@@ -29,7 +29,7 @@
 #include "common/events.h"
 #include "common/util.h"
 
-#include "backends/platform/sdl/sdl.h"
+#include "backends/platform/sdl/sdl_driver.h"
 
 #ifdef UNIX
 	#include "backends/saves/posix/posix-saves.h"
@@ -948,7 +948,7 @@ void OSystem_SDL::mixerProducerThread() {
 }
 
 int SDLCALL OSystem_SDL::mixerProducerThreadEntry(void *arg) {
-	DriverSDL *this_ = (DriverSDL *)arg;
+	OSystem_SDL *this_ = (OSystem_SDL *)arg;
 	assert(this_);
 	this_->mixerProducerThread();
 	return 0;
@@ -998,7 +998,7 @@ void OSystem_SDL::deinitThreadedMixer() {
 
 
 void OSystem_SDL::mixCallback(void *arg, byte *samples, int len) {
-	DriverSDL *this_ = (DriverSDL *)arg;
+	OSystem_SDL *this_ = (OSystem_SDL *)arg;
 	assert(this_);
 	assert(this_->_mixer);
 

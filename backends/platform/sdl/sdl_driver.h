@@ -26,15 +26,6 @@
 #ifndef BACKEND_DRIVER_SDL_H
 #define BACKEND_DRIVER_SDL_H
 
-#include "common/sys.h"
-
-#include "engine/color.h"
-#include "engine/model.h"
-#include "engine/colormap.h"
-#include "engine/bitmap.h"
-#include "engine/vector3d.h"
-
-#include "backends/events/default/default-events.h"
 #include "backends/base-backend.h"
 
 #include <SDL.h>
@@ -42,12 +33,13 @@
 #include <SDL_opengl.h>
 #endif
 
-#include <time.h>
-
 namespace Audio {
 	class MixerImpl;
-	class Mixer;
 }
+
+#if defined(MACOSX)
+#define MIXER_DOUBLE_BUFFERING 1
+#endif
 
 class OSystem_SDL : public BaseBackend {
 public:

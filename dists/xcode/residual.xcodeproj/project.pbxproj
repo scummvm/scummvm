@@ -12,15 +12,17 @@
 		281E11320E3FAA09004A8255 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 281E11300E3FAA09004A8255 /* stream.cpp */; };
 		28211ED30FAF797A009AB5FF /* default-events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211ED10FAF797A009AB5FF /* default-events.cpp */; };
 		28211ED60FAF79B2009AB5FF /* default-timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211ED40FAF79B2009AB5FF /* default-timer.cpp */; };
-		28211EDE0FAF7A19009AB5FF /* driver_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211ED80FAF7A19009AB5FF /* driver_gl.cpp */; };
-		28211EDF0FAF7A19009AB5FF /* driver_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EDA0FAF7A19009AB5FF /* driver_sdl.cpp */; };
-		28211EE00FAF7A19009AB5FF /* driver_tinygl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EDC0FAF7A19009AB5FF /* driver_tinygl.cpp */; };
 		28211EE20FAF7A48009AB5FF /* savefile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EE10FAF7A48009AB5FF /* savefile.cpp */; };
 		28211EE50FAF7A62009AB5FF /* posix-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EE30FAF7A62009AB5FF /* posix-saves.cpp */; };
 		28211EE80FAF7A7C009AB5FF /* default-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EE60FAF7A7C009AB5FF /* default-saves.cpp */; };
 		28211EFB0FAF7A98009AB5FF /* abstract-fs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EE90FAF7A98009AB5FF /* abstract-fs.cpp */; };
 		28211EFE0FAF7A98009AB5FF /* posix-fs-factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EF10FAF7A98009AB5FF /* posix-fs-factory.cpp */; };
 		28211F000FAF7A98009AB5FF /* stdiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28211EF50FAF7A98009AB5FF /* stdiostream.cpp */; };
+		2859E71C0FB39B0A00A01ECB /* base-backend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2859E71A0FB39B0A00A01ECB /* base-backend.cpp */; };
+		2859E71F0FB39B2100A01ECB /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2859E71D0FB39B2100A01ECB /* system.cpp */; };
+		2859E7230FB39B3700A01ECB /* gfx_opengl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2859E7210FB39B3700A01ECB /* gfx_opengl.cpp */; };
+		2859E7260FB39B4B00A01ECB /* gfx_tinygl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2859E7240FB39B4B00A01ECB /* gfx_tinygl.cpp */; };
+		2859E76D0FB39FE400A01ECB /* sdl_driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2859E76B0FB39FE400A01ECB /* sdl_driver.cpp */; };
 		2862A6950E0198B200DCA546 /* hashmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68B0E0198B200DCA546 /* hashmap.cpp */; };
 		2862A6960E0198B200DCA546 /* memorypool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A68D0E0198B200DCA546 /* memorypool.cpp */; };
 		2862A6970E0198B200DCA546 /* str.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2862A6900E0198B200DCA546 /* str.cpp */; };
@@ -144,13 +146,6 @@
 		28211ED20FAF797A009AB5FF /* default-events.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-events.h"; path = "../../backends/events/default/default-events.h"; sourceTree = SOURCE_ROOT; };
 		28211ED40FAF79B2009AB5FF /* default-timer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "default-timer.cpp"; path = "../../backends/timer/default/default-timer.cpp"; sourceTree = SOURCE_ROOT; };
 		28211ED50FAF79B2009AB5FF /* default-timer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "default-timer.h"; path = "../../backends/timer/default/default-timer.h"; sourceTree = SOURCE_ROOT; };
-		28211ED70FAF79EF009AB5FF /* driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver.h; path = ../../backends/platform/driver.h; sourceTree = SOURCE_ROOT; };
-		28211ED80FAF7A19009AB5FF /* driver_gl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_gl.cpp; path = ../../backends/platform/sdl/driver_gl.cpp; sourceTree = SOURCE_ROOT; };
-		28211ED90FAF7A19009AB5FF /* driver_gl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_gl.h; path = ../../backends/platform/sdl/driver_gl.h; sourceTree = SOURCE_ROOT; };
-		28211EDA0FAF7A19009AB5FF /* driver_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_sdl.cpp; path = ../../backends/platform/sdl/driver_sdl.cpp; sourceTree = SOURCE_ROOT; };
-		28211EDB0FAF7A19009AB5FF /* driver_sdl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_sdl.h; path = ../../backends/platform/sdl/driver_sdl.h; sourceTree = SOURCE_ROOT; };
-		28211EDC0FAF7A19009AB5FF /* driver_tinygl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = driver_tinygl.cpp; path = ../../backends/platform/sdl/driver_tinygl.cpp; sourceTree = SOURCE_ROOT; };
-		28211EDD0FAF7A19009AB5FF /* driver_tinygl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = driver_tinygl.h; path = ../../backends/platform/sdl/driver_tinygl.h; sourceTree = SOURCE_ROOT; };
 		28211EE10FAF7A48009AB5FF /* savefile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = savefile.cpp; path = ../../backends/saves/savefile.cpp; sourceTree = SOURCE_ROOT; };
 		28211EE30FAF7A62009AB5FF /* posix-saves.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "posix-saves.cpp"; path = "../../backends/saves/posix/posix-saves.cpp"; sourceTree = SOURCE_ROOT; };
 		28211EE40FAF7A62009AB5FF /* posix-saves.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "posix-saves.h"; path = "../../backends/saves/posix/posix-saves.h"; sourceTree = SOURCE_ROOT; };
@@ -163,6 +158,17 @@
 		28211EF20FAF7A98009AB5FF /* posix-fs-factory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "posix-fs-factory.h"; sourceTree = "<group>"; };
 		28211EF50FAF7A98009AB5FF /* stdiostream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stdiostream.cpp; path = ../../backends/fs/stdiostream.cpp; sourceTree = SOURCE_ROOT; };
 		28211EF60FAF7A98009AB5FF /* stdiostream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = stdiostream.h; path = ../../backends/fs/stdiostream.h; sourceTree = SOURCE_ROOT; };
+		2859E71A0FB39B0A00A01ECB /* base-backend.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = "base-backend.cpp"; path = "../../backends/base-backend.cpp"; sourceTree = SOURCE_ROOT; };
+		2859E71B0FB39B0A00A01ECB /* base-backend.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "base-backend.h"; path = "../../backends/base-backend.h"; sourceTree = SOURCE_ROOT; };
+		2859E71D0FB39B2100A01ECB /* system.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = system.cpp; sourceTree = "<group>"; };
+		2859E71E0FB39B2100A01ECB /* system.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
+		2859E7200FB39B3700A01ECB /* gfx_base.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = gfx_base.h; sourceTree = "<group>"; };
+		2859E7210FB39B3700A01ECB /* gfx_opengl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = gfx_opengl.cpp; sourceTree = "<group>"; };
+		2859E7220FB39B3700A01ECB /* gfx_opengl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = gfx_opengl.h; sourceTree = "<group>"; };
+		2859E7240FB39B4B00A01ECB /* gfx_tinygl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = gfx_tinygl.cpp; sourceTree = "<group>"; };
+		2859E7250FB39B4B00A01ECB /* gfx_tinygl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = gfx_tinygl.h; sourceTree = "<group>"; };
+		2859E76B0FB39FE400A01ECB /* sdl_driver.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sdl_driver.cpp; path = ../../backends/platform/sdl/sdl_driver.cpp; sourceTree = SOURCE_ROOT; };
+		2859E76C0FB39FE400A01ECB /* sdl_driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sdl_driver.h; path = ../../backends/platform/sdl/sdl_driver.h; sourceTree = SOURCE_ROOT; };
 		2862A6860E0198B200DCA546 /* algorithm.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = algorithm.h; sourceTree = "<group>"; };
 		2862A6870E0198B200DCA546 /* array.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = array.h; sourceTree = "<group>"; };
 		2862A6880E0198B200DCA546 /* endian.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
@@ -463,8 +469,9 @@
 		28211F080FAF7B2B009AB5FF /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				2859E71A0FB39B0A00A01ECB /* base-backend.cpp */,
+				2859E71B0FB39B0A00A01ECB /* base-backend.h */,
 				28211F090FAF7B35009AB5FF /* sdl */,
-				28211ED70FAF79EF009AB5FF /* driver.h */,
 			);
 			name = platform;
 			sourceTree = "<group>";
@@ -472,12 +479,8 @@
 		28211F090FAF7B35009AB5FF /* sdl */ = {
 			isa = PBXGroup;
 			children = (
-				28211ED80FAF7A19009AB5FF /* driver_gl.cpp */,
-				28211ED90FAF7A19009AB5FF /* driver_gl.h */,
-				28211EDA0FAF7A19009AB5FF /* driver_sdl.cpp */,
-				28211EDB0FAF7A19009AB5FF /* driver_sdl.h */,
-				28211EDC0FAF7A19009AB5FF /* driver_tinygl.cpp */,
-				28211EDD0FAF7A19009AB5FF /* driver_tinygl.h */,
+				2859E76B0FB39FE400A01ECB /* sdl_driver.cpp */,
+				2859E76C0FB39FE400A01ECB /* sdl_driver.h */,
 			);
 			name = sdl;
 			sourceTree = "<group>";
@@ -534,6 +537,8 @@
 		289EEE140D8921E400521A80 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				2859E71D0FB39B2100A01ECB /* system.cpp */,
+				2859E71E0FB39B2100A01ECB /* system.h */,
 				28A7B7A20FA4E26A001D12C7 /* libz.cpp */,
 				28A7B7A30FA4E26A001D12C7 /* libz.h */,
 				28A7B77B0FA4DF18001D12C7 /* archive.cpp */,
@@ -587,6 +592,11 @@
 		289EEE280D8921F600521A80 /* engine */ = {
 			isa = PBXGroup;
 			children = (
+				2859E7240FB39B4B00A01ECB /* gfx_tinygl.cpp */,
+				2859E7250FB39B4B00A01ECB /* gfx_tinygl.h */,
+				2859E7200FB39B3700A01ECB /* gfx_base.h */,
+				2859E7210FB39B3700A01ECB /* gfx_opengl.cpp */,
+				2859E7220FB39B3700A01ECB /* gfx_opengl.h */,
 				28D9D70F0E58130200BCBCB1 /* vector3d.h */,
 				28D9D7090E5812F600BCBCB1 /* matrix3.cpp */,
 				28D9D70A0E5812F600BCBCB1 /* matrix3.h */,
@@ -916,15 +926,17 @@
 				28A7B7A40FA4E26A001D12C7 /* libz.cpp in Sources */,
 				28211ED30FAF797A009AB5FF /* default-events.cpp in Sources */,
 				28211ED60FAF79B2009AB5FF /* default-timer.cpp in Sources */,
-				28211EDE0FAF7A19009AB5FF /* driver_gl.cpp in Sources */,
-				28211EDF0FAF7A19009AB5FF /* driver_sdl.cpp in Sources */,
-				28211EE00FAF7A19009AB5FF /* driver_tinygl.cpp in Sources */,
 				28211EE20FAF7A48009AB5FF /* savefile.cpp in Sources */,
 				28211EE50FAF7A62009AB5FF /* posix-saves.cpp in Sources */,
 				28211EE80FAF7A7C009AB5FF /* default-saves.cpp in Sources */,
 				28211EFB0FAF7A98009AB5FF /* abstract-fs.cpp in Sources */,
 				28211EFE0FAF7A98009AB5FF /* posix-fs-factory.cpp in Sources */,
 				28211F000FAF7A98009AB5FF /* stdiostream.cpp in Sources */,
+				2859E71C0FB39B0A00A01ECB /* base-backend.cpp in Sources */,
+				2859E71F0FB39B2100A01ECB /* system.cpp in Sources */,
+				2859E7230FB39B3700A01ECB /* gfx_opengl.cpp in Sources */,
+				2859E7260FB39B4B00A01ECB /* gfx_tinygl.cpp in Sources */,
+				2859E76D0FB39FE400A01ECB /* sdl_driver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -978,6 +990,8 @@
 					"-DSYSTEM_LITTLE_ENDIAN",
 					"-DHAVE_X86",
 					"-DUSE_ZLIB",
+					"-DUSE_OPENGL",
+					"-DSDL_BACKEND",
 				);
 				OTHER_LDFLAGS = (
 					"-L/sw/lib",
@@ -1019,6 +1033,8 @@
 					"-DSYSTEM_LITTLE_ENDIAN",
 					"-DHAVE_X86",
 					"-DUSE_ZLIB",
+					"-DUSE_OPENGL",
+					"-DSDL_BACKEND",
 				);
 				OTHER_LDFLAGS = (
 					"-L/sw/lib",
