@@ -7,6 +7,8 @@ MODULE_OBJS := \
 	costume.o \
 	engine.o \
 	font.o \
+	gfx_opengl.o \
+	gfx_tinygl.o \
 	keyframe.o \
 	lab.o \
 	lipsync.o \
