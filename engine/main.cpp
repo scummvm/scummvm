@@ -87,6 +87,10 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	if (!processSettings(command, settings))
 		return 0;
 
+	// Init the backend. Must take place after all config data (including
+	// the command line params) was read.
+	system.initBackend();
+
 	g_registry = new Registry();
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
