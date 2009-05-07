@@ -26,6 +26,7 @@
 #include "common/sys.h"
 #include "common/fs.h"
 #include "common/str.h"
+#include "common/events.h"
 
 #include "engine/engine.h"
 #include "engine/scene.h"
@@ -34,7 +35,7 @@
 #include "engine/actor.h"
 #include "engine/textobject.h"
 #include "engine/smush/smush.h"
-#include "backends/platform/driver.h"
+#include "engine/gfx_base.h"
 #include "engine/savegame.h"
 #include "engine/lipsync.h"
 #include "engine/registry.h"
@@ -408,7 +409,7 @@ void Engine::drawPrimitives() {
 
 void Engine::luaUpdate() {
 	// Update timing information
-	unsigned newStart = g_driver->getMillis();
+	unsigned newStart = g_system->getMillis();
 	if (newStart < _frameStart) {
 		_frameStart = newStart;
 		return;
@@ -569,7 +570,7 @@ void Engine::doFlip() {
 void Engine::mainLoop() {
 	_movieTime = 0;
 	_frameTime = 0;
-	_frameStart = g_driver->getMillis();
+	_frameStart = g_system->getMillis();
 	_frameCounter = 0;
 	_timeAccum = 0;
 	_frameTimeCollection = 0;
@@ -580,7 +581,7 @@ void Engine::mainLoop() {
 	_refreshShadowMask = false;
 
 	for (;;) {
-		uint32 startTime = g_driver->getMillis();
+		uint32 startTime = g_system->getMillis();
 
 		if (_savegameLoadRequest) {
 			savegameRestore();
@@ -594,13 +595,13 @@ void Engine::mainLoop() {
 
 		if (_mode == ENGINE_MODE_IDLE) {
 			// don't kill CPU
-			g_driver->delayMillis(10);
+			g_system->delayMillis(10);
 			continue;
 		}
 
 		// Process events
 		Common::Event event;
-		while (g_driver->getEventManager()->pollEvent(event)) {
+		while (g_system->getEventManager()->pollEvent(event)) {
 			// Handle any button operations
 			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_KEYUP)
 				handleButton(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
@@ -628,7 +629,7 @@ void Engine::mainLoop() {
 			g_imuseState = -1;
 		}
 
-		uint32 endTime = g_driver->getMillis();
+		uint32 endTime = g_system->getMillis();
 		if (startTime > endTime)
 			continue;
 		uint32 diffTime = endTime - startTime;
@@ -636,7 +637,7 @@ void Engine::mainLoop() {
 			continue;
 		if (diffTime < _speedLimitMs) {
 			uint32 delayTime = _speedLimitMs - diffTime;
-			g_driver->delayMillis(delayTime);
+			g_system->delayMillis(delayTime);
 		}
 	}
 }

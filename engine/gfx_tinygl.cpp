@@ -26,12 +26,13 @@
 #include "common/sys.h"
 #include "common/endian.h"
 #include "common/debug.h"
+#include "common/system.h"
 
 #include "engine/colormap.h"
 #include "engine/material.h"
 #include "engine/font.h"
 #include "engine/vector3d.h"
-#include "backends/platform/sdl/driver_tinygl.h"
+#include "engine/gfx_tinygl.h"
 
 #include "engine/tinygl/gl.h"
 #include "engine/tinygl/zgl.h"
@@ -136,12 +137,12 @@ TGLint tgluProject(TGLfloat objx, TGLfloat objy, TGLfloat objz, const TGLfloat m
 	return TGL_TRUE;
 }
 
-DriverTinyGL::DriverTinyGL() {
+GfxTinyGL::GfxTinyGL() {
 	_zb = NULL;
 	_storedDisplay = NULL;
 }
 
-DriverTinyGL::~DriverTinyGL() {
+GfxTinyGL::~GfxTinyGL() {
 	delete[] _storedDisplay;
 	if (_zb) {
 		tglClose();
@@ -149,23 +150,17 @@ DriverTinyGL::~DriverTinyGL() {
 	}
 }
 
-void DriverTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
-	uint32 flags = SDL_HWSURFACE;
-
-	if (fullscreen)
-		flags |= SDL_FULLSCREEN;
-	_screen = SDL_SetVideoMode(screenW, screenH, 16, flags);
-	if (_screen == NULL)
-		error("Could not initialize video");
+byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+	byte *buffer = g_system->setupScreen(screenW, screenH, fullscreen, accel3d);
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_screenBPP = 15;
-	_isFullscreen = fullscreen;
+	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 
-	SDL_WM_SetCaption("Residual: Software 3D Renderer", "Residual");
+	g_system->setWindowCaption("Residual: Software 3D Renderer");
 
-	_zb = ZB_open(screenW, screenH, ZB_MODE_5R6G5B, _screen->pixels);
+	_zb = ZB_open(screenW, screenH, ZB_MODE_5R6G5B, buffer);
 	tglInit(_zb);
 
 	_storedDisplay = new byte[640 * 480 * 2];
@@ -175,29 +170,15 @@ void DriverTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	TGLfloat ambientSource[] = { 0.6, 0.6, 0.6, 1.0 };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
+
+	return buffer;
 }
 
-void DriverTinyGL::toggleFullscreenMode() {
-	// We used to use SDL_WM_ToggleFullScreen() to switch to fullscreen
-	// mode, but since that was deemed too buggy for ScummVM it's probably
-	// too buggy for Residual as well.
-
-	if (_screen)
-		SDL_FreeSurface(_screen);
-
-	uint32 flags = SDL_HWSURFACE;
-	if (!_isFullscreen)
-		flags |= SDL_FULLSCREEN;
-
-	_screen = SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags);
-	if (_screen == NULL)
-		error("Could not change fullscreen mode");
-
-	_zb->pbuf = (PIXEL *)_screen->pixels;
-	_isFullscreen = !_isFullscreen;
+const char *GfxTinyGL::getVideoDeviceName() {
+	return "TinyGL Software Renderer";
 }
 
-void DriverTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
+void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 
@@ -210,7 +191,7 @@ void DriverTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) 
 	tglRotatef(roll, 0, 0, -1);
 }
 
-void DriverTinyGL::positionCamera(Vector3d pos, Vector3d interest) {
+void GfxTinyGL::positionCamera(Vector3d pos, Vector3d interest) {
 	Vector3d up_vec(0, 0, 1);
 
 	if (pos.x() == interest.x() && pos.y() == interest.y())
@@ -219,17 +200,17 @@ void DriverTinyGL::positionCamera(Vector3d pos, Vector3d interest) {
 	lookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
 
-void DriverTinyGL::clearScreen() {
+void GfxTinyGL::clearScreen() {
 	memset(_zb->pbuf, 0, 640 * 480 * 2);
 	memset(_zb->zbuf, 0, 640 * 480 * 2);
 	memset(_zb->zbuf2, 0, 640 * 480 * 4);
 }
 
-void DriverTinyGL::flipBuffer() {
-	SDL_Flip(_screen);
+void GfxTinyGL::flipBuffer() {
+	g_system->updateScreen();
 }
 
-bool DriverTinyGL::isHardwareAccelerated() {
+bool GfxTinyGL::isHardwareAccelerated() {
 	return false;
 }
 
@@ -282,7 +263,7 @@ static void tglShadowProjection(Vector3d light, Vector3d plane, Vector3d normal,
 	tglMultMatrixf(mat);
 }
 
-void DriverTinyGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxTinyGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -368,7 +349,7 @@ void DriverTinyGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1,
 	}*/
 }
 
-void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
+void GfxTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
@@ -388,7 +369,7 @@ void DriverTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float ro
 	tglRotatef(roll, 0, 1, 0);
 }
 
-void DriverTinyGL::finishActorDraw() {
+void GfxTinyGL::finishActorDraw() {
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPopMatrix();
 	tglDisable(TGL_TEXTURE_2D);
@@ -413,7 +394,7 @@ void DriverTinyGL::finishActorDraw() {
 	}*/
 }
 
-void DriverTinyGL::drawShadowPlanes() {
+void GfxTinyGL::drawShadowPlanes() {
 	tglEnable(TGL_SHADOW_MASK_MODE);
 	if (!_currentShadowArray->shadowMask) {
 		_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
@@ -434,20 +415,20 @@ void DriverTinyGL::drawShadowPlanes() {
 	tglDisable(TGL_SHADOW_MASK_MODE);
 }
 
-void DriverTinyGL::setShadowMode() {
+void GfxTinyGL::setShadowMode() {
 	tglEnable(TGL_SHADOW_MODE);
 }
 
-void DriverTinyGL::clearShadowMode() {
+void GfxTinyGL::clearShadowMode() {
 	tglDisable(TGL_SHADOW_MODE);
 }
 
-void DriverTinyGL::set3DMode() {
+void GfxTinyGL::set3DMode() {
 	tglMatrixMode(TGL_MODELVIEW);
 	tglEnable(TGL_DEPTH_TEST);
 }
 
-void DriverTinyGL::setShadow(Shadow *shadow) {
+void GfxTinyGL::setShadow(Shadow *shadow) {
 	_currentShadowArray = shadow;
 	if (shadow)
 		tglDisable(TGL_LIGHTING);
@@ -455,13 +436,13 @@ void DriverTinyGL::setShadow(Shadow *shadow) {
 		tglEnable(TGL_LIGHTING);
 }
 
-void DriverTinyGL::setShadowColor(byte r, byte g, byte b) {
+void GfxTinyGL::setShadowColor(byte r, byte g, byte b) {
 	_shadowColorR = r;
 	_shadowColorG = g;
 	_shadowColorB = b;
 }
 
-void DriverTinyGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
+void GfxTinyGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
 	tglNormal3fv((float *)face->_normal._coords);
 	tglBegin(TGL_POLYGON);
 	for (int i = 0; i < face->_numVertices; i++) {
@@ -475,7 +456,7 @@ void DriverTinyGL::drawModelFace(const Model::Face *face, float *vertices, float
 	tglEnd();
 }
 
-void DriverTinyGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) {
+void GfxTinyGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) {
 	tglPushMatrix();
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
@@ -484,11 +465,11 @@ void DriverTinyGL::translateViewpoint(Vector3d pos, float pitch, float yaw, floa
 	tglRotatef(roll, 0, 1, 0);
 }
 
-void DriverTinyGL::translateViewpoint() {
+void GfxTinyGL::translateViewpoint() {
 	tglPopMatrix();
 }
 
-void DriverTinyGL::drawHierachyNode(const Model::HierNode *node) {
+void GfxTinyGL::drawHierachyNode(const Model::HierNode *node) {
 	translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
 	if (node->_hierVisible) {
 		if (node->_mesh && node->_meshVisible) {
@@ -510,11 +491,11 @@ void DriverTinyGL::drawHierachyNode(const Model::HierNode *node) {
 		node->_sibling->draw();
 }
 
-void DriverTinyGL::disableLights() {
+void GfxTinyGL::disableLights() {
 	tglDisable(TGL_LIGHTING);
 }
 
-void DriverTinyGL::setupLight(Scene::Light *light, int lightId) {
+void GfxTinyGL::setupLight(Scene::Light *light, int lightId) {
 	assert(lightId < T_MAX_LIGHTS);
 	tglEnable(TGL_LIGHTING);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -560,7 +541,7 @@ void DriverTinyGL::setupLight(Scene::Light *light, int lightId) {
 	}
 }
 
-void DriverTinyGL::createBitmap(Bitmap *bitmap) {
+void GfxTinyGL::createBitmap(Bitmap *bitmap) {
 	if (bitmap->_format != 1) {
 		for (int pic = 0; pic < bitmap->_numImages; pic++) {
 			uint16 *bufPtr = reinterpret_cast<uint16 *>(bitmap->_data[pic]);
@@ -624,7 +605,7 @@ void TinyGLBlit(byte *dst, byte *src, int x, int y, int width, int height, bool 
 	}
 }
 
-void DriverTinyGL::drawBitmap(const Bitmap *bitmap) {
+void GfxTinyGL::drawBitmap(const Bitmap *bitmap) {
 	assert(bitmap->_currImage > 0);
 	if (bitmap->_format == 1)
 		TinyGLBlit((byte *)_zb->pbuf, (byte *)bitmap->_data[bitmap->_currImage - 1],
@@ -634,11 +615,11 @@ void DriverTinyGL::drawBitmap(const Bitmap *bitmap) {
 			bitmap->x(), bitmap->y(), bitmap->width(), bitmap->height(), false);
 }
 
-void DriverTinyGL::destroyBitmap(Bitmap *) { }
+void GfxTinyGL::destroyBitmap(Bitmap *) { }
 
-void DriverTinyGL::drawDepthBitmap(int, int, int, int, char *) { }
+void GfxTinyGL::drawDepthBitmap(int, int, int, int, char *) { }
 
-void DriverTinyGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
+void GfxTinyGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
 	material->_textures = new TGLuint[material->_numImages];
 	tglGenTextures(material->_numImages, (TGLuint *)material->_textures);
 	char *texdata = new char[material->_width * material->_height * 4];
@@ -669,7 +650,7 @@ void DriverTinyGL::createMaterial(Material *material, const char *data, const CM
 	delete[] texdata;
 }
 
-void DriverTinyGL::selectMaterial(const Material *material) {
+void GfxTinyGL::selectMaterial(const Material *material) {
 	TGLuint *textures = (TGLuint *)material->_textures;
 	tglBindTexture(TGL_TEXTURE_2D, textures[material->_currImage]);
 	tglPushMatrix();
@@ -680,18 +661,18 @@ void DriverTinyGL::selectMaterial(const Material *material) {
 	tglPopMatrix();
 }
 
-void DriverTinyGL::destroyMaterial(Material *material) {
+void GfxTinyGL::destroyMaterial(Material *material) {
 	tglDeleteTextures(material->_numImages, (TGLuint *)material->_textures);
 	delete[] (TGLuint *)material->_textures;
 }
 
-void DriverTinyGL::prepareSmushFrame(int width, int height, byte *bitmap) {
+void GfxTinyGL::prepareSmushFrame(int width, int height, byte *bitmap) {
 	_smushWidth = width;
 	_smushHeight = height;
 	_smushBitmap = bitmap;
 }
 
-void DriverTinyGL::drawSmushFrame(int offsetX, int offsetY) {
+void GfxTinyGL::drawSmushFrame(int offsetX, int offsetY) {
 	if (_smushWidth == 640 && _smushHeight == 480) {
 		memcpy(_zb->pbuf, _smushBitmap, 640 * 480 * 2);
 	} else {
@@ -699,13 +680,13 @@ void DriverTinyGL::drawSmushFrame(int offsetX, int offsetY) {
 	}
 }
 
-void DriverTinyGL::releaseSmushFrame() {
+void GfxTinyGL::releaseSmushFrame() {
 }
 
-void DriverTinyGL::loadEmergFont() {
+void GfxTinyGL::loadEmergFont() {
 }
 
-void DriverTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
+void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
 	uint16 color = ((fgColor.red() & 0xF8) << 8) | ((fgColor.green() & 0xFC) << 3) | (fgColor.blue() >> 3);
 
 	for (int l = 0; l < (int)strlen(text); l++) {
@@ -729,7 +710,7 @@ void DriverTinyGL::drawEmergString(int x, int y, const char *text, const Color &
 	}
 }
 
-Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
+GfxBase::TextObjectHandle *GfxTinyGL::createTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
 	TextObjectHandle *handle = new TextObjectHandle;
 	handle->width = width;
 	handle->height = height;
@@ -762,15 +743,15 @@ Driver::TextObjectHandle *DriverTinyGL::createTextBitmap(uint8 *data, int width,
 	return handle;
 }
 
-void DriverTinyGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
+void GfxTinyGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
 	TinyGLBlit((byte *)_zb->pbuf, (byte *)handle->bitmapData, x, y, handle->width, handle->height, true);
 }
 
-void DriverTinyGL::destroyTextBitmap(TextObjectHandle *handle) {
+void GfxTinyGL::destroyTextBitmap(TextObjectHandle *handle) {
 	delete[] handle->bitmapData;
 }
 
-Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
+Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 	uint16 *buffer = new uint16[w * h];
 	uint16 *src = (uint16 *)_storedDisplay;
 	assert(buffer);
@@ -802,15 +783,15 @@ Bitmap *DriverTinyGL::getScreenshot(int w, int h) {
 	return screenshot;
 }
 
-void DriverTinyGL::storeDisplay() {
+void GfxTinyGL::storeDisplay() {
 	memcpy(_storedDisplay, _zb->pbuf, 640 * 480 * 2);
 }
 
-void DriverTinyGL::copyStoredToDisplay() {
+void GfxTinyGL::copyStoredToDisplay() {
 	memcpy(_zb->pbuf, _storedDisplay, 640 * 480 * 2);
 }
 
-void DriverTinyGL::dimScreen() {
+void GfxTinyGL::dimScreen() {
 	uint16 *data = (uint16 *)_storedDisplay;
 	for (int l = 0; l < 640 * 480; l++) {
 		uint16 pixel = data[l];
@@ -822,7 +803,7 @@ void DriverTinyGL::dimScreen() {
 	}
 }
 
-void DriverTinyGL::dimRegion(int x, int y, int w, int h, float level) {
+void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 	uint16 *data = (uint16 *)_zb->pbuf;
 	for (int ly = y; ly < y + h; ly++) {
 		for (int lx = x; lx < x + w; lx++) {
@@ -836,7 +817,7 @@ void DriverTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 	}
 }
 
-void DriverTinyGL::drawRectangle(PrimitiveObject *primitive) {
+void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	uint16 *dst = (uint16 *)_zb->pbuf;
 	int x1 = primitive->getX1();
 	int x2 = primitive->getX2();
@@ -868,7 +849,7 @@ void DriverTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	}
 }
 
-void DriverTinyGL::drawLine(PrimitiveObject *primitive) {
+void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 	uint16 *dst = (uint16 *)_zb->pbuf;
 	int x1 = primitive->getX1();
 	int x2 = primitive->getX2();
@@ -886,7 +867,7 @@ void DriverTinyGL::drawLine(PrimitiveObject *primitive) {
 	}
 }
 
-void DriverTinyGL::drawPolygon(PrimitiveObject *primitive) {
+void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
 	uint16 *dst = (uint16 *)_zb->pbuf;
 	int x1 = primitive->getX1();
 	int y1 = primitive->getY1();

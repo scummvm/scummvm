@@ -29,7 +29,7 @@
 #include "common/events.h"
 #include "common/util.h"
 
-#include "backends/platform/sdl/driver_sdl.h"
+#include "backends/platform/sdl/sdl.h"
 
 #ifdef UNIX
 	#include "backends/saves/posix/posix-saves.h"
@@ -128,7 +128,7 @@ static byte SDLModToOSystemKeyFlags(SDLMod mod) {
 	return b;
 }
 
-void DriverSDL::fillMouseEvent(Common::Event &event, int x, int y) {
+void OSystem_SDL::fillMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
@@ -137,7 +137,7 @@ void DriverSDL::fillMouseEvent(Common::Event &event, int x, int y) {
 	_km.y = y;
 }
 
-void DriverSDL::handleKbdMouse() {
+void OSystem_SDL::handleKbdMouse() {
 	uint32 curTime = getMillis();
 	if (curTime >= _km.last_time + _km.delay_time) {
 		_km.last_time = curTime;
@@ -207,11 +207,11 @@ void DriverSDL::handleKbdMouse() {
 	}
 }
 
-void DriverSDL::warpMouse(int x, int y) {
+void OSystem_SDL::warpMouse(int x, int y) {
 	SDL_WarpMouse(x, y);
 }
 
-bool DriverSDL::pollEvent(Common::Event &event) {
+bool OSystem_SDL::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 	int axis;
 	byte b = 0;
@@ -226,7 +226,7 @@ bool DriverSDL::pollEvent(Common::Event &event) {
 
 				// Alt-Return and Alt-Enter toggle full screen mode
 				if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
-					toggleFullscreenMode();
+					setFullscreenMode(_fullscreen);
 					break;
 				}
 #if defined(MACOSX)
@@ -428,7 +428,7 @@ bool DriverSDL::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool DriverSDL::remapKey(SDL_Event &ev, Common::Event &event) {
+bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
 #ifdef LINUPY
 	// On Yopy map the End button to quit
 	if ((ev.key.keysym.sym == 293)) {
@@ -496,23 +496,12 @@ bool DriverSDL::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
-static Common::EventManager *s_eventManager = 0;
-
-Common::EventManager *DriverSDL::getEventManager() {
-	// FIXME/TODO: Eventually this method should be turned into an abstract one,
-	// to force backends to implement this conciously (even if they
-	// end up returning the default event manager anyway).
-	if (!s_eventManager)
-		s_eventManager = new DefaultEventManager(this);
-	return s_eventManager;
-}
-
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
 	return interval;
 }
 
-DriverSDL::DriverSDL() {
+OSystem_SDL::OSystem_SDL() {
 	_mixer = NULL;
 	_timer = NULL;
 	_savefile = NULL;
@@ -539,14 +528,14 @@ DriverSDL::DriverSDL() {
 	#endif
 }
 
-DriverSDL::~DriverSDL() {
+OSystem_SDL::~OSystem_SDL() {
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
 
 	delete _fsFactory;
 }
 
-void DriverSDL::init() {
+void OSystem_SDL::initBackend() {
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 
@@ -607,41 +596,114 @@ void DriverSDL::init() {
 	}
 }
 
-const char *DriverSDL::getVideoDeviceName() {
-	return "SDL Video Device";
+byte *OSystem_SDL::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+	uint32 sdlflags;
+	int bpp;
+
+	_opengl = accel3d;
+	_fullscreen = fullscreen;
+
+#ifdef USE_OPENGL
+	if (_opengl) {
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
+		sdlflags = SDL_OPENGL;
+		bpp = 24;
+	} else
+#endif
+	{
+		bpp = 16;
+		sdlflags = SDL_HWSURFACE;
+	}
+
+	if (_fullscreen)
+		sdlflags |= SDL_FULLSCREEN;
+
+	_screen = SDL_SetVideoMode(screenW, screenH, bpp, sdlflags);
+	if (!_screen)
+		error("Could not initialize video");
+
+#ifdef USE_OPENGL
+	if (_opengl) {
+		int glflag;
+
+		SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &glflag);
+		warning("INFO: GL RED bits: %d", glflag);
+		SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &glflag);
+		warning("INFO: GL GREEN bits: %d", glflag);
+		SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &glflag);
+		warning("INFO: GL BLUE bits: %d", glflag);
+		SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &glflag);
+		warning("INFO: GL APLHA bits: %d", glflag);
+		SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &glflag);
+		warning("INFO: GL Z buffer depth bits: %d", glflag);
+		SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &glflag);
+		warning("INFO: GL Double Buffer: %d", glflag);
+		SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &glflag);
+		warning("INFO: GL Stencil buffer bits: %d", glflag);
+	}
+#endif
+	return (byte *)_screen->pixels;
 }
 
-uint32 DriverSDL::getMillis() {
+void OSystem_SDL::setFullscreenMode(bool enable) {
+	if (_opengl) {
+		warning("Switching on fly to Fullscreen mode is not allowed");
+		// switching to fullscreen mode it cause lost of texture
+		// and after that recreating
+		// for now it's not allowed
+	} else {
+		warning("Switching on fly to Fullscreen mode is not allowed");
+		// We used to use SDL_WM_ToggleFullScreen() to switch to fullscreen
+		// mode, but since that was deemed too buggy for ScummVM it's probably
+		// too buggy for Residual as well.
+	}
+}
+
+void OSystem_SDL::updateScreen() {
+	if (_opengl)
+		SDL_GL_SwapBuffers();
+	else
+		SDL_Flip(_screen);
+}
+
+uint32 OSystem_SDL::getMillis() {
 	uint32 millis = SDL_GetTicks();
 	getEventManager()->processMillis(millis);
 	return millis;
 }
 
-void DriverSDL::delayMillis(uint msecs) {
+void OSystem_SDL::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
 }
 
-void DriverSDL::getTimeAndDate(struct tm &t) const {
+void OSystem_SDL::getTimeAndDate(struct tm &t) const {
 	time_t curTime = time(0);
 	t = *localtime(&curTime);
 }
 
-Common::TimerManager *DriverSDL::getTimerManager() {
+Common::TimerManager *OSystem_SDL::getTimerManager() {
 	assert(_timer);
 	return _timer;
 }
 
-Common::SaveFileManager *DriverSDL::getSavefileManager() {
+Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 	assert(_savefile);
 	return _savefile;
 }
 
-FilesystemFactory *DriverSDL::getFilesystemFactory() {
+FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
 	assert(_fsFactory);
 	return _fsFactory;
 }
 
-void DriverSDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 #ifdef DATA_PATH
 	// Add the global DATA_PATH to the directory search list
@@ -670,83 +732,40 @@ void DriverSDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 
 }
 
+void OSystem_SDL::setWindowCaption(const char *caption) {
+	SDL_WM_SetCaption(caption, caption);
+}
 
-static Common::String getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
-#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
-				error("Unable to access user profile directory");
+bool OSystem_SDL::hasFeature(Feature f) {
+	return
+		(f == kFeatureFullscreenMode) ||
+		(f == kFeatureIconifyWindow);
+}
 
-			strcat(configFile, "\\Application Data");
-			CreateDirectory(configFile, NULL);
-		}
-
-		strcat(configFile, "\\Residual");
-		CreateDirectory(configFile, NULL);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-
-		FILE *tmp = NULL;
-		if ((tmp = fopen(configFile, "r")) == NULL) {
-			// Check windows directory
-			char oldConfigFile[MAXPATHLEN];
-			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
-			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
-			if ((tmp = fopen(oldConfigFile, "r"))) {
-				strcpy(configFile, oldConfigFile);
-
-				fclose(tmp);
-			}
-		} else {
-			fclose(tmp);
-		}
-	} else {
-		// Check windows directory
-		GetWindowsDirectory(configFile, MAXPATHLEN);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+void OSystem_SDL::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureFullscreenMode:
+		setFullscreenMode(enable);
+		break;
+	case kFeatureIconifyWindow:
+		if (enable)
+			SDL_WM_IconifyWindow();
+		break;
+	default:
+		break;
 	}
-#elif defined(UNIX)
-	// On UNIX type systems, by default we store the config file inside
-	// to the HOME directory of the user.
-	//
-	// GP2X is Linux based but Home dir can be read only so do not use
-	// it and put the config in the executable dir.
-	//
-	// On the iPhone, the home dir of the user when you launch the app
-	// from the Springboard, is /. Which we don't want.
-	const char *home = getenv("HOME");
-	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
-	else
-		strcpy(configFile, DEFAULT_CONFIG_FILE);
-#else
-	strcpy(configFile, DEFAULT_CONFIG_FILE);
-#endif
-
-	return configFile;
 }
 
-Common::SeekableReadStream *DriverSDL::createConfigReadStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createReadStream();
+bool OSystem_SDL::getFeatureState(Feature f) {
+	switch (f) {
+	case kFeatureFullscreenMode:
+		return _fullscreen;
+	default:
+		return false;
+	}
 }
 
-Common::WriteStream *DriverSDL::createConfigWriteStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createWriteStream();
-}
-
-void DriverSDL::quit() {
+void OSystem_SDL::quit() {
 	SDL_ShowCursor(SDL_ENABLE);
 
 	SDL_RemoveTimer(_timerID);
@@ -760,7 +779,7 @@ void DriverSDL::quit() {
 	delete getEventManager();
 }
 
-void DriverSDL::setupIcon() {
+void OSystem_SDL::setupIcon() {
 	int w, h, ncols, nbytes, i;
 	unsigned int rgba[256], icon[32 * 32];
 	unsigned char mask[32][4];
@@ -806,19 +825,19 @@ void DriverSDL::setupIcon() {
 	SDL_FreeSurface(sdl_surf);
 }
 
-Common::MutexRef DriverSDL::createMutex() {
+OSystem::MutexRef OSystem_SDL::createMutex() {
 	return (MutexRef)SDL_CreateMutex();
 }
 
-void DriverSDL::lockMutex(MutexRef mutex) {
+void OSystem_SDL::lockMutex(MutexRef mutex) {
 	SDL_mutexP((SDL_mutex *)mutex);
 }
 
-void DriverSDL::unlockMutex(MutexRef mutex) {
+void OSystem_SDL::unlockMutex(MutexRef mutex) {
 	SDL_mutexV((SDL_mutex *)mutex);
 }
 
-void DriverSDL::deleteMutex(MutexRef mutex) {
+void OSystem_SDL::deleteMutex(MutexRef mutex) {
 	SDL_DestroyMutex((SDL_mutex *)mutex);
 }
 
@@ -829,7 +848,7 @@ void DriverSDL::deleteMutex(MutexRef mutex) {
 
 #ifdef MIXER_DOUBLE_BUFFERING
 
-void DriverSDL::mixerProducerThread() {
+void OSystem_SDL::mixerProducerThread() {
 	byte nextSoundBuffer;
 
 	SDL_LockMutex(_soundMutex);
@@ -850,14 +869,14 @@ void DriverSDL::mixerProducerThread() {
 	SDL_UnlockMutex(_soundMutex);
 }
 
-int SDLCALL DriverSDL::mixerProducerThreadEntry(void *arg) {
+int SDLCALL OSystem_SDL::mixerProducerThreadEntry(void *arg) {
 	DriverSDL *this_ = (DriverSDL *)arg;
 	assert(this_);
 	this_->mixerProducerThread();
 	return 0;
 }
 
-void DriverSDL::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
+void OSystem_SDL::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
 	_soundThreadIsRunning = false;
 	_soundThreadShouldQuit = false;
 
@@ -877,7 +896,7 @@ void DriverSDL::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
 	_soundThread = SDL_CreateThread(mixerProducerThreadEntry, this);
 }
 
-void DriverSDL::deinitThreadedMixer() {
+void OSystem_SDL::deinitThreadedMixer() {
 	// Kill thread?? _soundThread
 
 	if (_soundThreadIsRunning) {
@@ -900,7 +919,7 @@ void DriverSDL::deinitThreadedMixer() {
 }
 
 
-void DriverSDL::mixCallback(void *arg, byte *samples, int len) {
+void OSystem_SDL::mixCallback(void *arg, byte *samples, int len) {
 	DriverSDL *this_ = (DriverSDL *)arg;
 	assert(this_);
 	assert(this_->_mixer);
@@ -920,8 +939,8 @@ void DriverSDL::mixCallback(void *arg, byte *samples, int len) {
 
 #else
 
-void DriverSDL::mixCallback(void *sys, byte *samples, int len) {
-	DriverSDL *this_ = (DriverSDL *)sys;
+void OSystem_SDL::mixCallback(void *sys, byte *samples, int len) {
+	OSystem_SDL *this_ = (OSystem_SDL *)sys;
 	assert(this_);
 
 	if (this_->_mixer)
@@ -930,7 +949,7 @@ void DriverSDL::mixCallback(void *sys, byte *samples, int len) {
 
 #endif
 
-void DriverSDL::setupMixer() {
+void OSystem_SDL::setupMixer() {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 
@@ -987,7 +1006,7 @@ void DriverSDL::setupMixer() {
 	}
 }
 
-void DriverSDL::closeMixer() {
+void OSystem_SDL::closeMixer() {
 	if (_mixer)
 		_mixer->setReady(false);
 
@@ -1002,7 +1021,7 @@ void DriverSDL::closeMixer() {
 
 }
 
-Audio::Mixer *DriverSDL::getMixer() {
+Audio::Mixer *OSystem_SDL::getMixer() {
 	assert(_mixer);
 	return _mixer;
 }
@@ -1066,6 +1085,14 @@ int main(int argc, char *argv[]) {
 
 #endif // defined(__SYMBIAN32__)
 
+	// Create our OSystem instance
+#if defined(__SYMBIAN32__)
+	g_system = new OSystem_SDL_Symbian();
+#else
+	g_system = new OSystem_SDL();
+#endif
+
+	assert(g_system);
 
 	int res = residual_main(argc, argv);
 

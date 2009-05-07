@@ -28,11 +28,11 @@
 #include "common/debug.h"
 #include "common/timer.h"
 #include "common/file.h"
+#include "common/system.h"
 
 #include "engine/smush/smush.h"
 #include "engine/resource.h"
 #include "engine/engine.h"
-#include "backends/platform/driver.h"
 #include "engine/imuse/imuse_track.h"
 
 #include "mixer/mixer.h"
@@ -91,11 +91,11 @@ void Smush::init() {
 	_externalBuffer = new byte[_width * _height * 2];
 
 	vimaInit(smushDestTable);
-	g_driver->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
+	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void Smush::deinit() {
-	g_driver->getTimerManager()->removeTimerProc(&timerCallback);
+	g_system->getTimerManager()->removeTimerProc(&timerCallback);
 
 	if (_internalBuffer) {
 		delete[] _internalBuffer;
@@ -113,7 +113,7 @@ void Smush::deinit() {
 	if (_stream) {
 		_stream->finish();
 		_stream = NULL;
-		g_driver->getMixer()->stopHandle(_soundHandle);
+		g_system->getMixer()->stopHandle(_soundHandle);
 	}
 	_videoLooping = false;
 	_videoFinished = true;
@@ -131,9 +131,9 @@ void Smush::handleWave(const byte *src, uint32 size) {
 
 	if (!_stream) {
 		_stream = Audio::makeAppendableAudioStream(_freq, flags);
-		g_driver->getMixer()->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _stream);
+		g_system->getMixer()->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _stream);
 	}
-	if (g_driver->getMixer()->isReady()) {
+	if (g_system->getMixer()->isReady()) {
 		_stream->queueBuffer((byte *)dst, size * _channels * 2);
 	} else {
 		delete[] dst;

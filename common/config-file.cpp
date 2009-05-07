@@ -28,8 +28,8 @@
 #include "common/savefile.h"
 #include "common/util.h"
 #include "common/debug.h"
+#include "common/system.h"
 
-#include "backends/platform/driver.h"
 
 #define MAXLINELEN 256
 
@@ -67,7 +67,7 @@ bool ConfigFile::loadFromFile(const String &filename) {
 }
 
 bool ConfigFile::loadFromSaveFile(const char *filename) {
-	SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SeekableReadStream *loadFile;
 
 	assert(saveFileMan);
@@ -200,7 +200,7 @@ bool ConfigFile::saveToFile(const String &filename) {
 }
 
 bool ConfigFile::saveToSaveFile(const char *filename) {
-	SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	WriteStream *saveFile;
 
 	assert(saveFileMan);

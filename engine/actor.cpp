@@ -35,8 +35,7 @@
 #include "engine/smush/smush.h"
 #include "engine/walkplane.h"
 #include "engine/imuse/imuse.h"
-
-#include "backends/platform/driver.h"
+#include "engine/gfx_base.h"
 
 #include <cmath>
 #include <cstring>

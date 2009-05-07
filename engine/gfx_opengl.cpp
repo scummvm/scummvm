@@ -25,61 +25,36 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/system.h"
 
 #include "engine/colormap.h"
 #include "engine/material.h"
+#include "engine/gfx_opengl.h"
 
-#include "backends/platform/sdl/driver_gl.h"
+#ifdef USE_OPENGL
 
-DriverGL::DriverGL() {
+GfxOpenGL::GfxOpenGL() {
 	_storedDisplay = NULL;
 	_emergFont = NULL;
 }
 
-DriverGL::~DriverGL() {
+GfxOpenGL::~GfxOpenGL() {
 	delete[] _storedDisplay;
 	if (_emergFont && glIsList(_emergFont))
 		glDeleteLists(_emergFont, 128);
 }
 
-void DriverGL::setupScreen(int screenW, int screenH, bool fullscreen) {
-	char GLDriver[1024];
+byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
+	g_system->setupScreen(screenW, screenH, fullscreen, accel3d);
 
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-	uint32 flags = SDL_OPENGL;
-	if (fullscreen)
-		flags |= SDL_FULLSCREEN;
-	if (SDL_SetVideoMode(screenW, screenH, 24, flags) == 0)
-		error("Could not initialize video");
 	_screenWidth = screenW;
 	_screenHeight = screenH;
 	_screenBPP = 24;
-	_isFullscreen = fullscreen;
-	int flag;
-	SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &flag);
-	warning("INFO: GL RED bits: %d", flag);
-	SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &flag);
-	warning("INFO: GL GREEN bits: %d", flag);
-	SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &flag);
-	warning("INFO: GL BLUE bits: %d", flag);
-	SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &flag);
-	warning("INFO: GL APLHA bits: %d", flag);
-	SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &flag);
-	warning("INFO: GL Z buffer depth bits: %d", flag);
-	SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &flag);
-	warning("INFO: GL Double Buffer: %d", flag);
-	SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &flag);
-	warning("INFO: GL Stencil buffer bits: %d", flag);
+	_isFullscreen = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 
+	char GLDriver[1024];
 	sprintf(GLDriver, "Residual: %s/%s", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-	SDL_WM_SetCaption(GLDriver, "Residual");
+	g_system->setWindowCaption(GLDriver);
 
 	// Load emergency built-in font
 	loadEmergFont();
@@ -94,25 +69,15 @@ void DriverGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientSource);
 
 	glPolygonOffset(-6.0, -6.0);
+
+	return NULL;
 }
 
-void DriverGL::toggleFullscreenMode() {
-	warning("Switching on fly to Fullscreen mode is not allowed");
-	// switching to fullscreen mode it cause lost of texture
-	// and after that recreating
-	// for now it's not allowed
-/*
-	uint32 flags = SDL_OPENGL;
-	if (!_isFullscreen)
-		flags |= SDL_FULLSCREEN;
-	if (SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags) == 0)
-		warning("Could not change fullscreen mode");
-	else
-		_isFullscreen = !_isFullscreen;
-*/
+const char *GfxOpenGL::getVideoDeviceName() {
+	return "OpenGL Renderer";
 }
 
-void DriverGL::setupCamera(float fov, float nclip, float fclip, float roll) {
+void GfxOpenGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -125,7 +90,7 @@ void DriverGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	glRotatef(roll, 0, 0, -1);
 }
 
-void DriverGL::positionCamera(Vector3d pos, Vector3d interest) {
+void GfxOpenGL::positionCamera(Vector3d pos, Vector3d interest) {
 	Vector3d up_vec(0, 0, 1);
 
 	if (pos.x() == interest.x() && pos.y() == interest.y())
@@ -134,15 +99,15 @@ void DriverGL::positionCamera(Vector3d pos, Vector3d interest) {
 	gluLookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
 
-void DriverGL::clearScreen() {
+void GfxOpenGL::clearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void DriverGL::flipBuffer() {
-	SDL_GL_SwapBuffers();
+void GfxOpenGL::flipBuffer() {
+	g_system->updateScreen();
 }
 
-bool DriverGL::isHardwareAccelerated() {
+bool GfxOpenGL::isHardwareAccelerated() {
 	return true;
 }
 
@@ -195,7 +160,7 @@ static void glShadowProjection(Vector3d light, Vector3d plane, Vector3d normal, 
 	glMultMatrixf((GLfloat *)mat);
 }
 
-void DriverGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxOpenGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -266,7 +231,7 @@ void DriverGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int
 	*y2 = (int)bottom;
 }
 
-void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
+void GfxOpenGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -286,7 +251,7 @@ void DriverGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) 
 	glRotatef(roll, 0, 1, 0);
 }
 
-void DriverGL::finishActorDraw() {
+void GfxOpenGL::finishActorDraw() {
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 	if (_currentShadowArray) {
@@ -296,11 +261,11 @@ void DriverGL::finishActorDraw() {
 	}
 }
 
-void DriverGL::setShadow(Shadow *shadow) {
+void GfxOpenGL::setShadow(Shadow *shadow) {
 	_currentShadowArray = shadow;
 }
 
-void DriverGL::drawShadowPlanes() {
+void GfxOpenGL::drawShadowPlanes() {
 /*	glColor3f(1.0f, 1.0f, 1.0f);
 	_currentShadowArray->planeList.begin();
 	for (SectorListType::iterator i = _currentShadowArray->planeList.begin(); i != _currentShadowArray->planeList.end(); i++) {
@@ -336,26 +301,26 @@ void DriverGL::drawShadowPlanes() {
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 }
 
-void DriverGL::setShadowMode() {
+void GfxOpenGL::setShadowMode() {
 }
 
-void DriverGL::clearShadowMode() {
+void GfxOpenGL::clearShadowMode() {
 	glDisable(GL_STENCIL_TEST);
 }
 
-void DriverGL::setShadowColor(byte r, byte g, byte b) {
+void GfxOpenGL::setShadowColor(byte r, byte g, byte b) {
 	_shadowColorR = r;
 	_shadowColorG = g;
 	_shadowColorB = b;
 }
 
-void DriverGL::set3DMode() {
+void GfxOpenGL::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 }
 
-void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
+void GfxOpenGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
 	// Support transparency in actor objects, such as the message tube
 	// in Manny's Office
 	glAlphaFunc(GL_GREATER, 0.5);
@@ -375,7 +340,7 @@ void DriverGL::drawModelFace(const Model::Face *face, float *vertices, float *ve
 	glDisable(GL_ALPHA_TEST);
 }
 
-void DriverGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) {
+void GfxOpenGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
@@ -385,11 +350,11 @@ void DriverGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float ro
 	glRotatef(roll, 0, 1, 0);
 }
 
-void DriverGL::translateViewpoint() {
+void GfxOpenGL::translateViewpoint() {
 	glPopMatrix();
 }
 
-void DriverGL::drawHierachyNode(const Model::HierNode *node) {
+void GfxOpenGL::drawHierachyNode(const Model::HierNode *node) {
 	translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
 	if (node->_hierVisible) {
 		if (node->_mesh && node->_meshVisible) {
@@ -411,11 +376,11 @@ void DriverGL::drawHierachyNode(const Model::HierNode *node) {
 		node->_sibling->draw();
 }
 
-void DriverGL::disableLights() {
+void GfxOpenGL::disableLights() {
 	glDisable(GL_LIGHTING);
 }
 
-void DriverGL::setupLight(Scene::Light *light, int lightId) {
+void GfxOpenGL::setupLight(Scene::Light *light, int lightId) {
 	glEnable(GL_LIGHTING);
 	float lightColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	float lightPos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -462,7 +427,7 @@ void DriverGL::setupLight(Scene::Light *light, int lightId) {
 
 #define BITMAP_TEXTURE_SIZE 256
 
-void DriverGL::createBitmap(Bitmap *bitmap) {
+void GfxOpenGL::createBitmap(Bitmap *bitmap) {
 	GLuint *textures;
 	if (bitmap->_format == 1) {
 		bitmap->_hasTransparency = false;
@@ -548,7 +513,7 @@ void DriverGL::createBitmap(Bitmap *bitmap) {
 	}
 }
 
-void DriverGL::drawBitmap(const Bitmap *bitmap) {
+void GfxOpenGL::drawBitmap(const Bitmap *bitmap) {
 	GLuint *textures;
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -606,7 +571,7 @@ void DriverGL::drawBitmap(const Bitmap *bitmap) {
 	glEnable(GL_LIGHTING);
 }
 
-void DriverGL::destroyBitmap(Bitmap *bitmap) {
+void GfxOpenGL::destroyBitmap(Bitmap *bitmap) {
 	GLuint *textures;
 	textures = (GLuint *)bitmap->_texIds;
 	if (textures) {
@@ -615,7 +580,7 @@ void DriverGL::destroyBitmap(Bitmap *bitmap) {
 	}
 }
 
-void DriverGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
+void GfxOpenGL::createMaterial(Material *material, const char *data, const CMap *cmap) {
 	material->_textures = new GLuint[material->_numImages];
 	GLuint *textures;
 	glGenTextures(material->_numImages, (GLuint *)material->_textures);
@@ -647,7 +612,7 @@ void DriverGL::createMaterial(Material *material, const char *data, const CMap *
 	delete[] texdata;
 }
 
-void DriverGL::selectMaterial(const Material *material) {
+void GfxOpenGL::selectMaterial(const Material *material) {
 	GLuint *textures;
 	textures = (GLuint *)material->_textures;
 	glBindTexture(GL_TEXTURE_2D, textures[material->_currImage]);
@@ -656,14 +621,14 @@ void DriverGL::selectMaterial(const Material *material) {
 	glScalef(1.0f / material->_width, 1.0f / material->_height, 1);
 }
 
-void DriverGL::destroyMaterial(Material *material) {
+void GfxOpenGL::destroyMaterial(Material *material) {
 	GLuint *textures;
 	textures = (GLuint *)material->_textures;
 	glDeleteTextures(material->_numImages, textures);
 	delete[] textures;
 }
 
-void DriverGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
+void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	//	if (num != 0) {
 	//		warning("Animation not handled yet in GL texture path !");
 	//	}
@@ -687,7 +652,7 @@ void DriverGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	glDepthFunc(GL_LESS);
 }
 
-void DriverGL::prepareSmushFrame(int width, int height, byte *bitmap) {
+void GfxOpenGL::prepareSmushFrame(int width, int height, byte *bitmap) {
 	// remove if already exist
 	if (_smushNumTex > 0) {
 		glDeleteTextures(_smushNumTex, _smushTexIds);
@@ -728,7 +693,7 @@ void DriverGL::prepareSmushFrame(int width, int height, byte *bitmap) {
 	_smushHeight = height;
 }
 
-void DriverGL::drawSmushFrame(int offsetX, int offsetY) {
+void GfxOpenGL::drawSmushFrame(int offsetX, int offsetY) {
 	// prepare view
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -774,7 +739,7 @@ void DriverGL::drawSmushFrame(int offsetX, int offsetY) {
 	glEnable(GL_LIGHTING);
 }
 
-void DriverGL::releaseSmushFrame() {
+void GfxOpenGL::releaseSmushFrame() {
 	if (_smushNumTex > 0) {
 		glDeleteTextures(_smushNumTex, _smushTexIds);
 		delete[] _smushTexIds;
@@ -782,7 +747,7 @@ void DriverGL::releaseSmushFrame() {
 	}
 }
 
-void DriverGL::loadEmergFont() {
+void GfxOpenGL::loadEmergFont() {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	_emergFont = glGenLists(128);
@@ -793,7 +758,7 @@ void DriverGL::loadEmergFont() {
 	}
 }
 
-void DriverGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
+void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgColor) {
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -816,7 +781,7 @@ void DriverGL::drawEmergString(int x, int y, const char *text, const Color &fgCo
 	glPopMatrix();
 }
 
-Driver::TextObjectHandle *DriverGL::createTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
+GfxBase::TextObjectHandle *GfxOpenGL::createTextBitmap(uint8 *data, int width, int height, const Color &fgColor) {
 	TextObjectHandle *handle = new TextObjectHandle;
 	handle->width = width;
 	handle->height = height;
@@ -886,7 +851,7 @@ Driver::TextObjectHandle *DriverGL::createTextBitmap(uint8 *data, int width, int
 	return handle;
 }
 
-void DriverGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
+void GfxOpenGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
@@ -930,12 +895,12 @@ void DriverGL::drawTextBitmap(int x, int y, TextObjectHandle *handle) {
 	glEnable(GL_LIGHTING);
 }
 
-void DriverGL::destroyTextBitmap(TextObjectHandle *handle) {
+void GfxOpenGL::destroyTextBitmap(TextObjectHandle *handle) {
 	glDeleteTextures(handle->numTex, (GLuint *)handle->texIds);
 	delete[] (GLuint *)handle->texIds;
 }
 
-Bitmap *DriverGL::getScreenshot(int w, int h) {
+Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
 	uint16 *buffer = new uint16[w * h];
 	uint32 *src = (uint32 *)_storedDisplay;
 
@@ -973,11 +938,11 @@ Bitmap *DriverGL::getScreenshot(int w, int h) {
 	return screenshot;
 }
 
-void DriverGL::storeDisplay() {
+void GfxOpenGL::storeDisplay() {
 	glReadPixels(0, 0, _screenWidth, _screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, _storedDisplay);
 }
 
-void DriverGL::copyStoredToDisplay() {
+void GfxOpenGL::copyStoredToDisplay() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);
@@ -997,7 +962,7 @@ void DriverGL::copyStoredToDisplay() {
 	glEnable(GL_LIGHTING);
 }
 
-void DriverGL::dimScreen() {
+void GfxOpenGL::dimScreen() {
 	uint32 *data = (uint32 *)_storedDisplay;
 	for (int l = 0; l < _screenWidth * _screenHeight; l++) {
 		uint32 pixel = data[l];
@@ -1009,7 +974,7 @@ void DriverGL::dimScreen() {
 	}
 }
 
-void DriverGL::dimRegion(int x, int yReal, int w, int h, float level) {
+void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	uint32 *data = new uint32[w * h];
 	int y = _screenHeight - yReal;
 	
@@ -1047,7 +1012,7 @@ void DriverGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	delete[] data;
 }
 
-void DriverGL::drawRectangle(PrimitiveObject *primitive) {
+void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	int x1 = primitive->getX1();
 	int x2 = primitive->getX2();
 	int y1 = primitive->getY1();
@@ -1086,7 +1051,7 @@ void DriverGL::drawRectangle(PrimitiveObject *primitive) {
 	glEnable(GL_LIGHTING);
 }
 
-void DriverGL::drawLine(PrimitiveObject *primitive) {
+void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
 	int x1 = primitive->getX1();
 	int x2 = primitive->getX2();
 	int y1 = primitive->getY1();
@@ -1118,7 +1083,7 @@ void DriverGL::drawLine(PrimitiveObject *primitive) {
 	glEnable(GL_LIGHTING);
 }
 
-void DriverGL::drawPolygon(PrimitiveObject *primitive) {
+void GfxOpenGL::drawPolygon(PrimitiveObject *primitive) {
 	int x1 = primitive->getX1();
 	int y1 = primitive->getY1();
 	int x2 = primitive->getX2();
@@ -1158,3 +1123,5 @@ void DriverGL::drawPolygon(PrimitiveObject *primitive) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 }
+
+#endif

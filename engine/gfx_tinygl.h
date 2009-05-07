@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef BACKEND_DRIVER_TINYGL_H
-#define BACKEND_DRIVER_TINYGL_H
+#ifndef GFX_TINYGL_H
+#define GFX_TINYGL_H
 
 #include "common/sys.h"
 
@@ -33,25 +33,23 @@
 #include "engine/colormap.h"
 #include "engine/bitmap.h"
 #include "engine/vector3d.h"
-#include "backends/platform/driver.h"
-#include "backends/platform/sdl/driver_sdl.h"
+#include "engine/gfx_base.h"
 
 #include "engine/tinygl/gl.h"
 #include "engine/tinygl/zgl.h"
 
-#include <SDL.h>
-
-class DriverTinyGL : public DriverSDL {
+class GfxTinyGL : public GfxBase {
 public:
-	DriverTinyGL();
-	virtual ~DriverTinyGL();
+	GfxTinyGL();
+	virtual ~GfxTinyGL();
 
-	void setupScreen(int screenW, int screenH, bool fullscreen = false);
+	byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+
+	const char *getVideoDeviceName();
 
 	void setupCamera(float fov, float nclip, float fclip, float roll);
 	void positionCamera(Vector3d pos, Vector3d interest);
 
-	void toggleFullscreenMode();
 	void clearScreen(); 
 	void flipBuffer();
 
@@ -113,7 +111,7 @@ protected:
 
 private:
 	ZBuffer *_zb;
-	SDL_Surface *_screen;
+	byte *_screen;
 	byte *_smushBitmap;
 	int _smushWidth;
 	int _smushHeight;

@@ -30,7 +30,7 @@
 
 #include "engine/font.h"
 #include "engine/color.h"
-#include "backends/platform/driver.h"
+#include "engine/gfx_base.h"
 
 #include <string>
 
@@ -103,7 +103,7 @@ protected:
 	char _textID[256];
 	uint8 *_textBitmap;
 	int *_bitmapWidthPtr;
-	Driver::TextObjectHandle **_textObjectHandle;
+	GfxBase::TextObjectHandle **_textObjectHandle;
 };
 
 #endif

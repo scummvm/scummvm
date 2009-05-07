@@ -1530,7 +1530,7 @@ static void TextFileGetLine() {
 	
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
-	Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	file = saveFileMan->openForLoading(filename);
 	if (!file) {
 		lua_pushnil();
@@ -1552,7 +1552,7 @@ static void TextFileGetLineCount() {
 
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
-	Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	file = saveFileMan->openForLoading(filename);
 	if (!file) {
 		lua_pushnil();
@@ -1983,32 +1983,32 @@ static void ImSetVoiceEffect() {
 
 static void ImSetMusicVol() {
 	DEBUG_FUNCTION();
-	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, check_int(1));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, check_int(1));
 }
 
 static void ImGetMusicVol() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_driver->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
+	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 }
 
 static void ImSetVoiceVol() {
 	DEBUG_FUNCTION();
-	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, check_int(1));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, check_int(1));
 }
 
 static void ImGetVoiceVol() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_driver->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
+	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
 }
 
 static void ImSetSfxVol() {
 	DEBUG_FUNCTION();
-	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, check_int(1));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, check_int(1));
 }
 
 static void ImGetSfxVol() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_driver->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
+	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
 }
 
 static void ImSetParam() {
@@ -2104,7 +2104,7 @@ static void RestoreIMuse() {
 	g_imuse->resetState();
 	g_imuse->restoreState(savedIMuse);
 	delete savedIMuse;
-	g_driver->getSavefileManager()->removeSavefile("grim.tmp");
+	g_system->getSavefileManager()->removeSavefile("grim.tmp");
 }
 
 static void SetSoundPosition() {
@@ -2176,7 +2176,7 @@ static void luaFileFindFirst() {
 	lua_getparam(2);
 	FileFindDispose();
 
-	Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	g_listfiles = saveFileMan->listSavefiles(extension);
 	g_filesiter = g_listfiles.begin();
 
@@ -3065,11 +3065,11 @@ static void Save() {
 }
 
 static void lua_remove() {
-	if (g_driver->getSavefileManager()->removeSavefile(luaL_check_string(1)))
+	if (g_system->getSavefileManager()->removeSavefile(luaL_check_string(1)))
 		lua_pushuserdata(NULL);
 	else {
 		lua_pushnil();
-		lua_pushstring(g_driver->getSavefileManager()->getErrorDesc().c_str());
+		lua_pushstring(g_system->getSavefileManager()->getErrorDesc().c_str());
 	}
 }
 

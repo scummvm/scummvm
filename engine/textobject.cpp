@@ -25,11 +25,11 @@
 
 #include "common/sys.h"
 #include "common/util.h"
+#include "common/system.h"
 
 #include "engine/textobject.h"
 #include "engine/engine.h"
 #include "engine/localize.h"
-#include "backends/platform/driver.h"
 
 std::string parseMsgText(const char *msg, char *msgId);
 
@@ -143,7 +143,7 @@ void TextObject::createBitmap() {
 		}
 		message += msg[i];
 	}
-	_textObjectHandle = (Driver::TextObjectHandle **)malloc(sizeof(long) * _numberLines);
+	_textObjectHandle = (GfxBase::TextObjectHandle **)malloc(sizeof(long) * _numberLines);
 	_bitmapWidthPtr = new int[_numberLines];
 
 	for (int j = 0; j < _numberLines; j++) {

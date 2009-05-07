@@ -28,7 +28,7 @@
 #include "common/debug.h"
 
 #include "engine/font.h"
-#include "backends/platform/driver.h"
+#include "engine/gfx_base.h"
 
 #include <cstring>
 

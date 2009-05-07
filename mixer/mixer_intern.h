@@ -57,7 +57,7 @@ private:
 		NUM_CHANNELS = 32
 	};
 
-	Driver *_syst;
+	OSystem *_syst;
 	Common::Mutex _mutex;
 
 	uint _sampleRate;
@@ -69,7 +69,7 @@ private:
 
 
 public:
-	MixerImpl(Driver *system);
+	MixerImpl(OSystem *system);
 	~MixerImpl();
 
 	virtual bool isReady() const { return _mixerReady; }

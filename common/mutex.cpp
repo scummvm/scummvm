@@ -25,25 +25,25 @@
 
 #include "common/mutex.h"
 #include "common/debug.h"
+#include "common/system.h"
 
-#include "backends/platform/driver.h"
 
 namespace Common {
 
 Mutex::Mutex() {
-	_mutex = g_driver->createMutex();
+	_mutex = g_system->createMutex();
 }
 
 Mutex::~Mutex() {
-	g_driver->deleteMutex(_mutex);
+	g_system->deleteMutex(_mutex);
 }
 
 void Mutex::lock() {
-	g_driver->lockMutex(_mutex);
+	g_system->lockMutex(_mutex);
 }
 
 void Mutex::unlock() {
-	g_driver->unlockMutex(_mutex);
+	g_system->unlockMutex(_mutex);
 }
 
 
@@ -65,11 +65,11 @@ StackLock::~StackLock() {
 }
 
 void StackLock::lock() {
-	g_driver->lockMutex(_mutex);
+	g_system->lockMutex(_mutex);
 }
 
 void StackLock::unlock() {
-	g_driver->unlockMutex(_mutex);
+	g_system->unlockMutex(_mutex);
 }
 
 }	// End of namespace Common

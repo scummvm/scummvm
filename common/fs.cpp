@@ -24,7 +24,8 @@
  */
 
 #include "common/util.h"
-#include "backends/platform/driver.h"
+#include "common/system.h"
+
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory.h"
 
@@ -38,8 +39,8 @@ FSNode::FSNode(AbstractFSNode *realNode)
 }
 
 FSNode::FSNode(const Common::String &p) {
-	assert(g_driver);
-	FilesystemFactory *factory = g_driver->getFilesystemFactory();
+	assert(g_system);
+	FilesystemFactory *factory = g_system->getFilesystemFactory();
 	AbstractFSNode *tmp = 0;
 
 	if (p.empty() || p == ".")

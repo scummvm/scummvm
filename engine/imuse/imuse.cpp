@@ -27,6 +27,7 @@
 #include "common/debug.h"
 #include "common/timer.h"
 #include "common/mutex.h"
+#include "common/system.h"
 
 #include "engine/engine.h"
 #include "engine/savegame.h"
@@ -65,11 +66,11 @@ Imuse::Imuse(int fps) {
 	vimaInit(imuseDestTable);
 	_stateMusicTable = grimStateMusicTable;
 	_seqMusicTable = grimSeqMusicTable;
-	g_driver->getTimerManager()->installTimerProc(timerHandler, 1000000 / _callbackFps, this);
+	g_system->getTimerManager()->installTimerProc(timerHandler, 1000000 / _callbackFps, this);
 }
 
 Imuse::~Imuse() {
-	g_driver->getTimerManager()->removeTimerProc(timerHandler);
+	g_system->getTimerManager()->removeTimerProc(timerHandler);
 	stopAllSounds();
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		delete _track[l];
@@ -140,11 +141,11 @@ void Imuse::restoreState(SaveGame *savedState) {
 			track->mixerFlags |= kFlagStereo | kFlagReverseStereo;
 
 		track->stream = Audio::makeAppendableAudioStream(freq,  makeMixerFlags(track->mixerFlags));
-		g_driver->getMixer()->playInputStream(track->getType(), &track->handle, track->stream, -1, track->getVol(), track->getPan());
-		g_driver->getMixer()->pauseHandle(track->handle, true);
+		g_system->getMixer()->playInputStream(track->getType(), &track->handle, track->stream, -1, track->getVol(), track->getPan());
+		g_system->getMixer()->pauseHandle(track->handle, true);
 	}
 	savedState->endSection();
-	g_driver->getMixer()->pauseAll(false);
+	g_system->getMixer()->pauseAll(false);
 
 	printf("Imuse::restoreState() finished.\n");
 }
@@ -208,7 +209,7 @@ void Imuse::callback() {
 			// Ignore tracks which are about to finish. Also, if it did finish in the meantime,
 			// mark it as unused.
 			if (!track->stream) {
-				if (!g_driver->getMixer()->isSoundHandleActive(track->handle))
+				if (!g_system->getMixer()->isSoundHandleActive(track->handle))
 					memset(track, 0, sizeof(Track));
 				continue;
 			}
@@ -300,7 +301,7 @@ void Imuse::callback() {
 				if (result > mixer_size)
 					result = mixer_size;
 
-				if (g_driver->getMixer()->isReady()) {
+				if (g_system->getMixer()->isReady()) {
 					track->stream->queueBuffer(data, result);
 					track->regionOffset += result;
 				} else
@@ -314,9 +315,9 @@ void Imuse::callback() {
 				mixer_size -= result;
 				assert(mixer_size >= 0);
 			} while (mixer_size);
-			if (g_driver->getMixer()->isReady()) {
-				g_driver->getMixer()->setChannelVolume(track->handle, track->getVol());
-				g_driver->getMixer()->setChannelBalance(track->handle, track->getPan());
+			if (g_system->getMixer()->isReady()) {
+				g_system->getMixer()->setChannelVolume(track->handle, track->getVol());
+				g_system->getMixer()->setChannelBalance(track->handle, track->getPan());
 			}
 		}
 	}

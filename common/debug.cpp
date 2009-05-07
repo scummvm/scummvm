@@ -26,8 +26,7 @@
 #include "common/sys.h"
 #include "common/debug.h"
 #include "common/str.h"
-
-#include "backends/platform/driver.h"
+#include "common/system.h"
 
 #ifdef __PLAYSTATION2__
 	// for those replaced fopen/fread/etc functions
@@ -150,8 +149,8 @@ void NORETURN error(const char *s, ...) {
 	Symbian::FatalError(buf_output);
 #endif
 	// Finally exit. quit() will terminate the program if g_driver is present
-	if (g_driver)
-		g_driver->quit();
+	if (g_system)
+		g_system->quit();
 
 	exit(1);
 }

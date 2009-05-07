@@ -7,6 +7,7 @@
 
 #include "common/savefile.h"
 #include "common/fs.h"
+#include "common/system.h"
 
 #include "engine/lua/lauxlib.h"
 #include "engine/lua/lua.h"
@@ -17,7 +18,6 @@
 #include "engine/cmd_line.h"
 #include "engine/engine.h"
 #include "engine/savegame.h"
-#include "backends/platform/driver.h"
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
 #include <sys/stat.h>
@@ -167,7 +167,7 @@ static void io_readfrom() {
 		const char *s = luaL_check_string(FIRSTARG);
 		LuaFile *current;
 		Common::SeekableReadStream *inFile = NULL;
-		Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		inFile = saveFileMan->openForLoading(s);
 		if (!inFile)
 			current = g_resourceloader->openNewStreamLua(s);
@@ -204,7 +204,7 @@ static void io_writeto() {
 		}
 		LuaFile *current;
 		Common::WriteStream *outFile = NULL;
-		Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		outFile = saveFileMan->openForSaving(s);
 		if (!outFile) {
 			pushresult(0);
@@ -219,7 +219,7 @@ static void io_writeto() {
 static void io_appendto() {
 	const char *s = luaL_check_string(FIRSTARG);
 	Common::SeekableReadStream *inFile = NULL;
-	Common::SaveFileManager *saveFileMan = g_driver->getSavefileManager();
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	inFile = saveFileMan->openForLoading(s);
 	if (!inFile) {
 		pushresult(0);
@@ -348,7 +348,7 @@ static void io_date() {
 	tm t;
 	char b[BUFSIZ];
 
-	g_driver->getTimeAndDate(t);
+	g_system->getTimeAndDate(t);
 	sprintf(b, "%02d.%02d.%d %02d:%02d.%02d", t.tm_mday, t.tm_mon + 1, 1900 + t.tm_year, t.tm_hour, t.tm_min, t.tm_sec);
 	lua_pushstring(b);
 }

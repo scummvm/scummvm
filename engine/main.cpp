@@ -26,6 +26,7 @@
 #include "common/sys.h"
 #include "common/timer.h"
 #include "common/fs.h"
+#include "common/system.h"
 
 #include "engine/bitmap.h"
 #include "engine/resource.h"
@@ -36,38 +37,41 @@
 #include "engine/version.h"
 #include "engine/cmd_line.h"
 #include "engine/smush/smush.h"
+#include "engine/imuse/imuse.h"
 
-#include "backends/platform/sdl/driver_gl.h"
-#include "backends/platform/sdl/driver_tinygl.h"
+#ifdef USE_OPENGL
+#include "engine/gfx_opengl.h"
+#endif
+#include "engine/gfx_tinygl.h"
 
 #include "mixer/mixer.h"
-
-#include "engine/imuse/imuse.h"
 
 // Hacky global toggles for experimental/debug code
 bool SHOWFPS_GLOBAL, TINYGL_GLOBAL;
 enDebugLevels debugLevel = DEBUG_NONE;
 
 static bool g_lua_initialized = false;
-Driver *g_driver = NULL;
+GfxBase *g_driver = NULL;
 
 void quit();
 
 extern "C" int residual_main(int argc, char *argv[]) {
 	Common::String specialDebug;
 	Common::String command;
+	bool opengl = false;
 
 	printf("%s\n", gResidualFullVersion);
 	printf("------------------------------------------------\n");
+
+	// Verify that the backend has been initialized (i.e. g_system has been set).
+	assert(g_system);
+	OSystem &system = *g_system;
 
 	registerDefaults();
 
 	// Parse the command line
 	Common::StringMap settings;
 	command = parseCommandLine(settings, argc, argv);
-
-	// init temporary to allow read config file
-	g_driver = new DriverTinyGL();
 
 	// Load the config file (possibly overriden via command line):
 	if (settings.contains("config")) {
@@ -104,24 +108,34 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	TINYGL_GLOBAL = (tolower(g_registry->get("soft_renderer", "FALSE")[0]) == 't');
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
 
-	delete g_driver; // delete temporary created driver
-	if (TINYGL_GLOBAL)
-		g_driver = new DriverTinyGL();
-	else
-		g_driver = new DriverGL();
+	if (!TINYGL_GLOBAL) {
+		if (g_system->hasFeature(OSystem::kFeatureOpenGL))
+			opengl = true;
+		else
+			error("gfx backend doesn't support hardware rendering");
+	}
 
-	g_driver->init();
-	g_driver->setupScreen(640, 480, fullscreen);
+	if (TINYGL_GLOBAL)
+		g_driver = new GfxTinyGL();
+#ifdef USE_OPENGL
+	else
+		g_driver = new GfxOpenGL();
+#else
+	else
+		error("gfx backend doesn't support hardware rendering");
+#endif
+
+	g_driver->setupScreen(640, 480, fullscreen, opengl);
 
 	atexit(quit);
 
 	Common::FSNode dir(g_registry->get("GrimDataDir", "."));
 	SearchMan.addDirectory(dir.getPath(), dir, 0, 1);
 
-	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
-	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
-	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, Audio::Mixer::kMaxMixerVolume);
-	g_driver->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, Audio::Mixer::kMaxMixerVolume);
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
 	g_engine = new Engine();
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
@@ -168,6 +182,9 @@ extern "C" int residual_main(int argc, char *argv[]) {
 }
 
 void quit() {
+	if (!g_driver)
+		return;
+
 	if (g_lua_initialized) {
 		lua_removelibslists();
 		lua_close();
@@ -189,8 +206,9 @@ void quit() {
 	g_engine = NULL;
 	delete g_resourceloader;
 	g_resourceloader = NULL;
-	if (g_driver)
-		g_driver->quit();
 	delete g_driver;
 	g_driver = NULL;
+
+	Common::ConfigManager::destroy();
+	Common::SearchManager::destroy();
 }

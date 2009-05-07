@@ -33,8 +33,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/util.h"
-
-#include "backends/platform/driver.h"
+#include "common/system.h"
 
 DECLARE_SINGLETON(Common::ConfigManager);
 
@@ -69,8 +68,8 @@ ConfigManager::ConfigManager()
 
 void ConfigManager::loadDefaultConfigFile() {
 	// Open the default config file
-	assert(g_driver);
-	SeekableReadStream *stream = g_driver->createConfigReadStream();
+	assert(g_system);
+	SeekableReadStream *stream = g_system->createConfigReadStream();
 	_filename.clear();	// clear the filename to indicate that we are using the default config file
 
 	// ... load it, if available ...
@@ -202,8 +201,8 @@ void ConfigManager::flushToDisk() {
 
 	if (_filename.empty()) {
 		// Write to the default config file
-		assert(g_driver);
-		stream = g_driver->createConfigWriteStream();
+		assert(g_system);
+		stream = g_system->createConfigWriteStream();
 		if (!stream)	// If writing to the config file is not possible, do nothing
 			return;
 	} else {

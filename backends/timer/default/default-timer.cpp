@@ -23,9 +23,9 @@
  */
 
 #include "common/sys.h"
+#include "common/system.h"
 #include "backends/timer/default/default-timer.h"
 #include "common/util.h"
-#include "backends/platform/driver.h"
 
 
 struct TimerSlot {
@@ -84,7 +84,7 @@ DefaultTimerManager::~DefaultTimerManager() {
 void DefaultTimerManager::handler() {
 	Common::StackLock lock(_mutex);
 
-	const uint32 curTime = g_driver->getMillis();
+	const uint32 curTime = g_system->getMillis();
 
 	// Repeat as long as there is a TimerSlot that is scheduled to fire.
 	TimerSlot *slot = _head->next;
@@ -120,7 +120,7 @@ bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, v
 	slot->callback = callback;
 	slot->refCon = refCon;
 	slot->interval = interval;
-	slot->nextFireTime = g_driver->getMillis() + interval / 1000;
+	slot->nextFireTime = g_system->getMillis() + interval / 1000;
 	slot->nextFireTimeMicro = interval % 1000;
 	slot->next = 0;
 

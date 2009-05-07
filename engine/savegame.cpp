@@ -26,9 +26,10 @@
 #include "common/debug.h"
 #include "common/savefile.h"
 #include "common/endian.h"
+#include "common/system.h"
 
 #include "engine/savegame.h"
-#include "backends/platform/driver.h"
+#include "engine/gfx_base.h"
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'
@@ -38,7 +39,7 @@
 SaveGame::SaveGame(const char *filename, bool saving) :
 		_saving(saving), _currentSection(0) {
 	if (_saving) {
-		_outSaveFile = g_driver->getSavefileManager()->openForSaving(filename);
+		_outSaveFile = g_system->getSavefileManager()->openForSaving(filename);
 		if (!_outSaveFile) {
 			warning("SaveGame::SaveGame() Error creating savegame file");
 			return;
@@ -48,7 +49,7 @@ SaveGame::SaveGame(const char *filename, bool saving) :
 	} else {
 		uint32 tag, version;
 
-		_inSaveFile = g_driver->getSavefileManager()->openForLoading(filename);
+		_inSaveFile = g_system->getSavefileManager()->openForLoading(filename);
 		if (!_inSaveFile) {
 			warning("SaveGame::SaveGame() Error opening savegame file");
 			return;

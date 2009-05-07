@@ -27,8 +27,7 @@
 #include "common/debug.h"
 #include "common/timer.h"
 #include "common/mutex.h"
-
-#include "backends/platform/driver.h"
+#include "common/system.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
@@ -52,7 +51,7 @@ void Imuse::flushTrack(Track *track) {
 		}
 	}
 
-	if (!g_driver->getMixer()->isSoundHandleActive(track->handle)) {
+	if (!g_system->getMixer()->isSoundHandleActive(track->handle)) {
 		memset(track, 0, sizeof(Track));
 	}
 }
@@ -61,7 +60,7 @@ void Imuse::flushTracks() {
 	Common::StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && track->toBeRemoved && !g_driver->getMixer()->isSoundHandleActive(track->handle)) {
+		if (track->used && track->toBeRemoved && !g_system->getMixer()->isSoundHandleActive(track->handle)) {
 			memset(track, 0, sizeof(Track));
 		}
 	}
@@ -128,7 +127,7 @@ bool Imuse::isVoicePlaying() {
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && track->volGroupId == IMUSE_VOLGRP_VOICE) {
-			if (g_driver->getMixer()->isSoundHandleActive(track->handle))
+			if (g_system->getMixer()->isSoundHandleActive(track->handle))
 				return true;
 		}
 	}
@@ -146,7 +145,7 @@ bool Imuse::getSoundStatus(const char *soundName) {
 	
 	track = findTrack(soundName);
 	// Warn the user if the track was not found
-	if (track == NULL || !g_driver->getMixer()->isSoundHandleActive(track->handle)) {
+	if (track == NULL || !g_system->getMixer()->isSoundHandleActive(track->handle)) {
 		// This debug warning should be "light" since this function gets called
 		// on occassion to see if a sound has stopped yet
 		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
@@ -180,7 +179,7 @@ void Imuse::stopAllSounds() {
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used) {
-			g_driver->getMixer()->stopHandle(track->handle);
+			g_system->getMixer()->stopHandle(track->handle);
 			if (track->soundDesc) {
 				_sound->closeSound(track->soundDesc);
 			}

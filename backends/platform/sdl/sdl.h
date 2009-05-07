@@ -33,39 +33,50 @@
 #include "engine/colormap.h"
 #include "engine/bitmap.h"
 #include "engine/vector3d.h"
-#include "backends/platform/driver.h"
+
 #include "backends/events/default/default-events.h"
+#include "backends/base-backend.h"
 
 #include <SDL.h>
+#ifdef USE_OPENGL
+#include <SDL_opengl.h>
+#endif
 
 #include <time.h>
-
-// NOTE: This is not a complete driver, it needs to be subclassed
-//       to provide rendering functionality.
 
 namespace Audio {
 	class MixerImpl;
 	class Mixer;
 }
 
-class DriverSDL : public Driver, EventProvider {
+class OSystem_SDL : public BaseBackend {
 public:
-	DriverSDL();
-	virtual ~DriverSDL();
+	OSystem_SDL();
+	virtual ~OSystem_SDL();
 
-	void init();
+	virtual void initBackend();
 
-	void setupIcon();
+	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
 
-	const char *getVideoDeviceName();
+	virtual void setFullscreenMode(bool enable);
 
-	void warpMouse(int x, int y);
-	bool pollEvent(Common::Event &event);
+	// Update the dirty areas of the screen
+	void updateScreen();
+
+	// Warp the mouse cursor. Where set_mouse_pos() only informs the
+	// backend of the mouse cursor's current position, this function
+	// actually moves the cursor to the specified position.
+	virtual void warpMouse(int x, int y);
+
+	// Get the number of milliseconds since the program was started.
 	uint32 getMillis();
+
+	// Delay for a specified amount of milliseconds
 	void delayMillis(uint msecs);
-	Common::TimerManager *getTimerManager();
-	Common::EventManager *getEventManager();
-	void getTimeAndDate(struct tm &t) const;
+
+	// Get the next event.
+	// Returns true if an event was retrieved.
+	virtual bool pollEvent(Common::Event &event);
 
 	// Set function that generates samples
 	virtual void setupMixer();
@@ -75,22 +86,35 @@ public:
 
 	virtual Audio::Mixer *getMixer();
 
+	// Quit
+	virtual void quit();
 
+	virtual void getTimeAndDate(struct tm &t) const;
+	virtual Common::TimerManager *getTimerManager();
+
+	// Mutex handling
 	MutexRef createMutex();
 	void lockMutex(MutexRef mutex);
 	void unlockMutex(MutexRef mutex);
 	void deleteMutex(MutexRef mutex);
 
-	void quit();
+	virtual void setWindowCaption(const char *caption);
+
+	virtual bool hasFeature(Feature f);
+	virtual void setFeatureState(Feature f, bool enable);
+	virtual bool getFeatureState(Feature f);
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
-
 private:
+
+#ifdef USE_OPENGL
+	bool _opengl;
+#endif
+	bool _fullscreen;
+	SDL_Surface *_screen;
 
 	int _samplesPerSec;
 
@@ -130,6 +154,8 @@ private:
 
 	// mouse
 	KbdMouse _km;
+
+	void setupIcon();
 
 	void handleKbdMouse();
 

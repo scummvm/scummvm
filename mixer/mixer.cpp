@@ -25,12 +25,11 @@
 
 #include "common/util.h"
 #include "common/debug.h"
+#include "common/system.h"
 
 #include "mixer/mixer_intern.h"
 #include "mixer/rate.h"
 #include "mixer/audiostream.h"
-
-#include "backends/platform/driver.h"
 
 
 namespace Audio {
@@ -86,9 +85,9 @@ public:
 			_pauseLevel--;
 
 		if (_pauseLevel > 0)
-			_pauseStartTime = g_driver->getMillis();
+			_pauseStartTime = g_system->getMillis();
 		else
-			_pauseTime += (g_driver->getMillis() - _pauseStartTime);
+			_pauseTime += (g_system->getMillis() - _pauseStartTime);
 	}
 	bool isPaused() {
 		return _pauseLevel != 0;
@@ -111,7 +110,7 @@ public:
 #pragma mark -
 
 
-MixerImpl::MixerImpl(Driver *system)
+MixerImpl::MixerImpl(OSystem *system)
 	: _syst(system), _sampleRate(0), _mixerReady(false), _handleSeed(0) {
 
 	int i;
@@ -440,7 +439,7 @@ void Channel::mix(int16 *data, uint len) {
 		}
 
 		_samplesConsumed = _samplesDecoded;
-		_mixerTimeStamp = g_driver->getMillis();
+		_mixerTimeStamp = g_system->getMillis();
 		_pauseTime = 0;
 
 		_converter->flow(*_input, data, len, vol_l, vol_r);
@@ -461,7 +460,7 @@ uint32 Channel::getElapsedTime() {
 	uint32 seconds = _samplesConsumed / rate;
 	uint32 milliseconds = (1000 * (_samplesConsumed % rate)) / rate;
 
-	uint32 delta = g_driver->getMillis() - _mixerTimeStamp - _pauseTime;
+	uint32 delta = g_system->getMillis() - _mixerTimeStamp - _pauseTime;
 
 	// In theory it would seem like a good idea to limit the approximation
 	// so that it never exceeds the theoretical upper bound set by

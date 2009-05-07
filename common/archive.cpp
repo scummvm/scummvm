@@ -26,8 +26,7 @@
 #include "common/archive.h"
 #include "common/fs.h"
 #include "common/util.h"
-
-#include "backends/platform/driver.h"
+#include "common/system.h"
 
 namespace Common {
 
@@ -236,8 +235,8 @@ void SearchManager::clear() {
 	// Always keep system specific archives in the SearchManager.
 	// But we give them a lower priority than the default priority (which is 0),
 	// so that archives added by client code are searched first.
-	if (g_driver)
-		g_driver->addSysArchivesToSearchSet(*this, -1);
+	if (g_system)
+		g_system->addSysArchivesToSearchSet(*this, -1);
 
 	// Add the current dir as a very last resort.
 	// See also bug #2137680.

@@ -23,7 +23,8 @@
  */
 
 #include "common/util.h"
-#include "backends/platform/driver.h"
+#include "common/system.h"
+#include "common/str.h"
 
 namespace Common {
 
@@ -101,8 +102,8 @@ String tag2string(uint32 tag) {
 RandomSource::RandomSource() {
 	// Use system time as RNG seed. Normally not a good idea, if you are using
 	// a RNG for security purposes, but good enough for our purposes.
-	assert(g_driver);
-	uint32 seed = g_driver->getMillis();
+	assert(g_system);
+	uint32 seed = g_system->getMillis();
 	setSeed(seed);
 }
 

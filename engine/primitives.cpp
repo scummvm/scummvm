@@ -28,7 +28,7 @@
 
 #include "engine/font.h"
 #include "engine/color.h"
-#include "backends/platform/driver.h"
+#include "engine/gfx_base.h"
 #include "engine/primitives.h"
 
 #include <string>

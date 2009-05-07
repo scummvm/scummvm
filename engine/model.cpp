@@ -31,7 +31,7 @@
 #include "engine/resource.h"
 #include "engine/material.h"
 #include "engine/textsplit.h"
-#include "backends/platform/driver.h"
+#include "engine/gfx_base.h"
 
 #include <cstring>
 #include <cstdio>

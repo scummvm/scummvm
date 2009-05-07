@@ -27,15 +27,16 @@
 #define COMMON_MUTEX_H
 
 #include "common/sys.h"
+#include "common/system.h"
 
 namespace Common {
 
 class Mutex;
 
 /**
- * An pseudo-opaque mutex type.
+ * An pseudo-opaque mutex type. See OSystem::createMutex etc. for more details.
  */
-typedef struct OpaqueMutex *MutexRef;
+typedef OSystem::MutexRef MutexRef;
 
 
 /**

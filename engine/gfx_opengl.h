@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef BACKEND_DRIVER_GL_H
-#define BACKEND_DRIVER_GL_H
+#ifndef GFX_OPENGL_H
+#define GFX_OPENGL_H
 
 #include "common/sys.h"
 
@@ -33,24 +33,28 @@
 #include "engine/colormap.h"
 #include "engine/bitmap.h"
 #include "engine/vector3d.h"
+#include "engine/gfx_base.h"
 
-#include "backends/platform/driver.h"
-#include "backends/platform/sdl/driver_sdl.h"
+#ifdef USE_OPENGL
 
-#include <SDL.h>
+#ifdef SDL_BACKEND
 #include <SDL_opengl.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
 
-class DriverGL : public DriverSDL {
+class GfxOpenGL : public GfxBase {
 public:
-	DriverGL();
-	virtual ~DriverGL();
+	GfxOpenGL();
+	virtual ~GfxOpenGL();
 
-	void setupScreen(int screenW, int screenH, bool fullscreen = false);
+	byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+
+	const char *getVideoDeviceName();
 
 	void setupCamera(float fov, float nclip, float fclip, float roll);
 	void positionCamera(Vector3d pos, Vector3d interest);
-
-	void toggleFullscreenMode();
 
 	void clearScreen(); 
 	void flipBuffer();
@@ -119,5 +123,7 @@ private:
 	int _smushHeight;
 	byte *_storedDisplay;
 };
+
+#endif
 
 #endif

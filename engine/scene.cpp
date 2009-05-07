@@ -31,7 +31,7 @@
 #include "engine/resource.h"
 #include "engine/bitmap.h"
 #include "engine/colormap.h"
-#include "backends/platform/driver.h"
+#include "engine/gfx_base.h"
 #include "engine/engine.h"
 #include "engine/vector3d.h"
 
