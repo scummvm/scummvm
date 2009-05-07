@@ -306,6 +306,13 @@
 			<File
 				RelativePath="..\..\common\mutex.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\common\mutex.h"
@@ -1147,11 +1154,11 @@
 					Name="sdl"
 					>
 					<File
-						RelativePath="..\..\backends\platform\sdl\sdl.cpp"
+						RelativePath="..\..\backends\platform\sdl\sdl_driver.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\backends\platform\sdl\sdl.h"
+						RelativePath="..\..\backends\platform\sdl\sdl_driver.h"
 						>
 					</File>
 				</Filter>
