@@ -37,100 +37,95 @@ enum fileTypeEnum {
 
 int loadSingleFile;
 
-// TODO: Unify decodeGfxFormat1, decodeGfxFormat4 and decodeGfxFormat5
-
-void decodeGfxFormat1(dataFileEntry *pCurrentFileEntry) {
-	uint8 *buffer;
+/**
+ * Takes care of decoding a compressed graphic
+ */
+void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
+	int spriteSize;
 
-	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->width;
-	int x = 0;
-
-	buffer = (uint8 *) malloc(spriteSize);
-
-	while (x < spriteSize) {
-		uint8 c;
-		uint16 p0;
-
-		p0 = (dataPtr[0] << 8) | dataPtr[1];
-
-		/* decode planes */
-		for (c = 0; c < 16; c++) {
-			buffer[x + c] = ((p0 >> 15) & 1);
-
-			p0 <<= 1;
-		}
-
-		x += 16;
-
-		dataPtr += 2;
+	// Unified how to get spriteSize
+	switch (format) {
+	case 1:
+	case 4:
+		spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->width;
+		break;
+	case 5:
+		spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn;
+		break;
 	}
-
-	pCurrentFileEntry->subData.ptr = buffer;
-}
-
-void decodeGfxFormat4(dataFileEntry *pCurrentFileEntry) {
-	uint8 *buffer;
-	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
-
-	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->width;
-	int x = 0;
-
-	buffer = (uint8 *) malloc(spriteSize);
-
-	while (x < spriteSize) {
-		uint8 c;
-		uint16 p0;
-		uint16 p1;
-		uint16 p2;
-		uint16 p3;
-
-		p0 = (dataPtr[0] << 8) | dataPtr[1];
-		p1 = (dataPtr[2] << 8) | dataPtr[3];
-		p2 = (dataPtr[4] << 8) | dataPtr[5];
-		p3 = (dataPtr[6] << 8) | dataPtr[7];
-
-		/* decode planes */
-		for (c = 0; c < 16; c++) {
-			buffer[x + c] = ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8);
-
-			p0 <<= 1;
-			p1 <<= 1;
-			p2 <<= 1;
-			p3 <<= 1;
-		}
-
-		x += 16;
-
-		dataPtr += 8;
-	}
-
-	pCurrentFileEntry->subData.ptr = buffer;
-}
-
-void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
-	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
-	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn;
-	int range = pCurrentFileEntry->height * pCurrentFileEntry->width;
 
 	uint8 *buffer = (uint8 *)malloc(spriteSize);
-	uint8 *destP = buffer;
 
-	for (int line = 0; line < pCurrentFileEntry->height; line++) {
-		uint8 p0, p1, p2, p3, p4;
+	// Perform format specific decoding
+	switch (format) {
+	case 1:
+	case 4: {
+		int x = 0;
+		while (x < spriteSize) {
+			uint8 c;
+			uint16 p0;
+			// Format 4
+			uint16 p1, p2, p3;
 
-		for (int x = 0; x < pCurrentFileEntry->widthInColumn; x++) {
-			int bit = 7 - (x % 8);
-			int col = x / 8;
+			p0 = (dataPtr[0] << 8) | dataPtr[1];
 
-			p0 = (dataPtr[line*pCurrentFileEntry->width + col + range * 0] >> bit) & 1;
-			p1 = (dataPtr[line*pCurrentFileEntry->width + col + range * 1] >> bit) & 1;
-			p2 = (dataPtr[line*pCurrentFileEntry->width + col + range * 2] >> bit) & 1;
-			p3 = (dataPtr[line*pCurrentFileEntry->width + col + range * 3] >> bit) & 1;
-			p4 = (dataPtr[line*pCurrentFileEntry->width + col + range * 4] >> bit) & 1;
+			// Format 4
+			if (format == 4) {
+				p1 = (dataPtr[2] << 8) | dataPtr[3];
+				p2 = (dataPtr[4] << 8) | dataPtr[5];
+				p3 = (dataPtr[6] << 8) | dataPtr[7];
+			}
 
-			*destP++ = p0 | (p1 << 1) | (p2 << 2) | (p3 << 3) | (p4 << 4);
+			/* decode planes */
+			for (c = 0; c < 16; c++) {
+				// Format 4
+				if (format == 4) {
+					buffer[x + c] = ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8);
+				} else {
+					buffer[x + c] = ((p0 >> 15) & 1);
+				}
+
+				p0 <<= 1;
+
+				// Format 4
+				if (format == 4) {
+					p1 <<= 1;
+					p2 <<= 1;
+					p3 <<= 1;
+				}
+			}
+
+			x += 16;
+
+			dataPtr += (2 * format);
 		}
+
+		break;
+	}
+	case 5: {
+		uint8 *destP = buffer;
+		int range = pCurrentFileEntry->height * pCurrentFileEntry->width;
+
+		for (int line = 0; line < pCurrentFileEntry->height; line++) {
+			uint8 p0, p1, p2, p3, p4;
+
+			for (int x = 0; x < pCurrentFileEntry->widthInColumn; x++) {
+				int bit = 7 - (x % 8);
+				int col = x / 8;
+
+				p0 = (dataPtr[line*pCurrentFileEntry->width + col + range * 0] >> bit) & 1;
+				p1 = (dataPtr[line*pCurrentFileEntry->width + col + range * 1] >> bit) & 1;
+				p2 = (dataPtr[line*pCurrentFileEntry->width + col + range * 2] >> bit) & 1;
+				p3 = (dataPtr[line*pCurrentFileEntry->width + col + range * 3] >> bit) & 1;
+				p4 = (dataPtr[line*pCurrentFileEntry->width + col + range * 4] >> bit) & 1;
+
+				*destP++ = p0 | (p1 << 1) | (p2 << 2) | (p3 << 3) | (p4 << 4);
+			}
+		}
+
+		break;
+	}
 	}
 
 	pCurrentFileEntry->subData.ptr = buffer;
@@ -470,7 +465,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		case 1: {
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
 			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_BGMASK;
-			decodeGfxFormat1(&filesDatabase[fileIndex]);
+			decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = 0;
 			break;
@@ -478,14 +473,14 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		case 4: {
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
 			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
-			decodeGfxFormat4(&filesDatabase[fileIndex]);
+			decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 			break;
 		}
 		case 5: {
 			filesDatabase[fileIndex].subData.resourceType = OBJ_TYPE_SPRITE;
-			decodeGfxFormat5(&filesDatabase[fileIndex]);
+			decodeGfxUnified(&filesDatabase[fileIndex], localBuffer.type);
 			filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
 			filesDatabase[fileIndex].subData.index = currentEntryIdx;
 			filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
