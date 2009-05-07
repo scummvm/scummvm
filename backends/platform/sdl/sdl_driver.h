@@ -33,6 +33,8 @@
 #include <SDL_opengl.h>
 #endif
 
+#include <time.h>
+
 namespace Audio {
 	class MixerImpl;
 }

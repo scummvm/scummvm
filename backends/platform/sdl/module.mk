@@ -1,7 +1,7 @@
 MODULE := backends/platform/sdl
 
 MODULE_OBJS := \
-	sdl.o
+	sdl_driver.o
 
 MODULE_DIRS += \
 	backends/platform/sdl/
