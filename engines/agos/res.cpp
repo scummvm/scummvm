@@ -897,8 +897,14 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 			byte *dataOut = 0;
 			int dataOutSize = 0;
 
-			for (uint i = 0; i < srcSize / 4; ++i)
-				data.push(in.readUint32BE());
+			for (uint i = 0; i < srcSize / 4; ++i) {
+				uint32 dataVal = in.readUint32BE();
+				// Correct incorrect byte, in corrupt 72.out file, included in some PC versions.
+				if (dataVal == 168042714)
+					data.push(168050906);
+				else
+					data.push(dataVal);
+			}
 
 			decompressPN(data, dataOut, dataOutSize);
 			dst = allocBlock (dataOutSize + extraBuffer);
