@@ -50,15 +50,15 @@ void GuiObject::reflowLayout() {
 		}
 
 		if (_x < 0)
-			error("Widget <%s> has x < 0: %d", _name.c_str(), _x);
+			error("Widget <%s> has x < 0 (%d)", _name.c_str(), _x);
 		if (_x >= g_system->getOverlayWidth())
-			error("Widget <%s> has x > %d", _name.c_str(), g_system->getOverlayWidth());
+			error("Widget <%s> has x > %d (%d)", _name.c_str(), g_system->getOverlayWidth(), _x);
 		if (_x + _w > g_system->getOverlayWidth())
 			error("Widget <%s> has x + w > %d (%d)", _name.c_str(), g_system->getOverlayWidth(), _x + _w);
 		if (_y < 0)
-			error("Widget <%s> has y < 0", _name.c_str());
+			error("Widget <%s> has y < 0 (%d)", _name.c_str(), _y);
 		if (_y >= g_system->getOverlayHeight())
-			error("Widget <%s> has y > %d", _name.c_str(), g_system->getOverlayHeight());
+			error("Widget <%s> has y > %d (%d)", _name.c_str(), g_system->getOverlayHeight(), _y);
 		if (_y + _h > g_system->getOverlayHeight())
 			error("Widget <%s> has y + h > %d (%d)", _name.c_str(), g_system->getOverlayHeight(), _y + _h);
 	}
