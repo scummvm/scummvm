@@ -732,6 +732,81 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 
 }
 
+static Common::String getDefaultConfigFileName() {
+	char configFile[MAXPATHLEN];
+#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+	OSVERSIONINFO win32OsVersion;
+	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
+	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&win32OsVersion);
+	// Check for non-9X version of Windows.
+	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
+		// Use the Application Data directory of the user profile.
+		if (win32OsVersion.dwMajorVersion >= 5) {
+			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
+				error("Unable to access application data directory");
+		} else {
+			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
+				error("Unable to access user profile directory");
+
+			strcat(configFile, "\\Application Data");
+			CreateDirectory(configFile, NULL);
+		}
+
+		strcat(configFile, "\\ScummVM");
+		CreateDirectory(configFile, NULL);
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+
+		FILE *tmp = NULL;
+		if ((tmp = fopen(configFile, "r")) == NULL) {
+			// Check windows directory
+			char oldConfigFile[MAXPATHLEN];
+			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
+			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
+			if ((tmp = fopen(oldConfigFile, "r"))) {
+				strcpy(configFile, oldConfigFile);
+
+				fclose(tmp);
+			}
+		} else {
+			fclose(tmp);
+		}
+	} else {
+		// Check windows directory
+		GetWindowsDirectory(configFile, MAXPATHLEN);
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+	}
+#elif defined(UNIX)
+	// On UNIX type systems, by default we store the config file inside
+	// to the HOME directory of the user.
+	//
+	// GP2X is Linux based but Home dir can be read only so do not use
+	// it and put the config in the executable dir.
+	//
+	// On the iPhone, the home dir of the user when you launch the app
+	// from the Springboard, is /. Which we don't want.
+	const char *home = getenv("HOME");
+	if (home != NULL && strlen(home) < MAXPATHLEN)
+		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
+	else
+		strcpy(configFile, DEFAULT_CONFIG_FILE);
+#else
+	strcpy(configFile, DEFAULT_CONFIG_FILE);
+#endif
+
+	return configFile;
+}
+
+Common::SeekableReadStream *OSystem_SDL::createConfigReadStream() {
+	Common::FSNode file(getDefaultConfigFileName());
+	return file.createReadStream();
+}
+
+Common::WriteStream *OSystem_SDL::createConfigWriteStream() {
+	Common::FSNode file(getDefaultConfigFileName());
+	return file.createWriteStream();
+}
+
 void OSystem_SDL::setWindowCaption(const char *caption) {
 	SDL_WM_SetCaption(caption, caption);
 }
