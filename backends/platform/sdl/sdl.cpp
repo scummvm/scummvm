@@ -814,6 +814,9 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 bool OSystem_SDL::hasFeature(Feature f) {
 	return
 		(f == kFeatureFullscreenMode) ||
+#ifdef USE_OPENGL
+		(f == kFeatureOpenGL) ||
+#endif
 		(f == kFeatureIconifyWindow);
 }
 
