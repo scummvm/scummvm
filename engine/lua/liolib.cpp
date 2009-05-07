@@ -41,7 +41,7 @@ LuaFile *g_stdin;
 LuaFile *g_stdout;
 LuaFile *g_stderr;
 
-LuaFile::LuaFile() : _in(NULL), _out(NULL), _file(NULL), _stdin(false), _stdout(false), _stderr(false) {
+LuaFile::LuaFile() : _in(NULL), _out(NULL), _stdin(false), _stdout(false), _stderr(false) {
 }
 
 LuaFile::~LuaFile() {

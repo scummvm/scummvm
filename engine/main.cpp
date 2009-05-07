@@ -27,6 +27,7 @@
 #include "common/timer.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "engine/bitmap.h"
 #include "engine/resource.h"
@@ -84,15 +85,6 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gResidualVersion, Common::ConfigManager::kApplicationDomain);
 
-	if (!processSettings(command, settings))
-		return 0;
-
-	// Init the backend. Must take place after all config data (including
-	// the command line params) was read.
-	system.initBackend();
-
-	g_registry = new Registry();
-
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
@@ -107,6 +99,17 @@ extern "C" int residual_main(int argc, char *argv[]) {
 		specialDebug = settings["debugflags"];
 		settings.erase("debugflags");
 	}
+
+	if (!processSettings(command, settings))
+		return 0;
+
+	// Init the backend. Must take place after all config data (including
+	// the command line params) was read.
+	system.initBackend();
+
+	system.getEventManager()->init();
+
+	g_registry = new Registry();
 
 	SHOWFPS_GLOBAL = (tolower(g_registry->get("show_fps", "FALSE")[0]) == 't');
 	TINYGL_GLOBAL = (tolower(g_registry->get("soft_renderer", "FALSE")[0]) == 't');

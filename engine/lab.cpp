@@ -101,7 +101,7 @@ LuaFile *Lab::openNewStreamLua(const char *filename) const {
 	file->seek(i->second.offset, SEEK_SET);
 
 	LuaFile *filehandle = new LuaFile();
-	filehandle->_file = file;
+	filehandle->_in = file;
 
 	return filehandle;
 }

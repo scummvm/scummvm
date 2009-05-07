@@ -47,7 +47,6 @@ public:
 	Common::String _name;
 	Common::SeekableReadStream *_in;
 	Common::WriteStream *_out;
-	Common::File *_file;
 	bool _stdin, _stdout, _stderr;
 
 public:
