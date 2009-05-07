@@ -751,7 +751,7 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	linux* | uclinux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux*)
-		DEFINES="$DEFINES -DUNIX"
+		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
 		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
 		;;
 	beos*)
@@ -780,12 +780,12 @@ case $_host_os in
 		_ranlib=:
 		;;
 	darwin*)
-		DEFINES="$DEFINES -DUNIX -DMACOSX"
+		DEFINES="$DEFINES -DUNIX -DMACOSX -DUSE_OPENGL"
 		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -lGL -lGLU -L/usr/X11/lib \
 		-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
 		;;
 	mingw*)
-		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
+		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0 -DUSE_OPENGL"
 		LIBS="$LIBS -lmingw32 -lopengl32 -lglu32"
 		OBJS="$OBJS residualico.o"
 		;;
@@ -796,7 +796,7 @@ case $_host_os in
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
 	amigaos*)
-		DEFINES="$DEFINES -DMINIGL"
+		DEFINES="$DEFINES -DMINIGL -DUSE_OPENGL"
 		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
 		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
 		LIBS="$LIBS -lGL -lGLU"
