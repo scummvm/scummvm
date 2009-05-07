@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	mutex.o \
 	str.o \
 	stream.o \
+	system.o \
 	util.o
 
 # Include common rules
