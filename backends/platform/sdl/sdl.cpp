@@ -753,7 +753,7 @@ static Common::String getDefaultConfigFileName() {
 			CreateDirectory(configFile, NULL);
 		}
 
-		strcat(configFile, "\\ScummVM");
+		strcat(configFile, "\\Residual");
 		CreateDirectory(configFile, NULL);
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 
