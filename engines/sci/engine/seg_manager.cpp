@@ -750,7 +750,7 @@ Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 		VERIFY((byte *) funct_area < scr->buf + scr->buf_size, "Function area pointer references beyond end of script");
 
 		variables_nr = READ_LE_UINT16(data + 2);
-		functions_nr = *funct_area;
+		functions_nr = READ_LE_UINT16(funct_area);
 		is_class = READ_LE_UINT16(data + 14) & SCRIPT_INFO_CLASS;
 
 		obj->base_method = funct_area;
