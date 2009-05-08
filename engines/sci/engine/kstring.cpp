@@ -786,7 +786,7 @@ reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!state.initialized)
 		message_state_initialize(s->resmgr, &state);
 
-	char *buffer = argc == 4 ? kernel_dereference_char_pointer(s, argv[3], 0) : NULL;
+	char *buffer = kernel_dereference_char_pointer(s, argv[3], 0);
 
 	MessageTuple tuple;
 	tuple.noun = UKPV(0);
@@ -795,10 +795,8 @@ reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	tuple.cond = 0;
 	tuple.seq = 0;
 
-	if (state.loadRes(module) && state.getSpecific(&tuple)) {
-		if (buffer)
-			state.getText(buffer, 255);
-
+	if (buffer && state.loadRes(module) && state.getSpecific(&tuple)) {
+		state.getText(buffer, 255);
 		return argv[3];
 	} else {
 		return NULL_REG;
