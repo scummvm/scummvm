@@ -194,7 +194,7 @@ public:
 	/** Set character c at position p, replacing the previous character there. */
 	void setChar(char c, uint32 p);
 
-	/** Set character c at position p. */
+	/** Insert character c before position p. */
 	void insertChar(char c, uint32 p);
 
 	/** Clears the string, making it empty. */
