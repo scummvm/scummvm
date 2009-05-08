@@ -1054,52 +1054,118 @@ static int nearest_intersection(PathfindingState *s, const Common::Point &p, con
 	return find_free_point(isec, ipolygon, ret);
 }
 
-static int fix_point(PathfindingState *s, const Common::Point &p, Common::Point *ret, Polygon **ret_pol) {
-	// Checks a point for containment in any of the polygons in the polygon set.
-	// If the point is contained in a totally accessible polygon that polygon
-	// is removed from the set. If the point is contained in a polygon of another
-	// type the near point is returned. Otherwise the original point is returned
-	// Parameters: (const Common::Point &) p: The point
-	// Returns   : (int) PF_OK on success, PF_FATAL otherwise
-	//             (Common::Point) *ret: A valid input point for pathfinding
-	//             (Polygon *) *ret_pol: The polygon p was contained in if p
-	//                                     != *ret, NULL otherwise
-	PolygonList::iterator it;
-	*ret_pol = NULL;
+/**
+ * Checks that the start point is in a valid position, and takes appropriate action if it's not.
+ * @param s				the pathfinding state
+ * @param start			the start point
+ * @return a valid start point on success, NULL otherwise
+ */
+static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point &start) {
+	PolygonList::iterator it = s->polygons.begin();
+	Common::Point *new_start = new Common::Point(start);
 
-	// Check for polygon containment
-	for (it = s->polygons.begin(); it != s->polygons.end(); ++it) {
-		if (contained(p, *it) != CONT_OUTSIDE)
+	while (it != s->polygons.end()) {
+		int cont = contained(start, *it);
+		int type = (*it)->type;
+
+		switch (type) {
+		case POLY_TOTAL_ACCESS:
+			// Remove totally accessible polygons that contain the start point
+			if (cont != CONT_OUTSIDE) {
+				delete *it;
+				it = s->polygons.erase(it);
+				continue;
+			}
 			break;
-	}
+		case POLY_CONTAINED_ACCESS:
+			// Remove contained access polygons that do not contain
+			// the start point (containment test is inverted here).
+			if (cont == CONT_INSIDE) {
+				delete *it;
+				it = s->polygons.erase(it);
+				continue;
+			}
+			break;
+		case POLY_BARRED_ACCESS:
+		case POLY_NEAREST_ACCESS:
+			if (cont == CONT_INSIDE) {
+				if (s->_prependPoint != NULL) {
+					// We shouldn't get here twice
+					warning("AvoidPath: start point is contained in multiple polygons");
+					continue;
+				}
 
-	if (it != s->polygons.end()) {
-		Common::Point near_p;
+				if (near_point(start, (*it), new_start) != PF_OK) {
+					delete new_start;
+					return NULL;
+				}
 
-		if ((*it)->type == POLY_TOTAL_ACCESS) {
-			// Remove totally accessible polygon if it contains p
-			
-			s->polygons.erase(it);
-			*ret = p;
-			return PF_OK;
+				if (type == POLY_BARRED_ACCESS)
+					warning("AvoidPath: start position at unreachable location");
+
+				// The original start position is in an invalid location, so we
+				// use the moved point and add the original one to the final path
+				// later on.
+				s->_prependPoint = new Common::Point(start);
+			}
 		}
 
-		// Otherwise, compute near point
-		if (near_point(p, (*it), &near_p) == PF_OK) {
-			*ret = near_p;
-
-			if (p != *ret)
-				*ret_pol = *it;
-
-			return PF_OK;
-		}
-
-		return PF_FATAL;
+		++it;
 	}
 
-	// p is not contained in any polygon
-	*ret = p;
-	return PF_OK;
+	return new_start;
+}
+
+/**
+ * Checks that the end point is in a valid position, and takes appropriate action if it's not.
+ * @param s				the pathfinding state
+ * @param end			the end point
+ * @return a valid end point on success, NULL otherwise
+ */
+static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &end) {
+	PolygonList::iterator it = s->polygons.begin();
+	Common::Point *new_end = new Common::Point(end);
+
+	while (it != s->polygons.end()) {
+		int cont = contained(end, *it);
+		int type = (*it)->type;
+
+		switch (type) {
+		case POLY_TOTAL_ACCESS:
+			// Remove totally accessible polygons that contain the end point
+			if (cont != CONT_OUTSIDE) {
+				delete *it;
+				it = s->polygons.erase(it);
+				continue;
+			}
+			break;
+		case POLY_CONTAINED_ACCESS:
+		case POLY_BARRED_ACCESS:
+		case POLY_NEAREST_ACCESS:
+			if (cont == CONT_INSIDE) {
+				if (s->_appendPoint != NULL) {
+					// We shouldn't get here twice
+					warning("AvoidPath: end point is contained in multiple polygons");
+					continue;
+				}
+
+				// The original end position is in an invalid location, so we move the point
+				if (near_point(end, (*it), new_end) != PF_OK) {
+					delete new_end;
+					return NULL;
+				}
+
+				// For near-point access polygons we need to add the original end point
+				// to the path after pathfinding.
+				if (type == POLY_NEAREST_ACCESS)
+					s->_appendPoint = new Common::Point(end);
+			}
+		}
+
+		++it;
+	}
+
+	return new_end;
 }
 
 static Vertex *merge_point(PathfindingState *s, const Common::Point &v) {
@@ -1268,8 +1334,6 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	int err;
 	int count = 0;
 	PathfindingState *pf_s = new PathfindingState();
-	Common::Point new_start = start;
-	Common::Point new_end = end;
 
 	// Convert all polygons
 	if (poly_list.segment) {
@@ -1300,52 +1364,62 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	}
 
 	if (opt == 0) {
+		Common::Point intersection;
+
 		// Keyboard support
+		// FIXME: We don't need to dijkstra for keyboard support as we currently do
 		change_polygons_opt_0(pf_s);
 
 		// Find nearest intersection
-		err = nearest_intersection(pf_s, start, end, &new_start);
+		err = nearest_intersection(pf_s, start, end, &intersection);
 
 		if (err == PF_FATAL) {
-			sciprintf("[avoidpath] Error: fatal error finding nearest intersecton\n");
+			warning("AvoidPath: fatal error finding nearest intersecton");
 			delete pf_s;
 			return NULL;
-		} else if (err == PF_OK)
-			// Keep original start position if intersection was found
-			pf_s->_prependPoint = new Common::Point(start);
-	} else {
-		if (fix_point(pf_s, start, &new_start, &polygon) != PF_OK) {
-			sciprintf("[avoidpath] Error: couldn't fix start position for pathfinding\n");
-			delete pf_s;
-			return NULL;
-		} else if (polygon) {
-			// Start position has moved
-			pf_s->_prependPoint = new Common::Point(start);
-			if ((polygon->type != POLY_NEAREST_ACCESS))
-				sciprintf("[avoidpath] Warning: start position at unreachable location\n");
 		}
-	}
 
-	if (fix_point(pf_s, end, &new_end, &polygon) != PF_OK) {
-		sciprintf("[avoidpath] Error: couldn't fix end position for pathfinding\n");
-		delete pf_s;
-		return NULL;
+		if (err == PF_OK) {
+			// Intersection was found, prepend original start position after pathfinding
+			pf_s->_prependPoint = new Common::Point(start);
+			// Merge new start point into polygon set
+			pf_s->vertex_start = merge_point(pf_s, intersection);
+		} else {
+			// Otherwise we proceed with the original start point
+			pf_s->vertex_start = merge_point(pf_s, start);
+		}
+		// Merge end point into polygon set
+		pf_s->vertex_end = merge_point(pf_s, end);
 	} else {
-		// Keep original end position if it is contained in a
-		// near-point accessible polygon
-		if (polygon && (polygon->type == POLY_NEAREST_ACCESS))
-			pf_s->_appendPoint = new Common::Point(end);
-	}
+		Common::Point *new_start = fixup_start_point(pf_s, start);
 
-	if (s->_gameName == "Longbow") {
-		// FIXME: implement function to get current room number
-		if ((KP_UINT(s->script_000->locals_block->locals[13]) == 210))
-			fixLongbowRoom210(pf_s, new_start, new_end);
-	}
+		if (!new_start) {
+			warning("AvoidPath: Couldn't fixup start position for pathfinding");
+			delete pf_s;
+			return NULL;
+		}
 
-	// Merge start and end points into polygon set
-	pf_s->vertex_start = merge_point(pf_s, new_start);
-	pf_s->vertex_end = merge_point(pf_s, new_end);
+		Common::Point *new_end = fixup_end_point(pf_s, end);
+
+		if (!new_end) {
+			warning("AvoidPath: Couldn't fixup end position for pathfinding");
+			delete pf_s;
+			return NULL;
+		}
+
+		if (s->_gameName == "Longbow") {
+			// FIXME: implement function to get current room number
+			if ((KP_UINT(s->script_000->locals_block->locals[13]) == 210))
+				fixLongbowRoom210(pf_s, *new_start, *new_end);
+		}
+
+		// Merge start and end points into polygon set
+		pf_s->vertex_start = merge_point(pf_s, *new_start);
+		pf_s->vertex_end = merge_point(pf_s, *new_end);
+
+		delete new_start;
+		delete new_end;
+	}
 
 	// Allocate and build vertex index
 	pf_s->vertex_index = (Vertex**)sci_malloc(sizeof(Vertex *) * (count + 2));
