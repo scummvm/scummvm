@@ -273,9 +273,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			DO_LONG_OPTION("show-fps")
 			END_OPTION
 
-			DO_LONG_OPTION("gl-zbuffer")
-			END_OPTION
-
 			DO_LONG_OPTION("soft-renderer")
 			END_OPTION
 
