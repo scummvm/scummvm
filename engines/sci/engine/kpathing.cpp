@@ -1239,11 +1239,18 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		}
 	}
 
-	// WORKAROUND: self-intersecting polygon in ECO, room 300, remove last point
+	// WORKAROUND: self-intersecting polygons in ECO, rooms 280 and 300
 	if ((size == 11) && (s->_gameName == "eco")) {
 		if ((KP_UINT(s->script_000->locals_block->locals[13]) == 300)
 		&& (read_point(list, is_reg_t, 10) == Common::Point(221, 0))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 300");
+			size = 10;
+		}
+	}
+	if ((size == 12) && (s->_gameName == "eco")) {
+		if ((KP_UINT(s->script_000->locals_block->locals[13]) == 280)
+		&& (read_point(list, is_reg_t, 11) == Common::Point(238, 189))) {
+			debug(1, "Applying fix for self-intersecting polygon in ECO, room 280");
 			size = 10;
 		}
 	}
