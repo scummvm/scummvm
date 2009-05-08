@@ -1,5 +1,5 @@
 
-#include "engine/tinygl/zgl.h"
+#include "graphics/tinygl/zgl.h"
 
 #define VERTEX_ARRAY	0x0001
 #define COLOR_ARRAY		0x0002

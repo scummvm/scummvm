@@ -1,5 +1,5 @@
 
-#include "engine/tinygl/zgl.h"
+#include "graphics/tinygl/zgl.h"
 
 void glopViewport(GLContext *c, TGLParam *p) {
 	int xsize, ysize, xmin, ymin, xsize_req, ysize_req;

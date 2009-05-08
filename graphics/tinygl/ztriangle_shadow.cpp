@@ -1,5 +1,5 @@
 
-#include "engine/tinygl/zbuffer.h"
+#include "graphics/tinygl/zbuffer.h"
 
 #define ZCMP(z, zpix) ((z) >= (zpix))
 

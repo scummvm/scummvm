@@ -24,8 +24,8 @@ MODULES += \
 	engine/imuse \
 	engine/lua \
 	engine/smush \
-	engine/tinygl \
 	common \
+	graphics \
 	mixer
 
 

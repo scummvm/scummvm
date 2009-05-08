@@ -3,15 +3,15 @@
 
 #include "common/debug.h"
 
-#include "engine/tinygl/gl.h"
-#include "engine/tinygl/zbuffer.h"
-#include "engine/tinygl/zmath.h"
+#include "graphics/tinygl/gl.h"
+#include "graphics/tinygl/zbuffer.h"
+#include "graphics/tinygl/zmath.h"
 
 enum {
 
 #define ADD_OP(a,b,c) OP_ ## a ,
 
-#include "engine/tinygl/opinfo.h"
+#include "graphics/tinygl/opinfo.h"
 
 	DUMMY
 };

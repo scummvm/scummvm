@@ -1,5 +1,5 @@
 
-#include "engine/tinygl/zgl.h"
+#include "graphics/tinygl/zgl.h"
 
 void glopMaterial(GLContext *c, TGLParam *p) {
 	int mode = p[1].i;

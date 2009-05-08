@@ -1,7 +1,7 @@
 
 #include <stdlib.h>
 
-#include "engine/tinygl/zbuffer.h"
+#include "graphics/tinygl/zbuffer.h"
 
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
@@ -23,7 +23,7 @@ void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBuffe
 	z += dzdx;								\
 }
 
-#include "engine/tinygl/ztriangle.h"
+#include "graphics/tinygl/ztriangle.h"
 }
 
 // Smooth filled triangle.
@@ -88,7 +88,7 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 	}												\
 }
 
-#include "engine/tinygl/ztriangle.h"
+#include "graphics/tinygl/ztriangle.h"
 }
 
 void ZB_setTexture(ZBuffer *zb, PIXEL *texture) {
@@ -116,7 +116,7 @@ void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBu
 	t += dtdx;								\
 }
 
-#include "engine/tinygl/ztriangle.h"
+#include "graphics/tinygl/ztriangle.h"
 }
 
 void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {

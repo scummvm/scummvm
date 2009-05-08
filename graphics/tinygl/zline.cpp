@@ -1,5 +1,5 @@
 
-#include "engine/tinygl/zbuffer.h"
+#include "graphics/tinygl/zbuffer.h"
 
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
@@ -21,24 +21,24 @@ void ZB_plot(ZBuffer * zb, ZBufferPoint * p) {
 
 #define INTERP_Z
 static void ZB_line_flat_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2, int color) {
-#include "engine/tinygl/zline.h"
+#include "graphics/tinygl/zline.h"
 }
 
 // line with color interpolation
 #define INTERP_Z
 #define INTERP_RGB
 static void ZB_line_interp_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
-#include "engine/tinygl/zline.h"
+#include "graphics/tinygl/zline.h"
 }
 
 // no Z interpolation
 static void ZB_line_flat(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2, int color) {
-#include "engine/tinygl/zline.h"
+#include "graphics/tinygl/zline.h"
 }
 
 #define INTERP_RGB
 static void ZB_line_interp(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
-#include "engine/tinygl/zline.h"
+#include "graphics/tinygl/zline.h"
 }
 
 void ZB_line_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {

@@ -1,5 +1,5 @@
 
-#include "engine/tinygl/zgl.h"
+#include "graphics/tinygl/zgl.h"
 
 static void calc_buf(GLSpecBuf *buf, const float shininess) {
 	int i;

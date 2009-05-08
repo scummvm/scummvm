@@ -1,22 +1,22 @@
 
-#include "engine/tinygl/zgl.h"
+#include "graphics/tinygl/zgl.h"
 
 static const char *op_table_str[] = {
 #define ADD_OP(a, b, c) "gl" #a " " #c,
 
-#include "engine/tinygl/opinfo.h"
+#include "graphics/tinygl/opinfo.h"
 };
 
 static void (*op_table_func[])(GLContext *, TGLParam *) = {
 #define ADD_OP(a, b, c) glop ## a ,
 
-#include "engine/tinygl/opinfo.h"
+#include "graphics/tinygl/opinfo.h"
 };
 
 static int op_table_size[] = {
 #define ADD_OP(a, b, c) b + 1 ,
 
-#include "engine/tinygl/opinfo.h"
+#include "graphics/tinygl/opinfo.h"
 };
 
 GLContext *gl_get_context() {

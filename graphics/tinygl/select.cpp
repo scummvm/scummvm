@@ -1,5 +1,5 @@
 
-#include "engine/tinygl/zgl.h"
+#include "graphics/tinygl/zgl.h"
 
 int glRenderMode(int mode) {
 	GLContext *c = gl_get_context();

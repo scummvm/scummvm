@@ -34,8 +34,8 @@
 #include "engine/vector3d.h"
 #include "engine/gfx_tinygl.h"
 
-#include "engine/tinygl/gl.h"
-#include "engine/tinygl/zgl.h"
+#include "graphics/tinygl/gl.h"
+#include "graphics/tinygl/zgl.h"
 
 // below funcs lookAt, transformPoint and tgluProject are from Mesa glu sources
 static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx,

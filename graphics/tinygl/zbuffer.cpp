@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "engine/tinygl/zbuffer.h"
+#include "graphics/tinygl/zbuffer.h"
 
 ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
 	ZBuffer *zb;

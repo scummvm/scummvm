@@ -35,8 +35,8 @@
 #include "engine/vector3d.h"
 #include "engine/gfx_base.h"
 
-#include "engine/tinygl/gl.h"
-#include "engine/tinygl/zgl.h"
+#include "graphics/tinygl/gl.h"
+#include "graphics/tinygl/zgl.h"
 
 class GfxTinyGL : public GfxBase {
 public:

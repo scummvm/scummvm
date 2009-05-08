@@ -1,7 +1,7 @@
 
 // Texture Manager
 
-#include "engine/tinygl/zgl.h"
+#include "graphics/tinygl/zgl.h"
 
 static GLTexture *find_texture(GLContext *c, int h) {
 	GLTexture *t;
