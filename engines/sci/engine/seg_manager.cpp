@@ -84,6 +84,8 @@ SegManager::SegManager(bool sci1_1) {
 	reserved_id--; // reserved_id runs in the reversed direction to make sure no one will use it.
 
 	_heap.resize(DEFAULT_SCRIPTS);
+	for (uint i = 0; i < _heap.size(); ++i)
+		_heap[i] = 0;
 
 	Clones_seg_id = 0;
 	Lists_seg_id = 0;
@@ -346,11 +348,14 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, MemObjectTyp
 	}
 
 	if (segid >= (int)_heap.size()) {
-		if (segid >= (int)_heap.size() * 2) {
+		const int oldSize = _heap.size();
+		if (segid >= oldSize * 2) {
 			sciprintf("SegManager: hash_map error or others??");
 			return NULL;
 		}
-		_heap.resize(_heap.size() * 2);
+		_heap.resize(oldSize * 2);
+		for (int i = oldSize; i < oldSize * 2; ++i)
+			_heap[i] = 0;
 	}
 
 	mem->_segmgrId = hash_id;
