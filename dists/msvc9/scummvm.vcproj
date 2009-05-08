@@ -870,11 +870,11 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\sound\softsynth\opl\opl.cpp"
+						RelativePath="..\..\sound\softsynth\opl\opl_impl.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\sound\softsynth\opl\opl.h"
+						RelativePath="..\..\sound\softsynth\opl\opl_inc.h"
 						>
 					</File>
 				</Filter>

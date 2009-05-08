@@ -864,6 +864,14 @@
 						RelativePath="..\..\sound\softsynth\opl\mame.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\opl\opl_impl.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\sound\softsynth\opl\opl_inc.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
