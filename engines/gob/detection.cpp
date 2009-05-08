@@ -2964,7 +2964,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibouunknown",
-			"Dis-moi Adi : Français-Maths CE2 (PAK/???)",
+			"Dis-moi Adi : Français-Maths CE2 (PAK/??\?)",
 			{
 				{"adi_exerciser.pak", 0, "585db904fe745ab560886a13500ed5f2", 73207668},
 				{"adi_texts.pak", 0, "79c73034e0a098d2a45a70ba95f6eace", 10656},
@@ -2982,7 +2982,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibouunknown",
-			"Dis-moi Adi : Français-Maths CM2 (PAK/???)",
+			"Dis-moi Adi : Français-Maths CM2 (PAK/??\?)",
 			{
 				{"adi_exerciser.pak", 0, "7e4574ea8a8e77585fb17f5c8d7a7831", 65789907},
 				{"adi_texts.pak", 0, "79c73034e0a098d2a45a70ba95f6eace", 10656},
