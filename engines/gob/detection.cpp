@@ -2943,6 +2943,60 @@ static const GOBGameDescription gameDescriptions[] = {
 		0,
 		0
 	},
+	{
+		{
+			"adibouunknown",
+			"ADIBOU présente La Magie (STK2.1/OBC)",
+			{
+				{"adibou.stk", 0, "977d2449d398f3df23238d718fca35b5", 61097},
+				{"magic.stk", 0, "9776765dead3e338a32c43bf344b5819", 302664},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		"adibou.stk",
+		"main.obc"
+	},
+	{
+		{
+			"adibouunknown",
+			"Dis-moi Adi : Français-Maths CE2 (PAK/???)",
+			{
+				{"adi_exerciser.pak", 0, "585db904fe745ab560886a13500ed5f2", 73207668},
+				{"adi_texts.pak", 0, "79c73034e0a098d2a45a70ba95f6eace", 10656},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		"",
+		""
+	},
+	{
+		{
+			"adibouunknown",
+			"Dis-moi Adi : Français-Maths CM2 (PAK/???)",
+			{
+				{"adi_exerciser.pak", 0, "7e4574ea8a8e77585fb17f5c8d7a7831", 65789907},
+				{"adi_texts.pak", 0, "79c73034e0a098d2a45a70ba95f6eace", 10656},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		"",
+		""
+	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0 }
 };
 
