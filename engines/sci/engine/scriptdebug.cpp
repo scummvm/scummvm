@@ -2802,12 +2802,14 @@ static void _print_address(void * _, reg_t addr) {
 static int c_gc_show_reachable(EngineState *s) {
 	reg_t addr = cmd_params[0].reg;
 
-	GET_SEG_INTERFACE(addr.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, addr.segment);
+	if (!mobj) {
+		sciprintf("Unknown segment : %x\n", addr.segment);
+		return 1;
+	}
 
 	sciprintf("Reachable from "PREG":\n", PRINT_REG(addr));
-	seg_interface->listAllOutgoingReferences(s, addr, NULL, _print_address);
-
-	delete seg_interface;
+	mobj->listAllOutgoingReferences(s, addr, NULL, _print_address);
 
 	return 0;
 }
@@ -2815,12 +2817,14 @@ static int c_gc_show_reachable(EngineState *s) {
 static int c_gc_show_freeable(EngineState *s) {
 	reg_t addr = cmd_params[0].reg;
 
-	GET_SEG_INTERFACE(addr.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, addr.segment);
+	if (!mobj) {
+		sciprintf("Unknown segment : %x\n", addr.segment);
+		return 1;
+	}
 
 	sciprintf("Freeable in segment %04x:\n", addr.segment);
-	seg_interface->listAllDeallocatable(NULL, _print_address);
-
-	delete seg_interface;
+	mobj->listAllDeallocatable(addr.segment, NULL, _print_address);
 
 	return 0;
 }

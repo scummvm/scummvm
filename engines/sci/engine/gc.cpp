@@ -150,8 +150,8 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 #ifdef DEBUG_GC_VERBOSE
 			sciprintf("[GC] Checking "PREG"\n", PRINT_REG(reg));
 #endif
-			if (reg.segment < sm->_heap.size() && interfaces[reg.segment])
-				interfaces[reg.segment]->listAllOutgoingReferences(s, reg, &wm, add_outgoing_refs);
+			if (reg.segment < sm->_heap.size() && sm->_heap[reg.segment])
+				sm->_heap[reg.segment]->listAllOutgoingReferences(s, reg, &wm, add_outgoing_refs);
 		}
 	}
 
@@ -210,7 +210,7 @@ void run_gc(EngineState *s) {
 #ifdef DEBUG_GC
 			deallocator.segnames[deallocator.interfce->getType()] = deallocator.interfce->type;
 #endif
-			deallocator.interfce->listAllDeallocatable(&deallocator, free_unless_used);
+			sm->_heap[seg_nr]->listAllDeallocatable(seg_nr, &deallocator, free_unless_used);
 			delete deallocator.interfce;
 		}
 	}

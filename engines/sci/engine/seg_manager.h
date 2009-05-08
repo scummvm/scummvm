@@ -462,19 +462,6 @@ public:
 	// Parameters: (reg_t) sub_addr: The address (within the given segment) to deallocate
 	virtual void freeAtAddress(reg_t sub_addr);
 
-	// Iterates over and reports all addresses within the current segment
-	// Parameters: note : (voidptr * addr) -> (): Invoked for each address on which free_at_address()
-	//                                makes sense
-	//             (void *) param: Parameter passed to 'note'
-	virtual void listAllDeallocatable(void *param, NoteCallback note);
-
-	// Iterates over all references reachable from the specified object
-	// Parameters: (reg_t) object: The object (within the current segment) to analyse
-	//             (void *) param: Parameter passed to 'note'
-	//             note : (voidptr * addr) -> (): Invoked for each outgoing reference within the object
-	// Note: This function may also choose to report numbers (segment 0) as adresses
-	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
-
 	// Get the memory object
 	MemObject *getMobj() { return _mobj; }
 

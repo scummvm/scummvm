@@ -56,6 +56,8 @@ struct MemObject /* : public Common::Serializable */ {
 	MemObjectType _type;
 	int _segmgrId; /**< Internal value used by the seg_manager's hash map */
 
+	typedef void (*NoteCallback)(void *param, reg_t addr);	// FIXME: Bad choice of name
+
 public:
 	static MemObject *createMemObject(MemObjectType type);
 
@@ -72,6 +74,19 @@ public:
 
 	inline MemObjectType getType() const { return _type; }
 	inline int getSegMgrId() const { return _segmgrId; }
+
+	// Iterates over and reports all addresses within the current segment
+	// Parameters: note : (voidptr * addr) -> (): Invoked for each address on which free_at_address()
+	//                                makes sense
+	//             (void *) param: Parameter passed to 'note'
+	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {}
+
+	// Iterates over all references reachable from the specified object
+	// Parameters: (reg_t) object: The object (within the current segment) to analyse
+	//             (void *) param: Parameter passed to 'note'
+	//             note : (voidptr * addr) -> (): Invoked for each outgoing reference within the object
+	// Note: This function may also choose to report numbers (segment 0) as adresses
+	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note) {}
 };
 
 
@@ -230,6 +245,7 @@ public:
 	}
 
 	virtual byte *dereference(reg_t pointer, int *size);
+	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -343,11 +359,13 @@ public:
 		freeScript();
 	}
 
+	void freeScript();
+
 	virtual byte *dereference(reg_t pointer, int *size);
+	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
+	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
-
-	void freeScript();
 };
 
 /** Data stack */
@@ -366,6 +384,7 @@ public:
 	}
 
 	virtual byte *dereference(reg_t pointer, int *size);
+	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -467,6 +486,8 @@ public:
 		entries_used--;
 	}
 
+	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
+
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
@@ -481,16 +502,20 @@ struct CloneTable : public Table<Clone, 16, 4> {
 
 		free(table[idx].variables); // Free the dynamically allocated memory part
 	}
+
+	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 };
 
 
 /* NodeTable */
 struct NodeTable : public Table<Node, 32, 16> {
+	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 };
 
 
 /* ListTable */
 struct ListTable : public Table<List, 8, 4> {
+	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 };
 
 
@@ -520,6 +545,7 @@ public:
 	}
 
 	virtual byte *dereference(reg_t pointer, int *size);
+	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };

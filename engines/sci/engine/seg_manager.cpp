@@ -1195,12 +1195,6 @@ reg_t SegInterface::findCanonicAddress(reg_t addr) {
 void SegInterface::freeAtAddress(reg_t sub_addr) {
 }
 
-void SegInterface::listAllDeallocatable(void *param, NoteCallback note) {
-}
-
-void SegInterface::listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note) {
-}
-
 
 //-------------------- base --------------------
 class SegInterfaceBase : public SegInterface {
@@ -1209,7 +1203,6 @@ protected:
 		SegInterface(segmgr, mobj, segId, typeId) {}
 public:
 	reg_t findCanonicAddress(reg_t addr);
-	void listAllDeallocatable(void *param, NoteCallback note);
 };
 
 reg_t SegInterfaceBase::findCanonicAddress(reg_t addr) {
@@ -1217,8 +1210,12 @@ reg_t SegInterfaceBase::findCanonicAddress(reg_t addr) {
 	return addr;
 }
 
-void SegInterfaceBase::listAllDeallocatable(void *param, NoteCallback note) {
-	(*note)(param, make_reg(_segId, 0));
+void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
+	(*note)(param, make_reg(segId, 0));
+}
+
+void DynMem::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
+	(*note)(param, make_reg(segId, 0));
 }
 
 
@@ -1228,7 +1225,6 @@ public:
 	SegInterfaceScript(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterfaceBase(segmgr, mobj, segId, MEM_OBJ_SCRIPT) {}
 	void freeAtAddress(reg_t addr);
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 void SegInterfaceScript::freeAtAddress(reg_t addr) {
@@ -1243,8 +1239,8 @@ void SegInterfaceScript::freeAtAddress(reg_t addr) {
 		_segmgr->deallocateScript(script->nr);
 }
 
-void SegInterfaceScript::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	Script *script = (Script *)_mobj;
+void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+	Script *script = this;
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
 		int idx = RAW_GET_CLASS_INDEX(script, addr);
@@ -1274,25 +1270,21 @@ public:
 	SegInterfaceClones(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_CLONES) {}
 	void freeAtAddress(reg_t addr);
-	void listAllDeallocatable(void *param, NoteCallback note);
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
-void SegInterfaceClones::listAllDeallocatable(void *param, NoteCallback note) {
-	CloneTable *table = (CloneTable *)_mobj;
-	for (int i = 0; i < table->max_entry; i++)
-		if (ENTRY_IS_VALID(table, i))
-			(*note)(param, make_reg(_segId, i));
-
-
+template<typename T, int INITIAL, int INCREMENT>
+void Table<T, INITIAL, INCREMENT>::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
+	for (int i = 0; i < max_entry; i++)
+		if (isValidEntry(i))
+			(*note)(param, make_reg(segId, i));
 }
 
-void SegInterfaceClones::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	CloneTable *clone_table = (CloneTable *)_mobj;
+void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+	CloneTable *clone_table = this;
 	Clone *clone;
 	int i;
 
-	assert(addr.segment == _segId);
+//	assert(addr.segment == _segId);
 
 	if (!(ENTRY_IS_VALID(clone_table, addr.offset))) {
 		fprintf(stderr, "Unexpected request for outgoing references from clone at "PREG"\n", PRINT_REG(addr));
@@ -1344,7 +1336,6 @@ public:
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_LOCALS) {}
 	reg_t findCanonicAddress(reg_t addr);
 	void freeAtAddress(reg_t addr);
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 reg_t SegInterfaceLocals::findCanonicAddress(reg_t addr) {
@@ -1362,13 +1353,11 @@ void SegInterfaceLocals::freeAtAddress(reg_t sub_addr) {
 	// STUB
 }
 
-void SegInterfaceLocals::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	LocalVariables *locals = (LocalVariables *)_mobj;
+void LocalVariables::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+//	assert(addr.segment == _segId);
 
-	assert(addr.segment == _segId);
-
-	for (int i = 0; i < locals->nr; i++)
-		(*note)(param, locals->locals[i]);
+	for (int i = 0; i < nr; i++)
+		(*note)(param, locals[i]);
 }
 
 
@@ -1378,7 +1367,6 @@ public:
 	SegInterfaceStack(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_STACK) {}
 	reg_t findCanonicAddress(reg_t addr);
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 reg_t SegInterfaceStack::findCanonicAddress(reg_t addr) {
@@ -1386,12 +1374,10 @@ reg_t SegInterfaceStack::findCanonicAddress(reg_t addr) {
 	return addr;
 }
 
-void SegInterfaceStack::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	int i;
-	dstack_t &d = *(dstack_t *)_mobj;
-	fprintf(stderr, "Emitting %d stack entries\n", d.nr);
-	for (i = 0; i < d.nr; i++)
-		(*note)(param, d.entries[i]);
+void dstack_t::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+	fprintf(stderr, "Emitting %d stack entries\n", nr);
+	for (int i = 0; i < nr; i++)
+		(*note)(param, entries[i]);
 	fprintf(stderr, "DONE");
 }
 
@@ -1417,8 +1403,6 @@ public:
 	SegInterfaceLists(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_LISTS) {}
 	void freeAtAddress(reg_t addr);
-	void listAllDeallocatable(void *param, NoteCallback note);
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
@@ -1426,21 +1410,13 @@ void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
 	table->freeEntry(sub_addr.offset);
 }
 
-void SegInterfaceLists::listAllDeallocatable(void *param, NoteCallback note) {
-	ListTable *table = (ListTable *)_mobj;
-	for (int i = 0; i < table->max_entry; i++)
-		if (ENTRY_IS_VALID(table, i))
-			(*note) (param, make_reg(_segId, i));
-}
-
-void SegInterfaceLists::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	ListTable *table = (ListTable *)_mobj;
-	List *list = &(table->table[addr.offset]);
-
-	if (!ENTRY_IS_VALID(table, addr.offset)) {
-		fprintf(stderr, "Invalid list referenced for outgoing references: "PREG"\n", PRINT_REG(addr));
+void ListTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+	if (!isValidEntry(addr.offset)) {
+		warning("Invalid list referenced for outgoing references: "PREG"", PRINT_REG(addr));
 		return;
 	}
+
+	List *list = &(table[addr.offset]);
 
 	note(param, list->first);
 	note(param, list->last);
@@ -1455,8 +1431,6 @@ public:
 	SegInterfaceNodes(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_NODES) {}
 	void freeAtAddress(reg_t addr);
-	void listAllDeallocatable(void *param, NoteCallback note);
-	void listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note);
 };
 
 void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
@@ -1464,21 +1438,12 @@ void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
 	table->freeEntry(sub_addr.offset);
 }
 
-void SegInterfaceNodes::listAllDeallocatable(void *param, NoteCallback note) {
-	NodeTable *table = (NodeTable *)_mobj;
-	for (int i = 0; i < table->max_entry; i++)
-		if (ENTRY_IS_VALID(table, i))
-			(*note) (param, make_reg(_segId, i));
-}
-
-void SegInterfaceNodes::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
-	NodeTable *table = (NodeTable *)_mobj;
-	Node *node = &(table->table[addr.offset]);
-
-	if (!ENTRY_IS_VALID(table, addr.offset)) {
-		fprintf(stderr, "Invalid node referenced for outgoing references: "PREG"\n", PRINT_REG(addr));
+void NodeTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+	if (!isValidEntry(addr.offset)) {
+		warning("Invalid node referenced for outgoing references: "PREG"", PRINT_REG(addr));
 		return;
 	}
+	Node *node = &(table[addr.offset]);
 
 	// We need all four here. Can't just stick with 'pred' OR 'succ' because node operations allow us
 	// to walk around from any given node
@@ -1495,21 +1460,12 @@ public:
 	SegInterfaceHunk(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_HUNK) {}
 	void freeAtAddress(reg_t addr);
-	void listAllDeallocatable(void *param, NoteCallback note);
 };
 
 void SegInterfaceHunk::freeAtAddress(reg_t sub_addr) {
 	//sciprintf("  Request to free "PREG"\n", PRINT_REG(sub_addr));
 	// STUB
 }
-
-void SegInterfaceHunk::listAllDeallocatable(void *param, NoteCallback note) {
-	HunkTable *table = (HunkTable *)_mobj;
-	for (int i = 0; i < table->max_entry; i++)
-		if (ENTRY_IS_VALID(table, i))
-			(*note) (param, make_reg(_segId, i));
-}
-
 
 //-------------------- dynamic memory --------------------
 class SegInterfaceDynMem : public SegInterfaceBase {
