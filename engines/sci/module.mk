@@ -37,6 +37,7 @@ MODULE_OBJS = \
 	gfx/font.o \
 	gfx/gfx_driver.o \
 	gfx/gfx_gui.o \
+	gfx/gfx_pixmap_scale.o \
 	gfx/gfx_res_options.o \
 	gfx/gfx_resmgr.o \
 	gfx/gfx_resource.o \

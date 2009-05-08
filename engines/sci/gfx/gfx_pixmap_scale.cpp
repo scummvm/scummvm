@@ -29,14 +29,16 @@
 ** EXTRA_BYTE_OFFSET: Extra source byte offset for copying (used on big-endian machines in 24 bit mode)
 */
 
-#include "sci/sci_memory.h"
+#include "sci/gfx/gfx_system.h"
+#include "sci/gfx/gfx_resource.h"
+#include "sci/gfx/gfx_tools.h"
 
 namespace Sci {
 
 #define EXTEND_COLOR(x) (unsigned) ((((unsigned) x) << 24) | (((unsigned) x) << 16) | (((unsigned) x) << 8) | ((unsigned) x))
-#define PALETTE_MODE mode->palette
 
-void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
+template<int COPY_BYTES, typename SIZETYPE, int EXTRA_BYTE_OFFSET>
+void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	SIZETYPE result_colors[GFX_PIC_COLORS];
 	SIZETYPE alpha_color = 0xffffffff & mode->alpha_mask;
 	SIZETYPE alpha_ormask = 0;
@@ -70,7 +72,7 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 		int col;
 
 		const PaletteEntry& color = pxm->palette->getColor(i);
-		if (PALETTE_MODE)
+		if (mode->palette)
 			col = color.parent_index;
 		else {
 			col = mode->red_mask & ((EXTEND_COLOR(color.r)) >> mode->red_shift);
@@ -188,7 +190,8 @@ void FUNCNAME(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 // End of macro definition
 
 
-void FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
+template<int COPY_BYTES, typename SIZETYPE, int EXTRA_BYTE_OFFSET>
+void _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	int xfact = mode->xfact;
 	int yfact = mode->yfact;
 	int line_step = (yfact < 2) ? 0 : 256 / (yfact & ~1);
@@ -212,7 +215,7 @@ void FUNCNAME_LINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	}
 
 	assert(bytespp == COPY_BYTES);
-	assert(!PALETTE_MODE);
+	assert(!mode->palette);
 
 	masks[0] = mode->red_mask;
 	masks[1] = mode->green_mask;
@@ -337,7 +340,8 @@ static void gfx_apply_delta(unsigned int *color, int *delta, int factor) {
 
 #define REVERSE_ALPHA(foo) ((inverse_alpha) ? ~(foo) : (foo))
 
-void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
+template<int COPY_BYTES, typename SIZETYPE, int EXTRA_BYTE_OFFSET>
+void _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	int xfact = mode->xfact;
 	int yfact = mode->yfact;
 	int line_step = (yfact < 2) ? 0 : 256 / yfact;
@@ -361,7 +365,7 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	}
 
 	assert(bytespp == COPY_BYTES);
-	assert(!PALETTE_MODE);
+	assert(!mode->palette);
 
 	masks[0] = mode->red_mask;
 	masks[1] = mode->green_mask;
@@ -376,7 +380,7 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 		return;
 
 	if (separate_alpha_map && !alpha_dest)
-		alpha_dest = pxm->alpha_map = (byte*)sci_malloc(pxm->index_width * xfact * pxm->index_height * yfact);
+		alpha_dest = pxm->alpha_map = (byte *)sci_malloc(pxm->index_width * xfact * pxm->index_height * yfact);
 
 	src -= pxm->index_width + 1;
 
@@ -484,10 +488,165 @@ void FUNCNAME_TRILINEAR(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 #undef X_CALC_INTENSITY_NORMAL
 #undef MAKE_PIXEL_TRILINEAR
 #undef MAKE_PIXEL
-#undef FUNCNAME
-#undef FUNCNAME_LINEAR
-#undef FUNCNAME_TRILINEAR
 #undef SIZETYPE
 #undef EXTEND_COLOR
+
+
+
+static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
+	switch (mode->bytespp) {
+
+	case 1:
+		_gfx_xlate_pixmap_unfiltered<1, uint8, 0>(mode, pxm, scale);
+		break;
+
+	case 2:
+		_gfx_xlate_pixmap_unfiltered<2, uint16, 0>(mode, pxm, scale);
+		break;
+
+	case 3:
+#ifdef SCUMM_BIG_ENDIAN
+		_gfx_xlate_pixmap_unfiltered<3, uint32, 1>(mode, pxm, scale);
+#else
+		_gfx_xlate_pixmap_unfiltered<3, uint32, 0>(mode, pxm, scale);
+#endif
+		break;
+
+	case 4:
+		_gfx_xlate_pixmap_unfiltered<4, uint32, 0>(mode, pxm, scale);
+		break;
+
+	default:
+		GFXERROR("Invalid mode->bytespp=%d\n", mode->bytespp);
+
+	}
+
+	if (pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX) {
+		pxm->width = pxm->index_width;
+		pxm->height = pxm->index_height;
+	} else {
+		pxm->width = pxm->index_width * mode->xfact;
+		pxm->height = pxm->index_height * mode->yfact;
+	}
+}
+
+static void _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
+	if (mode->palette || !scale) { // fall back to unfiltered
+		_gfx_xlate_pixmap_unfiltered(mode, pxm, scale);
+		return;
+	}
+
+	pxm->width = pxm->index_width * mode->xfact;
+	pxm->height = pxm->index_height * mode->yfact;
+
+	switch (mode->bytespp) {
+
+	case 1:
+		_gfx_xlate_pixmap_linear<1, uint8, 0>(mode, pxm, scale);
+		break;
+
+	case 2:
+		_gfx_xlate_pixmap_linear<2, uint16, 0>(mode, pxm, scale);
+		break;
+
+	case 3:
+#ifdef SCUMM_BIG_ENDIAN
+		_gfx_xlate_pixmap_linear<3, uint32, 1>(mode, pxm, scale);
+#else
+		_gfx_xlate_pixmap_linear<3, uint32, 0>(mode, pxm, scale);
+#endif
+		break;
+
+	case 4:
+		_gfx_xlate_pixmap_linear<4, uint32, 0>(mode, pxm, scale);
+		break;
+
+	default:
+		GFXERROR("Invalid mode->bytespp=%d\n", mode->bytespp);
+
+	}
+
+}
+
+static void _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
+	if (mode->palette || !scale) { // fall back to unfiltered
+		_gfx_xlate_pixmap_unfiltered(mode, pxm, scale);
+		return;
+	}
+
+	pxm->width = pxm->index_width * mode->xfact;
+	pxm->height = pxm->index_height * mode->yfact;
+
+	switch (mode->bytespp) {
+	case 1:
+		_gfx_xlate_pixmap_trilinear<1, uint8, 0>(mode, pxm, scale);
+		break;
+
+	case 2:
+		_gfx_xlate_pixmap_trilinear<2, uint16, 0>(mode, pxm, scale);
+		break;
+
+	case 3:
+#ifdef SCUMM_BIG_ENDIAN
+		_gfx_xlate_pixmap_trilinear<3, uint32, 1>(mode, pxm, scale);
+#else
+		_gfx_xlate_pixmap_trilinear<3, uint32, 0>(mode, pxm, scale);
+#endif
+		break;
+
+	case 4:
+		_gfx_xlate_pixmap_trilinear<4, uint32, 0>(mode, pxm, scale);
+		break;
+
+	default:
+		GFXERROR("Invalid mode->bytespp=%d\n", mode->bytespp);
+
+	}
+}
+
+void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter) {
+	int was_allocated = 0;
+
+	if (mode->palette) {
+		if (pxm->palette && pxm->palette != mode->palette)
+			pxm->palette->mergeInto(mode->palette);
+	}
+
+
+	if (!pxm->data) {
+		pxm->data = (byte*)sci_malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height * mode->bytespp + 1);
+		// +1: Eases coying on BE machines in 24 bpp packed mode
+		// Assume that memory, if allocated already, will be sufficient
+
+		// Allocate alpha map
+		if (!mode->alpha_mask && pxm->colors_nr() < GFX_PIC_COLORS)
+			pxm->alpha_map = (byte*)sci_malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height + 1);
+	} else
+		was_allocated = 1;
+
+	switch (filter) {
+	case GFX_XLATE_FILTER_NONE:
+		_gfx_xlate_pixmap_unfiltered(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
+		break;
+
+	case GFX_XLATE_FILTER_LINEAR:
+		_gfx_xlate_pixmap_linear(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
+		break;
+
+	case GFX_XLATE_FILTER_TRILINEAR:
+		_gfx_xlate_pixmap_trilinear(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));
+		break;
+
+	default:
+		GFXERROR("Attempt to filter pixmap %04x in invalid mode #%d\n", pxm->ID, filter);
+
+		if (!was_allocated) {
+			if (!mode->alpha_mask && pxm->colors_nr() < GFX_PIC_COLORS)
+				free(pxm->alpha_map);
+			free(pxm->data);
+		}
+	}
+}
+
 
 } // End of namespace Sci
