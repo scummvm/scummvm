@@ -75,17 +75,9 @@ void add_outgoing_refs(void *refcon, reg_t addr) {
 
 reg_t_hash_map *find_all_used_references(EngineState *s) {
 	SegManager *sm = s->seg_manager;
-	Common::Array<SegInterface *> interfaces;
 	reg_t_hash_map *normal_map = NULL;
 	WorklistManager wm;
 	uint i;
-
-	interfaces.resize(sm->_heap.size());
-	for (i = 1; i < sm->_heap.size(); i++)
-		if (sm->_heap[i] == NULL)
-			interfaces[i] = NULL;
-		else
-			interfaces[i] = sm->getSegInterface(i);
 
 	// Initialise
 	// Init: Registers
@@ -121,9 +113,9 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 
 	// Init: Explicitly loaded scripts
 	for (i = 1; i < sm->_heap.size(); i++)
-		if (interfaces[i]
-		        && interfaces[i]->getType() == MEM_OBJ_SCRIPT) {
-			Script *script = (Script *)(interfaces[i]->getMobj());
+		if (sm->_heap[i]
+		        && sm->_heap[i]->getType() == MEM_OBJ_SCRIPT) {
+			Script *script = (Script *)sm->_heap[i];
 
 			if (script->lockers) { // Explicitly loaded?
 				int obj_nr;
@@ -157,11 +149,6 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 
 	// Normalise
 	normal_map = normalise_hashmap_ptrs(sm, wm._map);
-
-	// Cleanup
-	for (i = 1; i < sm->_heap.size(); i++)
-		if (interfaces[i])
-			delete interfaces[i];
 
 	return normal_map;
 }

@@ -48,8 +48,6 @@ enum idFlag {
 		(((mgr)._heap[index]	&& ((mgr)._heap[index]->getType() == MEM_OBJ_SCRIPT || (mgr)._heap[index]->getType() == MEM_OBJ_CLONES))? (mgr)._heap[index]	\
 		: NULL): NULL)
 
-class SegInterface;
-
 class SegManager : public Common::Serializable {
 public:
 	// Initialize the segment manager
@@ -368,13 +366,6 @@ public:
 	byte *dereference(reg_t reg, int *size);
 
 
-	// Segment Interface
-
-	// Retrieves the segment interface to the specified segment
-	// Parameters: (SegmentId) segid: ID of the segment to look up
-	// Returns   : (SegInterface *): An interface to the specified segment ID, or NULL on error
-	// The returned interface must be deleted after use
-	SegInterface *getSegInterface(SegmentId segid);
 
 
 	void heapRelocate(EngineState *s, reg_t block);
@@ -432,39 +423,6 @@ private:
 	// Parameters: (EngineState *) s: The state to operate on
 	// Effects   : Unreachable objects in 's' are deallocated
 	//void sm_gc(EngineState *s);
-};
-
-
-// 11. Segment interface, primarily for GC
-
-// TODO: Merge SegInterface and MemObject?
-// After all, _mobj->type == _typeId
-// and we make very little use of _segmgr (-> could get rid of that).
-// Other code would benefit, e.g. the saveload code.
-// But note that _mobj->segmgr_id != _segId !
-class SegInterface {
-protected:
-	SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId, MemObjectType typeId);
-
-public:
-	typedef void (*NoteCallback)(void *param, reg_t addr);
-
-	// Deallocates the segment interface
-	virtual ~SegInterface() {}
-
-	// Get the memory object
-	MemObject *getMobj() { return _mobj; }
-
-	// Get the segment type
-	MemObjectType getType() { return _typeId; }
-
-protected:
-	SegManager *_segmgr;
-	MemObject *_mobj;
-	SegmentId _segId;
-
-private:
-	MemObjectType _typeId; // Segment type
 };
 
 } // End of namespace Sci
