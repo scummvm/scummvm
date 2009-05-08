@@ -629,10 +629,6 @@ int script_map_kernel(EngineState *s) {
 			s->_kfuncTable[functnr].orig_name = sought_name;
 		} else
 			switch (kfunct_mappers[found].type) {
-			case KF_OLD:
-				sciprintf("Emulated kernel function found.\nThis shouldn't happen anymore.");
-				return 1;
-
 			case KF_NONE:
 				s->_kfuncTable[functnr].signature = NULL;
 				++ignored;
@@ -697,7 +693,7 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 			return KSIG_REF | KSIG_INVALID;
 
 	case MEM_OBJ_STACK:
-		if (allow_invalid || reg.offset < (*(dstack_t *)mobj).nr * sizeof(reg_t))
+		if (allow_invalid || reg.offset < (*(DataStack *)mobj).nr * sizeof(reg_t))
 			return KSIG_REF;
 		else
 			return KSIG_REF | KSIG_INVALID;

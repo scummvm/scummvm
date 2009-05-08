@@ -310,10 +310,12 @@ struct kfunct_sig_pair_t {
 	Common::String orig_name; /* Original name, in case we couldn't map it */
 };
 
-#define KF_OLD 0
-#define KF_NEW 1
-#define KF_NONE -1 /* No mapping, but name is known */
-#define KF_TERMINATOR -42 /* terminates kfunct_mappers */
+
+enum {
+	KF_NEW = 1,
+	KF_NONE = -1, /* No mapping, but name is known */
+	KF_TERMINATOR = -42 /* terminates kfunct_mappers */
+};
 
 struct SciKernelFunction {
 	int type; /* KF_* */

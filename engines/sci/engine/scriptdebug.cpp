@@ -305,7 +305,7 @@ int c_segtable(EngineState *s) {
 				break;
 
 			case MEM_OBJ_STACK:
-				sciprintf("D  data stack (%d)", (*(dstack_t *)mobj).nr);
+				sciprintf("D  data stack (%d)", (*(DataStack *)mobj).nr);
 				break;
 
 			case MEM_OBJ_SYS_STRINGS:
@@ -419,7 +419,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	break;
 
 	case MEM_OBJ_STACK: {
-		dstack_t *stack = (dstack_t *)mobj;
+		DataStack *stack = (DataStack *)mobj;
 		sciprintf("stack\n");
 		sciprintf("  %d (0x%x) entries\n", stack->nr, stack->nr);
 	}

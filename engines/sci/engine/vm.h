@@ -369,16 +369,16 @@ public:
 };
 
 /** Data stack */
-struct dstack_t : MemObject {
+struct DataStack : MemObject {
 	int nr; /**< Number of stack entries */
 	reg_t *entries;
 
 public:
-	dstack_t() {
+	DataStack() {
 		nr = 0;
 		entries = NULL;
 	}
-	~dstack_t() {
+	~DataStack() {
 		free(entries);
 		entries = NULL;
 	}

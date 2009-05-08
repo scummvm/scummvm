@@ -439,10 +439,10 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&mobj) {
 		break;
 	case MEM_OBJ_STACK:
 		// TODO: Switch this stack to use class Common::Stack?
-		s.syncAsUint32LE((*(dstack_t *)mobj).nr);
+		s.syncAsUint32LE((*(DataStack *)mobj).nr);
 		if (s.isLoading()) {
-			//free((*(dstack_t *)mobj).entries);
-			(*(dstack_t *)mobj).entries = (reg_t *)sci_calloc((*(dstack_t *)mobj).nr, sizeof(reg_t));
+			//free((*(DataStack *)mobj).entries);
+			(*(DataStack *)mobj).entries = (reg_t *)sci_calloc((*(DataStack *)mobj).nr, sizeof(reg_t));
 		}
 		break;
 	case MEM_OBJ_HUNK:
@@ -539,7 +539,7 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 // FIXME: This should probably be turned into an EngineState method
 static void reconstruct_stack(EngineState *retval) {
 	SegmentId stack_seg = find_unique_seg_by_type(retval->seg_manager, MEM_OBJ_STACK);
-	dstack_t *stack = (dstack_t *)(retval->seg_manager->_heap[stack_seg]);
+	DataStack *stack = (DataStack *)(retval->seg_manager->_heap[stack_seg]);
 
 	retval->stack_segment = stack_seg;
 	retval->stack_base = stack->entries;

@@ -549,7 +549,7 @@ void script_free_breakpoints(EngineState *s) {
 int game_init(EngineState *s) {
 	// FIXME Use new VM instantiation code all over the place"
 	reg_t game_obj; // Address of the game object
-	dstack_t *stack;
+	DataStack *stack;
 
 	stack = s->seg_manager->allocateStack(VM_STACK_SIZE, &s->stack_segment);
 	s->stack_base = stack->entries;

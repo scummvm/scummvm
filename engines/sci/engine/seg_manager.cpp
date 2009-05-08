@@ -313,7 +313,7 @@ MemObject *MemObject::createMemObject(MemObjectType type) {
 		mem = new SystemStrings();
 		break;
 	case MEM_OBJ_STACK:
-		mem = new dstack_t();
+		mem = new DataStack();
 		break;
 	case MEM_OBJ_HUNK:
 		mem = new HunkTable();
@@ -939,9 +939,9 @@ static char *SegManager::dynprintf(char *msg, ...) {
 }
 */
 
-dstack_t *SegManager::allocateStack(int size, SegmentId *segid) {
+DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
 	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_STACK, segid);
-	dstack_t *retval = (dstack_t *)mobj;
+	DataStack *retval = (DataStack *)mobj;
 
 	retval->entries = (reg_t *)sci_calloc(size, sizeof(reg_t));
 	retval->nr = size;
@@ -1091,7 +1091,7 @@ byte *LocalVariables::dereference(reg_t pointer, int *size) {
 	return base + pointer.offset;
 }
 
-byte *dstack_t::dereference(reg_t pointer, int *size) {
+byte *DataStack::dereference(reg_t pointer, int *size) {
 	int count = nr * sizeof(reg_t);
 	byte *base = (byte *)entries;
 
@@ -1374,7 +1374,7 @@ reg_t SegInterfaceStack::findCanonicAddress(reg_t addr) {
 	return addr;
 }
 
-void dstack_t::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+void DataStack::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	fprintf(stderr, "Emitting %d stack entries\n", nr);
 	for (int i = 0; i < nr; i++)
 		(*note)(param, entries[i]);

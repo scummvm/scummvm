@@ -278,15 +278,15 @@ public:
 
 	// Allocates a data stack
 	// Parameters: (int) size: Number of stack entries to reserve
-	// Returns   : (dstack_t *): The physical stack
+	// Returns   : (DataStack *): The physical stack
 	//             (SegmentId) segid: Segment ID of the stack
-	dstack_t *allocateStack(int size, SegmentId *segid);
+	DataStack *allocateStack(int size, SegmentId *segid);
 
 
 	// 5. System Strings
 
 	// Allocates a system string table
-	// Returns   : (dstack_t *): The physical stack
+	// Returns   : (DataStack *): The physical stack
 	//             (SegmentId) segid: Segment ID of the stack
 	// See also sys_string_acquire();
 	SystemStrings *allocateSysStrings(SegmentId *segid);
