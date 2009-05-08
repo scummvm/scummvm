@@ -329,7 +329,7 @@ static unsigned char clamp_color(int c) {
 
 static void MakeColor() {
 	Color *c;
-	
+
 	DEBUG_FUNCTION();
 	c = new Color (clamp_color(check_int(1)), clamp_color(check_int(2)), clamp_color(check_int(3)));
 	lua_pushusertag(c, MKID_BE('COLR'));
@@ -337,7 +337,7 @@ static void MakeColor() {
 
 static void GetColorComponents() {
 	Color *c;
-	
+
 	DEBUG_FUNCTION();
 	c = check_color(1);
 	lua_pushnumber(c->red());
@@ -1355,7 +1355,7 @@ static void SetActorHead() {
 	joint1 = check_int(2);
 	joint2 = check_int(3);
 	joint3 = check_int(4);
-	maxRoll = luaL_check_number(5); // Yaz: recheck to see if it's really roll
+	maxRoll = luaL_check_number(5);
 	maxPitch = luaL_check_number(6);
 	maxYaw = luaL_check_number(7);
 	act->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
@@ -1635,7 +1635,7 @@ static void SayLine() {
 						return;
 					}
 					key = lua_getresult(1);
-					if (lua_isnil(key)) 
+					if (lua_isnil(key))
 						break;
 					warning("SayLine() not null table");
 					key_text = lua_getstring(key);
@@ -3255,7 +3255,7 @@ static void stubWarning(const char *funcName) {
 	// If the user doesn't want these debug messages then don't print them
 	if (debugLevel != DEBUG_WARN && debugLevel != DEBUG_STUB && debugLevel != DEBUG_FUNC && debugLevel != DEBUG_ALL)
 		return;
-	
+
 	debugFunction("WARNING: Stub function", funcName);
 }
 
