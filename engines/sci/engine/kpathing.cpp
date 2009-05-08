@@ -927,8 +927,8 @@ static int near_point(const Common::Point &p, Polygon *polygon, Common::Point *r
 		FloatPoint new_point;
 		uint32 new_dist;
 
-		// Ignore edges on the screen border
-		if (edge_on_screen_border(p1, p2))
+		// Ignore edges on the screen border, except for contained access polygons
+		if ((polygon->type != POLY_CONTAINED_ACCESS) && (edge_on_screen_border(p1, p2)))
 			continue;
 
 		// Compute near point
@@ -1142,7 +1142,7 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 		case POLY_CONTAINED_ACCESS:
 		case POLY_BARRED_ACCESS:
 		case POLY_NEAREST_ACCESS:
-			if (cont == CONT_INSIDE) {
+			if (cont != CONT_OUTSIDE) {
 				if (s->_appendPoint != NULL) {
 					// We shouldn't get here twice
 					warning("AvoidPath: end point is contained in multiple polygons");
@@ -1230,12 +1230,21 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 
 	// WORKAROUND: broken polygon in LSL1VGA, room 350, after opening elevator
 	// Polygon has 17 points but size is set to 19
-	if (s->_gameName == "LSL1") {
+	if ((size == 19) && (s->_gameName == "LSL1")) {
 		// FIXME: implement function to get current room number
 		if ((KP_UINT(s->script_000->locals_block->locals[13]) == 350)
-		&& (size == 19) && (read_point(list, is_reg_t, 18) == Common::Point(108, 137))) {
-			debug(1, "Applying fix for broken polygon in LSL1, room 350");
+		&& (read_point(list, is_reg_t, 18) == Common::Point(108, 137))) {
+			debug(1, "Applying fix for broken polygon in LSL1VGA, room 350");
 			size = 17;
+		}
+	}
+
+	// WORKAROUND: self-intersecting polygon in ECO, room 300, remove last point
+	if ((size == 11) && (s->_gameName == "eco")) {
+		if ((KP_UINT(s->script_000->locals_block->locals[13]) == 300)
+		&& (read_point(list, is_reg_t, 10) == Common::Point(221, 0))) {
+			debug(1, "Applying fix for self-intersecting polygon in ECO, room 300");
+			size = 10;
 		}
 	}
 
@@ -1662,6 +1671,12 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		p = convert_polygon_set(s, poly_list, start, end, opt);
 
+		if (p && intersecting_polygons(p)) {
+			sciprintf("[avoidpath] Error: input set contains (self-)intersecting polygons\n");
+			delete p;
+			p = NULL;
+		}
+
 		if (!p) {
 			byte *oref;
 			sciprintf("[avoidpath] Error: pathfinding failed for following input:\n");
@@ -1675,12 +1690,6 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			POLY_SET_POINT(oref, 2, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 			return output;
-		}
-
-		if (intersecting_polygons(p)) {
-			sciprintf("[avoidpath] Error: input set contains (self-)intersecting polygons\n");
-			delete p;
-			p = NULL;
 		}
 
 		dijkstra(p);
