@@ -148,11 +148,16 @@ int MessageState::loadRes(int module) {
 	if (_module == module)
 		return 1;
 
+	// Unlock old resource
+	if (_module != -1)
+		resmgr->unlockResource(current_res, _module, kResourceTypeMessage);
+
 	_module = module;
-	current_res = resmgr->findResource(kResourceTypeMessage, module, 0);
+	current_res = resmgr->findResource(kResourceTypeMessage, module, 1);
 
 	if (current_res == NULL || current_res->data == NULL) {
 		sciprintf("Message subsystem: Failed to load %d.MSG\n", module);
+		_module = -1;
 		return 0;
 	}
 
