@@ -1192,10 +1192,6 @@ reg_t SegInterface::findCanonicAddress(reg_t addr) {
 	return addr;
 }
 
-void SegInterface::freeAtAddress(reg_t sub_addr) {
-}
-
-
 //-------------------- base --------------------
 class SegInterfaceBase : public SegInterface {
 protected:
@@ -1224,19 +1220,17 @@ class SegInterfaceScript : public SegInterfaceBase {
 public:
 	SegInterfaceScript(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterfaceBase(segmgr, mobj, segId, MEM_OBJ_SCRIPT) {}
-	void freeAtAddress(reg_t addr);
 };
 
-void SegInterfaceScript::freeAtAddress(reg_t addr) {
-	Script *script = (Script *)_mobj;
+void Script::freeAtAddress(SegManager *segmgr, reg_t addr) {
 	/*
 		sciprintf("[GC] Freeing script "PREG"\n", PRINT_REG(addr));
-		if (script->locals_segment)
-			sciprintf("[GC] Freeing locals %04x:0000\n", script->locals_segment);
+		if (locals_segment)
+			sciprintf("[GC] Freeing locals %04x:0000\n", locals_segment);
 	*/
 
-	if (script->marked_as_deleted)
-		_segmgr->deallocateScript(script->nr);
+	if (marked_as_deleted)
+		segmgr->deallocateScript(nr);
 }
 
 void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
@@ -1269,7 +1263,6 @@ class SegInterfaceClones : public SegInterface {
 public:
 	SegInterfaceClones(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_CLONES) {}
-	void freeAtAddress(reg_t addr);
 };
 
 template<typename T, int INITIAL, int INCREMENT>
@@ -1303,11 +1296,11 @@ void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *par
 	//sciprintf("[GC] Reporting clone-pos "PREG"\n", PRINT_REG(clone->pos));
 }
 
-void SegInterfaceClones::freeAtAddress(reg_t addr) {
-	CloneTable *clone_table = (CloneTable *)_mobj;
+void CloneTable::freeAtAddress(SegManager *segmgr, reg_t addr) {
+	CloneTable *clone_table = this;
 	Object *victim_obj;
 
-	assert(addr.segment == _segId);
+//	assert(addr.segment == _segId);
 
 	victim_obj = &(clone_table->table[addr.offset]);
 
@@ -1335,7 +1328,6 @@ public:
 	SegInterfaceLocals(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_LOCALS) {}
 	reg_t findCanonicAddress(reg_t addr);
-	void freeAtAddress(reg_t addr);
 };
 
 reg_t SegInterfaceLocals::findCanonicAddress(reg_t addr) {
@@ -1346,11 +1338,6 @@ reg_t SegInterfaceLocals::findCanonicAddress(reg_t addr) {
 	assert(owner_seg >= 0);
 
 	return make_reg(owner_seg, 0);
-}
-
-void SegInterfaceLocals::freeAtAddress(reg_t sub_addr) {
-	//sciprintf("  Request to free "PREG"\n", PRINT_REG(sub_addr));
-	// STUB
 }
 
 void LocalVariables::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
@@ -1402,12 +1389,10 @@ class SegInterfaceLists : public SegInterface {
 public:
 	SegInterfaceLists(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_LISTS) {}
-	void freeAtAddress(reg_t addr);
 };
 
-void SegInterfaceLists::freeAtAddress(reg_t sub_addr) {
-	ListTable *table = (ListTable *)_mobj;
-	table->freeEntry(sub_addr.offset);
+void ListTable::freeAtAddress(SegManager *segmgr, reg_t sub_addr) {
+	freeEntry(sub_addr.offset);
 }
 
 void ListTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
@@ -1430,12 +1415,10 @@ class SegInterfaceNodes : public SegInterface {
 public:
 	SegInterfaceNodes(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_NODES) {}
-	void freeAtAddress(reg_t addr);
 };
 
-void SegInterfaceNodes::freeAtAddress(reg_t sub_addr) {
-	NodeTable *table = (NodeTable *)_mobj;
-	table->freeEntry(sub_addr.offset);
+void NodeTable::freeAtAddress(SegManager *segmgr, reg_t sub_addr) {
+	freeEntry(sub_addr.offset);
 }
 
 void NodeTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
@@ -1459,27 +1442,14 @@ class SegInterfaceHunk : public SegInterface {
 public:
 	SegInterfaceHunk(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_HUNK) {}
-	void freeAtAddress(reg_t addr);
 };
-
-void SegInterfaceHunk::freeAtAddress(reg_t sub_addr) {
-	//sciprintf("  Request to free "PREG"\n", PRINT_REG(sub_addr));
-	// STUB
-}
 
 //-------------------- dynamic memory --------------------
 class SegInterfaceDynMem : public SegInterfaceBase {
 public:
 	SegInterfaceDynMem(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterfaceBase(segmgr, mobj, segId, MEM_OBJ_DYNMEM) {}
-	void freeAtAddress(reg_t addr);
 };
-
-void SegInterfaceDynMem::freeAtAddress(reg_t sub_addr) {
-	//sciprintf("  Request to free "PREG"\n", PRINT_REG(sub_addr));
-	// STUB
-}
-
 
 SegInterface *SegManager::getSegInterface(SegmentId segid) {
 	if (!check(segid))

@@ -36,6 +36,8 @@
 
 namespace Sci {
 
+class SegManager;
+
 enum MemObjectType {
 	MEM_OBJ_INVALID = 0,
 	MEM_OBJ_SCRIPT = 1,
@@ -74,6 +76,10 @@ public:
 
 	inline MemObjectType getType() const { return _type; }
 	inline int getSegMgrId() const { return _segmgrId; }
+
+	// Deallocates all memory associated with the specified address
+	// Parameters: (reg_t) sub_addr: The address (within the given segment) to deallocate
+	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr) {}
 
 	// Iterates over and reports all addresses within the current segment
 	// Parameters: note : (voidptr * addr) -> (): Invoked for each address on which free_at_address()
@@ -362,6 +368,7 @@ public:
 	void freeScript();
 
 	virtual byte *dereference(reg_t pointer, int *size);
+	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
@@ -503,18 +510,21 @@ struct CloneTable : public Table<Clone, 16, 4> {
 		free(table[idx].variables); // Free the dynamically allocated memory part
 	}
 
+	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 };
 
 
 /* NodeTable */
 struct NodeTable : public Table<Node, 32, 16> {
+	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 };
 
 
 /* ListTable */
 struct ListTable : public Table<List, 8, 4> {
+	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 };
 

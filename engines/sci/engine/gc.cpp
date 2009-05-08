@@ -167,7 +167,8 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 }
 
 struct deallocator_t {
-	SegInterface *interfce;
+	SegManager *segmgr;
+	MemObject *mobj;
 #ifdef DEBUG_GC
 	char *segnames[MEM_OBJ_MAX + 1];
 	int segcount[MEM_OBJ_MAX + 1];
@@ -181,10 +182,10 @@ void free_unless_used(void *refcon, reg_t addr) {
 
 	if (!use_map->contains(addr)) {
 		// Not found -> we can free it
-		deallocator->interfce->freeAtAddress(addr);
+		deallocator->mobj->freeAtAddress(deallocator->segmgr, addr);
 #ifdef DEBUG_GC
 		sciprintf("[GC] Deallocating "PREG"\n", PRINT_REG(addr));
-		deallocator->segcount[deallocator->interfce->getType()]++;
+		deallocator->segcount[deallocator->mobj->getType()]++;
 #endif
 	}
 
@@ -202,16 +203,16 @@ void run_gc(EngineState *s) {
 	memset(&(deallocator.segcount), 0, sizeof(int) * (MEM_OBJ_MAX + 1));
 #endif
 
+	deallocator.segmgr = sm;
 	deallocator.use_map = find_all_used_references(s);
 
 	for (seg_nr = 1; seg_nr < sm->_heap.size(); seg_nr++) {
 		if (sm->_heap[seg_nr] != NULL) {
-			deallocator.interfce = sm->getSegInterface(seg_nr);
+			deallocator.mobj = sm->_heap[seg_nr];
 #ifdef DEBUG_GC
-			deallocator.segnames[deallocator.interfce->getType()] = deallocator.interfce->type;
+			deallocator.segnames[deallocator.mobj->getType()] = deallocator.mobj->type;	// FIXME: add a segment "name"
 #endif
-			sm->_heap[seg_nr]->listAllDeallocatable(seg_nr, &deallocator, free_unless_used);
-			delete deallocator.interfce;
+			deallocator.mobj->listAllDeallocatable(seg_nr, &deallocator, free_unless_used);
 		}
 	}
 

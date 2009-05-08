@@ -458,10 +458,6 @@ public:
 	// This address "governs" a in the sense that deallocating c(a) will deallocate a.
 	virtual reg_t findCanonicAddress(reg_t sub_addr);
 
-	// Deallocates all memory associated with the specified address
-	// Parameters: (reg_t) sub_addr: The address (within the given segment) to deallocate
-	virtual void freeAtAddress(reg_t sub_addr);
-
 	// Get the memory object
 	MemObject *getMobj() { return _mobj; }
 
