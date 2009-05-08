@@ -2997,6 +2997,24 @@ static const GOBGameDescription gameDescriptions[] = {
 		"",
 		""
 	},
+	{
+		{
+			"adibouunknown",
+			"Dis-moi Adi : Anglais primaire 7-11 ans (PAK/??\?)",
+			{
+				{"adi_exerciser.pak", 0, "a2d7dec00cd5a6e2f2b8bfc225df490e", 136669275},
+				{"adi_texts.pak", 0, "eb09da3d13770c34bf77e4f94744d5f5", 10616},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		"",
+		""
+	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0 }
 };
 
