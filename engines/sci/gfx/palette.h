@@ -58,32 +58,32 @@ struct gfx_pixmap_color_t;
 
 class Palette {
 public:
-	explicit Palette(unsigned int size);
-	Palette(gfx_pixmap_color_t *colors, unsigned int size);
+	explicit Palette(uint size);
+	Palette(const gfx_pixmap_color_t *colors, uint size);
 	~Palette();
 
 	Palette *getref();
 	void free();
 	Palette *copy();
 
-	void resize(unsigned int size);
-	void setColor(unsigned int index, byte r, byte g, byte b);
-	void makeSystemColor(unsigned int index, const PaletteEntry &color);
-	const PaletteEntry &getColor(unsigned int index) const {
+	void resize(uint size);
+	void setColor(uint index, byte r, byte g, byte b);
+	void makeSystemColor(uint index, const PaletteEntry &color);
+	const PaletteEntry &getColor(uint index) const {
 		assert(index < _size);
 		return _colors[index];
 	}
-	const PaletteEntry &operator[](unsigned int index) const {
+	const PaletteEntry &operator[](uint index) const {
 		return getColor(index);
 	}
-	unsigned int size() const { return _size; }
+	uint size() const { return _size; }
 	bool isDirty() const { return _dirty; }
 	bool isShared() const { return _refcount > 1; }
 	Palette *getParent() { return _parent; }
 
 	void markClean() { _dirty = false; }
 
-	unsigned int findNearbyColor(byte r, byte g, byte b, bool lock=false);
+	uint findNearbyColor(byte r, byte g, byte b, bool lock=false);
 
 	void mergeInto(Palette *parent);
 	void unmerge();
@@ -91,7 +91,7 @@ public:
 	Common::String name; // strictly for debugging purposes
 private:
 	PaletteEntry *_colors;
-	unsigned int _size;
+	uint _size;
 
 	Palette *_parent;
 

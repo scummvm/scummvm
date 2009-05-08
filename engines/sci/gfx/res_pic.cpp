@@ -113,7 +113,7 @@ int fillmagc = 30000000;
 #endif
 
 // Color mapping used while scaling embedded views.
-gfx_pixmap_color_t embedded_view_colors[16] = {
+static const gfx_pixmap_color_t embedded_view_colors[16] = {
 	{0x00, 0, 0, 0}, {0x11, 0, 0, 0}, {0x22, 0, 0, 0}, {0x33, 0, 0, 0},
 	{0x44, 0, 0, 0}, {0x55, 0, 0, 0}, {0x66, 0, 0, 0}, {0x77, 0, 0, 0},
 	{0x88, 0, 0, 0}, {0x99, 0, 0, 0}, {0xaa, 0, 0, 0}, {0xbb, 0, 0, 0},
@@ -342,161 +342,6 @@ static void _gfxr_auxbuf_propagate_changes(gfxr_pic_t *pic, int bitmask) {
 #endif
 
 
-#if 0
-// Unreferenced - removed
-static void _gfxr_auxbuf_tag_line(gfxr_pic_t *pic, int pos, int width) {
-	for (int i = 0; i < width; i++)
-		pic->aux_map[i+pos] |= FRESH_PAINT;
-}
-
-// Unreferenced - removed
-static void _gfxr_auxbuf_spread(gfxr_pic_t *pic, int *min_x, int *min_y, int *max_x, int *max_y) {
-	// Tries to spread by approximating the first derivation of the border function.
-	// Draws to the current and the last line, thus taking up to twice as long as neccessary.
-	// Other than that, it's O(n^2)
-
-	int intervals_nr = 0, old_intervals_nr;
-	int x, y, i, pos = 10 * 320;
-	struct interval_struct {
-		int xl, xr, tag;
-	} intervals[2][160];
-
-	*max_x = *max_y = -1;
-	*min_x = *min_y = 320;
-
-#ifdef FILL_RECURSIVE_DEBUG
-	if (!fillmagc) {
-		fprintf(stderr, "------------------------------------------------\n");
-		fprintf(stderr, "LineID:   ");
-		for (i = 0; i < 5; i++)
-			fprintf(stderr, "  %d       ", i);
-		fprintf(stderr, "\n");
-	}
-#endif
-
-	for (y = 10; y < 200; y++) {
-		int ivi = y & 1; // InterVal Index: Current intervals; !ivi is the list of old ones
-		int old_intervals_start_offset = 0;
-		int width = 0;
-
-		old_intervals_nr = intervals_nr;
-		intervals_nr = 0;
-
-		for (x = 0; x < 321; x++)
-			if (x < 320 && pic->aux_map[pos+x] & 0x10)
-				width++;
-			else if (width) { // Found one interval
-				int xl = x - width;
-				int xr = x - 1;
-				int done = 0;
-				int found_interval = 0;
-
-				intervals[ivi][intervals_nr].width = xl;
-				intervals[ivi][intervals_nr].tag = 0;
-				intervals[ivi][intervals_nr++].xr = xr;
-
-				if (xl < *min_x)
-					*min_x = xl;
-				if (xr > *max_x)
-					*max_x = xr;
-
-				i = old_intervals_start_offset;
-				while (!done && i < old_intervals_nr) {
-					if (intervals[!ivi][i].width > xr + 1)
-						done = 1;
-
-					else if (intervals[!ivi][i].xr < xl - 1) {
-						int o_xl = intervals[!ivi][i].width;
-						int o_xr = intervals[!ivi][i].xr;
-						if (o_xr == o_xl && !intervals[!ivi][i].tag) { // thin bar
-							memcpy(intervals[ivi] + intervals_nr, intervals[ivi] + intervals_nr - 1, sizeof(struct interval_struct));
-							memcpy(intervals[ivi] + intervals_nr - 1, intervals[!ivi] + i, sizeof(struct interval_struct));
-							intervals[!ivi][i].tag = 1;
-							pic->aux_map[pos - 320 + o_xl] |= FRESH_PAINT;
-							++intervals_nr;
-						}
-
-						old_intervals_start_offset = i;
-					} else {
-						int k = i;
-						int old_xl = intervals[!ivi][i].width;
-						int dwidth_l = abs(old_xl - xl);
-						int old_xr, dwidth_r;
-						int write_left_width, write_right_width;
-
-						intervals[!ivi][i].tag = 1;
-						while (k + 1 < old_intervals_nr && intervals[!ivi][k+1].width <= xr) {
-							++k;
-							intervals[!ivi][i].tag = 1;
-						}
-
-						old_xr = intervals[!ivi][k].xr;
-						dwidth_r = abs(old_xr - xr);
-
-						// Current line
-						write_left_width = (dwidth_l > xl) ? xl : dwidth_l;
-						_gfxr_auxbuf_tag_line(pic, pos + xl - write_left_width, write_left_width);
-
-						write_right_width = (dwidth_r + xr > 319) ? 320 - xr : dwidth_r;
-						_gfxr_auxbuf_tag_line(pic, pos + xr, write_right_width);
-
-						if (xl - write_left_width < *min_x)
-							*min_x = xl - write_left_width;
-						if (xr + write_right_width > *max_x)
-							*max_x = xr + write_right_width;
-
-						// Previous line
-						write_left_width = (dwidth_l > old_xl) ? old_xl : dwidth_l;
-						write_right_width = (dwidth_r + old_xr > 319) ? 320 - old_xr : dwidth_r;
-
-						if (i == k) { // Only one predecessor interval
-							_gfxr_auxbuf_tag_line(pic, pos - 320 + old_xl - write_left_width, write_left_width);
-							_gfxr_auxbuf_tag_line(pic, pos - 320 + old_xr, write_right_width);
-						} else // Fill entire line
-							_gfxr_auxbuf_tag_line(pic, pos - 320 + old_xl - write_left_width, old_xr - old_xl
-							                      + 1 + write_left_width + write_right_width);
-
-						if (xl - write_left_width < *min_x)
-							*min_x = xl - write_left_width;
-						if (xr + write_right_width > *max_x)
-							*max_x = xr + write_right_width;
-
-						found_interval = done = 1;
-					}
-					i++;
-				}
-				width = 0;
-			}
-
-#ifdef FILL_RECURSIVE_DEBUG
-		if (!fillmagc && intervals_nr) {
-			fprintf(stderr, "AI L#%03d:", y);
-			for (int j = 0; j < intervals_nr; j++)
-				fprintf(stderr, "%c[%03d,%03d]", intervals[ivi][j].tag ? ' ' : '-', intervals[ivi][j].width, intervals[ivi][j].xr);
-			fprintf(stderr, "\n");
-		}
-#endif
-
-		if (intervals_nr) {
-			if (y < *min_y)
-				*min_y = y;
-			*max_y = y;
-		}
-
-		pos += 320;
-	}
-
-	for (pos = 320 * 200 - 1; pos >= 320; pos--)
-		if (pic->aux_map[pos - 320] & 0x40)
-			pic->aux_map[pos] |= 0x40;
-
-	if (*max_y < 199)
-		(*max_y)++;
-}
-
-#endif
-
-
 /*** Regular drawing operations ***/
 
 #define PATTERN_FLAG_RECTANGLE 0x10
@@ -702,7 +547,7 @@ static void _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int 
 	// random should be set to the random index, or -1 to disable
 
 	// These circle offsets uniquely identify the circles used by Sierra:
-	int circle_data[][8] = {
+	const int circle_data[][8] = {
 		{0},
 		{1, 0},
 		{2, 2, 1},
@@ -714,14 +559,14 @@ static void _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int 
 	};
 
 	// 'Random' fill patterns, provided by Carl Muckenhoupt:
-	byte random_data[32] = {
+	const byte random_data[32] = {
 		0x20, 0x94, 0x02, 0x24, 0x90, 0x82, 0xa4, 0xa2, 0x82, 0x09, 0x0a, 0x22,
 		0x12, 0x10, 0x42, 0x14, 0x91, 0x4a, 0x91, 0x11, 0x08, 0x12, 0x25, 0x10,
 		0x22, 0xa8, 0x14, 0x24, 0x00, 0x50, 0x24, 0x04
 	};
 
 	// 'Random' fill offsets, provided by Carl Muckenhoupt:
-	byte random_offset[128] = {
+	const byte random_offset[128] = {
 		0x00, 0x18, 0x30, 0xc4, 0xdc, 0x65, 0xeb, 0x48,
 		0x60, 0xbd, 0x89, 0x05, 0x0a, 0xf4, 0x7d, 0x7d,
 		0x85, 0xb0, 0x8e, 0x95, 0x1f, 0x22, 0x0d, 0xdf,

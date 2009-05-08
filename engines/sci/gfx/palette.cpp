@@ -30,7 +30,7 @@
 
 namespace Sci {
 
-Palette::Palette(unsigned int s) {
+Palette::Palette(uint s) {
 	_size = s;
 	_colors = new PaletteEntry[s];
 	_parent = 0;
@@ -38,15 +38,18 @@ Palette::Palette(unsigned int s) {
 	_refcount = 1;
 }
 
-Palette::Palette(gfx_pixmap_color_t *colors, unsigned int s) {
+Palette::Palette(const gfx_pixmap_color_t *colors, uint s) {
 	_size = s;
 	_colors = new PaletteEntry[s];
 	_parent = 0;
 	_dirty = true;
 	_refcount = 1;
 
-	for (unsigned int i = 0; i < _size; ++i)
-		setColor(i, colors[i].r, colors[i].g, colors[i].b);
+	for (uint i = 0; i < _size; ++i) {
+		_colors[i].r = colors[i].r;
+		_colors[i].g = colors[i].g;
+		_colors[i].b = colors[i].b;
+	}
 }
 
 Palette::~Palette() {
@@ -70,7 +73,7 @@ void Palette::free() {
 		delete this;
 }
 
-void Palette::resize(unsigned int s) {
+void Palette::resize(uint s) {
 	if (s == _size)
 		return;
 
@@ -79,7 +82,7 @@ void Palette::resize(unsigned int s) {
 	assert(s >= _size);
 
 	PaletteEntry *n = new PaletteEntry[s];
-	for (unsigned int i = 0; i < _size; ++i)
+	for (uint i = 0; i < _size; ++i)
 		n[i] = _colors[i];
 
 	delete[] _colors;
@@ -94,7 +97,7 @@ void Palette::unmerge() {
 #endif
 
 	int count = 0;
-	for (unsigned int i = 0; i < _size; ++i) {
+	for (uint i = 0; i < _size; ++i) {
 		if (_colors[i].refcount == PALENTRY_FREE)
 			continue;
 
@@ -121,7 +124,7 @@ void Palette::unmerge() {
 	_parent = 0;
 }
 
-void Palette::setColor(unsigned int index, byte r, byte g, byte b) {
+void Palette::setColor(uint index, byte r, byte g, byte b) {
 	assert(index < _size);
 	assert(!_parent);
 
@@ -141,7 +144,7 @@ void Palette::setColor(unsigned int index, byte r, byte g, byte b) {
 	_dirty = true;
 }
 
-void Palette::makeSystemColor(unsigned int index, const PaletteEntry &color) {
+void Palette::makeSystemColor(uint index, const PaletteEntry &color) {
 	assert(index < _size);
 	PaletteEntry& entry = _colors[index];
 	entry.r = color.r;
@@ -150,14 +153,14 @@ void Palette::makeSystemColor(unsigned int index, const PaletteEntry &color) {
 	entry.refcount = PALENTRY_LOCKED;
 }
 
-unsigned int Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
+uint Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
 	int bestdelta = 1 + ((0x100 * 0x100) * 3);
 	int bestcolor = -1;
 	int firstfree = -1;
 
 	assert(_size != 0);
 
-	for (unsigned int i = 0; i < _size; ++i) {
+	for (uint i = 0; i < _size; ++i) {
 		PaletteEntry& entry = _colors[i];
 	
 		if (entry.refcount != PALENTRY_FREE) {
@@ -223,19 +226,19 @@ void Palette::mergeInto(Palette *parent) {
 
 #ifdef DEBUG_MERGE
 	bool *used = new bool[_parent->size()];
-	for (unsigned int i = 0; i < _parent->size(); ++i)
+	for (uint i = 0; i < _parent->size(); ++i)
 		used[i] = false;
 	int count = 0;
 	int used_min = 1000;
 	int used_max = 0;
 #endif
 
-	for (unsigned int i = 0; i < _size; ++i) {
+	for (uint i = 0; i < _size; ++i) {
 		PaletteEntry& entry = _colors[i];
 		if (entry.refcount == PALENTRY_FREE)
 			continue;
 
-		unsigned int pi = _parent->findNearbyColor(entry.r, entry.g, entry.b);
+		uint pi = _parent->findNearbyColor(entry.r, entry.g, entry.b);
 #ifdef DEBUG_MERGE
 		if (!used[pi]) count++;
 		used[pi] = true;
@@ -257,7 +260,7 @@ Palette *Palette::copy() {
 	Palette* p = new Palette(_size);
 	p->name = "copy of " + name;
 
-	for (unsigned int i = 0; i < _size; ++i) {
+	for (uint i = 0; i < _size; ++i) {
 		p->_colors[i] = _colors[i];
 		p->_colors[i].refcount = 0;
 	}
