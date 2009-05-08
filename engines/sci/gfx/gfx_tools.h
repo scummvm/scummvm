@@ -43,9 +43,11 @@ enum gfx_xlate_filter_t {
 };
 
 
-extern int gfx_crossblit_alpha_threshold; /* Crossblitting functions use this value as threshold
-					  ** for distinguishing between transparent and opaque
-					  ** wrt alpha values */
+/**
+ * Crossblitting functions use this value as threshold for distinguishing
+ * between transparent and opaque wrt alpha values.
+ */
+extern int gfx_crossblit_alpha_threshold;
 
 gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, Palette *palette, int flags);
 /* Allocates a new gfx_mode_t structure with the specified parameters

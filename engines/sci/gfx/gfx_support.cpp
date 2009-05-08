@@ -29,12 +29,52 @@
 
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_tools.h"
-#include "sci/gfx/line.h"
-#include "sci/gfx/crossblit.h"
 
 namespace Sci {
 
 int gfx_crossblit_alpha_threshold = 128;
+
+
+#define LINEMACRO(startx, starty, deltalinear, deltanonlinear, linearvar, nonlinearvar, \
+                  linearend, nonlinearstart, linearmod, nonlinearmod) \
+	incrNE = ((deltalinear) > 0) ? (deltalinear) : -(deltalinear); \
+	incrNE <<= 1; \
+	deltanonlinear <<= 1; \
+	incrE = ((deltanonlinear) > 0) ? -(deltanonlinear) : (deltanonlinear);  \
+	d = nonlinearstart - 1;  \
+	while (linearvar != (linearend)) { \
+		memcpy(buffer + linewidth * (starty) + (startx), &color, PIXELWIDTH); \
+		linearvar += linearmod; \
+		if ((d += incrE) < 0) { \
+			d += incrNE; \
+			nonlinearvar += nonlinearmod; \
+		}; \
+	}; \
+	memcpy(buffer + linewidth * (starty) + (startx), &color, PIXELWIDTH);
+
+
+template <int PIXELWIDTH>
+void _gfx_draw_line_buffer(byte *buffer, int linewidth, Common::Point start, Common::Point end, unsigned int color) {
+	int incrE, incrNE, d;
+	int dx = ABS(end.x - start.x);
+	int dy = ABS(end.y - start.y);
+#ifdef SCUMM_BIG_ENDIAN
+	color = SWAP_BYTES_32(color);
+#endif
+
+	if (dx > dy) {
+		int sign1 = (end.x < start.x) ? -1 : 1;
+		int sign2 = (end.y < start.y) ? -1 : 1;
+		LINEMACRO(start.x, start.y, dx, dy, start.x, start.y, end.x, dx, sign1 * PIXELWIDTH, sign2);
+	} else { // dx <= dy
+		int sign1 = (end.y < start.y) ? -1 : 1;
+		int sign2 = (end.x < start.x) ? -1 : 1;
+		LINEMACRO(start.x, start.y, dy, dx, start.y, start.x, end.y, dy, sign1, sign2 * PIXELWIDTH);
+	}
+}
+
+#undef LINEMACRO
+
 
 static void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
 			Common::Point start, Common::Point end, unsigned int color) {
@@ -85,6 +125,53 @@ void gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color) {
 
 	gfx_draw_box_buffer(pxm->index_data, pxm->index_width, box, color);
 }
+
+
+/* Template parameters:
+ * BYTESPP: Bytes per pixel
+ * USE_PRIORITY: Whether to care about the priority buffer
+ */
+template <int BYTESPP, bool USE_PRIORITY, bool REVERSE_ALPHA>
+void _gfx_crossblit(byte *dest, byte *src, int bytes_per_dest_line, int bytes_per_src_line,
+	int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
+	unsigned int alpha_test_mask, unsigned int alpha_min,
+	byte *priority_buffer, int bytes_per_priority_line, int bytes_per_priority_pixel, int priority
+	) {
+	int x, y;
+	int alpha_end = xl * bytes_per_alpha_pixel;
+
+	for (y = 0; y < yl; y++) {
+		int pixel_offset = 0;
+		int alpha_offset = 0;
+		int priority_offset = 0;
+
+		for (x = 0; x < alpha_end; x += bytes_per_alpha_pixel) {
+			if (((alpha_test_mask & alpha[x]) < alpha_min) ^ REVERSE_ALPHA) {
+
+				if (USE_PRIORITY) {
+					if (priority_buffer[priority_offset] <= priority) {
+						priority_buffer[priority_offset] = priority;
+						memcpy(dest + pixel_offset, src + pixel_offset, BYTESPP);
+					}
+				} else {
+					memcpy(dest + pixel_offset, src + pixel_offset, BYTESPP);
+				}
+			}
+
+			pixel_offset += BYTESPP;
+			alpha_offset += bytes_per_alpha_pixel;
+			if (USE_PRIORITY)
+				priority_offset += bytes_per_priority_pixel;
+		}
+
+		dest += bytes_per_dest_line;
+		src += bytes_per_src_line;
+		alpha += bytes_per_alpha_line;
+		if (USE_PRIORITY)
+			priority_buffer += bytes_per_priority_line;
+	}
+}
+
 
 static void (*crossblit_fns[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
 	_gfx_crossblit<1, false, false>,
