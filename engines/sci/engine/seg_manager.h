@@ -452,12 +452,6 @@ public:
 	// Deallocates the segment interface
 	virtual ~SegInterface() {}
 
-	// Finds the canonic address associated with sub_reg
-	// Parameters: (reg_t) sub_addr: The base address whose canonic address is to be found
-	// For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
-	// This address "governs" a in the sense that deallocating c(a) will deallocate a.
-	virtual reg_t findCanonicAddress(reg_t sub_addr);
-
 	// Get the memory object
 	MemObject *getMobj() { return _mobj; }
 

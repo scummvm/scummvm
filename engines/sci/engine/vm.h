@@ -77,6 +77,12 @@ public:
 	inline MemObjectType getType() const { return _type; }
 	inline int getSegMgrId() const { return _segmgrId; }
 
+	// Finds the canonic address associated with sub_reg
+	// Parameters: (reg_t) sub_addr: The base address whose canonic address is to be found
+	// For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
+	// This address "governs" a in the sense that deallocating c(a) will deallocate a.
+	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr) { return sub_addr; }
+
 	// Deallocates all memory associated with the specified address
 	// Parameters: (reg_t) sub_addr: The address (within the given segment) to deallocate
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr) {}
@@ -251,6 +257,7 @@ public:
 	}
 
 	virtual byte *dereference(reg_t pointer, int *size);
+	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -368,6 +375,7 @@ public:
 	void freeScript();
 
 	virtual byte *dereference(reg_t pointer, int *size);
+	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
@@ -391,6 +399,7 @@ public:
 	}
 
 	virtual byte *dereference(reg_t pointer, int *size);
+	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -555,6 +564,7 @@ public:
 	}
 
 	virtual byte *dereference(reg_t pointer, int *size);
+	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);

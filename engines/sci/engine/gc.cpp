@@ -51,15 +51,15 @@ struct WorklistManager {
 	}
 };
 
-static reg_t_hash_map *normalise_hashmap_ptrs(reg_t_hash_map &nonnormal_map, const Common::Array<SegInterface *> &interfaces) {
+static reg_t_hash_map *normalise_hashmap_ptrs(SegManager *sm, reg_t_hash_map &nonnormal_map) {
 	reg_t_hash_map *normal_map = new reg_t_hash_map();
 
 	for (reg_t_hash_map::iterator i = nonnormal_map.begin(); i != nonnormal_map.end(); ++i) {
 		reg_t reg = i->_key;
-		SegInterface *interfce = (reg.segment < interfaces.size()) ? interfaces[reg.segment] : NULL;
+		MemObject *mobj = (reg.segment < sm->_heap.size()) ? sm->_heap[reg.segment] : NULL;
 
-		if (interfce) {
-			reg = interfce->findCanonicAddress(reg);
+		if (mobj) {
+			reg = mobj->findCanonicAddress(sm, reg);
 			normal_map->setVal(reg, true);
 		}
 	}
@@ -156,7 +156,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	}
 
 	// Normalise
-	normal_map = normalise_hashmap_ptrs(wm._map, interfaces);
+	normal_map = normalise_hashmap_ptrs(sm, wm._map);
 
 	// Cleanup
 	for (i = 1; i < sm->_heap.size(); i++)

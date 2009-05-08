@@ -1188,26 +1188,26 @@ SegInterface::SegInterface(SegManager *segmgr, MemObject *mobj, SegmentId segId,
 	VERIFY(_mobj->getType() == _typeId, "Invalid MemObject type");
 }
 
-reg_t SegInterface::findCanonicAddress(reg_t addr) {
-	return addr;
-}
-
 //-------------------- base --------------------
 class SegInterfaceBase : public SegInterface {
 protected:
 	SegInterfaceBase(SegManager *segmgr, MemObject *mobj, SegmentId segId, MemObjectType typeId) :
 		SegInterface(segmgr, mobj, segId, typeId) {}
 public:
-	reg_t findCanonicAddress(reg_t addr);
 };
 
-reg_t SegInterfaceBase::findCanonicAddress(reg_t addr) {
+reg_t Script::findCanonicAddress(SegManager *segmgr, reg_t addr) {
 	addr.offset = 0;
 	return addr;
 }
 
 void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
 	(*note)(param, make_reg(segId, 0));
+}
+
+reg_t DynMem::findCanonicAddress(SegManager *segmgr, reg_t addr) {
+	addr.offset = 0;
+	return addr;
 }
 
 void DynMem::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
@@ -1327,13 +1327,11 @@ class SegInterfaceLocals : public SegInterface {
 public:
 	SegInterfaceLocals(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_LOCALS) {}
-	reg_t findCanonicAddress(reg_t addr);
 };
 
-reg_t SegInterfaceLocals::findCanonicAddress(reg_t addr) {
-	LocalVariables *locals = (LocalVariables *)_mobj;
+reg_t LocalVariables::findCanonicAddress(SegManager *segmgr, reg_t addr) {
 	// Reference the owning script
-	SegmentId owner_seg = _segmgr->segGet(locals->script_id);
+	SegmentId owner_seg = segmgr->segGet(script_id);
 
 	assert(owner_seg >= 0);
 
@@ -1353,10 +1351,9 @@ class SegInterfaceStack : public SegInterface {
 public:
 	SegInterfaceStack(SegManager *segmgr, MemObject *mobj, SegmentId segId) :
 		SegInterface(segmgr, mobj, segId, MEM_OBJ_STACK) {}
-	reg_t findCanonicAddress(reg_t addr);
 };
 
-reg_t SegInterfaceStack::findCanonicAddress(reg_t addr) {
+reg_t DataStack::findCanonicAddress(SegManager *segmgr, reg_t addr) {
 	addr.offset = 0;
 	return addr;
 }

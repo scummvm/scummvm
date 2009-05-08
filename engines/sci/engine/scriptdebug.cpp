@@ -2792,13 +2792,6 @@ static void _print_address(void * _, reg_t addr) {
 		sciprintf("  "PREG"\n", PRINT_REG(addr));
 }
 
-#define GET_SEG_INTERFACE(seg_id) \
-	SegInterface *seg_interface = s->seg_manager->getSegInterface(seg_id);	\
-	if (!seg_interface) {								\
-		sciprintf("Unknown segment : %x\n", seg_id);				\
-		return 1;								\
-	}
-
 static int c_gc_show_reachable(EngineState *s) {
 	reg_t addr = cmd_params[0].reg;
 
@@ -2832,12 +2825,14 @@ static int c_gc_show_freeable(EngineState *s) {
 static int c_gc_normalise(EngineState *s) {
 	reg_t addr = cmd_params[0].reg;
 
-	GET_SEG_INTERFACE(addr.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, addr.segment);
+	if (!mobj) {
+		sciprintf("Unknown segment : %x\n", addr.segment);
+		return 1;
+	}
 
-	addr = seg_interface->findCanonicAddress(addr);
+	addr = mobj->findCanonicAddress(s->seg_manager, addr);
 	sciprintf(" "PREG"\n", PRINT_REG(addr));
-
-	delete seg_interface;
 
 	return 0;
 }
