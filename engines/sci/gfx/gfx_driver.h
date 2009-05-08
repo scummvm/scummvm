@@ -267,27 +267,6 @@ struct gfx_driver_t { /* Graphics driver */
 	*/
 
 
-	/*** Palette operations ***/
-
-	int (*set_palette)(gfx_driver_t *drv, int index, byte red, byte green,
-	                   byte blue);
-	/* Manipulates a palette index in the hardware palette.
-	** The actual update is not performed until install_palette() is called.
-	** This way updates can be batched.
-	** Parameters: (gfx_driver_t *) drv: The driver affected
-	**             (int) index: The index of the palette entry to modify
-	**             (int x int x int) red, green, blue: The RGB intensities to
-	**                               set for the specified index. The minimum
-	**                               intensity is 0, maximum is 0xff.
-	** Returns   : (int) GFX_OK, GFX_ERROR or GFX_FATAL
-	** This function does not need to update mode->palette, as this is done
-	** by the calling code.
-	** set_palette() is only required for targets supporting color index mode.
-	*/
-
-	int (*install_palette)(gfx_driver_t *drv, Palette* pal);
-	/* As set_palette, but for the full palette. */
-
 	void *state; /* Reserved for internal use */
 
 };

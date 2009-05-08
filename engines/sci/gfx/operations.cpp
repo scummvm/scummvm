@@ -202,12 +202,17 @@ static int _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 
 	// TODO: We probably want to only update the colours used by this pixmap
 	// here. This will require updating the 'dirty' system.
-	for (unsigned int i = 0; i < driver->mode->palette->size(); ++i) {
+	uint8 paletteData[4*256];
+	const uint paletteSize = driver->mode->palette->size();
+	for (uint i = 0; i < paletteSize; ++i) {
 		const PaletteEntry& c = (*driver->mode->palette)[i];
-		driver->set_palette(driver, i, c.r, c.g, c.b);
+		paletteData[4*i+0] = c.r;
+		paletteData[4*i+1] = c.g;
+		paletteData[4*i+2] = c.b;
+		paletteData[4*i+3] = 255;
 	}
 
-	driver->install_palette(driver, driver->mode->palette);
+	g_system->setPalette(paletteData, 0, paletteSize);
 	driver->mode->palette->markClean();
 	return GFX_OK;
 }

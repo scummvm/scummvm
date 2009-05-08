@@ -38,7 +38,6 @@ struct _scummvm_driver_state {
 	byte *visual[2];
 	uint8 *pointer_data;
 	int xsize, ysize;
-	uint8 *palette_data;
 };
 
 #define S ((struct _scummvm_driver_state *)(drv->state))
@@ -79,10 +78,6 @@ static int scummvm_init(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
 	drv->mode = gfx_new_mode(xfact, yfact, format, new Palette(256), 0);
 	drv->mode->palette->name = "global";
 
-	S->palette_data = new uint8[4*256];
-	for (i = 0; i < 4*256; ++i)
-		S->palette_data[i] = 0;
-
 	return GFX_OK;
 }
 
@@ -101,9 +96,6 @@ static void scummvm_exit(gfx_driver_t *drv) {
 
 		delete[] S->pointer_data;
 		S->pointer_data = NULL;
-
-		delete[] S->palette_data;
-		S->palette_data = NULL;
 
 		delete S;
 	}
@@ -306,28 +298,6 @@ static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer, Common:
 	return GFX_OK;
 }
 
-// Palette operations
-
-static int scummvm_set_palette(gfx_driver_t *drv, int index, byte red, byte green, byte blue) {
-	if (index < 0 || index > 255) {
-		GFXERROR("Attempt to set invalid palette entry %d\n", index);
-		return GFX_ERROR;
-	}
-
-	S->palette_data[4*index+0] = red;
-	S->palette_data[4*index+1] = green;
-	S->palette_data[4*index+2] = blue;
-	S->palette_data[4*index+3] = 255;
-
-	return GFX_OK;
-}
-
-static int scummvm_install_palette(gfx_driver_t *drv, Palette* palette) {
-	g_system->setPalette(S->palette_data, 0, palette->size());
-	return GFX_OK;
-}
-
-
 gfx_driver_t gfx_driver_scummvm = {
 	NULL,
 	0, 0,
@@ -343,8 +313,6 @@ gfx_driver_t gfx_driver_scummvm = {
 	scummvm_update,
 	scummvm_set_static_buffer,
 	scummvm_set_pointer,
-	scummvm_set_palette,
-	scummvm_install_palette,
 	NULL
 };
 
