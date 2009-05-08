@@ -1643,6 +1643,8 @@ static void SayLine() {
 						int x = atoi(lua_getstring(lua_getresult(2)));
 					else if (strmatch(key_text, "y"))
 						int y = atoi(lua_getstring(lua_getresult(2)));
+					else if (strmatch(key_text, "background"))
+						const char *backgorund = lua_getstring(lua_getresult(2));
 					else
 						error("Unknown SayLine key '%s'", key_text);
 				}
