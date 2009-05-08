@@ -2932,7 +2932,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibouunknown",
-			"ADIBOU 2 French",
+			"ADIBOU 2 environnement",
 			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 			FR_FRA,
 			kPlatformPC,
@@ -2942,6 +2942,52 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		0,
 		0
+	},
+	{
+		{
+			"adibouunknown",
+			"ADIBOU 2",
+			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		0,
+		0
+	},
+	{
+		{
+			"adibouunknown",
+			"ADIBÙ 2 Ambiente",
+			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		0,
+		0
+	},
+	{
+		{
+			"adibouunknown",
+				"ADIBÙ prima elementare : Imparo a leggere e a contare",
+			{
+				{"intro.stk", 0, "092707829555f27706920e4cacf1fada", 8737958},
+				{"appbou2.itk", 0, "f7bf045f6bdce5a7607c720e36704f33", 200005632},
+				{NULL, 0, NULL, 0}
+			},
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		"adibou.stk",
+		"intro.tot"
 	},
 	{
 		{
