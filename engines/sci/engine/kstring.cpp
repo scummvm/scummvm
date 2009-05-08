@@ -799,7 +799,7 @@ reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (buffer)
 			state.getText(buffer, 255);
 
-		return make_reg(0, *buffer);
+		return argv[3];
 	} else {
 		return NULL_REG;
 	}
