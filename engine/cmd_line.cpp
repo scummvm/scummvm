@@ -66,7 +66,6 @@ static const char HELP_STRING[] =
 	"  --movement=STRING        Set the Manny walking mode: Character/Camera\n"
 	"  --gamma=FLOAT            Set the gamma correction\n"
 	"  --show-fps=BOOL          Set the turn on/off display FPS info: TRUE/FALSE\n"
-	"  --gl-zbuffer=BOOL        Set the turn on/off Z Buffer in OpenGL display\n"
 	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: TRUE/FALSE\n"
 	"  --engine-speed=NUM       Set engine speed (default: 30)\n"
 	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
