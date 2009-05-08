@@ -300,14 +300,11 @@ void GfxResManager::setStaticPalette(Palette *newPalette)
 	}
 
 static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scaled, int force, gfx_mode_t *mode,
-										 gfx_xlate_filter_t filter, int endianize, gfx_options_t *options) {
+										 gfx_xlate_filter_t filter, gfx_options_t *options) {
 
 	XLATE_AS_APPROPRIATE(GFX_MASK_VISUAL, visual_map);
 	XLATE_AS_APPROPRIATE(GFX_MASK_PRIORITY, priority_map);
 	XLATE_AS_APPROPRIATE(GFX_MASK_CONTROL, control_map);
-
-	if (endianize && (maps & GFX_MASK_VISUAL) && res->scaled_data.pic->visual_map)
-		gfxr_endianness_adjust(res->scaled_data.pic->visual_map, mode);
 
 	return scaled ? res->scaled_data.pic : res->unscaled_data.pic;
 }
@@ -319,7 +316,6 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_PIC];
 	gfx_resource_t *res = NULL;
 	int hash = getOptionsHash(GFX_RESOURCE_TYPE_PIC);
-	int must_post_process_pic = 0;
 	int need_unscaled = (_driver->mode->xfact != 1 || _driver->mode->yfact != 1);
 
 	hash |= (flags << 20) | ((default_palette & 0x7) << 28);
@@ -388,21 +384,14 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 #endif
 	}
 
-	must_post_process_pic = res->scaled_data.pic->visual_map->data == NULL;
-	// If the pic was only just drawn, we'll have to endianness-adjust it now
-
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 	npic = gfxr_pic_xlate_common(res, maps, scaled || _options->pic0_unscaled, 0, _driver->mode,
-	                             _options->pic_xlate_filter, 0, _options);
+	                             _options->pic_xlate_filter, _options);
 #else
 	npic = gfxr_pic_xlate_common(res, maps, 1, 0, _driver->mode,
-	                             GFX_XLATE_FILTER_NONE, 0, _options);
+	                             GFX_XLATE_FILTER_NONE, _options);
 #endif
 
-
-	if (must_post_process_pic) {
-		gfxr_endianness_adjust(npic->visual_map, _driver->mode);
-	}
 
 	return npic;
 }
@@ -503,9 +492,9 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 		int old_ID = get_pic_id(res);
 		set_pic_id(res, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, new_nr)); // To ensure that our graphical translation options work properly
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->mode, _options->pic_xlate_filter, 1, _options);
+		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->mode, _options->pic_xlate_filter, _options);
 #else
-		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->mode, GFX_XLATE_FILTER_NONE, 1, _options);
+		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->mode, GFX_XLATE_FILTER_NONE, _options);
 #endif
 		set_pic_id(res, old_ID);
 	}
@@ -610,7 +599,6 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 #else
 		gfx_xlate_pixmap(cel_data, _driver->mode, GFX_XLATE_FILTER_NONE);
 #endif
-		gfxr_endianness_adjust(cel_data, _driver->mode);
 	}
 
 	return view;
@@ -692,7 +680,6 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 #else
 		gfx_xlate_pixmap(cursor, _driver->mode, GFX_XLATE_FILTER_NONE);
 #endif
-		gfxr_endianness_adjust(cursor, _driver->mode);
 
 		res->unscaled_data.pointer = cursor;
 

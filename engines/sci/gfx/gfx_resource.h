@@ -292,16 +292,6 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_p
 gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, byte *cel_base, int size, gfxr_view_t *view, bool isAmiga, bool isSci11);
 
 
-gfx_pixmap_t *gfxr_endianness_adjust(gfx_pixmap_t *pixmap, gfx_mode_t *mode);
-/* Endianness-adjusts a pixmap, if neccessary
-** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to adjust
-**             (gfx_mode_t *) mode: The mode to adjust it for
-** Returns   : (gfx_pixmap_t *) pixmap, or NULL on error
-** The pixmap is adjusted iff the mode signals that this is
-** required (by means of setting the appropriate flag), and
-** the mode has a byte depth of more than 1.
-*/
-
 } // End of namespace Sci
 
 #endif // SCI_GFX_GFX_RESOURCE_H

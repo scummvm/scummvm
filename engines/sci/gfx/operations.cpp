@@ -2063,7 +2063,6 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 #else
 			gfx_xlate_pixmap(pxm, state->driver->mode, GFX_XLATE_FILTER_NONE);
 #endif
-			gfxr_endianness_adjust(pxm, state->driver->mode); // FIXME: resmgr layer!
 		}
 		if (!pxm) {
 			GFXERROR("Could not find text pixmap %d/%d\n", i, handle->lines.size());

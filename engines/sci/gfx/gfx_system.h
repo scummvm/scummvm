@@ -53,9 +53,6 @@ namespace Sci {
 
 #define GFX_MODE_IS_UNSCALED(mode) (((mode)->xfact == 1) && ((mode)->yfact == 1))
 
-/* Reverse-endian: Target display has non-native endianness
-** (BE if local is LE or the other way 'round  */
-#define GFX_MODE_FLAG_REVERSE_ENDIAN (1<<0)
 /* Reverse Alpha: Alpha values 0 mean "transparent" if this is
 ** enabled  */
 #define GFX_MODE_FLAG_REVERSE_ALPHA  (1<<1)
