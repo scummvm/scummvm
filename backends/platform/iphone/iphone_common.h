@@ -62,11 +62,8 @@ void iphone_main(int argc, char *argv[]);
 
 // On the ObjC side
 void iPhone_updateScreen();
-void iPhone_updateScreenRect(int x1, int y1, int x2, int y2);
-unsigned short* iPhone_getSurface();
-void iPhone_lockSurface();
-void iPhone_unlockSurface();
-void iPhone_initSurface(int width, int height, bool landscape);
+void iPhone_updateScreenRect(unsigned short* screen, int x1, int y1, int x2, int y2);
+void iPhone_initSurface(int width, int height);
 bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY);
 const char* iPhone_getDocumentsDir();
 	

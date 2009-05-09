@@ -26,6 +26,8 @@
 #include <unistd.h>
 #include <pthread.h>
 
+#include <sys/time.h>
+
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "common/rect.h"
@@ -41,8 +43,7 @@
 #include "gui/message.h"
 
 #include "osys_iphone.h"
-#include "blit_arm.h"
-#include <sys/time.h>
+
 
 const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
 	{0, 0, 0}
@@ -157,11 +158,8 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 	_fullscreen = (uint16 *)malloc(fullSize);
 	bzero(_fullscreen, fullSize);
 
-	if (_screenOrientation != kScreenOrientationPortrait)
-		iPhone_initSurface(height, width, true);
-	else
-		iPhone_initSurface(width, height, false);
-
+	iPhone_initSurface(width, height);
+	
 	_fullScreenIsDirty = false;
 	dirtyFullScreen();
 	_mouseVisible = false;
@@ -270,9 +268,7 @@ void OSystem_IPHONE::updateScreen() {
 
 	internUpdateScreen();
 	_fullScreenIsDirty = false;
-	_fullScreenOverlayIsDirty = false;	
-
-	//memcpy(iPhone_getSurface(), _fullscreen, _screenWidth * _screenHeight * 2);
+	_fullScreenOverlayIsDirty = false;
 
 	iPhone_updateScreen();
 }
@@ -311,7 +307,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 			drawDirtyOverlayRect(dirtyRect);
 
 		drawMouseCursorOnRectUpdate(dirtyRect, mouseRect);
-		updateHardwareSurfaceForRect(dirtyRect);		
+		updateHardwareSurfaceForRect(dirtyRect);
 	}
 
 	if (_overlayVisible) {
@@ -325,71 +321,35 @@ void OSystem_IPHONE::internUpdateScreen() {
 			updateHardwareSurfaceForRect(dirtyRect);
 		}
 	}
-	
-	//iPhone_updateScreenRect(dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom );
 }
 
 void OSystem_IPHONE::drawDirtyRect(const Common::Rect& dirtyRect) {
 	int h = dirtyRect.bottom - dirtyRect.top;
 	int w = dirtyRect.right - dirtyRect.left;
 
-	switch (_screenOrientation) {
-		case kScreenOrientationPortrait: {
-			byte  *src = &_offscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
-			uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
-			for (int y = h; y > 0; y--) {
-				for (int x = w; x > 0; x--)
-					*dst++ = _palette[*src++];
-
-				dst += _screenWidth - w;
-				src += _screenWidth - w;
-			}
-			break;
-		}
-		case kScreenOrientationLandscape: {
-			byte *src = &_offscreen[(dirtyRect.bottom - 1) * _screenWidth + dirtyRect.left];
-			uint16 *dst = &_fullscreen[dirtyRect.left * _screenHeight + (_screenHeight - dirtyRect.bottom)];
-			blitLandscapeScreenRect8bpp(dst, src, w, h, _palette, -_screenWidth, -_screenHeight);
-			break;
-		}
-		case kScreenOrientationFlippedLandscape: {
-			byte *src = &_offscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
-			uint16 *dst = &_fullscreen[(_screenWidth - dirtyRect.left - 1) * _screenHeight + dirtyRect.top];
-			blitLandscapeScreenRect8bpp(dst, src, w, h, _palette, _screenWidth, _screenHeight);
-			break;
-		}
-	}	
+	byte  *src = &_offscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
+	uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
+	for (int y = h; y > 0; y--) {
+		for (int x = w; x > 0; x--)
+			*dst++ = _palette[*src++];
+		
+		dst += _screenWidth - w;
+		src += _screenWidth - w;
+	}
 }
 
 void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect& dirtyRect) {
 	int h = dirtyRect.bottom - dirtyRect.top;
 	int w = dirtyRect.right - dirtyRect.left;
 
-	switch (_screenOrientation) {
-		case kScreenOrientationPortrait: {
-			uint16 *src = (uint16 *)&_overlayBuffer[dirtyRect.top * _screenWidth + dirtyRect.left];
-			uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
-			int x = (dirtyRect.right - dirtyRect.left) * 2;
-			for (int y = h; y > 0; y--) {
-				memcpy(dst, src, x);
-				src += _screenWidth;
-				dst += _screenWidth;
-			}
-			break;
-		}
-		case kScreenOrientationLandscape: {
-			uint16 *src = (uint16 *)&_overlayBuffer[(dirtyRect.bottom - 1) * _screenWidth + dirtyRect.left];
-			uint16 *dst = &_fullscreen[dirtyRect.left * _screenHeight + (_screenHeight - dirtyRect.bottom)];
-			blitLandscapeScreenRect16bpp(dst, src, w, h, -_screenWidth, -_screenHeight);
-			break;
-		}
-		case kScreenOrientationFlippedLandscape: {
-			uint16 *src = (uint16 *)&_overlayBuffer[dirtyRect.top * _screenWidth + dirtyRect.left];
-			uint16 *dst = &_fullscreen[(_screenWidth - dirtyRect.left - 1) * _screenHeight + dirtyRect.top];
-			blitLandscapeScreenRect16bpp(dst, src, dirtyRect.right - dirtyRect.left, h, _screenWidth, _screenHeight);
-			break;
-		}
-	}	
+	uint16 *src = (uint16 *)&_overlayBuffer[dirtyRect.top * _screenWidth + dirtyRect.left];
+	uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
+	int x = (dirtyRect.right - dirtyRect.left) * 2;
+	for (int y = h; y > 0; y--) {
+		memcpy(dst, src, x);
+		src += _screenWidth;
+		dst += _screenWidth;
+	}
 }
 
 void OSystem_IPHONE::drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect, const Common::Rect& mouseRect) {
@@ -417,104 +377,23 @@ void OSystem_IPHONE::drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect
 			int displayHeight = _mouseHeight;
 		if (_mouseHeight + top > _screenHeight)
 			displayHeight = _screenHeight - top;
-			switch (_screenOrientation) {
-			case kScreenOrientationPortrait: {
-				byte *src = &_mouseBuf[srcY * _mouseWidth + srcX];
-				uint16 *dst = &_fullscreen[top * _screenWidth + left];
-				for (int y = displayHeight; y > srcY; y--) {
-					for (int x = displayWidth; x > srcX; x--) {
-						if (*src != _mouseKeyColour)
-							*dst = _palette[*src];
-						dst++;
-						src++;
-					}
-					dst += _screenWidth - displayWidth + srcX;
-					src += _mouseWidth - displayWidth + srcX;
-				}
-				break;
+		byte *src = &_mouseBuf[srcY * _mouseWidth + srcX];
+		uint16 *dst = &_fullscreen[top * _screenWidth + left];
+		for (int y = displayHeight; y > srcY; y--) {
+			for (int x = displayWidth; x > srcX; x--) {
+				if (*src != _mouseKeyColour)
+					*dst = _palette[*src];
+				dst++;
+				src++;
 			}
-			case kScreenOrientationLandscape: {
-				byte *src = &_mouseBuf[(_mouseHeight - 1 - srcY) * _mouseWidth + srcX];
-				uint16 *dst = &_fullscreen[left * _screenHeight + (_screenHeight - bottom + srcY)];
-				for (int x = displayWidth; x > srcX; x--) {
-					for (int y = displayHeight; y > srcY; y--) {
-						if (*src != _mouseKeyColour)
-							*dst = _palette[*src];
-						dst++;
-						src -= _mouseWidth;
-					}
-					dst -= -_screenHeight + displayHeight - srcY;
-					src += 1 - (displayHeight - srcY) * -_mouseWidth;
-				}
-				break;
-			}
-			case kScreenOrientationFlippedLandscape: {
-				byte *src = &_mouseBuf[srcY * _mouseWidth + srcX];
-				uint16 *dst = &_fullscreen[(_screenWidth - left - 1) * _screenHeight + top];
-				for (int x = displayWidth; x > srcX; x--) {
-					for (int y = displayHeight; y > srcY; y--) {
-						if (*src != _mouseKeyColour)
-							*dst = _palette[*src];
-						dst++;
-						src += _mouseWidth;
-					}
-					dst -= _screenHeight + displayHeight - srcY;
-					src += 1 - (displayHeight - srcY) * _mouseWidth;
-				}
-				break;
-			}
+			dst += _screenWidth - displayWidth + srcX;
+			src += _mouseWidth - displayWidth + srcX;
 		}
 	}
 }
 
 void OSystem_IPHONE::updateHardwareSurfaceForRect(const Common::Rect& updatedRect) {
-	uint16 *surface = iPhone_getSurface();
-	
-	int h = updatedRect.bottom - updatedRect.top;
-	int w = updatedRect.right - updatedRect.left;
-
-	if (w == _screenWidth && h == _screenHeight)
-		memcpy(surface, _fullscreen, _screenWidth * _screenHeight * 2);
-	else {
-		switch (_screenOrientation) {
-			case kScreenOrientationPortrait: {
-				int width = w * 2;
-				int offset = updatedRect.top * _screenWidth + updatedRect.left;
-				uint16 *fs = _fullscreen + offset;
-				surface += offset;
-				for (int y = h; y > 0; y--) {
-					memcpy(surface, fs, width);
-					surface += _screenWidth;
-					fs += _screenWidth;
-				}
-				break;
-			}
-			case kScreenOrientationLandscape: {
-				int height = h * 2;
-				int offset = updatedRect.left * _screenHeight + (_screenHeight - updatedRect.bottom);
-				uint16 *fs = _fullscreen + offset;
-				surface += offset;
-				for (int x = w; x > 0; x--) {
-					memcpy(surface, fs, height);
-					surface += _screenHeight;
-					fs += _screenHeight;
-				}
-				break;
-			}
-			case kScreenOrientationFlippedLandscape: {
-				int height = h * 2;
-				int offset = ((_screenWidth - updatedRect.left - 1) * _screenHeight + updatedRect.top);
-				uint16 *fs = _fullscreen + offset;
-				surface += offset;
-				for (int x = w; x > 0; x--) {
-					memcpy(surface, fs, height);
-					surface -= _screenHeight;
-					fs -= _screenHeight;
-				}
-				break;
-			}
-		}
-	}
+	iPhone_updateScreenRect(_fullscreen, updatedRect.left, updatedRect.top, updatedRect.right, updatedRect.bottom );		
 }
 
 Graphics::Surface *OSystem_IPHONE::lockScreen() {
@@ -1015,11 +894,8 @@ void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
 
 	if (_screenOrientation != newOrientation) {
 		_screenOrientation = newOrientation;
-		if (_screenOrientation != kScreenOrientationPortrait)
-			iPhone_initSurface(_screenHeight, _screenWidth, true);
-		else
-			iPhone_initSurface(_screenWidth, _screenHeight, false);
-
+		iPhone_initSurface(_screenWidth, _screenHeight);
+		
 		dirtyFullScreen();
 		if (_overlayVisible)
 			dirtyFullOverlayScreen();
@@ -1406,12 +1282,12 @@ void iphone_main(int argc, char *argv[]) {
 		//gDebugLevel = 10;
 	}
 
-	system("mkdir " SCUMMVM_ROOT_PATH);
-	system("mkdir " SCUMMVM_SAVE_PATH);
-
 #ifdef IPHONE_OFFICIAL
 	chdir( iPhone_getDocumentsDir() );
 #else
+	system("mkdir " SCUMMVM_ROOT_PATH);
+	system("mkdir " SCUMMVM_SAVE_PATH);
+
 	chdir("/var/mobile/");
 #endif
 	

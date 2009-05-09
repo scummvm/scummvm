@@ -30,30 +30,16 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import <OpenGLES/EAGL.h>
+#import <OpenGLES/ES1/gl.h>
+#import <OpenGLES/ES1/glext.h>
+
 #import "iphone_keyboard.h"
-
-void *CoreSurfaceBufferGetBaseAddress(void* surface);
-int CoreSurfaceBufferLock(void* surface, unsigned int lockType);
-int CoreSurfaceBufferUnlock(void* surface);
-void* CoreSurfaceBufferCreate(CFDictionaryRef dict);
-
-extern CFStringRef kCoreSurfaceBufferGlobal;
-extern CFStringRef kCoreSurfaceBufferMemoryRegion;
-extern CFStringRef kCoreSurfaceBufferPitch;
-extern CFStringRef kCoreSurfaceBufferWidth;
-extern CFStringRef kCoreSurfaceBufferHeight;
-extern CFStringRef kCoreSurfaceBufferPixelFormat;
-extern CFStringRef kCoreSurfaceBufferAllocSize;
-
-struct __GSEvent;
-CGPoint GSEventGetLocationInWindow(struct __GSEvent *ev); 
-unsigned int GSEventDeviceOrientation(struct __GSEvent *ev);
 
 @interface iPhoneView : UIView
 {
 	void* _screenSurface;
 	NSMutableArray* _events;
-	NSLock* _lock;
 	SoftKeyboard* _keyboardView;
 	CALayer* _screenLayer;
 
@@ -61,6 +47,15 @@ unsigned int GSEventDeviceOrientation(struct __GSEvent *ev);
 	int _fullHeight;
 	int _widthOffset;
 	int _heightOffset;
+	
+	EAGLContext* _context;
+	GLuint _viewRenderbuffer;
+	GLuint _viewFramebuffer;
+	GLint _backingWidth;
+	GLint _backingHeight;
+	GLint _visibleWidth;
+	GLint _visibleHeight;
+	GLuint _screenTexture;
 }
 
 - (id)initWithFrame:(struct CGRect)frame;
@@ -71,7 +66,7 @@ unsigned int GSEventDeviceOrientation(struct __GSEvent *ev);
 
 - (void)initSurface;
 
-- (void)updateScreenRect:(id)rect;
+- (void)updateSurface;
 
 - (id)getEvent;
 

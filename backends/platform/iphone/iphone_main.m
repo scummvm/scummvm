@@ -25,6 +25,7 @@
 
 #import <UIKit/UIKit.h>
 #import <Foundation/NSThread.h>
+
 #include "iphone_video.h"
 
 void iphone_main(int argc, char *argv[]);
@@ -37,6 +38,7 @@ void iphone_main(int argc, char *argv[]);
 - (void) mainLoop: (id)param;
 - (iPhoneView*) getView;
 - (UIWindow*) getWindow;
+- (void)didRotate:(NSNotification *)notification;
 @end
 
 static int gArgc;
@@ -90,17 +92,19 @@ int main(int argc, char** argv) {
 
 	[_window setContentView: _view];
 
-	//[_window orderFront: self];
-	//[_window makeKey: self];
-
   	[_window addSubview:_view];
 	[_window makeKeyAndVisible];
 
+	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(didRotate:)
+												 name:@"UIDeviceOrientationDidChangeNotification" object:nil];
+	
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }
 
 - (void)applicationSuspend:(struct __GSEvent *)event {
-	[self setApplicationBadge:NSLocalizedString(@"ON", nil)];
+	//[self setApplicationBadge:NSLocalizedString(@"ON", nil)];
 	[_view applicationSuspend];
 }
 
@@ -115,8 +119,8 @@ int main(int argc, char** argv) {
     [self setStatusBarHidden:YES animated:YES];
 }
 
-- (void)deviceOrientationChanged:(struct __GSEvent *)event {
-	int screenOrientation = GSEventDeviceOrientation(event);
+- (void)didRotate:(NSNotification *)notification {
+	int screenOrientation = [[UIDevice currentDevice] orientation];
 	[_view deviceOrientationChanged: screenOrientation];
 }
 
