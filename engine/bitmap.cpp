@@ -23,16 +23,10 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/debug.h"
 #include "common/endian.h"
 
 #include "engine/bitmap.h"
-#include "engine/smush/smush.h"
 #include "engine/gfx_base.h"
-
-#include <cstdlib>
-#include <cstring>
 
 static void decompress_codec3(const char *compressed, char *result);
 

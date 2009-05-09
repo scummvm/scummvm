@@ -23,21 +23,12 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/endian.h"
-#include "common/debug.h"
 #include "common/timer.h"
 #include "common/file.h"
-#include "common/system.h"
 
 #include "engine/smush/smush.h"
-#include "engine/resource.h"
 #include "engine/engine.h"
-#include "engine/imuse/imuse_track.h"
-
-#include "mixer/mixer.h"
-
-#include <cstring>
 
 #define SMUSH_LOOPMOVIE(x)		(x & 0x000001)
 #define SMUSH_ALTSPEED(x)		(x & 0x000004)

@@ -23,10 +23,8 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/debug.h"
-
 #include "engine/imuse/imuse.h"
+#include "engine/imuse/imuse_tables.h"
 
 void Imuse::setMusicState(int stateId) {
 	int l, num = -1;

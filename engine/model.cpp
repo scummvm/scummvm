@@ -23,18 +23,15 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/endian.h"
-#include "common/debug.h"
 
 #include "engine/model.h"
-#include "engine/resource.h"
+#include "engine/actor.h"
 #include "engine/material.h"
 #include "engine/textsplit.h"
 #include "engine/gfx_base.h"
 
 #include <cstring>
-#include <cstdio>
 
 Model::Model(const char *filename, const char *data, int len, const CMap &cmap) :
 		Resource(filename), _numMaterials(0), _numGeosets(0) {

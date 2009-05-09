@@ -23,14 +23,9 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/endian.h"
-#include "common/debug.h"
 
 #include "engine/font.h"
-#include "engine/gfx_base.h"
-
-#include <cstring>
 
 Font::Font(const char *filename, const char *data, int /*len*/) :
 	Resource(filename) {

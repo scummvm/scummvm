@@ -28,10 +28,6 @@
 
 #include "engine/resource.h"
 
-#include <cstring>
-
-class CMap;
-
 class Material : public Resource {
 public:
 	// Load a texture from the given data.

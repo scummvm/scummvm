@@ -23,19 +23,11 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/debug.h"
-#include "common/fs.h"
-
 #include "engine/resource.h"
-#include "engine/registry.h"
-#include "engine/bitmap.h"
 #include "engine/colormap.h"
 #include "engine/costume.h"
-#include "engine/font.h"
 #include "engine/keyframe.h"
 #include "engine/material.h"
-#include "engine/model.h"
 #include "engine/engine.h"
 #include "engine/lipsync.h"
 

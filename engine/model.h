@@ -27,13 +27,8 @@
 #define MODEL_H
 
 #include "engine/resource.h"
-#include "engine/vector3d.h"
 #include "engine/matrix4.h"
 
-#include <cstring>
-
-class CMap;
-class Material;
 class TextSplitter;
 
 class Model : public Resource {

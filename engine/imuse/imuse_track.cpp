@@ -23,17 +23,7 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/debug.h"
-#include "common/mutex.h"
-#include "common/system.h"
-
-#include "mixer/mixer.h"
-#include "mixer/audiostream.h"
-
 #include "engine/imuse/imuse.h"
-#include "engine/imuse/imuse_sndmgr.h"
-#include "engine/imuse/imuse_track.h"
 
 int Imuse::allocSlot(int priority) {
 	int l, lowest_priority = 127;

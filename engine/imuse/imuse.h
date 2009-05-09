@@ -26,22 +26,12 @@
 #ifndef IMUSE_H
 #define IMUSE_H
 
-#include "common/sys.h"
-#include "common/debug.h"
-
-#include "engine/lua.h"
-
-#include "mixer/mixer.h"
-#include "mixer/audiostream.h"
-
-#include "engine/imuse/imuse_sndmgr.h"
-#include "engine/imuse/imuse_mcmp_mgr.h"
 #include "engine/imuse/imuse_track.h"
-#include "engine/imuse/imuse_tables.h"
 
 #define MAX_IMUSE_TRACKS 16
 #define MAX_IMUSE_FADETRACKS 16
 
+class ImuseTable;
 class SaveGame;
 
 class Imuse {

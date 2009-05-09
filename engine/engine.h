@@ -26,19 +26,10 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "common/sys.h"
-
-#include "engine/scene.h"
 #include "engine/textobject.h"
-#include "engine/primitives.h"
-#include "engine/font.h"
-#include "engine/lua.h"
-#include "engine/savegame.h"
-
-#include <cstdlib>
-#include <list>
 
 class Actor;
+class SaveGame;
 
 #define ENGINE_MODE_IDLE	0
 #define ENGINE_MODE_PAUSE	1

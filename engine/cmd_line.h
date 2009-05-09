@@ -26,7 +26,6 @@
 #ifndef CMD_OPTIONS_H
 #define CMD_OPTIONS_H
 
-#include "common/str.h"
 #include "common/config-manager.h"
 
 void registerDefaults();

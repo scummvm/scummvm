@@ -23,9 +23,7 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/endian.h"
-#include "common/debug.h"
 
 #include "engine/colormap.h"
 #include "engine/costume.h"
@@ -34,14 +32,9 @@
 #include "engine/engine.h"
 #include "engine/keyframe.h"
 #include "engine/material.h"
-#include "engine/model.h"
 #include "engine/lua.h"
 
 #include "engine/imuse/imuse.h"
-
-#include <string>
-#include <cstdio>
-#include <map>
 
 // A costume in the Residual/GrimE engine consists of a set of
 // components, and a set of chores.  Each component represents an

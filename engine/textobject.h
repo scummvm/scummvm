@@ -26,13 +26,8 @@
 #ifndef TEXTOBJECT_H
 #define TEXTOBJECT_H
 
-#include "common/debug.h"
-
 #include "engine/font.h"
-#include "engine/color.h"
 #include "engine/gfx_base.h"
-
-#include <string>
 
 struct TextObjectDefaults {
 	Color fgColor;

@@ -26,11 +26,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "common/sys.h"
-
 #include "engine/resource.h"
-
-#include <list>
 
 class Font : public Resource {
 public:

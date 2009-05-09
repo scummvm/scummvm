@@ -26,7 +26,6 @@
 #ifndef ENGINE_MATRIX4_H
 #define ENGINE_MATRIX4_H
 
-#include "engine/vector3d.h"
 #include "engine/matrix3.h"
 
 // matrix 4 is a rotation matrix + position

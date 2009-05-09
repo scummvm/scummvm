@@ -27,12 +27,11 @@
 #define LAB_H
 
 #include <string>
-#include <cstring>
 #include <map>
 
 #include "common/file.h"
 
-#include "engine/lua/lua.h"
+class LuaFile;
 
 class Block {
 public:

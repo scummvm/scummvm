@@ -18,7 +18,6 @@
  *
  */
 
-#include "common/sys.h"
 #include "engine/internal_version.h"
 #include "engine/version.h"
 

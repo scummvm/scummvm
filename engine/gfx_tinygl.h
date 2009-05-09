@@ -26,16 +26,8 @@
 #ifndef GFX_TINYGL_H
 #define GFX_TINYGL_H
 
-#include "common/sys.h"
-
-#include "engine/color.h"
-#include "engine/model.h"
-#include "engine/colormap.h"
-#include "engine/bitmap.h"
-#include "engine/vector3d.h"
 #include "engine/gfx_base.h"
 
-#include "graphics/tinygl/gl.h"
 #include "graphics/tinygl/zgl.h"
 
 class GfxTinyGL : public GfxBase {

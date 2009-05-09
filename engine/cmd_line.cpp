@@ -23,13 +23,10 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/sys.h"
 #include "common/fs.h"
 
 #include "engine/cmd_line.h"
 #include "engine/version.h"
-#include "engine/gfx_base.h"
 
 #define DETECTOR_TESTING_HACK
 

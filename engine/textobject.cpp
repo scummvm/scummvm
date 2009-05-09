@@ -23,13 +23,7 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/util.h"
-#include "common/system.h"
-
 #include "engine/textobject.h"
-#include "engine/engine.h"
-#include "engine/localize.h"
 
 std::string parseMsgText(const char *msg, char *msgId);
 

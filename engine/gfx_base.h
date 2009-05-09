@@ -26,20 +26,11 @@
 #ifndef GFX_BASE_H
 #define GFX_BASE_H
 
-#include "common/sys.h"
-
-#include "engine/color.h"
 #include "engine/model.h"
 #include "engine/scene.h"
-#include "engine/vector3d.h"
-#include "engine/colormap.h"
-#include "engine/font.h"
 #include "engine/primitives.h"
-#include "engine/actor.h"
 
-class Material;
-class Bitmap;
-class Engine;
+class Shadow;
 
 class GfxBase {
 public:

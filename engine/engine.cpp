@@ -23,21 +23,13 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/fs.h"
-#include "common/str.h"
 #include "common/events.h"
 
 #include "engine/engine.h"
-#include "engine/scene.h"
 #include "engine/lua.h"
-#include "engine/colormap.h"
 #include "engine/actor.h"
-#include "engine/textobject.h"
 #include "engine/smush/smush.h"
-#include "engine/gfx_base.h"
 #include "engine/savegame.h"
-#include "engine/lipsync.h"
 #include "engine/registry.h"
 
 #include "engine/imuse/imuse.h"

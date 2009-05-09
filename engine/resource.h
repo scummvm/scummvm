@@ -30,9 +30,7 @@
 
 #include "engine/lab.h"
 
-#include <map>
 #include <list>
-#include <string>
 
 class Bitmap;
 class CMap;
@@ -92,7 +90,7 @@ public:
 
 private:
 	T* _ptr;
-	};
+};
 
 class ResourceLoader {
 public:

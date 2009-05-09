@@ -26,13 +26,6 @@
 #ifndef GFX_OPENGL_H
 #define GFX_OPENGL_H
 
-#include "common/sys.h"
-
-#include "engine/color.h"
-#include "engine/model.h"
-#include "engine/colormap.h"
-#include "engine/bitmap.h"
-#include "engine/vector3d.h"
 #include "engine/gfx_base.h"
 
 #ifdef USE_OPENGL

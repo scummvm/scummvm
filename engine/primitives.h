@@ -26,14 +26,7 @@
 #ifndef PRIMITIVESOBJECT_H
 #define PRIMITIVESOBJECT_H
 
-#include "common/sys.h"
-#include "common/debug.h"
-
-#include "engine/font.h"
 #include "engine/color.h"
-#include "engine/gfx_base.h"
-
-#include <string>
 
 class PrimitiveObject {
 public:

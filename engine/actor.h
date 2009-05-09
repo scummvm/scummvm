@@ -28,14 +28,8 @@
 
 #include "engine/color.h"
 #include "engine/resource.h"
-#include "engine/font.h"
 #include "engine/vector3d.h"
 
-#include <string>
-#include <list>
-
-class Costume;
-class LipSync;
 class TextObject;
 class Sector;
 

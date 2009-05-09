@@ -23,38 +23,20 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/endian.h"
-#include "common/util.h"
-#include "common/debug.h"
-#include "common/file.h"
-#include "common/fs.h"
-#include "common/savefile.h"
-
-#include "mixer/mixer.h"
 
 #include "engine/lua.h"
-#include "engine/cmd_line.h"
-#include "engine/resource.h"
 #include "engine/actor.h"
 #include "engine/registry.h"
 #include "engine/localize.h"
-#include "engine/color.h"
 #include "engine/colormap.h"
 #include "engine/costume.h"
 #include "engine/engine.h"
 #include "engine/smush/smush.h"
-#include "engine/textobject.h"
-#include "engine/objectstate.h"
-#include "engine/font.h"
-#include "engine/primitives.h"
 #include "engine/savegame.h"
-#include "engine/lipsync.h"
-
+#include "engine/lua/luadebug.h"
+#include "engine/lua/lauxlib.h"
 #include "engine/imuse/imuse.h"
-
-#include <cstdio>
-#include <cmath>
 
 #ifdef __SYMBIAN32__
 #include <zlib\zlib.h>

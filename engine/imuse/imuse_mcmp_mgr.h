@@ -26,19 +26,6 @@
 #ifndef MCMP_MGR_H
 #define MCMP_MGR_H
 
-#include "common/sys.h"
-#include "common/debug.h"
-#include "common/timer.h"
-
-#include "mixer/mixer.h"
-#include "mixer/audiostream.h"
-
-#include "engine/imuse/imuse_sndmgr.h"
-
-namespace Common {
-	class File;
-}
-
 class McmpMgr {
 private:
 

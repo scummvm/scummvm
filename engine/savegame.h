@@ -32,14 +32,7 @@
 #include <zlib.h>
 #endif
 
-#include "common/debug.h"
 #include "common/savefile.h"
-
-#include "engine/lua.h"
-
-namespace Common {
-	class SaveFileManager;
-}
 
 extern Common::SaveFileManager *g_saveFileMan;
 

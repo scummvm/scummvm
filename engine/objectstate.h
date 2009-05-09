@@ -26,12 +26,7 @@
 #ifndef OSTATE_H
 #define OSTATE_H
 
-#include "engine/resource.h"
 #include "engine/bitmap.h"
-#include "engine/vector3d.h"
-
-#include <string>
-#include <list>
 
 class ObjectState {
 public:

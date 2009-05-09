@@ -23,21 +23,12 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/debug.h"
-
 #include "engine/scene.h"
 #include "engine/textsplit.h"
-#include "engine/resource.h"
-#include "engine/bitmap.h"
 #include "engine/colormap.h"
-#include "engine/gfx_base.h"
 #include "engine/engine.h"
-#include "engine/vector3d.h"
 
 #include "engine/imuse/imuse.h"
-
-#include <cmath>
 
 Scene::Scene(const char *name, const char *buf, int len) :
 		_locked(false), _name(name), _enableLights(false) {

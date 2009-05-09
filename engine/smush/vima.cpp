@@ -23,9 +23,7 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/endian.h"
-#include "common/debug.h"
 
 static int16 imcTable1[] = {
 	  7,     8,     9,    10,    11,    12,    13,    14,    16,    17,

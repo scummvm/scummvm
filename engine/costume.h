@@ -27,16 +27,10 @@
 #define COSTUME_H
 
 #include "engine/model.h"
-#include "engine/vector3d.h"
-
-#include <string>
 
 #define DEFAULT_COLORMAP "item.cmp"
 
 typedef uint32 tag32;
-
-class TextSplitter;
-class Actor;
 
 class Costume {
 public:

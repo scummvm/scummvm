@@ -23,14 +23,9 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/timer.h"
 #include "common/fs.h"
-#include "common/system.h"
 #include "common/events.h"
 
-#include "engine/bitmap.h"
-#include "engine/resource.h"
 #include "engine/lua.h"
 #include "engine/registry.h"
 #include "engine/localize.h"
@@ -39,13 +34,12 @@
 #include "engine/cmd_line.h"
 #include "engine/smush/smush.h"
 #include "engine/imuse/imuse.h"
+#include "engine/lua/lualib.h"
 
 #ifdef USE_OPENGL
 #include "engine/gfx_opengl.h"
 #endif
 #include "engine/gfx_tinygl.h"
-
-#include "mixer/mixer.h"
 
 // Hacky global toggles for experimental/debug code
 bool SHOWFPS_GLOBAL, TINYGL_GLOBAL;

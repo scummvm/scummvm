@@ -23,19 +23,14 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/endian.h"
-#include "common/util.h"
-#include "common/timer.h"
-#include "common/str.h"
 
 #include "engine/resource.h"
 
-#include "mixer/mixer.h"
-#include "mixer/audiostream.h"
-
 #include "engine/imuse/imuse_sndmgr.h"
 #include "engine/imuse/imuse_mcmp_mgr.h"
+
+#include <cstring>
 
 ImuseSndMgr::ImuseSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {

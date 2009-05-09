@@ -23,20 +23,12 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/debug.h"
 #include "common/timer.h"
-#include "common/mutex.h"
-#include "common/system.h"
 
 #include "engine/engine.h"
 #include "engine/savegame.h"
 
-#include "mixer/mixer.h"
-#include "mixer/audiostream.h"
-
 #include "engine/imuse/imuse.h"
-#include "engine/imuse/imuse_sndmgr.h"
 
 Imuse *g_imuse = NULL;
 

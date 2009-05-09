@@ -23,15 +23,8 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/debug.h"
-
-#include "engine/font.h"
-#include "engine/color.h"
 #include "engine/gfx_base.h"
 #include "engine/primitives.h"
-
-#include <string>
 
 PrimitiveObject::PrimitiveObject() {
 	_x1 = 0;

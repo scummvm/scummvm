@@ -23,13 +23,10 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/savefile.h"
 #include "common/endian.h"
 #include "common/system.h"
 
 #include "engine/savegame.h"
-#include "engine/gfx_base.h"
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'

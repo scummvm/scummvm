@@ -26,11 +26,7 @@
 #ifndef BITMAP_H
 #define BITMAP_H
 
-#include "common/debug.h"
-
 #include "engine/resource.h"
-
-#include <cstring>
 
 class Bitmap : public Resource {
 public:

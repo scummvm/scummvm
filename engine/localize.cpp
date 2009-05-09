@@ -23,12 +23,7 @@
  *
  */
 
-#include "common/sys.h"
-#include "common/debug.h"
-#include "common/file.h"
-
 #include "engine/localize.h"
-#include "engine/registry.h"
 #include "engine/engine.h"
 
 #include <cstring>

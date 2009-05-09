@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/sys.h"
+#include "common/debug.h"
 
 #include "engine/walkplane.h"
 #include "engine/textsplit.h"

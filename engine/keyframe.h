@@ -26,11 +26,7 @@
 #ifndef KEYFRAME_H
 #define KEYFRAME_H
 
-#include "engine/resource.h"
 #include "engine/model.h"
-#include "engine/vector3d.h"
-
-class TextSplitter;
 
 class KeyframeAnim : public Resource {
 public:

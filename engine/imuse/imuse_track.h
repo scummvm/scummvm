@@ -26,16 +26,7 @@
 #ifndef IMUSE_TRACK_H
 #define IMUSE_TRACK_H
 
-#include "common/sys.h"
-#include "common/debug.h"
-
-#include "engine/lua.h"
-
-#include "mixer/mixer.h"
-#include "mixer/audiostream.h"
-
 #include "engine/imuse/imuse_sndmgr.h"
-#include "engine/imuse/imuse_mcmp_mgr.h"
 
 enum {
 	kFlagUnsigned = 1 << 0,

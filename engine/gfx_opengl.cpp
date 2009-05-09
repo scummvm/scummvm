@@ -23,11 +23,12 @@
  *
  */
 
-#include "common/debug.h"
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "engine/actor.h"
 #include "engine/colormap.h"
+#include "engine/font.h"
 #include "engine/material.h"
 #include "engine/gfx_opengl.h"
 

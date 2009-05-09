@@ -26,11 +26,7 @@
 #ifndef LIPSYNC_H
 #define LIPSYNC_H
 
-#include "common/sys.h"
-
 #include "engine/resource.h"
-
-#include <list>
 
 class LipSync : public Resource {
 public:

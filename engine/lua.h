@@ -26,11 +26,9 @@
 #ifndef LUA_HH
 #define LUA_HH
 
-#include "engine/vector3d.h"
 #include "engine/lua/lua.h"
-#include "engine/lua/lualib.h"
-#include "engine/lua/luadebug.h"
-#include "engine/lua/lauxlib.h"
+
+class Vector3d;
 
 // Register Residual builtin functions and structures
 void register_lua();

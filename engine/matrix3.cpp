@@ -25,8 +25,6 @@
 
 #include "engine/matrix3.h"
 
-#include <math.h>
-
 void Matrix3::setAsIdentity() {
 	_right.set(1.f, 0.f, 0.f);
 	_up.set(0.f, 1.f, 0.f);

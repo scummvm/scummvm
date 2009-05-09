@@ -32,19 +32,10 @@
 #include <zlib.h>
 #endif
 
-#include "common/sys.h"
-#include "common/debug.h"
-
 #include "engine/smush/blocky16.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
-
-#include <cstring>
-
-namespace Common {
-	class File;
-}
 
 struct SavePos {
 	uint32 filePos;

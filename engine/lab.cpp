@@ -23,13 +23,13 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/endian.h"
-#include "common/file.h"
 
 #include "engine/lab.h"
+#include "engine/lua/lua.h"
 
 #include <algorithm>
+#include <cstring>
 
 bool Lab::open(const char *filename) {
 	_labFileName = filename;

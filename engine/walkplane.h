@@ -26,8 +26,6 @@
 #ifndef WALKPLANE_H
 #define WALKPLANE_H
 
-#include "common/debug.h"
-
 #include "engine/vector3d.h"
 
 #include <string>

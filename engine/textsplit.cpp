@@ -23,12 +23,10 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/debug.h"
 
 #include "engine/textsplit.h"
 
-#include <cstdio>
 #include <cstring>
 #include <cctype>
 #include <cstdarg>
