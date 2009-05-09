@@ -571,10 +571,10 @@ void OSystem_SDL::setupKeymapper() {
 	act->addLeftClickEvent();
 
 	act = new Action(guiMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
-	act->addKeyEvent(KeyState(KEYCODE_F6, ASCII_F6, 0));
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
 
 	act = new Action(guiMap, "REMP", "Remap keys", kKeyRemapActionType);
-	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
 	mapper->addGlobalKeymap(guiMap);
 
