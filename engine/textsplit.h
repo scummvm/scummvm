@@ -26,8 +26,6 @@
 #ifndef TEXTSPLIT_HH
 #define TEXTSPLIT_HH
 
-#include <cstdlib>
-
 // A utility class to help in parsing the text-format files.  Splits
 // the text data into lines, skipping comments, trailing whitespace,
 // and empty lines.  Also folds everything to lowercase.

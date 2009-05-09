@@ -23,22 +23,13 @@
  *
  */
 
-#include "common/sys.h"
-
-#include "mixer/mixer.h"
-
 #include "engine/actor.h"
 #include "engine/engine.h"
+#include "engine/colormap.h"
 #include "engine/costume.h"
 #include "engine/lipsync.h"
-#include "engine/localize.h"
 #include "engine/smush/smush.h"
-#include "engine/walkplane.h"
 #include "engine/imuse/imuse.h"
-#include "engine/gfx_base.h"
-
-#include <cmath>
-#include <cstring>
 
 int g_winX1, g_winY1, g_winX2, g_winY2;
 

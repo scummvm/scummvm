@@ -23,12 +23,9 @@
  *
  */
 
-#include "common/sys.h"
 #include "common/endian.h"
-#include "common/debug.h"
 
 #include "engine/material.h"
-#include "engine/colormap.h"
 #include "engine/gfx_base.h"
 
 Material::Material(const char *filename, const char *data, int len, const CMap &cmap) :
