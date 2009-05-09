@@ -30,7 +30,7 @@
 #include "common/mutex.h"
 
 
-class Driver;
+class OSystem;
 
 
 namespace Audio {
