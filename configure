@@ -227,6 +227,13 @@ get_system_exe_extension() {
 # Generic options functions
 #
 
+# Show the configure help line for an option
+option_help() {
+        tmpopt=`echo $1 | sed 's/_/-/g'`
+	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
+	echo "  ${option}  ${2}"
+}
+
 # Show an error about an unknown option
 option_error() {
 	echo "error: unrecognised option: $ac_option
@@ -234,12 +241,6 @@ Try \`$0 --help' for more information." >&2
 	exit 1
 }
 
-# Show the configure help line for an option
-option_help() {
-        tmpopt=`echo $1 | sed 's/_/-/g'`
-	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
-	echo "  ${option}  ${2}"
-}
 
 #
 # Greet user
@@ -604,7 +605,7 @@ case $cxx_version in
 		;;
 	3_4)
 		_cxx_major=3
-		_mxx_minor=4
+		_cxx_minor=4
 		;;
 	'not found')
 		cxx_verc_fail=yes
