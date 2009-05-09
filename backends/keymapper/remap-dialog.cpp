@@ -80,6 +80,8 @@ void RemapDialog::open() {
 			keymapCount += _gameKeymaps->size();
 	}
 
+	debug(3, "keymaps: %d", keymapCount);
+
 	_keymapTable = (Keymap **)malloc(sizeof(Keymap*) * keymapCount);
 
 	Keymapper::Domain::iterator it;
@@ -125,14 +127,15 @@ void RemapDialog::reflowLayout() {
 	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
 	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
-	int areaX = g_gui.xmlEval()->getVar("KeyRemapper.KeymapArea.x");
-	int areaY = g_gui.xmlEval()->getVar("KeyRemapper.KeymapArea.y");
-	int areaW = g_gui.xmlEval()->getVar("KeyRemapper.KeymapArea.w");
-	int areaH = g_gui.xmlEval()->getVar("KeyRemapper.KeymapArea.h");
-	int spacing = 10; //g_gui.xmlEval()->getVar("remap_spacing");
-	int labelWidth = 100; //g_gui.xmlEval()->getVar("remap_label_width");
-	int buttonWidth = 80; //g_gui.xmlEval()->getVar("remap_button_width");
+	int16 areaX, areaY;
+	uint16 areaW, areaH;
+	int spacing = g_gui.xmlEval()->getVar("Globals.KeyRemapper.Spacing");
+	int labelWidth =  g_gui.xmlEval()->getVar("Globals.KeyRemapper.LabelWidth");
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.KeyRemapper.ButtonWidth");
 	int colWidth = labelWidth + buttonWidth + spacing;
+
+	g_gui.xmlEval()->getWidgetData((const String&)String("KeyRemapper.KeymapArea"), areaX, areaY, areaW, areaH);
+
 	_colCount = (areaW - scrollbarWidth) / colWidth;
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
 	if (_colCount <= 0 || _rowCount <= 0) 
