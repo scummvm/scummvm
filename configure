@@ -893,7 +893,7 @@ EOF
 		# In cross-compiling mode, we cannot run the result
 		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
 	else
-		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$HOSTEXEEXT 2> /dev/null" && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$HOSTEXEEXT 2> /dev/null" && rm -rf tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.dSYM tmp_cxx_compiler.cpp
 	fi
 }
 
@@ -1741,7 +1741,7 @@ else
 	_def_fluidsynth='#undef USE_FLUIDSYNTH'
 fi
 echo "$_fluidsynth"
-rm -f $TMPC $TMPO$HOSTEXEEXT
+rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
 
 #
 # Check for nasm
