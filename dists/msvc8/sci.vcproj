@@ -358,6 +358,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\gfx\gfx_pixmap_scale.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\gfx\gfx_res_options.cpp"
 				>
 			</File>
