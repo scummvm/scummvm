@@ -1239,7 +1239,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		}
 	}
 
-	// WORKAROUND: self-intersecting polygons in ECO, rooms 280 and 300
+	// WORKAROUND: self-intersecting polygons in ECO, rooms 221, 280 and 300
 	if ((size == 11) && (s->_gameName == "eco")) {
 		if ((KP_UINT(s->script_000->locals_block->locals[13]) == 300)
 		&& (read_point(list, is_reg_t, 10) == Common::Point(221, 0))) {
@@ -1252,6 +1252,18 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		&& (read_point(list, is_reg_t, 11) == Common::Point(238, 189))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 280");
 			size = 10;
+		}
+	}
+	if ((size == 16) && (s->_gameName == "eco")) {
+		if ((KP_UINT(s->script_000->locals_block->locals[13]) == 221)
+		&& (read_point(list, is_reg_t, 1) == Common::Point(419, 175))) {
+			debug(1, "Applying fix for self-intersecting polygon in ECO, room 221");
+			// Swap the first two points
+			poly->vertices.insertHead(new Vertex(read_point(list, is_reg_t, 1)));
+			poly->vertices.insertHead(new Vertex(read_point(list, is_reg_t, 0)));
+			size = 14;
+			assert(!is_reg_t);
+			list += 2 * POLY_POINT_SIZE;
 		}
 	}
 
