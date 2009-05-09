@@ -859,6 +859,7 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vert) {
 	return visVerts;
 }
 
+#if 0
 static bool point_on_screen_border(const Common::Point &p) {
 	// Determines if a point lies on the screen border
 	// Parameters: (const Common::Point &) p: The point
@@ -866,6 +867,7 @@ static bool point_on_screen_border(const Common::Point &p) {
 	// FIXME get dimensions from somewhere?
 	return (p.x == 0) || (p.x == 319) || (p.y == 0) || (p.y == 189);
 }
+#endif
 
 static bool edge_on_screen_border(const Common::Point &p, const Common::Point &q) {
 	// Determines if an edge lies on the screen border
