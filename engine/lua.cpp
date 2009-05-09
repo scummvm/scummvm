@@ -2284,7 +2284,7 @@ static void BlastImage() {
 	g_driver->drawBitmap(bitmap);
 }
 
-void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
+void setTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 	const char *key_text = NULL;
 	lua_Object key = LUA_NOOBJECT;
 	
@@ -2298,7 +2298,7 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 
 		// If the call to "next" fails then register an error
 		if (lua_call("next") != 0) {
-			error("getTextObjectParams failed to get next key!");
+			error("setTextObjectParams failed to get next key!");
 			return;
 		}
 		key = lua_getresult(1);
@@ -2331,7 +2331,7 @@ void getTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 		else if (strmatch(key_text, "rjustify"))
 			textObject->setJustify(3);
 		else
-			error("Unknown getTextObjectParams key '%s'", key_text);
+			error("Unknown setTextObjectParams key '%s'", key_text);
 	}
 }
 
@@ -2403,7 +2403,7 @@ static void ChangeTextObject() {
 	textObject->destroyBitmap();
 
 	if (lua_istable(tableObj))
-		getTextObjectParams(textObject, tableObj);
+		setTextObjectParams(textObject, tableObj);
 	
 	if (lua_isstring(lua_getparam(2))) {
 		line = lua_getstring(lua_getparam(2));
@@ -2444,7 +2444,7 @@ static void MakeTextObject() {
 	textObject->setDefaults(&textObjectDefaults);
 
 	if (lua_istable(tableObj))
-		getTextObjectParams(textObject, tableObj);
+		setTextObjectParams(textObject, tableObj);
 
 	while (TextObjectExists((char *)text.c_str()))
 		text += TEXT_NULL;
@@ -2502,7 +2502,7 @@ static void BlastText() {
 	textObject->setDefaults(&textObjectDefaults);
 
 	if (lua_istable(tableObj))
-		getTextObjectParams(textObject, tableObj);
+		setTextObjectParams(textObject, tableObj);
 
 	//printf("Blast: %s\n", (char *)text.c_str());
 
