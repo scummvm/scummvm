@@ -120,6 +120,7 @@ private:
 	class Chore {
 	public:
 		Chore();
+		~Chore();
 		void load(Costume *owner, TextSplitter &ts);
 		void play();
 		void playLooping();

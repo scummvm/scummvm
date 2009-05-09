@@ -719,6 +719,7 @@ Costume::~Costume() {
 		if (_components[i])
 			delete _components[i];
 	}
+	delete[] _components;
 	delete[] _chores;
 }
 
@@ -772,7 +773,18 @@ void Costume::Component::setParent(Component *newParent) {
 }
 
 // Should initialize the status variables so the chore can't play unexpectedly
-Costume::Chore::Chore() : _hasPlayed(false), _playing(false), _looping(false), _currTime(-1) {
+Costume::Chore::Chore() : _hasPlayed(false), _playing(false), _looping(false), _currTime(-1),
+                          _tracks(NULL) {
+}
+
+Costume::Chore::~Chore() {
+	if (_tracks) {
+		for (int i = 0; i < _numTracks; i++)
+			delete[] _tracks[i].keys;
+
+		delete[] _tracks;
+		_tracks = NULL;
+	}
 }
 
 void Costume::Chore::load(Costume *owner, TextSplitter &ts) {
