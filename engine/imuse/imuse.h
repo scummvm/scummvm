@@ -31,7 +31,7 @@
 #define MAX_IMUSE_TRACKS 16
 #define MAX_IMUSE_FADETRACKS 16
 
-class ImuseTable;
+struct ImuseTable;
 class SaveGame;
 
 class Imuse {

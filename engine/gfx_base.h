@@ -30,7 +30,7 @@
 #include "engine/scene.h"
 #include "engine/primitives.h"
 
-class Shadow;
+struct Shadow;
 
 class GfxBase {
 public:
