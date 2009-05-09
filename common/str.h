@@ -20,6 +20,7 @@
  *
  * $URL$
  * $Id$
+ *
  */
 
 #ifndef COMMON_STRING_H
@@ -194,7 +195,7 @@ public:
 	/** Set character c at position p, replacing the previous character there. */
 	void setChar(char c, uint32 p);
 
-	/** Set character c at position p. */
+	/** Insert character c before position p. */
 	void insertChar(char c, uint32 p);
 
 	/** Clears the string, making it empty. */
@@ -314,16 +315,7 @@ Common::String normalizePath(const Common::String &path, const char sep);
 bool matchString(const char *str, const char *pat, bool pathMode = false);
 
 
-class StringList : public Array<String> {
-public:
-	void push_back(const char *str) {
-		Array<String>::push_back(str);
-	}
-
-	void push_back(const String &str) {
-		Array<String>::push_back(str);
-	}
-};
+typedef Array<String> StringList;
 
 }	// End of namespace Common
 

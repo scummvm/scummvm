@@ -20,6 +20,7 @@
  *
  * $URL$
  * $Id$
+ *
  */
 
 #ifndef COMMON_FUNC_H
@@ -372,7 +373,7 @@ struct Functor0 {
  * Example creation:
  *
  * Foo bar;
- * Functor0Men<void, Foo> myFunctor(&bar, &Foo::myFunc);
+ * Functor0Mem<void, Foo> myFunctor(&bar, &Foo::myFunc);
  *
  * Example usage:
  *
@@ -439,7 +440,7 @@ struct Functor1 : public Common::UnaryFunction<Arg, Res> {
  * Usage is like with Functor0Mem. The resulting functor object
  * will take one parameter though.
  *
- * @see Functor0Men
+ * @see Functor0Mem
  */
 template<class Arg, class Res, class T>
 class Functor1Mem : public Functor1<Arg, Res> {
@@ -471,11 +472,31 @@ struct Functor2 : public Common::BinaryFunction<Arg1, Arg2, Res> {
 };
 
 /**
+ * Functor object for a binary function.
+ *
+ * @see Functor2Mem
+ */
+template<class Arg1, class Arg2, class Res>
+class Functor2Fun : public Functor2<Arg1, Arg2, Res> {
+public:
+	typedef Res (*FuncType)(Arg1, Arg2);
+
+	Functor2Fun(const FuncType func) : _func(func) {}
+
+	bool isValid() const { return _func != 0; }
+	Res operator()(Arg1 v1, Arg2 v2) const {
+		return (*_func)(v1, v2);
+	}
+private:
+	const FuncType _func;
+};
+
+/**
  * Functor object for a binary class member function.
  * Usage is like with Functor0Mem. The resulting functor object
  * will take two parameter though.
  *
- * @see Functor0Men
+ * @see Functor0Mem
  */
 template<class Arg1, class Arg2, class Res, class T>
 class Functor2Mem : public Functor2<Arg1, Arg2, Res> {

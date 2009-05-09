@@ -8,18 +8,19 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
+ *
  */
 
 #ifndef COMMON_QUEUE_H
@@ -35,17 +36,12 @@ namespace Common {
  */
 template<class T>
 class Queue {
-public:
-	typedef T value_type;
+//public:
+//	typedef T value_type;
 
 public:
 	Queue<T>() : _impl() {}
 	Queue<T>(const Queue<T> &queue) : _impl(queue._impl) {}
-
-	Queue<T> &operator=(const Queue<T> &queue) {
-		_impl = queue._impl;
-		return *this;
-	}
 
 	bool empty() const {
 		return _impl.empty();
@@ -60,19 +56,19 @@ public:
 	}
 
 	T &front() {
-		return *_impl.begin();
+		return _impl.front();
 	}
 
 	const T &front() const {
-		return *_impl.begin();
+		return _impl.front();
 	}
 
 	T &back() {
-		return *_impl.reverse_begin();
+		return _impl.back();
 	}
 
 	const T &back() const {
-		return *_impl.reverse_begin();
+		return _impl.back();
 	}
 
 	T pop() {

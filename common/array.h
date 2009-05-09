@@ -20,6 +20,7 @@
  *
  * $URL$
  * $Id$
+ *
  */
 
 #ifndef COMMON_ARRAY_H
@@ -30,6 +31,12 @@
 
 namespace Common {
 
+// TODO: Improve the storage management of this class.
+// In particular, don't use new[] and delete[], but rather
+// construct/destruct objects manually. This way, we can
+// ensure that storage which is not currently used does not
+// correspond to a live active object.
+// (This is only of interest for array of non-POD objects).
 template<class T>
 class Array {
 protected:
@@ -46,16 +53,30 @@ public:
 public:
 	Array() : _capacity(0), _size(0), _storage(0) {}
 	Array(const Array<T> &array) : _capacity(0), _size(0), _storage(0) {
-		_size = array._size;
-		_capacity = _size + 32;
+		_capacity = _size = array._size;
 		_storage = new T[_capacity];
+		assert(_storage);
 		copy(array._storage, array._storage + _size, _storage);
+	}
+
+	/**
+	 * Construct an array by copying data from a regular array.
+	 */
+	template<class T2>
+	Array(const T2 *data, int n) {
+		_capacity = _size = n;
+		_storage = new T[_capacity];
+		assert(_storage);
+		copy(data, data + _size, _storage);
 	}
 
 	~Array() {
 		delete[] _storage;
+		_storage = 0;
+		_capacity = _size = 0;
 	}
 
+	/** Appends element to the end of the array. */
 	void push_back(const T &element) {
 		ensureCapacity(_size + 1);
 		_storage[_size++] = element;
@@ -65,6 +86,36 @@ public:
 		ensureCapacity(_size + array._size);
 		copy(array._storage, array._storage + array._size, _storage + _size);
 		_size += array._size;
+	}
+
+	/** Removes the last element of the array. */
+	void pop_back() {
+		assert(_size > 0);
+		_size--;
+	}
+
+	/** Returns a reference to the first element of the array. */
+	T &front() {
+		assert(_size > 0);
+		return _storage[0];
+	}
+
+	/** Returns a reference to the first element of the array. */
+	const T &front() const {
+		assert(_size > 0);
+		return _storage[0];
+	}
+
+	/** Returns a reference to the last element of the array. */
+	T &back() {
+		assert(_size > 0);
+		return _storage[_size-1];
+	}
+
+	/** Returns a reference to the last element of the array. */
+	const T &back() const {
+		assert(_size > 0);
+		return _storage[_size-1];
 	}
 
 	void insert_at(int idx, const T &element) {
@@ -103,6 +154,7 @@ public:
 		_size = array._size;
 		_capacity = _size + 32;
 		_storage = new T[_capacity];
+		assert(_storage);
 		copy(array._storage, array._storage + _size, _storage);
 
 		return *this;
@@ -146,7 +198,8 @@ public:
 
 		T *old_storage = _storage;
 		_capacity = newCapacity;
-		_storage = new T[newCapacity];
+		_storage = new T[newCapacity]();
+		assert(_storage);
 
 		if (old_storage) {
 			// Copy old data
@@ -156,18 +209,7 @@ public:
 	}
 
 	void resize(uint newSize) {
-		if (newSize == _size)
-			return;
-
-		T *old_storage = _storage;
-		_capacity = newSize;
-		_storage = new T[newSize];
-		if (old_storage) {
-			// Copy old data
-			int cnt = (_size < newSize ? _size : newSize);
-			copy(old_storage, old_storage + cnt, _storage);
-			delete[] old_storage;
-		}
+		reserve(newSize);
 		_size = newSize;
 	}
 

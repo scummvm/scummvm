@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -64,88 +64,122 @@ public:
 		clear();
 	}
 
-	void push_front(const t_T &element) {
-		insert(begin(), element);
-	}
-
-	void push_back(const t_T &element) {
-		insert(end(), element);
-	}
-
+	/**
+	 * Inserts element before pos.
+	 */
 	void insert(iterator pos, const t_T &element) {
-		ListInternal::NodeBase *newNode = new Node(element);
-
-		newNode->_next = pos._node;
-		newNode->_prev = pos._node->_prev;
-		newNode->_prev->_next = newNode;
-		newNode->_next->_prev = newNode;
+		insert(pos._node, element);
 	}
 
+	/**
+	 * Inserts the elements from first to last before pos.
+	 */
 	template<typename iterator2>
 	void insert(iterator pos, iterator2 first, iterator2 last) {
 		for (; first != last; ++first)
 			insert(pos, *first);
 	}
 
+	/**
+	 * Deletes the element at location pos and returns an iterator pointing
+	 * to the element after the one which was deleted.
+	 */
 	iterator erase(iterator pos) {
 		assert(pos != end());
-
-		NodeBase *next = pos._node->_next;
-		NodeBase *prev = pos._node->_prev;
-		Node *node = static_cast<Node *>(pos._node);
-		prev->_next = next;
-		next->_prev = prev;
-		delete node;
-		return iterator(next);
+		return iterator(erase(pos._node)._next);
 	}
 
+	/**
+	 * Deletes the element at location pos and returns an iterator pointing
+	 * to the element before the one which was deleted.
+	 */
 	iterator reverse_erase(iterator pos) {
 		assert(pos != end());
-
-		NodeBase *next = pos._node->_next;
-		NodeBase *prev = pos._node->_prev;
-		Node *node = static_cast<Node *>(pos._node);
-		prev->_next = next;
-		next->_prev = prev;
-		delete node;
-		return iterator(prev);
+		return iterator(erase(pos._node)._prev);
 	}
 
+	/**
+	 * Deletes the elements between first and last (including first but not
+	 * last) and returns an iterator pointing to the element after the one
+	 * which was deleted (i.e., last).
+	 */
 	iterator erase(iterator first, iterator last) {
-		while (first != last)
-			erase(first++);
-
+		NodeBase *f = first._node;
+		NodeBase *l = last._node;
+		while (f != l)
+			f = erase(f)._next;
 		return last;
 	}
 
+	/**
+	 * Removes all elements that are equal to val from the list.
+	 */
 	void remove(const t_T &val) {
-		iterator i = begin();
-		while (i != end())
-			if (val == i.operator*())
-				i = erase(i);
+		NodeBase *i = _anchor._next;
+		while (i != &_anchor)
+			if (val == static_cast<Node *>(i)->_data)
+				i = erase(i)._next;
 			else
-				++i;
+				i = i->_next;
 	}
 
+	/** Inserts element at the start of the list. */
+	void push_front(const t_T &element) {
+		insert(_anchor._next, element);
+	}
+
+	/** Appends element to the end of the list. */
+	void push_back(const t_T &element) {
+		insert(&_anchor, element);
+	}
+
+	/** Removes the first element of the list. */
 	void pop_front() {
-		iterator i = begin();
-		i = erase(i);
+		assert(!empty());
+		erase(_anchor._next);
 	}
 
+	/** Removes the last element of the list. */
+	void pop_back() {
+		assert(!empty());
+		erase(_anchor._prev);
+	}
+
+	/** Returns a reference to the first element of the list. */
+	t_T &front() {
+		return static_cast<Node *>(_anchor._next)->_data;
+	}
+
+	/** Returns a reference to the first element of the list. */
+	const t_T &front() const {
+		return static_cast<Node *>(_anchor._next)->_data;
+	}
+
+	/** Returns a reference to the last element of the list. */
+	t_T &back() {
+		return static_cast<Node *>(_anchor._prev)->_data;
+	}
+
+	/** Returns a reference to the last element of the list. */
+	const t_T &back() const {
+		return static_cast<Node *>(_anchor._prev)->_data;
+	}
 
 	List<t_T> &operator=(const List<t_T> &list) {
 		if (this != &list) {
 			iterator i;
-			const_iterator j;
+			const iterator e = end();
+			const_iterator i2;
+			const_iterator e2 = list.end();
 
-			for (i = begin(), j = list.begin();  (i != end()) && (j != list.end()) ; ++i, ++j) {
-				static_cast<Node *>(i._node)->_data = static_cast<const Node *>(j._node)->_data;
+			for (i = begin(), i2 = list.begin();  (i != e) && (i2 != e2) ; ++i, ++i2) {
+				static_cast<Node *>(i._node)->_data = static_cast<const Node *>(i2._node)->_data;
 			}
 
-			if (i == end())
-				insert(i, j, list.end());
+			if (i == e)
+				insert(i, i2, e2);
 			else
-				erase(i, end());
+				erase(i, e);
 		}
 
 		return *this;
@@ -153,13 +187,21 @@ public:
 
 	uint size() const {
 		int n = 0;
-		for (const_iterator i = begin(); i != end(); ++i)
+		for (const NodeBase *cur = _anchor._next; cur != &_anchor; cur = cur->_next)
 			++n;
 		return n;
 	}
 
 	void clear() {
-		erase(begin(), end());
+		NodeBase *pos = _anchor._next;
+		while (pos != &_anchor) {
+			Node *node = static_cast<Node *>(pos);
+			pos = pos->_next;
+			delete node;
+		}
+
+		_anchor._prev = &_anchor;
+		_anchor._next = &_anchor;
 	}
 
 	bool empty() const {
@@ -189,6 +231,29 @@ public:
 
 	const_iterator	end() const {
 		return const_iterator(const_cast<NodeBase*>(&_anchor));
+	}
+
+protected:
+	NodeBase erase(NodeBase *pos) {
+		NodeBase n = *pos;
+		Node *node = static_cast<Node *>(pos);
+		n._prev->_next = n._next;
+		n._next->_prev = n._prev;
+		delete node;
+		return n;
+	}
+
+	/**
+	 * Inserts element before pos.
+	 */
+	void insert(NodeBase *pos, const t_T &element) {
+		ListInternal::NodeBase *newNode = new Node(element);
+		assert(newNode);
+
+		newNode->_next = pos;
+		newNode->_prev = pos->_prev;
+		newNode->_prev->_next = newNode;
+		newNode->_next->_prev = newNode;
 	}
 };
 
