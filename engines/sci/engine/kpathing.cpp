@@ -258,7 +258,7 @@ struct PathfindingState {
 
 static Vertex *vertex_cur;	// FIXME
 
-// Temporary hack to deal with points in reg_ts
+// FIXME: Temporary hack to deal with points in reg_ts
 static bool polygon_is_reg_t(const byte *list, int size) {
 	// Check the first three reg_ts
 	for (int i = 0; i < (size < 3 ? size : 3); i++)
@@ -1556,10 +1556,13 @@ static void dijkstra(PathfindingState *s) {
 			uint32 new_dist;
 			Vertex *vertex = *it;
 
+			// Early pathfinding-enabled games exclude edges on screen borders.
+// FIXME: Enable this selectively for those games that need it.
+#if 0
 			// Avoid plotting path along screen edge
 			if ((vertex != s->vertex_end) && point_on_screen_border(vertex->v))
 				continue;
-
+#endif
 			new_dist = vertex_min->dist + (uint32)sqrt((float)vertex_min->v.sqrDist(vertex->v));
 			if (new_dist < vertex->dist) {
 				vertex->dist = new_dist;
