@@ -226,7 +226,7 @@ void Blocky16::makeTablesInterpolation(int param) {
 			} else {
 				b2 = 4;
 			}
-			
+
 			memset(tableSmallBig, 0, param * param * 4);
 
 			variable2 = abs(value_table47_2_2 - value_table47_2_1);
@@ -353,7 +353,7 @@ void Blocky16::makeTables47(int width) {
 			_tableBig[128 + a + d * 2] = (byte)tmp;
 			_tableBig[128 + a + d * 2 + 1] = tmp >> 8;
 		}
-		
+
 		a += 388;
 		c += 128;
 	} while (c < 32768);
@@ -379,11 +379,11 @@ void Blocky16::level3(byte *d_dst) {
 			d_dst += _d_pitch;
 		}
 	} else if ((code == 0xFF) || (code == 0xF8)) {
-		WRITE_2X1_LINE(d_dst + 0, READ_LE_UINT16(_d_src + 0)); 
-		WRITE_2X1_LINE(d_dst + 2, READ_LE_UINT16(_d_src + 2)); 
+		WRITE_2X1_LINE(d_dst + 0, READ_LE_UINT16(_d_src + 0));
+		WRITE_2X1_LINE(d_dst + 2, READ_LE_UINT16(_d_src + 2));
 		d_dst += _d_pitch;
-		WRITE_2X1_LINE(d_dst + 0, READ_LE_UINT16(_d_src + 4)); 
-		WRITE_2X1_LINE(d_dst + 2, READ_LE_UINT16(_d_src + 6)); 
+		WRITE_2X1_LINE(d_dst + 0, READ_LE_UINT16(_d_src + 4));
+		WRITE_2X1_LINE(d_dst + 2, READ_LE_UINT16(_d_src + 6));
 		_d_src += 8;
 	} else if (code == 0xFD) {
 		t = *_d_src++;
@@ -420,7 +420,7 @@ void Blocky16::level3(byte *d_dst) {
 		t = READ_LE_UINT16(_paramPtr + code * 2);
 		t = (t << 16) | t;
 		for (i = 0; i < 2; i++) {
-			WRITE_4X1_LINE(d_dst + 0, t); 
+			WRITE_4X1_LINE(d_dst + 0, t);
 			d_dst += _d_pitch;
 		}
 	}
@@ -476,7 +476,7 @@ void Blocky16::level2(byte *d_dst) {
 		byte l = tmp_ptr[96];
 		int16 *tmp_ptr2 = (int16 *)tmp_ptr;
 		while (l--) {
-			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val); 
+			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val);
 			tmp_ptr2++;
 		}
 		l = tmp_ptr[97];
@@ -568,7 +568,7 @@ void Blocky16::level1(byte *d_dst) {
 		val >>= 16;
 		tmp_ptr2 = (int16 *)(tmp_ptr + 128);
 		while (l--) {
-			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val); 
+			WRITE_2X1_LINE(d_dst + READ_LE_UINT16(tmp_ptr2) * 2, val);
 			tmp_ptr2++;
 		}
 	} else if (code >= 0xF9) {
@@ -703,7 +703,7 @@ static byte bompDecode() {
 	if (bomp_num == 0) {
 		bomp_left = 2;
 	}
-	
+
 	return result;
 }
 
@@ -749,7 +749,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 				*(uint16 *)(ptr1++) = val;
 				*(uint16 *)(ptr2++) = val;
 			};
-		
+
 		}
 		_prevSeqNb = -1;
 	}
@@ -771,7 +771,7 @@ void Blocky16::decode(byte *dst, const byte *src) {
 		if (seq_nb == _prevSeqNb + 1) {
 			decode2(_curBuf, gfx_data, _width, _height, src + 24, src + 40);
 		}
-		
+
 		break;
 	case 3:
 		memcpy(_curBuf, _deltaBufs[1], _frameSize);

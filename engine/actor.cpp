@@ -237,7 +237,7 @@ void Actor::setWalkChore(int chore, Costume *cost) {
 
 void Actor::setTurnChores(int left_chore, int right_chore, Costume *cost) {
 	if (_turnCostume == cost && _leftTurnChore == left_chore &&
-	    _rightTurnChore == right_chore)
+		_rightTurnChore == right_chore)
 		return;
 
 	if (_leftTurnChore >= 0) {
@@ -347,7 +347,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			// (the mumble chore doesn't exist with the cat races announcer)
 			if (!_lipSync && _mumbleChore != -1)
 				_mumbleCostume->playChoreLooping(_mumbleChore);
-			
+
 			_talkAnim = -1;
 		}
 	}
@@ -381,7 +381,7 @@ bool Actor::talking() {
 	// If there's no sound file then we're obviously not talking
 	if (strlen(_talkSoundName.c_str()) == 0)
 		return false;
-	
+
 	return g_imuse->getSoundStatus(_talkSoundName.c_str());
 }
 
@@ -410,7 +410,7 @@ void Actor::shutUp() {
 
 void Actor::pushCostume(const char *name) {
 	Costume *newCost = g_resourceloader->loadCostume(name, currentCostume());
-	
+
 	newCost->setColormap(NULL);
 	_costumeStack.push_back(newCost);
 }
@@ -566,7 +566,7 @@ void Actor::update() {
 	// Update lip syncing
 	if (_lipSync) {
 		int posSound;
-		
+
 		// While getPosIn60HzTicks will return "-1" to indicate that the
 		// sound is no longer playing, it is more appropriate to check first
 		if(g_imuse->getSoundStatus(_talkSoundName.c_str()))

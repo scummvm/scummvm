@@ -46,7 +46,7 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 	// Next 36 bytes are the filename
 	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
 		char filebuf[37];
-		
+
 		memcpy(filebuf, data + 4, 36);
 		filebuf[36] = 0;
 		printf("Loading Keyframe '%s'.", filebuf);

@@ -59,7 +59,7 @@ private:
 		byte hookId;		// id of hook
 		int16 fadeDelay;	// fade delay in ms
 	};
-	
+
 public:
 
 	struct SoundDesc {

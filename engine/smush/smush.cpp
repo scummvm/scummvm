@@ -109,7 +109,7 @@ void Smush::deinit() {
 	_videoLooping = false;
 	_videoFinished = true;
 	_videoPause = true;
- 	_file.close();
+	_file.close();
 }
 
 void Smush::handleWave(const byte *src, uint32 size) {
@@ -157,7 +157,7 @@ void Smush::handleFrame() {
 	if (tag == MKID_BE('ANNO')) {
 		char *anno;
 		byte *data;
-		
+
 		size = _file.readUint32BE();
 		data = new byte[size];
 		_file.read(data, size);
@@ -303,9 +303,9 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	return true;
 }
 
-void Smush::stop() { 
+void Smush::stop() {
 	deinit();
- 	g_engine->setMode(ENGINE_MODE_NORMAL);
+	g_engine->setMode(ENGINE_MODE_NORMAL);
 }
 
 bool Smush::play(const char *filename, int x, int y) {
@@ -313,7 +313,7 @@ bool Smush::play(const char *filename, int x, int y) {
 
 	if (debugLevel == DEBUG_SMUSH)
 		printf("Playing video '%s'.\n", filename);
-	
+
 	// Load the video
 	if (!setupAnim(filename, x, y))
 		return false;
@@ -335,7 +335,7 @@ zlibFile::~zlibFile() {
 	close();
 }
 
-struct SavePos *zlibFile::getPos() { 
+struct SavePos *zlibFile::getPos() {
 	struct SavePos *pos;
 	uint32 position = _handle->pos();
 
@@ -352,7 +352,7 @@ struct SavePos *zlibFile::getPos() {
 	return pos;
 }
 
-bool zlibFile::setPos(struct SavePos *pos) { 
+bool zlibFile::setPos(struct SavePos *pos) {
 	if (!pos) {
 		warning("Unable to rewind SMUSH movie (no position passed)!");
 		return false;
@@ -503,7 +503,7 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 
 	return (uint32)(len - _stream.avail_out);
 }
- 
+
 byte zlibFile::readByte() {
 	unsigned char c;
 

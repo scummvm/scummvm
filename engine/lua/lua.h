@@ -52,7 +52,7 @@ public:
 public:
 	LuaFile();
 	~LuaFile();
-	
+
 	void close();
 	bool isOpen() const;
 	uint32 read(void *buf, uint32 len);

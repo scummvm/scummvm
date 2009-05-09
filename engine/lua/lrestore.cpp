@@ -311,7 +311,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		arraysObj->object = tempClosure;
 		arraysObj++;
 	}
-	
+
 	Hash *tempHash;
 	arraysObj = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayHashTablesCount);
 	arrayHashTables = arraysObj;

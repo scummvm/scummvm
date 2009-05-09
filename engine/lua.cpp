@@ -129,7 +129,7 @@ static inline PrimitiveObject *check_primobject(int num) {
 		return static_cast<PrimitiveObject *>(lua_getuserdata(param));
 	luaL_argerror(num, "primitive expected");
 	return NULL;
-} 
+}
 
 static inline TextObject *check_textobject(int num) {
 	lua_Object param = lua_getparam(num);
@@ -152,18 +152,18 @@ static inline double check_double(int num) {
 	// where doubles of "zero" are called as nil
 	if (lua_isnil(lua_getparam(num)))
 		return 0.0;
-	
+
 	return luaL_check_number(num);
 }
 
 static inline int check_int(int num) {
 	double val;
-	
+
 	// Have found some instances, such as in Rubacava and the tube-switcher
 	// room, where integers of "zero" are called as nil
 	if(lua_isnil(lua_getparam(num)))
 		return 0;
-	
+
 	val = luaL_check_number(num);
 	return int(round(val));
 }
@@ -220,7 +220,7 @@ static void PrintDebug() {
 	DEBUG_FUNCTION();
 	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
 		std::string msg = luaL_check_string(1);
-		
+
 		msg.insert(0, "Debug: ");
 		msg.append("\n");
 		std::fputs(msg.c_str(), stderr);
@@ -231,7 +231,7 @@ static void PrintError() {
 	DEBUG_FUNCTION();
 	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL) {
 		std::string msg = luaL_check_string(1);
-		
+
 		msg.insert(0, "Error: ");
 		// don't do 'error()' so we can stay alive if possible
 		std::fputs(msg.c_str(), stderr);
@@ -242,7 +242,7 @@ static void PrintWarning() {
 	DEBUG_FUNCTION();
 	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL) {
 		std::string msg = luaL_check_string(1);
-		
+
 		msg.insert(0, "Warning: ");
 		warning(msg.c_str());
 	}
@@ -293,7 +293,7 @@ static void FunctionName() {
 
 static void CheckForFile() {
 	const char *filename = luaL_check_string(1);
-	
+
 	DEBUG_FUNCTION();
 	pushbool(g_resourceloader->fileExists(filename));
 }
@@ -332,7 +332,7 @@ static void GetColorComponents() {
 static void ReadRegistryValue() {
 	const char *key;
 	const char *val;
-	
+
 	DEBUG_FUNCTION();
 	key = luaL_check_string(1);
 	val = g_registry->get(key, "");
@@ -345,7 +345,7 @@ static void ReadRegistryValue() {
 static void WriteRegistryValue() {
 	const char *key;
 	const char *val;
-	
+
 	DEBUG_FUNCTION();
 	key = luaL_check_string(1);
 	val = luaL_check_string(2);
@@ -356,7 +356,7 @@ static void WriteRegistryValue() {
 
 static void LoadActor() {
 	const char *name;
-	
+
 	DEBUG_FUNCTION();
 	if (lua_isnil(lua_getparam(1)))
 		name = "<unnamed>";
@@ -374,7 +374,7 @@ static void GetActorTimeScale() {
 
 static void SetSelectedActor() {
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	g_engine->setSelectedActor(act);
@@ -386,7 +386,7 @@ static void SetSelectedActor() {
  */
 static void GetCameraActor() {
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	stubWarning("VERIFY: GetCameraActor");
 	act = g_engine->selectedActor();
@@ -413,7 +413,7 @@ static void SetSayLineDefaults() {
 			return;
 		}
 		key = lua_getresult(1);
-		if (lua_isnil(key)) 
+		if (lua_isnil(key))
 			break;
 
 		key_text = lua_getstring(key);
@@ -427,7 +427,7 @@ static void SetSayLineDefaults() {
 static void SetActorTalkColor() {
 	Actor *act;
 	Color *c;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	c = check_color(2);
@@ -532,7 +532,7 @@ static void SetActorMumblechore() {
 static void SetActorVisibility() {
 	Actor *act;
 	bool val;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	val = getbool(2);
@@ -550,7 +550,7 @@ static void PutActorAt() {
 static void GetActorPos() {
 	Actor *act;
 	Vector3d pos;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	pos = act->pos();
@@ -588,7 +588,7 @@ static void GetActorRot() {
 
 static void IsActorTurning() {
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	pushbool(act->isTurning());
@@ -597,7 +597,7 @@ static void IsActorTurning() {
 static void GetAngleBetweenActors() {
 	Actor *act1;
 	Actor *act2;
-	
+
 	DEBUG_FUNCTION();
 	act1 = check_actor(1);
 	act2 = check_actor(2);
@@ -608,7 +608,7 @@ static void GetActorYawToPoint() {
 	Vector3d yawVector;
 	lua_Object param2;
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	param2 = lua_getparam(2);
@@ -634,7 +634,7 @@ static void GetActorYawToPoint() {
 static void PutActorInSet() {
 	const char *set = "";
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	// If the set is "nil" then set to an empty string, we should not render
@@ -669,7 +669,7 @@ static void GetActorWalkRate() {
 static void SetActorTurnRate() {
 	Actor *act;
 	float rate;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	rate = luaL_check_number(2);
@@ -678,7 +678,7 @@ static void SetActorTurnRate() {
 
 static void WalkActorForward() {
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	act->walkForward();
@@ -687,7 +687,7 @@ static void WalkActorForward() {
 static void SetActorReflection() {
 	Actor *act;
 	float angle;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	angle = luaL_check_number(2);
@@ -757,7 +757,7 @@ static void GetVideoDevices() {
 
 static void EnumerateVideoDevices() {
 	lua_Object result = lua_createtable();
-	
+
 	DEBUG_FUNCTION();
 	lua_pushobject(result);
 	lua_pushnumber(0.0); // id of device
@@ -792,7 +792,7 @@ static void IsActorResting() {
 }
 
 /* Get the location of one of the actor's nodes, this is
- * used by Glottis to watch where Manny is located in 
+ * used by Glottis to watch where Manny is located in
  * order to hand him the work order.  This function is
  * also important for when Velasco hands Manny the logbook
  * in Rubacava
@@ -802,7 +802,7 @@ static void GetActorNodeLocation() {
 	Costume *c;
 	Actor *act;
 	int node;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	node = check_int(2);
@@ -836,7 +836,7 @@ static void GetActorNodeLocation() {
 static void SetActorWalkDominate() {
 	lua_Object param2;
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	if (!act) {
@@ -848,7 +848,7 @@ static void SetActorWalkDominate() {
 		lua_pushnil();
 	} else if (lua_isnumber(param2)) {
 		int walkcode = check_int(2);
-		
+
 		if (walkcode != 1) {
 			warning("Unknown SetActorWalkDominate 'walking code' value: %d", walkcode);
 			lua_pushnil();
@@ -868,7 +868,7 @@ static void SetActorColormap() {
 	const char *mapname;
 	CMap *_cmap;
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	mapname = luaL_check_string(2);
@@ -879,7 +879,7 @@ static void SetActorColormap() {
 static void TurnActor() {
 	Actor *act;
 	int dir;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	dir = check_int(2);
@@ -927,7 +927,7 @@ static void GetActorCostume() {
 
 static void PopActorCostume() {
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	act->popCostume();
@@ -935,7 +935,7 @@ static void PopActorCostume() {
 
 static void GetActorCostumeDepth() {
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	lua_pushnumber(act->costumeStackDepth());
@@ -972,7 +972,7 @@ static void CompleteActorChore() {
 	//
 	// Note: This does not appear to function entirely as it should
 	// TODO: Make this operation work better
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	num = check_int(2);
@@ -1158,7 +1158,7 @@ static void TurnActorTo() {
 		z = luaL_check_number(4);
 	} else if (isActor(2)) {
 		Actor *destActor;
-		
+
 		destActor = check_actor(2);
 		x = destActor->pos().x();
 		y = destActor->pos().y();
@@ -1168,7 +1168,7 @@ static void TurnActorTo() {
 			warning("TurnActorTo() parameter type not understood");
 		return;
 	}
-	
+
 	// Find the vector pointing from the actor to the desired location
 	Vector3d turnToVector(x, y, z);
 	Vector3d lookVector = turnToVector - act->pos();
@@ -1177,7 +1177,7 @@ static void TurnActorTo() {
 	// yaw is offset from forward by 90 degrees
 	yaw -= 90.0f;
 	act->turnTo(0, yaw, 0);
-	
+
 	// Game will lock in elevator if this doesn't return false
 	pushbool(false);
 }
@@ -1189,7 +1189,7 @@ static void PointActorAt() {
 	TurnActorTo();
 }
 
-/* WalkActorVector handles the movement of the selected actor 
+/* WalkActorVector handles the movement of the selected actor
  * when the game is in "Camera-Relative Movement Mode"
  *
  * NOTE: The usage for paramaters 1 and 5 are as-yet unknown.
@@ -1197,7 +1197,7 @@ static void PointActorAt() {
 static void WalkActorVector() {
 	float moveHoriz, moveVert, yaw;
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	stubWarning("VERIFY: WalkActorVector");
 	// Second option is the actor returned by GetCameraActor
@@ -1233,14 +1233,14 @@ static void WalkActorVector() {
 		act->walkForward();
 }
 
-/* RotateVector takes a vector and rotates it around 
+/* RotateVector takes a vector and rotates it around
  * the point (0,0,0) by the requested number of degrees.
  * This function is used to calculate the locations for
  * getting on and off of the Bone Wagon.
  */
 static void RotateVector() {
 	lua_Object param1, param2, result;
-	
+
 	DEBUG_FUNCTION();
 	stubWarning("VERIFY: RotateVector");
 	param1 = lua_getparam(1);
@@ -1249,7 +1249,7 @@ static void RotateVector() {
 		Vector3d vec1 = tableToVector(param1);
 		lua_Object rotateObject = getTableValue(param2, "y");
 		float rotate, currAngle, newAngle;
-		
+
 		// The signpost uses an indexed table (1,2,3) instead of
 		// a value-based table (x,y,z)
 		if (rotateObject == 0)
@@ -1300,7 +1300,7 @@ static void SetActorPitch() {
 	param2 = lua_getparam(2);
 	if (lua_isnumber(param2)) {
 		float pitch = lua_getnumber(param2);
-		
+
 		act->setRot(pitch, act->yaw(), act->roll());
 	} else {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
@@ -1345,7 +1345,7 @@ static void SetActorHead() {
 
 static void PutActorAtInterest() {
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	if (!g_engine->currScene())
@@ -1372,7 +1372,7 @@ static void SetActorConstrain() {
 //	Actor *act = check_actor(1);
 //	bool constrain = !lua_isnil(lua_getparam(2));
 
-	// that below should be enabled, but for now it's disabled realated to 
+	// that below should be enabled, but for now it's disabled realated to
 	// above func SetActorFollowBoxes.
 //	act->setConstrain(constrain);
 	stubWarning("SetActorConstrain");
@@ -1488,7 +1488,7 @@ std::string parseMsgText(const char *msg, char *msgId) {
 	if (msg[0] == '/' && msgId) {
 		secondSlash = std::strchr(msg + 1, '/');
 		if (secondSlash) {
-		 	strncpy(msgId, msg + 1, secondSlash - msg - 1);
+			strncpy(msgId, msg + 1, secondSlash - msg - 1);
 			msgId[secondSlash - msg - 1] = 0;
 		} else {
 			msgId[0] = 0;
@@ -1509,7 +1509,7 @@ static void TextFileGetLine() {
 	textBuf[0] = 0;
 	const char *filename;
 	Common::SeekableReadStream *file;
-	
+
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
@@ -1569,7 +1569,7 @@ static void TextFileGetLineCount() {
 static void LocalizeString() {
 	char msgId[32], buf[640];
 	const char *str, *result;
-	
+
 	DEBUG_FUNCTION();
 	str = luaL_check_string(1);
 	// If the string that we're passed isn't localized yet then
@@ -1662,7 +1662,7 @@ static void InputDialog() {
 
 static void IsMessageGoing() {
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	if (lua_getparam(1) == LUA_NOOBJECT) {
 		pushbool(g_imuse->isVoicePlaying());
@@ -1674,7 +1674,7 @@ static void IsMessageGoing() {
 
 static void ShutUpActor() {
 	Actor *act;
-	
+
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	if (act)
@@ -1689,7 +1689,7 @@ static void GetPointSector() {
 	lua_Object xparam, yparam, zparam;
 	Sector *result;
 	float x = 0.0f, y = 0.0f, z = 0.0f;
-	
+
 	DEBUG_FUNCTION();
 	stubWarning("VERIFY: GetPointSector");
 	xparam = lua_getparam(1);
@@ -1697,7 +1697,7 @@ static void GetPointSector() {
 	zparam = lua_getparam(3);
 	if (lua_isnumber(xparam) && lua_isnumber(yparam) && lua_isnumber(zparam)) {
 		Vector3d point(x, y, z);
-		
+
 		// Find the point in any available sector
 		result = g_engine->currScene()->findPointSector(point, 0xFFFF);
 	} else {
@@ -1809,7 +1809,7 @@ static void MakeSectorActive() {
 // Scene functions
 static void LockSet() {
 	const char *name;
-	
+
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
 	// We should lock the set so it isn't destroyed
@@ -1818,7 +1818,7 @@ static void LockSet() {
 
 static void UnLockSet() {
 	const char *name;
-	
+
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
 	// We should unlock the set so it can be destroyed again
@@ -1827,7 +1827,7 @@ static void UnLockSet() {
 
 static void MakeCurrentSet() {
 	const char *name;
-	
+
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
 	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
@@ -1870,7 +1870,7 @@ static void MakeCurrentSetup() {
 static void GetCurrentSetup() {
 	const char *name;
 	Scene *scene;
-	
+
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
 	scene = g_engine->findScene(name);
@@ -1886,7 +1886,7 @@ static void GetCurrentSetup() {
 // FIXME: Function only spits back what it's given
 static void GetShrinkPos() {
 	double x, y, z, r;
-	
+
 	DEBUG_FUNCTION();
 	x = luaL_check_number(1);
 	y = luaL_check_number(2);
@@ -1918,7 +1918,7 @@ static void ImStartSound() {
 	soundName = luaL_check_string(1);
 	priority = check_int(2);
 	group = check_int(3);
-	
+
 	// Start the sound with the appropriate settings
 	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority, NULL)) {
 		lua_pushstring(soundName);
@@ -1937,7 +1937,7 @@ static void ImStartSound() {
 
 static void ImStopSound() {
 	const char *soundName;
-	
+
 	DEBUG_FUNCTION();
 	soundName = luaL_check_string(1);
 	g_imuse->stopSound(soundName);
@@ -1960,7 +1960,7 @@ static void ImResume() {
 
 static void ImSetVoiceEffect() {
 	const char *effectName;
-	
+
 	DEBUG_FUNCTION();
 	effectName = luaL_check_string(1);
 	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
@@ -2066,7 +2066,7 @@ static void ImSetState() {
 
 static void ImSetSequence() {
 	int state;
-	
+
 	DEBUG_FUNCTION();
 	state = check_int(1);
 	lua_pushnumber(g_imuse->setMusicSequence(state));
@@ -2097,7 +2097,7 @@ static void SetSoundPosition() {
 	Vector3d pos;
 	int minVolume = 10;
 	int maxVolume = 127;
-	
+
 	DEBUG_FUNCTION();
 	if (g_engine->currScene()) {
 		g_engine->currScene()->getSoundParameters(&minVolume, &maxVolume);
@@ -2188,7 +2188,7 @@ void setMovieTime(float movieTime) {
 
 void PerSecond() {
 	float rate;
-	
+
 	DEBUG_FUNCTION();
 	rate = luaL_check_number(1);
 	lua_pushnumber(g_engine->perSecond(rate));
@@ -2196,7 +2196,7 @@ void PerSecond() {
 
 void EnableControl() {
 	int num;
-	
+
 	DEBUG_FUNCTION();
 	num = check_control(1);
 	g_engine->enableControl(num);
@@ -2204,7 +2204,7 @@ void EnableControl() {
 
 void DisableControl() {
 	int num;
-	
+
 	DEBUG_FUNCTION();
 	num = check_control(1);
 	g_engine->disableControl(num);
@@ -2212,7 +2212,7 @@ void DisableControl() {
 
 void GetControlState() {
 	int num;
-	
+
 	DEBUG_FUNCTION();
 	num = check_control(1);
 	if (num >= KEYCODE_AXIS_JOY1_X && num <= KEYCODE_AXIS_MOUSE_Z)
@@ -2233,7 +2233,7 @@ static void killBitmapPrimitives(Bitmap *bitmap) {
 
 static void GetImage() {
 	const char *bitmapName;
-	
+
 	DEBUG_FUNCTION();
 	bitmapName = luaL_check_string(1);
 	Bitmap *image = g_resourceloader->loadBitmap(bitmapName);
@@ -2253,7 +2253,7 @@ static void BlastImage() {
 	bool transparent;
 	Bitmap *bitmap;
 	int x, y;
-	
+
 	DEBUG_FUNCTION();
 	bitmap = check_bitmapobject(1);
 	x = check_int(2);
@@ -2269,7 +2269,7 @@ static void BlastImage() {
 void setTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 	const char *key_text = NULL;
 	lua_Object key = LUA_NOOBJECT;
-	
+
 	DEBUG_FUNCTION();
 	for (;;) {
 		lua_pushobject(table_obj);
@@ -2284,7 +2284,7 @@ void setTextObjectParams(TextObject *textObject, lua_Object table_obj) {
 			return;
 		}
 		key = lua_getresult(1);
-		if (lua_isnil(key)) 
+		if (lua_isnil(key))
 			break;
 
 		// printf("debug param: %s %s\n", lua_getstring(key), lua_getstring(lua_getresult(2)));
@@ -2321,7 +2321,7 @@ static void CleanBuffer() {
 	DEBUG_FUNCTION();
 	g_driver->copyStoredToDisplay();
 }
- 
+
 static void Exit() {
 	DEBUG_FUNCTION();
 
@@ -2334,7 +2334,7 @@ static void Exit() {
  */
 TextObject *TextObjectExists(char *name) {
 	TextObject *modifyObject = NULL;
-	
+
 	DEBUG_FUNCTION();
 	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
@@ -2345,7 +2345,7 @@ TextObject *TextObjectExists(char *name) {
 	}
 	return modifyObject;
 }
-  
+
 /* Destroy a text object since we don't need it anymore
  * note that the menu creates more objects than it needs,
  * so it deletes some objects right after creating them
@@ -2386,7 +2386,7 @@ static void ChangeTextObject() {
 
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
-	
+
 	if (lua_isstring(lua_getparam(2))) {
 		line = lua_getstring(lua_getparam(2));
 		textObject->setText((char *)line);
@@ -2408,7 +2408,7 @@ static void GetTextSpeed() {
 
 static void SetTextSpeed() {
 	int speed;
-	
+
 	DEBUG_FUNCTION();
 	speed = check_int(1);
 	g_engine->setTextSpeed(speed);
@@ -2445,7 +2445,7 @@ static void MakeTextObject() {
 
 static void GetTextObjectDimensions() {
 	TextObject *textObjectParam;
-	
+
 	DEBUG_FUNCTION();
 	textObjectParam = check_textobject(1);
 	lua_pushnumber(textObjectParam->getBitmapWidth());
@@ -2464,7 +2464,7 @@ static void ExpireText() {
 static void GetTextCharPosition() {
 	TextObject *textObjectParam;
 	int pos;
-	
+
 	DEBUG_FUNCTION();
 	textObjectParam = check_textobject(1);
 	pos = (int)lua_getnumber(lua_getparam(2));
@@ -2501,7 +2501,7 @@ static void SetOffscreenTextPos() {
 
 static void SetSpeechMode() {
 	int mode;
-	
+
 	DEBUG_FUNCTION();
 	mode = check_int(1);
 	if (mode >= 1 && mode <= 3)
@@ -2644,7 +2644,7 @@ static void DrawLine() {
 	int x1, y1, x2, y2;
 	lua_Object tableObj;
 	Color color;
-	
+
 	DEBUG_FUNCTION();
 	x1 = check_int(1);
 	y1 = check_int(2);
@@ -2734,7 +2734,7 @@ static void DrawRectangle() {
 	int x1, y1, x2, y2;
 	lua_Object tableObj;
 	Color color;
-	
+
 	DEBUG_FUNCTION();
 	x1 = check_int(1);
 	y1 = check_int(2);
@@ -2772,7 +2772,7 @@ static void BlastRect() {
 	int x1, y1, x2, y2;
 	lua_Object tableObj;
 	Color color;
-	
+
 	DEBUG_FUNCTION();
 	x1 = check_int(1);
 	y1 = check_int(2);
@@ -2838,7 +2838,7 @@ static void NewObjectState() {
 	DEBUG_FUNCTION();
 	// Called with "nil" if you jump to zone "sp"
 	setupID = check_int(1);					// Setup ID
-	pos = check_objstate_pos(2); 		// When to draw
+	pos = check_objstate_pos(2);		// When to draw
 	bitmap = luaL_check_string(3);	// Bitmap
 	zbitmap = NULL;									// Zbuffer Bitmap
 	visible = getbool(5);						// Starts visible?
@@ -2852,7 +2852,7 @@ static void NewObjectState() {
 
 static void FreeObjectState() {
 	ObjectState *state;
-	
+
 	DEBUG_FUNCTION();
 	state = check_object(1);
 	g_engine->currScene()->deleteObjectState(state);
@@ -2860,7 +2860,7 @@ static void FreeObjectState() {
 
 static void SendObjectToBack() {
 	lua_Object param;
-	
+
 	DEBUG_FUNCTION();
 	param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT')) {
@@ -2872,7 +2872,7 @@ static void SendObjectToBack() {
 
 static void SendObjectToFront() {
 	lua_Object param;
-	
+
 	DEBUG_FUNCTION();
 	param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT')) {
@@ -2885,7 +2885,7 @@ static void SendObjectToFront() {
 static void SetObjectType() {
 	ObjectState::Position pos;
 	ObjectState *state;
-	
+
 	DEBUG_FUNCTION();
 	state = check_object(1);
 	pos = check_objstate_pos(2);
@@ -2899,7 +2899,7 @@ static void GetCurrentScript() {
 
 static void ScreenShot() {
 	int width, height;
-	
+
 	DEBUG_FUNCTION();
 	width = check_int(1);
 	height = check_int(2);
@@ -2927,7 +2927,7 @@ static void GetSaveGameImage() {
 	char *data;
 	Bitmap *screenshot;
 	int dataSize;
-	
+
 	printf("GetSaveGameImage() started.\n");
 	DEBUG_FUNCTION();
 	filename = luaL_check_string(1);
@@ -2953,7 +2953,7 @@ static void SubmitSaveGameData() {
 	SaveGame *savedState;
 	int count = 0;
 	const char *str;
-	
+
 	printf("SubmitSaveGameData() started.\n");
 	DEBUG_FUNCTION();
 	table = lua_getparam(1);
@@ -3018,7 +3018,7 @@ static void GetSaveGameData() {
 
 static void Load() {
 	lua_Object fileName;
-	
+
 	DEBUG_FUNCTION();
 	fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
@@ -3035,7 +3035,7 @@ static void Load() {
 
 static void Save() {
 	lua_Object fileName;
-	
+
 	DEBUG_FUNCTION();
 	fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
@@ -3187,8 +3187,8 @@ static void LoadBundle() {
  * function.  This is useful for finding problems in a LUA script
  * that are due to a few function calls leading up to a failure.
  *
- * This function is also used by the "Stub" handler which will 
- * generate warnings about missing functions when the debug flag 
+ * This function is also used by the "Stub" handler which will
+ * generate warnings about missing functions when the debug flag
  * is set to "Stub", warnings, or everything.
  */
 static void debugFunction(const char *debugMessage, const char *funcName) {
@@ -3197,7 +3197,7 @@ static void debugFunction(const char *debugMessage, const char *funcName) {
 
 	if (!stubFn && debugLevel != DEBUG_FUNC && debugLevel != DEBUG_ALL)
 		return;
-	
+
 	if (stubFn)
 		output = stderr;
 	else
@@ -3576,7 +3576,7 @@ struct luaL_reg mainOpcodes[] = {
 	{ "AddShadowPlane", AddShadowPlane },
 	{ "SetActorShadowValid", SetActorShadowValid },
 	{ "FreeObjectState", FreeObjectState },
-	{ "NewObjectState", NewObjectState }, 
+	{ "NewObjectState", NewObjectState },
 	{ "SetObjectType", SetObjectType },
 	{ "SendObjectToBack", SendObjectToBack },
 	{ "SendObjectToFront", SendObjectToFront },
@@ -3843,7 +3843,7 @@ lua_Object getTableFunction(lua_Object table, const char *name) {
 	lua_pushobject(table);
 	lua_pushstring(const_cast<char *>(name));
 	lua_Object handler = lua_gettable();
-	
+
 	if (lua_isnil(handler))
 		return LUA_NOOBJECT;
 
@@ -3873,7 +3873,7 @@ lua_Object getTableValue(lua_Object table, const char *name) {
 		error("getTableValue(): Parameter not a table!");
 		return 0;
 	}
-	
+
 	for (;;) {
 		lua_pushobject(table);
 		if (key_text)
@@ -3949,16 +3949,16 @@ void setTableValue(lua_Object table, const char *name, lua_Object newvalue) {
 Vector3d tableToVector(lua_Object table) {
 	lua_Object xparam, yparam, zparam;
 	float x, y, z;
-	
+
 	if (!lua_istable(table))
 		error("tableToVector passed a LUA object that is not a table!");
-	
+
 	xparam = getTableValue(table, "x");
 	yparam = getTableValue(table, "y");
 	zparam = getTableValue(table, "z");
 	if (!lua_isnumber(xparam) || !lua_isnumber(yparam) || !lua_isnumber(zparam))
 		error("tableToVector passed a LUA table that does not contain vector coordinates!");
-	
+
 	x = lua_getnumber(xparam);
 	y = lua_getnumber(yparam);
 	z = lua_getnumber(zparam);

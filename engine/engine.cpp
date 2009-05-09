@@ -291,7 +291,7 @@ Engine::~Engine() {
 
 void Engine::handleButton(int operation, int key, int /*keyModifier*/, uint16 ascii) {
 	lua_Object handler, system_table, userPaintHandler;
-	
+
 	// If we're not supposed to handle the key then don't
 	if (!_controlsEnabled[key])
 		return;
@@ -311,7 +311,7 @@ void Engine::handleButton(int operation, int key, int /*keyModifier*/, uint16 as
 		// recognize character codes
 		if (handler != LUA_NOOBJECT && operation == Common::EVENT_KEYDOWN) {
 			char keychar[2];
-			
+
 			lua_beginblock();
 			lua_pushobject(userPaintHandler);
 			keychar[0] = ascii;
@@ -814,7 +814,7 @@ Scene *Engine::findScene(const char *name) {
 
 void Engine::setSceneLock(const char *name, bool lockStatus) {
 	Scene *scene = findScene(name);
-	
+
 	if (!scene) {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Scene object '%s' not found in list!", name);
@@ -827,7 +827,7 @@ void Engine::setSceneLock(const char *name, bool lockStatus) {
 void Engine::setScene(const char *name) {
 	Scene *scene = findScene(name);
 	Scene *lastScene = _currScene;
-	
+
 	// If the scene already exists then use the existing data
 	if (scene) {
 		setScene(scene);
@@ -849,7 +849,7 @@ void Engine::setScene(const char *name) {
 
 void Engine::setScene(Scene *scene) {
 	Scene *lastScene = _currScene;
-	
+
 	_currScene = scene;
 	_currScene->setSoundParameters(20, 127);
 	// should delete the old scene after setting the new one

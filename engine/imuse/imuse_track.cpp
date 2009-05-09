@@ -28,7 +28,7 @@
 int Imuse::allocSlot(int priority) {
 	int l, lowest_priority = 127;
 	int trackId = -1;
-	
+
 	// allocSlot called by startSound so no locking is necessary
 	for (l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		if (!_track[l]->used) {
@@ -144,7 +144,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 Track *Imuse::findTrack(const char *soundName) {
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
-		
+
 		// Since the audio (at least for Eva's keystrokes) can be referenced
 		// two ways: keyboard.IMU and keyboard.imu, make a case insensitive
 		// search for the track to make sure we can find it
@@ -160,7 +160,7 @@ void Imuse::setPriority(const char *soundName, int priority) {
 	Common::StackLock lock(_mutex);
 	Track *changeTrack = NULL;
 	assert ((priority >= 0) && (priority <= 127));
-	
+
 	changeTrack = findTrack(soundName);
 	// Check to make sure we found the track
 	if (changeTrack == NULL) {
@@ -173,7 +173,7 @@ void Imuse::setPriority(const char *soundName, int priority) {
 void Imuse::setVolume(const char *soundName, int volume) {
 	Common::StackLock lock(_mutex);
 	Track *changeTrack;
-	
+
 	changeTrack = findTrack(soundName);
 	if (changeTrack == NULL) {
 		warning("Unable to find track '%s' to change volume!", soundName);
@@ -185,7 +185,7 @@ void Imuse::setVolume(const char *soundName, int volume) {
 void Imuse::setPan(const char *soundName, int pan) {
 	Common::StackLock lock(_mutex);
 	Track *changeTrack;
-	
+
 	changeTrack = findTrack(soundName);
 	if (changeTrack == NULL) {
 		warning("Unable to find track '%s' to change pan!", soundName);
@@ -197,7 +197,7 @@ void Imuse::setPan(const char *soundName, int pan) {
 int Imuse::getVolume(const char *soundName) {
 	Common::StackLock lock(_mutex);
 	Track *getTrack;
-	
+
 	getTrack = findTrack(soundName);
 	if (getTrack == NULL) {
 		warning("Unable to find track '%s' to get volume!", soundName);
@@ -209,7 +209,7 @@ int Imuse::getVolume(const char *soundName) {
 void Imuse::setHookId(const char *soundName, int hookId) {
 	Common::StackLock lock(_mutex);
 	Track *changeTrack;
-	
+
 	changeTrack = findTrack(soundName);
 	if (changeTrack == NULL) {
 		warning("Unable to find track '%s' to change hook id!", soundName);
@@ -221,7 +221,7 @@ void Imuse::setHookId(const char *soundName, int hookId) {
 int Imuse::getCountPlayedTracks(const char *soundName) {
 	Common::StackLock lock(_mutex);
 	int count = 0;
-	
+
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (strcasecmp(track->soundName, soundName) == 0)) {

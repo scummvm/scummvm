@@ -76,7 +76,7 @@ public:
 	int getSectorCount() {
 		return _numSectors;
 	}
-	Sector *getSectorBase(int id) { 
+	Sector *getSectorBase(int id) {
 		if ((_numSectors >= 0) && (id < _numSectors))
 			return &_sectors[id];
 		else

@@ -32,7 +32,7 @@
 
 class TextSplitter;
 
-class Sector { 
+class Sector {
 public:
 	Sector() : _vertices(0) {}
 	~Sector() { if (_vertices) delete[] _vertices; }

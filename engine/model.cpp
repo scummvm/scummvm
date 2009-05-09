@@ -480,7 +480,7 @@ void Model::HierNode::setMatrix(Matrix4 matrix) {
 void Model::HierNode::update() {
 	if (!_initialized)
 		return;
-	
+
 	_localMatrix._pos.set(_animPos.x() / _totalWeight, _animPos.y() / _totalWeight, _animPos.z() / _totalWeight);
 	_localMatrix._rot.buildFromPitchYawRoll(_animPitch / _totalWeight, _animYaw / _totalWeight, _animRoll / _totalWeight);
 

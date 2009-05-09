@@ -120,7 +120,7 @@ void Imuse::playMusic(const ImuseTable *table, int atribPos, bool sequence) {
 		}
 		char *soundName = getCurMusicSoundName();
 		int pan;
-			
+
 		if (table->pan == 0)
 			pan = 64;
 		else

@@ -100,10 +100,10 @@ static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx
 
 static void transformPoint(TGLfloat out[4], const TGLfloat m[16], const TGLfloat in[4]) {
 #define M(row,col)  m[col * 4 + row]
-   out[0] = M(0, 0) * in[0] + M(0, 1) * in[1] + M(0, 2) * in[2] + M(0, 3) * in[3];
-   out[1] = M(1, 0) * in[0] + M(1, 1) * in[1] + M(1, 2) * in[2] + M(1, 3) * in[3];
-   out[2] = M(2, 0) * in[0] + M(2, 1) * in[1] + M(2, 2) * in[2] + M(2, 3) * in[3];
-   out[3] = M(3, 0) * in[0] + M(3, 1) * in[1] + M(3, 2) * in[2] + M(3, 3) * in[3];
+	out[0] = M(0, 0) * in[0] + M(0, 1) * in[1] + M(0, 2) * in[2] + M(0, 3) * in[3];
+	out[1] = M(1, 0) * in[0] + M(1, 1) * in[1] + M(1, 2) * in[2] + M(1, 3) * in[3];
+	out[2] = M(2, 0) * in[0] + M(2, 1) * in[1] + M(2, 2) * in[2] + M(2, 3) * in[3];
+	out[3] = M(3, 0) * in[0] + M(3, 1) * in[1] + M(3, 2) * in[2] + M(3, 3) * in[3];
 #undef M
 }
 
@@ -578,7 +578,7 @@ void TinyGLBlit(byte *dst, byte *src, int x, int y, int width, int height, bool 
 
 	dst += (x + (y * 640)) * 2;
 	src += (srcX + (srcY * width)) * 2;
-	
+
 	int copyWidth = width * 2;
 
 	if (!trans) {

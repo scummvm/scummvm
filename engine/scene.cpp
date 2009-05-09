@@ -80,7 +80,7 @@ Scene::Scene(const char *name, const char *buf, int len) :
 
 	// Calculate the number of sectors
 	ts.expectString("section: sectors");
-	if (ts.eof()) 	// Sectors are optional, but section: doesn't seem to be
+	if (ts.eof())	// Sectors are optional, but section: doesn't seem to be
 		return;
 
 	int sectorStart = ts.getLineNumber();
@@ -170,7 +170,7 @@ void Scene::Light::load(TextSplitter &ts) {
 	ts.scanString(" intensity %f", 1, &_intensity);
 	ts.scanString(" umbraangle %f", 1, &_umbraangle);
 	ts.scanString(" penumbraangle %f", 1, &_penumbraangle);
-	
+
 	int r, g, b;
 	ts.scanString(" color %d %d %d", 3, &r, &g, &b);
 	_color.red() = r;
@@ -258,7 +258,7 @@ ObjectState *Scene::findState(const char *filename) {
 	// Check the different state objects for the bitmap
 	for (StateList::iterator i = _states.begin(); i != _states.end(); i++) {
 		const char *file = (*i)->bitmapFilename();
-		
+
 		if (strcmp(file, filename) == 0)
 			return *i;
 		if (strcasecmp(file, filename) == 0) {

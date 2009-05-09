@@ -99,7 +99,7 @@ void Imuse::startSfx(const char *soundName, int priority) {
 int32 Imuse::getPosIn60HzTicks(const char *soundName) {
 	Common::StackLock lock(_mutex);
 	Track *getTrack = NULL;
-	
+
 	getTrack = findTrack(soundName);
 	// Warn the user if the track was not found
 	if (getTrack == NULL) {
@@ -128,11 +128,11 @@ bool Imuse::isVoicePlaying() {
 bool Imuse::getSoundStatus(const char *soundName) {
 	Common::StackLock lock(_mutex);
 	Track *track = NULL;
-	
+
 	// If there's no name then don't try to get the status!
 	if (strlen(soundName) == 0)
 		return false;
-	
+
 	track = findTrack(soundName);
 	// Warn the user if the track was not found
 	if (track == NULL || !g_system->getMixer()->isSoundHandleActive(track->handle)) {
@@ -150,7 +150,7 @@ void Imuse::stopSound(const char *soundName) {
 	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
 		printf("Imuse::stopSound(): SoundName %s\n", soundName);
 	Track *removeTrack = NULL;
-	
+
 	removeTrack = findTrack(soundName);
 	// Warn the user if the track was not found
 	if (removeTrack == NULL) {

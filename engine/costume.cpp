@@ -183,13 +183,13 @@ void BitmapComponent::setKey(int val) {
 		return;
 	}
 	// Complain that we couldn't find the bitmap.  This means we probably
-	// didn't handle something correctly.  Example: Before the tube-switcher 
+	// didn't handle something correctly.  Example: Before the tube-switcher
 	// bitmaps were not loading with the scene. This was because they were requested
 	// as a different case then they were stored (tu_0_dorcu_door_open versus
 	// TU_0_DORCU_door_open), which was causing problems in the string comparison.
 	if(debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 		warning("Missing scene bitmap: %s", bitmap);
-	
+
 /* In case you feel like drawing the missing bitmap anyway...
 	// Assume that all objects the scene file forgot about are OBJSTATE_STATE class
 	state = new ObjectState(0, ObjectState::OBJSTATE_STATE, bitmap, NULL, true);
@@ -207,7 +207,7 @@ ModelComponent::ModelComponent(Costume::Component *parent, int parentID, const c
 		Costume::Component(parent, parentID, tag), _filename(filename),
 		_obj(NULL), _hier(NULL) {
 	const char *comma = std::strchr(filename, ',');
-	
+
 	// Can be called with a comma and a numeric parameter afterward, but
 	// the use for this parameter is currently unknown
 	// Example: At the "scrimshaw parlor" in Rubacava the object
@@ -220,7 +220,7 @@ ModelComponent::ModelComponent(Costume::Component *parent, int parentID, const c
 	}
 	if (prevComponent) {
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
-		
+
 		if (mmc)
 			_previousCmap = mmc->cmap();
 	}
@@ -232,7 +232,7 @@ void ModelComponent::init() {
 	// constructor before
 	if (!_obj) {
 		CMap *cmap = this->cmap();
-		
+
 		// Get the default colormap if we haven't found
 		// a valid colormap
 		if (!cmap) {
@@ -255,7 +255,7 @@ void ModelComponent::init() {
 	// parent object's tree.
 	if (_parent) {
 		MeshComponent *mc = dynamic_cast<MeshComponent *>(_parent);
-		
+
 		if (mc)
 			mc->node()->addChild(_hier);
 		else if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
@@ -288,7 +288,7 @@ void ModelComponent::update() {
 
 void ModelComponent::resetColormap() {
 	CMap *cmap;
-	
+
 	cmap = this->cmap();
 	if (_obj && cmap)
 		_obj->reload(*cmap);
@@ -330,7 +330,7 @@ MainModelComponent::MainModelComponent(Costume::Component *parent, int parentID,
 		ModelComponent(parent, parentID, filename, prevComponent, tag), _hierShared(false) {
 	if (parentID == -2 && prevComponent) {
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
-		
+
 		if (mmc && mmc->_filename == filename) {
 			_obj = mmc->_obj;
 			_hier = mmc->_hier;
@@ -382,7 +382,7 @@ private:
 ColormapComponent::ColormapComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
 		Costume::Component(parent, parentID, tag) {
 	_cmap = g_resourceloader->loadColormap(filename);
-	
+
 	if (parent)
 		parent->setColormap(_cmap);
 	else
@@ -524,19 +524,19 @@ void MeshComponent::update() {
 MaterialComponent::MaterialComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
 		Costume::Component(parent, parentID, tag), _filename(filename),
 		_num(0) {
-	
+
 	if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 		warning("Constructing MaterialComponent %s", filename);
 }
 
 void MaterialComponent::init() {
 	CMap *cmap = this->cmap();
-	
+
 	if (!cmap) {
 		// Use the default colormap if we're still drawing a blank
 		if (debugLevel == DEBUG_MODEL || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("MaterialComponent::init on %s", _filename.c_str());
-		
+
 		cmap = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
 	}
 	_mat = g_resourceloader->loadMaterial(_filename.c_str(), *cmap);
@@ -629,7 +629,7 @@ void SoundComponent::reset() {
 Costume::Costume(const char *filename, const char *data, int len, Costume *prevCost) :
 	_fname(filename), _cmap(NULL) {
 	TextSplitter ts(data, len);
-	
+
 	ts.expectString("costume v0.1");
 	ts.expectString("section tags");
 	int numTags;
@@ -638,7 +638,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 	for (int i = 0; i < numTags; i++) {
 		unsigned char t[4];
 		int which;
-		
+
 		// Obtain a tag ID from the file
 		ts.scanString(" %d '%c%c%c%c'", 5, &which, &t[0], &t[1], &t[2], &t[3]);
 		// Force characters to upper case
@@ -654,7 +654,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 		int id, tagID, hash, parentID, namePos;
 		const char *line = ts.currentLine();
 		Component *prevComponent = NULL;
-		
+
 		if (std::sscanf(line, " %d %d %d %d %n", &id, &tagID, &hash, &parentID, &namePos) < 4)
 			error("Bad component specification line: `%s'", line);
 		ts.nextLine();
@@ -663,7 +663,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 		// use the properties of the previous costume as a base
 		if (parentID == -1 && prevCost) {
 			MainModelComponent *mmc;
-			
+
 			// However, only the first item can actually share the
 			// node hierarchy with the previous costume, so flag
 			// that component so it knows what to do
@@ -671,7 +671,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 				parentID = -2;
 			prevComponent = prevCost->_components[0];
 			mmc = dynamic_cast<MainModelComponent *>(prevComponent);
-			// Make sure that the component is valid 
+			// Make sure that the component is valid
 			if (!mmc)
 				prevComponent = NULL;
 		}
@@ -735,7 +735,7 @@ Costume::Component::Component(Component *parent, int parentID, tag32 tag) {
 
 void Costume::Component::setColormap(CMap *c) {
 	ModelComponent *mc = dynamic_cast<ModelComponent *>(this);
-	
+
 	if (c)
 		_cmap = c;
 	if (mc && this->cmap())

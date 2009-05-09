@@ -42,7 +42,7 @@ public:
 	void setupCamera(float fov, float nclip, float fclip, float roll);
 	void positionCamera(Vector3d pos, Vector3d interest);
 
-	void clearScreen(); 
+	void clearScreen();
 	void flipBuffer();
 
 	bool isHardwareAccelerated();

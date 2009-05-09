@@ -108,14 +108,14 @@ bool Sector::isPointInSector(Vector3d point) const {
 	// z-coordinates so the railing in Cafe Calavera works properly.
 	if (_height != 0.0f && _height != 9999.0f) {
 		bool heightOK = false;
-		
+
 		// Handle height above Z
 		if ((point.z() >= _vertices[0].z()) && (point.z() <= _vertices[0].z() + _height))
 			heightOK = true;
 		// Handle height below Z
 		if ((point.z() <= _vertices[0].z()) && (point.z() >= _vertices[0].z() - _height))
 			heightOK = true;
-		
+
 		for (int i = 0; i < _numVertices; i++) {
 			if (_vertices[i + 1].z() != _vertices[i].z())
 				heightOK = true;

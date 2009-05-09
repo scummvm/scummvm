@@ -933,7 +933,7 @@ Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
 			step++;
 		}
 	}
-	
+
 	Bitmap *screenshot = new Bitmap((char *) buffer, w, h, "screenshot");
 	delete[] buffer;
 	return screenshot;
@@ -978,7 +978,7 @@ void GfxOpenGL::dimScreen() {
 void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 	uint32 *data = new uint32[w * h];
 	int y = _screenHeight - yReal;
-	
+
 	// collect the requested area and generate the dimmed version
 	glReadPixels(x, y - h, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	for (int ly = 0; ly < h; ly++) {
@@ -991,7 +991,7 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 			data[ly * w + lx] = ((color & 0xFF) << 16) | ((color & 0xFF) << 8) | (color & 0xFF);
 		}
 	}
-	
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, _screenWidth, _screenHeight, 0, 0, 1);

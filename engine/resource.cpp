@@ -234,7 +234,7 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 		result = NULL;
 	} else {
 		result = new LipSync(filename, b->data(), b->len());
-		
+
 		// Some lipsync files have no data
 		if (result->isValid()) {
 			delete b;
@@ -243,7 +243,7 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 			delete result;
 			result = NULL;
 		}
-	}	
+	}
 
 	return result;
 }
@@ -285,7 +285,7 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 bool ResourceLoader::exportResource(const char *filename) {
 	FILE *myFile = fopen(filename, "w");
 	Block *b = getFileBlock(filename);
-	
+
 	if (!b)
 		return false;
 	fwrite(b->data(), b->len(), 1, myFile);

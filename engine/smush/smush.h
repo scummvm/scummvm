@@ -75,7 +75,7 @@ private:
 	Audio::SoundHandle _soundHandle;
 	Audio::AppendableAudioStream *_stream;
 
- 	int32 _frame;
+	int32 _frame;
 	bool _updateNeeded;
 	int32 _speed;
 	int32 _movieTime;

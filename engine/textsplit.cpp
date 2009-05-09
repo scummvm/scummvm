@@ -64,7 +64,7 @@ int residual_vsscanf(const char *str, int field_count, const char *format, va_li
 TextSplitter::TextSplitter(const char *data, int len) {
 	char *line, *tmpData;
 	int i;
-	
+
 	tmpData = new char[len + 1];
 	std::memcpy(tmpData, data, len);
 	tmpData[len] = '\0';
@@ -159,7 +159,7 @@ void TextSplitter::processLine() {
 
 void TextSplitter::TextLines::setData(char *data, int length) {
 	int _lineLength = length;
-	
+
 	_lineData = new char[_lineLength];
 	std::memcpy(_lineData, data, _lineLength);
 	_lineData[_lineLength-1] = 0;

@@ -223,7 +223,7 @@ void TextObject::draw() {
 
 		if (y < 0)
 			y = 0;
-		
+
 		if (_justify == LJUSTIFY || _justify == NONE)
 			g_driver->drawTextBitmap(_x, height + y, _textObjectHandle[i]);
 		else if (_justify == CENTER) {

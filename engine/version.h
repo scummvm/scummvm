@@ -22,7 +22,7 @@
 
 extern const char *gResidualVersion;		// e.g. "0.0.6"
 extern const char *gResidualBuildDate;		// e.g. "2008-06-15"
-extern const char *gResidualVersionDate; 	// e.g. "0.0.6 (2008-06-15)"
+extern const char *gResidualVersionDate;	// e.g. "0.0.6 (2008-06-15)"
 extern const char *gResidualFullVersion;	// e.g. "Residual 0.0.6 (2008-06-15)"
 extern const char *gResidualFeatures;		// e.g. "ALSA MPEG2 zLib"
 

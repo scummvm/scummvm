@@ -287,7 +287,7 @@ int ImuseSndMgr::getJumpIdByRegionAndHookId(SoundDesc *sound, int region, int ho
 				return l;
 		}
 	}
-	
+
 	return -1;
 }
 
@@ -337,6 +337,6 @@ int32 ImuseSndMgr::getDataFromRegion(SoundDesc *sound, int region, byte **buf, i
 		*buf = new byte[size];
 		memcpy(*buf, sound->resPtr + region_offset + offset, size);
 	}
-	
+
 	return size;
 }

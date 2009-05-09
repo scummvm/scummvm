@@ -97,7 +97,7 @@ public:
 		float a = x() / magnitude();
 		float b = y() / magnitude();
 		float yaw;
-		
+
 		// find the angle on the upper half of the unit circle
 		yaw = std::acos(a) * (180.0f / LOCAL_PI);
 		if (b < 0.0f)
