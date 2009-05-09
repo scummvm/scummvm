@@ -23,9 +23,9 @@
  */
 
 #include "common/sys.h"
-#include "common/system.h"
 #include "backends/timer/default/default-timer.h"
 #include "common/util.h"
+#include "common/system.h"
 
 
 struct TimerSlot {

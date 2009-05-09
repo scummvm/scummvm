@@ -808,6 +808,13 @@ Common::WriteStream *OSystem_SDL::createConfigWriteStream() {
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {
+	Common::String cap(caption);
+
+	// Filter out any non-ASCII characters, replacing them by question marks.
+	// At some point, we may wish to allow LATIN 1 or UTF-8.
+	for (uint i = 0; i < cap.size(); ++i)
+		if ((byte)cap[i] > 0x7F)
+			cap.setChar('?', i);
 	SDL_WM_SetCaption(caption, caption);
 }
 
