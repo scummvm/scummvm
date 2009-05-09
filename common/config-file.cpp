@@ -67,6 +67,7 @@ bool ConfigFile::loadFromFile(const String &filename) {
 }
 
 bool ConfigFile::loadFromSaveFile(const char *filename) {
+	assert(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	SeekableReadStream *loadFile;
 
@@ -200,6 +201,7 @@ bool ConfigFile::saveToFile(const String &filename) {
 }
 
 bool ConfigFile::saveToSaveFile(const char *filename) {
+	assert(g_system);
 	SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	WriteStream *saveFile;
 
