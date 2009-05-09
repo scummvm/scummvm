@@ -1645,8 +1645,10 @@ static void SayLine() {
 						int y = atoi(lua_getstring(lua_getresult(2)));
 					else if (strmatch(key_text, "background"))
 						const char *backgorund = lua_getstring(lua_getresult(2));
+					else if (strmatch(key_text, "skip_log"))
+						int skip_log = atoi(lua_getstring(lua_getresult(2)));
 					else
-						error("Unknown SayLine key '%s'", key_text);
+						error("Unknown SayLine key '%s' = '%s'", key_text, lua_getstring(lua_getresult(2)));
 				}
 			} else {
 					error("SayLine() unknown type of param");
