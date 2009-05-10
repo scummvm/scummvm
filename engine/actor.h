@@ -169,9 +169,9 @@ private:
 	float _reflectionAngle;	// Maximum angle to turn by at walls
 	bool _visible;
 	bool _lookingMode;
-	std::string _talkSoundName;
+	Common::String _talkSoundName;
 	ResPtr<LipSync> _lipSync;
-	std::list<Costume *> _costumeStack;
+	Common::List<Costume *> _costumeStack;
 
 	// Variables for gradual turning
 	bool _turning;

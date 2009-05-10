@@ -305,7 +305,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	assert(msg);
 	assert(msgId);
 
-	std::string textName = msgId;
+	Common::String textName(msgId);
 	textName += ".txt";
 
 	if (msgId[0] == 0) {
@@ -318,8 +318,8 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	// When Domino yells at Manny (a SMUSH movie) he does it with
 	// a SayLine request rather than as part of the movie!
 	if (!g_smush->isPlaying() || g_engine->getMode() == ENGINE_MODE_NORMAL) {
-		std::string soundName = msgId;
-		std::string soundLip = msgId;
+		Common::String soundName = msgId;
+		Common::String soundLip = msgId;
 		soundName += ".wav";
 		soundLip += ".lip";
 
@@ -478,8 +478,8 @@ void Actor::setHead( int joint1, int joint2, int joint3, float maxRoll, float ma
 }
 
 Costume *Actor::findCostume(const char *name) {
-	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
-		if (std::strcmp((*i)->filename(), name) == 0)
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
+		if (strcasecmp((*i)->filename(), name) == 0)
 			return *i;
 
 	return NULL;
@@ -591,7 +591,7 @@ void Actor::update() {
 		}
 	}
 
-	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++) {
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++) {
 		(*i)->setPosRotate(_pos, _pitch, _yaw, _roll);
 		(*i)->update();
 	}
@@ -605,7 +605,7 @@ void Actor::draw() {
 	g_winX1 = g_winY1 = 1000;
 	g_winX2 = g_winY2 = -1000;
 
-	for (std::list<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
 		(*i)->setupTextures();
 
 	if (!g_driver->isHardwareAccelerated() && g_engine->getFlagRefreshShadowMask()) {
