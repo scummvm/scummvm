@@ -1065,6 +1065,9 @@
 		DF5CEB380F7553E000DEA624 /* vag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF5CEB350F7553E000DEA624 /* vag.cpp */; };
 		DF5CEB3B0F75540700DEA624 /* stringfrag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF5CEB3A0F75540700DEA624 /* stringfrag.cpp */; };
 		DF5CEB3C0F75540700DEA624 /* stringfrag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF5CEB3A0F75540700DEA624 /* stringfrag.cpp */; };
+		DF7A40330FB6E8960094E50F /* gfx_pixmap_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7A40320FB6E8960094E50F /* gfx_pixmap_scale.cpp */; };
+		DF7A40340FB6E8960094E50F /* gfx_pixmap_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7A40320FB6E8960094E50F /* gfx_pixmap_scale.cpp */; };
+		DF7A40350FB6E8960094E50F /* gfx_pixmap_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7A40320FB6E8960094E50F /* gfx_pixmap_scale.cpp */; };
 		DF7E8BFD0ED5FC77001CB19F /* saveload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7E8BF00ED5FC77001CB19F /* saveload.cpp */; };
 		DF7E8BFF0ED5FC77001CB19F /* ThemeEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7E8BF40ED5FC77001CB19F /* ThemeEngine.cpp */; };
 		DF7E8C000ED5FC77001CB19F /* ThemeEval.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7E8BF60ED5FC77001CB19F /* ThemeEval.cpp */; };
@@ -3095,7 +3098,6 @@
 		DF573C020F5A81EA00961A72 /* state.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
 		DF573C030F5A81EA00961A72 /* vm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm.h; sourceTree = "<group>"; };
 		DF573C040F5A81EA00961A72 /* vm_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm_types.h; sourceTree = "<group>"; };
-		DF573C090F5A820E00961A72 /* crossblit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crossblit.h; sourceTree = "<group>"; };
 		DF573C0A0F5A820E00961A72 /* gfx_driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gfx_driver.h; sourceTree = "<group>"; };
 		DF573C0B0F5A820E00961A72 /* gfx_options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gfx_options.h; sourceTree = "<group>"; };
 		DF573C0D0F5A820E00961A72 /* gfx_res_options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gfx_res_options.h; sourceTree = "<group>"; };
@@ -3106,7 +3108,6 @@
 		DF573C120F5A820E00961A72 /* gfx_tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gfx_tools.h; sourceTree = "<group>"; };
 		DF573C130F5A820E00961A72 /* gfx_widgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gfx_widgets.cpp; sourceTree = "<group>"; };
 		DF573C140F5A820E00961A72 /* gfx_widgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gfx_widgets.h; sourceTree = "<group>"; };
-		DF573C150F5A820E00961A72 /* line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = line.h; sourceTree = "<group>"; };
 		DF573C160F5A820E00961A72 /* menubar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = menubar.h; sourceTree = "<group>"; };
 		DF573C170F5A820E00961A72 /* operations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = operations.h; sourceTree = "<group>"; };
 		DF573C200F5A822D00961A72 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
@@ -3148,6 +3149,7 @@
 		DF5CEB350F7553E000DEA624 /* vag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vag.cpp; sourceTree = "<group>"; };
 		DF5CEB360F7553E000DEA624 /* vag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vag.h; sourceTree = "<group>"; };
 		DF5CEB3A0F75540700DEA624 /* stringfrag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stringfrag.cpp; sourceTree = "<group>"; };
+		DF7A40320FB6E8960094E50F /* gfx_pixmap_scale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gfx_pixmap_scale.cpp; sourceTree = "<group>"; };
 		DF7E8BF00ED5FC77001CB19F /* saveload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saveload.cpp; sourceTree = "<group>"; };
 		DF7E8BF10ED5FC77001CB19F /* saveload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saveload.h; sourceTree = "<group>"; };
 		DF7E8BF40ED5FC77001CB19F /* ThemeEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThemeEngine.cpp; sourceTree = "<group>"; };
@@ -6353,6 +6355,7 @@
 		DFC8303D0F48AF18005EF03C /* gfx */ = {
 			isa = PBXGroup;
 			children = (
+				DF7A40320FB6E8960094E50F /* gfx_pixmap_scale.cpp */,
 				DFE88C4B0F874A6600C555C5 /* gfx_gui.cpp */,
 				DFE88C4C0F874A6600C555C5 /* gfx_gui.h */,
 				DF5CEAFD0F7552C700DEA624 /* font.h */,
@@ -6366,7 +6369,6 @@
 				DF5CEB070F7552C700DEA624 /* res_pic.cpp */,
 				DF5CEB080F7552C700DEA624 /* res_view0.cpp */,
 				DF5CEB090F7552C700DEA624 /* res_view1.cpp */,
-				DF573C090F5A820E00961A72 /* crossblit.h */,
 				DF573C0A0F5A820E00961A72 /* gfx_driver.h */,
 				DF573C0B0F5A820E00961A72 /* gfx_options.h */,
 				DF573C0D0F5A820E00961A72 /* gfx_res_options.h */,
@@ -6377,7 +6379,6 @@
 				DF573C120F5A820E00961A72 /* gfx_tools.h */,
 				DF573C130F5A820E00961A72 /* gfx_widgets.cpp */,
 				DF573C140F5A820E00961A72 /* gfx_widgets.h */,
-				DF573C150F5A820E00961A72 /* line.h */,
 				DF573C160F5A820E00961A72 /* menubar.h */,
 				DF573C170F5A820E00961A72 /* operations.h */,
 				DFC830420F48AF18005EF03C /* font.cpp */,
@@ -8046,6 +8047,7 @@
 				DFF958C10FB223B300A3EC78 /* player.cpp in Sources */,
 				DFF958CA0FB223F000A3EC78 /* adlib.cpp in Sources */,
 				DFF958CB0FB223F000A3EC78 /* pcjr.cpp in Sources */,
+				DF7A40340FB6E8960094E50F /* gfx_pixmap_scale.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8987,6 +8989,7 @@
 				DFF958C00FB223B300A3EC78 /* player.cpp in Sources */,
 				DFF958C80FB223F000A3EC78 /* adlib.cpp in Sources */,
 				DFF958C90FB223F000A3EC78 /* pcjr.cpp in Sources */,
+				DF7A40330FB6E8960094E50F /* gfx_pixmap_scale.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9926,6 +9929,7 @@
 				DFF95CB80FB22D5700A3EC78 /* player.cpp in Sources */,
 				DFF95CB90FB22D5700A3EC78 /* adlib.cpp in Sources */,
 				DFF95CBA0FB22D5700A3EC78 /* pcjr.cpp in Sources */,
+				DF7A40350FB6E8960094E50F /* gfx_pixmap_scale.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10417,7 +10421,7 @@
 				PRODUCT_NAME = ScummVM;
 				PROVISIONING_PROFILE = "EF590570-5FAC-4346-9071-D609DE2B28D8";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphonesimulator2.0;
 			};
 			name = Debug;
 		};
@@ -10485,7 +10489,7 @@
 				PRODUCT_NAME = ScummVM;
 				PROVISIONING_PROFILE = "EF590570-5FAC-4346-9071-D609DE2B28D8";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphonesimulator2.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -203,7 +203,6 @@ uint getSizeNextPOT(uint size) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _textureWidth, _textureHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _textureBuffer);
 	[_lock unlock];
 
-	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer);
 	[_context presentRenderbuffer:GL_RENDERBUFFER_OES];		
@@ -266,26 +265,32 @@ uint getSizeNextPOT(uint size) {
 	
 	glOrthof(0, _backingWidth, 0, _backingHeight, 0, 1);
 	
-	if (_screenTexture > 0)
+	if (_screenTexture > 0) {
 		glDeleteTextures(1, &_screenTexture);
+	}
 
 	glGenTextures(1, &_screenTexture);
 	glBindTexture(GL_TEXTURE_2D, _screenTexture);
 	glEnable(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	
-	if (_textureBuffer)
+	if (_textureBuffer) {
 		free(_textureBuffer);
-	
+	}
+
 	int textureSize = _textureWidth * _textureHeight * 2;
 	_textureBuffer = (char*)malloc(textureSize);
 	memset(_textureBuffer, 0, textureSize);
 	
-	
-	glClear(GL_COLOR_BUFFER_BIT);
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer);
-	[_context presentRenderbuffer:GL_RENDERBUFFER_OES];		
-	
+
+	// The color buffer is triple-buffered, so we clear it multiple times right away to avid doing any glClears later.
+	int clearCount = 3;
+	while (clearCount-- > 0) {
+		glClear(GL_COLOR_BUFFER_BIT);
+		[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
+	}
+		
 	if (_keyboardView != nil) {
 		[_keyboardView removeFromSuperview];
 		[[_keyboardView inputView] removeFromSuperview];
