@@ -21,6 +21,7 @@
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
 #include <sys/stat.h>
+#include <time.h>
 #endif
 
 #ifdef _WIN32
