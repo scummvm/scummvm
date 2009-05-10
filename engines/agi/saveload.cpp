@@ -508,7 +508,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 #define NUM_VISIBLE_SLOTS 12
 
 const char *AgiEngine::getSavegameFilename(int num) {
-	static char saveLoadSlot[12];
+	static char saveLoadSlot[100];
 	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), num);
 	return saveLoadSlot;
 }
