@@ -209,6 +209,8 @@ public:
 
 	void resize(uint newSize) {
 		reserve(newSize);
+		for (uint i = _size; i < newSize; ++i)
+			_storage[i] = T();
 		_size = newSize;
 	}
 
