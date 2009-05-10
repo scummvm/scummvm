@@ -114,7 +114,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("gamma", "1.0");
 
 	// Miscellaneous
-	ConfMan.registerDefault("show_fps", "TRUE");
+	ConfMan.registerDefault("show_fps", "FALSE");
 	ConfMan.registerDefault("soft_renderer", "TRUE");
 	ConfMan.registerDefault("fullscreen", "FALSE");
 	ConfMan.registerDefault("engine_speed", "30");
