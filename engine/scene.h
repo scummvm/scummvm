@@ -101,7 +101,7 @@ public:
 	struct Setup {		// Camera setup data
 		void load(TextSplitter &ts);
 		void setupCamera() const;
-		std::string _name;
+		Common::String _name;
 		ResPtr<Bitmap> _bkgndBm, _bkgndZBm;
 		Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
@@ -109,8 +109,8 @@ public:
 
 	struct Light {		// Scene lighting data
 		void load(TextSplitter &ts);
-		std::string _name;
-		std::string _type;
+		Common::String _name;
+		Common::String _type;
 		Vector3d _pos, _dir;
 		Color _color;
 		float _intensity, _umbraangle, _penumbraangle;
@@ -120,7 +120,7 @@ public:
 
 private:
 
-	std::string _name;
+	Common::String _name;
 	int _numCmaps;
 	ResPtr<CMap> *_cmaps;
 	int _numSetups, _numLights, _numSectors, _numObjectStates;
@@ -131,7 +131,7 @@ private:
 public:
 	Setup *_currSetup;
 private:
-	typedef std::list<ObjectState*> StateList;
+	typedef Common::List<ObjectState*> StateList;
 	StateList _states;
 };
 

@@ -90,7 +90,7 @@ Scene::Scene(const char *name, const char *buf, int len) :
 	// cases where they count up, see hh.set for example)
 	while (!ts.eof()) {
 		ts.scanString(" %s", 1, tempBuf);
-		if(!std::strcmp(tempBuf, "sector"))
+		if (!strcasecmp(tempBuf, "sector"))
 			_numSectors++;
 	}
 	// Allocate and fill an array of sector info
