@@ -1191,28 +1191,29 @@ bool SoundMgr::loadInstruments() {
 void SoundMgr::fillAudio(void *udata, int16 *stream, uint len) {
 	SoundMgr *soundMgr = (SoundMgr *)udata;
 	uint32 p = 0;
-	static uint32 n = 0, s = 0;
+
+	// current number of audio bytes in _sndBuffer
+	static uint32 data_available = 0;
+	// offset of start of audio bytes in _sndBuffer
+	static uint32 data_offset = 0;
 
 	len <<= 2;
 
 	debugC(5, kDebugLevelSound, "(%p, %p, %d)", (void *)udata, (void *)stream, len);
-	memcpy(stream, (uint8 *)_sndBuffer + s, p = n);
-	for (n = 0, len -= p; n < len; p += n, len -= n) {
+
+	while (len > data_available) {
+		memcpy((uint8 *)stream + p, (uint8*)_sndBuffer + data_offset, data_available);
+		p += data_available;
+		len -= data_available;
+
 		soundMgr->playSound();
-		n = soundMgr->mixSound() << 1;
-		if (len < n) {
-			memcpy((uint8 *)stream + p, _sndBuffer, len);
-			s = len;
-			n -= s;
-			return;
-		} else {
-			memcpy((uint8 *)stream + p, _sndBuffer, n);
-		}
+		data_available = soundMgr->mixSound() << 1;
+		data_offset = 0;
 	}
-	soundMgr->playSound();
-	n = soundMgr->mixSound() << 1;
-	memcpy((uint8 *)stream + p, _sndBuffer, s = len);
-	n -= s;
+
+	memcpy((uint8 *)stream + p, (uint8*)_sndBuffer + data_offset, len);
+	data_offset += len;
+	data_available -= len;
 }
 
 SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _chn() {
