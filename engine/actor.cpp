@@ -326,7 +326,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		if (_talkSoundName == soundName)
 			return;
 
-		if (g_imuse->getSoundStatus(_talkSoundName.c_str()))
+		if (g_imuse->getSoundStatus(_talkSoundName.c_str()) || msg[0] == 0)
 			shutUp();
 
 		_talkSoundName = soundName;
@@ -373,8 +373,10 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			_sayLineText->setY(_winY1);
 		}
 	}
-	_sayLineText->createBitmap();
-	g_engine->registerTextObject(_sayLineText);
+	if (_sayLineText->isFontSet()) {
+		_sayLineText->createBitmap();
+		g_engine->registerTextObject(_sayLineText);
+	}
 }
 
 bool Actor::talking() {

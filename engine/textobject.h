@@ -70,6 +70,9 @@ public:
 	void setHeight(int height) { _height = height; }
 	void setFGColor(Color *fgColor) { _fgColor = fgColor; }
 	void setFont(Font *font) { _font = font; }
+	bool isFontSet() {
+		return _font != NULL;
+	}
 	void setJustify(int justify) { _justify = justify; }
 	void setDisabled(bool disabled) { _disabled = disabled; }
 	int getBitmapWidth();
