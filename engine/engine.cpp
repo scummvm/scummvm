@@ -249,14 +249,14 @@ Engine::Engine() :
 	printLineDefaults.width = 0;
 	printLineDefaults.height = 0;
 	printLineDefaults.font = NULL;
-	printLineDefaults.justify = 2;
+	printLineDefaults.justify = TextObject::LJUSTIFY;
 
 	sayLineDefaults.x = 0;
 	sayLineDefaults.y = 100;
 	sayLineDefaults.width = 0;
 	sayLineDefaults.height = 0;
 	sayLineDefaults.font = NULL;
-	sayLineDefaults.justify = 1;
+	sayLineDefaults.justify = TextObject::CENTER;
 
 	blastTextDefaults.x = 0;
 	blastTextDefaults.y = 200;
@@ -264,7 +264,7 @@ Engine::Engine() :
 	blastTextDefaults.height = 0;
 	blastTextDefaults.fgColor._vals[2] = 80;
 	blastTextDefaults.font = NULL;
-	blastTextDefaults.justify = 2;
+	blastTextDefaults.justify = TextObject::LJUSTIFY;
 }
 
 Engine::~Engine() {
