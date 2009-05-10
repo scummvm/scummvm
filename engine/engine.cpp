@@ -244,15 +244,15 @@ Engine::Engine() :
 	_savedState = NULL;
 	_fps[0] = 0;
 
-	textObjectDefaults.x = 0;
-	textObjectDefaults.y = 200;
-	textObjectDefaults.width = 10;
-	textObjectDefaults.height = 0;
-	textObjectDefaults.fgColor._vals[0] = 255;
-	textObjectDefaults.fgColor._vals[1] = 255;
-	textObjectDefaults.fgColor._vals[2] = 255;
-	textObjectDefaults.font = NULL;
-	textObjectDefaults.justify = 2;
+	printLineDefaults.x = 0;
+	printLineDefaults.y = 100;
+	printLineDefaults.width = 0;
+	printLineDefaults.height = 0;
+	printLineDefaults.fgColor._vals[0] = 255;
+	printLineDefaults.fgColor._vals[1] = 255;
+	printLineDefaults.fgColor._vals[2] = 255;
+	printLineDefaults.font = NULL;
+	printLineDefaults.justify = 2;
 
 	sayLineDefaults.x = 0;
 	sayLineDefaults.y = 100;
@@ -264,15 +264,15 @@ Engine::Engine() :
 	sayLineDefaults.font = NULL;
 	sayLineDefaults.justify = 1;
 
-	printLineDefaults.x = 0;
-	printLineDefaults.y = 100;
-	printLineDefaults.width = 0;
-	printLineDefaults.height = 0;
-	printLineDefaults.fgColor._vals[0] = 255;
-	printLineDefaults.fgColor._vals[1] = 255;
-	printLineDefaults.fgColor._vals[2] = 255;
-	printLineDefaults.font = NULL;
-	printLineDefaults.justify = 2;
+	blastTextDefaults.x = 0;
+	blastTextDefaults.y = 200;
+	blastTextDefaults.width = 0;
+	blastTextDefaults.height = 0;
+	blastTextDefaults.fgColor._vals[0] = 255;
+	blastTextDefaults.fgColor._vals[1] = 255;
+	blastTextDefaults.fgColor._vals[2] = 255;
+	blastTextDefaults.font = NULL;
+	blastTextDefaults.justify = 2;
 }
 
 Engine::~Engine() {

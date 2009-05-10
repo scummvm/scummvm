@@ -42,7 +42,7 @@ struct TextObjectDefaults {
 
 extern TextObjectDefaults sayLineDefaults;
 extern TextObjectDefaults printLineDefaults;
-extern TextObjectDefaults textObjectDefaults;
+extern TextObjectDefaults blastTextDefaults;
 
 class TextObject {
 public:

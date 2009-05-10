@@ -29,7 +29,7 @@ std::string parseMsgText(const char *msg, char *msgId);
 
 TextObjectDefaults sayLineDefaults;
 TextObjectDefaults printLineDefaults;
-TextObjectDefaults textObjectDefaults;
+TextObjectDefaults blastTextDefaults;
 
 TextObject::TextObject(bool blastDraw) :
 		_created(false), _x(0), _y(0), _width(0), _height(0), _justify(0),

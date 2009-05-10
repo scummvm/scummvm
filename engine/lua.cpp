@@ -2423,7 +2423,7 @@ static void MakeTextObject() {
 	line = lua_getstring(lua_getparam(1));
 	std::string text = line;
 	tableObj = lua_getparam(2);
-	textObject->setDefaults(&textObjectDefaults);
+	textObject->setDefaults(&blastTextDefaults);
 
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
@@ -2481,7 +2481,7 @@ static void BlastText() {
 	line = lua_getstring(lua_getparam(1));
 	std::string text = line;
 	tableObj = lua_getparam(2);
-	textObject->setDefaults(&textObjectDefaults);
+	textObject->setDefaults(&blastTextDefaults);
 
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
