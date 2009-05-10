@@ -26,9 +26,9 @@
 #ifndef WALKPLANE_H
 #define WALKPLANE_H
 
-#include "engine/vector3d.h"
+#include "common/str.h"
 
-#include <string>
+#include "engine/vector3d.h"
 
 class TextSplitter;
 
@@ -67,7 +67,7 @@ public:
 private:
 	int _numVertices, _id;
 
-	std::string _name;
+	Common::String _name;
 	int _type;
 	bool _visible;
 	Vector3d *_vertices;

@@ -1255,10 +1255,10 @@ static void RotateVector() {
 		if (rotateObject == 0)
 			rotateObject = getIndexedTableValue(param2, 2);
 		rotate = lua_getnumber(rotateObject);
-		Vector3d baseVector(std::sin(0.0f), std::cos(0.0f), 0);
+		Vector3d baseVector(sin(0.0f), cos(0.0f), 0);
 		currAngle = angle(baseVector, vec1) * (180 / LOCAL_PI);
 		newAngle = (currAngle - rotate) * (LOCAL_PI / 180);
-		Vector3d vec2(std::sin(newAngle), std::cos(newAngle), 0);
+		Vector3d vec2(sin(newAngle), cos(newAngle), 0);
 		vec2 *= vec1.magnitude();
 
 		result = lua_createtable();

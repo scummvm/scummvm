@@ -26,7 +26,6 @@
 #ifndef ENGINE_VECTOR3D_H
 #define ENGINE_VECTOR3D_H
 
-#include <cmath>
 #include <common/sys.h>
 
 class Vector3d {
@@ -88,7 +87,7 @@ public:
 	}
 
 	float magnitude() const {
-		return std::sqrt(x() * x() + y() * y() + z() * z());
+		return sqrt(x() * x() + y() * y() + z() * z());
 	}
 
 	// Get the angle a vector is around the unit circle
@@ -99,7 +98,7 @@ public:
 		float yaw;
 
 		// find the angle on the upper half of the unit circle
-		yaw = std::acos(a) * (180.0f / LOCAL_PI);
+		yaw = acos(a) * (180.0f / LOCAL_PI);
 		if (b < 0.0f)
 			// adjust for the lower half of the unit circle
 			return 360.0f - yaw;
@@ -130,7 +129,7 @@ inline Vector3d cross(const Vector3d& v1, const Vector3d& v2) {
 }
 
 inline float angle(const Vector3d& v1, const Vector3d& v2) {
-	return std::acos(dot(v1, v2) / (v1.magnitude() * v2.magnitude()));
+	return acos(dot(v1, v2) / (v1.magnitude() * v2.magnitude()));
 }
 
 inline Vector3d operator +(const Vector3d& v1, const Vector3d& v2) {
