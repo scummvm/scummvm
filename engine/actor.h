@@ -33,12 +33,12 @@
 class TextObject;
 class Sector;
 
-typedef std::list<Sector *> SectorListType;
+typedef Common::List<Sector *> SectorListType;
 
 extern int g_winX1, g_winY1, g_winX2, g_winY2;
 
 struct Shadow {
-	std::string name;
+	Common::String name;
 	Vector3d pos;
 	SectorListType planeList;
 	byte *shadowMask;
