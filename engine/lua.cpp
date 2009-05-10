@@ -1482,7 +1482,7 @@ static void SetActorShadowValid() {
 int translationMode = 0;
 
 std::string parseMsgText(const char *msg, char *msgId) {
-	std::string translation = g_localizer->localize(msg);
+	std::string translation = g_localizer->localize(msg).c_str();
 	const char *secondSlash = NULL;
 
 	if (msg[0] == '/' && msgId) {

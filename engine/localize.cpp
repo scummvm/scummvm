@@ -24,13 +24,17 @@
  */
 
 #include "common/file.h"
+#include "common/str.h"
+#include "common/endian.h"
 
 #include "engine/localize.h"
 #include "engine/engine.h"
 
-#include <cstring>
-
 Localizer *g_localizer = NULL;
+
+static int sortCallback(const void *entry1, const void *entry2) {
+	return strcasecmp(((Localizer::LocaleEntry *)entry1)->text, ((Localizer::LocaleEntry *)entry2)->text);
+}
 
 Localizer::Localizer() {
 	Common::File f;
@@ -57,7 +61,7 @@ Localizer::Localizer() {
 	data[filesize] = '\0';
 	f.close();
 
-	if (filesize < 4 || std::memcmp(data, "RCNE", 4) != 0)
+	if (filesize < 4 || READ_BE_UINT32(data) != MKID_BE('RCNE'))
 		error("Invalid magic reading grim.tab");
 
 	// Decode the data
@@ -66,40 +70,56 @@ Localizer::Localizer() {
 
 	char *nextline;
 	for (char *line = data + 4; line != NULL && *line != '\0'; line = nextline) {
-		nextline = std::strchr(line, '\n');
+		nextline = strchr(line, '\n');
 
 		if (nextline) {
 			if (nextline[-1] == '\r')
 				nextline[-1] = '\0';
 			nextline++;
 		}
-		char *tab = std::strchr(line, '\t');
+		char *tab = strchr(line, '\t');
 
 		if (!tab)
 			continue;
 
-		std::string key(line, tab - line);
-		std::string val = tab + 1;
-		_entries[key] = val;
+		LocaleEntry entry;
+		entry.text = new char[(tab - line) + 1];
+		strncpy(entry.text, line, tab - line);
+		entry.text[tab - line] = '\0';
+		entry.translation = new char[strlen(tab + 1) + 1];
+		strcpy(entry.translation, tab + 1);
+		_entries.push_back(entry);
 	}
+
+	qsort(_entries.begin(), _entries.size(), sizeof(LocaleEntry), sortCallback);
 
 	delete[] data;
 }
 
-std::string Localizer::localize(const char *str) const {
+Common::String Localizer::localize(const char *str) const {
 	assert(str);
 
 	if (str[0] != '/' || str[0] == 0)
 		return str;
 
-	const char *slash2 = std::strchr(str + 1, '/');
+	const char *slash2 = strchr(str + 1, '/');
 	if (!slash2)
 		return str;
 
-	std::string key(str + 1, slash2 - str - 1);
-	StringMap::const_iterator i = _entries.find(key);
-	if (i == _entries.end())
+	LocaleEntry key, *result;
+	Common::String s(str + 1, slash2 - str - 1);
+	key.text = (char *)s.c_str();
+	result = (Localizer::LocaleEntry *)bsearch(&key, _entries.begin(), _entries.size(), sizeof(LocaleEntry), sortCallback);
+
+	if (!result)
 		return slash2 + 1;
 
-	return i->second;
+	return result->translation;
+}
+
+Localizer::~Localizer() {
+	for (unsigned int i = 0; i < _entries.size(); i++) {
+		delete[] _entries[i].text;
+		delete[] _entries[i].translation;
+	}
 }

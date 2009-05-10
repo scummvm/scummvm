@@ -26,20 +26,23 @@
 #ifndef LOCALIZE_H
 #define LOCALIZE_H
 
-#include <map>
-#include <string>
+#include "common/array.h"
 
 class Localizer {
 public:
-	std::string localize(const char *str) const;
+	Common::String localize(const char *str) const;
 
 	Localizer();
-	~Localizer() { }
+	~Localizer();
+
+	struct LocaleEntry {
+		char *text;
+		char *translation;
+	};
 
 private:
-
-	typedef std::map<std::string, std::string> StringMap;
-	StringMap _entries;
+	typedef Common::Array<LocaleEntry *> AbstractLocaleList;
+	Common::Array<LocaleEntry> _entries;
 };
 
 extern Localizer *g_localizer;
