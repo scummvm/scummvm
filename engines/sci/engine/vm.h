@@ -277,8 +277,6 @@ struct Object {
 	uint16 *base_method; /**< Pointer to the method selector area for this object */
 	uint16 *base_vars; /**< Pointer to the varselector area for this object */
 	reg_t *variables;
-
-	Object() { memset(this, 0, sizeof(*this)); }
 };
 
 struct CodeBlock {
@@ -336,9 +334,7 @@ struct Script : public MemObject {
 	int locals_segment; /**< The local variable segment */
 	LocalVariables *locals_block;
 
-	CodeBlock *code;
-	int code_blocks_nr;
-	int code_blocks_allocated;
+	Common::Array<CodeBlock> _codeBlocks;
 	int relocated;
 	int marked_as_deleted;
 
@@ -360,9 +356,6 @@ public:
 		locals_segment = 0;
 		locals_block = NULL;
 
-		code = NULL;
-		code_blocks_nr = 0;
-		code_blocks_allocated = 0;
 		relocated = 0;
 		marked_as_deleted = 0;
 	}

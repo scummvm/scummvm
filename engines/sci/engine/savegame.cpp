@@ -603,9 +603,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				scr->locals_block = scr->locals_segment == 0 ? NULL : (LocalVariables *)(s->seg_manager->_heap[scr->locals_segment]);
 				scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, sci_obj_exports);
 				scr->synonyms = find_unique_script_block(s, scr->buf, sci_obj_synonyms);
-				scr->code = NULL;
-				scr->code_blocks_nr = 0;
-				scr->code_blocks_allocated = 0;
+				scr->_codeBlocks.clear();
 
 				if (!self->isSci1_1)
 					scr->export_table += 3;

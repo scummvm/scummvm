@@ -192,9 +192,7 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 	scr.locals_offset = 0;
 	scr.locals_block = NULL;
 
-	scr.code = NULL;
-	scr.code_blocks_nr = 0;
-	scr.code_blocks_allocated = 0;
+	scr._codeBlocks.clear();
 
 	scr.nr = script_nr;
 	scr.marked_as_deleted = 0;
@@ -373,8 +371,7 @@ void Script::freeScript() {
 
 	delete obj_indices;
 	obj_indices = 0;
-	free(code);
-	code = 0;
+	_codeBlocks.clear();
 }
 
 // memory operations
@@ -541,14 +538,10 @@ int SegManager::relocateObject(Object *obj, SegmentId segment, int location) {
 void SegManager::scriptAddCodeBlock(reg_t location) {
 	Script *scr = getScript(location.segment, SEG_ID);
 
-	if (++scr->code_blocks_nr > scr->code_blocks_allocated) {
-		scr->code_blocks_allocated += DEFAULT_OBJECTS_INCREMENT;
-		scr->code = (CodeBlock *)sci_realloc(scr->code, scr->code_blocks_allocated * sizeof(CodeBlock));
-	}
-
-	int index = scr->code_blocks_nr - 1;
-	scr->code[index].pos = location;
-	scr->code[index].size = READ_LE_UINT16(scr->buf + location.offset - 2);
+	CodeBlock cb;
+	cb.pos = location;
+	cb.size = READ_LE_UINT16(scr->buf + location.offset - 2);
+	scr->_codeBlocks.push_back(cb);
 }
 
 void SegManager::scriptRelocate(reg_t block) {
@@ -573,9 +566,9 @@ void SegManager::scriptRelocate(reg_t block) {
 					done = true;
 			}
 
-			for (k = 0; !done && (int)k < scr->code_blocks_nr; k++) {
-				if (pos >= scr->code[k].pos.offset &&
-				        pos < scr->code[k].pos.offset + scr->code[k].size)
+			for (k = 0; !done && k < scr->_codeBlocks.size(); k++) {
+				if (pos >= scr->_codeBlocks[k].pos.offset &&
+				        pos < scr->_codeBlocks[k].pos.offset + scr->_codeBlocks[k].size)
 					done = true;
 			}
 
