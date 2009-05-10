@@ -2377,7 +2377,7 @@ void LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	//uint8 pal2[768];
 	//uint8 pal3[768];
 
-	if (_currentLevel = 11 && !(_freezeStateFlags & 4)) {
+	if (_currentLevel == 11 && !(_freezeStateFlags & 4)) {
 		for (int i = 1; i < 384; i++) {
 
 		///////// TODO
