@@ -148,8 +148,9 @@ Lab::LabEntry *Lab::findFilename(const char *filename) const {
 void Lab::close() {
 	delete _f;
 	_f = NULL;
-	for (int i = 0; i < _numEntries; i++)
-		delete[] _entries[i].filename;
+	if (_entries)
+		for (int i = 0; i < _numEntries; i++)
+			delete[] _entries[i].filename;
 
 	delete[] _entries;
 }
