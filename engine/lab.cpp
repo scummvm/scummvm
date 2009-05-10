@@ -76,7 +76,7 @@ bool Lab::open(const char *filename) {
 
 	qsort(_entries, _numEntries, sizeof(LabEntry), sortCallback);
 
-	delete []string_table;
+	delete[] string_table;
 	return true;
 }
 
@@ -149,7 +149,7 @@ void Lab::close() {
 	delete _f;
 	_f = NULL;
 	for (int i = 0; i < _numEntries; i++)
-		delete []_entries[i].filename;
+		delete[] _entries[i].filename;
 
-	delete []_entries;
+	delete[ ]_entries;
 }
