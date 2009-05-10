@@ -265,7 +265,7 @@ find_sdlconfig() {
 #
 get_system_exe_extension() {
 	case $1 in
-	mingw* | os2-emx*)
+	mingw* | *os2-emx)
 		_exeext=".exe"
 		;;
 	arm-riscos)
