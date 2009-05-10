@@ -390,7 +390,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 			if (palBuf)
 				_vm->screen()->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf, 0x30);
 		}
-		
+	
 		_flags |= WF_XOR;
 	}
 
@@ -428,7 +428,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 		wsaData += 4;
 	}
 
-	for (int i = 0; i < _numFrames; ++i)
+	for (int i = 1; i < _numFrames; ++i)
 		_frameOffsTable[_numFrames] -= frameDataOffs;
 
 	// WSA movies without last frame offset need special treatment
