@@ -248,9 +248,6 @@ Engine::Engine() :
 	printLineDefaults.y = 100;
 	printLineDefaults.width = 0;
 	printLineDefaults.height = 0;
-	printLineDefaults.fgColor._vals[0] = 255;
-	printLineDefaults.fgColor._vals[1] = 255;
-	printLineDefaults.fgColor._vals[2] = 255;
 	printLineDefaults.font = NULL;
 	printLineDefaults.justify = 2;
 
@@ -258,9 +255,6 @@ Engine::Engine() :
 	sayLineDefaults.y = 100;
 	sayLineDefaults.width = 0;
 	sayLineDefaults.height = 0;
-	sayLineDefaults.fgColor._vals[0] = 255;
-	sayLineDefaults.fgColor._vals[1] = 255;
-	sayLineDefaults.fgColor._vals[2] = 255;
 	sayLineDefaults.font = NULL;
 	sayLineDefaults.justify = 1;
 
@@ -268,9 +262,7 @@ Engine::Engine() :
 	blastTextDefaults.y = 200;
 	blastTextDefaults.width = 0;
 	blastTextDefaults.height = 0;
-	blastTextDefaults.fgColor._vals[0] = 255;
-	blastTextDefaults.fgColor._vals[1] = 255;
-	blastTextDefaults.fgColor._vals[2] = 255;
+	blastTextDefaults.fgColor._vals[2] = 80;
 	blastTextDefaults.font = NULL;
 	blastTextDefaults.justify = 2;
 }
