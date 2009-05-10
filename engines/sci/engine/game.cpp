@@ -174,7 +174,7 @@ int _reset_graphics_input(EngineState *s) {
 	// but this is correct
 	s->picture_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
 
-	s->pics_drawn_nr = 0;
+	s->_pics.clear();
 
 	s->visual->add(GFXWC(s->visual), s->wm_port);
 	s->visual->add(GFXWC(s->visual), s->titlebar_port);
@@ -214,8 +214,7 @@ static void _free_graphics_input(EngineState *s) {
 	s->dyn_views = NULL;
 	s->port = NULL;
 
-	free(s->pics);
-	s->pics = NULL;
+	s->_pics.clear();
 }
 
 int game_init_sound(EngineState *s, int sound_flags) {
@@ -469,8 +468,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	sciprintf("Engine initialized\n");
 
 	s->pic_priority_table = NULL;
-	s->pics = NULL;
-	s->pics_nr = 0;
+	s->_pics.clear();
 
 	return 0;
 }

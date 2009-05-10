@@ -96,10 +96,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	priority_first = 0;
 	priority_last = 0;
 
-	pics_drawn_nr = 0;
-	pics_nr = 0;
-	pics = 0;
-
 	last_wait_time = 0;
 
 	version_lock_flag = 0;

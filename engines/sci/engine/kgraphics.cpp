@@ -975,12 +975,14 @@ void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr
 int sci01_priority_table_flags = 0;
 
 reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int pic_nr = SKPV(0);
+	drawn_pic_t dp;
 	int add_to_pic = 1;
-	int palette = SKPV_OR_ALT(3, 0);
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 
 	CHECK_THIS_KERNEL_FUNCTION;
+
+	dp.nr = SKPV(0);
+	dp.palette = SKPV_OR_ALT(3, 0);
 
 	if (s->version < SCI_VERSION_FTU_NEWER_DRAWPIC_PARAMETERS) {
 		if (!SKPV_OR_ALT(2, 0))
@@ -1000,24 +1002,13 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	SCIkdebug(SCIkGRAPHICS, "Drawing pic.%03d\n", SKPV(0));
 
-	if (!s->pics) {
-		s->pics = (drawn_pic_t*)sci_malloc(sizeof(drawn_pic_t) * (s->pics_nr = 8));
-		s->pics_drawn_nr = 0;
-	}
-
 	if (add_to_pic) {
-		if (s->pics_nr == s->pics_drawn_nr) {
-			s->pics_nr += 4;
-			s->pics = (drawn_pic_t*)sci_realloc(s->pics, sizeof(drawn_pic_t) * s->pics_nr);
-		}
-		s->pics[s->pics_drawn_nr].palette = palette;
-		s->pics[s->pics_drawn_nr++].nr = pic_nr;
-		GFX_ASSERT(gfxop_add_to_pic(s->gfx_state, pic_nr, 1, palette));
+		s->_pics.push_back(dp);
+		GFX_ASSERT(gfxop_add_to_pic(s->gfx_state, dp.nr, 1, dp.palette));
 	} else {
-		s->pics_drawn_nr = 1;
-		s->pics[0].nr = pic_nr;
-		s->pics[0].palette = palette;
-		GFX_ASSERT(gfxop_new_pic(s->gfx_state, pic_nr, 1, palette));
+		s->_pics.clear();
+		s->_pics.push_back(dp);
+		GFX_ASSERT(gfxop_new_pic(s->gfx_state, dp.nr, 1, dp.palette));
 	}
 
 	delete s->wm_port;

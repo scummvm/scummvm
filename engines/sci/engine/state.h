@@ -188,9 +188,7 @@ public:
 	int priority_first; /**< The line where priority zone 0 ends */
 	int priority_last; /**< The line where the highest priority zone starts */
 
-	int pics_drawn_nr;
-	int pics_nr;
-	drawn_pic_t *pics;
+	Common::Array<drawn_pic_t> _pics;
 
 	uint32 game_start_time; /**< The time at which the interpreter was started */
 	uint32 last_wait_time; /**< The last time the game invoked Wait() */
