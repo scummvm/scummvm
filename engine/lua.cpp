@@ -1481,12 +1481,12 @@ static void SetActorShadowValid() {
 // 2 - return '/msgId/'
 int translationMode = 0;
 
-std::string parseMsgText(const char *msg, char *msgId) {
-	std::string translation = g_localizer->localize(msg).c_str();
+Common::String parseMsgText(const char *msg, char *msgId) {
+	Common::String translation = g_localizer->localize(msg);
 	const char *secondSlash = NULL;
 
 	if (msg[0] == '/' && msgId) {
-		secondSlash = std::strchr(msg + 1, '/');
+		secondSlash = strchr(msg + 1, '/');
 		if (secondSlash) {
 			strncpy(msgId, msg + 1, secondSlash - msg - 1);
 			msgId[secondSlash - msg - 1] = 0;
@@ -1576,7 +1576,7 @@ static void LocalizeString() {
 	// construct the localized string, otherwise spit back what
 	// we've been given
 	if (str[0] == '/' && str[strlen(str)-1] == '/') {
-		std::string msg = parseMsgText(str, msgId);
+		Common::String msg = parseMsgText(str, msgId);
 		sprintf(buf, "/%s/%s", msgId, msg.c_str());
 		result = buf;
 	} else {
@@ -1588,7 +1588,7 @@ static void LocalizeString() {
 static void SayLine() {
 	int vol = 64, paramId = 2;
 	char msgId[32];
-	std::string msg = "";
+	Common::String msg;
 	lua_Object paramObj;
 	Actor *act;
 

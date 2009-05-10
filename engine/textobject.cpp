@@ -25,7 +25,7 @@
 
 #include "engine/textobject.h"
 
-std::string parseMsgText(const char *msg, char *msgId);
+Common::String parseMsgText(const char *msg, char *msgId);
 
 TextObjectDefaults sayLineDefaults;
 TextObjectDefaults printLineDefaults;
@@ -91,7 +91,7 @@ int TextObject::getBitmapHeight() {
 
 int TextObject::getTextCharPosition(int pos) {
 	int width = 0;
-	std::string msg = parseMsgText(_textID, NULL);
+	Common::String msg = parseMsgText(_textID, NULL);
 	for (int i = 0; (msg[i] != '\0') && (i < pos); ++i) {
 		width += _font->getCharWidth(msg[i]);
 	}
@@ -102,8 +102,8 @@ void TextObject::createBitmap() {
 	if (_created)
 		destroyBitmap();
 
-	std::string msg = parseMsgText(_textID, NULL);
-	std::string message;
+	Common::String msg = parseMsgText(_textID, NULL);
+	Common::String message;
 	char *c = (char *)msg.c_str();
 
 	int lineWidth = 0;
@@ -111,18 +111,18 @@ void TextObject::createBitmap() {
 	// remove spaces (NULL_TEXT) from the end of the string,
 	// while this helps make the string unique it screws up
 	// text justification
-	for (int i = (int)msg.length() - 1; c[i] == TEXT_NULL; i--)
-		msg.erase(msg.length() - 1, msg.length());
+	for (int i = (int)msg.size() - 1; c[i] == TEXT_NULL; i--)
+		msg.deleteLastChar();
 
 	// remove char of id 13 from the end of the string,
-	for (int i = (int)msg.length() - 1; c[i] == 13; i--)
-		msg.erase(msg.length() - 1, msg.length());
+	for (int i = (int)msg.size() - 1; c[i] == 13; i--)
+		msg.deleteLastChar();
 
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
 	_numberLines = 1;
 	lineWidth = 0;
-	for (int i = 0; msg[i] != '\0'; ++i) {
+	for (unsigned int i = 0; i < msg.size(); ++i) {
 		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
 		if ((_width != 0 && lineWidth > (_width - _x))
 				|| (_justify == CENTER && (_x - lineWidth / 2 < 0 || _x + lineWidth / 2 > 640))
@@ -130,7 +130,7 @@ void TextObject::createBitmap() {
 				|| (_justify == RJUSTIFY && (_x - lineWidth < 0))) {
 			lineWidth = 0;
 			for (; msg[i] != ' '; i--)
-				message.erase(message.length() - 1, message.length());
+				message.deleteLastChar();
 			message += '\n';
 			_numberLines++;
 			continue; // don't add the space back
@@ -141,11 +141,19 @@ void TextObject::createBitmap() {
 	_bitmapWidthPtr = new int[_numberLines];
 
 	for (int j = 0; j < _numberLines; j++) {
-		int nextLinePos = message.find_first_of('\n');
-		std::string currentLine = message.substr(0, nextLinePos);
+		int nextLinePos, cutLen;
+		const char *pos = strchr(message.c_str(), '\n');
+		if (pos) {
+			nextLinePos = pos - message.c_str();
+			cutLen = nextLinePos + 1;
+		} else {
+			nextLinePos = message.size();
+			cutLen = nextLinePos;
+		}
+		Common::String currentLine(message.c_str(), message.c_str() + nextLinePos);
 
 		_bitmapWidthPtr[j] = 0;
-		for (int i = 0; currentLine[i] != '\0'; ++i) {
+		for (unsigned int i = 0; i < currentLine.size(); ++i) {
 			_bitmapWidthPtr[j] += MAX(_font->getCharWidth(currentLine[i]), _font->getCharDataWidth(currentLine[i]));
 		}
 
@@ -154,7 +162,7 @@ void TextObject::createBitmap() {
 
 		// Fill bitmap
 		int startOffset = 0;
-		for (int c = 0; currentLine[c] != '\0'; c++) {
+		for (unsigned int c = 0; c < currentLine.size(); c++) {
 			int ch = currentLine[c];
 			int8 startingLine = _font->getCharStartingLine(ch) + _font->getBaseOffsetY();
 			int32 charDataWidth = _font->getCharDataWidth(ch);
@@ -176,7 +184,8 @@ void TextObject::createBitmap() {
 
 		_textObjectHandle[j] = g_driver->createTextBitmap(_textBitmap, _bitmapWidthPtr[j] + 1, _font->getHeight(), _fgColor);
 		delete[] _textBitmap;
-		message = message.substr(nextLinePos + 1, message.length() - (nextLinePos + 1));
+		for (int count = 0; count < cutLen; count++)
+			message.deleteChar(0);
 	}
 	_created = true;
 }
