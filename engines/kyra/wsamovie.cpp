@@ -423,15 +423,15 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 		_flags |= WF_NO_FIRST_FRAME;
 	}
 
-	for (int i = 1; i < _numFrames; ++i) {
-		_frameOffsTable[i] = READ_LE_UINT32(wsaData) - frameDataOffs;
+	for (int i = 1; i < _numFrames + 2; ++i) {
+		_frameOffsTable[i] = READ_LE_UINT32(wsaData);
 		wsaData += 4;
 	}
 
-	_frameOffsTable[_numFrames] = READ_LE_UINT32(wsaData);
-	wsaData += 4;
-	_frameOffsTable[_numFrames + 1] = READ_LE_UINT32(wsaData);
-	wsaData += 4;
+	for (int i = 0; i < _numFrames; ++i)
+		_frameOffsTable[_numFrames] -= frameDataOffs;
+
+	// WSA movies without last frame offset need special treatment
 	if (_frameOffsTable[_numFrames + 1])
 		_frameOffsTable[_numFrames] -= frameDataOffs;
 	else
