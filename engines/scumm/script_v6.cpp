@@ -2464,7 +2464,7 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 				if ((_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformMacintosh) &&
 					(!strcmp(videoname, "jumpgorge.san")))
 					_splayer->play("jumpgorg.san", _smushFrameRate);
-				// TODO: Document exactly why this is required
+				// WORKAROUND: A faster frame rate is required, to keep audio/video in sync in this video
 				else if (_game.id == GID_DIG && !strcmp(videoname, "sq3.san"))
 					_splayer->play(videoname, 14);
 				else
