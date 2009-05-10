@@ -186,9 +186,10 @@ struct parse_tree_node_t {
 
 /*FIXME: These need freeing functions...*/
 
+#if 0
 int *vocabulary_get_classes(ResourceManager *resmgr, int *count);
-
 int vocabulary_get_class_count(ResourceManager *resmgr);
+#endif
 
 /**
  * Fills the given StringList with selector names.

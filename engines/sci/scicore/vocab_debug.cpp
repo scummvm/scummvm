@@ -280,6 +280,7 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x7d*/ "IsItSkip"
 };
 
+#if 0
 int *vocabulary_get_classes(ResourceManager *resmgr, int* count) {
 	Resource* r;
 	int *c;
@@ -305,6 +306,7 @@ int vocabulary_get_class_count(ResourceManager *resmgr) {
 
 	return r->size / 4;
 }
+#endif
 
 bool vocabulary_get_snames(ResourceManager *resmgr, sci_version_t version, Common::StringList &selectorNames) {
 	int count;
