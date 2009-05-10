@@ -27,13 +27,7 @@
 #include "engine/primitives.h"
 
 PrimitiveObject::PrimitiveObject() {
-	_x1 = 0;
-	_y1 = 0;
-	_x2 = 0;
-	_y2 = 0;
-	_color._vals[0] = 0;
-	_color._vals[1] = 0;
-	_color._vals[2] = 0;
+	memset(&_color, 0, sizeof(Color));
 	_filled = false;
 	_type = 0;
 	_bitmap = NULL;
@@ -44,43 +38,35 @@ PrimitiveObject::~PrimitiveObject() {
 		g_driver->destroyBitmap(_bitmap);
 }
 
-void PrimitiveObject::createRectangle(int x1, int x2, int y1, int y2, Color color, bool filled) {
-	_x1 = x1;
-	_y1 = y1;
-	_x2 = x2;
-	_y2 = y2;
+void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, Color color, bool filled) {
+	_p1 = p1;
+	_p2 = p2;
 	_color = color;
 	_filled = filled;
 	_type = 1;
 }
 
-void PrimitiveObject::createBitmap(Bitmap *bitmap, int x, int y, bool /*transparent*/) {
+void PrimitiveObject::createBitmap(Bitmap *bitmap, Common::Point p, bool /*transparent*/) {
 	_type = 2;
 	_bitmap = bitmap;
-	_bitmap->setX(x);
-	_bitmap->setY(y);
+	_bitmap->setX(p.x);
+	_bitmap->setY(p.y);
 	// transparent: what to do ?
 	g_driver->createBitmap(_bitmap);
 }
 
-void PrimitiveObject::createLine(int x1, int x2, int y1, int y2, Color color) {
-	_x1 = x1;
-	_y1 = y1;
-	_x2 = x2;
-	_y2 = y2;
+void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, Color color) {
+	_p1 = p1;
+	_p2 = p2;
 	_color = color;
 	_type = 3;
 }
 
-void PrimitiveObject::createPolygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, Color color) {
-	_x1 = x1;
-	_y1 = y1;
-	_x2 = x2;
-	_y2 = y2;
-	_x3 = x3;
-	_y3 = y3;
-	_x4 = x4;
-	_y4 = y4;
+void PrimitiveObject::createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, Color color) {
+	_p1 = p1;
+	_p2 = p2;
+	_p3 = p3;
+	_p4 = p4;
 	_color = color;
 	_type = 4;
 }

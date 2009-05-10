@@ -26,6 +26,8 @@
 #ifndef PRIMITIVESOBJECT_H
 #define PRIMITIVESOBJECT_H
 
+#include "common/rect.h"
+
 #include "engine/color.h"
 
 class PrimitiveObject {
@@ -33,22 +35,18 @@ public:
 	PrimitiveObject();
 	~PrimitiveObject();
 
-	void createRectangle(int x1, int x2, int y1, int y2, Color color, bool filled);
-	void createBitmap(Bitmap *bitmap, int x, int y, bool transparent);
-	void createLine(int x1, int x2, int y1, int y2, Color color);
-	void createPolygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, Color color);
-	int getX1() { return _x1; }
-	int getY1() { return _y1; }
-	int getX2() { return _x2; }
-	int getY2() { return _y2; }
-	int getX3() { return _x3; }
-	int getY3() { return _y3; }
-	int getX4() { return _x4; }
-	int getY4() { return _y4; }
-	void setY1(int coord) { _y1 = coord; }
-	void setY2(int coord) { _y2 = coord; }
-	void setY3(int coord) { _y3 = coord; }
-	void setY4(int coord) { _y4 = coord; }
+	void createRectangle(Common::Point p1, Common::Point p2, Color color, bool filled);
+	void createBitmap(Bitmap *bitmap, Common::Point p, bool transparent);
+	void createLine(Common::Point p1, Common::Point p2, Color color);
+	void createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, Color color);
+	Common::Point getP1() { return _p1; }
+	Common::Point getP2() { return _p2; }
+	Common::Point getP3() { return _p3; }
+	Common::Point getP4() { return _p4; }
+	void setPoint1Y(int coord) { _p1.y = coord; }
+	void setPoint2Y(int coord) { _p2.y = coord; }
+	void setPoint3Y(int coord) { _p3.y = coord; }
+	void setPoint4Y(int coord) { _p4.y = coord; }
 	int getType() { return _type; }
 	void setColor(Color color) { _color = color; }
 	Color getColor() { return _color; }
@@ -58,7 +56,7 @@ public:
 	Bitmap *getBitmapHandle() { assert(_bitmap); return _bitmap; }
 
 private:
-	int _x1, _y1, _x2, _y2, _x3, _y3, _x4, _y4;
+	Common::Point _p1, _p2, _p3, _p4;
 	Color _color;
 	bool _filled;
 	int _type;

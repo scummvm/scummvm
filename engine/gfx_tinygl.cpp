@@ -814,10 +814,10 @@ void GfxTinyGL::dimRegion(int x, int y, int w, int h, float level) {
 
 void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	uint16 *dst = (uint16 *)_zb->pbuf;
-	int x1 = primitive->getX1();
-	int x2 = primitive->getX2();
-	int y1 = primitive->getY1();
-	int y2 = primitive->getY2();
+	int x1 = primitive->getP1().x;
+	int x2 = primitive->getP2().x;
+	int y1 = primitive->getP1().y;
+	int y2 = primitive->getP2().y;
 
 	Color color = primitive->getColor();
 	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
@@ -846,10 +846,10 @@ void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
 
 void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 	uint16 *dst = (uint16 *)_zb->pbuf;
-	int x1 = primitive->getX1();
-	int x2 = primitive->getX2();
-	int y1 = primitive->getY1();
-	int y2 = primitive->getY2();
+	int x1 = primitive->getP1().x;
+	int x2 = primitive->getP1().y;
+	int y1 = primitive->getP2().x;
+	int y2 = primitive->getP2().y;
 	float m = (y2 - y1) / (x2 - x1);
 	int b = (int)(-m * x1 + y1);
 
@@ -864,14 +864,14 @@ void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 
 void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
 	uint16 *dst = (uint16 *)_zb->pbuf;
-	int x1 = primitive->getX1();
-	int y1 = primitive->getY1();
-	int x2 = primitive->getX2();
-	int y2 = primitive->getY2();
-	int x3 = primitive->getX3();
-	int y3 = primitive->getY3();
-	int x4 = primitive->getX4();
-	int y4 = primitive->getY4();
+	int x1 = primitive->getP1().x;
+	int y1 = primitive->getP1().y;
+	int x2 = primitive->getP2().x;
+	int y2 = primitive->getP2().y;
+	int x3 = primitive->getP3().x;
+	int y3 = primitive->getP3().y;
+	int x4 = primitive->getP4().x;
+	int y4 = primitive->getP4().y;
 	float m;
 	int b;
 

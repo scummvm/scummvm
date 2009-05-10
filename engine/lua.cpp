@@ -2578,7 +2578,7 @@ static void PurgePrimitiveQueue() {
 
 static void DrawPolygon() {
 	lua_Object tableObj1, tableObj2, pointObj;
-	int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0, x4 = 0, y4 = 0;
+	Common::Point p1, p2, p3, p4;
 	Color color;
 
 	color._vals[0] = 255;
@@ -2592,35 +2592,35 @@ static void DrawPolygon() {
 		lua_pushobject(tableObj1);
 		lua_pushnumber(1);
 		pointObj = lua_gettable();
-		x1 = (int)lua_getnumber(pointObj);
+		p1.x = (int)lua_getnumber(pointObj);
 		lua_pushobject(tableObj1);
 		lua_pushnumber(2);
 		pointObj = lua_gettable();
-		y1 = (int)lua_getnumber(pointObj);
+		p1.y = (int)lua_getnumber(pointObj);
 		lua_pushobject(tableObj1);
 		lua_pushnumber(3);
 		pointObj = lua_gettable();
-		x2 = (int)lua_getnumber(pointObj);
+		p2.x = (int)lua_getnumber(pointObj);
 		lua_pushobject(tableObj1);
 		lua_pushnumber(4);
 		pointObj = lua_gettable();
-		y2 = (int)lua_getnumber(pointObj);
+		p2.y = (int)lua_getnumber(pointObj);
 		lua_pushobject(tableObj1);
 		lua_pushnumber(5);
 		pointObj = lua_gettable();
-		x3 = (int)lua_getnumber(pointObj);
+		p3.x = (int)lua_getnumber(pointObj);
 		lua_pushobject(tableObj1);
 		lua_pushnumber(6);
 		pointObj = lua_gettable();
-		y3 = (int)lua_getnumber(pointObj);
+		p3.y = (int)lua_getnumber(pointObj);
 		lua_pushobject(tableObj1);
 		lua_pushnumber(7);
 		pointObj = lua_gettable();
-		x4 = (int)lua_getnumber(pointObj);
+		p4.x = (int)lua_getnumber(pointObj);
 		lua_pushobject(tableObj1);
 		lua_pushnumber(8);
 		pointObj = lua_gettable();
-		y4 = (int)lua_getnumber(pointObj);
+		p4.y = (int)lua_getnumber(pointObj);
 	} else {
 		lua_pushnil();
 	}
@@ -2635,21 +2635,21 @@ static void DrawPolygon() {
 	}
 
 	PrimitiveObject *p = new PrimitiveObject();
-	p->createPolygon(x1, y1, x2, y2, x3, y3, x4, y4, color);
+	p->createPolygon(p1, p2, p3, p4, color);
 	g_engine->registerPrimitiveObject(p);
 	lua_pushusertag(p, MKID_BE('PRIM'));
 }
 
 static void DrawLine() {
-	int x1, y1, x2, y2;
+	Common::Point p1, p2;
 	lua_Object tableObj;
 	Color color;
 
 	DEBUG_FUNCTION();
-	x1 = check_int(1);
-	y1 = check_int(2);
-	x2 = check_int(3);
-	y2 = check_int(4);
+	p1.x = check_int(1);
+	p1.y = check_int(2);
+	p2.x = check_int(3);
+	p2.y = check_int(4);
 	tableObj = lua_getparam(5);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
@@ -2665,7 +2665,7 @@ static void DrawLine() {
 	}
 
 	PrimitiveObject *p = new PrimitiveObject();
-	p->createLine(x1, x2, y1, y2, color);
+	p->createLine(p1, p2, color);
 	g_engine->registerPrimitiveObject(p);
 	lua_pushusertag(p, MKID_BE('PRIM'));
 }
@@ -2687,7 +2687,8 @@ static void ChangePrimitive() {
 	psearch = check_primobject(1);
 	for (Engine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
-		if (p->getX1() == psearch->getX1() && p->getX2() == psearch->getX2() && p->getY1() == psearch->getY1() && p->getY2() == psearch->getY2()) {
+		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
+				&& p->getP1().y == psearch->getP1().y && p->getP2().y == psearch->getP2().y) {
 			pmodify = p;
 			break;
 		}
@@ -2714,32 +2715,32 @@ static void ChangePrimitive() {
 	if (!lua_isnil(yObj)) {
 		int y = atoi(lua_getstring(yObj));
 		if (pmodify->getType() == 4) {
-			int y1 = pmodify->getY1();
-			int y2 = pmodify->getY2();
-			int y3 = pmodify->getY3();
-			int y4 = pmodify->getY4();
+			int y1 = pmodify->getP1().y;
+			int y2 = pmodify->getP2().y;
+			int y3 = pmodify->getP3().y;
+			int y4 = pmodify->getP4().y;
 			int dy = y - y1;
-			pmodify->setY1(y1 + dy);
-			pmodify->setY2(y2 + dy);
-			pmodify->setY3(y3 + dy);
-			pmodify->setY4(y4 + dy);
+			pmodify->setPoint1Y(y1 + dy);
+			pmodify->setPoint2Y(y2 + dy);
+			pmodify->setPoint3Y(y3 + dy);
+			pmodify->setPoint4Y(y4 + dy);
 		} else {
-			pmodify->setY1(y);
-			pmodify->setY2(y);
+			pmodify->setPoint1Y(y);
+			pmodify->setPoint2Y(y);
 		}
 	}
 }
 
 static void DrawRectangle() {
-	int x1, y1, x2, y2;
+	Common::Point p1, p2;
 	lua_Object tableObj;
 	Color color;
 
 	DEBUG_FUNCTION();
-	x1 = check_int(1);
-	y1 = check_int(2);
-	x2 = check_int(3);
-	y2 = check_int(4);
+	p1.x = check_int(1);
+	p1.y = check_int(2);
+	p2.x = check_int(3);
+	p2.y = check_int(4);
 	tableObj = lua_getparam(5);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
@@ -2762,22 +2763,22 @@ static void DrawRectangle() {
 	}
 
 	PrimitiveObject *p = new PrimitiveObject();
-	p->createRectangle(x1, x2, y1, y2, color, filled);
+	p->createRectangle(p1, p2, color, filled);
 	g_engine->registerPrimitiveObject(p);
 	lua_pushusertag(p, MKID_BE('PRIM'));
 }
 
 static void BlastRect() {
 	DEBUG_FUNCTION();
-	int x1, y1, x2, y2;
+	Common::Point p1, p2;
 	lua_Object tableObj;
 	Color color;
 
 	DEBUG_FUNCTION();
-	x1 = check_int(1);
-	y1 = check_int(2);
-	x2 = check_int(3);
-	y2 = check_int(4);
+	p1.x = check_int(1);
+	p1.y = check_int(2);
+	p2.x = check_int(3);
+	p2.y = check_int(4);
 	tableObj = lua_getparam(5);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
@@ -2800,7 +2801,7 @@ static void BlastRect() {
 	}
 
 	PrimitiveObject *p = new PrimitiveObject();
-	p->createRectangle(x1, x2, y1, y2, color, filled);
+	p->createRectangle(p1, p2, color, filled);
 	p->draw();
 	delete p;
 }
