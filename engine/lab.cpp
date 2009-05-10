@@ -151,5 +151,5 @@ void Lab::close() {
 	for (int i = 0; i < _numEntries; i++)
 		delete[] _entries[i].filename;
 
-	delete[ ]_entries;
+	delete[] _entries;
 }
