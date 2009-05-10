@@ -747,9 +747,9 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 	evt.mouse.x = _mouseX;
 	evt.mouse.y = _mouseY;
 
-	if (eventType == 65) {
+	if (eventType == 65 || eventType == 199) {
 		evt.type = Common::EVENT_LBUTTONDOWN;
-	} else if (eventType == 66) {
+	} else if (eventType == 66 || eventType == 201) {
 		evt.type = Common::EVENT_RBUTTONDOWN;
 	} else {
 		evt.type = Common::EVENT_KEYDOWN;
@@ -1617,49 +1617,51 @@ int LoLEngine::clickedRestParty(Button *button) {
 			int f = checkInput(0);
 			removeInputTop();
 
-			if (f & !(f & 0x800)) {
-				gui_triggerEvent(f);
-			} else {
+			if (f & 0x800) {
 				gui_notifyButtonListChanged();
-			
-				if (!_partyAwake) {					
-					if (_system->getMillis() > delay3) {
-						for (int i = 0; i < 4; i++) {							
-							if (!(needPoisoningFlags & (1 << i)))
-								continue;
-							inflictDamage(i, 1, 0x8000, 1, 0x80);
-							if (_characters[i].flags & 8)
-								needPoisoningFlags &= ~(1 << i);
-						}
-						delay3 = _system->getMillis() + a * _tickLength;
+			} else if (f) {
+				gui_triggerEvent(f);
+				break;
+			}					
+						
+			if (!_partyAwake) {					
+				if (_system->getMillis() > delay3) {
+					for (int i = 0; i < 4; i++) {							
+						if (!(needPoisoningFlags & (1 << i)))
+							continue;
+						inflictDamage(i, 1, 0x8000, 1, 0x80);
+						if (_characters[i].flags & 8)
+							needPoisoningFlags &= ~(1 << i);
 					}
-					
-					if (_system->getMillis() > delay1) {
-						for (int i = 0; i < 4; i++) {							
-							if (!(needHealingFlags & (1 << i)))
-								continue;
-							increaseCharacterHitpoints(i, 1, false);
-							gui_drawCharPortraitWithStats(i);
-							if (_characters[i].hitPointsCur == _characters[i].hitPointsMax)
-								needHealingFlags &= ~(1 << i);
-						}						
-						delay1 = _system->getMillis() + h * _tickLength;
-					}
-
-					if (_system->getMillis() > delay2) {
-						for (int i = 0; i < 4; i++) {							
-							if (!(needMagicGainFlags & (1 << i)))
-								continue;
-							_characters[i].magicPointsCur++;														
-							gui_drawCharPortraitWithStats(i);
-							if (_characters[i].magicPointsCur == _characters[i].magicPointsMax)
-								needMagicGainFlags &= ~(1 << i);
-						}						
-						delay2 = _system->getMillis() + m * _tickLength;
-					}
-					_screen->updateScreen();
+					delay3 = _system->getMillis() + a * _tickLength;
 				}
+					
+				if (_system->getMillis() > delay1) {
+					for (int i = 0; i < 4; i++) {							
+						if (!(needHealingFlags & (1 << i)))
+							continue;
+						increaseCharacterHitpoints(i, 1, false);
+						gui_drawCharPortraitWithStats(i);
+						if (_characters[i].hitPointsCur == _characters[i].hitPointsMax)
+							needHealingFlags &= ~(1 << i);
+					}						
+					delay1 = _system->getMillis() + h * _tickLength;
+				}
+
+				if (_system->getMillis() > delay2) {
+					for (int i = 0; i < 4; i++) {							
+						if (!(needMagicGainFlags & (1 << i)))
+							continue;
+						_characters[i].magicPointsCur++;														
+						gui_drawCharPortraitWithStats(i);
+						if (_characters[i].magicPointsCur == _characters[i].magicPointsMax)
+							needMagicGainFlags &= ~(1 << i);
+					}						
+					delay2 = _system->getMillis() + m * _tickLength;
+				}
+				_screen->updateScreen();
 			}
+		
 		} while (!_partyAwake && (needHealingFlags || needMagicGainFlags));
 		
 		for (int i = 0; i < 4; i++) {
