@@ -34,18 +34,6 @@ void MessageState::initIndexRecordCursor() {
 	_engineCursor.index = 1;
 }
 
-void MessageState::setVersion(int version) {
-	_version = version;
-
-	if (version == 2101) {
-		_headerSize = 6;
-		_indexRecordSize = 4;
-	} else {
-		_headerSize = 10;
-		_indexRecordSize = 11;
-	}
-}
-
 void MessageState::parse(IndexRecordCursor *cursor, MessageTuple *t) {
 	t->noun = *(cursor->index_record + 0);
 	t->verb = *(cursor->index_record + 1);
@@ -81,7 +69,7 @@ int MessageState::getSpecific(MessageTuple *t) {
 int MessageState::getNext() {
 	if (_engineCursor.index == _recordCount)
 		return 0;
-	_engineCursor.index_record += _indexRecordSize;
+	_engineCursor.index_record += ((_version == 2101) ? 4 : 11);
 	_engineCursor.index ++;
 	return 1;
 }
@@ -122,12 +110,13 @@ int MessageState::loadRes(int module) {
 		return 0;
 	}
 
-	if (_version == 2101)
+	if (_version == 2101) {
 		_recordCount = READ_LE_UINT16(_currentResource->data + 4);
-	else
+		_indexRecords = _currentResource->data + 6;
+	} else {
 		_recordCount = READ_LE_UINT16(_currentResource->data + 8);
-
-	_indexRecords = _currentResource->data + _headerSize;
+		_indexRecords = _currentResource->data + 10;
+	}
 
 	initIndexRecordCursor();
 	return 1;

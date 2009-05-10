@@ -59,7 +59,7 @@ public:
 	int loadRes(int module);
 	int isInitialized() { return _initialized; }
 	void initialize(ResourceManager *resmgr);
-	void setVersion(int version);
+	void setVersion(int version) { _version = version; }
 
 private:
 	void initIndexRecordCursor();
@@ -73,8 +73,6 @@ private:
 	byte *_indexRecords;
 	IndexRecordCursor _engineCursor;
 	int _version;
-	int _headerSize;
-	int _indexRecordSize;
 };
 
 void message_state_initialize(ResourceManager *resmgr, MessageState *state);
