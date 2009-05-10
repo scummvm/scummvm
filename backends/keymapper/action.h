@@ -74,6 +74,7 @@ public:
 
 	void addKeyEvent(const KeyState &ks) {
 		Event evt;
+
 		evt.type = EVENT_KEYDOWN;
 		evt.kbd = ks;
 		addEvent(evt);
@@ -81,18 +82,21 @@ public:
 
 	void addLeftClickEvent() {
 		Event evt;
+
 		evt.type = EVENT_LBUTTONDOWN;
 		addEvent(evt);
 	}
 
 	void addMiddleClickEvent() {
 		Event evt;
+
 		evt.type = EVENT_MBUTTONDOWN;
 		addEvent(evt);
 	}
 
 	void addRightClickEvent() {
 		Event evt;
+
 		evt.type = EVENT_RBUTTONDOWN;
 		addEvent(evt);
 	}

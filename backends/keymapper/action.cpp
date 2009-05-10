@@ -44,9 +44,13 @@ Action::Action(Keymap *boss, const char *i,	String des, ActionType typ,
 }
 
 void Action::mapKey(const HardwareKey *key) {
-	if (_hwKey) _boss->unregisterMapping(this);
+	if (_hwKey)
+		_boss->unregisterMapping(this);
+
 	_hwKey = key;
-	if (_hwKey) _boss->registerMapping(this, _hwKey);
+
+	if (_hwKey)
+		_boss->registerMapping(this, _hwKey);
 }
 
 const HardwareKey *Action::getMappedKey() const {
