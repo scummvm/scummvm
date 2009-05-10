@@ -2459,13 +2459,14 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 			if (args[1] == 0) {
 				const char *videoname = (const char *)getStringAddressVar(VAR_VIDEONAME);
 				assert(videoname);
-				if (strcmp(videoname, "sq3.san") == 0)
-					_smushFrameRate = 14;
 
 				// Correct incorrect smush filename in Macintosh FT demo
 				if ((_game.id == GID_FT) && (_game.features & GF_DEMO) && (_game.platform == Common::kPlatformMacintosh) &&
-					(strcmp(videoname, "jumpgorge.san") == 0))
+					(!strcmp(videoname, "jumpgorge.san")))
 					_splayer->play("jumpgorg.san", _smushFrameRate);
+				// TODO: Document exactly why this is required
+				else if (_game.id == GID_DIG && !strcmp(videoname, "sq3.san"))
+					_splayer->play(videoname, 14);
 				else
 					_splayer->play(videoname, _smushFrameRate);
 
