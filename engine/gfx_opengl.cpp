@@ -1015,8 +1015,8 @@ void GfxOpenGL::dimRegion(int x, int yReal, int w, int h, float level) {
 
 void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 	int x1 = primitive->getP1().x;
-	int x2 = primitive->getP2().x;
 	int y1 = primitive->getP1().y;
+	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
 
 	Color color = primitive->getColor();
@@ -1054,8 +1054,8 @@ void GfxOpenGL::drawRectangle(PrimitiveObject *primitive) {
 
 void GfxOpenGL::drawLine(PrimitiveObject *primitive) {
 	int x1 = primitive->getP1().x;
-	int x2 = primitive->getP1().y;
-	int y1 = primitive->getP2().x;
+	int y1 = primitive->getP1().y;
+	int x2 = primitive->getP2().x;
 	int y2 = primitive->getP2().y;
 
 	Color color = primitive->getColor();
