@@ -117,7 +117,7 @@ scummvm-static: $(OBJS)
 iphone: $(OBJS)
 	$(CXX) $(LDFLAGS) -o scummvm $(OBJS) \
 		$(OSX_STATIC_LIBS) \
-		-framework UIKit -framework CoreGraphics -framework CoreSurface \
+		-framework UIKit -framework CoreGraphics -framework OpenGLES \
 		-framework GraphicsServices -framework CoreFoundation -framework QuartzCore \
 		-framework Foundation -framework AudioToolbox -framework CoreAudio \
 		-lobjc -lz

@@ -26,10 +26,6 @@
 #include "iphone_video.h"
 #include "iphone_common.h"
 
-#import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
-#import <QuartzCore/QuartzCore.h>
-
 static iPhoneView *sharedInstance = nil;
 static int _width = 0;
 static int _height = 0;
@@ -271,7 +267,6 @@ uint getSizeNextPOT(uint size) {
 
 	glGenTextures(1, &_screenTexture);
 	glBindTexture(GL_TEXTURE_2D, _screenTexture);
-	glEnable(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	
 	if (_textureBuffer) {
