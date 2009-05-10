@@ -27,10 +27,6 @@
 
 #include "engine/textsplit.h"
 
-#include <cstring>
-#include <cctype>
-#include <cstdarg>
-
 // FIXME: Replace this with a proper parser (this is just too dodgy :)
 int residual_vsscanf(const char *str, int field_count, const char *format, va_list ap) {
 	unsigned int f01 = va_arg(ap, long);
@@ -66,13 +62,13 @@ TextSplitter::TextSplitter(const char *data, int len) {
 	int i;
 
 	tmpData = new char[len + 1];
-	std::memcpy(tmpData, data, len);
+	memcpy(tmpData, data, len);
 	tmpData[len] = '\0';
 	// Find out how many lines of text there are
 	_numLines = _lineIndex = 0;
 	line = (char *)tmpData;
 	while (line) {
-		line = std::strchr(line, '\n');
+		line = strchr(line, '\n');
 		if (line) {
 			_numLines++;
 			line++;
@@ -83,8 +79,8 @@ TextSplitter::TextSplitter(const char *data, int len) {
 	line = (char *)tmpData;
 	for (i = 0; i < _numLines;i++) {
 		char *lastLine = line;
-		line = std::strchr(lastLine, '\n');
-		_lines[i].setData(lastLine, line-lastLine);
+		line = strchr(lastLine, '\n');
+		_lines[i].setData(lastLine, line - lastLine);
 		line++;
 	}
 	delete[] tmpData;
@@ -97,7 +93,7 @@ bool TextSplitter::checkString(const char *needle) {
 	// components like "object_art" which can be missing entirely
 	if (!currentLine())
 		return false;
-	else if (std::strstr(currentLine(), needle))
+	else if (strstr(currentLine(), needle))
 		return true;
 	else
 		return false;
@@ -106,7 +102,7 @@ bool TextSplitter::checkString(const char *needle) {
 void TextSplitter::expectString(const char *expected) {
 	if (!_currLine)
 		error("Expected `%s', got EOF", expected);
-	if (std::strcmp(currentLine(), expected) != 0)
+	if (strcasecmp(currentLine(), expected) != 0)
 		error("Expected `%s', got '%s'", expected, currentLine());
 	nextLine();
 }
@@ -115,7 +111,7 @@ void TextSplitter::scanString(const char *fmt, int field_count, ...) {
 	if (!_currLine)
 		error("Expected line of format '%s', got EOF", fmt);
 
-	std::va_list va;
+	va_list va;
 
 	va_start(va, field_count);
 
@@ -137,13 +133,13 @@ void TextSplitter::processLine() {
 	_currLine = _lines[_lineIndex++].getData();
 
 	// Cut off comments
-	char *comment_start = std::strchr(_currLine, '#');
+	char *comment_start = strchr(_currLine, '#');
 	if (comment_start)
 		*comment_start = '\0';
 
 	// Cut off trailing whitespace (including '\r')
-	char *strend = std::strchr(_currLine, '\0');
-	while (strend > _currLine && std::isspace(strend[-1]))
+	char *strend = strchr(_currLine, '\0');
+	while (strend > _currLine && isspace(strend[-1]))
 		strend--;
 	*strend = '\0';
 
@@ -154,13 +150,13 @@ void TextSplitter::processLine() {
 	// Convert to lower case
 	if (!eof())
 		for (char *s = _currLine; *s != '\0'; s++)
-			*s = std::tolower(*s);
+			*s = tolower(*s);
 }
 
 void TextSplitter::TextLines::setData(char *data, int length) {
 	int _lineLength = length;
 
 	_lineData = new char[_lineLength];
-	std::memcpy(_lineData, data, _lineLength);
-	_lineData[_lineLength-1] = 0;
+	memcpy(_lineData, data, _lineLength);
+	_lineData[_lineLength - 1] = 0;
 }

@@ -43,7 +43,7 @@ public:
 	const char *currentLine() const { return _currLine; }
 	bool eof() const { return _lineIndex == _numLines; }
 	int getLineNumber() { return _lineIndex; }
-	void setLineNumber(int line) { _lineIndex = line-1; processLine(); }
+	void setLineNumber(int line) { _lineIndex = line - 1; processLine(); }
 
 	// Check if the current line contains 'needle'
 	bool checkString(const char *needle);
@@ -55,11 +55,7 @@ public:
 	// Scan a line according to the given format (compatible with
 	// scanf); if not all fields are read (according to the field_count
 	// argument), bail out with an error.  Advance to the next line.
-	void scanString(const char *fmt, int field_count, ...)
-#ifdef __GNUC__
-	__attribute__((format (scanf, 2, 4)))
-#endif
-	;
+	void scanString(const char *fmt, int field_count, ...);
 	class TextLines {
 	public:
 		TextLines() {};
