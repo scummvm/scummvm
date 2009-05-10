@@ -27,8 +27,6 @@
 
 #include "engine/lipsync.h"
 
-#include <cstring>
-
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE
 
@@ -37,7 +35,7 @@ LipSync::LipSync(const char *filename, const char *data, int len) :
 	uint16 readPhoneme;
 	int j;
 
-	if (std::memcmp(data, "LIP!", 4) != 0) {
+	if (READ_BE_UINT32(data) != MKID_BE('LIP!')) {
 		error("Invalid file format in %s", filename);
 	} else {
 		_numEntries = (len - 8) / 4;

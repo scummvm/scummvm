@@ -91,7 +91,7 @@ public:
 	const char *sceneName() const { return _currScene->name(); }
 
 	// Scene registration
-	typedef std::list<Scene *> SceneListType;
+	typedef Common::List<Scene *> SceneListType;
 	SceneListType::const_iterator scenesBegin() const {
 		return _scenes.begin();
 	}
@@ -111,7 +111,7 @@ public:
 	}
 
 	// Actor registration
-	typedef std::list<Actor *> ActorListType;
+	typedef Common::List<Actor *> ActorListType;
 	ActorListType::const_iterator actorsBegin() const {
 		return _actors.begin();
 	}
@@ -124,7 +124,7 @@ public:
 	Actor *selectedActor() { return _selectedActor; }
 
 	// Text Object Registration
-	typedef std::list<TextObject *> TextListType;
+	typedef Common::List<TextObject *> TextListType;
 	TextListType::const_iterator textsBegin() const {
 		return _textObjects.begin();
 	}
@@ -144,7 +144,7 @@ public:
 	}
 
 	// Primitives Object Registration
-	typedef std::list<PrimitiveObject *> PrimitiveListType;
+	typedef Common::List<PrimitiveObject *> PrimitiveListType;
 	PrimitiveListType::const_iterator primitivesBegin() const {
 		return _primitiveObjects.begin();
 	}

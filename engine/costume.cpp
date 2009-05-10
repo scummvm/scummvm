@@ -100,7 +100,7 @@ public:
 	void setKey(int val);
 
 private:
-	std::string _filename;
+	Common::String _filename;
 };
 
 class ColormapComponent : public Costume::Component {
@@ -125,7 +125,7 @@ public:
 	void draw();
 
 protected:
-	std::string _filename;
+	Common::String _filename;
 	ResPtr<Model> _obj;
 	Model::HierNode *_hier;
 	Matrix4 _matrix;
@@ -164,7 +164,7 @@ public:
 	Model::HierNode *node() { return _node; }
 
 private:
-	std::string _name;
+	Common::String _name;
 	int _num;
 	Model::HierNode *_node;
 	Matrix4 _matrix;
@@ -206,14 +206,14 @@ void BitmapComponent::setKey(int val) {
 ModelComponent::ModelComponent(Costume::Component *parent, int parentID, const char *filename, Costume::Component *prevComponent, tag32 tag) :
 		Costume::Component(parent, parentID, tag), _filename(filename),
 		_obj(NULL), _hier(NULL) {
-	const char *comma = std::strchr(filename, ',');
+	const char *comma = strchr(filename, ',');
 
 	// Can be called with a comma and a numeric parameter afterward, but
 	// the use for this parameter is currently unknown
 	// Example: At the "scrimshaw parlor" in Rubacava the object
 	// "manny_cafe.3do,1" is requested
 	if (comma) {
-		_filename = std::string(filename, comma);
+		_filename = Common::String(filename, comma);
 		warning("Comma in model components not supported: %s", filename);
 	} else {
 		_filename = filename;
@@ -375,7 +375,7 @@ public:
 
 private:
 	ResPtr<Material> _mat;
-	std::string _filename;
+	Common::String _filename;
 	int _num;
 };
 
@@ -412,11 +412,11 @@ private:
 
 KeyframeComponent::KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
 		Costume::Component(parent, parentID, tag), _priority1(1), _priority2(5), _hier(NULL), _active(false) {
-	const char *comma = std::strchr(filename, ',');
+	const char *comma = strchr(filename, ',');
 	if (comma) {
-		std::string realName(filename, comma);
+		Common::String realName(filename, comma);
 		_keyf = g_resourceloader->loadKeyframe(realName.c_str());
-		std::sscanf(comma + 1, "%d,%d", &_priority1, &_priority2);
+		sscanf(comma + 1, "%d,%d", &_priority1, &_priority2);
 	} else
 		_keyf = g_resourceloader->loadKeyframe(filename);
 }
@@ -492,7 +492,7 @@ void KeyframeComponent::init() {
 
 MeshComponent::MeshComponent(Costume::Component *parent, int parentID, const char *name, tag32 tag) :
 		Costume::Component(parent, parentID, tag), _name(name), _node(NULL) {
-	if (std::sscanf(name, "mesh %d", &_num) < 1)
+	if (sscanf(name, "mesh %d", &_num) < 1)
 		error("Couldn't parse mesh name %s", name);
 
 }
@@ -561,7 +561,7 @@ public:
 	~LuaVarComponent() { }
 
 private:
-	std::string _name;
+	Common::String _name;
 };
 
 LuaVarComponent::LuaVarComponent(Costume::Component *parent, int parentID, const char *name, tag32 tag) :
@@ -584,14 +584,14 @@ public:
 }
 
 private:
-	std::string _soundName;
+	Common::String _soundName;
 };
 
 SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
 		Costume::Component(parent, parentID, tag) {
-	const char *comma = std::strchr(filename, ',');
+	const char *comma = strchr(filename, ',');
 	if (comma) {
-		_soundName = std::string(filename, comma);
+		_soundName = Common::String(filename, comma);
 	} else {
 		_soundName = filename;
 	}
@@ -644,7 +644,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 		// Force characters to upper case
 		for (int j = 0; j < 4; j++)
 			t[j] = toupper(t[j]);
-		std::memcpy(&tags[which], t, sizeof(tag32));
+		memcpy(&tags[which], t, sizeof(tag32));
 	}
 
 	ts.expectString("section components");
@@ -655,7 +655,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 		const char *line = ts.currentLine();
 		Component *prevComponent = NULL;
 
-		if (std::sscanf(line, " %d %d %d %d %n", &id, &tagID, &hash, &parentID, &namePos) < 4)
+		if (sscanf(line, " %d %d %d %d %n", &id, &tagID, &hash, &parentID, &namePos) < 4)
 			error("Bad component specification line: `%s'", line);
 		ts.nextLine();
 
@@ -699,7 +699,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 		ts.scanString(" %d %d %d %32s", 4, &id, &length, &tracks, name);
 		_chores[id]._length = length;
 		_chores[id]._numTracks = tracks;
-		std::memcpy(_chores[id]._name, name, 32);
+		memcpy(_chores[id]._name, name, 32);
 		if(debugLevel == DEBUG_ALL || debugLevel == DEBUG_CHORES)
 			printf("Loaded chore: %s\n", name);
 	}
@@ -908,7 +908,7 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 		return NULL;// new SpriteComponent(parent, parentID, name);
 
 	char t[4];
-	std::memcpy(t, &tag, sizeof(tag32));
+	memcpy(t, &tag, sizeof(tag32));
 	error("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);
 	return NULL;
 }

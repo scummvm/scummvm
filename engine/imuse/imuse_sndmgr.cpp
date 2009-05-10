@@ -30,8 +30,6 @@
 #include "engine/imuse/imuse_sndmgr.h"
 #include "engine/imuse/imuse_mcmp_mgr.h"
 
-#include <cstring>
-
 ImuseSndMgr::ImuseSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		memset(&_sounds[l], 0, sizeof(SoundDesc));
@@ -158,7 +156,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::allocSlot() {
 }
 
 ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGroupId) {
-	const char *extension = soundName + std::strlen(soundName) - 3;
+	const char *extension = soundName + strlen(soundName) - 3;
 	byte *ptr = NULL;
 	int headerSize = 0;
 

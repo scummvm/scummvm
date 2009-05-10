@@ -38,12 +38,6 @@
 #include "engine/lua/lauxlib.h"
 #include "engine/imuse/imuse.h"
 
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
-#include <zlib.h>
-#endif
-
 extern Imuse *g_imuse;
 
 Common::StringList g_listfiles;
@@ -219,32 +213,27 @@ static void new_dofile() {
 static void PrintDebug() {
 	DEBUG_FUNCTION();
 	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
-		std::string msg = luaL_check_string(1);
-
-		msg.insert(0, "Debug: ");
-		msg.append("\n");
-		std::fputs(msg.c_str(), stderr);
+		Common::String msg("Debug: ");
+		msg += Common::String(luaL_check_string(1)) + "\n";
+		printf(msg.c_str());
 	}
 }
 
 static void PrintError() {
 	DEBUG_FUNCTION();
 	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL) {
-		std::string msg = luaL_check_string(1);
-
-		msg.insert(0, "Error: ");
-		// don't do 'error()' so we can stay alive if possible
-		std::fputs(msg.c_str(), stderr);
+		Common::String msg("Error: ");
+		msg += Common::String(luaL_check_string(1)) + "\n";
+		printf(msg.c_str());
 	}
 }
 
 static void PrintWarning() {
 	DEBUG_FUNCTION();
 	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL) {
-		std::string msg = luaL_check_string(1);
-
-		msg.insert(0, "Warning: ");
-		warning(msg.c_str());
+		Common::String msg("Warning: ");
+		msg += Common::String(luaL_check_string(1)) + "\n";
+		printf(msg.c_str());
 	}
 }
 
@@ -2421,7 +2410,7 @@ static void MakeTextObject() {
 
 	DEBUG_FUNCTION();
 	line = lua_getstring(lua_getparam(1));
-	std::string text = line;
+	Common::String text = line;
 	tableObj = lua_getparam(2);
 	textObject->setDefaults(&blastTextDefaults);
 
@@ -2479,7 +2468,7 @@ static void BlastText() {
 
 	DEBUG_FUNCTION();
 	line = lua_getstring(lua_getparam(1));
-	std::string text = line;
+	Common::String text = line;
 	tableObj = lua_getparam(2);
 	textObject->setDefaults(&blastTextDefaults);
 
@@ -3829,7 +3818,7 @@ int bundle_dofile(const char *filename) {
 		delete b;
 		// Don't print warnings on Scripts\foo.lua,
 		// d:\grimFandango\Scripts\foo.lua
-		if (!std::strstr(filename, "Scripts\\") && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
+		if (!strstr(filename, "Scripts\\") && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
 			warning("Cannot find script %s", filename);
 
 		return 2;

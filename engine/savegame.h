@@ -26,12 +26,6 @@
 #ifndef SAVEGAME_H
 #define SAVEGAME_H
 
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
-#include <zlib.h>
-#endif
-
 #include "common/savefile.h"
 
 extern Common::SaveFileManager *g_saveFileMan;

@@ -26,18 +26,17 @@
 #ifndef COLORMAP_H
 #define COLORMAP_H
 
-#include "engine/resource.h"
+#include "common/endian.h"
 
-#include <cstring>
+#include "engine/resource.h"
 
 class CMap : public Resource {
 public:
 	// Load a colormap from the given data.
-	CMap(const char *filename, const char *data, int len) :
-		Resource(filename) {
-	if (len < 4 || std::memcmp(data, "CMP ", 4) != 0)
-		error("Invalid magic loading colormap");
-		std::memcpy(_colors, data + 64, sizeof(_colors));
+	CMap(const char *filename, const char *data, int len) : Resource(filename) {
+		if (len < 4 || READ_BE_UINT32(data) != MKID_BE('CMP '))
+			error("Invalid magic loading colormap");
+		memcpy(_colors, data + 64, sizeof(_colors));
 	}
 
 	// The color data, in RGB format

@@ -93,7 +93,7 @@ public:
 
 private:
 	Component *loadComponent(tag32 tag, Component *parent, int parentID, const char *name, Component *prevComponent);
-	std::string _fname;
+	Common::String _fname;
 
 	int _numComponents;
 	Component **_components;

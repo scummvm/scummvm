@@ -158,8 +158,8 @@ public:
 	void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
 private:
-	std::string _name;
-	std::string _setName;    // The actual current set
+	Common::String _name;
+	Common::String _setName;    // The actual current set
 	Color _talkColor;
 	Vector3d _pos;
 	float _pitch, _yaw, _roll;

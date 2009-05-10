@@ -31,12 +31,6 @@
 #include "engine/engine.h"
 #include "engine/lipsync.h"
 
-#include <algorithm>
-
-static void makeLower(std::string& s) {
-	std::transform(s.begin(), s.end(), s.begin(), tolower);
-}
-
 ResourceLoader *g_resourceloader = NULL;
 
 ResourceLoader::ResourceLoader() {
@@ -134,9 +128,9 @@ int ResourceLoader::fileLength(const char *filename) const {
 }
 
 Bitmap *ResourceLoader::loadBitmap(const char *filename) {
-	std::string fname = filename;
-	makeLower(fname);
-	CacheType::iterator i = _cache.find(fname);
+	Common::String fname = filename;
+	fname.toLowercase();
+	CacheType::iterator i = _cache.find(fname.c_str());
 	if (i != _cache.end()) {
 		return dynamic_cast<Bitmap *>(i->second);
 	}
@@ -150,14 +144,14 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 
 	Bitmap *result = new Bitmap(filename, b->data(), b->len());
 	delete b;
-	_cache[fname] = result;
+	_cache[fname.c_str()] = result;
 	return result;
 }
 
 CMap *ResourceLoader::loadColormap(const char *filename) {
-	std::string fname = filename;
-	makeLower(fname);
-	CacheType::iterator i = _cache.find(fname);
+	Common::String fname = filename;
+	fname.toLowercase();
+	CacheType::iterator i = _cache.find(fname.c_str());
 
 	if (i != _cache.end()) {
 		return dynamic_cast<CMap *>(i->second);
@@ -168,13 +162,13 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 		error("Could not find colormap %s", filename);
 	CMap *result = new CMap(filename, b->data(), b->len());
 	delete b;
-	_cache[fname] = result;
+	_cache[fname.c_str()] = result;
 	return result;
 }
 
 Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
-	std::string fname = filename;
-	makeLower(fname);
+	Common::String fname = filename;
+	fname.toLowercase();
 	Block *b = getFileBlock(filename);
 	if (!b)
 		error("Could not find costume %s", filename);
@@ -184,9 +178,9 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 }
 
 Font *ResourceLoader::loadFont(const char *filename) {
-	std::string fname = filename;
-	makeLower(fname);
-	CacheType::iterator i = _cache.find(fname);
+	Common::String fname = filename;
+	fname.toLowercase();
+	CacheType::iterator i = _cache.find(fname.c_str());
 	if (i != _cache.end()) {
 		return dynamic_cast<Font *>(i->second);
 	}
@@ -196,14 +190,14 @@ Font *ResourceLoader::loadFont(const char *filename) {
 		error("Could not find font file %s", filename);
 	Font *result = new Font(filename, b->data(), b->len());
 	delete b;
-	_cache[fname] = result;
+	_cache[fname.c_str()] = result;
 	return result;
 }
 
 KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
-	std::string fname = filename;
-	makeLower(fname);
-	CacheType::iterator i = _cache.find(fname);
+	Common::String fname = filename;
+	fname.toLowercase();
+	CacheType::iterator i = _cache.find(fname.c_str());
 	if (i != _cache.end()) {
 		return dynamic_cast<KeyframeAnim *>(i->second);
 	}
@@ -213,16 +207,16 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 		error("Could not find keyframe file %s", filename);
 	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
 	delete b;
-	_cache[fname] = result;
+	_cache[fname.c_str()] = result;
 	return result;
 }
 
 LipSync *ResourceLoader::loadLipSync(const char *filename) {
-	std::string fname = filename;
+	Common::String fname = filename;
+	fname.toLowercase();
 	LipSync *result;
 
-	makeLower(fname);
-	CacheType::iterator i = _cache.find(fname);
+	CacheType::iterator i = _cache.find(fname.c_str());
 	if (i != _cache.end()) {
 		return dynamic_cast<LipSync *>(i->second);
 	}
@@ -238,7 +232,7 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 		// Some lipsync files have no data
 		if (result->isValid()) {
 			delete b;
-			_cache[fname] = result;
+			_cache[fname.c_str()] = result;
 		} else {
 			delete result;
 			result = NULL;
@@ -249,9 +243,9 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 }
 
 Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
-	std::string fname = std::string(filename) + "@" + c.filename();
-	makeLower(fname);
-	CacheType::iterator i = _cache.find(fname);
+	Common::String fname = Common::String(filename) + "@" + c.filename();
+	fname.toLowercase();
+	CacheType::iterator i = _cache.find(fname.c_str());
 	if (i != _cache.end()) {
 		return dynamic_cast<Material *>(i->second);
 	}
@@ -261,14 +255,14 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 		error("Could not find material %s", filename);
 	Material *result = new Material(fname.c_str(), b->data(), b->len(), c);
 	delete b;
-	_cache[fname] = result;
+	_cache[fname.c_str()] = result;
 	return result;
 }
 
 Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
-	std::string fname = filename;
-	makeLower(fname);
-	CacheType::iterator i = _cache.find(fname);
+	Common::String fname = filename;
+	fname.toLowercase();
+	CacheType::iterator i = _cache.find(fname.c_str());
 	if (i != _cache.end()) {
 		return dynamic_cast<Model *>(i->second);
 	}
@@ -278,7 +272,7 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 		error("Could not find model %s", filename);
 	Model *result = new Model(filename, b->data(), b->len(), c);
 	delete b;
-	_cache[fname] = result;
+	_cache[fname.c_str()] = result;
 	return result;
 }
 
@@ -295,9 +289,9 @@ bool ResourceLoader::exportResource(const char *filename) {
 }
 
 void ResourceLoader::uncache(const char *filename) {
-	std::string fname = filename;
-	makeLower(fname);
-	CacheType::iterator i = _cache.find(fname);
+	Common::String fname = filename;
+	fname.toLowercase();
+	CacheType::iterator i = _cache.find(fname.c_str());
 	if (i != _cache.end())
 		_cache.erase(i);
 }

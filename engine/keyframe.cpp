@@ -28,12 +28,10 @@
 #include "engine/keyframe.h"
 #include "engine/textsplit.h"
 
-#include <cstring>
-
 KeyframeAnim::KeyframeAnim(const char *filename, const char *data, int len) :
 		Resource(filename) {
 
-	if (len >= 4 && std::memcmp(data, "FYEK", 4) == 0)
+	if (len >= 4 && READ_BE_UINT32(data) == MKID_BE('FYEK'))
 		loadBinary(data, len);
 	else {
 		TextSplitter ts(data, len);
@@ -110,7 +108,7 @@ void KeyframeAnim::loadText(TextSplitter &ts) {
 	ts.scanString("fps %f", 1, &_fps);
 	ts.scanString("joints %d", 1, &_numJoints);
 
-	if (std::strcmp(ts.currentLine(), "section: markers") == 0) {
+	if (strcasecmp(ts.currentLine(), "section: markers") == 0) {
 		ts.nextLine();
 		ts.scanString("markers %d", 1, &_numMarkers);
 		_markers = new Marker[_numMarkers];
@@ -171,9 +169,9 @@ void KeyframeAnim::KeyframeNode::loadBinary(const char *&data) {
 	// If the name handle is entirely null (like ma_rest.key)
 	// then we shouldn't try to set the name
 	if (READ_LE_UINT32(data) == 0)
-		std::memcpy(_meshName, "(null)", 32);
+		memcpy(_meshName, "(null)", 32);
 	else
-		std::memcpy(_meshName, data, 32);
+		memcpy(_meshName, data, 32);
 	_numEntries = READ_LE_UINT32(data + 36);
 	data += 44;
 	_entries = new KeyframeEntry[_numEntries];

@@ -30,8 +30,6 @@
 
 #include "engine/lab.h"
 
-#include <list>
-#include <string>
 #include <map>
 
 class Bitmap;
@@ -57,7 +55,7 @@ public:
 	void luaGc() { if (_luaRef) { _luaRef = false; deref(); } }
 
 private:
-	std::string _fname;
+	Common::String _fname;
 	int _ref;
 	bool _luaRef;
 };
@@ -119,10 +117,10 @@ public:
 	const Lab *findFile(const char *filename) const;
 private:
 
-	typedef std::list<Lab *> LabList;
+	typedef Common::List<Lab *> LabList;
 	LabList _labs;
 
-	typedef std::map<std::string, Resource *> CacheType;
+	typedef std::map<Common::String, Resource *> CacheType;
 	CacheType _cache;
 
 	Common::SearchSet _files;

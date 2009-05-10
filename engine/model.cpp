@@ -31,12 +31,10 @@
 #include "engine/textsplit.h"
 #include "engine/gfx_base.h"
 
-#include <cstring>
-
 Model::Model(const char *filename, const char *data, int len, const CMap &cmap) :
 		Resource(filename), _numMaterials(0), _numGeosets(0) {
 
-	if (len >= 4 && std::memcmp(data, "LDOM", 4) == 0)
+	if (len >= 4 && READ_BE_UINT32(data) == MKID_BE('LDOM'))
 		loadBinary(data, cmap);
 	else {
 		TextSplitter ts(data, len);
@@ -248,7 +246,7 @@ void Model::draw() const {
 
 Model::HierNode *Model::copyHierarchy() {
 	HierNode *result = new HierNode[_numHierNodes];
-	std::memcpy(result, _rootHierNode, _numHierNodes * sizeof(HierNode));
+	memcpy(result, _rootHierNode, _numHierNodes * sizeof(HierNode));
 	// Now adjust pointers
 	for (int i = 0; i < _numHierNodes; i++) {
 		if (result[i]._parent)
@@ -361,7 +359,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	ts.scanString("radius %f", 1, &_radius);
 
 	// In data001/rope_scale.3do, the shadow line is missing
-	if (std::sscanf(ts.currentLine(), "shadow %d", &_shadow) < 1) {
+	if (sscanf(ts.currentLine(), "shadow %d", &_shadow) < 1) {
 		_shadow = 0;
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Missing shadow directive in model");
@@ -417,7 +415,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		if (ts.eof())
 			error("Expected face data, got EOF");
 
-		if (std::sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
+		if (sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
 			error("Expected face data, got '%s'", ts.currentLine());
 
 		_materialid[num] = materialid;
@@ -433,7 +431,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		for (int j = 0; j < verts; j++) {
 			int readlen2;
 
-			if (std::sscanf(ts.currentLine() + readlen, " %d, %d%n", _faces[num]._vertices + j, _faces[num]._texVertices + j, &readlen2) < 2)
+			if (sscanf(ts.currentLine() + readlen, " %d, %d%n", _faces[num]._vertices + j, _faces[num]._texVertices + j, &readlen2) < 2)
 				error("Could not read vertex indices in line '%s'",
 
 			ts.currentLine());
