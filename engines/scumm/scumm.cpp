@@ -1207,6 +1207,8 @@ void ScummEngine::setupScumm() {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm() {
 
+	_smushFrameRate = (_game.id == GID_FT) ? 10 : 12;
+
 	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, 10);
 
 	ScummEngine::setupScumm();
