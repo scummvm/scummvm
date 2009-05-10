@@ -429,7 +429,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 	}
 
 	for (int i = 1; i < _numFrames; ++i)
-		_frameOffsTable[_numFrames] -= frameDataOffs;
+		_frameOffsTable[i] -= frameDataOffs;
 
 	// WSA movies without last frame offset need special treatment
 	if (_frameOffsTable[_numFrames + 1])
