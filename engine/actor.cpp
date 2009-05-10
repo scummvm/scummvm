@@ -357,6 +357,9 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		_sayLineText = NULL;
 	}
 
+	if (!sayLineDefaults.font)
+		return;
+
 	_sayLineText = new TextObject(false);
 	_sayLineText->setDefaults(&sayLineDefaults);
 	_sayLineText->setText((char *)msg);
@@ -373,10 +376,8 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 			_sayLineText->setY(_winY1);
 		}
 	}
-	if (_sayLineText->isFontSet()) {
-		_sayLineText->createBitmap();
-		g_engine->registerTextObject(_sayLineText);
-	}
+	_sayLineText->createBitmap();
+	g_engine->registerTextObject(_sayLineText);
 }
 
 bool Actor::talking() {
