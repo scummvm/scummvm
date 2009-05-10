@@ -50,8 +50,8 @@ private:
 
 class Lab {
 public:
-	Lab() : _f(NULL), _entries(NULL) { }
-	Lab(const char *filename) : _f(NULL), _entries(NULL) { open(filename); }
+	Lab() : _f(NULL), _entries(NULL), _numEntries(0) { }
+	Lab(const char *filename) : _f(NULL), _entries(NULL), _numEntries(0) { open(filename); }
 	bool open(const char *filename);
 	bool isOpen() const;
 	void close();
