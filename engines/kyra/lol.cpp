@@ -138,7 +138,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_monsters = 0;
 	_monsterProperties = 0;
 	_lvlBlockIndex = _lvlShapeIndex = 0;
-	_unkDrawLevelBool = true;
+	_partyAwake = true;
 	_vcnBlocks = 0;
 	_vcnShift = 0;
 	_vcnExpTable = 0;
@@ -884,7 +884,7 @@ void LoLEngine::startupNew() {
 	_availableSpells[0] = 0;
 	setupScreenDims();
 
-	memset(_unkWordArraySize8, 0x100, 8);
+	memset(_globalScriptVars2, 0x100, 8);
 
 	static int selectIds[] = { -9, -1, -8, -5 };
 	addCharacter(selectIds[_charSelection]);
@@ -1064,6 +1064,13 @@ void LoLEngine::setTemporaryFaceFrame(int charNum, int frame, int updateDelay, i
 		setCharacterUpdateEvent(charNum, 6, updateDelay, 1);
 	if (redraw)
 		gui_drawCharPortraitWithStats(charNum);
+}
+
+void LoLEngine::setTemporaryFaceFrameForAllCharacters(int frame, int updateDelay, int redraw) {
+	for (int i = 0; i < 4; i++)
+		setTemporaryFaceFrame(i, frame, updateDelay, 0);
+	if (redraw)
+		gui_drawAllCharPortraitsWithStats();
 }
 
 void LoLEngine::setCharacterUpdateEvent(int charNum, int updateType, int updateDelay, int overwrite) {

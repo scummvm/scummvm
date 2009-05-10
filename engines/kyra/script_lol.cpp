@@ -139,7 +139,9 @@ int LoLEngine::olol_moveParty(EMCState *script) {
 	
 	Button b;
 	memset(&b, 0, sizeof(Button));
-
+	b.data0Val2 = b.data1Val2 = b.data2Val2 = 0xfe;
+	b.data0Val3 = b.data1Val3 = b.data2Val3 = 0x01;
+	
 	switch (mode) {
 		case 0:
 			clickedUpArrow(&b);
@@ -642,7 +644,7 @@ int LoLEngine::olol_getGlobalVar(EMCState *script) {
 	case 5:
 		return _credits;
 	case 6:
-		return _unkWordArraySize8[stackPos(1)];
+		return _globalScriptVars2[stackPos(1)];
 	case 8:
 		return _updateFlags;
 	case 9:
@@ -695,7 +697,7 @@ int LoLEngine::olol_setGlobalVar(EMCState *script) {
 		break;
 
 	case 6:
-		_unkWordArraySize8[a] = b;
+		_globalScriptVars2[a] = b;
 		break;
 
 	case 7:

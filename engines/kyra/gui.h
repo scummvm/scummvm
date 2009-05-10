@@ -81,6 +81,8 @@ struct Button {
 	int8 mouseWheel;
 
 	Callback buttonCallback;
+
+	uint16 arg;
 };
 
 struct MenuItem {

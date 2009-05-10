@@ -470,7 +470,7 @@ void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objec
 		}
 
 	} else if (objectOnNextBlock == 4) {
-		_unkDrawLevelBool = true;
+		_partyAwake = true;
 		if (_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000) {
 			for (int i = 0; i < 4; i++) {
 				if (_characters[i].flags & 1)

@@ -785,6 +785,7 @@ private:
 	// characters
 	bool addCharacter(int id);
 	void setTemporaryFaceFrame(int charNum, int frame, int updateDelay, int redraw);
+	void setTemporaryFaceFrameForAllCharacters(int frame, int updateDelay, int redraw);
 	void setCharacterUpdateEvent(int charNum, int updateType, int updateDelay, int overwrite);
 	int countActiveCharacters();
 	void loadCharFaceShapes(int charNum, int id);
@@ -947,7 +948,7 @@ private:
 	int _sceneDefaultUpdate;
 	int _lvlBlockIndex;
 	int _lvlShapeIndex;
-	bool _unkDrawLevelBool;
+	bool _partyAwake;
 	uint8 *_vcnBlocks;
 	uint8 *_vcnShift;
 	uint8 *_vcnExpTable;
@@ -1196,7 +1197,7 @@ private:
 
 	uint8 _compassBroken;
 	uint8 _drainMagic;
-	uint16 _unkWordArraySize8[8];
+	uint16 _globalScriptVars2[8];
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;

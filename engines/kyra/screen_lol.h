@@ -64,6 +64,7 @@ public:
 
 	// palette stuff
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
+	void fadeToPalette1(int delay);
 	void loadSpecialColors(uint8 *destPalette);
 	void copyColor(int dstColorIndex, int srcColorIndex);
 	bool fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTime, uint32 targetTime);

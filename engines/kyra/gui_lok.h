@@ -47,6 +47,7 @@ namespace Kyra {
 		button.height = j; \
 		button.flags2 = k; \
 		button.mouseWheel = 0; \
+		button.arg = 0; \
 	} while (0)
 
 #define GUI_V1_MENU(menu, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \

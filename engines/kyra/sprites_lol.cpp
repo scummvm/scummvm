@@ -1099,7 +1099,7 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 			// second recovery phase after delivering an attack
 			// monsters will rearrange positions in this phase so as to allow a maximum
 			// number of monsters possible attacking at the same time
-			_unkDrawLevelBool = true;
+			_partyAwake = true;
 			monster->fightCurTick--;
 			if ((monster->fightCurTick <= 0) || (checkDrawObjectSpace(_partyPosX, _partyPosY, monster->x, monster->y) > 256) || (monster->flags & 8))
 				setMonsterMode(monster, 7);

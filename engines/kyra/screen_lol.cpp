@@ -658,6 +658,12 @@ void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 	_fadeFlag = 2;
 }
 
+void Screen_LoL::fadeToPalette1(int delay) {
+	loadSpecialColors(_palettes[0]);
+	fadePalette(_palettes[0], delay);
+	_fadeFlag = 0;
+}
+
 void Screen_LoL::loadSpecialColors(uint8 *destPalette) {
 	memcpy(destPalette + 0x240, _screenPalette + 0x240, 12);	
 }

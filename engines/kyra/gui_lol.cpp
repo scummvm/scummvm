@@ -69,7 +69,7 @@ void LoLEngine::gui_drawPlayField() {
 }
 
 void LoLEngine::gui_drawScene(int pageNum) {
-	if (!(_updateFlags & 1) && _weaponsDisabled == false && _unkDrawLevelBool && _vcnBlocks)
+	if (!(_updateFlags & 1) && _weaponsDisabled == false && _partyAwake && _vcnBlocks)
 		drawScene(pageNum);
 }
 
@@ -407,16 +407,10 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	if (_characters[charNum].damageSuffered)
 		_screen->fprintString("%d", 17, 28, 254, 0, 1, _characters[charNum].damageSuffered);
 
-	if (!cp)
-		_screen->hideMouse();
-
 	uint8 col = (charNum != _selectedCharacter || countActiveCharacters() == 1) ? 1 : 212;
 	_screen->drawBox(0, 0, 65, 33, col);
 
 	_screen->copyRegion(0, 0, _activeCharsXpos[charNum], 143, 66, 34, _screen->_curPage, cp, Screen::CR_NO_P_CHECK);
-
-	if (!cp)
-		_screen->showMouse();
 
 	_screen->setCurPage(cp);
 	_screen->setFont(tmpFid);
@@ -928,12 +922,8 @@ void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 		_activeButtons = b;
 	}
 
-	b->data0Val2 = 0xfe;
-	b->data0Val3 = 0x01;
-	b->data1Val2 = 0xfe;
-	b->data1Val3 = 0x01;
-	b->data2Val2 = 0xfe;
-	b->data2Val3 = 0x01;
+	b->data0Val2 = b->data1Val2 = b->data2Val2 = 0xfe;
+	b->data0Val3 = b->data1Val3 = b->data2Val3 = 0x01;
 
 	b->index = cnt;
 	b->keyCode = _buttonData[index].keyCode;
@@ -941,12 +931,12 @@ void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 	b->dimTableIndex = _buttonData[index].screenDim;
 	b->flags = _buttonData[index].buttonflags;
 
-	b->data2Val2 = (val != -1) ? (uint8)(val & 0xff) : _buttonData[index].index;
+	b->arg = (val != -1) ? (uint8)(val & 0xff) : _buttonData[index].index;
 
 	if (index == 15) {
 		// magic sub menu
 		b->x = _activeCharsXpos[_subMenuIndex] + 44;
-		b->data2Val2 = _subMenuIndex;
+		b->arg = _subMenuIndex;
 		b->y = _buttonData[index].y;
 		b->width = _buttonData[index].w - 1;
 		b->height = _buttonData[index].h - 1;
@@ -967,7 +957,7 @@ void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 }
 
 int LoLEngine::clickedUpArrow(Button *button) {
-	if (button->data2Val2 && !_floatingCursorsEnabled)
+	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
 	moveParty(_currentDirection, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 0, 80);
@@ -976,7 +966,7 @@ int LoLEngine::clickedUpArrow(Button *button) {
 }
 
 int LoLEngine::clickedDownArrow(Button *button) {
-	if (button->data2Val2 && !_floatingCursorsEnabled)
+	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
 	moveParty(_currentDirection ^ 2, 0, 1, 83);
@@ -985,7 +975,7 @@ int LoLEngine::clickedDownArrow(Button *button) {
 }
 
 int LoLEngine::clickedLeftArrow(Button *button) {
-	if (button->data2Val2 && !_floatingCursorsEnabled)
+	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
 	moveParty((_currentDirection - 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 2, 82);
@@ -994,7 +984,7 @@ int LoLEngine::clickedLeftArrow(Button *button) {
 }
 
 int LoLEngine::clickedRightArrow(Button *button) {
-	if (button->data2Val2 && !_floatingCursorsEnabled)
+	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
 	moveParty((_currentDirection + 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 3, 84);
@@ -1003,7 +993,7 @@ int LoLEngine::clickedRightArrow(Button *button) {
 }
 
 int LoLEngine::clickedTurnLeftArrow(Button *button) {
-	if (button->data2Val2 && !_floatingCursorsEnabled)
+	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
 	gui_toggleButtonDisplayMode(79, 1);
@@ -1025,7 +1015,7 @@ int LoLEngine::clickedTurnLeftArrow(Button *button) {
 }
 
 int LoLEngine::clickedTurnRightArrow(Button *button) {
-	if (button->data2Val2 && !_floatingCursorsEnabled)
+	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
 	gui_toggleButtonDisplayMode(81, 1);
@@ -1048,7 +1038,7 @@ int LoLEngine::clickedTurnRightArrow(Button *button) {
 }
 
 int LoLEngine::clickedAttackButton(Button *button) {
-	int c = button->data2Val2;
+	int c = button->arg;
 
 	if (_characters[c].flags & 0x314C)
 		return 1;
@@ -1092,7 +1082,7 @@ int LoLEngine::clickedAttackButton(Button *button) {
 }
 
 int LoLEngine::clickedMagicButton(Button *button) {
-	int c = button->data2Val2;
+	int c = button->arg;
 
 	if (_characters[c].flags & 0x314C)
 		return 1;
@@ -1111,7 +1101,7 @@ int LoLEngine::clickedMagicButton(Button *button) {
 
 int LoLEngine::clickedMagicSubmenu(Button *button) {
 	int spellLevel = (_mouseY - 144) >> 3;
-	int c = button->data2Val2;
+	int c = button->arg;
 
 	gui_enableDefaultPlayfieldButtons();
 
@@ -1163,7 +1153,7 @@ int LoLEngine::clickedPortraitLeft(Button *button) {
 		gui_disableControls(1);
 	}
 
-	_selectedCharacter = button->data2Val2;
+	_selectedCharacter = button->arg;
 	_weaponsDisabled = true;
 	gui_displayCharInventory(_selectedCharacter);
 	gui_enableCharInventoryButtons(_selectedCharacter);
@@ -1172,9 +1162,9 @@ int LoLEngine::clickedPortraitLeft(Button *button) {
 }
 
 int LoLEngine::clickedLiveMagicBarsLeft(Button *button) {
-	gui_highlightPortraitFrame(button->data2Val2);
-	_txt->printMessage(0, getLangString(0x4047), _characters[button->data2Val2].name, _characters[button->data2Val2].hitPointsCur,
-		_characters[button->data2Val2].hitPointsMax, _characters[button->data2Val2].magicPointsCur, _characters[button->data2Val2].magicPointsMax);
+	gui_highlightPortraitFrame(button->arg);
+	_txt->printMessage(0, getLangString(0x4047), _characters[button->arg].name, _characters[button->arg].hitPointsCur,
+		_characters[button->arg].hitPointsMax, _characters[button->arg].magicPointsCur, _characters[button->arg].magicPointsMax);
 	return 1;
 }
 
@@ -1183,7 +1173,7 @@ int LoLEngine::clickedPortraitEtcRight(Button *button) {
 		return 1;
 
 	int flg = _itemProperties[_itemsInPlay[_itemInHand].itemPropertyIndex].flags;
-	int c = button->data2Val2;
+	int c = button->arg;
 
 	if (flg & 1) {
 		if (!(_characters[c].flags & 8) || (flg & 0x20)) {
@@ -1201,7 +1191,7 @@ int LoLEngine::clickedPortraitEtcRight(Button *button) {
 
 int LoLEngine::clickedCharInventorySlot(Button *button) {
 	if (_itemInHand) {
-		uint16 sl = 1 << button->data2Val2;
+		uint16 sl = 1 << button->arg;
 		int type = _itemProperties[_itemsInPlay[_itemInHand].itemPropertyIndex].type;
 		if (!(sl & type)) {
 			bool f = false;
@@ -1220,17 +1210,17 @@ int LoLEngine::clickedCharInventorySlot(Button *button) {
 			return 1;
 		}
 	} else {
-		if (!_characters[_selectedCharacter].items[button->data2Val2]) {
-			_txt->printMessage(0, getLangString(_inventorySlotDesc[button->data2Val2] + 8));
+		if (!_characters[_selectedCharacter].items[button->arg]) {
+			_txt->printMessage(0, getLangString(_inventorySlotDesc[button->arg] + 8));
 			return 1;
 		}
 	}
 
 	int ih = _itemInHand;
 
-	setHandItem(_characters[_selectedCharacter].items[button->data2Val2]);
-	_characters[_selectedCharacter].items[button->data2Val2] = ih;
-	gui_drawCharInventoryItem(button->data2Val2);
+	setHandItem(_characters[_selectedCharacter].items[button->arg]);
+	_characters[_selectedCharacter].items[button->arg] = ih;
+	gui_drawCharInventoryItem(button->arg);
 
 	recalcCharacterStats(_selectedCharacter);
 
@@ -1239,7 +1229,7 @@ int LoLEngine::clickedCharInventorySlot(Button *button) {
 	if (ih)
 		runItemScript(_selectedCharacter, ih, 0x80, 0, 0);
 
-	gui_drawCharInventoryItem(button->data2Val2);
+	gui_drawCharInventoryItem(button->arg);
 	gui_drawCharPortraitWithStats(_selectedCharacter);
 	gui_changeCharacterStats(_selectedCharacter);
 
@@ -1284,7 +1274,7 @@ int LoLEngine::clickedSceneDropItem(Button *button) {
 		return 0;
 
 	uint16 block = _currentBlock;
-	if (button->data2Val2 > 1) {
+	if (button->arg > 1) {
 		block = calcNewBlockPosition(_currentBlock, _currentDirection);
 		int f = _wllWallFlags[_levelBlockProperties[block].walls[_currentDirection ^ 2]];
 		if (!(f & 0x80) || (f & 2))
@@ -1293,7 +1283,7 @@ int LoLEngine::clickedSceneDropItem(Button *button) {
 
 	uint16 x = 0;
 	uint16 y = 0;
-	int i = dirIndex[(_currentDirection << 2) + button->data2Val2];
+	int i = dirIndex[(_currentDirection << 2) + button->arg];
 
 	calcCoordinates(x, y, block, offsX[i], offsY[i]);
 	setItemPosition(_itemInHand, x, y, 0, 1);
@@ -1341,7 +1331,7 @@ int LoLEngine::clickedScenePickupItem(Button *button) {
 }
 
 int LoLEngine::clickedInventorySlot(Button *button) {
-	int slot = _inventoryCurItem + button->data2Val2;
+	int slot = _inventoryCurItem + button->arg;
 	if (slot > 47)
 		slot -= 48;
 
@@ -1358,7 +1348,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		_screen->hideMouse();
 
 		_inventory[slot] = 0;
-		gui_drawInventoryItem(button->data2Val2);
+		gui_drawInventoryItem(button->arg);
 		_screen->copyRegion(button->x, button->y - 3, button->x, button->y - 3, 25, 27, 0, 2);
 		KyraEngine_v1::snd_playSoundEffect(99);
 
@@ -1386,13 +1376,13 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		_inventory[slot] = hItem;
 	}
 
-	gui_drawInventoryItem(button->data2Val2);
+	gui_drawInventoryItem(button->arg);
 
 	return 1;
 }
 
 int LoLEngine::clickedInventoryScroll(Button *button) {
-	int8 inc = (int8)button->data2Val2;
+	int8 inc = (int8)button->arg;
 	int shp = (inc == 1) ? 75 : 74;
 	if (button->flags2 & 0x1000)
 		inc *= 9;
@@ -1460,11 +1450,11 @@ int LoLEngine::clickedSequenceWindow(Button *button) {
 }
 
 int LoLEngine::clickedScroll(Button *button) {
-	if (_selectedSpell == button->data2Val2)
+	if (_selectedSpell == button->arg)
 		return 1;
 
 	gui_highlightSelectedSpell(false);
-	_selectedSpell = button->data2Val2;
+	_selectedSpell = button->arg;
 	gui_highlightSelectedSpell(true);
 	gui_drawAllCharPortraitsWithStats();
 
@@ -1472,7 +1462,7 @@ int LoLEngine::clickedScroll(Button *button) {
 }
 
 int LoLEngine::clickedSpellTargetCharacter(Button *button) {
-	int t = button->data2Val2;
+	int t = button->arg;
 	_txt->printMessage(0, "%s.\r", _characters[t].name);
 	
 	if ((_spellProperties[_activeSpell.spell].flags & 0xff) == 1) {
@@ -1534,7 +1524,199 @@ int LoLEngine::clickedOptions(Button *button) {
 int LoLEngine::clickedRestParty(Button *button) {
 	gui_toggleButtonDisplayMode(77, 1);
 
-	gui_toggleButtonDisplayMode(77, 0);
+	Button b;
+	memset(&b, 0, sizeof(Button));
+	b.data0Val2 = b.data1Val2 = b.data2Val2 = 0xfe;
+	b.data0Val3 = b.data1Val3 = b.data2Val3 = 0x01;
+
+	if (_weaponsDisabled)
+		clickedExitCharInventory(&b);
+
+	int tHp = -1;
+	int tMp = -1;
+	int tHa = -1;
+	int needPoisoningFlags = 0;
+	int needHealingFlags = 0;
+	int needMagicGainFlags = 0;	
+
+	for (int i = 0; i < 4; i++) {
+		LoLCharacter *c = &_characters[i];
+		if (!(c->flags & 1) || (c->flags & 8))
+			continue;
+
+		if (c->hitPointsMax > tHp)
+			tHp = c->hitPointsMax;
+
+		if (c->magicPointsMax > tMp)
+			tMp = c->magicPointsMax;
+
+		if (c->flags & 0x80) {
+			needPoisoningFlags |= (1 << i);			
+			if (c->hitPointsCur > tHa)
+				tHa = c->hitPointsCur;
+		} else {
+			if (c->hitPointsCur < c->hitPointsMax)
+				needHealingFlags |= (1 << i);
+		}
+
+		if (c->magicPointsCur < c->magicPointsMax)
+			needMagicGainFlags |= (1 << i);
+
+		c->flags |= 0x1000;
+	}
+
+	if (needHealingFlags || needMagicGainFlags) {
+		_screen->fillRect(112, 0, 288, 120, 1);
+		gui_drawAllCharPortraitsWithStats();
+		
+		_txt->printMessage(0x8000, getLangString(0x4057));
+		gui_toggleButtonDisplayMode(77, 0);
+
+		int h = 600 / tHp;
+		if (h > 30)
+			h = 30;
+
+		int m = 600 / tMp;
+		if (m > 30)
+			m = 30;
+
+		int a = 600 / tHa;
+		if (a > 15)
+			a = 15;
+
+		uint32 delay1 = _system->getMillis() + h * _tickLength;
+		uint32 delay2 = _system->getMillis() + m * _tickLength;
+		uint32 delay3 = _system->getMillis() + a * _tickLength;
+
+		_partyAwake = false;
+		_updateFlags |= 1;
+
+		for (int i = 0, im = _smoothScrollModeNormal ? 32 : 16; i < im; i++) {
+			timerProcessMonsters(0);
+			timerProcessMonsters(1);
+			timerProcessDoors(0);
+			timerProcessFlyingObjects(0);
+
+			if (_partyAwake)
+				break;
+		}
+
+		resetBlockProperties();
+
+		do {
+			for (int i = 0, im = _smoothScrollModeNormal ? 8 : 4; i < im; i++) {
+				timerProcessMonsters(0);
+				timerProcessMonsters(1);
+				timerProcessDoors(0);
+				timerProcessFlyingObjects(0);
+
+				if (_partyAwake)
+					break;
+			}
+
+			int f = checkInput(0);
+			removeInputTop();
+
+			if (f & !(f & 0x800)) {
+				gui_triggerEvent(f);
+			} else {
+				gui_notifyButtonListChanged();
+			
+				if (!_partyAwake) {					
+					if (_system->getMillis() > delay3) {
+						for (int i = 0; i < 4; i++) {							
+							if (!(needPoisoningFlags & (1 << i)))
+								continue;
+							inflictDamage(i, 1, 0x8000, 1, 0x80);
+							if (_characters[i].flags & 8)
+								needPoisoningFlags &= ~(1 << i);
+						}
+						delay3 = _system->getMillis() + a * _tickLength;
+					}
+					
+					if (_system->getMillis() > delay1) {
+						for (int i = 0; i < 4; i++) {							
+							if (!(needHealingFlags & (1 << i)))
+								continue;
+							increaseCharacterHitpoints(i, 1, false);
+							gui_drawCharPortraitWithStats(i);
+							if (_characters[i].hitPointsCur == _characters[i].hitPointsMax)
+								needHealingFlags &= ~(1 << i);
+						}						
+						delay1 = _system->getMillis() + h * _tickLength;
+					}
+
+					if (_system->getMillis() > delay2) {
+						for (int i = 0; i < 4; i++) {							
+							if (!(needMagicGainFlags & (1 << i)))
+								continue;
+							_characters[i].magicPointsCur++;														
+							gui_drawCharPortraitWithStats(i);
+							if (_characters[i].magicPointsCur == _characters[i].magicPointsMax)
+								needMagicGainFlags &= ~(1 << i);
+						}						
+						delay2 = _system->getMillis() + m * _tickLength;
+					}
+					_screen->updateScreen();
+				}
+			}
+		} while (!_partyAwake && (needHealingFlags || needMagicGainFlags));
+		
+		for (int i = 0; i < 4; i++) {
+			int frm = 0;
+			int upd = 0;
+			bool setframe = true;
+
+			if (_characters[i].flags & 0x1000) {
+				_characters[i].flags &= 0xefff;				
+
+				if (_partyAwake) {
+					if (_characters[i].damageSuffered) {
+						frm = 5;
+						snd_playSoundEffect(_characters[i].screamSfx, -1);
+					} else {
+						frm = 4;
+					}
+					upd = 6;
+				}
+
+			} else {
+				if (_characters[i].damageSuffered)
+					setframe = false;
+				else
+					frm = 4;
+			}
+
+			if (setframe)
+				setTemporaryFaceFrame(i, frm, upd, 1);
+		}
+
+		_updateFlags &= 0xfffe;
+		_partyAwake = true;
+		updateDrawPage2();
+		gui_drawScene(0);
+		_txt->printMessage(0x8000, getLangString(0x4059));
+		_screen->fadeToPalette1(40);
+
+	} else {
+		for (int i = 0; i < 4; i++)
+			_characters[i].flags &= 0xefff;
+
+		if (needPoisoningFlags) {
+			setTemporaryFaceFrameForAllCharacters(0, 0, 0);
+			for (int i = 0; i < 4; i++) {
+				if (needPoisoningFlags & (1 << i))
+					setTemporaryFaceFrame(i, 3, 8, 0);
+			}
+			_txt->printMessage(0x8000, getLangString(0x405a));
+			gui_drawAllCharPortraitsWithStats();
+
+		} else {
+			setTemporaryFaceFrameForAllCharacters(2, 4, 1);
+			_txt->printMessage(0x8000, getLangString(0x4058));
+		}
+		gui_toggleButtonDisplayMode(77, 0);
+	}
 
 	return 1;
 }
@@ -1636,7 +1818,7 @@ void GUI_LoL::processButton(Button *button) {
 		val1 = button->data2Val1;
 		dataPtr = button->data2ShapePtr;
 		callback = button->data2Callback;
-		val2 = button->data2Val2;
+		val2 = button->arg;
 		val3 = button->data2Val3;
 	} else {
 		val1 = button->data0Val1;
