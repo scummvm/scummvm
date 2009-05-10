@@ -67,6 +67,7 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 }
 
 extern int _allocd_rules;
+gfx_color_t black = { PaletteEntry(0, 0, 0), 0, 0, 0, GFX_MASK_VISUAL };
 
 int _reset_graphics_input(EngineState *s) {
 	Resource *resource;
@@ -86,7 +87,6 @@ int _reset_graphics_input(EngineState *s) {
 		}
 	} else {
 		// Allocate SCI1 system colors
-		gfx_color_t black = { PaletteEntry(0, 0, 0), 0, 0, 0, GFX_MASK_VISUAL };
 		gfxop_set_system_color(s->gfx_state, 0, &black);
 
 		// Check for Amiga palette file.
