@@ -749,16 +749,47 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	switch (UKPV(0)) {
 	case 0 :
-	case 1 :
-		if (UKPV(0) == 0 ? state.getMessage(&tuple) : state.getNext()) {
-			char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], state.getLength() + 1) : NULL;
+		if (state.getMessage(&tuple)) {
+			char *buffer = NULL;
+
+			if ((argc == 7) && (argv[6] != NULL_REG))
+				buffer = kernel_dereference_char_pointer(s, argv[6], state.getLength() + 1);
+
+			int talker = state.getTalker();
 
 			if (buffer)
 				state.getText(buffer);
 			// Talker id
-			return make_reg(0, state.getTalker());
+			return make_reg(0, talker);
 		} else {
-			char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], 0) : NULL;
+			char *buffer = NULL;
+
+			if ((argc == 7) && (argv[6] != NULL_REG))
+				buffer = kernel_dereference_char_pointer(s, argv[6], strlen(DUMMY_MESSAGE) + 1);
+
+			if (buffer)
+				strcpy(buffer, DUMMY_MESSAGE);
+
+			return NULL_REG;
+		}
+	case 1 :
+		if (state.getNext()) {
+			char *buffer = NULL;
+
+			if ((argc == 2) && (argv[1] != NULL_REG))
+				buffer = kernel_dereference_char_pointer(s, argv[1], state.getLength() + 1);
+
+			int talker = state.getTalker();
+
+			if (buffer)
+				state.getText(buffer);
+			// Talker id
+			return make_reg(0, talker);
+		} else {
+			char *buffer = NULL;
+
+			if ((argc == 2) && (argv[1] != NULL_REG))
+				buffer = kernel_dereference_char_pointer(s, argv[1], strlen(DUMMY_MESSAGE) + 1);
 
 			if (buffer)
 				strcpy(buffer, DUMMY_MESSAGE);
@@ -768,7 +799,10 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case 2:
 		if (state.getMessage(&tuple))
 			return make_reg(0, state.getLength() + 1);
-		else return NULL_REG;
+		else
+			return NULL_REG;
+	default:
+		warning("kMessage subfunction %i invoked (not implemented)", UKPV(0));
 	}
 
 	return NULL_REG;

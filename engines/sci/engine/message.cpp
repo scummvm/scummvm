@@ -31,7 +31,8 @@ namespace Sci {
 void MessageState::initIndexRecordCursor() {
 	_engineCursor.resource_beginning = _currentResource->data;
 	_engineCursor.index_record = _indexRecords;
-	_engineCursor.index = 1;
+	_engineCursor.index = 0;
+	_lastMessage.seq = 0;
 }
 
 void MessageState::parse(IndexRecordCursor *cursor, MessageTuple *t) {
@@ -48,30 +49,37 @@ void MessageState::parse(IndexRecordCursor *cursor, MessageTuple *t) {
 
 int MessageState::getMessage(MessageTuple *t) {
 	MessageTuple looking_at;
-	int found = 0;
 
 	initIndexRecordCursor();
 
-	do {
+	while (_engineCursor.index != _recordCount) {
 		parse(&_engineCursor, &looking_at);
 		if (t->noun == looking_at.noun && 
 			t->verb == looking_at.verb && 
 			t->cond == looking_at.cond && 
 			t->seq == looking_at.seq)
-			found = 1;
-	} while (!found && getNext());
+			return 1;
+
+		_engineCursor.index_record += ((_version == 2101) ? 4 : 11);
+		_engineCursor.index++;
+	}
 
 	// FIXME: Recursion not handled yet
 
-	return found;
+	return 0;
 }
 
 int MessageState::getNext() {
 	if (_engineCursor.index == _recordCount)
 		return 0;
-	_engineCursor.index_record += ((_version == 2101) ? 4 : 11);
-	_engineCursor.index ++;
-	return 1;
+
+	MessageTuple mesg;
+	parse(&_engineCursor, &mesg);
+
+	if (_lastMessage.seq == mesg.seq - 1)
+		return 1;
+
+	return 0;
 }
 
 int MessageState::getTalker() {
@@ -81,7 +89,10 @@ int MessageState::getTalker() {
 void MessageState::getText(char *buffer) {
 	int offset = READ_LE_UINT16(_engineCursor.index_record + ((_version == 2101) ? 2 : 5));
 	char *stringptr = (char *)_engineCursor.resource_beginning + offset;
+	parse(&_engineCursor, &_lastMessage);
 	strcpy(buffer, stringptr);
+	_engineCursor.index_record += ((_version == 2101) ? 4 : 11);
+	_engineCursor.index++;
 }
 
 int MessageState::getLength() {

@@ -66,6 +66,7 @@ private:
 	int _recordCount;
 	byte *_indexRecords;
 	IndexRecordCursor _engineCursor;
+	MessageTuple _lastMessage;
 	int _version;
 };
 
