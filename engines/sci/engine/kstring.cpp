@@ -727,7 +727,7 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 static MessageState state;
 
 reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (!state.initialized)
+	if (!state.isInitialized())
 		message_state_initialize(s->resmgr, &state);
 
 	switch (UKPV(0)) {
@@ -782,7 +782,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (!state.initialized)
+	if (!state.isInitialized())
 		message_state_initialize(s->resmgr, &state);
 
 	char *buffer = kernel_dereference_char_pointer(s, argv[3], 0);

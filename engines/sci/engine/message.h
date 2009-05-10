@@ -49,17 +49,6 @@ typedef int get_talker_t(IndexRecordCursor *cursor);
 typedef void get_text_t(IndexRecordCursor *cursor, char *buffer, int buffer_size);
 typedef int index_record_count_t(byte *header);
 
-struct MessageHandler {
-	int version_id;
-	parse_index_record_t *parse;
-	get_talker_t *get_talker;
-	get_text_t *get_text;
-	index_record_count_t *index_record_count;
-
-	int header_size;
-	int index_record_size;
-};
-
 class MessageState {
 public:
 	int getSpecific(MessageTuple *t);
@@ -68,16 +57,24 @@ public:
 	int getLength();
 	int getText(char *buffer, int length);
 	int loadRes(int module);
+	int isInitialized() { return _initialized; }
+	void initialize(ResourceManager *resmgr);
+	void setVersion(int version);
 
-public: // TODO: hide the internals
-	int initialized;
-	MessageHandler *handler;
-	ResourceManager *resmgr;
-	Resource *current_res;
+private:
+	void initIndexRecordCursor();
+	void parse(IndexRecordCursor *cursor, MessageTuple *t);
+
+	int _initialized;
+	ResourceManager *_resmgr;
+	Resource *_currentResource;
 	int _module;
-	int record_count;
-	byte *index_records;
-	IndexRecordCursor engine_cursor;
+	int _recordCount;
+	byte *_indexRecords;
+	IndexRecordCursor _engineCursor;
+	int _version;
+	int _headerSize;
+	int _indexRecordSize;
 };
 
 void message_state_initialize(ResourceManager *resmgr, MessageState *state);
