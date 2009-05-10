@@ -48,6 +48,7 @@ namespace Common {
 	class TimerManager;
 	class SeekableReadStream;
 	class WriteStream;
+	class HardwareKeySet;
 }
 
 class FilesystemFactory;
@@ -743,6 +744,15 @@ public:
 	 * to the EventManager documentation.
 	 */
 	virtual Common::EventManager *getEventManager() = 0;
+
+	/**
+	 * Register hardware keys with keymapper
+	 *
+	 * @return HardwareKeySet with all keys and recommended mappings
+	 *
+	 * See keymapper documentation for further reference.
+	 */
+	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
 	//@}
 

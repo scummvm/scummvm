@@ -124,6 +124,8 @@ protected:
 
 	bool _themeChange;
 
+	void initKeymap();
+
 	void saveState();
 	void restoreState();
 

@@ -136,8 +136,7 @@ public:
 	// Returns true if an event was retrieved.
 	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
-	// Sets up the keymapper with the backends hardware key set
-	virtual void setupKeymapper();
+	Common::HardwareKeySet *getHardwareKeySet();
 
 	// Set function that generates samples
 	virtual void setupMixer();

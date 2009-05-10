@@ -71,6 +71,11 @@ void Keymapper::registerHardwareKeySet(HardwareKeySet *keys) {
 	if (_hardwareKeys)
 		error("Hardware key set already registered!");
 
+	if (!keys) {
+		warning("No hardware keys are supplied");
+		return;
+	}
+
 	_hardwareKeys = keys;
 }
 
@@ -93,6 +98,11 @@ void Keymapper::addGameKeymap(Keymap *keymap) {
 }
 
 void Keymapper::initKeymap(Domain &domain, Keymap *map) {
+	if (!_hardwareKeys) {
+		warning("No hardware keys were registered yet (%s)", map->getName().c_str());
+		return;
+	}
+
 	map->setConfigDomain(domain.getConfigDomain());
 	map->loadMappings(_hardwareKeys);
 

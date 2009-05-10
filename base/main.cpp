@@ -47,6 +47,8 @@
 #include "gui/GuiManager.h"
 #include "gui/message.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #if defined(_WIN32_WCE)
 #include "backends/platform/wince/CELauncherDialog.h"
 #elif defined(__DC__)
@@ -234,6 +236,46 @@ static void setupGraphics(OSystem &system) {
 	system.fillScreen(0);
 }
 
+static void setupKeymapper(OSystem &system) {
+
+#ifdef ENABLE_KEYMAPPER
+	using namespace Common;
+
+	Keymapper *mapper = system.getEventManager()->getKeymapper();
+	Keymap *globalMap = new Keymap("global");
+	Action *act;
+	HardwareKeySet *keySet;
+
+	keySet = system.getHardwareKeySet();
+
+	// Query backend for hardware keys and register them
+	mapper->registerHardwareKeySet(keySet);
+
+	// Now create the global keymap
+	act = new Action(globalMap, "MENU", "Menu", kGenericActionType, kSelectKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
+	
+	act = new Action(globalMap, "SKCT", "Skip", kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+
+	act = new Action(globalMap, "PAUS", "Pause", kGenericActionType, kStartKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
+	
+	act = new Action(globalMap, "SKLI", "Skip line", kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
+
+	act = new Action(globalMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+
+	act = new Action(globalMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
+
+	mapper->addGlobalKeymap(globalMap);
+
+	mapper->pushKeymap("global");
+#endif
+
+}
 
 extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::String specialDebug;
@@ -294,6 +336,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Init the event manager. As the virtual keyboard is loaded here, it must 
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
+
+	// Now as the event manager is created, setup the keymapper
+	setupKeymapper(system);
 
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())

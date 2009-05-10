@@ -79,6 +79,36 @@ GuiManager::~GuiManager() {
 	delete _theme;
 }
 
+#ifdef ENABLE_KEYMAPPER
+void GuiManager::initKeymap() {
+	using namespace Common;
+
+	bool tmp;
+	Keymapper *mapper = _system->getEventManager()->getKeymapper();
+
+	// Do not try to recreate same keymap over again
+	if (mapper->getKeymap("gui", tmp) != 0)
+		return;
+
+	Action *act;
+	Keymap *guiMap = new Keymap("gui");
+
+	act = new Action(guiMap, "CLOS", "Close", kGenericActionType, kStartKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+	
+	act = new Action(guiMap, "CLIK", "Mouse click");
+	act->addLeftClickEvent();
+
+	act = new Action(guiMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+
+	act = new Action(guiMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
+
+	mapper->addGlobalKeymap(guiMap);
+}
+#endif
+
 bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx) {
 	// If we are asked to reload the currently active theme, just do nothing
 	// FIXME: Actually, why? It might be desirable at times to force a theme reload...
@@ -213,6 +243,12 @@ void GuiManager::runLoop() {
 	const uint32 waitTime = 1000 / 45;
 
 #ifdef ENABLE_KEYMAPPER
+	// Due to circular reference with event manager and GUI
+	// we cannot init keymap on the GUI creation. Thus, let's
+	// try to do it on every launch, checking whether the
+	// map is already existing
+	initKeymap();
+
 	eventMan->getKeymapper()->pushKeymap("gui");
 #endif
 
