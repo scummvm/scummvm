@@ -123,7 +123,7 @@ void RemapDialog::close() {
 	free(_keymapTable);
 	_keymapTable = 0;
 
-	if (_changes) 
+	if (_changes)
 		ConfMan.flushToDisk();
 
 	Dialog::close();
@@ -232,7 +232,7 @@ void RemapDialog::handleKeyUp(Common::KeyState state) {
 
 		if (hwkey) {
 			_activeRemapAction->mapKey(hwkey);
-			// TODO:   _activeRemapAction->getParent()->saveMappings();
+			_activeRemapAction->getParent()->saveMappings();
 			_changes = true;
 			stopRemapping();
 		}

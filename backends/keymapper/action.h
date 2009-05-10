@@ -101,7 +101,7 @@ public:
 		addEvent(evt);
 	}
 
-	Keymap *getBoss() { 
+	Keymap *getParent() { 
 		return _boss;
 	}
 
