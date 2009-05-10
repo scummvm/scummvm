@@ -153,4 +153,6 @@ void Lab::close() {
 			delete[] _entries[i].filename;
 
 	delete[] _entries;
+	_entries = NULL;
+	_numEntries = 0;
 }
