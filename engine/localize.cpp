@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "engine/localize.h"
 #include "engine/engine.h"
 

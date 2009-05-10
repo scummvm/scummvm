@@ -26,12 +26,13 @@
 #ifndef LAB_H
 #define LAB_H
 
-#include <string>
-#include <map>
-
-#include "common/file.h"
+#include "common/str.h"
 
 class LuaFile;
+
+namespace Common {
+	class File;
+}
 
 class Block {
 public:
@@ -45,15 +46,14 @@ private:
 	Block();
 	const char *_data;
 	int _len;
-	bool _owner;
 };
 
 class Lab {
 public:
-	Lab() : _f(NULL) { }
-	explicit Lab(const char *filename) : _f(NULL) { open(filename); }
+	Lab() : _f(NULL), _entries(NULL) { }
+	Lab(const char *filename) : _f(NULL), _entries(NULL) { open(filename); }
 	bool open(const char *filename);
-	bool isOpen() const { return _f->isOpen(); }
+	bool isOpen() const;
 	void close();
 	bool fileExists(const char *filename) const;
 	Block *getFileBlock(const char *filename) const;
@@ -63,19 +63,19 @@ public:
 
 	~Lab() { close(); }
 
-private:
 	struct LabEntry {
-		LabEntry(int the_offset, int the_len) :
-		offset(the_offset), len(the_len) {}
 		int offset, len;
+		char *filename;
 	};
 
-	Common::File *_f;
-	typedef std::map<std::string, LabEntry> FileMapType;
-	FileMapType _fileMap;
-	std::string _labFileName;
+private:
 
-	FileMapType::const_iterator findFilename(const char *filename) const;
+	Common::File *_f;
+	LabEntry *_entries;
+	Common::String _labFileName;
+	int _numEntries;
+
+	LabEntry *findFilename(const char *filename) const;
 };
 
 #endif

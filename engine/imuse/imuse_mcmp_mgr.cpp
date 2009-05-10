@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "engine/engine.h"
 
 #include "engine/imuse/imuse_mcmp_mgr.h"

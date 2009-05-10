@@ -31,6 +31,8 @@
 #include "engine/lab.h"
 
 #include <list>
+#include <string>
+#include <map>
 
 class Bitmap;
 class CMap;

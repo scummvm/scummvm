@@ -24,12 +24,14 @@
  */
 
 #include "common/endian.h"
+#include "common/file.h"
 
 #include "engine/lab.h"
 #include "engine/lua/lua.h"
 
-#include <algorithm>
-#include <cstring>
+static int sortCallback(const void *entry1, const void *entry2) {
+	return strcasecmp(((Lab::LabEntry *)entry1)->filename, ((Lab::LabEntry *)entry2)->filename);
+}
 
 bool Lab::open(const char *filename) {
 	_labFileName = filename;
@@ -41,64 +43,70 @@ bool Lab::open(const char *filename) {
 		return false;
 
 	char header[16];
-	if (_f->read(header, sizeof(header)) < sizeof(header)) {
-		close();
-		return false;
-	}
-	if (std::memcmp(header, "LABN", 4) != 0) {
+	_f->read(header, sizeof(header));
+	if (READ_BE_UINT32(header) != MKID_BE('LABN')) {
 		close();
 		return false;
 	}
 
-	int num_entries = READ_LE_UINT32(header + 8);
+	_numEntries = READ_LE_UINT32(header + 8);
 	int string_table_size = READ_LE_UINT32(header + 12);
 
 	char *string_table = new char[string_table_size];
-	_f->seek(16 * (num_entries + 1), SEEK_SET);
+	_f->seek(16 * (_numEntries + 1), SEEK_SET);
 	_f->read(string_table, string_table_size);
 
+	_entries = new LabEntry[_numEntries];
 	_f->seek(16, SEEK_SET);
 	char binary_entry[16];
-	for (int i = 0; i < num_entries; i++) {
+	for (int i = 0; i < _numEntries; i++) {
 		_f->read(binary_entry, 16);
 		int fname_offset = READ_LE_UINT32(binary_entry);
 		int start = READ_LE_UINT32(binary_entry + 4);
 		int size = READ_LE_UINT32(binary_entry + 8);
 
-		std::string fname = string_table + fname_offset;
-		std::transform(fname.begin(), fname.end(), fname.begin(), tolower);
+		Common::String fname = string_table + fname_offset;
+		fname.toLowercase();
 
-		_fileMap.insert(std::make_pair(fname, LabEntry(start, size)));
-		_fileMap.size();
+		_entries[i].offset = start;
+		_entries[i].len = size;
+		_entries[i].filename = new char[fname.size() + 1];
+		strcpy(_entries[i].filename, fname.c_str());
 	}
+
+	qsort(_entries, _numEntries, sizeof(LabEntry), sortCallback);
 
 	delete []string_table;
 	return true;
 }
 
 bool Lab::fileExists(const char *filename) const {
-	return findFilename(filename) != _fileMap.end();
+	return findFilename(filename) != NULL;
+}
+
+bool Lab::isOpen() const {
+	return _f->isOpen();
 }
 
 Block *Lab::getFileBlock(const char *filename) const {
-	FileMapType::const_iterator i = findFilename(filename);
-	if (i == _fileMap.end())
+	LabEntry *i = findFilename(filename);
+	if (!i)
 		return NULL;
 
-	_f->seek(i->second.offset, SEEK_SET);
-	char *data = new char[i->second.len];
-	_f->read(data, i->second.len);
-	return new Block(data, i->second.len);
+	_f->seek(i->offset, SEEK_SET);
+	char *data = new char[i->len];
+	_f->read(data, i->len);
+	return new Block(data, i->len);
 }
 
 LuaFile *Lab::openNewStreamLua(const char *filename) const {
-	FileMapType::const_iterator i = findFilename(filename);
-	if (i == _fileMap.end())
+	LabEntry *i = findFilename(filename);
+	if (!i)
 		return NULL;
 
 	Common::File *file = new Common::File();
-	file->open(_labFileName.c_str());
-	file->seek(i->second.offset, SEEK_SET);
+	file->open(_labFileName);
+	file->seek(i->offset, SEEK_SET);
 
 	LuaFile *filehandle = new LuaFile();
 	filehandle->_in = file;
@@ -108,34 +116,40 @@ LuaFile *Lab::openNewStreamLua(const char *filename) const {
 
 Common::File *Lab::openNewStreamFile(const char *filename) const {
 	Common::File *file;
-	FileMapType::const_iterator i = findFilename(filename);
-	if (i == _fileMap.end())
+	LabEntry *i = findFilename(filename);
+	if (!i)
 		return NULL;
 
 	file = new Common::File();
 	file->open(_labFileName.c_str());
-	file->seek(i->second.offset, SEEK_SET);
+	file->seek(i->offset, SEEK_SET);
 
 	return file;
 }
 
 int Lab::fileLength(const char *filename) const {
-	FileMapType::const_iterator i = findFilename(filename);
-	if (i == _fileMap.end())
+	LabEntry *i = findFilename(filename);
+	if (!i)
 		return -1;
 
-	return i->second.len;
+	return i->len;
 }
 
-Lab::FileMapType::const_iterator Lab::findFilename(const char *filename) const {
-	std::string s = filename;
-	std::transform(s.begin(), s.end(), s.begin(), tolower);
-	return _fileMap.find(s);
+Lab::LabEntry *Lab::findFilename(const char *filename) const {
+	LabEntry key;
+
+	Common::String s = filename;
+	s.toLowercase();
+	key.filename = (char *)s.c_str();
+
+	return (Lab::LabEntry *)bsearch(&key, _entries, _numEntries, sizeof(LabEntry), sortCallback);
 }
 
 void Lab::close() {
-	if (_f)
-		delete _f;
+	delete _f;
 	_f = NULL;
-	_fileMap.clear();
+	for (int i = 0; i < _numEntries; i++)
+		delete []_entries[i].filename;
+
+	delete []_entries;
 }
