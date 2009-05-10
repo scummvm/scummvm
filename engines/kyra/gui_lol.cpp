@@ -124,8 +124,15 @@ void LoLEngine::gui_drawScroll() {
 	}
 }
 
-void LoLEngine::gui_highlightSelectedSpell(int unk) {
-
+void LoLEngine::gui_highlightSelectedSpell(bool mode) {
+	int y = 15;
+	for (int i = 0; i < 7; i++) {
+		if (_availableSpells[i] == -1)
+			continue;
+		uint8 col = (mode && (i == _selectedSpell)) ? 132 : 1;
+		_screen->fprintString(getLangString(_spellProperties[_availableSpells[i]].spellNameCode), 24, y, col, 0, 0);
+		y += 9;
+	}
 }
 
 void LoLEngine::gui_displayCharInventory(int charNum) {
@@ -160,8 +167,8 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 	_screen->fprintString(getLangString(0x4033), 182, 103, 172, 0, 5);
 
 	static const uint16 skillFlags[] = { 0x0080, 0x0000, 0x1000, 0x0002, 0x100, 0x0001, 0x0000, 0x0000 };
-	uint16 tmp[6];
-	memset(tmp, -1, 6);
+
+	memset(_invSkillFlags, -1, 6);
 	int x = 0;
 	int32 c = 0;
 
@@ -172,7 +179,7 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 		uint8 *shp = _gameShapes[skillFlags[(i << 1) + 1]];
 		_screen->drawShape(_screen->_curPage, shp, 108 + x, 98, 0, 0);
 		x += (shp[3] + 2);
-		tmp[c] = skillFlags[(i << 1) + 1];
+		_invSkillFlags[c] = skillFlags[(i << 1) + 1];
 		c++;
 	}
 
@@ -354,7 +361,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	if (_availableSpells[_selectedSpell] != -1) {
 		for (int i = 0; i < 4; i++) {
 			if (_spellProperties[_availableSpells[_selectedSpell]].mpRequired[i] <= _characters[charNum].magicPointsCur &&
-				_spellProperties[_availableSpells[_selectedSpell] + 1].unkArr[i] <= _characters[charNum].hitPointsCur)
+				_spellProperties[_availableSpells[_selectedSpell]].hpRequired[i] <= _characters[charNum].hitPointsCur)
 					spellLevels++;
 		}
 	}
@@ -386,7 +393,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 		_screen->drawShape(_screen->_curPage, _gameShapes[72 + _characters[charNum].field_41], 44, 17, 0, 0);
 
 		if (spellLevels == 0)
-			_screen->drawGridBox(44, 17, 22, 15, 1);
+			_screen->drawGridBox(44, 17, 22, 16, 1);
 	}
 
 	uint16 f = _characters[charNum].flags & 0x314C;
@@ -726,10 +733,10 @@ void LoLEngine::gui_updateInput() {
 			if (_weaponsDisabled || _availableSpells[1] == -1)
 				return;
 
-			gui_highlightSelectedSpell(0);
+			gui_highlightSelectedSpell(false);
 			if (_availableSpells[++_selectedSpell] == -1)
 				_selectedSpell = 0;
-			gui_highlightSelectedSpell(1);
+			gui_highlightSelectedSpell(true);
 
 			gui_drawAllCharPortraitsWithStats();
 				break;
@@ -887,7 +894,11 @@ void LoLEngine::gui_initCharInventorySpecialButtons(int charNum) {
 }
 
 void LoLEngine::gui_initMagicScrollButtons() {
-
+	for (int i = 0; i < 7; i++) {
+		if (_availableSpells[i] == -1)
+			continue;
+		gui_initButton(71 + i, -1, -1, i);
+	}
 }
 
 void LoLEngine::gui_initMagicSubmenu(int charNum) {
@@ -1110,16 +1121,14 @@ int LoLEngine::clickedMagicSubmenu(Button *button) {
 	} else {
 		_characters[c].flags |= 4;
 		_characters[c].flags &= 0xffef;
-		///
-		// TODO
-		///
-		/*if (processSpellcast(c, _availableSpells[_selectedSpell], spellLevel)) {
+
+		if (castSpell(c, _availableSpells[_selectedSpell], spellLevel)) {
 			setCharacterUpdateEvent(c, 1, 8, 1);
-			sub_718F(c, 2, spellLevel * spellLevel);
-		} else {*/
+			increaseExperience(c, 2, spellLevel * spellLevel);
+		} else {
 			_characters[c].flags &= 0xfffb;
 			gui_drawCharPortraitWithStats(c);
-		//}
+		}
 	}
 
 	_unkCharNum = -1;
@@ -1345,9 +1354,6 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 
 		WSAMovie_v2 *wsa = new WSAMovie_v2(this, _screen);
 		wsa->open("truth.wsa", 0, 0);
-		wsa->setDrawPage(2);
-		wsa->setX(0);
-		wsa->setY(0);
 
 		_screen->hideMouse();
 
@@ -1359,7 +1365,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		for (int i = 0; i < 25; i++) {
 			_smoothScrollTimer = _system->getMillis() + 7 * _tickLength;
 			_screen->copyRegion(button->x, button->y - 3, 0, 0, 25, 27, 2, 2);
-			wsa->displayFrame(i, 0x4000);
+			wsa->displayFrame(i, 2, 0, 0, 0x4000);
 			_screen->copyRegion(0, 0, button->x, button->y - 3, 25, 27, 2, 0);
 			_screen->updateScreen();
 			delayUntil(_smoothScrollTimer);
@@ -1454,14 +1460,45 @@ int LoLEngine::clickedSequenceWindow(Button *button) {
 }
 
 int LoLEngine::clickedScroll(Button *button) {
+	if (_selectedSpell == button->data2Val2)
+		return 1;
+
+	gui_highlightSelectedSpell(false);
+	_selectedSpell = button->data2Val2;
+	gui_highlightSelectedSpell(true);
+	gui_drawAllCharPortraitsWithStats();
+
 	return 1;
 }
 
-int LoLEngine::clickedUnk23(Button *button) {
+int LoLEngine::clickedSpellTargetCharacter(Button *button) {
+	int t = button->data2Val2;
+	_txt->printMessage(0, "%s.\r", _characters[t].name);
+	
+	if ((_spellProperties[_activeSpell.spell].flags & 0xff) == 1) {
+		_activeSpell.target = t;
+		castHealOnSingleCharacter(&_activeSpell);
+	}
+
+	gui_enableDefaultPlayfieldButtons();
 	return 1;
 }
 
-int LoLEngine::clickedUnk24(Button *button) {
+int LoLEngine::clickedSpellTargetScene(Button *button) {
+	LoLCharacter *c = &_characters[_activeSpell.charNum];
+	_txt->printMessage(0, getLangString(0x4041));
+
+	c->magicPointsCur += _activeSpell.p->mpRequired[_activeSpell.level];
+	if (c->magicPointsCur > c->magicPointsMax)
+		c->magicPointsCur = c->magicPointsMax;
+
+	c->hitPointsCur += _activeSpell.p->hpRequired[_activeSpell.level];
+	if (c->hitPointsCur > c->hitPointsMax)
+		c->hitPointsCur = c->hitPointsMax;
+
+	gui_drawCharPortraitWithStats(_activeSpell.charNum);
+	gui_enableDefaultPlayfieldButtons();
+
 	return 1;
 }
 

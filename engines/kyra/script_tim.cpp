@@ -420,10 +420,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 				screen()->updateScreen();
 			}
 
-			anim->wsa->setX(x);
-			anim->wsa->setY(y);
-			anim->wsa->setDrawPage(0);
-			anim->wsa->displayFrame(0, 0, 0, 0);
+			anim->wsa->displayFrame(0, 0, 0, 0, 0);
 		}
 
 		if (wsaFlags & 2)
@@ -581,12 +578,9 @@ int TIMInterpreter::cmd_stopFunc(const uint16 *param) {
 int TIMInterpreter::cmd_wsaDisplayFrame(const uint16 *param) {
 	Animation &anim = _animations[param[0]];
 	const int frame = param[1];
-
-	anim.wsa->setX(anim.x);
-	anim.wsa->setY(anim.y);
-	anim.wsa->setDrawPage((anim.wsaCopyParams & 0x4000) != 0 ? 2 : _drawPage2);
-	anim.wsa->displayFrame(frame, anim.wsaCopyParams & 0xF0FF, 0, 0);
-	if (!_drawPage2)
+	int page = (anim.wsaCopyParams & 0x4000) != 0 ? 2 : _drawPage2;
+	anim.wsa->displayFrame(frame, page, anim.x, anim.y, anim.wsaCopyParams & 0xF0FF, 0, 0);
+	if (!page)
 		screen()->updateScreen();
 	return 1;
 }
@@ -829,17 +823,11 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 		_screen->fadeToBlack(10);
 	}
 
-	if (wsaFlags & 7) {
-		_screen->hideMouse();
-		anim->wsa->setDrawPage(0);
-		anim->wsa->setX(x);
-		anim->wsa->setY(y);
-		anim->wsa->displayFrame(0, 0);
-		_screen->showMouse();
-	}
+	if (wsaFlags & 7)
+		anim->wsa->displayFrame(0, 0, x, y, 0);
 
 	if (wsaFlags & 3) {
-		_screen->loadSpecialColours(_screen->getPalette(3));
+		_screen->loadSpecialColors(_screen->getPalette(3));
 		_screen->fadePalette(_screen->getPalette(3), 10);
 		_screen->_fadeFlag = 0;
 	}
@@ -938,12 +926,8 @@ void TIMInterpreter_LoL::startBackgroundAnimation(int animIndex, int part) {
 	anim->curFrame = p->firstFrame;
 	anim->cyclesCompleted = 0;
 
-	if (anim->wsa) {
-		anim->wsa->setX(anim->x);
-		anim->wsa->setY(anim->y);
-		anim->wsa->setDrawPage(0);
-		anim->wsa->displayFrame(anim->curFrame - 1, 0, 0);
-	}
+	if (anim->wsa)
+		anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0);
 }
 
 void TIMInterpreter_LoL::stopBackgroundAnimation(int animIndex) {
@@ -1002,36 +986,26 @@ void TIMInterpreter_LoL::updateBackgroundAnimation(int animIndex) {
 
 	anim->nextFrame += (anim->frameDelay * _vm->_tickLength);
 
-	anim->wsa->setX(anim->x);
-	anim->wsa->setY(anim->y);
-	anim->wsa->setDrawPage(0);
-	anim->wsa->displayFrame(anim->curFrame - 1, 0);
+	anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0);
 	anim->nextFrame += _system->getMillis();
 }
 
 void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay) {
 	Animation *anim = &_animations[animIndex];
-	anim->wsa->setX(anim->x);
-	anim->wsa->setY(anim->y);
 	
 	int step = (lastFrame >= firstFrame) ? 1 : -1;
 	for (int i = firstFrame; i != (lastFrame + step) ; i += step) {
 		uint32 next = _system->getMillis() + delay * _vm->_tickLength;
 		if (anim->wsaCopyParams & 0x4000) {
 			_screen->copyRegion(112, 0, 112, 0, 176, 120, 6, 2);
-			anim->wsa->setDrawPage(2);
-			anim->wsa->displayFrame(i - 1, anim->wsaCopyParams & 0x1000 ? 0x5000 : 0x4000, _vm->_trueLightTable1, _vm->_trueLightTable2);
+			anim->wsa->displayFrame(i - 1, 2, anim->x, anim->y, anim->wsaCopyParams & 0x1000 ? 0x5000 : 0x4000, _vm->_trueLightTable1, _vm->_trueLightTable2);
 			_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
 			_screen->updateScreen();
 		} else {
-			anim->wsa->setDrawPage(0);
-			anim->wsa->displayFrame(i - 1, 0);
+			anim->wsa->displayFrame(i - 1, 0, anim->x, anim->y, 0);
 			_screen->updateScreen();
 		}
-		while ((int)(next - _system->getMillis()) > 0) {
-			_vm->updateInput();
-			_vm->delay(_vm->_tickLength);
-		}
+		_vm->delayUntil(next);
 	}
 }
 

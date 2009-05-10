@@ -287,6 +287,8 @@ enum kKyraResources {
 	lolMapStringId,
 	//lolMapPal,
 
+	lolSpellbookAnim,
+	lolSpellbookCoords,
 	lolHealShapeFrames,
 #endif // ENABLE_LOL
 

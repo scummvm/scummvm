@@ -64,11 +64,12 @@ public:
 
 	// palette stuff
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
-	void loadSpecialColours(uint8 *destPalette);
-	void copyColour(int dstColourIndex, int srcColourIndex);
-	bool fadeColour(int dstColourIndex, int srcColourIndex, uint32 elapsedTime, uint32 targetTime);
+	void loadSpecialColors(uint8 *destPalette);
+	void copyColor(int dstColorIndex, int srcColorIndex);
+	bool fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTime, uint32 targetTime);
+	bool fadePalSpecial(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime);
 
-	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColours);
+	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColors);
 	uint8 *generateLevelOverlay(const uint8 *srcPal, uint8 *ovl, int opColor, int weight);
 	uint8 *getLevelOverlay(int index) { return _levelOverlays[index]; }
 

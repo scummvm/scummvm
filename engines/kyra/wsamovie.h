@@ -47,11 +47,8 @@ public:
 
 	virtual int frames() = 0;
 
-	virtual void displayFrame(int frameNum, ...) = 0;
+	virtual void displayFrame(int frameNum, int pageNum, int x, int y, ...) = 0;
 
-	virtual void setX(int x) { _x = x; }
-	virtual void setY(int y) { _y = y; }
-	virtual void setDrawPage(int page) { _drawPage = page; }
 protected:
 	KyraEngine_v1 *_vm;
 	bool _opened;
@@ -70,7 +67,7 @@ public:
 
 	virtual int frames() { return _opened ? _numFrames : -1; }
 
-	virtual void displayFrame(int frameNum, ...);
+	virtual void displayFrame(int frameNum, int pageNum, int x, int y, ...);
 
 	enum WSAFlags {
 		WF_OFFSCREEN_DECODE = 0x10,
@@ -100,7 +97,7 @@ public:
 	int open(const char *filename, int offscreen, uint8 *palette);
 	void close();
 
-	void displayFrame(int frameNum, ...);
+	void displayFrame(int frameNum, int pageNum, int x, int y, ...);
 private:
 	void processFrame(int frameNum, uint8 *dst);
 
@@ -113,10 +110,7 @@ public:
 
 	int open(const char *filename, int unk1, uint8 *palette);
 
-	virtual void displayFrame(int frameNum, ...);
-
-	void setX(int x) { _x = x + _xAdd; }
-	void setY(int y) { _y = y + _yAdd; }
+	virtual void displayFrame(int frameNum, int pageNum, int x, int y, ...);
 
 	int xAdd() const { return _xAdd; }
 	int yAdd() const { return _yAdd; }

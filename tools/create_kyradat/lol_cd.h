@@ -74,6 +74,8 @@ const ExtractEntry lolCDFile2[] = {
 	{ lolMapStringId, 0x000287D0, 0x0002880C },
 	//{ lolMapPal, 0x0001D9C0, 0x0001DBC0 },
 
+	{ lolSpellbookAnim, 0x00032D94, 0x00032DCC },
+	{ lolSpellbookCoords, 0x00032DCC, 0x00032DE4 },
 	{ lolHealShapeFrames, 0x000297D0, 0x00029820 },
 
 	{ -1, 0, 0 }

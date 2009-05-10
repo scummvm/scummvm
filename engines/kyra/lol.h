@@ -78,7 +78,11 @@ struct LoLCharacter {
 struct SpellProperty {
 	uint16 spellNameCode;
 	uint16 mpRequired[4];
-	uint16 unkArr[8];
+	uint16 field_a;
+	uint16 field_c;
+	uint16 hpRequired[4];
+	uint16 field_16;
+	uint16 field_18;
 	uint16 flags;
 };
 
@@ -209,6 +213,14 @@ struct OpenDoorState {
 	int8 state;
 };
 
+struct ActiveSpell {
+	uint8 spell;
+	const SpellProperty *p;
+	uint8 charNum;
+	uint8 level;
+	uint8 target;
+};
+
 struct FlyingObject {
 	uint8 enable;
 	uint8 objectType;
@@ -311,7 +323,9 @@ private:
 	static const CharacterPrev _charPreviews[];
 
 	WSAMovie_v2 *_chargenWSA;
-	static const uint8 _chargenFrameTable[];
+	static const uint8 _chargenFrameTableTalkie[];
+	static const uint8 _chargenFrameTableFloppy[];
+	const uint8 *_chargenFrameTable;
 	int chooseCharacter();
 
 	void kingSelectionIntro();
@@ -377,6 +391,7 @@ private:
 	void snd_playSoundEffect(int track, int volume);
 	void snd_processEnvironmentalSoundEffect(int soundId, int block);
 	void snd_queueEnvironmentalSoundEffect(int soundId, int block);
+	void snd_playQueuedEffects();
 	void snd_loadSoundFile(int track);
 	int snd_playTrack(int track);
 	int snd_stopMusic();
@@ -430,7 +445,7 @@ private:
 	void gui_drawInventoryItem(int index);
 	void gui_drawCompass();
 	void gui_drawScroll();
-	void gui_highlightSelectedSpell(int unk);
+	void gui_highlightSelectedSpell(bool mode);
 	void gui_displayCharInventory(int charNum);
 	void gui_printCharInventoryStats(int charNum);
 	void gui_printCharacterStats(int index, int redraw, int value);
@@ -502,8 +517,8 @@ private:
 	int clickedWall(Button *button);
 	int clickedSequenceWindow(Button *button);
 	int clickedScroll(Button *button);
-	int clickedUnk23(Button *button);
-	int clickedUnk24(Button *button);
+	int clickedSpellTargetCharacter(Button *button);
+	int clickedSpellTargetScene(Button *button);
 	int clickedSceneThrowItem(Button *button);
 	int clickedOptions(Button *button);
 	int clickedRestParty(Button *button);
@@ -559,6 +574,7 @@ private:
 	int olol_setWallType(EMCState *script);
 	int olol_getWallType(EMCState *script);
 	int olol_drawScene(EMCState *script);
+	int olol_moveParty(EMCState *script);
 	int olol_delay(EMCState *script);
 	int olol_setGameFlag(EMCState *script);
 	int olol_testGameFlag(EMCState *script);
@@ -580,6 +596,7 @@ private:
 	int olol_playAnimationPart(EMCState *script);
 	int olol_freeAnimStruct(EMCState *script);
 	int olol_getDirection(EMCState *script);
+	int olol_characterSurpriseFeedback(EMCState *script);
 	int olol_setMusicTrack(EMCState *script);
 	int olol_setSequenceButtons(EMCState *script);
 	int olol_setDefaultButtonState(EMCState *script);
@@ -635,12 +652,15 @@ private:
 	int olol_changeMonsterStat(EMCState *script);
 	int olol_getMonsterStat(EMCState *script);
 	int olol_playCharacterScriptChat(EMCState *script);
+	int olol_playEnvironmentalSfx(EMCState *script);
 	int olol_update(EMCState *script);
 	int olol_healCharacter(EMCState *script);
 	int olol_drawExitButton(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
 	int olol_playMusicTrack(EMCState *script);
 	int olol_countBlockItems(EMCState *script);
+	int olol_characterSkillTest(EMCState *script);
+	int olol_countActiveMonsters(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_calcInflictableDamage(EMCState *script);
@@ -649,12 +669,17 @@ private:
 	int olol_printMessage(EMCState *script);
 	int olol_deleteLevelItem(EMCState *script);
 	int olol_calcInflictableDamagePerItem(EMCState *script);
+	int olol_distanceAttack(EMCState *script);
+	int olol_removeCharacterEffects(EMCState *script);
 	int olol_objectLeavesLevel(EMCState *script);
+	int olol_addSpellToScroll(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);
 	int olol_checkMonsterTypeHostility(EMCState *script);
 	int olol_setNextFunc(EMCState *script);
 	int olol_dummy1(EMCState *script);
 	int olol_suspendMonster(EMCState *script);
+	int olol_triggerEventOnMouseButtonRelease(EMCState *script);
+	int olol_printWindowText(EMCState *script);
 	int olol_setUnkDoorVar(EMCState *script);
 	int olol_resetTimDialogueState(EMCState *script);
 	int olol_savePage5(EMCState *script);
@@ -668,6 +693,7 @@ private:
 	int olol_resetPortraitsAndDisableSysTimer(EMCState *script);
 	int olol_enableSysTimer(EMCState *script);
 	int olol_checkNeedSceneRestore(EMCState *script);
+	int olol_castSpell(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
 	int olol_characterSays(EMCState *script);
@@ -785,7 +811,7 @@ private:
 	int _updatePortraitSpeechAnimDuration;
 	int _portraitSpeechAnimMode;
 	int _updateCharV3;
-	int _textColourFlag;
+	int _textColorFlag;
 	bool _fadeText;
 	int _needSceneRestore;
 	uint32 _palUpdateTimer;
@@ -1070,6 +1096,7 @@ private:
 	int _currentControlMode;
 	int _specialSceneFlag;
 	int _lastCharInventory;
+	uint16 _invSkillFlags[6];
 
 	FlyingObject *_flyingObjects;
 
@@ -1107,7 +1134,7 @@ private:
 	int checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, int testFlag, int wallFlag);
 	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag);
 	int calcMonsterSkillLevel(int id, int a);
-	bool checkBlockOccupiedByParty(int x, int y, int testFlag);
+	int checkBlockOccupiedByParty(int x, int y, int testFlag);
 	const uint16 *getCharacterOrMonsterStats(int id);
 	uint16 *getCharacterOrMonsterItemsMight(int id);
 	uint16 *getCharacterOrMonsterProtectionAgainstItems(int id);
@@ -1145,7 +1172,7 @@ private:
 	uint8 **_monsterShapesEx;
 	uint8 _monsterAnimType[3];
 	uint16 _monsterCurBlock;
-	int _monsterLastWalkDirection;
+	int _objectLastDirection;
 	int _monsterCountUnk;
 	int _monsterShiftAlt;
 
@@ -1163,7 +1190,8 @@ private:
 	int _monsterScaleWHSize;
 
 	// misc
-	void delay(uint32 millis, bool cUpdate = false, bool isMainLoop = false);
+	void delay(uint32 millis, bool cUpdate = false, bool iUpdate = false);
+	void delayUntil(uint32 timeStamp);
 	uint8 getRandomNumberSpecial();
 
 	uint8 _compassBroken;
@@ -1175,17 +1203,53 @@ private:
 	uint32 _rndSpecial;
 
 	// spells
-	void processMagicHeal(int charNum, int points);
-	int checkMagic(int charNum, int spellNum, int spellLevel);	
+	typedef Common::Functor1Mem<ActiveSpell*, int, LoLEngine> SpellProc;
+	Common::Array<const SpellProc*> _spellProcs;
+	typedef void (LoLEngine::*SpellProcCallback)(WSAMovie_v2*, int, int);
 
+	int castSpell(int charNum, int spellType, int spellLevel);
+
+	int castSpark(ActiveSpell *a);
+	int castHeal(ActiveSpell *a);
+	int castIce(ActiveSpell *a);
+	int castFireball(ActiveSpell *a);
+	int castHandOfFate(ActiveSpell *a);
+	int castMistOfDoom(ActiveSpell *a);
+	int castLightning(ActiveSpell *a);
+	int castFog(ActiveSpell *a);
+	int castSwarm(ActiveSpell *a);
+	int castUnk(ActiveSpell *a);
+	int castGuardian(ActiveSpell *a);
+	int castHealOnSingleCharacter(ActiveSpell *a);
+
+	void processMagicSpark(int charNum, int spellLevel);
+	void processMagicHealSelectTarget();
+	void processMagicHeal(int charNum, int spellLevel);
+	void processMagicIce(int charNum, int spellLevel);
+	void processMagicFireball(int charNum, int spellLevel);
+	void processMagicMistOfDoom(int charNum, int spellLevel);
+	void processMagicSwarm(int charNum, int damage);
+
+	void callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y);
+
+	void addSpellToScroll(int spell, int charNum);
+	void transferSpellToScollAnimation(int charNum, int spell, int slot);
+
+	void playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFrame, int frameDelay, int x, int y, SpellProcCallback callback, uint8 *pal1, uint8 *pal2, int fadeDelay, bool restoreScreen);
+	int checkMagic(int charNum, int spellNum, int spellLevel);
+	int getSpellTargetBlock(int currentBlock, int direction, int maxDistance, uint16 &targetBlock);
+	void inflictMagicalDamage(int target, int attacker, int damage, int index, int hitType);
+
+	ActiveSpell _activeSpell;
 	int8 _availableSpells[7];
 	int _selectedSpell;
 	const SpellProperty *_spellProperties;
 	int _spellPropertiesSize;
 	int _subMenuIndex;
-	uint16 _unkIceSHpFlag;
 
+	uint16 _freezeStateFlags;
 	uint8 *_healOverlay;
+	uint8 _swarmSpellStatus;
 
 	uint8 **_fireballShapes;
 	int _numFireballShapes;
@@ -1194,6 +1258,10 @@ private:
 	uint8 **_healiShapes;
 	int _numHealiShapes;
 
+	const uint8 *_updateSpellBookCoords;
+	int _updateSpellBookCoordsSize;
+	const uint8 *_updateSpellBookAnimData;
+	int _updateSpellBookAnimDataSize;
 	const uint8 *_healShapeFrames;
 	int _healShapeFramesSize;
 
@@ -1202,7 +1270,7 @@ private:
 	int calcInflictableDamage(int16 attacker, int16 target, int hitType);
 	int inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int deathFlag);
 	void characterHitpointsZero(int16 charNum, int a);
-	void resetCharacterState(LoLCharacter *c, int first, int last);
+	void removeCharacterEffects(LoLCharacter *c, int first, int last);
 	int calcInflictableDamagePerItem(int16 attacker, int16 target, uint16 itemMight, int index, int hitType);
 	void checkForPartyDeath();
 
@@ -1220,7 +1288,7 @@ private:
 	void attackWall(int a, int b);
 
 	uint16 getNearestMonsterFromCharacter(int charNum);
-	uint16 getNearestMonsterFromCharacterForBlock(int block, int charNum);
+	uint16 getNearestMonsterFromCharacterForBlock(uint16 block, int charNum);
 	uint16 getNearestMonsterFromPos(int x, int y);
 	uint16 getNearestPartyMemberFromPos(int x, int y);
 

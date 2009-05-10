@@ -148,7 +148,7 @@ void Screen_LoL::fprintStringIntro(const char *format, int x, int y, uint8 c1, u
 	printText(buffer, x, y, c1, c2);
 }
 
-void Screen_LoL::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColours) {
+void Screen_LoL::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColors) {
 	uint8 tmpPal[768];
 
 	for (int i = 0; i != lastColor; i++) {
@@ -161,7 +161,7 @@ void Screen_LoL::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, in
 	}
 
 	for (int i = 0; i < lastColor; i++)
-		grayOverlay[i] = findLeastDifferentColor(tmpPal + 3 * i, srcPal, lastColor, skipSpecialColours);
+		grayOverlay[i] = findLeastDifferentColor(tmpPal + 3 * i, srcPal, lastColor, skipSpecialColors);
 }
 
 uint8 *Screen_LoL::generateLevelOverlay(const uint8 *srcPal, uint8 *ovl, int opColor, int weight) {
@@ -290,7 +290,7 @@ void Screen_LoL::fadeClearSceneWindow(int delay) {
 
 	memcpy(tpal, _currentPalette, 768);
 	memset(tpal, 0, 384);
-	loadSpecialColours(tpal);
+	loadSpecialColors(tpal);
 	fadePalette(tpal, delay);
 	fillRect(112, 0, 288, 120, 0);
 	delete[] tpal;
@@ -658,13 +658,13 @@ void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 	_fadeFlag = 2;
 }
 
-void Screen_LoL::loadSpecialColours(uint8 *destPalette) {
+void Screen_LoL::loadSpecialColors(uint8 *destPalette) {
 	memcpy(destPalette + 0x240, _screenPalette + 0x240, 12);	
 }
 
-void Screen_LoL::copyColour(int dstColourIndex, int srcColourIndex) {
-	uint8 *s = _screenPalette + srcColourIndex * 3;
-	uint8 *d = _screenPalette + dstColourIndex * 3;
+void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {
+	uint8 *s = _screenPalette + srcColorIndex * 3;
+	uint8 *d = _screenPalette + dstColorIndex * 3;
 	memcpy(d, s, 3);
 
 	uint8 ci[4];
@@ -673,13 +673,13 @@ void Screen_LoL::copyColour(int dstColourIndex, int srcColourIndex) {
 	ci[2] = (d[2] << 2) | (d[2] & 3);
 	ci[3] = 0;
 
-	_system->setPalette(ci, dstColourIndex, 1);
+	_system->setPalette(ci, dstColorIndex, 1);
 }
 
-bool Screen_LoL::fadeColour(int dstColourIndex, int srcColourIndex, uint32 elapsedTime, uint32 targetTime) {
-	uint8 *dst = _screenPalette + 3 * dstColourIndex;
-	uint8 *src = _screenPalette + 3 * srcColourIndex;
-	uint8 *p = getPalette(1) + 3 * dstColourIndex;
+bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTime, uint32 targetTime) {
+	uint8 *dst = _screenPalette + 3 * dstColorIndex;
+	uint8 *src = _screenPalette + 3 * srcColorIndex;
+	uint8 *p = getPalette(1) + 3 * dstColorIndex;
 
 	bool res = false;
 
@@ -714,7 +714,35 @@ bool Screen_LoL::fadeColour(int dstColourIndex, int srcColourIndex, uint32 elaps
 
 	uint8 tpal[768];
 	memcpy(tpal, _screenPalette, 768);
-	memcpy(tpal + dstColourIndex * 3, tmpPalEntry, 3);
+	memcpy(tpal + dstColorIndex * 3, tmpPalEntry, 3);
+	setScreenPalette(tpal);
+	updateScreen();
+
+	return res;
+}
+
+bool Screen_LoL::fadePalSpecial(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime) {
+	uint8 tpal[768];
+	uint8 *p1 = _palettes[1];	
+
+	bool res = false;
+	for (int i = 0; i < 768; i++) {
+		uint8 out = 0;
+		if (elapsedTime < targetTime) {
+			int d = (pal2[i] & 0x3f) - (pal1[i] & 0x3f);
+			if (d)
+				res = true;
+
+			int val = ((((d << 8) / targetTime) * elapsedTime) >> 8) & 0xff;
+			out = ((pal1[i] & 0x3f) + val) & 0xff;
+		} else {
+			out = p1[i] = (pal2[i] & 0x3f);
+			res = false;
+		}
+
+		tpal[i] = out;
+	}
+
 	setScreenPalette(tpal);
 	updateScreen();
 

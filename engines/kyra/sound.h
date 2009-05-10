@@ -213,6 +213,13 @@ public:
 	bool voiceIsPlaying(const char *file = 0);
 
 	/**
+	 * Checks if all voice handles are used.
+	 *
+	 * @return false when a handle is free, else true
+	 */
+	bool allVoiceChannelsPlaying();
+
+	/**
 	 * Checks how long a voice has been playing
 	 *
 	 * @return time in milliseconds

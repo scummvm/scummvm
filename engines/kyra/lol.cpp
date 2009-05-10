@@ -72,6 +72,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 		break;
 	}
 
+	_chargenFrameTable = _flags.isTalkie ? _chargenFrameTableTalkie : _chargenFrameTableFloppy;
 	_chargenWSA = 0;
 	_lastUsedStringBuffer = 0;
 	_landsFile = 0;
@@ -89,6 +90,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_itemProperties = 0;
 	_itemInHand = 0;
 	memset(_inventory, 0, sizeof(_inventory));
+	memset(_invSkillFlags, 0, sizeof(_invSkillFlags));
 	_inventoryCurItem = 0;
 	_currentControlMode = 0;
 	_specialSceneFlag = 0;
@@ -102,6 +104,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset(_monsterAnimType, 0, 3);
 	_pageSavedFlag = false;
 	_healOverlay = 0;
+	_swarmSpellStatus = 0;
 
 	_ingameMT32SoundIndex = _ingameGMSoundIndex = /*_ingameADLSoundIndex =*/ 0;
 
@@ -110,7 +113,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_spellProperties = 0;
 	_updateFlags = 0;
 	_selectedSpell = 0;
-	_updateCharNum = _updatePortraitSpeechAnimDuration = _portraitSpeechAnimMode = _updateCharV3 = _textColourFlag = _needSceneRestore = 0;
+	_updateCharNum = _updatePortraitSpeechAnimDuration = _portraitSpeechAnimMode = _updateCharV3 = _textColorFlag = _needSceneRestore = 0;
 	_fadeText = false;
 	_palUpdateTimer = _updatePortraitNext = 0;
 	_lampStatusTimer = 0xffffffff;
@@ -155,7 +158,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_flyingObjects = 0;
 	_monsters = 0;
 	_lastMouseRegion = 0;
-	_monsterLastWalkDirection = _monsterCountUnk = _monsterShiftAlt = 0;
+	_objectLastDirection = _monsterCountUnk = _monsterShiftAlt = 0;
 	_monsterCurBlock = 0;
 	_seqWindowX1 = _seqWindowY1 = _seqWindowX2 = _seqWindowY2 = _seqTrigger = 0;
 	_spsWindowX = _spsWindowY = _spsWindowW = _spsWindowH = 0;
@@ -200,6 +203,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	memset(_activeTim, 0, sizeof(_activeTim));
 	memset(_activeVoiceFile, 0, sizeof(_activeVoiceFile));
 	memset(_openDoorState, 0, sizeof(_openDoorState));
+	memset(&_activeSpell, 0, sizeof(_activeSpell));
 
 	_activeVoiceFileTotalTime = 0;
 	_pageBuffer1 = _pageBuffer2 = 0;
@@ -221,7 +225,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_floatingCursorsEnabled = false;
 
 	memset(_lvlTempData, 0, sizeof(_lvlTempData));
-	_unkIceSHpFlag = 0;
+	_freezeStateFlags = 0;
 
 	_mapOverlay = 0;
 	_automapShapes = 0;
@@ -389,6 +393,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _defaultLegendData;
 	delete[] _mapCursorOverlay;
 	delete[] _mapOverlay;
+	_spellProcs.clear();
 }
 
 Screen *LoLEngine::screen() {
@@ -498,6 +503,24 @@ Common::Error LoLEngine::init() {
 
 	_automapShapes = new const uint8*[109];
 	_mapOverlay = new uint8[256];
+
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castSpark));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castHeal));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castIce));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castFireball));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castHandOfFate));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castMistOfDoom));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castLightning));
+	_spellProcs.push_back(new SpellProc(this, 0));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castFog));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castSwarm));
+	_spellProcs.push_back(new SpellProc(this, 0));
+	_spellProcs.push_back(new SpellProc(this, 0));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castUnk));
+	_spellProcs.push_back(new SpellProc(this, 0));
+	_spellProcs.push_back(new SpellProc(this, 0));
+	_spellProcs.push_back(new SpellProc(this, 0));
+	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castGuardian));
 
 	return Common::kNoError;
 }
@@ -736,7 +759,7 @@ int LoLEngine::mainMenu() {
 	assert(menu);
 	menu->init(data[dataIndex], MainMenu::Animation());
 
-	int selection = menu->handle(_flags.isTalkie ? (hasSave ? 12 : 6) : (hasSave ? 6 : 13));
+	int selection = menu->handle(_flags.isTalkie ? (hasSave ? 17 : 6) : (hasSave ? 6 : 18));
 	delete menu;
 	_screen->setScreenDim(0);
 
@@ -1153,7 +1176,7 @@ void LoLEngine::updatePortraits() {
 }
 
 void LoLEngine::initTextFading(int textType, int clearField) {
-	if (_textColourFlag == textType || !textType) {
+	if (_textColorFlag == textType || !textType) {
 		_fadeText = true;
 		_palUpdateTimer = _system->getMillis();
 	}
@@ -1546,7 +1569,7 @@ void LoLEngine::fadeText() {
 	if (!_fadeText)
 		return;
 
-	if (_screen->fadeColour(192, 252, _system->getMillis() - _palUpdateTimer, 60 * _tickLength))
+	if (_screen->fadeColor(192, 252, _system->getMillis() - _palUpdateTimer, 60 * _tickLength))
 		return;
 
 	if (_needSceneRestore)
@@ -1567,7 +1590,7 @@ void LoLEngine::setPaletteBrightness(uint8 *palette, int brightness, int modifie
 
 void LoLEngine::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier) {
 	memcpy(dst, src, 0x300);
-	_screen->loadSpecialColours(dst);
+	_screen->loadSpecialColors(dst);
 	brightness = (8 - brightness) << 5;
 	if (modifier >= 0 && modifier < 8 && _gameFlags[15] & 0x800) {
 		brightness = 256 - ((((modifier & 0xfffe) << 5) * (256 - brightness)) >> 8);
@@ -1690,10 +1713,11 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	if (playList.empty())
 		return false;
 
-	while (_sound->voiceIsPlaying(_activeVoiceFile)) {
-		update();
-		delay(_tickLength);
-	};
+	while (_sound->voiceIsPlaying(_activeVoiceFile))
+		delay(_tickLength, true, false);
+
+	while (_sound->allVoiceChannelsPlaying())
+		delay(_tickLength, false, true);
 
 	strcpy(_activeVoiceFile, *playList.begin());
 	_activeVoiceFileTotalTime = _sound->voicePlayFromList(playList);
@@ -1824,6 +1848,12 @@ void LoLEngine::snd_queueEnvironmentalSoundEffect(int soundId, int block) {
 	} else {
 		snd_processEnvironmentalSoundEffect(soundId, block);
 	}
+}
+
+void LoLEngine::snd_playQueuedEffects() {
+	for (int i = 0; i < _envSfxNumTracksInQueue; i++)
+		snd_processEnvironmentalSoundEffect(_envSfxQueuedTracks[i], _envSfxQueuedBlocks[i]);
+	_envSfxNumTracksInQueue = 0;
 }
 
 void LoLEngine::snd_loadSoundFile(int track) {
@@ -1969,7 +1999,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int unk1, char *str
 		}
 	}
 
-	_fadeText = 0;
+	_fadeText = false;
 	if (!skipAnim)
 		updatePortraitSpeechAnim();
 
@@ -1996,12 +2026,26 @@ uint16 *LoLEngine::getCharacterOrMonsterProtectionAgainstItems(int id) {
 	return (id & 0x8000) ? _monsters[id & 0x7fff].properties->protectionAgainstItems : _characters[id].protectionAgainstItems;
 }
 
-void LoLEngine::delay(uint32 millis, bool cUpdate, bool isMainLoop) {
-	uint32 endTime = _system->getMillis() + millis;
-	while (endTime > _system->getMillis()) {
+void LoLEngine::delay(uint32 millis, bool cUpdate, bool iUpdate) {
+	int del = (int)(millis);
+	while (del > 0) {
 		if (cUpdate)
 			update();
-		_system->delayMillis(4);
+		if (iUpdate)
+			updateInput();
+		int step = del >= _tickLength ? _tickLength : del;
+		_system->delayMillis(step);
+		del -= step;
+	}
+}
+
+void LoLEngine::delayUntil(uint32 timeStamp) {
+	int del = (int)(timeStamp - _system->getMillis());
+	while (del > 0) {
+		updateInput();
+		int step = del >= _tickLength ? _tickLength : del;
+		_system->delayMillis(step);
+		del -= step;
 	}
 }
 
@@ -2035,7 +2079,181 @@ void LoLEngine::updateEnvironmentalSfx(int soundId) {
 	snd_processEnvironmentalSoundEffect(soundId, _currentBlock);
 }
 
-void LoLEngine::processMagicHeal(int charNum, int points) {
+// spells
+
+int LoLEngine::castSpell(int charNum, int spellType, int spellLevel) {
+	_activeSpell.charNum = charNum;
+	_activeSpell.spell = spellType;
+	_activeSpell.p = &_spellProperties[spellType];
+
+	_activeSpell.level = spellLevel < 0 ? -spellLevel : spellLevel;
+
+	if ((_spellProperties[spellType].flags & 0x100) && testWallFlag(calcNewBlockPosition(_currentBlock, _currentDirection), _currentDirection, 1)) {
+		_txt->printMessage(2, getLangString(0x4257));
+		return 0;
+	}
+	
+	if (charNum < 0) {
+		_activeSpell.charNum = (charNum * -1) - 1;
+		if (_spellProcs[spellType]->isValid())
+			return (*_spellProcs[spellType])(&_activeSpell);
+	} else {
+		if (_activeSpell.p->mpRequired[spellLevel] > _characters[charNum].magicPointsCur)
+			return 0;
+
+		if (_activeSpell.p->hpRequired[spellLevel] >= _characters[charNum].hitPointsCur)
+			return 0;
+
+		setCharacterMagicOrHitPoints(charNum, 1, -_activeSpell.p->mpRequired[spellLevel], 1);
+		setCharacterMagicOrHitPoints(charNum, 0, -_activeSpell.p[1].hpRequired[spellLevel], 1);
+		gui_drawCharPortraitWithStats(charNum);
+
+		if (_spellProcs[spellType]->isValid())
+			(*_spellProcs[spellType])(&_activeSpell);
+	}
+	
+	return 1;
+}
+
+int LoLEngine::castSpark(ActiveSpell *a) {
+	processMagicSpark(a->charNum, a->level);
+	return 1;
+}
+
+int LoLEngine::castHeal(ActiveSpell *a) {
+	if (a->level < 3)
+		processMagicHealSelectTarget();
+	else
+		processMagicHeal(-1, a->level);
+
+	return 1;
+}
+
+int LoLEngine::castIce(ActiveSpell *a) {
+	processMagicIce(a->charNum, a->level);
+	return 1;
+}
+
+int LoLEngine::castFireball(ActiveSpell *a) {
+	processMagicFireball(a->charNum, a->level);
+	return 1;
+}
+
+int LoLEngine::castHandOfFate(ActiveSpell *a) {
+	return 1;
+}
+
+int LoLEngine::castMistOfDoom(ActiveSpell *a) {
+	processMagicMistOfDoom(a->charNum, a->level);
+	return 1;
+}
+
+int LoLEngine::castLightning(ActiveSpell *a) {
+	return 1;
+}
+
+int LoLEngine::castFog(ActiveSpell *a) {
+	return 1;
+}
+
+int LoLEngine::castSwarm(ActiveSpell *a) {
+	processMagicSwarm(a->charNum, 10);
+	return 1;
+}
+
+int LoLEngine::castUnk(ActiveSpell *a) {
+	return 1;
+}
+
+int LoLEngine::castGuardian(ActiveSpell *a) {
+	return 1;
+}
+
+int LoLEngine::castHealOnSingleCharacter(ActiveSpell *a) {
+	processMagicHeal(a->target, a->level);
+	return 1;
+}
+
+void LoLEngine::processMagicSpark(int charNum, int spellLevel) {
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	_screen->copyPage(0, 12);
+
+	mov->open("spark1.wsa", 0, 0);
+	if (!mov->opened())
+		error("SPARK: Unable to load SPARK1.WSA");
+	snd_playSoundEffect(72, -1);
+	playSpellAnimation(mov, 0, 7, 4, _activeCharsXpos[charNum] - 2, 138, 0, 0, 0, 0, false);
+	mov->close();
+
+	_screen->copyPage(12, 0);
+	_screen->updateScreen();
+
+	uint16 targetBlock = 0;
+	int dist = getSpellTargetBlock(_currentBlock, _currentDirection, 4, targetBlock);
+	uint16 target = getNearestMonsterFromCharacterForBlock(targetBlock, charNum);
+
+	static const uint8 dmg[] = { 7, 15, 25, 60 };
+	if (target != 0xffff) {
+		inflictMagicalDamage(target, charNum, dmg[spellLevel], 5, 0);
+		updateDrawPage2();
+		gui_drawScene(0);
+		_screen->copyPage(0, 12);
+	}
+
+	int numFrames = mov->open("spark2.wsa", 0, 0);
+	if (!mov->opened())
+		error("SPARK: Unable to load SPARK2.WSA");
+
+	uint16 wX[6];
+	uint16 wY[6];
+	uint16 wFrames[6];
+	const uint16 width = mov->width();
+	const uint16 height = mov->height();
+	
+	for (int i = 0; i < 6; i++) {
+		wX[i] = (_rnd.getRandomNumber(0x7fff) % 64) + ((176 - width) >> 1) + 80;
+		wY[i] = (_rnd.getRandomNumber(0x7fff) % 32) + ((120 - height) >> 1) - 16;
+		wFrames[i] = i << 1;
+	}
+
+	for (int i = 0, d = ((spellLevel << 1) + 12); i < d; i++) {
+		_smoothScrollTimer = _system->getMillis() + 4 * _tickLength;
+		_screen->copyPage(12, 2);
+
+		for (int ii = 0; ii <= spellLevel; ii++) {
+			if (wFrames[ii] >= i || wFrames[ii] + 13 <= i)
+				continue;
+			
+			if ((i - wFrames[ii]) == 1)
+				snd_playSoundEffect(162, -1);
+
+			mov->displayFrame(((i - wFrames[ii]) + (dist << 4)) % numFrames, 2, wX[ii], wY[ii], 0x5000, _trueLightTable1, _trueLightTable2);
+			_screen->copyRegion(wX[ii], wY[ii], wX[ii], wY[ii], width, height, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->updateScreen();
+		}
+
+		if (i < d - 1)
+			delayUntil(_smoothScrollTimer);
+	}
+
+	mov->close();
+
+	_screen->copyPage(12, 2);
+	updateDrawPage2();
+
+	_sceneUpdateRequired = true;
+
+	delete mov;
+}
+
+void LoLEngine::processMagicHealSelectTarget() {
+	_txt->printMessage(0, getLangString(0x4040));
+	gui_resetButtonList();
+	gui_setFaceFramesControlButtons(81, 0);
+	gui_initButtonsFromList(_buttonList8);
+}
+
+void LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 	if (!_healOverlay) {
 		_healOverlay = new uint8[256];
 		_screen->generateGrayOverlay(_screen->getPalette(1), _healOverlay, 52, 22, 20, 0, 256, true);
@@ -2043,28 +2261,28 @@ void LoLEngine::processMagicHeal(int charNum, int points) {
 
 	const uint8 *healShpFrames = 0;
 	const uint8 *healiShpFrames = 0;
-	bool resetFlag = false;
-	int maxDiff = 0;
+	bool curePoison = false;
+	int points = 0;
 
-	if (points == 0) {
-		maxDiff = 25;
+	if (spellLevel == 0) {
+		points = 25;
 		healShpFrames = _healShapeFrames;
 		healiShpFrames = _healShapeFrames + 32;
 
-	} else if (points == 1) {
-		maxDiff = 45;
+	} else if (spellLevel == 1) {
+		points = 45;
 		healShpFrames = _healShapeFrames + 16;
 		healiShpFrames = _healShapeFrames + 48;
 
-	} else if (points > 3) {
-		resetFlag = true;
-		maxDiff = points;
+	} else if (spellLevel > 3) {
+		curePoison = true;
+		points = spellLevel;
 		healShpFrames = _healShapeFrames + 16;
 		healiShpFrames = _healShapeFrames + 64;
 
 	} else {
-		resetFlag = true;
-		maxDiff = 10000;
+		curePoison = true;
+		points = 10000;
 		healShpFrames = _healShapeFrames + 16;
 		healiShpFrames = _healShapeFrames + 64;
 
@@ -2087,13 +2305,15 @@ void LoLEngine::processMagicHeal(int charNum, int points) {
 	memset(pts, 0, sizeof(pts));
 
 	while (charNum < n) {
-		if (!(_characters[charNum].flags & 1))
+		if (!(_characters[charNum].flags & 1)) {
+			charNum++;
 			continue;
+		}
 
 		pX[charNum] = _activeCharsXpos[charNum] - 6;
 		_characters[charNum].damageSuffered = 0;
 		int dmg = _characters[charNum].hitPointsMax - _characters[charNum].hitPointsCur;
-		diff[charNum] = (dmg < maxDiff) ? dmg : maxDiff;
+		diff[charNum] = (dmg < points) ? dmg : points;
 		_screen->copyRegion(pX[charNum], pY, charNum * 77, 32, 77, 44, 0, 2, Screen::CR_NO_P_CHECK);
 		charNum++;
 	}
@@ -2125,20 +2345,17 @@ void LoLEngine::processMagicHeal(int charNum, int points) {
 			_screen->updateScreen();
 		}
 
-		while ((int)(_smoothScrollTimer - _system->getMillis()) > 0) {
-			updateInput();
-			delay(_tickLength);
-		}
+		delayUntil(_smoothScrollTimer);
 	}
 
 	for (charNum = ch; charNum < n; charNum++) {
 		if (!(_characters[charNum].flags & 1))
-				continue;
+			continue;
 
 		_screen->copyRegion(charNum * 77, 32, pX[charNum], pY, 77, 44, 2, 2, Screen::CR_NO_P_CHECK);
 
-		if (resetFlag)
-			resetCharacterState(&_characters[charNum], 4, 4);
+		if (curePoison)
+			removeCharacterEffects(&_characters[charNum], 4, 4);
 
 		gui_drawCharPortraitWithStats(charNum);
 		_screen->copyRegion(pX[charNum], pY, pX[charNum], pY, 77, 44, 2, 0, Screen::CR_NO_P_CHECK);
@@ -2149,17 +2366,351 @@ void LoLEngine::processMagicHeal(int charNum, int points) {
 	updateDrawPage2();
 }
 
+void LoLEngine::processMagicIce(int charNum, int spellLevel) {
+	int cp = _screen->setCurPage(2);
+	
+	disableSysTimer(2);
+	
+	gui_drawScene(0);
+	_screen->copyPage(0, 12);
+
+	//uint8 pal2[768];
+	//uint8 pal3[768];
+
+	if (_currentLevel = 11 && !(_freezeStateFlags & 4)) {
+		for (int i = 1; i < 384; i++) {
+
+		///////// TODO
+
+		}
+
+		_freezeStateFlags |= 4;
+		static const uint8 freezeTimes[] =  { 20, 28, 40, 60 };
+		setCharacterUpdateEvent(charNum, 8, freezeTimes[spellLevel], 1);
+	}
+
+	////////// TODO
+	generateBrightnessPalette(_screen->_currentPalette, _screen->getPalette(1), _brightness, _lampEffect);
+	
+	////////// TODO
+
+	_screen->setCurPage(cp);
+}
+
+void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
+
+}
+
+void LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
+
+}
+
+void LoLEngine::processMagicSwarm(int charNum, int damage) {
+	int cp = _screen->setCurPage(2);
+	_screen->copyPage(0, 12);
+	snd_playSoundEffect(74, -1);
+	
+	uint16 destIds[6];
+	uint8 destModes[6];
+	int8 destTicks[6];
+
+	memset(destIds, 0, sizeof(destIds));
+	memset(destModes, 8, sizeof(destModes));
+	memset(destTicks, 0, sizeof(destTicks));
+
+	int t = 0;
+	uint16 o = _levelBlockProperties[calcNewBlockPosition(_currentBlock, _currentDirection)].assignedObjects;
+	while (o & 0x8000) {
+		o &= 0x7fff;
+		if (_monsters[o].mode != 13) {
+			destIds[t++] = o;
+			
+			if (!(_monsters[o].flags & 0x2000)) {
+				_envSfxUseQueue = true;
+				inflictMagicalDamage(o | 0x8000, charNum, damage, 0, 0);
+				_envSfxUseQueue = false;
+				_monsters[o].flags &= 0xffef;
+			}
+		}
+		o = _monsters[o].nextAssignedObject;
+	}
+
+	for (int i = 0; i < t; i++) {
+		SWAP(destModes[i], _monsters[destIds[i]].mode);
+		SWAP(destTicks[i], _monsters[destIds[i]].fightCurTick);
+	}
+
+	gui_drawScene(_screen->_curPage);
+	_screen->copyRegion(112, 0, 112, 0, 176, 120, _screen->_curPage, 7);
+
+	for (int i = 0; i < t; i++) {
+		_monsters[destIds[i]].mode = destModes[i];
+		_monsters[destIds[i]].fightCurTick = destTicks[i];
+	}
+
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+
+	mov->open("swarm.wsa", 0, 0);
+	if (!mov->opened())
+		error("Swarm: Unable to load SWARM.WSA");
+	_screen->hideMouse();
+	playSpellAnimation(mov, 0, 37, 2, 0, 0, 0, 0, 0, 0, false);
+	playSpellAnimation(mov, 38, 41, 8, 0, 0, &LoLEngine::callbackProcessMagicSwarm, 0, 0, 0, false);
+	_screen->showMouse();
+	mov->close();
+
+	_screen->copyPage(12, 0);
+	updateDrawPage2();
+
+	snd_playQueuedEffects();
+
+	_screen->setCurPage(cp);
+	delete mov;
+}
+
+void LoLEngine::callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y) {
+	if (_swarmSpellStatus)
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, 6, _screen->_curPage);
+	_swarmSpellStatus ^= 1;
+}
+
+void LoLEngine::addSpellToScroll(int spell, int charNum) {
+	bool assigned = false;
+	int slot = 0;
+	for (int i = 0; i < 7; i++) {
+		if (!assigned && _availableSpells[i] == -1) {
+			assigned = true;
+			slot = i;
+		}
+		
+		if (_availableSpells[i] == spell) {
+			_txt->printMessage(2, getLangString(0x42d0));
+			return;
+		}
+	}
+
+	if (spell > 1)
+		transferSpellToScollAnimation(charNum, spell, slot - 1);
+
+	_availableSpells[slot] = spell;
+	gui_enableDefaultPlayfieldButtons();
+}
+
+void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot)  {
+	int cX = 16 + _activeCharsXpos[charNum];
+
+	if (slot != 1) {
+		_screen->loadBitmap("playfld.cps", 3, 3, 0);
+		_screen->copyRegion(8, 0, 216, 0, 96, 120, 3, 3, Screen::CR_NO_P_CHECK);
+		_screen->copyPage(3, 10);
+		for (int i = 0; i < 9; i++) {
+			int h = (slot + 1) * 9 + i + 1;
+			_smoothScrollTimer = _system->getMillis() + _tickLength;
+			_screen->copyPage(10, 3);
+			_screen->copyRegion(216, 0, 8, 0, 96, 120, 3, 3, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(112, 0, 12, 0, 87, 15, 2, 2, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(201, 1, 17, 15, 6, h, 2, 2, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(208, 1, 89, 15, 6, h, 2, 2, Screen::CR_NO_P_CHECK);
+			int cp = _screen->setCurPage(2);
+			_screen->fillRect(21, 15, 89, h + 15, 206);
+			_screen->copyRegion(112, 16, 12, h + 15, 87, 14, 2, 2, Screen::CR_NO_P_CHECK);
+
+			int y = 15;
+			for (int ii = 0; ii < 7; ii++) {
+				if (_availableSpells[ii] == -1)
+					continue;
+				uint8 col = (ii == _selectedSpell) ? 132 : 1;
+				_screen->fprintString(getLangString(_spellProperties[_availableSpells[ii]].spellNameCode), 24, y, col, 0, 0);
+				y += 9;
+			}
+
+			_screen->setCurPage(cp);
+			_screen->copyRegion(8, 0, 8, 0, 96, 120, 3, 0, Screen::CR_NO_P_CHECK);
+			_screen->updateScreen();
+
+			delayUntil(_smoothScrollTimer);
+		}
+	}
+
+	_screen->hideMouse();
+
+	_screen->copyPage(0, 12);
+	int vX = _updateSpellBookCoords[slot << 1] + 32;
+	int vY = _updateSpellBookCoords[(slot << 1) + 1] + 5;
+	
+	char wsaFile[13];
+	snprintf(wsaFile, 13, "write%0d%c.wsa", spell, (_lang == 1) ? 'f' : (_lang == 0 ? 'e' : 'g'));
+	snd_playSoundEffect(_updateSpellBookAnimData[(spell << 2) + 3], -1);
+	snd_playSoundEffect(95, -1);
+
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+
+	mov->open("getspell.wsa", 0, 0);
+	if (!mov->opened())
+		error("SpellBook: Unable to load getspell anim");
+	snd_playSoundEffect(128, -1);
+	playSpellAnimation(mov, 0, 25, 5, _activeCharsXpos[charNum], 148, 0, 0, 0, 0, true);
+	snd_playSoundEffect(128, -1);
+	playSpellAnimation(mov, 26, 52, 5, _activeCharsXpos[charNum], 148, 0, 0, 0, 0, true);
+
+	for (int i = 16; i > 0; i--) {
+		_smoothScrollTimer = _system->getMillis() + _tickLength;
+		_screen->copyPage(12, 2);
+
+		int wsaX = vX + (((((cX - vX) << 8) / 16) * i) >> 8) - 16;
+		int wsaY = vY + (((((160 - vY) << 8) / 16) * i) >> 8) - 16;
+
+		mov->displayFrame(51, 2, wsaX, wsaY, 0x5000, _trueLightTable1, _trueLightTable2);
+
+		_screen->copyRegion(wsaX, wsaY, wsaX, wsaY, mov->width() + 48, mov->height() + 48, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+
+		delayUntil(_smoothScrollTimer);
+	}
+
+	mov->close();
+
+	mov->open("spellexp.wsa", 0, 0);
+	if (!mov->opened())
+		error("SpellBook: Unable to load spellexp anim");
+	snd_playSoundEffect(168, -1);
+	playSpellAnimation(mov, 0, 8, 3, vX - 44, vY - 38, 0, 0, 0, 0, true);
+	mov->close();
+
+	mov->open("writing.wsa", 0, 0);
+	if (!mov->opened())
+		error("SpellBook: Unable to load writing anim");
+	playSpellAnimation(mov, 0, 6, 5, _updateSpellBookCoords[slot << 1], _updateSpellBookCoords[(slot << 1) + 1], 0, 0, 0, 0, false);
+	mov->close();
+
+	mov->open(wsaFile, 0, 0);
+	if (!mov->opened())
+		error("SpellBook: Unable to load spellbook anim");
+	snd_playSoundEffect(_updateSpellBookAnimData[(spell << 2) + 3], -1);
+	playSpellAnimation(mov, _updateSpellBookAnimData[(spell << 2) + 1], _updateSpellBookAnimData[(spell << 2) + 2], _updateSpellBookAnimData[spell << 2], _updateSpellBookCoords[slot << 1], _updateSpellBookCoords[(slot << 1) + 1], 0, 0, 0, 0, false);
+	mov->close();
+
+	gui_drawScene(2);
+	updateDrawPage2();
+
+	_screen->showMouse();
+
+	delete mov;
+}
+
+void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFrame, int frameDelay, int x, int y, SpellProcCallback callback, uint8 *pal1, uint8 *pal2, int fadeDelay, bool restoreScreen) {
+	int w = 0;
+	int h = 0;
+	
+	if (mov) {
+		w = mov->width();
+		h = mov->height();
+	}
+
+	int w2 = w;
+	int h2 = h;
+	uint32 startTime = _system->getMillis();
+
+	if (x < 0)
+		w2 += x;
+	if (y < 0)
+		h2 += y;
+
+	int dir = lastFrame >= firstFrame ? 1 : -1;
+	int curFrame = firstFrame;
+
+	bool fin = false;
+
+	while (!fin) {
+		_smoothScrollTimer = _system->getMillis() + _tickLength * frameDelay;
+
+		if (mov || callback)
+			_screen->copyPage(12, 2);
+
+		if (callback)
+			(this->*callback)(mov, x, y);
+
+		if (mov)
+			mov->displayFrame(curFrame % mov->frames(), 2, x, y, 0x5000, _trueLightTable1, _trueLightTable2);
+
+		if (mov || callback) {
+			_screen->copyRegion(x, y, x, y, w2, h2, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->updateScreen();
+		}
+
+		int del = _smoothScrollTimer - _system->getMillis();
+		do {
+			
+			int step = del > _tickLength ? _tickLength : del;
+
+			if (!pal1 || !pal2) {
+				delay(step);
+				del -= step;
+				continue;
+			}
+
+			if (!_screen->fadePalSpecial(pal1, pal2, _system->getMillis() - startTime, _tickLength * fadeDelay) && !mov)
+				return;
+
+			delay(step);
+			del -= step;
+		} while (del > 0);
+
+		if (!mov)
+			continue;
+
+		curFrame += dir;
+		if (curFrame == lastFrame)
+			fin = true;
+	}
+
+	if (restoreScreen && (mov || callback)) {
+		_screen->copyPage(12, 2);
+		_screen->copyRegion(x, y, x, y, w2, h2, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+	}
+}
+
 int LoLEngine::checkMagic(int charNum, int spellNum, int spellLevel) {
 	if (_spellProperties[spellNum].mpRequired[spellLevel] > _characters[charNum].magicPointsCur) {
 		if (characterSays(0x4043, _characters[charNum].id, true))
 			_txt->printMessage(6, getLangString(0x4043), _characters[charNum].name);
 		return 1;
-	} else if (_spellProperties[spellNum + 1].unkArr[spellLevel] >= _characters[charNum].hitPointsCur) {
+	} else if (_spellProperties[spellNum].hpRequired[spellLevel] >= _characters[charNum].hitPointsCur) {
 		_txt->printMessage(2, getLangString(0x4179), _characters[charNum].name);
 		return 1;
 	}
 
 	return 0;
+}
+
+int LoLEngine::getSpellTargetBlock(int currentBlock, int direction, int maxDistance, uint16 &targetBlock) {
+	targetBlock = 0xffff;
+	uint16 c = calcNewBlockPosition(currentBlock, direction);
+
+	int i = 0;
+	for (; i < maxDistance; i++) {
+		if (_levelBlockProperties[currentBlock].assignedObjects & 0x8000) {
+			targetBlock = currentBlock;
+			return i;
+		}
+
+		if (_wllWallFlags[_levelBlockProperties[c].walls[direction ^ 2]] & 7) {
+			targetBlock = c;
+			return i;
+		}
+
+		currentBlock = c;
+		c = calcNewBlockPosition(currentBlock, direction);
+	}
+
+	return i;
+}
+
+void LoLEngine::inflictMagicalDamage(int target, int attacker, int damage, int index, int hitType) {
+	hitType = hitType ? 1 : 2;
+	damage = calcInflictableDamagePerItem(attacker, target, damage, index, hitType);
+	inflictDamage(target, damage, attacker, 2, index);
 }
 
 // fight
@@ -2296,11 +2847,11 @@ void LoLEngine::characterHitpointsZero(int16 charNum, int deathFlag) {
 	LoLCharacter *c = &_characters[charNum];
 	c->hitPointsCur = 0;
 	c->flags |= 8;
-	resetCharacterState(c, 1, 5);
+	removeCharacterEffects(c, 1, 5);
 	_partyDeathFlag = deathFlag;
 }
 
-void LoLEngine::resetCharacterState(LoLCharacter *c, int first, int last) {
+void LoLEngine::removeCharacterEffects(LoLCharacter *c, int first, int last) {
 	for (int i = first; i <= last; i++) {
 		switch (i - 1) {
 			case 0:
@@ -2614,12 +3165,15 @@ uint16 LoLEngine::getNearestMonsterFromCharacter(int charNum) {
 	return getNearestMonsterFromCharacterForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum);
 }
 
-uint16 LoLEngine::getNearestMonsterFromCharacterForBlock(int block, int charNum) {
+uint16 LoLEngine::getNearestMonsterFromCharacterForBlock(uint16 block, int charNum) {
 	uint16 cX = 0;
 	uint16 cY = 0;
 
 	uint16 id = 0xffff;
 	int minDist = 0x7fff;
+
+	if (block == 0xffff)
+		return id;
 
 	calcCoordinatesForSingleCharacter(charNum, cX, cY);
 

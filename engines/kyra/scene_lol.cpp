@@ -398,7 +398,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		memcpy(_screen->getPalette(2) + 0x180, _screen->_currentPalette, 384);
 		delete[] swampPal;
 
-		if (_unkIceSHpFlag & 4) {
+		if (_freezeStateFlags & 4) {
 			uint8 *pal0 = _screen->_currentPalette;
 			uint8 *pal2 = _screen->getPalette(2);
 			for (int i = 1; i < 768; i++)
@@ -870,24 +870,23 @@ bool LoLEngine::clickedShape(int shapeIndex) {
 	return false;
 }
 
-void LoLEngine::processDoorSwitch(uint16 block, int unk) {
+void LoLEngine::processDoorSwitch(uint16 block, int openClose) {
 	if ((block == _currentBlock) || (_levelBlockProperties[block].assignedObjects & 0x8000))
 		return;
 
-	int s = 0;
-	if (!unk) {
+	if (openClose == 0) {
 		for (int i = 0; i < 3; i++) {
 			if (_openDoorState[i].block != block)
 				continue;
-			s = -_openDoorState[i].state;
+			openClose = -_openDoorState[i].state;
 			break;
 		}
 	}
 
-	if (s == 0)
-		s = (_wllWallFlags[_levelBlockProperties[block].walls[_wllWallFlags[_levelBlockProperties[block].walls[0]] & 8 ? 0 : 1]] & 1) ? 1 : -1;
+	if (openClose == 0)
+		openClose = (_wllWallFlags[_levelBlockProperties[block].walls[_wllWallFlags[_levelBlockProperties[block].walls[0]] & 8 ? 0 : 1]] & 1) ? 1 : -1;
 
-	openCloseDoor(block, s);
+	openCloseDoor(block, openClose);
 }
 
 void LoLEngine::openCloseDoor(uint16 block, int openClose) {
@@ -1255,6 +1254,7 @@ void LoLEngine::drawScene(int pageNum) {
 		drawScriptShapes(_sceneDrawPage1);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
 		SWAP(_sceneDrawPage1, _sceneDrawPage2);
 	}
 
@@ -1316,7 +1316,7 @@ void LoLEngine::prepareSpecialScene(int fieldType, int hasDialogue, int suspendG
 
 		if (fadeFlag) {
 			memcpy(_screen->getPalette(3) + 384, _screen->_currentPalette + 384, 384);
-			_screen->loadSpecialColours(_screen->getPalette(3));
+			_screen->loadSpecialColors(_screen->getPalette(3));
 			_screen->fadePalette(_screen->getPalette(3), 10);
 			_screen->_fadeFlag = 0;
 		}

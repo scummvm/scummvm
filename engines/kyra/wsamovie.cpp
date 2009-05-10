@@ -134,10 +134,14 @@ void WSAMovie_v1::close() {
 	}
 }
 
-void WSAMovie_v1::displayFrame(int frameNum, ...) {
-	debugC(9, kDebugLevelMovie, "WSAMovie_v1::displayFrame(%d, ...)", frameNum);
+void WSAMovie_v1::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
+	debugC(9, kDebugLevelMovie, "WSAMovie_v1::displayFrame(%d, %d, %d, %d, ...)", frameNum, pageNum, x, y);
 	if (frameNum >= _numFrames || !_opened)
 		return;
+
+	_x = x;
+	_y = y;
+	_drawPage = pageNum;
 
 	uint8 *dst;
 	if (_flags & WF_OFFSCREEN_DECODE)
@@ -236,10 +240,14 @@ void WSAMovieAmiga::close() {
 	WSAMovie_v1::close();
 }
 
-void WSAMovieAmiga::displayFrame(int frameNum, ...) {
-	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::displayFrame(%d)", frameNum);
+void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
+	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::displayFrame(%d, %d, %d, %d,...)", frameNum, pageNum, x, y);
 	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
 		return;
+
+	_x = x;
+	_y = y;
+	_drawPage = pageNum;
 
 	uint8 *dst;
 	dst = _buffer;
@@ -415,16 +423,26 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 		_flags |= WF_NO_FIRST_FRAME;
 	}
 
-	for (int i = 1; i < _numFrames + 2; ++i) {
+	for (int i = 1; i < _numFrames; ++i) {
 		_frameOffsTable[i] = READ_LE_UINT32(wsaData) - frameDataOffs;
 		wsaData += 4;
 	}
+
+	_frameOffsTable[_numFrames] = READ_LE_UINT32(wsaData);
+	wsaData += 4;
+	_frameOffsTable[_numFrames + 1] = READ_LE_UINT32(wsaData);
+	wsaData += 4;
+	if (_frameOffsTable[_numFrames + 1])
+		_frameOffsTable[_numFrames] -= frameDataOffs;
+	else
+		_frameOffsTable[_numFrames] = 0;
 
 	// skip palette
 	wsaData += offsPal;
 
 	// read frame data
 	const int frameDataSize = p + fileSize - wsaData;
+
 	_frameData = new uint8[frameDataSize];
 	memcpy(_frameData, wsaData, frameDataSize);
 
@@ -438,10 +456,14 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 	return _numFrames;
 }
 
-void WSAMovie_v2::displayFrame(int frameNum, ...) {
-	debugC(9, kDebugLevelMovie, "WSAMovie_v2::displayFrame(%d, ...)", frameNum);
+void WSAMovie_v2::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
+	debugC(9, kDebugLevelMovie, "WSAMovie_v2::displayFrame(%d, %d, %d, %d,...)", frameNum, pageNum, x, y);
 	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
 		return;
+
+	_x = x + _xAdd;
+	_y = y + _yAdd;
+	_drawPage = pageNum;
 
 	uint8 *dst = 0;
 	if (_flags & WF_OFFSCREEN_DECODE)
@@ -503,7 +525,7 @@ void WSAMovie_v2::displayFrame(int frameNum, ...) {
 		_screen->_curPage = _drawPage;
 
 		va_list args;
-		va_start(args, frameNum);
+		va_start(args, y);
 
 		int copyParam = va_arg(args, int);
 		int plotFunc = (copyParam & 0xFF00) >> 12;

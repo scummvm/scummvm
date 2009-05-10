@@ -44,7 +44,7 @@ void LoLEngine::giveCredits(int credits, int redraw) {
 		if (t > credits)
 			t = credits;
 
-		if (_credits < 60 && t >= 0) {
+		if (_credits < 60 && t > 0) {
 			cnt = 0;
 
 			do {
@@ -86,7 +86,7 @@ void LoLEngine::takeCredits(int credits, int redraw) {
 		if (t > credits)
 			t = credits;
 
-		if (_credits - t < 60 && t >= 0) {
+		if (_credits - t < 60 && t > 0) {
 			cnt = 0;
 
 			do {
@@ -97,7 +97,7 @@ void LoLEngine::takeCredits(int credits, int redraw) {
 					_moneyColumnHeight[d]--;
 				}
 			} while (++cnt < t);
-		} else if (_credits - t < 60) {
+		} else if (_credits - t >= 60) {
 			_credits -= t;
 		}
 
@@ -343,7 +343,7 @@ void LoLEngine::removeLevelItem(int item, int block) {
 }
 
 bool LoLEngine::launchObject(int objectType, int item, int startX, int startY, int flyingHeight, int direction, int, int attackerId, int c) {
-	int sp = checkDrawObjectSpace(_partyPosX, _partyPosX, startX, startY);
+	int sp = checkDrawObjectSpace(_partyPosX, _partyPosY, startX, startY);
 	FlyingObject *t = _flyingObjects;
 	int slot = -1;
 	int i = 0;
@@ -354,7 +354,7 @@ bool LoLEngine::launchObject(int objectType, int item, int startX, int startY, i
 			break;
 		}
 
-		int csp = checkDrawObjectSpace(_partyPosX, _partyPosX, t->x, t->y);
+		int csp = checkDrawObjectSpace(_partyPosX, _partyPosY, t->x, t->y);
 		if (csp > sp){
 			sp = csp;
 			slot = i;
@@ -490,7 +490,8 @@ void LoLEngine::updateFlyingObject(FlyingObject *t) {
 	int x = 0;
 	int y = 0;
 	getNextStepCoords(t->x, t->y, x, y, t->direction);
-	int objectOnNextBlock = checkBlockBeforeObjectPlacement(x, y, _itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000 ? 256 : 63,  t->flags, t->wallFlags);
+	// WORKAROUND: The next line seems to be bugged in the original code. I have fixed it in a way that at least seems to work fine.
+	int objectOnNextBlock = checkBlockBeforeObjectPlacement(x, y, _itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000 ? 127 : 63,  t->flags, t->wallFlags);
 	if (objectOnNextBlock) {
 		endObjectFlight(t, x, y, objectOnNextBlock);
 	} else {

@@ -284,15 +284,11 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 	_screen->showMouse();
 	snd_playSoundEffect(0x25);
 
-	movie.setDrawPage(0);
-	movie.setX(0);
-	movie.setY(0);
-
 	bool breakFlag = false;
 	for (int i = 0; i <= 6 && !breakFlag; ++i) {
 		if (movie.opened()) {
 			_screen->hideMouse();
-			movie.displayFrame(i % frames, 0, 0);
+			movie.displayFrame(i % frames, 0, 0, 0, 0);
 			_screen->showMouse();
 			_screen->updateScreen();
 		}

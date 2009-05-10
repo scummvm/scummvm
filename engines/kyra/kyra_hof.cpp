@@ -1612,10 +1612,7 @@ void KyraEngine_HoF::updateInvWsa() {
 	if (_invWsa.timer > _system->getMillis())
 		return;
 
-	_invWsa.wsa->setX(0);
-	_invWsa.wsa->setY(0);
-	_invWsa.wsa->setDrawPage(_invWsa.page);
-	_invWsa.wsa->displayFrame(_invWsa.curFrame, 0, 0, 0);
+	_invWsa.wsa->displayFrame(_invWsa.curFrame, _invWsa.page, 0, 0, 0, 0, 0);
 
 	if (_invWsa.page)
 		_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);
@@ -1653,10 +1650,7 @@ void KyraEngine_HoF::displayInvWsaLastFrame() {
 	if (!_invWsa.wsa)
 		return;
 
-	_invWsa.wsa->setX(0);
-	_invWsa.wsa->setY(0);
-	_invWsa.wsa->setDrawPage(_invWsa.page);
-	_invWsa.wsa->displayFrame(_invWsa.lastFrame-1, 0, 0, 0);
+	_invWsa.wsa->displayFrame(_invWsa.lastFrame-1, _invWsa.page, 0, 0, 0, 0, 0);
 
 	if (_invWsa.page)
 		_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);

@@ -213,10 +213,8 @@ int LoLEngine::chooseCharacter() {
 
 	if (!_chargenWSA->open("CHARGEN.WSA", 1, 0))
 		error("Couldn't load CHARGEN.WSA");
-	_chargenWSA->setX(113);
-	_chargenWSA->setY(0);
-	_chargenWSA->setDrawPage(2);
-	_chargenWSA->displayFrame(0, 0, 0, 0);
+
+	_chargenWSA->displayFrame(0, 2, 113, 0, 0, 0, 0);
 
 	_screen->setFont(Screen::FID_9_FNT);
 	_screen->_curPage = 2;
@@ -305,15 +303,11 @@ void LoLEngine::kingSelectionIntro() {
 
 	_sound->voicePlay("KING01");
 
-	_chargenWSA->setX(113);
-	_chargenWSA->setY(0);
-	_chargenWSA->setDrawPage(0);
-
 	int index = 4;
-	while (_sound->voiceIsPlaying("KING01") && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
+	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying("KING01"))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
 		index = MAX(index, 4);
 
-		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 0, 0);
+		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 113, 0, 0, 0, 0);
 		_screen->copyRegion(_selectionPosTable[_selectionChar1IdxTable[index]*2+0], _selectionPosTable[_selectionChar1IdxTable[index]*2+1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
 		_screen->copyRegion(_selectionPosTable[_selectionChar2IdxTable[index]*2+0], _selectionPosTable[_selectionChar2IdxTable[index]*2+1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
 		_screen->copyRegion(_selectionPosTable[_selectionChar3IdxTable[index]*2+0], _selectionPosTable[_selectionChar3IdxTable[index]*2+1], _charPreviews[2].x, _charPreviews[2].y, 32, 32, 4, 0);
@@ -326,12 +320,15 @@ void LoLEngine::kingSelectionIntro() {
 			_system->delayMillis(10);
 		}
 
-		index = (index + 1) % 22;
+		if (_speechFlag)
+			index = (index + 1) % 22;
+		else if (++index >= 27)
+			break;
 	}
 
 	resetSkipFlag();
 
-	_chargenWSA->displayFrame(0x10, 0, 0, 0);
+	_chargenWSA->displayFrame(0x10, 0,113, 0, 0, 0, 0);
 	_screen->updateScreen();
 	_sound->voiceStop("KING01");
 }
@@ -347,13 +344,9 @@ void LoLEngine::kingSelectionReminder() {
 
 	_sound->voicePlay("KING02");
 
-	_chargenWSA->setX(113);
-	_chargenWSA->setY(0);
-	_chargenWSA->setDrawPage(0);
-
 	int index = 0;
-	while (_sound->voiceIsPlaying("KING02") && _charSelection == -1 && !shouldQuit() && index < 15) {
-		_chargenWSA->displayFrame(_chargenFrameTable[index+9], 0, 0, 0);
+	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying("KING02"))) && _charSelection == -1 && !shouldQuit() && index < 15) {
+		_chargenWSA->displayFrame(_chargenFrameTable[index+9], 0, 113, 0, 0, 0, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar1IdxTable[index]*2+0], _selectionPosTable[_reminderChar1IdxTable[index]*2+1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar2IdxTable[index]*2+0], _selectionPosTable[_reminderChar2IdxTable[index]*2+1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar3IdxTable[index]*2+0], _selectionPosTable[_reminderChar3IdxTable[index]*2+1], _charPreviews[2].x, _charPreviews[2].y, 32, 32, 4, 0);
@@ -366,7 +359,10 @@ void LoLEngine::kingSelectionReminder() {
 			_system->delayMillis(10);
 		}
 
-		index = (index + 1) % 22;
+		if (_speechFlag)
+			index = (index + 1) % 22;
+		else if (++index >= 27)
+			break;
 	}
 
 	_sound->voiceStop("KING02");
@@ -377,15 +373,11 @@ void LoLEngine::kingSelectionOutro() {
 
 	_sound->voicePlay("KING03");
 
-	_chargenWSA->setX(113);
-	_chargenWSA->setY(0);
-	_chargenWSA->setDrawPage(0);
-
 	int index = 0;
-	while (_sound->voiceIsPlaying("KING03") && !shouldQuit() && !skipFlag()) {
+	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying("KING03"))) && !shouldQuit() && !skipFlag()) {
 		index = MAX(index, 4);
 
-		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 0, 0);
+		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 113, 0, 0, 0, 0);
 		_screen->updateScreen();
 
 		uint32 waitEnd = _system->getMillis() + 8 * _tickLength;
@@ -394,12 +386,15 @@ void LoLEngine::kingSelectionOutro() {
 			_system->delayMillis(10);
 		}
 
-		index = (index + 1) % 22;
+		if (_speechFlag)
+			index = (index + 1) % 22;
+		else if (++index >= 27)
+			break;
 	}
 
 	resetSkipFlag();
 
-	_chargenWSA->displayFrame(0x10, 0, 0, 0);
+	_chargenWSA->displayFrame(0x10, 0, 113, 0, 0, 0, 0);
 	_screen->updateScreen();
 	_sound->voiceStop("KING03");
 }
@@ -598,10 +593,7 @@ void LoLEngine::showStarcraftLogo() {
 		return;
 	}
 	_screen->hideMouse();
-	ci->setX(32);
-	ci->setY(80);
-	ci->setDrawPage(2);
-	ci->displayFrame(0, 0);
+	ci->displayFrame(0, 2, 32, 80, 0);
 	_screen->copyPage(2, 0);
 	_screen->fadeFromBlack();
 	int inputFlag = 0;
@@ -609,7 +601,7 @@ void LoLEngine::showStarcraftLogo() {
 		inputFlag = checkInput(0) & 0xff;
 		if (shouldQuit() || inputFlag)
 			break;
-		ci->displayFrame(i, 0);
+		ci->displayFrame(i, 2, 32, 80, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		delay(4 * _tickLength);

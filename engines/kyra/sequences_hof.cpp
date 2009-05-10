@@ -103,10 +103,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			_seqWsa->close();
 			_seqWsa->open(cseq.wsaFile, 0, _screen->getPalette(0));
 			_screen->setScreenPalette(_screen->getPalette(0));
-			_seqWsa->setX(cseq.xPos);
-			_seqWsa->setY(cseq.yPos);
-			_seqWsa->setDrawPage(2);
-			_seqWsa->displayFrame(0, 0);
+			_seqWsa->displayFrame(0, 2, cseq.xPos, cseq.yPos, 0);
 		}
 
 		if (cseq.flags & 4) {
@@ -178,10 +175,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 
 				if (_seqWsa) {
 					int f = _seqWsaCurrentFrame % _seqWsa->frames();
-					_seqWsa->setX(cseq.xPos);
-					_seqWsa->setY(cseq.yPos);
-					_seqWsa->setDrawPage(2);
-					_seqWsa->displayFrame(f, 0);
+					_seqWsa->displayFrame(f, 2, cseq.xPos, cseq.yPos, 0);
 				}
 
 				_screen->copyPage(2, 12);
@@ -2245,9 +2239,6 @@ void KyraEngine_HoF::seq_loadNestedSequence(int wsaNum, int seqNum) {
 	_activeWSA[wsaNum].endFrame = s.endFrame;
 	_activeWSA[wsaNum].startFrame = _activeWSA[wsaNum].currentFrame = s.startframe;
 	_activeWSA[wsaNum].frameDelay = s.frameDelay;
-	_activeWSA[wsaNum].movie->setX(0);
-	_activeWSA[wsaNum].movie->setY(0);
-	_activeWSA[wsaNum].movie->setDrawPage(_screen->_curPage);
 	_activeWSA[wsaNum].callback = _callbackN[seqNum];
 	_activeWSA[wsaNum].control = s.wsaControl;
 
@@ -2274,61 +2265,40 @@ void KyraEngine_HoF::seq_nestedSequenceFrame(int command, int wsaNum) {
 
 	switch (command) {
 	case 0:
-		_activeWSA[wsaNum].movie->setDrawPage(8);
 		xa = -_activeWSA[wsaNum].movie->xAdd();
 		ya = -_activeWSA[wsaNum].movie->yAdd();
-		_activeWSA[wsaNum].movie->setX(xa);
-		_activeWSA[wsaNum].movie->setY(ya);
-		_activeWSA[wsaNum].movie->displayFrame(0, 0);
-		_activeWSA[wsaNum].movie->setX(0);
-		_activeWSA[wsaNum].movie->setY(0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 8, xa, ya, 0);
 		seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
 							_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 2);
 		break;
 
 	case 1:
-		_activeWSA[wsaNum].movie->setDrawPage(8);
 		xa = -_activeWSA[wsaNum].movie->xAdd();
 		ya = -_activeWSA[wsaNum].movie->yAdd();
-		_activeWSA[wsaNum].movie->setX(xa);
-		_activeWSA[wsaNum].movie->setY(ya);
-		_activeWSA[wsaNum].movie->displayFrame(0, 0);
-		_activeWSA[wsaNum].movie->setX(0);
-		_activeWSA[wsaNum].movie->setY(0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 8, xa, ya, 0);
 		seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
 							_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 1);
 		break;
 
 	case 2:
 		seq_waitForTextsTimeout();
-		_activeWSA[wsaNum].movie->setDrawPage(8);
 		xa = -_activeWSA[wsaNum].movie->xAdd();
 		ya = -_activeWSA[wsaNum].movie->yAdd();
-		_activeWSA[wsaNum].movie->setX(xa);
-		_activeWSA[wsaNum].movie->setY(ya);
-		_activeWSA[wsaNum].movie->displayFrame(0x15, 0);
-		_activeWSA[wsaNum].movie->setX(0);
-		_activeWSA[wsaNum].movie->setY(0);
+		_activeWSA[wsaNum].movie->displayFrame(0x15, 8, xa, ya, 0);
 		seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
 							_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 0, 2);
 		break;
 
 	case 3:
 		_screen->copyPage(2, 10);
-		_activeWSA[wsaNum].movie->setDrawPage(2);
-		_activeWSA[wsaNum].movie->setX(0);
-		_activeWSA[wsaNum].movie->setY(0);
-		_activeWSA[wsaNum].movie->displayFrame(0, 0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 2, 0, 0, 0);
 		_screen->copyPage(2, 12);
 		seq_cmpFadeFrame("scene2.cmp");
 		break;
 
 	case 4:
 		_screen->copyPage(2, 10);
-		_activeWSA[wsaNum].movie->setDrawPage(2);
-		_activeWSA[wsaNum].movie->setX(0);
-		_activeWSA[wsaNum].movie->setY(0);
-		_activeWSA[wsaNum].movie->displayFrame(0, 0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 2, 0, 0, 0);
 		_screen->copyPage(2, 12);
 		seq_cmpFadeFrame("scene3.cmp");
 		break;
@@ -2414,15 +2384,11 @@ bool KyraEngine_HoF::seq_processNextSubFrame(int wsaNum) {
 	}
 
 	if (_activeWSA[wsaNum].movie) {
-		_activeWSA[wsaNum].movie->setDrawPage(2);
-		_activeWSA[wsaNum].movie->setX(_activeWSA[wsaNum].x);
-		_activeWSA[wsaNum].movie->setY(_activeWSA[wsaNum].y);
-
 		if (_activeWSA[wsaNum].flags & 0x20) {
-			_activeWSA[wsaNum].movie->displayFrame(_activeWSA[wsaNum].control[currentFrame].index, 0x4000);
+			_activeWSA[wsaNum].movie->displayFrame(_activeWSA[wsaNum].control[currentFrame].index, 2, _activeWSA[wsaNum].x, _activeWSA[wsaNum].y, 0x4000);
 			_activeWSA[wsaNum].frameDelay = _activeWSA[wsaNum].control[currentFrame].delay;
 		} else {
-			_activeWSA[wsaNum].movie->displayFrame(currentFrame % _activeWSA[wsaNum].movie->frames(), 0x4000);
+			_activeWSA[wsaNum].movie->displayFrame(currentFrame % _activeWSA[wsaNum].movie->frames(), 2, _activeWSA[wsaNum].x, _activeWSA[wsaNum].y, 0x4000);
 		}
 	}
 
@@ -2532,12 +2498,8 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 			curframe = firstframe;
 
 		_seqWsaChatFrameTimeout = _seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
-		if (wsa) {
-			wsa->setDrawPage(2);
-			wsa->setX(wsaXpos);
-			wsa->setY(wsaYpos);
-			wsa->displayFrame(curframe % wsa->frames(), 0);
-		}
+		if (wsa)			
+			wsa->displayFrame(curframe % wsa->frames(), 2, wsaXpos, wsaYpos, 0);
 
 		_screen->copyPage(2, 12);
 
@@ -2794,24 +2756,21 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 		return;
 	}
 	_screen->hideMouse();
-	ci->setX(0);
-	ci->setY(0);
-	ci->setDrawPage(2);
-	ci->displayFrame(0, 0);
+	ci->displayFrame(0, 2, 0, 0, 0);
 	_screen->copyPage(2, 0);
 	_screen->fadeFromBlack();
 	for (int i = 1; i < endframe; i++) {
 		_seqEndTime = _system->getMillis() + 50;
 		if (skipFlag())
 			break;
-		ci->displayFrame(i, 0);
+		ci->displayFrame(i, 2, 0, 0, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		delay(_seqEndTime - _system->getMillis());
 	}
 	if (!skipFlag()) {
 		_seqEndTime = _system->getMillis() + 50;
-		ci->displayFrame(0, 0);
+		ci->displayFrame(0, 2, 0, 0, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		delay(_seqEndTime - _system->getMillis());
@@ -2943,16 +2902,12 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 	_invWsa.running = false;
 	snd_playSoundEffect(0xAF);
 
-	_invWsa.wsa->setX(0);
-	_invWsa.wsa->setY(0);
-	_invWsa.wsa->setDrawPage(_invWsa.page);
-
 	while (true) {
 		_invWsa.timer = _system->getMillis() + _invWsa.delay * _tickLength;
 
 		_screen->copyBlockToPage(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
 
-		_invWsa.wsa->displayFrame(_invWsa.curFrame, 0x4000, 0, 0);
+		_invWsa.wsa->displayFrame(_invWsa.curFrame, _invWsa.page, 0, 0, 0x4000, 0, 0);
 
 		if (_invWsa.page)
 			_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);

@@ -33,7 +33,7 @@
 namespace Kyra {
 
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm), _screen(screen),
-	_scriptParameter(0), _animWidth(0), _animColour1(0), _animColour2(0), _animFlag(true), _lineCount(0),
+	_scriptParameter(0), _animWidth(0), _animColor1(0), _animColor2(0), _animFlag(true), _lineCount(0),
 	_printFlag(false), _lineWidth(0), _numCharsTotal(0), _numCharsLeft(0), _numCharsPrinted(0) {
 	
 	memset(_stringParameters, 0, 15 * sizeof(char*));
@@ -102,7 +102,7 @@ void TextDisplayer_LoL::expandField() {
 
 	if (_vm->textEnabled()) {
 		_vm->_fadeText = false;
-		_vm->_textColourFlag = 0;
+		_vm->_textColorFlag = 0;
 		_vm->_timer->disable(11);
 		_screen->setScreenDim(clearDim(3));
 		_screen->copyRegionToBuffer(3, 0, 0, 320, 10, tmp);
@@ -146,13 +146,13 @@ void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, ui
 	if (str) {
 		_animString = str;
 		_animWidth = x;
-		_animColour1 = col1;
-		_animColour2 = col2;
+		_animColor1 = col1;
+		_animColor2 = col2;
 	} else {
 		_animString = defaultStr;
 		_animWidth = 7;
-		_animColour1 = 0;
-		_animColour2 = 0;
+		_animColor1 = 0;
+		_animColor2 = 0;
 	}
 }
 
@@ -163,17 +163,21 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 		if (_vm->_updateFlags & 2) {			
 			oldDim = clearDim(4);			
 			_textDimData[4].color1 = 254;
+			_textDimData[4].color2 = _screen->_curDim->unkA;
 		} else {
 			oldDim = clearDim(3);
 			_textDimData[3].color1 = 192;
-			_screen->copyColour(192, 254);
+			_textDimData[3].color2 = _screen->_curDim->unkA;
+			_screen->copyColor(192, 254);
 			_vm->enableTimer(11);
-			_vm->_textColourFlag = 0;
+			_vm->_textColorFlag = 0;
 			_vm->_fadeText = false;
 		}
 	} else {
-		oldDim = clearDim(dim);			
+		oldDim = _screen->curDimIndex();
+		_screen->setScreenDim(dim);		
 		_textDimData[dim].color1 = 254;
+		_textDimData[dim].color2 = _screen->_curDim->unkA;
 	}
 
 	int cp = _screen->setCurPage(0);
@@ -190,15 +194,15 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 	_vm->_fadeText = false;
 }
 
-void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
-	static uint8 textColours[] = { 0xfe, 0xa2, 0x84, 0x97, 0x9F };
+void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
+	static uint8 textColors[] = { 0xfe, 0xa2, 0x84, 0x97, 0x9F };
 	static uint8 soundEffect[] = { 0x0B, 0x00, 0x2B, 0x1B, 0x00 };
 	if (type & 4)
 		type ^= 4;
 	else
 		_vm->updatePortraits();
 
-	uint16 col = textColours[type & 0x7fff];
+	uint16 col = textColors[type & 0x7fff];
 
 	int od = _screen->curDimIndex();
 
@@ -207,7 +211,7 @@ void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 		_textDimData[4].color1 = col;
 	} else {
 		clearDim(3);
-		_screen->copyColour(192, col);
+		_screen->copyColor(192, col);
 		_textDimData[3].color1 = 192;
 		_vm->enableTimer(11);
 	}
@@ -228,7 +232,7 @@ void TextDisplayer_LoL::printMessage(uint16 type, char *str, ...) {
 			_vm->sound()->playSoundEffect(soundEffect[type]);
 	}
 
-	_vm->_textColourFlag = type & 0x7fff;
+	_vm->_textColorFlag = type & 0x7fff;
 	_vm->_fadeText = false;
 }
 

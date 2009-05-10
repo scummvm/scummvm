@@ -298,10 +298,7 @@ void KyraEngine_HoF::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) 
 			y = obj->yPos2;
 		}
 
-		_sceneAnimMovie[obj->animNum]->setX(x);
-		_sceneAnimMovie[obj->animNum]->setY(y);
-		_sceneAnimMovie[obj->animNum]->setDrawPage(2);
-		_sceneAnimMovie[obj->animNum]->displayFrame(obj->shapeIndex3, int(flags | layer), 0, 0);
+		_sceneAnimMovie[obj->animNum]->displayFrame(obj->shapeIndex3, 2, x, y, int(flags | layer), 0, 0);
 	}
 }
 

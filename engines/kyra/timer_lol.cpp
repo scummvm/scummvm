@@ -53,7 +53,7 @@ void LoLEngine::setupTimers() {
 
 void LoLEngine::enableTimer(int id) {
 	_timer->enable(id);
-	_timer->setNextRun(id, _system->getMillis() + _timer->getDelay(id) * _tickLength);
+	_timer->setCountdown(id, _timer->getDelay(id));
 }
 
 void LoLEngine::enableSysTimer(int sysTimer) {
@@ -249,7 +249,7 @@ void LoLEngine::timerUpdatePortraitAnimations(int skipUpdate) {
 }
 
 void LoLEngine::timerUpdateLampState(int timerNum) {
-	if ((_gameFlags[15] & 0x800) && (_gameFlags[15] & 0x400) && _lampOilStatus)
+	if ((_gameFlags[15] & 0x800) && (_gameFlags[15] & 0x400) && _lampOilStatus > 0)
 		_lampOilStatus--;
 }
 

@@ -603,12 +603,8 @@ void KyraEngine_MR::albumChatWaitToFinish() {
 			if (frame > 22)
 				frame = 13;
 
-			_album.wsa->setX(-100);
-			_album.wsa->setY(90);
-			_album.wsa->setDrawPage(2);
-
 			albumRestoreRect();
-			_album.wsa->displayFrame(frame, 0x4000);
+			_album.wsa->displayFrame(frame, 2, -100, 90, 0x4000);
 			albumUpdateRect();
 
 			nextFrame = _system->getMillis() + _rnd.getRandomNumberRng(4, 8) * _tickLength;

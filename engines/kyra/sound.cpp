@@ -188,6 +188,13 @@ bool Sound::voiceIsPlaying(const char *file) {
 	return res;
 }
 
+bool Sound::allVoiceChannelsPlaying() {
+	for (int i = 0; i < kNumChannelHandles; ++i)
+		if (!_mixer->isSoundHandleActive(_soundChannels[i].channelHandle))
+			return false;
+	return true;
+}
+
 uint32 Sound::voicePlayedTime(const char *file) {
 	if (!file)
 		return 0;

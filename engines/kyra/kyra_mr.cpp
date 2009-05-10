@@ -274,14 +274,14 @@ Common::Error KyraEngine_MR::go() {
 
 		for (int i = 0; i < 64 && !shouldQuit(); ++i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_menuAnim->displayFrame(i, 0);
+			_menuAnim->displayFrame(i, 0, 0, 0, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
 
 		for (int i = 64; i > 29 && !shouldQuit(); --i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_menuAnim->displayFrame(i, 0);
+			_menuAnim->displayFrame(i, 0, 0, 0, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
@@ -330,9 +330,6 @@ Common::Error KyraEngine_MR::go() {
 void KyraEngine_MR::initMainMenu() {
 	_menuAnim = new WSAMovie_v2(this, _screen);
 	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0));
-	_menuAnim->setX(0);
-	_menuAnim->setY(0);
-	_menuAnim->setDrawPage(0);
 	memset(_screen->getPalette(0), 0, 3);
 
 	_menu = new MainMenu(this);

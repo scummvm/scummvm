@@ -2714,7 +2714,7 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				finOut += _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
 		}
 
-		finOut /= 4;
+		finOut >>= 1;
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
 	}
@@ -2887,7 +2887,7 @@ void TownsPC98_OpnPercussionSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				finOut += _rhChan[ii].out;
 		}
 
-		finOut *= 3;
+		finOut <<= 2;
 
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
@@ -3381,7 +3381,7 @@ void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
 				break;
 			};
 
-			int32 finOut = ((output * 3) / ((_numChan + _numSSG - 3) / 3));
+			int32 finOut = ((output << 2) / ((_numChan + _numSSG - 3) / 3));
 
 			if (_chanInternal[i].enableLeft)
 				*leftSample += finOut;

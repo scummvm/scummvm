@@ -50,7 +50,7 @@ public:
 	void resetDimTextPositions(int dim);
 
 	void printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
-	void printMessage(uint16 type, char *str, ...);
+	void printMessage(uint16 type, const char *str, ...);
 	
 	int16 _scriptParameter;
 
@@ -82,8 +82,8 @@ private:
 	
 	const char *_animString;
 	int16 _animWidth;
-	uint8 _animColour1;
-	uint8 _animColour2;
+	uint8 _animColor1;
+	uint8 _animColor2;
 
 	bool _animFlag;
 	bool _printFlag;

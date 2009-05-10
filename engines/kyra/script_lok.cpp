@@ -426,11 +426,8 @@ int KyraEngine_LoK::o1_runWSAFromBeginningToEnd(EMCState *script) {
 	int worldUpdate = stackPos(4);
 	int wsaFrame = 0;
 
-	_movieObjects[wsaIndex]->setX(xpos);
-	_movieObjects[wsaIndex]->setY(ypos);
-	_movieObjects[wsaIndex]->setDrawPage(0);
 	while (running) {
-		_movieObjects[wsaIndex]->displayFrame(wsaFrame++);
+		_movieObjects[wsaIndex]->displayFrame(wsaFrame++, 0, xpos, ypos);
 		_animator->_updateScreen = true;
 		if (wsaFrame >= _movieObjects[wsaIndex]->frames())
 			running = false;
@@ -461,10 +458,7 @@ int KyraEngine_LoK::o1_displayWSAFrame(EMCState *script) {
 	int waitTime = stackPos(3);
 	int wsaIndex = stackPos(4);
 	_screen->hideMouse();
-	_movieObjects[wsaIndex]->setX(xpos);
-	_movieObjects[wsaIndex]->setY(ypos);
-	_movieObjects[wsaIndex]->setDrawPage(0);
-	_movieObjects[wsaIndex]->displayFrame(frame);
+	_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos);
 	_animator->_updateScreen = true;
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	while (_system->getMillis() < continueTime) {
@@ -504,12 +498,9 @@ int KyraEngine_LoK::o1_runWSAFrames(EMCState *script) {
 	int endFrame = stackPos(4);
 	int wsaIndex = stackPos(5);
 	_screen->hideMouse();
-	_movieObjects[wsaIndex]->setX(xpos);
-	_movieObjects[wsaIndex]->setY(ypos);
-	_movieObjects[wsaIndex]->setDrawPage(0);
 	for (; startFrame <= endFrame; ++startFrame) {
 		uint32 nextRun = _system->getMillis() + delayTime * _tickLength;
-		_movieObjects[wsaIndex]->displayFrame(startFrame);
+		_movieObjects[wsaIndex]->displayFrame(startFrame, 0, xpos, ypos);
 		_animator->_updateScreen = true;
 		while (_system->getMillis() < nextRun) {
 			_sprites->updateSceneAnims();
@@ -691,10 +682,7 @@ int KyraEngine_LoK::o1_displayWSAFrameOnHidPage(EMCState *script) {
 
 	_screen->hideMouse();
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-	_movieObjects[wsaIndex]->setX(xpos);
-	_movieObjects[wsaIndex]->setY(ypos);
-	_movieObjects[wsaIndex]->setDrawPage(2);
-	_movieObjects[wsaIndex]->displayFrame(frame);
+	_movieObjects[wsaIndex]->displayFrame(frame, 2, xpos, ypos);
 	_animator->_updateScreen = true;
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
@@ -759,17 +747,13 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 	if (maxTime - 1 <= 0)
 		maxTime = 1;
 
-	_movieObjects[wsaIndex]->setX(xpos);
-	_movieObjects[wsaIndex]->setY(ypos);
-	_movieObjects[wsaIndex]->setDrawPage(0);
-
 	// Workaround for bug #1498221 "KYRA1: Glitches when meeting Zanthia"
 	// the original didn't do a forced screen update after displaying a wsa frame
 	// while we have to do it, which make brandon disappear for a short moment,
 	// what shouldn't happen. So we're not updating the screen for this special
 	// case too.
 	if (startFrame == 18 && endFrame == 18 && _currentRoom == 45) {
-		_movieObjects[wsaIndex]->displayFrame(18);
+		_movieObjects[wsaIndex]->displayFrame(18, 0, xpos, ypos);
 		delay(waitTime * _tickLength);
 		return 0;
 	}
@@ -781,7 +765,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 			int frame = startFrame;
 			while (endFrame >= frame) {
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-				_movieObjects[wsaIndex]->displayFrame(frame);
+				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos);
 				if (waitTime)
 					_animator->_updateScreen = true;
 				while (_system->getMillis() < continueTime) {
@@ -799,7 +783,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 			int frame = startFrame;
 			while (endFrame <= frame) {
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-				_movieObjects[wsaIndex]->displayFrame(frame);
+				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos);
 				if (waitTime)
 					_animator->_updateScreen = true;
 				while (_system->getMillis() < continueTime) {
@@ -1276,9 +1260,6 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_makeAmuletAppear(%p) ()", (const void *)script);
 	WSAMovie_v1 amulet(this);
 	amulet.open("AMULET.WSA", 1, 0);
-	amulet.setX(224);
-	amulet.setY(152);
-	amulet.setDrawPage(0);
 	if (amulet.opened()) {
 		assert(_amuleteAnim);
 		_screen->hideMouse();
@@ -1297,7 +1278,7 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 			if (code == 14)
 				snd_playSoundEffect(0x73);
 
-			amulet.displayFrame(code);
+			amulet.displayFrame(code, 0, 224, 152);
 			_animator->_updateScreen = true;
 
 			while (_system->getMillis() < nextTime) {

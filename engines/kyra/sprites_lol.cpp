@@ -372,7 +372,7 @@ void LoLEngine::assignMonsterToBlock(uint16 *assignedBlockObjects, int id) {
 }
 
 int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, int testFlag, int wallFlag) {
-	_monsterLastWalkDirection = 0;
+	_objectLastDirection = 0;
 	int x2 = 0;
 	int y2 = 0;
 	int xOffs = 0;
@@ -390,7 +390,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, in
 	if (x & 0x80) {
 		if (((x & 0xff) + objectWidth) & 0xff00) {
 			xOffs = 1;
-			_monsterLastWalkDirection = 2;
+			_objectLastDirection = 2;
 			x2 = x + objectWidth;
 
 			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, objectWidth, testFlag, wallFlag);
@@ -406,7 +406,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, in
 	} else {
 		if (((x & 0xff) - objectWidth) & 0xff00) {
 			xOffs = -1;
-			_monsterLastWalkDirection = 6;
+			_objectLastDirection = 6;
 			x2 = x - objectWidth;
 
 			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x2, y), x, y, objectWidth, testFlag, wallFlag);
@@ -424,7 +424,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, in
 	if (y & 0x80) {
 		if (((y & 0xff) + objectWidth) & 0xff00) {
 			yOffs = 1;
-			_monsterLastWalkDirection = 4;
+			_objectLastDirection = 4;
 			y2 = y + objectWidth;
 
 			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, objectWidth, testFlag, wallFlag);
@@ -434,13 +434,14 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, in
 			r = checkBlockOccupiedByParty(x, y + yOffs, testFlag);
 			if (r)
 				return 4;
+			flag &= 1;
 		} else {
 			flag = 0;
 		}
 	} else {
 		if (((y & 0xff) - objectWidth) & 0xff00) {
 			yOffs = -1;
-			_monsterLastWalkDirection = 0;
+			_objectLastDirection = 0;
 			y2 = y - objectWidth;
 
 			r = checkBlockForWallsAndSufficientSpace(calcBlockIndex(x, y2), x, y, objectWidth, testFlag, wallFlag);
@@ -450,6 +451,7 @@ int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, in
 			r = checkBlockOccupiedByParty(x, y + yOffs, testFlag);
 			if (r)
 				return 4;
+			flag &= 1;
 		} else {
 			flag = 0;
 		}
@@ -517,11 +519,11 @@ int LoLEngine::calcMonsterSkillLevel(int id, int a) {
 	return (r- (r >> 1));
 }
 
-bool LoLEngine::checkBlockOccupiedByParty(int x, int y, int testFlag) {
+int LoLEngine::checkBlockOccupiedByParty(int x, int y, int testFlag) {
 	if ((testFlag & 4) && (_currentBlock == calcBlockIndex(x, y)))
-		return true;
+		return 1;
 
-	return false;
+	return 0;
 }
 
 void LoLEngine::drawBlockObjects(int blockArrayIndex) {
@@ -1191,8 +1193,8 @@ void LoLEngine::walkMonster(MonsterInPlay *monster) {
 		if (walkMonsterCheckDest(monster->x, monster->y, monster, 4) != 1)
 			return;
 
-		_monsterLastWalkDirection ^= 4;
-		setMonsterDirection(monster, _monsterLastWalkDirection);
+		_objectLastDirection ^= 4;
+		setMonsterDirection(monster, _objectLastDirection);
 	} else {
 		setMonsterDirection(monster, s);
 		if (monster->numDistAttacks) {
@@ -1208,7 +1210,7 @@ void LoLEngine::walkMonster(MonsterInPlay *monster) {
 	int fx = 0;
 	int fy = 0;
 
-	getNextStepCoords(monster->x, monster->y, fx, fy, (s == -1) ? _monsterLastWalkDirection : s);
+	getNextStepCoords(monster->x, monster->y, fx, fy, (s == -1) ? _objectLastDirection : s);
 	placeMonster(monster, fx, fy);
 }
 

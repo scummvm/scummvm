@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 45
+#define RESFILE_VERSION 46
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -449,7 +449,9 @@ bool StaticResource::init() {
 		{ lolMapStringId, kLolRawDataBe16, "MAPSTRID.LST" },
 		//{ lolMapPal, kRawData, "MAP.PAL" },
 
-		{ lolHealShapeFrames, kRawData, "MHEAL.SHP" },		
+		{ lolSpellbookAnim, kRawData, "MBOOKA.DEF" },
+		{ lolSpellbookCoords, kRawData, "MBOOKC.DEF" },
+		{ lolHealShapeFrames, kRawData, "MHEAL.SHP" },
 
 		{ 0, 0, 0 }
 	};
@@ -1047,8 +1049,12 @@ bool StaticResource::loadSpellData(const char *filename, void *&ptr, int &size) 
 		t->spellNameCode = file->readUint16LE();
 		for (int ii = 0; ii < 4; ii++)
 			t->mpRequired[ii] = file->readUint16LE();
-		for (int ii = 0; ii < 8; ii++)
-			t->unkArr[ii] = file->readUint16LE();
+		t->field_a = file->readUint16LE();
+		t->field_c = file->readUint16LE();
+		for (int ii = 0; ii < 4; ii++)
+			t->hpRequired[ii] = file->readUint16LE();
+		t->field_16 = file->readUint16LE();
+		t->field_18 = file->readUint16LE();
 		t->flags = file->readUint16LE();
 	};
 
@@ -1849,6 +1855,8 @@ void LoLEngine::initStaticResource() {
 	memcpy (_mapCursorOverlay, tmp, tmpSize);
 	_staticres->unloadId(lolMapCursorOvl);
 
+	_updateSpellBookCoords = _staticres->loadRawData(lolSpellbookCoords, _updateSpellBookCoordsSize);
+	_updateSpellBookAnimData = _staticres->loadRawData(lolSpellbookAnim, _updateSpellBookAnimDataSize);
 	_healShapeFrames = _staticres->loadRawData(lolHealShapeFrames, _healShapeFramesSize);
 
 	// assign music data
@@ -1962,11 +1970,11 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedScroll),
 		cb(clickedScroll),
 		cb(clickedScroll),
-		cb(clickedUnk23),
-		cb(clickedUnk23),
-		cb(clickedUnk23),
-		cb(clickedUnk23),
-		cb(clickedUnk24),
+		cb(clickedSpellTargetCharacter),
+		cb(clickedSpellTargetCharacter),
+		cb(clickedSpellTargetCharacter),
+		cb(clickedSpellTargetCharacter),
+		cb(clickedSpellTargetScene),
 		cb(clickedSceneThrowItem),
 		cb(clickedSceneThrowItem),
 		cb(clickedOptions),
@@ -2950,6 +2958,11 @@ const ScreenDim Screen_LoL::_screenDimTable256C[] = {
 	{ 0x07, 0x19, 0x1A, 0x97, 0x00, 0x00, 0x00, 0x00 },
 	{ 0x03, 0x1E, 0x22, 0x8C, 0x00, 0x00, 0x00, 0x00 },
 	{ 0x02, 0x48, 0x24, 0x34, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x0E, 0x00, 0x16, 0x78, 0xFE, 0x01, 0x00, 0x00 },
+	{ 0x0D, 0xA2, 0x18, 0x0C, 0xFE, 0x01, 0x00, 0x00 },
+	{ 0x0F, 0x06, 0x14, 0x6E, 0x01, 0x00, 0x00, 0x00 },
+	{ 0x1A, 0xBE, 0x0A, 0x07, 0xFE, 0x01, 0x00, 0x00 },
 	{ 0x0B, 0x8C, 0x10, 0x33, 0x3D, 0x01, 0x00, 0x00 },	// Main menu box (5 entries, CD version only)
 	{ 0x0B, 0x8C, 0x10, 0x23, 0x3D, 0x01, 0x00, 0x00 }	// Main menu box (3 entries, floppy version only)
 };
@@ -2967,6 +2980,11 @@ const ScreenDim Screen_LoL::_screenDimTable16C[] = {
 	{ 0x07, 0x19, 0x1A, 0x97, 0x00, 0x00, 0x00, 0x00 },
 	{ 0x03, 0x1E, 0x22, 0x8C, 0x00, 0x00, 0x00, 0x00 },
 	{ 0x02, 0x48, 0x24, 0x34, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x0E, 0x00, 0x16, 0x78, 0x33, 0x44, 0x00, 0x00 },
+	{ 0x0D, 0xA2, 0x18, 0x0C, 0x33, 0x44, 0x00, 0x00 },
+	{ 0x0F, 0x06, 0x14, 0x6E, 0x44, 0x00, 0x00, 0x00 },
+	{ 0x1A, 0xBE, 0x0A, 0x07, 0x33, 0x44, 0x00, 0x00 },
 	{ 0x0B, 0x8C, 0x10, 0x33, 0x33, 0x44, 0x00, 0x00 },	// Main menu box (5 entries, not used here)
 	{ 0x0B, 0x8C, 0x10, 0x23, 0x33, 0x44, 0x00, 0x00 }	// Main menu box (3 entries)
 };
@@ -2986,13 +3004,19 @@ const LoLEngine::CharacterPrev LoLEngine::_charPreviews[] = {
 	{   "Conrad", 0x10F, 0x7F, { 0x0A, 0x0C, 0x0A } }
 };
 
-const uint8 LoLEngine::_chargenFrameTable[] = {
+const uint8 LoLEngine::_chargenFrameTableTalkie[] = {
 	0x00, 0x01, 0x02, 0x03, 0x04,
 	0x05, 0x04, 0x03, 0x02, 0x01,
 	0x00, 0x00, 0x01, 0x02, 0x03,
 	0x04, 0x05, 0x06, 0x07, 0x08,
 	0x09, 0x0A, 0x0B, 0x0C, 0x0D,
 	0x0E, 0x0F, 0x10, 0x11, 0x12
+};
+
+const uint8 LoLEngine::_chargenFrameTableFloppy[] = {
+	0,  1,  2,  3,  4,  5,  4,  3,  2,
+	1,  0,  0,  1,  2,  3,  4,  5,  6,
+	7,  8,  9, 10, 11, 12, 13, 14, 15
 };
 
 const uint16 LoLEngine::_selectionPosTable[] = {
