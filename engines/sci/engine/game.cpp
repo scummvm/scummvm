@@ -68,11 +68,6 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 
 extern int _allocd_rules;
 
-static void _sci1_alloc_system_colors(EngineState *s) {
-	gfx_color_t black = { PaletteEntry(0, 0, 0), 0, 0, 0, GFX_MASK_VISUAL };
-	gfxop_set_system_color(s->gfx_state, 0, &black);
-}
-
 int _reset_graphics_input(EngineState *s) {
 	Resource *resource;
 	int font_nr;
@@ -90,7 +85,9 @@ int _reset_graphics_input(EngineState *s) {
 			gfxop_set_system_color(s->gfx_state, i, &(s->ega_colors[i]));
 		}
 	} else {
-		_sci1_alloc_system_colors(s);
+		// Allocate SCI1 system colors
+		gfx_color_t black = { PaletteEntry(0, 0, 0), 0, 0, 0, GFX_MASK_VISUAL };
+		gfxop_set_system_color(s->gfx_state, 0, &black);
 
 		// Check for Amiga palette file.
 		Common::File file;

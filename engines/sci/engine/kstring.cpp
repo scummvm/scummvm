@@ -424,8 +424,7 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// LSL5 stores the password at the beginning in memory.drv, using XOR encryption,
 	// which means that is_print_str() will fail. Therefore, do not use the heuristic to determine
 	// if we're handling a string or an array for LSL5's password screen (room 155)
-	// FIXME: implement function to get current room number
-	if (s->_gameName.equalsIgnoreCase("lsl5") && (KP_UINT(s->script_000->locals_block->locals[13]) == 155))
+	if (s->_gameName.equalsIgnoreCase("lsl5") && s->currentRoomNumber() == 155)
 		lsl5PasswordWorkaround = true;
 
 	const char* dst = (const char *)dest; // used just for code beautification purposes
