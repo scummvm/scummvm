@@ -58,7 +58,7 @@ Keymap *Keymapper::Domain::getKeymap(const String& name) {
 
 Keymapper::Keymapper(EventManager *evtMgr)
 	: _eventMan(evtMgr), _enabled(true), _hardwareKeys(0) {
-	ConfigManager::Domain *confDom = ConfMan.getDomain(ConfigManager::kApplicationDomain);
+	ConfigManager::Domain *confDom = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 
 	_globalDomain.setConfigDomain(confDom);
 }
