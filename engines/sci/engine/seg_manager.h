@@ -186,12 +186,6 @@ public:
 	// objects have been instantiated, or a run-time error will occur.
 	void scriptRelocate(reg_t block);
 
-	// Deallocates all unused but allocated entries for objects
-	// Parameters: (SegmentId) segid: segment of the script to prune in this way
-	// These entries are created during script instantiation; deallocating them
-	// frees up some additional memory.
-	void scriptFreeUnusedObjects(SegmentId segid);
-
 	// Sets the script-relative offset of the exports table
 	// Parameters: (int) offset: The script-relative exports table offset
 	//	       (int) id: ID of the script or script segment to write to

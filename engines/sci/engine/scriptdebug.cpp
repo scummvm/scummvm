@@ -388,7 +388,6 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	switch (mobj->getType()) {
 
 	case MEM_OBJ_SCRIPT: {
-		int i;
 		Script *scr = (Script *)mobj;
 		sciprintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, (uint)scr->buf_size, (uint)scr->buf_size);
 		if (scr->export_table)
@@ -403,10 +402,10 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		else
 			sciprintf("  Locals : none\n");
 
-		sciprintf("  Objects: %4d\n", scr->objects_nr);
-		for (i = 0; i < scr->objects_nr; i++) {
+		sciprintf("  Objects: %4d\n", scr->_objects.size());
+		for (uint i = 0; i < scr->_objects.size(); i++) {
 			sciprintf("    ");
-			print_obj_head(s, scr->objects + i);
+			print_obj_head(s, &scr->_objects[i]);
 		}
 	}
 	break;

@@ -189,10 +189,6 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 	}
 
 	// Initialize objects
-	scr.objects = NULL;
-	scr.objects_allocated = 0;
-	scr.objects_nr = 0; // No objects recorded yet
-
 	scr.locals_offset = 0;
 	scr.locals_block = NULL;
 
@@ -370,19 +366,10 @@ void Script::freeScript() {
 	buf = NULL;
 	buf_size = 0;
 
-	if (objects) {
-		for (int i = 0; i < objects_nr; i++) {
-			Object *object = &objects[i];
-			if (object->variables) {
-				free(object->variables);
-				object->variables = NULL;
-				object->variables_nr = 0;
-			}
-		}
-		free(objects);
-		objects = NULL;
-		objects_nr = 0;
+	for (uint i = 0; i < _objects.size(); i++) {
+		free(_objects[i].variables);
 	}
+	_objects.clear();
 
 	delete obj_indices;
 	obj_indices = 0;
@@ -578,17 +565,18 @@ void SegManager::scriptRelocate(reg_t block) {
 			continue; // FIXME: A hack pending investigation
 
 		if (!relocateLocal(scr, block.segment, pos)) {
-			int k, done = 0;
+			bool done = false;
+			uint k;
 
-			for (k = 0; !done && k < scr->objects_nr; k++) {
-				if (relocateObject(scr->objects + k, block.segment, pos))
-					done = 1;
+			for (k = 0; !done && k < scr->_objects.size(); k++) {
+				if (relocateObject(&scr->_objects[k], block.segment, pos))
+					done = true;
 			}
 
-			for (k = 0; !done && k < scr->code_blocks_nr; k++) {
+			for (k = 0; !done && (int)k < scr->code_blocks_nr; k++) {
 				if (pos >= scr->code[k].pos.offset &&
 				        pos < scr->code[k].pos.offset + scr->code[k].size)
-					done = 1;
+					done = true;
 			}
 
 			if (!done) {
@@ -598,8 +586,8 @@ void SegManager::scriptRelocate(reg_t block) {
 					sciprintf("- locals: %d at %04x\n", scr->locals_block->nr, scr->locals_offset);
 				else
 					sciprintf("- No locals\n");
-				for (k = 0; k < scr->objects_nr; k++)
-					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->objects[k].pos.offset, scr->objects[k].variables_nr);
+				for (k = 0; k < scr->_objects.size(); k++)
+					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k].variables_nr);
 // SQ3 script 71 has broken relocation entries.
 // Since this is mainstream, we can't break out as we used to do.
 				sciprintf("Trying to continue anyway...\n");
@@ -624,11 +612,12 @@ void SegManager::heapRelocate(EngineState *s, reg_t block) {
 		int pos = READ_LE_UINT16(scr->heap_start + block.offset + 2 + (i * 2)) + scr->script_size;
 
 		if (!relocateLocal(scr, block.segment, pos)) {
-			int k, done = 0;
+			bool done = false;
+			uint k;
 
-			for (k = 0; !done && k < scr->objects_nr; k++) {
-				if (relocateObject(scr->objects + k, block.segment, pos))
-					done = 1;
+			for (k = 0; !done && k < scr->_objects.size(); k++) {
+				if (relocateObject(&scr->_objects[k], block.segment, pos))
+					done = true;
 			}
 
 			if (!done) {
@@ -638,8 +627,8 @@ void SegManager::heapRelocate(EngineState *s, reg_t block) {
 					sciprintf("- locals: %d at %04x\n", scr->locals_block->nr, scr->locals_offset);
 				else
 					sciprintf("- No locals\n");
-				for (k = 0; k < scr->objects_nr; k++)
-					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->objects[k].pos.offset, scr->objects[k].variables_nr);
+				for (k = 0; k < scr->_objects.size(); k++)
+					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k].variables_nr);
 				sciprintf("Triggering breakpoint...\n");
 				BREAKPOINT();
 			}
@@ -661,20 +650,13 @@ Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 
 	VERIFY(base < scr->buf_size, "Attempt to initialize object beyond end of script\n");
 
-	if (!scr->objects) {
-		scr->objects_allocated = DEFAULT_OBJECTS;
-		scr->objects = (Object *)sci_malloc(sizeof(Object) * scr->objects_allocated);
-	}
-	if (scr->objects_nr == scr->objects_allocated) {
-		scr->objects_allocated += DEFAULT_OBJECTS_INCREMENT;
-		scr->objects = (Object *)sci_realloc(scr->objects, sizeof(Object) * scr->objects_allocated);
-	}
-
 	temp = make_reg(obj_pos.segment, base);
-	id = scr->obj_indices->checkKey(base, true);
-	scr->objects_nr++;
 
-	obj = scr->objects + id;
+	id = scr->obj_indices->checkKey(base, true);
+	if ((uint)id == scr->_objects.size())
+		scr->_objects.push_back(Object());
+
+	obj = &scr->_objects[id];
 
 	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET  < scr->buf_size, "Function area pointer stored beyond end of script\n");
 
@@ -724,19 +706,11 @@ Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 
 	VERIFY(base < (uint16)scr->buf_size, "Attempt to initialize object beyond end of script\n");
 
-	if (!scr->objects) {
-		scr->objects_allocated = DEFAULT_OBJECTS;
-		scr->objects = (Object *)sci_malloc(sizeof(Object) * scr->objects_allocated);
-	}
-	if (scr->objects_nr == scr->objects_allocated) {
-		scr->objects_allocated += DEFAULT_OBJECTS_INCREMENT;
-		scr->objects = (Object *)sci_realloc(scr->objects, sizeof(Object) * scr->objects_allocated);
-	}
-
 	id = scr->obj_indices->checkKey(obj_pos.offset, true);
-	scr->objects_nr++;
+	if ((uint)id == scr->_objects.size())
+		scr->_objects.push_back(Object());
 
-	obj = scr->objects + id;
+	obj = &scr->_objects[id];
 
 	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < (uint16)scr->buf_size, "Function area pointer stored beyond end of script\n");
 
@@ -909,20 +883,6 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 		obj->variables[6] = INST_LOOKUP_CLASS(obj->variables[6].offset);
 
 		seeker += READ_LE_UINT16(seeker + 2) * 2;
-	}
-}
-
-void SegManager::scriptFreeUnusedObjects(SegmentId seg) {
-	Script *scr = getScript(seg, SEG_ID);
-	if (scr->objects_allocated > scr->objects_nr) {
-		if (scr->objects_nr)
-			scr->objects = (Object *)sci_realloc(scr->objects, sizeof(Object) * scr->objects_nr);
-		else {
-			if (scr->objects_allocated)
-				free(scr->objects);
-			scr->objects = NULL;
-		}
-		scr->objects_allocated = scr->objects_nr;
 	}
 }
 
@@ -1208,18 +1168,16 @@ void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, 
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
 		int idx = RAW_GET_CLASS_INDEX(script, addr);
-		if (idx >= 0 && idx < script->objects_nr) {
-			Object *obj = script->objects + idx;
-			int i;
-
+		if (idx >= 0 && (uint)idx < script->_objects.size()) {
 			// Note all local variables, if we have a local variable environment
 			if (script->locals_segment)
 				(*note)(param, make_reg(script->locals_segment, 0));
 
-			for (i = 0; i < obj->variables_nr; i++)
-				(*note)(param, obj->variables[i]);
+			Object &obj = script->_objects[idx];
+			for (int i = 0; i < obj.variables_nr; i++)
+				(*note)(param, obj.variables[i]);
 		} else {
-			fprintf(stderr, "Request for outgoing script-object reference at "PREG" yielded invalid index %d\n", PRINT_REG(addr), idx);
+			warning("Request for outgoing script-object reference at "PREG" yielded invalid index %d", PRINT_REG(addr), idx);
 		}
 	} else {
 		/*		fprintf(stderr, "Unexpected request for outgoing script-object references at "PREG"\n", PRINT_REG(addr));*/

@@ -1876,8 +1876,6 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	if (relocation >= 0)
 		s->seg_manager->scriptRelocate(make_reg(reg.segment, relocation));
 
-	s->seg_manager->scriptFreeUnusedObjects(reg.segment);
-
 	return reg.segment;		// instantiation successful
 }
 
@@ -2094,8 +2092,8 @@ Object *obj_get(EngineState *s, reg_t offset) {
 			if (offset.offset <= (*(Script *)memobj).buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 			        && RAW_IS_OBJECT((*(Script *)memobj).buf + offset.offset)) {
 				idx = RAW_GET_CLASS_INDEX((Script *)memobj, offset);
-				if (idx >= 0 && idx < (*(Script *)memobj).objects_nr)
-					obj = (*(Script *)memobj).objects + idx;
+				if (idx >= 0 && (uint)idx < (*(Script *)memobj)._objects.size())
+					obj = &(*(Script *)memobj)._objects[idx];
 			}
 		}
 	}

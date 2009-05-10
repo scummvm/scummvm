@@ -277,6 +277,8 @@ struct Object {
 	uint16 *base_method; /**< Pointer to the method selector area for this object */
 	uint16 *base_vars; /**< Pointer to the varselector area for this object */
 	reg_t *variables;
+
+	Object() { memset(this, 0, sizeof(*this)); }
 };
 
 struct CodeBlock {
@@ -323,11 +325,12 @@ struct Script : public MemObject {
 	int synonyms_nr; /**< Number of entries in the synonyms block */
 	int lockers; /**< Number of classes and objects that require this script */
 
-	Object *objects; /**< Table for objects, contains property variables */
-	/* Indexed by the value stored at SCRIPT_LOCALVARPTR_OFFSET,
-	** see VM_OBJECT_[GS]ET_INDEX()  */
-	int objects_nr; /**< Number of objects and classes */
-	int objects_allocated; /**< Number of allocated objects */
+	/**
+	 * Table for objects, contains property variables.
+	 * Indexed by the value stored at SCRIPT_LOCALVARPTR_OFFSET,
+	 * see VM_OBJECT_[GS]ET_INDEX()
+	 */
+	Common::Array<Object> _objects;
 
 	int locals_offset;
 	int locals_segment; /**< The local variable segment */
@@ -352,10 +355,6 @@ public:
 		export_table = NULL;
 
 		obj_indices = NULL;
-
-		objects = NULL;
-		objects_allocated = 0;
-		objects_nr = 0;
 
 		locals_offset = 0;
 		locals_segment = 0;

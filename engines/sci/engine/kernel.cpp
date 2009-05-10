@@ -673,7 +673,7 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 		if (reg.offset <= (*(Script *)mobj).buf_size && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 		        && RAW_IS_OBJECT((*(Script *)mobj).buf + reg.offset)) {
 			int idx = RAW_GET_CLASS_INDEX((Script *)mobj, reg);
-			if (idx >= 0 && idx < (*(Script *)mobj).objects_nr)
+			if (idx >= 0 && (uint)idx < (*(Script *)mobj)._objects.size())
 				return KSIG_OBJECT;
 			else
 				return KSIG_REF;

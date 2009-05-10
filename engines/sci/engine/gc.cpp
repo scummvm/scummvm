@@ -118,15 +118,12 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 			Script *script = (Script *)sm->_heap[i];
 
 			if (script->lockers) { // Explicitly loaded?
-				int obj_nr;
-
 				// Locals, if present
 				wm.push(make_reg(script->locals_segment, 0));
 
 				// All objects (may be classes, may be indirectly reachable)
-				for (obj_nr = 0; obj_nr < script->objects_nr; obj_nr++) {
-					Object *obj = script->objects + obj_nr;
-					wm.push(obj->pos);
+				for (uint obj_nr = 0; obj_nr < script->_objects.size(); obj_nr++) {
+					wm.push(script->_objects[obj_nr].pos);
 				}
 			}
 		}

@@ -277,7 +277,8 @@ static void sync_LocalVariables(Common::Serializer &s, LocalVariables &obj) {
 		sync_reg_t(s, obj.locals[i]);
 }
 
-static void sync_Object(Common::Serializer &s, Object &obj) {
+template <>
+void syncWithSerializer(Common::Serializer &s, Object &obj) {
 	s.syncAsSint32LE(obj.flags);
 	sync_reg_t(s, obj.pos);
 	s.syncAsSint32LE(obj.variables_nr);
@@ -288,11 +289,6 @@ static void sync_Object(Common::Serializer &s, Object &obj) {
 		obj.variables = (reg_t *)sci_calloc(obj.variables_nr, sizeof(reg_t));
 	for (int i = 0; i < obj.variables_nr; ++i)
 		sync_reg_t(s, obj.variables[i]);
-}
-
-template <>
-void syncWithSerializer(Common::Serializer &s, Clone &obj) {
-	sync_Object(s, obj);
 }
 
 template <>
@@ -341,13 +337,22 @@ static void sync_Script(Common::Serializer &s, Script &obj) {
 	s.syncAsSint32LE(obj.exports_nr);
 	s.syncAsSint32LE(obj.synonyms_nr);
 	s.syncAsSint32LE(obj.lockers);
-	s.syncAsSint32LE(obj.objects_allocated);
-	s.syncAsSint32LE(obj.objects_nr);
 
-	if (!obj.objects && obj.objects_allocated)
-		obj.objects = (Object *)sci_calloc(obj.objects_allocated, sizeof(Object));
-	for (int i = 0; i < obj.objects_allocated; ++i)
-		sync_Object(s, obj.objects[i]);
+#if 1
+	uint len = obj._objects.size();
+	s.syncAsUint32LE(len); 	// Used to be obj.objects_allocated
+	s.skip(4); 	// Used to be obj.objects_nr
+	// Resize the array if loading.
+	if (s.isLoading())
+		obj._objects.resize(len);
+	Common::Array<Object>::iterator i;
+	for (i = obj._objects.begin(); i != obj._objects.end(); ++i) {
+		syncWithSerializer<Object>(s, *i);
+	}
+#else
+	s.skip(4); 	// Used to be obj.objects_allocated
+	syncArray<Object>(s, obj._objects);
+#endif
 
 	s.syncAsSint32LE(obj.locals_offset);
 	s.syncAsSint32LE(obj.locals_segment);
@@ -585,14 +590,13 @@ static void load_script(EngineState *s, SegmentId seg) {
 
 // FIXME: The following should likely become a SegManager method
 static void reconstruct_scripts(EngineState *s, SegManager *self) {
-	uint i;
+	uint i, j;
 	MemObject *mobj;
 	for (i = 0; i < self->_heap.size(); i++) {
 		if (self->_heap[i]) {
 			mobj = self->_heap[i];
 			switch (mobj->getType())  {
 			case MEM_OBJ_SCRIPT: {
-				int j;
 				Script *scr = (Script *)mobj;
 
 				load_script(s, i);
@@ -606,10 +610,10 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				if (!self->isSci1_1)
 					scr->export_table += 3;
 
-				for (j = 0; j < scr->objects_nr; j++) {
-					byte *data = scr->buf + scr->objects[j].pos.offset;
-					scr->objects[j].base = scr->buf;
-					scr->objects[j].base_obj = data;
+				for (j = 0; j < scr->_objects.size(); j++) {
+					byte *data = scr->buf + scr->_objects[j].pos.offset;
+					scr->_objects[j].base = scr->buf;
+					scr->_objects[j].base_obj = data;
 				}
 				break;
 			}
@@ -624,34 +628,33 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 			mobj = self->_heap[i];
 			switch (mobj->getType())  {
 			case MEM_OBJ_SCRIPT: {
-				int j;
 				Script *scr = (Script *)mobj;
 
-				for (j = 0; j < scr->objects_nr; j++) {
-					byte *data = scr->buf + scr->objects[j].pos.offset;
+				for (j = 0; j < scr->_objects.size(); j++) {
+					byte *data = scr->buf + scr->_objects[j].pos.offset;
 
 					if (self->isSci1_1) {
 						uint16 *funct_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 6 ));
 						uint16 *prop_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 4 ));
 
-						scr->objects[j].base_method = funct_area;
-						scr->objects[j].base_vars = prop_area;
+						scr->_objects[j].base_method = funct_area;
+						scr->_objects[j].base_vars = prop_area;
 					} else {
 						int funct_area = READ_LE_UINT16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
 						Object *base_obj;
 
-						base_obj = obj_get(s, scr->objects[j].variables[SCRIPT_SPECIES_SELECTOR]);
+						base_obj = obj_get(s, scr->_objects[j].variables[SCRIPT_SPECIES_SELECTOR]);
 
 						if (!base_obj) {
 							sciprintf("Object without a base class: Script %d, index %d (reg address "PREG"\n",
-								  scr->nr, j, PRINT_REG(scr->objects[j].variables[SCRIPT_SPECIES_SELECTOR]));
+								  scr->nr, j, PRINT_REG(scr->_objects[j].variables[SCRIPT_SPECIES_SELECTOR]));
 							continue;
 						}
-						scr->objects[j].variable_names_nr = base_obj->variables_nr;
-						scr->objects[j].base_obj = base_obj->base_obj;
+						scr->_objects[j].variable_names_nr = base_obj->variables_nr;
+						scr->_objects[j].base_obj = base_obj->base_obj;
 
-						scr->objects[j].base_method = (uint16 *) (data + funct_area);
-						scr->objects[j].base_vars = (uint16 *) (data + scr->objects[j].variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
+						scr->_objects[j].base_method = (uint16 *)(data + funct_area);
+						scr->_objects[j].base_vars = (uint16 *)(data + scr->_objects[j].variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
 					}
 				}
 				break;
