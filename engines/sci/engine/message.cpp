@@ -93,22 +93,16 @@ int MessageState::getTalker() {
 		return *(_engineCursor.index_record + 4);
 }
 
-int MessageState::getText(char *buffer, int length) {
-	int offset;
-	if (_version == 2101)
-		offset = READ_LE_UINT16(_engineCursor.index_record + 2);
-	else
-		offset = READ_LE_UINT16(_engineCursor.index_record + 5);
-
+void MessageState::getText(char *buffer) {
+	int offset = READ_LE_UINT16(_engineCursor.index_record + ((_version == 2101) ? 2 : 5));
 	char *stringptr = (char *)_engineCursor.resource_beginning + offset;
-	strncpy(buffer, stringptr, length);
-
-	return strlen(buffer);
+	strcpy(buffer, stringptr);
 }
 
 int MessageState::getLength() {
-	char buffer[500];
-	return getText(buffer, sizeof(buffer));
+	int offset = READ_LE_UINT16(_engineCursor.index_record + ((_version == 2101) ? 2 : 5));
+	char *stringptr = (char *)_engineCursor.resource_beginning + offset;
+	return strlen(stringptr);
 }
 
 int MessageState::loadRes(int module) {

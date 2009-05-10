@@ -46,7 +46,7 @@ struct IndexRecordCursor {
 //typedef int index_record_size_t();
 typedef void parse_index_record_t(IndexRecordCursor *index_record, MessageTuple *t);
 typedef int get_talker_t(IndexRecordCursor *cursor);
-typedef void get_text_t(IndexRecordCursor *cursor, char *buffer, int buffer_size);
+typedef void get_text_t(IndexRecordCursor *cursor);
 typedef int index_record_count_t(byte *header);
 
 class MessageState {
@@ -55,7 +55,7 @@ public:
 	int getNext();
 	int getTalker();
 	int getLength();
-	int getText(char *buffer, int length);
+	void getText(char *buffer);
 	int loadRes(int module);
 	int isInitialized() { return _initialized; }
 	void initialize(ResourceManager *resmgr);

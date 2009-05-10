@@ -727,55 +727,48 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 static MessageState state;
 
 reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	MessageTuple tuple;
+
 	if (!state.isInitialized())
 		message_state_initialize(s->resmgr, &state);
 
 	switch (UKPV(0)) {
-	case 0 : {
-		char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], 0) : NULL;
-		MessageTuple tuple;
-		int module = UKPV(1);
+	case 0:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+		if (!state.loadRes(UKPV(1)))
+			return NULL_REG;
 
 		tuple.noun = UKPV(2);
 		tuple.verb = UKPV(3);
 		tuple.cond = UKPV(4);
 		tuple.seq = UKPV(5);
+	}
 
-		if (state.loadRes(module) && state.getSpecific(&tuple)) {
+	switch (UKPV(0)) {
+	case 0 :
+	case 1 :
+		if (UKPV(0) == 0 ? state.getSpecific(&tuple) : state.getNext()) {
+			char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], state.getLength() + 1) : NULL;
+
 			if (buffer)
-				state.getText(buffer, 100);
+				state.getText(buffer);
 			// Talker id
 			return make_reg(0, state.getTalker());
 		} else {
-			if (buffer) strcpy(buffer, DUMMY_MESSAGE);
-			return NULL_REG;
-		}
-	}
-	case 1 : {
-		char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], 0) : NULL;
+			char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], 0) : NULL;
 
-		if (state.getNext()) {
 			if (buffer)
-				state.getText(buffer, 100);
-			// Talker id
-			return make_reg(0, state.getTalker());
-		} else {
-			if (buffer) strcpy(buffer, DUMMY_MESSAGE);
+				strcpy(buffer, DUMMY_MESSAGE);
+
 			return NULL_REG;
 		}
-	}
-	case 2 : {
-		MessageTuple tuple;
-		int module = UKPV(1);
-		tuple.noun = UKPV(2);
-		tuple.verb = UKPV(3);
-		tuple.cond = UKPV(4);
-		tuple.seq = UKPV(5);
-
-		if (state.loadRes(module) && state.getSpecific(&tuple))
+	case 2:
+		if (state.getSpecific(&tuple))
 			return make_reg(0, state.getLength() + 1);
 		else return NULL_REG;
-	}
 	}
 
 	return NULL_REG;
@@ -785,8 +778,6 @@ reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!state.isInitialized())
 		message_state_initialize(s->resmgr, &state);
 
-	char *buffer = kernel_dereference_char_pointer(s, argv[3], 0);
-
 	MessageTuple tuple;
 	tuple.noun = UKPV(0);
 	int module = UKPV(1);
@@ -794,12 +785,17 @@ reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	tuple.cond = 0;
 	tuple.seq = 0;
 
-	if (buffer && state.loadRes(module) && state.getSpecific(&tuple)) {
-		state.getText(buffer, 255);
-		return argv[3];
-	} else {
-		return NULL_REG;
+	if (state.loadRes(module) && state.getSpecific(&tuple)) {
+		int len = state.getLength();
+		char *buffer = kernel_dereference_char_pointer(s, argv[3], len + 1);
+
+		if (buffer) {
+			state.getText(buffer);
+			return argv[3];
+		}
 	}
+
+	return NULL_REG;
 }
 
 } // End of namespace Sci
