@@ -49,6 +49,8 @@ Palette::Palette(const gfx_pixmap_color_t *colors, uint s) {
 		_colors[i].r = colors[i].r;
 		_colors[i].g = colors[i].g;
 		_colors[i].b = colors[i].b;
+		_colors[i].refcount = 0;
+		_colors[i].parent_index = -1;
 	}
 }
 
