@@ -2455,9 +2455,6 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 		grabCursor(args[1], args[2], args[3], args[4]);
 		break;
 	case 6: {
-			if (_smushFrameRate == 0)
-				_smushFrameRate = 14;
-
 			// SMUSH movie playback
 			if (args[1] == 0) {
 				const char *videoname = (const char *)getStringAddressVar(VAR_VIDEONAME);
