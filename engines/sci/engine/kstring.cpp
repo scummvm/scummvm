@@ -727,10 +727,10 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 static MessageState state;
 
 reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	MessageTuple tuple;
-
 	if (!state.isInitialized())
 		message_state_initialize(s->resmgr, &state);
+
+	MessageTuple tuple;
 
 	switch (UKPV(0)) {
 	case 0:
@@ -750,7 +750,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case 0 :
 	case 1 :
-		if (UKPV(0) == 0 ? state.getSpecific(&tuple) : state.getNext()) {
+		if (UKPV(0) == 0 ? state.getMessage(&tuple) : state.getNext()) {
 			char *buffer = argc == 7 ? kernel_dereference_char_pointer(s, argv[6], state.getLength() + 1) : NULL;
 
 			if (buffer)
@@ -766,7 +766,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return NULL_REG;
 		}
 	case 2:
-		if (state.getSpecific(&tuple))
+		if (state.getMessage(&tuple))
 			return make_reg(0, state.getLength() + 1);
 		else return NULL_REG;
 	}
@@ -785,7 +785,7 @@ reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	tuple.cond = 0;
 	tuple.seq = 0;
 
-	if (state.loadRes(module) && state.getSpecific(&tuple)) {
+	if (state.loadRes(module) && state.getMessage(&tuple)) {
 		int len = state.getLength();
 		char *buffer = kernel_dereference_char_pointer(s, argv[3], len + 1);
 

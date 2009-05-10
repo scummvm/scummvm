@@ -46,7 +46,7 @@ void MessageState::parse(IndexRecordCursor *cursor, MessageTuple *t) {
 	}
 }
 
-int MessageState::getSpecific(MessageTuple *t) {
+int MessageState::getMessage(MessageTuple *t) {
 	MessageTuple looking_at;
 	int found = 0;
 
@@ -75,10 +75,7 @@ int MessageState::getNext() {
 }
 
 int MessageState::getTalker() {
-	if (_version == 2101)
-		return -1;
-	else
-		return *(_engineCursor.index_record + 4);
+	return (_version == 2101) ? -1 : *(_engineCursor.index_record + 4);
 }
 
 void MessageState::getText(char *buffer) {
@@ -110,13 +107,9 @@ int MessageState::loadRes(int module) {
 		return 0;
 	}
 
-	if (_version == 2101) {
-		_recordCount = READ_LE_UINT16(_currentResource->data + 4);
-		_indexRecords = _currentResource->data + 6;
-	} else {
-		_recordCount = READ_LE_UINT16(_currentResource->data + 8);
-		_indexRecords = _currentResource->data + 10;
-	}
+	int offs = (_version == 2101) ? 0 : 4;
+	_recordCount = READ_LE_UINT16(_currentResource->data + 4 + offs);
+	_indexRecords = _currentResource->data + 6 + offs;
 
 	initIndexRecordCursor();
 	return 1;
@@ -132,14 +125,12 @@ void MessageState::initialize(ResourceManager *resmgr) {
 
 void message_state_initialize(ResourceManager *resmgr, MessageState *state) {
 	Resource *tester = resmgr->findResource(kResourceTypeMessage, 0, 0);
-	int version;
 
-	if (tester == NULL)
-		return;
-
-	version = READ_LE_UINT16(tester->data);
-	state->initialize(resmgr);
-	state->setVersion(version);
+	if (tester) {
+		int version = READ_LE_UINT16(tester->data);
+		state->initialize(resmgr);
+		state->setVersion(version);
+	}
 }
 
 } // End of namespace Sci

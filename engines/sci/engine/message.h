@@ -43,15 +43,9 @@ struct IndexRecordCursor {
 	byte *resource_beginning;
 };
 
-//typedef int index_record_size_t();
-typedef void parse_index_record_t(IndexRecordCursor *index_record, MessageTuple *t);
-typedef int get_talker_t(IndexRecordCursor *cursor);
-typedef void get_text_t(IndexRecordCursor *cursor);
-typedef int index_record_count_t(byte *header);
-
 class MessageState {
 public:
-	int getSpecific(MessageTuple *t);
+	int getMessage(MessageTuple *t);
 	int getNext();
 	int getTalker();
 	int getLength();
