@@ -1663,6 +1663,39 @@ int LoLEngine::olol_castSpell(EMCState *script) {
 	return castSpell(stackPos(0), stackPos(1), stackPos(2));
 }
 
+int LoLEngine::olol_paletteFlash(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_paletteFlash(%p) (%d)", (const void *)script, stackPos(0));
+	uint8 *s = _screen->getPalette(1);
+	uint8 *d = _screen->getPalette(3);
+	uint8 ovl[256];
+	generateFlashPalette(s, d, stackPos(0));
+	_screen->loadSpecialColors(s);
+	_screen->loadSpecialColors(d);
+
+	if (_smoothScrollModeNormal) {
+		for (int i = 0; i < 256; i++)
+			ovl[i] = i;
+		ovl[1] = 6;
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, 0, 2);
+		_screen->applyOverlay(112, 0, 176, 120, 0, ovl);
+	}
+
+	_screen->setScreenPalette(d);
+	_screen->updateScreen();
+
+	delay(2 * _tickLength);
+
+	_screen->setScreenPalette(s);
+	_screen->updateScreen();
+
+	if (_smoothScrollModeNormal) {
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
+		_screen->updateScreen();
+	}
+	
+	return 0;
+}
+
 int LoLEngine::olol_disableControls(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_disableControls(%p) (%d)", (const void *)script, stackPos(0));
 	return gui_disableControls(stackPos(0));
@@ -2218,7 +2251,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0xB0
-	OpcodeUnImpl();
+	Opcode(olol_paletteFlash);
 	OpcodeUnImpl();
 	Opcode(olol_dummy1); // anim buffer select?
 	Opcode(olol_disableControls);

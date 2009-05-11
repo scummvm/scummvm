@@ -1611,6 +1611,28 @@ void LoLEngine::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness
 	}
 }
 
+void LoLEngine::generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags) {
+	if (!src || !dst)
+		return;
+
+	memcpy(dst, src, 6);
+
+	uint8 *s = src + 6;
+	uint8 *d = dst + 6;
+
+	for (int i = 2; i < 128; i++) {
+		for (int ii = 0; ii < 3; ii++) {
+			uint8 t = *s++ & 0x3f;
+			if (colorFlags & (1 << ii))
+				t += ((0x3f - t) >> 1);
+			else
+				t -= (t >> 1);
+			*d++ = t;
+		}
+	}
+	memcpy(d, s, 384);
+}
+
 void LoLEngine::updateSequenceBackgroundAnimations() {
 	if (_updateFlags & 8)
 		return;
@@ -2111,7 +2133,7 @@ int LoLEngine::castSpell(int charNum, int spellType, int spellLevel) {
 		if (_activeSpell.p->hpRequired[spellLevel] >= _characters[charNum].hitPointsCur)
 			return 0;
 
-		setCharacterMagicOrHitPoints(charNum, 1, -_activeSpell.p->mpRequired[spellLevel], 1);
+		//setCharacterMagicOrHitPoints(charNum, 1, -_activeSpell.p->mpRequired[spellLevel], 1);
 		setCharacterMagicOrHitPoints(charNum, 0, -_activeSpell.p[1].hpRequired[spellLevel], 1);
 		gui_drawCharPortraitWithStats(charNum);
 

@@ -694,6 +694,7 @@ private:
 	int olol_enableSysTimer(EMCState *script);
 	int olol_checkNeedSceneRestore(EMCState *script);
 	int olol_castSpell(EMCState *script);
+	int olol_paletteFlash(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
 	int olol_characterSays(EMCState *script);
@@ -759,6 +760,7 @@ private:
 	void fadeText();
 	void setPaletteBrightness(uint8 *palette, int brightness, int modifier);
 	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
+	void generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags);
 	void updateSequenceBackgroundAnimations();
 	void savePage5();
 	void restorePage5();
