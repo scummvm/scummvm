@@ -924,7 +924,7 @@ static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams
 	int i, seeklen, resnr, resmax;
 	unsigned char *seekstr = NULL;
 	Resource *script = NULL;
-	char *dot = strchr(cmdParams[0].str, '.');
+	char *dot = (char *)strchr(cmdParams[0].str, '.');
 	ResourceType restype;
 
 	if (NULL == s) {
