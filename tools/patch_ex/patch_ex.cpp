@@ -318,10 +318,10 @@ int main(int argc, char *argv[]) {
 
 	action = UNKNOWN_ACTION;
 
-	// Arguments checks and usage dispaly
+	// Argument checks and usage display
 	if (argc != 3) {
 		printf("Usage: patchex gfupd101.exe LanguageCode/SpecialAction\n");
-		printf("Aviable languages:\n");
+		printf("Available languages:\n");
 		for (i = 0; kLanguages_code[i]; i++)
 			printf("-%s (%s)\n", kLanguages_ext[i], kLanguages_code[i]);
 		printf("Special actions:\n");
