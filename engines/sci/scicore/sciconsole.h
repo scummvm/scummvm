@@ -43,9 +43,6 @@ namespace Sci {
 
 struct gfx_pixmap_t;
 
-/** If this flag is set, we echo all sciprintf() stuff to the text console. */
-extern int con_passthrough;
-
 union cmd_param_t {
 	int32 val;
 	const char *str;
@@ -56,14 +53,6 @@ union cmd_param_t {
 typedef int (*ConCommand)(EngineState *s, const Common::Array<cmd_param_t> &cmdParams);
 
 /*** FUNCTION DEFINITIONS ***/
-
-void con_set_string_callback(void(*callback)(char *));
-/* Sets the console string callback
-** Parameters: (void -> char *) callback: The closure to invoke after
-**                              a string for sciprintf() has been generated
-** This sets a single callback function to be used after sciprintf()
-** is used.
-*/
 
 void con_set_pixmap_callback(void(*callback)(gfx_pixmap_t *));
 /* Sets the console pixmap callback

@@ -34,6 +34,7 @@
 namespace Sci {
 
 extern EngineState *g_EngineState;
+extern bool g_redirect_sciprintf_to_gui;
 
 class ConsoleFunc : public Common::Functor2<int, const char **, bool> {
 public:
@@ -48,7 +49,10 @@ public:
 			tmp += ' ';
 			tmp += argv[i];
 		}
+		g_redirect_sciprintf_to_gui = true;
 		con_parse(g_EngineState, tmp.c_str());
+		sciprintf("\n");
+		g_redirect_sciprintf_to_gui = false;
 
 		return true;
 #else

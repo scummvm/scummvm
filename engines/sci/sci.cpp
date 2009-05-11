@@ -78,8 +78,6 @@ static void init_console() {
 	             "SCI0 palette- 0: EGA, 1:AGI/Amiga, 2:Grayscale\n");
 	con_hook_int(&sci01_priority_table_flags, "sci01_priority_table_flags",
 	             "SCI01 priority table debugging flags: 1:Disable, 2:Print on change\n");
-
-	con_passthrough = true; // enables all sciprintf data to be sent to stdout
 }
 
 static int init_gamestate(EngineState *gamestate, sci_version_t version) {

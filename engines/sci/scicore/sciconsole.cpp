@@ -30,55 +30,46 @@
 #include "sci/engine/state.h"
 #include "sci/scicore/sciconsole.h"
 
+#include "sci/sci.h"	// For _console only
+#include "sci/console.h"	// For _console only
+
 namespace Sci {
 
 #ifdef SCI_CONSOLE
 
-int con_passthrough = false;
-
-static void (*_con_string_callback)(char*) = NULL;
 static void (*_con_pixmap_callback)(gfx_pixmap_t *) = NULL;
+
+bool g_redirect_sciprintf_to_gui = false;
 
 int sciprintf(const char *fmt, ...) {
 	va_list argp;
-	int bufsize = 256;
-	int i;
-	char *buf = (char *)sci_malloc(bufsize);
 
-	if (NULL == fmt) {
-		fprintf(stderr, "console.c: sciprintf(): NULL passed for parameter fmt\n");
-		return -1;
-	}
+	assert(fmt);
 
-	if (NULL == buf) {
-		fprintf(stderr, "console.c: sciprintf(): malloc failed for buf\n");
-		return -1;
-	}
-
+	// First determine how big a buffer we need
 	va_start(argp, fmt);
-	while ((i = vsnprintf(buf, bufsize - 1, fmt, argp)) == -1 || (i >= bufsize - 2)) {
-		// while we're out of space...
-		va_end(argp);
-		va_start(argp, fmt); // reset argp
-
-		free(buf);
-		buf = (char *)sci_malloc(bufsize <<= 1);
-	}
+	int bufsize = vsnprintf(0, 0, fmt, argp);
+	assert(bufsize >= 0);
 	va_end(argp);
 
-	if (con_passthrough)
-		printf("%s", buf);
+	// Allocate buffer for the full printed string
+	char *buf = (char *)sci_malloc(bufsize + 1);
+	assert(buf);
 
-	if (_con_string_callback)
-		_con_string_callback(buf);
-	else
-		free(buf);
+	// Print everything according to fmt into buf
+	va_start(argp, fmt); // reset argp
+	int bufsize2 = vsnprintf(buf, bufsize + 1, fmt, argp);
+	assert(bufsize == bufsize2);
+	va_end(argp);
+
+	// Display the result suitably
+	if (g_redirect_sciprintf_to_gui)
+		((SciEngine *)g_engine)->_console->DebugPrintf("%s", buf);
+	printf("%s", buf);
+
+	free(buf);
 
 	return 1;
-}
-
-void con_set_string_callback(void(*callback)(char *)) {
-	_con_string_callback = callback;
 }
 
 void con_set_pixmap_callback(void(*callback)(gfx_pixmap_t *)) {

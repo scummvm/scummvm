@@ -30,7 +30,6 @@
 #include "sci/engine/state.h"
 #include "sci/scicore/sciconsole.h"
 
-
 #include "sci/sci.h"	// For _console only
 #include "sci/console.h"	// For _console only
 
@@ -201,8 +200,6 @@ void con_init() {
 		              "    a list of addresses and indices is provided.\n"
 		              "    ?obj.idx may be used to disambiguate 'obj'\n"
 		              "    by the index 'idx'.\n");
-
-		con_hook_int(&con_passthrough, "con_passthrough", "scicon->stdout passthrough");
 	}
 }
 
