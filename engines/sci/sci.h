@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-struct Console;
+class Console;
 
 // our engine debug levels
 enum kDebugLevels {
