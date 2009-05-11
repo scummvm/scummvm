@@ -25,6 +25,7 @@
 
 #include <common/sys.h>
 #include <common/file.h>
+#include <common/str.h>
 
 #include <engine/lua/lua.h>
 #include <engine/lua/lundump.h>
@@ -45,12 +46,10 @@
 
 #include <engine/localize.h>
 #include <engine/resource.h>
-#include <backends/platform/driver.h>
 
 // hacks below for shutup linker
 int g_flags = 0;
 ResourceLoader *g_resourceloader = NULL;
-Driver *g_driver = NULL;
 enDebugLevels debugLevel = DEBUG_NONE;
 LuaFile *ResourceLoader::openNewStreamLua(const char *filename) const { return NULL; }
 
@@ -137,7 +136,7 @@ public:
     os << "\"";
     std::string str(text->str, text->u.s.len);
     if (translateStrings)
-      str = g_localizer->localize(str.c_str());
+      str = g_localizer->localize(str.c_str()).c_str();
     for (std::string::iterator i = str.begin(); i != str.end(); i++) {
       unsigned char c = *i;
       if (strchr(specials, c)) {
