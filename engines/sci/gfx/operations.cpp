@@ -29,6 +29,7 @@
 #include "sci/gfx/operations.h"
 #include "sci/gfx/font.h"
 #include "sci/sci.h"	// for g_engine, evil hack
+#include "sci/console.h"
 
 #include "common/system.h"
 #include "common/events.h"

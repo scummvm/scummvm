@@ -30,6 +30,8 @@
 #include "engines/advancedDetector.h"
 #include "sci/sci.h"
 #include "sci/console.h"
+#include "sci/scicore/sciconsole.h"
+
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 
@@ -301,6 +303,10 @@ Common::Error SciEngine::run() {
 	gfxop_exit(&gfx_state);
 
 	return Common::kNoError;
+}
+
+GUI::Debugger *SciEngine::getDebugger() {
+	return _console;
 }
 
 const char* SciEngine::getGameID() const {

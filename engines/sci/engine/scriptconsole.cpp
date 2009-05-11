@@ -28,6 +28,7 @@
 
 #include "sci/sci_memory.h"
 #include "sci/engine/state.h"
+#include "sci/scicore/sciconsole.h"
 
 namespace Sci {
 

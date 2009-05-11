@@ -29,10 +29,11 @@
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 
-#include "sci/console.h"
 #include "sci/scicore/resource.h"
 
 namespace Sci {
+
+struct Console;
 
 // our engine debug levels
 enum kDebugLevels {
@@ -79,7 +80,7 @@ public:
 
 	// Engine APIs
 	virtual Common::Error run();
-	virtual GUI::Debugger *getDebugger() { return _console; }
+	virtual GUI::Debugger *getDebugger();
 
 	const char* getGameID() const;
 	int getResourceVersion() const;
