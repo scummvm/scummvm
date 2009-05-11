@@ -515,6 +515,8 @@ OSystem_SDL::OSystem_SDL() {
 #endif
 	_samplesPerSec = 0;
 
+	memset(&_km, 0, sizeof(_km));
+
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
 	#elif defined(UNIX)
