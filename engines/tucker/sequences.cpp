@@ -84,12 +84,10 @@ void TuckerEngine::handleCreditsSequence() {
 			Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf, 320, 320, 200);
 		} else {
 			Graphics::copyRect(_locationBackgroundGfxBuf, 640, imgBuf + imgNum * 64000, 320, 320, 200);
-			drawCreditsString(5, 48, counter2 * 6);
-			drawCreditsString(5, 60, counter2 * 6 + 1);
-			drawCreditsString(5, 80, counter2 * 6 + 2);
-			drawCreditsString(5, 92, counter2 * 6 + 3);
-			drawCreditsString(5, 140, counter2 * 6 + 4);
-			drawCreditsString(5, 116, counter2 * 6 + 5);
+			static const int yPosTable[] = { 48, 60, 80, 92, 140, 116 };
+			for (int i = 0; i < 6; ++i) {
+				drawCreditsString(5, yPosTable[i], counter2 * 6 + i);
+			}
 			++counter1;
 			if (counter1 < 20) {
 				fadePaletteColor(191, kFadePaletteStep);
@@ -506,7 +504,7 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	_musicVolume = 0;
 	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
 	_updateScreenWidth = 0;
-	_updateScreenPicture = 0;
+	_updateScreenPicture = false;
 	_updateScreenOffset = 0;
 	_picBufPtr = _pic2BufPtr = 0;
 }
@@ -975,7 +973,7 @@ void AnimationSequencePlayer::displayLoadingScreen() {
 
 void AnimationSequencePlayer::initPicPart4() {
 	_updateScreenWidth = 320;
-	_updateScreenPicture = 1;
+	_updateScreenPicture = true;
 	_updateScreenOffset = 0;
 }
 

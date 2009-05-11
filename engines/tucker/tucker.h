@@ -225,7 +225,7 @@ public:
 		kLocationAnimationsTableSize = 20,
 		kLocationObjectsTableSize = 10,
 		kActionsTableSize = 100,
-		kFlagsTableSize = 800,
+		kFlagsTableSize = 300,
 		kLocationSoundsTableSize = 30,
 		kLocationMusicsTableSize = 4,
 		kSpriteFramesTableSize = 200,
@@ -298,6 +298,7 @@ protected:
 	void startSpeechSound(int num, int volume);
 	void stopSpeechSound();
 	bool isSpeechSoundPlaying();
+	void rememberSpeechSound();
 	void redrawPanelItems();
 	void redrawPanelItemsHelper();
 	void drawSprite(int i);
@@ -317,13 +318,15 @@ protected:
 	void drawStringAlt(int offset, int color, const uint8 *str, int strLen = -1);
 	void drawItemString(int offset, int num, const uint8 *str);
 	void drawCreditsString(int x, int y, int num);
-	void updateCharSpeechSound();
+	void updateCharSpeechSound(bool displayText);
 	void updateItemsGfxColors(int bit0, int bit7);
 	int testLocationMask(int x, int y);
 	int getStringWidth(int num, const uint8 *ptr);
 	int getPositionForLine(int num, const uint8 *ptr);
-	void findActionKey(int count);
-	int parseTableInstruction();
+	void resetCharacterAnimationIndex(int count);
+	int readTableInstructionCode(int *index);
+	int readTableInstructionParam(int len);
+	int executeTableInstruction();
 	void moveUpInventoryObjects();
 	void moveDownInventoryObjects();
 	void setActionVerbUnderCursor();
@@ -588,7 +591,6 @@ protected:
 	int _locationNum;
 	int _nextLocationNum;
 	bool _gamePaused;
-	bool _gamePaused2;
 	bool _gameDebug;
 	bool _displayGameHints;
 	int _execData3Counter;
@@ -686,7 +688,7 @@ protected:
 	Audio::SoundHandle _sfxHandles[6];
 	Audio::SoundHandle _musicHandles[2];
 	Audio::SoundHandle _speechHandle;
-	int _soundsMapTable[2];
+	int _miscSoundFxNum[2];
 	int _speechHistoryTable[kSpeechHistoryTableSize];
 	int _charSpeechSoundVolumeTable[kMaxCharacters];
 	int _charSpeechSoundCounter;
@@ -767,8 +769,8 @@ protected:
 	int _characterAnimationsTable[200];
 	int _characterStateTable[200];
 	int _backgroundSprOffset;
-	int _updateCharPositionNewType;
-	int _updateCharPositionType;
+	int _currentActionVerb;
+	int _previousActionVerb;
 	int _mainSpritesBaseOffset;
 	int _currentSpriteAnimationLength;
 	int _currentSpriteAnimationFrame;

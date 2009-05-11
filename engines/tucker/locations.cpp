@@ -455,9 +455,9 @@ void TuckerEngine::updateSprite_locationNum6_1(int i) {
 		} else {
 			_spritesTable[i].needUpdate = 0;
 			state = 7;
-			_soundsMapTable[0] = 3;
+			_miscSoundFxNum[0] = 3;
 			_miscSoundFxDelayCounter[0] = 70;
-			_soundsMapTable[1] = 4;
+			_miscSoundFxNum[1] = 4;
 			_miscSoundFxDelayCounter[1] = 25;
 		}
 	}
@@ -785,7 +785,7 @@ void TuckerEngine::updateSprite_locationNum10() {
 		} else if (r > 24000) {
 			state = 6;
 			_miscSoundFxDelayCounter[0] = 120;
-			_soundsMapTable[0] = 0;
+			_miscSoundFxNum[0] = 0;
 		} else {
 			setCharacterAnimation(0, 0);
 		}
@@ -1149,7 +1149,7 @@ void TuckerEngine::updateSprite_locationNum16_0(int i) {
 		state = 4;
 		if (_xPosCurrent < 300) {
 			_miscSoundFxDelayCounter[0] = 2;
-			_soundsMapTable[0] = 9;
+			_miscSoundFxNum[0] = 9;
 		}
 	} else if (r < 32000) {
 		state = 5;
@@ -1354,7 +1354,7 @@ void TuckerEngine::updateSprite_locationNum21() {
 
 void TuckerEngine::execData3PreUpdate_locationNum21() {
 	if (_xPosCurrent > 460 && _flagsTable[58] == 0 && _nextAction == 0) {
-		_updateCharPositionNewType = 0;
+		_currentActionVerb = 0;
 		_pendingActionDelay = 0;
 		_flagsTable[59] = 1;
 		_nextAction = 2;
@@ -1758,7 +1758,7 @@ void TuckerEngine::execData3PreUpdate_locationNum28() {
 		_csDataLoaded = 0;
 		_pendingActionDelay = 0;
 		_pendingActionIndex = 0;
-		_updateCharPositionNewType = 0;
+		_currentActionVerb = 0;
 	}
 }
 
@@ -2361,7 +2361,7 @@ void TuckerEngine::execData3PreUpdate_locationNum53() {
 		_csDataLoaded = 0;
 		_pendingActionDelay = 0;
 		_pendingActionIndex = 0;
-		_updateCharPositionNewType = 0;
+		_currentActionVerb = 0;
 	}
 }
 

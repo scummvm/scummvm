@@ -55,7 +55,7 @@ static void saveOrLoadInt(Common::ReadStream &stream, int &i) {
 
 template <class S>
 void TuckerEngine::saveOrLoadGameStateData(S &s) {
-	for (int i = 0; i < 300; ++i) {
+	for (int i = 0; i < kFlagsTableSize; ++i) {
 		saveOrLoadInt(s, _flagsTable[i]);
 	}
 	for (int i = 0; i < 40; ++i) {

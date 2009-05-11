@@ -129,7 +129,7 @@ void TuckerEngine::restart() {
 	if (_nextLocationNum == 0) {
 		_nextLocationNum = (_gameFlags & kGameFlagDemo) == 0 ? kStartupLocationGame : kStartupLocationDemo;
 	}
-	_gamePaused = _gamePaused2 = false;
+	_gamePaused = false;
 	_gameDebug = false;
 	_displayGameHints = false;
 	_displaySpeechText = (_gameFlags & kGameFlagNoSubtitles) == 0 ? ConfMan.getBool("subtitles") : false;
@@ -204,7 +204,7 @@ void TuckerEngine::restart() {
 	_currentFxIndex = 0;
 	_speechSoundNum = 0;
 	_speechVolume = kMaxSoundVolume;
-	memset(_soundsMapTable, 0, sizeof(_soundsMapTable));
+	memset(_miscSoundFxNum, 0, sizeof(_miscSoundFxNum));
 	memset(_speechHistoryTable, 0, sizeof(_speechHistoryTable));
 	for (int i = 0; i < kMaxCharacters; ++i) {
 		_charSpeechSoundVolumeTable[i] = kMaxSoundVolume;
@@ -275,8 +275,8 @@ void TuckerEngine::restart() {
 	memset(_characterAnimationsTable, 0, sizeof(_characterAnimationsTable));
 	memset(_characterStateTable, 0, sizeof(_characterStateTable));
 	_backgroundSprOffset = 0;
-	_updateCharPositionNewType = 0;
-	_updateCharPositionType = 0;
+	_currentActionVerb = 0;
+	_previousActionVerb = 0;
 	_mainSpritesBaseOffset = 0;
 	_currentSpriteAnimationLength = 0;
 	_currentSpriteAnimationFrame = 0;
@@ -510,21 +510,20 @@ void TuckerEngine::mainLoop() {
 		if (_currentFxSet != 0) {
 			setSoundVolumeDistance();
 		}
-		updateCharSpeechSound();
+		updateCharSpeechSound(_displaySpeechText);
 		redrawScreen(_scrollOffset);
 		startCharacterSounds();
 		for (int num = 0; num < 2; ++num) {
 			if (_miscSoundFxDelayCounter[num] > 0) {
 				--_miscSoundFxDelayCounter[num];
 				if (_miscSoundFxDelayCounter[num] == 0) {
-					const int index = _soundsMapTable[num];
+					const int index = _miscSoundFxNum[num];
 					startSound(_locationSoundsTable[index].offset, index, _locationSoundsTable[index].volume);
 				}
 			}
 		}
 		if (_gamePaused && _charSpeechSoundCounter == 0) {
 			stopSounds();
-			_gamePaused2 = true;
 			while (1) {
 				waitForTimer(1);
 				if (_inputKeys[kInputKeyPause]) {
@@ -542,10 +541,10 @@ void TuckerEngine::mainLoop() {
 						_lastKeyPressed = 0;
 					}
 				}
-				updateCharSpeechSound();
+				updateCharSpeechSound(false);
 			}
 			playSounds();
-			_gamePaused = _gamePaused2 = false;
+			_gamePaused = false;
 		}
 		if (_inputKeys[kInputKeyPause]) {
 			_inputKeys[kInputKeyPause] = false;
@@ -770,7 +769,7 @@ void TuckerEngine::updateMouseState() {
 void TuckerEngine::updateCharPositionHelper() {
 	setCursorType(2);
 	_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-	_updateCharPositionNewType = 0;
+	_currentActionVerb = 0;
 	startSpeechSound(_speechSoundNum, _speechVolume);
 	int pos = getPositionForLine(_speechSoundNum, _characterSpeechDataPtr);
 	_characterSpeechDataPtr += pos;
@@ -778,10 +777,10 @@ void TuckerEngine::updateCharPositionHelper() {
 }
 
 void TuckerEngine::updateCharPosition() {
-	if (_updateCharPositionNewType == 0 || _locationMaskCounter == 0) {
+	if (_currentActionVerb == 0 || _locationMaskCounter == 0) {
 		return;
 	}
-	if (_updateCharPositionNewType == 1 && _locationNum != 18) {
+	if (_currentActionVerb == 1 && _locationNum != 18) {
 		int pos;
 		_actionPosX = _xPosCurrent;
 		_actionPosY = _yPosCurrent - 64;
@@ -794,7 +793,7 @@ void TuckerEngine::updateCharPosition() {
 			}
 			if (_currentActionObj1Num == 259) {
 				handleSpecialObjectSelectionSequence();
-				_updateCharPositionNewType = 0;
+				_currentActionVerb = 0;
 				return;
 			}
 			_speechSoundNum = _currentActionObj1Num;
@@ -836,7 +835,7 @@ void TuckerEngine::updateCharPosition() {
 				return;
 			} else if (_currentActionObj1Num == 91) {
 				handleSpecialObjectSelectionSequence();
-				_updateCharPositionNewType = 0;
+				_currentActionVerb = 0;
 				return;
 			}
 			break;
@@ -850,10 +849,11 @@ void TuckerEngine::updateCharPosition() {
 			break;
 		}
 	}
-	int actionKey = _currentActionObj2Num * 1000000 + _currentInfoString2SourceType * 100000 + _updateCharPositionNewType * 10000 + _currentInfoString1SourceType * 1000 + _currentActionObj1Num;
+	int actionKey = _currentActionObj2Num * 1000000 + _currentInfoString2SourceType * 100000 + _currentActionVerb * 10000 + _currentInfoString1SourceType * 1000 + _currentActionObj1Num;
+	debug(3, "updateCharPosition() actionKey %d",  actionKey);
 	int skip = 0;
 	Action *action = 0;
-	for (int i = 0; i < _actionsCount && skip == 0; ) {
+	for (int i = 0; i < _actionsCount && skip == 0; ++i) {
 		action = &_actionsTable[i];
 		if (action->key == actionKey) {
 			skip = 1;
@@ -865,6 +865,7 @@ void TuckerEngine::updateCharPosition() {
 				} else if (_inventoryItemsState[action->testFlag1Num - 500] != action->testFlag1Value) {
 					skip = 0;
 				}
+				debug(3, "updateCharPosition() flag1 %d value %d", action->testFlag1Num, action->testFlag1Value);
 			}
 			if (action->testFlag2Num != 0) {
 				if (action->testFlag2Num < 500) {
@@ -874,15 +875,13 @@ void TuckerEngine::updateCharPosition() {
 				} else if (_inventoryItemsState[action->testFlag2Num - 500] != action->testFlag2Value) {
 					skip = 0;
 				}
+				debug(3, "updateCharPosition() flag2 %d value %d", action->testFlag2Num, action->testFlag2Value);
 			}
-		}
-		if (skip == 0) {
-			++i;
 		}
 	}
 	if (skip == 0) {
-		playSpeechForAction(_updateCharPositionNewType);
-		_updateCharPositionNewType = 0;
+		playSpeechForAction(_currentActionVerb);
+		_currentActionVerb = 0;
 		return;
 	}
 	assert(action);
@@ -905,8 +904,8 @@ void TuckerEngine::updateCharPosition() {
 	_pendingActionIndex = action->index;
 	_characterSoundFxDelayCounter = action->fxDelay;
 	_characterSoundFxNum = action->fxNum;
-	_updateCharPositionType = _updateCharPositionNewType;
-	_updateCharPositionNewType = 0;
+	_previousActionVerb = _currentActionVerb;
+	_currentActionVerb = 0;
 }
 
 void TuckerEngine::updateFlagsForCharPosition() {
@@ -915,11 +914,20 @@ void TuckerEngine::updateFlagsForCharPosition() {
 		if (_pendingActionDelay > 0) {
 			return;
 		}
-		if (_updateCharPositionType == 3 || _updateCharPositionType == 4 || _updateCharPositionType == 8 || _updateCharPositionType == 2) {
+		switch (_previousActionVerb) {
+		case 3:
+		case 4:
+		case 8:
+		case 2:
+			debug(3, "updateFlagsForCharPosition() set flag %d value %d", _charPositionFlagNum, _charPositionFlagValue);
 			_flagsTable[_charPositionFlagNum] = _charPositionFlagValue;
-		} else if (_updateCharPositionType == 6 && _charPositionFlagValue == 1) {
-			addObjectToInventory(_charPositionFlagNum);
-			_forceRedrawPanelItems = true;
+			break;
+		case 6:
+			if (_charPositionFlagValue == 1) {
+				addObjectToInventory(_charPositionFlagNum);
+				_forceRedrawPanelItems = true;
+			}
+			break;
 		}
 		if (_pendingActionIndex > 0) {
 			_nextAction = _pendingActionIndex;
@@ -1067,7 +1075,7 @@ void TuckerEngine::updateCursor() {
 			} else {
 				_skipPanelObjectUnderCursor = 0;
 				_actionRequiresTwoObjects = false;
-				_updateCharPositionNewType = 0;
+				_currentActionVerb = 0;
 				setSelectedObjectKey();
 			}
 		}
@@ -1802,6 +1810,13 @@ void TuckerEngine::stopSpeechSound() {
 
 bool TuckerEngine::isSpeechSoundPlaying() {
 	return _mixer->isSoundHandleActive(_speechHandle);
+}
+
+void TuckerEngine::rememberSpeechSound() {
+	for (int i = 4; i > 0; --i) {
+		_speechHistoryTable[i] = _speechHistoryTable[i - 1];
+	}
+	_speechHistoryTable[0] = _partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000;
 }
 
 void TuckerEngine::redrawPanelItems() {
@@ -2847,7 +2862,7 @@ void TuckerEngine::drawCreditsString(int x, int y, int num) {
 	}
 }
 
-void TuckerEngine::updateCharSpeechSound() {
+void TuckerEngine::updateCharSpeechSound(bool displayText) {
 	if (_charSpeechSoundCounter == 0) {
 		return;
 	}
@@ -2862,7 +2877,7 @@ void TuckerEngine::updateCharSpeechSound() {
 		setCursorType(0);
 		return;
 	}
-	if (_displaySpeechText && !_gamePaused2) {
+	if (displayText) {
 		drawSpeechText(_actionPosX, _actionPosY, _characterSpeechDataPtr, _speechSoundNum, _actionTextColor);
 	}
 }
@@ -2920,7 +2935,7 @@ int TuckerEngine::getPositionForLine(int num, const uint8 *ptr) {
 	return i;
 }
 
-void TuckerEngine::findActionKey(int count) {
+void TuckerEngine::resetCharacterAnimationIndex(int count) {
 	_backgroundSpriteCurrentFrame = 0;
 	_characterAnimationIndex = 0;
 	for (int i = 0; i < count; ++i) {
@@ -2931,364 +2946,352 @@ void TuckerEngine::findActionKey(int count) {
 	}
 }
 
-static int parseInt(const uint8 *buf, int offset, int len) {
-	assert(len < 16);
-	char tmpBuf[16];
-	memcpy(tmpBuf, buf + offset, len);
-	tmpBuf[len] = 0;
-	return strtol(tmpBuf, 0, 10);
+enum TableInstructionCode {
+	kCode_invalid,
+	kCode_pan,
+	kCode_bua,
+	kCode_bub,
+	kCode_buc,
+	kCode_bsd,
+	kCode_bof,
+	kCode_buh,
+	kCode_bon,
+	kCode_bso,
+	kCode_bus,
+	kCode_buw,
+	kCode_bux,
+	kCode_c0a,
+	kCode_c0c,
+	kCode_c0s,
+	kCode_end,
+	kCode_fad,
+	kCode_fw,
+	kCode_flx,
+	kCode_fxx,
+	kCode_fx,
+	kCode_gfg,
+	kCode_gv,
+	kCode_loc,
+	kCode_opt,
+	kCode_opf,
+	kCode_ofg,
+	kCode_snc,
+	kCode_sse,
+	kCode_ssp,
+	kCode_s0p,
+	kCode_sp,
+	kCode_tpo,
+	kCode_wa_,
+	kCode_wsm,
+	kCode_wat,
+	kCode_was,
+	kCode_wfx,
+	kCode_xhr,
+	kCode_xhm
+};
+
+static const struct {
+	const char *name;
+	int code;
+} _instructions[] = {
+	{ "pan", kCode_pan },
+	{ "bua", kCode_bua },
+	{ "bub", kCode_bub },
+	{ "buc", kCode_buc },
+	{ "bsd", kCode_bsd },
+	{ "bcd", kCode_bsd }, // only ref 6.27
+	{ "bud", kCode_bsd }, // only ref 13.3
+	{ "bof", kCode_bof },
+	{ "buh", kCode_buh },
+	{ "bon", kCode_bon },
+	{ "bso", kCode_bso },
+	{ "bus", kCode_bus },
+	{ "b0s", kCode_bus }, // only ref 65.25
+	{ "buw", kCode_buw },
+	{ "bdx", kCode_bux },
+	{ "bux", kCode_bux },
+	{ "c0a", kCode_c0a },
+	{ "c0c", kCode_c0c },
+	{ "c0s", kCode_c0s },
+	{ "end", kCode_end },
+	{ "fad", kCode_fad },
+	{ "fw",  kCode_fw  },
+	{ "flx", kCode_flx },
+	{ "fxx", kCode_fxx },
+	{ "fx",  kCode_fx  },
+	{ "gfg", kCode_gfg },
+	{ "gv",  kCode_gv  },
+	{ "loc", kCode_loc },
+	{ "opt", kCode_opt },
+	{ "opf", kCode_opf },
+	{ "ofg", kCode_ofg },
+	{ "snc", kCode_snc },
+	{ "sse", kCode_sse },
+	{ "ssp", kCode_ssp },
+	{ "s0p", kCode_s0p },
+	{ "sp",  kCode_sp  },
+	{ "tpo", kCode_tpo },
+	{ "wa+", kCode_wa_ },
+	{ "wsm", kCode_wsm },
+	{ "wat", kCode_wat },
+	{ "was", kCode_was },
+	{ "wfx", kCode_wfx },
+	{ "xhr", kCode_xhr },
+	{ "xhm", kCode_xhm },
+	{ 0, 0 }
+};
+
+int TuckerEngine::readTableInstructionCode(int *index) {
+	bool match = false;
+	for (int i = 0; _instructions[i].name; ++i) {
+		const int nameLen = strlen(_instructions[i].name);
+		if (_instructions[i].name[1] == '0') {
+			if (_instructions[i].name[0] == _tableInstructionsPtr[0] && _instructions[i].name[2] == _tableInstructionsPtr[2]) {
+				const char digit = _tableInstructionsPtr[1];
+				assert(digit >= '0' && digit <= '9');
+				*index = digit - '0';
+				match = true;
+			}
+		} else {
+			if (strncmp(_instructions[i].name, (const char *)_tableInstructionsPtr, nameLen) == 0) {
+				*index = 0;
+				match = true;
+			}
+		}
+		if (match) {
+			_tableInstructionsPtr += nameLen + 1;
+			return _instructions[i].code;
+		}
+	}
+	warning("Unhandled instruction '%c%c%c'", _tableInstructionsPtr[0], _tableInstructionsPtr[1], _tableInstructionsPtr[2]);
+	return kCode_invalid;
 }
 
-int TuckerEngine::parseTableInstruction() {
-	int spr;
-	debug(2, "parseTableInstruction() instruction %c%c%c", _tableInstructionsPtr[0], _tableInstructionsPtr[1], _tableInstructionsPtr[2]);
-	switch (_tableInstructionsPtr[0]) {
-	case 'p': // 12
-		if (_tableInstructionsPtr[1] == 'a') { // 0
-			_tableInstructionsPtr += 4;
-			_panelState = parseInt(_tableInstructionsPtr, 0, 2);
-			_forceRedrawPanelItems = true;
-			_tableInstructionsPtr += 3;
-			return 0;
-		}
-		break;
-	case 'b': // 1
-		if (_tableInstructionsPtr[2] == 'a') { // 0
-			_backgroundSpriteCurrentAnimation = parseInt(_tableInstructionsPtr, 4, 3);
-			_backgroundSpriteCurrentFrame = 0;
-			_backgroundSprOffset = 0;
-			_mainLoopCounter2 = 0;
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'b') { // 1
-			int i = parseInt(_tableInstructionsPtr, 4, 3);
-			_spriteAnimationFrameIndex = _spriteAnimationsTable[i].firstFrameIndex;
-			_characterFacingDirection = 5;
-			_mainLoopCounter2 = 0;
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'c') { // 2
-			int i = parseInt(_tableInstructionsPtr, 4, 3);
-			findActionKey(i);
-			_backgroundSpriteCurrentFrame = 0;
-			_backgroundSprOffset = 0;
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'd') { // 4
-			_selectedCharacterDirection = parseInt(_tableInstructionsPtr, 4, 2);
-			_tableInstructionsPtr += 7;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'f') { // 5
-			_skipCurrentCharacterDraw = 1;
-			_tableInstructionsPtr += 4;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'h') { // 7
-			_noCharacterAnimationChange = parseInt(_tableInstructionsPtr, 4, 2);
-			_tableInstructionsPtr += 7;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'n') { // 10
-			_skipCurrentCharacterDraw = 0;
-			_tableInstructionsPtr += 4;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'o') { // 11
-			_backgroundSprOffset = parseInt(_tableInstructionsPtr, 4, 3);
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 's') { // 14
-			int i = parseInt(_tableInstructionsPtr, 4, 3);
-			_speechSoundNum = i - 1;
-			_speechHistoryTable[4] = _speechHistoryTable[3];
-			_speechHistoryTable[3] = _speechHistoryTable[2];
-			_speechHistoryTable[2] = _speechHistoryTable[1];
-			_speechHistoryTable[1] = _speechHistoryTable[0];
-			_speechHistoryTable[0] = _partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000;
-			startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, _speechVolume);
-			_actionPosX = _xPosCurrent;
-			_actionPosY = _yPosCurrent - 64;
-			_actionTextColor = 1;
-			_actionCharacterNum = 99;
-			_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'v') { // 16
-			_speechVolume = parseInt(_tableInstructionsPtr, 4, 3);
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'w') { // 17
-			_selectedObject.xPos = parseInt(_tableInstructionsPtr, 4, 3);
-			_selectedObject.yPos = parseInt(_tableInstructionsPtr, 8, 3);
-			_locationMaskIgnore = 1;
-			_panelLockedFlag = 1;
-			_tableInstructionsPtr += 12;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'x') { // 18
-			_xPosCurrent = parseInt(_tableInstructionsPtr, 4, 3);
-			_yPosCurrent = parseInt(_tableInstructionsPtr, 8, 3);
-			_tableInstructionsPtr += 12;
-			return 0;
-		}
-		break;
-	case 'c': // 2
-		spr = _tableInstructionsPtr[1] - '0';
-		if (_tableInstructionsPtr[2] == 'a') { // 0
-			_spritesTable[spr].state = parseInt(_tableInstructionsPtr, 4, 3);
-			if (_spritesTable[spr].state == 999) {
-				_spritesTable[spr].state = -1;
-			}
-			_mainLoopCounter1 = 0;
-			_spritesTable[spr].updateDelay = 0;
-			_spritesTable[spr].nextAnimationFrame = 0;
-			_spritesTable[spr].prevAnimationFrame = 0;
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'c') { // 2
-			int i = parseInt(_tableInstructionsPtr, 4, 3);
-			setCharacterAnimation(i, spr);
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 's') { // 14
-			int i = parseInt(_tableInstructionsPtr, 4, 3);
-			_speechSoundNum = i - 1;
-			_speechHistoryTable[4] = _speechHistoryTable[3];
-			_speechHistoryTable[3] = _speechHistoryTable[2];
-			_speechHistoryTable[2] = _speechHistoryTable[1];
-			_speechHistoryTable[1] = _speechHistoryTable[0];
-			_speechHistoryTable[0] = _partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000;
-			startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, _charSpeechSoundVolumeTable[spr]);
-			_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-			_actionTextColor = 181 + spr;
-			if (_tableInstructionFlag == 0) {
-				_actionPosX = _tableInstructionItemNum1;
-				_actionPosY = _tableInstructionItemNum2;
-			} else {
-				_actionPosX = _tableInstructionObj1Table[spr];
-				_actionPosY = _tableInstructionObj2Table[spr];
-			}
-			_actionCharacterNum = spr;
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'v') { // 16
-			_charSpeechSoundVolumeTable[spr] = parseInt(_tableInstructionsPtr, 4, 3);
-			_tableInstructionsPtr += 8;
-			return 0;
-		}
-		break;
-	case 'e': // 4
-		if (_tableInstructionsPtr[1] == 'n') { // 10
-			return 2;
-		}
-		break;
-	case 'f': // 5
-		if (_tableInstructionsPtr[2] == 'd') { // 3
-			_fadePaletteCounter = parseInt(_tableInstructionsPtr, 4, 2);
-			_tableInstructionsPtr += 7;
-			return 0;
-		}
-		if (_tableInstructionsPtr[1] == 'm') { // 9
-			_redrawPanelItemsCounter = 50;
-			_lastInventoryObjectIndex = 1;
-			_inventoryObjectsOffset = 0;
-			_tableInstructionsPtr += 3;
-			return 0;
-		}
-		if (_tableInstructionsPtr[1] == 'w') { // 17
-			_selectedCharacterNum = parseInt(_tableInstructionsPtr, 3, 2);
-			_tableInstructionsPtr += 6;
-			_actionVerb = 0;
-			_selectedObjectType = 0;
-			_selectedObjectNum = 1;
-			setSelectedObjectKey();
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'x') { // 18
-			int i = parseInt(_tableInstructionsPtr, 4, 2);
-			if (_tableInstructionsPtr[1] == 'l') { // 8
-				_locationSoundsTable[i].type = 2;
-				startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
-			} else {
-				if (isSoundPlaying(i)) {
-					stopSound(i);
-				}
-			}
-			_tableInstructionsPtr += 7;
-			return 0;
-		}
-		if (_tableInstructionsPtr[1] == 'x') { // 18
-			int i = parseInt(_tableInstructionsPtr, 3, 2);
-			startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
-			_soundInstructionIndex = i;
-			_tableInstructionsPtr += 6;
-			return 0;
-		}
-		break;
-	case 'g': // 6
-		if (_tableInstructionsPtr[2] == 'g') { // 6
-			int i = parseInt(_tableInstructionsPtr, 4, 3);
-			_flagsTable[i] = parseInt(_tableInstructionsPtr, 8, 2);
-			_tableInstructionsPtr += 11;
-			return 0;
-		}
-		if (_tableInstructionsPtr[1] == 'v') { // 16
-			_characterAnimationNum = parseInt(_tableInstructionsPtr, 3, 2);
-			_tableInstructionsPtr += 6;
-			return 0;
-		}
-		break;
-	case 'l': // 8
-		if (_tableInstructionsPtr[2] == 'c') { // 2
-			_nextLocationNum = parseInt(_tableInstructionsPtr, 4, 2);
-			_tableInstructionsPtr += 7;
-			return 1;
-		}
-		break;
-	case 'o': // 11
-		if (_tableInstructionsPtr[2] == 't') { // 15
-			_conversationOptionsCount = parseInt(_tableInstructionsPtr, 4, 2);
-			_tableInstructionsPtr += 7;
-			for (int i = 0; i < _conversationOptionsCount; ++i) {
-				_instructionsActionsTable[i] = parseInt(_tableInstructionsPtr, 0, 3) - 1;
-				_nextTableToLoadTable[i] = parseInt(_tableInstructionsPtr, 4, 3);
-				_tableInstructionsPtr += 8;
-			}
-			_nextTableToLoadIndex = -1;
-			setCursorType(1);
-			return 1;
-		}
-		if (_tableInstructionsPtr[2] == 'f') { // 5
-			int count = parseInt(_tableInstructionsPtr, 4, 2);
-			_tableInstructionsPtr += 7;
-			_conversationOptionsCount = 0;
-			for (int i = 0; i < count; ++i) {
-				int flag = parseInt(_tableInstructionsPtr, 0, 3);
-				int value = parseInt(_tableInstructionsPtr, 4, 2);
-				if (value == _flagsTable[flag]) {
-					assert(_conversationOptionsCount < 6);
-					_instructionsActionsTable[_conversationOptionsCount] = parseInt(_tableInstructionsPtr, 7, 3) - 1;
-					_nextTableToLoadTable[_conversationOptionsCount] = parseInt(_tableInstructionsPtr, 11, 3);
-					++_conversationOptionsCount;
-				}
-				_tableInstructionsPtr += 15;
-			}
-			_nextTableToLoadIndex = -1;
-			setCursorType(1);
-			return 1;
-		}
-		if (_tableInstructionsPtr[2] == 'g') { // 6
-			int i = parseInt(_tableInstructionsPtr, 8, 2);
-			if (i == 0) {
-				int obj = parseInt(_tableInstructionsPtr, 4, 3);
-				removeObjectFromInventory(obj);
-			} else {
-				int obj = parseInt(_tableInstructionsPtr, 4, 3);
-				addObjectToInventory(obj);
-			}
-			_tableInstructionsPtr += 11;
-			return 0;
-		}
-		break;
-	case 's': // 14
-		if (_tableInstructionsPtr[2] == 'c') { // 2
-			_tableInstructionsPtr += 4;
-			_mainLoopCounter1 = 0;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'e') { // 4
-			_nextAction = parseInt(_tableInstructionsPtr, 4, 3);
-			_csDataLoaded = false;
-			return 3;
-		}
-		if (_tableInstructionsPtr[2] == 'p') { // 12
-			if (_tableInstructionsPtr[1] == 's') { // 14
-				_tableInstructionFlag = 0;
-				_tableInstructionItemNum1 = parseInt(_tableInstructionsPtr, 4, 3);
-				_tableInstructionItemNum2 = parseInt(_tableInstructionsPtr, 8, 3);
-			} else {
-				int num = _tableInstructionsPtr[1] - '0';
-				_tableInstructionFlag = 1;
-				_tableInstructionObj1Table[num] = parseInt(_tableInstructionsPtr, 4, 3);
-				_tableInstructionObj2Table[num] = parseInt(_tableInstructionsPtr, 8, 3);
-			}
-			_tableInstructionsPtr += 12;
-			return 0;
-		}
-		if (_tableInstructionsPtr[1] == 'p') { // 12
-			_characterSpriteAnimationFrameCounter = 1;
-			_tableInstructionsPtr += 3;
-			return 0;
-		}
-		break;
-	case 't': // 15
-		if (_tableInstructionsPtr[2] == 'o') { // 11
-			_ptTextOffset = parseInt(_tableInstructionsPtr, 4, 4);
-			_characterSpeechDataPtr = _ptTextBuf + getPositionForLine(_ptTextOffset, _ptTextBuf);
-			_tableInstructionsPtr += 9;
-			return 0;
-		}
-		break;
-	case 'w': // 17
-		if (_tableInstructionsPtr[2] == '+') { // 19
-			_csDataTableFlag2 = 1;
-			_stopActionCounter = 20;
-			_tableInstructionsPtr += 4;
-			return 1;
-		}
-		if (_tableInstructionsPtr[2] == 'm') { // 9
-			_stopActionOnPanelLock = 1;
-			_tableInstructionsPtr += 4;
-			return 1;
-		}
-		if (_tableInstructionsPtr[2] == 't') { // 15
-			_stopActionCounter = parseInt(_tableInstructionsPtr, 4, 3);
-			_tableInstructionsPtr += 8;
-			return 1;
-		}
-		if (_tableInstructionsPtr[2] == 's') { // 14
-			_csDataTableFlag2 = 1;
-			_tableInstructionsPtr += 4;
-			return 1;
-		}
-		if (_tableInstructionsPtr[2] == 'a') { // 0
-			if (_tableInstructionsPtr[1] == 'b') { // 1
-				_csDataTableCount = 99;
-			} else {
-				_csDataTableCount = _tableInstructionsPtr[1] - '0' + 1;
-			}
-			return 1;
-		}
-		if (_tableInstructionsPtr[2] == 'x') { // 18
-			_stopActionOnSoundFlag = true;
-			_tableInstructionsPtr += 4;
-			return 1;
-		}
-		break;
-	case 'x': // 18
-		if (_tableInstructionsPtr[2] == 'r') { // 13
-			_validInstructionId = true;
-			_tableInstructionsPtr += 4;
-			return 0;
-		}
-		if (_tableInstructionsPtr[2] == 'm') { // 9
-			_validInstructionId = false;
-			_tableInstructionsPtr += 4;
-			return 0;
-		}
-		break;
+int TuckerEngine::readTableInstructionParam(int len) {
+	char *end = 0;
+	const int param = strtol((const char *)_tableInstructionsPtr, &end, 10);
+	if (end != (const char *)_tableInstructionsPtr + len) {
+		warning("Unexpected instruction parameter length %d (%d)", (int)(end - (const char *)_tableInstructionsPtr), len);
 	}
-	warning("Instruction not recognised %c%c%c", _tableInstructionsPtr[0], _tableInstructionsPtr[1], _tableInstructionsPtr[2]);
+	_tableInstructionsPtr += len + 1;
+	return param;
+}
+
+int TuckerEngine::executeTableInstruction() {
+	int i, index = 0;
+
+	debug(2, "executeTableInstruction() instruction %c%c%c", _tableInstructionsPtr[0], _tableInstructionsPtr[1], _tableInstructionsPtr[2]);
+	const int code = readTableInstructionCode(&index);
+	switch (code) {
+	case kCode_pan:
+		_panelState = readTableInstructionParam(2);
+		_forceRedrawPanelItems = true;
+		return 0;
+	case kCode_bua:
+		_backgroundSpriteCurrentAnimation = readTableInstructionParam(3);
+		_backgroundSpriteCurrentFrame = 0;
+		_backgroundSprOffset = 0;
+		_mainLoopCounter2 = 0;
+		return 0;
+	case kCode_bub:
+		i = readTableInstructionParam(3);
+		_spriteAnimationFrameIndex = _spriteAnimationsTable[i].firstFrameIndex;
+		_characterFacingDirection = 5;
+		_mainLoopCounter2 = 0;
+		return 0;
+	case kCode_buc:
+		i = readTableInstructionParam(3);
+		resetCharacterAnimationIndex(i);
+		_backgroundSpriteCurrentFrame = 0;
+		_backgroundSprOffset = 0;
+		return 0;
+	case kCode_bsd:
+		_selectedCharacterDirection = readTableInstructionParam(2);
+		return 0;
+	case kCode_bof:
+		_skipCurrentCharacterDraw = 1;
+		return 0;
+	case kCode_buh:
+		_noCharacterAnimationChange = readTableInstructionParam(2);
+		return 0;
+	case kCode_bon:
+		_skipCurrentCharacterDraw = 0;
+		return 0;
+	case kCode_bso:
+		_backgroundSprOffset = readTableInstructionParam(3);
+		return 0;
+	case kCode_bus: 
+		_speechSoundNum = readTableInstructionParam(3) - 1;
+		rememberSpeechSound();
+		startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, _speechVolume);
+		_actionPosX = _xPosCurrent;
+		_actionPosY = _yPosCurrent - 64;
+		_actionTextColor = 1;
+		_actionCharacterNum = 99;
+		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
+		return 0;
+	case kCode_buw: 
+		_selectedObject.xPos = readTableInstructionParam(3);
+		_selectedObject.yPos = readTableInstructionParam(3);
+		_locationMaskIgnore = 1;
+		_panelLockedFlag = 1;
+		return 0;
+	case kCode_bux:
+		_xPosCurrent = readTableInstructionParam(3);
+		_yPosCurrent = readTableInstructionParam(3);
+		return 0;
+	case kCode_c0a:
+		_spritesTable[index].state = readTableInstructionParam(3);
+		if (_spritesTable[index].state == 999) {
+			_spritesTable[index].state = -1;
+		}
+		_mainLoopCounter1 = 0;
+		_spritesTable[index].updateDelay = 0;
+		_spritesTable[index].nextAnimationFrame = 0;
+		_spritesTable[index].prevAnimationFrame = 0;
+		return 0;
+	case kCode_c0c:
+		setCharacterAnimation(readTableInstructionParam(3), index);
+		return 0;
+	case kCode_c0s:
+		_speechSoundNum = readTableInstructionParam(3) - 1;
+		rememberSpeechSound();
+		startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, _charSpeechSoundVolumeTable[index]);
+		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
+		_actionTextColor = 181 + index;
+		if (_tableInstructionFlag == 0) {
+			_actionPosX = _tableInstructionItemNum1;
+			_actionPosY = _tableInstructionItemNum2;
+		} else {
+			_actionPosX = _tableInstructionObj1Table[index];
+			_actionPosY = _tableInstructionObj2Table[index];
+		}
+		_actionCharacterNum = index;
+		return 0;
+	case kCode_end:
+		return 2;
+	case kCode_fad:
+		_fadePaletteCounter = readTableInstructionParam(2);
+		return 0;
+	case kCode_fw:
+		_selectedCharacterNum = readTableInstructionParam(2);
+		_actionVerb = 0;
+		_selectedObjectType = 0;
+		_selectedObjectNum = 1;
+		setSelectedObjectKey();
+		return 0;
+	case kCode_flx:
+		i = readTableInstructionParam(2);
+		_locationSoundsTable[i].type = 2;
+		startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
+		return 0;
+	case kCode_fxx:
+		i = readTableInstructionParam(2);
+		if (isSoundPlaying(i)) {
+			stopSound(i);
+		}
+		return 0;
+	case kCode_fx:
+		i = readTableInstructionParam(2);
+		startSound(_locationSoundsTable[i].offset, i, _locationSoundsTable[i].volume);
+		_soundInstructionIndex = i;
+		return 0;
+	case kCode_gfg:
+		i = readTableInstructionParam(3);
+		assert(i >= 0 && i < kFlagsTableSize);
+		_flagsTable[i] = readTableInstructionParam(2);
+		debug(2, "executeTableInstruction() set flag %d to %d", i, _flagsTable[i]);
+		return 0;
+	case kCode_gv:
+		_characterAnimationNum = readTableInstructionParam(2);
+		return 0;
+	case kCode_loc:
+		_nextLocationNum = readTableInstructionParam(2);
+		return 1;
+	case kCode_opt:
+		_conversationOptionsCount = readTableInstructionParam(2);
+		for (i = 0; i < _conversationOptionsCount; ++i) {
+			_instructionsActionsTable[i] = readTableInstructionParam(3) - 1;
+			_nextTableToLoadTable[i] = readTableInstructionParam(3);
+		}
+		_nextTableToLoadIndex = -1;
+		setCursorType(1);
+		return 1;
+	case kCode_opf:
+		_conversationOptionsCount = 0;
+		for (i = readTableInstructionParam(2); i > 0; --i) {
+			const int flag = readTableInstructionParam(3);
+			const int value = readTableInstructionParam(2);
+			debug(2, "executeTableInstruction() compare flag %d to %d (%d)", i, value, _flagsTable[i]);
+			assert(flag >= 0 && flag < kFlagsTableSize);
+			if (value == _flagsTable[flag]) {
+				assert(_conversationOptionsCount < 6);
+				_instructionsActionsTable[_conversationOptionsCount] = readTableInstructionParam(3) - 1;
+				_nextTableToLoadTable[_conversationOptionsCount] = readTableInstructionParam(3);
+				++_conversationOptionsCount;
+			} else {
+				readTableInstructionParam(3);
+				readTableInstructionParam(3);
+			}
+		}
+		_nextTableToLoadIndex = -1;
+		setCursorType(1);
+		return 1;
+	case kCode_ofg:
+		i = readTableInstructionParam(3);
+		if (readTableInstructionParam(2) == 0) {
+			removeObjectFromInventory(i);
+		} else {
+			addObjectToInventory(i);
+		}
+		return 0;
+	case kCode_snc:
+		_mainLoopCounter1 = 0;
+		return 0;
+	case kCode_sse:
+		_nextAction = readTableInstructionParam(3);
+		_csDataLoaded = false;
+		return 3;
+	case kCode_ssp:
+		_tableInstructionFlag = 0;
+		_tableInstructionItemNum1 = readTableInstructionParam(3);
+		_tableInstructionItemNum2 = readTableInstructionParam(3);
+		return 0;
+	case kCode_s0p:
+		_tableInstructionFlag = 1;
+		_tableInstructionObj1Table[index] = readTableInstructionParam(3);
+		_tableInstructionObj2Table[index] = readTableInstructionParam(3);
+		return 0;
+	case kCode_sp:
+		_characterSpriteAnimationFrameCounter = 1;
+		return 0;
+	case kCode_tpo:
+		_ptTextOffset = readTableInstructionParam(4);
+		_characterSpeechDataPtr = _ptTextBuf + getPositionForLine(_ptTextOffset, _ptTextBuf);
+		return 0;
+	case kCode_wa_:
+		_csDataTableFlag2 = 1;
+		_stopActionCounter = 20;
+		return 1;
+	case kCode_wsm:
+		_stopActionOnPanelLock = 1;
+		return 1;
+	case kCode_wat:
+		_stopActionCounter = readTableInstructionParam(3);
+		return 1;
+	case kCode_was:
+		_csDataTableFlag2 = 1;
+		return 1;
+	case kCode_wfx:
+		_stopActionOnSoundFlag = true;
+		return 1;
+	case kCode_xhr:
+		_validInstructionId = true;
+		return 0;
+	case kCode_xhm:
+		_validInstructionId = false;
+		return 0;
+	}
 	return 2;
 }
 
@@ -3532,7 +3535,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 				_actionCharacterNum = 99;
 				setCursorType(2);
 				_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-				_updateCharPositionNewType = 0;
+				_currentActionVerb = 0;
 				_speechSoundNum = 2235;
 				startSpeechSound(_speechSoundNum, _speechVolume);
 				_characterSpeechDataPtr = _ptTextBuf + getPositionForLine(_speechSoundNum, _ptTextBuf);
@@ -3669,7 +3672,7 @@ void TuckerEngine::setActionForInventoryObject() {
 }
 
 void TuckerEngine::setActionState() {
-	_updateCharPositionNewType = (_actionVerb == 0) ? 8 : _actionVerb;
+	_currentActionVerb = (_actionVerb == 0) ? 8 : _actionVerb;
 	_currentActionObj1Num = _actionObj1Num;
 	_currentInfoString1SourceType = _actionObj1Type;
 	_currentActionObj2Num = _actionObj2Num;
@@ -3688,7 +3691,7 @@ void TuckerEngine::playSpeechForAction(int i) {
 		_speechActionCounterTable[i] = 0;
 	}
 	if (speechActionTable[i] >= 2000) {
-		if (_updateCharPositionNewType == 8 && _currentActionObj1Num == 6 && _currentInfoString1SourceType == 3) {
+		if (_currentActionVerb == 8 && _currentActionObj1Num == 6 && _currentInfoString1SourceType == 3) {
 			_speechSoundNum = 2395;
 		} else {
 			_speechSoundNum = _speechActionCounterTable[i] + speechActionTable[i];
@@ -3790,7 +3793,7 @@ void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, 
 }
 
 void TuckerEngine::redrawScreen(int offset) {
-	debug(3, "redrawScreen() _fullRedrawCounter %d offset %d _dirtyRectsCount %d", _fullRedrawCounter, offset, _dirtyRectsCount);
+	debug(9, "redrawScreen() _fullRedrawCounter %d offset %d _dirtyRectsCount %d", _fullRedrawCounter, offset, _dirtyRectsCount);
 	assert(offset <= kScreenWidth);
 	if (_fullRedrawCounter > 0) {
 		--_fullRedrawCounter;

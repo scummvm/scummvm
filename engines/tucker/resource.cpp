@@ -701,6 +701,7 @@ void TuckerEngine::loadActionFile() {
 			action->index = t.getNextInteger();
 			action->delay = t.getNextInteger();
 			action->setFlagNum = t.getNextInteger();
+			assert(action->setFlagNum >= 0 && action->setFlagNum < kFlagsTableSize);
 			action->setFlagValue = t.getNextInteger();
 			action->fxNum = t.getNextInteger();
 			action->fxDelay = t.getNextInteger();
@@ -1015,10 +1016,7 @@ void TuckerEngine::loadActionsTable() {
 			}
 			break;
 		}
-		table = 0;
-		while (table == 0) {
-			table = parseTableInstruction();
-		}
+		while ((table = executeTableInstruction()) == 0);
 	} while (table == 3);
 	if (table == 2) {
 		_nextAction = 0;
