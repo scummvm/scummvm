@@ -51,6 +51,7 @@ int MessageState::getMessage(MessageTuple *t) {
 	MessageTuple looking_at;
 
 	initIndexRecordCursor();
+	_lastMessage.seq = t->seq - 1;
 
 	while (_engineCursor.index != _recordCount) {
 		parse(&_engineCursor, &looking_at);
