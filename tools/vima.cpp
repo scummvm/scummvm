@@ -27,268 +27,242 @@
 #include <cstdio>
 #include <cstring>
 
+
+typedef unsigned char byte;
+typedef unsigned char uint8;
+typedef signed char int8;
+typedef signed short int16;
+typedef unsigned short uint16;
+
 uint32_t get_be_uint32(char *p) {
-  unsigned char *pos = reinterpret_cast<unsigned char *>(p);
-  return (pos[0] << 24) | (pos[1] << 16) | (pos[2] << 8) | pos[3];
+	unsigned char *pos = reinterpret_cast<unsigned char *>(p);
+	return (pos[0] << 24) | (pos[1] << 16) | (pos[2] << 8) | pos[3];
 }
 
-uint16_t imcTable1[] = {
-  0x0007, 0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e,
-  0x0010, 0x0011, 0x0013, 0x0015, 0x0017, 0x0019, 0x001c, 0x001f,
-  0x0022, 0x0025, 0x0029, 0x002d, 0x0032, 0x0037, 0x003c, 0x0042,
-  0x0049, 0x0050, 0x0058, 0x0061, 0x006b, 0x0076, 0x0082, 0x008f,
-  0x009d, 0x00ad, 0x00be, 0x00d1, 0x00e6, 0x00fd, 0x0117, 0x0133,
-  0x0151, 0x0173, 0x0198, 0x01c1, 0x01ee, 0x0220, 0x0256, 0x0292,
-  0x02d4, 0x031c, 0x036c, 0x03c3, 0x0424, 0x048e, 0x0502, 0x0583,
-  0x0610, 0x06ab, 0x0756, 0x0812, 0x08e0, 0x09c3, 0x0abd, 0x0bd0,
-  0x0cff, 0x0e4c, 0x0fba, 0x114c, 0x1307, 0x14ee, 0x1706, 0x1954,
-  0x1bdc, 0x1ea5, 0x21b6, 0x2515, 0x28ca, 0x2cdf, 0x315b, 0x364b,
-  0x3bb9, 0x41b2, 0x4844, 0x4f7e, 0x5771, 0x602f, 0x69ce, 0x7462,
-  0x7fff
+static int16 imcTable1[] = {
+	  7,     8,     9,    10,    11,    12,    13,    14,    16,    17,
+	 19,    21,    23,    25,    28,    31,    34,    37,    41,    45,
+	 50,    55,    60,    66,    73,    80,    88,    97,   107,   118,
+	130,   143,   157,   173,   190,   209,   230,   253,   279,   307,
+	337,   371,   408,   449,   494,   544,   598,   658,   724,   796,
+	876,   963,  1060,  1166,  1282,  1411,  1552,  1707,  1878,  2066,
+	2272,  2499,  2749,  3024,  3327,  3660,  4026,  4428,  4871,  5358,
+	5894,  6484,  7132,  7845,  8630,  9493, 10442, 11487, 12635, 13899,
+	15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
 };
 
-uint8_t imcTable2[] = {
-  0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-  0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-  0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-  0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-  0x04, 0x04, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x05,
-  0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x06,
-  0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
-  0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
-  0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07
+static int8 imcTable2[] = {
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+	6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
 };
 
-uint8_t imcOtherTable1[] = {
-  0xff, 0x04, 0xff, 0x04, 0x00, 0x00, 0x00, 0x00
-};
-uint8_t imcOtherTable2[] = {
-  0xff, 0xff, 0x02, 0x06, 0xff, 0xff, 0x02, 0x06
-};
-uint8_t imcOtherTable3[] = {
-  0xff, 0xff, 0xff, 0xff, 0x01, 0x02, 0x04, 0x06,
-  0xff, 0xff, 0xff, 0xff, 0x01, 0x02, 0x04, 0x06
-};
-uint8_t imcOtherTable4[] = {
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0x01, 0x01, 0x01, 0x02, 0x02, 0x04, 0x05, 0x06,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0x01, 0x01, 0x01, 0x02, 0x02, 0x04, 0x05, 0x06
-};
-uint8_t imcOtherTable5[] = {
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02,
-  0x02, 0x04, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02,
-  0x02, 0x04, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06
-};
-uint8_t imcOtherTable6[] = {
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-  0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-  0x02, 0x02, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-  0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-  0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-  0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-  0x02, 0x02, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-  0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06
-};
-uint8_t *offsets[] = {
-  NULL, NULL, imcOtherTable1, imcOtherTable2, imcOtherTable3,
-  imcOtherTable4, imcOtherTable5, imcOtherTable6
+static int8 imcOtherTable1[] = {
+	-1, 4, -1, 4
 };
 
-uint16_t destTable[5786];
-uint8_t sBytes[4];
-uint16_t sWords[4];
-int decLength, currTablePos, entrySize, decsToDo, tableEntry,
-  sBytesPos, destPos_sWordsPos, destPos, outputWord,
-  decsLeft, bytesToDec, var40, currTableVal, destOffs;
-char *sourceBuffer;
-unsigned char *sourcePos;
-uint16_t *sWordsPos;
+static int8 imcOtherTable2[] = {
+	-1, -1, 2, 6, -1, -1, 2, 6
+};
 
-void initVima() {
-  int destTableStartPos, incer;
-  for (destTableStartPos = 0, incer = 0; destTableStartPos < 64;
-       destTableStartPos++, incer++) {
-    unsigned int destTablePos, imcTable1Pos;
-    for (imcTable1Pos = 0, destTablePos = destTableStartPos;
-	 imcTable1Pos < sizeof(imcTable1) / sizeof(imcTable1[0]);
-	 imcTable1Pos++, destTablePos += 64) {
-      int put = 0, count, tableValue;
-      for (count = 32, tableValue = imcTable1[imcTable1Pos]; count != 0;
-	   count >>= 1, tableValue >>= 1) {
-	if ((incer & count) != 0)
-	  put += tableValue;
-      }
-      destTable[destTablePos] = put;
-    }
-  }
+static int8 imcOtherTable3[] = {
+	-1, -1, -1, -1, 1, 2, 4, 6,
+	-1, -1, -1, -1, 1, 2, 4, 6
+};
+
+static int8 imcOtherTable4[] = {
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	1, 1, 1, 2, 2, 4, 5, 6,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	1, 1, 1, 2, 2, 4, 5, 6
+};
+
+static int8 imcOtherTable5[] = {
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	 1, 1, 1, 1, 1, 2, 2, 2,
+	 2, 4, 4, 4, 5, 5, 6, 6,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	 1, 1, 1, 1, 1, 2, 2, 2,
+	 2, 4, 4, 4, 5, 5, 6, 6
+};
+
+static int8 imcOtherTable6[] = {
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	 1, 1, 1, 1, 1, 1, 1, 1,
+	 1, 1, 2, 2, 2, 2, 2, 2,
+	 2, 2, 4, 4, 4, 4, 4, 4,
+	 5, 5, 5, 5, 6, 6, 6, 6,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1,
+	 1, 1, 1, 1, 1, 1, 1, 1,
+	 1, 1, 2, 2, 2, 2, 2, 2,
+	 2, 2, 4, 4, 4, 4, 4, 4,
+	 5, 5, 5, 5, 6, 6, 6, 6
+};
+
+static int8 *offsets[] = {
+	imcOtherTable1, imcOtherTable2, imcOtherTable3,
+	imcOtherTable4, imcOtherTable5, imcOtherTable6
+};
+
+static uint16 destTable[5786];
+byte *sourceBuffer;
+
+void vimaInit(uint16 *destTable) {
+	int destTableStartPos, incer;
+
+	for (destTableStartPos = 0, incer = 0; destTableStartPos < 64; destTableStartPos++, incer++) {
+		unsigned int destTablePos, imcTable1Pos;
+		for (imcTable1Pos = 0, destTablePos = destTableStartPos;
+				imcTable1Pos < sizeof(imcTable1) / sizeof(imcTable1[0]); imcTable1Pos++, destTablePos += 64) {
+			int put = 0, count, tableValue;
+			for (count = 32, tableValue = imcTable1[imcTable1Pos]; count != 0; count >>= 1, tableValue >>= 1) {
+				if (incer & count) {
+					put += tableValue;
+				}
+			}
+			destTable[destTablePos] = put;
+		}
+	}
 }
 
-int eax, bit;
+void decompressVima(byte *src, int16 *dest, int destLen, uint16 *destTable) {
+	int numChannels = 1;
+	byte sBytes[2];
+	int16 sWords[2];
 
-void decompressVima() {
-  sourcePos = (unsigned char *) sourceBuffer;  // sourcePos in ecx
-  entrySize = 1;  // entrySize in esi
-  sBytes[0] = *sourcePos;
-  sourcePos++;
-  if (sBytes[0] & 0x80) {
-    sBytes[0] = ~sBytes[0];
-    entrySize = 2;
-  }
-  sWords[0] = (sourcePos[0] << 8) | sourcePos[1];
-  sourcePos += 2;
-  if (entrySize > 1) {
-    sBytes[1] = *sourcePos;
-    sourcePos++;
-    sWords[1] = (sourcePos[0] << 8) | sourcePos[1];
-    sourcePos += 2;
-  }
-  currTablePos = 1;
-  decsToDo = decLength / (2 * entrySize);
-  if (currTablePos == 0) {
-    sBytes[1] = 0;
-    sBytes[0] = 0;
-    sWords[1] = 0;
-    sWords[0] = 0;
-  }
-  tableEntry = (sourcePos[0] << 8) | sourcePos[1];
-  sourcePos += 2;
-  sBytesPos = 0;
-  if (entrySize <= 0)
-    goto exitMainDec;
-  sWordsPos = sWords;
-  destPos_sWordsPos = destOffs - (int) sWords;
-  destOffs = 0;  // destOffs in ebx
- nextByte:
-  // edi = destPos_sWordsPos, eax = sWordsPos, esi = sBytesPos
-  destPos = destPos_sWordsPos + (int) sWordsPos;
-  currTablePos = (signed char) sBytes[sBytesPos];
-  outputWord = (signed short) *sWordsPos;
-  if (decsToDo == 0)
-    goto done;
-  decsLeft = decsToDo;
-  bytesToDec = entrySize * 2;
- nextDec:
-  currTableVal = imcTable2[currTablePos];
-  destOffs += currTableVal & 0xff;
-  bit = 1 << (currTableVal - 1);
-  var40 = bit - 1;
-  eax = (tableEntry & 0xffff) >> (16 - destOffs);
-  eax &= (bit | var40);
-  if (destOffs > 7) {
-    tableEntry = ((tableEntry & 0xff) << 8) | *sourcePos;
-    sourcePos++;
-    destOffs -= 8;
-  }
-  if (eax & bit)
-    eax ^= bit;
-  else
-    bit = 0;
-  if (eax == var40) {
-    outputWord = ((signed short) (tableEntry << destOffs) & 0xffffff00);
-    tableEntry = ((tableEntry & 0xff) << 8) | *sourcePos;
-    sourcePos++;
-    outputWord |= ((tableEntry >> (8 - destOffs)) & 0xff);
-    tableEntry = ((tableEntry & 0xff) << 8) | *sourcePos;
-    sourcePos++;
-  }
-  else {
-    int index = (eax << (7 - currTableVal)) | (currTablePos << 6);
-    int delta;
-    delta = destTable[index];
-    if (eax != 0)
-      delta += (imcTable1[currTablePos] >> (currTableVal - 1));
-    if (bit != 0)
-      delta = -delta;
-    outputWord += delta;
-    if (outputWord < -0x8000)
-      outputWord = -0x8000;
-    else if (outputWord > 0x7fff)
-      outputWord = 0x7fff;
-  }
-  *((uint16_t *) destPos) = outputWord;
-  destPos += bytesToDec;
-  currTablePos += (signed char) offsets[currTableVal][eax];
-  if (currTablePos < 0)
-    currTablePos = 0;
-  else if (currTablePos > 88)
-    currTablePos = 88;
- done:
-  decsLeft--;
-  if (decsLeft != 0)
-    goto nextDec;
-  sBytes[sBytesPos] = currTablePos;
-  *sWordsPos = outputWord;
-  sWordsPos++;
-  sBytesPos++;
-  if (sBytesPos < entrySize)
-    goto nextByte;
- exitMainDec:
-  return;
+	sBytes[0] = *(uint8 *)(src++);
+	if (sBytes[0] & 0x80) {
+		sBytes[0] = ~sBytes[0];
+		numChannels = 2;
+	}
+	sWords[0] = (src[0] << 8) | src[1];
+	src += 2;
+	if (numChannels > 1) {
+		sBytes[1] = *(uint8 *)(src++);
+		sWords[1] = (src[0] << 8) | src[1];
+		src += 2;
+	}
+
+	int numSamples = destLen / (numChannels * 2);
+	int bits = (src[0] << 8) | src[1];
+	int bitPtr = 0;
+	src += 2;
+
+	for (int channel = 0; channel < numChannels; channel++) {
+		int16 *destPos = dest + channel;
+		int currTablePos = sBytes[channel];
+		int outputWord = sWords[channel];
+
+		for (int sample = 0; sample < numSamples; sample++) {
+			int numBits = imcTable2[currTablePos];
+			bitPtr += numBits;
+			int highBit = 1 << (numBits - 1);
+			int lowBits = highBit - 1;
+			int val = (bits >> (16 - bitPtr)) & (highBit | lowBits);
+
+			if (bitPtr > 7) {
+				bits = ((bits & 0xff) << 8) | *(uint8 *)(src++);
+				bitPtr -= 8;
+			}
+
+			if (val & highBit)
+				val ^= highBit;
+			else
+				highBit = 0;
+
+			if (val == lowBits) {
+				outputWord = ((int16)(bits << bitPtr) & 0xffffff00);
+				bits = ((bits & 0xff) << 8) | *(uint8 *)(src++);
+				outputWord |= ((bits >> (8 - bitPtr)) & 0xff);
+				bits = ((bits & 0xff) << 8) | *(uint8 *)(src++);
+			} else {
+				int index = (val << (7 - numBits)) | (currTablePos << 6);
+				int delta = destTable[index];
+
+				if (val)
+					delta += (imcTable1[currTablePos] >> (numBits - 1));
+				if (highBit)
+					delta = -delta;
+
+				outputWord += delta;
+				if (outputWord < -0x8000)
+					outputWord = -0x8000;
+				else if (outputWord > 0x7fff)
+					outputWord = 0x7fff;
+			}
+
+			byte *b = (byte *)destPos;
+			b[0] = (byte)(outputWord >> 0);
+			b[1] = (byte)(outputWord >> 8);
+			destPos += numChannels;
+
+			currTablePos += offsets[numBits - 2][val];
+
+			if (currTablePos < 0)
+				currTablePos = 0;
+			else if (currTablePos > 88)
+				currTablePos = 88;
+		}
+	}
 }
 
 int main(int /* argc */, char *argv[]) {
-  initVima();
+	vimaInit(destTable);
 
-  FILE *f = fopen(argv[1], "rb");
-  if (f == NULL) {
-    perror(argv[1]);
-    return 1;
-  }
+	FILE *f = fopen(argv[1], "rb");
+	if (f == NULL) {
+		perror(argv[1]);
+		return 1;
+	}
 
-  char magic[4];
-  fread(magic, 4, 1, f);
-  if (memcmp(magic, "MCMP", 4) != 0) {
-    fprintf(stderr, "Not a valid file\n");
-    return 1;
-  }
-  uint16_t numBlocks = getc(f) << 8;
-  numBlocks |= getc(f);
-  char *blocks = new char[9 * numBlocks];
-  fread(blocks, 9, numBlocks, f);
+	char magic[4];
+	fread(magic, 4, 1, f);
+	if (memcmp(magic, "MCMP", 4) != 0) {
+		fprintf(stderr, "Not a valid file\n");
+		return 1;
+	}
+	uint16_t numBlocks = getc(f) << 8;
+	numBlocks |= getc(f);
+	char *blocks = new char[9 * numBlocks];
+	fread(blocks, 9, numBlocks, f);
 
-  uint16_t numCodecs = getc(f) << 8;
-  numCodecs |= getc(f);
-  numCodecs /= 5;
-  char *codecs = new char[5 * numCodecs];
-  fread(codecs, 5, numCodecs, f);
+	uint16_t numCodecs = getc(f) << 8;
+	numCodecs |= getc(f);
+	numCodecs /= 5;
+	char *codecs = new char[5 * numCodecs];
+	fread(codecs, 5, numCodecs, f);
 
-  for (int i = 0; i < numBlocks; i++) {
-    int codec = blocks[9 * i];
-    int uncompSize = get_be_uint32(blocks + 9 * i + 1);
-    int compSize = get_be_uint32(blocks + 9 * i + 5);
+	for (int i = 0; i < numBlocks; i++) {
+		int codec = blocks[9 * i];
+		int uncompSize = get_be_uint32(blocks + 9 * i + 1);
+		int compSize = get_be_uint32(blocks + 9 * i + 5);
 
-    sourceBuffer = new char[compSize];
-    fread(sourceBuffer, 1, compSize, f);
+		sourceBuffer = new byte[compSize];
+		fread(sourceBuffer, 1, compSize, f);
 
-    if (strcmp(codecs + 5 * codec, "NULL") == 0)
-      fwrite(sourceBuffer, 1, uncompSize, stdout);
-    else if (strcmp(codecs + 5 * codec, "VIMA") == 0) {
-      decLength = uncompSize;
-      char *buffer = new char[uncompSize];
-      destOffs = (int) buffer;
-      decompressVima();
-      fwrite(buffer, 1, uncompSize, stdout);
-      delete[] buffer;
-    }
-    else {
-      fprintf(stderr, "Unrecognized codec %s\n", codecs + 5 * codec);
-      return 1;
-    }
-    delete[] sourceBuffer;
-  }
-  return 0;
+		if (strcmp(codecs + 5 * codec, "NULL") == 0)
+			fwrite(sourceBuffer, 1, uncompSize, stdout);
+		else if (strcmp(codecs + 5 * codec, "VIMA") == 0) {
+			char *buffer = new char[uncompSize];
+			decompressVima(sourceBuffer, (int16 *)buffer, uncompSize, destTable);
+			fwrite(buffer, 1, uncompSize, stdout);
+			delete[] buffer;
+		} else {
+			fprintf(stderr, "Unrecognized codec %s\n", codecs + 5 * codec);
+			return 1;
+		}
+		delete[] sourceBuffer;
+	}
+
+	return 0;
 }
