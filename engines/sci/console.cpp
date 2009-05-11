@@ -29,6 +29,7 @@
 #include "sci/console.h"
 #include "sci/scicore/resource.h"
 #include "sci/scicore/versions.h"
+#include "sci/scicore/vocabulary.h"
 
 namespace Sci {
 
@@ -36,6 +37,8 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
 	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
+	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
+	DCmd_Register("kernelnames",		WRAP_METHOD(Console, cmdKernelNames));
 	DCmd_Register("man",				WRAP_METHOD(Console, cmdMan));
 }
 
@@ -49,6 +52,48 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 
 	DebugPrintf("Emulated interpreter version: %d.%03d.%03d\n",
 		SCI_VERSION_MAJOR(ver), SCI_VERSION_MINOR(ver), SCI_VERSION_PATCHLEVEL(ver));
+
+	return true;
+}
+
+bool Console::cmdSelectors(int argc, const char **argv) {
+	Common::StringList selectorNames;
+
+	if (!vocabulary_get_snames(_vm->getResMgr(), _vm->getVersion(), selectorNames)) {
+		DebugPrintf("No selector name table found!\n");
+		return true;
+	}
+
+	DebugPrintf("Selector names in numeric order:\n");
+	for (uint seeker = 0; seeker < selectorNames.size(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, selectorNames[seeker].c_str());
+		if (seeker % 3 == 0)
+			DebugPrintf("\n");
+	}
+
+	DebugPrintf("\n");
+
+	return true;
+}
+
+bool Console::cmdKernelNames(int argc, const char **argv) {
+	Common::StringList kernelNames;
+
+	vocabulary_get_knames(_vm->getResMgr(), kernelNames);
+
+	if (kernelNames.empty()) {
+		DebugPrintf("No kernel name table found!\n");
+		return true;
+	}
+
+	DebugPrintf("Selector names in numeric order:\n");
+	for (uint seeker = 0; seeker < kernelNames.size(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, kernelNames[seeker].c_str());
+		if (seeker % 3 == 0)
+			DebugPrintf("\n");
+	}
+
+	DebugPrintf("\n");
 
 	return true;
 }

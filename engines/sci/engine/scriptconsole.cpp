@@ -45,8 +45,6 @@ static int c_dump(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); 
 //static int c_objinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // shows some info about one class
 //static int c_objmethods(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Disassembles all methods of a class
 static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Searches a string in one resource or resource class
-static int c_selectornames(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Displays all selector names
-static int c_kernelnames(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Displays all kernel function names
 static int c_dissectscript(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Splits a script into objects and explains them
 
 struct cmd_mm_entry_t {
@@ -785,8 +783,6 @@ static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		          "docs       - lists all misc. documentation\n"
 		          "\n"
 		          "restypes   - lists all resource types\n"
-		          "selectors  - lists all selectors\n"
-		          "syscalls   - lists all kernel functions\n"
 		          "words      - lists all kernel words\n"
 		          "suffixes   - lists all suffix replacements\n"
 		          "[resource] - lists all [resource]s");
@@ -808,10 +804,6 @@ static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 				return 1;
 			}
 
-			if (!strcmp("selectors", cmdParams[0].str))
-				return c_selectornames(s, cmdParams);
-			else if (!strcmp("syscalls", cmdParams[0].str))
-				return c_kernelnames(s, cmdParams);
 			else if (!strcmp("suffixes", cmdParams[0].str) || !strcmp("suffices", cmdParams[0].str) || !strcmp("sufficos", cmdParams[0].str))
 				// sufficos: Accusative Plural of 'suffix'
 				return c_list_suffixes(s, cmdParams);
@@ -993,49 +985,6 @@ static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams
 		}
 
 	free(seekstr);
-
-	return 0;
-}
-
-static int c_selectornames(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Common::StringList selectorNames;
-
-	if (NULL == s) {
-		sciprintf("console.c: c_selectornames(): NULL passed for parameter s\n");
-		return -1;
-	}
-
-	if (!vocabulary_get_snames(s->resmgr, s ? s->version : 0, selectorNames)) {
-		sciprintf("No selector name table found!\n");
-		return 1;
-	}
-
-	sciprintf("Selector names in numeric order:\n");
-	for (uint seeker = 0; seeker < selectorNames.size(); seeker++) {
-		sciprintf("%03x: %s\n", seeker, selectorNames[seeker].c_str());
-	}
-
-	return 0;
-}
-
-static int c_kernelnames(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Common::StringList knames;
-
-	if (NULL == s) {
-		sciprintf("console.c: c_kernelnames NULL passed for parameter s\n");
-		return -1;
-	}
-
-	vocabulary_get_knames(s->resmgr, knames);
-
-	if (knames.empty()) {
-		sciprintf("No kernel name table found!\n");
-		return 1;
-	}
-
-	sciprintf("Syscalls in numeric order:\n");
-	for (uint seeker = 0; seeker < knames.size(); seeker++)
-		sciprintf("%03x: %s\n", seeker, knames[seeker].c_str());
 
 	return 0;
 }
