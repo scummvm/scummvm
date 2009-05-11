@@ -75,7 +75,7 @@ uint32 READ_LE_UINT32(const void *ptr) {
 
 struct mspack_file_p {
 	FILE *fh;
-	char *name;
+	const char *name;
 	uint16 *CodeTable;
 };
 
@@ -95,9 +95,9 @@ uint16 *create_dec_table(uint32 key) {
 	return dectable;
 }
 
-static struct mspack_file *res_open(struct mspack_system *handle, char *filename, int mode) {
+static struct mspack_file *res_open(struct mspack_system *handle, const char *filename, int mode) {
 	struct mspack_file_p *fh;
-	char *fmode;
+	const char *fmode;
 	uint32 magic, key;
 	
 	switch (mode) {
@@ -347,7 +347,7 @@ int main(int argc, char *argv[]) {
 	for(i = 0; kLanguages_code[i]; i++)
 		if (strcasecmp(kLanguages_code[i], argv[2]) == 0 || strcasecmp(kLanguages_ext[i], argv[2]) == 0) {
 			printf("%s selected.\n", kLanguages_ext[i]);
-			sprintf(lang, kLanguages_code[i]);
+			strcpy(lang, kLanguages_code[i]);
 			action = LOCALISED_ACTION;
 			break;
 		}

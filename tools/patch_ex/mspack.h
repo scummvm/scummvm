@@ -46,7 +46,7 @@
 
 struct mspack_system {
   struct mspack_file * (*open)(struct mspack_system *self,
-			       char *filename,
+			       const char *filename,
 			       int mode);
   void (*close)(struct mspack_file *file);
   int (*read)(struct mspack_file *file,
