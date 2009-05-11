@@ -1632,24 +1632,37 @@ int FWScript::o1_loadMusic() {
 
 	debugC(5, kCineDebugScript, "Line: %d: loadMusic(%s)", _line, param);
 	g_sound->loadMusic(param);
+
+	strncpy(currentDatName, param, 30);
+	musicIsPlaying = 0;
+
 	return 0;
 }
 
 int FWScript::o1_playMusic() {
 	debugC(5, kCineDebugScript, "Line: %d: playMusic()", _line);
 	g_sound->playMusic();
+
+	musicIsPlaying = 1;
+
 	return 0;
 }
 
 int FWScript::o1_fadeOutMusic() {
 	debugC(5, kCineDebugScript, "Line: %d: fadeOutMusic()", _line);
 	g_sound->fadeOutMusic();
+
+	musicIsPlaying = 0;
+
 	return 0;
 }
 
 int FWScript::o1_stopSample() {
 	debugC(5, kCineDebugScript, "Line: %d: stopSample()", _line);
 	g_sound->stopMusic();
+
+	musicIsPlaying = 0;
+
 	return 0;
 }
 

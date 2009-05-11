@@ -89,6 +89,7 @@ char newMsgName[20];
 char currentCtName[15];
 char currentPartName[15];
 char currentDatName[30];
+uint16 musicIsPlaying;
 
 byte isInPause = 0;
 

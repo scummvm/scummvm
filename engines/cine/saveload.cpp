@@ -29,6 +29,7 @@
 #include "cine/cine.h"
 #include "cine/bg_list.h"
 #include "cine/saveload.h"
+#include "cine/sound.h"
 #include "cine/various.h"
 
 namespace Cine {
@@ -646,7 +647,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	in.read(currentDatName, 13);
 
 	// At 0x001C:
-	saveVar2 = in.readSint16BE();
+	musicIsPlaying = in.readSint16BE();
 
 	// At 0x001E:
 	in.read(currentPrcName, 13);
@@ -748,12 +749,10 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	}
 
 	if (strlen(currentDatName)) {
-/*		i = saveVar2;
-		saveVar2 = 0;
-		loadMusic();
-		if (i) {
-			playMusic();
-		}*/
+		g_sound->loadMusic(currentDatName);
+		if (musicIsPlaying) {
+			g_sound->playMusic();
+		}
 	}
 
 	return !in.ioFailed();
@@ -835,7 +834,7 @@ void CineEngine::makeSaveFW(Common::OutSaveFile &out) {
 	out.writeUint16BE(currentDisk);
 	out.write(currentPartName, 13);
 	out.write(currentDatName, 13);
-	out.writeUint16BE(saveVar2);
+	out.writeUint16BE(musicIsPlaying);
 	out.write(currentPrcName, 13);
 	out.write(currentRelName, 13);
 	out.write(currentMsgName, 13);

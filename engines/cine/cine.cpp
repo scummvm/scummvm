@@ -172,6 +172,9 @@ void CineEngine::initialize() {
 
 	var2 = var3 = var4 = var5 = 0;
 
+	musicIsPlaying = 0;
+	currentDatName[0] = 0;
+
 	_preLoad = false;
 	if (ConfMan.hasKey("save_slot")) {
 		char saveNameBuffer[256];

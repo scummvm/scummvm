@@ -78,6 +78,7 @@ extern int16 commandVar2;
 extern int16 commandVar3[4];
 
 extern char currentDatName[30];
+extern uint16 musicIsPlaying;
 
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 
