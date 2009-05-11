@@ -205,12 +205,12 @@ int ListWidget::findItem(int x, int y) const {
 
 static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop) {
 	int match = 0;
-	while (*x && *y && toupper(*x) == toupper(*y)) {
+	while (*x && *y && tolower(*x) == tolower(*y)) {
 		++x;
 		++y;
 		++match;
 	}
-	stop = !*y || (*x && (toupper(*x) >= toupper(*y)));
+	stop = !*y || (*x && (tolower(*x) >= tolower(*y)));
 	return match;
 }
 
