@@ -252,8 +252,8 @@ static void sci01_song_header_dump(byte *data, int size) {
 #undef CHECK_FOR_END_ABSOLUTE
 #undef SONGDATA
 
-int c_sfx_01_header(EngineState *s) {
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmd_params[0].val, 0);
+int c_sfx_01_header(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
 
 	if (!song) {
 		sciprintf("Doesn't exist\n");
@@ -265,10 +265,10 @@ int c_sfx_01_header(EngineState *s) {
 	return 0;
 }
 
-int c_sfx_01_track(EngineState *s) {
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmd_params[0].val, 0);
+int c_sfx_01_track(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
 
-	int offset = cmd_params[1].val;
+	int offset = cmdParams[1].val;
 
 	if (!song) {
 		sciprintf("Doesn't exist\n");
@@ -282,7 +282,7 @@ int c_sfx_01_track(EngineState *s) {
 
 const char *(*_debug_get_input)(void) = _debug_get_input_default;
 
-int c_segtable(EngineState *s) {
+int c_segtable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	uint i;
 
 	sciprintf("  ---- segment table ----\n");
@@ -543,15 +543,15 @@ int objinfo(EngineState *s, reg_t pos);
 
 void song_lib_dump(const songlib_t &songlib, int line);
 
-static int c_songlib_print(EngineState *s) {
+static int c_songlib_print(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	song_lib_dump(s->sound.songlib, __LINE__);
 
 	return 0;
 }
 
-static int c_vr(EngineState *s) {
-	reg_t reg = cmd_params[0].reg;
-	reg_t reg_end = cmd_paramlength > 1 ? cmd_params[1].reg : NULL_REG;
+static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	reg_t reg = cmdParams[0].reg;
+	reg_t reg_end = cmdParams.size() > 1 ? cmdParams[1].reg : NULL_REG;
 	int type_mask = determine_reg_type(s, reg, 1);
 	int filter;
 	int found = 0;
@@ -643,18 +643,18 @@ static int c_vr(EngineState *s) {
 	return 0;
 }
 
-int c_segkill(EngineState *s) {
-	unsigned int i = 0;
+int c_segkill(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	uint i = 0;
 
-	while (i < cmd_paramlength) {
-		int nr = cmd_params[i++].val;
+	while (i < cmdParams.size()) {
+		int nr = cmdParams[i++].val;
 
 		s->seg_manager->setLockers(nr, 0, SEG_ID);
 	}
 	return 0;
 }
 
-static int c_mousepos(EngineState *s) {
+static int c_mousepos(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	sci_event_t event;
 
 	sciprintf("Click somewhere in the game window...\n");
@@ -666,12 +666,12 @@ static int c_mousepos(EngineState *s) {
 	return 0;
 }
 
-int c_seginfo(EngineState *s) {
+int c_seginfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	uint i = 0;
 
-	if (cmd_paramlength) {
-		while (i < cmd_paramlength) {
-			int nr = cmd_params[i++].val;
+	if (cmdParams.size()) {
+		while (i < cmdParams.size()) {
+			int nr = cmdParams[i++].val;
 			if (nr < 0 || (uint)nr >= s->seg_manager->_heap.size() || !s->seg_manager->_heap[nr]) {
 				sciprintf("Segment %04x does not exist\n", nr);
 				return 1;
@@ -707,17 +707,21 @@ int c_debuginfo(EngineState *s) {
 	return 0;
 }
 
-int c_step(EngineState *s) {
+int c_debuginfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	return c_debuginfo(s);
+}
+
+int c_step(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	_debugstate_valid = 0;
-	if (cmd_paramlength && (cmd_params[0].val > 0))
-		_debug_step_running = cmd_params[0].val - 1;
+	if (cmdParams.size() && (cmdParams[0].val > 0))
+		_debug_step_running = cmdParams[0].val - 1;
 
 	return 0;
 }
 
 #if 0
 // TODO Re-implement con:so
-int c_stepover(EngineState *s) {
+int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int opcode, opnumber;
 
 	if (!_debugstate_valid) {
@@ -760,7 +764,7 @@ int c_stepover(EngineState *s) {
 }
 #endif
 
-int c_sim_parse(EngineState *s) {
+int c_sim_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	unsigned int i;
 	const char *operators = ",&/()[]#<>";
 
@@ -769,14 +773,14 @@ int c_sim_parse(EngineState *s) {
 		return 1;
 	}
 
-	if (cmd_paramlength == 0) {
+	if (cmdParams.size() == 0) {
 		s->parser_valid = 0;
 		return 0;
 	}
 
-	for (i = 0; i < cmd_paramlength; i++) {
+	for (i = 0; i < cmdParams.size(); i++) {
 		int flag = 0;
-		char *token = cmd_params[i].str;
+		char *token = cmdParams[i].str;
 
 		if (strlen(token) == 1) {// could be an operator
 			int j = 0;
@@ -816,14 +820,14 @@ int c_sim_parse(EngineState *s) {
 
 	}
 
-	s->parser_nodes[cmd_paramlength].type = -1; // terminate
+	s->parser_nodes[cmdParams.size()].type = -1; // terminate
 
 	s->parser_valid = 2;
 
 	return 0;
 }
 
-int c_classtable(EngineState *s) {
+int c_classtable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -837,9 +841,9 @@ int c_classtable(EngineState *s) {
 	return 0;
 }
 
-int c_viewinfo(EngineState *s) {
-	int view = cmd_params[0].val;
-	int palette = cmd_params[1].val;
+int c_viewinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int view = cmdParams[0].val;
+	int palette = cmdParams[1].val;
 	int loops, i;
 	gfxr_view_t *view_pixmaps = NULL;
 
@@ -880,7 +884,7 @@ int c_viewinfo(EngineState *s) {
 	return 0;
 }
 
-int c_list_sentence_fragments(EngineState *s) {
+int c_list_sentence_fragments(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -933,13 +937,13 @@ enum {
 	_parse_token_number
 };
 
-int _parse_getinp(int *i, int *nr) {
+int _parse_getinp(int *i, int *nr, const Common::Array<cmd_param_t> &cmdParams) {
 	char *token;
 
-	if ((unsigned)*i == cmd_paramlength)
+	if ((unsigned)*i == cmdParams.size())
 		return _parse_eoi;
 
-	token = cmd_params[(*i)++].str;
+	token = cmdParams[(*i)++].str;
 
 	if (!strcmp(token, "("))
 		return _parse_token_pareno;
@@ -955,7 +959,7 @@ int _parse_getinp(int *i, int *nr) {
 	return _parse_token_number;
 }
 
-int _parse_nodes(EngineState *s, int *i, int *pos, int type, int nr) {
+int _parse_nodes(EngineState *s, int *i, int *pos, int type, int nr, const Common::Array<cmd_param_t> &cmdParams) {
 	int nexttk, nextval, newpos, oldpos;
 
 	if (type == _parse_token_nil)
@@ -976,21 +980,21 @@ int _parse_nodes(EngineState *s, int *i, int *pos, int type, int nr) {
 	}
 	s->parser_nodes[oldpos = ++(*pos)].type = PARSE_TREE_NODE_BRANCH;
 
-	nexttk = _parse_getinp(i, &nextval);
-	if ((newpos = s->parser_nodes[oldpos].content.branches[0] = _parse_nodes(s, i, pos, nexttk, nextval)) == -1)
+	nexttk = _parse_getinp(i, &nextval, cmdParams);
+	if ((newpos = s->parser_nodes[oldpos].content.branches[0] = _parse_nodes(s, i, pos, nexttk, nextval, cmdParams)) == -1)
 		return -1;
 
-	nexttk = _parse_getinp(i, &nextval);
-	if ((newpos = s->parser_nodes[oldpos].content.branches[1] = _parse_nodes(s, i, pos, nexttk, nextval)) == -1)
+	nexttk = _parse_getinp(i, &nextval, cmdParams);
+	if ((newpos = s->parser_nodes[oldpos].content.branches[1] = _parse_nodes(s, i, pos, nexttk, nextval, cmdParams)) == -1)
 		return -1;
 
-	if (_parse_getinp(i, &nextval) != _parse_token_parenc)
+	if (_parse_getinp(i, &nextval, cmdParams) != _parse_token_parenc)
 		sciprintf("Expected ')' at token %d\n", *i);
 
 	return oldpos;
 }
 
-int c_set_parse_nodes(EngineState *s) {
+int c_set_parse_nodes(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int i = 0;
 	int foo, bar;
 	int pos = -1;
@@ -1000,8 +1004,8 @@ int c_set_parse_nodes(EngineState *s) {
 		return 1;
 	}
 
-	bar = _parse_getinp(&i, &foo);
-	if (_parse_nodes(s, &i, &pos, bar, foo) == -1)
+	bar = _parse_getinp(&i, &foo, cmdParams);
+	if (_parse_nodes(s, &i, &pos, bar, foo, cmdParams) == -1)
 		return 1;
 
 	vocab_dump_parse_tree("debug-parse-tree", s->parser_nodes);
@@ -1010,7 +1014,7 @@ int c_set_parse_nodes(EngineState *s) {
 
 // parses with a GNF rule set
 
-int c_parse(EngineState *s) {
+int c_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	ResultWordList words;
 	char *error;
 	char *string;
@@ -1020,7 +1024,7 @@ int c_parse(EngineState *s) {
 		return 1;
 	}
 
-	string = cmd_params[0].str;
+	string = cmdParams[0].str;
 	sciprintf("Parsing '%s'\n", string);
 	bool res = vocab_tokenize_string(words, string, s->_parserWords, s->_parserSuffixes, &error);
 	if (res && !words.empty()) {
@@ -1049,8 +1053,8 @@ int c_parse(EngineState *s) {
 	return 0;
 }
 
-int c_save_game(EngineState *s) {
-	int omit_check = cmd_params[0].str[0] == '_';
+int c_save_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int omit_check = cmdParams[0].str[0] == '_';
 
 	if (!s) {
 		sciprintf("Not in debug state\n");
@@ -1065,27 +1069,27 @@ int c_save_game(EngineState *s) {
 
 		if (result) {
 			sciprintf("Game state has %d open file handles.\n", result);
-			sciprintf("Save to '_%s' to ignore this check.\nGame was NOT saved.\n", cmd_params[0].str);
+			sciprintf("Save to '_%s' to ignore this check.\nGame was NOT saved.\n", cmdParams[0].str);
 			return 1;
 		}
 	}
 
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out;
-	if (!(out = saveFileMan->openForSaving(cmd_params[0].str))) {
-		sciprintf("Error opening savegame \"%s\" for writing\n", cmd_params[0].str);
+	if (!(out = saveFileMan->openForSaving(cmdParams[0].str))) {
+		sciprintf("Error opening savegame \"%s\" for writing\n", cmdParams[0].str);
 		return 0;
 	}
 
 	// TODO: enable custom descriptions? force filename into a specific format?
 	if (gamestate_save(s, out, "debugging")) {
-		sciprintf("Saving the game state to '%s' failed\n", cmd_params[0].str);
+		sciprintf("Saving the game state to '%s' failed\n", cmdParams[0].str);
 	}
 
 	return 0;
 }
 
-int c_restore_game(EngineState *s) {
+int c_restore_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	EngineState *newstate = NULL;
 
 	if (!s) {
@@ -1095,7 +1099,7 @@ int c_restore_game(EngineState *s) {
 
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::SeekableReadStream *in;
-	if (!(in = saveFileMan->openForLoading(cmd_params[0].str))) {
+	if (!(in = saveFileMan->openForLoading(cmdParams[0].str))) {
 		// found a savegame file
 		newstate = gamestate_restore(s, in);
 		delete in;
@@ -1109,14 +1113,14 @@ int c_restore_game(EngineState *s) {
 		s->execution_stack_pos = s->execution_stack_base;
 		return 0;
 	} else {
-		sciprintf("Restoring gamestate '%s' failed.\n", cmd_params[0].str);
+		sciprintf("Restoring gamestate '%s' failed.\n", cmdParams[0].str);
 		return 1;
 	}
 }
 
 extern char *old_save_dir;
 
-int c_restart_game(EngineState *s) {
+int c_restart_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	unsigned int i;
 	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
 
@@ -1126,14 +1130,14 @@ int c_restart_game(EngineState *s) {
 	}
 
 	old_save_dir = strdup(deref_save_dir);
-	for (i = 0; i < cmd_paramlength; i++) {
-		if ((strcmp(cmd_params[0].str, "-r") == 0) || (strcmp(cmd_params[0].str, "--replay") == 0))
+	for (i = 0; i < cmdParams.size(); i++) {
+		if ((strcmp(cmdParams[0].str, "-r") == 0) || (strcmp(cmdParams[0].str, "--replay") == 0))
 			s->restarting_flags |= SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
 		else
-			if ((strcmp(cmd_params[0].str, "-p") == 0) || (strcmp(cmd_params[0].str, "--play") == 0))
+			if ((strcmp(cmdParams[0].str, "-p") == 0) || (strcmp(cmdParams[0].str, "--play") == 0))
 				s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
 			else {
-				sciprintf("Invalid parameter '%s'\n", cmd_params[0].str);
+				sciprintf("Invalid parameter '%s'\n", cmdParams[0].str);
 				return 1;
 			}
 	}
@@ -1148,7 +1152,7 @@ int c_restart_game(EngineState *s) {
 	return 0;
 }
 
-int c_stack(EngineState *s) {
+int c_stack(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1161,7 +1165,7 @@ int c_stack(EngineState *s) {
 
 	ExecStack &xs = s->_executionStack[s->execution_stack_pos];
 
-	for (int i = cmd_params[0].val ; i > 0; i--) {
+	for (int i = cmdParams[0].val ; i > 0; i--) {
 		if ((xs.sp - xs.fp - i) == 0)
 			sciprintf("-- temp variables --\n");
 		if (xs.sp - i >= s->stack_base)
@@ -1455,8 +1459,8 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	return retval;
 }
 
-int c_dumpnodes(EngineState *s) {
-	int end = MIN<int>(cmd_params[0].val, VOCAB_TREE_NODES);
+int c_dumpnodes(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int end = MIN<int>(cmdParams[0].val, VOCAB_TREE_NODES);
 	int i;
 
 	if (!_debugstate_valid) {
@@ -1479,7 +1483,7 @@ int c_dumpnodes(EngineState *s) {
 static const char *varnames[] = {"global", "local", "temp", "param"};
 static const char *varabbrev = "gltp";
 
-int c_vmvarlist(EngineState *s) {
+int c_vmvarlist(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int i;
 
 	for (i = 0;i < 4;i++) {
@@ -1492,13 +1496,13 @@ int c_vmvarlist(EngineState *s) {
 	return 0;
 }
 
-int c_vmvars(EngineState *s) {
-	const char *vartype_pre = strchr(varabbrev, *cmd_params[0].str);
+int c_vmvars(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	const char *vartype_pre = strchr(varabbrev, *cmdParams[0].str);
 	int vartype;
-	int idx = cmd_params[1].val;
+	int idx = cmdParams[1].val;
 
 	if (!vartype_pre) {
-		sciprintf("Invalid variable type '%c'\n", *cmd_params[0].str);
+		sciprintf("Invalid variable type '%c'\n", *cmdParams[0].str);
 		return 1;
 	}
 	vartype = vartype_pre - varabbrev;
@@ -1512,13 +1516,13 @@ int c_vmvars(EngineState *s) {
 		return 1;
 	}
 
-	switch (cmd_paramlength) {
+	switch (cmdParams.size()) {
 	case 2:
 		sciprintf("%s var %d == "PREG"\n", varnames[vartype], idx, PRINT_REG(p_vars[vartype][idx]));
 		break;
 
 	case 3:
-		p_vars[vartype][idx] = cmd_params[2].reg;
+		p_vars[vartype][idx] = cmdParams[2].reg;
 		break;
 
 	default:
@@ -1528,7 +1532,7 @@ int c_vmvars(EngineState *s) {
 	return 0;
 }
 
-static int c_backtrace(EngineState *s) {
+static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int i;
 
 	if (!_debugstate_valid) {
@@ -1596,7 +1600,7 @@ static int c_backtrace(EngineState *s) {
 	return 0;
 }
 
-static int c_redraw_screen(EngineState *s) {
+static int c_redraw_screen(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1610,7 +1614,7 @@ static int c_redraw_screen(EngineState *s) {
 	return 0;
 }
 
-static int c_clear_screen(EngineState *s) {
+static int c_clear_screen(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1622,7 +1626,7 @@ static int c_clear_screen(EngineState *s) {
 	return 0;
 }
 
-static int c_visible_map(EngineState *s) {
+static int c_visible_map(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1633,8 +1637,8 @@ static int c_visible_map(EngineState *s) {
 	if (s->onscreen_console)
 		con_restore_screen(s, s->osc_backup);
 
-	if (cmd_params[0].val <= 3)
-		s->pic_visible_map = cmd_params[0].val;
+	if (cmdParams[0].val <= 3)
+		s->pic_visible_map = cmdParams[0].val;
 	c_redraw_screen(s);
 
 	if (s->onscreen_console)
@@ -1643,7 +1647,7 @@ static int c_visible_map(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_current_port(EngineState *s) {
+static int c_gfx_current_port(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1657,7 +1661,7 @@ static int c_gfx_current_port(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_print_port(EngineState *s) {
+static int c_gfx_print_port(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	GfxPort *port;
 
 	if (!_debugstate_valid) {
@@ -1667,9 +1671,9 @@ static int c_gfx_print_port(EngineState *s) {
 
 	port = s->port;
 
-	if (cmd_paramlength > 0) {
+	if (cmdParams.size() > 0) {
 		if (s->visual) {
-			port = gfxw_find_port(s->visual, cmd_params[0].val);
+			port = gfxw_find_port(s->visual, cmdParams[0].val);
 		} else {
 			sciprintf("visual is uninitialized.\n");
 			return 1;
@@ -1684,14 +1688,14 @@ static int c_gfx_print_port(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_priority(EngineState *s) {
+static int c_gfx_priority(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	if (cmd_paramlength) {
-		int zone = cmd_params[0].val;
+	if (cmdParams.size()) {
+		int zone = cmdParams[0].val;
 		if (zone < 0)
 			zone = 0;
 		if (zone > 15) zone = 15;
@@ -1704,7 +1708,7 @@ static int c_gfx_priority(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_print_visual(EngineState *s) {
+static int c_gfx_print_visual(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1718,7 +1722,7 @@ static int c_gfx_print_visual(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_print_dynviews(EngineState *s) {
+static int c_gfx_print_dynviews(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1732,7 +1736,7 @@ static int c_gfx_print_dynviews(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_print_dropviews(EngineState *s) {
+static int c_gfx_print_dropviews(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1746,7 +1750,7 @@ static int c_gfx_print_dropviews(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_drawpic(EngineState *s) {
+static int c_gfx_drawpic(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int flags = 1, default_palette = 0;
 
 	if (!_debugstate_valid) {
@@ -1754,14 +1758,14 @@ static int c_gfx_drawpic(EngineState *s) {
 		return 1;
 	}
 
-	if (cmd_paramlength > 1) {
-		default_palette = cmd_params[1].val;
+	if (cmdParams.size() > 1) {
+		default_palette = cmdParams[1].val;
 
-		if (cmd_paramlength > 2)
-			flags = cmd_params[2].val;
+		if (cmdParams.size() > 2)
+			flags = cmdParams[2].val;
 	}
 
-	gfxop_new_pic(s->gfx_state, cmd_params[0].val, flags, default_palette);
+	gfxop_new_pic(s->gfx_state, cmdParams[0].val, flags, default_palette);
 	gfxop_clear_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 	gfxop_update(s->gfx_state);
 	gfxop_sleep(s->gfx_state, 0);
@@ -1773,16 +1777,16 @@ static int c_gfx_drawpic(EngineState *s) {
 extern GfxWidget *debug_widgets[];
 extern int debug_widget_pos;
 
-static int c_gfx_print_widget(EngineState *s) {
+static int c_gfx_print_widget(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	if (cmd_paramlength) {
+	if (cmdParams.size()) {
 		unsigned int i;
-		for (i = 0; i < cmd_paramlength ; i++) {
-			int widget_nr = cmd_params[i].val;
+		for (i = 0; i < cmdParams.size() ; i++) {
+			int widget_nr = cmdParams[i].val;
 
 			sciprintf("===== Widget #%d:\n", widget_nr);
 			debug_widgets[widget_nr]->print(0);
@@ -1799,8 +1803,8 @@ static int c_gfx_print_widget(EngineState *s) {
 }
 #endif
 
-static int c_gfx_show_map(EngineState *s) {
-	int map = cmd_params[0].val;
+static int c_gfx_show_map(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int map = cmdParams[0].val;
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -1834,11 +1838,11 @@ static int c_gfx_show_map(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_draw_cel(EngineState *s) {
-	int view = cmd_params[0].val;
-	int loop = cmd_params[1].val;
-	int cel = cmd_params[2].val;
-	int palette = cmd_params[3].val;
+static int c_gfx_draw_cel(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int view = cmdParams[0].val;
+	int loop = cmdParams[1].val;
+	int cel = cmdParams[2].val;
+	int palette = cmdParams[3].val;
 
 	if (!s) {
 		sciprintf("Not in debug state!\n");
@@ -1852,8 +1856,8 @@ static int c_gfx_draw_cel(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_fill_screen(EngineState *s) {
-	int col = cmd_params[0].val;
+static int c_gfx_fill_screen(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int col = cmdParams[0].val;
 
 	if (!s) {
 		sciprintf("Not in debug state!\n");
@@ -1870,8 +1874,8 @@ static int c_gfx_fill_screen(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_draw_rect(EngineState *s) {
-	int col = cmd_params[4].val;
+static int c_gfx_draw_rect(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int col = cmdParams[4].val;
 
 	if (!s) {
 		sciprintf("Not in debug state!\n");
@@ -1882,14 +1886,14 @@ static int c_gfx_draw_rect(EngineState *s) {
 		col = 0;
 
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-	gfxop_fill_box(s->gfx_state, gfx_rect(cmd_params[0].val, cmd_params[1].val, cmd_params[2].val, cmd_params[3].val), s->ega_colors[col]);
+	gfxop_fill_box(s->gfx_state, gfx_rect(cmdParams[0].val, cmdParams[1].val, cmdParams[2].val, cmdParams[3].val), s->ega_colors[col]);
 	gfxop_update(s->gfx_state);
 
 	return 0;
 }
 
-static int c_gfx_propagate_rect(EngineState *s) {
-	int map = cmd_params[4].val;
+static int c_gfx_propagate_rect(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int map = cmdParams[4].val;
 	rect_t rect;
 
 	if (!s) {
@@ -1902,7 +1906,7 @@ static int c_gfx_propagate_rect(EngineState *s) {
 
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
 
-	rect = gfx_rect(cmd_params[0].val, cmd_params[1].val, cmd_params[2].val, cmd_params[3].val);
+	rect = gfx_rect(cmdParams[0].val, cmdParams[1].val, cmdParams[2].val, cmdParams[3].val);
 
 	if (map == 1)
 		gfxop_clear_box(s->gfx_state, rect);
@@ -1922,12 +1926,12 @@ static int c_gfx_propagate_rect(EngineState *s) {
 
 #if 0
 // Unreferenced - removed
-static int c_gfx_draw_viewobj(EngineState *s) {
+static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 #ifdef __GNUC__
 #warning "Re-implement con:gfx_draw_viewobj"
 #endif
 #if 0
-	HeapPtr pos = (HeapPtr)(cmd_params[0].val);
+	HeapPtr pos = (HeapPtr)(cmdParams[0].val);
 	int is_view;
 	int x, y, priority;
 	int nsLeft, nsRight, nsBottom, nsTop;
@@ -1988,7 +1992,7 @@ static int c_gfx_draw_viewobj(EngineState *s) {
 }
 #endif
 
-static int c_gfx_flush_resources(EngineState *s) {
+static int c_gfx_flush_resources(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2003,18 +2007,18 @@ static int c_gfx_flush_resources(EngineState *s) {
 	return 0;
 }
 
-static int c_gfx_update_zone(EngineState *s) {
+static int c_gfx_update_zone(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	return s->gfx_state->driver->update(s->gfx_state->driver, gfx_rect(cmd_params[0].val, cmd_params[1].val, cmd_params[2].val, cmd_params[3].val),
-										Common::Point(cmd_params[0].val, cmd_params[1].val), GFX_BUFFER_FRONT);
+	return s->gfx_state->driver->update(s->gfx_state->driver, gfx_rect(cmdParams[0].val, cmdParams[1].val, cmdParams[2].val, cmdParams[3].val),
+										Common::Point(cmdParams[0].val, cmdParams[1].val), GFX_BUFFER_FRONT);
 }
 
-static int c_disasm_addr(EngineState *s) {
-	reg_t vpc = cmd_params[0].reg;
+static int c_disasm_addr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	reg_t vpc = cmdParams[0].reg;
 	int op_count = 1;
 	int do_bwc = 0;
 	int do_bytes = 0;
@@ -2025,16 +2029,16 @@ static int c_disasm_addr(EngineState *s) {
 	s->seg_manager->dereference(vpc, &size);
 	size += vpc.offset; // total segment size
 
-	for (i = 1; i < cmd_paramlength; i++) {
-		if (!scumm_stricmp(cmd_params[i].str, "bwt"))
+	for (i = 1; i < cmdParams.size(); i++) {
+		if (!scumm_stricmp(cmdParams[i].str, "bwt"))
 			do_bwc = 1;
-		else if (!scumm_stricmp(cmd_params[i].str, "bc"))
+		else if (!scumm_stricmp(cmdParams[i].str, "bc"))
 			do_bytes = 1;
-		else if (toupper(cmd_params[i].str[0]) == 'C')
-			op_count = atoi(cmd_params[i].str + 1);
+		else if (toupper(cmdParams[i].str[0]) == 'C')
+			op_count = atoi(cmdParams[i].str + 1);
 		else {
 			invalid = 1;
-			sciprintf("Invalid option '%s'\n", cmd_params[i].str);
+			sciprintf("Invalid option '%s'\n", cmdParams[i].str);
 		}
 	}
 
@@ -2048,9 +2052,9 @@ static int c_disasm_addr(EngineState *s) {
 	return 0;
 }
 
-static int c_disasm(EngineState *s) {
-	Object *obj = obj_get(s, cmd_params[0].reg);
-	int selector_id = script_find_selector(s, cmd_params[1].str);
+static int c_disasm(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	Object *obj = obj_get(s, cmdParams[0].reg);
+	int selector_id = script_find_selector(s, cmdParams[1].str);
 	reg_t addr;
 
 	if (!obj) {
@@ -2063,7 +2067,7 @@ static int c_disasm(EngineState *s) {
 		return 1;
 	}
 
-	if (lookup_selector(s, cmd_params[0].reg, selector_id, NULL, &addr) != kSelectorMethod) {
+	if (lookup_selector(s, cmdParams[0].reg, selector_id, NULL, &addr) != kSelectorMethod) {
 		sciprintf("Not a method.");
 		return 1;
 	}
@@ -2075,15 +2079,15 @@ static int c_disasm(EngineState *s) {
 	return 0;
 }
 
-static int c_sg(EngineState *s) {
+static int c_sg(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	_debug_seeking = _DEBUG_SEEK_GLOBAL;
-	_debug_seek_special = cmd_params[0].val;
+	_debug_seek_special = cmdParams[0].val;
 	_debugstate_valid = 0;
 
 	return 0;
 }
 
-static int c_snk(EngineState *s) {
+static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int callk_index;
 	char *endptr;
 
@@ -2092,21 +2096,21 @@ static int c_snk(EngineState *s) {
 		return 1;
 	}
 
-	if (cmd_paramlength > 0) {
+	if (cmdParams.size() > 0) {
 		/* Try to convert the parameter to a number. If the conversion stops
 		   before end of string, assume that the parameter is a function name
 		   and scan the function table to find out the index. */
-		callk_index = strtoul(cmd_params [0].str, &endptr, 0);
+		callk_index = strtoul(cmdParams [0].str, &endptr, 0);
 		if (*endptr != '\0') {
 			callk_index = -1;
 			for (uint i = 0; i < s->_kernelNames.size(); i++)
-				if (cmd_params [0].str == s->_kernelNames[i]) {
+				if (cmdParams [0].str == s->_kernelNames[i]) {
 					callk_index = i;
 					break;
 				}
 
 			if (callk_index == -1) {
-				sciprintf("Unknown kernel function '%s'\n", cmd_params[0].str);
+				sciprintf("Unknown kernel function '%s'\n", cmdParams[0].str);
 				return 1;
 			}
 		}
@@ -2122,28 +2126,28 @@ static int c_snk(EngineState *s) {
 	return 0;
 }
 
-static int c_sret(EngineState *s) {
+static int c_sret(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	_debug_seeking = _DEBUG_SEEK_LEVEL_RET;
 	_debug_seek_level = s->execution_stack_pos;
 	_debugstate_valid = 0;
 	return 0;
 }
 
-static int c_go(EngineState *s) {
+static int c_go(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	_debug_seeking = 0;
 	_debugstate_valid = 0;
 	script_debug_flag = 0;
 	return 0;
 }
 
-static int c_set_acc(EngineState *s) {
-	s->r_acc = cmd_params[0].reg;
+static int c_set_acc(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	s->r_acc = cmdParams[0].reg;
 	return 0;
 }
 
-static int c_send(EngineState *s) {
-	reg_t object = cmd_params[0].reg;
-	char *selector_name = cmd_params[1].str;
+static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	reg_t object = cmdParams[0].reg;
+	char *selector_name = cmdParams[1].str;
 	StackPtr stackframe = s->_executionStack[0].sp;
 	int selector_id;
 	unsigned int i;
@@ -2173,36 +2177,36 @@ static int c_send(EngineState *s) {
 	}
 
 	stackframe[0] = make_reg(0, selector_id);
-	stackframe[1] = make_reg(0, cmd_paramlength - 2);
+	stackframe[1] = make_reg(0, cmdParams.size() - 2);
 
-	for (i = 2; i < cmd_paramlength; i++)
-		stackframe[i] = cmd_params[i].reg;
+	for (i = 2; i < cmdParams.size(); i++)
+		stackframe[i] = cmdParams[i].reg;
 
-	xstack = add_exec_stack_entry(s, fptr, s->_executionStack[0].sp + cmd_paramlength, object, cmd_paramlength - 2,
+	xstack = add_exec_stack_entry(s, fptr, s->_executionStack[0].sp + cmdParams.size(), object, cmdParams.size() - 2,
 									s->_executionStack[0].sp - 1, 0, object, s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = selector_id;
 	xstack->type = selector_type == kSelectorVariable ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
 
 	// Now commit the actual function:
-	xstack = send_selector(s, object, object, stackframe, cmd_paramlength - 2, stackframe);
+	xstack = send_selector(s, object, object, stackframe, cmdParams.size() - 2, stackframe);
 
-	xstack->sp += cmd_paramlength;
-	xstack->fp += cmd_paramlength;
+	xstack->sp += cmdParams.size();
+	xstack->fp += cmdParams.size();
 
 	s->_executionStackPosChanged = true;
 
 	return 0;
 }
 
-static int c_resource_id(EngineState *s) {
-	int id = cmd_params[0].val;
+static int c_resource_id(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int id = cmdParams[0].val;
 
 	sciprintf("%s.%d (0x%x)\n", getResourceTypeName((ResourceType)(id >> 11)), id & 0x7ff, id & 0x7ff);
 
 	return 0;
 }
 
-static int c_listclones(EngineState *s) {
+static int c_listclones(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 #if 0
 	int i, j = 0;
 
@@ -2280,7 +2284,8 @@ static void handle_config_update(const generic_config_flag_t *flags_list, int fl
 	}
 }
 
-static int c_handle_config_update(const generic_config_flag_t *flags, int flags_nr, const char *subsystem, int *active_options_p) {
+static int c_handle_config_update(const generic_config_flag_t *flags, int flags_nr, const char *subsystem,
+			int *active_options_p, const Common::Array<cmd_param_t> &cmdParams) {
 	unsigned int i;
 
 	if (!_debugstate_valid) {
@@ -2288,11 +2293,11 @@ static int c_handle_config_update(const generic_config_flag_t *flags, int flags_
 		return 1;
 	}
 
-	if (cmd_paramlength == 0)
+	if (cmdParams.size() == 0)
 		handle_config_update(flags, flags_nr, subsystem, active_options_p, 0);
 
-	for (i = 0; i < cmd_paramlength; i++)
-		handle_config_update(flags, flags_nr, subsystem, active_options_p, cmd_params[i].str);
+	for (i = 0; i < cmdParams.size(); i++)
+		handle_config_update(flags, flags_nr, subsystem, active_options_p, cmdParams[i].str);
 
 	return 0;
 }
@@ -2328,24 +2333,24 @@ void set_debug_mode(EngineState *s, int mode, const char *areas) {
 	free(param);
 }
 
-int c_debuglog(EngineState *s) {
-	return c_handle_config_update(SCIk_Debug_Names, SCIk_DEBUG_MODES, "VM and kernel", (int *)&(s->debug_mode));
+int c_debuglog(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	return c_handle_config_update(SCIk_Debug_Names, SCIk_DEBUG_MODES, "VM and kernel", (int *)&(s->debug_mode), cmdParams);
 }
 
 #define SFX_DEBUG_MODES 2
 #define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
 
-static int c_sfx_debuglog(EngineState *s) {
+static int c_sfx_debuglog(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	const generic_config_flag_t sfx_debug_modes[SFX_DEBUG_MODES] = {
 		{"Song activation/deactivation", 's', SFX_DEBUG_SONGS},
 		{"Song cue polling and delivery", 'c', SFX_DEBUG_CUES}
 	};
 
-	return c_handle_config_update(sfx_debug_modes, SFX_DEBUG_MODES, "sound subsystem", (int *)&(s->sound.debug));
+	return c_handle_config_update(sfx_debug_modes, SFX_DEBUG_MODES, "sound subsystem", (int *)&(s->sound.debug), cmdParams);
 }
 
-static int c_sfx_remove(EngineState *s) {
-	reg_t id = cmd_params[0].reg;
+static int c_sfx_remove(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	reg_t id = cmdParams[0].reg;
 	int handle = FROBNICATE_HANDLE(id);
 
 	if (id.segment) {
@@ -2361,7 +2366,7 @@ static int c_sfx_remove(EngineState *s) {
 
 #define GFX_DEBUG_MODES 4
 
-int c_gfx_debuglog(EngineState *s) {
+int c_gfx_debuglog(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	gfx_driver_t *drv = s->gfx_state->driver;
 	const generic_config_flag_t gfx_debug_modes[GFX_DEBUG_MODES] = {
 		{ "Mouse Pointer", 'p', GFX_DEBUG_POINTER},
@@ -2370,10 +2375,10 @@ int c_gfx_debuglog(EngineState *s) {
 		{ "Basic operations", 'b', GFX_DEBUG_BASIC},
 	};
 
-	return c_handle_config_update(gfx_debug_modes, GFX_DEBUG_MODES, "graphics subsystem", (int *)&(drv->debug_flags));
+	return c_handle_config_update(gfx_debug_modes, GFX_DEBUG_MODES, "graphics subsystem", (int *)&(drv->debug_flags), cmdParams);
 }
 
-int c_dump_words(EngineState *s) {
+int c_dump_words(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2392,14 +2397,14 @@ int c_dump_words(EngineState *s) {
 	return 0;
 }
 
-int c_simkey(EngineState *s) {
-	_kdebug_cheap_event_hack = cmd_params[0].val;
+int c_simkey(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	_kdebug_cheap_event_hack = cmdParams[0].val;
 
 	return 0;
 }
 
-static int c_is_sample(EngineState *s) {
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmd_params[0].val, 0);
+static int c_is_sample(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
 	SongIterator *songit;
 	Audio::AudioStream *data;
 
@@ -2429,14 +2434,14 @@ static int c_is_sample(EngineState *s) {
 	return 0;
 }
 
-int c_simsoundcue(EngineState *s) {
-	_kdebug_cheap_soundcue_hack = cmd_params[0].val;
+int c_simsoundcue(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	_kdebug_cheap_soundcue_hack = cmdParams[0].val;
 
 	return 0;
 }
 
 #define ASSERT_PARAMS(number) \
-	if (cmd_paramlength <= number) {\
+	if (cmdParams.size() <= number) {\
 		sciprintf("Operation '%s' needs %d parameters\n", op, number); \
 		return 1;\
 	}
@@ -2562,20 +2567,20 @@ int objinfo(EngineState *s, reg_t pos) {
 	return 0;
 }
 
-int c_vo(EngineState *s) {
-	return objinfo(s, cmd_params[0].reg);
+int c_vo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	return objinfo(s, cmdParams[0].reg);
 }
 
-int c_obj(EngineState *s) {
+int c_obj(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return objinfo(s, *p_objp);
 }
 
-int c_accobj(EngineState *s) {
+int c_accobj(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return objinfo(s, s->r_acc);
 }
 
-int c_shownode(EngineState *s) {
-	reg_t addr = cmd_params[0].reg;
+int c_shownode(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	reg_t addr = cmdParams[0].reg;
 
 	return show_node(s, addr);
 }
@@ -2601,7 +2606,7 @@ static Breakpoint *bp_alloc(EngineState *s) {
 	return bp;
 }
 
-int c_bpx(EngineState *s) {
+int c_bpx(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Breakpoint *bp;
 
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
@@ -2611,26 +2616,26 @@ int c_bpx(EngineState *s) {
 	bp = bp_alloc(s);
 
 	bp->type = BREAK_SELECTOR;
-	bp->data.name = (char *)sci_malloc(strlen(cmd_params [0].str) + 1);
-	strcpy(bp->data.name, cmd_params [0].str);
+	bp->data.name = (char *)sci_malloc(strlen(cmdParams [0].str) + 1);
+	strcpy(bp->data.name, cmdParams [0].str);
 	s->have_bp |= BREAK_SELECTOR;
 
 	return 0;
 }
 
-int c_bpe(EngineState *s) {
+int c_bpe(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Breakpoint *bp;
 
 	bp = bp_alloc(s);
 
 	bp->type = BREAK_EXPORT;
-	bp->data.address = (cmd_params [0].val << 16 | cmd_params [1].val);
+	bp->data.address = (cmdParams [0].val << 16 | cmdParams [1].val);
 	s->have_bp |= BREAK_EXPORT;
 
 	return 0;
 }
 
-int c_bplist(EngineState *s) {
+int c_bplist(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Breakpoint *bp;
 	int i = 0;
 	int bpdata;
@@ -2655,7 +2660,7 @@ int c_bplist(EngineState *s) {
 	return 0;
 }
 
-int c_bpdel(EngineState *s) {
+int c_bpdel(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Breakpoint *bp, *bp_next, *bp_prev;
 	int i = 0, found = 0;
 	int type;
@@ -2663,13 +2668,13 @@ int c_bpdel(EngineState *s) {
 	// Find breakpoint with given index
 	bp_prev = NULL;
 	bp = s->bp_list;
-	while (bp && i < cmd_params [0].val) {
+	while (bp && i < cmdParams [0].val) {
 		bp_prev = bp;
 		bp = bp->next;
 		i++;
 	}
 	if (!bp) {
-		sciprintf("Invalid breakpoint index %i\n", cmd_params [0].val);
+		sciprintf("Invalid breakpoint index %i\n", cmdParams [0].val);
 		return 1;
 	}
 
@@ -2698,7 +2703,7 @@ int c_bpdel(EngineState *s) {
 	return 0;
 }
 
-int c_gnf(EngineState *s) {
+int c_gnf(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2709,15 +2714,15 @@ int c_gnf(EngineState *s) {
 	return 0;
 }
 
-int c_se(EngineState *s) {
+int c_se(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	stop_on_event = 1;
 	_debugstate_valid = script_debug_flag = script_error_flag = 0;
 
 	return 0;
 }
 
-int c_type(EngineState *s) {
-	int t = determine_reg_type(s, cmd_params[0].reg, 1);
+int c_type(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int t = determine_reg_type(s, cmdParams[0].reg, 1);
 	int invalid = t & KSIG_INVALID;
 
 	switch (t & ~KSIG_INVALID) {
@@ -2750,17 +2755,17 @@ int c_type(EngineState *s) {
 	return 0;
 }
 
-int c_statusbar(EngineState *s) {
+int c_statusbar(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	s->titlebar_port->_color = s->ega_colors[cmd_params[0].val];
-	s->titlebar_port->_bgcolor = s->ega_colors[cmd_params[1].val];
+	s->titlebar_port->_color = s->ega_colors[cmdParams[0].val];
+	s->titlebar_port->_bgcolor = s->ega_colors[cmdParams[1].val];
 
-	s->status_bar_foreground = cmd_params[0].val;
-	s->status_bar_background = cmd_params[1].val;
+	s->status_bar_foreground = cmdParams[0].val;
+	s->status_bar_background = cmdParams[1].val;
 
 	sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, s->status_bar_foreground, s->status_bar_background);
 	gfxop_update(s->gfx_state);
@@ -2768,7 +2773,7 @@ int c_statusbar(EngineState *s) {
 	return 0;
 }
 
-int c_sci_version(EngineState *s) {
+int c_sci_version(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
@@ -2780,8 +2785,8 @@ int c_sci_version(EngineState *s) {
 	return 0;
 }
 
-// int c_sleep(EngineState *s) {
-//	sleep(cmd_params[0].val);
+// int c_sleep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+//	sleep(cmdParams[0].val);
 //
 //	return 0;
 // }
@@ -2791,8 +2796,8 @@ static void _print_address(void * _, reg_t addr) {
 		sciprintf("  "PREG"\n", PRINT_REG(addr));
 }
 
-static int c_gc_show_reachable(EngineState *s) {
-	reg_t addr = cmd_params[0].reg;
+static int c_gc_show_reachable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	reg_t addr = cmdParams[0].reg;
 
 	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, addr.segment);
 	if (!mobj) {
@@ -2806,8 +2811,8 @@ static int c_gc_show_reachable(EngineState *s) {
 	return 0;
 }
 
-static int c_gc_show_freeable(EngineState *s) {
-	reg_t addr = cmd_params[0].reg;
+static int c_gc_show_freeable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	reg_t addr = cmdParams[0].reg;
 
 	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, addr.segment);
 	if (!mobj) {
@@ -2821,8 +2826,8 @@ static int c_gc_show_freeable(EngineState *s) {
 	return 0;
 }
 
-static int c_gc_normalise(EngineState *s) {
-	reg_t addr = cmd_params[0].reg;
+static int c_gc_normalise(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	reg_t addr = cmdParams[0].reg;
 
 	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, addr.segment);
 	if (!mobj) {
@@ -2836,13 +2841,13 @@ static int c_gc_normalise(EngineState *s) {
 	return 0;
 }
 
-static int c_gc(EngineState *s) {
+static int c_gc(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	run_gc(s);
 
 	return 0;
 }
 
-static int c_gc_list_reachable(EngineState *s) {
+static int c_gc_list_reachable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t_hash_map *use_map = find_all_used_references(s);
 
 	sciprintf("Reachable references (normalised):\n");

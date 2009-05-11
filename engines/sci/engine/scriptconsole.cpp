@@ -34,22 +34,20 @@ namespace Sci {
 
 #ifdef SCI_CONSOLE
 
-EngineState *con_gamestate = NULL;
-
 // console commands
 
-static int c_list(EngineState *s); // lists various types of things
-static int c_man(EngineState *s); // 'manual page'
-static int c_set(EngineState *s); // sets an int variable
-static int c_print(EngineState *s); // prints a variable
-static int c_size(EngineState *s); // displays the size of a resource
-static int c_dump(EngineState *s); // gives a hex dump of a resource
-//static int c_objinfo(EngineState *s); // shows some info about one class
-//static int c_objmethods(EngineState *s); // Disassembles all methods of a class
-static int c_hexgrep(EngineState *s); // Searches a string in one resource or resource class
-static int c_selectornames(EngineState *s); // Displays all selector names
-static int c_kernelnames(EngineState *s); // Displays all kernel function names
-static int c_dissectscript(EngineState *s); // Splits a script into objects and explains them
+static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // lists various types of things
+static int c_man(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // 'manual page'
+static int c_set(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // sets an int variable
+static int c_print(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // prints a variable
+static int c_size(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // displays the size of a resource
+static int c_dump(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // gives a hex dump of a resource
+//static int c_objinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // shows some info about one class
+//static int c_objmethods(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Disassembles all methods of a class
+static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Searches a string in one resource or resource class
+static int c_selectornames(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Displays all selector names
+static int c_kernelnames(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Displays all kernel function names
+static int c_dissectscript(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Splits a script into objects and explains them
 
 struct cmd_mm_entry_t {
 	const char *name;
@@ -61,7 +59,7 @@ typedef cmd_mm_entry_t cmd_page_t; // Simple info page
 struct cmd_command_t {
 	const char *name;
 	const char *description;
-	int (*command)(EngineState *);
+	ConCommand command;
 	const char *param;
 };
 
@@ -119,9 +117,6 @@ static cmd_mm_struct_t cmd_mm[CMD_MM_ENTRIES];
 
 static int _cmd_initialized = 0;
 static int _lists_need_sorting = 0;
-
-unsigned int cmd_paramlength;
-cmd_param_t *cmd_params;
 
 void _cmd_exit() {
 	int t;
@@ -418,13 +413,10 @@ void con_parse(EngineState *s, const char *command) {
 	while (!done) {
 		cmd_command_t *command_todo;
 		int onvar = 1;		// currently working on a variable?
-		unsigned int parammem = 0;
-		unsigned int i;
 		cdone = 0;
 		pos = 0;
 
-		//cmd_params = sci_realloc(cmd_params, parammem);
-		cmd_paramlength = 0;
+		Common::Array<cmd_param_t> cmdParams;
 
 		while (*cmd == ' ')
 			cmd++;
@@ -451,10 +443,9 @@ void con_parse(EngineState *s, const char *command) {
 			default:
 				if (!onvar) {
 					onvar = 1;
-					if (cmd_paramlength == parammem)
-						cmd_params = (cmd_param_t*)sci_realloc(cmd_params, sizeof(cmd_param_t)* (parammem += 8));
-					cmd_params[cmd_paramlength].str = cmd + pos;
-					cmd_paramlength++;
+					cmd_param_t tmp;
+					tmp.str = cmd + pos;
+					cmdParams.push_back(tmp);
 				}
 				break;
 			}
@@ -468,7 +459,7 @@ void con_parse(EngineState *s, const char *command) {
 			if (!command_todo)
 				sciprintf("%s: not found\n", cmd);
 			else {
-				unsigned int minparams;
+				uint minparams;
 				int need_state = 0;
 
 				paramt = command_todo->param;
@@ -482,10 +473,10 @@ void con_parse(EngineState *s, const char *command) {
 				if ((paramt[0] != 0) && (paramt[strlen(paramt) - 1] == '*'))
 					minparams -= 2;
 
-				if (cmd_paramlength < minparams)
-					sciprintf("%s: needs more than %d parameters\n", cmd, cmd_paramlength);
+				if (cmdParams.size() < minparams)
+					sciprintf("%s: needs more than %d parameters\n", cmd, cmdParams.size());
 
-				else if ((cmd_paramlength > strlen(paramt)) && ((strlen(paramt) == 0) || paramt[strlen(paramt) - 1] != '*'))
+				else if ((cmdParams.size() > strlen(paramt)) && ((strlen(paramt) == 0) || paramt[strlen(paramt) - 1] != '*'))
 					sciprintf("%s: too many parameters", cmd);
 				else {
 					int do_execute = !need_state || s; // /me wants an implication arrow
@@ -493,7 +484,7 @@ void con_parse(EngineState *s, const char *command) {
 					int paramtypepos = 0;
 					char *endptr;
 
-					for (i = 0; i < cmd_paramlength; i++) {
+					for (uint i = 0; i < cmdParams.size(); i++) {
 						paramtype = paramt[paramtypepos];
 
 						if ((paramt[paramtypepos + 1]) && (paramt[paramtypepos + 1] != '*'))
@@ -502,12 +493,11 @@ void con_parse(EngineState *s, const char *command) {
 
 						switch (paramtype) {
 							// Now turn the parameters into variables of the appropriate types,
-							// unless they're strings, and store them in the global cmd_params[]
-							// structure
+							// unless they're strings, and store them into the cmdParams array
 
 						case 'a': {
-							char *oldname = cmd_params[i].str;
-							if (parse_reg_t(s, oldname, &(cmd_params[i].reg))) {
+							const char *oldname = cmdParams[i].str;
+							if (parse_reg_t(s, oldname, &(cmdParams[i].reg))) {
 								sciprintf("%s: '%s' is not an address or object\n", cmd, oldname);
 								do_execute = 0;
 							}
@@ -515,9 +505,9 @@ void con_parse(EngineState *s, const char *command) {
 						}
 
 						case 'i': {
-							char *orgstr = cmd_params[i].str;
+							const char *orgstr = cmdParams[i].str;
 
-							cmd_params[i].val = strtol(orgstr, &endptr, 0);
+							cmdParams[i].val = strtol(orgstr, &endptr, 0);
 							if (*endptr != '\0') {
 								do_execute = 0;
 								sciprintf("%s: '%s' is not an int\n", cmd, orgstr);
@@ -526,16 +516,16 @@ void con_parse(EngineState *s, const char *command) {
 						break;
 
 						case 'h': {
-							char *orgstr = cmd_params[i].str;
+							const char *orgstr = cmdParams[i].str;
 
-							cmd_params[i].val = strtol(orgstr, &endptr, 16);
+							cmdParams[i].val = strtol(orgstr, &endptr, 16);
 
 							if (*endptr != '\0') {
 								do_execute = 0;
 								sciprintf("%s: '%s' is not a hex number\n", cmd, orgstr);
 							}
 
-							cmd_params[i].val &= 0xff;	// Clip hex numbers to 0x00 ... 0xff
+							cmdParams[i].val &= 0xff;	// Clip hex numbers to 0x00 ... 0xff
 						}
 						break;
 
@@ -543,15 +533,16 @@ void con_parse(EngineState *s, const char *command) {
 							break;
 
 						default:
-							fprintf(stderr, "Internal error: Heap corruption or prior assertion failed:\n"
-							        "Unknown parameter type '%c' for funtion\n", paramtype);
+							warning("Internal error: Heap corruption or prior assertion failed: "
+							        "Unknown parameter type '%c' for function", paramtype);
 
 						}
 					}
 
 					if (do_execute) {
-						command_todo->command(s);
-					} else fprintf(stderr, "Skipping command...\n");
+						command_todo->command(s, cmdParams);
+					} else
+						fprintf(stderr, "Skipping command...\n");
 				}
 			}
 		}
@@ -559,9 +550,6 @@ void con_parse(EngineState *s, const char *command) {
 	}
 
 	free(_cmd);
-	if (cmd_params)
-		free(cmd_params);
-	cmd_params = NULL;
 }
 
 /* (unused)
@@ -610,7 +598,7 @@ int con_hook_page(const char *name, const char *body) {
 	return 0;
 }
 
-int con_hook_command(int command(EngineState *), const char *name, const char *param, const char *description) {
+int con_hook_command(ConCommand command, const char *name, const char *param, const char *description) {
 	cmd_command_t *cmd = NULL;
 	unsigned int i;
 
@@ -689,7 +677,7 @@ static ResourceType parseResourceType(char *resid) {
 	return res;
 }
 
-static int c_list_words(EngineState *s) {
+static int c_list_words(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	WordMap words;
 
 	vocab_get_words(s->resmgr, words);
@@ -708,7 +696,7 @@ static int c_list_words(EngineState *s) {
 	return 0;
 }
 
-int c_list_suffixes(EngineState *s) {
+int c_list_suffixes(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	SuffixList suffixes;
 	char word_buf[256], alt_buf[256];
 
@@ -786,11 +774,11 @@ static void _cmd_print_page(cmd_mm_entry_t *data, int full) {
 		sciprintf("%s\n", data->name);
 }
 
-static int c_list(EngineState *s) {
+static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (_lists_need_sorting)
 		con_sort_all();
 
-	if (cmd_paramlength == 0) {
+	if (cmdParams.size() == 0) {
 		sciprintf("usage: list [type]\nwhere type is one of the following:\n"
 		          "cmds       - lists all commands\n"
 		          "vars       - lists all variables\n"
@@ -802,13 +790,13 @@ static int c_list(EngineState *s) {
 		          "words      - lists all kernel words\n"
 		          "suffixes   - lists all suffix replacements\n"
 		          "[resource] - lists all [resource]s");
-	} else if (cmd_paramlength == 1) {
+	} else if (cmdParams.size() == 1) {
 		const char *mm_subsects[3] = {"cmds", "vars", "docs"};
 		int mm_found = -1;
 		int i;
 
 		for (i = 0; i < 3; i++)
-			if (mm_subsects[i] && !strcmp(mm_subsects[i], cmd_params[0].str))
+			if (mm_subsects[i] && !strcmp(mm_subsects[i], cmdParams[0].str))
 				mm_found = i;
 
 		if (mm_found >= 0)
@@ -820,22 +808,22 @@ static int c_list(EngineState *s) {
 				return 1;
 			}
 
-			if (!strcmp("selectors", cmd_params[0].str))
-				return c_selectornames(s);
-			else if (!strcmp("syscalls", cmd_params[0].str))
-				return c_kernelnames(s);
-			else if (!strcmp("suffixes", cmd_params[0].str) || !strcmp("suffices", cmd_params[0].str) || !strcmp("sufficos", cmd_params[0].str))
+			if (!strcmp("selectors", cmdParams[0].str))
+				return c_selectornames(s, cmdParams);
+			else if (!strcmp("syscalls", cmdParams[0].str))
+				return c_kernelnames(s, cmdParams);
+			else if (!strcmp("suffixes", cmdParams[0].str) || !strcmp("suffices", cmdParams[0].str) || !strcmp("sufficos", cmdParams[0].str))
 				// sufficos: Accusative Plural of 'suffix'
-				return c_list_suffixes(s);
-			else if (!strcmp("words", cmd_params[0].str))
-				return c_list_words(s);
-			else if (strcmp("restypes", cmd_params[0].str) == 0) {
+				return c_list_suffixes(s, cmdParams);
+			else if (!strcmp("words", cmdParams[0].str))
+				return c_list_words(s, cmdParams);
+			else if (strcmp("restypes", cmdParams[0].str) == 0) {
 				for (i = 0; i < kResourceTypeInvalid; i++)
 					sciprintf("%s\n", getResourceTypeName((ResourceType)i));
 			} else {
-				ResourceType res = parseResourceType(cmd_params[0].str);
+				ResourceType res = parseResourceType(cmdParams[0].str);
 				if (res == kResourceTypeInvalid)
-					sciprintf("Unknown resource type: '%s'\n", cmd_params[0].str);
+					sciprintf("Unknown resource type: '%s'\n", cmdParams[0].str);
 				else {
 					for (i = 0; i < sci_max_resource_nr[s->resmgr->_sciVersion]; i++)
 						if (s->resmgr->testResource(res, i))
@@ -848,10 +836,10 @@ static int c_list(EngineState *s) {
 	return 0;
 }
 
-static int c_man(EngineState *s) {
+static int c_man(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int section = 0;
 	unsigned int i;
-	char *name = cmd_params[0].str;
+	char *name = cmdParams[0].str;
 	char *c = strchr(name, '.');
 	cmd_mm_entry_t *entry = 0;
 
@@ -885,17 +873,17 @@ static int c_man(EngineState *s) {
 	return 0;
 }
 
-static int c_set(EngineState *s) {
-	cmd_var_t *var = (cmd_var_t *) cmd_mm_find(cmd_params[0].str, CMD_MM_VAR);
+static int c_set(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	cmd_var_t *var = (cmd_var_t *)cmd_mm_find(cmdParams[0].str, CMD_MM_VAR);
 
 	if (var)
-		*(var->var.intp) = cmd_params[1].val;
+		*(var->var.intp) = cmdParams[1].val;
 
 	return 0;
 }
 
-static int c_print(EngineState *s) {
-	cmd_var_t *var = (cmd_var_t *) cmd_mm_find(cmd_params[0].str, CMD_MM_VAR);
+static int c_print(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	cmd_var_t *var = (cmd_var_t *)cmd_mm_find(cmdParams[0].str, CMD_MM_VAR);
 
 	if (var)
 		sciprintf("%d", *(var->var.intp));
@@ -905,42 +893,42 @@ static int c_print(EngineState *s) {
 	return 0;
 }
 
-static int c_size(EngineState *s) {
-	ResourceType res = parseResourceType(cmd_params[0].str);
+static int c_size(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	ResourceType res = parseResourceType(cmdParams[0].str);
 	if (res == kResourceTypeInvalid)
-		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
+		sciprintf("Resource type '%s' is not valid\n", cmdParams[0].str);
 	else {
-		Resource *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
+		Resource *resource = s->resmgr->findResource(res, cmdParams[1].val, 0);
 		if (resource) {
 			sciprintf("Size: %d\n", resource->size);
 		} else
-			sciprintf("Resource %s.%03d not found\n", cmd_params[0].str, cmd_params[1].val);
+			sciprintf("Resource %s.%03d not found\n", cmdParams[0].str, cmdParams[1].val);
 	}
 
 	return 0;
 }
 
-static int c_dump(EngineState *s) {
-	ResourceType res = parseResourceType(cmd_params[0].str);
+static int c_dump(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	ResourceType res = parseResourceType(cmdParams[0].str);
 
 	if (res == kResourceTypeInvalid)
-		sciprintf("Resource type '%s' is not valid\n", cmd_params[0].str);
+		sciprintf("Resource type '%s' is not valid\n", cmdParams[0].str);
 	else {
-		Resource *resource = s->resmgr->findResource(res, cmd_params[1].val, 0);
+		Resource *resource = s->resmgr->findResource(res, cmdParams[1].val, 0);
 		if (resource)
 			sci_hexdump(resource->data, resource->size, 0);
 		else
-			sciprintf("Resource %s.%03d not found\n", cmd_params[0].str, cmd_params[1].val);
+			sciprintf("Resource %s.%03d not found\n", cmdParams[0].str, cmdParams[1].val);
 	}
 
 	return 0;
 }
 
-static int c_hexgrep(EngineState *s) {
+static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int i, seeklen, resnr, resmax;
 	unsigned char *seekstr = NULL;
 	Resource *script = NULL;
-	char *dot = strchr(cmd_params[0].str, '.');
+	char *dot = strchr(cmdParams[0].str, '.');
 	ResourceType restype;
 
 	if (NULL == s) {
@@ -948,7 +936,8 @@ static int c_hexgrep(EngineState *s) {
 		return(-1);
 	}
 
-	seekstr = (unsigned char *)sci_malloc(seeklen = (cmd_paramlength - 1));
+	seeklen = cmdParams.size() - 1;
+	seekstr = (unsigned char *)sci_malloc(seeklen);
 
 	if (NULL == seekstr) {
 		fprintf(stderr, "console.c: c_hexgrep(): malloc failed for seekstr\r\n");
@@ -956,7 +945,7 @@ static int c_hexgrep(EngineState *s) {
 	}
 
 	for (i = 0; i < seeklen; i++)
-		seekstr[i] = (byte)cmd_params[i + 1].val;
+		seekstr[i] = (byte)cmdParams[i + 1].val;
 
 	if (dot) {
 		*dot = 0;
@@ -966,9 +955,9 @@ static int c_hexgrep(EngineState *s) {
 		resmax = 999;
 	}
 
-	restype = parseResourceType(cmd_params[0].str);
+	restype = parseResourceType(cmdParams[0].str);
 	if (restype == kResourceTypeInvalid) {
-		sciprintf("Unknown resource type \"%s\"\n", cmd_params[0].str);
+		sciprintf("Unknown resource type \"%s\"\n", cmdParams[0].str);
 		free(seekstr);
 		return 1;
 	}
@@ -1008,7 +997,7 @@ static int c_hexgrep(EngineState *s) {
 	return 0;
 }
 
-static int c_selectornames(EngineState * s) {
+static int c_selectornames(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Common::StringList selectorNames;
 
 	if (NULL == s) {
@@ -1029,7 +1018,7 @@ static int c_selectornames(EngineState * s) {
 	return 0;
 }
 
-static int c_kernelnames(EngineState * s) {
+static int c_kernelnames(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Common::StringList knames;
 
 	if (NULL == s) {
@@ -1051,13 +1040,13 @@ static int c_kernelnames(EngineState * s) {
 	return 0;
 }
 
-static int c_dissectscript(EngineState * s) {
+static int c_dissectscript(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (NULL == s) {
 		sciprintf("console.c: c_dissectscript(): NULL passed for parameter s\n");
 		return -1;
 	}
 
-	script_dissect(s->resmgr, cmd_params[0].val, s->_selectorNames);
+	script_dissect(s->resmgr, cmdParams[0].val, s->_selectorNames);
 	return 0;
 }
 

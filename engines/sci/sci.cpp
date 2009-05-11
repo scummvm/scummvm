@@ -43,7 +43,7 @@ namespace Sci {
 
 extern gfx_driver_t gfx_driver_scummvm;
 
-int c_quit(EngineState *s) {
+int c_quit(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	script_abort_flag = 1; // Terminate VM
 	_debugstate_valid = 0;
 	_debug_seeking = 0;
@@ -51,7 +51,7 @@ int c_quit(EngineState *s) {
 	return 0;
 }
 
-int c_die(EngineState *s) {
+int c_die(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	exit(0); //
 	return 0;
 }

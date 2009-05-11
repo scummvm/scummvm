@@ -52,15 +52,8 @@ union cmd_param_t {
 	reg_t reg;
 };
 
-/** The number of parameters passed to a function called from the parser */
-extern unsigned int cmd_paramlength;
 
-/** The parameters passed to a function called by the parser */
-extern cmd_param_t *cmd_params;
-
-/** The game state as used by some of the console commands */
-extern struct EngineState *con_gamestate;
-
+typedef int (*ConCommand)(EngineState *s, const Common::Array<cmd_param_t> &cmdParams);
 
 /*** FUNCTION DEFINITIONS ***/
 
@@ -98,7 +91,7 @@ void con_parse(EngineState *s, const char *command);
 */
 
 
-int con_hook_command(int command(EngineState *s), const char *name, const char *param, const char *description);
+int con_hook_command(ConCommand command, const char *name, const char *param, const char *description);
 /* Adds a command to the parser's command list
 ** Parameters: command: The command to add
 **             name: The command's name
