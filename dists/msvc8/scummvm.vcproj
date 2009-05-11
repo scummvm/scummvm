@@ -983,6 +983,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\backends\platform\sdl\hardwarekeys.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\backends\platform\sdl\main.cpp"
 					>
 					<FileConfiguration

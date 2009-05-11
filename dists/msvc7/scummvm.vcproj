@@ -714,6 +714,9 @@
 					RelativePath="..\..\backends\platform\sdl\graphics.cpp">
 				</File>
 				<File
+					RelativePath="..\..\backends\platform\sdl\hardwarekeys.cpp">
+				</File>
+				<File
 					RelativePath="..\..\backends\platform\sdl\main.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">
