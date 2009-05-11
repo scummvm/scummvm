@@ -1023,7 +1023,7 @@ void SmushPlayer::parseNextFrame() {
 	const int32 subSize = _base->readUint32BE();
 	const int32 subOffset = _base->pos();
 
-	if (_base->pos() >= _baseSize) {
+	if (_base->pos() >= (int32)_baseSize) {
 		_vm->_smushVideoShouldFinish = true;
 		_endOfFile = true;
 		return;
