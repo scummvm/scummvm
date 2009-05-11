@@ -90,7 +90,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_itemProperties = 0;
 	_itemInHand = 0;
 	memset(_inventory, 0, sizeof(_inventory));
-	memset(_invSkillFlags, 0, sizeof(_invSkillFlags));
+	memset(_charStatusFlags, 0, sizeof(_charStatusFlags));
 	_inventoryCurItem = 0;
 	_currentControlMode = 0;
 	_specialSceneFlag = 0;

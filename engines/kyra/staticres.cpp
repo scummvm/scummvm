@@ -1983,7 +1983,7 @@ void LoLEngine::assignButtonCallback(Button *button, int index) {
 		cb(clickedCompass),
 		cb(clickedAutomap),
 		cb(clickedLamp),
-		cb(clickedUnk32),
+		cb(clickedStatusIcon),
 	};
 #undef cb
 

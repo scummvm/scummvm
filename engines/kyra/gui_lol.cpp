@@ -166,20 +166,20 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 
 	_screen->fprintString(getLangString(0x4033), 182, 103, 172, 0, 5);
 
-	static const uint16 skillFlags[] = { 0x0080, 0x0000, 0x1000, 0x0002, 0x100, 0x0001, 0x0000, 0x0000 };
+	static const uint16 statusFlags[] = { 0x0080, 0x0000, 0x1000, 0x0002, 0x100, 0x0001, 0x0000, 0x0000 };
 
-	memset(_invSkillFlags, -1, 6);
+	memset(_charStatusFlags, 0xffff, sizeof(_charStatusFlags));
 	int x = 0;
 	int32 c = 0;
 
 	for (int i = 0; i < 3; i++) {
-		if (!(l->flags & skillFlags[i << 1]))
+		if (!(l->flags & statusFlags[i << 1]))
 			continue;
 
-		uint8 *shp = _gameShapes[skillFlags[(i << 1) + 1]];
+		uint8 *shp = _gameShapes[statusFlags[(i << 1) + 1]];
 		_screen->drawShape(_screen->_curPage, shp, 108 + x, 98, 0, 0);
 		x += (shp[3] + 2);
-		_invSkillFlags[c] = skillFlags[(i << 1) + 1];
+		_charStatusFlags[c] = statusFlags[(i << 1) + 1];
 		c++;
 	}
 
@@ -1782,7 +1782,20 @@ int LoLEngine::clickedLamp(Button *button) {
 	return 1;
 }
 
-int LoLEngine::clickedUnk32(Button *button) {
+int LoLEngine::clickedStatusIcon(Button *button) {
+	int t = _mouseX - 220;
+	if (t < 0)
+		t = 0;
+
+	t /= 14;
+	if (t > 2)
+		t = 2;
+
+	uint16 str = _charStatusFlags[t] + 1;
+	if (str == 0 || str > 3)
+		return 1;
+
+	_txt->printMessage(0x8002, getLangString(str == 1 ? 0x424c : (str == 2 ? 0x424e : 0x424d)));
 	return 1;
 }
 

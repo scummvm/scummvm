@@ -526,7 +526,7 @@ private:
 	int clickedCompass(Button *button);
 	int clickedAutomap(Button *button);
 	int clickedLamp(Button *button);
-	int clickedUnk32(Button *button);
+	int clickedStatusIcon(Button *button);
 
 	const ButtonDef *_buttonData;
 	int _buttonDataSize;
@@ -1097,7 +1097,7 @@ private:
 	int _currentControlMode;
 	int _specialSceneFlag;
 	int _lastCharInventory;
-	uint16 _invSkillFlags[6];
+	uint16 _charStatusFlags[3];
 
 	FlyingObject *_flyingObjects;
 
