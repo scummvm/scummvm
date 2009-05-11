@@ -47,23 +47,21 @@ struct _midi_device **devices[] = {
 	devices_opl2,
 };
 
-static struct _midi_device *find_dev(int type, char *name) {
+void *sfx_find_device(int type, char *name) {
+	struct _midi_device *dev = NULL;
 	int i = 0;
 
 	if (!type)
 		return NULL;
 
-	if (!name)
-		return devices[type][0];
+	if (!name) {
+		dev = devices[type][0];
+	} else {
+		while (devices[type][i] && !strcmp(name, devices[type][i]->name))
+			++i;
 
-	while (devices[type][i] && !strcmp(name, devices[type][i]->name))
-		++i;
-
-	return devices[type][i];
-}
-
-void *sfx_find_device(int type, char *name) {
-	struct _midi_device *dev = find_dev(type, name);
+		dev = devices[type][i];
+	}
 
 	if (dev) {
 		if (dev->init(dev)) {
