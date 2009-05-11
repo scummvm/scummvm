@@ -35,8 +35,6 @@ namespace GUI {
 
 Debugger::Debugger() {
 	_frame_countdown = 0;
-	_dvar_count = 0;
-	_dcmd_count = 0;
 	_detach_now = false;
 	_isAttached = false;
 	_errStr = NULL;
@@ -57,10 +55,6 @@ Debugger::Debugger() {
 }
 
 Debugger::~Debugger() {
-	for (int i = 0; i < _dcmd_count; i++) {
-		delete _dcmds[i].debuglet;
-		_dcmds[i].debuglet = 0;
-	}
 	delete _debuggerDialog;
 }
 
@@ -167,13 +161,11 @@ void Debugger::enter() {
 }
 
 bool Debugger::handleCommand(int argc, const char **argv, bool &result) {
-	for (int i = 0; i < _dcmd_count; ++i) {
-		if (!strcmp(_dcmds[i].name, argv[0])) {
-			Debuglet *debuglet = _dcmds[i].debuglet;
-			assert(debuglet);
-			result = (*debuglet)(argc, argv);
-			return true;
-		}
+	if (_cmds.contains(argv[0])) {
+		Debuglet *debuglet = _cmds[argv[0]].get();
+		assert(debuglet);
+		result = (*debuglet)(argc, argv);
+		return true;
 	}
 
 	return false;
@@ -181,7 +173,7 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &result) {
 
 // Command execution loop
 bool Debugger::parseCommand(const char *inputOrig) {
-	int i = 0, num_params = 0;
+	int num_params = 0;
 	const char *param[256];
 	char *input = strdup(inputOrig);	// One of the rare occasions using strdup is OK (although avoiding strtok might be more elegant here).
 
@@ -203,8 +195,8 @@ bool Debugger::parseCommand(const char *inputOrig) {
 	}
 
 	// It's not a command, so things get a little tricky for variables. Do fuzzy matching to ignore things like subscripts.
-	for (i = 0; i < _dvar_count; i++) {
-		if (!strncmp(_dvars[i].name, param[0], strlen(_dvars[i].name))) {
+	for (uint i = 0; i < _dvars.size(); i++) {
+		if (!strncmp(_dvars[i].name.c_str(), param[0], _dvars[i].name.size())) {
 			if (num_params > 1) {
 				// Alright, we need to check the TYPE of the variable to deref and stuff... the array stuff is a bit ugly :)
 				switch (_dvars[i].type) {
@@ -235,7 +227,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					}
 					break;
 				default:
-					DebugPrintf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name, param[1]);
+					DebugPrintf("Failed to set variable %s to %s - unknown type\n", _dvars[i].name.c_str(), param[1]);
 					break;
 				}
 			} else {
@@ -286,7 +278,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 
 // returns true if something has been completed
 // completion has to be delete[]-ed then
-bool Debugger::tabComplete(const char *input, char*& completion) {
+bool Debugger::tabComplete(const char *input, Common::String &completion) const {
 	// very basic tab completion
 	// for now it just supports command completions
 
@@ -297,63 +289,61 @@ bool Debugger::tabComplete(const char *input, char*& completion) {
 	if (strchr(input, ' '))
 		return false; // already finished the first word
 
-	unsigned int inputlen = strlen(input);
+	const uint inputlen = strlen(input);
 
-	unsigned int matchlen = 0;
-	char match[30]; // the max. command name is 30 chars
+	completion.clear();
 
-	for (int i = 0; i < _dcmd_count; i++) {
-		if (!strncmp(_dcmds[i].name, input, inputlen)) {
-			unsigned int commandlen = strlen(_dcmds[i].name);
-			if (commandlen == inputlen) { // perfect match
+	CommandsMap::const_iterator i, e = _cmds.end();
+	for (i = _cmds.begin(); i != e; ++i) {
+		if (i->_key.hasPrefix(input)) {
+			uint commandlen = i->_key.size();
+			if (commandlen == inputlen) { // perfect match, so no tab completion possible
 				return false;
 			}
 			if (commandlen > inputlen) { // possible match
 				// no previous match
-				if (matchlen == 0) {
-					strcpy(match, _dcmds[i].name + inputlen);
-					matchlen = commandlen - inputlen;
+				if (completion.empty()) {
+					completion = i->_key.c_str() + inputlen;
 				} else {
 					// take common prefix of previous match and this command
-					unsigned int j;
-					for (j = 0; j < matchlen; j++) {
-						if (match[j] != _dcmds[i].name[inputlen + j]) break;
+					for (uint j = 0; j < completion.size(); j++) {
+						if (completion[j] != i->_key[inputlen + j]) {
+							completion = Common::String(completion.begin(), completion.begin() + j);
+							// If there is no unambiguous completion, abort
+							if (completion.empty())
+								return false;
+							break;
+						}
 					}
-					matchlen = j;
 				}
-				if (matchlen == 0)
-					return false;
 			}
 		}
 	}
-	if (matchlen == 0)
+	if (completion.empty())
 		return false;
 
-	completion = new char[matchlen + 1];
-	memcpy(completion, match, matchlen);
-	completion[matchlen] = 0;
 	return true;
 }
 
 // Variable registration function
-void Debugger::DVar_Register(const char *varname, void *pointer, int type, int optional) {
-	assert(_dvar_count < ARRAYSIZE(_dvars));
-	strcpy(_dvars[_dvar_count].name, varname);
-	_dvars[_dvar_count].type = type;
-	_dvars[_dvar_count].variable = pointer;
-	_dvars[_dvar_count].optional = optional;
+void Debugger::DVar_Register(const Common::String &varname, void *pointer, int type, int optional) {
+	// TODO: Filter out duplicates
+	// TODO: Sort this list? Then we can do binary search later on when doing lookups.
+	assert(pointer);
 
-	_dvar_count++;
+	DVar tmp;
+	tmp.name = varname;
+	tmp.type = type;
+	tmp.variable = pointer;
+	tmp.optional = optional;
+
+	_dvars.push_back(tmp);
 }
 
 // Command registration function
-void Debugger::DCmd_Register(const char *cmdname, Debuglet *debuglet) {
-	assert(debuglet->isValid());
-	assert(_dcmd_count < ARRAYSIZE(_dcmds));
-	strcpy(_dcmds[_dcmd_count].name, cmdname);
-	_dcmds[_dcmd_count].debuglet = debuglet;
-
-	_dcmd_count++;
+void Debugger::DCmd_Register(const Common::String &cmdname, Debuglet *debuglet) {
+	assert(debuglet && debuglet->isValid());
+	_cmds[cmdname] = Common::SharedPtr<Debuglet>(debuglet);
 }
 
 
@@ -368,12 +358,23 @@ bool Debugger::Cmd_Exit(int argc, const char **argv) {
 bool Debugger::Cmd_Help(int argc, const char **argv) {
 
 	const int charsPerLine = _debuggerDialog->getCharsPerLine();
-	int width, size, i;
+	int width, size;
+	uint i;
 
 	DebugPrintf("Commands are:\n");
+
+	// Obtain a list of sorted command names
+	Common::StringList cmds;
+	CommandsMap::const_iterator iter, e = _cmds.end();
+	for (iter = _cmds.begin(); iter != e; ++iter) {
+		cmds.push_back(iter->_key);
+	}
+	sort(cmds.begin(), cmds.end());
+
+	// Print them all
 	width = 0;
-	for (i = 0; i < _dcmd_count; i++) {
-		size = strlen(_dcmds[i].name) + 1;
+	for (i = 0; i < cmds.size(); i++) {
+		size = cmds[i].size() + 1;
 
 		if ((width + size) >= charsPerLine) {
 			DebugPrintf("\n");
@@ -381,16 +382,16 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 		} else
 			width += size;
 
-		DebugPrintf("%s ", _dcmds[i].name);
+		DebugPrintf("%s ", cmds[i].c_str());
 	}
 	DebugPrintf("\n");
 
-	if (_dvar_count > 0) {
+	if (!_dvars.empty()) {
 		DebugPrintf("\n");
 		DebugPrintf("Variables are:\n");
 		width = 0;
-		for (i = 0; i < _dvar_count; i++) {
-			size = strlen(_dvars[i].name) + 1;
+		for (i = 0; i < _dvars.size(); i++) {
+			size = _dvars[i].name.size() + 1;
 
 			if ((width + size) >= charsPerLine) {
 				DebugPrintf("\n");
@@ -398,7 +399,7 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 			} else
 				width += size;
 
-			DebugPrintf("%s ", _dvars[i].name);
+			DebugPrintf("%s ", _dvars[i].name.c_str());
 		}
 		DebugPrintf("\n");
 	}
@@ -459,7 +460,7 @@ bool Debugger::debuggerInputCallback(GUI::ConsoleDialog *console, const char *in
 }
 
 
-bool Debugger::debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, char*& completion, void *refCon) {
+bool Debugger::debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, Common::String &completion, void *refCon) {
 	Debugger *debugger = (Debugger *)refCon;
 
 	return debugger->tabComplete(input, completion);

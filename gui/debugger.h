@@ -26,6 +26,9 @@
 #define GUI_DEBUGGER_H
 
 #include "common/func.h"
+#include "common/ptr.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 namespace GUI {
 
@@ -51,7 +54,7 @@ public:
 protected:
 	typedef Common::Functor2<int, const char **, bool> Debuglet;
 
-	// Convenicence macro for registering a method of a debugger class
+	// Convenience macro for registering a method of a debugger class
 	// as the current command.
 	#define WRAP_METHOD(cls, method) \
 		new Common::Functor2Mem<int, const char **, bool, cls>(this, &cls::method)
@@ -65,26 +68,20 @@ protected:
 	};
 
 	struct DVar {
-		char name[30];
+		Common::String name;
 		void *variable;
-		int type, optional;
-	};
-
-	struct DCmd {
-		char name[30];
-		Debuglet *debuglet;
+		int type;
+		int optional;
 	};
 
 	int _frame_countdown;
 	bool _detach_now;
 
 private:
-	// TODO: Consider replacing the following two arrays by a Hashmap
-	int _dvar_count;
-	DVar _dvars[256];
+	Common::Array<DVar> _dvars;
 
-	int _dcmd_count;
-	DCmd _dcmds[256];
+	typedef Common::HashMap<Common::String, Common::SharedPtr<Debuglet>, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CommandsMap;
+	CommandsMap _cmds;
 
 	bool _isAttached;
 	char *_errStr;
@@ -109,11 +106,11 @@ private:
 	void enter();
 
 	bool parseCommand(const char *input);
-	bool tabComplete(const char *input, char*& completion);
+	bool tabComplete(const char *input, Common::String &completion) const;
 
 protected:
-	void DVar_Register(const char *varname, void *pointer, int type, int optional);
-	void DCmd_Register(const char *cmdname, Debuglet *debuglet);
+	void DVar_Register(const Common::String &varname, void *pointer, int type, int optional);
+	void DCmd_Register(const Common::String &cmdname, Debuglet *debuglet);
 
 	bool Cmd_Exit(int argc, const char **argv);
 	bool Cmd_Help(int argc, const char **argv);
@@ -124,7 +121,7 @@ protected:
 #if USE_CONSOLE
 private:
 	static bool debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon);
-	static bool debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, char*& completion, void *refCon);
+	static bool debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, Common::String &completion, void *refCon);
 #endif
 };
 

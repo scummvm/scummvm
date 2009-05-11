@@ -327,14 +327,13 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 				str[i] = buffer(_promptStartPos + i);
 			str[len] = '\0';
 
-			char *completion = 0;
+			Common::String completion;
 			if ((*_completionCallbackProc)(this, str, completion, _callbackRefCon)) {
 				if (_caretVisible)
 					drawCaret(true);
-				insertIntoPrompt(completion);
+				insertIntoPrompt(completion.c_str());
 				scrollToCurrent();
 				drawLine(pos2line(_currentPos));
-				delete[] completion;
 			}
 			delete[] str;
 		}
