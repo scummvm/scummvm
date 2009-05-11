@@ -51,6 +51,7 @@ private:
 	Codec37Decoder *_codec37;
 	Codec47Decoder *_codec47;
 	Common::SeekableReadStream *_base;
+	uint32 _baseSize;
 	byte *_frameBuffer;
 	byte *_specialBuffer;
 
