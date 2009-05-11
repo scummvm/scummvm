@@ -443,7 +443,7 @@ void zlibFile::close() {
 		_handle = NULL;
 	}
 
-	delete _inBuf;
+	delete[] _inBuf;
 	_inBuf = NULL;
 }
 
