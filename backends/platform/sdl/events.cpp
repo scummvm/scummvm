@@ -24,7 +24,6 @@
  */
 
 #include "backends/platform/sdl/sdl.h"
-#include "backends/keymapper/keymapper.h"
 #include "common/util.h"
 #include "common/events.h"
 
@@ -519,25 +518,4 @@ bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 #endif
 	return false;
-}
-
-Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
-#ifdef ENABLE_KEYMAPPER
-	using namespace Common;
-
-	HardwareKeySet *keySet = new HardwareKeySet();
-	keySet->addHardwareKey(new HardwareKey( "a", KeyState(KEYCODE_a), "a", kActionKeyType ));
-	keySet->addHardwareKey(new HardwareKey( "s", KeyState(KEYCODE_s), "s", kActionKeyType ));
-	keySet->addHardwareKey(new HardwareKey( "d", KeyState(KEYCODE_d), "d", kActionKeyType ));
-	keySet->addHardwareKey(new HardwareKey( "f", KeyState(KEYCODE_f), "f", kActionKeyType ));
-	keySet->addHardwareKey(new HardwareKey( "n", KeyState(KEYCODE_n), "n (vk)", kTriggerLeftKeyType, kVirtualKeyboardActionType ));
-	keySet->addHardwareKey(new HardwareKey( "m", KeyState(KEYCODE_m), "m (remap)", kTriggerRightKeyType, kKeyRemapActionType ));
-	keySet->addHardwareKey(new HardwareKey( "[", KeyState(KEYCODE_LEFTBRACKET), "[ (select)", kSelectKeyType ));
-	keySet->addHardwareKey(new HardwareKey( "]", KeyState(KEYCODE_RIGHTBRACKET), "] (start)", kStartKeyType ));
-
-	return keySet;
-
-#else
-	return 0;
-#endif
 }

@@ -230,6 +230,8 @@ void RemapDialog::handleKeyUp(Common::KeyState state) {
 	if (_activeRemapAction) {
 		const HardwareKey *hwkey = _keymapper->findHardwareKey(state);
 
+		debug(0, "Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
+
 		if (hwkey) {
 			_activeRemapAction->mapKey(hwkey);
 			_activeRemapAction->getParent()->saveMappings();

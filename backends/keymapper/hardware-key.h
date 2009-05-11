@@ -35,7 +35,7 @@
 namespace Common {
 
 
-#define HWKEY_ID_SIZE (4)
+#define HWKEY_ID_SIZE (15)
 
 /**
 * Describes an available hardware key 
