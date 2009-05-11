@@ -246,7 +246,7 @@ byte *kmem(EngineState *s, reg_t handle) {
 		return NULL;
 	}
 
-	return (byte *)ht->table[handle.offset].mem;
+	return (byte *)ht->_table[handle.offset].mem;
 }
 
 // Frees the specified handle. Returns 0 on success, 1 otherwise.

@@ -420,7 +420,7 @@ struct Hunk {
 	const char *type;
 };
 
-template<typename T, int INITIAL, int INCREMENT>
+template<typename T>
 struct Table : public MemObject {
 	typedef T value_type;
 	struct Entry : public T {
@@ -429,67 +429,47 @@ struct Table : public MemObject {
 	enum { HEAPENTRY_INVALID = -1 };
 
 
-	int entries_nr; /**< Number of entries allocated */
 	int first_free; /**< Beginning of a singly linked list for entries */
 	int entries_used; /**< Statistical information */
-	int max_entry; /**< Highest entry used */
 
-	Entry *table;
+	Common::Array<Entry> _table;
 
 public:
 	Table() {
-		entries_nr = 0;
-		max_entry = 0;
 		entries_used = 0;
 		first_free = HEAPENTRY_INVALID;
-		table = NULL;
-	}
-
-	~Table() {
-		// FIXME: Shouldn't we make sure that all table entries are disposed
-		// of properly?
-		free(table);
-		table = NULL;
-		entries_nr = max_entry = 0;
 	}
 
 	void initTable() {
-		entries_nr = INITIAL;
-		max_entry = 0;
 		entries_used = 0;
 		first_free = HEAPENTRY_INVALID;
-		table = (Entry *)calloc(INITIAL, sizeof(Entry));
 	}
 
 	int allocEntry() {
 		entries_used++;
 		if (first_free != HEAPENTRY_INVALID) {
 			int oldff = first_free;
-			first_free = table[oldff].next_free;
+			first_free = _table[oldff].next_free;
 
-			table[oldff].next_free = oldff;
+			_table[oldff].next_free = oldff;
 			return oldff;
 		} else {
-			if (max_entry == entries_nr) {
-				entries_nr += INCREMENT;
-
-				table = (Entry *)sci_realloc(table,  sizeof(Entry) * entries_nr);
-				memset(&table[entries_nr-INCREMENT], 0, INCREMENT * sizeof(Entry));
-			}
-			table[max_entry].next_free = max_entry; /* Tag as 'valid' */
-			return max_entry++;
+			uint newIdx = _table.size();
+			_table.push_back(Entry());
+			_table[newIdx].next_free = newIdx;	// Tag as 'valid'
+			return newIdx;
 		}
 	}
 
 	bool isValidEntry(int idx) {
-		return idx >= 0 && idx < max_entry && table[idx].next_free == idx;
+		return idx >= 0 && (uint)idx < _table.size() && _table[idx].next_free == idx;
 	}
 
 	virtual void freeEntry(int idx) {
-		if (idx < 0 || idx >= max_entry)
+		if (idx < 0 || (uint)idx >= _table.size())
 			::error("Table::freeEntry: Attempt to release invalid table index %d", idx);
 
-		table[idx].next_free = first_free;
+		_table[idx].next_free = first_free;
 		first_free = idx;
 		entries_used--;
 	}
@@ -504,11 +484,11 @@ public:
 
 
 /* CloneTable */
-struct CloneTable : public Table<Clone, 16, 4> {
+struct CloneTable : public Table<Clone> {
 	virtual void freeEntry(int idx) {
-		Table<Clone, 16, 4>::freeEntry(idx);
+		Table<Clone>::freeEntry(idx);
 
-		free(table[idx].variables); // Free the dynamically allocated memory part
+		free(_table[idx].variables); // Free the dynamically allocated memory part
 	}
 
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
@@ -517,25 +497,25 @@ struct CloneTable : public Table<Clone, 16, 4> {
 
 
 /* NodeTable */
-struct NodeTable : public Table<Node, 32, 16> {
+struct NodeTable : public Table<Node> {
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 };
 
 
 /* ListTable */
-struct ListTable : public Table<List, 8, 4> {
+struct ListTable : public Table<List> {
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 };
 
 
 /* HunkTable */
-struct HunkTable : public Table<Hunk, 4, 4> {
+struct HunkTable : public Table<Hunk> {
 	virtual void freeEntry(int idx) {
-		Table<Hunk, 4, 4>::freeEntry(idx);
+		Table<Hunk>::freeEntry(idx);
 
-		free(table[idx].mem);
+		free(_table[idx].mem);
 	}
 };
 

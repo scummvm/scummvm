@@ -54,18 +54,16 @@ struct cmd_mm_entry_t {
 	const char *description;
 }; // All later structures must "extend" this
 
-typedef cmd_mm_entry_t cmd_page_t; // Simple info page
+// Simple info page
+struct cmd_page_t : public cmd_mm_entry_t {
+};
 
-struct cmd_command_t {
-	const char *name;
-	const char *description;
+struct cmd_command_t : public cmd_mm_entry_t {
 	ConCommand command;
 	const char *param;
 };
 
-struct cmd_var_t {
-	const char *name;
-	const char *description;
+struct cmd_var_t : public cmd_mm_entry_t {
 	union {
 		int *intp;
 		char **charpp;
@@ -128,9 +126,11 @@ void _cmd_exit() {
 static cmd_mm_entry_t *cmd_mm_find(char *name, int type) {
 	int i;
 
-	for (i = 0; i < cmd_mm[type].entries; i++)
-		if (!strcmp(((cmd_mm_entry_t *)((byte *)cmd_mm[type].data + i * cmd_mm[type].size_per_entry))->name, name))
-			return ((cmd_mm_entry_t *)((byte *)cmd_mm[type].data + i * cmd_mm[type].size_per_entry));
+	for (i = 0; i < cmd_mm[type].entries; i++) {
+		cmd_mm_entry_t *tmp = (cmd_mm_entry_t *)((byte *)cmd_mm[type].data + i * cmd_mm[type].size_per_entry);
+		if (!strcmp(tmp->name, name))
+			return tmp;
+	}
 
 	return NULL;
 }
@@ -310,7 +310,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 				if (mobj->getType() == MEM_OBJ_SCRIPT)
 					max_index = (*(Script *)mobj)._objects.size();
 				else if (mobj->getType() == MEM_OBJ_CLONES)
-					max_index = (*(CloneTable *)mobj).max_entry;
+					max_index = (*(CloneTable *)mobj)._table.size();
 			}
 
 			while (idx < max_index) {
@@ -324,7 +324,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 					obj = &(*(Script *)mobj)._objects[idx];
 					objpos.offset = obj->pos.offset;
 				} else if (mobj->getType() == MEM_OBJ_CLONES) {
-					obj = &((*(CloneTable *)mobj).table[idx]);
+					obj = &((*(CloneTable *)mobj)._table[idx]);
 					objpos.offset = idx;
 					valid = clone_is_used((CloneTable *)mobj, idx);
 				}
@@ -579,7 +579,7 @@ static cmd_mm_entry_t *con_alloc_page_entry(int ID) {
 		else
 			nextsize <<= 1;
 
-		cmd_mm[ID].data = sci_realloc(cmd_mm[ID].data, nextsize * cmd_mm[ID].size_per_entry);
+		cmd_mm[ID].data = realloc(cmd_mm[ID].data, nextsize * cmd_mm[ID].size_per_entry);
 		cmd_mm[ID].allocated = nextsize;
 	}
 

@@ -2086,14 +2086,17 @@ Object *obj_get(EngineState *s, reg_t offset) {
 	int idx;
 
 	if (memobj != NULL) {
-		if (memobj->getType() == MEM_OBJ_CLONES && ENTRY_IS_VALID((CloneTable *)memobj, offset.offset))
-			obj = &((*(CloneTable *)memobj).table[offset.offset]);
-		else if (memobj->getType() == MEM_OBJ_SCRIPT) {
-			if (offset.offset <= (*(Script *)memobj).buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-			        && RAW_IS_OBJECT((*(Script *)memobj).buf + offset.offset)) {
-				idx = RAW_GET_CLASS_INDEX((Script *)memobj, offset);
-				if (idx >= 0 && (uint)idx < (*(Script *)memobj)._objects.size())
-					obj = &(*(Script *)memobj)._objects[idx];
+		if (memobj->getType() == MEM_OBJ_CLONES) {
+			CloneTable *ct = (CloneTable *)memobj;
+			if (ct->isValidEntry(offset.offset))
+				obj = &(ct->_table[offset.offset]);
+		} else if (memobj->getType() == MEM_OBJ_SCRIPT) {
+			Script *scr = (Script *)memobj;
+			if (offset.offset <= scr->buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
+			        && RAW_IS_OBJECT(scr->buf + offset.offset)) {
+				idx = RAW_GET_CLASS_INDEX(scr, offset);
+				if (idx >= 0 && (uint)idx < scr->_objects.size())
+					obj = &scr->_objects[idx];
 			}
 		}
 	}

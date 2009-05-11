@@ -75,9 +75,6 @@ MemObject *SegManager::allocNonscriptSegment(MemObjectType type, SegmentId *segi
 }
 
 SegManager::SegManager(bool sci1_1) {
-	// Initialise memory count
-	mem_allocated = 0;
-
 	id_seg_map = new IntMapper();
 	reserved_id = INVALID_SCRIPT_ID;
 	id_seg_map->checkKey(reserved_id, true);	// reserve 0 for seg_id
@@ -966,7 +963,7 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Clones_seg_id, offset);
-	return &(table->table[offset]);
+	return &(table->_table[offset]);
 }
 
 List *SegManager::alloc_List(reg_t *addr) {
@@ -982,7 +979,7 @@ List *SegManager::alloc_List(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Lists_seg_id, offset);
-	return &(table->table[offset]);
+	return &(table->_table[offset]);
 }
 
 Node *SegManager::alloc_Node(reg_t *addr) {
@@ -998,7 +995,7 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Nodes_seg_id, offset);
-	return &(table->table[offset]);
+	return &(table->_table[offset]);
 }
 
 Hunk *SegManager::alloc_Hunk(reg_t *addr) {
@@ -1014,7 +1011,7 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Hunks_seg_id, offset);
-	return &(table->table[offset]);
+	return &(table->_table[offset]);
 }
 
 byte *MemObject::dereference(reg_t pointer, int *size) {
@@ -1181,9 +1178,9 @@ void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, 
 
 //-------------------- clones --------------------
 
-template<typename T, int INITIAL, int INCREMENT>
-void Table<T, INITIAL, INCREMENT>::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
-	for (int i = 0; i < max_entry; i++)
+template<typename T>
+void Table<T>::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
+	for (uint i = 0; i < _table.size(); i++)
 		if (isValidEntry(i))
 			(*note)(param, make_reg(segId, i));
 }
@@ -1201,7 +1198,7 @@ void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *par
 		return;
 	}
 
-	clone = &(clone_table->table[addr.offset]);
+	clone = &(clone_table->_table[addr.offset]);
 
 	// Emit all member variables (including references to the 'super' delegate)
 	for (i = 0; i < clone->variables_nr; i++)
@@ -1218,7 +1215,7 @@ void CloneTable::freeAtAddress(SegManager *segmgr, reg_t addr) {
 
 //	assert(addr.segment == _segId);
 
-	victim_obj = &(clone_table->table[addr.offset]);
+	victim_obj = &(clone_table->_table[addr.offset]);
 
 #ifdef GC_DEBUG
 	if (!(victim_obj->flags & OBJECT_FLAG_FREED))
@@ -1281,7 +1278,7 @@ void ListTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *para
 		return;
 	}
 
-	List *list = &(table[addr.offset]);
+	List *list = &(_table[addr.offset]);
 
 	note(param, list->first);
 	note(param, list->last);
@@ -1300,7 +1297,7 @@ void NodeTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *para
 		warning("Invalid node referenced for outgoing references: "PREG"", PRINT_REG(addr));
 		return;
 	}
-	Node *node = &(table[addr.offset]);
+	Node *node = &(_table[addr.offset]);
 
 	// We need all four here. Can't just stick with 'pred' OR 'succ' because node operations allow us
 	// to walk around from any given node

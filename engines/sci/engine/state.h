@@ -73,12 +73,14 @@ public:
 	void nextFile();
 };
 
-#define CURRENT_SAVEGAME_VERSION 8
-#define MINIMUM_SAVEGAME_VERSION 8
+enum {
+	CURRENT_SAVEGAME_VERSION = 9,
+	MINIMUM_SAVEGAME_VERSION = 9,
 
-#define MAX_SAVEGAME_NR 20 /**< Maximum number of savegames */
+	MAX_SAVEGAME_NR = 20, /**< Maximum number of savegames */
 
-#define MAX_SAVE_DIR_SIZE MAXPATHLEN
+	MAX_SAVE_DIR_SIZE = MAXPATHLEN
+};
 
 /** values for EngineState.restarting_flag */
 enum {

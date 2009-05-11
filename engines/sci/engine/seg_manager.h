@@ -380,7 +380,6 @@ public: // TODO: make private
 	// For standard Mark&Sweep:
 	// 1 or 0, depending on what unreachable/freshly allocated
 	// memory is tagged as
-	size_t mem_allocated; // Total amount of memory allocated
 
 	SegmentId Clones_seg_id; // ID of the (a) clones segment
 	SegmentId Lists_seg_id; // ID of the (a) list segment

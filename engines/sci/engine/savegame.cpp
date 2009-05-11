@@ -181,15 +181,14 @@ void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
-	uint sync_heap_size = _heap.size();
-	s.syncAsUint32LE(sync_heap_size);
 	s.syncAsSint32LE(reserved_id);
 	s.syncAsSint32LE(exports_wide);
 	s.syncAsSint32LE(gc_mark_bits);
-	s.syncAsUint32LE(mem_allocated);
 
 	id_seg_map->saveLoadWithSerializer(s);
 
+	uint sync_heap_size = _heap.size();
+	s.syncAsUint32LE(sync_heap_size);
 	_heap.resize(sync_heap_size);
 	for (uint i = 0; i < sync_heap_size; ++i)
 		sync_MemObjPtr(s, _heap[i]);
@@ -269,8 +268,8 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 
 static void sync_LocalVariables(Common::Serializer &s, LocalVariables &obj) {
 	s.syncAsSint32LE(obj.script_id);
-	s.syncAsSint32LE(obj.nr);
 
+	s.syncAsSint32LE(obj.nr);
 	if (!obj.locals && obj.nr)
 		obj.locals = (reg_t *)sci_calloc(obj.nr, sizeof(reg_t));
 	for (int i = 0; i < obj.nr; ++i)
@@ -281,10 +280,10 @@ template <>
 void syncWithSerializer(Common::Serializer &s, Object &obj) {
 	s.syncAsSint32LE(obj.flags);
 	sync_reg_t(s, obj.pos);
-	s.syncAsSint32LE(obj.variables_nr);
 	s.syncAsSint32LE(obj.variable_names_nr);
 	s.syncAsSint32LE(obj.methods_nr);
 
+	s.syncAsSint32LE(obj.variables_nr);
 	if (!obj.variables && obj.variables_nr)
 		obj.variables = (reg_t *)sci_calloc(obj.variables_nr, sizeof(reg_t));
 	for (int i = 0; i < obj.variables_nr; ++i)
@@ -292,13 +291,24 @@ void syncWithSerializer(Common::Serializer &s, Object &obj) {
 }
 
 template <>
-void syncWithSerializer(Common::Serializer &s, List &obj) {
+void syncWithSerializer(Common::Serializer &s, Table<Clone>::Entry &obj) {
+	s.syncAsSint32LE(obj.next_free);
+
+	syncWithSerializer<Object>(s, obj);
+}
+
+template <>
+void syncWithSerializer(Common::Serializer &s, Table<List>::Entry &obj) {
+	s.syncAsSint32LE(obj.next_free);
+
 	sync_reg_t(s, obj.first);
 	sync_reg_t(s, obj.last);
 }
 
 template <>
-void syncWithSerializer(Common::Serializer &s, Node &obj) {
+void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
+	s.syncAsSint32LE(obj.next_free);
+
 	sync_reg_t(s, obj.pred);
 	sync_reg_t(s, obj.succ);
 	sync_reg_t(s, obj.key);
@@ -306,18 +316,12 @@ void syncWithSerializer(Common::Serializer &s, Node &obj) {
 }
 
 template <typename T>
-static void sync_Table(Common::Serializer &s, T &obj) {
-	s.syncAsSint32LE(obj.entries_nr);
+void sync_Table(Common::Serializer &s, T &obj) {
+	// TODO: Change this to use syncArray. This involves breaking the savegame format compatibility.
 	s.syncAsSint32LE(obj.first_free);
 	s.syncAsSint32LE(obj.entries_used);
-	s.syncAsSint32LE(obj.max_entry);
 
-	if (!obj.table && obj.entries_nr)
-		obj.table = (typename T::Entry *)sci_calloc(obj.entries_nr, sizeof(typename T::Entry));
-	for (int i = 0; i < obj.entries_nr; ++i) {
-		s.syncAsSint32LE(obj.table[i].next_free);
-		syncWithSerializer<typename T::value_type>(s, obj.table[i]);
-	}
+	syncArray<typename T::Entry>(s, obj._table);
 }
 
 static void sync_Script(Common::Serializer &s, Script &obj) {
@@ -338,21 +342,7 @@ static void sync_Script(Common::Serializer &s, Script &obj) {
 	s.syncAsSint32LE(obj.synonyms_nr);
 	s.syncAsSint32LE(obj.lockers);
 
-#if 1
-	uint len = obj._objects.size();
-	s.syncAsUint32LE(len); 	// Used to be obj.objects_allocated
-	s.skip(4); 	// Used to be obj.objects_nr
-	// Resize the array if loading.
-	if (s.isLoading())
-		obj._objects.resize(len);
-	Common::Array<Object>::iterator i;
-	for (i = obj._objects.begin(); i != obj._objects.end(); ++i) {
-		syncWithSerializer<Object>(s, *i);
-	}
-#else
-	s.skip(4); 	// Used to be obj.objects_allocated
 	syncArray<Object>(s, obj._objects);
-#endif
 
 	s.syncAsSint32LE(obj.locals_offset);
 	s.syncAsSint32LE(obj.locals_segment);
@@ -382,6 +372,14 @@ static void sync_DynMem(Common::Serializer &s, DynMem &obj) {
 	}
 	if (obj._size)
 		s.syncBytes(obj._buf, obj._size);
+}
+
+static void sync_DataStack(Common::Serializer &s, DataStack &obj) {
+	s.syncAsUint32LE(obj.nr);
+	if (s.isLoading()) {
+		//free(obj.entries);
+		obj.entries = (reg_t *)sci_calloc(obj.nr, sizeof(reg_t));
+	}
 }
 
 #pragma mark -
@@ -443,12 +441,7 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&mobj) {
 		sync_SystemStrings(s, *(SystemStrings *)mobj);
 		break;
 	case MEM_OBJ_STACK:
-		// TODO: Switch this stack to use class Common::Stack?
-		s.syncAsUint32LE((*(DataStack *)mobj).nr);
-		if (s.isLoading()) {
-			//free((*(DataStack *)mobj).entries);
-			(*(DataStack *)mobj).entries = (reg_t *)sci_calloc((*(DataStack *)mobj).nr, sizeof(reg_t));
-		}
+		sync_DataStack(s, *(DataStack *)mobj);
 		break;
 	case MEM_OBJ_HUNK:
 		if (s.isLoading()) {
@@ -551,20 +544,16 @@ static void reconstruct_stack(EngineState *retval) {
 	retval->stack_top = retval->stack_base + VM_STACK_SIZE;
 }
 
-static int clone_entry_used(CloneTable *table, int n) {
-	int backup;
+static bool clone_entry_used(CloneTable *table, int n) {
 	int seeker = table->first_free;
-	CloneTable::Entry *entries = table->table;
 
-	if (seeker == CloneTable::HEAPENTRY_INVALID) return 1;
+	while (seeker != CloneTable::HEAPENTRY_INVALID) {
+		if (seeker == n)
+			return false;
+		seeker = table->_table[seeker].next_free;
+	}
 
-	do {
-		if (seeker == n) return 0;
-		backup = seeker;
-		seeker = entries[seeker].next_free;
-	} while (entries[backup].next_free != CloneTable::HEAPENTRY_INVALID);
-
-	return 1;
+	return true;
 }
 
 static void load_script(EngineState *s, SegmentId seg) {
@@ -666,52 +655,46 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 // FIXME: The following should likely become a SegManager method
 static void reconstruct_clones(EngineState *s, SegManager *self) {
-	uint i;
-	MemObject *mobj;
-
-	for (i = 0; i < self->_heap.size(); i++) {
+	for (uint i = 0; i < self->_heap.size(); i++) {
 		if (self->_heap[i]) {
-			mobj = self->_heap[i];
+			MemObject *mobj = self->_heap[i];
 			switch (mobj->getType()) {
 			case MEM_OBJ_CLONES: {
-				int j;
-				CloneTable::Entry *seeker = (*(CloneTable *)mobj).table;
+				CloneTable *ct = (CloneTable *)mobj;
 
 				/*
 				sciprintf("Free list: ");
-				for (j = (*(CloneTable *)mobj).first_free; j != HEAPENTRY_INVALID; j = (*(CloneTable *)mobj).table[j].next_free) {
+				for (uint j = ct->first_free; j != HEAPENTRY_INVALID; j = ct->_table[j].next_free) {
 					sciprintf("%d ", j);
 				}
 				sciprintf("\n");
 
 				sciprintf("Entries w/zero vars: ");
-				for (j = 0; j < (*(CloneTable *)mobj).max_entry; j++) {
-					if ((*(CloneTable *)mobj).table[j].variables == NULL)
+				for (uint j = 0; j < ct->_table.size(); j++) {
+					if (ct->_table[j].variables == NULL)
 						sciprintf("%d ", j);
 				}
 				sciprintf("\n");
 				*/
 
-				for (j = 0; j < (*(CloneTable *)mobj).max_entry; j++) {
+				for (uint j = 0; j < ct->_table.size(); j++) {
 					Object *base_obj;
 
-					if (!clone_entry_used(&(*(CloneTable *)mobj), j)) {
-						seeker++;
+					if (!clone_entry_used(ct, j)) {
 						continue;
 					}
-					base_obj = obj_get(s, seeker->variables[SCRIPT_SPECIES_SELECTOR]);
+					CloneTable::Entry &seeker = ct->_table[j];
+					base_obj = obj_get(s, seeker.variables[SCRIPT_SPECIES_SELECTOR]);
 					if (!base_obj) {
 						sciprintf("Clone entry without a base class: %d\n", j);
-						seeker->base = seeker->base_obj = NULL;
-						seeker->base_vars = seeker->base_method = NULL;
-						continue;
+						seeker.base = seeker.base_obj = NULL;
+						seeker.base_vars = seeker.base_method = NULL;
+					} else {
+						seeker.base = base_obj->base;
+						seeker.base_obj = base_obj->base_obj;
+						seeker.base_vars = base_obj->base_vars;
+						seeker.base_method = base_obj->base_method;
 					}
-					seeker->base = base_obj->base;
-					seeker->base_obj = base_obj->base_obj;
-					seeker->base_vars = base_obj->base_vars;
-					seeker->base_method = base_obj->base_method;
-
-					seeker++;
 				}
 
 				break;

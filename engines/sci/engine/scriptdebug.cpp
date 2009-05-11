@@ -366,7 +366,7 @@ static void print_list(EngineState *s, List *l) {
 			return;
 		}
 
-		node = &((*(NodeTable *)mobj).table[pos.offset]);
+		node = &((*(NodeTable *)mobj)._table[pos.offset]);
 
 		sciprintf("\t"PREG"  : "PREG" -> "PREG"\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
@@ -437,28 +437,26 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	break;
 
 	case MEM_OBJ_CLONES: {
-		int i = 0;
 		CloneTable *ct = (CloneTable *)mobj;
 
 		sciprintf("clones\n");
 
-		for (i = 0; i < ct->max_entry; i++)
-			if (ENTRY_IS_VALID(ct, i)) {
+		for (uint i = 0; i < ct->_table.size(); i++)
+			if (ct->isValidEntry(i)) {
 				sciprintf("  [%04x] ", i);
-				print_obj_head(s, &(ct->table[i]));
+				print_obj_head(s, &(ct->_table[i]));
 			}
 	}
 	break;
 
 	case MEM_OBJ_LISTS: {
-		int i = 0;
 		ListTable *lt = (ListTable *)mobj;
 
 		sciprintf("lists\n");
-		for (i = 0; i < lt->max_entry; i++)
-			if (ENTRY_IS_VALID(lt, i)) {
+		for (uint i = 0; i < lt->_table.size(); i++)
+			if (lt->isValidEntry(i)) {
 				sciprintf("  [%04x]: ", i);
-				print_list(s, &(lt->table[i]));
+				print_list(s, &(lt->_table[i]));
 			}
 	}
 	break;
@@ -469,14 +467,13 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	}
 
 	case MEM_OBJ_HUNK: {
-		int i;
 		HunkTable *ht = (HunkTable *)mobj;
 
 		sciprintf("hunk  (total %d)\n", ht->entries_used);
-		for (i = 0; i < ht->max_entry; i++)
-			if (ENTRY_IS_VALID(ht, i)) {
+		for (uint i = 0; i < ht->_table.size(); i++)
+			if (ht->isValidEntry(i)) {
 				sciprintf("    [%04x] %d bytes at %p, type=%s\n",
-				          i, ht->table[i].size, ht->table[i].mem, ht->table[i].type);
+				          i, ht->_table[i].size, ht->_table[i].mem, ht->_table[i].type);
 			}
 	}
 
@@ -511,7 +508,7 @@ static int show_node(EngineState *s, reg_t addr) {
 			return 1;
 		}
 
-		list = &(lt->table[addr.offset]);
+		list = &(lt->_table[addr.offset]);
 
 		sciprintf(PREG" : first x last = ("PREG", "PREG")\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
 	} else {
@@ -530,7 +527,7 @@ static int show_node(EngineState *s, reg_t addr) {
 			sciprintf("Address does not contain a node\n");
 			return 1;
 		}
-		node = &(nt->table[addr.offset]);
+		node = &(nt->_table[addr.offset]);
 
 		sciprintf(PREG" : prev x next = ("PREG", "PREG"); maps "PREG" -> "PREG"\n",
 		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
