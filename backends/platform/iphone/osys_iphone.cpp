@@ -340,7 +340,6 @@ void OSystem_IPHONE::drawDirtyRect(const Common::Rect& dirtyRect) {
 
 void OSystem_IPHONE::drawDirtyOverlayRect(const Common::Rect& dirtyRect) {
 	int h = dirtyRect.bottom - dirtyRect.top;
-	int w = dirtyRect.right - dirtyRect.left;
 
 	uint16 *src = (uint16 *)&_overlayBuffer[dirtyRect.top * _screenWidth + dirtyRect.left];
 	uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
@@ -866,11 +865,10 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 		} else if (vecXNorm < -0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 			// Swipe left
 			return false;
-		} else
-			return false;
-	} else
-		return false;
-	
+		}
+	} 
+
+	return false;
 }
 
 void  OSystem_IPHONE::handleEvent_orientationChanged(int orientation) {
