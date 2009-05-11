@@ -140,8 +140,13 @@ int AgiEngine::handleController(int key) {
 			(int)g_mouse.y >= _game.lineUserInput * CHAR_LINES &&
 			(int)g_mouse.y <= (_game.lineUserInput + 1) * CHAR_LINES) {
 		if (predictiveDialog()) {
-			strcpy((char *)_game.inputBuffer, _predictiveResult);
-			handleKeys(KEY_ENTER);
+			if (_game.inputMode == INPUT_NONE) {
+				for (int n = 0; _predictiveResult[n]; n++)
+					keyEnqueue(_predictiveResult[n]);
+			} else {
+				strcpy((char *)_game.inputBuffer, _predictiveResult);
+				handleKeys(KEY_ENTER);
+			}
 		}
 		return true;
 	}
@@ -396,7 +401,7 @@ int AgiEngine::waitAnyKey() {
 		_gfx->getKey();
 	}
 
-	debugC(3, kDebugLevelInput, "waiting...");
+	debugC(3, kDebugLevelInput, "waiting... (any key)");
 	while (!(shouldQuit() || restartGame)) {
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();

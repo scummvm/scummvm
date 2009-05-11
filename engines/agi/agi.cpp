@@ -73,6 +73,9 @@ void AgiEngine::processEvents() {
 					newInputMode(INPUT_NORMAL);
 					_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
 							_stringdata.y, ' ', _game.colorFg, _game.colorBg);
+				} else if (_game.inputMode == INPUT_NONE) {
+					for (int n = 0; _predictiveResult[n]; n++)
+						keyEnqueue(_predictiveResult[n]);
 				}
 			}
 			break;
