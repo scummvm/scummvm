@@ -33,6 +33,45 @@
 
 namespace Sci {
 
+extern EngineState *g_EngineState;
+
+class ConsoleFunc : public Common::Functor2<int, const char **, bool> {
+public:
+	ConsoleFunc(const ConCommand &func, const char *param) : _func(func), _param(param) {}
+
+	bool isValid() const { return _func != 0; }
+	bool operator()(int argc, const char **argv) const {
+#if 1
+		// FIXME: Evil hack: recreate the original input string
+		Common::String tmp = argv[0];
+		for (int i = 1; i < argc; ++i) {
+			tmp += ' ';
+			tmp += argv[i];
+		}
+		con_parse(g_EngineState, tmp.c_str());
+
+		return true;
+#else
+		Common::Array<cmd_param_t> cmdParams;
+		for (int i = 1; i < argc; ++i) {
+			cmd_param_t tmp;
+			tmp.str = argv[i];
+			// TODO: Convert argc/argv suitable, using _param
+			cmdParams.push_back(tmp);
+		}
+		assert(g_EngineState);
+		return !(*_func)(g_EngineState, cmdParams);
+#endif
+	}
+private:
+	EngineState *_s;
+	const ConCommand _func;
+	const char *_param;
+};
+
+
+
+
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
@@ -44,6 +83,11 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 
 Console::~Console() {
 }
+
+void Console::con_hook_command(ConCommand command, const char *name, const char *param, const char *description) {
+	DCmd_Register(name, new ConsoleFunc(command, param));
+}
+
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
 	int ver = _vm->getVersion();

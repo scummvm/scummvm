@@ -30,6 +30,10 @@
 #include "sci/engine/state.h"
 #include "sci/scicore/sciconsole.h"
 
+
+#include "sci/sci.h"	// For _console only
+#include "sci/console.h"	// For _console only
+
 namespace Sci {
 
 #ifdef SCI_CONSOLE
@@ -121,7 +125,7 @@ void _cmd_exit() {
 		free(cmd_mm[t].data);
 }
 
-static cmd_mm_entry_t *cmd_mm_find(char *name, int type) {
+static cmd_mm_entry_t *cmd_mm_find(const char *name, int type) {
 	int i;
 
 	for (i = 0; i < cmd_mm[type].entries; i++) {
@@ -397,10 +401,6 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 }
 
 void con_parse(EngineState *s, const char *command) {
-	int quote = 0;		// quoting?
-	int done = 0;		// are we done yet?
-	int cdone = 0;		// Done with the current command?
-	const char *paramt;	// parameter types
 	char *cmd = (command && command[0]) ? (char *)sci_strdup(command) : (char *)sci_strdup(" ");
 	char *_cmd = cmd;
 	int pos = 0;
@@ -408,9 +408,12 @@ void con_parse(EngineState *s, const char *command) {
 	if (!_cmd_initialized)
 		con_init();
 
+	bool done = false;		// are we done yet?
 	while (!done) {
 		cmd_command_t *command_todo;
-		int onvar = 1;		// currently working on a variable?
+		bool quote = false;		// quoting?
+		bool cdone = false;		// Done with the current command?
+		bool onvar = true;		// currently working on a variable?
 		cdone = 0;
 		pos = 0;
 
@@ -422,25 +425,27 @@ void con_parse(EngineState *s, const char *command) {
 		while (!cdone) {
 			switch (cmd[pos]) {
 			case 0:
-				done = 1;
+				cdone = done = true;
 			case ';':
 				if (!quote)
-					cdone = 1;
+					cdone = true;
 			case ' ':
-				if (!quote)
-					cmd[pos] = onvar = 0;
+				if (!quote) {
+					cmd[pos] = 0;
+					onvar = false;
+				}
 				break;
 			case '\\':		// don't check next char for special meaning
 				memmove(cmd + pos, cmd + pos + 1, strlen(cmd + pos) - 1);
 				break;
 			case '"':
-				quote ^= 1;
+				quote = !quote;
 				memmove(cmd + pos, cmd + pos + 1, strlen(cmd + pos));
 				pos--;
 				break;
 			default:
 				if (!onvar) {
-					onvar = 1;
+					onvar = true;
 					cmd_param_t tmp;
 					tmp.str = cmd + pos;
 					cmdParams.push_back(tmp);
@@ -460,7 +465,7 @@ void con_parse(EngineState *s, const char *command) {
 				uint minparams;
 				int need_state = 0;
 
-				paramt = command_todo->param;
+				const char *paramt = command_todo->param;	// parameter types
 				if (command_todo->param[0] == '!') {
 					need_state = 1;
 					paramt++;
@@ -641,6 +646,8 @@ int con_hook_command(ConCommand command, const char *name, const char *param, co
 	cmd->param = param;
 	cmd->description = description;
 
+	((SciEngine *)g_engine)->_console->con_hook_command(command, name, param, description);
+
 	return 0;
 }
 
@@ -664,7 +671,7 @@ int con_hook_int(int *pointer, const char *name, const char *description) {
 
 // Console commands and support functions
 
-static ResourceType parseResourceType(char *resid) {
+static ResourceType parseResourceType(const char *resid) {
 	// Gets the resource number of a resource string, or returns -1
 	ResourceType res = kResourceTypeInvalid;
 
@@ -830,14 +837,14 @@ static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 static int c_man(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int section = 0;
-	unsigned int i;
-	char *name = cmdParams[0].str;
-	char *c = strchr(name, '.');
+	uint i;
+	Common::String name = cmdParams[0].str;
+	const char *c = strchr(name.c_str(), '.');
 	cmd_mm_entry_t *entry = 0;
 
 	if (c) {
-		*c = 0;
 		section = atoi(c + 1);
+		name = Common::String(name.begin(), c);
 	}
 
 	if (section < 0 || section >= CMD_MM_ENTRIES) {
@@ -847,10 +854,10 @@ static int c_man(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 	sciprintf("section:%d\n", section);
 	if (section)
-		entry = cmd_mm_find(name, section - 1);
+		entry = cmd_mm_find(name.c_str(), section - 1);
 	else
 		for (i = 0; i < CMD_MM_ENTRIES && !section; i++) {
-			if ((entry = cmd_mm_find(name, i)))
+			if ((entry = cmd_mm_find(name.c_str(), i)))
 				section = i + 1;
 		}
 
@@ -859,7 +866,7 @@ static int c_man(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		return 1;
 	}
 
-	sciprintf("-- %s: %s.%d\n", cmd_mm[section - 1].name, name, section);
+	sciprintf("-- %s: %s.%d\n", cmd_mm[section - 1].name, name.c_str(), section);
 	cmd_mm[section - 1].print(entry, 1);
 
 	return 0;

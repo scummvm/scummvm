@@ -2007,9 +2007,12 @@ static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
 	s->stack_base[1] = NULL_REG;
 }
 
+EngineState *g_EngineState = 0;
+
 static EngineState *_game_run(EngineState *s, int restoring) {
 	EngineState *successor = NULL;
 	int game_is_finished = 0;
+	g_EngineState = s;
 	do {
 		s->_executionStackPosChanged = false;
 		run_vm(s, (successor || restoring) ? 1 : 0);
@@ -2038,6 +2041,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 				script_free_vm_memory(s);
 				delete s;
 				s = successor;
+				g_EngineState = s;
 
 				if (script_abort_flag == SCRIPT_ABORT_WITH_REPLAY) {
 					sciprintf("Restarting with replay()\n");

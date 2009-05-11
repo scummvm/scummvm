@@ -48,7 +48,7 @@ extern int con_passthrough;
 
 union cmd_param_t {
 	int32 val;
-	char *str;
+	const char *str;
 	reg_t reg;
 };
 

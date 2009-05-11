@@ -777,9 +777,9 @@ int c_sim_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 	for (i = 0; i < cmdParams.size(); i++) {
 		int flag = 0;
-		char *token = cmdParams[i].str;
+		Common::String token = cmdParams[i].str;
 
-		if (strlen(token) == 1) {// could be an operator
+		if (token.size() == 1) {// could be an operator
 			int j = 0;
 			while (operators[j] && (operators[j] != token[0]))
 				j++;
@@ -791,24 +791,24 @@ int c_sim_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		}
 
 		if (!flag) {
-			char *openb = strchr(token, '['); // look for opening braces
+			const char *openb = strchr(token.c_str(), '['); // look for opening braces
 			ResultWord result;
 
 			if (openb)
-				*openb = 0; // remove them and the rest
+				token = Common::String(token.begin(), openb);	// remove them and the rest
 
-			result = vocab_lookup_word(token, strlen(token), s->_parserWords, s->_parserSuffixes);
+			result = vocab_lookup_word(token.c_str(), token.size(), s->_parserWords, s->_parserSuffixes);
 
 			if (result._class != -1) {
 				s->parser_nodes[i].type = 0;
 				s->parser_nodes[i].content.value = result._group;
 			} else { // group name was specified directly?
-				int val = strtol(token, NULL, 0);
+				int val = strtol(token.c_str(), NULL, 0);
 				if (val) {
 					s->parser_nodes[i].type = 0;
 					s->parser_nodes[i].content.value = val;
 				} else { // invalid and not matched
-					sciprintf("Couldn't interpret '%s'\n", token);
+					sciprintf("Couldn't interpret '%s'\n", token.c_str());
 					s->parser_valid = 0;
 					return 1;
 				}
@@ -935,7 +935,7 @@ enum {
 };
 
 int _parse_getinp(int *i, int *nr, const Common::Array<cmd_param_t> &cmdParams) {
-	char *token;
+	const char *token;
 
 	if ((unsigned)*i == cmdParams.size())
 		return _parse_eoi;
@@ -1014,7 +1014,7 @@ int c_set_parse_nodes(EngineState *s, const Common::Array<cmd_param_t> &cmdParam
 int c_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	ResultWordList words;
 	char *error;
-	char *string;
+	const char *string;
 
 	if (!s) {
 		sciprintf("Not in debug state\n");
@@ -2144,7 +2144,7 @@ static int c_set_acc(EngineState *s, const Common::Array<cmd_param_t> &cmdParams
 
 static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t object = cmdParams[0].reg;
-	char *selector_name = cmdParams[1].str;
+	const char *selector_name = cmdParams[1].str;
 	StackPtr stackframe = s->_executionStack[0].sp;
 	int selector_id;
 	unsigned int i;
@@ -2230,7 +2230,7 @@ struct generic_config_flag_t {
 };
 
 static void handle_config_update(const generic_config_flag_t *flags_list, int flags_nr, const char *subsystem,
-								 int *active_options_p, char *changestring /* or NULL to display*/) {
+								 int *active_options_p, const char *changestring /* or NULL to display*/) {
 	if (!changestring) {
 		int j;
 
@@ -2283,7 +2283,6 @@ static void handle_config_update(const generic_config_flag_t *flags_list, int fl
 
 static int c_handle_config_update(const generic_config_flag_t *flags, int flags_nr, const char *subsystem,
 			int *active_options_p, const Common::Array<cmd_param_t> &cmdParams) {
-	unsigned int i;
 
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
@@ -2293,7 +2292,7 @@ static int c_handle_config_update(const generic_config_flag_t *flags, int flags_
 	if (cmdParams.size() == 0)
 		handle_config_update(flags, flags_nr, subsystem, active_options_p, 0);
 
-	for (i = 0; i < cmdParams.size(); i++)
+	for (uint i = 0; i < cmdParams.size(); i++)
 		handle_config_update(flags, flags_nr, subsystem, active_options_p, cmdParams[i].str);
 
 	return 0;
