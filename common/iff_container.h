@@ -162,7 +162,7 @@ public:
 	void incBytesRead(uint32 inc) {
 		bytesRead += inc;
 		if (bytesRead > size) {
-			error("Chunk overread");
+			error("Chunk '%s' overread", ID2string(id));
 		}
 	}
 
