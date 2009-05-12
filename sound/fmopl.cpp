@@ -34,8 +34,8 @@ namespace OPL {
 // Config implementation
 
 enum OplEmulator {
-	kMame = 0,
-	kDOSBox = 1
+	kMame = 1,
+	kDOSBox = 2
 };
 
 const Config::EmulatorDescription Config::_drivers[] = {
