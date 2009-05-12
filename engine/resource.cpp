@@ -333,8 +333,10 @@ void ResourceLoader::uncache(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
 
-	if (_cacheDirty)
+	if (_cacheDirty) {
 		qsort(_cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
+		_cacheDirty = false;
+	}
 
 	for (unsigned int i = 0; i < _cache.size(); i++) {
 		if (fname.compareTo(_cache[i].fname) == 0) {
