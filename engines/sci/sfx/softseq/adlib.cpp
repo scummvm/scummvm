@@ -553,7 +553,8 @@ void MidiDriver_Adlib::setPatch(int voice, int patch) {
 	setOperator(registerOffset[voice] + 3, _patches[patch].op[1]);
 
 	// Set the additional settings for the modulator
-	setRegister(0xC0 + voice, (mod.feedback << 1) | mod.algorithm);
+	byte algorithm = mod.algorithm ? 1 : 0;
+	setRegister(0xC0 + voice, (mod.feedback << 1) | algorithm);
 }
 
 void MidiDriver_Adlib::setOperator(int reg, AdlibOperator &op) {
