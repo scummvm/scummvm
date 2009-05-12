@@ -83,13 +83,15 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 		case MKID_BE('TEXT'):
 			scriptData->text = new byte[chunk->size];
 			assert(scriptData->text);
-			chunk->read(scriptData->text, chunk->size);
+			if (chunk->read(scriptData->text, chunk->size) != chunk->size)
+				error("Couldn't read TEXT chunk from file '%s'", filename);
 			break;
 
 		case MKID_BE('ORDR'):
 			scriptData->ordr = new uint16[chunk->size >> 1];
 			assert(scriptData->ordr);
-			chunk->read(scriptData->ordr, chunk->size);
+			if (chunk->read(scriptData->ordr, chunk->size) != chunk->size)
+				error("Couldn't read ORDR chunk from file '%s'", filename);
 
 			for (int i = (chunk->size >> 1) - 1; i >= 0; --i)
 				scriptData->ordr[i] = READ_BE_UINT16(&scriptData->ordr[i]);
@@ -98,7 +100,8 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 		case MKID_BE('DATA'):
 			scriptData->data = new uint16[chunk->size >> 1];
 			assert(scriptData->data);
-			chunk->read(scriptData->data, chunk->size);
+			if (chunk->read(scriptData->data, chunk->size) != chunk->size)
+				error("Couldn't read DATA chunk from file '%s'", filename);
 
 			for (int i = (chunk->size >> 1) - 1; i >= 0; --i)
 				scriptData->data[i] = READ_BE_UINT16(&scriptData->data[i]);
@@ -110,17 +113,14 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 		}
 	}
 
-	if (!scriptData->ordr) {
-		unload(scriptData);
-		error("Couldn't read ORDR chunk from file: '%s'", filename);
-		return false;
-	}
+	if (!scriptData->ordr)
+		error("No ORDR chunk found in file: '%s'", filename);
 
-	if (!scriptData->data) {
-		unload(scriptData);
-		error("Couldn't read DATA chunk from file: '%s'", filename);
-		return false;
-	}
+	if (!scriptData->data)
+		error("No DATA chunk found in file: '%s'", filename);
+
+	if (stream->err())
+		error("Read error while parsing file '%s", filename);
 
 	delete stream;
 

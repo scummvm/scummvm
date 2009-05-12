@@ -149,7 +149,8 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 			avtlChunkSize = chunk->size >> 1;
 			tim->avtl = new uint16[avtlChunkSize];
 			assert(tim->avtl);
-			chunk->read(tim->avtl, chunk->size);
+			if (chunk->read(tim->avtl, chunk->size) != chunk->size)
+				error("Couldn't read AVTL chunk from file '%s'", filename);
 
 			for (int i = avtlChunkSize - 1; i >= 0; --i)
 				tim->avtl[i] = READ_LE_UINT16(&tim->avtl[i]);
@@ -161,10 +162,13 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 		}
 	}
 
-	delete stream;
-
 	if (!tim->avtl)
-		error("Couldn't read AVTL chunk from file: '%s'", filename);
+		error("No AVTL chunk found in file: '%s'", filename);
+
+	if (stream->err())
+		error("Read error while parsing file '%s", filename);
+
+	delete stream;
 
 	int num = (avtlChunkSize < TIM::kCountFuncs) ? avtlChunkSize : (int)TIM::kCountFuncs;
 	for (int i = 0; i < num; ++i)
