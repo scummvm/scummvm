@@ -41,7 +41,7 @@ public:
 	};
 
 private:
-	typedef Common::Array<LocaleEntry *> AbstractLocaleList;
+
 	Common::Array<LocaleEntry> _entries;
 };
 

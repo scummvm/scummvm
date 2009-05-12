@@ -122,7 +122,7 @@ void TextObject::createBitmap() {
 	// (if necessary) for the text object
 	_numberLines = 1;
 	lineWidth = 0;
-	for (unsigned int i = 0; i < msg.size(); ++i) {
+	for (unsigned int i = 0; i < msg.size(); i++) {
 		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
 		if ((_width != 0 && lineWidth > (_width - _x))
 				|| (_justify == CENTER && (_x - lineWidth / 2 < 0 || _x + lineWidth / 2 > 640))

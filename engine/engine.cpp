@@ -350,10 +350,7 @@ void Engine::handleDebugLoadResource() {
 		buf[i++] = c;
 
 	buf[i] = '\0';
-	if (strncmp(buf, "exp:", 4) == 0)
-		// Export a resource in order to view it directly
-		resource = (void *)g_resourceloader->exportResource(&buf[4]);
-	else if (strstr(buf, ".key"))
+	if (strstr(buf, ".key"))
 		resource = (void *)g_resourceloader->loadKeyframe(buf);
 	else if (strstr(buf, ".zbm") || strstr(buf, ".bm"))
 		resource = (void *)g_resourceloader->loadBitmap(buf);
