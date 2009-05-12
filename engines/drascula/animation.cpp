@@ -697,7 +697,7 @@ void DrasculaEngine::animation_4_2() {
 	loadPic(96, frontSurface);
 	loadPic(97, extraSurface);
 	loadPic(99, backSurface);
-	selectVerb(0);
+	selectVerb(kVerbNone);
 
 	flags[9] = 0;
 	flags[4] = 1;
@@ -969,7 +969,7 @@ void DrasculaEngine::animation_25_2() {
 void DrasculaEngine::animation_27_2() {
 	flags[22] = 1;
 
-	selectVerb(0);
+	selectVerb(kVerbNone);
 	removeObject(kItemEarWithEarPlug);
 	addObject(kItemEarplugs);
 
@@ -1010,7 +1010,7 @@ void DrasculaEngine::animation_31_2() {
 
 	playTalkSequence(31);	// sequence 31, chapter 2
 
-	selectVerb(0);
+	selectVerb(kVerbNone);
 	removeObject(kItemLeaves);
 	removeObject(kItemBubbleGum);
 	removeObject(kItemTissues);
@@ -1231,7 +1231,7 @@ void DrasculaEngine::animation_5_5(){
 	int flyX[] = {1, 63, 125, 187, 249};
 	int pixelX = curX - 53, pixelY = curY - 9;
 
-	selectVerb(0);
+	selectVerb(kVerbNone);
 	removeObject(8);
 
 	gotoObject(curX - 19, curY + curHeight);
@@ -1410,7 +1410,7 @@ void DrasculaEngine::animation_12_5() {
 	characterMoved = 0;
 	curX = -1;
 	objExit = 104;
-	selectVerb(0);
+	selectVerb(kVerbNone);
 	enterRoom(57);
 }
 
@@ -1562,7 +1562,7 @@ void DrasculaEngine::animation_5_6() {
 void DrasculaEngine::animation_6_6() {
 	animate("rct.bin", 11);
 	clearRoom();
-	selectVerb(0);
+	selectVerb(kVerbNone);
 	removeObject(20);
 	loadPic(96, frontSurface);
 	loadPic(97, frontSurface);
@@ -1571,7 +1571,7 @@ void DrasculaEngine::animation_6_6() {
 	doBreak = 1;
 	objExit = 104;
 	curX = -1;
-	selectVerb(0);
+	selectVerb(kVerbNone);
 	enterRoom(58);
 	hare_se_ve = 1;
 	trackProtagonist = 1;
@@ -1960,7 +1960,7 @@ void DrasculaEngine::animation_5_2() {
 	flags[8] = 1;
 	curX = curX - 4;
 	talk_sync(_text[46], "46.als", "4442444244244");
-	selectVerb(0);
+	selectVerb(kVerbNone);
 }
 
 void DrasculaEngine::animation_6_2() {
@@ -1999,7 +1999,7 @@ void DrasculaEngine::animation_6_2() {
 	loadPic(96, frontSurface);
 	loadPic(97, extraSurface);
 	loadPic(99, backSurface);
-	selectVerb(0);
+	selectVerb(kVerbNone);
 
 	flags[9] = 0;
 }
@@ -2045,7 +2045,7 @@ void DrasculaEngine::animation_33_2() {
 	loadPic(96, frontSurface);
 	loadPic(97, extraSurface);
 	loadPic(99, backSurface);
-	selectVerb(0);
+	selectVerb(kVerbNone);
 
 	flags[33] = 1;
 	flags[9] = 0;
@@ -2156,7 +2156,7 @@ void DrasculaEngine::animation_6_4() {
 	loadPic(96, frontSurface);
 	loadPic(roomDisk, drawSurface3);
 	loadPic(roomNumber, bgSurface, HALF_PAL);
-	selectVerb(0);
+	selectVerb(kVerbNone);
 	updateRoom();
 }
 

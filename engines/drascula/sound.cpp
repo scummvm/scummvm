@@ -100,7 +100,7 @@ void DrasculaEngine::volumeControls() {
 	if (_lang == kSpanish)
 		loadPic(974, tableSurface);
 
-	selectVerb(0);
+	selectVerb(kVerbNone);
 
 	updateEvents();
 }

@@ -60,6 +60,7 @@ enum Languages {
 
 enum Verbs {
 	kVerbDefault = -1,
+	kVerbNone = 0,
 	kVerbLook = 1,
 	kVerbPick = 2,
 	kVerbOpen = 3,

@@ -61,7 +61,7 @@ void DrasculaEngine::selectVerbFromBar() {
 	}
 
 	// no verb selected
-	selectVerb(0);
+	selectVerb(kVerbNone);
 }
 
 void DrasculaEngine::selectVerb(int verb) {

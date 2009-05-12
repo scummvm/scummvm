@@ -318,7 +318,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (loadedDifferentChapter == 0)
 			animation_1_1();
 
-		selectVerb(0);
+		selectVerb(kVerbNone);
 		loadPic("2aux62.alg", drawSurface2);
 		trackProtagonist = 1;
 		objExit = 104;
@@ -517,7 +517,7 @@ bool DrasculaEngine::runCurrentChapter() {
 #ifndef _WIN32_WCE
 			updateEvents();
 #endif
-			selectVerb(0);
+			selectVerb(kVerbNone);
 		}
 
 		if (leftMouseButton == 1 && menuBar == 1) {
@@ -536,24 +536,24 @@ bool DrasculaEngine::runCurrentChapter() {
 
 		Common::KeyCode key = getScan();
 		if (key == Common::KEYCODE_F1 && menuScreen == 0) {
-			selectVerb(1);
+			selectVerb(kVerbLook);
 		} else if (key == Common::KEYCODE_F2 && menuScreen == 0) {
-			selectVerb(2);
+			selectVerb(kVerbPick);
 		} else if (key == Common::KEYCODE_F3 && menuScreen == 0) {
-			selectVerb(3);
+			selectVerb(kVerbOpen);
 		} else if (key == Common::KEYCODE_F4 && menuScreen == 0) {
-			selectVerb(4);
+			selectVerb(kVerbClose);
 		} else if (key == Common::KEYCODE_F5 && menuScreen == 0) {
-			selectVerb(5);
+			selectVerb(kVerbTalk);
 		} else if (key == Common::KEYCODE_F6 && menuScreen == 0) {
-			selectVerb(6);
+			selectVerb(kVerbMove);
 		} else if (key == Common::KEYCODE_F9) {
 			volumeControls();
 		} else if (key == Common::KEYCODE_F10) {
 			if (!saveLoadScreen())
 				return true;
 		} else if (key == Common::KEYCODE_F8) {
-			selectVerb(0);
+			selectVerb(kVerbNone);
 		} else if (key == Common::KEYCODE_v) {
 			_subtitlesDisabled = true;
 			ConfMan.setBool("subtitles", !_subtitlesDisabled);

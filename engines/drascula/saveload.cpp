@@ -174,7 +174,7 @@ bool DrasculaEngine::saveLoadScreen() {
 		delay(5);
 	}
 
-	selectVerb(0);
+	selectVerb(kVerbNone);
 
 	clearRoom();
 	loadPic(roomNumber, bgSurface, HALF_PAL);
@@ -223,7 +223,7 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 	loadedDifferentChapter = 0;
 	sscanf(currentData, "%d.ald", &roomNum);
 	enterRoom(roomNum);
-	selectVerb(0);
+	selectVerb(kVerbNone);
 
 	return true;
 }

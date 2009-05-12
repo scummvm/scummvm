@@ -178,7 +178,7 @@ bool DrasculaEngine::pickupObject() {
 	}
 	updateEvents();
 	if (takeObject == 0)
-		selectVerb(0);
+		selectVerb(kVerbNone);
 
 	return false;
 }
