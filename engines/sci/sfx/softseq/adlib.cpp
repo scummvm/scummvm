@@ -84,6 +84,12 @@ int MidiDriver_Adlib::open(bool isSCI0) {
 
 	_opl = OPL::Config::create(isStereo() ? OPL::Config::kDualOpl2 : OPL::Config::kOpl2);
 
+	// Try falling back to mono, thus plain OPL2 emualtor, when no Dual OPL2 is available.
+	if (!_opl && _stereo) {
+		_stereo = false;
+		_opl = OPL::Config::create(OPL::Config::kOpl2);
+	}
+
 	if (!_opl)
 		return -1;
 
