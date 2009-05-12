@@ -191,6 +191,8 @@ void RemapDialog::reflowLayout() {
 }
 
 void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	debug(0, "Command!");
+
 	if (cmd >= kRemapCmd && cmd < kRemapCmd + _keymapWidgets.size()) {
 		startRemapping(cmd - kRemapCmd);
 	} else if (cmd == GUI::kPopUpItemSelectedCmd) {
@@ -226,6 +228,13 @@ void RemapDialog::stopRemapping() {
 	_keymapper->setEnabled(true);
 }
 
+void RemapDialog::handleKeyDown(Common::KeyState state) {
+	if (_activeRemapAction)
+		return;
+
+	GUI::Dialog::handleKeyDown(state);
+}
+
 void RemapDialog::handleKeyUp(Common::KeyState state) {
 	if (_activeRemapAction) {
 		const HardwareKey *hwkey = _keymapper->findHardwareKey(state);
@@ -239,7 +248,7 @@ void RemapDialog::handleKeyUp(Common::KeyState state) {
 			stopRemapping();
 		}
 	} else {
-		GUI::Dialog::handleKeyDown(state);
+		GUI::Dialog::handleKeyUp(state);
 	}
 }
 
