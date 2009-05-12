@@ -26,24 +26,80 @@
 #define SOUND_FMOPL_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace OPL {
+
+class OPL;
+
+class Config {
+public:
+	enum OplFlags {
+		kFlagOpl2		= (1 << 0),
+		kFlagDualOpl2	= (1 << 1),
+		kFlagOpl3		= (1 << 2)
+	};
+
+	/**
+	 * OPL type to emulate.
+	 */
+	enum OplType {
+		kOpl2,
+		kDualOpl2,
+		kOpl3
+	};
+
+	typedef int8 DriverId;
+	struct EmulatorDescription {
+		const char *name;
+		const char *description;
+
+		DriverId id;	// A unique ID for each driver
+		uint32 flags;	// Capabilities of this driver
+	};
+
+	/**
+	 * Get a list of all available OPL emulators.
+	 * @return list of all available OPL emulators, terminated by a zero entry
+	 */
+	static const EmulatorDescription *getAvailable() { return _drivers; }
+
+	/**
+	 * Returns the driver id of a given name.
+	 */
+	static DriverId parse(const Common::String &name);
+
+	/**
+	 * Detects a driver for the specific type.
+	 */
+	static DriverId detect(OplType type = kOpl2);
+
+	/**
+	 * Checks whether the driver id is valid.
+	 */
+	static bool validDriver(DriverId id) { return (id > 0); }
+
+	/**
+	 * Creates the specific driver with a specific type setup.
+	 */ 
+	static OPL *create(DriverId driver, OplType type);
+
+	/**
+	 * Wrapper to easily init an OPL chip, without specifing an emulator.
+	 */
+	static OPL *create(OplType type) { return create(detect(type), type); }
+
+private:
+	static const EmulatorDescription _drivers[];	
+};
 
 class OPL {
 private:
 	// TODO: This is part of a temporary HACK to allow only 1 instance
 	static bool _hasInstance;
 public:
+	OPL() { _hasInstance = true; }
 	virtual ~OPL() { _hasInstance = false; }
-
-	/**
-	 * OPL type to emulate.
-	 */
-	enum kOplType {
-		kOpl2,
-		kDualOpl2,
-		kOpl3
-	};
 
 	/**
 	 * Initializes the OPL emulator.
@@ -99,8 +155,6 @@ public:
 	 * Returns whether the setup OPL mode is stereo or not
 	 */
 	virtual bool isStereo() const = 0;
-
-	static OPL *create(kOplType type);
 };
 
 } // end of namespace OPL

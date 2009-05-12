@@ -82,7 +82,7 @@ int MidiDriver_Adlib::open(bool isSCI0) {
 	debug(3, "ADLIB: Starting driver in %s mode", (isSCI0 ? "SCI0" : "SCI1"));
 	_isSCI0 = isSCI0;
 
-	_opl = OPL::OPL::create(isStereo() ? OPL::OPL::kDualOpl2 : OPL::OPL::kOpl2);
+	_opl = OPL::Config::create(isStereo() ? OPL::Config::kDualOpl2 : OPL::Config::kOpl2);
 
 	if (!_opl)
 		return -1;

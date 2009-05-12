@@ -101,6 +101,7 @@ private:
 	//
 	bool _enableAudioSettings;
 	PopUpWidget *_midiPopUp;
+	PopUpWidget *_oplPopUp;
 	PopUpWidget *_outputRatePopUp;
 
 	//

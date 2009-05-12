@@ -183,6 +183,9 @@
 			<widget name = 'auMidiPopup'
 					type = 'PopUp'
 			/>
+			<widget name = 'auOPLPopup'
+					type = 'PopUp'
+			/>
 			<widget name = 'auSampleRatePopup'
 					type = 'PopUp'
 			/>

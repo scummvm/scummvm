@@ -40,6 +40,7 @@
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
+#include "sound/fmopl.h"
 
 namespace GUI {
 
@@ -102,6 +103,7 @@ void OptionsDialog::init() {
 	_aspectCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
+	_oplPopUp = 0;
 	_outputRatePopUp = 0;
 	_enableMIDISettings = false;
 	_multiMidiCheckbox = 0;
@@ -180,6 +182,9 @@ void OptionsDialog::open() {
 		MidiDriverType id = MidiDriver::parseMusicDriver(ConfMan.get("music_driver", _domain));
 		_midiPopUp->setSelectedTag(id);
 	}
+
+	if (_oplPopUp)
+		_oplPopUp->setSelectedTag(OPL::Config::parse(ConfMan.get("opl_driver", _domain)));
 
 	if (_outputRatePopUp) {
 		_outputRatePopUp->setSelected(1);
@@ -312,6 +317,21 @@ void OptionsDialog::close() {
 					ConfMan.removeKey("music_driver", _domain);
 			} else {
 				ConfMan.removeKey("music_driver", _domain);
+			}
+		}
+
+		if (_oplPopUp) {
+			if (_enableAudioSettings) {
+				const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
+				while (ed->name && ed->id != (int)_oplPopUp->getSelectedTag())
+					++ed;
+
+				if (ed->name)
+					ConfMan.set("opl_driver", ed->name, _domain);
+				else
+					ConfMan.removeKey("opl_driver", _domain);
+			} else {
+				ConfMan.removeKey("opl_driver", _domain);
 			}
 		}
 
@@ -457,6 +477,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 
 	_midiPopUp->setEnabled(enabled);
+	_oplPopUp->setEnabled(enabled);
 	_outputRatePopUp->setEnabled(enabled);
 }
 
@@ -543,6 +564,16 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	while (md->name) {
 		_midiPopUp->appendEntry(md->description, md->id);
 		md++;
+	}
+
+	// The OPL emulator popup & a label
+	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup", "AdLib emulator:");
+
+	// Populate it
+	const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
+	while (ed->name) {
+		_oplPopUp->appendEntry(ed->description, ed->id);
+		++ed;
 	}
 
 	// Sample rate settings

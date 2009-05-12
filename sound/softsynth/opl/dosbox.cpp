@@ -190,7 +190,7 @@ struct Handler : public DOSBox::Handler {
 };
 } // end of namespace OPL3
 
-OPL::OPL(kOplType type) : _type(type), _rate(0), _handler(0) {
+OPL::OPL(Config::OplType type) : _type(type), _rate(0), _handler(0) {
 }
 
 OPL::~OPL() {
@@ -209,12 +209,12 @@ bool OPL::init(int rate) {
 	memset(_chip, 0, sizeof(_chip));
 
 	switch (_type) {
-	case kOpl2:
+	case Config::kOpl2:
 		_handler = new OPL2::Handler();
 		break;
 
-	case kDualOpl2:
-	case kOpl3:
+	case Config::kDualOpl2:
+	case Config::kOpl3:
 		_handler = new OPL3::Handler();
 		break;
 	
@@ -224,7 +224,7 @@ bool OPL::init(int rate) {
 
 	_handler->init(rate);
 	
-	if (_type == kDualOpl2) {
+	if (_type == Config::kDualOpl2) {
 		// Setup opl3 mode in the hander
 		_handler->writeReg(0x105, 1);
 	}
@@ -240,12 +240,12 @@ void OPL::reset() {
 void OPL::write(int port, int val) {
 	if (port&1) {
 		switch (_type) {
-		case kOpl2:
-		case kOpl3:
+		case Config::kOpl2:
+		case Config::kOpl3:
 			if (!_chip[0].write(_reg.normal, val))
 				_handler->writeReg(_reg.normal, val);
 			break;
-		case kDualOpl2:
+		case Config::kDualOpl2:
 			// Not a 0x??8 port, then write to a specific port
 			if (!(port & 0x8)) {
 				byte index = (port & 2) >> 1;
@@ -261,13 +261,13 @@ void OPL::write(int port, int val) {
 		// Ask the handler to write the address
 		// Make sure to clip them in the right range
 		switch (_type) {
-		case kOpl2:
+		case Config::kOpl2:
 			_reg.normal = _handler->writeAddr(port, val) & 0xff;
 			break;
-		case kOpl3:
+		case Config::kOpl3:
 			_reg.normal = _handler->writeAddr(port, val) & 0x1ff;
 			break;
-		case kDualOpl2:
+		case Config::kDualOpl2:
 			// Not a 0x?88 port, when write to a specific side
 			if (!(port & 0x8)) {
 				byte index = (port & 2) >> 1;
@@ -283,16 +283,16 @@ void OPL::write(int port, int val) {
 
 byte OPL::read(int port) {
 	switch (_type) {
-	case kOpl2:
+	case Config::kOpl2:
 		if (!(port & 1))
 			//Make sure the low bits are 6 on opl2
 			return _chip[0].read() | 0x6;
 		break;
-	case kOpl3:
+	case Config::kOpl3:
 		if (!(port & 1))
 			return _chip[0].read();
 		break;
-	case kDualOpl2:
+	case Config::kDualOpl2:
 		// Only return for the lower ports
 		if (port & 1)
 			return 0xff;
@@ -305,9 +305,9 @@ byte OPL::read(int port) {
 void OPL::writeReg(int r, int v) {
 	byte tempReg = 0;
 	switch (_type) {
-	case kOpl2:
-	case kDualOpl2:
-	case kOpl3:
+	case Config::kOpl2:
+	case Config::kDualOpl2:
+	case Config::kOpl3:
 		// We can't use _handler->writeReg here directly, since it would miss timer changes.
 
 		// Backup old setup register
@@ -350,7 +350,7 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 void OPL::readBuffer(int16 *buffer, int length) {
 	// For stereo OPL cards, we divide the sample count by 2,
 	// to match stereo AudioStream behavior.
-	if (_type != kOpl2)
+	if (_type != Config::kOpl2)
 		length >>= 1;
 
 	_handler->generate(buffer, length);

@@ -85,7 +85,7 @@ public:
 
 class OPL : public ::OPL::OPL {
 private:
-	kOplType _type;
+	Config::OplType _type;
 	uint _rate;
 
 	Handler *_handler;
@@ -98,7 +98,7 @@ private:
 	void free();
 	void dualWrite(uint8 index, uint8 reg, uint8 val);
 public:
-	OPL(kOplType type);
+	OPL(Config::OplType type);
 	~OPL();
 
 	bool init(int rate);
@@ -110,7 +110,7 @@ public:
 	void writeReg(int r, int v);
 
 	void readBuffer(int16 *buffer, int length);
-	bool isStereo() const { return _type != kOpl2; }
+	bool isStereo() const { return _type != Config::kOpl2; }
 };
 
 } // end of namespace DOSBox
