@@ -160,7 +160,6 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Object *parent_obj = obj_get(s, parent_addr);
 	reg_t clone_addr;
 	Clone *clone_obj; // same as Object*
-	int varblock_size;
 
 	if (!parent_obj) {
 		SCIkwarn(SCIkERROR, "Attempt to clone non-object/class at "PREG" failed", PRINT_REG(parent_addr));
@@ -176,17 +175,14 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	memcpy(clone_obj, parent_obj, sizeof(Clone));
+	*clone_obj = *parent_obj;
 	clone_obj->flags = 0;
-	varblock_size = parent_obj->variables_nr * sizeof(reg_t);
-	clone_obj->variables = (reg_t*)malloc(varblock_size);
-	memcpy(clone_obj->variables, parent_obj->variables, varblock_size);
 
 	// Mark as clone
-	clone_obj->variables[SCRIPT_INFO_SELECTOR].offset = SCRIPT_INFO_CLONE;
-	clone_obj->variables[SCRIPT_SPECIES_SELECTOR] = clone_obj->pos;
+	clone_obj->_variables[SCRIPT_INFO_SELECTOR].offset = SCRIPT_INFO_CLONE;
+	clone_obj->_variables[SCRIPT_SPECIES_SELECTOR] = clone_obj->pos;
 	if (IS_CLASS(parent_obj))
-		clone_obj->variables[SCRIPT_SUPERCLASS_SELECTOR] = parent_obj->pos;
+		clone_obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = parent_obj->pos;
 	s->seg_manager->incrementLockers(parent_obj->pos.segment, SEG_ID);
 	s->seg_manager->incrementLockers(clone_obj->pos.segment, SEG_ID);
 
@@ -206,7 +202,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	if (victim_obj->variables[SCRIPT_INFO_SELECTOR].offset != SCRIPT_INFO_CLONE) {
+	if (victim_obj->_variables[SCRIPT_INFO_SELECTOR].offset != SCRIPT_INFO_CLONE) {
 		//SCIkwarn("Attempt to dispose something other than a clone at %04x\n", offset);
 		// SCI silently ignores this behaviour; some games actually depend on it
 		return s->r_acc;

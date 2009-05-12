@@ -686,7 +686,7 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 			return KSIG_OBJECT | KSIG_INVALID;
 
 	case MEM_OBJ_LOCALS:
-		if (allow_invalid || reg.offset < (*(LocalVariables *)mobj).nr * sizeof(reg_t))
+		if (allow_invalid || reg.offset < (*(LocalVariables *)mobj)._locals.size() * sizeof(reg_t))
 			return KSIG_REF;
 		else
 			return KSIG_REF | KSIG_INVALID;

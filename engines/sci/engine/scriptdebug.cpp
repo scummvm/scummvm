@@ -340,7 +340,7 @@ int c_segtable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 static void print_obj_head(EngineState *s, Object *obj) {
 	sciprintf(PREG" %s : %3d vars, %3d methods\n", PRINT_REG(obj->pos), obj_get_name(s, obj->pos),
-				obj->variables_nr, obj->methods_nr);
+				obj->_variables.size(), obj->methods_nr);
 }
 
 static void print_list(EngineState *s, List *l) {
@@ -391,7 +391,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		sciprintf("  Synynms: %4d\n", scr->synonyms_nr);
 
 		if (scr->locals_block)
-			sciprintf("  Locals : %4d in segment 0x%x\n", scr->locals_block->nr, scr->locals_segment);
+			sciprintf("  Locals : %4d in segment 0x%x\n", scr->locals_block->_locals.size(), scr->locals_segment);
 		else
 			sciprintf("  Locals : none\n");
 
@@ -406,7 +406,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 	case MEM_OBJ_LOCALS: {
 		LocalVariables *locals = (LocalVariables *)mobj;
 		sciprintf("locals for script.%03d\n", locals->script_id);
-		sciprintf("  %d (0x%x) locals\n", locals->nr, locals->nr);
+		sciprintf("  %d (0x%x) locals\n", locals->_locals.size(), locals->_locals.size());
 	}
 	break;
 
@@ -1182,13 +1182,13 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 		return -1;
 	}
 
-	selectors = obj->variables_nr;
+	selectors = obj->_variables.size();
 
 	if (s->version < SCI_VERSION(1, 001, 000))
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
-		if (!(obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
-			obj = obj_get(s, obj->variables[SCRIPT_SUPERCLASS_SELECTOR]);
+		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
+			obj = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 			selectoroffset = (byte *)obj->base_vars;
 		} else
 			selectoroffset = (byte *)obj->base_vars;
@@ -2533,17 +2533,17 @@ int objinfo(EngineState *s, reg_t pos) {
 
 	print_obj_head(s, obj);
 
-	if (!(obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-		var_container = obj_get(s, obj->variables[SCRIPT_SUPERCLASS_SELECTOR]);
+	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
+		var_container = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 	sciprintf("  -- member variables:\n");
-	for (i = 0; i < obj->variables_nr; i++) {
+	for (i = 0; (uint)i < obj->_variables.size(); i++) {
 		sciprintf("    ");
 		if (i < var_container->variable_names_nr)
 			sciprintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
 		else
 			sciprintf("p#%x = ", i);
 
-		sciprintf(PREG"\n", PRINT_REG(obj->variables[i]));
+		sciprintf(PREG"\n", PRINT_REG(obj->_variables[i]));
 	}
 	sciprintf("  -- methods:\n");
 	for (i = 0; i < obj->methods_nr; i++) {
@@ -2870,7 +2870,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		disassemble(s, *pc, 0, 1);
 		if (_debug_seeking == _DEBUG_SEEK_GLOBAL)
 			sciprintf("Global %d (0x%x) = "PREG"\n", _debug_seek_special,
-			          _debug_seek_special, PRINT_REG(s->script_000->locals_block->locals[_debug_seek_special]));
+			          _debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[_debug_seek_special]));
 
 		_debugstate_valid = old_debugstate;
 

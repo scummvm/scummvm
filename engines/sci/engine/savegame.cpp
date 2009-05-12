@@ -149,6 +149,12 @@ void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 }
 
 
+template <>
+void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
+	sync_reg_t(s, obj);
+}
+
+
 
 void MenuItem::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_type);
@@ -259,7 +265,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 
 	sync_SegManagerPtr(s, seg_manager);
 
-
 	syncArray<Class>(s, _classtable);
 
 	sync_sfx_state_t(s, sound);
@@ -267,12 +272,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 
 static void sync_LocalVariables(Common::Serializer &s, LocalVariables &obj) {
 	s.syncAsSint32LE(obj.script_id);
-
-	s.syncAsSint32LE(obj.nr);
-	if (!obj.locals && obj.nr)
-		obj.locals = (reg_t *)calloc(obj.nr, sizeof(reg_t));
-	for (int i = 0; i < obj.nr; ++i)
-		sync_reg_t(s, obj.locals[i]);
+	syncArray<reg_t>(s, obj._locals);
 }
 
 template <>
@@ -282,11 +282,7 @@ void syncWithSerializer(Common::Serializer &s, Object &obj) {
 	s.syncAsSint32LE(obj.variable_names_nr);
 	s.syncAsSint32LE(obj.methods_nr);
 
-	s.syncAsSint32LE(obj.variables_nr);
-	if (!obj.variables && obj.variables_nr)
-		obj.variables = (reg_t *)calloc(obj.variables_nr, sizeof(reg_t));
-	for (int i = 0; i < obj.variables_nr; ++i)
-		sync_reg_t(s, obj.variables[i]);
+	syncArray<reg_t>(s, obj._variables);
 }
 
 template <>
@@ -629,14 +625,14 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						int funct_area = READ_LE_UINT16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
 						Object *base_obj;
 
-						base_obj = obj_get(s, scr->_objects[j].variables[SCRIPT_SPECIES_SELECTOR]);
+						base_obj = obj_get(s, scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]);
 
 						if (!base_obj) {
 							sciprintf("Object without a base class: Script %d, index %d (reg address "PREG"\n",
-								  scr->nr, j, PRINT_REG(scr->_objects[j].variables[SCRIPT_SPECIES_SELECTOR]));
+								  scr->nr, j, PRINT_REG(scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]));
 							continue;
 						}
-						scr->_objects[j].variable_names_nr = base_obj->variables_nr;
+						scr->_objects[j].variable_names_nr = base_obj->_variables.size();
 						scr->_objects[j].base_obj = base_obj->base_obj;
 
 						scr->_objects[j].base_method = (uint16 *)(data + funct_area);
@@ -683,7 +679,7 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 						continue;
 					}
 					CloneTable::Entry &seeker = ct->_table[j];
-					base_obj = obj_get(s, seeker.variables[SCRIPT_SPECIES_SELECTOR]);
+					base_obj = obj_get(s, seeker._variables[SCRIPT_SPECIES_SELECTOR]);
 					if (!base_obj) {
 						sciprintf("Clone entry without a base class: %d\n", j);
 						seeker.base = seeker.base_obj = NULL;

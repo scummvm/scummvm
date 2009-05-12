@@ -231,7 +231,7 @@ public:
 	SegmentId script_000_segment;
 	Script *script_000;  /**< script 000, e.g. for globals */
 	
-	uint16 currentRoomNumber() { return KP_UINT(script_000->locals_block->locals[13]); }
+	uint16 currentRoomNumber() { return KP_UINT(script_000->locals_block->_locals[13]); }
 
 	int parser_lastmatch_word; /**< Position of the input word the parser last matched on, or SAID_NO_MATCH */
 

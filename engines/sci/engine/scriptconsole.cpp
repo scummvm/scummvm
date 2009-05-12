@@ -328,8 +328,8 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 				}
 
 				if (valid) {
-					char *objname = (char *) obj->base
-					                + obj->variables[SCRIPT_NAME_SELECTOR].offset;
+					char *objname = (char *)obj->base
+					                + obj->_variables[SCRIPT_NAME_SELECTOR].offset;
 					if (!strcmp(objname, str_objname)) {
 						// Found a match!
 						if (index < 0 ||

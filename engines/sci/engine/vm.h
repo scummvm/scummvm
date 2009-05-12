@@ -225,7 +225,7 @@ struct Class {
 #define RAW_GET_CLASS_INDEX(scr, reg) ((scr)->obj_indices->checkKey(reg.offset, false))
 #define RAW_IS_OBJECT(datablock) (READ_LE_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
 
-#define IS_CLASS(obj) (obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)
+#define IS_CLASS(obj) (obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)
 
 /** This struct is used to buffer the list of send calls in send_selector() */
 struct CallsStruct {
@@ -242,18 +242,11 @@ struct CallsStruct {
 
 struct LocalVariables : public MemObject {
 	int script_id; /**< Script ID this local variable block belongs to */
-	reg_t *locals;
-	int nr;
+	Common::Array<reg_t> _locals;
 
 public:
 	LocalVariables() {
 		script_id = 0;
-		locals = 0;
-		nr = 0;
-	}
-	~LocalVariables() {
-		free(locals);
-		locals = NULL;
 	}
 
 	virtual byte *dereference(reg_t pointer, int *size);
@@ -269,14 +262,13 @@ public:
 struct Object {
 	int flags;
 	reg_t pos; /**< Object offset within its script; for clones, this is their base */
-	int variables_nr;
 	int variable_names_nr; /**< Number of variable names, may be less than variables_nr */
 	int methods_nr;
 	byte *base; /**< Points to a buffer all relative references (code, strings) point to */
 	byte *base_obj; /**< base + object offset within base */
 	uint16 *base_method; /**< Pointer to the method selector area for this object */
 	uint16 *base_vars; /**< Pointer to the varselector area for this object */
-	reg_t *variables;
+	Common::Array<reg_t> _variables;
 };
 
 struct CodeBlock {
@@ -286,9 +278,9 @@ struct CodeBlock {
 
 #define VM_OBJECT_GET_VARSELECTOR(obj, i)  \
 	(s->version < SCI_VERSION(1,001,000) ? \
-	 READ_LE_UINT16(obj->base_obj + obj->variables_nr * 2 + i*2) : \
+	 READ_LE_UINT16(obj->base_obj + obj->_variables.size() * 2 + i*2) : \
 	 *(obj->base_vars + i))
-#define VM_OBJECT_READ_PROPERTY(obj, i) (obj->variables[i])
+#define VM_OBJECT_READ_PROPERTY(obj, i) (obj->_variables[i])
 #define VM_OBJECT_GET_FUNCSELECTOR(obj, i) \
 	(s->version < SCI_VERSION(1,001,000) ? \
 	 READ_LE_UINT16((byte *) (obj->base_method + i)) : \
@@ -485,12 +477,6 @@ public:
 
 /* CloneTable */
 struct CloneTable : public Table<Clone> {
-	virtual void freeEntry(int idx) {
-		Table<Clone>::freeEntry(idx);
-
-		free(_table[idx].variables); // Free the dynamically allocated memory part
-	}
-
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 };

@@ -361,9 +361,6 @@ void Script::freeScript() {
 	buf = NULL;
 	buf_size = 0;
 
-	for (uint i = 0; i < _objects.size(); i++) {
-		free(_objects[i].variables);
-	}
 	_objects.clear();
 
 	delete obj_indices;
@@ -498,38 +495,37 @@ int SegManager::getSynonymsNr(int id, idFlag flag) {
 	return scr->synonyms_nr;
 }
 
-int SegManager::relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location) {
+int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location) {
 	int rel = location - block_location;
-	int index;
 
 	if (rel < 0)
 		return 0;
 
-	index = rel >> 1;
+	uint idx = rel >> 1;
 
-	if (index >= block_items)
+	if (idx >= block.size())
 		return 0;
 
 	if (rel & 1) {
-		sciprintf("Error: Attempt to relocate odd variable #%d.5e (relative to %04x)\n", index, block_location);
+		sciprintf("Error: Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
 		return 0;
 	}
-	block[index].segment = segment; // Perform relocation
+	block[idx].segment = segment; // Perform relocation
 	if (isSci1_1)
-		block[index].offset += getScript(segment, SEG_ID)->script_size;
+		block[idx].offset += getScript(segment, SEG_ID)->script_size;
 
 	return 1;
 }
 
 int SegManager::relocateLocal(Script *scr, SegmentId segment, int location) {
 	if (scr->locals_block)
-		return relocateBlock(scr->locals_block->locals, scr->locals_offset, scr->locals_block->nr, segment, location);
+		return relocateBlock(scr->locals_block->_locals, scr->locals_offset, segment, location);
 	else
 		return 0; // No hands, no cookies
 }
 
 int SegManager::relocateObject(Object *obj, SegmentId segment, int location) {
-	return relocateBlock(obj->variables, obj->pos.offset, obj->variables_nr, segment, location);
+	return relocateBlock(obj->_variables, obj->pos.offset, segment, location);
 }
 
 void SegManager::scriptAddCodeBlock(reg_t location) {
@@ -573,11 +569,11 @@ void SegManager::scriptRelocate(reg_t block) {
 				sciprintf("While processing relocation block "PREG":\n", PRINT_REG(block));
 				sciprintf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
 				if (scr->locals_block)
-					sciprintf("- locals: %d at %04x\n", scr->locals_block->nr, scr->locals_offset);
+					sciprintf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
 				else
 					sciprintf("- No locals\n");
 				for (k = 0; k < scr->_objects.size(); k++)
-					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k].variables_nr);
+					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
 // SQ3 script 71 has broken relocation entries.
 // Since this is mainstream, we can't break out as we used to do.
 				sciprintf("Trying to continue anyway...\n");
@@ -614,11 +610,11 @@ void SegManager::heapRelocate(EngineState *s, reg_t block) {
 				sciprintf("While processing relocation block "PREG":\n", PRINT_REG(block));
 				sciprintf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
 				if (scr->locals_block)
-					sciprintf("- locals: %d at %04x\n", scr->locals_block->nr, scr->locals_offset);
+					sciprintf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
 				else
 					sciprintf("- No locals\n");
 				for (k = 0; k < scr->_objects.size(); k++)
-					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k].variables_nr);
+					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
 				sciprintf("Triggering breakpoint...\n");
 				BREAKPOINT();
 			}
@@ -671,8 +667,7 @@ Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 		       // add again for classes, since those also store selectors
 		       + (is_class ? functions_nr * 2 : 0) < scr->buf_size, "Function area extends beyond end of script");
 
-		obj->variables_nr = variables_nr;
-		obj->variables = (reg_t *)malloc(sizeof(reg_t) * variables_nr);
+		obj->_variables.resize(variables_nr);
 
 		obj->methods_nr = functions_nr;
 		obj->base = scr->buf;
@@ -681,7 +676,7 @@ Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 		obj->base_vars = NULL;
 
 		for (i = 0; i < variables_nr; i++)
-			obj->variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
+			obj->_variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
 	}
 
 	return obj;
@@ -727,16 +722,15 @@ Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 
 		VERIFY(((byte *) funct_area + functions_nr) < scr->buf + scr->buf_size, "Function area extends beyond end of script");
 
-		obj->variables_nr = variables_nr;
 		obj->variable_names_nr = variables_nr;
-		obj->variables = (reg_t *)malloc(sizeof(reg_t) * variables_nr);
+		obj->_variables.resize(variables_nr);
 
 		obj->methods_nr = functions_nr;
 		obj->base = scr->buf;
 		obj->base_obj = data;
 
 		for (i = 0; i < variables_nr; i++)
-			obj->variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
+			obj->_variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
 	}
 
 	return obj;
@@ -755,21 +749,19 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 		scr->locals_block = NULL;
 		return NULL;
 	} else {
-		MemObject *mobj;
 		LocalVariables *locals;
 
 		if (scr->locals_segment) {
-			mobj = _heap[scr->locals_segment];
-			VERIFY(mobj != NULL, "Re-used locals segment was NULL'd out");
-			VERIFY(mobj->getType() == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
-			VERIFY((*(LocalVariables *)mobj).script_id == scr->nr, "Re-used locals segment belonged to other script");
+			locals = (LocalVariables *)_heap[scr->locals_segment];
+			VERIFY(locals != NULL, "Re-used locals segment was NULL'd out");
+			VERIFY(locals->getType() == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
+			VERIFY(locals->script_id == scr->nr, "Re-used locals segment belonged to other script");
 		} else
-			mobj = allocNonscriptSegment(MEM_OBJ_LOCALS, &scr->locals_segment);
+			locals = (LocalVariables *)allocNonscriptSegment(MEM_OBJ_LOCALS, &scr->locals_segment);
 
-		locals = scr->locals_block = (LocalVariables *)mobj;
+		scr->locals_block = locals;
 		locals->script_id = scr->nr;
-		locals->locals = (reg_t *)calloc(count, sizeof(reg_t));
-		locals->nr = count;
+		locals->_locals.resize(count);
 
 		return locals;
 	}
@@ -808,7 +800,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 		byte *base = (byte *)(scr->buf + location.offset);
 
 		for (i = 0; i < count; i++)
-			locals->locals[i].offset = READ_LE_UINT16(base + i * 2);
+			locals->_locals[i].offset = READ_LE_UINT16(base + i * 2);
 	}
 }
 
@@ -861,16 +853,16 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 		obj = scriptObjInit(s, reg);
 
 #if 0
-		if (obj->variables[5].offset != 0xffff) {
-			obj->variables[5] = INST_LOOKUP_CLASS(obj->variables[5].offset);
-			base_obj = obj_get(s, obj->variables[5]);
+		if (obj->_variables[5].offset != 0xffff) {
+			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
+			base_obj = obj_get(s, obj->_variables[5]);
 			obj->variable_names_nr = base_obj->variables_nr;
 			obj->base_obj = base_obj->base_obj;
 		}
 #endif
 
 		// Copy base from species class, as we need its selector IDs
-		obj->variables[6] = INST_LOOKUP_CLASS(obj->variables[6].offset);
+		obj->_variables[6] = INST_LOOKUP_CLASS(obj->_variables[6].offset);
 
 		seeker += READ_LE_UINT16(seeker + 2) * 2;
 	}
@@ -1032,8 +1024,11 @@ byte *Script::dereference(reg_t pointer, int *size) {
 }
 
 byte *LocalVariables::dereference(reg_t pointer, int *size) {
-	int count = nr * sizeof(reg_t);
-	byte *base = (byte *)locals;
+	// FIXME: The following doesn't seem to be endian safe.
+	// To fix this, we'd have to always treat the reg_t
+	// values stored here as in the little endian format.
+	int count = _locals.size() * sizeof(reg_t);
+	byte *base = (byte *)&_locals[0];
 
 	if (size)
 		*size = count;
@@ -1164,8 +1159,8 @@ void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, 
 				(*note)(param, make_reg(script->locals_segment, 0));
 
 			Object &obj = script->_objects[idx];
-			for (int i = 0; i < obj.variables_nr; i++)
-				(*note)(param, obj.variables[i]);
+			for (uint i = 0; i < obj._variables.size(); i++)
+				(*note)(param, obj._variables[i]);
 		} else {
 			warning("Request for outgoing script-object reference at "PREG" yielded invalid index %d", PRINT_REG(addr), idx);
 		}
@@ -1188,7 +1183,6 @@ void Table<T>::listAllDeallocatable(SegmentId segId, void *param, NoteCallback n
 void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	CloneTable *clone_table = this;
 	Clone *clone;
-	int i;
 
 //	assert(addr.segment == _segId);
 
@@ -1201,8 +1195,8 @@ void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *par
 	clone = &(clone_table->_table[addr.offset]);
 
 	// Emit all member variables (including references to the 'super' delegate)
-	for (i = 0; i < clone->variables_nr; i++)
-		(*note)(param, clone->variables[i]);
+	for (uint i = 0; i < clone->_variables.size(); i++)
+		(*note)(param, clone->_variables[i]);
 
 	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
 	(*note)(param, clone->pos);
@@ -1229,8 +1223,6 @@ void CloneTable::freeAtAddress(SegManager *segmgr, reg_t addr) {
 		sciprintf("[GC] Clone "PREG": Freeing\n", PRINT_REG(addr));
 		sciprintf("[GC] Clone had pos "PREG"\n", PRINT_REG(victim_obj->pos));
 	*/
-	free(victim_obj->variables);
-	victim_obj->variables = NULL;
 	clone_table->freeEntry(addr.offset);
 }
 
@@ -1248,8 +1240,8 @@ reg_t LocalVariables::findCanonicAddress(SegManager *segmgr, reg_t addr) {
 void LocalVariables::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 //	assert(addr.segment == _segId);
 
-	for (int i = 0; i < nr; i++)
-		(*note)(param, locals[i]);
+	for (uint i = 0; i < _locals.size(); i++)
+		(*note)(param, _locals[i]);
 }
 
 

@@ -395,7 +395,7 @@ private:
 	Hunk *alloc_Hunk(reg_t *);
 
 	int relocateLocal(Script *scr, SegmentId segment, int location);
-	int relocateBlock(reg_t *block, int block_location, int block_items, SegmentId segment, int location);
+	int relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location);
 	int relocateObject(Object *obj, SegmentId segment, int location);
 
 	int findFreeId(int *id);

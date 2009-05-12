@@ -72,16 +72,16 @@ static reg_t &validate_property(Object *obj, int index) {
 		return _dummy_register;
 	}
 
-	if (index < 0 || index >= obj->variables_nr) {
+	if (index < 0 || (uint)index >= obj->_variables.size()) {
 		if (sci_debug_flags & 4)
 			sciprintf("[VM] Invalid property #%d (out of [0..%d]) requested!\n", index,
-			          obj->variables_nr);
+			          obj->_variables.size());
 
 		_dummy_register = NULL_REG;
 		return _dummy_register;
 	}
 
-	return obj->variables[index];
+	return obj->_variables[index];
 }
 
 static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
@@ -176,7 +176,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #  define validate_variable(r, sb, t, m, i, l)
 #  define validate_read_var(r, sb, t, m, i, l) ((r)[i])
 #  define validate_write_var(r, sb, t, m, i, l, v) ((r)[i] = (v))
-#  define validate_property(o, p) ((o)->variables[p])
+#  define validate_property(o, p) ((o)->_variables[p])
 #  define ASSERT_ARITHMETIC(v) (v).offset
 
 #endif
@@ -614,7 +614,7 @@ void run_vm(EngineState *s, int restoring) {
 #ifndef DISABLE_VALIDATIONS
 	// Initialize maximum variable count
 	if (s->script_000->locals_block)
-		variables_max[VAR_GLOBAL] = s->script_000->locals_block->nr;
+		variables_max[VAR_GLOBAL] = s->script_000->locals_block->_locals.size();
 	else
 		variables_max[VAR_GLOBAL] = 0;
 #endif
@@ -625,7 +625,7 @@ void run_vm(EngineState *s, int restoring) {
 
 	// SCI code reads the zeroeth argument to determine argc
 	if (s->script_000->locals_block)
-		variables_base[VAR_GLOBAL] = variables[VAR_GLOBAL] = s->script_000->locals_block->locals;
+		variables_base[VAR_GLOBAL] = variables[VAR_GLOBAL] = s->script_000->locals_block->_locals.begin();
 	else
 		variables_base[VAR_GLOBAL] = variables[VAR_GLOBAL] = NULL;
 
@@ -682,12 +682,12 @@ void run_vm(EngineState *s, int restoring) {
 
 					variables_seg[VAR_LOCAL] = local_script->locals_segment;
 					if (local_script->locals_block)
-						variables_base[VAR_LOCAL] = variables[VAR_LOCAL] = local_script->locals_block->locals;
+						variables_base[VAR_LOCAL] = variables[VAR_LOCAL] = local_script->locals_block->_locals.begin();
 					else
 						variables_base[VAR_LOCAL] = variables[VAR_LOCAL] = NULL;
 #ifndef DISABLE_VALIDATIONS
 					if (local_script->locals_block)
-						variables_max[VAR_LOCAL] = local_script->locals_block->nr;
+						variables_max[VAR_LOCAL] = local_script->locals_block->_locals.size();
 					else
 						variables_max[VAR_LOCAL] = 0;
 					variables_max[VAR_TEMP] = xs->sp - xs->fp;
@@ -1489,10 +1489,10 @@ static int _obj_locate_varselector(EngineState *s, Object *obj, Selector slc) {
 	} else {
 		byte *buf = (byte *) obj->base_vars;
 		int i;
-		int varnum = obj->variables[1].offset;
+		int varnum = obj->_variables[1].offset;
 
-		if (!(obj->variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-			buf = ((byte *) obj_get(s, obj->variables[SCRIPT_SUPERCLASS_SELECTOR])->base_vars);
+		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
+			buf = ((byte *) obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR])->base_vars);
 
 		for (i = 0; i < varnum; i++)
 			if (READ_LE_UINT16(buf + (i << 1)) == slc) // Found it?
@@ -1534,8 +1534,8 @@ static SelectorType _lookup_selector_function(EngineState *s, int seg_id, Object
 
 			return kSelectorMethod;
 		} else {
-			seg_id = obj->variables[SCRIPT_SUPERCLASS_SELECTOR].segment;
-			obj = obj_get(s, obj->variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			seg_id = obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].segment;
+			obj = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 		}
 	}
 
@@ -1561,13 +1561,13 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 	if (IS_CLASS(obj))
 		species = obj;
 	else
-		species = obj_get(s, obj->variables[SCRIPT_SPECIES_SELECTOR]);
+		species = obj_get(s, obj->_variables[SCRIPT_SPECIES_SELECTOR]);
 
 
 	if (!obj) {
 		CORE_ERROR("SLC-LU", "Error while looking up Species class");
 		sciprintf("Original address was "PREG"\n", PRINT_REG(obj_location));
-		sciprintf("Species address was "PREG"\n", PRINT_REG(obj->variables[SCRIPT_SPECIES_SELECTOR]));
+		sciprintf("Species address was "PREG"\n", PRINT_REG(obj->_variables[SCRIPT_SPECIES_SELECTOR]));
 		return kSelectorNone;
 	}
 
@@ -1576,7 +1576,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 	if (index >= 0) {
 		// Found it as a variable
 		if (vptr)
-			*vptr = obj->variables + index;
+			*vptr = &obj->_variables[index];
 		return kSelectorVariable;
 	}
 
@@ -1851,14 +1851,14 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 			Object *base_obj;
 
 			// Instantiate the superclass, if neccessary
-			obj->variables[SCRIPT_SPECIES_SELECTOR] = INST_LOOKUP_CLASS(obj->variables[SCRIPT_SPECIES_SELECTOR].offset);
+			obj->_variables[SCRIPT_SPECIES_SELECTOR] = INST_LOOKUP_CLASS(obj->_variables[SCRIPT_SPECIES_SELECTOR].offset);
 
-			base_obj = obj_get(s, obj->variables[SCRIPT_SPECIES_SELECTOR]);
-			obj->variable_names_nr = base_obj->variables_nr;
+			base_obj = obj_get(s, obj->_variables[SCRIPT_SPECIES_SELECTOR]);
+			obj->variable_names_nr = base_obj->_variables.size();
 			obj->base_obj = base_obj->base_obj;
 			// Copy base from species class, as we need its selector IDs
 
-			obj->variables[SCRIPT_SUPERCLASS_SELECTOR] = INST_LOOKUP_CLASS(obj->variables[SCRIPT_SUPERCLASS_SELECTOR].offset);
+			obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = INST_LOOKUP_CLASS(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].offset);
 		} // if object or class
 		break;
 		case sci_obj_pointers: // A relocation table
@@ -2114,7 +2114,7 @@ const char *obj_get_name(EngineState *s, reg_t pos) {
 	if (!obj)
 		return "<no such object>";
 
-	return (const char *)(obj->base + obj->variables[SCRIPT_NAME_SELECTOR].offset);
+	return (const char *)(obj->base + obj->_variables[SCRIPT_NAME_SELECTOR].offset);
 }
 
 void quit_vm() {

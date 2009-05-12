@@ -44,7 +44,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->kernel_opt_flags & KERNEL_OPT_FLAG_GOT_2NDEVENT) {
 		// Penalty time- too many requests to this function without
 		// waiting!
-		int delay = s->script_000->locals_block->locals[SCI_VARIABLE_GAME_SPEED].offset;
+		int delay = s->script_000->locals_block->_locals[SCI_VARIABLE_GAME_SPEED].offset;
 
 		gfxop_sleep(s->gfx_state, delay * 1000 / 60);
 	}
