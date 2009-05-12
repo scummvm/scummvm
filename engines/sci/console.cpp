@@ -82,6 +82,8 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
 	DCmd_Register("kernelnames",		WRAP_METHOD(Console, cmdKernelNames));
+	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
+	DCmd_Register("words",				WRAP_METHOD(Console, cmdWords));
 	DCmd_Register("man",				WRAP_METHOD(Console, cmdMan));
 }
 
@@ -139,6 +141,54 @@ bool Console::cmdKernelNames(int argc, const char **argv) {
 		DebugPrintf("%03x: %20s | ", seeker, kernelNames[seeker].c_str());
 		if (seeker % 3 == 0)
 			DebugPrintf("\n");
+	}
+
+	DebugPrintf("\n");
+
+	return true;
+}
+
+bool Console::cmdSuffixes(int argc, const char **argv) {
+	SuffixList suffixes;
+	char word_buf[256], alt_buf[256];
+
+	if (!vocab_get_suffixes(_vm->getResMgr(), suffixes)) {
+		DebugPrintf("No suffix vocabulary.\n");
+		return true;
+	}
+
+	int i = 0;
+	for (SuffixList::const_iterator suf = suffixes.begin(); suf != suffixes.end(); ++suf) {
+		strncpy(word_buf, suf->word_suffix, suf->word_suffix_length);
+		word_buf[suf->word_suffix_length] = 0;
+		strncpy(alt_buf, suf->alt_suffix, suf->alt_suffix_length);
+		alt_buf[suf->alt_suffix_length] = 0;
+
+		DebugPrintf("%4d: (%03x) -%12s  =>  -%12s (%03x)\n", i, suf->class_mask, word_buf, alt_buf, suf->result_class);
+		++i;
+	}
+
+	vocab_free_suffixes(_vm->getResMgr(), suffixes);
+
+	return true;
+}
+
+bool Console::cmdWords(int argc, const char **argv) {
+	WordMap words;
+
+	vocab_get_words(_vm->getResMgr(), words);
+
+	if (words.empty()) {
+		DebugPrintf("No vocabulary.\n");
+		return true;
+	}
+
+	int j = 0;
+	for (WordMap::iterator i = words.begin(); i != words.end(); ++i) {
+		DebugPrintf("%4d: %03x [%03x] %20s |", j, i->_value._class, i->_value._group, i->_key.c_str());
+		if (j % 3 == 0)
+			DebugPrintf("\n");
+		j++;
 	}
 
 	DebugPrintf("\n");

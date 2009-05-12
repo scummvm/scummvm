@@ -679,50 +679,6 @@ static ResourceType parseResourceType(const char *resid) {
 	return res;
 }
 
-static int c_list_words(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	WordMap words;
-
-	vocab_get_words(s->resmgr, words);
-
-	if (words.empty()) {
-		sciprintf("No vocabulary.\n");
-		return 1;
-	}
-
-	int j = 0;
-	for (WordMap::iterator i = words.begin(); i != words.end(); ++i) {
-		sciprintf("%4d: %03x [%03x] %s\n", j, i->_value._class, i->_value._group, i->_key.c_str());
-		j++;
-	}
-
-	return 0;
-}
-
-int c_list_suffixes(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	SuffixList suffixes;
-	char word_buf[256], alt_buf[256];
-
-	if (!vocab_get_suffixes(s->resmgr, suffixes)) {
-		sciprintf("No suffix vocabulary.\n");
-		return 1;
-	}
-
-	int i = 0;
-	for (SuffixList::const_iterator suf = suffixes.begin(); suf != suffixes.end(); ++suf) {
-		strncpy(word_buf, suf->word_suffix, suf->word_suffix_length);
-		word_buf[suf->word_suffix_length] = 0;
-		strncpy(alt_buf, suf->alt_suffix, suf->alt_suffix_length);
-		alt_buf[suf->alt_suffix_length] = 0;
-
-		sciprintf("%4d: (%03x) -%12s  =>  -%12s (%03x)\n", i, suf->class_mask, word_buf, alt_buf, suf->result_class);
-		++i;
-	}
-
-	vocab_free_suffixes(s->resmgr, suffixes);
-
-	return 0;
-}
-
 static void _cmd_print_command(cmd_mm_entry_t *data, int full) {
 	const char *paramseeker = ((cmd_command_t *)data)->param;
 
@@ -787,8 +743,6 @@ static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		          "docs       - lists all misc. documentation\n"
 		          "\n"
 		          "restypes   - lists all resource types\n"
-		          "words      - lists all kernel words\n"
-		          "suffixes   - lists all suffix replacements\n"
 		          "[resource] - lists all [resource]s");
 	} else if (cmdParams.size() == 1) {
 		const char *mm_subsects[3] = {"cmds", "vars", "docs"};
@@ -808,11 +762,6 @@ static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 				return 1;
 			}
 
-			else if (!strcmp("suffixes", cmdParams[0].str) || !strcmp("suffices", cmdParams[0].str) || !strcmp("sufficos", cmdParams[0].str))
-				// sufficos: Accusative Plural of 'suffix'
-				return c_list_suffixes(s, cmdParams);
-			else if (!strcmp("words", cmdParams[0].str))
-				return c_list_words(s, cmdParams);
 			else if (strcmp("restypes", cmdParams[0].str) == 0) {
 				for (i = 0; i < kResourceTypeInvalid; i++)
 					sciprintf("%s\n", getResourceTypeName((ResourceType)i));
