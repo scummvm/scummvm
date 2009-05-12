@@ -451,7 +451,6 @@ reg_t kGetSaveDir(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv);
-reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv);

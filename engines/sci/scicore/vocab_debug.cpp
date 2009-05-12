@@ -276,7 +276,7 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x79*/ "ATan",
 	/*0x7a*/ "Lock",         
 	/*0x7b*/ "StrSplit",       
-	/*0x7c*/ "GetMessage",
+	/*0x7c*/ "Message",
 	/*0x7d*/ "IsItSkip"
 };
 
@@ -456,7 +456,7 @@ static void vocabulary_get_knames1(ResourceManager *resmgr, Common::StringList &
 		names[i] = sci1_default_knames[i];
 }
 
-//
+#ifdef ENABLE_SCI32
 static void vocabulary_get_knames11(ResourceManager *resmgr, Common::StringList &names) {
 /*
  999.voc format for SCI1.1 games:
@@ -481,6 +481,7 @@ static void vocabulary_get_knames11(ResourceManager *resmgr, Common::StringList 
 		names[i] = Common::String((char *)r->data + off + 2, len);
 	}
 }
+#endif
 
 void vocabulary_get_knames(ResourceManager *resmgr, Common::StringList &names) {
 	names.clear();
@@ -502,7 +503,7 @@ void vocabulary_get_knames(ResourceManager *resmgr, Common::StringList &names) {
 		vocabulary_get_knames1(resmgr, names);
 		break;
 	case SCI_VERSION_1_1:
-		vocabulary_get_knames11(resmgr, names);
+		vocabulary_get_knames1(resmgr, names);
 		break;
 #ifdef ENABLE_SCI32
 	case SCI_VERSION_32:

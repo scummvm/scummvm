@@ -729,6 +729,27 @@ static MessageState state;
 reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	MessageTuple tuple;
 
+	if (argc == 4) {
+		// Earlier version of of this function (GetMessage)
+		tuple.noun = UKPV(0);
+		int module = UKPV(1);
+		tuple.verb = UKPV(2);
+		tuple.cond = 0;
+		tuple.seq = 1;
+
+		if (state.loadRes(s->resmgr, module, true) && state.getMessage(&tuple)) {
+			int len = state.getLength();
+			char *buffer = kernel_dereference_char_pointer(s, argv[3], len + 1);
+
+			if (buffer) {
+				state.getText(buffer);
+				return argv[3];
+			}
+		}
+
+		return NULL_REG;
+	}
+
 	switch (UKPV(0)) {
 	case 0:
 	case 2:
@@ -802,27 +823,6 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	default:
 		warning("kMessage subfunction %i invoked (not implemented)", UKPV(0));
-	}
-
-	return NULL_REG;
-}
-
-reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	MessageTuple tuple;
-	tuple.noun = UKPV(0);
-	int module = UKPV(1);
-	tuple.verb = UKPV(2);
-	tuple.cond = 0;
-	tuple.seq = 0;
-
-	if (state.loadRes(s->resmgr, module, true) && state.getMessage(&tuple)) {
-		int len = state.getLength();
-		char *buffer = kernel_dereference_char_pointer(s, argv[3], len + 1);
-
-		if (buffer) {
-			state.getText(buffer);
-			return argv[3];
-		}
 	}
 
 	return NULL_REG;

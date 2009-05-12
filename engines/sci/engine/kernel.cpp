@@ -201,7 +201,6 @@ SciKernelFunction kfunct_mappers[] = {
 	/*(?)*/	DEFUN("TimesCot", kTimesCot, "ii"),
 	/*(?)*/	DEFUN("TimesTan", kTimesTan, "ii"),
 	DEFUN("Message", kMessage, ".*"),
-	DEFUN("GetMessage", kGetMessage, "iiir"),
 	DEFUN("DoAudio", kDoAudio, ".*"),
 	DEFUN("DoSync", kDoSync, ".*"),
 

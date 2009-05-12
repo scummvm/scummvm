@@ -33,7 +33,7 @@ void MessageState::parse(IndexRecordCursor *cursor, MessageTuple *t) {
 	t->verb = *(cursor->index_record + 1);
 	if (_version == 2101) {
 		t->cond = 0;
-		t->seq = 0;
+		t->seq = 1;
 	} else {
 		t->cond = *(cursor->index_record + 2);
 		t->seq = *(cursor->index_record + 3);
