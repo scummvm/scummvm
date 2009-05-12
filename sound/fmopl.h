@@ -72,7 +72,7 @@ public:
 	/**
 	 * Detects a driver for the specific type.
 	 */
-	static DriverId detect(OplType type = kOpl2);
+	static DriverId detect(OplType type);
 
 	/**
 	 * Creates the specific driver with a specific type setup.
@@ -81,8 +81,9 @@ public:
 
 	/**
 	 * Wrapper to easily init an OPL chip, without specifing an emulator.
+	 * By default it will try to initialize an OPL2 emulator, thus an AdLib card.
 	 */
-	static OPL *create(OplType type) { return create(detect(type), type); }
+	static OPL *create(OplType type = kOpl2) { return create(detect(type), type); }
 
 private:
 	static const EmulatorDescription _drivers[];	
