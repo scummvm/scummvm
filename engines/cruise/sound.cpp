@@ -119,8 +119,9 @@ void MusicPlayer::loadSong(const char *name) {
 
 	// Get the file without the extension
 	strcpy(baseName, name);
-	char *p = strchr(tempName, '.');
-	if (p) *p = '\0';
+	char *p = strchr(baseName, '.');
+	if (p)
+		*p = '\0';
 
 	// Get the instruments states file
 	strcpy(tempName, baseName);
