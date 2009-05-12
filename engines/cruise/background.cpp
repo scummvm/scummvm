@@ -206,7 +206,8 @@ int loadBackground(const char *name, int idx) {
 	}
 
 
-	strcpy(backgroundTable[idx].name, name);
+	if (name != backgroundTable[idx].name)
+		strcpy(backgroundTable[idx].name, name);
 
 	return (0);
 }

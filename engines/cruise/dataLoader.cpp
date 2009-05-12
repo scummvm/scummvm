@@ -499,7 +499,8 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		}
 		}
 
-		strcpy(filesDatabase[fileIndex].subData.name, name);
+		if (name != filesDatabase[fileIndex].subData.name)
+			strcpy(filesDatabase[fileIndex].subData.name, name);
 
 		// create the mask
 		switch (localBuffer.type) {
