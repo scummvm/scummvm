@@ -46,21 +46,6 @@ namespace Sci {
 ** - "FTU" means "First To Use"
 */
 
-#define SCI_VERSION_FTU_NEW_GETTIME SCI_VERSION(0,000,629)
-/* These versions of SCI has a different set of subfunctions in GetTime() */
-
-#define SCI_VERSION_FTU_NEWER_DRAWPIC_PARAMETERS SCI_VERSION(0,000,502)
-/* Last version known not to do this: 0.000.435
-** Old SCI versions used to interpret the third DrawPic() parameter inversely,
-** with the opposite default value (obviously)
-*/
-
-#define SCI_VERSION_FTU_PRIORITY_14_ZONES SCI_VERSION(0,000,502)
-/* Last version known to do this: 0.000.490
- * Uses 14 zones from 42 to 190 instead of 15 zones from 42 to 200.
-*/
-
-
 #define SCI_VERSION_FTU_NEW_SCRIPT_HEADER SCI_VERSION(0,000,395)
 /* Last version known not to do this: 0.000.343
 ** Old SCI versions used two word header for script blocks (first word equal
@@ -81,16 +66,32 @@ namespace Sci {
    clobbered the old songs.
 */
 
-#define SCI_VERSION_FTU_INVERSE_CANBEHERE SCI_VERSION(1,000,510)
-/* FIXME: This shouldn't be a version number.
- * But it'll do for now.
- */
+#define SCI_VERSION_FTU_NEWER_DRAWPIC_PARAMETERS SCI_VERSION(0,000,502)
+/* Last version known not to do this: 0.000.435
+** Old SCI versions used to interpret the third DrawPic() parameter inversely,
+** with the opposite default value (obviously)
+*/
+
+#define SCI_VERSION_FTU_PRIORITY_14_ZONES SCI_VERSION(0,000,502)
+/* Last version known to do this: 0.000.490
+ * Uses 14 zones from 42 to 190 instead of 15 zones from 42 to 200.
+*/
+
+#define SCI_VERSION_FTU_NEW_GETTIME SCI_VERSION(0,000,629)
+/* These versions of SCI has a different set of subfunctions in GetTime() */
+
+#define SCI_VERSION_FTU_DOSOUND_VARIANT_1 SCI_VERSION(1,000,000)
 
 #define SCI_VERSION_FTU_LOFS_ABSOLUTE SCI_VERSION(1,000,200)
 /* First version known to do this: ?
    In later versions (SCI1 and beyond), the argument of lofs[as]
    instructions is absolute rather than relative.
 */
+
+#define SCI_VERSION_FTU_INVERSE_CANBEHERE SCI_VERSION(1,000,510)
+/* FIXME: This shouldn't be a version number.
+ * But it'll do for now.
+ */
 
 #define SCI_VERSION_FTU_DISPLAY_COORDS_FUZZY SCI_VERSION(1,000,510)
 /* First version known to do this: ?
@@ -99,7 +100,6 @@ namespace Sci {
    fits.
 */
 
-#define SCI_VERSION_FTU_DOSOUND_VARIANT_1 SCI_VERSION(1,000,000)
 #define SCI_VERSION_FTU_DOSOUND_VARIANT_2 SCI_VERSION(1,000,510)
 
 
