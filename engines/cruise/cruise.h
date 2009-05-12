@@ -46,7 +46,7 @@ enum CruiseGameType {
 
 #define MAX_LANGUAGE_STRINGS 25
 
-enum LangStringId { ID_PAUSED = 0, ID_INVENTORY = 5, ID_PLAYER_MENU = 7,
+enum LangStringId { ID_PAUSED = 0, ID_INVENTORY = 5, ID_SPEAK_ABOUT = 6, ID_PLAYER_MENU = 7,
 	ID_SAVE = 9, ID_LOAD = 10, ID_RESTART = 11, ID_QUIT = 12};
 
 struct CRUISEGameDescription;

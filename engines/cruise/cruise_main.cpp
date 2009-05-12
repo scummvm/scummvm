@@ -799,7 +799,7 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 
 	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
 
-	menuTable[0] = createMenu(x, y, "Parler de...");
+	menuTable[0] = createMenu(x, y, _vm->langString(ID_SPEAK_ABOUT));
 
 	for (j = 1; j < numOfLoadedOverlay; j++) {
 		if (overlayTable[j].alreadyLoaded) {
