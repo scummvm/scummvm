@@ -35,6 +35,8 @@ ResourceLoader *g_resourceloader = NULL;
 
 ResourceLoader::ResourceLoader() {
 	int lab_counter = 0;
+	_cacheDirty = false;
+
 	Lab *l;
 	Common::ArchiveMemberList files;
 
@@ -81,7 +83,7 @@ ResourceLoader::~ResourceLoader() {
 		delete (*i);
 }
 
-const Lab *ResourceLoader::findFile(const char *filename) const {
+const Lab *ResourceLoader::getLab(const char *filename) const {
 	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); i++)
 		if ((*i)->fileExists(filename))
 			return *i;
@@ -89,12 +91,36 @@ const Lab *ResourceLoader::findFile(const char *filename) const {
 	return NULL;
 }
 
+static int sortCallback(const void *entry1, const void *entry2) {
+	return strcasecmp(((ResourceLoader::ResourceCache *)entry1)->fname, ((ResourceLoader::ResourceCache *)entry2)->fname);
+}
+
+Resource *ResourceLoader::getFileFromCache(const char *filename) {
+	ResourceLoader::ResourceCache *entry = getEntryFromCache(filename);
+	if (entry)
+		return entry->resPtr;
+	else
+		return NULL;
+}
+
+ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const char *filename) {
+	if (_cacheDirty) {
+		qsort(_cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
+		_cacheDirty = false;
+	}
+
+	ResourceCache key;
+	key.fname = (char *)filename;
+
+	return (ResourceLoader::ResourceCache *)bsearch(&key, _cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
+}
+
 bool ResourceLoader::fileExists(const char *filename) const {
-	return findFile(filename) != NULL;
+	return getLab(filename) != NULL;
 }
 
 Block *ResourceLoader::getFileBlock(const char *filename) const {
-	const Lab *l = findFile(filename);
+	const Lab *l = getLab(filename);
 	if (!l)
 		return NULL;
 	else
@@ -102,7 +128,7 @@ Block *ResourceLoader::getFileBlock(const char *filename) const {
 }
 
 LuaFile *ResourceLoader::openNewStreamLua(const char *filename) const {
-	const Lab *l = findFile(filename);
+	const Lab *l = getLab(filename);
 
 	if (!l)
 		return NULL;
@@ -111,7 +137,7 @@ LuaFile *ResourceLoader::openNewStreamLua(const char *filename) const {
 }
 
 Common::File *ResourceLoader::openNewStreamFile(const char *filename) const {
-	const Lab *l = findFile(filename);
+	const Lab *l = getLab(filename);
 
 	if (!l)
 		return NULL;
@@ -120,7 +146,7 @@ Common::File *ResourceLoader::openNewStreamFile(const char *filename) const {
 }
 
 int ResourceLoader::fileLength(const char *filename) const {
-	const Lab *l = findFile(filename);
+	const Lab *l = getLab(filename);
 	if (l)
 		return l->fileLength(filename);
 	else
@@ -130,9 +156,9 @@ int ResourceLoader::fileLength(const char *filename) const {
 Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	CacheType::iterator i = _cache.find(fname.c_str());
-	if (i != _cache.end()) {
-		return dynamic_cast<Bitmap *>(i->second);
+	Resource *ptr = getFileFromCache(fname.c_str());
+	if (ptr) {
+		return dynamic_cast<Bitmap *>(ptr);
 	}
 
 	Block *b = getFileBlock(filename);
@@ -144,17 +170,24 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 
 	Bitmap *result = new Bitmap(filename, b->data(), b->len());
 	delete b;
-	_cache[fname.c_str()] = result;
+
+	ResourceCache entry;
+	entry.resPtr = result;
+	entry.fname = new char[fname.size() + 1];
+	strcpy(entry.fname, fname.c_str());
+	_cache.push_back(entry);
+	_cacheDirty = true;
+
 	return result;
 }
 
 CMap *ResourceLoader::loadColormap(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	CacheType::iterator i = _cache.find(fname.c_str());
+	Resource *ptr = getFileFromCache(fname.c_str());
 
-	if (i != _cache.end()) {
-		return dynamic_cast<CMap *>(i->second);
+	if (ptr) {
+		return dynamic_cast<CMap *>(ptr);
 	}
 
 	Block *b = getFileBlock(filename);
@@ -162,7 +195,14 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 		error("Could not find colormap %s", filename);
 	CMap *result = new CMap(filename, b->data(), b->len());
 	delete b;
-	_cache[fname.c_str()] = result;
+
+	ResourceCache entry;
+	entry.resPtr = result;
+	entry.fname = new char[fname.size() + 1];
+	strcpy(entry.fname, fname.c_str());
+	_cache.push_back(entry);
+	_cacheDirty = true;
+
 	return result;
 }
 
@@ -174,15 +214,17 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 		error("Could not find costume %s", filename);
 	Costume *result = new Costume(filename, b->data(), b->len(), prevCost);
 	delete b;
+
 	return result;
 }
 
 Font *ResourceLoader::loadFont(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	CacheType::iterator i = _cache.find(fname.c_str());
-	if (i != _cache.end()) {
-		return dynamic_cast<Font *>(i->second);
+	Resource *ptr = getFileFromCache(fname.c_str());
+
+	if (ptr) {
+		return dynamic_cast<Font *>(ptr);
 	}
 
 	Block *b = getFileBlock(filename);
@@ -190,16 +232,24 @@ Font *ResourceLoader::loadFont(const char *filename) {
 		error("Could not find font file %s", filename);
 	Font *result = new Font(filename, b->data(), b->len());
 	delete b;
-	_cache[fname.c_str()] = result;
+
+	ResourceCache entry;
+	entry.resPtr = result;
+	entry.fname = new char[fname.size() + 1];
+	strcpy(entry.fname, fname.c_str());
+	_cache.push_back(entry);
+	_cacheDirty = true;
+
 	return result;
 }
 
 KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	CacheType::iterator i = _cache.find(fname.c_str());
-	if (i != _cache.end()) {
-		return dynamic_cast<KeyframeAnim *>(i->second);
+	Resource *ptr = getFileFromCache(fname.c_str());
+
+	if (ptr) {
+		return dynamic_cast<KeyframeAnim *>(ptr);
 	}
 
 	Block *b = getFileBlock(filename);
@@ -207,7 +257,14 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 		error("Could not find keyframe file %s", filename);
 	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
 	delete b;
-	_cache[fname.c_str()] = result;
+
+	ResourceCache entry;
+	entry.resPtr = result;
+	entry.fname = new char[fname.size() + 1];
+	strcpy(entry.fname, fname.c_str());
+	_cache.push_back(entry);
+	_cacheDirty = true;
+
 	return result;
 }
 
@@ -216,9 +273,10 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 	fname.toLowercase();
 	LipSync *result;
 
-	CacheType::iterator i = _cache.find(fname.c_str());
-	if (i != _cache.end()) {
-		return dynamic_cast<LipSync *>(i->second);
+	Resource *ptr = getFileFromCache(fname.c_str());
+
+	if (ptr) {
+		return dynamic_cast<LipSync *>(ptr);
 	}
 
 	Block *b = getFileBlock(filename);
@@ -232,7 +290,12 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 		// Some lipsync files have no data
 		if (result->isValid()) {
 			delete b;
-			_cache[fname.c_str()] = result;
+			ResourceCache entry;
+			entry.resPtr = result;
+			entry.fname = new char[fname.size() + 1];
+			strcpy(entry.fname, fname.c_str());
+			_cache.push_back(entry);
+			_cacheDirty = true;
 		} else {
 			delete result;
 			result = NULL;
@@ -245,9 +308,10 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 	Common::String fname = Common::String(filename) + "@" + c.filename();
 	fname.toLowercase();
-	CacheType::iterator i = _cache.find(fname.c_str());
-	if (i != _cache.end()) {
-		return dynamic_cast<Material *>(i->second);
+	Resource *ptr = getFileFromCache(fname.c_str());
+
+	if (ptr) {
+		return dynamic_cast<Material *>(ptr);
 	}
 
 	Block *b = getFileBlock(filename);
@@ -255,16 +319,24 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 		error("Could not find material %s", filename);
 	Material *result = new Material(fname.c_str(), b->data(), b->len(), c);
 	delete b;
-	_cache[fname.c_str()] = result;
+
+	ResourceCache entry;
+	entry.resPtr = result;
+	entry.fname = new char[fname.size() + 1];
+	strcpy(entry.fname, fname.c_str());
+	_cache.push_back(entry);
+	_cacheDirty = true;
+
 	return result;
 }
 
 Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	CacheType::iterator i = _cache.find(fname.c_str());
-	if (i != _cache.end()) {
-		return dynamic_cast<Model *>(i->second);
+	Resource *ptr = getFileFromCache(fname.c_str());
+
+	if (ptr) {
+		return dynamic_cast<Model *>(ptr);
 	}
 
 	Block *b = getFileBlock(filename);
@@ -272,26 +344,29 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 		error("Could not find model %s", filename);
 	Model *result = new Model(filename, b->data(), b->len(), c);
 	delete b;
-	_cache[fname.c_str()] = result;
+
+	ResourceCache entry;
+	entry.resPtr = result;
+	entry.fname = new char[fname.size() + 1];
+	strcpy(entry.fname, fname.c_str());
+	_cache.push_back(entry);
+	_cacheDirty = true;
+
 	return result;
-}
-
-bool ResourceLoader::exportResource(const char *filename) {
-	FILE *myFile = fopen(filename, "w");
-	Block *b = getFileBlock(filename);
-
-	if (!b)
-		return false;
-	fwrite(b->data(), b->len(), 1, myFile);
-	fclose(myFile);
-	delete b;
-	return true;
 }
 
 void ResourceLoader::uncache(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	CacheType::iterator i = _cache.find(fname.c_str());
-	if (i != _cache.end())
-		_cache.erase(i);
+
+	if (_cacheDirty)
+		qsort(_cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
+
+	for (unsigned int i = 0; i < _cache.size(); i++) {
+		if (fname.compareTo(_cache[i].fname) == 0) {
+			delete[] _cache[i].fname;
+			_cache.remove_at(i);
+			_cacheDirty = true;
+		}
+	}
 }

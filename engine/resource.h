@@ -100,7 +100,6 @@ public:
 	LuaFile *openNewStreamLua(const char *filename) const;
 	int fileLength(const char *filename) const;
 
-	bool exportResource(const char *filename);
 	Bitmap *loadBitmap(const char *fname);
 	CMap *loadColormap(const char *fname);
 	Costume *loadCostume(const char *fname, Costume *prevCost);
@@ -111,19 +110,26 @@ public:
 	LipSync *loadLipSync(const char *fname);
 	void uncache(const char *fname);
 
+	struct ResourceCache {
+		char *fname;
+		Resource *resPtr;
+	};
+
 	ResourceLoader();
 	ResourceLoader(const ResourceLoader &);
 	~ResourceLoader();
-	const Lab *findFile(const char *filename) const;
+	const Lab *getLab(const char *filename) const;
+	Resource *getFileFromCache(const char *filename);
+	ResourceLoader::ResourceCache *getEntryFromCache(const char *filename);
+
 private:
 
 	typedef Common::List<Lab *> LabList;
 	LabList _labs;
-
-	typedef std::map<Common::String, Resource *> CacheType;
-	CacheType _cache;
-
 	Common::SearchSet _files;
+
+	Common::Array<ResourceCache> _cache;
+	bool _cacheDirty;
 
 	// Shut up pointless g++ warning
 	friend class dummy;
