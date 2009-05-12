@@ -1632,13 +1632,13 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 001, 113)
 	},
 
-	// Larry 6 - English/German DOS CD - LORES
+	// Larry 6 - English/German/French DOS CD - LORES
 	{{"lsl6", "", {
 		{"resource.map", 0, "0b91234b7112782962cb480b7791b6e2", 7263},
 		{"resource.000", 0, "57d5fe8bb9e044158514476ea7678eb0", 5754790},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		{},
-		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1_1,
 		SCI_VERSION(1, 001, 115)
 	},
 
