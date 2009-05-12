@@ -133,6 +133,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 	scriptData->sysFuncs = opcodes;
 
 	strncpy(scriptData->filename, filename, 13);
+	scriptData->filename[12] = 0;
 
 	return true;
 }
