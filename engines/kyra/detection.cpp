@@ -1036,8 +1036,8 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_PC98_SJIS_FLAGS
 	},
 
-	// TODO: It looks like this demo version does not WSA v2 files, thus being
-	// quite old... Our TIM player does not support that currently, thus
+	// TODO: It looks like this demo version does not use WSA v2 files, that means
+	// it is probably being quite old... Since our TIM player relies on WSA v2 features,
 	// we disable the detection entry for now.
 	/*{
 		{
