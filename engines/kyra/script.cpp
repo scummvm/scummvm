@@ -215,15 +215,15 @@ bool EMCInterpreter::run(EMCState *script) {
 #pragma mark - Command implementations
 #pragma mark -
 
-void EMCInterpreter::op_jmp(EMCState* script) {
+void EMCInterpreter::op_jmp(EMCState *script) {
 	script->ip = script->dataPtr->data + _parameter;
 }
 
-void EMCInterpreter::op_setRetValue(EMCState* script) {
+void EMCInterpreter::op_setRetValue(EMCState *script) {
 	script->retValue = _parameter;
 }
 
-void EMCInterpreter::op_pushRetOrPos(EMCState* script) {
+void EMCInterpreter::op_pushRetOrPos(EMCState *script) {
 	switch (_parameter) {
 	case 0:
 		script->stack[--script->sp] = script->retValue;
@@ -241,23 +241,23 @@ void EMCInterpreter::op_pushRetOrPos(EMCState* script) {
 	}
 }
 
-void EMCInterpreter::op_push(EMCState* script) {
+void EMCInterpreter::op_push(EMCState *script) {
 	script->stack[--script->sp] = _parameter;
 }
 
-void EMCInterpreter::op_pushReg(EMCState* script) {
+void EMCInterpreter::op_pushReg(EMCState *script) {
 	script->stack[--script->sp] = script->regs[_parameter];
 }
 
-void EMCInterpreter::op_pushBPNeg(EMCState* script) {
+void EMCInterpreter::op_pushBPNeg(EMCState *script) {
 	script->stack[--script->sp] = script->stack[(-(int32)(_parameter + 2)) + script->bp];
 }
 
-void EMCInterpreter::op_pushBPAdd(EMCState* script) {
+void EMCInterpreter::op_pushBPAdd(EMCState *script) {
 	script->stack[--script->sp] = script->stack[(_parameter - 1) + script->bp];
 }
 
-void EMCInterpreter::op_popRetOrPos(EMCState* script) {
+void EMCInterpreter::op_popRetOrPos(EMCState *script) {
 	switch (_parameter) {
 	case 0:
 		script->retValue = script->stack[script->sp++];
@@ -278,27 +278,27 @@ void EMCInterpreter::op_popRetOrPos(EMCState* script) {
 	}
 }
 
-void EMCInterpreter::op_popReg(EMCState* script) {
+void EMCInterpreter::op_popReg(EMCState *script) {
 	script->regs[_parameter] = script->stack[script->sp++];
 }
 
-void EMCInterpreter::op_popBPNeg(EMCState* script) {
+void EMCInterpreter::op_popBPNeg(EMCState *script) {
 	script->stack[(-(int32)(_parameter + 2)) + script->bp] = script->stack[script->sp++];
 }
 
-void EMCInterpreter::op_popBPAdd(EMCState* script) {
+void EMCInterpreter::op_popBPAdd(EMCState *script) {
 	script->stack[(_parameter - 1) + script->bp] = script->stack[script->sp++];
 }
 
-void EMCInterpreter::op_addSP(EMCState* script) {
+void EMCInterpreter::op_addSP(EMCState *script) {
 	script->sp += _parameter;
 }
 
-void EMCInterpreter::op_subSP(EMCState* script) {
+void EMCInterpreter::op_subSP(EMCState *script) {
 	script->sp -= _parameter;
 }
 
-void EMCInterpreter::op_sysCall(EMCState* script) {
+void EMCInterpreter::op_sysCall(EMCState *script) {
 	const uint8 id = _parameter;
 
 	assert(script->dataPtr->sysFuncs);
@@ -312,14 +312,14 @@ void EMCInterpreter::op_sysCall(EMCState* script) {
 	}
 }
 
-void EMCInterpreter::op_ifNotJmp(EMCState* script) {
+void EMCInterpreter::op_ifNotJmp(EMCState *script) {
 	if (!script->stack[script->sp++]) {
 		_parameter &= 0x7FFF;
 		script->ip = script->dataPtr->data + _parameter;
 	}
 }
 
-void EMCInterpreter::op_negate(EMCState* script) {
+void EMCInterpreter::op_negate(EMCState *script) {
 	int16 value = script->stack[script->sp];
 	switch (_parameter) {
 	case 0:
@@ -344,7 +344,7 @@ void EMCInterpreter::op_negate(EMCState* script) {
 	}
 }
 
-void EMCInterpreter::op_eval(EMCState* script) {
+void EMCInterpreter::op_eval(EMCState *script) {
 	int16 ret = 0;
 	bool error = false;
 
@@ -436,7 +436,7 @@ void EMCInterpreter::op_eval(EMCState* script) {
 		script->stack[--script->sp] = ret;
 }
 
-void EMCInterpreter::op_setRetAndJmp(EMCState* script) {
+void EMCInterpreter::op_setRetAndJmp(EMCState *script) {
 	if (script->sp >= EMCState::kStackLastEntry) {
 		script->ip = 0;
 	} else {
