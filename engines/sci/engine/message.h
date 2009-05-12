@@ -27,6 +27,7 @@
 #define SCI_ENGINE_MESSAGE_H
 
 #include "sci/scicore/resource.h"
+#include "common/stack.h"
 
 namespace Sci {
 
@@ -40,37 +41,39 @@ struct MessageTuple {
 struct IndexRecordCursor {
 	byte *index_record;
 	int index;
-	byte *resource_beginning;
+	int nextSeq;
 };
+
+typedef Common::Stack<IndexRecordCursor> CursorStack;
 
 class MessageState {
 public:
+	MessageState() : _module(-1) { }
 	int getMessage(MessageTuple *t);
 	int getNext();
 	int getTalker();
 	int getLength();
 	void getText(char *buffer);
-	int loadRes(int module);
+	int loadRes(ResourceManager *resmgr, int module, bool lock);
 	int isInitialized() { return _initialized; }
 	void initialize(ResourceManager *resmgr);
 	void setVersion(int version) { _version = version; }
 
 private:
-	void initIndexRecordCursor();
 	void parse(IndexRecordCursor *cursor, MessageTuple *t);
+	void parseRef(IndexRecordCursor *cursor, MessageTuple *t);
+	void initCursor();
+	void advanceCursor(bool increaseSeq);
 
 	int _initialized;
-	ResourceManager *_resmgr;
 	Resource *_currentResource;
 	int _module;
 	int _recordCount;
 	byte *_indexRecords;
+	CursorStack _cursorStack;
 	IndexRecordCursor _engineCursor;
-	MessageTuple _lastMessage;
 	int _version;
 };
-
-void message_state_initialize(ResourceManager *resmgr, MessageState *state);
 
 } // End of namespace Sci
 

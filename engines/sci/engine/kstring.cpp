@@ -727,9 +727,6 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 static MessageState state;
 
 reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (!state.isInitialized())
-		message_state_initialize(s->resmgr, &state);
-
 	MessageTuple tuple;
 
 	switch (UKPV(0)) {
@@ -738,9 +735,6 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case 3:
 	case 4:
 	case 5:
-		if (!state.loadRes(UKPV(1)))
-			return NULL_REG;
-
 		tuple.noun = UKPV(2);
 		tuple.verb = UKPV(3);
 		tuple.cond = UKPV(4);
@@ -749,7 +743,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	switch (UKPV(0)) {
 	case 0 :
-		if (state.getMessage(&tuple)) {
+		if (state.loadRes(s->resmgr, UKPV(1), true) && state.getMessage(&tuple)) {
 			char *buffer = NULL;
 
 			if ((argc == 7) && (argv[6] != NULL_REG))
@@ -759,6 +753,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			if (buffer)
 				state.getText(buffer);
+
 			// Talker id
 			return make_reg(0, talker);
 		} else {
@@ -783,6 +778,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			if (buffer)
 				state.getText(buffer);
+
 			// Talker id
 			return make_reg(0, talker);
 		} else {
@@ -796,11 +792,14 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			return NULL_REG;
 		}
-	case 2:
-		if (state.getMessage(&tuple))
-			return make_reg(0, state.getLength() + 1);
+	case 2: {
+		MessageState tempState;
+
+		if (tempState.loadRes(s->resmgr, UKPV(1), false) && tempState.getMessage(&tuple))
+			return make_reg(0, tempState.getLength() + 1);
 		else
 			return NULL_REG;
+	}
 	default:
 		warning("kMessage subfunction %i invoked (not implemented)", UKPV(0));
 	}
@@ -809,9 +808,6 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (!state.isInitialized())
-		message_state_initialize(s->resmgr, &state);
-
 	MessageTuple tuple;
 	tuple.noun = UKPV(0);
 	int module = UKPV(1);
@@ -819,7 +815,7 @@ reg_t kGetMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	tuple.cond = 0;
 	tuple.seq = 0;
 
-	if (state.loadRes(module) && state.getMessage(&tuple)) {
+	if (state.loadRes(s->resmgr, module, true) && state.getMessage(&tuple)) {
 		int len = state.getLength();
 		char *buffer = kernel_dereference_char_pointer(s, argv[3], len + 1);
 
