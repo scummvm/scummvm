@@ -183,8 +183,10 @@ void OptionsDialog::open() {
 		_midiPopUp->setSelectedTag(id);
 	}
 
-	if (_oplPopUp)
-		_oplPopUp->setSelectedTag(OPL::Config::parse(ConfMan.get("opl_driver", _domain)));
+	if (_oplPopUp) {
+		OPL::Config::DriverId id = MAX<OPL::Config::DriverId>(OPL::Config::parse(ConfMan.get("opl_driver", _domain)), 0);
+		_oplPopUp->setSelectedTag(id);
+	}
 
 	if (_outputRatePopUp) {
 		_outputRatePopUp->setSelected(1);
