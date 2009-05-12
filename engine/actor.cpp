@@ -471,7 +471,7 @@ void Actor::clearCostumes() {
 		popCostume();
 }
 
-void Actor::setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw ) {
+void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw) {
 	if (!_costumeStack.empty()) {
 		_costumeStack.back()->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
 	}
