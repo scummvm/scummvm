@@ -153,6 +153,15 @@ int ResourceLoader::fileLength(const char *filename) const {
 		return 0;
 }
 
+void ResourceLoader::putIntoCache(Common::String fname, Resource *res) {
+	ResourceCache entry;
+	entry.resPtr = res;
+	entry.fname = new char[fname.size() + 1];
+	strcpy(entry.fname, fname.c_str());
+	_cache.push_back(entry);
+	_cacheDirty = true;
+}
+
 Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
@@ -171,12 +180,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	Bitmap *result = new Bitmap(filename, b->data(), b->len());
 	delete b;
 
-	ResourceCache entry;
-	entry.resPtr = result;
-	entry.fname = new char[fname.size() + 1];
-	strcpy(entry.fname, fname.c_str());
-	_cache.push_back(entry);
-	_cacheDirty = true;
+	putIntoCache(fname, result);
 
 	return result;
 }
@@ -196,12 +200,7 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 	CMap *result = new CMap(filename, b->data(), b->len());
 	delete b;
 
-	ResourceCache entry;
-	entry.resPtr = result;
-	entry.fname = new char[fname.size() + 1];
-	strcpy(entry.fname, fname.c_str());
-	_cache.push_back(entry);
-	_cacheDirty = true;
+	putIntoCache(fname, result);
 
 	return result;
 }
@@ -233,12 +232,7 @@ Font *ResourceLoader::loadFont(const char *filename) {
 	Font *result = new Font(filename, b->data(), b->len());
 	delete b;
 
-	ResourceCache entry;
-	entry.resPtr = result;
-	entry.fname = new char[fname.size() + 1];
-	strcpy(entry.fname, fname.c_str());
-	_cache.push_back(entry);
-	_cacheDirty = true;
+	putIntoCache(fname, result);
 
 	return result;
 }
@@ -258,12 +252,7 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
 	delete b;
 
-	ResourceCache entry;
-	entry.resPtr = result;
-	entry.fname = new char[fname.size() + 1];
-	strcpy(entry.fname, fname.c_str());
-	_cache.push_back(entry);
-	_cacheDirty = true;
+	putIntoCache(fname, result);
 
 	return result;
 }
@@ -290,12 +279,7 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 		// Some lipsync files have no data
 		if (result->isValid()) {
 			delete b;
-			ResourceCache entry;
-			entry.resPtr = result;
-			entry.fname = new char[fname.size() + 1];
-			strcpy(entry.fname, fname.c_str());
-			_cache.push_back(entry);
-			_cacheDirty = true;
+			putIntoCache(fname, result);
 		} else {
 			delete result;
 			result = NULL;
@@ -320,12 +304,7 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 	Material *result = new Material(fname.c_str(), b->data(), b->len(), c);
 	delete b;
 
-	ResourceCache entry;
-	entry.resPtr = result;
-	entry.fname = new char[fname.size() + 1];
-	strcpy(entry.fname, fname.c_str());
-	_cache.push_back(entry);
-	_cacheDirty = true;
+	putIntoCache(fname, result);
 
 	return result;
 }
@@ -345,12 +324,7 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
 	Model *result = new Model(filename, b->data(), b->len(), c);
 	delete b;
 
-	ResourceCache entry;
-	entry.resPtr = result;
-	entry.fname = new char[fname.size() + 1];
-	strcpy(entry.fname, fname.c_str());
-	_cache.push_back(entry);
-	_cacheDirty = true;
+	putIntoCache(fname, result);
 
 	return result;
 }

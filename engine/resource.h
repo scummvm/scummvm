@@ -121,6 +121,7 @@ public:
 	const Lab *getLab(const char *filename) const;
 	Resource *getFileFromCache(const char *filename);
 	ResourceLoader::ResourceCache *getEntryFromCache(const char *filename);
+	void putIntoCache(Common::String fname, Resource *res);
 
 private:
 
