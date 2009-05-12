@@ -34,35 +34,35 @@
 
 namespace Kyra {
 EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm) {
-#define COMMAND(x) { &EMCInterpreter::x, #x }
-	static const CommandEntry commandProcs[] = {
+#define OPCODE(x) { &EMCInterpreter::x, #x }
+	static const OpcodeEntry opcodes[] = {
 		// 0x00
-		COMMAND(cmd_jmpTo),
-		COMMAND(cmd_setRetValue),
-		COMMAND(cmd_pushRetOrPos),
-		COMMAND(cmd_push),
+		OPCODE(op_jmp),
+		OPCODE(op_setRetValue),
+		OPCODE(op_pushRetOrPos),
+		OPCODE(op_push),
 		// 0x04
-		COMMAND(cmd_push),
-		COMMAND(cmd_pushReg),
-		COMMAND(cmd_pushBPNeg),
-		COMMAND(cmd_pushBPAdd),
+		OPCODE(op_push),
+		OPCODE(op_pushReg),
+		OPCODE(op_pushBPNeg),
+		OPCODE(op_pushBPAdd),
 		// 0x08
-		COMMAND(cmd_popRetOrPos),
-		COMMAND(cmd_popReg),
-		COMMAND(cmd_popBPNeg),
-		COMMAND(cmd_popBPAdd),
+		OPCODE(op_popRetOrPos),
+		OPCODE(op_popReg),
+		OPCODE(op_popBPNeg),
+		OPCODE(op_popBPAdd),
 		// 0x0C
-		COMMAND(cmd_addSP),
-		COMMAND(cmd_subSP),
-		COMMAND(cmd_execOpcode),
-		COMMAND(cmd_ifNotJmp),
+		OPCODE(op_addSP),
+		OPCODE(op_subSP),
+		OPCODE(op_sysCall),
+		OPCODE(op_ifNotJmp),
 		// 0x10
-		COMMAND(cmd_negate),
-		COMMAND(cmd_eval),
-		COMMAND(cmd_setRetAndJmp)
+		OPCODE(op_negate),
+		OPCODE(op_eval),
+		OPCODE(op_setRetAndJmp)
 	};
-	_commands = commandProcs;
-#undef COMMAND
+	_opcodes = opcodes;
+#undef OPCODE
 }
 
 bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Common::Array<const Opcode*> *opcodes) {
@@ -130,7 +130,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 	while (chunkSize--)
 		scriptData->data[chunkSize] = READ_BE_UINT16(&scriptData->data[chunkSize]);
 
-	scriptData->opcodes = opcodes;
+	scriptData->sysFuncs = opcodes;
 
 	strncpy(scriptData->filename, filename, 13);
 
@@ -207,10 +207,10 @@ bool EMCInterpreter::run(EMCState *script) {
 	}
 
 	if (opcode > 18) {
-		error("Script unknown command: %d in file '%s' at offset 0x%.08X", opcode, script->dataPtr->filename, instOffset);
+		error("Unknown script opcode: %d in file '%s' at offset 0x%.08X", opcode, script->dataPtr->filename, instOffset);
 	} else {
-		debugC(5, kDebugLevelScript, "[0x%.08X] EMCInterpreter::%s([%d/%u])", instOffset, _commands[opcode].desc, _parameter, (uint)_parameter);
-		(this->*(_commands[opcode].proc))(script);
+		debugC(5, kDebugLevelScript, "[0x%.08X] EMCInterpreter::%s([%d/%u])", instOffset, _opcodes[opcode].desc, _parameter, (uint)_parameter);
+		(this->*(_opcodes[opcode].proc))(script);
 	}
 
 	return (script->ip != 0);
@@ -297,15 +297,15 @@ bool IFFParser::loadBlock(const uint32 chunkName, void *loadTo, uint32 ptrSize) 
 #pragma mark - Command implementations
 #pragma mark -
 
-void EMCInterpreter::cmd_jmpTo(EMCState* script) {
+void EMCInterpreter::op_jmp(EMCState* script) {
 	script->ip = script->dataPtr->data + _parameter;
 }
 
-void EMCInterpreter::cmd_setRetValue(EMCState* script) {
+void EMCInterpreter::op_setRetValue(EMCState* script) {
 	script->retValue = _parameter;
 }
 
-void EMCInterpreter::cmd_pushRetOrPos(EMCState* script) {
+void EMCInterpreter::op_pushRetOrPos(EMCState* script) {
 	switch (_parameter) {
 	case 0:
 		script->stack[--script->sp] = script->retValue;
@@ -323,23 +323,23 @@ void EMCInterpreter::cmd_pushRetOrPos(EMCState* script) {
 	}
 }
 
-void EMCInterpreter::cmd_push(EMCState* script) {
+void EMCInterpreter::op_push(EMCState* script) {
 	script->stack[--script->sp] = _parameter;
 }
 
-void EMCInterpreter::cmd_pushReg(EMCState* script) {
+void EMCInterpreter::op_pushReg(EMCState* script) {
 	script->stack[--script->sp] = script->regs[_parameter];
 }
 
-void EMCInterpreter::cmd_pushBPNeg(EMCState* script) {
+void EMCInterpreter::op_pushBPNeg(EMCState* script) {
 	script->stack[--script->sp] = script->stack[(-(int32)(_parameter + 2)) + script->bp];
 }
 
-void EMCInterpreter::cmd_pushBPAdd(EMCState* script) {
+void EMCInterpreter::op_pushBPAdd(EMCState* script) {
 	script->stack[--script->sp] = script->stack[(_parameter - 1) + script->bp];
 }
 
-void EMCInterpreter::cmd_popRetOrPos(EMCState* script) {
+void EMCInterpreter::op_popRetOrPos(EMCState* script) {
 	switch (_parameter) {
 	case 0:
 		script->retValue = script->stack[script->sp++];
@@ -360,48 +360,48 @@ void EMCInterpreter::cmd_popRetOrPos(EMCState* script) {
 	}
 }
 
-void EMCInterpreter::cmd_popReg(EMCState* script) {
+void EMCInterpreter::op_popReg(EMCState* script) {
 	script->regs[_parameter] = script->stack[script->sp++];
 }
 
-void EMCInterpreter::cmd_popBPNeg(EMCState* script) {
+void EMCInterpreter::op_popBPNeg(EMCState* script) {
 	script->stack[(-(int32)(_parameter + 2)) + script->bp] = script->stack[script->sp++];
 }
 
-void EMCInterpreter::cmd_popBPAdd(EMCState* script) {
+void EMCInterpreter::op_popBPAdd(EMCState* script) {
 	script->stack[(_parameter - 1) + script->bp] = script->stack[script->sp++];
 }
 
-void EMCInterpreter::cmd_addSP(EMCState* script) {
+void EMCInterpreter::op_addSP(EMCState* script) {
 	script->sp += _parameter;
 }
 
-void EMCInterpreter::cmd_subSP(EMCState* script) {
+void EMCInterpreter::op_subSP(EMCState* script) {
 	script->sp -= _parameter;
 }
 
-void EMCInterpreter::cmd_execOpcode(EMCState* script) {
-	uint8 opcode = _parameter;
+void EMCInterpreter::op_sysCall(EMCState* script) {
+	const uint8 id = _parameter;
 
-	assert(script->dataPtr->opcodes);
-	assert(opcode < script->dataPtr->opcodes->size());
+	assert(script->dataPtr->sysFuncs);
+	assert(id < script->dataPtr->sysFuncs->size());
 
-	if ((*script->dataPtr->opcodes)[opcode] && ((*script->dataPtr->opcodes)[opcode])->isValid()) {
-		script->retValue = (*(*script->dataPtr->opcodes)[opcode])(script);
+	if ((*script->dataPtr->sysFuncs)[id] && ((*script->dataPtr->sysFuncs)[id])->isValid()) {
+		script->retValue = (*(*script->dataPtr->sysFuncs)[id])(script);
 	} else {
 		script->retValue = 0;
-		warning("Calling unimplemented opcode(0x%.02X/%d) from file '%s'", opcode, opcode, script->dataPtr->filename);
+		warning("Unimplemented system call 0x%.02X/%d used in file '%s'", id, id, script->dataPtr->filename);
 	}
 }
 
-void EMCInterpreter::cmd_ifNotJmp(EMCState* script) {
+void EMCInterpreter::op_ifNotJmp(EMCState* script) {
 	if (!script->stack[script->sp++]) {
 		_parameter &= 0x7FFF;
 		script->ip = script->dataPtr->data + _parameter;
 	}
 }
 
-void EMCInterpreter::cmd_negate(EMCState* script) {
+void EMCInterpreter::op_negate(EMCState* script) {
 	int16 value = script->stack[script->sp];
 	switch (_parameter) {
 	case 0:
@@ -426,7 +426,7 @@ void EMCInterpreter::cmd_negate(EMCState* script) {
 	}
 }
 
-void EMCInterpreter::cmd_eval(EMCState* script) {
+void EMCInterpreter::op_eval(EMCState* script) {
 	int16 ret = 0;
 	bool error = false;
 
@@ -518,7 +518,7 @@ void EMCInterpreter::cmd_eval(EMCState* script) {
 		script->stack[--script->sp] = ret;
 }
 
-void EMCInterpreter::cmd_setRetAndJmp(EMCState* script) {
+void EMCInterpreter::op_setRetAndJmp(EMCState* script) {
 	if (script->sp >= EMCState::kStackLastEntry) {
 		script->ip = 0;
 	} else {

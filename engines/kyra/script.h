@@ -43,7 +43,7 @@ struct EMCData {
 	uint16 *ordr;
 	uint16 dataSize;
 
-	const Common::Array<const Opcode*> *opcodes;
+	const Common::Array<const Opcode*> *sysFuncs;
 };
 
 struct EMCState {
@@ -98,7 +98,7 @@ class EMCInterpreter {
 public:
 	EMCInterpreter(KyraEngine_v1 *vm);
 
-	bool load(const char *filename, EMCData *data, const Common::Array<const Opcode*> *opcodes);
+	bool load(const char *filename, EMCData *data, const Common::Array<const Opcode *> *opcodes);
 	void unload(EMCData *data);
 
 	void init(EMCState *scriptState, const EMCData *data);
@@ -111,32 +111,32 @@ protected:
 	KyraEngine_v1 *_vm;
 	int16 _parameter;
 
-	typedef void (EMCInterpreter::*CommandProc)(EMCState*);
-	struct CommandEntry {
-		CommandProc proc;
+	typedef void (EMCInterpreter::*OpcodeProc)(EMCState *);
+	struct OpcodeEntry {
+		OpcodeProc proc;
 		const char *desc;
 	};
 
-	const CommandEntry *_commands;
+	const OpcodeEntry *_opcodes;
 private:
-	void cmd_jmpTo(EMCState*);
-	void cmd_setRetValue(EMCState*);
-	void cmd_pushRetOrPos(EMCState*);
-	void cmd_push(EMCState*);
-	void cmd_pushReg(EMCState*);
-	void cmd_pushBPNeg(EMCState*);
-	void cmd_pushBPAdd(EMCState*);
-	void cmd_popRetOrPos(EMCState*);
-	void cmd_popReg(EMCState*);
-	void cmd_popBPNeg(EMCState*);
-	void cmd_popBPAdd(EMCState*);
-	void cmd_addSP(EMCState*);
-	void cmd_subSP(EMCState*);
-	void cmd_execOpcode(EMCState*);
-	void cmd_ifNotJmp(EMCState*);
-	void cmd_negate(EMCState*);
-	void cmd_eval(EMCState*);
-	void cmd_setRetAndJmp(EMCState*);
+	void op_jmp(EMCState*);
+	void op_setRetValue(EMCState*);
+	void op_pushRetOrPos(EMCState*);
+	void op_push(EMCState*);
+	void op_pushReg(EMCState*);
+	void op_pushBPNeg(EMCState*);
+	void op_pushBPAdd(EMCState*);
+	void op_popRetOrPos(EMCState*);
+	void op_popReg(EMCState*);
+	void op_popBPNeg(EMCState*);
+	void op_popBPAdd(EMCState*);
+	void op_addSP(EMCState*);
+	void op_subSP(EMCState*);
+	void op_sysCall(EMCState*);
+	void op_ifNotJmp(EMCState*);
+	void op_negate(EMCState*);
+	void op_eval(EMCState*);
+	void op_setRetAndJmp(EMCState*);
 };
 } // end of namespace Kyra
 
