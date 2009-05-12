@@ -194,7 +194,7 @@ int createResFileEntry(int width, int height, int resType) {
 
 	filesDatabase[entryNumber].subData.ptr = (uint8 *) mallocAndZero(size + div);
 
-	if (filesDatabase[entryNumber].subData.ptr) {
+	if (!filesDatabase[entryNumber].subData.ptr) {
 		return (-2);
 	}
 
