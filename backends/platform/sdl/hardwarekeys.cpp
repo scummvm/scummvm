@@ -46,7 +46,7 @@ const Key keys[] = {
 	{"CLEAR", KEYCODE_CLEAR, 0, "Clear", kActionKeyType, false},
 	{"RETURN", KEYCODE_RETURN, ASCII_RETURN, "Return", kActionKeyType, false},
 	{"PAUSE", KEYCODE_PAUSE, 0, "Pause", kActionKeyType, false},
-	{"ESCAPE", KEYCODE_ESCAPE, ASCII_ESCAPE, "Esc", kActionKeyType, false},
+	{"ESCAPE", KEYCODE_ESCAPE, ASCII_ESCAPE, "Esc", kStartKeyType, false},
 	{"SPACE", KEYCODE_SPACE, ASCII_SPACE, "Space", kActionKeyType, false},
 	{"EXCLAIM", KEYCODE_EXCLAIM, '!', "!", kActionKeyType, false},
 	{"QUOTEDBL", KEYCODE_QUOTEDBL, '"', "\"", kActionKeyType, false},
