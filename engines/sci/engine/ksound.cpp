@@ -904,6 +904,9 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				PUT_SEL32V(obj, handle, 0);
 				sfx_song_set_status(&s->sound,
 				                    handle, SOUND_STATUS_STOPPED);
+			} else {
+				// FIXME: Support fade-and-continue. For now, send signal right away.
+				PUT_SEL32V(obj, signal, -1);
 			}
 		}
 		break;
