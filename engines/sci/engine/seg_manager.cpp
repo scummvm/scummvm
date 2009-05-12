@@ -818,8 +818,8 @@ void SegManager::scriptRelocateExportsSci11(int seg) {
 		/* We are forced to use an ugly heuristic here to distinguish function
 		   exports from object/class exports. The former kind points into the
 		   script resource, the latter into the heap resource.  */
-		int location = READ_LE_UINT16((byte *)(scr->export_table + i));
-		if (READ_LE_UINT16(scr->heap_start + location) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+		uint16 location = READ_LE_UINT16((byte *)(scr->export_table + i));
+		if ((location < scr->heap_size - 1) && (READ_LE_UINT16(scr->heap_start + location) == SCRIPT_OBJECT_MAGIC_NUMBER)) {
 			WRITE_LE_UINT16((byte *)(scr->export_table + i), location + scr->heap_start - scr->buf);
 		} else {
 			// Otherwise it's probably a function export,
