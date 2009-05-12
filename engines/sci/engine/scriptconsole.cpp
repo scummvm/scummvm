@@ -912,7 +912,7 @@ static int c_dump(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	else {
 		Resource *resource = s->resmgr->findResource(res, cmdParams[1].val, 0);
 		if (resource)
-			sci_hexdump(resource->data, resource->size, 0);
+			Common::hexdump(resource->data, resource->size, 16, 0);
 		else
 			sciprintf("Resource %s.%03d not found\n", cmdParams[0].str, cmdParams[1].val);
 	}

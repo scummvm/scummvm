@@ -212,32 +212,6 @@ void script_map_selectors(EngineState *s, selector_map_t *map) {
 	FIND_SELECTOR(syncTime);
 }
 
-int sci_hexdump(byte *data, int length, int offsetplus) {
-	char tempstr[40];
-	int i;
-
-	for (i = 0; i < length; i += 8) {
-		int j;
-
-		sprintf(tempstr, "%04x:                                 ", i + offsetplus);
-		for (j = 0; j < MIN(8, length - i); j++)
-			sprintf(tempstr + 6 + (j*3) + (j > 3), "%02x  ", data[i+j]);
-		for (j = 0; j < MIN(8, length - i); j++) {
-			int thechar;
-			thechar = data[i+j];
-			sprintf(tempstr + 31 + j, "%c", ((thechar < ' ') || (thechar > 127)) ? '.' : thechar);
-		}
-
-		for (j = 0; j < 38; j++)
-			if (!tempstr[j])
-				tempstr[j] = ' '; // get rid of sprintf's \0s
-
-		sciprintf("%s\n", tempstr);
-	}
-
-	return 0;
-}
-
 static void script_dump_object(char *data, int seeker, int objsize, const Common::StringList &selectorNames) {
 	int selectors, overloads, selectorsize;
 	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
@@ -247,7 +221,7 @@ static void script_dump_object(char *data, int seeker, int objsize, const Common
 
 	sciprintf("Object\n");
 
-	sci_hexdump((unsigned char *) data + seeker, objsize - 4, seeker);
+	Common::hexdump((unsigned char *) data + seeker, objsize - 4, 16, seeker);
 	//-4 because the size includes the two-word header
 
 	sciprintf("Name: %s\n", namepos ? ((char *)(data + namepos)) : "<unknown>");
@@ -289,7 +263,7 @@ static void script_dump_class(char *data, int seeker, int objsize, const Common:
 
 	sciprintf("Class\n");
 
-	sci_hexdump((unsigned char *) data + seeker, objsize - 4, seeker);
+	Common::hexdump((unsigned char *) data + seeker, objsize - 4, 16, seeker);
 
 	sciprintf("Name: %s\n", namepos ? ((char *)data + namepos) : "<unknown>");
 	sciprintf("Superclass: %x\n", superclass);
@@ -370,19 +344,19 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 
 		case sci_obj_code: {
 			sciprintf("Code\n");
-			sci_hexdump(script->data + seeker, objsize - 4, seeker);
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case 3: {
 			sciprintf("<unknown>\n");
-			sci_hexdump(script->data + seeker, objsize - 4, seeker);
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case sci_obj_said: {
 			sciprintf("Said\n");
-			sci_hexdump(script->data + seeker, objsize - 4, seeker);
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 
 			sciprintf("%04x: ", seeker);
 			while (seeker < _seeker) {
@@ -447,25 +421,25 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 
 		case sci_obj_exports: {
 			sciprintf("Exports\n");
-			sci_hexdump((unsigned char *)script->data + seeker, objsize - 4, seeker);
+			Common::hexdump((unsigned char *)script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case sci_obj_pointers: {
 			sciprintf("Pointers\n");
-			sci_hexdump(script->data + seeker, objsize - 4, seeker);
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case 9: {
 			sciprintf("<unknown>\n");
-			sci_hexdump(script->data + seeker, objsize - 4, seeker);
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case sci_obj_localvars: {
 			sciprintf("Local vars\n");
-			sci_hexdump(script->data + seeker, objsize - 4, seeker);
+			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 

@@ -145,7 +145,7 @@ static void midi_hexdump(byte *data, int size, int notational_offset) { // Speci
 				fprintf(stderr, "Track broken at %x after"
 				        " offset mod of %d\n",
 				        offset + notational_offset, offset_mod);
-				sci_hexdump(data, size, notational_offset);
+				Common::hexdump(data, size, 16, notational_offset);
 				return;
 			}
 			fprintf(stderr, "(rs %02x) ", cmd);
@@ -481,7 +481,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		sciprintf("dynmem (%s): %d bytes\n",
 		          (*(DynMem *)mobj)._description ? (*(DynMem *)mobj)._description : "no description", (*(DynMem *)mobj)._size);
 
-		sci_hexdump((*(DynMem *)mobj)._buf, (*(DynMem *)mobj)._size, 0);
+		Common::hexdump((*(DynMem *)mobj)._buf, (*(DynMem *)mobj)._size, 16, 0);
 	}
 	break;
 
@@ -618,7 +618,7 @@ static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 			if (reg_end.segment != 0)
 				sciprintf("Block size less than or equal to %d\n", size);
 
-			sci_hexdump(block, size, 0);
+			Common::hexdump(block, size, 16, 0);
 		}
 		break;
 

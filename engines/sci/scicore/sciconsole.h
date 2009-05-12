@@ -148,9 +148,6 @@ int con_hook_int(int *pointer, const char *name, const char *description);
 ** The internal list of int references is used by some of the basic commands.
 */
 
-
-int sci_hexdump(byte *data, int length, int offsetplus);
-
 } // End of namespace Sci
 
 #endif // SCI_SCICORE_SCICONSOLE_H
