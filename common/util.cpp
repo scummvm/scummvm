@@ -91,11 +91,11 @@ String StringTokenizer::nextToken() {
 //
 // Print hexdump of the data passed in
 //
-void hexdump(const byte * data, int len, int bytesPerLine) {
+void hexdump(const byte * data, int len, int bytesPerLine, int startOffset) {
 	assert(1 <= bytesPerLine && bytesPerLine <= 32);
 	int i;
 	byte c;
-	int offset = 0;
+	int offset = startOffset;
 	while (len >= bytesPerLine) {
 		printf("%06x: ", offset);
 		for (i = 0; i < bytesPerLine; i++) {

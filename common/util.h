@@ -96,8 +96,9 @@ private:
  * @param data	the data to be dumped
  * @param len	the lenght of that data
  * @param bytesPerLine	number of bytes to print per line (default: 16)
+ * @param startOffset	shift the shown offsets by the starting offset (default: 0)
  */
-extern void hexdump(const byte * data, int len, int bytesPerLine = 16);
+extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int startOffset = 0);
 
 
 /**
