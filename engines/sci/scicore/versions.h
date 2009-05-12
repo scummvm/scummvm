@@ -46,17 +46,6 @@ namespace Sci {
 ** - "FTU" means "First To Use"
 */
 
-#define SCI_VERSION_LAST_SCI0 SCI_VERSION(0,000,685)
-
-#define SCI_VERSION_DEFAULT_SCI0 SCI_VERSION_LAST_SCI0
-/* AFAIK this is the last published SCI0 version */
-#define SCI_VERSION_DEFAULT_SCI01 SCI_VERSION(1,000,72)
-/* The version used by my implementation of QfG2 */
-
-
-#define SCI_VERSION_FTU_CENTERED_TEXT_AS_DEFAULT SCI_VERSION(0,000,629)
-/* Last version known not to do this: 0.000.502 */
-
 #define SCI_VERSION_FTU_NEW_GETTIME SCI_VERSION(0,000,629)
 /* These versions of SCI has a different set of subfunctions in GetTime() */
 
@@ -77,11 +66,6 @@ namespace Sci {
 ** Old SCI versions used two word header for script blocks (first word equal
 ** to 0x82, meaning of the second one unknown). New SCI versions used one
 ** word header.
-*/
-
-#define SCI_VERSION_LTU_BASE_OB1 SCI_VERSION(0,000,256)
-/* First version version known not to have this bug: ?
-** When doing CanBeHere(), augment y offset by 1
 */
 
 #define SCI_VERSION_FTU_2ND_ANGLES SCI_VERSION(0,000,395)

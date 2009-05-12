@@ -1129,8 +1129,14 @@ void _k_base_setter(EngineState *s, reg_t object) {
 	if (lookup_selector(s, object, s->selector_map.brLeft, NULL, NULL) != kSelectorVariable)
 		return; // non-fatal
 
-	if (s->version <= SCI_VERSION_LTU_BASE_OB1)
+	// Note: there was a check here for a very old version of SCI, which supposedly needed
+	// to subtract 1 from absrect.top. The original check was for version 0.000.256, which
+	// does not exist (earliest one was KQ4 SCI, version 0.000.274). This code is left here
+	// for reference only
+#if 0
+	if (s->version <= SCI_VERSION(0,000,256))
 		--absrect.top; // Compensate for early SCI OB1 'bug'
+#endif
 
 	PUT_SEL32V(object, brLeft, absrect.left);
 	PUT_SEL32V(object, brRight, absrect.right);

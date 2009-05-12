@@ -388,7 +388,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 	s->max_version = SCI_VERSION(9, 999, 999);
 	s->min_version = 0; //Set no real limits
-	s->version = SCI_VERSION_DEFAULT_SCI0;
+	s->version = 0;
 	s->kernel_opt_flags = 0;
 
 	if (!version) {
