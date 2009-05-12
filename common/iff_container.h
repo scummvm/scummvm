@@ -202,7 +202,7 @@ public:
 	IFFParser(Common::ReadStream &input) : _formChunk(&input), _chunk(&input) {
 		_formChunk.readHeader();
 		if (_formChunk.id != ID_FORM) {
-			error("IFFDecoder input is not a FORM type IFF file");
+			error("IFFParser input is not a FORM type IFF file");
 		}
 		_typeId = _formChunk.readUint32BE();
 	}
