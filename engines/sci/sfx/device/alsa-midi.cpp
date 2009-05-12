@@ -71,16 +71,16 @@ static void _set_tempo(void) {
 }
 
 
-static int am_subscribe_to_ports(void) {
+static Common::Error am_subscribe_to_ports(void) {
 	if ((port_out = snd_seq_connect_to(seq, port_out, port_nr, subport_nr)) < 0) {
 		fprintf(stderr, "[SFX] Could not connect to ALSA sequencer port: %s\n", snd_strerror(port_out));
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 
-static int aminit(midi_writer_t *self) {
+static Common::Error aminit(midi_writer_t *self) {
 	int err;
 
 	snd_midi_event_new(4096, &parser);
@@ -91,7 +91,7 @@ static int aminit(midi_writer_t *self) {
 	if (snd_seq_open(&seq, seq_name, SND_SEQ_OPEN_OUTPUT, SND_SEQ_NONBLOCK)) {
 		fprintf(stderr, "[SFX] Failed to open ALSA MIDI sequencer '%s' for output\n",
 		        seq_name);
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	if ((port_out = snd_seq_create_simple_port(seq, "FreeSCI",
@@ -100,11 +100,11 @@ static int aminit(midi_writer_t *self) {
 	                SND_SEQ_PORT_CAP_READ,
 	                SND_SEQ_PORT_TYPE_MIDI_GENERIC)) < 0) {
 		fprintf(stderr, "[SFX] Could not create ALSA sequencer port\n");
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	if (am_subscribe_to_ports())
-		return SFX_ERROR;
+		return Common::kUnknownError;
 
 	queue = snd_seq_alloc_queue(seq);
 	_set_tempo();
@@ -115,18 +115,18 @@ static int aminit(midi_writer_t *self) {
 		fflush(NULL);
 		fprintf(stderr, "[SFX] Error while draining: %s\n",
 		        snd_strerror(err));
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int amsetopt(midi_writer_t *self, char *name, char *value) {
-	return SFX_ERROR;
+static Common::Error amsetopt(midi_writer_t *self, char *name, char *value) {
+	return Common::kUnknownError;
 }
 
 
-static int amwrite(midi_writer_t *self, unsigned char *buf, int len) {
+static Common::Error amwrite(midi_writer_t *self, unsigned char *buf, int len) {
 	snd_seq_event_t evt;
 
 #if 0
@@ -162,7 +162,7 @@ static int amwrite(midi_writer_t *self, unsigned char *buf, int len) {
 #endif
 
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 static void amdelay(midi_writer_t *self, int ticks) {

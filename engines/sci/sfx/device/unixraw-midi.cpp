@@ -41,29 +41,29 @@ namespace Sci {
 static int fd;
 static const char *devicename = "/dev/midi";
 
-static int unixraw_init(midi_writer_t *self) {
+static Common::Error unixraw_init(midi_writer_t *self) {
 	sciprintf("[SFX] Initialising UNIX raw MIDI backend, v%s\n", SCI_UNIXRAW_MIDI_VERSION);
 
 	fd = open(devicename, O_WRONLY | O_SYNC);
 
 	if (!IS_VALID_FD(fd)) {
 		sciprintf("[SFX] Failed to open %s\n", devicename);
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int unixraw_set_option(midi_writer_t *self, char *name, char *value) {
-	return SFX_ERROR;
+static Common::Error unixraw_set_option(midi_writer_t *self, char *name, char *value) {
+	return Common::kUnknownError;
 }
 
-static int unixraw_write(midi_writer_t *self, unsigned char *buffer, int len) {
+static Common::Error unixraw_write(midi_writer_t *self, unsigned char *buffer, int len) {
 	if (write(fd, buffer, len) != len) {
 		sciprintf("[SFX] MIDI write error\n");
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 static void unixraw_delay(midi_writer_t *self, int ticks) {

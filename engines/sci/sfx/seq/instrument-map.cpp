@@ -258,31 +258,31 @@ static int bound_hard_127(int i, const char *descr) {
 	return r;
 }
 
-static int set_bend_range(midi_writer_t *writer, int channel, int range) {
+static Common::Error set_bend_range(midi_writer_t *writer, int channel, int range) {
 	byte buf[3] = {0xb0, 0x65, 0x00};
 
 	buf[0] |= channel & 0xf;
-	if (writer->write(writer, buf, 3) != SFX_OK)
-		return SFX_ERROR;
+	if (writer->write(writer, buf, 3) != Common::kNoError)
+		return Common::kUnknownError;
 
 	buf[1] = 0x64;
-	if (writer->write(writer, buf, 3) != SFX_OK)
-		return SFX_ERROR;
+	if (writer->write(writer, buf, 3) != Common::kNoError)
+		return Common::kUnknownError;
 
 	buf[1] = 0x06;
 	buf[2] = BOUND_127(range);
-	if (writer->write(writer, buf, 3) != SFX_OK)
-		return SFX_ERROR;
+	if (writer->write(writer, buf, 3) != Common::kNoError)
+		return Common::kUnknownError;
 
 	buf[1] = 0x26;
 	buf[2] = 0;
-	if (writer->write(writer, buf, 3) != SFX_OK)
-		return SFX_ERROR;
+	if (writer->write(writer, buf, 3) != Common::kNoError)
+		return Common::kUnknownError;
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int write_decorated(decorated_midi_writer_t *self, byte *buf, int len) {
+static Common::Error write_decorated(decorated_midi_writer_t *self, byte *buf, int len) {
 	sfx_instrument_map_t *map = self->map;
 	int op = *buf & 0xf0;
 	int chan = *buf & 0x0f;
@@ -300,18 +300,18 @@ static int write_decorated(decorated_midi_writer_t *self, byte *buf, int len) {
 		self->patches[chan] = map->patch_map[patch];
 
 		if (instrument == SFX_UNMAPPED || instrument == SFX_MAPPED_TO_RHYTHM)
-			return SFX_OK;
+			return Common::kNoError;
 
 		assert(len >= 2);
 		buf[1] = bound_hard_127(instrument, "patch lookup");
 
-		if (self->writer->write(self->writer, buf, len) != SFX_OK)
-			return SFX_ERROR;
+		if (self->writer->write(self->writer, buf, len) != Common::kNoError)
+			return Common::kUnknownError;
 
 		if (bend_range != SFX_UNMAPPED)
 			return set_bend_range(self->writer, chan, bend_range);
 
-		return SFX_OK;
+		return Common::kNoError;
 	}
 
 	if (chan == MIDI_RHYTHM_CHANNEL || patch == SFX_MAPPED_TO_RHYTHM) {
@@ -332,7 +332,7 @@ static int write_decorated(decorated_midi_writer_t *self, byte *buf, int len) {
 			}
 
 			if (instrument == SFX_UNMAPPED)
-				return SFX_OK;
+				return Common::kNoError;
 
 			assert(len >= 3);
 
@@ -365,7 +365,7 @@ static int write_decorated(decorated_midi_writer_t *self, byte *buf, int len) {
 		/* Instrument channel handling */
 
 		if (patch == SFX_UNMAPPED)
-			return SFX_OK;
+			return Common::kNoError;
 
 		switch (op) {
 		case 0x80:
@@ -485,9 +485,9 @@ midi_writer_t *sfx_mapped_writer(midi_writer_t *writer, sfx_instrument_map_t *ma
 	strcpy(retval->name, writer->name);
 	strcat(retval->name, NAME_SUFFIX);
 
-	retval->init = (int (*)(midi_writer_t *)) init_decorated;
-	retval->set_option = (int (*)(midi_writer_t *, char *, char *)) set_option_decorated;
-	retval->write = (int (*)(midi_writer_t *, byte *, int)) write_decorated;
+	retval->init = (Common::Error (*)(midi_writer_t *)) init_decorated;
+	retval->set_option = (Common::Error (*)(midi_writer_t *, char *, char *)) set_option_decorated;
+	retval->write = (Common::Error (*)(midi_writer_t *, byte *, int)) write_decorated;
 	retval->delay = (void (*)(midi_writer_t *, int)) delay_decorated;
 	retval->flush = (void (*)(midi_writer_t *)) flush_decorated;
 	retval->reset_timer = (void (*)(midi_writer_t *)) reset_timer_decorated;

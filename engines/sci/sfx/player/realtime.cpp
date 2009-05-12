@@ -137,7 +137,7 @@ static Resource *find_patch(ResourceManager *resmgr, const char *seq_name, int p
 	if (patchfile != SFX_SEQ_PATCHFILE_NONE) {
 		res = resmgr->findResource(kResourceTypePatch, patchfile, 0);
 		if (!res) {
-			fprintf(stderr, "[SFX] " __FILE__": patch.%03d requested by sequencer (%s), but not found\n",
+			warning("[SFX] " __FILE__": patch.%03d requested by sequencer (%s), but not found",
 			        patchfile, seq_name);
 		}
 	}
@@ -147,19 +147,19 @@ static Resource *find_patch(ResourceManager *resmgr, const char *seq_name, int p
 
 /* API implementation */
 
-static int rt_set_option(char *name, char *value) {
-	return SFX_ERROR;
+static Common::Error rt_set_option(char *name, char *value) {
+	return Common::kUnknownError;
 }
 
-static int rt_init(ResourceManager *resmgr, int expected_latency) {
+static Common::Error rt_init(ResourceManager *resmgr, int expected_latency) {
 	Resource *res = NULL, *res2 = NULL;
 	void *seq_dev = NULL;
 
 	seq = sfx_find_sequencer(NULL);
 
 	if (!seq) {
-		fprintf(stderr, "[SFX] " __FILE__": Could not find sequencer\n");
-		return SFX_ERROR;
+		warning("[SFX] " __FILE__": Could not find sequencer");
+		return Common::kUnknownError;
 	}
 
 	sfx_player_realtime.polyphony = seq->polyphony;
@@ -175,8 +175,8 @@ static int rt_init(ResourceManager *resmgr, int expected_latency) {
 	              res2 ? res2->size : 0,
 	              res2 ? res2->data : NULL,
 	              seq_dev)) {
-		fprintf(stderr, "[SFX] " __FILE__": Sequencer failed to initialize\n");
-		return SFX_ERROR;
+		warning("[SFX] " __FILE__": Sequencer failed to initialize");
+		return Common::kUnknownError;
 	}
 
 	play_writeahead = expected_latency;
@@ -188,10 +188,10 @@ static int rt_init(ResourceManager *resmgr, int expected_latency) {
 	if (seq->reset_timer)
 		seq->reset_timer(0);
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int rt_add_iterator(SongIterator *it, uint32 start_time) {
+static Common::Error rt_add_iterator(SongIterator *it, uint32 start_time) {
 	if (seq->reset_timer) /* Restart timer counting if possible */
 		seq->reset_timer(start_time);
 
@@ -203,15 +203,15 @@ static int rt_add_iterator(SongIterator *it, uint32 start_time) {
 	play_it_done = 0;
 	play_moredelay = 0;
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int rt_fade_out(void) {
-	fprintf(stderr, __FILE__": Attempt to fade out- not implemented yet\n");
-	return SFX_ERROR;
+static Common::Error rt_fade_out(void) {
+	warning(__FILE__": Attempt to fade out- not implemented yet");
+	return Common::kUnknownError;
 }
 
-static int rt_stop(void) {
+static Common::Error rt_stop(void) {
 	SongIterator *it = play_it;
 
 	play_it = NULL;
@@ -220,45 +220,42 @@ static int rt_stop(void) {
 	if (seq && seq->allstop)
 		seq->allstop();
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int rt_send_iterator_message(const SongIterator::Message &msg) {
+static Common::Error rt_send_iterator_message(const SongIterator::Message &msg) {
 	if (!play_it)
-		return SFX_ERROR;
+		return Common::kUnknownError;
 
 	songit_handle_message(&play_it, msg);
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int rt_pause(void) {
+static Common::Error rt_pause(void) {
 	play_pause_started = g_system->getMillis();
-	/* Also, indicate that we haven't modified the time counter
-	** yet  */
+	// Also, indicate that we haven't modified the time counter yet
 	play_pause_counter = play_pause_started;
 
 	play_paused = 1;
 	if (!seq->allstop) {
 		sciprintf("[SFX] Cannot suspend sequencer, sound will continue for a bit\n");
-		return SFX_OK;
+		return Common::kNoError;
 	} else
 		return seq->allstop();
 }
 
-static int rt_resume(void) {
+static Common::Error rt_resume(void) {
 	play_paused = 0;
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int rt_exit(void) {
-	int retval = SFX_OK;
-
+static Common::Error rt_exit(void) {
 	if (seq->close()) {
-		fprintf(stderr, "[SFX] Sequencer reported error on close\n");
-		retval = SFX_ERROR;
+		warning("[SFX] Sequencer reported error on close");
+		return Common::kUnknownError;
 	}
 
-	return retval;
+	return Common::kNoError;
 }
 
 sfx_player_t sfx_player_realtime = {

@@ -51,11 +51,11 @@ static int rpn[16];
 /* MIDI writer */
 
 static int fluidsynth_midi_init(struct _midi_writer *self) {
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 static int fluidsynth_midi_set_option(struct _midi_writer *self, char *name, char *value) {
-	return SFX_ERROR;
+	return Common::kUnknownError;
 }
 
 static int fluidsynth_midi_write(struct _midi_writer *self, unsigned char *buf, int len) {
@@ -118,7 +118,7 @@ static int fluidsynth_midi_write(struct _midi_writer *self, unsigned char *buf, 
 	} else
 		sciprintf("FluidSynth: Skipping invalid message of %i bytes.\n", len);
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 static void fluidsynth_midi_delay(struct _midi_writer *self, int ticks) {
@@ -154,13 +154,13 @@ static int fluidsynth_init(sfx_softseq_t *self, byte *data_ptr, int data_length,
 
 	if (0) {
 		sciprintf("FluidSynth ERROR: Mono sound output not supported.\n");
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	gmseq = sfx_find_sequencer("General MIDI");
 	if (!gmseq) {
 		sciprintf("FluidSynth ERROR: Unable to find General MIDI sequencer.\n");
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	settings = new_fluid_settings();
@@ -170,7 +170,7 @@ static int fluidsynth_init(sfx_softseq_t *self, byte *data_ptr, int data_length,
 		sciprintf("FluidSynth ERROR: Sample rate '%i' not supported. Valid "
 		          "range is (%i-%i).\n", SAMPLE_RATE, (int) min, (int) max);
 		delete_fluid_settings(settings);
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	fluid_settings_setnum(settings, "synth.sample-rate", SAMPLE_RATE);
@@ -181,13 +181,13 @@ static int fluidsynth_init(sfx_softseq_t *self, byte *data_ptr, int data_length,
 	if ((sfont_id = fluid_synth_sfload(synth, soundfont, 1)) < 0) {
 		delete_fluid_synth(synth);
 		delete_fluid_settings(settings);
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	gmseq->open(data_length, data_ptr, data2_length, data2_ptr,
 	            &midi_writer_fluidsynth);
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 static void fluidsynth_exit(sfx_softseq_t *self) {
@@ -206,7 +206,7 @@ static void fluidsynth_volume(sfx_softseq_t *self, int volume) {
 }
 
 static int fluidsynth_set_option(sfx_softseq_t *self, const char *name, const char *value) {
-	return SFX_ERROR;
+	return Common::kUnknownError;
 }
 
 static void fluidsynth_event(sfx_softseq_t *self, byte cmd, int argc, byte *argv) {

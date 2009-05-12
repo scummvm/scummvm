@@ -29,7 +29,7 @@
 
 #include "common/scummsys.h"
 
-#include "sci/sfx/sfx.h"
+#include "common/error.h"
 #include "sci/sfx/device.h"
 
 namespace Sci {
@@ -42,20 +42,20 @@ struct sfx_sequencer_t {
 
 	int device;  /* Type of device the sequencer depends on, may be SFX_DEVICE_NONE. */
 
-	int (*set_option)(char *name, char *value);
+	Common::Error (*set_option)(char *name, char *value);
 	/* Sets an option for the sequencing mechanism
 	** Parameters: (char *) name: The name describing what to set
 	**             (char *) value: The value to set
-	** Returns   : (int) SFX_OK, or SFX_ERROR if the name wasn't understood
+	** Returns   : (int) Common::kNoError, or Common::kUnknownError if the name wasn't understood
 	*/
 
-	int (*open)(int patch_len, byte *patch, int patch2_len, byte *patch2, void *device);
+	Common::Error (*open)(int patch_len, byte *patch, int patch2_len, byte *patch2, void *device);
 	/* Opens the sequencer for writing
 	** Parameters: (int) patch_len, patch2_len: Length of the patch data
 	**             (byte *) patch, patch2: Bulk patch data
 	**             (void *) device: A device matching the 'device' property, or NULL
 	**                              if the property is null.
-	** Returns   : (int) SFX_OK on success, SFX_ERROR otherwise
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError otherwise
 	** The device should be initialized to a tick frequency of 60 Hz.
 	** 'patch' and 'patch_len' refer to the patch resource passed to open,
 	** as specified by the 'patchfile' property. 'patch' may be NULL if the
@@ -65,50 +65,50 @@ struct sfx_sequencer_t {
 	** data.
 	*/
 
-	int (*close)();
+	Common::Error (*close)();
 	/* Closes the sequencer
-	** Returns   : SFX_OK on success, SFX_ERROR otherwise
+	** Returns   : Common::kNoError on success, Common::kUnknownError otherwise
 	*/
 
-	int (*event)(byte command, int argc, byte *argv);
+	Common::Error (*event)(byte command, int argc, byte *argv);
 	/* Plays a MIDI event
 	** Parameters: (byte) command: MIDI command to play
 	**             (int) argc: Number of arguments to the command
 	**             (byte *) argv: Pointer to additional arguments
-	** Returns   : SFX_OK on success, SFX_ERROR otherwise
+	** Returns   : Common::kNoError on success, Common::kUnknownError otherwise
 	** argv is guaranteed to point to a sufficiently large number of
 	** arguments, as indicated by 'command' and the MIDI standard.
 	** No 'running status' will be passed, 'command' will always be
 	** explicit.
 	*/
-	int (*delay)(int ticks); /* OPTIONAL -- may be NULL, but highly recommended */
+	Common::Error (*delay)(int ticks); /* OPTIONAL -- may be NULL, but highly recommended */
 	/* Inserts a delay (delta time) into the sequencer cue
 	** Parameters: (int) ticks: Number of 60 Hz ticks to delay
-	** Returns   : SFX_OK on success, SFX_ERROR otherwise
+	** Returns   : Common::kNoError on success, Common::kUnknownError otherwise
 	*/
 
-	int (*reset_timer)(uint32 ts);
+	Common::Error (*reset_timer)(uint32 ts);
 	/* OPTIONAL -- may be NULL, but highly recommended in combination with delay() */
 	/* Resets the timer counter associated with the 'delay()' function
 	** Parameters: (uint32) ts: Timestamp of the base time
-	** Returns   : SFX_OK on success, SFX_ERROR otherwise
+	** Returns   : Common::kNoError on success, Common::kUnknownError otherwise
 	*/
 
-	int (*allstop)(); /* OPTIONAL -- may be NULL */
+	Common::Error (*allstop)(); /* OPTIONAL -- may be NULL */
 	/* Stops playing everything in the sequencer queue
-	** Returns   : SFX_OK on success, SFX_ERROR otherwise
+	** Returns   : Common::kNoError on success, Common::kUnknownError otherwise
 	*/
 
-	int (*volume)(uint8 volume);  /* OPTIONAL -- can be NULL */
+	Common::Error (*volume)(uint8 volume);  /* OPTIONAL -- can be NULL */
 	/* Sets the sequencer volume
 	** Parameters; (byte) volume: The volume to set, with 0 being mute and 127 full volume
-	** Returns   : SFX_OK on success, SFX_ERROR otherwise
+	** Returns   : Common::kNoError on success, Common::kUnknownError otherwise
 	*/
 
-	int (*reverb)(int param); /* OPTIONAL -- may be NULL */
+	Common::Error (*reverb)(int param); /* OPTIONAL -- may be NULL */
 	/* Sets the device reverb
 	** Parameters; (int) param: The reverb to set
-	** Returns   : SFX_OK on success, SFX_ERROR otherwise
+	** Returns   : Common::kNoError on success, Common::kUnknownError otherwise
 	*/
 
 	int patchfile, patchfile2; /* Patch resources to pass into the call to open(),

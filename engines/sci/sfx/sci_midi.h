@@ -28,11 +28,16 @@
 
 #include "sound/mididrv.h"
 #include "sound/softsynth/emumidi.h"
-#include "sci/sfx/sfx.h"
+#include "common/error.h"
 
 namespace Sci {
 
 class ResourceManager;
+
+enum {
+	MIDI_CHANNELS = 16
+};
+
 
 #define MIDI_RHYTHM_CHANNEL 9
 

@@ -268,13 +268,13 @@ static void pp_timer_callback() {
 	/* Hey, we're polled anyway ;-) */
 }
 
-static int pp_set_option(char *name, char *value) {
-	return SFX_ERROR;
+static Common::Error pp_set_option(char *name, char *value) {
+	return Common::kUnknownError;
 }
 
-static int pp_init(ResourceManager *resmgr, int expected_latency) {
+static Common::Error pp_init(ResourceManager *resmgr, int expected_latency) {
 	if (!g_system->getMixer()->isReady())
-		return SFX_ERROR;
+		return Common::kUnknownError;
 
 	Resource *res = NULL, *res2 = NULL;
 
@@ -286,7 +286,7 @@ static int pp_init(ResourceManager *resmgr, int expected_latency) {
 
 	if (!seq) {
 		sciprintf("[sfx:seq:polled] Initialisation failed: Could not find software sequencer\n");
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	if (seq->patch_nr != SFX_SEQ_PATCHFILE_NONE) {
@@ -304,7 +304,7 @@ static int pp_init(ResourceManager *resmgr, int expected_latency) {
 	              (res2) ? res2->size : 0)) {
 		sciprintf("[sfx:seq:polled] Initialisation failed: Sequencer '%s', v%s failed to initialise\n",
 		          seq->name, seq->version);
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	seq->set_volume(seq, volume);
@@ -314,10 +314,10 @@ static int pp_init(ResourceManager *resmgr, int expected_latency) {
 	g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, 0, newStream);
 
 	sfx_player_polled.polyphony = seq->polyphony;
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int pp_add_iterator(SongIterator *it, uint32 start_time) {
+static Common::Error pp_add_iterator(SongIterator *it, uint32 start_time) {
 	SongIterator *old = play_it;
 
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(seq->playmask));
@@ -339,15 +339,15 @@ static int pp_add_iterator(SongIterator *it, uint32 start_time) {
 		new_song = 1;
 	}
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int pp_fade_out() {
+static Common::Error pp_fade_out() {
 	warning(__FILE__": Attempt to fade out- not implemented yet");
-	return SFX_ERROR;
+	return Common::kUnknownError;
 }
 
-static int pp_stop() {
+static Common::Error pp_stop() {
 	SongIterator *it = play_it;
 
 	play_it = NULL;
@@ -356,28 +356,28 @@ static int pp_stop() {
 
 	seq->allstop(seq);
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int pp_send_iterator_message(const SongIterator::Message &msg) {
+static Common::Error pp_send_iterator_message(const SongIterator::Message &msg) {
 	if (!play_it)
-		return SFX_ERROR;
+		return Common::kUnknownError;
 
 	songit_handle_message(&play_it, msg);
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int pp_pause() {
+static Common::Error pp_pause() {
 	play_paused = 1;
 	seq->set_volume(seq, 0);
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int pp_resume() {
+static Common::Error pp_resume() {
 	if (!play_it) {
 		play_paused = 0;
-		return SFX_OK; /* Nothing to resume */
+		return Common::kNoError; /* Nothing to resume */
 	}
 
 	if (play_paused)
@@ -387,15 +387,15 @@ static int pp_resume() {
 
 	play_paused = 0;
 	seq->set_volume(seq, volume);
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int pp_exit() {
+static Common::Error pp_exit() {
 	seq->exit(seq);
 	delete play_it;
 	play_it = NULL;
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 sfx_player_t sfx_player_polled = {

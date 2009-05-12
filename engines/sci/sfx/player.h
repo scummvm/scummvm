@@ -41,65 +41,65 @@ struct sfx_player_t {
 	const char *name;
 	const char *version;
 
-	int (*set_option)(char *name, char *value);
+	Common::Error (*set_option)(char *name, char *value);
 	/* Sets an option for player timing mechanism
 	** Parameters: (char *) name: The name describing what to set
 	**             (char *) value: The value to set
-	** Returns   : (int) SFX_OK, or SFX_ERROR if the name wasn't understood
+	** Returns   : (int) Common::kNoError, or Common::kUnknownError if the name wasn't understood
 	*/
 
-	int (*init)(ResourceManager *resmgr, int expected_latency);
+	Common::Error (*init)(ResourceManager *resmgr, int expected_latency);
 	/* Initializes the player
 	** Parameters: (ResourceManager *) resmgr: A resource manager for driver initialization
 	**             (int) expected_latency: Expected delay in between calls to 'maintenance'
 	**                   (in microseconds)
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	int (*add_iterator)(SongIterator *it, uint32 start_time);
+	Common::Error (*add_iterator)(SongIterator *it, uint32 start_time);
 	/* Adds an iterator to the song player
 	** Parameters: (songx_iterator_t *) it: The iterator to play
 	**             (uint32) start_time: The time to assume as the
 	**                        time the first MIDI command executes at
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	** The iterator should not be cloned (to avoid memory leaks) and
 	** may be modified according to the needs of the player.
 	** Implementors may use the 'sfx_iterator_combine()' function
 	** to add iterators onto their already existing iterators
 	*/
 
-	int (*fade_out)();
+	Common::Error (*fade_out)();
 	/* Fades out the currently playing song (within two seconds
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	int (*stop)();
+	Common::Error (*stop)();
 	/* Stops the currently playing song and deletes the associated iterator
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	int (*iterator_message)(const SongIterator::Message &msg);
+	Common::Error (*iterator_message)(const SongIterator::Message &msg);
 	/* Transmits a song iterator message to the active song
 	** Parameters: (SongIterator::Message) msg: The message to transmit
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	** OPTIONAL -- may be NULL
 	** If this method is not present, sending messages will stop
 	** and re-start playing, so it is preferred that it is present
 	*/
 
-	int (*pause)(); /* OPTIONAL -- may be NULL */
+	Common::Error (*pause)(); /* OPTIONAL -- may be NULL */
 	/* Pauses song playing
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	int (*resume)(); /* OPTIONAL -- may be NULL */
+	Common::Error (*resume)(); /* OPTIONAL -- may be NULL */
 	/* Resumes song playing after a pause
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	int (*exit)();
+	Common::Error (*exit)();
 	/* Stops the player
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
 	void (*maintenance)(); /* OPTIONAL -- may be NULL */

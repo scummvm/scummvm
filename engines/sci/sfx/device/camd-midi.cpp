@@ -58,10 +58,10 @@ static struct MidiNode *midi_node = NULL;
 			sciprintf("[SFX] CAMD driver: ");	\
 			sciprintf(m);				\
 			sciprintf("\n");			\
-			return SFX_ERROR;			\
+			return Common::kUnknownError;			\
 	}
 
-static int camd_init(midi_writer_t *self) {
+static Common::Error camd_init(midi_writer_t *self) {
 	sciprintf("[SFX] Initialising CAMD raw MIDI backend, v%s\n", SCI_CAMD_MIDI_VERSION);
 
 	CamdBase = IExec->OpenLibrary("camd.library", 36L);
@@ -82,18 +82,18 @@ static int camd_init(midi_writer_t *self) {
 
 	sciprintf("[SFX] CAMD initialisation completed\n");
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int camd_set_option(midi_writer_t *self, char *name, char *value) {
-	return SFX_ERROR;
+static Common::Error camd_set_option(midi_writer_t *self, char *name, char *value) {
+	return Common::kUnknownError;
 }
 
 #define MAX_MIDI_LEN 3
 
-static int camd_write(midi_writer_t *self, unsigned char *buffer, int len) {
+static Common::Error camd_write(midi_writer_t *self, unsigned char *buffer, int len) {
 	if (len == 0)
-		return SFX_OK;
+		return Common::kNoError;
 
 	if (buffer[0] == SYSEX_PREFIX) {
 		/* Must send this as a SysEx */
@@ -117,7 +117,7 @@ static int camd_write(midi_writer_t *self, unsigned char *buffer, int len) {
 		ICamd->PutMidi(midi_link, data);
 	}
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 static void camd_delay(midi_writer_t *self, int ticks) {

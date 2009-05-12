@@ -370,8 +370,6 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-int sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
-	int command, int arg1, int arg2);
 
 reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 command = UKPV(0);
@@ -672,9 +670,6 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
-
-int sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
-	int command, int arg1, int arg2);
 
 reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 command = UKPV(0);

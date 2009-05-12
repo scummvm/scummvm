@@ -322,11 +322,11 @@ static int midi_adlib_event(byte command, int argc, byte *argv) {
 
 static int midi_adlib_delay(int ticks) {
 	SEQ_DELTA_TIME(ticks);
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 static int midi_adlib_set_option(char *name, char *value) {
-	return SFX_ERROR; /* No options are supported at this time */
+	return Common::kUnknownError; /* No options are supported at this time */
 }
 
 /* the driver struct */

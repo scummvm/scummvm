@@ -707,7 +707,7 @@ static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
 
 static const song_handle_t midi_send_base = 0xffff0000;
 
-int sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
+Common::Error sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
 	int command, int arg1, int arg2) {
 	byte buffer[5];
 	tell_synth_func *tell = sfx_get_player_tell_func();
@@ -724,7 +724,7 @@ int sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
 		/* We need to have a GET_PLAYMASK interface to use
 		   here. SET_PLAYMASK we've got.
 		*/
-		return SFX_OK;
+		return Common::kNoError;
 	}
 
 	buffer[0] = channel | command; /* No channel remapping yet */
@@ -745,12 +745,12 @@ int sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
 		break;
 	default:
 		sciprintf("Unexpected explicit MIDI command %02x\n", command);
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	if (tell)
 		tell(MIDI_cmdlen[command >> 4], buffer);
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 int sfx_get_volume(sfx_state_t *self) {

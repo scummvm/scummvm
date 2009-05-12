@@ -27,7 +27,7 @@
 #ifndef SCI_SFX_SFX_ENGINE_H
 #define SCI_SFX_SFX_ENGINE_H
 
-#include "sci/sfx/sfx.h"
+#include "common/error.h"
 #include "sci/sfx/songlib.h"
 #include "sci/scicore/resource.h"
 
@@ -161,6 +161,12 @@ void sfx_song_set_fade(sfx_state_t *self, song_handle_t handle, fade_params_t *f
 ** Parameters: (song_handle_t) handle: The song handle to reference
 **             (fade_params_t *) fade_setup: The precise fade-out configuration to use
 */
+
+
+// Previously undocumented:
+Common::Error sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
+	int command, int arg1, int arg2);
+
 
 } // End of namespace Sci
 

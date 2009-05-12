@@ -446,23 +446,23 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 	return instrument;
 }
 
-static int ami_set_option(sfx_softseq_t *self, const char *name, const char *value) {
-	return SFX_ERROR;
+static Common::Error ami_set_option(sfx_softseq_t *self, const char *name, const char *value) {
+	return Common::kUnknownError;
 }
 
-static int ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2, int patch2_len) {
+static Common::Error ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2, int patch2_len) {
 	Common::File file;
 	byte header[40];
 	int i;
 
 	if (!file.open("bank.001")) {
 		sciprintf("[sfx:seq:amiga] Error: file bank.001 not found\n");
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	if (file.read(header, 40) < 40) {
 		sciprintf("[sfx:seq:amiga] Error: failed to read header of file bank.001\n");
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	for (i = 0; i < 256; i++)
@@ -491,18 +491,18 @@ static int ami_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch
 
 		if (!instrument) {
 			sciprintf("[sfx:seq:amiga] Error: failed to read bank.001\n");
-			return SFX_ERROR;
+			return Common::kUnknownError;
 		}
 
 		if (id < 0 || id > 255) {
 			sciprintf("[sfx:seq:amiga] Error: instrument ID out of bounds\n");
-			return SFX_ERROR;
+			return Common::kUnknownError;
 		}
 
 		bank.instruments[id] = instrument;
 	}
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 static void ami_exit(sfx_softseq_t *self) {

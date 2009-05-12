@@ -26,7 +26,7 @@
 #ifndef SCI_SFX_SOFTSEQ_H
 #define SCI_SFX_SOFTSEQ_H
 
-#include "sci/sfx/sfx.h"
+#include "common/error.h"
 #include "sci/sfx/sfx_pcm.h"
 #include "sci/sfx/sequencer.h"
 #include "sci/tools.h"
@@ -38,7 +38,7 @@ struct sfx_softseq_t {
 	const char *name;
 	const char *version;
 
-	int (*set_option)(sfx_softseq_t *self, const char *name, const char *value);
+	Common::Error (*set_option)(sfx_softseq_t *self, const char *name, const char *value);
 	/* Sets an option for the sequencer
 	** Parameters: (sfx_softseq_t *) self: Self reference
 	**             (const char *) name: Name of the option to set
@@ -46,7 +46,7 @@ struct sfx_softseq_t {
 	** Returns   : (int) GFX_OK on success, or GFX_ERROR if not supported
 	*/
 
-	int (*init)(sfx_softseq_t *self, byte *res_data, int res_size,
+	Common::Error (*init)(sfx_softseq_t *self, byte *res_data, int res_size,
 	        byte *res2_data, int res2_size);
 	/* Initialises the sequencer
 	** Parameters: (sfx_softseq_t *) self: Self reference
@@ -54,7 +54,7 @@ struct sfx_softseq_t {
 	**             (int) res_size: Number of bytes in 'res_data'
 	**             (byte *) res2_data: Resource data for 'patch2_nr' (see below)
 	**             (int) res2_size: Number of bytes in 'res2_data'
-	** Returns   : (int) SFX_OK on success, SFX_ERROR otherwise
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError otherwise
 	** Note that 'res_data' is only a valid pointer for this call. If the
 	** data is needed later during execution, it should be backed up internally.
 	** If the requested resource is not available, res_data will be NULL

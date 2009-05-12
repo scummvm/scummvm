@@ -26,7 +26,7 @@
 #ifndef SCI_SFX_SFX_PCM_H
 #define SCI_SFX_SFX_PCM_H
 
-#include "sci/sfx/sfx.h"
+#include "common/error.h"
 #include "sound/timestamp.h"
 
 namespace Sci {

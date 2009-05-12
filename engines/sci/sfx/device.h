@@ -29,6 +29,7 @@
 #define SCI_SFX_DEVICE_H
 
 #include "common/scummsys.h"
+#include "common/error.h"
 
 namespace Sci {
 
@@ -40,43 +41,43 @@ namespace Sci {
 struct _midi_device {
 	const char *name;
 
-	int (*init)(struct _midi_device *self);
+	Common::Error (*init)(struct _midi_device *self);
 	/* Initializes the device
 	** Parameters: (midi_device_t *) self: Self reference
-	** Returns   : (int) SFX_OK on success, SFX_ERROR if the device could not be
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError if the device could not be
 	**                   opened
 	*/
 
-	int (*set_option)(struct _midi_device *self, char *name, char *value);
+	Common::Error (*set_option)(struct _midi_device *self, char *name, char *value);
 	/* Sets an option for the device
 	** Parameters: (char *) name: Name of the option to set
 	**             (char *) value: Value of the option to set
-	** Returns   : (int) SFX_OK on success, SFX_ERROR otherwise (unsupported option)
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError otherwise (unsupported option)
 	*/
 };
 
 struct midi_writer_t {
 	char *name; /* Name description of the device */
 
-	int (*init)(midi_writer_t *self);
+	Common::Error (*init)(midi_writer_t *self);
 	/* Initializes the writer
 	** Parameters: (midi_writer_t *) self: Self reference
-	** Returns   : (int) SFX_OK on success, SFX_ERROR if the device could not be
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError if the device could not be
 	**                   opened
 	*/
 
-	int (*set_option)(midi_writer_t *self, char *name, char *value);
+	Common::Error (*set_option)(midi_writer_t *self, char *name, char *value);
 	/* Sets an option for the writer
 	** Parameters: (char *) name: Name of the option to set
 	**             (char *) value: Value of the option to set
-	** Returns   : (int) SFX_OK on success, SFX_ERROR otherwise (unsupported option)
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError otherwise (unsupported option)
 	*/
 
-	int (*write)(midi_writer_t *self, unsigned char *buf, int len);
+	Common::Error (*write)(midi_writer_t *self, unsigned char *buf, int len);
 	/* Writes some bytes to the MIDI stream
 	** Parameters: (char *) buf: The buffer to write
 	**             (int) len: Number of bytes to write
-	** Returns   : (int) SFX_OK on success, SFX_ERROR on failure
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	** No delta time is expected here.
 	*/
 

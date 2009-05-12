@@ -46,13 +46,13 @@ extern sfx_softseq_t sfx_softseq_pcspeaker;
 /* Forward-declare the sequencer we are defining here */
 
 
-static int SN76496_set_option(sfx_softseq_t *self, const char *name, const char *value) {
-	return SFX_ERROR;
+static Common::Error SN76496_set_option(sfx_softseq_t *self, const char *name, const char *value) {
+	return Common::kUnknownError;
 }
 
-static int SN76496_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
+static Common::Error SN76496_init(sfx_softseq_t *self, byte *patch, int patch_len, byte *patch2,
 	int patch2_len) {
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 static void SN76496_exit(sfx_softseq_t *self) {

@@ -112,11 +112,11 @@ static void player_void_callback(void) {
 
 /* API implementation */
 
-static int player_set_option(char *name, char *value) {
-	return SFX_ERROR;
+static Common::Error player_set_option(char *name, char *value) {
+	return Common::kUnknownError;
 }
 
-static int player_init(ResourceManager *resmgr, int expected_latency) {
+static Common::Error player_init(ResourceManager *resmgr, int expected_latency) {
 	MidiDriverType musicDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB);
 
 	switch(musicDriver) {
@@ -148,10 +148,10 @@ static int player_init(ResourceManager *resmgr, int expected_latency) {
 	mididrv->open(resmgr);
 	mididrv->setVolume(volume);
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int player_add_iterator(SongIterator *it, uint32 start_time) {
+static Common::Error player_add_iterator(SongIterator *it, uint32 start_time) {
 	mutex->lock();
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(mididrv->getPlayMask()));
 	SIMSG_SEND(it, SIMSG_SET_RHYTHM(mididrv->hasRhythmChannel()));
@@ -166,15 +166,15 @@ static int player_add_iterator(SongIterator *it, uint32 start_time) {
 	play_it_done = 0;
 	mutex->unlock();
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int player_fade_out(void) {
+static Common::Error player_fade_out(void) {
 	warning("Attempt to fade out - not implemented yet");
-	return SFX_ERROR;
+	return Common::kUnknownError;
 }
 
-static int player_stop(void) {
+static Common::Error player_stop(void) {
 	debug(3, "Player: Stopping song iterator %p", (void *)play_it);
 	mutex->lock();
 	delete play_it;
@@ -183,23 +183,23 @@ static int player_stop(void) {
 		static_cast<MidiDriver *>(mididrv)->send(0xb0 + i, SCI_MIDI_CHANNEL_NOTES_OFF, 0);
 	mutex->unlock();
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int player_send_iterator_message(const SongIterator::Message &msg) {
+static Common::Error player_send_iterator_message(const SongIterator::Message &msg) {
 	mutex->lock();
 	if (!play_it) {
 		mutex->unlock();
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	songit_handle_message(&play_it, msg);
 	mutex->unlock();
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int player_pause(void) {
+static Common::Error player_pause(void) {
 	mutex->lock();
 	play_paused = 1;
 	play_pause_diff = wakeup_time.msecsDiff(current_time);
@@ -207,27 +207,27 @@ static int player_pause(void) {
 	mididrv->playSwitch(false);
 	mutex->unlock();
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int player_resume(void) {
+static Common::Error player_resume(void) {
 	mutex->lock();
 	wakeup_time = Audio::Timestamp(current_time.msecs() + play_pause_diff, SFX_TICKS_PER_SEC);
 	mididrv->playSwitch(true);
 	play_paused = 0;
 	mutex->unlock();
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
-static int player_exit(void) {
+static Common::Error player_exit(void) {
 	mididrv->close();
 	delete mididrv;
 	delete mutex;
 	delete play_it;
 	play_it = NULL;
 
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 sfx_player_t sfx_player_player = {

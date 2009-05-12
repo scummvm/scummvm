@@ -46,8 +46,9 @@
 
 #include "sci/tools.h"
 #include "sci/sfx/iterator.h"
-#include "../softseq.h"
-#include "../adlib_sbi.h"
+#include "sci/sfx/softseq.h"
+#include "sci/sfx/adlib_sbi.h"
+#include "sci/sfx/sci_midi.h"
 
 #include "sound/fmopl.h"
 
@@ -404,14 +405,14 @@ static void opl2_poll(sfx_softseq_t *self, byte *dest, int count) {
 	YM3812UpdateOne(ym3812, ptr, count);
 }
 
-static int opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
+static Common::Error opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte *data2_ptr,
 	int data2_length) {
 	int i;
 
 	/* load up the patch.003 file, parse out the instruments */
 	if (data_length < 1344) {
 		sciprintf("[sfx:seq:opl2] Invalid patch.003: Expected %d, got %d\n", 1344, data_length);
-		return -1;
+		return Common::kUnknownError;
 	}
 
 	for (i = 0; i < 48; i++)
@@ -423,13 +424,13 @@ static int opl2_init(sfx_softseq_t *self, byte *data_ptr, int data_length, byte 
 
 	if (!(ym3812 = makeAdlibOPL(SAMPLE_RATE))) {
 		sciprintf("[sfx:seq:opl2] Failure: Emulator init failed!\n");
-		return SFX_ERROR;
+		return Common::kUnknownError;
 	}
 
 	ready = 1;
 
 	opl2_allstop(self);
-	return SFX_OK;
+	return Common::kNoError;
 }
 
 
@@ -543,8 +544,8 @@ static void opl2_volume(sfx_softseq_t *self, int volume) {
 #endif
 }
 
-int opl2_set_option(sfx_softseq_t *self, const char *name, const char *value) {
-	return SFX_ERROR;
+static Common::Error opl2_set_option(sfx_softseq_t *self, const char *name, const char *value) {
+	return Common::kUnknownError;
 }
 
 void opl2_event(sfx_softseq_t *self, byte cmd, int argc, byte *argv) {
