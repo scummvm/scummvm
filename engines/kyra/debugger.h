@@ -66,7 +66,7 @@ protected:
 	virtual void postEnter();
 
 	bool cmd_enterRoom(int argc, const char **argv);
-	bool cmd_listRooms(int argc, const char **argv);
+	bool cmd_listScenes(int argc, const char **argv);
 	bool cmd_giveItem(int argc, const char **argv);
 	bool cmd_listBirthstones(int argc, const char **argv);
 };

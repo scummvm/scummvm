@@ -193,7 +193,7 @@ bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
 Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
 	: Debugger(vm), _vm(vm) {
 	DCmd_Register("enter",				WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
-	DCmd_Register("rooms",				WRAP_METHOD(Debugger_LoK, cmd_listRooms));
+	DCmd_Register("scenes",				WRAP_METHOD(Debugger_LoK, cmd_listScenes));
 	DCmd_Register("give",				WRAP_METHOD(Debugger_LoK, cmd_giveItem));
 	DCmd_Register("birthstones",		WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
 }
@@ -245,7 +245,7 @@ bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger_LoK::cmd_listRooms(int argc, const char **argv) {
+bool Debugger_LoK::cmd_listScenes(int argc, const char **argv) {
 	for (int i = 0; i < _vm->_roomTableSize; i++) {
 		DebugPrintf("%-3i: %-10s", i, _vm->_roomFilenameTable[_vm->_roomTable[i].nameIndex]);
 		if (!(i % 8))
@@ -262,7 +262,7 @@ bool Debugger_LoK::cmd_giveItem(int argc, const char **argv) {
 
 		// Kyrandia 1 has only 108 items (-1 to 106), otherwise it will crash
 		if (item < -1 || item > 106) {
-			DebugPrintf("itemid must be any value between (including) -1 and 106\n");
+			DebugPrintf("'itemid' must be any value between (including) -1 and 106\n");
 			return true;
 		}
 
@@ -276,9 +276,9 @@ bool Debugger_LoK::cmd_giveItem(int argc, const char **argv) {
 }
 
 bool Debugger_LoK::cmd_listBirthstones(int argc, const char **argv) {
-	DebugPrintf("Needed Birthstone gems:\n");
+	DebugPrintf("Needed birthstone gems:\n");
 	for (int i = 0; i < ARRAYSIZE(_vm->_birthstoneGemTable); ++i)
-		DebugPrintf("%-2d '%s'\n", _vm->_birthstoneGemTable[i], _vm->_itemList[_vm->_birthstoneGemTable[i]]);
+		DebugPrintf("%-3d '%s'\n", _vm->_birthstoneGemTable[i], _vm->_itemList[_vm->_birthstoneGemTable[i]]);
 	return true;
 }
 
@@ -287,7 +287,6 @@ bool Debugger_LoK::cmd_listBirthstones(int argc, const char **argv) {
 Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
 	DCmd_Register("character_info",		WRAP_METHOD(Debugger_v2, cmd_characterInfo));
 	DCmd_Register("enter",				WRAP_METHOD(Debugger_v2, cmd_enterScene));
-	DCmd_Register("rooms",				WRAP_METHOD(Debugger_v2, cmd_listScenes));	// for consistency with kyra_v1
 	DCmd_Register("scenes",				WRAP_METHOD(Debugger_v2, cmd_listScenes));
 	DCmd_Register("scene_info",			WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
 	DCmd_Register("scene_to_facing",	WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
