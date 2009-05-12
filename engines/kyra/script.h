@@ -73,20 +73,19 @@ struct EMCState {
 class Resource;
 class KyraEngine_v1;
 
-class ScriptFileParser {
+class IFFParser {
 public:
-	ScriptFileParser() : _stream(0), _startOffset(0), _endOffset(0) {}
-	ScriptFileParser(const char *filename, Resource *res) : _stream(0), _startOffset(0), _endOffset(0) { setFile(filename, res); }
-	~ScriptFileParser() { destroy(); }
+	IFFParser() : _stream(0), _startOffset(0), _endOffset(0) {}
+	IFFParser(const char *filename, Resource *res) : _stream(0), _startOffset(0), _endOffset(0) { setFile(filename, res); }
+	~IFFParser() { destroy(); }
 
-	// 'script' must be allocated with new!
 	void setFile(const char *filename, Resource *res);
 
 	operator bool() const { return (_startOffset != _endOffset) && _stream; }
 
 	uint32 getFORMBlockSize();
-	uint32 getIFFBlockSize(const uint32 chunk);
-	bool loadIFFBlock(const uint32 chunk, void *loadTo, uint32 ptrSize);
+	uint32 getBlockSize(const uint32 chunk);
+	bool loadBlock(const uint32 chunk, void *loadTo, uint32 ptrSize);
 private:
 	void destroy();
 

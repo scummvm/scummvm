@@ -119,7 +119,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	if (!vm()->resource()->exists(filename))
 		return 0;
 
-	ScriptFileParser file(filename, vm()->resource());
+	IFFParser file(filename, vm()->resource());
 	if (!file)
 		error("Couldn't open TIM file '%s'", filename);
 
@@ -137,16 +137,16 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	tim->procFunc = -1;
 	tim->opcodes = opcodes;
 
-	uint32 avtlChunkSize = file.getIFFBlockSize(AVTL_CHUNK);
-	uint32 textChunkSize = file.getIFFBlockSize(TEXT_CHUNK);
+	uint32 avtlChunkSize = file.getBlockSize(AVTL_CHUNK);
+	uint32 textChunkSize = file.getBlockSize(TEXT_CHUNK);
 
 	tim->avtl = new uint16[avtlChunkSize/2];
 	if (textChunkSize != 0xFFFFFFFF)
 		tim->text = new byte[textChunkSize];
 
-	if (!file.loadIFFBlock(AVTL_CHUNK, tim->avtl, avtlChunkSize))
+	if (!file.loadBlock(AVTL_CHUNK, tim->avtl, avtlChunkSize))
 		error("Couldn't read AVTL chunk in TIM file '%s'", filename);
-	if (textChunkSize != 0xFFFFFFFF && !file.loadIFFBlock(TEXT_CHUNK, tim->text, textChunkSize))
+	if (textChunkSize != 0xFFFFFFFF && !file.loadBlock(TEXT_CHUNK, tim->text, textChunkSize))
 		error("Couldn't read TEXT chunk in TIM file '%s'", filename);
 
 	avtlChunkSize >>= 1;

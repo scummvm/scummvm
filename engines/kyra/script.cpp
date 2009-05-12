@@ -66,7 +66,7 @@ EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm) {
 }
 
 bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Common::Array<const Opcode*> *opcodes) {
-	ScriptFileParser file(filename, _vm->resource());
+	IFFParser file(filename, _vm->resource());
 	if (!file) {
 		error("Couldn't open script file '%s'", filename);
 		return false;
@@ -80,18 +80,18 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 		return false;
 	}
 
-	uint32 chunkSize = file.getIFFBlockSize(TEXT_CHUNK);
+	uint32 chunkSize = file.getBlockSize(TEXT_CHUNK);
 	if (chunkSize != (uint32)-1) {
 		scriptData->text = new byte[chunkSize];
 
-		if (!file.loadIFFBlock(TEXT_CHUNK, scriptData->text, chunkSize)) {
+		if (!file.loadBlock(TEXT_CHUNK, scriptData->text, chunkSize)) {
 			unload(scriptData);
 			error("Couldn't load TEXT chunk from file: '%s'", filename);
 			return false;
 		}
 	}
 
-	chunkSize = file.getIFFBlockSize(ORDR_CHUNK);
+	chunkSize = file.getBlockSize(ORDR_CHUNK);
 	if (chunkSize == (uint32)-1) {
 		unload(scriptData);
 		error("No ORDR chunk found in file: '%s'", filename);
@@ -101,7 +101,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 	scriptData->ordr = new uint16[chunkSize];
 
-	if (!file.loadIFFBlock(ORDR_CHUNK, scriptData->ordr, chunkSize << 1)) {
+	if (!file.loadBlock(ORDR_CHUNK, scriptData->ordr, chunkSize << 1)) {
 		unload(scriptData);
 		error("Couldn't load ORDR chunk from file: '%s'", filename);
 		return false;
@@ -110,7 +110,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 	while (chunkSize--)
 		scriptData->ordr[chunkSize] = READ_BE_UINT16(&scriptData->ordr[chunkSize]);
 
-	chunkSize = file.getIFFBlockSize(DATA_CHUNK);
+	chunkSize = file.getBlockSize(DATA_CHUNK);
 	if (chunkSize == (uint32)-1) {
 		unload(scriptData);
 		error("No DATA chunk found in file: '%s'", filename);
@@ -120,7 +120,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 	scriptData->data = new uint16[chunkSize];
 
-	if (!file.loadIFFBlock(DATA_CHUNK, scriptData->data, chunkSize << 1)) {
+	if (!file.loadBlock(DATA_CHUNK, scriptData->data, chunkSize << 1)) {
 		unload(scriptData);
 		error("Couldn't load DATA chunk from file: '%s'", filename);
 		return false;
@@ -217,10 +217,10 @@ bool EMCInterpreter::run(EMCState *script) {
 }
 
 #pragma mark -
-#pragma mark - ScriptFileParser implementation
+#pragma mark - IFFParser implementation
 #pragma mark -
 
-void ScriptFileParser::setFile(const char *filename, Resource *res) {
+void IFFParser::setFile(const char *filename, Resource *res) {
 	destroy();
 
 	res->exists(filename, true);
@@ -230,13 +230,13 @@ void ScriptFileParser::setFile(const char *filename, Resource *res) {
 	_endOffset = _stream->size();
 }
 
-void ScriptFileParser::destroy() {
+void IFFParser::destroy() {
 	delete _stream;
 	_stream = 0;
 	_startOffset = _endOffset = 0;
 }
 
-uint32 ScriptFileParser::getFORMBlockSize() {
+uint32 IFFParser::getFORMBlockSize() {
 	uint32 oldOffset = _stream->pos();
 
 	uint32 data = _stream->readUint32LE();
@@ -250,7 +250,7 @@ uint32 ScriptFileParser::getFORMBlockSize() {
 	return data;
 }
 
-uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
+uint32 IFFParser::getBlockSize(const uint32 chunkName) {
 	uint32 size = (uint32)-1;
 
 	_stream->seek(_startOffset + 0x0C);
@@ -271,7 +271,7 @@ uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
 	return size;
 }
 
-bool ScriptFileParser::loadIFFBlock(const uint32 chunkName, void *loadTo, uint32 ptrSize) {
+bool IFFParser::loadBlock(const uint32 chunkName, void *loadTo, uint32 ptrSize) {
 	_stream->seek(_startOffset + 0x0C);
 
 	while ((uint)_stream->pos() < _endOffset) {
