@@ -75,11 +75,6 @@ public:
 	static DriverId detect(OplType type = kOpl2);
 
 	/**
-	 * Checks whether the driver id is valid.
-	 */
-	static bool validDriver(DriverId id) { return (id > 0); }
-
-	/**
 	 * Creates the specific driver with a specific type setup.
 	 */ 
 	static OPL *create(DriverId driver, OplType type);

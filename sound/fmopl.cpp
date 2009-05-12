@@ -34,12 +34,13 @@ namespace OPL {
 // Config implementation
 
 enum OplEmulator {
+	kAuto = 0,
 	kMame = 1,
 	kDOSBox = 2
 };
 
 const Config::EmulatorDescription Config::_drivers[] = {
-	{ "auto", "<default>", 0, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+	{ "auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 	{ "mame", "MAME OPL emulator", kMame, kFlagOpl2 },
 #ifndef DISABLE_DOSBOX_OPL
 	{ "db", "DOSBox OPL emulator (experimental)", kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
@@ -53,7 +54,7 @@ Config::DriverId Config::parse(const Common::String &name) {
 			return _drivers[i].id;
 	}
 
-	return 0;
+	return -1;
 }
 
 Config::DriverId Config::detect(OplType type) {
@@ -76,12 +77,13 @@ Config::DriverId Config::detect(OplType type) {
 
 	// When a valid driver is selected, check whether it supports
 	// the requested OPL chip.
-	if (validDriver(drv)) {
+	if (drv != -1 && drv != kAuto) {
 		// If the chip is supported, just use the driver.
 		if ((flags & _drivers[drv].flags))
 			return drv;
-
 		// When it doesn't support the flags fall back to auto detection
+		else
+			drv = -1;
 	}
 
 	// Detect the first matching emulator
@@ -96,10 +98,26 @@ Config::DriverId Config::detect(OplType type) {
 }
 
 OPL *Config::create(DriverId driver, OplType type) {
-	if (!validDriver(driver))
+	// On invalid driver selection, we try to do some fallback detection
+	if (driver == -1) {
+		warning("Invalid OPL driver selected, trying to detect a fallback emulator");
+		driver = kAuto;
+	}
+
+	// If autodetection is selected, we search for a matching
+	// driver.
+	if (driver == kAuto) {
 		driver = detect(type);
 
-	switch (driver)  {
+		// No emulator for the specified OPL chip could
+		// be found, thus stop here.
+		if (driver == -1) {
+			warning("No OPL emulator available for type %d", type);
+			return 0;
+		}
+	}
+
+	switch (driver) {
 	case kMame:
 		if (type == kOpl2)
 			return new MAME::OPL();
