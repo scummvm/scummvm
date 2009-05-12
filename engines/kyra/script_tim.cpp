@@ -34,6 +34,7 @@
 #include "kyra/screen_lol.h"
 #endif // ENABLE_LOL
 
+#include "common/iff_container.h"
 #include "common/endian.h"
 
 namespace Kyra {
@@ -87,7 +88,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 #undef COMMAND_UNIMPL
 #undef COMMAND
 
-	_commands = commandProcs ;
+	_commands = commandProcs;
 	_commandsSize = ARRAYSIZE(commandProcs);
 
 	_animations = new Animation[TIM::kWSASlots];
@@ -115,21 +116,17 @@ TIMInterpreter::~TIMInterpreter() {
 	delete[] _animations;	
 }
 
-TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes) {
+TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode *> *opcodes) {
 	if (!vm()->resource()->exists(filename))
 		return 0;
 
-	IFFParser file(filename, vm()->resource());
-	if (!file)
+	Common::SeekableReadStream *stream = vm()->resource()->createReadStream(filename);
+	if (!stream)
 		error("Couldn't open TIM file '%s'", filename);
 
-	uint32 formBlockSize = file.getFORMBlockSize();
-	if (formBlockSize == 0xFFFFFFFF)
-		error("No FORM chunk found in TIM file '%s'", filename);
-
-	if (formBlockSize < 20)
-		error("TIM file '%s' FORM chunk size smaller than 20", filename);
-
+	IFFParser iff(*stream);
+	Common::IFFChunk *chunk = 0;
+	
 	TIM *tim = new TIM;
 	assert(tim);
 	memset(tim, 0, sizeof(TIM));
@@ -137,27 +134,44 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	tim->procFunc = -1;
 	tim->opcodes = opcodes;
 
-	uint32 avtlChunkSize = file.getBlockSize(AVTL_CHUNK);
-	uint32 textChunkSize = file.getBlockSize(TEXT_CHUNK);
+	int avtlChunkSize = 0;
 
-	tim->avtl = new uint16[avtlChunkSize/2];
-	if (textChunkSize != 0xFFFFFFFF)
-		tim->text = new byte[textChunkSize];
+	while ((chunk = iff.nextChunk()) != 0) {
+		switch (chunk->id) {
+		case MKID_BE('TEXT'):
+			tim->text = new byte[chunk->size];
+			assert(tim->text);
+			if (chunk->read(tim->text, chunk->size) != chunk->size)
+				error("Couldn't read TEXT chunk from file '%s'", filename);
+			break;
 
-	if (!file.loadBlock(AVTL_CHUNK, tim->avtl, avtlChunkSize))
-		error("Couldn't read AVTL chunk in TIM file '%s'", filename);
-	if (textChunkSize != 0xFFFFFFFF && !file.loadBlock(TEXT_CHUNK, tim->text, textChunkSize))
-		error("Couldn't read TEXT chunk in TIM file '%s'", filename);
+		case MKID_BE('AVTL'):
+			avtlChunkSize = chunk->size >> 1;
+			tim->avtl = new uint16[avtlChunkSize];
+			assert(tim->avtl);
+			chunk->read(tim->avtl, chunk->size);
 
-	avtlChunkSize >>= 1;
-	for (uint i = 0; i < avtlChunkSize; ++i)
-		tim->avtl[i] = READ_LE_UINT16(tim->avtl + i);
+			for (int i = avtlChunkSize - 1; i >= 0; --i)
+				tim->avtl[i] = READ_LE_UINT16(&tim->avtl[i]);
+			break;
+
+		default:
+			warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk->id), chunk->size, filename);
+			break;
+		}
+	}
+
+	delete stream;
+
+	if (!tim->avtl)
+		error("Couldn't read AVTL chunk from file: '%s'", filename);
 
 	int num = (avtlChunkSize < TIM::kCountFuncs) ? avtlChunkSize : (int)TIM::kCountFuncs;
 	for (int i = 0; i < num; ++i)
 		tim->func[i].avtl = tim->avtl + tim->avtl[i];
 
 	strncpy(tim->filename, filename, 13);
+	tim->filename[12] = 0;
 
 	return tim;
 }

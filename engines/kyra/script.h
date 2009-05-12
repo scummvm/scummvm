@@ -29,6 +29,7 @@
 #include "common/stream.h"
 #include "common/array.h"
 #include "common/func.h"
+#include "common/iff_container.h"
 
 namespace Kyra {
 
@@ -64,34 +65,28 @@ struct EMCState {
 #define stackPos(x) (script->stack[script->sp+x])
 #define stackPosString(x) ((const char*)&script->dataPtr->text[READ_BE_UINT16(&script->dataPtr->text[stackPos(x)<<1])])
 
-#define FORM_CHUNK 0x4D524F46
-#define TEXT_CHUNK 0x54584554
-#define DATA_CHUNK 0x41544144
-#define ORDR_CHUNK 0x5244524F
-#define AVTL_CHUNK 0x4C545641
-
 class Resource;
 class KyraEngine_v1;
 
-class IFFParser {
+class IFFParser : public Common::IFFParser {
 public:
-	IFFParser() : _stream(0), _startOffset(0), _endOffset(0) {}
-	IFFParser(const char *filename, Resource *res) : _stream(0), _startOffset(0), _endOffset(0) { setFile(filename, res); }
-	~IFFParser() { destroy(); }
-
-	void setFile(const char *filename, Resource *res);
-
-	operator bool() const { return (_startOffset != _endOffset) && _stream; }
-
-	uint32 getFORMBlockSize();
-	uint32 getBlockSize(const uint32 chunk);
-	bool loadBlock(const uint32 chunk, void *loadTo, uint32 ptrSize);
-private:
-	void destroy();
-
-	Common::SeekableReadStream *_stream;
-	uint32 _startOffset;
-	uint32 _endOffset;
+	IFFParser(Common::SeekableReadStream &input) : Common::IFFParser(input) {
+		// It seems Westwood missunderstood the 'size' field of the FORM chunk.
+		//
+		// For EMC scripts (type EMC2) it's filesize instead of filesize - 8,
+		// means accidently including the 8 bytes used by the chunk header for the FORM
+		// chunk.
+		//
+		// For TIM scripts (type AVFS) it's filesize - 12 instead of filesize - 8,
+		// means it will not include the size of the 'type' field in the FORM chunk,
+		// instead of only not including the chunk header size.
+		//
+		// Both lead to some problems in our IFF parser, either reading after the end
+		// of file or producing a "Chunk overread" error message. To work around this
+		// we need to adjust the size field properly.
+		if (_typeId == MKID_BE('EMC2') || _typeId == MKID_BE('AVFS'))
+			_formChunk.size = input.size() - 8;
+	}
 };
 
 class EMCInterpreter {

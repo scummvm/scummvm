@@ -28,6 +28,7 @@
 #include "common/stream.h"
 #include "common/util.h"
 #include "common/system.h"
+
 #include "kyra/kyra_v1.h"
 #include "kyra/resource.h"
 #include "kyra/script.h"
@@ -66,69 +67,62 @@ EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm) {
 }
 
 bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Common::Array<const Opcode*> *opcodes) {
-	IFFParser file(filename, _vm->resource());
-	if (!file) {
+	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
+	if (!stream) {
 		error("Couldn't open script file '%s'", filename);
 		return false;
 	}
 
 	memset(scriptData, 0, sizeof(EMCData));
 
-	uint32 formBlockSize = file.getFORMBlockSize();
-	if (formBlockSize == (uint32)-1) {
-		error("No FORM chunk found in file: '%s'", filename);
-		return false;
-	}
+	IFFParser iff(*stream);
+	Common::IFFChunk *chunk = 0;
 
-	uint32 chunkSize = file.getBlockSize(TEXT_CHUNK);
-	if (chunkSize != (uint32)-1) {
-		scriptData->text = new byte[chunkSize];
+	while ((chunk = iff.nextChunk()) != 0) {
+		switch (chunk->id) {
+		case MKID_BE('TEXT'):
+			scriptData->text = new byte[chunk->size];
+			assert(scriptData->text);
+			chunk->read(scriptData->text, chunk->size);
+			break;
 
-		if (!file.loadBlock(TEXT_CHUNK, scriptData->text, chunkSize)) {
-			unload(scriptData);
-			error("Couldn't load TEXT chunk from file: '%s'", filename);
-			return false;
+		case MKID_BE('ORDR'):
+			scriptData->ordr = new uint16[chunk->size >> 1];
+			assert(scriptData->ordr);
+			chunk->read(scriptData->ordr, chunk->size);
+
+			for (int i = (chunk->size >> 1) - 1; i >= 0; --i)
+				scriptData->ordr[i] = READ_BE_UINT16(&scriptData->ordr[i]);
+			break;
+
+		case MKID_BE('DATA'):
+			scriptData->data = new uint16[chunk->size >> 1];
+			assert(scriptData->data);
+			chunk->read(scriptData->data, chunk->size);
+
+			for (int i = (chunk->size >> 1) - 1; i >= 0; --i)
+				scriptData->data[i] = READ_BE_UINT16(&scriptData->data[i]);
+			break;
+
+		default:
+			warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk->id), chunk->size, filename);
+			break;
 		}
 	}
 
-	chunkSize = file.getBlockSize(ORDR_CHUNK);
-	if (chunkSize == (uint32)-1) {
+	if (!scriptData->ordr) {
 		unload(scriptData);
-		error("No ORDR chunk found in file: '%s'", filename);
-		return false;
-	}
-	chunkSize >>= 1;
-
-	scriptData->ordr = new uint16[chunkSize];
-
-	if (!file.loadBlock(ORDR_CHUNK, scriptData->ordr, chunkSize << 1)) {
-		unload(scriptData);
-		error("Couldn't load ORDR chunk from file: '%s'", filename);
+		error("Couldn't read ORDR chunk from file: '%s'", filename);
 		return false;
 	}
 
-	while (chunkSize--)
-		scriptData->ordr[chunkSize] = READ_BE_UINT16(&scriptData->ordr[chunkSize]);
-
-	chunkSize = file.getBlockSize(DATA_CHUNK);
-	if (chunkSize == (uint32)-1) {
+	if (!scriptData->data) {
 		unload(scriptData);
-		error("No DATA chunk found in file: '%s'", filename);
+		error("Couldn't read DATA chunk from file: '%s'", filename);
 		return false;
 	}
-	chunkSize >>= 1;
 
-	scriptData->data = new uint16[chunkSize];
-
-	if (!file.loadBlock(DATA_CHUNK, scriptData->data, chunkSize << 1)) {
-		unload(scriptData);
-		error("Couldn't load DATA chunk from file: '%s'", filename);
-		return false;
-	}
-	scriptData->dataSize = chunkSize;
-
-	while (chunkSize--)
-		scriptData->data[chunkSize] = READ_BE_UINT16(&scriptData->data[chunkSize]);
+	delete stream;
 
 	scriptData->sysFuncs = opcodes;
 
@@ -215,83 +209,6 @@ bool EMCInterpreter::run(EMCState *script) {
 	}
 
 	return (script->ip != 0);
-}
-
-#pragma mark -
-#pragma mark - IFFParser implementation
-#pragma mark -
-
-void IFFParser::setFile(const char *filename, Resource *res) {
-	destroy();
-
-	res->exists(filename, true);
-	_stream = res->createReadStream(filename);
-	assert(_stream);
-	_startOffset = 0;
-	_endOffset = _stream->size();
-}
-
-void IFFParser::destroy() {
-	delete _stream;
-	_stream = 0;
-	_startOffset = _endOffset = 0;
-}
-
-uint32 IFFParser::getFORMBlockSize() {
-	uint32 oldOffset = _stream->pos();
-
-	uint32 data = _stream->readUint32LE();
-
-	if (data != FORM_CHUNK) {
-		_stream->seek(oldOffset);
-		return (uint32)-1;
-	}
-
-	data = _stream->readUint32BE();
-	return data;
-}
-
-uint32 IFFParser::getBlockSize(const uint32 chunkName) {
-	uint32 size = (uint32)-1;
-
-	_stream->seek(_startOffset + 0x0C);
-
-	while ((uint)_stream->pos() < _endOffset) {
-		uint32 chunk = _stream->readUint32LE();
-		uint32 size_temp = _stream->readUint32BE();
-
-		if (chunk != chunkName) {
-			_stream->seek((size_temp + 1) & (~1), SEEK_CUR);
-			assert((uint)_stream->pos() <= _endOffset);
-		} else {
-			size = size_temp;
-			break;
-		}
-	}
-
-	return size;
-}
-
-bool IFFParser::loadBlock(const uint32 chunkName, void *loadTo, uint32 ptrSize) {
-	_stream->seek(_startOffset + 0x0C);
-
-	while ((uint)_stream->pos() < _endOffset) {
-		uint32 chunk = _stream->readUint32LE();
-		uint32 chunkSize = _stream->readUint32BE();
-
-		if (chunk != chunkName) {
-			_stream->seek((chunkSize + 1) & (~1), SEEK_CUR);
-			assert((uint)_stream->pos() <= _endOffset);
-		} else {
-			uint32 loadSize = 0;
-
-			loadSize = MIN(ptrSize, chunkSize);
-			_stream->read(loadTo, loadSize);
-			return true;
-		}
-	}
-
-	return false;
 }
 
 #pragma mark -
