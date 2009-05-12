@@ -43,7 +43,7 @@
 namespace Sci {
 
 // from ksound.cpp:
-SongIterator *build_iterator(EngineState *s, int song_nr, int type, songit_id_t id);
+SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id);
 
 #pragma mark -
 
@@ -705,7 +705,7 @@ int _reset_graphics_input(EngineState *s);
 
 static void reconstruct_sounds(EngineState *s) {
 	song_t *seeker;
-	int it_type = s->resmgr->_sciVersion >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
+	SongIteratorType it_type = s->resmgr->_sciVersion >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
 
 	if (s->sound.songlib.lib)
 		seeker = *(s->sound.songlib.lib);

@@ -27,7 +27,6 @@
 
 #include "sci/tools.h"
 #include "sci/sfx/core.h"
-#include "sci/sfx/iterator_internal.h"
 #include "sci/sfx/player.h"
 #include "sci/sfx/sci_midi.h"
 
@@ -670,12 +669,12 @@ void sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops) {
 	SongIterator::Message msg = SongIterator::Message(handle, SIMSG_SET_LOOPS(loops));
 	ASSERT_SONG(song);
 
+	song->loops = loops;
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Setting loops on %08lx to %d\n",
 	        handle, loops);
 #endif
 	songit_handle_message(&(song->it), msg);
-	song->loops = ((BaseSongIterator *)song->it)->loops;
 
 	if (player/* && player->send_iterator_message*/)
 		/* FIXME: The above should be optional! */
@@ -684,14 +683,13 @@ void sfx_song_set_loops(sfx_state_t *self, song_handle_t handle, int loops) {
 
 void sfx_song_set_hold(sfx_state_t *self, song_handle_t handle, int hold) {
 	song_t *song = song_lib_find(self->songlib, handle);
-	SongIterator::Message msg
-	= SongIterator::Message(handle, SIMSG_SET_HOLD(hold));
+	SongIterator::Message msg = SongIterator::Message(handle, SIMSG_SET_HOLD(hold));
 	ASSERT_SONG(song);
 
 	song->hold = hold;
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Setting hold on %08lx to %d\n",
-	        handle, loops);
+	        handle, hold);
 #endif
 	songit_handle_message(&(song->it), msg);
 

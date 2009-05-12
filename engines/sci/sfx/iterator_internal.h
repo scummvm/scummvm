@@ -36,12 +36,6 @@ namespace Sci {
 
 /* Iterator types */
 
-#define SCI_SONG_ITERATOR_TYPE_SCI0 0
-#define SCI_SONG_ITERATOR_TYPE_SCI1 1
-
-#define SIPFX __FILE__" : "
-
-
 enum {
 	SI_STATE_UNINITIALISED		= -1,
 	SI_STATE_DELTA_TIME			= 0,	//!< Now at a delta time
@@ -80,6 +74,7 @@ struct SongIteratorChannel {
 	byte last_cmd;	//!< Last operation executed, for running status */
 
 public:
+	void init(int id, int offset, int end);
 	void resetSynthChannels();
 };
 
@@ -165,6 +160,17 @@ public:
 	void init();
 	int getTimepos();
 	SongIterator *clone(int delta);
+
+private:
+	int getSmallestDelta() const;
+
+	void updateDelta(int delta);
+
+	/** Checks that none of the channels is waiting for its delta to be read */
+	bool noDeltaTime() const;
+
+	/** Determine the channel # of the next active event, or -1 */
+	int getCommandIndex() const;
 };
 
 #define PLAYMASK_NONE 0x0
@@ -173,6 +179,10 @@ public:
 /*--------- Fast Forward ---------*/
 /**********************************/
 
+/**
+ * A song iterator which fast-forwards another iterator.
+ * Skips all delta times until a specified 'delta' has been used up.
+ */
 class FastForwardSongIterator : public SongIterator {
 protected:
 	SongIterator *_delegate;
@@ -194,8 +204,6 @@ public:
 /**********************************/
 
 enum {
-	MAX_BUF_SIZE = 4,
-	
 	TEE_LEFT = 0,
 	TEE_RIGHT = 1,
 	TEE_LEFT_ACTIVE  = (1<<0),
@@ -203,10 +211,7 @@ enum {
 	TEE_LEFT_READY  = (1<<2), /**< left result is ready */
 	TEE_RIGHT_READY = (1<<3), /**< right result is ready */
 	TEE_LEFT_PCM = (1<<4),
-	TEE_RIGHT_PCM = (1<<5),
-
-	TEE_MORPH_NONE = 0, /**< Not waiting to self-morph */
-	TEE_MORPH_READY = 1 /**< Ready to self-morph */
+	TEE_RIGHT_PCM = (1<<5)
 };
 
 /**
@@ -216,11 +221,11 @@ class TeeSongIterator : public SongIterator {
 public:
 	int _status;
 
-	int morph_deferred; /* One of TEE_MORPH_* above */
+	bool _readyToMorph; /* One of TEE_MORPH_* above */
 
 	struct {
 		SongIterator *it;
-		byte buf[MAX_BUF_SIZE];
+		byte buf[4];
 		int result;
 		int retval;
 

@@ -69,14 +69,14 @@ BaseSongIterator::BaseSongIterator(byte *data, uint size, songit_id_t id)
 
 #define CHECK_FOR_END_ABSOLUTE(offset) \
 	if (offset > self->_data.size()) { \
-		warning(SIPFX "Reached end of song without terminator (%x/%x) at %d!", offset, self->_data.size(), __LINE__); \
+		warning("Reached end of song without terminator (%x/%x) at %d!", offset, self->_data.size(), __LINE__); \
 		return SI_FINISHED; \
 	}
 
 #define CHECK_FOR_END(offset_augment) \
 	if ((channel->offset + (offset_augment)) > channel->end) { \
 		channel->state = SI_STATE_FINISHED; \
-		warning(SIPFX "Reached end of track %d without terminator (%x+%x/%x) at %d!", channel->id, channel->offset, offset_augment, channel->end, __LINE__); \
+		warning("Reached end of track %d without terminator (%x+%x/%x) at %d!", channel->id, channel->offset, offset_augment, channel->end, __LINE__); \
 		return SI_FINISHED; \
 	}
 
@@ -106,6 +106,25 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self, sfx_pcm_config_t *format, 
 #define PARSE_FLAG_LOOPS_UNLIMITED (1 << 0) /* Unlimited # of loops? */
 #define PARSE_FLAG_PARAMETRIC_CUE (1 << 1) /* Assume that cues take an additional "cue value" argument */
 /* This implements a difference between SCI0 and SCI1 cues. */
+
+void SongIteratorChannel::init(int id_, int offset_, int end_) {
+	playmask = PLAYMASK_NONE; /* Disable all channels */
+	id = id_;
+	notes_played = 0;
+	state = SI_STATE_DELTA_TIME;
+	loop_timepos = 0;
+	total_timepos = 0;
+	timepos_increment = 0;
+	delay = 0; /* Only used for more than one channel */
+	last_cmd = 0xfe;
+
+	offset
+	= loop_offset
+	  = initial_offset
+	    = offset_;
+	end = end_;
+	saw_notes = 0;
+}
 
 void SongIteratorChannel::resetSynthChannels() {
 	byte buf[5];
@@ -362,7 +381,7 @@ static int _sci_midi_process_state(BaseSongIterator *self, byte *buf, int *resul
 	}
 
 	case SI_STATE_UNINITIALISED:
-		warning(SIPFX "Attempt to read command from uninitialized iterator!");
+		warning("Attempt to read command from uninitialized iterator!");
 		self->init();
 		return self->nextCommand(buf, result);
 
@@ -418,7 +437,7 @@ static int _sci_midi_process_state(BaseSongIterator *self, byte *buf, int *resul
 	}
 
 	default:
-		warning(SIPFX "Invalid iterator state %d!", channel->state);
+		warning("Invalid iterator state %d!", channel->state);
 		BREAKPOINT();
 		return SI_FINISHED;
 	}
@@ -465,7 +484,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 		Common::Array<byte>::iterator iter = Common::find(self->_data.begin() + offset, self->_data.end(), SCI0_END_OF_SONG);
 
 		if (iter == self->_data.end()) {
-			warning(SIPFX "Playing unterminated song!");
+			warning("Playing unterminated song!");
 			return 1;
 		}
 
@@ -479,7 +498,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 	}
 
 	if (!found_it) {
-		warning(SIPFX "Song indicates presence of PCM, but"
+		warning("Song indicates presence of PCM, but"
 		        " none found (finally at offset %04x)", offset);
 
 		return 1;
@@ -497,7 +516,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 	if (offset + SCI0_PCM_DATA_OFFSET + size != self->_data.size()) {
 		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->_data.size();
 
-		warning(SIPFX "PCM advertizes %d bytes of data, but %d"
+		warning("PCM advertizes %d bytes of data, but %d"
 		        " bytes are trailing in the resource!",
 		        size, self->_data.size() - (offset + SCI0_PCM_DATA_OFFSET));
 
@@ -610,25 +629,6 @@ int Sci0SongIterator::getTimepos() {
 	return channel.total_timepos;
 }
 
-static void _base_init_channel(SongIteratorChannel *channel, int id, int offset, int end) {
-	channel->playmask = PLAYMASK_NONE; /* Disable all channels */
-	channel->id = id;
-	channel->notes_played = 0;
-	channel->state = SI_STATE_DELTA_TIME;
-	channel->loop_timepos = 0;
-	channel->total_timepos = 0;
-	channel->timepos_increment = 0;
-	channel->delay = 0; /* Only used for more than one channel */
-	channel->last_cmd = 0xfe;
-
-	channel->offset
-	= channel->loop_offset
-	  = channel->initial_offset
-	    = offset;
-	channel->end = end;
-	channel->saw_notes = 0;
-}
-
 Sci0SongIterator::Sci0SongIterator(byte *data, uint size, songit_id_t id)
  : BaseSongIterator(data, size, id) {
 	channel_mask = 0xffff;	// Allocate all channels by default
@@ -648,7 +648,7 @@ void Sci0SongIterator::init() {
 
 	ccc = 0; /* Reset cumulative cue counter */
 	active_channels = 1;
-	_base_init_channel(&channel, 0, SCI0_MIDI_OFFSET, _data.size());
+	channel.init(0, SCI0_MIDI_OFFSET, _data.size());
 	channel.resetSynthChannels();
 
 	if (_data[0] == 2) /* Do we have an embedded PCM? */
@@ -679,10 +679,7 @@ static const int sci0_to_sci1_device_map[][2] = {
 	{0xff, 0xff},
 }; /* Maps bit number to device ID */
 
-#define SONGDATA(x) self->_data[offset + (x)]
-#define SCI1_CHANDATA(off) self->_data[channel->offset + (off)]
-
-static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
+static int _sci1_sample_init(Sci1SongIterator *self, const int offset) {
 	Sci1Sample sample;
 	int rate;
 	int length;
@@ -716,7 +713,7 @@ static int _sci1_sample_init(Sci1SongIterator *self, int offset) {
 
 	sample.announced = false;
 
-	/* Perform insertion sort */
+	/* Insert into the sample list at the right spot, keeping it sorted by delta */
 	Common::List<Sci1Sample>::iterator seeker = self->_samples.begin();
 	while (seeker != self->_samples.end() && seeker->delta < begin)
 		++seeker;
@@ -732,24 +729,24 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 	self->_samples.clear();
 //	self->_deviceId = 0x0c;
 
-	if (SONGDATA(0) == 0xf0) {
-		self->priority = SONGDATA(1);
+	if (self->_data[offset] == 0xf0) {
+		self->priority = self->_data[offset + 1];
 
 		offset += 8;
 	}
 
-	while (SONGDATA(0) != 0xff
-	        && SONGDATA(0) != self->_deviceId) {
+	while (self->_data[offset] != 0xff
+	        && self->_data[offset] != self->_deviceId) {
 		offset++;
 		CHECK_FOR_END_ABSOLUTE(offset + 1);
-		while (SONGDATA(0) != 0xff) {
+		while (self->_data[offset] != 0xff) {
 			CHECK_FOR_END_ABSOLUTE(offset + 7);
 			offset += 6;
 		}
 		offset++;
 	}
 
-	if (SONGDATA(0) == 0xff) {
+	if (self->_data[offset] == 0xff) {
 		sciprintf("[iterator-1] Song does not support"
 		          " hardware 0x%02x\n",
 		          self->_deviceId);
@@ -758,7 +755,7 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 
 	offset++;
 
-	while (SONGDATA(0) != 0xff) { /* End of list? */
+	while (self->_data[offset] != 0xff) { /* End of list? */
 		uint track_offset;
 		int end;
 		offset += 2;
@@ -781,27 +778,21 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 				break; /* Scan for remaining samples */
 			} else {
 				int channel_nr = self->_data[track_offset] & 0xf;
-				SongIteratorChannel *channel =
-				    &(self->_channels[self->_numChannels++]);
+				SongIteratorChannel &channel =
+				    self->_channels[self->_numChannels++];
 
 				if (self->_data[track_offset] & 0xf0)
 					printf("Channel %d has mapping bits %02x\n",
 					       channel_nr, self->_data[track_offset] & 0xf0);
 
-				_base_init_channel(channel,
-				                   channel_nr,
-				                   /* Skip over header bytes: */
-				                   track_offset + 2,
-				                   track_offset + end);
-				channel->resetSynthChannels();
+				// Add 2 to skip over header bytes */
+				channel.init(channel_nr, track_offset + 2, track_offset + end);
+				channel.resetSynthChannels();
 
-				self->polyphony[self->_numChannels - 1]
-				= SCI1_CHANDATA(-1);
-				self->importance[self->_numChannels - 1]
-				= self->polyphony[self->_numChannels - 1] >> 4;
-				self->polyphony[self->_numChannels - 1] &= 15;
+				self->polyphony[self->_numChannels - 1] = self->_data[channel.offset - 1] & 15;
+				self->importance[self->_numChannels - 1] = self->_data[channel.offset - 1] >> 4;
 
-				channel->playmask = ~0; /* Enable all */
+				channel.playmask = ~0; /* Enable all */
 				self->channel_mask |= (1 << channel_nr);
 
 				CHECK_FOR_END_ABSOLUTE(offset + end);
@@ -828,104 +819,60 @@ static int _sci1_song_init(Sci1SongIterator *self) {
 	return 0; /* Success */
 }
 
-#undef SONGDATA
+int Sci1SongIterator::getSmallestDelta() const {
+	int d = -1;
+	for (int i = 0; i < _numChannels; i++)
+		if (_channels[i].state == SI_STATE_COMMAND
+		        && (d == -1 || _channels[i].delay < d))
+			d = _channels[i].delay;
 
-static int _sci1_get_smallest_delta(Sci1SongIterator *self) {
-	int i, d = -1;
-	for (i = 0; i < self->_numChannels; i++)
-		if (self->_channels[i].state == SI_STATE_COMMAND
-		        && (d == -1 || self->_channels[i].delay < d))
-			d = self->_channels[i].delay;
-
-	if (!self->_samples.empty() && self->_samples.begin()->delta < d)
-		return self->_samples.begin()->delta;
+	if (!_samples.empty() && _samples.begin()->delta < d)
+		return _samples.begin()->delta;
 	else
 		return d;
 }
 
-static void _sci1_update_delta(Sci1SongIterator *self, int delta) {
-	int i;
+void Sci1SongIterator::updateDelta(int delta) {
+	if (!_samples.empty())
+		_samples.begin()->delta -= delta;
 
-	if (!self->_samples.empty())
-		self->_samples.begin()->delta -= delta;
-
-	for (i = 0; i < self->_numChannels; i++)
-		if (self->_channels[i].state == SI_STATE_COMMAND)
-			self->_channels[i].delay -= delta;
+	for (int i = 0; i < _numChannels; i++)
+		if (_channels[i].state == SI_STATE_COMMAND)
+			_channels[i].delay -= delta;
 }
 
-static int _sci1_no_delta_time(Sci1SongIterator *self) { /* Checks that none of the channels is waiting for its delta to be read */
-	int i;
-
-	for (i = 0; i < self->_numChannels; i++)
-		if (self->_channels[i].state == SI_STATE_DELTA_TIME)
-			return 0;
-
-	return 1;
+bool Sci1SongIterator::noDeltaTime() const {
+	for (int i = 0; i < _numChannels; i++)
+		if (_channels[i].state == SI_STATE_DELTA_TIME)
+			return false;
+	return true;
 }
-
-#if 0
-// Unreferenced - removed
-static void _sci1_dump_state(Sci1SongIterator *self) {
-	int i;
-
-	sciprintf("-- [%p] ------------------------\n", self);
-	for (i = 0; i < self->_numChannels; i++) {
-		int j;
-		sciprintf("%d(s%02d): d-%d:\t(%x/%x)  ",
-		          self->_channels[i].id,
-		          self->_channels[i].state,
-		          self->_channels[i].delay,
-		          self->_channels[i].offset,
-		          self->_channels[i].end);
-		for (j = -3; j < 9; j++) {
-			if (j == 0)
-				sciprintf(">");
-			else
-				sciprintf(" ");
-
-			sciprintf("%02x", self->_data[self->_channels[i].offset + j]);
-
-			if (j == 0)
-				sciprintf("<");
-			else
-				sciprintf(" ");
-		}
-		sciprintf("\n");
-	}
-	if (!self->_samples.empty()) {
-		sciprintf("\t[sample %d]\n",
-		          self->_samples.begin()->delta);
-	}
-	sciprintf("------------------------------------------\n");
-}
-#endif
 
 #define COMMAND_INDEX_NONE -1
 #define COMMAND_INDEX_PCM -2
 
-static int _sci1_command_index(Sci1SongIterator *self) {
+int Sci1SongIterator::getCommandIndex() const {
 	/* Determine the channel # of the next active event, or -1 */
 	int i;
 	int base_delay = 0x7ffffff;
 	int best_chan = COMMAND_INDEX_NONE;
 
-	for (i = 0; i < self->_numChannels; i++)
-		if ((self->_channels[i].state != SI_STATE_PENDING)
-		        && (self->_channels[i].state != SI_STATE_FINISHED))  {
+	for (i = 0; i < _numChannels; i++)
+		if ((_channels[i].state != SI_STATE_PENDING)
+		        && (_channels[i].state != SI_STATE_FINISHED))  {
 
-			if ((self->_channels[i].state == SI_STATE_DELTA_TIME)
-			        && (self->_channels[i].delay == 0))
+			if ((_channels[i].state == SI_STATE_DELTA_TIME)
+			        && (_channels[i].delay == 0))
 				return i;
 			/* First, read all unknown delta times */
 
-			if (self->_channels[i].delay < base_delay) {
+			if (_channels[i].delay < base_delay) {
 				best_chan = i;
-				base_delay = self->_channels[i].delay;
+				base_delay = _channels[i].delay;
 			}
 		}
 
-	if (!self->_samples.empty() && base_delay >= self->_samples.begin()->delta)
+	if (!_samples.empty() && base_delay >= _samples.begin()->delta)
 		return COMMAND_INDEX_PCM;
 
 	return best_chan;
@@ -944,8 +891,6 @@ Audio::AudioStream *Sci1SongIterator::getAudioStream() {
 }
 
 int Sci1SongIterator::nextCommand(byte *buf, int *result) {
-	int retval = -42; /* Shouldn't happen, but gcc doesn't agree */
-	int chan;
 
 	if (!_initialised) {
 		sciprintf("[iterator-1] DEBUG: Initialising for %d\n",
@@ -962,8 +907,9 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 		return delay;
 	}
 
-	do {
-		chan = _sci1_command_index(this);
+	int retval = 0;
+	while (retval > 0) { /* All delays must be processed separately */
+		int chan = getCommandIndex();
 
 		if (chan == COMMAND_INDEX_NONE) {
 			return SI_FINISHED;
@@ -979,7 +925,7 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 				int delay = _samples.begin()->delta;
 
 				if (delay) {
-					_sci1_update_delta(this, delay);
+					updateDelta(delay);
 					return delay;
 				}
 				/* otherwise we're touching a PCM */
@@ -1015,11 +961,11 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 #endif
 			} else if (retval > 0) {
 				int sd ;
-				sd = _sci1_get_smallest_delta(this);
+				sd = getSmallestDelta();
 
-				if (_sci1_no_delta_time(this) && sd) {
+				if (noDeltaTime() && sd) {
 					/* No other channel is ready */
-					_sci1_update_delta(this, sd);
+					updateDelta(sd);
 
 					/* Only from here do we return delta times */
 					return sd;
@@ -1028,7 +974,7 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 
 		} /* Not a PCM */
 
-	} while (retval > 0); /* All delays must be processed separately */
+	}
 
 	return retval;
 }
@@ -1132,7 +1078,7 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 		}
 
 		default:
-			warning(SIPFX "Unsupported command %d to SCI1 iterator", msg._type);
+			warning("Unsupported command %d to SCI1 iterator", msg._type);
 		}
 		return this;
 	}
@@ -1350,7 +1296,7 @@ TeeSongIterator::TeeSongIterator(SongIterator *left, SongIterator *right) {
 	int firstfree = 1; /* First free channel */
 	int incomplete_map = 0;
 
-	morph_deferred = TEE_MORPH_NONE;
+	_readyToMorph = false;
 	_status = TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE;
 
 	_children[TEE_LEFT].it = left;
@@ -1430,7 +1376,7 @@ int TeeSongIterator::nextCommand(byte *buf, int *result) {
 		/* None is active? */
 		return SI_FINISHED;
 
-	if (morph_deferred == TEE_MORPH_READY)
+	if (_readyToMorph)
 		return SI_MORPH;
 
 	if ((_status & (TEE_LEFT_ACTIVE | TEE_RIGHT_ACTIVE))
@@ -1444,9 +1390,9 @@ int TeeSongIterator::nextCommand(byte *buf, int *result) {
 			which = TEE_LEFT;
 		else if (_status & TEE_RIGHT_ACTIVE)
 			which = TEE_RIGHT;
-		memcpy(buf, _children[which].buf, MAX_BUF_SIZE);
+		memcpy(buf, _children[which].buf, sizeof(buf));
 		*result = _children[which].result;
-		morph_deferred = TEE_MORPH_READY;
+		_readyToMorph = true;
 		return _children[which].retval;
 	}
 
@@ -1538,7 +1484,7 @@ int TeeSongIterator::nextCommand(byte *buf, int *result) {
 	}
 
 	_status &= ~ready_masks[retid];
-	memcpy(buf, _children[retid].buf, MAX_BUF_SIZE);
+	memcpy(buf, _children[retid].buf, sizeof(buf));
 	*result = _children[retid].result;
 
 	return _children[retid].retval;
@@ -1694,11 +1640,11 @@ SongIterator::~SongIterator() {
 			songit_tee_death_notification(_deathListeners[i], this);
 }
 
-SongIterator *songit_new(byte *data, uint size, int type, songit_id_t id) {
+SongIterator *songit_new(byte *data, uint size, SongIteratorType type, songit_id_t id) {
 	BaseSongIterator *it;
 
 	if (!data || size < 22) {
-		warning(SIPFX "Attempt to instantiate song iterator for null song data");
+		warning("Attempt to instantiate song iterator for null song data");
 		return NULL;
 	}
 
@@ -1714,7 +1660,7 @@ SongIterator *songit_new(byte *data, uint size, int type, songit_id_t id) {
 
 	default:
 		/**-- Invalid/unsupported sound resources --**/
-		warning(SIPFX "Attempt to instantiate invalid/unknown song iterator type %d", type);
+		warning("Attempt to instantiate invalid/unknown song iterator type %d", type);
 		return NULL;
 	}
 

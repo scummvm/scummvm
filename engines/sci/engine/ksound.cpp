@@ -121,7 +121,7 @@ static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 	PUT_SEL32V(obj, flags, flags);
 }
 
-SongIterator *build_iterator(EngineState *s, int song_nr, int type, songit_id_t id) {
+SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id) {
 	Resource *song = s->resmgr->findResource(kResourceTypeSound, song_nr, 0);
 
 	if (!song)

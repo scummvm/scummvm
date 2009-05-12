@@ -36,13 +36,15 @@ namespace Audio {
 
 namespace Sci {
 
-#define SI_FINISHED -1 /* Song finished playing */
-#define SI_LOOP -2 /* Song just looped */
-#define SI_ABSOLUTE_CUE -3 /* Found a song cue (absolute) */
-#define SI_RELATIVE_CUE -4 /* Found a song cue (relative) */
-#define SI_PCM -5 /* Found a PCM */
-#define SI_IGNORE -6 /* This event got edited out by the remapper */
-#define SI_MORPH -255 /* Song iterator requested self-morph. */
+enum SongIteratorStatus {
+	SI_FINISHED = -1,		/**< Song finished playing */
+	SI_LOOP = -2,			/**< Song just looped */
+	SI_ABSOLUTE_CUE = -3,	/**< Found a song cue (absolute) */
+	SI_RELATIVE_CUE = -4,	/**< Found a song cue (relative) */
+	SI_PCM = -5,			/**< Found a PCM */
+	SI_IGNORE = -6,			/**< This event got edited out by the remapper */
+	SI_MORPH = -255			/**< Song iterator requested self-morph. */
+};
 
 #define FADE_ACTION_NONE              0
 #define FADE_ACTION_FADE_AND_STOP     1
@@ -54,8 +56,6 @@ struct fade_params_t {
 	int step_size;
 	int action;
 };
-
-#define SONG_ITERATOR_MESSAGE_ARGUMENTS_NR 2
 
 /* Helper defs for messages */
 enum {
@@ -232,8 +232,10 @@ private:
 /*-- Song iterator operations --*/
 /********************************/
 
-#define SCI_SONG_ITERATOR_TYPE_SCI0 0
-#define SCI_SONG_ITERATOR_TYPE_SCI1 1
+enum SongIteratorType {
+	SCI_SONG_ITERATOR_TYPE_SCI0 = 0,
+	SCI_SONG_ITERATOR_TYPE_SCI1 = 1
+};
 
 #define IT_READER_MASK_MIDI	(1 << 0)
 #define IT_READER_MASK_DELAY	(1 << 1)
@@ -251,7 +253,7 @@ private:
 			    | IT_READER_MASK_CUE	\
 			    | IT_READER_MASK_PCM )
 
-int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask);
+int songit_next(SongIterator **it, byte *buf, int *result, int mask);
 /* Convenience wrapper around it->next
 ** Parameters: (SongIterator **it) Reference to the iterator to access
 **             (byte *) buf: The buffer to write to (needs to be able to
@@ -269,7 +271,7 @@ int songit_next(SongIterator **it, unsigned char *buf, int *result, int mask);
 **                   or the number of loops remaining for SI_LOOP.
 */
 
-SongIterator *songit_new(unsigned char *data, uint size, int type, songit_id_t id);
+SongIterator *songit_new(byte *data, uint size, SongIteratorType type, songit_id_t id);
 /* Constructs a new song iterator object
 ** Parameters: (byte *) data: The song data to iterate over
 **             (uint) size: Number of bytes in the song
