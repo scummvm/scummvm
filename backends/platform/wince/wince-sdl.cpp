@@ -1153,7 +1153,7 @@ bool OSystem_WINCE3::update_scalers() {
 	if (_videoMode.mode != GFX_NORMAL)
 		return false;
 
-	_videoMode.aspectRatio = false;
+	_videoMode.aspectRatioCorrection = false;
 
 	if (CEDevice::hasPocketPCResolution()) {
 		if (	(!_orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth))
@@ -1181,7 +1181,7 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorYd = 5;
 				_scalerProc = PocketPCLandscapeAspect;
 				_modeFlags = 0;
-				_videoMode.aspectRatio = true;
+				_videoMode.aspectRatioCorrection = true;
 			} else {
 				_scaleFactorXm = 1;
 				_scaleFactorXd = 1;
@@ -1367,7 +1367,7 @@ bool OSystem_WINCE3::loadGFXMode() {
 
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	// Always use full screen mode to have a "clean screen"
-	if (!_videoMode.aspectRatio) {
+	if (!_videoMode.aspectRatioCorrection) {
 		displayWidth = _videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd;
 		displayHeight = _videoMode.screenHeight * _scaleFactorYm / _scaleFactorYd;
 	} else {
@@ -1559,7 +1559,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
 		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd, _newShakePos * _scaleFactorYm / _scaleFactorYd};
-		if (_videoMode.aspectRatio)
+		if (_videoMode.aspectRatioCorrection)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 		SDL_FillRect(_hwscreen, &blackrect, 0);
 		_currentShakePos = _newShakePos;
