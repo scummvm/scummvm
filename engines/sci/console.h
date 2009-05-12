@@ -47,7 +47,7 @@ private:
 	bool cmdSelectors(int argc, const char **argv);
 	bool cmdKernelNames(int argc, const char **argv);
 	bool cmdSuffixes(int argc, const char **argv);
-	bool cmdWords(int argc, const char **argv);
+	bool cmdKernelWords(int argc, const char **argv);
 	bool cmdMan(int argc, const char **argv);
 
 private:

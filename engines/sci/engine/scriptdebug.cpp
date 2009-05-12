@@ -201,42 +201,48 @@ static void midi_hexdump(byte *data, int size, int notational_offset) { // Speci
 	}
 }
 
-#define SONGDATA(x) data[offset + (x)]
-#define CHECK_FOR_END_ABSOLUTE(off) if ((off) >= size) return;
+int c_sfx_01_header_dump(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
 
-static void sci01_song_header_dump(byte *data, int size) {
-	int offset = 0;
-	int smallest_start = 10000;
+	if (!song) {
+		sciprintf("Doesn't exist\n");
+		return 1;
+	}
+
+	uint32 offset = 0;
 
 	sciprintf("SCI01 song track mappings:\n");
 
-	if (*data == 0xf0) // SCI1 priority spec
+	if (*song->data == 0xf0) // SCI1 priority spec
 		offset = 8;
 
-	CHECK_FOR_END_ABSOLUTE(0);
-	while (SONGDATA(0) != 0xff) {
-		byte device_id = data[offset];
+	if (song->size <= 0)
+		return 1;
+
+	while (song->data[offset] != 0xff) {
+		byte device_id = song->data[offset];
 		sciprintf("* Device %02x:\n", device_id);
 		offset++;
-		CHECK_FOR_END_ABSOLUTE(offset + 1);
-		while (SONGDATA(0) != 0xff) {
+
+		if (offset + 1 >= song->size)
+			return 1;
+
+		while (song->data[offset] != 0xff) {
 			int track_offset;
 			int end;
 			byte header1, header2;
 
-			CHECK_FOR_END_ABSOLUTE(offset + 7);
+			if (offset + 7 >= song->size)
+				return 1;
 
 			offset += 2;
 
-			track_offset = READ_LE_UINT16(data + offset);
-			header1 = data[track_offset];
-			header2 = data[track_offset+1];
+			track_offset = READ_LE_UINT16(song->data + offset);
+			header1 = song->data[track_offset];
+			header2 = song->data[track_offset+1];
 			track_offset += 2;
 
-			if (track_offset < smallest_start)
-				smallest_start = track_offset;
-
-			end = READ_LE_UINT16(data + offset + 2);
+			end = READ_LE_UINT16(song->data + offset + 2);
 			sciprintf("  - %04x -- %04x", track_offset, track_offset + end);
 
 			if (track_offset == 0xfe)
@@ -248,19 +254,6 @@ static void sci01_song_header_dump(byte *data, int size) {
 		}
 		offset++;
 	}
-}
-#undef CHECK_FOR_END_ABSOLUTE
-#undef SONGDATA
-
-int c_sfx_01_header(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
-
-	if (!song) {
-		sciprintf("Doesn't exist\n");
-		return 1;
-	}
-
-	sci01_song_header_dump(song->data, song->size);
 
 	return 0;
 }
@@ -3153,7 +3146,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "Tests whether a given sound resource\n"
 			                 "  is a PCM sample, and displays infor-\n"
 			                 "  mation on it if it is.\n\n");
-			con_hook_command(c_sfx_01_header, "sfx-01-header", "i",
+			con_hook_command(c_sfx_01_header_dump, "sfx-01-header", "i",
 			                 "Dumps the header of an SCI01 song\n\n"
 			                 "SEE ALSO\n\n"
 			                 "  sfx-01-track.1\n\n");

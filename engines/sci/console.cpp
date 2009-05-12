@@ -83,7 +83,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
 	DCmd_Register("kernelnames",		WRAP_METHOD(Console, cmdKernelNames));
 	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
-	DCmd_Register("words",				WRAP_METHOD(Console, cmdWords));
+	DCmd_Register("kernelwords",		WRAP_METHOD(Console, cmdKernelWords));
 	DCmd_Register("man",				WRAP_METHOD(Console, cmdMan));
 }
 
@@ -173,7 +173,7 @@ bool Console::cmdSuffixes(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdWords(int argc, const char **argv) {
+bool Console::cmdKernelWords(int argc, const char **argv) {
 	WordMap words;
 
 	vocab_get_words(_vm->getResMgr(), words);
