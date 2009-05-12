@@ -187,7 +187,7 @@ void BitmapComponent::setKey(int val) {
 	// bitmaps were not loading with the scene. This was because they were requested
 	// as a different case then they were stored (tu_0_dorcu_door_open versus
 	// TU_0_DORCU_door_open), which was causing problems in the string comparison.
-	if(debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+	if (debugLevel == DEBUG_BITMAPS || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 		warning("Missing scene bitmap: %s", bitmap);
 
 /* In case you feel like drawing the missing bitmap anyway...
@@ -700,7 +700,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 		_chores[id]._length = length;
 		_chores[id]._numTracks = tracks;
 		memcpy(_chores[id]._name, name, 32);
-		if(debugLevel == DEBUG_ALL || debugLevel == DEBUG_CHORES)
+		if (debugLevel == DEBUG_ALL || debugLevel == DEBUG_CHORES)
 			printf("Loaded chore: %s\n", name);
 	}
 

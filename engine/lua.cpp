@@ -155,7 +155,7 @@ static inline int check_int(int num) {
 
 	// Have found some instances, such as in Rubacava and the tube-switcher
 	// room, where integers of "zero" are called as nil
-	if(lua_isnil(lua_getparam(num)))
+	if (lua_isnil(lua_getparam(num)))
 		return 0;
 
 	val = luaL_check_number(num);
@@ -3150,19 +3150,19 @@ static void ForceRefresh() {
 
 static void JustLoaded() {
 	DEBUG_FUNCTION();
-	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 		error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
 
 static void PlaySound() {
 	DEBUG_FUNCTION();
-	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 		error("OPCODE USAGE VERIFICATION: PlaySound");
 }
 
 static void SetEmergencyFont() {
 	DEBUG_FUNCTION();
-	if(debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
 		error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
 }
 
