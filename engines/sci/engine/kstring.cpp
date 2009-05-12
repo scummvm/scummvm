@@ -505,7 +505,7 @@ reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	SCIkdebug(SCIkSTRINGS, "Formatting \"%s\"\n", source);
 
 
-	arguments = (int*)sci_malloc(sizeof(int) * argc);
+	arguments = (int*)malloc(sizeof(int) * argc);
 #ifdef SATISFY_PURIFY
 	memset(arguments, 0, sizeof(int) * argc);
 #endif

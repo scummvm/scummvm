@@ -25,7 +25,6 @@
 
 // Graphical operations, called from the widget state manager
 
-#include "sci/sci_memory.h"
 #include "sci/gfx/operations.h"
 #include "sci/gfx/font.h"
 #include "sci/sci.h"	// for g_engine, evil hack

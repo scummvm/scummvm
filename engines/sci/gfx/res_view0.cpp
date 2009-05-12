@@ -25,7 +25,6 @@
 
 #include "common/endian.h"
 
-#include "sci/sci_memory.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
@@ -132,7 +131,7 @@ static int gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, 
 		return 1;
 	}
 
-	dest->cels = (gfx_pixmap_t**)sci_malloc(sizeof(gfx_pixmap_t *) * cels_nr);
+	dest->cels = (gfx_pixmap_t**)malloc(sizeof(gfx_pixmap_t *) * cels_nr);
 
 	for (i = 0; i < cels_nr; i++) {
 		int cel_offset = READ_LE_UINT16(resource + offset + 4 + (i << 1));
@@ -174,7 +173,7 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 		return NULL;
 	}
 
-	view = (gfxr_view_t *)sci_malloc(sizeof(gfxr_view_t));
+	view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
 	view->ID = id;
 
 	view->loops_nr = resource[V0_LOOPS_NR_OFFSET];
@@ -198,7 +197,7 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 		return NULL;
 	}
 
-	view->loops = (gfxr_loop_t*)sci_malloc(sizeof(gfxr_loop_t) * ((view->loops_nr) ? view->loops_nr : 1)); /* Alloc 1 if no loop */
+	view->loops = (gfxr_loop_t*)malloc(sizeof(gfxr_loop_t) * ((view->loops_nr) ? view->loops_nr : 1)); /* Alloc 1 if no loop */
 
 	for (i = 0; i < view->loops_nr; i++) {
 		int error_token = 0;

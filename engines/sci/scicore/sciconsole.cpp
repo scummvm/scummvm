@@ -26,7 +26,6 @@
 /* First part of the console implmentation: VM independent stuff */
 /* Remember, it doesn't have to be fast. */
 
-#include "sci/sci_memory.h"
 #include "sci/engine/state.h"
 #include "sci/scicore/sciconsole.h"
 
@@ -53,7 +52,7 @@ int sciprintf(const char *fmt, ...) {
 	va_end(argp);
 
 	// Allocate buffer for the full printed string
-	char *buf = (char *)sci_malloc(bufsize + 1);
+	char *buf = (char *)malloc(bufsize + 1);
 	assert(buf);
 
 	// Print everything according to fmt into buf

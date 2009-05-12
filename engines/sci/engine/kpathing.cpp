@@ -1448,7 +1448,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	}
 
 	// Allocate and build vertex index
-	pf_s->vertex_index = (Vertex**)sci_malloc(sizeof(Vertex *) * (count + 2));
+	pf_s->vertex_index = (Vertex**)malloc(sizeof(Vertex *) * (count + 2));
 
 	count = 0;
 

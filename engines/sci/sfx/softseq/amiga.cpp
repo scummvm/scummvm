@@ -24,7 +24,6 @@
  */
 
 #include "sci/tools.h"
-#include "sci/sci_memory.h"
 #include "sci/sfx/softseq.h"
 
 #include "common/file.h"
@@ -374,7 +373,7 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 		return NULL;
 	}
 
-	instrument = (instrument_t *) sci_malloc(sizeof(instrument_t));
+	instrument = (instrument_t *) malloc(sizeof(instrument_t));
 
 	seg_size[0] = read_int16(header + 35) * 2;
 	seg_size[1] = read_int16(header + 41) * 2;
@@ -411,7 +410,7 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 	sciprintf("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
 	sciprintf("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
 #endif
-	instrument->samples = (int8 *) sci_malloc(size + 1);
+	instrument->samples = (int8 *) malloc(size + 1);
 	if (file.read(instrument->samples, size) < (unsigned int)size) {
 		sciprintf("[sfx:seq:amiga] Error: failed to read instrument samples\n");
 		return NULL;
@@ -434,7 +433,7 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 		instrument->size = seg_size[0];
 		instrument->loop_size = seg_size[1];
 
-		instrument->loop = (int8*)sci_malloc(instrument->loop_size + 1);
+		instrument->loop = (int8*)malloc(instrument->loop_size + 1);
 		memcpy(instrument->loop, instrument->samples + loop_offset, instrument->loop_size);
 
 		instrument->samples[instrument->size] = instrument->loop[0];

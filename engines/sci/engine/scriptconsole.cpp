@@ -26,7 +26,6 @@
 /* Second half of the console implementation: VM dependent stuff */
 /* Remember, it doesn't have to be fast. */
 
-#include "sci/sci_memory.h"
 #include "sci/engine/state.h"
 #include "sci/scicore/sciconsole.h"
 
@@ -160,7 +159,7 @@ void con_init() {
 			cmd_mm[i].size_per_entry = cmd_mm_sizes_per_entry[i];
 			cmd_mm[i].entries = 0;
 			cmd_mm[i].allocated = CMD_MM_DEFAULT_ALLOC;
-			cmd_mm[i].data = sci_calloc(cmd_mm[i].allocated, cmd_mm[i].size_per_entry);
+			cmd_mm[i].data = calloc(cmd_mm[i].allocated, cmd_mm[i].size_per_entry);
 			cmd_mm[i].print = cmd_mm_printers[i];
 		}
 
@@ -398,7 +397,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 }
 
 void con_parse(EngineState *s, const char *command) {
-	char *cmd = (command && command[0]) ? (char *)sci_strdup(command) : (char *)sci_strdup(" ");
+	char *cmd = (command && command[0]) ? (char *)strdup(command) : (char *)strdup(" ");
 	char *_cmd = cmd;
 	int pos = 0;
 
@@ -882,7 +881,7 @@ static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams
 	}
 
 	seeklen = cmdParams.size() - 1;
-	seekstr = (unsigned char *)sci_malloc(seeklen);
+	seekstr = (unsigned char *)malloc(seeklen);
 
 	if (NULL == seekstr) {
 		fprintf(stderr, "console.c: c_hexgrep(): malloc failed for seekstr\r\n");

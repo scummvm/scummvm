@@ -488,12 +488,6 @@
 			RelativePath="..\..\engines\sci\sci.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sci\sci_memory.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\sci_memory.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\sci\engine\script.cpp">
 		</File>
 		<File

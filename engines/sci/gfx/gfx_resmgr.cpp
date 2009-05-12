@@ -118,7 +118,7 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 			gfxr_remove_artifacts_pic0(scaled_pic, unscaled_pic);
 
 		if (!scaled_pic->undithered_buffer)
-			scaled_pic->undithered_buffer = sci_malloc(scaled_pic->undithered_buffer_size);
+			scaled_pic->undithered_buffer = malloc(scaled_pic->undithered_buffer_size);
 
 		memcpy(scaled_pic->undithered_buffer, scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer_size);
 
@@ -359,7 +359,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 			return NULL;
 		}
 		if (!res) {
-			res = (gfx_resource_t *)sci_malloc(sizeof(gfx_resource_t));
+			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
 			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num);
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 			res->lock_sequence_nr = _options->buffer_pics_nr;
@@ -548,7 +548,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 		}
 
 		if (!res) {
-			res = (gfx_resource_t *)sci_malloc(sizeof(gfx_resource_t));
+			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
 			res->scaled_data.view = NULL;
 			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
 			res->lock_sequence_nr = _tagLockCounter;
@@ -619,7 +619,7 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 		gfx_bitmap_font_t *font = gfxr_read_font(fontRes->id, fontRes->data, fontRes->size);
 
 		if (!res) {
-			res = (gfx_resource_t *)sci_malloc(sizeof(gfx_resource_t));
+			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
 			res->scaled_data.font = NULL;
 			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_FONT, num);
 			res->lock_sequence_nr = _tagLockCounter;
@@ -665,7 +665,7 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 			return NULL;
 
 		if (!res) {
-			res = (gfx_resource_t *)sci_malloc(sizeof(gfx_resource_t));
+			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
 			res->scaled_data.pointer = NULL;
 			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, num);
 			res->lock_sequence_nr = _tagLockCounter;

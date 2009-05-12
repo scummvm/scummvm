@@ -366,7 +366,7 @@ GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone, char *text,
 
 		list->add(GFXWC(list), text_handle);
 	} else {
-		char *textdup = (char *)sci_malloc(strlen(text) + 1);
+		char *textdup = (char *)malloc(strlen(text) + 1);
 
 		strncpy(textdup, text, cursor);
 

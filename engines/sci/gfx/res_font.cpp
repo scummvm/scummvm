@@ -23,7 +23,6 @@
  *
  */
 
-#include "sci/sci_memory.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
@@ -64,7 +63,7 @@ static int calc_char(byte *dest, int total_width, int total_height, byte *src, i
 }
 
 gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
-	gfx_bitmap_font_t *font = (gfx_bitmap_font_t*)sci_calloc(sizeof(gfx_bitmap_font_t), 1);
+	gfx_bitmap_font_t *font = (gfx_bitmap_font_t*)calloc(sizeof(gfx_bitmap_font_t), 1);
 	int chars_nr;
 	int max_width = 0, max_height;
 	int i;
@@ -96,7 +95,7 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 	}
 
 	font->ID = id;
-	font->widths = (int*)sci_malloc(sizeof(int) * chars_nr);
+	font->widths = (int*)malloc(sizeof(int) * chars_nr);
 
 	for (i = 0; i < chars_nr; i++) {
 		int offset = READ_LE_UINT16(resource + (i << 1) + 6);
@@ -125,7 +124,7 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 		font->row_size = (font->row_size + 3) & ~3;
 
 	font->char_size = font->row_size * max_height;
-	font->data = (byte *)sci_calloc(font->char_size, chars_nr);
+	font->data = (byte *)calloc(font->char_size, chars_nr);
 
 	for (i = 0; i < chars_nr; i++) {
 		int offset = READ_LE_UINT16(resource + (i << 1) + 6);

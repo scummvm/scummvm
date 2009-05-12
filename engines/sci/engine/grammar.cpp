@@ -31,7 +31,6 @@
 #include "sci/tools.h"
 #include "sci/scicore/vocabulary.h"
 #include "sci/scicore/sciconsole.h"
-#include "sci/sci_memory.h"
 
 namespace Sci {
 
@@ -104,7 +103,7 @@ static void _vfree(parse_rule_t *rule) {
 }
 
 static parse_rule_t *_vdup(parse_rule_t *a) {
-	parse_rule_t *rule = (parse_rule_t*)sci_malloc(sizeof(int) * (a->length + 4));
+	parse_rule_t *rule = (parse_rule_t*)malloc(sizeof(int) * (a->length + 4));
 
 	rule->id = a->id;
 	rule->length = a->length;
@@ -127,7 +126,7 @@ static parse_rule_t *_vinsert(parse_rule_t *turkey, parse_rule_t *stuffing) {
 	if ((firstnt == turkey->length) || (turkey->data[firstnt] != stuffing->id))
 		return NULL;
 
-	rule = (parse_rule_t*)sci_malloc(sizeof(int) * (turkey->length - 1 + stuffing->length + 4));
+	rule = (parse_rule_t*)malloc(sizeof(int) * (turkey->length - 1 + stuffing->length + 4));
 	rule->id = turkey->id;
 	rule->specials_nr = turkey->specials_nr + stuffing->specials_nr - 1;
 	rule->first_special = firstnt + stuffing->first_special;
@@ -160,7 +159,7 @@ static parse_rule_t *_vbuild_rule(const parse_tree_branch_t *branch) {
 			return NULL; // invalid
 	}
 
-	rule = (parse_rule_t*)sci_malloc(sizeof(int) * (4 + tokens));
+	rule = (parse_rule_t*)malloc(sizeof(int) * (4 + tokens));
 
 	++_allocd_rules;
 	rule->id = branch->id;
@@ -205,7 +204,7 @@ static parse_rule_t *_vsatisfy_rule(parse_rule_t *rule, const ResultWord &input)
 
 	if (((dep & TOKEN_TERMINAL_CLASS) && ((dep & 0xffff) & input._class)) ||
 			((dep & TOKEN_TERMINAL_GROUP) && ((dep & 0xffff) & input._group))) {
-		parse_rule_t *retval = (parse_rule_t*)sci_malloc(sizeof(int) * (4 + rule->length));
+		parse_rule_t *retval = (parse_rule_t*)malloc(sizeof(int) * (4 + rule->length));
 		++_allocd_rules;
 		retval->id = rule->id;
 		retval->specials_nr = rule->specials_nr - 1;
@@ -251,7 +250,7 @@ static parse_rule_list_t *_vocab_add_rule(parse_rule_list_t *list, parse_rule_t 
 	if (!rule)
 		return list;
 
-	new_elem = (parse_rule_list_t*)sci_malloc(sizeof(parse_rule_list_t));
+	new_elem = (parse_rule_list_t*)malloc(sizeof(parse_rule_list_t));
 	term = rule->data[rule->first_special];
 
 	new_elem->rule = rule;

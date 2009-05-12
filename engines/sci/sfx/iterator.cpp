@@ -30,7 +30,6 @@
 #include "sci/sfx/iterator_internal.h"
 #include "sci/sfx/player.h"
 #include "sci/tools.h"
-#include "sci/sci_memory.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"

@@ -31,7 +31,6 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/tools.h"
-#include "sci/sci_memory.h"
 #include "sci/scicore/resource.h"
 #include "sci/scicore/vocabulary.h"
 #include "sci/scicore/decompressor.h"

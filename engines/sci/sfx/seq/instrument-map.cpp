@@ -25,14 +25,13 @@
 
 #include "common/scummsys.h"
 #include "sci/sfx/sci_midi.h"
-#include "sci/sci_memory.h"
 #include "sci/sfx/seq/instrument-map.h"
 #include "sci/sfx/core.h"
 
 namespace Sci {
 
 sfx_instrument_map_t *sfx_instrument_map_new(int velocity_maps_nr) {
-	sfx_instrument_map_t *map = (sfx_instrument_map_t *)sci_malloc(sizeof(sfx_instrument_map_t));
+	sfx_instrument_map_t *map = (sfx_instrument_map_t *)malloc(sizeof(sfx_instrument_map_t));
 	int i;
 
 	map->initialisation_block_size = 0;
@@ -45,9 +44,9 @@ sfx_instrument_map_t *sfx_instrument_map_new(int velocity_maps_nr) {
 		map->velocity_map = NULL; /* Yes, this complicates control flow needlessly, but it avoids some of the pointless
 					  ** warnings that certain memory tools seem to find appropriate. */
 	else {
-		map->velocity_map = (byte **)sci_malloc(sizeof(byte *) * velocity_maps_nr);
+		map->velocity_map = (byte **)malloc(sizeof(byte *) * velocity_maps_nr);
 		for (i = 0; i < velocity_maps_nr; ++i)
-			map->velocity_map[i] = (byte *)sci_malloc(SFX_VELOCITIES_NR);
+			map->velocity_map[i] = (byte *)malloc(SFX_VELOCITIES_NR);
 	}
 	for (i = 0; i < SFX_INSTRUMENTS_NR; ++i)
 		map->velocity_map_index[i] = SFX_NO_VELOCITY_MAP;
@@ -170,7 +169,7 @@ sfx_instrument_map_t *sfx_instrument_map_load_sci(byte *data, size_t size) {
 			fprintf(stderr, "[instrument-map] Instrument larger than required by initialisation block:  %d of %d\n", (int) size, PATCH_MIN_SIZE);
 
 		if (map->initialisation_block_size != 0) {
-			map->initialisation_block = (byte *)sci_malloc(map->initialisation_block_size);
+			map->initialisation_block = (byte *)malloc(map->initialisation_block_size);
 			memcpy(map->initialisation_block, data + PATCH_INIT_DATA, map->initialisation_block_size);
 		}
 	}
@@ -480,9 +479,9 @@ midi_writer_t *sfx_mapped_writer(midi_writer_t *writer, sfx_instrument_map_t *ma
 	if (map == NULL)
 		return writer;
 
-	retval = (decorated_midi_writer_t *)sci_malloc(sizeof(decorated_midi_writer_t));
+	retval = (decorated_midi_writer_t *)malloc(sizeof(decorated_midi_writer_t));
 	retval->writer = writer;
-	retval->name = (char *)sci_malloc(strlen(writer->name) + strlen(NAME_SUFFIX) + 1);
+	retval->name = (char *)malloc(strlen(writer->name) + strlen(NAME_SUFFIX) + 1);
 	strcpy(retval->name, writer->name);
 	strcat(retval->name, NAME_SUFFIX);
 

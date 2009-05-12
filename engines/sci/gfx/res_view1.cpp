@@ -27,7 +27,6 @@
 
 #include "common/endian.h"
 
-#include "sci/sci_memory.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
@@ -249,7 +248,7 @@ static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, by
 		return 1;
 	}
 
-	dest->cels = (gfx_pixmap_t**)sci_malloc(sizeof(gfx_pixmap_t *) * cels_nr);
+	dest->cels = (gfx_pixmap_t**)malloc(sizeof(gfx_pixmap_t *) * cels_nr);
 
 	for (i = 0; i < cels_nr; i++) {
 		int cel_offset = READ_LE_UINT16(resource + offset + 4 + (i << 1));
@@ -286,7 +285,7 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_p
 		return NULL;
 	}
 
-	view = (gfxr_view_t*)sci_malloc(sizeof(gfxr_view_t));
+	view = (gfxr_view_t*)malloc(sizeof(gfxr_view_t));
 	view->ID = id;
 	view->flags = 0;
 
@@ -320,7 +319,7 @@ gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_p
 		view->palette = NULL;
 	}
 
-	view->loops = (gfxr_loop_t*)sci_malloc(sizeof(gfxr_loop_t) * view->loops_nr);
+	view->loops = (gfxr_loop_t*)malloc(sizeof(gfxr_loop_t) * view->loops_nr);
 
 	for (i = 0; i < view->loops_nr; i++) {
 		int error_token = 0;
@@ -348,7 +347,7 @@ gfxr_loop_t *gfxr_draw_loop11(int id, int loop, int mirrored, byte *resource_bas
 	int i;
 
 	result->cels_nr = cels_nr;
-	result->cels = (gfx_pixmap_t **)sci_malloc(sizeof(gfx_pixmap_t *) * cels_nr);
+	result->cels = (gfx_pixmap_t **)malloc(sizeof(gfx_pixmap_t *) * cels_nr);
 
 	for (i = 0; i < cels_nr; i++) {
 		result->cels[i] = gfxr_draw_cel1(id, loop, i, mirrored, resource_base, seeker, size, view, 0, true);
@@ -368,7 +367,7 @@ gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
 	int i;
 	byte *seeker;
 
-	view = (gfxr_view_t *)sci_malloc(sizeof(gfxr_view_t));
+	view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
 
 	memset(view, 0, sizeof(gfxr_view_t));
 	view->ID = id;

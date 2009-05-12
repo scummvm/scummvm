@@ -77,7 +77,7 @@ reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->status_bar_background = bgcolor;
 
 	if (text.segment) {
-		const char *tmp = sci_strdup(kernel_dereference_char_pointer(s, text, 0));
+		const char *tmp = strdup(kernel_dereference_char_pointer(s, text, 0));
 		s->_statusBarText = tmp ? tmp : "";
 	}
 

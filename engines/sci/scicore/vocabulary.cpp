@@ -458,7 +458,7 @@ bool vocab_tokenize_string(ResultWordList &retval, const char *sentence, const W
 				// Look it up
 
 				if (lookup_result._class == -1) { // Not found?
-					*error = (char *)sci_calloc(wordlen + 1, 1);
+					*error = (char *)calloc(wordlen + 1, 1);
 					strncpy(*error, lastword, wordlen); // Set the offending word
 					retval.clear();
 					return false; // And return with error

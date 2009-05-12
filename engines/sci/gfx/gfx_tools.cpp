@@ -23,7 +23,6 @@
  *
  */
 
-#include "sci/sci_memory.h"
 #include "sci/gfx/gfx_tools.h"
 
 namespace Sci {
@@ -45,7 +44,7 @@ void gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
 }
 
 gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, Palette *palette, int flags) {
-	gfx_mode_t *mode = (gfx_mode_t *)sci_malloc(sizeof(gfx_mode_t));
+	gfx_mode_t *mode = (gfx_mode_t *)malloc(sizeof(gfx_mode_t));
 
 	mode->xfact = xfact;
 	mode->yfact = yfact;
@@ -108,7 +107,7 @@ void gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box) {
 }
 
 gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
-	gfx_pixmap_t *clone = (gfx_pixmap_t *)sci_malloc(sizeof(gfx_pixmap_t));
+	gfx_pixmap_t *clone = (gfx_pixmap_t *)malloc(sizeof(gfx_pixmap_t));
 	*clone = *pxm;
 	clone->index_data = NULL;
 	clone->palette = NULL;
@@ -117,7 +116,7 @@ gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 
 	memcpy(clone->data, pxm->data, clone->data_size);
 	if (clone->alpha_map) {
-		clone->alpha_map = (byte *) sci_malloc(clone->width * clone->height);
+		clone->alpha_map = (byte *) malloc(clone->width * clone->height);
 		memcpy(clone->alpha_map, pxm->alpha_map, clone->width * clone->height);
 	}
 
@@ -125,7 +124,7 @@ gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 }
 
 gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
-	gfx_pixmap_t *pxm = (gfx_pixmap_t *)sci_malloc(sizeof(gfx_pixmap_t));
+	gfx_pixmap_t *pxm = (gfx_pixmap_t *)malloc(sizeof(gfx_pixmap_t));
 
 	pxm->alpha_map = NULL;
 	pxm->data = NULL;
@@ -169,7 +168,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 	if (!size)
 		size = 1;
 
-	pixmap->index_data = (byte*)sci_malloc(size);
+	pixmap->index_data = (byte*)malloc(size);
 
 	memset(pixmap->index_data, 0, size);
 
@@ -207,7 +206,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	if (!size)
 		size = 1;
 
-	pixmap->data = (byte*)sci_malloc(pixmap->data_size = size);
+	pixmap->data = (byte*)malloc(pixmap->data_size = size);
 	return pixmap;
 }
 
@@ -251,7 +250,7 @@ gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode
 	xl = pixmap->index_width;
 	yl = pixmap->index_height;
 	linewidth = xfact * xl;
-	initial_new_data = new_data = (byte *)sci_malloc(linewidth * yfact * yl);
+	initial_new_data = new_data = (byte *)malloc(linewidth * yfact * yl);
 
 	for (yc = 0; yc < yl; yc++) {
 

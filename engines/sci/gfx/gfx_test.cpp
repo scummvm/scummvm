@@ -70,10 +70,6 @@ void *memdup(void *mem, size_t size) {
 	return r;
 }
 
-#ifdef FREESCI_PRIMARY_RESOURCE_H_
-#  include "../scicore/sci_memory.c"
-#endif
-
 void sci_gettime(long *seconds, long *useconds) {
 	struct timeval tv;
 
@@ -178,7 +174,7 @@ int gfxr_interpreter_options_hash(gfx_resource_type_t type, int version, gfx_opt
 
 
 int *arrdup(int *src, int count) {
-	int *retval = sci_malloc(sizeof(int) * count);
+	int *retval = malloc(sizeof(int) * count);
 	memcpy(retval, src, sizeof(int) * count);
 	return retval;
 }
@@ -221,7 +217,7 @@ gfx_pixmap_color_t pic_colors[PIC_COLORS_NR] = {
 };
 
 gfxr_pic_t *gfxr_interpreter_init_pic(int version, gfx_mode_t *mode, int ID, void *internal) {
-	gfxr_pic_t *pic = sci_malloc(sizeof(gfxr_pic_t));
+	gfxr_pic_t *pic = malloc(sizeof(gfxr_pic_t));
 
 	pic->mode = mode;
 	pic->undithered_buffer = NULL;
@@ -338,7 +334,7 @@ gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *inte
 	if (nr < 0 || nr > TEST_VIEWS_NR)
 		return NULL;
 
-	view = sci_malloc(sizeof(gfxr_view_t));
+	view = malloc(sizeof(gfxr_view_t));
 	view->ID = nr | 2048;
 	view->flags = GFX_PIXMAP_FLAG_EXTERNAL_PALETTE;
 
@@ -346,10 +342,10 @@ gfxr_view_t *gfxr_interpreter_get_view(gfx_resstate_t *state, int nr, void *inte
 	view->colors = view_colors;
 
 	view->loops_nr = 1;
-	view->loops = loop = sci_malloc(sizeof(gfxr_loop_t));
+	view->loops = loop = malloc(sizeof(gfxr_loop_t));
 
 	loop->cels_nr = 3;
-	loop->cels = sci_malloc(sizeof(gfx_pixmap_t *) * loop->cels_nr);
+	loop->cels = malloc(sizeof(gfx_pixmap_t *) * loop->cels_nr);
 
 	for (i = 0; i < 3; i++) {
 		gfx_pixmap_t *pxm = gfx_pixmap_alloc_index_data(gfx_new_pixmap(16, 16, 2048 | nr, 0, i));
@@ -402,10 +398,10 @@ gfx_bitmap_font_t *gfxr_interpreter_get_font(gfx_resstate_t *state, int nr, void
 	if (nr < 0 || nr > TEST_FONTS_NR)
 		return NULL;
 
-	font = sci_malloc(sizeof(gfx_bitmap_font_t));
+	font = malloc(sizeof(gfx_bitmap_font_t));
 	font->ID = nr;
 	font->chars_nr = BUILTIN_CHARS_NR;
-	font->widths = sci_malloc(sizeof(int) * BUILTIN_CHARS_NR);
+	font->widths = malloc(sizeof(int) * BUILTIN_CHARS_NR);
 	for (i = 0; i < BUILTIN_CHARS_NR; i++)
 		font->widths[i] = BUILTIN_CHARS_WIDTH;
 	font->row_size = (BUILTIN_CHARS_WIDTH + 7) >> 3;
@@ -1060,7 +1056,7 @@ int main(int argc, char **argv) {
 
 		case 'g':
 			if (driver) sci_free(driver);
-			driver = sci_strdup(optarg);
+			driver = strdup(optarg);
 			break;
 
 		case 'l': {

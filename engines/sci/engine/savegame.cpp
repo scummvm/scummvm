@@ -31,7 +31,6 @@
 #include <time.h>	// FIXME: For struct tm
 
 
-#include "sci/sci_memory.h"
 #include "sci/gfx/operations.h"
 #include "sci/gfx/menubar.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxContainer
@@ -271,7 +270,7 @@ static void sync_LocalVariables(Common::Serializer &s, LocalVariables &obj) {
 
 	s.syncAsSint32LE(obj.nr);
 	if (!obj.locals && obj.nr)
-		obj.locals = (reg_t *)sci_calloc(obj.nr, sizeof(reg_t));
+		obj.locals = (reg_t *)calloc(obj.nr, sizeof(reg_t));
 	for (int i = 0; i < obj.nr; ++i)
 		sync_reg_t(s, obj.locals[i]);
 }
@@ -285,7 +284,7 @@ void syncWithSerializer(Common::Serializer &s, Object &obj) {
 
 	s.syncAsSint32LE(obj.variables_nr);
 	if (!obj.variables && obj.variables_nr)
-		obj.variables = (reg_t *)sci_calloc(obj.variables_nr, sizeof(reg_t));
+		obj.variables = (reg_t *)calloc(obj.variables_nr, sizeof(reg_t));
 	for (int i = 0; i < obj.variables_nr; ++i)
 		sync_reg_t(s, obj.variables[i]);
 }
@@ -368,7 +367,7 @@ static void sync_DynMem(Common::Serializer &s, DynMem &obj) {
 	s.syncAsSint32LE(obj._size);
 	syncCStr(s, &obj._description);
 	if (!obj._buf && obj._size) {
-		obj._buf = (byte *)sci_calloc(obj._size, 1);
+		obj._buf = (byte *)calloc(obj._size, 1);
 	}
 	if (obj._size)
 		s.syncBytes(obj._buf, obj._size);
@@ -378,7 +377,7 @@ static void sync_DataStack(Common::Serializer &s, DataStack &obj) {
 	s.syncAsUint32LE(obj.nr);
 	if (s.isLoading()) {
 		//free(obj.entries);
-		obj.entries = (reg_t *)sci_calloc(obj.nr, sizeof(reg_t));
+		obj.entries = (reg_t *)calloc(obj.nr, sizeof(reg_t));
 	}
 }
 

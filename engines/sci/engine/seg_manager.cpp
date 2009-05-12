@@ -175,7 +175,7 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 	// allocate the script.buf
 
 	setScriptSize(scr, s, script_nr);
-	scr.buf = (byte *)sci_malloc(scr.buf_size);
+	scr.buf = (byte *)malloc(scr.buf_size);
 
 	dbgPrint("scr.buf ", scr.buf);
 	if (!scr.buf) {
@@ -672,7 +672,7 @@ Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 		       + (is_class ? functions_nr * 2 : 0) < scr->buf_size, "Function area extends beyond end of script");
 
 		obj->variables_nr = variables_nr;
-		obj->variables = (reg_t *)sci_malloc(sizeof(reg_t) * variables_nr);
+		obj->variables = (reg_t *)malloc(sizeof(reg_t) * variables_nr);
 
 		obj->methods_nr = functions_nr;
 		obj->base = scr->buf;
@@ -729,7 +729,7 @@ Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 
 		obj->variables_nr = variables_nr;
 		obj->variable_names_nr = variables_nr;
-		obj->variables = (reg_t *)sci_malloc(sizeof(reg_t) * variables_nr);
+		obj->variables = (reg_t *)malloc(sizeof(reg_t) * variables_nr);
 
 		obj->methods_nr = functions_nr;
 		obj->base = scr->buf;
@@ -768,7 +768,7 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 
 		locals = scr->locals_block = (LocalVariables *)mobj;
 		locals->script_id = scr->nr;
-		locals->locals = (reg_t *)sci_calloc(count, sizeof(reg_t));
+		locals->locals = (reg_t *)calloc(count, sizeof(reg_t));
 		locals->nr = count;
 
 		return locals;
@@ -879,7 +879,7 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 /*
 static char *SegManager::dynprintf(char *msg, ...) {
 	va_list argp;
-	char *buf = (char *)sci_malloc(strlen(msg) + 100);
+	char *buf = (char *)malloc(strlen(msg) + 100);
 
 	va_start(argp, msg);
 	vsprintf(buf, msg, argp);
@@ -893,7 +893,7 @@ DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
 	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_STACK, segid);
 	DataStack *retval = (DataStack *)mobj;
 
-	retval->entries = (reg_t *)sci_calloc(size, sizeof(reg_t));
+	retval->entries = (reg_t *)calloc(size, sizeof(reg_t));
 	retval->nr = size;
 
 	return retval;
@@ -943,7 +943,7 @@ Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) 
 	if (!h)
 		return NULL;
 
-	h->mem = sci_malloc(size);
+	h->mem = malloc(size);
 	h->size = size;
 	h->type = hunk_type;
 
@@ -1093,9 +1093,9 @@ unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr)
 	if (size == 0)
 		d._buf = NULL;
 	else
-		d._buf = (byte *)sci_malloc(size);
+		d._buf = (byte *)malloc(size);
 
-	d._description = sci_strdup(descr);
+	d._description = strdup(descr);
 
 	return (unsigned char *)(d._buf);
 }

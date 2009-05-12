@@ -179,7 +179,7 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	memcpy(clone_obj, parent_obj, sizeof(Clone));
 	clone_obj->flags = 0;
 	varblock_size = parent_obj->variables_nr * sizeof(reg_t);
-	clone_obj->variables = (reg_t*)sci_malloc(varblock_size);
+	clone_obj->variables = (reg_t*)malloc(varblock_size);
 	memcpy(clone_obj->variables, parent_obj->variables, varblock_size);
 
 	// Mark as clone

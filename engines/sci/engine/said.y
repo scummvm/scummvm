@@ -102,7 +102,7 @@ static tree_t said_terminal(int);
 static int yylex(void);
 
 static int yyerror(const char *s) {
-	said_parse_error = sci_strdup(s);
+	said_parse_error = strdup(s);
 	return 1; /* Abort */
 }
 

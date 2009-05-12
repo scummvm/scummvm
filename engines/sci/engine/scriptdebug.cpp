@@ -2312,7 +2312,7 @@ const generic_config_flag_t SCIk_Debug_Names[SCIk_DEBUG_MODES] = {
 } ;
 
 void set_debug_mode(EngineState *s, int mode, const char *areas) {
-	char *param = (char*)sci_malloc(strlen(areas) + 2);
+	char *param = (char*)malloc(strlen(areas) + 2);
 
 	param[0] = (mode) ? '+' : '-';
 	strcpy(param + 1, areas);
@@ -2583,10 +2583,10 @@ static Breakpoint *bp_alloc(EngineState *s) {
 		bp = s->bp_list;
 		while (bp->next)
 			bp = bp->next;
-		bp->next = (Breakpoint *)sci_malloc(sizeof(Breakpoint));
+		bp->next = (Breakpoint *)malloc(sizeof(Breakpoint));
 		bp = bp->next;
 	} else {
-		s->bp_list = (Breakpoint *)sci_malloc(sizeof(Breakpoint));
+		s->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
 		bp = s->bp_list;
 	}
 
@@ -2605,7 +2605,7 @@ int c_bpx(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	bp = bp_alloc(s);
 
 	bp->type = BREAK_SELECTOR;
-	bp->data.name = (char *)sci_malloc(strlen(cmdParams [0].str) + 1);
+	bp->data.name = (char *)malloc(strlen(cmdParams [0].str) + 1);
 	strcpy(bp->data.name, cmdParams [0].str);
 	s->have_bp |= BREAK_SELECTOR;
 

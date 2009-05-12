@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	detection.o \
 	exereader.o \
 	sci.o \
-	sci_memory.o \
 	tools.o \
 	engine/game.o \
 	engine/gc.o \

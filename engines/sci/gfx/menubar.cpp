@@ -28,7 +28,6 @@
 ** used for any actual actions on behalf of the interpreter.
 */
 
-#include "sci/sci_memory.h"
 #include "sci/engine/state.h"
 #include "sci/gfx/menubar.h"
 #include "sci/engine/kernel.h"
@@ -41,7 +40,7 @@ namespace Sci {
 ** Parameters: (char *) src: The source string
 **             (int) length: The maximum length of the string (not counting
 **                           a trailing \0).
-** Returns   : (char *) The resulting copy, allocated with sci_malloc().
+** Returns   : (char *) The resulting copy, allocated with malloc().
 ** To free this string, use the free() command.
 ** See _SCI_MALLOC() for more information if call fails.
 */

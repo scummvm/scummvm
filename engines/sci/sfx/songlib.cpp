@@ -26,7 +26,6 @@
 #include "sci/tools.h"
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
-#include "sci/sci_memory.h"
 
 namespace Sci {
 
@@ -34,7 +33,7 @@ namespace Sci {
 
 song_t *song_new(song_handle_t handle, SongIterator *it, int priority) {
 	song_t *retval;
-	retval = (song_t*) sci_malloc(sizeof(song_t));
+	retval = (song_t*) malloc(sizeof(song_t));
 
 #ifdef SATISFY_PURIFY
 	memset(retval, 0, sizeof(song_t));

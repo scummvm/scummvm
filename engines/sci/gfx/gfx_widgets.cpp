@@ -23,7 +23,6 @@
  *
  */
 
-#include "sci/sci_memory.h"
 #include "sci/gfx/gfx_gui.h"		// for kWindowAutoRestore
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"
@@ -1754,7 +1753,7 @@ GfxWidget *gfxw_show_widget(GfxWidget *widget) {
 }
 
 gfxw_snapshot_t *gfxw_make_snapshot(GfxVisual *visual, rect_t area) {
-	gfxw_snapshot_t *retval = (gfxw_snapshot_t*)sci_malloc(sizeof(gfxw_snapshot_t));
+	gfxw_snapshot_t *retval = (gfxw_snapshot_t*)malloc(sizeof(gfxw_snapshot_t));
 
 	retval->serial = widget_serial_number_counter++;
 

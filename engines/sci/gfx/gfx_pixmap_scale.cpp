@@ -65,7 +65,7 @@ void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale
 	assert(bytespp == COPY_BYTES);
 
 	if (separate_alpha_map && !alpha_dest)
-		alpha_dest = pxm->alpha_map = (byte *)sci_malloc(pxm->index_width * xfact * pxm->index_height * yfact);
+		alpha_dest = pxm->alpha_map = (byte *)malloc(pxm->index_width * xfact * pxm->index_height * yfact);
 
 	// Calculate all colors
 	for (i = 0; i < pxm->colors_nr(); i++) {
@@ -227,7 +227,7 @@ void _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	shifts[3] = mode->alpha_shift;
 
 	if (separate_alpha_map && !alpha_dest)
-		alpha_dest = pxm->alpha_map = (byte *)sci_malloc(pxm->index_width * xfact * pxm->index_height * yfact);
+		alpha_dest = pxm->alpha_map = (byte *)malloc(pxm->index_width * xfact * pxm->index_height * yfact);
 
 	for (y = 0; y < pxm->index_height; y++) {
 		byte *linepos = dest;
@@ -380,7 +380,7 @@ void _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale)
 		return;
 
 	if (separate_alpha_map && !alpha_dest)
-		alpha_dest = pxm->alpha_map = (byte *)sci_malloc(pxm->index_width * xfact * pxm->index_height * yfact);
+		alpha_dest = pxm->alpha_map = (byte *)malloc(pxm->index_width * xfact * pxm->index_height * yfact);
 
 	src -= pxm->index_width + 1;
 
@@ -614,13 +614,13 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t fi
 
 
 	if (!pxm->data) {
-		pxm->data = (byte*)sci_malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height * mode->bytespp + 1);
+		pxm->data = (byte*)malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height * mode->bytespp + 1);
 		// +1: Eases coying on BE machines in 24 bpp packed mode
 		// Assume that memory, if allocated already, will be sufficient
 
 		// Allocate alpha map
 		if (!mode->alpha_mask && pxm->colors_nr() < GFX_PIC_COLORS)
-			pxm->alpha_map = (byte*)sci_malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height + 1);
+			pxm->alpha_map = (byte*)malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height + 1);
 	} else
 		was_allocated = 1;
 

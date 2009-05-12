@@ -289,7 +289,7 @@ int *vocabulary_get_classes(ResourceManager *resmgr, int* count) {
 	if ((r = resmgr->findResource(kResourceTypeVocab, 996, 0)) == NULL)
 		return 0;
 
-	c = (int *)sci_malloc(sizeof(int) * r->size / 2);
+	c = (int *)malloc(sizeof(int) * r->size / 2);
 	for (i = 2; i < r->size; i += 4) {
 		c[i/4] = READ_LE_UINT16(r->data + i);
 	}
@@ -356,13 +356,13 @@ opcode* vocabulary_get_opcodes(ResourceManager *resmgr) {
 
 	count = READ_LE_UINT16(r->data);
 
-	o = (opcode*)sci_malloc(sizeof(opcode) * 256);
+	o = (opcode*)malloc(sizeof(opcode) * 256);
 	for (i = 0; i < count; i++) {
 		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
 		int len = READ_LE_UINT16(r->data + offset) - 2;
 		o[i].type = READ_LE_UINT16(r->data + offset + 2);
 		o[i].number = i;
-		o[i].name = (char *)sci_malloc(len + 1);
+		o[i].name = (char *)malloc(len + 1);
 		memcpy(o[i].name, r->data + offset + 4, len);
 		o[i].name[len] = '\0';
 #ifdef VOCABULARY_DEBUG
@@ -372,7 +372,7 @@ opcode* vocabulary_get_opcodes(ResourceManager *resmgr) {
 	for (i = count; i < 256; i++) {
 		o[i].type = 0;
 		o[i].number = i;
-		o[i].name = (char *)sci_malloc(strlen("undefined") + 1);
+		o[i].name = (char *)malloc(strlen("undefined") + 1);
 		strcpy(o[i].name, "undefined");
 	}
 	return o;

@@ -24,7 +24,6 @@
  */
 
 #include <time.h>	// for time() to seed rand() via srand()
-#include "sci/sci_memory.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
 
@@ -148,7 +147,7 @@ void gfxr_init_static_palette() {
 
 
 gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
-	gfxr_pic_t *pic = (gfxr_pic_t*)sci_malloc(sizeof(gfxr_pic_t));
+	gfxr_pic_t *pic = (gfxr_pic_t*)malloc(sizeof(gfxr_pic_t));
 
 	pic->mode = mode;
 
@@ -1569,7 +1568,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 				p0printf("Explicit priority table @%d\n", pos);
 				if (!pic->priorityTable) {
-					pic->priorityTable = (int*)sci_malloc(16 * sizeof(int));
+					pic->priorityTable = (int*)malloc(16 * sizeof(int));
 				} else {
 					// This occurs in the title screen of Longbow, perhaps with the animated Robin sprite
 					GFXWARN("pic->priorityTable is not NULL (%p); this only occurs with overlaid pics, otherwise it's a bug", (void *)pic->priorityTable);
@@ -1592,7 +1591,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				int *pri_table;
 
 				if (!pic->priorityTable) {
-					pic->priorityTable = (int*)sci_malloc(16 * sizeof(int));
+					pic->priorityTable = (int*)malloc(16 * sizeof(int));
 				} else {
 					GFXERROR("pic->priorityTable is not NULL (%p); possible memory corruption", (void *)pic->priorityTable);
 				}

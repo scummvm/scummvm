@@ -518,7 +518,7 @@ void kernel_compile_signature(const char **s) {
 	if (!src)
 		return; // NULL signature: Nothing to do
 
-	result = (char*)sci_malloc(strlen(*s) + 1);
+	result = (char*)malloc(strlen(*s) + 1);
 
 	while (*src) {
 		char c;

@@ -910,7 +910,6 @@
 		DF0942020F63CB26002D821E /* unzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473C10D81F4E800B6D1FB /* unzip.cpp */; };
 		DF0942030F63CB26002D821E /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAD2390F50120E00C3A4E2 /* console.cpp */; };
 		DF0942040F63CB26002D821E /* exereader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAD23B0F50120E00C3A4E2 /* exereader.cpp */; };
-		DF0942050F63CB26002D821E /* sci_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573BF30F5A81D400961A72 /* sci_memory.cpp */; };
 		DF0942070F63CB26002D821E /* intmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573BFA0F5A81EA00961A72 /* intmap.cpp */; };
 		DF0942080F63CB26002D821E /* kdebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573BFC0F5A81EA00961A72 /* kdebug.cpp */; };
 		DF0942090F63CB26002D821E /* state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573C010F5A81EA00961A72 /* state.cpp */; };
@@ -1024,7 +1023,6 @@
 		DF2FFD2B0F48717F0006E566 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = DF2FFD290F48717F0006E566 /* Default.png */; };
 		DF2FFD2C0F48717F0006E566 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = DF2FFD2A0F48717F0006E566 /* icon.png */; };
 		DF2FFD2D0F48719E0006E566 /* scummclassic.zip in Resources */ = {isa = PBXBuildFile; fileRef = DF2FFBDB0F485E480006E566 /* scummclassic.zip */; };
-		DF573BF60F5A81D400961A72 /* sci_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573BF30F5A81D400961A72 /* sci_memory.cpp */; };
 		DF573C060F5A81EA00961A72 /* intmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573BFA0F5A81EA00961A72 /* intmap.cpp */; };
 		DF573C070F5A81EA00961A72 /* kdebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573BFC0F5A81EA00961A72 /* kdebug.cpp */; };
 		DF573C080F5A81EA00961A72 /* state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573C010F5A81EA00961A72 /* state.cpp */; };
@@ -2824,7 +2822,6 @@
 		DFF95C880FB22D5700A3EC78 /* unzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473C10D81F4E800B6D1FB /* unzip.cpp */; };
 		DFF95C890FB22D5700A3EC78 /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAD2390F50120E00C3A4E2 /* console.cpp */; };
 		DFF95C8A0FB22D5700A3EC78 /* exereader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAD23B0F50120E00C3A4E2 /* exereader.cpp */; };
-		DFF95C8B0FB22D5700A3EC78 /* sci_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573BF30F5A81D400961A72 /* sci_memory.cpp */; };
 		DFF95C8C0FB22D5700A3EC78 /* intmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573BFA0F5A81EA00961A72 /* intmap.cpp */; };
 		DFF95C8D0FB22D5700A3EC78 /* kdebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573BFC0F5A81EA00961A72 /* kdebug.cpp */; };
 		DFF95C8E0FB22D5700A3EC78 /* state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF573C010F5A81EA00961A72 /* state.cpp */; };
@@ -3082,8 +3079,6 @@
 		DF2FFD0F0F4870E50006E566 /* tucker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tucker.h; sourceTree = "<group>"; };
 		DF2FFD290F48717F0006E566 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		DF2FFD2A0F48717F0006E566 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		DF573BF30F5A81D400961A72 /* sci_memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sci_memory.cpp; sourceTree = "<group>"; };
-		DF573BF40F5A81D400961A72 /* sci_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sci_memory.h; sourceTree = "<group>"; };
 		DF573BF50F5A81D400961A72 /* uinput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uinput.h; sourceTree = "<group>"; };
 		DF573BF80F5A81EA00961A72 /* aatree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aatree.h; sourceTree = "<group>"; };
 		DF573BF90F5A81EA00961A72 /* heapmgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = heapmgr.h; sourceTree = "<group>"; };
@@ -6287,8 +6282,6 @@
 			children = (
 				DF573CC40F5A863100961A72 /* tools.cpp */,
 				DF573CC50F5A863100961A72 /* tools.h */,
-				DF573BF30F5A81D400961A72 /* sci_memory.cpp */,
-				DF573BF40F5A81D400961A72 /* sci_memory.h */,
 				DF573BF50F5A81D400961A72 /* uinput.h */,
 				DFAAD2390F50120E00C3A4E2 /* console.cpp */,
 				DFAAD23A0F50120E00C3A4E2 /* console.h */,
@@ -7999,7 +7992,6 @@
 				DFD6470C0F495B51008E18EF /* unzip.cpp in Sources */,
 				DFAAD23D0F50120E00C3A4E2 /* console.cpp in Sources */,
 				DFAAD23E0F50120E00C3A4E2 /* exereader.cpp in Sources */,
-				DF573BF60F5A81D400961A72 /* sci_memory.cpp in Sources */,
 				DF573C060F5A81EA00961A72 /* intmap.cpp in Sources */,
 				DF573C070F5A81EA00961A72 /* kdebug.cpp in Sources */,
 				DF573C080F5A81EA00961A72 /* state.cpp in Sources */,
@@ -8934,7 +8926,6 @@
 				DF0942020F63CB26002D821E /* unzip.cpp in Sources */,
 				DF0942030F63CB26002D821E /* console.cpp in Sources */,
 				DF0942040F63CB26002D821E /* exereader.cpp in Sources */,
-				DF0942050F63CB26002D821E /* sci_memory.cpp in Sources */,
 				DF0942070F63CB26002D821E /* intmap.cpp in Sources */,
 				DF0942080F63CB26002D821E /* kdebug.cpp in Sources */,
 				DF0942090F63CB26002D821E /* state.cpp in Sources */,
@@ -9881,7 +9872,6 @@
 				DFF95C880FB22D5700A3EC78 /* unzip.cpp in Sources */,
 				DFF95C890FB22D5700A3EC78 /* console.cpp in Sources */,
 				DFF95C8A0FB22D5700A3EC78 /* exereader.cpp in Sources */,
-				DFF95C8B0FB22D5700A3EC78 /* sci_memory.cpp in Sources */,
 				DFF95C8C0FB22D5700A3EC78 /* intmap.cpp in Sources */,
 				DFF95C8D0FB22D5700A3EC78 /* kdebug.cpp in Sources */,
 				DFF95C8E0FB22D5700A3EC78 /* state.cpp in Sources */,

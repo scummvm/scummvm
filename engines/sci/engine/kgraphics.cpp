@@ -1655,7 +1655,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 		if (entries_nr) { // determine list_top, selection, and the entries_list
 			seeker = text;
-			entries_list = (char**)sci_malloc(sizeof(char *) * entries_nr);
+			entries_list = (char**)malloc(sizeof(char *) * entries_nr);
 			for (i = 0; i < entries_nr; i++) {
 				entries_list[i] = seeker;
 				seeker += entry_size	;
