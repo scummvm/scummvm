@@ -40,7 +40,7 @@ struct Key {
 	bool shiftable;
 };
 
-const Key keys[] = {
+static const Key keys[] = {
 	{"BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", kActionKeyType, false},
 	{"TAB", KEYCODE_TAB, ASCII_TAB, "Tab", kActionKeyType, false},
 	{"CLEAR", KEYCODE_CLEAR, 0, "Clear", kActionKeyType, false},
@@ -183,7 +183,7 @@ struct Mod {
 	bool shiftable;
 };
 
-const Mod modifiers[] = {
+static const Mod modifiers[] = {
 	{ 0, "", "", false },
 	{ KBD_CTRL, "C+", "Ctrl+", false },
 	{ KBD_ALT, "A+", "Alt+", false },
