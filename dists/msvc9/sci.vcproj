@@ -479,10 +479,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\sciconsole.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\sciconsole.h"
 				>
 			</File>

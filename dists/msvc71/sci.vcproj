@@ -351,9 +351,6 @@
 				RelativePath="..\..\engines\sci\scicore\resource.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\sciconsole.cpp">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\sciconsole.h">
 			</File>
 			<File
