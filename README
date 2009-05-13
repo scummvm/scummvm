@@ -883,6 +883,7 @@ arguments -- see the next section.
   --native-mt32            True Roland MT-32 (disable GM emulation)
   --enable-gs              Enable Roland GS mode for MIDI playback
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
+  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)
   --aspect-ratio           Enable aspect ratio correction
   --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,
                            hercAmber, amiga)
@@ -1868,6 +1869,7 @@ The following keywords are recognized:
                              negative, don't even try to access the CD-ROM.
     joystick_num    number   Number of joystick device to use for input
     music_driver    string   The music engine to use.
+	opl_driver      string   The AdLib (OPL) emulator to use.
     output_rate     number   The output sample rate to use, in Hz. Sensible
                              values are 11025, 22050 and 44100.
     alsa_port       string   Port to use for output when using the

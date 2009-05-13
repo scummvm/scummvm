@@ -7,7 +7,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Discworld 2 - Missing Presumed ...!?
 
  General:
-   - Added experimental Adlib emulator from DOSBox.
+   - Added experimental AdLib emulator from DOSBox.
 
  Beneath a Steel Sky:
    - Changed the game speed to match the original game (previously
@@ -139,7 +139,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Rewrote parts of Digital iMUSE, fixing some bugs.
    - Rewrote the internal timer code, fixing some speed issues in e.g. COMI.
    - Improved support for sound effects in Amiga version of Zak McKracken.
-   - Added support for mixed Adlib/MIDI mode in Monkey Island 1 (Floppy).
+   - Added support for mixed AdLib/MIDI mode in Monkey Island 1 (Floppy).
 
 0.11.1 (2008-02-29)
  SCUMM:
@@ -221,7 +221,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Many bugfixes.
 
  Queen:
-   - Added support for Adlib music.
+   - Added support for AdLib music.
    - Added missing music patterns playback in Amiga version.
 
  SCUMM:
@@ -369,7 +369,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  BASS:
    - Fixed character spacing in LINC terminals in floppy version v0.0303.
-   - Fixed a regression which caused incorrect adlib music emulation.
+   - Fixed a regression which caused incorrect AdLib music emulation.
 
  Broken Sword 1:
    - Fixed speech-related crashes.
@@ -607,7 +607,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Windows Mobile port (PocketPC / Smartphone):
    - Fixed FOTAQ crash on all platforms when leaving the hotel AGAIN.
-   - Better low quality Adlib emulation for FOTAQ.
+   - Better low quality AdLib emulation for FOTAQ.
    - Fix randomly broken Hide Toolbar option. (thanks iKi)
    - Fix first hardware key mapping (was not displayed before).
    - Fix BASS & Simon hangs on Smartphone when using the Skip hotkey.
@@ -734,7 +734,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added HQ2x and HQ3x scalers.
    - Rewrote sound code for more flexibility and performance.
    - Improved native MT32 support.
-   - Adlib GM emulation table revamped, providing more accurate software MIDI.
+   - AdLib GM emulation table revamped, providing more accurate software MIDI.
    - Default Makefile now uses configure script.
    - Greatly improved the launcher and options dialogs (work-in-progress).
    - Many other "under the hood" improvements, like a new config managment
@@ -750,9 +750,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SCUMM:
    - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
    - Added INSANE support for Full Throttle 'action sequences'.
-   - Added option to choose between Adlib, PCjr and PC Speaker in earlier
+   - Added option to choose between AdLib, PCjr and PC Speaker in earlier
      games.
-   - Added Adlib support for indy3ega and loom (ega).
+   - Added AdLib support for indy3ega and loom (ega).
    - Added MIDI support for loom (ega), monkeyega and monkeyvga.
    - Added sound effects support for indy3/monkeyega/monkeyvga/pass.
    - Added FM Towns targets for Loom and Indy3.
@@ -834,7 +834,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 - Added akos16 implementation for The Dig and Full Throttle costumes.
 - Added Digital iMUSE implementation for The Dig and Full Throttle music.
 - Loom CD speech+music syncronisation improved greatly.
-- Added midi-emulation via adlib, for platforms without sequencer support.
+- Added midi-emulation via AdLib, for platforms without sequencer support.
 - Code separation of various engine parts into several libraries.
 - Several fixes to prevent Simon the Sorcerer crashing and hanging.
 - Hundreds of bugfixes for many other games.
