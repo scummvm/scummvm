@@ -908,7 +908,7 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 	}
 
 	int retval = 0;
-	while (retval > 0) { /* All delays must be processed separately */
+	do {	 /* All delays must be processed separately */
 		int chan = getCommandIndex();
 
 		if (chan == COMMAND_INDEX_NONE) {
@@ -974,7 +974,7 @@ int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 
 		} /* Not a PCM */
 
-	}
+	} while (retval > 0);
 
 	return retval;
 }
