@@ -37,6 +37,7 @@
 #include "cruise/cruise.h"
 #include "cruise/font.h"
 #include "cruise/gfxModule.h"
+#include "cruise/staticres.h"
 
 namespace Cruise {
 
@@ -138,27 +139,46 @@ void CruiseEngine::initialize() {
 bool CruiseEngine::loadLanguageStrings() {
 	Common::File f;
 
-	if (!f.open("DELPHINE.LNG"))
-		return false;
+	// Give preference to a language file
+	if (f.open("DELPHINE.LNG")) {
+		char *data = (char *)malloc(f.size());
+		f.read(data, f.size());
+		char *ptr = data;
 
-	char *data = (char *)malloc(f.size());
-	f.read(data, f.size());
-	char *ptr = data;
+		for (int i = 0; i < MAX_LANGUAGE_STRINGS; ++i) {
+			// Get the start of the next string
+			while (*ptr != '"') ++ptr;
+			const char *v = ++ptr;
 
-	for (int i = 0; i < MAX_LANGUAGE_STRINGS; ++i) {
-		// Get the start of the next string
-		while (*ptr != '"') ++ptr;
-		const char *v = ++ptr;
+			// Find the end of the string, and replace the end '"' with a NULL
+			while (*ptr != '"') ++ptr;
+			*ptr++ = '\0';
 
-		// Find the end of the string, and replace the end '"' with a NULL
-		while (*ptr != '"') ++ptr;
-		*ptr++ = '\0';
+			// Add the string to the list
+			_langStrings.push_back(v);
+		}
 
-		// Add the string to the list
-		_langStrings.push_back(v);
+		f.close();
+
+	} else {
+		// Try and use one of the pre-defined language lists
+		const char **p = NULL;
+		switch (getLanguage()) {
+			case Common::EN_ANY:
+				p = englishLanguageStrings;
+				break;
+			case Common::FR_FRA:
+				p = frenchLanguageStrings;
+				break;
+			default:
+				return false;
+		}
+
+		// Load in the located language set
+		for (int i = 0; i < 13; ++i, ++p)
+			_langStrings.push_back(*p);
 	}
 
-	f.close();
 	return true;
 }
 

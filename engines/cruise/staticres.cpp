@@ -208,4 +208,13 @@ const byte mouseCursorMagnifyingGlass[] = {
 	0xfe, 0xc0, 0xfc, 0x00, 0xf8, 0x00, 0x00, 0x00
 };
 
+const char *englishLanguageStrings[13] = {
+	"Pause", NULL, NULL, NULL, NULL, "Inventory", "Speak about...", "Player Menu", NULL,
+	"Save", "Load", "Start Again", "Quit"
+};
+const char *frenchLanguageStrings[13] = {
+	"", NULL, NULL, NULL, NULL, "Inventaire", "Parler de...", "Menu Joueur", NULL,
+	"Sauvegarde", "Chargement", "Recommencer le jeu", "Quitter"
+};
+
 } // End of namespace Cruise
