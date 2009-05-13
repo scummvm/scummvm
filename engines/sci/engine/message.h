@@ -48,30 +48,32 @@ typedef Common::Stack<IndexRecordCursor> CursorStack;
 
 class MessageState {
 public:
-	MessageState() : _module(-1) { }
-	int getMessage(MessageTuple *t);
-	int getNext();
+	MessageState() : _module(-1), _locked(false) { }
+	int findTuple(MessageTuple &t);
+	MessageTuple getTuple();
+	MessageTuple getRefTuple();
+	int getMessage();
+	void gotoNext();
+	char *getText();
 	int getTalker();
 	int getLength();
-	void getText(char *buffer);
+	MessageTuple &getLastTuple();
+	int getLastModule();
 	int loadRes(ResourceManager *resmgr, int module, bool lock);
-	int isInitialized() { return _initialized; }
-	void initialize(ResourceManager *resmgr);
-	void setVersion(int version) { _version = version; }
 
 private:
-	void parse(IndexRecordCursor *cursor, MessageTuple *t);
-	void parseRef(IndexRecordCursor *cursor, MessageTuple *t);
 	void initCursor();
 	void advanceCursor(bool increaseSeq);
 
-	int _initialized;
 	Resource *_currentResource;
 	int _module;
+	bool _locked;
 	int _recordCount;
 	byte *_indexRecords;
 	CursorStack _cursorStack;
 	IndexRecordCursor _engineCursor;
+	MessageTuple _lastReturned;
+	int _lastReturnedModule;
 	int _version;
 };
 

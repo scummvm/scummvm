@@ -722,107 +722,143 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return argv[2];
 }
 
-#define DUMMY_MESSAGE "No MESSAGE support in SCI yet"
+#define DUMMY_MESSAGE "Message not found!"
 
 static MessageState state;
 
+enum kMessageFunc {
+	K_MESSAGE_GET,
+	K_MESSAGE_NEXT,
+	K_MESSAGE_SIZE,
+	K_MESSAGE_REFCOND,
+	K_MESSAGE_REFVERB,
+	K_MESSAGE_REFNOUN,
+	K_MESSAGE_PUSH,
+	K_MESSAGE_POP,
+	K_MESSAGE_LASTMESSAGE
+};
+
 reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	MessageTuple tuple;
+	int func;
+	// For earlier version of of this function (GetMessage)
+	bool isGetMessage = argc == 4;
 
-	if (argc == 4) {
-		// Earlier version of of this function (GetMessage)
+	if (isGetMessage) {
+		func = K_MESSAGE_GET;
+
 		tuple.noun = UKPV(0);
-		int module = UKPV(1);
 		tuple.verb = UKPV(2);
 		tuple.cond = 0;
 		tuple.seq = 1;
+	} else {
+		func = UKPV(0);
 
-		if (state.loadRes(s->resmgr, module, true) && state.getMessage(&tuple)) {
-			int len = state.getLength();
-			char *buffer = kernel_dereference_char_pointer(s, argv[3], len + 1);
+		if (argc >= 6) {
+			tuple.noun = UKPV(2);
+			tuple.verb = UKPV(3);
+			tuple.cond = UKPV(4);
+			tuple.seq = UKPV(5);
+		}
+	}
+
+	switch (func) {
+	case K_MESSAGE_GET:
+	case K_MESSAGE_NEXT: {
+		reg_t bufferReg;
+		char *buffer = NULL;
+		const char *str;
+		reg_t retval;
+
+		if (func == K_MESSAGE_GET) {
+			state.loadRes(s->resmgr, UKPV(1), true);
+			state.findTuple(tuple);
+
+			if (isGetMessage)
+				bufferReg = (argc == 4 ? argv[3] : NULL_REG);
+			else
+				bufferReg = (argc == 7 ? argv[6] : NULL_REG);
+		} else {
+			bufferReg = (argc == 2 ? argv[1] : NULL_REG);
+		}
+
+		if (state.getMessage()) {
+			str = state.getText();
+			if (isGetMessage)
+				retval = bufferReg;
+			else
+				retval = make_reg(0, state.getTalker());
+		} else {
+			str = DUMMY_MESSAGE;
+			retval = NULL_REG;
+		}
+
+		if (!bufferReg.isNull()) {
+			int len = strlen(str) + 1;
+			buffer = kernel_dereference_char_pointer(s, bufferReg, len);
 
 			if (buffer) {
-				state.getText(buffer);
-				return argv[3];
+				strcpy(buffer, str);
+			} else {
+				warning("Message: buffer "PREG" invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str);
+
+				// Set buffer to empty string if possible
+				buffer = kernel_dereference_char_pointer(s, bufferReg, 1);
+				if (buffer)
+					*buffer = 0;
+			}
+
+			state.gotoNext();
+		}
+
+		return retval;
+	}
+	case K_MESSAGE_SIZE: {
+		MessageState tempState;
+
+		if (tempState.loadRes(s->resmgr, UKPV(1), false) && tempState.findTuple(tuple) && tempState.getMessage())
+			return make_reg(0, strlen(tempState.getText()));
+		else
+			return NULL_REG;
+	}
+	case K_MESSAGE_REFCOND:
+	case K_MESSAGE_REFVERB:
+	case K_MESSAGE_REFNOUN: {
+		MessageState tempState;
+
+		if (tempState.loadRes(s->resmgr, UKPV(1), false) && tempState.findTuple(tuple)) {
+			MessageTuple t = tempState.getRefTuple();
+			switch (func) {
+			case K_MESSAGE_REFCOND:
+				return make_reg(0, t.cond);
+			case K_MESSAGE_REFVERB:
+				return make_reg(0, t.verb);
+			case K_MESSAGE_REFNOUN:
+				return make_reg(0, t.noun);
 			}
 		}
 
 		return NULL_REG;
 	}
+	case K_MESSAGE_LASTMESSAGE: {
+		MessageTuple msg = state.getLastTuple();
+		int module = state.getLastModule();
+		byte *buffer = kernel_dereference_bulk_pointer(s, argv[1], 10);
 
-	switch (UKPV(0)) {
-	case 0:
-	case 2:
-	case 3:
-	case 4:
-	case 5:
-		tuple.noun = UKPV(2);
-		tuple.verb = UKPV(3);
-		tuple.cond = UKPV(4);
-		tuple.seq = UKPV(5);
-	}
-
-	switch (UKPV(0)) {
-	case 0 :
-		if (state.loadRes(s->resmgr, UKPV(1), true) && state.getMessage(&tuple)) {
-			char *buffer = NULL;
-
-			if ((argc == 7) && (argv[6] != NULL_REG))
-				buffer = kernel_dereference_char_pointer(s, argv[6], state.getLength() + 1);
-
-			int talker = state.getTalker();
-
-			if (buffer)
-				state.getText(buffer);
-
-			// Talker id
-			return make_reg(0, talker);
+		if (buffer) {
+			WRITE_LE_UINT16(buffer, module);
+			WRITE_LE_UINT16(buffer + 2, msg.noun);
+			WRITE_LE_UINT16(buffer + 4, msg.verb);
+			WRITE_LE_UINT16(buffer + 6, msg.cond);
+			WRITE_LE_UINT16(buffer + 8, msg.seq);
 		} else {
-			char *buffer = NULL;
-
-			if ((argc == 7) && (argv[6] != NULL_REG))
-				buffer = kernel_dereference_char_pointer(s, argv[6], strlen(DUMMY_MESSAGE) + 1);
-
-			if (buffer)
-				strcpy(buffer, DUMMY_MESSAGE);
-
-			return NULL_REG;
+			warning("Message: buffer "PREG" invalid or too small to hold the tuple", PRINT_REG(argv[1]));
 		}
-	case 1 :
-		if (state.getNext()) {
-			char *buffer = NULL;
 
-			if ((argc == 2) && (argv[1] != NULL_REG))
-				buffer = kernel_dereference_char_pointer(s, argv[1], state.getLength() + 1);
-
-			int talker = state.getTalker();
-
-			if (buffer)
-				state.getText(buffer);
-
-			// Talker id
-			return make_reg(0, talker);
-		} else {
-			char *buffer = NULL;
-
-			if ((argc == 2) && (argv[1] != NULL_REG))
-				buffer = kernel_dereference_char_pointer(s, argv[1], strlen(DUMMY_MESSAGE) + 1);
-
-			if (buffer)
-				strcpy(buffer, DUMMY_MESSAGE);
-
-			return NULL_REG;
-		}
-	case 2: {
-		MessageState tempState;
-
-		if (tempState.loadRes(s->resmgr, UKPV(1), false) && tempState.getMessage(&tuple))
-			return make_reg(0, tempState.getLength() + 1);
-		else
-			return NULL_REG;
+		return NULL_REG;
 	}
 	default:
-		warning("kMessage subfunction %i invoked (not implemented)", UKPV(0));
+		warning("Message: subfunction %i invoked (not implemented)", func);
 	}
 
 	return NULL_REG;

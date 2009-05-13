@@ -28,29 +28,37 @@
 
 namespace Sci {
 
-void MessageState::parse(IndexRecordCursor *cursor, MessageTuple *t) {
-	t->noun = *(cursor->index_record + 0);
-	t->verb = *(cursor->index_record + 1);
+MessageTuple MessageState::getTuple() {
+	MessageTuple t;
+
+	t.noun = *(_engineCursor.index_record + 0);
+	t.verb = *(_engineCursor.index_record + 1);
 	if (_version == 2101) {
-		t->cond = 0;
-		t->seq = 1;
+		t.cond = 0;
+		t.seq = 1;
 	} else {
-		t->cond = *(cursor->index_record + 2);
-		t->seq = *(cursor->index_record + 3);
+		t.cond = *(_engineCursor.index_record + 2);
+		t.seq = *(_engineCursor.index_record + 3);
 	}
+
+	return t;
 }
 
-void MessageState::parseRef(IndexRecordCursor *cursor, MessageTuple *t) {
+MessageTuple MessageState::getRefTuple() {
+	MessageTuple t;
+
 	if (_version == 2101) {
-		t->noun = 0;
-		t->verb = 0;
-		t->cond = 0;
+		t.noun = 0;
+		t.verb = 0;
+		t.cond = 0;
 	} else {
-		t->noun = *(cursor->index_record + 7);
-		t->verb = *(cursor->index_record + 8);
-		t->cond = *(cursor->index_record + 9);
+		t.noun = *(_engineCursor.index_record + 7);
+		t.verb = *(_engineCursor.index_record + 8);
+		t.cond = *(_engineCursor.index_record + 9);
 	}
-	t->seq = 1;
+	t.seq = 1;
+
+	return t;
 }
 
 void MessageState::initCursor() {
@@ -67,20 +75,22 @@ void MessageState::advanceCursor(bool increaseSeq) {
 		_engineCursor.nextSeq++;
 }
 
-int MessageState::getMessage(MessageTuple *t) {
+int MessageState::findTuple(MessageTuple &t) {
+	if (_module == -1)
+		return 0;
+
 	// Reset the cursor
 	initCursor();
-	_engineCursor.nextSeq = t->seq;
+	_engineCursor.nextSeq = t.seq;
 
 	// Do a linear search for the message
 	while (1) {
-		MessageTuple looking_at;
-		parse(&_engineCursor, &looking_at);
+		MessageTuple looking_at = getTuple();
 
-		if (t->noun == looking_at.noun && 
-			t->verb == looking_at.verb && 
-			t->cond == looking_at.cond && 
-			t->seq == looking_at.seq)
+		if (t.noun == looking_at.noun && 
+			t.verb == looking_at.verb && 
+			t.cond == looking_at.cond && 
+			t.seq == looking_at.seq)
 			break;
 
 		advanceCursor(false);
@@ -90,15 +100,16 @@ int MessageState::getMessage(MessageTuple *t) {
 			return 0;
 	}
 
-	return getNext();
+	return 1;
 }
 
-int MessageState::getNext() {
+int MessageState::getMessage() {
+	if (_module == -1)
+		return 0;
+
 	if (_engineCursor.index != _recordCount) {
-		MessageTuple mesg;
-		parse(&_engineCursor, &mesg);
-		MessageTuple ref;
-		parseRef(&_engineCursor, &ref);
+		MessageTuple mesg = getTuple();
+		MessageTuple ref = getRefTuple();
 
 		if (_engineCursor.nextSeq == mesg.seq) {
 			// We found the right sequence number, check for recursion
@@ -107,8 +118,8 @@ int MessageState::getNext() {
 				// Recursion, advance the current cursor and load the reference
 				advanceCursor(true);
 
-				if (getMessage(&ref))
-					return getNext();
+				if (findTuple(ref))
+					return getMessage();
 				else {
 					// Reference not found
 					return 0;
@@ -123,7 +134,7 @@ int MessageState::getNext() {
 	// We either ran out of records, or found an incorrect sequence number. Go to previous stack frame.
 	if (!_cursorStack.empty()) {
 		_engineCursor = _cursorStack.pop();
-		return getNext();
+		return getMessage();
 	}
 
 	// Stack is empty, no message available
@@ -134,10 +145,22 @@ int MessageState::getTalker() {
 	return (_version == 2101) ? -1 : *(_engineCursor.index_record + 4);
 }
 
-void MessageState::getText(char *buffer) {
+MessageTuple &MessageState::getLastTuple() {
+	return _lastReturned;
+}
+
+int MessageState::getLastModule() {
+	return _lastReturnedModule;
+}
+
+char *MessageState::getText() {
 	int offset = READ_LE_UINT16(_engineCursor.index_record + ((_version == 2101) ? 2 : 5));
-	char *stringptr = (char *)_currentResource->data + offset;
-	strcpy(buffer, stringptr);
+	return (char *)_currentResource->data + offset;
+}
+
+void MessageState::gotoNext() {
+	_lastReturned = getTuple();
+	_lastReturnedModule = _module;
 	advanceCursor(true);
 }
 
@@ -148,24 +171,27 @@ int MessageState::getLength() {
 }
 
 int MessageState::loadRes(ResourceManager *resmgr, int module, bool lock) {
-	if (_module == module)
-		return 1;
+	if (_locked) {
+		// We already have a locked resource
+		if (_module == module) {
+			// If it's the same resource, we are done
+			return 1;
+		}
 
-	// Unlock old resource
-	if (_module != -1) {
+		// Otherwise, free the old resource
 		resmgr->unlockResource(_currentResource, _module, kResourceTypeMessage);
-		_module = -1;
+		_locked = false;
 	}
 
 	_currentResource = resmgr->findResource(kResourceTypeMessage, module, lock);
 
 	if (_currentResource == NULL || _currentResource->data == NULL) {
-		warning("Message subsystem: failed to load %d.msg", module);
+		warning("Message: failed to load %d.msg", module);
 		return 0;
 	}
 
-	if (lock)
-		_module = module;
+	_module = module;
+	_locked = lock;
 
 	_version = READ_LE_UINT16(_currentResource->data);
 
