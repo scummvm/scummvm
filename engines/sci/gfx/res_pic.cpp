@@ -1155,7 +1155,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int pos = 0;
 	int x, y;
 	int oldx, oldy;
-	int pal, index;
+	int pal = 0, index = 0;
 	int temp;
 	int line_mode = style->line_mode;
 	// NOTE: here, it is assumed that the titlebar size is always 10. This may differ depending on

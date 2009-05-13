@@ -285,6 +285,7 @@ void Screen::buildDisplay() {
 	byte *file = _vm->_resman->openResource(_thisScreen.background_layer_id);
 
 	MultiScreenHeader screenLayerTable;
+	memset(&screenLayerTable, 0, sizeof(screenLayerTable));
 
 	if (!Sword2Engine::isPsx()) // On PSX version, there would be nothing to read here
 		screenLayerTable.read(file + ResHeader::size());

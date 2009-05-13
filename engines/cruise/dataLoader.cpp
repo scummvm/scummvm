@@ -53,6 +53,9 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 	case 5:
 		spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn;
 		break;
+
+	default:
+		error("Unkown gfx format %d", format);
 	}
 
 	uint8 *buffer = (uint8 *)malloc(spriteSize);
@@ -66,7 +69,7 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 			uint8 c;
 			uint16 p0;
 			// Format 4
-			uint16 p1, p2, p3;
+			uint16 p1 = 0, p2 = 0, p3 = 0;
 
 			p0 = (dataPtr[0] << 8) | dataPtr[1];
 

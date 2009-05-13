@@ -141,6 +141,7 @@ bool AgiEngine::predictiveDialog(void) {
 
 	// show the predictive dialog.
 	// if another window is already in display, save its state into tmpwindow
+	memset(&tmpwindow, 0, sizeof(tmpwindow));
 	tmpwindow.active = false;
 	if (_game.window.active)
 		memcpy(&tmpwindow, &(_game.window), sizeof(AgiBlock));

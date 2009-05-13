@@ -339,6 +339,7 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 	} while (textChar >= 10);
 
 	DisplayedText ret;
+	memset(&ret, 0, sizeof(ret));
 	ret.textData = dest;
 	ret.textWidth = dtLastWidth;
 	return ret;
