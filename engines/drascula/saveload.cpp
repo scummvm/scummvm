@@ -190,7 +190,7 @@ bool DrasculaEngine::loadGame(const char *gameName) {
 	Common::InSaveFile *sav;
 
 	previousMusic = roomMusic;
-	menuScreen = 0;
+	_menuScreen = false;
 	if (currentChapter != 1)
 		clearRoom();
 

@@ -381,7 +381,7 @@ public:
 	int x1[40], y1[40], x2[40], y2[40];
 	int takeObject, pickedObject;
 	bool _subtitlesDisabled;
-	int menuBar, menuScreen, hasName;
+	bool _menuBar, _menuScreen, _hasName;
 	char textName[20];
 	int curExcuseLook;
 	int curExcuseAction;
@@ -538,7 +538,7 @@ public:
 	byte *TryInMem();
 	int playFrameSSN();
 
-	int UsingMem;
+	bool _useMemForArj;
 	byte CHUNK;
 	byte CMP, dacSSN[768];
 	int FrameSSN;

@@ -1502,11 +1502,11 @@ bool DrasculaEngine::checkAction(int fl) {
 
 	hasAnswer = 1;
 
-	if (menuScreen == 1 && roomParse(200, fl)) {
+	if (_menuScreen && roomParse(200, fl)) {
 		;
-	} else if (menuScreen != 1 && roomParse(201, fl)) {
+	} else if (!_menuScreen && roomParse(201, fl)) {
 		;
-	} else if (menuScreen == 1) {
+	} else if (_menuScreen) {
 		if (currentChapter == 1) {
 			hasAnswer = 0;
 		} else if (currentChapter == 2) {
@@ -1607,7 +1607,7 @@ bool DrasculaEngine::checkAction(int fl) {
 		room(roomNumber, fl);
 	}
 
-	if (hasAnswer == 0 && (hasName == 1 || menuScreen == 1))
+	if (hasAnswer == 0 && (_hasName || _menuScreen))
 		room(0, -1);
 
 	showCursor();
@@ -1646,7 +1646,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	char buffer[256];
 	int palLevel = 0;
 
-	hasName = 0;
+	_hasName = false;
 
 	strcpy(currentData, fileName);
 

@@ -45,10 +45,10 @@ void DrasculaEngine::pickObject(int object) {
 
 void DrasculaEngine::chooseObject(int object) {
 	if (currentChapter == 5) {
-		if (takeObject == 1 && menuScreen == 0 && pickedObject != 16)
+		if (takeObject == 1 && !_menuScreen && pickedObject != 16)
 			addObject(pickedObject);
 	} else {
-		if (takeObject == 1 && menuScreen == 0)
+		if (takeObject == 1 && !_menuScreen)
 			addObject(pickedObject);
 	}
 	for (int i = 0; i < OBJHEIGHT; i++)
@@ -115,7 +115,7 @@ void DrasculaEngine::checkObjects() {
 				&& mouseX < x2[l] && mouseY < y2[l]
 				&& visible[l] == 1 && isDoor[l] == 0) {
 			strcpy(textName, objName[l]);
-			hasName = 1;
+			_hasName = true;
 			veo = 1;
 		}
 	}
@@ -124,13 +124,13 @@ void DrasculaEngine::checkObjects() {
 			&& mouseX < curX + curWidth - 2 && mouseY < curY + curHeight - 2) {
 		if (currentChapter == 2 || veo == 0) {
 			strcpy(textName, "hacker");
-			hasName = 1;
+			_hasName = true;
 			veo = 1;
 		}
 	}
 
 	if (veo == 0)
-		hasName = 0;
+		_hasName = false;
 }
 
 void DrasculaEngine::removeObject() {

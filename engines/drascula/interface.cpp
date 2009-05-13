@@ -65,7 +65,7 @@ void DrasculaEngine::selectVerbFromBar() {
 }
 
 void DrasculaEngine::selectVerb(int verb) {
-	int c = (menuScreen == 1) ? 0 : 171;
+	int c = _menuScreen ? 0 : 171;
 
 	if (currentChapter == 5) {
 		if (takeObject == 1 && pickedObject != 16)
@@ -84,7 +84,7 @@ void DrasculaEngine::selectVerb(int verb) {
 		pickedObject = verb;
 	} else {
 		takeObject = 0;
-		hasName = 0;
+		_hasName = false;
 	}
 }
 
@@ -203,14 +203,14 @@ bool DrasculaEngine::checkMenuFlags() {
 }
 
 void DrasculaEngine::showMap() {
-	hasName = 0;
+	_hasName = false;
 
 	for (int l = 0; l < numRoomObjs; l++) {
 		if (mouseX > x1[l] && mouseY > y1[l]
 				&& mouseX < x2[l] && mouseY < y2[l]
 				&& visible[l] == 1) {
 			strcpy(textName, objName[l]);
-			hasName = 1;
+			_hasName = true;
 		}
 	}
 }
