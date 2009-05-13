@@ -103,6 +103,7 @@ static const char HELP_STRING[] =
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
 	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
+	"  --opl-driver=DRIVER      Select Adlib (OPL) emulator (db, mame)\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
 	"                           hercAmber, amiga)\n"
@@ -353,6 +354,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")
+			END_OPTION
+
+			DO_LONG_OPTION("opl-driver")
 			END_OPTION
 
 			DO_OPTION('g', "gfx-mode")
