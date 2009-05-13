@@ -282,6 +282,7 @@ void EditGameDialog::open() {
 
 	e = ConfMan.hasKey("music_driver", _domain) ||
 		ConfMan.hasKey("output_rate", _domain) ||
+		ConfMan.hasKey("opl_driver", _domain) ||
 		ConfMan.hasKey("subtitles", _domain) ||
 		ConfMan.hasKey("talkspeed", _domain);
 	_globalAudioOverride->setState(e);
