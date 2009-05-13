@@ -1345,7 +1345,7 @@ operating system and configuration.
 
     null       - Null output. Don't play any music.
 
-    AdLib      - Internal AdLib emulation (default)
+    adlib      - Internal AdLib emulation (default)
     fluidsynth - FluidSynth MIDI emulation
     mt32       - Internal MT-32 emulation
     pcjr       - Internal PCjr emulation (only usable in SCUMM games)
