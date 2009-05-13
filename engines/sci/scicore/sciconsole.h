@@ -35,6 +35,7 @@
 #include "common/scummsys.h"
 
 #include "sci/tools.h"
+#include "sci/engine/state.h"
 #include "sci/engine/vm_types.h"
 
 #define SCI_CONSOLE
@@ -53,15 +54,6 @@ union cmd_param_t {
 typedef int (*ConCommand)(EngineState *s, const Common::Array<cmd_param_t> &cmdParams);
 
 /*** FUNCTION DEFINITIONS ***/
-
-void con_set_pixmap_callback(void(*callback)(gfx_pixmap_t *));
-/* Sets the console pixmap callback
-** Parameters: (void -> gfx_pixmap_t *) callback: The closure to invoke after
-**                                      a pixmap has been provided to be
-**                                      published in the on-screen console
-** This sets a single callback function to be used after sciprintf()
-** is used.
-*/
 
 void con_init();
 /* Initializes the command parser
@@ -114,21 +106,6 @@ int con_hook_command(ConCommand command, const char *name, const char *param, co
 ** the actual number of parameters is stored in cmd_paramlength.
 ** It is allowed to modify the char*s from a cmd_params[] element, as long
 ** as no element beyond strlen(cmd_params[x].str)+1 is accessed.
-*/
-
-int con_can_handle_pixmaps();
-/* Determines whether the console supports pixmap inserts
-** Returns   : (int) non-zero iff pixmap inserts are supported
-*/
-
-int con_insert_pixmap(gfx_pixmap_t *pixmap);
-/* Inserts a pixmap into the console history buffer
-** Parameters: (gfx_pixmap_t *) pixmap: The pixmap to insert
-** Returns   : (int) 0 on success, non-zero if no receiver for
-**                   the pixmap could not be found
-** The pixmap must be unique; it is freed by the console on demand.
-** Use gfx_clone_pixmap() if neccessary.
-** If the pixmap could not be inserted, the called must destroy it
 */
 
 int con_hook_page(const char *topic, const char *body);

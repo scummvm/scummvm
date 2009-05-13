@@ -54,7 +54,6 @@ MODULE_OBJS = \
 	gfx/res_view1.o \
 	scicore/decompressor.o \
 	scicore/resource.o \
-	scicore/sciconsole.o \
 	scicore/vocabulary.o \
 	scicore/vocab_debug.o \
 	sfx/adlib_sbi.o \

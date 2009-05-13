@@ -24,6 +24,11 @@
  */
 
 #include "sci/tools.h"
+#include "sci/engine/state.h"
+#include "sci/scicore/sciconsole.h"
+
+#include "sci/sci.h"	// For _console only
+#include "sci/console.h"	// For _console only
 
 namespace Sci {
 
@@ -40,5 +45,42 @@ int sci_ffs(int bits) {
 
 	return retval;
 }
+
+#ifdef SCI_CONSOLE
+
+bool g_redirect_sciprintf_to_gui = false;
+
+int sciprintf(const char *fmt, ...) {
+	va_list argp;
+
+	assert(fmt);
+
+	// First determine how big a buffer we need
+	va_start(argp, fmt);
+	int bufsize = vsnprintf(0, 0, fmt, argp);
+	assert(bufsize >= 0);
+	va_end(argp);
+
+	// Allocate buffer for the full printed string
+	char *buf = (char *)malloc(bufsize + 1);
+	assert(buf);
+
+	// Print everything according to fmt into buf
+	va_start(argp, fmt); // reset argp
+	int bufsize2 = vsnprintf(buf, bufsize + 1, fmt, argp);
+	assert(bufsize == bufsize2);
+	va_end(argp);
+
+	// Display the result suitably
+	if (g_redirect_sciprintf_to_gui)
+		((SciEngine *)g_engine)->_console->DebugPrintf("%s", buf);
+	printf("%s", buf);
+
+	free(buf);
+
+	return 1;
+}
+
+#endif // SCI_CONSOLE
 
 } // End of namespace Sci

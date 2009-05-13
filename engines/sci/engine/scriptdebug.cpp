@@ -836,6 +836,7 @@ int c_viewinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int palette = cmdParams[1].val;
 	int loops, i;
 	gfxr_view_t *view_pixmaps = NULL;
+	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 
 	if (!s) {
 		sciprintf("Not in debug state\n");
@@ -859,10 +860,9 @@ int c_viewinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 				int height;
 				Common::Point mod;
 
-				if (con_can_handle_pixmaps()) {
-					view_pixmaps = s->gfx_state->gfxResMan->getView(view, &i, &j, palette);
-					con_insert_pixmap(gfx_clone_pixmap(view_pixmaps->loops[i].cels[j], s->gfx_state->driver->mode));
-				}
+				// Show pixmap on screen
+				view_pixmaps = s->gfx_state->gfxResMan->getView(view, &i, &j, palette);
+				gfxop_draw_cel(s->gfx_state, view, i, j, Common::Point(0,0), transparent, palette);
 
 				gfxop_get_cel_parameters(s->gfx_state, view, i, j, &width, &height, &mod);
 
