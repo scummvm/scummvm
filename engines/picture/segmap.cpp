@@ -343,7 +343,7 @@ void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 so
 	
 	debug(0, "SegmentMap::findPath() count = %d", pointsArray[1]);
 
-#if 0 // DEBUG: Draw the path we found
+#if 1 // DEBUG: Draw the path we found
 	int sx = sourceX, sy = sourceY;
 	LineData ld;
 	ld.pitch = _vm->_sceneWidth;
@@ -361,10 +361,7 @@ void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 so
 int8 SegmentMap::getScalingAtPoint(int16 x, int16 y) {
 	int8 scaling = 0;
 	for (uint i = 0; i < _infoRects.size(); i++) {
-		if (_infoRects[i].id == 0 &&
-			y >= _infoRects[i].y && y <= _infoRects[i].y + _infoRects[i].height &&
-			x >= _infoRects[i].x && x <= _infoRects[i].x + _infoRects[i].width) {
-
+		if (_infoRects[i].id == 0 && _infoRects[i].isPointInside(x, y)) {
 			int8 topScaling = (int8)_infoRects[i].b;
 			int8 bottomScaling = (int8)_infoRects[i].c;
 			if (y - _infoRects[i].y > 0) {
@@ -372,6 +369,7 @@ int8 SegmentMap::getScalingAtPoint(int16 x, int16 y) {
 			}
 		}
 	}
+	debug(0, "SegmentMap::getScalingAtPoint(%d, %d) %d", x, y, scaling);
 	return scaling;
 }
 
@@ -380,10 +378,7 @@ void SegmentMap::getRgbModifiertAtPoint(int16 x, int16 y, int16 id, byte &r, byt
 	g = 0;
 	b = 0;
 	for (uint i = 0; i < _infoRects.size(); i++) {
-		if (_infoRects[i].id == id &&
-			y >= _infoRects[i].y && y <= _infoRects[i].y + _infoRects[i].height &&
-			x >= _infoRects[i].x && x <= _infoRects[i].x + _infoRects[i].width) {
-
+		if (_infoRects[i].id == id && _infoRects[i].isPointInside(x, y)) {
 			r = _infoRects[i].a;
 			g = _infoRects[i].b;
 			b = _infoRects[i].c;

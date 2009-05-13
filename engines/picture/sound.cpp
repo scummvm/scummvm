@@ -49,7 +49,7 @@ namespace Picture {
 
 Sound::Sound(PictureEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 4; i++) {
-		channels[i].type = 0;
+		channels[i].type = kChannelTypeEmpty;
 		channels[i].resIndex = -1;
 	}
 }
@@ -63,7 +63,7 @@ void Sound::playSpeech(int16 resIndex) {
 
 	debug(0, "playSpeech(%d)", resIndex);
 
-	internalPlaySound(resIndex, -3, 50 /*TODO*/, 64);
+	internalPlaySound(resIndex, kChannelTypeSpeech, 50 /*TODO*/, 64);
 
 }
 
@@ -73,8 +73,8 @@ void Sound::playSound(int16 resIndex, int16 type, int16 volume) {
 
 	debug(0, "playSound(%d, %d, %d)", resIndex, type, volume);
 	
-	if (volume == -1 || type == -2) {
-		if (type == -1) {
+	if (volume == -1 || type == kChannelTypeSfx) {
+		if (type == kChannelTypeBackground) {
 			internalPlaySound(resIndex, type, 50 /*TODO*/, 64);
 		} else {
 			internalPlaySound(resIndex, type, 100 /*TODO*/, 64);
@@ -104,29 +104,29 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		_vm->_mixer->stopAll();
 		_vm->_screen->keepTalkTextItemsAlive();
 		for (int i = 0; i < 4; i++) {
-			channels[i].type = 0;
+			channels[i].type = kChannelTypeEmpty;
 			channels[i].resIndex = -1;
 		}
-	} else if (type == -2) {
+	} else if (type == kChannelTypeSfx) {
 		// Stop sounds with specified resIndex
 		for (int i = 0; i < 4; i++) {
 			if (channels[i].resIndex == resIndex) {
 				_vm->_mixer->stopHandle(channels[i].handle);
-				channels[i].type = 0;
+				channels[i].type = kChannelTypeEmpty;
 				channels[i].resIndex = -1;
 			}
 		}
 	} else {
 
-		if (type == -3) {
-			// Stop sounds with type == -3 and play new sound
+		if (type == kChannelTypeSpeech) {
+			// Stop speech and play new sound
 			stopSpeech();
 		}
 	
 		// Play new sound in empty channel
 		int freeChannel = -1;
 		for (int i = 0; i < 4; i++) {
-			if (channels[i].type == 0) {
+			if (channels[i].type == kChannelTypeEmpty) {
 				freeChannel = i;
 				break;
 			}
@@ -139,8 +139,8 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			uint32 soundSize = _vm->_res->getCurItemSize();
 
 			byte flags = Audio::Mixer::FLAG_UNSIGNED;
-			// Sounds with type == -1 loop
-			if (type == -1)
+			// Background sounds
+			if (type == kChannelTypeBackground)
 				flags |= Audio::Mixer::FLAG_LOOP;
 			Audio::AudioStream *stream = Audio::makeLinearInputStream(soundData, soundSize, 22050, flags, 0, 0);
 
@@ -158,7 +158,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 
 void Sound::updateSpeech() {
 	for (int i = 0; i < 4; i++) {
-		if (channels[i].type == -3 && _vm->_mixer->isSoundHandleActive(channels[i].handle)) {
+		if (channels[i].type == kChannelTypeSpeech && _vm->_mixer->isSoundHandleActive(channels[i].handle)) {
 			_vm->_screen->keepTalkTextItemsAlive();
 			break;
 		}
@@ -167,10 +167,10 @@ void Sound::updateSpeech() {
 
 void Sound::stopSpeech() {
 	for (int i = 0; i < 4; i++) {
-		if (channels[i].type == -3) {
+		if (channels[i].type == kChannelTypeSpeech) {
 			_vm->_mixer->stopHandle(channels[i].handle);
 			_vm->_screen->keepTalkTextItemsAlive();
-			channels[i].type = 0;
+			channels[i].type = kChannelTypeEmpty;
 			channels[i].resIndex = -1;
 		}
 	}

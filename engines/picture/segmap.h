@@ -94,6 +94,9 @@ public: // for debugging purposes
 		int16 height, width;
 		byte id;
 		byte a, b, c;
+		inline bool isPointInside(int16 px, int16 py) {
+			return py >= y && py <= y + height && px >= x && px <= x + width;
+		}
 	};
 	
 	struct PathPoint {

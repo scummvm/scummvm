@@ -50,6 +50,13 @@ namespace Picture {
 
 // 0x1219
 
+enum SoundChannelType {
+	kChannelTypeEmpty		= 0,
+	kChannelTypeBackground	= -1,
+	kChannelTypeSfx			= -2,
+	kChannelTypeSpeech		= -3
+};
+
 struct SoundChannel {
 	int16 resIndex;
 	int16 type;
@@ -58,22 +65,22 @@ struct SoundChannel {
 
 class Sound {
 public:
-    Sound(PictureEngine *vm);
-    ~Sound();
+	Sound(PictureEngine *vm);
+	~Sound();
 
-    void playSpeech(int16 resIndex);
-    void playSound(int16 resIndex, int16 type, int16 volume);
+	void playSpeech(int16 resIndex);
+	void playSound(int16 resIndex, int16 type, int16 volume);
 	void playSoundAtPos(int16 resIndex, int16 x, int16 y);
 	void updateSpeech();
 	void stopSpeech();
 
 protected:
-    PictureEngine *_vm;
+	PictureEngine *_vm;
 
-    SoundChannel channels[4];
-    
-    void internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 panning);
-    
+	SoundChannel channels[4];
+
+	void internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 panning);
+
 };
 
 
