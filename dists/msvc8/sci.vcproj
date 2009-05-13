@@ -486,10 +486,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\versions.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\versions.h"
 				>
 			</File>
@@ -551,10 +547,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\sequencer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\sfx.h"
 				>
 			</File>
 			<File
