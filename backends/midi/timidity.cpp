@@ -37,6 +37,7 @@
 #if defined (UNIX)
 
 #include "common/util.h"
+#include "common/endian.h"
 #include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
@@ -367,7 +368,7 @@ void MidiDriver_TIMIDITY::timidity_meta_seq(int p1, int p2, int p3) {
 	seqbuf[3] = 0x7f;
 	seqbuf[4] = p1;
 	seqbuf[5] = p2;
-	*(short *)&seqbuf[6] = p3;
+	WRITE_UINT16(&seqbuf[6], p3);
 
 	timidity_write_data(seqbuf, sizeof(seqbuf));
 }
