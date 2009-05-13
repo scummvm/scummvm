@@ -62,6 +62,8 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 
 	_vm = this;
 	_debugger = new Debugger();
+	_music = new MusicPlayer();
+	_sound = new SoundPlayer();
 
 	syst->getEventManager()->registerRandomSource(_rnd, "cruise");
 }
@@ -131,9 +133,6 @@ void CruiseEngine::initialize() {
 	_driver = MidiDriver::createMidi(midiDriver);
 	if (_mt32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_music = new MusicPlayer();
-	_sound = new SoundPlayer();
 }
 
 bool CruiseEngine::loadLanguageStrings() {
