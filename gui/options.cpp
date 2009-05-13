@@ -595,7 +595,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const String &prefix) {
 	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", kClearSoundFontCmd, 0);
 
 	// Multi midi setting
-	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", "Mixed Adlib/MIDI mode", 0, 0);
+	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", "Mixed AdLib/MIDI mode", 0, 0);
 
 	// Native mt32 setting
 	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", "True Roland MT-32 (disable GM emulation)", 0, 0);

@@ -1365,7 +1365,7 @@ operating system and configuration.
 To select a sound driver, select it in the Launcher, or pass its name
 via the '-e' option to scummvm, for example:
 
-    scummvm -eAdLib monkey2
+    scummvm -eadlib monkey2
 
 
 7.1) Playing sound with AdLib emulation:
