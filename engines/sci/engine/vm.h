@@ -982,13 +982,6 @@ int script_map_kernel(EngineState *s);
 ** This function reads from and writes to s. It is called by script_run().
 */
 
-
-void script_detect_versions(EngineState *s);
-/* Detects SCI versions by their different script header
-** Parameters: (EngineState *) s: The state to operate on
-** Returns   : (void)
-*/
-
 reg_t kalloc(EngineState *s, const char *type, int space);
 /* Allocates "kernel" memory and returns a handle suitable to be passed on to SCI scripts
 ** Parameters: (EngineState *) s: Pointer to the EngineState to operate on

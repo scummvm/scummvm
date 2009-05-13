@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 
+#include "sci/sci.h"
 #include "sci/scicore/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"

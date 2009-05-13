@@ -57,71 +57,62 @@ enum kDebugLevels {
 	kDebugLevelDclInflate = 1 << 17
 };
 
-struct GameFlags {
-	//int gameType;
-	//int gameId;
-	//uint32 features;
-	// SCI Version
-	// Resource Map Version
-	// etc...
-};
-
 struct SciGameDescription {
 	ADGameDescription desc;
-	GameFlags flags;
+	uint32 flags;
 	int res_version;
 	int version;
 };
 
-enum SciGameFlags {
-	/*
-	** SCI version flags
-	*/
-	GF_SCI0				= (1 << 0),
-	/*
-	** kDoSound() is different in this version than its SCI0 counterpart
-	*/
-	GF_SCI01			= (1 << 1),
-	GF_SCI1				= (1 << 2),
-	GF_SCI11			= (1 << 3),
-	GF_SCI32			= (1 << 4),
+enum SciGameVersions {
+	SCI_VERSION_AUTODETECT = 0,
+	SCI_VERSION_0 = 1,
+	SCI_VERSION_01 = 2,
+	SCI_VERSION_01_VGA = 3,
+	SCI_VERSION_01_VGA_ODD = 4,
+	SCI_VERSION_1_EARLY = 5,
+	SCI_VERSION_1_LATE = 6,
+	SCI_VERSION_1_1 = 7,
+	SCI_VERSION_32 = 8
+};
 
+enum SciGameFlags {
 	/*
 	** SCI0 flags
 	*/
 
-	/* First version known not to do this: 0.000.395
+	/* Applies to all versions before 0.000.395
 	** Old SCI versions used two word header for script blocks (first word equal
 	** to 0x82, meaning of the second one unknown). New SCI versions used one
 	** word header.
 	*/
-	GF_OLDSCRIPTHEADER	= (1 << 5),
+	GF_OLDSCRIPTHEADER	= (1 << 0),
 
-	/* First version known not to do this: 0.000.395
+	/* Applies to all versions before 0.000.395
 	** Earlier versions assign 120 degrees to left & right , and 60 to up and down.
 	** Later versions use an even 90 degree distribution.
 	*/
-	GF_OLDANGLES		= (1 << 6),
+	GF_OLDANGLES		= (1 << 1),
 
-	/* First version known not to do this: 0.000.490 (PQ2-new)
+	/* Applies to all versions before 0.000.490 (PQ2-new)
 	** When a new song is initialized, we store its state and
     ** resume it when the new one finishes.  Older versions completely
     ** clobbered the old songs.
 	*/
-	GF_OLDRESUMESONG	= (1 << 7),
+	GF_OLDRESUMESONG	= (1 << 2),
 
-	/* First version known not to do this: 0.000.502
+	/* Applies to all versions before 0.000.502
 	** Old SCI versions used to interpret the third DrawPic() parameter inversely,
 	** with the opposite default value (obviously).
 	** Also, they used 15 priority zones from 42 to 200 instead of 14 priority
 	** zones from 42 to 190.
 	*/
-	GF_OLDGFXFUNCTIONS	= (1 << 8),
+	GF_OLDGFXFUNCTIONS	= (1 << 3),
 
-	/* First version known not to do this: 0.000.629
+	/* Applies to all versions before 0.000.629
 	** Older SCI versions had simpler code for GetTime()
 	*/
-	GF_OLDGETTIME		= (1 << 9),
+	GF_OLDGETTIME		= (1 << 4),
 
 	// ----------------------------------------------------------------------------
 
@@ -129,19 +120,19 @@ enum SciGameFlags {
 	** SCI1 flags
 	*/
 	
-	/* First version known to do this: 1.000.200
+	/* Applies to all versions from 1.000.200 onwards
     ** In later SCI1 versions, the argument of lofs[as]
 	** instructions is absolute rather than relative.
 	*/
-	GF_LOFSABSOLUTE		= (1 << 10),
+	GF_LOFSABSOLUTE		= (1 << 5),
 
-	/* First version known to do this: 1.000.510
+	/* Applies to all versions from 1.000.510 onwards
     ** In later SCI1 versions, CanBeHere is called inversely.
 	** Also in kDisplay(), if the text would not fit on the screen, it
     ** is moved to the left and upwards until it fits.
 	** Finally, kDoSound() is different than in earlier SCI1 versions.
 	*/
-	GF_LATESCI1			= (1 << 11)
+	GF_LATESCI1			= (1 << 6)
 };
 
 class SciEngine : public Engine {

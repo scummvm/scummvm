@@ -55,7 +55,6 @@ MODULE_OBJS = \
 	scicore/decompressor.o \
 	scicore/resource.o \
 	scicore/sciconsole.o \
-	scicore/versions.o \
 	scicore/vocabulary.o \
 	scicore/vocab_debug.o \
 	sfx/adlib_sbi.o \

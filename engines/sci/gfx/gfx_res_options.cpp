@@ -23,6 +23,7 @@
  *
  */
 
+#include "sci/sci.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_options.h"
 #include "sci/gfx/gfx_resmgr.h"

@@ -23,7 +23,7 @@
  *
  */
 
-
+#include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/scicore/resource.h"
 

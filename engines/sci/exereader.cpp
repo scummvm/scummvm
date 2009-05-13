@@ -336,11 +336,20 @@ bool getSciVersionFromString(Common::String versionString, int *version, Common:
 	}
 
 	// Parse to a version number
-	if (!version_parse(mappedVersion.c_str(), version)) {
+	char *endptr[3];
+	const char *ver = mappedVersion.c_str();
+	int major = strtol(ver, &endptr[0], 10);
+	int minor = strtol(ver + 2, &endptr[1], 10);
+	int patchlevel = strtol(ver + 6, &endptr[2], 10);
+
+	if (endptr[0] != ver + 1 || endptr[1] != ver + 5 || *endptr[2] != '\0') {
+		warning("Failed to parse version string '%s'", ver);
 		return true;
-	} else {
-		return false;
 	}
+
+	*version = SCI_VERSION(major, minor, patchlevel);
+
+	return false;
 }
 
 } // End of namespace Sci

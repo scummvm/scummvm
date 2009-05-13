@@ -30,6 +30,7 @@
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 
+#include "sci/sci.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_resmgr.h"
 

@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/file.h"
 
+#include "sci/sci.h"
 #include "sci/scicore/resource.h"
 #include "sci/engine/state.h"
 #include "sci/scicore/versions.h"
@@ -398,8 +399,6 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 		s->version_lock_flag = 1; // Lock version
 	}
 
-	script_detect_versions(s);
-
 	if (s->version >= SCI_VERSION(1, 001, 000))
 		result = create_class_table_sci11(s);
 	else
@@ -450,9 +449,6 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 	if (_init_vocabulary(s))
 		return 1;
-
-	if (s->selector_map.cantBeHere != -1)
-		version_require_later_than(s, SCI_VERSION_FTU_INVERSE_CANBEHERE);
 
 	s->restarting_flags = SCI_GAME_IS_NOT_RESTARTING;
 

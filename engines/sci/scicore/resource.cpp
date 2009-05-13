@@ -28,6 +28,7 @@
 #include "common/util.h"
 #include "common/debug.h"
 
+#include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/tools.h"

@@ -71,18 +71,6 @@ enum ResourceStatus {
 #define SCI_ERROR_CRITICAL SCI_ERROR_NO_RESOURCE_FILES_FOUND
 /* the first critical error number */
 
-/*** SCI VERSION NUMBERS ***/
-#define SCI_VERSION_AUTODETECT 0
-#define SCI_VERSION_0 1
-#define SCI_VERSION_01 2
-#define SCI_VERSION_01_VGA 3
-#define SCI_VERSION_01_VGA_ODD 4
-#define SCI_VERSION_1_EARLY 5
-#define SCI_VERSION_1_LATE 6
-#define SCI_VERSION_1_1 7
-#ifdef ENABLE_SCI32
-#define SCI_VERSION_32 8
-#endif
 #define SCI_VERSION_LAST SCI_VERSION_1_LATE /* The last supported SCI version */
 
 #define SCI_VERSION_1 SCI_VERSION_1_EARLY

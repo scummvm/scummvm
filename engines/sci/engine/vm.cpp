@@ -1583,29 +1583,6 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 	return _lookup_selector_function(s, obj_location.segment, obj, selector_id, fptr);
 }
 
-// Detects SCI versions by their different script header
-void script_detect_versions(EngineState *s) {
-	int c;
-	Resource *script = {0};
-
-	if (s->resmgr->findResource(kResourceTypeHeap, 0, 0)) {
-		version_require_later_than(s, SCI_VERSION(1, 001, 000));
-		return;
-	}
-
-	for (c = 0; c < 1000; c++) {
-		if ((script = s->resmgr->findResource(kResourceTypeScript, c, 0))) {
-
-			int id = (int16)READ_LE_UINT16(script->data);
-
-			if (id > 15) {
-				version_require_earlier_than(s, SCI_VERSION_FTU_NEW_SCRIPT_HEADER);
-				return;
-			}
-		}
-	}
-}
-
 SegmentId script_get_segment(EngineState *s, int script_nr, int load) {
 	SegmentId segment;
 
