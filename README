@@ -48,7 +48,7 @@ Table of Contents:
  * 6.2 Converting savegames
  * 6.3 Viewing/Loading savegames from the command line
 7.0) Music and Sound
- * 7.1 Adlib emulation
+ * 7.1 AdLib emulation
  * 7.2 FluidSynth MIDI emulation
  * 7.3 MT-32 emulation
  * 7.4 MIDI emulation
@@ -879,7 +879,7 @@ arguments -- see the next section.
   --extrapath=PATH         Extra path to additional game data
   --soundfont=FILE         Select the SoundFont for MIDI playback (Only
                            supported by some MIDI drivers)
-  --multi-midi             Enable combination of Adlib and native MIDI
+  --multi-midi             Enable combination of AdLib and native MIDI
   --native-mt32            True Roland MT-32 (disable GM emulation)
   --enable-gs              Enable Roland GS mode for MIDI playback
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
@@ -1337,14 +1337,14 @@ Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
 7.0) Music and Sound:
 ---- ----------------
 On most operating systems and for most games, ScummVM will by default
-use Adlib emulation for music playback. MIDI may not be available on all
+use AdLib emulation for music playback. MIDI may not be available on all
 operating systems or may need manual configuration. If you want to use
 MIDI, you have several different choices of output, depending on your
 operating system and configuration.
 
     null       - Null output. Don't play any music.
 
-    adlib      - Internal Adlib emulation (default)
+    AdLib      - Internal AdLib emulation (default)
     fluidsynth - FluidSynth MIDI emulation
     mt32       - Internal MT-32 emulation
     pcjr       - Internal PCjr emulation (only usable in SCUMM games)
@@ -1364,12 +1364,12 @@ operating system and configuration.
 To select a sound driver, select it in the Launcher, or pass its name
 via the '-e' option to scummvm, for example:
 
-    scummvm -eadlib monkey2
+    scummvm -eAdLib monkey2
 
 
-7.1) Playing sound with Adlib emulation:
+7.1) Playing sound with AdLib emulation:
 ---- -----------------------------------
-By default an Adlib card will be emulated and ScummVM will output the
+By default an AdLib card will be emulated and ScummVM will output the
 music as sampled waves. This is the default mode for most games, and
 offers the best compatibility between machines and games.
 
@@ -1418,8 +1418,8 @@ Some games (such as Sam & Max) only contain MIDI music data.  This once
 prevented music for these games from working on platforms that do not
 support MIDI, or soundcards that do not provide MIDI drivers (e.g. many
 soundcards will not play MIDI under Linux). ScummVM can now emulate MIDI
-mode using sampled waves and Adlib, FluidSynth MIDI emulation or MT-32
-emulation using the -eadlib, -efluidsynth or -emt32 options
+mode using sampled waves and AdLib, FluidSynth MIDI emulation or MT-32
+emulation using the -eAdLib, -efluidsynth or -emt32 options
 respectively.  However, if you are capable of using native MIDI, we
 recommend using one of the MIDI modes below for best sound.
 
@@ -1457,9 +1457,9 @@ If neither of the above settings is enabled, ScummVM will initialize
 your device in General MIDI mode and use GM emulation in games with
 MT-32 soundtracks.
 
-Some games contain sound effects that are exclusive to the Adlib
+Some games contain sound effects that are exclusive to the AdLib
 soundtrack. For these games, you may wish to specify --multi-midi in
-order to combine MIDI music with Adlib sound effects.
+order to combine MIDI music with AdLib sound effects.
 
 
 7.6) Playing sound with Sequencer MIDI:                          [UNIX ONLY]
@@ -1472,9 +1472,9 @@ If you have problems with not hearing audio in this configuration, it is
 possible you will need to set the "SCUMMVM_MIDIPORT" variable to 1 or 2.
 This selects the port on the selected sequencer to use. Then start
 scummvm with the -eseq parameter. This should work on several cards, and
-may offer better performance and quality than Adlib emulation. However,
+may offer better performance and quality than AdLib emulation. However,
 for those systems where sequencer support does not work, you can always
-fall back on Adlib emulation.
+fall back on AdLib emulation.
 
 
 7.6.1) Playing sound with ALSA sequencer:                        [UNIX ONLY]
@@ -1565,7 +1565,7 @@ SCUMMVM_PORT=Software Synth in your environment.
 7.7) Using TiMidity++ MIDI server:
 ---- -----------------------------
 If you system lacks any MIDI sequencer, but you still want better MIDI
-quality than default Adlib emulation can offer, you can try TiMidity++
+quality than default AdLib emulation can offer, you can try TiMidity++
 MIDI server. See http://timidity.sourceforge.net/ for download and
 install instructions.
 
@@ -1754,9 +1754,9 @@ Some games use CD audio. If you use compressed files for this, they are
 probably sampled at 44100 Hz, so for these games that may be a better
 choice of sample rate.
 
-When using the Adlib, FM Towns, PC Speaker or IBM PCjr music drivers,
+When using the AdLib, FM Towns, PC Speaker or IBM PCjr music drivers,
 ScummVM is responsible for generating the samples. Usually 22050 Hz will
-be plenty for these, but there is at least one piece of Adlib music in
+be plenty for these, but there is at least one piece of AdLib music in
 Beneath a Steel Sky that will sound a lot better at 44100 Hz.
 
 Using frequencies in between is not recommended. For one thing, your
@@ -1873,7 +1873,7 @@ The following keywords are recognized:
     alsa_port       string   Port to use for output when using the
                              ALSA music driver.
     music_volume    number   The music volume setting (0-255)
-    multi_midi      bool     If true, enable combination Adlib and native
+    multi_midi      bool     If true, enable combination AdLib and native
                              MIDI.
     soundfont       string   The SoundFont to use for MIDI playback. (Only
                              supported by some MIDI drivers.)
