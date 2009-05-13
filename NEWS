@@ -6,6 +6,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Discworld.
    - Added support for Discworld 2 - Missing Presumed ...!?
 
+ General:
+   - Added experimental Adlib emulator from DOSBox.
+
  Beneath a Steel Sky:
    - Changed the game speed to match the original game (previously
      it ran too fast).
