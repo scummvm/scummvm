@@ -376,8 +376,13 @@ gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
 	view->loops_nr = loops_num;
 	view->loops = (gfxr_loop_t *)calloc(view->loops_nr, sizeof(gfxr_loop_t));
 
-	// There is no indication of size here, but this is certainly large enough
-	view->palette = gfxr_read_pal11(id, resource + palette_offset, 1284);
+	if (palette_offset > 0) {
+		// There is no indication of size here, but this is certainly large enough
+		view->palette = gfxr_read_pal11(id, resource + palette_offset, 1284);
+	} else {
+		// View has no palette
+		view->palette = NULL;
+	}
 
 	seeker = resource + header_size;
 	for (i = 0; i < view->loops_nr; i++) {
