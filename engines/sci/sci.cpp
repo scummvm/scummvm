@@ -81,50 +81,7 @@ static void init_console() {
 }
 
 static int init_gamestate(EngineState *gamestate, sci_version_t version) {
-	int errc;
-
-	if ((errc = script_init_engine(gamestate, version))) { // Initialize game state
-		int recovered = 0;
-
-		if (errc == SCI_ERROR_INVALID_SCRIPT_VERSION) {
-			int tversion = SCI_VERSION_FTU_NEW_SCRIPT_HEADER - ((version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 0 : 1);
-
-			while (!recovered && tversion) {
-				printf("Trying version %d.%03x.%03d instead\n", SCI_VERSION_MAJOR(tversion),
-				       SCI_VERSION_MINOR(tversion), SCI_VERSION_PATCHLEVEL(tversion));
-
-				errc = script_init_engine(gamestate, tversion);
-
-				if ((recovered = !errc))
-					version = tversion;
-
-				if (errc != SCI_ERROR_INVALID_SCRIPT_VERSION)
-					break;
-
-				switch (tversion) {
-
-				case SCI_VERSION_FTU_NEW_SCRIPT_HEADER - 1:
-					if (version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
-						tversion = 0;
-					else
-						tversion = SCI_VERSION_FTU_NEW_SCRIPT_HEADER;
-					break;
-
-				case SCI_VERSION_FTU_NEW_SCRIPT_HEADER:
-					tversion = 0;
-					break;
-				}
-			}
-			if (recovered)
-				printf("Success.\n");
-		}
-
-		if (!recovered) {
-			fprintf(stderr, "Script initialization failed. Aborting...\n");
-			return 1;
-		}
-	}
-	return 0;
+	return script_init_engine(gamestate, version);
 }
 
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
@@ -222,6 +179,7 @@ Common::Error SciEngine::run() {
 	EngineState *gamestate = new EngineState();
 	gamestate->resmgr = _resmgr;
 	gamestate->gfx_state = NULL;
+	gamestate->flags = getFlags();
 
 	if (init_gamestate(gamestate, version))
 		return Common::kUnknownError;
@@ -328,7 +286,7 @@ Common::Platform SciEngine::getPlatform() const {
 }
 
 uint32 SciEngine::getFlags() const {
-	return _gameDescription->desc.flags;
+	return _gameDescription->flags;
 }
 
 Common::String SciEngine::getSavegameName(int nr) const {

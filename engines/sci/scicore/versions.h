@@ -46,30 +46,6 @@ namespace Sci {
 ** - "FTU" means "First To Use"
 */
 
-#define SCI_VERSION_FTU_NEW_SCRIPT_HEADER SCI_VERSION(0,000,395)
-/* Last version known not to do this: 0.000.343
-** Old SCI versions used two word header for script blocks (first word equal
-** to 0x82, meaning of the second one unknown). New SCI versions used one
-** word header.
-*/
-
-#define SCI_VERSION_FTU_2ND_ANGLES SCI_VERSION(0,000,395)
-/* Last version known not to use this: ?
-** Earlier versions assign 120 degrees to left & right , and 60 to up and down.
-** Later versions use an even 90 degree distribution.
-*/
-
-#define SCI_VERSION_FTU_NEWER_DRAWPIC_PARAMETERS SCI_VERSION(0,000,502)
-/* Last version known not to do this: 0.000.435
-** Old SCI versions used to interpret the third DrawPic() parameter inversely,
-** with the opposite default value (obviously)
-*/
-
-#define SCI_VERSION_FTU_PRIORITY_14_ZONES SCI_VERSION(0,000,502)
-/* Last version known to do this: 0.000.490
- * Uses 14 zones from 42 to 190 instead of 15 zones from 42 to 200.
-*/
-
 #define SCI_VERSION_FTU_NEW_GETTIME SCI_VERSION(0,000,629)
 /* These versions of SCI has a different set of subfunctions in GetTime() */
 

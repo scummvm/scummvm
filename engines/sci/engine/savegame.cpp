@@ -513,9 +513,9 @@ static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
 }
 
 static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
-	int magic_pos_adder = s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER ? 0 : 2;
+	if (s->flags & GF_SCI0_OLD)
+		buf += 2;
 
-	buf += magic_pos_adder;
 	do {
 		int seeker_type = READ_LE_UINT16(buf);
 		int seeker_size;
@@ -857,8 +857,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	memcpy(&(retval->selector_map), &(s->selector_map), sizeof(selector_map_t));
 
-	retval->max_version = retval->version;
-	retval->min_version = retval->version;
 	retval->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 
 	// Copy breakpoint information from current game instance

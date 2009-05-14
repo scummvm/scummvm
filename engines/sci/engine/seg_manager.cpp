@@ -23,6 +23,7 @@
  *
  */
 
+#include "sci/sci.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
@@ -146,7 +147,7 @@ void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
 		sciprintf("%s: failed to load %s\n", __FUNCTION__, !script ? "script" : "heap");
 		return;
 	}
-	if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) {
+	if (s->flags & GF_SCI0_OLD) {
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
 	} else if (s->version < SCI_VERSION(1, 001, 000)) {

@@ -56,7 +56,7 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 
 	s->opcodes = vocabulary_get_opcodes(s->resmgr);
 
-	if (!vocabulary_get_snames(s->resmgr, s->version, s->_selectorNames)) {
+	if (!vocabulary_get_snames(s->resmgr, (s->flags & GF_SCI0_OLD), s->_selectorNames)) {
 		sciprintf("_init_vocabulary(): Could not retrieve selector names (vocab.997)!\n");
 		return 1;
 	}
@@ -127,7 +127,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->priority_first = 42; // Priority zone 0 ends here
 
-	if (s->version < SCI_VERSION_FTU_PRIORITY_14_ZONES)
+	if (s->flags & GF_SCI0_OLDGFXFUNCS)
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;
@@ -323,7 +323,7 @@ static int create_class_table_sci0(EngineState *s) {
 		Resource *script = s->resmgr->findResource(kResourceTypeScript, scriptnr, 0);
 
 		if (script) {
-			if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
+			if (s->flags & GF_SCI0_OLD)
 				magic_offset = seeker = 2;
 			else
 				magic_offset = seeker = 0;
@@ -336,9 +336,8 @@ static int create_class_table_sci0(EngineState *s) {
 						break;
 					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2);
 					if (seeker <= lastseeker) {
-						warning("Script version is invalid");
 						s->_classtable.clear();
-						return SCI_ERROR_INVALID_SCRIPT_VERSION;
+						error("Script version is invalid");
 					}
 				}
 
@@ -387,8 +386,6 @@ static int create_class_table_sci0(EngineState *s) {
 int script_init_engine(EngineState *s, sci_version_t version) {
 	int result;
 
-	s->max_version = SCI_VERSION(9, 999, 999);
-	s->min_version = 0; //Set no real limits
 	s->version = 0;
 	s->kernel_opt_flags = 0;
 

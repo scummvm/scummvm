@@ -26,6 +26,7 @@
 #include "common/debug.h"
 #include "common/stack.h"
 
+#include "sci/sci.h"
 #include "sci/scicore/resource.h"
 #include "sci/engine/state.h"
 #include "sci/scicore/versions.h"
@@ -1005,7 +1006,7 @@ void run_vm(EngineState *s, int restoring) {
 			gc_countdown(s);
 
 			xs->sp -= (opparams[1] >> 1) + 1;
-			if (s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER) {
+			if (!(s->flags & GF_SCI0_OLD)) {
 				xs->sp -= restadjust;
 				s->r_amp_rest = 0; // We just used up the restadjust, remember?
 			}
@@ -1016,7 +1017,7 @@ void run_vm(EngineState *s, int restoring) {
 			} else {
 				int argc = ASSERT_ARITHMETIC(xs->sp[0]);
 
-				if (s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
+				if (!(s->flags & GF_SCI0_OLD))
 					argc += restadjust;
 
 				if (s->_kfuncTable[opparams[0]].signature
@@ -1034,7 +1035,7 @@ void run_vm(EngineState *s, int restoring) {
 				xs_new = &(s->_executionStack[s->execution_stack_pos]);
 				s->_executionStackPosChanged = true;
 
-				if (s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
+				if (!(s->flags & GF_SCI0_OLD))
 					restadjust = s->r_amp_rest;
 
 			}
@@ -1549,7 +1550,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
 	// toggle, meaning that we must remove it for selector lookup.
-	if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
+	if (s->flags & GF_SCI0_OLD)
 		selector_id &= ~1;
 
 	if (!obj) {
@@ -1722,7 +1723,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	reg.segment = seg_id;
 	reg.offset = 0;
 
-	if (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) {
+	if (s->flags & GF_SCI0_OLD) {
 		//
 		int locals_nr = READ_LE_UINT16(script->data);
 
@@ -1899,7 +1900,7 @@ int script_instantiate(EngineState *s, int script_nr) {
 }
 
 void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
-	reg_t reg = make_reg(seg, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
+	reg_t reg = make_reg(seg, (s->flags & GF_SCI0_OLD) ? 2 : 0);
 	int objtype, objlength;
 
 	// Make a pass over the object in order uninstantiate all superclasses
@@ -1941,7 +1942,7 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 }
 
 void script_uninstantiate(EngineState *s, int script_nr) {
-	reg_t reg = make_reg(0, (s->version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER) ? 2 : 0);
+	reg_t reg = make_reg(0, (s->flags & GF_SCI0_OLD) ? 2 : 0);
 
 	reg.segment = s->seg_manager->segGet(script_nr);
 

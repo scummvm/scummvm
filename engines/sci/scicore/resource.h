@@ -66,7 +66,6 @@ enum ResourceStatus {
 #define SCI_ERROR_RESOURCE_TOO_BIG 9
 /* Resource size exceeds SCI_MAX_RESOURCE_SIZE */
 #define SCI_ERROR_UNSUPPORTED_VERSION 10
-#define SCI_ERROR_INVALID_SCRIPT_VERSION 11
 
 #define SCI_ERROR_CRITICAL SCI_ERROR_NO_RESOURCE_FILES_FOUND
 /* the first critical error number */

@@ -100,8 +100,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	version_lock_flag = 0;
 	version = 0;
-	max_version = 0;
-	min_version = 0;
 
 	_fileHandles.resize(5);
 

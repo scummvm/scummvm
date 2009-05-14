@@ -160,7 +160,7 @@ int _find_view_priority(EngineState *s, int y) {
 				return j;
 		return 14; // Maximum
 	} else {
-		if (s->version >= SCI_VERSION_FTU_PRIORITY_14_ZONES)
+		if (!(s->flags & GF_SCI0_OLDGFXFUNCS))
 			return SCI0_VIEW_PRIORITY_14_ZONES(y);
 		else
 			return SCI0_VIEW_PRIORITY(y) == 15 ? 14 : SCI0_VIEW_PRIORITY(y);
@@ -168,7 +168,7 @@ int _find_view_priority(EngineState *s, int y) {
 }
 
 int _find_priority_band(EngineState *s, int nr) {
-	if (s->version >= SCI_VERSION_FTU_PRIORITY_14_ZONES && (nr < 0 || nr > 14)) {
+	if (!(s->flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 14)) {
 		if (nr == 15)
 			return 0xffff;
 		else {
@@ -177,7 +177,7 @@ int _find_priority_band(EngineState *s, int nr) {
 		return 0;
 	}
 
-	if (s->version < SCI_VERSION_FTU_PRIORITY_14_ZONES && (nr < 0 || nr > 15)) {
+	if ((s->flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 15)) {
 		warning("Attempt to get priority band %d", nr);
 		return 0;
 	}
@@ -187,7 +187,7 @@ int _find_priority_band(EngineState *s, int nr) {
 	else {
 		int retval;
 
-		if (s->version >= SCI_VERSION_FTU_PRIORITY_14_ZONES)
+		if (!(s->flags & GF_SCI0_OLDGFXFUNCS))
 			retval = SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr);
 		else
 			retval = SCI0_PRIORITY_BAND_FIRST(nr);
@@ -675,7 +675,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc,
 
 	angle %= 360;
 
-	if (s->version >= SCI_VERSION_FTU_2ND_ANGLES) {
+	if (!(s->flags & GF_SCI0_OLD)) {
 		if (angle < 45)
 			loop = 3;
 		else if (angle < 136)
@@ -985,7 +985,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	dp.nr = SKPV(0);
 	dp.palette = SKPV_OR_ALT(3, 0);
 
-	if (s->version < SCI_VERSION_FTU_NEWER_DRAWPIC_PARAMETERS) {
+	if (s->flags & GF_SCI0_OLDGFXFUNCS) {
 		if (!SKPV_OR_ALT(2, 0))
 			add_to_pic = 0;
 	} else {
@@ -1050,7 +1050,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->priority_first = 42;
 
-	if (s->version < SCI_VERSION_FTU_PRIORITY_14_ZONES)
+	if (s->flags & GF_SCI0_OLDGFXFUNCS)
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;

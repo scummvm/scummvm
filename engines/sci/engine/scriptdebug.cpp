@@ -1379,7 +1379,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			int stackframe = (scr[pos.offset + 2] >> 1) + (*p_restadjust);
 			int argc = ((*p_sp)[- stackframe - 1]).offset;
 
-			if (s->version >= SCI_VERSION_FTU_NEW_SCRIPT_HEADER)
+			if (!(s->flags & GF_SCI0_OLD))
 				argc += (*p_restadjust);
 
 			sciprintf(" Kernel params: (");

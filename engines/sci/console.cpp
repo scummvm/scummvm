@@ -109,7 +109,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 bool Console::cmdSelectors(int argc, const char **argv) {
 	Common::StringList selectorNames;
 
-	if (!vocabulary_get_snames(_vm->getResMgr(), _vm->getVersion(), selectorNames)) {
+	if (!vocabulary_get_snames(_vm->getResMgr(), (_vm->getFlags() & GF_SCI0_OLD), selectorNames)) {
 		DebugPrintf("No selector name table found!\n");
 		return true;
 	}

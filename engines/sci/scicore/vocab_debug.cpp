@@ -308,7 +308,7 @@ int vocabulary_get_class_count(ResourceManager *resmgr) {
 }
 #endif
 
-bool vocabulary_get_snames(ResourceManager *resmgr, sci_version_t version, Common::StringList &selectorNames) {
+bool vocabulary_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringList &selectorNames) {
 	int count;
 
 	Resource *r = resmgr->findResource(kResourceTypeVocab, 997, 0);
@@ -324,11 +324,11 @@ bool vocabulary_get_snames(ResourceManager *resmgr, sci_version_t version, Commo
 		
 		Common::String tmp((const char *)r->data + offset + 2, len);
 		selectorNames.push_back(tmp);
-		if ((version != 0) && (version < SCI_VERSION_FTU_NEW_SCRIPT_HEADER)) {
-			// Early SCI versions used the LSB in the selector ID as a read/write
-			// toggle. To compensate for that, we add every selector name twice.
+
+		// Early SCI versions used the LSB in the selector ID as a read/write
+		// toggle. To compensate for that, we add every selector name twice.
+		if (isOldSci0)
 			selectorNames.push_back(tmp);
-		}
 	}
 
 	return true;

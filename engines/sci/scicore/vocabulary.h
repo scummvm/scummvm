@@ -195,7 +195,7 @@ int vocabulary_get_class_count(ResourceManager *resmgr);
  * Fills the given StringList with selector names.
  * Returns true upon success, false oterwise.
  */
-bool vocabulary_get_snames(ResourceManager *resmgr, sci_version_t version, Common::StringList &selectorNames);
+bool vocabulary_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringList &selectorNames);
 
 /* Look up a selector name in an array, return the index */
 int vocabulary_lookup_sname(const Common::StringList &selectorNames, const char *sname);

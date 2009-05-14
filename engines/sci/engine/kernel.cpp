@@ -359,46 +359,35 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	g_system->getTimeAndDate(loc_time);
 	start_time = g_system->getMillis() - s->game_start_time;
 
-	if (s->version < SCI_VERSION_FTU_NEW_GETTIME) { // Use old semantics
-		if (argc) { // Get seconds since last am/pm switch
-			retval = loc_time.tm_sec + loc_time.tm_min * 60 + (loc_time.tm_hour % 12) * 3600;
-			debugC(2, kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
-		} else { // Get time since game started
-			retval = start_time * 60 / 1000;
-			debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
-		}
-	} else {
-		int mode = UKPV_OR_ALT(0, 0);
-		// The same strange method is still used for distinguishing
-		// mode 0 and the others. We assume that this is safe, though
+	if (argc && s->version < SCI_VERSION_FTU_NEW_GETTIME) { // Use old semantics
+		retval = loc_time.tm_sec + loc_time.tm_min * 60 + (loc_time.tm_hour % 12) * 3600;
+		debugC(2, kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
+		return make_reg(0, retval);
+	}
 
-		switch (mode) {
-		case _K_NEW_GETTIME_TICKS : {
-			retval = start_time * 60 / 1000;
-			debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
-			break;
-		}
-		case _K_NEW_GETTIME_TIME_12HOUR : {
-			loc_time.tm_hour %= 12;
-			retval = (loc_time.tm_min << 6) | (loc_time.tm_hour << 12) | (loc_time.tm_sec);
-			debugC(2, kDebugLevelTime, "GetTime(12h) returns %d", retval);
-			break;
-		}
-		case _K_NEW_GETTIME_TIME_24HOUR : {
-			retval = (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1) | (loc_time.tm_hour << 11);
-			debugC(2, kDebugLevelTime, "GetTime(24h) returns %d", retval);
-			break;
-		}
-		case _K_NEW_GETTIME_DATE : {
-			retval = ((loc_time.tm_mon + 1) << 5) | loc_time.tm_mday | (((loc_time.tm_year + 1900) & 0x7f) << 9);
-			debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
-			break;
-		}
-		default: {
-			warning("Attempt to use unknown GetTime mode %d", mode);
-			break;
-		}
-		}
+	int mode = UKPV_OR_ALT(0, 0);
+
+	switch (mode) {
+	case _K_NEW_GETTIME_TICKS :
+		retval = start_time * 60 / 1000;
+		debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
+		break;
+	case _K_NEW_GETTIME_TIME_12HOUR :
+		loc_time.tm_hour %= 12;
+		retval = (loc_time.tm_min << 6) | (loc_time.tm_hour << 12) | (loc_time.tm_sec);
+		debugC(2, kDebugLevelTime, "GetTime(12h) returns %d", retval);
+		break;
+	case _K_NEW_GETTIME_TIME_24HOUR :
+		retval = (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1) | (loc_time.tm_hour << 11);
+		debugC(2, kDebugLevelTime, "GetTime(24h) returns %d", retval);
+		break;
+	case _K_NEW_GETTIME_DATE :
+		retval = ((loc_time.tm_mon + 1) << 5) | loc_time.tm_mday | (((loc_time.tm_year + 1900) & 0x7f) << 9);
+		debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
+		break;
+	default:
+		warning("Attempt to use unknown GetTime mode %d", mode);
+		break;
 	}
 
 	return make_reg(0, retval);

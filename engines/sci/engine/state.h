@@ -196,7 +196,7 @@ public:
 
 	byte version_lock_flag; /**< Set to 1 to disable any autodetection mechanisms */
 	sci_version_t version; /**< The approximated patchlevel of the version to emulate */
-	sci_version_t max_version, min_version; /* Used for autodetect sanity checks */
+	uint32 flags;			/* Specific game flags */
 
 	unsigned int kernel_opt_flags; /**< Kernel optimization flags- used for performance tweaking */
 
