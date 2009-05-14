@@ -191,8 +191,9 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	// Set the savegame dir
-	script_set_gamestate_save_dir(gamestate, ConfMan.get("savepath").c_str());
+	// Set the savegame dir (actually, we set it to a fake value,
+	// since we cannot let the game control where saves are stored)
+	script_set_gamestate_save_dir(gamestate, "/");
 
 	gfx_crossblit_alpha_threshold = 0x90;
 	GfxState gfx_state;
