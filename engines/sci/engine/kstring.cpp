@@ -817,7 +817,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		MessageState tempState;
 
 		if (tempState.loadRes(s->resmgr, UKPV(1), false) && tempState.findTuple(tuple) && tempState.getMessage())
-			return make_reg(0, strlen(tempState.getText()));
+			return make_reg(0, strlen(tempState.getText()) + 1);
 		else
 			return NULL_REG;
 	}
