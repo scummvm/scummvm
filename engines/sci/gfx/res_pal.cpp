@@ -41,8 +41,7 @@ namespace Sci {
 Palette *gfxr_read_pal11(int id, byte *resource, int size) {
 	int start_color = resource[25];
 	int format = resource[32];
-	int offset = (format == SCI_PAL_FORMAT_VARIABLE_FLAGS) ? 1 : 0;
-	int entry_size = 3 + offset;
+	int entry_size = (format == SCI_PAL_FORMAT_VARIABLE_FLAGS) ? 4 : 3;
 	byte *pal_data = resource + 37;
 	int _colors_nr = READ_LE_UINT16(resource + 29);
 	Palette *retval = new Palette(_colors_nr + start_color);
@@ -56,7 +55,15 @@ Palette *gfxr_read_pal11(int id, byte *resource, int size) {
 		retval->setColor(i, 0, 0, 0);
 	}
 	for (i = start_color; i < start_color + _colors_nr; i ++) {
-		retval->setColor(i, pal_data[0 + offset], pal_data[1 + offset], pal_data[2 + offset]);
+		switch (format) {
+		case SCI_PAL_FORMAT_CONSTANT_FLAGS:
+			retval->setColor(i, pal_data[0], pal_data[1], pal_data[2]);
+			break;
+		case SCI_PAL_FORMAT_VARIABLE_FLAGS:
+			if (pal_data[0] & 1)
+				retval->setColor(i, pal_data[1], pal_data[2], pal_data[3]);
+			break;
+		}
 		pal_data += entry_size;
 	}
 
@@ -92,7 +99,8 @@ Palette *gfxr_read_pal1(int id, byte *resource, int size) {
 
 	for (pos = 0; pos < counter; pos++) {
 		unsigned int color = colors[pos];
-		retval->setColor(pos, (color >> 8) & 0xff, (color >> 16) & 0xff, (color >> 24) & 0xff);
+		if (color & 1)
+			retval->setColor(pos, (color >> 8) & 0xff, (color >> 16) & 0xff, (color >> 24) & 0xff);
 	}
 
 	return retval;
