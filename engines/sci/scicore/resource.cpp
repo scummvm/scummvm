@@ -711,7 +711,6 @@ int ResourceManager::detectMapVersion() {
 int ResourceManager::detectVolVersion() {
 	Common::File file;
 	ResourceSource *rsrc = _sources;
-	uint32 pos;
 	// looking for a volume among sources
 	while (rsrc) {
 		if (rsrc->source_type == kSourceVolume) {
@@ -732,93 +731,54 @@ int ResourceManager::detectVolVersion() {
 	// Checking 1MB of data should be enough to determine the version
 	uint16 resId, wCompression;
 	uint32 dwPacked, dwUnpacked;
-	bool bFailed = false;
-	while (!file.eos() && !bFailed && file.pos() < 0x100000) {
-		resId = file.readUint16LE();
-		dwPacked = file.readUint16LE();
-		dwUnpacked = file.readUint16LE();
-		wCompression = file.readUint16LE();
-		if (file.eos())
-			break;
-		if ((wCompression > 4) || (wCompression == 0 && dwPacked != dwUnpacked + 4)
-		        || (dwUnpacked < dwPacked - 4)) {
-			bFailed = true;
-			break;
-		}
-		file.seek(dwPacked - 4, SEEK_CUR);
-	}
-	if (!bFailed)
-		return SCI_VERSION_0;
-	//
-	// Check for SCI1 format
-	bFailed = false;
-	file.seek(0, SEEK_SET);
-	while (!file.eos() && !bFailed && file.pos() < 0x100000) {
-		pos = file.pos();
-		file.seek(1, SEEK_CUR);
-		resId = file.readUint16LE();
-		dwPacked = file.readUint16LE();
-		dwUnpacked = file.readUint16LE();
-		wCompression = file.readUint16LE();
-		if (file.eos())
-			break;
-		if ((wCompression > 20) || (wCompression == 0 && dwPacked != dwUnpacked + 4)
-		        || (dwUnpacked < dwPacked - 4)) {
-			bFailed = true;
-			break;
-		}
-		file.seek(dwPacked - 4, SEEK_CUR);
-	}
-	if (!bFailed)
-		return SCI_VERSION_1;
-	//
-	// Check for SCI1.1 format
-	bFailed = false;
-	file.seek(0, SEEK_SET);
-	while (!file.eos() && !bFailed && file.pos() < 0x100000) {
-		pos = file.pos();
-		file.seek(1, SEEK_CUR);
-		resId = file.readUint16LE();
-		dwPacked = file.readUint16LE();
-		dwUnpacked = file.readUint16LE();
-		wCompression = file.readUint16LE();
-		if (file.eos())
-			break;
-		if ((wCompression > 20) || (wCompression == 0 && dwPacked != dwUnpacked)
-		        || (dwUnpacked < dwPacked)) {
-			bFailed = true;
-			break;
-		}
-		file.seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
-	}
-	if (!bFailed)
-		return SCI_VERSION_1_1;
+	int curVersion = SCI_VERSION_0;
+	bool failed = false;
 
-#ifdef ENABLE_SCI32
-	//
-	// Check for SCI32 v2 format (Gabriel Knight 1 CD)
-	bFailed = false;
-	file.seek(0, SEEK_SET);
-	while (!file.eos() && !bFailed && file.pos() < 0x100000) {
-		pos = file.pos();
-		file.seek(1, SEEK_CUR);
+	// Check for SCI0, SCI1, SCI1.1 and SCI32 v2 (Gabriel Knight 1 CD) formats
+	while (!file.eos() && file.pos() < 0x100000) {
+		if (curVersion > SCI_VERSION_0)
+			file.readByte();
 		resId = file.readUint16LE();
-		dwPacked = file.readUint32LE();
-		dwUnpacked = file.readUint32LE();
-		wCompression = file.readUint16LE();
+		dwPacked = (curVersion < SCI_VERSION_32) ? file.readUint16LE() : file.readUint32LE();
+		dwUnpacked = (curVersion < SCI_VERSION_32) ? file.readUint16LE() : file.readUint32LE();
+		wCompression = (curVersion < SCI_VERSION_32) ? file.readUint16LE() : file.readUint32LE();
 		if (file.eos())
-			break;
-		if ((wCompression != 0 && wCompression != 32)
-		        || (wCompression == 0 && dwPacked != dwUnpacked)
-		        || (dwUnpacked < dwPacked)) {
-			bFailed = true;
-			break;
+			return curVersion;
+
+		int chk = (curVersion == SCI_VERSION_0) ? 4 : 20;
+		int offs = curVersion < SCI_VERSION_1_1 ? 4 : 0;
+		if ((curVersion < SCI_VERSION_32 && wCompression > chk) 
+				|| (curVersion == SCI_VERSION_32 && wCompression != 0 && wCompression != 32) 
+				|| (wCompression == 0 && dwPacked != dwUnpacked + offs)
+		        || (dwUnpacked < dwPacked - offs)) {
+
+			// Retry with a newer SCI version
+			if (curVersion == SCI_VERSION_0) {
+				curVersion = SCI_VERSION_1;
+			} else if (curVersion == SCI_VERSION_1) {
+				curVersion = SCI_VERSION_1_1;
+			} else if (curVersion == SCI_VERSION_1_1) {
+				curVersion = SCI_VERSION_32;
+			} else {
+				// All version checks failed, exit loop
+				failed = true;
+				break;
+			}
+
+			file.seek(0, SEEK_SET);
+			continue;
 		}
-		file.seek(dwPacked, SEEK_CUR);//(9 + wPacked) % 2 ? wPacked + 1 : wPacked, SEEK_CUR);
+
+		if (curVersion < SCI_VERSION_1_1)
+			file.seek(dwPacked - 4, SEEK_CUR);
+		else if (curVersion == SCI_VERSION_1_1)
+			file.seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
+		else if (curVersion == SCI_VERSION_32)
+			file.seek(dwPacked, SEEK_CUR);//(9 + wPacked) % 2 ? wPacked + 1 : wPacked, SEEK_CUR);
 	}
-	if (!bFailed)
-		return SCI_VERSION_32;
-#endif
+
+	if (!failed)
+		return curVersion;
 
 	// Failed to detect volume version
 	return SCI_VERSION_AUTODETECT;
