@@ -43,7 +43,7 @@ Debugger::Debugger(AGOSEngine *vm)
 	DCmd_Register("voice",    WRAP_METHOD(Debugger, Cmd_PlayVoice));
 	DCmd_Register("bit",      WRAP_METHOD(Debugger, Cmd_SetBit));
 	DCmd_Register("bit2",     WRAP_METHOD(Debugger, Cmd_SetBit2));
-	DCmd_Register("bit3",     WRAP_METHOD(Debugger, Cmd_SetBit2));
+	DCmd_Register("bit3",     WRAP_METHOD(Debugger, Cmd_SetBit3));
 	DCmd_Register("var",      WRAP_METHOD(Debugger, Cmd_SetVar));
 	DCmd_Register("obj",      WRAP_METHOD(Debugger, Cmd_SetObjectFlag));
 	DCmd_Register("sub",      WRAP_METHOD(Debugger, Cmd_StartSubroutine));
