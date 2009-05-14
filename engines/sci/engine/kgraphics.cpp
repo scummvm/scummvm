@@ -261,7 +261,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 }
 
 PaletteEntry get_pic_color(EngineState *s, int color) {
-	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA || s->flags & GF_SCI1_EGA)
+	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
 		return s->ega_colors[color].visual;
 
 	if (color == -1 || color == 255)     // -1 occurs in Eco Quest 1. Not sure if this is the best approach, but it seems to work
@@ -278,7 +278,7 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int control) {
 	gfx_color_t retval;
 
-	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA || s->flags & GF_SCI1_EGA) {
+	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA) {
 		retval = s->ega_colors[(color >=0 && color < 16)? color : 0];
 		gfxop_set_color(s->gfx_state, &retval, (color < 0) ? -1 : retval.visual.r, retval.visual.g, retval.visual.b,
 		                (color == -1) ? 255 : 0, priority, control);
@@ -482,7 +482,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_GET_COLORS_NR:
 
-		return make_reg(0, (s->resmgr->_sciVersion < SCI_VERSION_01_VGA || s->flags & GF_SCI1_EGA) ? 0x10 : 0x100);
+		return make_reg(0, s->resmgr->_sciVersion < SCI_VERSION_01_VGA ? 0x10 : 0x100);
 		break;
 
 	case K_GRAPH_DRAW_LINE: {
@@ -2484,7 +2484,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bgcolor.mask = 0;
 
 	if (SKPV_OR_ALT(8 + argextra, 255) >= 0) {
-		if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA || s->flags & GF_SCI1_EGA)
+		if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
 			bgcolor.visual = get_pic_color(s, SKPV_OR_ALT(8 + argextra, 15));
 		else
 			bgcolor.visual = get_pic_color(s, SKPV_OR_ALT(8 + argextra, 255));
@@ -2509,7 +2509,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	black.alpha = 0;
 	black.control = -1;
 	black.priority = -1;
-	lWhite.visual = get_pic_color(s, (s->resmgr->_sciVersion < SCI_VERSION_01_VGA || s->flags & GF_SCI1_EGA) ? 15 : 255);
+	lWhite.visual = get_pic_color(s, s->resmgr->_sciVersion < SCI_VERSION_01_VGA ? 15 : 255);
 	lWhite.mask = GFX_MASK_VISUAL;
 	lWhite.alpha = 0;
 	lWhite.priority = -1;
@@ -3178,10 +3178,10 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			temp = KP_SINT(argv[argpt++]);
 			SCIkdebug(SCIkGRAPHICS, "Display: set_color(%d)\n", temp);
-			if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA || s->flags & GF_SCI1_EGA) && temp >= 0 && temp <= 15)
+			if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA) && temp >= 0 && temp <= 15)
 				color0 = (s->ega_colors[temp]);
 			else
-				if ((s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) && temp >= 0 && temp < 256) {
+				if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA && temp >= 0 && temp < 256) {
 					color0.visual = get_pic_color(s, temp);
 					color0.mask = GFX_MASK_VISUAL;
 				} else
@@ -3195,7 +3195,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			temp = KP_SINT(argv[argpt++]);
 			SCIkdebug(SCIkGRAPHICS, "Display: set_bg_color(%d)\n", temp);
-			if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA || s->flags & GF_SCI1_EGA) && temp >= 0 && temp <= 15)
+			if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA && temp >= 0 && temp <= 15)
 				bg_color = s->ega_colors[temp];
 			else
 				if ((s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) && temp >= 0 && temp <= 256) {

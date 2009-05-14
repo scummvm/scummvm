@@ -226,7 +226,8 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	if (gfxop_init(_resmgr->_sciVersion, &gfx_state, &gfx_options, _resmgr)) {
+	int resVersion = !(getFlags() & GF_SCI1_EGA) ? _resmgr->_sciVersion : SCI_VERSION_01;
+	if (gfxop_init(resVersion, &gfx_state, &gfx_options, _resmgr)) {
 		fprintf(stderr, "Graphics initialization failed. Aborting...\n");
 		return Common::kUnknownError;
 	}

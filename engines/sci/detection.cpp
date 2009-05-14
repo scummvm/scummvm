@@ -405,6 +405,22 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION(1, 000, 510)
 	},
 
+	// Conquests of the Longbow EGA - English DOS
+	{{"longbow", "EGA", {
+	      {"resource.map", 0, "7676ec9f08967d7a9a7724f5170456e0", 6261},
+	      {"resource.000", 0, "36e8fda5d0b8c49e587c8a9617959f72", 718161},
+	      {"resource.001", 0, "3c3735caa34fa3f261a9552831bb43ed", 705680},
+	      {"resource.002", 0, "7025b87e735b1df3f0e9488a621f4333", 700633},
+	      {"resource.003", 0, "eaca7933e8e56bea22b42f7fd5d7a8a7", 686510},
+	      {"resource.004", 0, "b7bb35c027bb424ecefcd122768e5e60", 705631},
+	      {"resource.005", 0, "58942b1aa6d6ffeb66e9f8897fd4435f", 469243},
+	      {"resource.006", 0, "8c767b3939add63d11274065e46aad04", 713158},
+	      {NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+	      GF_FOR_SCI1_510_OR_LATER | GF_SCI1_EGA,
+	      SCI_VERSION_AUTODETECT,
+	      SCI_VERSION(1, 000, 510)
+	},
+
 	// Conquests of the Longbow - English DOS Demo
 	{{"longbow", "", {
 		{"resource.map", 0, "cbc5cb73341de1bff1b1e20a640af220", 588},
