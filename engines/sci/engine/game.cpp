@@ -34,7 +34,6 @@
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 #include "sci/gfx/menubar.h"
-#include "sci/scicore/versions.h"
 
 namespace Sci {
 

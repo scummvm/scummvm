@@ -29,7 +29,6 @@
 #include "sci/sci.h"
 #include "sci/scicore/resource.h"
 #include "sci/engine/state.h"
-#include "sci/scicore/versions.h"
 #include "sci/engine/intmap.h"
 #include "sci/engine/kdebug.h"
 #include "sci/engine/kernel.h"

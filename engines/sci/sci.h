@@ -127,7 +127,7 @@ enum SciGameFlags {
 	/* Applies to all versions from 1.000.510 onwards
 	** kDoSound() is different than in earlier SCI1 versions.
 	*/
-	GF_NEWDOSOUND			= (1 << 4),
+	GF_SCI1_NEWDOSOUND		= (1 << 4),
 
 	/*
 	** Newer SCI1 games (like KQ5 CD and EcoQuest 1) use
