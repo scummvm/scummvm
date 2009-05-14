@@ -88,11 +88,6 @@ namespace Sci {
    instructions is absolute rather than relative.
 */
 
-#define SCI_VERSION_FTU_INVERSE_CANBEHERE SCI_VERSION(1,000,510)
-/* FIXME: This shouldn't be a version number.
- * But it'll do for now.
- */
-
 #define SCI_VERSION_FTU_DISPLAY_COORDS_FUZZY SCI_VERSION(1,000,510)
 /* First version known to do this: ?
    In later versions of SCI1 kDisplay(), if the text would not fit on

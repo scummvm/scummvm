@@ -359,7 +359,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	SCIkdebug(SCIkBRESEN, "New data: (x,y)=(%d,%d), di=%d\n", x, y, bdi);
 
-	if (s->version >= SCI_VERSION_FTU_INVERSE_CANBEHERE)
+	if (s->selector_map.cantBeHere != -1)
 		invoke_selector(INV_SEL(client, cantBeHere, 0), 0);
 	else
 		invoke_selector(INV_SEL(client, canBeHere, 0), 0);

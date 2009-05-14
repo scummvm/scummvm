@@ -127,7 +127,6 @@ enum SciGameFlags {
 	GF_LOFSABSOLUTE		= (1 << 5),
 
 	/* Applies to all versions from 1.000.510 onwards
-    ** In later SCI1 versions, CanBeHere is called inversely.
 	** Also in kDisplay(), if the text would not fit on the screen, it
     ** is moved to the left and upwards until it fits.
 	** Finally, kDoSound() is different than in earlier SCI1 versions.

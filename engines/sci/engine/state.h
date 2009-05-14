@@ -285,7 +285,7 @@ public:
 PaletteEntry get_pic_color(EngineState *s, int color);
 
 static inline reg_t not_register(EngineState *s, reg_t r) {
-	if (s->version >= SCI_VERSION_FTU_INVERSE_CANBEHERE)
+	if (s->selector_map.cantBeHere != -1)
 		return make_reg(0, !r.offset);
 	else
 		return r;
