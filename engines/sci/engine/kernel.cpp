@@ -359,7 +359,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	g_system->getTimeAndDate(loc_time);
 	start_time = g_system->getMillis() - s->game_start_time;
 
-	if (argc && s->version < SCI_VERSION_FTU_NEW_GETTIME) { // Use old semantics
+	if (argc && s->flags & GF_SCI0_OLDGETTIME) { // Use old semantics
 		retval = loc_time.tm_sec + loc_time.tm_min * 60 + (loc_time.tm_hour % 12) * 3600;
 		debugC(2, kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
 		return make_reg(0, retval);

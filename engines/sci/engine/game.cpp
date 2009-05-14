@@ -386,15 +386,8 @@ static int create_class_table_sci0(EngineState *s) {
 int script_init_engine(EngineState *s, sci_version_t version) {
 	int result;
 
-	s->version = 0;
 	s->kernel_opt_flags = 0;
-
-	if (!version) {
-		s->version_lock_flag = 0;
-	} else {
-		s->version = version;
-		s->version_lock_flag = 1; // Lock version
-	}
+	s->version = version;
 
 	if (s->version >= SCI_VERSION(1, 001, 000))
 		result = create_class_table_sci11(s);

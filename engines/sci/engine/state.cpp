@@ -98,7 +98,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	last_wait_time = 0;
 
-	version_lock_flag = 0;
 	version = 0;
 
 	_fileHandles.resize(5);

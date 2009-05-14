@@ -194,7 +194,6 @@ public:
 	uint32 game_start_time; /**< The time at which the interpreter was started */
 	uint32 last_wait_time; /**< The last time the game invoked Wait() */
 
-	byte version_lock_flag; /**< Set to 1 to disable any autodetection mechanisms */
 	sci_version_t version; /**< The approximated patchlevel of the version to emulate */
 	uint32 flags;			/* Specific game flags */
 

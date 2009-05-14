@@ -121,6 +121,11 @@ enum SciGameFlags {
 	GF_NEWDOSOUND		= (1 << 4)
 };
 
+// The 4 SCI0 engine generations (pre-395, pre-502, pre-629 and post-629)
+#define GF_SCI0_BEFORE_395 (GF_SCI0_OLD | GF_SCI0_OLDGFXFUNCS | GF_SCI0_OLDGETTIME)
+#define GF_SCI0_BEFORE_502 (GF_SCI0_OLDGFXFUNCS | GF_SCI0_OLDGETTIME)
+#define GF_SCI0_BEFORE_629 GF_SCI0_OLDGETTIME
+
 class SciEngine : public Engine {
 public:
 	SciEngine(OSystem *syst, const SciGameDescription *desc);
