@@ -36,6 +36,7 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/array.h"
+#include "common/func.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -53,6 +54,8 @@ enum VarType {
 	vtByte,
 	vtWord
 };
+
+typedef Common::Functor0<void> ScriptFunction;
 
 class ScriptInterpreter {
 public:
@@ -92,6 +95,8 @@ protected:
 	};
 
 	PictureEngine *_vm;
+	Common::Array<const ScriptFunction*> _scriptFuncs;
+	Common::Array<const char *> _scriptFuncNames;
 
 	byte *_stack;
 
@@ -109,13 +114,13 @@ protected:
 	int16 readInt16();
 	
 	void execOpcode(byte opcode);
-	void execKernelOpcode(uint16 kernelOpcode);
+
+	void setupScriptFunctions();
+	void execScriptFunction(uint16 index);
 
 	byte arg8(int16 offset);
 	int16 arg16(int16 offset);
 
-	void pushByte(byte value);
-	byte popByte();
 	void pushInt16(int16 value);
 	int16 popInt16();
 
@@ -124,6 +129,68 @@ protected:
 	void localWrite16(int16 offset, int16 value);
 	int16 localRead16(int16 offset);
 	byte *localPtr(int16 offset);
+
+	void sfNop();
+	void sfGetGameVar();
+	void sfSetGameVar();
+	void sfUpdateScreen();
+	void sfGetRandomNumber();
+	void sfDrawGuiTextMulti();
+	void sfUpdateVerbLine();
+	void sfSetFontColor();
+	void sfGetTalkTextDuration();
+	void sfTalk();
+	void sfFindPaletteFragment();
+	void sfClearPaletteFragments();
+	void sfAddPaletteFragment();
+	void sfSetDeltaAnimPalette();
+	void sfBuildColorTransTable();
+	void sfSetDeltaMainPalette();
+	void sfLoadScript();
+	void sfRegisterFont();
+	void sfLoadAddPalette();
+	void sfLoadScene();
+	void sfSetGuiHeight();
+	void sfFindMouseInRectIndex1();
+	void sfFindMouseInRectIndex2();
+	void sfDrawGuiImage();
+	void sfAddAnimatedSpriteNoLoop();
+	void sfAddAnimatedSprite();
+	void sfAddStaticSprite();
+	void sfAddAnimatedSpriteScaled();
+	void sfFindPath();
+	void sfWalk();
+	void sfScrollCameraUp();
+	void sfScrollCameraDown();
+	void sfScrollCameraLeft();
+	void sfScrollCameraRight();
+	void sfScrollCameraUpEx();
+	void sfScrollCameraDownEx();
+	void sfScrollCameraLeftEx();
+	void sfScrollCameraRightEx();
+	void sfSetCamera();
+	void sfGetRgbModifiertAtPoint();
+	void sfStartAnim();
+	void sfAnimNextFrame();
+	void sfGetAnimFrameNumber();
+	void sfGetAnimStatus();
+	void sfStartShakeScreen();
+	void sfStopShakeScreen();
+	void sfStartSequence();
+	void sfEndSequence();
+	void sfSequenceVolumeStuff();
+	void sfPlaySound1();
+	void sfPlaySound2();
+	void sfClearScreen();
+	void sfHandleInput();
+	void sfRunOptionsScreen();
+	void sfPrecacheSprites();
+	void sfPrecacheSounds1();
+	void sfDeleteAllPbfFilesByExternalArray();
+	void sfPrecacheSounds2();
+	void sfRestoreStackPtr();
+	void sfSaveStackPtr();
+	void sfPlayMovie();
 
 };
 

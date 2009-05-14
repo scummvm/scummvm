@@ -59,12 +59,95 @@ ScriptInterpreter::ScriptInterpreter(PictureEngine *vm) : _vm(vm) {
 	_slots[kMaxScriptSlots - 1].size = 1024;
  	_slots[kMaxScriptSlots - 1].data = new byte[_slots[kMaxScriptSlots - 1].size];
 
+	setupScriptFunctions();
+
 }
 
 ScriptInterpreter::~ScriptInterpreter() {
 	delete[] _stack;
 	for (int i = 0; i < kMaxScriptSlots; i++)
 		delete[] _slots[i].data;
+	for (uint i = 0; i < _scriptFuncs.size(); ++i)
+		delete _scriptFuncs[i];
+}
+
+typedef Common::Functor0Mem<void, ScriptInterpreter> ScriptFunctionF;
+#define RegisterScriptFunction(x) \
+	_scriptFuncs.push_back(new ScriptFunctionF(this, &ScriptInterpreter::x));  \
+	_scriptFuncNames.push_back(#x);
+void ScriptInterpreter::setupScriptFunctions() {
+
+	RegisterScriptFunction(sfNop);
+	RegisterScriptFunction(sfNop);
+	RegisterScriptFunction(sfGetGameVar);
+	RegisterScriptFunction(sfSetGameVar);
+	RegisterScriptFunction(sfUpdateScreen);
+	RegisterScriptFunction(sfGetRandomNumber);
+	RegisterScriptFunction(sfDrawGuiTextMulti);
+	RegisterScriptFunction(sfUpdateVerbLine);
+	RegisterScriptFunction(sfSetFontColor);
+	RegisterScriptFunction(sfGetTalkTextDuration);
+	RegisterScriptFunction(sfTalk);
+	RegisterScriptFunction(sfFindPaletteFragment);
+	RegisterScriptFunction(sfClearPaletteFragments);
+	RegisterScriptFunction(sfAddPaletteFragment);
+	RegisterScriptFunction(sfSetDeltaAnimPalette);
+	RegisterScriptFunction(sfNop); // TODO
+	RegisterScriptFunction(sfBuildColorTransTable);
+	RegisterScriptFunction(sfSetDeltaMainPalette);
+	RegisterScriptFunction(sfLoadScript);
+	RegisterScriptFunction(sfRegisterFont);
+	RegisterScriptFunction(sfLoadAddPalette);
+	RegisterScriptFunction(sfLoadScene);
+	RegisterScriptFunction(sfSetGuiHeight);
+	RegisterScriptFunction(sfFindMouseInRectIndex1);
+	RegisterScriptFunction(sfFindMouseInRectIndex2);
+	RegisterScriptFunction(sfDrawGuiImage);
+	RegisterScriptFunction(sfAddAnimatedSpriteNoLoop);
+	RegisterScriptFunction(sfAddAnimatedSprite);
+	RegisterScriptFunction(sfAddStaticSprite);
+	RegisterScriptFunction(sfAddAnimatedSpriteScaled);
+	RegisterScriptFunction(sfFindPath);
+	RegisterScriptFunction(sfWalk);
+	RegisterScriptFunction(sfScrollCameraUp);
+	RegisterScriptFunction(sfScrollCameraDown);
+	RegisterScriptFunction(sfScrollCameraLeft);
+	RegisterScriptFunction(sfScrollCameraRight);
+	RegisterScriptFunction(sfScrollCameraUpEx);
+	RegisterScriptFunction(sfScrollCameraDownEx);
+	RegisterScriptFunction(sfScrollCameraLeftEx);
+	RegisterScriptFunction(sfScrollCameraRightEx);
+	RegisterScriptFunction(sfSetCamera);
+	RegisterScriptFunction(sfNop); // TODO
+	RegisterScriptFunction(sfGetRgbModifiertAtPoint);
+	RegisterScriptFunction(sfStartAnim);
+	RegisterScriptFunction(sfAnimNextFrame);
+	RegisterScriptFunction(sfNop);
+	RegisterScriptFunction(sfGetAnimFrameNumber);
+	RegisterScriptFunction(sfGetAnimStatus);
+	RegisterScriptFunction(sfStartShakeScreen);
+	RegisterScriptFunction(sfStopShakeScreen);
+	RegisterScriptFunction(sfStartSequence);
+	RegisterScriptFunction(sfEndSequence);
+	RegisterScriptFunction(sfSequenceVolumeStuff);
+	RegisterScriptFunction(sfPlaySound1);
+	RegisterScriptFunction(sfPlaySound2);
+	RegisterScriptFunction(sfClearScreen);
+	RegisterScriptFunction(sfNop);
+	RegisterScriptFunction(sfHandleInput);
+	RegisterScriptFunction(sfRunOptionsScreen);
+	RegisterScriptFunction(sfPrecacheSprites);
+	RegisterScriptFunction(sfPrecacheSounds1);
+	RegisterScriptFunction(sfDeleteAllPbfFilesByExternalArray);
+	RegisterScriptFunction(sfPrecacheSounds2);
+	RegisterScriptFunction(sfRestoreStackPtr);
+	RegisterScriptFunction(sfSaveStackPtr);
+	RegisterScriptFunction(sfPlayMovie);
+	RegisterScriptFunction(sfNop);
+
+
+
+
 }
 
 void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
@@ -143,13 +226,6 @@ int16 ScriptInterpreter::readInt16() {
 
 void ScriptInterpreter::execOpcode(byte opcode) {
 
-#if 0
-	char ln[256];
-	snprintf(ln, 256, "\t\t\t%02X %02X %02X %02X %02X %02X %02X %02X",
-		_code[0], _code[1], _code[2], _code[3], _code[4], _code[5], _code[6], _code[7]);
-	debug(1, "%s", ln);
-#endif
-
 	int16 ofs;
 
 	debug(1, "opcode = %d", opcode);
@@ -161,9 +237,9 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_subCode = _code;
 		byte length = readByte();
 		debug(1, "length = %d", length);
-		uint16 kernelOpcode = readInt16();
-		debug(1, "callKernel %d", kernelOpcode);
-		execKernelOpcode(kernelOpcode);
+		uint16 index = readInt16();
+		debug(1, "callScriptFunction %d", index);
+		execScriptFunction(index);
 		_code += length - 2;
 		break;
 	}
@@ -388,520 +464,12 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 
 }
 
-void ScriptInterpreter::execKernelOpcode(uint16 kernelOpcode) {
-
-	switch (kernelOpcode) {
-	
-	case 0:
-	case 1:
-		// ok, NOPs
-		break;
-
-	case 2:// ok
-	{
-		debug(0, "o2_getGameVar(%d, %d)", arg16(3), arg16(5));
-		int16 value = getGameVar(arg16(3));
-		localWrite16(arg16(5), value);
-		break;
-	}
-
-	case 3:// ok
-	{
-		debug(0, "o2_setGameVar(%d, %d)", arg16(3), arg16(5));
-		VarType varType = getGameVarType(arg16(3));
-		int16 value = 0;
-		if (varType == vtByte)
-			value = arg8(5);
-		else if (varType == vtWord)
-			value = arg16(5);
-		setGameVar(arg16(3), value);
-		break;
-	}
-
-	case 4:
-	{
-
-		debug(0, "o2_updateScreen()");
-
-		_vm->_sound->updateSpeech();
-
-		_vm->_screen->updateShakeScreen();
-
-		if (_vm->shouldQuit())
-			return;
-
-		if (!_vm->_movieSceneFlag)
-			_vm->updateInput();
-		else
-			_vm->_mouseButton = 0;
-
-		// TODO? Check keyb
-		
-		_vm->_counter01--;
-		if (_vm->_counter01 <= 0) {
-			_vm->_counter01 = MIN(_vm->_counter02, 30);
-			_vm->_counter02 = 0;
-			_vm->updateScreen();
-			_vm->_flag01 = 1;
-			_vm->_system->delayMillis(5);
-			_vm->_counter02 = 1; // ?
-		} else {
-			_vm->_screen->clearSprites();
-			_vm->_flag01 = 0;
-			//_vm->_system->updateScreen();
-		}
-
-		// TODO
-		break;
-
-	}
-
-	case 5:// ok
-	{
-		debug(0, "o2_getRandomNumber(%d)", arg16(3));
-		localWrite16(arg16(5), _vm->_rnd->getRandomNumber(arg16(3) - 1));
-		break;
-	}
-
-	case 6:// ok
-	{
-		debug(0, "o2_drawGuiTextMulti()");
-		_vm->_screen->drawGuiTextMulti((byte*)localPtr(arg16(3)));
-		break;
-	}
-
-	case 7:// ok
-	{
-		debug(0, "o2_updateVerbLine(slot: %d; offset: %04X)", arg16(5), arg16(3));
-		_vm->_screen->updateVerbLine(arg16(5), arg16(3));
-		break;
-	}
-
-	case 8:// ok
-	{
-		debug(0, "o2_setFontColor(%d)", arg8(3));
-		_vm->_screen->_fontColor1 = 0;
-		_vm->_screen->_fontColor2 = arg8(3);
-		break;
-	}
-
-	case 9:// ok
-	{
-		debug(0, "o2_getTalkTextDuration()");
-		int16 duration = _vm->_screen->getTalkTextDuration();
-		localWrite16(arg16(3), duration);
-		break;
-	}
-
-	case 10:// ok
-	{
-		debug(0, "o2_talk(slot: %d; offset: %d)", arg16(5), arg16(3));
-		_vm->talk(arg16(5), arg16(3));
-		break;
-	}
-	
-	case 11:// ok
-	{
-		debug(0, "o2_findFragment(%d, %d)", arg16(3), arg16(5));
-		localWrite16(arg16(5), _vm->_palette->findFragment(arg16(3)));
-		break;
-	}
-
-	case 12:// ok
-	{
-		debug(0, "o2_clearPaletteFragments()");
-		_vm->_palette->clearFragments();
-		break;
-	}
-	
-	case 13:// ok
-	{
-		debug(0, "o2_addFragment(%d, %d)", arg16(3), arg16(5));
-		_vm->_palette->addFragment(arg16(3), arg16(5));
-		break;
-	}
-	
-	case 14:// ok
-	{
-		debug(0, "o2_setDeltaPalette(animPalette, %d, %d, %d, %d)", arg8(6), arg8(5), arg8(4), arg8(3));
-		_vm->_palette->setDeltaPalette(_vm->_palette->getAnimPalette(), arg8(6), (char)arg8(5), arg8(4), arg8(3));
-		break;
-	}
-
-	case 16:// ok
-	{
-		debug(0, "o2_buildColorTransTable(%d, %d, %d)", arg8(4), (char)arg8(3), arg8(5));
-		_vm->_palette->buildColorTransTable(arg8(4), (char)arg8(3), arg8(5));
-		break;
-	}
-
-	case 17:// ok
-	{
-		debug(0, "o2_setDeltaPalette(mainPalette, %d, %d, %d, %d)", arg8(6), arg8(5), arg8(4), arg8(3));
-		_vm->_palette->setDeltaPalette(_vm->_palette->getMainPalette(), arg8(6), (char)arg8(5), arg8(4), arg8(3));
-		break;
-	}
-
-	case 18:// ok
-	{
-		debug(0, "o2_loadScript(resIndex: %d; slotIndex: %d)", arg16(4), arg8(3));
-		int16 codeOfs = _code - getSlotData(_regs.reg4);
-		loadScript(arg16(4), arg8(3));
-		_code = getSlotData(_regs.reg4) + codeOfs;
-		_switchLocalDataNear = true;
-		break;
-	}
-	
-	case 19:// ok
-	{
-		debug(0, "o2_registerFont(%d, %d)", arg8(3), arg16(4));
-		_vm->_screen->registerFont(arg8(3), arg16(4));
-		break;
-	}
-
-	case 20:// ok
-	{
-		debug(0, "o2_loadAddPalette(startIndex: %d; resIndex: %d)", arg8(3), arg16(4));
-		_vm->_palette->loadAddPalette(arg16(4), arg8(3));
-		break;
-	}
-
-	case 21:// TODO
-	{
-		debug(0, "o2_loadScene(resIndex: %d; flag: %d)", arg16(4), arg8(3));
-		if (arg8(3) == 0) {
-			_vm->_sound->stopSpeech();
-			_vm->loadScene(arg16(4));
-		} else {
-			_vm->_screen->loadMouseCursor(arg16(4));
-		}
-		break;
-	}
-
-	case 22:// ok
-	{
-		debug(0, "o2_setGuiHeight(%d)", arg8(3));
-		_vm->setGuiHeight(arg8(3));
-		break;
-	}
-
-	case 23:// ok
-	{
-		debug(0, "o2_findMouseInRectIndex1(offset: %d; slot: %d; elemSize: %d; var: %d; index: %d)", arg16(3), arg16(5), arg16(7), arg16(9), arg16(11));
-
-		int16 index = -1;
-		if (_vm->_mouseY < _vm->_cameraHeight) {
-			index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
-				_vm->_mouseX + _vm->_cameraX,
-				_vm->_mouseY + _vm->_cameraY,
-				arg16(11) + 1, arg16(7));
-		}
-		localWrite16(arg16(9), index);
-		break;
-	}
-
-	case 24:// ok
-	{
-
-		debug(0, "o2_findMouseInRectIndex2(offset: %d, slot: %d, elemSize: %d, var: %d)", arg16(3), arg16(5), arg16(7), arg16(9));
-		int16 index = -1;
-
-		if (_vm->_sceneResIndex != 0) {
-			if (_vm->_mouseY < _vm->_cameraHeight) {
-				index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
-					_vm->_mouseX + _vm->_cameraX,
-					_vm->_mouseY + _vm->_cameraY,
-					0, arg16(7));
-			}
-		}
-
-		localWrite16(arg16(9), index);
-
-		break;
-	}
-
-	case 25:// ok
-	{
-  		debug(0, "o2_drawGuiImage(x: %d; y: %d; resIndex: %d)", arg16(5), arg16(3), arg16(7));
-  		_vm->_screen->drawGuiImage(arg16(5), arg16(3), arg16(7));
-		break;
-	}
-
-	case 26:// ok
-	{
-		debug(0, "o2_addAnimatedSpriteNoLoop(2; x: %d; y: %d; fragmentId: %d; offset: %d)", arg16(5), arg16(3), arg16(7), arg16(9));
-		_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), false, 2);
-		break;
-	}
-
-	case 27:// ok
-	{
-		debug(0, "o2_addAnimatedSprite(2; x: %d; y: %d; fragmentId: %d; offset: %d)", arg16(5), arg16(3), arg16(7), arg16(9));
-		_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), true, 2);
-		break;
-	}
-
-	case 28:// ok
-	{
-		debug(1, "o2_addStaticSprite()");
-		_vm->_screen->addStaticSprite(_subCode + 3);
-		break;
-	}
-
-	case 29:// ok
-	{
-		debug(0, "o2_addAnimatedSprite(1; x: %d; y: %d; value: %d; offset: %d)", arg16(5), arg16(3), arg16(7), arg16(9));
-		_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), true, 1);
-		break;
-	}
-
-	case 30:// ok
-	{
-		debug(0, "o2_findPath(sourceX: %d; sourceY: %d; destX: %d; destY: %d; slotIndex: %d; offset: %d)", arg16(5), arg16(3), arg16(9), arg16(7), arg16(13), arg16(11));
-		_vm->_segmap->findPath((int16*)(getSlotData(arg16(13)) + arg16(11)), arg16(9), arg16(7), arg16(5), arg16(3));
-		break;
-	}
-
-	case 31:// ok
-	{
-		debug(0, "o2_walk()");
-		_vm->walk(getSlotData(arg16(5)) + arg16(3));
-		break;
-	}
-
-	case 32:// ok
-	{
-		debug(0, "o2_scrollCameraUp()");
-		_vm->scrollCameraUp(4);
-		break;
-	}
-
-	case 33:// ok
-	{
-		debug(0, "o2_scrollCameraDown()");
-		_vm->scrollCameraDown(4);
-		break;
-	}
-
-	case 34:// ok
-	{
-		debug(0, "o2_scrollCameraLeft()");
-		_vm->scrollCameraLeft(4);
-		break;
-	}
-
-	case 35:// ok
-	{
-		debug(0, "o2_scrollCameraRight()");
-		_vm->scrollCameraRight(4);
-		break;
-	}
-
-	case 36:// ok
-	{
-		debug(0, "o2_scrollCameraUpEx(%d)", arg16(3));
-		_vm->scrollCameraUp(arg16(3));
-		break;
-	}
-
-	case 37:// ok
-	{
-		debug(0, "o2_scrollCameraDownEx(%d)", arg16(3));
-		_vm->scrollCameraDown(arg16(3));
-		break;
-	}
-
-	case 38:// ok
-	{
-		debug(0, "o2_scrollCameraLeftEx(%d)", arg16(3));
-		_vm->scrollCameraLeft(arg16(3));
-		break;
-	}
-
-	case 39:// ok
-	{
-		debug(0, "o2_scrollCameraRightEx(%d)", arg16(3));
-		_vm->scrollCameraRight(arg16(3));
-		break;
-	}
-
-	case 40:// ok
-	{
-		debug(0, "o2_setCamera(%d, %d)", arg16(5), arg16(3));
-		_vm->setCamera(arg16(5), arg16(3));
-		break;
-	}
-
-	case 42:// ok
-	{
-		debug(0, "o2_getRgbModifiertAtPoint(x: %d; y: %d; id: %d; varSlot: %d; varOffset: %d)", arg16(5), arg16(3), arg16(7), arg16(11), arg16(9));
-		byte *rgb = getSlotData(arg16(11)) + arg16(9);
-		_vm->_segmap->getRgbModifiertAtPoint(arg16(5), arg16(3), arg16(7), rgb[0], rgb[1], rgb[2]);
-		break;
-	}
-
-	case 43:// ok
-	{
-		debug(0, "o2_startAnim(%d)", arg16(3));
-		_vm->_anim->start(arg16(3));
-		break;
-	}
-	
-	case 44:// ok
-	{
-		debug(0, "o2_animNextFrame()");
-		_vm->_anim->nextFrame();
-		break;
-	}
-	
-	case 45:// ok
-	{
-		// NOP
-		break;
-	}
-
-	case 46:// ok
-	{
-		debug(0, "o2_getAnimFrameNumber(%d)", arg16(3));
-		localWrite16(arg16(3), _vm->_anim->getFrameNumber());
-		break;
-	}
-
-	case 47:
-	{
-		// almost ok
-		debug(0, "o2_getAnimStatus()");
-		int16 status = _vm->_anim->getStatus();
-		if (status == 0 || status == 1) {
-			// TODO mov screenFlag01, 0
-		}
-		localWrite16(arg16(3), status);
-		break;
-	}
-
-	case 48:// ok
-	{
-		_vm->_screen->startShakeScreen(arg16(3));
-		break;
-	}
-
-	case 49:// ok
-	{
-		_vm->_screen->stopShakeScreen();
-		break;
-	}
-
-	case 50:// TODO
-	{
-		debug(0, "o2_startSequence");
-		break;
-	}
-
-	case 51:// TODO
-	{
-		debug(0, "o2_endSequence");
-		break;
-	}
-
-	case 52:// TODO
-	{
-		debug(0, "o2_sequenceVolumeStuff");
-		break;
-	}
-
-	case 53:// TODO
-	{
-		debug(0, "o2_playSound1(%d, %d, %d, %d)", arg16(9), arg16(7), arg16(5), arg16(3));
-		break;
-	}
-
-	case 54:// TODO
-	{
-		//debug(0, "o2_playSound2(%d, %d, %d)", arg16(7), arg16(5), arg16(3));
-		
-		_vm->_sound->playSound(arg16(3), arg16(5), arg16(7));
-		
-		break;
-	}
-
-	case 55:// TODO
-		debug(0, "o2_clearScreen()");
-		break;
-
-	case 56:// ok
-	{
-		// NOP
-		break;
-	}
-
-	case 57:// TODO
-	{
-		debug(0, "o2_handleInput");
-		int16 varOfs = arg16(3);
-
-		localWrite16(varOfs, 0);
-
-		//_vm->_input->update();
-		break;
-	}
-
-	case 58:// TODO
-	{
-		debug(0, "o2_runOptionsScreen(%d, %d)", arg16(5), arg16(3));
-		break;
-	}
-
-	case 59:// TODO
-	{
-		debug(0, "o2_precacheSprites(%04X)", arg16(3));
-		break;
-	}
-
-	case 60:// TODO
-	{
-		debug(0, "o2_precacheSounds1(%04X)", arg16(3));
-		break;
-	}
-
-	case 61:// TODO
-	{
-		debug(0, "o2_deleteAllPbfFilesByExternalArray()");
-		break;
-	}
-
-	case 62:// TODO - this opcode was never executed while I completed the game
-	{
-		debug(0, "o2_precacheSounds2(%04X)", arg16(3));
-		break;
-	}
-
-	case 63:// ok
-	{
-		_regs.sp = _savedSp;
-		break;
-	}
-
-	case 64:// ok
-	{
-		_savedSp = _regs.sp;
-		break;
-	}
-
-	case 65:// TODO
-	{
-		debug(0, "o2_playMovie(%d, %d)", arg16(3), arg16(5));
-		_vm->_moviePlayer->playMovie(arg16(3));
-		break;
-	}
-	
-	case 66:
-		// NOP
-		break;
-
-	default:
-		error("Invalid kernel opcode %d", kernelOpcode);
-	}
-
+void ScriptInterpreter::execScriptFunction(uint16 index) {
+	debug(4, "execScriptFunction(%d)", index);
+	if (index >= _scriptFuncs.size())
+		error("ScriptInterpreter::execScriptFunction() Invalid script function index %d", index);
+	debug(4, "%s", _scriptFuncNames[index]);
+	(*_scriptFuncs[index])();
 }
 
 VarType ScriptInterpreter::getGameVarType(uint variable) {
@@ -1126,16 +694,6 @@ int16 ScriptInterpreter::arg16(int16 offset) {
 	return READ_LE_UINT16(&_subCode[offset]);
 }
 
-void ScriptInterpreter::pushByte(byte value) {
-	_stack[_regs.sp] = value;
-	_regs.sp--;
-}
-
-byte ScriptInterpreter::popByte() {
-	_regs.sp++;
-	return _stack[_regs.sp];
-}
-
 void ScriptInterpreter::pushInt16(int16 value) {
 	WRITE_LE_UINT16(_stack + _regs.sp, value);
 	_regs.sp -= 2;
@@ -1232,6 +790,317 @@ void ScriptInterpreter::loadState(Common::ReadStream *in) {
 	// Load IP
 	_code = getSlotData(_regs.reg4) + in->readUint16LE();
 
+}
+
+void ScriptInterpreter::sfNop() {
+	// NOP
+}
+
+void ScriptInterpreter::sfGetGameVar() {
+	int16 value = getGameVar(arg16(3));
+	localWrite16(arg16(5), value);
+}
+
+void ScriptInterpreter::sfSetGameVar() {
+	int16 varIndex = arg16(3);
+	VarType varType = getGameVarType(varIndex);
+	int16 value = 0;
+	if (varType == vtByte)
+		value = arg8(5);
+	else if (varType == vtWord)
+		value = arg16(5);
+	setGameVar(varIndex, value);
+}
+
+void ScriptInterpreter::sfUpdateScreen() {
+
+	_vm->_sound->updateSpeech();
+
+	_vm->_screen->updateShakeScreen();
+
+	// TODO: Set quit flag
+	if (_vm->shouldQuit())
+		return;
+
+	if (!_vm->_movieSceneFlag)
+		_vm->updateInput();
+	else
+		_vm->_mouseButton = 0;
+
+	// TODO? Check keyb
+
+	_vm->_counter01--;
+	if (_vm->_counter01 <= 0) {
+		_vm->_counter01 = MIN(_vm->_counter02, 30);
+		_vm->_counter02 = 0;
+		_vm->updateScreen();
+		_vm->_flag01 = 1;
+		_vm->_system->delayMillis(5);
+		_vm->_counter02 = 1; // ?
+	} else {
+		_vm->_screen->clearSprites();
+		_vm->_flag01 = 0;
+		//_vm->_system->updateScreen();
+	}
+
+	// TODO
+
+}
+
+void ScriptInterpreter::sfGetRandomNumber() {
+	localWrite16(arg16(5), _vm->_rnd->getRandomNumber(arg16(3) - 1));
+}
+
+void ScriptInterpreter::sfDrawGuiTextMulti() {
+	_vm->_screen->drawGuiTextMulti((byte*)localPtr(arg16(3)));
+}
+
+void ScriptInterpreter::sfUpdateVerbLine() {
+	_vm->_screen->updateVerbLine(arg16(5), arg16(3));
+}
+
+void ScriptInterpreter::sfSetFontColor() {
+	_vm->_screen->_fontColor1 = 0;
+	_vm->_screen->_fontColor2 = arg8(3);
+}
+
+void ScriptInterpreter::sfGetTalkTextDuration() {
+	localWrite16(arg16(3), _vm->_screen->getTalkTextDuration());
+}
+
+void ScriptInterpreter::sfTalk() {
+	_vm->talk(arg16(5), arg16(3));
+}
+
+void ScriptInterpreter::sfFindPaletteFragment() {
+	localWrite16(arg16(5), _vm->_palette->findFragment(arg16(3)));
+}
+
+void ScriptInterpreter::sfClearPaletteFragments() {
+	_vm->_palette->clearFragments();
+}
+
+void ScriptInterpreter::sfAddPaletteFragment() {
+	_vm->_palette->addFragment(arg16(3), arg16(5));
+}
+
+void ScriptInterpreter::sfSetDeltaAnimPalette() {
+	_vm->_palette->setDeltaPalette(_vm->_palette->getAnimPalette(), arg8(6), (char)arg8(5), arg8(4), arg8(3));
+}
+
+void ScriptInterpreter::sfBuildColorTransTable() {
+	_vm->_palette->buildColorTransTable(arg8(4), (char)arg8(3), arg8(5));
+}
+
+void ScriptInterpreter::sfSetDeltaMainPalette() {
+	_vm->_palette->setDeltaPalette(_vm->_palette->getMainPalette(), arg8(6), (char)arg8(5), arg8(4), arg8(3));
+}
+
+void ScriptInterpreter::sfLoadScript() {
+	int16 codeOfs = _code - getSlotData(_regs.reg4);
+	loadScript(arg16(4), arg8(3));
+	_code = getSlotData(_regs.reg4) + codeOfs;
+	_switchLocalDataNear = true;
+}
+
+void ScriptInterpreter::sfRegisterFont() {
+	_vm->_screen->registerFont(arg8(3), arg16(4));
+}
+
+void ScriptInterpreter::sfLoadAddPalette() {
+	_vm->_palette->loadAddPalette(arg16(4), arg8(3));
+}
+
+void ScriptInterpreter::sfLoadScene() {
+	if (arg8(3) == 0) {
+		_vm->_sound->stopSpeech();
+		_vm->loadScene(arg16(4));
+	} else {
+		_vm->_screen->loadMouseCursor(arg16(4));
+	}
+}
+
+void ScriptInterpreter::sfSetGuiHeight() {
+	_vm->setGuiHeight(arg8(3));
+}
+
+void ScriptInterpreter::sfFindMouseInRectIndex1() {
+	int16 index = -1;
+	if (_vm->_mouseY < _vm->_cameraHeight) {
+		index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
+			_vm->_mouseX + _vm->_cameraX,
+			_vm->_mouseY + _vm->_cameraY,
+			arg16(11) + 1, arg16(7));
+	}
+	localWrite16(arg16(9), index);
+}
+
+void ScriptInterpreter::sfFindMouseInRectIndex2() {
+	int16 index = -1;
+	if (_vm->_sceneResIndex != 0) {
+		if (_vm->_mouseY < _vm->_cameraHeight) {
+			index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
+				_vm->_mouseX + _vm->_cameraX,
+				_vm->_mouseY + _vm->_cameraY,
+				0, arg16(7));
+		}
+	}
+	localWrite16(arg16(9), index);
+}
+
+void ScriptInterpreter::sfDrawGuiImage() {
+  	_vm->_screen->drawGuiImage(arg16(5), arg16(3), arg16(7));
+}
+
+void ScriptInterpreter::sfAddAnimatedSpriteNoLoop() {
+	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), false, 2);
+}
+
+void ScriptInterpreter::sfAddAnimatedSprite() {
+	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), true, 2);
+}
+
+void ScriptInterpreter::sfAddStaticSprite() {
+	_vm->_screen->addStaticSprite(_subCode + 3);
+}
+
+void ScriptInterpreter::sfAddAnimatedSpriteScaled() {
+	_vm->_screen->addAnimatedSprite(arg16(5), arg16(3), arg16(7), (byte*)localPtr(0), (int16*)localPtr(arg16(9)), true, 1);
+}
+
+void ScriptInterpreter::sfFindPath() {
+	_vm->_segmap->findPath((int16*)(getSlotData(arg16(13)) + arg16(11)), arg16(9), arg16(7), arg16(5), arg16(3));
+}
+
+void ScriptInterpreter::sfWalk() {
+	_vm->walk(getSlotData(arg16(5)) + arg16(3));
+}
+
+void ScriptInterpreter::sfScrollCameraUp() {
+	_vm->scrollCameraUp(4);
+}
+
+void ScriptInterpreter::sfScrollCameraDown() {
+	_vm->scrollCameraDown(4);
+}
+
+void ScriptInterpreter::sfScrollCameraLeft() {
+	_vm->scrollCameraLeft(4);
+}
+
+void ScriptInterpreter::sfScrollCameraRight() {
+	_vm->scrollCameraRight(4);
+}
+
+void ScriptInterpreter::sfScrollCameraUpEx() {
+	_vm->scrollCameraUp(arg16(3));
+}
+
+void ScriptInterpreter::sfScrollCameraDownEx() {
+	_vm->scrollCameraDown(arg16(3));
+}
+
+void ScriptInterpreter::sfScrollCameraLeftEx() {
+	_vm->scrollCameraLeft(arg16(3));
+}
+
+void ScriptInterpreter::sfScrollCameraRightEx() {
+	_vm->scrollCameraRight(arg16(3));
+}
+
+void ScriptInterpreter::sfSetCamera() {
+	_vm->setCamera(arg16(5), arg16(3));
+}
+
+void ScriptInterpreter::sfGetRgbModifiertAtPoint() {
+	byte *rgb = getSlotData(arg16(11)) + arg16(9);
+	_vm->_segmap->getRgbModifiertAtPoint(arg16(5), arg16(3), arg16(7), rgb[0], rgb[1], rgb[2]);
+}
+
+void ScriptInterpreter::sfStartAnim() {
+	_vm->_anim->start(arg16(3));
+}
+
+void ScriptInterpreter::sfAnimNextFrame() {
+	_vm->_anim->nextFrame();
+}
+
+void ScriptInterpreter::sfGetAnimFrameNumber() {
+	localWrite16(arg16(3), _vm->_anim->getFrameNumber());
+}
+
+void ScriptInterpreter::sfGetAnimStatus() {
+	int16 status = _vm->_anim->getStatus();
+	if (status == 0 || status == 1) {
+		// TODO mov screenFlag01, 0
+	}
+	localWrite16(arg16(3), status);
+}
+
+void ScriptInterpreter::sfStartShakeScreen() {
+	_vm->_screen->startShakeScreen(arg16(3));
+}
+
+void ScriptInterpreter::sfStopShakeScreen() {
+	_vm->_screen->stopShakeScreen();
+}
+
+void ScriptInterpreter::sfStartSequence() {
+	// TODO
+}
+
+void ScriptInterpreter::sfEndSequence() {
+	// TODO
+}
+
+void ScriptInterpreter::sfSequenceVolumeStuff() {
+	// TODO
+}
+
+void ScriptInterpreter::sfPlaySound1() {
+	// TODO
+}
+
+void ScriptInterpreter::sfPlaySound2() {
+	_vm->_sound->playSound(arg16(3), arg16(5), arg16(7));
+}
+
+void ScriptInterpreter::sfClearScreen() {
+	// TODO
+}
+
+void ScriptInterpreter::sfHandleInput() {
+	// TODO: Recheck what this does, I don't remember
+	int16 varOfs = arg16(3);
+	localWrite16(varOfs, 0);
+}
+
+void ScriptInterpreter::sfRunOptionsScreen() {
+	// TODO
+}
+
+void ScriptInterpreter::sfPrecacheSprites() {
+}
+
+void ScriptInterpreter::sfPrecacheSounds1() {
+}
+
+void ScriptInterpreter::sfDeleteAllPbfFilesByExternalArray() {
+}
+
+void ScriptInterpreter::sfPrecacheSounds2() {
+}
+
+void ScriptInterpreter::sfRestoreStackPtr() {
+	_regs.sp = _savedSp;
+}
+
+void ScriptInterpreter::sfSaveStackPtr() {
+	_savedSp = _regs.sp;
+}
+
+void ScriptInterpreter::sfPlayMovie() {
+	_vm->_moviePlayer->playMovie(arg16(3));
 }
 
 } // End of namespace Picture
