@@ -562,15 +562,9 @@ static void load_script(EngineState *s, SegmentId seg) {
 	if (s->version >= SCI_VERSION(1,001,000))
 		heap = s->resmgr->findResource(kResourceTypeHeap, scr->nr, 0);
 
-	switch (s->seg_manager->isSci1_1) {
-	case 0 :
-		s->seg_manager->mcpyInOut(0, script->data, script->size, seg, SEG_ID);
-		break;
-	case 1 :
-		s->seg_manager->mcpyInOut(0, script->data, script->size, seg, SEG_ID);
+	s->seg_manager->mcpyInOut(0, script->data, script->size, seg, SEG_ID);
+	if (s->seg_manager->isSci1_1)
 		s->seg_manager->mcpyInOut(scr->script_size, heap->data, heap->size, seg, SEG_ID);
-		break;
-	}
 }
 
 // FIXME: The following should likely become a SegManager method
