@@ -439,6 +439,7 @@ void MoviePlayerSMK::nextFrame() {
 		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
 	} else {
 		closeFile();
+		_vm->_omniTV = false;
 		_vm->_variableArray[254] = 6747;
 	}
 }
