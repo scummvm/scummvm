@@ -2554,9 +2554,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 746496},
 		{"resource.004", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 761984},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0},
-		0,
+		GF_FOR_SCI0_BEFORE_502,
 		SCI_VERSION_0,
-		SCI_VERSION(0, 000, 685) // TODO: best bet, exe seems packed
+		SCI_VERSION(0, 000, 453)
 	},
 
 	// Space Quest 3 - German Amiga
