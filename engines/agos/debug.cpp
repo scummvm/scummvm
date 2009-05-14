@@ -297,7 +297,16 @@ void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint16 res, uint16 id) {
 	printf("; end\n");
 }
 
-void AGOSEngine::dumpAllVgaFiles() {
+void AGOSEngine::dumpAllVgaImageFiles() {
+	uint8 start = (getGameType() == GType_PN) ? 0 : 2;
+	uint8 end = (getGameType() == GType_PN) ? 26 : 450;
+
+	for (int f = start; f < end; f++) {
+		dumpVgaBitmaps(f);
+	}
+}
+
+void AGOSEngine::dumpAllVgaScriptFiles() {
 	uint8 start = (getGameType() == GType_PN) ? 0 : 2;
 	uint8 end = (getGameType() == GType_PN) ? 26 : 450;
 
@@ -424,7 +433,7 @@ static const byte bmp_hdr[] = {
 	0x00, 0x01, 0x00, 0x00,
 };
 
-void dumpBMP(const char *filename, int w, int h, const byte *bytes, const uint32 *palette) {
+void dumpBMP(const char *filename, int16 w, int16 h, const byte *bytes, const uint32 *palette) {
 	Common::DumpFile out;
 	byte my_hdr[sizeof(bmp_hdr)];
 	int i;
@@ -459,40 +468,102 @@ void dumpBMP(const char *filename, int w, int h, const byte *bytes, const uint32
 void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, uint16 w, uint16 h, int flags, const byte *palette,
 								 byte base) {
 
-	if (getGameType() != GType_FF && getGameType() != GType_PP)
-		w *= 16;
-
-	/* allocate */
-	byte *b = (byte *)malloc(w * h);
-	int i, j;
+	byte *imageBuffer = (byte *)malloc(w * h);
+	assert(imageBuffer);
 
 	VC10_state state;
-
 	state.depack_cont = -0x80;
 	state.srcPtr = offs;
 	state.dh = h;
-	state.y_skip = 0;
+	state.height = h;
+	state.width = w / 16;
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		for (i = 0; i != w; i++) {
-			byte *c = vc10_depackColumn(&state);
-			for (j = 0; j != h; j++) {
-				b[j * w + i] = c[j];
-			}
+	if (getFeatures() & GF_PLANAR) {
+		state.srcPtr = convertImage(&state, (getGameType() == GType_PN || (flags & 0x80) != 0));
+		flags &= ~0x80;
+	}
+
+	const byte *src = state.srcPtr;
+	byte *dst = imageBuffer;
+	int i, j;
+
+	if (w > _screenWidth) {
+		for (i = 0; i < w; i += 8) {
+			decodeColumn(dst, src + readUint32Wrapper(src), h, w);
+			dst += 8;
+			src += 4;
 		}
-	} else {
+	} else if (h > _screenHeight) {
+		for (i = 0; i < h; i += 8) {
+			decodeRow(dst, src + readUint32Wrapper(src), w, w);
+			dst += 8 * w;
+			src += 4;
+		}
+	} else if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		if ((flags & 0x80)) {
+			for (i = 0; i != w; i++) {
+				byte *c = vc10_depackColumn(&state);
+				for (j = 0; j != h; j++) {
+					dst[j * w + i] = c[j];
+				}
+			}
+		} else {
+			for (j = 0; j != h; j++) {
+				for (i = 0; i != w; i++) {
+					dst[i] = src[i];
+				}
+			}
+			dst += w;
+			src += w;
+		}
+	} else if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) && w == 320 && (h == 134 || h == 200)) {
+		for (j = 0; j != h; j++) {
+			uint16 count = w / 8;
+
+			byte *dstPtr = dst;
+			do {
+				uint32 bits = (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | (src[3]);
+
+				dstPtr[0] = (byte)((bits >> (32 - 5)) & 31);
+				dstPtr[1] = (byte)((bits >> (32 - 10)) & 31);
+				dstPtr[2] = (byte)((bits >> (32 - 15)) & 31);
+				dstPtr[3] = (byte)((bits >> (32 - 20)) & 31);
+				dstPtr[4] = (byte)((bits >> (32 - 25)) & 31);
+				dstPtr[5] = (byte)((bits >> (32 - 30)) & 31);
+
+				bits = (bits << 8) | src[4];
+
+				dstPtr[6] = (byte)((bits >> (40 - 35)) & 31);
+				dstPtr[7] = (byte)((bits) & 31);
+
+				dstPtr += 8;
+				src += 5;
+			} while (--count);
+			dst += w;
+		} 
+	} else if (flags & 0x80) {
 		for (i = 0; i != w; i += 2) {
 			byte *c = vc10_depackColumn(&state);
 			for (j = 0; j != h; j++) {
-				byte pix = c[j];
-				b[j * w + i] = (pix >> 4) | base;
-				b[j * w + i + 1] = (pix & 0xF) | base;
+				byte col = c[j];
+				dst[j * w + i] = (col >> 4) | base;
+				dst[j * w + i + 1] = (col & 0xF) | base;
 			}
+		}
+	} else {
+		for (j = 0; j != h; j++) {
+			for (i = 0; i != w / 2; i ++) {
+				byte col = src[i];
+				dst[i * 2] = (col >> 4) | base;
+				dst[i * 2 + 1] = (col & 0xF) | base;
+			}
+			dst += w;
+			src += w / 2;
 		}
 	}
 
-	dumpBMP(filename, w, h, b, (const uint32 *)palette);
-	free(b);
+	dumpBMP(filename, w, h, imageBuffer, (const uint32 *)palette);
+	free(imageBuffer);
 }
 
 void AGOSEngine::dumpSingleBitmap(int file, int image, const byte *offs, int w, int h, byte base) {
@@ -506,65 +577,91 @@ void AGOSEngine::dumpSingleBitmap(int file, int image, const byte *offs, int w, 
 	dumpBitmap(buf, offs, w, h, 0, _displayPalette, base);
 }
 
-void palLoad(byte *pal, const byte *vga1, int a, int b) {
-	uint num = (a == 0) ? 0x20 : 0x10;
-	byte *palptr;
+void AGOSEngine::palLoad(byte *pal, const byte *vga1, int a, int b) {
 	const byte *src;
+	uint16 num, palSize;
+	byte *palptr = (byte *)&pal[0];
+	
+	if (getGameType() == GType_FF || getGameType() == GType_PP) {
+		num = 256;
+		palSize = 768;
+	} else {
+		num = 32;
+		palSize = 96;
+	}
 
-	palptr = (byte *)&pal[a << 4];
-	src = vga1 + 6 + b * 96;
+	if (getGameType() == GType_PN && (getFeatures() & GF_EGA)) {
+		memcpy(palptr, _displayPalette, 64);
+	} else if (getGameType() == GType_PN || getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
+		src = vga1 + READ_BE_UINT16(vga1 + 6) + b * 32;
 
-	do {
-		palptr[0] = src[0] << 2;
-		palptr[1] = src[1] << 2;
-		palptr[2] = src[2] << 2;
-		palptr[3] = 0;
+		do {
+			uint16 color = READ_BE_UINT16(src);
+			palptr[0] = ((color & 0xf00) >> 8) * 32;
+			palptr[1] = ((color & 0x0f0) >> 4) * 32;
+			palptr[2] = ((color & 0x00f) >> 0) * 32;
+			palptr[3] = 0;
 
-		palptr += 4;
-		src += 3;
-	} while (--num);
+			palptr += 4;
+			src += 2;
+		} while (--num);
+	} else {
+		src = vga1 + 6 + b * palSize;
+
+		do {
+			palptr[0] = src[0] << 2;
+			palptr[1] = src[1] << 2;
+			palptr[2] = src[2] << 2;
+			palptr[3] = 0;
+
+			palptr += 4;
+			src += 3;
+		} while (--num);
+	}
 }
 
-void AGOSEngine::dumpVgaBitmaps(const byte *vga, byte *vga1, int res) {
-	int i;
-	uint32 offs;
+void AGOSEngine::dumpVgaBitmaps(uint16 zoneNum) {
+	uint16 width, height, flags;
+	uint32 offs, curOffs = 0;
 	const byte *p2;
-	byte pal[768];
+	byte pal[1024];
+
+	uint16 zone = (getGameType() == GType_PN) ? 0 : zoneNum;
+	VgaPointersEntry *vpe = &_vgaBufferPointers[zone];
+	if (vpe->vgaFile1 == NULL || vpe->vgaFile2 == NULL)
+		return;
+
+	const byte *vga1 = vpe->vgaFile1;
+	const byte *vga2 = vpe->vgaFile2;
+	uint32 imageBlockSize = vpe->vgaFile2End - vpe->vgaFile2;
 
 	memset(pal, 0, sizeof(pal));
-	palLoad(pal, vga1, 2, 0);
-	palLoad(pal, vga1, 3, 1);
-	palLoad(pal, vga1, 4, 2);
-	palLoad(pal, vga1, 5, 3);
+	palLoad(pal, vga1, 0, 0);
 
-	int width, height, flags;
-
-	for (i = 1; ; i++) {
-		p2 = vga + i * 8;
+	for (int i = 1; ; i++) {
+		p2 = vga2 + i * 8;
 		offs = readUint32Wrapper(p2);
 
-		/* try to detect end of images.
-		 * assume the end when offset >= 200kb */
-		if (offs >= 204800)
-			return;
-
+		width = readUint16Wrapper(p2 + 6);
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
-			width = READ_LE_UINT16(p2 + 6);
 			height = READ_LE_UINT16(p2 + 4) & 0x7FFF;
 			flags = p2[5];
 		} else {
-			width = READ_BE_UINT16(p2 + 6) / 16;
 			height = p2[5];
 			flags = p2[4];
 		}
 
-		printf("Image %d. Width=%d, Height=%d, Flags=0x%X\n", i, width, height, flags);
+		debug(1, "Zone %d: Image %d. Offs= %d Width=%d, Height=%d, Flags=0x%X", zoneNum, i, offs, width, height, flags);
+		if (offs < curOffs || offs >= imageBlockSize || width == 0 || height == 0)
+			return;
+
+		curOffs = offs;
 
 		/* dump bitmap */
 		char buf[40];
-		sprintf(buf, "dumps/Res%d_Image%d.bmp", res, i);
+		sprintf(buf, "dumps/Res%d_Image%d.bmp", zoneNum, i);
 
-		dumpBitmap(buf, vga + offs, width, height, flags, pal, 0);
+		dumpBitmap(buf, vga2 + offs, width, height, flags, pal, 0);
 	}
 }
 

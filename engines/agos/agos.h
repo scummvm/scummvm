@@ -44,10 +44,6 @@
 
 namespace AGOS {
 
-/* Enable and set to zone number number to dump */
-//#define DUMP_FILE_NR 8
-//#define DUMP_BITMAPS_FILE_NR 8
-
 uint fileReadItemID(Common::SeekableReadStream *in);
 
 #define CHECK_BOUNDS(x, y) assert((uint)(x) < ARRAYSIZE(y))
@@ -645,7 +641,8 @@ protected:
 
 	/* used in debugger */
 	void dumpAllSubroutines();
-	void dumpAllVgaFiles();
+	void dumpAllVgaImageFiles();
+	void dumpAllVgaScriptFiles();
 	void dumpSubroutines();
 	void dumpSubroutine(Subroutine *sub);
 	void dumpSubroutineLine(SubroutineLine *sl, Subroutine *sub);
@@ -1209,9 +1206,12 @@ protected:
 	virtual void dumpVgaFile(const byte *vga);
 	void dumpVgaScript(const byte *ptr, uint16 res, uint16 id);
 	void dumpVgaScriptAlways(const byte *ptr, uint16 res, uint16 id);
-	void dumpVgaBitmaps(const byte *vga, byte *vga1, int res);
+
+	void dumpVgaBitmaps(uint16 zoneNum);
+
 	void dumpSingleBitmap(int file, int image, const byte *offs, int w, int h, byte base);
 	void dumpBitmap(const char *filename, const byte *offs, uint16 w, uint16 h, int flags, const byte *palette, byte base);
+	void palLoad(byte *pal, const byte *vga1, int a, int b);
 
 	void fillBackFromBackGround(uint16 height, uint16 width);
 	void fillBackFromFront();
@@ -1249,8 +1249,8 @@ protected:
 	void waitForMark(uint i);
 	void scrollScreen();
 
-	void decodeColumn(byte *dst, const byte *src, uint16 height);
-	void decodeRow(byte *dst, const byte *src, uint16 width);
+	void decodeColumn(byte *dst, const byte *src, uint16 height, uint16 pitch);
+	void decodeRow(byte *dst, const byte *src, uint16 width, uint16 pitch);
 	void hitarea_stuff_helper_2();
 	void fastFadeIn();
 	void slowFadeIn();

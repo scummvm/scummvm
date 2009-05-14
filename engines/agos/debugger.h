@@ -53,6 +53,8 @@ protected:
 	bool Cmd_SetVar(int argc, const char **argv);
 	bool Cmd_SetObjectFlag(int argc, const char **argv);
 	bool Cmd_StartSubroutine(int argc, const char **argv);
+	bool Cmd_dumpImage(int argc, const char **argv);
+	bool Cmd_dumpScript(int argc, const char **argv);
 };
 
 } // End of namespace AGOS

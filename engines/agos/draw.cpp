@@ -645,7 +645,7 @@ void AGOSEngine::scrollScreen() {
 		}
 
 		src = _scrollImage + y / 2;
-		decodeRow(dst, src + readUint32Wrapper(src), _scrollWidth);
+		decodeRow(dst, src + readUint32Wrapper(src), _scrollWidth, _dxSurfacePitch);
 
 		_scrollY += _scrollFlag;
 		vcWriteVar(250, _scrollY);
@@ -670,7 +670,7 @@ void AGOSEngine::scrollScreen() {
 			src = _scrollImage + x / 2;
 		else
 			src = _scrollImage + x * 4;
-		decodeColumn(dst, src + readUint32Wrapper(src), _scrollHeight);
+		decodeColumn(dst, src + readUint32Wrapper(src), _scrollHeight, _dxSurfacePitch);
 
 		_scrollX += _scrollFlag;
 		vcWriteVar(251, _scrollX);

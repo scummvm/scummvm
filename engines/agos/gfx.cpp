@@ -84,8 +84,7 @@ void vc10_skip_cols(VC10_state *vs) {
 	}
 }
 
-void AGOSEngine::decodeColumn(byte *dst, const byte *src, uint16 height) {
-	const uint16 pitch = _dxSurfacePitch;
+void AGOSEngine::decodeColumn(byte *dst, const byte *src, uint16 height, uint16 pitch) {
 	int8 reps = (int8)0x80;
 	byte color;
 	byte *dstPtr = dst;
@@ -128,8 +127,7 @@ void AGOSEngine::decodeColumn(byte *dst, const byte *src, uint16 height) {
 	}
 }
 
-void AGOSEngine::decodeRow(byte *dst, const byte *src, uint16 width) {
-	const uint16 pitch = _dxSurfacePitch;
+void AGOSEngine::decodeRow(byte *dst, const byte *src, uint16 width, uint16 pitch) {
 	int8 reps = (int8)0x80;
 	byte color;
 	byte *dstPtr = dst;
@@ -987,7 +985,7 @@ void AGOSEngine::horizontalScroll(VC10_state *state) {
 		src = state->srcPtr + _scrollX * 4;
 
 	for (w = 0; w < _screenWidth; w += 8) {
-		decodeColumn(dst, src + readUint32Wrapper(src), state->height);
+		decodeColumn(dst, src + readUint32Wrapper(src), state->height, _dxSurfacePitch);
 		dst += 8;
 		src += 4;
 	}
@@ -1017,7 +1015,7 @@ void AGOSEngine::verticalScroll(VC10_state *state) {
 	src = state->srcPtr + _scrollY / 2;
 
 	for (h = 0; h < _screenHeight; h += 8) {
-		decodeRow(dst, src + READ_LE_UINT32(src), state->width);
+		decodeRow(dst, src + READ_LE_UINT32(src), state->width, _dxSurfacePitch);
 		dst += 8 * state->width;
 		src += 4;
 	}
@@ -1129,26 +1127,6 @@ void AGOSEngine::animate(uint16 windowNum, uint16 zoneNum, uint16 vgaSpriteId, i
 		}
 		assert(READ_BE_UINT16(&((AnimationHeader_WW *) p)->id) == vgaSpriteId);
 	}
-
-#ifdef DUMP_FILE_NR
-	{
-		static bool dumped = false;
-		if (res == DUMP_FILE_NR && !dumped) {
-			dumped = true;
-			dumpVgaFile(_curVgaFile1);
-		}
-	}
-#endif
-
-#ifdef DUMP_BITMAPS_FILE_NR
-	{
-		static bool dumped = false;
-		if (res == DUMP_BITMAPS_FILE_NR && !dumped) {
-			dumped = true;
-			dumpVgaBitmaps(_curVgaFile2, _curVgaFile1, zoneNum);
-		}
-	}
-#endif
 
 	if (_dumpVgaScripts) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {

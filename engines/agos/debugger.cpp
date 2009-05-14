@@ -47,6 +47,8 @@ Debugger::Debugger(AGOSEngine *vm)
 	DCmd_Register("var",      WRAP_METHOD(Debugger, Cmd_SetVar));
 	DCmd_Register("obj",      WRAP_METHOD(Debugger, Cmd_SetObjectFlag));
 	DCmd_Register("sub",      WRAP_METHOD(Debugger, Cmd_StartSubroutine));
+	DCmd_Register("dumpimage",      WRAP_METHOD(Debugger, Cmd_dumpImage));
+	DCmd_Register("dumpscript",     WRAP_METHOD(Debugger, Cmd_dumpScript));
 
 }
 
@@ -259,6 +261,40 @@ bool Debugger::Cmd_StartSubroutine(int argc, const char **argv) {
 			_vm->startSubroutine(sub);
 	} else
 		DebugPrintf("Subroutine %d\n", _vm->_currentTable->id);
+
+	return true;
+}
+
+bool Debugger::Cmd_dumpImage(int argc, const char **argv) {
+	if (argc > 1) {
+		uint16 zoneNum = atoi(argv[1]);
+		_vm->loadZone(zoneNum, false);
+		VgaPointersEntry *vpe = &_vm->_vgaBufferPointers[zoneNum];
+		if (vpe->vgaFile2 != NULL) {
+			_vm->dumpVgaBitmaps(zoneNum);
+		} else {
+			DebugPrintf("Invalid Zone Number %d\n", zoneNum);
+
+		}
+	} else
+		DebugPrintf("Syntax: dumpimage <zonenum>\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_dumpScript(int argc, const char **argv) {
+	if (argc > 1) {
+		uint16 zoneNum = atoi(argv[1]);
+		_vm->loadZone(zoneNum, false);
+		VgaPointersEntry *vpe = &_vm->_vgaBufferPointers[zoneNum];
+		if (vpe->vgaFile1 != NULL) {
+			_vm->dumpVgaFile(vpe->vgaFile1);
+		} else {
+			DebugPrintf("Invalid Zone Number %d\n", zoneNum);
+
+		}
+	} else
+		DebugPrintf("Syntax: dumpscript <zonenum>\n");
 
 	return true;
 }
