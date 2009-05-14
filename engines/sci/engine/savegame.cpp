@@ -579,9 +579,9 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				Script *scr = (Script *)mobj;
 
 				load_script(s, i);
-				scr->locals_block = scr->locals_segment == 0 ? NULL : (LocalVariables *)(s->seg_manager->_heap[scr->locals_segment]);
-				scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, sci_obj_exports);
-				scr->synonyms = find_unique_script_block(s, scr->buf, sci_obj_synonyms);
+				scr->locals_block = (scr->locals_segment == 0) ? NULL : (LocalVariables *)(s->seg_manager->_heap[scr->locals_segment]);
+				scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, SCI_OBJ_EXPORTS);
+				scr->synonyms = find_unique_script_block(s, scr->buf, SCI_OBJ_SYNONYMS);
 				scr->_codeBlocks.clear();
 
 				if (!self->isSci1_1)

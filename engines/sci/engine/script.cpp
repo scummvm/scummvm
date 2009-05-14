@@ -339,11 +339,11 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 		objectctr[objtype]++;
 
 		switch (objtype) {
-		case sci_obj_object:
+		case SCI_OBJ_OBJECT:
 			script_dump_object((char *)script->data, seeker, objsize, selectorNames);
 			break;
 
-		case sci_obj_code: {
+		case SCI_OBJ_CODE: {
 			sciprintf("Code\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
@@ -355,7 +355,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 		};
 		break;
 
-		case sci_obj_said: {
+		case SCI_OBJ_SAID: {
 			sciprintf("Said\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 
@@ -406,7 +406,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 		}
 		break;
 
-		case sci_obj_strings: {
+		case SCI_OBJ_STRINGS: {
 			sciprintf("Strings\n");
 			while (script->data [seeker]) {
 				sciprintf("%04x: %s\n", seeker, script->data + seeker);
@@ -416,17 +416,17 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 		};
 		break;
 
-		case sci_obj_class:
+		case SCI_OBJ_CLASS:
 			script_dump_class((char *)script->data, seeker, objsize, selectorNames);
 			break;
 
-		case sci_obj_exports: {
+		case SCI_OBJ_EXPORTS: {
 			sciprintf("Exports\n");
 			Common::hexdump((unsigned char *)script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
-		case sci_obj_pointers: {
+		case SCI_OBJ_POINTERS: {
 			sciprintf("Pointers\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
@@ -438,7 +438,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 		};
 		break;
 
-		case sci_obj_localvars: {
+		case SCI_OBJ_LOCALVARS: {
 			sciprintf("Local vars\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};

@@ -37,18 +37,18 @@ class ResourceManager;
 
 #define SCI_SCRIPTS_NR 1000
 
-enum script_object_types {
-	sci_obj_terminator,
-	sci_obj_object,
-	sci_obj_code,
-	sci_obj_synonyms,
-	sci_obj_said,
-	sci_obj_strings,
-	sci_obj_class,
-	sci_obj_exports,
-	sci_obj_pointers,
-	sci_obj_preload_text, /* This is really just a flag. */
-	sci_obj_localvars
+enum ScriptObjectTypes {
+	SCI_OBJ_TERMINATOR,
+	SCI_OBJ_OBJECT,
+	SCI_OBJ_CODE,
+	SCI_OBJ_SYNONYMS,
+	SCI_OBJ_SAID,
+	SCI_OBJ_STRINGS,
+	SCI_OBJ_CLASS,
+	SCI_OBJ_EXPORTS,
+	SCI_OBJ_POINTERS,
+	SCI_OBJ_PRELOAD_TEXT, /* This is really just a flag. */
+	SCI_OBJ_LOCALVARS
 };
 
 void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringList &selectorNames);

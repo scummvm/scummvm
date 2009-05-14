@@ -331,7 +331,7 @@ static int create_class_table_sci0(EngineState *s) {
 				while (seeker < script->size)	{
 					unsigned int lastseeker = seeker;
 					objtype = (int16)READ_LE_UINT16(script->data + seeker);
-					if (objtype == sci_obj_class || objtype == sci_obj_terminator)
+					if (objtype == SCI_OBJ_CLASS || objtype == SCI_OBJ_TERMINATOR)
 						break;
 					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2);
 					if (seeker <= lastseeker) {
@@ -340,7 +340,7 @@ static int create_class_table_sci0(EngineState *s) {
 					}
 				}
 
-				if (objtype == sci_obj_class) {
+				if (objtype == SCI_OBJ_CLASS) {
 					int sugg_script;
 
 					seeker -= SCRIPT_OBJECT_MAGIC_OFFSET; // Adjust position; script home is base +8 bytes
@@ -372,7 +372,7 @@ static int create_class_table_sci0(EngineState *s) {
 					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2); // Move to next
 				}
 
-			} while (objtype != sci_obj_terminator && seeker <= script->size);
+			} while (objtype != SCI_OBJ_TERMINATOR && seeker <= script->size);
 
 		}
 	}

@@ -1766,21 +1766,21 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 		addr = data_base;
 
 		switch (objtype) {
-		case sci_obj_exports: {
+		case SCI_OBJ_EXPORTS: {
 			s->seg_manager->setExportTableOffset(data_base.offset, reg.segment, SEG_ID);
 		}
 		break;
 
-		case sci_obj_synonyms:
+		case SCI_OBJ_SYNONYMS:
 			s->seg_manager->setSynonymsOffset(addr.offset, reg.segment, SEG_ID);   // +4 is to step over the header
 			s->seg_manager->setSynonymsNr((objlength) / 4, reg.segment, SEG_ID);
 			break;
 
-		case sci_obj_localvars:
+		case SCI_OBJ_LOCALVARS:
 			s->seg_manager->scriptInitialiseLocals(data_base);
 			break;
 
-		case sci_obj_class: {
+		case SCI_OBJ_CLASS: {
 			int classpos = addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 			int species;
 			reg_tmp.offset = addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
@@ -1821,11 +1821,11 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 		addr = reg;
 
 		switch (objtype) {
-		case sci_obj_code:
+		case SCI_OBJ_CODE:
 			s->seg_manager->scriptAddCodeBlock(addr);
 			break;
-		case sci_obj_object:
-		case sci_obj_class: { // object or class?
+		case SCI_OBJ_OBJECT:
+		case SCI_OBJ_CLASS: { // object or class?
 			Object *obj = s->seg_manager->scriptObjInit(s, addr);
 			Object *base_obj;
 
@@ -1840,7 +1840,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 			obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = INST_LOOKUP_CLASS(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].offset);
 		} // if object or class
 		break;
-		case sci_obj_pointers: // A relocation table
+		case SCI_OBJ_POINTERS: // A relocation table
 			relocation = addr.offset;
 			break;
 
@@ -1916,7 +1916,7 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 
 		reg.offset += 4; // Step over header
 
-		if ((objtype == sci_obj_object) || (objtype == sci_obj_class)) { // object or class?
+		if ((objtype == SCI_OBJ_OBJECT) || (objtype == SCI_OBJ_CLASS)) { // object or class?
 			int superclass;
 
 			reg.offset -= SCRIPT_OBJECT_MAGIC_OFFSET;
