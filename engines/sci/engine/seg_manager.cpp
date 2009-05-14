@@ -863,7 +863,15 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
 #endif
 
 		// Copy base from species class, as we need its selector IDs
-		obj->_variables[6] = INST_LOOKUP_CLASS(obj->_variables[6].offset);
+		obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = INST_LOOKUP_CLASS(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].offset);
+
+		// Set the -classScript- selector to the script number.
+		// FIXME: As this selector is filled in at run-time, it is likely
+		// that it is supposed to hold a pointer. The Obj::isKindOf method
+		// uses this selector together with -propDict- to compare classes.
+		// For the purpose of Obj::isKindOf, using the script number appears
+		// to be sufficient.
+		obj->_variables[SCRIPT_CLASSSCRIPT_SELECTOR] = make_reg(0, scr->nr);
 
 		seeker += READ_LE_UINT16(seeker + 2) * 2;
 	}

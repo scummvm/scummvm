@@ -203,6 +203,7 @@ public:
 /*---------------------------------*/
 #define SCRIPT_SPECIES_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 0 : 5)
 #define SCRIPT_SUPERCLASS_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 1 : 6)
+#define SCRIPT_CLASSSCRIPT_SELECTOR 4
 
 /** Magic adjustment value for lofsa and lofss */
 #define SCRIPT_LOFS_MAGIC 3
