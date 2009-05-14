@@ -299,20 +299,21 @@ void AGOSEngine::dumpVgaScriptAlways(const byte *ptr, uint16 res, uint16 id) {
 
 void AGOSEngine::dumpAllVgaImageFiles() {
 	uint8 start = (getGameType() == GType_PN) ? 0 : 2;
-	uint8 end = (getGameType() == GType_PN) ? 26 : 450;
+	uint16 end = (getGameType() == GType_PN) ? 26 : 450;
 
-	for (int f = start; f < end; f++) {
-		dumpVgaBitmaps(f);
+	for (int z = start; z < end; z++) {
+		loadZone(z, false);
+		dumpVgaBitmaps(z);
 	}
 }
 
 void AGOSEngine::dumpAllVgaScriptFiles() {
 	uint8 start = (getGameType() == GType_PN) ? 0 : 2;
-	uint8 end = (getGameType() == GType_PN) ? 26 : 450;
+	uint16 end = (getGameType() == GType_PN) ? 26 : 450;
 
-	for (int f = start; f < end; f++) {
-		uint16 zoneNum = (getGameType() == GType_PN) ? 0 : f;
-		loadZone(f, false);
+	for (int z = start; z < end; z++) {
+		uint16 zoneNum = (getGameType() == GType_PN) ? 0 : z;
+		loadZone(z, false);
 
 		VgaPointersEntry *vpe = &_vgaBufferPointers[zoneNum];
 		if (vpe->vgaFile1 != NULL) {
@@ -320,8 +321,6 @@ void AGOSEngine::dumpAllVgaScriptFiles() {
 			dumpVgaFile(_curVgaFile1);
 		}
 	}
-
-	error("Complete");
 }
 
 void AGOSEngine_Feeble::dumpVgaFile(const byte *vga) {
