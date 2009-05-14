@@ -580,14 +580,22 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 			case MEM_OBJ_SCRIPT: {
 				Script *scr = (Script *)mobj;
 
+				// FIXME: Unify this code with script_instantiate_*
 				load_script(s, i);
 				scr->locals_block = (scr->locals_segment == 0) ? NULL : (LocalVariables *)(s->seg_manager->_heap[scr->locals_segment]);
-				scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, SCI_OBJ_EXPORTS);
-				scr->synonyms = find_unique_script_block(s, scr->buf, SCI_OBJ_SYNONYMS);
-				scr->_codeBlocks.clear();
-
-				if (!self->isSci1_1)
+				if (s->seg_manager->isSci1_1) {
+					scr->export_table = 0;
+					scr->synonyms = 0;
+					if (READ_LE_UINT16(scr->buf + 6) > 0) {
+						scr->export_table = (uint16 *)(scr->buf + 8);
+						scr->exports_nr = READ_LE_UINT16((byte *)(scr->export_table - 1));
+					}
+				} else {
+					scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, SCI_OBJ_EXPORTS);
+					scr->synonyms = find_unique_script_block(s, scr->buf, SCI_OBJ_SYNONYMS);
 					scr->export_table += 3;
+				}
+				scr->_codeBlocks.clear();
 
 				for (j = 0; j < scr->_objects.size(); j++) {
 					byte *data = scr->buf + scr->_objects[j].pos.offset;
