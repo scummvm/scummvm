@@ -59,13 +59,6 @@ namespace Sci {
 ** Later versions use an even 90 degree distribution.
 */
 
-#define SCI_VERSION_RESUME_SUSPENDED_SONG SCI_VERSION(0,000,490)
-/* First version (PQ2-new) known to use the different song resumption
-   mechanism -- When a new song is initialized, we store its state and
-   resume it when the new one finishes.  Older versions completely
-   clobbered the old songs.
-*/
-
 #define SCI_VERSION_FTU_NEWER_DRAWPIC_PARAMETERS SCI_VERSION(0,000,502)
 /* Last version known not to do this: 0.000.435
 ** Old SCI versions used to interpret the third DrawPic() parameter inversely,
@@ -86,13 +79,6 @@ namespace Sci {
 /* First version known to do this: ?
    In later versions (SCI1 and beyond), the argument of lofs[as]
    instructions is absolute rather than relative.
-*/
-
-#define SCI_VERSION_FTU_DISPLAY_COORDS_FUZZY SCI_VERSION(1,000,510)
-/* First version known to do this: ?
-   In later versions of SCI1 kDisplay(), if the text would not fit on
-   the screen, the text is moved to the left and upwards until it
-   fits.
 */
 
 #define SCI_VERSION_FTU_DOSOUND_VARIANT_2 SCI_VERSION(1,000,510)

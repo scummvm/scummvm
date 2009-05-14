@@ -94,25 +94,18 @@ enum SciGameFlags {
 	*/
 	GF_OLDANGLES		= (1 << 1),
 
-	/* Applies to all versions before 0.000.490 (PQ2-new)
-	** When a new song is initialized, we store its state and
-    ** resume it when the new one finishes.  Older versions completely
-    ** clobbered the old songs.
-	*/
-	GF_OLDRESUMESONG	= (1 << 2),
-
 	/* Applies to all versions before 0.000.502
 	** Old SCI versions used to interpret the third DrawPic() parameter inversely,
 	** with the opposite default value (obviously).
 	** Also, they used 15 priority zones from 42 to 200 instead of 14 priority
 	** zones from 42 to 190.
 	*/
-	GF_OLDGFXFUNCTIONS	= (1 << 3),
+	GF_OLDGFXFUNCTIONS	= (1 << 2),
 
 	/* Applies to all versions before 0.000.629
 	** Older SCI versions had simpler code for GetTime()
 	*/
-	GF_OLDGETTIME		= (1 << 4),
+	GF_OLDGETTIME		= (1 << 3),
 
 	// ----------------------------------------------------------------------------
 
@@ -124,14 +117,12 @@ enum SciGameFlags {
     ** In later SCI1 versions, the argument of lofs[as]
 	** instructions is absolute rather than relative.
 	*/
-	GF_LOFSABSOLUTE		= (1 << 5),
+	GF_LOFSABSOLUTE		= (1 << 4),
 
 	/* Applies to all versions from 1.000.510 onwards
-	** Also in kDisplay(), if the text would not fit on the screen, it
-    ** is moved to the left and upwards until it fits.
-	** Finally, kDoSound() is different than in earlier SCI1 versions.
+	** kDoSound() is different than in earlier SCI1 versions.
 	*/
-	GF_LATESCI1			= (1 << 6)
+	GF_NEWDOSOUND		= (1 << 5)
 };
 
 class SciEngine : public Engine {

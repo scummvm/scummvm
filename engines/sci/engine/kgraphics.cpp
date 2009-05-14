@@ -3260,18 +3260,16 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 	}
 
-	if (s->version >= SCI_VERSION_FTU_DISPLAY_COORDS_FUZZY) {
-		if (halign == ALIGN_LEFT)
-			GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text, area.width, &area.width, &area.height, 0, NULL, NULL, NULL));
+	// If the text does not fit on the screen, move it to the left and upwards until it does
+	if (halign == ALIGN_LEFT)
+		GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text, area.width, &area.width, &area.height, 0, NULL, NULL, NULL));
 
-		// Make the text fit on the screen
-		if (area.x + area.width > 320)
-			area.x += 320 - area.x - area.width; // Plus negative number = subtraction
+	// Make the text fit on the screen
+	if (area.x + area.width > 320)
+		area.x += 320 - area.x - area.width; // Plus negative number = subtraction
 
-		if (area.y + area.height > 200) {
-			area.y += 200 - area.y - area.height; // Plus negative number = subtraction
-		}
-	}
+	if (area.y + area.height > 200)
+		area.y += 200 - area.y - area.height; // Plus negative number = subtraction
 
 	if (gray)
 		color1 = &bg_color;
