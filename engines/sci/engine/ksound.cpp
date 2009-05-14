@@ -983,7 +983,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (s->flags & GF_SCI1_NEWDOSOUND)
+	if (s->version >= SCI_VERSION(1,001,000) || s->flags & GF_SCI1_NEWDOSOUND)
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
 	else if (s->version >= SCI_VERSION(1,000,000))
 		return kDoSound_SCI01(s, funct_nr, argc, argv);
