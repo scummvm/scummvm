@@ -46,11 +46,6 @@ namespace Sci {
 ** - "FTU" means "First To Use"
 */
 
-#define SCI_VERSION_FTU_NEW_GETTIME SCI_VERSION(0,000,629)
-/* These versions of SCI has a different set of subfunctions in GetTime() */
-
-#define SCI_VERSION_FTU_DOSOUND_VARIANT_1 SCI_VERSION(1,000,000)
-
 #define SCI_VERSION_FTU_LOFS_ABSOLUTE SCI_VERSION(1,000,200)
 /* First version known to do this: ?
    In later versions (SCI1 and beyond), the argument of lofs[as]

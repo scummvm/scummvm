@@ -309,10 +309,7 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 	case 2 : 
 	case 4 :
-		if (s->version >= SCI_VERSION(1, 1, 0) ||
-			s->_gameName.equalsIgnoreCase("eco") ||
-			(s->_gameName.equalsIgnoreCase("KQ5") && s->version == SCI_VERSION(1, 000, 784))	// KQ5 CD
-			) {
+		if (s->version >= SCI_VERSION(1, 1, 0) || (s->flags & GF_SCI1_NEWSETCURSOR)) {
 			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, Common::Point(UKPV(0), UKPV(1))));
 		} else {
 			if (SKPV_OR_ALT(1, 1)) {

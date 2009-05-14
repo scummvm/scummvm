@@ -88,7 +88,7 @@ enum SciGameFlags {
 	** Also, old SCI versions assign 120 degrees to left & right, and 60 to up
 	** and down. Later versions use an even 90 degree distribution.
 	*/
-	GF_SCI0_OLD			= (1 << 0),
+	GF_SCI0_OLD				= (1 << 0),
 
 	/* Applies to all versions before 0.000.502
 	** Old SCI versions used to interpret the third DrawPic() parameter inversely,
@@ -96,12 +96,12 @@ enum SciGameFlags {
 	** Also, they used 15 priority zones from 42 to 200 instead of 14 priority
 	** zones from 42 to 190.
 	*/
-	GF_SCI0_OLDGFXFUNCS	= (1 << 1),
+	GF_SCI0_OLDGFXFUNCS		= (1 << 1),
 
 	/* Applies to all versions before 0.000.629
 	** Older SCI versions had simpler code for GetTime()
 	*/
-	GF_SCI0_OLDGETTIME	= (1 << 2),
+	GF_SCI0_OLDGETTIME		= (1 << 2),
 
 	// ----------------------------------------------------------------------------
 
@@ -113,12 +113,18 @@ enum SciGameFlags {
     ** In later SCI1 versions, the argument of lofs[as]
 	** instructions is absolute rather than relative.
 	*/
-	GF_LOFSABSOLUTE		= (1 << 3),
+	GF_LOFSABSOLUTE			= (1 << 3),
 
 	/* Applies to all versions from 1.000.510 onwards
 	** kDoSound() is different than in earlier SCI1 versions.
 	*/
-	GF_NEWDOSOUND		= (1 << 4)
+	GF_NEWDOSOUND			= (1 << 4),
+
+	/*
+	** Newer SCI1 games (like KQ5 CD and EcoQuest 1) use
+	** different semantics in kSetCursor(), like SCI1.1 games
+	*/
+	GF_SCI1_NEWSETCURSOR	= (1 << 5)
 };
 
 // The 4 SCI0 engine generations (pre-395, pre-502, pre-629 and post-629)

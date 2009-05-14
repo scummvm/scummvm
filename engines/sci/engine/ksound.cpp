@@ -136,7 +136,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	song_handle_t handle;
 	int cue;
 
-	if (s->version >= SCI_VERSION_FTU_DOSOUND_VARIANT_1)
+	if (s->version >= SCI_VERSION(1,000,000))
 		return;
 	/* SCI01 and later explicitly poll for everything */
 
@@ -984,7 +984,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->version >= SCI_VERSION_FTU_DOSOUND_VARIANT_2)
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
-	else if (s->version >= SCI_VERSION_FTU_DOSOUND_VARIANT_1)
+	else if (s->version >= SCI_VERSION(1,000,000))
 		return kDoSound_SCI01(s, funct_nr, argc, argv);
 	else
 		return kDoSound_SCI0(s, funct_nr, argc, argv);
