@@ -936,7 +936,9 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 
 	file.seek(0, SEEK_SET);
 
-	byte bMask = _mapVersion == SCI_VERSION_01_VGA_ODD ? 0xF0 : 0xFC;
+	byte bMask = 0xFC;
+	// FIXME: The code above seems to give correct results for Jones
+	//byte bMask = _mapVersion == SCI_VERSION_01_VGA_ODD ? 0xF0 : 0xFC;
 	byte bShift = _mapVersion == SCI_VERSION_01_VGA_ODD ? 28 : 26;
 
 	do {

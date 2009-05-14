@@ -118,22 +118,27 @@ enum SciGameFlags {
 	** SCI1 flags
 	*/
 	
+	/*
+	** Used to distinguish SCI1 EGA games
+	*/
+	GF_SCI1_EGA				= (1 << 3),
+
 	/* Applies to all SCI1 versions after 1.000.200
     ** In late SCI1 versions, the argument of lofs[as] instructions
 	** is absolute rather than relative.
 	*/
-	GF_SCI1_LOFSABSOLUTE	= (1 << 3),
+	GF_SCI1_LOFSABSOLUTE	= (1 << 4),
 
 	/* Applies to all versions from 1.000.510 onwards
 	** kDoSound() is different than in earlier SCI1 versions.
 	*/
-	GF_SCI1_NEWDOSOUND		= (1 << 4),
+	GF_SCI1_NEWDOSOUND		= (1 << 5),
 
 	/*
 	** Newer SCI1 games (like KQ5 CD and EcoQuest 1) use
 	** different semantics in kSetCursor(), like SCI1.1 games
 	*/
-	GF_SCI1_NEWSETCURSOR	= (1 << 5)
+	GF_SCI1_NEWSETCURSOR	= (1 << 6)
 };
 
 class SciEngine : public Engine {

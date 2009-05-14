@@ -43,7 +43,7 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 
 	sciprintf("Initializing vocabulary\n");
 
-	if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA) && vocab_get_words(s->resmgr, s->_parserWords)) {
+	if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA || s->flags & GF_SCI1_EGA) && vocab_get_words(s->resmgr, s->_parserWords)) {
 		vocab_get_suffixes(s->resmgr, s->_parserSuffixes);
 		if (vocab_get_branches(s->resmgr, s->_parserBranches))
 			// Now build a GNF grammar out of this

@@ -812,7 +812,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "b86daa3ba2784d1502da881eedb80d9b", 719747},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		0,
-		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_01_VGA_ODD,
 		SCI_VERSION(1, 000, 172)
 	},
 #endif
@@ -1239,13 +1239,14 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 
 	// Laura Bow 2 - English DOS Floppy
+	// Executable scanning reports "2.000.274"
 	{{"laurabow2", "", {
 		{"resource.map", 0, "610bfd9a852004222f0faaf5fc9e630a", 6489},
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5035964},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
 		0,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(2, 000, 274)
+		SCI_VERSION(1, 001, 69)	// this is just a guess
 	},
 
 	// Laura Bow 2 - English DOS CD (from "The Roberta Williams Antology"/1996)
@@ -1268,7 +1269,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0},
 		0,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION(2, 000, 274)
+		SCI_VERSION(1, 001, 69)	// this is just a guess
 	},
 #endif
 
@@ -1293,7 +1294,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "24c958bc922b07f91e25e8c93aa01fcf", 491230},
 		{"resource.003", 0, "685cd6c1e05a695ab1e0db826337ee2a", 553279},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
-		GF_FOR_SCI0_BEFORE_629,
+		GF_FOR_SCI0_BEFORE_629 | GF_SCI1_EGA,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION(0, 000, 510)	// FIXME: some versions are v. 0.000.577
 	},
