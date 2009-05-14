@@ -49,12 +49,12 @@ struct param_struct {
 	gfx_driver_t *driver;
 };
 
-GfxResManager::GfxResManager(int version, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) : 
-				_version(version), _options(options), _driver(driver), _resManager(resManager), 
+GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) : 
+				_version(version), _isVGA(isVGA), _options(options), _driver(driver), _resManager(resManager), 
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
-	if (_version < SCI_VERSION_01_VGA) {
+	if (_version < SCI_VERSION_01_VGA || !_isVGA) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
 	} else if (_version == SCI_VERSION_1_1) {
 		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
@@ -103,7 +103,7 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 		if (_version == SCI_VERSION_1_1)
 			DRAW_PIC11(unscaled_pic, &basic_style)
 		else
-			DRAW_PIC01(unscaled_pic, &basic_style, _version >= SCI_VERSION_01_VGA)
+			DRAW_PIC01(unscaled_pic, &basic_style, _isVGA)
 	}
 
 	if (scaled_pic && scaled_pic->undithered_buffer)
@@ -112,9 +112,9 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 	if (_version == SCI_VERSION_1_1)
 		DRAW_PIC11(scaled_pic, &style)
 	else
-		DRAW_PIC01(scaled_pic, &style, _version >= SCI_VERSION_01_VGA)
+		DRAW_PIC01(scaled_pic, &style, _isVGA)
 
-	if (_version < SCI_VERSION_01_VGA) {
+	if (!_isVGA) {
 		if (need_unscaled)
 			gfxr_remove_artifacts_pic0(scaled_pic, unscaled_pic);
 
@@ -524,14 +524,14 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 
 		if (_version < SCI_VERSION_01)
 			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, -1);
-		else if (_version == SCI_VERSION_01)
+		else if (_version == SCI_VERSION_01 || !_isVGA)
 			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, palette);
 		else if (_version >= SCI_VERSION_01_VGA && _version <= SCI_VERSION_1_LATE)
 			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, _staticPalette);
 		else if (_version >= SCI_VERSION_1_1)
 			view = gfxr_draw_view11(resid, viewRes->data, viewRes->size);
 
-		if (_version >= SCI_VERSION_01_VGA) {
+		if (_isVGA) {
 			if (!view->palette) {
 				view->palette = new Palette(_staticPalette->size());
 				view->palette->name = "interpreter_get_view";

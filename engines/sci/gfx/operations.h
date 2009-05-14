@@ -136,7 +136,7 @@ struct GfxState {
 /* Fundamental operations */
 /**************************/
 
-int gfxop_init(int version, GfxState *state, gfx_options_t *options, ResourceManager *resManager,
+int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options, ResourceManager *resManager,
 			   int xfact = 1, int yfact = 1, gfx_color_mode_t bpp = GFX_COLOR_MODE_INDEX);
 /* Initializes a graphics mode
 ** Parameters: (int) version: The interpreter version

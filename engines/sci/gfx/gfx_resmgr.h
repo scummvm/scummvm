@@ -87,7 +87,7 @@ typedef Common::HashMap<int, gfx_resource_t *> IntResMap;
 
 class GfxResManager {
 public:
-	GfxResManager(int version, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager);
+	GfxResManager(int version, bool isVGA, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager);
 
 	~GfxResManager();
 
@@ -248,6 +248,7 @@ public:
 
 private:
 	int _version;
+	bool _isVGA;
 	gfx_options_t *_options;
 	gfx_driver_t *_driver;
 	Palette *_staticPalette;

@@ -74,7 +74,7 @@ int _reset_graphics_input(EngineState *s) {
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 	sciprintf("Initializing graphics\n");
 
-	if (s->resmgr->_sciVersion <= SCI_VERSION_01) {
+	if (s->resmgr->_sciVersion <= SCI_VERSION_01 || (s->flags & GF_SCI1_EGA)) {
 		int i;
 
 		for (i = 0; i < 16; i++) {
