@@ -555,16 +555,18 @@ static bool clone_entry_used(CloneTable *table, int n) {
 static void load_script(EngineState *s, SegmentId seg) {
 	Resource *script, *heap = NULL;
 	Script *scr = (Script *)(s->seg_manager->_heap[seg]);
+	assert(scr);
 
 	scr->buf = (byte *)malloc(scr->buf_size);
+	assert(scr->buf);
 
 	script = s->resmgr->findResource(kResourceTypeScript, scr->nr, 0);
 	if (s->version >= SCI_VERSION(1,001,000))
 		heap = s->resmgr->findResource(kResourceTypeHeap, scr->nr, 0);
 
-	s->seg_manager->mcpyInOut(0, script->data, script->size, seg, SEG_ID);
+	memcpy(scr->buf, script->data, script->size);
 	if (s->seg_manager->isSci1_1)
-		s->seg_manager->mcpyInOut(scr->script_size, heap->data, heap->size, seg, SEG_ID);
+		memcpy(scr->buf + scr->script_size, heap->data, heap->size);
 }
 
 // FIXME: The following should likely become a SegManager method

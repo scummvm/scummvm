@@ -249,11 +249,6 @@ public:
 	// Returns   : (int16) The value read from the specified location
 	int16 getHeap(reg_t reg);
 
-	// Writes a 16 bit value into a script's heap representation
-	// Parameters: (reg_t) reg: The address to write to
-	//	       (int16) value: The value to write
-	//void putHeap(reg_t reg, int16 value);
-
 	// Copies a byte string into a script's heap representation
 	// Parameters: (int) dst: The script-relative offset of the destination area
 	//	       (const void *) src: Pointer to the data source location
