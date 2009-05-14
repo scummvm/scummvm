@@ -712,8 +712,10 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	seeker = (char *) textres->data;
 
-	while (counter--)
-		while (*seeker++);
+	while (counter--) {
+		while (*seeker++)
+			;
+	}
 	/* The second parameter (counter) determines the number of the string inside the text
 	** resource.
 	*/

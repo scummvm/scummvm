@@ -1457,10 +1457,12 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				} else if (modifiers & SCI_EVM_ALT) { // Ctrl has precedence over Alt
 					switch (key) {
 					case 0x2100 /* A-f */:
-						while ((cursor < textlen) && (text[cursor++] != ' '));
+						while ((cursor < textlen) && (text[cursor++] != ' '))
+							;
 						break;
 					case 0x3000 /* A-b */:
-						while ((cursor > 0) && (text[--cursor - 1] != ' '));
+						while ((cursor > 0) && (text[--cursor - 1] != ' '))
+							;
 						break;
 					case 0x2000 /* A-d */: {
 						while ((cursor < textlen) && (text[cursor] == ' ')) {

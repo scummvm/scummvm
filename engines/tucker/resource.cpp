@@ -1016,7 +1016,9 @@ void TuckerEngine::loadActionsTable() {
 			}
 			break;
 		}
-		while ((table = executeTableInstruction()) == 0);
+		do {
+			table = executeTableInstruction();
+		} while (table == 0);
 	} while (table == 3);
 	if (table == 2) {
 		_nextAction = 0;

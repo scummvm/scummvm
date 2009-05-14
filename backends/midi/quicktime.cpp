@@ -101,7 +101,7 @@ int MidiDriver_QT::open() {
 
 	simpleNoteRequest.info.flags = 0;
 	WRITE_BE_UINT16(& simpleNoteRequest.info.polyphony, 11);        // simultaneous tones
-	WRITE_BE_UINT16(& simpleNoteRequest.info.typicalPolyphony, 0x00010000);
+	WRITE_BE_UINT32(& simpleNoteRequest.info.typicalPolyphony, 0x00010000);
 
 	qtErr = NAStuffToneDescription(qtNoteAllocator, 1, &simpleNoteRequest.tone);
 	if (qtErr != noErr)

@@ -788,7 +788,7 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x01: // add
 			r_temp = POP32();
 			if (r_temp.segment || s->r_acc.segment) {
-				reg_t r_ptr;
+				reg_t r_ptr = NULL_REG;
 				int offset;
 				// Pointer arithmetics!
 				if (s->r_acc.segment) {
@@ -815,7 +815,7 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x02: // sub
 			r_temp = POP32();
 			if (r_temp.segment || s->r_acc.segment) {
-				reg_t r_ptr;
+				reg_t r_ptr = NULL_REG;
 				int offset;
 				// Pointer arithmetics!
 				if (s->r_acc.segment) {

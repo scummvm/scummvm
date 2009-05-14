@@ -916,7 +916,8 @@ uint32 AGOSEngine_PN::ftext(uint32 base, int n) {
 	uint32 b = base;
 	int ct = n;
 	while (ct) {
-		while(_textBase[b++]);
+		while(_textBase[b++])
+			;
 		ct--;
 	}
 	return b;
@@ -927,7 +928,8 @@ char *AGOSEngine_PN::unctok(char *c, int n) {
 	uint8 *tokbase;
 	tokbase = _textBase + getlong(30);
 	x = n;
-	while (x-=(*tokbase++ > 127)); 
+	while (x-=(*tokbase++ > 127))
+		;
 	while (*tokbase < 128)
 		*c++=*tokbase++;
 	*c++ = *tokbase & 127;
@@ -1043,7 +1045,8 @@ void AGOSEngine_PN::patok(int n) {
 	uint8 *tokbase;
 	tokbase = _textBase + getlong(30);
 	x = n;
-	while (x -= (*tokbase++ > 127)); 
+	while (x -= (*tokbase++ > 127))
+		;
 	while (*tokbase < 128)
 		pcf(*tokbase++);
 	pcf((uint8)(*tokbase & 127));

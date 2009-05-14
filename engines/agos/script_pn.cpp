@@ -891,7 +891,9 @@ nln:	_linct = ((*_linebase) & 127) - 1;
 	}
 
 carryon:
-	while((x = doaction()) && !shouldQuit());
+	do {
+		x = doaction();
+	} while (x && !shouldQuit());
 
 skipln:	_linebase += 127 & *_linebase;
 	_linembr++;
