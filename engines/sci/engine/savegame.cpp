@@ -518,12 +518,12 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 
 	do {
 		int seeker_type = READ_LE_UINT16(buf);
-		int seeker_size;
 
 		if (seeker_type == 0) break;
 		if (seeker_type == type) return buf;
 
-		seeker_size = READ_LE_UINT16(buf + 2);
+		int seeker_size = READ_LE_UINT16(buf + 2);
+		assert(seeker_size > 0);
 		buf += seeker_size;
 	} while(1);
 
