@@ -25,8 +25,8 @@
 
 #include "common/endian.h"
 
+#include "sci/sci.h"
 #include "sci/exereader.h"
-#include "sci/scicore/versions.h"
 
 namespace Sci {
 

@@ -29,7 +29,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-#include "sci/scicore/versions.h"
+#include "sci/sci.h"
 
 namespace Sci {
 

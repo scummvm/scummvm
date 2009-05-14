@@ -34,6 +34,7 @@
 namespace Sci {
 
 class Console;
+struct EngineState;
 
 // our engine debug levels
 enum kDebugLevels {
@@ -76,6 +77,14 @@ enum SciGameVersions {
 	SCI_VERSION_32 = 8
 };
 
+#define SCI_VERSION(_major_, _minor_, _patchlevel_) (((_major_)<<20) | ((_minor_)<<10) | _patchlevel_)
+/* This allows version numbers to be compared directly */
+
+#define SCI_VERSION_MAJOR(_version_) ((_version_) >> 20)
+#define SCI_VERSION_MINOR(_version_) (((_version_) >> 10) & 0x3ff)
+#define SCI_VERSION_PATCHLEVEL(_version_) ((_version_) & 0x3ff)
+#define SCI_VERSION_IGNORE_PATCHLEVEL(_version_) ((_version) & ~0x3ff)
+
 enum SciGameFlags {
 	/*
 	** SCI0 flags
@@ -109,11 +118,11 @@ enum SciGameFlags {
 	** SCI1 flags
 	*/
 	
-	/* Applies to all versions from 1.000.200 onwards
-    ** In later SCI1 versions, the argument of lofs[as]
-	** instructions is absolute rather than relative.
+	/* Applies to all SCI1 versions after 1.000.200
+    ** In late SCI1 versions, the argument of lofs[as] instructions
+	** is absolute rather than relative.
 	*/
-	GF_LOFSABSOLUTE			= (1 << 3),
+	GF_SCI1_LOFSABSOLUTE	= (1 << 3),
 
 	/* Applies to all versions from 1.000.510 onwards
 	** kDoSound() is different than in earlier SCI1 versions.

@@ -31,7 +31,7 @@
 #include "common/hash-str.h"
 #include "common/list.h"
 
-#include "sci/scicore/versions.h"
+#include "sci/sci.h"
 
 namespace Sci {
 

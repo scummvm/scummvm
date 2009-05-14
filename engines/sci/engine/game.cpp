@@ -29,12 +29,12 @@
 #include "sci/sci.h"
 #include "sci/scicore/resource.h"
 #include "sci/engine/state.h"
-#include "sci/scicore/versions.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 #include "sci/gfx/menubar.h"
+#include "sci/scicore/versions.h"
 
 namespace Sci {
 
@@ -445,8 +445,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->bp_list = NULL; // No breakpoints defined
 	s->have_bp = 0;
 
-	if (s->version >= SCI_VERSION_FTU_LOFS_ABSOLUTE &&
-	        s->version < SCI_VERSION(1, 001, 000))
+	if (s->flags & GF_SCI1_LOFSABSOLUTE && s->version < SCI_VERSION(1, 001, 000))
 		s->seg_manager->setExportWidth(1);
 	else
 		s->seg_manager->setExportWidth(0);

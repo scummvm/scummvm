@@ -1239,13 +1239,15 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x39: // lofsa
 			s->r_acc.segment = xs->addr.pc.segment;
 
-			if (s->version >= SCI_VERSION(1, 001, 000))
+			if (s->version >= SCI_VERSION(1, 001, 000)) {
 				s->r_acc.offset = opparams[0] + local_script->script_size;
-			else
-				if (s->version >= SCI_VERSION_FTU_LOFS_ABSOLUTE)
+			} else {
+				if (s->flags & GF_SCI1_LOFSABSOLUTE)
 					s->r_acc.offset = opparams[0];
 				else
 					s->r_acc.offset = xs->addr.pc.offset + opparams[0];
+			}
+
 #ifndef DISABLE_VALIDATIONS
 			if (s->r_acc.offset >= code_buf_size) {
 				sciprintf("VM: lofsa operation overflowed: "PREG" beyond end"
@@ -1258,7 +1260,7 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x3a: // lofss
 			r_temp.segment = xs->addr.pc.segment;
 
-			if (s->version >= SCI_VERSION_FTU_LOFS_ABSOLUTE)
+			if (s->flags & GF_SCI1_LOFSABSOLUTE)
 				r_temp.offset = opparams[0];
 			else
 				r_temp.offset = xs->addr.pc.offset + opparams[0];

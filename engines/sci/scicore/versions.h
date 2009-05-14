@@ -30,14 +30,6 @@
 
 namespace Sci {
 
-#define SCI_VERSION(_major_, _minor_, _patchlevel_) (((_major_)<<20) | ((_minor_)<<10) | _patchlevel_)
-/* This allows version numbers to be compared directly */
-
-#define SCI_VERSION_MAJOR(_version_) ((_version_) >> 20)
-#define SCI_VERSION_MINOR(_version_) (((_version_) >> 10) & 0x3ff)
-#define SCI_VERSION_PATCHLEVEL(_version_) ((_version_) & 0x3ff)
-#define SCI_VERSION_IGNORE_PATCHLEVEL(_version_) ((_version) & ~0x3ff)
-
 /* Version number guide:
 ** - Always use the version number of the first known version to have a special feature.
 ** - Don't assume that special feature changes are linked just because they appeared to change
@@ -46,18 +38,8 @@ namespace Sci {
 ** - "FTU" means "First To Use"
 */
 
-#define SCI_VERSION_FTU_LOFS_ABSOLUTE SCI_VERSION(1,000,200)
-/* First version known to do this: ?
-   In later versions (SCI1 and beyond), the argument of lofs[as]
-   instructions is absolute rather than relative.
-*/
-
 #define SCI_VERSION_FTU_DOSOUND_VARIANT_2 SCI_VERSION(1,000,510)
 
-
-typedef int sci_version_t;
-
-struct EngineState;
 
 } // End of namespace Sci
 

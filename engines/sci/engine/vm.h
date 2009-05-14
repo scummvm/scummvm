@@ -29,7 +29,6 @@
 /* VM and kernel declarations */
 
 //#include "common/serializer.h"
-#include "sci/scicore/versions.h"	// for sci_version_t
 #include "sci/engine/vm_types.h"	// for reg_t
 
 #include "common/util.h"
@@ -37,6 +36,8 @@
 namespace Sci {
 
 class SegManager;
+struct EngineState;
+typedef int sci_version_t;
 
 enum MemObjectType {
 	MEM_OBJ_INVALID = 0,

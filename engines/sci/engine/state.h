@@ -35,9 +35,9 @@ namespace Common {
 	class WriteStream;
 }
 
+#include "sci/sci.h"
 #include "sci/scicore/vocabulary.h"
 #include "sci/scicore/resource.h"
-	#include "sci/scicore/versions.h"
 #include "sci/engine/kernel.h"	// for kfunct_sig_pair_t
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
