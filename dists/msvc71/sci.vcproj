@@ -354,9 +354,6 @@
 				RelativePath="..\..\engines\sci\scicore\sciconsole.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\scicore\versions.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\scicore\vocab_debug.cpp">
 			</File>
 			<File
