@@ -474,18 +474,10 @@ static void syncIncrust(Common::Serializer &s) {
 		s.syncAsUint16LE(dummyWord);
 
 		if (t->saveSize) {
-			byte *buffer = (byte *)malloc(t->saveSize);
-			memset(buffer, 0, t->saveSize);
-			s.syncBytes(buffer, t->saveSize);
-			free(buffer);
+			if (s.isLoading())
+				t->ptr = (byte *)malloc(t->saveSize);
 
-			// TODO: convert graphic format here
-			if (s.isLoading()) {
-				int width = t->saveWidth;
-				int height = t->saveHeight;
-				t->ptr = (uint8*)malloc(width * height);
-				memset(t->ptr, 0, width * height);
-			}
+			s.syncBytes(t->ptr, t->saveSize);
 		}
 
 		if (s.isSaving())
