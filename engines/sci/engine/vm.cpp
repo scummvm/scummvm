@@ -258,7 +258,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	seg = s->seg_manager->segGet(script);
 
 	if (!s->seg_manager->scriptIsLoaded(seg, SEG_ID))  // Script not present yet?
-		script_instantiate(s, script);
+		seg = script_instantiate(s, script);
 	else
 		s->seg_manager->getScript(seg, SEG_ID)->unmarkDeleted();
 
@@ -528,7 +528,7 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 }
 
 static Script *script_locate_by_segment(EngineState *s, SegmentId seg) {
-	return (Script *)GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
+	return s->seg_manager->getScriptIfLoaded(seg, SEG_ID);
 }
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {

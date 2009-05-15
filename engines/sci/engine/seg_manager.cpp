@@ -402,6 +402,13 @@ Script *SegManager::getScript(const int id, idFlag flag) {
 	return (Script *)_heap[seg];
 }
 
+Script *SegManager::getScriptIfLoaded(const int id, idFlag flag) {
+	const int seg = (flag == SCRIPT_ID) ? segGet(id) : id;
+	if (seg < 0 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
+		return 0;
+	return (Script *)_heap[seg];
+}
+
 // validate the seg
 // return:
 //	false - invalid seg

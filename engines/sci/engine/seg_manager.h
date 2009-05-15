@@ -75,11 +75,13 @@ public:
 	// Returns   : (int) 1 on success, 0 on failure
 	int deallocateScript(int script_nr);
 
-	// Determines whether a script has been loaded yet
-	// Parameters: (int) id: number of the script or ID of the script segment to check for
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
+	/**
+	 * Determines whether a script has been loaded yet.
+	 * @param id	number of the script or ID of the script segment to check for
+	 * @param flag	whether to address the script by script number (SCRIPT_ID) or
+	 *				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	 *				but less convenient.
+	 */
 	int scriptIsLoaded(int id, idFlag flag);
 
 	// Validate whether the specified public function is exported by the script in the specified segment
@@ -94,7 +96,28 @@ public:
 	// Returns   : (int) The associated segment ID, or -1 if no matching segment exists
 	int segGet(int script_nr) const;
 
+	/**
+	 * Return a pointer to the specified script. If the id is invalid, does not refer
+	 * to a script or the script is not loaded, this will invoke error().
+	 * @param id	number of the script or ID of the script segment to check for
+	 * @param flag	whether to address the script by script number (SCRIPT_ID) or
+	 *				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	 *				but less convenient.
+	 * @return pointer to the Script object
+	 */
 	Script *getScript(int id, idFlag flag);
+
+	/**
+	 * Return a pointer to the specified script. If the id is invalid, does not refer
+	 * to a script or the script is not loaded, this will return NULL.
+	 * @param id	number of the script or ID of the script segment to check for
+	 * @param flag	whether to address the script by script number (SCRIPT_ID) or
+	 *				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
+	 *				but less convenient.
+	 * @return pointer to the Script object, or NULL
+	 */
+	Script *getScriptIfLoaded(int id, idFlag flag);
+
 
 
 
