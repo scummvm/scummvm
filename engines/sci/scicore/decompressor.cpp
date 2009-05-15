@@ -199,7 +199,7 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 			if (token > 0xff) {
 				if (token >= _curtoken) {
 					warning("unpackLZW: Bad token %x", token);
-					return SCI_ERROR_DECOMPRESSION_INSANE;
+					return SCI_ERROR_DECOMPRESSION_ERROR;
 				} 
 				tokenlastlength = tokenlengthlist[token] + 1;
 				if (_dwWrote + tokenlastlength > _szUnpacked) {
@@ -231,7 +231,7 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 		}
 	}
 
-	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_INSANE;
+	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
 int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPacked,
@@ -310,7 +310,7 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 			break;
 		}
 	}
-	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_INSANE;
+	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
 #define PAL_SIZE 1284
@@ -853,12 +853,12 @@ int DecompressorDCL::unpackDCL(byte* dest) {
 
 			if (val_length + _dwWrote > _szUnpacked) {
 				warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes", val_length);
-				return SCI_ERROR_DECOMPRESSION_OVERFLOW;
+				return SCI_ERROR_DECOMPRESSION_ERROR;
 			}
 
 			if (_dwWrote < val_distance) {
 				warning("DCL-INFLATE Error: Attempt to copy from before beginning of input stream");
-				return SCI_ERROR_DECOMPRESSION_INSANE;
+				return SCI_ERROR_DECOMPRESSION_ERROR;
 			}
 
 			while (val_length) {
@@ -885,7 +885,7 @@ int DecompressorDCL::unpackDCL(byte* dest) {
 		}
 	}
 
-	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_INSANE;
+	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
 #ifdef ENABLE_SCI32
@@ -910,21 +910,21 @@ int DecompressorLZS::unpackLZS() {
 					break;
 				if (!(clen = getCompLen())) {
 					warning("lzsDecomp: length mismatch");
-					return SCI_ERROR_DECOMPRESSION_INSANE;
+					return SCI_ERROR_DECOMPRESSION_ERROR;
 				}
 				copyComp(offs, clen);
 			} else { // Eleven bit offset follows 
 				offs = getBitsMSB(11);
 				if (!(clen = getCompLen())) {
 					warning("lzsDecomp: length mismatch");
-					return SCI_ERROR_DECOMPRESSION_INSANE;
+					return SCI_ERROR_DECOMPRESSION_ERROR;
 				}
 				copyComp(offs, clen);
 			}
 		} else // Literal byte follows
 			putByte(getByteMSB());
 	} // end of while ()
-	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_INSANE;
+	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
 uint16 DecompressorLZS::getCompLen() {
