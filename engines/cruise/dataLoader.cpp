@@ -131,6 +131,7 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 	}
 	}
 
+	free(pCurrentFileEntry->subData.ptr);
 	pCurrentFileEntry->subData.ptr = buffer;
 }
 
