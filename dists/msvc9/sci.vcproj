@@ -279,11 +279,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\script.h"
+				RelativePath="..\..\engines\sci\engine\sciconsole.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\scriptconsole.cpp"
+				RelativePath="..\..\engines\sci\engine\sciconsole.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\script.h"
 				>
 			</File>
 			<File
@@ -460,42 +464,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="scicore"
-			>
-			<File
-				RelativePath="..\..\engines\sci\scicore\decompressor.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\decompressor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\resource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\resource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\sciconsole.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\vocab_debug.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\vocabulary.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\scicore\vocabulary.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="sfx"
 			>
 			<File
@@ -644,6 +612,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\sci\decompressor.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\decompressor.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\sci\detection.cpp"
 			>
 		</File>
@@ -653,6 +629,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\exereader.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\resource.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\resource.h"
 			>
 		</File>
 		<File
@@ -677,6 +661,18 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\uinput.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\vocab_debug.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\vocabulary.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\vocabulary.h"
 			>
 		</File>
 	</Files>
