@@ -264,6 +264,26 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
+
+	{	// Hebrew CD v2
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.scn", 0, "759d1374b4f02af6d52fc07c96679936", 770780},
+				{"english.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::HB_ISR,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
 	{	// UK multilanguage PSX CD
 		{
 			"dw",
