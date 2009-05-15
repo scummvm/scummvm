@@ -486,6 +486,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	af2bd1a43b50b55915d87994e093203d	34829	de	Windows	HE 99	Updated	-	Lightkey
 	57a5cfec9ef231a007043cc1917e8988	-1	en	Wii	HE 100	-	-	sanguinehearts
 
+	c7c492a107ec520d7a7943037d0ca54a	-1	nl	Windows	HE 71	Demo	-	DarthBo
 	084ed0fa98a6d1e9368d67fe9cfbd417	-1	en	Windows	HE 71	Demo	-	khalek
 	c8aac5e3e701874e2fa4117896f9e1b1	-1	en	Mac	HE 73	Demo	-	khalek, sev
 	0855496dde35356b1a9691e22ba84cdc	-1	en	Windows	HE 73	Demo	-	khalek
@@ -505,6 +506,7 @@ freddi2	Freddi Fish 2: The Case of the Haunted Schoolhouse
 	8ee63cafb1fe9d62aa0d5a23117e70e7	-1	us	All	HE 100	Updated	-	Kirben
 	e41de1c2a15abbcdbf9977e2d7e8a340	-1	ru	Windows	HE 100	Updated	-	sev
 
+	c20848f53c2d48bfacdc840993843765	-1	nl	Windows	HE 80	Demo	-	DarthBo
 	fc8d197a22146e74766e9cb0cfcaf1da	27298	en	All	HE 80	Demo	-	khalek, sev
 	d37c55388294b66e53e7ced3af88fa68	-1	en	All	HE 100	Updated Demo	-	khalek
 
@@ -748,6 +750,7 @@ puttzoo	Putt-Putt Saves the Zoo
 
 	3486ede0f904789267d4bcc5537a46d4	-1	en	Mac	-	Demo	-	khalek
 	d220d154aafbfa12bd6f3ab1b2dae420	-1	de	Mac	-	Demo	-	Joachim Eberhard
+	aa81aa6d5545ce172fdba81f2e2f9d36	-1	nl	Windows	-	Demo	-	DarthBo
 	de4efb910210736813c9a1185384bace	-1	en	Windows	HE 72	Demo	-	khalek
 	f3d55aea441e260e9e9c7d2a187097e0	14337	en	Windows	-	Demo	-	khalek
 	65fa23d6884e8ca23d5d2406d70de7e8	-1	fr	Windows	-	Demo	-	gist974
