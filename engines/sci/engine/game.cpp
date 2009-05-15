@@ -408,7 +408,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 		return 1;
 	}
 
-	s->script_000 = s->seg_manager->getScript(s->script_000_segment, SEG_ID);
+	s->script_000 = s->seg_manager->getScript(s->script_000_segment);
 
 	s->sys_strings = s->seg_manager->allocateSysStrings(&s->sys_strings_segment);
 	s->string_frag_segment = s->seg_manager->allocateStringFrags();

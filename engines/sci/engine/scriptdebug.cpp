@@ -639,7 +639,7 @@ int c_segkill(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	while (i < cmdParams.size()) {
 		int nr = cmdParams[i++].val;
 
-		s->seg_manager->getScript(nr, SEG_ID)->setLockers(0);
+		s->seg_manager->getScript(nr)->setLockers(0);
 	}
 	return 0;
 }
@@ -2551,7 +2551,7 @@ int objinfo(EngineState *s, reg_t pos) {
 		sciprintf("    [%03x] %s = "PREG"\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
 	if (s->seg_manager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
-		sciprintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment, SEG_ID)->nr);
+		sciprintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
 
 	return 0;
 }

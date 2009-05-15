@@ -222,7 +222,7 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 			}
 		} else
 			if (caller.segment != the_class->reg.segment)
-				s->seg_manager->getScript(the_class->reg.segment, SEG_ID)->incrementLockers();
+				s->seg_manager->getScript(the_class->reg.segment)->incrementLockers();
 
 		return the_class->reg;
 	}
@@ -252,17 +252,15 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 // Returns an object's superclass
 
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
-	int seg;
-	uint16 temp;
+	int seg = s->seg_manager->segGet(script);
+	Script *scr = s->seg_manager->getScriptIfLoaded(seg);
 
-	seg = s->seg_manager->segGet(script);
-
-	if (!s->seg_manager->scriptIsLoaded(seg, SEG_ID))  // Script not present yet?
+	if (!scr)  // Script not present yet?
 		seg = script_instantiate(s, script);
 	else
-		s->seg_manager->getScript(seg, SEG_ID)->unmarkDeleted();
+		scr->unmarkDeleted();
 
-	temp = s->seg_manager->validateExportFunc(pubfunct, seg);
+	int temp = s->seg_manager->validateExportFunc(pubfunct, seg);
 	if (!temp) {
 		sciprintf("Request for invalid exported function 0x%x of script 0x%x\n", pubfunct, script);
 		script_error_flag = script_debug_flag = 1;
@@ -528,7 +526,7 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 }
 
 static Script *script_locate_by_segment(EngineState *s, SegmentId seg) {
-	return s->seg_manager->getScriptIfLoaded(seg, SEG_ID);
+	return s->seg_manager->getScriptIfLoaded(seg);
 }
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
@@ -1591,7 +1589,7 @@ SegmentId script_get_segment(EngineState *s, int script_nr, int load) {
 
 	if (segment > 0) {
 		if ((load & SCRIPT_GET_LOCK) == SCRIPT_GET_LOCK)
-			s->seg_manager->getScript(segment, SEG_ID)->incrementLockers();
+			s->seg_manager->getScript(segment)->incrementLockers();
 
 		return segment;
 	} else
@@ -1713,7 +1711,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	reg.segment = seg_id;
 	reg.offset = 0;
 
-	Script *scr = s->seg_manager->getScript(seg_id, SEG_ID);
+	Script *scr = s->seg_manager->getScript(seg_id);
 
 	if (s->flags & GF_SCI0_OLD) {
 		//
@@ -1861,7 +1859,7 @@ int script_instantiate_sci11(EngineState *s, int script_nr) {
 	if (was_new)
 		return seg_id;
 
-	Script *scr = s->seg_manager->getScript(seg_id, SEG_ID);
+	Script *scr = s->seg_manager->getScript(seg_id);
 
 	heap_start = script->size;
 	if (script->size & 2)
@@ -1896,7 +1894,7 @@ int script_instantiate(EngineState *s, int script_nr) {
 void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 	reg_t reg = make_reg(seg, (s->flags & GF_SCI0_OLD) ? 2 : 0);
 	int objtype, objlength;
-	Script *scr = s->seg_manager->getScript(seg, SEG_ID);
+	Script *scr = s->seg_manager->getScript(seg);
 
 	// Make a pass over the object in order uninstantiate all superclasses
 	objlength = 0;

@@ -184,8 +184,8 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	clone_obj->_variables[SCRIPT_SPECIES_SELECTOR] = clone_obj->pos;
 	if (IS_CLASS(parent_obj))
 		clone_obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = parent_obj->pos;
-	s->seg_manager->getScript(parent_obj->pos.segment, SEG_ID)->incrementLockers();
-	s->seg_manager->getScript(clone_obj->pos.segment, SEG_ID)->incrementLockers();
+	s->seg_manager->getScript(parent_obj->pos.segment)->incrementLockers();
+	s->seg_manager->getScript(clone_obj->pos.segment)->incrementLockers();
 
 	return clone_addr;
 }
@@ -243,7 +243,7 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!scriptid)
 		return NULL_REG;
 
-	scr = s->seg_manager->getScript(scriptid, SEG_ID);
+	scr = s->seg_manager->getScript(scriptid);
 
 	if (!scr->exports_nr) {
 		SCIkdebug(SCIkERROR, "Script 0x%x does not have a dispatch table\n", script);
@@ -266,7 +266,7 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 
 	int id = s->seg_manager->segGet(script);
-	Script *scr = s->seg_manager->getScriptIfLoaded(id, SEG_ID);
+	Script *scr = s->seg_manager->getScriptIfLoaded(id);
 	if (scr) {
 		if (s->_executionStack[s->execution_stack_pos].addr.pc.segment != id)
 			scr->setLockers(1);

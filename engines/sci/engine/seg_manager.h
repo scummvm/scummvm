@@ -32,12 +32,6 @@
 
 namespace Sci {
 
-// SCRIPT_ID must be 0
-enum idFlag {
-	SCRIPT_ID,
-	SEG_ID
-};
-
 #define GET_SEGMENT(mgr, index, rtype) (((index) > 0 && (int)(mgr)._heap.size() > index) ?		\
 		(((mgr)._heap[index] && (mgr)._heap[index]->getType() == rtype)? (mgr)._heap[index]	: NULL) : NULL)
 
@@ -77,12 +71,9 @@ public:
 
 	/**
 	 * Determines whether a script has been loaded yet.
-	 * @param id	number of the script or ID of the script segment to check for
-	 * @param flag	whether to address the script by script number (SCRIPT_ID) or
-	 *				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	 *				but less convenient.
+	 * @param seg	ID of the script segment to check for
 	 */
-	int scriptIsLoaded(int id, idFlag flag);
+	bool scriptIsLoaded(int seg);
 
 	// Validate whether the specified public function is exported by the script in the specified segment
 	// Parameters:	(int) pubfunct: Index of the function to validate
@@ -99,24 +90,17 @@ public:
 	/**
 	 * Return a pointer to the specified script. If the id is invalid, does not refer
 	 * to a script or the script is not loaded, this will invoke error().
-	 * @param id	number of the script or ID of the script segment to check for
-	 * @param flag	whether to address the script by script number (SCRIPT_ID) or
-	 *				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	 *				but less convenient.
+	 * @param seg	ID of the script segment to check for
 	 * @return pointer to the Script object
 	 */
-	Script *getScript(int id, idFlag flag);
+	Script *getScript(int seg);
 
 	/**
 	 * Return a pointer to the specified script. If the id is invalid, does not refer
-	 * to a script or the script is not loaded, this will return NULL.
-	 * @param id	number of the script or ID of the script segment to check for
-	 * @param flag	whether to address the script by script number (SCRIPT_ID) or
-	 *				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	 *				but less convenient.
+	 * @param seg	ID of the script segment to check for
 	 * @return pointer to the Script object, or NULL
 	 */
-	Script *getScriptIfLoaded(int id, idFlag flag);
+	Script *getScriptIfLoaded(int seg);
 
 
 
