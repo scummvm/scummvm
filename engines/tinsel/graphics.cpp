@@ -30,6 +30,7 @@
 #include "tinsel/palette.h"
 #include "tinsel/scene.h"
 #include "tinsel/tinsel.h"
+#include "tinsel/scn.h"
 
 namespace Tinsel {
 
@@ -46,10 +47,10 @@ extern uint8 transPalette[MAX_COLOURS];
 
 /**
  * PSX Block list unwinder.
- * Chunk type 0x3 in PSX version of Discworld 1 is compressed, thus we need to decompress
- * it before passing data to drawing functions
+ * Chunk type 0x0003 (CHUNK_CHARPTR) in PSX version of DW 1 & 2 is compressed (original code
+ * calls the compression PJCRLE), thus we need to decompress it before passing data to drawing functions
  */
-uint8* psxBlockListUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
+uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 	uint32 remainingBlocks = 0;
 
 	uint16 compressionType = 0; // Kind of decompression to apply 
@@ -70,14 +71,6 @@ uint8* psxBlockListUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx
 	destinationBuffer = (uint8*)malloc((imageWidth * imageHeight) / 8);
 	dstIdx = destinationBuffer;
 	remainingBlocks = (imageWidth * imageHeight) / 16;
-
-	controlData = READ_LE_UINT16(srcIdx);
-
-	// Get to index data 
-	if ( (controlData & 0xff) == 0x88) // These images go straight to compressed index data
-		srcIdx += 2;		
-	else  // In this case we have to skip psx CLUT before getting to data
-		srcIdx += 32;
 
 	while (remainingBlocks) { // Repeat until all blocks are decompressed
 		if (!controlBits) {
@@ -223,7 +216,7 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
  * Straight rendering with transparency support, PSX variant supporting also 4-BIT clut data
  * TODO: finish supporting 4-bit data
  */
-static void PsxWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool fourBitClut, uint32 palStart) {
+static void PsxWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool fourBitClut, uint32 psxSkipBytes, uint32 palStart) {
 	// Set up the offset between destination blocks
 	int rightClip = applyClipping ? pObj->rightClip : 0;
 	Common::Rect boxBounds;
@@ -289,9 +282,9 @@ static void PsxWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool appl
 				// In case we have a 4-bit CLUT image, blocks are 2x4, then expanded into 4x4
 				const uint8 *p;
 				if (fourBitClut)
-					p = (uint8 *)pObj->charBase + (indexVal << 3);
+					p = (uint8 *)pObj->charBase + psxSkipBytes + (indexVal << 3);
 				else
-					p = (uint8 *)pObj->charBase + (indexVal << 4);
+					p = (uint8 *)pObj->charBase + psxSkipBytes + (indexVal << 4);
 
 				p += boxBounds.top * (fourBitClut ? sizeof(uint16) : sizeof(uint32));
 				for (int yp = boxBounds.top; yp <= boxBounds.bottom; ++yp, p += (fourBitClut ? sizeof(uint16) : sizeof(uint32))) {
@@ -752,7 +745,9 @@ void DrawObject(DRAWOBJECT *pObj) {
 	uint8 *srcPtr = NULL;
 	uint8 *destPtr;
 
-	bool psxFourBitClut = false; // Used for PSX version, to check if image is in 4-bit CLUT mode
+	bool psxFourBitClut; // Used by Tinsel PSX, true if an image using a 4bit CLUT is rendered
+	bool psxRLEindex; // Used by Tinsel PSX, true if an image is using PJCRLE compressed indexes
+	uint32 psxSkipBytes; // Used by Tinsel PSX, number of bytes to skip before counting indexes for image tiles
 
 	if ((pObj->width <= 0) || (pObj->height <= 0))
 		// Empty image, so return immediately
@@ -770,11 +765,51 @@ void DrawObject(DRAWOBJECT *pObj) {
 			srcPtr = p + (pObj->hBits & OFFSETMASK);
 			pObj->charBase = (char *)p + READ_LE_UINT32(p + 0x10);
 			pObj->transOffset = READ_LE_UINT32(p + 0x14);
-	
+
 			// Decompress block indexes for Discworld PSX
 			if (TinselV1PSX) {
-				psxFourBitClut = (READ_LE_UINT16(srcPtr) != 0xCC88) ? true : false;
-				srcPtr = psxBlockListUnwinder(pObj->width, pObj->height, srcPtr);
+				uint8 paletteType = *(srcPtr); // if 0x88 we are using an 8bit palette type, if 0x44 we are using a 4 bit PSX CLUT
+				uint8 indexType = *(srcPtr + 1); // if 0xCC indexes for this image are compressed with PCJRLE, if 0xDD indexes are not compressed
+			
+				switch (paletteType) {
+					case 0x88: // Normal 8-bit palette
+						psxFourBitClut = false; 
+						psxSkipBytes = 0;
+						switch (indexType) {
+							case 0xDD: // Normal uncompressed indexes
+								psxRLEindex = false;
+								srcPtr += sizeof(uint16); // Get to the beginning of index data
+								break;
+							case 0xCC: // PJCRLE compressed indexes
+								psxRLEindex = true;
+								srcPtr = psxPJCRLEUnwinder(pObj->width, pObj->height, srcPtr + sizeof(uint16));
+								break;
+							default:
+								error("Unknown PSX index type 0x%.2X", indexType);
+								break;
+						}
+						break;
+					case 0x44: // PSX 4-bit CLUT
+						psxFourBitClut = true;
+						psxSkipBytes = READ_LE_UINT32(p + sizeof(uint32) * 5) << 4; // Fetch number of bytes we have to skip
+						switch (indexType) {
+							case 0xDD: // Normal uncompressed indexes
+								psxRLEindex = false;
+								srcPtr += sizeof(uint16) * 17; // Skip image type and clut, and get to beginning of index data
+								break;
+							case 0xCC: // PJCRLE compressed indexes
+								psxRLEindex = true;
+								srcPtr = psxPJCRLEUnwinder(pObj->width, pObj->height, srcPtr + sizeof(uint16) * 17);
+								break;
+							default:
+								error("Unknown PSX index type 0x%.2X", indexType);
+								break;
+						}
+						break;
+					default:
+						error("Unknown PSX palette type 0x%.2X", paletteType);
+						break;
+				}
 			}
 		}
 
@@ -842,7 +877,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x08:
 		case 0x41:
 		case 0x48:
-			PsxWrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, pObj->pPal->posInDAC);
+			PsxWrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, pObj->pPal->posInDAC);
 			break;
 
 		case 0x04:
@@ -907,7 +942,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 
 	// If we were using Discworld PSX, free the memory allocated
 	// for decompressed block indexes.
-	if (TinselV1PSX)
+	if (TinselV1PSX && psxRLEindex)
 		free(srcPtr);
 }
 
