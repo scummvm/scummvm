@@ -35,8 +35,8 @@ struct backgroundIncrustStruct {
 	uint16 objectIdx;
 	int16 type;
 	uint16 overlayIdx;
-	uint16 X;
-	uint16 Y;
+	int16 X;
+	int16 Y;
 	uint16 field_E;
 	uint16 scale;
 	uint16 backgroundIdx;

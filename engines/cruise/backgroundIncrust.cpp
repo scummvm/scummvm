@@ -52,7 +52,11 @@ void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width
 	pIncrust->ptr = (uint8*)malloc(width * height);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			pIncrust->ptr[i * width + j] = pBackground[(i+Y) * 320 + j + X];
+			int xp = j + X;
+			int yp = i + Y;
+
+			pIncrust->ptr[i * width + j] = ((xp < 0) || (yp < 0) || (xp >= 320) || (yp >= 200)) ?
+				0 : pBackground[yp * 320 + xp];
 		}
 	}
 }
