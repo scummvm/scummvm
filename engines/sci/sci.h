@@ -77,17 +77,7 @@ enum SciGameVersions {
 	SCI_VERSION_32 = 8
 };
 
-static const char *versionNames[9] = {
-	"Autodetected",
-	"SCI0",
-	"SCI01 EGA",
-	"SCI01 VGA",
-	"SCI01 VGA ODD",
-	"SCI1 early",
-	"SCI1 late",
-	"SCI1.1",
-	"SCI32"
-};
+extern const char *versionNames[9];
 
 enum SciGameFlags {
 	/*

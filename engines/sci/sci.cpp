@@ -43,6 +43,19 @@ namespace Sci {
 
 extern gfx_driver_t gfx_driver_scummvm;
 
+const char *versionNames[9] = {
+	"Autodetected",
+	"SCI0",
+	"SCI01 EGA",
+	"SCI01 VGA",
+	"SCI01 VGA ODD",
+	"SCI1 early",
+	"SCI1 late",
+	"SCI1.1",
+	"SCI32"
+};
+
+
 int c_quit(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	script_abort_flag = 1; // Terminate VM
 	_debugstate_valid = 0;
