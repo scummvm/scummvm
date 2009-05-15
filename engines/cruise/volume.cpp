@@ -27,7 +27,7 @@
 
 namespace Cruise {
 
-FILE *PAL_fileHandle = NULL;
+Common::File PAL_file;
 uint8 *PAL_ptr = NULL;
 
 int16 numLoadedPal;
@@ -38,30 +38,27 @@ char currentBaseName[15] = "";
 void loadPal(volumeDataStruct *entry) {
 	char name[20];
 
+	// This code isn't currently being used, so return
 	return;
 
-	if (PAL_fileHandle) {
-		fclose(PAL_fileHandle);
-	}
+	if (PAL_file.isOpen())
+		PAL_file.close();
 
 	removeExtention(entry->ident, name);
 	strcat(name, ".PAL");
 
-	// FIXME: using fopen/fread is not portable. Use Common::File instead
-	PAL_fileHandle = fopen(name, "rb");
+	if (!PAL_file.open(name))
+		return;
 
-	fread(&numLoadedPal, 2, 1, PAL_fileHandle);
-	fread(&fileData2, 2, 1, PAL_fileHandle);
+	numLoadedPal = PAL_file.readSint16BE();
+	fileData2 = PAL_file.readSint16BE();
 
-	flipShort(&numLoadedPal);
-	flipShort(&fileData2);
-
-	PAL_ptr = (uint8 *) malloc(numLoadedPal * fileData2);
+	PAL_ptr = (uint8 *)malloc(numLoadedPal * fileData2);
 }
 
 void closePal(void) {
-	if (PAL_fileHandle) {
-		fclose(PAL_fileHandle);
+	if (PAL_file.isOpen()) {
+		PAL_file.close();
 
 		free(PAL_ptr);
 		PAL_ptr = NULL;
@@ -80,7 +77,7 @@ int closeBase(void) {
 		strcpy(currentBaseName, "");
 	}
 
-	if (PAL_fileHandle) {
+	if (PAL_file.isOpen()) {
 		closePal();
 	}
 
