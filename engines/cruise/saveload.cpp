@@ -459,11 +459,7 @@ static void syncIncrust(Common::Serializer &s) {
 		s.syncAsSint16LE(t->scriptNumber);
 		s.syncAsSint16LE(t->scriptOverlayIdx);
 		s.syncAsUint32LE(dummyLong);
-
-		int tmp = t->saveWidth / 2;
-		s.syncAsSint16LE(tmp);
-		t->saveWidth = tmp * 2;
-
+		s.syncAsSint16LE(t->saveWidth);
 		s.syncAsSint16LE(t->saveHeight);
 		s.syncAsSint16LE(t->saveSize);
 		s.syncAsSint16LE(t->savedX);
