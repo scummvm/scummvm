@@ -31,7 +31,7 @@
 // or something like that.
 
 #include "sci/gfx/gfx_resource.h"
-#include "sci/scicore/resource.h"
+#include "sci/resource.h"
 
 #include "common/hashmap.h"
 

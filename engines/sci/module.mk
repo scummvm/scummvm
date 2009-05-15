@@ -2,10 +2,14 @@ MODULE := engines/sci
 
 MODULE_OBJS = \
 	console.o \
+	decompressor.o \
 	detection.o \
 	exereader.o \
+	resource.o \
 	sci.o \
 	tools.o \
+	vocabulary.o \
+	vocab_debug.o \
 	engine/game.o \
 	engine/gc.o \
 	engine/grammar.o \
@@ -26,8 +30,8 @@ MODULE_OBJS = \
 	engine/message.o \
 	engine/said.o \
 	engine/savegame.o \
+	engine/sciconsole.o \
 	engine/script.o \
-	engine/scriptconsole.o \
 	engine/scriptdebug.o \
 	engine/seg_manager.o \
 	engine/stringfrag.o \
@@ -52,10 +56,6 @@ MODULE_OBJS = \
 	gfx/res_pic.o \
 	gfx/res_view0.o \
 	gfx/res_view1.o \
-	scicore/decompressor.o \
-	scicore/resource.o \
-	scicore/vocabulary.o \
-	scicore/vocab_debug.o \
 	sfx/adlib_sbi.o \
 	sfx/core.o \
 	sfx/iterator.o \

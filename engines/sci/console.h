@@ -29,7 +29,7 @@
 #define SCI_CONSOLE_H
 
 #include "gui/debugger.h"
-#include "sci/scicore/sciconsole.h"
+#include "sci/engine/sciconsole.h"
 
 namespace Sci {
 

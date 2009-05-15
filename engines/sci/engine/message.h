@@ -26,7 +26,7 @@
 #ifndef SCI_ENGINE_MESSAGE_H
 #define SCI_ENGINE_MESSAGE_H
 
-#include "sci/scicore/resource.h"
+#include "sci/resource.h"
 #include "common/stack.h"
 
 namespace Sci {

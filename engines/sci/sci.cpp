@@ -30,8 +30,8 @@
 #include "engines/advancedDetector.h"
 #include "sci/sci.h"
 #include "sci/console.h"
-#include "sci/scicore/sciconsole.h"
 
+#include "sci/engine/sciconsole.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 

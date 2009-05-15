@@ -32,12 +32,12 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
+#include "sci/engine/sciconsole.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
-#include "sci/scicore/resource.h"
-#include "sci/scicore/sciconsole.h"
-#include "sci/scicore/vocabulary.h"
+#include "sci/resource.h"
+#include "sci/vocabulary.h"
 #include "sci/sfx/iterator.h"
 #include "sci/sfx/sci_midi.h"
 

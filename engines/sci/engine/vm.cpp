@@ -27,7 +27,7 @@
 #include "common/stack.h"
 
 #include "sci/sci.h"
-#include "sci/scicore/resource.h"
+#include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
 #include "sci/engine/kdebug.h"

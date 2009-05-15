@@ -29,7 +29,7 @@
 
 #include "common/error.h"
 #include "sci/sfx/songlib.h"
-#include "sci/scicore/resource.h"
+#include "sci/resource.h"
 
 namespace Sci {
 

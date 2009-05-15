@@ -36,7 +36,7 @@ int sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 ** Parameters: fmt: a printf-style format string
 **             ...: Additional parameters as defined in fmt
 ** Returns   : (int) 1
-** Implementation is in src/scicore/console.c
+** Implementation is in src/console.c
 */
 
 /** Find first set bit in bits and return its index. Returns 0 if bits is 0. */

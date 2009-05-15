@@ -31,7 +31,7 @@
 #include "common/archive.h"
 
 #include "sci/engine/vm.h"          // for Object
-#include "sci/scicore/decompressor.h"
+#include "sci/decompressor.h"
 
 namespace Common {
 class ReadStream;

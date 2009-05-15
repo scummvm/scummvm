@@ -32,9 +32,9 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/tools.h"
-#include "sci/scicore/resource.h"
-#include "sci/scicore/vocabulary.h"
-#include "sci/scicore/decompressor.h"
+#include "sci/resource.h"
+#include "sci/vocabulary.h"
+#include "sci/decompressor.h"
 
 namespace Sci {
 

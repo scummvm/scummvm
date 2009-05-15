@@ -29,7 +29,7 @@
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 
-#include "sci/scicore/resource.h"
+#include "sci/resource.h"
 
 namespace Sci {
 

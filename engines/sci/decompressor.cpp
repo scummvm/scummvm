@@ -29,7 +29,7 @@
 #include "common/endian.h"
 #include "common/debug.h"
 
-#include "sci/scicore/decompressor.h"
+#include "sci/decompressor.h"
 #include "sci/sci.h"
 
 namespace Sci {

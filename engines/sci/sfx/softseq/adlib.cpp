@@ -29,7 +29,7 @@
 
 #include "sound/fmopl.h"
 
-#include "sci/scicore/resource.h"
+#include "sci/resource.h"
 #include "sci/sfx/softseq/adlib.h"
 
 namespace Sci {
