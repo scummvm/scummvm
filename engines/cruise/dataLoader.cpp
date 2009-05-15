@@ -135,23 +135,23 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 	pCurrentFileEntry->subData.ptr = buffer;
 }
 
-int updateResFileEntry(int height, int width, int entryNumber, int resType) {
+int updateResFileEntry(int height, int width, int size, int entryNumber, int resType) {
 	int div = 0;
 
 	resetFileEntry(entryNumber);
 
 	filesDatabase[entryNumber].subData.compression = 0;
 
-	int maskSize = height * width;	// for sprites: width * height
+	int maskSize = size;
 
 	if (resType == 4) {
 		div = maskSize / 4;
 	} else if (resType == 5) {
 		width = (width * 8) / 5;
-		maskSize = height * width;
+		maskSize = MAX(size, height * width);
 	}
 
-	filesDatabase[entryNumber].subData.ptr = (uint8 *) mallocAndZero(maskSize + div);
+	filesDatabase[entryNumber].subData.ptr = (uint8 *)mallocAndZero(maskSize + div);
 
 	if (!filesDatabase[entryNumber].subData.ptr)
 		return (-2);
@@ -166,11 +166,10 @@ int updateResFileEntry(int height, int width, int entryNumber, int resType) {
 	return entryNumber;
 }
 
-int createResFileEntry(int width, int height, int resType) {
+int createResFileEntry(int width, int height, int size, int resType) {
 	int i;
 	int entryNumber;
 	int div = 0;
-	int size;
 
 	printf("Executing untested createResFileEntry!\n");
 	exit(1);
@@ -187,8 +186,6 @@ int createResFileEntry(int width, int height, int resType) {
 	entryNumber = i;
 
 	filesDatabase[entryNumber].subData.compression = 0;
-
-	size = width * height;	// for sprites: width * height
 
 	if (resType == 4) {
 		div = size / 4;
@@ -360,9 +357,9 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 	flipLong(&loadFileVar1);
 
 	if (destIdx == -1) {
-		fileIndex = createResFileEntry(loadFileVar1, 1, 1);
+		fileIndex = createResFileEntry(loadFileVar1, 1, loadFileVar1, 1);
 	} else {
-		fileIndex = updateResFileEntry(loadFileVar1, 1, destIdx, 1);
+		fileIndex = updateResFileEntry(loadFileVar1, 1, loadFileVar1, destIdx, 1);
 	}
 
 	destPtr = filesDatabase[fileIndex].subData.ptr;
@@ -439,9 +436,9 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 			localBuffer.width -= 10;
 
 		if (currentDestEntry == -1) {
-			fileIndex = createResFileEntry(localBuffer.width, localBuffer.height, localBuffer.type);
+			fileIndex = createResFileEntry(localBuffer.width, localBuffer.height, resourceSize, localBuffer.type);
 		} else {
-			fileIndex = updateResFileEntry(localBuffer.height, localBuffer.width, currentDestEntry, localBuffer.type);
+			fileIndex = updateResFileEntry(localBuffer.height, localBuffer.width, resourceSize, currentDestEntry, localBuffer.type);
 		}
 
 		if (fileIndex < 0) {
@@ -458,6 +455,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		ptr5 = ptr3 + localBuffer.offset + numIdx * 16;
 
 		memcpy(filesDatabase[fileIndex].subData.ptr, ptr5, resourceSize);
+
 		ptr5 += resourceSize;
 
 		switch (localBuffer.type) {
