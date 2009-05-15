@@ -24,7 +24,7 @@
  */
 
 #include "common/scummsys.h"
-#include "sci/scicore/resource.h"
+#include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/sfx/seq/instrument-map.h"
 
