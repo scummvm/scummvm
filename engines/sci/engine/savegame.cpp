@@ -343,7 +343,7 @@ static void sync_Script(Common::Serializer &s, Script &obj) {
 	s.syncAsSint32LE(obj.locals_offset);
 	s.syncAsSint32LE(obj.locals_segment);
 
-	s.syncAsSint32LE(obj.marked_as_deleted);
+	s.syncAsSint32LE(obj._markedAsDeleted);
 }
 
 static void sync_SystemString(Common::Serializer &s, SystemString &obj) {

@@ -330,7 +330,7 @@ struct Script : public MemObject {
 
 	Common::Array<CodeBlock> _codeBlocks;
 	int relocated;
-	int marked_as_deleted;
+	bool _markedAsDeleted;
 
 public:
 	Script() {
@@ -351,7 +351,7 @@ public:
 		locals_block = NULL;
 
 		relocated = 0;
-		marked_as_deleted = 0;
+		_markedAsDeleted = 0;
 	}
 
 	~Script() {
@@ -367,6 +367,90 @@ public:
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
+	// script lock operations
+
+	/** Increments the number of lockers of this script by one. */
+	void incrementLockers();
+
+	/** Decrements the number of lockers of this script by one. */
+	void decrementLockers();
+
+	/**
+	 * Retrieves the number of locks held on this script.
+	 * @return the number of locks held on the previously identified script
+	 */
+	int getLockers() const;
+
+	/** Sets the number of locks held on this script. */
+	void setLockers(int lockers);
+
+	/**
+	 * Retrieves a pointer to the synonyms associated with this script
+	 * @return	pointer to the synonyms, in non-parsed format.
+	 */
+	byte *getSynonyms() const;
+
+	/**
+	 * Retrieves the number of synonyms associated with this script.
+	 * @return	the number of synonyms associated with this script
+	 */
+	int getSynonymsNr() const;
+
+
+	/**
+	 * Sets the script-relative offset of the exports table.
+	 * @param offset	script-relative exports table offset
+	 */
+	void setExportTableOffset(int offset);
+
+	/**
+	 * Sets the script-relative offset of the synonyms associated with this script.
+	 * @param offset	script-relative offset of the synonyms block
+	 */
+	void setSynonymsOffset(int offset);
+
+	/**
+	 * Sets the number of synonyms associated with this script,
+	 * @param nr		number of synonyms, as to be stored within the script
+	 */
+	void setSynonymsNr(int nr);
+
+
+	/**
+	 * Copies a byte string into a script's heap representation.
+	 * @param dst	script-relative offset of the destination area
+	 * @param src	pointer to the data source location
+	 * @param n		number of bytes to copy
+	 */
+	void mcpyInOut(int dst, const void *src, size_t n);
+
+
+	/**
+	 * Marks the script as deleted.
+	 * This will not actually delete the script.  If references remain present on the
+	 * heap or the stack, the script will stay in memory in a quasi-deleted state until
+	 * either unreachable (resulting in its eventual deletion) or reloaded (resulting
+	 * in its data being updated).
+	 */
+	void markDeleted() {
+		_markedAsDeleted = true;
+	}
+
+	/**
+	 * Marks the script as not deleted.
+	 */
+	void unmarkDeleted() {
+		_markedAsDeleted = false;
+	}
+
+	/**
+	 * Determines whether the script is marked as being deleted.
+	 */
+	bool isMarkedAsDeleted() const {
+		return _markedAsDeleted;
+	}
+
 };
 
 /** Data stack */

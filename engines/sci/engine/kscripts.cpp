@@ -184,8 +184,8 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	clone_obj->_variables[SCRIPT_SPECIES_SELECTOR] = clone_obj->pos;
 	if (IS_CLASS(parent_obj))
 		clone_obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = parent_obj->pos;
-	s->seg_manager->incrementLockers(parent_obj->pos.segment, SEG_ID);
-	s->seg_manager->incrementLockers(clone_obj->pos.segment, SEG_ID);
+	s->seg_manager->getScript(parent_obj->pos.segment, SEG_ID)->incrementLockers();
+	s->seg_manager->getScript(clone_obj->pos.segment, SEG_ID)->incrementLockers();
 
 	return clone_addr;
 }
@@ -269,7 +269,7 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int id = s->seg_manager->segGet(script);
 
 		if (s->_executionStack[s->execution_stack_pos].addr.pc.segment != id)
-			s->seg_manager->setLockers(1, script, SCRIPT_ID);
+			s->seg_manager->getScript(id, SEG_ID)->setLockers(1);
 	}
 
 	script_uninstantiate(s, script);

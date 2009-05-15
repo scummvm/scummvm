@@ -97,55 +97,6 @@ public:
 	Script *getScript(int id, idFlag flag);
 
 
-	// script lock operations
-
-	// Increments the number of lockers of the script in question by one
-	// Parameters: (int) id: ID of the script or script segment to modify
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	void incrementLockers(int id, idFlag flag);
-
-	// Decrements the number of lockers of the script in question by one
-	// Parameters: (int) id: ID of the script or script segment to modify
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	void decrementLockers(int id, idFlag flag);
-
-	// Retrieves the number of locks held on this script
-	// Parameters: (int) id: ID of the script or script segment to read from
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	// Returns   : (int) The number of locks held on the previously identified script
-	int getLockers(int id, idFlag flag);
-
-	// Sets the number of locks held on the specified script
-	// Parameters: (int) id: ID of the script or script segment to modify
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	void setLockers(int lockers, int id, idFlag flag);
-
-	// Retrieves a pointer to the synonyms associated with the specified script
-	// Parameters: (int) id: ID of the script or script segment to read from
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	// Returns   : (byte *) Pointer to the synonyms, in non-parsed format.
-	// A dynamic failure is issued if the specified ID does not reference a proper script.
-	byte *getSynonyms(int id, idFlag flag);
-
-	// Retrieves the number of synonyms associated with the specified script
-	// Parameters: (int) id: ID of the script or script segment to read from
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	// Returns   : (int) The number of synonyms associated with the specified script
-	// A dynamic failure is issued if the specified ID does not reference a proper script.
-	int getSynonymsNr(int id, idFlag flag);
-
 
 	// 1b. Script Initialisation
 
@@ -186,50 +137,11 @@ public:
 	// objects have been instantiated, or a run-time error will occur.
 	void scriptRelocate(reg_t block);
 
-	// Sets the script-relative offset of the exports table
-	// Parameters: (int) offset: The script-relative exports table offset
-	//	       (int) id: ID of the script or script segment to write to
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	// A dynamic failure is issued if the specified ID does not reference a proper script.
-	void setExportTableOffset(int offset, int id, idFlag flag);
-
-	// Sets the script-relative offset of the synonyms associated with the specified script
-	// Parameters: (int) offset: The script-relative offset of the synonyms block
-	//	       (int) id: ID of the script or script segment to write to
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	// A dynamic failure is issued if the specified ID does not reference a proper script.
-	void setSynonymsOffset(int offset, int id, idFlag flag);
-
-	// Sets the number of synonyms associated with the specified script
-	// Parameters: (int) nr: The number of synonyms, as to be stored within the script
-	//	       (int) id: ID of the script or script segment to write to
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	// A dynamic failure is issued if the specified ID does not reference a proper script.
-	void setSynonymsNr(int nr, int id, idFlag flag);
-
-	// Marks the script identified by its script number as deleted
-	// Parameters: (int) script_nr: Script number to mark as deleted
-	// This will not actually delete the script.  If references remain present on the
-	// heap or the stack, the script will stay in memory in a quasi-deleted state until
-	// either unreachable (resulting in its eventual deletion) or reloaded (resulting
-	// in its data being updated).
-	void markScriptDeleted(int script_nr);
-
-	// Marks the script identified by its script number as not deleted
-	// Parameters: (int) script_nr: Script number to mark as not deleted
-	void unmarkScriptDeleted(int script_nr);
-
 	// Determines whether the script referenced by the indicated segment is marked as being deleted.
 	// Parameters: (SegmentId) Segment ID of the script to investigate
 	// Returns   : (int) 1 iff seg points to a script and the segment is deleted, 0 otherwise
 	// Will return 0 when applied to an invalid or non-script seg.
-	int scriptIsMarkedAsDeleted(SegmentId seg);
+	bool scriptIsMarkedAsDeleted(SegmentId seg);
 
 
 	// 2. Clones
@@ -248,17 +160,6 @@ public:
 	// Parameters: (reg_t) reg: The address to read from
 	// Returns   : (int16) The value read from the specified location
 	int16 getHeap(reg_t reg);
-
-	// Copies a byte string into a script's heap representation
-	// Parameters: (int) dst: The script-relative offset of the destination area
-	//	       (const void *) src: Pointer to the data source location
-	//	       (size_t) n: Number of bytes to copy
-	//	       (int) id: ID of the script or script segment to write to
-	//             (idFlag) flag: Whether to address the script by script number (SCRIPT_ID) or
-	//				by its segment (SEG_ID). SEG_ID is faster than SCRIPT_ID,
-	//				but less convenient.
-	// A dynamic failure is issued if the specified ID does not reference a proper script.
-	void mcpyInOut(int dst, const void *src, size_t n, int id, idFlag flag);
 
 
 	// 4. Stack
@@ -360,7 +261,6 @@ public:
 	void heapRelocate(EngineState *s, reg_t block);
 	void scriptRelocateExportsSci11(int seg);
 	void scriptInitialiseObjectsSci11(EngineState *s, int seg);
-	int scriptMarkedDeleted(int script_nr);
 	int initialiseScript(Script &scr, EngineState *s, int script_nr);
 
 private:

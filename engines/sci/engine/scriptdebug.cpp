@@ -639,7 +639,7 @@ int c_segkill(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	while (i < cmdParams.size()) {
 		int nr = cmdParams[i++].val;
 
-		s->seg_manager->setLockers(nr, 0, SEG_ID);
+		s->seg_manager->getScript(nr, SEG_ID)->setLockers(0);
 	}
 	return 0;
 }

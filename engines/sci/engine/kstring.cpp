@@ -200,12 +200,12 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		seg = s->seg_manager->segGet(script);
 
 		if (seg >= 0)
-			synonyms_nr = s->seg_manager->getSynonymsNr(seg, SEG_ID);
+			synonyms_nr = s->seg_manager->getScript(seg, SEG_ID)->getSynonymsNr();
 
 		if (synonyms_nr) {
 			byte *synonyms;
 
-			synonyms = s->seg_manager->getSynonyms(seg, SEG_ID);
+			synonyms = s->seg_manager->getScript(seg, SEG_ID)->getSynonyms();
 			if (synonyms) {
 				SCIkdebug(SCIkPARSER, "Setting %d synonyms for script.%d\n",
 				          synonyms_nr, script);

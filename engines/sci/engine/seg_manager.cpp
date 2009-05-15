@@ -193,7 +193,7 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 	scr._codeBlocks.clear();
 
 	scr.nr = script_nr;
-	scr.marked_as_deleted = 0;
+	scr._markedAsDeleted = false;
 	scr.relocated = 0;
 
 	scr.obj_indices = new IntMapper();
@@ -251,33 +251,18 @@ int SegManager::deallocate(int seg, bool recursive) {
 	return 1;
 }
 
-int SegManager::scriptMarkedDeleted(int script_nr) {
-	Script *scr = getScript(script_nr, SCRIPT_ID);
-	return scr->marked_as_deleted;
-}
-
-void SegManager::markScriptDeleted(int script_nr) {
-	Script *scr = getScript(script_nr, SCRIPT_ID);
-	scr->marked_as_deleted = 1;
-}
-
-void SegManager::unmarkScriptDeleted(int script_nr) {
-	Script *scr = getScript(script_nr, SCRIPT_ID);
-	scr->marked_as_deleted = 0;
-}
-
-int SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
+bool SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
 	Script *scr;
 
 	if (!check(seg))
-		return 0;
+		return false;
 
 	if (_heap[seg]->getType() != MEM_OBJ_SCRIPT)
-		return 0;
+		return false;
 
 	scr = (Script *)_heap[seg];
 
-	return scr->marked_as_deleted;
+	return scr->_markedAsDeleted;
 }
 
 
@@ -371,10 +356,10 @@ void Script::freeScript() {
 
 // memory operations
 
-void SegManager::mcpyInOut(int dst, const void *src, size_t n, int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-	if (scr->buf) {
-		memcpy(scr->buf + dst, src, n);
+void Script::mcpyInOut(int dst, const void *src, size_t n) {
+	if (buf) {
+		assert(dst + n <= buf_size);
+		memcpy(buf + dst, src, n);
 	}
 }
 
@@ -439,36 +424,30 @@ int SegManager::scriptIsLoaded(int id, idFlag flag) {
 	return check(id);
 }
 
-void SegManager::incrementLockers(int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-	scr->lockers++;
+void Script::incrementLockers() {
+	lockers++;
 }
 
-void SegManager::decrementLockers(int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-	if (scr->lockers > 0)
-		scr->lockers--;
+void Script::decrementLockers() {
+	if (lockers > 0)
+		lockers--;
 }
 
-int SegManager::getLockers(int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-	return scr->lockers;
+int Script::getLockers() const {
+	return lockers;
 }
 
-void SegManager::setLockers(int lockers, int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-	scr->lockers = lockers;
+void Script::setLockers(int lockers_) {
+	lockers = lockers_;
 }
 
-void SegManager::setExportTableOffset(int offset, int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-
+void Script::setExportTableOffset(int offset) {
 	if (offset) {
-		scr->export_table = (uint16 *)(scr->buf + offset + 2);
-		scr->exports_nr = READ_LE_UINT16((byte *)(scr->export_table - 1));
+		export_table = (uint16 *)(buf + offset + 2);
+		exports_nr = READ_LE_UINT16((byte *)(export_table - 1));
 	} else {
-		scr->export_table = NULL;
-		scr->exports_nr = 0;
+		export_table = NULL;
+		exports_nr = 0;
 	}
 }
 
@@ -476,24 +455,20 @@ void SegManager::setExportWidth(int flag) {
 	exports_wide = flag;
 }
 
-void SegManager::setSynonymsOffset(int offset, int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-	scr->synonyms = scr->buf + offset;
+void Script::setSynonymsOffset(int offset) {
+	synonyms = buf + offset;
 }
 
-byte *SegManager::getSynonyms(int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-	return scr->synonyms;
+byte *Script::getSynonyms() const {
+	return synonyms;
 }
 
-void SegManager::setSynonymsNr(int nr, int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-	scr->synonyms_nr = nr;
+void Script::setSynonymsNr(int n) {
+	synonyms_nr = n;
 }
 
-int SegManager::getSynonymsNr(int id, idFlag flag) {
-	Script *scr = getScript(id, flag);
-	return scr->synonyms_nr;
+int Script::getSynonymsNr() const {
+	return synonyms_nr;
 }
 
 int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location) {
@@ -1149,7 +1124,7 @@ void Script::freeAtAddress(SegManager *segmgr, reg_t addr) {
 			sciprintf("[GC] Freeing locals %04x:0000\n", locals_segment);
 	*/
 
-	if (marked_as_deleted)
+	if (_markedAsDeleted)
 		segmgr->deallocateScript(nr);
 }
 

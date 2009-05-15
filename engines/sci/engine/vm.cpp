@@ -222,7 +222,7 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 			}
 		} else
 			if (caller.segment != the_class->reg.segment)
-				s->seg_manager->incrementLockers(the_class->reg.segment, SEG_ID);
+				s->seg_manager->getScript(the_class->reg.segment, SEG_ID)->incrementLockers();
 
 		return the_class->reg;
 	}
@@ -255,12 +255,12 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	int seg;
 	uint16 temp;
 
-	if (!s->seg_manager->scriptIsLoaded(script, SCRIPT_ID))  // Script not present yet?
+	seg = s->seg_manager->segGet(script);
+
+	if (!s->seg_manager->scriptIsLoaded(seg, SEG_ID))  // Script not present yet?
 		script_instantiate(s, script);
 	else
-		s->seg_manager->unmarkScriptDeleted(script);
-
-	seg = s->seg_manager->segGet(script);
+		s->seg_manager->getScript(seg, SEG_ID)->unmarkDeleted();
 
 	temp = s->seg_manager->validateExportFunc(pubfunct, seg);
 	if (!temp) {
@@ -528,11 +528,7 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 }
 
 static Script *script_locate_by_segment(EngineState *s, SegmentId seg) {
-	MemObject *memobj = GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
-	if (memobj)
-		return (Script *)memobj;
-
-	return NULL;
+	return (Script *)GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
 }
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
@@ -1595,7 +1591,7 @@ SegmentId script_get_segment(EngineState *s, int script_nr, int load) {
 
 	if (segment > 0) {
 		if ((load & SCRIPT_GET_LOCK) == SCRIPT_GET_LOCK)
-			s->seg_manager->incrementLockers(segment, SEG_ID);
+			s->seg_manager->getScript(segment, SEG_ID)->incrementLockers();
 
 		return segment;
 	} else
@@ -1604,7 +1600,6 @@ SegmentId script_get_segment(EngineState *s, int script_nr, int load) {
 
 reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 	SegmentId seg = script_get_segment(s, script_nr, SCRIPT_GET_DONT_LOAD);
-	MemObject *memobj;
 	Script *script = NULL;
 
 #ifndef DISABLE_VALIDATIONS
@@ -1616,10 +1611,7 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 	}
 #endif
 
-	memobj = GET_SEGMENT(*s->seg_manager, seg, MEM_OBJ_SCRIPT);
-
-	if (memobj)
-		script = (Script *)memobj;
+	script = script_locate_by_segment(s, seg);
 
 #ifndef DISABLE_VALIDATIONS
 	if (script
@@ -1643,9 +1635,7 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : get_class_address(s, id, SCRIPT_GET_LOCK, reg))
 
 int script_instantiate_common(EngineState *s, int script_nr, Resource **script, Resource **heap, int *was_new) {
-	int seg;
 	int seg_id;
-	int marked_for_deletion;
 	reg_t reg;
 
 	*was_new = 1;
@@ -1671,23 +1661,22 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 		return 0;
 	}
 
-	Script *scr = 0;
-	seg = s->seg_manager->segGet(script_nr);
-	if (s->seg_manager->scriptIsLoaded(script_nr, SCRIPT_ID)) {
-		marked_for_deletion = s->seg_manager->scriptMarkedDeleted(script_nr);
-		if (!marked_for_deletion) {
-			s->seg_manager->incrementLockers(seg, SEG_ID);
-			return seg;
+	seg_id = s->seg_manager->segGet(script_nr);
+	Script *scr = script_locate_by_segment(s, seg_id);
+	if (scr) {
+		if (!scr->isMarkedAsDeleted()) {
+			scr->incrementLockers();
+			return seg_id;
 		} else {
-			seg_id = seg;
-			scr = (Script *)s->seg_manager->_heap[seg];
-			assert(scr);
 			scr->freeScript();
 		}
-	} else if (!(scr = s->seg_manager->allocateScript(s, script_nr, &seg_id))) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
-		sciprintf("Not enough heap space for script size 0x%x of script 0x%x, should this happen?`\n", (*script)->size, script_nr);
-		script_debug_flag = script_error_flag = 1;
-		return 0;
+	} else {
+		scr = s->seg_manager->allocateScript(s, script_nr, &seg_id);
+		if (!scr) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
+			sciprintf("Not enough heap space for script size 0x%x of script 0x%x, should this happen?`\n", (*script)->size, script_nr);
+			script_debug_flag = script_error_flag = 1;
+			return 0;
+		}
 	}
 
 	s->seg_manager->initialiseScript(*scr, s, script_nr);
@@ -1696,10 +1685,10 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 	reg.offset = 0;
 
 	// Set heap position (beyond the size word)
-	s->seg_manager->setLockers(1, reg.segment, SEG_ID);
-	s->seg_manager->setExportTableOffset(0, reg.segment, SEG_ID);
-	s->seg_manager->setSynonymsOffset(0, reg.segment, SEG_ID);
-	s->seg_manager->setSynonymsNr(0, reg.segment, SEG_ID);
+	scr->setLockers(1);
+	scr->setExportTableOffset(0);
+	scr->setSynonymsOffset(0);
+	scr->setSynonymsNr(0);
 
 	*was_new = 0;
 
@@ -1724,6 +1713,8 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	reg.segment = seg_id;
 	reg.offset = 0;
 
+	Script *scr = s->seg_manager->getScript(seg_id, SEG_ID);
+
 	if (s->flags & GF_SCI0_OLD) {
 		//
 		int locals_nr = READ_LE_UINT16(script->data);
@@ -1733,14 +1724,14 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 		// Instead, the script starts with a 16 bit int specifying the
 		// number of locals we need; these are then allocated and zeroed.
 
-		s->seg_manager->mcpyInOut(0, script->data, script->size, reg.segment, SEG_ID);
+		scr->mcpyInOut(0, script->data, script->size);
 		magic_pos_adder = 2;  // Step over the funny prefix
 
 		if (locals_nr)
 			s->seg_manager->scriptInitialiseLocalsZero(reg.segment, locals_nr);
 
 	} else {
-		s->seg_manager->mcpyInOut(0, script->data, script->size, reg.segment, SEG_ID);
+		scr->mcpyInOut(0, script->data, script->size);
 		magic_pos_adder = 0;
 	}
 
@@ -1767,13 +1758,13 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 
 		switch (objtype) {
 		case SCI_OBJ_EXPORTS: {
-			s->seg_manager->setExportTableOffset(data_base.offset, reg.segment, SEG_ID);
+			scr->setExportTableOffset(data_base.offset);
 		}
 		break;
 
 		case SCI_OBJ_SYNONYMS:
-			s->seg_manager->setSynonymsOffset(addr.offset, reg.segment, SEG_ID);   // +4 is to step over the header
-			s->seg_manager->setSynonymsNr((objlength) / 4, reg.segment, SEG_ID);
+			scr->setSynonymsOffset(addr.offset);   // +4 is to step over the header
+			scr->setSynonymsNr((objlength) / 4);
 			break;
 
 		case SCI_OBJ_LOCALVARS:
@@ -1870,15 +1861,17 @@ int script_instantiate_sci11(EngineState *s, int script_nr) {
 	if (was_new)
 		return seg_id;
 
+	Script *scr = s->seg_manager->getScript(seg_id, SEG_ID);
+
 	heap_start = script->size;
 	if (script->size & 2)
 		heap_start ++;
 
-	s->seg_manager->mcpyInOut(0, script->data, script->size, seg_id, SEG_ID);
-	s->seg_manager->mcpyInOut(heap_start, heap->data, heap->size, seg_id, SEG_ID);
+	scr->mcpyInOut(0, script->data, script->size);
+	scr->mcpyInOut(heap_start, heap->data, heap->size);
 
 	if (READ_LE_UINT16(script->data + 6) > 0)
-		s->seg_manager->setExportTableOffset(6, seg_id, SEG_ID);
+		scr->setExportTableOffset(6);
 
 	reg.segment = seg_id;
 	reg.offset = heap_start + 4;
@@ -1903,6 +1896,7 @@ int script_instantiate(EngineState *s, int script_nr) {
 void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 	reg_t reg = make_reg(seg, (s->flags & GF_SCI0_OLD) ? 2 : 0);
 	int objtype, objlength;
+	Script *scr = s->seg_manager->getScript(seg, SEG_ID);
 
 	// Make a pass over the object in order uninstantiate all superclasses
 	objlength = 0;
@@ -1911,7 +1905,8 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 		reg.offset += objlength; // Step over the last checked object
 
 		objtype = SEG_GET_HEAP(s, reg);
-		if (!objtype) break;
+		if (!objtype)
+			break;
 		objlength = SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + 2));  // use SEG_UGET_HEAP ??
 
 		reg.offset += 4; // Step over header
@@ -1927,8 +1922,8 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 				int superclass_script = s->_classtable[superclass].script;
 
 				if (superclass_script == script_nr) {
-					if (s->seg_manager->getLockers(reg.segment, SEG_ID))
-						s->seg_manager->decrementLockers(reg.segment, SEG_ID);  // Decrease lockers if this is us ourselves
+					if (scr->getLockers())
+						scr->decrementLockers();  // Decrease lockers if this is us ourselves
 				} else
 					script_uninstantiate(s, superclass_script);
 				// Recurse to assure that the superclass lockers number gets decreased
@@ -1946,16 +1941,17 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 	reg_t reg = make_reg(0, (s->flags & GF_SCI0_OLD) ? 2 : 0);
 
 	reg.segment = s->seg_manager->segGet(script_nr);
+	Script *scr = script_locate_by_segment(s, reg.segment);
 
-	if (!s->seg_manager->scriptIsLoaded(script_nr, SCRIPT_ID) || reg.segment <= 0) {   // Is it already loaded?
+	if (!scr) {   // Is it already loaded?
 		//warning("unloading script 0x%x requested although not loaded", script_nr);
 		// This is perfectly valid SCI behaviour
 		return;
 	}
 
-	s->seg_manager->decrementLockers(reg.segment, SEG_ID);   // One less locker
+	scr->decrementLockers();   // One less locker
 
-	if (s->seg_manager->getLockers(reg.segment, SEG_ID) > 0)
+	if (scr->getLockers() > 0)
 		return;
 
 	// Free all classtable references to this script
@@ -1968,12 +1964,12 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 	else
 		sciprintf("FIXME: Add proper script uninstantiation for SCI 1.1\n");
 
-	if (s->seg_manager->getLockers(reg.segment, SEG_ID))
+	if (scr->getLockers())
 		return; // if xxx.lockers > 0
 
 	// Otherwise unload it completely
 	// Explanation: I'm starting to believe that this work is done by SCI itself.
-	s->seg_manager->markScriptDeleted(script_nr);
+	scr->markDeleted();
 
 	if (script_checkloads_flag)
 		sciprintf("Unloaded script 0x%x.\n", script_nr);
@@ -2064,17 +2060,17 @@ int game_run(EngineState **_s) {
 }
 
 Object *obj_get(EngineState *s, reg_t offset) {
-	MemObject *memobj = GET_OBJECT_SEGMENT(*s->seg_manager, offset.segment);
+	MemObject *mobj = GET_OBJECT_SEGMENT(*s->seg_manager, offset.segment);
 	Object *obj = NULL;
 	int idx;
 
-	if (memobj != NULL) {
-		if (memobj->getType() == MEM_OBJ_CLONES) {
-			CloneTable *ct = (CloneTable *)memobj;
+	if (mobj != NULL) {
+		if (mobj->getType() == MEM_OBJ_CLONES) {
+			CloneTable *ct = (CloneTable *)mobj;
 			if (ct->isValidEntry(offset.offset))
 				obj = &(ct->_table[offset.offset]);
-		} else if (memobj->getType() == MEM_OBJ_SCRIPT) {
-			Script *scr = (Script *)memobj;
+		} else if (mobj->getType() == MEM_OBJ_SCRIPT) {
+			Script *scr = (Script *)mobj;
 			if (offset.offset <= scr->buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 			        && RAW_IS_OBJECT(scr->buf + offset.offset)) {
 				idx = RAW_GET_CLASS_INDEX(scr, offset);
