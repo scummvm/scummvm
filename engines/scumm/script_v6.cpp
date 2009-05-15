@@ -232,6 +232,7 @@ void ScummEngine_v6::setupOpcodes() {
 	OPCODE(0xbb, o6_talkEgo);
 	/* BC */
 	OPCODE(0xbc, o6_dimArray);
+	OPCODE(0xbd, o6_dummy);
 	OPCODE(0xbe, o6_startObjectQuick);
 	OPCODE(0xbf, o6_startScriptQuick2);
 	/* C0 */
