@@ -26,11 +26,6 @@
 #ifndef CRUISE_CRUISE_MAIN_H
 #define CRUISE_CRUISE_MAIN_H
 
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>	// FIXME: WINCE: this is not needed/not portable (probably applies to all above includes)
-
-
 #include "common/scummsys.h"
 #include "common/savefile.h"
 
