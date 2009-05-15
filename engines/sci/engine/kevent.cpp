@@ -40,7 +40,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[1];
 	sci_event_t e;
 	int oldx, oldy;
-	int modifier_mask = SCI_VERSION_MAJOR(s->version) == 0 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
+	int modifier_mask = s->version <= SCI_VERSION_0 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
 
 	if (s->kernel_opt_flags & KERNEL_OPT_FLAG_GOT_2NDEVENT) {
 		// Penalty time- too many requests to this function without

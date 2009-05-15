@@ -174,12 +174,12 @@ public:
 #define SCRIPT_FUNCTAREAPTR_MAGIC 8 -8
 
 /** Offset of the name pointer */
-#define SCRIPT_NAME_OFFSET (s->version < SCI_VERSION(1,001,000) ? 14 -8 : 16)
-#define SCRIPT_NAME_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 3 : 8)
+#define SCRIPT_NAME_OFFSET (s->version < SCI_VERSION_1_1 ? 14 -8 : 16)
+#define SCRIPT_NAME_SELECTOR (s->version < SCI_VERSION_1_1 ? 3 : 8)
 
 /** Object-relative offset of the -info- selector */
-#define SCRIPT_INFO_OFFSET (s->version < SCI_VERSION(1,001,000) ? 12 -8 : 14)
-#define SCRIPT_INFO_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 2 : 7)
+#define SCRIPT_INFO_OFFSET (s->version < SCI_VERSION_1_1 ? 12 -8 : 14)
+#define SCRIPT_INFO_SELECTOR (s->version < SCI_VERSION_1_1 ? 2 : 7)
 
 /** Flag fo the -info- selector */
 #define SCRIPT_INFO_CLONE 0x0001
@@ -191,18 +191,18 @@ public:
 /** Magical object identifier */
 #define SCRIPT_OBJECT_MAGIC_NUMBER 0x1234
 /** Offset of this identifier */
-#define SCRIPT_OBJECT_MAGIC_OFFSET (s->version < SCI_VERSION(1,001,000) ? -8 : 0)
+#define SCRIPT_OBJECT_MAGIC_OFFSET (s->version < SCI_VERSION_1_1 ? -8 : 0)
 
 /** Script-relative offset of the species ID */
 #define SCRIPT_SPECIES_OFFSET 8 -8
 
-#define SCRIPT_SUPERCLASS_OFFSET (s->version < SCI_VERSION(1,001,000) ? 10 -8 : 12)
+#define SCRIPT_SUPERCLASS_OFFSET (s->version < SCI_VERSION_1_1 ? 10 -8 : 12)
 
 /*---------------------------------*/
 /* Script selector index variables */
 /*---------------------------------*/
-#define SCRIPT_SPECIES_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 0 : 5)
-#define SCRIPT_SUPERCLASS_SELECTOR (s->version < SCI_VERSION(1,001,000) ? 1 : 6)
+#define SCRIPT_SPECIES_SELECTOR (s->version < SCI_VERSION_1_1 ? 0 : 5)
+#define SCRIPT_SUPERCLASS_SELECTOR (s->version < SCI_VERSION_1_1 ? 1 : 6)
 #define SCRIPT_CLASSSCRIPT_SELECTOR 4
 
 /** Magic adjustment value for lofsa and lofss */
@@ -279,16 +279,16 @@ struct CodeBlock {
 };
 
 #define VM_OBJECT_GET_VARSELECTOR(obj, i)  \
-	(s->version < SCI_VERSION(1,001,000) ? \
+	(s->version < SCI_VERSION_1_1 ? \
 	 READ_LE_UINT16(obj->base_obj + obj->_variables.size() * 2 + i*2) : \
 	 *(obj->base_vars + i))
 #define VM_OBJECT_READ_PROPERTY(obj, i) (obj->_variables[i])
 #define VM_OBJECT_GET_FUNCSELECTOR(obj, i) \
-	(s->version < SCI_VERSION(1,001,000) ? \
+	(s->version < SCI_VERSION_1_1 ? \
 	 READ_LE_UINT16((byte *) (obj->base_method + i)) : \
 	 READ_LE_UINT16((byte *) (obj->base_method + i*2 + 1)))
 #define VM_OBJECT_READ_FUNCTION(obj, i) \
-	(s->version < SCI_VERSION(1,001,000) ? \
+	(s->version < SCI_VERSION_1_1 ? \
 	 make_reg(obj->pos.segment, \
 		 READ_LE_UINT16((byte *) (obj->base_method \
 				 + obj->methods_nr + 1 \

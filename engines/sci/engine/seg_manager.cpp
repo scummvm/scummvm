@@ -143,14 +143,14 @@ void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
 	scr.script_size = script->size;
 	scr.heap_size = 0; // Set later
 
-	if (!script || (s->version >= SCI_VERSION(1, 001, 000) && !heap)) {
+	if (!script || (s->version >= SCI_VERSION_1_1 && !heap)) {
 		sciprintf("%s: failed to load %s\n", __FUNCTION__, !script ? "script" : "heap");
 		return;
 	}
 	if (s->flags & GF_SCI0_OLD) {
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
-	} else if (s->version < SCI_VERSION(1, 001, 000)) {
+	} else if (s->version < SCI_VERSION_1_1) {
 		scr.buf_size = script->size;
 	} else {
 		scr.buf_size = script->size + heap->size;
@@ -198,7 +198,7 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 
 	scr.obj_indices = new IntMapper();
 
-	if (s->version >= SCI_VERSION(1, 001, 000))
+	if (s->version >= SCI_VERSION_1_1)
 		scr.heap_start = scr.buf + scr.script_size;
 	else
 		scr.heap_start = scr.buf;

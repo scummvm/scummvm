@@ -77,13 +77,17 @@ enum SciGameVersions {
 	SCI_VERSION_32 = 8
 };
 
-#define SCI_VERSION(_major_, _minor_, _patchlevel_) (((_major_)<<20) | ((_minor_)<<10) | _patchlevel_)
-/* This allows version numbers to be compared directly */
-
-#define SCI_VERSION_MAJOR(_version_) ((_version_) >> 20)
-#define SCI_VERSION_MINOR(_version_) (((_version_) >> 10) & 0x3ff)
-#define SCI_VERSION_PATCHLEVEL(_version_) ((_version_) & 0x3ff)
-#define SCI_VERSION_IGNORE_PATCHLEVEL(_version_) ((_version) & ~0x3ff)
+static const char *versionNames[9] = {
+	"Autodetected",
+	"SCI0",
+	"SCI01 EGA",
+	"SCI01 VGA",
+	"SCI01 VGA ODD",
+	"SCI1 early",
+	"SCI1 late",
+	"SCI1.1",
+	"SCI32"
+};
 
 enum SciGameFlags {
 	/*

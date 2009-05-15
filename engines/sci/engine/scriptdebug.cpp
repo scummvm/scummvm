@@ -1184,7 +1184,7 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 
 	selectors = obj->_variables.size();
 
-	if (s->version < SCI_VERSION(1, 001, 000))
+	if (s->version < SCI_VERSION_1_1)
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
@@ -2768,8 +2768,7 @@ int c_sci_version(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		return 1;
 	}
 
-	sciprintf("Emulating SCI version %d.%03d.%03d\n", SCI_VERSION_MAJOR(s->version), SCI_VERSION_MINOR(s->version),
-	          SCI_VERSION_PATCHLEVEL(s->version));
+	sciprintf("Emulating SCI version %s\n", versionNames[s->version]);
 
 	return 0;
 }

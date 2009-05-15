@@ -309,7 +309,7 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 	case 2 : 
 	case 4 :
-		if (s->version >= SCI_VERSION(1, 1, 0) || (s->flags & GF_SCI1_NEWSETCURSOR)) {
+		if (s->version >= SCI_VERSION_1_1 || (s->flags & GF_SCI1_NEWSETCURSOR)) {
 			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, Common::Point(UKPV(0), UKPV(1))));
 		} else {
 			if (SKPV_OR_ALT(1, 1)) {
@@ -1132,7 +1132,7 @@ void _k_base_setter(EngineState *s, reg_t object) {
 	// does not exist (earliest one was KQ4 SCI, version 0.000.274). This code is left here
 	// for reference only
 #if 0
-	if (s->version <= SCI_VERSION(0,000,256))
+	if (s->version <= SCI_VERSION_0)
 		--absrect.top; // Compensate for early SCI OB1 'bug'
 #endif
 
@@ -1343,7 +1343,7 @@ static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	 * that game - bringing the save/load dialog on a par with SCI0.
 	 */
 	if (type == K_CONTROL_BUTTON && text && (s->_gameName == "sq4") &&
-			s->version < SCI_VERSION(1, 001, 000) && !strcmp(text, " Delete ")) {
+			s->version < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 }

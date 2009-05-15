@@ -1238,7 +1238,7 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x39: // lofsa
 			s->r_acc.segment = xs->addr.pc.segment;
 
-			if (s->version >= SCI_VERSION(1, 001, 000)) {
+			if (s->version >= SCI_VERSION_1_1) {
 				s->r_acc.offset = opparams[0] + local_script->script_size;
 			} else {
 				if (s->flags & GF_SCI1_LOFSABSOLUTE)
@@ -1475,7 +1475,7 @@ static int _obj_locate_varselector(EngineState *s, Object *obj, Selector slc) {
 	// Determines if obj explicitly defines slc as a varselector
 	// Returns -1 if not found
 
-	if (s->version < SCI_VERSION(1, 001, 000)) {
+	if (s->version < SCI_VERSION_1_1) {
 		int varnum = obj->variable_names_nr;
 		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
 		int i;
@@ -1528,7 +1528,7 @@ static SelectorType _lookup_selector_function(EngineState *s, int seg_id, Object
 
 		if (index >= 0) {
 			if (fptr) {
-				if (s->version < SCI_VERSION(1, 001, 000))
+				if (s->version < SCI_VERSION_1_1)
 					*fptr = make_reg(obj->pos.segment, READ_LE_UINT16((byte *)(obj->base_method + index + obj->methods_nr + 1)));
 				else
 					*fptr = make_reg(obj->pos.segment, READ_LE_UINT16((byte *)(obj->base_method + index * 2 + 2)));
@@ -1651,13 +1651,13 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 	*was_new = 1;
 
 	*script = s->resmgr->findResource(kResourceTypeScript, script_nr, 0);
-	if (s->version >= SCI_VERSION(1, 001, 000))
+	if (s->version >= SCI_VERSION_1_1)
 		*heap = s->resmgr->findResource(kResourceTypeHeap, script_nr, 0);
 
-	if (!*script || (s->version >= SCI_VERSION(1, 001, 000) && !heap)) {
+	if (!*script || (s->version >= SCI_VERSION_1_1 && !heap)) {
 		sciprintf("Script 0x%x requested but not found\n", script_nr);
 		//script_debug_flag = script_error_flag = 1;
-		if (s->version >= SCI_VERSION(1, 001, 000)) {
+		if (s->version >= SCI_VERSION_1_1) {
 			if (*heap)
 				sciprintf("Inconsistency: heap resource WAS found\n");
 			else if (*script)
@@ -1894,7 +1894,7 @@ int script_instantiate_sci11(EngineState *s, int script_nr) {
 }
 
 int script_instantiate(EngineState *s, int script_nr) {
-	if (s->version >= SCI_VERSION(1, 001, 000))
+	if (s->version >= SCI_VERSION_1_1)
 		return script_instantiate_sci11(s, script_nr);
 	else
 		return script_instantiate_sci0(s, script_nr);
@@ -1963,7 +1963,7 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 		if (s->_classtable[i].reg.segment == reg.segment)
 			s->_classtable[i].reg = NULL_REG;
 
-	if (s->version < SCI_VERSION(1, 001, 000))
+	if (s->version < SCI_VERSION_1_1)
 		script_uninstantiate_sci0(s, script_nr, reg.segment);
 	else
 		sciprintf("FIXME: Add proper script uninstantiation for SCI 1.1\n");

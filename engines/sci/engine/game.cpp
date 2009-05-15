@@ -97,7 +97,7 @@ int _reset_graphics_input(EngineState *s) {
 		} else {
 			resource = s->resmgr->findResource(kResourceTypePalette, 999, 1);
 			if (resource) {
-				if (s->version < SCI_VERSION(1, 001, 000))
+				if (s->version < SCI_VERSION_1_1)
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1(999, resource->data, resource->size));
 				else
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal11(999, resource->data, resource->size));
@@ -388,12 +388,12 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->kernel_opt_flags = 0;
 	s->version = version;
 
-	if (s->version >= SCI_VERSION(1, 001, 000))
+	if (s->version >= SCI_VERSION_1_1)
 		result = create_class_table_sci11(s);
 	else
 		result = create_class_table_sci0(s);
 
-	s->seg_manager = new SegManager(s->version >= SCI_VERSION(1, 001, 000));
+	s->seg_manager = new SegManager(s->version >= SCI_VERSION_1_1);
 	s->gc_countdown = GC_INTERVAL - 1;
 
 	if (result) {
@@ -444,7 +444,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->bp_list = NULL; // No breakpoints defined
 	s->have_bp = 0;
 
-	if (s->flags & GF_SCI1_LOFSABSOLUTE && s->version < SCI_VERSION(1, 001, 000))
+	if (s->flags & GF_SCI1_LOFSABSOLUTE && s->version < SCI_VERSION_1_1)
 		s->seg_manager->setExportWidth(1);
 	else
 		s->seg_manager->setExportWidth(0);

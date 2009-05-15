@@ -496,7 +496,7 @@ void vocabulary_get_knames(ResourceManager *resmgr, Common::StringList &names) {
 		// HACK: KQ5 needs the SCI1 default vocabulary names to work correctly.
 		// Having more vocabulary names (like in SCI1) doesn't seem to have any
 		// ill effects, other than resulting in unmapped functions towards the
-		// end, which are never used by the game interpteter anyway
+		// end, which are never used by the game interpreter anyway
 		// return vocabulary_get_knames0(resmgr, count);
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
