@@ -81,7 +81,8 @@ int loadOverlay(const char *scriptName) {
 	if (!overlayTable[scriptIdx].ovlData)
 		return (-2);
 
-	strcpy(overlayTable[scriptIdx].overlayName, scriptName);
+	if (scriptName != overlayTable[scriptIdx].overlayName)
+		strcpy(overlayTable[scriptIdx].overlayName, scriptName);
 
 	overlayTable[scriptIdx].alreadyLoaded = 1;
 
