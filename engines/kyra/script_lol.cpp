@@ -1663,6 +1663,39 @@ int LoLEngine::olol_castSpell(EMCState *script) {
 	return castSpell(stackPos(0), stackPos(1), stackPos(2));
 }
 
+int LoLEngine::olol_pitDrop(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_pitDrop(%p)  (%d)", (const void *)script, stackPos(0));
+	int m = stackPos(0);
+	_screen->updateScreen();
+	if (m) {
+		gui_drawScene(2);
+		pitDropScroll(9);
+		snd_playSoundEffect(-1, -1);
+		shakeScene(30, 4, 0, 1);
+
+	} else {
+		int t = -1;
+		for (int i = 0; i < 4; i++) {
+			if (!(_characters[i].flags & 1) || (_characters[i].id >= 0))
+				continue;
+			if (_characters[i].id == -1)
+				t = 54;
+			else if (_characters[i].id == -5)
+				t = 53;
+			else if (_characters[i].id == -8)
+				t = 52;
+			else if (_characters[i].id == -9)
+				t = 51;
+		}
+
+		_screen->fillRect(112, 0, 288, 120, 0, 2);
+		snd_playSoundEffect(t, -1);
+		pitDropScroll(12);
+	}
+
+	return 1;
+}
+
 int LoLEngine::olol_paletteFlash(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_paletteFlash(%p) (%d)", (const void *)script, stackPos(0));
 	uint8 *s = _screen->getPalette(1);
@@ -1686,13 +1719,10 @@ int LoLEngine::olol_paletteFlash(EMCState *script) {
 	delay(2 * _tickLength);
 
 	_screen->setScreenPalette(s);
-	_screen->updateScreen();
-
-	if (_smoothScrollModeNormal) {
+	if (_smoothScrollModeNormal)
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
-		_screen->updateScreen();
-	}
-	
+
+	_screen->updateScreen();
 	return 0;
 }
 
@@ -2247,7 +2277,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0xAC
 	OpcodeUnImpl();
 	Opcode(olol_castSpell);
-	OpcodeUnImpl();
+	Opcode(olol_pitDrop);
 	OpcodeUnImpl();
 
 	// 0xB0

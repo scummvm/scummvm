@@ -1255,7 +1255,7 @@ bool LoLEngine::chasePartyWithDistanceAttacks(MonsterInPlay *monster) {
 
 		if (flyingObject == 1) {
 			snd_playSoundEffect(147, -1);
-			distObj1Sub(10, 2, 2, 1);
+			shakeScene(10, 2, 2, 1);
 
 			for (int i = 0; i < 4; i++) {
 				if (!(_characters[i].flags & 1))

@@ -1485,7 +1485,7 @@ private:
 
 class TownsPC98_OpnSquareSineSource {
 public:
-	TownsPC98_OpnSquareSineSource(const uint32 timerbase);
+	TownsPC98_OpnSquareSineSource(const uint32 timerbase, const uint8 levelOutModifier);
 	~TownsPC98_OpnSquareSineSource();
 
 	void init(const int *rsTable, const int *rseTable);
@@ -1516,6 +1516,7 @@ private:
 	int32 *_tleTable;
 
 	const uint32 _tickLength;
+	const uint8 _levelOutModifier;
 	uint32 _timer;
 
 	struct Channel {
@@ -2553,8 +2554,8 @@ bool TownsPC98_OpnChannelPCM::control_ff_endOfTrack(uint8 para) {
 	}
 }
 
-TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase) :	_tlTable(0),
-	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
+TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase, const uint8 levelOutModifier) :	_tlTable(0),
+	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _levelOutModifier(levelOutModifier), _ready(0), _reg(0), _rand(1), _outN(1),
 	_nTick(0), _evpUpdateCnt(0), _evpTimer(0x1f), _pReslt(0x1f), _attack(0), _cont(false), _evpUpdate(true),
 	_timer(0), _noiseGenerator(0), _chanEnable(0) {
 
@@ -2714,7 +2715,7 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				finOut += _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
 		}
 
-		finOut >>= 1;
+		finOut >>= _levelOutModifier;		
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
 	}
@@ -2887,7 +2888,7 @@ void TownsPC98_OpnPercussionSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				finOut += _rhChan[ii].out;
 		}
 
-		finOut <<= 2;
+		finOut <<= 1;
 
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
@@ -2968,7 +2969,7 @@ bool TownsPC98_OpnCore::init() {
 	}
 
 	if (_numSSG) {
-		_ssg = new TownsPC98_OpnSquareSineSource(_timerbase);
+		_ssg = new TownsPC98_OpnSquareSineSource(_timerbase, _numChan / 3);
 		_ssg->init(&_ssgTables[0], &_ssgTables[16]);
 	}
 

@@ -1228,6 +1228,76 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 	}
 }
 
+void LoLEngine::pitDropScroll(int numSteps) {
+	_screen->copyRegionSpecial(0, 320, 200, 112, 0, 6, 176, 120, 0, 0, 176, 120, 0);
+	uint32 ctime = 0;
+	int del = 0;
+
+	for (int i = 0; i < numSteps; i++) {
+		ctime = _system->getMillis();
+		int ys = ((30720 / numSteps) * i) >> 8;
+		_screen->copyRegionSpecial(6, 176, 120, 0, ys, 0, 320, 200, 112, 0, 176, 120 - ys, 0);
+		_screen->copyRegionSpecial(2, 320, 200, 112, 0, 0, 320, 200, 112, 120 - ys, 176, ys, 0);
+		_screen->updateScreen();
+
+		del = _tickLength -	(_system->getMillis() - ctime);
+		if (del > 0)
+			delay(del, false, true);
+	}	
+
+	_screen->copyRegionSpecial(2, 320, 200, 112, 0, 0, 320, 200, 112, 0, 176, 120, 0);
+	_screen->updateScreen();
+
+	del = _tickLength -	(_system->getMillis() - ctime);
+	if (del > 0)
+		delay(del, false, true);
+	updateDrawPage2();
+}
+
+void LoLEngine::shakeScene(int duration, int width, int height, int restore) {
+	_screen->copyRegion(112, 0, 112, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
+	uint32 endTime = _system->getMillis() + duration * _tickLength;
+	
+	while (endTime > _system->getMillis()) {
+		_smoothScrollTimer = _system->getMillis() + 2 * _tickLength;
+
+		int s1 = width ? (getRandomNumberSpecial() % (width << 1)) - width : 0;
+		int s2 = height ? (getRandomNumberSpecial() % (height << 1)) - height : 0;
+
+		int x1, y1, x2, y2, w, h;
+		if (s1 >= 0) {
+			x1 = 112;
+			x2 = 112;
+			w = 176 - s1;
+		} else {
+			x1 = 112 - s1;
+			x2 = 112 + s1;
+			w = 176 + s1;
+		}
+
+		if (s2 >= 0) {
+			y1 = 0;
+			y2 = 0;
+			h = 120 - s2;
+		} else {
+			y1 = -s2;
+			y2 = s2;
+			h = 120 + s2;
+		}
+
+		_screen->copyRegion(x1, y1, x2, y2, w, h, 6, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		
+		delayUntil(_smoothScrollTimer);
+	}
+
+	if (restore) {
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, 6, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		updateDrawPage2();
+	}
+}
+
 int LoLEngine::smoothScrollDrawSpecialShape(int pageNum) {
 	// TODO
 	if(!_scriptAssignedLevelShape)

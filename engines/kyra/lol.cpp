@@ -1795,6 +1795,8 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 		return;
 
 	_lastSfxTrack = track;
+	if (track == -1)
+		return;
 
 	int16 volIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2 + 1]);
 
@@ -2133,7 +2135,7 @@ int LoLEngine::castSpell(int charNum, int spellType, int spellLevel) {
 		if (_activeSpell.p->hpRequired[spellLevel] >= _characters[charNum].hitPointsCur)
 			return 0;
 
-		//setCharacterMagicOrHitPoints(charNum, 1, -_activeSpell.p->mpRequired[spellLevel], 1);
+		setCharacterMagicOrHitPoints(charNum, 1, -_activeSpell.p->mpRequired[spellLevel], 1);
 		setCharacterMagicOrHitPoints(charNum, 0, -_activeSpell.p[1].hpRequired[spellLevel], 1);
 		gui_drawCharPortraitWithStats(charNum);
 
@@ -3175,10 +3177,6 @@ void LoLEngine::stunCharacter(int charNum) {
 }
 
 void LoLEngine::level11specialUnk() {
-
-}
-
-void LoLEngine::distObj1Sub(int a, int b, int c, int d) {
 
 }
 

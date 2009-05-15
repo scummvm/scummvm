@@ -528,6 +528,96 @@ void Screen_LoL::smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dst
 	}
 }
 
+void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, int page2, int w2, int h2, int x2, int y2, int w3, int h3, int mode, ...) {
+	if (!w3 || !h3)
+		return;
+	
+	uint8 *table1 = 0;
+	uint8 *table2 = 0;
+
+	if (mode == 2) {
+		va_list args;
+		va_start(args, mode);
+		table1 = va_arg(args, uint8*);
+		table2 = va_arg(args, uint8*);
+		va_end(args);
+	}
+
+	_internDimX = _internDimY = 0;
+	_internDimW = w1;
+	_internDimH = h1;
+	calcBoundariesIntern(x1, y1, w3, h3);
+	if (_internBlockWidth == -1)
+		return;
+
+	int iu5_1 = _internDimU5;
+	int iu6_1 = _internDimU6;
+	int ibw_1 = _internBlockWidth;
+	int ibh_1 = _internBlockHeight;
+	int dx_1 = _internDimDstX;
+	int dy_1 = _internDimDstY;
+	
+	_internDimX = _internDimY = 0;
+	_internDimW = w2;
+	_internDimH = h2;
+
+	calcBoundariesIntern(x2, y2, ibw_1, ibh_1);
+	if (_internBlockWidth == -1)
+		return;
+	
+	int iu5_2 = _internDimU5;
+	int iu6_2 = _internDimU6;
+	int ibw_2 = _internBlockWidth;
+	int ibh_2 = _internBlockHeight;
+	int dx_2 = _internDimDstX;
+	int dy_2 = _internDimDstY;
+
+	uint8 *src = getPagePtr(page1) + (dy_1 + iu6_2) * w1;
+	uint8 *dst = getPagePtr(page2) + (dy_2 + iu6_1) * w2;
+
+	for (int i = 0; i < ibh_2; i++) {
+		uint8 *s = src + iu5_2 + dx_1;
+		uint8 *d = dst + iu5_1 + dx_2;
+
+		if (mode == 0) {
+			memcpy(d, s, ibw_2);
+
+		} else if (mode == 1) {
+			if (!(i & 1)) {
+				s++;
+				d++;
+			}
+			
+			for (int ii = (i & 1) ^ 1; ii < ibw_2; ii += 2 ) {
+				*d = *s;
+				d += 2;
+				s += 2;
+			}
+
+		} else if (mode == 2) {
+			for (int ii = 0; ii < ibw_2; ii++) {
+				uint8 cmd = *s++;
+				uint8 offs = table1[cmd];
+				if (!(offs & 0x80))
+					cmd = table2[(offs << 8) | *d];
+				*d++ = cmd;
+			}
+			
+		} else if (mode == 3) {
+			s = s - iu5_2 + ibw_1;
+			s = s - iu5_2 - 1;
+			for (int ii = 0; ii < ibw_2; ii++)
+				*d++ = *s--;
+		}
+
+		dst += w2;
+		src += w1;
+	}
+
+	if (!page2)
+		addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
+}
+
 void Screen_LoL::copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl) {
 	if (!w || !h || !ovl)
 		return;
@@ -538,7 +628,7 @@ void Screen_LoL::copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, 
 	_internDimW = cdim->w << 3;
 	_internDimH = cdim->h;
 
-	calcMapBoundaries(x2, y2, w, h);
+	calcBoundariesIntern(x2, y2, w, h);
 	if (_internBlockWidth == -1)
 		return;
 
@@ -560,7 +650,8 @@ void Screen_LoL::copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, 
 		src += 320;
 	}
 
-	addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
+	if (!page2)
+		addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
 }
 
 void Screen_LoL::applyOverlaySpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, int flag, uint8 *ovl) {
@@ -573,7 +664,7 @@ void Screen_LoL::applyOverlaySpecial(int page1, int x1, int y1, int page2, int x
 	_internDimW = cdim->w << 3;
 	_internDimH = cdim->h;
 
-	calcMapBoundaries(x2, y2, w, h);
+	calcBoundariesIntern(x2, y2, w, h);
 	if (_internBlockWidth == -1)
 		return;
 
@@ -597,10 +688,11 @@ void Screen_LoL::applyOverlaySpecial(int page1, int x1, int y1, int page2, int x
 		src += 320;
 	}
 
-	addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
+	if (!page2)
+		addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
 }
 
-void Screen_LoL::calcMapBoundaries(int dstX, int dstY, int width, int height) {
+void Screen_LoL::calcBoundariesIntern(int dstX, int dstY, int width, int height) {
 	_internBlockWidth = _internBlockWidth2 = width;
 	_internBlockHeight = height;
 	_internDimDstX = dstX;

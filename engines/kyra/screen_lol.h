@@ -62,6 +62,8 @@ public:
 	void smoothScrollTurnStep2(int srcPage1Num, int srcPage2Num, int dstPageNum);
 	void smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dstPageNum);
 
+	void copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, int page2, int w2, int h2, int x2, int y2, int w3, int h3, int mode, ...);
+
 	// palette stuff
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 	void fadeToPalette1(int delay);
@@ -99,7 +101,7 @@ private:
 	uint8 *_levelOverlays[8];
 
 	// magic atlas
-	void calcMapBoundaries(int dstX, int dstY, int c, int d);
+	void calcBoundariesIntern(int dstX, int dstY, int c, int d);
 
 	int _internDimX;
 	int _internDimY;

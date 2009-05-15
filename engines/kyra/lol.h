@@ -694,6 +694,7 @@ private:
 	int olol_enableSysTimer(EMCState *script);
 	int olol_checkNeedSceneRestore(EMCState *script);
 	int olol_castSpell(EMCState *script);
+	int olol_pitDrop(EMCState *script);
 	int olol_paletteFlash(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
@@ -926,6 +927,9 @@ private:
 	void movePartySmoothScrollRight(int speed);
 	void movePartySmoothScrollTurnLeft(int speed);
 	void movePartySmoothScrollTurnRight(int speed);
+
+	void pitDropScroll(int numSteps);
+	void shakeScene(int duration, int width, int height, int restore);
 
 	int smoothScrollDrawSpecialShape(int pageNum);
 
