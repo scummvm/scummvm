@@ -171,8 +171,7 @@ int createResFileEntry(int width, int height, int size, int resType) {
 	int entryNumber;
 	int div = 0;
 
-	printf("Executing untested createResFileEntry!\n");
-	exit(1);
+	error("Executing untested createResFileEntry!");
 
 	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (!filesDatabase[i].subData.ptr)
@@ -496,7 +495,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 			break;
 		}
 		default: {
-			printf("Unsuported gfx loading type: %d\n", localBuffer.type);
+			warning("Unsuported gfx loading type: %d", localBuffer.type);
 			break;
 		}
 		}

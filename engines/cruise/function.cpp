@@ -314,7 +314,7 @@ int16 Op_UnmergeBackgroundIncrust(void) {
 
 int16 Op_FreePreload(void) {
 	// TODO: implement
-	printf("Op_FreePreload, implement\n");
+	debug(1, "Op_FreePreload not implemented");
 	return (0);
 }
 
@@ -371,7 +371,7 @@ int16 Op_comment(void) {
 
 	var = (char *)popPtr();
 
-	printf("COMMENT: \"%s\"\n", var);
+	debug(1, "COMMENT: \"%s\"", var);
 
 	return (0);
 }
@@ -599,7 +599,7 @@ int16 Op_InitializeState(void) {
 		ovlIdx = currentScriptPtr->overlayNumber;
 
 #ifdef FUNCTION_DEBUG
-	printf("Init %s state to %d\n", getObjectName(objIdx, overlayTable[ovlIdx].ovlData->arrayNameObj), param1);
+	debug(1, "Init %s state to %d", getObjectName(objIdx, overlayTable[ovlIdx].ovlData->arrayNameObj), param1);
 #endif
 
 	objInit(ovlIdx, objIdx, param1);
@@ -1653,7 +1653,7 @@ int16 Op_SetVolume(void) {
 int16 Op_SongExist(void) {
 	char* songName = (char*)popPtr();
 
-	printf("Unimplemented \"Op_SongExist\": %s\n", songName);
+	warning("Unimplemented \"Op_SongExist\": %s", songName);
 
 	return 0;
 }
@@ -1994,7 +1994,7 @@ int32 opcodeType8(void) {
 		pushVar(opcodeTablePtr[opcode]());
 		return (0);
 	} else {
-		printf("Unsupported opcode %d in opcode type 8\n", opcode);
+		warning("Unsupported opcode %d in opcode type 8", opcode);
 		pushVar(0);
 		// exit(1);
 	}

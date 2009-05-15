@@ -90,7 +90,7 @@ int loadBackground(const char *name, int idx) {
 	uint8 *ptr2;
 	uint8 *ptrToFree;
 
-	printf("Loading BG: %s\n", name);
+	debug(1, "Loading BG: %s", name);
 
 	if (!backgroundScreens[idx]) {
 		backgroundScreens[idx] = (uint8 *)mallocAndZero(320 * 200);

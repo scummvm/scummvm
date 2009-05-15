@@ -256,7 +256,7 @@ int16 findFileInDisks(const char *name) {
 	strToUpper(fileName);
 
 	if (!volumeDataLoaded) {
-		printf("CNF wasn't loaded, reading now...\n");
+		debug(1, "CNF wasn't loaded, reading now...");
 		if (currentVolumeFile.isOpen()) {
 			askDisk(-1);
 			freeDisk();
@@ -281,7 +281,7 @@ int16 findFileInDisks(const char *name) {
 	if (disk >= 0) {
 		int temp;
 
-		printf("File found on disk %d\n", disk);
+		debug(1, "File found on disk %d", disk);
 
 		if (currentVolumeFile.isOpen()) {
 			askDisk(-1);
@@ -369,7 +369,7 @@ int16 readVolCnf(void) {
 		fileHandle.read(&volumeData[i].size, 4);
 
 		flipShort(&volumeData[i].diskNumber);
-		printf("Disk number: %d\n", volumeData[i].diskNumber);
+		debug(1, "Disk number: %d", volumeData[i].diskNumber);
 		flipLong(&volumeData[i].size);
 	}
 

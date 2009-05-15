@@ -55,7 +55,7 @@ int loadOverlay(const char *scriptName) {
 	byte *unpackedBuffer;
 	ovlDataStruct *ovlData;
 
-	printf("Load overlay: %s\n", scriptName);
+	debug(1, "Load overlay: %s", scriptName);
 
 	newNumberOfScript = numOfLoadedOverlay;
 
@@ -93,12 +93,12 @@ int loadOverlay(const char *scriptName) {
 
 	strcat(fileName, ".OVL");
 
-	printf("Attempting to load overlay file %s...\n", fileName);
+	debug(1, "Attempting to load overlay file %s...", fileName);
 
 	fileIdx = findFileInDisks(fileName);
 
 	if (fileIdx < 0) {
-		printf("Unable to load overlay %s !\n", scriptName);
+		warning("Unable to load overlay %s !", scriptName);
 		//releaseScript(scriptName);
 		return (-18);
 	}
@@ -126,7 +126,7 @@ int loadOverlay(const char *scriptName) {
 		loadPackedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
 	}
 
-	printf("OVL loading done...\n");
+	debug(1, "OVL loading done...");
 
 	Common::MemoryReadStream s(unpackedBuffer, unpackedSize);
 
@@ -644,7 +644,7 @@ int releaseOverlay(const char *name) {
 	removeScript(overlayIdx, -1, &relHead);
 	removeScript(overlayIdx, -1, &relHead);
 
-	printf("releaseOverlay: finish !\n");
+	debug(1, "releaseOverlay: finish !");
 
 	return 0;
 }

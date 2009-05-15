@@ -298,8 +298,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	for (i = 0; i < 64; i++) {
 		if (preloadData[i].ptr) {
 			if (!strcmp(preloadData[i].name, name)) {
-				printf("Unsupported code in loadFIleSub1 !\n");
-				exit(1);
+				error("Unsupported code in loadFIleSub1 !");
 			}
 		}
 	}
@@ -708,7 +707,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 Common::KeyCode keyboardCode = Common::KEYCODE_INVALID;
 
 void freeStuff2(void) {
-	printf("implement freeStuff2\n");
+	warning("implement freeStuff2");
 }
 
 void *allocAndZero(int size) {

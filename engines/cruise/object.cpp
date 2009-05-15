@@ -94,8 +94,7 @@ int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuer
 		break;
 	}
 	default: {
-		printf("Unsupported case %d in getMultipleObjectParam\n", ptr->_class);
-		exit(1);
+		error("Unsupported case %d in getMultipleObjectParam", ptr->_class);
 	}
 	}
 
@@ -216,7 +215,7 @@ int16 objInit(int ovlIdx, int objIdx, int newState) {
 		break;
 	}
 	default: {
-		printf("Unsupported param = %d in objInit\n", ptr->_class);
+		warning("Unsupported param = %d in objInit", ptr->_class);
 		// exit(1);
 	}
 	}
@@ -253,8 +252,7 @@ int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *
 		break;
 	}
 	default: {
-		printf("Unsupported case %d in getSingleObjectParam\n", ptr->_class);
-		exit(1);
+		error("Unsupported case %d in getSingleObjectParam", ptr->_class);
 	}
 	}
 
@@ -284,8 +282,7 @@ int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *
 		break;
 	}
 	default: {
-		printf("Unsupported case %d in getSingleObjectParam case 1\n", param3);
-		exit(1);
+		error("Unsupported case %d in getSingleObjectParam case 1", param3);
 	}
 	}
 

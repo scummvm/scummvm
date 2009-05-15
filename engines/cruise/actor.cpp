@@ -937,7 +937,7 @@ void processAnimation(void) {
 					break;
 				}
 				default: {
-					printf("Unimplemented currentActor->phase=%d in processAnimation()\n", currentActor->phase);
+					warning("Unimplemented currentActor->phase=%d in processAnimation()", currentActor->phase);
 					// exit(1);
 				}
 				}

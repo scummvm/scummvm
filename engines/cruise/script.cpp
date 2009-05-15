@@ -104,8 +104,7 @@ int32 opcodeType0(void) {
 			pushVar(*address);
 			return (0);
 		} else {
-			printf("Unsupported code in opcodeType0 case 1!\n");
-			exit(1);
+			error("Unsupported code in opcodeType0 case 1!");
 		}
 
 		return (0);
@@ -129,11 +128,8 @@ int32 opcodeType0(void) {
 
 		break;
 	}
-	default: {
-		printf("Unsupported type %d in opcodeType0\n",
-		       currentScriptOpcodeType);
-		exit(1);
-	}
+	default:
+		error("Unsupported type %d in opcodeType0", currentScriptOpcodeType);
 	}
 
 	return 0;
@@ -200,10 +196,8 @@ int32 opcodeType1(void)	{
 			*(ptr + var_A + offset) = var;
 			return (0);
 		}
-		default: {
-			printf("Unsupported code in opcodeType1 case 1!\n");
-			exit(1);
-		}
+		default:
+			error("Unsupported code in opcodeType1 case 1!");
 		}
 
 		break;
@@ -229,11 +223,8 @@ int32 opcodeType1(void)	{
 		saveOpcodeVar = var;
 		break;
 	}
-	default: {
-		printf("Unsupported type %d in opcodeType1\n",
-		       currentScriptOpcodeType);
-		exit(1);
-	}
+	default:
+		error("Unsupported type %d in opcodeType1", currentScriptOpcodeType);
 	}
 
 	return (0);
@@ -647,9 +638,7 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		currentScriptOpcodeType = opcodeType & 7;
 
 		if (!opcodeTypeTable[(opcodeType & 0xFB) >> 3]) {
-			printf("Unsupported opcode type %d\n", (opcodeType & 0xFB) >> 3);
-			exit(1);
-			return (-21);
+			error("Unsupported opcode type %d", (opcodeType & 0xFB) >> 3);
 		}
 	} while (!opcodeTypeTable[(opcodeType & 0xFB) >> 3]());
 
