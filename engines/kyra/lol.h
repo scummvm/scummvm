@@ -585,6 +585,7 @@ private:
 	int olol_allocItemPropertiesBuffer(EMCState *script);
 	int olol_setItemProperty(EMCState *script);
 	int olol_makeItem(EMCState *script);
+	int olol_placeMoveLevelItem(EMCState *script);
 	int olol_createLevelItem(EMCState *script);
 	int olol_getItemPara(EMCState *script);
 	int olol_getCharacterStat(EMCState *script);
@@ -671,6 +672,7 @@ private:
 	int olol_calcInflictableDamagePerItem(EMCState *script);
 	int olol_distanceAttack(EMCState *script);
 	int olol_removeCharacterEffects(EMCState *script);
+	int olol_checkInventoryFull(EMCState *script);
 	int olol_objectLeavesLevel(EMCState *script);
 	int olol_addSpellToScroll(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);
@@ -680,8 +682,11 @@ private:
 	int olol_suspendMonster(EMCState *script);
 	int olol_triggerEventOnMouseButtonRelease(EMCState *script);
 	int olol_printWindowText(EMCState *script);
+	int olol_checkPartyForItemType(EMCState *script);
 	int olol_setUnkDoorVar(EMCState *script);
 	int olol_resetTimDialogueState(EMCState *script);
+	int olol_getItemOnPos(EMCState *script);
+	int olol_removeLevelItem(EMCState *script);
 	int olol_savePage5(EMCState *script);
 	int olol_restorePage5(EMCState *script);
 	int olol_initDialogueSequence(EMCState *script);
@@ -690,6 +695,8 @@ private:
 	int olol_prepareSpecialScene(EMCState *script);
 	int olol_restoreAfterSpecialScene(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
+	int olol_transformRegion(EMCState *script);
+	int olol_calcCoordinatesAddDirectionOffset(EMCState *script);
 	int olol_resetPortraitsAndDisableSysTimer(EMCState *script);
 	int olol_enableSysTimer(EMCState *script);
 	int olol_checkNeedSceneRestore(EMCState *script);
@@ -759,6 +766,7 @@ private:
 	void resetPortraitsAndDisableSysTimer();
 	void toggleSelectedCharacterFrame(bool mode);
 	void fadeText();
+	void transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 	void setPaletteBrightness(uint8 *palette, int brightness, int modifier);
 	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
 	void generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags);
@@ -1104,6 +1112,7 @@ private:
 	int _specialSceneFlag;
 	int _lastCharInventory;
 	uint16 _charStatusFlags[3];
+	int _emcLastItem;
 
 	FlyingObject *_flyingObjects;
 

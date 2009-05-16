@@ -618,7 +618,7 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 		addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
 }
 
-void Screen_LoL::copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl) {
+void Screen_LoL::copyBlockAndApplyOverlay(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl) {
 	if (!w || !h || !ovl)
 		return;
 

@@ -95,6 +95,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_currentControlMode = 0;
 	_specialSceneFlag = 0;
 	_lastCharInventory = -1;
+	_emcLastItem = -1;
 
 	_itemIconShapes = _itemShapes = _gameShapes = _thrownShapes = _effectShapes = _fireballShapes = _healShapes = _healiShapes = 0;
 	_levelShpList = _levelDatList = 0;
@@ -1587,6 +1588,44 @@ void LoLEngine::fadeText() {
 	_timer->disable(11);
 
 	_fadeText = false;
+}
+
+void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage) {
+	uint16 *p1 = (uint16*) _tempBuffer5120;
+	uint16 *p2 = (uint16*) (_tempBuffer5120 + 640);
+	
+	for (int i = 0; i < w; i++)
+		p1[i] = i;
+
+	for (int i = 0; i < h; i++)
+		p2[i] = i;
+
+	for (int i = 0; i < w; i++)
+		SWAP(p1[_rnd.getRandomNumberRng(0, w - 1)], p1[i]);
+
+	for (int i = 0; i < h; i++)
+		SWAP(p2[_rnd.getRandomNumberRng(0, h - 1)], p2[i]);
+
+	for (int i = 0; i < h; i++) {
+		int i2 = i;
+
+		for (int ii = 0; ii < w; ii++) {
+			int dx1 = x1 + p1[ii];
+			int dy1 = y1 + p2[i2];
+			int dx2 = x2 + p1[ii];
+			int dy2 = y2 + p2[i2];
+
+			if (++i2 == h)
+				i2 = 0;
+
+			_screen->setPagePixel(dstPage, dx2, dy2, _screen->getPagePixel(srcPage, dx1, dy1));
+		}
+
+		if (!dstPage && (i & 5) == 5) {
+			updateInput();
+			_screen->updateScreen();
+		}
+	}
 }
 
 void LoLEngine::setPaletteBrightness(uint8 *palette, int brightness, int modifier) {
@@ -3468,31 +3507,31 @@ void LoLEngine::drawMapPage(int pageNum) {
 				uint8 w31 = _levelBlockProperties[b3].walls[1];
 
 				// draw block
-				_screen->copyBlockSpecial(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 7, 6, 0, _mapOverlay);
+				_screen->copyBlockAndApplyOverlay(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 7, 6, 0, _mapOverlay);
 
 				// draw north wall
 				drawMapBlockWall(b3, w31, sx, sy, 3);
 				drawMapShape(w31, sx, sy, 3);
 				if (_wllBuffer4[w31] & 0xc0)
-					_screen->copyBlockSpecial(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 1, 6, 0, _mapOverlay);
+					_screen->copyBlockAndApplyOverlay(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 1, 6, 0, _mapOverlay);
 
 				// draw west wall
 				drawMapBlockWall(b1, w13, sx, sy, 1);
 				drawMapShape(w13, sx, sy, 1);
 				if (_wllBuffer4[w13] & 0xc0)
-					_screen->copyBlockSpecial(_screen->_curPage, sx + 6, sy, _screen->_curPage, sx + 6, sy, 1, 6, 0, _mapOverlay);
+					_screen->copyBlockAndApplyOverlay(_screen->_curPage, sx + 6, sy, _screen->_curPage, sx + 6, sy, 1, 6, 0, _mapOverlay);
 
 				// draw east wall
 				drawMapBlockWall(b0, w02, sx, sy, 0);
 				drawMapShape(w02, sx, sy, 0);
 				if (_wllBuffer4[w02] & 0xc0)
-					_screen->copyBlockSpecial(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 7, 1, 0, _mapOverlay);
+					_screen->copyBlockAndApplyOverlay(_screen->_curPage, sx, sy, _screen->_curPage, sx, sy, 7, 1, 0, _mapOverlay);
 
 				//draw south wall
 				drawMapBlockWall(b2, w20, sx, sy, 2);
 				drawMapShape(w20, sx, sy, 2);
 				if (_wllBuffer4[w20] & 0xc0)
-					_screen->copyBlockSpecial(_screen->_curPage, sx, sy + 5, _screen->_curPage, sx, sy + 5, 7, 1, 0, _mapOverlay);
+					_screen->copyBlockAndApplyOverlay(_screen->_curPage, sx, sy + 5, _screen->_curPage, sx, sy + 5, 7, 1, 0, _mapOverlay);
 			}
 
 			sx += 7;
@@ -3545,7 +3584,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 		for (int ii = 0; ii < 11; ii++) {
 			if (!_defaultLegendData[ii].enable)
 				continue;
-			_screen->copyBlockSpecial(_screen->_curPage, 235, (tY << 3) + 21, _screen->_curPage, 235, (tY << 3) + 21, 7, 6, 0, _mapOverlay);
+			_screen->copyBlockAndApplyOverlay(_screen->_curPage, 235, (tY << 3) + 21, _screen->_curPage, 235, (tY << 3) + 21, 7, 6, 0, _mapOverlay);
 			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232, (tY << 3) + 18 + _defaultLegendData[ii].x, 0, 0);
 			printMapText(_defaultLegendData[ii].stringId, 244, (tY << 3) + 22);
 			tY++;
@@ -3641,7 +3680,7 @@ void LoLEngine::redrawMapCursor() {
 	int cx = _automapTopLeftX + (((_currentBlock - sx) % 32) * 7);
 	int cy = _automapTopLeftY + (((_currentBlock - (sy << 5)) / 32) * 6);
 	_screen->copyRegion(cx, cy, cx, cy, 16, 16, 2, 0);
-	_screen->copyBlockSpecial(2, 0, 0, 0, cx - 3, cy - 2, 16, 16, 0, _mapCursorOverlay);
+	_screen->copyBlockAndApplyOverlay(2, 0, 0, 0, cx - 3, cy - 2, 16, 16, 0, _mapCursorOverlay);
 
 	_mapCursorOverlay[24] = _mapCursorOverlay[1];
 	for (int i = 1; i < 24; i++)
@@ -3655,9 +3694,9 @@ void LoLEngine::drawMapBlockWall(uint16 block, uint8 wall, int x, int y, int dir
 		return;
 
 	int cp = _screen->_curPage;
-	_screen->copyBlockSpecial(cp, x + _mapCoords[0][direction], y + _mapCoords[1][direction], cp, x + _mapCoords[0][direction], y + _mapCoords[1][direction], _mapCoords[2][direction], _mapCoords[3][direction], 0, _mapOverlay);
-	_screen->copyBlockSpecial(cp, x + _mapCoords[4][direction], y + _mapCoords[5][direction], cp, x + _mapCoords[4][direction], y + _mapCoords[5][direction], _mapCoords[8][direction], _mapCoords[9][direction], 0, _mapOverlay);
-	_screen->copyBlockSpecial(cp, x + _mapCoords[6][direction], y + _mapCoords[7][direction], cp, x + _mapCoords[6][direction], y + _mapCoords[7][direction], _mapCoords[8][direction], _mapCoords[9][direction], 0, _mapOverlay);
+	_screen->copyBlockAndApplyOverlay(cp, x + _mapCoords[0][direction], y + _mapCoords[1][direction], cp, x + _mapCoords[0][direction], y + _mapCoords[1][direction], _mapCoords[2][direction], _mapCoords[3][direction], 0, _mapOverlay);
+	_screen->copyBlockAndApplyOverlay(cp, x + _mapCoords[4][direction], y + _mapCoords[5][direction], cp, x + _mapCoords[4][direction], y + _mapCoords[5][direction], _mapCoords[8][direction], _mapCoords[9][direction], 0, _mapOverlay);
+	_screen->copyBlockAndApplyOverlay(cp, x + _mapCoords[6][direction], y + _mapCoords[7][direction], cp, x + _mapCoords[6][direction], y + _mapCoords[7][direction], _mapCoords[8][direction], _mapCoords[9][direction], 0, _mapOverlay);
 }
 
 void LoLEngine::drawMapShape(uint8 wall, int x, int y, int direction) {

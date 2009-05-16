@@ -275,6 +275,12 @@ int LoLEngine::olol_makeItem(EMCState *script) {
 	return makeItem(stackPos(0), stackPos(1), stackPos(2));
 }
 
+int LoLEngine::olol_placeMoveLevelItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setItemProperty(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	placeMoveLevelItem(stackPos(0), stackPos(1), stackPos(2), stackPos(3) & 0xff, stackPos(4) & 0xff, stackPos(5));
+	return 1;
+}
+
 int LoLEngine::olol_createLevelItem(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setItemProperty(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	int item = makeItem(stackPos(0), stackPos(1), stackPos(2));
@@ -1443,6 +1449,15 @@ int LoLEngine::olol_removeCharacterEffects(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_checkInventoryFull(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkInventoryFull(%p)", (const void *)script);
+	for (int i = 0; i < 48; i++) {
+		if (_inventory[i])
+			return 0;
+	}
+	return 1;
+}
+
 int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_objectLeavesLevel(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	int o = _levelBlockProperties[stackPos(0)].assignedObjects;
@@ -1570,6 +1585,32 @@ int LoLEngine::olol_printWindowText(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_checkPartyForItemType(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkPartyForItemType(%p) (%d, %d, %d))", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	int p = stackPos(1);
+
+	if (!stackPos(2)) {
+		for (int i = 0; i < 48; i++) {
+			if (!_inventory[i] || _itemsInPlay[_inventory[i]].itemPropertyIndex != p)
+				continue;
+			return 1;
+		}
+
+		if (_itemsInPlay[_itemInHand].itemPropertyIndex == p)
+			return 1;
+	}
+
+	int last = (stackPos(0) == -1) ? 3 : stackPos(0);
+	int first = (stackPos(0) == -1) ? 0 : stackPos(0);
+
+	for (int i = first; i <= last; i++) {
+		if (itemEquipped(i, p))
+			return 1;
+	}
+
+	return 0;
+}
+
 int LoLEngine::olol_setUnkDoorVar(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setUnkDoorVar(%p) (%d)", (const void *)script, stackPos(0));
 	_emcDoorState = stackPos(0);
@@ -1579,6 +1620,51 @@ int LoLEngine::olol_setUnkDoorVar(EMCState *script) {
 int LoLEngine::olol_resetTimDialogueState(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_resetTimDialogueState(%p) (%d)", (const void *)script, stackPos(0));
 	_tim->resetDialogueState(_activeTim[stackPos(0)]);
+	return 1;
+}
+
+int LoLEngine::olol_getItemOnPos(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getItemOnPos(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	int pX = stackPos(1);
+	if (pX != -1)
+		pX &= 0xff;
+
+	int pY = stackPos(2);
+	if (pY != -1)
+		pY &= 0xff;
+
+	int o = (stackPos(3) || _emcLastItem == -1) ? stackPos(0) : _emcLastItem;
+
+	_emcLastItem = _levelBlockProperties[o].assignedObjects;
+
+	while (_emcLastItem) {
+		if (_emcLastItem & 0x8000) {
+			o = _emcLastItem & 0x7fff;
+			_emcLastItem = _levelBlockProperties[o].assignedObjects;
+			continue;
+		}
+
+		if (pX != -1 && (_itemsInPlay[_emcLastItem].x & 0xff) != pX) {
+			o = _emcLastItem & 0x7fff;
+			_emcLastItem = _levelBlockProperties[o].assignedObjects;
+			continue;
+		}
+
+		if (pY != -1 && (_itemsInPlay[_emcLastItem].y & 0xff) != pY) {
+			o = _emcLastItem & 0x7fff;
+			_emcLastItem = _levelBlockProperties[o].assignedObjects;
+			continue;
+		}
+
+		return _emcLastItem;
+	}
+	
+	return 0;
+}
+
+int LoLEngine::olol_removeLevelItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_removeLevelItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	removeLevelItem(stackPos(0), stackPos(1));
 	return 1;
 }
 
@@ -1638,6 +1724,20 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 	strcpy(_ingameSoundList[t], c);
 
 	return 0;
+}
+
+int LoLEngine::olol_transformRegion(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_transformRegion(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	transformRegion(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	return 1;
+}
+
+int LoLEngine::olol_calcCoordinatesAddDirectionOffset(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_calcCoordinatesAddDirectionOffset(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	uint16 x = stackPos(0);
+	uint16 y = stackPos(1);
+	calcCoordinatesAddDirectionOffset(x, y, stackPos(2));
+	return stackPos(3) ? x : y;
 }
 
 int LoLEngine::olol_resetPortraitsAndDisableSysTimer(EMCState *script) {
@@ -2041,7 +2141,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_makeItem);
 
 	// 0x10
-	OpcodeUnImpl();
+	Opcode(olol_placeMoveLevelItem);
 	Opcode(olol_createLevelItem);
 	Opcode(olol_getItemPara);
 	Opcode(olol_getCharacterStat);
@@ -2191,7 +2291,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_removeCharacterEffects);
 
 	// 0x74
-	OpcodeUnImpl();
+	Opcode(olol_checkInventoryFull);
 	Opcode(olol_objectLeavesLevel);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
@@ -2216,13 +2316,13 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x84
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_checkPartyForItemType);
 	Opcode(olol_setUnkDoorVar);
 	Opcode(olol_resetTimDialogueState);
 
 	// 0x88
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_getItemOnPos);
+	Opcode(olol_removeLevelItem);
 	Opcode(olol_savePage5);
 	Opcode(olol_restorePage5);
 
@@ -2245,8 +2345,8 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x98
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_transformRegion);
+	Opcode(olol_calcCoordinatesAddDirectionOffset);
 	Opcode(olol_resetPortraitsAndDisableSysTimer);
 	Opcode(olol_enableSysTimer);
 

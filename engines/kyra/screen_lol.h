@@ -76,7 +76,7 @@ public:
 	uint8 *generateLevelOverlay(const uint8 *srcPal, uint8 *ovl, int opColor, int weight);
 	uint8 *getLevelOverlay(int index) { return _levelOverlays[index]; }
 
-	void copyBlockSpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl);
+	void copyBlockAndApplyOverlay(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl);
 	void applyOverlaySpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, int flag, uint8 *ovl);
 
 	uint8 getShapePaletteSize(const uint8 *shp);
