@@ -51,6 +51,8 @@ static const byte feebleFontSize[208] = {
 };
 
 uint AGOSEngine::getFeebleFontSize(byte chr) {
+	if (getGameType() == GType_FF && (getFeatures() & GF_DEMO) && chr == 32)
+		return 4;
 	return feebleFontSize[chr - 32];
 }
 

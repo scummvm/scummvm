@@ -51,11 +51,6 @@ static const GameSpecificSettings simon2_settings = {
 	"SIMON2",                               // speech_filename
 };
 
-static const GameSpecificSettings feeblefiles_settings = {
-	"",                                     // effects_filename
-	"VOICES",                               // speech_filename
-};
-
 static const GameSpecificSettings puzzlepack_settings = {
 	"",                                     // effects_filename
 	"MUSIC",                               // speech_filename
@@ -73,12 +68,6 @@ AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
 	_thisTickCount = 0;
 	_startSecondCount = 0;
 	_tSecondCount = 0;
-}
-
-AGOSEngine_Feeble::AGOSEngine_Feeble(OSystem *system)
-	: AGOSEngine_Simon2(system) {
-
-	_vgaCurSpritePriority = 0;
 }
 
 AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system)
@@ -200,7 +189,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_lastVgaTick = 0;
 
 	_marks = 0;
-	_omniTV = false;
 	_scanFlag = false;
 
 	_scriptVar2 = 0;
@@ -477,7 +465,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	_vgaTickCounter = 0;
 
-	_moviePlayer = 0;
 	_sound = 0;
 
 	_effectsPaused = false;
@@ -717,27 +704,6 @@ void AGOSEngine_PuzzlePack::setupGame() {
 	AGOSEngine::setupGame();
 }
 
-void AGOSEngine_Feeble::setupGame() {
-	gss = &feeblefiles_settings;
-	_numVideoOpcodes = 85;
-	_vgaMemSize = 7500000;
-	_itemMemSize = 20000;
-	_tableMemSize = 200000;
-	_frameCount = 1;
-	_vgaBaseDelay = 5;
-	_vgaPeriod = 50;
-	_numBitArray1 = 16;
-	_numBitArray2 = 16;
-	_numBitArray3 = 16;
-	_numItemStore = 10;
-	_numTextBoxes = 40;
-	_numVars = 255;
-
-	_numSpeech = 10000;
-
-	AGOSEngine::setupGame();
-}
-
 void AGOSEngine_Simon2::setupGame() {
 	gss = &simon2_settings;
 	_tableIndexBase = 1580 / 4;
@@ -968,7 +934,6 @@ AGOSEngine::~AGOSEngine() {
 	delete[] _windowList;
 
 	delete _debugger;
-	delete _moviePlayer;
 	delete _sound;
 }
 
@@ -1039,18 +1004,6 @@ Common::Error AGOSEngine::go() {
 	if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformAmiga &&
 		(getFeatures() & GF_DEMO)) {
 		playMusic(0, 0);
-	}
-
-	if ((getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformMacintosh) &&
-		getGameType() == GType_FF) {
-		_moviePlayer = makeMoviePlayer(this, (const char *)"epic.dxa");
-		assert(_moviePlayer);
-
-		_moviePlayer->load();
-		_moviePlayer->play();
-
-		delete _moviePlayer;
-		_moviePlayer = NULL;
 	}
 
 	runSubroutine101();

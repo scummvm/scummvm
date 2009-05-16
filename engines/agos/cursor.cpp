@@ -644,6 +644,11 @@ void AGOSEngine_PuzzlePack::initMouse() {
 	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
 }
 
+void AGOSEngine_FeebleDemo::initMouse() {
+	// TODO: Add larger cursor
+	AGOSEngine_Simon1::initMouse();
+}
+
 void AGOSEngine_Feeble::initMouse() {
 	_maxCursorWidth = 40;
 	_maxCursorHeight = 40;
@@ -721,6 +726,11 @@ void AGOSEngine_Feeble::drawMousePart(int image, byte x, byte y) {
 		src += width;
 		dst += _maxCursorWidth;
 	}
+}
+
+void AGOSEngine_FeebleDemo::drawMousePointer() {
+	// TODO: Add larger cursor
+	CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
 }
 
 void AGOSEngine_Feeble::drawMousePointer() {

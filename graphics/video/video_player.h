@@ -154,6 +154,7 @@ protected:
 		uint32 frameCount;
 		int32 frameRate;
 		int32 frameDelay;
+		uint32 frameOffs;
 		uint32 currentFrame;
 		uint32 startTime;
 	} _videoInfo;

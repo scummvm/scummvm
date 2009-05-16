@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	detection.o \
 	draw.o \
 	event.o \
+	feeble.o \
 	gfx.o \
 	icons.o \
 	input.o \

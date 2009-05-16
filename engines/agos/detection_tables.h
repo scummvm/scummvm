@@ -2236,6 +2236,46 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// The Feeble Files - English DOS Demo
+	{
+		{
+			"feeble",
+			"Demo",
+
+			{
+	{ "MAINMENU.SMK",		GAME_VGAFILE,	"b62df52fc36f514eb0464120853f22b6", 968808},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DEMO
+		},
+
+		GType_FF,
+		GID_FEEBLEFILES,
+		GF_DEMO
+	},
+
+	// The Feeble Files - German DOS Demo
+	{
+		{
+			"feeble",
+			"Demo",
+
+			{
+	{ "MAINMENU.SMK",		GAME_VGAFILE,	"e18d365044eabea7352934917bbfd2e4", 976436},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_DEMO
+		},
+
+		GType_FF,
+		GID_FEEBLEFILES,
+		GF_DEMO
+	},
+
 	// The Feeble Files - English Amiga CD
 	{
 		{

@@ -157,6 +157,8 @@ bool DXADecoder::loadFile(const char *fileName) {
 #endif
 	_videoInfo.currentFrame = 0;
 
+	_videoInfo.frameOffs = _fileStream->pos();
+
 	return true;
 }
 

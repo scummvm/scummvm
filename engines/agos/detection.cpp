@@ -30,6 +30,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
+#include "agos/intern.h"
 #include "agos/agos.h"
 
 namespace AGOS {
@@ -100,6 +101,8 @@ static const ADParams detectionParams = {
 	0
 };
 
+using namespace AGOS;
+
 class AgosMetaEngine : public AdvancedMetaEngine {
 public:
 	AgosMetaEngine() : AdvancedMetaEngine(detectionParams) {}
@@ -154,7 +157,10 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new AGOS::AGOSEngine_Simon2(syst);
 		break;
 	case AGOS::GType_FF:
-		*engine = new AGOS::AGOSEngine_Feeble(syst);
+		if (gd->features & GF_DEMO)
+			*engine = new AGOS::AGOSEngine_FeebleDemo(syst);
+		else
+			*engine = new AGOS::AGOSEngine_Feeble(syst);
 		break;
 	case AGOS::GType_PP:
 		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);

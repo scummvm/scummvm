@@ -43,7 +43,7 @@
 
 namespace AGOS {
 
-MoviePlayer::MoviePlayer(AGOSEngine *vm)
+MoviePlayer::MoviePlayer(AGOSEngine_Feeble *vm)
 	: _vm(vm) {
 	_mixer = _vm->_mixer;
 
@@ -227,7 +227,7 @@ const char * MoviePlayerDXA::_sequenceList[90] = {
 	"wurbatak"
 };
 
-MoviePlayerDXA::MoviePlayerDXA(AGOSEngine *vm, const char *name)
+MoviePlayerDXA::MoviePlayerDXA(AGOSEngine_Feeble *vm, const char *name)
 	: MoviePlayer(vm) {
 	debug(0, "Creating DXA cutscene player");
 
@@ -316,18 +316,28 @@ void MoviePlayerDXA::startSound() {
 }
 
 void MoviePlayerDXA::nextFrame() {
-	if (_vm->_mixer->isSoundHandleActive(_bgSound) && (_vm->_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < (uint32)getCurFrame()) {
+	if (_bgSoundStream && _vm->_mixer->isSoundHandleActive(_bgSound) && (_vm->_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < (uint32)getCurFrame()) {
 		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
 		return;
 	}
 
 	if (getCurFrame() < getFrameCount()) {
 		decodeNextFrame();
-		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
+		if (_vm->_interactiveVideo == TYPE_OMNITV) {
+			copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
+		} else if (_vm->_interactiveVideo == TYPE_LOOPING) {
+			copyFrameToBuffer(_vm->getBackBuf(), (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
+		}
 	} else {
-		closeFile();
-		_vm->_omniTV = false;
-		_vm->_variableArray[254] = 6747;
+		if (_vm->_interactiveVideo == TYPE_OMNITV) {
+			closeFile();
+			_vm->_interactiveVideo = 0;
+			_vm->_variableArray[254] = 6747;
+		} else if (_vm->_interactiveVideo == TYPE_LOOPING) {
+			_fileStream->seek(_videoInfo.frameOffs);
+			_videoInfo.currentFrame = 0;
+			startSound();
+		}
 	}
 }
 
@@ -374,7 +384,7 @@ bool MoviePlayerDXA::processFrame() {
 			// sync case for the subsequent frames.
 			_ticks = _vm->_system->getMillis();
 		} else {
-			_ticks += getFrameDelay();
+			_ticks += getFrameWaitTime();
 			while (_vm->_system->getMillis() < _ticks)
 				_vm->_system->delayMillis(10);
 		}
@@ -392,7 +402,7 @@ bool MoviePlayerDXA::processFrame() {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-MoviePlayerSMK::MoviePlayerSMK(AGOSEngine *vm, const char *name)
+MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
 	: MoviePlayer(vm), SmackerDecoder(vm->_mixer) {
 	debug(0, "Creating SMK cutscene player");
 
@@ -436,11 +446,20 @@ void MoviePlayerSMK::handleNextFrame() {
 void MoviePlayerSMK::nextFrame() {
 	if (getCurFrame() < getFrameCount()) {
 		decodeNextFrame();
-		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
+		if (_vm->_interactiveVideo == TYPE_OMNITV) {
+			copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
+		} else if (_vm->_interactiveVideo == TYPE_LOOPING) {
+			copyFrameToBuffer(_vm->getBackBuf(), (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
+		}
 	} else {
-		closeFile();
-		_vm->_omniTV = false;
-		_vm->_variableArray[254] = 6747;
+		if (_vm->_interactiveVideo == TYPE_OMNITV) {
+			closeFile();
+			_vm->_interactiveVideo = 0;
+			_vm->_variableArray[254] = 6747;
+		} else if (_vm->_interactiveVideo == TYPE_LOOPING) {
+			_fileStream->seek(_videoInfo.frameOffs);
+			_videoInfo.currentFrame = 0;
+		}
 	}
 }
 
@@ -481,7 +500,7 @@ bool MoviePlayerSMK::processFrame() {
 // Factory function for creating the appropriate cutscene player
 ///////////////////////////////////////////////////////////////////////////////
 
-MoviePlayer *makeMoviePlayer(AGOSEngine *vm, const char *name) {
+MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name) {
 	char baseName[40];
 	char filename[20];
 

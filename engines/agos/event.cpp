@@ -581,13 +581,10 @@ void AGOSEngine_Feeble::timerProc() {
 			}
 		}
 
-		if (getGameType() == GType_FF && _omniTV) {
+		if (getGameType() == GType_FF && _interactiveVideo) {
 			// Controls Omni TV videos
 			if (getBitFlag(42)) {
-				_omniTV = false;
-				_moviePlayer->stopVideo();
-				delete _moviePlayer;
-				_moviePlayer = NULL;
+				stopInteractiveVideo();
 			} else {
 				_moviePlayer->nextFrame();
 			}
@@ -597,7 +594,7 @@ void AGOSEngine_Feeble::timerProc() {
 	}
 
 	if (_displayScreen) {
-		if (getGameType() == GType_FF) {
+		if (getGameType() == GType_FF && !(getFeatures() & GF_DEMO)) {
 			if (!getBitFlag(78)) {
 				oracleLogo();
 			}

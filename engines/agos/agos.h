@@ -165,9 +165,6 @@ class Debugger;
 
 class AGOSEngine : public Engine {
 	friend class Debugger;
-	friend class MoviePlayer;
-	friend class MoviePlayerDXA;
-	friend class MoviePlayerSMK;
 
 	// Engine APIs
 	Common::Error init();
@@ -286,7 +283,6 @@ protected:
 	uint32 _lastVgaTick;
 
 	uint16 _marks;
-	bool _omniTV;
 	bool _scanFlag;
 
 	bool _scriptVar2;
@@ -550,7 +546,6 @@ protected:
 
 	int _vgaTickCounter;
 
-	MoviePlayer *_moviePlayer;
 	Audio::SoundHandle _modHandle;
 
 	Sound *_sound;
@@ -791,7 +786,7 @@ protected:
 	void killAllTimers();
 
 	void endCutscene();
-	void runSubroutine101();
+	virtual void runSubroutine101();
 
 	virtual void inventoryUp(WindowBlock *window);
 	virtual void inventoryDown(WindowBlock *window);
@@ -1877,7 +1872,7 @@ protected:
 class AGOSEngine_Feeble : public AGOSEngine_Simon2 {
 public:
 	AGOSEngine_Feeble(OSystem *system);
-	//~AGOSEngine_Feeble();
+	~AGOSEngine_Feeble();
 
 	virtual void setupGame();
 	virtual void setupOpcodes();
@@ -1920,6 +1915,10 @@ public:
 	void off_b3NotZero();
 
 protected:
+	friend class MoviePlayer;
+	friend class MoviePlayerDXA;
+	friend class MoviePlayerSMK;
+
 	typedef void (AGOSEngine_Feeble::*OpcodeProcFeeble) ();
 	struct OpcodeEntryFeeble {
 		OpcodeProcFeeble proc;
@@ -1928,11 +1927,17 @@ protected:
 
 	const OpcodeEntryFeeble *_opcodesFeeble;
 
+	MoviePlayer *_moviePlayer;
+
+	uint8 _interactiveVideo;
 	uint16 _vgaCurSpritePriority;
 
 	virtual uint16 to16Wrapper(uint value);
 	virtual uint16 readUint16Wrapper(const void *src);
 	virtual uint32 readUint32Wrapper(const void *src);
+
+	void playVideo(const char *filename, bool lastSceneUsed = false);
+	void stopInteractiveVideo();
 
 	virtual void drawImage(VC10_state *state);
 	void scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY);
@@ -1979,6 +1984,8 @@ protected:
 	void linksUp();
 	void linksDown();
 
+	virtual void runSubroutine101();
+
 	void checkUp(WindowBlock *window);
 	void checkDown(WindowBlock *window);
 	virtual void inventoryUp(WindowBlock *window);
@@ -1995,6 +2002,27 @@ protected:
 	void windowBackSpace(WindowBlock *window);
 
 	virtual char *genSaveName(int slot);
+};
+
+class AGOSEngine_FeebleDemo : public AGOSEngine_Feeble {
+public:
+	AGOSEngine_FeebleDemo(OSystem *system);
+
+protected:
+	bool _filmMenuUsed;
+
+	virtual Common::Error go();
+
+	virtual void initMouse();
+	virtual void drawMousePointer();
+
+	void exitMenu();
+	void filmMenu();
+	void handleText();
+	void handleWobble();
+	void mainMenu();
+	void startInteractiveVideo(const char *filename);
+	void waitForSpace();
 };
 
 class AGOSEngine_PuzzlePack : public AGOSEngine_Feeble {

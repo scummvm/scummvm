@@ -473,6 +473,8 @@ bool SmackerDecoder::loadFile(const char *fileName) {
 	_palette = (byte *)malloc(3 * 256);
 	memset(_palette, 0, 3 * 256);
 
+	_videoInfo.frameOffs = _fileStream->pos();
+
 	return true;
 }
 
