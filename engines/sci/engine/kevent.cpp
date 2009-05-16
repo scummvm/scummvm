@@ -224,7 +224,8 @@ reg_t kLocalToGlobal(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kJoystick(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	warning("Unimplemented syscall 'Joystick()");
+	// Subfunction 12 sets/gets joystick repeat rate
+	debug(5, "Unimplemented syscall 'Joystick()'");
 	return NULL_REG;
 }
 

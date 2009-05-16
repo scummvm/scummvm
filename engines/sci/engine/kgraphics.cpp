@@ -1250,13 +1250,13 @@ reg_t kSetNowSeen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case 1:
-		warning("STUB: kPalette() effect 1, direct palette set");
+		debug(5, "STUB: kPalette() effect 1, direct palette set");
 		break;
 	case 2:
-		warning("STUB: kPalette() effect 2, set flag to colors");
+		debug(5, "STUB: kPalette() effect 2, set flag to colors");
 		break;
 	case 3:
-		warning("STUB: kPalette() effect 3, clear flag to colors");
+		debug(5, "STUB: kPalette() effect 3, clear flag to colors");
 		break;
 	case 4:	{	// Set palette intensity
 #if 0
@@ -1273,7 +1273,7 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		return s->r_acc;
 #endif
-		warning("STUB: kPalette() effect 4, set color intensity");
+		debug(5, "STUB: kPalette() effect 4, set color intensity");
 		break;
 		}
 	case 5: {	// Find closest color
@@ -1300,13 +1300,13 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, bestindex);
 	}
 	case 6:
-		warning("STUB: kPalette() effect 6, animate palette");
+		debug(5, "STUB: kPalette() effect 6, animate palette");
 		break;
 	case 7:
-		warning("STUB: kPalette() effect 7, save palette to heap");
+		debug(5, "STUB: kPalette() effect 7, save palette to heap");
 		break;
 	case 8:
-		warning("STUB: kPalette() effect 8, set stored palette");
+		debug(5, "STUB: kPalette() effect 8, set stored palette");
 		break;
 	default:
 		warning("kPalette(): Unimplemented subfunction: %d", UKPV(0));
