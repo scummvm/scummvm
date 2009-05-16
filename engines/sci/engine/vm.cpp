@@ -368,6 +368,14 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
 			sciprintf("Send to invalid selector 0x%x of object at "PREG"\n", 0xffff & selector, PRINT_REG(send_obj));
+
+			// WORKAROUND: LSL6 tries to access the invalid 'keep' selector of the game object.
+			// FIXME: Find out if this is a game bug.
+			if ((s->_gameName == "LSL6") && (s->currentRoomNumber() == 100)) {
+				debug("LSL6 room 100 detected, continuing...");
+				break;
+			}
+
 			script_error_flag = script_debug_flag = 1;
 			break;
 
