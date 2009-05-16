@@ -183,7 +183,7 @@ OBJS += CEgui/GUIElement.o CEgui/Panel.o CEgui/SDL_ImageResource.o \
         CEgui/ItemSwitch.o CEgui/PanelKeyboard.o CEgui/ToolbarHandler.o
 OBJS += CEkeys/EventsBuffer.o
 OBJS += $(srcdir)/gui/Actions.o $(srcdir)/gui/Key.o $(srcdir)/gui/KeysDialog.o
-OBJS += ../sdl/sdl.o ../sdl/graphics.o ../sdl/events.o
+OBJS += ../sdl/sdl.o ../sdl/graphics.o ../sdl/events.o ../sdl/hardwarekeys.o
 OBJS += missing/missing.o
 OBJS += ARMscaler.o
 ifndef DYNAMIC_MODULES
