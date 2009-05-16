@@ -37,7 +37,7 @@ void resetBackgroundIncrustList(backgroundIncrustStruct *pHead) {
 
 // blit background to another one
 void addBackgroundIncrustSub1(int fileIdx, int X, int Y, char *ptr2, int16 scale, char *destBuffer, char *dataPtr) {
-	assert(*dataPtr != 0);
+	assert((dataPtr != NULL) && (*dataPtr != 0));
 
 	buildPolyModel(X, Y, scale, ptr2, destBuffer, dataPtr);
 }
@@ -142,7 +142,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 	newElement->X = params.X;
 	newElement->Y = params.Y;
 	newElement->scale = params.scale;
-	newElement->field_E = params.fileIdx;
+	newElement->frame = params.fileIdx;
 	newElement->spriteId = filesDatabase[params.fileIdx].subData.index;
 	newElement->ptr = NULL;
 	strcpy(newElement->name, filesDatabase[params.fileIdx].subData.name);
@@ -195,7 +195,7 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 		backgroundIncrustStruct* pl2 = pl->next;
 
 		bool bLoad = false;
-		int frame = pl->field_E;
+		int frame = pl->frame;
 		//int screen = pl->backgroundIdx;
 
 		if ((filesDatabase[frame].subData.ptr == NULL) || (strcmp(pl->name, filesDatabase[frame].subData.name))) {
@@ -207,13 +207,15 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 			}
 		}
 
-		if (frame >= -1) {
-			if (filesDatabase[frame].subData.resourceType == 4) {	// sprite
+		if (frame >= 0) {
+			if (filesDatabase[frame].subData.resourceType == OBJ_TYPE_SPRITE) {
+				// Sprite
 				int width = filesDatabase[frame].width;
 				int height = filesDatabase[frame].height;
 
 				drawSprite(width, height, NULL, filesDatabase[frame].subData.ptr, pl->Y, pl->X, backgroundScreens[pl->backgroundIdx], filesDatabase[frame].subData.ptrMask);
-			} else {			// poly
+			} else {
+				// Poly
 				addBackgroundIncrustSub1(frame, pl->X, pl->Y, NULL, pl->scale, (char*)backgroundScreens[pl->backgroundIdx], (char *)filesDatabase[frame].subData.ptr);
 			}
 		}

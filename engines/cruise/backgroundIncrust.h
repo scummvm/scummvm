@@ -37,7 +37,7 @@ struct backgroundIncrustStruct {
 	uint16 overlayIdx;
 	int16 X;
 	int16 Y;
-	uint16 field_E;
+	uint16 frame;
 	uint16 scale;
 	uint16 backgroundIdx;
 	uint16 scriptNumber;

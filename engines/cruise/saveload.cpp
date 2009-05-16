@@ -453,7 +453,7 @@ static void syncIncrust(Common::Serializer &s) {
 		s.syncAsSint16LE(t->overlayIdx);
 		s.syncAsSint16LE(t->X);
 		s.syncAsSint16LE(t->Y);
-		s.syncAsSint16LE(t->field_E);
+		s.syncAsSint16LE(t->frame);
 		s.syncAsSint16LE(t->scale);
 		s.syncAsSint16LE(t->backgroundIdx);
 		s.syncAsSint16LE(t->scriptNumber);
