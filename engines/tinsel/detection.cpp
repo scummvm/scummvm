@@ -459,6 +459,26 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V2,
 	},
 
+	{	// Russian Discworld 2 release by Fargus
+		{
+			"dw2",
+			"CD",
+			{
+				{"dw2.scn", 0, "c6d15ce9720a9d8fef06e6582dcf3f34", 103593},
+				{"english1.smp", 0, "aa8d05f6fade11e6f066d42c302c8e89", 250926923},
+				{"english1.txt", 0, "b522e19d7b2cd7b85e50e36fe48e36a9", 274444},
+				{NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		GID_DW2,
+		0,
+		GF_CD | GF_SCNFILES,
+		TINSEL_V2,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
