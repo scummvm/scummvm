@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	resource_intern.o \
 	saveload.o \
 	saveload_lok.o \
+	saveload_lol.o \
 	saveload_hof.o \
 	saveload_mr.o \
 	scene_v1.o \

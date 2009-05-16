@@ -1585,6 +1585,15 @@ int LoLEngine::olol_printWindowText(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_updateBlockAnimations2(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_updateBlockAnimations2(%p) (%d, %d, %d, %d, ...)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	int numFrames = stackPos(3);
+	assert (numFrames <= 97);
+	int curFrame = stackPos(2) % numFrames;
+	setWallType(stackPos(0), stackPos(1), stackPos(4 + curFrame));
+	return 0;
+}
+
 int LoLEngine::olol_checkPartyForItemType(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkPartyForItemType(%p) (%d, %d, %d))", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	int p = stackPos(1);
@@ -2315,7 +2324,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0x84
-	OpcodeUnImpl();
+	Opcode(olol_updateBlockAnimations2);
 	Opcode(olol_checkPartyForItemType);
 	Opcode(olol_setUnkDoorVar);
 	Opcode(olol_resetTimDialogueState);

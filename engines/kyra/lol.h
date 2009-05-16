@@ -682,6 +682,7 @@ private:
 	int olol_suspendMonster(EMCState *script);
 	int olol_triggerEventOnMouseButtonRelease(EMCState *script);
 	int olol_printWindowText(EMCState *script);
+	int olol_updateBlockAnimations2(EMCState *script);
 	int olol_checkPartyForItemType(EMCState *script);
 	int olol_setUnkDoorVar(EMCState *script);
 	int olol_resetTimDialogueState(EMCState *script);
@@ -1346,8 +1347,8 @@ private:
 	bool lineIsPassable(int, int) { return false; }
 
 	// save
-	Common::Error loadGameState(int slot) { return Common::kNoError; }
-	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail) { return Common::kNoError; }
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
 	void generateTempData();
 	LevelTempData *_lvlTempData[28];

@@ -152,6 +152,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_blockDrawingBuffer = 0;
 	_sceneWindowBuffer = 0;
 	memset(_doorShapes, 0, sizeof(_doorShapes));
+	memset(_characterFaceShapes, 0, sizeof(_characterFaceShapes));
 
 	_lampEffect = _brightness = _lampOilStatus = 0;
 	_lampStatusSuspended = false;
@@ -387,6 +388,11 @@ LoLEngine::~LoLEngine() {
 			delete[] _lvlTempData[i]->flyingObjects;
 			delete _lvlTempData[i];
 		}
+	}
+
+	for (int i = 0; i < 3; i++) {
+		for (int ii = 0; ii < 40; ii++)
+			delete[] _characterFaceShapes[ii][i];
 	}
 
 	delete[] _healOverlay;
@@ -1104,8 +1110,10 @@ void LoLEngine::loadCharFaceShapes(int charNum, int id) {
 	_screen->loadBitmap(file, 3, 3, 0);
 
 	const uint8 *p = _screen->getCPagePtr(3);
-	for (int i = 0; i < 40; i++)
+	for (int i = 0; i < 40; i++) {
+		delete[] _characterFaceShapes[i][charNum];
 		_characterFaceShapes[i][charNum] = _screen->makeShapeCopy(p, i);
+	}
 }
 
 void LoLEngine::updatePortraitSpeechAnim() {
@@ -3808,8 +3816,8 @@ void LoLEngine::generateTempData() {
 	char filename[13];
 	snprintf(filename, sizeof(filename), "LEVEL%d.CMZ", _currentLevel);
 
-	_screen->loadBitmap(filename, 3, 3, 0);
-	const uint8 *p = _screen->getCPagePtr(2);
+	_screen->loadBitmap(filename, 15, 15, 0);
+	const uint8 *p = _screen->getCPagePtr(14);
 	uint16 len = READ_LE_UINT16(p + 4);
 	p += 6;
 
