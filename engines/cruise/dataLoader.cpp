@@ -248,10 +248,10 @@ int loadFile(const char* name, int idx, int destIdx) {
 
 		int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
 
-		if (idx > numMaxEntriesInSet) {
+		if (destIdx > numMaxEntriesInSet) {
 			return 0;	// exit if limit is reached
 		}
-		return loadSetEntry(name, ptr, idx, destIdx);
+		return loadSetEntry(name, ptr, destIdx, idx);
 
 		break;
 	}
