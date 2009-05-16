@@ -1177,8 +1177,8 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType) {
 
 			dir = pl->startDirection;
 
-			if (pl->idx >= 0)
-				freePerso(pl->idx);
+			if (pl->pathId >= 0)
+				freePerso(pl->pathId);
 
 			free(pl);
 			pl = pl4;
