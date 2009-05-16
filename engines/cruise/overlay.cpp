@@ -25,6 +25,7 @@
 
 #include "common/stream.h"
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 
 namespace Cruise {
@@ -566,6 +567,16 @@ int loadOverlay(const char *scriptName) {
 				}
 
 				s2.read(ovlData->stringTable[i].string, ovlData->stringTable[i].length);
+
+				// WORKAROUND: English version, idx 16, num #60 has a line feed character
+				// in the middle of a word
+				if ((scriptIdx == 16) && (i == 60) && (_vm->getLanguage() == Common::EN_ANY)) {
+					char *p = strchr(ovlData->stringTable[i].string, '\xa');
+					if (p != NULL) {
+						// Delete the line feed character by shifting remainder of message
+						while ((*p = *(p + 1)) != '\0') ++p;
+					}
+				}
 			}
 		}
 	}
