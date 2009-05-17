@@ -217,7 +217,7 @@ void Smush::handleFrame() {
 		// If we're not supposed to loop (or looping fails) then end the video
 		if(!_videoLooping || !_file.setPos(_startPos)) {
 			_videoFinished = true;
-			g_grime->setMode(ENGINE_MODE_NORMAL);
+			g_grim->setMode(ENGINE_MODE_NORMAL);
 			return;
 		}
 	}
@@ -305,7 +305,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 
 void Smush::stop() {
 	deinit();
-	g_grime->setMode(ENGINE_MODE_NORMAL);
+	g_grim->setMode(ENGINE_MODE_NORMAL);
 }
 
 bool Smush::play(const char *filename, int x, int y) {

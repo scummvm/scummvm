@@ -366,7 +366,7 @@ static void SetSelectedActor() {
 
 	DEBUG_FUNCTION();
 	act = check_actor(1);
-	g_grime->setSelectedActor(act);
+	g_grim->setSelectedActor(act);
 }
 
 /* Get the currently selected actor, this is used in
@@ -378,7 +378,7 @@ static void GetCameraActor() {
 
 	DEBUG_FUNCTION();
 	stubWarning("VERIFY: GetCameraActor");
-	act = g_grime->selectedActor();
+	act = g_grim->selectedActor();
 	lua_pushusertag(act, MKID_BE('ACTR'));
 }
 
@@ -1197,7 +1197,7 @@ static void WalkActorVector() {
 	moveVert = luaL_check_number(4);
 
 	// Get the direction the camera is pointing
-	Vector3d cameraVector = g_grime->currScene()->_currSetup->_interest - g_grime->currScene()->_currSetup->_pos;
+	Vector3d cameraVector = g_grim->currScene()->_currSetup->_interest - g_grim->currScene()->_currSetup->_pos;
 	// find the angle the camera direction is around the unit circle
 	float cameraYaw = cameraVector.unitCircleAngle();
 
@@ -1337,10 +1337,10 @@ static void PutActorAtInterest() {
 
 	DEBUG_FUNCTION();
 	act = check_actor(1);
-	if (!g_grime->currScene())
+	if (!g_grim->currScene())
 		return;
 
-	act->setPos(g_grime->currScene()->_currSetup->_interest);
+	act->setPos(g_grim->currScene()->_currSetup->_interest);
 }
 
 static void SetActorFollowBoxes() {
@@ -1372,9 +1372,9 @@ static void GetVisibleThings() {
 	Actor *sel;
 
 	DEBUG_FUNCTION();
-	sel = g_grime->selectedActor();
-	for (GrimEngine::ActorListType::const_iterator i = g_grime->actorsBegin(); i != g_grime->actorsEnd(); i++) {
-		if (!(*i)->inSet(g_grime->sceneName()))
+	sel = g_grim->selectedActor();
+	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); i++) {
+		if (!(*i)->inSet(g_grim->sceneName()))
 			continue;
 		// Consider the active actor visible
 		if (sel == (*i) || sel->angleTo(*(*i)) < 90) {
@@ -1451,7 +1451,7 @@ static void ActivateActorShadow() {
 	bool state = getbool(3);
 
 	act->setActivateShadow(shadowId, state);
-	g_grime->flagRefreshShadowMask(true);
+	g_grim->flagRefreshShadowMask(true);
 }
 
 static void SetActorShadowValid() {
@@ -1688,7 +1688,7 @@ static void GetPointSector() {
 		Vector3d point(x, y, z);
 
 		// Find the point in any available sector
-		result = g_grime->currScene()->findPointSector(point, 0xFFFF);
+		result = g_grim->currScene()->findPointSector(point, 0xFFFF);
 	} else {
 		result = NULL;
 	}
@@ -1712,7 +1712,7 @@ static void GetActorSector() {
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	sectorType = check_int(2);
-	Sector *result = g_grime->currScene()->findPointSector(act->pos(), sectorType);
+	Sector *result = g_grim->currScene()->findPointSector(act->pos(), sectorType);
 	if (result) {
 		lua_pushnumber(result->id());
 		lua_pushstring(const_cast<char *>(result->name()));
@@ -1732,9 +1732,9 @@ static void IsActorInSector() {
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	name = luaL_check_string(2);
-	numSectors = g_grime->currScene()->getSectorCount();
+	numSectors = g_grim->currScene()->getSectorCount();
 	for (i = 0; i < numSectors; i++) {
-		Sector *sector = g_grime->currScene()->getSectorBase(i);
+		Sector *sector = g_grim->currScene()->getSectorBase(i);
 		if (sector->visible() && strmatch(sector->name(), name)) {
 			if (sector->isPointInSector(act->pos())) {
 				lua_pushnumber(sector->id());
@@ -1758,13 +1758,13 @@ static void MakeSectorActive() {
 	sectorName = lua_getparam(1);
 	visible = !lua_isnil(lua_getparam(2));
 	// FIXME: This happens on initial load. Are we initting something in the wrong order?
-	if (!g_grime->currScene() && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)) {
+	if (!g_grim->currScene() && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)) {
 		warning("!!!! Trying to call MakeSectorActive without a scene!");
 		return;
 	}
 
-	if (g_grime->currScene())
-		numSectors = g_grime->currScene()->getSectorCount();
+	if (g_grim->currScene())
+		numSectors = g_grim->currScene()->getSectorCount();
 	else
 		numSectors = 0;
 
@@ -1772,7 +1772,7 @@ static void MakeSectorActive() {
 		const char *name = luaL_check_string(1);
 
 		for (i = 0; i < numSectors; i++) {
-			Sector *sector = g_grime->currScene()->getSectorBase(i);
+			Sector *sector = g_grim->currScene()->getSectorBase(i);
 			if (strmatch(sector->name(), name)) {
 				sector->setVisible(visible);
 				return;
@@ -1782,7 +1782,7 @@ static void MakeSectorActive() {
 		int id = check_int(1);
 
 		for (i = 0; i < numSectors; i++) {
-			Sector *sector = g_grime->currScene()->getSectorBase(i);
+			Sector *sector = g_grim->currScene()->getSectorBase(i);
 			if (sector->id() == id) {
 				sector->setVisible(visible);
 				return;
@@ -1802,7 +1802,7 @@ static void LockSet() {
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
 	// We should lock the set so it isn't destroyed
-	g_grime->setSceneLock(name, true);
+	g_grim->setSceneLock(name, true);
 }
 
 static void UnLockSet() {
@@ -1811,7 +1811,7 @@ static void UnLockSet() {
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
 	// We should unlock the set so it can be destroyed again
-	g_grime->setSceneLock(name, false);
+	g_grim->setSceneLock(name, false);
 }
 
 static void MakeCurrentSet() {
@@ -1821,7 +1821,7 @@ static void MakeCurrentSet() {
 	name = luaL_check_string(1);
 	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
 		printf("Entered new scene '%s'.\n", name);
-	g_grime->setScene(name);
+	g_grim->setScene(name);
 }
 
 static void MakeCurrentSetup() {
@@ -1829,8 +1829,8 @@ static void MakeCurrentSetup() {
 
 	DEBUG_FUNCTION();
 	num = check_int(1);
-	prevSetup = g_grime->currScene()->setup();
-	g_grime->currScene()->setSetup(num);
+	prevSetup = g_grim->currScene()->setup();
+	g_grim->currScene()->setSetup(num);
 
 	lua_beginblock();
 	lua_Object camChangeHandler = getEventHandler("camChangeHandler");
@@ -1862,7 +1862,7 @@ static void GetCurrentSetup() {
 
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
-	scene = g_grime->findScene(name);
+	scene = g_grim->findScene(name);
 	if (!scene) {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("GetCurrentSetup() Requested scene (%s) is not loaded!", name);
@@ -2088,8 +2088,8 @@ static void SetSoundPosition() {
 	int maxVolume = 127;
 
 	DEBUG_FUNCTION();
-	if (g_grime->currScene()) {
-		g_grime->currScene()->getSoundParameters(&minVolume, &maxVolume);
+	if (g_grim->currScene()) {
+		g_grim->currScene()->getSoundParameters(&minVolume, &maxVolume);
 	}
 
 	const char *soundName = lua_getstring(lua_getresult(1));
@@ -2109,9 +2109,9 @@ static void SetSoundPosition() {
 		return;
 	}
 
-	if (g_grime->currScene()) {
-		g_grime->currScene()->setSoundParameters(minVolume, maxVolume);
-		g_grime->currScene()->setSoundPosition(soundName, pos);
+	if (g_grim->currScene()) {
+		g_grim->currScene()->setSoundParameters(minVolume, maxVolume);
+		g_grim->currScene()->setSoundPosition(soundName, pos);
 	}
 }
 
@@ -2180,7 +2180,7 @@ void PerSecond() {
 
 	DEBUG_FUNCTION();
 	rate = luaL_check_number(1);
-	lua_pushnumber(g_grime->perSecond(rate));
+	lua_pushnumber(g_grim->perSecond(rate));
 }
 
 void EnableControl() {
@@ -2188,7 +2188,7 @@ void EnableControl() {
 
 	DEBUG_FUNCTION();
 	num = check_control(1);
-	g_grime->enableControl(num);
+	g_grim->enableControl(num);
 }
 
 void DisableControl() {
@@ -2196,7 +2196,7 @@ void DisableControl() {
 
 	DEBUG_FUNCTION();
 	num = check_control(1);
-	g_grime->disableControl(num);
+	g_grim->disableControl(num);
 }
 
 void GetControlState() {
@@ -2205,16 +2205,16 @@ void GetControlState() {
 	DEBUG_FUNCTION();
 	num = check_control(1);
 	if (num >= KEYCODE_AXIS_JOY1_X && num <= KEYCODE_AXIS_MOUSE_Z)
-		lua_pushnumber(g_grime->getControlAxis(num));
+		lua_pushnumber(g_grim->getControlAxis(num));
 	else
-		pushbool(g_grime->getControlState(num));
+		pushbool(g_grim->getControlState(num));
 }
 
 static void killBitmapPrimitives(Bitmap *bitmap) {
-	for (GrimEngine::PrimitiveListType::const_iterator i = g_grime->primitivesBegin(); i != g_grime->primitivesEnd(); i++) {
+	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
 		if (p->isBitmap() && p->getBitmapHandle() == bitmap) {
-			g_grime->killPrimitiveObject(p);
+			g_grim->killPrimitiveObject(p);
 			break;
 		}
 	}
@@ -2325,7 +2325,7 @@ TextObject *TextObjectExists(char *name) {
 	TextObject *modifyObject = NULL;
 
 	DEBUG_FUNCTION();
-	for (GrimEngine::TextListType::const_iterator i = g_grime->textsBegin(); i != g_grime->textsEnd(); i++) {
+	for (GrimEngine::TextListType::const_iterator i = g_grim->textsBegin(); i != g_grim->textsEnd(); i++) {
 		TextObject *textO = *i;
 		if (strlen(name) == strlen(textO->name()) && strcmp(textO->name(), name) == 0) {
 			modifyObject = textO;
@@ -2353,7 +2353,7 @@ static void KillTextObject() {
 
 	delText = TextObjectExists((char *) textObjectParm->name());
 	if (delText)
-		g_grime->killTextObject(delText);
+		g_grim->killTextObject(delText);
 }
 
 /* Make changes to a text object based on the parameters passed
@@ -2392,7 +2392,7 @@ static void ChangeTextObject() {
  */
 static void GetTextSpeed() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_grime->getTextSpeed());
+	lua_pushnumber(g_grim->getTextSpeed());
 }
 
 static void SetTextSpeed() {
@@ -2400,7 +2400,7 @@ static void SetTextSpeed() {
 
 	DEBUG_FUNCTION();
 	speed = check_int(1);
-	g_grime->setTextSpeed(speed);
+	g_grim->setTextSpeed(speed);
 }
 
 static void MakeTextObject() {
@@ -2425,7 +2425,7 @@ static void MakeTextObject() {
 	textObject->setText((char *)text.c_str());
 
 	textObject->createBitmap();
-	g_grime->registerTextObject(textObject);
+	g_grim->registerTextObject(textObject);
 
 	lua_pushusertag(textObject, MKID_BE('TEXT'));
 	lua_pushnumber(textObject->getBitmapWidth());
@@ -2444,9 +2444,9 @@ static void GetTextObjectDimensions() {
 static void ExpireText() {
 	DEBUG_FUNCTION();
 	// Expire all the text objects
-	g_grime->killTextObjects();
+	g_grim->killTextObjects();
 	// Cleanup actor references to deleted text objects
-	for (GrimEngine::ActorListType::const_iterator i = g_grime->actorsBegin(); i != g_grime->actorsEnd(); i++)
+	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); i++)
 		(*i)->lineCleanup();
 }
 
@@ -2494,14 +2494,14 @@ static void SetSpeechMode() {
 	DEBUG_FUNCTION();
 	mode = check_int(1);
 	if (mode >= 1 && mode <= 3)
-		g_grime->setSpeechMode(mode);
+		g_grim->setSpeechMode(mode);
 }
 
 static void GetSpeechMode() {
 	int mode;
 
 	DEBUG_FUNCTION();
-	mode = g_grime->getSpeechMode();
+	mode = g_grim->getSpeechMode();
 	lua_pushnumber(mode);
 }
 
@@ -2515,7 +2515,7 @@ static void StartFullscreenMovie() {
 	// on-screen the whole movie
 	// ExpireText(); --- disable above hack
 	CleanBuffer();
-	g_grime->setMode(ENGINE_MODE_SMUSH);
+	g_grim->setMode(ENGINE_MODE_SMUSH);
 	pushbool(g_smush->play(luaL_check_string(1), 0, 0));
 }
 
@@ -2532,7 +2532,7 @@ static void StartMovie() {
 	if (!lua_isnil(lua_getparam(4)))
 		y = check_int(4);
 
-	g_grime->setMode(ENGINE_MODE_NORMAL);
+	g_grim->setMode(ENGINE_MODE_NORMAL);
 	pushbool(g_smush->play(luaL_check_string(1), x, y));
 }
 
@@ -2542,12 +2542,12 @@ static void StartMovie() {
  */
 static void IsFullscreenMoviePlaying() {
 	DEBUG_FUNCTION();
-	pushbool(g_smush->isPlaying() && g_grime->getMode() == ENGINE_MODE_SMUSH);
+	pushbool(g_smush->isPlaying() && g_grim->getMode() == ENGINE_MODE_SMUSH);
 }
 
 static void IsMoviePlaying() {
 	DEBUG_FUNCTION();
-	pushbool(g_smush->isPlaying() && g_grime->getMode() == ENGINE_MODE_NORMAL);
+	pushbool(g_smush->isPlaying() && g_grim->getMode() == ENGINE_MODE_NORMAL);
 }
 
 static void StopMovie() {
@@ -2562,7 +2562,7 @@ static void PauseMovie() {
 
 static void PurgePrimitiveQueue() {
 	DEBUG_FUNCTION();
-	g_grime->killPrimitiveObjects();
+	g_grim->killPrimitiveObjects();
 }
 
 static void DrawPolygon() {
@@ -2625,7 +2625,7 @@ static void DrawPolygon() {
 
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createPolygon(p1, p2, p3, p4, color);
-	g_grime->registerPrimitiveObject(p);
+	g_grim->registerPrimitiveObject(p);
 	lua_pushusertag(p, MKID_BE('PRIM'));
 }
 
@@ -2655,7 +2655,7 @@ static void DrawLine() {
 
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createLine(p1, p2, color);
-	g_grime->registerPrimitiveObject(p);
+	g_grim->registerPrimitiveObject(p);
 	lua_pushusertag(p, MKID_BE('PRIM'));
 }
 
@@ -2674,7 +2674,7 @@ static void ChangePrimitive() {
 		return;
 
 	psearch = check_primobject(1);
-	for (GrimEngine::PrimitiveListType::const_iterator i = g_grime->primitivesBegin(); i != g_grime->primitivesEnd(); i++) {
+	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
 		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
 				&& p->getP1().y == psearch->getP1().y && p->getP2().y == psearch->getP2().y) {
@@ -2753,7 +2753,7 @@ static void DrawRectangle() {
 
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createRectangle(p1, p2, color, filled);
-	g_grime->registerPrimitiveObject(p);
+	g_grim->registerPrimitiveObject(p);
 	lua_pushusertag(p, MKID_BE('PRIM'));
 }
 
@@ -2836,7 +2836,7 @@ static void NewObjectState() {
 		zbitmap = luaL_check_string(4);
 
 	state = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
-	g_grime->currScene()->addObjectState(state);
+	g_grim->currScene()->addObjectState(state);
 	lua_pushusertag(state, MKID_BE('STAT'));
 }
 
@@ -2845,7 +2845,7 @@ static void FreeObjectState() {
 
 	DEBUG_FUNCTION();
 	state = check_object(1);
-	g_grime->currScene()->deleteObjectState(state);
+	g_grim->currScene()->deleteObjectState(state);
 }
 
 static void SendObjectToBack() {
@@ -2856,7 +2856,7 @@ static void SendObjectToBack() {
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT')) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
 		// moving object to top in list ?
-		g_grime->currScene()->moveObjectStateToFirst(state);
+		g_grim->currScene()->moveObjectStateToFirst(state);
 	}
 }
 
@@ -2868,7 +2868,7 @@ static void SendObjectToFront() {
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT')) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
 		// moving object to last in list ?
-		g_grime->currScene()->moveObjectStateToLast(state);
+		g_grim->currScene()->moveObjectStateToLast(state);
 	}
 }
 
@@ -2894,11 +2894,11 @@ static void ScreenShot() {
 	width = check_int(1);
 	height = check_int(2);
 
-	int mode = g_grime->getMode();
-	g_grime->setMode(ENGINE_MODE_NORMAL);
-	g_grime->updateDisplayScene();
+	int mode = g_grim->getMode();
+	g_grim->setMode(ENGINE_MODE_NORMAL);
+	g_grim->updateDisplayScene();
 	Bitmap *screenshot = g_driver->getScreenshot(width, height);
-	g_grime->setMode(mode);
+	g_grim->setMode(mode);
 	if (screenshot) {
 		screenshot->luaRef();
 		lua_pushusertag(screenshot, MKID_BE('VBUF'));
@@ -2948,7 +2948,7 @@ static void SubmitSaveGameData() {
 	DEBUG_FUNCTION();
 	table = lua_getparam(1);
 
-	savedState = g_grime->savedState();
+	savedState = g_grim->savedState();
 	if (!savedState)
 		error("Cannot obtain saved game!");
 	savedState->beginSection('SUBS');
@@ -3012,15 +3012,15 @@ static void Load() {
 	DEBUG_FUNCTION();
 	fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
-		g_grime->_savegameFileName = NULL;
+		g_grim->_savegameFileName = NULL;
 	} else if (lua_isstring(fileName)) {
-		g_grime->_savegameFileName = lua_getstring(fileName);
+		g_grim->_savegameFileName = lua_getstring(fileName);
 	} else {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Load() fileName is wrong");
 		return;
 	}
-	g_grime->_savegameLoadRequest = true;
+	g_grim->_savegameLoadRequest = true;
 }
 
 static void Save() {
@@ -3029,15 +3029,15 @@ static void Save() {
 	DEBUG_FUNCTION();
 	fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
-		g_grime->_savegameFileName = NULL;
+		g_grim->_savegameFileName = NULL;
 	} else if (lua_isstring(fileName)) {
-		g_grime->_savegameFileName = lua_getstring(fileName);
+		g_grim->_savegameFileName = lua_getstring(fileName);
 	} else {
 		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
 			warning("Save() fileName is wrong");
 		return;
 	}
-	g_grime->_savegameSaveRequest = true;
+	g_grim->_savegameSaveRequest = true;
 }
 
 static void lua_remove() {
@@ -3090,12 +3090,12 @@ static void SetAmbientLight() {
 	DEBUG_FUNCTION();
 	mode = check_int(1);
 	if (mode == 0) {
-		if (g_grime->currScene()) {
-			g_grime->currScene()->setLightEnableState(true);
+		if (g_grim->currScene()) {
+			g_grim->currScene()->setLightEnableState(true);
 		}
 	} else if (mode == 1) {
-		if (g_grime->currScene()) {
-			g_grime->currScene()->setLightEnableState(false);
+		if (g_grim->currScene()) {
+			g_grim->currScene()->setLightEnableState(false);
 		}
 	} else {
 		error("SetAmbientLight() Unknown param %d", mode);
@@ -3108,13 +3108,13 @@ static void RenderModeUser() {
 	DEBUG_FUNCTION();
 	param1 = lua_getparam(1);
 	if (lua_isnumber(param1)) {
-		g_grime->setPreviousMode(g_grime->getMode());
+		g_grim->setPreviousMode(g_grim->getMode());
 		g_smush->pause(true);
-		g_grime->setMode(ENGINE_MODE_DRAW);
+		g_grim->setMode(ENGINE_MODE_DRAW);
 	} else if (lua_isnil(param1)) {
 		g_smush->pause(false);
-		g_grime->refreshDrawMode();
-		g_grime->setMode(g_grime->getPreviousMode());
+		g_grim->refreshDrawMode();
+		g_grim->setMode(g_grim->getPreviousMode());
 	} else {
 		error("RenderModeUser() Unknown type of param");
 	}
@@ -3128,7 +3128,7 @@ static void SetGamma() {
 
 static void Display() {
 	DEBUG_FUNCTION();
-	if (g_grime->getFlipEnable()) {
+	if (g_grim->getFlipEnable()) {
 		g_driver->flipBuffer();
 	}
 }
@@ -3138,14 +3138,14 @@ static void EngineDisplay() {
 	DEBUG_FUNCTION();
 	bool mode = check_int(1) != 0;
 	if (mode) {
-		g_grime->setFlipEnable(true);
+		g_grim->setFlipEnable(true);
 	} else {
-		g_grime->setFlipEnable(false);
+		g_grim->setFlipEnable(false);
 	}
 }
 
 static void ForceRefresh() {
-	g_grime->refreshDrawMode();
+	g_grim->refreshDrawMode();
 }
 
 static void JustLoaded() {

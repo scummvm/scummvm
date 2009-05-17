@@ -221,7 +221,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 	// save maximum length for string
 	saveSint32(maxStringLength);
 
-	//printf("1: %d\n", g_grime->_savedState->getBufferPos());
+	//printf("1: %d\n", g_grim->_savedState->getBufferPos());
 
 	// save hash tables for strings and user data
 	TaggedString *tempString;
@@ -249,7 +249,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 		}
 	}
 
-	//printf("2: %d\n", g_grime->_savedState->getBufferPos());
+	//printf("2: %d\n", g_grim->_savedState->getBufferPos());
 
 	Closure *tempClosure = (Closure *)L->rootcl.next;
 	while (tempClosure) {

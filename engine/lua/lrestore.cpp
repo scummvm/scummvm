@@ -254,7 +254,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 	maxStringsLength = restoreSint32();
 	char *tempStringBuffer = (char *)luaM_malloc(maxStringsLength);
 
-	//printf("1: %d\n", g_grime->_savedState->getBufferPos());
+	//printf("1: %d\n", g_grim->_savedState->getBufferPos());
 
 	int32 i;
 	for (i = 0; i < arrayStringsCount; i++) {
@@ -291,7 +291,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 	}
 	luaM_free(tempStringBuffer);
 
-	//printf("2: %d\n", g_grime->_savedState->getBufferPos());
+	//printf("2: %d\n", g_grim->_savedState->getBufferPos());
 
 	int32 l;
 	Closure *tempClosure;

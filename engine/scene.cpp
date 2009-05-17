@@ -210,7 +210,7 @@ void Scene::setSetup(int num) {
 		return;
 	}
 	_currSetup = _setups + num;
-	g_grime->flagRefreshShadowMask(true);
+	g_grim->flagRefreshShadowMask(true);
 }
 
 void Scene::drawBitmaps(ObjectState::Position stage) {
