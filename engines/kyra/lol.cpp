@@ -535,7 +535,6 @@ Common::Error LoLEngine::init() {
 
 Common::Error LoLEngine::go() {
 	setupPrologueData(true);
-	_sound->setSoundList(&_soundData[kMusicIntro]);
 
 	if (!saveFileLoadable(0) || _flags.isDemo)
 		showIntro();
@@ -612,10 +611,13 @@ Common::Error LoLEngine::go() {
 	_tim = new TIMInterpreter_LoL(this, _screen, _system);
 	assert(_tim);
 
-	if (!shouldQuit() && (processSelection == 0 || processSelection == 3))
+	if (shouldQuit())
+		return Common::kNoError;
+
+	if (processSelection == 0 || processSelection == 3)
 		startup();
 
-	if (!shouldQuit() && processSelection == 0)
+	if (processSelection == 0)
 		startupNew();
 
 	if (!shouldQuit() && (processSelection == 0 || processSelection == 3)) {

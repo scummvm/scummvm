@@ -89,6 +89,7 @@ void LoLEngine::setupPrologueData(bool load) {
 		memset(_selectionAnimTimers, 0, sizeof(_selectionAnimTimers));
 		memset(_screen->getPalette(1), 0, 768);
 
+		_sound->setSoundList(&_soundData[kMusicIntro]);
 	} else {
 		delete _chargenWSA; _chargenWSA = 0;
 		
@@ -99,21 +100,11 @@ void LoLEngine::setupPrologueData(bool load) {
 		memset(pal, 0, 768);
 		_screen->setScreenPalette(pal);
 
-		// TODO: We need to check if the SYSEX events of intro and ingame differ.
-		// If they differ, we really need to setup the proper ingame SYSEX when starting
-		// the game. But the proper place to do it would not be in this function.
-		/*if (_sound->getMusicType() == Sound::kMidiMT32 || _sound->getSfxType() == Sound::kMidiMT32) {
-			_sound->loadSoundFile("LOLSYSEX");
-			_sound->playTrack(0);
-
-			while (_sound->isPlaying() && !shouldQuit())
-				delay(10);
-		}*/
-
 		if (shouldQuit())
 			return;
 
 		_eventList.clear();
+		_sound->setSoundList(0);
 	}
 
 	// We have three sound.dat files, one for the intro, one for the
