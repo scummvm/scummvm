@@ -83,6 +83,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},
 	{"qfg2",            "Quest for Glory II: Trial by Fire"},
 	{"qfg3",            "Quest for Glory III: Wages of War"},
+	{"slater",          "Slater & Charlie Go Camping"},
 	{"sq1sci",          "Space Quest I: The Sarien Encounter"},
 	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
 	{"sq4",             "Space Quest IV: Roger Wilco and the Time Rippers"},
@@ -101,7 +102,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},
 	{"rama",            "RAMA"},
 	{"shivers",         "Shivers"},
-	//{"shivers2",        "Shivers II: Harvest of Souls"},
+	{"shivers2",        "Shivers II: Harvest of Souls"},
 	{"sq6",             "Space Quest 6: The Spinal Frontier"},
 	{"torin",           "Torin's Passage"},
 #endif // ENABLE_SCI32
@@ -759,6 +760,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_32
 	},
 
+	// Gabriel Knight 2 - English Windows Non-Interactive Demo
+	// Executable scanning reports "2.100.002"
+	{{"gk2", "Demo", {
+		{"resource.map", 0, "e0effce11c4908f4b91838741716c83d", 1351},
+		{"resource.000", 0, "d04cfc7f04b6f74d13025378be49ec2b", 4640330},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_32
+	},
 	// Gabriel Knight 2 - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.1"
 	{{"gk2", "", {
@@ -1989,6 +2000,17 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_32
 	},
 
+	// Lighthouse - English Windows Demo
+	// Executable scanning reports "3.000.000", VERSION file reports "1.00"
+	{{"lighthouse", "Demo", {
+		{"resmap.000", 0, "3bdee7a16926975a4729f75cf6b80a92", 1525},
+		{"ressci.000", 0, "3c585827fa4a82f4c04a56a0bc52ccee", 11494351},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_32
+	},
+
 	// Lighthouse - English DOS (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.1"
 	{{"lighthouse", "", {
@@ -2015,6 +2037,17 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_32
 	},
 #endif // ENABLE_SCI32
+
+	// Mixed-Up Fairy Tales v1.000 - English DOS Non-Interactive Demo
+	{{"fairytales", "Demo", {
+		{"resource.map", 0, "c2cf672c3f4251e7472d4542af3bf764", 933},
+		{"resource.000", 0, "8be56a3a88c065ee00c02c0e29199f3a", 14643},
+		{"resource.001", 0, "9e33566515b18bee7915db448063bba2", 871853},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		0,
+		SCI_VERSION_01,
+		SCI_VERSION_01
+	},
 
 	// Mixed-Up Fairy Tales v1.000 - English DOS (supplied by markcoolio in bug report #2723791)
 	// Executable scanning reports "1.000.145"
@@ -2076,6 +2109,17 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "1c7f311b0a2c927b2fbe81ae341fb2f6", 5790},
 		{"resource.001", 0, "5a0ed1d745855148364de1b3be099bac", 4369438},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_0
+	},
+
+	// Mixed-Up Mother Goose - English Windows Interactive Demo
+	// Executable scanning reports "x.yyy.zzz"
+	{{"mothergoose", "Demo", {
+		{"resource.map", 0, "87f9dc1cafc4d4fa835fb2f00cf3a6ef", 4560},
+		{"resource.001", 0, "5a0ed1d745855148364de1b3be099bac", 2070072},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
 		0,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_0
@@ -2667,6 +2711,17 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_32
 	},
 
+	// RAMA - English DOS/Windows Demo
+	// Executable scanning reports "2.100.002", VERSION file reports "000.000.008"
+	{{"rama", "Demo", {
+		{"resmap.001", 0, "775304e9b2a545156be4d94209550094", 1393},
+		{"ressci.001", 0, "259437fd75fdf51e8207fda8c01fa4fd", 2334384},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_32
+	},
+
 	// RAMA - English Windows (from jvprat)
 	// Executable scanning reports "3.000.000", VERSION file reports "1.100.000"
 	{{"rama", "", {
@@ -2715,7 +2770,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 
 	// Shivers - English Windows Demo
-	// FIXME: Unknown version
+	// Executable scanning reports "2.100.002"
 	{{"shivers", "Demo", {
 		{"resmap.000", 0, "d9e0bc5eddefcbe47f528760085d8927", 1186},
 		{"ressci.000", 0, "3a93c6340b54e07e65d0e5583354d186", 10505469},
@@ -2724,7 +2779,30 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_32
 	},
+
+	// Shivers2 - English Windows Demo
+	// Executable scanning reports "3.000.000"
+	{{"shivers2", "Demo", {
+		{"resmap.000", 0, "d8659188b84beaef076bd869837cd530", 634},
+		{"ressci.000", 0, "7fbac0807a044c9543e8ac376d200e59", 4925003},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_32
+	},
 #endif // ENABLE_SCI32
+
+	// Slater & Charlie Go Camping - English DOS Demo
+	// Executable scanning reports "1.cfs.081", VERSION file reports "1.000"
+	{{"slater", "Demo", {
+		{"resource.map", 0, "61b4f74039399e5aa1e737b16d0fc023", 1409},
+		{"resource.msg", 0, "1aeafe2b495de288d002109650b66614", 1364},
+		{"resource.000", 0, "8e10d4f05c1fd9f883384fa38a898489", 377394},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1_1
+	},
 
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 1.000.510 (just a guess)
