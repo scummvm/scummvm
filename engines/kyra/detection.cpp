@@ -1221,8 +1221,8 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 int KyraMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
-	// Slot 0 can't be deleted, it's for restarting the game(s)
-	if (slot == 0)
+	// In Kyra games slot 0 can't be deleted, it's for restarting the game(s)
+	if (slot == 0 && !ConfMan.getDomain(target)->get("gameid").equalsIgnoreCase("lol"))
 		return;
 
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
@@ -1243,8 +1243,9 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 		if (error == Kyra::KyraEngine_v1::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);
 
-			desc.setDeletableFlag(slot != 0);
-			desc.setWriteProtectedFlag(slot == 0 || slot >= 990);
+			bool lolGame = ConfMan.getDomain(target)->get("gameid").equalsIgnoreCase("lol");
+			desc.setDeletableFlag(slot != 0 || lolGame);
+			desc.setWriteProtectedFlag((slot == 0 && !lolGame) || slot >= 990);
 			desc.setThumbnail(header.thumbnail);
 
 			return desc;
