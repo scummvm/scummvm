@@ -38,7 +38,6 @@
 
 #include "common/config-manager.h"
 #include "common/endian.h"
-#include "base/version.h"
 
 namespace Kyra {
 
@@ -534,75 +533,26 @@ Common::Error LoLEngine::init() {
 }
 
 Common::Error LoLEngine::go() {
-	setupPrologueData(true);
+	int action = -1;
 
-	if (!saveFileLoadable(0) || _flags.isDemo)
-		showIntro();
-
-	if (_flags.isDemo)
-		return Common::kNoError;
-
-	preInit();
-
-	int processSelection = -1;
-	while (!shouldQuit() && processSelection == -1) {
-		_screen->loadBitmap("TITLE.CPS", 2, 2, _screen->getPalette(0));
-		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-
-		_screen->setFont(Screen::FID_6_FNT);
-		// Original version: (260|193) "V CD1.02 D"
-		const int width = _screen->getTextWidth(gScummVMVersion);
-		_screen->fprintString("SVM %s", 300 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
-		_screen->setFont(Screen::FID_9_FNT);
-
-		_screen->fadePalette(_screen->getPalette(0), 0x1E);
-		_screen->updateScreen();
-
-		_eventList.clear();
-		int selection = mainMenu();
-		_screen->hideMouse();
-
-		// Unlike the original, we add a nice fade to black
-		memset(_screen->getPalette(0), 0, 768);
-		_screen->fadePalette(_screen->getPalette(0), 0x54);
-
-		switch (selection) {
-		case 0:		// New game
-			processSelection = 0;
-			break;
-
-		case 1:		// Show intro
-			showIntro();
-			break;
-
-		case 2:		// "Lore of the Lands" (only CD version)
-			break;
-
-		case 3:		// Load game
-			// For now fall through
-			//processSelection = 3;
-			//break;
-
-		case 4:		// Quit game
-		default:
-			quitGame();
-			updateInput();
-			break;
-		}
+	if (_gameToLoad == -1) {
+		action = processPrologue();
+		if (action == -1)
+			return Common::kNoError;
 	}
 
-	if (processSelection == -1)
-		return Common::kNoError;
+	if (!_flags.isDemo && !_res->loadFileList("FILEDATA.FDT"))
+		error("Couldn't load file list: 'FILEDATA.FDT'");
 
-	if (processSelection == 0) {
-		_sound->loadSoundFile(0);
-		_sound->playTrack(6);
-		chooseCharacter();
-		_sound->playTrack(1);
-		_screen->fadeToBlack();
-	}
+	if (_gameToLoad != -1)
+		preInit();
 
-	setupPrologueData(false);
+	// We have three sound.dat files, one for the intro, one for the
+	// end sequence and one for ingame, each contained in a different
+	// PAK file. Therefore a new call to loadSoundFile() is required
+	// whenever the PAK file configuration changes.
+	if (_flags.platform == Common::kPlatformPC98)
+		_sound->loadSoundFile("sound.dat");
 
 	_sound->setSoundList(&_soundData[kMusicIngame]);
 	if (_flags.platform != Common::kPlatformPC)
@@ -614,18 +564,22 @@ Common::Error LoLEngine::go() {
 	if (shouldQuit())
 		return Common::kNoError;
 
-	if (processSelection == 0 || processSelection == 3)
-		startup();
+	startup();
 
-	if (processSelection == 0)
+	if (action == 0) {
 		startupNew();
-
-	if (!shouldQuit() && (processSelection == 0 || processSelection == 3)) {
-		_screen->_fadeFlag = 3;
-		_sceneUpdateRequired = true;
-		enableSysTimer(1);
-		runLoop();
+	} else if (_gameToLoad != -1) {
+		if (loadGameState(_gameToLoad) != Common::kNoError)
+			error("Couldn't load game slot %d on startup", _gameToLoad);
+		_gameToLoad = -1;
+	} else if (action == 3) {
+		// XXX
 	}
+
+	_screen->_fadeFlag = 3;
+	_sceneUpdateRequired = true;
+	enableSysTimer(1);
+	runLoop();
 
 	delete _tim;
 	_tim = 0;

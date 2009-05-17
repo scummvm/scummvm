@@ -29,9 +29,84 @@
 #include "kyra/screen_lol.h"
 #include "kyra/resource.h"
 
+#include "base/version.h"
+
 namespace Kyra {
 
 #pragma mark - Intro
+
+int LoLEngine::processPrologue() {
+	debugC(9, kDebugLevelMain, "LoLEngine::processPrologue()");
+
+	setupPrologueData(true);
+
+	if (!saveFileLoadable(0) || _flags.isDemo)
+		showIntro();
+
+	if (_flags.isDemo)
+		return -1;
+
+	preInit();
+
+	int processSelection = -1;
+	while (!shouldQuit() && processSelection == -1) {
+		_screen->loadBitmap("TITLE.CPS", 2, 2, _screen->getPalette(0));
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+
+		_screen->setFont(Screen::FID_6_FNT);
+		// Original version: (260|193) "V CD1.02 D"
+		const int width = _screen->getTextWidth(gScummVMVersion);
+		_screen->fprintString("SVM %s", 300 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
+		_screen->setFont(Screen::FID_9_FNT);
+
+		_screen->fadePalette(_screen->getPalette(0), 0x1E);
+		_screen->updateScreen();
+
+		_eventList.clear();
+		int selection = mainMenu();
+		_screen->hideMouse();
+
+		// Unlike the original, we add a nice fade to black
+		memset(_screen->getPalette(0), 0, 768);
+		_screen->fadePalette(_screen->getPalette(0), 0x54);
+
+		switch (selection) {
+		case 0:		// New game
+			processSelection = 0;
+			break;
+
+		case 1:		// Show intro
+			showIntro();
+			break;
+
+		case 2:		// "Lore of the Lands" (only CD version)
+			break;
+
+		case 3:		// Load game
+			// For now fall through
+			//processSelection = 3;
+			//break;
+
+		case 4:		// Quit game
+		default:
+			quitGame();
+			updateInput();
+			break;
+		}
+	}
+
+	if (processSelection == 0 || processSelection == 3) {
+		_sound->loadSoundFile(0);
+		_sound->playTrack(6);
+		chooseCharacter();
+		_sound->playTrack(1);
+		_screen->fadeToBlack();
+	}
+
+	setupPrologueData(false);
+
+	return processSelection;
+}
 
 void LoLEngine::setupPrologueData(bool load) {
 	debugC(9, kDebugLevelMain, "LoLEngine::setupPrologueData(%d)", load);
@@ -90,12 +165,16 @@ void LoLEngine::setupPrologueData(bool load) {
 		memset(_screen->getPalette(1), 0, 768);
 
 		_sound->setSoundList(&_soundData[kMusicIntro]);
+	
+		// We have three sound.dat files, one for the intro, one for the
+		// end sequence and one for ingame, each contained in a different
+		// PAK file. Therefore a new call to loadSoundFile() is required
+		// whenever the PAK file configuration changes.
+		if (_flags.platform == Common::kPlatformPC98)
+			_sound->loadSoundFile("sound.dat");
 	} else {
 		delete _chargenWSA; _chargenWSA = 0;
 		
-		if (!_flags.isDemo && !_res->loadFileList("FILEDATA.FDT"))
-			error("Couldn't load file list: 'FILEDATA.FDT'");
-
 		uint8 *pal = _screen->getPalette(0);
 		memset(pal, 0, 768);
 		_screen->setScreenPalette(pal);
@@ -106,13 +185,6 @@ void LoLEngine::setupPrologueData(bool load) {
 		_eventList.clear();
 		_sound->setSoundList(0);
 	}
-
-	// We have three sound.dat files, one for the intro, one for the
-	// end sequence and one for ingame, each contained in a different
-	// PAK file. Therefore a new call to loadSoundFile() is required
-	// whenever the PAK file configuration changes.
-	if (_flags.platform == Common::kPlatformPC98)
-		_sound->loadSoundFile("sound.dat");
 }
 
 void LoLEngine::showIntro() {
@@ -463,7 +535,7 @@ int LoLEngine::selectionCharInfo(int character) {
 
 	default:
 		break;
-	};
+	}
 
 	_screen->loadBitmap(filename, 9, 9, 0);
 	_screen->copyRegion(0, 122, 0, 122, 320, 78, 4, 0, Screen::CR_NO_P_CHECK);

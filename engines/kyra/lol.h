@@ -309,7 +309,8 @@ private:
 
 	int _floatingMouseArrowControl;
 
-	// intro
+	// intro + character selection
+	int processPrologue();
 	void setupPrologueData(bool load);
 
 	void showIntro();
