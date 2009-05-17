@@ -624,37 +624,37 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 	uint32 t = 0;
 
 	switch (mode) {
-		case 1:
-			mode = 0x100;
-			_lastButtonShape = shapeIndex;
-			break;
+	case 1:
+		mode = 0x100;
+		_lastButtonShape = shapeIndex;
+		break;
 
-		case 0:
-			if (!_lastButtonShape)
-				return;
+	case 0:
+		if (!_lastButtonShape)
+			return;
 
-			t = _system->getMillis();
-			if (_buttonPressTimer > t)
-				delay(_buttonPressTimer - t);
+		t = _system->getMillis();
+		if (_buttonPressTimer > t)
+			delay(_buttonPressTimer - t);
 
-		case 2:
-			mode = 0;
-			_lastButtonShape = 0;
-			break;
+	case 2:
+		mode = 0;
+		_lastButtonShape = 0;
+		break;
 
-		case 3:
-			mode = 0;
-			_lastButtonShape = 0;
-			pageNum = 6;
+	case 3:
+		mode = 0;
+		_lastButtonShape = 0;
+		pageNum = 6;
 
-			x2 = x1;
-			y2 = y1;
-			x1 = 0;
-			y1 = 0;
-			break;
+		x2 = x1;
+		y2 = y1;
+		x1 = 0;
+		y1 = 0;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_screen->drawShape(pageNum, _gameShapes[shapeIndex], x1, y1, 0, mode, _screen->_paletteOverlay1, 1);
@@ -755,53 +755,53 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 		evt.type = Common::EVENT_KEYDOWN;
 
 		switch (eventType) {
-			case 96:
-				evt.kbd.keycode = Common::KEYCODE_UP;
-				break;
-			case 102:
-				evt.kbd.keycode = Common::KEYCODE_RIGHT;
-				break;
-			case 97:
-				evt.kbd.keycode = Common::KEYCODE_DOWN;
-				break;
-			case 92:
-				evt.kbd.keycode = Common::KEYCODE_LEFT;
-				break;
-			case 91:
-				evt.kbd.keycode = Common::KEYCODE_HOME;
-				break;
-			case 101:
-				evt.kbd.keycode = Common::KEYCODE_PAGEUP;
-				break;
-			case 112:
-				evt.kbd.keycode = Common::KEYCODE_F1;
-				break;
-			case 113:
-				evt.kbd.keycode = Common::KEYCODE_F2;
-				break;
-			case 114:
-				evt.kbd.keycode = Common::KEYCODE_F3;
-				break;
-			case 25:
-				evt.kbd.keycode = Common::KEYCODE_o;
-				break;
-			case 20:
-				evt.kbd.keycode = Common::KEYCODE_r;
-				break;
-			case 110:
-				evt.kbd.keycode = Common::KEYCODE_ESCAPE;
-				break;
-			case 43:
-				evt.kbd.keycode = Common::KEYCODE_SPACE;
-				break;
-			case 61:
-				evt.kbd.keycode = Common::KEYCODE_RETURN;
-				break;
-			case 55:
-				evt.kbd.keycode = Common::KEYCODE_SLASH;
-				break;
-			default:
-				break;
+		case 96:
+			evt.kbd.keycode = Common::KEYCODE_UP;
+			break;
+		case 102:
+			evt.kbd.keycode = Common::KEYCODE_RIGHT;
+			break;
+		case 97:
+			evt.kbd.keycode = Common::KEYCODE_DOWN;
+			break;
+		case 92:
+			evt.kbd.keycode = Common::KEYCODE_LEFT;
+			break;
+		case 91:
+			evt.kbd.keycode = Common::KEYCODE_HOME;
+			break;
+		case 101:
+			evt.kbd.keycode = Common::KEYCODE_PAGEUP;
+			break;
+		case 112:
+			evt.kbd.keycode = Common::KEYCODE_F1;
+			break;
+		case 113:
+			evt.kbd.keycode = Common::KEYCODE_F2;
+			break;
+		case 114:
+			evt.kbd.keycode = Common::KEYCODE_F3;
+			break;
+		case 25:
+			evt.kbd.keycode = Common::KEYCODE_o;
+			break;
+		case 20:
+			evt.kbd.keycode = Common::KEYCODE_r;
+			break;
+		case 110:
+			evt.kbd.keycode = Common::KEYCODE_ESCAPE;
+			break;
+		case 43:
+			evt.kbd.keycode = Common::KEYCODE_SPACE;
+			break;
+		case 61:
+			evt.kbd.keycode = Common::KEYCODE_RETURN;
+			break;
+		case 55:
+			evt.kbd.keycode = Common::KEYCODE_SLASH;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -1409,32 +1409,32 @@ int LoLEngine::clickedWall(Button *button) {
 
 	int res = 0;
 	switch (type) {
-		case 1:
-			res = clickedWallShape(block, dir);
-			break;
+	case 1:
+		res = clickedWallShape(block, dir);
+		break;
 
-		case 2:
-			res = clickedLeverOn(block, dir);
-			break;
+	case 2:
+		res = clickedLeverOn(block, dir);
+		break;
 
-		case 3:
-			res = clickedLeverOff(block, dir);
-			break;
+	case 3:
+		res = clickedLeverOff(block, dir);
+		break;
 
-		case 4:
-			res = clickedWallOnlyScript(block);
-			break;
+	case 4:
+		res = clickedWallOnlyScript(block);
+		break;
 
-		case 5:
-			res = clickedDoorSwitch(block, dir);
-			break;
+	case 5:
+		res = clickedDoorSwitch(block, dir);
+		break;
 
-		case 6:
-			res = clickedNiche(block, dir);
-			break;
+	case 6:
+		res = clickedNiche(block, dir);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	return res;

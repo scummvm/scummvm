@@ -260,60 +260,60 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 					quitGame();
 			} else {
 				switch(event.kbd.keycode) {
-					case Common::KEYCODE_SPACE:
-						keys = 43;
-						break;
-					case Common::KEYCODE_RETURN:
-						keys = 61;
-						break;
-					case Common::KEYCODE_UP:
-					case Common::KEYCODE_KP8:
-						keys = 96;
-						break;
-					case Common::KEYCODE_RIGHT:
-					case Common::KEYCODE_KP6:
-						keys = 102;
-						break;
-					case Common::KEYCODE_DOWN:
-					case Common::KEYCODE_KP2:
-						keys = 97;
-						break;
-					case Common::KEYCODE_LEFT:
-					case Common::KEYCODE_KP4:
-						keys = 92;
-						break;
-					case Common::KEYCODE_HOME:
-					case Common::KEYCODE_KP7:
-						keys = 91;
-						break;
-					case Common::KEYCODE_PAGEUP:
-					case Common::KEYCODE_KP9:
-						keys = 101;
-						break;
-					case Common::KEYCODE_F1:
-						keys = 112;
-						break;
-					case Common::KEYCODE_F2:
-						keys = 113;
-						break;
-					case Common::KEYCODE_F3:
-						keys = 114;
-						break;
-					case Common::KEYCODE_o:
-						keys = 25;
-						break;
-					case Common::KEYCODE_r:
-						keys = 20;
-						break;
-					case Common::KEYCODE_SLASH:
-						keys = 55;
-						break;
-					case Common::KEYCODE_ESCAPE:
-						keys = 110;
-						break;
-					default:
-						keys = 0;
-						break;
+				case Common::KEYCODE_SPACE:
+					keys = 43;
+					break;
+				case Common::KEYCODE_RETURN:
+					keys = 61;
+					break;
+				case Common::KEYCODE_UP:
+				case Common::KEYCODE_KP8:
+					keys = 96;
+					break;
+				case Common::KEYCODE_RIGHT:
+				case Common::KEYCODE_KP6:
+					keys = 102;
+					break;
+				case Common::KEYCODE_DOWN:
+				case Common::KEYCODE_KP2:
+					keys = 97;
+					break;
+				case Common::KEYCODE_LEFT:
+				case Common::KEYCODE_KP4:
+					keys = 92;
+					break;
+				case Common::KEYCODE_HOME:
+				case Common::KEYCODE_KP7:
+					keys = 91;
+					break;
+				case Common::KEYCODE_PAGEUP:
+				case Common::KEYCODE_KP9:
+					keys = 101;
+					break;
+				case Common::KEYCODE_F1:
+					keys = 112;
+					break;
+				case Common::KEYCODE_F2:
+					keys = 113;
+					break;
+				case Common::KEYCODE_F3:
+					keys = 114;
+					break;
+				case Common::KEYCODE_o:
+					keys = 25;
+					break;
+				case Common::KEYCODE_r:
+					keys = 20;
+					break;
+				case Common::KEYCODE_SLASH:
+					keys = 55;
+					break;
+				case Common::KEYCODE_ESCAPE:
+					keys = 110;
+					break;
+				default:
+					keys = 0;
+					break;
 				}
 
 				// When we got an keypress, which we might need to handle,

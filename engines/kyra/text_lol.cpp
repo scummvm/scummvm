@@ -249,35 +249,35 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 		bool eos = false;
 
 		switch (para) {
-			case '\0':
+		case '\0':
+			eos = true;
+			break;
+		case '#':
+			para = *++s;
+			switch (para) {
+			case 'E':
+			case 'G':
+			case 'X':
+			case 'c':
+			case 'd':
+			case 'e':
+			case 'f':
+			case 'g':
+			case 's':
+			case 'u':
+			case 'x':
+				break;
+			default:
 				eos = true;
 				break;
-			case '#':
-				para = *++s;
-				switch (para) {
-					case 'E':
-					case 'G':
-					case 'X':
-					case 'c':
-					case 'd':
-					case 'e':
-					case 'f':
-					case 'g':
-					case 's':
-					case 'u':
-					case 'x':
-						break;
-					default:
-						eos = true;
-						break;
-				}
-				break;
-			case ' ':
-			case '+':
-			case '-':
-				++s;
-			default:
-				break;
+			}
+			break;
+		case ' ':
+		case '+':
+		case '-':
+			++s;
+		default:
+			break;
 		}
 
 		if (eos)
@@ -286,16 +286,16 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 		para = *s;
 
 		switch (para) {
-			case '\0':
-				eos = true;
-				break;
-			case '0':
-				++s;
-				break;
-			default:
-				while(para && para > 47 && para < 58)
-					para = *++s;
-				break;
+		case '\0':
+			eos = true;
+			break;
+		case '0':
+			++s;
+			break;
+		default:
+			while(para && para > 47 && para < 58)
+				para = *++s;
+			break;
 		}
 
 		if (eos)
@@ -304,32 +304,32 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 		para = *s++;
 
 		switch (para) {
-			case 'a':
-				snprintf(dst, 7, "%d", _scriptParameter);
-				dst += strlen(dst);
-				break;
+		case 'a':
+			snprintf(dst, 7, "%d", _scriptParameter);
+			dst += strlen(dst);
+			break;
 
-			case 'n':
-				strcpy(dst, _vm->_characters[script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]].name);
-				dst += strlen(dst);	
-				break;
+		case 'n':
+			strcpy(dst, _vm->_characters[script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]].name);
+			dst += strlen(dst);	
+			break;
 
-			case 's':
-				strcpy(dst, _vm->getLangString(script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]));
-				dst += strlen(dst);
-				break;
+		case 's':
+			strcpy(dst, _vm->getLangString(script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]));
+			dst += strlen(dst);
+			break;
 
-			case 'X':
-			case 'd':
-			case 'u':
-			case 'x':
-				snprintf(dst, 7, "%d", script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]);
-				dst += strlen(dst);
-				break;
+		case 'X':
+		case 'd':
+		case 'u':
+		case 'x':
+			snprintf(dst, 7, "%d", script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]);
+			dst += strlen(dst);
+			break;
 
-			case '\0':
-			default:				
-				continue;
+		case '\0':
+		default:				
+			continue;
 		}
 	}
 	*dst = 0;
@@ -376,66 +376,66 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 		}
 
 		switch (c - 1) {
-			case 0:
+		case 0:
+			printLine(_currentLine);
+			textPageBreak();
+			_numCharsPrinted = 0;
+			break;
+
+		case 1:
+			printLine(_currentLine);
+			_textDimData[sdx].color2 = parseCommand();
+			break;
+
+		case 5:
+			printLine(_currentLine);
+			_textDimData[sdx].color1 = parseCommand();
+			break;
+
+		case 8:
+			//TODO
+			break;
+
+		case 11:
+			//TODO
+			break;
+
+		case 12:
+			printLine(_currentLine);
+			_lineCount++;
+			_textDimData[sdx].column = 0;
+			_textDimData[sdx].line++;
+			break;
+
+		case 18:
+			//TODO
+			break;
+
+		case 23:
+			//TODO
+			break;
+
+		case 24:
+			//TODO
+			break;
+
+		case 26:
+			//TODO
+			break;
+
+		case 28:
+			//TODO
+			break;
+
+		default:
+			_lineWidth += _screen->getCharWidth(c);
+			_currentLine[_numCharsLeft++] = c;
+			_currentLine[_numCharsLeft] = 0;
+
+			if ((_textDimData[sdx].column + _lineWidth) > (sd->w << 3))
 				printLine(_currentLine);
-				textPageBreak();
-				_numCharsPrinted = 0;
-				break;
-
-			case 1:
-				printLine(_currentLine);
-				_textDimData[sdx].color2 = parseCommand();
-				break;
-
-			case 5:
-				printLine(_currentLine);
-				_textDimData[sdx].color1 = parseCommand();
-				break;
-
-			case 8:
-				//TODO
-				break;
-
-			case 11:
-				//TODO
-				break;
-
-			case 12:
-				printLine(_currentLine);
-				_lineCount++;
-				_textDimData[sdx].column = 0;
-				_textDimData[sdx].line++;
-				break;
-
-			case 18:
-				//TODO
-				break;
-
-			case 23:
-				//TODO
-				break;
-
-			case 24:
-				//TODO
-				break;
-
-			case 26:
-				//TODO
-				break;
-
-			case 28:
-				//TODO
-				break;
-
-			default:
-				_lineWidth += _screen->getCharWidth(c);
-				_currentLine[_numCharsLeft++] = c;
-				_currentLine[_numCharsLeft] = 0;
-
-				if ((_textDimData[sdx].column + _lineWidth) > (sd->w << 3))
-					printLine(_currentLine);
-				
-				break;
+			
+			break;
 		}		
 
 		c = parseCommand();
@@ -654,25 +654,25 @@ void TextDisplayer_LoL::textPageBreak() {
 		_vm->gui_notifyButtonListChanged();
 
 		switch (inputFlag) {
-			case 43:
-			case 61:
+		case 43:
+		case 61:
+			loop = false;
+			break;
+
+		case 199:
+		case 201:
+			if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, y, x + 74, y + 9))
+				target = true;
+			break;
+
+		case 200:
+		case 202:
+			if (target)
 				loop = false;
-				break;
+			break;
 
-			case 199:
-			case 201:
-				if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, y, x + 74, y + 9))
-					target = true;
-				break;
-
-			case 200:
-			case 202:
-				if (target)
-					loop = false;
-				break;
-
-			default:
-				break;
+		default:
+			break;
 		}
 	} while (loop);
 

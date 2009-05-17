@@ -583,22 +583,22 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 
 				if (ii != 8) {
 					switch (_currentDirection - (_flyingObjects[ii].direction >> 1) + 3) {
-						case 1:
-						case 5:
-							shpIndex = _flyingItemShapes[shpIndex].shapeFront;
-							break;
-						case 3:
-							shpIndex = _flyingItemShapes[shpIndex].shapeBack;
-							break;
-						case 2:
-						case 6:
-							flg |= 0x10;
-						case 0:
-						case 4:
-							shpIndex = _flyingItemShapes[shpIndex].shapeLeft;
-							break;
-						default:
-							break;
+					case 1:
+					case 5:
+						shpIndex = _flyingItemShapes[shpIndex].shapeFront;
+						break;
+					case 3:
+						shpIndex = _flyingItemShapes[shpIndex].shapeBack;
+						break;
+					case 2:
+					case 6:
+						flg |= 0x10;
+					case 0:
+					case 4:
+						shpIndex = _flyingItemShapes[shpIndex].shapeLeft;
+						break;
+					default:
+						break;
 					}
 
 					shp = _thrownShapes[shpIndex];
@@ -699,60 +699,60 @@ void LoLEngine::drawMonster(uint16 id) {
 int LoLEngine::getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags) {
 	int tmp = 0;
 	switch (_monsterAnimType[m->properties->shapeIndex]) {
-		case 0:
-			// default
-			if (dirFlags) {
-				return (m->mode == 13) ? -1 : (dirFlags + m->currentSubFrame);
-			} else {
-				if (m->damageReceived)
-					return 12;
+	case 0:
+		// default
+		if (dirFlags) {
+			return (m->mode == 13) ? -1 : (dirFlags + m->currentSubFrame);
+		} else {
+			if (m->damageReceived)
+				return 12;
 
-				switch (m->mode - 5) {
-					case 0:
-						return (m->properties->flags & 4) ? 13 : 0;
-					case 3:
-						return (m->fightCurTick + 13);
-					case 6:
-						return 14;
-					case 8:
-						return -1;
-					default:
-						return m->currentSubFrame;
-				}
+			switch (m->mode - 5) {
+			case 0:
+				return (m->properties->flags & 4) ? 13 : 0;
+			case 3:
+				return (m->fightCurTick + 13);
+			case 6:
+				return 14;
+			case 8:
+				return -1;
+			default:
+				return m->currentSubFrame;
 			}
-			break;
-		case 1:
-			// monsters whose outward appearance reflects the damage they have taken
-			tmp = (m->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
-			if (m->hitPoints > (tmp >> 1))
-				tmp = 0;
-			else if (m->hitPoints > (tmp >> 2))
-				tmp = 4;
-			else
-				tmp = 8;
+		}
+		break;
+	case 1:
+		// monsters whose outward appearance reflects the damage they have taken
+		tmp = (m->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
+		if (m->hitPoints > (tmp >> 1))
+			tmp = 0;
+		else if (m->hitPoints > (tmp >> 2))
+			tmp = 4;
+		else
+			tmp = 8;
 
-			switch (m->mode) {
-				case 8:
-					return (m->fightCurTick + tmp);
-				case 11:
-					return 12;
-				case 13:
-					return (m->fightCurTick + 12);
-				default:
-					return tmp;
-			}
-			
-			break;
-		case 2:
-			///////
-			// TODO
-			break;
-		case 3:
-			///////
-			// TODO
-			break;
+		switch (m->mode) {
+		case 8:
+			return (m->fightCurTick + tmp);
+		case 11:
+			return 12;
+		case 13:
+			return (m->fightCurTick + 12);
 		default:
-			break;
+			return tmp;
+		}
+			
+		break;
+	case 2:
+		///////
+		// TODO
+		break;
+	case 3:
+		///////
+		// TODO
+		break;
+	default:
+		break;
 	}
 
 	return 0;
@@ -1064,102 +1064,101 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 	}
 
 	switch (monster->mode) {
-		case 0:
-		case 1:
-			// friendly mode
-			if (monster->flags & 0x10) {
-				for (int i = 0; i < 30; i++) {
-					if (_monsters[i].mode == 1)
-						setMonsterMode(&_monsters[i], 7);
-				}
-			} else if (monster->mode == 1) {
-				moveMonster(monster);
+	case 0:
+	case 1:
+		// friendly mode
+		if (monster->flags & 0x10) {
+			for (int i = 0; i < 30; i++) {
+				if (_monsters[i].mode == 1)
+					setMonsterMode(&_monsters[i], 7);
 			}
-			break;
-
-		case 2:
+		} else if (monster->mode == 1) {
 			moveMonster(monster);
-			break;
+		}
+		break;
 
-		case 3:			
-			if (updateMonsterAdjustBlocks(monster))
+	case 2:
+		moveMonster(monster);
+		break;
+
+	case 3:			
+		if (updateMonsterAdjustBlocks(monster))
+			setMonsterMode(monster, 7);
+		for (int i = 0; i < 4; i++) {
+			if (calcNewBlockPosition(monster->block, i) == _currentBlock)
 				setMonsterMode(monster, 7);
-			for (int i = 0; i < 4; i++) {
-				if (calcNewBlockPosition(monster->block, i) == _currentBlock)
-					setMonsterMode(monster, 7);
-			}
-			break;
+		}
+		break;
 
-		case 4:
-			// straying around not tracing the party
-			moveStrayingMonster(monster);
-			break;
+	case 4:
+		// straying around not tracing the party
+		moveStrayingMonster(monster);
+		break;
 
-		case 5:
-			// second recovery phase after delivering an attack
-			// monsters will rearrange positions in this phase so as to allow a maximum
-			// number of monsters possible attacking at the same time
-			_partyAwake = true;
-			monster->fightCurTick--;
-			if ((monster->fightCurTick <= 0) || (checkDrawObjectSpace(_partyPosX, _partyPosY, monster->x, monster->y) > 256) || (monster->flags & 8))
-				setMonsterMode(monster, 7);
-			else
-				rearrangeAttackingMonster(monster);
-			break;
+	case 5:
+		// second recovery phase after delivering an attack
+		// monsters will rearrange positions in this phase so as to allow a maximum
+		// number of monsters possible attacking at the same time
+		_partyAwake = true;
+		monster->fightCurTick--;
+		if ((monster->fightCurTick <= 0) || (checkDrawObjectSpace(_partyPosX, _partyPosY, monster->x, monster->y) > 256) || (monster->flags & 8))
+			setMonsterMode(monster, 7);
+		else
+			rearrangeAttackingMonster(monster);
+		break;
 
-		case 6:
-			// same as mode 5, but without rearranging
-			if (--monster->fightCurTick <= 0)
-				setMonsterMode(monster, 7);
-			break;
+	case 6:
+		// same as mode 5, but without rearranging
+		if (--monster->fightCurTick <= 0)
+			setMonsterMode(monster, 7);
+		break;
 
-		case 7:
-			// monster destination is set to current party position
-			// depending on the flag setting this gets updated each round
-			// monster can't change mode before arriving at destination and/or attacking the party
-			if (!chasePartyWithDistanceAttacks(monster))
-				chasePartyWithCloseAttacks(monster);
-			checkSceneUpdateNeed(monster->block);
-			break;
+	case 7:
+		// monster destination is set to current party position
+		// depending on the flag setting this gets updated each round
+		// monster can't change mode before arriving at destination and/or attacking the party
+		if (!chasePartyWithDistanceAttacks(monster))
+			chasePartyWithCloseAttacks(monster);
+		checkSceneUpdateNeed(monster->block);
+		break;
 
-		case 8:
-			// first recovery phase after delivering an attack
-			if (++monster->fightCurTick > 2) {
-				setMonsterMode(monster, 5);
-				monster->fightCurTick = (int8) ((((8 << 8) / monster->properties->fightingStats[4]) * _monsterModifiers[6 + _monsterDifficulty]) >> 8);
-			}
-			checkSceneUpdateNeed(monster->block);
-			break;
+	case 8:
+		// first recovery phase after delivering an attack
+		if (++monster->fightCurTick > 2) {
+			setMonsterMode(monster, 5);
+			monster->fightCurTick = (int8) ((((8 << 8) / monster->properties->fightingStats[4]) * _monsterModifiers[6 + _monsterDifficulty]) >> 8);
+		}
+		checkSceneUpdateNeed(monster->block);
+		break;
 
-		case 9:
-			if (--monster->fightCurTick) {
-				chasePartyWithCloseAttacks(monster);
-			} else {
-				setMonsterMode(monster, 7);
-				monster->flags &= 0xfff7;
-			}
+	case 9:
+		if (--monster->fightCurTick) {
+			chasePartyWithCloseAttacks(monster);
+		} else {
+			setMonsterMode(monster, 7);
+			monster->flags &= 0xfff7;
+		}
+		break;
 
-			break;
+	case 12:
+		checkSceneUpdateNeed(monster->block);
+		if (++monster->fightCurTick > 13)
+			runLevelScriptCustom(0x404, -1, monster->id, monster->id, 0, 0);
+		break;
 
-		case 12:
-			checkSceneUpdateNeed(monster->block);
-			if (++monster->fightCurTick > 13)
-				runLevelScriptCustom(0x404, -1, monster->id, monster->id, 0, 0);
-			break;
+	case 13:
+		// monster death
+		if (++monster->fightCurTick > 2)
+			killMonster(monster);
+		checkSceneUpdateNeed(monster->block);
+		break;
 
-		case 13:
-			// monster death
-			if (++monster->fightCurTick > 2)
-				killMonster(monster);
-			checkSceneUpdateNeed(monster->block);
-			break;
+	case 14:
+		monster->damageReceived = 0;
+		break;
 
-		case 14:
-			monster->damageReceived = 0;
-			break;
-
-		default:
-			break;
+	default:
+		break;
 	}
 
 	if (monster->damageReceived) {

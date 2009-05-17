@@ -1333,32 +1333,32 @@ void LoLEngine::increaseExperience(int charNum, int skill, uint32 points) {
 		int inc = 0;
 
 		switch (skill) {
-			case 0:
-				_txt->printMessage(0x8003, getLangString(0x4023), _characters[charNum].name);
-				inc = _rnd.getRandomNumberRng(4, 6);
-				_characters[charNum].hitPointsCur += inc;
-				_characters[charNum].hitPointsMax += inc;
-				break;
+		case 0:
+			_txt->printMessage(0x8003, getLangString(0x4023), _characters[charNum].name);
+			inc = _rnd.getRandomNumberRng(4, 6);
+			_characters[charNum].hitPointsCur += inc;
+			_characters[charNum].hitPointsMax += inc;
+			break;
 
-			case 1:
-				_txt->printMessage(0x8003, getLangString(0x4025), _characters[charNum].name);
-				inc = _rnd.getRandomNumberRng(2, 6);
-				_characters[charNum].hitPointsCur += inc;
-				_characters[charNum].hitPointsMax += inc;
-				break;
+		case 1:
+			_txt->printMessage(0x8003, getLangString(0x4025), _characters[charNum].name);
+			inc = _rnd.getRandomNumberRng(2, 6);
+			_characters[charNum].hitPointsCur += inc;
+			_characters[charNum].hitPointsMax += inc;
+			break;
 
-			case 2:
-				_txt->printMessage(0x8003, getLangString(0x4024), _characters[charNum].name);
-				inc = (_characters[charNum].defaultModifiers[6] * (_rnd.getRandomNumberRng(1, 8) + 17)) >> 8;
-				_characters[charNum].magicPointsCur += inc;
-				_characters[charNum].magicPointsMax += inc;
-				inc = _rnd.getRandomNumberRng(1, 6);
-				_characters[charNum].hitPointsCur += inc;
-				_characters[charNum].hitPointsMax += inc;
-				break;
+		case 2:
+			_txt->printMessage(0x8003, getLangString(0x4024), _characters[charNum].name);
+			inc = (_characters[charNum].defaultModifiers[6] * (_rnd.getRandomNumberRng(1, 8) + 17)) >> 8;
+			_characters[charNum].magicPointsCur += inc;
+			_characters[charNum].magicPointsMax += inc;
+			inc = _rnd.getRandomNumberRng(1, 6);
+			_characters[charNum].hitPointsCur += inc;
+			_characters[charNum].hitPointsMax += inc;
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		}
 
 		snd_playSoundEffect(118, -1);
@@ -2899,33 +2899,33 @@ void LoLEngine::characterHitpointsZero(int16 charNum, int deathFlag) {
 void LoLEngine::removeCharacterEffects(LoLCharacter *c, int first, int last) {
 	for (int i = first; i <= last; i++) {
 		switch (i - 1) {
-			case 0:
-				c->flags &= 0xfffb;
-				c->weaponHit = 0;
-				break;
+		case 0:
+			c->flags &= 0xfffb;
+			c->weaponHit = 0;
+			break;
 
-			case 1:
-				c->damageSuffered = 0;
-				break;
+		case 1:
+			c->damageSuffered = 0;
+			break;
 
-			case 2:
-				c->flags &= 0xffbf;
-				break;
+		case 2:
+			c->flags &= 0xffbf;
+			break;
 
-			case 3:
-				c->flags &= 0xff7f;
-				break;
+		case 3:
+			c->flags &= 0xff7f;
+			break;
 
-			case 4:
-				c->flags &= 0xfeff;
-				break;
+		case 4:
+			c->flags &= 0xfeff;
+			break;
 
-			case 6:
-				c->flags &= 0xefff;
-				break;
+		case 6:
+			c->flags &= 0xefff;
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		}
 
 		for (int ii = 0; ii < 5; ii++) {
@@ -2985,67 +2985,66 @@ void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, in
 	int t = 0;
 
 	switch (monster->properties->attackSkillType - 1) {
-		case 0:
-			t = removeCharacterItem(target, 0x7ff);
-			if (t) {
-				giveItemToMonster(monster, t);
-				if (characterSays(0x4019, _characters[target].id, true))
-					_txt->printMessage(6, getLangString(0x4019));
-			}
-			break;
+	case 0:
+		t = removeCharacterItem(target, 0x7ff);
+		if (t) {
+			giveItemToMonster(monster, t);
+			if (characterSays(0x4019, _characters[target].id, true))
+				_txt->printMessage(6, getLangString(0x4019));
+		}
+		break;
 
-		case 1:
-			// poison character
-			paralyzePoisonCharacter(target, 0x80, 0x88, 100, 1);
-			break;
+	case 1:
+		// poison character
+		paralyzePoisonCharacter(target, 0x80, 0x88, 100, 1);
+		break;
 
-		case 2:
-			t = removeCharacterItem(target, 0x20);
-			if (t) {
-				deleteItem(t);
-				if (characterSays(0x401b, _characters[target].id, true))
-					_txt->printMessage(6, getLangString(0x401b));
-			}
-			break;
+	case 2:
+		t = removeCharacterItem(target, 0x20);
+		if (t) {
+			deleteItem(t);
+			if (characterSays(0x401b, _characters[target].id, true))
+				_txt->printMessage(6, getLangString(0x401b));
+		}
+		break;
 
-		case 3:
-			t = removeCharacterItem(target, 0x0f);
-			if (t) {
-				if (characterSays(0x401e, _characters[target].id, true))
-					_txt->printMessage(6, getLangString(0x401e), _characters[target].name);
-				setItemPosition(t, monster->x, monster->y, 0, 1);
-			}
-			break;
+	case 3:
+		t = removeCharacterItem(target, 0x0f);
+		if (t) {
+			if (characterSays(0x401e, _characters[target].id, true))
+				_txt->printMessage(6, getLangString(0x401e), _characters[target].name);
+			setItemPosition(t, monster->x, monster->y, 0, 1);
+		}
+		break;
 
-		case 5:
-			if (_characters[target].magicPointsCur <= 0)
-				return;
+	case 5:
+		if (_characters[target].magicPointsCur <= 0)
+			return;
 
-			monster->hitPoints += _characters[target].magicPointsCur;
-			_characters[target].magicPointsCur = 0;
-			gui_drawCharPortraitWithStats(target);
-			if (characterSays(0x4020, _characters[target].id, true))
-				_txt->printMessage(6, getLangString(0x4020), _characters[target].name);
-			break;
+		monster->hitPoints += _characters[target].magicPointsCur;
+		_characters[target].magicPointsCur = 0;
+		gui_drawCharPortraitWithStats(target);
+		if (characterSays(0x4020, _characters[target].id, true))
+			_txt->printMessage(6, getLangString(0x4020), _characters[target].name);
+		break;
 
-		case 7:
-			stunCharacter(target);
-			break;
+	case 7:
+		stunCharacter(target);
+		break;
 
-		case 8:
-			monster->hitPoints += damage;
-			if (monster->hitPoints > monster->properties->hitPoints)
-				monster->hitPoints = monster->properties->hitPoints;
+	case 8:
+		monster->hitPoints += damage;
+		if (monster->hitPoints > monster->properties->hitPoints)
+			monster->hitPoints = monster->properties->hitPoints;
+		break;
 
-			break;
+	case 9:
+		// paralyze party (spider web)
+		paralyzePoisonAllCharacters(0x40, 0x48, 100);
+		break;
 
-		case 9:
-			// paralyze party (spider web)
-			paralyzePoisonAllCharacters(0x40, 0x48, 100);
-			break;
-
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -3056,66 +3055,64 @@ void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker,
 	int itm = 0;
 
 	switch (monster->properties->defenseSkillType - 1) {
-		case 0:
-		case 1:
-			if ((deathFlag & 0x3f) == 2 || skill)
-				return;
+	case 0:
+	case 1:
+		if ((deathFlag & 0x3f) == 2 || skill)
+			return;
 
-			for (int i = 0; i < 3 ; i++) {
-				itm = _characters[attacker].items[i];
-				if (!itm)
-					continue;
-				if ((_itemProperties[_itemsInPlay[itm].itemPropertyIndex].protection & 0x3f) != deathFlag)
-					continue;
+		for (int i = 0; i < 3 ; i++) {
+			itm = _characters[attacker].items[i];
+			if (!itm)
+				continue;
+			if ((_itemProperties[_itemsInPlay[itm].itemPropertyIndex].protection & 0x3f) != deathFlag)
+				continue;
 
-				removeCharacterItem(attacker, 0x7fff);
+			removeCharacterItem(attacker, 0x7fff);
 
-				if (monster->properties->defenseSkillType == 1) {
-					deleteItem(itm);
-					if (characterSays(0x401d, _characters[attacker].id, true))
-						_txt->printMessage(6, getLangString(0x401d));
-				} else {
-					giveItemToMonster(monster, itm);
-					if (characterSays(0x401c, _characters[attacker].id, true))
-						_txt->printMessage(6, getLangString(0x401c));
-				}
+			if (monster->properties->defenseSkillType == 1) {
+				deleteItem(itm);
+				if (characterSays(0x401d, _characters[attacker].id, true))
+					_txt->printMessage(6, getLangString(0x401d));
+			} else {
+				giveItemToMonster(monster, itm);
+				if (characterSays(0x401c, _characters[attacker].id, true))
+					_txt->printMessage(6, getLangString(0x401c));
 			}
-			break;
+		}
+		break;
 
-		case 2:
-			if (!(deathFlag & 0x80))
-				return;
-			monster->flags |= 8;
-			monster->direction = calcMonsterDirection(monster->x, monster->y, _partyPosX, _partyPosY) ^ 4;
-			setMonsterMode(monster, 9);
-			monster->fightCurTick = 30;
-			break;
+	case 2:
+		if (!(deathFlag & 0x80))
+			return;
+		monster->flags |= 8;
+		monster->direction = calcMonsterDirection(monster->x, monster->y, _partyPosX, _partyPosY) ^ 4;
+		setMonsterMode(monster, 9);
+		monster->fightCurTick = 30;
+		break;
 
-		case 3:
-			if (deathFlag != 3)
-				return;
-			monster->hitPoints += damage;
-			if (monster->hitPoints > monster->properties->hitPoints)
-				monster->hitPoints = monster->properties->hitPoints;
+	case 3:
+		if (deathFlag != 3)
+			return;
+		monster->hitPoints += damage;
+		if (monster->hitPoints > monster->properties->hitPoints)
+			monster->hitPoints = monster->properties->hitPoints;
+		break;
 
+	case 4:
+		if (!(deathFlag & 0x80))
+			return;			
+		monster->hitPoints += damage;
+		if (monster->hitPoints > monster->properties->hitPoints)
+			monster->hitPoints = monster->properties->hitPoints;
+		break;
 
-			break;
+	case 5:
+		if ((deathFlag & 0x84) == 0x84)
+			monster->numDistAttacks++;
+		break;
 
-		case 4:
-			if (!(deathFlag & 0x80))
-				return;			
-			monster->hitPoints += damage;
-			if (monster->hitPoints > monster->properties->hitPoints)
-				monster->hitPoints = monster->properties->hitPoints;
-			break;
-
-		case 5:
-			if ((deathFlag & 0x84) == 0x84)
-				monster->numDistAttacks++;
-			break;
-
-		default:
-			break;
+	default:
+		break;
 	}
 }
 

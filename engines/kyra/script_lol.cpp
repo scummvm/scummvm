@@ -143,51 +143,51 @@ int LoLEngine::olol_moveParty(EMCState *script) {
 	b.data0Val3 = b.data1Val3 = b.data2Val3 = 0x01;
 	
 	switch (mode) {
-		case 0:
-			clickedUpArrow(&b);
-			break;
+	case 0:
+		clickedUpArrow(&b);
+		break;
 
-		case 1:
-			clickedRightArrow(&b);
-			break;
+	case 1:
+		clickedRightArrow(&b);
+		break;
 
-		case 2:
-			clickedDownArrow(&b);
-			break;
+	case 2:
+		clickedDownArrow(&b);
+		break;
 
-		case 3:
-			clickedLeftArrow(&b);
-			break;
+	case 3:
+		clickedLeftArrow(&b);
+		break;
 
-		case 4:
-			clickedTurnLeftArrow(&b);
-			break;
+	case 4:
+		clickedTurnLeftArrow(&b);
+		break;
 
-		case 5:
-			clickedTurnRightArrow(&b);
-			break;
+	case 5:
+		clickedTurnRightArrow(&b);
+		break;
 
-		case 10:
-		case 11:
-		case 12:
-		case 13:
-			mode = ABS(mode - 10 - _currentDirection);
-			if (mode > 2)
-				mode = (mode ^ 2) * -1;
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+		mode = ABS(mode - 10 - _currentDirection);
+		if (mode > 2)
+			mode = (mode ^ 2) * -1;
 
-			while (mode) {
-				if (mode > 0) {
-					clickedTurnRightArrow(&b);
-					mode--;
-				} else {
-					clickedTurnLeftArrow(&b);
-					mode++;
-				}
+		while (mode) {
+			if (mode > 0) {
+				clickedTurnRightArrow(&b);
+				mode--;
+			} else {
+				clickedTurnLeftArrow(&b);
+				mode++;
 			}
-			break;
+		}
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	return 1;
@@ -1200,30 +1200,30 @@ int LoLEngine::olol_changeMonsterStat(EMCState *script) {
 	uint16 y = 0;
 
 	switch (stackPos(1)) {
-		case 0:
-			setMonsterMode(m, d);
-			break;
+	case 0:
+		setMonsterMode(m, d);
+		break;
 
-		case 1:
-			m->hitPoints = d;
-			break;
+	case 1:
+		m->hitPoints = d;
+		break;
 
-		case 2:
-			calcCoordinates(x, y, d, m->x & 0xff, m->y & 0xff);
-			if (!walkMonsterCheckDest(x, y, m, 7))
-				placeMonster(m, x, y);
-			break;
+	case 2:
+		calcCoordinates(x, y, d, m->x & 0xff, m->y & 0xff);
+		if (!walkMonsterCheckDest(x, y, m, 7))
+			placeMonster(m, x, y);
+		break;
 
-		case 3:
-			setMonsterDirection(m, d << 1);
-			break;
+	case 3:
+		setMonsterDirection(m, d << 1);
+		break;
 
-		case 6:
-			m->flags |= d;
-			break;
+	case 6:
+		m->flags |= d;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	return 1;
@@ -1238,26 +1238,26 @@ int LoLEngine::olol_getMonsterStat(EMCState *script) {
 	int d = stackPos(1);
 
 	switch (d) {
-		case 0:
-			return m->mode;
-		case 1:
-			return m->hitPoints;
-		case 2:
-			return m->block;
-		case 3:
-			return m->facing;
-		case 4:
-			return m->type;
-		case 5:
-			return m->properties->hitPoints;
-		case 6:
-			return m->flags;
-		case 7:
-			return m->properties->flags;
-		case 8:
-			return _monsterAnimType[m->properties->shapeIndex];
-		default:
-			break;
+	case 0:
+		return m->mode;
+	case 1:
+		return m->hitPoints;
+	case 2:
+		return m->block;
+	case 3:
+		return m->facing;
+	case 4:
+		return m->type;
+	case 5:
+		return m->properties->hitPoints;
+	case 6:
+		return m->flags;
+	case 7:
+		return m->properties->flags;
+	case 8:
+		return _monsterAnimType[m->properties->shapeIndex];
+	default:
+		break;
 	}
 
 	return 0;
@@ -2074,46 +2074,46 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 	uint8 *tmp = 0;
 
 	switch (param[0]) {
-		case 0:
+	case 0:
+		_screen->fadeClearSceneWindow(10);
+		break;
+
+	case 1:
+		tmp = _screen->getPalette(3);
+		memcpy(tmp + 0x180, _screen->_currentPalette + 0x180, 0x180);
+		_screen->loadSpecialColors(tmp);
+		_screen->fadePalette(tmp, 10);
+		_screen->_fadeFlag = 0;
+		break;
+
+	case 2:
+		_screen->fadeToBlack(10);
+		break;
+
+	case 3:
+		tmp = _screen->getPalette(3);
+		_screen->loadSpecialColors(tmp);
+		_screen->fadePalette(tmp, 10);
+		_screen->_fadeFlag = 0;
+		break;
+
+	case 4:
+		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
-			break;
+		gui_drawPlayField();
+		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+		_screen->_fadeFlag = 0;
+		break;
 
-		case 1:
-			tmp = _screen->getPalette(3);
-			memcpy(tmp + 0x180, _screen->_currentPalette + 0x180, 0x180);
-			_screen->loadSpecialColors(tmp);
-			_screen->fadePalette(tmp, 10);
-			_screen->_fadeFlag = 0;
-			break;
+	case 5:
+		tmp = _screen->getPalette(3);
+		_screen->loadSpecialColors(tmp);
+		_screen->fadePalette(_screen->getPalette(1), 10);
+		_screen->_fadeFlag = 0;
+		break;
 
-		case 2:
-			_screen->fadeToBlack(10);
-			break;
-
-		case 3:
-			tmp = _screen->getPalette(3);
-			_screen->loadSpecialColors(tmp);
-			_screen->fadePalette(tmp, 10);
-			_screen->_fadeFlag = 0;
-			break;
-
-		case 4:
-			if (_screen->_fadeFlag != 2)
-				_screen->fadeClearSceneWindow(10);
-			gui_drawPlayField();
-			setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
-			_screen->_fadeFlag = 0;
-			break;
-
-		case 5:
-			tmp = _screen->getPalette(3);
-			_screen->loadSpecialColors(tmp);
-			_screen->fadePalette(_screen->getPalette(1), 10);
-			_screen->_fadeFlag = 0;
-			break;
-
-		default:
-			break;
+	default:
+		break;
 	}
 
 	return 1;

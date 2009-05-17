@@ -661,20 +661,20 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 
 		if (_sceneDefaultUpdate) {
 			switch (unk2) {
-				case 0:
-					movePartySmoothScrollUp(2);
-					break;
-				case 1:
-					movePartySmoothScrollDown(2);
-					break;
-				case 2:
-					movePartySmoothScrollLeft(1);
-					break;
-				case 3:
-					movePartySmoothScrollRight(1);
-					break;
-				default:
-					break;
+			case 0:
+				movePartySmoothScrollUp(2);
+				break;
+			case 1:
+				movePartySmoothScrollDown(2);
+				break;
+			case 2:
+				movePartySmoothScrollLeft(1);
+				break;
+			case 3:
+				movePartySmoothScrollRight(1);
+				break;
+			default:
+				break;
 			}
 		} else {
 			gui_drawScene(0);
