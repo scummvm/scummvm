@@ -504,7 +504,7 @@ void Actor::update() {
 		// have the actor turn all the way to the destination yaw.
 		// Without this some actors will lock the interface on changing
 		// scenes, this affects the Bone Wagon in particular.
-		if (turnAmt == 0 || turnAmt >= abs(dyaw)) {
+		if (turnAmt == 0 || turnAmt >= fabs(dyaw)) {
 			setYaw(_destYaw);
 			_turning = false;
 		}
