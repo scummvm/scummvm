@@ -1062,9 +1062,7 @@ static void IsActorChoring() {
 }
 
 static void ActorLookAt() {
-	float rate = 100.0; // Give a default rate
-	lua_Object x, y, z;
-	bool nullvector = false;
+	lua_Object x, y, z, rate;
 	Vector3d vector;
 	Actor *act;
 
@@ -1073,59 +1071,53 @@ static void ActorLookAt() {
 	x = lua_getparam(2);
 	y = lua_getparam(3);
 	z = lua_getparam(4);
+	rate = lua_getparam(5);
+
+	if (lua_isnumber(rate))
+		act->setLookAtRate(luaL_check_number(rate));
 
 	// Look at nothing
 	if (lua_isnil(x)) {
-		if (act->isLookAtVectorZero()) {
-			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("Actor requested to look at nothing, already looking at nothing!");
+		if (act->isLookAtVectorZero())
 			return;
-		}
 
-		nullvector = true;
+		act->setLookAtVectorZero();
+		act->setLooking(true);
 		if (lua_isnumber(y))
-			rate = luaL_check_number(3);
+			act->setLookAtRate(luaL_check_number(y));
 	} else if (lua_isnumber(x)) { // look at xyz
 		float fX;
 		float fY;
 		float fZ;
 
-		fX = luaL_check_number(2);
+		fX = luaL_check_number(x);
 
 		if (lua_isnumber(y))
-			fY = luaL_check_number(3);
+			fY = luaL_check_number(y);
 		else
 			fY = 0.f;
 
 		if (lua_isnumber(z))
-			fZ = luaL_check_number(4);
+			fZ = luaL_check_number(z);
 		else
 			fZ = 0.f;
 
-		vector.set(fX,fY,fZ);
-
-		if (lua_isnumber(lua_getparam(5)))
-			rate = luaL_check_number(5);
-	} else if (isActor(2)) { // look at another actor
-		Actor *lookedAct = check_actor(2);
+		vector.set(fX, fY, fZ);
+		act->setLookAtVector(vector);
+	} else if (isActor(x)) { // look at another actor
+		Actor *lookedAct = check_actor(x);
 
 		act->setLookAtVector(lookedAct->pos());
 
 		if (lua_isnumber(y))
-			rate = luaL_check_number(3);
+			act->setLookAtRate(luaL_check_number(y));
 	} else {
 		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("ActorLookAt: Don't know what to look at!");
 		return;
 	}
 
-	act->setLookAtRate(rate);
-	if (nullvector)
-		act->setLookAtVectorZero();
-	else
-		act->setLookAtVector(vector);
 	act->setLooking(true);
-	pushbool(act->isTurning());
 }
 
 /* Turn the actor to a point specified in the 3D space,
