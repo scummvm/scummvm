@@ -319,8 +319,8 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 						break;
 				}
 
-				// When we got an keypress we might handle, break the event loop
-				// and pass it to GUI code.
+				// When we got an keypress, which we might need to handle,
+				// break the event loop and pass it to GUI code.
 				if (keys)
 					breakLoop = true;
 			}
@@ -482,7 +482,7 @@ void KyraEngine_v1::delayWithTicks(int ticks) {
 }
 
 void KyraEngine_v1::registerDefaultSettings() {
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+	if (_flags.platform == Common::kPlatformFMTowns)
 		ConfMan.registerDefault("cdaudio", true);
 	if (_flags.fanLang != Common::UNK_LANG) {
 		// HACK/WORKAROUND: Since we can't use registerDefault here to overwrite
