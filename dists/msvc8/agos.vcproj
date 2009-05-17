@@ -231,6 +231,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\agos\feeble.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\agos\gfx.cpp"
 			>
 		</File>

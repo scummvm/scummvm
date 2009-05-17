@@ -343,6 +343,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\saveload_lol.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\saveload_mr.cpp"
 			>
 		</File>
