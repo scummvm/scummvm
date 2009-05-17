@@ -27,6 +27,7 @@
 
 #include "common/sys.h"
 #include "common/debug.h"
+#include "common/str.h"
 
 #if defined(WIN32)
 #include <windows.h>
@@ -72,6 +73,33 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #endif
 
 namespace Common {
+
+/**
+ * A simple non-optimized string tokenizer.
+ *
+ * Example of use:
+ * StringTokenizer("Now, this is a test!", " ,!") gives tokens "Now", "this", "is", "a" and "test" using nextToken().
+ */
+class StringTokenizer {
+public:
+	/**
+	 * Creates a StringTokenizer.
+	 * @param str The string to be tokenized.
+	 * @param delimiters String containing all the delimiter characters (i.e. the characters to be ignored).
+	 * @note Uses space, horizontal tab, carriage return, newline, form feed and vertical tab as delimiters by default.
+	 */
+	StringTokenizer(const String &str, const String &delimiters = " \t\r\n\f\v");
+	void reset();       //!< Resets the tokenizer to its initial state
+	bool empty() const; //!< Returns true if there are no more tokens left in the string, false otherwise
+	String nextToken(); //!< Returns the next token from the string (Or an empty string if there are no more tokens)
+
+private:
+	const String _str;        //!< The string to be tokenized
+	const String _delimiters; //!< String containing all the delimiter characters
+	uint         _tokenBegin; //!< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
+	uint         _tokenEnd;   //!< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
+};
+
 
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is
@@ -130,6 +158,94 @@ public:
 	 */
 	uint getRandomNumberRng(uint min, uint max);
 };
+
+/**
+ * List of game language.
+ */
+enum Language {
+	ZH_TWN,
+	CZ_CZE,
+	NL_NLD,
+	EN_ANY,     // Generic English (when only one game version exist)
+	EN_GRB,
+	EN_USA,
+	FR_FRA,
+	DE_DEU,
+	GR_GRE,
+	HB_ISR,
+	IT_ITA,
+	JA_JPN,
+	KO_KOR,
+	NB_NOR,
+	PL_POL,
+	PT_BRA,
+	RU_RUS,
+	ES_ESP,
+	SE_SWE,
+
+	UNK_LANG = -1	// Use default language (i.e. none specified)
+};
+
+struct LanguageDescription {
+	const char *code;
+	const char *description;
+	Common::Language id;
+};
+
+extern const LanguageDescription g_languages[];
+
+
+/** Convert a string containing a language name into a Language enum value. */
+extern Language parseLanguage(const String &str);
+extern const char *getLanguageCode(Language id);
+extern const char *getLanguageDescription(Language id);
+
+
+/**
+ * List of game platforms. Specifying a platform for a target can be used to
+ * give the game engines a hint for which platform the game data file are.
+ * This may be optional or required, depending on the game engine and the
+ * game in question.
+ */
+enum Platform {
+	kPlatformPC,
+	kPlatformAmiga,
+	kPlatformAtariST,
+	kPlatformMacintosh,
+	kPlatformFMTowns,
+	kPlatformWindows,
+	kPlatformNES,
+	kPlatformC64,
+	kPlatformLinux,
+	kPlatformAcorn,
+	kPlatformSegaCD,
+	kPlatform3DO,
+	kPlatformPCEngine,
+
+	kPlatformApple2GS,
+	kPlatformPC98,
+	kPlatformWii,
+	kPlatformPSX,
+
+	kPlatformUnknown = -1
+};
+
+struct PlatformDescription {
+	const char *code;
+	const char *code2;
+	const char *abbrev;
+	const char *description;
+	Common::Platform id;
+};
+
+extern const PlatformDescription g_platforms[];
+
+/** Convert a string containing a platform name into a Platform enum value. */
+extern Platform parsePlatform(const String &str);
+extern const char *getPlatformCode(Platform id);
+extern const char *getPlatformAbbrev(Platform id);
+extern const char *getPlatformDescription(Platform id);
+
 
 }	// End of namespace Common
 

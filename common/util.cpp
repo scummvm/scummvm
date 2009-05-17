@@ -28,6 +28,36 @@
 
 namespace Common {
 
+StringTokenizer::StringTokenizer(const String &str, const String &delimiters) : _str(str), _delimiters(delimiters) {
+	reset();
+}
+
+void StringTokenizer::reset() {
+	_tokenBegin = _tokenEnd = 0;
+}
+
+bool StringTokenizer::empty() const {
+	// Search for the next token's start (i.e. the next non-delimiter character)
+	for (uint i = _tokenEnd; i < _str.size(); i++) {
+		if (!_delimiters.contains(_str[i]))
+			return false; // Found a token so the tokenizer is not empty
+	}
+	// Didn't find any more tokens so the tokenizer is empty
+	return true;
+}
+
+String StringTokenizer::nextToken() {
+	// Seek to next token's start (i.e. jump over the delimiters before next token)
+	for (_tokenBegin = _tokenEnd; _tokenBegin < _str.size() && _delimiters.contains(_str[_tokenBegin]); _tokenBegin++)
+		;
+	// Seek to the token's end (i.e. jump over the non-delimiters)
+	for (_tokenEnd = _tokenBegin; _tokenEnd < _str.size() && !_delimiters.contains(_str[_tokenEnd]); _tokenEnd++)
+		;
+	// Return the found token
+	return String(_str.c_str() + _tokenBegin, _tokenEnd - _tokenBegin);
+}
+
+
 //
 // Print hexdump of the data passed in
 //
@@ -125,6 +155,140 @@ uint RandomSource::getRandomBit(void) {
 
 uint RandomSource::getRandomNumberRng(uint min, uint max) {
 	return getRandomNumber(max - min) + min;
+}
+
+
+const LanguageDescription g_languages[] = {
+	{"zh", "Chinese (Taiwan)", ZH_TWN},
+	{"cz", "Czech", CZ_CZE},
+	{"nl", "Dutch", NL_NLD},
+	{"en", "English", EN_ANY}, // Generic English (when only one game version exist)
+	{"gb", "English (GB)", EN_GRB},
+	{"us", "English (US)", EN_USA},
+	{"fr", "French", FR_FRA},
+	{"de", "German", DE_DEU},
+	{"gr", "Greek", GR_GRE},
+	{"hb", "Hebrew", HB_ISR},
+	{"it", "Italian", IT_ITA},
+	{"jp", "Japanese", JA_JPN},
+	{"kr", "Korean", KO_KOR},
+	{"nb", "Norwegian Bokm\xE5l", NB_NOR},
+	{"pl", "Polish", PL_POL},
+	{"br", "Portuguese", PT_BRA},
+	{"ru", "Russian", RU_RUS},
+	{"es", "Spanish", ES_ESP},
+	{"se", "Swedish", SE_SWE},
+	{0, 0, UNK_LANG}
+};
+
+Language parseLanguage(const String &str) {
+	if (str.empty())
+		return UNK_LANG;
+
+	const LanguageDescription *l = g_languages;
+	for (; l->code; ++l) {
+		if (str.equalsIgnoreCase(l->code))
+			return l->id;
+	}
+
+	return UNK_LANG;
+}
+
+const char *getLanguageCode(Language id) {
+	const LanguageDescription *l = g_languages;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->code;
+	}
+	return 0;
+}
+
+const char *getLanguageDescription(Language id) {
+	const LanguageDescription *l = g_languages;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->description;
+	}
+	return 0;
+}
+
+
+const PlatformDescription g_platforms[] = {
+	{"2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
+	{"3do", "3do", "3do", "3DO", kPlatform3DO},
+	{"acorn", "acorn", "acorn", "Acorn", kPlatformAcorn},
+	{"amiga", "ami", "amiga", "Amiga", kPlatformAmiga},
+	{"atari", "atari-st", "st", "Atari ST", kPlatformAtariST},
+	{"c64", "c64", "c64", "Commodore 64", kPlatformC64},
+	{"pc", "dos", "ibm", "DOS", kPlatformPC},
+	{"pc98", "pc98", "pc98", "PC-98", kPlatformPC98},
+	{"wii", "wii", "wii", "Nintendo Wii", kPlatformWii},
+
+	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
+	// However, on the net many variations can be seen, like "FMTOWNS",
+	// "FM TOWNS", "FmTowns", etc.
+	{"fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns},
+
+	{"linux", "linux", "linux", "Linux", kPlatformLinux},
+	{"macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh},
+	{"pce", "pce", "pce", "PC-Engine", kPlatformPCEngine },
+	{"nes", "nes", "nes", "NES", kPlatformNES},
+	{"segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD},
+	{"windows", "win", "win", "Windows", kPlatformWindows},
+	{"playstation", "psx", "PSX", "Playstation", kPlatformPSX},
+
+
+	{0, 0, 0, "Default", kPlatformUnknown}
+};
+
+Platform parsePlatform(const String &str) {
+	if (str.empty())
+		return kPlatformUnknown;
+
+	// Handle some special case separately, for compatibility with old config
+	// files.
+	if (str == "1")
+		return kPlatformAmiga;
+	else if (str == "2")
+		return kPlatformAtariST;
+	else if (str == "3")
+		return kPlatformMacintosh;
+
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (str.equalsIgnoreCase(l->code) || str.equalsIgnoreCase(l->code2) || str.equalsIgnoreCase(l->abbrev))
+			return l->id;
+	}
+
+	return kPlatformUnknown;
+}
+
+
+const char *getPlatformCode(Platform id) {
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->code;
+	}
+	return 0;
+}
+
+const char *getPlatformAbbrev(Platform id) {
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->abbrev;
+	}
+	return 0;
+}
+
+const char *getPlatformDescription(Platform id) {
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->description;
+	}
+	return l->description;
 }
 
 
