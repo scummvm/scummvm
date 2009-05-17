@@ -28,10 +28,10 @@
  *  - tucker
  */
 
-#ifndef GRAPHICS_VIDEO_FLICPLAYER_H
-#define GRAPHICS_VIDEO_FLICPLAYER_H
+#ifndef GRAPHICS_VIDEO_FlicDecoder_H
+#define GRAPHICS_VIDEO_FlicDecoder_H
 
-#include "common/scummsys.h"
+#include "graphics/video/video_player.h"
 #include "common/list.h"
 #include "common/rect.h"
 
@@ -41,50 +41,10 @@ namespace Common {
 
 namespace Graphics {
 
-struct ChunkHeader {
-	uint32 size;
-	uint16 type;
-};
-
-struct FrameTypeChunkHeader {
-	ChunkHeader header;
-	uint16 numChunks;
-	uint16 delay;
-	uint16 reserved; // always zero
-	uint16 widthOverride;
-	uint16 heightOverride;
-};
-
-// TOD: rewrite this based on VideoDecoder & VideoPlayer (this may
-// require improvements to these two classes).
-class FlicPlayer {
+class FlicDecoder : public VideoDecoder {
 public:
-	FlicPlayer();
-	~FlicPlayer();
-
-	/**
-	 * Returns the width of the video
-	 * @return the width of the video
-	 */
-	int getWidth();
-
-	/**
-	 * Returns the height of the video
-	 * @return the height of the video
-	 */
-	int getHeight();
-
-	/**
-	 * Returns the current frame number of the video
-	 * @return the current frame number of the video
-	 */
-	int32 getCurFrame();
-
-	/**
-	 * Returns the amount of frames in the video
-	 * @return the amount of frames in the video
-	 */
-	int32 getFrameCount();
+	FlicDecoder();
+	virtual ~FlicDecoder();
 
 	/**
 	 * Load a FLIC encoded video file
@@ -100,55 +60,29 @@ public:
 	/**
 	 * Decode the next frame
 	 */
-	void decodeNextFrame();
+	bool decodeNextFrame();
 
-	bool isLastFrame() const { return _currFrame == _flicInfo.numFrames; }
-	uint32 getSpeed() const { return _flicInfo.speed; }
-	bool isPaletteDirty() const { return _paletteDirty; }
-	const uint8 *getPalette() { _paletteDirty = false; return _palette; }
-	const uint8 *getOffscreen() const { return _offscreen; }
 	const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 	void clearDirtyRects() { _dirtyRects.clear(); }
-	void redraw();
-	void reset();
-
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
-	/**
-	 * Copy current frame into the specified position of the destination
-	 * buffer.
-	 * @param dst		the buffer
-	 * @param x		the x position of the buffer
-	 * @param y		the y position of the buffer
-	 * @param pitch		the pitch of buffer
-	 */
-	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
+	byte getPixel(int offset) { return _videoFrameBuffer[offset]; }
+	byte* getPalette() { _paletteChanged = false; return _palette; }
+	bool paletteChanged() { return _paletteChanged; }
+	void reset();
 
 private:
-	struct FlicHeader {
-		uint32 size;
-		uint16 type;
-		uint16 numFrames;
-		uint16 width;
-		uint16 height;
-		uint32 speed;
-		uint16 offsetFrame1;
-		uint16 offsetFrame2;
-	};
+	uint16 _offsetFrame1;
+	uint16 _offsetFrame2;
+	byte *_palette;
+	bool _paletteChanged;
 
-	ChunkHeader readChunkHeader();
-	FrameTypeChunkHeader readFrameTypeChunkHeader(ChunkHeader chunkHead);
 	void decodeByteRun(uint8 *data);
 	void decodeDeltaFLC(uint8 *data);
-	void setPalette(uint8 *mem);
+	void unpackPalette(uint8 *mem);
 
-	Common::SeekableReadStream *_fileStream;
-	bool _paletteDirty;
-	uint8 *_offscreen;
-	uint8 _palette[256 * 4];
-	FlicHeader _flicInfo;
-	uint16 _currFrame;
 	Common::List<Common::Rect> _dirtyRects;
+
 };
 
 } // End of namespace Graphics

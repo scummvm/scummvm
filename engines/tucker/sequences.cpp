@@ -892,6 +892,17 @@ uint8 *AnimationSequencePlayer::loadPicture(const char *fileName) {
 	return p;
 }
 
+void AnimationSequencePlayer::getRGBPalette(int index) {
+	byte rgbPalette[3 * 256];
+	memcpy(rgbPalette, _flicPlayer[index].getPalette(), 3 * 256);
+	for (int i = 0; i < 256; i++) {
+		_animationPalette[i * 4 + 0] = rgbPalette[i * 3 + 0];
+		_animationPalette[i * 4 + 1] = rgbPalette[i * 3 + 1];
+		_animationPalette[i * 4 + 2] = rgbPalette[i * 3 + 2];
+		_animationPalette[i * 4 + 3] = 0;
+	}
+}
+
 void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
 	if (!_flicPlayer[index].loadFile(fileName)) {
 		warning("Unable to open flc animation file '%s'", fileName);
@@ -900,22 +911,24 @@ void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
 	}
 	_flicPlayer[index].decodeNextFrame();
 	if (index == 0) {
-		memcpy(_animationPalette, _flicPlayer[index].getPalette(), 1024);
+		getRGBPalette(index);
 		_flicPlayer[index].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
 	}
 }
 
-void AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
-	_flicPlayer[index].decodeNextFrame();
+bool AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
+	bool framesLeft = _flicPlayer[index].decodeNextFrame();
 	_flicPlayer[index].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
 	if (index == 0) {
-		if (_flicPlayer[index].isPaletteDirty()) {
-			memcpy(_animationPalette, _flicPlayer[index].getPalette(), 1024);
+		if (_flicPlayer[index].paletteChanged()) {
+			getRGBPalette(index);
 		}
 	}
 	if (_seqNum != 19) {
 		++_frameCounter;
 	}
+
+	return framesLeft;
 }
 
 void AnimationSequencePlayer::loadIntroSeq17_18() {
@@ -924,8 +937,7 @@ void AnimationSequencePlayer::loadIntroSeq17_18() {
 }
 
 void AnimationSequencePlayer::playIntroSeq17_18() {
-	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0].isLastFrame()) {
+	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
 	updateSounds();
@@ -939,20 +951,24 @@ void AnimationSequencePlayer::loadIntroSeq19_20() {
 }
 
 void AnimationSequencePlayer::playIntroSeq19_20() {
+	// The intro credits animation. This uses 2 animations: the foreground one, which
+	// is the actual intro credits, and the background one, which is an animation of
+	// cogs, and is being replayed when an intro credit appears
+	// FIXME: The background animation is not being played, as a result of the change
+	// to the FLIC video player in commit #40638
 	if (_flicPlayer[0].getCurFrame() >= 116) {
-		_flicPlayer[1].decodeNextFrame();
-		if (_flicPlayer[1].isLastFrame()) {
+		if (!_flicPlayer[1].decodeNextFrame()) {
 			_flicPlayer[1].reset();
 		}
 	}
-	decodeNextAnimationFrame(0);
+	bool framesLeft = decodeNextAnimationFrame(0);
 	for (int i = 0; i < kScreenWidth * kScreenHeight; ++i) {
 		if (_offscreenBuffer[i] == 0) {
-			_offscreenBuffer[i] = _flicPlayer[1].getOffscreen()[i];
+			_offscreenBuffer[i] = _flicPlayer[1].getPixel(i);
 		}
 	}
 	updateSounds();
-	if (_flicPlayer[0].isLastFrame()) {
+	if (!framesLeft) {
 		_changeToNextSequence = true;
 	}
 }
@@ -1007,11 +1023,11 @@ void AnimationSequencePlayer::loadIntroSeq3_4() {
 
 void AnimationSequencePlayer::playIntroSeq3_4() {
 	if (!_updateScreenPicture) {
-		decodeNextAnimationFrame(0);
+		bool framesLeft = decodeNextAnimationFrame(0);
 		if (_flicPlayer[0].getCurFrame() == 706) {
 			initPicPart4();
 		}
-		if (_flicPlayer[0].isLastFrame()) {
+		if (!framesLeft) {
 			_changeToNextSequence = true;
 		}
 	} else {
@@ -1051,7 +1067,7 @@ void AnimationSequencePlayer::drawPic1Part10() {
 	int offset = 0;
 	for (int y = 0; y < kScreenHeight; ++y) {
 		for (int x = 0; x < kScreenWidth; ++x) {
-			uint8 color = _flicPlayer[0].getOffscreen()[offset];
+			byte color = _flicPlayer[0].getPixel(offset);
 			if (color == 0) {
 				color = _picBufPtr[800 + y * 640 + _updateScreenWidth + x];
 			}
@@ -1069,7 +1085,7 @@ void AnimationSequencePlayer::loadIntroSeq9_10() {
 }
 
 void AnimationSequencePlayer::playIntroSeq9_10() {
-	decodeNextAnimationFrame(0);
+	bool framesLeft = decodeNextAnimationFrame(0);
 	if (_flicPlayer[0].getCurFrame() >= 264 && _flicPlayer[0].getCurFrame() <= 295) {
 		drawPic1Part10();
 		_updateScreenWidth += 6;
@@ -1082,7 +1098,7 @@ void AnimationSequencePlayer::playIntroSeq9_10() {
 			_updateScreenWidth = 0;
 		}
 	}
-	if (_flicPlayer[0].isLastFrame()) {
+	if (!framesLeft) {
 		_changeToNextSequence = true;
 	}
 	updateSounds();
@@ -1094,8 +1110,7 @@ void AnimationSequencePlayer::loadIntroSeq21_22() {
 }
 
 void AnimationSequencePlayer::playIntroSeq21_22() {
-	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0].isLastFrame()) {
+	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
 	updateSounds();
@@ -1107,8 +1122,7 @@ void AnimationSequencePlayer::loadIntroSeq13_14() {
 }
 
 void AnimationSequencePlayer::playIntroSeq13_14() {
-	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0].isLastFrame()) {
+	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
 	updateSounds();
@@ -1120,8 +1134,7 @@ void AnimationSequencePlayer::loadIntroSeq15_16() {
 }
 
 void AnimationSequencePlayer::playIntroSeq15_16() {
-	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0].isLastFrame()) {
+	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
 	updateSounds();
@@ -1133,8 +1146,7 @@ void AnimationSequencePlayer::loadIntroSeq27_28() {
 }
 
 void AnimationSequencePlayer::playIntroSeq27_28() {
-	decodeNextAnimationFrame(0);
-	if (_flicPlayer[0].isLastFrame()) {
+	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
 	updateSounds();

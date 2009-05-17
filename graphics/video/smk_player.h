@@ -53,7 +53,7 @@ class BigHuffmanTree;
 /**
  * Implementation of a Smacker v2/v4 video decoder
  */
-class SmackerDecoder : public Graphics::VideoDecoder {
+class SmackerDecoder : public VideoDecoder {
 public:
 	SmackerDecoder(Audio::Mixer *mixer);
 	virtual ~SmackerDecoder();
@@ -66,6 +66,10 @@ public:
 	 * @param filename	the filename to load
 	 */
 	bool loadFile(const char *filename);
+
+	/**
+	 * Close an SMK encoded video file
+	 */
 	void closeFile();
 
 	bool decodeNextFrame();

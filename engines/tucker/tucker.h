@@ -885,7 +885,7 @@ private:
 	void unloadAnimation();
 	uint8 *loadPicture(const char *fileName);
 	void openAnimation(int index, const char *fileName);
-	void decodeNextAnimationFrame(int index);
+	bool decodeNextAnimationFrame(int index);
 	void loadIntroSeq17_18();
 	void playIntroSeq17_18();
 	void loadIntroSeq19_20();
@@ -907,6 +907,7 @@ private:
 	void playIntroSeq15_16();
 	void loadIntroSeq27_28();
 	void playIntroSeq27_28();
+	void getRGBPalette(int index);
 
 	OSystem *_system;
 	Audio::Mixer *_mixer;
@@ -916,7 +917,7 @@ private:
 	bool _changeToNextSequence;
 	const SequenceUpdateFunc *_updateFunc;
 	int _updateFuncIndex;
-	::Graphics::FlicPlayer _flicPlayer[2];
+	::Graphics::FlicDecoder _flicPlayer[2];
 	uint8 _animationPalette[256 * 4];
 	int _soundsList1Offset;
 	int _soundsList1Count;
