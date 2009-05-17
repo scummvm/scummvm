@@ -144,7 +144,7 @@ public:
 		return _lookAtVector.isZero();
 	}
 	void setLookAtVectorZero() {
-		_lookAtVector.set( 0.f, 0.f, 0.f );
+		_lookAtVector.set(0.f, 0.f, 0.f);
 	}
 	void setLookAtVector(Vector3d vector) {
 		_lookAtVector = vector;
