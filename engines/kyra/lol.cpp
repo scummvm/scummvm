@@ -400,6 +400,9 @@ LoLEngine::~LoLEngine() {
 	delete[] _defaultLegendData;
 	delete[] _mapCursorOverlay;
 	delete[] _mapOverlay;
+
+	for (Common::Array<const SpellProc*>::iterator i = _spellProcs.begin(); i != _spellProcs.end(); ++i)
+		delete *i;
 	_spellProcs.clear();
 }
 
@@ -544,6 +547,8 @@ Common::Error LoLEngine::go() {
 	if (!_flags.isDemo && !_res->loadFileList("FILEDATA.FDT"))
 		error("Couldn't load file list: 'FILEDATA.FDT'");
 
+	// Usually fonts etc. would be setup by the prologue code, if we skip
+	// the prologue code we need to setup them manually here.
 	if (_gameToLoad != -1)
 		preInit();
 
