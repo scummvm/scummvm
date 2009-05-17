@@ -315,8 +315,14 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 						keys = 110;
 						break;
 					default:
+						keys = 0;
 						break;
 				}
+
+				// When we got an keypress we might handle, break the event loop
+				// and pass it to GUI code.
+				if (keys)
+					breakLoop = true;
 			}
 			break;
 
