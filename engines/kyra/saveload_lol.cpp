@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "common/endian.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -427,4 +429,6 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
 
