@@ -344,32 +344,32 @@ void Towns_EuphonyPcmChannel::noteOff(byte note) {
 
 void Towns_EuphonyPcmChannel::controlChange(byte control, byte value) {
 	switch (control) {
-		case 0x07:
-			// volume
-			_ctrl7_volume = value;
-			break;
-		case 0x0A:
-			// pan position
-			break;
-		case 0x79:
-			// Reset controller
-			for (uint8 i = 0; i < 8; i++) {
-				if (_voice->_snd[i])
-					delete _voice->_snd[i];
-				delete _voice->_env[i];
-			}
-			delete _voice;
-			_voice = new Voice;
-			for (uint8 i = 0; i < 8; i++) {
-				_voice->_env[i] = new Voice::Env;
-				_voice->_snd[i] = 0;
-			}
-			break;
-		case 0x7B:
-			noteOff(_note);
-			break;
-		default:
-			break;
+	case 0x07:
+		// volume
+		_ctrl7_volume = value;
+		break;
+	case 0x0A:
+		// pan position
+		break;
+	case 0x79:
+		// Reset controller
+		for (uint8 i = 0; i < 8; i++) {
+			if (_voice->_snd[i])
+				delete _voice->_snd[i];
+			delete _voice->_env[i];
+		}
+		delete _voice;
+		_voice = new Voice;
+		for (uint8 i = 0; i < 8; i++) {
+			_voice->_env[i] = new Voice::Env;
+			_voice->_snd[i] = 0;
+		}
+		break;
+	case 0x7B:
+		noteOff(_note);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -473,85 +473,85 @@ void Towns_EuphonyPcmChannel::nextTick(int32 *outbuf, int buflen) {
 
 void Towns_EuphonyPcmChannel::evpNextTick() {
 	switch (_voice->_env[_current]->state) {
-		case s_ready:
+	case s_ready:
+		_voice->_env[_current]->currentLevel = 0;
+		return;
+
+	case s_attacking:
+		if (_voice->_env[_current]->attackRate == 0)
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->totalLevel;
+		else if (_voice->_env[_current]->attackRate >= 1270)
 			_voice->_env[_current]->currentLevel = 0;
-			return;
+		else
+			_voice->_env[_current]->currentLevel = (_voice->_env[_current]->totalLevel *
+				_voice->_env[_current]->tickCount++ * 1000) /
+					(_voice->_env[_current]->attackRate * _voice->_env[_current]->rate);
 
-		case s_attacking:
-			if (_voice->_env[_current]->attackRate == 0)
-				_voice->_env[_current]->currentLevel = _voice->_env[_current]->totalLevel;
-			else if (_voice->_env[_current]->attackRate >= 1270)
-				_voice->_env[_current]->currentLevel = 0;
-			else
-				_voice->_env[_current]->currentLevel = (_voice->_env[_current]->totalLevel *
-					_voice->_env[_current]->tickCount++ * 1000) /
-						(_voice->_env[_current]->attackRate * _voice->_env[_current]->rate);
+		if (_voice->_env[_current]->currentLevel >= _voice->_env[_current]->totalLevel) {
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->totalLevel;
+			_voice->_env[_current]->state = s_decaying;
+			_voice->_env[_current]->tickCount = 0;
+		}
+		break;
 
-			if (_voice->_env[_current]->currentLevel >= _voice->_env[_current]->totalLevel) {
-				_voice->_env[_current]->currentLevel = _voice->_env[_current]->totalLevel;
-				_voice->_env[_current]->state = s_decaying;
-				_voice->_env[_current]->tickCount = 0;
-			}
-			break;
+	case s_decaying:
+		if (_voice->_env[_current]->decayRate == 0) {
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->sustainLevel;
+		} else if (_voice->_env[_current]->decayRate >= 1270) {
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->totalLevel;
+		} else {
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->totalLevel;
+			_voice->_env[_current]->currentLevel -= ((_voice->_env[_current]->totalLevel -
+				_voice->_env[_current]->sustainLevel) * _voice->_env[_current]->tickCount++ * 1000) /
+					(_voice->_env[_current]->decayRate * _voice->_env[_current]->rate);
+		}
 
-		case s_decaying:
-			if (_voice->_env[_current]->decayRate == 0)
-				_voice->_env[_current]->currentLevel = _voice->_env[_current]->sustainLevel;
-			else if (_voice->_env[_current]->decayRate >= 1270)
-				_voice->_env[_current]->currentLevel = _voice->_env[_current]->totalLevel;
-			else {
-				_voice->_env[_current]->currentLevel = _voice->_env[_current]->totalLevel;
-				_voice->_env[_current]->currentLevel -= ((_voice->_env[_current]->totalLevel -
-					_voice->_env[_current]->sustainLevel) * _voice->_env[_current]->tickCount++ * 1000) /
-						(_voice->_env[_current]->decayRate * _voice->_env[_current]->rate);
-			}
+		if (_voice->_env[_current]->currentLevel <= _voice->_env[_current]->sustainLevel) {
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->sustainLevel;
+			_voice->_env[_current]->state = s_sustaining;
+			_voice->_env[_current]->tickCount = 0;
+		}
+		break;
 
-			if (_voice->_env[_current]->currentLevel <= _voice->_env[_current]->sustainLevel) {
-				_voice->_env[_current]->currentLevel = _voice->_env[_current]->sustainLevel;
-				_voice->_env[_current]->state = s_sustaining;
-				_voice->_env[_current]->tickCount = 0;
-			}
-			break;
+	case s_sustaining:
+		if (_voice->_env[_current]->sustainRate == 0) {
+			_voice->_env[_current]->currentLevel = 0;
+		} else if (_voice->_env[_current]->sustainRate >= 2540) {
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->sustainLevel;
+		} else {
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->sustainLevel;
+			_voice->_env[_current]->currentLevel -= (_voice->_env[_current]->sustainLevel *
+				_voice->_env[_current]->tickCount++ * 1000) / (_voice->_env[_current]->sustainRate *
+					_voice->_env[_current]->rate);
+		}
 
-			case s_sustaining:
-				if (_voice->_env[_current]->sustainRate == 0)
-					_voice->_env[_current]->currentLevel = 0;
-				else if (_voice->_env[_current]->sustainRate >= 2540)
-					_voice->_env[_current]->currentLevel = _voice->_env[_current]->sustainLevel;
-				else {
-					_voice->_env[_current]->currentLevel = _voice->_env[_current]->sustainLevel;
-					_voice->_env[_current]->currentLevel -= (_voice->_env[_current]->sustainLevel *
-						_voice->_env[_current]->tickCount++ * 1000) / (_voice->_env[_current]->sustainRate *
-							_voice->_env[_current]->rate);
-				}
+		if (_voice->_env[_current]->currentLevel <= 0) {
+			_voice->_env[_current]->currentLevel = 0;
+			_voice->_env[_current]->state = s_ready;
+			_voice->_env[_current]->tickCount = 0;
+		}
+		break;
 
-				if (_voice->_env[_current]->currentLevel <= 0) {
-					_voice->_env[_current]->currentLevel = 0;
-					_voice->_env[_current]->state = s_ready;
-					_voice->_env[_current]->tickCount = 0;
-				}
-				break;
+	case s_releasing:
+		if (_voice->_env[_current]->releaseRate == 0) {
+			_voice->_env[_current]->currentLevel = 0;
+		} else if (_voice->_env[_current]->releaseRate >= 1270) {
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->releaseLevel;
+		} else {
+			_voice->_env[_current]->currentLevel = _voice->_env[_current]->releaseLevel;
+			_voice->_env[_current]->currentLevel -= (_voice->_env[_current]->releaseLevel *
+				_voice->_env[_current]->tickCount++ * 1000) / (_voice->_env[_current]->releaseRate *
+					_voice->_env[_current]->rate);
+		}
 
-			case s_releasing:
-				if (_voice->_env[_current]->releaseRate == 0)
-					_voice->_env[_current]->currentLevel = 0;
-				else if (_voice->_env[_current]->releaseRate >= 1270)
-					_voice->_env[_current]->currentLevel = _voice->_env[_current]->releaseLevel;
-				else {
-					_voice->_env[_current]->currentLevel = _voice->_env[_current]->releaseLevel;
-					_voice->_env[_current]->currentLevel -= (_voice->_env[_current]->releaseLevel *
-						_voice->_env[_current]->tickCount++ * 1000) / (_voice->_env[_current]->releaseRate *
-							_voice->_env[_current]->rate);
-				}
+		if (_voice->_env[_current]->currentLevel <= 0) {
+			_voice->_env[_current]->currentLevel = 0;
+			_voice->_env[_current]->state = s_ready;
+		}
+		break;
 
-				if (_voice->_env[_current]->currentLevel <= 0) {
-					_voice->_env[_current]->currentLevel = 0;
-					_voice->_env[_current]->state = s_ready;
-				}
-				break;
-
-			default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -1232,37 +1232,38 @@ void TownsPC98_OpnOperator::generateOutput(int32 phasebuf, int32 *feed, int32 &o
 		EnvelopeState nextState = s_ready;
 
 		switch (_state) {
-			case s_ready:
-				return;
-			case s_attacking:
-				targetLevel = 0;
-				nextState = s_decaying;
-				if ((_specifiedAttackRate << 1) + _keyScale2 < 64) {
-					targetTime = (1 << fs_a.shift) - 1;
-					levelIncrement = (~_currentLevel * _adTbl[fs_a.rate + ((_tickCount >> fs_a.shift) & 7)]) >> 4;
-					break;
-				} else {
-					_currentLevel = targetLevel;
-					_state = nextState;
-				}
-			case s_decaying:
-				targetTime = (1 << fs_d.shift) - 1;
-				nextState = s_sustaining;
-				targetLevel = _sustainLevel;
-				levelIncrement = _adTbl[fs_d.rate + ((_tickCount >> fs_d.shift) & 7)];
+		case s_ready:
+			return;
+		case s_attacking:
+			targetLevel = 0;
+			nextState = s_decaying;
+			if ((_specifiedAttackRate << 1) + _keyScale2 < 64) {
+				targetTime = (1 << fs_a.shift) - 1;
+				levelIncrement = (~_currentLevel * _adTbl[fs_a.rate + ((_tickCount >> fs_a.shift) & 7)]) >> 4;
 				break;
-			case s_sustaining:
-				targetTime = (1 << fs_s.shift) - 1;
-				nextState = s_sustaining;
-				targetLevel = 1023;
-				levelIncrement = _adTbl[fs_s.rate + ((_tickCount >> fs_s.shift) & 7)];
-				break;
-			case s_releasing:
-				targetTime = (1 << fs_r.shift) - 1;
-				nextState = s_ready;
-				targetLevel = 1023;
-				levelIncrement = _adTbl[fs_r.rate + ((_tickCount >> fs_r.shift) & 7)];
-				break;
+			} else {
+				_currentLevel = targetLevel;
+				_state = nextState;
+			}
+			// Fall through
+		case s_decaying:
+			targetTime = (1 << fs_d.shift) - 1;
+			nextState = s_sustaining;
+			targetLevel = _sustainLevel;
+			levelIncrement = _adTbl[fs_d.rate + ((_tickCount >> fs_d.shift) & 7)];
+			break;
+		case s_sustaining:
+			targetTime = (1 << fs_s.shift) - 1;
+			nextState = s_sustaining;
+			targetLevel = 1023;
+			levelIncrement = _adTbl[fs_s.rate + ((_tickCount >> fs_s.shift) & 7)];
+			break;
+		case s_releasing:
+			targetTime = (1 << fs_r.shift) - 1;
+			nextState = s_ready;
+			targetLevel = 1023;
+			levelIncrement = _adTbl[fs_r.rate + ((_tickCount >> fs_r.shift) & 7)];
+			break;
 		}
 
 		if (!(_tickCount & targetTime)) {
@@ -3033,146 +3034,146 @@ void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 	}
 
 	switch (h) {
-		case 0x00:
-			// ssg
-			if (_ssg)
-				_ssg->writeReg(l, value);
-			break;
-		case 0x10:
-			// pcm rhythm channel
-			if (_prc)
-				_prc->writeReg(l, value);
-			break;
-		case 0x20:
-			if (l == 8) {
-				// Key on/off
-				for (int i = 0; i < 4; i++) {
-					if ((value >> (4 + i)) & 1)
-						co[oprOrdr[i]]->keyOn();
-					else
-						co[oprOrdr[i]]->keyOff();
-				}
-			} else if (l == 4) {
-				// Timer A
-				_timers[0].value = (_timers[0].value & 0xff00) | value;
-			} else if (l == 5) {
-				// Timer A
-				_timers[0].value = (_timers[0].value & 0xff) | (value << 8);
-			} else if (l == 6) {
-				// Timer B
-				_timers[1].value = value & 0xff;
-			} else if (l == 7) {
-				_timers[0].enabled = (value & 1) ? 1 : 0;
-				_timers[1].enabled = (value & 2) ? 1 : 0;
-
-				float spc = (float)(0x400 - _timers[0].value) / _baserate;
-				_timers[0].smpPerCb = (int32) spc;
-				_timers[0].smpPerCbRem = (uint32) ((spc - (float)_timers[0].smpPerCb) * 1000000.0f);
-
-				spc = (float)(0x100 - _timers[1].value) * 16.0f / _baserate;
-				_timers[1].smpPerCb = (int32) spc;
-				_timers[1].smpPerCbRem = (uint32) ((spc - (float)_timers[1].smpPerCb) * 1000000.0f);
-
-				if (value & 10) {
-					_timers[0].smpTillCb = _timers[0].smpPerCb;
-					_timers[0].smpTillCbRem = _timers[0].smpTillCbRem;
-				}
-
-				if (value & 20) {
-					_timers[1].smpTillCb = _timers[1].smpPerCb;
-					_timers[1].smpTillCbRem = _timers[1].smpTillCbRem;
-				}
-			} else if (l == 2) {
-				// LFO
-				warning("TownsPC98_OpnDriver: TRYING TO USE LFO (NOT SUPPORTED)");
-			} else if (l == 10 || l == 11) {
-				// DAC
-				warning("TownsPC98_OpnDriver: TRYING TO USE DAC (NOT SUPPORTED)");
+	case 0x00:
+		// ssg
+		if (_ssg)
+			_ssg->writeReg(l, value);
+		break;
+	case 0x10:
+		// pcm rhythm channel
+		if (_prc)
+			_prc->writeReg(l, value);
+		break;
+	case 0x20:
+		if (l == 8) {
+			// Key on/off
+			for (int i = 0; i < 4; i++) {
+				if ((value >> (4 + i)) & 1)
+					co[oprOrdr[i]]->keyOn();
+				else
+					co[oprOrdr[i]]->keyOff();
 			}
-			break;
+		} else if (l == 4) {
+			// Timer A
+			_timers[0].value = (_timers[0].value & 0xff00) | value;
+		} else if (l == 5) {
+			// Timer A
+			_timers[0].value = (_timers[0].value & 0xff) | (value << 8);
+		} else if (l == 6) {
+			// Timer B
+			_timers[1].value = value & 0xff;
+		} else if (l == 7) {
+			_timers[0].enabled = (value & 1) ? 1 : 0;
+			_timers[1].enabled = (value & 2) ? 1 : 0;
 
-		case 0x30:
-			// detune, multiple
-			o->detune((value >> 4) & 7);
-			o->multiple(value & 0x0f);
+			float spc = (float)(0x400 - _timers[0].value) / _baserate;
+			_timers[0].smpPerCb = (int32) spc;
+			_timers[0].smpPerCbRem = (uint32) ((spc - (float)_timers[0].smpPerCb) * 1000000.0f);
+
+			spc = (float)(0x100 - _timers[1].value) * 16.0f / _baserate;
+			_timers[1].smpPerCb = (int32) spc;
+			_timers[1].smpPerCbRem = (uint32) ((spc - (float)_timers[1].smpPerCb) * 1000000.0f);
+
+			if (value & 10) {
+				_timers[0].smpTillCb = _timers[0].smpPerCb;
+				_timers[0].smpTillCbRem = _timers[0].smpTillCbRem;
+			}
+
+			if (value & 20) {
+				_timers[1].smpTillCb = _timers[1].smpPerCb;
+				_timers[1].smpTillCbRem = _timers[1].smpTillCbRem;
+			}
+		} else if (l == 2) {
+			// LFO
+			warning("TownsPC98_OpnDriver: TRYING TO USE LFO (NOT SUPPORTED)");
+		} else if (l == 10 || l == 11) {
+			// DAC
+			warning("TownsPC98_OpnDriver: TRYING TO USE DAC (NOT SUPPORTED)");
+		}
+		break;
+
+	case 0x30:
+		// detune, multiple
+		o->detune((value >> 4) & 7);
+		o->multiple(value & 0x0f);
+		c->updateEnvelopeParameters = true;
+		break;
+
+	case 0x40:
+		// total level
+		o->totalLevel(value & 0x7f);
+		break;
+
+	case 0x50:
+		// rate scaling, attack rate
+		o->attackRate(value & 0x1f);
+		if (o->scaleRate(value >> 6))
 			c->updateEnvelopeParameters = true;
-			break;
+		break;
 
-		case 0x40:
-			// total level
-			o->totalLevel(value & 0x7f);
-			break;
+	case 0x60:
+		// first decay rate, amplitude modulation
+		o->decayRate(value & 0x1f);
+		if (value & 0x80)
+			warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION (NOT SUPPORTED)");
+		break;
 
-		case 0x50:
-			// rate scaling, attack rate
-			o->attackRate(value & 0x1f);
-			if (o->scaleRate(value >> 6))
-				c->updateEnvelopeParameters = true;
-			break;
+	case 0x70:
+		// secondary decay rate
+		o->sustainRate(value & 0x1f);
+		break;
 
-		case 0x60:
-			// first decay rate, amplitude modulation
-			o->decayRate(value & 0x1f);
-			if (value & 0x80)
-				warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION (NOT SUPPORTED)");
-			break;
+	case 0x80:
+		// secondary amplitude, release rate;
+		o->sustainLevel(value >> 4);
+		o->releaseRate(value & 0x0f);
+		break;
 
-		case 0x70:
-			// secondary decay rate
-			o->sustainRate(value & 0x1f);
-			break;
+	case 0x90:
+		warning("TownsPC98_OpnDriver: TRYING TO SSG ENVELOPE SHAPES (NOT SUPPORTED)");
+		break;
 
-		case 0x80:
-			// secondary amplitude, release rate;
-			o->sustainLevel(value >> 4);
-			o->releaseRate(value & 0x0f);
-			break;
+	case 0xa0:
+		// frequency
+		l &= ~3;
+		if (l == 0) {
+			c->frqTemp = (c->frqTemp & 0xff00) | value;
+			c->updateEnvelopeParameters = true;
+			for (int i = 0; i < 4; i++)
+				co[i]->frequency(c->frqTemp);
+		} else if (l == 4) {
+			c->frqTemp = (c->frqTemp & 0xff) | (value << 8);
+		} else if (l == 8) {
+			// Ch 3/6 special mode frq
+			warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
+		} else if (l == 12) {
+			// Ch 3/6 special mode frq
+			warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
+		}
+		break;
 
-		case 0x90:
-			warning("TownsPC98_OpnDriver: TRYING TO SSG ENVELOPE SHAPES (NOT SUPPORTED)");
-			break;
+	case 0xb0:
+		l &= ~3;
+		if (l == 0) {
+			// feedback, _algorithm
+			co[0]->feedbackLevel((value >> 3) & 7);
+			c->algorithm = value & 7;
+		} else if (l == 4) {
+			// stereo, LFO sensitivity
+			c->enableLeft = value & 0x80 ? true : false;
+			c->enableRight = value & 0x40 ? true : false;
+			uint8 ams = (value & 0x3F) >> 3;
+			if (ams)
+				warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION SENSITIVITY (NOT SUPPORTED)");
+			uint8 fms = value & 3;
+			if (fms)
+				warning("TownsPC98_OpnDriver: TRYING TO USE FREQ MODULATION SENSITIVITY (NOT SUPPORTED)");
+		}
+		break;
 
-		case 0xa0:
-			// frequency
-			l &= ~3;
-			if (l == 0) {
-				c->frqTemp = (c->frqTemp & 0xff00) | value;
-				c->updateEnvelopeParameters = true;
-				for (int i = 0; i < 4; i++)
-					co[i]->frequency(c->frqTemp);
-			} else if (l == 4) {
-				c->frqTemp = (c->frqTemp & 0xff) | (value << 8);
-			} else if (l == 8) {
-				// Ch 3/6 special mode frq
-				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
-			} else if (l == 12) {
-				// Ch 3/6 special mode frq
-				warning("TownsPC98_OpnDriver: TRYING TO USE CH 3/6 SPECIAL MODE FREQ (NOT SUPPORTED)");
-			}
-			break;
-
-		case 0xb0:
-			l &= ~3;
-			if (l == 0) {
-				// feedback, _algorithm
-				co[0]->feedbackLevel((value >> 3) & 7);
-				c->algorithm = value & 7;
-			} else if (l == 4) {
-				// stereo, LFO sensitivity
-				c->enableLeft = value & 0x80 ? true : false;
-				c->enableRight = value & 0x40 ? true : false;
-				uint8 ams = (value & 0x3F) >> 3;
-				if (ams)
-					warning("TownsPC98_OpnDriver: TRYING TO USE AMP MODULATION SENSITIVITY (NOT SUPPORTED)");
-				uint8 fms = value & 3;
-				if (fms)
-					warning("TownsPC98_OpnDriver: TRYING TO USE FREQ MODULATION SENSITIVITY (NOT SUPPORTED)");
-			}
-			break;
-
-		default:
-			warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAddress);
-			break;
+	default:
+		warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAddress);
+		break;
 	}
 }
 
