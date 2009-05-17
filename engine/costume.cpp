@@ -913,8 +913,7 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 	return NULL;
 }
 
-Model::HierNode *Costume::getModelNodes()
-{
+Model::HierNode *Costume::getModelNodes() {
 	for (int i = 0; i < _numComponents; i++) {
 		if (!_components[i])
 			continue;
