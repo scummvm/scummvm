@@ -25,7 +25,7 @@
 
 #include "common/events.h"
 
-#include "engine/engine.h"
+#include "engine/grim.h"
 #include "engine/lua.h"
 #include "engine/actor.h"
 #include "engine/smush/smush.h"

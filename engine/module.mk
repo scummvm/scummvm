@@ -5,10 +5,10 @@ MODULE_OBJS := \
 	bitmap.o \
 	cmd_line.o \
 	costume.o \
-	engine.o \
 	font.o \
 	gfx_opengl.o \
 	gfx_tinygl.o \
+	grim.o \
 	keyframe.o \
 	lab.o \
 	lipsync.o \

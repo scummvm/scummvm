@@ -1,7 +1,7 @@
 #include "common/endian.h"
 #include "common/debug.h"
 
-#include "engine/engine.h"
+#include "engine/grim.h"
 #include "engine/savegame.h"
 
 #include "engine/lua/ltask.h"

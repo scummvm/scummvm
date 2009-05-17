@@ -16,7 +16,7 @@
 
 #include "engine/resource.h"
 #include "engine/cmd_line.h"
-#include "engine/engine.h"
+#include "engine/grim.h"
 #include "engine/savegame.h"
 
 #if defined(UNIX) || defined(__SYMBIAN32__)

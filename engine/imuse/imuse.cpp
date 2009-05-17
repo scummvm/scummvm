@@ -25,7 +25,7 @@
 
 #include "common/timer.h"
 
-#include "engine/engine.h"
+#include "engine/grim.h"
 #include "engine/savegame.h"
 
 #include "engine/imuse/imuse.h"

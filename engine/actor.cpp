@@ -24,7 +24,7 @@
  */
 
 #include "engine/actor.h"
-#include "engine/engine.h"
+#include "engine/grim.h"
 #include "engine/colormap.h"
 #include "engine/costume.h"
 #include "engine/lipsync.h"

@@ -306,13 +306,6 @@
 			<File
 				RelativePath="..\..\common\mutex.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\common\mutex.h"
@@ -435,14 +428,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\engine.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engine\engine.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engine\font.cpp"
 				>
 			</File>
@@ -468,6 +453,14 @@
 			</File>
 			<File
 				RelativePath="..\..\engine\gfx_tinygl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engine\grim.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engine\grim.h"
 				>
 			</File>
 			<File

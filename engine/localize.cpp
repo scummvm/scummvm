@@ -28,7 +28,7 @@
 #include "common/endian.h"
 
 #include "engine/localize.h"
-#include "engine/engine.h"
+#include "engine/grim.h"
 
 Localizer *g_localizer = NULL;
 

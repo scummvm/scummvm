@@ -31,7 +31,7 @@
 #include "engine/localize.h"
 #include "engine/colormap.h"
 #include "engine/costume.h"
-#include "engine/engine.h"
+#include "engine/grim.h"
 #include "engine/smush/smush.h"
 #include "engine/savegame.h"
 #include "engine/lua/luadebug.h"

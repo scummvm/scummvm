@@ -1,5 +1,5 @@
 #include "engine/savegame.h"
-#include "engine/engine.h"
+#include "engine/grim.h"
 
 #include "common/endian.h"
 #include "common/debug.h"

@@ -28,7 +28,7 @@
 #include "engine/costume.h"
 #include "engine/keyframe.h"
 #include "engine/material.h"
-#include "engine/engine.h"
+#include "engine/grim.h"
 #include "engine/lipsync.h"
 
 ResourceLoader *g_resourceloader = NULL;

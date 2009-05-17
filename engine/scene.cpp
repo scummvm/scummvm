@@ -26,7 +26,7 @@
 #include "engine/scene.h"
 #include "engine/textsplit.h"
 #include "engine/colormap.h"
-#include "engine/engine.h"
+#include "engine/grim.h"
 
 #include "engine/imuse/imuse.h"
 

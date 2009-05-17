@@ -29,7 +29,7 @@
 #include "engine/lua.h"
 #include "engine/registry.h"
 #include "engine/localize.h"
-#include "engine/engine.h"
+#include "engine/grim.h"
 #include "engine/version.h"
 #include "engine/cmd_line.h"
 #include "engine/smush/smush.h"

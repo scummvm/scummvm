@@ -29,7 +29,7 @@
 #include "engine/costume.h"
 #include "engine/actor.h"
 #include "engine/textsplit.h"
-#include "engine/engine.h"
+#include "engine/grim.h"
 #include "engine/keyframe.h"
 #include "engine/material.h"
 #include "engine/lua.h"
