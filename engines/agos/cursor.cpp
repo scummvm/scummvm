@@ -639,15 +639,24 @@ void AGOSEngine::mouseOn() {
 }
 
 void AGOSEngine_PuzzlePack::initMouse() {
-	_maxCursorWidth = 75;
-	_maxCursorHeight = 97;
-	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
+	if (getGameId() == GID_DIMP) {
+		AGOSEngine_Simon1::initMouse();
+	} else {
+		_maxCursorWidth = 75;
+		_maxCursorHeight = 97;
+		_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
+	}
 }
 
 void AGOSEngine_FeebleDemo::initMouse() {
 	// TODO: Add larger cursor
 	AGOSEngine_Simon1::initMouse();
 }
+
+static const byte mouseCursorPalette[] = {
+	0x00, 0x00, 0x00, 0x00, // Black
+	0xFF, 0xFF, 0xFF, 0x00, // White
+};
 
 void AGOSEngine_Feeble::initMouse() {
 	_maxCursorWidth = 40;
@@ -658,21 +667,12 @@ void AGOSEngine_Feeble::initMouse() {
 void AGOSEngine_Simon1::initMouse() {
 	AGOSEngine::initMouse();
 
-	uint8 color = 225;
-	if (getGameType() == GType_FF && (getFeatures() & GF_DEMO)) {
-		color = 250;
-	} else if (getPlatform() == Common::kPlatformAmiga) {
-		color = (getFeatures() & GF_32COLOR) ? 17 : 241;
-	}
-
-	memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
-
 	const uint16 *src = _common_mouseInfo;
 	for (int i = 0; i < 16; i++) {
 		for (int j = 0; j < 16; j++) {
 			if (src[0] & (1 << (15 - (j % 16)))) {
 				if (src[1] & (1 << (15 - (j % 16)))) {
-					_mouseData[16 * i + j] = color;
+					_mouseData[16 * i + j] = 1;
 				} else {
 					_mouseData[16 * i + j] = 0;
 				}
@@ -680,12 +680,18 @@ void AGOSEngine_Simon1::initMouse() {
 		}
 		src += 2;
 	}
+
+	CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
 }
 
 void AGOSEngine::initMouse() {
 	_maxCursorWidth = 16;
 	_maxCursorHeight = 16;
 	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
+
+	memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
+
+	CursorMan.replaceCursorPalette(mouseCursorPalette, 0, ARRAYSIZE(mouseCursorPalette) / 4);
 }
 
 void AGOSEngine_PuzzlePack::loadMouseImage() {
@@ -697,9 +703,7 @@ void AGOSEngine_PuzzlePack::loadMouseImage() {
 }
 
 void AGOSEngine_PuzzlePack::drawMousePointer() {
-	if (getGameId() == GID_DIMP) {
-		AGOSEngine::drawMousePointer();
-	} else {
+	if (getGameId() != GID_DIMP) {
 		CursorMan.replaceCursor(_mouseData, _maxCursorWidth, _maxCursorHeight, 37, 48, 0);
 	}
 }
@@ -731,8 +735,6 @@ void AGOSEngine_Feeble::drawMousePart(int image, byte x, byte y) {
 }
 
 void AGOSEngine_FeebleDemo::drawMousePointer() {
-	// TODO: Add larger cursor
-	CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
 }
 
 void AGOSEngine_Feeble::drawMousePointer() {
@@ -795,20 +797,10 @@ void AGOSEngine_Feeble::drawMousePointer() {
 void AGOSEngine::drawMousePointer() {
 	if (getGameType() == GType_SIMON2) {
 		CursorMan.replaceCursor(_simon2_cursors[_mouseCursor], 16, 16, 7, 7);
-	} else if (getGameType() == GType_SIMON1) {
-		CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
-	} else {
+	} else if (getGameType() != GType_SIMON1) {
 		const uint16 *src;
 		int i, j;
-		uint8 color;
 
-		if (getGameType() == GType_PN) {
-			color = (getPlatform() == Common::kPlatformPC) ? 15 : 14;
-		} else if (getGameType() == GType_ELVIRA1) {
-			color = 15;
-		} else {
-			color = 65;
-		}
 		memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
 
 		if (getGameType() == GType_WW) {
@@ -866,7 +858,7 @@ void AGOSEngine::drawMousePointer() {
 			for (j = 0; j < 16; j++) {
 				if (src[0] & (1 << (15 - (j % 16)))) {
 					if (src[1] & (1 << (15 - (j % 16)))) {
-						_mouseData[16 * i + j] = color;
+						_mouseData[16 * i + j] = 1;
 					} else {
 						_mouseData[16 * i + j] = 0;
 					}
