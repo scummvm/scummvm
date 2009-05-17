@@ -215,7 +215,7 @@ void Smush::handleFrame() {
 	_movieTime += _speed / 1000;
 	if (_frame == _nbframes) {
 		// If we're not supposed to loop (or looping fails) then end the video
-		if(!_videoLooping || !_file.setPos(_startPos)) {
+		if (!_videoLooping || !_file.setPos(_startPos)) {
 			_videoFinished = true;
 			g_grim->setMode(ENGINE_MODE_NORMAL);
 			return;

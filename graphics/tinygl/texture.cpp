@@ -77,7 +77,7 @@ void tglGenTextures(int n, unsigned int *textures) {
 			t = t->next;
 		}
 	}
-	for(i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 		textures[i] = max + i + 1;
 	}
 }

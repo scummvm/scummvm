@@ -107,12 +107,12 @@ public:
 			return yaw;
 	}
 
-	float dotProduct( float sx, float sy, float sz ) {
-		return x() * sx + y() * sy + z()*sz;
+	float dotProduct(float sx, float sy, float sz) {
+		return x() * sx + y() * sy + z() * sz;
 	}
 
 	bool isZero() {
-		if(x() == 0.f && y() == 0.f && z() == 0.f)
+		if (x() == 0.f && y() == 0.f && z() == 0.f)
 			return true;
 		return false;
 	}

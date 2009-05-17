@@ -268,7 +268,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 		saveUint32(makeIdFromPointer(tempHash).hi);
 		saveSint32(tempHash->nhash);
 		int32 countUsedHash = 0;
-		for(i = 0; i < tempHash->nhash; i++) {
+		for (i = 0; i < tempHash->nhash; i++) {
 			Node *newNode = &tempHash->node[i];
 			if (newNode->ref.ttype != LUA_T_NIL && newNode->val.ttype != LUA_T_NIL) {
 				countUsedHash++;

@@ -42,7 +42,7 @@ void glopMaterial(GLContext *c, TGLParam *p) {
 	case TGL_AMBIENT_AND_DIFFUSE:
 		for (i = 0; i < 4; i++)
 			m->diffuse.v[i] = v[i];
-		for(i=0;i<4;i++)
+		for (i = 0; i < 4; i++)
 			m->ambient.v[i] = v[i];
 		break;
 	default:
