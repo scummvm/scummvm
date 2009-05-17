@@ -371,8 +371,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 			// WORKAROUND: LSL6 tries to access the invalid 'keep' selector of the game object.
 			// FIXME: Find out if this is a game bug.
-			if ((s->_gameName == "LSL6") && (s->currentRoomNumber() == 100)) {
-				debug("LSL6 room 100 detected, continuing...");
+			if ((s->_gameName == "LSL6") && (selector == 0x18c)) {
+				debug("LSL6 detected, continuing...");
 				break;
 			}
 

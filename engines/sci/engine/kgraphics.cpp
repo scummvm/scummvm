@@ -972,15 +972,21 @@ void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr
 
 int sci01_priority_table_flags = 0;
 
+#define K_DRAWPIC_FLAG_MIRRORED (1 << 14)
+
 reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	drawn_pic_t dp;
 	int add_to_pic = 1;
 	gfx_color_t transparent = s->wm_port->_bgcolor;
+	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
 
 	CHECK_THIS_KERNEL_FUNCTION;
 
 	dp.nr = SKPV(0);
 	dp.palette = SKPV_OR_ALT(3, 0);
+
+	if ((argc > 1) && (UKPV(1) & K_DRAWPIC_FLAG_MIRRORED))
+		picFlags |= DRAWPIC1_FLAG_MIRRORED;
 
 	if (s->flags & GF_SCI0_OLDGFXFUNCS) {
 		if (!SKPV_OR_ALT(2, 0))
@@ -1002,11 +1008,11 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (add_to_pic) {
 		s->_pics.push_back(dp);
-		GFX_ASSERT(gfxop_add_to_pic(s->gfx_state, dp.nr, 1, dp.palette));
+		GFX_ASSERT(gfxop_add_to_pic(s->gfx_state, dp.nr, picFlags, dp.palette));
 	} else {
 		s->_pics.clear();
 		s->_pics.push_back(dp);
-		GFX_ASSERT(gfxop_new_pic(s->gfx_state, dp.nr, 1, dp.palette));
+		GFX_ASSERT(gfxop_new_pic(s->gfx_state, dp.nr, picFlags, dp.palette));
 	}
 
 	delete s->wm_port;
@@ -1040,7 +1046,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->pic_priority_table = NULL;
 
 	if (argc > 1)
-		s->pic_animate = SKPV(1); // The animation used during kAnimate() later on
+		s->pic_animate = SKPV(1) & 0xff; // The animation used during kAnimate() later on
 
 	s->dyn_views = NULL;
 	s->drop_views = NULL;

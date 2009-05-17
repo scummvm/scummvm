@@ -388,10 +388,9 @@ gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
 	for (i = 0; i < view->loops_nr; i++) {
 		int loop_offset = READ_LE_UINT16(seeker + V2_LOOP_OFFSET);
 		int cels = seeker[V2_CELS_NUM];
-		int mirrored = seeker[V2_IS_MIRROR];
+		// int mirrored = seeker[V2_IS_MIRROR];
 		int copy_entry = seeker[V2_COPY_OF_LOOP];
 
-		printf("%d\n", mirrored);
 		if (copy_entry == 255)
 			gfxr_draw_loop11(id, i, 0, resource, resource + loop_offset, size, cels, view->loops + i,
 			                 view, bytes_per_cel);

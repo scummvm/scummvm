@@ -1015,14 +1015,16 @@ namespace Sci {
 	x = *(resource + pos++); \
 	y = *(resource + pos++); \
 	x |= (temp & 0xf0) << 4; \
-	y |= (temp & 0x0f) << 8;
+	y |= (temp & 0x0f) << 8; \
+	if (flags & DRAWPIC1_FLAG_MIRRORED) \
+		x = 319 - x;
 
 #define GET_REL_COORDS(x, y) \
 	temp = *(resource + pos++); \
 	if (temp & 0x80) \
-		x -= ((temp >> 4) & 0x7); \
+		x -= ((temp >> 4) & 0x7) * (flags & DRAWPIC1_FLAG_MIRRORED ? -1 : 1); \
 	else \
-		x += (temp >> 4); \
+		x += (temp >> 4) * (flags & DRAWPIC1_FLAG_MIRRORED ? -1 : 1); \
 	\
 	if (temp & 0x08) \
 		y -= (temp & 0x7); \
@@ -1035,7 +1037,7 @@ namespace Sci {
 		y = oldy - (temp & 0x7f); \
 	else \
 		y = oldy + temp; \
-	x = oldx + *((signed char *) resource + pos++);
+	x = oldx + *((signed char *) resource + pos++) * (flags & DRAWPIC1_FLAG_MIRRORED ? -1 : 1);
 
 
 static void check_and_remove_artifact(byte *dest, byte* srcp, int legalcolor, byte l, byte r, byte u, byte d) {
@@ -1505,12 +1507,17 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				p0printf("(%d, %d)\n", posx, posy);
 				pos += 2;
 				if (!sci1 && !nodraw)
-					view = gfxr_draw_cel0(-1, -1, -1, resource + pos, bytesize, NULL, 0);
+					view = gfxr_draw_cel0(-1, -1, -1, resource + pos, bytesize, NULL, flags & DRAWPIC1_FLAG_MIRRORED);
 				else
-					view = gfxr_draw_cel1(-1, -1, -1, 0, resource + pos, resource + pos, bytesize, NULL, (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR), false);
+					view = gfxr_draw_cel1(-1, -1, -1, flags & DRAWPIC1_FLAG_MIRRORED, resource + pos, resource + pos,
+										  bytesize, NULL, (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR), false);
 				pos += bytesize;
 				if (nodraw)
 					continue;
+
+				if (flags & DRAWPIC1_FLAG_MIRRORED)
+					posx -= view->index_width - 1;
+
 				p0printf("(%d, %d)-(%d, %d)\n", posx, posy, posx + view->index_width, posy + view->index_height);
 
 				// we can only safely replace the palette if it's static
@@ -1642,7 +1649,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	pic->visual_map->palette = gfxr_read_pal11(-1, resource + palette_data_ptr, 1284);
 
 	if (has_bitmap)
-		view = gfxr_draw_cel1(-1, 0, 0, 0, resource, resource + bitmap_data_ptr, size - bitmap_data_ptr, NULL, 0, true);
+		view = gfxr_draw_cel1(-1, 0, 0, flags & DRAWPIC1_FLAG_MIRRORED, resource, resource + bitmap_data_ptr, size - bitmap_data_ptr, NULL, 0, true);
 
 	if (view) {
 		view->palette = pic->visual_map->palette->getref();
