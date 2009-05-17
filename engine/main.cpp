@@ -137,7 +137,7 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, Audio::Mixer::kMaxMixerVolume);
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
-	g_engine = new GrimEngine();
+	g_grime = new GrimEngine();
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
 	g_smush = new Smush();
@@ -173,8 +173,8 @@ extern "C" int residual_main(int argc, char *argv[]) {
 //	lua_pushnumber(0);		// bootParam
 	lua_call("BOOT");
 
-	g_engine->setMode(ENGINE_MODE_NORMAL);
-	g_engine->mainLoop();
+	g_grime->setMode(ENGINE_MODE_NORMAL);
+	g_grime->mainLoop();
 
 
 	quit();
@@ -203,8 +203,8 @@ void quit() {
 	g_imuse = NULL;
 	delete g_localizer;
 	g_localizer = NULL;
-	delete g_engine;
-	g_engine = NULL;
+	delete g_grime;
+	g_grime = NULL;
 	delete g_resourceloader;
 	g_resourceloader = NULL;
 	delete g_driver;

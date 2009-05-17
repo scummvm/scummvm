@@ -205,7 +205,7 @@ const ControlDescriptor controls[] = {
 // a "character" handler or a "button" handler
 #define CHAR_KEY(k) ((k >= 'a' && k <= 'z') || (k >= 'A' && k <= 'Z') || (k >= '0' && k <= '9') || k == ' ')
 
-GrimEngine *g_engine = NULL;
+GrimEngine *g_grime = NULL;
 
 extern Imuse *g_imuse;
 int g_imuseState = -1;
@@ -624,27 +624,27 @@ void GrimEngine::mainLoop() {
 }
 
 void GrimEngine::savegameReadStream(void *data, int32 size) {
-	g_engine->_savedState->read(data, size);
+	g_grime->_savedState->read(data, size);
 }
 
 void GrimEngine::savegameWriteStream(void *data, int32 size) {
-	g_engine->_savedState->write(data, size);
+	g_grime->_savedState->write(data, size);
 }
 
 int32 GrimEngine::savegameReadSint32() {
-	return g_engine->_savedState->readLESint32();
+	return g_grime->_savedState->readLESint32();
 }
 
 void GrimEngine::savegameWriteSint32(int32 val) {
-	g_engine->_savedState->writeLESint32(val);
+	g_grime->_savedState->writeLESint32(val);
 }
 
 uint32 GrimEngine::savegameReadUint32() {
-	return g_engine->_savedState->readLEUint32();
+	return g_grime->_savedState->readLEUint32();
 }
 
 void GrimEngine::savegameWriteUint32(uint32 val) {
-	g_engine->_savedState->writeLEUint32(val);
+	g_grime->_savedState->writeLEUint32(val);
 }
 
 void GrimEngine::savegameRestore() {
@@ -696,11 +696,11 @@ void GrimEngine::storeSaveGameImage(SaveGame *savedState) {
 
 	printf("GrimEngine::StoreSaveGameImage() started.\n");
 
-	int mode = g_engine->getMode();
-	g_engine->setMode(ENGINE_MODE_NORMAL);
-	g_engine->updateDisplayScene();
+	int mode = g_grime->getMode();
+	g_grime->setMode(ENGINE_MODE_NORMAL);
+	g_grime->updateDisplayScene();
 	screenshot = g_driver->getScreenshot(width, height);
-	g_engine->setMode(mode);
+	g_grime->setMode(mode);
 	savedState->beginSection('SIMG');
 	if (screenshot) {
 		int size = screenshot->width() * screenshot->height() * sizeof(uint16);

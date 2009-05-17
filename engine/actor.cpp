@@ -46,7 +46,7 @@ Actor::Actor(const char *name) :
 		_turnCostume(NULL), _leftTurnChore(-1), _rightTurnChore(-1),
 		_lastTurnDir(0), _currTurnDir(0),
 		_mumbleCostume(NULL), _mumbleChore(-1), _sayLineText(NULL) {
-	g_engine->registerActor(this);
+	g_grime->registerActor(this);
 	_lookingMode = false;
 	_constrain = false;
 	_talkSoundName = "";
@@ -130,7 +130,7 @@ bool Actor::isTurning() const {
 }
 
 void Actor::walkForward() {
-	float dist = g_engine->perSecond(_walkRate);
+	float dist = g_grime->perSecond(_walkRate);
 	float yaw_rad = _yaw * (LOCAL_PI / 180), pitch_rad = _pitch * (LOCAL_PI / 180);
 	//float yaw;
 	Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
@@ -152,7 +152,7 @@ void Actor::walkForward() {
 	Sector *currSector = NULL, *prevSector = NULL;
 	Sector::ExitInfo ei;
 
-	g_engine->currScene()->findClosestSector(_pos, &currSector, &_pos);
+	g_grime->currScene()->findClosestSector(_pos, &currSector, &_pos);
 	if (!currSector) { // Shouldn't happen...
 		_pos += forwardVec * dist;
 		_walkedCur = true;
@@ -177,7 +177,7 @@ void Actor::walkForward() {
 
 		// Check for an adjacent sector which can continue
 		// the path
-		currSector = g_engine->currScene()->findPointSector(ei.exitPoint + (float)0.0001 * puckVector, 0x1000);
+		currSector = g_grime->currScene()->findPointSector(ei.exitPoint + (float)0.0001 * puckVector, 0x1000);
 		if (currSector == prevSector)
 			break;
 	}
@@ -193,7 +193,7 @@ void Actor::walkForward() {
 		return;
 
 	ei.angleWithEdge += (float)0.1;
-	float turnAmt = g_engine->perSecond(_turnRate);
+	float turnAmt = g_grime->perSecond(_turnRate);
 	if (turnAmt > ei.angleWithEdge)
 		turnAmt = ei.angleWithEdge;
 	setYaw(_yaw + turnAmt * turnDir);
@@ -203,7 +203,7 @@ Vector3d Actor::puckVector() const {
 	float yaw_rad = _yaw * (LOCAL_PI / 180);
 	Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
 
-	Sector *sector = g_engine->currScene()->findPointSector(_pos, 0x1000);
+	Sector *sector = g_grime->currScene()->findPointSector(_pos, 0x1000);
 	if (!sector)
 		return forwardVec;
 	else
@@ -278,7 +278,7 @@ void Actor::setMumbleChore(int chore, Costume *cost) {
 }
 
 void Actor::turn(int dir) {
-	float delta = g_engine->perSecond(_turnRate) * dir;
+	float delta = g_grime->perSecond(_turnRate) * dir;
 	setYaw(_yaw + delta);
 	_currTurnDir = dir;
 }
@@ -317,7 +317,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	// However, normal SMUSH movies may call SayLine, for example:
 	// When Domino yells at Manny (a SMUSH movie) he does it with
 	// a SayLine request rather than as part of the movie!
-	if (!g_smush->isPlaying() || g_engine->getMode() == ENGINE_MODE_NORMAL) {
+	if (!g_smush->isPlaying() || g_grime->getMode() == ENGINE_MODE_NORMAL) {
 		Common::String soundName = msgId;
 		Common::String soundLip = msgId;
 		soundName += ".wav";
@@ -331,8 +331,8 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 
 		_talkSoundName = soundName;
 		g_imuse->startVoice(_talkSoundName.c_str());
-		if (g_engine->currScene()) {
-			g_engine->currScene()->setSoundPosition(_talkSoundName.c_str(), pos());
+		if (g_grime->currScene()) {
+			g_grime->currScene()->setSoundPosition(_talkSoundName.c_str(), pos());
 		}
 
 		// If the actor is clearly not visible then don't try to play the lip sync
@@ -353,7 +353,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	}
 
 	if (_sayLineText) {
-		g_engine->killTextObject(_sayLineText);
+		g_grime->killTextObject(_sayLineText);
 		_sayLineText = NULL;
 	}
 
@@ -364,7 +364,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	_sayLineText->setDefaults(&sayLineDefaults);
 	_sayLineText->setText((char *)msg);
 	_sayLineText->setFGColor(&_talkColor);
-	if (g_engine->getMode() == ENGINE_MODE_SMUSH) {
+	if (g_grime->getMode() == ENGINE_MODE_SMUSH) {
 		_sayLineText->setX(640 / 2);
 		_sayLineText->setY(420);
 	} else {
@@ -377,7 +377,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 		}
 	}
 	_sayLineText->createBitmap();
-	g_engine->registerTextObject(_sayLineText);
+	g_grime->registerTextObject(_sayLineText);
 }
 
 bool Actor::talking() {
@@ -406,7 +406,7 @@ void Actor::shutUp() {
 	}
 
 	if (_sayLineText) {
-		g_engine->killTextObject(_sayLineText);
+		g_grime->killTextObject(_sayLineText);
 		_sayLineText = NULL;
 	}
 }
@@ -490,11 +490,11 @@ void Actor::update() {
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
 	if (_constrain && !_walking) {
-		g_engine->currScene()->findClosestSector(_pos, NULL, &_pos);
+		g_grime->currScene()->findClosestSector(_pos, NULL, &_pos);
 	}
 
 	if (_turning) {
-		float turnAmt = g_engine->perSecond(_turnRate);
+		float turnAmt = g_grime->perSecond(_turnRate);
 		float dyaw = _destYaw - _yaw;
 		while (dyaw > 180)
 			dyaw -= 360;
@@ -522,7 +522,7 @@ void Actor::update() {
 		if (dist > 0)
 			dir /= dist;
 
-		float walkAmt = g_engine->perSecond(_walkRate);
+		float walkAmt = g_grime->perSecond(_walkRate);
 
 		if (walkAmt >= dist) {
 			_pos = _destPos;
@@ -597,7 +597,7 @@ void Actor::update() {
 	}
 
 	if (_lookingMode) {
-		/*float lookAtAmt = */g_engine->perSecond(_lookAtRate);
+		/*float lookAtAmt = */g_grime->perSecond(_lookAtRate);
 	}
 }
 
@@ -608,7 +608,7 @@ void Actor::draw() {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
 		(*i)->setupTextures();
 
-	if (!g_driver->isHardwareAccelerated() && g_engine->getFlagRefreshShadowMask()) {
+	if (!g_driver->isHardwareAccelerated() && g_grime->getFlagRefreshShadowMask()) {
 		for (int l = 0; l < 5; l++) {
 			if (!_shadowArray[l].active)
 				continue;
@@ -679,13 +679,13 @@ void Actor::setShadowPlane(const char *name) {
 void Actor::addShadowPlane(const char *name) {
 	assert(_activeShadowSlot != -1);
 
-	int numSectors = g_engine->currScene()->getSectorCount();
+	int numSectors = g_grime->currScene()->getSectorCount();
 
 	for (int i = 0; i < numSectors; i++) {
-		Sector *sector = g_engine->currScene()->getSectorBase(i);
+		Sector *sector = g_grime->currScene()->getSectorBase(i);
 		if (strmatch(sector->name(), name)) {
 			_shadowArray[_activeShadowSlot].planeList.push_back(sector);
-			g_engine->flagRefreshShadowMask(true);
+			g_grime->flagRefreshShadowMask(true);
 			return;
 		}
 	}

@@ -214,7 +214,7 @@ private:
 	PrimitiveListType _primitiveObjects;
 };
 
-extern GrimEngine *g_engine;
+extern GrimEngine *g_grime;
 
 extern int g_imuseState;
 
