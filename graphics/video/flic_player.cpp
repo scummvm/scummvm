@@ -49,7 +49,7 @@ bool FlicDecoder::loadFile(const char *fileName) {
 	if (!_fileStream)
 		return false;
 
-	uint32 frameSize = _fileStream->readUint32LE();
+	/* uint32 frameSize = */ _fileStream->readUint32LE();
 	uint16 frameType = _fileStream->readUint16LE();
 
 	// Check FLC magic number
