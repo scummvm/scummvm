@@ -155,7 +155,7 @@ public:
 	float lookAtRate() {
 		return _lookAtRate;
 	}
-	void setHead( int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
+	void setHead(int joint1, int joint2, int joint3, float maxRoll, float maxPitch, float maxYaw);
 
 private:
 	Common::String _name;
