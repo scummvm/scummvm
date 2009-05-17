@@ -78,7 +78,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 	for (i = 0; i < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; i++) {
 		// Filenames are case insensitive, see findTrack
 		if (!strcasecmp(_track[i]->soundName, soundName)) {
-			if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				printf("Imuse::startSound(): Track '%s' already playing.\n", soundName);
 			return true;
 		}

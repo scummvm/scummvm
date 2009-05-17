@@ -90,7 +90,7 @@ void debug(const char *s, ...) {
 void debug(int level, const char *s, ...) {
 	va_list va;
 
-	if (level > debugLevel)
+	if (level > gDebugLevel)
 		return;
 
 	va_start(va, s);

@@ -39,7 +39,7 @@ Material::Material(const char *filename, const char *data, int len, const CMap &
 	_height = READ_LE_UINT32(data + 80 + _numImages * 40);
 
 	if (_width == 0 || _height == 0) {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("skip load texture: bad texture size (%dx%d) for texture %s", _width, _height, filename);
 		return;
 	}

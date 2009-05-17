@@ -191,11 +191,11 @@ static Costume *get_costume(Actor *a, int param, const char *called_from) {
 	Costume *result;
 	if (lua_isnil(lua_getparam(param))) {
 		result = a->currentCostume();
-		if (!result && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
+		if (!result && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
 			warning("Actor %s has no costume [%s]", a->name(), called_from);
 	} else {
 		result = a->findCostume(luaL_check_string(param));
-		if (!result && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
+		if (!result && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
 			warning("Actor %s has no costume %s [%s]", a->name(), lua_getstring(lua_getparam(param)), called_from);
 	}
 	return result;
@@ -212,7 +212,7 @@ static void new_dofile() {
 
 static void PrintDebug() {
 	DEBUG_FUNCTION();
-	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL) {
+	if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
 		Common::String msg("Debug: ");
 		msg += Common::String(luaL_check_string(1)) + "\n";
 		printf(msg.c_str());
@@ -221,7 +221,7 @@ static void PrintDebug() {
 
 static void PrintError() {
 	DEBUG_FUNCTION();
-	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL) {
+	if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL) {
 		Common::String msg("Error: ");
 		msg += Common::String(luaL_check_string(1)) + "\n";
 		printf(msg.c_str());
@@ -230,7 +230,7 @@ static void PrintError() {
 
 static void PrintWarning() {
 	DEBUG_FUNCTION();
-	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL) {
+	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL) {
 		Common::String msg("Warning: ");
 		msg += Common::String(luaL_check_string(1)) + "\n";
 		printf(msg.c_str());
@@ -461,12 +461,12 @@ static void SetActorWalkChore() {
 	chore = check_int(2);
 	costume = get_costume(act, 3, "SetActorWalkChore");
 	if (!costume) {
-		if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("SetActorWalkChore() could not find the requested costume, attempting to load...");
 		act->pushCostume(lua_getstring(lua_getparam(3)));
 		costume = get_costume(act, 3, "SetActorWalkChore");
 		if (!costume) {
-			if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 				error("SetActorWalkChore() could not find the requested costume!");
 			return;
 		}
@@ -608,7 +608,7 @@ static void GetActorYawToPoint() {
 	} else if (lua_istable(param2)) {
 		yawVector = tableToVector(param2);
 	} else {
-		if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 			error("Unhandled data type for GetActorYawToPoint!");
 		lua_pushnil();
 		return;
@@ -800,7 +800,7 @@ static void GetActorNodeLocation() {
 		lua_pushnil();
 		lua_pushnil();
 		lua_pushnil();
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("GetActorNodeLocation() when actor has no costume (which means no nodes)!");
 		return;
 	}
@@ -809,7 +809,7 @@ static void GetActorNodeLocation() {
 		lua_pushnil();
 		lua_pushnil();
 		lua_pushnil();
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("GetActorNodeLocation() when actor has no nodes!");
 		return;
 	}
@@ -907,7 +907,7 @@ static void GetActorCostume() {
 	c = act->currentCostume();
 	if (!c) {
 		lua_pushnil();
-		if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 			printf("GetActorCostume() on '%s' when actor has no costume!", act->name());
 		return;
 	}
@@ -940,7 +940,7 @@ static void PlayActorChore() {
 	num = check_int(2);
 	cost = get_costume(act, 3, "playActorChore");
 	if (!cost) {
-		if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Actor costume not found, unable to perform chore.");
 		return;
 	}
@@ -967,7 +967,7 @@ static void CompleteActorChore() {
 	num = check_int(2);
 	cost = get_costume(act, 3, "completeActorChore");
 	if (!cost) {
-		if (debugLevel == DEBUG_CHORES || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Actor costume not found, unable to perform chore.");
 		return;
 	}
@@ -1051,7 +1051,7 @@ static void IsActorChoring() {
 	else if (lua_isstring(param2))
 		result = cost->isChoring(lua_getstring(param2), excludeLooping);
 	else {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("IsActorChoring: LUA Parameter 2 is of unhandled type!");
 	}
 
@@ -1077,7 +1077,7 @@ static void ActorLookAt() {
 	// Look at nothing
 	if (lua_isnil(x)) {
 		if (act->isLookAtVectorZero()) {
-			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("Actor requested to look at nothing, already looking at nothing!");
 			return;
 		}
@@ -1114,7 +1114,7 @@ static void ActorLookAt() {
 		if (lua_isnumber(y))
 			rate = luaL_check_number(3);
 	} else {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("ActorLookAt: Don't know what to look at!");
 		return;
 	}
@@ -1153,7 +1153,7 @@ static void TurnActorTo() {
 		y = destActor->pos().y();
 		z = destActor->pos().z();
 	} else {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("TurnActorTo() parameter type not understood");
 		return;
 	}
@@ -1264,7 +1264,7 @@ static void RotateVector() {
 		lua_pushnumber(vec2.z());
 		lua_settable();
 	} else {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("RotateVector() parameter type not understood!");
 		// This will likely cause a crash since LUA is expecting
 		// a table out of this function
@@ -1292,7 +1292,7 @@ static void SetActorPitch() {
 
 		act->setRot(pitch, act->yaw(), act->roll());
 	} else {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("SetActorPitch() parameter type not understood!");
 		return;
 	}
@@ -1350,7 +1350,7 @@ static void SetActorFollowBoxes() {
 	DEBUG_FUNCTION();
 	act = check_actor(1);
 	mode = !lua_isnil(lua_getparam(2));
-	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 		warning("SetActorFollowBoxes() not implemented");
 	// that is not walkbox walking, but temporary hack
 	// act->enableWalkbox(mode);
@@ -1627,7 +1627,7 @@ static void SayLine() {
 			paramObj = lua_getparam(paramId++);
 		} while (!lua_isnil(paramObj));
 		if (msg.empty()) {
-			if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("SayLine: Did not find a message ID!");
 			stubWarning("ERROR: SayLine");
 			return;
@@ -1693,7 +1693,7 @@ static void GetPointSector() {
 		result = NULL;
 	}
 	if (!result) {
-		if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 			error("GetPointSector() passed an unhandled type or failed to find any matching sector!");
 		lua_pushnil();
 		lua_pushnil();
@@ -1758,7 +1758,7 @@ static void MakeSectorActive() {
 	sectorName = lua_getparam(1);
 	visible = !lua_isnil(lua_getparam(2));
 	// FIXME: This happens on initial load. Are we initting something in the wrong order?
-	if (!g_grim->currScene() && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)) {
+	if (!g_grim->currScene() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)) {
 		warning("!!!! Trying to call MakeSectorActive without a scene!");
 		return;
 	}
@@ -1788,7 +1788,7 @@ static void MakeSectorActive() {
 				return;
 			}
 		}
-	} else if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL){
+	} else if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL){
 		warning("MakeSectorActive Parameter is not a sector ID or Name");
 		return;
 	} else
@@ -1819,7 +1819,7 @@ static void MakeCurrentSet() {
 
 	DEBUG_FUNCTION();
 	name = luaL_check_string(1);
-	if (debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 		printf("Entered new scene '%s'.\n", name);
 	g_grim->setScene(name);
 }
@@ -1864,7 +1864,7 @@ static void GetCurrentSetup() {
 	name = luaL_check_string(1);
 	scene = g_grim->findScene(name);
 	if (!scene) {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("GetCurrentSetup() Requested scene (%s) is not loaded!", name);
 		lua_pushnil();
 		return;
@@ -1884,7 +1884,7 @@ static void GetShrinkPos() {
 	lua_pushnumber(x);
 	lua_pushnumber(y);
 	lua_pushnumber(z);
-	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 		warning("Stub function GetShrinkPos(%g,%g,%g,%g) called", x, y, z, r);
 }
 
@@ -1914,10 +1914,10 @@ static void ImStartSound() {
 	} else {
 		// Allow soft failing when loading sounds, hard failing when not
 		if (priority == 127) {
-			if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("ImStartSound failed to load '%s'", soundName);
 		} else {
-			if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 				error("ImStartSound failed to start '%s'", soundName);
 		}
 		lua_pushnil();
@@ -1952,7 +1952,7 @@ static void ImSetVoiceEffect() {
 
 	DEBUG_FUNCTION();
 	effectName = luaL_check_string(1);
-	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 		warning("ImSetVoiceEffect(%s) Voice effects are not yet supported", effectName);
 }
 
@@ -2003,7 +2003,7 @@ static void ImSetParam() {
 		break;
 	default:
 		lua_pushnil();
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("ImSetParam() Unimplemented %d, %d", param, value);
 	}
 }
@@ -2024,7 +2024,7 @@ void ImGetParam() {
 		break;
 	default:
 		lua_pushnil();
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("ImGetParam() Unimplemented %d", param);
 	}
 }
@@ -2344,7 +2344,7 @@ static void KillTextObject() {
 
 	DEBUG_FUNCTION();
 	if (lua_isnil(lua_getparam(1))) {
-		if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 			error("KillTextObject(NULL)");
 		return;
 	}
@@ -2685,7 +2685,7 @@ static void ChangePrimitive() {
 	if (!pmodify) {
 		// When Manny exists Don's computer (using ESC) the primitive objects
 		// are destroyed just before the last call to change them
-		if (debugLevel == DEBUG_WARN)
+		if (gDebugLevel == DEBUG_WARN)
 			warning("Primitive object not found.");
 		return;
 	}
@@ -3016,7 +3016,7 @@ static void Load() {
 	} else if (lua_isstring(fileName)) {
 		g_grim->_savegameFileName = lua_getstring(fileName);
 	} else {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Load() fileName is wrong");
 		return;
 	}
@@ -3033,7 +3033,7 @@ static void Save() {
 	} else if (lua_isstring(fileName)) {
 		g_grim->_savegameFileName = lua_getstring(fileName);
 	} else {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Save() fileName is wrong");
 		return;
 	}
@@ -3150,19 +3150,19 @@ static void ForceRefresh() {
 
 static void JustLoaded() {
 	DEBUG_FUNCTION();
-	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 		error("OPCODE USAGE VERIFICATION: JustLoaded");
 }
 
 static void PlaySound() {
 	DEBUG_FUNCTION();
-	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 		error("OPCODE USAGE VERIFICATION: PlaySound");
 }
 
 static void SetEmergencyFont() {
 	DEBUG_FUNCTION();
-	if (debugLevel == DEBUG_ERROR || debugLevel == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 		error("OPCODE USAGE VERIFICATION: SetEmergencyFont");
 }
 
@@ -3185,7 +3185,7 @@ static void debugFunction(const char *debugMessage, const char *funcName) {
 	bool stubFn = strcmp(debugMessage, "WARNING: Stub function") == 0;
 	FILE *output;
 
-	if (!stubFn && debugLevel != DEBUG_FUNC && debugLevel != DEBUG_ALL)
+	if (!stubFn && gDebugLevel != DEBUG_FUNC && gDebugLevel != DEBUG_ALL)
 		return;
 
 	if (stubFn)
@@ -3229,7 +3229,7 @@ static void debugFunction(const char *debugMessage, const char *funcName) {
 // Stub function for builtin functions not yet implemented
 static void stubWarning(const char *funcName) {
 	// If the user doesn't want these debug messages then don't print them
-	if (debugLevel != DEBUG_WARN && debugLevel != DEBUG_STUB && debugLevel != DEBUG_FUNC && debugLevel != DEBUG_ALL)
+	if (gDebugLevel != DEBUG_WARN && gDebugLevel != DEBUG_STUB && gDebugLevel != DEBUG_FUNC && gDebugLevel != DEBUG_ALL)
 		return;
 
 	debugFunction("WARNING: Stub function", funcName);
@@ -3818,7 +3818,7 @@ int bundle_dofile(const char *filename) {
 		delete b;
 		// Don't print warnings on Scripts\foo.lua,
 		// d:\grimFandango\Scripts\foo.lua
-		if (!strstr(filename, "Scripts\\") && (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL))
+		if (!strstr(filename, "Scripts\\") && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
 			warning("Cannot find script %s", filename);
 
 		return 2;
@@ -3847,7 +3847,7 @@ lua_Object getTableFunction(lua_Object table, const char *name) {
 	}
 
 	if (!lua_isfunction(handler)) {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Invalid event handler %s", name);
 		return LUA_NOOBJECT;
 	}

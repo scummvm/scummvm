@@ -43,7 +43,7 @@
 
 // Hacky global toggles for experimental/debug code
 bool SHOWFPS_GLOBAL, TINYGL_GLOBAL;
-enDebugLevels debugLevel = DEBUG_NONE;
+enDebugLevels gDebugLevel = DEBUG_NONE;
 
 static bool g_lua_initialized = false;
 GfxBase *g_driver = NULL;
@@ -83,11 +83,11 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
 	if (settings.contains("debuglevel")) {
-		debugLevel = (enDebugLevels)strtol(settings["debuglevel"].c_str(), 0, 10);
-		printf("Debuglevel (from command line): %d\n", debugLevel);
+		gDebugLevel = (enDebugLevels)strtol(settings["debuglevel"].c_str(), 0, 10);
+		printf("Debuglevel (from command line): %d\n", gDebugLevel);
 		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
 	} else if (ConfMan.hasKey("debuglevel"))
-		debugLevel = (enDebugLevels)ConfMan.getInt("debuglevel");
+		gDebugLevel = (enDebugLevels)ConfMan.getInt("debuglevel");
 
 	if (settings.contains("debugflags")) {
 		specialDebug = settings["debugflags"];

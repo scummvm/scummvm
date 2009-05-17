@@ -805,7 +805,7 @@ void GrimEngine::setSceneLock(const char *name, bool lockStatus) {
 	Scene *scene = findScene(name);
 
 	if (!scene) {
-		if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Scene object '%s' not found in list!", name);
 		return;
 	}

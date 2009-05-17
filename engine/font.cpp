@@ -99,7 +99,7 @@ uint16 Font::getCharIndex(unsigned char c) {
 		if (_charIndex[i] == c2)
 			return i;
 	}
-	if (debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 		warning("The requsted character (code 0x%x) does not correspond to anything in the font data!", c2);
 	// If we couldn't find the character then default to
 	// the first character in the font so that something

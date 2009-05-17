@@ -46,7 +46,7 @@ enum enDebugLevels {
 	DEBUG_CHORES,
 	DEBUG_ALL
 };
-extern enDebugLevels debugLevel;
+extern enDebugLevels gDebugLevel;
 extern const char *debug_levels[];
 extern const char *debug_descriptions[];
 
