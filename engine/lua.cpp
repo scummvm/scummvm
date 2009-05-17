@@ -1575,7 +1575,7 @@ static void LocalizeString() {
 }
 
 static void SayLine() {
-	int vol = 64, paramId = 2;
+	int /*vol = 64, */paramId = 2;
 	char msgId[32];
 	Common::String msg;
 	lua_Object paramObj;
