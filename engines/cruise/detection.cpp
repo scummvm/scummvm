@@ -62,11 +62,6 @@ static const PlainGameDescriptor cruiseGames[] = {
 	{0, 0}
 };
 
-static const ADObsoleteGameID obsoleteGameIDsTable[] = {
-	{"cruise", "cruise", Common::kPlatformUnknown},
-	{0, 0, Common::kPlatformUnknown}
-};
-
 namespace Cruise {
 
 static const CRUISEGameDescription gameDescriptions[] = {
@@ -169,7 +164,7 @@ static const ADParams detectionParams = {
 	// List of all engine targets
 	cruiseGames,
 	// Structure for autoupgrading obsolete targets
-	obsoleteGameIDsTable,
+	0,
 	// Name of single gameid (optional)
 	"cruise",
 	// List of files for file-based fallback detection (optional)
