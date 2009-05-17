@@ -205,7 +205,7 @@ const ControlDescriptor controls[] = {
 // a "character" handler or a "button" handler
 #define CHAR_KEY(k) ((k >= 'a' && k <= 'z') || (k >= 'A' && k <= 'Z') || (k >= '0' && k <= '9') || k == ' ')
 
-Engine *g_engine = NULL;
+GrimEngine *g_engine = NULL;
 
 extern Imuse *g_imuse;
 int g_imuseState = -1;
@@ -216,7 +216,7 @@ extern Common::StringList::const_iterator g_filesiter;
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
 
-Engine::Engine() :
+GrimEngine::GrimEngine() :
 		_currScene(NULL), _selectedActor(NULL) {
 
 	_controlsEnabled = new bool[KEYCODE_EXTRA_LAST];
@@ -267,7 +267,7 @@ Engine::Engine() :
 	blastTextDefaults.justify = TextObject::LJUSTIFY;
 }
 
-Engine::~Engine() {
+GrimEngine::~GrimEngine() {
 	delete[] _controlsEnabled;
 	delete[] _controlsState;
 
@@ -281,7 +281,7 @@ Engine::~Engine() {
 	killTextObjects();
 }
 
-void Engine::handleButton(int operation, int key, int /*keyModifier*/, uint16 ascii) {
+void GrimEngine::handleButton(int operation, int key, int /*keyModifier*/, uint16 ascii) {
 	lua_Object handler, system_table, userPaintHandler;
 
 	// If we're not supposed to handle the key then don't
@@ -338,7 +338,7 @@ void Engine::handleButton(int operation, int key, int /*keyModifier*/, uint16 as
 	lua_endblock();
 }
 
-void Engine::handleDebugLoadResource() {
+void GrimEngine::handleDebugLoadResource() {
 	void *resource = NULL;
 	int c, i = 0;
 	char buf[512];
@@ -376,7 +376,7 @@ void Engine::handleDebugLoadResource() {
 		warning("Requested resouce (%s) not found!");
 }
 
-void Engine::drawPrimitives() {
+void GrimEngine::drawPrimitives() {
 	// Draw Primitives
 	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
 		(*i)->draw();
@@ -388,7 +388,7 @@ void Engine::drawPrimitives() {
 	}
 }
 
-void Engine::luaUpdate() {
+void GrimEngine::luaUpdate() {
 	// Update timing information
 	unsigned newStart = g_system->getMillis();
 	if (newStart < _frameStart) {
@@ -416,7 +416,7 @@ void Engine::luaUpdate() {
 	lua_runtasks();
 }
 
-void Engine::updateDisplayScene() {
+void GrimEngine::updateDisplayScene() {
 	_doFlip = true;
 
 	if (_mode == ENGINE_MODE_SMUSH) {
@@ -530,7 +530,7 @@ void Engine::updateDisplayScene() {
 	}
 }
 
-void Engine::doFlip() {
+void GrimEngine::doFlip() {
 	if (SHOWFPS_GLOBAL && _doFlip)
 		g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 
@@ -548,7 +548,7 @@ void Engine::doFlip() {
 	}
 }
 
-void Engine::mainLoop() {
+void GrimEngine::mainLoop() {
 	_movieTime = 0;
 	_frameTime = 0;
 	_frameStart = g_system->getMillis();
@@ -623,32 +623,32 @@ void Engine::mainLoop() {
 	}
 }
 
-void Engine::savegameReadStream(void *data, int32 size) {
+void GrimEngine::savegameReadStream(void *data, int32 size) {
 	g_engine->_savedState->read(data, size);
 }
 
-void Engine::savegameWriteStream(void *data, int32 size) {
+void GrimEngine::savegameWriteStream(void *data, int32 size) {
 	g_engine->_savedState->write(data, size);
 }
 
-int32 Engine::savegameReadSint32() {
+int32 GrimEngine::savegameReadSint32() {
 	return g_engine->_savedState->readLESint32();
 }
 
-void Engine::savegameWriteSint32(int32 val) {
+void GrimEngine::savegameWriteSint32(int32 val) {
 	g_engine->_savedState->writeLESint32(val);
 }
 
-uint32 Engine::savegameReadUint32() {
+uint32 GrimEngine::savegameReadUint32() {
 	return g_engine->_savedState->readLEUint32();
 }
 
-void Engine::savegameWriteUint32(uint32 val) {
+void GrimEngine::savegameWriteUint32(uint32 val) {
 	g_engine->_savedState->writeLEUint32(val);
 }
 
-void Engine::savegameRestore() {
-	printf("Engine::savegameRestore() started.\n");
+void GrimEngine::savegameRestore() {
+	printf("GrimEngine::savegameRestore() started.\n");
 	_savegameLoadRequest = false;
 	char filename[200];
 	if (!_savegameFileName) {
@@ -687,14 +687,14 @@ void Engine::savegameRestore() {
 
 	g_imuse->pause(false);
 	g_smush->pause(false);
-	printf("Engine::savegameRestore() finished.\n");
+	printf("GrimEngine::savegameRestore() finished.\n");
 }
 
-void Engine::storeSaveGameImage(SaveGame *savedState) {
+void GrimEngine::storeSaveGameImage(SaveGame *savedState) {
 	int width = 250, height = 188;
 	Bitmap *screenshot;
 
-	printf("Engine::StoreSaveGameImage() started.\n");
+	printf("GrimEngine::StoreSaveGameImage() started.\n");
 
 	int mode = g_engine->getMode();
 	g_engine->setMode(ENGINE_MODE_NORMAL);
@@ -712,11 +712,11 @@ void Engine::storeSaveGameImage(SaveGame *savedState) {
 	}
 	savedState->endSection();
 	delete screenshot;
-	printf("Engine::StoreSaveGameImage() finished.\n");
+	printf("GrimEngine::StoreSaveGameImage() finished.\n");
 }
 
-void Engine::savegameSave() {
-	printf("Engine::savegameSave() started.\n");
+void GrimEngine::savegameSave() {
+	printf("GrimEngine::savegameSave() started.\n");
 	_savegameSaveRequest = false;
 	char filename[200];
 	if (!_savegameFileName) {
@@ -752,10 +752,10 @@ void Engine::savegameSave() {
 
 	g_imuse->pause(false);
 	g_smush->pause(false);
-	printf("Engine::savegameSave() finished.\n");
+	printf("GrimEngine::savegameSave() finished.\n");
 }
 
-void Engine::savegameCallback() {
+void GrimEngine::savegameCallback() {
 	lua_Object funcParam1;
 	lua_Object funcParam2;
 	bool unk1 = false;
@@ -792,7 +792,7 @@ void Engine::savegameCallback() {
 	lua_endblock();
 }
 
-Scene *Engine::findScene(const char *name) {
+Scene *GrimEngine::findScene(const char *name) {
 	// Find scene object
 	for (SceneListType::const_iterator i = scenesBegin(); i != scenesEnd(); i++) {
 		if (!strcmp((char *) (*i)->name(), (char *) name))
@@ -801,7 +801,7 @@ Scene *Engine::findScene(const char *name) {
 	return NULL;
 }
 
-void Engine::setSceneLock(const char *name, bool lockStatus) {
+void GrimEngine::setSceneLock(const char *name, bool lockStatus) {
 	Scene *scene = findScene(name);
 
 	if (!scene) {
@@ -813,7 +813,7 @@ void Engine::setSceneLock(const char *name, bool lockStatus) {
 	scene->_locked = lockStatus;
 }
 
-void Engine::setScene(const char *name) {
+void GrimEngine::setScene(const char *name) {
 	Scene *scene = findScene(name);
 	Scene *lastScene = _currScene;
 
@@ -836,7 +836,7 @@ void Engine::setScene(const char *name) {
 	delete b;
 }
 
-void Engine::setScene(Scene *scene) {
+void GrimEngine::setScene(Scene *scene) {
 	Scene *lastScene = _currScene;
 
 	_currScene = scene;
@@ -848,7 +848,7 @@ void Engine::setScene(Scene *scene) {
 	}
 }
 
-void Engine::setTextSpeed(int speed) {
+void GrimEngine::setTextSpeed(int speed) {
 	if (speed < 1)
 		_textSpeed = 1;
 	if (speed > 10)
@@ -856,10 +856,10 @@ void Engine::setTextSpeed(int speed) {
 	_textSpeed = speed;
 }
 
-float Engine::getControlAxis(int num) {
+float GrimEngine::getControlAxis(int num) {
 	return 0;
 }
 
-bool Engine::getControlState(int num) {
+bool GrimEngine::getControlState(int num) {
 	return _controlsState[num];
 }

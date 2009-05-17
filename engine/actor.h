@@ -226,7 +226,7 @@ private:
 
 	int _winX1, _winY1, _winX2, _winY2;
 
-	friend class Engine;
+	friend class GrimEngine;
 };
 
 #endif

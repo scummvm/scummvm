@@ -1373,7 +1373,7 @@ static void GetVisibleThings() {
 
 	DEBUG_FUNCTION();
 	sel = g_engine->selectedActor();
-	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++) {
+	for (GrimEngine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++) {
 		if (!(*i)->inSet(g_engine->sceneName()))
 			continue;
 		// Consider the active actor visible
@@ -2211,7 +2211,7 @@ void GetControlState() {
 }
 
 static void killBitmapPrimitives(Bitmap *bitmap) {
-	for (Engine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
+	for (GrimEngine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
 		if (p->isBitmap() && p->getBitmapHandle() == bitmap) {
 			g_engine->killPrimitiveObject(p);
@@ -2325,7 +2325,7 @@ TextObject *TextObjectExists(char *name) {
 	TextObject *modifyObject = NULL;
 
 	DEBUG_FUNCTION();
-	for (Engine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
+	for (GrimEngine::TextListType::const_iterator i = g_engine->textsBegin(); i != g_engine->textsEnd(); i++) {
 		TextObject *textO = *i;
 		if (strlen(name) == strlen(textO->name()) && strcmp(textO->name(), name) == 0) {
 			modifyObject = textO;
@@ -2446,7 +2446,7 @@ static void ExpireText() {
 	// Expire all the text objects
 	g_engine->killTextObjects();
 	// Cleanup actor references to deleted text objects
-	for (Engine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++)
+	for (GrimEngine::ActorListType::const_iterator i = g_engine->actorsBegin(); i != g_engine->actorsEnd(); i++)
 		(*i)->lineCleanup();
 }
 
@@ -2674,7 +2674,7 @@ static void ChangePrimitive() {
 		return;
 
 	psearch = check_primobject(1);
-	for (Engine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
+	for (GrimEngine::PrimitiveListType::const_iterator i = g_engine->primitivesBegin(); i != g_engine->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
 		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
 				&& p->getP1().y == psearch->getP1().y && p->getP2().y == psearch->getP2().y) {

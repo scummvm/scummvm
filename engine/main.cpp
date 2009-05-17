@@ -137,7 +137,7 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, Audio::Mixer::kMaxMixerVolume);
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
-	g_engine = new Engine();
+	g_engine = new GrimEngine();
 	g_resourceloader = new ResourceLoader();
 	g_localizer = new Localizer();
 	g_smush = new Smush();

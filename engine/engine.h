@@ -46,7 +46,7 @@ struct ControlDescriptor {
 	int key;
 };
 
-class Engine {
+class GrimEngine {
 public:
 
 	void setMode(int mode) { _mode = mode; }
@@ -180,8 +180,8 @@ public:
 	const char *_savegameFileName;
 	SaveGame *_savedState;
 
-	Engine();
-	~Engine();
+	GrimEngine();
+	~GrimEngine();
 
 private:
 
@@ -214,7 +214,7 @@ private:
 	PrimitiveListType _primitiveObjects;
 };
 
-extern Engine *g_engine;
+extern GrimEngine *g_engine;
 
 extern int g_imuseState;
 
