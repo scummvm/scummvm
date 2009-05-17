@@ -526,7 +526,7 @@ void KyraEngine_v1::writeSettings() {
 
 	ConfMan.setInt("walkspeed", _configWalkspeed);
 	ConfMan.setBool("music_mute", _configMusic == 0);
-	if (_flags.gameID != GI_KYRA3)
+	if (_flags.platform == Common::kPlatformFMTowns)
 		ConfMan.setBool("cdaudio", _configMusic == 2);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 
