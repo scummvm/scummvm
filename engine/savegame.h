@@ -28,8 +28,6 @@
 
 #include "common/savefile.h"
 
-extern Common::SaveFileManager *g_saveFileMan;
-
 class SaveGame {
 public:
 	SaveGame(const char *filename, bool saving);
