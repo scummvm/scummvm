@@ -736,8 +736,8 @@ protected:
 	bool _csDataLoaded;
 	bool _csDataHandled;
 	bool _stopActionOnSoundFlag;
-	int _csDataTableFlag2;
-	int _stopActionOnPanelLock;
+	bool _stopActionOnSpeechFlag;
+	bool _stopActionOnPanelLock;
 	int _csDataTableCount;
 	int _stopActionCounter;
 	int _actionTextColor;

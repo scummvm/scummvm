@@ -504,27 +504,17 @@ void TuckerEngine::loadObj() {
 }
 
 void TuckerEngine::loadData() {
-	int flag = 0;
 	int objNum = _partNum * 10;
 	loadFile("data.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_dataCount = 0;
 	int count = 0;
 	int maxCount = 0;
-	while (flag < 2) {
-		flag = 0;
-		if (!t.findIndex(objNum)) {
-			flag = 2;
-		}
-		while (flag == 0) {
-			if (!t.findNextToken(kDataTokenDw)) {
-				flag = 1;
-				continue;
-			}
+	while (t.findIndex(objNum)) {
+		while (t.findNextToken(kDataTokenDw)) {
 			_dataCount = t.getNextInteger();
 			if (_dataCount < 0) {
-				flag = 1;
-				continue;
+				break;
 			}
 			if (_dataCount > maxCount) {
 				maxCount = _dataCount;
@@ -539,10 +529,8 @@ void TuckerEngine::loadData() {
 			d->yDest = t.getNextInteger();
 			d->index = count;
 		}
-		if (flag < 2) {
-			++objNum;
-			++count;
-		}
+		++objNum;
+		++count;
 	}
 	_dataCount = maxCount;
 	int offset = 0;
@@ -967,15 +955,15 @@ void TuckerEngine::loadActionsTable() {
 			_csDataHandled = true;
 			debug(2, "loadActionsTable() _nextAction %d", _nextAction);
 		}
-		if (_csDataTableFlag2 == 1 && _charSpeechSoundCounter > 0) {
+		if (_stopActionOnSpeechFlag && _charSpeechSoundCounter > 0) {
 			break;
 		}
-		_csDataTableFlag2 = 0;
-		if (_stopActionOnPanelLock == 1) {
+		_stopActionOnSpeechFlag = false;
+		if (_stopActionOnPanelLock) {
 			if (_panelLockedFlag) {
 				break;
 			}
-			_stopActionOnPanelLock = 0;
+			_stopActionOnPanelLock = false;
 		}
 		if (_stopActionCounter > 0) {
 			--_stopActionCounter;
@@ -993,19 +981,17 @@ void TuckerEngine::loadActionsTable() {
 					if (_backgroundSpriteCurrentFrame != _backgroundSpriteLastFrame) {
 						break;
 					}
-					_csDataTableCount = 0;
 				} else {
 					if (_spriteAnimationFramesTable[_spriteAnimationFrameIndex] != 999) {
 						break;
 					}
-					_csDataTableCount = 0;
 				}
 			} else {
 				if (_spritesTable[_csDataTableCount - 1].firstFrame - 1 != _spritesTable[_csDataTableCount - 1].animationFrame) {
 					break;
 				}
-				_csDataTableCount = 0;
 			}
+			 _csDataTableCount = 0;
 		}
 		if (_conversationOptionsCount != 0) {
 			if (_leftMouseButtonPressed && _nextTableToLoadIndex != -1) {

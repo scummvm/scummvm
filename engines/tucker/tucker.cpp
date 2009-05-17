@@ -242,8 +242,8 @@ void TuckerEngine::restart() {
 	_csDataLoaded = false;
 	_csDataHandled = false;
 	_stopActionOnSoundFlag = false;
-	_csDataTableFlag2 = 0;
-	_stopActionOnPanelLock = 0;
+	_stopActionOnSpeechFlag = false;
+	_stopActionOnPanelLock = false;
 	_csDataTableCount = 0;
 	_stopActionCounter = 0;
 	_actionTextColor = 0;
@@ -3270,17 +3270,17 @@ int TuckerEngine::executeTableInstruction() {
 		_characterSpeechDataPtr = _ptTextBuf + getPositionForLine(_ptTextOffset, _ptTextBuf);
 		return 0;
 	case kCode_wa_:
-		_csDataTableFlag2 = 1;
+		_stopActionOnSpeechFlag = true;
 		_stopActionCounter = 20;
 		return 1;
 	case kCode_wsm:
-		_stopActionOnPanelLock = 1;
+		_stopActionOnPanelLock = true;
 		return 1;
 	case kCode_wat:
 		_stopActionCounter = readTableInstructionParam(3);
 		return 1;
 	case kCode_was:
-		_csDataTableFlag2 = 1;
+		_stopActionOnSpeechFlag = true;
 		return 1;
 	case kCode_wfx:
 		_stopActionOnSoundFlag = true;
