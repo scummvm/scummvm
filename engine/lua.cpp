@@ -1611,13 +1611,13 @@ static void SayLine() {
 					warning("SayLine() not null table");
 					key_text = lua_getstring(key);
 					if (strmatch(key_text, "x"))
-						int x = atoi(lua_getstring(lua_getresult(2)));
+						/*int x = */atoi(lua_getstring(lua_getresult(2)));
 					else if (strmatch(key_text, "y"))
-						int y = atoi(lua_getstring(lua_getresult(2)));
+						/*int y = */atoi(lua_getstring(lua_getresult(2)));
 					else if (strmatch(key_text, "background"))
-						const char *backgorund = lua_getstring(lua_getresult(2));
+						/*const char *backgorund = */lua_getstring(lua_getresult(2));
 					else if (strmatch(key_text, "skip_log"))
-						int skip_log = atoi(lua_getstring(lua_getresult(2)));
+						/*int skip_log = */atoi(lua_getstring(lua_getresult(2)));
 					else
 						error("Unknown SayLine key '%s' = '%s'", key_text, lua_getstring(lua_getresult(2)));
 				}
