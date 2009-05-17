@@ -36,7 +36,7 @@
 
 GfxOpenGL::GfxOpenGL() {
 	_storedDisplay = NULL;
-	_emergFont = NULL;
+	_emergFont = 0;
 }
 
 GfxOpenGL::~GfxOpenGL() {
