@@ -87,7 +87,7 @@ public:
 		if (_typeId == MKID_BE('EMC2'))
 			_formChunk.size -= 8;
 		else if (_typeId == MKID_BE('AVFS'))
-			_formChunk.size = input.size() - 8;
+			_formChunk.size += 4;
 	}
 };
 
