@@ -1313,7 +1313,7 @@ void drawMenu(menuStruct *pMenu) {
 
 		int color;
 
-		if (p1->varC) {
+		if (p1->selected) {
 			color = selectColor;
 		} else {
 			if (p1->color != 255) {

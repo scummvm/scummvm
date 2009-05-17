@@ -101,7 +101,7 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 
 		pNewElement->string = menuText;
 		pNewElement->next = NULL;
-		pNewElement->varC = 0;
+		pNewElement->selected = false;
 		pNewElement->color = color;
 		pNewElement->gfx = renderText(160, menuText);
 
@@ -129,13 +129,13 @@ void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu) {
 			menuElementStruct *pCurrentEntry = pMenu->ptrNextElement;
 
 			while (pCurrentEntry) {
-				pCurrentEntry->varC = 0;
+				pCurrentEntry->selected = false;
 
 				if (var_2 == 0) {
 					if ((mouseX > pCurrentEntry->x) && ((pCurrentEntry->x + 160) >= mouseX)) {
 						if ((mouseY > pCurrentEntry->y) && ((pCurrentEntry->y + height) >= mouseY)) {
 							var_2 = 1;
-							pCurrentEntry->varC = 1;
+							pCurrentEntry->selected = true;
 						}
 					}
 				}

@@ -774,7 +774,7 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 	pMenuElement = pMenu->ptrNextElement;
 
 	while (pMenuElement) {
-		if (pMenuElement->varC) {
+		if (pMenuElement->selected) {
 			currentMenuElementX = pMenuElement->x;
 			currentMenuElementY = pMenuElement->y;
 			currentMenuElement = pMenuElement;

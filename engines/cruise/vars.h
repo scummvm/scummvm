@@ -45,7 +45,7 @@ struct menuElementStruct {
 	int x;
 	int y;
 	int varA;
-	int varC;
+	bool selected;
 	unsigned char color;
 	gfxEntryStruct *gfx;
 	menuElementSubStruct *ptrSub;
