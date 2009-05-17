@@ -718,26 +718,26 @@ void LoLEngine::gui_updateInput() {
 	}
 
 	switch (inputFlag) {
-		case 43:
-		case 61:
-			// space or enter
-			snd_stopSpeech(true);
-			break;
-		case 55:
-			if (_weaponsDisabled || _availableSpells[1] == -1)
-				return;
+	case 43:
+	case 61:
+		// space or enter
+		snd_stopSpeech(true);
+		break;
+	case 55:
+		if (_weaponsDisabled || _availableSpells[1] == -1)
+			return;
 
-			gui_highlightSelectedSpell(false);
-			if (_availableSpells[++_selectedSpell] == -1)
-				_selectedSpell = 0;
-			gui_highlightSelectedSpell(true);
+		gui_highlightSelectedSpell(false);
+		if (_availableSpells[++_selectedSpell] == -1)
+			_selectedSpell = 0;
+		gui_highlightSelectedSpell(true);
 
-			gui_drawAllCharPortraitsWithStats();
-				break;
-		case 0x71a:
+		gui_drawAllCharPortraitsWithStats();
 			break;
-		default:
-			break;
+	case 0x71a:
+		break;
+	default:
+		break;
 	}
 }
 
