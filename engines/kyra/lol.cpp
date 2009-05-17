@@ -612,6 +612,8 @@ void LoLEngine::preInit() {
 	char filename[32];
 	snprintf(filename, sizeof(filename), "LANDS.%s", _languageExt[_lang]);
 	_res->exists(filename, true);
+	if (_landsFile)
+		delete[] _landsFile;
 	_landsFile = _res->fileData(filename, 0);
 	loadItemIconShapes();
 }
