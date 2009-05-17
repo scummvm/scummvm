@@ -614,6 +614,7 @@ private:
 	int olol_getGlobalVar(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
 	int olol_triggerDoorSwitch(EMCState *script);
+	int olol_checkEquippedItemScriptFlags(EMCState *script);	
 	int olol_setDoorState(EMCState *script);
 	int olol_updateBlockAnimations(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
@@ -661,7 +662,7 @@ private:
 	int olol_playMusicTrack(EMCState *script);
 	int olol_countBlockItems(EMCState *script);
 	int olol_characterSkillTest(EMCState *script);
-	int olol_countActiveMonsters(EMCState *script);
+	int olol_countAllMonsters(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_calcInflictableDamage(EMCState *script);
@@ -675,13 +676,15 @@ private:
 	int olol_checkInventoryFull(EMCState *script);
 	int olol_objectLeavesLevel(EMCState *script);
 	int olol_addSpellToScroll(EMCState *script);
+	int olol_playDialogueText(EMCState *script);
 	int olol_playDialogueTalkText(EMCState *script);
 	int olol_checkMonsterTypeHostility(EMCState *script);
 	int olol_setNextFunc(EMCState *script);
 	int olol_dummy1(EMCState *script);
 	int olol_suspendMonster(EMCState *script);
-	int olol_triggerEventOnMouseButtonRelease(EMCState *script);
+	int olol_triggerEventOnMouseButtonClick(EMCState *script);
 	int olol_printWindowText(EMCState *script);
+	int olol_countSpecificMonsters(EMCState *script);
 	int olol_updateBlockAnimations2(EMCState *script);
 	int olol_checkPartyForItemType(EMCState *script);
 	int olol_setUnkDoorVar(EMCState *script);
@@ -693,14 +696,19 @@ private:
 	int olol_initDialogueSequence(EMCState *script);
 	int olol_restoreAfterDialogueSequence(EMCState *script);
 	int olol_setSpecialSceneButtons(EMCState *script);
+	int olol_restoreButtonsAfterSpecialScene(EMCState *script);
 	int olol_prepareSpecialScene(EMCState *script);
 	int olol_restoreAfterSpecialScene(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
+	int olol_checkBlockForMonster(EMCState *script);	
 	int olol_transformRegion(EMCState *script);
 	int olol_calcCoordinatesAddDirectionOffset(EMCState *script);
 	int olol_resetPortraitsAndDisableSysTimer(EMCState *script);
 	int olol_enableSysTimer(EMCState *script);
 	int olol_checkNeedSceneRestore(EMCState *script);
+	int olol_getNextActiveCharacter(EMCState *script);
+	int olol_paralyzePoisonCharacter(EMCState *script);
+	int olol_drawCharPortrait(EMCState *script);
 	int olol_castSpell(EMCState *script);
 	int olol_pitDrop(EMCState *script);
 	int olol_paletteFlash(EMCState *script);
@@ -833,6 +841,7 @@ private:
 	int _loadLevelFlag;
 	int _hasTempDataFlags;
 	int _unkCharNum;
+	uint16 _scriptCharacterCycle;
 	int _charStatsTemp[5];
 
 	const LoLCharacter *_charDefaults;
@@ -1294,7 +1303,7 @@ private:
 	void applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, int16 damage);
 	void applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int deathFlag, int skill, int damage);
 	int removeCharacterItem(int charNum, int itemFlags);
-	bool paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw);
+	int paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw);
 	void paralyzePoisonAllCharacters(int typeFlag, int immunityFlags, int hitChance);
 	void stunCharacter(int charNum);
 	void level11specialUnk();

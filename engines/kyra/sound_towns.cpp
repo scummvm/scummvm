@@ -1235,11 +1235,16 @@ void TownsPC98_OpnOperator::generateOutput(int32 phasebuf, int32 *feed, int32 &o
 			case s_ready:
 				return;
 			case s_attacking:
-				nextState = s_decaying;
-				targetTime = (1 << fs_a.shift) - 1;
 				targetLevel = 0;
-				levelIncrement = (~_currentLevel * _adTbl[fs_a.rate + ((_tickCount >> fs_a.shift) & 7)]) >> 4;
-				break;
+				nextState = s_decaying;
+				if ((_specifiedAttackRate << 1) + _keyScale2 < 64) {
+					targetTime = (1 << fs_a.shift) - 1;
+					levelIncrement = (~_currentLevel * _adTbl[fs_a.rate + ((_tickCount >> fs_a.shift) & 7)]) >> 4;
+					break;
+				} else {
+					_currentLevel = targetLevel;
+					_state = nextState;
+				}
 			case s_decaying:
 				targetTime = (1 << fs_d.shift) - 1;
 				nextState = s_sustaining;
@@ -1485,7 +1490,7 @@ private:
 
 class TownsPC98_OpnSquareSineSource {
 public:
-	TownsPC98_OpnSquareSineSource(const uint32 timerbase, const uint8 levelOutModifier);
+	TownsPC98_OpnSquareSineSource(const uint32 timerbase);
 	~TownsPC98_OpnSquareSineSource();
 
 	void init(const int *rsTable, const int *rseTable);
@@ -1516,7 +1521,6 @@ private:
 	int32 *_tleTable;
 
 	const uint32 _tickLength;
-	const uint8 _levelOutModifier;
 	uint32 _timer;
 
 	struct Channel {
@@ -2554,8 +2558,8 @@ bool TownsPC98_OpnChannelPCM::control_ff_endOfTrack(uint8 para) {
 	}
 }
 
-TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase, const uint8 levelOutModifier) :	_tlTable(0),
-	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _levelOutModifier(levelOutModifier), _ready(0), _reg(0), _rand(1), _outN(1),
+TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase) : _tlTable(0),
+	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
 	_nTick(0), _evpUpdateCnt(0), _evpTimer(0x1f), _pReslt(0x1f), _attack(0), _cont(false), _evpUpdate(true),
 	_timer(0), _noiseGenerator(0), _chanEnable(0) {
 
@@ -2715,7 +2719,7 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				finOut += _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
 		}
 
-		finOut >>= _levelOutModifier;		
+		finOut /= 3;		
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
 	}
@@ -2969,7 +2973,7 @@ bool TownsPC98_OpnCore::init() {
 	}
 
 	if (_numSSG) {
-		_ssg = new TownsPC98_OpnSquareSineSource(_timerbase, _numChan / 3);
+		_ssg = new TownsPC98_OpnSquareSineSource(_timerbase);
 		_ssg->init(&_ssgTables[0], &_ssgTables[16]);
 	}
 
@@ -3232,16 +3236,21 @@ int inline TownsPC98_OpnCore::readBuffer(int16 *buffer, const int numSamples) {
 void TownsPC98_OpnCore::generateTables() {
 	delete[] _oprRates;
 	_oprRates = new uint8[128];
+
+	WRITE_BE_UINT32(_oprRates + 32, _numChan == 6 ? 0x90900000 : 0x00081018);
+	WRITE_BE_UINT32(_oprRates + 36, _numChan == 6 ? 0x00001010 : 0x00081018);
 	memset(_oprRates, 0x90, 32);
-	uint8 *dst = (uint8*) _oprRates + 32;
+	memset(_oprRates + 96, 0x80, 32);
+	uint8 *dst = (uint8*) _oprRates + 40;
+	for (int i = 0; i < 40; i += 4)
+		WRITE_BE_UINT32(dst + i, 0x00081018);
 	for (int i = 0; i < 48; i += 4)
 		WRITE_BE_UINT32(dst + i, 0x00081018);
-	dst += 48;
+	dst += 40;
 	for (uint8 i = 0; i < 16; i ++) {
 		uint8 v = (i < 12) ? i : 12;
 		*dst++ = ((4 + v) << 3);
 	}
-	memset(dst, 0x80, 32);
 
 	delete[] _oprRateshift;
 	_oprRateshift = new uint8[128];
@@ -3382,7 +3391,7 @@ void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
 				break;
 			};
 
-			int32 finOut = ((output << 2) / ((_numChan + _numSSG - 3) / 3));
+			int32 finOut = (output << 2) / ((_numChan + _numSSG - 3) / 3);
 
 			if (_chanInternal[i].enableLeft)
 				*leftSample += finOut;

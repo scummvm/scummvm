@@ -84,8 +84,10 @@ public:
 		// Both lead to some problems in our IFF parser, either reading after the end
 		// of file or producing a "Chunk overread" error message. To work around this
 		// we need to adjust the size field properly.
-		if (_typeId == MKID_BE('EMC2') || _typeId == MKID_BE('AVFS'))
+		if (_typeId == MKID_BE('EMC2'))
 			_formChunk.size -= 8;
+		else if (_typeId == MKID_BE('AVFS'))
+			_formChunk.size = input.size() - 8;
 	}
 };
 

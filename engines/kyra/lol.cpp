@@ -235,6 +235,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	_compassTimer = 0;
 	_timer3Para = 0;
+	_scriptCharacterCycle = 0;
 	_partyDeathFlag = -1;
 }
 
@@ -3167,19 +3168,19 @@ int LoLEngine::removeCharacterItem(int charNum, int itemFlags) {
 	return 0;
 }
 
-bool LoLEngine::paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw) {
+int LoLEngine::paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw) {
 	if (!(_characters[charNum].flags & 1) || (_characters[charNum].flags & immunityFlags))
 		return 0;
 
 	if ((int)_rnd.getRandomNumberRng(1, 100) > hitChance)
 		return 0;
 
-	int r = false;
+	int r = 0;
 	
 	if (typeFlag == 0x40) {
 		_characters[charNum].flags |= 0x40;
 		setCharacterUpdateEvent(charNum, 3, 3600, 1);
-		r = true;
+		r = 1;
 
 	// check for bezel ring
 	} else if (typeFlag == 0x80 && !itemEquipped(charNum, 225)) {
@@ -3187,12 +3188,12 @@ bool LoLEngine::paralyzePoisonCharacter(int charNum, int typeFlag, int immunityF
 		setCharacterUpdateEvent(charNum, 4, 10, 1);
 		if (characterSays(0x4021, _characters[charNum].id, true))
 			_txt->printMessage(6, getLangString(0x4021), _characters[charNum].name);
-		r = true;
+		r = 1;
 
 	} else if (typeFlag == 0x1000) {
 		_characters[charNum].flags |= 0x1000;
 		setCharacterUpdateEvent(charNum, 7, 120, 1);		
-		r = true;
+		r = 1;
 	}
 
 	if (r && redraw)

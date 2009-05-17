@@ -750,6 +750,20 @@ int LoLEngine::olol_triggerDoorSwitch(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_checkEquippedItemScriptFlags(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkEquippedItemScriptFlags(%p)", (const void *)script);
+	for (int i = 0; i < 4; i++) {
+		if (!(_characters[i].flags & 1))
+			continue;
+		for (int ii = 0; ii < 4; ii++) {
+			uint8 f = _itemProperties[_itemsInPlay[_characters[i].items[ii]].itemPropertyIndex].itemScriptFunc;
+			if (f == 0 || f == 2)
+				return 1;
+		}
+	}
+	return 0;
+}
+
 int LoLEngine::olol_setDoorState(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setDoorState(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	if (stackPos(1))
@@ -1349,8 +1363,8 @@ int LoLEngine::olol_characterSkillTest(EMCState *script){
 	return (_rnd.getRandomNumberRng(1, 100) > m) ? -1 : c;
 }
 
-int LoLEngine::olol_countActiveMonsters(EMCState *script){
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_countActiveMonsters(%p)", (const void *)script);
+int LoLEngine::olol_countAllMonsters(EMCState *script){
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_countAllMonsters(%p)", (const void *)script);
 	int res = 0;
 
 	for (int i = 0; i < 30; i++) {
@@ -1510,6 +1524,12 @@ int LoLEngine::olol_addSpellToScroll(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_playDialogueText(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playDialogueText(%p) (%d)", (const void *)script, stackPos(0));
+	_txt->printDialogueText(3, getLangString(stackPos(0)), script, 0, 1);
+	return 1;
+}
+
 int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playDialogueTalkText(%p) (%d)", (const void *)script, stackPos(0));
 	int track = stackPos(0);
@@ -1551,8 +1571,8 @@ int LoLEngine::olol_suspendMonster(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_triggerEventOnMouseButtonRelease(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_triggerEventOnMouseButtonRelease(%p) (%d)", (const void *)script, stackPos(0));
+int LoLEngine::olol_triggerEventOnMouseButtonClick(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_triggerEventOnMouseButtonClick(%p) (%d)", (const void *)script, stackPos(0));
 	gui_notifyButtonListChanged();
 	snd_characterSpeaking();
 
@@ -1583,6 +1603,23 @@ int LoLEngine::olol_printWindowText(EMCState *script) {
 		_txt->resetDimTextPositions(dim);
 	_txt->printDialogueText(dim, getLangString(stackPos(2)), script, 0, 3);
 	return 1;
+}
+
+int LoLEngine::olol_countSpecificMonsters(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_countSpecificMonsters(%p) (%d, ...)", (const void *)script, stackPos(0));
+	uint16 types = 0;
+	int res = 0;
+	int cnt = 0;
+
+	while (stackPos(cnt) != -1)
+		types |= (1 << stackPos(cnt++));
+
+	for (int i = 0; i < 30; i++) {
+		if (((1 << _monsters[i].type) & types) && _monsters[i].mode < 14)
+			res++;		
+	}
+
+	return res;
 }
 
 int LoLEngine::olol_updateBlockAnimations2(EMCState *script) {
@@ -1707,6 +1744,12 @@ int LoLEngine::olol_setSpecialSceneButtons(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_restoreButtonsAfterSpecialScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreButtonsAfterSpecialScene(%p)", (const void *)script);
+	gui_specialSceneRestoreButtons();
+	return 1;
+}
+
 int LoLEngine::olol_prepareSpecialScene(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_prepareSpecialScene(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	prepareSpecialScene(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
@@ -1733,6 +1776,20 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 	strcpy(_ingameSoundList[t], c);
 
 	return 0;
+}
+
+int LoLEngine::olol_checkBlockForMonster(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkBlockForMonster(%p)  (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	uint16 block = stackPos(0);
+	uint16 id = stackPos(1) | 0x8000;
+
+	uint16 o = _levelBlockProperties[block].assignedObjects;
+	while (o & 0x8000) {
+		if (id == 0xffff || id == o)
+			return o & 0x7fff;		
+		o = findObject(o)->nextAssignedObject;
+	}
+	return -1;
 }
 
 int LoLEngine::olol_transformRegion(EMCState *script) {
@@ -1765,6 +1822,36 @@ int LoLEngine::olol_enableSysTimer(EMCState *script) {
 int LoLEngine::olol_checkNeedSceneRestore(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkNeedSceneRestore(%p)", (const void *)script);
 	return _needSceneRestore;
+}
+
+int LoLEngine::olol_getNextActiveCharacter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getNextActiveCharacter(%p)  (%d)", (const void *)script, stackPos(0));
+	if (stackPos(0))
+		_scriptCharacterCycle = 0;
+	else
+		_scriptCharacterCycle++;
+	
+	while (_scriptCharacterCycle < 4) {
+		if (_characters[_scriptCharacterCycle].flags & 1)
+			return _scriptCharacterCycle;
+		_scriptCharacterCycle++;
+	}
+	return -1;
+}
+
+int LoLEngine::olol_paralyzePoisonCharacter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_paralyzePoisonCharacter(%p)  (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	return paralyzePoisonCharacter(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+}
+
+int LoLEngine::olol_drawCharPortrait(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drawCharPortrait(%p)  (%d)", (const void *)script, stackPos(0));
+	int charNum = stackPos(0);
+	if (charNum == -1)
+		gui_drawAllCharPortraitsWithStats();
+	else
+		gui_drawCharPortraitWithStats(charNum);	
+	return 1;
 }
 
 int LoLEngine::olol_castSpell(EMCState *script) {
@@ -2200,7 +2287,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x30
 	Opcode(olol_setGlobalVar);
 	Opcode(olol_triggerDoorSwitch);
-	OpcodeUnImpl();
+	Opcode(olol_checkEquippedItemScriptFlags);
 	Opcode(olol_setDoorState);
 
 	// 0x34
@@ -2282,7 +2369,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_characterSkillTest);
 
 	// 0x68
-	Opcode(olol_countActiveMonsters);
+	Opcode(olol_countAllMonsters);
 	OpcodeUnImpl();
 	Opcode(olol_stopCharacterSpeech);
 	Opcode(olol_setPaletteBrightness);
@@ -2307,7 +2394,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x78
 	Opcode(olol_addSpellToScroll);
-	OpcodeUnImpl();
+	Opcode(olol_playDialogueText);
 	Opcode(olol_playDialogueTalkText);
 	Opcode(olol_checkMonsterTypeHostility);
 
@@ -2319,9 +2406,9 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x80
 	OpcodeUnImpl();
-	Opcode(olol_triggerEventOnMouseButtonRelease);
+	Opcode(olol_triggerEventOnMouseButtonClick);
 	Opcode(olol_printWindowText);
-	OpcodeUnImpl();
+	Opcode(olol_countSpecificMonsters);
 
 	// 0x84
 	Opcode(olol_updateBlockAnimations2);
@@ -2339,7 +2426,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_initDialogueSequence);
 	Opcode(olol_restoreAfterDialogueSequence);
 	Opcode(olol_setSpecialSceneButtons);
-	OpcodeUnImpl();
+	Opcode(olol_restoreButtonsAfterSpecialScene);
 
 	// 0x90
 	OpcodeUnImpl();
@@ -2351,7 +2438,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_assignCustomSfx);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_checkBlockForMonster);
 
 	// 0x98
 	Opcode(olol_transformRegion);
@@ -2361,9 +2448,9 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x9C
 	Opcode(olol_checkNeedSceneRestore);
-	OpcodeUnImpl();
-	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_getNextActiveCharacter);
+	Opcode(olol_paralyzePoisonCharacter);
+	Opcode(olol_drawCharPortrait);
 
 	// 0xA0
 	OpcodeUnImpl();
