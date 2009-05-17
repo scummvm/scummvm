@@ -918,16 +918,17 @@ void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
 
 bool AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
 	bool framesLeft = _flicPlayer[index].decodeNextFrame();
-	_flicPlayer[index].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
+	if (_seqNum == 19) {
+		_flicPlayer[index].copyFrameToBuffer(_offscreenBuffer, 0, 0, kScreenWidth);
+	} else {
+		_flicPlayer[index].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
+		++_frameCounter;
+	}
 	if (index == 0) {
 		if (_flicPlayer[index].paletteChanged()) {
 			getRGBPalette(index);
 		}
 	}
-	if (_seqNum != 19) {
-		++_frameCounter;
-	}
-
 	return framesLeft;
 }
 
@@ -954,8 +955,6 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 	// The intro credits animation. This uses 2 animations: the foreground one, which
 	// is the actual intro credits, and the background one, which is an animation of
 	// cogs, and is being replayed when an intro credit appears
-	// FIXME: The background animation is not being played, as a result of the change
-	// to the FLIC video player in commit #40638
 	if (_flicPlayer[0].getCurFrame() >= 116) {
 		if (!_flicPlayer[1].decodeNextFrame()) {
 			_flicPlayer[1].reset();
