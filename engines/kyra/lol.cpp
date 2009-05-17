@@ -606,7 +606,8 @@ Common::Error LoLEngine::go() {
 	setupPrologueData(false);
 
 	_sound->setSoundList(&_soundData[kMusicIngame]);
-	_sound->loadSoundFile(0);
+	if (_flags.platform != Common::kPlatformPC)
+		_sound->loadSoundFile(0);
 
 	_tim = new TIMInterpreter_LoL(this, _screen, _system);
 	assert(_tim);
