@@ -549,8 +549,10 @@ Common::Error LoLEngine::go() {
 
 	// Usually fonts etc. would be setup by the prologue code, if we skip
 	// the prologue code we need to setup them manually here.
-	if (_gameToLoad != -1)
+	if (_gameToLoad != -1) {
 		preInit();
+		_screen->setFont(Screen::FID_9_FNT);
+	}
 
 	// We have three sound.dat files, one for the intro, one for the
 	// end sequence and one for ingame, each contained in a different
