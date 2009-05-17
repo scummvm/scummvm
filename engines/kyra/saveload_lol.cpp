@@ -242,7 +242,10 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	loadLevel(_currentLevel);
 	gui_drawPlayField();
 	timerSpecialCharacterUpdate(0);
-	_unkFlag |= 0x800;	
+	_unkFlag |= 0x800;
+
+	while (!_screen->isMouseVisible())
+		_screen->showMouse();
 
 	return Common::kNoError;
 }
