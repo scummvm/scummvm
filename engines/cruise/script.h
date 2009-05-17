@@ -38,7 +38,7 @@ enum scriptTypeEnum {
 struct scriptInstanceStruct {
 	struct scriptInstanceStruct *nextScriptPtr;
 	int16 ccr;
-	int16 var4;
+	int16 scriptOffset;
 	uint8 *var6;
 	int16 varA;
 	int16 scriptNumber;

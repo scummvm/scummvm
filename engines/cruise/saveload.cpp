@@ -329,7 +329,7 @@ void syncScript(Common::Serializer &s, scriptInstanceStruct *entry) {
 
 		s.syncAsUint16LE(dummyWord);
 		s.syncAsSint16LE(ptr->ccr);
-		s.syncAsSint16LE(ptr->var4);
+		s.syncAsSint16LE(ptr->scriptOffset);
 		s.syncAsUint32LE(dummyLong);
 		s.syncAsSint16LE(ptr->varA);
 		s.syncAsSint16LE(ptr->scriptNumber);

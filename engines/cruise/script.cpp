@@ -24,6 +24,7 @@
  */
 
 #include "cruise/cruise_main.h"
+#include "common/endian.h"
 
 namespace Cruise {
 
@@ -33,19 +34,15 @@ scriptInstanceStruct procHead;
 scriptInstanceStruct *currentScriptPtr;
 
 int8 getByteFromScript(void) {
-	int8 var = *(int8*)(currentData3DataPtr + currentScriptPtr->var4);
-
-	currentScriptPtr->var4 = currentScriptPtr->var4 + 1;
+	int8 var = *(int8*)(currentData3DataPtr + currentScriptPtr->scriptOffset);
+	++currentScriptPtr->scriptOffset;
 
 	return (var);
 }
 
 short int getShortFromScript(void) {
-	short int var = *(int16 *)(currentData3DataPtr + currentScriptPtr->var4);
-
-	currentScriptPtr->var4 = currentScriptPtr->var4 + 2;
-
-	flipShort(&var);
+	short int var = (int16)READ_BE_UINT16(currentData3DataPtr + currentScriptPtr->scriptOffset);
+	currentScriptPtr->scriptOffset += 2;
 
 	return (var);
 }
@@ -362,7 +359,7 @@ int32 opcodeType7(void) {
 }
 
 int32 opcodeType5(void) {
-	int offset = currentScriptPtr->var4;
+	int offset = currentScriptPtr->scriptOffset;
 	int short1 = getShortFromScript();
 	int newSi = short1 + offset;
 	int bitMask = currentScriptPtr->ccr;
@@ -370,37 +367,37 @@ int32 opcodeType5(void) {
 	switch (currentScriptOpcodeType) {
 	case 0: {
 		if (!(bitMask & 1)) {
-			currentScriptPtr->var4 = newSi;
+			currentScriptPtr->scriptOffset = newSi;
 		}
 		break;
 	}
 	case 1: {
 		if (bitMask & 1) {
-			currentScriptPtr->var4 = newSi;
+			currentScriptPtr->scriptOffset = newSi;
 		}
 		break;
 	}
 	case 2: {
 		if (bitMask & 2) {
-			currentScriptPtr->var4 = newSi;
+			currentScriptPtr->scriptOffset = newSi;
 		}
 		break;
 	}
 	case 3: {
 		if (bitMask & 3) {
-			currentScriptPtr->var4 = newSi;
+			currentScriptPtr->scriptOffset = newSi;
 		}
 		break;
 	}
 	case 4: {
 		if (bitMask & 4) {
-			currentScriptPtr->var4 = newSi;
+			currentScriptPtr->scriptOffset = newSi;
 		}
 		break;
 	}
 	case 5: {
 		if (bitMask & 5) {
-			currentScriptPtr->var4 = newSi;
+			currentScriptPtr->scriptOffset = newSi;
 		}
 		break;
 	}
@@ -408,7 +405,7 @@ int32 opcodeType5(void) {
 		break;	// never
 	}
 	case 7: {
-		currentScriptPtr->var4 = newSi;	//always
+		currentScriptPtr->scriptOffset = newSi;	//always
 		break;
 	}
 	}
@@ -556,7 +553,7 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 
 	tempPtr->varA = var_C;
 	tempPtr->nextScriptPtr = NULL;
-	tempPtr->var4 = 0;
+	tempPtr->scriptOffset = 0;
 
 	tempPtr->scriptNumber = param;
 	tempPtr->overlayNumber = overlayNumber;
@@ -626,10 +623,10 @@ int executeScripts(scriptInstanceStruct *ptr) {
 	positionInStack = 0;
 
 	do {
-		if (currentScriptPtr->var4 == 290
+		if (currentScriptPtr->scriptOffset == 290
 		        && currentScriptPtr->overlayNumber == 4
 		        && currentScriptPtr->scriptNumber == 0) {
-			currentScriptPtr->var4 = 923;
+			currentScriptPtr->scriptOffset = 923;
 		}
 		opcodeType = getByteFromScript();
 
