@@ -656,14 +656,16 @@ void AGOSEngine_Feeble::initMouse() {
 }
 
 void AGOSEngine_Simon1::initMouse() {
-	_maxCursorWidth = 16;
-	_maxCursorHeight = 16;
-	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
-	memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
+	AGOSEngine::initMouse();
 
 	uint8 color = 225;
-	if (getPlatform() == Common::kPlatformAmiga)
+	if (getGameType() == GType_FF && (getFeatures() & GF_DEMO)) {
+		color = 250;
+	} else if (getPlatform() == Common::kPlatformAmiga) {
 		color = (getFeatures() & GF_32COLOR) ? 17 : 241;
+	}
+
+	memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
 
 	const uint16 *src = _common_mouseInfo;
 	for (int i = 0; i < 16; i++) {
