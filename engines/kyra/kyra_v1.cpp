@@ -103,11 +103,8 @@ Common::Error KyraEngine_v1::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
 	if (!_flags.useDigSound) {
-		// We prefer AdLib over native MIDI, since our AdLib playback code is much
-		// more mature than our MIDI player. For example we are missing MT-32 support
-		// and it seems our MIDI playback code has threading issues (see bug #1506583
-		// "KYRA1: Crash on exceeded polyphony" for more information).
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
+		// We prefer AdLib over MIDI, since generally AdLib is better supported
+		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB);
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)
@@ -499,7 +496,7 @@ void KyraEngine_v1::readSettings() {
 	_configMusic = 0;
 
 	if (!ConfMan.getBool("music_mute")) {
-		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+		if (_flags.platform == Common::kPlatformFMTowns)
 			_configMusic = ConfMan.getBool("cdaudio") ? 2 : 1;
 		else
 			_configMusic = 1;
