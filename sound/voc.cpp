@@ -143,6 +143,15 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 		case 7:	// end of loop
 			assert(len == 0);
 			break;
+		case 8: // "Extended"
+			// This occures in the LoL Intro demo. This block can usually be used to create stereo
+			// sound, but the LoL intro has only an empty block, thus this dummy implementation will
+			// work.
+			assert(len == 4);
+			stream.readUint16LE();
+			stream.readByte();
+			stream.readByte();
+			break;
 		default:
 			warning("Unhandled code in VOC file : %d", code);
 			return ret_sound;
