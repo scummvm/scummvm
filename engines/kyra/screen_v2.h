@@ -71,7 +71,7 @@ public:
 	virtual int getLayer(int x, int y);
 
 	// special WSA handling
-	void wsaFrameAnimationStep(int x1, int y1, int x2, int y2, int w1, int h1, int w2, int h2,	int srcPage, int dstPage, int dim);
+	void wsaFrameAnimationStep(int x1, int y1, int x2, int y2, int w1, int h1, int w2, int h2, int srcPage, int dstPage, int dim);
 protected:
 	uint8 *_wsaFrameAnimBuffer;
 };

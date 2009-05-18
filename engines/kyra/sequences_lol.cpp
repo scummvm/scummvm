@@ -43,8 +43,17 @@ int LoLEngine::processPrologue() {
 	if (!saveFileLoadable(0) || _flags.isDemo)
 		showIntro();
 
-	if (_flags.isDemo)
+	if (_flags.isDemo) {
+		_screen->fadePalette(_screen->getPalette(1), 30, 0);
+		_screen->loadBitmap("FINAL.CPS", 2, 2, _screen->getPalette(0));
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->fadePalette(_screen->getPalette(0), 30, 0);
+		delayWithTicks(300);
+		_screen->fadePalette(_screen->getPalette(1), 60, 0);
+
+		setupPrologueData(false);
 		return -1;
+	}
 
 	preInit();
 
@@ -219,7 +228,8 @@ void LoLEngine::showIntro() {
 	while (!_tim->finished() && !shouldQuit() && !skipFlag()) {
 		updateInput();
 		_tim->exec(intro, false);
-		_screen->checkedPageUpdate(8, 4);
+		if (!_flags.isDemo)
+			_screen->checkedPageUpdate(8, 4);
 
 		if (_tim->_palDiff) {
 			if (palNextFadeStep < _system->getMillis()) {

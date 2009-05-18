@@ -96,7 +96,7 @@ public:
 	};
 
 	struct Animation {
-		WSAMovie_v2 *wsa;
+		Movie *wsa;
 		int16 x, y;
 		uint32 nextFrame;
 		uint8 enable;

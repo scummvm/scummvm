@@ -42,6 +42,9 @@ public:
 
 	virtual bool opened() { return _opened; }
 
+	virtual int width() const = 0;
+	virtual int height() const = 0;
+
 	virtual int open(const char *filename, int offscreen, uint8 *palette) = 0;
 	virtual void close() = 0;
 
@@ -61,6 +64,9 @@ class WSAMovie_v1 : public Movie {
 public:
 	WSAMovie_v1(KyraEngine_v1 *vm);
 	virtual ~WSAMovie_v1();
+
+	int width() const { return _width; }
+	int height() const { return _height; }
 
 	virtual int open(const char *filename, int offscreen, uint8 *palette);
 	virtual void close();
@@ -114,9 +120,6 @@ public:
 
 	int xAdd() const { return _xAdd; }
 	int yAdd() const { return _yAdd; }
-
-	int width() const { return _width; }
-	int height() const { return _height; }
 
 	void setWidth(int w) { _width = w; }
 	void setHeight(int h) { _height = h; }

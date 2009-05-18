@@ -53,7 +53,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 		COMMAND(cmd_initFunc),
 		COMMAND(cmd_stopFunc),
 		COMMAND(cmd_wsaDisplayFrame),
-		COMMAND_UNIMPL(),
+		COMMAND(cmd_displayText),
 		// 0x08
 		COMMAND(cmd_loadVocFile),
 		COMMAND(cmd_unloadVocFile),
@@ -98,7 +98,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	_textDisplayed = false;
 	_textAreaBuffer = new uint8[320*40];
 	assert(_textAreaBuffer);
-	_drawPage2 = 8;
+	_drawPage2 = (vm()->gameFlags().isDemo && vm()->gameFlags().gameID == GI_LOL) ? 0 : 8;
 
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
 	_abortFlag = 0;
@@ -401,7 +401,9 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 	anim->x = x;
 	anim->y = y;
 	anim->wsaCopyParams = wsaFlags;
-	_drawPage2 = 8;
+	const bool isLoLDemo = vm()->gameFlags().isDemo && vm()->gameFlags().gameID == GI_LOL;
+
+	_drawPage2 = isLoLDemo ? 0 : 8;
 
 	uint16 wsaOpenFlags = ((wsaFlags & 0x10) != 0) ? 2 : 0;
 
@@ -409,22 +411,42 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 	snprintf(file, 32, "%s.WSA", filename);
 
 	if (vm()->resource()->exists(file)) {
-		anim->wsa = new WSAMovie_v2(_vm, _screen);
+		if (isLoLDemo)
+			anim->wsa = new WSAMovie_v1(_vm);
+		else
+			anim->wsa = new WSAMovie_v2(_vm, _screen);
 		assert(anim->wsa);
 
 		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? screen()->getPalette(0) : 0);
 	}
 
 	if (anim->wsa && anim->wsa->opened()) {
-		if (x == -1)
-			anim->x = x = 0;
-		if (y == -1)
-			anim->y = y = 0;
+		if (isLoLDemo) {
+			if (x == -1) {
+				int16 t = int8(320 - anim->wsa->width());
+				uint8 v = int8(t & 0x00FF) - int8((t & 0xFF00) >> 8);
+				v >>= 1;
+				anim->x = x = v;
+			}
+
+			if (y == -1) {
+				int16 t = int8(200 - anim->wsa->height());
+				uint8 v = int8(t & 0x00FF) - int8((t & 0xFF00) >> 8);
+				v >>= 1;
+				anim->y = y = v;
+			}
+		} else {
+			if (x == -1)
+				anim->x = x = 0;
+			if (y == -1)
+				anim->y = y = 0;
+		}
 
 		if (wsaFlags & 2) {
 			screen()->fadePalette(screen()->getPalette(1), 15, 0);
-			screen()->clearPage(8);
-			screen()->checkedPageUpdate(8, 4);
+			screen()->clearPage(_drawPage2);
+			if (_drawPage2)
+				screen()->checkedPageUpdate(8, 4);
 			screen()->updateScreen();
 		}
 		
@@ -433,12 +455,13 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 
 			if (vm()->resource()->exists(file)) {
 				screen()->loadBitmap(file, 3, 3, screen()->getPalette(0));
-				screen()->copyRegion(0, 0, 0, 0, 320, 200, 2, 8, Screen::CR_NO_P_CHECK);
-				screen()->checkedPageUpdate(8, 4);
+				screen()->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
+				if (_drawPage2)
+					screen()->checkedPageUpdate(8, 4);
 				screen()->updateScreen();
 			}
 
-			anim->wsa->displayFrame(0, 0, 0, 0, 0);
+			anim->wsa->displayFrame(0, x, y, 0, 0);
 		}
 
 		if (wsaFlags & 2)
@@ -446,8 +469,9 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 	} else {
 		if (wsaFlags & 2) {
 			screen()->fadePalette(screen()->getPalette(1), 15, 0);
-			screen()->clearPage(8);
-			screen()->checkedPageUpdate(8, 4);
+			screen()->clearPage(_drawPage2);
+			if (_drawPage2)
+				screen()->checkedPageUpdate(8, 4);
 			screen()->updateScreen();
 		}
 
@@ -455,8 +479,9 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 
 		if (vm()->resource()->exists(file)) {
 			screen()->loadBitmap(file, 3, 3, screen()->getPalette(0));
-			screen()->copyRegion(0, 0, 0, 0, 320, 200, 2, 8, Screen::CR_NO_P_CHECK);
-			screen()->checkedPageUpdate(8, 4);
+			screen()->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
+			if (_drawPage2)
+				screen()->checkedPageUpdate(8, 4);
 			screen()->updateScreen();
 		}
 
