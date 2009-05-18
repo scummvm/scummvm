@@ -176,16 +176,27 @@ AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfter
 	}
 
 	if (type == 17) { // MS IMA ADPCM
-		return Audio::makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		Audio::AudioStream *sndStream = Audio::makeADPCMStream(stream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		data = (byte *)malloc(size * 4);
+		assert(data);
+		size = sndStream->readBuffer((int16*)data, size * 2);
+		size *= 2; // 16bits.
+		delete sndStream;
 	} else if (type == 2) { // MS ADPCM
-		return Audio::makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		Audio::AudioStream *sndStream = Audio::makeADPCMStream(stream, false, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		data = (byte *)malloc(size * 4);
+		assert(data);
+		size = sndStream->readBuffer((int16*)data, size * 2);
+		size *= 2; // 16bits.
+		delete sndStream;
+	} else {
+		// Plain data. Just read everything at once.
+		// TODO: More elegant would be to wrap the stream.
+		data = (byte *)malloc(size);
+		assert(data);
+		stream->read(data, size);
 	}
 
-	// Plain data. Just read everything at once.
-	// TODO: More elegant would be to wrap the stream.
-	data = (byte *)malloc(size);
-	assert(data);
-	stream->read(data, size);
 	if (disposeAfterUse)
 		delete stream;
 
