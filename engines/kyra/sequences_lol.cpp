@@ -180,7 +180,10 @@ void LoLEngine::setupPrologueData(bool load) {
 		// PAK file. Therefore a new call to loadSoundFile() is required
 		// whenever the PAK file configuration changes.
 		if (_flags.platform == Common::kPlatformPC98)
-			_sound->loadSoundFile("sound.dat");
+			_sound->loadSoundFile("SOUND.DAT");
+
+		if (_flags.isDemo)
+			_sound->loadSoundFile("LOREINTR");
 	} else {
 		delete _chargenWSA; _chargenWSA = 0;
 		

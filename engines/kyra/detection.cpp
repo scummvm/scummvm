@@ -1036,9 +1036,7 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_PC98_SJIS_FLAGS
 	},
 
-	// TODO: It looks like this demo version does use something between
-	// WSA v1 and WSA v2 files, that means it is probably being quite old... 
-	/*{
+	{
 		{
 			"lol",
 			"Demo",
@@ -1052,7 +1050,7 @@ const KYRAGameDescription adGameDescs[] = {
 			ADGF_DEMO
 		},
 		LOL_DEMO_FLAGS
-	},*/
+	},
 
 	{
 		{

@@ -405,7 +405,18 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 
 	_drawPage2 = isLoLDemo ? 0 : 8;
 
-	uint16 wsaOpenFlags = ((wsaFlags & 0x10) != 0) ? 2 : 0;
+	uint16 wsaOpenFlags = 0;
+	if (isLoLDemo) {
+		if (!(wsaFlags & 0x10))
+			wsaOpenFlags |= 1;
+	} else {
+		if (wsaFlags & 0x10)
+			wsaOpenFlags |= 2;
+		wsaOpenFlags |= 1;
+
+		if (offscreenBuffer == 2)
+			wsaOpenFlags = 1;
+	}
 
 	char file[32];
 	snprintf(file, 32, "%s.WSA", filename);
@@ -461,7 +472,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 				screen()->updateScreen();
 			}
 
-			anim->wsa->displayFrame(0, x, y, 0, 0);
+			anim->wsa->displayFrame(0, 0, x, y, 0);
 		}
 
 		if (wsaFlags & 2)
