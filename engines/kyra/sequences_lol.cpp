@@ -94,7 +94,7 @@ int LoLEngine::processPrologue() {
 		case 3:		// Load game
 			// For now fall through
 			//processSelection = 3;
-			//break;
+			break;
 
 		case 4:		// Quit game
 		default:
