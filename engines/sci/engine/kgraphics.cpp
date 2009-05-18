@@ -2389,7 +2389,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			s->gfx_state->gfxResMan->freeAllResources();
 		} else {
 			// WORKAROUND for LSL6
-			printf("SetPort case 6 called in LSL6. Origin: %d, %d - Clip rect: %d, %d, %d, %d\n", SKPV(0), SKPV(1), UKPV(2), UKPV(3), UKPV(4), UKPV(5));
+			printf("SetPort case 6 called in LSL6. Origin: %d, %d - Clip rect: %d, %d, %d, %d\n", SKPV(1), SKPV(0), UKPV(5), UKPV(4), UKPV(3), UKPV(2));
 		}
 
 		break;
