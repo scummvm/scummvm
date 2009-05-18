@@ -313,7 +313,6 @@ void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
 
 template <typename T>
 void sync_Table(Common::Serializer &s, T &obj) {
-	// TODO: Change this to use syncArray. This involves breaking the savegame format compatibility.
 	s.syncAsSint32LE(obj.first_free);
 	s.syncAsSint32LE(obj.entries_used);
 

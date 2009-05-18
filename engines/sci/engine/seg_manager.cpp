@@ -136,8 +136,7 @@ void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
 	scr.heap_size = 0; // Set later
 
 	if (!script || (s->version >= SCI_VERSION_1_1 && !heap)) {
-		sciprintf("%s: failed to load %s\n", __FUNCTION__, !script ? "script" : "heap");
-		return;
+		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
 	if (s->flags & GF_SCI0_OLD) {
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
@@ -205,36 +204,10 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 	mobj = _heap[seg];
 	id_seg_map->removeKey(mobj->getSegMgrId());
 
-	switch (mobj->getType()) {
-	case MEM_OBJ_SCRIPT:
-		// FIXME: Get rid of the recursive flag, so that we can move the
-		// following into the destructor. The only time it is set to false
-		// is in the SegManager destructor.
-		if (recursive && (*(Script *)mobj).locals_segment)
-			deallocate((*(Script *)mobj).locals_segment, recursive);
-		break;
-
-	case MEM_OBJ_LOCALS:
-		break;
-
-	case MEM_OBJ_DYNMEM:
-		break;
-	case MEM_OBJ_SYS_STRINGS: 
-		break;
-	case MEM_OBJ_STACK:
-		break;
-	case MEM_OBJ_LISTS:
-		break;
-	case MEM_OBJ_NODES:
-		break;
-	case MEM_OBJ_CLONES:
-		break;
-	case MEM_OBJ_HUNK:
-		break;
-	case MEM_OBJ_STRING_FRAG:
-		break;
-	default:
-		error("Deallocating segment type %d not supported", mobj->getType());
+	if (mobj->getType() == MEM_OBJ_SCRIPT) {
+		Script *scr = (Script *)mobj;
+		if (recursive && scr->locals_segment)
+			deallocate(scr->locals_segment, recursive);
 	}
 
 	delete mobj;
@@ -244,16 +217,9 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 }
 
 bool SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
-	Script *scr;
-
-	if (!check(seg))
+	Script *scr = getScriptIfLoaded(seg);
+	if (!scr)
 		return false;
-
-	if (_heap[seg]->getType() != MEM_OBJ_SCRIPT)
-		return false;
-
-	scr = (Script *)_heap[seg];
-
 	return scr->_markedAsDeleted;
 }
 
@@ -361,6 +327,7 @@ SegmentId SegManager::segGet(int script_id) const {
 }
 
 Script *SegManager::getScript(const SegmentId seg) {
+	// FIXME: We accept segment 0, but that is actually an invalid segment...
 	if (seg < 0 || (uint)seg >= _heap.size()) {
 		error("SegManager::getScript(): seg id %x out of bounds", seg);
 	}
@@ -374,6 +341,7 @@ Script *SegManager::getScript(const SegmentId seg) {
 }
 
 Script *SegManager::getScriptIfLoaded(const SegmentId seg) {
+	// FIXME: We accept segment 0, but that is actually an invalid segment...
 	if (seg < 0 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
 		return 0;
 	return (Script *)_heap[seg];
@@ -384,11 +352,12 @@ Script *SegManager::getScriptIfLoaded(const SegmentId seg) {
 //	false - invalid seg
 //	true  - valid seg
 bool SegManager::check(SegmentId seg) {
+	// FIXME: We accept segment 0, but that is actually an invalid segment...
 	if (seg < 0 || (uint)seg >= _heap.size()) {
 		return false;
 	}
 	if (!_heap[seg]) {
-		sciprintf("SegManager: seg %x is removed from memory, but not removed from hash_map\n", seg);
+		warning("SegManager: seg %x is removed from memory, but not removed from hash_map", seg);
 		return false;
 	}
 	return true;
