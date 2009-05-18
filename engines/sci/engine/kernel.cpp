@@ -255,7 +255,7 @@ int kfree(EngineState *s, reg_t handle) {
 	return 0;
 }
 
-char *old_save_dir;
+char *old_save_dir;	// FIXME get rid of this
 
 reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
