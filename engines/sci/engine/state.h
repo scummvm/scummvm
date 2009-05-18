@@ -208,7 +208,6 @@ public:
 	/* VM Information */
 
 	Common::Array<ExecStack> _executionStack; /**< The execution stack */
-	int execution_stack_pos;       /**< Position on the execution stack */
 	/**
 	 * When called from kernel functions, the vm is re-started recursively on
 	 * the same stack. This variable contains the stack base for the current vm.

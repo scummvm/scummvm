@@ -263,7 +263,7 @@ reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	old_save_dir = strdup(deref_save_dir);
 	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE; // This appears to help
-	s->execution_stack_pos = s->execution_stack_base;
+	s->_executionStack.resize(s->execution_stack_base + 1);
 	script_abort_flag = 1; // Force vm to abort ASAP
 	return NULL_REG;
 }

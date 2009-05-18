@@ -652,7 +652,7 @@ reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			if (newstate) {
 				s->successor = newstate;
 				script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
-				s->execution_stack_pos = s->execution_stack_base;
+				s->_executionStack.resize(s->execution_stack_base + 1);
 			} else {
 				s->r_acc = make_reg(0, 1);
 				sciprintf("Restoring failed (game_id = '%s').\n", game_id);

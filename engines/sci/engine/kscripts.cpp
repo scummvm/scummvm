@@ -92,7 +92,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 
 	// Write "kernel" call to the stack, for debugging:
 	xstack = add_exec_stack_entry(s, NULL_REG, NULL, NULL_REG, k_argc, k_argp - 1, 0, NULL_REG,
-	                              s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
+	                              s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = -42 - kfunct; // Evil debugging hack to identify kernel function
 	xstack->type = EXEC_STACK_TYPE_KERNEL;
 
@@ -104,7 +104,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 
 	run_vm(s, 0); // Start a new vm
 
-	--(s->execution_stack_pos); // Get rid of the extra stack entry
+	s->_executionStack.pop_back(); // Get rid of the extra stack entry
 
 	return 0;
 }
@@ -269,7 +269,7 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int id = s->seg_manager->segGet(script);
 	Script *scr = s->seg_manager->getScriptIfLoaded(id);
 	if (scr) {
-		if (s->_executionStack[s->execution_stack_pos].addr.pc.segment != id)
+		if (s->_executionStack.back().addr.pc.segment != id)
 			scr->setLockers(1);
 	}
 

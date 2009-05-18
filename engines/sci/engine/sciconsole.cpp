@@ -221,10 +221,10 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 		rel_offsetting = 1;
 
 		if (!scumm_strnicmp(str + 1, "PC", 2)) {
-			*dest = s->_executionStack[s->execution_stack_pos].addr.pc;
+			*dest = s->_executionStack.back().addr.pc;
 			offsetting = str + 3;
 		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
-			*dest = s->_executionStack[s->execution_stack_pos].addr.pc;
+			*dest = s->_executionStack.back().addr.pc;
 			offsetting = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;
@@ -236,10 +236,10 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 			*dest = s->r_acc;
 			offsetting = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "OBJ", 3)) {
-			*dest = s->_executionStack[s->execution_stack_pos].objp;
+			*dest = s->_executionStack.back().objp;
 			offsetting = str + 4;
 		} else if (!scumm_strnicmp(str + 1, "O", 1)) {
-			*dest = s->_executionStack[s->execution_stack_pos].objp;
+			*dest = s->_executionStack.back().objp;
 			offsetting = str + 2;
 		} else
 			return 1; // No matching register

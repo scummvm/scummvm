@@ -430,7 +430,6 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
-	s->execution_stack_pos = -1;   // Start at execution stack position 0
 
 	vocabulary_get_knames(s->resmgr, s->_kernelNames);
 	script_map_kernel(s);

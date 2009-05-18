@@ -104,7 +104,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	kernel_opt_flags = 0;
 
-	execution_stack_pos = 0;
 	execution_stack_base = 0;
 	_executionStackPosChanged = false;
 

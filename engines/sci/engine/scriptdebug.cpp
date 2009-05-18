@@ -692,7 +692,7 @@ int c_debuginfo(EngineState *s) {
 
 	sciprintf("acc="PREG" prev="PREG" &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), *p_restadjust);
 
-	if (!s->_executionStack.empty() && s->execution_stack_pos >= 0) {
+	if (!s->_executionStack.empty()) {
 		sciprintf("pc="PREG" obj="PREG" fp="PSTK" sp="PSTK"\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
 	} else
 		sciprintf("<no execution stack: pc,obj,fp omitted>\n");
@@ -728,7 +728,7 @@ int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
 	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
 		_debug_seeking = _DEBUG_SEEK_SO;
-		_debug_seek_level = s->execution_stack_pos;
+		_debug_seek_level = s->_executionStack.size()-1;
 		// Store in _debug_seek_special the offset of the next command after send
 		switch (opcode) {
 		case 0x46: // calle W
@@ -1103,7 +1103,7 @@ int c_restore_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) 
 
 		script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
 		_debugstate_valid = 0;
-		s->execution_stack_pos = s->execution_stack_base;
+		s->_executionStack.resize(s->execution_stack_base + 1);
 		return 0;
 	} else {
 		sciprintf("Restoring gamestate '%s' failed.\n", cmdParams[0].str);
@@ -1151,12 +1151,12 @@ int c_stack(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		return 1;
 	}
 
-	if (s->execution_stack_pos < 0) {
+	if (s->_executionStack.empty()) {
 		sciprintf("No exec stack!");
 		return 1;
 	}
 
-	ExecStack &xs = s->_executionStack[s->execution_stack_pos];
+	ExecStack &xs = s->_executionStack.back();
 
 	for (int i = cmdParams[0].val ; i > 0; i--) {
 		if ((xs.sp - xs.fp - i) == 0)
@@ -1526,15 +1526,13 @@ int c_vmvars(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 }
 
 static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int i;
-
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
 	sciprintf("Call stack (current base: 0x%x):\n", s->execution_stack_base);
-	for (i = 0; i <= s->execution_stack_pos; i++) {
+	for (uint i = 0; i < s->_executionStack.size(); i++) {
 		ExecStack &call = s->_executionStack[i];
 		const char *objname = obj_get_name(s, call.sendp);
 		int paramc, totalparamc;
@@ -2121,7 +2119,7 @@ static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 static int c_sret(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	_debug_seeking = _DEBUG_SEEK_LEVEL_RET;
-	_debug_seek_level = s->execution_stack_pos;
+	_debug_seek_level = s->_executionStack.size()-1;
 	_debugstate_valid = 0;
 	return 0;
 }
@@ -2176,7 +2174,7 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		stackframe[i] = cmdParams[i].reg;
 
 	xstack = add_exec_stack_entry(s, fptr, s->_executionStack[0].sp + cmdParams.size(), object, cmdParams.size() - 2,
-									s->_executionStack[0].sp - 1, 0, object, s->execution_stack_pos, SCI_XS_CALLEE_LOCALS);
+									s->_executionStack[0].sp - 1, 0, object, s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = selector_id;
 	xstack->type = selector_type == kSelectorVariable ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
 
@@ -2904,13 +2902,13 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			}
 
 			case _DEBUG_SEEK_LEVEL_RET: {
-				if ((op != op_ret) || (_debug_seek_level < s->execution_stack_pos))
+				if ((op != op_ret) || (_debug_seek_level < (int)s->_executionStack.size()-1))
 					return;
 				break;
 			}
 
 			case _DEBUG_SEEK_SO:
-				if (!REG_EQ(*pc, _debug_seek_reg) || s->execution_stack_pos != _debug_seek_level)
+				if (!REG_EQ(*pc, _debug_seek_reg) || (int)s->_executionStack.size()-1 != _debug_seek_level)
 					return;
 				break;
 
@@ -2920,7 +2918,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 					return;
 				if ((op & 0x3) > 1)
 					return; // param or temp
-				if ((op & 0x3) && s->_executionStack[s->execution_stack_pos].local_segment > 0)
+				if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
 					return; // locals and not running in script.000
 				if (paramf1 != _debug_seek_special)
 					return; // CORRECT global?

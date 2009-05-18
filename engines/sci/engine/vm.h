@@ -808,73 +808,77 @@ typedef int kernel_function(struct EngineState *s);
 extern kernel_function* kfuncs[];
 extern int max_instance;
 
-/*inline*/
+/**
+ * Executes function pubfunct of the specified script.
+ * Parameters: (EngineState *) s: The state which is to be executed with
+ *             (uint16) script: The script which is called
+ *             (uint16) pubfunct: The exported script function which is to be called
+ *             (StackPtr) sp: Stack pointer position
+ *             (reg_t) calling_obj: The heap address of the object which executed the call
+ *             (uint16) argc: Number of arguments supplied
+ *             (StackPtr) argp: Pointer to the first supplied argument
+ * Returns   : (ExecStack *): A pointer to the new exec stack TOS entry
+ */
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj,
 	uint16 argc, StackPtr argp);
-/* Executes function pubfunct of the specified script.
-** Parameters: (EngineState *) s: The state which is to be executed with
-**             (uint16) script: The script which is called
-**             (uint16) pubfunct: The exported script function which is to be called
-**             (StackPtr) sp: Stack pointer position
-**             (reg_t) calling_obj: The heap address of the object which executed the call
-**             (uint16) argc: Number of arguments supplied
-**             (StackPtr) argp: Pointer to the first supplied argument
-** Returns   : (ExecStack *): A pointer to the new exec stack TOS entry
-*/
 
 
+/**
+ * Executes a "send" or related operation to a selector.
+ * Parameters: (EngineState *) s: The EngineState to operate on
+ *             (reg_t) send_obj: Heap address of the object to send to
+ *             (reg_t) work_obj: Heap address of the object initiating the send
+ *             (StackPtr) sp: Stack pointer position
+ *             (int) framesize: Size of the send as determined by the "send" operation
+ *             (StackPtr) argp: Pointer to the beginning of the heap block containing the
+ *                              data to be sent. This area is a succession of one or more
+ *                              sequences of [selector_number][argument_counter] and then
+ *                              "argument_counter" word entries with the parameter values.
+ * Returns   : (ExecStack *): A pointer to the new execution stack TOS entry
+ */
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
 	StackPtr sp, int framesize, StackPtr argp);
-/* Executes a "send" or related operation to a selector
-** Parameters: (EngineState *) s: The EngineState to operate on
-**             (reg_t) send_obj: Heap address of the object to send to
-**             (reg_t) work_obj: Heap address of the object initiating the send
-**             (StackPtr) sp: Stack pointer position
-**             (int) framesize: Size of the send as determined by the "send" operation
-**             (StackPtr) argp: Pointer to the beginning of the heap block containing the
-**                              data to be send. This area is a succession of one or more
-**                              sequences of [selector_number][argument_counter] and then
-**                              "argument_counter" word entries with the parameter values.
-** Returns   : (ExecStack *): A pointer to the new execution stack TOS entry
-*/
 
 
 #define SCI_XS_CALLEE_LOCALS -1
 
+/**
+ * Adds an entry to the top of the execution stack.
+ *
+ * @param s				The state with which to execute
+ * @param pc			The initial program counter
+ * @param sp			The initial stack pointer
+ * @param objp			Pointer to the beginning of the current object
+ * @param argc			Number of parameters to call with
+ * @param argp			Heap pointer to the first parameter
+ * @param selector		The selector by which it was called or
+ *						NULL_SELECTOR if n.a. For debugging.
+ * @param sendp			Pointer to the object which the message was sent to.
+ *						Equal to objp for anything but super.
+ * @param origin		Number of the execution stack element this entry was created by
+ *						(usually the current TOS number, except for multiple sends).
+ * @param local_segment	The segment to use for local variables,
+ *						or SCI_XS_CALLEE_LOCALS to use obj's segment.
+ * @return a pointer to the new exec stack TOS entry
+ */
 ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t objp, int argc,
 	StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId local_segment);
-/* Adds an entry to the top of the execution stack
-** Parameters: (EngineState *) s: The state with which to execute
-**             (reg_t) pc: The initial program counter
-**             (StackPtr) sp: The initial stack pointer
-**             (reg_t) objp: Pointer to the beginning of the current object
-**             (int) argc: Number of parameters to call with
-**             (StackPtr) argp: Heap pointer to the first parameter
-**             (Selector) selector: The selector by which it was called or
-**			  NULL_SELECTOR if n.a. For debugging.
-**             (reg_t) sendp: Pointer to the object which the message was sent to.
-**                       Equal to objp for anything but super.
-**             (int) origin: Number of the execution stack element this entry was created by
-**                       (usually the current TOS number, except for multiple sends).
-**             (SegmentId) local_segment: The segment to use for local variables,
-**                        or SCI_XS_CALLEE_LOCALS to use obj's segment.
-** Returns   : (ExecStack *): A pointer to the new exec stack TOS entry
-*/
 
 
+/**
+ * Adds one varselector access to the execution stack.
+ * Parameters: (EngineState *) s: The EngineState to use
+ *             (reg_t) objp: Pointer to the object owning the selector
+ *             (int) argc: 1 for writing, 0 for reading
+ *             (StackPtr) argp: Pointer to the address of the data to write -2
+ *             (int) selector: Selector name
+ *             (reg_t *) address: Heap address of the selector
+ *             (int) origin: Stack frame which the access originated from
+ * Returns   : (ExecStack *): Pointer to the new exec-TOS element
+ * This function is called from send_selector only.
+ */
 ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp,
 	Selector selector, reg_t *address, int origin);
-/* Adds one varselector access to the execution stack
-** Parameters: (EngineState *) s: The EngineState to use
-**             (reg_t) objp: Pointer to the object owning the selector
-**             (int) argc: 1 for writing, 0 for reading
-**             (StackPtr) argp: Pointer to the address of the data to write -2
-**             (int) selector: Selector name
-**             (reg_t *) address: Heap address of the selector
-**             (int) origin: Stack frame which the access originated from
-** Returns   : (ExecStack *): Pointer to the new exec-TOS element
-** This function is called from send_selector only.
-*/
 
 
 void run_vm(EngineState *s, int restoring);

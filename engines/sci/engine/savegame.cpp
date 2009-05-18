@@ -794,7 +794,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Set exec stack base to zero
 	retval->execution_stack_base = 0;
-	retval->execution_stack_pos = 0;
+	retval->_executionStack.clear();
 
 	// Now copy all current state information
 	// Graphics and input state:

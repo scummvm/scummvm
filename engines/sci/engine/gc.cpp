@@ -86,7 +86,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	// Init: Value Stack
 	// We do this one by hand since the stack doesn't know the current execution stack
 	{
-		ExecStack &xs = s->_executionStack[s->execution_stack_pos];
+		ExecStack &xs = s->_executionStack.back();
 		reg_t *pos;
 
 		for (pos = s->stack_base; pos < xs.sp; pos++)
@@ -97,7 +97,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 #endif
 
 	// Init: Execution Stack
-	for (i = 0; (int)i <= s->execution_stack_pos; i++) {
+	for (i = 0; i < s->_executionStack.size(); i++) {
 		ExecStack &es = s->_executionStack[i];
 
 		if (es.type != EXEC_STACK_TYPE_KERNEL) {
