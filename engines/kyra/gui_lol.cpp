@@ -702,7 +702,9 @@ void LoLEngine::gui_toggleFightButtons(bool disable) {
 }
 
 void LoLEngine::gui_updateInput() {
-	int inputFlag = checkInput(_activeButtons, true);
+	// TODO: We need to catch all cases where loading is not possible and
+	// set the "mainLoop" parameter to false for them.
+	int inputFlag = checkInput(_activeButtons, !(_updateFlags & 3));
 	if (_preserveEvents)
 		_preserveEvents = false;
 	else
