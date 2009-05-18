@@ -34,7 +34,6 @@ struct EngineState;
 
 #define SCIk_DEBUG_MODES 17
 
-#define SCIkERROR_NR -2
 #define SCIkWARNING_NR -1
 #define SCIkFUNCCHK_NR 5
 #define SCIkSOUNDCHK_NR 7
@@ -43,7 +42,6 @@ struct EngineState;
 #define SCIkPARSER_NR 10
 #define SCIkAVOIDPATH_NR 17
 
-#define SCIkERROR      s, __FILE__, __LINE__, SCIkERROR_NR
 #define SCIkNODES      s, __FILE__, __LINE__, 1
 #define SCIkGRAPHICS   s, __FILE__, __LINE__, 2
 #define SCIkSTRINGS    s, __FILE__, __LINE__, 3

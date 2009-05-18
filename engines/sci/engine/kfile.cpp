@@ -408,7 +408,8 @@ reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 
 	default:
-		SCIkwarn(SCIkERROR, "Unknown DeviceInfo() sub-command: %d\n", mode);
+		// TODO: Not all sub-commands are handled. E.g. KQ5CD calls sub-command 5
+		warning("Unknown DeviceInfo() sub-command: %d\n", mode);
 		break;
 	}
 
@@ -848,7 +849,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	default :
-		SCIkwarn(SCIkERROR, "Unknown FileIO() sub-command: %d\n", func_nr);
+		error("Unknown FileIO() sub-command: %d\n", func_nr);
 	}
 
 	return s->r_acc;

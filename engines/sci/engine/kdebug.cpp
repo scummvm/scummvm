@@ -36,10 +36,7 @@ int sci_debug_flags = 0; // Special flags
 void _SCIkwarn(EngineState *s, const char *file, int line, int area, const char *format, ...) {
 	va_list args;
 
-	if (area == SCIkERROR_NR)
-		fprintf(stderr, "ERROR: ");
-	else
-		fprintf(stderr, "Warning: ");
+	fprintf(stderr, "Warning: ");
 
 	va_start(args, format);
 	vfprintf(stderr, format, args);

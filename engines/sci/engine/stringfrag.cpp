@@ -112,14 +112,14 @@ static int internal_stringfrag_length(EngineState *s, reg_t *buffer) {
 	int result = 0;
 
 	if (buffer == NULL) {
-//	SCIkwarn(SCIkERROR, "Error: Invalid stringfrag handle");
+//	error("Error: Invalid stringfrag handle");
 		return 0;
 	}
 
 	while ((buffer->offset & 0xff00) != 0 &&
 	       (buffer->offset & 0x00ff) != 0) {
 		if (buffer->segment != STRINGFRAG_SEGMENT) {
-//	    SCIkwarn(SCIkERROR, "Error: Invalid stringfrag handle");
+//	    error("Error: Invalid stringfrag handle");
 			return 0;
 		}
 
@@ -128,7 +128,7 @@ static int internal_stringfrag_length(EngineState *s, reg_t *buffer) {
 	}
 
 	if (buffer->segment != STRINGFRAG_SEGMENT) {
-		SCIkwarn(SCIkERROR, "Error: Invalid stringfrag handle");
+		error("Error: Invalid stringfrag handle");
 		return 0;
 	}
 

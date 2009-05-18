@@ -241,7 +241,7 @@ byte *kmem(EngineState *s, reg_t handle) {
 	HunkTable *ht = (HunkTable *)GET_SEGMENT(*s->seg_manager, handle.segment, MEM_OBJ_HUNK);
 
 	if (!ht || !ENTRY_IS_VALID(ht, handle.offset)) {
-		SCIkwarn(SCIkERROR, "Error: kmem() with invalid handle\n");
+		error("Error: kmem() with invalid handle\n");
 		return NULL;
 	}
 
@@ -404,7 +404,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
 		if (!s->seg_manager->allocDynmem(UKPV(1), "kMemory() critical", &s->r_acc)) {
-			SCIkwarn(SCIkERROR, "Critical heap allocation failed\n");
+			error("Critical heap allocation failed\n");
 			script_error_flag = script_debug_flag = 1;
 		}
 		return s->r_acc;
@@ -414,7 +414,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	case K_MEMORY_FREE :
 		if (s->seg_manager->freeDynmem(argv[1])) {
-			SCIkwarn(SCIkERROR, "Attempt to kMemory::free() non-dynmem pointer "PREG"!\n", PRINT_REG(argv[1]));
+			error("Attempt to kMemory::free() non-dynmem pointer "PREG"!\n", PRINT_REG(argv[1]));
 		}
 		break;
 	case K_MEMORY_MEMCPY : {
@@ -439,7 +439,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		byte *ref = kernel_dereference_bulk_pointer(s, argv[1], 2);
 
 		if (!ref) {
-			SCIkdebug(SCIkERROR, "Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
+			error("Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 		if (s->seg_manager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
@@ -452,7 +452,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		byte *ref = kernel_dereference_bulk_pointer(s, argv[1], 2);
 
 		if (!ref) {
-			SCIkdebug(SCIkERROR, "Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
+			error("Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 
@@ -460,7 +460,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {
-				SCIkdebug(SCIkERROR, "Attempt to poke memory reference "PREG" to "PREG"!\n", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
+				error("Attempt to poke memory reference "PREG" to "PREG"!\n", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
 				WRITE_LE_UINT16(ref, argv[2].offset); // ???
 			}
@@ -763,12 +763,12 @@ static void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entr
 	void *retval = s->seg_manager->dereference(pointer, &maxsize);
 
 	if (pointer.offset & (align - 1)) {
-		SCIkdebug(SCIkERROR, "Unaligned pointer read: "PREG" expected with %d alignment!\n", PRINT_REG(pointer), align);
+		error("Unaligned pointer read: "PREG" expected with %d alignment!\n", PRINT_REG(pointer), align);
 		return NULL;
 	}
 
 	if (entries > maxsize) {
-		SCIkdebug(SCIkERROR, "Trying to dereference pointer "PREG" beyond end of segment!\n", PRINT_REG(pointer));
+		error("Trying to dereference pointer "PREG" beyond end of segment!\n", PRINT_REG(pointer));
 		return NULL;
 	}
 	return retval;

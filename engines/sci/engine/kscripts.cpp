@@ -74,7 +74,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 	slc_type = lookup_selector(s, object, selector_id, NULL, &address);
 
 	if (slc_type == kSelectorNone) {
-		SCIkwarn(SCIkERROR, "Selector '%s' of object at "PREG" could not be invoked (%s L%d)\n",
+		error("Selector '%s' of object at "PREG" could not be invoked (%s L%d)\n",
 		         s->_selectorNames[selector_id].c_str(), PRINT_REG(object), fname, line);
 		if (noinvalid == 0)
 			KERNEL_OOPS("Not recoverable: VM was halted\n");
@@ -163,7 +163,7 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Clone *clone_obj; // same as Object*
 
 	if (!parent_obj) {
-		SCIkwarn(SCIkERROR, "Attempt to clone non-object/class at "PREG" failed", PRINT_REG(parent_addr));
+		error("Attempt to clone non-object/class at "PREG" failed", PRINT_REG(parent_addr));
 		return NULL_REG;
 	}
 
@@ -172,7 +172,7 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	clone_obj = s->seg_manager->alloc_Clone(&clone_addr);
 
 	if (!clone_obj) {
-		SCIkwarn(SCIkERROR, "Cloning "PREG" failed-- internal error!\n", PRINT_REG(parent_addr));
+		error("Cloning "PREG" failed-- internal error!\n", PRINT_REG(parent_addr));
 		return NULL_REG;
 	}
 
@@ -198,7 +198,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 underBits;
 
 	if (!victim_obj) {
-		SCIkwarn(SCIkERROR, "Attempt to dispose non-class/object at "PREG"\n",
+		error("Attempt to dispose non-class/object at "PREG"\n",
 		         PRINT_REG(victim_addr));
 		return s->r_acc;
 	}
@@ -246,12 +246,13 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	scr = s->seg_manager->getScript(scriptid);
 
 	if (!scr->exports_nr) {
-		SCIkdebug(SCIkERROR, "Script 0x%x does not have a dispatch table\n", script);
+		// FIXME: Is this fatal? This occurs in SQ4CD
+		warning("Script 0x%x does not have a dispatch table\n", script);
 		return NULL_REG;
 	}
 
 	if (index > scr->exports_nr) {
-		SCIkwarn(SCIkERROR, "Dispatch index too big: %d > %d\n", index, scr->exports_nr);
+		error("Dispatch index too big: %d > %d\n", index, scr->exports_nr);
 		return NULL_REG;
 	}
 
