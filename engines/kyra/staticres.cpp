@@ -1844,7 +1844,7 @@ void LoLEngine::initStaticResource() {
 	for (int i = 0; i < tmpSize; i++) {
 		_defaultLegendData[i].shapeIndex = *tmp++;
 		_defaultLegendData[i].enable = *tmp++ ? true : false;
-		_defaultLegendData[i].x = *tmp++;
+		_defaultLegendData[i].x = (int8)*tmp++;
 		_defaultLegendData[i].stringId = READ_LE_UINT16(tmp);
 		tmp += 2;
 	}

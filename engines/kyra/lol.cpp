@@ -3370,7 +3370,7 @@ void LoLEngine::displayAutomap() {
 	_screen->fadePalette(_screen->getPalette(3), 10);
 	_smoothScrollTimer = _system->getMillis() + 8 * _tickLength;
 
-	while (!exitAutomap) {
+	while (!exitAutomap && !shouldQuit()) {
 		if (_mapUpdateNeeded) {
 			drawMapPage(2);
 			_screen->copyPage(2, 0);
@@ -3660,10 +3660,8 @@ void LoLEngine::automapForwardButton() {
 	if (i == _currentMapLevel)
 		return;
 
-	for (int l = 0; l < 11; l++) {
+	for (int l = 0; l < 11; l++)
 		_defaultLegendData[l].enable = false;
-		_defaultLegendData[l].shapeIndex = 255;
-	}
 
 	_currentMapLevel = i;
 	loadLevelWallData(i, false);
@@ -3679,10 +3677,8 @@ void LoLEngine::automapBackButton() {
 	if (i == _currentMapLevel)
 		return;
 
-	for (int l = 0; l < 11; l++) {
+	for (int l = 0; l < 11; l++)
 		_defaultLegendData[l].enable = false;
-		_defaultLegendData[l].shapeIndex = 255;
-	}
 
 	_currentMapLevel = i;
 	loadLevelWallData(i, false);
