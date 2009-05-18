@@ -521,13 +521,13 @@ struct Table : public MemObject {
 
 public:
 	Table() {
-		entries_used = 0;
-		first_free = HEAPENTRY_INVALID;
+		initTable();
 	}
 
 	void initTable() {
 		entries_used = 0;
 		first_free = HEAPENTRY_INVALID;
+		_table.clear();
 	}
 
 	int allocEntry() {

@@ -906,7 +906,6 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 
 	if (!Clones_seg_id) {
 		table = (CloneTable *)allocNonscriptSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
-		table->initTable();
 	} else
 		table = (CloneTable *)_heap[Clones_seg_id];
 
@@ -920,11 +919,9 @@ List *SegManager::alloc_List(reg_t *addr) {
 	ListTable *table;
 	int offset;
 
-	if (!Lists_seg_id) {
-		table = (ListTable *)allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
-		table->initTable();
-	} else
-		table = (ListTable *)_heap[Lists_seg_id];
+	if (!Lists_seg_id)
+		allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
+	table = (ListTable *)_heap[Lists_seg_id];
 
 	offset = table->allocEntry();
 
@@ -936,11 +933,9 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 	NodeTable *table;
 	int offset;
 
-	if (!Nodes_seg_id) {
-		table = (NodeTable *)allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
-		table->initTable();
-	} else
-		table = (NodeTable *)_heap[Nodes_seg_id];
+	if (!Nodes_seg_id)
+		allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
+	table = (NodeTable *)_heap[Nodes_seg_id];
 
 	offset = table->allocEntry();
 
@@ -952,11 +947,9 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	HunkTable *table;
 	int offset;
 
-	if (!Hunks_seg_id) {
-		table = (HunkTable *)allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
-		table->initTable();
-	} else
-		table = (HunkTable *)_heap[Hunks_seg_id];
+	if (!Hunks_seg_id)
+		allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
+	table = (HunkTable *)_heap[Hunks_seg_id];
 
 	offset = table->allocEntry();
 
