@@ -200,8 +200,13 @@ int _find_priority_band(EngineState *s, int nr) {
 
 reg_t graph_save_box(EngineState *s, rect_t area) {
 	reg_t handle = kalloc(s, "graph_save_box()", sizeof(gfxw_snapshot_t *));
-	gfxw_snapshot_t **ptr = (gfxw_snapshot_t **) kmem(s, handle);
+	gfxw_snapshot_t **ptr = (gfxw_snapshot_t **)kmem(s, handle);
 
+	// FIXME: gfxw_make_snapshot returns a pointer. Now why do we store a
+	// pointer to real memory inside the SCI heap?
+	// If we save and the load again, this cannot work in general.
+	// This seems like bad design. Either the snapshot data itself should be
+	// stored in the heap, or a unique persistent id.
 	*ptr = gfxw_make_snapshot(s->visual, area);
 
 	return handle;
