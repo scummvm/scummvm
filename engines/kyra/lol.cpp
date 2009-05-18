@@ -2073,7 +2073,7 @@ uint16 *LoLEngine::getCharacterOrMonsterProtectionAgainstItems(int id) {
 
 void LoLEngine::delay(uint32 millis, bool cUpdate, bool iUpdate) {
 	int del = (int)(millis);
-	while (del > 0) {
+	while (del > 0 && !shouldQuit()) {
 		if (cUpdate)
 			update();
 		if (iUpdate)
