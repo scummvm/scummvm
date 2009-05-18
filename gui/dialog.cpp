@@ -100,13 +100,13 @@ void Dialog::open() {
 
 void Dialog::close() {
 	_visible = false;
-	g_gui.closeTopDialog();
 
 	if (_mouseWidget) {
 		_mouseWidget->handleMouseLeft(0);
 		_mouseWidget = 0;
 	}
 	releaseFocus();
+	g_gui.closeTopDialog();
 }
 
 void Dialog::reflowLayout() {
