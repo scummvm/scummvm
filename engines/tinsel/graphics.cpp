@@ -216,7 +216,7 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
  * Straight rendering with transparency support, PSX variant supporting also 4-BIT clut data
  * TODO: finish supporting 4-bit data
  */
-static void PsxWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool fourBitClut, uint32 psxSkipBytes, uint32 palStart) {
+static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool fourBitClut, uint32 psxSkipBytes, uint32 palStart, bool transparency) {
 	// Set up the offset between destination blocks
 	int rightClip = applyClipping ? pObj->rightClip : 0;
 	Common::Rect boxBounds;
@@ -277,52 +277,33 @@ static void PsxWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool appl
 			int16 indexVal = READ_LE_UINT16(srcP);
 			srcP += sizeof(uint16);
 
-			if (indexVal >= 0) {
-				// Draw a 4x4 block based on the opcode as in index into the block list
-				// In case we have a 4-bit CLUT image, blocks are 2x4, then expanded into 4x4
-				const uint8 *p;
-				if (fourBitClut)
-					p = (uint8 *)pObj->charBase + psxSkipBytes + (indexVal << 3);
-				else
-					p = (uint8 *)pObj->charBase + psxSkipBytes + (indexVal << 4);
+			// Draw a 4x4 block based on the opcode as in index into the block list
+			// In case we have a 4-bit CLUT image, blocks are 2x4, then expanded into 4x4
+			const uint8 *p;
+			if (fourBitClut)
+				p = (uint8 *)pObj->charBase + psxSkipBytes + (indexVal << 3);
+			else
+				p = (uint8 *)pObj->charBase + psxSkipBytes + (indexVal << 4);
 
-				p += boxBounds.top * (fourBitClut ? sizeof(uint16) : sizeof(uint32));
-				for (int yp = boxBounds.top; yp <= boxBounds.bottom; ++yp, p += (fourBitClut ? sizeof(uint16) : sizeof(uint32))) {
-					if(!fourBitClut)
+			p += boxBounds.top * (fourBitClut ? sizeof(uint16) : sizeof(uint32));
+			for (int yp = boxBounds.top; yp <= boxBounds.bottom; ++yp, p += (fourBitClut ? sizeof(uint16) : sizeof(uint32))) {
+				if(!fourBitClut) {
+					if (!transparency)
 						Common::copy(p + boxBounds.left, p + boxBounds.right + 1, tempDest + (SCREEN_WIDTH * (yp - boxBounds.top)));
-					else {
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 0) = (*p & 0x0f) + palStart;
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 1) = ((*p & 0xf0) >> 4) + palStart;
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 2) = (*(p + 1) & 0x0f) + palStart;
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 3) = ((*(p + 1) & 0xf0) >> 4) + palStart;
-					}
-				}
-
-			} else {
-				// Draw a 4x4 block with transparency support
-				indexVal &= 0x7fff;
-
-				// If index is zero, then skip drawing the block completely
-				if (indexVal > 0) {
-					// Use the index along with the object's translation offset
-					const uint8 *p;
-
-					if (fourBitClut)
-						p = (uint8 *)pObj->charBase + ((pObj->transOffset + indexVal) << 3);
 					else
-						p = (uint8 *)pObj->charBase + ((pObj->transOffset + indexVal) << 4);
-
-					// Loop through each pixel - only draw a pixel if it's non-zero
-					p += boxBounds.top * (fourBitClut ? sizeof(uint16) : sizeof(uint32));
-					for (int yp = boxBounds.top; yp <= boxBounds.bottom; ++yp) {
-						p += boxBounds.left;
-						for (int xp = boxBounds.left; xp <= boxBounds.right; ++xp, ++p) {
-							// TODO: Manage 4-bit clut data in this case
-							if (*p)
-								*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = *p;
+						for (int xp = boxBounds.left; xp <= boxBounds.right; ++xp) {
+							if (*(p + (xp - boxBounds.left)))
+								*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = *(p + (xp - boxBounds.left));
 						}
-						p += 3 - boxBounds.right;
-					}
+				} else {
+					if (*p & 0x0f || !transparency)
+						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 0) = (*p & 0x0f) + palStart;
+					if ((*p & 0xf0) >> 4 || !transparency)
+						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 1) = ((*p & 0xf0) >> 4) + palStart;
+					if (*(p + 1) & 0x0f || !transparency)
+						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 2) = (*(p + 1) & 0x0f) + palStart;
+					if ((*(p + 1) & 0xf0) >> 4 || !transparency)
+						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 3) = ((*(p + 1) & 0xf0) >> 4) + palStart;
 				}
 			}
 
@@ -770,7 +751,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 			if (TinselV1PSX) {
 				uint8 paletteType = *(srcPtr); // if 0x88 we are using an 8bit palette type, if 0x44 we are using a 4 bit PSX CLUT
 				uint8 indexType = *(srcPtr + 1); // if 0xCC indexes for this image are compressed with PCJRLE, if 0xDD indexes are not compressed
-			
+		
 				switch (paletteType) {
 					case 0x88: // Normal 8-bit palette
 						psxFourBitClut = false; 
@@ -874,24 +855,13 @@ void DrawObject(DRAWOBJECT *pObj) {
 		// Tinsel v1 decoders, PSX specific variants
 		switch (typeId) {
 		case 0x01:
-		case 0x08:
 		case 0x41:
+			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, pObj->pPal->posInDAC, true);
+			break;
+		case 0x08:
 		case 0x48:
-			PsxWrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, pObj->pPal->posInDAC);
+			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, pObj->pPal->posInDAC, false);
 			break;
-
-		case 0x04:
-		case 0x44:
-			// WrtConst with/without clipping
-			WrtConst(pObj, destPtr, typeId == 0x44);
-			break;
-
-		case 0x84:
-		case 0xC4:
-			// WrtTrans with/without clipping
-			WrtTrans(pObj, destPtr, typeId == 0xC4);
-			break;
-
 		default:
 			error("Unknown drawing type %d", typeId);
 		}
