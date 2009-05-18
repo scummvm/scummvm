@@ -597,6 +597,7 @@ int TIMInterpreter::cmd_wsaDisplayFrame(const uint16 *param) {
 	Animation &anim = _animations[param[0]];
 	const int frame = param[1];
 	int page = (anim.wsaCopyParams & 0x4000) != 0 ? 2 : _drawPage2;
+	// WORKAROUND for some bugged scripts that will try to display frames of non-existent animations
 	if (anim.wsa)
 		anim.wsa->displayFrame(frame, page, anim.x, anim.y, anim.wsaCopyParams & 0xF0FF, 0, 0);
 	if (!page)
@@ -945,6 +946,7 @@ void TIMInterpreter_LoL::startBackgroundAnimation(int animIndex, int part) {
 	anim->curFrame = p->firstFrame;
 	anim->cyclesCompleted = 0;
 
+	// WORKAROUND for some bugged scripts that will try to display frames of non-existent animations
 	if (anim->wsa)
 		anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0);
 }

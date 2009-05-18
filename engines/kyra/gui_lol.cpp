@@ -1308,7 +1308,7 @@ int LoLEngine::clickedScenePickupItem(Button *button) {
 
 	int p = 0;
 	for (int i = 0; i < len; i++) {
-		p = _screen->getPagePixel(_screen->_curPage, _mouseX + checkX[i], _mouseY + checkY[i]);
+		p = _screen->getPagePixel(_screen->_curPage, CLIP(_mouseX + checkX[i], 0, 320), CLIP(_mouseY + checkY[i], 0, 200));
 		if (p)
 			break;
 	}
@@ -2115,7 +2115,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 			buttonList->flags2 |= flags;
 
 			if (buttonList->buttonCallback) {
-				_vm->removeInputTop();
+				//_vm->removeInputTop();
 				if ((*buttonList->buttonCallback.get())(buttonList))
 					break;
 			}

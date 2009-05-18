@@ -1254,8 +1254,12 @@ private:
 	void processMagicHeal(int charNum, int spellLevel);
 	void processMagicIce(int charNum, int spellLevel);
 	void processMagicFireball(int charNum, int spellLevel);
+	void processMagicHandOfFate(int charNum, int spellLevel);
 	void processMagicMistOfDoom(int charNum, int spellLevel);
+	void processMagicLightning(int charNum, int spellLevel);
+	void processMagicFog();
 	void processMagicSwarm(int charNum, int damage);
+	void processMagicGuardian(int charNum, int spellLevel);
 
 	void callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y);
 
