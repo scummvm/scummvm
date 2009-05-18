@@ -244,13 +244,6 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 #define GET_OP_SIGNED_WORD() (((int16)READ_LE_UINT16(code_buf + ((xs->addr.pc.offset) += 2) - 2)))
 #define GET_OP_SIGNED_FLEX() ((opcode & 1)? GET_OP_SIGNED_BYTE() : GET_OP_SIGNED_WORD())
 
-#define SEG_GET_HEAP(s, reg) s->seg_manager->getHeap(reg)
-#define OBJ_SPECIES(s, reg) SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + SCRIPT_SPECIES_OFFSET))
-// Returns an object's species
-
-#define OBJ_SUPERCLASS(s, reg) SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + SCRIPT_SUPERCLASS_OFFSET))
-// Returns an object's superclass
-
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
 	int seg = s->seg_manager->segGet(script);
 	Script *scr = s->seg_manager->getScriptIfLoaded(seg);
@@ -1704,7 +1697,7 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 int script_instantiate_sci0(EngineState *s, int script_nr) {
 	int objtype;
 	unsigned int objlength;
-	reg_t reg, reg_tmp;
+	reg_t reg;
 	int seg_id;
 	int relocation = -1;
 	int magic_pos_adder; // Usually 0; 2 for older SCI versions
@@ -1745,17 +1738,16 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	// export table and local variable block
 
 	objlength = 0;
-	reg_tmp = reg;
 	reg.offset = magic_pos_adder;
 
 	do {
 		reg_t data_base;
 		reg_t addr;
 		reg.offset += objlength; // Step over the last checked object
-		objtype = SEG_GET_HEAP(s, reg);
+		objtype = scr->getHeap(reg.offset);
 		if (!objtype) break;
 
-		objlength = SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + 2));
+		objlength = scr->getHeap(reg.offset + 2);
 
 		data_base = reg;
 		data_base.offset += 4;
@@ -1780,8 +1772,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 		case SCI_OBJ_CLASS: {
 			int classpos = addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 			int species;
-			reg_tmp.offset = addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
-			species = OBJ_SPECIES(s, reg_tmp);
+			species = scr->getHeap(addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
 			if (species < 0 || species >= (int)s->_classtable.size()) {
 				sciprintf("Invalid species %d(0x%x) not in interval "
 				          "[0,%d) while instantiating script %d\n",
@@ -1810,9 +1801,9 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 	do {
 		reg_t addr;
 		reg.offset += objlength; // Step over the last checked object
-		objtype = SEG_GET_HEAP(s, reg);
+		objtype = scr->getHeap(reg.offset);
 		if (!objtype) break;
-		objlength = SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + 2));
+		objlength = scr->getHeap(reg.offset + 2);
 		reg.offset += 4; // Step over header
 
 		addr = reg;
@@ -1887,7 +1878,7 @@ int script_instantiate_sci11(EngineState *s, int script_nr) {
 	s->seg_manager->scriptInitialiseObjectsSci11(s, seg_id);
 
 	reg.offset = READ_LE_UINT16(heap->data);
-	s->seg_manager->heapRelocate(s, reg);
+	s->seg_manager->heapRelocate(reg);
 
 	return seg_id;
 }
@@ -1910,10 +1901,10 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 	do {
 		reg.offset += objlength; // Step over the last checked object
 
-		objtype = SEG_GET_HEAP(s, reg);
+		objtype = scr->getHeap(reg.offset);
 		if (!objtype)
 			break;
-		objlength = SEG_GET_HEAP(s, make_reg(reg.segment, reg.offset + 2));  // use SEG_UGET_HEAP ??
+		objlength = scr->getHeap(reg.offset + 2);  // use SEG_UGET_HEAP ??
 
 		reg.offset += 4; // Step over header
 
@@ -1922,7 +1913,7 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 
 			reg.offset -= SCRIPT_OBJECT_MAGIC_OFFSET;
 
-			superclass = OBJ_SUPERCLASS(s, reg); // Get superclass...
+			superclass = scr->getHeap(reg.offset + SCRIPT_SUPERCLASS_OFFSET); // Get superclass...
 
 			if (superclass >= 0) {
 				int superclass_script = s->_classtable[superclass].script;

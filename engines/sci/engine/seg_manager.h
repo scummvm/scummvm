@@ -161,12 +161,6 @@ public:
 
 	// 3. Objects (static, from Scripts, and dynmic, from Clones)
 
-	// Not all of these functions are fully operational for clones ATM
-
-	// Retrieves a 16 bit value from within a script's heap representation
-	// Parameters: (reg_t) reg: The address to read from
-	// Returns   : (int16) The value read from the specified location
-	int16 getHeap(reg_t reg);
 
 
 	// 4. Stack
@@ -265,7 +259,7 @@ public:
 
 
 
-	void heapRelocate(EngineState *s, reg_t block);
+	void heapRelocate(reg_t block);
 	void scriptRelocateExportsSci11(int seg);
 	void scriptInitialiseObjectsSci11(EngineState *s, int seg);
 	int initialiseScript(Script &scr, EngineState *s, int script_nr);

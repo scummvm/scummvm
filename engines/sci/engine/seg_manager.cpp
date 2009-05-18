@@ -363,23 +363,10 @@ void Script::mcpyInOut(int dst, const void *src, size_t n) {
 	}
 }
 
-int16 SegManager::getHeap(reg_t reg) {
-	MemObject *mobj;
-	Script *scr;
-
-	VERIFY(check(reg.segment), "Invalid seg id");
-	mobj = _heap[reg.segment];
-
-	switch (mobj->getType()) {
-	case MEM_OBJ_SCRIPT:
-		scr = (Script *)mobj;
-		VERIFY(reg.offset + 1 < (uint16)scr->buf_size, "invalid offset\n");
-		return (scr->buf[reg.offset] | (scr->buf[reg.offset+1]) << 8);
-	default:
-		error("SegManager::getHeap: unsupported mem obj type %d", mobj->getType());
-		break;
-	}
-	return 0; // never get here
+int16 Script::getHeap(uint16 offset) const {
+	VERIFY(offset + 1 < (int)buf_size, "invalid offset\n");
+	return READ_LE_UINT16(buf + offset);
+//	return (buf[offset] | (buf[offset+1]) << 8);
 }
 
 // return the seg if script_id is valid and in the map, else -1
@@ -560,7 +547,7 @@ void SegManager::scriptRelocate(reg_t block) {
 	}
 }
 
-void SegManager::heapRelocate(EngineState *s, reg_t block) {
+void SegManager::heapRelocate(reg_t block) {
 	Script *scr = getScript(block.segment);
 
 	VERIFY(block.offset < (uint16)scr->heap_size && READ_LE_UINT16(scr->heap_start + block.offset) * 2 + block.offset < (uint16)scr->buf_size,

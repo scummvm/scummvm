@@ -451,6 +451,13 @@ public:
 		return _markedAsDeleted;
 	}
 
+	/**
+	 * Retrieves a 16 bit value from within a script's heap representation.
+	 * @param offset	offset to read from
+	 * @return the value read from the specified location
+	 */
+	int16 getHeap(uint16 offset) const;
+
 };
 
 /** Data stack */
