@@ -38,14 +38,14 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
 		//sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
 		//script_debug_flag = script_error_flag = 1;
-		warning("%s, L%d: Attempt to use non-node "PREG" as list node", __FILE__, __LINE__, PRINT_REG(addr));
+		warning("Attempt to use non-node "PREG" as list node", PRINT_REG(addr));
 		return NULL;
 	}
 
 	NodeTable *nt = (NodeTable *)mobj;
 
 	if (!ENTRY_IS_VALID(nt, addr.offset)) {
-		sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node", __FILE__, __LINE__, PRINT_REG(addr));
+		sciprintf("Attempt to use non-node "PREG" as list node\n", PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -57,7 +57,7 @@ List *lookup_list(EngineState *s, reg_t addr) {
 	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (!mobj) {
-		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list", __FILE__, __LINE__, PRINT_REG(addr));
+		sciprintf("Attempt to use non-list "PREG" as list\n", PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -65,7 +65,7 @@ List *lookup_list(EngineState *s, reg_t addr) {
 	ListTable *lt = (ListTable *)mobj;
 
 	if (!ENTRY_IS_VALID(lt, addr.offset)) {
-		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list\n", __FILE__, __LINE__, PRINT_REG(addr));
+		sciprintf("Attempt to use non-list "PREG" as list\n", PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
