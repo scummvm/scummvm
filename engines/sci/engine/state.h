@@ -224,10 +224,8 @@ public:
 	StackPtr stack_base; /**< Pointer to the least stack element */
 	StackPtr stack_top; /**< First invalid stack element */
 
-	SegmentId parser_segment;  /**< A heap area used by the parser for error reporting */
 	reg_t parser_base; /**< Base address for the parser error reporting mechanism */
 	reg_t parser_event; /**< The event passed to Parse() and later used by Said() */
-	SegmentId script_000_segment;
 	Script *script_000;  /**< script 000, e.g. for globals */
 	
 	uint16 currentRoomNumber() { return KP_UINT(script_000->locals_block->_locals[13]); }

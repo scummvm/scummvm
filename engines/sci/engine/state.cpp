@@ -116,10 +116,8 @@ EngineState::EngineState() : _dirseeker(this) {
 	stack_base = 0;
 	stack_top = 0;
 
-	parser_segment = 0;
 	parser_base = NULL_REG;
 	parser_event = NULL_REG;
-	script_000_segment = 0;
 	script_000 = 0;
 
 	string_frag_segment = 0;

@@ -93,10 +93,6 @@ static void init_console() {
 	             "SCI01 priority table debugging flags: 1:Disable, 2:Print on change\n");
 }
 
-static int init_gamestate(EngineState *gamestate, sci_version_t version) {
-	return script_init_engine(gamestate, version);
-}
-
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 		: Engine(syst), _gameDescription(desc) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -230,7 +226,7 @@ Common::Error SciEngine::run() {
 		error ("Unknown SCI version in game entry");
 	}
 
-	if (init_gamestate(gamestate, version))
+	if (script_init_engine(gamestate, version))
 		return Common::kUnknownError;
 
 
