@@ -862,6 +862,11 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x48:
 			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, pObj->pPal->posInDAC, false);
 			break;
+		case 0x84:
+		case 0xC4:
+			// WrtTrans with/without clipping
+			WrtTrans(pObj, destPtr, typeId == 0xC4);
+			break;
 		default:
 			error("Unknown drawing type %d", typeId);
 		}
