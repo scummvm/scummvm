@@ -920,7 +920,7 @@ reg_t kNumLoops(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	SCIkdebug(SCIkGRAPHICS, "NumLoops(view.%d) = %d", view, loops_nr);
+	SCIkdebug(SCIkGRAPHICS, "NumLoops(view.%d) = %d\n", view, loops_nr);
 
 	return make_reg(0, loops_nr);
 }
