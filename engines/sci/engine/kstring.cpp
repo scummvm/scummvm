@@ -188,8 +188,8 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->_synonyms.clear();
 
-	list = LOOKUP_LIST(GET_SEL32(object, elements));
-	node = LOOKUP_NODE(list->first);
+	list = lookup_list(s, GET_SEL32(object, elements));
+	node = lookup_node(s, list->first);
 
 	while (node) {
 		reg_t objpos = node->value;
@@ -227,7 +227,7 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		}
 
-		node = LOOKUP_NODE(node->succ);
+		node = lookup_node(s, node->succ);
 	}
 
 	SCIkdebug(SCIkPARSER, "A total of %d synonyms are active now.\n", s->_synonyms.size());

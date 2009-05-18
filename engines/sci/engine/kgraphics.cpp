@@ -817,10 +817,10 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 	}
 
 	if (cliplist_ref.segment)
-		cliplist = LOOKUP_LIST(cliplist_ref);
+		cliplist = lookup_list(s, cliplist_ref);
 
 	if (cliplist) {
-		Node *node = LOOKUP_NODE(cliplist->first);
+		Node *node = lookup_node(s, cliplist->first);
 
 		retval = 0; // Assume that we Can'tBeHere...
 
@@ -838,7 +838,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 				}
 
 			} // if (other_obj != obj)
-			node = LOOKUP_NODE(node->succ); // move on
+			node = lookup_node(s, node->succ); // move on
 		}
 	}
 
@@ -1983,7 +1983,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 		BREAKPOINT();
 	}
 
-	node = LOOKUP_NODE(list->first);
+	node = lookup_node(s, list->first);
 	while (node) {
 		reg_t obj = node->value; // The object we're using
 		reg_t next_node;
@@ -2008,7 +2008,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 		if (tempWidget)
 			GFX_ASSERT((*widget_list)->add(GFXWC(*widget_list), tempWidget));
 
-		node = LOOKUP_NODE(next_node); // Next node
+		node = lookup_node(s, next_node); // Next node
 	}
 
 	widget = (GfxDynView *)(*widget_list)->_contents;
@@ -2312,7 +2312,7 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		list = LOOKUP_LIST(list_ref);
+		list = lookup_list(s, list_ref);
 
 		pic_views = gfxw_new_list(s->picture_port->_bounds, 1);
 
@@ -2976,7 +2976,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 						// after all, damage the cast list
 
 	if (cast_list_ref.segment) {
-		cast_list = LOOKUP_LIST(cast_list_ref);
+		cast_list = lookup_list(s, cast_list_ref);
 		if (!cast_list)
 			return s->r_acc;
 	}

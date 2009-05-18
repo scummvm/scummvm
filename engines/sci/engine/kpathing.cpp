@@ -385,18 +385,18 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 	if (!poly_list.segment)
 		return;
 
-	list = LOOKUP_LIST(poly_list);
+	list = lookup_list(s, poly_list);
 
 	if (!list) {
 		warning("[avoidpath] Could not obtain polygon list");
 		return;
 	}
 
-	node = LOOKUP_NODE(list->first);
+	node = lookup_node(s, list->first);
 
 	while (node) {
 		draw_polygon(s, node->value);
-		node = LOOKUP_NODE(node->succ);
+		node = lookup_node(s, node->succ);
 	}
 }
 
@@ -431,7 +431,7 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	if (!poly_list.segment)
 		return;
 
-	list = LOOKUP_LIST(poly_list);
+	list = lookup_list(s, poly_list);
 
 	if (!list) {
 		warning("[avoidpath] Could not obtain polygon list");
@@ -439,11 +439,11 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	}
 
 	sciprintf("Polygons:\n");
-	node = LOOKUP_NODE(list->first);
+	node = lookup_node(s, list->first);
 
 	while (node) {
 		print_polygon(s, node->value);
-		node = LOOKUP_NODE(node->succ);
+		node = lookup_node(s, node->succ);
 	}
 }
 
@@ -1367,11 +1367,11 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 	// Convert all polygons
 	if (poly_list.segment) {
-		List *list = LOOKUP_LIST(poly_list);
-		Node *node = LOOKUP_NODE(list->first);
+		List *list = lookup_list(s, poly_list);
+		Node *node = lookup_node(s, list->first);
 
 		while (node) {
-			Node *dup = LOOKUP_NODE(list->first);
+			Node *dup = lookup_node(s, list->first);
 
 			// Workaround for game bugs that put a polygon in the list more than once
 			while (dup != node) {
@@ -1379,7 +1379,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 					warning("[avoidpath] Ignoring duplicate polygon");
 					break;
 				}
-				dup = LOOKUP_NODE(dup->succ);
+				dup = lookup_node(s, dup->succ);
 			}
 
 			if (dup == node) {
@@ -1389,7 +1389,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 				count += KP_UINT(GET_SEL32(node->value, size));
 			}
 
-			node = LOOKUP_NODE(node->succ);
+			node = lookup_node(s, node->succ);
 		}
 	}
 

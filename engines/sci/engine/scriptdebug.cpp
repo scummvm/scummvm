@@ -82,9 +82,12 @@ int _kdebug_cheap_soundcue_hack = -1;
 
 char inputbuf[256] = "";
 
+#if 0
+// Unused
 #define LOOKUP_SPECIES(species) (\
 	(species >= 1000) ? species : *(s->_classtable[species].scriptposp) \
 		+ s->_classtable[species].class_offset)
+#endif
 
 const char *_debug_get_input_default() {
 	char newinpbuf[256];
@@ -573,7 +576,7 @@ static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 			break;
 
 		case KSIG_LIST: {
-			List *l = LOOKUP_LIST(reg);
+			List *l = lookup_list(s, reg);
 
 			sciprintf("list\n");
 

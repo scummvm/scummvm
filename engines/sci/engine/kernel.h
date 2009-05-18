@@ -236,25 +236,18 @@ void _k_dyn_view_list_accept_change(EngineState *s);
 
 void process_sound_events(EngineState *s); /* Get all sound events, apply their changes to the heap */
 
-#define LOOKUP_NODE(addr) lookup_node(s, (addr), __FILE__, __LINE__)
-#define LOOKUP_LIST(addr) lookup_list(s, addr, __FILE__, __LINE__)
-
-Node *lookup_node(EngineState *s, reg_t addr, const char *file, int line);
+Node *lookup_node(EngineState *s, reg_t addr);
 /* Resolves an address into a list node
 ** Parameters: (EngineState *) s: The state to operate on
 **             (reg_t) addr: The address to resolve
-**             (const char *) file: The file the function was called from
-**             (int) line: The line number the function was called from
 ** Returns   : (Node *) The list node referenced, or NULL on error
 */
 
 
-List *lookup_list(EngineState *s, reg_t addr, const char *file, int line);
+List *lookup_list(EngineState *s, reg_t addr);
 /* Resolves a list pointer to a list
 ** Parameters: (EngineState *) s: The state to operate on
 **             (reg_t) addr: The address to resolve
-**             (const char *) file: The file the function was called from
-**             (int) line: The line number the function was called from
 ** Returns   : (List *) The list referenced, or NULL on error
 */
 
