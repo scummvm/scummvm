@@ -469,7 +469,7 @@ int SoundMgr::initSound() {
 		report("disabled\n");
 	}
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 
 	return r;
 }
