@@ -3062,14 +3062,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "SEE ALSO\n"
 			                 "  debuglog.1, sfx_debuglog.1\n");
 
-#ifdef SCI_SIMPLE_SAID_CODE
-			con_hook_command(c_sim_parse, "simparse", "s*", "Simulates a parsed entity.\n\nUSAGE\n  Call this"
-			                 " function with a list of\n  Said operators, words, and word group"
-			                 "\n  numbers to match Said() specs\n  that look identical.\n"
-			                 "\n  Note that opening braces and\n  everything behind them are\n"
-			                 "\n  removed from all non-operator\n  parameter tokens.\n"
-			                 "\n  simparse without parameters\n  removes the entity.\n");
-#endif /* SCI_SIMPLE_SAID_CODE */
 #ifdef GFXW_DEBUG_WIDGETS
 			con_hook_command(c_gfx_print_widget, "gfx_print_widget", "i*", "If called with no parameters, it\n  shows which widgets are active.\n"
 			                 "  With parameters, it lists the\n  widget corresponding to the\n  numerical index specified (for\n  each parameter).");

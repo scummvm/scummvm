@@ -228,7 +228,7 @@ public:
 	reg_t parser_event; /**< The event passed to Parse() and later used by Said() */
 	Script *script_000;  /**< script 000, e.g. for globals */
 	
-	uint16 currentRoomNumber() { return KP_UINT(script_000->locals_block->_locals[13]); }
+	uint16 currentRoomNumber() const { return KP_UINT(script_000->locals_block->_locals[13]); }
 
 	int parser_lastmatch_word; /**< Position of the input word the parser last matched on, or SAID_NO_MATCH */
 

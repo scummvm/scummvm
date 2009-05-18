@@ -77,41 +77,6 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 /* Parser */
 /**********/
 
-#ifdef SCI_SIMPLE_SAID_CODE
-int vocab_match_simple(EngineState *s, HeapPtr addr) {
-	int nextitem;
-	int listpos = 0;
-
-	if (!s->parser_valid)
-		return SAID_NO_MATCH;
-
-	if (s->parser_valid == 2) { /* debug mode: sim_said */
-		do {
-			sciprintf("DEBUGMATCH: ");
-			nextitem = s->heap[addr++];
-
-			if (nextitem < 0xf0) {
-				nextitem = nextitem << 8 | s->heap[addr++];
-				if (s->parser_nodes[listpos].type
-				        || nextitem != s->parser_nodes[listpos++].content.value)
-					return SAID_NO_MATCH;
-			} else {
-
-				if (nextitem == 0xff)
-					return (s->parser_nodes[listpos++].type == -1) ? SAID_FULL_MATCH : SAID_NO_MATCH; /* Finished? */
-
-				if (s->parser_nodes[listpos].type != 1
-				        || nextitem != s->parser_nodes[listpos++].content.value)
-					return SAID_NO_MATCH;
-
-			}
-		} while (42);
-	} else { /* normal simple match mode */
-		return vocab_simple_said_test(s, addr);
-	}
-}
-#endif /* SCI_SIMPLE_SAID_CODE */
-
 
 reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t heap_said_block = argv[0];
@@ -137,29 +102,8 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-#ifdef SCI_SIMPLE_SAID_CODE
-
-	s->acc = 0;
-
-	if (s->parser_lastmatch_word == SAID_FULL_MATCH)
-		return; /* Matched before; we're not doing any more matching work today. */
-
-	if ((new_lastmatch = vocab_match_simple(s, said_block)) != SAID_NO_MATCH) {
-
-		if (s->debug_mode & (1 << SCIkPARSER_NR))
-			sciprintf("Match (simple).\n");
-		s->acc = 1;
-
-		if (new_lastmatch == SAID_FULL_MATCH) /* Finished matching? */
-			PUT_SELECTOR(s->parser_event, claimed, 1); /* claim event */
-		/* otherwise, we have a partial match: Set new lastmatch word in all cases. */
-
-		s->parser_lastmatch_word = new_lastmatch;
-	}
-
-#else /* !SCI_SIMPLE_SAID_CODE */
-	if ((new_lastmatch = said(s, said_block, (s->debug_mode & (1 << SCIkPARSER_NR))))
-	        != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
+	new_lastmatch = said(s, said_block, (s->debug_mode & (1 << SCIkPARSER_NR)));
+	if (new_lastmatch  != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
 
 		if (s->debug_mode & (1 << SCIkPARSER_NR))
 			sciprintf("Match.\n");
@@ -175,7 +119,6 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->parser_lastmatch_word = SAID_NO_MATCH;
 		return NULL_REG;
 	}
-#endif /* !SCI_SIMPLE_SAID_CODE */
 	return s->r_acc;
 }
 
@@ -275,10 +218,6 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		                           s->parser_rules))
 			syntax_fail = 1; /* Building a tree failed */
 
-#ifdef SCI_SIMPLE_SAID_CODE
-		vocab_build_simple_parse_tree(&(s->parser_nodes[0]), words);
-#endif /* SCI_SIMPLE_SAID_CODE */
-
 		if (syntax_fail) {
 
 			s->r_acc = make_reg(0, 1);
@@ -292,10 +231,8 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		} else {
 			s->parser_valid = 1;
 			PUT_SEL32V(event, claimed, 0);
-#ifndef SCI_SIMPLE_SAID_CODE
 			if (s->debug_mode & (1 << SCIkPARSER_NR))
 				vocab_dump_parse_tree("Parse-tree", s->parser_nodes);
-#endif /* !SCI_SIMPLE_SAID_CODE */
 		}
 
 	} else {
