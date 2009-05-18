@@ -254,10 +254,12 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 					saveGameState(saveLoadSlot, savegameName, 0);
 				}
 			} else if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == 'd')
-					_debugger->attach();
-				else if (event.kbd.keycode == 'q')
+				if (event.kbd.keycode == 'd') {
+					if (_debugger)
+						_debugger->attach();
+				} else if (event.kbd.keycode == 'q') {
 					quitGame();
+				}
 			} else {
 				switch(event.kbd.keycode) {
 				case Common::KEYCODE_SPACE:
