@@ -92,9 +92,6 @@ SegManager::SegManager(bool sci1_1) {
 
 	exports_wide = 0;
 	isSci1_1 = sci1_1;
-
-	// gc initialisation
-	gc_mark_bits = 0;
 }
 
 // Destroy the object, free the memorys if allocated before
@@ -114,25 +111,22 @@ SegManager::~SegManager() {
 // Returns   : 0 - allocation failure
 //             1 - allocated successfully
 //             seg_id - allocated segment id
-Script *SegManager::allocateScript(EngineState *s, int script_nr, int* seg_id) {
-	int seg;
+Script *SegManager::allocateScript(EngineState *s, int script_nr, SegmentId *seg_id) {
 	bool was_added;
-	MemObject* mem;
+	MemObject *mem;
 
-	seg = id_seg_map->checkKey(script_nr, true, &was_added);
+	*seg_id = id_seg_map->checkKey(script_nr, true, &was_added);
 	if (!was_added) {
-		*seg_id = seg;
 		return (Script *)_heap[*seg_id];
 	}
 
 	// allocate the MemObject
-	mem = memObjAllocate(seg, script_nr, MEM_OBJ_SCRIPT);
+	mem = memObjAllocate(*seg_id, script_nr, MEM_OBJ_SCRIPT);
 	if (!mem) {
 		sciprintf("%s, %d, Not enough memory, ", __FILE__, __LINE__);
 		return NULL;
 	}
 
-	*seg_id = seg;
 	return (Script *)mem;
 }
 
@@ -206,7 +200,7 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 	return 1;
 }
 
-int SegManager::deallocate(int seg, bool recursive) {
+int SegManager::deallocate(SegmentId seg, bool recursive) {
 	MemObject *mobj;
 	VERIFY(check(seg), "invalid seg id");
 
@@ -267,7 +261,7 @@ bool SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
 
 
 int SegManager::deallocateScript(int script_nr) {
-	int seg = segGet(script_nr);
+	SegmentId seg = segGet(script_nr);
 
 	deallocate(seg, true);
 
@@ -370,11 +364,11 @@ int16 Script::getHeap(uint16 offset) const {
 }
 
 // return the seg if script_id is valid and in the map, else -1
-int SegManager::segGet(int script_id) const {
+SegmentId SegManager::segGet(int script_id) const {
 	return id_seg_map->lookupKey(script_id);
 }
 
-Script *SegManager::getScript(const int seg) {
+Script *SegManager::getScript(const SegmentId seg) {
 	if (seg < 0 || (uint)seg >= _heap.size()) {
 		error("SegManager::getScript(): seg id %x out of bounds", seg);
 	}
@@ -387,7 +381,7 @@ Script *SegManager::getScript(const int seg) {
 	return (Script *)_heap[seg];
 }
 
-Script *SegManager::getScriptIfLoaded(const int seg) {
+Script *SegManager::getScriptIfLoaded(const SegmentId seg) {
 	if (seg < 0 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
 		return 0;
 	return (Script *)_heap[seg];
@@ -397,7 +391,7 @@ Script *SegManager::getScriptIfLoaded(const int seg) {
 // return:
 //	false - invalid seg
 //	true  - valid seg
-bool SegManager::check(int seg) {
+bool SegManager::check(SegmentId seg) {
 	if (seg < 0 || (uint)seg >= _heap.size()) {
 		return false;
 	}
@@ -408,7 +402,7 @@ bool SegManager::check(int seg) {
 	return true;
 }
 
-bool SegManager::scriptIsLoaded(int seg) {
+bool SegManager::scriptIsLoaded(SegmentId seg) {
 	return getScriptIfLoaded(seg) != 0;
 }
 
@@ -768,7 +762,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 	}
 }
 
-void SegManager::scriptRelocateExportsSci11(int seg) {
+void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
 	for (int i = 0; i < scr->exports_nr; i++) {
 		/* We are forced to use an ugly heuristic here to distinguish function
@@ -784,7 +778,7 @@ void SegManager::scriptRelocateExportsSci11(int seg) {
 	}
 }
 
-void SegManager::scriptInitialiseObjectsSci11(EngineState *s, int seg) {
+void SegManager::scriptInitialiseObjectsSci11(EngineState *s, SegmentId seg) {
 	Script *scr = getScript(seg);
 	byte *seeker = scr->heap_start + 4 + READ_LE_UINT16(scr->heap_start + 2) * 2;
 
@@ -875,7 +869,7 @@ SegmentId SegManager::allocateStringFrags() {
 	return segid;
 }
 
-uint16 SegManager::validateExportFunc(int pubfunct, int seg) {
+uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
 	Script *scr = getScript(seg);
 	if (scr->exports_nr <= pubfunct) {
 		sciprintf("pubfunct is invalid");

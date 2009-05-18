@@ -160,7 +160,7 @@ void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 void MenuItem::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_type);
 	s.syncString(_keytext);
-	s.skip(4); 	// Used to be keytext_size (an already unused field)
+	s.skip(4); 	// Obsolete: Used to be keytext_size
 
 	s.syncAsSint32LE(_flags);
 	s.syncBytes(_said, MENU_SAID_SPEC_SIZE);
@@ -189,7 +189,7 @@ void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(reserved_id);
 	s.syncAsSint32LE(exports_wide);
-	s.syncAsSint32LE(gc_mark_bits);
+	s.skip(4);	// Obsolete: Used to be gc_mark_bits
 
 	id_seg_map->saveLoadWithSerializer(s);
 
@@ -587,8 +587,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 					scr->export_table = 0;
 					scr->synonyms = 0;
 					if (READ_LE_UINT16(scr->buf + 6) > 0) {
-						scr->export_table = (uint16 *)(scr->buf + 8);
-						scr->exports_nr = READ_LE_UINT16((byte *)(scr->export_table - 1));
+						scr->setExportTableOffset(6);
 					}
 				} else {
 					scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, SCI_OBJ_EXPORTS);

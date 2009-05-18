@@ -60,7 +60,7 @@ public:
 	//			      script data
 	// Returns   : (int) 0 on failure, 1 on success
 	//	       (int) *seg_id: The segment ID of the newly allocated segment, on success
-	Script *allocateScript(EngineState *s, int script_nr, int* seg_id);
+	Script *allocateScript(EngineState *s, int script_nr, SegmentId *seg_id);
 
 	// The script must then be initialised; see section (1b.), below.
 
@@ -73,19 +73,19 @@ public:
 	 * Determines whether a script has been loaded yet.
 	 * @param seg	ID of the script segment to check for
 	 */
-	bool scriptIsLoaded(int seg);
+	bool scriptIsLoaded(SegmentId seg);
 
 	// Validate whether the specified public function is exported by the script in the specified segment
 	// Parameters:	(int) pubfunct: Index of the function to validate
 	//		(int) seg: Segment ID of the script the check is to be performed for
 	// Returns   :  (uint16) 0 if the public function is invalid, its offset into the script's segment
 	//			 otherwise
-	uint16 validateExportFunc(int pubfunct, int seg);
+	uint16 validateExportFunc(int pubfunct, SegmentId seg);
 
 	// Get the segment ID associated with a script number
 	// Parameters: (int) script_nr: Number of the script to look up
 	// Returns   : (int) The associated segment ID, or -1 if no matching segment exists
-	int segGet(int script_nr) const;
+	SegmentId segGet(int script_nr) const;
 
 	/**
 	 * Return a pointer to the specified script. If the id is invalid, does not refer
@@ -93,14 +93,14 @@ public:
 	 * @param seg	ID of the script segment to check for
 	 * @return pointer to the Script object
 	 */
-	Script *getScript(int seg);
+	Script *getScript(SegmentId seg);
 
 	/**
 	 * Return a pointer to the specified script. If the id is invalid, does not refer
 	 * @param seg	ID of the script segment to check for
 	 * @return pointer to the Script object, or NULL
 	 */
-	Script *getScriptIfLoaded(int seg);
+	Script *getScriptIfLoaded(SegmentId seg);
 
 
 
@@ -260,8 +260,8 @@ public:
 
 
 	void heapRelocate(reg_t block);
-	void scriptRelocateExportsSci11(int seg);
-	void scriptInitialiseObjectsSci11(EngineState *s, int seg);
+	void scriptRelocateExportsSci11(SegmentId seg);
+	void scriptInitialiseObjectsSci11(EngineState *s, SegmentId seg);
 	int initialiseScript(Script &scr, EngineState *s, int script_nr);
 
 private:
@@ -272,11 +272,6 @@ public: // TODO: make private
 	int exports_wide;
 	bool isSci1_1;
 
-	int gc_mark_bits;
-	// For standard Mark&Sweep:
-	// 1 or 0, depending on what unreachable/freshly allocated
-	// memory is tagged as
-
 	SegmentId Clones_seg_id; // ID of the (a) clones segment
 	SegmentId Lists_seg_id; // ID of the (a) list segment
 	SegmentId Nodes_seg_id; // ID of the (a) node segment
@@ -286,7 +281,7 @@ private:
 	MemObject *allocNonscriptSegment(MemObjectType type, SegmentId *segid);
 	LocalVariables *allocLocalsSegment(Script *scr, int count);
 	MemObject *memObjAllocate(SegmentId segid, int hash_id, MemObjectType type);
-	int deallocate(int seg, bool recursive);
+	int deallocate(SegmentId seg, bool recursive);
 
 	Hunk *alloc_Hunk(reg_t *);
 
@@ -304,7 +299,7 @@ private:
 	** Returns   : (bool)	false if 'seg' is an invalid segment
 	**			true  if 'seg' is a valid segment
 	*/
-	bool check(int seg);
+	bool check(SegmentId seg);
 
 	void dbgPrint(const char* msg, void *i);	// for debug only
 
