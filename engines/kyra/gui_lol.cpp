@@ -1525,7 +1525,7 @@ int LoLEngine::clickedOptions(Button *button) {
 
 int LoLEngine::clickedRestParty(Button *button) {
 	gui_toggleButtonDisplayMode(77, 1);
-
+	
 	Button b;
 	memset(&b, 0, sizeof(Button));
 	b.data0Val2 = b.data1Val2 = b.data2Val2 = 0xfe;
@@ -1566,6 +1566,8 @@ int LoLEngine::clickedRestParty(Button *button) {
 
 		c->flags |= 0x1000;
 	}
+
+	removeInputTop();
 
 	if (needHealingFlags || needMagicGainFlags) {
 		_screen->fillRect(112, 0, 288, 120, 1);
