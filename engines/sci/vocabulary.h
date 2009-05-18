@@ -38,8 +38,6 @@ namespace Sci {
 class ResourceManager;
 
 /*#define VOCABULARY_DEBUG */
-/*#define SCI_SIMPLE_SAID_DEBUG */ /* uncomment to enable simple said debugging */
-
 
 #define SCRIPT_UNKNOWN_FUNCTION_STRING "[Unknown]"
 /* The string used to identify the "unknown" SCI0 function for each game */
