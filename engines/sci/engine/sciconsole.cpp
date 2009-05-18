@@ -203,7 +203,7 @@ void con_init() {
 }
 
 static inline int clone_is_used(CloneTable *t, int idx) {
-	return ENTRY_IS_VALID(t, idx);
+	return t->isValidEntry(idx);
 }
 
 int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on success

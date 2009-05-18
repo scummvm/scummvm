@@ -44,7 +44,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 
 	NodeTable *nt = (NodeTable *)mobj;
 
-	if (!ENTRY_IS_VALID(nt, addr.offset)) {
+	if (!nt->isValidEntry(addr.offset)) {
 		sciprintf("Attempt to use non-node "PREG" as list node\n", PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
@@ -64,7 +64,7 @@ List *lookup_list(EngineState *s, reg_t addr) {
 
 	ListTable *lt = (ListTable *)mobj;
 
-	if (!ENTRY_IS_VALID(lt, addr.offset)) {
+	if (!lt->isValidEntry(addr.offset)) {
 		sciprintf("Attempt to use non-list "PREG" as list\n", PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;

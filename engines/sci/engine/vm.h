@@ -564,9 +564,6 @@ public:
 //	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
-// FIXME: Replace ENTRY_IS_VALID by a direct method call
-#define ENTRY_IS_VALID(t, i) ((t)->isValidEntry(i))
-
 
 /* CloneTable */
 struct CloneTable : public Table<Clone> {

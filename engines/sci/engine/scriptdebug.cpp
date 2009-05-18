@@ -354,15 +354,15 @@ static void print_list(EngineState *s, List *l) {
 
 	while (!IS_NULL_REG(pos)) {
 		Node *node;
-		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_NODES);
+		NodeTable *nt = (NodeTable *)GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_NODES);
 
-		if (!mobj || !ENTRY_IS_VALID((NodeTable *)mobj, pos.offset)) {
+		if (!nt || !nt->isValidEntry(pos.offset)) {
 			sciprintf("   WARNING: "PREG": Doesn't contain list node!\n",
 			          PRINT_REG(pos));
 			return;
 		}
 
-		node = &((*(NodeTable *)mobj)._table[pos.offset]);
+		node = &(nt->_table[pos.offset]);
 
 		sciprintf("\t"PREG"  : "PREG" -> "PREG"\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
@@ -499,7 +499,7 @@ static int show_node(EngineState *s, reg_t addr) {
 		ListTable *lt = (ListTable *)mobj;
 		List *list;
 
-		if (!ENTRY_IS_VALID(lt, addr.offset)) {
+		if (!lt->isValidEntry(addr.offset)) {
 			sciprintf("Address does not contain a list\n");
 			return 1;
 		}
@@ -519,7 +519,7 @@ static int show_node(EngineState *s, reg_t addr) {
 
 		nt = (NodeTable *)mobj;
 
-		if (!ENTRY_IS_VALID(nt, addr.offset)) {
+		if (!nt->isValidEntry(addr.offset)) {
 			sciprintf("Address does not contain a node\n");
 			return 1;
 		}

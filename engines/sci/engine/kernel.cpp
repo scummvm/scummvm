@@ -240,8 +240,8 @@ bool has_kernel_function(EngineState *s, const char *kname) {
 byte *kmem(EngineState *s, reg_t handle) {
 	HunkTable *ht = (HunkTable *)GET_SEGMENT(*s->seg_manager, handle.segment, MEM_OBJ_HUNK);
 
-	if (!ht || !ENTRY_IS_VALID(ht, handle.offset)) {
-		error("Error: kmem() with invalid handle\n");
+	if (!ht || !ht->isValidEntry(handle.offset)) {
+		warning("Error: kmem() with invalid handle\n");
 		return NULL;
 	}
 
@@ -669,7 +669,7 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 			return KSIG_REF;
 
 	case MEM_OBJ_CLONES:
-		if (allow_invalid || ENTRY_IS_VALID((CloneTable *)mobj, reg.offset))
+		if (allow_invalid || ((CloneTable *)mobj)->isValidEntry(reg.offset))
 			return KSIG_OBJECT;
 		else
 			return KSIG_OBJECT | KSIG_INVALID;
@@ -694,13 +694,13 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 			return KSIG_REF | KSIG_INVALID;
 
 	case MEM_OBJ_LISTS:
-		if (allow_invalid || ENTRY_IS_VALID((ListTable *)mobj, reg.offset))
+		if (allow_invalid || ((ListTable *)mobj)->isValidEntry(reg.offset))
 			return KSIG_LIST;
 		else
 			return KSIG_LIST | KSIG_INVALID;
 
 	case MEM_OBJ_NODES:
-		if (allow_invalid || ENTRY_IS_VALID((NodeTable *)mobj, reg.offset))
+		if (allow_invalid || ((NodeTable *)mobj)->isValidEntry(reg.offset))
 			return KSIG_NODE;
 		else
 			return KSIG_NODE | KSIG_INVALID;

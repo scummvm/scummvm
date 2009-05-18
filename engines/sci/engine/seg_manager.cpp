@@ -1106,7 +1106,7 @@ void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *par
 
 //	assert(addr.segment == _segId);
 
-	if (!(ENTRY_IS_VALID(clone_table, addr.offset))) {
+	if (!clone_table->isValidEntry(addr.offset)) {
 		fprintf(stderr, "Unexpected request for outgoing references from clone at "PREG"\n", PRINT_REG(addr));
 //		BREAKPOINT();
 		return;
