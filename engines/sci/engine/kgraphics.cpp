@@ -226,7 +226,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 	while (port_nr > 2 && !(s->port->_flags & GFXW_FLAG_IMMUNE_TO_SNAPSHOTS) && (gfxw_widget_matches_snapshot(*ptr, s->port))) {
 		// This shouldn't ever happen, actually, since windows (ports w/ ID > 2) should all be immune
 		GfxPort *newport = gfxw_find_port(s->visual, port_nr);
-		error("Port %d is not immune against snapshots!\n", s->port->_ID);
+		error("Port %d is not immune against snapshots", s->port->_ID);
 		port_nr--;
 		if (newport)
 			s->port = newport;
@@ -240,7 +240,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 		} while (parent && (gfxw_widget_matches_snapshot(*ptr, parent)));
 
 		if (!parent) {
-			error("Attempted widget mass destruction by a snapshot\n");
+			error("Attempted widget mass destruction by a snapshot");
 			BREAKPOINT();
 		}
 
@@ -249,7 +249,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 
 
 	if (!ptr) {
-		error("Attempt to restore invalid snaphot with handle %04x!\n", handle);
+		error("Attempt to restore invalid snaphot with handle "PREG, PRINT_REG(handle));
 		return;
 	}
 
@@ -343,7 +343,7 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	default :
-		error("kSetCursor: Unhandled case: %d arguments given!\n", argc);
+		error("kSetCursor: Unhandled case: %d arguments given", argc);
 		break;
 	}
 	return s->r_acc;
@@ -698,7 +698,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc,
 	maxloops = gfxop_lookup_view_get_loops(s->gfx_state, view);
 
 	if (maxloops == GFX_ERROR) {
-		error("Invalid view.%03d\n", view);
+		error("Invalid view.%03d", view);
 		return;
 	} else if ((loop > 1) && (maxloops < 4))
 		return;
@@ -886,7 +886,7 @@ reg_t kCelHigh(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset)) {
-		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid\n", loop, cel, view, view);
+		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid", loop, cel, view, view);
 		return NULL_REG;
 	} else
 		return make_reg(0, height);
@@ -904,7 +904,7 @@ reg_t kCelWide(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset)) {
-		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid\n", loop, cel, view, view);
+		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid", loop, cel, view, view);
 		return NULL_REG;
 	} else
 		return make_reg(0, width);
@@ -916,11 +916,11 @@ reg_t kNumLoops(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int loops_nr = gfxop_lookup_view_get_loops(s->gfx_state, view);
 
 	if (loops_nr < 0) {
-		error("view.%d (0x%x) not found\n", view, view);
+		error("view.%d (0x%x) not found", view, view);
 		return NULL_REG;
 	}
 
-	SCIkdebug(SCIkGRAPHICS, "NumLoops(view.%d) = %d\n", view, loops_nr);
+	SCIkdebug(SCIkGRAPHICS, "NumLoops(view.%d) = %d", view, loops_nr);
 
 	return make_reg(0, loops_nr);
 }
@@ -935,7 +935,7 @@ reg_t kNumCels(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
 		// OK, this is a hack and there's a
 		// real function to calculate cel numbers...
-		error("view.%d (0x%x) not found\n", view, view);
+		error("view.%d (0x%x) not found", view, view);
 		return NULL_REG;
 	}
 

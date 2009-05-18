@@ -38,14 +38,14 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
 		//sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
 		//script_debug_flag = script_error_flag = 1;
-		warning("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
+		warning("%s, L%d: Attempt to use non-node "PREG" as list node", __FILE__, __LINE__, PRINT_REG(addr));
 		return NULL;
 	}
 
 	NodeTable *nt = (NodeTable *)mobj;
 
 	if (!ENTRY_IS_VALID(nt, addr.offset)) {
-		sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
+		sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node", __FILE__, __LINE__, PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -57,7 +57,7 @@ List *lookup_list(EngineState *s, reg_t addr) {
 	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (!mobj) {
-		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list\n", __FILE__, __LINE__, PRINT_REG(addr));
+		sciprintf("%s, L%d: Attempt to use non-list "PREG" as list", __FILE__, __LINE__, PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -302,7 +302,7 @@ reg_t kPrevNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kNodeValue(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0])) {
-		error("List node at "PREG" is not sane!\n", PRINT_REG(argv[0]));
+		error("List node at "PREG" is not sane", PRINT_REG(argv[0]));
 		script_debug_flag = script_error_flag = 0;
 		return NULL_REG;
 	}
@@ -321,11 +321,11 @@ reg_t kAddAfter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *newnode = lookup_node(s, argv[2]);
 
 	if (!l || !sane_listp(s, argv[0]))
-		error("List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List at "PREG" is not sane anymore", PRINT_REG(argv[0]));
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!newnode) {
-		warning("New 'node' "PREG" is not a node!\n", argv[1], argv[2]);
+		warning("New 'node' "PREG" is not a node", PRINT_REG(argv[2]));
 		return NULL_REG;
 	}
 
@@ -368,7 +368,7 @@ reg_t kFindKey(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	SCIkdebug(SCIkNODES, "Looking for key "PREG" in list "PREG"\n", PRINT_REG(key), PRINT_REG(list_pos));
 
 	if (!sane_listp(s, list_pos))
-		error("List at "PREG" is not sane anymore!\n", PRINT_REG(list_pos));
+		error("List at "PREG" is not sane anymore", PRINT_REG(list_pos));
 
 	node_pos = lookup_list(s, list_pos)->first;
 
