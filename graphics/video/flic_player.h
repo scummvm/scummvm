@@ -66,8 +66,7 @@ public:
 	void clearDirtyRects() { _dirtyRects.clear(); }
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
-	byte getPixel(int offset) { return _videoFrameBuffer[offset]; }
-	byte* getPalette() { _paletteChanged = false; return _palette; }
+	const byte *getPalette() { _paletteChanged = false; return _palette; }
 	bool paletteChanged() { return _paletteChanged; }
 	void reset();
 

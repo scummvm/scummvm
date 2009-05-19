@@ -117,6 +117,23 @@ public:
 	virtual void setPalette(byte *pal);
 
 	/**
+	 * Gets the value of the pixel at the specified x and y coordinates
+	 * Note: This method assumes that the video's pitch equals its width, and that
+	 * the video has an 8bpp palette
+	 * @param x	the x coordinate of the pixel
+	 * @param y	the y coordinate of the pixel
+	 */
+	byte getPixel(int x, int y) {
+		return *(_videoFrameBuffer + y * _videoInfo.width + x * 1);
+	}
+
+	/**
+	 * Gets the value of the pixel at the specified offset
+	 * @param offset	the offset of the pixel in the video buffer
+	 */
+	byte getPixel(int offset) { return getPixel(offset, 0); }
+
+	/**
 	 * Return the black palette color for the current frame
 	 */
 	byte getBlack() { return _curFrameBlack; }
@@ -153,7 +170,7 @@ protected:
 		uint32 height;
 		uint32 frameCount;
 		int32 frameRate;
-		int32 frameDelay;
+		int32 frameDelay;		// 1/100 ms
 		uint32 frameOffs;
 		uint32 currentFrame;
 		uint32 startTime;

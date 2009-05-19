@@ -72,8 +72,9 @@ bool FlicDecoder::loadFile(const char *fileName) {
 	}
 	_fileStream->readUint16LE();	// flags
 	// Note: The normal delay is a 32-bit integer (dword), whereas the overriden delay is a 16-bit integer (word)
-	_videoInfo.frameDelay = _fileStream->readUint32LE() * 1000;	// "speed", in milliseconds
-	_videoInfo.frameRate = 1000 / _videoInfo.frameDelay;
+	// frameDelay is the FLIC "speed", in milliseconds. Our frameDelay is calculated in 1/100 ms, so we convert it here
+	_videoInfo.frameDelay = _fileStream->readUint32LE() / 100;
+	_videoInfo.frameRate = 100 * 1000 / _videoInfo.frameDelay;
 
 	_fileStream->seek(80);
 	_offsetFrame1 = _fileStream->readUint32LE();
@@ -206,10 +207,10 @@ bool FlicDecoder::decodeNextFrame() {
 	case FRAME_TYPE: {
 		chunkCount = _fileStream->readUint16LE();
 		// Note: The overriden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
-		uint16 newFrameDelay = _fileStream->readUint16LE() * 1000;	// "speed", in milliseconds
+		uint16 newFrameDelay = _fileStream->readUint16LE() / 100;	// "speed", in milliseconds
 		if (newFrameDelay > 0) {
 			_videoInfo.frameDelay = newFrameDelay;
-			_videoInfo.frameRate = 1000 / _videoInfo.frameDelay;
+			_videoInfo.frameRate = 100 * 1000 / _videoInfo.frameDelay;
 		}
 		_fileStream->readUint16LE();	// reserved, always 0
 		uint16 newWidth = _fileStream->readUint16LE();
@@ -272,27 +273,27 @@ void FlicDecoder::reset() {
 	_fileStream->seek(_offsetFrame1);
 }
 
-void FlicDecoder::unpackPalette(uint8 *mem) {
-	uint16 numPackets = READ_LE_UINT16(mem); mem += 2;
+void FlicDecoder::unpackPalette(uint8 *data) {
+	uint16 numPackets = READ_LE_UINT16(data); data += 2;
 
-	if (0 == READ_LE_UINT16(mem)) { //special case
-		mem += 2;
+	if (0 == READ_LE_UINT16(data)) { //special case
+		data += 2;
 		for (int i = 0; i < 256; ++i) {
-			memcpy(_palette + i * 3, mem + i * 3, 3);
+			memcpy(_palette + i * 3, data + i * 3, 3);
 		}
 	} else {
 		uint8 palPos = 0;
 
 		while (numPackets--) {
-			palPos += *mem++;
-			uint8 change = *mem++;
+			palPos += *data++;
+			uint8 change = *data++;
 
 			for (int i = 0; i < change; ++i) {
-				memcpy(_palette + (palPos + i) * 3, mem + i * 3, 3);
+				memcpy(_palette + (palPos + i) * 3, data + i * 3, 3);
 			}
 
 			palPos += change;
-			mem += (change * 3);
+			data += (change * 3);
 		}
 	}
 }

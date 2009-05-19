@@ -110,6 +110,7 @@ private:
 	// (bit 0) is set, it denotes a frame that contains a palette record
 	byte *_frameTypes;
 	byte *_frameData;
+	// The RGB palette
 	byte *_palette;
 
 	Audio::Mixer *_mixer;
