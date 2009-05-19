@@ -100,7 +100,6 @@ void KyraEngine_MR::setItemMouseCursor() {
 }
 
 bool KyraEngine_MR::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
-
 	if (_mouseState <= -1)
 		return false;
 
@@ -124,7 +123,6 @@ bool KyraEngine_MR::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 }
 
 bool KyraEngine_MR::processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2) {
-
 	int itemPos = checkItemCollision(x, y);
 
 	if (unk1)
@@ -313,7 +311,6 @@ void KyraEngine_MR::itemDropDown(int startX, int startY, int dstX, int dstY, int
 }
 
 void KyraEngine_MR::exchangeMouseItem(int itemPos, int runScript) {
-
 	if (itemListMagic(_itemInHand, itemPos))
 		return;
 
@@ -390,7 +387,6 @@ bool KyraEngine_MR::isDropable(int x, int y) {
 }
 
 bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
-
 	uint16 item = _itemList[itemSlot].id;
 	if (_currentChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
 		eelScript();
@@ -469,7 +465,6 @@ bool KyraEngine_MR::itemListMagic(int handItem, int itemSlot) {
 }
 
 bool KyraEngine_MR::itemInventoryMagic(int handItem, int invSlot) {
-
 	uint16 item = _mainCharacter.inventory[invSlot];
 	if (_currentChapter == 1 && handItem == 3 && item == 3 && queryGameFlag(0x76)) {
 		eelScript();

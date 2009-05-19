@@ -762,7 +762,6 @@ int GUI_LoK::quitPlaying(Button *button) {
 }
 
 bool GUI_LoK::quitConfirm(const char *str) {
-
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
 
@@ -801,7 +800,6 @@ int GUI_LoK::quitConfirmNo(Button *button) {
 }
 
 int GUI_LoK::gameControlsMenu(Button *button) {
-
 	_vm->readSettings();
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
@@ -850,7 +848,6 @@ int GUI_LoK::gameControlsMenu(Button *button) {
 }
 
 void GUI_LoK::setupControls(Menu &menu) {
-
 	switch (_vm->_configMusic) {
 		case 0:
 			menu.item[0].itemString = _offString; //"Off"

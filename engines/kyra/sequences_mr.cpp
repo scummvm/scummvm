@@ -108,7 +108,6 @@ void KyraEngine_MR::hideBadConscience() {
 }
 
 void KyraEngine_MR::showGoodConscience() {
-
 	if (_goodConscienceShown)
 		return;
 

@@ -115,7 +115,6 @@ int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *p
 }
 
 void Screen_v2::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff) {
-
 	int maxDiff = 0;
 	diff = 0;
 	int len = _use16ColorMode ? 48 : 768;
@@ -313,12 +312,10 @@ int Screen_v2::getShapeScaledHeight(const uint8 *shpFile, int scale) {
 }
 
 uint16 Screen_v2::getShapeSize(const uint8 *shp) {
-
 	return READ_LE_UINT16(shp+6);
 }
 
 uint8 *Screen_v2::makeShapeCopy(const uint8 *src, int index) {
-
 	const uint8 *shape = getPtrToShape(src, index);
 	if (!shape)
 		return 0;
@@ -480,7 +477,6 @@ bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, i
 }
 
 void Screen_v2::checkedPageUpdate(int srcPage, int dstPage) {
-
 	const uint32 *src = (const uint32 *)getPagePtr(srcPage);
 	uint32 *dst = (uint32 *)getPagePtr(dstPage);
 	uint32 *page0 = (uint32 *)getPagePtr(0);

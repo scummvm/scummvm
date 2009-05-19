@@ -34,7 +34,6 @@ void KyraEngine_MR::restorePage3() {
 }
 
 void KyraEngine_MR::clearAnimObjects() {
-
 	for (int i = 0; i < 67; ++i)
 		_animObjects[i].enabled = false;
 
@@ -238,7 +237,6 @@ void KyraEngine_MR::updateItemAnimations() {
 }
 
 void KyraEngine_MR::updateCharacterAnim(int charId) {
-
 	AnimObj *obj = &_animObjects[0];
 	obj->needRefresh = true;
 	obj->flags &= ~1;
@@ -439,7 +437,6 @@ void KyraEngine_MR::resetCharacterAnimDim() {
 }
 
 void KyraEngine_MR::showIdleAnim() {
-
 	if (_mainCharacter.sceneId == 20 || _mainCharacter.sceneId == 21
 			|| _mainCharacter.sceneId == 12 || _mainCharacter.sceneId == 11)
 		return;

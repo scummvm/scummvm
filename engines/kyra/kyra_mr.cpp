@@ -365,7 +365,6 @@ void KyraEngine_MR::uninitMainMenu() {
 }
 
 void KyraEngine_MR::playVQA(const char *name) {
-
 	VQAMovie vqa(this, _system);
 
 	char filename[20];
@@ -412,7 +411,6 @@ void KyraEngine_MR::playMenuAudioFile() {
 }
 
 void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
-
 	if (_musicSoundChannel != -1 && !_soundDigital->isPlaying(_musicSoundChannel))
 		force = 1;
 	else if (_musicSoundChannel == -1)
@@ -435,7 +433,6 @@ void KyraEngine_MR::snd_playWanderScoreViaMap(int track, int force) {
 }
 
 void KyraEngine_MR::stopMusicTrack() {
-
 	if (_musicSoundChannel != -1 && _soundDigital->isPlaying(_musicSoundChannel))
 		_soundDigital->stopSound(_musicSoundChannel);
 
@@ -444,7 +441,6 @@ void KyraEngine_MR::stopMusicTrack() {
 }
 
 int KyraEngine_MR::musicUpdate(int forceRestart) {
-
 	static uint32 mTimer = 0;
 	static uint16 lock = 0;
 
@@ -529,7 +525,6 @@ void KyraEngine_MR::playStudioSFX(const char *str) {
 #pragma mark -
 
 void KyraEngine_MR::preinit() {
-
 	_itemBuffer1 = new int8[72];
 	_itemBuffer2 = new int8[144];
 	initMouseShapes();
@@ -547,7 +542,6 @@ void KyraEngine_MR::initMouseShapes() {
 }
 
 void KyraEngine_MR::startup() {
-
 	_album.wsa = new WSAMovie_v2(this, _screen);
 	assert(_album.wsa);
 	_album.leftPage.wsa = new WSAMovie_v2(this, _screen);
@@ -719,7 +713,6 @@ void KyraEngine_MR::loadInterface() {
 }
 
 void KyraEngine_MR::initItems() {
-
 	_screen->loadBitmap("ITEMS.CSH", 3, 3, 0);
 
 	for (int i = 248; i <= 319; ++i)
@@ -950,7 +943,6 @@ void KyraEngine_MR::updateCharPal(int unk1) {
 }
 
 bool KyraEngine_MR::checkCharCollision(int x, int y) {
-
 	int scale = getScale(_mainCharacter.x1, _mainCharacter.y1);
 	int width = (scale * 37) >> 8;
 	int height = (scale * 76) >> 8;
@@ -968,7 +960,6 @@ bool KyraEngine_MR::checkCharCollision(int x, int y) {
 #pragma mark -
 
 void KyraEngine_MR::runLoop() {
-
 	_eventList.clear();
 
 	_runFlag = true;
@@ -1339,7 +1330,6 @@ char *KyraEngine_MR::appendLanguage(char *buf, int lang, int bufSize) {
 }
 
 int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
-
 	delete[] buffer;
 	buffer = 0;
 
@@ -1384,7 +1374,6 @@ void KyraEngine_MR::getTableEntry(Common::SeekableReadStream *stream, int id, ch
 #pragma mark -
 
 bool KyraEngine_MR::talkObjectsInCurScene() {
-
 	for (int i = 0; i < 88; ++i) {
 		if (_talkObjectList[i].sceneId == _mainCharacter.sceneId)
 			return true;
@@ -1396,7 +1385,6 @@ bool KyraEngine_MR::talkObjectsInCurScene() {
 #pragma mark -
 
 bool KyraEngine_MR::updateScore(int scoreId, int strId) {
-
 	int scoreIndex = (scoreId >> 3);
 	int scoreBit = scoreId & 7;
 	if ((_scoreFlagTable[scoreIndex] & (1 << scoreBit)) != 0)

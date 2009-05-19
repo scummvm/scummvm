@@ -721,7 +721,6 @@ void KyraEngine_MR::showAlbum() {
 }
 
 void KyraEngine_MR::loadAlbumPage() {
-
 	char filename[16];
 	int num = _album.curPage / 2;
 
@@ -764,7 +763,6 @@ void KyraEngine_MR::loadAlbumPageWSA() {
 }
 
 void KyraEngine_MR::printAlbumPageText() {
-
 	static const uint8 posY[] = {
 		0x41, 0x55, 0x55, 0x55, 0x55, 0x55, 0x5A, 0x5A,
 		0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x3C
@@ -936,7 +934,6 @@ void KyraEngine_MR::albumUpdateAnims() {
 }
 
 void KyraEngine_MR::albumAnim1() {
-
 	for (int i = 6; i >= 3; --i) {
 		albumRestoreRect();
 		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000);
@@ -951,7 +948,6 @@ void KyraEngine_MR::albumAnim1() {
 }
 
 void KyraEngine_MR::albumAnim2() {
-
 	for (int i = 3; i <= 6; ++i) {
 		albumRestoreRect();
 		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000);

@@ -844,7 +844,6 @@ bool Screen_LoL::fadePalSpecial(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, ui
 }
 
 uint8 Screen_LoL::getShapePaletteSize(const uint8 *shp) {
-
 	return shp[10];
 }
 

@@ -36,7 +36,6 @@ namespace Kyra {
 #define TimerV1(x) new Common::Functor1Mem<int, void, KyraEngine_LoK>(this, &KyraEngine_LoK::x)
 
 void KyraEngine_LoK::setupTimers() {
-
 	for (int i = 0; i <= 4; ++i)
 		_timer->addTimer(i, 0, -1, 1);
 

@@ -29,7 +29,6 @@
 namespace Kyra {
 
 void KyraEngine_v2::freeSceneAnims() {
-
 	for (int i = 0; i < ARRAYSIZE(_sceneAnims); ++i)
 		_sceneAnims[i].flags = 0;
 

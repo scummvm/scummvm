@@ -36,7 +36,6 @@
 namespace Kyra {
 
 Common::Error LoLEngine::loadGameState(int slot) {
-
 	const uint16 *cdf[] = { _charDefsMan, _charDefsWoman, _charDefsKieran, _charDefsMan, _charDefsAkshel };
 
 	const char *fileName = getSavegameFilename(slot);
@@ -250,7 +249,6 @@ Common::Error LoLEngine::loadGameState(int slot) {
 }
 
 Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail) {
-
 	const char *fileName = getSavegameFilename(slot);
 
 	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName, thumbnail);

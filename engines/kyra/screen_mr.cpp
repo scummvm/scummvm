@@ -129,7 +129,6 @@ int Screen_MR::getDrawLayer2(int x, int y, int height) {
 }
 
 void Screen_MR::drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2, uint8 c3) {
-
 	fillRect(x1, y1, x2, y2, c1);
 
 	fillRect(x1, y1, x2, y1+1, c2);

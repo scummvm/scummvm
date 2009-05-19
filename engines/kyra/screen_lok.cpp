@@ -79,7 +79,6 @@ const ScreenDim *Screen_LoK::getScreenDim(int dim) {
 }
 
 void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
-
 	assert(_vm->palTable1()[palIndex]);
 	assert(_currentPalette);
 	uint8 tempPal[768];
@@ -177,7 +176,6 @@ void Screen_LoK::deletePageFromDisk(int page) {
 }
 
 void Screen_LoK::copyBackgroundBlock(int x, int page, int flag) {
-
 	if (x < 1)
 		return;
 

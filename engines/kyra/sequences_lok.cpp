@@ -40,7 +40,6 @@
 namespace Kyra {
 
 void KyraEngine_LoK::seq_demo() {
-
 	snd_playTheme(0, 2);
 
 	_screen->loadBitmap("START.CPS", 7, 7, _screen->_currentPalette);
@@ -89,7 +88,6 @@ void KyraEngine_LoK::seq_demo() {
 }
 
 void KyraEngine_LoK::seq_intro() {
-
 	if (_flags.isTalkie)
 		_res->loadPakFile("INTRO.VRM");
 
@@ -129,7 +127,6 @@ void KyraEngine_LoK::seq_intro() {
 }
 
 void KyraEngine_LoK::seq_introLogos() {
-
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		_screen->loadBitmap("LOGO.CPS", 3, 3, _screen->_currentPalette);
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);

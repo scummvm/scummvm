@@ -36,7 +36,6 @@ namespace Kyra {
 #pragma mark - Intro
 
 int LoLEngine::processPrologue() {
-
 	setupPrologueData(true);
 
 	if (!saveFileLoadable(0) || _flags.isDemo)
@@ -117,7 +116,6 @@ int LoLEngine::processPrologue() {
 }
 
 void LoLEngine::setupPrologueData(bool load) {
-
 	static const char * const fileListCD[] = {
 		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
 		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
@@ -198,7 +196,6 @@ void LoLEngine::setupPrologueData(bool load) {
 }
 
 void LoLEngine::showIntro() {
-
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
 
@@ -266,7 +263,6 @@ void LoLEngine::showIntro() {
 }
 
 int LoLEngine::chooseCharacter() {
-
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
 
@@ -362,7 +358,6 @@ int LoLEngine::chooseCharacter() {
 }
 
 void LoLEngine::kingSelectionIntro() {
-
 	_screen->copyRegion(0, 0, 0, 0, 112, 120, 4, 0, Screen::CR_NO_P_CHECK);
 	int y = 38;
 
@@ -405,7 +400,6 @@ void LoLEngine::kingSelectionIntro() {
 }
 
 void LoLEngine::kingSelectionReminder() {
-
 	_screen->copyRegion(0, 0, 0, 0, 112, 120, 4, 0, Screen::CR_NO_P_CHECK);
 	int y = 48;
 
@@ -439,7 +433,6 @@ void LoLEngine::kingSelectionReminder() {
 }
 
 void LoLEngine::kingSelectionOutro() {
-
 	_sound->voicePlay("KING03");
 
 	int index = 0;
@@ -469,7 +462,6 @@ void LoLEngine::kingSelectionOutro() {
 }
 
 void LoLEngine::processCharacterSelection() {
-
 	_charSelection = -1;
 	while (!shouldQuit() && _charSelection == -1) {
 		uint32 nextKingMessage = _system->getMillis() + 900 * _tickLength;
@@ -486,7 +478,6 @@ void LoLEngine::processCharacterSelection() {
 }
 
 void LoLEngine::updateSelectionAnims() {
-
 	for (int i = 0; i < 4; ++i) {
 		if (_system->getMillis() < _selectionAnimTimers[i])
 			continue;

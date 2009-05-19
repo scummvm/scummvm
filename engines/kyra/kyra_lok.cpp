@@ -398,7 +398,6 @@ void KyraEngine_LoK::startup() {
 }
 
 void KyraEngine_LoK::mainLoop() {
-
 	_eventList.clear();
 
 	while (!shouldQuit()) {
@@ -530,7 +529,6 @@ void KyraEngine_LoK::delayWithTicks(int ticks) {
 #pragma mark -
 
 void KyraEngine_LoK::setupShapes123(const Shape *shapeTable, int endShape, int flags) {
-
 	for (int i = 123; i <= 172; ++i)
 		_shapes[i] = 0;
 
@@ -558,7 +556,6 @@ void KyraEngine_LoK::setupShapes123(const Shape *shapeTable, int endShape, int f
 }
 
 void KyraEngine_LoK::freeShapes123() {
-
 	for (int i = 123; i <= 172; ++i) {
 		delete[] _shapes[i];
 		_shapes[i] = 0;
@@ -604,7 +601,6 @@ void KyraEngine_LoK::resetBrandonPoisonFlags() {
 #pragma mark -
 
 void KyraEngine_LoK::processInput(int xpos, int ypos) {
-
 	if (processInputHelper(xpos, ypos))
 		return;
 
@@ -820,7 +816,6 @@ bool KyraEngine_LoK::hasClickedOnExit(int xpos, int ypos) {
 }
 
 void KyraEngine_LoK::clickEventHandler2() {
-
 	Common::Point mouse = getMousePos();
 
 	_emc->init(&_scriptClick, &_scriptClickData);
@@ -894,7 +889,6 @@ void KyraEngine_LoK::runNpcScript(int func) {
 }
 
 void KyraEngine_LoK::checkAmuletAnimFlags() {
-
 	if (_brandonStatusBit & 2) {
 		seq_makeBrandonNormal2();
 		_timer->setCountdown(19, 300);

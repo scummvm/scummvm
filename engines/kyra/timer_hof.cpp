@@ -31,7 +31,6 @@ namespace Kyra {
 #define TimerV2(x) new Common::Functor1Mem<int, void, KyraEngine_HoF>(this, &KyraEngine_HoF::x)
 
 void KyraEngine_HoF::setupTimers() {
-
 	_timer->addTimer(0, 0, 5, 1);
 	_timer->addTimer(1, TimerV2(timerFadeOutMessage), -1, 1);
 	_timer->addTimer(2, TimerV2(timerCauldronAnimation), 1, 1);
@@ -91,7 +90,6 @@ void KyraEngine_HoF::timerBurnZanthia(int arg) {
 }
 
 void KyraEngine_HoF::setTimer1DelaySecs(int secs) {
-
 	if (secs == -1)
 		secs = 32000;
 
@@ -99,7 +97,6 @@ void KyraEngine_HoF::setTimer1DelaySecs(int secs) {
 }
 
 void KyraEngine_HoF::setWalkspeed(uint8 newSpeed) {
-
 	if (newSpeed < 5)
 		newSpeed = 3;
 	else

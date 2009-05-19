@@ -287,7 +287,6 @@ void KyraEngine_LoK::setCharacterPositionWithUpdate(int character) {
 }
 
 int KyraEngine_LoK::setCharacterPosition(int character, int *facingTable) {
-
 	if (character == 0) {
 		_currentCharacter->x1 += _charAddXPosTable[_currentCharacter->facing];
 		_currentCharacter->y1 += _charAddYPosTable[_currentCharacter->facing];
@@ -431,7 +430,6 @@ void KyraEngine_LoK::startSceneScript(int brandonAlive) {
 }
 
 void KyraEngine_LoK::initSceneData(int facing, int unk1, int brandonAlive) {
-
 	int16 xpos2 = 0;
 	int setFacing = 1;
 

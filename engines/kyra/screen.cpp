@@ -418,7 +418,6 @@ void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &
 }
 
 int Screen::fadePalStep(const uint8 *palette, int diff) {
-
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : (_use16ColorMode ? 16 : 256)) * 3;
 	
 	uint8 fadePal[768];
@@ -479,7 +478,6 @@ void Screen::getRealPalette(int num, uint8 *dst) {
 }
 
 void Screen::setScreenPalette(const uint8 *palData) {
-
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
 
 	uint8 screenPal[256 * 4];
@@ -538,7 +536,6 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 }
 
 void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {
-
 	if (x2 < 0) {
 		if (x2  <= -w)
 			return;
@@ -616,7 +613,6 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 }
 
 void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
-
 	uint8 *src = getPagePtr(srcPage);
 	uint8 *dst = getPagePtr(dstPage);
 	memcpy(dst, src, SCREEN_W * SCREEN_H);
@@ -800,7 +796,6 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 }
 
 void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
-
 	drawClippedLine(x1, y1, x2, y1, color);
 	drawClippedLine(x1, y1, x1, y2, color);
 	drawClippedLine(x2, y1, x2, y2, color);
@@ -823,7 +818,6 @@ void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color
 }
 
 void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
-
 	if (x1 < 0)
 		x1 = 0;
 	else if (x1 > 319)
@@ -857,7 +851,6 @@ void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
 }
 
 void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
-
 	uint8 *ptr = getPagePtr(_curPage) + y * SCREEN_W + x;
 
 	if (vertical) {
@@ -1991,7 +1984,6 @@ void Screen::wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src) {
 }
 
 void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool noXor) {
-
 	if (noXor)
 		wrapped_decodeFrameDeltaPage<true>(dst, src, pitch);
 	else
@@ -2501,7 +2493,6 @@ void Screen::hideMouse() {
 }
 
 void Screen::showMouse() {
-
 	if (_mouseLockCount == 1)
 		CursorMan.showMouse(true);
 
@@ -2710,7 +2701,6 @@ void Screen::rectClip(int &x, int &y, int w, int h) {
 }
 
 void Screen::shakeScreen(int times) {
-
 	while (times--) {
 		// seems to be 1 line (320 pixels) offset in the original
 		// 4 looks more like dosbox though, maybe check this again
@@ -3005,7 +2995,6 @@ int SJIStoFMTChunk(int f, int s) { // copied from scumm\charset.cpp
 } // end of anonymous namespace
 
 void Screen::drawCharSJIS(uint16 c, int x, int y) {
-
 	int color1 = _textColorsMap[1];
 	int color2 = _textColorsMap[0];
 

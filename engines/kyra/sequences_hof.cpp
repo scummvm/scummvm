@@ -330,7 +330,6 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 }
 
 int KyraEngine_HoF::seq_introWestwood(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-
 	if (frm == -2) {
 		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 			delay(300 * _tickLength);
@@ -342,7 +341,6 @@ int KyraEngine_HoF::seq_introWestwood(WSAMovie_v2 *wsaObj, int x, int y, int frm
 }
 
 int KyraEngine_HoF::seq_introTitle(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-
 	if (frm == 1) {
 		_sound->playTrack(3);
 	} else if (frm == 25) {
@@ -363,7 +361,6 @@ int KyraEngine_HoF::seq_introTitle(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 }
 
 int KyraEngine_HoF::seq_introOverview(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-
 	uint8 *tmpPal = &(_screen->getPalette(3)[0x101]);
 	memset(tmpPal, 0, 256);
 	_seqSubFrameEndTimeInternal = 0;
@@ -463,7 +460,6 @@ int KyraEngine_HoF::seq_introOverview(WSAMovie_v2 *wsaObj, int x, int y, int frm
 }
 
 int KyraEngine_HoF::seq_introLibrary(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-
 	switch (_seqFrameCounter) {
 	case 0:
 		_seqSubframePlaying = true;
@@ -538,7 +534,6 @@ int KyraEngine_HoF::seq_introLibrary(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 
 
 int KyraEngine_HoF::seq_introHand(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-
 	switch (_seqFrameCounter) {
 	case 0:
 		_seqSubframePlaying = true;
@@ -2149,7 +2144,6 @@ void KyraEngine_HoF::seq_cmpFadeFrame(const char *cmpFile) {
 }
 
 void KyraEngine_HoF::seq_playTalkText(uint8 chatNum) {
-
 	assert(chatNum < _sequenceSoundListSize);
 
 	if (chatNum < 12 && !_flags.isDemo && textEnabled())
@@ -2160,7 +2154,6 @@ void KyraEngine_HoF::seq_playTalkText(uint8 chatNum) {
 }
 
 void KyraEngine_HoF::seq_waitForTextsTimeout() {
-
 	uint32 longest = seq_activeTextsTimeLeft() + _system->getMillis();
 	uint32 now = _system->getMillis();
 
@@ -2181,7 +2174,6 @@ void KyraEngine_HoF::seq_resetAllTextEntries() {
 }
 
 int KyraEngine_HoF::seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width) {
-
 	for (int i = 0; i < 10; i++) {
 		if (_activeText[i].duration != -1) {
 			if (i < 9)
@@ -2204,7 +2196,6 @@ int KyraEngine_HoF::seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, 
 }
 
 void KyraEngine_HoF::seq_loadNestedSequence(int wsaNum, int seqNum) {
-
 	if (_activeWSA[wsaNum].flags != -1)
 		return;
 
@@ -2520,7 +2511,6 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 
 void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed,
 	int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData, const char *const *specialData) {
-
 	if (!data)
 		return;
 

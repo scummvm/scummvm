@@ -598,7 +598,6 @@ Common::Error LoLEngine::go() {
 #pragma mark - Initialization
 
 void LoLEngine::preInit() {
-
 	_res->loadPakFile("GENERAL.PAK");
 	if (_flags.isTalkie)
 		_res->loadPakFile("STARTUP.PAK");
@@ -618,7 +617,6 @@ void LoLEngine::preInit() {
 }
 
 void LoLEngine::loadItemIconShapes() {
-
 	if (_itemIconShapes) {
 		for (int i = 0; i < _numItemIconShapes; i++)
 			delete[]  _itemIconShapes[i];
@@ -685,7 +683,6 @@ uint8 *LoLEngine::getItemIconShapePtr(int index) {
 }
 
 int LoLEngine::mainMenu() {
-
 	bool hasSave = saveFileLoadable(0);
 
 	MainMenu::StaticData data[] = {
@@ -922,7 +919,6 @@ void LoLEngine::update() {
 #pragma mark - Localization
 
 char *LoLEngine::getLangString(uint16 id) {
-
 	if (id == 0xFFFF)
 		return 0;
 
@@ -1798,7 +1794,6 @@ void LoLEngine::snd_stopSpeech(bool setFlag) {
 }
 
 void LoLEngine::snd_playSoundEffect(int track, int volume) {
-
 	if (track == 1 && (_lastSfxTrack == -1 || _lastSfxTrack == 1))
 		return;
 
@@ -2440,19 +2435,15 @@ void LoLEngine::processMagicIce(int charNum, int spellLevel) {
 }
 
 void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
-
 }
 
 void LoLEngine::processMagicHandOfFate(int charNum, int spellLevel) {
-
 }
 
 void LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
-
 }
 
 void LoLEngine::processMagicLightning(int charNum, int spellLevel) {
-
 }
 
 void LoLEngine::processMagicFog() {
@@ -2555,7 +2546,6 @@ void LoLEngine::processMagicSwarm(int charNum, int damage) {
 }
 
 void LoLEngine::processMagicGuardian(int charNum, int spellLevel) {
-
 }
 
 void LoLEngine::callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y) {
@@ -3020,7 +3010,6 @@ int LoLEngine::calcInflictableDamagePerItem(int16 attacker, int16 target, uint16
 }
 
 void LoLEngine::checkForPartyDeath() {
-
 }
 
 void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, int16 damage) {
@@ -3233,15 +3222,12 @@ void LoLEngine::stunCharacter(int charNum) {
 }
 
 void LoLEngine::level11specialUnk() {
-
 }
 
 void LoLEngine::launchMagicViper() {
-
 }
 
 void LoLEngine::attackWall(int a, int b) {
-
 }
 
 uint16 LoLEngine::getNearestMonsterFromCharacter(int charNum) {

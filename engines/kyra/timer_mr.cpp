@@ -31,7 +31,6 @@ namespace Kyra {
 #define TimerV3(x) new Common::Functor1Mem<int, void, KyraEngine_MR>(this, &KyraEngine_MR::x)
 
 void KyraEngine_MR::setupTimers() {
-
 	_timer->addTimer(0, TimerV3(timerRestoreCommandLine), -1, 1);
 	for (int i = 1; i <= 3; ++i)
 		_timer->addTimer(i, TimerV3(timerRunSceneScript7), -1, 0);
@@ -82,7 +81,6 @@ void KyraEngine_MR::timerFleaDeath(int arg) {
 }
 
 void KyraEngine_MR::setWalkspeed(uint8 speed) {
-
 	if (speed < 5)
 		speed = 3;
 	else

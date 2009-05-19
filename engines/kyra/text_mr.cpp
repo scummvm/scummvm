@@ -82,7 +82,6 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 }
 
 int TextDisplayer_MR::dropCRIntoString(char *str, int minOffs, int maxOffs) {
-
 	int offset = 0;
 	char *proc = str + minOffs;
 
@@ -196,7 +195,6 @@ int KyraEngine_MR::chatCalcDuration(const char *str) {
 }
 
 void KyraEngine_MR::objectChat(const char *str, int object, int vocHigh, int vocLow) {
-
 	if (_mainCharacter.animFrame == 87 || _mainCharacter.animFrame == 0xFFFF || _mainCharacter.x1 <= 0 || _mainCharacter.y1 <= 0)
 		return;
 
@@ -304,7 +302,6 @@ void KyraEngine_MR::objectChatPrintText(const char *str, int object) {
 }
 
 void KyraEngine_MR::objectChatProcess(const char *script) {
-
 	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 	memset(&_chatScriptState, 0, sizeof(_chatScriptState));
 
@@ -488,7 +485,6 @@ void KyraEngine_MR::goodConscienceChatWaitToFinish() {
 }
 
 void KyraEngine_MR::albumChat(const char *str, int vocHigh, int vocLow) {
-
 	_talkObjectList[1].x = 190;
 	_talkObjectList[1].y = 188;
 
@@ -609,7 +605,6 @@ void KyraEngine_MR::albumChatWaitToFinish() {
 }
 
 void KyraEngine_MR::malcolmSceneStartupChat() {
-
 	if (_noStartupChat)
 		return;
 
@@ -794,7 +789,6 @@ void KyraEngine_MR::dialogStartScript(int object, int funcNum) {
 }
 
 void KyraEngine_MR::dialogEndScript(int object) {
-
 	_emc->init(&_dialogScriptState, &_dialogScriptData);
 	_emc->start(&_dialogScriptState, _dialogScriptFuncEnd);
 
@@ -810,7 +804,6 @@ void KyraEngine_MR::dialogEndScript(int object) {
 }
 
 void KyraEngine_MR::npcChatSequence(const char *str, int object, int vocHigh, int vocLow) {
-
 	_chatText = str;
 	_chatObject = object;
 	_chatVocHigh = _chatVocLow = -1;
@@ -867,7 +860,6 @@ void KyraEngine_MR::randomSceneChat() {
 }
 
 void KyraEngine_MR::runDialog(int dlgIndex, int funcNum) {
-
 	switch (_currentChapter-2) {
 	case 0:
 		dlgIndex -= 34;

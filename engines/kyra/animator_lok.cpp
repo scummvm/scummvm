@@ -355,7 +355,6 @@ void Animator_LoK::prepDrawAllObjects() {
 }
 
 void Animator_LoK::copyChangedObjectsForward(int refreshFlag) {
-
 	for (AnimObject *curObject = _objectQueue; curObject; curObject = curObject->nextAnimObject) {
 		if (curObject->active) {
 			if (curObject->refreshFlag || refreshFlag) {

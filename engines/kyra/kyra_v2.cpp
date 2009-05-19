@@ -144,7 +144,6 @@ void KyraEngine_v2::pauseEngineIntern(bool pause) {
 }
 
 void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
-
 	uint32 start = _system->getMillis();
 	do {
 		if (updateGame) {

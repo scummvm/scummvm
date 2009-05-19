@@ -34,7 +34,6 @@ namespace Kyra {
 #define TimerV2(x) new Common::Functor1Mem<int, void, LoLEngine>(this, &LoLEngine::x)
 
 void LoLEngine::setupTimers() {
-
 	_timer->addTimer(0, TimerV2(timerProcessDoors), 15, true);
 	_timer->addTimer(0x10, TimerV2(timerProcessMonsters), 6, true);
 	_timer->addTimer(0x11, TimerV2(timerProcessMonsters), 6, true);
