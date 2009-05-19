@@ -195,7 +195,7 @@ public:
 	uint32 last_wait_time; /**< The last time the game invoked Wait() */
 
 	sci_version_t version; /**< The approximated patchlevel of the version to emulate */
-	uint32 flags;			/* Specific game flags */
+	uint32 flags;			/**< Specific game flags */
 
 	unsigned int kernel_opt_flags; /**< Kernel optimization flags- used for performance tweaking */
 

@@ -251,7 +251,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(savegame_version);
 
 	syncCStr(s, &game_version);
-	s.syncAsSint32LE(version);
+	s.skip(4);	// Obsolete: Used to be version
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
 	if (s.isLoading()) {
@@ -757,6 +757,9 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
 	retval = new EngineState();
+
+	retval->version = s->version;
+	retval->flags = s->flags;
 
 	retval->savegame_version = -1;
 	retval->gfx_state = s->gfx_state;

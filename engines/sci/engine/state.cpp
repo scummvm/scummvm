@@ -99,10 +99,11 @@ EngineState::EngineState() : _dirseeker(this) {
 	last_wait_time = 0;
 
 	version = 0;
-
-	_fileHandles.resize(5);
+	flags = 0;
 
 	kernel_opt_flags = 0;
+
+	_fileHandles.resize(5);
 
 	execution_stack_base = 0;
 	_executionStackPosChanged = false;
@@ -119,14 +120,14 @@ EngineState::EngineState() : _dirseeker(this) {
 	parser_event = NULL_REG;
 	script_000 = 0;
 
-	string_frag_segment = 0;
-
 	parser_lastmatch_word = 0;
 	bp_list = 0;
 	have_bp = 0;
 	debug_mode = 0;
 	sys_strings_segment = 0;
 	sys_strings = 0;
+	string_frag_segment = 0;
+
 	parser_rules = 0;
 	memset(parser_nodes, 0, sizeof(parser_nodes));
 
