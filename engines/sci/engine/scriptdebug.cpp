@@ -89,11 +89,12 @@ char inputbuf[256] = "";
 		+ s->_classtable[species].class_offset)
 #endif
 
-const char *_debug_get_input_default() {
+static const char *_debug_get_input() {
 	char newinpbuf[256];
 	
 	printf("> ");
-	fgets(newinpbuf, 254, stdin);
+	if (!fgets(newinpbuf, 254, stdin))
+		return NULL;
 
 	size_t l = strlen(newinpbuf);
 	if (l > 0 && newinpbuf[0] != '\n') {
@@ -276,8 +277,6 @@ int c_sfx_01_track(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) 
 	return 0;
 }
 
-const char *(*_debug_get_input)(void) = _debug_get_input_default;
-
 int c_segtable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	uint i;
 
@@ -341,8 +340,13 @@ int c_segtable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-static void print_obj_head(EngineState *s, Object *obj) {
-	sciprintf(PREG" %s : %3d vars, %3d methods\n", PRINT_REG(obj->pos), obj_get_name(s, obj->pos),
+static void print_obj_head(EngineState *s, reg_t pos) {
+	Object *obj = obj_get(s, pos);
+
+	if (!obj)
+		return;
+
+	sciprintf("["PREG"] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
 				obj->_variables.size(), obj->methods_nr);
 }
 
@@ -380,7 +384,14 @@ static void print_list(EngineState *s, List *l) {
 	sciprintf("\t>\n");
 }
 
-static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
+static bool _c_single_seg_info(EngineState *s, int nr) {
+	sciprintf("[%04x] ", nr);
+
+	if ((nr < 0) || ((uint)nr >= s->seg_manager->_heap.size()) || !s->seg_manager->_heap[nr])
+		return false;
+
+	MemObject *mobj = s->seg_manager->_heap[nr];
+
 	switch (mobj->getType()) {
 
 	case MEM_OBJ_SCRIPT: {
@@ -401,7 +412,7 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		sciprintf("  Objects: %4d\n", scr->_objects.size());
 		for (uint i = 0; i < scr->_objects.size(); i++) {
 			sciprintf("    ");
-			print_obj_head(s, &scr->_objects[i]);
+			print_obj_head(s, scr->_objects[i].pos);
 		}
 	}
 	break;
@@ -439,8 +450,11 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 
 		for (uint i = 0; i < ct->_table.size(); i++)
 			if (ct->isValidEntry(i)) {
-				sciprintf("  [%04x] ", i);
-				print_obj_head(s, &(ct->_table[i]));
+				reg_t objpos;
+				objpos.offset = i;
+				objpos.segment = nr;
+				sciprintf("  [%04x] %s; copy of ", i, obj_get_name(s, objpos));
+				print_obj_head(s, ct->_table[i].pos);
 			}
 	}
 	break;
@@ -490,6 +504,9 @@ static void _c_single_seg_info(EngineState *s, MemObject *mobj) {
 		sciprintf("Invalid type %d\n", mobj->getType());
 		break;
 	}
+
+	sciprintf("\n");
+	return true;
 }
 
 static int show_node(EngineState *s, reg_t addr) {
@@ -665,21 +682,14 @@ int c_seginfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (cmdParams.size()) {
 		while (i < cmdParams.size()) {
 			int nr = cmdParams[i++].val;
-			if (nr < 0 || (uint)nr >= s->seg_manager->_heap.size() || !s->seg_manager->_heap[nr]) {
+			if (!_c_single_seg_info(s, nr))
 				sciprintf("Segment %04x does not exist\n", nr);
-				return 1;
-			}
-			sciprintf("[%04x] ", nr);
-			_c_single_seg_info(s, s->seg_manager->_heap[nr]);
 		}
-	} else
+	} else {
 		for (i = 0; i < s->seg_manager->_heap.size(); i++) {
-			if (s->seg_manager->_heap[i]) {
-				sciprintf("[%04x] ", i);
-				_c_single_seg_info(s, s->seg_manager->_heap[i]);
-				sciprintf("\n");
-			}
+			_c_single_seg_info(s, i);
 		}
+	}
 
 	return 0;
 }
@@ -2526,25 +2536,31 @@ int objinfo(EngineState *s, reg_t pos) {
 	Object *var_container = obj;
 	int i;
 
-	sciprintf("["PREG"]: ", PRINT_REG(pos));
 	if (!obj) {
-		sciprintf("Not an object.");
+		sciprintf("["PREG"]: Not an object.", PRINT_REG(pos));
 		return 1;
 	}
 
-	print_obj_head(s, obj);
+	print_obj_head(s, pos);
 
 	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
 		var_container = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 	sciprintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->_variables.size(); i++) {
 		sciprintf("    ");
-		if (i < var_container->variable_names_nr)
+		if (i < var_container->variable_names_nr) {
 			sciprintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
-		else
+		} else
 			sciprintf("p#%x = ", i);
 
-		sciprintf(PREG"\n", PRINT_REG(obj->_variables[i]));
+		reg_t val = obj->_variables[i];
+		sciprintf(PREG, PRINT_REG(val));
+
+		Object *ref = obj_get(s, val);
+		if (ref)
+			sciprintf(" (%s)", obj_get_name(s, val));
+
+		sciprintf("\n");
 	}
 	sciprintf("  -- methods:\n");
 	for (i = 0; i < obj->methods_nr; i++) {

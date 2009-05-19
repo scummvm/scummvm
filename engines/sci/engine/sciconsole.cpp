@@ -328,21 +328,19 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 				}
 
 				if (valid) {
-					char *objname = (char *)obj->base
-					                + obj->_variables[SCRIPT_NAME_SELECTOR].offset;
+					const char *objname = obj_get_name(s, objpos);
 					if (!strcmp(objname, str_objname)) {
 						// Found a match!
-						if (index < 0 ||
-						        times_found == index)
-							*dest = objpos;
-						else if (times_found < 0 && index) {
-							if (index == 1) {
+						if ((index < 0) && (times_found > 0)) {
+							if (times_found == 1) {
 								// First time we realized the ambiguity
 								sciprintf("Ambiguous:\n");
 								sciprintf("  %3x: ["PREG"] %s\n", 0, PRINT_REG(*dest), str_objname);
 							}
-							sciprintf("  %3x: ["PREG"] %s\n", index, PRINT_REG(objpos), str_objname);
+							sciprintf("  %3x: ["PREG"] %s\n", times_found, PRINT_REG(objpos), str_objname);
 						}
+						if (index < 0 || times_found == index)
+							*dest = objpos;
 						++times_found;
 					}
 				}

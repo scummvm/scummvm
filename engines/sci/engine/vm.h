@@ -815,9 +815,6 @@ extern int script_gc_interval;
 extern int script_step_counter;
 
 
-/** The function used to get input for debugging */
-extern const char *(*_debug_get_input)(void);
-
 extern int _debugstate_valid;
 extern int _debug_seeking;
 extern int _debug_step_running;

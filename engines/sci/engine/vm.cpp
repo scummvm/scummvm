@@ -2075,11 +2075,18 @@ Object *obj_get(EngineState *s, reg_t offset) {
 
 const char *obj_get_name(EngineState *s, reg_t pos) {
 	Object *obj = obj_get(s, pos);
-
 	if (!obj)
 		return "<no such object>";
 
-	return (const char *)(obj->base + obj->_variables[SCRIPT_NAME_SELECTOR].offset);
+	reg_t nameReg = obj->_variables[SCRIPT_NAME_SELECTOR];
+	if (nameReg.isNull())
+		return "<no name>";
+
+	const char *name = (const char*)s->seg_manager->dereference(obj->_variables[SCRIPT_NAME_SELECTOR], NULL);
+	if (!name)
+		return "<invalid name>";
+
+	return name;
 }
 
 void quit_vm() {
