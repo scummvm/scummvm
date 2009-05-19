@@ -63,7 +63,7 @@ bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments, gfx_bitmap
 
 	while ((foo = *text++)) {
 		if (foo >= font->chars_nr) {
-			GFXWARN("Invalid char 0x%02x (max. 0x%02x) encountered in text string '%s', font %04x\n",
+			error("Invalid char 0x%02x (max. 0x%02x) encountered in text string '%s', font %04x",
 			        foo, font->chars_nr, text, font->ID);
 			if (font->chars_nr > ' ')
 				foo = ' ';

@@ -65,9 +65,6 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 	int slc_type;
 	StackPtr stackframe = k_argp + k_argc;
 
-	// Execution stack
-	ExecStack *xstack;
-
 	stackframe[0] = make_reg(0, selector_id);  // The selector we want to call
 	stackframe[1] = make_reg(0, argc); // Argument count
 
@@ -91,6 +88,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 	va_end(argp);
 
 	// Write "kernel" call to the stack, for debugging:
+	ExecStack *xstack;
 	xstack = add_exec_stack_entry(s, NULL_REG, NULL, NULL_REG, k_argc, k_argp - 1, 0, NULL_REG,
 	                              s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = -42 - kfunct; // Evil debugging hack to identify kernel function

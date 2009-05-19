@@ -285,19 +285,17 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 
 static void _exec_varselectors(EngineState *s) {
 	// Executes all varselector read/write ops on the TOS
-	// Now check the TOS to execute all varselector entries
-	if (!s->_executionStack.empty())
-		while (s->_executionStack.back().type == EXEC_STACK_TYPE_VARSELECTOR) {
-			// varselector access?
-			if (s->_executionStack.back().argc) { // write?
-				reg_t temp = s->_executionStack.back().variables_argp[1];
-				*(s->_executionStack.back().addr.varp) = temp;
+	while (!s->_executionStack.empty() && s->_executionStack.back().type == EXEC_STACK_TYPE_VARSELECTOR) {
+		ExecStack &xs = s->_executionStack.back();
+		// varselector access?
+		if (xs.argc) { // write?
+			*(xs.addr.varp) = xs.variables_argp[1];
 
-			} else // No, read
-				s->r_acc = *(s->_executionStack.back().addr.varp);
+		} else // No, read
+			s->r_acc = *(xs.addr.varp);
 
-			s->_executionStack.pop_back();
-		}
+		s->_executionStack.pop_back();
+	}
 }
 
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
@@ -364,6 +362,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			}
 
 			script_error_flag = script_debug_flag = 1;
+
 			break;
 
 		case kSelectorVariable:
@@ -507,6 +506,9 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 	xstack.type = EXEC_STACK_TYPE_CALL; // Normal call
 
 	s->_executionStack.push_back(xstack);
+	// FIXME: push_back can cause the storage of _executionStack to be reallocated.
+	// As a result, any pointers to a member of _executionStack becomes invalid.
+	// This can cause severe breakage since run_vm does exactly that...
 
 	return &(s->_executionStack.back());
 }
@@ -563,6 +565,8 @@ static void gc_countdown(EngineState *s) {
 static const byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
 
 void run_vm(EngineState *s, int restoring) {
+	assert(s);
+
 	reg_t *variables[4]; // global, local, temp, param, as immediate pointers
 	reg_t *variables_base[4]; // Used for referencing VM ops
 	SegmentId variables_seg[4]; // Same as above, contains segment IDs
@@ -589,11 +593,6 @@ void run_vm(EngineState *s, int restoring) {
 
 	if (!local_script) {
 		script_error(s, __FILE__, __LINE__, "Program Counter gone astray");
-		return;
-	}
-
-	if (NULL == s) {
-		sciprintf("vm.c: run_vm(): NULL passed for \"s\"\n");
 		return;
 	}
 
@@ -625,12 +624,13 @@ void run_vm(EngineState *s, int restoring) {
 	while (1) {
 		byte opcode;
 		int old_pc_offset;
-		StackPtr old_sp = xs->sp;
+		StackPtr old_sp;
 		byte opnumber;
 		int var_type; // See description below
 		int var_number;
 
 		old_pc_offset = xs->addr.pc.offset;
+		old_sp = xs->sp;
 
 		if (s->_executionStackPosChanged) {
 			Script *scr;
@@ -1445,11 +1445,14 @@ void run_vm(EngineState *s, int restoring) {
 		if (s->_executionStackPosChanged) // Force initialization
 			xs = xs_new;
 
-#ifndef DISABLE_VALIDATIONS
+//#ifndef DISABLE_VALIDATIONS
 		if (xs != &(s->_executionStack.back())) {
-			sciprintf("Error: xs is stale (%d vs %d); last command was %02x\n", (int)(xs - &s->_executionStack[0]), s->_executionStack.size()-1, opnumber);
+			warning("xs is stale (%d/%p vs %d/%p); last command was %02x\n",
+					(int)(xs - &s->_executionStack[0]), (void *)xs,
+					s->_executionStack.size()-1, (void *)&(s->_executionStack.back()),
+					opnumber);
 		}
-#endif
+//#endif
 		if (script_error_flag) {
 			_debug_step_running = 0; // Stop multiple execution
 			_debug_seeking = 0; // Stop special seeks
@@ -1517,10 +1520,7 @@ static SelectorType _lookup_selector_function(EngineState *s, int seg_id, Object
 
 		if (index >= 0) {
 			if (fptr) {
-				if (s->version < SCI_VERSION_1_1)
-					*fptr = make_reg(obj->pos.segment, READ_LE_UINT16((byte *)(obj->base_method + index + obj->methods_nr + 1)));
-				else
-					*fptr = make_reg(obj->pos.segment, READ_LE_UINT16((byte *)(obj->base_method + index * 2 + 2)));
+				*fptr = VM_OBJECT_READ_FUNCTION(obj, index);
 			}
 
 			return kSelectorMethod;
