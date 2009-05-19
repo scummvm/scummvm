@@ -34,13 +34,13 @@ public:
 		_inStreamV2 = new Common::MemoryReadStream(contents_v2, sizeof(contents_v2));
 	}
 
-    void tearDown() {
-    	delete _inStreamV1;
-    	delete _inStreamV2;
-    }
+	void tearDown() {
+		delete _inStreamV1;
+		delete _inStreamV2;
+	}
 
 	// A method which reads a v1 file
-	void readVersioned_v1(Common::SeekableReadStream *stream, int version) {
+	void readVersioned_v1(Common::SeekableReadStream *stream, Common::Serializer::Version version) {
 		Common::Serializer  ser(stream, 0);
 
 		TS_ASSERT(ser.syncMagic("MAGI", 4));
@@ -51,17 +51,17 @@ public:
 		uint32 tmp;
 
 		ser.syncAsUint16BE(tmp, Common::Serializer::Version(1));
-		TS_ASSERT_EQUALS(tmp, 0x0607);
+		TS_ASSERT_EQUALS(tmp, (uint16)0x0607);
 
 		ser.syncAsSint16LE(tmp, Common::Serializer::Version(1));
-		TS_ASSERT_EQUALS(tmp, -2);
+		TS_ASSERT_EQUALS((int16)tmp, -2);
 
 		ser.syncAsByte(tmp);
-		TS_ASSERT_EQUALS(tmp, 0x0a);
+		TS_ASSERT_EQUALS(tmp, (uint8)0x0a);
 	}
 
 	// A method which reads a v2 file
-	void readVersioned_v2(Common::SeekableReadStream *stream, int version) {
+	void readVersioned_v2(Common::SeekableReadStream *stream, Common::Serializer::Version version) {
 		Common::Serializer  ser(stream, 0);
 
 		TS_ASSERT(ser.syncMagic("MAGI", 4));
@@ -78,19 +78,19 @@ public:
 		tmp = 0x12345678;
 		ser.syncAsUint32LE(tmp, Common::Serializer::Version(2));
 		if (ser.getVersion() < 2) {
-			TS_ASSERT_EQUALS(tmp, 0x12345678);
+			TS_ASSERT_EQUALS(tmp, (uint32)0x12345678);
 		} else {
-			TS_ASSERT_EQUALS(tmp, 0x05040302);
+			TS_ASSERT_EQUALS(tmp, (uint32)0x05040302);
 		}
 
 		ser.syncAsUint16BE(tmp, Common::Serializer::Version(1));
-		TS_ASSERT_EQUALS(tmp, 0x0607);
+		TS_ASSERT_EQUALS(tmp, (uint32)0x0607);
 
 		// Skip over obsolete data
 		ser.skip(2, Common::Serializer::Version(1), Common::Serializer::Version(1));
 
 		ser.syncAsByte(tmp);
-		TS_ASSERT_EQUALS(tmp, 0x0a);
+		TS_ASSERT_EQUALS(tmp, (uint8)0x0a);
 	}
 
 	void test_read_v1_as_v1() {
@@ -101,7 +101,7 @@ public:
 	// read v2 data correctly. It should instead error out if it
 	// detects a version newer than its current version.
 
-	void test_read_v2_as_v1() {
+	void test_read_v1_as_v2() {
 		readVersioned_v2(_inStreamV1, 1);
 	}
 

@@ -22,7 +22,7 @@ class BufferedSeekableReadStreamTestSuite : public CxxTest::TestSuite {
 
 		TS_ASSERT(!ssrs.eos());
 
-		TS_ASSERT_EQUALS(0, ssrs.read(&b, 1));
+		TS_ASSERT_EQUALS((uint)0, ssrs.read(&b, 1));
 		TS_ASSERT(ssrs.eos());
 	}
 
