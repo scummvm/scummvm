@@ -28,8 +28,6 @@
 namespace Sci {
 
 EngineState::EngineState() : _dirseeker(this) {
-	savegame_version = 0;
-
 	widget_serial_counter = 0;
 
 	resmgr = 0;
@@ -81,7 +79,7 @@ EngineState::EngineState() : _dirseeker(this) {
 	picture_port = 0;
 	iconbar_port = 0;
 
-	memset(&pic_visible_map, 0, sizeof(pic_visible_map));	// FIXME: Remove this once/if we C++ify gfx_map_mask_t
+	pic_visible_map = GFX_MASK_NONE;
 	pic_animate = 0;
 
 	dyn_views = 0;

@@ -116,8 +116,6 @@ public:
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 public:
-	int savegame_version;
-
 	int widget_serial_counter; /**< Used for savegames */
 
 	ResourceManager *resmgr; /**< The resource manager */

@@ -248,7 +248,7 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 }
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
-	s.syncAsSint32LE(savegame_version);
+	s.skip(4);	// Obsolete: Used to be savegame_version
 
 	syncCStr(s, &game_version);
 	s.skip(4);	// Obsolete: Used to be version
@@ -475,8 +475,6 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	meta.game_version = s->game_version;
 	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
-
-	s->savegame_version = CURRENT_SAVEGAME_VERSION;
 
 	if (s->execution_stack_base) {
 		sciprintf("Cannot save from below kernel function\n");
@@ -755,15 +753,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 */
 
-	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
-	retval = new EngineState();
-
-	retval->version = s->version;
-	retval->flags = s->flags;
-
-	retval->savegame_version = -1;
-	retval->gfx_state = s->gfx_state;
-
 	SavegameMetadata meta;
 
 	Common::Serializer ser(fh, 0);
@@ -782,12 +771,13 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		return NULL;
 	}
 
-	// Backwards compatibility settings
-	retval->dyn_views = NULL;
-	retval->drop_views = NULL;
-	retval->port = NULL;
-	retval->save_dir_copy_buf = NULL;
+	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
+	retval = new EngineState();
 
+	// Copy some old data
+	retval->version = s->version;
+	retval->flags = s->flags;
+	retval->gfx_state = s->gfx_state;
 	retval->sound_mute = s->sound_mute;
 	retval->sound_volume = s->sound_volume;
 
@@ -797,7 +787,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Set exec stack base to zero
 	retval->execution_stack_base = 0;
-	retval->_executionStack.clear();
 
 	// Now copy all current state information
 	// Graphics and input state:
