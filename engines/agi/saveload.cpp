@@ -613,6 +613,16 @@ int AgiEngine::selectSlot() {
 
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
+
+		// It may happen that somebody will open GMM while
+		// this dialog is open, and load a game
+		// We are processing it here, effectively jumping
+		// out of the dead loop
+		if (getflag(fRestoreJustRan)) {
+			rc = -2;
+			goto getout;
+		}
+
 		switch (key) {
 		case KEY_ENTER:
 			rc = active;
@@ -724,6 +734,7 @@ press:
 
 getout:
 	closeWindow();
+
 	return rc;
 }
 
@@ -844,7 +855,9 @@ int AgiEngine::loadGameDialog() {
 	slot = selectSlot();
 
 	if (slot < 0) {
-		messageBox("Game NOT restored.");
+		if (slot == -1) // slot = -2 when GMM was launched
+			messageBox("Game NOT restored.");
+
 		return errOK;
 	}
 

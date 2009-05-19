@@ -299,10 +299,27 @@ char *AgiEngine::wordWrapString(const char *s, int *len) {
  */
 void AgiEngine::closeWindow() {
 	debugC(4, kDebugLevelText, "closeWindow()");
+
+	if (getflag(fRestoreJustRan)) {
+		forgetWindow();
+	}
+
 	_sprites->eraseBoth();
 	eraseTextbox();	/* remove window, if any */
 	_sprites->blitBoth();
 	_sprites->commitBoth();		/* redraw sprites */
+	_game.hasWindow = false;
+}
+
+/**
+ * Remove existing window without restoring anything
+ */
+void AgiEngine::forgetWindow() {
+	debugC(4, kDebugLevelText, "forgetWindow()");
+
+	free(_game.window.buffer);
+	_game.window.buffer = 0;
+	_game.window.active = false;
 	_game.hasWindow = false;
 }
 
@@ -466,6 +483,9 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 	setvar(vKey, 0);
 
 	do {
+		if (getflag(fRestoreJustRan))
+			break;
+
 		mainCycle();
 		if (_game.keypress == KEY_ENTER) {
 			debugC(4, kDebugLevelText, "KEY_ENTER");
