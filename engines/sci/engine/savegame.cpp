@@ -271,9 +271,9 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	sync_sfx_state_t(s, sound);
 }
 
-static void sync_LocalVariables(Common::Serializer &s, LocalVariables &obj) {
-	s.syncAsSint32LE(obj.script_id);
-	syncArray<reg_t>(s, obj._locals);
+void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsSint32LE(script_id);
+	syncArray<reg_t>(s, _locals);
 }
 
 template <>
@@ -319,30 +319,48 @@ void sync_Table(Common::Serializer &s, T &obj) {
 	syncArray<typename T::Entry>(s, obj._table);
 }
 
-static void sync_Script(Common::Serializer &s, Script &obj) {
-	s.syncAsSint32LE(obj.nr);
-	s.syncAsUint32LE(obj.buf_size);
-	s.syncAsUint32LE(obj.script_size);
-	s.syncAsUint32LE(obj.heap_size);
+void CloneTable::saveLoadWithSerializer(Common::Serializer &s) {
+	sync_Table<CloneTable>(s, *this);
+}
+
+void NodeTable::saveLoadWithSerializer(Common::Serializer &s) {
+	sync_Table<NodeTable>(s, *this);
+}
+
+void ListTable::saveLoadWithSerializer(Common::Serializer &s) {
+	sync_Table<ListTable>(s, *this);
+}
+
+void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.isLoading()) {
+		initTable();
+	}
+}
+
+void Script::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsSint32LE(nr);
+	s.syncAsUint32LE(buf_size);
+	s.syncAsUint32LE(script_size);
+	s.syncAsUint32LE(heap_size);
 
 	// FIXME: revamp obj_indices handling
-	if (!obj.obj_indices) {
+	if (!obj_indices) {
 		assert(s.isLoading());
-		obj.obj_indices = new IntMapper();
+		obj_indices = new IntMapper();
 	}
 
-	obj.obj_indices->saveLoadWithSerializer(s);
+	obj_indices->saveLoadWithSerializer(s);
 
-	s.syncAsSint32LE(obj.exports_nr);
-	s.syncAsSint32LE(obj.synonyms_nr);
-	s.syncAsSint32LE(obj.lockers);
+	s.syncAsSint32LE(exports_nr);
+	s.syncAsSint32LE(synonyms_nr);
+	s.syncAsSint32LE(lockers);
 
-	syncArray<Object>(s, obj._objects);
+	syncArray<Object>(s, _objects);
 
-	s.syncAsSint32LE(obj.locals_offset);
-	s.syncAsSint32LE(obj.locals_segment);
+	s.syncAsSint32LE(locals_offset);
+	s.syncAsSint32LE(locals_segment);
 
-	s.syncAsSint32LE(obj._markedAsDeleted);
+	s.syncAsSint32LE(_markedAsDeleted);
 }
 
 static void sync_SystemString(Common::Serializer &s, SystemString &obj) {
@@ -354,27 +372,31 @@ static void sync_SystemString(Common::Serializer &s, SystemString &obj) {
 	syncCStr(s, (char **)&obj.value);
 }
 
-static void sync_SystemStrings(Common::Serializer &s, SystemStrings &obj) {
+void SystemStrings::saveLoadWithSerializer(Common::Serializer &s) {
 	for (int i = 0; i < SYS_STRINGS_MAX; ++i)
-		sync_SystemString(s, obj.strings[i]);
+		sync_SystemString(s, strings[i]);
 }
 
-static void sync_DynMem(Common::Serializer &s, DynMem &obj) {
-	s.syncAsSint32LE(obj._size);
-	syncCStr(s, &obj._description);
-	if (!obj._buf && obj._size) {
-		obj._buf = (byte *)calloc(obj._size, 1);
+void DynMem::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsSint32LE(_size);
+	syncCStr(s, &_description);
+	if (!_buf && _size) {
+		_buf = (byte *)calloc(_size, 1);
 	}
-	if (obj._size)
-		s.syncBytes(obj._buf, obj._size);
+	if (_size)
+		s.syncBytes(_buf, _size);
 }
 
-static void sync_DataStack(Common::Serializer &s, DataStack &obj) {
-	s.syncAsUint32LE(obj.nr);
+void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsUint32LE(nr);
 	if (s.isLoading()) {
-		//free(obj.entries);
-		obj.entries = (reg_t *)calloc(obj.nr, sizeof(reg_t));
+		//free(entries);
+		entries = (reg_t *)calloc(nr, sizeof(reg_t));
 	}
+}
+
+void StringFrag::saveLoadWithSerializer(Common::Serializer &s) {
+	// TODO
 }
 
 #pragma mark -
@@ -422,42 +444,7 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&mobj) {
 	}
 	
 	s.syncAsSint32LE(mobj->_segmgrId);
-	switch (type) {
-	case MEM_OBJ_SCRIPT:
-		sync_Script(s, *(Script *)mobj);
-		break;
-	case MEM_OBJ_CLONES:
-		sync_Table<CloneTable>(s, *(CloneTable *)mobj);
-		break;
-	case MEM_OBJ_LOCALS:
-		sync_LocalVariables(s, *(LocalVariables *)mobj);
-		break;
-	case MEM_OBJ_SYS_STRINGS:
-		sync_SystemStrings(s, *(SystemStrings *)mobj);
-		break;
-	case MEM_OBJ_STACK:
-		sync_DataStack(s, *(DataStack *)mobj);
-		break;
-	case MEM_OBJ_HUNK:
-		if (s.isLoading()) {
-			(*(HunkTable *)mobj).initTable();
-		}
-		break;
-	case MEM_OBJ_STRING_FRAG:
-		break;
-	case MEM_OBJ_LISTS:
-		sync_Table<ListTable>(s, *(ListTable *)mobj);
-		break;
-	case MEM_OBJ_NODES:
-		sync_Table<NodeTable>(s, *(NodeTable *)mobj);
-		break;
-	case MEM_OBJ_DYNMEM:
-		sync_DynMem(s, *(DynMem *)mobj);
-		break;
-	default:
-		error("Unknown MemObject type %d", type);
-		break;
-	}
+	mobj->saveLoadWithSerializer(s);
 }
 
 

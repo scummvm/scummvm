@@ -28,7 +28,7 @@
 
 /* VM and kernel declarations */
 
-//#include "common/serializer.h"
+#include "common/serializer.h"
 #include "sci/engine/vm_types.h"	// for reg_t
 
 #include "common/util.h"
@@ -55,7 +55,7 @@ enum MemObjectType {
 	MEM_OBJ_MAX // For sanity checking
 };
 
-struct MemObject /* : public Common::Serializable */ {
+struct MemObject : public Common::Serializable {
 	MemObjectType _type;
 	int _segmgrId; /**< Internal value used by the seg_manager's hash map */
 
@@ -103,6 +103,11 @@ public:
 };
 
 
+// TODO: Implement the following class
+struct StringFrag : public MemObject {
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+};
+
 struct IntMapper;
 
 enum {
@@ -144,7 +149,7 @@ public:
 
 	virtual byte *dereference(reg_t pointer, int *size);
 
-//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 /** Number of bytes to be allocated for the stack */
@@ -255,7 +260,7 @@ public:
 	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
-//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 /** Clone has been marked as 'freed' */
@@ -366,7 +371,7 @@ public:
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
-//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	// script lock operations
 
@@ -479,7 +484,7 @@ public:
 	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
 
-//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 #define CLONE_USED -1
@@ -560,8 +565,6 @@ public:
 	}
 
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
-
-//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 
@@ -569,6 +572,8 @@ public:
 struct CloneTable : public Table<Clone> {
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 
@@ -576,6 +581,8 @@ struct CloneTable : public Table<Clone> {
 struct NodeTable : public Table<Node> {
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 
@@ -583,6 +590,8 @@ struct NodeTable : public Table<Node> {
 struct ListTable : public Table<List> {
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 
@@ -593,6 +602,8 @@ struct HunkTable : public Table<Hunk> {
 
 		free(_table[idx].mem);
 	}
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 
@@ -615,7 +626,7 @@ public:
 	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 
-//	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 /** Contains selector IDs for a few selected selectors */

@@ -254,7 +254,7 @@ MemObject *MemObject::createMemObject(MemObjectType type) {
 		mem = new HunkTable();
 		break;
 	case MEM_OBJ_STRING_FRAG:
-		mem = new MemObject();	// FIXME: This is a temporary hack until MEM_OBJ_STRING_FRAG is implemented
+		mem = new StringFrag();
 		break;
 	case MEM_OBJ_LISTS:
 		mem = new ListTable();

@@ -63,9 +63,6 @@ typedef int Selector;
 #define PSTK "ST:%04x"
 #define PRINT_STK(v) (unsigned) (v - s->stack_base)
 
-// String fragment
-typedef reg_t *StringFrag;
-
 static inline reg_t make_reg(int segment, int offset) {
 	reg_t r;
 	r.offset = offset;
