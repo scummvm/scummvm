@@ -510,7 +510,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 const char *AgiEngine::getSavegameFilename(int num) {
 	static Common::String saveLoadSlot;
 	char extension[5];
-	snprintf(extension, sizeof(extension), ".%3d", num);
+	snprintf(extension, sizeof(extension), ".%.3d", num);
 
 	saveLoadSlot = _targetName + extension;
 	return saveLoadSlot.c_str();
