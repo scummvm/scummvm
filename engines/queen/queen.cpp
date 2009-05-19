@@ -344,7 +344,7 @@ Common::Error QueenEngine::saveGameState(int slot, const char *desc) {
 		file->finalize();
 
 		// check for errors
-		if (file->ioFailed()) {
+		if (file->err()) {
 			warning("Can't write file '%s'. (Disk full?)", name);
 			err = Common::kWritingFailed;
 		}

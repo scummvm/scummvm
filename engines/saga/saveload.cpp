@@ -247,7 +247,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	out->finalize();
 
-	if (out->ioFailed())
+	if (out->err())
 		warning("Can't write file '%s'. (Disk full?)", fileName);
 
 	delete out;

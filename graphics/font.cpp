@@ -649,7 +649,7 @@ bool NewFont::cacheFontData(const NewFont &font, const Common::String &filename)
 		cacheFile.writeByte(0);
 	}
 
-	return !cacheFile.ioFailed();
+	return !cacheFile.err();
 }
 
 NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {

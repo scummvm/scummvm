@@ -234,7 +234,7 @@ bool PlainSave::save(int16 dataVar, int32 size, int32 offset, const char *name,
 			variables, variableSizes, _endianness);
 
 	out->finalize();
-	if (out->ioFailed()) {
+	if (out->err()) {
 		warning("Can't write to file \"%s\"", name);
 		retVal = false;
 	}
@@ -494,7 +494,7 @@ bool StagedSave::write() const {
 
 	if (result) {
 		out->finalize();
-		if (out->ioFailed()) {
+		if (out->err()) {
 			warning("Can't write to file \"%s\"", _name);
 			result = false;
 		}

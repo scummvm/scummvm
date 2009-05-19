@@ -484,7 +484,7 @@ static void DoSave(void) {
 	memcpy(hdr.desc, SaveSceneDesc, SG_DESC_LEN);
 	hdr.desc[SG_DESC_LEN - 1] = 0;
 	g_system->getTimeAndDate(hdr.dateTime);
-	if (!syncSaveGameHeader(s, hdr) || f->ioFailed()) {
+	if (!syncSaveGameHeader(s, hdr) || f->err()) {
 		goto save_failure;
 	}
 
@@ -492,7 +492,7 @@ static void DoSave(void) {
 
 	// Write out the special Id for Discworld savegames
 	f->writeUint32LE(0xFEEDFACE);
-	if (f->ioFailed())
+	if (f->err())
 		goto save_failure;
 
 	f->finalize();

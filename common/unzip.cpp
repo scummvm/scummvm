@@ -372,7 +372,7 @@ typedef struct {
       *pi = (int)c;
         return UNZ_OK;
     } else {
-        if (fin.ioFailed())
+        if (fin.err())
             return UNZ_ERRNO;
         else
             return UNZ_EOF;
@@ -385,12 +385,12 @@ typedef struct {
 */
 static int unzlocal_getShort(Common::SeekableReadStream *fin, uLong *pX) {
 	*pX = fin->readUint16LE();
-	return fin->ioFailed() ? UNZ_ERRNO : UNZ_OK;
+	return (fin->err() || fin->eos()) ? UNZ_ERRNO : UNZ_OK;
 }
 
 static int unzlocal_getLong(Common::SeekableReadStream *fin, uLong *pX) {
 	*pX = fin->readUint32LE();
-	return fin->ioFailed() ? UNZ_ERRNO : UNZ_OK;
+	return (fin->err() || fin->eos()) ? UNZ_ERRNO : UNZ_OK;
 }
 
 
@@ -433,7 +433,7 @@ static uLong unzlocal_SearchCentralDir(Common::SeekableReadStream &fin) {
 	uLong uPosFound=0;
 
 	uSizeFile = fin.size();
-	if (fin.ioFailed())
+	if (fin.err())
 		return 0;
 
 	if (uMaxBack>uSizeFile)
@@ -456,7 +456,7 @@ static uLong unzlocal_SearchCentralDir(Common::SeekableReadStream &fin) {
 		uReadSize = ((BUFREADCOMMENT+4) < (uSizeFile-uReadPos)) ?
                      (BUFREADCOMMENT+4) : (uSizeFile-uReadPos);
 		fin.seek(uReadPos, SEEK_SET);
-		if (fin.ioFailed())
+		if (fin.err())
 			break;
 
 		if (fin.read(buf,(uInt)uReadSize)!=uReadSize)
@@ -510,7 +510,7 @@ unzFile unzOpen(Common::SeekableReadStream *stream) {
 		err=UNZ_ERRNO;
 
 	us->_stream->seek(central_pos, SEEK_SET);
-	if (us->_stream->ioFailed())
+	if (us->_stream->err())
 		err=UNZ_ERRNO;
 
 	/* the signature, already checked */
@@ -651,7 +651,7 @@ static int unzlocal_GetCurrentFileInfoInternal(unzFile file,
 		return UNZ_PARAMERROR;
 	s=(unz_s*)file;
 	s->_stream->seek(s->pos_in_central_dir+s->byte_before_the_zipfile, SEEK_SET);
-	if (s->_stream->ioFailed())
+	if (s->_stream->err())
 		err=UNZ_ERRNO;
 
 
@@ -735,7 +735,7 @@ static int unzlocal_GetCurrentFileInfoInternal(unzFile file,
 
 		if (lSeek!=0) {
 			s->_stream->seek(lSeek, SEEK_CUR);
-			if (s->_stream->ioFailed())
+			if (s->_stream->err())
 				lSeek=0;
 			else
 				err=UNZ_ERRNO;
@@ -759,7 +759,7 @@ static int unzlocal_GetCurrentFileInfoInternal(unzFile file,
 
 		if (lSeek!=0) {
 			s->_stream->seek(lSeek, SEEK_CUR);
-			if (s->_stream->ioFailed())
+			if (s->_stream->err())
 				lSeek=0;
 			else
 				err=UNZ_ERRNO;
@@ -917,7 +917,7 @@ static int unzlocal_CheckCurrentFileCoherencyHeader(unz_s* s, uInt* piSizeVar,
 
 	s->_stream->seek(s->cur_file_info_internal.offset_curfile +
 								s->byte_before_the_zipfile, SEEK_SET);
-	if (s->_stream->ioFailed())
+	if (s->_stream->err())
 		return UNZ_ERRNO;
 
 
@@ -1121,7 +1121,7 @@ int unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
 				return UNZ_EOF;
 			pfile_in_zip_read_info->_stream->seek(pfile_in_zip_read_info->pos_in_zipfile +
 				pfile_in_zip_read_info->byte_before_the_zipfile, SEEK_SET);
-			if (pfile_in_zip_read_info->_stream->ioFailed())
+			if (pfile_in_zip_read_info->_stream->err())
 				return UNZ_ERRNO;
 			if (pfile_in_zip_read_info->_stream->read(pfile_in_zip_read_info->read_buffer,uReadThis)!=uReadThis)
 				return UNZ_ERRNO;
@@ -1275,7 +1275,7 @@ int unzGetLocalExtrafield(unzFile file, voidp buf, unsigned len) {
 
 	pfile_in_zip_read_info->_stream->seek(pfile_in_zip_read_info->offset_local_extrafield +
 			  pfile_in_zip_read_info->pos_local_extrafield,SEEK_SET);
-	if (pfile_in_zip_read_info->_stream->ioFailed())
+	if (pfile_in_zip_read_info->_stream->err())
 		return UNZ_ERRNO;
 
 	if (pfile_in_zip_read_info->_stream->read(buf,(uInt)size_to_read)!=size_to_read)
@@ -1339,7 +1339,7 @@ int unzGetGlobalComment(unzFile file, char *szComment, uLong uSizeBuf) {
 		uReadThis = s->gi.size_comment;
 
 	s->_stream->seek(s->central_pos+22, SEEK_SET);
-	if (s->_stream->ioFailed())
+	if (s->_stream->err())
 		return UNZ_ERRNO;
 
 	if (uReadThis>0) {

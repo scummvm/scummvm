@@ -334,7 +334,7 @@ Common::Error ToucheEngine::saveGameState(int num, const char *description) {
 		f->write(headerDescription, kGameStateDescriptionLen);
 		saveGameStateData(f);
 		f->finalize();
-		if (!f->ioFailed()) {
+		if (!f->err()) {
 			saveOk = true;
 		} else {
 			warning("Can't write file '%s'", gameStateFileName.c_str());

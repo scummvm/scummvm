@@ -253,7 +253,7 @@ void DrasculaEngine::saveGame(char gameName[]) {
 	out->writeSint32LE(pickedObject);
 
 	out->finalize();
-	if (out->ioFailed())
+	if (out->err())
 		warning("Can't write file '%s'. (Disk full?)", gameName);
 
 	delete out;

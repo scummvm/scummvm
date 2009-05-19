@@ -109,7 +109,7 @@ public:
 	}
 	bool writeBit8u(MT32Emu::Bit8u out) {
 		_out.writeByte(out);
-		return !_out.ioFailed();
+		return !_out.err();
 	}
 	bool isEOF() {
 		return _in.isOpen() && _in.eos();

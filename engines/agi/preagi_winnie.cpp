@@ -1161,7 +1161,7 @@ void Winnie::saveGame() {
 
 	outfile->finalize();
 
-	if (outfile->ioFailed())
+	if (outfile->err())
 		warning("Can't write file '%s'. (Disk full?)", szFile);
 
 	delete outfile;

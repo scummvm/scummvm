@@ -262,7 +262,7 @@ void SkyMetaEngine::removeSaveState(const char *target, int slot) const {
 			outf->write(savenames[cnt].c_str(), savenames[cnt].size() + 1);
 		}
 		outf->finalize();
-		if (!outf->ioFailed())
+		if (!outf->err())
 			ioFailed = false;
 		delete outf;
 	}

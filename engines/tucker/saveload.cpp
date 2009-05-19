@@ -112,7 +112,7 @@ Common::Error TuckerEngine::saveGameState(int num, const char *description) {
 		f->writeUint16LE(0);
 		saveOrLoadGameStateData(*f);
 		f->finalize();
-		if (f->ioFailed()) {
+		if (f->err()) {
 			warning("Can't write file '%s'", gameStateFileName.c_str());
 			ret = Common::kWritingFailed;
 		}

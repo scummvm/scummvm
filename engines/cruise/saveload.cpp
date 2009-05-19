@@ -770,7 +770,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName) 
 	header.saveName = saveName;
 	writeSavegameHeader(f, header);
 
-	if (f->ioFailed()) {
+	if (f->err()) {
 		delete f;
 		saveMan->removeSavefile(filename);
 		return Common::kWritingFailed;

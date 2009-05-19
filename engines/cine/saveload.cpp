@@ -42,7 +42,7 @@ bool writeChunkHeader(Common::OutSaveFile &out, const ChunkHeader &header) {
 	out.writeUint32BE(header.id);
 	out.writeUint32BE(header.version);
 	out.writeUint32BE(header.size);
-	return !out.ioFailed();
+	return !out.err();
 }
 
 bool loadChunkHeader(Common::SeekableReadStream &in, ChunkHeader &header) {

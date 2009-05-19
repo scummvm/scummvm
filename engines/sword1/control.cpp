@@ -1140,7 +1140,7 @@ void Control::saveGameToFile(uint8 slot) {
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
 		outf->writeUint32LE(playerRaw[cnt2]);
 	outf->finalize();
-	if (outf->ioFailed())
+	if (outf->err())
 		displayMessage(0, "Couldn't write to file '%s'. Device full? (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 	delete outf;
 }
@@ -1288,7 +1288,7 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 	newSave->write(saveData, dataSize);
 
 	newSave->finalize();
-	if (newSave->ioFailed())
+	if (newSave->err())
 		warning("Couldn't write to file '%s'. Device full?", newFileName);
 	delete newSave;
 

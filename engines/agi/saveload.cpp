@@ -225,7 +225,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	out->writeSint16BE(_gfx->getAGIPalFileNum());
 
 	out->finalize();
-	if (out->ioFailed()) {
+	if (out->err()) {
 		warning("Can't write file '%s'. (Disk full?)", fileName);
 		result = errIOError;
 	} else

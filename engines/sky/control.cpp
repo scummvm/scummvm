@@ -1087,7 +1087,7 @@ void Control::saveDescriptions(const Common::StringList &list) {
 			outf->write(list[cnt].c_str(), list[cnt].size() + 1);
 		}
 		outf->finalize();
-		if (!outf->ioFailed())
+		if (!outf->err())
 			ioFailed = false;
 		delete outf;
 	}
@@ -1114,7 +1114,7 @@ void Control::doAutoSave(void) {
 	outf->write(saveData, fSize);
 	outf->finalize();
 
-	if (outf->ioFailed())
+	if (outf->err())
 		displayMessage(0, "Unable to write autosave file '%s'. Disk full?", fName, _saveFileMan->popErrorDesc().c_str());
 
 	delete outf;
@@ -1135,7 +1135,7 @@ uint16 Control::saveGameToFile(void) {
 
 	uint32 writeRes = outf->write(saveData, fSize);
 	outf->finalize();
-	if (outf->ioFailed())
+	if (outf->err())
 		writeRes = 0;
 	free(saveData);
 	delete outf;

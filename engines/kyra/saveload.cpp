@@ -197,7 +197,7 @@ Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, con
 	else
 		out->writeUint32BE(GF_FLOPPY);
 
-	if (out->ioFailed()) {
+	if (out->err()) {
 		warning("Can't write file '%s'. (Disk full?)", filename);
 		delete out;
 		return 0;
