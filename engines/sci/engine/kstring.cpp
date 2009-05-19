@@ -803,4 +803,10 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kSetQuitStr(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+        char *quitStr = kernel_dereference_char_pointer(s, argv[0], 0);
+        debug("Setting quit string to '%s'", quitStr);
+        return s->r_acc;
+}
+
 } // End of namespace Sci

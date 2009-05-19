@@ -154,6 +154,29 @@ reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	ResourceType restype = (ResourceType)(UKPV(0) & 0x7f);
+
+	switch (restype) {
+	case kResourceTypeAudio36:
+	case kResourceTypeSync36: {
+		assert(argc >= 6);
+
+		uint module = UKPV(1);
+		uint noun = UKPV(2);
+		uint verb = UKPV(3);
+		uint cond = UKPV(4);
+		uint seq = UKPV(5);
+		warning("ResCheck: checking for currently unsupported %s resource: module %i; tuple (%i, %i, %i, %i)",
+				getResourceTypeName(restype), module, noun, verb, cond, seq);
+		return NULL_REG;
+	}
+	default:
+		Resource *res = s->resmgr->testResource(restype, UKPV(1));
+		return make_reg(0, res != NULL);
+	}
+}
+
 reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
 	Object *parent_obj = obj_get(s, parent_addr);

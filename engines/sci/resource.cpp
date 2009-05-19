@@ -70,19 +70,20 @@ const char *sci_error_types[] = {
 	"SCI version is unsupported"
 };
 
-// These are the 18 resource types supported by SCI1
+// These are the 20 resource types supported by SCI1.1
 const char *resourceTypeNames[] = {
 	"view", "pic", "script", "text", "sound",
 	"memory", "vocab", "font", "cursor",
 	"patch", "bitmap", "palette", "cdaudio",
-	"audio", "sync", "message", "map", "heap"
+	"audio", "sync", "message", "map", "heap",
+	"audio36", "sync36"
 };
 
 const char *resourceTypeSuffixes[] = {
 	"v56", "p56", "scr", "tex", "snd",
 	"   ", "voc", "fon", "cur", "pat",
 	"bit", "pal", "cda", "aud", "syn",
-	"msg", "map", "hep"
+	"msg", "map", "hep", "aud", "syn"
 };
 
 const char *getResourceTypeName(ResourceType restype) {

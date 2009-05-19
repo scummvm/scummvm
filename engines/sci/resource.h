@@ -111,6 +111,8 @@ enum ResourceType {
 	kResourceTypeMessage,
 	kResourceTypeMap,
 	kResourceTypeHeap,
+	kResourceTypeAudio36,
+	kResourceTypeSync36,
 	kResourceTypeInvalid
 };
 

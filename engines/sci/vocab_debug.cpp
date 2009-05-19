@@ -32,7 +32,7 @@ namespace Sci {
 // Default kernel name table
 #define SCI0_KNAMES_WELL_DEFINED 0x6e
 #define SCI0_KNAMES_DEFAULT_ENTRIES_NR 0x72
-#define SCI1_KNAMES_DEFAULT_ENTRIES_NR 0x7E
+#define SCI1_KNAMES_DEFAULT_ENTRIES_NR 0x89
 
 static const char *sci0_default_knames[SCI0_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x00*/ "Load",
@@ -233,7 +233,7 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x4e*/ "OnControl",
 	/*0x4f*/ "InitBresen",
 	/*0x50*/ "DoBresen",
-	/*0x51*/ SCRIPT_UNKNOWN_FUNCTION_STRING, // DoAvoider is not implemented in SCI1
+	/*0x51*/ "Platform",
 	/*0x52*/ "SetJump",
 	/*0x53*/ "SetDebug",
 	/*0x54*/ "InspectObj",
@@ -277,7 +277,18 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x7a*/ "Lock",         
 	/*0x7b*/ "StrSplit",       
 	/*0x7c*/ "Message",
-	/*0x7d*/ "IsItSkip"
+	/*0x7d*/ "IsItSkip",
+	/*0x7e*/ "MergePoly",
+	/*0x7f*/ "ResCheck",
+	/*0x80*/ "AssertPalette",
+	/*0x81*/ "TextColors",
+	/*0x82*/ "TextFonts",
+	/*0x83*/ "Record",
+	/*0x84*/ "PlayBack",
+	/*0x85*/ SCRIPT_UNKNOWN_FUNCTION_STRING,
+	/*0x86*/ "SetVideoMode",
+	/*0x87*/ "SetQuitStr",
+	/*0x88*/ "DbugStr"
 };
 
 #if 0

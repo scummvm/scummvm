@@ -203,6 +203,8 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("Message", kMessage, ".*"),
 	DEFUN("DoAudio", kDoAudio, ".*"),
 	DEFUN("DoSync", kDoSync, ".*"),
+	DEFUN("ResCheck", kResCheck, "iii*"),
+	DEFUN("SetQuitStr", kSetQuitStr, "r"),
 
 	// Special and NOP stuff
 	{KF_NEW, NULL, k_Unknown, NULL},
@@ -763,12 +765,12 @@ static void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entr
 	void *retval = s->seg_manager->dereference(pointer, &maxsize);
 
 	if (pointer.offset & (align - 1)) {
-		error("Unaligned pointer read: "PREG" expected with %d alignment!\n", PRINT_REG(pointer), align);
+		warning("Unaligned pointer read: "PREG" expected with %d alignment", PRINT_REG(pointer), align);
 		return NULL;
 	}
 
 	if (entries > maxsize) {
-		error("Trying to dereference pointer "PREG" beyond end of segment!\n", PRINT_REG(pointer));
+		warning("Trying to dereference pointer "PREG" beyond end of segment", PRINT_REG(pointer));
 		return NULL;
 	}
 	return retval;
