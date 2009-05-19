@@ -75,16 +75,16 @@ public:
 	virtual int32 getFrameRate();
 
 	/**
-	 * Returns the time to wait for each frame in 1/100 ms
-	 * @return the time to wait for each frame in 1/100 ms
+	 * Returns the time to wait for each frame in ms
+	 * @return the time to wait for each frame in ms
 	 */
 	virtual int32 getFrameDelay();
 
 	/**
-	 * Returns the current A/V lag in 1/100 ms
+	 * Returns the current A/V lag in ms
 	 * If > 0, audio lags behind
 	 * If < 0, video lags behind
-	 * @return the current A/V lag in 1/100 ms
+	 * @return the current A/V lag in ms
 	 */
 	virtual int32 getAudioLag();
 
@@ -170,7 +170,7 @@ protected:
 		uint32 height;
 		uint32 frameCount;
 		int32 frameRate;
-		int32 frameDelay;		// 1/100 ms
+		int32 frameDelay;		// ms
 		uint32 frameOffs;
 		uint32 currentFrame;
 		uint32 startTime;

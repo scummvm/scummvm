@@ -244,7 +244,7 @@ int32 DXADecoderWithSound::getAudioLag() {
 	int32 videoTime = _videoInfo.currentFrame * frameDelay;
 	int32 audioTime;
 
-	audioTime = (((int32) _mixer->getSoundElapsedTime(*_bgSoundHandle)) * 100);
+	audioTime = (int32) _mixer->getSoundElapsedTime(*_bgSoundHandle);
 
 	return videoTime - audioTime;
 }

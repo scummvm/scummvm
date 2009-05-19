@@ -86,13 +86,13 @@ bool DXADecoder::loadFile(const char *fileName) {
 
 	if (frameRate > 0) {
 		_videoInfo.frameRate = 1000 / frameRate;
-		_videoInfo.frameDelay = frameRate * 100;
+		_videoInfo.frameDelay = frameRate;
 	} else if (frameRate < 0) {
 		_videoInfo.frameRate = 100000 / (-frameRate);
-		_videoInfo.frameDelay = -frameRate;
+		_videoInfo.frameDelay = -frameRate / 100;
 	} else {
 		_videoInfo.frameRate = 10;
-		_videoInfo.frameDelay = 10000;
+		_videoInfo.frameDelay = 100;
 	}
 
 	_videoInfo.width = _fileStream->readUint16BE();

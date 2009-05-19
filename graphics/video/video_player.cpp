@@ -88,14 +88,14 @@ int32 VideoDecoder::getAudioLag() {
 	   Calculate the lag by how much time has gone by since the first frame
 	   and how much time *should* have passed.
 	*/
-	int32 audioTime = (g_system->getMillis() - _videoInfo.startTime) * 100;
+	int32 audioTime = g_system->getMillis() - _videoInfo.startTime;
 	int32 videoTime = _videoInfo.currentFrame * getFrameDelay();
 
 	return videoTime - audioTime;
 }
 
 uint32 VideoDecoder::getFrameWaitTime() {
-	int32 waitTime = (getFrameDelay() + getAudioLag()) / 100;
+	int32 waitTime = getFrameDelay() + getAudioLag();
 
 	if (waitTime < 0)
 		return 0;
