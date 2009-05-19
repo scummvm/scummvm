@@ -321,6 +321,12 @@ void MoviePlayerDXA::nextFrame() {
 		return;
 	}
 
+	if (_vm->_interactiveVideo == TYPE_LOOPING && getCurFrame() == getFrameCount()) {
+		_fileStream->seek(_videoInfo.frameOffs);
+		_videoInfo.currentFrame = 0;
+		startSound();
+	}
+
 	if (getCurFrame() < getFrameCount()) {
 		decodeNextFrame();
 		if (_vm->_interactiveVideo == TYPE_OMNITV) {
@@ -328,16 +334,10 @@ void MoviePlayerDXA::nextFrame() {
 		} else if (_vm->_interactiveVideo == TYPE_LOOPING) {
 			copyFrameToBuffer(_vm->getBackBuf(), (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
 		}
-	} else {
-		if (_vm->_interactiveVideo == TYPE_OMNITV) {
-			closeFile();
-			_vm->_interactiveVideo = 0;
-			_vm->_variableArray[254] = 6747;
-		} else if (_vm->_interactiveVideo == TYPE_LOOPING) {
-			_fileStream->seek(_videoInfo.frameOffs);
-			_videoInfo.currentFrame = 0;
-			startSound();
-		}
+	} else if (_vm->_interactiveVideo == TYPE_OMNITV) {
+		closeFile();
+		_vm->_interactiveVideo = 0;
+		_vm->_variableArray[254] = 6747;
 	}
 }
 
@@ -444,6 +444,11 @@ void MoviePlayerSMK::handleNextFrame() {
 }
 
 void MoviePlayerSMK::nextFrame() {
+	if (_vm->_interactiveVideo == TYPE_LOOPING && getCurFrame() == getFrameCount()) {
+		_fileStream->seek(_videoInfo.frameOffs);
+		_videoInfo.currentFrame = 0;
+	}
+
 	if (getCurFrame() < getFrameCount()) {
 		decodeNextFrame();
 		if (_vm->_interactiveVideo == TYPE_OMNITV) {
@@ -451,15 +456,10 @@ void MoviePlayerSMK::nextFrame() {
 		} else if (_vm->_interactiveVideo == TYPE_LOOPING) {
 			copyFrameToBuffer(_vm->getBackBuf(), (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
 		}
-	} else {
-		if (_vm->_interactiveVideo == TYPE_OMNITV) {
-			closeFile();
-			_vm->_interactiveVideo = 0;
-			_vm->_variableArray[254] = 6747;
-		} else if (_vm->_interactiveVideo == TYPE_LOOPING) {
-			_fileStream->seek(_videoInfo.frameOffs);
-			_videoInfo.currentFrame = 0;
-		}
+	} else if (_vm->_interactiveVideo == TYPE_OMNITV) {
+		closeFile();
+		_vm->_interactiveVideo = 0;
+		_vm->_variableArray[254] = 6747;
 	}
 }
 
