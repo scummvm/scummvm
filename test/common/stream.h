@@ -10,18 +10,18 @@ class ReadLineStreamTestSuite : public CxxTest::TestSuite {
 
 		char buffer[100];
 
-		TS_ASSERT(0 != ms.readLine_NEW(buffer, sizeof(buffer)));
-		TS_ASSERT(0 == strcmp(buffer, "ab\n"));
+		TS_ASSERT_DIFFERS((char *)0, ms.readLine_NEW(buffer, sizeof(buffer)));
+		TS_ASSERT_EQUALS(0, strcmp(buffer, "ab\n"));
 
-		TS_ASSERT(0 != ms.readLine_NEW(buffer, sizeof(buffer)));
-		TS_ASSERT(0 == strcmp(buffer, "\n"));
+		TS_ASSERT_DIFFERS((char *)0, ms.readLine_NEW(buffer, sizeof(buffer)));
+		TS_ASSERT_EQUALS(0, strcmp(buffer, "\n"));
 
-		TS_ASSERT(0 != ms.readLine_NEW(buffer, sizeof(buffer)));
-		TS_ASSERT(0 == strcmp(buffer, "c\n"));
+		TS_ASSERT_DIFFERS((char *)0, ms.readLine_NEW(buffer, sizeof(buffer)));
+		TS_ASSERT_EQUALS(0, strcmp(buffer, "c\n"));
 
 		TS_ASSERT(!ms.eos());
 
-		TS_ASSERT(0 == ms.readLine_NEW(buffer, sizeof(buffer)));
+		TS_ASSERT_EQUALS((char *)0, ms.readLine_NEW(buffer, sizeof(buffer)));
 
 		TS_ASSERT(ms.eos());
 	}
@@ -32,14 +32,14 @@ class ReadLineStreamTestSuite : public CxxTest::TestSuite {
 
 		char buffer[100];
 
-		TS_ASSERT(0 != ms.readLine_NEW(buffer, sizeof(buffer)));
-		TS_ASSERT(0 == strcmp(buffer, "ab\n"));
+		TS_ASSERT_DIFFERS((char *)0, ms.readLine_NEW(buffer, sizeof(buffer)));
+		TS_ASSERT_EQUALS(0, strcmp(buffer, "ab\n"));
 
-		TS_ASSERT(0 != ms.readLine_NEW(buffer, sizeof(buffer)));
-		TS_ASSERT(0 == strcmp(buffer, "\n"));
+		TS_ASSERT_DIFFERS((char *)0, ms.readLine_NEW(buffer, sizeof(buffer)));
+		TS_ASSERT_EQUALS(0, strcmp(buffer, "\n"));
 
-		TS_ASSERT(0 != ms.readLine_NEW(buffer, sizeof(buffer)));
-		TS_ASSERT(0 == strcmp(buffer, "c"));
+		TS_ASSERT_DIFFERS((char *)0, ms.readLine_NEW(buffer, sizeof(buffer)));
+		TS_ASSERT_EQUALS(0, strcmp(buffer, "c"));
 
 		TS_ASSERT(ms.eos());
 	}

@@ -15,16 +15,16 @@ class BufferedReadStreamTestSuite : public CxxTest::TestSuite {
 
 		byte i, b;
 		for (i = 0; i < 10; ++i) {
-			TS_ASSERT( !srs.eos() );
+			TS_ASSERT(!srs.eos());
 
 			b = srs.readByte();
-			TS_ASSERT_EQUALS( i, b );
+			TS_ASSERT_EQUALS(i, b);
 		}
 
-		TS_ASSERT( !srs.eos() );
+		TS_ASSERT(!srs.eos());
 
 		b = srs.readByte();
 
-		TS_ASSERT ( srs.eos() );
+		TS_ASSERT(srs.eos());
 	}
 };

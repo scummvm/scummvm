@@ -7,39 +7,39 @@ class ListTestSuite : public CxxTest::TestSuite
 	public:
 	void test_empty_clear() {
 		Common::List<int> container;
-		TS_ASSERT( container.empty() );
+		TS_ASSERT(container.empty());
 		container.push_back(17);
 		container.push_back(33);
-		TS_ASSERT( !container.empty() );
+		TS_ASSERT(!container.empty());
 		container.clear();
-		TS_ASSERT( container.empty() );
+		TS_ASSERT(container.empty());
 	}
 
 	public:
 	void test_size() {
 		Common::List<int> container;
-		TS_ASSERT_EQUALS( container.size(), (unsigned int)0 );
+		TS_ASSERT_EQUALS(container.size(), (unsigned int)0);
 		container.push_back(17);
-		TS_ASSERT_EQUALS( container.size(), (unsigned int)1 );
+		TS_ASSERT_EQUALS(container.size(), (unsigned int)1);
 		container.push_back(33);
-		TS_ASSERT_EQUALS( container.size(), (unsigned int)2 );
+		TS_ASSERT_EQUALS(container.size(), (unsigned int)2);
 		container.clear();
-		TS_ASSERT_EQUALS( container.size(), (unsigned int)0 );
+		TS_ASSERT_EQUALS(container.size(), (unsigned int)0);
 	}
 
 	void test_iterator_begin_end() {
 		Common::List<int> container;
 
 		// The container is initially empty ...
-		TS_ASSERT( container.begin() == container.end() );
+		TS_ASSERT_EQUALS(container.begin(), container.end());
 
 		// ... then non-empty ...
 		container.push_back(33);
-		TS_ASSERT( container.begin() != container.end() );
+		TS_ASSERT_DIFFERS(container.begin(), container.end());
 
 		// ... and again empty.
 		container.clear();
-		TS_ASSERT( container.begin() == container.end() );
+		TS_ASSERT_EQUALS(container.begin(), container.end());
 	}
 
 	void test_iterator() {
@@ -58,32 +58,32 @@ class ListTestSuite : public CxxTest::TestSuite
 		iter = container.begin();
 		cIter = container.begin();
 
-		TS_ASSERT( iter == cIter );
+		TS_ASSERT_EQUALS(iter, cIter);
 
-		TS_ASSERT_EQUALS( *iter, 17 );
+		TS_ASSERT_EQUALS(*iter, 17);
 		++iter;
 		++cIter;
-		TS_ASSERT( iter != container.end() );
-		TS_ASSERT( cIter != container.end() );
-		TS_ASSERT( iter == cIter );
+		TS_ASSERT_DIFFERS(iter, container.end());
+		TS_ASSERT_DIFFERS(cIter, container.end());
+		TS_ASSERT_EQUALS(iter, cIter);
 
-		TS_ASSERT_EQUALS( *iter, 33 );
+		TS_ASSERT_EQUALS(*iter, 33);
 		++iter;
 		++cIter;
-		TS_ASSERT( iter != container.end() );
-		TS_ASSERT( cIter != container.end() );
-		TS_ASSERT( iter == cIter );
+		TS_ASSERT_DIFFERS(iter, container.end());
+		TS_ASSERT_DIFFERS(cIter, container.end());
+		TS_ASSERT_EQUALS(iter, cIter);
 
 		// Also test the postinc
-		TS_ASSERT_EQUALS( *iter, -11 );
+		TS_ASSERT_EQUALS(*iter, -11);
 		iter++;
 		cIter++;
-		TS_ASSERT( iter == container.end() );
-		TS_ASSERT( cIter == container.end() );
-		TS_ASSERT( iter == cIter );
+		TS_ASSERT_EQUALS(iter, container.end());
+		TS_ASSERT_EQUALS(cIter, container.end());
+		TS_ASSERT_EQUALS(iter, cIter);
 
 		cIter = iter;
-		TS_ASSERT( iter == cIter );
+		TS_ASSERT_EQUALS(iter, cIter);
 	}
 
 	void test_insert() {
@@ -107,25 +107,25 @@ class ListTestSuite : public CxxTest::TestSuite
 		// Verify contents are correct
 		iter = container.begin();
 
-		TS_ASSERT_EQUALS( *iter, 17 );
+		TS_ASSERT_EQUALS(*iter, 17);
 		++iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, 33 );
+		TS_ASSERT_EQUALS(*iter, 33);
 		++iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, 42 );
+		TS_ASSERT_EQUALS(*iter, 42);
 		++iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, 43 );
+		TS_ASSERT_EQUALS(*iter, 43);
 		++iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, -11 );
+		TS_ASSERT_EQUALS(*iter, -11);
 		++iter;
-		TS_ASSERT( iter == container.end() );
+		TS_ASSERT_EQUALS(iter, container.end());
 	}
 
 	void test_erase() {
@@ -155,17 +155,17 @@ class ListTestSuite : public CxxTest::TestSuite
 		// Verify contents are correct
 		Common::List<int>::iterator iter = container.begin();
 
-		TS_ASSERT_EQUALS( *iter, 17 );
+		TS_ASSERT_EQUALS(*iter, 17);
 		++iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, 33 );
+		TS_ASSERT_EQUALS(*iter, 33);
 		++iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, 43 );
+		TS_ASSERT_EQUALS(*iter, 43);
 		++iter;
-		TS_ASSERT( iter == container.end() );
+		TS_ASSERT_EQUALS(iter, container.end());
 	}
 
 	void test_remove() {
@@ -191,17 +191,17 @@ class ListTestSuite : public CxxTest::TestSuite
 		// Verify contents are correct
 		Common::List<int>::iterator iter = container.begin();
 
-		TS_ASSERT_EQUALS( *iter, 17 );
+		TS_ASSERT_EQUALS(*iter, 17);
 		++iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, 33 );
+		TS_ASSERT_EQUALS(*iter, 33);
 		++iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, 43 );
+		TS_ASSERT_EQUALS(*iter, 43);
 		++iter;
-		TS_ASSERT( iter == container.end() );
+		TS_ASSERT_EQUALS(iter, container.end());
 	}
 
 	void test_reverse() {
@@ -214,36 +214,36 @@ class ListTestSuite : public CxxTest::TestSuite
 		container.push_back(-11);
 
 		iter = container.reverse_begin();
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
 
-		TS_ASSERT_EQUALS( *iter, -11 );
+		TS_ASSERT_EQUALS(*iter, -11);
 		--iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, 33 );
+		TS_ASSERT_EQUALS(*iter, 33);
 		--iter;
-		TS_ASSERT( iter != container.end() );
+		TS_ASSERT_DIFFERS(iter, container.end());
 
-		TS_ASSERT_EQUALS( *iter, 17 );
+		TS_ASSERT_EQUALS(*iter, 17);
 		--iter;
-		TS_ASSERT( iter == container.end() );
+		TS_ASSERT_EQUALS(iter, container.end());
 
 		iter = container.reverse_begin();
 
 		iter = container.reverse_erase(iter);
-		TS_ASSERT( iter != container.end() );
-		TS_ASSERT_EQUALS( *iter, 33 );
+		TS_ASSERT_DIFFERS(iter, container.end());
+		TS_ASSERT_EQUALS(*iter, 33);
 
 		iter = container.reverse_erase(iter);
-		TS_ASSERT( iter != container.end() );
-		TS_ASSERT_EQUALS( *iter, 17 );
+		TS_ASSERT_DIFFERS(iter, container.end());
+		TS_ASSERT_EQUALS(*iter, 17);
 
 		iter = container.reverse_erase(iter);
-		TS_ASSERT( iter == container.end() );
+		TS_ASSERT_EQUALS(iter, container.end());
 
-		TS_ASSERT( container.begin() == container.end() );
-		TS_ASSERT( container.reverse_begin() == container.end() );
+		TS_ASSERT_EQUALS(container.begin(), container.end());
+		TS_ASSERT_EQUALS(container.reverse_begin(), container.end());
 	}
 
 	void test_front_back_push_pop() {

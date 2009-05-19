@@ -15,14 +15,14 @@ class SubReadStreamTestSuite : public CxxTest::TestSuite {
 		int i;
 		byte b;
 		for (i = 0; i < end; ++i) {
-			TS_ASSERT( !srs.eos() );
+			TS_ASSERT(!srs.eos());
 
 			b = srs.readByte();
-			TS_ASSERT_EQUALS( i, b );
+			TS_ASSERT_EQUALS(i, b);
 		}
 
-		TS_ASSERT( !srs.eos() );
+		TS_ASSERT(!srs.eos());
 		b = srs.readByte();
-		TS_ASSERT( srs.eos() );
+		TS_ASSERT(srs.eos());
 	}
 };

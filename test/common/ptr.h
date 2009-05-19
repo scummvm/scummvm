@@ -13,21 +13,22 @@ class PtrTestSuite : public CxxTest::TestSuite
 		{
 			Common::SharedPtr<int> p2 = p1;
 			TS_ASSERT(!p1.unique());
-			TS_ASSERT(p1.refCount() == p2.refCount());
-			TS_ASSERT(p1.refCount() == 2);
-			TS_ASSERT(p1 == p2);
+			TS_ASSERT_EQUALS(p1.refCount(), p2.refCount());
+			TS_ASSERT_EQUALS(p1.refCount(), 2);
+			TS_ASSERT_EQUALS(p1, p2);
 			TS_ASSERT_EQUALS(*p2, 1);
 			{
 				Common::SharedPtr<int> p3;
 				p3 = p2;
-				TS_ASSERT(p3 == p2 && p3 == p1);
-				TS_ASSERT(p1.refCount() == 3);
+				TS_ASSERT_EQUALS(p3, p2);
+				TS_ASSERT_EQUALS(p3, p1);
+				TS_ASSERT_EQUALS(p1.refCount(), 3);
 				TS_ASSERT_EQUALS(*p3, 1);
 				*p3 = 0;
 				TS_ASSERT_EQUALS(*p3, 0);
 			}
 			TS_ASSERT_EQUALS(*p2, 0);
-			TS_ASSERT(p1.refCount() == 2);
+			TS_ASSERT_EQUALS(p1.refCount(), 2);
 		}
 
 		TS_ASSERT_EQUALS(*p1, 0);
