@@ -836,17 +836,19 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	case K_FILEIO_FILE_EXISTS : {
 		char *name = kernel_dereference_char_pointer(s, argv[1], 0);
-		// TODO: Transform the name given by the scripts to us, e.g. by
-		// prepending TARGET-
-		// TODO: We may have to also check for a regular file with the
-		// given name, using File::exists(). Really depends on *how*
-		// scripts use this opcode. Need more test data...
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		bool exists = !saveFileMan->listSavefiles(name).empty();
 
-		s->r_acc = make_reg(0, exists);
-		debug(3, "K_FILEIO_FILE_EXISTS(%s) -> %d", name, s->r_acc.offset);
-		break;
+		// Check for regular file
+		bool exists = Common::File::exists(name);
+
+		if (!exists) {
+			// TODO: Transform the name given by the scripts to us, e.g. by
+			// prepending TARGET-
+			Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+			exists = !saveFileMan->listSavefiles(name).empty();
+		}
+
+		debug(3, "K_FILEIO_FILE_EXISTS(%s) -> %d", name, exists);
+		return make_reg(0, exists);
 	}
 	default :
 		error("Unknown FileIO() sub-command: %d\n", func_nr);

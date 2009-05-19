@@ -285,7 +285,7 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x82*/ "TextFonts",
 	/*0x83*/ "Record",
 	/*0x84*/ "PlayBack",
-	/*0x85*/ SCRIPT_UNKNOWN_FUNCTION_STRING,
+	/*0x85*/ "ShowMovie",
 	/*0x86*/ "SetVideoMode",
 	/*0x87*/ "SetQuitStr",
 	/*0x88*/ "DbugStr"

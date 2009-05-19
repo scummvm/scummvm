@@ -847,7 +847,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 	ResourceSource *psrcPatch;
 	bool bAdd;
 
-	for (int i = kResourceTypeView; i < kResourceTypeInvalid; i ++) {
+	for (int i = kResourceTypeView; i < kResourceTypeAudio36; i ++) {
 		files.clear();
 		szResType = getResourceTypeName((ResourceType)i);
 		// SCI0 naming - type.nnn
