@@ -434,7 +434,6 @@ bool MainMenu::getInput() {
 }
 
 int MainMenu::handle(int dim) {
-	debugC(9, kDebugLevelMain, "MainMenu::handle(%d)", dim);
 	int command = -1;
 
 	uint8 colorMap[16];
@@ -516,7 +515,6 @@ int MainMenu::handle(int dim) {
 }
 
 void MainMenu::draw(int select) {
-	debugC(9, kDebugLevelMain, "MainMenu::draw(%d)", select);
 	int top = _screen->_curDim->sy;
 	top += _static.menuTable[1];
 
@@ -528,7 +526,6 @@ void MainMenu::draw(int select) {
 }
 
 void MainMenu::drawBox(int x, int y, int w, int h, int fill) {
-	debugC(9, kDebugLevelMain, "MainMenu::drawBox(%d, %d, %d, %d, %d)", x, y, w, h, fill);
 	--w; --h;
 
 	if (fill)
@@ -544,7 +541,6 @@ void MainMenu::drawBox(int x, int y, int w, int h, int fill) {
 }
 
 void MainMenu::printString(const char *format, int x, int y, int col1, int col2, int flags, ...) {
-	debugC(9, kDebugLevelMain, "MainMenu::printString('%s', %d, %d, %d, %d, %d, ...)", format, x, y, col1, col2, flags);
 	if (!format)
 		return;
 

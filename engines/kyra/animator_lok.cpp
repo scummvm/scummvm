@@ -55,7 +55,6 @@ Animator_LoK::~Animator_LoK() {
 }
 
 void Animator_LoK::init(int actors_, int items_, int sprites_) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::init(%d, %d, %d)", actors_, items_, sprites_);
 	_screenObjects = new AnimObject[actors_ + items_ + sprites_];
 	assert(_screenObjects);
 	memset(_screenObjects, 0, sizeof(AnimObject) * (actors_ + items_ + sprites_));
@@ -68,7 +67,6 @@ void Animator_LoK::init(int actors_, int items_, int sprites_) {
 }
 
 void Animator_LoK::close() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::close()");
 	if (_initOk) {
 		_initOk = false;
 		delete[] _screenObjects;
@@ -119,7 +117,6 @@ void Animator_LoK::initAnimStateList() {
 }
 
 void Animator_LoK::preserveAllBackgrounds() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::preserveAllBackgrounds()");
 	uint8 curPage = _screen->_curPage;
 	_screen->_curPage = 2;
 
@@ -135,7 +132,6 @@ void Animator_LoK::preserveAllBackgrounds() {
 }
 
 void Animator_LoK::flagAllObjectsForBkgdChange() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::flagAllObjectsForBkgdChange()");
 	AnimObject *curObject = _objectQueue;
 	while (curObject) {
 		curObject->bkgdChangeFlag = 1;
@@ -144,7 +140,6 @@ void Animator_LoK::flagAllObjectsForBkgdChange() {
 }
 
 void Animator_LoK::flagAllObjectsForRefresh() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::flagAllObjectsForRefresh()");
 	AnimObject *curObject = _objectQueue;
 	while (curObject) {
 		curObject->refreshFlag = 1;
@@ -153,7 +148,6 @@ void Animator_LoK::flagAllObjectsForRefresh() {
 }
 
 void Animator_LoK::restoreAllObjectBackgrounds() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::restoreAllObjectBackground()");
 	AnimObject *curObject = _objectQueue;
 	_screen->_curPage = 2;
 
@@ -170,7 +164,6 @@ void Animator_LoK::restoreAllObjectBackgrounds() {
 }
 
 void Animator_LoK::preserveAnyChangedBackgrounds() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::preserveAnyChangedBackgrounds()");
 	AnimObject *curObject = _objectQueue;
 	_screen->_curPage = 2;
 
@@ -186,7 +179,6 @@ void Animator_LoK::preserveAnyChangedBackgrounds() {
 }
 
 void Animator_LoK::preserveOrRestoreBackground(AnimObject *obj, bool restore) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::preserveOrRestoreBackground(%p, %d)", (const void *)obj, restore);
 	int x = 0, y = 0, width = obj->width, height = obj->height;
 
 	if (restore) {
@@ -218,7 +210,6 @@ void Animator_LoK::preserveOrRestoreBackground(AnimObject *obj, bool restore) {
 }
 
 void Animator_LoK::prepDrawAllObjects() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::prepDrawAllObjects()");
 	AnimObject *curObject = _objectQueue;
 	int drawPage = 2;
 	int flagUnk1 = 0, flagUnk2 = 0, flagUnk3 = 0;
@@ -364,7 +355,6 @@ void Animator_LoK::prepDrawAllObjects() {
 }
 
 void Animator_LoK::copyChangedObjectsForward(int refreshFlag) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::copyChangedObjectsForward(%d)", refreshFlag);
 
 	for (AnimObject *curObject = _objectQueue; curObject; curObject = curObject->nextAnimObject) {
 		if (curObject->active) {
@@ -405,7 +395,6 @@ void Animator_LoK::copyChangedObjectsForward(int refreshFlag) {
 }
 
 void Animator_LoK::updateAllObjectShapes() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::updateAllObjectShapes()");
 	restoreAllObjectBackgrounds();
 	preserveAnyChangedBackgrounds();
 	prepDrawAllObjects();
@@ -413,7 +402,6 @@ void Animator_LoK::updateAllObjectShapes() {
 }
 
 void Animator_LoK::animRemoveGameItem(int index) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::animRemoveGameItem(%d)", index);
 	restoreAllObjectBackgrounds();
 
 	AnimObject *animObj = &_items[index];
@@ -428,7 +416,6 @@ void Animator_LoK::animRemoveGameItem(int index) {
 }
 
 void Animator_LoK::animAddGameItem(int index, uint16 sceneId) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::animRemoveGameItem(%d, %d)", index, sceneId);
 	restoreAllObjectBackgrounds();
 	assert(sceneId < _vm->_roomTableSize);
 	Room *currentRoom = &_vm->_roomTable[sceneId];
@@ -454,7 +441,6 @@ void Animator_LoK::animAddGameItem(int index, uint16 sceneId) {
 }
 
 void Animator_LoK::animAddNPC(int character) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::animAddNPC(%d)", character);
 	restoreAllObjectBackgrounds();
 	AnimObject *animObj = &_actors[character];
 	const Character *ch = &_vm->_characterList[character];
@@ -479,7 +465,6 @@ void Animator_LoK::animAddNPC(int character) {
 }
 
 Animator_LoK::AnimObject *Animator_LoK::objectRemoveQueue(AnimObject *queue, AnimObject *rem) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::objectRemoveQueue(%p, %p)", (const void *)queue, (const void *)rem);
 	AnimObject *cur = queue;
 	AnimObject *prev = queue;
 
@@ -513,13 +498,11 @@ Animator_LoK::AnimObject *Animator_LoK::objectRemoveQueue(AnimObject *queue, Ani
 }
 
 Animator_LoK::AnimObject *Animator_LoK::objectAddHead(AnimObject *queue, AnimObject *head) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::objectAddHead(%p, %p)", (const void *)queue, (const void *)head);
 	head->nextAnimObject = queue;
 	return head;
 }
 
 Animator_LoK::AnimObject *Animator_LoK::objectQueue(AnimObject *queue, AnimObject *add) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::objectQueue(%p, %p)", (const void *)queue, (const void *)add);
 	if (add->drawY <= queue->drawY || !queue) {
 		add->nextAnimObject = queue;
 		return add;
@@ -545,7 +528,6 @@ Animator_LoK::AnimObject *Animator_LoK::objectQueue(AnimObject *queue, AnimObjec
 }
 
 void Animator_LoK::addObjectToQueue(AnimObject *object) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::addObjectToQueue(%p)", (const void *)object);
 	if (!_objectQueue)
 		_objectQueue = objectAddHead(0, object);
 	else
@@ -553,7 +535,6 @@ void Animator_LoK::addObjectToQueue(AnimObject *object) {
 }
 
 void Animator_LoK::refreshObject(AnimObject *object) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::refreshObject(%p)", (const void *)object);
 	_objectQueue = objectRemoveQueue(_objectQueue, object);
 	if (_objectQueue)
 		_objectQueue = objectQueue(_objectQueue, object);
@@ -562,7 +543,6 @@ void Animator_LoK::refreshObject(AnimObject *object) {
 }
 
 void Animator_LoK::makeBrandonFaceMouse() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::makeBrandonFaceMouse()");
 	Common::Point mouse = _vm->getMousePos();
 	if (mouse.x >= _vm->_currentCharacter->x1)
 		_vm->_currentCharacter->facing = 3;
@@ -573,21 +553,18 @@ void Animator_LoK::makeBrandonFaceMouse() {
 }
 
 int16 Animator_LoK::fetchAnimWidth(const uint8 *shape, int16 mult) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::fetchAnimWidth(%p, %d)", (const void *)shape, mult);
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
 	return (((int16)READ_LE_UINT16((shape+3))) * mult) >> 8;
 }
 
 int16 Animator_LoK::fetchAnimHeight(const uint8 *shape, int16 mult) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::fetchAnimHeight(%p, %d)", (const void *)shape, mult);
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
 	return (int16)(((int8)*(shape+2)) * mult) >> 8;
 }
 
 void Animator_LoK::setBrandonAnimSeqSize(int width, int height) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::setBrandonAnimSeqSize(%d, %d)", width, height);
 	restoreAllObjectBackgrounds();
 	_brandonAnimSeqSizeWidth = _actors[0].width;
 	_brandonAnimSeqSizeHeight = _actors[0].height;
@@ -597,7 +574,6 @@ void Animator_LoK::setBrandonAnimSeqSize(int width, int height) {
 }
 
 void Animator_LoK::resetBrandonAnimSeqSize() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::resetBrandonAnimSeqSize()");
 	restoreAllObjectBackgrounds();
 	_actors[0].width = _brandonAnimSeqSizeWidth;
 	_actors[0].height = _brandonAnimSeqSizeHeight;
@@ -605,7 +581,6 @@ void Animator_LoK::resetBrandonAnimSeqSize() {
 }
 
 void Animator_LoK::animRefreshNPC(int character) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::animRefreshNPC(%d)", character);
 	AnimObject *animObj = &_actors[character];
 	Character *ch = &_vm->characterList()[character];
 
@@ -664,7 +639,6 @@ void Animator_LoK::animRefreshNPC(int character) {
 }
 
 void Animator_LoK::setCharacterDefaultFrame(int character) {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::setCharacterDefaultFrame()");
 	static const uint16 initFrameTable[] = {
 		7, 41, 77, 0, 0
 	};
@@ -677,7 +651,6 @@ void Animator_LoK::setCharacterDefaultFrame(int character) {
 }
 
 void Animator_LoK::setCharactersHeight() {
-	debugC(9, kDebugLevelAnimator, "Animator_LoK::setCharactersHeight()");
 	static const int8 initHeightTable[] = {
 		48, 40, 48, 47, 56,
 		44, 42, 47, 38, 35,

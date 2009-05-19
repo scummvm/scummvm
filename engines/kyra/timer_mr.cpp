@@ -31,7 +31,6 @@ namespace Kyra {
 #define TimerV3(x) new Common::Functor1Mem<int, void, KyraEngine_MR>(this, &KyraEngine_MR::x)
 
 void KyraEngine_MR::setupTimers() {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::setupTimers()");
 
 	_timer->addTimer(0, TimerV3(timerRestoreCommandLine), -1, 1);
 	for (int i = 1; i <= 3; ++i)
@@ -44,13 +43,11 @@ void KyraEngine_MR::setupTimers() {
 }
 
 void KyraEngine_MR::timerRestoreCommandLine(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::timerRestoreCommandLine(%d)", arg);
 	if (_shownMessage)
 		_restoreCommandLine = true;
 }
 
 void KyraEngine_MR::timerRunSceneScript7(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::timerRunSceneScript7(%d)", arg);
 	_emc->init(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[1] = _mouseX;
 	_sceneScriptState.regs[2] = _mouseY;
@@ -63,7 +60,6 @@ void KyraEngine_MR::timerRunSceneScript7(int arg) {
 }
 
 void KyraEngine_MR::timerFleaDeath(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::timerFleaDeath(%d)", arg);
 	_timer->setCountdown(4, 5400);
 	saveGameState(999, "Autosave", 0);
 	_screen->hideMouse();
@@ -86,7 +82,6 @@ void KyraEngine_MR::timerFleaDeath(int arg) {
 }
 
 void KyraEngine_MR::setWalkspeed(uint8 speed) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::setWalkspeed(%d)", speed);
 
 	if (speed < 5)
 		speed = 3;
@@ -97,14 +92,12 @@ void KyraEngine_MR::setWalkspeed(uint8 speed) {
 }
 
 void KyraEngine_MR::setCommandLineRestoreTimer(int secs) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::setCommandLineRestoreTimer(%d)", secs);
 	if (secs == -1)
 		secs = 32000;
 	_timer->setCountdown(0, secs*60);
 }
 
 void KyraEngine_MR::setNextIdleAnimTimer() {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_MR::setNextIdleAnimTimer()");
 	_nextIdleAnim = _system->getMillis() + _rnd.getRandomNumberRng(10, 15) * 1000;
 }
 

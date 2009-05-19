@@ -45,12 +45,10 @@ TextDisplayer::TextDisplayer(KyraEngine_v1 *vm, Screen *screen) {
 }
 
 void TextDisplayer::setTalkCoords(uint16 y) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::setTalkCoords(%d)", y);
 	_talkCoords.y = y;
 }
 
 int TextDisplayer::getCenterStringX(const char *str, int x1, int x2) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::getCenterStringX('%s', %d, %d)", str, x1, x2);
 	_screen->_charWidth = -2;
 	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
 	int strWidth = _screen->getTextWidth(str);
@@ -61,7 +59,6 @@ int TextDisplayer::getCenterStringX(const char *str, int x1, int x2) {
 }
 
 int TextDisplayer::getCharLength(const char *str, int len) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::getCharLength('%s', %d)", str, len);
 	int charsCount = 0;
 	if (*str) {
 		_screen->_charWidth = -2;
@@ -84,7 +81,6 @@ int TextDisplayer::getCharLength(const char *str, int len) {
 }
 
 int TextDisplayer::dropCRIntoString(char *str, int offs) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::dropCRIntoString('%s', %d)", str, offs);
 	int pos = 0;
 	str += offs;
 	while (*str) {
@@ -99,7 +95,6 @@ int TextDisplayer::dropCRIntoString(char *str, int offs) {
 }
 
 char *TextDisplayer::preprocessString(const char *str) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::preprocessString('%s')", str);
 	if (str != _talkBuffer) {
 		assert(strlen(str) < sizeof(_talkBuffer) - 1);
 		strcpy(_talkBuffer, str);
@@ -136,7 +131,6 @@ char *TextDisplayer::preprocessString(const char *str) {
 }
 
 int TextDisplayer::buildMessageSubstrings(const char *str) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::buildMessageSubstrings('%s')", str);
 	int currentLine = 0;
 	int pos = 0;
 	while (*str) {
@@ -158,7 +152,6 @@ int TextDisplayer::buildMessageSubstrings(const char *str) {
 }
 
 int TextDisplayer::getWidestLineWidth(int linesCount) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::getWidestLineWidth(%d)", linesCount);
 	int maxWidth = 0;
 	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
 	_screen->_charWidth = -2;
@@ -174,7 +167,6 @@ int TextDisplayer::getWidestLineWidth(int linesCount) {
 }
 
 void TextDisplayer::calcWidestLineBounds(int &x1, int &x2, int w, int cx) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::calcWidestLineBounds(%d, %d)", w, cx);
 	x1 = cx - w / 2;
 	if (x1 + w >= Screen::SCREEN_W - 12) {
 		x1 = Screen::SCREEN_W - 12 - w - 1;
@@ -185,7 +177,6 @@ void TextDisplayer::calcWidestLineBounds(int &x1, int &x2, int w, int cx) {
 }
 
 void TextDisplayer::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::restoreTalkTextMessageBkgd(%d, %d)", srcPage, dstPage);
 	if (_talkMessagePrinted) {
 		_talkMessagePrinted = false;
 		_screen->copyRegion(_talkCoords.x, _talkCoords.y, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage);
@@ -193,7 +184,6 @@ void TextDisplayer::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
 }
 
 void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::printTalkTextMessage('%s', %d, %d, %d, %d, %d)", text, x, y, color, srcPage, dstPage);
 	char *str = preprocessString(text);
 	int lineCount = buildMessageSubstrings(str);
 	int top = y - lineCount * 10;
@@ -221,8 +211,6 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 }
 
 void TextDisplayer::printIntroTextMessage(const char *text, int x, int y, uint8 col1, uint8 col2, uint8 col3, int dstPage, Screen::FontId font) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::printIntroTextMessage('%s', %d, %d, %d, %d, %d, %d, %d)",
-			text, x, y, col1, col2, col3, dstPage, font);
 	char *str = preprocessString(text);
 	int lineCount = buildMessageSubstrings(str);
 	int top = y - lineCount * 10;
@@ -249,7 +237,6 @@ void TextDisplayer::printIntroTextMessage(const char *text, int x, int y, uint8 
 }
 
 void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::printText('%s', %d, %d, %d, %d, %d)", str, x, y, c0, c1, c2);
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
@@ -261,7 +248,6 @@ void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1,
 }
 
 void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX) {
-	debugC(9, kDebugLevelMain, "TextDisplayer::printCharacterText('%s', %d, %d)", text, charNum, charX);
 	uint8 colorTable[] = {0x0F, 0x9, 0x0C9, 0x80, 0x5, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3a};
 	int top, left, x1, x2, w, x;
 	char *msg;

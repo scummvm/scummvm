@@ -69,19 +69,16 @@ bool Screen_LoK::init() {
 }
 
 void Screen_LoK::setScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::setScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	_curDim = &_screenDimTable[dim];
 }
 
 const ScreenDim *Screen_LoK::getScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::getScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	return &_screenDimTable[dim];
 }
 
 void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::fadeSpecialPalette(%d, %d, %d, %d)", palIndex, startIndex, size, fadeTime);
 
 	assert(_vm->palTable1()[palIndex]);
 	assert(_currentPalette);
@@ -95,7 +92,6 @@ void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int 
 }
 
 void Screen_LoK::addBitBlitRect(int x, int y, int w, int h) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::addBitBlitRects(%d, %d, %d, %d)", x, y, w, h);
 	if (_bitBlitNum >= kNumBitBlitRects)
 		error("too many bit blit rects");
 
@@ -107,7 +103,6 @@ void Screen_LoK::addBitBlitRect(int x, int y, int w, int h) {
 }
 
 void Screen_LoK::bitBlitRects() {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::bitBlitRects()");
 	Common::Rect *cur = _bitBlitRects;
 	while (_bitBlitNum) {
 		_bitBlitNum--;
@@ -117,7 +112,6 @@ void Screen_LoK::bitBlitRects() {
 }
 
 void Screen_LoK::savePageToDisk(const char *file, int page) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::savePageToDisk('%s', %d)", file, page);
 	if (!_saveLoadPage[page/2]) {
 		_saveLoadPage[page/2] = new uint8[SCREEN_W * SCREEN_H];
 		assert(_saveLoadPage[page/2]);
@@ -141,7 +135,6 @@ void Screen_LoK::savePageToDisk(const char *file, int page) {
 }
 
 void Screen_LoK::loadPageFromDisk(const char *file, int page) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::loadPageFromDisk('%s', %d)", file, page);
 	if (!_saveLoadPage[page/2]) {
 		warning("trying to restore page %d, but no backup found", page);
 		return;
@@ -165,7 +158,6 @@ void Screen_LoK::loadPageFromDisk(const char *file, int page) {
 }
 
 void Screen_LoK::queryPageFromDisk(const char *file, int page, uint8 *buffer) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::queryPageFromDisk('%s', %d, %p)", file, page, (const void *)buffer);
 	if (!_saveLoadPage[page/2]) {
 		warning("trying to query page %d, but no backup found", page);
 		return;
@@ -175,7 +167,6 @@ void Screen_LoK::queryPageFromDisk(const char *file, int page, uint8 *buffer) {
 }
 
 void Screen_LoK::deletePageFromDisk(int page) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::deletePageFromDisk(%d)", page);
 	delete[] _saveLoadPage[page/2];
 	_saveLoadPage[page/2] = 0;
 
@@ -186,7 +177,6 @@ void Screen_LoK::deletePageFromDisk(int page) {
 }
 
 void Screen_LoK::copyBackgroundBlock(int x, int page, int flag) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::copyBackgroundBlock(%d, %d, %d)", x, page, flag);
 
 	if (x < 1)
 		return;
@@ -228,12 +218,10 @@ void Screen_LoK::copyBackgroundBlock(int x, int page, int flag) {
 }
 
 void Screen_LoK::copyBackgroundBlock2(int x) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::copyBackgroundBlock2(%d)", x);
 	copyBackgroundBlock(x, 4, 1);
 }
 
 void Screen_LoK::setTextColorMap(const uint8 *cmap) {
-	debugC(9, kDebugLevelScreen, "Screen_LoK::setTextColorMap(%p)", (const void *)cmap);
 	setTextColor(cmap, 0, 11);
 }
 

@@ -32,7 +32,6 @@
 namespace Kyra {
 
 void KyraEngine_v2::allocAnimObjects(int actors, int anims, int items) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::allocAnimObjects(%d, %d, %d)", actors, anims, items);
 	_animObjects = new AnimObj[actors+anims+items];
 	assert(_animObjects);
 
@@ -44,13 +43,11 @@ void KyraEngine_v2::allocAnimObjects(int actors, int anims, int items) {
 }
 
 KyraEngine_v2::AnimObj *KyraEngine_v2::initAnimList(AnimObj *list, AnimObj *entry) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::initAnimList(%p, %p)", (const void*)list, (const void*)entry);
 	entry->nextObject = list;
 	return entry;
 }
 
 KyraEngine_v2::AnimObj *KyraEngine_v2::addToAnimListSorted(AnimObj *list, AnimObj *add) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addToAnimListSorted(%p, %p)", (const void*)list, (const void*)add);
 	add->nextObject = 0;
 
 	if (!list)
@@ -82,7 +79,6 @@ KyraEngine_v2::AnimObj *KyraEngine_v2::addToAnimListSorted(AnimObj *list, AnimOb
 }
 
 KyraEngine_v2::AnimObj *KyraEngine_v2::deleteAnimListEntry(AnimObj *list, AnimObj *entry) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addToAnimListSorted(%p, %p)", (const void*)list, (const void*)entry);
 	if (!list)
 		return 0;
 
@@ -123,7 +119,6 @@ KyraEngine_v2::AnimObj *KyraEngine_v2::deleteAnimListEntry(AnimObj *list, AnimOb
 }
 
 void KyraEngine_v2::refreshAnimObjectsIfNeed() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::refreshAnimObjectsIfNeed()");
 	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject) {
 		if (curEntry->enabled && curEntry->needRefresh) {
 			restorePage3();
@@ -136,19 +131,16 @@ void KyraEngine_v2::refreshAnimObjectsIfNeed() {
 }
 
 void KyraEngine_v2::flagAnimObjsForRefresh() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::flagAnimObjsForRefresh()");
 	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
 		curEntry->needRefresh = 1;
 }
 
 void KyraEngine_v2::flagAnimObjsSpecialRefresh() {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::flagAnimObjsSpecialRefresh()");
 	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
 		curEntry->specialRefresh = 1;
 }
 
 void KyraEngine_v2::addItemToAnimList(int item) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addItemToAnimList(%d)", item);
 	assert(item < _itemListSize);
 
 	restorePage3();
@@ -181,7 +173,6 @@ void KyraEngine_v2::addItemToAnimList(int item) {
 }
 
 void KyraEngine_v2::deleteItemAnimEntry(int item) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::deleteItemAnimEntry(%d)", item);
 	assert(item < _itemListSize);
 
 	AnimObj *animObj = _animItems + item;

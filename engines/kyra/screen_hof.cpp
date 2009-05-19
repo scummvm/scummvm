@@ -35,13 +35,11 @@ Screen_HoF::Screen_HoF(KyraEngine_HoF *vm, OSystem *system)
 }
 
 void Screen_HoF::setScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_HoF::setScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	_curDim = &_screenDimTable[dim];
 }
 
 const ScreenDim *Screen_HoF::getScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_HoF::getScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	return &_screenDimTable[dim];
 }

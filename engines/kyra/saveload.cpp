@@ -127,7 +127,6 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 }
 
 Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForReading('%s', -)", filename);
 
 	Common::SeekableReadStream *in = 0;
 	if (!(in = _saveFileMan->openForLoading(filename)))
@@ -178,7 +177,6 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 }
 
 Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::openSaveForWriting('%s', '%s', %p)", filename, saveName, (const void *)thumbnail);
 	if (shouldQuit())
 		return 0;
 

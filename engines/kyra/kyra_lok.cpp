@@ -316,7 +316,6 @@ Common::Error KyraEngine_LoK::go() {
 
 
 void KyraEngine_LoK::startup() {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::startup()");
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
 	_sound->setSoundList(&_soundData[kMusicIngame]);
@@ -399,7 +398,6 @@ void KyraEngine_LoK::startup() {
 }
 
 void KyraEngine_LoK::mainLoop() {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::mainLoop()");
 
 	_eventList.clear();
 
@@ -532,7 +530,6 @@ void KyraEngine_LoK::delayWithTicks(int ticks) {
 #pragma mark -
 
 void KyraEngine_LoK::setupShapes123(const Shape *shapeTable, int endShape, int flags) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setupShapes123(%p, %d, %d)", (const void *)shapeTable, endShape, flags);
 
 	for (int i = 123; i <= 172; ++i)
 		_shapes[i] = 0;
@@ -561,7 +558,6 @@ void KyraEngine_LoK::setupShapes123(const Shape *shapeTable, int endShape, int f
 }
 
 void KyraEngine_LoK::freeShapes123() {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::freeShapes123()");
 
 	for (int i = 123; i <= 172; ++i) {
 		delete[] _shapes[i];
@@ -581,7 +577,6 @@ Movie *KyraEngine_LoK::createWSAMovie() {
 }
 
 void KyraEngine_LoK::setBrandonPoisonFlags(int reset) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::setBrandonPoisonFlags(%d)", reset);
 	_brandonStatusBit |= 1;
 
 	if (reset)
@@ -598,7 +593,6 @@ void KyraEngine_LoK::setBrandonPoisonFlags(int reset) {
 }
 
 void KyraEngine_LoK::resetBrandonPoisonFlags() {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::resetBrandonPoisonFlags()");
 	_brandonStatusBit = 0;
 
 	for (int i = 0; i < 0x100; ++i)
@@ -610,7 +604,6 @@ void KyraEngine_LoK::resetBrandonPoisonFlags() {
 #pragma mark -
 
 void KyraEngine_LoK::processInput(int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::processInput(%d, %d)", xpos, ypos);
 
 	if (processInputHelper(xpos, ypos))
 		return;
@@ -662,7 +655,6 @@ void KyraEngine_LoK::processInput(int xpos, int ypos) {
 }
 
 int KyraEngine_LoK::processInputHelper(int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::processInputHelper(%d, %d)", xpos, ypos);
 	uint8 item = findItemAtPos(xpos, ypos);
 	if (item != 0xFF) {
 		if (_itemInHand == -1) {
@@ -689,7 +681,6 @@ int KyraEngine_LoK::processInputHelper(int xpos, int ypos) {
 }
 
 int KyraEngine_LoK::clickEventHandler(int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::clickEventHandler(%d, %d)", xpos, ypos);
 	_emc->init(&_scriptClick, &_scriptClickData);
 	_scriptClick.regs[1] = xpos;
 	_scriptClick.regs[2] = ypos;
@@ -816,7 +807,6 @@ void KyraEngine_LoK::updateMousePointer(bool forceUpdate) {
 }
 
 bool KyraEngine_LoK::hasClickedOnExit(int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::hasClickedOnExit(%d, %d)", xpos, ypos);
 	if (xpos < 16 || xpos >= 304)
 		return true;
 
@@ -830,7 +820,6 @@ bool KyraEngine_LoK::hasClickedOnExit(int xpos, int ypos) {
 }
 
 void KyraEngine_LoK::clickEventHandler2() {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::clickEventHandler2()");
 
 	Common::Point mouse = getMousePos();
 
@@ -846,7 +835,6 @@ void KyraEngine_LoK::clickEventHandler2() {
 }
 
 int KyraEngine_LoK::checkForNPCScriptRun(int xpos, int ypos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::checkForNPCScriptRun(%d, %d)", xpos, ypos);
 	int returnValue = -1;
 	const Character *currentChar = _currentCharacter;
 	int charLeft = 0, charRight = 0, charTop = 0, charBottom = 0;
@@ -895,7 +883,6 @@ int KyraEngine_LoK::checkForNPCScriptRun(int xpos, int ypos) {
 }
 
 void KyraEngine_LoK::runNpcScript(int func) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::runNpcScript(%d)", func);
 	_emc->init(&_npcScript, &_npcScriptData);
 	_emc->start(&_npcScript, func);
 	_npcScript.regs[0] = _currentCharacter->sceneId;
@@ -907,7 +894,6 @@ void KyraEngine_LoK::runNpcScript(int func) {
 }
 
 void KyraEngine_LoK::checkAmuletAnimFlags() {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::checkSpecialAnimFlags()");
 
 	if (_brandonStatusBit & 2) {
 		seq_makeBrandonNormal2();

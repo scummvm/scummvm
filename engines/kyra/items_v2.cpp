@@ -29,7 +29,6 @@
 namespace Kyra {
 
 void KyraEngine_v2::initItemList(int size) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::initItemList(%d)", size);
 	delete[] _itemList;
 
 	_itemList = new Item[size];
@@ -41,7 +40,6 @@ void KyraEngine_v2::initItemList(int size) {
 }
 
 int KyraEngine_v2::findFreeItem() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::findFreeItem()");
 	for (int i = 0; i < _itemListSize; ++i) {
 		if (_itemList[i].id == 0xFFFF)
 			return i;
@@ -50,7 +48,6 @@ int KyraEngine_v2::findFreeItem() {
 }
 
 int KyraEngine_v2::countAllItems() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::countAllItems()");
 	int num = 0;
 	for (int i = 0; i < _itemListSize; ++i) {
 		if (_itemList[i].id != 0xFFFF)
@@ -60,7 +57,6 @@ int KyraEngine_v2::countAllItems() {
 }
 
 int KyraEngine_v2::findItem(uint16 sceneId, uint16 id) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::findItem(%u, %u)", sceneId, id);
 	for (int i = 0; i < _itemListSize; ++i) {
 		if (_itemList[i].id == id && _itemList[i].sceneId == sceneId)
 			return i;
@@ -69,7 +65,6 @@ int KyraEngine_v2::findItem(uint16 sceneId, uint16 id) {
 }
 
 int KyraEngine_v2::findItem(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::findItem(%u)", item);
 	for (int i = 0; i < _itemListSize; ++i) {
 		if (_itemList[i].id == item)
 			return i;
@@ -78,13 +73,11 @@ int KyraEngine_v2::findItem(uint16 item) {
 }
 
 void KyraEngine_v2::resetItemList() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::resetItemList()");
 	for (int i = 0; i < _itemListSize; ++i)
 		resetItem(i);
 }
 
 void KyraEngine_v2::resetItem(int index) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::resetItem(%d)", index);
 	_itemList[index].id = 0xFFFF;
 	_itemList[index].sceneId = 0xFFFF;
 	_itemList[index].x = 0;
@@ -92,7 +85,6 @@ void KyraEngine_v2::resetItem(int index) {
 }
 
 void KyraEngine_v2::setHandItem(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::setHandItem(%u)", item);
 	Screen *scr = screen();
 	scr->hideMouse();
 
@@ -107,7 +99,6 @@ void KyraEngine_v2::setHandItem(uint16 item) {
 }
 
 void KyraEngine_v2::removeHandItem() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::removeHandItem()");
 	Screen *scr = screen();
 	scr->hideMouse();
 	scr->setMouseCursor(0, 0, getShapePtr(0));

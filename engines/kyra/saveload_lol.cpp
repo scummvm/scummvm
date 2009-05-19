@@ -36,7 +36,6 @@
 namespace Kyra {
 
 Common::Error LoLEngine::loadGameState(int slot) {
-	debugC(9, kDebugLevelMain, "LoLEngine::loadGameState(%d)", slot);
 
 	const uint16 *cdf[] = { _charDefsMan, _charDefsWoman, _charDefsKieran, _charDefsMan, _charDefsAkshel };
 
@@ -251,7 +250,6 @@ Common::Error LoLEngine::loadGameState(int slot) {
 }
 
 Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail) {
-	debugC(9, kDebugLevelMain, "LoLEngine::saveGameState(%d, '%s', %p)", slot, saveName, (const void *)thumbnail);
 
 	const char *fileName = getSavegameFilename(slot);
 

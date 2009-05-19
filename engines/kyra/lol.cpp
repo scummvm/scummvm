@@ -598,7 +598,6 @@ Common::Error LoLEngine::go() {
 #pragma mark - Initialization
 
 void LoLEngine::preInit() {
-	debugC(9, kDebugLevelMain, "LoLEngine::preInit()");
 
 	_res->loadPakFile("GENERAL.PAK");
 	if (_flags.isTalkie)
@@ -619,7 +618,6 @@ void LoLEngine::preInit() {
 }
 
 void LoLEngine::loadItemIconShapes() {
-	debugC(9, kDebugLevelMain, "LoLEngine::loadItemIconShapes()");
 
 	if (_itemIconShapes) {
 		for (int i = 0; i < _numItemIconShapes; i++)
@@ -687,7 +685,6 @@ uint8 *LoLEngine::getItemIconShapePtr(int index) {
 }
 
 int LoLEngine::mainMenu() {
-	debugC(9, kDebugLevelMain, "LoLEngine::mainMenu()");
 
 	bool hasSave = saveFileLoadable(0);
 
@@ -925,7 +922,6 @@ void LoLEngine::update() {
 #pragma mark - Localization
 
 char *LoLEngine::getLangString(uint16 id) {
-	debugC(9, kDebugLevelMain, "LoLEngine::getLangString(0x%.04X)", id);
 
 	if (id == 0xFFFF)
 		return 0;
@@ -958,7 +954,6 @@ char *LoLEngine::getLangString(uint16 id) {
 }
 
 uint8 *LoLEngine::getTableEntry(uint8 *buffer, uint16 id) {
-	debugC(9, kDebugLevelMain, "LoLEngine::getTableEntry(%p, %d)", (const void *)buffer, id);
 	if (!buffer)
 		return 0;
 
@@ -1803,7 +1798,6 @@ void LoLEngine::snd_stopSpeech(bool setFlag) {
 }
 
 void LoLEngine::snd_playSoundEffect(int track, int volume) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "LoLEngine::snd_playSoundEffect(%d, %d)", track, volume);
 
 	if (track == 1 && (_lastSfxTrack == -1 || _lastSfxTrack == 1))
 		return;

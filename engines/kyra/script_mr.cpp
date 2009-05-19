@@ -1080,7 +1080,7 @@ int KyraEngine_MR::o3_customChatFinish(EMCState *script) {
 }
 
 int KyraEngine_MR::o3_setupSceneAnimObject(EMCState *script) {
-	debugC(9, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setupSceneAnimObject(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')", (const void *)script,
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setupSceneAnimObject(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %s)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9),
 			stackPos(10), stackPos(11), stackPosString(12));
 	musicUpdate(0);

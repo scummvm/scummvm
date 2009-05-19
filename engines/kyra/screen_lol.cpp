@@ -73,14 +73,12 @@ bool Screen_LoL::init() {
 
 
 void Screen_LoL::setScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_LoL::setScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	_curDim = _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
 	_curDimIndex = dim;
 }
 
 const ScreenDim *Screen_LoL::getScreenDim(int dim) {
-	debugC(9, kDebugLevelScreen, "Screen_LoL::getScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	return _customDimTable[dim] ? (const ScreenDim *)_customDimTable[dim] : &_screenDimTable[dim];
 }
@@ -97,7 +95,6 @@ void Screen_LoL::modifyScreenDim(int dim, int x, int y, int w, int h) {
 }
 
 void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) {
-	debugC(9, kDebugLevelScreen, "Screen_LoL::fprintString('%s', %d, %d, %d, %d, %d, ...)", format, x, y, col1, col2, flags);
 	if (!format)
 		return;
 
@@ -127,7 +124,6 @@ void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint
 }
 
 void Screen_LoL::fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...) {
-	debugC(9, kDebugLevelScreen, "Screen_LoL::fprintStringIntro('%s', %d, %d, %d, %d, %d, %d, ...)", format, x, y, c1, c2, c3, flags);
 	char buffer[400];
 
 	va_list args;
@@ -848,7 +844,6 @@ bool Screen_LoL::fadePalSpecial(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, ui
 }
 
 uint8 Screen_LoL::getShapePaletteSize(const uint8 *shp) {
-	debugC(9, kDebugLevelScreen, "Screen_LoL::getShapePaletteSize(%p)", (const void *)shp);
 
 	return shp[10];
 }

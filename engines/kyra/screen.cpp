@@ -66,7 +66,6 @@ Screen::~Screen() {
 }
 
 bool Screen::init() {
-	debugC(9, kDebugLevelScreen, "Screen::init()");
 	_disableScreen = false;
 	_debugEnabled = false;
 
@@ -207,7 +206,6 @@ void Screen::setResolution() {
 }
 
 void Screen::updateScreen() {
-	debugC(9, kDebugLevelScreen, "Screen::updateScreen()");
 	if (_disableScreen)
 		return;
 
@@ -303,19 +301,16 @@ void Screen::mergeOverlay(int x, int y, int w, int h) {
 }
 
 uint8 *Screen::getPagePtr(int pageNum) {
-	debugC(9, kDebugLevelScreen, "Screen::getPagePtr(%d)", pageNum);
 	assert(pageNum < SCREEN_PAGE_NUM);
 	return _pagePtrs[pageNum];
 }
 
 const uint8 *Screen::getCPagePtr(int pageNum) const {
-	debugC(9, kDebugLevelScreen, "Screen::getCPagePtr(%d)", pageNum);
 	assert(pageNum < SCREEN_PAGE_NUM);
 	return _pagePtrs[pageNum];
 }
 
 uint8 *Screen::getPageRect(int pageNum, int x, int y, int w, int h) {
-	debugC(9, kDebugLevelScreen, "Screen::getPageRect(%d, %d, %d, %d, %d)", pageNum, x, y, w, h);
 	assert(pageNum < SCREEN_PAGE_NUM);
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, w, h);
@@ -323,7 +318,6 @@ uint8 *Screen::getPageRect(int pageNum, int x, int y, int w, int h) {
 }
 
 void Screen::clearPage(int pageNum) {
-	debugC(9, kDebugLevelScreen, "Screen::clearPage(%d)", pageNum);
 	assert(pageNum < SCREEN_PAGE_NUM);
 	if (pageNum == 0 || pageNum == 1)
 		_forceFullUpdate = true;
@@ -332,7 +326,6 @@ void Screen::clearPage(int pageNum) {
 }
 
 int Screen::setCurPage(int pageNum) {
-	debugC(9, kDebugLevelScreen, "Screen::setCurPage(%d)", pageNum);
 	assert(pageNum < SCREEN_PAGE_NUM);
 	int previousPage = _curPage;
 	_curPage = pageNum;
@@ -340,7 +333,6 @@ int Screen::setCurPage(int pageNum) {
 }
 
 void Screen::clearCurPage() {
-	debugC(9, kDebugLevelScreen, "Screen::clearCurPage()");
 	if (_curPage == 0 || _curPage == 1)
 		_forceFullUpdate = true;
 	memset(getPagePtr(_curPage), 0, SCREEN_PAGE_SIZE);
@@ -348,14 +340,12 @@ void Screen::clearCurPage() {
 }
 
 uint8 Screen::getPagePixel(int pageNum, int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen::getPagePixel(%d, %d, %d)", pageNum, x, y);
 	assert(pageNum < SCREEN_PAGE_NUM);
 	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
 	return _pagePtrs[pageNum][y * SCREEN_W + x];
 }
 
 void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
-	debugC(9, kDebugLevelScreen, "Screen::setPagePixel(%d, %d, %d, %d)", pageNum, x, y, color);
 	assert(pageNum < SCREEN_PAGE_NUM);
 	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
 	if (pageNum == 0 || pageNum == 1)
@@ -364,19 +354,16 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 }
 
 void Screen::fadeFromBlack(int delay, const UpdateFunctor *upFunc) {
-	debugC(9, kDebugLevelScreen, "Screen::fadeFromBlack(%d, %p)", delay, (const void*)upFunc);
 	fadePalette(_currentPalette, delay, upFunc);
 }
 
 void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
-	debugC(9, kDebugLevelScreen, "Screen::fadeToBlack(%d, %p)", delay, (const void*)upFunc);
 	uint8 blackPal[768];
 	memset(blackPal, 0, 768);
 	fadePalette(blackPal, delay, upFunc);
 }
 
 void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *upFunc) {
-	debugC(9, kDebugLevelScreen, "Screen::fadePalette(%p, %d, %p)", (const void *)palData, delay, (const void*)upFunc);
 	updateScreen();
 
 	int diff = 0, delayInc = 0;
@@ -410,7 +397,6 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 }
 
 void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff) {
-	debugC(9, kDebugLevelScreen, "Screen::getFadeParams(%p, %d, %p, %p)", (const void *)palette, delay, (const void *)&delayInc, (const void *)&diff);
 	uint8 maxDiff = 0;
 
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256) * 3;
@@ -432,7 +418,6 @@ void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &
 }
 
 int Screen::fadePalStep(const uint8 *palette, int diff) {
-	debugC(9, kDebugLevelScreen, "Screen::fadePalStep(%p, %d)", (const void *)palette, diff);
 
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : (_use16ColorMode ? 16 : 256)) * 3;
 	
@@ -469,7 +454,6 @@ int Screen::fadePalStep(const uint8 *palette, int diff) {
 }
 
 void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
-	debugC(9, kDebugLevelScreen, "Screen::setPaletteIndex(%u, %u, %u, %u)", index, red, green, blue);
 	_currentPalette[index * 3 + 0] = red;
 	_currentPalette[index * 3 + 1] = green;
 	_currentPalette[index * 3 + 2] = blue;
@@ -477,7 +461,6 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 }
 
 void Screen::getRealPalette(int num, uint8 *dst) {
-	debugC(9, kDebugLevelScreen, "Screen::getRealPalette(%d, %p)", num, (const void *)dst);
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
 	const uint8 *palData = getPalette(num);
 
@@ -496,7 +479,6 @@ void Screen::getRealPalette(int num, uint8 *dst) {
 }
 
 void Screen::setScreenPalette(const uint8 *palData) {
-	debugC(9, kDebugLevelScreen, "Screen::setScreenPalette(%p)", (const void *)palData);
 
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
 
@@ -532,7 +514,6 @@ void Screen::setScreenPalette(const uint8 *palData) {
 }
 
 void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
-	debugC(9, kDebugLevelScreen, "Screen::copyToPage0(%d, %d, %d, %p)", y, h, page, (const void *)seqBuf);
 	assert(y + h <= SCREEN_H);
 	const uint8 *src = getPagePtr(page) + y * SCREEN_W;
 	uint8 *dstPage = getPagePtr(0) + y * SCREEN_W;
@@ -557,7 +538,6 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 }
 
 void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {
-	debugC(9, kDebugLevelScreen, "Screen::copyRegion(%d, %d, %d, %d, %d, %d, %d, %d, %d)", x1, y1, x2, y2, w, h, srcPage, dstPage, flags);
 
 	if (x2 < 0) {
 		if (x2  <= -w)
@@ -610,7 +590,6 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 }
 
 void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest) {
-	debugC(9, kDebugLevelScreen, "Screen::copyRegionToBuffer(%d, %d, %d, %d, %d)", pageNum, x, y, w, h);
 	if (y < 0) {
 		dest += (-y) * w;
 		h += y;
@@ -637,7 +616,6 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 }
 
 void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
-	debugC(9, kDebugLevelScreen, "Screen::copyPage(%d, %d)", srcPage, dstPage);
 
 	uint8 *src = getPagePtr(srcPage);
 	uint8 *dst = getPagePtr(dstPage);
@@ -649,7 +627,6 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 }
 
 void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src) {
-	debugC(9, kDebugLevelScreen, "Screen::copyBlockToPage(%d, %d, %d, %d, %d, %p)", pageNum, x, y, w, h, (const void *)src);
 	if (y < 0) {
 		src += (-y) * w;
 		h += y;
@@ -684,7 +661,6 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 }
 
 void Screen::copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src) {
-	debugC(9, kDebugLevelScreen, "Screen::copyFromCurPageBlock(%d, %d, %d, %d, %p)", x, y, w, h, (const void *)src);
 	if (x < 0)
 		x = 0;
 	else if (x >= 40)
@@ -716,7 +692,6 @@ void Screen::copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src) 
 }
 
 void Screen::copyCurPageBlock(int x, int y, int w, int h, uint8 *dst) {
-	debugC(9, kDebugLevelScreen, "Screen::copyCurPageBlock(%d, %d, %d, %d, %p)", x, y, w, h, (const void *)dst);
 	assert(dst);
 	if (x < 0)
 		x = 0;
@@ -743,7 +718,6 @@ void Screen::copyCurPageBlock(int x, int y, int w, int h, uint8 *dst) {
 }
 
 void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent) {
-	debugC(9, kDebugLevelScreen, "Screen::shuffleScreen(%d, %d, %d, %d, %d, %d, %d, %d)", sx, sy, w, h, srcPage, dstPage, ticks, transparent);
 	assert(sx >= 0 && w <= SCREEN_W);
 	int x;
 	uint16 x_offs[SCREEN_W];
@@ -800,7 +774,6 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 }
 
 void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, bool xored) {
-	debugC(9, kDebugLevelScreen, "Screen::fillRect(%d, %d, %d, %d, %d, %d, %d)", x1, y1, x2, y2, color, pageNum, xored);
 	assert(x2 < SCREEN_W && y2 < SCREEN_H);
 	if (pageNum == -1)
 		pageNum = _curPage;
@@ -827,7 +800,6 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 }
 
 void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
-	debugC(9, kDebugLevelScreen, "Screen::drawBox(%i, %i, %i, %i, %i)", x1, y1, x2, y2, color);
 
 	drawClippedLine(x1, y1, x2, y1, color);
 	drawClippedLine(x1, y1, x1, y2, color);
@@ -836,7 +808,6 @@ void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
 }
 
 void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2) {
-	debugC(9, kDebugLevelScreen, "Screen::drawShadedBox(%i, %i, %i, %i, %i, %i)", x1, y1, x2, y2, color1, color2);
 	assert(x1 >= 0 && y1 >= 0);
 	hideMouse();
 
@@ -852,7 +823,6 @@ void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color
 }
 
 void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
-	debugC(9, kDebugLevelScreen, "Screen::drawClippedLine(%i, %i, %i, %i, %i)", x1, y1, x2, y2, color);
 
 	if (x1 < 0)
 		x1 = 0;
@@ -887,7 +857,6 @@ void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
 }
 
 void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
-	debugC(9, kDebugLevelScreen, "Screen::drawLine(%i, %i, %i, %i, %i)", vertical, x, y, length, color);
 
 	uint8 *ptr = getPagePtr(_curPage) + y * SCREEN_W + x;
 
@@ -911,7 +880,6 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 }
 
 void Screen::setAnimBlockPtr(int size) {
-	debugC(9, kDebugLevelScreen, "Screen::setAnimBlockPtr(%d)", size);
 	delete[] _animBlockPtr;
 	_animBlockPtr = new uint8[size];
 	assert(_animBlockPtr);
@@ -920,12 +888,10 @@ void Screen::setAnimBlockPtr(int size) {
 }
 
 void Screen::setTextColor(const uint8 *cmap, int a, int b) {
-	debugC(9, kDebugLevelScreen, "Screen::setTextColor(%p, %d, %d)", (const void *)cmap, a, b);
 	memcpy(&_textColorsMap[a], cmap, b-a+1);
 }
 
 bool Screen::loadFont(FontId fontId, const char *filename) {
-	debugC(9, kDebugLevelScreen, "Screen::loadFont(%d, '%s')", fontId, filename);
 	Font *fnt = &_fonts[fontId];
 
 	// FIXME: add font support for amiga version
@@ -959,7 +925,6 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 }
 
 Screen::FontId Screen::setFont(FontId fontId) {
-	debugC(9, kDebugLevelScreen, "Screen::setFont(%d)", fontId);
 	FontId prev = _currentFont;
 	_currentFont = fontId;
 	return prev;
@@ -983,7 +948,6 @@ int Screen::getCharWidth(uint16 c) const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
-	debugC(9, kDebugLevelScreen, "Screen::getCharWidth('%c'|%d)", c & 0xFF, c);
 	if (c & 0xFF00)
 		return SJIS_CHARSIZE >> 1;
 	return (int)_fonts[_currentFont].charWidthTable[c] + _charWidth;
@@ -993,7 +957,6 @@ int Screen::getTextWidth(const char *str) const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
-	debugC(9, kDebugLevelScreen, "Screen::getTextWidth('%s')", str);
 
 	int curLineLen = 0;
 	int maxLineLen = 0;
@@ -1025,7 +988,6 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
-	debugC(9, kDebugLevelScreen, "Screen::printText('%s', %d, %d, 0x%X, 0x%X)", str, x, y, color1, color2);
 	uint8 cmap[2];
 	cmap[0] = color2;
 	cmap[1] = color1;
@@ -1079,7 +1041,6 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 }
 
 void Screen::drawCharANSI(uint8 c, int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen::drawChar('%c', %d, %d)", c, x, y);
 	Font *fnt = &_fonts[_currentFont];
 	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x;
 
@@ -1145,7 +1106,6 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 }
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
-	debugC(9, kDebugLevelScreen, "Screen::drawShape(%d, %p, %d, %d, %d, 0x%.04X, ...)", pageNum, (const void *)shapeData, x, y, sd, flags);
 	if (!shapeData)
 		return;
 
@@ -1900,7 +1860,6 @@ void Screen::drawShapePlotType52(uint8 *dst, uint8 cmd) {
 }
 
 void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrame3(%p, %p, %u)", (const void *)src, (const void *)dst, size);
 	const uint8 *dstEnd = dst + size;
 	while (dst < dstEnd) {
 		int8 code = *src++;
@@ -1921,7 +1880,6 @@ void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {
 }
 
 uint Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrame4(%p, %p, %u)", (const void *)src, (const void *)dst, dstSize);
 	uint8 *dstOrig = dst;
 	uint8 *dstEnd = dst + dstSize;
 	while (1) {
@@ -1971,7 +1929,6 @@ uint Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 }
 
 void Screen::decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDelta(%p, %p, %d)", (const void *)dst, (const void *)src, noXor);
 	if (noXor)
 		wrapped_decodeFrameDelta<true>(dst, src);
 	else
@@ -2034,7 +1991,6 @@ void Screen::wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src) {
 }
 
 void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool noXor) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPage(%p, %p, %d, %d)", (const void *)dst, (const void *)src, pitch, noXor);
 
 	if (noXor)
 		wrapped_decodeFrameDeltaPage<true>(dst, src, pitch);
@@ -2220,7 +2176,6 @@ void Screen::wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitc
 }
 
 uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
-	debugC(9, kDebugLevelScreen, "Screen::encodeShape(%d, %d, %d, %d, %d)", x, y, w, h, flags);
 	uint8 *srcPtr = &_pagePtrs[_curPage][y * SCREEN_W + x];
 	int16 shapeSize = 0;
 	uint8 *tmp = srcPtr;
@@ -2409,7 +2364,6 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 }
 
 int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
-	debugC(9, kDebugLevelScreen, "Screen::encodeShapeAndCalculateSize(%p, %p, %d)", (const void *)from, (const void *)to, size_to);
 	byte *fromPtrEnd = from + size_to;
 	bool skipPixel = true;
 	byte *tempPtr = 0;
@@ -2542,13 +2496,11 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 }
 
 void Screen::hideMouse() {
-	debugC(9, kDebugLevelScreen, "Screen::hideMouse()");
 	++_mouseLockCount;
 	CursorMan.showMouse(false);
 }
 
 void Screen::showMouse() {
-	debugC(9, kDebugLevelScreen, "Screen::showMouse()");
 
 	if (_mouseLockCount == 1)
 		CursorMan.showMouse(true);
@@ -2563,7 +2515,6 @@ bool Screen::isMouseVisible() const {
 }
 
 void Screen::setShapePages(int page1, int page2, int minY, int maxY) {
-	debugC(9, kDebugLevelScreen, "Screen::setShapePages(%d, %d, %d, %d)", page1, page2, minY, maxY);
 	_shapePages[0] = _pagePtrs[page1];
 	_shapePages[1] = _pagePtrs[page2];
 	_maskMinY = minY;
@@ -2571,7 +2522,6 @@ void Screen::setShapePages(int page1, int page2, int minY, int maxY) {
 }
 
 void Screen::setMouseCursor(int x, int y, const byte *shape) {
-	debugC(9, kDebugLevelScreen, "Screen::setMouseCursor(%d, %d, %p)", x, y, (const void *)shape);
 	if (!shape)
 		return;
 	// if mouseDisabled
@@ -2621,7 +2571,6 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 }
 
 void Screen::copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr) {
-	debugC(9, kDebugLevelScreen, "Screen::copyScreenFromRect(%d, %d, %d, %d, %p)", x, y, w, h, (const void *)ptr);
 	x <<= 3; w <<= 3;
 	const uint8 *src = ptr;
 	uint8 *dst = &_pagePtrs[0][y * SCREEN_W + x];
@@ -2636,7 +2585,6 @@ void Screen::copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr) {
 }
 
 void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
-	debugC(9, kDebugLevelScreen, "Screen::copyScreenToRect(%d, %d, %d, %d, %p)", x, y, w, h, (const void *)ptr);
 	x <<= 3; w <<= 3;
 	const uint8 *src = &_pagePtrs[0][y * SCREEN_W + x];
 	uint8 *dst = ptr;
@@ -2648,7 +2596,6 @@ void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
 }
 
 uint8 *Screen::getPalette(int num) {
-	debugC(9, kDebugLevelScreen, "Screen::getPalette(%d)", num);
 	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 6 : 4));
 	if (num == 0)
 		return _currentPalette;
@@ -2657,7 +2604,6 @@ uint8 *Screen::getPalette(int num) {
 }
 
 byte Screen::getShapeFlag1(int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen::getShapeFlag1(%d, %d)", x, y);
 	uint8 color = _shapePages[0][y * SCREEN_W + x];
 	color &= 0x80;
 	color ^= 0x80;
@@ -2668,7 +2614,6 @@ byte Screen::getShapeFlag1(int x, int y) {
 }
 
 byte Screen::getShapeFlag2(int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen::getShapeFlag2(%d, %d)", x, y);
 	uint8 color = _shapePages[0][y * SCREEN_W + x];
 	color &= 0x7F;
 	color &= 0x87;
@@ -2676,7 +2621,6 @@ byte Screen::getShapeFlag2(int x, int y) {
 }
 
 int Screen::getDrawLayer(int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen::getDrawLayer(%d, %d)", x, y);
 	int xpos = x - 8;
 	int ypos = y - 1;
 	int layer = 1;
@@ -2694,7 +2638,6 @@ int Screen::getDrawLayer(int x, int y) {
 }
 
 int Screen::getDrawLayer2(int x, int y, int height) {
-	debugC(9, kDebugLevelScreen, "Screen::getDrawLayer2(%d, %d, %d)", x, y, height);
 	int xpos = x - 8;
 	int ypos = y - 1;
 	int layer = 1;
@@ -2715,7 +2658,6 @@ int Screen::getDrawLayer2(int x, int y, int height) {
 
 
 int Screen::setNewShapeHeight(uint8 *shape, int height) {
-	debugC(9, kDebugLevelScreen, "Screen::setNewShapeHeight(%p, %d)", (const void *)shape, height);
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
 
@@ -2725,7 +2667,6 @@ int Screen::setNewShapeHeight(uint8 *shape, int height) {
 }
 
 int Screen::resetShapeHeight(uint8 *shape) {
-	debugC(9, kDebugLevelScreen, "Screen::setNewShapeHeight(%p)", (const void *)shape);
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
 
@@ -2735,7 +2676,6 @@ int Screen::resetShapeHeight(uint8 *shape) {
 }
 
 void Screen::blockInRegion(int x, int y, int width, int height) {
-	debugC(9, kDebugLevelScreen, "Screen::blockInRegion(%d, %d, %d, %d)", x, y, width, height);
 	assert(_shapePages[0]);
 	byte *toPtr = _shapePages[0] + (y * 320 + x);
 	for (int i = 0; i < height; ++i) {
@@ -2747,7 +2687,6 @@ void Screen::blockInRegion(int x, int y, int width, int height) {
 }
 
 void Screen::blockOutRegion(int x, int y, int width, int height) {
-	debugC(9, kDebugLevelScreen, "Screen::blockOutRegion(%d, %d, %d, %d)", x, y, width, height);
 	assert(_shapePages[0]);
 	byte *toPtr = _shapePages[0] + (y * 320 + x);
 	for (int i = 0; i < height; ++i) {
@@ -2771,7 +2710,6 @@ void Screen::rectClip(int &x, int &y, int w, int h) {
 }
 
 void Screen::shakeScreen(int times) {
-	debugC(9, kDebugLevelScreen, "Screen::shakeScreen(%d)", times);
 
 	while (times--) {
 		// seems to be 1 line (320 pixels) offset in the original
@@ -2784,7 +2722,6 @@ void Screen::shakeScreen(int times) {
 }
 
 void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData, bool skip) {
-	debugC(9, kDebugLevelScreen, "KyraEngine_v1::loadBitmap('%s', %d, %d, %p, %d)", filename, tempPage, dstPage, (void *)palData, skip);
 	uint32 fileSize;
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 
@@ -2802,7 +2739,6 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
 
 	if (palData && palSize) {
-		debugC(9, kDebugLevelMain,"Loading a palette of size %i from %s", palSize, filename);
 		loadPalette(srcData + 10, palData, palSize);
 	}
 
@@ -2840,14 +2776,12 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 }
 
 bool Screen::loadPalette(const char *filename, uint8 *palData) {
-	debugC(9, kDebugLevelScreen, "Screen::loadPalette('%s' %p)", filename, (void *)palData);
 	uint32 fileSize = 0;
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 	if (!srcData)
 		return false;
 
 	if (palData && fileSize) {
-		debugC(9, kDebugLevelScreen,"Loading a palette of size %u from '%s'", fileSize, filename);
 		loadPalette(srcData, palData, fileSize);
 	}
 	delete[] srcData;
@@ -2855,7 +2789,6 @@ bool Screen::loadPalette(const char *filename, uint8 *palData) {
 }
 
 void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {
-	debugC(9, kDebugLevelScreen, "Screen::loadPalette(%p, %p %d)", (const void *)data, (void *)palData, bytes);
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		assert(bytes % 2 == 0);
 		assert(bytes / 2 <= 256);
@@ -3072,7 +3005,6 @@ int SJIStoFMTChunk(int f, int s) { // copied from scumm\charset.cpp
 } // end of anonymous namespace
 
 void Screen::drawCharSJIS(uint16 c, int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen::drawCharSJIS('%c', %d, %d)", c, x, y);
 
 	int color1 = _textColorsMap[1];
 	int color2 = _textColorsMap[0];

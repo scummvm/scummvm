@@ -32,7 +32,6 @@
 namespace Kyra {
 
 void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2, int unk3) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::enterNewScene('%d, %d, %d, %d, %d)", sceneId, facing, unk1, unk2, unk3);
 	++_enterNewSceneLock;
 	_screen->hideMouse();
 
@@ -196,7 +195,6 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 }
 
 void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::enterNewSceneUnk1(%d, %d, %d)", facing, unk1, unk2);
 	int x = 0, y = 0;
 	int x2 = 0, y2 = 0;
 	bool needProc = true;
@@ -294,7 +292,6 @@ void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 }
 
 void KyraEngine_MR::enterNewSceneUnk2(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::enterNewSceneUnk2(%d)", unk1);
 	_unk3 = -1;
 	if (_mainCharX == -1 && _mainCharY == -1 && !unk1) {
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
@@ -312,7 +309,6 @@ void KyraEngine_MR::enterNewSceneUnk2(int unk1) {
 }
 
 void KyraEngine_MR::unloadScene() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::unloadScene()");
 	delete[] _sceneStrings;
 	_sceneStrings = 0;
 	musicUpdate(0);
@@ -325,7 +321,6 @@ void KyraEngine_MR::unloadScene() {
 }
 
 void KyraEngine_MR::freeSceneShapes() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::freeSceneShapes()");
 	for (uint i = 0; i < ARRAYSIZE(_sceneShapes); ++i) {
 		delete[] _sceneShapes[i];
 		_sceneShapes[i] = 0;
@@ -333,7 +328,6 @@ void KyraEngine_MR::freeSceneShapes() {
 }
 
 void KyraEngine_MR::loadScenePal() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadScenePal()");
 	char filename[16];
 	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
 	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
@@ -357,7 +351,6 @@ void KyraEngine_MR::loadScenePal() {
 }
 
 void KyraEngine_MR::loadSceneMsc() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::loadSceneMsc()");
 	char filename[16];
 	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
 	strcat(filename, ".MSC");
@@ -390,7 +383,6 @@ void KyraEngine_MR::loadSceneMsc() {
 }
 
 void KyraEngine_MR::initSceneScript(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::initSceneScript(%d)", unk1);
 	const SceneDesc &scene = _sceneList[_mainCharacter.sceneId];
 	musicUpdate(0);
 
@@ -495,7 +487,6 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 }
 
 void KyraEngine_MR::initSceneAnims(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::initSceneAnims(%d)", unk1);
 	for (int i = 0; i < 67; ++i)
 		_animObjects[i].enabled = false;
 
@@ -611,7 +602,6 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 }
 
 void KyraEngine_MR::initSceneScreen(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::initSceneScreen(%d)", unk1);
 	_screen->copyBlockToPage(2, 0, 188, 320, 12, _interfaceCommandLine);
 
 	if (_unkSceneScreenFlag1) {
@@ -649,7 +639,6 @@ void KyraEngine_MR::initSceneScreen(int unk1) {
 }
 
 int KyraEngine_MR::trySceneChange(int *moveTable, int unk1, int updateChar) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::trySceneChange(%p, %d, %d)", (const void*)moveTable, unk1, updateChar);
 	bool running = true;
 	bool unkFlag = false;
 	int changedScene = 0;
@@ -709,7 +698,6 @@ int KyraEngine_MR::trySceneChange(int *moveTable, int unk1, int updateChar) {
 }
 
 int KyraEngine_MR::checkSceneChange() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::checkSceneChange()");
 	const SceneDesc &curScene = _sceneList[_mainCharacter.sceneId];
 	int charX = _mainCharacter.x1, charY = _mainCharacter.y1;
 	int facing = 0;
@@ -762,7 +750,6 @@ int KyraEngine_MR::checkSceneChange() {
 	return 1;
 }
 int KyraEngine_MR::runSceneScript1(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::runSceneScript1(%d, %d)", x, y);
 	if (y > 187 && _unk3 > -4)
 		return 0;
 	if (_deathHandler >= 0)
@@ -782,7 +769,6 @@ int KyraEngine_MR::runSceneScript1(int x, int y) {
 }
 
 int KyraEngine_MR::runSceneScript2() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::runSceneScript2()");
 	_sceneScriptState.regs[1] = _mouseX;
 	_sceneScriptState.regs[2] = _mouseY;
 	_sceneScriptState.regs[3] = 0;
@@ -796,7 +782,6 @@ int KyraEngine_MR::runSceneScript2() {
 }
 
 void KyraEngine_MR::runSceneScript4(int unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::runSceneScript4(%d)", unk1);
 	_sceneScriptState.regs[4] = _itemInHand;
 	_sceneScriptState.regs[5] = unk1;
 	_sceneScriptState.regs[3] = 0;
@@ -811,7 +796,6 @@ void KyraEngine_MR::runSceneScript4(int unk1) {
 }
 
 void KyraEngine_MR::runSceneScript8() {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::runSceneScript8()");
 	_emc->start(&_sceneScriptState, 8);
 	while (_emc->isValid(&_sceneScriptState)) {
 		musicUpdate(0);
@@ -820,7 +804,6 @@ void KyraEngine_MR::runSceneScript8() {
 }
 
 bool KyraEngine_MR::lineIsPassable(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_MR::lineIsPassable(%d, %d)", x, y);
 	static const uint8 widthTable[] = { 1, 1, 1, 1, 1, 2, 4, 6, 8 };
 
 	if ((_pathfinderFlag & 2) && x >= 320)

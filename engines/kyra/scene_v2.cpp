@@ -29,7 +29,6 @@
 namespace Kyra {
 
 void KyraEngine_v2::freeSceneAnims() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::freeSceneAnims()");
 
 	for (int i = 0; i < ARRAYSIZE(_sceneAnims); ++i)
 		_sceneAnims[i].flags = 0;
@@ -41,7 +40,6 @@ void KyraEngine_v2::freeSceneAnims() {
 }
 
 void KyraEngine_v2::updateSpecialSceneScripts() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateSpecialSceneScripts()");
 	uint32 nextTime = _system->getMillis() + _tickLength;
 	const int startScript = _lastProcessedSceneScript;
 
@@ -71,7 +69,6 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 }
 
 void KyraEngine_v2::runSceneScript6() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript6()");
 	_emc->init(&_sceneScriptState, &_sceneScriptData);
 
 	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
@@ -87,7 +84,6 @@ void KyraEngine_v2::runSceneScript6() {
 #pragma mark - pathfinder
 
 int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
 	x &= ~3; toX &= ~3;
 	y &= ~1; toY &= ~1;
 	int size = KyraEngine_v1::findWay(x, y, toX, toY, moveTable, moveTableSize);
@@ -103,7 +99,6 @@ int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 }
 
 bool KyraEngine_v2::directLinePassable(int x, int y, int toX, int toY) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::directLinePassable(%d, %d, %d, %d)", x, y, toX, toY);
 	Screen *scr = screen();
 
 	while (x != toX || y != toY) {
@@ -118,7 +113,6 @@ bool KyraEngine_v2::directLinePassable(int x, int y, int toX, int toY) {
 }
 
 int KyraEngine_v2::pathfinderInitPositionTable(int *moveTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderInitPositionTable(%p)", (const void*)moveTable);
 	bool breakLoop = false;
 	int *moveTableCur = moveTable;
 	int oldEntry = *moveTableCur, curEntry = *moveTableCur;
@@ -169,7 +163,6 @@ int KyraEngine_v2::pathfinderInitPositionTable(int *moveTable) {
 }
 
 int KyraEngine_v2::pathfinderAddToPositionTable(int index, int v1, int v2) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderAddToPositionTable(%d, %d, %d)", index, v1, v2);
 	_pathfinderPositionTable[index<<1] = v1;
 	_pathfinderPositionTable[(index<<1)+1] = v2;
 	++index;
@@ -179,7 +172,6 @@ int KyraEngine_v2::pathfinderAddToPositionTable(int index, int v1, int v2) {
 }
 
 int KyraEngine_v2::pathfinderInitPositionIndexTable(int tableLen, int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderInitPositionIndexTable(%d, %d, %d)", tableLen, x, y);
 	int x1 = 0, y1 = 0;
 	int x2 = 0, y2 = 0;
 	int lastEntry = 0;
@@ -208,7 +200,6 @@ int KyraEngine_v2::pathfinderInitPositionIndexTable(int tableLen, int x, int y) 
 }
 
 int KyraEngine_v2::pathfinderAddToPositionIndexTable(int index, int v) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderAddToPositionIndexTable(%d, %d)", index, v);
 	_pathfinderPositionIndexTable[index] = v;
 	++index;
 	if (index >= 199)
@@ -217,7 +208,6 @@ int KyraEngine_v2::pathfinderAddToPositionIndexTable(int index, int v) {
 }
 
 void KyraEngine_v2::pathfinderFinializePath(int *moveTable, int tableLen, int x, int y, int moveTableSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderFinializePath(%p, %d, %d, %d, %d)", (void *)moveTable, tableLen, x, y, moveTableSize);
 	int x1 = 0, y1 = 0;
 	int x2 = 0, y2 = 0;
 	int index1 = 0, index2 = 0;

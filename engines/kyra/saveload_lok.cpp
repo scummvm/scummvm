@@ -37,7 +37,6 @@
 namespace Kyra {
 
 Common::Error KyraEngine_LoK::loadGameState(int slot) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::loadGame(%d)", slot);
 
 	const char *fileName = getSavegameFilename(slot);
 
@@ -220,7 +219,6 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 }
 
 Common::Error KyraEngine_LoK::saveGameState(int slot, const char *saveName, const Graphics::Surface *thumb) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::saveGame(%d, '%s', %p)", slot, saveName, (const void *)thumb);
 
 	const char *fileName = getSavegameFilename(slot);
 

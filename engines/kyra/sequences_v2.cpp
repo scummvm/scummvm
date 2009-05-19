@@ -29,7 +29,6 @@
 namespace Kyra {
 
 void KyraEngine_v2::runAnimationScript(const char *filename, int allowSkip, int resetChar, int newShapes, int shapeUnload) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::runAnimationScript('%s', %d, %d, %d, %d)", filename, allowSkip, resetChar, newShapes, shapeUnload);
 	memset(&_animationScriptData, 0, sizeof(_animationScriptData));
 	memset(&_animationScriptState, 0, sizeof(_animationScriptState));
 
@@ -77,7 +76,6 @@ void KyraEngine_v2::runAnimationScript(const char *filename, int allowSkip, int 
 }
 
 void KyraEngine_v2::processAnimationScript(int allowSkip, int resetChar) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::processAnimationScript(%d, %d)", allowSkip, resetChar);
 	setCharacterAnimDim(_animShapeWidth, _animShapeHeight);
 
 	_emc->init(&_animationScriptState, &_animationScriptData);

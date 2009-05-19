@@ -29,7 +29,6 @@
 namespace Kyra {
 
 int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::findWay(%d, %d, %d, %d, %p, %d)", x, y, toX, toY, (const void *)moveTable, moveTableSize);
 	x &= 0xFFFC; toX &= 0xFFFC;
 	y &= 0xFFFE; toY &= 0xFFFE;
 	x = (int16)x; y = (int16)y; toX = (int16)toX; toY = (int16)toY;
@@ -144,7 +143,6 @@ int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 }
 
 int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::findSubPath(%d, %d, %d, %d, %p, %d, %d)", x, y, toX, toY, (const void *)moveTable, start, end);
 	// only used for debug specific code
 	//static uint16 unkTable[] = { 8, 5 };
 	static const int8 facingTable1[] = {  7,  0,  1,  2,  3,  4,  5,  6,  1,  2,  3,  4,  5,  6,  7,  0 };
@@ -213,7 +211,6 @@ int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, i
 }
 
 int KyraEngine_v1::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::getFacingFromPointToPoint(%d, %d, %d, %d)", x, y, toX, toY);
 	static const int facingTable[] = {
 		1, 0, 1, 2, 3, 4, 3, 2, 7, 0, 7, 6, 5, 4, 5, 6
 	};
@@ -257,7 +254,6 @@ int KyraEngine_v1::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
 
 
 int KyraEngine_v1::getOppositeFacingDirection(int dir) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::getOppositeFacingDirection(%d)", dir);
 	switch (dir) {
 	case 0:
 		return 2;
@@ -280,13 +276,11 @@ int KyraEngine_v1::getOppositeFacingDirection(int dir) {
 }
 
 void KyraEngine_v1::changePosTowardsFacing(int &x, int &y, int facing) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::changePosTowardsFacing(%d, %d, %d)", x, y, facing);
 	x += _addXPosTable[facing];
 	y += _addYPosTable[facing];
 }
 
 int KyraEngine_v1::getMoveTableSize(int *moveTable) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::getMoveTableSize(%p)", (const void *)moveTable);
 	int retValue = 0;
 	if (moveTable[0] == 8)
 		return 0;

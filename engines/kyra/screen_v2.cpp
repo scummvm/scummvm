@@ -115,7 +115,6 @@ int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *p
 }
 
 void Screen_v2::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::getFadeParams(%p, %d, %p, %p)", (const void *)palette, delay, (const void *)&delayInc, (const void *)&diff);
 
 	int maxDiff = 0;
 	diff = 0;
@@ -282,7 +281,6 @@ void Screen_v2::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFu
 }
 
 const uint8 *Screen_v2::getPtrToShape(const uint8 *shpFile, int shape) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::getPtrToShape(%p, %d)", (const void *)shpFile, shape);
 	uint16 shapes = READ_LE_UINT16(shpFile);
 
 	if (shapes <= shape)
@@ -294,7 +292,6 @@ const uint8 *Screen_v2::getPtrToShape(const uint8 *shpFile, int shape) {
 }
 
 uint8 *Screen_v2::getPtrToShape(uint8 *shpFile, int shape) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::getPtrToShape(%p, %d)", (void *)shpFile, shape);
 	uint16 shapes = READ_LE_UINT16(shpFile);
 
 	if (shapes <= shape)
@@ -306,25 +303,21 @@ uint8 *Screen_v2::getPtrToShape(uint8 *shpFile, int shape) {
 }
 
 int Screen_v2::getShapeScaledWidth(const uint8 *shpFile, int scale) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::getShapeScaledWidth(%p, %d)", (const void*)shpFile, scale);
 	int width = READ_LE_UINT16(shpFile+3);
 	return (width * scale) >> 8;
 }
 
 int Screen_v2::getShapeScaledHeight(const uint8 *shpFile, int scale) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::getShapeScaledHeight(%p, %d)", (const void*)shpFile, scale);
 	int height = shpFile[2];
 	return (height * scale) >> 8;
 }
 
 uint16 Screen_v2::getShapeSize(const uint8 *shp) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::getShapeSize(%p)", (const void *)shp);
 
 	return READ_LE_UINT16(shp+6);
 }
 
 uint8 *Screen_v2::makeShapeCopy(const uint8 *src, int index) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::makeShapeCopy(%p, %d)", (const void *)src, index);
 
 	const uint8 *shape = getPtrToShape(src, index);
 	if (!shape)
@@ -340,7 +333,6 @@ uint8 *Screen_v2::makeShapeCopy(const uint8 *src, int index) {
 }
 
 int Screen_v2::getLayer(int x, int y) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::getLayer(%d, %d)", x, y);
 	if (x < 0)
 		x = 0;
 	else if (x >= 320)
@@ -362,14 +354,12 @@ int Screen_v2::getLayer(int x, int y) {
 }
 
 int Screen_v2::getRectSize(int w, int h) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::getRectSize(%d, %d)", w, h);
 	if (w > 320 || h > 200)
 		return 0;
 	return w*h;
 }
 
 void Screen_v2::setTextColorMap(const uint8 *cmap) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::setTextColorMap(%p)", (const void *)cmap);
 	setTextColor(cmap, 0, 15);
 }
 
@@ -490,7 +480,6 @@ bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, i
 }
 
 void Screen_v2::checkedPageUpdate(int srcPage, int dstPage) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::checkedPageUpdate(%d, %d)", srcPage, dstPage);
 
 	const uint32 *src = (const uint32 *)getPagePtr(srcPage);
 	uint32 *dst = (uint32 *)getPagePtr(dstPage);

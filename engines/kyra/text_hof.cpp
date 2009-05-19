@@ -87,7 +87,6 @@ void TextDisplayer_HoF::printCustomCharacterText(const char *text, int x, int y,
 }
 
 char *TextDisplayer_HoF::preprocessString(const char *str) {
-	debugC(9, kDebugLevelMain, "TextDisplayer_HoF::preprocessString('%s')", str);
 
 	if (str != _talkBuffer) {
 		assert(strlen(str) < sizeof(_talkBuffer) - 1);
@@ -129,7 +128,6 @@ char *TextDisplayer_HoF::preprocessString(const char *str) {
 }
 
 void TextDisplayer_HoF::calcWidestLineBounds(int &x1, int &x2, int w, int x) {
-	debugC(9, kDebugLevelMain, "TextDisplayer_HoF::calcWidestLineBounds(%d, %d)", w, x);
 	x1 = x;
 	x1 -= (w >> 1);
 	x2 = x1 + w + 1;

@@ -1453,7 +1453,6 @@ void KyraEngine_HoF::restoreGfxRect32x32(int x, int y) {
 #pragma mark -
 
 void KyraEngine_HoF::openTalkFile(int newFile) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::openTalkFile(%d)", newFile);
 	char talkFilename[16];
 
 	if (_oldTalkFile > 0) {
@@ -1481,7 +1480,6 @@ void KyraEngine_HoF::openTalkFile(int newFile) {
 }
 
 void KyraEngine_HoF::snd_playVoiceFile(int id) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::snd_playVoiceFile(%d)", id);
 	char vocFile[9];
 	assert(id >= 0 && id <= 9999999);
 	sprintf(vocFile, "%07d", id);
@@ -1498,7 +1496,6 @@ void KyraEngine_HoF::snd_playVoiceFile(int id) {
 }
 
 void KyraEngine_HoF::snd_loadSoundFile(int id) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::snd_loadSoundFile(%d)", id);
 	if (id < 0 || !_trackMap)
 		return;
 
@@ -1509,7 +1506,6 @@ void KyraEngine_HoF::snd_loadSoundFile(int id) {
 }
 
 void KyraEngine_HoF::playVoice(int high, int low) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::playVoice(%d, %d)", high, low);
 	if (!_flags.isTalkie)
 		return;
 	int vocFile = high * 10000 + low * 10;
@@ -1518,7 +1514,6 @@ void KyraEngine_HoF::playVoice(int high, int low) {
 }
 
 void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_HoF::snd_playSoundEffect(%d, %d)", track, volume);
 
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		if (track == 10)

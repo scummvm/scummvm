@@ -36,7 +36,6 @@ namespace Kyra {
 #pragma mark - Intro
 
 int LoLEngine::processPrologue() {
-	debugC(9, kDebugLevelMain, "LoLEngine::processPrologue()");
 
 	setupPrologueData(true);
 
@@ -118,7 +117,6 @@ int LoLEngine::processPrologue() {
 }
 
 void LoLEngine::setupPrologueData(bool load) {
-	debugC(9, kDebugLevelMain, "LoLEngine::setupPrologueData(%d)", load);
 
 	static const char * const fileListCD[] = {
 		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
@@ -200,7 +198,6 @@ void LoLEngine::setupPrologueData(bool load) {
 }
 
 void LoLEngine::showIntro() {
-	debugC(9, kDebugLevelMain, "LoLEngine::showIntro()");
 
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
@@ -269,7 +266,6 @@ void LoLEngine::showIntro() {
 }
 
 int LoLEngine::chooseCharacter() {
-	debugC(9, kDebugLevelMain, "LoLEngine::chooseCharacter()");
 
 	_tim = new TIMInterpreter(this, _screen, _system);
 	assert(_tim);
@@ -366,7 +362,6 @@ int LoLEngine::chooseCharacter() {
 }
 
 void LoLEngine::kingSelectionIntro() {
-	debugC(9, kDebugLevelMain, "LoLEngine::kingSelectionIntro()");
 
 	_screen->copyRegion(0, 0, 0, 0, 112, 120, 4, 0, Screen::CR_NO_P_CHECK);
 	int y = 38;
@@ -410,7 +405,6 @@ void LoLEngine::kingSelectionIntro() {
 }
 
 void LoLEngine::kingSelectionReminder() {
-	debugC(9, kDebugLevelMain, "LoLEngine::kingSelectionReminder()");
 
 	_screen->copyRegion(0, 0, 0, 0, 112, 120, 4, 0, Screen::CR_NO_P_CHECK);
 	int y = 48;
@@ -445,7 +439,6 @@ void LoLEngine::kingSelectionReminder() {
 }
 
 void LoLEngine::kingSelectionOutro() {
-	debugC(9, kDebugLevelMain, "LoLEngine::kingSelectionOutro()");
 
 	_sound->voicePlay("KING03");
 
@@ -476,7 +469,6 @@ void LoLEngine::kingSelectionOutro() {
 }
 
 void LoLEngine::processCharacterSelection() {
-	debugC(9, kDebugLevelMain, "LoLEngine::processCharacterSelection()");
 
 	_charSelection = -1;
 	while (!shouldQuit() && _charSelection == -1) {
@@ -494,7 +486,6 @@ void LoLEngine::processCharacterSelection() {
 }
 
 void LoLEngine::updateSelectionAnims() {
-	debugC(9, kDebugLevelMain, "LoLEngine::updateSelectionAnims()");
 
 	for (int i = 0; i < 4; ++i) {
 		if (_system->getMillis() < _selectionAnimTimers[i])
@@ -517,7 +508,6 @@ void LoLEngine::updateSelectionAnims() {
 }
 
 int LoLEngine::selectionCharInfo(int character) {
-	debugC(9, kDebugLevelMain, "LoLEngine::selectionCharInfo(%d)", character);
 	if (character < 0)
 		return -1;
 
@@ -597,7 +587,6 @@ int LoLEngine::selectionCharInfo(int character) {
 }
 
 void LoLEngine::selectionCharInfoIntro(char *file) {
-	debugC(9, kDebugLevelMain, "LoLEngine::selectionCharInfoIntro(%p)", (const void *)file);
 	int index = 0;
 	file[4] = '0';
 

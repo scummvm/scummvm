@@ -33,7 +33,6 @@
 namespace Kyra {
 
 void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::waitForChatToFinish(%i, %s, %i)", chatDuration, chatStr, charNum);
 	bool hasUpdatedNPCs = false;
 	bool runLoop = true;
 	bool drawText = textEnabled();
@@ -245,7 +244,6 @@ int KyraEngine_LoK::initCharacterChat(int8 charNum) {
 }
 
 void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::characterSays('%s', %i, %d)", chatStr, charNum, chatDuration);
 	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
 
 	uint16 chatTicks;
@@ -327,7 +325,6 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 }
 
 void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::drawSentenceCommand('%s', %i)", sentence, color);
 	_screen->hideMouse();
 	_screen->fillRect(8, 143, 311, 152, 12);
 
@@ -347,7 +344,6 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 }
 
 void KyraEngine_LoK::updateSentenceCommand(const char *str1, const char *str2, int color) {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::updateSentenceCommand('%s', '%s', %i)", str1, str2, color);
 	char sentenceCommand[500];
 	strncpy(sentenceCommand, str1, 500);
 	if (str2)
@@ -358,7 +354,6 @@ void KyraEngine_LoK::updateSentenceCommand(const char *str1, const char *str2, i
 }
 
 void KyraEngine_LoK::updateTextFade() {
-	debugC(9, kDebugLevelMain, "KyraEngine_LoK::updateTextFade()");
 	if (!_fadeText)
 		return;
 

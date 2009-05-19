@@ -29,7 +29,6 @@
 namespace Kyra {
 
 void KyraEngine_LoK::snd_playSoundEffect(int track, int volume) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_playSoundEffect(%d, %d)", track, volume);
 	if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 		return;
@@ -39,7 +38,6 @@ void KyraEngine_LoK::snd_playSoundEffect(int track, int volume) {
 }
 
 void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_playWanderScoreViaMap(%d, %d)", command, restart);
 	if (restart)
 		_lastMusicCommand = -1;
 
@@ -72,7 +70,6 @@ void KyraEngine_LoK::snd_playWanderScoreViaMap(int command, int restart) {
 }
 
 void KyraEngine_LoK::snd_playVoiceFile(int id) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_playVoiceFile(%d)", id);
 	char vocFile[9];
 	snprintf(vocFile, sizeof(vocFile), "%03d", id);
 	_speechFile = vocFile;
@@ -80,7 +77,6 @@ void KyraEngine_LoK::snd_playVoiceFile(int id) {
 }
 
 void KyraEngine_LoK::snd_voiceWaitForFinish(bool ingame) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_voiceWaitForFinish(%d)", ingame);
 	while (_sound->voiceIsPlaying() && !skipFlag()) {
 		if (ingame)
 			delay(10, true);
@@ -90,7 +86,6 @@ void KyraEngine_LoK::snd_voiceWaitForFinish(bool ingame) {
 }
 
 uint32 KyraEngine_LoK::snd_getVoicePlayTime() {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_LoK::snd_getVoicePlayTime()");
 	if (!snd_voiceIsPlaying())
 		return 0;
 	return (_speechPlayTime != -1 ? _speechPlayTime : 0);

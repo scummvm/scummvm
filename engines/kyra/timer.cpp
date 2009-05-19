@@ -93,7 +93,6 @@ void TimerManager::reset() {
 }
 
 void TimerManager::addTimer(uint8 id, TimerFunc *func, int countdown, bool enabled) {
-	debugC(9, kDebugLevelTimer, "TimerManager::addTimer(%d, %p, %d, %d)", id, (const void*)func, countdown, enabled);
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end()) {
@@ -114,7 +113,6 @@ void TimerManager::addTimer(uint8 id, TimerFunc *func, int countdown, bool enabl
 }
 
 void TimerManager::update() {
-	debugC(9, kDebugLevelTimer, "TimerManager::update()");
 
 	if (_system->getMillis() < _nextRun || _isPaused)
 		return;
@@ -139,7 +137,6 @@ void TimerManager::update() {
 }
 
 void TimerManager::resync() {
-	debugC(9, kDebugLevelTimer, "TimerManager::resync()");
 
 	const uint32 curTime = _isPaused ? _pauseStart : _system->getMillis();
 
@@ -148,12 +145,10 @@ void TimerManager::resync() {
 }
 
 void TimerManager::resetNextRun() {
-	debugC(9, kDebugLevelTimer, "TimerManager::resetNextRun()");
 	_nextRun = 0;
 }
 
 void TimerManager::setCountdown(uint8 id, int32 countdown) {
-	debugC(9, kDebugLevelTimer, "TimerManager::setCountdown(%d, %d)", id, countdown);
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end()) {
@@ -172,7 +167,6 @@ void TimerManager::setCountdown(uint8 id, int32 countdown) {
 }
 
 void TimerManager::setDelay(uint8 id, int32 countdown) {
-	debugC(9, kDebugLevelTimer, "TimerManager::setDelay(%d, %d)", id, countdown);
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
@@ -182,7 +176,6 @@ void TimerManager::setDelay(uint8 id, int32 countdown) {
 }
 
 int32 TimerManager::getDelay(uint8 id) const {
-	debugC(9, kDebugLevelTimer, "TimerManager::getDelay(%d)", id);
 
 	CIterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
@@ -193,7 +186,6 @@ int32 TimerManager::getDelay(uint8 id) const {
 }
 
 void TimerManager::setNextRun(uint8 id, uint32 nextRun) {
-	debugC(9, kDebugLevelTimer, "TimerManager::setNextRun(%d, %u)", id, nextRun);
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end()) {
@@ -205,7 +197,6 @@ void TimerManager::setNextRun(uint8 id, uint32 nextRun) {
 }
 
 uint32 TimerManager::getNextRun(uint8 id) const {
-	debugC(9, kDebugLevelTimer, "TimerManager::getNextRun(%d)", id);
 
 	CIterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
@@ -216,7 +207,6 @@ uint32 TimerManager::getNextRun(uint8 id) const {
 }
 
 void TimerManager::pauseSingleTimer(uint8 id, bool p) {
-	debugC(9, kDebugLevelTimer, "TimerManager::pauseSingleTimer(%d, %d)", id, (int) p);
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	
 	if (timer == _timers.end()) {
@@ -238,7 +228,6 @@ void TimerManager::pauseSingleTimer(uint8 id, bool p) {
 }
 
 bool TimerManager::isEnabled(uint8 id) const {
-	debugC(9, kDebugLevelTimer, "TimerManager::isEnabled(%d)", id);
 
 	CIterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
@@ -249,7 +238,6 @@ bool TimerManager::isEnabled(uint8 id) const {
 }
 
 void TimerManager::enable(uint8 id) {
-	debugC(9, kDebugLevelTimer, "TimerManager::enable(%d)", id);
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
@@ -259,7 +247,6 @@ void TimerManager::enable(uint8 id) {
 }
 
 void TimerManager::disable(uint8 id) {
-	debugC(9, kDebugLevelTimer, "TimerManager::disable(%d)", id);
 
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
@@ -269,7 +256,6 @@ void TimerManager::disable(uint8 id) {
 }
 
 void TimerManager::loadDataFromFile(Common::SeekableReadStream &file, int version) {
-	debugC(9, kDebugLevelTimer, "TimerManager::loadDataFromFile(%p, %d)", (const void *)&file, version);
 
 	const uint32 loadTime = _isPaused ? _pauseStart : _system->getMillis();
 
@@ -317,7 +303,6 @@ void TimerManager::loadDataFromFile(Common::SeekableReadStream &file, int versio
 }
 
 void TimerManager::saveDataToFile(Common::WriteStream &file) const {
-	debugC(9, kDebugLevelTimer, "TimerManager::saveDataToFile(%p)", (const void *)&file);
 
 	const uint32 saveTime = _isPaused ? _pauseStart : _system->getMillis();
 

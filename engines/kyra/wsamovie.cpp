@@ -39,7 +39,6 @@ WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm) : Movie(vm) {}
 WSAMovie_v1::~WSAMovie_v1() { close(); }
 
 int WSAMovie_v1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
-	debugC(9, kDebugLevelMovie, "WSAMovie_v1::open('%s', %d, %p)", filename, offscreenDecode, (const void *)palBuf);
 	close();
 
 	uint32 flags = 0;
@@ -124,7 +123,6 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, uint8 *palBuf) 
 }
 
 void WSAMovie_v1::close() {
-	debugC(9, kDebugLevelMovie, "WSAMovie_v1::close()");
 	if (_opened) {
 		delete[] _deltaBuffer;
 		delete[] _offscreenBuffer;
@@ -135,7 +133,6 @@ void WSAMovie_v1::close() {
 }
 
 void WSAMovie_v1::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
-	debugC(9, kDebugLevelMovie, "WSAMovie_v1::displayFrame(%d, %d, %d, %d, ...)", frameNum, pageNum, x, y);
 	if (frameNum >= _numFrames || !_opened)
 		return;
 
@@ -203,7 +200,6 @@ void WSAMovie_v1::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
 }
 
 void WSAMovie_v1::processFrame(int frameNum, uint8 *dst) {
-	debugC(9, kDebugLevelMovie, "WSAMovie_v1::processFrame(%d, %p)", frameNum, (const void *)dst);
 	if (!_opened)
 		return;
 	assert(frameNum <= _numFrames);
@@ -220,7 +216,6 @@ void WSAMovie_v1::processFrame(int frameNum, uint8 *dst) {
 WSAMovieAmiga::WSAMovieAmiga(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _buffer(0) {}
 
 int WSAMovieAmiga::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
-	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::open('%s', %d, %p)", filename, offscreenDecode, (const void *)palBuf);
 	int res = WSAMovie_v1::open(filename, offscreenDecode, palBuf);
 
 	if (!res)
@@ -232,7 +227,6 @@ int WSAMovieAmiga::open(const char *filename, int offscreenDecode, uint8 *palBuf
 }
 
 void WSAMovieAmiga::close() {
-	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::close()");
 	if (_opened) {
 		delete[] _buffer;
 		_buffer = 0;
@@ -241,7 +235,6 @@ void WSAMovieAmiga::close() {
 }
 
 void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
-	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::displayFrame(%d, %d, %d, %d,...)", frameNum, pageNum, x, y);
 	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
 		return;
 
@@ -318,7 +311,6 @@ void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
 }
 
 void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
-	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::processFrame(%d, %p)", frameNum, (const void *)dst);
 	if (!_opened)
 		return;
 	assert(frameNum <= _numFrames);
@@ -353,7 +345,6 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 WSAMovie_v2::WSAMovie_v2(KyraEngine_v1 *vm, Screen_v2 *screen) : WSAMovie_v1(vm), _screen(screen), _xAdd(0), _yAdd(0) {}
 
 int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
-	debugC(9, kDebugLevelMovie, "WSAMovie_v2::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);
 	close();
 
 	uint32 flags = 0;
@@ -457,7 +448,6 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 }
 
 void WSAMovie_v2::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
-	debugC(9, kDebugLevelMovie, "WSAMovie_v2::displayFrame(%d, %d, %d, %d,...)", frameNum, pageNum, x, y);
 	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
 		return;
 

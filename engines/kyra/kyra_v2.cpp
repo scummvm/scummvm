@@ -144,7 +144,6 @@ void KyraEngine_v2::pauseEngineIntern(bool pause) {
 }
 
 void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::delay(%u, %d, %d)", amount, updateGame, isMainLoop);
 
 	uint32 start = _system->getMillis();
 	do {
@@ -170,13 +169,11 @@ bool KyraEngine_v2::checkSpecialSceneExit(int num, int x, int y) {
 }
 
 void KyraEngine_v2::addShapeToPool(const uint8 *data, int realIndex, int shape) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::addShapeToPool(%p, %d, %d)", data, realIndex, shape);
 	remShapeFromPool(realIndex);
 	_gameShapes[realIndex] = screen_v2()->makeShapeCopy(data, shape);
 }
 
 void KyraEngine_v2::addShapeToPool(uint8 *shpData, int index) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::addShapeToPool(%p, %d)", shpData, index);
 	remShapeFromPool(index);
 	_gameShapes[index] = shpData;
 }
@@ -190,7 +187,6 @@ void KyraEngine_v2::remShapeFromPool(int idx) {
 }
 
 uint8 *KyraEngine_v2::getShapePtr(int shape) const {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::getShapePtr(%d)", shape);
 	ShapeMap::iterator iter = _gameShapes.find(shape);
 	if (iter == _gameShapes.end())
 		return 0;
@@ -198,7 +194,6 @@ uint8 *KyraEngine_v2::getShapePtr(int shape) const {
 }
 
 void KyraEngine_v2::moveCharacter(int facing, int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::moveCharacter(%d, %d, %d)", facing, x, y);
 	x &= ~3;
 	y &= ~1;
 	_mainCharacter.facing = facing;
@@ -233,13 +228,11 @@ void KyraEngine_v2::moveCharacter(int facing, int x, int y) {
 }
 
 void KyraEngine_v2::updateCharPosWithUpdate() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateCharPosWithUpdate()");
 	updateCharPos(0, 0);
 	update();
 }
 
 int KyraEngine_v2::updateCharPos(int *table, int force) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateCharPos(%p, %d)", (const void*)table, force);
 	if (_updateCharPosNextUpdate > _system->getMillis() && !force)
 		return 0;
 	_mainCharacter.x1 += _charAddXPosTable[_mainCharacter.facing];

@@ -28,7 +28,6 @@
 namespace Kyra {
 
 int KyraEngine_HoF::checkItemCollision(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::checkItemCollision(%d, %d)", x, y);
 	int itemPos = -1, yPos = -1;
 
 	for (int i = 0; i < 30; ++i) {
@@ -59,7 +58,6 @@ int KyraEngine_HoF::checkItemCollision(int x, int y) {
 }
 
 void KyraEngine_HoF::updateWaterFlasks() {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::updateWaterFlasks()");
 	for (int i = 22; i < 24; i++) {
 		if (_itemInHand == i)
 			setHandItem(i - 1);
@@ -82,7 +80,6 @@ void KyraEngine_HoF::updateWaterFlasks() {
 }
 
 bool KyraEngine_HoF::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::dropItem(%d, %u, %d, %d, %d)", unk1, item, x, y, unk2);
 	if (_mouseState <= -1)
 		return false;
 
@@ -97,7 +94,6 @@ bool KyraEngine_HoF::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 }
 
 bool KyraEngine_HoF::processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::processItemDrop(%u, %u, %d, %d, %d, %d)", sceneId, item, x, y, unk1, unk2);
 	int itemPos = checkItemCollision(x, y);
 
 	if (unk1)
@@ -205,7 +201,6 @@ bool KyraEngine_HoF::processItemDrop(uint16 sceneId, uint16 item, int x, int y, 
 }
 
 void KyraEngine_HoF::itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::itemDropDown(%d, %d, %d, %d, %d, %u)", startX, startY, dstX, dstY, itemSlot, item);
 	uint8 *itemShape = getShapePtr(item + 64);
 
 	if (startX == dstX && startY == dstY) {
@@ -310,7 +305,6 @@ void KyraEngine_HoF::itemDropDown(int startX, int startY, int dstX, int dstY, in
 }
 
 void KyraEngine_HoF::exchangeMouseItem(int itemPos) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::exchangeMouseItem(%d)", itemPos);
 	_screen->hideMouse();
 
 	deleteItemAnimEntry(itemPos);
@@ -334,7 +328,6 @@ void KyraEngine_HoF::exchangeMouseItem(int itemPos) {
 }
 
 bool KyraEngine_HoF::pickUpItem(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::pickUpItem(%d, %d)", x, y);
 	int itemPos = checkItemCollision(x, y);
 
 	if (itemPos <= -1)
@@ -365,7 +358,6 @@ bool KyraEngine_HoF::pickUpItem(int x, int y) {
 }
 
 bool KyraEngine_HoF::isDropable(int x, int y) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::isDropable(%d, %d)", x, y);
 	if (x < 14 || x > 304 || y < 14 || y > 136)
 		return false;
 
@@ -381,7 +373,6 @@ bool KyraEngine_HoF::isDropable(int x, int y) {
 }
 
 int KyraEngine_HoF::getItemCommandStringDrop(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::getItemCommandStringDrop(%u)", item);
 	assert(item < _itemStringMapSize);
 	int stringId = _itemStringMap[item];
 
@@ -394,7 +385,6 @@ int KyraEngine_HoF::getItemCommandStringDrop(uint16 item) {
 }
 
 int KyraEngine_HoF::getItemCommandStringPickUp(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::getItemCommandStringPickUp(%u)", item);
 	assert(item < _itemStringMapSize);
 	int stringId = _itemStringMap[item];
 
@@ -407,7 +397,6 @@ int KyraEngine_HoF::getItemCommandStringPickUp(uint16 item) {
 }
 
 int KyraEngine_HoF::getItemCommandStringInv(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::getItemCommandStringInv(%u)", item);
 	assert(item < _itemStringMapSize);
 	int stringId = _itemStringMap[item];
 
@@ -420,7 +409,6 @@ int KyraEngine_HoF::getItemCommandStringInv(uint16 item) {
 }
 
 bool KyraEngine_HoF::itemIsFlask(int item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::itemIsFlask(%d)", item);
 	for (int i = 0; _flaskTable[i] != -1; ++i) {
 		if (_flaskTable[i] == item)
 			return true;
@@ -430,7 +418,6 @@ bool KyraEngine_HoF::itemIsFlask(int item) {
 }
 
 void KyraEngine_HoF::setMouseCursor(uint16 item) {
-	debugC(9, kDebugLevelMain, "KyraEngine_HoF::setMouseCursor(%u)", item);
 	int shape = 0;
 	int hotX = 1;
 	int hotY = 1;

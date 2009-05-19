@@ -182,7 +182,6 @@ void VQAMovie::decodeSND1(byte *inbuf, uint32 insize, byte *outbuf, uint32 outsi
 }
 
 bool VQAMovie::open(const char *filename) {
-	debugC(9, kDebugLevelMovie, "VQAMovie::open('%s')", filename);
 	close();
 
 	_file = _vm->resource()->createReadStream(filename);
@@ -355,7 +354,6 @@ bool VQAMovie::open(const char *filename) {
 }
 
 void VQAMovie::close() {
-	debugC(9, kDebugLevelMovie, "VQAMovie::close()");
 	if (_opened) {
 		delete[] _frameInfo;
 		delete[] _frame;
@@ -384,7 +382,6 @@ void VQAMovie::close() {
 }
 
 void VQAMovie::displayFrame(uint frameNum) {
-	debugC(9, kDebugLevelMovie, "VQAMovie::displayFrame(%d)", frameNum);
 	if (frameNum >= _header.numFrames || !_opened)
 		return;
 
@@ -633,7 +630,6 @@ void VQAMovie::play() {
 				break;
 
 			case MKID_BE('CMDS'):	// Unused tag, always empty in kyra3
-				debugC(9, kDebugLevelMovie, "VQAMovie::play: skipping CMDS tag");
 				_file->seek(size, SEEK_CUR);
 				break;
 
