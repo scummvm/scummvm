@@ -34,7 +34,9 @@ namespace Common {
 
 #define SYNC_AS(SUFFIX,TYPE,SIZE) \
 	template <typename T> \
-	void syncAs ## SUFFIX(T &val) { \
+	void syncAs ## SUFFIX(T &val, Version minVersion = 0, Version maxVersion = kLastVersion) { \
+		if (_version < minVersion || _version > maxVersion) \
+			return;	\
 		if (_loadStream) \
 			val = static_cast<T>(_loadStream->read ## SUFFIX()); \
 		else { \
@@ -45,31 +47,130 @@ namespace Common {
 	}
 
 
-// TODO: Write comment for this
-// TODO: Inspired by the SCUMM engine -- move to common/ code and use in more engines?
+/**
+ * This class allows syncing / serializing data (primarily game savestates)
+ * between memory and Read/WriteStreams.
+ * It optionally supports versioning the serialized data (client code must
+ * use the syncVersion() method for this). This makes it possible to support
+ * multiple versions of a savegame format with a single codepath
+ *
+ * This class was heavily inspired by the save/load code in the SCUMM engine.
+ *
+ * @todo Maybe rename this to Synchronizer?
+ *
+ * @todo One feature the SCUMM code has but that is missing here: Support for
+ *       syncing arrays of a given type and *fixed* size; and also support
+ *       for when the array size changed between versions. Also, support for
+ *       2D-arrays.
+ *
+ * @todo Proper error handling!
+ */
 class Serializer {
 public:
+	typedef uint32 Version;
+	static const Version kLastVersion = 0xFFFFFFFF;
+
+protected:
+	Common::SeekableReadStream *_loadStream;
+	Common::WriteStream *_saveStream;
+
+	uint _bytesSynced;
+
+	Version _version;
+
+public:
 	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out)
-		: _loadStream(in), _saveStream(out), _bytesSynced(0) {
+		: _loadStream(in), _saveStream(out), _bytesSynced(0), _version(0) {
 		assert(in || out);
 	}
+	virtual ~Serializer() {}
 
-	bool isSaving() { return (_saveStream != 0); }
-	bool isLoading() { return (_loadStream != 0); }
+	inline bool isSaving() { return (_saveStream != 0); }
+	inline bool isLoading() { return (_loadStream != 0); }
+
+	/**
+	 * Returns true if an I/O failure occurred.
+	 * This flag is never cleared automatically. In order to clear it,
+	 * client code has to call clearErr() explicitly.
+	 */
+	bool err() const {
+		if (_saveStream)
+			return _saveStream->err();
+		else
+			return _loadStream->err();
+	}
+
+	/**
+	 * Reset the I/O error status as returned by err().
+	 */
+	void clearErr() {
+		if (_saveStream)
+			_saveStream->clearErr();
+		else
+			_loadStream->clearErr();
+	}
+
+	/**
+	 * Sync the "version" of the savegame we are loading/creating.
+	 * @param currentVersion	current format version, used when writing a new file
+	 * @return true if the version of the savestate is not too new.
+	 */
+	bool syncVersion(Version currentVersion) {
+		_version = currentVersion;
+		syncAsUint32LE(_version);
+		return _version <= currentVersion;
+	}
+
+	/**
+	 * Return the version of the savestate being serialized. Useful if the engine
+	 * needs to perform additional adjustments when loading old savestates.
+	 */
+	Version getVersion() const { return _version; }
+
+	/**
+	 * Sync a 'magic id' of up to 256 bytes, and return whether it matched.
+	 * When saving, this will simply write out the magic id and return true.
+	 * When loading, this will read the specified number of bytes, compare it
+	 * to the given magic id and return true on a match, false otherwise.
+	 *
+	 * A typical magic id is a FOURCC like 'MAGI'.
+	 *
+	 * @param magic		magic id as a byte sequence
+	 * @param size		length of the magic id in bytes
+	 * @return true if the magic id matched, false otherwise
+	 *
+	 * @todo Should this have minVersion/maxVersion params, too?
+	 */
+	bool syncMagic(const char *magic, byte size) {
+		char buf[256];
+		bool match;
+		if (isSaving()) {
+			_saveStream->write(magic, size);
+			match = true;
+		} else {
+			_loadStream->read(buf, size);
+			match = (0 == memcmp(buf, magic, size));
+		}
+		_bytesSynced += size;
+		return match;
+	}
+
 
 	/**
 	 * Return the total number of bytes synced so far.
 	 */
 	uint bytesSynced() const { return _bytesSynced; }
 
-
 	/**
 	 * Skip a number of bytes in the data stream.
 	 * This is useful to skip obsolete fields in old savestates.
 	 */
-	void skip(uint32 size) {
+	void skip(uint32 size, Version minVersion = 0, Version maxVersion = kLastVersion) {
+		if (_version < minVersion || _version > maxVersion)
+			return;	// Ignore anything which is not supposed to be present in this save game version
+
 		_bytesSynced += size;
-		if (_loadStream)
+		if (isLoading())
 			_loadStream->skip(size);
 		else {
 			while (size--)
@@ -80,8 +181,11 @@ public:
 	/**
 	 * Sync a block of arbitrary fixed-length data.
 	 */
-	void syncBytes(byte *buf, uint32 size) {
-		if (_loadStream)
+	void syncBytes(byte *buf, uint32 size, Version minVersion = 0, Version maxVersion = kLastVersion) {
+		if (_version < minVersion || _version > maxVersion)
+			return;	// Ignore anything which is not supposed to be present in this save game version
+
+		if (isLoading())
 			_loadStream->read(buf, size);
 		else
 			_saveStream->write(buf, size);
@@ -90,9 +194,13 @@ public:
 
 	/**
 	 * Sync a C-string, by treating it as a zero-terminated byte sequence.
+	 * @todo Replace this method with a special Syncer class for Common::String
 	 */
-	void syncString(Common::String &str) {
-		if (_loadStream) {
+	void syncString(Common::String &str, Version minVersion = 0, Version maxVersion = kLastVersion) {
+		if (_version < minVersion || _version > maxVersion)
+			return;	// Ignore anything which is not supposed to be present in this save game version
+
+		if (isLoading()) {
 			char c;
 			str.clear();
 			while ((c = _loadStream->readByte())) {
@@ -107,13 +215,6 @@ public:
 		}
 	}
 
-	/**
-	 * Sync a fixed length C-string
-	 */
-	void syncString(char *buf, uint16 size) {
-		syncBytes((byte *)buf, size);
-	}
-
 	SYNC_AS(Byte, byte, 1)
 
 	SYNC_AS(Uint16LE, uint16, 2)
@@ -125,45 +226,13 @@ public:
 	SYNC_AS(Uint32BE, uint32, 4)
 	SYNC_AS(Sint32LE, int32, 4)
 	SYNC_AS(Sint32BE, int32, 4)
-
-protected:
-	Common::SeekableReadStream *_loadStream;
-	Common::WriteStream *_saveStream;
-
-	uint _bytesSynced;
 };
 
 #undef SYNC_AS
 
-// TODO: Make a subclass "VersionedSerializer", which makes it easy to support
-//       multiple versions of a savegame format (again inspired by SCUMM).
-/*
-class VersionedSerializer : public Serializer {
-public:
-	// "version" is the version of the savegame we are loading/creating
-	VersionedSerializer(Common::SeekableReadStream *in, Common::OutSaveFile *out, int version)
-		: Serializer(in, out), _version(version) {
-		assert(in || out);
-	}
-
-	void syncBytes(byte *buf, uint16 size, int minVersion = 0, int maxVersion = INF) {
-		if (_version < minVersion || _version > maxVersion)
-			return;	// Do nothing if too old or too new
-		if (_loadStream) {
-			_loadStream->read(buf, size);
-		} else {
-			_saveStream->write(buf, size);
-		}
-	}
-	...
-
-};
-
-*/
 
 // Mixin class / interface
-// TODO Maybe call it ISerializable or SerializableMixin ?
-// TODO: Taken from SCUMM engine -- move to common/ code?
+// TODO: Maybe rename this to Syncable ?
 class Serializable {
 public:
 	virtual ~Serializable() {}

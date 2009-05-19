@@ -148,8 +148,8 @@ static void syncBasicInfo(Common::Serializer &s) {
 static void syncBackgroundTable(Common::Serializer &s) {
 	// restore backgroundTable
 	for (int i = 0; i < 8; i++) {
-		s.syncString(backgroundTable[i].name, 9);
-		s.syncString(backgroundTable[i].extention, 6);
+		s.syncBytes((byte *)backgroundTable[i].name, 9);
+		s.syncBytes((byte *)backgroundTable[i].extention, 6);
 	}
 }
 
@@ -189,7 +189,7 @@ static void syncFilesDatabase(Common::Serializer &s) {
 		}
 
 		s.syncAsSint16LE(fe.subData.index);
-		s.syncString(fe.subData.name, 13);
+		s.syncBytes((byte *)fe.subData.name, 13);
 		s.syncAsByte(dummyVal);
 
 		s.syncAsSint16LE(fe.subData.transparency);
@@ -213,7 +213,7 @@ static void syncPreloadData(Common::Serializer &s) {
 	for (int i = 0; i < 64; i++) {
 		preloadStruct &pe = preloadData[i];
 
-		s.syncString(pe.name, 15);
+		s.syncBytes((byte *)pe.name, 15);
 		s.syncAsByte(dummyByte);
 		s.syncAsUint32LE(pe.size);
 		s.syncAsUint32LE(pe.sourceSize);
@@ -231,7 +231,7 @@ static void syncOverlays1(Common::Serializer &s) {
 	for (int i = 0; i < numOfLoadedOverlay; i++) {
 		overlayStruct &oe = overlayTable[i];
 
-		s.syncString(oe.overlayName, 13);
+		s.syncBytes((byte *)oe.overlayName, 13);
 		s.syncAsByte(dummyByte);
 		s.syncAsUint32LE(dummyLong);
 		s.syncAsUint16LE(oe.alreadyLoaded);
@@ -464,7 +464,7 @@ static void syncIncrust(Common::Serializer &s) {
 		s.syncAsSint16LE(t->saveSize);
 		s.syncAsSint16LE(t->savedX);
 		s.syncAsSint16LE(t->savedY);
-		s.syncString(t->name, 13);
+		s.syncBytes((byte *)t->name, 13);
 		s.syncAsByte(dummyByte);
 		s.syncAsSint16LE(t->spriteId);
 		s.syncAsUint16LE(dummyWord);
@@ -597,7 +597,7 @@ static void DoSync(Common::Serializer &s) {
 	syncPalette(s, newPal);
 	syncPalette(s, workpal);
 
-	s.syncString(currentCtpName, 40);
+	s.syncBytes((byte *)currentCtpName, 40);
 
 	syncBackgroundTable(s);
 	syncPalScreen(s);

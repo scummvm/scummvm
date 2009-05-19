@@ -70,7 +70,7 @@ void MusicPlayer::resume() {
 
 void MusicPlayer::doSync(Common::Serializer &s) {
 	// synchronise current music name, if any, state, and position
-	s.syncString(_musicName, 33);
+	s.syncBytes((byte *)_musicName, 33);
 	uint16 v = (uint16)songLoaded();
 	s.syncAsSint16LE(v);
 	s.syncAsSint16LE(_songPlayed);
