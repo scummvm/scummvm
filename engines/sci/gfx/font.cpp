@@ -43,42 +43,39 @@ void gfxr_free_font(gfx_bitmap_font_t *font) {
 }
 
 bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments, gfx_bitmap_font_t *font, int max_width,
-	const char *text, int *width, int *height,
-	int *line_height_p, int *last_offset_p, int flags) {
+	const char *text, int *width, int *height, int *line_height_p, int *last_offset_p, int flags) {
 
-	int lineheight = font->line_height;
-	int maxheight = lineheight;
+	int maxheight = font->line_height;
 	int last_breakpoint = 0;
 	int last_break_width = 0;
-	int max_allowed_width = max_width;
 	int maxwidth = 0, localmaxwidth = 0;
 	const char *breakpoint_ptr = NULL;
-	unsigned char foo;
+	unsigned char curChar;
 
 	if (line_height_p)
-		*line_height_p = lineheight;
+		*line_height_p = font->line_height;
 
 
 	fragments.push_back(TextFragment(text));
 
-	while ((foo = *text++)) {
-		if (foo >= font->chars_nr) {
+	while ((curChar = *text++)) {
+		if (curChar >= font->chars_nr) {
 			error("Invalid char 0x%02x (max. 0x%02x) encountered in text string '%s', font %04x",
-			        foo, font->chars_nr, text, font->ID);
+			        curChar, font->chars_nr, text, font->ID);
 			if (font->chars_nr > ' ')
-				foo = ' ';
+				curChar = ' ';
 			else {
 				return false;
 			}
 		}
 
-		if (((foo == '\n') || (foo == 0x0d)) && !(flags & kFontNoNewlines)) {
+		if (((curChar == '\n') || (curChar == 0x0d)) && !(flags & kFontNoNewlines)) {
 			fragments.back().length = text - 1 - fragments.back().offset;
 
 			if (*text)
-				maxheight += lineheight;
+				maxheight += font->line_height;
 
-			if (foo == 0x0d && *text == '\n')
+			if (curChar == 0x0d && *text == '\n')
 				text++; // Interpret DOS-style CR LF as single NL
 
 			fragments.push_back(TextFragment(text));
@@ -88,16 +85,16 @@ bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments, gfx_bitmap
 
 			localmaxwidth = 0;
 
-		} else { // foo != '\n'
-			localmaxwidth += font->widths[foo];
+		} else { // curChar != '\n'
+			localmaxwidth += font->widths[curChar];
 
-			if (localmaxwidth > max_allowed_width) {
+			if (localmaxwidth > max_width) {
 				int blank_break = 1; // break is at a blank char, i.e. not within a word
 
-				maxheight += lineheight;
+				maxheight += font->line_height;
 
 				if (last_breakpoint == 0) { // Text block too long and without whitespace?
-					last_breakpoint = localmaxwidth - font->widths[foo];
+					last_breakpoint = localmaxwidth - font->widths[curChar];
 					last_break_width = 0;
 					--text;
 					blank_break = 0; // non-blank break
@@ -107,7 +104,7 @@ bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments, gfx_bitmap
 				}
 
 				if (last_breakpoint == 0) {
-					GFXWARN("Warning: maxsize %d too small for '%s'\n", max_allowed_width, text);
+					GFXWARN("Warning: maxsize %d too small for '%s'\n", max_width, text);
 				}
 
 				if (last_breakpoint > maxwidth)
@@ -123,7 +120,7 @@ bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments, gfx_bitmap
 
 			} else if (*text == ' ') {
 				last_breakpoint = localmaxwidth;
-				last_break_width = font->widths[foo];
+				last_break_width = font->widths[curChar];
 				breakpoint_ptr = text;
 			}
 
