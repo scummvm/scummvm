@@ -374,7 +374,7 @@ void AGOSEngine_FeebleDemo::waitForSpace() {
 	const char *message;
 
 	if (_language == Common::DE_DEU) {
-		message = "DrÅcken Sie die <Leertaste>, um fortzufahren...";
+		message = "Dr\x81""cken Sie die <Leertaste>, um fortzufahren...";
 	} else {
 		message = "Press <SPACE> to continue...";
 	}

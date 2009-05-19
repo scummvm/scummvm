@@ -1465,7 +1465,7 @@ const uint8 Control::_languageStrings[8 * 20][43] = {
 //BS1_GERMAN:
 	"PAUSE",
 	"BITTE LEGEN SIE CD-",
-	"EIN UND DR\xDC CKEN SIE EINE BELIEBIGE TASTE",
+	"EIN UND DR\xDC""CKEN SIE EINE BELIEBIGE TASTE",
 	"FALSCHE CD",
 	"Speichern",
 	"Laden",
