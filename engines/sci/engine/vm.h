@@ -67,6 +67,9 @@ public:
 public:
 	virtual ~MemObject() {}
 
+	inline MemObjectType getType() const { return _type; }
+	inline int getSegMgrId() const { return _segmgrId; }
+
 	/**
 	 * Dereferences a raw memory pointer.
 	 * @param reg   reference to dereference
@@ -75,30 +78,36 @@ public:
 	 */
 	virtual byte *dereference(reg_t pointer, int *size);
 
-	inline MemObjectType getType() const { return _type; }
-	inline int getSegMgrId() const { return _segmgrId; }
-
-	// Finds the canonic address associated with sub_reg
-	// Parameters: (reg_t) sub_addr: The base address whose canonic address is to be found
-	// For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
-	// This address "governs" a in the sense that deallocating c(a) will deallocate a.
+	/**
+	 * Finds the canonic address associated with sub_reg.
+	 *
+	 * For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
+	 * This address "governs" a in the sense that deallocating c(a) will deallocate a.
+	 *
+	 * @param sub_addr		base address whose canonic address is to be found
+	 */
 	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr) { return sub_addr; }
 
-	// Deallocates all memory associated with the specified address
-	// Parameters: (reg_t) sub_addr: The address (within the given segment) to deallocate
+	/**
+	 * Deallocates all memory associated with the specified address.
+	 * @param sub_addr		address (within the given segment) to deallocate
+	 */
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr) {}
 
-	// Iterates over and reports all addresses within the current segment
-	// Parameters: note : (voidptr * addr) -> (): Invoked for each address on which free_at_address()
-	//                                makes sense
-	//             (void *) param: Parameter passed to 'note'
+	/**
+	 * Iterates over and reports all addresses within the current segment.
+	 * @param note		Invoked for each address on which free_at_address() makes sense
+	 * @param param		parameter passed to 'note'
+	 */
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {}
 
-	// Iterates over all references reachable from the specified object
-	// Parameters: (reg_t) object: The object (within the current segment) to analyse
-	//             (void *) param: Parameter passed to 'note'
-	//             note : (voidptr * addr) -> (): Invoked for each outgoing reference within the object
-	// Note: This function may also choose to report numbers (segment 0) as adresses
+	/**
+	 * Iterates over all references reachable from the specified object.
+	 * @param object	object (within the current segment) to analyse
+	 * @param param		parameter passed to 'note'
+	 * @param note		Invoked for each outgoing reference within the object
+	 * Note: This function may also choose to report numbers (segment 0) as adresses
+	 */
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note) {}
 };
 
