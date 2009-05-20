@@ -48,7 +48,7 @@ public:
 		TS_ASSERT(ser.syncVersion(1));
 		TS_ASSERT_EQUALS(ser.getVersion(), version);
 
-		uint32 tmp;
+		uint32 tmp = 0;
 
 		ser.syncAsUint16BE(tmp, Common::Serializer::Version(1));
 		TS_ASSERT_EQUALS(tmp, (uint16)0x0607);
