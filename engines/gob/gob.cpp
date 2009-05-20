@@ -180,6 +180,10 @@ bool GobEngine::isBATDemo() const {
 	return (_features & kFeaturesBATDemo) != 0;
 }
 
+bool GobEngine::isDemo() const {
+	return (isSCNDemo() || isBATDemo());
+}
+
 Common::Error GobEngine::run() {
 	if (!initGameParts()) {
 		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");

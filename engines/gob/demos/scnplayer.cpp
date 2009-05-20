@@ -36,29 +36,12 @@
 namespace Gob {
 
 SCNPlayer::SCNPlayer(GobEngine *vm) : DemoPlayer(vm) {
-	_doubleMode = false;
 }
 
 SCNPlayer::~SCNPlayer() {
 }
 
-bool SCNPlayer::play(const char *fileName) {
-	if (!fileName)
-		return false;
-
-	debugC(1, kDebugDemo, "Playing SCN \"%s\"", fileName);
-
-	init();
-
-	Common::File scn;
-
-	if (!scn.open(fileName))
-		return false;
-
-	return play(scn);
-}
-
-bool SCNPlayer::play(Common::File &scn) {
+bool SCNPlayer::playStream(Common::SeekableReadStream &scn) {
 	// Read labels
 	LabelMap labels;
 	if (!readLabels(scn, labels))
@@ -93,7 +76,7 @@ bool SCNPlayer::play(Common::File &scn) {
 	return true;
 }
 
-bool SCNPlayer::readLabels(Common::File &scn, LabelMap &labels) {
+bool SCNPlayer::readLabels(Common::SeekableReadStream &scn, LabelMap &labels) {
 	debugC(1, kDebugDemo, "Reading SCN labels");
 
 	int32 startPos = scn.pos();
@@ -119,7 +102,9 @@ bool SCNPlayer::readLabels(Common::File &scn, LabelMap &labels) {
 	return true;
 }
 
-void SCNPlayer::gotoLabel(Common::File &scn, const LabelMap &labels, const char *label) {
+void SCNPlayer::gotoLabel(Common::SeekableReadStream &scn,
+		const LabelMap &labels, const char *label) {
+
 	debugC(2, kDebugDemo, "Jumping to label \"%s\"", label);
 
 	if (!labels.contains(label))

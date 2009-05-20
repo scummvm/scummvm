@@ -44,7 +44,8 @@ protected:
 	static const char *_fontNames[4];
 	GobEngine *_vm;
 
-	void cleanup(void);
+	void cleanup();
+	void doDemo();
 };
 
 class Init_v1 : public Init {

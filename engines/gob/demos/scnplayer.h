@@ -26,7 +26,6 @@
 #ifndef GOB_SCNPLAYER_H
 #define GOB_SCNPLAYER_H
 
-#include "common/file.h"
 #include "common/str.h"
 #include "common/hashmap.h"
 
@@ -39,15 +38,15 @@ public:
 	SCNPlayer(GobEngine *vm);
 	virtual ~SCNPlayer();
 
-	virtual bool play(const char *fileName);
+protected:
+	virtual bool playStream(Common::SeekableReadStream &scn);
 
 private:
 	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> LabelMap;
 
-	bool play(Common::File &scn);
-	bool readLabels(Common::File &scn, LabelMap &labels);
+	bool readLabels(Common::SeekableReadStream &scn, LabelMap &labels);
 
-	void gotoLabel(Common::File &scn, const LabelMap &labels, const char *label);
+	void gotoLabel(Common::SeekableReadStream &scn, const LabelMap &labels, const char *label);
 };
 
 } // End of namespace Gob

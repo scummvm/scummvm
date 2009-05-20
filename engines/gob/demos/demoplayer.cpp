@@ -24,6 +24,7 @@
  */
 
 #include "common/endian.h"
+#include "common/file.h"
 
 #include "gob/gob.h"
 #include "gob/demos/demoplayer.h"
@@ -35,11 +36,70 @@
 
 namespace Gob {
 
+DemoPlayer::Script DemoPlayer::_scripts[] = {
+	{kScriptSourceFile, "demo.scn"},
+	{kScriptSourceFile, "wdemo.s24"},
+	{kScriptSourceFile, "play123.scn"},
+	{kScriptSourceFile, "e.scn"},
+	{kScriptSourceFile, "i.scn"},
+	{kScriptSourceFile, "s.scn"},
+	{kScriptSourceDirect, 
+		"slide machu.imd 20\nslide conseil.imd 20\nslide cons.imd 20\n" \
+		"slide tumia.imd 1\nslide tumib.imd 1\nslide tumic.imd 1\n"     \
+		"slide tumid.imd 1\nslide post.imd 1\nslide posta.imd 1\n"      \
+		"slide postb.imd 1\nslide postc.imd 1\nslide xdome.imd 20\n"    \
+		"slide xant.imd 20\nslide tum.imd 20\nslide voile.imd 20\n"     \
+		"slide int.imd 20\nslide voila.imd 1\nslide voilb.imd 1\n"}
+};
+
 DemoPlayer::DemoPlayer(GobEngine *vm) : _vm(vm) {
 	_doubleMode = false;
 }
 
 DemoPlayer::~DemoPlayer() {
+}
+
+bool DemoPlayer::play(const char *fileName) {
+	if (!fileName)
+		return false;
+
+	debugC(1, kDebugDemo, "Playing \"%s\"", fileName);
+
+	init();
+
+	Common::File bat;
+
+	if (!bat.open(fileName))
+		return false;
+
+	return playStream(bat);
+}
+
+bool DemoPlayer::play(uint32 index) {
+	if (index >= ARRAYSIZE(_scripts))
+		return false;
+
+	Script &script = _scripts[index];
+
+	debugC(1, kDebugDemo, "Playing demoIndex %d: %d", index, script.source);
+
+	switch (script.source) {
+	case kScriptSourceFile:
+		return play(script.script);
+
+	case kScriptSourceDirect:
+		{
+			Common::MemoryReadStream stream((const byte *) script.script, strlen(script.script));
+
+			init();
+			return playStream(stream);
+		}
+
+	default:
+		return false;
+	}
+
+	return false;
 }
 
 bool DemoPlayer::lineStartsWith(const Common::String &line, const char *start) {
@@ -84,11 +144,6 @@ void DemoPlayer::playVideo(const char *fileName) {
 
 		waitTime = atoi(spaceBack) * 100;
 	}
-
-	// WORKAROUND: The Inca2 demo wants to play cons2.imd, but that file doesn't exist.
-	//             cons.imd does, however.
-	if ((_vm->getGameType() == kGameTypeInca2) && (!scumm_stricmp(file, "cons2.imd")))
-		strcpy(file, "cons.imd");
 
 	debugC(1, kDebugDemo, "Playing video \"%s\"", file);
 

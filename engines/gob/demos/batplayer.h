@@ -26,8 +26,6 @@
 #ifndef GOB_BATPLAYER_H
 #define GOB_BATPLAYER_H
 
-#include "common/file.h"
-
 #include "gob/demos/demoplayer.h"
 
 namespace Gob {
@@ -37,10 +35,8 @@ public:
 	BATPlayer(GobEngine *vm);
 	virtual ~BATPlayer();
 
-	virtual bool play(const char *fileName);
-
-private:
-	bool play(Common::File &bat);
+protected:
+	virtual bool playStream(Common::SeekableReadStream &bat);
 };
 
 } // End of namespace Gob

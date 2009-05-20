@@ -26,8 +26,8 @@
 #ifndef GOB_DEMOPLAYER_H
 #define GOB_DEMOPLAYER_H
 
-#include "common/file.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/hashmap.h"
 
 namespace Gob {
@@ -39,11 +39,14 @@ public:
 	DemoPlayer(GobEngine *vm);
 	virtual ~DemoPlayer();
 
-	virtual bool play(const char *fileName) = 0;
+	bool play(const char *fileName);
+	bool play(uint32 index);
 
 protected:
 	GobEngine *_vm;
 	bool _doubleMode;
+
+	virtual bool playStream(Common::SeekableReadStream &stream) = 0;
 
 	bool lineStartsWith(const Common::String &line, const char *start);
 
@@ -55,6 +58,19 @@ protected:
 
 	void playVideoNormal();
 	void playVideoDoubled();
+
+private:
+	enum ScriptSource {
+		kScriptSourceFile,
+		kScriptSourceDirect
+	};
+
+	struct Script {
+		ScriptSource source;
+		const char *script;
+	};
+
+	static Script _scripts[];
 };
 
 } // End of namespace Gob

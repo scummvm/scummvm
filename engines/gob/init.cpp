@@ -48,13 +48,35 @@ Init::Init(GobEngine *vm) : _vm(vm) {
 	_palDesc = 0;
 }
 
-void Init::cleanup(void) {
+void Init::cleanup() {
 	_vm->_video->freeDriver();
 	_vm->_global->_primarySurfDesc = 0;
 
 	_vm->_sound->speakerOff();
 	_vm->_sound->blasterStop(0);
 	_vm->_dataIO->closeDataFile();
+}
+
+void Init::doDemo() {
+	if (_vm->isSCNDemo()) {
+		// This is a non-interactive demo with a SCN script and VMD videos
+
+		_vm->_video->setPrePalette();
+
+		SCNPlayer scnPlayer(_vm);
+
+		if (_vm->_demoIndex > 0)
+			scnPlayer.play(_vm->_demoIndex - 1);
+	}
+
+	if (_vm->isBATDemo()) {
+		// This is a non-interactive demo with a BAT script and videos
+
+		BATPlayer batPlayer(_vm);
+
+		if (_vm->_demoIndex > 0)
+			batPlayer.play(_vm->_demoIndex - 1);
+	}
 }
 
 void Init::initGame() {
@@ -68,10 +90,12 @@ void Init::initGame() {
 
 	initVideo();
 
-	handle2 = _vm->_dataIO->openData(_vm->_startStk);
-	if (handle2 >= 0) {
-		_vm->_dataIO->closeData(handle2);
-		_vm->_dataIO->openDataFile(_vm->_startStk);
+	if (!_vm->isDemo()) {
+		handle2 = _vm->_dataIO->openData(_vm->_startStk);
+		if (handle2 >= 0) {
+			_vm->_dataIO->closeData(handle2);
+			_vm->_dataIO->openDataFile(_vm->_startStk);
+		}
 	}
 
 	_vm->_util->initInput();
@@ -95,28 +119,8 @@ void Init::initGame() {
 	for (int i = 0; i < 8; i++)
 		_vm->_draw->_fonts[i] = 0;
 
-	if (_vm->isSCNDemo()) {
-		// This is a non-interactive demo with a SCN script and VMD videos
-
-		_vm->_video->setPrePalette();
-
-		SCNPlayer scnPlayer(_vm);
-
-		scnPlayer.play(_vm->_startTot);
-
-		delete _palDesc;
-		_vm->_video->initPrimary(-1);
-		cleanup();
-		return;
-	}
-
-	if (_vm->isBATDemo()) {
-		// This is a non-interactive demo with a BAT script and videos
-
-		BATPlayer batPlayer(_vm);
-
-		batPlayer.play(_vm->_startTot);
-
+	if (_vm->isDemo()) {
+		doDemo();
 		delete _palDesc;
 		_vm->_video->initPrimary(-1);
 		cleanup();

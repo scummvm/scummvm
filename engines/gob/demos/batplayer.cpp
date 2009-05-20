@@ -36,29 +36,12 @@
 namespace Gob {
 
 BATPlayer::BATPlayer(GobEngine *vm) : DemoPlayer(vm) {
-	_doubleMode = false;
 }
 
 BATPlayer::~BATPlayer() {
 }
 
-bool BATPlayer::play(const char *fileName) {
-	if (!fileName)
-		return false;
-
-	debugC(1, kDebugDemo, "Playing BAT \"%s\"", fileName);
-
-	init();
-
-	Common::File bat;
-
-	if (!bat.open(fileName))
-		return false;
-
-	return play(bat);
-}
-
-bool BATPlayer::play(Common::File &bat) {
+bool BATPlayer::playStream(Common::SeekableReadStream &bat) {
 	// Iterate over all lines
 	while (!bat.err() && !bat.eos()) {
 		Common::String line = bat.readLine();

@@ -232,6 +232,8 @@ public:
 
 	char *_startStk;
 	char *_startTot;
+	uint32 _demoIndex;
+
 	bool _copyProtection;
 	bool _noMusic;
 
@@ -266,6 +268,7 @@ public:
 	bool hasAdlib() const;
 	bool isSCNDemo() const;
 	bool isBATDemo() const;
+	bool isDemo() const;
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();
