@@ -144,6 +144,17 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 			ConfMan.getActiveDomainName().c_str(),
 			dir.getPath().c_str()
 			);
+
+		// Autoadded is set only when no path was provided and
+		// the game is run from command line.
+		//
+		// Thus, we remove this garbage entry
+		//
+		// Fixes bug #1544799
+		if (ConfMan.hasKey("autoadded")) {
+			ConfMan.removeGameDomain(ConfMan.getActiveDomainName().c_str());
+		}
+
 		return err;
 	}
 
