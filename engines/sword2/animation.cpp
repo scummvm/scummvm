@@ -47,25 +47,25 @@ namespace Sword2 {
 ///////////////////////////////////////////////////////////////////////////////
 
 static const MovieInfo sequenceList[19] = {
-	{ "carib",    222, false },
-	{ "escape",   187, false },
-	{ "eye",      248, false },
-	{ "finale",  1485, false },
-	{ "guard",     75, false },
-	{ "intro",   1800, false },
-	{ "jungle",   186, false },
-	{ "museum",   167, false },
-	{ "pablo",     75, false },
-	{ "pyramid",   60, false },
-	{ "quaram",   184, false },
-	{ "river",    656, false },
-	{ "sailing",  138, false },
-	{ "shaman",   788, true  },
-	{ "stone1",    34, true  },
-	{ "stone2",   282, false },
-	{ "stone3",    65, true  },
-	{ "demo",      60, false },
-	{ "enddemo",  110, false }
+	{ "carib",    222 },
+	{ "escape",   187 },
+	{ "eye",      248 },
+	{ "finale",  1485 },
+	{ "guard",     75 },
+	{ "intro",   1800 },
+	{ "jungle",   186 },
+	{ "museum",   167 },
+	{ "pablo",     75 },
+	{ "pyramid",   60 },
+	{ "quaram",   184 },
+	{ "river",    656 },
+	{ "sailing",  138 },
+	{ "shaman",   788 },
+	{ "stone1",    34 },
+	{ "stone2",   282 },
+	{ "stone3",    65 },
+	{ "demo",      60 },
+	{ "enddemo",  110 }
 };
 
 MoviePlayer::MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType)
@@ -128,10 +128,7 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 	if (_vm->shouldQuit())
 		return;
 
-	bool seamless = false;
-
 	if (_id >= 0) {
-		seamless = sequenceList[_id].seamless;
 		_numFrames = sequenceList[_id].frames;
 		if (_numFrames > 60)
 			_leadOutFrame = _numFrames - 60;

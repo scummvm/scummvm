@@ -61,7 +61,6 @@ struct MovieText {
 struct MovieInfo {
 	const char *name;
 	int frames;
-	bool seamless;
 };
 
 class DXADecoderWithSound : public Graphics::DXADecoder {
