@@ -30,7 +30,6 @@
 #include "gob/gob.h"
 #include "gob/video.h"
 #include "gob/util.h"
-#include "gob/indeo3.h"
 #include "gob/draw.h"
 #include "gob/global.h"
 

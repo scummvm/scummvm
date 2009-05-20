@@ -35,7 +35,6 @@
 #include "gob/draw.h"
 #include "gob/sound/sound.h"
 #include "gob/videoplayer.h"
-#include "gob/indeo3.h"
 
 namespace Gob {
 

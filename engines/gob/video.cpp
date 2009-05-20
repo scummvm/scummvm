@@ -35,7 +35,6 @@
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
-#include "gob/indeo3.h"
 
 #include "gob/driver_vga.h"
 
