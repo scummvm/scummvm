@@ -30,8 +30,8 @@
  * written, produced, and directed by Alan Smithee
  */
 
-#ifndef GOB_INDEO3_H
-#define GOB_INDEO3_H
+#ifndef GRAPHICS_VIDEO_INDEO3_H
+#define GRAPHICS_VIDEO_INDEO3_H
 
 #include "common/stream.h"
 
@@ -40,7 +40,7 @@ namespace Graphics {
 	class SierraLight;
 }
 
-namespace Gob {
+namespace Graphics {
 
 class Indeo3 {
 public:
@@ -115,6 +115,6 @@ private:
 	void blitLineDither(BlitState &s);
 };
 
-} // End of namespace Gob
+} // End of namespace Graphics
 
-#endif // GOB_INDEO3_H
+#endif // GRAPHICS_VIDEO_INDEO3_H

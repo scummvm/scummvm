@@ -30,7 +30,7 @@
  * written, produced, and directed by Alan Smithee
  */
 
-namespace Gob {
+namespace Graphics {
 
 const int Indeo3::_corrector_type_0[24] = {
 	195, 159, 133, 115, 101,  93,  87,  77,
@@ -2355,4 +2355,4 @@ const uint32 Indeo3::correctionhighorder[] = {
 	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
 
-} // End of namespace Gob
+} // End of namespace Graphics

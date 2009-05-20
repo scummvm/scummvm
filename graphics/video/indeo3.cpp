@@ -33,12 +33,12 @@
 #include "common/endian.h"
 #include "common/frac.h"
 #include "common/file.h"
+
 #include "graphics/dither.h"
+#include "graphics/video/indeo3.h"
+#include "graphics/video/indeo3data.h"
 
-#include "gob/indeo3.h"
-#include "gob/indeo3data.h"
-
-namespace Gob {
+namespace Graphics {
 
 Indeo3::Indeo3(int16 width, int16 height, Graphics::PaletteLUT *palLUT) {
 	assert((width > 0) && (height > 0));
@@ -1148,4 +1148,4 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 	}
 }
 
-} // End of namespace Gob
+} // End of namespace Graphics

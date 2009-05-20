@@ -22,7 +22,9 @@ MODULE_OBJS := \
 	video/flic_player.o \
 	video/mpeg_player.o \
 	video/smk_player.o \
-	video/video_player.o
+	video/video_player.o \
+	video/indeo3.o \
+	video/coktelvideo.o
 
 ifndef DISABLE_SCALERS
 MODULE_OBJS += \

@@ -94,7 +94,7 @@ void DemoPlayer::playVideo(const char *fileName) {
 
 	if (_vm->_vidPlayer->primaryOpen(file)) {
 		bool videoSupportsDouble =
-			((_vm->_vidPlayer->getFeatures() & CoktelVideo::kFeaturesSupportsDouble) != 0);
+			((_vm->_vidPlayer->getFeatures() & Graphics::CoktelVideo::kFeaturesSupportsDouble) != 0);
 
 		if (_doubleMode) {
 			if (videoSupportsDouble) {
@@ -130,7 +130,7 @@ void DemoPlayer::playVideoDoubled() {
 			if (_vm->_vidPlayer->primaryPlay(i, i))
 				break;
 
-			CoktelVideo::State state = _vm->_vidPlayer->getState();
+			Graphics::CoktelVideo::State state = _vm->_vidPlayer->getState();
 
 			int16 w = state.right - state.left + 1;
 			int16 h = state.bottom - state.top + 1;

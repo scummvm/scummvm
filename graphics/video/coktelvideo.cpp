@@ -25,12 +25,12 @@
 
 #include "common/endian.h"
 #include "common/system.h"
+
 #include "graphics/dither.h"
+#include "graphics/video/coktelvideo.h"
+#include "graphics/video/indeo3.h"
 
-#include "gob/coktelvideo.h"
-#include "gob/indeo3.h"
-
-namespace Gob {
+namespace Graphics {
 
 Imd::Imd() {
 	clear(false);
@@ -1834,4 +1834,4 @@ Common::MemoryReadStream *Vmd::getExtraData(const char *fileName) {
 	return stream;
 }
 
-} // End of namespace Gob
+} // End of namespace Graphics

@@ -28,7 +28,8 @@
 
 #include "common/array.h"
 
-#include "gob/coktelvideo.h"
+#include "graphics/video/coktelvideo.h"
+
 #include "gob/dataio.h"
 
 namespace Gob {
@@ -85,7 +86,7 @@ public:
 	int16 getDefaultX(int slot = -1) const;
 	int16 getDefaultY(int slot = -1) const;
 
-	CoktelVideo::State getState(int slot = -1) const;
+	Graphics::CoktelVideo::State getState(int slot = -1) const;
 	uint32 getFeatures(int slot = -1) const;
 
 	bool hasExtraData(const char *fileName, int slot = -1) const;
@@ -108,10 +109,10 @@ private:
 			bool isOpen() const;
 
 			const char *getFileName() const;
-			CoktelVideo *getVideo();
-			const CoktelVideo *getVideo() const;
+			Graphics::CoktelVideo *getVideo();
+			const Graphics::CoktelVideo *getVideo() const;
 
-			CoktelVideo::State getState() const;
+			Graphics::CoktelVideo::State getState() const;
 			uint32 getFeatures() const;
 
 			int16 getDefaultX() const;
@@ -120,15 +121,15 @@ private:
 			bool hasExtraData(const char *fileName) const;
 			Common::MemoryReadStream *getExtraData(const char *fileName);
 
-			CoktelVideo::State nextFrame();
+			Graphics::CoktelVideo::State nextFrame();
 
 		private:
 			GobEngine *_vm;
 
 			char *_fileName;
 			DataStream *_stream;
-			CoktelVideo *_video;
-			CoktelVideo::State _state;
+			Graphics::CoktelVideo *_video;
+			Graphics::CoktelVideo::State _state;
 			int16 _defaultX, _defaultY;
 	};
 
@@ -149,11 +150,11 @@ private:
 
 	int getNextFreeSlot();
 
-	void copyPalette(CoktelVideo &video, int16 palStart = -1, int16 palEnd = -1);
+	void copyPalette(Graphics::CoktelVideo &video, int16 palStart = -1, int16 palEnd = -1);
 	bool doPlay(int16 frame, int16 breakKey,
 			uint16 palCmd, int16 palStart, int16 palEnd,
 			int16 palFrame, int16 endFrame);
-	void evalBgShading(CoktelVideo &video);
+	void evalBgShading(Graphics::CoktelVideo &video);
 };
 
 } // End of namespace Gob

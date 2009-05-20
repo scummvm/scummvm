@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GOB_COKTELVIDEO_H
-#define GOB_COKTELVIDEO_H
+#ifndef GRAPHICS_VIDEO_COKTELVIDEO_H
+#define GRAPHICS_VIDEO_COKTELVIDEO_H
 
 #include "common/stream.h"
 #include "common/array.h"
@@ -32,7 +32,7 @@
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 
-namespace Gob {
+namespace Graphics {
 
 class Indeo3;
 
@@ -412,6 +412,6 @@ protected:
 	void deADPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n);
 };
 
-} // End of namespace Gob
+} // End of namespace Graphics
 
-#endif // GOB_COKTELVIDEO_H
+#endif // GRAPHICS_VIDEO_COKTELVIDEO_H
