@@ -55,6 +55,11 @@ public:
 
 	bool decodeNextFrame();
 
+	/**
+	 * Get the sound chunk tag of the loaded DXA file
+	 */
+	uint32 getSoundTag() { return _soundTag; }
+
 private:
 	void decodeZlib(byte *data, int size, int totalSize);
 	void decode12(int size);
@@ -76,6 +81,7 @@ private:
 	uint16 _curHeight;
 	uint32 _frameSize;
 	ScaleMode _scaleMode;
+	uint32 _soundTag;
 };
 
 } // End of namespace Graphics

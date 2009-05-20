@@ -72,8 +72,9 @@ bool FlicDecoder::loadFile(const char *fileName) {
 	}
 	_fileStream->readUint16LE();	// flags
 	// Note: The normal delay is a 32-bit integer (dword), whereas the overriden delay is a 16-bit integer (word)
-	_videoInfo.frameDelay = _fileStream->readUint32LE();	// frameDelay is the FLIC "speed", in milliseconds
-	_videoInfo.frameRate = 1000 / _videoInfo.frameDelay;
+	// frameDelay is the FLIC "speed", in milliseconds. Our frameDelay is calculated in 1/100 ms, so we convert it here
+	_videoInfo.frameDelay = 100 * _fileStream->readUint32LE();
+	_videoInfo.frameRate = 100 * 1000 / _videoInfo.frameDelay;
 
 	_fileStream->seek(80);
 	_offsetFrame1 = _fileStream->readUint32LE();
@@ -206,10 +207,11 @@ bool FlicDecoder::decodeNextFrame() {
 	case FRAME_TYPE: {
 		chunkCount = _fileStream->readUint16LE();
 		// Note: The overriden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
+		// frameDelay is the FLIC "speed", in milliseconds. Our frameDelay is calculated in 1/100 ms, so we convert it here
 		uint16 newFrameDelay = _fileStream->readUint16LE();	// "speed", in milliseconds
 		if (newFrameDelay > 0) {
-			_videoInfo.frameDelay = newFrameDelay;
-			_videoInfo.frameRate = 1000 / _videoInfo.frameDelay;
+			_videoInfo.frameDelay = 100 * newFrameDelay;
+			_videoInfo.frameRate = 100 * 1000 / _videoInfo.frameDelay;
 		}
 		_fileStream->readUint16LE();	// reserved, always 0
 		uint16 newWidth = _fileStream->readUint16LE();

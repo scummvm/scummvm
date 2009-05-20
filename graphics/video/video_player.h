@@ -75,16 +75,16 @@ public:
 	virtual int32 getFrameRate();
 
 	/**
-	 * Returns the time to wait for each frame in ms
-	 * @return the time to wait for each frame in ms
+	 * Returns the time to wait for each frame in 1/100 ms (to avoid rounding errors)
+	 * @return the time to wait for each frame in 1/100 ms (to avoid rounding errors)
 	 */
 	virtual int32 getFrameDelay();
 
 	/**
-	 * Returns the current A/V lag in ms
+	 * Returns the current A/V lag in 1/100 ms (to avoid rounding errors)
 	 * If > 0, audio lags behind
 	 * If < 0, video lags behind
-	 * @return the current A/V lag in ms
+	 * @return the current A/V lag in 1/100 ms (to avoid rounding errors)
 	 */
 	virtual int32 getAudioLag();
 
@@ -158,20 +158,14 @@ public:
 	 */
 	virtual bool decodeNextFrame() = 0;
 
-	/**
-	 * Used to read the sound header from DXA files. It's not pretty,
-	 * but it's slightly better than exposing _fileStream
-	 */
-	uint32 readSoundHeader() { return _fileStream->readUint32BE(); }
-
 protected:
 	struct {
 		uint32 width;
 		uint32 height;
 		uint32 frameCount;
 		int32 frameRate;
-		int32 frameDelay;		// ms
-		uint32 frameOffs;
+		int32 frameDelay;		// 1/100 ms (to avoid rounding errors)
+		uint32 firstframeOffset;
 		uint32 currentFrame;
 		uint32 startTime;
 	} _videoInfo;

@@ -273,10 +273,9 @@ void MoviePlayerDXA::stopVideo() {
 
 void MoviePlayerDXA::startSound() {
 	byte *buffer;
-	uint32 offset, size, tag;
+	uint32 offset, size;
 
-	tag = _fileStream->readUint32BE();
-	if (tag == MKID_BE('WAVE')) {
+	if (getSoundTag() == MKID_BE('WAVE')) {
 		size = _fileStream->readUint32BE();
 
 		if (_sequenceNum) {
@@ -322,7 +321,7 @@ void MoviePlayerDXA::nextFrame() {
 	}
 
 	if (_vm->_interactiveVideo == TYPE_LOOPING && getCurFrame() == getFrameCount()) {
-		_fileStream->seek(_videoInfo.frameOffs);
+		_fileStream->seek(_videoInfo.firstframeOffset);
 		_videoInfo.currentFrame = 0;
 		startSound();
 	}
@@ -445,7 +444,7 @@ void MoviePlayerSMK::handleNextFrame() {
 
 void MoviePlayerSMK::nextFrame() {
 	if (_vm->_interactiveVideo == TYPE_LOOPING && getCurFrame() == getFrameCount()) {
-		_fileStream->seek(_videoInfo.frameOffs);
+		_fileStream->seek(_videoInfo.firstframeOffset);
 		_videoInfo.currentFrame = 0;
 	}
 

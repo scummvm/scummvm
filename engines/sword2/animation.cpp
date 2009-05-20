@@ -80,16 +80,7 @@ bool MoviePlayer::load(const char *name) {
 		break;
 	}
 
-	if (_decoder->loadFile(filename)) {
-		// The DXA animations in the Broken Sword games always use external audio tracks,
-		// if they have any sound at all.
-		if (_decoderType == kVideoDecoderDXA && _decoder->readSoundHeader() != MKID_BE('NULL'))
-			return false;
-	} else {
-		return false;
-	}
-
-	return true;
+	return _decoder->loadFile(filename);
 }
 
 void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadIn, uint32 leadOut) {
@@ -280,7 +271,7 @@ int32 DXADecoderWithSound::getAudioLag() {
 	int32 videoTime = _videoInfo.currentFrame * frameDelay;
 	int32 audioTime;
 
-	audioTime = (int32) _mixer->getSoundElapsedTime(*_bgSoundHandle);
+	audioTime = (((int32) _mixer->getSoundElapsedTime(*_bgSoundHandle)) * 100);
 
 	return videoTime - audioTime;
 }

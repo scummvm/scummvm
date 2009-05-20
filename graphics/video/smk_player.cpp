@@ -344,9 +344,9 @@ int32 SmackerDecoder::getAudioLag() {
 		   and how much time *should* have passed.
 		*/
 
-		audioTime = g_system->getMillis() - _videoInfo.startTime;
+		audioTime = (g_system->getMillis() - _videoInfo.startTime) * 100;
 	} else
-		audioTime = (int32) _mixer->getSoundElapsedTime(_audioHandle);
+		audioTime = (((int32) _mixer->getSoundElapsedTime(_audioHandle)) * 100);
 
 	return videoTime - audioTime;
 }
@@ -380,13 +380,13 @@ bool SmackerDecoder::loadFile(const char *fileName) {
 
 	if (frameRate > 0) {
 		_videoInfo.frameRate = 1000 / frameRate;
-		_videoInfo.frameDelay = frameRate;
+		_videoInfo.frameDelay = frameRate * 100;
 	} else if (frameRate < 0) {
 		_videoInfo.frameRate = 100000 / (-frameRate);
-		_videoInfo.frameDelay = -frameRate / 100;
+		_videoInfo.frameDelay = -frameRate;
 	} else {
 		_videoInfo.frameRate = 10;
-		_videoInfo.frameDelay = 100;
+		_videoInfo.frameDelay = 10000;
 	}
 
 	// Flags are determined by which bit is set, which can be one of the following:
@@ -473,7 +473,7 @@ bool SmackerDecoder::loadFile(const char *fileName) {
 	_palette = (byte *)malloc(3 * 256);
 	memset(_palette, 0, 3 * 256);
 
-	_videoInfo.frameOffs = _fileStream->pos();
+	_videoInfo.firstframeOffset = _fileStream->pos();
 
 	return true;
 }
