@@ -405,7 +405,7 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 	(*pixmap)->palette = new Palette(default_colors, DEFAULT_COLORS_NR);
 }
 
-int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options, ResourceManager *resManager, 
+int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options, ResourceManager *resManager,
 			   int xfact, int yfact, gfx_color_mode_t bpp) {
 	int color_depth = bpp ? bpp : 1;
 	int initialized = 0;

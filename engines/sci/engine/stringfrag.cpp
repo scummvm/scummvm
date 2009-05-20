@@ -38,7 +38,7 @@ could possible be turned into documentation for the strings frags code...
 Max Horn wrote:
 > Basically, saving the reg_t "array" (?) in the SystemString struct (see
 > sync_SystemString in engine/savegame.cpp) seems like a bad hack that will
-> result in breakage... 
+> result in breakage...
 
 The short explanation is that the casts _will_ go away, but that the
 system strings, too, will become stringfrag-based eventually.
@@ -107,7 +107,7 @@ int is_valid_stringfrag(EngineState *s, reg_t pos) {
 
 	return internal_is_valid_stringfrag(s, buffer);
 }
-	
+
 static int internal_stringfrag_length(EngineState *s, reg_t *buffer) {
 	int result = 0;
 
@@ -245,20 +245,20 @@ void stringfrag_memmove(EngineState *s, reg_t *buffer, int sourcepos, int destpo
 	/* Some of these values are not used yet. There are a couple
 	   of cases that we could implement faster if the need arises, in
 	   which case we would most certainly need these. */
-	int source_begin_pos = sourcepos/2; 
-	int source_begin_offset = sourcepos%2; 
+	int source_begin_pos = sourcepos/2;
+	int source_begin_offset = sourcepos%2;
 	int source_end_pos = (sourcepos+count-1)/2;
 	int source_end_offset = (sourcepos+count-1)%2;
 
-	int dest_begin_pos = destpos/2; 
-	int dest_begin_offset = destpos%2; 
+	int dest_begin_pos = destpos/2;
+	int dest_begin_offset = destpos%2;
 	int dest_end_pos = (destpos+count-1)/2;
 	int dest_end_offset = (destpos+count-1)%2;
 
 	if (sourcepos < destpos) {
 		for (int n = count-1; n >= 0; n--) {
 			buffer[dest_end_pos].segment = STRINGFRAG_SEGMENT;
-			stringfrag_setchar(buffer, dest_end_pos, dest_end_offset, 
+			stringfrag_setchar(buffer, dest_end_pos, dest_end_offset,
 					   stringfrag_getchar(buffer, source_end_pos, source_end_offset));
 			if (source_end_offset ^= 1)
 				source_end_pos --;
@@ -268,7 +268,7 @@ void stringfrag_memmove(EngineState *s, reg_t *buffer, int sourcepos, int destpo
 	} else {
 		for (int n = 0; n < count; n++) {
 			buffer[dest_begin_pos].segment = STRINGFRAG_SEGMENT;
-			stringfrag_setchar(buffer, dest_begin_pos, dest_begin_offset, 
+			stringfrag_setchar(buffer, dest_begin_pos, dest_begin_offset,
 					   stringfrag_getchar(buffer, source_begin_pos, source_begin_offset));
 			if (!(source_begin_offset ^= 1))
 				source_begin_pos ++;
@@ -291,7 +291,7 @@ static void internal_stringfrag_insert_char(EngineState *s, reg_t *buffer, int p
 
 	/* The variables restore_null_offset and restore_null_pos will
 	   indicate where the NUL character should be PUT BACK after
-	   inserting c, as this operation might overwrite the NUL. */ 
+	   inserting c, as this operation might overwrite the NUL. */
 	if (seeker->offset & 0xff00) {
 		restore_nul_offset = 1;
 		restore_nul_pos = 0;
@@ -329,7 +329,7 @@ static void internal_stringfrag_delete_char(EngineState *s, reg_t *buffer, int p
 
 	/* The variables restore_null_offset and restore_null_pos will
 	   indicate where the NUL character should be PUT BACK after
-	   deletion, as this operation might overwrite the NUL. */ 
+	   deletion, as this operation might overwrite the NUL. */
 	if (seeker->offset & 0xff00) {
 		restore_nul_offset = 1;
 		restore_nul_pos = -1;

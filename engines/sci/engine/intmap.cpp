@@ -104,7 +104,7 @@ int IntMapper::lookupKey(int key) const {
 
 	if (*node)
 		return (*node)->idx;
-	
+
 	return -1;
 }
 

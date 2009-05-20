@@ -8,7 +8,7 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- 
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -200,7 +200,7 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 				if (token >= _curtoken) {
 					warning("unpackLZW: Bad token %x", token);
 					return SCI_ERROR_DECOMPRESSION_ERROR;
-				} 
+				}
 				tokenlastlength = tokenlengthlist[token] + 1;
 				if (_dwWrote + tokenlastlength > _szUnpacked) {
 					// For me this seems a normal situation, It's necessary to handle it
@@ -387,7 +387,7 @@ void DecompressorLZW::reorderPic(byte *src, byte *dest, int dsize) {
 	byte *writer = dest;
 	char viewdata[7];
 	byte *cdata, *cdata_start;
-	
+
 	*writer++ = PIC_OP_OPX;
 	*writer++ = PIC_OPX_SET_PALETTE;
 
@@ -406,7 +406,7 @@ void DecompressorLZW::reorderPic(byte *src, byte *dest, int dsize) {
 
 	memcpy(viewdata, seeker, sizeof(viewdata));
 	seeker += sizeof(viewdata);
-	
+
 	memcpy(writer, seeker, 4*256); /* Palette */
 	seeker += 4*256;
 	writer += 4*256;
@@ -418,7 +418,7 @@ void DecompressorLZW::reorderPic(byte *src, byte *dest, int dsize) {
 	}
 
 	if (dsize != view_start + EXTRA_MAGIC_SIZE + view_size) {
-		memcpy(dest + view_size + view_start + EXTRA_MAGIC_SIZE, seeker, 
+		memcpy(dest + view_size + view_start + EXTRA_MAGIC_SIZE, seeker,
 		       dsize - view_size - view_start - EXTRA_MAGIC_SIZE);
 		seeker += dsize - view_size - view_start - EXTRA_MAGIC_SIZE;
 	}
@@ -426,7 +426,7 @@ void DecompressorLZW::reorderPic(byte *src, byte *dest, int dsize) {
 	cdata_start = cdata = (byte *)malloc(cdata_size);
 	memcpy(cdata, seeker, cdata_size);
 	seeker += cdata_size;
-	
+
 	writer = dest + view_start;
 	*writer++ = PIC_OP_OPX;
 	*writer++ = PIC_OPX_EMBEDDED_VIEW;
@@ -442,7 +442,7 @@ void DecompressorLZW::reorderPic(byte *src, byte *dest, int dsize) {
 	*writer++ = 0;
 
 	decodeRLE(&seeker, &cdata, writer, view_size);
-	
+
 	free(cdata_start);
 }
 
@@ -903,17 +903,17 @@ int DecompressorLZS::unpackLZS() {
 	uint16 offs = 0, clen;
 
 	while (!isFinished()) {
-		if (getBitsMSB(1)) { // Compressed bytes follow 
+		if (getBitsMSB(1)) { // Compressed bytes follow
 			if (getBitsMSB(1)) { // Seven bit offset follows
 				offs = getBitsMSB(7);
-				if (!offs) // This is the end marker - a 7 bit offset of zero 
+				if (!offs) // This is the end marker - a 7 bit offset of zero
 					break;
 				if (!(clen = getCompLen())) {
 					warning("lzsDecomp: length mismatch");
 					return SCI_ERROR_DECOMPRESSION_ERROR;
 				}
 				copyComp(offs, clen);
-			} else { // Eleven bit offset follows 
+			} else { // Eleven bit offset follows
 				offs = getBitsMSB(11);
 				if (!(clen = getCompLen())) {
 					warning("lzsDecomp: length mismatch");

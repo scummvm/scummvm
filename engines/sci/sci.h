@@ -111,7 +111,7 @@ enum SciGameFlags {
 	/*
 	** SCI1 flags
 	*/
-	
+
 	/*
 	** Used to distinguish SCI1 EGA games
 	*/

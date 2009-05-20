@@ -532,7 +532,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 
 static Audio::AudioStream *makeStream(byte *data, int size, sfx_pcm_config_t conf) {
 	printf("Playing PCM data of size %d, rate %d\n", size, conf.rate);
-	
+
 	// Duplicate the data
 	byte *sound = (byte *)malloc(size);
 	memcpy(sound, data, size);
@@ -1234,9 +1234,9 @@ int FastForwardSongIterator::getTimepos() {
 	return _delegate->getTimepos();
 }
 
-FastForwardSongIterator::FastForwardSongIterator(SongIterator *capsit, int delta) 
+FastForwardSongIterator::FastForwardSongIterator(SongIterator *capsit, int delta)
 	: _delegate(capsit), _delta(delta) {
-	
+
 	channel_mask = capsit->channel_mask;
 }
 

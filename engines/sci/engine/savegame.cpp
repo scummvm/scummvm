@@ -82,7 +82,7 @@ static void sync_song_t(Common::Serializer &s, song_t &obj) {
 	s.syncAsSint32LE(obj.restore_time);
 	s.syncAsSint32LE(obj.loops);
 	s.syncAsSint32LE(obj.hold);
-	
+
 	if (s.isLoading()) {
 		obj._delay = 0;
 		obj.it = 0;
@@ -219,7 +219,7 @@ static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
 		delete obj;
 		obj = new SegManager(sci11);
 	}
-	
+
 	obj->saveLoadWithSerializer(s);
 }
 
@@ -366,7 +366,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 static void sync_SystemString(Common::Serializer &s, SystemString &obj) {
 	syncCStr(s, &obj.name);
 	s.syncAsSint32LE(obj.max_size);
-	
+
 	// FIXME: This is a *WEIRD* hack: We sync a reg_t* as if it was a string.
 	// No idea why, but this mimicks what the old save/load code used to do.
 	syncCStr(s, (char **)&obj.value);
@@ -406,7 +406,7 @@ static void sync_songlib_t(Common::Serializer &s, songlib_t &obj) {
 	if (s.isSaving())
 		songcount = song_lib_count(obj);
 	s.syncAsUint32LE(songcount);
-	
+
 	if (s.isLoading()) {
 		song_lib_init(&obj);
 		while (songcount--) {
@@ -442,7 +442,7 @@ static void sync_MemObjPtr(Common::Serializer &s, MemObject *&mobj) {
 	} else {
 		assert(mobj);
 	}
-	
+
 	s.syncAsSint32LE(mobj->_segmgrId);
 	mobj->saveLoadWithSerializer(s);
 }
@@ -819,7 +819,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	internal_stringfrag_strncpy(s, str->value, s->sys_strings->strings[SYS_STRING_SAVEDIR].value, str->max_size);
 	str->value[str->max_size - 1].segment = s->string_frag_segment; // Make sure to terminate
 	str->value[str->max_size - 1].offset &= 0xff00; // Make sure to terminate
-	
+
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
 	retval->game_start_time = g_system->getMillis() - retval->game_time * 1000;

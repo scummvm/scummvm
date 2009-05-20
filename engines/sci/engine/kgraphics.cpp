@@ -276,7 +276,7 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 	else {
 		error("Color index %d out of bounds for pic %d (%d max)", color, s->gfx_state->pic_nr, s->gfx_state->gfxResMan->getColorCount());
 		BREAKPOINT();
-		return PaletteEntry(0,0,0); 
+		return PaletteEntry(0,0,0);
 	}
 }
 
@@ -312,7 +312,7 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			s->mouse_pointer_loop = s->save_mouse_pointer_loop;
 			s->mouse_pointer_cel = s->save_mouse_pointer_cel;
 		}
-	case 2 : 
+	case 2 :
 	case 4 :
 		if (s->version >= SCI_VERSION_1_1 || (s->flags & GF_SCI1_NEWSETCURSOR)) {
 			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, Common::Point(UKPV(0), UKPV(1))));
@@ -1344,8 +1344,8 @@ static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	 * SQ4SG.<number>) and the exact file format of the savegame index
 	 * (SQ4SG.DIR). From the earlier discussions on file I/O handling -
 	 * before as well as after the merge - I gather that this is not an
-	 * option. 
-	 * 
+	 * option.
+	 *
 	 * SQ4/Floppy is special, being the first game to implement savegame
 	 * deletion at all. For later games, we manage to implement deletion by
 	 * using gross hacks in kDeviceInfo() (essentially repurposing a few
@@ -3155,7 +3155,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	color0 = port->_color;
 	bg_color = port->_bgcolor;
 	// TODO: in SCI1VGA the default colors for text and background are #0 (black)
-	// SCI0 case should be checked 
+	// SCI0 case should be checked
 	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
 		// This priority check fixes the colors in the menus in KQ5
 		// TODO/FIXME: Is this correct?

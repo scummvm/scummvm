@@ -75,7 +75,7 @@ enum {
 	PF_OK = 0,
 	PF_ERROR = -1,
 	PF_FATAL = -2
-};	
+};
 
 // Floating point struct
 struct FloatPoint {
@@ -130,11 +130,11 @@ public:
 
 public:
 	CircularVertexList() : _head(0) {}
-	
+
 	Vertex *first() const {
 		return _head;
 	}
-	
+
 	void insertHead(Vertex *elm) {
 		if (_head == NULL) {
 			elm->_next = elm->_prev = elm;
@@ -240,7 +240,7 @@ struct PathfindingState {
 		_appendPoint = NULL;
 		vertices = 0;
 	}
-	
+
 	~PathfindingState() {
 		free(vertex_index);
 
@@ -810,10 +810,10 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vert) {
 		if (VERTEX_HAS_EDGES(vertex)) {
 			CLIST_FOREACH(vertex, &polygon->vertices) {
 				const Common::Point *high, *low;
-	
+
 				// Add edges that intersect the initial position of the sweeping line
 				clockwise(vertex, high, low);
-	
+
 				if ((high->y < p.y) && (low->y >= p.y) && (*low != p))
 					intersected.push_front(vertex);
 			}
@@ -1201,7 +1201,7 @@ static Vertex *merge_point(PathfindingState *s, const Common::Point &v) {
 		if (VERTEX_HAS_EDGES(polygon->vertices.first())) {
 			CLIST_FOREACH(vertex, &polygon->vertices) {
 				Vertex *next = CLIST_NEXT(vertex);
-		
+
 				if (between(vertex->v, next->v, v)) {
 					// Split edge by adding vertex
 					polygon->vertices.insertAfter(vertex, v_new);

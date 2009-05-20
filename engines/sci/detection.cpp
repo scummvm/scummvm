@@ -1567,7 +1567,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_0
 	},
-	
+
 	// Larry 2 - English DOS
 	// SCI interpreter version 0.000.409
 	{{"lsl2", "", {
@@ -3476,7 +3476,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 	// Try to parse the executable version
 	if (getSciVersionFromString(exeVersionString, &g_fallbackDesc.version, g_fallbackDesc.desc.platform)) {
-		printf("Detected version: %s, parsed SCI version: %s\n", 
+		printf("Detected version: %s, parsed SCI version: %s\n",
 					exeVersionString.c_str(), versionNames[g_fallbackDesc.version]);
 
 		return (const ADGameDescription *)&g_fallbackDesc;

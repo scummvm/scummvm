@@ -47,7 +47,7 @@ enum {
 };
 
 struct SongIteratorChannel {
-	
+
 	int state;	//!< State of this song iterator channel
 	int offset;     //!< Offset into the data chunk */
 	int end;	//!< Last allowed byte in track */

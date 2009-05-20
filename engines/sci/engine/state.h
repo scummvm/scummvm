@@ -52,7 +52,7 @@ struct kfunct_sig_pair_t;	// from kernel.h
 struct GfxState;
 struct GfxPort;
 struct GfxVisual;
-struct GfxContainer;	
+struct GfxContainer;
 struct GfxList;
 
 
@@ -68,7 +68,7 @@ public:
 		_outbuffer = NULL_REG;
 		_iter = _savefiles.begin();
 	}
-	
+
 	void firstFile(const char *mask, reg_t buffer);
 	void nextFile();
 };
@@ -100,11 +100,11 @@ public:
 	Common::String _name;
 	Common::SeekableReadStream *_in;
 	Common::WriteStream *_out;
-	
+
 public:
 	FileHandle();
 	~FileHandle();
-	
+
 	void close();
 	bool isOpen() const;
 };
@@ -224,7 +224,7 @@ public:
 	reg_t parser_base; /**< Base address for the parser error reporting mechanism */
 	reg_t parser_event; /**< The event passed to Parse() and later used by Said() */
 	Script *script_000;  /**< script 000, e.g. for globals */
-	
+
 	uint16 currentRoomNumber() const { return KP_UINT(script_000->locals_block->_locals[13]); }
 
 	int parser_lastmatch_word; /**< Position of the input word the parser last matched on, or SAID_NO_MATCH */

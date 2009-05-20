@@ -49,8 +49,8 @@ struct param_struct {
 	gfx_driver_t *driver;
 };
 
-GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) : 
-				_version(version), _isVGA(isVGA), _options(options), _driver(driver), _resManager(resManager), 
+GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) :
+				_version(version), _isVGA(isVGA), _options(options), _driver(driver), _resManager(resManager),
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
@@ -154,7 +154,7 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 			return 10;
 		else
 			return (_options->pic0_unscaled) ? 0x10000 : (_options->pic0_dither_mode << 12)
-			       | (_options->pic0_dither_pattern << 8) | (_options->pic0_brush_mode << 4) 
+			       | (_options->pic0_dither_pattern << 8) | (_options->pic0_brush_mode << 4)
 				   | (_options->pic0_line_mode);
 #else
 		if (_version >= SCI_VERSION_01_VGA)
@@ -536,7 +536,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				view->palette = new Palette(_staticPalette->size());
 				view->palette->name = "interpreter_get_view";
 			}
-			
+
 			// Palettize view
 			for (unsigned i = 0; i < MIN(view->palette->size(), _staticPalette->size()); i++) {
 				const PaletteEntry& vc = view->palette->getColor(i);
@@ -659,7 +659,7 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 			return NULL;
 		}
 
-		gfx_pixmap_t *cursor = gfxr_draw_cursor(GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, num), 
+		gfx_pixmap_t *cursor = gfxr_draw_cursor(GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, num),
 										cursorRes->data, cursorRes->size, _version != SCI_VERSION_0);
 
 		if (!cursor)

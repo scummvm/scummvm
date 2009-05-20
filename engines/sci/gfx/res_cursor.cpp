@@ -59,8 +59,8 @@ gfx_pixmap_t *gfxr_draw_cursor(int id, byte *resource, int size, bool isSci01) {
 
 	retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(CURSOR_SIZE, CURSOR_SIZE, id, 0, 0));
 	// FIXME: don't copy palette
- 	retval->palette = new Palette(gfx_sci01_cursor_colors, isSci01 ? GFX_SCI01_CURSOR_COLORS_NR : GFX_SCI0_CURSOR_COLORS_NR);
- 	retval->palette->name = "cursor"; 
+	retval->palette = new Palette(gfx_sci01_cursor_colors, isSci01 ? GFX_SCI01_CURSOR_COLORS_NR : GFX_SCI0_CURSOR_COLORS_NR);
+	retval->palette->name = "cursor";
 	retval->color_key = GFX_CURSOR_TRANSPARENT;
 
 	if (isSci01) {

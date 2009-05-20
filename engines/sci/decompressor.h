@@ -63,7 +63,7 @@ protected:
 	 * @param nUnpacket	size of unpacked data
 	 * @return 0 on success, non-zero on error
 	 */
-	virtual void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);	
+	virtual void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 	/**
 	 * Get a number of bits from _src stream, starting with the most
@@ -89,7 +89,7 @@ protected:
 	byte getByteLSB();
 
 	void fetchBitsMSB();
-	void fetchBitsLSB(); 
+	void fetchBitsLSB();
 
 	/**
 	 * Write one byte into _dest stream
@@ -158,7 +158,7 @@ protected:
 	void decodeRLE(byte **rledata, byte **pixeldata, byte *outbuffer, int size);
 	int getRLEsize(byte *rledata, int dsize);
 	void buildCelHeaders(byte **seeker, byte **writer, int celindex, int *cc_lengths, int max);
-	
+
 	// decompressor data
 	struct Tokenlist {
 		byte data;

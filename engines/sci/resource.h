@@ -129,7 +129,7 @@ const char *getResourceTypeSuffix(ResourceType restype);
 struct resource_index_t {
 	uint16 wOffset;
 	uint16 wSize;
-}; 
+};
 
 struct ResourceSource {
 	ResSourceType source_type;

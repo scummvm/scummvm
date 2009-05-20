@@ -824,7 +824,7 @@ SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
 
 SegmentId SegManager::allocateStringFrags() {
 	SegmentId segid;
-	
+
 	allocNonscriptSegment(MEM_OBJ_STRING_FRAG, &segid);
 
 	return segid;

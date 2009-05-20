@@ -32,13 +32,13 @@
  *    AUXBUF_FILL: Name of the exported floodfill function
  *    AUXBUF_FILL_HELPER: Name of the helper function
  *    FILL_FUNCTION: Name of the exported floodfill function
- *    FILL_FUNCTION_RECURSIVE: Name of the helper function 
+ *    FILL_FUNCTION_RECURSIVE: Name of the helper function
  *
  * Define DRAW_SCALED to support scaled drawing, or leave it out for faster
  * processing.
  *
  */
- 
+
 namespace Sci {
 
 #define CLIPMASK_HARD_BOUND 0x80 /* ensures that we don't re-fill filled stuff */

@@ -164,12 +164,12 @@ uint Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
 
 	for (uint i = 0; i < _size; ++i) {
 		PaletteEntry& entry = _colors[i];
-	
+
 		if (entry.refcount != PALENTRY_FREE) {
 			int dr = abs(entry.r - r);
 			int dg = abs(entry.g - g);
 			int db = abs(entry.b - b);
-	
+
 			if (dr == 0 && dg == 0 && db == 0) {
 				// Exact match
 				//exact = true;
@@ -177,7 +177,7 @@ uint Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
 					entry.refcount++;
 				return i;
 			}
-	
+
 			int delta = (dr * dr) + (dg * dg) + (db * db);
 			if (delta < bestdelta) {
 				bestdelta = delta;
@@ -188,7 +188,7 @@ uint Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
 				firstfree = i;
 		}
 	}
-	
+
 	if (firstfree != -1) {
 		// TODO: mark palette as dirty
 		setColor(firstfree, r, g, b);

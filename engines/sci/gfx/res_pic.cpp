@@ -1552,7 +1552,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 				gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
 				gfx_free_mode(mode);
-				// When the mode is freed, the associated view 
+				// When the mode is freed, the associated view
 				// palette is freed too, so set it to NULL
 				view->palette = NULL;
 

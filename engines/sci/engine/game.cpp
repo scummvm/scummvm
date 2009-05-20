@@ -143,7 +143,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->visual = gfxw_new_visual(s->gfx_state, font_nr);
 
-	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);	
+	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
 
 	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
@@ -419,7 +419,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	str->max_size = MAX_SAVE_DIR_SIZE;
 	str->value = (reg_t *)calloc(MAX_SAVE_DIR_SIZE, sizeof(reg_t));	// FIXME -- sizeof(char) or sizeof(reg_t) ??
 	str->value[0].segment = s->string_frag_segment; // Set to empty string
-	str->value[0].offset = 0; 
+	str->value[0].offset = 0;
 
 
 	s->save_dir_copy = make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
@@ -458,7 +458,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 void script_set_gamestate_save_dir(EngineState *s, const char *path) {
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
-	
+
 	strncpy((char *)str->value, path, str->max_size);		// FIXME -- strncpy or internal_stringfrag_strncpy ?
 	str->value[str->max_size - 1].segment = s->string_frag_segment; // Make sure to terminate
 	str->value[str->max_size - 1].offset &= 0xff00; // Make sure to terminate

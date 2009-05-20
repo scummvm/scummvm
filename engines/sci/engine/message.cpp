@@ -87,9 +87,9 @@ int MessageState::findTuple(MessageTuple &t) {
 	while (1) {
 		MessageTuple looking_at = getTuple();
 
-		if (t.noun == looking_at.noun && 
-			t.verb == looking_at.verb && 
-			t.cond == looking_at.cond && 
+		if (t.noun == looking_at.noun &&
+			t.verb == looking_at.verb &&
+			t.cond == looking_at.cond &&
 			t.seq == looking_at.seq)
 			break;
 

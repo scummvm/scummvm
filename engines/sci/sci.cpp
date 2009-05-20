@@ -201,7 +201,7 @@ Common::Error SciEngine::run() {
 		}
 	} else if (version >= SCI_VERSION_1_EARLY && version <= SCI_VERSION_1_LATE) {
 		// SCI1
-		
+
 		if (gamestate->flags & GF_SCI0_OLD ||
 			gamestate->flags & GF_SCI0_OLDGFXFUNCS ||
 			gamestate->flags & GF_SCI0_OLDGETTIME) {

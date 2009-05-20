@@ -46,14 +46,14 @@ namespace Sci {
  *
  * To handle opening a file called "foobar", what we do is this: First, we
  * create an 'augmented file name', by prepending the game target and a dash,
- * so if we running game target sq1vga, the name becomes "sq1vga-foobar". 
+ * so if we running game target sq1vga, the name becomes "sq1vga-foobar".
  * Next, we check if such a file is known to the SaveFileManager. If so, we
  * we use that for reading/writing, delete it, whatever.
  *
  * If no such file is present but we were only asked to *read* the file,
  * we fallback to looking for a regular file called "foobar", and open that
  * for reading only.
- * 
+ *
  * There are some caveats to this: First off, SCI apparently has no way
  * to signal that a file is supposed to be opened for reading only. For now,
  * we hackishly just assume that this is what _K_FILE_MODE_OPEN_OR_FAIL is for.
@@ -71,8 +71,8 @@ namespace Sci {
  * at all, and for what. Based on that, we can maybe come up with a better waybill
  * to provide this functionality.
  */
- 
- 
+
+
 
 FileHandle::FileHandle() : _in(0), _out(0) {
 }
@@ -197,7 +197,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	s->_fileHandles[handle]._name = filename;
 
 	s->r_acc = make_reg(0, handle);
-	
+
 	debug(3, " -> opened file '%s' with handle %d", filename, handle);
 }
 
@@ -694,7 +694,7 @@ enum {
 
 
 void DirSeeker::firstFile(const char *mask, reg_t buffer) {
-	
+
 	// Verify that we are given a valid buffer
 	if (!buffer.segment) {
 		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask);
@@ -722,7 +722,7 @@ void DirSeeker::nextFile() {
 	char *mem = kernel_dereference_char_pointer(_vm, _outbuffer, 0);
 	memset(mem, 0, 13);
 
-	// TODO: Transform the string back into a format usable by the SCI scripts. 
+	// TODO: Transform the string back into a format usable by the SCI scripts.
 	// I.e., strip any TARGET- prefix.
 	const char *string = _iter->c_str();
 	assert(string);

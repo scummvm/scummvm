@@ -49,7 +49,7 @@ gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &form
 	mode->xfact = xfact;
 	mode->yfact = yfact;
 	mode->bytespp = format.bytesPerPixel;
-	
+
 	// FIXME: I am not sure whether the following assignments are quite right.
 	// The only code using these are the built-in scalers of the SCI engine.
 	// And those are pretty weird, so I am not sure I interpreted them correctly.

@@ -138,7 +138,7 @@ public:
 
 
 	/* Retrieves a translated view cel
-	** Parameters: 
+	** Parameters:
 	**             (int) nr: The view number
 	**             (int *) loop: Pointer to a variable containing the loop number
 	**             (int *) cel: Pointer to a variable containing the cel number

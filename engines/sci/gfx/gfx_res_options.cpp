@@ -140,7 +140,7 @@ void apply_mod(byte *factor, gfx_pixmap_t *pxm) {
 		UPDATE_COL(c.g, 1);
 		UPDATE_COL(c.b, 2);
 		pal->setColor(i, c.r, c.g, c.b);
-			
+
 #undef UPDATE_COL
 	}
 }
@@ -168,7 +168,7 @@ int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm) {
 		if (pxm->palette)
 			pxm->palette->free();
 
-		pxm->palette = new Palette(conf->conf.assign.assign.palette.colors, 
+		pxm->palette = new Palette(conf->conf.assign.assign.palette.colors,
 								   conf->conf.assign.assign.palette.colors_nr);
 		pxm->palette->name = "res";
 	}

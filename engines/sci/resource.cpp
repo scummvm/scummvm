@@ -748,8 +748,8 @@ int ResourceManager::detectVolVersion() {
 
 		int chk = (curVersion == SCI_VERSION_0) ? 4 : 20;
 		int offs = curVersion < SCI_VERSION_1_1 ? 4 : 0;
-		if ((curVersion < SCI_VERSION_32 && wCompression > chk) 
-				|| (curVersion == SCI_VERSION_32 && wCompression != 0 && wCompression != 32) 
+		if ((curVersion < SCI_VERSION_32 && wCompression > chk)
+				|| (curVersion == SCI_VERSION_32 && wCompression != 0 && wCompression != 32)
 				|| (wCompression == 0 && dwPacked != dwUnpacked + offs)
 		        || (dwUnpacked < dwPacked - offs)) {
 
@@ -868,7 +868,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 			} else {
 				// SCI0 scheme
 				int resname_len = strlen(szResType);
-				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0 
+				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0
 					&& !isalpha(name[resname_len + 1])) {
 					number = atoi(name.c_str() + resname_len + 1);
 					bAdd = true;
@@ -1056,10 +1056,10 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		compression = kCompNone;
 		break;
 	case 1:
-		compression = (_sciVersion == SCI_VERSION_0) ? kCompLZW : kCompHuffman; 
+		compression = (_sciVersion == SCI_VERSION_0) ? kCompLZW : kCompHuffman;
 		break;
 	case 2:
-		compression = (_sciVersion == SCI_VERSION_0) ? kCompHuffman : kCompLZW1; 
+		compression = (_sciVersion == SCI_VERSION_0) ? kCompHuffman : kCompLZW1;
 		break;
 	case 3:
 		compression = kCompLZW1View;

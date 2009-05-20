@@ -91,7 +91,7 @@ char inputbuf[256] = "";
 
 static const char *_debug_get_input() {
 	char newinpbuf[256];
-	
+
 	printf("> ");
 	if (!fgets(newinpbuf, 254, stdin))
 		return NULL;

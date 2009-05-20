@@ -70,7 +70,7 @@ bool vocabulary_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::Stri
 	for (int i = 0; i < count; i++) {
 		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
 		int len = READ_LE_UINT16(r->data + offset);
-		
+
 		Common::String tmp((const char *)r->data + offset + 2, len);
 		selectorNames.push_back(tmp);
 
