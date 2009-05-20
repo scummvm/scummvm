@@ -22,6 +22,7 @@ MODULE_OBJS = \
 	engine/klists.o \
 	engine/kmath.o \
 	engine/kmenu.o \
+	engine/kmisc.o \
 	engine/kmovement.o \
 	engine/kpathing.o \
 	engine/kscripts.o \
