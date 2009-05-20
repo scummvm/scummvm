@@ -46,28 +46,6 @@ namespace Sword2 {
 // Basic movie player
 ///////////////////////////////////////////////////////////////////////////////
 
-static const MovieInfo sequenceList[19] = {
-	{ "carib",    222 },
-	{ "escape",   187 },
-	{ "eye",      248 },
-	{ "finale",  1485 },
-	{ "guard",     75 },
-	{ "intro",   1800 },
-	{ "jungle",   186 },
-	{ "museum",   167 },
-	{ "pablo",     75 },
-	{ "pyramid",   60 },
-	{ "quaram",   184 },
-	{ "river",    656 },
-	{ "sailing",  138 },
-	{ "shaman",   788 },
-	{ "stone1",    34 },
-	{ "stone2",   282 },
-	{ "stone3",    65 },
-	{ "demo",      60 },
-	{ "enddemo",  110 }
-};
-
 MoviePlayer::MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType)
 	: _vm(vm), _snd(snd), _bgSoundHandle(bgSoundHandle), _system(system), VideoPlayer(decoder) {
 	_bgSoundStream = NULL;
@@ -84,15 +62,6 @@ MoviePlayer:: ~MoviePlayer(void) {
  * @param id the id of the file
  */
 bool MoviePlayer::load(const char *name) {
-	_id = -1;
-
-	for (int i = 0; i < ARRAYSIZE(sequenceList); i++) {
-		if (scumm_stricmp(name, sequenceList[i].name) == 0) {
-			_id = i;
-			break;
-		}
-	}
-
 	if (_decoderType == kVideoDecoderDXA) {
 		_bgSoundStream = Audio::AudioStream::openStreamFile(name);
 	} else {
@@ -128,11 +97,9 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 	if (_vm->shouldQuit())
 		return;
 
-	if (_id >= 0) {
-		_numFrames = sequenceList[_id].frames;
-		if (_numFrames > 60)
-			_leadOutFrame = _numFrames - 60;
-	}
+	_leadOutFrame = _decoder->getFrameCount();
+	if (_leadOutFrame > 60)
+		_leadOutFrame -= 60;
 
 	_movieTexts = movieTexts;
 	_numMovieTexts = numMovieTexts;

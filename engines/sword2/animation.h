@@ -58,11 +58,6 @@ struct MovieText {
 	}
 };
 
-struct MovieInfo {
-	const char *name;
-	int frames;
-};
-
 class DXADecoderWithSound : public Graphics::DXADecoder {
 public:
 	DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle);
@@ -97,9 +92,7 @@ protected:
 	Audio::SoundHandle *_bgSoundHandle;
 	Audio::AudioStream *_bgSoundStream;
 
-	int _id;
 	uint32 _leadOut;
-	int _numFrames;
 	int _leadOutFrame;
 
 	void performPostProcessing(byte *screen);
