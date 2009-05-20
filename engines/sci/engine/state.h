@@ -263,7 +263,7 @@ public:
 
 	Common::Array<kfunct_sig_pair_t> _kfuncTable; /**< Table of kernel functions */
 
-	opcode *opcodes;
+	Common::Array<opcode> _opcodes;
 
 	selector_map_t selector_map; /**< Shortcut list for important selectors */
 

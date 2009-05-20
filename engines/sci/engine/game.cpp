@@ -53,7 +53,7 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 		s->parser_rules = NULL;
 	}
 
-	s->opcodes = vocabulary_get_opcodes(s->resmgr);
+	vocabulary_get_opcodes(s->resmgr, s->_opcodes);
 
 	if (!vocabulary_get_snames(s->resmgr, (s->flags & GF_SCI0_OLD), s->_selectorNames)) {
 		sciprintf("_init_vocabulary(): Could not retrieve selector names (vocab.997)!\n");
@@ -500,8 +500,7 @@ void script_free_engine(EngineState *s) {
 
 	s->_selectorNames.clear();
 	s->_kernelNames.clear();
-	vocabulary_free_opcodes(s->opcodes);
-	s->opcodes = NULL;
+	s->_opcodes.clear();
 }
 
 void script_free_breakpoints(EngineState *s) {

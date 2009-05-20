@@ -354,51 +354,36 @@ int vocabulary_lookup_sname(const Common::StringList &selectorNames, const char 
 	return -1;
 }
 
-opcode* vocabulary_get_opcodes(ResourceManager *resmgr) {
-	opcode* o;
+void vocabulary_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &o) {
 	int count, i = 0;
 	Resource* r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES, 0);
 
+	o.clear();
+
 	// if the resource couldn't be loaded, leave
 	if (r == NULL) {
-		fprintf(stderr, "unable to load vocab.%03d\n", VOCAB_RESOURCE_OPCODES);
-		return NULL;
+		warning("unable to load vocab.%03d", VOCAB_RESOURCE_OPCODES);
+		return;
 	}
 
 	count = READ_LE_UINT16(r->data);
 
-	o = (opcode*)malloc(sizeof(opcode) * 256);
+	o.resize(256);
 	for (i = 0; i < count; i++) {
 		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
 		int len = READ_LE_UINT16(r->data + offset) - 2;
 		o[i].type = READ_LE_UINT16(r->data + offset + 2);
 		o[i].number = i;
-		o[i].name = (char *)malloc(len + 1);
-		memcpy(o[i].name, r->data + offset + 4, len);
-		o[i].name[len] = '\0';
-#ifdef VOCABULARY_DEBUG
-		printf("Opcode %02X: %s, %d\n", i, o[i].name, o[i].type);
+		o[i].name = Common::String((char *)r->data + offset + 4, len);
+#if 1 //def VOCABULARY_DEBUG
+		printf("Opcode %02X: %s, %d\n", i, o[i].name.c_str(), o[i].type);
 #endif
 	}
 	for (i = count; i < 256; i++) {
 		o[i].type = 0;
 		o[i].number = i;
-		o[i].name = (char *)malloc(strlen("undefined") + 1);
-		strcpy(o[i].name, "undefined");
+		o[i].name = "undefined";
 	}
-	return o;
-}
-
-void vocabulary_free_opcodes(opcode *opcodes) {
-	int i;
-	if (!opcodes)
-		return;
-
-	for (i = 0; i < 256; i++) {
-		if (opcodes[i].name)
-			free(opcodes[i].name);
-	}
-	free(opcodes);
 }
 
 // Alternative kernel func names retriever. Required for KQ1/SCI (at least).

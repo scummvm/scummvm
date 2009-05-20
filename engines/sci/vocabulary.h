@@ -49,7 +49,7 @@ class ResourceManager;
 struct opcode {
 	int type;
 	int number;
-	char* name;
+	Common::String name;
 };
 
 #define VOCAB_RESOURCE_OPCODES 998
@@ -199,14 +199,9 @@ int vocabulary_lookup_sname(const Common::StringList &selectorNames, const char 
 
 
 /**
- * Returns a null terminated array of opcodes.
+ * Obtain the list of opcodes.
  */
-opcode *vocabulary_get_opcodes(ResourceManager *resmgr);
-
-void vocabulary_free_opcodes(opcode *opcodes);
-/* Frees a previously allocated list of opcodes
-** Parameters: (opcode *) opcodes: Opcodes to free
-*/
+void vocabulary_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &opcodes);
 
 /**
  * Fills a StringList with kernel function names.

@@ -1302,7 +1302,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	if (print_bw_tag)
 		sciprintf("[%c] ", opsize ? 'B' : 'W');
-	sciprintf("%s", s->opcodes[opcode].name);
+	sciprintf("%s", s->_opcodes[opcode].name.c_str());
 
 	i = 0;
 	while (g_opcode_formats[opcode][i]) {
