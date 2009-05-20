@@ -303,21 +303,6 @@ struct kfunct_sig_pair_t {
 };
 
 
-enum {
-	KF_NEW = 1,
-	KF_NONE = -1, /* No mapping, but name is known */
-	KF_TERMINATOR = -42 /* terminates kfunct_mappers */
-};
-
-struct SciKernelFunction {
-	int type; /* KF_* */
-	const char *name;
-	kfunct *fun; /* The actual function */
-	const char *signature;  /* kfunct signature */
-};
-
-extern SciKernelFunction kfunct_mappers[];
-
 
 
 // New kernel functions

@@ -34,6 +34,19 @@
 namespace Sci {
 
 
+enum KernelFunctionType {
+	KF_NEW = 1,
+	KF_NONE = -1, /**< No mapping, but name is known */
+	KF_TERMINATOR = -42 /**< terminates kfunct_mappers */
+};
+
+struct SciKernelFunction {
+	KernelFunctionType type;
+	const char *name;
+	kfunct *fun; /* The actual function */
+	const char *signature;  /* kfunct signature */
+};
+
 static int sci_max_allowed_unknown_kernel_functions[] = {
 	0,
 	0x72, // SCI0
@@ -381,6 +394,9 @@ int script_map_kernel(EngineState *s) {
 				s->_kfuncTable[functnr].orig_name.clear();
 				kernel_compile_signature(&(s->_kfuncTable[functnr].signature));
 				++mapped;
+				break;
+			case KF_TERMINATOR:
+				error("Unexpectedly encountered KF_TERMINATOR");
 				break;
 			}
 

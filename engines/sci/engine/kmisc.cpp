@@ -93,19 +93,8 @@ reg_t kMemoryInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 // kfunct_mappers below doubles for unknown kfunctions
 
 reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (funct_nr >= SCI_MAPPED_UNKNOWN_KFUNCTIONS_NR) {
-		warning("Unhandled Unknown function %04x", funct_nr);
-		return NULL_REG;
-	} else {
-		switch (kfunct_mappers[funct_nr].type) {
-		case KF_NEW:
-			return kfunct_mappers[funct_nr].fun(s, funct_nr, argc, argv);
-		case KF_NONE:
-		default:
-			warning("Unhandled Unknown function %04x", funct_nr);
-			return NULL_REG;
-		}
-	}
+	warning("Unhandled Unknown function %04x", funct_nr);
+	return NULL_REG;
 }
 
 reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -122,10 +111,12 @@ reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-#define _K_NEW_GETTIME_TICKS 0
-#define _K_NEW_GETTIME_TIME_12HOUR 1
-#define _K_NEW_GETTIME_TIME_24HOUR 2
-#define _K_NEW_GETTIME_DATE 3
+enum {
+	_K_NEW_GETTIME_TICKS = 0,
+	_K_NEW_GETTIME_TIME_12HOUR = 1,
+	_K_NEW_GETTIME_TIME_24HOUR = 2,
+	_K_NEW_GETTIME_DATE = 3
+};
 
 reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	tm loc_time;
@@ -175,12 +166,14 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, retval);
 }
 
-#define K_MEMORY_ALLOCATE_CRITICAL		1
-#define K_MEMORY_ALLOCATE_NONCRITICAL   2
-#define K_MEMORY_FREE			3
-#define	K_MEMORY_MEMCPY			4
-#define K_MEMORY_PEEK			5
-#define K_MEMORY_POKE			6
+enum {
+	K_MEMORY_ALLOCATE_CRITICAL		= 1,
+	K_MEMORY_ALLOCATE_NONCRITICAL   = 2,
+	K_MEMORY_FREE					= 3,
+	K_MEMORY_MEMCPY					= 4,
+	K_MEMORY_PEEK					= 5,
+	K_MEMORY_POKE					= 6
+};
 
 reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
@@ -256,11 +249,9 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int i;
-
 	sciprintf("Unimplemented syscall: %s[%x](", s->_kernelNames[funct_nr].c_str(), funct_nr);
 
-	for (i = 0; i < argc; i++) {
+	for (int i = 0; i < argc; i++) {
 		sciprintf(PREG, PRINT_REG(argv[i]));
 		if (i + 1 < argc) sciprintf(", ");
 	}
