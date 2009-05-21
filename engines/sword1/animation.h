@@ -26,8 +26,8 @@
 #ifndef SWORD1_ANIMATION_H
 #define SWORD1_ANIMATION_H
 
-#include "graphics/video/dxa_player.h"
-#include "graphics/video/smk_player.h"
+#include "graphics/video/dxa_decoder.h"
+#include "graphics/video/smk_decoder.h"
 #include "graphics/video/video_player.h"
 
 #include "sword1/screen.h"

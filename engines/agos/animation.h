@@ -29,8 +29,8 @@
 #include "common/file.h"
 #include "common/stream.h"
 
-#include "graphics/video/dxa_player.h"
-#include "graphics/video/smk_player.h"
+#include "graphics/video/dxa_decoder.h"
+#include "graphics/video/smk_decoder.h"
 #include "sound/mixer.h"
 
 namespace AGOS {

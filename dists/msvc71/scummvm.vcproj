@@ -1228,16 +1228,16 @@
 			<Filter
 				Name="video">
 				<File
-					RelativePath="..\..\graphics\video\dxa_player.cpp">
+					RelativePath="..\..\graphics\video\dxa_decoder.cpp">
 				</File>
 				<File
-					RelativePath="..\..\graphics\video\dxa_player.h">
+					RelativePath="..\..\graphics\video\dxa_decoder.h">
 				</File>
 				<File
-					RelativePath="..\..\graphics\video\flic_player.cpp">
+					RelativePath="..\..\graphics\video\flic_decoder.cpp">
 				</File>
 				<File
-					RelativePath="..\..\graphics\video\flic_player.h">
+					RelativePath="..\..\graphics\video\flic_decoder.h">
 				</File>
 				<File
 					RelativePath="..\..\graphics\video\mpeg_player.cpp">
@@ -1246,10 +1246,10 @@
 					RelativePath="..\..\graphics\video\mpeg_player.h">
 				</File>
 				<File
-					RelativePath="..\..\graphics\video\smk_player.cpp">
+					RelativePath="..\..\graphics\video\smk_decoder.cpp">
 				</File>
 				<File
-					RelativePath="..\..\graphics\video\smk_player.h">
+					RelativePath="..\..\graphics\video\smk_decoder.h">
 				</File>
 				<File
 					RelativePath="..\..\graphics\video\video_player.cpp">

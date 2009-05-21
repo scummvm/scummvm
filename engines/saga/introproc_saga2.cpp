@@ -33,7 +33,7 @@
 
 #include "sound/mixer.h"
 #include "graphics/surface.h"
-#include "graphics/video/smk_player.h"
+#include "graphics/video/smk_decoder.h"
 
 #include "common/events.h"
 #include "common/system.h"

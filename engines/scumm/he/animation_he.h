@@ -28,7 +28,7 @@
 
 #include "common/file.h"
 
-#include "graphics/video/smk_player.h"
+#include "graphics/video/smk_decoder.h"
 
 #include "sound/mixer.h"
 

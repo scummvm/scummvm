@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "common/util.h"
 
-#include "graphics/video/dxa_player.h"
+#include "graphics/video/dxa_decoder.h"
 
 #ifdef USE_ZLIB
   #include "common/zlib.h"

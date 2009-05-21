@@ -18,10 +18,10 @@ MODULE_OBJS := \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
-	video/dxa_player.o \
-	video/flic_player.o \
+	video/dxa_decoder.o \
+	video/flic_decoder.o \
 	video/mpeg_player.o \
-	video/smk_player.o \
+	video/smk_decoder.o \
 	video/video_player.o \
 	video/coktelvideo/indeo3.o \
 	video/coktelvideo/coktelvideo.o
