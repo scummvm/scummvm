@@ -877,7 +877,7 @@ public:
 private:
 
 	void syncTime();
-	void loadSounds(int type, int num);
+	void loadSounds(int num);
 	Audio::AudioStream *loadSoundFileAsStream(int index, AnimationSoundType type);
 	void updateSounds();
 	void fadeInPalette();
@@ -926,7 +926,6 @@ private:
 	int _soundSeqDataOffset;
 	int _soundSeqDataCount;
 	int _soundSeqDataIndex;
-	int _musicVolume;
 	uint8 *_offscreenBuffer;
 	int _updateScreenWidth;
 	int _updateScreenPicture;

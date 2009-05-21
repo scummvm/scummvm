@@ -501,7 +501,6 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	_soundsList1Count = 0;
 	_soundsList2Offset = 0;
 	_soundsList2Count = 0;
-	_musicVolume = 0;
 	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
 	_updateScreenWidth = 0;
 	_updateScreenPicture = false;
@@ -555,6 +554,8 @@ void AnimationSequencePlayer::mainLoop() {
 			unloadAnimation();
 			++_updateFuncIndex;
 			_seqNum = this->_updateFunc[_updateFuncIndex].num;
+		} else {
+			updateSounds();
 		}
 		_system->copyRectToScreen(_offscreenBuffer, kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 		_system->setPalette(_animationPalette, 0, 256);
@@ -636,136 +637,40 @@ Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(int index, An
 	return stream;
 }
 
-void AnimationSequencePlayer::loadSounds(int type, int num) {
-	int index = 0;
-	switch (type) {
-	case 1:
-		switch (num) {
-		case 0:
-			index = 1;
-			_soundsList1Count = 14;
-			_soundsList1Offset = 0;
-			_soundsList2Count = 10;
-			_soundsList2Offset = 14;
-			_soundSeqDataCount = 58;
-			_soundSeqDataOffset = 0;
-			break;
-		case 1:
-			index = 1;
-			_soundsList1Count = 14;
-			_soundsList1Offset = 24;
-			_soundsList2Count = 5;
-			_soundsList2Offset = 38;
-			_soundSeqDataCount = 60;
-			_soundSeqDataOffset = 58;
-			break;
-		case 2:
-			index = 1;
-			_soundsList1Count = 14;
-			_soundsList1Offset = 43;
-			_soundsList2Count = 9;
-			_soundsList2Offset = 57;
-			_soundSeqDataCount = 48;
-			_soundSeqDataOffset = 118;
-			break;
-		}
-		_musicVolume = 0;
-		break;
-	case 3:
-		switch (num) {
-		case 0:
-			index = 3;
-			_soundsList1Count = 13;
-			_soundsList1Offset = 66;
-			_soundsList2Count = 0;
-			_soundSeqDataCount = 19;
-			_soundSeqDataOffset = 166;
-			break;
-		case 1:
-			index = 6;
-			_soundsList1Count = 14;
-			_soundsList1Offset = 79;
-			_soundsList2Count = 4;
-			_soundsList2Offset = 93;
-			_soundSeqDataCount = 25;
-			_soundSeqDataOffset = 185;
-			break;
-		case 2:
-			index = 7;
-			_soundsList1Count = 13;
-			_soundsList1Offset = 97;
-			_soundsList2Count = 9;
-			_soundsList2Offset = 110;
-			_soundSeqDataCount = 43;
-			_soundSeqDataOffset = 210;
-			break;
-		case 3:
-			index = 10;
-			_soundsList1Count = 11;
-			_soundsList1Offset = 119;
-			_soundsList2Count = 0;
-			_soundSeqDataCount = 11;
-			_soundSeqDataOffset = 253;
-			break;
-		}
-		_musicVolume = 80;
-		break;
-	case 4:
-		switch (num) {
-		case 0:
-			index = 4;
-			_soundsList1Count = 6;
-			_soundsList1Offset = 130;
-			_soundsList2Count = 0;
-			_soundSeqDataCount = 12;
-			_soundSeqDataOffset = 264;
-			break;
-		case 1:
-			index = 9;
-			_soundsList1Count = 10;
-			_soundsList1Offset = 136;
-			_soundsList2Count = 0;
-			_soundSeqDataCount = 24;
-			_soundSeqDataOffset = 276;
-			break;
-		}
-		_musicVolume = 80;
-		break;
-	case 5:
-		index = 5;
-		_soundsList1Count = 0;
-		_soundsList2Count = 0;
-		_soundSeqDataCount = 0;
-		_musicVolume = 100;
-		break;
-	case 9:
-		index = 8;
-		_soundsList1Count = 0;
-		_soundsList2Count = 0;
-		_soundSeqDataCount = 0;
-		_musicVolume = 100;
-		break;
-	case 10:
-		index = 0;
-		_soundsList1Count = 4;
-		_soundsList1Offset = 146;
-		_soundsList2Count = 0;
-		_soundSeqDataCount = 7;
-		_soundSeqDataOffset = 300;
-		_musicVolume = 100;
-		break;
-	default:
-		index = 0;
-		_soundsList1Count = 0;
-		_soundsList2Count = 0;
-		_soundSeqDataCount = 0;
-		_musicVolume = 100;
-		break;
-	}
-	if (_musicVolume != 0) {
+enum {
+	kSoundsList_Seq3_4,
+	kSoundsList_Seq9_10,
+	kSoundsList_Seq21_20,
+	kSoundsList_Seq13_14,
+	kSoundsList_Seq15_16,
+	kSoundsList_Seq27_28,
+	kSoundsList_Seq17_18,
+	kSoundsList_Seq19_20
+};
+
+void AnimationSequencePlayer::loadSounds(int num) {
+	static const int soundsList[][8] = {
+		{   1,   0,  14,   0,  10,  14,  58,   0 },
+		{   1,   0,  14,  24,   5,  38,  60,  58 },
+		{   1,   0,  14,  43,   9,  57,  48, 118 },
+		{   6,  80,  14,  79,   4,  93,  25, 185 },
+		{   7,  80,  13,  97,   9, 110,  43, 210 },
+		{  10,  80,  11, 119,   0,   0,  11, 253 },
+		{   8, 100,   0,   0,   0,   0,   0,   0 },
+		{   0, 100,   4, 146,   0,   0,   7, 300 }
+	};
+	int musicIndex = soundsList[num][0];
+	int musicVolume = soundsList[num][1];
+	_soundsList1Count = soundsList[num][2];
+	_soundsList1Offset = soundsList[num][3];
+	_soundsList2Count = soundsList[num][4];
+	_soundsList2Offset = soundsList[num][5];
+	_soundSeqDataCount = soundsList[num][6];
+	_soundSeqDataOffset = soundsList[num][7];
+	if (musicVolume != 0) {
 		Audio::AudioStream *s;
-		if ((s = loadSoundFileAsStream(index, (type == 5) ? kAnimationSoundType16BitsRAW : kAnimationSoundType8BitsRAW)) != 0) {
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_musicVolume));
+		if ((s = loadSoundFileAsStream(musicIndex, kAnimationSoundType8BitsRAW)) != 0) {
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(musicVolume));
 		}
 	}
 	_soundSeqDataIndex = 0;
@@ -801,8 +706,7 @@ void AnimationSequencePlayer::updateSounds() {
 		case 4:
 			_mixer->stopHandle(_musicHandle);
 			if ((s = loadSoundFileAsStream(p->index, kAnimationSoundType8BitsRAW)) != 0) {
-				_musicVolume = p->volume;
-				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_musicVolume));
+				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 5:
@@ -815,8 +719,7 @@ void AnimationSequencePlayer::updateSounds() {
 		case 6:
 			_mixer->stopHandle(_musicHandle);
 			if ((s = loadSoundFileAsStream(p->index, kAnimationSoundType16BitsRAW)) != 0) {
-				_musicVolume = p->volume;
-				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_musicVolume));
+				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		default:
@@ -933,7 +836,7 @@ bool AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
 }
 
 void AnimationSequencePlayer::loadIntroSeq17_18() {
-	loadSounds(9, 0);
+	loadSounds(kSoundsList_Seq17_18);
 	openAnimation(0, "graphics/merit.flc");
 }
 
@@ -941,12 +844,11 @@ void AnimationSequencePlayer::playIntroSeq17_18() {
 	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
-	updateSounds();
 }
 
 void AnimationSequencePlayer::loadIntroSeq19_20() {
 	fadeOutPalette();
-	loadSounds(10, 1);
+	loadSounds(kSoundsList_Seq19_20);
 	openAnimation(0, "graphics/budttle2.flc");
 	openAnimation(1, "graphics/machine.flc");
 }
@@ -966,7 +868,6 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 			_offscreenBuffer[i] = _flicPlayer[1].getPixel(i);
 		}
 	}
-	updateSounds();
 	if (!framesLeft) {
 		_changeToNextSequence = true;
 	}
@@ -1012,7 +913,7 @@ void AnimationSequencePlayer::drawPicPart4() {
 
 void AnimationSequencePlayer::loadIntroSeq3_4() {
 	displayLoadingScreen();
-	loadSounds(1, 0);
+	loadSounds(kSoundsList_Seq3_4);
 	_picBufPtr = loadPicture("graphics/house.pic");
 	openAnimation(0, "graphics/intro1.flc");
 	_system->copyRectToScreen(_offscreenBuffer, 320, 0, 0, kScreenWidth, kScreenHeight);
@@ -1032,7 +933,6 @@ void AnimationSequencePlayer::playIntroSeq3_4() {
 	} else {
 		drawPicPart4();
 	}
-	updateSounds();
 }
 
 void AnimationSequencePlayer::drawPic2Part10() {
@@ -1076,7 +976,7 @@ void AnimationSequencePlayer::drawPic1Part10() {
 }
 
 void AnimationSequencePlayer::loadIntroSeq9_10() {
-	loadSounds(1, 1);
+	loadSounds(kSoundsList_Seq9_10);
 	_pic2BufPtr = loadPicture("graphics/bits.pic");
 	_picBufPtr = loadPicture("graphics/lab.pic");
 	openAnimation(0, "graphics/intro2.flc");
@@ -1100,11 +1000,10 @@ void AnimationSequencePlayer::playIntroSeq9_10() {
 	if (!framesLeft) {
 		_changeToNextSequence = true;
 	}
-	updateSounds();
 }
 
 void AnimationSequencePlayer::loadIntroSeq21_22() {
-	loadSounds(1, 2);
+	loadSounds(kSoundsList_Seq21_20);
 	openAnimation(0, "graphics/intro3.flc");
 }
 
@@ -1112,11 +1011,10 @@ void AnimationSequencePlayer::playIntroSeq21_22() {
 	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
-	updateSounds();
 }
 
 void AnimationSequencePlayer::loadIntroSeq13_14() {
-	loadSounds(3, 1);
+	loadSounds(kSoundsList_Seq13_14);
 	openAnimation(0, "graphics/allseg02.flc");
 }
 
@@ -1124,11 +1022,10 @@ void AnimationSequencePlayer::playIntroSeq13_14() {
 	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
-	updateSounds();
 }
 
 void AnimationSequencePlayer::loadIntroSeq15_16() {
-	loadSounds(3, 2);
+	loadSounds(kSoundsList_Seq15_16);
 	openAnimation(0, "graphics/allseg03.flc");
 }
 
@@ -1136,11 +1033,10 @@ void AnimationSequencePlayer::playIntroSeq15_16() {
 	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
-	updateSounds();
 }
 
 void AnimationSequencePlayer::loadIntroSeq27_28() {
-	loadSounds(3, 3);
+	loadSounds(kSoundsList_Seq27_28);
 	openAnimation(0, "graphics/allseg04.flc");
 }
 
@@ -1148,7 +1044,6 @@ void AnimationSequencePlayer::playIntroSeq27_28() {
 	if (!decodeNextAnimationFrame(0)) {
 		_changeToNextSequence = true;
 	}
-	updateSounds();
 }
 
 } // namespace Tucker
