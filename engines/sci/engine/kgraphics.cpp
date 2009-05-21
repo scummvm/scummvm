@@ -1427,10 +1427,6 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					return s->r_acc;
 				}
 
-				if (text_pos == s->save_dir_copy) {
-					max = MAX_SAVE_DIR_SIZE - 1;
-					display_offset = s->save_dir_edit_offset;
-				}
 				textlen = strlen(text);
 
 				cursor += display_offset;
@@ -1544,9 +1540,6 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					if (max_displayed < max)
 						update_cursor_limits(&display_offset, &cursor, max_displayed);
 
-					if (text_pos == s->save_dir_copy)
-						s->save_dir_edit_offset = display_offset;
-
 					cursor -= display_offset;
 
 					PUT_SEL32V(event, claimed, 1);
@@ -1599,10 +1592,6 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	int cursor;
 	int max;
 
-	if (text_pos == s->save_dir_copy) {
-		SCIkdebug(SCIkGRAPHICS, "Displaying the save_dir copy\n");
-	}
-
 	switch (type) {
 	case K_CONTROL_BUTTON:
 		SCIkdebug(SCIkGRAPHICS, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
@@ -1628,10 +1617,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		if (cursor > (signed)strlen(text))
 			cursor = strlen(text);
 
-		if (text_pos == s->save_dir_copy)
-			update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);
-
-		update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);
+//		update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);	FIXME: get rid of this?
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_edit_control(s->port, obj, area, text, font_nr, (unsigned)cursor, (int8)inverse));
 		break;
 

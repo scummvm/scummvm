@@ -422,9 +422,6 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	str->value[0].offset = 0;
 
 
-	s->save_dir_copy = make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
-	s->save_dir_edit_offset = 0;
-
 	s->r_acc = s->r_prev = NULL_REG;
 	s->r_amp_rest = 0;
 
@@ -477,7 +474,6 @@ void script_set_gamestate_save_dir(EngineState *s, reg_t path) {
 
 void script_free_vm_memory(EngineState *s) {
 	sciprintf("Freeing VM memory\n");
-	s->save_dir_copy_buf = NULL;
 
 	s->_classtable.clear();
 

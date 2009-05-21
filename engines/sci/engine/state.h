@@ -150,10 +150,6 @@ public:
 
 	long game_time; /**< Counted at 60 ticks per second, reset during start time */
 
-	reg_t save_dir_copy; /**< Last copy of the save dir */
-	int save_dir_edit_offset; /**< For kEdit(): Display offset for editing the savedir */
-	char *save_dir_copy_buf; /**< Temp savedir buffer for kEdit() */
-
 	int mouse_pointer_view; /**< Mouse pointer resource, or -1 if disabled */
 	int mouse_pointer_loop; /**< Mouse pointer resource, or -1 if disabled */
 	int mouse_pointer_cel; /**< Mouse pointer resource, or -1 if disabled */

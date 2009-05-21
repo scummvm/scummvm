@@ -796,8 +796,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->game_obj = s->game_obj;
 	retval->script_000 = retval->seg_manager->getScript(script_get_segment(s, 0, SCRIPT_GET_DONT_LOAD));
 	retval->gc_countdown = GC_INTERVAL - 1;
-	retval->save_dir_copy = make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
-	retval->save_dir_edit_offset = 0;
 	retval->sys_strings_segment = find_unique_seg_by_type(retval->seg_manager, MEM_OBJ_SYS_STRINGS);
 	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->seg_manager, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS);
 

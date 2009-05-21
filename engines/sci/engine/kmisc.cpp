@@ -34,12 +34,7 @@
 
 namespace Sci {
 
-char *old_save_dir;	// FIXME get rid of this
-
 reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
-
-	old_save_dir = strdup(deref_save_dir);
 	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE; // This appears to help
 	s->_executionStack.resize(s->execution_stack_base + 1);
@@ -51,14 +46,6 @@ reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 ** Returns the restarting_flag in acc
 */
 reg_t kGameIsRestarting(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
-
-	if (old_save_dir && deref_save_dir) {
-		strcpy(deref_save_dir, old_save_dir);
-		free(old_save_dir);
-		old_save_dir = NULL;
-	}
-
 	s->r_acc = make_reg(0, (s->restarting_flags & SCI_GAME_WAS_RESTARTED));
 
 	if (argc) { // Only happens during replay

@@ -1121,18 +1121,14 @@ int c_restore_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) 
 	}
 }
 
-extern char *old_save_dir;
-
 int c_restart_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	unsigned int i;
-	char *deref_save_dir = (char*)kernel_dereference_bulk_pointer(s, s->save_dir_copy, 1);
 
 	if (!s) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	old_save_dir = strdup(deref_save_dir);
 	for (i = 0; i < cmdParams.size(); i++) {
 		if ((strcmp(cmdParams[0].str, "-r") == 0) || (strcmp(cmdParams[0].str, "--replay") == 0))
 			s->restarting_flags |= SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;

@@ -57,10 +57,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	game_time = 0;
 
-	save_dir_copy = NULL_REG;
-	save_dir_edit_offset = 0;
-	save_dir_copy_buf = 0;
-
 	mouse_pointer_view = 0;
 	mouse_pointer_loop = 0;
 	mouse_pointer_cel = 0;
