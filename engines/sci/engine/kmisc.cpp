@@ -132,13 +132,13 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	g_system->getTimeAndDate(loc_time);
 	start_time = g_system->getMillis() - s->game_start_time;
 
-	if (argc && s->flags & GF_SCI0_OLDGETTIME) { // Use old semantics
-		retval = loc_time.tm_sec + loc_time.tm_min * 60 + (loc_time.tm_hour % 12) * 3600;
+	if ((s->flags & GF_SCI0_OLDGETTIME) && argc) { // Use old semantics
+		retval = (loc_time.tm_hour % 12) * 3600 + loc_time.tm_min * 60 + loc_time.tm_sec;
 		debugC(2, kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
 		return make_reg(0, retval);
 	}
 
-	int mode = UKPV_OR_ALT(0, 0);
+	int mode = argc > 0 ? UKPV_OR_ALT(0, 0) : 0;
 
 	switch (mode) {
 	case _K_NEW_GETTIME_TICKS :
@@ -146,16 +146,15 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
 	case _K_NEW_GETTIME_TIME_12HOUR :
-		loc_time.tm_hour %= 12;
-		retval = (loc_time.tm_min << 6) | (loc_time.tm_hour << 12) | (loc_time.tm_sec);
+		retval = ((loc_time.tm_hour % 12) << 12) | (loc_time.tm_min << 6) | (loc_time.tm_sec);
 		debugC(2, kDebugLevelTime, "GetTime(12h) returns %d", retval);
 		break;
 	case _K_NEW_GETTIME_TIME_24HOUR :
-		retval = (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1) | (loc_time.tm_hour << 11);
+		retval = (loc_time.tm_hour << 11) | (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1);
 		debugC(2, kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
 	case _K_NEW_GETTIME_DATE :
-		retval = ((loc_time.tm_mon + 1) << 5) | loc_time.tm_mday | (((loc_time.tm_year + 1900) & 0x7f) << 9);
+		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year + 1900) & 0x7f) << 9);
 		debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
 	default:
