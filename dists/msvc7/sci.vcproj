@@ -327,6 +327,12 @@
 			<File
 				RelativePath="..\..\engines\sci\gfx\res_view1.cpp">
 			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\seq_decoder.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\gfx\seq_decoder.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="sfx">
