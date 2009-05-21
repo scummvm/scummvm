@@ -232,6 +232,12 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_automapShapes = 0;
 	_defaultLegendData = 0;
 
+	_lightningProps = 0;
+	_lightningCurSfx = -1;
+	_lightningDiv = 0;
+	_lightningFirstSfx = 0;
+	_lightningSfxFrame = 0;
+
 	_compassTimer = 0;
 	_timer3Para = 0;
 	_scriptCharacterCycle = 0;
@@ -362,6 +368,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _levelShapeProperties;
 	delete[] _blockDrawingBuffer;
 	delete[] _sceneWindowBuffer;
+	delete[] _lightningProps;
 
 	if (_levelShapes) {
 		for (int i = 0; i < 400; i++)
@@ -2561,6 +2568,39 @@ void LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
 }
 
 void LoLEngine::processMagicLightning(int charNum, int spellLevel) {
+	_screen->hideMouse();
+	_screen->copyPage(0, 2);
+	gui_drawScene(2);
+	_screen->copyPage(2, 12);
+
+	_lightningCurSfx = _lightningProps[spellLevel].sfxId;
+	_lightningDiv = _lightningProps[spellLevel].frameDiv;
+	_lightningFirstSfx = 0;
+
+	char wsafile[13];
+	snprintf(wsafile, 13, "litning%d.wsa", spellLevel + 1);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	mov->open(wsafile, 1, 0);
+	if (!mov->opened())
+		error("Litning: Unable to load litning.wsa");
+
+	for (int i = 0; i < 4; i++)
+		playSpellAnimation(mov, 0, _lightningProps[spellLevel].lastFrame, 3, 93, 0, &LoLEngine::callbackProcessMagicLightning, 0, 0, 0, false);
+
+	mov->close();
+	delete mov;
+
+	_screen->setScreenPalette(_screen->getPalette(1));
+	_screen->copyPage(12, 2);
+	_screen->copyPage(12, 0);
+	updateDrawPage2();
+
+	static const uint8 lighntingDamage[] = { 18, 35, 50, 72 };
+	inflictMagicalDamageForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum, lighntingDamage[spellLevel], 5);
+	
+	_sceneUpdateRequired = true;
+	gui_drawScene(0);
+	_screen->showMouse();
 }
 
 void LoLEngine::processMagicFog() {
@@ -2669,6 +2709,38 @@ void LoLEngine::callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y) {
 	if (_swarmSpellStatus)
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, 6, _screen->_curPage);
 	_swarmSpellStatus ^= 1;
+}
+
+void LoLEngine::callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y) {
+	uint8 *tpal = new uint8[768];
+	if (_lightningDiv == 2)
+		shakeScene(1, 2, 3, 0);
+
+	uint8 *p1 = _screen->getPalette(1);
+
+	if (_lightningSfxFrame % _lightningDiv) {
+		_screen->setScreenPalette(p1);
+	} else {
+		memcpy(tpal, p1, 768);
+		for (int i = 6; i < 384; i++) {
+			uint16 v = (tpal[i] * 120) / 64;
+			tpal[i] = (v < 64) ? v : 63;
+		}
+		_screen->setScreenPalette(tpal);
+	}
+
+	if (_lightningDiv == 2) {
+		if (!_lightningFirstSfx) {
+			snd_playSoundEffect(_lightningCurSfx, -1);
+			_lightningFirstSfx = 1;
+		}
+	} else {
+		if (!(_lightningSfxFrame & 7))
+			snd_playSoundEffect(_lightningCurSfx, -1);
+	}
+
+	_lightningSfxFrame++;
+	delete[] tpal;
 }
 
 void LoLEngine::addSpellToScroll(int spell, int charNum) {

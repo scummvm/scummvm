@@ -821,10 +821,10 @@ int LoLEngine::clickedDoorSwitch(uint16 block, uint16 direction) {
 		return 0;
 
 	snd_playSoundEffect(78, -1);
-	_emcDoorState = 0;
+	_blockDoor = 0;
 	runLevelScript(block, 0x40);
 
-	if (!_emcDoorState) {
+	if (!_blockDoor) {
 		delay(15 * _tickLength);
 		processDoorSwitch(block, 0);
 	}

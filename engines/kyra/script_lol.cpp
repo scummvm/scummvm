@@ -1671,10 +1671,10 @@ int LoLEngine::olol_checkPartyForItemType(EMCState *script) {
 	return 0;
 }
 
-int LoLEngine::olol_setUnkDoorVar(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setUnkDoorVar(%p) (%d)", (const void *)script, stackPos(0));
-	_emcDoorState = stackPos(0);
-	return _emcDoorState;
+int LoLEngine::olol_blockDoor(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_blockDoor(%p) (%d)", (const void *)script, stackPos(0));
+	_blockDoor = stackPos(0);
+	return _blockDoor;
 }
 
 int LoLEngine::olol_resetTimDialogueState(EMCState *script) {
@@ -2453,7 +2453,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x84
 	Opcode(olol_updateBlockAnimations2);
 	Opcode(olol_checkPartyForItemType);
-	Opcode(olol_setUnkDoorVar);
+	Opcode(olol_blockDoor);
 	Opcode(olol_resetTimDialogueState);
 
 	// 0x88

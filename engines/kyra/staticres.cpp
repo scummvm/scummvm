@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 46
+#define RESFILE_VERSION 47
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -452,6 +452,7 @@ bool StaticResource::init() {
 		{ lolSpellbookAnim, kRawData, "MBOOKA.DEF" },
 		{ lolSpellbookCoords, kRawData, "MBOOKC.DEF" },
 		{ lolHealShapeFrames, kRawData, "MHEAL.SHP" },
+		{ lolLightningDefs, kRawData, "MLGHTNG.DEF" },
 
 		{ 0, 0, 0 }
 	};
@@ -1858,6 +1859,15 @@ void LoLEngine::initStaticResource() {
 	_updateSpellBookCoords = _staticres->loadRawData(lolSpellbookCoords, _updateSpellBookCoordsSize);
 	_updateSpellBookAnimData = _staticres->loadRawData(lolSpellbookAnim, _updateSpellBookAnimDataSize);
 	_healShapeFrames = _staticres->loadRawData(lolHealShapeFrames, _healShapeFramesSize);
+
+	tmp = _staticres->loadRawData(lolLightningDefs, tmpSize);
+	_lightningProps = new LightningProperty[5];
+	for (int i = 0; i < 5; i++) {
+		_lightningProps[i].lastFrame = tmp[i << 2];
+		_lightningProps[i].frameDiv = tmp[(i << 2) + 1];
+		_lightningProps[i].sfxId = READ_LE_UINT16(&tmp[(i << 2) + 2]);
+	}
+	_staticres->unloadId(lolLightningDefs);	
 
 	// assign music data
 	static const char *pcMusicFileListIntro[] = { "LOREINTR" };

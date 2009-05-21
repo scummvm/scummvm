@@ -260,6 +260,12 @@ struct MapLegendData {
 	uint16 stringId;
 };
 
+struct LightningProperty {
+	uint8 lastFrame;
+	uint8 frameDiv;
+	int16 sfxId;
+};
+
 class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
@@ -689,7 +695,7 @@ private:
 	int olol_countSpecificMonsters(EMCState *script);
 	int olol_updateBlockAnimations2(EMCState *script);
 	int olol_checkPartyForItemType(EMCState *script);
-	int olol_setUnkDoorVar(EMCState *script);
+	int olol_blockDoor(EMCState *script);
 	int olol_resetTimDialogueState(EMCState *script);
 	int olol_getItemOnPos(EMCState *script);
 	int olol_removeLevelItem(EMCState *script);
@@ -955,7 +961,7 @@ private:
 	int smoothScrollDrawSpecialShape(int pageNum);
 
 	OpenDoorState _openDoorState[3];
-	int _emcDoorState;
+	int _blockDoor;
 
 	uint32 _smoothScrollTimer;
 	int _smoothScrollModeNormal;
@@ -1263,6 +1269,7 @@ private:
 	void processMagicGuardian(int charNum, int spellLevel);
 
 	void callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y);
+	void callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y);
 
 	void addSpellToScroll(int spell, int charNum);
 	void transferSpellToScollAnimation(int charNum, int spell, int slot);
@@ -1273,13 +1280,18 @@ private:
 	void inflictMagicalDamage(int target, int attacker, int damage, int index, int hitType);
 	void inflictMagicalDamageForBlock(int block, int attacker, int damage, int index);
 
-
 	ActiveSpell _activeSpell;
 	int8 _availableSpells[7];
 	int _selectedSpell;
 	const SpellProperty *_spellProperties;
 	int _spellPropertiesSize;
 	int _subMenuIndex;
+
+	LightningProperty *_lightningProps;
+	int16 _lightningCurSfx;
+	int16 _lightningDiv;
+	int16 _lightningFirstSfx;
+	int16 _lightningSfxFrame;
 
 	uint8 *_healOverlay;
 	uint8 _swarmSpellStatus;
