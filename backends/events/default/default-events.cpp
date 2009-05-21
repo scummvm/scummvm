@@ -237,6 +237,8 @@ DefaultEventManager::~DefaultEventManager() {
 
 		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordTempFileName.c_str());
 
+		assert(_playbackFile);
+
 		_recordFile = g_system->getSavefileManager()->openForSaving(_recordFileName.c_str());
 		_recordFile->writeUint32LE(RECORD_SIGNATURE);
 		_recordFile->writeUint32LE(RECORD_VERSION);

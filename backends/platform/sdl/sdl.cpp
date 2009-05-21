@@ -468,12 +468,14 @@ void OSystem_SDL::quit() {
 	free(_cursorPalette);
 	free(_mouseData);
 
-	delete _savefile;
 	delete _timer;
 
 	SDL_Quit();
 
+	// Even Manager requires save manager for storing
+	// recorded events
 	delete getEventManager();
+	delete _savefile;
 
 	exit(0);
 }
