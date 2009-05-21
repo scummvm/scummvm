@@ -1121,7 +1121,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 					break;
 
 				default:
-					// FIXME: I've seen case 12 and 13 happen in Urban
+					// FIXME: I've seen case 13 happen in Urban
 					// Runner. Perhaps it uses a more recent form of
 					// Indeo 3? There appears to have been several.
 					warning("Indeo3::decodeChunk: Unknown case %d", k);
