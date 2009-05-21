@@ -83,15 +83,6 @@ bool vocabulary_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::Stri
 	return true;
 }
 
-int vocabulary_lookup_sname(const Common::StringList &selectorNames, const char *sname) {
-	for (uint pos = 0; pos < selectorNames.size(); ++pos) {
-		if (selectorNames[pos] == sname)
-			return pos;
-	}
-
-	return -1;
-}
-
 void vocabulary_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &o) {
 	int count, i = 0;
 	Resource* r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES, 0);

@@ -194,10 +194,6 @@ int vocabulary_get_class_count(ResourceManager *resmgr);
  */
 bool vocabulary_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringList &selectorNames);
 
-/* Look up a selector name in an array, return the index */
-int vocabulary_lookup_sname(const Common::StringList &selectorNames, const char *sname);
-
-
 /**
  * Obtain the list of opcodes.
  */

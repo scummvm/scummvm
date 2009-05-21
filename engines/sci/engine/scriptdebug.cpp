@@ -2157,7 +2157,7 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t *vptr;
 	reg_t fptr;
 
-	selector_id = vocabulary_lookup_sname(s->_selectorNames, selector_name);
+	selector_id = script_find_selector(s, selector_name);
 
 	if (selector_id < 0) {
 		sciprintf("Unknown selector: \"%s\"\n", selector_name);
