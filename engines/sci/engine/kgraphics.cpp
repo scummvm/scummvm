@@ -24,6 +24,7 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 
 #include "sci/sci.h"
 #include "sci/resource.h"
@@ -32,6 +33,7 @@
 #include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
+#include "sci/gfx/seq_decoder.h"
 
 namespace Sci {
 
@@ -3307,6 +3309,47 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if ((!s->pic_not_valid) && update_immediately) { // Refresh if drawn to valid picture
 		FULL_REDRAW();
 		SCIkdebug(SCIkGRAPHICS, "Refreshing display...\n");
+	}
+
+	return s->r_acc;
+}
+
+reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	const char *filename = kernel_dereference_char_pointer(s, argv[0], 0);
+	int framerate = UKPV(1); // FIXME: verify
+	SeqDecoder seq;
+
+	if (!seq.loadFile(filename)) {
+		warning("Failed to open movie file %s", filename);
+		return s->r_acc;
+	}
+
+	bool play = true;
+	while (play) {
+		gfx_pixmap_t *pixmap = seq.getFrame(play);
+		gfx_xlate_pixmap(pixmap, s->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
+		GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset)));
+		gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
+		gfx_free_pixmap(pixmap);
+
+		uint32 startTime = g_system->getMillis();
+
+		// Wait before showing the next frame
+		while (play && (g_system->getMillis() < startTime + 1000 / framerate)) {
+			// FIXME: we should probably make a function that handles quitting in these kinds of situations
+			Common::Event curEvent;
+			Common::EventManager *eventMan = g_system->getEventManager();
+
+			// Process quit events
+			while (eventMan->pollEvent(curEvent)) {
+				if (curEvent.type == Common::EVENT_QUIT) {
+					play = false;
+					quit_vm();
+				}
+			}
+
+			g_system->delayMillis(10);
+		}
 	}
 
 	return s->r_acc;
