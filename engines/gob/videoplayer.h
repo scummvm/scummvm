@@ -28,7 +28,7 @@
 
 #include "common/array.h"
 
-#include "graphics/video/coktelvideo.h"
+#include "graphics/video/coktelvideo/coktelvideo.h"
 
 #include "gob/dataio.h"
 

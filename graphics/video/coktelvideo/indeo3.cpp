@@ -35,8 +35,8 @@
 #include "common/file.h"
 
 #include "graphics/dither.h"
-#include "graphics/video/indeo3.h"
-#include "graphics/video/indeo3data.h"
+#include "graphics/video/coktelvideo/indeo3.h"
+#include "graphics/video/coktelvideo/indeo3data.h"
 
 namespace Graphics {
 

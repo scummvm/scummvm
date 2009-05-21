@@ -27,8 +27,8 @@
 #include "common/system.h"
 
 #include "graphics/dither.h"
-#include "graphics/video/coktelvideo.h"
-#include "graphics/video/indeo3.h"
+#include "graphics/video/coktelvideo/coktelvideo.h"
+#include "graphics/video/coktelvideo/indeo3.h"
 
 namespace Graphics {
 

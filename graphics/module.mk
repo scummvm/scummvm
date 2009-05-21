@@ -23,8 +23,8 @@ MODULE_OBJS := \
 	video/mpeg_player.o \
 	video/smk_player.o \
 	video/video_player.o \
-	video/indeo3.o \
-	video/coktelvideo.o
+	video/coktelvideo/indeo3.o \
+	video/coktelvideo/coktelvideo.o
 
 ifndef DISABLE_SCALERS
 MODULE_OBJS += \
