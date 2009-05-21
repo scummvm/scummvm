@@ -76,12 +76,12 @@ scummvm.bin : scummvm.elf
 SCUMMVM.BIN : scummvm.bin
 	scramble $< $@
 
-plugin_dist :
-	for p in plugins/*.plg; do \
+plugin_dist : $(PLUGINS)
+	for p in $(PLUGINS); do \
 	  sh-elf-strip -g -o "`basename \"$$p\" | LC_CTYPE=C tr '[:lower:]' '[:upper:]'`" "$$p"; \
 	done
 
-dist : SCUMMVM.BIN plugins plugin_dist
+dist : SCUMMVM.BIN plugin_dist
 
 spotless : distclean
 	$(RM) SCUMMVM.BIN scummvm.bin *.PLG

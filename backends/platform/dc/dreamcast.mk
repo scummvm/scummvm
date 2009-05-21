@@ -7,11 +7,11 @@ CC := $(CXX)
 ASFLAGS := $(CXXFLAGS)
 
 
-dist : SCUMMVM.BIN plugins plugin_dist
+dist : SCUMMVM.BIN plugin_dist
 
-plugin_dist :
-	for p in plugins/*.plg; do \
-	  if [ x'plugins/*.plg' != x"$$p" ]; then sh-elf-strip -g -o "`basename \"$$p\" | LC_CTYPE=C tr '[:lower:]' '[:upper:]'`" "$$p"; fi ; \
+plugin_dist : $(PLUGINS)
+	for p in $(PLUGINS); do \
+	  sh-elf-strip -g -o "`basename \"$$p\" | LC_CTYPE=C tr '[:lower:]' '[:upper:]'`" "$$p"; \
 	done
 
 SCUMMVM.BIN : scummvm.bin
