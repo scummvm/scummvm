@@ -260,6 +260,9 @@
 			RelativePath="..\..\engines\gob\goblin_v4.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\helper.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\init.cpp">
 		</File>
 		<File
