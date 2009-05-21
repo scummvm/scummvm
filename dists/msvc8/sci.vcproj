@@ -238,6 +238,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\kmisc.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\kmovement.cpp"
 				>
 			</File>

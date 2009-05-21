@@ -1687,6 +1687,30 @@
 					RelativePath="..\..\graphics\video\video_player.h"
 					>
 				</File>
+				<Filter
+					Name="coktelvideo"
+					>
+					<File
+						RelativePath="..\..\graphics\video\coktelvideo\coktelvideo.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\graphics\video\coktelvideo\coktelvideo.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\graphics\video\coktelvideo\indeo3.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\graphics\video\coktelvideo\indeo3.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\graphics\video\coktelvideo\indeo3data.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
