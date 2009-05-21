@@ -224,7 +224,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 	ptr = (gfxw_snapshot_t **)kmem(s, handle);
 
 	if (!ptr) {
-		warning("Attempt to restore invalid handle "PREG, PRINT_REG(handle));
+		warning("Attempt to restore invalid handle %04x:%04x", PRINT_REG(handle));
 		return;
 	}
 
@@ -254,7 +254,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 
 
 	if (!ptr) {
-		error("Attempt to restore invalid snaphot with handle "PREG, PRINT_REG(handle));
+		error("Attempt to restore invalid snaphot with handle %04x:%04x", PRINT_REG(handle));
 		return;
 	}
 
@@ -744,7 +744,7 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 	if (other_area.left >= 320 || other_area.top >= 190 || area.right >= 320 || area.bottom >= 190)
 		return 0; // Out of scope
 
-	SCIkdebug(SCIkBRESEN, "OtherSignal=%04x, z=%04x obj="PREG"\n", other_signal, (other_signal & view_mask), PRINT_REG(other_obj));
+	SCIkdebug(SCIkBRESEN, "OtherSignal=%04x, z=%04x obj=%04x:%04x\n", other_signal, (other_signal & view_mask), PRINT_REG(other_obj));
 
 	if ((other_signal & (view_mask)) == 0) {
 		// check whether the other object ignores actors
@@ -782,7 +782,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 	zone = gfx_rect(abs_zone.left + port->zone.x, abs_zone.top + port->zone.y, abs_zone.width(), abs_zone.height());
 
 	signal = GET_SEL32V(obj, signal);
-	SCIkdebug(SCIkBRESEN, "Checking collision: (%d,%d) to (%d,%d) ([%d..%d]x[%d..%d]), obj="PREG", sig=%04x, cliplist="PREG"\n",
+	SCIkdebug(SCIkBRESEN, "Checking collision: (%d,%d) to (%d,%d) ([%d..%d]x[%d..%d]), obj=%04x:%04x, sig=%04x, cliplist=%04x:%04x\n",
 	          GFX_PRINT_RECT(zone), abs_zone.left, abs_zone.right, abs_zone.top, abs_zone.bottom,
 	          PRINT_REG(obj), signal, PRINT_REG(cliplist_ref));
 
@@ -831,11 +831,11 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 
 		while (node) { // Check each object in the list against our bounding rectangle
 			reg_t other_obj = node->value;
-			SCIkdebug(SCIkBRESEN, "  comparing against "PREG"\n", PRINT_REG(other_obj));
+			SCIkdebug(SCIkBRESEN, "  comparing against %04x:%04x\n", PRINT_REG(other_obj));
 
 			if (!is_object(s, other_obj)) {
-				warning("CanBeHere() cliplist contains non-object "PREG, PRINT_REG(other_obj));
-			} else if (!REG_EQ(other_obj, obj)) { // Clipping against yourself is not recommended
+				warning("CanBeHere() cliplist contains non-object %04x:%04x", PRINT_REG(other_obj));
+			} else if (other_obj != obj) { // Clipping against yourself is not recommended
 
 				if (collides_with(s, abs_zone, other_obj, 0, GASEOUS_VIEW_MASK_PASSIVE, funct_nr, argc, argv)) {
 					SCIkdebug(SCIkBRESEN, " -> %04x\n", retval);
@@ -1102,7 +1102,7 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 		if (loop != oldloop) {
 			loop = 0;
 			PUT_SEL32V(object, loop, 0);
-			SCIkdebug(SCIkGRAPHICS, "Resetting loop for "PREG"!\n", PRINT_REG(object));
+			SCIkdebug(SCIkGRAPHICS, "Resetting loop for %04x:%04x!\n", PRINT_REG(object));
 		}
 
 		if (cel != oldcel) {
@@ -1330,7 +1330,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse);
 
 static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = IS_NULL_REG(text_pos) ? NULL : (char *)s->seg_manager->dereference(text_pos, NULL);
+	char *text = text_pos.isNull() ? NULL : (char *)s->seg_manager->dereference(text_pos, NULL);
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
 
@@ -1423,11 +1423,11 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				int textlen;
 
 				if (!text) {
-					warning("Could not draw control: "PREG" does not reference text", PRINT_REG(text_pos));
+					warning("Could not draw control: %04x:%04x does not reference text", PRINT_REG(text_pos));
 					return s->r_acc;
 				}
 
-				if (REG_EQ(text_pos, s->save_dir_copy)) {
+				if (text_pos == s->save_dir_copy) {
 					max = MAX_SAVE_DIR_SIZE - 1;
 					display_offset = s->save_dir_edit_offset;
 				}
@@ -1544,7 +1544,7 @@ reg_t kEditControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					if (max_displayed < max)
 						update_cursor_limits(&display_offset, &cursor, max_displayed);
 
-					if (REG_EQ(text_pos, s->save_dir_copy))
+					if (text_pos == s->save_dir_copy)
 						s->save_dir_edit_offset = display_offset;
 
 					cursor -= display_offset;
@@ -1588,7 +1588,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	int font_nr = GET_SEL32V(obj, font);
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = IS_NULL_REG(text_pos) ? NULL : (char *)s->seg_manager->dereference(text_pos, NULL);
+	char *text = text_pos.isNull() ? NULL : (char *)s->seg_manager->dereference(text_pos, NULL);
 	int view = GET_SEL32V(obj, view);
 	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
 	int loop = sign_extend_byte(GET_SEL32V(obj, loop));
@@ -1599,13 +1599,13 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	int cursor;
 	int max;
 
-	if (REG_EQ(text_pos, s->save_dir_copy)) {
+	if (text_pos == s->save_dir_copy) {
 		SCIkdebug(SCIkGRAPHICS, "Displaying the save_dir copy\n");
 	}
 
 	switch (type) {
 	case K_CONTROL_BUTTON:
-		SCIkdebug(SCIkGRAPHICS, "drawing button "PREG" to %d,%d\n", PRINT_REG(obj), x, y);
+		SCIkdebug(SCIkGRAPHICS, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, text, font_nr,
 		                          (int8)(state & kControlStateFramed), (int8)inverse, (int8)(state & kControlStateDisabled)));
 		break;
@@ -1613,14 +1613,14 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	case K_CONTROL_TEXT:
 		mode = (gfx_alignment_t) GET_SEL32V(obj, mode);
 
-		SCIkdebug(SCIkGRAPHICS, "drawing text "PREG" to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
+		SCIkdebug(SCIkGRAPHICS, "drawing text %04x:%04x to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
 
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, text, font_nr, mode,
 									(int8)(!!(state & kControlStateDitherFramed)), (int8)inverse));
 		break;
 
 	case K_CONTROL_EDIT:
-		SCIkdebug(SCIkGRAPHICS, "drawing edit control "PREG" to %d,%d\n", PRINT_REG(obj), x, y);
+		SCIkdebug(SCIkGRAPHICS, "drawing edit control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
 
 		max = GET_SEL32V(obj, max);
 		cursor = GET_SEL32V(obj, cursor);
@@ -1628,7 +1628,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		if (cursor > (signed)strlen(text))
 			cursor = strlen(text);
 
-		if (REG_EQ(text_pos, s->save_dir_copy))
+		if (text_pos == s->save_dir_copy)
 			update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);
 
 		update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);
@@ -1637,7 +1637,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	case K_CONTROL_ICON:
 
-		SCIkdebug(SCIkGRAPHICS, "drawing icon control "PREG" to %d,%d\n", PRINT_REG(obj), x, y - 1);
+		SCIkdebug(SCIkGRAPHICS, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y - 1);
 
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_icon_control(s->port, obj, area, view, loop, cel,
 		                          (int8)(state & kControlStateFramed), (int8)inverse));
@@ -1688,7 +1688,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		break;
 
 	default:
-		warning("Unknown control type: %d at "PREG", at (%d, %d) size %d x %d",
+		warning("Unknown control type: %d at %04x:%04x, at (%d, %d) size %d x %d",
 		         type, PRINT_REG(obj), x, y, xl, yl);
 	}
 
@@ -1718,7 +1718,7 @@ static void draw_obj_to_control_map(EngineState *s, GfxDynView *view) {
 	reg_t obj = make_reg(view->_ID, view->_subID);
 
 	if (!is_object(s, obj))
-		warning("View %d does not contain valid object reference "PREG"", view->_ID, PRINT_REG(obj));
+		warning("View %d does not contain valid object reference %04x:%04x", view->_ID, PRINT_REG(obj));
 
 	if (!(view->signalp && (((reg_t *)view->signalp)->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
 		Common::Rect abs_zone = get_nsrect(s, make_reg(view->_ID, view->_subID), 1);
@@ -1756,19 +1756,19 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 				temp = GET_SEL32V(obj, nsBottom);
 				PUT_SEL32V(obj, lsBottom, temp);
 #ifdef DEBUG_LSRECT
-				fprintf(stderr, "lsRected "PREG"\n", PRINT_REG(obj));
+				fprintf(stderr, "lsRected %04x:%04x\n", PRINT_REG(obj));
 #endif
 			}
 #ifdef DEBUG_LSRECT
 			else
-				fprintf(stderr, "Not lsRecting "PREG" because %d\n", PRINT_REG(obj), lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL));
+				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL));
 #endif
 
 			if (widget->signal & _K_VIEW_SIG_FLAG_HIDDEN)
 				widget->signal |= _K_VIEW_SIG_FLAG_REMOVE;
 		}
 #ifdef DEBUG_LSRECT
-		fprintf(stderr, "obj "PREG" has pflags %x\n", PRINT_REG(obj), (widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)));
+		fprintf(stderr, "obj %04x:%04x has pflags %x\n", PRINT_REG(obj), (widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)));
 #endif
 
 		if (widget->signalp) {
@@ -1820,7 +1820,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 				reg_t under_bits = NULL_REG;
 
 				if (!is_object(s, obj)) {
-					error("Non-object "PREG" present in view list during delete time\n", PRINT_REG(obj));
+					error("Non-object %04x:%04x present in view list during delete time\n", PRINT_REG(obj));
 					obj = NULL_REG;
 				} else
 					if (widget->under_bitsp) { // Is there a bg picture left to clean?
@@ -1830,7 +1830,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 							if (!kfree(s, mem_handle)) {
 								*((reg_t*)(widget->under_bitsp)) = make_reg(0, widget->under_bits = 0);
 							} else {
-								warning("Treating viewobj "PREG" as no longer present", PRINT_REG(obj));
+								warning("Treating viewobj %04x:%04x as no longer present", PRINT_REG(obj));
 								obj = NULL_REG;
 							}
 						}
@@ -1838,9 +1838,9 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 
 				if (is_object(s, obj)) {
 					if (invoke_selector(INV_SEL(obj, delete_, 1), 0))
-						warning("Object at "PREG" requested deletion, but does not have a delete funcselector", PRINT_REG(obj));
+						warning("Object at %04x:%04x requested deletion, but does not have a delete funcselector", PRINT_REG(obj));
 					if (_k_animate_ran) {
-						warning("Object at "PREG" invoked kAnimate() during deletion", PRINT_REG(obj));
+						warning("Object at %04x:%04x invoked kAnimate() during deletion", PRINT_REG(obj));
 						return dropped;
 					}
 
@@ -1852,10 +1852,10 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 						graph_restore_box(s, under_bits);
 					}
 
-					SCIkdebug(SCIkGRAPHICS, "Freeing "PREG" with signal=%04x\n", PRINT_REG(obj), signal);
+					SCIkdebug(SCIkGRAPHICS, "Freeing %04x:%04x with signal=%04x\n", PRINT_REG(obj), signal);
 
 					if (!(signal & _K_VIEW_SIG_FLAG_HIDDEN)) {
-						SCIkdebug(SCIkGRAPHICS, "Adding view at "PREG" to background\n", PRINT_REG(obj));
+						SCIkdebug(SCIkGRAPHICS, "Adding view at %04x:%04x to background\n", PRINT_REG(obj));
 						if (!(gfxw_remove_id(widget->_parent, widget->_ID, widget->_subID) == widget)) {
 							error("Attempt to remove view with ID %x:%x from list failed!\n", widget->_ID, widget->_subID);
 							BREAKPOINT();
@@ -1868,7 +1868,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 						widget->draw_bounds.x += s->dyn_views->_bounds.x - widget->_parent->_bounds.x;
 						dropped = 1;
 					} else {
-						SCIkdebug(SCIkGRAPHICS, "Deleting view at "PREG"\n", PRINT_REG(obj));
+						SCIkdebug(SCIkGRAPHICS, "Deleting view at %04x:%04x\n", PRINT_REG(obj));
 						widget->_flags |= GFXW_FLAG_VISIBLE;
 						gfxw_annihilate(widget);
 						return -1; // restart: Done in Animate()
@@ -1898,7 +1898,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	int z;
 	GfxDynView *widget;
 
-	SCIkdebug(SCIkGRAPHICS, " - Adding "PREG"\n", PRINT_REG(obj));
+	SCIkdebug(SCIkGRAPHICS, " - Adding %04x:%04x\n", PRINT_REG(obj));
 
 	obj = obj;
 
@@ -1938,14 +1938,14 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	if (lookup_selector(s, obj, s->selector_map.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
 		under_bitsp = NULL;
 		under_bits = NULL_REG;
-		SCIkdebug(SCIkGRAPHICS, "Object at "PREG" has no underBits\n", PRINT_REG(obj));
+		SCIkdebug(SCIkGRAPHICS, "Object at %04x:%04x has no underBits\n", PRINT_REG(obj));
 	} else
 		under_bits = *((reg_t *)under_bitsp);
 
 	if (lookup_selector(s, obj, s->selector_map.signal, &(signalp), NULL) != kSelectorVariable) {
 		signalp = NULL;
 		signal = 0;
-		SCIkdebug(SCIkGRAPHICS, "Object at "PREG" has no signal selector\n", PRINT_REG(obj));
+		SCIkdebug(SCIkGRAPHICS, "Object at %04x:%04x has no signal selector\n", PRINT_REG(obj));
 	} else {
 		signal = signalp->offset;
 		SCIkdebug(SCIkGRAPHICS, "    with signal = %04x\n", signal);
@@ -1999,7 +1999,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 
 			if (!(signal & _K_VIEW_SIG_FLAG_FROZEN)) {
 
-				SCIkdebug(SCIkGRAPHICS, "  invoking "PREG"::doit()\n", PRINT_REG(obj));
+				SCIkdebug(SCIkGRAPHICS, "  invoking %04x:%04x::doit()\n", PRINT_REG(obj));
 				invoke_selector(INV_SEL(obj, doit, 1), 0); // Call obj::doit() if neccessary
 			}
 		}
@@ -2064,7 +2064,7 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 		// their clipped nsRect drawn to the control map
 		if (view->signal & _K_VIEW_SIG_FLAG_STOP_UPDATE) {
 			view->signal |= _K_VIEW_SIG_FLAG_STOPUPD;
-			SCIkdebug(SCIkGRAPHICS, "Setting magic STOP_UPD for "PREG"\n", PRINT_REG(obj));
+			SCIkdebug(SCIkGRAPHICS, "Setting magic STOP_UPD for %04x:%04x\n", PRINT_REG(obj));
 		}
 
 		if ((options & _K_MAKE_VIEW_LIST_DRAW_TO_CONTROL_MAP))
@@ -2098,12 +2098,12 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 			}
 		}
 
-		SCIkdebug(SCIkGRAPHICS, "  dv["PREG"]: signal %04x -> %04x\n", PRINT_REG(obj), oldsignal, view->signal);
+		SCIkdebug(SCIkGRAPHICS, "  dv[%04x:%04x]: signal %04x -> %04x\n", PRINT_REG(obj), oldsignal, view->signal);
 
 		// Never happens
 /*		if (view->signal & 0) {
 			view->signal &= ~_K_VIEW_SIG_FLAG_STOPUPD;
-			fprintf(stderr, "Unsetting magic StopUpd for view "PREG"\n", PRINT_REG(obj));
+			fprintf(stderr, "Unsetting magic StopUpd for view %04x:%04x\n", PRINT_REG(obj));
 		} */
 
 		view = (GfxDynView *)view->_next;
@@ -2162,7 +2162,7 @@ static void _k_raise_topmost_in_view_list(EngineState *s, GfxList *list, GfxDynV
 
 		// step 11
 		if ((view->signal & (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == 0) {
-			SCIkdebug(SCIkGRAPHICS, "Forcing precedence 2 at ["PREG"] with %04x\n", PRINT_REG(make_reg(view->_ID, view->_subID)), view->signal);
+			SCIkdebug(SCIkGRAPHICS, "Forcing precedence 2 at [%04x:%04x] with %04x\n", PRINT_REG(make_reg(view->_ID, view->_subID)), view->signal);
 			view->force_precedence = 2;
 
 			if ((view->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_HIDDEN)) == _K_VIEW_SIG_FLAG_REMOVE) {
@@ -2187,7 +2187,7 @@ static void _k_redraw_view_list(EngineState *s, GfxList *list) {
 	GfxDynView *view = (GfxDynView *) list->_contents;
 	while (view) {
 
-		SCIkdebug(SCIkGRAPHICS, "  dv["PREG"]: signal %04x\n", make_reg(view->_ID, view->_subID), view->signal);
+		SCIkdebug(SCIkGRAPHICS, "  dv[%04x:%04x]: signal %04x\n", make_reg(view->_ID, view->_subID), view->signal);
 
 		// step 1 of subalgorithm
 		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
@@ -2313,7 +2313,7 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		List *list;
 
 		if (!list_ref.segment) {
-			warning("Attempt to AddToPic single non-list: "PREG"", PRINT_REG(list_ref));
+			warning("Attempt to AddToPic single non-list: %04x:%04x", PRINT_REG(list_ref));
 			return s->r_acc;
 		}
 
@@ -3174,7 +3174,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (!text) {
-		error("Display with invalid reference "PREG"!\n", PRINT_REG(textp));
+		error("Display with invalid reference %04x:%04x!\n", PRINT_REG(textp));
 		return NULL_REG;
 	}
 
@@ -3310,7 +3310,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->r_acc = graph_save_box(s, save_area);
 		text_handle->_serial++; // This is evil!
 
-		SCIkdebug(SCIkGRAPHICS, "Saving (%d, %d) size (%d, %d) as "PREG"\n", save_area.x, save_area.y, save_area.width, save_area.height, s->r_acc);
+		SCIkdebug(SCIkGRAPHICS, "Saving (%d, %d) size (%d, %d) as %04x:%04x\n", save_area.x, save_area.y, save_area.width, save_area.height, s->r_acc);
 	}
 
 	SCIkdebug(SCIkGRAPHICS, "Display: Commiting text '%s'\n", text);

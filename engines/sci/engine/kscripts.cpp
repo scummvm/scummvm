@@ -45,12 +45,12 @@ void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t va
 
 	if ((selector_id < 0) || (selector_id > (int)s->_selectorNames.size())) {
 		warning("Attempt to write to invalid selector %d of"
-		         " object at "PREG" (%s L%d).", selector_id, PRINT_REG(object), fname, line);
+		         " object at %04x:%04x (%s L%d).", selector_id, PRINT_REG(object), fname, line);
 		return;
 	}
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != kSelectorVariable)
-		warning("Selector '%s' of object at "PREG" could not be"
+		warning("Selector '%s' of object at %04x:%04x could not be"
 		         " written to (%s L%d)", s->_selectorNames[selector_id].c_str(), PRINT_REG(object), fname, line);
 	else
 		*address = value;
@@ -71,7 +71,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 	slc_type = lookup_selector(s, object, selector_id, NULL, &address);
 
 	if (slc_type == kSelectorNone) {
-		error("Selector '%s' of object at "PREG" could not be invoked (%s L%d)\n",
+		error("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)\n",
 		         s->_selectorNames[selector_id].c_str(), PRINT_REG(object), fname, line);
 		if (noinvalid == 0)
 			KERNEL_OOPS("Not recoverable: VM was halted\n");
@@ -184,16 +184,16 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Clone *clone_obj; // same as Object*
 
 	if (!parent_obj) {
-		error("Attempt to clone non-object/class at "PREG" failed", PRINT_REG(parent_addr));
+		error("Attempt to clone non-object/class at %04x:%04x failed", PRINT_REG(parent_addr));
 		return NULL_REG;
 	}
 
-	SCIkdebug(SCIkMEM, "Attempting to clone from "PREG"\n", PRINT_REG(parent_addr));
+	SCIkdebug(SCIkMEM, "Attempting to clone from %04x:%04x\n", PRINT_REG(parent_addr));
 
 	clone_obj = s->seg_manager->alloc_Clone(&clone_addr);
 
 	if (!clone_obj) {
-		error("Cloning "PREG" failed-- internal error!\n", PRINT_REG(parent_addr));
+		error("Cloning %04x:%04x failed-- internal error!\n", PRINT_REG(parent_addr));
 		return NULL_REG;
 	}
 
@@ -219,7 +219,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 underBits;
 
 	if (!victim_obj) {
-		error("Attempt to dispose non-class/object at "PREG"\n",
+		error("Attempt to dispose non-class/object at %04x:%04x\n",
 		         PRINT_REG(victim_addr));
 		return s->r_acc;
 	}
@@ -232,7 +232,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	underBits = GET_SEL32V(victim_addr, underBits);
 	if (underBits) {
-		warning("Clone "PREG" was cleared with underBits set", PRINT_REG(victim_addr));
+		warning("Clone %04x:%04x was cleared with underBits set", PRINT_REG(victim_addr));
 	}
 #if 0
 	if (s->dyn_views) {  // Free any widget associated with the clone

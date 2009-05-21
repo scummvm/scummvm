@@ -337,7 +337,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					cmplen = 256;
 
 				if (bp->type == BREAK_SELECTOR && !strncmp(bp->data.name, method_name, cmplen)) {
-					sciprintf("Break on %s (in ["PREG"])\n", method_name, PRINT_REG(send_obj));
+					sciprintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
 					script_debug_flag = print_send_action = 1;
 					breakpointFlag = true;
 					break;
@@ -347,12 +347,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 #ifdef VM_DEBUG_SEND
-		sciprintf("Send to "PREG", selector %04x (%s):", PRINT_REG(send_obj), selector, s->_selectorNames[selector].c_str());
+		sciprintf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, s->_selectorNames[selector].c_str());
 #endif // VM_DEBUG_SEND
 
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
-			sciprintf("Send to invalid selector 0x%x of object at "PREG"\n", 0xffff & selector, PRINT_REG(send_obj));
+			sciprintf("Send to invalid selector 0x%x of object at %04x:%04x\n", 0xffff & selector, PRINT_REG(send_obj));
 
 			// WORKAROUND: LSL6 tries to access the invalid 'keep' selector of the game object.
 			// FIXME: Find out if this is a game bug.
@@ -370,7 +370,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #ifdef VM_DEBUG_SEND
 			sciprintf("Varselector: ");
 			if (argc)
-				sciprintf("Write "PREG"\n", PRINT_REG(argp[1]));
+				sciprintf("Write %04x:%04x\n", PRINT_REG(argp[1]));
 			else
 				sciprintf("Read\n");
 #endif // VM_DEBUG_SEND
@@ -391,7 +391,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 						reg_t oldReg = *varp;
 						reg_t newReg = argp[1];
 
-						sciprintf("[write to selector: change "PREG" to "PREG"]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
+						sciprintf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
 						print_send_action = 0;
 					}
 					CallsStruct call;
@@ -405,7 +405,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				break;
 #ifdef STRICT_SEND
 			default:
-				sciprintf("Send error: Variable selector %04x in "PREG" called with %04x params\n", selector, PRINT_REG(send_obj), argc);
+				sciprintf("Send error: Variable selector %04x in %04x:%04x called with %04x params\n", selector, PRINT_REG(send_obj), argc);
 				script_debug_flag = 1; // Enter debug mode
 				_debug_seeking = _debug_step_running = 0;
 #endif
@@ -421,7 +421,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				if (i + 1 < argc)
 					sciprintf(", ");
 			}
-			sciprintf(") at "PREG"\n", PRINT_REG(funcp));
+			sciprintf(") at %04x:%04x\n", PRINT_REG(funcp));
 #endif // VM_DEBUG_SEND
 			if (print_send_action) {
 				sciprintf("[invoke selector]\n");
@@ -531,7 +531,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 
 	if (!mobj) {
 		script_debug_flag = script_error_flag = 1;
-		sciprintf("[VM] Error: Attempt to add %d to invalid pointer "PREG"!", offset, PRINT_REG(base));
+		sciprintf("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x!", offset, PRINT_REG(base));
 		return NULL_REG;
 	}
 
@@ -549,7 +549,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 		break;
 
 	default:
-		sciprintf("[VM] Error: Attempt to add %d to pointer "PREG": Pointer arithmetics of this type unsupported!", offset, PRINT_REG(base));
+		sciprintf("[VM] Error: Attempt to add %d to pointer %04x:%04x: Pointer arithmetics of this type unsupported!", offset, PRINT_REG(base));
 		return NULL_REG;
 
 	}
@@ -656,7 +656,7 @@ void run_vm(EngineState *s, int restoring) {
 				code_buf_size = scr->buf_size;
 #endif
 				/*if (!obj) {
-					SCIkdebug(SCIkWARNING, "Running with non-existant self= "PREG"\n", PRINT_REG(xs->objp));
+					SCIkdebug(SCIkWARNING, "Running with non-existant self= %04x:%04x\n", PRINT_REG(xs->objp));
 				}*/
 
 				local_script = script_locate_by_segment(s, xs->local_segment);
@@ -782,7 +782,7 @@ void run_vm(EngineState *s, int restoring) {
 				// Pointer arithmetics!
 				if (s->r_acc.segment) {
 					if (r_temp.segment) {
-						sciprintf("Error: Attempt to add two pointers, stack="PREG" and acc="PREG"!\n",
+						sciprintf("Error: Attempt to add two pointers, stack=%04x:%04x and acc=%04x:%04x!\n",
 						          PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 						script_debug_flag = script_error_flag = 1;
 						offset = 0;
@@ -809,7 +809,7 @@ void run_vm(EngineState *s, int restoring) {
 				// Pointer arithmetics!
 				if (s->r_acc.segment) {
 					if (r_temp.segment) {
-						sciprintf("Error: Attempt to subtract two pointers, stack="PREG" and acc="PREG"!\n",
+						sciprintf("Error: Attempt to subtract two pointers, stack=%04x:%04x and acc=%04x:%04x!\n",
 						          PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 						script_debug_flag = script_error_flag = 1;
 						offset = 0;
@@ -876,14 +876,14 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x0d: // eq?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			s->r_acc = make_reg(0, REG_EQ(r_temp, s->r_acc));
+			s->r_acc = make_reg(0, r_temp == s->r_acc);
 			// Explicitly allow pointers to be compared
 			break;
 
 		case 0x0e: // ne?
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
-			s->r_acc = make_reg(0, !REG_EQ(r_temp, s->r_acc));
+			s->r_acc = make_reg(0, r_temp != s->r_acc);
 			// Explicitly allow pointers to be compared
 			break;
 
@@ -1238,7 +1238,7 @@ void run_vm(EngineState *s, int restoring) {
 
 #ifndef DISABLE_VALIDATIONS
 			if (s->r_acc.offset >= code_buf_size) {
-				sciprintf("VM: lofsa operation overflowed: "PREG" beyond end"
+				sciprintf("VM: lofsa operation overflowed: %04x:%04x beyond end"
 				          " of script (at %04x)\n", PRINT_REG(s->r_acc), code_buf_size);
 				script_error_flag = script_debug_flag = 1;
 			}
@@ -1254,7 +1254,7 @@ void run_vm(EngineState *s, int restoring) {
 				r_temp.offset = xs->addr.pc.offset + opparams[0];
 #ifndef DISABLE_VALIDATIONS
 			if (r_temp.offset >= code_buf_size) {
-				sciprintf("VM: lofss operation overflowed: "PREG" beyond end"
+				sciprintf("VM: lofss operation overflowed: %04x:%04x beyond end"
 				          " of script (at %04x)\n", PRINT_REG(r_temp), code_buf_size);
 				script_error_flag = script_debug_flag = 1;
 			}
@@ -1545,7 +1545,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 	if (!obj) {
 		CORE_ERROR("SLC-LU", "Attempt to send to non-object or invalid script");
-		sciprintf("Address was "PREG"\n", PRINT_REG(obj_location));
+		sciprintf("Address was %04x:%04x\n", PRINT_REG(obj_location));
 		return kSelectorNone;
 	}
 
@@ -1557,8 +1557,8 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 	if (!obj) {
 		CORE_ERROR("SLC-LU", "Error while looking up Species class");
-		sciprintf("Original address was "PREG"\n", PRINT_REG(obj_location));
-		sciprintf("Species address was "PREG"\n", PRINT_REG(obj->_variables[SCRIPT_SPECIES_SELECTOR]));
+		sciprintf("Original address was %04x:%04x\n", PRINT_REG(obj_location));
+		sciprintf("Species address was %04x:%04x\n", PRINT_REG(obj->_variables[SCRIPT_SPECIES_SELECTOR]));
 		return kSelectorNone;
 	}
 

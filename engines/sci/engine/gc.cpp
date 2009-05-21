@@ -40,7 +40,7 @@ struct WorklistManager {
 			return;
 
 	#ifdef DEBUG_GC_VERBOSE
-		sciprintf("[GC] Adding "PREG"\n", PRINT_REG(reg));
+		sciprintf("[GC] Adding %04x:%04x\n", PRINT_REG(reg));
 	#endif
 
 		if (_map.contains(reg))
@@ -137,7 +137,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 		wm._worklist.pop_back();
 		if (reg.segment != s->stack_segment) { // No need to repeat this one
 #ifdef DEBUG_GC_VERBOSE
-			sciprintf("[GC] Checking "PREG"\n", PRINT_REG(reg));
+			sciprintf("[GC] Checking %04x:%04x\n", PRINT_REG(reg));
 #endif
 			if (reg.segment < sm->_heap.size() && sm->_heap[reg.segment])
 				sm->_heap[reg.segment]->listAllOutgoingReferences(s, reg, &wm, add_outgoing_refs);
@@ -168,7 +168,7 @@ void free_unless_used(void *refcon, reg_t addr) {
 		// Not found -> we can free it
 		deallocator->mobj->freeAtAddress(deallocator->segmgr, addr);
 #ifdef DEBUG_GC
-		sciprintf("[GC] Deallocating "PREG"\n", PRINT_REG(addr));
+		sciprintf("[GC] Deallocating %04x:%04x\n", PRINT_REG(addr));
 		deallocator->segcount[deallocator->mobj->getType()]++;
 #endif
 	}

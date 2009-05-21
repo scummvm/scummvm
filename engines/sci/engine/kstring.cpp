@@ -89,7 +89,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	said_block = (byte *) kernel_dereference_bulk_pointer(s, heap_said_block, 0);
 
 	if (!said_block) {
-		warning("Said on non-string, pointer "PREG"", PRINT_REG(heap_said_block));
+		warning("Said on non-string, pointer %04x:%04x", PRINT_REG(heap_said_block));
 		return NULL_REG;
 	}
 
@@ -98,7 +98,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		vocab_decypher_said_block(s, said_block);
 	}
 
-	if (IS_NULL_REG(s->parser_event) || (GET_SEL32V(s->parser_event, claimed))) {
+	if (s->parser_event.isNull() || (GET_SEL32V(s->parser_event, claimed))) {
 		return NULL_REG;
 	}
 
@@ -289,12 +289,12 @@ reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *src = (char *) kernel_dereference_bulk_pointer(s, argv[1], 0);
 
 	if (!dest) {
-		warning("Attempt to strcpy TO invalid pointer "PREG"",
+		warning("Attempt to strcpy TO invalid pointer %04x:%04x",
 		          PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 	if (!src) {
-		warning("Attempt to strcpy FROM invalid pointer "PREG"",
+		warning("Attempt to strcpy FROM invalid pointer %04x:%04x",
 		          PRINT_REG(argv[1]));
 		return NULL_REG;
 	}
@@ -353,7 +353,7 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t *dest2;
 
 	if (!dest) {
-		warning("Attempt to StrAt at invalid pointer "PREG"", PRINT_REG(argv[0]));
+		warning("Attempt to StrAt at invalid pointer %04x:%04x", PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 
@@ -739,7 +739,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			if (buffer) {
 				strcpy(buffer, str);
 			} else {
-				warning("Message: buffer "PREG" invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str);
+				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str);
 
 				// Set buffer to empty string if possible
 				buffer = kernel_dereference_char_pointer(s, bufferReg, 1);
@@ -791,7 +791,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			WRITE_LE_UINT16(buffer + 6, msg.cond);
 			WRITE_LE_UINT16(buffer + 8, msg.seq);
 		} else {
-			warning("Message: buffer "PREG" invalid or too small to hold the tuple", PRINT_REG(argv[1]));
+			warning("Message: buffer %04x:%04x invalid or too small to hold the tuple", PRINT_REG(argv[1]));
 		}
 
 		return NULL_REG;

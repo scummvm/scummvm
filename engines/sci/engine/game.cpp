@@ -574,13 +574,13 @@ int game_init(EngineState *s) {
 	const char *tmp = obj_get_name(s, game_obj);
 
 	if (!tmp) {
-		sciprintf("Error: script.000, export 0 ("PREG") does not\n"
+		sciprintf("Error: script.000, export 0 (%04x:%04x) does not\n"
 		          " yield an object with a name -> sanity check failed\n", PRINT_REG(game_obj));
 		return 1;
 	}
 	s->_gameName = tmp;
 
-	sciprintf(" \"%s\" at "PREG"\n", s->_gameName.c_str(), PRINT_REG(game_obj));
+	sciprintf(" \"%s\" at %04x:%04x\n", s->_gameName.c_str(), PRINT_REG(game_obj));
 
 	s->game_obj = game_obj;
 

@@ -335,9 +335,9 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 							if (times_found == 1) {
 								// First time we realized the ambiguity
 								sciprintf("Ambiguous:\n");
-								sciprintf("  %3x: ["PREG"] %s\n", 0, PRINT_REG(*dest), str_objname);
+								sciprintf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(*dest), str_objname);
 							}
-							sciprintf("  %3x: ["PREG"] %s\n", times_found, PRINT_REG(objpos), str_objname);
+							sciprintf("  %3x: [%04x:%04x] %s\n", times_found, PRINT_REG(objpos), str_objname);
 						}
 						if (index < 0 || times_found == index)
 							*dest = objpos;

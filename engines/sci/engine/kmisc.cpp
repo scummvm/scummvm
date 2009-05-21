@@ -188,7 +188,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	case K_MEMORY_FREE :
 		if (s->seg_manager->freeDynmem(argv[1])) {
-			error("Attempt to kMemory::free() non-dynmem pointer "PREG"!\n", PRINT_REG(argv[1]));
+			error("Attempt to kMemory::free() non-dynmem pointer %04x:%04x!\n", PRINT_REG(argv[1]));
 		}
 		break;
 	case K_MEMORY_MEMCPY : {
@@ -201,10 +201,10 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		else {
 			warning("Could not execute kMemory:memcpy of %d bytes:", size);
 			if (!dest) {
-				warning("  dest ptr ("PREG") invalid/memory region too small", PRINT_REG(argv[1]));
+				warning("  dest ptr (%04x:%04x) invalid/memory region too small", PRINT_REG(argv[1]));
 			}
 			if (!src) {
-				warning("  src ptr ("PREG") invalid/memory region too small", PRINT_REG(argv[2]));
+				warning("  src ptr (%04x:%04x) invalid/memory region too small", PRINT_REG(argv[2]));
 			}
 		}
 		break;
@@ -213,7 +213,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		byte *ref = kernel_dereference_bulk_pointer(s, argv[1], 2);
 
 		if (!ref) {
-			error("Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
+			error("Attempt to poke invalid memory at %04x:%04x!\n", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 		if (s->seg_manager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
@@ -226,7 +226,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		byte *ref = kernel_dereference_bulk_pointer(s, argv[1], 2);
 
 		if (!ref) {
-			error("Attempt to poke invalid memory at "PREG"!\n", PRINT_REG(argv[1]));
+			error("Attempt to poke invalid memory at %04x:%04x!\n", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 
@@ -234,7 +234,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {
-				error("Attempt to poke memory reference "PREG" to "PREG"!\n", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
+				error("Attempt to poke memory reference %04x:%04x to %04x:%04x!\n", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
 				WRITE_LE_UINT16(ref, argv[2].offset); // ?
 			}
@@ -251,7 +251,7 @@ reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	sciprintf("Unimplemented syscall: %s[%x](", s->_kernelNames[funct_nr].c_str(), funct_nr);
 
 	for (int i = 0; i < argc; i++) {
-		sciprintf(PREG, PRINT_REG(argv[i]));
+		sciprintf("%04x:%04x", PRINT_REG(argv[i]));
 		if (i + 1 < argc) sciprintf(", ");
 	}
 	sciprintf(")\n");

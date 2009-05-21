@@ -485,7 +485,7 @@ void SegManager::scriptRelocate(reg_t block) {
 			}
 
 			if (!done) {
-				sciprintf("While processing relocation block "PREG":\n", PRINT_REG(block));
+				sciprintf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
 				sciprintf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
 				if (scr->locals_block)
 					sciprintf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
@@ -526,7 +526,7 @@ void SegManager::heapRelocate(reg_t block) {
 			}
 
 			if (!done) {
-				sciprintf("While processing relocation block "PREG":\n", PRINT_REG(block));
+				sciprintf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
 				sciprintf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
 				if (scr->locals_block)
 					sciprintf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
@@ -849,7 +849,7 @@ void SegManager::free_hunk_entry(reg_t addr) {
 	HunkTable *ht = (HunkTable *)GET_SEGMENT(*this, addr.segment, MEM_OBJ_HUNK);
 
 	if (!ht) {
-		sciprintf("Attempt to free Hunk from address "PREG": Invalid segment type\n", PRINT_REG(addr));
+		sciprintf("Attempt to free Hunk from address %04x:%04x: Invalid segment type\n", PRINT_REG(addr));
 		return;
 	}
 
@@ -927,14 +927,14 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 }
 
 byte *MemObject::dereference(reg_t pointer, int *size) {
-	error("Error: Trying to dereference pointer "PREG" to inappropriate segment",
+	error("Error: Trying to dereference pointer %04x:%04x to inappropriate segment",
 		          PRINT_REG(pointer));
 	return NULL;
 }
 
 byte *Script::dereference(reg_t pointer, int *size) {
 	if (pointer.offset > buf_size) {
-		sciprintf("Error: Attempt to dereference invalid pointer "PREG" into script segment (script size=%d)\n",
+		sciprintf("Error: Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)\n",
 				  PRINT_REG(pointer), (uint)buf_size);
 		return NULL;
 	}
@@ -982,13 +982,13 @@ byte *SystemStrings::dereference(reg_t pointer, int *size) {
 	if (pointer.offset < SYS_STRINGS_MAX && strings[pointer.offset].name)
 		return (byte *)(strings[pointer.offset].value);
 
-	error("Attempt to dereference invalid pointer "PREG"", PRINT_REG(pointer));
+	error("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
 	return NULL;
 }
 
 byte *SegManager::dereference(reg_t pointer, int *size) {
 	if (!pointer.segment || (pointer.segment >= _heap.size()) || !_heap[pointer.segment]) {
-		error("Attempt to dereference invalid pointer "PREG"", PRINT_REG(pointer));
+		error("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
 		return NULL; /* Invalid */
 	}
 
@@ -1055,7 +1055,7 @@ reg_t Script::findCanonicAddress(SegManager *segmgr, reg_t addr) {
 
 void Script::freeAtAddress(SegManager *segmgr, reg_t addr) {
 	/*
-		sciprintf("[GC] Freeing script "PREG"\n", PRINT_REG(addr));
+		sciprintf("[GC] Freeing script %04x:%04x\n", PRINT_REG(addr));
 		if (locals_segment)
 			sciprintf("[GC] Freeing locals %04x:0000\n", locals_segment);
 	*/
@@ -1082,10 +1082,10 @@ void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, 
 			for (uint i = 0; i < obj._variables.size(); i++)
 				(*note)(param, obj._variables[i]);
 		} else {
-			warning("Request for outgoing script-object reference at "PREG" yielded invalid index %d", PRINT_REG(addr), idx);
+			warning("Request for outgoing script-object reference at %04x:%04x yielded invalid index %d", PRINT_REG(addr), idx);
 		}
 	} else {
-		/*		fprintf(stderr, "Unexpected request for outgoing script-object references at "PREG"\n", PRINT_REG(addr));*/
+		/*		fprintf(stderr, "Unexpected request for outgoing script-object references at %04x:%04x\n", PRINT_REG(addr));*/
 		/* Happens e.g. when we're looking into strings */
 	}
 }
@@ -1107,7 +1107,7 @@ void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *par
 //	assert(addr.segment == _segId);
 
 	if (!clone_table->isValidEntry(addr.offset)) {
-		fprintf(stderr, "Unexpected request for outgoing references from clone at "PREG"\n", PRINT_REG(addr));
+		fprintf(stderr, "Unexpected request for outgoing references from clone at %04x:%04x\n", PRINT_REG(addr));
 //		BREAKPOINT();
 		return;
 	}
@@ -1120,7 +1120,7 @@ void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *par
 
 	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
 	(*note)(param, clone->pos);
-	//sciprintf("[GC] Reporting clone-pos "PREG"\n", PRINT_REG(clone->pos));
+	//sciprintf("[GC] Reporting clone-pos %04x:%04x\n", PRINT_REG(clone->pos));
 }
 
 void CloneTable::freeAtAddress(SegManager *segmgr, reg_t addr) {
@@ -1133,15 +1133,15 @@ void CloneTable::freeAtAddress(SegManager *segmgr, reg_t addr) {
 
 #ifdef GC_DEBUG
 	if (!(victim_obj->flags & OBJECT_FLAG_FREED))
-		sciprintf("[GC] Warning: Clone "PREG" not reachable and not freed (freeing now)\n", PRINT_REG(addr));
+		sciprintf("[GC] Warning: Clone %04x:%04x not reachable and not freed (freeing now)\n", PRINT_REG(addr));
 #ifdef GC_DEBUG_VERBOSE
 	else
-		sciprintf("[GC-DEBUG] Clone "PREG": Freeing\n", PRINT_REG(addr));
+		sciprintf("[GC-DEBUG] Clone %04x:%04x: Freeing\n", PRINT_REG(addr));
 #endif
 #endif
 	/*
-		sciprintf("[GC] Clone "PREG": Freeing\n", PRINT_REG(addr));
-		sciprintf("[GC] Clone had pos "PREG"\n", PRINT_REG(victim_obj->pos));
+		sciprintf("[GC] Clone %04x:%04x: Freeing\n", PRINT_REG(addr));
+		sciprintf("[GC] Clone had pos %04x:%04x\n", PRINT_REG(victim_obj->pos));
 	*/
 	clone_table->freeEntry(addr.offset);
 }
@@ -1186,7 +1186,7 @@ void ListTable::freeAtAddress(SegManager *segmgr, reg_t sub_addr) {
 
 void ListTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	if (!isValidEntry(addr.offset)) {
-		warning("Invalid list referenced for outgoing references: "PREG"", PRINT_REG(addr));
+		warning("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
 	}
 
@@ -1206,7 +1206,7 @@ void NodeTable::freeAtAddress(SegManager *segmgr, reg_t sub_addr) {
 
 void NodeTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	if (!isValidEntry(addr.offset)) {
-		warning("Invalid node referenced for outgoing references: "PREG"", PRINT_REG(addr));
+		warning("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
 	}
 	Node *node = &(_table[addr.offset]);

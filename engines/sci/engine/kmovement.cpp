@@ -151,7 +151,7 @@ reg_t kSetJump(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Always force vy to be upwards
 	vy = -abs(vy);
 
-	SCIkdebug(SCIkBRESEN, "SetJump for object at "PREG"\n", PRINT_REG(object));
+	SCIkdebug(SCIkBRESEN, "SetJump for object at %04x:%04x\n", PRINT_REG(object));
 	SCIkdebug(SCIkBRESEN, "xStep: %d, yStep: %d\n", vx, vy);
 
 	PUT_SEL32V(object, xStep, vx);
@@ -206,7 +206,7 @@ static void initialize_bresen(EngineState *s, int argc, reg_t *argv, reg_t mover
 	PUT_SEL32V(mover, dx, deltax_step);
 	PUT_SEL32V(mover, dy, deltay_step);
 
-	SCIkdebug(SCIkBRESEN, "Init bresen for mover "PREG": d=(%d,%d)\n", PRINT_REG(mover), deltax, deltay);
+	SCIkdebug(SCIkBRESEN, "Init bresen for mover %04x:%04x: d=(%d,%d)\n", PRINT_REG(mover), deltax, deltay);
 	SCIkdebug(SCIkBRESEN, "    steps=%d, mv=(%d, %d), i1= %d, i2=%d\n",
 	          numsteps, deltax_step, deltay_step, i1, bdi*2);
 
@@ -352,7 +352,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		y = desty;
 		completed = 1;
 
-		SCIkdebug(SCIkBRESEN, "Finished mover "PREG"\n", PRINT_REG(mover));
+		SCIkdebug(SCIkBRESEN, "Finished mover %04x:%04x\n", PRINT_REG(mover));
 	}
 
 	PUT_SEL32V(client, x, x);
@@ -374,7 +374,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		PUT_SEL32V(client, y, oldy);
 		PUT_SEL32V(client, signal, (signal | _K_VIEW_SIG_FLAG_HIT_OBSTACLE));
 
-		SCIkdebug(SCIkBRESEN, "Finished mover "PREG" by collision\n", PRINT_REG(mover));
+		SCIkdebug(SCIkBRESEN, "Finished mover %04x:%04x by collision\n", PRINT_REG(mover));
 		completed = 1;
 	}
 
@@ -399,14 +399,14 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, -1);
 
 	if (!is_heap_object(s, avoider)) {
-		warning("DoAvoider() where avoider "PREG" is not an object", PRINT_REG(avoider));
+		warning("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
 	client = GET_SEL32(avoider, client);
 
 	if (!is_heap_object(s, client)) {
-		warning("DoAvoider() where client "PREG" is not an object", PRINT_REG(client));
+		warning("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
 		return NULL_REG;
 	}
 
@@ -415,7 +415,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (!is_heap_object(s, mover)) {
 		if (mover.segment) {
-			warning("DoAvoider() where mover "PREG" is not an object", PRINT_REG(mover));
+			warning("DoAvoider() where mover %04x:%04x is not an object", PRINT_REG(mover));
 		}
 		return s->r_acc;
 	}
@@ -426,7 +426,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	SCIkdebug(SCIkBRESEN, "Doing avoider %04x (dest=%d,%d)\n", avoider, destx, desty);
 
 	if (invoke_selector(INV_SEL(mover, doit, 1) , 0)) {
-		error("Mover "PREG" of avoider "PREG" doesn't have a doit() funcselector\n", PRINT_REG(mover), PRINT_REG(avoider));
+		error("Mover %04x:%04x of avoider %04x:%04x doesn't have a doit() funcselector\n", PRINT_REG(mover), PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
@@ -435,7 +435,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc; // Return gracefully.
 
 	if (invoke_selector(INV_SEL(client, isBlocked, 1) , 0)) {
-		error("Client "PREG" of avoider "PREG" doesn't"
+		error("Client %04x:%04x of avoider %04x:%04x doesn't"
 		         " have an isBlocked() funcselector", PRINT_REG(client), PRINT_REG(avoider));
 		return NULL_REG;
 	}
@@ -454,7 +454,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int ystep = GET_SEL32V(client, yStep);
 		int moves;
 
-		SCIkdebug(SCIkBRESEN, " avoider "PREG"\n", PRINT_REG(avoider));
+		SCIkdebug(SCIkBRESEN, " avoider %04x:%04x\n", PRINT_REG(avoider));
 
 		for (moves = 0; moves < 8; moves++) {
 			int move_x = (int)(sin(angle * PI / 180.0) * (xstep));
@@ -466,7 +466,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			SCIkdebug(SCIkBRESEN, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)\n", oldx, oldy, angle, move_x, move_y);
 
 			if (invoke_selector(INV_SEL(client, canBeHere, 1) , 0)) {
-				error("Client "PREG" of avoider "PREG" doesn't"
+				error("Client %04x:%04x of avoider %04x:%04x doesn't"
 				         " have a canBeHere() funcselector", PRINT_REG(client), PRINT_REG(avoider));
 				return NULL_REG;
 			}
@@ -487,7 +487,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				angle -= 360;
 		}
 
-		warning("DoAvoider failed for avoider "PREG"", PRINT_REG(avoider));
+		warning("DoAvoider failed for avoider %04x:%04x", PRINT_REG(avoider));
 	} else {
 		int heading = GET_SEL32V(client, heading);
 
@@ -500,7 +500,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (looper.segment) {
 			if (invoke_selector(INV_SEL(looper, doit, 1), 2, angle, client)) {
-				error("Looper "PREG" of avoider "PREG" doesn't"
+				error("Looper %04x:%04x of avoider %04x:%04x doesn't"
 				         " have a doit() funcselector", PRINT_REG(looper), PRINT_REG(avoider));
 			} else
 				return s->r_acc;

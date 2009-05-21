@@ -36,16 +36,16 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 	if (!mobj) {
 		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
 		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
-		//sciprintf("%s, L%d: Attempt to use non-node "PREG" as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
+		//sciprintf("%s, L%d: Attempt to use non-node %04x:%04x as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
 		//script_debug_flag = script_error_flag = 1;
-		warning("Attempt to use non-node "PREG" as list node", PRINT_REG(addr));
+		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}
 
 	NodeTable *nt = (NodeTable *)mobj;
 
 	if (!nt->isValidEntry(addr.offset)) {
-		sciprintf("Attempt to use non-node "PREG" as list node\n", PRINT_REG(addr));
+		sciprintf("Attempt to use non-node %04x:%04x as list node\n", PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -57,7 +57,7 @@ List *lookup_list(EngineState *s, reg_t addr) {
 	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (!mobj) {
-		sciprintf("Attempt to use non-list "PREG" as list\n", PRINT_REG(addr));
+		sciprintf("Attempt to use non-list %04x:%04x as list\n", PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -65,7 +65,7 @@ List *lookup_list(EngineState *s, reg_t addr) {
 	ListTable *lt = (ListTable *)mobj;
 
 	if (!lt->isValidEntry(addr.offset)) {
-		sciprintf("Attempt to use non-list "PREG" as list\n", PRINT_REG(addr));
+		sciprintf("Attempt to use non-list %04x:%04x as list\n", PRINT_REG(addr));
 		script_debug_flag = script_error_flag = 1;
 		return NULL;
 	}
@@ -90,13 +90,13 @@ static int sane_nodep(EngineState *s, reg_t addr) {
 		if (!node)
 			return 0;
 
-		if ((have_prev) && !REG_EQ(node->pred, prev))
+		if ((have_prev) && node->pred != prev)
 			return 0;
 
 		prev = addr;
 		addr = node->succ;
 		have_prev = 1;
-	} while (!IS_NULL_REG(addr));
+	} while (!addr.isNull());
 
 	return 1;
 }
@@ -105,9 +105,9 @@ int sane_listp(EngineState *s, reg_t addr) {
 	List *l = lookup_list(s, addr);
 	int empties = 0;
 
-	if (IS_NULL_REG(l->first))
+	if (l->first.isNull())
 		++empties;
-	if (IS_NULL_REG(l->last))
+	if (l->last.isNull())
 		++empties;
 
 	// Either none or both must be set
@@ -123,10 +123,10 @@ int sane_listp(EngineState *s, reg_t addr) {
 		if (!node_a || !node_z)
 			return 0;
 
-		if (!IS_NULL_REG(node_a->pred))
+		if (!node_a->pred.isNull())
 			return 0;
 
-		if (!IS_NULL_REG(node_z->succ))
+		if (!node_z->succ.isNull())
 			return 0;
 
 		return sane_nodep(s, l->first);
@@ -141,7 +141,7 @@ reg_t kNewList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	List *l;
 	l = s->seg_manager->alloc_List(&listbase);
 	l->first = l->last = NULL_REG;
-	SCIkdebug(SCIkNODES, "New listbase at "PREG"\n", PRINT_REG(listbase));
+	SCIkdebug(SCIkNODES, "New listbase at %04x:%04x\n", PRINT_REG(listbase));
 
 	return listbase; // Return list base address
 }
@@ -151,17 +151,17 @@ reg_t kDisposeList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (!l) {
 		// FIXME: This should be an error, but it's turned to a warning for now
-		warning("Attempt to dispose non-list at "PREG"!\n", PRINT_REG(argv[0]));
+		warning("Attempt to dispose non-list at %04x:%04x!\n", PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 
 	if (!sane_listp(s, argv[0]))
-		error("List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
 
-/*	if (!IS_NULL_REG(l->first)) {
+/*	if (!l->first.isNull()) {
 		reg_t n_addr = l->first;
 
-		while (!IS_NULL_REG(n_addr)) { // Free all nodes
+		while (!n_addr.isNull()) { // Free all nodes
 			Node *n = lookup_node(s, n_addr);
 			s->seg_manager->free_Node(n_addr);
 			n_addr = n->succ;
@@ -192,18 +192,18 @@ reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 reg_t kNewNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = _k_new_node(s, argv[0], argv[1]);
 
-	SCIkdebug(SCIkNODES, "New nodebase at "PREG"\n", PRINT_REG(s->r_acc));
+	SCIkdebug(SCIkNODES, "New nodebase at %04x:%04x\n", PRINT_REG(s->r_acc));
 
 	return s->r_acc;
 }
 
 reg_t kFirstNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (IS_NULL_REG(argv[0]))
+	if (argv[0].isNull())
 		return NULL_REG;
 	List *l = lookup_list(s, argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
-		error("List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
 
 	if (l)
 		return l->first;
@@ -215,7 +215,7 @@ reg_t kLastNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	List *l = lookup_list(s, argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
-		error("List at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
 
 	if (l)
 		return l->last;
@@ -227,27 +227,27 @@ reg_t kEmptyList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	List *l = lookup_list(s, argv[0]);
 
 	if (!l || !sane_listp(s, argv[0]))
-		error("List at "PREG" is invalid or not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List at %04x:%04x is invalid or not sane anymore!\n", PRINT_REG(argv[0]));
 
-	return make_reg(0, ((l) ? IS_NULL_REG(l->first) : 0));
+	return make_reg(0, ((l) ? l->first.isNull() : 0));
 }
 
 void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = lookup_list(s, listbase);
 	Node *new_n = lookup_node(s, nodebase);
 
-	SCIkdebug(SCIkNODES, "Adding node "PREG" to end of list "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+	SCIkdebug(SCIkNODES, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
-		warning("Attempt to add non-node ("PREG") to list at "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
-		error("List at "PREG" is not sane anymore!\n", PRINT_REG(listbase));
+		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(listbase));
 
 	new_n->succ = l->first;
 	new_n->pred = NULL_REG;
 	// Set node to be the first and last node if it's the only node of the list
-	if (IS_NULL_REG(l->first))
+	if (l->first.isNull())
 		l->last = nodebase;
 	else {
 		Node *old_n = lookup_node(s, l->first);
@@ -260,18 +260,18 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = lookup_list(s, listbase);
 	Node *new_n = lookup_node(s, nodebase);
 
-	SCIkdebug(SCIkNODES, "Adding node "PREG" to end of list "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+	SCIkdebug(SCIkNODES, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
-		warning("Attempt to add non-node ("PREG") to list at "PREG"\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
-		error("List at "PREG" is not sane anymore!\n", PRINT_REG(listbase));
+		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(listbase));
 
 	new_n->succ = NULL_REG;
 	new_n->pred = l->last;
 	// Set node to be the first and last node if it's the only node of the list
-	if (IS_NULL_REG(l->last))
+	if (l->last.isNull())
 		l->first = nodebase;
 	else {
 		Node *old_n = lookup_node(s, l->last);
@@ -283,7 +283,7 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 reg_t kNextNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0])) {
-		error("List node at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List node at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
 		script_error_flag = script_debug_flag = 0;
 		return NULL_REG;
 	}
@@ -294,7 +294,7 @@ reg_t kNextNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kPrevNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0]))
-		error("List node at "PREG" is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List node at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
 
 	return n->pred;
 }
@@ -302,7 +302,7 @@ reg_t kPrevNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kNodeValue(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0])) {
-		error("List node at "PREG" is not sane", PRINT_REG(argv[0]));
+		error("List node at %04x:%04x is not sane", PRINT_REG(argv[0]));
 		script_debug_flag = script_error_flag = 0;
 		return NULL_REG;
 	}
@@ -317,15 +317,15 @@ reg_t kAddToFront(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kAddAfter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	List *l =lookup_list(s, argv[0]);
-	Node *firstnode = IS_NULL_REG(argv[1]) ? NULL : lookup_node(s, argv[1]);
+	Node *firstnode = argv[1].isNull() ? NULL : lookup_node(s, argv[1]);
 	Node *newnode = lookup_node(s, argv[2]);
 
 	if (!l || !sane_listp(s, argv[0]))
-		error("List at "PREG" is not sane anymore", PRINT_REG(argv[0]));
+		error("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!newnode) {
-		warning("New 'node' "PREG" is not a node", PRINT_REG(argv[2]));
+		warning("New 'node' %04x:%04x is not a node", PRINT_REG(argv[2]));
 		return NULL_REG;
 	}
 
@@ -341,7 +341,7 @@ reg_t kAddAfter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		firstnode->succ = argv[2];
 		newnode->succ = oldnext;
 
-		if (IS_NULL_REG(oldnext))  // Appended after last node?
+		if (oldnext.isNull())  // Appended after last node?
 			// Set new node as last list node
 			l->last = argv[2];
 		else
@@ -365,24 +365,24 @@ reg_t kFindKey(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t key = argv[1];
 	reg_t list_pos = argv[0];
 
-	SCIkdebug(SCIkNODES, "Looking for key "PREG" in list "PREG"\n", PRINT_REG(key), PRINT_REG(list_pos));
+	SCIkdebug(SCIkNODES, "Looking for key %04x:%04x in list %04x:%04x\n", PRINT_REG(key), PRINT_REG(list_pos));
 
 	if (!sane_listp(s, list_pos))
-		error("List at "PREG" is not sane anymore", PRINT_REG(list_pos));
+		error("List at %04x:%04x is not sane anymore", PRINT_REG(list_pos));
 
 	node_pos = lookup_list(s, list_pos)->first;
 
-	SCIkdebug(SCIkNODES, "First node at "PREG"\n", PRINT_REG(node_pos));
+	SCIkdebug(SCIkNODES, "First node at %04x:%04x\n", PRINT_REG(node_pos));
 
-	while (!IS_NULL_REG(node_pos)) {
+	while (!node_pos.isNull()) {
 		Node *n = lookup_node(s, node_pos);
-		if (REG_EQ(n->key, key)) {
-			SCIkdebug(SCIkNODES, " Found key at "PREG"\n", PRINT_REG(node_pos));
+		if (n->key == key) {
+			SCIkdebug(SCIkNODES, " Found key at %04x:%04x\n", PRINT_REG(node_pos));
 			return node_pos;
 		}
 
 		node_pos = n->succ;
-		SCIkdebug(SCIkNODES, "NextNode at "PREG"\n", PRINT_REG(node_pos));
+		SCIkdebug(SCIkNODES, "NextNode at %04x:%04x\n", PRINT_REG(node_pos));
 	}
 
 	SCIkdebug(SCIkNODES, "Looking for key without success\n");
@@ -394,18 +394,18 @@ reg_t kDeleteKey(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *n;
 	List *l = lookup_list(s, argv[0]);
 
-	if (IS_NULL_REG(node_pos))
+	if (node_pos.isNull())
 		return NULL_REG; // Signal falure
 
 	n = lookup_node(s, node_pos);
-	if (REG_EQ(l->first, node_pos))
+	if (l->first == node_pos)
 		l->first = n->succ;
-	if (REG_EQ(l->last, node_pos))
+	if (l->last == node_pos)
 		l->last = n->pred;
 
-	if (!IS_NULL_REG(n->pred))
+	if (!n->pred.isNull())
 		lookup_node(s, n->pred)->succ = n->succ;
-	if (!IS_NULL_REG(n->succ))
+	if (!n->succ.isNull())
 		lookup_node(s, n->succ)->pred = n->pred;
 
 	//s->seg_manager->free_Node(node_pos);
@@ -450,7 +450,7 @@ reg_t kSort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!input_size)
 		return s->r_acc;
 
-	if (IS_NULL_REG(output_data)) {
+	if (output_data.isNull()) {
 		list = s->seg_manager->alloc_List(&output_data);
 		list->first = list->last = NULL_REG;
 		PUT_SEL32(dest, elements, output_data);

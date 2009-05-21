@@ -494,7 +494,7 @@ reg_t kalloc(EngineState *s, const char *type, int space) {
 	reg_t reg;
 
 	s->seg_manager->alloc_hunk_entry(type, space, &reg);
-	SCIkdebug(SCIkMEM, "Allocated %d at hunk "PREG" (%s)\n", space, PRINT_REG(reg), type);
+	SCIkdebug(SCIkMEM, "Allocated %d at hunk %04x:%04x (%s)\n", space, PRINT_REG(reg), type);
 
 	return reg;
 }
@@ -889,12 +889,12 @@ int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *a
 			int type = determine_reg_type(s, *argv, *sig & KSIG_ALLOW_INV);
 
 			if (!type) {
-				sciprintf("[KERN] Could not determine type of ref "PREG"; failing signature check\n", PRINT_REG(*argv));
+				sciprintf("[KERN] Could not determine type of ref %04x:%04x; failing signature check\n", PRINT_REG(*argv));
 				return 0;
 			}
 
 			if (type & KSIG_INVALID) {
-				sciprintf("[KERN] ref "PREG" was determined to be a %s, but the reference itself is invalid\n",
+				sciprintf("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid\n",
 				          PRINT_REG(*argv), kernel_argtype_description(type));
 				return 0;
 			}
@@ -920,12 +920,12 @@ static void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entr
 	void *retval = s->seg_manager->dereference(pointer, &maxsize);
 
 	if (pointer.offset & (align - 1)) {
-		warning("Unaligned pointer read: "PREG" expected with %d alignment", PRINT_REG(pointer), align);
+		warning("Unaligned pointer read: %04x:%04x expected with %d alignment", PRINT_REG(pointer), align);
 		return NULL;
 	}
 
 	if (entries > maxsize) {
-		warning("Trying to dereference pointer "PREG" beyond end of segment", PRINT_REG(pointer));
+		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
 		return NULL;
 	}
 	return retval;

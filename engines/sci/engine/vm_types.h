@@ -50,7 +50,6 @@ struct reg_t {
 	}
 };
 
-#define PREG "%04x:%04x"
 #define PRINT_REG(r) (0xffff) & (unsigned) (r).segment, (unsigned) (r).offset
 
 // Stack pointer type
@@ -60,7 +59,6 @@ typedef reg_t *StackPtr;
 typedef int Selector;
 #define NULL_SELECTOR -1
 
-#define PSTK "ST:%04x"
 #define PRINT_STK(v) (unsigned) (v - s->stack_base)
 
 static inline reg_t make_reg(int segment, int offset) {
@@ -70,8 +68,6 @@ static inline reg_t make_reg(int segment, int offset) {
 	return r;
 }
 
-#define IS_NULL_REG(r) ((r).isNull())
-#define REG_EQ(a, b) ((a) == (b))
 extern reg_t NULL_REG;
 
 } // End of namespace Sci

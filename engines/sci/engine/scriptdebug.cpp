@@ -346,7 +346,7 @@ static void print_obj_head(EngineState *s, reg_t pos) {
 	if (!obj)
 		return;
 
-	sciprintf("["PREG"] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
+	sciprintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
 				obj->_variables.size(), obj->methods_nr);
 }
 
@@ -356,30 +356,30 @@ static void print_list(EngineState *s, List *l) {
 
 	sciprintf("\t<\n");
 
-	while (!IS_NULL_REG(pos)) {
+	while (!pos.isNull()) {
 		Node *node;
 		NodeTable *nt = (NodeTable *)GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_NODES);
 
 		if (!nt || !nt->isValidEntry(pos.offset)) {
-			sciprintf("   WARNING: "PREG": Doesn't contain list node!\n",
+			sciprintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
 			          PRINT_REG(pos));
 			return;
 		}
 
 		node = &(nt->_table[pos.offset]);
 
-		sciprintf("\t"PREG"  : "PREG" -> "PREG"\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
+		sciprintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
-		if (!REG_EQ(my_prev, node->pred))
-			sciprintf("   WARNING: current node gives "PREG" as predecessor!\n",
+		if (my_prev != node->pred)
+			sciprintf("   WARNING: current node gives %04x:%04x as predecessor!\n",
 			          PRINT_REG(node->pred));
 
 		my_prev = pos;
 		pos = node->succ;
 	}
 
-	if (!REG_EQ(my_prev, l->last))
-		sciprintf("   WARNING: Last node was expected to be "PREG", was "PREG"!\n",
+	if (my_prev != l->last)
+		sciprintf("   WARNING: Last node was expected to be %04x:%04x, was %04x:%04x!\n",
 		          PRINT_REG(l->last), PRINT_REG(my_prev));
 	sciprintf("\t>\n");
 }
@@ -523,7 +523,7 @@ static int show_node(EngineState *s, reg_t addr) {
 
 		list = &(lt->_table[addr.offset]);
 
-		sciprintf(PREG" : first x last = ("PREG", "PREG")\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
+		sciprintf("%04x:%04x : first x last = (%04x:%04x, %04x:%04x)\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
 	} else {
 		NodeTable *nt;
 		Node *node;
@@ -542,7 +542,7 @@ static int show_node(EngineState *s, reg_t addr) {
 		}
 		node = &(nt->_table[addr.offset]);
 
-		sciprintf(PREG" : prev x next = ("PREG", "PREG"); maps "PREG" -> "PREG"\n",
+		sciprintf("%04x:%04x : prev x next = (%04x:%04x, %04x:%04x); maps %04x:%04x -> %04x:%04x\n",
 		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
 	}
 
@@ -566,7 +566,7 @@ static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int filter;
 	int found = 0;
 
-	sciprintf(PREG" is of type 0x%x%s: ", PRINT_REG(reg), type_mask & ~KSIG_INVALID, type_mask & KSIG_INVALID ? " (invalid)" : "");
+	sciprintf("%04x:%04x is of type 0x%x%s: ", PRINT_REG(reg), type_mask & ~KSIG_INVALID, type_mask & KSIG_INVALID ? " (invalid)" : "");
 
 	type_mask &= ~KSIG_INVALID;
 
@@ -700,10 +700,10 @@ int c_debuginfo(EngineState *s) {
 		return 1;
 	}
 
-	sciprintf("acc="PREG" prev="PREG" &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), *p_restadjust);
+	sciprintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), *p_restadjust);
 
 	if (!s->_executionStack.empty()) {
-		sciprintf("pc="PREG" obj="PREG" fp="PSTK" sp="PSTK"\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
+		sciprintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
 	} else
 		sciprintf("<no execution stack: pc,obj,fp omitted>\n");
 
@@ -839,7 +839,7 @@ int c_classtable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	sciprintf("Available classes:\n");
 	for (uint i = 0; i < s->_classtable.size(); i++)
 		if (s->_classtable[i].reg.segment)
-			sciprintf(" Class 0x%x at "PREG" (script 0x%x)\n", i, PRINT_REG(s->_classtable[i].reg), s->_classtable[i].script);
+			sciprintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i, PRINT_REG(s->_classtable[i].reg), s->_classtable[i].script);
 
 	return 0;
 }
@@ -1172,7 +1172,7 @@ int c_stack(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		if ((xs.sp - xs.fp - i) == 0)
 			sciprintf("-- temp variables --\n");
 		if (xs.sp - i >= s->stack_base)
-			sciprintf(PSTK" = "PREG"\n", PRINT_STK(xs.sp - i), PRINT_REG(xs.sp[-i]));
+			sciprintf("ST:%04x = %04x:%04x\n", PRINT_STK(xs.sp - i), PRINT_REG(xs.sp[-i]));
 	}
 
 	return 0;
@@ -1191,7 +1191,7 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 	int selectors;
 
 	if (!obj) {
-		sciprintf("Applied prop_ofs_to_id on non-object at "PREG"\n", PRINT_REG(objp));
+		sciprintf("Applied prop_ofs_to_id on non-object at %04x:%04x\n", PRINT_REG(objp));
 		return -1;
 	}
 
@@ -1208,7 +1208,7 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 	}
 
 	if (prop_ofs < 0 || (prop_ofs >> 1) >= selectors) {
-		sciprintf("Applied prop_ofs_to_id to invalid property offset %x (property #%d not in [0..%d]) on object at "PREG"\n",
+		sciprintf("Applied prop_ofs_to_id to invalid property offset %x (property #%d not in [0..%d]) on object at %04x:%04x\n",
 		          prop_ofs, prop_ofs >> 1, selectors - 1, PRINT_REG(objp));
 		return -1;
 	}
@@ -1253,7 +1253,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	opsize &= 1; // byte if true, word if false
 
-	sciprintf(PREG": ", PRINT_REG(pos));
+	sciprintf("%04x:%04x: ", PRINT_REG(pos));
 
 	if (print_bytecode) {
 		while (g_opcode_formats[opcode][i]) {
@@ -1375,7 +1375,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		}
 	}
 
-	if (REG_EQ(pos, *p_pc)) { // Extra information if debugging the current opcode
+	if (pos == *p_pc) { // Extra information if debugging the current opcode
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
 			int prop_ofs = scr[pos.offset + 1];
@@ -1387,7 +1387,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	sciprintf("\n");
 
-	if (REG_EQ(pos, *p_pc)) { // Extra information if debugging the current opcode
+	if (pos == *p_pc) { // Extra information if debugging the current opcode
 		if (opcode == op_callk) {
 			int stackframe = (scr[pos.offset + 2] >> 1) + (*p_restadjust);
 			int argc = ((*p_sp)[- stackframe - 1]).offset;
@@ -1398,7 +1398,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			sciprintf(" Kernel params: (");
 
 			for (int j = 0; j < argc; j++) {
-				sciprintf(PREG, PRINT_REG((*p_sp)[j - stackframe]));
+				sciprintf("%04x:%04x", PRINT_REG((*p_sp)[j - stackframe]));
 				if (j + 1 < argc)
 					sciprintf(", ");
 			}
@@ -1447,7 +1447,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				sciprintf("](");
 
 				while (argc--) {
-					sciprintf(PREG, PRINT_REG(sb[- stackframe + 2]));
+					sciprintf("%04x:%04x", PRINT_REG(sb[- stackframe + 2]));
 					if (argc)
 						sciprintf(", ");
 					stackframe--;
@@ -1490,7 +1490,7 @@ int c_vmvarlist(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int i;
 
 	for (i = 0;i < 4;i++) {
-		sciprintf("%s vars at "PREG" ", varnames[i], PRINT_REG(make_reg(p_var_segs[i], p_vars[i] - p_var_base[i])));
+		sciprintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(p_var_segs[i], p_vars[i] - p_var_base[i])));
 		if (p_var_max)
 			sciprintf("  total %d", p_var_max[i]);
 		sciprintf("\n");
@@ -1521,7 +1521,7 @@ int c_vmvars(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 	switch (cmdParams.size()) {
 	case 2:
-		sciprintf("%s var %d == "PREG"\n", varnames[vartype], idx, PRINT_REG(p_vars[vartype][idx]));
+		sciprintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(p_vars[vartype][idx]));
 		break;
 
 	case 3:
@@ -1571,7 +1571,7 @@ static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 			totalparamc = 16;
 
 		for (paramc = 1; paramc <= totalparamc; paramc++) {
-			sciprintf(PREG, PRINT_REG(call.variables_argp[paramc]));
+			sciprintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
 
 			if (paramc < call.argc)
 				sciprintf(", ");
@@ -1580,19 +1580,19 @@ static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 		if (call.argc > 16)
 			sciprintf("...");
 
-		sciprintf(")\n    obj@"PREG, PRINT_REG(call.objp));
+		sciprintf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
 		if (call.type == EXEC_STACK_TYPE_CALL) {
-			sciprintf(" pc="PREG, PRINT_REG(call.addr.pc));
+			sciprintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
 			if (call.sp == CALL_SP_CARRY)
 				sciprintf(" sp,fp:carry");
 			else {
-				sciprintf(" sp="PSTK, PRINT_STK(call.sp));
-				sciprintf(" fp="PSTK, PRINT_STK(call.fp));
+				sciprintf(" sp=ST:%04x", PRINT_STK(call.sp));
+				sciprintf(" fp=ST:%04x", PRINT_STK(call.fp));
 			}
 		} else
 			sciprintf(" pc:none");
 
-		sciprintf(" argp:"PSTK, PRINT_STK(call.variables_argp));
+		sciprintf(" argp:ST:%04x", PRINT_STK(call.variables_argp));
 		if (call.type == EXEC_STACK_TYPE_CALL)
 			sciprintf(" script: %d", (*(Script *)s->seg_manager->_heap[call.addr.pc.segment]).nr);
 		sciprintf("\n");
@@ -2166,7 +2166,7 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 	o = obj_get(s, object);
 	if (o == NULL) {
-		sciprintf("Address \""PREG"\" is not an object\n", PRINT_REG(object));
+		sciprintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
 		return 1;
 	}
 
@@ -2537,7 +2537,7 @@ int objinfo(EngineState *s, reg_t pos) {
 	int i;
 
 	if (!obj) {
-		sciprintf("["PREG"]: Not an object.", PRINT_REG(pos));
+		sciprintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
 		return 1;
 	}
 
@@ -2554,7 +2554,7 @@ int objinfo(EngineState *s, reg_t pos) {
 			sciprintf("p#%x = ", i);
 
 		reg_t val = obj->_variables[i];
-		sciprintf(PREG, PRINT_REG(val));
+		sciprintf("%04x:%04x", PRINT_REG(val));
 
 		Object *ref = obj_get(s, val);
 		if (ref)
@@ -2565,7 +2565,7 @@ int objinfo(EngineState *s, reg_t pos) {
 	sciprintf("  -- methods:\n");
 	for (i = 0; i < obj->methods_nr; i++) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
-		sciprintf("    [%03x] %s = "PREG"\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
+		sciprintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
 	if (s->seg_manager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
 		sciprintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
@@ -2798,7 +2798,7 @@ int c_sci_version(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 static void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
-		sciprintf("  "PREG"\n", PRINT_REG(addr));
+		sciprintf("  %04x:%04x\n", PRINT_REG(addr));
 }
 
 static int c_gc_show_reachable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
@@ -2810,7 +2810,7 @@ static int c_gc_show_reachable(EngineState *s, const Common::Array<cmd_param_t> 
 		return 1;
 	}
 
-	sciprintf("Reachable from "PREG":\n", PRINT_REG(addr));
+	sciprintf("Reachable from %04x:%04x:\n", PRINT_REG(addr));
 	mobj->listAllOutgoingReferences(s, addr, NULL, _print_address);
 
 	return 0;
@@ -2841,7 +2841,7 @@ static int c_gc_normalise(EngineState *s, const Common::Array<cmd_param_t> &cmdP
 	}
 
 	addr = mobj->findCanonicAddress(s->seg_manager, addr);
-	sciprintf(" "PREG"\n", PRINT_REG(addr));
+	sciprintf(" %04x:%04x\n", PRINT_REG(addr));
 
 	return 0;
 }
@@ -2857,7 +2857,7 @@ static int c_gc_list_reachable(EngineState *s, const Common::Array<cmd_param_t> 
 
 	sciprintf("Reachable references (normalised):\n");
 	for (reg_t_hash_map::iterator i = use_map->begin(); i != use_map->end(); ++i) {
-		sciprintf(" - "PREG"\n", PRINT_REG(i->_key));
+		sciprintf(" - %04x:%04x\n", PRINT_REG(i->_key));
 	}
 
 	delete use_map;
@@ -2881,11 +2881,11 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		p_pp = pp;
 		p_objp = objp;
 		p_restadjust = restadjust;
-		sciprintf("%d: acc="PREG"  ", script_step_counter, PRINT_REG(s->r_acc));
+		sciprintf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
 		_debugstate_valid = 1;
 		disassemble(s, *pc, 0, 1);
 		if (_debug_seeking == _DEBUG_SEEK_GLOBAL)
-			sciprintf("Global %d (0x%x) = "PREG"\n", _debug_seek_special,
+			sciprintf("Global %d (0x%x) = %04x:%04x\n", _debug_seek_special,
 			          _debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[_debug_seek_special]));
 
 		_debugstate_valid = old_debugstate;
@@ -2924,7 +2924,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			}
 
 			case _DEBUG_SEEK_SO:
-				if (!REG_EQ(*pc, _debug_seek_reg) || (int)s->_executionStack.size()-1 != _debug_seek_level)
+				if ((*pc != _debug_seek_reg) || (int)s->_executionStack.size()-1 != _debug_seek_level)
 					return;
 				break;
 

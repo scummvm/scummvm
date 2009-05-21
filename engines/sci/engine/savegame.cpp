@@ -616,7 +616,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						base_obj = obj_get(s, scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]);
 
 						if (!base_obj) {
-							sciprintf("Object without a base class: Script %d, index %d (reg address "PREG"\n",
+							sciprintf("Object without a base class: Script %d, index %d (reg address %04x:%04x\n",
 								  scr->nr, j, PRINT_REG(scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]));
 							continue;
 						}

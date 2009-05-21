@@ -144,33 +144,33 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	while ((result = sfx_poll(&s->sound, &handle, &cue))) {
 		reg_t obj = DEFROBNICATE_HANDLE(handle);
 		if (!is_object(s, obj)) {
-			warning("Non-object "PREG" received sound signal (%d/%d)", PRINT_REG(obj), result, cue);
+			warning("Non-object %04x:%04x received sound signal (%d/%d)", PRINT_REG(obj), result, cue);
 			return;
 		}
 
 		switch (result) {
 
 		case SI_LOOP:
-			SCIkdebug(SCIkSOUND, "[process-sound] Song "PREG" looped (to %d)\n",
+			SCIkdebug(SCIkSOUND, "[process-sound] Song %04x:%04x looped (to %d)\n",
 			          PRINT_REG(obj), cue);
 			/*			PUT_SEL32V(obj, loops, GET_SEL32V(obj, loop) - 1);*/
 			PUT_SEL32V(obj, signal, -1);
 			break;
 
 		case SI_RELATIVE_CUE:
-			SCIkdebug(SCIkSOUND, "[process-sound] Song "PREG" received relative cue %d\n",
+			SCIkdebug(SCIkSOUND, "[process-sound] Song %04x:%04x received relative cue %d\n",
 			          PRINT_REG(obj), cue);
 			PUT_SEL32V(obj, signal, cue + 0x7f);
 			break;
 
 		case SI_ABSOLUTE_CUE:
-			SCIkdebug(SCIkSOUND, "[process-sound] Song "PREG" received absolute cue %d\n",
+			SCIkdebug(SCIkSOUND, "[process-sound] Song %04x:%04x received absolute cue %d\n",
 			          PRINT_REG(obj), cue);
 			PUT_SEL32V(obj, signal, cue);
 			break;
 
 		case SI_FINISHED:
-			SCIkdebug(SCIkSOUND, "[process-sound] Song "PREG" finished\n",
+			SCIkdebug(SCIkSOUND, "[process-sound] Song %04x:%04x finished\n",
 			          PRINT_REG(obj));
 			PUT_SEL32V(obj, signal, -1);
 			PUT_SEL32V(obj, state, _K_SOUND_STATUS_STOPPED);
@@ -243,7 +243,7 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		sciprintf("(");
 		for (i = 1; i < argc; i++) {
-			sciprintf(PREG, PRINT_REG(argv[i]));
+			sciprintf("%04x:%04x", PRINT_REG(argv[i]));
 			if (i + 1 < argc)
 				sciprintf(", ");
 		}
@@ -438,7 +438,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		sciprintf("(");
 		for (i = 1; i < argc; i++) {
-			sciprintf(PREG, PRINT_REG(argv[i]));
+			sciprintf("%04x:%04x", PRINT_REG(argv[i]));
 			if (i + 1 < argc)
 				sciprintf(", ");
 		}
@@ -533,7 +533,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		                   handle, looping);
 		sfx_song_renice(&s->sound, handle, pri);
 
-		SCIkdebug(SCIkSOUND, "[sound01-update-handle] -- CUE "PREG);
+		SCIkdebug(SCIkSOUND, "[sound01-update-handle] -- CUE %04x:%04x");
 
 		PUT_SEL32V(obj, signal, signal);
 		PUT_SEL32V(obj, min, min);
@@ -588,7 +588,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case SI_ABSOLUTE_CUE:
 			signal = cue;
-			SCIkdebug(SCIkSOUND, "---    [CUE] "PREG" Absolute Cue: %d\n",
+			SCIkdebug(SCIkSOUND, "---    [CUE] %04x:%04x Absolute Cue: %d\n",
 			          PRINT_REG(obj), signal);
 
 			PUT_SEL32V(obj, signal, signal);
@@ -596,7 +596,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case SI_RELATIVE_CUE:
 			signal = cue;
-			SCIkdebug(SCIkSOUND, "---    [CUE] "PREG" Relative Cue: %d\n",
+			SCIkdebug(SCIkSOUND, "---    [CUE] %04x:%04x Relative Cue: %d\n",
 			          PRINT_REG(obj), cue);
 
 			/* FIXME to match commented-out semantics
@@ -607,7 +607,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			break;
 
 		case SI_FINISHED:
-			SCIkdebug(SCIkSOUND, "---    [FINISHED] "PREG"\n", PRINT_REG(obj));
+			SCIkdebug(SCIkSOUND, "---    [FINISHED] %04x:%04x\n", PRINT_REG(obj));
 			PUT_SEL32V(obj, signal, 0xffff);
 			break;
 
@@ -758,7 +758,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		sciprintf("(");
 		for (i = 1; i < argc; i++) {
-			sciprintf(PREG, PRINT_REG(argv[i]));
+			sciprintf("%04x:%04x", PRINT_REG(argv[i]));
 			if (i + 1 < argc)
 				sciprintf(", ");
 		}
@@ -944,14 +944,14 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case SI_ABSOLUTE_CUE:
 			signal = cue;
-			fprintf(stderr, "[CUE] "PREG" Absolute Cue: %d\n",
+			fprintf(stderr, "[CUE] %04x:%04x Absolute Cue: %d\n",
 			        PRINT_REG(obj), signal);
 
 			PUT_SEL32V(obj, signal, signal);
 			break;
 
 		case SI_RELATIVE_CUE:
-			fprintf(stderr, "[CUE] "PREG" Relative Cue: %d\n",
+			fprintf(stderr, "[CUE] %04x:%04x Relative Cue: %d\n",
 			        PRINT_REG(obj), cue);
 
 			PUT_SEL32V(obj, dataInc, cue);
