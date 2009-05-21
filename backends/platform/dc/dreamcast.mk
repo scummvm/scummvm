@@ -9,7 +9,7 @@ ASFLAGS := $(CXXFLAGS)
 
 dist : SCUMMVM.BIN plugin_dist
 
-plugin_dist : $(PLUGINS)
+plugin_dist : plugins
 	for p in $(PLUGINS); do \
 	  sh-elf-strip -g -o "`basename \"$$p\" | LC_CTYPE=C tr '[:lower:]' '[:upper:]'`" "$$p"; \
 	done
