@@ -10,7 +10,7 @@ ASFLAGS := $(CXXFLAGS)
 dist : SCUMMVM.BIN plugin_dist
 
 plugin_dist : plugins
-	@for p in $(PLUGINS); do \
+	@[ -z "$(PLUGINS)" ] || for p in $(or $(PLUGINS),none); do \
 	  t="`basename \"$$p\" | LC_CTYPE=C tr '[:lower:]' '[:upper:]'`"; \
 	  if /usr/bin/test "$$p" -ot "$$t"; then :; else \
 	    echo sh-elf-strip -g -o "$$t" "$$p"; \
