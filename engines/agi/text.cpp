@@ -300,26 +300,10 @@ char *AgiEngine::wordWrapString(const char *s, int *len) {
 void AgiEngine::closeWindow() {
 	debugC(4, kDebugLevelText, "closeWindow()");
 
-	if (getflag(fRestoreJustRan)) {
-		forgetWindow();
-	}
-
 	_sprites->eraseBoth();
 	eraseTextbox();	/* remove window, if any */
 	_sprites->blitBoth();
 	_sprites->commitBoth();		/* redraw sprites */
-	_game.hasWindow = false;
-}
-
-/**
- * Remove existing window without restoring anything
- */
-void AgiEngine::forgetWindow() {
-	debugC(4, kDebugLevelText, "forgetWindow()");
-
-	free(_game.window.buffer);
-	_game.window.buffer = 0;
-	_game.window.active = false;
 	_game.hasWindow = false;
 }
 
@@ -355,6 +339,8 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 	int key, active = 0;
 	int rc = -1;
 	int bx[5], by[5];
+
+	setflag(fNoSaveLoadAllowed, true);
 
 	_sprites->eraseBoth();
 	blitTextbox(m, -1, -1, -1);
@@ -440,6 +426,8 @@ getout:
 	closeWindow();
 	debugC(2, kDebugLevelText, "selectionBox(): Result = %d", rc);
 
+	setflag(fNoSaveLoadAllowed, false);
+
 	return rc;
 }
 
@@ -468,11 +456,16 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 
 	/* blocking */
 
+	setflag(fNoSaveLoadAllowed, true);
+
 	if (_game.vars[vWindowReset] == 0) {
 		int k;
 		setvar(vKey, 0);
 		k = waitKey();
 		closeWindow();
+
+		setflag(fNoSaveLoadAllowed, false);
+
 		return k;
 	}
 
@@ -498,6 +491,8 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 	setvar(vWindowReset, 0);
 
 	closeWindow();
+
+	setflag(fNoSaveLoadAllowed, false);
 
 	return 0;
 }

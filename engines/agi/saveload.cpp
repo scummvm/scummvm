@@ -552,6 +552,8 @@ int AgiEngine::selectSlot() {
 	int textCentre, buttonLength, buttonX[2], buttonY;
 	const char *buttonText[] = { "  OK  ", "Cancel", NULL };
 
+	setflag(fNoSaveLoadAllowed, true);
+
 	for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
 		getSavegameDescription(_firstSlot + i, desc[i]);
 	}
@@ -734,6 +736,8 @@ press:
 
 getout:
 	closeWindow();
+
+	setflag(fNoSaveLoadAllowed, false);
 
 	return rc;
 }

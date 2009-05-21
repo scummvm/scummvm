@@ -1174,11 +1174,11 @@ Common::Error AgiBase::saveGameState(int slot, const char *desc) {
 }
 
 bool AgiBase::canLoadGameStateCurrently() {
-	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork));
+	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !getflag(fNoSaveLoadAllowed));
 }
 
 bool AgiBase::canSaveGameStateCurrently() {
-	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork));
+	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !getflag(fNoSaveLoadAllowed));
 }
 
 } // End of namespace Agi

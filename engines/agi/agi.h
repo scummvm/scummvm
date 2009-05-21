@@ -331,7 +331,8 @@ enum {
 	fStatusSelectsItems,
 	fMenusWork,
 	fOutputMode,		/* 15 */
-	fAutoRestart
+	fAutoRestart,
+	fNoSaveLoadAllowed
 };
 
 struct AgiEvent {
@@ -968,7 +969,6 @@ public:
 	int messageBox(const char *);
 	int selectionBox(const char *, const char **);
 	void closeWindow(void);
-	void forgetWindow(void);
 	void drawWindow(int, int, int, int);
 	void printText(const char *, int, int, int, int, int, int, bool checkerboard = false);
 	void printTextConsole(const char *, int, int, int, int, int);
