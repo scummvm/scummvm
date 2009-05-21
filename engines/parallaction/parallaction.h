@@ -547,7 +547,7 @@ private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
 	SoundMan_br				*_soundManI;
-	Inventory				*_inventory[3];
+	Inventory				*_inventory;
 
 	int32		_counters[32];
 	Table		*_countersNames;

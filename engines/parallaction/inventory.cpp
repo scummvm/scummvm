@@ -351,13 +351,11 @@ void Parallaction_ns::initInventory() {
 }
 
 void Parallaction_br::initInventory() {
-	for (int i = 0; i < 3; ++i) {
-		_inventory[i] = new Inventory(&_invProps_BR, _verbs_BR);
-		assert(_inventory[i]);
-	}
+	_inventory = new Inventory(&_invProps_BR, _verbs_BR);
+	assert(_inventory);
 	_inventoryRenderer = new InventoryRenderer(this, &_invProps_BR);
 	assert(_inventoryRenderer);
-	// don't bind here, wait for changeCharacter()
+	_inventoryRenderer->bindInventory(_inventory);
 }
 
 void Parallaction_ns::destroyInventory() {
@@ -369,12 +367,8 @@ void Parallaction_ns::destroyInventory() {
 
 void Parallaction_br::destroyInventory() {
 	delete _inventoryRenderer;
-	delete _inventory[0];
-	delete _inventory[1];
-	delete _inventory[2];
-	_inventory[0] = 0;
-	_inventory[1] = 0;
-	_inventory[2] = 0;
+	delete _inventory;
+	_inventory = 0;
 	_inventoryRenderer = 0;
 }
 

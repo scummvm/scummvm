@@ -455,9 +455,6 @@ void Parallaction_br::changeCharacter(const char *name) {
 		_char.setName(name);
 		_char._ani->gfxobj = _gfx->loadCharacterAnim(name);
 		_char._talk = _disk->loadTalk(name);
-
-		// TODO: select the inventory according to character
-		_inventoryRenderer->bindInventory(_inventory[0]);
 	}
 
 	_char._ani->_flags |= kFlagsActive;
