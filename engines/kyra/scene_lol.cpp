@@ -36,7 +36,7 @@
 namespace Kyra {
 
 void LoLEngine::loadLevel(int index) {
-	_unkFlag |= 0x800;
+	_gameFlags[36] |= 0x800;
 	setMouseCursorToIcon(0x85);
 	_nextScriptFunc = 0;
 
@@ -395,10 +395,10 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	if (_currentLevel == 11) {
 		uint8 *swampPal = _res->fileData("SWAMPICE.COL", 0);
 		memcpy(_screen->getPalette(2), swampPal, 384);
-		memcpy(_screen->getPalette(2) + 0x180, _screen->_currentPalette, 384);
+		memcpy(_screen->getPalette(2) + 384, _screen->_currentPalette + 384, 384);
 		delete[] swampPal;
 
-		if (_freezeStateFlags & 4) {
+		if (_gameFlags[26] & 4) {
 			uint8 *pal0 = _screen->_currentPalette;
 			uint8 *pal2 = _screen->getPalette(2);
 			for (int i = 1; i < 768; i++)
@@ -651,12 +651,12 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 	_sceneDefaultUpdate = 1;
 
 	calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
-	_unkFlag &= 0xfdff;
+	_gameFlags[36] &= 0xfdff;
 
 	runLevelScript(opos, 4);
 	runLevelScript(npos, 1);
 
-	if (!(_unkFlag & 0x200)) {
+	if (!(_gameFlags[36] & 0x200)) {
 		initTextFading(2, 0);
 
 		if (_sceneDefaultUpdate) {

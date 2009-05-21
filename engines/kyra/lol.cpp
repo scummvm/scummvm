@@ -123,7 +123,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lastButtonShape = 0;
 	_buttonPressTimer = 0;
 	_selectedCharacter = 0;
-	_unkFlag = 0;
+	_gameFlags[36] = 0;
 	_suspendScript = _sceneUpdateRequired = false;
 	_scriptDirection = 0;
 	_currentDirection = 0;
@@ -226,7 +226,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_floatingCursorsEnabled = false;
 
 	memset(_lvlTempData, 0, sizeof(_lvlTempData));
-	_freezeStateFlags = 0;
+	_gameFlags[26] = 0;
 
 	_mapOverlay = 0;
 	_automapShapes = 0;
@@ -868,7 +868,7 @@ void LoLEngine::runLoop() {
 	enableSysTimer(2);
 
 	bool _runFlag = true;
-	_unkFlag |= 0x800;
+	_gameFlags[36] |= 0x800;
 
 	while (!shouldQuit() && _runFlag) {
 		if (_nextScriptFunc) {
@@ -2411,26 +2411,143 @@ void LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	gui_drawScene(0);
 	_screen->copyPage(0, 12);
 
-	//uint8 pal2[768];
-	//uint8 pal3[768];
+	uint8 *tpal = new uint8[768];
+	uint8 *swampCol = new uint8[768];
 
-	if (_currentLevel == 11 && !(_freezeStateFlags & 4)) {
-		for (int i = 1; i < 384; i++) {
-
-		///////// TODO
-
-		}
-
-		_freezeStateFlags |= 4;
+	if (_currentLevel == 11 && !(_gameFlags[26] & 4)) {
+		uint8 *sc = _screen->_currentPalette;
+		uint8 *dc = _screen->getPalette(2);
+		for (int i = 1; i < 768; i++)
+			SWAP(sc[i], dc[i]);
+		_gameFlags[26] |= 4;
 		static const uint8 freezeTimes[] =  { 20, 28, 40, 60 };
 		setCharacterUpdateEvent(charNum, 8, freezeTimes[spellLevel], 1);
 	}
 
-	////////// TODO
-	generateBrightnessPalette(_screen->_currentPalette, _screen->getPalette(1), _brightness, _lampEffect);
+	uint8 *sc = _res->fileData("swampice.col", 0);
+	memcpy(swampCol, sc, 384);
+	uint8 *s = _screen->getPalette(1);
+	for (int i = 384; i < 768; i++)
+		swampCol[i] = tpal[i] = s[i] & 0x3f;
 
-	////////// TODO
+	for (int i = 1; i < 128; i++) {
+		tpal[i * 3] = 0;
+		uint16 v = (s[i * 3] + s[i * 3 + 1] + s[i * 3 + 2]) / 3;
+		tpal[i * 3 + 1] = v;
+		tpal[i * 3 + 2] = v << 1;
+		
+		if (tpal[i * 3 + 2] > 0x3f)
+			tpal[i * 3 + 2] = 0x3f;
+	}
+	generateBrightnessPalette(tpal, tpal, _brightness, _lampEffect);
+	generateBrightnessPalette(swampCol, swampCol, _brightness, _lampEffect);
+	swampCol[0] = swampCol[1] = swampCol[2] = tpal[0] = tpal[1] = tpal[2] = 0;
+		
+	generateBrightnessPalette(_screen->_currentPalette, s, _brightness, _lampEffect);
 
+	int sX = 112;
+	int sY = 0;
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	
+	if (spellLevel == 0) {
+		sX = 0;
+	} if (spellLevel == 1 || spellLevel == 2) {
+		mov->open("snow.wsa", 1, 0);
+		if (!mov->opened())
+			error("Ice: Unable to load snow.wsa");
+	} if (spellLevel == 3) {
+		mov->open("ice.wsa", 1, 0);
+		if (!mov->opened())
+			error("Ice: Unable to load ice.wsa");
+		sX = 136;
+		sY = 12;
+	}
+
+	snd_playSoundEffect(71, -1);
+
+	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, s, tpal, 40, false);
+
+	_screen->fadePaletteStep(s, tpal, _system->getMillis(), _tickLength);
+	if (mov->opened()) {
+		int r = true;
+		if (spellLevel > 2) {
+			_levelBlockProperties[calcNewBlockPosition(_currentBlock, _currentDirection)].flags |= 0x10;
+			snd_playSoundEffect(165, -1);
+			r = false;
+		};
+
+		playSpellAnimation(mov, 0, mov->frames(), 2, sX, sY, 0, 0, 0, 0, r);
+		mov->close();
+	}
+
+	delete mov;
+	static const uint8 snowDamage[] = { 10, 20, 30, 55 };
+	static const uint8 iceDamageMax[] = {1, 2, 15, 20, 35};
+	static const uint8 iceDamageMin[] = {10, 10, 3, 4, 4};
+	static const uint8 iceDamageAdd[] = {5, 10, 30, 10, 10};
+
+	bool breakWall = false;
+
+	if (spellLevel < 3) {
+		inflictMagicalDamageForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum, snowDamage[spellLevel], 3);
+	} else {
+		uint16 o = _levelBlockProperties[calcNewBlockPosition(_currentBlock, _currentDirection)].assignedObjects;
+		while (o & 0x8000) {
+			int might = _rnd.getRandomNumberRng(iceDamageMin[spellLevel], iceDamageMax[spellLevel]) + iceDamageAdd[spellLevel];
+			int dmg = calcInflictableDamagePerItem(charNum, 0, might, 3, 2);
+
+			MonsterInPlay *m = &_monsters[o & 0x7fff];
+			if (m->hitPoints <= dmg) {
+				increaseExperience(charNum, 2, m->hitPoints);
+				o = m->nextAssignedObject;
+				
+				if (m->flags & 0x20) {
+					m->mode = 0;
+					monsterDropItems(m);
+					if (_currentLevel != 29)
+						setMonsterMode(m, 14);
+					runLevelScriptCustom(0x404, -1, o, o, 0, 0);
+					checkSceneUpdateNeed(m->block);
+					if (m->mode != 14)
+						placeMonster(m, 0, 0);
+
+				} else {
+					killMonster(m);
+				}
+
+			} else {
+				breakWall = true;
+				inflictDamage(o, dmg, charNum, 2, 3);
+				m->damageReceived = 0;
+				o = m->nextAssignedObject;
+			}
+
+			if (m->flags & 0x20)
+				break;
+		}
+	}
+
+	updateDrawPage2();
+	gui_drawScene(0);
+	enableSysTimer(2);
+
+	if (_currentLevel != 11)
+		generateBrightnessPalette(_screen->_currentPalette, swampCol, _brightness, _lampEffect);
+
+	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, tpal, swampCol, 40, 0);
+
+	_screen->fadePaletteStep(tpal, swampCol, _system->getMillis(), _tickLength);
+
+	if (breakWall)
+		breakIceWall(tpal, swampCol);
+
+	static const uint8 freezeTime[] = { 20, 28, 40, 60 };
+	if (_currentLevel == 11)
+		setCharacterUpdateEvent(charNum, 8, freezeTime[spellLevel], 1);
+
+	delete[] sc;
+	delete[] swampCol;
+	delete[] tpal;
 	_screen->setCurPage(cp);
 }
 
@@ -2724,15 +2841,15 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			int step = del > _tickLength ? _tickLength : del;
 
 			if (!pal1 || !pal2) {
-				delay(step);
+				delay(step, false, true);
 				del -= step;
 				continue;
 			}
 
-			if (!_screen->fadePalSpecial(pal1, pal2, _system->getMillis() - startTime, _tickLength * fadeDelay) && !mov)
+			if (!_screen->fadePaletteStep(pal1, pal2, _system->getMillis() - startTime, _tickLength * fadeDelay) && !mov)
 				return;
 
-			delay(step);
+			delay(step, false, true);
 			del -= step;
 		} while (del > 0);
 
@@ -2791,6 +2908,16 @@ void LoLEngine::inflictMagicalDamage(int target, int attacker, int damage, int i
 	hitType = hitType ? 1 : 2;
 	damage = calcInflictableDamagePerItem(attacker, target, damage, index, hitType);
 	inflictDamage(target, damage, attacker, 2, index);
+}
+
+void LoLEngine::inflictMagicalDamageForBlock(int block, int attacker, int damage, int index) {
+	uint16 o = _levelBlockProperties[block].assignedObjects;
+	while (o & 0x8000) {		
+		inflictDamage(o, calcInflictableDamagePerItem(attacker, o, damage, index, 2), attacker, 2, index);
+		if ((_monsters[o & 0x7fff].flags & 0x20) && (_currentLevel != 22))
+			break;
+		o = _monsters[o & 0x7fff].nextAssignedObject;
+	}
 }
 
 // fight
@@ -3221,13 +3348,49 @@ void LoLEngine::stunCharacter(int charNum) {
 	_txt->printMessage(6, getLangString(0x4026), _characters[charNum].name);
 }
 
-void LoLEngine::level11specialUnk() {
+void LoLEngine::restoreSwampPalette() {
+	_gameFlags[26] &= 0xfffb;
+	if (_currentLevel != 11)
+		return;
+
+	uint8 *s = _screen->getPalette(2);
+	uint8 *d = _screen->_currentPalette;
+	uint8 *d2 = _screen->getPalette(1);
+
+	for (int i = 1; i < 768; i++)
+		SWAP(s[i], d[i]);
+
+	generateBrightnessPalette(d, d2, _brightness, _lampEffect);
+	_screen->loadSpecialColors(s);
+	_screen->loadSpecialColors(d2);
+
+	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, s, d2, 40, 0);
 }
 
 void LoLEngine::launchMagicViper() {
 }
 
-void LoLEngine::attackWall(int a, int b) {
+void LoLEngine::breakIceWall(uint8 *pal1, uint8 *pal2) {
+	_screen->hideMouse();
+	uint16 bl = calcNewBlockPosition(_currentBlock, _currentDirection);
+	_levelBlockProperties[bl].flags &= 0xef;
+	_screen->copyPage(0, 2);
+	gui_drawScene(2);
+	_screen->copyPage(2, 10);
+
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	int numFrames = mov->open("shatter.wsa", 1, 0);
+	if (!mov->opened())
+		error("Shatter: Unable to load shatter.wsa");
+	snd_playSoundEffect(166, -1);
+	playSpellAnimation(mov, 0, numFrames, 1, 58, 0, 0, pal1, pal2, 20, true);
+	mov->close();
+	delete mov;
+
+	_screen->copyPage(10, 0);
+	updateDrawPage2();
+	gui_drawScene(0);
+	_screen->showMouse();
 }
 
 uint16 LoLEngine::getNearestMonsterFromCharacter(int charNum) {

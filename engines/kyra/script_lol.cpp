@@ -202,6 +202,9 @@ int LoLEngine::olol_delay(EMCState *script) {
 
 int LoLEngine::olol_setGameFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGameFlag(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	
+	assert((stackPos(0) >> 4) < 40);
+	
 	if (stackPos(1))
 		_gameFlags[stackPos(0) >> 4] |= (1 << (stackPos(0) & 0x0f));
 	else
@@ -214,6 +217,8 @@ int LoLEngine::olol_testGameFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_testGameFlag(%p) (%d)", (const void *)script, stackPos(0));
 	if (stackPos(0) < 0)
 		return 0;
+
+	assert((stackPos(0) >> 4) < 40);
 
 	if (_gameFlags[stackPos(0) >> 4] & (1 << (stackPos(0) & 0x0f)))
 		return 1;
@@ -1104,6 +1109,15 @@ int LoLEngine::olol_characterJoinsParty(EMCState *script) {
 
 	return 1;
 }
+int LoLEngine::olol_giveItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_giveItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	int item = makeItem(stackPos(0), stackPos(1), stackPos(2));
+	if (addItemToInventory(item))
+		return 1;
+
+	deleteItem(item);
+	return 0;
+}
 
 int LoLEngine::olol_loadTimScript(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadTimScript(%p) (%d, %s)", (const void *)script, stackPos(0), stackPosString(1));
@@ -1854,6 +1868,31 @@ int LoLEngine::olol_drawCharPortrait(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_placeInventoryItemInHand(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_placeInventoryItemInHand(%p)  (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	int itemType = stackPos(0);
+	int i = 0;
+	for (; i < 48; i++) {
+		if (!_inventory[i])
+			continue;		
+		if (_itemsInPlay[_inventory[i]].itemPropertyIndex == itemType)
+			break;
+	}
+
+	if (i == 48)
+		return -1;
+
+	_inventoryCurItem = i;
+	int r = _itemInHand;
+	setHandItem(_inventory[i]);
+	_inventory[i] = r;
+
+	if (stackPos(1))
+		gui_drawInventory();
+
+	return r;
+}
+
 int LoLEngine::olol_castSpell(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_castSpell(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	return castSpell(stackPos(0), stackPos(1), stackPos(2));
@@ -2328,7 +2367,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_characterJoinsParty);
 
 	// 0x4C
-	OpcodeUnImpl();
+	Opcode(olol_giveItem);
 	OpcodeUnImpl();
 	Opcode(olol_loadTimScript);
 	Opcode(olol_runTimScript);
@@ -2472,7 +2511,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0xAC
-	OpcodeUnImpl();
+	Opcode(olol_placeInventoryItemInHand);
 	Opcode(olol_castSpell);
 	Opcode(olol_pitDrop);
 	OpcodeUnImpl();

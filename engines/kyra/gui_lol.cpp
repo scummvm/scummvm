@@ -1048,7 +1048,7 @@ int LoLEngine::clickedAttackButton(Button *button) {
 	int bl = calcNewBlockPosition(_currentBlock, _currentDirection);
 
 	if (_levelBlockProperties[bl].flags & 0x10) {
-		attackWall(0, 0);
+		breakIceWall(0, 0);
 		return 1;
 	}
 
@@ -1750,6 +1750,7 @@ int LoLEngine::clickedAutomap(Button *button) {
 	if (!(_gameFlags[15] & 0x1000))
 		return 0;
 
+	removeInputTop();
 	displayAutomap();
 
 	gui_drawPlayField();

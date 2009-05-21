@@ -815,20 +815,20 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 	return res;
 }
 
-bool Screen_LoL::fadePalSpecial(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime) {
+bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime) {
 	uint8 tpal[768];
-	uint8 *p1 = _palettes[1];
+	uint8 *p1 = _palettes[0];	
 
 	bool res = false;
 	for (int i = 0; i < 768; i++) {
 		uint8 out = 0;
 		if (elapsedTime < targetTime) {
-			int d = (pal2[i] & 0x3f) - (pal1[i] & 0x3f);
+			int32 d = ((pal2[i] & 0x3f) - (pal1[i] & 0x3f));
 			if (d)
 				res = true;
 
-			int val = ((((d << 8) / targetTime) * elapsedTime) >> 8) & 0xff;
-			out = ((pal1[i] & 0x3f) + val) & 0xff;
+			int32 val = ((((d << 8) / (int32)targetTime) * (int32)elapsedTime) >> 8);
+			out = ((pal1[i] & 0x3f) + (int8)val);
 		} else {
 			out = p1[i] = (pal2[i] & 0x3f);
 			res = false;

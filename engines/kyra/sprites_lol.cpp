@@ -1232,7 +1232,7 @@ bool LoLEngine::chasePartyWithDistanceAttacks(MonsterInPlay *monster) {
 		s = monster->properties->numDistWeapons ? _rnd.getRandomNumberRng(1, monster->properties->numDistWeapons) : 0;
 	} else {
 		s = monster->curDistWeapon++;
-		if (monster->curDistWeapon == monster->properties->numDistWeapons)
+		if (monster->curDistWeapon >= monster->properties->numDistWeapons)
 			monster->curDistWeapon = 0;
 	}
 

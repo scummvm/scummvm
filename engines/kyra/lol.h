@@ -568,7 +568,7 @@ private:
 	uint16 _currentBlock;
 	bool _sceneUpdateRequired;
 	int16 _visibleBlockIndex[18];
-	uint16 _gameFlags[16];
+	uint16 _gameFlags[40];
 	int16 _globalScriptVars[24];
 
 	// emc opcode
@@ -639,6 +639,7 @@ private:
 	int olol_createHandItem(EMCState *script);
 	int olol_playAttackSound(EMCState *script);
 	int olol_characterJoinsParty(EMCState *script);
+	int olol_giveItem(EMCState *script);
 	int olol_loadTimScript(EMCState *script);
 	int olol_runTimScript(EMCState *script);
 	int olol_releaseTimScript(EMCState *script);
@@ -710,6 +711,7 @@ private:
 	int olol_getNextActiveCharacter(EMCState *script);
 	int olol_paralyzePoisonCharacter(EMCState *script);
 	int olol_drawCharPortrait(EMCState *script);
+	int olol_placeInventoryItemInHand(EMCState *script);
 	int olol_castSpell(EMCState *script);
 	int olol_pitDrop(EMCState *script);
 	int olol_paletteFlash(EMCState *script);
@@ -967,7 +969,6 @@ private:
 	const uint8 *_scrollYBottom;
 	int _scrollYBottomSize;
 
-	int _unkFlag;
 	int _nextScriptFunc;
 	uint8 _currentLevel;
 	int _sceneDefaultUpdate;
@@ -1270,6 +1271,8 @@ private:
 	int checkMagic(int charNum, int spellNum, int spellLevel);
 	int getSpellTargetBlock(int currentBlock, int direction, int maxDistance, uint16 &targetBlock);
 	void inflictMagicalDamage(int target, int attacker, int damage, int index, int hitType);
+	void inflictMagicalDamageForBlock(int block, int attacker, int damage, int index);
+
 
 	ActiveSpell _activeSpell;
 	int8 _availableSpells[7];
@@ -1278,7 +1281,6 @@ private:
 	int _spellPropertiesSize;
 	int _subMenuIndex;
 
-	uint16 _freezeStateFlags;
 	uint8 *_healOverlay;
 	uint8 _swarmSpellStatus;
 
@@ -1311,12 +1313,12 @@ private:
 	int paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw);
 	void paralyzePoisonAllCharacters(int typeFlag, int immunityFlags, int hitChance);
 	void stunCharacter(int charNum);
-	void level11specialUnk();
+	void restoreSwampPalette();
 
 	void distObj1Sub(int a, int b, int c, int d);
 	void launchMagicViper();
 
-	void attackWall(int a, int b);
+	void breakIceWall(uint8 *pal1, uint8 *pal2);
 
 	uint16 getNearestMonsterFromCharacter(int charNum);
 	uint16 getNearestMonsterFromCharacterForBlock(uint16 block, int charNum);

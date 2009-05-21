@@ -172,7 +172,7 @@ void LoLEngine::timerSpecialCharacterUpdate(int timerNum) {
 					break;
 
 				case 7:
-					level11specialUnk();
+					restoreSwampPalette();
 					break;
 
 				default:
