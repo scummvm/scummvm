@@ -151,7 +151,7 @@ void WSAMovie_v1::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
 			if (_flags & WF_OFFSCREEN_DECODE)
 				Screen::decodeFrameDelta(dst, _deltaBuffer);
 			else
-				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, false);
+				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, (_flags & WF_XOR) == 0);
 		}
 		_currentFrame = 0;
 	}
