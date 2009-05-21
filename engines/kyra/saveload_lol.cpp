@@ -53,7 +53,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	_screen->updateScreen();
 
 	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, true);
-		
+
 	for (int i = 0; i < 4; i++) {
 		LoLCharacter *c = &_characters[i];
 		c->flags = in.readUint16BE();
@@ -148,7 +148,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		t->destDirection = in.readByte();
 		t->hitOffsX = in.readSByte();
 		t->hitOffsY = in.readSByte();
-		t->currentSubFrame = in.readByte();	
+		t->currentSubFrame = in.readByte();
 	}
 
 	for (int i = 0; i < 1024; i++) {
@@ -228,7 +228,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			m->flags = in.readByte();
 			m->wallFlags = in.readByte();
 		}
-		l->monsterDifficulty = in.readByte();	
+		l->monsterDifficulty = in.readByte();
 	}
 
 	calcCharPortraitXpos();
@@ -345,7 +345,7 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 		out->writeUint16BE(t->y);
 		out->writeSByte(t->level);
 		out->writeUint16BE(t->itemPropertyIndex);
-		out->writeUint16BE(t->shpCurFrame_flg);	
+		out->writeUint16BE(t->shpCurFrame_flg);
 		out->writeByte(t->destDirection);
 		out->writeSByte(t->hitOffsX);
 		out->writeSByte(t->hitOffsY);
@@ -363,7 +363,7 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 		out->write(l->flags, 1024);
 
 		for (int ii = 0; ii < 30; ii++) {
-			MonsterInPlay *m = &l->monsters[ii];			
+			MonsterInPlay *m = &l->monsters[ii];
 			out->writeUint16BE(m->nextAssignedObject);
 			out->writeUint16BE(m->nextDrawObject);
 			out->writeByte(m->flyingHeight);
@@ -372,7 +372,7 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 			out->writeUint16BE(m->y);
 			out->writeSByte(m->shiftStep);
 			out->writeUint16BE(m->destX);
-			out->writeUint16BE(m->destY);	
+			out->writeUint16BE(m->destY);
 			out->writeByte(m->destDirection);
 			out->writeSByte(m->hitOffsX);
 			out->writeSByte(m->hitOffsY);
@@ -403,13 +403,13 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 			out->writeUint16BE(m->x);
 			out->writeUint16BE(m->y);
 			out->writeByte(m->flyingHeight);
-			out->writeByte(m->direction);			
+			out->writeByte(m->direction);
 			out->writeByte(m->distance);
 			out->writeSByte(m->field_D);
 			out->writeByte(m->c);
 			out->writeByte(m->flags);
 			out->writeByte(m->wallFlags);
-		}			
+		}
 		out->writeByte(l->monsterDifficulty);
 	}
 

@@ -149,10 +149,10 @@ uint32 Sound::voicePlayFromList(Common::List<const char*> fileList) {
 		out->queueBuffer(vocBuffer, size);
 		totalPlayTime += size;
 	}
-	
+
 	totalPlayTime = (totalPlayTime * 1000) / 22050;
 	out->finish();
-	
+
 	_soundChannels[h].file = *fileList.begin();
 	_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, out);
 	return totalPlayTime;

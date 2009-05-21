@@ -2478,7 +2478,7 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 			curframe = firstframe;
 
 		_seqWsaChatFrameTimeout = _seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
-		if (wsa)			
+		if (wsa)
 			wsa->displayFrame(curframe % wsa->frames(), 2, wsaXpos, wsaYpos, 0);
 
 		_screen->copyPage(2, 12);

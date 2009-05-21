@@ -339,7 +339,7 @@ private:
 
 	int getCharSelection();
 	int selectionCharAccept();
-	
+
 	void showStarcraftLogo();
 
 	int _charSelection;
@@ -615,7 +615,7 @@ private:
 	int olol_getGlobalVar(EMCState *script);
 	int olol_setGlobalVar(EMCState *script);
 	int olol_triggerDoorSwitch(EMCState *script);
-	int olol_checkEquippedItemScriptFlags(EMCState *script);	
+	int olol_checkEquippedItemScriptFlags(EMCState *script);
 	int olol_setDoorState(EMCState *script);
 	int olol_updateBlockAnimations(EMCState *script);
 	int olol_mapShapeToBlock(EMCState *script);
@@ -701,7 +701,7 @@ private:
 	int olol_prepareSpecialScene(EMCState *script);
 	int olol_restoreAfterSpecialScene(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
-	int olol_checkBlockForMonster(EMCState *script);	
+	int olol_checkBlockForMonster(EMCState *script);
 	int olol_transformRegion(EMCState *script);
 	int olol_calcCoordinatesAddDirectionOffset(EMCState *script);
 	int olol_resetPortraitsAndDisableSysTimer(EMCState *script);

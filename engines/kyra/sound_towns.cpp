@@ -2720,7 +2720,7 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				finOut += _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
 		}
 
-		finOut /= 3;		
+		finOut /= 3;
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
 	}
@@ -4140,7 +4140,7 @@ SoundTownsPC98_v2::~SoundTownsPC98_v2() {
 bool SoundTownsPC98_v2::init() {
 	_driver = new TownsPC98_OpnDriver(_mixer, _vm->gameFlags().platform == Common::kPlatformPC98 ?
 		TownsPC98_OpnDriver::OD_TYPE86 : TownsPC98_OpnDriver::OD_TOWNS);
-	
+
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 		_vm->checkCD();
 		// FIXME: While checking for 'track1.XXX(X)' looks like

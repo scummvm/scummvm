@@ -80,7 +80,7 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 	uint8 *tmpPal2 = new uint8[256];
 	uint16 *tmpPal3 = new uint16[256];
 	memset (tmpPal1, 0, 64);
-	memset (tmpPal2, 0, 256);	
+	memset (tmpPal2, 0, 256);
 
 	for (int i = 0; i < 64; i++) {
 		tmpPal1[i] = *p;
@@ -342,7 +342,7 @@ void LoLEngine::removeAssignedObjectFromBlock(LevelBlockProperty *l, int id) {
 			i->nextAssignedObject = 0;
 			return;
 		}
-		
+
 		i = findObject(*blockItemIndex);
 		blockItemIndex = &i->nextAssignedObject;
 	}
@@ -356,7 +356,7 @@ void LoLEngine::removeDrawObjectFromBlock(LevelBlockProperty *l, int id) {
 		if (*blockItemIndex == id) {
 			i = findObject(id);
 			*blockItemIndex = i->nextDrawObject;
-			i->nextDrawObject = 0;			
+			i->nextDrawObject = 0;
 			return;
 		}
 
@@ -605,10 +605,10 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 				}
 
 				if (shp)
-					fy += (shp[2] >> 2);			
+					fy += (shp[2] >> 2);
 
 			} else {
-				shp = (_itemProperties[i->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[i->itemPropertyIndex].shpIndex] : 
+				shp = (_itemProperties[i->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[i->itemPropertyIndex].shpIndex] :
 					_itemShapes[_gameShapeMap[_itemProperties[i->itemPropertyIndex].shpIndex << 1]];
 			}
 
@@ -625,7 +625,7 @@ void LoLEngine::drawMonster(uint16 id) {
 	int curFrm = getMonsterCurFrame(m, flg & 0xffef);
 	uint8 *shp = 0;
 
-	if (curFrm == -1) {		
+	if (curFrm == -1) {
 		shp = _monsterShapes[m->properties->shapeIndex << 4];
 		calcDrawingLayerParameters(m->x + _monsterShiftOffs[m->shiftStep << 1], m->y + _monsterShiftOffs[(m->shiftStep << 1) + 1], _shpDmX, _shpDmY, _dmScaleW, _dmScaleH, shp, 0);
 	} else {
@@ -741,7 +741,7 @@ int LoLEngine::getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags) {
 		default:
 			return tmp;
 		}
-			
+
 		break;
 	case 2:
 		///////
@@ -801,7 +801,7 @@ void LoLEngine::redrawSceneItem() {
 		setLevelShapesDim(tile, x1, x2, 13);
 		uint16 s = _visibleBlocks[tile]->drawObjects;
 
-		int t = (i << 7) + 1;		
+		int t = (i << 7) + 1;
 		while (s) {
 			if (s & 0x8000) {
 				s = _monsters[s & 0x7fff].nextDrawObject;
@@ -815,7 +815,7 @@ void LoLEngine::redrawSceneItem() {
 						if (item->flyingHeight > 1)
 							fy -= ((item->flyingHeight - 1) * 6);
 
-						uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[item->itemPropertyIndex].shpIndex] : 
+						uint8 *shp = (_itemProperties[item->itemPropertyIndex].flags & 0x40) ? _gameShapes[_itemProperties[item->itemPropertyIndex].shpIndex] :
 							_itemShapes[_gameShapeMap[_itemProperties[item->itemPropertyIndex].shpIndex << 1]];
 
 						drawItemOrMonster(shp, 0, item->x, item->y, fx, fy, 0, t, 0);
@@ -1052,7 +1052,7 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 			f &= 6;
 		}
 	}
-	
+
 	if ((f & 1) && (monster->flags & 0x10))
 		setMonsterMode(monster, 7);
 
@@ -1081,7 +1081,7 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 		moveMonster(monster);
 		break;
 
-	case 3:			
+	case 3:
 		if (updateMonsterAdjustBlocks(monster))
 			setMonsterMode(monster, 7);
 		for (int i = 0; i < 4; i++) {
@@ -1233,7 +1233,7 @@ bool LoLEngine::chasePartyWithDistanceAttacks(MonsterInPlay *monster) {
 	} else {
 		s = monster->curDistWeapon++;
 		if (monster->curDistWeapon == monster->properties->numDistWeapons)
-			monster->curDistWeapon = 0;	
+			monster->curDistWeapon = 0;
 	}
 
 	int flyingObject = monster->properties->distWeapons[s];
@@ -1273,7 +1273,7 @@ bool LoLEngine::chasePartyWithDistanceAttacks(MonsterInPlay *monster) {
 				if (getMonsterDistance(monster->block, _monsters[i].block) < 7)
 					setMonsterMode(monster, 7);
 			}
-			_txt->printMessage(2, getLangString(0x401a));			
+			_txt->printMessage(2, getLangString(0x401a));
 
 		} else if (flyingObject == 4) {
 			launchMagicViper();
@@ -1296,7 +1296,7 @@ void LoLEngine::chasePartyWithCloseAttacks(MonsterInPlay *monster) {
 		int dir = calcMonsterDirection(monster->x & 0xff00, monster->y & 0xff00, _partyPosX & 0xff00, _partyPosY & 0xff00);
 		int x1 = _partyPosX;
 		int y1 = _partyPosY;
-		
+
 		calcSpriteRelPosition(monster->x, monster->y, x1, y1, dir >> 1);
 
 		int t = (x1 < 0) ? -x1 : x1;
@@ -1313,7 +1313,7 @@ void LoLEngine::chasePartyWithCloseAttacks(MonsterInPlay *monster) {
 					inflictDamage(dst, dmg, m, 0, 0);
 					applyMonsterAttackSkill(monster, dst, dmg);
 				}
-					
+
 				setMonsterMode(monster, 8);
 				checkSceneUpdateNeed(monster->block);
 
@@ -1321,7 +1321,7 @@ void LoLEngine::chasePartyWithCloseAttacks(MonsterInPlay *monster) {
 				setMonsterDirection(monster, dir);
 				checkSceneUpdateNeed(monster->block);
 			}
-			return;			
+			return;
 		}
 	}
 
@@ -1460,12 +1460,12 @@ void LoLEngine::rearrangeAttackingMonster(MonsterInPlay *monster) {
 	uint16 my = monster->y;
 	uint16 *c = (t & 1) ? &my : &mx;
 	bool centered = (*c & 0x7f) ? false : true;
-				
+
 	bool posFlag = true;
 	if (monster->properties->maxWidth <= 63) {
 		if (centered) {
 			bool r = false;
-			
+
 			if (monster->nextAssignedObject & 0x8000) {
 				r = true;
 			} else {
@@ -1474,7 +1474,7 @@ void LoLEngine::rearrangeAttackingMonster(MonsterInPlay *monster) {
 
 				if (id != monster->id) {
 					r = true;
-				} else {					
+				} else {
 					for (int i = 0; i < 3; i++) {
 						t = (t + 1) & 3;
 						id = _levelBlockProperties[calcNewBlockPosition(monster->block, t)].assignedObjects;
@@ -1494,7 +1494,7 @@ void LoLEngine::rearrangeAttackingMonster(MonsterInPlay *monster) {
 
 	if (centered && posFlag)
 		return;
-	
+
 	if (posFlag) {
 		if (*c & 0x80)
 			*c -= 32;
@@ -1506,10 +1506,10 @@ void LoLEngine::rearrangeAttackingMonster(MonsterInPlay *monster) {
 		else
 			*c -= 32;
 	}
-	
+
 	if (walkMonsterCheckDest(mx, my, monster, 4))
 		return;
-		
+
 	int fx = _partyPosX;
 	int fy = _partyPosY;
 	calcSpriteRelPosition(mx, my, fx, fy, monster->direction >> 1);
@@ -1524,11 +1524,11 @@ void LoLEngine::rearrangeAttackingMonster(MonsterInPlay *monster) {
 void LoLEngine::moveStrayingMonster(MonsterInPlay *monster) {
 	int x = 0;
 	int y = 0;
-	
+
 	if (monster->fightCurTick) {
 		uint8 d = (monster->direction - monster->fightCurTick) & 6;
 		uint8 id = monster->id;
-	
+
 		for (int i = 0; i < 7; i++) {
 			getNextStepCoords(monster->x, monster->y, x, y, d);
 

@@ -324,10 +324,10 @@ void LoLEngine::setItemPosition(int item, uint16 x, uint16 y, int flyingHeight, 
 	else
 		_itemsInPlay[item].shpCurFrame_flg &= 0xbfff;
 
-	
+
 	assignItemToBlock(&_levelBlockProperties[block].assignedObjects, item);
 	reassignDrawObjects(_currentDirection, item, &_levelBlockProperties[block], false);
-	
+
 	if (b)
 		runLevelScriptCustom(block, 0x80, -1, item, 0, 0);
 
@@ -383,7 +383,7 @@ bool LoLEngine::launchObject(int objectType, int item, int startX, int startY, i
 	t->attackerId = attackerId;
 	t->flags = 7;
 	t->wallFlags = 2;
-	t->c = c;	
+	t->c = c;
 
 	if (attackerId != -1) {
 		if (attackerId & 0x8000) {
@@ -456,13 +456,13 @@ void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objec
 	} else if (objectOnNextBlock == 2) {
 		if (_itemProperties[_itemsInPlay[t->item].itemPropertyIndex].flags & 0x4000) {
 			int o = _levelBlockProperties[_itemsInPlay[t->item].block].assignedObjects;
-			
+
 			while (o & 0x8000) {
 				ItemInPlay *i = findObject(o);
 				o = i->nextAssignedObject;
 				runItemScript(t->attackerId, t->item, 0x8000, o, 0);
 			}
-			
+
 			return;
 
 		} else {

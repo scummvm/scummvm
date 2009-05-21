@@ -35,7 +35,7 @@ namespace Kyra {
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm), _screen(screen),
 	_scriptParameter(0), _animWidth(0), _animColor1(0), _animColor2(0), _animFlag(true), _lineCount(0),
 	_printFlag(false), _lineWidth(0), _numCharsTotal(0), _numCharsLeft(0), _numCharsPrinted(0) {
-	
+
 	memset(_stringParameters, 0, 15 * sizeof(char*));
 	_buffer = new char[600];
 	memset(_buffer, 0, 600);
@@ -160,8 +160,8 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 	int oldDim = 0;
 
 	if (dim == 3) {
-		if (_vm->_updateFlags & 2) {			
-			oldDim = clearDim(4);			
+		if (_vm->_updateFlags & 2) {
+			oldDim = clearDim(4);
 			_textDimData[4].color1 = 254;
 			_textDimData[4].color2 = _screen->_curDim->unkA;
 		} else {
@@ -175,7 +175,7 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 		}
 	} else {
 		oldDim = _screen->curDimIndex();
-		_screen->setScreenDim(dim);		
+		_screen->setScreenDim(dim);
 		_textDimData[dim].color1 = 254;
 		_textDimData[dim].color2 = _screen->_curDim->unkA;
 	}
@@ -222,7 +222,7 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 	vsnprintf((char*) _buffer, 240, str, args);
 
 	va_end(args);
-	
+
 	displayText(_buffer);
 
 	_screen->setScreenDim(od);
@@ -311,7 +311,7 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 
 		case 'n':
 			strcpy(dst, _vm->_characters[script ? script->stack[script->sp + paramIndex] : paramList[paramIndex]].name);
-			dst += strlen(dst);	
+			dst += strlen(dst);
 			break;
 
 		case 's':
@@ -328,7 +328,7 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 			break;
 
 		case '\0':
-		default:				
+		default:
 			continue;
 		}
 	}
@@ -337,20 +337,20 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 
 void TextDisplayer_LoL::displayText(char *str, ...) {
 	_printFlag = false;
-	
+
 	_lineWidth = 0;
 	_numCharsLeft = 0;
 	_numCharsPrinted = 0;
 
 	_tempString1 = str;
 	_tempString2 = 0;
-	
+
 	_currentLine[0] = 0;
 
 	memset(_ctrl, 0, 3);
 
 	char c = parseCommand();
-	
+
 	va_list args;
 	va_start(args, str);
 
@@ -369,7 +369,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 			} else {
 				break;
 			}
-			
+
 			_ctrl[0] = _ctrl[2];
 			_ctrl[2] = _ctrl[1] = 0;
 			c = parseCommand();
@@ -434,9 +434,9 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 
 			if ((_textDimData[sdx].column + _lineWidth) > (sd->w << 3))
 				printLine(_currentLine);
-			
+
 			break;
-		}		
+		}
 
 		c = parseCommand();
 	}
@@ -490,21 +490,21 @@ void TextDisplayer_LoL::printLine(char *str) {
 
 	int fh = (_screen->getFontHeight() + _screen->_charOffset);
 	int lines = (sd->h - _screen->_charOffset) / fh;
-	
+
 	while (_textDimData[sdx].line >= lines) {
 		if (lines <= _lineCount && _animFlag) {
 			_lineCount = 0;
 			textPageBreak();
 			_numCharsPrinted = 0;
 		}
-		
+
 		int h1 = ((sd->h / fh) - 1) * fh;
 		int h2 = sd->h - fh;
 
 		if (h2)
 			_screen->copyRegion(sd->sx << 3, sd->sy + fh, sd->sx << 3, sd->sy, sd->w << 3, h2, _screen->_curPage, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
-		_screen->fillRect(sd->sx << 3, sd->sy + h1, (sd->sx + sd->w - 1) << 3, sd->sy + sd->h - 1, _textDimData[sdx].color2);	
+		_screen->fillRect(sd->sx << 3, sd->sy + h1, (sd->sx + sd->w - 1) << 3, sd->sy + sd->h - 1, _textDimData[sdx].color2);
 		if (_textDimData[sdx].line)
 			_textDimData[sdx].line--;
 	}
@@ -529,10 +529,10 @@ void TextDisplayer_LoL::printLine(char *str) {
 			//cut off line after last space
 			c = str[n1];
 			lw -= _screen->getCharWidth(c);
-			
+
 			if (!n2 && lw <= w)
 				n2 = n1;
-			
+
 			if (n2 && c == ' ') {
 				s = n1;
 				_printFlag = false;
@@ -554,11 +554,11 @@ void TextDisplayer_LoL::printLine(char *str) {
 
 	c = str[s];
 	str[s] = 0;
-	
+
 	_screen->printText(str, x1, y, _textDimData[sdx].color1, _textDimData[sdx].color2);
 	_textDimData[sdx].column += lw;
 	_numCharsPrinted += strlen(str);
-	
+
 	str[s] = c;
 
 	if (c == ' ')
@@ -618,7 +618,7 @@ void TextDisplayer_LoL::textPageBreak() {
 		} else {
 			x += 6;
 			y = dim->sy + dim->h - 2;
-		}		
+		}
 	} else {
 		y = dim->sy + dim->h - 10;
 	}
@@ -638,7 +638,7 @@ void TextDisplayer_LoL::textPageBreak() {
 
 		while (!inputFlag) {
 			_vm->update();
-		
+
 			if (_vm->_speechFlag) {
 				if (((_vm->_system->getMillis() > speechPartTime) || (_vm->snd_characterSpeaking() != 2)) && speechPartTime) {
 					loop = false;

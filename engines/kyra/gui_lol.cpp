@@ -1180,7 +1180,7 @@ int LoLEngine::clickedPortraitEtcRight(Button *button) {
 	if (flg & 1) {
 		if (!(_characters[c].flags & 8) || (flg & 0x20)) {
 			runItemScript(c, _itemInHand, 0x400, 0, 0);
-			runLevelScriptCustom(_currentBlock, 0x400, c, _itemInHand, 0, 0);			
+			runLevelScriptCustom(_currentBlock, 0x400, c, _itemInHand, 0, 0);
 		} else {
 			_txt->printMessage(2, getLangString(0x402c), _characters[c].name);
 		}
@@ -1466,7 +1466,7 @@ int LoLEngine::clickedScroll(Button *button) {
 int LoLEngine::clickedSpellTargetCharacter(Button *button) {
 	int t = button->arg;
 	_txt->printMessage(0, "%s.\r", _characters[t].name);
-	
+
 	if ((_spellProperties[_activeSpell.spell].flags & 0xff) == 1) {
 		_activeSpell.target = t;
 		castHealOnSingleCharacter(&_activeSpell);
@@ -1525,7 +1525,7 @@ int LoLEngine::clickedOptions(Button *button) {
 
 int LoLEngine::clickedRestParty(Button *button) {
 	gui_toggleButtonDisplayMode(77, 1);
-	
+
 	Button b;
 	memset(&b, 0, sizeof(Button));
 	b.data0Val2 = b.data1Val2 = b.data2Val2 = 0xfe;
@@ -1539,7 +1539,7 @@ int LoLEngine::clickedRestParty(Button *button) {
 	int tHa = -1;
 	int needPoisoningFlags = 0;
 	int needHealingFlags = 0;
-	int needMagicGainFlags = 0;	
+	int needMagicGainFlags = 0;
 
 	for (int i = 0; i < 4; i++) {
 		LoLCharacter *c = &_characters[i];
@@ -1553,7 +1553,7 @@ int LoLEngine::clickedRestParty(Button *button) {
 			tMp = c->magicPointsMax;
 
 		if (c->flags & 0x80) {
-			needPoisoningFlags |= (1 << i);			
+			needPoisoningFlags |= (1 << i);
 			if (c->hitPointsCur > tHa)
 				tHa = c->hitPointsCur;
 		} else {
@@ -1572,7 +1572,7 @@ int LoLEngine::clickedRestParty(Button *button) {
 	if (needHealingFlags || needMagicGainFlags) {
 		_screen->fillRect(112, 0, 288, 120, 1);
 		gui_drawAllCharPortraitsWithStats();
-		
+
 		_txt->printMessage(0x8000, getLangString(0x4057));
 		gui_toggleButtonDisplayMode(77, 0);
 
@@ -1626,11 +1626,11 @@ int LoLEngine::clickedRestParty(Button *button) {
 			} else if (f) {
 				gui_triggerEvent(f);
 				break;
-			}					
-						
-			if (!_partyAwake) {					
+			}
+
+			if (!_partyAwake) {
 				if (_system->getMillis() > delay3) {
-					for (int i = 0; i < 4; i++) {							
+					for (int i = 0; i < 4; i++) {
 						if (!(needPoisoningFlags & (1 << i)))
 							continue;
 						inflictDamage(i, 1, 0x8000, 1, 0x80);
@@ -1639,42 +1639,42 @@ int LoLEngine::clickedRestParty(Button *button) {
 					}
 					delay3 = _system->getMillis() + a * _tickLength;
 				}
-					
+
 				if (_system->getMillis() > delay1) {
-					for (int i = 0; i < 4; i++) {							
+					for (int i = 0; i < 4; i++) {
 						if (!(needHealingFlags & (1 << i)))
 							continue;
 						increaseCharacterHitpoints(i, 1, false);
 						gui_drawCharPortraitWithStats(i);
 						if (_characters[i].hitPointsCur == _characters[i].hitPointsMax)
 							needHealingFlags &= ~(1 << i);
-					}						
+					}
 					delay1 = _system->getMillis() + h * _tickLength;
 				}
 
 				if (_system->getMillis() > delay2) {
-					for (int i = 0; i < 4; i++) {							
+					for (int i = 0; i < 4; i++) {
 						if (!(needMagicGainFlags & (1 << i)))
 							continue;
-						_characters[i].magicPointsCur++;														
+						_characters[i].magicPointsCur++;
 						gui_drawCharPortraitWithStats(i);
 						if (_characters[i].magicPointsCur == _characters[i].magicPointsMax)
 							needMagicGainFlags &= ~(1 << i);
-					}						
+					}
 					delay2 = _system->getMillis() + m * _tickLength;
 				}
 				_screen->updateScreen();
 			}
-		
+
 		} while (!_partyAwake && (needHealingFlags || needMagicGainFlags));
-		
+
 		for (int i = 0; i < 4; i++) {
 			int frm = 0;
 			int upd = 0;
 			bool setframe = true;
 
 			if (_characters[i].flags & 0x1000) {
-				_characters[i].flags &= 0xefff;				
+				_characters[i].flags &= 0xefff;
 
 				if (_partyAwake) {
 					if (_characters[i].damageSuffered) {

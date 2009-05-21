@@ -83,7 +83,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 		COMMAND(cmd_return(1)),
 		COMMAND(cmd_return(1)),
 		COMMAND(cmd_return(n1))
-	};	
+	};
 #undef cmd_return
 #undef COMMAND_UNIMPL
 #undef COMMAND
@@ -113,7 +113,7 @@ TIMInterpreter::~TIMInterpreter() {
 		delete[] _animations[i].parts;
 	}
 
-	delete[] _animations;	
+	delete[] _animations;
 }
 
 TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode *> *opcodes) {
@@ -126,7 +126,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 
 	IFFParser iff(*stream);
 	Common::IFFChunk *chunk = 0;
-	
+
 	TIM *tim = new TIM;
 	assert(tim);
 	memset(tim, 0, sizeof(TIM));
@@ -217,7 +217,7 @@ int TIMInterpreter::exec(TIM *tim, bool loop) {
 			update();
 			checkSpeechProgress();
 
-			bool running = true;			
+			bool running = true;
 			int cnt = 0;
 			while (cur.ip && cur.nextTime <= _system->getMillis() && running) {
 				if (cnt++ > 0) {
@@ -460,7 +460,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 				screen()->checkedPageUpdate(8, 4);
 			screen()->updateScreen();
 		}
-		
+
 		if (wsaFlags & 4) {
 			snprintf(file, 32, "%s.CPS", filename);
 
@@ -840,7 +840,7 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 		_animations[i].parts = new AnimPart[TIM::kAnimParts];
 		memset(_animations[i].parts, 0, TIM::kAnimParts * sizeof(AnimPart));
 	}
-	
+
 	_drawPage2 = 0;
 
 	memset(_dialogueButtonString, 0, 3 * sizeof(const char*));
@@ -948,8 +948,8 @@ void TIMInterpreter_LoL::drawDialogueBox(int numStr, const char *s1, const char 
 
 		if (numStr == 1) {
 			_dialogueButtonXoffs = 0;
-			_dialogueButtonPosX = d->sx + d->w - 77;			
-		} else {			
+			_dialogueButtonPosX = d->sx + d->w - 77;
+		} else {
 			_dialogueButtonXoffs = d->w / numStr;
 			_dialogueButtonPosX = d->sx + (_dialogueButtonXoffs >> 1) - 37;
 		}
@@ -1049,7 +1049,7 @@ void TIMInterpreter_LoL::updateBackgroundAnimation(int animIndex) {
 
 void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay) {
 	Animation *anim = &_animations[animIndex];
-	
+
 	int step = (lastFrame >= firstFrame) ? 1 : -1;
 	for (int i = firstFrame; i != (lastFrame + step) ; i += step) {
 		uint32 next = _system->getMillis() + delay * _vm->_tickLength;
@@ -1098,10 +1098,10 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	if (_dialogueNumButtons == 0) {
 		int e = _vm->checkInput(0, false) & 0xFF;
 		_vm->removeInputTop();
-		
+
 		if (e) {
 			_vm->gui_notifyButtonListChanged();
-		
+
 			if (e == 43 || e == 61) {
 				_vm->snd_stopSpeech(true);
 				//_dlgTimer = 0;
@@ -1146,7 +1146,7 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 			case 200:
 			case 202:
 				x = _dialogueButtonPosX;
-				
+
 				for (int i = 0; i < _dialogueNumButtons; i++) {
 					if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
 						_dialogueHighlightedButton = i;
@@ -1165,7 +1165,7 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 
 	if (df != _dialogueHighlightedButton)
 		drawDialogueButtons();
-	
+
 	if (res == 0)
 		return 0;
 
@@ -1213,7 +1213,7 @@ void TIMInterpreter_LoL::checkSpeechProgress() {
 		}
 	}
 }
-	
+
 char *TIMInterpreter_LoL::getTableString(int id) {
 	return _vm->getLangString(id);
 }
@@ -1283,7 +1283,7 @@ int TIMInterpreter_LoL::cmd_processDialogue(const uint16 *param) {
 	_animations[5].wsa = 0;
 
 	if (_currentTim->procParam)
-		advanceToOpcode(21);	
+		advanceToOpcode(21);
 
 	return res;
 }

@@ -41,7 +41,7 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 
 	for (int i = 0; i < 8; i++)
 		_levelOverlays[i] = new uint8[256];
-	
+
 	_fadeFlag = 2;
 	_curDimIndex = 0;
 
@@ -207,7 +207,7 @@ uint8 *Screen_LoL::generateLevelOverlay(const uint8 *srcPal, uint8 *ovl, int opC
 				if (c <= m) {
 					m = c;
 					l = x;
-				}				
+				}
 			}
 			x++;
 		} while (--ii);
@@ -215,7 +215,7 @@ uint8 *Screen_LoL::generateLevelOverlay(const uint8 *srcPal, uint8 *ovl, int opC
 		*d++ = l & 0xff;
 	}
 
-	return ovl;	
+	return ovl;
 }
 
 void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
@@ -227,7 +227,7 @@ void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
 		if (x <= 0)
 			return;
 		w = x;
-		x = 0;		
+		x = 0;
 	}
 
 	int tmp = x + w;
@@ -242,7 +242,7 @@ void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
 		if (y <= 0)
 			return;
 		h = y;
-		y = 0;		
+		y = 0;
 	}
 
 	tmp = y + h;
@@ -256,7 +256,7 @@ void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
 
 	w >>= 1;
 	int w2 = w;
-	
+
 	while (h--) {
 		if (w) {
 			while (w--) {
@@ -281,7 +281,7 @@ void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
 void Screen_LoL::fadeClearSceneWindow(int delay) {
 	if (_fadeFlag == 1)
 		return;
-	
+
 	uint8 *tpal = new uint8[768];
 
 	memcpy(tpal, _currentPalette, 768);
@@ -423,7 +423,7 @@ void Screen_LoL::smoothScrollHorizontalStep(int pageNum, int srcX, int dstX, int
 
 		for (int i = 0; i < w; i++)
 			*s++ = *d++;
-		
+
 		s += pitchS;
 		d += pitchD;
 	}
@@ -527,7 +527,7 @@ void Screen_LoL::smoothScrollTurnStep3(int srcPage1Num, int srcPage2Num, int dst
 void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, int page2, int w2, int h2, int x2, int y2, int w3, int h3, int mode, ...) {
 	if (!w3 || !h3)
 		return;
-	
+
 	uint8 *table1 = 0;
 	uint8 *table2 = 0;
 
@@ -552,7 +552,7 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 	int ibh_1 = _internBlockHeight;
 	int dx_1 = _internDimDstX;
 	int dy_1 = _internDimDstY;
-	
+
 	_internDimX = _internDimY = 0;
 	_internDimW = w2;
 	_internDimH = h2;
@@ -560,7 +560,7 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 	calcBoundariesIntern(x2, y2, ibw_1, ibh_1);
 	if (_internBlockWidth == -1)
 		return;
-	
+
 	int iu5_2 = _internDimU5;
 	int iu6_2 = _internDimU6;
 	int ibw_2 = _internBlockWidth;
@@ -583,7 +583,7 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 				s++;
 				d++;
 			}
-			
+
 			for (int ii = (i & 1) ^ 1; ii < ibw_2; ii += 2 ) {
 				*d = *s;
 				d += 2;
@@ -598,7 +598,7 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 					cmd = table2[(offs << 8) | *d];
 				*d++ = cmd;
 			}
-			
+
 		} else if (mode == 3) {
 			s = s - iu5_2 + ibw_1;
 			s = s - iu5_2 - 1;
@@ -753,7 +753,7 @@ void Screen_LoL::fadeToPalette1(int delay) {
 }
 
 void Screen_LoL::loadSpecialColors(uint8 *destPalette) {
-	memcpy(destPalette + 0x240, _screenPalette + 0x240, 12);	
+	memcpy(destPalette + 0x240, _screenPalette + 0x240, 12);
 }
 
 void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {
@@ -817,7 +817,7 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 
 bool Screen_LoL::fadePalSpecial(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime) {
 	uint8 tpal[768];
-	uint8 *p1 = _palettes[1];	
+	uint8 *p1 = _palettes[1];
 
 	bool res = false;
 	for (int i = 0; i < 768; i++) {

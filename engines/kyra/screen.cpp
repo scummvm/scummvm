@@ -73,7 +73,7 @@ bool Screen::init() {
 	_useOverlays = false;
 	_useSJIS = false;
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
-	
+
 	_sjisTempPage = _sjisFontData = 0;
 
 	if (_vm->gameFlags().useHiResOverlay) {
@@ -419,12 +419,12 @@ void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &
 
 int Screen::fadePalStep(const uint8 *palette, int diff) {
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : (_use16ColorMode ? 16 : 256)) * 3;
-	
+
 	uint8 fadePal[768];
 	memcpy(fadePal, _screenPalette, colors);
 
 	bool needRefresh = false;
-	
+
 	for (int i = 0; i < colors; ++i) {
 		int c1 = palette[i];
 		int c2 = fadePal[i];
@@ -1227,7 +1227,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		&Screen::drawShapePlotType37,		// used by LoL (monsters)
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		&Screen::drawShapePlotType48,		// used by LoL (slime spots on the floor)
-		0, 0, 0, 
+		0, 0, 0,
 		&Screen::drawShapePlotType52,		// used by LoL (projectiles)
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0
@@ -1823,7 +1823,7 @@ void Screen::drawShapePlotType33(uint8 *dst, uint8 cmd) {
 
 void Screen::drawShapePlotType37(uint8 *dst, uint8 cmd) {
 	cmd = _dsTable2[cmd];
-	
+
 	if (cmd == 255) {
 		cmd = _dsTable5[*dst];
 	} else {

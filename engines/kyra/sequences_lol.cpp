@@ -170,7 +170,7 @@ void LoLEngine::setupPrologueData(bool load) {
 		memset(_screen->getPalette(1), 0, 768);
 
 		_sound->setSoundList(&_soundData[kMusicIntro]);
-	
+
 		// We have three sound.dat files, one for the intro, one for the
 		// end sequence and one for ingame, each contained in a different
 		// PAK file. Therefore a new call to loadSoundFile() is required
@@ -182,7 +182,7 @@ void LoLEngine::setupPrologueData(bool load) {
 			_sound->loadSoundFile("LOREINTR");
 	} else {
 		delete _chargenWSA; _chargenWSA = 0;
-		
+
 		uint8 *pal = _screen->getPalette(0);
 		memset(pal, 0, 768);
 		_screen->setScreenPalette(pal);
@@ -667,7 +667,7 @@ void LoLEngine::showStarcraftLogo() {
 		_sound->voicePlay("star2");
 		while(_sound->voiceIsPlaying("star2") && !(shouldQuit() || inputFlag)) {
 			inputFlag = checkInput(0) & 0xff;
-			delay(_tickLength);			
+			delay(_tickLength);
 		}
 	}
 

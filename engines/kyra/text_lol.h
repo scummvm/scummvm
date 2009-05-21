@@ -42,7 +42,7 @@ public:
 
 	void setAnimParameters(const char *str, int x, uint8 col1, uint8 col2);
 	void setAnimFlag(bool flag) { _animFlag = flag; }
-	
+
 	void setupField(bool mode);
 	void expandField();
 
@@ -51,7 +51,7 @@ public:
 
 	void printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void printMessage(uint16 type, const char *str, ...);
-	
+
 	int16 _scriptParameter;
 
 private:
@@ -60,7 +60,7 @@ private:
 	void readNextPara();
 	void printLine(char *str);
 	void preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
-	void textPageBreak();	
+	void textPageBreak();
 
 	void clearCurDim();
 
@@ -79,7 +79,7 @@ private:
 	uint32 _numCharsTotal;
 	uint32 _numCharsLeft;
 	uint32 _numCharsPrinted;
-	
+
 	const char *_animString;
 	int16 _animWidth;
 	uint8 _animColor1;

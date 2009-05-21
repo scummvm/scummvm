@@ -381,7 +381,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 			if (palBuf)
 				_vm->screen()->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf, 0x30);
 		}
-	
+
 		_flags |= WF_XOR;
 	}
 

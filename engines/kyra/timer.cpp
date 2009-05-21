@@ -200,12 +200,12 @@ uint32 TimerManager::getNextRun(uint8 id) const {
 
 void TimerManager::pauseSingleTimer(uint8 id, bool p) {
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
-	
+
 	if (timer == _timers.end()) {
 		warning("TimerManager::pauseSingleTimer: No timer %d", id);
 		return;
 	}
-	
+
 	if (p) {
 		timer->pauseStartTime = _system->getMillis();
 		timer->enabled |= 2;
@@ -216,7 +216,7 @@ void TimerManager::pauseSingleTimer(uint8 id, bool p) {
 		timer->nextRun += elapsedTime;
 		resetNextRun();
 		timer->pauseStartTime = 0;
-	}	
+	}
 }
 
 bool TimerManager::isEnabled(uint8 id) const {

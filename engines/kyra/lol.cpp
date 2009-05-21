@@ -642,7 +642,7 @@ int LoLEngine::checkInput(Button *buttonList, bool mainLoop) {
 	if (!inputFlag) {
 		// This fixes a bug with some interactive sequences (like the inn where you mee Timothy).
 		// In the original code Mouse position variables are only updated when mouse button
-		// or keyboard events get triggered. 
+		// or keyboard events get triggered.
 
 		// TODO/FIXME: Check whether this is the correct way to do it in KYRA, too. In this case a
 		// fix could be added to KyraEngine_v1::checkInput() and the virtual stuff would not be
@@ -973,7 +973,7 @@ void LoLEngine::decodeSjis(const char *src, char *dst) {
 				*dst++ = *src++;
 			}
 			cmd = *src++;
-			
+
 		} else {
 			s[0] = *src++;
 			Util::decodeString1(s, d);
@@ -1259,7 +1259,7 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 	} else {
 		c->hitPointsCur = newVal;
 		if (c->hitPointsCur < 1)
-			c->flags |= 8;		
+			c->flags |= 8;
 	}
 
 	if (_updateFlags & 2)
@@ -1268,7 +1268,7 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 	Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
 	int cp = _screen->setCurPage(0);
 
-	int s = 8192 / pointsMax;	
+	int s = 8192 / pointsMax;
 	pointsMax = (s * pointsMax) >> 8;
 	pointsCur = (s * pointsCur) >> 8;
 	newVal = (s * newVal) >> 8;
@@ -1279,7 +1279,7 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 
 	if (newVal != pointsCur) {
 		step = (newVal >= pointsCur) ? 2 : -2;
-		
+
 		for (int i = pointsCur; i != newVal || newVal != newValScl;) {
 			if (ABS(i - newVal) < ABS(step))
 				step >>= 1;
@@ -1295,7 +1295,7 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 			if (i == newVal) {
 				newVal = newValScl;
 				step = -step;
-			}			
+			}
 
 			delayUntil(_smoothScrollTimer);
 		}
@@ -1559,7 +1559,7 @@ void LoLEngine::fadeText() {
 void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage) {
 	uint16 *p1 = (uint16*) _tempBuffer5120;
 	uint16 *p2 = (uint16*) (_tempBuffer5120 + 640);
-	
+
 	for (int i = 0; i < w; i++)
 		p1[i] = i;
 
@@ -2126,7 +2126,7 @@ int LoLEngine::castSpell(int charNum, int spellType, int spellLevel) {
 		_txt->printMessage(2, getLangString(0x4257));
 		return 0;
 	}
-	
+
 	if (charNum < 0) {
 		_activeSpell.charNum = (charNum * -1) - 1;
 		if (_spellProcs[spellType]->isValid())
@@ -2145,7 +2145,7 @@ int LoLEngine::castSpell(int charNum, int spellType, int spellLevel) {
 		if (_spellProcs[spellType]->isValid())
 			(*_spellProcs[spellType])(&_activeSpell);
 	}
-	
+
 	return 1;
 }
 
@@ -2247,7 +2247,7 @@ void LoLEngine::processMagicSpark(int charNum, int spellLevel) {
 	uint16 wFrames[6];
 	const uint16 width = mov->width();
 	const uint16 height = mov->height();
-	
+
 	for (int i = 0; i < 6; i++) {
 		wX[i] = (_rnd.getRandomNumber(0x7fff) % 64) + ((176 - width) >> 1) + 80;
 		wY[i] = (_rnd.getRandomNumber(0x7fff) % 32) + ((120 - height) >> 1) - 16;
@@ -2261,7 +2261,7 @@ void LoLEngine::processMagicSpark(int charNum, int spellLevel) {
 		for (int ii = 0; ii <= spellLevel; ii++) {
 			if (wFrames[ii] >= i || wFrames[ii] + 13 <= i)
 				continue;
-			
+
 			if ((i - wFrames[ii]) == 1)
 				snd_playSoundEffect(162, -1);
 
@@ -2405,9 +2405,9 @@ void LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 
 void LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	int cp = _screen->setCurPage(2);
-	
+
 	disableSysTimer(2);
-	
+
 	gui_drawScene(0);
 	_screen->copyPage(0, 12);
 
@@ -2428,7 +2428,7 @@ void LoLEngine::processMagicIce(int charNum, int spellLevel) {
 
 	////////// TODO
 	generateBrightnessPalette(_screen->_currentPalette, _screen->getPalette(1), _brightness, _lampEffect);
-	
+
 	////////// TODO
 
 	_screen->setCurPage(cp);
@@ -2456,7 +2456,7 @@ void LoLEngine::processMagicFog() {
 		error("Fog: Unable to load fog.wsa");
 
 	snd_playSoundEffect(145, -1);
-	
+
 	for (int curFrame = 0; curFrame < numFrames; curFrame++) {
 		_smoothScrollTimer = _system->getMillis() + 3 * _tickLength;
 		_screen->copyPage(12, 2);
@@ -2465,7 +2465,7 @@ void LoLEngine::processMagicFog() {
 		_screen->updateScreen();
 		delayUntil(_smoothScrollTimer);
 	}
-	
+
 	mov->close();
 	delete mov;
 
@@ -2486,7 +2486,7 @@ void LoLEngine::processMagicSwarm(int charNum, int damage) {
 	int cp = _screen->setCurPage(2);
 	_screen->copyPage(0, 12);
 	snd_playSoundEffect(74, -1);
-	
+
 	uint16 destIds[6];
 	uint8 destModes[6];
 	int8 destTicks[6];
@@ -2501,7 +2501,7 @@ void LoLEngine::processMagicSwarm(int charNum, int damage) {
 		o &= 0x7fff;
 		if (_monsters[o].mode != 13) {
 			destIds[t++] = o;
-			
+
 			if (!(_monsters[o].flags & 0x2000)) {
 				_envSfxUseQueue = true;
 				inflictMagicalDamage(o | 0x8000, charNum, damage, 0, 0);
@@ -2562,7 +2562,7 @@ void LoLEngine::addSpellToScroll(int spell, int charNum) {
 			assigned = true;
 			slot = i;
 		}
-		
+
 		if (_availableSpells[i] == spell) {
 			_txt->printMessage(2, getLangString(0x42d0));
 			return;
@@ -2617,7 +2617,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 	_screen->copyPage(0, 12);
 	int vX = _updateSpellBookCoords[slot << 1] + 32;
 	int vY = _updateSpellBookCoords[(slot << 1) + 1] + 5;
-	
+
 	char wsaFile[13];
 	snprintf(wsaFile, 13, "write%0d%c.wsa", spell, (_lang == 1) ? 'f' : (_lang == 0 ? 'e' : 'g'));
 	snd_playSoundEffect(_updateSpellBookAnimData[(spell << 2) + 3], -1);
@@ -2681,7 +2681,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFrame, int frameDelay, int x, int y, SpellProcCallback callback, uint8 *pal1, uint8 *pal2, int fadeDelay, bool restoreScreen) {
 	int w = 0;
 	int h = 0;
-	
+
 	if (mov) {
 		w = mov->width();
 		h = mov->height();
@@ -2720,7 +2720,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 
 		int del = _smoothScrollTimer - _system->getMillis();
 		do {
-			
+
 			int step = del > _tickLength ? _tickLength : del;
 
 			if (!pal1 || !pal2) {
@@ -2877,7 +2877,7 @@ int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int ski
 
 			snd_queueEnvironmentalSoundEffect(m->properties->sounds[2], m->block);
 			checkSceneUpdateNeed(m->block);
-			
+
 			if (m->hitPoints <= 0) {
 				m->hitPoints = 0;
 				if (!(attacker & 0x8000))
@@ -2985,7 +2985,7 @@ int LoLEngine::calcInflictableDamagePerItem(int16 attacker, int16 target, uint16
 		return 0;
 
 	if (!(attacker & 0x8000)) {
-		dmg = (dmg * _characters[attacker].totalMightModifier) >> 8;	
+		dmg = (dmg * _characters[attacker].totalMightModifier) >> 8;
 		if (!dmg)
 			return 0;
 	}
@@ -3134,7 +3134,7 @@ void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker,
 
 	case 4:
 		if (!(deathFlag & 0x80))
-			return;			
+			return;
 		monster->hitPoints += damage;
 		if (monster->hitPoints > monster->properties->hitPoints)
 			monster->hitPoints = monster->properties->hitPoints;
@@ -3173,7 +3173,7 @@ int LoLEngine::paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFl
 		return 0;
 
 	int r = 0;
-	
+
 	if (typeFlag == 0x40) {
 		_characters[charNum].flags |= 0x40;
 		setCharacterUpdateEvent(charNum, 3, 3600, 1);
@@ -3189,7 +3189,7 @@ int LoLEngine::paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFl
 
 	} else if (typeFlag == 0x1000) {
 		_characters[charNum].flags |= 0x1000;
-		setCharacterUpdateEvent(charNum, 7, 120, 1);		
+		setCharacterUpdateEvent(charNum, 7, 120, 1);
 		r = 1;
 	}
 

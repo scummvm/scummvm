@@ -136,12 +136,12 @@ int LoLEngine::olol_moveParty(EMCState *script) {
 	int mode = stackPos(0);
 	if (mode > 5 && mode < 10)
 		mode = (mode - 6 - _currentDirection) & 3;
-	
+
 	Button b;
 	memset(&b, 0, sizeof(Button));
 	b.data0Val2 = b.data1Val2 = b.data2Val2 = 0xfe;
 	b.data0Val3 = b.data1Val3 = b.data2Val3 = 0x01;
-	
+
 	switch (mode) {
 	case 0:
 		clickedUpArrow(&b);
@@ -1058,7 +1058,7 @@ int LoLEngine::olol_createHandItem(EMCState *script) {
 
 int LoLEngine::olol_playAttackSound(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playAttackSound(%p) (%d)", (const void *)script, stackPos(0));
-	
+
 	static const uint8 sounds[] = { 12, 62, 63 };
 	int d = stackPos(0);
 
@@ -1369,7 +1369,7 @@ int LoLEngine::olol_countAllMonsters(EMCState *script){
 
 	for (int i = 0; i < 30; i++) {
 		if (_monsters[i].hitPoints > 0 && _monsters[i].mode != 13)
-			res++;		
+			res++;
 	}
 
 	return res;
@@ -1398,7 +1398,7 @@ int LoLEngine::olol_calcInflictableDamage(EMCState *script) {
 
 int LoLEngine::olol_getInflictedDamage(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getInflictedDamage(%p) (%d)", (const void *)script, stackPos(0));
-	int mx = stackPos(0);	
+	int mx = stackPos(0);
 	return mx ? _rnd.getRandomNumberRng(2, mx) : 0;
 }
 
@@ -1439,13 +1439,13 @@ int LoLEngine::olol_calcInflictableDamagePerItem(EMCState *script) {
 
 int LoLEngine::olol_distanceAttack(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_distanceAttack(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8));
-	
+
 	uint16 fX = stackPos(3);
 	uint16 fY = stackPos(4);
 
 	if (!(stackPos(8) & 0x8000))
 		fX = fY = 0x80;
-		
+
 	uint16 x = 0;
 	uint16 y = 0;
 	calcCoordinates(x, y, stackPos(2), fX, fY);
@@ -1580,7 +1580,7 @@ int LoLEngine::olol_triggerEventOnMouseButtonClick(EMCState *script) {
 	removeInputTop();
 	if (f == 0 || (f & 0x800))
 		return 0;
-	
+
 	int evt = stackPos(0);
 	if (evt) {
 		gui_triggerEvent(evt);
@@ -1588,7 +1588,7 @@ int LoLEngine::olol_triggerEventOnMouseButtonClick(EMCState *script) {
 	} else {
 		removeInputTop();
 	}
-	
+
 	return 1;
 }
 
@@ -1616,7 +1616,7 @@ int LoLEngine::olol_countSpecificMonsters(EMCState *script) {
 
 	for (int i = 0; i < 30; i++) {
 		if (((1 << _monsters[i].type) & types) && _monsters[i].mode < 14)
-			res++;		
+			res++;
 	}
 
 	return res;
@@ -1704,7 +1704,7 @@ int LoLEngine::olol_getItemOnPos(EMCState *script) {
 
 		return _emcLastItem;
 	}
-	
+
 	return 0;
 }
 
@@ -1786,7 +1786,7 @@ int LoLEngine::olol_checkBlockForMonster(EMCState *script) {
 	uint16 o = _levelBlockProperties[block].assignedObjects;
 	while (o & 0x8000) {
 		if (id == 0xffff || id == o)
-			return o & 0x7fff;		
+			return o & 0x7fff;
 		o = findObject(o)->nextAssignedObject;
 	}
 	return -1;
@@ -1830,7 +1830,7 @@ int LoLEngine::olol_getNextActiveCharacter(EMCState *script) {
 		_scriptCharacterCycle = 0;
 	else
 		_scriptCharacterCycle++;
-	
+
 	while (_scriptCharacterCycle < 4) {
 		if (_characters[_scriptCharacterCycle].flags & 1)
 			return _scriptCharacterCycle;
@@ -1850,7 +1850,7 @@ int LoLEngine::olol_drawCharPortrait(EMCState *script) {
 	if (charNum == -1)
 		gui_drawAllCharPortraitsWithStats();
 	else
-		gui_drawCharPortraitWithStats(charNum);	
+		gui_drawCharPortraitWithStats(charNum);
 	return 1;
 }
 

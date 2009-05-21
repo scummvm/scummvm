@@ -1243,7 +1243,7 @@ void LoLEngine::pitDropScroll(int numSteps) {
 		del = _tickLength -	(_system->getMillis() - ctime);
 		if (del > 0)
 			delay(del, false, true);
-	}	
+	}
 
 	_screen->copyRegionSpecial(2, 320, 200, 112, 0, 0, 320, 200, 112, 0, 176, 120, 0);
 	_screen->updateScreen();
@@ -1257,7 +1257,7 @@ void LoLEngine::pitDropScroll(int numSteps) {
 void LoLEngine::shakeScene(int duration, int width, int height, int restore) {
 	_screen->copyRegion(112, 0, 112, 0, 176, 120, 0, 6, Screen::CR_NO_P_CHECK);
 	uint32 endTime = _system->getMillis() + duration * _tickLength;
-	
+
 	while (endTime > _system->getMillis()) {
 		_smoothScrollTimer = _system->getMillis() + 2 * _tickLength;
 
@@ -1287,7 +1287,7 @@ void LoLEngine::shakeScene(int duration, int width, int height, int restore) {
 
 		_screen->copyRegion(x1, y1, x2, y2, w, h, 6, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		
+
 		delayUntil(_smoothScrollTimer);
 	}
 

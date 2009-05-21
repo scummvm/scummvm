@@ -140,7 +140,7 @@ public:
 	virtual uint16 processDialogue() { return 1; }
 
 	virtual void setupBackgroundAnimationPart(int animIndex, int part, int firstFrame, int lastFrame, int cycles, int nextPart, int partDelay, int f, int sfxIndex, int sfxFrame) {}
-	virtual void startBackgroundAnimation(int animIndex, int part) {}	
+	virtual void startBackgroundAnimation(int animIndex, int part) {}
 	virtual void stopBackgroundAnimation(int animIndex) {}
 	virtual void updateBackgroundAnimation(int animIndex) {}
 	virtual void playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay) {}
@@ -155,7 +155,7 @@ public:
 protected:
 	virtual KyraEngine_v1 *vm();
 	virtual Screen_v2 *screen();
-	
+
 	KyraEngine_v1 *_vm;
 	Screen_v2 *_screen;
 	OSystem *_system;
@@ -228,7 +228,7 @@ public:
 
 	Animation *initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaCopyParams);
 	int freeAnimStruct(int index);
-	
+
 	void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3);
 	uint16 processDialogue();
 	void resetDialogueState(TIM *tim);
@@ -237,15 +237,15 @@ public:
 	void startBackgroundAnimation(int animIndex, int part);
 	void stopBackgroundAnimation(int animIndex);
 	void updateBackgroundAnimation(int animIndex);
-	void playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay);	
-		
+	void playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay);
+
 private:
 	KyraEngine_v1 *vm();
 	Screen_v2 *screen();
 
 	void update();
 	void checkSpeechProgress();
-		
+
 	char *getTableString(int id);
 	void advanceToOpcode(int opcode);
 
