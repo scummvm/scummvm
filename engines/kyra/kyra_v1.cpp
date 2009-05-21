@@ -370,10 +370,14 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 	}
 
 	GUI *guiInstance = gui();
-	if (guiInstance && keys)
-		return guiInstance->processButtonList(buttonList, keys | 0x8000, mouseWheel);
-	else
+	if (guiInstance) {
+		if (keys)
+			return guiInstance->processButtonList(buttonList, keys | 0x8000, mouseWheel);
+		else
+			return guiInstance->processButtonList(buttonList, 0, mouseWheel);
+	} else {
 		return keys;
+	}
 }
 
 void KyraEngine_v1::updateInput() {

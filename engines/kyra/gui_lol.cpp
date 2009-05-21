@@ -905,7 +905,7 @@ void LoLEngine::gui_initMagicSubmenu(int charNum) {
 
 void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 	Button *b = new Button;
-	memset (b, 0, sizeof(Button));
+	memset(b, 0, sizeof(Button));
 
 	int cnt = 1;
 
@@ -919,7 +919,6 @@ void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 		}
 
 		n->nextButton = b;
-
 	} else {
 		_activeButtons = b;
 	}
