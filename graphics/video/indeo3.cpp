@@ -1095,16 +1095,16 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 										lp2 = 4;
 										break;
 
-								case 9:
-									warning("Indeo3::decodeChunk: Untested (4)");
-									lv1 = *buf1++;
-									lv = (lv1 & 0x7F) << 1;
-									lv += (lv << 8);
-									lv += (lv << 16);
-									for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-										cur_lp[j] = lv;
-									LV1_CHECK(buf1,rle_v3,lv1,lp2)
-									break;
+									case 9:
+										warning("Indeo3::decodeChunk: Untested (4)");
+										lv1 = *buf1++;
+										lv = (lv1 & 0x7F) << 1;
+										lv += (lv << 8);
+										lv += (lv << 16);
+										for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
+											cur_lp[j] = lv;
+										LV1_CHECK(buf1,rle_v3,lv1,lp2)
+										break;
 
 									default:
 										return;
