@@ -27,6 +27,7 @@
 
 #include "gob/gob.h"
 #include "gob/variables.h"
+#include "gob/helper.h"
 
 namespace Gob {
 

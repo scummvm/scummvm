@@ -27,6 +27,7 @@
 
 #include "gob/gob.h"
 #include "gob/game.h"
+#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"

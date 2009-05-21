@@ -29,6 +29,7 @@
 
 #include "gob/gob.h"
 #include "gob/game.h"
+#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/inter.h"
 #include "gob/draw.h"

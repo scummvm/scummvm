@@ -28,6 +28,7 @@
 
 #include "gob/gob.h"
 #include "gob/demos/demoplayer.h"
+#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/draw.h"

@@ -27,6 +27,7 @@
 #include "engines/advancedDetector.h"
 
 #include "gob/gob.h"
+#include "gob/helper.h"
 
 namespace Gob {
 

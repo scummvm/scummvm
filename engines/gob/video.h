@@ -30,6 +30,7 @@
 #include "common/rect.h"
 
 #include "gob/gob.h"
+#include "gob/helper.h"
 
 namespace Graphics {
 	class PaletteLUT;

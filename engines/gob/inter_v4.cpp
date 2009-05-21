@@ -28,6 +28,7 @@
 
 #include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/draw.h"
 #include "gob/game.h"

@@ -26,7 +26,6 @@
 #ifndef GOB_GOB_H
 #define GOB_GOB_H
 
-
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -127,77 +126,6 @@ enum {
 	kDebugVideo      = 1 <<  9,
 	kDebugCollisions = 1 << 10,
 	kDebugDemo       = 1 << 11
-};
-
-inline char *strncpy0(char *dest, const char *src, size_t n) {
-	strncpy(dest, src, n);
-	dest[n] = 0;
-	return dest;
-}
-
-inline char *strdupcpy(const char *str) {
-	if (!str)
-		return 0;
-
-	size_t len = strlen(str) + 1;
-
-	char *nstr = new char[len];
-
-	memcpy(nstr, str, len);
-
-	return nstr;
-}
-
-// A "smart" reference counting templated class
-template<typename T>
-class ReferenceCounter {
-public:
-	class Ptr {
-	public:
-		bool operator==(const Ptr &p) const { return _p == p._p; }
-		bool operator==(const ReferenceCounter *p) const { return _p == p; }
-
-		T *operator-> () { return _p; }
-		T &operator* () { return *_p; }
-		operator T*() { return _p; }
-
-		Ptr(T *p) : _p(p) { ++_p->_references; }
-		Ptr() : _p(0) { }
-
-		~Ptr() {
-			if (_p && (--_p->_references == 0))
-				delete _p;
-		}
-
-		Ptr(const Ptr &p) : _p(p._p) { ++_p->_references; }
-
-		Ptr &operator= (const Ptr &p) {
-			++p._p->_references;
-			if (_p && (--_p->_references == 0))
-				delete _p;
-			_p = p._p;
-			return *this;
-		}
-		Ptr *operator= (const Ptr *p) {
-			if (p)
-				++p->_p->_references;
-			if (_p && (--_p->_references == 0))
-				delete _p;
-
-			_p = p ? p->_p : 0;
-			return this;
-		}
-
-	private:
-		T *_p;
-	};
-
-	ReferenceCounter() : _references(0) { }
-	virtual ~ReferenceCounter() {}
-
-private:
-	unsigned _references;
-	friend class Ptr;
 };
 
 struct GOBGameDescription;

@@ -28,6 +28,7 @@
 
 #include "gob/gob.h"
 #include "gob/inter.h"
+#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
