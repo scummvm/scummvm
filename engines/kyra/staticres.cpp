@@ -1899,6 +1899,7 @@ void LoLEngine::initStaticResource() {
 	_staticres->unloadId(lolLightningDefs);	
 
 	_buttonCallbacks.clear();
+	_buttonCallbacks.reserve(95);
 #define cb(x) _buttonCallbacks.push_back(BUTTON_FUNCTOR(LoLEngine, this, &LoLEngine::x))
 	// 0x00
 	cb(clickedUpArrow);
@@ -1999,6 +2000,7 @@ void LoLEngine::initStaticResource() {
 	cb(clickedStatusIcon);
 #undef cb
 }
+
 
 #endif // ENABLE_LOL
 
