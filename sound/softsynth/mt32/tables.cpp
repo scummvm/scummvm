@@ -610,7 +610,7 @@ bool Tables::initNotes(Synth *synth, PCMWaveEntry *pcmWaves, float rate, float m
 	char filename[64];
 	int intRate = (int)rate;
 	char version[4] = {0, 0, 0, 5};
-	sprintf(filename, "waveformcache-%d-%.2f.raw", intRate, masterTune);
+	sprintf(filename, "waveformcache-%d-%.2f.raw", intRate, (double)masterTune);
 
 	File *file = NULL;
 	char header[20];
