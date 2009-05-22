@@ -1523,7 +1523,6 @@ int LoLEngine::clickedRestParty(Button *button) {
 	gui_toggleButtonDisplayMode(77, 1);
 
 	Button b;
-	memset(&b, 0, sizeof(Button));
 	b.data0Val2 = b.data1Val2 = b.data2Val2 = 0xfe;
 	b.data0Val3 = b.data1Val3 = b.data2Val3 = 0x01;
 
