@@ -513,12 +513,23 @@ bool SoundMidiPC::init() {
 		} else if (_vm->gameFlags().gameID == GI_LOL) {
 			midiFile = "LOREINTR";
 
-			if (_vm->gameFlags().isTalkie)
-				pakFile = "ENG/STARTUP.PAK";
-			else if (_vm->gameFlags().useInstallerPackage)
-				pakFile = "INTROVOC.CMP";
-			else
-				pakFile = "INTROVOC.PAK";
+			if (_vm->gameFlags().isDemo) {
+				if (!_vm->gameFlags().useAltShapeHeader) {
+					// Intro demo
+					pakFile = "INTROVOC.PAK";
+				} else {
+					// Kyra2 SEQ player based demo
+					pakFile = "GENERAL.PAK";
+					midiFile = "LOREDEMO";
+				}
+			} else {
+				if (_vm->gameFlags().isTalkie)
+					pakFile = "ENG/STARTUP.PAK";
+				else if (_vm->gameFlags().useInstallerPackage)
+					pakFile = "INTROVOC.CMP";
+				else
+					pakFile = "INTROVOC.PAK";
+			}
 		}
 
 		if (!midiFile)
