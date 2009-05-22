@@ -269,8 +269,8 @@ void MidiOutput::sendIntern(const byte event, const byte channel, byte param1, c
 void MidiOutput::sysEx(const byte *msg, uint16 length) {
 	uint32 curTime = _system->getMillis();
 
-	if (_lastSysEx + 40 > curTime)
-		_system->delayMillis(_lastSysEx + 40 - curTime);
+	if (_lastSysEx + 45 > curTime)
+		_system->delayMillis(_lastSysEx + 45 - curTime);
 
 	_output->sysEx(msg, length);
 
@@ -514,7 +514,7 @@ bool SoundMidiPC::init() {
 			midiFile = "LOREINTR";
 
 			if (_vm->gameFlags().isDemo) {
-				if (!_vm->gameFlags().useAltShapeHeader) {
+				if (_vm->gameFlags().useAltShapeHeader) {
 					// Intro demo
 					pakFile = "INTROVOC.PAK";
 				} else {
