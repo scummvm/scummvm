@@ -920,6 +920,7 @@ void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 
 	*b = Button();
 
+	b->nextButton = 0;
 	b->data0Val2 = b->data1Val2 = b->data2Val2 = 0xfe;
 	b->data0Val3 = b->data1Val3 = b->data2Val3 = 0x01;
 
