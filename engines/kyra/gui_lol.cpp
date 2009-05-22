@@ -954,7 +954,7 @@ void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 		b->height = _buttonData[index].h - 1;
 	}
 
-	assignButtonCallback(b, index);
+	b->buttonCallback = _buttonCallbacks[index];
 }
 
 int LoLEngine::clickedUpArrow(Button *button) {

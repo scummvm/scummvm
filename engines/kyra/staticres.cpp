@@ -1997,9 +1997,6 @@ void LoLEngine::initStaticResource() {
 #undef cb
 }
 
-void LoLEngine::assignButtonCallback(Button *button, int index) {
-	button->buttonCallback = _buttonCallbacks[index];
-}
 #endif // ENABLE_LOL
 
 const ScreenDim Screen_LoK::_screenDimTable[] = {
