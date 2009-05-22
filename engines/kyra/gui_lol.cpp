@@ -858,11 +858,8 @@ void LoLEngine::gui_enableCharInventoryButtons(int charNum) {
 }
 
 void LoLEngine::gui_resetButtonList() {
-	while (_activeButtons) {
-		Button *n = _activeButtons->nextButton;
-		delete _activeButtons;
-		_activeButtons = n;
-	}
+	for (uint i = 0; i < ARRAYSIZE(_activeButtonData); ++i)
+		_activeButtonData[i].nextButton = 0;
 
 	gui_notifyButtonListChanged();
 	_activeButtons = 0;
@@ -904,24 +901,24 @@ void LoLEngine::gui_initMagicSubmenu(int charNum) {
 }
 
 void LoLEngine::gui_initButton(int index, int x, int y, int val) {
-	Button *b = new Button;
-	memset(b, 0, sizeof(Button));
-
+	Button *b = 0;
 	int cnt = 1;
 
 	if (_activeButtons) {
-		cnt++;
 		Button *n = _activeButtons;
-
 		while (n->nextButton) {
+			++cnt;
 			n = n->nextButton;
-			cnt++;
 		}
 
-		n->nextButton = b;
+		++cnt;
+		b = n->nextButton = &_activeButtonData[cnt];
 	} else {
+		b = &_activeButtonData[0];
 		_activeButtons = b;
 	}
+
+	*b = Button();
 
 	b->data0Val2 = b->data1Val2 = b->data2Val2 = 0xfe;
 	b->data0Val3 = b->data1Val3 = b->data2Val3 = 0x01;

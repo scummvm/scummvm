@@ -497,6 +497,7 @@ private:
 
 	Common::Array<Button::Callback> _buttonCallbacks;
 	Button *_activeButtons;
+	Button _activeButtonData[70];
 	ButtonDef _sceneWindowButton;
 	bool _preserveEvents;
 

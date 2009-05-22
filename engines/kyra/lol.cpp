@@ -246,7 +246,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 LoLEngine::~LoLEngine() {
 	setupPrologueData(false);
-	gui_resetButtonList();
 
 	delete[] _landsFile;
 	delete[] _levelLangFile;
