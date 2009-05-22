@@ -306,8 +306,6 @@ private:
 	void updateEnvironmentalSfx(int soundId);
 
 	// mouse
-	int checkInput(Button *buttonList, bool mainLoop = false);
-
 	void setMouseCursorToIcon(int icon);
 	void setMouseCursorToItemInHand();
 	uint8 *getItemIconShapePtr(int index);

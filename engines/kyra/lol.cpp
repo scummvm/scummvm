@@ -640,27 +640,6 @@ void LoLEngine::loadItemIconShapes() {
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
 }
 
-int LoLEngine::checkInput(Button *buttonList, bool mainLoop) {
-	int mx = _mouseX;
-	int my = _mouseY;
-
-	int inputFlag = KyraEngine_v1::checkInput(buttonList, mainLoop);
-
-	if (!inputFlag) {
-		// This fixes a bug with some interactive sequences (like the inn where you mee Timothy).
-		// In the original code Mouse position variables are only updated when mouse button
-		// or keyboard events get triggered.
-
-		// TODO/FIXME: Check whether this is the correct way to do it in KYRA, too. In this case a
-		// fix could be added to KyraEngine_v1::checkInput() and the virtual stuff would not be
-		// necessary.
-		_mouseX = mx;
-		_mouseY = my;
-	}
-
-	return inputFlag;
-}
-
 void LoLEngine::setMouseCursorToIcon(int icon) {
 	_gameFlags[15] |= 0x200;
 	int i = _itemProperties[_itemsInPlay[_itemInHand].itemPropertyIndex].shpIndex;

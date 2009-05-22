@@ -324,12 +324,6 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 			}
 			break;
 
-		case Common::EVENT_MOUSEMOVE: {
-			Common::Point pos = getMousePos();
-			_mouseX = pos.x;
-			_mouseY = pos.y;
-			} break;
-
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP: {
 			Common::Point pos = getMousePos();
@@ -407,7 +401,7 @@ void KyraEngine_v1::updateInput() {
 		case Common::EVENT_MOUSEMOVE:
 			if (screen()->isMouseVisible())
 				updateScreen = true;
-			// fall through
+			break;
 
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
