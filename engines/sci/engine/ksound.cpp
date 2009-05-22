@@ -29,6 +29,9 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/vm.h"		// for Object
 
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+
 namespace Sci {
 
 #define _K_SCI0_SOUND_INIT_HANDLE 0
@@ -82,6 +85,9 @@ namespace Sci {
 #define _K_SCI1_SOUND_MIDI_SEND 18
 #define _K_SCI1_SOUND_REVERB 19 /* Get/Set */
 #define _K_SCI1_SOUND_UPDATE_VOL_PRI 20
+
+Audio::SoundHandle _audioHandle;
+uint16 _audioRate;
 
 enum AudioCommands {
 	// TODO: find the difference between kSci1AudioWPlay and kSci1AudioPlay
@@ -991,26 +997,49 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return kDoSound_SCI0(s, funct_nr, argc, argv);
 }
 
+// Used for speech playback in CD games
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	Audio::Mixer *mixer = g_system->getMixer();
+
 	switch (UKPV(0)) {
 	case kSci1AudioWPlay:
+		mixer->stopHandle(_audioHandle);
+		// TODO
+		warning("kDoAudio stub: AudioWPlay audio number %d", UKPV(1));
+		//mixer->playInputStream(Audio::Mixer::kSpeechSoundType, 0, newStream);
 		break;
 	case kSci1AudioPlay:
+		// TODO
+		warning("kDoAudio stub: AudioPlay audio number %d", UKPV(1));
 		break;
 	case kSci1AudioStop:
+		mixer->stopHandle(_audioHandle);
 		break;
 	case kSci1AudioPause:
+		mixer->pauseHandle(_audioHandle, true);
 		break;
 	case kSci1AudioResume:
+		mixer->pauseHandle(_audioHandle, false);
 		break;
-	case kSci1AudioPosition :
-		return make_reg(0, -1); /* Finish immediately */
+	case kSci1AudioPosition:
+		if (mixer->isSoundHandleActive(_audioHandle)) {
+			return make_reg(0, mixer->getSoundElapsedTime(_audioHandle) * 6 / 100); // return elapsed time in 1/60th
+		} else {	
+			return make_reg(0, -1); // Sound finished
+		}
 	case kSci1AudioRate:
+		_audioRate = UKPV(1);
 		break;
 	case kSci1AudioVolume:
+		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, UKPV(1));
 		break;
 	case kSci1AudioLanguage:
+		// TODO
+		warning("kDoAudio stub: Set audio language to %d", UKPV(1));
+		// TODO: CD Audio (is it even used?)
 		break;
+	default:
+		warning("kDoAudio: Unhandled case %d", UKPV(0));
 	}
 
 	return s->r_acc;
