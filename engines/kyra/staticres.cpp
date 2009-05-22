@@ -1761,6 +1761,35 @@ void KyraEngine_MR::initStaticResource() {
 #ifdef ENABLE_LOL
 // TODO: move this to lol.cpp maybe?
 void LoLEngine::initStaticResource() {
+	// assign music data
+	static const char *pcMusicFileListIntro[] = { "LOREINTR" };
+	static const char *pcMusicFileListFinale[] = { "LOREFINL" };
+	static const char *pcMusicFileListIngame[] = { "LORE%02d%c" };
+
+	static const char *pc98MusicFileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
+	static const char *pc98MusicFileListFinale[] = { "lore%02d.86" };
+	static const char *pc98MusicFileListIngame[] = { "lore%02d.86" };
+
+	memset(_soundData, 0, sizeof(_soundData));
+	if (_flags.platform == Common::kPlatformPC) {
+		_soundData[0].fileList = pcMusicFileListIntro;
+		_soundData[0].fileListLen = ARRAYSIZE(pcMusicFileListIntro);
+		_soundData[1].fileList = pcMusicFileListIngame;
+		_soundData[1].fileListLen = ARRAYSIZE(pcMusicFileListIngame);
+		_soundData[2].fileList = pcMusicFileListFinale;
+		_soundData[2].fileListLen = ARRAYSIZE(pcMusicFileListFinale);
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		_soundData[0].fileList = pc98MusicFileListIntro;
+		_soundData[0].fileListLen = ARRAYSIZE(pc98MusicFileListIntro);
+		_soundData[1].fileList = pc98MusicFileListIngame;
+		_soundData[1].fileListLen = ARRAYSIZE(pc98MusicFileListIngame);
+		_soundData[2].fileList = pc98MusicFileListFinale;
+		_soundData[2].fileListLen = ARRAYSIZE(pc98MusicFileListFinale);
+	}
+
+	if (_flags.isDemo)
+		return;
+
 	_charDefaults = _staticres->loadCharData(kLolCharacterDefs, _charDefaultsSize);
 	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(kLolIngameSfxIndex, _ingameSoundIndexSize);
 	_musicTrackMap = _staticres->loadRawData(kLolMusicTrackMap, _musicTrackMapSize);
@@ -1868,32 +1897,6 @@ void LoLEngine::initStaticResource() {
 		_lightningProps[i].sfxId = READ_LE_UINT16(&tmp[(i << 2) + 2]);
 	}
 	_staticres->unloadId(lolLightningDefs);	
-
-	// assign music data
-	static const char *pcMusicFileListIntro[] = { "LOREINTR" };
-	static const char *pcMusicFileListFinale[] = { "LOREFINL" };
-	static const char *pcMusicFileListIngame[] = { "LORE%02d%c" };
-
-	static const char *pc98MusicFileListIntro[] = { 0, "lore84.86", "lore82.86", 0, 0, 0, "lore83.86", "lore81.86" };
-	static const char *pc98MusicFileListFinale[] = { "lore%02d.86" };
-	static const char *pc98MusicFileListIngame[] = { "lore%02d.86" };
-
-	memset(_soundData, 0, sizeof(_soundData));
-	if (_flags.platform == Common::kPlatformPC) {
-		_soundData[0].fileList = pcMusicFileListIntro;
-		_soundData[0].fileListLen = ARRAYSIZE(pcMusicFileListIntro);
-		_soundData[1].fileList = pcMusicFileListIngame;
-		_soundData[1].fileListLen = ARRAYSIZE(pcMusicFileListIngame);
-		_soundData[2].fileList = pcMusicFileListFinale;
-		_soundData[2].fileListLen = ARRAYSIZE(pcMusicFileListFinale);
-	} else if (_flags.platform == Common::kPlatformPC98) {
-		_soundData[0].fileList = pc98MusicFileListIntro;
-		_soundData[0].fileListLen = ARRAYSIZE(pc98MusicFileListIntro);
-		_soundData[1].fileList = pc98MusicFileListIngame;
-		_soundData[1].fileListLen = ARRAYSIZE(pc98MusicFileListIngame);
-		_soundData[2].fileList = pc98MusicFileListFinale;
-		_soundData[2].fileListLen = ARRAYSIZE(pc98MusicFileListFinale);
-	}
 
 	_buttonCallbacks.clear();
 #define cb(x) _buttonCallbacks.push_back(BUTTON_FUNCTOR(LoLEngine, this, &LoLEngine::x))
