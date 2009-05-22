@@ -218,6 +218,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	_buttonData = 0;
 	_activeButtons = 0;
+	gui_resetButtonList();
 	_preserveEvents = false;
 	_buttonList1 = _buttonList2 = _buttonList3 = _buttonList4 = _buttonList5 = _buttonList6 = _buttonList7 = _buttonList8 = 0;
 
