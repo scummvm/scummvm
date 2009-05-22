@@ -520,7 +520,7 @@ bool SoundMidiPC::init() {
 				} else {
 					// Kyra2 SEQ player based demo
 					pakFile = "GENERAL.PAK";
-					midiFile = "LOREDEMO";
+					midiFile = "LOLSYSEX";
 				}
 			} else {
 				if (_vm->gameFlags().isTalkie)
