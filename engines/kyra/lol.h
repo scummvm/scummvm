@@ -496,6 +496,8 @@ private:
 	void gui_initMagicSubmenu(int charNum);
 	void gui_initButton(int index, int x = -1, int y = -1, int val = -1);
 	void gui_notifyButtonListChanged() { if (_gui) _gui->_buttonListChanged = true; }
+
+	Common::Array<Button::Callback> _buttonCallbacks;
 	void assignButtonCallback(Button *button, int index);
 
 	Button *_activeButtons;

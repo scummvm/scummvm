@@ -1759,7 +1759,7 @@ void KyraEngine_MR::initStaticResource() {
 }
 
 #ifdef ENABLE_LOL
-// TODO: move this to kLol.cpp maybe?
+// TODO: move this to lol.cpp maybe?
 void LoLEngine::initStaticResource() {
 	_charDefaults = _staticres->loadCharData(kLolCharacterDefs, _charDefaultsSize);
 	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(kLolIngameSfxIndex, _ingameSoundIndexSize);
@@ -1894,110 +1894,111 @@ void LoLEngine::initStaticResource() {
 		_soundData[2].fileList = pc98MusicFileListFinale;
 		_soundData[2].fileListLen = ARRAYSIZE(pc98MusicFileListFinale);
 	}
+
+	_buttonCallbacks.clear();
+#define cb(x) _buttonCallbacks.push_back(BUTTON_FUNCTOR(LoLEngine, this, &LoLEngine::x))
+	// 0x00
+	cb(clickedUpArrow);
+	cb(clickedDownArrow);
+	_buttonCallbacks.push_back(_buttonCallbacks[1]);
+	cb(clickedLeftArrow);
+
+	// 0x04
+	cb(clickedRightArrow);
+	cb(clickedTurnLeftArrow);
+	cb(clickedTurnRightArrow);
+	cb(clickedAttackButton);
+
+	// 0x08
+	for (int i = 0; i < 3; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[7]);
+	cb(clickedMagicButton);
+
+	// 0x0C
+	for (int i = 0; i < 3; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[11]);
+	cb(clickedMagicSubmenu);
+
+	// 0x10
+	cb(clickedScreen);
+	cb(clickedPortraitLeft);
+	for (int i = 0; i < 7; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[17]);
+
+	// 0x19
+	cb(clickedLiveMagicBarsLeft);
+	for (int i = 0; i < 3; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[25]);
+
+	// 0x1D
+	cb(clickedPortraitEtcRight);
+	for (int i = 0; i < 3; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[29]);
+
+	// 0x21
+	cb(clickedCharInventorySlot);
+	for (int i = 0; i < 10; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[33]);
+
+	// 0x2C
+	cb(clickedExitCharInventory);
+	cb(clickedSceneDropItem);
+	for (int i = 0; i < 3; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[45]);
+
+	// 0x31
+	cb(clickedScenePickupItem);
+	cb(clickedInventorySlot);
+	for (int i = 0; i < 9; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[50]);
+
+	// 0x3C
+	cb(clickedInventoryScroll);
+	cb(clickedInventoryScroll);
+	cb(clickedWall);
+	_buttonCallbacks.push_back(_buttonCallbacks[62]);
+
+	// 0x40
+	cb(clickedSequenceWindow);
+	_buttonCallbacks.push_back(_buttonCallbacks[0]);
+	_buttonCallbacks.push_back(_buttonCallbacks[1]);
+	_buttonCallbacks.push_back(_buttonCallbacks[3]);
+
+	// 0x44
+	_buttonCallbacks.push_back(_buttonCallbacks[4]);
+	_buttonCallbacks.push_back(_buttonCallbacks[5]);
+	_buttonCallbacks.push_back(_buttonCallbacks[6]);
+	cb(clickedScroll);
+
+	// 0x48
+	for (int i = 0; i < 9; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[71]);
+
+	// 0x51
+	cb(clickedSpellTargetCharacter);
+	for (int i = 0; i < 3; ++i)
+		_buttonCallbacks.push_back(_buttonCallbacks[81]);
+
+	// 0x55
+	cb(clickedSpellTargetScene);
+	cb(clickedSceneThrowItem);
+	_buttonCallbacks.push_back(_buttonCallbacks[86]);
+
+	// 0x58
+	cb(clickedOptions);
+	cb(clickedRestParty);
+	cb(clickedMoneyBox);
+	cb(clickedCompass);
+
+	// 0x5C
+	cb(clickedAutomap);
+	cb(clickedLamp);
+	cb(clickedStatusIcon);
+#undef cb
 }
 
 void LoLEngine::assignButtonCallback(Button *button, int index) {
-#define cb(x) BUTTON_FUNCTOR(LoLEngine, this, &LoLEngine::x)
-	static Button::Callback buttonCallbacks[] = {
-		cb(clickedUpArrow),
-		cb(clickedDownArrow),
-		cb(clickedDownArrow),
-		cb(clickedLeftArrow),
-		cb(clickedRightArrow),
-		cb(clickedTurnLeftArrow),
-		cb(clickedTurnRightArrow),
-		cb(clickedAttackButton),
-		cb(clickedAttackButton),
-		cb(clickedAttackButton),
-		cb(clickedAttackButton),
-		cb(clickedMagicButton),
-		cb(clickedMagicButton),
-		cb(clickedMagicButton),
-		cb(clickedMagicButton),
-		cb(clickedMagicSubmenu),
-		cb(clickedScreen),
-		cb(clickedPortraitLeft),
-		cb(clickedPortraitLeft),
-		cb(clickedPortraitLeft),
-		cb(clickedPortraitLeft),
-		cb(clickedPortraitLeft),
-		cb(clickedPortraitLeft),
-		cb(clickedPortraitLeft),
-		cb(clickedPortraitLeft),
-		cb(clickedLiveMagicBarsLeft),
-		cb(clickedLiveMagicBarsLeft),
-		cb(clickedLiveMagicBarsLeft),
-		cb(clickedLiveMagicBarsLeft),
-		cb(clickedPortraitEtcRight),
-		cb(clickedPortraitEtcRight),
-		cb(clickedPortraitEtcRight),
-		cb(clickedPortraitEtcRight),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedCharInventorySlot),
-		cb(clickedExitCharInventory),
-		cb(clickedSceneDropItem),
-		cb(clickedSceneDropItem),
-		cb(clickedSceneDropItem),
-		cb(clickedSceneDropItem),
-		cb(clickedScenePickupItem),
-		cb(clickedInventorySlot),
-		cb(clickedInventorySlot),
-		cb(clickedInventorySlot),
-		cb(clickedInventorySlot),
-		cb(clickedInventorySlot),
-		cb(clickedInventorySlot),
-		cb(clickedInventorySlot),
-		cb(clickedInventorySlot),
-		cb(clickedInventorySlot),
-		cb(clickedInventorySlot),
-		cb(clickedInventoryScroll),
-		cb(clickedInventoryScroll),
-		cb(clickedWall),
-		cb(clickedWall),
-		cb(clickedSequenceWindow),
-		cb(clickedUpArrow),
-		cb(clickedDownArrow),
-		cb(clickedLeftArrow),
-		cb(clickedRightArrow),
-		cb(clickedTurnLeftArrow),
-		cb(clickedTurnRightArrow),
-		cb(clickedScroll),
-		cb(clickedScroll),
-		cb(clickedScroll),
-		cb(clickedScroll),
-		cb(clickedScroll),
-		cb(clickedScroll),
-		cb(clickedScroll),
-		cb(clickedScroll),
-		cb(clickedScroll),
-		cb(clickedScroll),
-		cb(clickedSpellTargetCharacter),
-		cb(clickedSpellTargetCharacter),
-		cb(clickedSpellTargetCharacter),
-		cb(clickedSpellTargetCharacter),
-		cb(clickedSpellTargetScene),
-		cb(clickedSceneThrowItem),
-		cb(clickedSceneThrowItem),
-		cb(clickedOptions),
-		cb(clickedRestParty),
-		cb(clickedMoneyBox),
-		cb(clickedCompass),
-		cb(clickedAutomap),
-		cb(clickedLamp),
-		cb(clickedStatusIcon),
-	};
-#undef cb
-
-	button->buttonCallback = buttonCallbacks[index];
+	button->buttonCallback = _buttonCallbacks[index];
 }
 #endif // ENABLE_LOL
 
