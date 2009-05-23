@@ -166,7 +166,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 	// Check for max length for strings and count them
 	for (i = 0; i < NUM_HASHS; i++) {
 		stringtable *tempStringTable = &L->string_root[i];
-		for (int32 l = 0; l < tempStringTable->size; l++) {
+		for (l = 0; l < tempStringTable->size; l++) {
 			if (tempStringTable->hash[l] && tempStringTable->hash[l] != &EMPTY) {
 				countElements++;
 				if (tempStringTable->hash[l]->constindex != -1) {
