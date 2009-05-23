@@ -677,7 +677,7 @@ callfunc:
 			// goes through
 		case RETCODE:
 			{
-				StkId firstResult = (base + ((aux==RETCODE) ? *pc : 0));
+				StkId firstResult = (base + ((aux == RETCODE) ? *pc : 0));
 				if (lua_callhook)
 					luaD_callHook(base, NULL, 1);
 				// If returning from the original stack frame, terminate
