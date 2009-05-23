@@ -29,21 +29,20 @@ int32 luaC_ref(TObject *o, int32 lock) {
 	if (ttype(o) == LUA_T_NIL)
 		ref = -1;   // special ref for nil
 	else {
-		for (ref = 0; ref < L->refSize; ref++) {
+		for (ref = 0; ref < L->refSize; ref++)
 			if (L->refArray[ref].status == FREE)
 				goto found;
-			// no more empty spaces */
-			{
-				int32 oldSize = L->refSize;
-				L->refSize = luaM_growvector(&L->refArray, L->refSize, struct ref, refEM, MAX_WORD);
-				for (ref = oldSize; ref < L->refSize; ref++)
-					L->refArray[ref].status = FREE;
-				ref = oldSize;
-			}
-found:
-			L->refArray[ref].o = *o;
-			L->refArray[ref].status = lock ? LOCK : HOLD;
+		// no more empty spaces */
+		{
+			int32 oldSize = L->refSize;
+			L->refSize = luaM_growvector(&L->refArray, L->refSize, struct ref, refEM, MAX_WORD);
+			for (ref = oldSize; ref < L->refSize; ref++)
+				L->refArray[ref].status = FREE;
+			ref = oldSize;
 		}
+found:
+		L->refArray[ref].o = *o;
+		L->refArray[ref].status = lock ? LOCK : HOLD;
 	}
 	return ref;
 }
