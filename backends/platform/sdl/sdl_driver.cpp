@@ -558,7 +558,8 @@ void OSystem_SDL::initBackend() {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
-	SDL_ShowCursor(SDL_DISABLE);
+	// disabled for now
+	//SDL_ShowCursor(SDL_DISABLE);
 
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
