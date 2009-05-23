@@ -106,11 +106,12 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 		delete *i;
 	_speechList.clear();
 
-	int32 pt = 0;
 	for (Common::List<const char*>::iterator i = playList.begin(); i != playList.end(); ++i) {
-		Audio::AudioStream *a = _sound->getVoiceStream(*i, &pt, false);
-		_speechList.push_back(a);
-		_activeVoiceFileTotalTime += pt;
+		Audio::AudioStream *a = _sound->getVoiceStream(*i);
+		if (a) {
+			_activeVoiceFileTotalTime += a->getTotalPlayTime();
+			_speechList.push_back(a);
+		}
 	}
 
 	//_activeVoiceFileTotalTime = _sound->voicePlay(_activeVoiceFile, 255, false, false);

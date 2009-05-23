@@ -66,21 +66,20 @@ bool Sound::voiceFileIsPresent(const char *file) {
 	return false;
 }
 
-int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx, bool appendSuffix) {
-	int32 ptime = 0;
-	Audio::AudioStream *audioStream = getVoiceStream(file, &ptime, appendSuffix);
+int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx) {
+	Audio::AudioStream *audioStream = getVoiceStream(file);
 
 	if (!audioStream) {
 		warning("Couldn't load sound file '%s'", file);
 		return 0;
 	}
 
-	playVoiceStream(audioStream, file, volume, isSfx) ;
-
-	return ptime;
+	int playTime = audioStream->getTotalPlayTime();
+	playVoiceStream(audioStream, file, volume, isSfx);
+	return playTime;
 }
 
-Audio::AudioStream *Sound::getVoiceStream(const char *file, int32 *totalPlayingTime, bool appendSuffix) {
+Audio::AudioStream *Sound::getVoiceStream(const char *file) {
 	char filenamebuffer[25];
 
 	Audio::AudioStream *audioStream = 0;
@@ -95,28 +94,6 @@ Audio::AudioStream *Sound::getVoiceStream(const char *file, int32 *totalPlayingT
 		break;
 	}
 
-	int32 vocStreamPlayTime = 0;
-
-	if (!audioStream) {
-		strcpy(filenamebuffer, file);
-		if (appendSuffix)
-			strcat(filenamebuffer, ".VOC");
-
-		uint32 fileSize = 0;
-		byte *fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
-		if (!fileData)
-			return 0;
-
-		Common::MemoryReadStream vocStream(fileData, fileSize);
-		audioStream = Audio::makeVOCStream(vocStream, Audio::Mixer::FLAG_UNSIGNED);
-
-		if (audioStream)
-			vocStreamPlayTime = vocStream.size() * 1000 / audioStream->getRate();
-	} else {
-		vocStreamPlayTime = audioStream->getTotalPlayTime();
-	}
- 
-	*totalPlayingTime = vocStreamPlayTime;
 	return audioStream;
 }
 
@@ -259,6 +236,21 @@ bool KyraEngine_v1::snd_voiceIsPlaying() {
 
 // static res
 
+namespace {
+
+// A simple wrapper to create VOC streams the way like creating MP3, OGG/Vorbis and FLAC streams.
+// Possible TODO: Think of making this complete and moving it to sound/voc.cpp ?
+Audio::AudioStream *makeVOCStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops) {
+	Audio::AudioStream *as = Audio::makeVOCStream(*stream, Audio::Mixer::FLAG_UNSIGNED);
+
+	if (disposeAfterUse)
+		delete stream;
+
+	return as;
+}
+
+} // end of anonymous namespace
+
 const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
 #ifdef USE_FLAC
 	{ ".VOF", Audio::makeFlacStream },
@@ -269,6 +261,10 @@ const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
 #ifdef USE_MAD
 	{ ".VO3", Audio::makeMP3Stream },
 #endif // USE_MAD
+
+	{ ".VOC", makeVOCStream },
+	{ "", makeVOCStream },
+
 	{ 0, 0 }
 };
 

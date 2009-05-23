@@ -187,17 +187,14 @@ public:
 	 * specified voice file, it stops the
 	 * current voice.
 	 *
-	 * TODO: add support for queueing voice
-	 * files
-	 *
 	 * @param file		file to be played
 	 * @param volume	volume of the voice file
 	 * @param isSfx		marks file as sfx instead of voice
 	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, bool appendSuffix = true);
+	virtual int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false);
 	
-	Audio::AudioStream *getVoiceStream(const char *file, int32 *totalPlayingTime, bool appendSuffix = true);
+	Audio::AudioStream *getVoiceStream(const char *file);
 
 	void playVoiceStream(Audio::AudioStream * stream, const char *handleName, uint8 volume = 255, bool isSfx = false);
 
@@ -461,7 +458,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, bool appendSuffix = true) { return -1; }
+	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false) { return -1; }
 	void playSoundEffect(uint8);
 
 protected:
@@ -488,7 +485,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, bool appendSuffix = true);
+	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false);
 	void playSoundEffect(uint8 track);
 
 protected:

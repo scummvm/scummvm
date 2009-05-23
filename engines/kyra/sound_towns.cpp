@@ -4231,7 +4231,7 @@ void SoundTownsPC98_v2::beginFadeOut() {
 	haltTrack();
 }
 
-int32 SoundTownsPC98_v2::voicePlay(const char *file, uint8, bool, bool) {
+int32 SoundTownsPC98_v2::voicePlay(const char *file, uint8, bool) {
 	static const uint16 rates[] =	{ 0x10E1, 0x0CA9, 0x0870, 0x0654, 0x0438, 0x032A, 0x021C, 0x0194 };
 	static const char patternHOF[] = "%s.PCM";
 	static const char patternLOL[] = "%s.VOC";
