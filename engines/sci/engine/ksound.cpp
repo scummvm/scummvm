@@ -88,6 +88,8 @@ namespace Sci {
 
 Audio::SoundHandle _audioHandle;
 uint16 _audioRate;
+int16 _lang;
+byte *_audioMap;
 
 enum AudioCommands {
 	// TODO: find the difference between kSci1AudioWPlay and kSci1AudioPlay
@@ -997,20 +999,84 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return kDoSound_SCI0(s, funct_nr, argc, argv);
 }
 
+bool findAudEntry(uint16 audioNumber, byte& volume, uint32& offset, uint32& size) {
+	// AUDIO00X.MAP contains 10-byte entries:
+	// w nEntry
+	// dw offset+volume (as in resource.map)
+	// dw size
+	// ending with 10 0xFFs
+	uint16 n;
+	uint32 off;
+
+	if (_audioMap == 0)
+		return false;
+
+	byte *ptr = _audioMap;
+	while ((n = READ_UINT16(ptr)) != 0xFFFF) {
+		if (n == audioNumber) {
+			off = READ_LE_UINT32(ptr + 2);
+			size = READ_LE_UINT32(ptr + 6);
+			volume = off >> 28;
+			offset = off & 0x0FFFFFFF;
+			return true;
+		}
+		ptr += 10;
+	}
+
+	return false;
+}
+
 // Used for speech playback in CD games
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Audio::Mixer *mixer = g_system->getMixer();
 
 	switch (UKPV(0)) {
 	case kSci1AudioWPlay:
+	case kSci1AudioPlay: {
 		mixer->stopHandle(_audioHandle);
-		// TODO
-		warning("kDoAudio stub: AudioWPlay audio number %d", UKPV(1));
-		//mixer->playInputStream(Audio::Mixer::kSpeechSoundType, 0, newStream);
-		break;
-	case kSci1AudioPlay:
-		// TODO
-		warning("kDoAudio stub: AudioPlay audio number %d", UKPV(1));
+
+		// Try to load from an external patch file first
+		// FIXME: the resource loader seems to return some sort of dummy resource here
+		Sci::Resource* audioRes = 0; //s->resmgr->findResource(kResourceTypeSync, UKPV(1), 1);
+		Audio::AudioStream *audioStream = 0;
+
+		if (audioRes) {
+			audioStream = Audio::makeLinearInputStream(audioRes->data, audioRes->size, _audioRate, Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+		} else {
+			// No patch file found, read it from the audio volume
+			byte volume;
+			uint32 offset;
+			uint32 size;
+
+			if (findAudEntry(UKPV(1), volume, offset, size)) {
+				uint32 start = offset * 1000 / _audioRate;
+				uint32 duration = size * 1000 / _audioRate;
+
+				char filename[40];
+				sprintf(filename, "AUDIO%03d.%03d", _lang, volume);
+
+				// Try to load compressed
+				audioStream = Audio::AudioStream::openStreamFile(filename, start, duration); 
+				if (!audioStream) { 
+					// Compressed file load failed, try to load original raw data
+					byte *soundbuff = (byte *)malloc(size);
+					Common::File* audioFile = new Common::File();
+					if (audioFile->open(filename)) {
+						audioFile->seek(offset);
+						audioFile->read(soundbuff, size);
+						audioFile->close();
+						delete audioFile;
+
+						audioStream = Audio::makeLinearInputStream(soundbuff, size,	_audioRate,
+								Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+					}
+				}
+			}
+		}
+
+		if (audioStream)
+			mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
+		}
 		break;
 	case kSci1AudioStop:
 		mixer->stopHandle(_audioHandle);
@@ -1034,9 +1100,24 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, UKPV(1));
 		break;
 	case kSci1AudioLanguage:
-		// TODO
-		warning("kDoAudio stub: Set audio language to %d", UKPV(1));
-		// TODO: CD Audio (is it even used?)
+		// TODO: CD Audio (used for example in the end credits of KQ6CD)
+		if (SKPV(1) != -1) {
+			_lang = UKPV(1);
+
+			char filename[40];
+			sprintf(filename, "AUDIO%03d.MAP", _lang);
+
+			Common::File* audioMapFile = new Common::File();
+			if (audioMapFile->open(filename)) {
+				// TODO: This needs to be freed, right now we got a memory leak here!
+				_audioMap = new byte[audioMapFile->size()];
+				audioMapFile->read(_audioMap, audioMapFile->size());
+				audioMapFile->close();
+				delete audioMapFile;
+			} else {
+				_audioMap = 0;
+			}
+		}
 		break;
 	default:
 		warning("kDoAudio: Unhandled case %d", UKPV(0));
