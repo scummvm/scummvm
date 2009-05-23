@@ -56,12 +56,12 @@ credits:
 	$(srcdir)/tools/credits.pl --text > AUTHORS
 	$(srcdir)/tools/credits.pl --rtf > Credits.rtf
 	$(srcdir)/tools/credits.pl --cpp > gui/credits.h
-	$(srcdir)/tools/credits.pl --html > ../../web/trunk/credits.inc
-	$(srcdir)/tools/credits.pl --xml > ../../docs/trunk/docbook/credits.xml
+	$(srcdir)/tools/credits.pl --xml-website > ../../web/trunk/data/credits.xml
+	$(srcdir)/tools/credits.pl --xml-docbook > ../../docs/trunk/docbook/credits.xml
 
 md5scumm: tools/md5table$(EXEEXT)
 	tools/md5table$(EXEEXT) --c++ < $(srcdir)/tools/scumm-md5.txt > engines/scumm/scumm-md5.h
-	tools/md5table$(EXEEXT) --php < $(srcdir)/tools/scumm-md5.txt > ../../web/trunk/docs/md5.inc
+	cp $(srcdir)/tools/scumm-md5.txt ../../web/trunk/data/scumm-md5.txt
 
 
 #
