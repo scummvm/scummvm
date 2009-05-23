@@ -472,9 +472,14 @@ static void GetActorPos() {
 
 static void SetActorRot() {
 	Actor *act = check_actor(1);
-	float pitch = luaL_check_number(2);
-	float yaw = luaL_check_number(3);
-	float roll = luaL_check_number(4);
+	lua_Object p = lua_getparam(2);
+	lua_Object y = lua_getparam(3);
+	lua_Object r = lua_getparam(4);
+	if (!lua_isnumber(p) || !lua_isnumber(y) || !lua_isnumber(r))
+		return;
+	float pitch = lua_getnumber(p);
+	float yaw = lua_getnumber(y);
+	float roll = lua_getnumber(r);
 	if (getbool(5))
 		act->turnTo(pitch, yaw, roll);
 	else
