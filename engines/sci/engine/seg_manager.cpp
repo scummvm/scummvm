@@ -982,13 +982,15 @@ byte *SystemStrings::dereference(reg_t pointer, int *size) {
 	if (pointer.offset < SYS_STRINGS_MAX && strings[pointer.offset].name)
 		return (byte *)(strings[pointer.offset].value);
 
-	error("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+	// This occurs in KQ5CD when interacting with certain objects
+	warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
 	return NULL;
 }
 
 byte *SegManager::dereference(reg_t pointer, int *size) {
 	if (!pointer.segment || (pointer.segment >= _heap.size()) || !_heap[pointer.segment]) {
-		error("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+		// This occurs in KQ5CD when interacting with certain objects
+		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
 		return NULL; /* Invalid */
 	}
 
