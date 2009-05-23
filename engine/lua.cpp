@@ -2716,6 +2716,7 @@ static void Load() {
 		g_grim->_savegameFileName = lua_getstring(fileName);
 	} else {
 		warning("Load() fileName is wrong");
+		return;
 	}
 	g_grim->_savegameLoadRequest = true;
 }
