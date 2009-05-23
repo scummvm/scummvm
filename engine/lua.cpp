@@ -1560,7 +1560,7 @@ static void MakeSectorActive() {
 			}
 		}
 	} else if (lua_isnumber(sectorName)) {
-		int id = lua_getnumber(lua_getparam(2));
+		int id = lua_getnumber(lua_getparam(1));
 
 		for (i = 0; i < numSectors; i++) {
 			Sector *sector = g_grim->currScene()->getSectorBase(i);
@@ -1605,7 +1605,7 @@ static void MakeCurrentSet() {
 static void MakeCurrentSetup() {
 	int num, prevSetup;
 
-	num = lua_getnumber(lua_getparam(2));
+	num = lua_getnumber(lua_getparam(1));
 	prevSetup = g_grim->currScene()->setup();
 	g_grim->currScene()->setSetup(num);
 
