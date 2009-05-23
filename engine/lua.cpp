@@ -916,7 +916,7 @@ static void ActorLookAt() {
 	rate = lua_getparam(5);
 
 	if (lua_isnumber(rate))
-		act->setLookAtRate(luaL_check_number(rate));
+		act->setLookAtRate(lua_getnumber(rate));
 
 	// Look at nothing
 	if (lua_isnil(x)) {
@@ -926,21 +926,24 @@ static void ActorLookAt() {
 		act->setLookAtVectorZero();
 		act->setLooking(true);
 		if (lua_isnumber(y))
-			act->setLookAtRate(luaL_check_number(y));
+			act->setLookAtRate(lua_getnumber(y));
 	} else if (lua_isnumber(x)) { // look at xyz
 		float fX;
 		float fY;
 		float fZ;
 
-		fX = luaL_check_number(x);
+		if (lua_isnumber(x))
+			fX = lua_getnumber(x);
+		else
+			fX = 0.f;
 
 		if (lua_isnumber(y))
-			fY = luaL_check_number(y);
+			fY = lua_getnumber(y);
 		else
 			fY = 0.f;
 
 		if (lua_isnumber(z))
-			fZ = luaL_check_number(z);
+			fZ = lua_getnumber(z);
 		else
 			fZ = 0.f;
 
@@ -952,7 +955,7 @@ static void ActorLookAt() {
 		act->setLookAtVector(lookedAct->pos());
 
 		if (lua_isnumber(y))
-			act->setLookAtRate(luaL_check_number(y));
+			act->setLookAtRate(lua_getnumber(y));
 	} else {
 		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("ActorLookAt: Don't know what to look at!");
