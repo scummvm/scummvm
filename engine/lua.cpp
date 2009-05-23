@@ -141,30 +141,11 @@ static inline Bitmap *check_bitmapobject(int num) {
 	return NULL;
 }
 
-static inline int check_int(int num) {
-	double val;
-
-	// Have found some instances, such as in Rubacava and the tube-switcher
-	// room, where integers of "zero" are called as nil
-	if (lua_isnil(lua_getparam(num)))
-		return 0;
-
-	val = luaL_check_number(num);
-	return int(round(val));
-}
-
 static inline int check_control(int num) {
-	int val = check_int(num);
+	int val = lua_getnumber(lua_getparam(num));
 	if (val < 0 || val >= KEYCODE_EXTRA_LAST)
 		luaL_argerror(num, "control identifier out of range");
 	return val;
-}
-
-static inline ObjectState::Position check_objstate_pos(int num) {
-	int val = check_int(num);
-	if (val < 1 || val > 3)
-		luaL_argerror(num, "object state position out of range");
-	return (ObjectState::Position) val;
 }
 
 static inline bool getbool(int num) {
@@ -185,7 +166,7 @@ static Costume *get_costume(Actor *a, int param, const char *called_from) {
 		if (!result && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
 			warning("Actor %s has no costume [%s]", a->name(), called_from);
 	} else {
-		result = a->findCostume(luaL_check_string(param));
+		result = a->findCostume(lua_getstring(lua_getparam(param)));
 		if (!result && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
 			warning("Actor %s has no costume %s [%s]", a->name(), lua_getstring(lua_getparam(param)), called_from);
 	}
@@ -285,7 +266,8 @@ static byte clamp_color(int c) {
 }
 
 static void MakeColor() {
-	Color *c = new Color (clamp_color(check_int(1)), clamp_color(check_int(2)), clamp_color(check_int(3)));
+	Color *c = new Color (clamp_color(lua_getnumber(lua_getparam(1))),
+			clamp_color(lua_getnumber(lua_getparam(2))), clamp_color(lua_getnumber(lua_getparam(2))));
 	lua_pushusertag(c, MKID_BE('COLR'));
 }
 
@@ -394,7 +376,7 @@ static void SetActorRestChore() {
 		chore = -1;
 		costume = NULL;
 	} else {
-		chore = check_int(2);
+		chore = lua_getnumber(lua_getparam(2));
 		costume = get_costume(act, 3, "SetActorRestChore");
 	}
 
@@ -403,7 +385,7 @@ static void SetActorRestChore() {
 
 static void SetActorWalkChore() {
 	Actor *act = check_actor(1);
-	int chore = check_int(2);
+	int chore = lua_getnumber(lua_getparam(2));
 	Costume *costume = get_costume(act, 3, "SetActorWalkChore");
 	if (!costume) {
 		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
@@ -421,8 +403,8 @@ static void SetActorWalkChore() {
 
 static void SetActorTurnChores() {
 	Actor *act = check_actor(1);
-	int left_chore = check_int(2);
-	int right_chore = check_int(3);
+	int left_chore = lua_getnumber(lua_getparam(2));
+	int right_chore = lua_getnumber(lua_getparam(3));
 	Costume *costume = get_costume(act, 4, "SetActorTurnChores");
 	act->setTurnChores(left_chore, right_chore, costume);
 }
@@ -431,9 +413,9 @@ static void SetActorTalkChore() {
 	int chore;
 
 	Actor *act = check_actor(1);
-	int index = check_int(2);
+	int index = lua_getnumber(lua_getparam(2));
 	if (lua_isnumber(lua_getparam(3)))
-		chore = check_int(3);
+		chore = lua_getnumber(lua_getparam(3));
 	else
 		chore = -1;
 
@@ -444,7 +426,7 @@ static void SetActorTalkChore() {
 
 static void SetActorMumblechore() {
 	Actor *act = check_actor(1);
-	int chore = check_int(2);
+	int chore = lua_getnumber(lua_getparam(2));
 	Costume *costume = get_costume(act, 3, "SetActorMumblechore");
 	act->setMumbleChore(chore, costume);
 }
@@ -605,8 +587,8 @@ static void SetVideoDevices() {
 	int devId;
 	int modeId;
 
-	devId = check_int(1);
-	modeId = check_int(2);
+	devId = lua_getnumber(lua_getparam(1));
+	modeId = lua_getnumber(lua_getparam(2));
 	// ignore setting video devices
 }
 
@@ -626,7 +608,7 @@ static void EnumerateVideoDevices() {
 
 static void Enumerate3DDevices() {
 	lua_Object result = lua_createtable();
-	int num = check_int(1);
+	int num = lua_getnumber(lua_getparam(1));
 	lua_pushobject(result);
 	lua_pushnumber(-1.0);
 	if (g_driver->isHardwareAccelerated()) {
@@ -656,7 +638,7 @@ static void GetActorNodeLocation() {
 	int node;
 
 	act = check_actor(1);
-	node = check_int(2);
+	node = lua_getnumber(lua_getparam(2));
 	c = act->currentCostume();
 	if (!c) {
 		lua_pushnil();
@@ -697,7 +679,7 @@ static void SetActorWalkDominate() {
 	if (lua_isnil(param2)) {
 		lua_pushnil();
 	} else if (lua_isnumber(param2)) {
-		int walkcode = check_int(2);
+		int walkcode = lua_getnumber(lua_getparam(2));
 
 		if (walkcode != 1) {
 			warning("Unknown SetActorWalkDominate 'walking code' value: %d", walkcode);
@@ -730,7 +712,7 @@ static void TurnActor() {
 	int dir;
 
 	act = check_actor(1);
-	dir = check_int(2);
+	dir = lua_getnumber(lua_getparam(2));
 	act->turn(dir);
 }
 
@@ -790,7 +772,7 @@ static void PlayActorChore() {
 	Costume *cost;
 
 	act = check_actor(1);
-	num = check_int(2);
+	num = lua_getnumber(lua_getparam(2));
 	cost = get_costume(act, 3, "playActorChore");
 	if (!cost) {
 		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
@@ -816,7 +798,7 @@ static void CompleteActorChore() {
 	// TODO: Make this operation work better
 
 	act = check_actor(1);
-	num = check_int(2);
+	num = lua_getnumber(lua_getparam(2));
 	cost = get_costume(act, 3, "completeActorChore");
 	if (!cost) {
 		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
@@ -833,7 +815,7 @@ static void PlayActorChoreLooping() {
 	Costume *cost;
 
 	act = check_actor(1);
-	num = check_int(2);
+	num = lua_getnumber(lua_getparam(2));
 	cost = get_costume(act, 3, "playActorChoreLooping");
 	if (!cost)
 		return;
@@ -848,7 +830,7 @@ static void SetActorChoreLooping() {
 	Costume *cost;
 
 	act = check_actor(1);
-	num = check_int(2);
+	num = lua_getnumber(lua_getparam(2));
 	val = getbool(3);
 	cost = get_costume(act, 4, "setActorChoreLooping");
 	if (!cost)
@@ -869,7 +851,7 @@ static void StopActorChore() {
 	if (lua_isnil(lua_getparam(2)))
 		cost->stopChores();
 	else
-		cost->stopChore(check_int(2));
+		cost->stopChore(lua_getnumber(lua_getparam(2)));
 }
 
 static void IsActorChoring() {
@@ -895,7 +877,7 @@ static void IsActorChoring() {
 	if (lua_isnil(param2))
 		result = cost->isChoring(excludeLooping);
 	else if (lua_isnumber(param2))
-		result = cost->isChoring(check_int(2), excludeLooping);
+		result = cost->isChoring(lua_getnumber(lua_getparam(2)), excludeLooping);
 	else if (lua_isstring(param2))
 		result = cost->isChoring(lua_getstring(param2), excludeLooping);
 	else {
@@ -1154,9 +1136,9 @@ static void SetActorHead() {
 	Actor *act;
 
 	act = check_actor(1);
-	joint1 = check_int(2);
-	joint2 = check_int(3);
-	joint3 = check_int(4);
+	joint1 = lua_getnumber(lua_getparam(2));
+	joint2 = lua_getnumber(lua_getparam(3));
+	joint3 = lua_getnumber(lua_getparam(4));
 	maxRoll = luaL_check_number(5);
 	maxPitch = luaL_check_number(6);
 	maxYaw = luaL_check_number(7);
@@ -1215,9 +1197,9 @@ static void GetVisibleThings() {
 }
 
 static void SetShadowColor() {
-	int r = check_int(1);
-	int g = check_int(2);
-	int b = check_int(3);
+	int r = lua_getnumber(lua_getparam(1));
+	int g = lua_getnumber(lua_getparam(2));
+	int b = lua_getnumber(lua_getparam(3));
 
 	g_driver->setShadowColor(r, g, b);
 }
@@ -1230,7 +1212,7 @@ static void KillActorShadows() {
 
 static void SetActiveShadow() {
 	Actor *act = check_actor(1);
-	int shadowId = check_int(2);
+	int shadowId = lua_getnumber(lua_getparam(2));
 
 	act->setActiveShadow(shadowId);
 }
@@ -1260,7 +1242,7 @@ static void AddShadowPlane() {
 
 static void ActivateActorShadow() {
 	Actor *act = check_actor(1);
-	int shadowId = check_int(2);
+	int shadowId = lua_getnumber(lua_getparam(2));
 	bool state = getbool(3);
 
 	act->setActivateShadow(shadowId, state);
@@ -1269,7 +1251,7 @@ static void ActivateActorShadow() {
 
 static void SetActorShadowValid() {
 	Actor *act = check_actor(1);
-	int valid = check_int(2);
+	int valid = lua_getnumber(lua_getparam(2));
 
 	warning("SetActorShadowValid(%d) unknown purpose", valid);
 
@@ -1318,7 +1300,7 @@ static void TextFileGetLine() {
 		return;
 	}
 
-	int pos = check_int(2);
+	int pos = lua_getnumber(lua_getparam(2));
 	file->seek(pos, SEEK_SET);
 	file->readLine_NEW(textBuf, 512);
 	delete file;
@@ -1511,7 +1493,7 @@ static void GetActorSector() {
 	int sectorType;
 
 	act = check_actor(1);
-	sectorType = check_int(2);
+	sectorType = lua_getnumber(lua_getparam(2));
 	Sector *result = g_grim->currScene()->findPointSector(act->pos(), sectorType);
 	if (result) {
 		lua_pushnumber(result->id());
@@ -1578,7 +1560,7 @@ static void MakeSectorActive() {
 			}
 		}
 	} else if (lua_isnumber(sectorName)) {
-		int id = check_int(1);
+		int id = lua_getnumber(lua_getparam(2));
 
 		for (i = 0; i < numSectors; i++) {
 			Sector *sector = g_grim->currScene()->getSectorBase(i);
@@ -1623,7 +1605,7 @@ static void MakeCurrentSet() {
 static void MakeCurrentSetup() {
 	int num, prevSetup;
 
-	num = check_int(1);
+	num = lua_getnumber(lua_getparam(2));
 	prevSetup = g_grim->currScene()->setup();
 	g_grim->currScene()->setSetup(num);
 
@@ -1697,8 +1679,8 @@ static void ImStartSound() {
 	const char *soundName;
 
 	soundName = luaL_check_string(1);
-	priority = check_int(2);
-	group = check_int(3);
+	priority = lua_getnumber(lua_getparam(2));
+	group = lua_getnumber(lua_getparam(3));
 
 	// Start the sound with the appropriate settings
 	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority, NULL)) {
@@ -1744,7 +1726,7 @@ static void ImSetVoiceEffect() {
 }
 
 static void ImSetMusicVol() {
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, check_int(1));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, lua_getnumber(lua_getparam(1)));
 }
 
 static void ImGetMusicVol() {
@@ -1752,7 +1734,7 @@ static void ImGetMusicVol() {
 }
 
 static void ImSetVoiceVol() {
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, check_int(1));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, lua_getnumber(lua_getparam(1)));
 }
 
 static void ImGetVoiceVol() {
@@ -1760,7 +1742,7 @@ static void ImGetVoiceVol() {
 }
 
 static void ImSetSfxVol() {
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, check_int(1));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, lua_getnumber(lua_getparam(1)));
 }
 
 static void ImGetSfxVol() {
@@ -1772,8 +1754,8 @@ static void ImSetParam() {
 	const char *soundName;
 
 	soundName = luaL_check_string(1);
-	param = check_int(2);
-	value = check_int(3);
+	param = lua_getnumber(lua_getparam(2));
+	value = lua_getnumber(lua_getparam(3));
 	switch (param) {
 	case IM_SOUND_VOL:
 		g_imuse->setVolume(soundName, value);
@@ -1793,7 +1775,7 @@ void ImGetParam() {
 	int param;
 
 	soundName = luaL_check_string(1);
-	param = check_int(2);
+	param = lua_getnumber(lua_getparam(2));
 	switch (param) {
 	case IM_SOUND_PLAY_COUNT:
 		lua_pushnumber(g_imuse->getCountPlayedTracks(soundName));
@@ -1813,9 +1795,9 @@ static void ImFadeParam() {
 	const char *soundName;
 
 	soundName = luaL_check_string(1);
-	opcode = check_int(2);
-	value = check_int(3);
-	duration = check_int(4);
+	opcode = lua_getnumber(lua_getparam(2));
+	value = lua_getnumber(lua_getparam(3));
+	duration = lua_getnumber(lua_getparam(4));
 	switch (opcode) {
 	case IM_SOUND_PAN:
 		g_imuse->setFadePan(soundName, value, duration);
@@ -1827,13 +1809,13 @@ static void ImFadeParam() {
 }
 
 static void ImSetState() {
-	g_imuseState = check_int(1);
+	g_imuseState = lua_getnumber(lua_getparam(1));
 }
 
 static void ImSetSequence() {
 	int state;
 
-	state = check_int(1);
+	state = lua_getnumber(lua_getparam(1));
 	lua_pushnumber(g_imuse->setMusicSequence(state));
 }
 
@@ -1874,8 +1856,8 @@ static void SetSoundPosition() {
 		} else {
 			return;
 		}
-		minVolume = check_int(3);
-		maxVolume = check_int(4);
+		minVolume = lua_getnumber(lua_getparam(3));
+		maxVolume = lua_getnumber(lua_getparam(4));
 	} else if (lua_isnumber(lua_getparam(2))) {
 		error("SetSoundPosition() Position x,y,z as params is not suported.");
 	} else {
@@ -1996,8 +1978,8 @@ static void BlastImage() {
 	int x, y;
 
 	bitmap = check_bitmapobject(1);
-	x = check_int(2);
-	y = check_int(3);
+	x = lua_getnumber(lua_getparam(2));
+	y = lua_getnumber(lua_getparam(3));
 	transparent = getbool(4);
 	bitmap->setX(x);
 	bitmap->setY(y);
@@ -2141,7 +2123,7 @@ static void GetTextSpeed() {
 static void SetTextSpeed() {
 	int speed;
 
-	speed = check_int(1);
+	speed = lua_getnumber(lua_getparam(1));
 	g_grim->setTextSpeed(speed);
 }
 
@@ -2226,7 +2208,7 @@ static void SetOffscreenTextPos() {
 static void SetSpeechMode() {
 	int mode;
 
-	mode = check_int(1);
+	mode = lua_getnumber(lua_getparam(1));
 	if (mode >= 1 && mode <= 3)
 		g_grim->setSpeechMode(mode);
 }
@@ -2258,10 +2240,10 @@ static void StartMovie() {
 	warning("StartMovie() mode: %d", (int)mode);
 
 	if (!lua_isnil(lua_getparam(3)))
-		x = check_int(3);
+		x = lua_getnumber(lua_getparam(3));
 
 	if (!lua_isnil(lua_getparam(4)))
-		y = check_int(4);
+		y = lua_getnumber(lua_getparam(4));
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 	pushbool(g_smush->play(luaL_check_string(1), x, y));
@@ -2360,10 +2342,10 @@ static void DrawLine() {
 	lua_Object tableObj;
 	Color color;
 
-	p1.x = check_int(1);
-	p1.y = check_int(2);
-	p2.x = check_int(3);
-	p2.y = check_int(4);
+	p1.x = lua_getnumber(lua_getparam(1));
+	p1.y = lua_getnumber(lua_getparam(2));
+	p2.x = lua_getnumber(lua_getparam(3));
+	p2.y = lua_getnumber(lua_getparam(4));
 	tableObj = lua_getparam(5);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
@@ -2449,10 +2431,10 @@ static void DrawRectangle() {
 	lua_Object tableObj;
 	Color color;
 
-	p1.x = check_int(1);
-	p1.y = check_int(2);
-	p2.x = check_int(3);
-	p2.y = check_int(4);
+	p1.x = lua_getnumber(lua_getparam(1));
+	p1.y = lua_getnumber(lua_getparam(2));
+	p2.x = lua_getnumber(lua_getparam(3));
+	p2.y = lua_getnumber(lua_getparam(4));
 	tableObj = lua_getparam(5);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
@@ -2528,10 +2510,10 @@ static void DimScreen() {
 }
 
 static void DimRegion() {
-	int x = check_int(1);
-	int y = check_int(2);
-	int w = check_int(3);
-	int h = check_int(4);
+	int x = lua_getnumber(lua_getparam(1));
+	int y = lua_getnumber(lua_getparam(2));
+	int w = lua_getnumber(lua_getparam(3));
+	int h = lua_getnumber(lua_getparam(4));
 	float level = lua_getnumber(lua_getparam(5));
 	g_driver->dimRegion(x, y, w, h, level);
 }
@@ -2542,8 +2524,9 @@ static void GetDiskFreeSpace() {
 }
 
 static void NewObjectState() {
-	int setupID = check_int(1);
-	ObjectState::Position pos = check_objstate_pos(2);
+	int setupID = lua_getnumber(lua_getparam(1));
+	int val = (int)lua_getnumber(lua_getparam(2));
+	ObjectState::Position pos = (ObjectState::Position)val;
 	const char *bitmap = lua_getstring(lua_getparam(3));
 	const char *zbitmap = NULL;
 	if (!lua_isnil(lua_getparam(4)))
@@ -2580,7 +2563,8 @@ static void SendObjectToFront() {
 
 static void SetObjectType() {
 	ObjectState *state = check_object(1);
-	ObjectState::Position pos = check_objstate_pos(2);
+	int val = (int)lua_getnumber(lua_getparam(2));
+	ObjectState::Position pos = (ObjectState::Position)val;
 	state->setPos(pos);
 }
 
@@ -2589,8 +2573,8 @@ static void GetCurrentScript() {
 }
 
 static void ScreenShot() {
-	int width = check_int(1);
-	int height = check_int(2);
+	int width = lua_getnumber(lua_getparam(1));
+	int height = lua_getnumber(lua_getparam(2));
 	int mode = g_grim->getMode();
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 	g_grim->updateDisplayScene();
@@ -2757,7 +2741,7 @@ static void LightMgrSetChange() {
 }
 
 static void SetAmbientLight() {
-	int mode = check_int(1);
+	int mode = lua_getnumber(lua_getparam(1));
 	if (mode == 0) {
 		if (g_grim->currScene()) {
 			g_grim->currScene()->setLightEnableState(true);
@@ -2793,7 +2777,7 @@ static void Display() {
 
 static void EngineDisplay() {
 	// it enable/disable updating display
-	bool mode = check_int(1) != 0;
+	bool mode = (int)lua_getnumber(lua_getparam(1)) != 0;
 	if (mode) {
 		g_grim->setFlipEnable(true);
 	} else {
