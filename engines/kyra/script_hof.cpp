@@ -1482,6 +1482,7 @@ typedef Common::Functor2Mem<const TIM*, const uint16*, int, KyraEngine_HoF> TIMO
 void KyraEngine_HoF::setupOpcodeTable() {
 	Common::Array<const Opcode*> *table = 0;
 
+	_opcodes.reserve(176);
 	SetOpcodeTable(_opcodes);
 	// 0x00
 	Opcode(o2_setCharacterFacingRefresh);
@@ -1705,6 +1706,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_demoFinale);
 	Opcode(o2_dummy);
 
+	_opcodesAnimation.reserve(6);
 	SetOpcodeTable(_opcodesAnimation);
 
 	// 0x00
@@ -1718,6 +1720,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 
 	// ---- TIM opcodes
 
+	_timOpcodes.reserve(4);
 	// 0x00
 	OpcodeTim(t2_initChat);
 	OpcodeTim(t2_updateSceneAnim);

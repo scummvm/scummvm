@@ -2250,6 +2250,7 @@ typedef Common::Functor2Mem<const TIM *, const uint16 *, int, LoLEngine> TIMOpco
 void LoLEngine::setupOpcodeTable() {
 	Common::Array<const Opcode*> *table = 0;
 
+	_opcodes.reserve(192);
 	SetOpcodeTable(_opcodes);
 	// 0x00
 	Opcode(olol_setWallType);
@@ -2540,6 +2541,8 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	Common::Array<const TIMOpcode*> *timTable = 0;
+
+	_timIntroOpcodes.reserve(8);
 	SetTimOpcodeTable(_timIntroOpcodes);
 
 	// 0x00
@@ -2554,6 +2557,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeTimUnImpl();
 	OpcodeTimUnImpl();
 
+	_timIngameOpcodes.reserve(17);
 	SetTimOpcodeTable(_timIngameOpcodes);
 
 	// 0x00

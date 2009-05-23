@@ -1149,6 +1149,7 @@ typedef Common::Functor1Mem<EMCState*, int, KyraEngine_MR> OpcodeV3;
 void KyraEngine_MR::setupOpcodeTable() {
 	Common::Array<const Opcode*> *table = 0;
 
+	_opcodes.reserve(176);
 	SetOpcodeTable(_opcodes);
 	// 0x00
 	Opcode(o3_getMalcolmShapes);
@@ -1371,18 +1372,20 @@ void KyraEngine_MR::setupOpcodeTable() {
 	OpcodeUnImpl();
 	Opcode(o3_dummy);
 
+	_opcodesAnimation.reserve(8);
 	SetOpcodeTable(_opcodesAnimation);
 	// 0x00
 	Opcode(o2a_setAnimationShapes);
 	Opcode(o3a_setCharacterFrame);
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_dummy);
-	// 0x0a
+	// 0x04
 	Opcode(o2a_setResetFrame);
 	Opcode(o1_getRand);
 	Opcode(o3_getMalcolmShapes);
 	Opcode(o3_dummy);
 
+	_opcodesDialog.reserve(5);
 	SetOpcodeTable(_opcodesDialog);
 	// 0x00
 	Opcode(o3d_updateAnim);

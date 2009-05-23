@@ -1773,6 +1773,7 @@ typedef Common::Functor1Mem<EMCState*, int, KyraEngine_LoK> OpcodeV1;
 void KyraEngine_LoK::setupOpcodeTable() {
 	Common::Array<const Opcode *> *table = 0;
 
+	_opcodes.reserve(157);
 	SetOpcodeTable(_opcodes);
 	// 0x00
 	Opcode(o1_magicInMouseItem);
