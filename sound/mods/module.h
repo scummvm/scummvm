@@ -70,7 +70,7 @@ public:
 	byte songlen;
 	byte undef;
 	byte songpos[128];
-	byte sig[4];
+	uint32 sig;
 	pattern_t *pattern;
 
 	Module();
@@ -82,6 +82,7 @@ public:
 
 private:
 	static const int16 periods[16][60];
+	static const uint32 signatures[];
 };
 
 } // End of namespace Modules

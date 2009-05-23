@@ -26,6 +26,7 @@
 #include "sound/mods/module.h"
 
 #include "common/util.h"
+#include "common/endian.h"
 
 namespace Modules {
 
@@ -111,6 +112,10 @@ const int16 Module::periods[16][60] = {
 	 216 , 203 , 192 , 181 , 171 , 161 , 152 , 144 , 136 , 128 , 121 , 114,
 	 108 , 101 , 96  , 90  , 85  , 80  , 76  , 72  , 68  , 64  , 60  , 57 }};
 
+const uint32 Module::signatures[] = {
+	MKID_BE('M.K.'), MKID_BE('M!K!'), MKID_BE('FLT4')
+};
+
 bool Module::load(Common::SeekableReadStream &st, int offs) {
 	if (offs) {
 		// Load the module with the common sample data
@@ -138,9 +143,19 @@ bool Module::load(Common::SeekableReadStream &st, int offs) {
 	undef = st.readByte();
 
 	st.read(songpos, 128);
-	st.read(sig, 4);
-	if (memcmp(sig, "M.K.", 4)) {
-		warning("Expected 'M.K.' in protracker module");
+
+	sig = st.readUint32BE();
+
+	bool foundSig = false;
+	for (int i = 0; i < ARRAYSIZE(signatures); i++) {
+		if (sig == signatures[i]) {
+			foundSig = true;
+			break;
+		}
+	}
+
+	if (!foundSig) {
+		warning("No known signature found in protracker module");
 		return false;
 	}
 
