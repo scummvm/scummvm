@@ -2592,11 +2592,8 @@ static void GetCurrentScript() {
 }
 
 static void ScreenShot() {
-	int width, height;
-
-	width = check_int(1);
-	height = check_int(2);
-
+	int width = check_int(1);
+	int height = check_int(2);
 	int mode = g_grim->getMode();
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 	g_grim->updateDisplayScene();
@@ -2610,10 +2607,6 @@ static void ScreenShot() {
 	}
 }
 
-/*
- * Restore a screenshot from a savegame file
- *
- */
 static void GetSaveGameImage() {
 	int width = 250, height = 188;
 	const char *filename;
@@ -2624,6 +2617,10 @@ static void GetSaveGameImage() {
 	printf("GetSaveGameImage() started.\n");
 	filename = luaL_check_string(1);
 	SaveGame *savedState = new SaveGame(filename, false);
+	if (!savedState) {
+		lua_pushnil();
+		return;
+	}
 	dataSize = savedState->beginSection('SIMG');
 	data = new char[dataSize];
 	savedState->read(data, dataSize);
@@ -2633,7 +2630,8 @@ static void GetSaveGameImage() {
 		lua_pushusertag(screenshot, MKID_BE('VBUF'));
 	} else {
 		lua_pushnil();
-		error("Could not restore screenshot from file!");
+		warning("Could not restore screenshot from file!");
+		return;
 	}
 	savedState->endSection();
 	delete savedState;
@@ -2643,17 +2641,14 @@ static void GetSaveGameImage() {
 static void SubmitSaveGameData() {
 	lua_Object table, table2;
 	SaveGame *savedState;
-	int count = 0;
 	const char *str;
-
-	printf("SubmitSaveGameData() started.\n");
 	table = lua_getparam(1);
 
 	savedState = g_grim->savedState();
 	if (!savedState)
 		error("Cannot obtain saved game!");
 	savedState->beginSection('SUBS');
-	count = 0;
+	int count = 0;
 	for (;;) {
 		lua_pushobject(table);
 		lua_pushnumber(count);
@@ -2667,20 +2662,13 @@ static void SubmitSaveGameData() {
 		savedState->write(str, len);
 	}
 	savedState->endSection();
-	printf("SubmitSaveGameData() finished.\n");
 }
 
 static void GetSaveGameData() {
-	lua_Object result;
-	const char *filename;
-	int dataSize;
-
-	printf("GetSaveGameData() started.\n");
-	filename = luaL_check_string(1);
+	const char *filename = luaL_check_string(1);
 	SaveGame *savedState = new SaveGame(filename, false);
-	dataSize = savedState->beginSection('SUBS');
-
-	result = lua_createtable();
+	int32 dataSize = savedState->beginSection('SUBS');
+	lua_Object result = lua_createtable();
 
 	char str[128];
 	int strSize;
@@ -2707,9 +2695,7 @@ static void GetSaveGameData() {
 }
 
 static void Load() {
-	lua_Object fileName;
-
-	fileName = lua_getparam(1);
+	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
 		g_grim->_savegameFileName = NULL;
 	} else if (lua_isstring(fileName)) {
@@ -2722,9 +2708,7 @@ static void Load() {
 }
 
 static void Save() {
-	lua_Object fileName;
-
-	fileName = lua_getparam(1);
+	lua_Object fileName = lua_getparam(1);
 	if (lua_isnil(fileName)) {
 		g_grim->_savegameFileName = NULL;
 	} else if (lua_isstring(fileName)) {
