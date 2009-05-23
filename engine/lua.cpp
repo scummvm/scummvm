@@ -2777,9 +2777,7 @@ static void LightMgrSetChange() {
 }
 
 static void SetAmbientLight() {
-	int mode;
-
-	mode = check_int(1);
+	int mode = check_int(1);
 	if (mode == 0) {
 		if (g_grim->currScene()) {
 			g_grim->currScene()->setLightEnableState(true);
@@ -2788,8 +2786,6 @@ static void SetAmbientLight() {
 		if (g_grim->currScene()) {
 			g_grim->currScene()->setLightEnableState(false);
 		}
-	} else {
-		error("SetAmbientLight() Unknown param %d", mode);
 	}
 }
 
