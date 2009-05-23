@@ -56,6 +56,7 @@ MODULE_OBJS := \
 	sound_towns.o \
 	sound.o \
 	sound_lok.o \
+	sound_lol.o \
 	sprites.o \
 	staticres.o \
 	text.o \

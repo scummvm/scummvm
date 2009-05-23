@@ -66,17 +66,24 @@ bool Sound::voiceFileIsPresent(const char *file) {
 	return false;
 }
 
-int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx) {
+int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx, bool appendSuffix) {
+	int32 ptime = 0;
+	Audio::AudioStream *audioStream = getVoiceStream(file, &ptime, appendSuffix);
+
+	if (!audioStream) {
+		warning("Couldn't load sound file '%s'", file);
+		return 0;
+	}
+
+	playVoiceStream(audioStream, file, volume, isSfx) ;
+
+	return ptime;
+}
+
+Audio::AudioStream *Sound::getVoiceStream(const char *file, int32 *totalPlayingTime, bool appendSuffix) {
 	char filenamebuffer[25];
 
-	int h = 0;
-	while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
-		h++;
-	if (h >= kNumChannelHandles)
-		return 0;
-
 	Audio::AudioStream *audioStream = 0;
-
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, _supportedCodecs[i].fileext);
@@ -88,9 +95,12 @@ int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx) {
 		break;
 	}
 
+	int32 vocStreamPlayTime = 0;
+
 	if (!audioStream) {
 		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, ".VOC");
+		if (appendSuffix)
+			strcat(filenamebuffer, ".VOC");
 
 		uint32 fileSize = 0;
 		byte *fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
@@ -100,62 +110,25 @@ int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx) {
 		Common::MemoryReadStream vocStream(fileData, fileSize);
 		audioStream = Audio::makeVOCStream(vocStream, Audio::Mixer::FLAG_UNSIGNED);
 
-		delete[] fileData;
-		fileSize = 0;
+		if (audioStream)
+			vocStreamPlayTime = vocStream.size() * 1000 / audioStream->getRate();
+	} else {
+		vocStreamPlayTime = audioStream->getTotalPlayTime();
 	}
-
-	if (!audioStream) {
-		warning("Couldn't load sound file '%s'", file);
-		return 0;
-	}
-
-	_soundChannels[h].file = file;
-	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream, -1, volume);
-
-	return audioStream->getTotalPlayTime();
+ 
+	*totalPlayingTime = vocStreamPlayTime;
+	return audioStream;
 }
 
-uint32 Sound::voicePlayFromList(Common::List<const char*> fileList) {
+void Sound::playVoiceStream(Audio::AudioStream *stream, const char *handleName, uint8 volume, bool isSfx) {
 	int h = 0;
 	while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
 		h++;
 	if (h >= kNumChannelHandles)
-		return 0;
+		return;
 
-	Audio::AppendableAudioStream *out = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED);
-	uint32 totalPlayTime = 0;
-
-	for (Common::List<const char*>::iterator i = fileList.begin(); i != fileList.end(); i++) {
-		Common::SeekableReadStream *file = _vm->resource()->createReadStream(*i);
-
-		if (!file) {
-			warning("Couldn't load voice file: %s", *i);
-			continue;
-		}
-
-		int size, rate;
-		uint8 *data = Audio::loadVOCFromStream(*file, size, rate);
-		delete file;
-
-		// FIXME/HACK: While loadVOCStream uses malloc / realloc,
-		// AppendableAudioStream uses delete[] to free the passed buffer.
-		// As a consequence we just 'move' the data to a buffer allocated
-		// via new[].
-		uint8 *vocBuffer = new uint8[size];
-		assert(vocBuffer);
-		memcpy(vocBuffer, data, size);
-		free(data);
-
-		out->queueBuffer(vocBuffer, size);
-		totalPlayTime += size;
-	}
-
-	totalPlayTime = (totalPlayTime * 1000) / 22050;
-	out->finish();
-
-	_soundChannels[h].file = *fileList.begin();
-	_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, out);
-	return totalPlayTime;
+	_soundChannels[h].file = handleName;
+	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, stream, -1, volume);
 }
 
 void Sound::voiceStop(const char *file) {

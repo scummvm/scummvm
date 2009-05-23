@@ -640,7 +640,7 @@ void TextDisplayer_LoL::textPageBreak() {
 			_vm->update();
 
 			if (_vm->_speechFlag) {
-				if (((_vm->_system->getMillis() > speechPartTime) || (_vm->snd_characterSpeaking() != 2)) && speechPartTime) {
+				if (((_vm->_system->getMillis() > speechPartTime) || (_vm->snd_updateCharacterSpeech() != 2)) && speechPartTime) {
 					loop = false;
 					inputFlag = 43;
 					break;

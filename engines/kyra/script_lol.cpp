@@ -1587,7 +1587,7 @@ int LoLEngine::olol_suspendMonster(EMCState *script) {
 int LoLEngine::olol_triggerEventOnMouseButtonClick(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_triggerEventOnMouseButtonClick(%p) (%d)", (const void *)script, stackPos(0));
 	gui_notifyButtonListChanged();
-	snd_characterSpeaking();
+	snd_updateCharacterSpeech();
 
 	int f = checkInput(0);
 	removeInputTop();
@@ -1980,7 +1980,7 @@ int LoLEngine::olol_characterSays(EMCState *script) {
 	if (stackPos(0) != -2)
 		return characterSays(stackPos(0), stackPos(1), stackPos(2));
 	else
-		return snd_characterSpeaking();
+		return snd_updateCharacterSpeech();
 }
 
 int LoLEngine::olol_queueSpeech(EMCState *script) {

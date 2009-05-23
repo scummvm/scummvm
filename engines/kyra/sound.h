@@ -195,15 +195,11 @@ public:
 	 * @param isSfx		marks file as sfx instead of voice
 	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false);
+	virtual int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, bool appendSuffix = true);
+	
+	Audio::AudioStream *getVoiceStream(const char *file, int32 *totalPlayingTime, bool appendSuffix = true);
 
-	/**
-	 * Queues the specified voice files in an AppendableAudioStream
-	 * and plays them.
-	 *
-	 * @param fileList:	files to be played
-	 */
-	virtual uint32 voicePlayFromList(Common::List<const char*> fileList);
+	void playVoiceStream(Audio::AudioStream * stream, const char *handleName, uint8 volume = 255, bool isSfx = false);
 
 	/**
 	 * Checks if a voice is being played.
@@ -465,7 +461,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false) { return -1; }
+	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, bool appendSuffix = true) { return -1; }
 	void playSoundEffect(uint8);
 
 protected:
@@ -492,7 +488,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false);
+	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, bool appendSuffix = true);
 	void playSoundEffect(uint8 track);
 
 protected:

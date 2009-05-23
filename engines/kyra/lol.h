@@ -413,7 +413,7 @@ private:
 	void loadTalkFile(int index);
 	void snd_playVoiceFile(int track) {}
 	bool snd_playCharacterSpeech(int id, int8 speaker, int);
-	int snd_characterSpeaking();
+	int snd_updateCharacterSpeech();
 	void snd_stopSpeech(bool setFlag);
 	void snd_playSoundEffect(int track, int volume);
 	void snd_processEnvironmentalSoundEffect(int soundId, int block);
@@ -440,6 +440,7 @@ private:
 	uint16 _envSfxQueuedBlocks[10];
 	int _nextSpeechId;
 	int _nextSpeaker;
+	Common::List<Audio::AudioStream*> _speechList;
 
 	int _curTlkFile;
 	int _speechFlag;

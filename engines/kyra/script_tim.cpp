@@ -1108,7 +1108,7 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 			}
 		}
 
-		if (_vm->snd_characterSpeaking() != 2) {
+		if (_vm->snd_updateCharacterSpeech() != 2) {
 			//if (_dlgTimer < _system->getMillis()) {
 				res = 1;
 				if (!_vm->shouldQuit()) {
@@ -1201,7 +1201,7 @@ void TIMInterpreter_LoL::update() {
 
 void TIMInterpreter_LoL::checkSpeechProgress() {
 	if (_vm->speechEnabled() && _currentTim->procParam > 1 && _currentTim->func[_currentFunc].loopIp) {
-		if (_vm->snd_characterSpeaking() != 2) {
+		if (_vm->snd_updateCharacterSpeech() != 2) {
 			_currentTim->func[_currentFunc].loopIp = 0;
 			_currentTim->dlgFunc = _currentFunc;
 			advanceToOpcode(21);
@@ -1235,7 +1235,7 @@ int TIMInterpreter_LoL::execCommand(int cmd, const uint16 *param) {
 
 int TIMInterpreter_LoL::cmd_setLoopIp(const uint16 *param) {
 	if (_vm->speechEnabled()) {
-		if (_vm->snd_characterSpeaking() == 2)
+		if (_vm->snd_updateCharacterSpeech() == 2)
 			_currentTim->func[_currentFunc].loopIp = _currentTim->func[_currentFunc].ip;
 		else
 			advanceToOpcode(21);
@@ -1253,7 +1253,7 @@ int TIMInterpreter_LoL::cmd_continueLoop(const uint16 *param) {
 
 	func.ip = func.loopIp;
 
-	if (_vm->snd_characterSpeaking() != 2) {
+	if (_vm->snd_updateCharacterSpeech() != 2) {
 		uint16 factor = param[0];
 		if (factor) {
 			const uint32 random = _vm->_rnd.getRandomNumberRng(0, 0x8000);
