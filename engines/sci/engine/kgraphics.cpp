@@ -3268,7 +3268,8 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 	}
 
-	// This code places texts incorrectly on screen
+	// FIXME: This code places texts incorrectly on screen. Apparently, it was used for latter SCI1 games
+	// (1.000.510 onwards), like Eco Quest 1. It has been replaced with clipping code instead
 #if 0
 	// If the text does not fit on the screen, move it to the left and upwards until it does
 	if (halign == ALIGN_LEFT)
@@ -3281,13 +3282,16 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (area.y + area.height > 200)
 		area.y += 200 - area.y - area.height; // Plus negative number = subtraction
 #else
-	// Replaced with this instead
 	// If the text does not fit on the screen, clip it till it does
-	if (area.x + area.width > s->gfx_state->pic_port_bounds.width)
-		area.width = CLIP<int>(area.width, 0, s->gfx_state->pic_port_bounds.width);
+	if (area.x + area.width > s->gfx_state->pic_port_bounds.width) {
+		warning("Text does not fit on screen width, clipping it");
+		area.width = s->gfx_state->pic_port_bounds.width - area.x;
+	}
 
-	if (area.y + area.height > s->gfx_state->pic_port_bounds.height)
-		area.height = CLIP<int>(area.height, 0, s->gfx_state->pic_port_bounds.height);
+	if (area.y + area.height > s->gfx_state->pic_port_bounds.height) {
+		warning("Text does not fit on screen height, clipping it");
+		area.height = s->gfx_state->pic_port_bounds.height - area.y;
+	}
 #endif
 
 
