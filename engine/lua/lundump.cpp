@@ -10,12 +10,8 @@
 #include "engine/lua/lstring.h"
 #include "engine/lua/lundump.h"
 
-#define	LoadBlock(b,size, Z)	ezread(Z, b, size)
-#define	LoadNative(t, Z)		LoadBlock(&t, sizeof(t), Z)
-#define doLoadNumber(f, Z)		f = LoadNumber(Z)
-
-static float conv_float(const char *data) {
-	const byte *udata = (const byte *)(data);
+static float conv_float(const byte *data) {
+	const byte *udata = data;
 	byte fdata[4];
 	fdata[0] = udata[3];
 	fdata[1] = udata[2];
@@ -47,26 +43,21 @@ static uint16 LoadWord(ZIO *Z) {
 	return (hi << 8) | lo;
 }
 
-static uint32 LoadLong(ZIO *Z) {
+static void *LoadBlock(int size, ZIO *Z) {
+	void *b = luaM_malloc(size);
+	ezread(Z, b, size);
+	return b;
+}
+
+static uint32 LoadSize(ZIO *Z) {
 	uint32 hi = LoadWord(Z);
 	uint32 lo = LoadWord(Z);
 	return (hi << 16) | lo;
 }
 
 static float LoadFloat(ZIO *Z) {
-	uint32 l = LoadLong(Z);
-	return conv_float((const char *)&l);
-}
-
-static byte *LoadCode(ZIO *Z) {
-	int32 size = LoadLong(Z);
-	int32 s = size;
-	void* b;
-	if (s != size)
-		luaL_verror("code too long (%ld bytes) in %s", size, zname(Z));
-	b = luaM_malloc(size);
-	LoadBlock(b, size, Z);
-	return (byte *)b;
+	uint32 l = LoadSize(Z);
+	return conv_float((const byte *)&l);
 }
 
 static TaggedString *LoadTString(ZIO *Z) {
@@ -77,10 +68,10 @@ static TaggedString *LoadTString(ZIO *Z) {
 		return NULL;
 	else {
 		char *s = luaL_openspace(size);
-		LoadBlock(s, size, Z);
+		ezread(Z, s, size);
 		for (i = 0; i < size; i++)
 			s[i] ^= 0xff;
-		return luaS_newlstr(s, size - 1);
+		return luaS_new(s);
 	}
 }
 
@@ -97,8 +88,6 @@ static void LoadLocals(TProtoFunc *tf, ZIO *Z) {
 	tf->locvars[i].varname = NULL;
 }
 
-static TProtoFunc *LoadFunction(ZIO *Z);
-
 static void LoadConstants(TProtoFunc *tf, ZIO *Z) {
 	int32 i, n = LoadWord(Z);
 	tf->nconsts = n;
@@ -107,62 +96,46 @@ static void LoadConstants(TProtoFunc *tf, ZIO *Z) {
 	tf->consts = luaM_newvector(n, TObject);
 	for (i = 0; i < n; i++) {
 		TObject *o = tf->consts + i;
-		ttype(o) = (lua_Type)-ezgetc(Z);
-		switch ((uint32)ttype(o)) {
-		case (uint32)-'N':
+		int c = ezgetc(Z);
+		switch (c) {
+		case ID_NUM:
 			ttype(o) = LUA_T_NUMBER;
-		case (uint32)LUA_T_NUMBER:
-			doLoadNumber(nvalue(o), Z);
+			nvalue(o) = LoadFloat(Z);
 			break;
-		case (uint32)-'S':
+		case ID_STR:
 			ttype(o) = LUA_T_STRING;
-		case (uint32)LUA_T_STRING:
 			tsvalue(o) = LoadTString(Z);
 			break;
-		case (uint32)-'F':
+		case ID_FUN:
 			ttype(o) = LUA_T_PROTO;
-		case (uint32)LUA_T_PROTO:
-			break;
-		case (uint32)LUA_T_NIL:
-			break;
+			tfvalue(o) = NULL;
 		default:
-			luaL_verror("bad constant #%d in %s: type=%d [%s]", i, zname(Z), ttype(o), luaO_typename(o));
 			break;
 		}
 	}
 }
 
-static void LoadSubfunctions(TProtoFunc *tf, ZIO *Z) {
-	char t;
-	do {
-		t = ezgetc(Z);
-		switch (t) {
-		case '#':
-			{
-				int32 i = LoadWord(Z);
-				if (ttype(tf->consts + i) != LUA_T_PROTO)
-					luaL_verror("trying to load function into nonfunction constant (type=%d)", ttype(tf->consts + i));
-				tfvalue(tf->consts + i) = LoadFunction(Z);
-				break;
-			}
-		case '$':
-			break;
-		default:
-			luaL_verror("invalid subfunction type %c", t);
-		}
-	} while (t != '$');
-}
+static void LoadFunctions(TProtoFunc *tf, ZIO *Z);
 
 static TProtoFunc *LoadFunction(ZIO *Z) {
 	TProtoFunc *tf = luaF_newproto();
 	tf->lineDefined = LoadWord(Z);
 	tf->fileName = LoadTString(Z);
-	tf->code = LoadCode(Z);
+	tf->code = (byte *)LoadBlock(LoadSize(Z), Z);
 	LoadConstants(tf, Z);
 	LoadLocals(tf, Z);
-	LoadSubfunctions(tf, Z);
+	LoadFunctions(tf, Z);
 
 	return tf;
+}
+
+static void LoadFunctions(TProtoFunc *tf, ZIO *Z) {
+	while (ezgetc(Z) == ID_FUNCTION) {
+		int32 i = LoadWord(Z);
+		TProtoFunc *t = LoadFunction(Z);
+		TObject *o = tf->consts + i;
+		tfvalue(o) = t;
+	}
 }
 
 static void LoadSignature(ZIO *Z) {
@@ -175,28 +148,18 @@ static void LoadSignature(ZIO *Z) {
 }
 
 static void LoadHeader(ZIO *Z) {
-	int32 version, id, sizeofR;
-#if 0
-	real f = (real)-TEST_NUMBER;
-	real tf = (real)TEST_NUMBER;
-#endif
+	int32 version, sizeofR;
+
 	LoadSignature(Z);
 	version = ezgetc(Z);
 	if (version > VERSION)
 		luaL_verror("%s too new: version=0x%02x; expected at most 0x%02x", zname(Z), version, VERSION);
-	if (version < VERSION0)			// check last major change
-		luaL_verror("%s too old: version=0x%02x; expected at least 0x%02x", zname(Z), version, VERSION0);
+	if (version < VERSION)			// check last major change
+		luaL_verror("%s too old: version=0x%02x; expected at least 0x%02x", zname(Z), version, VERSION);
 	sizeofR = ezgetc(Z);			// test number representation
-	id = ezgetc(Z);
-	if (id != ID_NUMBER || sizeofR != sizeof(real)) {
-		luaL_verror("unknown number signature in %s: read 0x%02x%02x; expected 0x%02x%02x", 
-				zname(Z), id, sizeofR, ID_NUMBER, sizeof(real));
-	}
-#if 0
-	doLoadNumber(f, Z);
-	if (f != tf) // LUA_NUMBER
-		luaL_verror("unknown number representation in %s: read " NUMBER_FMT "; expected " NUMBER_FMT, zname(Z), f, tf);
-#endif
+	if (sizeofR != sizeof(float))
+		luaL_verror("number expected float in %s", zname(Z));
+	ezgetc(Z);
 	ezgetc(Z);
 	ezgetc(Z);
 	ezgetc(Z);

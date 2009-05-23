@@ -13,11 +13,11 @@
 #define LOCAL_PI          (3.14159265358979323846)
 #endif
 
-#define FROMRAD(a) ((a)*(180.0/LOCAL_PI))
-#define TORAD(a)    ((a)*(LOCAL_PI/180.0))
+#define FROMRAD(a) ((a) * (180.0 / LOCAL_PI))
+#define TORAD(a)    ((a) * (LOCAL_PI / 180.0))
 
 static void math_abs() {
-	double d = luaL_check_number(1);
+	float d = luaL_check_number(1);
 	if (d < 0)
 		d = -d;
 	lua_pushnumber(d);
@@ -77,9 +77,9 @@ static void math_rad() {
 
 static void math_min() {
 	int32 i = 1;
-	double dmin = luaL_check_number(i);
+	float dmin = luaL_check_number(i);
 	while (lua_getparam(++i) != LUA_NOOBJECT) {
-		double d = luaL_check_number(i);
+		float d = luaL_check_number(i);
 		if (d < dmin)
 			dmin = d;
 	}
@@ -88,9 +88,9 @@ static void math_min() {
 
 static void math_max() {
 	int32 i = 1;
-	double dmax = luaL_check_number(i);
+	float dmax = luaL_check_number(i);
 	while (lua_getparam(++i) != LUA_NOOBJECT) {
-		double d = luaL_check_number(i);
+		float d = luaL_check_number(i);
 		if (d > dmax)
 			dmax = d;
 	}
@@ -98,8 +98,8 @@ static void math_max() {
 }
 
 static void math_random() {
-	double r = (double)(rand() % RAND_MAX) / (double)RAND_MAX;
-	double l = luaL_opt_number(1, 0);
+	float r = (float)(rand() % RAND_MAX) / (float)RAND_MAX;
+	float l = luaL_opt_number(1, 0);
 	if (l == 0)
 		lua_pushnumber(r);
 	else

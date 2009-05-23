@@ -172,7 +172,7 @@ lua_Object lua_getglobal(const char *name) {
 
 lua_Object lua_rawgetglobal(const char *name) {
 	TaggedString *ts = luaS_new(name);
-	return put_luaObject(&ts->u.s.globalval);
+	return put_luaObject(&ts->globalval);
 }
 
 void lua_setglobal(const char *name) {
@@ -217,7 +217,7 @@ int32 lua_isfunction(lua_Object o) {
 	return (t == LUA_T_PROTO) || (t == LUA_T_CPROTO);
 }
 
-double lua_getnumber(lua_Object object) {
+float lua_getnumber(lua_Object object) {
 	if (object == LUA_NOOBJECT)
 		return 0.0;
 	if (tonumber(Address(object)))
@@ -227,26 +227,17 @@ double lua_getnumber(lua_Object object) {
 }
 
 const char *lua_getstring (lua_Object object) {
-	luaC_checkGC();  // "tostring" may create a new string
 	if (object == LUA_NOOBJECT || tostring(Address(object)))
 		return NULL;
 	else
 		return (svalue(Address(object)));
 }
 
-int32 lua_strlen (lua_Object object) {
-	luaC_checkGC();  // "tostring" may create a new string
-	if (object == LUA_NOOBJECT || tostring(Address(object)))
-		return 0;
-	else
-		return (tsvalue(Address(object))->u.s.len);
-}
-
 void *lua_getuserdata(lua_Object object) {
 	if (object == LUA_NOOBJECT || ttype(Address(object)) != LUA_T_USERDATA)
 		return NULL;
 	else
-		return tsvalue(Address(object))->u.d.v;
+		return tsvalue(Address(object))->globalval.value.ts;
 }
 
 lua_CFunction lua_getcfunction(lua_Object object) {
@@ -261,27 +252,24 @@ void lua_pushnil() {
 	incr_top;
 }
 
-void lua_pushnumber(double n) {
+void lua_pushnumber(float n) {
 	ttype(L->stack.top) = LUA_T_NUMBER;
-	nvalue(L->stack.top) = (real)n;
+	nvalue(L->stack.top) = n;
 	incr_top;
-}
-
-void lua_pushlstring (const char *s, int32 len) {
-	tsvalue(L->stack.top) = luaS_newlstr(s, len);
-	ttype(L->stack.top) = LUA_T_STRING;
-	incr_top;
-	luaC_checkGC();
 }
 
 void lua_pushstring(const char *s) {
 	if (!s)
-		lua_pushnil();
-	else
-		lua_pushlstring(s, strlen(s));
+		ttype(L->stack.top) = LUA_T_NIL;
+	else {
+		tsvalue(L->stack.top) = luaS_new(s);
+		ttype(L->stack.top) = LUA_T_STRING;
+	}
+	incr_top;
+	luaC_checkGC();
 }
 
-void lua_pushcclosure(lua_CFunction fn, int32 n) {
+void lua_pushCclosure(lua_CFunction fn, int32 n) {
 	if (!fn)
 		lua_error("API error - attempt to push a NULL Cfunction");
 	checkCparams(n);
@@ -289,7 +277,6 @@ void lua_pushcclosure(lua_CFunction fn, int32 n) {
 	fvalue(L->stack.top) = fn;
 	incr_top;
 	luaV_closure(n);
-	luaC_checkGC();
 }
 
 void lua_pushusertag(void *u, int32 tag) {
@@ -324,7 +311,7 @@ int32 lua_tag(lua_Object lo) {
 		int32 t;
 		switch (t = ttype(o)) {
 		case LUA_T_USERDATA:
-			return o->value.ts->u.d.tag;
+			return o->value.ts->globalval.ttype;
 		case LUA_T_ARRAY:
 			return o->value.a->htag;
 		case LUA_T_PMARK:
@@ -335,7 +322,7 @@ int32 lua_tag(lua_Object lo) {
 			return o->value.cl->consts[0].ttype;
 #ifdef LUA_DEBUG
 		case LUA_T_LINE:
-			LUA_INTERNALERROR("invalid type");
+			LUA_INTERNALERROR("internal error");
 #endif
 		default:
 			return t;
@@ -351,7 +338,7 @@ void lua_settag(int32 tag) {
 		(L->stack.top - 1)->value.a->htag = tag;
 		break;
 	case LUA_T_USERDATA:
-		(L->stack.top - 1)->value.ts->u.d.tag = tag;
+		(L->stack.top - 1)->value.ts->globalval.ttype = (lua_Type)tag;
 		break;
 	default:
 		luaL_verror("cannot change the tag of a %.20s", luaO_typenames[-ttype((L->stack.top - 1))]);
@@ -483,25 +470,6 @@ lua_Object lua_getref(int32 ref) {
 	TObject *o = luaC_getref(ref);
 	return (o ? put_luaObject(o) : LUA_NOOBJECT);
 }
-
-/*
-** =======================================================
-** Derived functions
-** =======================================================
-*/
-int32 (lua_call)(char *name) { return lua_call(name); }
-
-void (lua_pushref)(int32 ref) { lua_pushref(ref); }
-
-int32 (lua_refobject)(lua_Object o, int32 l) { return lua_refobject(o, l); }
-
-void (lua_register)(char *n, lua_CFunction f) { lua_register(n, f); }
-
-void (lua_pushuserdata)(void *u) { lua_pushuserdata(u); }
-
-void (lua_pushcfunction)(lua_CFunction f) { lua_pushcfunction(f); }
-
-int32 (lua_clonetag)(int32 t) { return lua_clonetag(t); }
 
 
 #ifdef LUA_COMPAT2_5

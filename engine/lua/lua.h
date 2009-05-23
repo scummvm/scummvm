@@ -13,7 +13,7 @@
 #ifndef lua_h
 #define lua_h
 
-#define LUA_VERSION		"Lua 3.1"
+#define LUA_VERSION		"Lua 3.1 (alpha)"
 #define LUA_COPYRIGHT	"Copyright (C) 1994-1998 TeCGraf, PUC-Rio"
 #define LUA_AUTHORS 	"W. Celes, R. Ierusalimschy & L. H. de Figueiredo"
 
@@ -23,9 +23,6 @@
 
 typedef void (*lua_CFunction)();
 typedef uint32 lua_Object;
-
-typedef struct lua_State lua_State;
-extern lua_State *lua_state;
 
 struct PointerId {
 	uint32	low;
@@ -79,7 +76,6 @@ void lua_removelibslists();
 
 void lua_open();
 void lua_close();
-lua_State *lua_setstate(lua_State *st);
 
 lua_Object lua_settagmethod(int32 tag, const char *event); // In: new method
 lua_Object lua_gettagmethod(int32 tag, const char *event);
@@ -92,7 +88,6 @@ void lua_settag(int32 tag); // In: object
 void lua_error(const char *s);
 int32 lua_dostring(const char *string); // Out: returns
 int32 lua_dobuffer(const char *buff, int32 size, const char *name);
-// Out: returns
 int32 lua_callfunction(lua_Object f);
 // In: parameters; Out: returns */
 
@@ -112,17 +107,15 @@ int32 lua_isnumber             (lua_Object object);
 int32 lua_isstring             (lua_Object object);
 int32 lua_isfunction           (lua_Object object);
 
-double lua_getnumber 		(lua_Object object);
+float lua_getnumber 		(lua_Object object);
 const char *lua_getstring 		(lua_Object object);
-int32 lua_strlen 		(lua_Object object);
 lua_CFunction lua_getcfunction 	(lua_Object object);
 void *lua_getuserdata		(lua_Object object);
 
 void lua_pushnil();
-void lua_pushnumber(double n);
-void lua_pushlstring(const char *s, int32 len);
+void lua_pushnumber(float n);
 void lua_pushstring(const char *s);
-void lua_pushcclosure(lua_CFunction fn, int32 n);
+void lua_pushCclosure(lua_CFunction fn, int32 n);
 void lua_pushusertag(void *u, int32 tag);
 void lua_pushobject(lua_Object object);
 
@@ -151,25 +144,18 @@ void current_script();
 
 /* some useful macros/derived functions */
 
-int32 (lua_call)(char *name);
 #define lua_call(name)		lua_callfunction(lua_getglobal(name))
 
-void (lua_pushref)(int32 ref);
 #define lua_pushref(ref)	lua_pushobject(lua_getref(ref))
 
-int32 (lua_refobject)(lua_Object o, int32 l);
 #define lua_refobject(o,l)	(lua_pushobject(o), lua_ref(l))
 
-void (lua_register)(char *n, lua_CFunction f);
 #define lua_register(n, f)	(lua_pushcfunction(f), lua_setglobal(n))
 
-void (lua_pushuserdata)(void *u);
 #define lua_pushuserdata(u)	lua_pushusertag(u, 0)
 
-void (lua_pushcfunction)(lua_CFunction f);
-#define lua_pushcfunction(f)	lua_pushcclosure(f, 0)
+#define lua_pushcfunction(f)	lua_pushCclosure(f, 0)
 
-int32 (lua_clonetag)(int32 t);
 #define lua_clonetag(t)		lua_copytagmethods(lua_newtag(), (t))
 
 /* ==========================================================================

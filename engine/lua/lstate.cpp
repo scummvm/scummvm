@@ -19,7 +19,7 @@
 #include "engine/lua/ltm.h"
 #include "engine/lua/lualib.h"
 
-lua_State *lua_state = NULL;
+LState *lua_state = NULL;
 
 int32 globalTaskSerialId;
 
@@ -70,7 +70,7 @@ void lua_resetglobals() {
 void lua_open() {
 	if (lua_state)
 		return;
-	lua_state = luaM_new(lua_State);
+	lua_state = luaM_new(LState);
 	lua_resetglobals();
 	luaT_init();
 	luaB_predefine();
@@ -98,12 +98,6 @@ void lua_close() {
 	printf("total de blocos: %ld\n", numblocks);
 	printf("total de memoria: %ld\n", totalmem);
 #endif
-}
-
-lua_State *lua_setstate(lua_State *st) {
-	lua_State *old = lua_state;
-	lua_state = st;
-	return old;
 }
 
 static void savetask(lua_Task *t) {

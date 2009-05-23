@@ -18,24 +18,8 @@
 #define LUA_ASSERT(c, s)			// empty
 #endif
 
-/*
-** "real" is the type "number" of Lua
-** GREP LUA_NUMBER to change that
-*/
-#ifndef LUA_NUM_TYPE
-#define LUA_NUM_TYPE float
-#endif
-
-/*
-** format to convert number to strings
-*/
-#define NUMBER_FMT  "%g"
-
-typedef LUA_NUM_TYPE real;
-
 #define MAX_INT			(2147483647 - 2)  // maximum value of an int (-2 for safety)
-#define MAX_WORD		65534
-
+#define MAX_WORD		(65534U)
 
 /*
 ** Lua TYPES
@@ -63,7 +47,7 @@ typedef enum {
 
 typedef union {
 	lua_CFunction f;  // LUA_T_CPROTO, LUA_T_CMARK
-	real n;  // LUA_T_NUMBER
+	float n;  // LUA_T_NUMBER
 	struct TaggedString *ts;  // LUA_T_STRING, LUA_T_USERDATA
 	struct TProtoFunc *tf;  // LUA_T_PROTO, LUA_T_PMARK
 	struct Closure *cl;  // LUA_T_CLOSURE, LUA_T_CLMARK
@@ -90,18 +74,9 @@ typedef struct GCnode {
 
 typedef struct TaggedString {
 	GCnode head;
-	uint32 hash;
 	int32 constindex;  // hint to reuse constants (= -1 if this is a userdata)
-	union {
-		struct {
-			TObject globalval;
-			int32 len;  // if this is a string, here is its length
-		} s;
-		struct {
-			int32 tag;
-			void *v;  // if this is a userdata, here is its value
-		} d;
-	} u;
+	uint32 hash;
+	TObject globalval;
 	char str[1];   // \0 byte already reserved
 } TaggedString;
 
@@ -162,6 +137,7 @@ extern TObject luaO_nilobject;
 
 int32 luaO_equalObj(TObject *t1, TObject *t2);
 int32 luaO_redimension(int32 oldsize);
+int luaO_findstring(const char *name, const char *list[]);
 void luaO_insertlist(GCnode *root, GCnode *node);
 
 #define luaO_memup(d, s, n)		memmove(d, s, n)

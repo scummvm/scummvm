@@ -15,7 +15,6 @@ void luaS_init();
 TaggedString *luaS_createudata(void *udata, int32 tag);
 TaggedString *luaS_collector();
 void luaS_free (TaggedString *l);
-TaggedString *luaS_newlstr(const char *str, int32 l);
 TaggedString *luaS_new(const char *str);
 TaggedString *luaS_newfixedstring (const char *str);
 void luaS_rawsetglobal(TaggedString *ts, TObject *newval);

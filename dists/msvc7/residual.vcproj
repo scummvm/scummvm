@@ -510,9 +510,6 @@
 					RelativePath="..\..\engine\lua\lopcodes.h">
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lparser.cpp">
-				</File>
-				<File
 					RelativePath="..\..\engine\lua\lparser.h">
 				</File>
 				<File
@@ -535,6 +532,12 @@
 				</File>
 				<File
 					RelativePath="..\..\engine\lua\lstrlib.cpp">
+				</File>
+				<File
+					RelativePath="..\..\engine\lua\lstx.cpp">
+				</File>
+				<File
+					RelativePath="..\..\engine\lua\lstx.h">
 				</File>
 				<File
 					RelativePath="..\..\engine\lua\ltable.cpp">

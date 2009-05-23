@@ -22,13 +22,12 @@
 #define get_word(pc)	((*((pc) + 1) << 8)|(*(pc)))
 #define next_word(pc)   (pc += 2, get_word(pc - 2))
 
-static TaggedString *strconc(TaggedString *l, TaggedString *r) {
-	size_t nl = l->u.s.len;
-	size_t nr = r->u.s.len;
-	char *buffer = luaL_openspace(nl + nr + 1);
-	memcpy(buffer, l->str, nl);
-	memcpy(buffer + nl, r->str, nr);
-	return luaS_newlstr(buffer, nl + nr);
+static TaggedString *strconc(char *l, char *r) {
+	size_t nl = strlen(l);
+	char *buffer = luaL_openspace(nl + strlen(r) + 1);
+	strcpy(buffer, l);
+	strcpy(buffer + nl, r);
+	return luaS_new(buffer);
 }
 
 int32 luaV_tonumber (TObject *obj) { // LUA_NUMBER
@@ -37,8 +36,8 @@ int32 luaV_tonumber (TObject *obj) { // LUA_NUMBER
 
 	if (ttype(obj) != LUA_T_STRING)
 		return 1;
-	else if (sscanf(svalue(obj), "%lf %c",&t, &c) == 1) {
-		nvalue(obj) = (real)t;
+	else if (sscanf(svalue(obj), "%lf %c", &t, &c) == 1) {
+		nvalue(obj) = (float)t;
 		ttype(obj) = LUA_T_NUMBER;
 		return 0;
 	} else
@@ -46,22 +45,16 @@ int32 luaV_tonumber (TObject *obj) { // LUA_NUMBER
 }
 
 int32 luaV_tostring (TObject *obj) { // LUA_NUMBER
-	// The Lua scripts for Grim Fandango sometimes end up executing
-	// str..nil.  The nil shows up in the original engine as "(nil)"...
-	if (ttype(obj) == LUA_T_NIL) {
-		tsvalue(obj) = luaS_new("(nil)");
-		ttype(obj) = LUA_T_STRING;
-		return 0;
-	} else if (ttype(obj) != LUA_T_NUMBER)
+	if (ttype(obj) != LUA_T_NUMBER)
 		return 1;
 	else {
 		char s[60];
-		real f = nvalue(obj);
+		float f = nvalue(obj);
 		int32 i;
-		if ((real)(-MAX_INT) <= f && f <= (real)MAX_INT && (real)(i = (int32)f) == f)
+		if ((float)(-MAX_INT) <= f && f <= (float)MAX_INT && (float)(i = (int32)f) == f)
 			sprintf (s, "%d", (int)i);
 		else
-			sprintf (s, NUMBER_FMT, nvalue(obj));
+			sprintf (s, "%g", (double)nvalue(obj));
 		tsvalue(obj) = luaS_new(s);
 		ttype(obj) = LUA_T_STRING;
 		return 0;
@@ -143,7 +136,7 @@ void luaV_settable(TObject *t, int32 mode) {
 
 void luaV_getglobal(TaggedString *ts) {
 	// WARNING: caller must assure stack space
-	TObject *value = &ts->u.s.globalval;
+	TObject *value = &ts->globalval;
 	TObject *im = luaT_getimbyObj(value, IM_GETGLOBAL);
 	if (ttype(im) == LUA_T_NIL) {  // default behavior
 		*L->stack.top++ = *value;
@@ -158,7 +151,7 @@ void luaV_getglobal(TaggedString *ts) {
 }
 
 void luaV_setglobal(TaggedString *ts) {
-	TObject *oldvalue = &ts->u.s.globalval;
+	TObject *oldvalue = &ts->globalval;
 	TObject *im = luaT_getimbyObj(oldvalue, IM_SETGLOBAL);
 	if (ttype(im) == LUA_T_NIL)  // default behavior */
 		luaS_rawsetglobal(ts, --L->stack.top);
@@ -193,26 +186,6 @@ static void call_arith(IMS event) {
 	call_binTM(event, "unexpected type in arithmetic operation");
 }
 
-static int32 strcomp(char *l, int32 ll, char *r, int32 lr) {
-	for (;;) {
-		int32 temp = (int32)strcoll(l, r);
-		if (temp != 0)
-			return temp;
-		// strings are equal up to a '\0'
-		temp = strlen(l);  // index of first '\0' in both strings
-		if (temp == ll)  // l is finished?
-			return (temp == lr) ? 0 : -1;  // l is equal or smaller than r
-		else if (temp == lr)  // r is finished?
-			return 1;  // l is greater than r (because l is not finished)
-		// both strings longer than temp; go on comparing (after the '\0')
-		temp++;
-		l += temp;
-		ll -= temp;
-		r += temp;
-		lr -= temp;
-	}
-}
-
 static void comparison(lua_Type ttype_less, lua_Type ttype_equal, lua_Type ttype_great, IMS op) {
 	Stack *S = &L->stack;
 	TObject *l = S->top-2;
@@ -221,7 +194,7 @@ static void comparison(lua_Type ttype_less, lua_Type ttype_equal, lua_Type ttype
 	if (ttype(l) == LUA_T_NUMBER && ttype(r) == LUA_T_NUMBER)
 		result = (nvalue(l) < nvalue(r)) ? -1 : (nvalue(l) == nvalue(r)) ? 0 : 1;
 	else if (ttype(l) == LUA_T_STRING && ttype(r) == LUA_T_STRING)
-		result = (int32)strcomp(svalue(l), tsvalue(l)->u.s.len, svalue(r), tsvalue(r)->u.s.len);
+		result = strcoll(svalue(l), svalue(r));
 	else {
 		call_binTM(op, "unexpected type in comparison");
 		return;
@@ -241,7 +214,7 @@ void luaV_pack(StkId firstel, int32 nvararg, TObject *tab) {
 	for (i = 0; i < nvararg; i++) {
 		TObject index;
 		ttype(&index) = LUA_T_NUMBER;
-		nvalue(&index) = (real)i + 1;
+		nvalue(&index) = (float)i + 1;
 		*(luaH_set(avalue(tab), &index)) = *(firstelem + i);
 	}
 	// store counter in field "n" */
@@ -250,7 +223,7 @@ void luaV_pack(StkId firstel, int32 nvararg, TObject *tab) {
 		ttype(&index) = LUA_T_STRING;
 		tsvalue(&index) = luaS_new("n");
 		ttype(&extra) = LUA_T_NUMBER;
-		nvalue(&extra) = (real)nvararg;
+		nvalue(&extra) = (float)nvararg;
 		*(luaH_set(avalue(tab), &index)) = extra;
 	}
 }
@@ -301,7 +274,7 @@ newfunc:
 			aux -= PUSHNUMBER0;
 pushnumber:
 			ttype(S->top) = LUA_T_NUMBER;
-			nvalue(S->top) = (real)aux;
+			nvalue(S->top) = (float)aux;
 			S->top++;
 			break;
 		case PUSHLOCAL:
@@ -461,7 +434,7 @@ setlist:
 				TObject *arr = S->top-n-1;
 				for (; n; n--) {
 					ttype(S->top) = LUA_T_NUMBER;
-					nvalue(S->top) = (real)(n + aux);
+					nvalue(S->top) = (float)(n + aux);
 					*(luaH_set(avalue(arr), S->top)) = *(S->top - 1);
 					S->top--;
 			}
@@ -577,7 +550,7 @@ createarray:
 				break;
 			}
 		case POWOP:
-			call_binTM(IM_POW, "undefined operation");
+			call_arith(IM_POW);
 			break;
 		case CONCOP:
 			{
@@ -586,7 +559,7 @@ createarray:
 				if (tostring(l) || tostring(r))
 					call_binTM(IM_CONCAT, "unexpected type for concatenation");
 				else {
-					tsvalue(l) = strconc(tsvalue(l), tsvalue(r));
+					tsvalue(l) = strconc(svalue(l), svalue(r));
 					--S->top;
 				}
 				luaC_checkGC();
@@ -665,10 +638,8 @@ iffupjmp:
 			aux = *pc++;
 			goto closure;
 		case CLOSURE0:
-			aux = 0;
-			goto closure;
 		case CLOSURE1:
-			aux = 1;
+			aux -= CLOSURE0;
 closure:
 			luaV_closure(aux);
 			luaC_checkGC();
@@ -733,7 +704,7 @@ setline:
 			break;
 #ifdef LUA_DEBUG
 		default:
-			LUA_INTERNALERROR("opcode doesn't match");
+			LUA_INTERNALERROR("internal error - opcode doesn't match");
 #endif
 		}
 	}

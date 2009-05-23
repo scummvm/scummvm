@@ -719,10 +719,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lparser.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\engine\lua\lparser.h"
 					>
 				</File>
@@ -752,6 +748,14 @@
 				</File>
 				<File
 					RelativePath="..\..\engine\lua\lstrlib.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\engine\lua\lstx.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\engine\lua\lstx.h"
 					>
 				</File>
 				<File

@@ -363,10 +363,10 @@ int32 luaD_protectedrun(int32 nResults) {
 ** returns 0 = chunk loaded; 1 = error; 2 = no more chunks to load
 */
 static int32 protectedparser(ZIO *z, int32 bin) {
-	volatile int32 status;
-	TProtoFunc *volatile tf;
+	int32 status;
+	TProtoFunc *tf;
 	jmp_buf myErrorJmp;
-	jmp_buf *volatile oldErr = L->errorJmp;
+	jmp_buf *oldErr = L->errorJmp;
 	L->errorJmp = &myErrorJmp;
 	if (setjmp(myErrorJmp) == 0) {
 		tf = bin ? luaU_undump1(z) : luaY_parser(z);

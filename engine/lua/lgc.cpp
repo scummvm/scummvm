@@ -35,7 +35,7 @@ int32 luaC_ref(TObject *o, int32 lock) {
 			// no more empty spaces */
 			{
 				int32 oldSize = L->refSize;
-				L->refSize = luaM_growvector(&L->refArray, L->refSize, struct ref, refEM, MAX_INT);
+				L->refSize = luaM_growvector(&L->refArray, L->refSize, struct ref, refEM, MAX_WORD);
 				for (ref = oldSize; ref < L->refSize; ref++)
 					L->refArray[ref].status = FREE;
 				ref = oldSize;
@@ -88,7 +88,7 @@ static int32 ismarked(TObject *o) {
 	case LUA_T_CLMARK:
 	case LUA_T_CMARK:
 	case LUA_T_PMARK:
-		LUA_INTERNALERROR("invalid type");
+		LUA_INTERNALERROR("internal error");
 #endif
 	default:  // nil, number or cproto
 		return 1;
@@ -187,9 +187,8 @@ static void hashmark(Hash *h) {
 static void globalmark() {
 	TaggedString *g;
 	for (g = (TaggedString *)L->rootglobal.next; g; g = (TaggedString *)g->head.next){
-		LUA_ASSERT(g->constindex >= 0, "userdata in global list");
-		if (g->u.s.globalval.ttype != LUA_T_NIL) {
-			markobject(&g->u.s.globalval);
+		if (g->globalval.ttype != LUA_T_NIL) {
+			markobject(&g->globalval);
 			strmark(g);  // cannot collect non nil global variables
 		}
 	}

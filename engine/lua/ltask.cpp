@@ -62,7 +62,7 @@ void start_script() {
 
 	// Return task handle
 	ttype(L->stack.top) = LUA_T_TASK;
-	nvalue(L->stack.top) = (real)new_task->id;
+	nvalue(L->stack.top) = (float)new_task->id;
 	incr_top;
 }
 
@@ -134,7 +134,7 @@ void next_script() {
 			lua_pushnil();
 		} else {
 			ttype(L->stack.top) = LUA_T_TASK;
-			nvalue(L->stack.top) = (real)t->id;
+			nvalue(L->stack.top) = (float)t->id;
 			incr_top;
 		}
 	}
@@ -204,7 +204,7 @@ void find_script() {
 
 	if (t) {
 		ttype(L->stack.top) = LUA_T_TASK;
-		nvalue(L->stack.top) = (real)t->id;
+		nvalue(L->stack.top) = (float)t->id;
 		incr_top;
 		lua_pushnumber(countTasks);
 	} else {
@@ -232,7 +232,7 @@ void current_script() {
 		lua_pushnil();
 	} else {
 		ttype(L->stack.top) = LUA_T_TASK;
-		nvalue(L->stack.top) = (real)L->curr_task->id;
+		nvalue(L->stack.top) = (float)L->curr_task->id;
 		incr_top;
 	}
 }

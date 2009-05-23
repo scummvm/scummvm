@@ -19,7 +19,7 @@
 #define openspace(size)  if (L->Mbuffnext + (size) > L->Mbuffsize) Openspace(size)
 
 static void Openspace(int32 size) {
-	lua_State *l = L;  // to optimize
+	LState *l = L;  // to optimize
 	int32 base = l->Mbuffbase-l->Mbuffer;
 	l->Mbuffsize *= 2;
 	if (l->Mbuffnext + size > l->Mbuffsize)  // still not big enough?
@@ -44,10 +44,6 @@ void luaL_resetbuffer() {
 
 void luaL_addsize(int32 n) {
 	L->Mbuffnext += n;
-}
-
-int32 luaL_getsize() {
-	return L->Mbuffnext - (L->Mbuffbase - L->Mbuffer);
 }
 
 int32 luaL_newbuffer(int32 size) {

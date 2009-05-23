@@ -170,8 +170,9 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 			if (tempStringTable->hash[l] && tempStringTable->hash[l] != &EMPTY) {
 				countElements++;
 				if (tempStringTable->hash[l]->constindex != -1) {
-					if (maxStringLength < tempStringTable->hash[l]->u.s.len) {
-						maxStringLength = tempStringTable->hash[l]->u.s.len;
+					int len = strlen(tempStringTable->hash[l]->str);
+					if (maxStringLength < len) {
+						maxStringLength = len;
 					}
 				}
 			}
@@ -234,16 +235,17 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 				saveUint32(makeIdFromPointer(tempString).hi);
 				saveSint32(tempString->constindex);
 				if (tempString->constindex != -1) {
-					saveObjectValue(&tempString->u.s.globalval, saveSint32, saveUint32);
-					saveSint32(tempString->u.s.len);
-					saveStream(tempString->str, tempString->u.s.len);
+					saveObjectValue(&tempString->globalval, saveSint32, saveUint32);
+					int len = strlen(tempString->str);
+					saveSint32(len);
+					saveStream(tempString->str, len);
 				} else {
 					if (saveCallbackPtr) {
-						PointerId ptr = makeIdFromPointer(tempString->u.d.v);
-						ptr = saveCallbackPtr(tempString->u.d.tag, ptr, saveSint32);
-						tempString->u.d.v = makePointerFromId(ptr);
+						PointerId ptr = makeIdFromPointer(tempString->globalval.value.ts);
+						ptr = saveCallbackPtr(tempString->globalval.ttype, ptr, saveSint32);
+						tempString->globalval.value.ts = (TaggedString *)makePointerFromId(ptr);
 					}
-					saveObjectValue((TObject *)&tempString->u.d, saveSint32, saveUint32);
+					saveObjectValue((TObject *)&tempString->globalval, saveSint32, saveUint32);
 				}
 			}
 		}

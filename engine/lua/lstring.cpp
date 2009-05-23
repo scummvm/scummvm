@@ -15,7 +15,7 @@
 
 #define gcsizestring(l)	(1 + (l / 64))  // "weight" for a string with length 'l'
 
-TaggedString EMPTY = {{NULL, 2}, 0L, 0, {{{LUA_T_NIL, {NULL}}, 0L}}, {0}};
+TaggedString EMPTY = {{NULL, 2}, 0, 0L, {LUA_T_NIL, {NULL}}, {0}};
 
 void luaS_init() {
 	int32 i;
@@ -27,111 +27,70 @@ void luaS_init() {
 	}
 }
 
-static uint32 hash_s(const char *s, int32 l) {
-	uint32 h = 0;
-	while (l--)
-		h = ((h << 5) - h) ^ (byte)*(s++);
+static uint32 hash(const char *s, int32 tag) {
+	uint32 h;
+	if (tag != LUA_T_STRING) {
+#ifdef TARGET_64BITS
+		h = (uint64)s;
+#else
+		h = (uint32)s;
+#endif
+	} else {
+		h = 0;
+		while (*s)
+			h = ((h << 5) - h) ^ (byte)*(s++);
+	}
 	return h;
 }
 
-static int32 newsize(stringtable *tb) {
-	int32 size = tb->size;
-	int32 realuse = 0;
-	int32 i;
-
-	// count how many entries are really in use
-	for (i = 0; i < size; i++)
-		if (tb->hash[i] && tb->hash[i] != &EMPTY)
-			realuse++;
-	if (2 * (realuse + 1) <= size)  // +1 is the new element
-		return size;  // don't need to grow, just rehash to clear EMPTYs
-	else
-		return luaO_redimension(size);
-}
-
 static void grow(stringtable *tb) {
-	int32 ns = newsize(tb);
-	TaggedString **newhash = luaM_newvector(ns, TaggedString *);
+	int newsize = luaO_redimension(tb->size);
+	TaggedString **newhash = luaM_newvector(newsize, TaggedString *);
 	int32 i;
 
-	for (i = 0; i < ns; i++)
+	for (i = 0; i < newsize; i++)
 		newhash[i] = NULL;
 	// rehash
 	tb->nuse = 0;
 	for (i = 0; i < tb->size; i++) {
 		if (tb->hash[i] && tb->hash[i] != &EMPTY) {
-			int32 h = tb->hash[i]->hash % ns;
+			int32 h = tb->hash[i]->hash % newsize;
 			while (newhash[h])
-				h = (h + 1) % ns;
+				h = (h + 1) % newsize;
 			newhash[h] = tb->hash[i];
 			tb->nuse++;
 		}
 	}
 	luaM_free(tb->hash);
-	tb->size = ns;
+	tb->size = newsize;
 	tb->hash = newhash;
 }
 
-static TaggedString *newone_s(const char *str, int32 l, uint32 h) {
-	TaggedString *ts = (TaggedString *)luaM_malloc(sizeof(TaggedString) + l);
-	memcpy(ts->str, str, l);
-	ts->str[l] = 0;  // ending 0
-	ts->u.s.globalval.ttype = LUA_T_NIL;  // initialize global value
-	ts->u.s.len = l;
-	ts->constindex = 0;
-	L->nblocks += gcsizestring(l);
+static TaggedString *newone(const char *buff, int32 tag, uint32 h) {
+	TaggedString *ts;
+	if (tag == LUA_T_STRING) {
+		int l = strlen(buff);
+		ts = (TaggedString *)luaM_malloc(sizeof(TaggedString) + l);
+		strcpy(ts->str, buff);
+		ts->globalval.ttype = LUA_T_NIL;  /* initialize global value */
+		ts->constindex = 0;
+		L->nblocks += gcsizestring(l);
+	} else {
+		ts = (TaggedString *)luaM_malloc(sizeof(TaggedString));
+		ts->globalval.value.ts = (TaggedString *)buff;
+		ts->globalval.ttype = (lua_Type)(tag == LUA_ANYTAG ? 0 : tag);
+		ts->constindex = -1;  /* tag -> this is a userdata */
+		L->nblocks++;
+	}
 	ts->head.marked = 0;
 	ts->head.next = (GCnode *)ts;  // signal it is in no list
 	ts->hash = h;
 	return ts;
 }
 
-static TaggedString *newone_u(char *buff, int32 tag, uint32 h) {
-	TaggedString *ts = luaM_new(TaggedString);
-	ts->u.d.v = buff;
-	ts->u.d.tag = (tag == LUA_ANYTAG) ? 0 : tag;
-	ts->constindex = -1;  // tag -> this is a userdata
-	L->nblocks++;
-	ts->head.marked = 0;
-	ts->head.next = (GCnode *)ts;  // signal it is in no list
-	ts->hash = h;
-	return ts;
-}
-
-static TaggedString *insert_s (const char *str, int32 l, stringtable *tb) {
+static TaggedString *insert(const char *buff, int32 tag, stringtable *tb) {
 	TaggedString *ts;
-	uint32 h = hash_s(str, l);
-	int32 size = tb->size;
-	int32 i;
-	int32 j = -1;
-	if (tb->nuse * 3 >= size * 2) {
-		grow(tb);
-		size = tb->size;
-	}
-	for (i = h % size; (ts = tb->hash[i]); ) {
-		if (ts == &EMPTY)
-			j = i;
-		else if (ts->constindex >= 0 && ts->u.s.len == l && (memcmp(str, ts->str, MAX(l, ts->u.s.len)) == 0))
-			return ts;
-		if (++i == size)
-			i = 0;
-	}
-	// not found
-	if (j != -1)  // is there an EMPTY space?
-		i = j;
-	else
-		tb->nuse++;
-	ts = tb->hash[i] = newone_s(str, l, h);
-	return ts;
-}
-
-static TaggedString *insert_u(void *buff, int32 tag, stringtable *tb) {
-	TaggedString *ts;
-#ifdef TARGET_64BITS
-	uint32 h = (uint64)buff;
-#else
-	uint32 h = (uint32)buff;
-#endif
+	uint32 h = hash(buff, tag);
 	int32 size = tb->size;
 	int32 i;
 	int32 j = -1;
@@ -142,7 +101,9 @@ static TaggedString *insert_u(void *buff, int32 tag, stringtable *tb) {
 	for (i = h % size; (ts = tb->hash[i]) != NULL; ) {
 		if (ts == &EMPTY)
 			j = i;
-		else if (ts->constindex < 0 && (tag == ts->u.d.tag || tag == LUA_ANYTAG) && buff == ts->u.d.v)
+		else if ((ts->constindex >= 0) ? // is a string?
+				(tag == LUA_T_STRING && (strcmp(buff, ts->str) == 0)) :
+				((tag == ts->globalval.ttype || tag == LUA_ANYTAG) && buff == (const char *)ts->globalval.value.ts))
 			return ts;
 		if (++i == size)
 			i = 0;
@@ -152,25 +113,24 @@ static TaggedString *insert_u(void *buff, int32 tag, stringtable *tb) {
 		i = j;
 	else
 		tb->nuse++;
-	ts = tb->hash[i] = newone_u((char *)buff, tag, h);
+	ts = tb->hash[i] = newone(buff, tag, h);
 	return ts;
 }
 
 TaggedString *luaS_createudata(void *udata, int32 tag) {
 #ifdef TARGET_64BITS
-	return insert_u(udata, tag, &L->string_root[(uint64)udata % NUM_HASHS]);
+	return insert((char *)udata, tag, &L->string_root[(uint64)udata % NUM_HASHS]);
 #else
-	return insert_u(udata, tag, &L->string_root[(uint32)udata % NUM_HASHS]);
+	return insert((char *)udata, tag, &L->string_root[(uint32)udata % NUM_HASHS]);
 #endif
 }
 
-TaggedString *luaS_newlstr(const char *str, int32 l) {
-	int32 i = (l == 0) ? 0 : (byte)str[0];
-	return insert_s(str, l, &L->string_root[i % NUM_HASHS]);
-}
-
 TaggedString *luaS_new(const char *str) {
-	return luaS_newlstr(str, strlen(str));
+#ifdef TARGET_64BITS
+	return insert(str, LUA_T_STRING, &L->string_root[(uint64)str[0] % NUM_HASHS]);
+#else
+	return insert(str, LUA_T_STRING, &L->string_root[(uint32)str[0] % NUM_HASHS]);
+#endif
 }
 
 TaggedString *luaS_newfixedstring(const char *str) {
@@ -183,7 +143,7 @@ TaggedString *luaS_newfixedstring(const char *str) {
 void luaS_free(TaggedString *l) {
 	while (l) {
 		TaggedString *next = (TaggedString *)l->head.next;
-		L->nblocks -= (l->constindex == -1) ? 1 : gcsizestring(l->u.s.len);
+		L->nblocks -= (l->constindex == -1) ? 1 : gcsizestring(strlen(l->str));
 		luaM_free(l);
 		l = next;
 	}
@@ -261,7 +221,7 @@ void luaS_freeall() {
 }
 
 void luaS_rawsetglobal(TaggedString *ts, TObject *newval) {
-	ts->u.s.globalval = *newval;
+	ts->globalval = *newval;
 	if (ts->head.next == (GCnode *)ts) {  // is not in list?
 		ts->head.next = L->rootglobal.next;
 		L->rootglobal.next = (GCnode *)ts;
@@ -271,13 +231,13 @@ void luaS_rawsetglobal(TaggedString *ts, TObject *newval) {
 char *luaS_travsymbol (int32 (*fn)(TObject *)) {
 	TaggedString *g;
 	for (g = (TaggedString *)L->rootglobal.next; g; g = (TaggedString *)g->head.next)
-		if (fn(&g->u.s.globalval))
+		if (fn(&g->globalval))
 			return g->str;
 	return NULL;
 }
 
 int32 luaS_globaldefined(const char *name) {
 	TaggedString *ts = luaS_new(name);
-	return ts->u.s.globalval.ttype != LUA_T_NIL;
+	return ts->globalval.ttype != LUA_T_NIL;
 }
 

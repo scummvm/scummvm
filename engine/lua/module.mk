@@ -13,12 +13,12 @@ MODULE_OBJS := \
 	lmathlib.o \
 	lmem.o \
 	lobject.o \
-	lparser.o \
 	lrestore.o \
 	lsave.o \
 	lstate.o \
 	lstring.o \
 	lstrlib.o \
+	lstx.o \
 	ltable.o \
 	ltask.o \
 	ltm.o \

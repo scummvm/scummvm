@@ -38,25 +38,36 @@ int32 luaO_equalObj(TObject *t1, TObject *t2) {
 	switch (ttype(t1)) {
 	case LUA_T_NIL:
 		return 1;
-	case LUA_T_NUMBER: return
-						   nvalue(t1) == nvalue(t2);
+	case LUA_T_NUMBER:
+		return nvalue(t1) == nvalue(t2);
 	case LUA_T_STRING:
 	case LUA_T_USERDATA:
 		return svalue(t1) == svalue(t2);
 	case LUA_T_ARRAY:
 		return avalue(t1) == avalue(t2);
 	case LUA_T_PROTO:
-		return tfvalue(t1)  == tfvalue(t2);
+		return tfvalue(t1) == tfvalue(t2);
 	case LUA_T_CPROTO:
-		return fvalue(t1)  == fvalue(t2);
+		return fvalue(t1) == fvalue(t2);
 	case LUA_T_CLOSURE:
 		return t1->value.cl == t2->value.cl;
 	case LUA_T_TASK:
 		return nvalue(t1) == nvalue(t2);
 	default:
-		LUA_INTERNALERROR("invalid type");
+#ifdef LUA_DEBUG
+		LUA_INTERNALERROR("internal error in `lua_equalObj'");
+#endif
 		return 0; // UNREACHABLE
 	}
+}
+
+int luaO_findstring(const char *name, const char *list[]) {
+	int i;
+
+	for (i = 0; list[i]; i++)
+		if (strcmp(list[i], name) == 0)
+			return i;
+	return -1;  // name not found
 }
 
 void luaO_insertlist(GCnode *root, GCnode *node) {

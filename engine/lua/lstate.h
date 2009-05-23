@@ -7,11 +7,9 @@
 #ifndef lstate_h
 #define lstate_h
 
-#include <setjmp.h>
-
 #include "engine/lua/lobject.h"
-#include "engine/lua/lua.h"
 
+#include <setjmp.h>
 
 #define MAX_C_BLOCKS 10
 #define GARBAGE_BLOCK 150
@@ -74,23 +72,15 @@ struct lua_Task {
 	int32 id;
 };
 
-struct lua_State {
-	// thread-specific state
+struct LState {
 	Stack stack;  // Lua stack
 	C_Lua_Stack Cstack;  // C2lua struct
-	jmp_buf *errorJmp;  // current error recover point
 	CallInfo *ci;  // call info for current function
 	CallInfo *base_ci;  // array of CallInfo's
 	int32 base_ci_size;
 	CallInfo *end_ci;  // points after end of ci array
-	char *Mbuffer;  // global buffer
-	char *Mbuffbase;  // current first position of Mbuffer
-	int32 Mbuffsize;  // size of Mbuffer
-	int32 Mbuffnext;  // next position to fill in Mbuffer
-	C_Lua_Stack Cblocks[MAX_C_BLOCKS];
-	int32 numCblocks;  // number of nested Cblocks
 	enum TaskState Tstate;  // state of current thread
-	// global state
+	jmp_buf *errorJmp;  // current error recover point
 	lua_Task *root_task;  // first task created
 	lua_Task *curr_task;
 	lua_Task *last_task;
@@ -103,13 +93,21 @@ struct lua_State {
 	struct IM *IMtable;  // table for tag methods
 	int32 IMtable_size;  // size of IMtable
 	int32 last_tag;  // last used tag in IMtable
+	struct FuncState *mainState, *currState;  // point to local structs in yacc
+	struct LexState *lexstate;  // point to local struct in yacc
 	ref *refArray;  // locked objects
 	int32 refSize;  // size of refArray
 	int32 GCthreshold;
 	int32 nblocks;  // number of 'blocks' currently allocated
+	char *Mbuffer;  /* global buffer */
+	char *Mbuffbase;  /* current first position of Mbuffer */
+	int Mbuffsize;  /* size of Mbuffer */
+	int Mbuffnext;  /* next position to fill in Mbuffer */
+	struct C_Lua_Stack Cblocks[MAX_C_BLOCKS];
+	int numCblocks;  /* number of nested Cblocks */
 };
 
-extern lua_State *lua_state;
+extern LState *lua_state;
 extern int32 globalTaskSerialId;
 
 #define L	lua_state

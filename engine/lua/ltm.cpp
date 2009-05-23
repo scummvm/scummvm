@@ -19,7 +19,7 @@ const char *luaT_eventname[] = {  // ORDER IM
 };
 
 static int32 luaI_checkevent(const char *name, const char *list[]) {
-	int32 e = luaL_findstring(name, list);
+	int32 e = luaO_findstring(name, list);
 	if (e < 0)
 		luaL_verror("`%.50s' is not a valid event name", name);
 	return e;
@@ -94,7 +94,7 @@ int32 luaT_efectivetag(TObject *o) {
 		return o->value.a->htag;
 	case LUA_T_USERDATA:
 		{
-			int32 tag = o->value.ts->u.d.tag;
+			int32 tag = o->value.ts->globalval.ttype;
 			return (tag >= 0) ? LUA_T_USERDATA : tag;
 		}
 	case LUA_T_CLOSURE:
@@ -104,7 +104,7 @@ int32 luaT_efectivetag(TObject *o) {
 	case LUA_T_CMARK:
 	case LUA_T_CLMARK:
 	case LUA_T_LINE:
-		LUA_INTERNALERROR("invalid type");
+		lua_error("internal error");
 #endif
 	default:
 		return t;
@@ -179,7 +179,7 @@ void luaT_setfallback() {
 	const char *name = luaL_check_string(1);
 	lua_Object func = lua_getparam(2);
 	luaL_arg_check(lua_isfunction(func), 2, "function expected");
-	switch (luaL_findstring(name, oldnames)) {
+	switch (luaO_findstring(name, oldnames)) {
 	case 0:  // old error fallback
 		oldfunc = L->errorim;
 		L->errorim = *luaA_Address(func);
@@ -211,7 +211,7 @@ void luaT_setfallback() {
 	default:
 		{
 			int32 e;
-			if ((e = luaL_findstring(name, luaT_eventname)) >= 0) {
+			if ((e = luaO_findstring(name, luaT_eventname)) >= 0) {
 				oldfunc = *luaT_getim(LUA_T_NIL, e);
 				fillvalids(e, luaA_Address(func));
 				replace = (e == IM_GC || e == IM_INDEX) ? nilFB : typeFB;

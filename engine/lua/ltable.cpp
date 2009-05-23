@@ -145,34 +145,35 @@ Hash *luaH_new(int32 nhash) {
 	return t;
 }
 
-static int32 newsize(Hash *t) {
-	Node *v = t->node;
-	int32 size = nhash(t);
-	int32 realuse = 0;
-	int32 i;
-	for (i = 0; i < size; i++) {
-		if (ttype(ref(v + i)) != LUA_T_NIL && ttype(val(v + i)) != LUA_T_NIL)
-			realuse++;
+/*
+** Rehash:
+** Check if table has deleted slots. It it has, it does not need to
+** grow, since rehash will reuse them.
+*/
+static int emptyslots (Hash *t) {
+	int i;
+
+	for (i = nhash(t) - 1; i >= 0; i--) {
+		Node *n = node(t, i);
+		if (ttype(ref(n)) != LUA_T_NIL && ttype(val(n)) == LUA_T_NIL)
+			return 1;
 	}
-	if (2 * (realuse + 1) <= size)  // +1 is the new element
-		return size;  // don't need to grow, just rehash
-	else
-		return luaO_redimension(size);
+	return 0;
 }
 
 static void rehash(Hash *t) {
 	int32 nold = nhash(t);
 	Node *vold = nodevector(t);
-	int32 nnew = newsize(t);
 	int32 i;
-	nodevector(t) = hashnodecreate(nnew);
-	nhash(t) = nnew;
+	if (!emptyslots(t))
+		nhash(t) = luaO_redimension(nhash(t));
+	nodevector(t) = hashnodecreate(nhash(t));
 	for (i = 0; i < nold; i++) {
 		Node *n = vold + i;
 		if (ttype(ref(n)) != LUA_T_NIL && ttype(val(n)) != LUA_T_NIL)
 			*node(t, present(t, ref(n))) = *n;  // copy old node to luaM_new hash
 	}
-	L->nblocks += gcsize(nnew) - gcsize(nold);
+	L->nblocks += gcsize(t->nhash) - gcsize(nold);
 	luaM_free(vold);
 }
 

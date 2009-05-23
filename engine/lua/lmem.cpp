@@ -43,16 +43,15 @@ void *luaM_realloc(void *block, int32 size) {
 #else
 /* LUA_DEBUG */
 
-#define HEADER	(sizeof(double))
 #define MARK    55
 
 int32 numblocks = 0;
 int32 totalmem = 0;
 
 static void *checkblock(void *block) {
-	int32 *b = (int32 *)((char *)block - HEADER);
+	int32 *b = (int32 *)block - 1;
 	int32 size = *b;
-	LUA_ASSERT(*(((char *)b) + size + HEADER) == MARK, "corrupted block");
+	assert(*(((char *)b) + size + sizeof(int32)) == MARK);
 	numblocks--;
 	totalmem -= size;
 	return b;
@@ -60,12 +59,14 @@ static void *checkblock(void *block) {
 
 void *luaM_realloc(void *block, int32 size) {
 	int32 realsize = HEADER + size + 1;
+	int32 realsize = sizeof(int32) + size + sizeof(char);
 	if (realsize != (size_t)realsize)
 		lua_error("Allocation Error: Block too big");
 	if (size == 0) {  // ANSI dosen't need this, but some machines...
 		if (block) {
 			int32 *b = (int32 *)((char *)block - HEADER);
 			memset(block, -1, *b);  // erase block
+			memset(block, -1, *((int32 *)block - 1));  // erase block
 			block = checkblock(block);
 			free(block);
 		}
@@ -81,8 +82,8 @@ void *luaM_realloc(void *block, int32 size) {
 	totalmem += size;
 	numblocks++;
 	*(int32 *)block = size;
-	*(((char *)block) + size + HEADER) = MARK;
-	return (int32 *)((char *)block + HEADER);
+	*(((char *)block) + size + sizeof(int32)) = MARK;
+	return (int32 *)block+1;
 }
 
 #endif

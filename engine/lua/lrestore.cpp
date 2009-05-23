@@ -239,7 +239,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 	printf("lua_Restore() started.\n");
 
 	lua_close();
-	L = luaM_new(lua_State);
+	L = luaM_new(LState);
 	lua_resetglobals();
 
 	arrayStringsCount = restoreSint32();
@@ -268,8 +268,8 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 			restoreObjectValue(&obj, restoreSint32, restoreUint32);
 			int32 length = restoreSint32();
 			restoreStream(tempStringBuffer, length);
-			tempString = luaS_newlstr(tempStringBuffer, length);
-			tempString->u.s.globalval = obj;
+			tempString = luaS_new(tempStringBuffer);
+			tempString->globalval = obj;
 		} else {
 			PointerId ptr;
 			lua_Type tag = (lua_Type)restoreSint32();
@@ -280,9 +280,9 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 			else
 				tempString = luaS_createudata((void *)makePointerFromId(ptr), tag);
 			if (restoreCallbackPtr) {
-				PointerId ptr = makeIdFromPointer(tempString->u.d.v);
-				ptr = restoreCallbackPtr(tempString->u.d.tag, ptr, restoreSint32);
-				tempString->u.d.v = makePointerFromId(ptr);
+				PointerId ptr = makeIdFromPointer(tempString->globalval.value.ts);
+				ptr = restoreCallbackPtr(tempString->globalval.ttype, ptr, restoreSint32);
+				tempString->globalval.value.ts = (TaggedString *)makePointerFromId(ptr);
 			}
 		}
 		tempString->constindex = constIndex;
@@ -380,7 +380,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		for (l = 0; l < tempStringTable->size; l++) {
 			TaggedString *tempString = tempStringTable->hash[l];
 			if (tempString && tempString->constindex != -1 && tempString != &EMPTY) {
-				recreateObj(&tempString->u.s.globalval);
+				recreateObj(&tempString->globalval);
 			}
 		}
 	}
