@@ -561,6 +561,7 @@ const int lolCDFile2Need[] = {
 	lolSpellbookCoords,
 	lolHealShapeFrames,
 	lolLightningDefs,
+	lolFireballCoords,
 
 	-1
 };

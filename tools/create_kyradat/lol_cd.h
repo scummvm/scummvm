@@ -78,6 +78,7 @@ const ExtractEntry lolCDFile2[] = {
 	{ lolSpellbookCoords, 0x00032DCC, 0x00032DE4 },
 	{ lolHealShapeFrames, 0x000297D0, 0x00029820 },
 	{ lolLightningDefs, 0x00032740, 0x00032754 },
+	{ lolFireballCoords, 0x0001D9C0, 0x0001DBC0 },
 
 	{ -1, 0, 0 }
 };

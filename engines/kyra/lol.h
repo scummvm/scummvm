@@ -266,6 +266,28 @@ struct LightningProperty {
 	int16 sfxId;
 };
 
+struct FireballState {
+	FireballState(int i) {
+		active = true;
+		destX = 200;
+		destY = 60;
+		tblIndex = ((i * 50) % 255) + 200;
+		progress = 1000;
+		step = 10;
+		finalize = false;
+		finProgress = 0;
+	};
+
+	bool active;
+	int16 destX;
+	int16 destY;
+	uint16 tblIndex;
+	int32 progress;
+	uint8 step;
+	bool finalize;
+	uint8 finProgress;
+};
+
 class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
@@ -1308,6 +1330,8 @@ private:
 	int _updateSpellBookAnimDataSize;
 	const uint8 *_healShapeFrames;
 	int _healShapeFramesSize;
+	const int16 *_fireBallCoords;
+	int _fireBallCoordsSize;
 
 	// fight
 	int battleHitSkillTest(int16 attacker, int16 target, int skill);

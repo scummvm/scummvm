@@ -232,6 +232,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_mapOverlay = 0;
 	_automapShapes = 0;
 	_defaultLegendData = 0;
+	_mapCursorOverlay = 0;
 
 	_lightningProps = 0;
 	_lightningCurSfx = -1;
@@ -2538,6 +2539,154 @@ void LoLEngine::processMagicIce(int charNum, int spellLevel) {
 }
 
 void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
+	int fbCnt = 0;
+	int d = 1;
+
+	if (spellLevel == 0) {
+		fbCnt = 4;		
+	} else if (spellLevel == 1) {
+		fbCnt = 5;
+	} else if (spellLevel == 2) {
+		fbCnt = 6;
+	} else if (spellLevel == 3) {
+		d = 0;
+		fbCnt = 5;
+	}
+
+	int drawPage1 = 2;
+	int drawPage2 = 4;
+
+	int bl = _currentBlock;
+	int fireballItem = makeItem(9, 0, 0);
+
+	int i = 0;
+	for (; i < 3; i++) {
+		runLevelScriptCustom(bl, 0x200, -1, fireballItem, 0, 0);
+		uint16 o = _levelBlockProperties[bl].assignedObjects;
+
+		if ((o & 0x8000) || (_wllWallFlags[_levelBlockProperties[bl].walls[_currentDirection ^ 2]] & 7)) {
+			while (o & 0x8000) {
+				static const uint8 fireballDamage[] = { 20, 40, 80, 100 };
+				int dmg = calcInflictableDamagePerItem(charNum, o, fireballDamage[spellLevel], 4, 1);
+				MonsterInPlay *m = &_monsters[o & 0x7fff];
+				o = m->nextAssignedObject;
+				_envSfxUseQueue = true;
+				inflictDamage(m->id | 0x8000, dmg, charNum, 2, 4);
+				_envSfxUseQueue = false;
+			}
+			break;
+		}
+
+		bl = calcNewBlockPosition(bl, _currentDirection);
+	}
+
+	d += i;
+	if (d > 3)
+		d = 3;
+
+	deleteItem(fireballItem);
+
+	snd_playSoundEffect(69, -1);
+
+	int cp = _screen->setCurPage(2);
+	_screen->copyPage(0, 12);
+
+	int fireBallWH = (d << 4) * -1;
+	int numFireBalls = 1;
+	if (fbCnt > 3)
+		numFireBalls = fbCnt - 3;
+
+	FireballState *fireballState[3];
+	memset(fireballState, 0, sizeof(fireballState));
+	for (i = 0; i < numFireBalls; i++)
+		fireballState[i] = new FireballState(i);
+
+	_screen->copyPage(12, drawPage1);
+
+	for (i = 0; i < numFireBalls;) {
+		_screen->setCurPage(drawPage1);
+		uint32 ctime = _system->getMillis();
+
+		for (int ii = 0; ii < MIN(fbCnt, 3); ii++) {
+			FireballState *fb = fireballState[ii];
+			if (!fb)
+				continue;
+			if (!fb->active)
+				continue;
+
+			static const int8 finShpIndex1[] = { 5, 6, 7, 7, 6, 5 };
+			static const int8 finShpIndex2[] = { -1, 1, 2, 3, 4, -1 };
+			uint8 *shp = fb->finalize ? _fireballShapes[finShpIndex1[fb->finProgress]] : _fireballShapes[0];
+
+			int fX = (((fb->progress * _fireBallCoords[fb->tblIndex & 0xff]) >> 16) + fb->destX) - ((fb->progress / 8 + shp[3] + fireBallWH) >> 1);
+			int fY = (((fb->progress * _fireBallCoords[(fb->tblIndex + 64) & 0xff]) >> 16) + fb->destY) - ((fb->progress / 8 + shp[2] + fireBallWH) >> 1);
+			int sW = ((fb->progress / 8 + shp[3] + fireBallWH) << 8) / shp[3];
+			int sH = ((fb->progress / 8 + shp[2] + fireBallWH) << 8) / shp[2];
+
+			if (fb->finalize) {
+				_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
+				
+				if (finShpIndex2[fb->finProgress] != -1) {
+					shp = _fireballShapes[finShpIndex2[fb->finProgress]];
+					fX = (((fb->progress * _fireBallCoords[fb->tblIndex & 0xff]) >> 16) + fb->destX) - ((fb->progress / 8 + shp[3] + fireBallWH) >> 1);
+					fY = (((fb->progress * _fireBallCoords[(fb->tblIndex + 64) & 0xff]) >> 16) + fb->destY) - ((fb->progress / 8 + shp[2] + fireBallWH) >> 1);
+					sW = ((fb->progress / 8 + shp[3] + fireBallWH) << 8) / shp[3];
+					sH = ((fb->progress / 8 + shp[2] + fireBallWH) << 8) / shp[2];
+					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 4, sW, sH);
+				}
+
+			} else {
+				_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
+			}
+			
+			if (fb->finalize) {
+				if (++fb->finProgress >= 6) {
+					fb->active = false;
+					i++;
+				}
+			} else {
+				if (fb->step < 40)
+					fb->step += 2;
+				else
+					fb->step = 40;
+
+				if (fb->progress < fb->step) {
+					if (ii < 1) {
+						fb->progress = fb->step = fb->finProgress = 0;
+						fb->finalize = true;
+					} else {
+						fb->active = false;
+						i++;					
+					}
+
+					static const uint8 fireBallSfx[] = { 98, 167, 167, 168 };
+					snd_playSoundEffect(fireBallSfx[d], -1);
+
+				} else {
+					fb->progress -= fb->step;
+				}				
+			}
+		}
+
+		int del = _tickLength - (_system->getMillis() - ctime);
+		if (del > 0)
+			delay(del, false, true);
+
+		_screen->checkedPageUpdate(drawPage1, drawPage2);
+		_screen->updateScreen();
+		SWAP(drawPage1, drawPage2);
+		_screen->copyPage(12, drawPage1);
+	}
+
+	for (i = 0; i < numFireBalls; i++)
+		delete[] fireballState[i];
+	
+	_screen->setCurPage(cp);
+	_screen->copyPage(12, 0);
+	_screen->updateScreen();
+	updateDrawPage2();
+	snd_playQueuedEffects();
+	runLevelScriptCustom(bl, 0x20, charNum, 3, 0, 0);
 }
 
 void LoLEngine::processMagicHandOfFate(int charNum, int spellLevel) {
@@ -2574,8 +2723,8 @@ void LoLEngine::processMagicLightning(int charNum, int spellLevel) {
 	_screen->copyPage(12, 0);
 	updateDrawPage2();
 
-	static const uint8 lighntingDamage[] = { 18, 35, 50, 72 };
-	inflictMagicalDamageForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum, lighntingDamage[spellLevel], 5);
+	static const uint8 lightningDamage[] = { 18, 35, 50, 72 };
+	inflictMagicalDamageForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum, lightningDamage[spellLevel], 5);
 	
 	_sceneUpdateRequired = true;
 	gui_drawScene(0);

@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 47
+#define RESFILE_VERSION 48
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -453,6 +453,7 @@ bool StaticResource::init() {
 		{ lolSpellbookCoords, kRawData, "MBOOKC.DEF" },
 		{ lolHealShapeFrames, kRawData, "MHEAL.SHP" },
 		{ lolLightningDefs, kRawData, "MLGHTNG.DEF" },
+		{ lolFireballCoords, kLolRawDataBe16, "MFIREBLL.DEF" },
 
 		{ 0, 0, 0 }
 	};
@@ -1848,12 +1849,14 @@ void LoLEngine::initStaticResource() {
 	_scrollYBottom = _staticres->loadRawData(kLolScrollYBottom, _scrollYBottomSize);
 
 	const char *const *tmpSndList = _staticres->loadStrings(kLolIngameSfxFiles, _ingameSoundListSize);
-	_ingameSoundList = new char*[_ingameSoundListSize];
-	for (int i = 0; i < _ingameSoundListSize; i++) {
-		_ingameSoundList[i] = new char[strlen(tmpSndList[i]) + 1];
-		strcpy(_ingameSoundList[i], tmpSndList[i]);
+	if (tmpSndList) {
+		_ingameSoundList = new char*[_ingameSoundListSize];
+		for (int i = 0; i < _ingameSoundListSize; i++) {
+			_ingameSoundList[i] = new char[strlen(tmpSndList[i]) + 1];
+			strcpy(_ingameSoundList[i], tmpSndList[i]);
+		}
+		_staticres->unloadId(kLolIngameSfxFiles);
 	}
-	_staticres->unloadId(kLolIngameSfxFiles);
 
 	_buttonData = _staticres->loadButtonDefs(kLolButtonDefs, _buttonDataSize);
 	_buttonList1 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList1, _buttonList1Size);
@@ -1870,15 +1873,17 @@ void LoLEngine::initStaticResource() {
 	int tmpSize = 0;
 	const uint8 *tmp = _staticres->loadRawData(lolLegendData, tmpSize);
 	tmpSize /= 5;
-	_defaultLegendData = new MapLegendData[tmpSize];
-	for (int i = 0; i < tmpSize; i++) {
-		_defaultLegendData[i].shapeIndex = *tmp++;
-		_defaultLegendData[i].enable = *tmp++ ? true : false;
-		_defaultLegendData[i].x = (int8)*tmp++;
-		_defaultLegendData[i].stringId = READ_LE_UINT16(tmp);
-		tmp += 2;
+	if (tmp) {
+		_defaultLegendData = new MapLegendData[tmpSize];
+		for (int i = 0; i < tmpSize; i++) {
+			_defaultLegendData[i].shapeIndex = *tmp++;
+			_defaultLegendData[i].enable = *tmp++ ? true : false;
+			_defaultLegendData[i].x = (int8)*tmp++;
+			_defaultLegendData[i].stringId = READ_LE_UINT16(tmp);
+			tmp += 2;
+		}
+		_staticres->unloadId(lolLegendData);
 	}
-	_staticres->unloadId(lolLegendData);
 
 	tmp = _staticres->loadRawData(lolMapCursorOvl, tmpSize);
 	_mapCursorOverlay = new uint8[tmpSize];
@@ -1890,13 +1895,17 @@ void LoLEngine::initStaticResource() {
 	_healShapeFrames = _staticres->loadRawData(lolHealShapeFrames, _healShapeFramesSize);
 
 	tmp = _staticres->loadRawData(lolLightningDefs, tmpSize);
-	_lightningProps = new LightningProperty[5];
-	for (int i = 0; i < 5; i++) {
-		_lightningProps[i].lastFrame = tmp[i << 2];
-		_lightningProps[i].frameDiv = tmp[(i << 2) + 1];
-		_lightningProps[i].sfxId = READ_LE_UINT16(&tmp[(i << 2) + 2]);
+	if (tmp) {
+		_lightningProps = new LightningProperty[5];
+		for (int i = 0; i < 5; i++) {
+			_lightningProps[i].lastFrame = tmp[i << 2];
+			_lightningProps[i].frameDiv = tmp[(i << 2) + 1];
+			_lightningProps[i].sfxId = READ_LE_UINT16(&tmp[(i << 2) + 2]);
+		}
+		_staticres->unloadId(lolLightningDefs);	
 	}
-	_staticres->unloadId(lolLightningDefs);	
+
+	_fireBallCoords = (const int16*) _staticres->loadRawDataBe16(lolFireballCoords, _fireBallCoordsSize);
 
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(95);

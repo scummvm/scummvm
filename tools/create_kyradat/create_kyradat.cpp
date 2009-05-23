@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 47,
+	kKyraDatVersion = 48,
 	kIndexSize = 12
 };
 
@@ -345,6 +345,7 @@ const ExtractFilename extractFilenames[] = {
 	{ lolSpellbookCoords, k3TypeRaw16to8, "MBOOKC.DEF" },
 	{ lolHealShapeFrames, kTypeRawData, "MHEAL.SHP" },
 	{ lolLightningDefs, kTypeRawData, "MLGHTNG.DEF" },	
+	{ lolFireballCoords, lolTypeRaw16, "MFIREBLL.DEF" },
 
 	{ -1, 0, 0 }
 };

@@ -291,6 +291,7 @@ enum kKyraResources {
 	lolSpellbookCoords,
 	lolHealShapeFrames,
 	lolLightningDefs,
+	lolFireballCoords,
 #endif // ENABLE_LOL
 
 	kMaxResIDs

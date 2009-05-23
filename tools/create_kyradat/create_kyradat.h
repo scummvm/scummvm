@@ -255,6 +255,7 @@ enum kExtractID {
 	lolSpellbookCoords,
 	lolHealShapeFrames,
 	lolLightningDefs,
+	lolFireballCoords,
 
 	kMaxResIDs
 };
