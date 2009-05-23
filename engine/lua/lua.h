@@ -166,7 +166,7 @@ void current_script();
 
 #ifdef LUA_COMPAT2_5
 
-lua_Object lua_setfallback(char *event, lua_CFunction fallback);
+lua_Object lua_setfallback(const char *event, lua_CFunction fallback);
 
 #define lua_storeglobal		lua_setglobal
 #define lua_type			lua_tag

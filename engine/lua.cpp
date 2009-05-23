@@ -43,6 +43,10 @@ extern Imuse *g_imuse;
 Common::StringList g_listfiles;
 Common::StringList::const_iterator g_filesiter;
 
+static int refSystemTable;
+static int refTypeOverride;
+static int refOldConcatFallback;
+
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 
 static inline bool isObject(int num) {
@@ -905,7 +909,6 @@ static void ActorLookAt() {
 	Vector3d vector;
 	Actor *act;
 
-	
 	act = check_actor(1);
 	x = lua_getparam(2);
 	y = lua_getparam(3);
@@ -2849,6 +2852,82 @@ static void LoadBundle() {
 	// loading grimdemo.mus is allready handled
 }
 
+void typeOverride() {
+	lua_Object data = lua_getparam(1);
+
+	if (lua_isuserdata(data)) {
+		switch (lua_tag(data)) {
+		case MKID_BE('ACTR'):
+			lua_pushstring("actor");
+			lua_pushnumber(lua_type(data));
+			return;
+		case MKID_BE('COST'):
+			lua_pushstring("costume");
+			lua_pushnumber(lua_type(data));
+			return;
+		case MKID_BE('SET '):
+			lua_pushstring("set");
+			lua_pushnumber(lua_type(data));
+			return;
+		case MKID_BE('KEYF'):
+			lua_pushstring("keyframe");
+			lua_pushnumber(lua_type(data));
+			return;
+		default:
+			break;
+		}
+	}
+
+	lua_pushobject(data);
+	lua_callfunction(lua_getref(refTypeOverride));
+	lua_Object param1 = lua_getresult(1);
+	lua_Object param2 = lua_getresult(2);
+	lua_pushobject(param1);
+	lua_pushobject(param2);
+}
+
+void concatFallback() {
+	lua_Object params[2];
+	char result[200];
+	char *strPtr;
+
+	params[0] = lua_getparam(1);
+	params[1] = lua_getparam(2);
+	result[0] = 0;
+
+	for (int i = 0; i < 2; i++) {
+		if (!lua_isnil(params[i]) && !lua_isuserdata(params[i]) && !lua_isstring(params[i])) {
+			lua_pushobject(params[0]);
+			lua_pushobject(params[1]);
+			lua_callfunction(lua_getref(refOldConcatFallback));
+			lua_pushobject(lua_getresult(1));
+			return;
+		}
+
+		int pos = strlen(result);
+		strPtr = &result[pos];
+
+		if (lua_isnil(params[i]))
+			sprintf(strPtr, "(nil)");
+		else if (lua_isstring(params[i]))
+			sprintf(strPtr, lua_getstring(params[i]));
+		else if (lua_tag(params[i]) == MKID_BE('ACTR')) {
+			Actor *a = check_actor(params[i]);
+			sprintf(strPtr, "(actor%d:%s)", (long)a,
+				(a->currentCostume() && a->currentCostume()->getModelNodes()) ?
+				a->currentCostume()->getModelNodes()->_name : "");
+		} else {
+			lua_pushobject(params[0]);
+			lua_pushobject(params[1]);
+			lua_callfunction(lua_getref(refOldConcatFallback));
+			lua_pushobject(lua_getresult(1));
+			return;
+		}
+	}
+
+	lua_pushstring(result);
+}
+
 // Stub function for builtin functions not yet implemented
 static void stubWarning(const char *funcName) {
 	warning("Stub function: %s", funcName);
@@ -3366,6 +3445,13 @@ struct luaL_reg hardwareOpcodes[] = {
 	{ "EnumerateVideoDevices", EnumerateVideoDevices }
 };
 
+struct luaL_reg miscOpcodes[] = {
+	{ "  concatfallback", concatFallback },
+	{ "  typeoverride", typeOverride },
+	{ "  dfltcamera", dummyHandler },
+	{ "  dfltcontrol", dummyHandler },
+};
+
 void register_lua() {
 	// Register main opcodes functions
 	luaL_openlib(mainOpcodes, ARRAYSIZE(mainOpcodes));
@@ -3379,13 +3465,19 @@ void register_lua() {
 	// Register hardware opcodes functions
 	luaL_openlib(hardwareOpcodes, ARRAYSIZE(hardwareOpcodes));
 
+	// Register miscOpcodes opcodes functions
+	luaL_openlib(miscOpcodes, ARRAYSIZE(miscOpcodes));
+
 	// Register system table
 	lua_Object system_table = lua_createtable();
 	lua_pushobject(system_table);
 	lua_setglobal("system");
 
+	lua_pushobject(system_table);
+	refSystemTable = lua_ref(1);
+
 	for (unsigned i = 0; i < ARRAYSIZE(system_defaults); i++) {
-		lua_pushobject(system_table);
+		lua_pushobject(lua_getref(refSystemTable));
 		lua_pushstring(system_defaults[i].name);
 		lua_pushnumber(system_defaults[i].key);
 		lua_settable();
@@ -3393,7 +3485,7 @@ void register_lua() {
 
 	// Create and populate system.controls table
 	lua_Object controls_table = lua_createtable();
-	lua_pushobject(system_table);
+	lua_pushobject(lua_getref(refSystemTable));
 	lua_pushstring("controls");
 	lua_pushobject(controls_table);
 	lua_settable();
@@ -3405,15 +3497,25 @@ void register_lua() {
 		lua_settable();
 	}
 
-	lua_pushobject(system_table);
+	lua_pushobject(lua_getref(refSystemTable));
 	lua_pushstring("camChangeHandler");
 	lua_pushcfunction(dummyHandler);
 	lua_settable();
 
-	lua_pushobject(system_table);
+	lua_pushobject(lua_getref(refSystemTable));
 	lua_pushstring("axisHandler");
 	lua_pushcfunction(dummyHandler);
 	lua_settable();
+
+	lua_pushobject(lua_getref(refSystemTable));
+	lua_pushstring("buttonHandler");
+	lua_pushcfunction(dummyHandler);
+	lua_settable();
+
+	lua_pushobject(lua_getglobal("type"));
+	refTypeOverride = lua_ref(true);
+	lua_pushCclosure(typeOverride, 0);
+	lua_setglobal("type");
 
 	// Register constants for box types
 	lua_pushnumber(0);
@@ -3426,6 +3528,9 @@ void register_lua() {
 	lua_setglobal("SPECIAL");
 	lua_pushnumber(0x8000);
 	lua_setglobal("HOT");
+
+	lua_pushobject(lua_setfallback("concat", concatFallback));
+	refOldConcatFallback = lua_ref(1);
 
 	saveCallbackPtr = saveCallback;
 	restoreCallbackPtr = restoreCallback;
