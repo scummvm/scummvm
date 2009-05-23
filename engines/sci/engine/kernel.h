@@ -434,6 +434,7 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kSetQuitStr(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kSetVideoMode(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
 // The Unknown/Unnamed kernel function

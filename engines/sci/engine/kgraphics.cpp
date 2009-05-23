@@ -3374,4 +3374,21 @@ reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kSetVideoMode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	// This call is used for KQ6's intro. It has one parameter, which is
+	// 1 when the intro begins, and 0 when it ends. It is suspected that
+	// this is actually a flag to enable video planar memory access, as
+	// the video decoder in KQ6 is specifically written for the planar
+	// memory model. Planar memory mode access was used for VGA "Mode X"
+	// (320x240 resolution, although the intro in KQ6 is 320x200).
+	// Refer to http://en.wikipedia.org/wiki/Mode_X
+
+	//warning("STUB: SetVideoMode %d", UKPV(0));
+
+	// We (ab)use this kernel function to free tagged resources when the
+	// intro of KQ6 starts. This fixes some palette issues in the intro.
+	s->gfx_state->gfxResMan->freeTaggedResources();
+	return s->r_acc;
+}
+
 } // End of namespace Sci

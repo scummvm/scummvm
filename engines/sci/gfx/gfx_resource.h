@@ -95,7 +95,7 @@ struct gfxr_pic_t {
 	** Bit 3-5: 'filled' (all three bits are set to 1)
 	*/
 
-	rect_t bounds;
+	// rect_t bounds;	// unused
 
 	void *undithered_buffer; /* copies visual_map->index_data before dithering */
 	int undithered_buffer_size;

@@ -211,6 +211,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("ResCheck", kResCheck, "iii*"),
 	DEFUN("SetQuitStr", kSetQuitStr, "r"),
 	DEFUN("ShowMovie", kShowMovie, "ri"),
+	DEFUN("SetVideoMode", kSetVideoMode, ".*"),
 
 	// Special and NOP stuff
 	{KF_NEW, NULL, k_Unknown, NULL},
