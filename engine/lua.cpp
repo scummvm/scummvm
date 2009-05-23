@@ -2756,17 +2756,18 @@ static PointerId restoreCallback(int32 /*tag*/, PointerId ptr, RestoreSint32 /*s
 }
 
 static void LockFont() {
-	lua_Object param1;
-
-	param1 = lua_getparam(1);
+	lua_Object param1 = lua_getparam(1);
 	if (lua_isstring(param1)) {
 		const char *fontName = lua_getstring(param1);
 		Font *result = g_resourceloader->loadFont(fontName);
 		if (result) {
 			result->luaRef();
 			lua_pushusertag(result, MKID_BE('FONT'));
+			return;
 		}
 	}
+
+	lua_pushnil();
 }
 
 static void EnableDebugKeys() {
