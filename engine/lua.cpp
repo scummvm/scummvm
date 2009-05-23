@@ -203,9 +203,13 @@ static Costume *get_costume(Actor *a, int param, const char *called_from) {
 
 // Lua interface to bundle_dofile
 
+int luaA_passresults();
+
 static void new_dofile() {
 	const char *fname_str = luaL_check_string(1);
-	bundle_dofile(fname_str);
+	if (bundle_dofile(fname_str) == 0)
+		if (luaA_passresults() == 0)
+			lua_pushuserdata(NULL);
 }
 
 // Debugging message functions
