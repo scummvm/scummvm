@@ -2521,13 +2521,11 @@ static void DimScreen() {
 }
 
 static void DimRegion() {
-	
 	int x = check_int(1);
 	int y = check_int(2);
 	int w = check_int(3);
 	int h = check_int(4);
-	float level = luaL_check_number(5);
-
+	float level = lua_getnumber(lua_getparam(5));
 	g_driver->dimRegion(x, y, w, h, level);
 }
 
