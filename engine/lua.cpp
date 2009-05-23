@@ -267,7 +267,7 @@ static byte clamp_color(int c) {
 
 static void MakeColor() {
 	Color *c = new Color (clamp_color(lua_getnumber(lua_getparam(1))),
-			clamp_color(lua_getnumber(lua_getparam(2))), clamp_color(lua_getnumber(lua_getparam(2))));
+			clamp_color(lua_getnumber(lua_getparam(2))), clamp_color(lua_getnumber(lua_getparam(3))));
 	lua_pushusertag(c, MKID_BE('COLR'));
 }
 
