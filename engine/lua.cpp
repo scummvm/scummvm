@@ -2482,14 +2482,21 @@ static void DrawRectangle() {
 
 static void BlastRect() {
 	Common::Point p1, p2;
-	lua_Object tableObj;
 	Color color;
+	lua_Object objX1 = lua_getparam(1);
+	lua_Object objY1 = lua_getparam(2);
+	lua_Object objX2 = lua_getparam(3);
+	lua_Object objY2 = lua_getparam(4);
+	lua_Object tableObj = lua_getparam(5);
 
-	p1.x = check_int(1);
-	p1.y = check_int(2);
-	p2.x = check_int(3);
-	p2.y = check_int(4);
-	tableObj = lua_getparam(5);
+	if (!lua_isnumber(objX1) || !lua_isnumber(objY1) || !lua_isnumber(objX2) || !lua_isnumber(objY2)) {
+		lua_pushnil();
+		return;
+	}
+	p1.x = lua_getnumber(objX1);
+	p1.y = lua_getnumber(objY1);
+	p2.x = lua_getnumber(objX2);
+	p2.y = lua_getnumber(objY2);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
 	color._vals[2] = 255;
