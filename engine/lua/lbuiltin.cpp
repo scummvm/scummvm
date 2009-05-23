@@ -425,7 +425,7 @@ static void testC() {
 				lua_pushobject(reg[getnum(s)]);
 				break;
 			case 'f':
-				(lua_call)(getname(s));
+				lua_call(getname(s));
 				break;
 			case 'i':
 				reg[getnum(s)] = lua_gettable();
