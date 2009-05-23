@@ -94,7 +94,7 @@ lua_Object lua_pop() {
 lua_Object lua_lua2C(int32 number) {
 	if (number <= 0 || number > L->Cstack.num)
 		return LUA_NOOBJECT;
-	return L->Cstack.lua2C+number;
+	return L->Cstack.lua2C + number;
 }
 
 int32 lua_callfunction(lua_Object function) {
