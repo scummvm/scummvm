@@ -3268,6 +3268,8 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 	}
 
+	// This code places texts incorrectly on screen
+#if 0
 	// If the text does not fit on the screen, move it to the left and upwards until it does
 	if (halign == ALIGN_LEFT)
 		GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text, area.width, &area.width, &area.height, 0, NULL, NULL, NULL));
@@ -3278,6 +3280,16 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (area.y + area.height > 200)
 		area.y += 200 - area.y - area.height; // Plus negative number = subtraction
+#else
+	// Replaced with this instead
+	// If the text does not fit on the screen, clip it till it does
+	if (area.x + area.width > s->gfx_state->pic_port_bounds.width)
+		area.width = CLIP<int>(area.width, 0, s->gfx_state->pic_port_bounds.width);
+
+	if (area.y + area.height > s->gfx_state->pic_port_bounds.height)
+		area.height = CLIP<int>(area.height, 0, s->gfx_state->pic_port_bounds.height);
+#endif
+
 
 	if (gray)
 		color1 = &bg_color;
