@@ -2715,9 +2715,7 @@ static void Load() {
 	} else if (lua_isstring(fileName)) {
 		g_grim->_savegameFileName = lua_getstring(fileName);
 	} else {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Load() fileName is wrong");
-		return;
+		warning("Load() fileName is wrong");
 	}
 	g_grim->_savegameLoadRequest = true;
 }
@@ -2731,8 +2729,7 @@ static void Save() {
 	} else if (lua_isstring(fileName)) {
 		g_grim->_savegameFileName = lua_getstring(fileName);
 	} else {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Save() fileName is wrong");
+		warning("Save() fileName is wrong");
 		return;
 	}
 	g_grim->_savegameSaveRequest = true;
