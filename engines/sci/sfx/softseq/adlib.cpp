@@ -124,6 +124,10 @@ void MidiDriver_Adlib::send(uint32 b) {
 	byte op1 = (b >> 8) & 0xff;
 	byte op2 = (b >> 16) & 0xff;
 
+	// FIXME: Remove this hack after adding support for the rhythm channel
+	if (channel == 9)
+		return;
+
 	switch (command) {
 	case 0x80:
 		noteOff(channel, op1);
@@ -603,7 +607,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 		return -1;
 	}
 
-	if ((res->size != 1344) && (res->size != 2690)) {
+	if ((res->size != 1344) && (res->size != 2690) && (res->size != 5382)) {
 		warning("ADLIB: Unsupported patch format (%i bytes)", res->size);
 		return -1;
 	}
@@ -611,9 +615,13 @@ int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 	for (int i = 0; i < 48; i++)
 		_driver->sysEx(res->data + (28 * i), 28);
 
-	if (res->size == 2690)
+	if (res->size == 2690) {
 		for (int i = 48; i < 96; i++)
 			_driver->sysEx(res->data + 2 + (28 * i), 28);
+	} else if (res->size == 5382) {
+		for (int i = 48; i < 190; i++)
+			_driver->sysEx(res->data + (28 * i), 28);
+	}
 
 	return static_cast<MidiDriver_Adlib *>(_driver)->open(resmgr->_sciVersion == SCI_VERSION_0);
 }
