@@ -2537,37 +2537,26 @@ static void GetDiskFreeSpace() {
 }
 
 static void NewObjectState() {
-	ObjectState *state = NULL;
-	ObjectState::Position pos;
-	const char *bitmap, *zbitmap;
-	bool visible;
-	int setupID;
-
-	// Called with "nil" if you jump to zone "sp"
-	setupID = check_int(1);					// Setup ID
-	pos = check_objstate_pos(2);		// When to draw
-	bitmap = luaL_check_string(3);	// Bitmap
-	zbitmap = NULL;									// Zbuffer Bitmap
-	visible = getbool(5);						// Starts visible?
+	int setupID = check_int(1);
+	ObjectState::Position pos = check_objstate_pos(2);
+	const char *bitmap = lua_getstring(lua_getparam(3));
+	const char *zbitmap = NULL;
 	if (!lua_isnil(lua_getparam(4)))
-		zbitmap = luaL_check_string(4);
+		zbitmap = lua_getstring(lua_getparam(4));
+	bool visible = getbool(5);
 
-	state = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
+	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
 	g_grim->currScene()->addObjectState(state);
 	lua_pushusertag(state, MKID_BE('STAT'));
 }
 
 static void FreeObjectState() {
-	ObjectState *state;
-
-	state = check_object(1);
+	ObjectState *state = check_object(1);
 	g_grim->currScene()->deleteObjectState(state);
 }
 
 static void SendObjectToBack() {
-	lua_Object param;
-
-	param = lua_getparam(1);
+	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT')) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
 		// moving object to top in list ?
@@ -2576,9 +2565,7 @@ static void SendObjectToBack() {
 }
 
 static void SendObjectToFront() {
-	lua_Object param;
-
-	param = lua_getparam(1);
+	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT')) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
 		// moving object to last in list ?
