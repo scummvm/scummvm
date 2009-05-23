@@ -1129,7 +1129,7 @@ extern gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, i
 extern void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp);
 
 void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, byte *resource,
-					 gfxr_pic0_params_t *style, int resid, int sci1, Palette *static_pal) {
+					 gfxr_pic0_params_t *style, int resid, int sci1, Palette *static_pal, Common::Rect portBounds) {
 	const int default_palette_table[GFXR_PIC0_PALETTE_SIZE] = {
 		0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
 		0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0x88,
@@ -1160,10 +1160,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int pal = 0, index = 0;
 	int temp;
 	int line_mode = style->line_mode;
-	// NOTE: here, it is assumed that the titlebar size is always 10. This may differ depending on
-	// the port bounds y starting point, but we haven't come across a case where this actually occurs.
-	// Also, there is a check further down which sets the titlebar size to 0 if the picture port goes off screen.
-	int titlebar_size = 10;
+	int titlebar_size = portBounds.top;
 	byte op, opx;
 
 #ifdef FILL_RECURSIVE_DEBUG
@@ -1540,10 +1537,9 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				} else
 					view->palette = embedded_view_pal->getref();
 
-				// Hack to prevent overflowing the visual map buffer.
-				// Yes, this does happen otherwise.
-				if (view->index_height + titlebar_size > 200)
-					titlebar_size = 0;
+				// Clip the view's height to fit within the screen buffer
+				// It can go off screen at some cases, e.g. in KQ6's intro
+				view->index_height = CLIP<int>(view->index_height, 0, portBounds.height());
 
 				// Set up mode structure for resizing the view
 				Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1byte/p, which handles masks and the rest for us
@@ -1634,16 +1630,13 @@ end_op_loop: {}
 }
 
 void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, byte *resource,
-					 gfxr_pic0_params_t *style, int resid, Palette *static_pal) {
+					 gfxr_pic0_params_t *style, int resid, Palette *static_pal, Common::Rect portBounds) {
 	int has_bitmap = READ_LE_UINT16(resource + 4);
 	int vector_data_ptr = READ_LE_UINT16(resource + 16);
 	int palette_data_ptr = READ_LE_UINT16(resource + 28);
 	int bitmap_data_ptr = READ_LE_UINT16(resource + 32);
 	gfx_pixmap_t *view = NULL;
-	// NOTE: here, it is assumed that the titlebar size is always 10. This may differ depending on
-	// the port bounds y starting point, but we haven't come across a case where this actually occurs.
-	// Also, there is a check further down which sets the titlebar size to 0 if the picture port goes off screen.
-	int titlebar_size = 10;
+	int titlebar_size = portBounds.top;
 
 	if (pic->visual_map->palette) pic->visual_map->palette->free();
 	pic->visual_map->palette = gfxr_read_pal11(-1, resource + palette_data_ptr, 1284);
@@ -1664,10 +1657,9 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)
 			view_transparentize(view, pic->visual_map, 0, 0, view->index_width, view->index_height);
 
-		// Hack to prevent overflowing the visual map buffer.
-		// Yes, this does happen otherwise.
-		if (view->index_height + titlebar_size > 200)
-			titlebar_size = 0;
+		// Clip the view's height to fit within the screen buffer
+		// It can go off screen at some cases, e.g. in KQ6's intro
+		view->index_height = CLIP<int>(view->index_height, 0, portBounds.height());
 
 		_gfx_crossblit_simple(pic->visual_map->index_data + titlebar_size*view->index_width,
 		                      view->index_data,
@@ -1679,7 +1671,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		GFXWARN("No view was contained in SCI1.1 pic resource");
 	}
 
-	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr, resource + vector_data_ptr, style, resid, 1, static_pal);
+	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr, resource + vector_data_ptr, style, resid, 1, static_pal, portBounds);
 }
 
 void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {

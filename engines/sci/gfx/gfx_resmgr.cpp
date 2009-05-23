@@ -54,6 +54,8 @@ GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, gf
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
+	_portBounds = Common::Rect(0, 10, 320, 200);	// default value, with a titlebar of 10px
+
 	if (_version < SCI_VERSION_01_VGA || !_isVGA) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
 	} else if (_version == SCI_VERSION_1_1) {
@@ -73,12 +75,6 @@ GfxResManager::~GfxResManager() {
 	_staticPalette->free();
 	_staticPalette = 0;
 }
-
-#define DRAW_PIC01(pic, picStyle, isSci1) \
-	gfxr_draw_pic01((pic), flags, default_palette, res->size, res->data, (picStyle), res->id, (isSci1), _staticPalette);
-
-#define DRAW_PIC11(pic, picStyle) \
-	gfxr_draw_pic11((pic), flags, default_palette, res->size, res->data, (picStyle), res->id, _staticPalette);
 
 int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic, int flags, int default_palette, int nr) {
 	Resource *res = _resManager->findResource(kResourceTypePic, nr, 0);
@@ -101,18 +97,18 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 
 	if (need_unscaled) {
 		if (_version == SCI_VERSION_1_1)
-			DRAW_PIC11(unscaled_pic, &basic_style)
+			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id, _staticPalette, _portBounds);
 		else
-			DRAW_PIC01(unscaled_pic, &basic_style, _isVGA)
+			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id, _isVGA, _staticPalette, _portBounds);
 	}
 
 	if (scaled_pic && scaled_pic->undithered_buffer)
 		memcpy(scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer, scaled_pic->undithered_buffer_size);
 
 	if (_version == SCI_VERSION_1_1)
-		DRAW_PIC11(scaled_pic, &style)
+		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id, _staticPalette, _portBounds);
 	else
-		DRAW_PIC01(scaled_pic, &style, _isVGA)
+		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id, _isVGA, _staticPalette, _portBounds);
 
 	if (!_isVGA) {
 		if (need_unscaled)

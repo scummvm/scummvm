@@ -2377,6 +2377,9 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (s->_gameName != "LSL6") {
 			s->gfx_state->pic_port_bounds = gfx_rect(UKPV(5), UKPV(4), UKPV(3), UKPV(2));
 
+			// Notify the graphics resource manager that the pic port bounds changed
+			s->gfx_state->gfxResMan->changePortBounds(UKPV(5), UKPV(4), UKPV(3), UKPV(2));
+
 			// FIXME: Should really only invalidate all loaded pic resources here;
 			// this is overkill
 			s->gfx_state->gfxResMan->freeAllResources();

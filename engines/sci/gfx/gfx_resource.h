@@ -31,6 +31,8 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_driver.h"
 
+#include "common/rect.h"
+
 namespace Common {
 	class File;
 }
@@ -172,7 +174,7 @@ void gfxr_clear_pic0(gfxr_pic_t *pic, int titlebar_size);
 
 void gfxr_draw_pic01(gfxr_pic_t *pic, int fill_normally, int default_palette,
 	int size, byte *resource, gfxr_pic0_params_t *style, int resid, int sci1,
-	Palette *static_pal);
+	Palette *static_pal, Common::Rect portBounds);
 /* Draws a pic resource (all formats prior to SCI1.1)
 ** Parameters: (gfxr_pic_t *) pic: The pic to draw to
 **             (int) fill_normally: If 1, the pic is drawn normally; if 0, all
@@ -193,7 +195,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int fill_normally, int default_palette,
 
 void gfxr_draw_pic11(gfxr_pic_t *pic, int fill_normally, int default_palette,
 	int size, byte *resource, gfxr_pic0_params_t *style, int resid,
-	Palette *static_pal);
+	Palette *static_pal, Common::Rect portBounds);
 /* Draws a pic resource (SCI1.1)
 ** Parameters: (gfxr_pic_t *) pic: The pic to draw to
 **             (int) fill_normally: If 1, the pic is drawn normally; if 0, all

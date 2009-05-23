@@ -34,6 +34,7 @@
 #include "sci/resource.h"
 
 #include "common/hashmap.h"
+#include "common/rect.h"
 
 namespace Sci {
 
@@ -227,6 +228,13 @@ public:
 	// Set static palette and merge it into the global palette
 	void setStaticPalette(Palette *newPalette);
 
+	/*
+	** Sets the picture port bounds
+	*/
+	void changePortBounds(int x1, int y1, int x2, int y2) {
+		_portBounds = Common::Rect(x1, y1, x2, y2);
+	}
+
 #if 0
 	void setPaletteIntensity(int16 from, int16 to, int16 intensity) {
 		Palette *pal = _staticPalette->getref();
@@ -257,6 +265,7 @@ private:
 			  ** of the lock_counter, as will any resources referenced afterwards.
 			  */
 	int _tagLockCounter; /* lock counter value at tag time */
+	Common::Rect _portBounds;
 
 	IntResMap _resourceMaps[GFX_RESOURCE_TYPES_NR];
 	ResourceManager *_resManager;
