@@ -150,7 +150,7 @@ Hash *luaH_new(int32 nhash) {
 ** Check if table has deleted slots. It it has, it does not need to
 ** grow, since rehash will reuse them.
 */
-static int emptyslots (Hash *t) {
+static int emptyslots(Hash *t) {
 	int i;
 
 	for (i = nhash(t) - 1; i >= 0; i--) {
