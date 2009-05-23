@@ -2663,7 +2663,7 @@ static void SubmitSaveGameData() {
 			break;
 		str = lua_getstring(table2);
 		int len = strlen(str) + 1;
-		savedState->write(&len, sizeof(int));
+		savedState->write(&len, sizeof(int32));
 		savedState->write(str, len);
 	}
 	savedState->endSection();
@@ -2689,7 +2689,7 @@ static void GetSaveGameData() {
 	for (;;) {
 		if (dataSize <= 0)
 			break;
-		savedState->read(&strSize, sizeof(int));
+		savedState->read(&strSize, sizeof(int32));
 		savedState->read(str, strSize);
 		lua_pushobject(result);
 		lua_pushnumber(count);
