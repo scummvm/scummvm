@@ -2794,19 +2794,15 @@ static void SetAmbientLight() {
 }
 
 static void RenderModeUser() {
-	lua_Object param1;
-
-	param1 = lua_getparam(1);
-	if (lua_isnumber(param1)) {
+	lua_Object param1 = lua_getparam(1);
+	if (!lua_isnil(param1) && g_grim->getMode() != ENGINE_MODE_DRAW) {
 		g_grim->setPreviousMode(g_grim->getMode());
 		g_smush->pause(true);
 		g_grim->setMode(ENGINE_MODE_DRAW);
-	} else if (lua_isnil(param1)) {
+	} else if (lua_isnil(param1) && g_grim->getMode() == ENGINE_MODE_DRAW) {
 		g_smush->pause(false);
 		g_grim->refreshDrawMode();
 		g_grim->setMode(g_grim->getPreviousMode());
-	} else {
-		error("RenderModeUser() Unknown type of param");
 	}
 }
 
