@@ -110,7 +110,7 @@ void luaD_lineHook(int32 line) {
 
 void luaD_callHook(StkId base, TProtoFunc *tf, int32 isreturn) {
 	struct C_Lua_Stack oldCLS = L->Cstack;
-	StkId old_top = L->Cstack.lua2C = L->Cstack.base = L->stack.top-L->stack.stack;
+	StkId old_top = L->Cstack.lua2C = L->Cstack.base = L->stack.top - L->stack.stack;
 	L->Cstack.num = 0;
 	if (isreturn)
 		(*lua_callhook)(LUA_NOOBJECT, "(return)", 0);
@@ -134,15 +134,17 @@ static StkId callC(lua_CFunction f, StkId base) {
 	struct C_Lua_Stack *CS = &L->Cstack;
 	struct C_Lua_Stack oldCLS = *CS;
 	StkId firstResult;
-	int32 numarg = (L->stack.top-L->stack.stack) - base;
+	int32 numarg = (L->stack.top - L->stack.stack) - base;
 	CS->num = numarg;
 	CS->lua2C = base;
 	CS->base = base + numarg;  // == top - stack
-	if (lua_callhook)
-		luaD_callHook(base, NULL, 0);
+	if (lua_callhook) {
+		TObject *f = L->stack.stack + base - 1;
+		(*lua_callhook)(Ref(f), "(C)", -1);
+	}
 	(*f)();  // do the actual call
-	if (lua_callhook)  // func may have changed lua_callhook
-		luaD_callHook(base, NULL, 1);
+//	if (lua_callhook)  // func may have changed lua_callhook
+//		(*lua_callhook)(LUA_NOOBJECT, "(return)", 0);
 	firstResult = CS->base;
 	*CS = oldCLS;
 	return firstResult;
@@ -206,8 +208,10 @@ void luaD_precall(TObject *f, StkId base, int32 nResults) {
 		L->ci->pc = NULL;
 	} else {
 		byte *pc = tfvalue(f)->code;
-		if (lua_callhook)
-			luaD_callHook(base, tfvalue(f), 0);
+		if (lua_callhook) {
+			TObject *f = L->stack.stack + base - 1;
+			(*lua_callhook)(Ref(f), tfvalue(f)->fileName->str, tfvalue(f)->lineDefined);
+		}
 		luaD_checkstack((*pc++) + EXTRA_STACK);
 		if (*pc < ZEROVARARG) {
 			luaD_adjusttop(base + *(pc++));

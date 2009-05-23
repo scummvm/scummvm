@@ -4,6 +4,9 @@
 ** See Copyright Notice in lua.h
 */
 
+#include "common/endian.h"
+
+#include "engine/actor.h"
 
 #include "engine/lua/lbuiltin.h"
 #include "engine/lua/ldo.h"
@@ -18,6 +21,7 @@
 #include "engine/lua/ltask.h"
 #include "engine/lua/ltm.h"
 #include "engine/lua/lualib.h"
+#include "engine/lua/luadebug.h"
 
 LState *lua_state = NULL;
 
@@ -67,6 +71,68 @@ void lua_resetglobals() {
 	luaX_init();
 }
 
+Actor *check_actor(int num);
+Color *check_color(int num);
+
+void callHook(lua_Function func, const char *filename, int line) {
+	const char *name, *type;
+	FILE *output = stdout;
+	int i;
+
+	type = lua_getobjname(func, &name);
+	if (func == LUA_NOOBJECT) {
+		fprintf(output, "%s\n", filename);
+		return;
+	}
+
+	switch (*type) {
+	case 'g':
+		fprintf(output, "function: %s(", name);
+		for (i = 1; ; i++) {
+			if (lua_getparam(i) == LUA_NOOBJECT)
+				break;
+			if (lua_isnil(lua_getparam(i)))
+				fprintf(output, "nil");
+			else if (lua_istable(lua_getparam(i)))
+				fprintf(output, "{...}");
+			else if (lua_isuserdata(lua_getparam(i))) {
+				if (lua_tag(lua_getparam(i)) == MKID_BE('ACTR')) {
+					Actor *a = check_actor(i);
+					fprintf(output, "<actor \"%s\">", a->name());
+				} else if (lua_tag(lua_getparam(i)) == MKID_BE('COLR')) {
+					Color *c = check_color(i);
+					fprintf(output, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
+				} else
+					fprintf(output, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
+			} else if (lua_isfunction(lua_getparam(i))) {
+				fprintf(output, "<function>");
+			} else if (lua_isnumber(lua_getparam(i)))
+				fprintf(output, "%g", lua_getnumber(lua_getparam(i)));
+			else if (lua_isstring(lua_getparam(i)))
+				fprintf(output, "\"%s\"", lua_getstring(lua_getparam(i)));
+			else
+				fprintf(output, "<unknown>");
+			if (lua_getparam(i + 1) != LUA_NOOBJECT)
+				fprintf(output, ", ");
+		}
+		fprintf(output, ")");
+			break;
+	case 't':
+		fprintf(output, "`%s' tag method", name);
+		break;
+	default:
+		{
+			if (line == 0)
+				fprintf(output, "{START SCRIPT: %s}", filename);
+			else if (line < 0) {
+				fprintf(output, "%s", filename);
+			} else
+				fprintf(output, "function (%s:%d)", filename, line);
+		}
+	}
+	fprintf(output, "\n");
+}
+
 void lua_open() {
 	if (lua_state)
 		return;
@@ -75,6 +141,8 @@ void lua_open() {
 	luaT_init();
 	luaB_predefine();
 	luaL_addlibtolist(stdErrorRimFunc, (sizeof(stdErrorRimFunc) / sizeof(stdErrorRimFunc[0])));
+	if (gDebugLevel == DEBUG_LUA || gDebugLevel == DEBUG_ALL)
+		lua_callhook = callHook;
 }
 
 void lua_close() {
