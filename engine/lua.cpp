@@ -2859,19 +2859,19 @@ void typeOverride() {
 		switch (lua_tag(data)) {
 		case MKID_BE('ACTR'):
 			lua_pushstring("actor");
-			lua_pushnumber(lua_type(data));
+			lua_pushnumber(lua_tag(data));
 			return;
 		case MKID_BE('COST'):
 			lua_pushstring("costume");
-			lua_pushnumber(lua_type(data));
+			lua_pushnumber(lua_tag(data));
 			return;
 		case MKID_BE('SET '):
 			lua_pushstring("set");
-			lua_pushnumber(lua_type(data));
+			lua_pushnumber(lua_tag(data));
 			return;
 		case MKID_BE('KEYF'):
 			lua_pushstring("keyframe");
-			lua_pushnumber(lua_type(data));
+			lua_pushnumber(lua_tag(data));
 			return;
 		default:
 			break;
