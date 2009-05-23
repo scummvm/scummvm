@@ -84,9 +84,22 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
 	DCmd_Register("kernelwords",		WRAP_METHOD(Console, cmdKernelWords));
 	DCmd_Register("man",				WRAP_METHOD(Console, cmdMan));
+	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
+	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 }
 
 Console::~Console() {
+}
+
+static ResourceType parseResourceType(const char *resid) {
+	// Gets the resource number of a resource string, or returns -1
+	ResourceType res = kResourceTypeInvalid;
+
+	for (int i = 0; i < kResourceTypeInvalid; i++)
+		if (strcmp(getResourceTypeName((ResourceType)i), resid) == 0)
+			res = (ResourceType)i;
+
+	return res;
 }
 
 void Console::con_hook_command(ConCommand command, const char *name, const char *param, const char *description) {
@@ -98,7 +111,6 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	int ver = _vm->getVersion();
 
 	DebugPrintf("Resource file version:        %s\n", sci_version_types[_vm->getResMgr()->_sciVersion]);
-
 	DebugPrintf("Emulated interpreter version: %s\n", versionNames[ver]);
 
 	return true;
@@ -230,6 +242,61 @@ bool Console::cmdMan(int argc, const char **argv) {
 	cmd_mm[section - 1].print(entry, 1);
 
 #endif
+	return true;
+}
+
+bool Console::cmdHexDump(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
+		DebugPrintf("The 20 valid resource types are:\n");
+		// There are 20 resource types supported by SCI1.1
+		for (int i = 0; i < 20; i++) {
+			DebugPrintf("%s", getResourceTypeName((ResourceType) i));
+			DebugPrintf((i < 19) ? ", " : "\n");
+		}
+
+		return true;
+	}
+
+	int resNum = atoi(argv[2]);
+	if (resNum == 0) {
+		DebugPrintf("The resource number specified is not a number");
+		return true;
+	}
+
+	ResourceType res = parseResourceType(argv[1]);
+
+	if (res == kResourceTypeInvalid)
+		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
+	else {
+		Resource *resource = _vm->getResMgr()->findResource(res, resNum, 0);
+		if (resource) {
+			Common::hexdump(resource->data, resource->size, 16, 0);
+			DebugPrintf("Resource %s.%03d not has been dumped to standard output\n", argv[1], resNum);
+		} else {
+			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdDissectScript(int argc, const char **argv) {
+	Common::StringList selectorNames;
+
+	if (argc != 2) {
+		DebugPrintf("Examines a script\n");
+		DebugPrintf("Usage: %s <script number>\n", argv[0]);
+		return true;
+	}
+
+	if (!vocabulary_get_snames(_vm->getResMgr(), (_vm->getFlags() & GF_SCI0_OLD), selectorNames)) {
+		DebugPrintf("No selector name table found!\n");
+		return true;
+	}
+
+	script_dissect(_vm->getResMgr(), atoi(argv[1]), selectorNames);
+
 	return true;
 }
 

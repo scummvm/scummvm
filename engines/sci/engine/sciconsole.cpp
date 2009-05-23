@@ -43,11 +43,9 @@ static int c_man(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); /
 static int c_set(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // sets an int variable
 static int c_print(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // prints a variable
 static int c_size(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // displays the size of a resource
-static int c_dump(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // gives a hex dump of a resource
 //static int c_objinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // shows some info about one class
 //static int c_objmethods(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Disassembles all methods of a class
 static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Searches a string in one resource or resource class
-static int c_dissectscript(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Splits a script into objects and explains them
 
 struct cmd_mm_entry_t {
 	const char *name;
@@ -171,11 +169,9 @@ void con_init() {
 		con_hook_command(&c_print, "print", "s", "Prints an int variable");
 		con_hook_command(&c_set, "set", "si", "Sets an int variable");
 		con_hook_command(&c_size, "size", "si", "Displays the size of a resource");
-		con_hook_command(&c_dump, "dump", "si", "HexDumps a resource");
 		con_hook_command(&c_hexgrep, "hexgrep", "shh*", "Searches some resources for a\n"
 		                 "  particular sequence of bytes, re-\n  presented as hexadecimal numbers.\n\n"
 		                 "EXAMPLES:\n  hexgrep script e8 03 c8 00\n  hexgrep pic.042 fe");
-		con_hook_command(&c_dissectscript, "dissectscript", "i", "Examines a script.");
 
 		con_hook_page("addresses", "Passing address parameters\n\n"
 		              "  Address parameters may be passed in one of\n"
@@ -850,22 +846,6 @@ static int c_size(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-static int c_dump(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	ResourceType res = parseResourceType(cmdParams[0].str);
-
-	if (res == kResourceTypeInvalid)
-		sciprintf("Resource type '%s' is not valid\n", cmdParams[0].str);
-	else {
-		Resource *resource = s->resmgr->findResource(res, cmdParams[1].val, 0);
-		if (resource)
-			Common::hexdump(resource->data, resource->size, 16, 0);
-		else
-			sciprintf("Resource %s.%03d not found\n", cmdParams[0].str, cmdParams[1].val);
-	}
-
-	return 0;
-}
-
 static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int i, seeklen, resnr, resmax;
 	unsigned char *seekstr = NULL;
@@ -936,16 +916,6 @@ static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams
 
 	free(seekstr);
 
-	return 0;
-}
-
-static int c_dissectscript(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (NULL == s) {
-		sciprintf("console.c: c_dissectscript(): NULL passed for parameter s\n");
-		return -1;
-	}
-
-	script_dissect(s->resmgr, cmdParams[0].val, s->_selectorNames);
 	return 0;
 }
 
