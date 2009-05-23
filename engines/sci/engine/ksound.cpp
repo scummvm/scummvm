@@ -1036,8 +1036,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		mixer->stopHandle(_audioHandle);
 
 		// Try to load from an external patch file first
-		// FIXME: the resource loader seems to return some sort of dummy resource here
-		Sci::Resource* audioRes = 0; //s->resmgr->findResource(kResourceTypeSync, UKPV(1), 1);
+		Sci::Resource* audioRes = s->resmgr->findResource(kResourceTypeAudio, UKPV(1), 1);
 		Audio::AudioStream *audioStream = 0;
 
 		if (audioRes) {
