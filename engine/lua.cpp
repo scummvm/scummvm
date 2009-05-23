@@ -2579,11 +2579,8 @@ static void SendObjectToFront() {
 }
 
 static void SetObjectType() {
-	ObjectState::Position pos;
-	ObjectState *state;
-
-	state = check_object(1);
-	pos = check_objstate_pos(2);
+	ObjectState *state = check_object(1);
+	ObjectState::Position pos = check_objstate_pos(2);
 	state->setPos(pos);
 }
 
