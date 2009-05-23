@@ -80,12 +80,15 @@ public:
 	bool isDirty() const { return _dirty; }
 	bool isShared() const { return _refcount > 1; }
 	Palette *getParent() { return _parent; }
+	int getRevision() const { return _revision; }
 
 	void markClean() { _dirty = false; }
 
 	uint findNearbyColor(byte r, byte g, byte b, bool lock=false);
 
-	void mergeInto(Palette *parent);
+	bool mergeInto(Palette *parent); // returns false if already merged
+	void forceInto(Palette *parent);
+
 	void unmerge();
 
 	Common::String name; // strictly for debugging purposes
@@ -97,6 +100,8 @@ private:
 
 	bool _dirty; // Palette has changed
 	int _refcount; // Number of pixmaps (or other objects) using this palette
+	int _revision; // When this is incremented, all child references are
+	               // invalidated
 };
 
 

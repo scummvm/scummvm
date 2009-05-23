@@ -36,6 +36,7 @@ Palette::Palette(uint s) {
 	_parent = 0;
 	_dirty = true;
 	_refcount = 1;
+	_revision = 0;
 }
 
 Palette::Palette(const gfx_pixmap_color_t *colors, uint s) {
@@ -44,6 +45,7 @@ Palette::Palette(const gfx_pixmap_color_t *colors, uint s) {
 	_parent = 0;
 	_dirty = true;
 	_refcount = 1;
+	_revision = 0;
 
 	for (uint i = 0; i < _size; ++i) {
 		_colors[i].r = colors[i].r;
@@ -97,6 +99,12 @@ void Palette::unmerge() {
 #ifdef DEBUG_MERGE
 	fprintf(stderr, "Unmerge %s from %s (%d colors)\n", name.c_str(), _parent->name.c_str(), _size);
 #endif
+	if (_parent->_revision != _revision) {
+#ifdef DEBUG_MERGE
+		fprintf(stderr, "NOP (revision mismatch)\n");
+#endif
+		return;
+	}
 
 	int count = 0;
 	for (uint i = 0; i < _size; ++i) {
@@ -108,9 +116,6 @@ void Palette::unmerge() {
 		assert(pi < (int)_parent->_size);
 		assert(_parent->_colors[pi].refcount != 0);
 		assert(_parent->_colors[pi].refcount != PALENTRY_FREE);
-#ifdef DEBUG_MERGE
-		int old = _parent->_colors[pi].refcount;
-#endif
 		if (_parent->_colors[pi].refcount != PALENTRY_LOCKED)
 			_parent->_colors[pi].refcount--;
 		if (_parent->_colors[pi].refcount == 0) {
@@ -211,28 +216,29 @@ uint Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
 	return bestcolor;
 }
 
-void Palette::mergeInto(Palette *parent) {
+bool Palette::mergeInto(Palette *parent) {
 	assert(!_parent || _parent == parent);
 	assert(parent != this);
 #ifdef DEBUG_MERGE
 	fprintf(stderr, "Merge: %s into %s (%d colors)\n", name.c_str(), parent->name.c_str(), _size);
 #endif
 
-	if (_parent == parent) {
+	if (_parent == parent && parent->_revision == _revision) {
 #ifdef DEBUG_MERGE
 		fprintf(stderr, "NOP\n");
 #endif
-		return;
+		return false;
 	}
 	_parent = parent;
+	_revision = parent->_revision;
 
 #ifdef DEBUG_MERGE
 	bool *used = new bool[_parent->size()];
 	for (uint i = 0; i < _parent->size(); ++i)
 		used[i] = false;
 	int count = 0;
-	int used_min = 1000;
-	int used_max = 0;
+	uint used_min = 1000;
+	uint used_max = 0;
 #endif
 
 	for (uint i = 0; i < _size; ++i) {
@@ -255,6 +261,33 @@ void Palette::mergeInto(Palette *parent) {
 	fprintf(stderr, "Merge used %d colours in [%d..%d]\n", count, used_min, used_max);
 	delete[] used;
 #endif
+	return true;
+}
+
+void Palette::forceInto(Palette *parent) {
+	assert(!_parent || _parent == parent);
+	assert(parent != this);
+#ifdef DEBUG_MERGE
+	fprintf(stderr, "Merge: force %s into %s (%d colors)\n", name.c_str(), parent->name.c_str(), _size);
+#endif
+
+	_parent = parent;
+	parent->_revision++;
+	_revision = parent->_revision;
+
+	for (unsigned int i = 0; i < _size; ++i) {
+		// FIXME: PALENTRY_LOCKED doesn't work well with forceInto...
+		if (_colors[i].refcount != PALENTRY_FREE) {
+			_parent->_colors[i] = _colors[i];
+			_parent->_colors[i].parent_index = -1;
+			_colors[i].parent_index = i;
+			if (_parent->_colors[i].refcount != PALENTRY_LOCKED)
+				_parent->_colors[i].refcount = 1;
+		} else {
+			_parent->_colors[i].refcount = 0;
+		}
+	}
+	_parent->_dirty = true;
 }
 
 Palette *Palette::copy() {
@@ -264,7 +297,8 @@ Palette *Palette::copy() {
 
 	for (uint i = 0; i < _size; ++i) {
 		p->_colors[i] = _colors[i];
-		p->_colors[i].refcount = 0;
+		if (p->_colors[i].refcount >= 0)
+			p->_colors[i].refcount = 0;
 	}
 	return p;
 }
