@@ -121,7 +121,7 @@ protected:
 
 	bool _buttonListChanged;
 	Button *_backUpButtonList;
-	Button *_unknownButtonList;
+	Button *_specialProcessButton;
 	uint16 _flagsModifier;
 
 protected:

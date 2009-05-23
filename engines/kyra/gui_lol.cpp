@@ -1803,7 +1803,7 @@ int LoLEngine::clickedStatusIcon(Button *button) {
 GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollDown);
-	_unknownButtonList = _backUpButtonList = 0;
+	_specialProcessButton = _backUpButtonList = 0;
 	_flagsModifier = 0;
 	_buttonListChanged = false;
 }
@@ -1900,7 +1900,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 		return inputFlag & 0x7FFF;
 
 	if (_backUpButtonList != buttonList || _buttonListChanged) {
-		_unknownButtonList = 0;
+		_specialProcessButton = 0;
 		//flagsModifier |= 0x2200;
 		_backUpButtonList = buttonList;
 		_buttonListChanged = false;
@@ -1938,10 +1938,10 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 	}
 
 	buttonList = _backUpButtonList;
-	if (_unknownButtonList) {
-		buttonList = _unknownButtonList;
-		if (_unknownButtonList->flags & 8)
-			_unknownButtonList = 0;
+	if (_specialProcessButton) {
+		buttonList = _specialProcessButton;
+		if (_specialProcessButton->flags & 8)
+			_specialProcessButton = 0;
 	}
 
 	int returnValue = 0;
@@ -1976,7 +1976,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 				flags = buttonList->flags & 0x0F00;
 				buttonList->flags2 |= 0x80;
 				inputFlag = 0;
-				_unknownButtonList = buttonList;
+				_specialProcessButton = buttonList;
 			} else if (buttonList->keyCode2 == inFlags) {
 				flags = buttonList->flags & 0xF000;
 				if (!flags)
@@ -1984,7 +1984,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 				progress = true;
 				buttonList->flags2 |= 0x80;
 				inputFlag = 0;
-				_unknownButtonList = buttonList;
+				_specialProcessButton = buttonList;
 			}
 		}
 
@@ -1998,10 +1998,10 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 		if (!progress)
 			buttonList->flags2 &= ~6;
 
-		if ((flags & 0x3300) && (buttonList->flags & 4) && progress && (buttonList == _unknownButtonList || !_unknownButtonList)) {
+		if ((flags & 0x3300) && (buttonList->flags & 4) && progress && (buttonList == _specialProcessButton || !_specialProcessButton)) {
 			buttonList->flags |= 6;
-			if (!_unknownButtonList)
-				_unknownButtonList = buttonList;
+			if (!_specialProcessButton)
+				_specialProcessButton = buttonList;
 		} else if ((flags & 0x8800) && !(buttonList->flags & 4) && progress) {
 			buttonList->flags2 |= 6;
 		} else {
@@ -2009,19 +2009,19 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 		}
 
 		bool progressSwitch = false;
-		if (!_unknownButtonList) {
+		if (!_specialProcessButton) {
 			progressSwitch = progress;
 		} else  {
-			if (_unknownButtonList->flags & 0x40)
-				progressSwitch = (_unknownButtonList == buttonList);
+			if (_specialProcessButton->flags & 0x40)
+				progressSwitch = (_specialProcessButton == buttonList);
 			else
 				progressSwitch = progress;
 		}
 
 		if (progressSwitch) {
-			if ((flags & 0x1100) && progress && !_unknownButtonList) {
+			if ((flags & 0x1100) && progress && !_specialProcessButton) {
 				inputFlag = 0;
-				_unknownButtonList = buttonList;
+				_specialProcessButton = buttonList;
 			}
 
 			if ((buttonList->flags & flags) && (progress || !(buttonList->flags & 1))) {
@@ -2038,7 +2038,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 
 				switch (flagTable[combinedFlags]) {
 				case 0x400:
-					if (!(buttonList->flags & 1) || ((buttonList->flags & 1) && _unknownButtonList == buttonList)) {
+					if (!(buttonList->flags & 1) || ((buttonList->flags & 1) && _specialProcessButton == buttonList)) {
 						buttonList->flags2 ^= 1;
 						returnValue = buttonList->index | 0x8000;
 						unk1 = true;
@@ -2079,7 +2079,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 						buttonList->flags2 |= 4;
 						buttonList->flags2 |= 2;
 					}
-					_unknownButtonList = buttonList;
+					_specialProcessButton = buttonList;
 					break;
 				}
 			}
@@ -2095,13 +2095,13 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 		}
 
 		if ((flags & 0x8800) == 0x8800) {
-			_unknownButtonList = 0;
+			_specialProcessButton = 0;
 			if (!progress || (buttonList->flags & 4))
 				buttonList->flags2 &= ~6;
 		}
 
-		if (!progress && buttonList == _unknownButtonList && !(buttonList->flags & 0x40))
-			_unknownButtonList = 0;
+		if (!progress && buttonList == _specialProcessButton && !(buttonList->flags & 0x40))
+			_specialProcessButton = 0;
 
 		if ((buttonList->flags2 & 0x18) != ((buttonList->flags2 & 3) << 3))
 			processButton(buttonList);
@@ -2123,7 +2123,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 				break;
 		}
 
-		if (_unknownButtonList == buttonList && (buttonList->flags & 0x40))
+		if (_specialProcessButton == buttonList && (buttonList->flags & 0x40))
 			break;
 
 		buttonList = buttonList->nextButton;

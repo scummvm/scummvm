@@ -53,7 +53,7 @@ private:
 
 	bool _pressFlag;
 
-	Button *_unknownButtonList;
+	Button *_specialProcessButton;
 	Button *_backUpButtonList;
 	bool _buttonListChanged;
 	uint16 _flagsModifier;
