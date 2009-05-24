@@ -20,13 +20,13 @@ MODULES := tools $(MODULES)
 # After the game specific modules follow the shared modules
 MODULES += \
 	backends \
-	engine \
-	engine/imuse \
-	engine/lua \
-	engine/smush \
+	engines/grim \
+	engines/grim/imuse \
+	engines/grim/lua \
+	engines/grim/smush \
 	common \
 	graphics \
-	mixer
+	sound
 
 
 ######################################################################

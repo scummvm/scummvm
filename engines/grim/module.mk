@@ -1,4 +1,4 @@
-MODULE := engine
+MODULE := engines/grim
 
 MODULE_OBJS := \
 	actor.o \
