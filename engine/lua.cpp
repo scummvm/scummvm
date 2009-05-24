@@ -2202,7 +2202,7 @@ static void GetTextSpeed() {
 
 static void SetTextSpeed() {
 	lua_Object speedObj = lua_getparam(1);
-	if (!lua_isnumber(speedObj)
+	if (!lua_isnumber(speedObj))
 		return;
 
 	int speed = lua_getnumber(speedObj);
