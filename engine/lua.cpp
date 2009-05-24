@@ -2236,11 +2236,13 @@ static void MakeTextObject() {
 }
 
 static void GetTextObjectDimensions() {
-	TextObject *textObjectParam;
+	lua_Object textObj = lua_getparam(1);
 
-	textObjectParam = check_textobject(1);
-	lua_pushnumber(textObjectParam->getBitmapWidth());
-	lua_pushnumber(textObjectParam->getBitmapHeight());
+	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKID_BE('TEXT')) {
+		TextObject *textObject = static_cast<TextObject *>(lua_getuserdata(textObj));
+		lua_pushnumber(textObject->getBitmapWidth());
+		lua_pushnumber(textObject->getBitmapHeight());
+	}
 }
 
 static void ExpireText() {
@@ -2252,12 +2254,12 @@ static void ExpireText() {
 }
 
 static void GetTextCharPosition() {
-	TextObject *textObjectParam;
-	int pos;
-
-	textObjectParam = check_textobject(1);
-	pos = (int)lua_getnumber(lua_getparam(2));
-	lua_pushnumber((double)textObjectParam->getTextCharPosition(pos));
+	lua_Object textObj = lua_getparam(1);
+	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKID_BE('TEXT')) {
+		TextObject *textObject = static_cast<TextObject *>(lua_getuserdata(textObj));
+		int pos = lua_getnumber(lua_getparam(2));
+		lua_pushnumber(textObject->getTextCharPosition(pos));
+	}
 }
 
 static void BlastText() {
