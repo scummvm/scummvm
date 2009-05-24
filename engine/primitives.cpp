@@ -63,7 +63,7 @@ void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, Color color
 }
 
 void PrimitiveObject::createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, Color color) {
-	_type = RECTANGLE;
+	_type = POLYGON;
 	_p1 = p1;
 	_p2 = p2;
 	_p3 = p3;
