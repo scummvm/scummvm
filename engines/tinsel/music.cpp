@@ -179,6 +179,11 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	currentMidi = dwFileOffset;
 	currentLoop = bLoop;
 
+	// Tinsel V1 PSX uses a different music format, so i
+	// disable it here.
+	// TODO: Maybe this should be moved to a better place...
+	if (TinselV1PSX) return false;
+
 	if (volMusic != 0) {
 		SetMidiVolume(volMusic);
 	}
@@ -327,7 +332,8 @@ void OpenMidiFiles(void) {
 	Common::File midiStream;
 
 	// Demo version has no midi file
-	if ((_vm->getFeatures() & GF_DEMO) || (TinselVersion == TINSEL_V2))
+	// Also, Discworld PSX uses still unsupported psx SEQ format for music...
+	if ((_vm->getFeatures() & GF_DEMO) || (TinselVersion == TINSEL_V2) || TinselV1PSX)
 		return;
 
 	if (midiBuffer.pDat)
