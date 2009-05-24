@@ -31,10 +31,11 @@ namespace Sci {
 class MidiDriver_Adlib : public MidiDriver_Emulated {
 public:
 	enum {
-		kVoices = 9
+		kVoices = 9,
+		kRhythmKeys = 62
 	};
 
-	MidiDriver_Adlib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15) { }
+	MidiDriver_Adlib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15), _rhythmKeyMap(0) { }
 	~MidiDriver_Adlib() { }
 
 	// MidiDriver
@@ -53,6 +54,7 @@ public:
 
 	void setVolume(byte volume);
 	void playSwitch(bool play);
+	void loadResource(Resource *res);
 
 private:
 	enum ChannelID {
@@ -102,7 +104,7 @@ private:
 	struct AdlibVoice {
 		int8 channel;			// MIDI channel that this voice is assigned to or -1
 		int8 note;				// Currently playing MIDI note or -1
-		int8 patch;				// Currently playing patch or -1
+		int patch;				// Currently playing patch or -1
 		uint8 velocity;			// Note velocity
 		bool isSustained;		// Flag indicating a note that is being sustained by the hold pedal
 		uint16 age;				// Age of the current note
@@ -117,10 +119,10 @@ private:
 	int _masterVolume;
 	Channel _channels[MIDI_CHANNELS];
 	AdlibVoice _voices[kVoices];
+	byte *_rhythmKeyMap;
 	Common::Array<AdlibPatch> _patches;
 
-	void sysEx(const byte *msg, uint16 length);
-	AdlibPatch *loadPatch(byte *data);
+	void loadInstrument(const byte *ins);
 	void voiceOn(int voice, int note, int velocity);
 	void voiceOff(int voice);
 	void setPatch(int voice, int patch);

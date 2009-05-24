@@ -111,6 +111,9 @@ void MidiDriver_Adlib::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 
 	delete _opl;
+
+	if (_rhythmKeyMap)
+		delete[] _rhythmKeyMap;
 }
 
 void MidiDriver_Adlib::setVolume(byte volume) {
@@ -123,10 +126,6 @@ void MidiDriver_Adlib::send(uint32 b) {
 	byte channel = b & 0xf;
 	byte op1 = (b >> 8) & 0xff;
 	byte op2 = (b >> 16) & 0xff;
-
-	// FIXME: Remove this hack after adding support for the rhythm channel
-	if (channel == 9)
-		return;
 
 	switch (command) {
 	case 0x80:
@@ -201,14 +200,12 @@ void MidiDriver_Adlib::generateSamples(int16 *data, int len) {
 	}
 }
 
-void MidiDriver_Adlib::sysEx(const byte *msg, uint16 length) {
+void MidiDriver_Adlib::loadInstrument(const byte *ins) {
 	AdlibPatch patch;
-
-	assert(length == 28);
 
 	// Set data for the operators
 	for (int i = 0; i < 2; i++) {
-		const byte *op = msg + i * 13;
+		const byte *op = ins + i * 13;
 		patch.op[i].kbScaleLevel = op[0] & 0x3;
 		patch.op[i].frequencyMult = op[1] & 0xf;
 		patch.op[i].attackRate = op[3] & 0xf;
@@ -221,12 +218,12 @@ void MidiDriver_Adlib::sysEx(const byte *msg, uint16 length) {
 		patch.op[i].vibrato = op[10];
 		patch.op[i].kbScaleRate = op[11];
 	}
-	patch.op[0].waveForm = msg[26] & 0x3;
-	patch.op[1].waveForm = msg[27] & 0x3;
+	patch.op[0].waveForm = ins[26] & 0x3;
+	patch.op[1].waveForm = ins[27] & 0x3;
 
 	// Set data for the modulator
-	patch.mod.feedback = msg[2] & 0x7;
-	patch.mod.algorithm = !msg[12]; // Flag is inverted
+	patch.mod.feedback = ins[2] & 0x7;
+	patch.mod.algorithm = !ins[12]; // Flag is inverted
 
 	_patches.push_back(patch);
 }
@@ -442,9 +439,15 @@ void MidiDriver_Adlib::noteOff(int channel, int note) {
 
 void MidiDriver_Adlib::voiceOn(int voice, int note, int velocity) {
 	int channel = _voices[voice].channel;
-	int patch = _channels[channel].patch;
+	int patch;
 
 	_voices[voice].age = 0;
+
+	if (channel == 9) {
+		patch = CLIP(note, 27, 88) + 101;
+	} else {
+		patch = _channels[channel].patch;
+	}
 
 	// Set patch if different from current patch
 	if ((patch != _voices[voice].patch) && _playSwitch) {
@@ -464,9 +467,14 @@ void MidiDriver_Adlib::voiceOff(int voice) {
 }
 
 void MidiDriver_Adlib::setNote(int voice, int note, bool key) {
+	int channel = _voices[voice].channel;
 	int n, fre, oct;
 	float delta;
-	int bend = _channels[_voices[voice].channel].pitchWheel;
+	int bend = _channels[channel].pitchWheel;
+
+	if ((channel == 9) && _rhythmKeyMap) {
+		note = _rhythmKeyMap[CLIP(note, 27, 88) - 27];
+	}
 
 	_voices[voice].note = note;
 
@@ -557,6 +565,11 @@ void MidiDriver_Adlib::setVelocityReg(int regOffset, int velocity, int kbScaleLe
 }
 
 void MidiDriver_Adlib::setPatch(int voice, int patch) {
+	if ((patch < 0) || ((uint)patch >= _patches.size())) {
+		warning("ADLIB: Invalid patch %i requested", patch);
+		return;
+	}
+
 	AdlibModulator &mod = _patches[patch].mod;
 
 	// Set the common settings for both operators
@@ -596,6 +609,21 @@ void MidiDriver_Adlib::playSwitch(bool play) {
 	renewNotes(-1, play);
 }
 
+void MidiDriver_Adlib::loadResource(Resource *res) {
+	for (int i = 0; i < 48; i++)
+		loadInstrument(res->data + (28 * i));
+
+	if (res->size == 2690) {
+		for (int i = 48; i < 96; i++)
+			loadInstrument(res->data + 2 + (28 * i));
+	} else if (res->size == 5382) {
+		for (int i = 48; i < 190; i++)
+			loadInstrument(res->data + (28 * i));
+		_rhythmKeyMap = new byte[kRhythmKeys];
+		memcpy(_rhythmKeyMap, res->data + 5320, kRhythmKeys);
+	}
+}
+
 int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 	assert(resmgr != NULL);
 
@@ -612,16 +640,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 		return -1;
 	}
 
-	for (int i = 0; i < 48; i++)
-		_driver->sysEx(res->data + (28 * i), 28);
-
-	if (res->size == 2690) {
-		for (int i = 48; i < 96; i++)
-			_driver->sysEx(res->data + 2 + (28 * i), 28);
-	} else if (res->size == 5382) {
-		for (int i = 48; i < 190; i++)
-			_driver->sysEx(res->data + (28 * i), 28);
-	}
+	static_cast<MidiDriver_Adlib *>(_driver)->loadResource(res);
 
 	return static_cast<MidiDriver_Adlib *>(_driver)->open(resmgr->_sciVersion == SCI_VERSION_0);
 }
