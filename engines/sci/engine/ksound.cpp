@@ -1029,6 +1029,7 @@ bool findAudEntry(uint16 audioNumber, byte& volume, uint32& offset, uint32& size
 // Used for speech playback in CD games
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Audio::Mixer *mixer = g_system->getMixer();
+	int sampleLen = 0;
 
 	switch (UKPV(0)) {
 	case kSci1AudioWPlay:
@@ -1041,6 +1042,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (audioRes) {
 			audioStream = Audio::makeLinearInputStream(audioRes->data, audioRes->size, _audioRate, Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+			sampleLen = audioRes->size * 60 / _audioRate; 
 		} else {
 			// No patch file found, read it from the audio volume
 			byte volume;
@@ -1070,13 +1072,16 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 								Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, 0, 0);
 					}
 				}
+
+				sampleLen = size * 60 / _audioRate;
 			}
 		}
 
 		if (audioStream)
 			mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
 		}
-		break;
+
+		return make_reg(0, sampleLen);		// return sample length in ticks
 	case kSci1AudioStop:
 		mixer->stopHandle(_audioHandle);
 		break;
@@ -1088,7 +1093,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	case kSci1AudioPosition:
 		if (mixer->isSoundHandleActive(_audioHandle)) {
-			return make_reg(0, mixer->getSoundElapsedTime(_audioHandle) * 6 / 100); // return elapsed time in 1/60th
+			return make_reg(0, mixer->getSoundElapsedTime(_audioHandle) * 6 / 100); // return elapsed time in ticks
 		} else {	
 			return make_reg(0, -1); // Sound finished
 		}
