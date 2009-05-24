@@ -1,19 +1,19 @@
 #include "common/endian.h"
 #include "common/debug.h"
 
-#include "engine/grim.h"
-#include "engine/savegame.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/savegame.h"
 
-#include "engine/lua/ltask.h"
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/ldo.h"
-#include "engine/lua/ltm.h"
-#include "engine/lua/ltable.h"
-#include "engine/lua/lvm.h"
-#include "engine/lua/lopcodes.h"
-#include "engine/lua/lstring.h"
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/ltask.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/ldo.h"
+#include "engines/grim/lua/ltm.h"
+#include "engines/grim/lua/ltable.h"
+#include "engines/grim/lua/lvm.h"
+#include "engines/grim/lua/lopcodes.h"
+#include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/lua.h"
 
 RestoreCallback restoreCallbackPtr = NULL;
 

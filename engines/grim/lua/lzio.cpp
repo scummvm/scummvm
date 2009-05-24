@@ -5,7 +5,7 @@
 */
 
 
-#include "engine/lua/lzio.h"
+#include "engines/grim/lua/lzio.h"
 
 #include "common/file.h"
 

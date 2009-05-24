@@ -26,11 +26,11 @@
 #include "common/endian.h"
 #include "common/system.h"
 
-#include "engine/actor.h"
-#include "engine/colormap.h"
-#include "engine/font.h"
-#include "engine/material.h"
-#include "engine/gfx_opengl.h"
+#include "engines/grim/actor.h"
+#include "engines/grim/colormap.h"
+#include "engines/grim/font.h"
+#include "engines/grim/material.h"
+#include "engines/grim/gfx_opengl.h"
 
 #ifdef USE_OPENGL
 

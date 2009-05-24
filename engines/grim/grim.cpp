@@ -25,14 +25,14 @@
 
 #include "common/events.h"
 
-#include "engine/grim.h"
-#include "engine/lua.h"
-#include "engine/actor.h"
-#include "engine/smush/smush.h"
-#include "engine/savegame.h"
-#include "engine/registry.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/lua.h"
+#include "engines/grim/actor.h"
+#include "engines/grim/smush/smush.h"
+#include "engines/grim/savegame.h"
+#include "engines/grim/registry.h"
 
-#include "engine/imuse/imuse.h"
+#include "engines/grim/imuse/imuse.h"
 
 // Entries in the system.controls table
 

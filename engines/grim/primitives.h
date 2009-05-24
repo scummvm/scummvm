@@ -28,7 +28,7 @@
 
 #include "common/rect.h"
 
-#include "engine/color.h"
+#include "engines/grim/color.h"
 
 class PrimitiveObject {
 public:

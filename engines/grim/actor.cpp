@@ -23,13 +23,13 @@
  *
  */
 
-#include "engine/actor.h"
-#include "engine/grim.h"
-#include "engine/colormap.h"
-#include "engine/costume.h"
-#include "engine/lipsync.h"
-#include "engine/smush/smush.h"
-#include "engine/imuse/imuse.h"
+#include "engines/grim/actor.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/colormap.h"
+#include "engines/grim/costume.h"
+#include "engines/grim/lipsync.h"
+#include "engines/grim/smush/smush.h"
+#include "engines/grim/imuse/imuse.h"
 
 int g_winX1, g_winY1, g_winX2, g_winY2;
 

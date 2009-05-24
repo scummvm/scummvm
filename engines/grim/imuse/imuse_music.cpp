@@ -23,8 +23,8 @@
  *
  */
 
-#include "engine/imuse/imuse.h"
-#include "engine/imuse/imuse_tables.h"
+#include "engines/grim/imuse/imuse.h"
+#include "engines/grim/imuse/imuse_tables.h"
 
 void Imuse::setMusicState(int stateId) {
 	int l, num = -1;

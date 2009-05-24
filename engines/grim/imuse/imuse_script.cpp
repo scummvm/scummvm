@@ -23,7 +23,7 @@
  *
  */
 
-#include "engine/imuse/imuse.h"
+#include "engines/grim/imuse/imuse.h"
 
 void Imuse::flushTrack(Track *track) {
 	track->toBeRemoved = true;

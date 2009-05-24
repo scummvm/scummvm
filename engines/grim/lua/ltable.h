@@ -7,7 +7,7 @@
 #ifndef ltable_h
 #define ltable_h
 
-#include "engine/lua/lobject.h"
+#include "engines/grim/lua/lobject.h"
 
 #define node(t, i)	(&(t)->node[i])
 #define ref(n)		(&(n)->ref)

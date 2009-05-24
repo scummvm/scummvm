@@ -18,8 +18,8 @@
  *
  */
 
-#include "engine/internal_version.h"
-#include "engine/version.h"
+#include "engines/grim/internal_version.h"
+#include "engines/grim/version.h"
 
 const char *gResidualVersion = RESIDUAL_VERSION;
 const char *gResidualBuildDate = __DATE__ " " __TIME__;

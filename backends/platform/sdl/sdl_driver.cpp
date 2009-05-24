@@ -37,7 +37,7 @@
 	#include "backends/saves/default/default-saves.h"
 #endif
 #include "backends/timer/default/default-timer.h"
-#include "mixer/mixer_intern.h"
+#include "sound/mixer_intern.h"
 
 #include "backends/timer/default/default-timer.h"
 #include "backends/saves/default/default-saves.h"

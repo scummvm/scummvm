@@ -23,12 +23,12 @@
  *
  */
 
-#include "engine/scene.h"
-#include "engine/textsplit.h"
-#include "engine/colormap.h"
-#include "engine/grim.h"
+#include "engines/grim/scene.h"
+#include "engines/grim/textsplit.h"
+#include "engines/grim/colormap.h"
+#include "engines/grim/grim.h"
 
-#include "engine/imuse/imuse.h"
+#include "engines/grim/imuse/imuse.h"
 
 Scene::Scene(const char *name, const char *buf, int len) :
 		_locked(false), _name(name), _enableLights(false) {

@@ -26,9 +26,9 @@
 #ifndef GFX_BASE_H
 #define GFX_BASE_H
 
-#include "engine/model.h"
-#include "engine/scene.h"
-#include "engine/primitives.h"
+#include "engines/grim/model.h"
+#include "engines/grim/scene.h"
+#include "engines/grim/primitives.h"
 
 struct Shadow;
 

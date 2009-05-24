@@ -25,8 +25,8 @@
 
 #include "common/endian.h"
 
-#include "engine/material.h"
-#include "engine/gfx_base.h"
+#include "engines/grim/material.h"
+#include "engines/grim/gfx_base.h"
 
 Material::Material(const char *filename, const char *data, int len, const CMap &cmap) :
 		Resource(filename), _cmap((CMap *) &cmap) {

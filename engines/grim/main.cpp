@@ -26,20 +26,20 @@
 #include "common/fs.h"
 #include "common/events.h"
 
-#include "engine/lua.h"
-#include "engine/registry.h"
-#include "engine/localize.h"
-#include "engine/grim.h"
-#include "engine/version.h"
-#include "engine/cmd_line.h"
-#include "engine/smush/smush.h"
-#include "engine/imuse/imuse.h"
-#include "engine/lua/lualib.h"
+#include "engines/grim/lua.h"
+#include "engines/grim/registry.h"
+#include "engines/grim/localize.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/version.h"
+#include "engines/grim/cmd_line.h"
+#include "engines/grim/smush/smush.h"
+#include "engines/grim/imuse/imuse.h"
+#include "engines/grim/lua/lualib.h"
 
 #ifdef USE_OPENGL
-#include "engine/gfx_opengl.h"
+#include "engines/grim/gfx_opengl.h"
 #endif
-#include "engine/gfx_tinygl.h"
+#include "engines/grim/gfx_tinygl.h"
 
 // Hacky global toggles for experimental/debug code
 bool SHOWFPS_GLOBAL, TINYGL_GLOBAL;

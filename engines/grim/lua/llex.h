@@ -7,8 +7,8 @@
 #ifndef llex_h
 #define llex_h
 
-#include "engine/lua/lobject.h"
-#include "engine/lua/lzio.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lzio.h"
 
 #define MAX_IFS 5
 

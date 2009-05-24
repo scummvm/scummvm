@@ -26,7 +26,7 @@
 #include "common/endian.h"
 #include "common/debug.h"
 
-#include "engine/smush/blocky16.h"
+#include "engines/grim/smush/blocky16.h"
 
 #if defined(SYSTEM_NEED_ALIGNMENT)
 

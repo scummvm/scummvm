@@ -23,7 +23,7 @@
  *
  */
 
-#include "engine/objectstate.h"
+#include "engines/grim/objectstate.h"
 
 ObjectState::ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible) :
 		_setupID(setupID), _pos(pos) {

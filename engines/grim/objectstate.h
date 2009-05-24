@@ -26,7 +26,7 @@
 #ifndef OSTATE_H
 #define OSTATE_H
 
-#include "engine/bitmap.h"
+#include "engines/grim/bitmap.h"
 
 class ObjectState {
 public:

@@ -25,7 +25,7 @@
 
 #include "common/sys.h"
 
-#include "engine/imuse/imuse_tables.h"
+#include "engines/grim/imuse/imuse_tables.h"
 
 ImuseTable grimStateMusicTable[] = {
 	{0, 1000,   0, 0, 60, 127,   0, ""},

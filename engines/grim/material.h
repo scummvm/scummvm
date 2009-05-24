@@ -26,7 +26,7 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include "engine/resource.h"
+#include "engines/grim/resource.h"
 
 class Material : public Resource {
 public:

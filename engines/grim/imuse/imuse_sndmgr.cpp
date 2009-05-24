@@ -25,10 +25,10 @@
 
 #include "common/endian.h"
 
-#include "engine/resource.h"
+#include "engines/grim/resource.h"
 
-#include "engine/imuse/imuse_sndmgr.h"
-#include "engine/imuse/imuse_mcmp_mgr.h"
+#include "engines/grim/imuse/imuse_sndmgr.h"
+#include "engines/grim/imuse/imuse_mcmp_mgr.h"
 
 ImuseSndMgr::ImuseSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {

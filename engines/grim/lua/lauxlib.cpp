@@ -10,10 +10,10 @@
 ** function. With care, these functions can be used by other libraries.
 */
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lua.h"
-#include "engine/lua/luadebug.h"
-#include "engine/lua/lmem.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lua.h"
+#include "engines/grim/lua/luadebug.h"
+#include "engines/grim/lua/lmem.h"
 
 void luaL_argerror(int32 numarg, const char *extramsg) {
 	const char *funcname;

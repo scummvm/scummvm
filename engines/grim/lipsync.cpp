@@ -25,7 +25,7 @@
 
 #include "common/endian.h"
 
-#include "engine/lipsync.h"
+#include "engines/grim/lipsync.h"
 
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE

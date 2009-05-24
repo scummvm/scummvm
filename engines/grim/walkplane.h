@@ -28,7 +28,7 @@
 
 #include "common/str.h"
 
-#include "engine/vector3d.h"
+#include "engines/grim/vector3d.h"
 
 class TextSplitter;
 

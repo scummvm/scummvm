@@ -6,22 +6,22 @@
 
 #include "common/endian.h"
 
-#include "engine/actor.h"
+#include "engines/grim/actor.h"
 
-#include "engine/lua/lbuiltin.h"
-#include "engine/lua/ldo.h"
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lfunc.h"
-#include "engine/lua/lgc.h"
-#include "engine/lua/llex.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lstate.h"
-#include "engine/lua/lstring.h"
-#include "engine/lua/ltable.h"
-#include "engine/lua/ltask.h"
-#include "engine/lua/ltm.h"
-#include "engine/lua/lualib.h"
-#include "engine/lua/luadebug.h"
+#include "engines/grim/lua/lbuiltin.h"
+#include "engines/grim/lua/ldo.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lfunc.h"
+#include "engines/grim/lua/lgc.h"
+#include "engines/grim/lua/llex.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/ltable.h"
+#include "engines/grim/lua/ltask.h"
+#include "engines/grim/lua/ltm.h"
+#include "engines/grim/lua/lualib.h"
+#include "engines/grim/lua/luadebug.h"
 
 LState *lua_state = NULL;
 

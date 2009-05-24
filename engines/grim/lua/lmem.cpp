@@ -5,9 +5,9 @@
 */
 
 
-#include "engine/lua/lmem.h"
-#include "engine/lua/lstate.h"
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/lua.h"
 
 int32 luaM_growaux(void **block, int32 nelems, int32 size, const char *errormsg, int32 limit) {
 	if (nelems >= limit)

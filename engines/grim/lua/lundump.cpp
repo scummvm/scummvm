@@ -4,11 +4,11 @@
 ** See Copyright Notice in lua.h
 */
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lfunc.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lstring.h"
-#include "engine/lua/lundump.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lfunc.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/lundump.h"
 
 static float conv_float(const byte *data) {
 	const byte *udata = data;

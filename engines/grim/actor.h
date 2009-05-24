@@ -26,9 +26,9 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include "engine/color.h"
-#include "engine/resource.h"
-#include "engine/vector3d.h"
+#include "engines/grim/color.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/vector3d.h"
 
 class TextObject;
 class Sector;

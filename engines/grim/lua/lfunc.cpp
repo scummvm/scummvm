@@ -6,9 +6,9 @@
 
 
 
-#include "engine/lua/lfunc.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lstate.h"
+#include "engines/grim/lua/lfunc.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lstate.h"
 
 #define gcsizeproto(p)	5  /* approximate "weight" for a prototype */
 #define gcsizeclosure(c) 1  /* approximate "weight" for a closure */

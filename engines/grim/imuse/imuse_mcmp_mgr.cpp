@@ -25,9 +25,9 @@
 
 #include "common/file.h"
 
-#include "engine/grim.h"
+#include "engines/grim/grim.h"
 
-#include "engine/imuse/imuse_mcmp_mgr.h"
+#include "engines/grim/imuse/imuse_mcmp_mgr.h"
 
 uint16 imuseDestTable[5786];
 

@@ -1,8 +1,8 @@
 #ifndef ltask_h
 #define ltask_h
 
-#include "engine/lua/lua.h"
-#include "engine/lua/lstate.h"
+#include "engines/grim/lua/lua.h"
+#include "engines/grim/lua/lstate.h"
 
 extern int32 task_tag;
 

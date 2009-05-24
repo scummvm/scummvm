@@ -26,8 +26,8 @@
 #ifndef TEXTOBJECT_H
 #define TEXTOBJECT_H
 
-#include "engine/font.h"
-#include "engine/gfx_base.h"
+#include "engines/grim/font.h"
+#include "engines/grim/gfx_base.h"
 
 struct TextObjectDefaults {
 	Color fgColor;

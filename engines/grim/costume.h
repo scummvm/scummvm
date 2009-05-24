@@ -26,7 +26,7 @@
 #ifndef COSTUME_H
 #define COSTUME_H
 
-#include "engine/model.h"
+#include "engines/grim/model.h"
 
 #define DEFAULT_COLORMAP "item.cmp"
 

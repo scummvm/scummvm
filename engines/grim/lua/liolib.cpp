@@ -9,15 +9,15 @@
 #include "common/fs.h"
 #include "common/system.h"
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lua.h"
-#include "engine/lua/luadebug.h"
-#include "engine/lua/lualib.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lua.h"
+#include "engines/grim/lua/luadebug.h"
+#include "engines/grim/lua/lualib.h"
 
-#include "engine/resource.h"
-#include "engine/cmd_line.h"
-#include "engine/grim.h"
-#include "engine/savegame.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/cmd_line.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/savegame.h"
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
 #include <sys/stat.h>

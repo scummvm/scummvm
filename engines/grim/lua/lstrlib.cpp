@@ -5,9 +5,9 @@
 */
 
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lua.h"
-#include "engine/lua/lualib.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lua.h"
+#include "engines/grim/lua/lualib.h"
 
 static void addnchar(const char *s, int32 n) {
 	char *b = luaL_openspace(n);

@@ -26,7 +26,7 @@
 #ifndef LUA_HH
 #define LUA_HH
 
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/lua.h"
 
 class Vector3d;
 

@@ -26,8 +26,8 @@
 #include "common/endian.h"
 #include "common/file.h"
 
-#include "engine/lab.h"
-#include "engine/lua/lua.h"
+#include "engines/grim/lab.h"
+#include "engines/grim/lua/lua.h"
 
 static int sortCallback(const void *entry1, const void *entry2) {
 	return strcasecmp(((Lab::LabEntry *)entry1)->filename, ((Lab::LabEntry *)entry2)->filename);

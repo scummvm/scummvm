@@ -26,7 +26,7 @@
 #ifndef ENGINE_MATRIX4_H
 #define ENGINE_MATRIX4_H
 
-#include "engine/matrix3.h"
+#include "engines/grim/matrix3.h"
 
 // matrix 4 is a rotation matrix + position
 class Matrix4 {

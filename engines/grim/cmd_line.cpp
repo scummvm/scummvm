@@ -25,8 +25,8 @@
 
 #include "common/fs.h"
 
-#include "engine/cmd_line.h"
-#include "engine/version.h"
+#include "engines/grim/cmd_line.h"
+#include "engines/grim/version.h"
 
 #define DETECTOR_TESTING_HACK
 

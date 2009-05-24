@@ -25,10 +25,10 @@
 
 #include "common/timer.h"
 
-#include "engine/grim.h"
-#include "engine/savegame.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/savegame.h"
 
-#include "engine/imuse/imuse.h"
+#include "engines/grim/imuse/imuse.h"
 
 Imuse *g_imuse = NULL;
 

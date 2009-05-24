@@ -28,7 +28,7 @@
 
 #include "common/endian.h"
 
-#include "engine/resource.h"
+#include "engines/grim/resource.h"
 
 class CMap : public Resource {
 public:

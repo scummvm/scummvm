@@ -26,7 +26,7 @@
 #ifndef GFX_TINYGL_H
 #define GFX_TINYGL_H
 
-#include "engine/gfx_base.h"
+#include "engines/grim/gfx_base.h"
 
 #include "graphics/tinygl/zgl.h"
 

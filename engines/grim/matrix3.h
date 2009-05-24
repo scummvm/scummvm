@@ -26,7 +26,7 @@
 #ifndef ENGINE_MATRIX3_H
 #define ENGINE_MATRIX3_H
 
-#include "engine/vector3d.h"
+#include "engines/grim/vector3d.h"
 
 // matrix 3 is a rotation matrix
 class Matrix3{

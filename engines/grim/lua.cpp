@@ -25,18 +25,18 @@
 
 #include "common/endian.h"
 
-#include "engine/lua.h"
-#include "engine/actor.h"
-#include "engine/registry.h"
-#include "engine/localize.h"
-#include "engine/colormap.h"
-#include "engine/costume.h"
-#include "engine/grim.h"
-#include "engine/smush/smush.h"
-#include "engine/savegame.h"
-#include "engine/lua/luadebug.h"
-#include "engine/lua/lauxlib.h"
-#include "engine/imuse/imuse.h"
+#include "engines/grim/lua.h"
+#include "engines/grim/actor.h"
+#include "engines/grim/registry.h"
+#include "engines/grim/localize.h"
+#include "engines/grim/colormap.h"
+#include "engines/grim/costume.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/smush/smush.h"
+#include "engines/grim/savegame.h"
+#include "engines/grim/lua/luadebug.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/imuse/imuse.h"
 
 extern Imuse *g_imuse;
 

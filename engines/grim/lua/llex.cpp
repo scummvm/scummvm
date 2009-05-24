@@ -5,16 +5,16 @@
 */
 
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/llex.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lobject.h"
-#include "engine/lua/lparser.h"
-#include "engine/lua/lstate.h"
-#include "engine/lua/lstring.h"
-#include "engine/lua/lstx.h"
-#include "engine/lua/luadebug.h"
-#include "engine/lua/lzio.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/llex.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lparser.h"
+#include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/lstx.h"
+#include "engines/grim/lua/luadebug.h"
+#include "engines/grim/lua/lzio.h"
 
 
 int32 lua_debug = 0;

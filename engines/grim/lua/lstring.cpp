@@ -6,11 +6,11 @@
 
 #include "common/util.h"
 
-#include "engine/lua/lmem.h"
-#include "engine/lua/lobject.h"
-#include "engine/lua/lstate.h"
-#include "engine/lua/lstring.h"
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/lua.h"
 
 
 #define gcsizestring(l)	(1 + (l / 64))  // "weight" for a string with length 'l'

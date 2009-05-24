@@ -26,7 +26,7 @@
 #ifndef LIPSYNC_H
 #define LIPSYNC_H
 
-#include "engine/resource.h"
+#include "engines/grim/resource.h"
 
 class LipSync : public Resource {
 public:

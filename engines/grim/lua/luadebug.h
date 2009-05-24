@@ -9,7 +9,7 @@
 #define luadebug_h
 
 
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/lua.h"
 
 typedef lua_Object lua_Function;
 

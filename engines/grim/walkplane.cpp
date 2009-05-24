@@ -25,8 +25,8 @@
 
 #include "common/debug.h"
 
-#include "engine/walkplane.h"
-#include "engine/textsplit.h"
+#include "engines/grim/walkplane.h"
+#include "engines/grim/textsplit.h"
 
 void Sector::load(TextSplitter &ts) {
 //	float height = 12345.f; // Yaz: this is in the original code...

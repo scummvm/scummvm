@@ -26,7 +26,7 @@
 #ifndef KEYFRAME_H
 #define KEYFRAME_H
 
-#include "engine/model.h"
+#include "engines/grim/model.h"
 
 class KeyframeAnim : public Resource {
 public:

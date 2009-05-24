@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#include "engine/lua/lobject.h"
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lua.h"
 
 const char *luaO_typenames[] = { // ORDER LUA_T
 	"userdata", "number", "string", "table", "function", "function", "task",

@@ -26,8 +26,8 @@
 #ifndef IMUSE_SNDMGR_H
 #define IMUSE_SNDMGR_H
 
-#include "mixer/mixer.h"
-#include "mixer/audiostream.h"
+#include "sound/mixer.h"
+#include "sound/audiostream.h"
 
 class McmpMgr;
 class Block;

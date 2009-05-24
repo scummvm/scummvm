@@ -25,8 +25,8 @@
 
 #include "common/endian.h"
 
-#include "engine/keyframe.h"
-#include "engine/textsplit.h"
+#include "engines/grim/keyframe.h"
+#include "engines/grim/textsplit.h"
 
 KeyframeAnim::KeyframeAnim(const char *filename, const char *data, int len) :
 		Resource(filename) {

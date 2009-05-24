@@ -5,19 +5,19 @@
 */
 
 
-#include "engine/lua/lapi.h"
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lbuiltin.h"
-#include "engine/lua/ldo.h"
-#include "engine/lua/lfunc.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lobject.h"
-#include "engine/lua/lstate.h"
-#include "engine/lua/lstring.h"
-#include "engine/lua/ltable.h"
-#include "engine/lua/ltask.h"
-#include "engine/lua/ltm.h"
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/lapi.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lbuiltin.h"
+#include "engines/grim/lua/ldo.h"
+#include "engines/grim/lua/lfunc.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/ltable.h"
+#include "engines/grim/lua/ltask.h"
+#include "engines/grim/lua/ltm.h"
+#include "engines/grim/lua/lua.h"
 
 
 static void pushstring(TaggedString *s) {

@@ -26,7 +26,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 
-#include "engine/savegame.h"
+#include "engines/grim/savegame.h"
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'

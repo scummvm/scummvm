@@ -8,7 +8,7 @@
 #ifndef lualib_h
 #define lualib_h
 
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/lua.h"
 
 void lua_iolibopen();
 void lua_strlibopen();

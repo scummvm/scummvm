@@ -5,9 +5,9 @@
 */
 
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lstate.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lstate.h"
 
 
 /*-------------------------------------------------------

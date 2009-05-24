@@ -25,11 +25,11 @@
 
 #include "common/endian.h"
 
-#include "engine/model.h"
-#include "engine/actor.h"
-#include "engine/material.h"
-#include "engine/textsplit.h"
-#include "engine/gfx_base.h"
+#include "engines/grim/model.h"
+#include "engines/grim/actor.h"
+#include "engines/grim/material.h"
+#include "engines/grim/textsplit.h"
+#include "engines/grim/gfx_base.h"
 
 Model::Model(const char *filename, const char *data, int len, const CMap &cmap) :
 		Resource(filename), _numMaterials(0), _numGeosets(0) {

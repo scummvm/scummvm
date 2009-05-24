@@ -54,18 +54,18 @@ by  GNU Bison version 1.25
 */
 
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/ldo.h"
-#include "engine/lua/lfunc.h"
-#include "engine/lua/llex.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lopcodes.h"
-#include "engine/lua/lparser.h"
-#include "engine/lua/lstate.h"
-#include "engine/lua/lstring.h"
-#include "engine/lua/lua.h"
-#include "engine/lua/luadebug.h"
-#include "engine/lua/lzio.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/ldo.h"
+#include "engines/grim/lua/lfunc.h"
+#include "engines/grim/lua/llex.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lopcodes.h"
+#include "engines/grim/lua/lparser.h"
+#include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/lua.h"
+#include "engines/grim/lua/luadebug.h"
+#include "engines/grim/lua/lzio.h"
 
 
 int luaY_parse (void);

@@ -25,16 +25,16 @@
 
 #include "common/endian.h"
 
-#include "engine/colormap.h"
-#include "engine/costume.h"
-#include "engine/actor.h"
-#include "engine/textsplit.h"
-#include "engine/grim.h"
-#include "engine/keyframe.h"
-#include "engine/material.h"
-#include "engine/lua.h"
+#include "engines/grim/colormap.h"
+#include "engines/grim/costume.h"
+#include "engines/grim/actor.h"
+#include "engines/grim/textsplit.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/keyframe.h"
+#include "engines/grim/material.h"
+#include "engines/grim/lua.h"
 
-#include "engine/imuse/imuse.h"
+#include "engines/grim/imuse/imuse.h"
 
 // A costume in the Residual/GrimE engine consists of a set of
 // components, and a set of chores.  Each component represents an

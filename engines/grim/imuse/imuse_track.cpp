@@ -23,7 +23,7 @@
  *
  */
 
-#include "engine/imuse/imuse.h"
+#include "engines/grim/imuse/imuse.h"
 
 int Imuse::allocSlot(int priority) {
 	int l, lowest_priority = 127;

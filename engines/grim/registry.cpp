@@ -23,8 +23,8 @@
  *
  */
 
-#include "engine/registry.h"
-#include "engine/cmd_line.h"
+#include "engines/grim/registry.h"
+#include "engines/grim/cmd_line.h"
 
 Registry *g_registry = NULL;
 

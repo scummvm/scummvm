@@ -26,7 +26,7 @@
 #ifndef GFX_OPENGL_H
 #define GFX_OPENGL_H
 
-#include "engine/gfx_base.h"
+#include "engines/grim/gfx_base.h"
 
 #ifdef USE_OPENGL
 

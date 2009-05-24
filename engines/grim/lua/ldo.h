@@ -8,8 +8,8 @@
 #define ldo_h
 
 
-#include "engine/lua/lobject.h"
-#include "engine/lua/lstate.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lstate.h"
 
 
 #define MULT_RET        255

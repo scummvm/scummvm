@@ -26,7 +26,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "engine/textobject.h"
+#include "engines/grim/textobject.h"
 
 class Actor;
 class SaveGame;

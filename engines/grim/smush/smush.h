@@ -32,10 +32,10 @@
 #include <zlib.h>
 #endif
 
-#include "engine/smush/blocky16.h"
+#include "engines/grim/smush/blocky16.h"
 
-#include "mixer/mixer.h"
-#include "mixer/audiostream.h"
+#include "sound/mixer.h"
+#include "sound/audiostream.h"
 
 struct SavePos {
 	uint32 filePos;

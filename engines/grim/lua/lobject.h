@@ -7,10 +7,10 @@
 #ifndef lobject_h
 #define lobject_h
 
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/lua.h"
 
 #ifdef LUA_DEBUG
-#include "engine/lua/lauxlib.h"
+#include "engines/grim/lua/lauxlib.h"
 #define LUA_INTERNALERROR(s)	luaL_verror("INTERNAL ERROR - %s [%s:%d]", (s), __FILE__, __LINE__)
 #define LUA_ASSERT(c, s)			{ if (!(c)) LUA_INTERNALERROR(s); }
 #else

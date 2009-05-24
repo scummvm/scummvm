@@ -8,7 +8,7 @@
 #define lfunc_h
 
 
-#include "engine/lua/lobject.h"
+#include "engines/grim/lua/lobject.h"
 
 
 TProtoFunc *luaF_newproto();

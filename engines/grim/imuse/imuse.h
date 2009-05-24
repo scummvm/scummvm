@@ -26,7 +26,7 @@
 #ifndef IMUSE_H
 #define IMUSE_H
 
-#include "engine/imuse/imuse_track.h"
+#include "engines/grim/imuse/imuse_track.h"
 
 #define MAX_IMUSE_TRACKS 16
 #define MAX_IMUSE_FADETRACKS 16

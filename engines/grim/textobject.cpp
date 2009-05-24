@@ -23,7 +23,7 @@
  *
  */
 
-#include "engine/textobject.h"
+#include "engines/grim/textobject.h"
 
 Common::String parseMsgText(const char *msg, char *msgId);
 

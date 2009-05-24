@@ -5,11 +5,11 @@
 */
 
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lobject.h"
-#include "engine/lua/lstate.h"
-#include "engine/lua/ltm.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/ltm.h"
 
 
 const char *luaT_eventname[] = {  // ORDER IM

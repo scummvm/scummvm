@@ -25,7 +25,7 @@
 
 #include "common/debug.h"
 
-#include "engine/textsplit.h"
+#include "engines/grim/textsplit.h"
 
 // FIXME: Replace this with a proper parser (this is just too dodgy :)
 int residual_vsscanf(const char *str, int field_count, const char *format, va_list ap) {

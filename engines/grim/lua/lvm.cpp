@@ -5,18 +5,18 @@
 */
 
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/ldo.h"
-#include "engine/lua/lfunc.h"
-#include "engine/lua/lgc.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lopcodes.h"
-#include "engine/lua/lstate.h"
-#include "engine/lua/lstring.h"
-#include "engine/lua/ltable.h"
-#include "engine/lua/ltm.h"
-#include "engine/lua/luadebug.h"
-#include "engine/lua/lvm.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/ldo.h"
+#include "engines/grim/lua/lfunc.h"
+#include "engines/grim/lua/lgc.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lopcodes.h"
+#include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/ltable.h"
+#include "engines/grim/lua/ltm.h"
+#include "engines/grim/lua/luadebug.h"
+#include "engines/grim/lua/lvm.h"
 
 #define skip_word(pc)	(pc += 2)
 #define get_word(pc)	((*((pc) + 1) << 8)|(*(pc)))

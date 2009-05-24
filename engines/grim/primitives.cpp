@@ -23,8 +23,8 @@
  *
  */
 
-#include "engine/gfx_base.h"
-#include "engine/primitives.h"
+#include "engines/grim/gfx_base.h"
+#include "engines/grim/primitives.h"
 
 PrimitiveObject::PrimitiveObject() {
 	memset(&_color, 0, sizeof(Color));

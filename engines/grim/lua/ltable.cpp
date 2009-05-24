@@ -4,12 +4,12 @@
 ** See Copyright Notice in lua.h
 */
 
-#include "engine/lua/lauxlib.h"
-#include "engine/lua/lmem.h"
-#include "engine/lua/lobject.h"
-#include "engine/lua/lstate.h"
-#include "engine/lua/ltable.h"
-#include "engine/lua/lua.h"
+#include "engines/grim/lua/lauxlib.h"
+#include "engines/grim/lua/lmem.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lstate.h"
+#include "engines/grim/lua/ltable.h"
+#include "engines/grim/lua/lua.h"
 
 #define gcsize(n)		(1 + (n / 16))
 #define nuse(t)			((t)->nuse)

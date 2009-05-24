@@ -26,7 +26,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include "engine/resource.h"
+#include "engines/grim/resource.h"
 
 class Font : public Resource {
 public:

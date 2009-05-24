@@ -26,9 +26,9 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "engine/color.h"
-#include "engine/walkplane.h"
-#include "engine/objectstate.h"
+#include "engines/grim/color.h"
+#include "engines/grim/walkplane.h"
+#include "engines/grim/objectstate.h"
 
 // The Lua code calls this a "set".
 

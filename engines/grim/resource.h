@@ -28,7 +28,7 @@
 
 #include "common/archive.h"
 
-#include "engine/lab.h"
+#include "engines/grim/lab.h"
 
 #include <map>
 

@@ -27,8 +27,8 @@
 #include "common/timer.h"
 #include "common/file.h"
 
-#include "engine/smush/smush.h"
-#include "engine/grim.h"
+#include "engines/grim/smush/smush.h"
+#include "engines/grim/grim.h"
 
 #define SMUSH_LOOPMOVIE(x)		(x & 0x000001)
 #define SMUSH_ALTSPEED(x)		(x & 0x000004)

@@ -26,8 +26,8 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "engine/resource.h"
-#include "engine/matrix4.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/matrix4.h"
 
 class TextSplitter;
 

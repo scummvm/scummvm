@@ -7,8 +7,8 @@
 #ifndef lundump_h
 #define lundump_h
 
-#include "engine/lua/lobject.h"
-#include "engine/lua/lzio.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lzio.h"
 
 #define ID_CHUNK		27              // ESC
 #define ID_FUNCTION		'#'

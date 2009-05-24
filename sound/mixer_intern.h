@@ -28,7 +28,7 @@
 
 #include "common/sys.h"
 #include "common/mutex.h"
-#include "mixer/mixer.h"
+#include "sound/mixer.h"
 
 namespace Audio {
 

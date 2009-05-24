@@ -7,7 +7,7 @@
 #ifndef lstate_h
 #define lstate_h
 
-#include "engine/lua/lobject.h"
+#include "engines/grim/lua/lobject.h"
 
 #include <setjmp.h>
 

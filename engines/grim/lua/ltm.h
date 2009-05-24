@@ -8,8 +8,8 @@
 #define ltm_h
 
 
-#include "engine/lua/lobject.h"
-#include "engine/lua/lstate.h"
+#include "engines/grim/lua/lobject.h"
+#include "engines/grim/lua/lstate.h"
 
 /*
 * WARNING: if you change the order of this enumeration,

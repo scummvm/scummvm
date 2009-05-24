@@ -25,8 +25,8 @@
 
 #include "common/endian.h"
 
-#include "engine/bitmap.h"
-#include "engine/gfx_base.h"
+#include "engines/grim/bitmap.h"
+#include "engines/grim/gfx_base.h"
 
 static void decompress_codec3(const char *compressed, char *result);
 

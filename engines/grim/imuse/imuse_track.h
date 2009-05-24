@@ -26,7 +26,7 @@
 #ifndef IMUSE_TRACK_H
 #define IMUSE_TRACK_H
 
-#include "engine/imuse/imuse_sndmgr.h"
+#include "engines/grim/imuse/imuse_sndmgr.h"
 
 enum {
 	kFlagUnsigned = 1 << 0,

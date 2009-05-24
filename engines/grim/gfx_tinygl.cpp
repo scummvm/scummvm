@@ -26,11 +26,11 @@
 #include "common/endian.h"
 #include "common/system.h"
 
-#include "engine/actor.h"
-#include "engine/colormap.h"
-#include "engine/material.h"
-#include "engine/font.h"
-#include "engine/gfx_tinygl.h"
+#include "engines/grim/actor.h"
+#include "engines/grim/colormap.h"
+#include "engines/grim/material.h"
+#include "engines/grim/font.h"
+#include "engines/grim/gfx_tinygl.h"
 
 // below funcs lookAt, transformPoint and tgluProject are from Mesa glu sources
 static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx,

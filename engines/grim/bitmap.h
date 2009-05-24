@@ -26,7 +26,7 @@
 #ifndef BITMAP_H
 #define BITMAP_H
 
-#include "engine/resource.h"
+#include "engines/grim/resource.h"
 
 class Bitmap : public Resource {
 public:

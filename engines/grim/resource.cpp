@@ -23,13 +23,13 @@
  *
  */
 
-#include "engine/resource.h"
-#include "engine/colormap.h"
-#include "engine/costume.h"
-#include "engine/keyframe.h"
-#include "engine/material.h"
-#include "engine/grim.h"
-#include "engine/lipsync.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/colormap.h"
+#include "engines/grim/costume.h"
+#include "engines/grim/keyframe.h"
+#include "engines/grim/material.h"
+#include "engines/grim/grim.h"
+#include "engines/grim/lipsync.h"
 
 ResourceLoader *g_resourceloader = NULL;
 

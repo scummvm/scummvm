@@ -25,7 +25,7 @@
 
 #include "common/endian.h"
 
-#include "engine/font.h"
+#include "engines/grim/font.h"
 
 Font::Font(const char *filename, const char *data, int /*len*/) :
 	Resource(filename) {
