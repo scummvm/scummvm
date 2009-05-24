@@ -278,7 +278,7 @@ static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 			srcP += sizeof(uint16);
 
 			// Draw a 4x4 block based on the opcode as in index into the block list
-			// In case we have a 4-bit CLUT image, blocks are 2x4, then expanded into 4x4
+			// In case we have a 4-bit CLUT image, blocks are 2x4 bytes, then expanded into 4x4
 			const uint8 *p;
 			if (fourBitClut)
 				p = (uint8 *)pObj->charBase + psxSkipBytes + (indexVal << 3);
@@ -292,8 +292,8 @@ static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 						Common::copy(p + boxBounds.left, p + boxBounds.right + 1, tempDest + (SCREEN_WIDTH * (yp - boxBounds.top)));
 					else
 						for (int xp = boxBounds.left; xp <= boxBounds.right; ++xp) {
-							if (*(p + (xp - boxBounds.left)))
-								*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = *(p + (xp - boxBounds.left));
+							if (*(p + xp))
+								*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = *(p + xp);
 						}
 				} else {
 					for (int xp = boxBounds.left; xp <= boxBounds.right; ++xp) {
