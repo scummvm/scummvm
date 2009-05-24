@@ -725,7 +725,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 	byte psxMapperTable[16];
 
 	bool psxFourBitClut; // Used by Tinsel PSX, true if an image using a 4bit CLUT is rendered
-	bool psxRLEindex; // Used by Tinsel PSX, true if an image is using PJCRLE compressed indexes
+	bool psxRLEindex = false; // Used by Tinsel PSX, true if an image is using PJCRLE compressed indexes
 	uint32 psxSkipBytes; // Used by Tinsel PSX, number of bytes to skip before counting indexes for image tiles
 
 	if ((pObj->width <= 0) || (pObj->height <= 0))
