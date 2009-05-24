@@ -1178,6 +1178,12 @@ int gfxop_sleep(GfxState *state, uint32 msecs) {
 static int _gfxop_set_pointer(GfxState *state, gfx_pixmap_t *pxm, Common::Point *hotspot) {
 	BASIC_CHECKS(GFX_FATAL);
 
+	// FIXME: We may have to store this pxm somewhere, as the global palette
+	// may change when a new PIC is loaded. The cursor has to be regenerated
+	// from this pxm at that point. (An alternative might be to ensure the
+	// cursor only uses colours in the static part of the palette?)
+	if (pxm && pxm->palette)
+		pxm->palette->mergeInto(state->driver->mode->palette);
 	state->driver->set_pointer(state->driver, pxm, hotspot);
 
 	return GFX_OK;
@@ -1801,6 +1807,11 @@ static int _gfxop_set_pic(GfxState *state) {
 	gfx_copy_pixmap_box_i(state->priority_map, state->pic_unscaled->priority_map, gfx_rect(0, 0, 320, 200));
 	gfx_copy_pixmap_box_i(state->static_priority_map, state->pic_unscaled->priority_map, gfx_rect(0, 0, 320, 200));
 
+	// Reset global palette to this PIC's palette
+	// FIXME: The _gfxop_install_pixmap call below updates the OSystem palette.
+	// This is too soon, since it causes brief palette corruption until the
+	// screen is updated too. (Possibly related: EngineState::pic_not_valid .)
+	state->pic->visual_map->palette->forceInto(state->driver->mode->palette);
 	_gfxop_install_pixmap(state->driver, state->pic->visual_map);
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
