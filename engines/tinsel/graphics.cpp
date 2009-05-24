@@ -296,14 +296,12 @@ static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 								*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = *(p + (xp - boxBounds.left));
 						}
 				} else {
-					if (*p & 0x0f || !transparency)
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 0) = (*p & 0x0f) + palStart;
-					if ((*p & 0xf0) >> 4 || !transparency)
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 1) = ((*p & 0xf0) >> 4) + palStart;
-					if (*(p + 1) & 0x0f || !transparency)
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 2) = (*(p + 1) & 0x0f) + palStart;
-					if ((*(p + 1) & 0xf0) >> 4 || !transparency)
-						*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + 3) = ((*(p + 1) & 0xf0) >> 4) + palStart;
+					for (int xp = boxBounds.left; xp <= boxBounds.right; ++xp) {
+						// Extract pixel value from byte
+						byte pixValue =  (*(p + (xp / 2)) & (xp % 2 ? 0xf0 : 0x0f)) >> (xp % 2 ? 4 : 0);
+						if (pixValue || !transparency)
+							*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = pixValue;
+					}
 				}
 			}
 
@@ -866,6 +864,11 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0xC4:
 			// WrtTrans with/without clipping
 			WrtTrans(pObj, destPtr, typeId == 0xC4);
+			break;
+		case 0x04:
+		case 0x44:
+			// WrtConst with/without clipping
+			WrtConst(pObj, destPtr, typeId == 0x44);
 			break;
 		default:
 			error("Unknown drawing type %d", typeId);
