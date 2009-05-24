@@ -817,7 +817,7 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 
 bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime) {
 	uint8 tpal[768];
-	uint8 *p1 = _palettes[0];	
+	uint8 *p1 = _palettes[0];
 
 	bool res = false;
 	for (int i = 0; i < 768; i++) {

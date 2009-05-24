@@ -706,7 +706,7 @@ void LoLEngine::gui_updateInput() {
 	// set the "mainLoop" parameter to false for them.
 	int inputFlag = checkInput(_activeButtons, !(_updateFlags & 3), 0);
 	if (_preserveEvents)
-		_preserveEvents = false;		
+		_preserveEvents = false;
 	else
 		removeInputTop();
 

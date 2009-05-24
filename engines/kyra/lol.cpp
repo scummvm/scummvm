@@ -2170,20 +2170,20 @@ void LoLEngine::processMagicIce(int charNum, int spellLevel) {
 		uint16 v = (s[i * 3] + s[i * 3 + 1] + s[i * 3 + 2]) / 3;
 		tpal[i * 3 + 1] = v;
 		tpal[i * 3 + 2] = v << 1;
-		
+
 		if (tpal[i * 3 + 2] > 0x3f)
 			tpal[i * 3 + 2] = 0x3f;
 	}
 	generateBrightnessPalette(tpal, tpal, _brightness, _lampEffect);
 	generateBrightnessPalette(swampCol, swampCol, _brightness, _lampEffect);
 	swampCol[0] = swampCol[1] = swampCol[2] = tpal[0] = tpal[1] = tpal[2] = 0;
-		
+
 	generateBrightnessPalette(_screen->_currentPalette, s, _brightness, _lampEffect);
 
 	int sX = 112;
 	int sY = 0;
 	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
-	
+
 	if (spellLevel == 0) {
 		sX = 0;
 	} if (spellLevel == 1 || spellLevel == 2) {
@@ -2235,7 +2235,7 @@ void LoLEngine::processMagicIce(int charNum, int spellLevel) {
 			if (m->hitPoints <= dmg) {
 				increaseExperience(charNum, 2, m->hitPoints);
 				o = m->nextAssignedObject;
-				
+
 				if (m->flags & 0x20) {
 					m->mode = 0;
 					monsterDropItems(m);
@@ -2291,7 +2291,7 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 	int d = 1;
 
 	if (spellLevel == 0) {
-		fbCnt = 4;		
+		fbCnt = 4;
 	} else if (spellLevel == 1) {
 		fbCnt = 5;
 	} else if (spellLevel == 2) {
@@ -2373,7 +2373,7 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 
 			if (fb->finalize) {
 				_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
-				
+
 				if (finShpIndex2[fb->finProgress] != -1) {
 					shp = _fireballShapes[finShpIndex2[fb->finProgress]];
 					fX = (((fb->progress * _fireBallCoords[fb->tblIndex & 0xff]) >> 16) + fb->destX) - ((fb->progress / 8 + shp[3] + fireBallWH) >> 1);
@@ -2386,7 +2386,7 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 			} else {
 				_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
 			}
-			
+
 			if (fb->finalize) {
 				if (++fb->finProgress >= 6) {
 					fb->active = false;
@@ -2404,7 +2404,7 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 						fb->finalize = true;
 					} else {
 						fb->active = false;
-						i++;					
+						i++;
 					}
 
 					static const uint8 fireBallSfx[] = { 98, 167, 167, 168 };
@@ -2412,7 +2412,7 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 
 				} else {
 					fb->progress -= fb->step;
-				}				
+				}
 			}
 		}
 
@@ -2428,7 +2428,7 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 
 	for (i = 0; i < numFireBalls; i++)
 		delete[] fireballState[i];
-	
+
 	_screen->setCurPage(cp);
 	_screen->copyPage(12, 0);
 	_screen->updateScreen();
@@ -2473,7 +2473,7 @@ void LoLEngine::processMagicLightning(int charNum, int spellLevel) {
 
 	static const uint8 lightningDamage[] = { 18, 35, 50, 72 };
 	inflictMagicalDamageForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum, lightningDamage[spellLevel], 5);
-	
+
 	_sceneUpdateRequired = true;
 	gui_drawScene(0);
 	_screen->showMouse();
@@ -2860,7 +2860,7 @@ void LoLEngine::inflictMagicalDamage(int target, int attacker, int damage, int i
 
 void LoLEngine::inflictMagicalDamageForBlock(int block, int attacker, int damage, int index) {
 	uint16 o = _levelBlockProperties[block].assignedObjects;
-	while (o & 0x8000) {		
+	while (o & 0x8000) {
 		inflictDamage(o, calcInflictableDamagePerItem(attacker, o, damage, index, 2), attacker, 2, index);
 		if ((_monsters[o & 0x7fff].flags & 0x20) && (_currentLevel != 22))
 			break;

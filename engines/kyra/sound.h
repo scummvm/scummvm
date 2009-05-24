@@ -194,7 +194,7 @@ public:
 	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
 	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
-	
+
 	Audio::AudioStream *getVoiceStream(const char *file);
 
 	bool playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);

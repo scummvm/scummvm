@@ -201,9 +201,9 @@ int LoLEngine::olol_delay(EMCState *script) {
 
 int LoLEngine::olol_setGameFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGameFlag(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	
+
 	assert((stackPos(0) >> 4) < 40);
-	
+
 	if (stackPos(1))
 		_gameFlags[stackPos(0) >> 4] |= (1 << (stackPos(0) & 0x0f));
 	else
@@ -1873,7 +1873,7 @@ int LoLEngine::olol_placeInventoryItemInHand(EMCState *script) {
 	int i = 0;
 	for (; i < 48; i++) {
 		if (!_inventory[i])
-			continue;		
+			continue;
 		if (_itemsInPlay[_inventory[i]].itemPropertyIndex == itemType)
 			break;
 	}

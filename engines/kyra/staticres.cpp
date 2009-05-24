@@ -1902,7 +1902,7 @@ void LoLEngine::initStaticResource() {
 			_lightningProps[i].frameDiv = tmp[(i << 2) + 1];
 			_lightningProps[i].sfxId = READ_LE_UINT16(&tmp[(i << 2) + 2]);
 		}
-		_staticres->unloadId(lolLightningDefs);	
+		_staticres->unloadId(lolLightningDefs);
 	}
 
 	_fireBallCoords = (const int16*) _staticres->loadRawDataBe16(lolFireballCoords, _fireBallCoordsSize);

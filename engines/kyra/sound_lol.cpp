@@ -48,7 +48,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	_lastSpeechId = id;
 	_lastSpeaker = speaker;
 	_nextSpeechId = _nextSpeaker = -1;
-	
+
 	char pattern1[8];
 	char pattern2[5];
 	char file1[13];
