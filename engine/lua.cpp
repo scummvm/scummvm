@@ -2224,13 +2224,14 @@ static void StartFullscreenMovie() {
 	bool mode = getbool(2);
 	warning("StartFullscreenMovie() mode: %d", (int)mode);
 
-	// Clean out any text objects on the display before running the
-	// movie, otherwise things like Bruno's "Nice bathrobe." will stay
-	// on-screen the whole movie
-	// ExpireText(); --- disable above hack
+	lua_Object name = lua_getparam(1);
+	if (!lua_isstring(name)) {
+		lua_pushnil();
+		return;
+	}
 	CleanBuffer();
 	g_grim->setMode(ENGINE_MODE_SMUSH);
-	pushbool(g_smush->play(luaL_check_string(1), 0, 0));
+	pushbool(g_smush->play(lua_getstring(name), 0, 0));
 }
 
 static void StartMovie() {
@@ -2239,6 +2240,11 @@ static void StartMovie() {
 
 	warning("StartMovie() mode: %d", (int)mode);
 
+	lua_Object name = lua_getparam(1);
+	if (!lua_isstring(name)) {
+		lua_pushnil();
+		return;
+	}
 	if (!lua_isnil(lua_getparam(3)))
 		x = lua_getnumber(lua_getparam(3));
 
@@ -2246,7 +2252,7 @@ static void StartMovie() {
 		y = lua_getnumber(lua_getparam(4));
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
-	pushbool(g_smush->play(luaL_check_string(1), x, y));
+	pushbool(g_smush->play(lua_getstring(name), x, y));
 }
 
 /* Fullscreen movie playing query and normal movie
@@ -2368,18 +2374,18 @@ static void DrawLine() {
 
 static void ChangePrimitive() {
 	PrimitiveObject *psearch, *pmodify = NULL;
-	lua_Object tableObj;
 	Color color;
 
-	tableObj = lua_getparam(2);
-	color._vals[0] = 255;
-	color._vals[1] = 255;
-	color._vals[2] = 255;
+	lua_Object param1 = lua_getparam(1);
+	if (!lua_isuserdata(param1))
+		return;
 
-	if (lua_isnil(lua_getparam(1)) || !lua_istable(tableObj))
+	lua_Object tableObj = lua_getparam(2);
+	if (!lua_istable(tableObj))
 		return;
 
 	psearch = check_primobject(1);
+	
 	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
 		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
@@ -2387,13 +2393,6 @@ static void ChangePrimitive() {
 			pmodify = p;
 			break;
 		}
-	}
-	if (!pmodify) {
-		// When Manny exists Don's computer (using ESC) the primitive objects
-		// are destroyed just before the last call to change them
-		if (gDebugLevel == DEBUG_WARN)
-			warning("Primitive object not found.");
-		return;
 	}
 
 	lua_pushobject(tableObj);
@@ -2405,37 +2404,98 @@ static void ChangePrimitive() {
 	}
 
 	lua_pushobject(tableObj);
+	lua_pushstring("layer");
+	lua_Object layer = lua_gettable();
+	if (lua_isnumber(layer)) {
+		// TODO pmodify->setLayer(lua_getnumber(layer));
+		assert(0);
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushstring("xoffset");
+	lua_Object xoffset = lua_gettable();
+	lua_pushobject(tableObj);
+	lua_pushstring("yoffset");
+	lua_Object yoffset = lua_gettable();
+	if (lua_isnumber(xoffset) || lua_isnumber(yoffset)) {
+		int x = 0;
+		int y = 0;
+		if (lua_isnumber(xoffset))
+			x = lua_getnumber(xoffset);
+		if (lua_isnumber(yoffset))
+			y = lua_getnumber(yoffset);
+		// TODO pmodify->setOffets(x, y);
+		assert(0);
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushstring("x");
+	lua_Object xobj = lua_gettable();
+	lua_pushobject(tableObj);
 	lua_pushstring("y");
-	lua_Object yObj = lua_gettable();
-	if (!lua_isnil(yObj)) {
-		int y = atoi(lua_getstring(yObj));
-		if (pmodify->getType() == 4) {
-			int y1 = pmodify->getP1().y;
-			int y2 = pmodify->getP2().y;
-			int y3 = pmodify->getP3().y;
-			int y4 = pmodify->getP4().y;
-			int dy = y - y1;
-			pmodify->setPoint1Y(y1 + dy);
-			pmodify->setPoint2Y(y2 + dy);
-			pmodify->setPoint3Y(y3 + dy);
-			pmodify->setPoint4Y(y4 + dy);
-		} else {
-			pmodify->setPoint1Y(y);
-			pmodify->setPoint2Y(y);
-		}
+	lua_Object yobj = lua_gettable();
+	if (lua_isnumber(xobj) || lua_isnumber(yobj)) {
+		int x = -1;
+		int y = -1;
+		if (lua_isnumber(xobj))
+			x = lua_getnumber(xobj);
+		if (lua_isnumber(yobj))
+			y = lua_getnumber(yobj);
+		pmodify->setPos(x, y);
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushstring("x2");
+	lua_Object x2 = lua_gettable();
+	lua_pushobject(tableObj);
+	lua_pushstring("y2");
+	lua_Object y2 = lua_gettable();
+	if (lua_isnumber(x2) || lua_isnumber(y2)) {
+		int x = -1;
+		int y = -1;
+		if (lua_isnumber(x2))
+			x = lua_getnumber(x2);
+		if (lua_isnumber(y2))
+			y = lua_getnumber(y2);
+		// TODO pmodify->setSize(x, y);
+		assert(0);
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushstring("width");
+	lua_Object width = lua_gettable();
+	lua_pushobject(tableObj);
+	lua_pushstring("height");
+	lua_Object height = lua_gettable();
+	if (lua_isnumber(width) || lua_isnumber(height)) {
+		int x = -1;
+		int y = -1;
+		if (lua_isnumber(width))
+			x = lua_getnumber(width);
+		if (lua_isnumber(height))
+			y = lua_getnumber(height);
+		// TODO pmodify->setSize(x, y);
+		assert(0);
 	}
 }
 
 static void DrawRectangle() {
 	Common::Point p1, p2;
-	lua_Object tableObj;
 	Color color;
+	lua_Object objX1 = lua_getparam(1);
+	lua_Object objY1 = lua_getparam(2);
+	lua_Object objX2 = lua_getparam(3);
+	lua_Object objY2 = lua_getparam(4);
+	lua_Object tableObj = lua_getparam(5);
 
-	p1.x = lua_getnumber(lua_getparam(1));
-	p1.y = lua_getnumber(lua_getparam(2));
-	p2.x = lua_getnumber(lua_getparam(3));
-	p2.y = lua_getnumber(lua_getparam(4));
-	tableObj = lua_getparam(5);
+	if (!lua_isnumber(objX1) || !lua_isnumber(objY1) || !lua_isnumber(objX2) || !lua_isnumber(objY2)) {
+		lua_pushnil();
+		return;
+	}
+	p1.x = lua_getnumber(objX1);
+	p1.y = lua_getnumber(objY1);
+	p2.x = lua_getnumber(objX2);
+	p2.y = lua_getnumber(objY2);
 	color._vals[0] = 255;
 	color._vals[1] = 255;
 	color._vals[2] = 255;
@@ -2459,7 +2519,7 @@ static void DrawRectangle() {
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createRectangle(p1, p2, color, filled);
 	g_grim->registerPrimitiveObject(p);
-	lua_pushusertag(p, MKID_BE('PRIM'));
+	lua_pushusertag(p, MKID_BE('PRIM')); // FIXME: we use PRIM usetag here
 }
 
 static void BlastRect() {
@@ -2590,13 +2650,16 @@ static void ScreenShot() {
 
 static void GetSaveGameImage() {
 	int width = 250, height = 188;
-	const char *filename;
 	char *data;
 	Bitmap *screenshot;
 	int dataSize;
 
-	printf("GetSaveGameImage() started.\n");
-	filename = luaL_check_string(1);
+	lua_Object param = lua_getparam(1);
+	if (!lua_isstring(param)) {
+		lua_pushnil();
+		return;
+	}
+	const char *filename = lua_getstring(param);
 	SaveGame *savedState = new SaveGame(filename, false);
 	if (!savedState) {
 		lua_pushnil();
@@ -2616,7 +2679,6 @@ static void GetSaveGameImage() {
 	}
 	savedState->endSection();
 	delete savedState;
-	printf("GetSaveGameImage() finished.\n");
 }
 
 static void SubmitSaveGameData() {
@@ -2646,12 +2708,15 @@ static void SubmitSaveGameData() {
 }
 
 static void GetSaveGameData() {
-	const char *filename = luaL_check_string(1);
+	lua_Object param = lua_getparam(1);
+	if (!lua_isstring(param))
+		return;
+	const char *filename = lua_getstring(param);
 	SaveGame *savedState = new SaveGame(filename, false);
 	int32 dataSize = savedState->beginSection('SUBS');
 	lua_Object result = lua_createtable();
 
-	char str[128];
+	char str[200];
 	int strSize;
 	int count = 0;
 
@@ -2672,7 +2737,6 @@ static void GetSaveGameData() {
 
 	savedState->endSection();
 	delete savedState;
-	printf("GetSaveGameData() finished.\n");
 }
 
 static void Load() {

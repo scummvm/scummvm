@@ -39,15 +39,15 @@ PrimitiveObject::~PrimitiveObject() {
 }
 
 void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, Color color, bool filled) {
+	_type = RECTANGLE;
 	_p1 = p1;
 	_p2 = p2;
 	_color = color;
 	_filled = filled;
-	_type = 1;
 }
 
 void PrimitiveObject::createBitmap(Bitmap *bitmap, Common::Point p, bool /*transparent*/) {
-	_type = 2;
+	_type = BITMAP;
 	_bitmap = bitmap;
 	_bitmap->setX(p.x);
 	_bitmap->setY(p.y);
@@ -56,30 +56,53 @@ void PrimitiveObject::createBitmap(Bitmap *bitmap, Common::Point p, bool /*trans
 }
 
 void PrimitiveObject::createLine(Common::Point p1, Common::Point p2, Color color) {
+	_type = LINE;
 	_p1 = p1;
 	_p2 = p2;
 	_color = color;
-	_type = 3;
 }
 
 void PrimitiveObject::createPolygon(Common::Point p1, Common::Point p2, Common::Point p3, Common::Point p4, Color color) {
+	_type = RECTANGLE;
 	_p1 = p1;
 	_p2 = p2;
 	_p3 = p3;
 	_p4 = p4;
 	_color = color;
-	_type = 4;
 }
 
 void PrimitiveObject::draw() {
 	assert(_type);
 
-	if (_type == 1)
+	if (_type == RECTANGLE)
 		g_driver->drawRectangle(this);
-	else if (_type == 2)
+	else if (_type == BITMAP)
 		g_driver->drawBitmap(_bitmap);
-	else if (_type == 3)
+	else if (_type == LINE)
 		g_driver->drawLine(this);
-	else if (_type == 4)
+	else if (_type == POLYGON)
 		g_driver->drawPolygon(this);
+}
+
+void PrimitiveObject::setPos(int x, int y) {
+	if (x != -1) {
+		int dx = x - _p1.x;
+		_p1.x += dx;
+		if (_type == RECTANGLE || _type == LINE || _type == POLYGON)
+			_p2.x += dx;
+		if (_type == POLYGON) {
+			_p3.x += dx;
+			_p4.x += dx;
+		}
+	}
+	if (y != -1) {
+		int dy = y - _p1.y;
+		_p1.y += dy;
+		if (_type == RECTANGLE || _type == LINE || _type == POLYGON)
+			_p2.y += dy;
+		if (_type == POLYGON) {
+			_p3.y += dy;
+			_p4.y += dy;
+		}
+	}
 }

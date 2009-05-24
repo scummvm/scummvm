@@ -35,6 +35,13 @@ public:
 	PrimitiveObject();
 	~PrimitiveObject();
 
+	typedef enum {
+		RECTANGLE = 1,
+		BITMAP,
+		LINE,
+		POLYGON
+	} PrimType;
+
 	void createRectangle(Common::Point p1, Common::Point p2, Color color, bool filled);
 	void createBitmap(Bitmap *bitmap, Common::Point p, bool transparent);
 	void createLine(Common::Point p1, Common::Point p2, Color color);
@@ -43,11 +50,7 @@ public:
 	Common::Point getP2() { return _p2; }
 	Common::Point getP3() { return _p3; }
 	Common::Point getP4() { return _p4; }
-	void setPoint1Y(int coord) { _p1.y = coord; }
-	void setPoint2Y(int coord) { _p2.y = coord; }
-	void setPoint3Y(int coord) { _p3.y = coord; }
-	void setPoint4Y(int coord) { _p4.y = coord; }
-	int getType() { return _type; }
+	void setPos(int x, int y);
 	void setColor(Color color) { _color = color; }
 	Color getColor() { return _color; }
 	bool isFilled() { return _filled; }
