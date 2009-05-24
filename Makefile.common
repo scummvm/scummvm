@@ -91,7 +91,7 @@ endif
 ######################################################################
 
 # AmigaOS4's grep has a problem with "./" in pathnames, so use cat.
-VERSION = $(shell cat "${srcdir}/engine/internal_version.h" | grep RESIDUAL_VERSION | cut -d\" -f2)
+VERSION = $(shell cat "${srcdir}/engines/grim/internal_version.h" | grep RESIDUAL_VERSION | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
@@ -153,7 +153,7 @@ endif
 
 DISTNAME := residual-$(DISTVERSION)
 DISTDIR := dist
-VERFILE := $(DISTDIR)/$(DISTNAME)/engine/internal_version.h
+VERFILE := $(DISTDIR)/$(DISTNAME)/engines/grim/internal_version.h
 
 ifeq ($(shell svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
 SVNROOT := $(srcdir)
@@ -161,13 +161,13 @@ else
 SVNROOT := https://residual.svn.sourceforge.net/svnroot/residual/residual/trunk/
 endif
 
-$(VERFILE): $(srcdir)/engine/internal_version.h
+$(VERFILE): $(srcdir)/engines/grim/internal_version.h
 	@$(RM_REC) $(DISTDIR)
 	@$(MKDIR) $(DISTDIR)
 	svn export $(SVNROOT) $(DISTDIR)/$(DISTNAME)
 ifneq ($(origin VER_SVNREV), undefined)
 	@# Use the current SVN revision as a default for the snapshot sources
-	@svn cat $(SVNROOT)/engine/internal_version.h | sed -e \
+	@svn cat $(SVNROOT)/engines/grim/internal_version.h | sed -e \
 		"s/^#define RESIDUAL_SVN_REVISION$$/#define RESIDUAL_SVN_REVISION \"$(VER_SVNREV)\"/g" \
 		> $(VERFILE)
 endif
