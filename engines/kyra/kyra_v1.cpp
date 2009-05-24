@@ -224,7 +224,7 @@ void KyraEngine_v1::setMousePos(int x, int y) {
 	_system->warpMouse(x, y);
 }
 
-int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
+int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) {
 	_isSaveAllowed = mainLoop;
 	updateInput();
 	_isSaveAllowed = false;
@@ -365,7 +365,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop) {
 	GUI *guiInstance = gui();
 	if (guiInstance) {
 		if (keys)
-			return guiInstance->processButtonList(buttonList, keys | 0x8000, mouseWheel);
+			return guiInstance->processButtonList(buttonList, keys | eventFlag, mouseWheel);
 		else
 			return guiInstance->processButtonList(buttonList, 0, mouseWheel);
 	} else {

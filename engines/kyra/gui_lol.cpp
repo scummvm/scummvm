@@ -704,18 +704,19 @@ void LoLEngine::gui_toggleFightButtons(bool disable) {
 void LoLEngine::gui_updateInput() {
 	// TODO: We need to catch all cases where loading is not possible and
 	// set the "mainLoop" parameter to false for them.
-	int inputFlag = checkInput(_activeButtons, !(_updateFlags & 3));
+	int inputFlag = checkInput(_activeButtons, !(_updateFlags & 3), 0);
 	if (_preserveEvents)
-		_preserveEvents = false;
+		_preserveEvents = false;		
 	else
 		removeInputTop();
 
-	if (inputFlag && _unkCharNum != -1 && !(inputFlag & 0x8800)) {
+	if (inputFlag && _activeMagicMenu != -1 && !(inputFlag & 0x8800)) {
 		gui_enableDefaultPlayfieldButtons();
-		_characters[_unkCharNum].flags &= 0xffef;
-		gui_drawCharPortraitWithStats(_unkCharNum);
+		_characters[_activeMagicMenu].flags &= 0xffef;
+		gui_drawCharPortraitWithStats(_activeMagicMenu);
 		gui_triggerEvent(inputFlag);
-		_unkCharNum = -1;
+		_preserveEvents = false;
+		_activeMagicMenu = -1;
 		inputFlag = 0;
 	}
 
@@ -955,6 +956,14 @@ void LoLEngine::gui_initButton(int index, int x, int y, int val) {
 	b->buttonCallback = _buttonCallbacks[index];
 }
 
+void LoLEngine::gui_notifyButtonListChanged() {
+	if (_gui) {
+		if (!_gui->_buttonListChanged && !_preserveEvents)
+			removeInputTop();
+		_gui->_buttonListChanged = true;
+	}
+}
+
 int LoLEngine::clickedUpArrow(Button *button) {
 	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
@@ -1093,7 +1102,7 @@ int LoLEngine::clickedMagicButton(Button *button) {
 
 	gui_drawCharPortraitWithStats(c);
 	gui_initMagicSubmenu(c);
-	_unkCharNum = c;
+	_activeMagicMenu = c;
 
 	return 1;
 }
@@ -1120,14 +1129,14 @@ int LoLEngine::clickedMagicSubmenu(Button *button) {
 		}
 	}
 
-	_unkCharNum = -1;
+	_activeMagicMenu = -1;
 	return 1;
 }
 
 int LoLEngine::clickedScreen(Button *button) {
-	_characters[_unkCharNum].flags &= 0xffef;
-	gui_drawCharPortraitWithStats(_unkCharNum);
-	_unkCharNum = -1;
+	_characters[_activeMagicMenu].flags &= 0xffef;
+	gui_drawCharPortraitWithStats(_activeMagicMenu);
+	_activeMagicMenu = -1;
 
 	if (!(button->flags2 & 0x80)) {
 		if (button->flags2 & 0x100)

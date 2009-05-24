@@ -203,7 +203,7 @@ protected:
 
 	// input
 	void updateInput();
-	int checkInput(Button *buttonList, bool mainLoop = false);
+	int checkInput(Button *buttonList, bool mainLoop = false, int eventFlag = 0x8000);
 	void removeInputTop();
 
 	int _mouseX, _mouseY;

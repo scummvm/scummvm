@@ -519,7 +519,7 @@ Common::Error LoLEngine::init() {
 	memset(&_scriptData, 0, sizeof(EMCData));
 
 	_hasTempDataFlags = 0;
-	_unkCharNum = -1;
+	_activeMagicMenu = -1;
 
 	_automapShapes = new const uint8*[109];
 	_mapOverlay = new uint8[256];

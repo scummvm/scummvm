@@ -515,7 +515,7 @@ private:
 	void gui_initMagicScrollButtons();
 	void gui_initMagicSubmenu(int charNum);
 	void gui_initButton(int index, int x = -1, int y = -1, int val = -1);
-	void gui_notifyButtonListChanged() { if (_gui) _gui->_buttonListChanged = true; }
+	void gui_notifyButtonListChanged();
 
 	Common::Array<Button::Callback> _buttonCallbacks;
 	Button *_activeButtons;
@@ -870,7 +870,7 @@ private:
 
 	int _loadLevelFlag;
 	int _hasTempDataFlags;
-	int _unkCharNum;
+	int _activeMagicMenu;
 	uint16 _scriptCharacterCycle;
 	int _charStatsTemp[5];
 
