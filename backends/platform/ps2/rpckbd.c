@@ -58,7 +58,7 @@ int PS2KbdRead(char *key)
 	int res;
 	if ((!kbdInitialized) || (curr_readmode != PS2KBD_READMODE_NORMAL))
 		return -1;
-	
+
 	if (PollSema(kbdRpcSema) >= 0) {
 		// last rpc call completed
 		res = (rpcKey != 0);

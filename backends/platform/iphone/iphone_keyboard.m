@@ -45,11 +45,11 @@
 - (id)initWithKeyboard:(SoftKeyboard*)keyboard; {
 	self = [super initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
 	softKeyboard = keyboard;
-	
+
 	[[self textInputTraits] setAutocorrectionType:1];
 	[[self textInputTraits] setAutocapitalizationType:0];
 	[[self textInputTraits] setEnablesReturnKeyAutomatically:NO];
-	
+
 	return self;
 }
 
@@ -67,7 +67,7 @@
 	}
 
 	[softKeyboard handleKeyPress:[character characterAtIndex:0]];
-	
+
 	return NO;
 }
 

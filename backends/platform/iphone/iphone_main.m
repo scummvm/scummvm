@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	gArgc = argc;
 	gArgv = argv;
 
-    NSAutoreleasePool *autoreleasePool = [ 
+    NSAutoreleasePool *autoreleasePool = [
         [ NSAutoreleasePool alloc ] init
     ];
 
@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(didRotate:)
 												 name:@"UIDeviceOrientationDidChangeNotification" object:nil];
-	
+
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }
 
@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
 - (void)applicationResume:(struct __GSEvent *)event {
 	[self removeApplicationBadge];
 	[_view applicationResume];
-	
+
 	// Workaround, need to "hide" and unhide the statusbar to properly remove it,
 	// since the Springboard has put it back without apparently flagging our application.
     [self setStatusBarHidden:YES animated:YES];

@@ -76,7 +76,7 @@ int cacheEnterDir(ISODirectoryRecord *dir) {
 	cacheName = cachedDir + strlen(cachedDir);
 	memcpy(cacheName, dir->name, dir->len_fi);
     cacheName[dir->len_fi] = '/';
-	cacheName[dir->len_fi + 1] = '\0';	
+	cacheName[dir->len_fi + 1] = '\0';
 	return cdReadSectors(cachedDirLba, 1, cacheBuf, &rmode);
 }
 
@@ -144,7 +144,7 @@ ISODirectoryRecord *findPath(const char *path) {
 			initRootCache();
 		return (ISODirectoryRecord *)cacheBuf;
 	}
-	
+
 	do {
 		tok = strchr(path, '/');
 		if (tok)

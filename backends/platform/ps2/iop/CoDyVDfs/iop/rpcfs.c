@@ -48,7 +48,7 @@ int initRpc(void) {
 	thread.attr = 0;
 
 	tid = CreateThread(&thread);
-	if (tid >= 0) 
+	if (tid >= 0)
 		StartThread(tid, 0);
 	else {
 		printf("Unable to start RPC Thread!\n");

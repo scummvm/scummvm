@@ -48,13 +48,13 @@ void iPhone_updateScreen() {
 
 void iPhone_updateScreenRect(unsigned short* screen, int x1, int y1, int x2, int y2) {
 	[_lock lock];
-	
+
 	int y;
 	for (y = y1; y < y2; ++y) {
 		memcpy(&_textureBuffer[(y * _textureWidth + x1 )* 2], &screen[y * _width + x1], (x2 - x1) * 2);
 	}
 
-	[_lock unlock];	
+	[_lock unlock];
 }
 
 
@@ -104,13 +104,13 @@ bool getLocalMouseCoords(CGPoint *point) {
 uint getSizeNextPOT(uint size) {
     if ((size & (size - 1)) || !size) {
         int log = 0;
-		
+
         while (size >>= 1)
             ++log;
-		
+
         size = (2 << log);
     }
-	
+
     return size;
 }
 
@@ -129,7 +129,7 @@ uint getSizeNextPOT(uint size) {
 	_screenLayer = nil;
 
 	sharedInstance = self;
-	
+
 	_lock = [NSLock new];
 	_keyboardView = nil;
 	_context = nil;
@@ -144,7 +144,7 @@ uint getSizeNextPOT(uint size) {
 	if (_keyboardView != nil) {
 		[_keyboardView dealloc];
 	}
-	
+
 	if (_screenTexture)
 		free(_textureBuffer);
 }
@@ -188,7 +188,7 @@ uint getSizeNextPOT(uint size) {
 		texWidth, texHeight,
 		0.0f, texHeight
 	};
-	
+
 	glVertexPointer(2, GL_FLOAT, 0, vertices);
 	glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 
@@ -201,7 +201,7 @@ uint getSizeNextPOT(uint size) {
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer);
-	[_context presentRenderbuffer:GL_RENDERBUFFER_OES];		
+	[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
 
 }
 
@@ -212,55 +212,55 @@ uint getSizeNextPOT(uint size) {
 	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
 
 	//printf("Window: (%d, %d), Surface: (%d, %d), Texture(%d, %d)\n", _fullWidth, _fullHeight, _width, _height, _textureWidth, _textureHeight);
-	
+
 	if (_context == nil) {
 		orientation = UIDeviceOrientationLandscapeRight;
 		CAEAGLLayer *eaglLayer = (CAEAGLLayer*) self.layer;
-		
+
 		eaglLayer.opaque = YES;
 		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
 										[NSNumber numberWithBool:FALSE], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat, nil];
-		
+
 		_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
 		if (!_context || [EAGLContext setCurrentContext:_context]) {
 			glGenFramebuffersOES(1, &_viewFramebuffer);
 			glGenRenderbuffersOES(1, &_viewRenderbuffer);
-			
+
 			glBindFramebufferOES(GL_FRAMEBUFFER_OES, _viewFramebuffer);
 			glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer);
 			[_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(id<EAGLDrawable>)self.layer];
 			glFramebufferRenderbufferOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, _viewRenderbuffer);
-			
+
 			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &_backingWidth);
 			glGetRenderbufferParameterivOES(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &_backingHeight);
-			
+
 			if (glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES) != GL_FRAMEBUFFER_COMPLETE_OES) {
 				NSLog(@"Failed to make complete framebuffer object %x.", glCheckFramebufferStatusOES(GL_FRAMEBUFFER_OES));
 				return;
 			}
-			
+
 			glViewport(0, 0, _backingWidth, _backingHeight);
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			
+
 			glEnable(GL_TEXTURE_2D);
 			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glEnableClientState(GL_VERTEX_ARRAY);			
+			glEnableClientState(GL_VERTEX_ARRAY);
 		}
 	}
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	
+
 	if (orientation ==  UIDeviceOrientationLandscapeRight) {
 		glRotatef(-90, 0, 0, 1);
 	} else if (orientation == UIDeviceOrientationLandscapeLeft) {
-		glRotatef(90, 0, 0, 1);		
+		glRotatef(90, 0, 0, 1);
 	} else {
 		glRotatef(180, 0, 0, 1);
 	}
-	
+
 	glOrthof(0, _backingWidth, 0, _backingHeight, 0, 1);
-	
+
 	if (_screenTexture > 0) {
 		glDeleteTextures(1, &_screenTexture);
 	}
@@ -268,7 +268,7 @@ uint getSizeNextPOT(uint size) {
 	glGenTextures(1, &_screenTexture);
 	glBindTexture(GL_TEXTURE_2D, _screenTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	
+
 	if (_textureBuffer) {
 		free(_textureBuffer);
 	}
@@ -276,7 +276,7 @@ uint getSizeNextPOT(uint size) {
 	int textureSize = _textureWidth * _textureHeight * 2;
 	_textureBuffer = (char*)malloc(textureSize);
 	memset(_textureBuffer, 0, textureSize);
-	
+
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer);
 
 	// The color buffer is triple-buffered, so we clear it multiple times right away to avid doing any glClears later.
@@ -285,7 +285,7 @@ uint getSizeNextPOT(uint size) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
 	}
-		
+
 	if (_keyboardView != nil) {
 		[_keyboardView removeFromSuperview];
 		[[_keyboardView inputView] removeFromSuperview];
@@ -327,7 +327,7 @@ uint getSizeNextPOT(uint size) {
 			_keyboardView = [[SoftKeyboard alloc] initWithFrame:keyFrame];
 			[_keyboardView setInputDelegate:self];
 		}
-		
+
 		[self addSubview:[_keyboardView inputView]];
 		[self addSubview: _keyboardView];
 		[[_keyboardView inputView] becomeFirstResponder];
@@ -370,7 +370,7 @@ uint getSizeNextPOT(uint size) {
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	NSSet *allTouches = [event allTouches];
-	
+
 	switch ([allTouches count]) {
 		case 1:
 		{
@@ -378,7 +378,7 @@ uint getSizeNextPOT(uint size) {
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-			
+
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseDown], @"type",
@@ -386,16 +386,16 @@ uint getSizeNextPOT(uint size) {
 			  [NSNumber numberWithFloat:point.y], @"y",
 			  nil
 			  ]
-			 ];		
+			 ];
 			break;
-		}			
+		}
 		case 2:
 		{
 			UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-			
+
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
@@ -403,16 +403,16 @@ uint getSizeNextPOT(uint size) {
 			  [NSNumber numberWithFloat:point.y], @"y",
 			  nil
 			  ]
-			 ];		
+			 ];
 			break;
-		}						
+		}
 	}
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	NSSet *allTouches = [event allTouches];
-	
+
 	switch ([allTouches count]) {
 		case 1:
 		{
@@ -420,7 +420,7 @@ uint getSizeNextPOT(uint size) {
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-			
+
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseDragged], @"type",
@@ -428,16 +428,16 @@ uint getSizeNextPOT(uint size) {
 			  [NSNumber numberWithFloat:point.y], @"y",
 			  nil
 			  ]
-			 ];		
+			 ];
 			break;
-		}			
+		}
 		case 2:
 		{
 			UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-			
+
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseSecondDragged], @"type",
@@ -445,16 +445,16 @@ uint getSizeNextPOT(uint size) {
 			  [NSNumber numberWithFloat:point.y], @"y",
 			  nil
 			  ]
-			 ];		
+			 ];
 			break;
-		}						
+		}
 	}
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	NSSet *allTouches = [event allTouches];
-	
+
 	switch ([allTouches count]) {
 		case 1:
 		{
@@ -462,7 +462,7 @@ uint getSizeNextPOT(uint size) {
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-			
+
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseUp], @"type",
@@ -470,16 +470,16 @@ uint getSizeNextPOT(uint size) {
 			  [NSNumber numberWithFloat:point.y], @"y",
 			  nil
 			  ]
-			 ];		
+			 ];
 			break;
-		}			
+		}
 		case 2:
 		{
 			UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-			
+
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseSecondUp], @"type",
@@ -487,15 +487,15 @@ uint getSizeNextPOT(uint size) {
 			  [NSNumber numberWithFloat:point.y], @"y",
 			  nil
 			  ]
-			 ];		
+			 ];
 			break;
-		}						
+		}
 	}
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
 {
-	
+
 }
 
 - (void)handleKeyPress:(unichar)c {
