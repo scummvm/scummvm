@@ -52,7 +52,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
 
-	_speechFile = "";
 	_trackMap = 0;
 	_trackMapSize = 0;
 	_lastMusicCommand = -1;

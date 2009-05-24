@@ -49,24 +49,17 @@ Sound::~Sound() {
 }
 
 bool Sound::voiceFileIsPresent(const char *file) {
-	char filenamebuffer[25];
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
-		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodecs[i].fileext);
-		if (_vm->resource()->getFileSize(filenamebuffer) > 0)
+		Common::String f = file;
+		f += _supportedCodecs[i].fileext;
+		if (_vm->resource()->getFileSize(f.c_str()) > 0)
 			return true;
 	}
-
-	strcpy(filenamebuffer, file);
-	strcat(filenamebuffer, ".VOC");
-
-	if (_vm->resource()->getFileSize(filenamebuffer) > 0)
-		return true;
 
 	return false;
 }
 
-int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx) {
+int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx, Audio::SoundHandle *handle) {
 	Audio::AudioStream *audioStream = getVoiceStream(file);
 
 	if (!audioStream) {
@@ -75,7 +68,7 @@ int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx) {
 	}
 
 	int playTime = audioStream->getTotalPlayTime();
-	playVoiceStream(audioStream, file, volume, isSfx);
+	playVoiceStream(audioStream, handle, volume, isSfx);
 	return playTime;
 }
 
@@ -97,64 +90,49 @@ Audio::AudioStream *Sound::getVoiceStream(const char *file) {
 	return audioStream;
 }
 
-void Sound::playVoiceStream(Audio::AudioStream *stream, const char *handleName, uint8 volume, bool isSfx) {
+bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle, uint8 volume, bool isSfx) {
 	int h = 0;
-	while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
+	while (_mixer->isSoundHandleActive(_soundChannels[h]) && h < kNumChannelHandles)
 		h++;
 	if (h >= kNumChannelHandles)
-		return;
+		return false;
 
-	_soundChannels[h].file = handleName;
-	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, stream, -1, volume);
+	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h], stream, -1, volume);
+	if (handle)
+		*handle = _soundChannels[h];
+
+	return true;
 }
 
-void Sound::voiceStop(const char *file) {
-	if (!file) {
+void Sound::voiceStop(const Audio::SoundHandle *handle) {
+	if (!handle) {
 		for (int h = 0; h < kNumChannelHandles; h++) {
-			if (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle))
-				_mixer->stopHandle(_soundChannels[h].channelHandle);
+			if (_mixer->isSoundHandleActive(_soundChannels[h]))
+				_mixer->stopHandle(_soundChannels[h]);
 		}
 	} else {
-		for (int i = 0; i < kNumChannelHandles; ++i) {
-			if (_soundChannels[i].file == file)
-				_mixer->stopHandle(_soundChannels[i].channelHandle);
-		}
+		_mixer->stopHandle(*handle);
 	}
 }
 
-bool Sound::voiceIsPlaying(const char *file) {
-	bool res = false;
-	if (!file) {
+bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) {
+	if (!handle) {
 		for (int h = 0; h < kNumChannelHandles; h++) {
-			if (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle))
-				res = true;
+			if (_mixer->isSoundHandleActive(_soundChannels[h]))
+				return true;
 		}
 	} else {
-		for (int i = 0; i < kNumChannelHandles; ++i) {
-			if (_soundChannels[i].file == file)
-				res = _mixer->isSoundHandleActive(_soundChannels[i].channelHandle);
-		}
+		return _mixer->isSoundHandleActive(*handle);
 	}
-	return res;
+
+	return false;
 }
 
 bool Sound::allVoiceChannelsPlaying() {
 	for (int i = 0; i < kNumChannelHandles; ++i)
-		if (!_mixer->isSoundHandleActive(_soundChannels[i].channelHandle))
+		if (!_mixer->isSoundHandleActive(_soundChannels[i]))
 			return false;
 	return true;
-}
-
-uint32 Sound::voicePlayedTime(const char *file) {
-	if (!file)
-		return 0;
-
-	for (int i = 0; i < kNumChannelHandles; ++i) {
-		if (_soundChannels[i].file == file)
-			return _mixer->getSoundElapsedTime(_soundChannels[i].channelHandle);
-	}
-
-	return 0;
 }
 
 #pragma mark -
@@ -224,14 +202,11 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 }
 
 void KyraEngine_v1::snd_stopVoice() {
-	if (!_speechFile.empty()) {
-		_sound->voiceStop(_speechFile.c_str());
-		_speechFile.clear();
-	}
+	_sound->voiceStop(&_speechHandle);
 }
 
 bool KyraEngine_v1::snd_voiceIsPlaying() {
-	return _speechFile.empty() ? false : _sound->voiceIsPlaying(_speechFile.c_str());
+	return _sound->voiceIsPlaying(&_speechHandle);
 }
 
 // static res

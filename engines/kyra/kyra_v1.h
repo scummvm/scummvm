@@ -32,6 +32,8 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "sound/mixer.h"
+
 #include "kyra/script.h"
 
 namespace Common {
@@ -278,7 +280,7 @@ protected:
 	uint8 _flagsTable[100];	// TODO: check this value
 
 	// sound
-	Common::String _speechFile;
+	Audio::SoundHandle _speechHandle;
 
 	int _curMusicTheme;
 	int _curSfxFile;

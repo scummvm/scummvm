@@ -367,10 +367,10 @@ void LoLEngine::kingSelectionIntro() {
 	_screen->fprintStringIntro(_tim->getCTableEntry(60), 8, y + 30, 0x32, 0x00, 0x9C, 0x20);
 	_screen->fprintStringIntro(_tim->getCTableEntry(61), 8, y + 40, 0x32, 0x00, 0x9C, 0x20);
 
-	_sound->voicePlay("KING01");
+	_sound->voicePlay("KING01", 255, false, &_speechHandle);
 
 	int index = 4;
-	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying("KING01"))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
+	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
 		index = MAX(index, 4);
 
 		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 113, 0, 0, 0, 0);
@@ -396,7 +396,7 @@ void LoLEngine::kingSelectionIntro() {
 
 	_chargenWSA->displayFrame(0x10, 0,113, 0, 0, 0, 0);
 	_screen->updateScreen();
-	_sound->voiceStop("KING01");
+	_sound->voiceStop(&_speechHandle);
 }
 
 void LoLEngine::kingSelectionReminder() {
@@ -406,10 +406,10 @@ void LoLEngine::kingSelectionReminder() {
 	_screen->fprintStringIntro(_tim->getCTableEntry(62), 8, y, 0x32, 0x00, 0x9C, 0x20);
 	_screen->fprintStringIntro(_tim->getCTableEntry(63), 8, y + 10, 0x32, 0x00, 0x9C, 0x20);
 
-	_sound->voicePlay("KING02");
+	_sound->voicePlay("KING02", 255, false, &_speechHandle);
 
 	int index = 0;
-	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying("KING02"))) && _charSelection == -1 && !shouldQuit() && index < 15) {
+	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && index < 15) {
 		_chargenWSA->displayFrame(_chargenFrameTable[index+9], 0, 113, 0, 0, 0, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar1IdxTable[index]*2+0], _selectionPosTable[_reminderChar1IdxTable[index]*2+1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar2IdxTable[index]*2+0], _selectionPosTable[_reminderChar2IdxTable[index]*2+1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
@@ -429,14 +429,14 @@ void LoLEngine::kingSelectionReminder() {
 			break;
 	}
 
-	_sound->voiceStop("KING02");
+	_sound->voiceStop(&_speechHandle);
 }
 
 void LoLEngine::kingSelectionOutro() {
-	_sound->voicePlay("KING03");
+	_sound->voicePlay("KING03", 255, false, &_speechHandle);
 
 	int index = 0;
-	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying("KING03"))) && !shouldQuit() && !skipFlag()) {
+	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && !shouldQuit() && !skipFlag()) {
 		index = MAX(index, 4);
 
 		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 113, 0, 0, 0, 0);
@@ -458,7 +458,7 @@ void LoLEngine::kingSelectionOutro() {
 
 	_chargenWSA->displayFrame(0x10, 0, 113, 0, 0, 0, 0);
 	_screen->updateScreen();
-	_sound->voiceStop("KING03");
+	_sound->voiceStop(&_speechHandle);
 }
 
 void LoLEngine::processCharacterSelection() {
@@ -582,11 +582,11 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 	file[4] = '0';
 
 	while (_charSelectionInfoResult == -1 && !shouldQuit()) {
-		if (!_sound->voicePlay(file))
+		if (!_sound->voicePlay(file, 255, false, &_speechHandle))
 			break;
 
 		int i = 0;
-		while (_sound->voiceIsPlaying(file) && _charSelectionInfoResult == -1 && !shouldQuit()) {
+		while (_sound->voiceIsPlaying(&_speechHandle) && _charSelectionInfoResult == -1 && !shouldQuit()) {
 			_screen->drawShape(0, _screen->getPtrToShape(_screen->getCPagePtr(9), _charInfoFrameTable[i]), 11, 130, 0, 0);
 			_screen->updateScreen();
 
@@ -599,7 +599,7 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 			i = (i + 1) % 32;
 		}
 
-		_sound->voiceStop(file);
+		_sound->voiceStop(&_speechHandle);
 		file[4] = ++index + '0';
 	}
 
@@ -664,8 +664,8 @@ void LoLEngine::showStarcraftLogo() {
 	}
 
 	if (!(shouldQuit() || inputFlag)) {
-		_sound->voicePlay("star2");
-		while(_sound->voiceIsPlaying("star2") && !(shouldQuit() || inputFlag)) {
+		_sound->voicePlay("star2", 255, false, &_speechHandle);
+		while(_sound->voiceIsPlaying(&_speechHandle) && !(shouldQuit() || inputFlag)) {
 			inputFlag = checkInput(0) & 0xff;
 			delay(_tickLength);
 		}

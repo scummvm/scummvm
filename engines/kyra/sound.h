@@ -190,20 +190,21 @@ public:
 	 * @param file		file to be played
 	 * @param volume	volume of the voice file
 	 * @param isSfx		marks file as sfx instead of voice
+	 * @param handle	store a copy of the sound handle
 	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false);
+	virtual int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, Audio::SoundHandle *handle = 0);
 	
 	Audio::AudioStream *getVoiceStream(const char *file);
 
-	void playVoiceStream(Audio::AudioStream * stream, const char *handleName, uint8 volume = 255, bool isSfx = false);
+	bool playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
 
 	/**
 	 * Checks if a voice is being played.
 	 *
 	 * @return true when playing, else false
 	 */
-	bool voiceIsPlaying(const char *file = 0);
+	bool voiceIsPlaying(const Audio::SoundHandle *handle = 0);
 
 	/**
 	 * Checks if all voice handles are used.
@@ -217,12 +218,14 @@ public:
 	 *
 	 * @return time in milliseconds
 	 */
-	uint32 voicePlayedTime(const char *file);
+	uint32 voicePlayedTime(const Audio::SoundHandle &handle) {
+		return _mixer->getSoundElapsedTime(handle);
+	}
 
 	/**
 	 * Stops playback of the current voice.
 	 */
-	void voiceStop(const char *file = 0);
+	void voiceStop(const Audio::SoundHandle *handle = 0);
 protected:
 	const char *fileListEntry(int file) const { return (_soundDataList != 0 && file >= 0 && file < _soundDataList->fileListLen) ? _soundDataList->fileList[file] : ""; }
 	int fileListLen() const { return _soundDataList->fileListLen; }
@@ -234,11 +237,7 @@ protected:
 		kNumChannelHandles = 4
 	};
 
-	struct SoundChannel {
-		Common::String file;
-		Audio::SoundHandle channelHandle;
-	};
-	SoundChannel _soundChannels[kNumChannelHandles];
+	Audio::SoundHandle _soundChannels[kNumChannelHandles];
 
 	int _musicEnabled;
 	bool _sfxEnabled;
@@ -458,7 +457,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false) { return -1; }
+	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, Audio::SoundHandle *handle = 0) { return -1; }
 	void playSoundEffect(uint8);
 
 protected:
@@ -485,7 +484,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false);
+	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, Audio::SoundHandle *handle = 0);
 	void playSoundEffect(uint8 track);
 
 protected:

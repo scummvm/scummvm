@@ -29,8 +29,6 @@
 
 namespace Kyra {
 
-#define LOL_VOICE_HANDLE "LoL_VOICE"
-
 bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	if (!_speechFlag)
 		return false;
@@ -88,22 +86,22 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	if (newSpeechList.empty())
 		return false;
 
-	while (_sound->voiceIsPlaying(LOL_VOICE_HANDLE))
+	while (_sound->voiceIsPlaying(&_speechHandle))
 		delay(_tickLength, true, false);
 
 	while (_sound->allVoiceChannelsPlaying())
 		delay(_tickLength, false, true);
 
-	_activeVoiceFileTotalTime = 0;
 	for (Common::List<Audio::AudioStream *>::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
 		delete *i;
 	_speechList.clear();
 	_speechList = newSpeechList;
 
+	_activeVoiceFileTotalTime = 0;
 	for (Common::List<Audio::AudioStream *>::const_iterator i = _speechList.begin(); i != _speechList.end(); ++i)
 		_activeVoiceFileTotalTime += (*i)->getTotalPlayTime();
 
-	_sound->playVoiceStream(*_speechList.begin(), LOL_VOICE_HANDLE);
+	_sound->playVoiceStream(*_speechList.begin(), &_speechHandle);
 	_speechList.pop_front();
 
 	if (!_activeVoiceFileTotalTime)
@@ -115,11 +113,11 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 }
 
 int LoLEngine::snd_updateCharacterSpeech() {
-	if (_sound->voiceIsPlaying(LOL_VOICE_HANDLE))
+	if (_sound->voiceIsPlaying(&_speechHandle))
 		return 2;
 
 	if (_speechList.begin() != _speechList.end()) {
-		_sound->playVoiceStream(*_speechList.begin(), LOL_VOICE_HANDLE);
+		_sound->playVoiceStream(*_speechList.begin(), &_speechHandle);
 		_speechList.pop_front();
 		return 2;
 
@@ -137,11 +135,11 @@ int LoLEngine::snd_updateCharacterSpeech() {
 }
 
 void LoLEngine::snd_stopSpeech(bool setFlag) {
-	if (!_sound->voiceIsPlaying(LOL_VOICE_HANDLE))
+	if (!_sound->voiceIsPlaying(&_speechHandle))
 		return;
 
 	//_dlgTimer = 0;
-	_sound->voiceStop(LOL_VOICE_HANDLE);
+	_sound->voiceStop(&_speechHandle);
 	_activeVoiceFileTotalTime = 0;
 	_nextSpeechId = _nextSpeaker = -1;
 

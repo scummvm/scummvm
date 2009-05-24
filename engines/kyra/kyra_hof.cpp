@@ -1486,12 +1486,10 @@ void KyraEngine_HoF::snd_playVoiceFile(int id) {
 	if (_sound->voiceFileIsPresent(vocFile)) {
 		snd_stopVoice();
 
-		while (!_sound->voicePlay(vocFile)) {
+		while (!_sound->voicePlay(vocFile, 255, false, &_speechHandle)) {
 			updateWithText();
 			_system->delayMillis(10);
 		}
-
-		_speechFile = vocFile;
 	}
 }
 
