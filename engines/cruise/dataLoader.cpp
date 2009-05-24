@@ -420,7 +420,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		localBuffer.width = s4.readUint16BE();
 		localBuffer.height = s4.readUint16BE();
 		localBuffer.type = s4.readUint16BE();
-		localBuffer.transparency = s4.readUint16BE();
+		localBuffer.transparency = s4.readUint16BE() & 0x1F;
 		localBuffer.hotspotY = s4.readUint16BE();
 		localBuffer.hotspotX = s4.readUint16BE();
 
