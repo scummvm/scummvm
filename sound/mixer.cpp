@@ -27,9 +27,9 @@
 #include "common/debug.h"
 #include "common/system.h"
 
-#include "mixer/mixer_intern.h"
-#include "mixer/rate.h"
-#include "mixer/audiostream.h"
+#include "sound/mixer_intern.h"
+#include "sound/rate.h"
+#include "sound/audiostream.h"
 
 
 namespace Audio {

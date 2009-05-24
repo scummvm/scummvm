@@ -1,4 +1,4 @@
-MODULE := mixer
+MODULE := sound
 
 MODULE_OBJS := \
 	audiostream.o \

@@ -29,8 +29,8 @@
 #include "common/list.h"
 #include "common/util.h"
 
-#include "mixer/audiostream.h"
-#include "mixer/mixer.h"
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
 //#include "sound/mp3.h"
 //#include "sound/vorbis.h"
 //#include "sound/flac.h"

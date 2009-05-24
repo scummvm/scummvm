@@ -1,4 +1,4 @@
-MODULE := engine/imuse
+MODULE := engines/grim/imuse
 
 MODULE_OBJS := \
 	imuse.o \

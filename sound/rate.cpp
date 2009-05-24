@@ -36,9 +36,9 @@
 #include "common/debug.h"
 #include "common/frac.h"
 
-#include "mixer/audiostream.h"
-#include "mixer/rate.h"
-#include "mixer/mixer.h"
+#include "sound/audiostream.h"
+#include "sound/rate.h"
+#include "sound/mixer.h"
 
 namespace Audio {
 

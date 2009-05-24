@@ -1,4 +1,4 @@
-MODULE := engine/smush
+MODULE := engines/grim/smush
 
 MODULE_OBJS := \
 	blocky16.o \

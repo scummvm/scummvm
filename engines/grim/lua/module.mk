@@ -1,4 +1,4 @@
-MODULE := engine/lua
+MODULE := engines/grim/lua
 
 MODULE_OBJS := \
 	lapi.o \
