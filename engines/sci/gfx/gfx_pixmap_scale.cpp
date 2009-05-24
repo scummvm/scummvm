@@ -646,6 +646,8 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t fi
 			free(pxm->data);
 		}
 	}
+	if (pxm->palette)
+		pxm->palette_revision = pxm->palette->getRevision();
 }
 
 

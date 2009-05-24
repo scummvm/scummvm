@@ -196,7 +196,11 @@ static int _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 	if (!driver->mode->palette) return GFX_OK;
 	if (!pxm->palette) return GFX_OK;
 
+	pxm->palette->mergeInto(driver->mode->palette);
 	assert(pxm->palette->getParent() == driver->mode->palette);
+
+	if (pxm->palette_revision != pxm->palette->getRevision())
+		gfx_xlate_pixmap(pxm, driver->mode, GFX_XLATE_FILTER_NONE);
 
 	if (!driver->mode->palette->isDirty()) return GFX_OK;
 
@@ -214,6 +218,7 @@ static int _gfxop_install_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm) {
 
 	g_system->setPalette(paletteData, 0, paletteSize);
 	driver->mode->palette->markClean();
+
 	return GFX_OK;
 }
 

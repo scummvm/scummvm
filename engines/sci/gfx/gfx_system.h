@@ -201,6 +201,7 @@ struct gfx_pixmap_t { /* gfx_pixmap_t: Pixel map */
 			 */
 
 	int color_key;
+	int palette_revision; // Revision of palette at the time data was generated
 };
 
 

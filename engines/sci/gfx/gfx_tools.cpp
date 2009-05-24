@@ -112,6 +112,7 @@ gfx_pixmap_t *gfx_clone_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 	clone->index_data = NULL;
 	clone->palette = NULL;
 	clone->data = NULL;
+	clone->palette_revision = -1;
 	gfx_pixmap_alloc_data(clone, mode);
 
 	memcpy(clone->data, pxm->data, clone->data_size);
@@ -129,6 +130,7 @@ gfx_pixmap_t *gfx_new_pixmap(int xl, int yl, int resid, int loop, int cel) {
 	pxm->alpha_map = NULL;
 	pxm->data = NULL;
 	pxm->palette = NULL;
+	pxm->palette_revision = -1;
 
 	pxm->index_width = xl;
 	pxm->index_height = yl;
