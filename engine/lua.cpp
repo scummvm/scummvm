@@ -1972,33 +1972,34 @@ static void killBitmapPrimitives(Bitmap *bitmap) {
 }
 
 static void GetImage() {
-	const char *bitmapName;
-
-	bitmapName = luaL_check_string(1);
+	lua_Object nameObj = lua_getparam(1);
+	if (!lua_isstring(nameObj)) {
+		lua_pushnil();
+		return;
+	}
+	const char *bitmapName = lua_getstring(nameObj);
 	Bitmap *image = g_resourceloader->loadBitmap(bitmapName);
 	image->luaRef();
 	lua_pushusertag(image, MKID_BE('VBUF'));
 }
 
 static void FreeImage() {
-	Bitmap *bitmap;
-
-	bitmap = check_bitmapobject(1);
+	Bitmap *bitmap = check_bitmapobject(1);
 	killBitmapPrimitives(bitmap);
 }
 
 static void BlastImage() {
-	bool transparent;
-	Bitmap *bitmap;
-	int x, y;
+	Bitmap *bitmap = check_bitmapobject(1);
+	lua_Object xObj = lua_getparam(2);
+	lua_Object yObj = lua_getparam(3);
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj))
+		return;
 
-	bitmap = check_bitmapobject(1);
-	x = lua_getnumber(lua_getparam(2));
-	y = lua_getnumber(lua_getparam(3));
-	transparent = getbool(4);
+	int x = lua_getnumber(xObj);
+	int y = lua_getnumber(yObj);
+	bool transparent = getbool(4); // TODO transparent/masked copy into display
 	bitmap->setX(x);
 	bitmap->setY(y);
-	// transparent: what to do ?
 	g_driver->createBitmap(bitmap);
 	g_driver->drawBitmap(bitmap);
 }
