@@ -2003,53 +2003,118 @@ static void BlastImage() {
 	g_driver->drawBitmap(bitmap);
 }
 
-void setTextObjectParams(TextObject *textObject, lua_Object table_obj) {
-	const char *key_text = NULL;
-	lua_Object key = LUA_NOOBJECT;
+void setTextObjectParams(TextObject *textObject, lua_Object tableObj) {
+	lua_Object keyObj;
 
-	for (;;) {
-		lua_pushobject(table_obj);
-		if (key_text)
-			lua_pushobject(key);
-		else
-			lua_pushnil();
-
-		// If the call to "next" fails then register an error
-		if (lua_call("next") != 0) {
-			error("setTextObjectParams failed to get next key!");
-			return;
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectX));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isnumber(keyObj)) {
+			textObject->setX(lua_getnumber(keyObj));
 		}
-		key = lua_getresult(1);
-		if (lua_isnil(key))
-			break;
+	}
 
-		// printf("debug param: %s %s\n", lua_getstring(key), lua_getstring(lua_getresult(2)));
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectY));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isnumber(keyObj)) {
+			textObject->setY(lua_getnumber(keyObj));
+		}
+	}
 
-		key_text = lua_getstring(key);
-		if (strmatch(key_text, "x"))
-			textObject->setX(atoi(lua_getstring(lua_getresult(2))));
-		else if (strmatch(key_text, "y"))
-			textObject->setY(atoi(lua_getstring(lua_getresult(2))));
-		else if (strmatch(key_text, "width"))
-			textObject->setWidth(atoi(lua_getstring(lua_getresult(2))));
-		else if (strmatch(key_text, "height"))
-			textObject->setHeight(atoi(lua_getstring(lua_getresult(2))));
-		else if (strmatch(key_text, "font"))
-			textObject->setFont(check_font(2));
-		else if (strmatch(key_text, "fgcolor"))
-			textObject->setFGColor(check_color(2));
-		else if (strmatch(key_text, "hicolor"));
-			// this is only used in credits screen, can be ignored, seems not needed
-		else if (strmatch(key_text, "disabled"))
-			textObject->setDisabled(atoi(lua_getstring(lua_getresult(2))) != 0);
-		else if (strmatch(key_text, "center"))
-			textObject->setJustify(1);
-		else if (strmatch(key_text, "ljustify"))
-			textObject->setJustify(2);
-		else if (strmatch(key_text, "rjustify"))
-			textObject->setJustify(3);
-		else
-			error("Unknown setTextObjectParams key '%s'", key_text);
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectFont));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKID_BE('FONT')) {
+			textObject->setFont(static_cast<Font *>(lua_getuserdata(keyObj)));
+		}
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectWidth));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isnumber(keyObj)) {
+			textObject->setWidth(lua_getnumber(keyObj));
+		}
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectHeight));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isnumber(keyObj)) {
+			textObject->setHeight(lua_getnumber(keyObj));
+		}
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectFGColor));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKID_BE('COLR')) {
+			textObject->setFGColor(static_cast<Color *>(lua_getuserdata(keyObj)));
+		}
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectBGColor));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKID_BE('COLR')) {
+			//textObject->setBGColor(static_cast<Color *>(lua_getuserdata(keyObj)));
+			warning("setTextObjectParams: dummy BGColor");
+		}
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectFXColor));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isuserdata(keyObj) && lua_tag(keyObj) == MKID_BE('COLR')) {
+			//textObject->setFXColor(static_cast<Color *>(lua_getuserdata(keyObj)));
+			warning("setTextObjectParams: dummy FXColor");
+		}
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectCenter));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (!lua_isnil(keyObj)) {
+			textObject->setJustify(1); //5
+		}
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectLJustify));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (!lua_isnil(keyObj)) {
+			textObject->setJustify(2); //4
+		}
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectRJustify));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (!lua_isnil(keyObj)) {
+			textObject->setJustify(3); //6
+		}
+	}
+
+	lua_pushobject(tableObj);
+	lua_pushobject(lua_getref(refTextObjectDuration));
+	keyObj = lua_gettable();
+	if (keyObj) {
+		if (lua_isnumber(keyObj)) {
+			//textObject->setDuration(lua_getnumber(key));
+			warning("setTextObjectParams: dummy Duration: %d", lua_getnumber(keyObj));
+		}
 	}
 }
 
