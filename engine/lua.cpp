@@ -2280,54 +2280,18 @@ static void PurgePrimitiveQueue() {
 }
 
 static void DrawPolygon() {
-	lua_Object tableObj1, tableObj2, pointObj;
+	lua_Object pointObj;
 	Common::Point p1, p2, p3, p4;
 	Color color;
 
-	color._vals[0] = 255;
-	color._vals[1] = 255;
-	color._vals[2] = 255;
-
-	tableObj1 = lua_getparam(1);
-	tableObj2 = lua_getparam(2);
-
-	if (lua_istable(tableObj1)) {
-		lua_pushobject(tableObj1);
-		lua_pushnumber(1);
-		pointObj = lua_gettable();
-		p1.x = (int)lua_getnumber(pointObj);
-		lua_pushobject(tableObj1);
-		lua_pushnumber(2);
-		pointObj = lua_gettable();
-		p1.y = (int)lua_getnumber(pointObj);
-		lua_pushobject(tableObj1);
-		lua_pushnumber(3);
-		pointObj = lua_gettable();
-		p2.x = (int)lua_getnumber(pointObj);
-		lua_pushobject(tableObj1);
-		lua_pushnumber(4);
-		pointObj = lua_gettable();
-		p2.y = (int)lua_getnumber(pointObj);
-		lua_pushobject(tableObj1);
-		lua_pushnumber(5);
-		pointObj = lua_gettable();
-		p3.x = (int)lua_getnumber(pointObj);
-		lua_pushobject(tableObj1);
-		lua_pushnumber(6);
-		pointObj = lua_gettable();
-		p3.y = (int)lua_getnumber(pointObj);
-		lua_pushobject(tableObj1);
-		lua_pushnumber(7);
-		pointObj = lua_gettable();
-		p4.x = (int)lua_getnumber(pointObj);
-		lua_pushobject(tableObj1);
-		lua_pushnumber(8);
-		pointObj = lua_gettable();
-		p4.y = (int)lua_getnumber(pointObj);
-	} else {
+	lua_Object tableObj1 = lua_getparam(1);
+	if (!lua_istable(tableObj1)) {
 		lua_pushnil();
+		return;
 	}
 
+	int layer = 2;
+	lua_Object tableObj2 = lua_getparam(2);
 	if (lua_istable(tableObj2)) {
 		lua_pushobject(tableObj2);
 		lua_pushstring("color");
@@ -2335,7 +2299,47 @@ static void DrawPolygon() {
 		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID_BE('COLR')) {
 			color = static_cast<Color *>(lua_getuserdata(colorObj));
 		}
+		lua_pushobject(tableObj2);
+		lua_pushstring("layer");
+		lua_Object layerObj = lua_gettable();
+		if (lua_isnumber(layerObj))
+			layer = lua_getnumber(layerObj);
 	}
+
+	// This code support static 4 points polygon as game doesn't use other than that.
+	// However original engine can support many points per polygon
+	lua_pushobject(tableObj1);
+	lua_pushnumber(1);
+	pointObj = lua_gettable();
+	p1.x = (int)lua_getnumber(pointObj);
+	lua_pushobject(tableObj1);
+	lua_pushnumber(2);
+	pointObj = lua_gettable();
+	p1.y = (int)lua_getnumber(pointObj);
+	lua_pushobject(tableObj1);
+	lua_pushnumber(3);
+	pointObj = lua_gettable();
+	p2.x = (int)lua_getnumber(pointObj);
+	lua_pushobject(tableObj1);
+	lua_pushnumber(4);
+	pointObj = lua_gettable();
+	p2.y = (int)lua_getnumber(pointObj);
+	lua_pushobject(tableObj1);
+	lua_pushnumber(5);
+	pointObj = lua_gettable();
+	p3.x = (int)lua_getnumber(pointObj);
+	lua_pushobject(tableObj1);
+	lua_pushnumber(6);
+	pointObj = lua_gettable();
+	p3.y = (int)lua_getnumber(pointObj);
+	lua_pushobject(tableObj1);
+	lua_pushnumber(7);
+	pointObj = lua_gettable();
+	p4.x = (int)lua_getnumber(pointObj);
+	lua_pushobject(tableObj1);
+	lua_pushnumber(8);
+	pointObj = lua_gettable();
+	p4.y = (int)lua_getnumber(pointObj);
 
 	PrimitiveObject *p = new PrimitiveObject();
 	p->createPolygon(p1, p2, p3, p4, color);
