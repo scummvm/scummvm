@@ -252,18 +252,23 @@ Audio::AudioStream *makeVOCStream(Common::SeekableReadStream *stream, bool dispo
 } // end of anonymous namespace
 
 const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
-#ifdef USE_FLAC
-	{ ".VOF", Audio::makeFlacStream },
-#endif // USE_FLAC
-#ifdef USE_VORBIS
-	{ ".VOG", Audio::makeVorbisStream },
-#endif // USE_VORBIS
-#ifdef USE_MAD
-	{ ".VO3", Audio::makeMP3Stream },
-#endif // USE_MAD
-
 	{ ".VOC", makeVOCStream },
 	{ "", makeVOCStream },
+
+#ifdef USE_MAD
+	{ ".VO3", Audio::makeMP3Stream },
+	{ ".MP3", Audio::makeMP3Stream },
+#endif // USE_MAD
+
+#ifdef USE_VORBIS
+	{ ".VOG", Audio::makeVorbisStream },
+	{ ".OGG", Audio::makeVorbisStream },
+#endif // USE_VORBIS
+
+#ifdef USE_FLAC
+	{ ".VOF", Audio::makeFlacStream },
+	{ ".FLA", Audio::makeFlacStream },
+#endif // USE_FLAC
 
 	{ 0, 0 }
 };
