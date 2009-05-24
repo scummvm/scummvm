@@ -100,15 +100,15 @@ COLORREF* psxClutToRGBPal(uint8 *srcClut, int *colours) {
 	int coloursInPalette = 0;
 
 	// Allocate space for the 16 colour destination palette
-	COLORREF *dstPal = (COLORREF*)calloc(sizeof(COLORREF), MAX_COLOURS);
-	memset(dstPal, 0, MAX_COLOURS * sizeof(COLORREF));
+	COLORREF *dstPal = (COLORREF*)calloc(sizeof(COLORREF), 16);
+	memset(dstPal, 0, 16 * sizeof(COLORREF));
 
-	for (int idx = 0; idx < 0x10; idx++) {
+	for (int idx = 0; idx < 16; idx++) {
 		clutEntry = READ_LE_UINT16(srcClut); // Read PSX CLUT entry
 		srcClut += sizeof(uint16);
 
 		if ((clutEntry == 0) && (coloursInPalette == 0))
-			coloursInPalette++;
+			continue;
 		else if ((clutEntry == 0) && (coloursInPalette != 0)) {
 			*colours = coloursInPalette;
 			return dstPal;
