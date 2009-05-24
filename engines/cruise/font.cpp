@@ -72,7 +72,7 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 			lineLength = rightBorder_X;
 			localString = tempPtr;
 		} else if (charData >= 0) {
-			lineLength += wordSpacingWidth + FROM_LE_16(fontData[charData].charWidth);
+			lineLength += wordSpacingWidth + (int16)FROM_LE_16(fontData[charData].charWidth);
 		} else if (ch == ' ') {
 			lineLength += wordSpacingWidth + 5;
 			localString = tempPtr;
@@ -258,7 +258,7 @@ int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
 			} else {
 				if (charData) {
 					if (pixelCount + wordSpacingWidth +
-							FROM_LE_16(fontData[charData].charWidth) >= inRightBorder_X) {
+							(int16)FROM_LE_16(fontData[charData].charWidth) >= inRightBorder_X) {
 						finish = 1;
 						if (temp_pc) {
 							pixelCount = temp_pc;
@@ -266,7 +266,7 @@ int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
 						}
 					} else {
 						pixelCount += wordSpacingWidth +
-							FROM_LE_16(fontData[charData].charWidth);
+							(int16)FROM_LE_16(fontData[charData].charWidth);
 					}
 				}
 			}
@@ -422,21 +422,16 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 								   FROM_LE_16(fe.v1),
 						           stringRenderBufferSize,
 						           stringWidth / 2,
-								   FROM_LE_16(fe.charWidth));
+								   (int16)FROM_LE_16(fe.charWidth));
 
 						drawPosPixel_X +=
-						    wordSpacingWidth + FROM_LE_16(fe.charWidth);
+						    wordSpacingWidth + (int16)FROM_LE_16(fe.charWidth);
 					}
 				}
 			} else {
 				stringFinished = 1;	// character = 0x00
 			}
-
-			// check if string already reached the end
-			if (ptrStringEnd <= string) {
-				break;
-			}
-		} while (!stringFinished);
+		} while ((string < ptrStringEnd) && !stringFinished);
 
 		// var_8 = 0;
 		heightOffset += wordSpacingHeight + lineHeight;
