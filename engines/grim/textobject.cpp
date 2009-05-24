@@ -209,7 +209,7 @@ void TextObject::destroyBitmap() {
 void TextObject::draw() {
 	int height = 0;
 
-	if (!_created)
+	if (!_created || _disabled)
 		return;
 	// render multi-line (wrapped) text
 	for (int i = 0; i < _numberLines; i++) {
