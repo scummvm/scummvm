@@ -39,6 +39,10 @@ typedef	uint32	COLORREF;
 #define TINSEL_GetGValue(rgb)	((uint8)(((uint16)(FROM_LE_32(rgb))) >> 8))
 #define TINSEL_GetBValue(rgb)	((uint8)((FROM_LE_32(rgb))>>16))
 
+#define PSXGetRValue(rgb)	(FROM_LE_32(rgb) & 0x000000f8)
+#define PSXGetGValue(rgb)	(FROM_LE_32((rgb) >> 8) & 0x000000f8)
+#define PSXGetBValue(rgb)	(FROM_LE_32((rgb) >> 16) & 0x000000f8)
+
 enum {
 	MAX_COLOURS		= 256,	//!< maximum number of colours - for VGA 256
 	BITS_PER_PIXEL	= 8,	//!< number of bits per pixel for VGA 256
@@ -107,7 +111,7 @@ void ResetPalAllocator(void);	// wipe out all palettes
 void PaletteStats(void);	// Shows the maximum number of palettes used at once
 #endif
 
-COLORREF* psxClutToRGBPal(uint8 *srcClut); // Convert Discworld PSX 555 CLUTs to compatible 888 palette
+void psxPaletteMapper(PALQ *originalPal, uint16 *psxClut, byte *mapperTable); // Maps PSX CLUTs to original palette in resource file
 
 void PalettesToVideoDAC(void);	// Update the video DAC with palettes currently the the DAC queue
 

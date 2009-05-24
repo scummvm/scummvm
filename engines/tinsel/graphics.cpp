@@ -214,9 +214,8 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 
 /**
  * Straight rendering with transparency support, PSX variant supporting also 4-BIT clut data
- * TODO: finish supporting 4-bit data
  */
-static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool fourBitClut, uint32 psxSkipBytes, uint32 palStart, bool transparency) {
+static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping, bool fourBitClut, uint32 psxSkipBytes, byte *psxMapperTable, bool transparency) {
 	// Set up the offset between destination blocks
 	int rightClip = applyClipping ? pObj->rightClip : 0;
 	Common::Rect boxBounds;
@@ -300,7 +299,7 @@ static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 						// Extract pixel value from byte
 						byte pixValue =  (*(p + (xp / 2)) & (xp % 2 ? 0xf0 : 0x0f)) >> (xp % 2 ? 4 : 0);
 						if (pixValue || !transparency)
-							*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = pixValue;
+							*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = psxMapperTable[pixValue];
 					}
 				}
 			}
@@ -723,6 +722,7 @@ void UpdateScreenRect(const Common::Rect &pClip) {
 void DrawObject(DRAWOBJECT *pObj) {
 	uint8 *srcPtr = NULL;
 	uint8 *destPtr;
+	byte psxMapperTable[16];
 
 	bool psxFourBitClut; // Used by Tinsel PSX, true if an image using a 4bit CLUT is rendered
 	bool psxRLEindex; // Used by Tinsel PSX, true if an image is using PJCRLE compressed indexes
@@ -769,6 +769,9 @@ void DrawObject(DRAWOBJECT *pObj) {
 						}
 						break;
 					case 0x44: // PSX 4-bit CLUT
+						memset(psxMapperTable, 0, 16);
+						psxPaletteMapper(pObj->pPal, (uint16*)(srcPtr + sizeof(uint16)), psxMapperTable);
+
 						psxFourBitClut = true;
 						psxSkipBytes = READ_LE_UINT32(p + sizeof(uint32) * 5) << 4; // Fetch number of bytes we have to skip
 						switch (indexType) {
@@ -854,11 +857,11 @@ void DrawObject(DRAWOBJECT *pObj) {
 		switch (typeId) {
 		case 0x01:
 		case 0x41:
-			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, pObj->pPal->posInDAC, true);
+			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
 			break;
 		case 0x08:
 		case 0x48:
-			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, pObj->pPal->posInDAC, false);
+			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, false);
 			break;
 		case 0x84:
 		case 0xC4:

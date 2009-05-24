@@ -92,40 +92,33 @@ static int maxDACQ = 0;
 #endif
 
 /**
- * Convert Discworld PSX 555 CLUTs to compatible 888 palette
+ * Map PSX palettes to original palette from resource file
  */
-COLORREF* psxClutToRGBPal(uint8 *srcClut, int *colours) {
-	uint8 red, green, blue;
-	uint16 clutEntry;
-	int coloursInPalette = 0;
+void psxPaletteMapper(PALQ *originalPal, uint16 *psxClut, byte *mapperTable) {
+	PALETTE *pal = (PALETTE *)LockMem(originalPal->hPal);
+	bool colorFound = false;
 
-	// Allocate space for the 16 colour destination palette
-	COLORREF *dstPal = (COLORREF*)calloc(sizeof(COLORREF), 16);
-	memset(dstPal, 0, 16 * sizeof(COLORREF));
+	for (int j = 0; j < 16; j++) {
+		if(!(psxClut[j] & 0x8000)) {
+			for (int i = 0; (i < pal->numColours) && !colorFound; i++) {
+				// get R G B values in the same way as psx format converters
+				uint16 psxEquivalent = (uint16)((uint32)(PSXGetRValue(pal->palRGB[i]) >> 3) | 
+									((PSXGetGValue(pal->palRGB[i]) >> 3) << 5) |
+									((PSXGetBValue(pal->palRGB[i]) >> 3) << 10));
 
-	for (int idx = 0; idx < 16; idx++) {
-		clutEntry = READ_LE_UINT16(srcClut); // Read PSX CLUT entry
-		srcClut += sizeof(uint16);
-
-		if ((clutEntry == 0) && (coloursInPalette == 0))
-			continue;
-		else if ((clutEntry == 0) && (coloursInPalette != 0)) {
-			*colours = coloursInPalette;
-			return dstPal;
-		} else
-			coloursInPalette++;
-
-		// Extract color data
-		red = ((clutEntry & 0x1F) * 255) / 31;
-		green =  (((clutEntry & 0x3E0) >> 5) * 255) / 31;
-		blue = (((clutEntry & 0x7C00) >> 10) * 255) / 31;
-
-		// Write the palette
-		dstPal[idx] = TINSEL_RGB(red, green, blue);
+				if (psxEquivalent == psxClut[j]) {
+					mapperTable[j] = i + 1;
+					colorFound = true;
+				}
+			}
+			// FIXME: This is just to hack around a bug that causes some text to appear
+			// black, i still have to find the correct fix for this.
+			if(psxClut[j] == 0x7EC0 && !colorFound) mapperTable[j] = 197; 
+			colorFound = false;
+		} else {
+			mapperTable[j] = 0;
+		}
 	}
-
-	*colours = coloursInPalette;
-	return dstPal;
 }
 
 /**
