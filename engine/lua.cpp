@@ -2394,6 +2394,7 @@ static void ChangePrimitive() {
 			break;
 		}
 	}
+	assert(pmodify);
 
 	lua_pushobject(tableObj);
 	lua_pushstring("color");
