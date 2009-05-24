@@ -193,7 +193,7 @@ public:
 	 * @param handle	store a copy of the sound handle
 	 * @return playtime of the voice file (-1 marks unknown playtime)
 	 */
-	virtual int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, Audio::SoundHandle *handle = 0);
+	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle = 0, uint8 volume = 255, bool isSfx = false);
 	
 	Audio::AudioStream *getVoiceStream(const char *file);
 
@@ -457,7 +457,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, Audio::SoundHandle *handle = 0) { return -1; }
+	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx) { return -1; }
 	void playSoundEffect(uint8);
 
 protected:
@@ -484,7 +484,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	int32 voicePlay(const char *file, uint8 volume = 255, bool isSfx = false, Audio::SoundHandle *handle = 0);
+	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx);
 	void playSoundEffect(uint8 track);
 
 protected:

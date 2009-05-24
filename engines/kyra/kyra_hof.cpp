@@ -1486,7 +1486,7 @@ void KyraEngine_HoF::snd_playVoiceFile(int id) {
 	if (_sound->voiceFileIsPresent(vocFile)) {
 		snd_stopVoice();
 
-		while (!_sound->voicePlay(vocFile, 255, false, &_speechHandle)) {
+		while (!_sound->voicePlay(vocFile, &_speechHandle)) {
 			updateWithText();
 			_system->delayMillis(10);
 		}
@@ -1524,7 +1524,7 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1) {
-		_sound->voicePlay(_ingameSoundList[vocIndex], 255, true);
+		_sound->voicePlay(_ingameSoundList[vocIndex], 0, 255, true);
 	} else if (_flags.platform == Common::kPlatformPC) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
 			track = track < _mt32SfxMapSize ? _mt32SfxMap[track] - 1 : -1;

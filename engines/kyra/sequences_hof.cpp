@@ -2149,7 +2149,7 @@ void KyraEngine_HoF::seq_playTalkText(uint8 chatNum) {
 	if (chatNum < 12 && !_flags.isDemo && textEnabled())
 		seq_setTextEntry(chatNum, 160, 168, _sequenceStringsDuration[chatNum], 160);
 
-	_sound->voicePlay(_sequenceSoundList[chatNum], 255, false, &_speechHandle);
+	_sound->voicePlay(_sequenceSoundList[chatNum], &_speechHandle);
 }
 
 void KyraEngine_HoF::seq_waitForTextsTimeout() {

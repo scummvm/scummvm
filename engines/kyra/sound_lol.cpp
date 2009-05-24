@@ -178,7 +178,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	}
 
 	if (hasVocFile) {
-		_sound->voicePlay(_ingameSoundList[vocIndex], volume & 0xff, true);
+		_sound->voicePlay(_ingameSoundList[vocIndex], 0, volume & 0xff, true);
 	} else if (_flags.platform == Common::kPlatformPC) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
 			track = track < _ingameMT32SoundIndexSize ? _ingameMT32SoundIndex[track] - 1 : -1;

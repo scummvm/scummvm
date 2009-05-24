@@ -59,7 +59,7 @@ bool Sound::voiceFileIsPresent(const char *file) {
 	return false;
 }
 
-int32 Sound::voicePlay(const char *file, uint8 volume, bool isSfx, Audio::SoundHandle *handle) {
+int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx) {
 	Audio::AudioStream *audioStream = getVoiceStream(file);
 
 	if (!audioStream) {

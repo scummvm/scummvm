@@ -367,7 +367,7 @@ void LoLEngine::kingSelectionIntro() {
 	_screen->fprintStringIntro(_tim->getCTableEntry(60), 8, y + 30, 0x32, 0x00, 0x9C, 0x20);
 	_screen->fprintStringIntro(_tim->getCTableEntry(61), 8, y + 40, 0x32, 0x00, 0x9C, 0x20);
 
-	_sound->voicePlay("KING01", 255, false, &_speechHandle);
+	_sound->voicePlay("KING01", &_speechHandle);
 
 	int index = 4;
 	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
@@ -406,7 +406,7 @@ void LoLEngine::kingSelectionReminder() {
 	_screen->fprintStringIntro(_tim->getCTableEntry(62), 8, y, 0x32, 0x00, 0x9C, 0x20);
 	_screen->fprintStringIntro(_tim->getCTableEntry(63), 8, y + 10, 0x32, 0x00, 0x9C, 0x20);
 
-	_sound->voicePlay("KING02", 255, false, &_speechHandle);
+	_sound->voicePlay("KING02", &_speechHandle);
 
 	int index = 0;
 	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && index < 15) {
@@ -433,7 +433,7 @@ void LoLEngine::kingSelectionReminder() {
 }
 
 void LoLEngine::kingSelectionOutro() {
-	_sound->voicePlay("KING03", 255, false, &_speechHandle);
+	_sound->voicePlay("KING03", &_speechHandle);
 
 	int index = 0;
 	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && !shouldQuit() && !skipFlag()) {
@@ -582,7 +582,7 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 	file[4] = '0';
 
 	while (_charSelectionInfoResult == -1 && !shouldQuit()) {
-		if (!_sound->voicePlay(file, 255, false, &_speechHandle))
+		if (!_sound->voicePlay(file, &_speechHandle))
 			break;
 
 		int i = 0;
@@ -664,7 +664,7 @@ void LoLEngine::showStarcraftLogo() {
 	}
 
 	if (!(shouldQuit() || inputFlag)) {
-		_sound->voicePlay("star2", 255, false, &_speechHandle);
+		_sound->voicePlay("star2", &_speechHandle);
 		while(_sound->voiceIsPlaying(&_speechHandle) && !(shouldQuit() || inputFlag)) {
 			inputFlag = checkInput(0) & 0xff;
 			delay(_tickLength);
