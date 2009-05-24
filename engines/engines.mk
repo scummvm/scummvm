@@ -1,0 +1,2 @@
+DEFINES +=
+MODULES += engines/grim

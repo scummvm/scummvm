@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	hashmap.o \
 	libz.o \
 	memorypool.o \
+	md5.o \
 	mutex.o \
 	str.o \
 	stream.o \
