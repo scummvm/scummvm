@@ -902,34 +902,34 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="mixer"
+			Name="sound"
 			>
 			<File
-				RelativePath="..\..\mixer\audiostream.cpp"
+				RelativePath="..\..\sound\audiostream.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\mixer\audiostream.h"
+				RelativePath="..\..\sound\audiostream.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\mixer\mixer.cpp"
+				RelativePath="..\..\sound\mixer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\mixer\mixer.h"
+				RelativePath="..\..\sound\mixer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\mixer\mixer_intern.h"
+				RelativePath="..\..\sound\mixer_intern.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\mixer\rate.cpp"
+				RelativePath="..\..\sound\rate.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\mixer\rate.h"
+				RelativePath="..\..\sound\rate.h"
 				>
 			</File>
 		</Filter>
