@@ -243,6 +243,22 @@ void Palette::setGlobalOSystemPalette() const {
 	g_system->setPalette(buf, 0, colorCount());
 }
 
+Cine::Palette::Color Palette::getColor(byte index) const {
+	return _colors[index];
+}
+
+uint8 Palette::getR(byte index) const {
+	return _colors[index].r;
+}
+
+uint8 Palette::getG(byte index) const {
+	return _colors[index].g;
+}
+
+uint8 Palette::getB(byte index) const {
+	return _colors[index].b;
+}
+
 void Palette::setColorFormat(const Graphics::PixelFormat format) {
 	_format = format;
 }

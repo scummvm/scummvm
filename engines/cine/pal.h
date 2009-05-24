@@ -84,12 +84,11 @@ void transformPaletteRange(byte *srcPal, byte *dstPal, int startColor, int stopC
 // TODO: Make use of
 // TODO: Test
 class Palette {
-private:
+public:
 	struct Color {
 		uint8 r, g, b;
 	};
 
-public:
 	/*! \brief Create an initially black palette with the given color format and number of colors.
 	 * \param format Color format
 	 * \param numColors Number of colors
@@ -176,6 +175,18 @@ public:
 
 	/*! \brief Sets current palette to global OSystem's palette using g_system->setPalette. */
 	void setGlobalOSystemPalette() const;
+
+	/*! \brief Get the color at the given palette index. */
+	Color getColor(byte index) const;
+
+	/*! \brief Get the red color component of the color at the given palette index. */
+	uint8 getR(byte index) const;
+
+	/*! \brief Get the green color component of the color at the given palette index. */
+	uint8 getG(byte index) const;
+
+	/*! \brief Get the blue color component of the color at the given palette index. */
+	uint8 getB(byte index) const;
 
 private:
 	void setColorFormat(const Graphics::PixelFormat format);
