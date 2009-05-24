@@ -29,6 +29,8 @@
 
 namespace Kyra {
 
+#define LOL_VOICE_HANDLE "LoL_VOICE"
+
 bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	if (!_speechFlag)
 		return false;
@@ -54,7 +56,8 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	char file3[13];
 	file3[0] = 0;
 
-	Common::List<const char*> playList;
+	Audio::AudioStream *as = 0;
+	Common::List<Audio::AudioStream *> newSpeechList;
 
 	snprintf(pattern2, sizeof(pattern2), "%02d", id & 0x4000 ? 0 : _curTlkFile);
 
@@ -64,11 +67,8 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 		snprintf(pattern1, sizeof(pattern1), "%03d", id);
 	} else {
 		snprintf(file3, sizeof(file3), "@%04d%c.%s", id - 1000, (char)speaker, pattern2);
-		if (_res->exists(file3)) {
-			char *f = new char[strlen(file3) + 1];
-			strcpy(f, file3);
-			playList.push_back(f);
-		}
+		if ((as = _sound->getVoiceStream(file3)) != 0)
+			newSpeechList.push_back(as);
 	}
 
 	if (!file3[0]) {
@@ -76,49 +76,37 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 			char symbol = '0' + i;
 			snprintf(file1, sizeof(file1), "%s%c%c.%s", pattern1, (char)speaker, symbol, pattern2);
 			snprintf(file2, sizeof(file2), "%s%c%c.%s", pattern1, '_', symbol, pattern2);
-			if (_res->exists(file1)) {
-				char *f = new char[strlen(file1) + 1];
-				strcpy(f, file1);
-				playList.push_back(f);
-			} else if (_res->exists(file2)) {
-				char *f = new char[strlen(file2) + 1];
-				strcpy(f, file2);
-				playList.push_back(f);
-			} else {
+			if ((as = _sound->getVoiceStream(file1)) != 0)
+				newSpeechList.push_back(as);
+			else if ((as = _sound->getVoiceStream(file2)) != 0)
+				newSpeechList.push_back(as);
+			else
 				break;
-			}
 		}
 	}
 
-	if (playList.empty())
+	if (newSpeechList.empty())
 		return false;
 
-	while (_sound->voiceIsPlaying(_activeVoiceFile))
+	while (_sound->voiceIsPlaying(LOL_VOICE_HANDLE))
 		delay(_tickLength, true, false);
 
 	while (_sound->allVoiceChannelsPlaying())
 		delay(_tickLength, false, true);
 
-	strcpy(_activeVoiceFile, *playList.begin());
-
 	_activeVoiceFileTotalTime = 0;
 	for (Common::List<Audio::AudioStream *>::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
 		delete *i;
 	_speechList.clear();
+	_speechList = newSpeechList;
 
-	for (Common::List<const char*>::iterator i = playList.begin(); i != playList.end(); ++i) {
-		Audio::AudioStream *a = _sound->getVoiceStream(*i);
-		if (a) {
-			_activeVoiceFileTotalTime += a->getTotalPlayTime();
-			_speechList.push_back(a);
-		}
-	}
+	for (Common::List<Audio::AudioStream *>::const_iterator i = _speechList.begin(); i != _speechList.end(); ++i)
+		_activeVoiceFileTotalTime += (*i)->getTotalPlayTime();
 
 	//_activeVoiceFileTotalTime = _sound->voicePlay(_activeVoiceFile, 255, false, false);
-	_sound->playVoiceStream(*_speechList.begin(), _activeVoiceFile);
+	_sound->playVoiceStream(*_speechList.begin(), LOL_VOICE_HANDLE);
 	_speechList.pop_front();
 
-	playList.clear();
 	//for (Common::List<const char*>::iterator i = _speechPlayList.begin(); i != _speechPlayList.end(); ++i)
 	//	_activeVoiceFileTotalTime += _sound->getTotalPlayTime(*i, false);
 	/*if (_speechPlayList.begin() != _speechPlayList.end())
@@ -133,11 +121,11 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 }
 
 int LoLEngine::snd_updateCharacterSpeech() {
-	if (_sound->voiceIsPlaying(_activeVoiceFile))
+	if (_sound->voiceIsPlaying(LOL_VOICE_HANDLE))
 		return 2;
 
 	if (_speechList.begin() != _speechList.end()) {
-		_sound->playVoiceStream(*_speechList.begin(), _activeVoiceFile);
+		_sound->playVoiceStream(*_speechList.begin(), LOL_VOICE_HANDLE);
 		_speechList.pop_front();
 		return 2;
 
@@ -155,11 +143,11 @@ int LoLEngine::snd_updateCharacterSpeech() {
 }
 
 void LoLEngine::snd_stopSpeech(bool setFlag) {
-	if (!_sound->voiceIsPlaying(_activeVoiceFile))
+	if (!_sound->voiceIsPlaying(LOL_VOICE_HANDLE))
 		return;
 
 	//_dlgTimer = 0;
-	_sound->voiceStop(_activeVoiceFile);
+	_sound->voiceStop(LOL_VOICE_HANDLE);
 	_activeVoiceFileTotalTime = 0;
 	_nextSpeechId = _nextSpeaker = -1;
 

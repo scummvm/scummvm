@@ -425,7 +425,6 @@ private:
 
 	int _lastSpeechId;
 	int _lastSpeaker;
-	char _activeVoiceFile[13];
 	uint32 _activeVoiceFileTotalTime;
 	int _lastSfxTrack;
 	int _lastMusicTrack;
