@@ -2126,70 +2126,51 @@ static void Exit() {
 	exit(0);
 }
 
-/* Check for an existing object by a certain name
- * this function is used by several functions that look
- * for text objects to see if they need to be created/modified/destroyed.
- */
-TextObject *TextObjectExists(char *name) {
-	TextObject *modifyObject = NULL;
-
-	for (GrimEngine::TextListType::const_iterator i = g_grim->textsBegin(); i != g_grim->textsEnd(); i++) {
-		TextObject *textO = *i;
-		if (strlen(name) == strlen(textO->name()) && strcmp(textO->name(), name) == 0) {
-			modifyObject = textO;
-			break;
-		}
-	}
-	return modifyObject;
-}
-
 /* Destroy a text object since we don't need it anymore
  * note that the menu creates more objects than it needs,
  * so it deletes some objects right after creating them
  */
 static void KillTextObject() {
-	TextObject *textObjectParm, *delText;
+	lua_Object textObj = lua_getparam(1);
 
-	if (lua_isnil(lua_getparam(1))) {
-		if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-			error("KillTextObject(NULL)");
-		return;
+	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKID_BE('TEXT')) {
+		TextObject *textObject = static_cast<TextObject *>(lua_getuserdata(textObj));
+		// TODO rewrote removing, but change only status, I guess disable or flag to removal
+		// as it's done in original engine
+		g_grim->killTextObject(textObject);
 	}
-
-	textObjectParm = check_textobject(1);
-
-	delText = TextObjectExists((char *) textObjectParm->name());
-	if (delText)
-		g_grim->killTextObject(delText);
 }
 
 /* Make changes to a text object based on the parameters passed
  * in the table in the LUA parameter 2.
  */
 static void ChangeTextObject() {
-	TextObject *textObject;
-	lua_Object tableObj;
 	const char *line;
+	lua_Object textObj = lua_getparam(1);
+	int paramId = 2;
+	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKID_BE('TEXT')) {
+		TextObject *textObject = static_cast<TextObject *>(lua_getuserdata(textObj));
+		do {
+			lua_Object paramObj = lua_getparam(paramId++);
+			if (!paramObj)
+				break;
+			if (!lua_isstring(paramObj)) {
+				if (!lua_istable(paramObj))
+					break;
+				setTextObjectParams(textObject, paramObj);
+			} else {
+				line = lua_getstring(paramObj);
+				textObject->setText((char *)line);
+				lua_getstring(paramObj);
 
-	textObject = check_textobject(1);
-	if (lua_isstring(lua_getparam(2))) {
-		tableObj = lua_getparam(3);
-	} else
-		tableObj = lua_getparam(2);
+			}
+			textObject->destroyBitmap();
+			textObject->createBitmap();
 
-	textObject->destroyBitmap();
-
-	if (lua_istable(tableObj))
-		setTextObjectParams(textObject, tableObj);
-
-	if (lua_isstring(lua_getparam(2))) {
-		line = lua_getstring(lua_getparam(2));
-		textObject->setText((char *)line);
+			lua_pushnumber(textObject->getBitmapWidth());
+			lua_pushnumber(textObject->getBitmapHeight());
+		} while (false);
 	}
-	textObject->createBitmap();
-
-	lua_pushnumber(textObject->getBitmapWidth());
-	lua_pushnumber(textObject->getBitmapHeight());
 }
 
 /* Return the "text speed", this option must be handled
