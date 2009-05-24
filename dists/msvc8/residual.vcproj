@@ -385,437 +385,437 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="engine"
+			Name="engines"
 			>
 			<File
-				RelativePath="..\..\engine\actor.cpp"
+				RelativePath="..\..\engines\grim\actor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\actor.h"
+				RelativePath="..\..\engines\grim\actor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\bitmap.cpp"
+				RelativePath="..\..\engines\grim\bitmap.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\bitmap.h"
+				RelativePath="..\..\engines\grim\bitmap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\cmd_line.cpp"
+				RelativePath="..\..\engines\grim\cmd_line.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\cmd_line.h"
+				RelativePath="..\..\engines\grim\cmd_line.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\color.h"
+				RelativePath="..\..\engines\grim\color.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\colormap.h"
+				RelativePath="..\..\engines\grim\colormap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\costume.cpp"
+				RelativePath="..\..\engines\grim\costume.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\costume.h"
+				RelativePath="..\..\engines\grim\costume.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\font.cpp"
+				RelativePath="..\..\engines\grim\font.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\font.h"
+				RelativePath="..\..\engines\grim\font.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\gfx_base.h"
+				RelativePath="..\..\engines\grim\gfx_base.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\gfx_opengl.cpp"
+				RelativePath="..\..\engines\grim\gfx_opengl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\gfx_opengl.h"
+				RelativePath="..\..\engines\grim\gfx_opengl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\gfx_tinygl.cpp"
+				RelativePath="..\..\engines\grim\gfx_tinygl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\gfx_tinygl.h"
+				RelativePath="..\..\engines\grim\gfx_tinygl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\grim.cpp"
+				RelativePath="..\..\engines\grim\grim.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\grim.h"
+				RelativePath="..\..\engines\grim\grim.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\internal_version.h"
+				RelativePath="..\..\engines\grim\internal_version.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\keyframe.cpp"
+				RelativePath="..\..\engines\grim\keyframe.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\keyframe.h"
+				RelativePath="..\..\engines\grim\keyframe.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\lab.cpp"
+				RelativePath="..\..\engines\grim\lab.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\lab.h"
+				RelativePath="..\..\engines\grim\lab.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\lipsync.cpp"
+				RelativePath="..\..\engines\grim\lipsync.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\lipsync.h"
+				RelativePath="..\..\engines\grim\lipsync.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\localize.cpp"
+				RelativePath="..\..\engines\grim\localize.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\localize.h"
+				RelativePath="..\..\engines\grim\localize.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\lua.cpp"
+				RelativePath="..\..\engines\grim\lua.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\lua.h"
+				RelativePath="..\..\engines\grim\lua.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\main.cpp"
+				RelativePath="..\..\engines\grim\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\material.cpp"
+				RelativePath="..\..\engines\grim\material.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\material.h"
+				RelativePath="..\..\engines\grim\material.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\matrix3.cpp"
+				RelativePath="..\..\engines\grim\matrix3.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\matrix3.h"
+				RelativePath="..\..\engines\grim\matrix3.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\matrix4.cpp"
+				RelativePath="..\..\engines\grim\matrix4.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\matrix4.h"
+				RelativePath="..\..\engines\grim\matrix4.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\model.cpp"
+				RelativePath="..\..\engines\grim\model.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\model.h"
+				RelativePath="..\..\engines\grim\model.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\objectstate.cpp"
+				RelativePath="..\..\engines\grim\objectstate.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\objectstate.h"
+				RelativePath="..\..\engines\grim\objectstate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\primitives.cpp"
+				RelativePath="..\..\engines\grim\primitives.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\primitives.h"
+				RelativePath="..\..\engines\grim\primitives.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\registry.cpp"
+				RelativePath="..\..\engines\grim\registry.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\registry.h"
+				RelativePath="..\..\engines\grim\registry.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\resource.cpp"
+				RelativePath="..\..\engines\grim\resource.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\resource.h"
+				RelativePath="..\..\engines\grim\resource.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\savegame.cpp"
+				RelativePath="..\..\engines\grim\savegame.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\savegame.h"
+				RelativePath="..\..\engines\grim\savegame.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\scene.cpp"
+				RelativePath="..\..\engines\grim\scene.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\scene.h"
+				RelativePath="..\..\engines\grim\scene.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\textobject.cpp"
+				RelativePath="..\..\engines\grim\textobject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\textobject.h"
+				RelativePath="..\..\engines\grim\textobject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\textsplit.cpp"
+				RelativePath="..\..\engines\grim\textsplit.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\textsplit.h"
+				RelativePath="..\..\engines\grim\textsplit.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\vector3d.h"
+				RelativePath="..\..\engines\grim\vector3d.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\version.cpp"
+				RelativePath="..\..\engines\grim\version.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\version.h"
+				RelativePath="..\..\engines\grim\version.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\walkplane.cpp"
+				RelativePath="..\..\engines\grim\walkplane.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\engine\walkplane.h"
+				RelativePath="..\..\engines\grim\walkplane.h"
 				>
 			</File>
 			<Filter
 				Name="lua"
 				>
 				<File
-					RelativePath="..\..\engine\lua\lapi.cpp"
+					RelativePath="..\..\engines\grim\lua\lapi.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lapi.h"
+					RelativePath="..\..\engines\grim\lua\lapi.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lauxlib.cpp"
+					RelativePath="..\..\engines\grim\lua\lauxlib.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lauxlib.h"
+					RelativePath="..\..\engines\grim\lua\lauxlib.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lbuffer.cpp"
+					RelativePath="..\..\engines\grim\lua\lbuffer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lbuiltin.cpp"
+					RelativePath="..\..\engines\grim\lua\lbuiltin.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lbuiltin.h"
+					RelativePath="..\..\engines\grim\lua\lbuiltin.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\ldo.cpp"
+					RelativePath="..\..\engines\grim\lua\ldo.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\ldo.h"
+					RelativePath="..\..\engines\grim\lua\ldo.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lfunc.cpp"
+					RelativePath="..\..\engines\grim\lua\lfunc.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lfunc.h"
+					RelativePath="..\..\engines\grim\lua\lfunc.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lgc.cpp"
+					RelativePath="..\..\engines\grim\lua\lgc.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lgc.h"
+					RelativePath="..\..\engines\grim\lua\lgc.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\liolib.cpp"
+					RelativePath="..\..\engines\grim\lua\liolib.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\llex.cpp"
+					RelativePath="..\..\engines\grim\lua\llex.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\llex.h"
+					RelativePath="..\..\engines\grim\lua\llex.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lmathlib.cpp"
+					RelativePath="..\..\engines\grim\lua\lmathlib.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lmem.cpp"
+					RelativePath="..\..\engines\grim\lua\lmem.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lmem.h"
+					RelativePath="..\..\engines\grim\lua\lmem.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lobject.cpp"
+					RelativePath="..\..\engines\grim\lua\lobject.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lobject.h"
+					RelativePath="..\..\engines\grim\lua\lobject.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lopcodes.h"
+					RelativePath="..\..\engines\grim\lua\lopcodes.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lparser.h"
+					RelativePath="..\..\engines\grim\lua\lparser.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lrestore.cpp"
+					RelativePath="..\..\engines\grim\lua\lrestore.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lsave.cpp"
+					RelativePath="..\..\engines\grim\lua\lsave.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lstate.cpp"
+					RelativePath="..\..\engines\grim\lua\lstate.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lstate.h"
+					RelativePath="..\..\engines\grim\lua\lstate.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lstring.cpp"
+					RelativePath="..\..\engines\grim\lua\lstring.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lstring.h"
+					RelativePath="..\..\engines\grim\lua\lstring.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lstrlib.cpp"
+					RelativePath="..\..\engines\grim\lua\lstrlib.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lstx.cpp"
+					RelativePath="..\..\engines\grim\lua\lstx.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lstx.h"
+					RelativePath="..\..\engines\grim\lua\lstx.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\ltable.cpp"
+					RelativePath="..\..\engines\grim\lua\ltable.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\ltable.h"
+					RelativePath="..\..\engines\grim\lua\ltable.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\ltask.cpp"
+					RelativePath="..\..\engines\grim\lua\ltask.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\ltask.h"
+					RelativePath="..\..\engines\grim\lua\ltask.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\ltm.cpp"
+					RelativePath="..\..\engines\grim\lua\ltm.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\ltm.h"
+					RelativePath="..\..\engines\grim\lua\ltm.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lua.h"
+					RelativePath="..\..\engines\grim\lua\lua.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\luadebug.h"
+					RelativePath="..\..\engines\grim\lua\luadebug.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lualib.h"
+					RelativePath="..\..\engines\grim\lua\lualib.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lundump.cpp"
+					RelativePath="..\..\engines\grim\lua\lundump.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lundump.h"
+					RelativePath="..\..\engines\grim\lua\lundump.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lvm.cpp"
+					RelativePath="..\..\engines\grim\lua\lvm.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lvm.h"
+					RelativePath="..\..\engines\grim\lua\lvm.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lzio.cpp"
+					RelativePath="..\..\engines\grim\lua\lzio.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\lua\lzio.h"
+					RelativePath="..\..\engines\grim\lua\lzio.h"
 					>
 				</File>
 			</Filter>
@@ -823,51 +823,51 @@
 				Name="imuse"
 				>
 				<File
-					RelativePath="..\..\engine\imuse\imuse.cpp"
+					RelativePath="..\..\engines\grim\imuse\imuse.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse.h"
+					RelativePath="..\..\engines\grim\imuse\imuse.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_mcmp_mgr.cpp"
+					RelativePath="..\..\engines\grim\imuse\imuse_mcmp_mgr.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_mcmp_mgr.h"
+					RelativePath="..\..\engines\grim\imuse\imuse_mcmp_mgr.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_music.cpp"
+					RelativePath="..\..\engines\grim\imuse\imuse_music.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_script.cpp"
+					RelativePath="..\..\engines\grim\imuse\imuse_script.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_sndmgr.cpp"
+					RelativePath="..\..\engines\grim\imuse\imuse_sndmgr.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_sndmgr.h"
+					RelativePath="..\..\engines\grim\imuse\imuse_sndmgr.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_tables.cpp"
+					RelativePath="..\..\engines\grim\imuse\imuse_tables.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_tables.h"
+					RelativePath="..\..\engines\grim\imuse\imuse_tables.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_track.cpp"
+					RelativePath="..\..\engines\grim\imuse\imuse_track.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\imuse\imuse_track.h"
+					RelativePath="..\..\engines\grim\imuse\imuse_track.h"
 					>
 				</File>
 			</Filter>
@@ -875,23 +875,23 @@
 				Name="smush"
 				>
 				<File
-					RelativePath="..\..\engine\smush\blocky16.cpp"
+					RelativePath="..\..\engines\grim\smush\blocky16.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\smush\blocky16.h"
+					RelativePath="..\..\engines\grim\smush\blocky16.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\smush\smush.cpp"
+					RelativePath="..\..\engines\grim\smush\smush.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\smush\smush.h"
+					RelativePath="..\..\engines\grim\smush\smush.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engine\smush\vima.cpp"
+					RelativePath="..\..\engines\grim\smush\vima.cpp"
 					>
 				</File>
 			</Filter>
