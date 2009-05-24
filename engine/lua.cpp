@@ -46,6 +46,21 @@ Common::StringList::const_iterator g_filesiter;
 static int refSystemTable;
 static int refTypeOverride;
 static int refOldConcatFallback;
+static int refTextObjectX;
+static int refTextObjectY;
+static int refTextObjectFont;
+static int refTextObjectWidth;
+static int refTextObjectHeight;
+static int refTextObjectFGColor;
+static int refTextObjectBGColor;
+static int refTextObjectFXColor;
+static int refTextObjectHIColor;
+static int refTextObjectDuration;
+static int refTextObjectCenter;
+static int refTextObjectLJustify;
+static int refTextObjectRJustify;
+static int refTextObjvVolume;
+static int refTextObjectBackground;
 
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 
@@ -3563,6 +3578,40 @@ void register_lua() {
 
 	saveCallbackPtr = saveCallback;
 	restoreCallbackPtr = restoreCallback;
+
+	// initialize Text globals
+	lua_pushstring("x");
+	refTextObjectX = lua_ref(true);
+	lua_pushstring("y");
+	refTextObjectY = lua_ref(true);
+	lua_pushstring("font");
+	refTextObjectFont = lua_ref(true);
+	lua_pushstring("width");
+	refTextObjectWidth = lua_ref(true);
+	lua_pushstring("height");
+	refTextObjectHeight = lua_ref(true);
+	lua_pushstring("fgcolor");
+	refTextObjectFGColor = lua_ref(true);
+	lua_pushstring("bgcolor");
+	refTextObjectBGColor = lua_ref(true);
+	lua_pushstring("fxcolor");
+	refTextObjectFXColor = lua_ref(true);
+	lua_pushstring("hicolor");
+	refTextObjectHIColor = lua_ref(true);
+	lua_pushstring("duration");
+	refTextObjectDuration = lua_ref(true);
+	lua_pushstring("center");
+	refTextObjectCenter = lua_ref(true);
+	lua_pushstring("ljustify");
+	refTextObjectLJustify = lua_ref(true);
+	lua_pushstring("rjustify");
+	refTextObjectRJustify = lua_ref(true);
+	lua_pushstring("volume");
+	refTextObjvVolume = lua_ref(true);
+//	lua_pushstring(&text_buffer);
+//	refTextObjectBuffer = lua_ref(true);
+	lua_pushstring("background");
+	refTextObjectBackground = lua_ref(true);
 }
 
 int bundle_dofile(const char *filename) {
