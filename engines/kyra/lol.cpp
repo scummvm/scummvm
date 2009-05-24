@@ -123,11 +123,11 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_lastButtonShape = 0;
 	_buttonPressTimer = 0;
 	_selectedCharacter = 0;
-	_gameFlags[36] = 0;
 	_suspendScript = _sceneUpdateRequired = false;
 	_scriptDirection = 0;
 	_currentDirection = 0;
 	_currentBlock = 0;
+	_compassDirection = _compassDirectionIndex = -1;
 	memset(_visibleBlockIndex, 0, sizeof(_visibleBlockIndex));
 
 	_smoothScrollModeNormal = 1;
@@ -226,7 +226,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_floatingCursorsEnabled = false;
 
 	memset(_lvlTempData, 0, sizeof(_lvlTempData));
-	_gameFlags[26] = 0;
 
 	_mapOverlay = 0;
 	_automapShapes = 0;
