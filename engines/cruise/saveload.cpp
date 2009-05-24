@@ -180,7 +180,7 @@ static void syncFilesDatabase(Common::Serializer &s) {
 		s.syncAsUint16LE(fe.width);
 		s.syncAsUint16LE(fe.resType);
 		s.syncAsUint16LE(fe.height);
-	
+
 		// TODO: Have a look at the saving/loading of this pointer
 		tmp = (fe.subData.ptr) ? 1 : 0;
 		s.syncAsUint32LE(tmp);
@@ -602,7 +602,7 @@ static void DoSync(Common::Serializer &s) {
 	syncBackgroundTable(s);
 	syncPalScreen(s);
 	syncSoundList(s);
-	
+
 	for (int i = 0; i < stateID; ++i)
 		s.syncAsSint16LE(globalVars[i]);
 

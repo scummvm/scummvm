@@ -149,14 +149,14 @@ void ControlButton::draw(void) {
 		memset(HIFbuf, 0, _resMan->readUint16(&fHead->height) * _resMan->readUint16(&fHead->width));
 		Screen::decompressHIF(src, HIFbuf);
 		src = HIFbuf;
-	
+
 		if (_resMan->readUint16(&fHead->width) < 300)
 			for (uint16 cnt = 0; cnt < _resMan->readUint16(&fHead->height); cnt++) {
 				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
 					if (src[cntx])
 						dst[cntx] = src[cntx];
-				
-				dst += SCREEN_WIDTH; 
+
+				dst += SCREEN_WIDTH;
 				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width); cntx++)
 					if (src[cntx])
 						dst[cntx] = src[cntx];
@@ -191,14 +191,14 @@ void ControlButton::draw(void) {
 						dst[cntx * 2] = src[cntx];
 						dst[cntx * 2 + 1] = src[cntx];
 					}
-				
-				dst += SCREEN_WIDTH; 
+
+				dst += SCREEN_WIDTH;
 				for (uint16 cntx = 0; cntx < _resMan->readUint16(&fHead->width) / 2; cntx++)
 					if (src[cntx]) {
 						dst[cntx * 2] = src[cntx];
 						dst[cntx * 2 + 1] = src[cntx];
 					}
-			
+
 				dst += SCREEN_WIDTH;
 				src += _resMan->readUint16(&fHead->width)/2;
 			}
@@ -214,7 +214,7 @@ void ControlButton::draw(void) {
 			dst += SCREEN_WIDTH;
 			src += _resMan->readUint16(&fHead->width);
 		}
-	
+
 	_system->copyRectToScreen(_dstBuf, SCREEN_WIDTH, _x, _y, _width, _height);
 }
 
@@ -1022,15 +1022,15 @@ void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 			Screen::decompressHIF(sprData, HIFbuf);
 			sprData = HIFbuf;
 		}
-		
+
 		for (uint16 cnty = 0; cnty < _resMan->getUint16(chSpr->height); cnty++) {
 			for (uint16 cntx = 0; cntx < _resMan->getUint16(chSpr->width); cntx++) {
 				if (sprData[cntx])
 					dst[cntx] = sprData[cntx];
 			}
-			
+
 			if(SwordEngine::isPsx()) { //On PSX version we need to double horizontal lines
-				dst += SCREEN_WIDTH; 
+				dst += SCREEN_WIDTH;
 				for (uint16 cntx = 0; cntx < _resMan->getUint16(chSpr->width); cntx++)
 					if (sprData[cntx])
 						dst[cntx] = sprData[cntx];
@@ -1041,10 +1041,10 @@ void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 		}
 		destX += _resMan->getUint16(chSpr->width) - 3;
 		str++;
-		
+
 		free(HIFbuf);
 	}
-	
+
 	_system->copyRectToScreen(_screenBuf + y * SCREEN_WIDTH + x, SCREEN_WIDTH, x, y, (destX - x) + 3, 28);
 }
 
@@ -1070,7 +1070,7 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 
 		for (uint16 cnty = 0; cnty < barHeight; cnty++) {
 			memcpy(destMem, srcMem, _resMan->getUint16(frHead->width));
-			
+
 			if(SwordEngine::isPsx()) { //linedoubling
 				destMem += SCREEN_WIDTH;
 				memcpy(destMem, srcMem, _resMan->getUint16(frHead->width));
@@ -1079,7 +1079,7 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 			srcMem += _resMan->getUint16(frHead->width);
 			destMem += SCREEN_WIDTH;
 		}
-		
+
 		_system->copyRectToScreen(_screenBuf + destY * SCREEN_WIDTH + destX, SCREEN_WIDTH, destX, destY, _resMan->getUint16(frHead->width), _resMan->getUint16(frHead->height));
 		_resMan->resClose(SR_VLIGHT);
 		destX += 32;
@@ -1106,7 +1106,7 @@ void Control::saveGameToFile(uint8 slot) {
 	outf->writeByte(SAVEGAME_VERSION);
 
 	if (!isPanelShown()) // Generate a thumbnail only if we are outside of game menu
-		Graphics::saveThumbnail(*outf); 
+		Graphics::saveThumbnail(*outf);
 
 	// Date / time
 	tm curTime;

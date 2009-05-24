@@ -115,7 +115,7 @@ bool Mickey::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 			break;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -509,7 +509,7 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 		animate();
 		drawMenu(menu, *sel0, *sel1);
 	}
-	
+
 	return false;
 }
 
@@ -535,7 +535,7 @@ void Mickey::getMenuSel(char *buffer, int *sel0, int *sel1) {
 				}
 			}
 		}
-		
+
 		if (_clickToMove || getMenuSelRow(menu, sel0, sel1, 2)) {
 			break;
 		}
@@ -1358,11 +1358,11 @@ void Mickey::intro() {
 
 	// show copyright and play theme
 	printExeMsg(IDO_MSA_COPYRIGHT);
-	
+
 	// Quit if necessary
 	if (_vm->shouldQuit())
 		return;
-	
+
 	playSound(IDI_MSA_SND_THEME);
 
 	// load game
@@ -1375,7 +1375,7 @@ void Mickey::intro() {
 			return;
 		}
 	}
-	
+
 	// Quit if necessary
 	if (_vm->shouldQuit())
 		return;
@@ -1386,7 +1386,7 @@ void Mickey::intro() {
 
 	drawRoom();
 	printRoomDesc();
-	
+
 	// Quit if necessary
 	if (_vm->shouldQuit())
 		return;
@@ -2104,7 +2104,7 @@ void Mickey::waitAnyKey(bool anim) {
 				break;
 			}
 		}
-		
+
 		if (anim) {
 			animate();
 			_vm->_gfx->doUpdate();

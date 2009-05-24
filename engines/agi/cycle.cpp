@@ -347,7 +347,7 @@ int AgiEngine::playGame() {
 			}
 
 			interpretCycle();
-			
+
 			// Check if the user has asked to load a game from the command line
 			// or the launcher
 			if (firstLoop) {

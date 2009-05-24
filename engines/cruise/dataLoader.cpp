@@ -424,7 +424,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		localBuffer.hotspotY = s4.readUint16BE();
 		localBuffer.hotspotX = s4.readUint16BE();
 
-		if (sec == 1) 
+		if (sec == 1)
 			// Type 1: Width - (1*2) , Type 5: Width - (5*2)
 			localBuffer.width -= localBuffer.type * 2;
 

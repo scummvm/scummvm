@@ -55,8 +55,8 @@ const int Inter_Fascination::_goblinFuncLookUp[][2] = {
 	{10, 9},
 	{11, 10},
 	{12, 11},
-	{1000, 12}, 
-	{1001, 13}, 
+	{1000, 12},
+	{1001, 13},
 	{1002, 14}
 };
 
@@ -515,7 +515,7 @@ void Inter_Fascination::setupOpcodes() {
 
 	_opcodesDrawFascination = opcodesDraw;
 	_opcodesFuncFascination = opcodesFunc;
-	_opcodesGoblinFascination = opcodesGoblin;	
+	_opcodesGoblinFascination = opcodesGoblin;
 }
 
 void Inter_Fascination::executeDrawOpcode(byte i) {
@@ -676,14 +676,14 @@ void Inter_Fascination::oFascin_cdUnknown6() {
 
 void Inter_Fascination::oFascin_setRenderFlags() {
 	int16 expr;
-//	warning("Fascination oFascin_cdUnknown10 (set render flags)");	
+//	warning("Fascination oFascin_cdUnknown10 (set render flags)");
 	evalExpr(&expr);
 	warning("_draw_renderFlags <- %d",expr);
 	_vm->_draw->_renderFlags = expr;
 }
 
 void Inter_Fascination::oFascin_cdUnknown11() {
-//	warning("Fascination oFascin_cdUnknown11 (set variable)");	
+//	warning("Fascination oFascin_cdUnknown11 (set variable)");
 	evalExpr(0);
 }
 
@@ -744,7 +744,7 @@ const char *Inter_Fascination::getOpcodeGoblinDesc(int i) {
 	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
 		if (_goblinFuncLookUp[j][0] == i)
 			return _opcodesGoblinFascination[_goblinFuncLookUp[j][1]].desc;
-	warning("Error in getOpcodeGoblinDesc %d",i);	
+	warning("Error in getOpcodeGoblinDesc %d",i);
 	return "";
 }
 

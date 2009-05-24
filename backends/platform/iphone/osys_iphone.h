@@ -104,7 +104,7 @@ protected:
 	TimerProc _timerCallback;
 
 	Common::Array<Common::Rect> _dirtyRects;
-	Common::Array<Common::Rect> _dirtyOverlayRects;	
+	Common::Array<Common::Rect> _dirtyOverlayRects;
 	ScreenOrientation _screenOrientation;
 	bool _fullScreenIsDirty;
 	bool _fullScreenOverlayIsDirty;
@@ -168,7 +168,7 @@ public:
 	virtual void quit();
 
 	FilesystemFactory *getFilesystemFactory() { return _fsFactory; }
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);	
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual void getTimeAndDate(struct tm &t) const;
 
 	virtual void setWindowCaption(const char *caption);
@@ -186,13 +186,13 @@ public:
 protected:
 	void internUpdateScreen();
 	void dirtyFullScreen();
-	void dirtyFullOverlayScreen();	
+	void dirtyFullOverlayScreen();
 	void clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h);
 	void suspendLoop();
 	void drawDirtyRect(const Common::Rect& dirtyRect);
-	void drawDirtyOverlayRect(const Common::Rect& dirtyRect);	
+	void drawDirtyOverlayRect(const Common::Rect& dirtyRect);
 	void drawMouseCursorOnRectUpdate(const Common::Rect& updatedRect, const Common::Rect& mouseRect);
-	void updateHardwareSurfaceForRect(const Common::Rect& updatedRect);	
+	void updateHardwareSurfaceForRect(const Common::Rect& updatedRect);
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 
@@ -207,5 +207,5 @@ protected:
 	bool handleEvent_secondMouseUp(Common::Event &event, int x, int y);
 
 	bool handleEvent_mouseDragged(Common::Event &event, int x, int y);
-	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);	
+	bool handleEvent_mouseSecondDragged(Common::Event &event, int x, int y);
 };

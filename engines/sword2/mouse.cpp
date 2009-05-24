@@ -339,8 +339,8 @@ void Mouse::systemMenuMouse() {
 
 	// Do nothing if using PSX version and are on TOP menu.
 
-	if ((icon_list[hit] == OPTIONS_ICON || icon_list[hit] == QUIT_ICON 
-		|| icon_list[hit] == SAVE_ICON || icon_list[hit] == RESTORE_ICON 
+	if ((icon_list[hit] == OPTIONS_ICON || icon_list[hit] == QUIT_ICON
+		|| icon_list[hit] == SAVE_ICON || icon_list[hit] == RESTORE_ICON
 		|| icon_list[hit] == RESTART_ICON ) && Sword2Engine::isPsx() )
 		return;
 
@@ -1522,9 +1522,9 @@ void Mouse::decompressMouse(byte *decomp, byte *comp, uint8 frame, int width, in
 		}
 
 		free(buffer);
-	
+
 	} else {
-		comp = comp + READ_LE_UINT32(comp + frame * 4) - MOUSE_ANIM_HEADER_SIZE;	
+		comp = comp + READ_LE_UINT32(comp + frame * 4) - MOUSE_ANIM_HEADER_SIZE;
 
 		while (i < size) {
 			if (*comp > 183) {
@@ -1604,12 +1604,12 @@ void Mouse::drawMouse() {
 			_mouseAnim.mousew, _mouseAnim.mouseh, mouse_width);
 
 	// Fix height for mouse sprite in PSX version
-	if (Sword2Engine::isPsx()) { 
+	if (Sword2Engine::isPsx()) {
 		mouse_height *= 2;
-		
+
 		byte *buffer = (byte *)malloc(mouse_width * mouse_height);
 		Screen::resizePsxSprite(buffer, mouseData, mouse_width, mouse_height);
-		
+
 		free(mouseData);
 		mouseData = buffer;
 	}

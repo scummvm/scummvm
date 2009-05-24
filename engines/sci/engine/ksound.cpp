@@ -1042,7 +1042,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (audioRes) {
 			audioStream = Audio::makeLinearInputStream(audioRes->data, audioRes->size, _audioRate, Audio::Mixer::FLAG_UNSIGNED, 0, 0);
-			sampleLen = audioRes->size * 60 / _audioRate; 
+			sampleLen = audioRes->size * 60 / _audioRate;
 		} else {
 			// No patch file found, read it from the audio volume
 			byte volume;
@@ -1057,8 +1057,8 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				sprintf(filename, "AUDIO%03d.%03d", _lang, volume);
 
 				// Try to load compressed
-				audioStream = Audio::AudioStream::openStreamFile(filename, start, duration); 
-				if (!audioStream) { 
+				audioStream = Audio::AudioStream::openStreamFile(filename, start, duration);
+				if (!audioStream) {
 					// Compressed file load failed, try to load original raw data
 					byte *soundbuff = (byte *)malloc(size);
 					Common::File* audioFile = new Common::File();
@@ -1094,7 +1094,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case kSci1AudioPosition:
 		if (mixer->isSoundHandleActive(_audioHandle)) {
 			return make_reg(0, mixer->getSoundElapsedTime(_audioHandle) * 6 / 100); // return elapsed time in ticks
-		} else {	
+		} else {
 			return make_reg(0, -1); // Sound finished
 		}
 	case kSci1AudioRate:

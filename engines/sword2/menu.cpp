@@ -43,7 +43,7 @@ void Mouse::clearIconArea(int menu, int pocket, Common::Rect *r) {
 	byte *buf = _vm->_screen->getScreen();
 	int16 screenWide = _vm->_screen->getScreenWide();
 	byte menuIconWidth;
-	
+
 	// Initialize menu icon width at correct size
 	// depending if we are using pc or psx version.
 	if (Sword2Engine::isPsx())
@@ -80,8 +80,8 @@ void Mouse::processMenu() {
 
 	byte *buf = _vm->_screen->getScreen();
 	int16 screenWide = _vm->_screen->getScreenWide();
-	byte menuIconWidth; 
-	
+	byte menuIconWidth;
+
 	if (Sword2Engine::isPsx())
 		menuIconWidth = RDMENU_PSXICONWIDE;
 	else
@@ -219,7 +219,7 @@ int32 Mouse::showMenu(uint8 menu) {
 	// Do not show menu in PSX version, as there was really
 	// nothing similar in the original game (menu was started
 	// using SELECT button in psx pad)
-	if (Sword2Engine::isPsx() && menu == RDMENU_TOP) 
+	if (Sword2Engine::isPsx() && menu == RDMENU_TOP)
 		return RD_OK;
 
 	// Check for invalid menu parameter
@@ -296,7 +296,7 @@ void Mouse::closeMenuImmediately() {
 int32 Mouse::setMenuIcon(uint8 menu, uint8 pocket, byte *icon) {
 	Common::Rect r;
 	byte menuIconWidth;
-	
+
 	if (Sword2Engine::isPsx())
 		menuIconWidth = RDMENU_PSXICONWIDE;
 	else

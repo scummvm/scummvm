@@ -750,7 +750,7 @@ void processAnimation(void) {
 					currentActor->flag = 1;
 				}
 
-				currentActor->pathId = computePathfinding(moveInfo, params.X, params.Y, 
+				currentActor->pathId = computePathfinding(moveInfo, params.X, params.Y,
 					aniX, aniY, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
 				if (currentActor->pathId == ANIM_WAIT) {
@@ -804,7 +804,7 @@ void processAnimation(void) {
 				// , so 'break' statements should *not* be used at the end of case areas
 				switch (currentActor->phase) {
 				case ANIM_PHASE_STATIC_END:
-				case ANIM_PHASE_STATIC: 
+				case ANIM_PHASE_STATIC:
 				{
 					// In-place (on the spot) animationos
 

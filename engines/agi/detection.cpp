@@ -195,7 +195,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
 	GAME3("bc", "2.10 1988-11-10 5.25\"", "bcdir", "0c5a9acbcc7e51127c34818e75806df6", 0x3149, GID_BC),
-	
+
 	// Black Cauldron (PC) 2.10 [AGI 3.002.097]
 	GAME3("bc", "2.10", "bcdir", "0de3953c9225009dc91e5b0d1692967b", 0x3149, GID_BC),
 
@@ -524,7 +524,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Troll's Tale
 	GAMEpre_PS("troll", "", "troll.img", "62903f264b3d849be4214b3a5c42a2fa", 184320, 0x0000, GID_TROLL, Common::kPlatformPC),
-	
+
 	// Winnie the Pooh in the Hundred Acre Wood
 	GAMEpre_P("winnie", "", "title.pic", "2e7900c1ccaa7671d65405f6d1efed30", 0x0000, GID_WINNIE, Common::kPlatformPC),
 

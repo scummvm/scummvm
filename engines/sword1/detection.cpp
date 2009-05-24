@@ -54,7 +54,7 @@ static const char *g_dirNames[] = {	"clusters",	"speech" };
 #define NUM_COMMON_FILES_TO_CHECK 1
 #define NUM_PC_FILES_TO_CHECK 3
 #define NUM_MAC_FILES_TO_CHECK 4
-#define NUM_PSX_FILES_TO_CHECK 2 
+#define NUM_PSX_FILES_TO_CHECK 2
 #define NUM_DEMO_FILES_TO_CHECK 1
 #define NUM_MAC_DEMO_FILES_TO_CHECK 1
 #define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_PSX_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK + NUM_MAC_DEMO_FILES_TO_CHECK
@@ -264,7 +264,7 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 
 		if (versionSave < 2) // These older version of the savegames used a flag to signal presence of thumbnail
 			in->skip(1);
-		
+
 		if (Graphics::checkThumbnailHeader(*in)) {
 			Graphics::Surface *thumbnail = new Graphics::Surface();
 			assert(thumbnail);
@@ -323,7 +323,7 @@ Common::Error SwordEngine::loadGameState(int slot) {
 	_control->restoreGameFromFile(slot);
 	reinitialize();
 	_control->doRestore();
-	reinitRes();	
+	reinitRes();
 	return Common::kNoError;	// TODO: return success/failure
 }
 

@@ -244,7 +244,7 @@ static const MadeGameDescription gameDescriptions[] = {
  		GF_CD_COMPRESSED,
  		3,
  	},
- 
+
  	{
  		// Return to Zork - French CD version 1.2 5/13/95 (installed)
 		// Patch #2685032 submitted by goodoldgeorg

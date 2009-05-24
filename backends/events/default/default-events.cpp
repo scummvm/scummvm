@@ -469,7 +469,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 						event.type = Common::EVENT_RTL;
 				}
 			}
-#ifdef ENABLE_VKEYBD	
+#ifdef ENABLE_VKEYBD
 			else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
 				if (_vk->isDisplaying()) {
 					_vk->close(true);
@@ -483,7 +483,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				}
 			}
 #endif
-#ifdef ENABLE_KEYMAPPER	
+#ifdef ENABLE_KEYMAPPER
 			else if (event.kbd.keycode == Common::KEYCODE_F8 && event.kbd.flags == 0) {
 				if (!_remap) {
 					_remap = true;

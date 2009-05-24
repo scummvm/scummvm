@@ -41,7 +41,7 @@ static const char netArg[] = "192.168.0.10" "\0" "255.255.255.0" "\0" "192.168.0
 
 IrxFile irxFiles[] = {
 	{ "SIO2MAN", BIOS, NOTHING, NULL, 0 },
-	{ "MCMAN",   BIOS, NOTHING, NULL, 0 }, 
+	{ "MCMAN",   BIOS, NOTHING, NULL, 0 },
 	{ "MCSERV",  BIOS, NOTHING, NULL, 0 },
 	{ "PADMAN",  BIOS, NOTHING, NULL, 0 },
 	{ "LIBSD",   BIOS, NOTHING, NULL, 0 },
@@ -73,7 +73,7 @@ PS2Device detectBootPath(const char *elfPath, char *bootPath) {
 	PS2Device device = _getDev(elfPath);
 
 	printf("elf path: %s, device %d\n", elfPath, device);
-	
+
 	strcpy(bootPath, elfPath);
 
 	char *pathPos = bootPath;
@@ -115,7 +115,7 @@ PS2Device detectBootPath(const char *elfPath, char *bootPath) {
 	return device;
 }
 
-int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {	
+int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
 
 	IrxReference *resModules = (IrxReference *)malloc(numIrxFiles * sizeof(IrxReference));
 	IrxReference *curModule = resModules;

@@ -224,7 +224,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path) {
 			lastSlash = r;
 		}
 	}
-	
+
 	if (path == "mp:/") {
 		// This is the root directory
 		_isDirectory = true;

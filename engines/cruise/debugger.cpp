@@ -47,8 +47,8 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 	cellStruct *currentObject = cellHead.prev;
 
 	while (currentObject) {
-		if (currentObject->overlay > 0 && overlayTable[currentObject->overlay].alreadyLoaded && 
-			(currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || 
+		if (currentObject->overlay > 0 && overlayTable[currentObject->overlay].alreadyLoaded &&
+			(currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK ||
 			currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUAL)) {
 			const char *pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
 

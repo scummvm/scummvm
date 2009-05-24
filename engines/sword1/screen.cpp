@@ -348,7 +348,7 @@ void Screen::newScreen(uint32 screen) {
 
 void Screen::quitScreen(void) {
 	uint8 cnt;
-	if (SwordEngine::isPsx()) 
+	if (SwordEngine::isPsx())
 		flushPsxCache();
 	for (cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers; cnt++)
 		_resMan->resClose(_roomDefTable[_currentScreen].layers[cnt]);
@@ -363,9 +363,9 @@ void Screen::quitScreen(void) {
 
 void Screen::draw(void) {
 	uint8 cnt;
-	
+
 	debug(8, "Screen::draw() -> _currentScreen %u", _currentScreen);
-	
+
 	if (_currentScreen == 54) {
 		// rm54 has a BACKGROUND parallax layer in parallax[0]
 		if (_parallax[0] && !SwordEngine::isPsx() ) //Avoid drawing this parallax on PSX edition, it gets occluded by background
@@ -400,7 +400,7 @@ void Screen::draw(void) {
 	} else { //We are using PSX version
 		if(_currentScreen == 45 || _currentScreen == 55 ||
 		   _currentScreen == 57 || _currentScreen == 63 || _currentScreen == 71) { // Width shrinked backgrounds
-			if (!_psxCache.decodedBackground)	
+			if (!_psxCache.decodedBackground)
 				_psxCache.decodedBackground = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
 		} else {
 			if (!_psxCache.decodedBackground)
@@ -425,11 +425,11 @@ void Screen::draw(void) {
 	if (_parallax[1])
 		renderParallax(_parallax[1]);
 
-	// PSX version has parallax layer for this room in an external file (TRAIN.PLX) 
+	// PSX version has parallax layer for this room in an external file (TRAIN.PLX)
 	if(SwordEngine::isPsx() && _currentScreen == 63) {
 		// FIXME: this should be handled in a cleaner way...
 		if (!_psxCache.extPlxCache) {
-			Common::File parallax; 
+			Common::File parallax;
 			parallax.open("TRAIN.PLX");
 			_psxCache.extPlxCache = (uint8*) malloc(parallax.size());
 			parallax.read(_psxCache.extPlxCache, parallax.size());
@@ -448,9 +448,9 @@ void Screen::processImage(uint32 id) {
 	Object *compact;
 	FrameHeader *frameHead;
 	int scale;
-	
+
 	compact = _objMan->fetchObject(id);
-	
+
 	if (compact->o_type == TYPE_TEXT)
 		frameHead = _textMan->giveSpriteData((uint8)compact->o_target);
 	else
@@ -460,7 +460,7 @@ void Screen::processImage(uint32 id) {
 
 	uint16 spriteX = compact->o_anim_x;
 	uint16 spriteY = compact->o_anim_y;
-	
+
 	if (compact->o_status & STAT_SHRINK) {
 		scale = (compact->o_scale_a * compact->o_ycoord + compact->o_scale_b) / 256;
 		spriteX += ((int16)_resMan->readUint16(&frameHead->offsetX) * scale) / 256;
@@ -514,7 +514,7 @@ void Screen::processImage(uint32 id) {
 		} else
 			sprSizeY = (_resMan->readUint16(&frameHead->height));
 	}
-	
+
 	if (!(compact->o_status & STAT_OVERRIDE)) {
 		//mouse size linked to exact size & coordinates of sprite box - shrink friendly
 		if (_resMan->readUint16(&frameHead->offsetX) || _resMan->readUint16(&frameHead->offsetY)) {
@@ -537,7 +537,7 @@ void Screen::processImage(uint32 id) {
 	spriteClipAndSet(&spriteX, &spriteY, &sprSizeX, &sprSizeY, &incr);
 
 	if ((sprSizeX > 0) && (sprSizeY > 0)) {
-		if( (!(SwordEngine::isPsx()) || (compact->o_type == TYPE_TEXT) 
+		if( (!(SwordEngine::isPsx()) || (compact->o_type == TYPE_TEXT)
 		|| (compact->o_resource == LVSFLY) || (!(compact->o_resource == GEORGE_MEGA) && (sprSizeX < 260))))
 			drawSprite(sprData + incr, spriteX, spriteY, sprSizeX, sprSizeY, sprPitch);
 		else if (((sprSizeX >= 260) && (sprSizeX < 450)) || ((compact->o_resource == GMWRITH) && (sprSizeX < 515))  // a psx shrinked sprite (1/2 width)
@@ -550,13 +550,13 @@ void Screen::processImage(uint32 id) {
 		if (!(compact->o_status&STAT_FORE) && !(SwordEngine::isPsx() && (compact->o_resource == MOUBUSY))) // Check fixes moue sprite being masked by layer, happens only on psx
 			verticalMask(spriteX, spriteY, sprSizeX, sprSizeY);
 	}
-	
+
 	if (compact->o_type != TYPE_TEXT)
 		_resMan->resClose(compact->o_resource);
-	
+
 	if (tonyBuf)
 		free(tonyBuf);
-		
+
 	if (hifBuf)
 		free(hifBuf);
 }
@@ -569,7 +569,7 @@ void Screen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight) {
 		bHeight *= 2;
 		bWidth *= 2;
 	}
-		
+
 	bWidth = (bWidth + (x & (SCRNGRID_X - 1)) + (SCRNGRID_X - 1)) / SCRNGRID_X;
 	bHeight = (bHeight + (y & (SCRNGRID_Y - 1)) + (SCRNGRID_Y - 1)) / SCRNGRID_Y;
 
@@ -615,14 +615,14 @@ void Screen::blitBlockClear(uint16 x, uint16 y, uint8 *data) {
 		for (uint8 cntx = 0; cntx < SCRNGRID_X; cntx++)
 			if (data[cntx])
 				dest[cntx] = data[cntx];
-				
+
 		if (SwordEngine::isPsx()) {
 			dest += _scrnSizeX;
 			for (uint8 cntx = 0; cntx < SCRNGRID_X; cntx++)
 				if (data[cntx])
 					dest[cntx] = data[cntx];
-		}	
-			
+		}
+
 		data += SCRNGRID_X;
 		dest += _scrnSizeX;
 	}
@@ -717,19 +717,19 @@ void Screen::renderParallax(uint8 *data) {
 
 void Screen::drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch) {
 	uint8 *dest = _screenBuf + (sprY * _scrnSizeX) + sprX;
-	
+
 	for (uint16 cnty = 0; cnty < sprHeight; cnty++) {
 		for (uint16 cntx = 0; cntx < sprWidth; cntx++)
 			if (sprData[cntx])
 				dest[cntx] = sprData[cntx];
-				
+
 		if (SwordEngine::isPsx()) { //On PSX version we need to double horizontal lines
-			dest += _scrnSizeX; 
+			dest += _scrnSizeX;
 			for (uint16 cntx = 0; cntx < sprWidth; cntx++)
 				if (sprData[cntx])
 					dest[cntx] = sprData[cntx];
 		}
-			
+
 		sprData += sprPitch;
 		dest += _scrnSizeX;
 	}
@@ -738,14 +738,14 @@ void Screen::drawSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidt
 // Used to draw psx sprites which are 1/2 of original width
 void Screen::drawPsxHalfShrinkedSprite(uint8 *sprData, uint16 sprX, uint16 sprY, uint16 sprWidth, uint16 sprHeight, uint16 sprPitch) {
 	uint8 *dest = _screenBuf + (sprY * _scrnSizeX) + sprX;
-	
+
 	for (uint16 cnty = 0; cnty < sprHeight; cnty++) {
 		for (uint16 cntx = 0; cntx < sprWidth; cntx++)
 			if (sprData[cntx]) {
 				dest[cntx * 2] = sprData[cntx]; //In these sprites we need to double vetical lines too...
 				dest[cntx * 2 + 1] = sprData[cntx];
 			}
-				
+
 		dest += _scrnSizeX;
 		for (uint16 cntx = 0; cntx < sprWidth; cntx++)
 			if (sprData[cntx]) {
@@ -754,7 +754,7 @@ void Screen::drawPsxHalfShrinkedSprite(uint8 *sprData, uint16 sprX, uint16 sprY,
 			}
 
 		sprData += sprPitch;
-		dest += _scrnSizeX; 
+		dest += _scrnSizeX;
 	}
 }
 
@@ -769,7 +769,7 @@ void Screen::drawPsxFullShrinkedSprite(uint8 *sprData, uint16 sprX, uint16 sprY,
 				dest[cntx * 3 + 1] = sprData[cntx];
 				dest[cntx * 3 + 2] = sprData[cntx];
 			}
-				
+
 		dest += _scrnSizeX;
 		for (uint16 cntx = 0; cntx < sprWidth; cntx++)
 			if (sprData[cntx]) {
@@ -777,7 +777,7 @@ void Screen::drawPsxFullShrinkedSprite(uint8 *sprData, uint16 sprX, uint16 sprY,
 				dest[cntx * 3 + 1] = sprData[cntx];
 				dest[cntx * 3 + 2] = sprData[cntx];
 			}
-		
+
 		sprData += sprPitch;
 		dest += _scrnSizeX;
 	}
@@ -790,7 +790,7 @@ void Screen::fastShrink(uint8 *src, uint32 width, uint32 height, uint32 scale, u
 	uint32 step = 0x10000 / scale;
 	uint8 columnTab[160];
 	uint32 res = step >> 1;
-	
+
 	for (uint16 cnt = 0; cnt < resWidth; cnt++) {
 		columnTab[cnt] = (uint8)(res >> 8);
 		res += step;
@@ -865,8 +865,8 @@ uint8* Screen::psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint
 	psxBackground += 4; //We skip the id tag
 
 	for (uint32 currentTile = 0; currentTile < totTiles; currentTile++) {
-		uint32 tileOffset = READ_LE_UINT32(psxBackground + 4 * currentTile); 
-		
+		uint32 tileOffset = READ_LE_UINT32(psxBackground + 4 * currentTile);
+
 		if(isCompressed)
 			decompressHIF(psxBackground + tileOffset - 4, decomp_tile); //Decompress the tile into decomp_tile
 		else
@@ -875,10 +875,10 @@ uint8* Screen::psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint
 		if (currentTile > 0 && !(currentTile % xresInTiles)) { //Finished a line of tiles, going down
 			tileYpos++;
 			tileXpos = 0;
-		} 
-		
+		}
+
 		for (byte tileLine = 0; tileLine < 16; tileLine++) { // Copy data to destination buffer
-			memcpy(fullres_buffer + tileLine * bakXres * 2 + tileXpos * 16 + tileYpos * bakXres * 16 * 2, decomp_tile + tileLine * 16, 16); 
+			memcpy(fullres_buffer + tileLine * bakXres * 2 + tileXpos * 16 + tileYpos * bakXres * 16 * 2, decomp_tile + tileLine * 16, 16);
 			memcpy(fullres_buffer + tileLine * bakXres * 2 + bakXres + tileXpos * 16 + tileYpos * bakXres * 16 * 2, decomp_tile + tileLine * 16, 16);
 		}
 		tileXpos++;
@@ -909,8 +909,8 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 
 	uint32 currentTile;
 	for (currentTile = 0; currentTile < totTiles; currentTile++) {
-		uint32 tileOffset = READ_LE_UINT32(psxBackground + 4 * currentTile); 
-		
+		uint32 tileOffset = READ_LE_UINT32(psxBackground + 4 * currentTile);
+
 		if(isCompressed)
 			decompressHIF(psxBackground + tileOffset - 4, decomp_tile); //Decompress the tile into decomp_tile
 		else
@@ -919,8 +919,8 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 		if (currentTile > 0 && !(currentTile % xresInTiles)) { //Finished a line of tiles, going down
 			tileYpos++;
 			tileXpos = 0;
-		} 
-	
+		}
+
 		for (byte tileLine = 0; tileLine < 16; tileLine++) {
 			uint8 *dest = fullres_buffer + tileLine * bakXres * 2 + tileXpos * 32 + tileYpos * bakXres * 16 * 2;
 			for (byte tileColumn = 0; tileColumn < 16; tileColumn++) {
@@ -947,7 +947,7 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 
 	tileXpos = 0;
 	for (; currentTile < totTiles + remainingTiles; currentTile++) {
-		uint32 tileOffset = READ_LE_UINT32(psxBackground + 4 * currentTile); 
+		uint32 tileOffset = READ_LE_UINT32(psxBackground + 4 * currentTile);
 
 		if(isCompressed)
 			decompressHIF(psxBackground + tileOffset - 4, decomp_tile); //Decompress the tile into decomp_tile
@@ -955,7 +955,7 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 			memcpy(decomp_tile, psxBackground + tileOffset - 4, 256);
 
 		for (byte tileLine = 0; tileLine < tileHeight; tileLine++) { // Write the decoded tiles into last lines of background
-			memcpy(fullres_buffer + tileXpos * 16 + (tileLine + (yresInTiles - 1) * 16) * bakXres * 2, decomp_tile + tileLine * 16, 16); 
+			memcpy(fullres_buffer + tileXpos * 16 + (tileLine + (yresInTiles - 1) * 16) * bakXres * 2, decomp_tile + tileLine * 16, 16);
 			memcpy(fullres_buffer + tileXpos * 16 + (tileLine + (yresInTiles - 1) * 16) * bakXres * 2 + bakXres, decomp_tile + tileLine * 16, 16);
 		}
 		tileXpos++;
@@ -997,10 +997,10 @@ void Screen::drawPsxParallax(uint8 *psxParallax, uint16 paraScrlX, uint16 scrnSc
 		int32 tileBegin = (tileXpos * 16) - paraScrlX;
 		tileBegin = (tileBegin < 0) ? 0 : tileBegin;
 		uint16 currentLine = (tileYpos * 16); //Current line of the image we are drawing upon, used to avoid going out of screen
-	
+
 		if (tileXpos >= skipRow) { // Tiles not needed in the screen buffer are not uncompressed
 			uint32 tileOffset = READ_LE_UINT32(plxOff + 4 * currentTile);
-			uint16 rightScreenLimit = _scrnSizeX - scrnScrlX; // Do not write over and beyond this limit, lest we get memory corruption	
+			uint16 rightScreenLimit = _scrnSizeX - scrnScrlX; // Do not write over and beyond this limit, lest we get memory corruption
 			uint8 *dest = _screenBuf + (tileYpos * 16 * _scrnSizeX) + tileBegin + scrnScrlX;
 			uint8 *src = tile_buffer;
 
@@ -1008,15 +1008,15 @@ void Screen::drawPsxParallax(uint8 *psxParallax, uint16 paraScrlX, uint16 scrnSc
 
 			if (tileXpos != skipRow) { // This tile will surely be drawn fully in the buffer
 				for (byte tileLine = 0; (tileLine < 16) && (currentLine < SCREEN_DEPTH); tileLine++) { // Check that we are not going outside the bottom screen part
-					for (byte tileColumn = 0; (tileColumn < 16) && (tileBegin + tileColumn) < rightScreenLimit; tileColumn++) 
-						if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);	
-					dest += _scrnSizeX; 
+					for (byte tileColumn = 0; (tileColumn < 16) && (tileBegin + tileColumn) < rightScreenLimit; tileColumn++)
+						if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);
+					dest += _scrnSizeX;
 					currentLine++;
 
 					if (currentLine < SCREEN_DEPTH) {
-						for (byte tileColumn = 0; (tileColumn < 16) && (tileBegin + tileColumn) < rightScreenLimit; tileColumn++) 
-							if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);	
-						dest += _scrnSizeX; 
+						for (byte tileColumn = 0; (tileColumn < 16) && (tileBegin + tileColumn) < rightScreenLimit; tileColumn++)
+							if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);
+						dest += _scrnSizeX;
 						currentLine++;
 					}
 					src += 16; // get to next line of decoded tile
@@ -1024,15 +1024,15 @@ void Screen::drawPsxParallax(uint8 *psxParallax, uint16 paraScrlX, uint16 scrnSc
 			} else { // This tile may be drawn only partially
 				src += leftPixelSkip; //Skip hidden pixels
 				for (byte tileLine = 0; (tileLine < 16) && (currentLine < SCREEN_DEPTH); tileLine++) {
-					for (byte tileColumn = 0; tileColumn < (16 - leftPixelSkip); tileColumn++) 
-						if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);	
-					dest += _scrnSizeX; 
+					for (byte tileColumn = 0; tileColumn < (16 - leftPixelSkip); tileColumn++)
+						if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);
+					dest += _scrnSizeX;
 					currentLine++;
 
 					if (currentLine < SCREEN_DEPTH) {
-						for (byte tileColumn = 0; tileColumn < (16 - leftPixelSkip); tileColumn++) 
-							if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);	
-						dest += _scrnSizeX; 
+						for (byte tileColumn = 0; tileColumn < (16 - leftPixelSkip); tileColumn++)
+							if (*(src + tileColumn)) *(dest + tileColumn) = *(src + tileColumn);
+						dest += _scrnSizeX;
 						currentLine++;
 					}
 					src += 16;
@@ -1100,9 +1100,9 @@ void Screen::decompressHIF(uint8 *src, uint8 *dest) {
 				src += 2;
 				if (info_word == 0xFFFF) return; //Got 0xFFFF code, finished.
 
-				int32 repeat_count = (info_word >> 12) + 2; //How many time data needs to be refetched 
+				int32 repeat_count = (info_word >> 12) + 2; //How many time data needs to be refetched
 				while(repeat_count >= 0) {
-					uint8 *old_data_src = dest - ((info_word & 0xFFF) + 1); 
+					uint8 *old_data_src = dest - ((info_word & 0xFFF) + 1);
 					*dest++ = *old_data_src;
 					repeat_count--;
 				}
@@ -1178,7 +1178,7 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 		*pSprWidth = 0;
 	else
 		*pSprWidth = (uint16)sprW;
-	
+
 	*pSprX = (uint16)sprX;
 	*pSprY = (uint16)sprY;
 
@@ -1186,18 +1186,18 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 		// sprite will be drawn, so mark it in the grid buffer
 		uint16 gridH = (*pSprHeight + (sprY & (SCRNGRID_Y - 1)) + (SCRNGRID_Y - 1)) / SCRNGRID_Y;
 		uint16 gridW = (*pSprWidth +  (sprX & (SCRNGRID_X - 1)) + (SCRNGRID_X - 1)) / SCRNGRID_X;
-		
-		if(SwordEngine::isPsx()) { 
+
+		if(SwordEngine::isPsx()) {
 			gridH *= 2; // This will correct the PSX sprite being cut at half height
 			gridW *= 2; // and masking problems when sprites are stretched in width
-			
+
 			uint16 bottomSprPos = (*pSprY + (*pSprHeight) * 2); //Position of bottom line of sprite
 			if ( bottomSprPos > _scrnSizeY ) { //Check that resized psx sprite isn't drawn outside of screen boundaries
 				uint16 outScreen = bottomSprPos - _scrnSizeY;
 				*pSprHeight -= (outScreen % 2) ? (outScreen + 1) / 2 : outScreen / 2;
 			}
 
-		}		
+		}
 
 		uint16 gridX = sprX / SCRNGRID_X;
 		uint16 gridY = sprY / SCRNGRID_Y;
@@ -1226,7 +1226,7 @@ void Screen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const b
 	int i, j;
 
 	if(SwordEngine::isPsx())
-		memset(frame, 0, sizeof(frame)); // PSX top menu is black	
+		memset(frame, 0, sizeof(frame)); // PSX top menu is black
 	else
 		memset(frame, 199, sizeof(frame)); // Dark gray background
 
@@ -1245,11 +1245,11 @@ void Screen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const b
 					frame[(i * 2 + 1 + 4) * 40 + j + 2] = data; //Linedoubling the sprite
 				}
 			}
-			
+
 			free(frameBufferPSX);
 		} else {
-			for (i = 0; i < _resMan->getUint16(frameHead->height); i++) 
-				for (j = 0; j < _resMan->getUint16(frameHead->height); j++) 
+			for (i = 0; i < _resMan->getUint16(frameHead->height); i++)
+				for (j = 0; j < _resMan->getUint16(frameHead->height); j++)
 					frame[(i + 4) * 40 + j + 2] = frameData[i * _resMan->getUint16(frameHead->width) + j];
 		}
 

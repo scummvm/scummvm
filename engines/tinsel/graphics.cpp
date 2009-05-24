@@ -53,7 +53,7 @@ extern uint8 transPalette[MAX_COLOURS];
 uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 	uint32 remainingBlocks = 0;
 
-	uint16 compressionType = 0; // Kind of decompression to apply 
+	uint16 compressionType = 0; // Kind of decompression to apply
 	uint16 controlBits = 0; // Control bits used to calculate the number of decompressed indexes
 	uint16 baseIndex = 0; // Base index to be repeated / incremented.
 
@@ -82,7 +82,7 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 			// else there is no compression.
 			if (controlData & 0x4000)
 				compressionType = 2;
-			else if (controlData & 0x8000) 
+			else if (controlData & 0x8000)
 				compressionType = 1;
 			else
 				compressionType = 0;
@@ -749,10 +749,10 @@ void DrawObject(DRAWOBJECT *pObj) {
 			if (TinselV1PSX) {
 				uint8 paletteType = *(srcPtr); // if 0x88 we are using an 8bit palette type, if 0x44 we are using a 4 bit PSX CLUT
 				uint8 indexType = *(srcPtr + 1); // if 0xCC indexes for this image are compressed with PCJRLE, if 0xDD indexes are not compressed
-		
+
 				switch (paletteType) {
 					case 0x88: // Normal 8-bit palette
-						psxFourBitClut = false; 
+						psxFourBitClut = false;
 						psxSkipBytes = 0;
 						switch (indexType) {
 							case 0xDD: // Normal uncompressed indexes

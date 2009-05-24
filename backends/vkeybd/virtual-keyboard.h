@@ -54,7 +54,7 @@ class VirtualKeyboardParser;
  * This includes storage of the virtual key press events when the user clicks
  * a key and delivery of them when the keyboard is closed, as well as managing
  * the internal state of the keyboard, such as its active mode.
- */  
+ */
 class VirtualKeyboard {
 protected:
 
@@ -73,7 +73,7 @@ protected:
 		kVKEventSubmit,
 		/** Close the keyboard, without submitting keypresses */
 		kVKEventCancel,
-		/** Clear the virtual keypress queue */ 
+		/** Clear the virtual keypress queue */
 		kVKEventClear,
 		/** Move the keypress queue insert position backwards */
 		kVKEventMoveLeft,
@@ -87,23 +87,23 @@ protected:
 	struct VKEvent {
 		String name;
 		VKEventType type;
-		/** 
+		/**
 		 * Void pointer that will point to different types of data depending
 		 * on the type of the event, these are:
 		 * - KeyState struct for kVKEventKey events
 		 * - a flags byte for kVKEventModifier events
 		 * - c-string stating the name of the new mode for kSwitchMode events
-		 */ 
+		 */
 		void *data;
-		
+
 		VKEvent() : data(0) {}
 		~VKEvent() {
 			if (data)
 				free(data);
 		}
 	};
-	
-	typedef HashMap<String, VKEvent*> VKEventMap; 
+
+	typedef HashMap<String, VKEvent*> VKEventMap;
 
 	/**
 	 * Mode struct encapsulates all the data for each mode of the keyboard
@@ -122,7 +122,7 @@ protected:
 		Mode() : image(0) {}
 		~Mode() { delete image; }
 	};
-	
+
 	typedef HashMap<String, Mode, IgnoreCase_Hash, IgnoreCase_EqualTo> ModeMap;
 
 	enum HorizontalAlignment {
@@ -143,7 +143,7 @@ protected:
 		uint strLen;
 	};
 
-	/** 
+	/**
 	 * Class that stores the queue of virtual key presses, as well as
 	 * maintaining a string that represents a preview of the queue
 	 */
@@ -182,11 +182,11 @@ public:
 	VirtualKeyboard();
 
 	virtual ~VirtualKeyboard();
-	
+
 	/**
 	 * Loads the keyboard pack with the given name.
-	 * The system first looks for an uncompressed keyboard pack by searching 
-	 * for packName.xml in the filesystem, if this does not exist then it 
+	 * The system first looks for an uncompressed keyboard pack by searching
+	 * for packName.xml in the filesystem, if this does not exist then it
 	 * searches for a compressed keyboard pack by looking for packName.zip.
 	 * @param packName	name of the keyboard pack
 	 */
@@ -201,7 +201,7 @@ public:
 
 	/**
 	 * Hides the keyboard, ending the event loop.
-	 * @param submit	if true all accumulated key presses are submitted to 
+	 * @param submit	if true all accumulated key presses are submitted to
 	 *					the event manager
 	 */
 	void close(bool submit);
@@ -218,7 +218,7 @@ public:
 		return _loaded;
 	}
 
-protected:	
+protected:
 
 	OSystem *_system;
 	Archive *_fileArchive;
@@ -227,7 +227,7 @@ protected:
 	VirtualKeyboardGUI	*_kbdGUI;
 
 	KeyPressQueue _keyQueue;
-	
+
 	friend class VirtualKeyboardParser;
 	VirtualKeyboardParser *_parser;
 

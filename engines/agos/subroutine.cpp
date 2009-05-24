@@ -540,7 +540,7 @@ int AGOSEngine::startSubroutine(Subroutine *sub) {
 
 	// WORKAROUND: If the game is saved, right after Simon is thrown in the dungeon of Sordid's Fortress of Doom,
 	// the saved game fails to load correctly. When loading the saved game, the sequence of Simon waking is started,
-	// before the scene is actually reloaded, due to a script bug. We manually add the extra script code from the 
+	// before the scene is actually reloaded, due to a script bug. We manually add the extra script code from the
 	// updated DOS CD release, which fixed this particular script bug.
 	if (getGameType() == GType_SIMON2 && sub->id == 12101) {
 		const byte bit = 228;
@@ -577,7 +577,7 @@ restart:
 	}
 
 	// WORKAROUND: Feeble walks in the incorrect direction, when looking at the Vent in the Research and Testing area of
-	// the Company Central Command Compound. We manually add the extra script code from the updated English 2CD release, 
+	// the Company Central Command Compound. We manually add the extra script code from the updated English 2CD release,
 	// which fixed this particular script bug.
 	if (getGameType() == GType_FF && _language == Common::EN_ANY) {
 		if (sub->id == 39125 && readVariable(84) == 2) {

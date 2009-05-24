@@ -168,7 +168,7 @@ struct AnimHeader {
 			blend = readS.readUint16LE();
 			runTimeComp = readS.readByte();
 			feetStartDir = readS.readByte();
-			feetEndDir = readS.readByte();	
+			feetEndDir = readS.readByte();
 		} else {
 			runTimeComp = readS.readByte();
 			noAnimFrames = readS.readUint16LE();
@@ -631,7 +631,7 @@ struct PSXFontEntry {
 		writeS.writeUint16LE(skipLines);
 		writeS.writeUint16LE(charWidth);
 		writeS.writeUint16LE(charHeight);
-	}	
+	}
 };
 
 } // End of namespace Sword2

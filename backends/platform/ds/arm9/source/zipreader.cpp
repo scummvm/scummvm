@@ -171,7 +171,7 @@ bool ZipFile::findFile(const char *search) {
 	char searchName[128];
 	strcpy(searchName, search);
 	char *tmp = searchName;
-	
+
 	// Change slashes to backslashes
 	for (; *tmp; ++tmp) {
 		if (*tmp == '/')

@@ -40,7 +40,7 @@
 #include <string.h>
 
 namespace OPL {
-namespace DOSBox {	
+namespace DOSBox {
 
 Timer::Timer() {
 	masked = false;
@@ -51,7 +51,7 @@ Timer::Timer() {
 }
 
 void Timer::update(double time) {
-	if (!enabled || !delay) 
+	if (!enabled || !delay)
 		return;
 	double deltaStart = time - startTime;
 	// Only set the overflow flag when not masked
@@ -66,7 +66,7 @@ void Timer::reset(double time) {
 	double delta = (time - startTime);
 	double rem = fmod(delta, delay);
 	double next = delay - rem;
-	startTime = time + next;		
+	startTime = time + next;
 }
 
 void Timer::stop() {
@@ -116,7 +116,7 @@ bool Chip::write(uint32 reg, uint8 val) {
 				timer[1].stop();
 
 			timer[1].masked = (val & 0x20) > 0;
-	
+
 			if (timer[1].masked)
 				timer[1].overflow = false;
 		}
@@ -148,7 +148,7 @@ namespace OPL2 {
 #include "opl_impl.h"
 
 struct Handler : public DOSBox::Handler {
-	void writeReg(uint32 reg, uint8 val) {	
+	void writeReg(uint32 reg, uint8 val) {
 		adlib_write(reg, val);
 	}
 
@@ -171,7 +171,7 @@ namespace OPL3 {
 #include "opl_impl.h"
 
 struct Handler : public DOSBox::Handler {
-	void writeReg(uint32 reg, uint8 val) {	
+	void writeReg(uint32 reg, uint8 val) {
 		adlib_write(reg, val);
 	}
 
@@ -217,13 +217,13 @@ bool OPL::init(int rate) {
 	case Config::kOpl3:
 		_handler = new OPL3::Handler();
 		break;
-	
+
 	default:
 		return false;
 	}
 
 	_handler->init(rate);
-	
+
 	if (_type == Config::kDualOpl2) {
 		// Setup opl3 mode in the hander
 		_handler->writeReg(0x105, 1);
@@ -234,7 +234,7 @@ bool OPL::init(int rate) {
 }
 
 void OPL::reset() {
-	init(_rate);	
+	init(_rate);
 }
 
 void OPL::write(int port, int val) {
@@ -325,7 +325,7 @@ void OPL::writeReg(int r, int v) {
 
 void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 	// Make sure you don't use opl3 features
-	// Don't allow write to disable opl3		
+	// Don't allow write to disable opl3
 	if (reg == 5)
 		return;
 
@@ -334,7 +334,7 @@ void OPL::dualWrite(uint8 index, uint8 reg, uint8 val) {
 		val &= 3;
 
 	// Write to the timer?
-	if (_chip[index].write(reg, val)) 
+	if (_chip[index].write(reg, val))
 		return;
 
 	// Enabling panning

@@ -41,7 +41,7 @@ namespace Common {
 
 class Keymapper {
 public:
-	
+
 	struct MapRecord {
 		Keymap* keymap;
 		bool inherit;
@@ -53,11 +53,11 @@ public:
 				IgnoreCase_Hash, IgnoreCase_EqualTo>  {
 	public:
 		Domain() : _configDomain(0) {}
-		~Domain() { 
+		~Domain() {
 			deleteAllKeyMaps();
 		}
 
-		void setConfigDomain(ConfigManager::Domain *confDom) { 
+		void setConfigDomain(ConfigManager::Domain *confDom) {
 			_configDomain = confDom;
 		}
 		ConfigManager::Domain *getConfigDomain() {
@@ -69,7 +69,7 @@ public:
 		void deleteAllKeyMaps();
 
 		Keymap *getKeymap(const String& name);
-		
+
 	private:
 		ConfigManager::Domain *_configDomain;
 	};
@@ -120,10 +120,10 @@ public:
 	Keymap *getKeymap(const String& name, bool &global);
 
 	/**
-	 * Push a new keymap to the top of the active stack, activating 
+	 * Push a new keymap to the top of the active stack, activating
 	 * it for use.
 	 * @param name		name of the keymap to push
-	 * @param inherit	if true keymapper will iterate down the 
+	 * @param inherit	if true keymapper will iterate down the
 	 *					stack if it cannot find a key in the new map
 	 * @return			true if succesful
 	 */
@@ -136,7 +136,7 @@ public:
 
 	/**
 	 * @brief Map a key press event.
-	 * If the active keymap contains a Action mapped to the given key, then 
+	 * If the active keymap contains a Action mapped to the given key, then
 	 * the Action's events are pushed into the EventManager's event queue.
 	 * @param key		key that was pressed
 	 * @param keyDown	true for key down, false for key up
@@ -180,7 +180,7 @@ private:
 	HardwareKeySet *_hardwareKeys;
 
 	void pushKeymap(Keymap *newMap, bool inherit, bool global);
-	
+
 	Action *getAction(const KeyState& key);
 	void executeAction(const Action *act, bool keyDown);
 

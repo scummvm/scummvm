@@ -261,7 +261,7 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 	if (!_file.isOpen())
 		if (!_file.open("tunes.dat"))
 			return false;
-		
+
 	Common::File tableFile;
 	if (!tableFile.open("tunes.tab"))
 		return false;
@@ -280,7 +280,7 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 		_audioSource = NULL;
 		return false;
 	}
-	
+
 	return true;
 }
 

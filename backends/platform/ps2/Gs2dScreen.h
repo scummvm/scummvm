@@ -77,7 +77,7 @@ public:
 	void showOverlay(void);
 	void hideOverlay(void);
 	Graphics::PixelFormat getOverlayFormat(void);
-	int16 getOverlayWidth(void); 
+	int16 getOverlayWidth(void);
 	int16 getOverlayHeight(void);
 
 	//- mouse routines

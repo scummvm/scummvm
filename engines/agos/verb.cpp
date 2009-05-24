@@ -754,7 +754,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 
 	if (_clickOnly)
 		return;
- 
+
 	if (best_ha->flags & kBFInvertTouch) {
 		if (!(best_ha->flags & kBFBoxSelected)) {
 			hitarea_leave(best_ha, false);
@@ -763,7 +763,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 	} else {
 		if (mode == 0)
 			return;
- 
+
 		if (!(best_ha->flags & kBFInvertSelect))
 			return;
 
@@ -1145,7 +1145,7 @@ void AGOSEngine_PN::hitBox1(HitArea *ha) {
 		_mousePrintFG++;
 		_mouseString1 = _mouseString;
 		_mouseString = (const char*)"showname \0";
-	
+
 	}
 }
 

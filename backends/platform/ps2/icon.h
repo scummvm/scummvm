@@ -23,7 +23,7 @@
 class PS2Icon {
 public:
 	PS2Icon() {};
-	
+
 	~PS2Icon() {};
 
 	uint16 decompressData(uint16 **data);

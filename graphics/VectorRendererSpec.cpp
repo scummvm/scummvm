@@ -399,7 +399,7 @@ inline void VectorRendererSpec<PixelType>::
 blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha)	{
 	register int idst = *ptr;
 	register int isrc = color;
-	
+
 	*ptr = (PixelType)(
 		(_redMask & ((idst & _redMask) +
 		((int)(((int)(isrc & _redMask) -

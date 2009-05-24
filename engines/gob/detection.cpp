@@ -849,7 +849,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		0, 0, 0
 	},
-	{ // Supplied by goodoldgeorg in bug report #2563539 
+	{ // Supplied by goodoldgeorg in bug report #2563539
 		{
 			"ween",
 			"",
@@ -1489,7 +1489,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeFascination,
 		kFeaturesNone,
 		"disk0.stk", 0, 0
-	},	
+	},
 	{
 		{
 			"fascination",
@@ -1502,7 +1502,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeFascination,
 		kFeaturesNone,
 		"disk0.stk", 0, 0
-	},	
+	},
 	{
 		{
 			"fascination",
@@ -1515,7 +1515,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeFascination,
 		kFeaturesNone,
 		"disk0.stk", 0, 0
-	},	
+	},
 	{
 		{
 			"fascination",
@@ -1528,7 +1528,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeFascination,
 		kFeaturesNone,
 		"disk0.stk", 0, 0
-	},	
+	},
 	{
 		{
 			"geisha",

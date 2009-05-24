@@ -76,7 +76,7 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 	_needFullRedraw = false;
 
 	memset(&_thisScreen, 0, sizeof(_thisScreen));
-	
+
 	_fps = 0;
 	_frameCount = 0;
 	_cycleTime = 0;
@@ -101,7 +101,7 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 	_pauseTicks = 0;
 	_pauseStartTick = 0;
 
-	// Clean the cache for PSX version SCREENS.CLU 
+	// Clean the cache for PSX version SCREENS.CLU
 	_psxScrCache[0] = NULL;
 	_psxScrCache[1] = NULL;
 	_psxScrCache[2] = NULL;
@@ -521,7 +521,7 @@ void Screen::processLayer(byte *file, uint32 layer_number) {
 
 	// Layers are uncompressed in PSX version, RLE256 compressed
 	// in PC version.
-	if (Sword2Engine::isPsx()) { 
+	if (Sword2Engine::isPsx()) {
 		spriteInfo.type = RDSPR_TRANS | RDSPR_NOCOMPRESSION;
 		spriteInfo.data = file + layer_head.offset;
 	} else {
@@ -554,9 +554,9 @@ void Screen::processImage(BuildUnit *build_unit) {
 	// We have some problematic animation frames in PSX demo (looks like there is missing data),
 	// so we just skip them.
 	if ( (Sword2Engine::isPsx() &&  _vm->_logic->readVar(DEMO)) &&
-		 ((build_unit->anim_resource == 369 && build_unit->anim_pc == 0) || 
+		 ((build_unit->anim_resource == 369 && build_unit->anim_pc == 0) ||
 		 (build_unit->anim_resource == 296 && build_unit->anim_pc == 5)  ||
-		 (build_unit->anim_resource == 534 && build_unit->anim_pc == 13)) ) 
+		 (build_unit->anim_resource == 534 && build_unit->anim_pc == 13)) )
 		return;
 
 	byte *file = _vm->_resman->openResource(build_unit->anim_resource);
@@ -1309,7 +1309,7 @@ bool Screen::getPsxScrCacheStatus(uint8 level) {
 	if (level > 3) {
 		level = 0;
 	}
-	
+
 	return _psxCacheEnabled[level];
 }
 

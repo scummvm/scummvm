@@ -137,7 +137,7 @@ public:
 #define CORO_END_CONTEXT(x)    } *x = (CoroContextTag *)coroParam
 
 /**
- * Begin the code section of a coroutine. 
+ * Begin the code section of a coroutine.
  * @param x	name of the coroutine context
  * @see CORO_BEGIN_CODE
  */

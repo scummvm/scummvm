@@ -136,10 +136,10 @@ SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 	} else {
 		_isValid = ETrue;
 		_isDirectory = EFalse;
-		TParsePtrC parser(fname);		
-		if(parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent())  {		
+		TParsePtrC parser(fname);
+		if(parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent())  {
 			_isDirectory = ETrue;
-		}		
+		}
 	}
 }
 

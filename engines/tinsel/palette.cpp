@@ -107,12 +107,12 @@ COLORREF* psxClutToRGBPal(uint8 *srcClut, int *colours) {
 		clutEntry = READ_LE_UINT16(srcClut); // Read PSX CLUT entry
 		srcClut += sizeof(uint16);
 
-		if ((clutEntry == 0) && (coloursInPalette == 0)) 
+		if ((clutEntry == 0) && (coloursInPalette == 0))
 			coloursInPalette++;
 		else if ((clutEntry == 0) && (coloursInPalette != 0)) {
 			*colours = coloursInPalette;
 			return dstPal;
-		} else 
+		} else
 			coloursInPalette++;
 
 		// Extract color data

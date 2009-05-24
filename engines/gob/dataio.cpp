@@ -371,7 +371,7 @@ void DataIO::openDataFile(const char *src, bool itk) {
 	ChunkDesc *dataDesc;
 	char path[128];
 	int16 file;
-	char *fakeTotPtr; 
+	char *fakeTotPtr;
 
 	strncpy0(path, src, 127);
 	if (!strchr(path, '.')) {

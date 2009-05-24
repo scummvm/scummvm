@@ -64,7 +64,7 @@ void PictureResource::load(byte *source, int size) {
 
 void PictureResource::loadRaw(byte *source, int size) {
 	// Loads a "raw" picture as used in RtZ, LGoP2, Manhole:N&E and Rodney's Funscreen
-	
+
 	Common::MemoryReadStream *sourceS = new Common::MemoryReadStream(source, size);
 
 	_hasPalette = (sourceS->readByte() != 0);
@@ -118,7 +118,7 @@ void PictureResource::loadChunked(byte *source, int size) {
 
 		uint32 chunkType = sourceS->readUint32BE();
 		uint32 chunkSize = sourceS->readUint32BE();
-		
+
 		if (sourceS->eos())
 			break;
 

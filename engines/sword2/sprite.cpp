@@ -141,7 +141,7 @@ int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
 void Screen::unwindRaw16(byte *dst, byte *src, uint16 blockSize, byte *colTable) {
 	// for each pair of pixels
 	while (blockSize > 1) {
-		
+
 		if (Sword2Engine::isPsx()) {
 			// 1st colour = number in table at position given by upper
 			// nibble of source byte
@@ -282,7 +282,7 @@ uint32 Screen::decompressHIF(byte *src, byte *dst, uint32 *skipData) {
 				while(repeat_count >= 0) {
 					uint16 refetchData = (info_word & 0xFFF) + 1;
 					if (refetchData > decompSize) return 0; // We have a problem here...
-					uint8 *old_data_src = dst - refetchData; 
+					uint8 *old_data_src = dst - refetchData;
 					*dst++ = *old_data_src;
 					decompSize++;
 					repeat_count--;
@@ -298,7 +298,7 @@ uint32 Screen::decompressHIF(byte *src, byte *dst, uint32 *skipData) {
 	}
 }
 
-// Double line image to keep aspect ratio. 
+// Double line image to keep aspect ratio.
 // Used in PSX version.
 void Screen::resizePsxSprite(byte *dst, byte *src, uint16 destW, uint16 destH) {
 	for (int i = 0; i < destH / 2; i++) {
@@ -547,7 +547,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 				free(tempBuf);
 			} else { // PC RLE16 sprites
 				sprite = (byte *)malloc(s->w * s->h);
-				
+
 				if (!sprite)
 					return RDERR_OUTOFMEMORY;
 
@@ -573,7 +573,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 
 					s->w = (decompData / (s->h / 2));
 					sprite = (byte *)malloc(s->w * s->h);
-				
+
 					if (!sprite)
 						return RDERR_OUTOFMEMORY;
 
@@ -695,7 +695,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 			return RDERR_OUTOFMEMORY;
 		}
 
-		// We cannot use good scaling for PSX version, as we are missing 
+		// We cannot use good scaling for PSX version, as we are missing
 		// some required data.
 		if (_renderCaps & RDBLTFX_EDGEBLEND && !Sword2Engine::isPsx())
 			scaleImageGood(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, _buffer + _screenWide * rd.top + rd.left);

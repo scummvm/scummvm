@@ -51,15 +51,15 @@ ScreenEffects::ScreenEffects(Screen *screen) : _screen(screen) {
 	vfxY1 = 0;
 	vfxWidth = 0;
 	vfxHeight = 0;
-	
+
 	_fxPalette = new byte[768];
-	
+
 }
 
 ScreenEffects::~ScreenEffects() {
 	delete[] _fxPalette;
 }
- 
+
 void ScreenEffects::run(int16 effectNum, Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount) {
 	// Workaround: we set up the final palette beforehand, to reduce CPU usage during the screen effect.
 	// The visual difference is not noticeable, but CPU load is much much less (as palette updates are very expensive).

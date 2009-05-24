@@ -425,12 +425,12 @@ void OSystem_DS::grabOverlay(OverlayColor* buf, int pitch) {
 	for (int y = 0; y < 200; y++) {
 		u16* src = start + (y * 320);
 		u16* dest = ((u16 *) (buf)) + (y * pitch);
-				
+
 		for (int x = 0; x < 320; x++) {
 			*dest++ =  *src++;
 		}
 	}
-	
+
 }
 
 void OSystem_DS::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {

@@ -3120,7 +3120,7 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_bso:
 		_backgroundSprOffset = readTableInstructionParam(3);
 		return 0;
-	case kCode_bus: 
+	case kCode_bus:
 		_speechSoundNum = readTableInstructionParam(3) - 1;
 		rememberSpeechSound();
 		startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, _speechVolume);
@@ -3130,7 +3130,7 @@ int TuckerEngine::executeTableInstruction() {
 		_actionCharacterNum = 99;
 		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 		return 0;
-	case kCode_buw: 
+	case kCode_buw:
 		_selectedObject.xPos = readTableInstructionParam(3);
 		_selectedObject.yPos = readTableInstructionParam(3);
 		_locationMaskIgnore = 1;

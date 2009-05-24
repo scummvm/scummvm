@@ -1001,7 +1001,7 @@ void Inter_v5::o5_gob96(OpGobParams &params) {
 	warning("Dynasty Stub: GobFunc 96: %d, %d, %d, %d",
 			speedThrottle4, speedThrottle3, speedThrottle2, speedThrottle1);
 
-	// TODO 
+	// TODO
 }
 
 void Inter_v5::o5_gob97(OpGobParams &params) {

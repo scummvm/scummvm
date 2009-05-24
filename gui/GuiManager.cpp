@@ -95,7 +95,7 @@ void GuiManager::initKeymap() {
 
 	act = new Action(guiMap, "CLOS", "Close", kGenericActionType, kStartKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
-	
+
 	act = new Action(guiMap, "CLIK", "Mouse click");
 	act->addLeftClickEvent();
 

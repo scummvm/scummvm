@@ -6,12 +6,12 @@
  *  modify it under the terms of the GNU Lesser General Public
  *  License as published by the Free Software Foundation; either
  *  version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *  Lesser General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -132,7 +132,7 @@ typedef struct operator_struct {
 	Bit32u act_state;				// activity state (regular, percussion)
 	bool sus_keep;					// keep sustain level when decay finished
 	bool vibrato,tremolo;			// vibrato/tremolo enable bits
-	
+
 	// variables used to provide non-continuous envelopes
 	Bit32u generator_pos;			// for non-standard sample rates we need to determine how many samples have passed
 	Bits cur_env_step;				// current (standardized) sample position
@@ -151,7 +151,7 @@ Bitu chip_num;
 op_type op[MAXOPERATORS];
 
 Bits int_samplerate;
-	
+
 Bit8u status;
 Bit32u index;
 #if defined(OPLTYPE_IS_OPL3)

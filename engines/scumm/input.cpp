@@ -440,9 +440,9 @@ void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
 		// SCUMM var 244 is the episode score
 		// and var 245 is the series score
 		char text[50];
-		
+
 		updateIQPoints();
-		
+
 		sprintf(text, "IQ Points: Episode = %d, Series = %d", _scummVars[244], _scummVars[245]);
 		Indy3IQPointsDialog indy3IQPointsDialog(this, text);
 		runDialog(indy3IQPointsDialog);

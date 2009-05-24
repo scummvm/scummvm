@@ -649,7 +649,7 @@ public:
 	struct DebugPoint {
 		Point point;
 		byte color;
-		
+
 		DebugPoint() : color(0) {}
 
 		DebugPoint(const Point &p, byte c): point(p), color(c) {}

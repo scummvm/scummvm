@@ -1737,8 +1737,8 @@ void OSystem_WINCE3::internUpdateScreen() {
 			toolbarScaler = Normal2x;
 		else if (_videoMode.scaleFactor == 3)
 			toolbarScaler = Normal3x;
-		toolbarScaler((byte *)toolbarSurface->pixels, srcPitch, 
-					(byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch), 
+		toolbarScaler((byte *)toolbarSurface->pixels, srcPitch,
+					(byte *)_hwscreen->pixels + (_toolbarHandler.getOffset() * _scaleFactorYm / _scaleFactorYd * dstPitch),
 					dstPitch, toolbar_rect[0].w, toolbar_rect[0].h);
 		SDL_UnlockSurface(toolbarSurface);
 		SDL_UnlockSurface(_hwscreen);

@@ -45,7 +45,7 @@ private:
 	byte _masterVolume;
 
 	byte *_songPointer;
-	// TODO: lib_SongSize 
+	// TODO: lib_SongSize
 	int _songSize;
 
 	void patchMidi(uint32 adr, const byte *data, int size);

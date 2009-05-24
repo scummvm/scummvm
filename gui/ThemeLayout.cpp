@@ -192,7 +192,7 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 		// Advance the vertical offset by the height of the newest item, plus
 		// the item spacing value.
 		curY += _children[i]->getHeight() + _spacing;
-		
+
 		// Update width and height of this stack layout
 		_w = MAX(_w, (int16)(_children[i]->getWidth() + _padding.left + _padding.right));
 		_h += _children[i]->getHeight() + _spacing;
@@ -205,7 +205,7 @@ void ThemeLayoutStacked::reflowLayoutVertical() {
 
 	// If there were any items with undetermined height, then compute and set
 	// their height now. We do so by determining how much space is left, and
-	// then distributing this equally over all items which need auto-resizing. 
+	// then distributing this equally over all items which need auto-resizing.
 	if (rescount) {
 		int newh = (getParentHeight() - _h - _padding.bottom) / rescount;
 
@@ -268,7 +268,7 @@ void ThemeLayoutStacked::reflowLayoutHorizontal() {
 
 	// If there were any items with undetermined width, then compute and set
 	// their width now. We do so by determining how much space is left, and
-	// then distributing this equally over all items which need auto-resizing. 
+	// then distributing this equally over all items which need auto-resizing.
 	if (rescount) {
 		int neww = (getParentWidth() - _w - _padding.right) / rescount;
 

@@ -81,7 +81,7 @@ void restoreBackground(backgroundIncrustStruct *pIncrust) {
 			int xp = j + X;
 			int yp = i + Y;
 
-			if ((xp >= 0) && (yp >= 0) && (xp < 320) && (yp < 200)) 
+			if ((xp >= 0) && (yp >= 0) && (xp < 320) && (yp < 200))
 				pBackground[yp * 320 + xp] = pIncrust->ptr[i * width + j];
 		}
 	}
@@ -101,7 +101,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 
 	// Don't process any further if not a sprite or polygon
 	if (!ptr) return NULL;
-	if ((filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_SPRITE) && 
+	if ((filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_SPRITE) &&
 		(filesDatabase[params.fileIdx].subData.resourceType != OBJ_TYPE_POLY)) {
 		return NULL;
 	}

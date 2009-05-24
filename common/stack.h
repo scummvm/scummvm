@@ -89,7 +89,7 @@ private:
 public:
 	Stack<T>() {}
 	Stack<T>(const Array<T> &stackContent) : _stack(stackContent) {}
-	
+
 	bool empty() const {
 		return _stack.empty();
 	}

@@ -155,7 +155,7 @@ bool DXADecoder::loadFile(const char *fileName) {
 		} while (tag != 0);
 	}
 #endif
-	
+
 	// Read the sound header
 	_soundTag = _fileStream->readUint32BE();
 

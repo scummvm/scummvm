@@ -539,7 +539,7 @@ void AGOSEngine::dumpBitmap(const char *filename, const byte *offs, uint16 w, ui
 				src += 5;
 			} while (--count);
 			dst += w;
-		} 
+		}
 	} else if (flags & 0x80) {
 		for (i = 0; i != w; i += 2) {
 			byte *c = vc10_depackColumn(&state);
@@ -580,7 +580,7 @@ void AGOSEngine::palLoad(byte *pal, const byte *vga1, int a, int b) {
 	const byte *src;
 	uint16 num, palSize;
 	byte *palptr = (byte *)&pal[0];
-	
+
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		num = 256;
 		palSize = 768;

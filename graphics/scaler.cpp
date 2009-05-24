@@ -116,12 +116,12 @@ void InitLUT(Graphics::PixelFormat format) {
 	hqx_low3bits = (7 << format.rShift) | (7 << format.gShift) | (7 << format.bShift),
 
 	hqx_highbits = format.RGBToColor(255,255,255) ^ hqx_lowbits;
-	
+
 	// FIXME: The following code only does the right thing
 	// if the color order is RGB or BGR, i.e., green is in the middle.
 	hqx_greenMask = format.RGBToColor(0,255,0);
 	hqx_redBlueMask = format.RGBToColor(255,0,255);
-	
+
 	hqx_green_redBlue_Mask = (hqx_greenMask << 16) | hqx_redBlueMask;
 #endif
 }

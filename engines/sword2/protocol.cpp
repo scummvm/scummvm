@@ -72,7 +72,7 @@ byte *Sword2Engine::fetchPalette(byte *screenFile) {
  */
 
 byte *Sword2Engine::fetchPaletteMatchTable(byte *screenFile) {
-	
+
 	if (isPsx()) return NULL;
 
 	MultiScreenHeader mscreenHeader;
@@ -90,7 +90,7 @@ byte *Sword2Engine::fetchPaletteMatchTable(byte *screenFile) {
 byte *Sword2Engine::fetchScreenHeader(byte *screenFile) {
 	if (isPsx()) { // In PSX version there's no MultiScreenHeader, so just skip resource header
 		return screenFile + ResHeader::size();
-	} else { 
+	} else {
 		MultiScreenHeader mscreenHeader;
 
 		mscreenHeader.read(screenFile + ResHeader::size());
@@ -116,7 +116,7 @@ byte *Sword2Engine::fetchLayerHeader(byte *screenFile, uint16 layerNo) {
 		return screenFile + ResHeader::size() + ScreenHeader::size() + 2 + 0x400 + layerNo * LayerHeader::size();
 	} else {
 		MultiScreenHeader mscreenHeader;
-	
+
 		mscreenHeader.read(screenFile + ResHeader::size());
 		return screenFile + ResHeader::size() + mscreenHeader.layers + layerNo * LayerHeader::size();
 	}
@@ -174,7 +174,7 @@ byte *Sword2Engine::fetchCdtEntry(byte *animFile, uint16 frameNo) {
 
 byte *Sword2Engine::fetchFrameHeader(byte *animFile, uint16 frameNo) {
 	// required address = (address of the start of the anim header) + frameOffset
-	
+
 	CdtEntry cdt;
 
 	cdt.read(fetchCdtEntry(animFile, frameNo));
@@ -231,7 +231,7 @@ byte *Sword2Engine::fetchBackgroundLayer(byte *screenFile) {
 			psxBackground = fetchPsxBackground(locNo);
 			_screen->setPsxScrCache(psxBackground, 1);
 			return psxBackground;
-		}		
+		}
 	} else {
 		MultiScreenHeader mscreenHeader;
 
@@ -259,7 +259,7 @@ byte *Sword2Engine::fetchForegroundParallaxLayer(byte *screenFile, int layer) {
 			psxParallax = fetchPsxParallax(locNo, 1);
 			_screen->setPsxScrCache(psxParallax, 2);
 			return psxParallax;
-		}		
+		}
 	} else {
 		MultiScreenHeader mscreenHeader;
 
@@ -310,7 +310,7 @@ byte *Sword2Engine::fetchPsxBackground(uint32 location) {
 	}
 
 	file.seek(location * 4, SEEK_SET);
-	screenOffset = file.readUint32LE();	
+	screenOffset = file.readUint32LE();
 
 	if (screenOffset == 0) { // We don't have screen data for this location number.
 		file.close();
@@ -319,10 +319,10 @@ byte *Sword2Engine::fetchPsxBackground(uint32 location) {
 
 	// Get to the beginning of PSXScreensEntry
 	file.seek(screenOffset + ResHeader::size(), SEEK_SET);
-	
+
 	buffer = (byte *)malloc(PSXScreensEntry::size());
 	file.read(buffer, PSXScreensEntry::size());
-	
+
 	// Prepare the header
 	header.read(buffer);
 	free(buffer);
@@ -336,7 +336,7 @@ byte *Sword2Engine::fetchPsxBackground(uint32 location) {
 	buffer = (byte *)malloc(totSize);
 
 	// Write some informations before background data
-	WRITE_LE_UINT16(buffer, header.bgXres); 
+	WRITE_LE_UINT16(buffer, header.bgXres);
 	WRITE_LE_UINT16(buffer + 2, header.bgYres);
 	WRITE_LE_UINT32(buffer + 4, header.bgOffset);
 
@@ -378,17 +378,17 @@ byte *Sword2Engine::fetchPsxParallax(uint32 location, uint8 level) {
 	}
 
 	file.seek(location * 4, SEEK_SET);
-	screenOffset = file.readUint32LE();	
+	screenOffset = file.readUint32LE();
 
 	if (screenOffset == 0) // There is no screen here
 		return NULL;
 
 	// Get to the beginning of PSXScreensEntry
 	file.seek(screenOffset + ResHeader::size(), SEEK_SET);
-	
+
 	buffer = (byte *)malloc(PSXScreensEntry::size());
 	file.read(buffer, PSXScreensEntry::size());
-	
+
 	// Initialize the header
 	header.read(buffer);
 	free(buffer);
@@ -422,14 +422,14 @@ byte *Sword2Engine::fetchPsxParallax(uint32 location, uint8 level) {
 
 	// Insert parallax resolution information in the buffer,
 	// preceding parallax data.
-	WRITE_LE_UINT16(buffer, plxXres); 
+	WRITE_LE_UINT16(buffer, plxXres);
 	WRITE_LE_UINT16(buffer + 2, plxYres);
-	WRITE_LE_UINT16(buffer + 4, horTiles); 
+	WRITE_LE_UINT16(buffer + 4, horTiles);
 	WRITE_LE_UINT16(buffer + 6, verTiles);
 
 	// Read parallax data from file and store it inside the buffer,
 	// skipping the generated header.
-	file.read(buffer + 8, totSize - 8); 
+	file.read(buffer + 8, totSize - 8);
 	file.close();
 
 	return buffer;

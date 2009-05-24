@@ -267,7 +267,7 @@ void Ps2File::cacheReadSync(void) {
 	}
 }
 
-uint32 Ps2File::read(void *dest, uint32 len) {	
+uint32 Ps2File::read(void *dest, uint32 len) {
 	// uint32 r=0, d=0, ds=0, sz=0;
 #ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);

@@ -64,7 +64,7 @@ private:
 	void removeFromCacheList(Resource *res);
 	void addToCacheList(Resource *res);
 	void checkMemUsage();
-	
+
 	Sword2Engine *_vm;
 
 	int _curCD;

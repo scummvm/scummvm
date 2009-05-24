@@ -188,7 +188,7 @@ void MusicPlayer::removeSong() {
 	}
 
 	_songPlayed = false;
-	
+
 	strcpy(_musicName, "");
 }
 

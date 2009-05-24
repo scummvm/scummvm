@@ -380,7 +380,7 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 					warning("\"%s\"", _macCdFileList[i].name);
 					pos += sprintf(pos, "\"%s\"\n", _macCdFileList[i].name);
 				}
-		} 
+		}
 	} else {
 		for (int i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
 			if (!fileExists[i]) {

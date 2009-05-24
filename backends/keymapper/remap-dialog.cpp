@@ -146,7 +146,7 @@ void RemapDialog::reflowLayout() {
 
 	_colCount = (areaW - scrollbarWidth) / colWidth;
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
-	if (_colCount <= 0 || _rowCount <= 0) 
+	if (_colCount <= 0 || _rowCount <= 0)
 		error("Remap dialog too small to display any keymaps!");
 
 	_scrollBar->resize(areaX + areaW - scrollbarWidth, areaY, scrollbarWidth, areaH);
@@ -164,9 +164,9 @@ void RemapDialog::reflowLayout() {
 		ActionWidgets widg;
 
 		if (i >= _keymapWidgets.size()) {
-			widg.actionText = 
+			widg.actionText =
 				new GUI::StaticTextWidget(this, 0, 0, 0, 0, "", Graphics::kTextAlignRight);
-			widg.keyButton = 
+			widg.keyButton =
 				new GUI::ButtonWidget(this, 0, 0, 0, 0, "", kRemapCmd + i);
 			_keymapWidgets.push_back(widg);
 		} else {
@@ -208,7 +208,7 @@ void RemapDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
 
 void RemapDialog::startRemapping(uint i) {
 	if (_topAction + i >= _currentActions.size())
-		return; 
+		return;
 
 	_remapTimeout = getMillis() + kRemapTimeoutDelay;
 	_activeRemapAction = _currentActions[_topAction + i].action;
@@ -287,7 +287,7 @@ void RemapDialog::loadKeymap() {
 			if (act->getMappedKey())
 				freeKeys.remove(act->getMappedKey());
 		}
-		
+
 		// loop through remaining finding mappings for unmapped keys
 		if (top.inherit) {
 			for (int i = activeKeymaps.size() - 2; i >= 0; --i) {
@@ -365,7 +365,7 @@ void RemapDialog::refreshKeymap() {
 			widg.actionText->setVisible(true);
 			widg.keyButton->setVisible(true);
 
-			actionI++; 
+			actionI++;
 		} else {
 			widg.actionText->setVisible(false);
 			widg.keyButton->setVisible(false);
@@ -373,7 +373,7 @@ void RemapDialog::refreshKeymap() {
 		//widg.actionText->draw();
 		//widg.keyButton->draw();
 	}
-	// need to redraw entire Dialog so that invisible 
+	// need to redraw entire Dialog so that invisible
 	// widgets disappear
 	draw();
 }

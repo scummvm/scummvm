@@ -335,7 +335,7 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 		close();
 	}
 
-	
+
 	if ((!guard) && (cmd == 0x40000000)) {
 		close();
 		g_engine->openMainMenuDialog();

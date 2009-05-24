@@ -596,7 +596,7 @@ static int MovieCommand(char cmd, int commandOffset) {
 		PPRINT_CMD pCmd;
 
 		pCmd = (PPRINT_CMD)(bigBuffer + commandOffset);
-		
+
 		MovieText(nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
 				(int16)READ_LE_UINT16(&pCmd->x),
 				(int16)READ_LE_UINT16(&pCmd->y),

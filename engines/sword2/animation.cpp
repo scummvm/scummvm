@@ -197,7 +197,7 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
 		uint16 height = text->_textSprite.h;
 
 		// Resize text sprites for PSX version
-		if (Sword2Engine::isPsx()) { 
+		if (Sword2Engine::isPsx()) {
 			height *= 2;
 			byte *buffer = (byte *)malloc(width * height);
 			Screen::resizePsxSprite(buffer, src, width, height);

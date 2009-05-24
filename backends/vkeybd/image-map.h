@@ -41,7 +41,7 @@ class ImageMap {
 public:
 
 	~ImageMap();
-	
+
 	Polygon *createArea(const String& id);
 	void removeArea(const String& id);
 	void removeAllAreas();

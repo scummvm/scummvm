@@ -56,7 +56,7 @@ public:
 	virtual bool getErr(void);
 	virtual void setErr(bool);
 
-	
+
 private:
 	void cacheReadAhead(void);
 	void cacheReadSync(void);

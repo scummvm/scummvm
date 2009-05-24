@@ -399,7 +399,7 @@ void Scene::skipScene() {
 			_sceneQueue.erase(_sceneQueue.begin(), queueIterator);
 
 			endScene();
-			
+
 			loadScene(*_sceneQueue.begin());
 			break;
 		}

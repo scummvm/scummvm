@@ -103,7 +103,7 @@ int Router::doAnimate(byte *ob_logic, byte *ob_graph, int32 animRes, bool revers
 
 		// point to anim header
 		anim_head.read(_vm->fetchAnimHeader(anim_file));
-		
+
 		// now running an anim, looping back to this call again
 		obLogic.setLooping(1);
 		obGraph.setAnimResource(animRes);

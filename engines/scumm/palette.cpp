@@ -829,7 +829,7 @@ int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	uint sum, bestsum, bestitem = 0;
 
 	int startColor = (_game.version == 8) ? 24 : 1;
-	
+
 	if (_game.heversion >= 99)
 		pal = _hePalettes + 1024 + startColor * 3;
 	else

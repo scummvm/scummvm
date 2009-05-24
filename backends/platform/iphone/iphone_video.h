@@ -47,7 +47,7 @@
 	int _fullHeight;
 	int _widthOffset;
 	int _heightOffset;
-	
+
 	EAGLContext* _context;
 	GLuint _viewRenderbuffer;
 	GLuint _viewFramebuffer;

@@ -260,13 +260,13 @@ void Screen::renderParallax(byte *ptr, int16 l) {
 		return;
 
 	// Fetch resolution data from parallax
-	
+
 	if (Sword2Engine::isPsx()) {
 		xRes = READ_LE_UINT16(ptr);
 		yRes = READ_LE_UINT16(ptr + 2) * 2;
 	} else {
 		Parallax p;
-		
+
 		p.read(ptr);
 		xRes = p.w;
 		yRes = p.h;
@@ -588,7 +588,7 @@ int32 Screen::initialisePsxBackgroundLayer(byte *parallax) {
 
 	_xBlocks[_layer] = (bgXres + BLOCKWIDTH - 1) / BLOCKWIDTH;
 	_yBlocks[_layer] = (bgYres + BLOCKHEIGHT - 1) / BLOCKHEIGHT;
-	
+
 	uint16 remLines = bgYres % 64;
 
 	byte *tileChunk = (byte *)malloc(BLOCKHEIGHT * BLOCKWIDTH);
@@ -615,7 +615,7 @@ int32 Screen::initialisePsxBackgroundLayer(byte *parallax) {
 
 		memset(tileChunk, 1, BLOCKHEIGHT * BLOCKWIDTH);
 
-		if (!(remLines && posY == _yBlocks[_layer] - 1)) 
+		if (!(remLines && posY == _yBlocks[_layer] - 1))
 			remLines = 32;
 
 		for(j = 0; j < remLines; j++) {
@@ -628,7 +628,7 @@ int32 Screen::initialisePsxBackgroundLayer(byte *parallax) {
 				block_has_data = true;
 			else
 				block_is_transparent = true;
-		}	
+		}
 
 		int tileIndex = totStripes * posY + posX;
 
@@ -657,7 +657,7 @@ int32 Screen::initialisePsxBackgroundLayer(byte *parallax) {
 	free(tileChunk);
 	_layer++;
 
-	return RD_OK;	
+	return RD_OK;
 }
 
 /**
@@ -728,7 +728,7 @@ int32 Screen::initialisePsxParallaxLayer(byte *parallax) {
 			block_has_data = true;
 
 			// If one of the two grouped blocks is without data, then we also have transparency
-			if(!firstTilePresent || !secondTilePresent) 
+			if(!firstTilePresent || !secondTilePresent)
 				block_is_transparent = true;
 		}
 
@@ -747,7 +747,7 @@ int32 Screen::initialisePsxParallaxLayer(byte *parallax) {
 
 			// If we didn't find transparency in first block and we have
 			// a second tile, check it
-			if (secondTilePresent && !block_is_transparent) { 
+			if (secondTilePresent && !block_is_transparent) {
 				for (k = 0; k < 0x400; k++) {
 					if ( *(block + k) == 0) {
 						block_is_transparent = true;

@@ -452,7 +452,7 @@ void Control::doControlPanel(void) {
 	if (SkyEngine::isDemo()) {
 		return;
 	}
-	
+
 	initPanel();
 
 	_savedCharSet = _skyText->giveCurrentCharSet();
@@ -783,7 +783,7 @@ uint16 Control::shiftDown(uint8 speed) {
 		else
 			return 0;
 	}
-	
+
 	return SHIFTED;
 }
 

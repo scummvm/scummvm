@@ -45,23 +45,23 @@ protected:
 
 public:
 	Timestamp();
-	
+
 	/**
 	 * Set up a timestamp with a given time and framerate.
 	 * @param msecs		staring time in milliseconds
 	 * @param frameRate	number of frames per second
 	 */
 	Timestamp(uint32 msecs, int frameRate);
-	
+
 	/** Adds a number of frames to a timestamp. */
 	Timestamp addFrames(int frames) const;
-	
+
 	/** Computes the difference (# of frames) between this timestamp and b. */
 	int frameDiff(const Timestamp &b) const;
-	
+
 	/** Computes the difference (# of milliseconds) between this timestamp and b. */
 	int msecsDiff(const Timestamp &b) const;
-	
+
 	/** Determines the time in milliseconds described by this timestamp. */
 	uint32 msecs() const;
 };

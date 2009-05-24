@@ -99,17 +99,17 @@ public:
 	virtual GUI::Debugger *getDebugger();
 	bool isEGA() const { return (getFeatures() & GF_EGA) != 0; }
 
-	virtual Common::Error loadGameState(int slot) { 
+	virtual Common::Error loadGameState(int slot) {
 		return loadGame(slot) ? Common::kReadingFailed : Common::kNoError;
 	}
 	virtual Common::Error saveGameState(int slot, const char *desc) {
 		String s(desc);
 		return saveGame(slot, s) ? Common::kReadingFailed : Common::kNoError;
 	}
-	virtual bool canLoadGameStateCurrently() { 
+	virtual bool canLoadGameStateCurrently() {
 		return _saveLoadAllowed && !Fights.isFighting();
 	}
-	virtual bool canSaveGameStateCurrently() { 
+	virtual bool canSaveGameStateCurrently() {
 		return _saveLoadAllowed && !Fights.isFighting();
 	}
 };

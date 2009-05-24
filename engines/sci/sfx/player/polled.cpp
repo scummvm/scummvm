@@ -99,7 +99,7 @@ protected:
 
 void PolledPlayerAudioStream::queryTimestamp() {
 	Audio::Timestamp stamp;
-	
+
 	if (!new_song) {
 		_mode = FEED_MODE_IDLE;
 	} else {

@@ -163,7 +163,7 @@ public:
 	Common::Error saveGameState(int slot, const char *desc);
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
-	bool canLoadGameStateCurrently();	
+	bool canLoadGameStateCurrently();
 
 	uint32 _features;
 
@@ -218,7 +218,7 @@ public:
 	byte *fetchTextLine(byte *file, uint32 text_line);
 	bool checkTextLine(byte *file, uint32 text_line);
 	byte *fetchPaletteMatchTable(byte *screenFile);
-	
+
 	uint32 saveGame(uint16 slotNo, const byte *description);
 	uint32 restoreGame(uint16 slotNo);
 	uint32 getSaveDescription(uint16 slotNo, byte *description);

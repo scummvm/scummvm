@@ -331,7 +331,7 @@ Palette &Palette::load(const byte *buf, const uint size, const Graphics::PixelFo
 	const int rBytePos = bytePos(format.rShift, format.bytesPerPixel, isBigEndian(endian));
 	const int gBytePos = bytePos(format.gShift, format.bytesPerPixel, isBigEndian(endian));
 	const int bBytePos = bytePos(format.bShift, format.bytesPerPixel, isBigEndian(endian));
-	
+
 	for (uint i = 0; i < numColors; i++) {
 		// format.rMax(), format.gMax(), format.bMax() are also used as masks here
 		_colors[i].r = (buf[i * format.bytesPerPixel + rBytePos] >> (format.rShift % 8)) & format.rMax();

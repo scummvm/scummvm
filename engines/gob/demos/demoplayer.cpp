@@ -44,7 +44,7 @@ DemoPlayer::Script DemoPlayer::_scripts[] = {
 	{kScriptSourceFile, "e.scn"},
 	{kScriptSourceFile, "i.scn"},
 	{kScriptSourceFile, "s.scn"},
-	{kScriptSourceDirect, 
+	{kScriptSourceDirect,
 		"slide machu.imd 20\nslide conseil.imd 20\nslide cons.imd 20\n" \
 		"slide tumia.imd 1\nslide tumib.imd 1\nslide tumic.imd 1\n"     \
 		"slide tumid.imd 1\nslide post.imd 1\nslide posta.imd 1\n"      \

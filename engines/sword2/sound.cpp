@@ -211,9 +211,9 @@ void Sound::playMovieSound(int32 res, int type) {
 
 	byte *data = _vm->_resman->openResource(res);
 	uint32 len = _vm->_resman->fetchLen(res);
-	
+
 	assert(_vm->_resman->fetchType(data) == WAV_FILE);
-	
+
 	// In PSX version we have nothing to skip here, as data starts right away
 	if (!Sword2Engine::isPsx()) {
 		data += ResHeader::size();
@@ -300,7 +300,7 @@ void Sound::queueFx(int32 res, int32 type, int32 delay, int32 volume, int32 pan)
 				_fxQueue[i].data = data;
 			else
 				_fxQueue[i].data = data + ResHeader::size();
-			
+
 			_fxQueue[i].len = len;
 			_fxQueue[i].delay = delay;
 			_fxQueue[i].volume = volume;

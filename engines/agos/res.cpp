@@ -704,7 +704,7 @@ static bool getBit(Common::Stack<uint32> &dataList, uint32 &srcVal) {
 
 static uint32 copyBits(Common::Stack<uint32> &dataList, uint32 &srcVal, int numBits) {
 	uint32 destVal = 0;
-	
+
 	for (int i = 0; i < numBits; ++i) {
 		bool f = getBit(dataList, srcVal);
 		destVal = (destVal << 1) | (f ? 1 : 0);

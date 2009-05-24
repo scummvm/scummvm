@@ -161,12 +161,12 @@ void Sound::playSample(QueueElement *elem) {
 		if (_fxList[elem->id].roomVolList[cnt].roomNo) {
 			if ((_fxList[elem->id].roomVolList[cnt].roomNo == (int)Logic::_scriptVars[SCREEN]) ||
 				(_fxList[elem->id].roomVolList[cnt].roomNo == -1)) {
-						
+
 					uint8 volL = (_fxList[elem->id].roomVolList[cnt].leftVol * 10 * _sfxVolL) / 255;
 					uint8 volR = (_fxList[elem->id].roomVolList[cnt].rightVol * 10 * _sfxVolR) / 255;
 					int8 pan = (volR - volL) / 2;
 					uint8 volume = (volR + volL) / 2;
-						
+
 					if (SwordEngine::isPsx()) { ;
 						uint32 size = READ_LE_UINT32(sampleData);
 						Audio::AudioStream *audStream = new Audio::VagStream(new Common::MemoryReadStream(sampleData + 4, size-4), _fxList[elem->id].type == FX_LOOP);
@@ -195,7 +195,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		warning("Sound::startSpeech: COW file isn't open");
 		return false;
 	}
-	
+
 	uint32 locIndex = 0xFFFFFFFF;
 	uint32 sampleSize = 0;
 	uint32 index = 0;
@@ -203,49 +203,49 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 	if (_cowMode == CowPSX) {
 		Common::File file;
 		uint16 i;
-		
+
 		if (!file.open("speech.lis")) {
 			warning ("Could not open speech.lis");
 			return false;
 		}
 
-		for (i = 0; !file.eos() && !file.err(); i++) 
+		for (i = 0; !file.eos() && !file.err(); i++)
 			if (file.readUint16LE() == roomNo) {
 				locIndex = i;
 				break;
 			}
 		file.close();
-		
+
 		if (locIndex == 0xFFFFFFFF) {
 			warning ("Could not find room %d in speech.lis", roomNo);
 			return false;
 		}
-		
+
 		if (!file.open("speech.inf")) {
 			warning ("Could not open speech.inf");
 			return false;
 		}
-	
+
 		file.seek(locIndex * 4 + 2); // 4 bytes per room, skip first 2 bytes
-		
+
 		uint16 numLines = file.readUint16LE();
-		uint16 roomOffset = file.readUint16LE(); 
+		uint16 roomOffset = file.readUint16LE();
 
 		file.seek(0x112 + roomOffset * 2); // The offset is in terms of uint16's, so multiply by 2. Skip the 0x112 byte header too.
-		
+
 		locIndex = 0xFFFFFFFF;
-		
+
 		for (i = 0; i < numLines; i++)
 			if (file.readUint16LE() == localNo) {
 				locIndex = i;
 				break;
 			}
-				
+
 		if (locIndex == 0xFFFFFFFF) {
 			warning ("Could not find local number %d in room %d in speech.inf", roomNo, localNo);
 			return false;
 		}
-		
+
 		file.close();
 
 		index = _cowHeader[(roomOffset + locIndex) * 2];
@@ -255,9 +255,9 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 		sampleSize = _cowHeader[locIndex + (localNo * 2)];
 		index = _cowHeader[locIndex + (localNo * 2) - 1];
 	}
-	
+
 	debug(6, "startSpeech(%d, %d): locIndex %d, sampleSize %d, index %d", roomNo, localNo, locIndex, sampleSize, index);
-	
+
 	if (sampleSize) {
 		uint8 speechVol = (_speechVolR + _speechVolL) / 2;
 		int8 speechPan = (_speechVolR - _speechVolL) / 2;
@@ -493,7 +493,7 @@ void Sound::initCowSystem(void) {
 		debug(1, "Using uncompressed Speech Cluster");
 		_cowMode = CowWave;
 	}
-	
+
 	if (SwordEngine::isPsx()) {
 		// There's only one file on the PSX, so set it to the current disc.
 		_currentCowFile = SwordEngine::_systemVars.currentCD;
@@ -503,16 +503,16 @@ void Sound::initCowSystem(void) {
 			_cowMode = CowPSX;
 		}
 	}
-	
+
 	if (!_cowFile.isOpen())
 		_cowFile.open("speech.clu");
-		
+
 	if (!_cowFile.isOpen()) {
 		_cowFile.open("cows.mad");
 		if (_cowFile.isOpen())
 			_cowMode = CowDemo;
 	}
-	
+
 	if (_cowFile.isOpen()) {
 		if (SwordEngine::isPsx()) {
 			// Get data from the external table file

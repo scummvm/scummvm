@@ -210,7 +210,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 		uint16 resSizeX;
 		uint16 resSizeY;
 
-		if (SwordEngine::isPsx()) //PSX pointers are half height	
+		if (SwordEngine::isPsx()) //PSX pointers are half height
 			ptrSizeY *= 2;
 
 		if (luggageId) {
@@ -244,7 +244,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 					for (uint32 cntx = 0; cntx < luggSizeX; cntx++)
 						if (luggSrc[cntx])
 							dstData[cntx] = luggSrc[cntx];
-					
+
 					if(SwordEngine::isPsx()) {
 						dstData += resSizeX;
 						for (uint32 cntx = 0; cntx < luggSizeX; cntx++)
@@ -258,7 +258,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 			}
 			_resMan->resClose(luggageId);
 		}
-		
+
 		uint8 *dstData = ptrData;
 		uint8 *srcData = (uint8*)ptr + sizeof(MousePtr);
 		for (uint32 frameCnt = 0; frameCnt < noFrames; frameCnt++) {
@@ -267,7 +267,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 					if (srcData[cntx])
 						dstData[cntx] = srcData[cntx];
 
-				if(SwordEngine::isPsx()) {		
+				if(SwordEngine::isPsx()) {
 					dstData +=resSizeX;
 					for (uint32 cntx = 0; cntx < ptrSizeX; cntx++)
 						if (srcData[cntx])

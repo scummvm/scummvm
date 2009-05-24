@@ -224,7 +224,7 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 	// Check that text sprite has even horizontal resolution in PSX version
 	// (needed to work around a problem in some sprites, which reports an odd
 	// number as horiz resolution, but then have the next even number as true width)
-	if (Sword2Engine::isPsx()) 
+	if (Sword2Engine::isPsx())
 		spriteWidth = (spriteWidth % 2) ? spriteWidth + 1 : spriteWidth;
 
 	// Find the total height of the text sprite: the total height of the
@@ -297,7 +297,7 @@ byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, L
 
 		// Skip space at end of last word in this line
 		pos++;
-		
+
 		if (Sword2Engine::isPsx())
 			linePtr += (char_height / 2 + _lineSpacing) * spriteWidth;
 		else
@@ -369,11 +369,11 @@ uint16 FontRenderer::charHeight(uint32 fontRes) {
  */
 
 byte *FontRenderer::findChar(byte ch, byte *charSet) {
-	
+
 	// PSX version doesn't use an animation table to keep all letters,
 	// instead a big sprite (char atlas) is used, and the single char
 	// must be extracted from that.
-	
+
 	if (Sword2Engine::isPsx()) {
 		byte *buffer;
 		PSXFontEntry header;
@@ -390,7 +390,7 @@ byte *FontRenderer::findChar(byte ch, byte *charSet) {
 		// We have no such character, generate an empty one
 		// on the fly, size 6x12.
 		if (header.charWidth == 0) {
-			
+
 			// Prepare a "bogus" FrameHeader to be returned with
 			// "empty" character data.
 			bogusHeader.compSize = 0;
@@ -400,7 +400,7 @@ byte *FontRenderer::findChar(byte ch, byte *charSet) {
 			buffer = (byte *)malloc(24 * 3 + FrameHeader::size());
 			memset(buffer, 0, 24 * 3 + FrameHeader::size());
 			bogusHeader.write(buffer);
-			
+
 			return buffer;
 		}
 
@@ -471,8 +471,8 @@ void FontRenderer::copyChar(byte *charPtr, byte *spritePtr, uint16 spriteWidth, 
 					// Do nothing if source pixel is zero,
 					// ie. transparent
 					break;
-				case LETTER_COL_PSX1: // Values for colored zone 
-				case LETTER_COL_PSX2: 
+				case LETTER_COL_PSX1: // Values for colored zone
+				case LETTER_COL_PSX2:
 				case LETTER_COL:
 					*dest = pen;
 					break;
@@ -516,7 +516,7 @@ uint32 FontRenderer::buildNewBloc(byte *ascii, int16 x, int16 y, uint16 width, u
 	assert(i < MAX_text_blocs);
 
 	// Create and position the sprite
-	
+
 	_blocList[i].text_mem = makeTextSprite(ascii, width, pen, fontRes);
 
 	// 'NO_JUSTIFICATION' means print sprite with top-left at (x,y)

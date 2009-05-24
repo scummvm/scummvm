@@ -632,7 +632,7 @@ int16 ScriptFunctions::sfClearMono(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfGetSoundEnergy(int16 argc, int16 *argv) {
-	// This is called while in-game voices are played to animate 
+	// This is called while in-game voices are played to animate
 	// mouths when NPCs are talking
 	int result = 0;
 	if (_vm->_mixer->isSoundHandleActive(_audioStreamHandle) && _vm->_soundEnergyArray) {

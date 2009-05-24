@@ -33,19 +33,19 @@
 
 #include "sound/audiostream.h"
 #include "common/stream.h"
- 
+
 namespace Audio {
 
 class VagStream : public Audio::AudioStream {
 public:
 	VagStream(Common::SeekableReadStream *stream, bool loop = false, int rate = 11025);
 	~VagStream();
-	
+
 	bool isStereo() const { return false; }
 	bool endOfData() const { return _stream->pos() == _stream->size(); }
 	int getRate() const { return _rate; }
 	int readBuffer(int16 *buffer, const int numSamples);
-	void rewind();	
+	void rewind();
 
 private:
 	Common::SeekableReadStream *_stream;

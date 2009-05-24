@@ -264,7 +264,7 @@ void Ps2FilesystemNode::doverify(void) {
 		_isHere = false;
 		_isDirectory = false;
 		return;
-	} 
+	}
 
 	switch (medium) {
 #if 0
@@ -361,7 +361,7 @@ AbstractFSNode *Ps2FilesystemNode::getChild(const Common::String &n) const {
 
 /*
 	int fd;
- 
+
 	if (_path == "pfs0:")
 		fd = fio.dopen("pfs0:/");
 	else
@@ -442,7 +442,7 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 
 				if ( (mode == Common::FSNode::kListAll) ||
 
-					((mode == Common::FSNode::kListDirectoriesOnly) && 
+					((mode == Common::FSNode::kListDirectoriesOnly) &&
 					 (dirent.stat.mode & FIO_S_IFDIR)) ||
 
 				    ((mode == Common::FSNode::kListFilesOnly) &&
@@ -499,7 +499,7 @@ char *Ps2FilesystemNode::getDeviceDescription() const {
 		return "Host";
 	else if (strncmp(_path.c_str(), "mc0", 3) == 0)
 		return "Memory Card";
-	else 
+	else
 		return "WTF ???";
 }
 

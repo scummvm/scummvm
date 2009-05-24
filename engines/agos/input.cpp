@@ -463,9 +463,9 @@ bool AGOSEngine::processSpecialKeys() {
 			_lastMinute = t1;
 		}
 	}
-	
+
 	if (shouldQuit())
-		_exitCutscene = true;		
+		_exitCutscene = true;
 
 	switch (_keyPressed.keycode) {
 	case Common::KEYCODE_UP:
@@ -694,7 +694,7 @@ void AGOSEngine_PN::interact(char *buffer, uint8 size) {
 		_inputting = true;
 		_inputReady = true;
 	}
-	
+
 	while (!shouldQuit() && _inputReady) {
 		if (!_noScanFlag && _scanFlag) {
 			buffer[0] = 1;
@@ -744,7 +744,7 @@ void AGOSEngine_PN::clearCursor(WindowBlock *window) {
 
 bool AGOSEngine_PN::processSpecialKeys() {
 	if (shouldQuit())
-		_exitCutscene = true;		
+		_exitCutscene = true;
 
 	switch (_keyPressed.keycode) {
 	case Common::KEYCODE_ESCAPE:

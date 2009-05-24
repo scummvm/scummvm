@@ -565,7 +565,7 @@ void Troll::gameLoop() {
 	memset(_roomStates, 0, sizeof(_roomStates));
 
 	memset(_inventory, 0, sizeof(_inventory));
-	
+
 	while (!done && !_vm->shouldQuit()) {
 		*menu = 0;
 

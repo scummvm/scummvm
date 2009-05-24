@@ -382,7 +382,7 @@ bool ThemeEngine::init() {
 		if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
 #ifdef USE_ZLIB
 			Common::ZipArchive *zipArchive = new Common::ZipArchive(node);
-	
+
 			if (!zipArchive || !zipArchive->isOpen()) {
 				delete zipArchive;
 				zipArchive = 0;
@@ -397,7 +397,7 @@ bool ThemeEngine::init() {
 			_themeArchive = new Common::FSDirectory(node);
 		}
 	}
-	
+
 	// Load the theme
 	// We pass the theme file here by default, so the user will
 	// have a descriptive error message. The only exception will
@@ -415,7 +415,7 @@ void ThemeEngine::clearAll() {
 }
 
 void ThemeEngine::refresh() {
-	
+
 	// Flush all bitmaps if the overlay pixel format changed.
 	if (_overlayFormat != _system->getOverlayFormat()) {
 		for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
@@ -622,7 +622,7 @@ void ThemeEngine::loadTheme(const Common::String &themeId) {
 		// Load the archive containing image and XML data
 		_themeOk = loadThemeXML(themeId);
 	}
-	
+
 	if (!_themeOk) {
 		warning("Failed to load theme '%s'", themeId.c_str());
 		return;
@@ -1487,10 +1487,10 @@ void ThemeEngine::listUsableThemes(Common::FSNode node, Common::List<ThemeDescri
 			list.push_back(td);
 		}
 	}
-	
+
 	fileList.clear();
 #endif
-	
+
 	// Check if we exceeded the given recursion depth
 	if (depth - 1 == -1)
 		return;
@@ -1509,7 +1509,7 @@ Common::String ThemeEngine::getThemeFile(const Common::String &id) {
 	// of the builtin one.
 	if (id.equalsIgnoreCase("default"))
 		return Common::String();
-	
+
 	// For our builtin theme we don't have to do anything for now too
 	if (id.equalsIgnoreCase("builtin"))
 		return Common::String();

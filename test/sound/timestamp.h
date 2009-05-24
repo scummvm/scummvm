@@ -9,7 +9,7 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		const Audio::Timestamp a(10000, 1000);
 		const Audio::Timestamp b(10001, 1000);
 		const Audio::Timestamp c(10002, 1000);
-	
+
 		TS_ASSERT_EQUALS(a.frameDiff(b), -1);
 		TS_ASSERT_EQUALS(b.frameDiff(a), 1);
 		TS_ASSERT_EQUALS(c.frameDiff(a), 2);

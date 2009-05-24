@@ -316,7 +316,7 @@ void Script::setupScriptOpcodeList() {
 		// String manipulation
 		OPCODE(opDummy),		// 71: opStrCat, string concatenation (unused)
 		OPCODE(opDummy),		// 72: opStrFormat, string formatting (unused)
-		// Assignment 
+		// Assignment
 		OPCODE(opDummy),		// 73: assign (unused)
 		OPCODE(opDummy),		// 74: += (unused)
 		OPCODE(opDummy),		// 75: -= (unused)
@@ -434,7 +434,7 @@ void Script::setupScriptOpcodeList() {
 		// String manipulation
 		OPCODE(opDummy),		// 80: opStrCat, string concatenation (unused)
 		OPCODE(opDummy),		// 81: opStrFormat, string formatting (unused)
-		// Assignment 
+		// Assignment
 		OPCODE(opDummy),		// 82: assign (unused)
 		OPCODE(opDummy),		// 83: += (unused)
 		OPCODE(opDummy),		// 84: -= (unused)
@@ -660,7 +660,7 @@ void Script::opCcallV(SCRIPTOP_PARAMS) {
 	(this->*scriptFunction)(thread, argumentsCount, stopParsing);
 	if (stopParsing)
 		return;
-	
+
 	if (scriptFunction == &Saga::Script::sfScriptGotoScene) {
 		stopParsing = true;
 		breakOut = true;

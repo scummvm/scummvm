@@ -86,7 +86,7 @@ enum {
 enum {
 	// FIXME: The following two 'truth values' are stored inside the list
 	// of "operators". So they somehow coincide with OP_LOAD_VAR_UINT32
-	// and OP_LOAD_VAR_UINT32_AS_UINT16. I haven't yet quite understood 
+	// and OP_LOAD_VAR_UINT32_AS_UINT16. I haven't yet quite understood
 	// how, resp. what that means. You have been warned.
 	GOB_TRUE = 24,
 	GOB_FALSE = 23

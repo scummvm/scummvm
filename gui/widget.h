@@ -45,7 +45,7 @@ enum {
 	WIDGET_CLEARBG		= 1 <<  5,
 	WIDGET_WANT_TICKLE	= 1 <<  7,
 	WIDGET_TRACK_MOUSE	= 1 <<  8,
-	// Retain focus on mouse up. By default widgets lose focus on mouseup, 
+	// Retain focus on mouse up. By default widgets lose focus on mouseup,
 	// but some widgets might want to retain it - widgets where you enter
 	// text, for instance
 	WIDGET_RETAIN_FOCUS	= 1 <<  9,

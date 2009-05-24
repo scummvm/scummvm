@@ -80,7 +80,7 @@ uint32 Text::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
 void Text::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen) {
 	LineInfo lines[MAX_LINES];
 	uint16 numLines = analyzeSentence(text, maxWidth, lines);
-	
+
 	uint16 sprWidth = 0;
 	uint16 lineCnt;
 	for (lineCnt = 0; lineCnt < numLines; lineCnt++)
@@ -103,7 +103,7 @@ void Text::makeTextSprite(uint8 slot, uint8 *text, uint16 maxWidth, uint8 pen) {
 	memset(linePtr, NO_COL, sprSize);
 	for (lineCnt = 0; lineCnt < numLines; lineCnt++) {
 		uint8 *sprPtr = linePtr + (sprWidth - lines[lineCnt].width) / 2; // center the text
-		for (uint16 pos = 0; pos < lines[lineCnt].length; pos++) 
+		for (uint16 pos = 0; pos < lines[lineCnt].length; pos++)
 			sprPtr += copyChar(*text++, sprPtr, sprWidth, pen) - OVERLAP;
 		text++; // skip space at the end of the line
 		if(SwordEngine::isPsx()) //Chars are half height in psx version
@@ -166,7 +166,7 @@ uint16 Text::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
 	uint8 *decBuf = NULL;
 	uint8 *decChr;
 	uint16 frameHeight = 0;
-	
+
 	if(SwordEngine::isPsx()) {
 		frameHeight =  _resMan->getUint16(chFrame->height)/2;
 		if(_fontId == CZECH_GAME_FONT) { //Czech game fonts are compressed
@@ -179,7 +179,7 @@ uint16 Text::copyChar(uint8 ch, uint8 *sprPtr, uint16 sprWidth, uint8 pen) {
 		frameHeight =  _resMan->getUint16(chFrame->height);
 		decChr = chData;
 	}
-	
+
 	for (uint16 cnty = 0; cnty < frameHeight; cnty++) {
 		for (uint16 cntx = 0; cntx < _resMan->getUint16(chFrame->width); cntx++) {
 			if (*decChr == LETTER_COL)

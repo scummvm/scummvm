@@ -100,16 +100,16 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 	uint32 sampleLen = _sampleStream.readUint32LE();
 	if (_sampleStream.ioFailed())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
-		
+
 	if (TinselV1PSX) {
 		// Read the stream and create a VAG Audio stream
 		Audio::AudioStream *vagStream = new Audio::VagStream(_sampleStream.readStream(sampleLen), false, 44100);
-		
+
 		// FIXME: Should set this in a different place ;)
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volSound);
 		//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volVoice);
-		
+
 		// Play the audio stream
 		_vm->_mixer->playInputStream(type, &curChan.handle, vagStream);
 	} else {

@@ -646,7 +646,7 @@ void CdDoChange(CORO_PARAM) {
 		return;
 
 	CORO_INVOKE_0(CdCD);
-	
+
 	CdHasChanged();
 
 	CORO_END_CODE;

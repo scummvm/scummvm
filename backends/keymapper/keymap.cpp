@@ -124,7 +124,7 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 	if (!_configDomain)
 		return;
 
-	ConfigManager::Domain::iterator it;	
+	ConfigManager::Domain::iterator it;
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
 	for (it = _configDomain->begin(); it != _configDomain->end(); it++) {
@@ -138,7 +138,7 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 		Action *ua = getAction(actionId);
 
 		if (!ua) {
-			warning("'%s' keymap does not contain Action with ID %s", 
+			warning("'%s' keymap does not contain Action with ID %s",
 				_name.c_str(), actionId);
 			_configDomain->erase(key);
 
@@ -199,7 +199,7 @@ bool Keymap::isComplete(const HardwareKeySet *hwKeys) {
 
 // TODO:
 // - current weakness:
-//     - if an action finds a key with required type but a parent action with 
+//     - if an action finds a key with required type but a parent action with
 //       higher priority is using it, that key is never used
 void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 	// Create copies of action and key lists.
@@ -208,7 +208,7 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 
 	List<Action*>::iterator actIt;
 	List<const HardwareKey*>::iterator keyIt, selectedKey;
-	
+
 	// Remove actions and keys from local lists that have already been mapped.
 	actIt = actions.begin();
 
@@ -227,16 +227,16 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 	// Sort remaining actions by priority.
 	ActionPriorityComp priorityComp;
 	sort(actions.begin(), actions.end(), priorityComp);
-	
+
 	// First mapping pass:
-	// - Match if a key's preferred action type is the same as the action's 
+	// - Match if a key's preferred action type is the same as the action's
 	// type, or vice versa.
 	// - Priority is given to:
 	//     - keys that match action types over key types.
 	//     - keys that have not been used by parent maps.
 	// - If a key has been used by a parent map the new action must have a
 	//   higher priority than the parent action.
-	// - As soon as the number of skipped actions equals the number of keys 
+	// - As soon as the number of skipped actions equals the number of keys
 	//   remaining we stop matching. This means that the second pass will assign keys
 	//   to these higher priority skipped actions.
 	uint skipped = 0;
@@ -317,7 +317,7 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 		if (selectedKey != keys.end()) {
 			act->mapKey(*selectedKey);
 			keys.erase(selectedKey);
-		} else {// no match = no keys left 
+		} else {// no match = no keys left
 			break;
 		}
 	}

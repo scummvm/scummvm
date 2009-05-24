@@ -147,7 +147,7 @@ void AGOSEngine_PN::opn_opcode01() {
 	int32 sp = varval() + varval();
 	_variableArray[12] = sp % 65536;
 	_variableArray[13] = sp / 65536;
-	if (sp > 65535) 
+	if (sp > 65535)
 		sp=65535;
 	writeval(str, (int)sp);
 	setScriptReturn(true);
@@ -329,7 +329,7 @@ void AGOSEngine_PN::opn_opcode25() {
 void AGOSEngine_PN::opn_opcode26() {
 	while ((_stackbase->classnum != -1) && (_stackbase != NULL))
 		junkstack();
-	dumpstack(); 
+	dumpstack();
 	setScriptReturn(true);
 }
 
@@ -371,10 +371,10 @@ void AGOSEngine_PN::opn_opcode31() {
 			slot = matchSaveGame(_saveFile, countSaveGames());
 			strcpy(bf, genSaveName(slot));
 			break;
-		case 1: 
+		case 1:
 			strcpy(bf, "test.sav");
 			break;
-		case 2: 
+		case 2:
 			// NOTE: Is this case ever used?
 			error("opn_opcode31: case 2");
 			break;
@@ -776,7 +776,7 @@ void AGOSEngine_PN::writeval(uint8 *ptr, int val) {
 	_workptr = ptr;
 	_linct = 255;
 
-	if ((a = readfromline()) < 247) 
+	if ((a = readfromline()) < 247)
 		error("writeval: Write to constant (%d)", a);
 
 	switch (a) {
@@ -836,7 +836,7 @@ int AGOSEngine_PN::actCallD(int n) {
 	funcentry(pf, n);
 	addstack(-1);
 	funccpy(pf);
-	setposition(n, 0); 
+	setposition(n, 0);
 	return(doline(1));
 }
 
@@ -1065,7 +1065,7 @@ void AGOSEngine_PN::dumpstack() {
 	if (_stackbase == NULL)
 		error("dumpstack: Stack underflow or unknown longjmp");
 
-	a = _stackbase->nextframe; 
+	a = _stackbase->nextframe;
 	free((char *)_stackbase);
 	_stackbase = a;
 }
@@ -1076,7 +1076,7 @@ void AGOSEngine_PN::junkstack() {
 	if (_stackbase == NULL)
 		error("junkstack: Stack underflow or unknown longjmp");
 
-	a = _stackbase->nextframe; 
+	a = _stackbase->nextframe;
 	if (_stackbase->classnum == -1)
 		free((char *)_stackbase->savearea);
 	free((char *)_stackbase);
@@ -1100,7 +1100,7 @@ void AGOSEngine_PN::popstack(int type) {
 	b = 0;
 	while (a < 6)
 		_variableArray[b++] = _stackbase->flag[a++];
-	b = 24; 
+	b = 24;
 	a = 0;
 	while (a < 8)
 		_variableArray[b++] = _stackbase->param[a++];

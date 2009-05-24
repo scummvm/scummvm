@@ -209,7 +209,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 				}
 			} else
 				sioprintf("Module \"%s\" wasn't found: %d\n", modules[i].path, modules[i].errorCode);
-			
+
 			if ((modules[i].errorCode < 0) || (res < 0) || (rv < 0)) {
 				if (!(modules[i].fileRef->flags & OPTIONAL)) {
 					if (modules[i].errorCode < 0)
@@ -220,7 +220,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 					quit();
 				}
 			}
-			
+
 			if (modules[i].buffer)
 				free(modules[i].buffer);
 		} else {
@@ -723,7 +723,7 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 		while ((*lnEnd) && (*lnEnd != '\n'))
 			lnEnd++;
 		*lnEnd = '\0';
-		
+
 		Common::String str(lnSta);
 		int width = Graphics::g_sysfont.getStringWidth(str);
 		if (width > maxWidth)
@@ -821,17 +821,17 @@ void OSystem_PS2::quit(void) {
 		// ("", 0, NULL);
 
 		/* back to PS2 Browser */
-/*		
+/*
 		__asm__ __volatile__(
 			"   li $3, 0x04;"
 			"   syscall;"
 			"   nop;"
         );
 */
-	
+
 /*
 		SifIopReset("rom0:UNDL ", 0);
-		while (!SifIopSync()) ; 
+		while (!SifIopSync()) ;
 		// SifIopReboot(...);
 */
 		#else
@@ -959,7 +959,7 @@ void OSystem_PS2::makeConfigPath() {
 		sprintf(path, "mc0:ScummVM/ScummVM.ini");
 	else
 		ps2_fclose(src);
-		
+
 	_configFile = strdup(path);
 }
 
@@ -967,7 +967,7 @@ Common::SeekableReadStream *OSystem_PS2::createConfigReadStream() {
 	Common::FSNode file(_configFile);
 	return file.createReadStream();
 }
-    
+
 Common::WriteStream *OSystem_PS2::createConfigWriteStream() {
 	Common::FSNode file(_configFile);
 	return file.createWriteStream();

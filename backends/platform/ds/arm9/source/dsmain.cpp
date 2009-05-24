@@ -647,7 +647,7 @@ void displayMode8Bit() {
 
 	// ConsoleInit destroys the hardware palette :-(
 	OSystem_DS::instance()->restoreHardwarePalette();
-	
+
 //	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
 	// Do text stuff
@@ -893,7 +893,7 @@ void displayMode16Bit() {
 
 	BG3_XDX = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
 	BG3_XDY = 0;
-	BG3_YDX = 0;	
+	BG3_YDX = 0;
 	BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 
 	#ifdef HEAVY_LOGGING
@@ -1571,7 +1571,7 @@ void addEventsToQueue() {
 			}
 
 
-			static int selectHoldCount = 0;			
+			static int selectHoldCount = 0;
 			static const int SELECT_HOLD_TIME = 60;
 
 			if ((getKeysHeld() & KEY_SELECT)) {
@@ -1585,8 +1585,8 @@ void addEventsToQueue() {
 				selectHoldCount = 0;
 			}
 
-			
-	
+
+
 			if (getKeysReleased() & KEY_SELECT) {
 				if (selectHoldCount < SELECT_HOLD_TIME) {
 					// Just pressed select - show DS options screen
@@ -1838,7 +1838,7 @@ void soundBufferEmptyHandler() {
 	}
 	currentTimeMillis++;
 // TIMER0 end
-	
+
 	soundHiPart = !soundHiPart;
 }
 

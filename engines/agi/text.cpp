@@ -272,9 +272,9 @@ char *AgiEngine::wordWrapString(const char *s, int *len) {
 		if (wLen) {
 			memcpy(outStr, pWord, wLen);
 			outStr += wLen;
-		}   
+		}
 		lnLen += wLen+1;
-		
+
 		if (lnLen > msgWidth) {
 			msgWidth = lnLen;
 

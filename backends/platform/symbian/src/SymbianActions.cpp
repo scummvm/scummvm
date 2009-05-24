@@ -164,7 +164,7 @@ void SymbianActions::initInstanceGame() {
 	// Pause
 	if(is_cruise) {
 		_key_action[ACTION_PAUSE].setKey('P');
-	} 
+	}
 	else {
 		_key_action[ACTION_PAUSE].setKey(' ');
 	}

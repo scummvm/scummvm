@@ -150,7 +150,7 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 	uint16 ofs = 0;
 	uint16 i = 0, l = 0;
 	byte val;
-	
+
 	SoundEnergyItem soundEnergyItem;
 
 	const int modeValues[3][4] = {
@@ -225,11 +225,11 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 			for (i = 0; i < workChunkSize; i++)
 				soundBuffer[i] = *source++;
 			workSample = soundBuffer[workChunkSize - 1] - 128;
-			
+
 			soundEnergyItem.energy = 4;
 			if (soundEnergyArray)
 				soundEnergyArray->push_back(soundEnergyItem);
-			
+
 			break;
 
 		default:

@@ -56,7 +56,7 @@ byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 	if (a == 0xFF || a == 0xFE || a == 0xFD) {
 		if (a == 0xFF)
 			ptr2 = _twoByteTokenStrings;
-		if (a == 0xFE) 
+		if (a == 0xFE)
 			ptr2 = _secondTwoByteTokenStrings;
 		if (a == 0xFD)
 			ptr2 = _thirdTwoByteTokenStrings;
@@ -79,7 +79,7 @@ byte *AGOSEngine::uncompressToken(byte a, byte *ptr) {
 					count1++;
 				}
 				ptr1 = _byteTokenStrings;		/* Find it */
-				while (count1--)	{			
+				while (count1--)	{
 					while (*ptr1++)
 						;
 				}
@@ -224,7 +224,7 @@ l1:		_stringTabPtr[i++] = mem;
 				;
 			mem++;
 		}
-	
+
 		_stringTabPos = i;
 	}
 }
@@ -936,7 +936,7 @@ char *AGOSEngine_PN::unctok(char *c, int n) {
 	*c = 0;
 	return c;
 }
-	
+
 void AGOSEngine_PN::uncomstr(char *c, uint32 x) {
 	if (x > _textBaseSize)
 		error("UNCOMSTR: TBASE over-run\n");
@@ -1441,7 +1441,7 @@ void AGOSEngine_PN::getResponse(uint16 charNum, uint16 objNum, uint16 &msgNum1, 
 		}
 		ptr++;
 	}
-		
+
 	while ((num = *ptr++) != 0) {
 		if (num == objNum) {
 			msgNum2 = *ptr++;
@@ -1534,7 +1534,7 @@ char *AGOSEngine_PN::getMessage(char *msg, uint16 num) {
 					char *tmpPtr = strPtr1;
 					char *strPtr2 = strPtr1;
 
-					while (*strPtr2 != 0 && *strPtr2 != 32) 
+					while (*strPtr2 != 0 && *strPtr2 != 32)
 						strPtr2++;
 
 					while (*strPtr2) {

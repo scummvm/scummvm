@@ -91,8 +91,8 @@ static void play_song(SongIterator *it) {
 }
 
 static void player_tell_synth(int buf_nr, byte *buf) {
-	byte op1 = (buf_nr < 2 ? 0 : buf[1]); 
-	byte op2 = (buf_nr < 3 ? 0 : buf[2]); 
+	byte op1 = (buf_nr < 2 ? 0 : buf[1]);
+	byte op2 = (buf_nr < 3 ? 0 : buf[2]);
 
 	static_cast<MidiDriver *>(mididrv)->send(buf[0], op1, op2);
 }

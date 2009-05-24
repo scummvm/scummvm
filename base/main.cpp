@@ -221,7 +221,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 }
 
 static void setupGraphics(OSystem &system) {
-	
+
 	system.beginGFXTransaction();
 		// Set the user specified graphics mode (if any).
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
@@ -265,13 +265,13 @@ static void setupKeymapper(OSystem &system) {
 	// Now create the global keymap
 	act = new Action(globalMap, "MENU", "Menu", kGenericActionType, kSelectKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
-	
+
 	act = new Action(globalMap, "SKCT", "Skip", kGenericActionType, kActionKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 
 	act = new Action(globalMap, "PAUS", "Pause", kGenericActionType, kStartKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
-	
+
 	act = new Action(globalMap, "SKLI", "Skip line", kGenericActionType, kActionKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
 
@@ -344,7 +344,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	setupGraphics(system);
 
-	// Init the event manager. As the virtual keyboard is loaded here, it must 
+	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
 
@@ -395,7 +395,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// screen to draw on yet.
 			warning("Could not find any engine capable of running the selected game");
 		}
-		
+
 		// reset the graphics to default
 		setupGraphics(system);
 		launcherDialog();

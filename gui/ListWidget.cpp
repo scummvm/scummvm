@@ -403,7 +403,7 @@ void ListWidget::drawWidget() {
 			buffer = _list[pos];
 			width = _w - r.left - scrollbarW;
 			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 2),
-									buffer, _state, Graphics::kTextAlignLeft, inverted, pad, true);			
+									buffer, _state, Graphics::kTextAlignLeft, inverted, pad, true);
 		}
 
 		_textWidth[i] = width;

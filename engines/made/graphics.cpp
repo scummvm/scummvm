@@ -77,7 +77,7 @@ void decompressImage(byte *source, Graphics::Surface &surface, uint16 cmdOffs, u
 	byte *cmdBuffer = source + cmdOffs;
 	ValueReader maskReader(source + maskOffs, (maskFlags & 2) != 0);
 	ValueReader pixelReader(source + pixelOffs, (pixelFlags & 2) != 0);
-	
+
 	if ((maskFlags != 0) && (maskFlags != 2) && (pixelFlags != 0) && (pixelFlags != 2) && (cmdFlags != 0))
 		error("decompressImage() Unsupported flags: cmdFlags = %02X; maskFlags = %02X, pixelFlags = %02X", cmdFlags, maskFlags, pixelFlags);
 

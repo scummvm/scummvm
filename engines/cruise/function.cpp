@@ -1394,7 +1394,7 @@ int16 Op_SongSize(void) {
 			*pSize = size;
 	} else
 		oldSize = 0;
-	
+
 	return oldSize;
 }
 
@@ -1412,7 +1412,7 @@ int16 Op_SetPattern(void) {
 
 int16 Op_FadeSong(void) {
 	_vm->music().fadeSong();
-	
+
 	return 0;
 }
 
@@ -1646,7 +1646,7 @@ int16 Op_SetVolume(void) {
 		int volume = 63 - newVolume;
 		_vm->music().setVolume(volume << 2);
 	}
-	
+
 	return oldVolume >> 2;
 }
 

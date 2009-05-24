@@ -46,11 +46,11 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, S
 	uint16 type = READ_LE_UINT16(data);
 
 	switch (type) { // Create a sound object based on the type
-	case AGI_SOUND_SAMPLE: 
+	case AGI_SOUND_SAMPLE:
 		return new IIgsSample(data, len, resnum, manager);
-	case AGI_SOUND_MIDI: 
+	case AGI_SOUND_MIDI:
 		return new IIgsMidi  (data, len, resnum, manager);
-	case AGI_SOUND_4CHN: 
+	case AGI_SOUND_4CHN:
 		return new PCjrSound (data, len, resnum, manager);
 	}
 

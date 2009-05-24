@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #include "sound/vag.h"
 
 namespace Audio {
@@ -48,10 +48,10 @@ double f[5][2] = { { 0.0, 0.0 },
 
 int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 	int32 samplesDecoded = 0;
-	
+
 	if (_samplesRemaining) {
 		byte i = 0;
-		
+
 		for (i = 28 - _samplesRemaining; i < 28 && samplesDecoded < numSamples; i++) {
 			_samples[i] = _samples[i] + _s1 * f[_predictor][0] + _s2 * f[_predictor][1];
 			_s2 = _s1;
@@ -70,17 +70,17 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 
 		_samplesRemaining = 0;
 	}
-	
+
 	while (samplesDecoded < numSamples) {
 		byte i = 0;
-	
+
 		_predictor = _stream->readByte();
 		byte shift = _predictor & 0xf;
 		_predictor >>= 4;
-	
+
 		if (_stream->readByte() == 7)
 			return samplesDecoded;
-	
+
 		for (i = 0; i < 28; i += 2) {
 			byte d = _stream->readByte();
 			int16 s = (d & 0xf) << 12;
@@ -92,7 +92,7 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 				s |= 0xffff0000;
 			_samples[i + 1] = (double)(s >> shift);
 		}
-	
+
 		for (i = 0; i < 28 && samplesDecoded < numSamples; i++) {
 			_samples[i] = _samples[i] + _s1 * f[_predictor][0] + _s2 * f[_predictor][1];
 			_s2 = _s1;
@@ -101,7 +101,7 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 			buffer[samplesDecoded] = d;
 			samplesDecoded++;
 		}
-		
+
 		if (i != 27)
 			_samplesRemaining = 28 - i;
 	}

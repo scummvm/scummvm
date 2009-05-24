@@ -444,7 +444,7 @@ protected:
 
 	void setupScriptOpcodeList();
 	void opDummy(SCRIPTOP_PARAMS) { warning("Dummy opcode called"); }
-	void opNextBlock(SCRIPTOP_PARAMS) { 
+	void opNextBlock(SCRIPTOP_PARAMS) {
 		thread->_instructionOffset = (((thread->_instructionOffset) >> 10) + 1) << 10;
 	}
 	void opDup(SCRIPTOP_PARAMS);

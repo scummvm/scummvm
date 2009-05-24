@@ -86,7 +86,7 @@ void Keymapper::addGlobalKeymap(Keymap *keymap) {
 void Keymapper::addGameKeymap(Keymap *keymap) {
 	if (ConfMan.getActiveDomain() == 0)
 		error("Call to Keymapper::addGameKeymap when no game loaded");
-	
+
 	// Detect whether the active game changed since last call.
 	// If so, flush the game key configuration.
 	if (_gameDomain.getConfigDomain() != ConfMan.getActiveDomain()) {
@@ -118,7 +118,7 @@ void Keymapper::initKeymap(Domain &domain, Keymap *map) {
 void Keymapper::cleanupGameKeymaps() {
 	// Flush all game specific keymaps
 	_gameDomain.deleteAllKeyMaps();
-	
+
 	// Now restore the stack of active maps. Re-add all global keymaps, drop
 	// the game specific (=deleted) ones.
 	Stack<MapRecord> newStack;

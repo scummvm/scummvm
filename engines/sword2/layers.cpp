@@ -179,7 +179,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 	}
 
 	// Background parallax layers
-	
+
 	for (i = 0; i < 2; i++) {
 		if (screenLayerTable.bg_parallax[i])
 			initialiseBackgroundLayer(_vm->fetchBackgroundParallaxLayer(file, i));
@@ -188,11 +188,11 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 	}
 
 	// Normal backround layer
-	
+
 	initialiseBackgroundLayer(_vm->fetchBackgroundLayer(file));
 
 	// Foreground parallax layers
-	
+
 	for (i = 0; i < 2; i++) {
 		if (screenLayerTable.fg_parallax[i])
 			initialiseBackgroundLayer(_vm->fetchForegroundParallaxLayer(file, i));

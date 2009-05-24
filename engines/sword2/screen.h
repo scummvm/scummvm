@@ -215,7 +215,7 @@ private:
 	// positions, etc.
 
 	ScreenInfo _thisScreen;
-	
+
 	int32 _renderCaps;
 	int8 _renderLevel;
 
@@ -459,7 +459,7 @@ public:
 	void rollCredits();
 	void splashScreen();
 
-	// Some sprites are compressed in HIF format 
+	// Some sprites are compressed in HIF format
 	static uint32 decompressHIF(byte *src, byte *dst, uint32 *skipData = NULL);
 	// This is used to resize psx sprites back to original resolution
 	static void resizePsxSprite(byte *dst, byte *src, uint16 destW, uint16 destH);

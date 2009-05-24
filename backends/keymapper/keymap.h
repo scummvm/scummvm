@@ -48,7 +48,7 @@ class HardwareKeySet;
 template<> struct Hash<KeyState>
 	: public UnaryFunction<KeyState, uint> {
 
-	uint operator()(const KeyState &val) const { 
+	uint operator()(const KeyState &val) const {
 		return (uint)val.keycode | ((uint)val.flags << 24);
 	}
 };
@@ -78,7 +78,7 @@ public:
 	 * @return		a pointer to the Action or 0 if no
 	 */
 	Action *getMappedAction(const KeyState& ks) const;
-	
+
 	void setConfigDomain(ConfigManager::Domain *dom);
 
 	/**
@@ -94,7 +94,7 @@ public:
 	 */
 	void saveMappings();
 
-	
+
 	void automaticMapping(HardwareKeySet *hwKeys);
 
 	/**
@@ -110,7 +110,7 @@ private:
 	friend struct Action;
 
 	/**
-	 * Adds a new Action to this Map, 
+	 * Adds a new Action to this Map,
 	 * adding it at the back of the internal array
 	 * @param action the Action to add
 	 */
@@ -141,7 +141,7 @@ private:
 	String _name;
 	Keymap *_parent;
 	List<Action*> _actions;
-	HashMap<KeyState, Action*> _keymap; 
+	HashMap<KeyState, Action*> _keymap;
 	ConfigManager::Domain *_configDomain;
 
 };

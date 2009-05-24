@@ -522,7 +522,7 @@ bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
 	} else if (argv[1][0] == '-') {
 		result = Common::disableDebugChannel(argv[1] + 1);
 	}
-	
+
 	if (result) {
 		DebugPrintf("%s %s\n", (argv[1][0] == '+') ? "Enabled" : "Disabled", argv[1] + 1);
 	} else {

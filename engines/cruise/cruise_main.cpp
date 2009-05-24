@@ -570,8 +570,8 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 	cellStruct *currentObject = cellHead.prev;
 
 	while (currentObject) {
-		if (currentObject->overlay > 0 && overlayTable[currentObject->overlay].alreadyLoaded && 
-				(currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || 
+		if (currentObject->overlay > 0 && overlayTable[currentObject->overlay].alreadyLoaded &&
+				(currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK ||
 				currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUAL)) {
 			const char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
 
@@ -633,7 +633,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 								offset += j;
 
 								if (offset >= 0) {
-									if (filesDatabase[offset].resType == OBJ_TYPE_LINE && 
+									if (filesDatabase[offset].resType == OBJ_TYPE_LINE &&
 											filesDatabase[offset].subData.ptr) {
 										dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
 									}

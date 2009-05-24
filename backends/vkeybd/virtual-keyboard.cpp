@@ -97,7 +97,7 @@ bool VirtualKeyboard::loadKeyboardPack(String packName) {
 		// uncompressed keyboard pack
 		if (!_parser->loadFile(vkDir.getChild(packName + ".xml")))
 			return false;
-		
+
 	} else if (vkDir.getChild(packName + ".zip").exists()) {
 		// compressed keyboard pack
 #ifdef USE_ZLIB
@@ -239,7 +239,7 @@ void VirtualKeyboard::close(bool submit) {
 	_kbdGUI->close();
 }
 
-bool VirtualKeyboard::isDisplaying() { 
+bool VirtualKeyboard::isDisplaying() {
 	return _kbdGUI->isDisplaying();
 }
 
@@ -359,7 +359,7 @@ void VirtualKeyboard::KeyPressQueue::clear() {
 	_strChanged = true;
 }
 
-bool VirtualKeyboard::KeyPressQueue::empty() { 
+bool VirtualKeyboard::KeyPressQueue::empty() {
 	return _keys.empty();
 }
 

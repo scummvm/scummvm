@@ -446,7 +446,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();
 	}
-	
+
 	return IDI_WTP_PAR_OK;
 }
 
@@ -1016,7 +1016,7 @@ phase2:
 		if (parser(hdr.ofsDesc[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK)
 			goto phase1;
 	}
-	
+
 	while (!_vm->shouldQuit()) {
 		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
 			switch(parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata)) {

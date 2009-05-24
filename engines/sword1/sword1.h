@@ -66,7 +66,7 @@ struct SystemVars {
 	uint8	showText;
 	uint8	language;
 	bool    isDemo;
-	uint32	engineStartTime;    // Used for playtime 
+	uint32	engineStartTime;    // Used for playtime
 	Common::Platform platform;
 };
 
@@ -80,7 +80,7 @@ public:
 	uint32 _features;
 
 	bool mouseIsActive();
-	
+
 	static bool isMac() { return _systemVars.platform == Common::kPlatformMacintosh; }
 	static bool isPsx() { return _systemVars.platform == Common::kPlatformPSX; }
 

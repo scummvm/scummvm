@@ -72,7 +72,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		if (selection < 0)
 			break;
 
-		// TODO: 
+		// TODO:
 		// Currently ThemeEngine::listUseableThemes uses a
 		// list. Thus we can not use operator[] here but
 		// need to iterate through the list. We might want
@@ -97,7 +97,7 @@ void ThemeBrowser::updateListing() {
 
 	ThemeEngine::listUsableThemes(_themes);
 
-	const Common::String currentThemeId = g_gui.theme()->getThemeId();	
+	const Common::String currentThemeId = g_gui.theme()->getThemeId();
 	int currentThemeIndex = 0, index = 0;
 
 	Common::StringList list;

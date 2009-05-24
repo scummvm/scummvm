@@ -162,7 +162,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 
 	// _tvMode = TV_NTSC;
 	printf("Setting up %s mode\n", (_tvMode == TV_PAL) ? "PAL" : "NTSC");
-	
+
     // set screen size, 640x512 for pal, 640x448 for ntsc
 	_tvWidth = 640;
 	_tvHeight = ((_tvMode == TV_PAL) ? 512 /*544*/ : 448);
@@ -188,7 +188,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_clutPtrs[TEXT]   = _clutPtrs[SCREEN] + 0x2000;
 	_texPtrs[SCREEN]  = _clutPtrs[SCREEN] + 0x3000;
 	_texPtrs[TEXT]    = 0;						  // these buffers are stored in the alpha gaps of the frame buffers
-	_texPtrs[MOUSE]	  = 128 * 256 * 4;			  
+	_texPtrs[MOUSE]	  = 128 * 256 * 4;
 	_texPtrs[PRINTF]  = _texPtrs[MOUSE] + M_SIZE * M_SIZE * 4;
 
 	_showOverlay = false;
@@ -249,7 +249,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	updateScreen();
 
 	createAnimTextures();
-	
+
 	// create anim thread
 	ee_thread_t animThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
@@ -683,7 +683,7 @@ void Gs2dScreen::animThread(void) {
 		do {
 			WaitSema(g_AnimSema);
 		} while ((!_systemQuit) && (!g_RunAnim));
-		
+
 		if (_systemQuit)
 			break;
 
@@ -808,7 +808,7 @@ const uint32 Gs2dScreen::_binaryClut[16] __attribute__((aligned(64))) = {
 	GS_RGBA(   0,    0,    0, 0x20), // scrPrintf: semitransparent
 	GS_RGBA(0xC0, 0xC0, 0xC0,    0), // scrPrintf: red
 	GS_RGBA(0x16, 0x16, 0xF0,    0), // scrPrintf: blue
-	
+
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), // unused
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80),
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80),

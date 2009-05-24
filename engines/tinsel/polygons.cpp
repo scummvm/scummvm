@@ -138,7 +138,7 @@ struct LINEINFO {
 /**
  * POLY structure class. This is implemented as a class, because the structure
  * of POLY's changed between TINSEL v1 and v2.
- * 
+ *
  * FIXME: Right now, we always read *all* data in a polygon, even if only a single
  * field is needed. This is rather inefficient.
  */

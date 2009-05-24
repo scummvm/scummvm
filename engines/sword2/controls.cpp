@@ -269,9 +269,9 @@ Dialog::Dialog(Sword2Engine *vm)
 	// Usually the mouse pointer will already be "normal", but not always.
 	_vm->_mouse->setMouse(NORMAL_MOUSE_ID);
 
-	// Force mouse mode as system menu: normally not needed, 
-	// but value is not correct in case of game start dialog 
-	// (when asking to restart or load a game). 
+	// Force mouse mode as system menu: normally not needed,
+	// but value is not correct in case of game start dialog
+	// (when asking to restart or load a game).
 	// This is forced to avoid GMM loading/saving being enabled
 	// during initial dialog.
 	_vm->_mouse->setMouseMode(MOUSE_system_menu);

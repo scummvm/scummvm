@@ -473,11 +473,11 @@ Common::Error Sword2Engine::run() {
 
 		// Handle GMM Loading
 		if (_gmmLoadSlot != -1) {
-			
+
 			// Hide mouse cursor and fade screen
 			_mouse->hideMouse();
 			_screen->fadeDown();
-			
+
 			// Clean up and load game
 			_logic->_router->freeAllRouteMem();
 

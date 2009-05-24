@@ -234,7 +234,7 @@ void Inter::funcBlock(int16 retFlag) {
 		// The EGA, Mac and Windows versions of gob1 doesn't add a delay after
 		// showing images between levels. We manually add it here.
 		if ((_vm->getGameType() == kGameTypeGob1) &&
-		   (  _vm->isEGA() || 
+		   (  _vm->isEGA() ||
 		     (_vm->getPlatform() == Common::kPlatformMacintosh) ||
 		     (_vm->getPlatform() == Common::kPlatformWindows))) {
 

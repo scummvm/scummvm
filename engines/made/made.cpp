@@ -280,7 +280,7 @@ Common::Error MadeEngine::run() {
 	} else {
 		error ("Unknown MADE game");
 	}
-	
+
 	if ((getFeatures() & GF_CD) || (getFeatures() & GF_CD_COMPRESSED))
 		checkCD();
 

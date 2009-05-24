@@ -117,7 +117,7 @@ public:
 	bool _autoStopSound;
 	uint _soundEnergyIndex;
 	SoundEnergyArray *_soundEnergyArray;
-	
+
 	uint32 _musicBeatStart;
 	uint32 _cdTimeStart;
 

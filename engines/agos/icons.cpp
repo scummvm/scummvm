@@ -354,11 +354,11 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 			dst += _dxSurfacePitch;
 		}
 	} else {
-		uint8 palette[4];	
-		palette[0] = *src >> 4;	
-		palette[1] = *src++ & 0xf;	
-		palette[2] = *src >> 4;	
-		palette[3] = *src++ & 0xf;	
+		uint8 palette[4];
+		palette[0] = *src >> 4;
+		palette[1] = *src++ & 0xf;
+		palette[2] = *src >> 4;
+		palette[3] = *src++ & 0xf;
 		for (int yp = 0; yp < 24; ++yp, src += 6) {
 			// Get bit-set representing the 24 pixels for the line
 			uint32 v1 = (READ_BE_UINT16(src) << 8) | *(src + 4);

@@ -354,8 +354,8 @@ MemHandle *ResMan::resHandle(uint32 id) {
 	// portuguese subtitles (cluster file 2, group 6) with a version that do not
 	// contain subtitles for this languages (i.e. has only 6 languages and not 7).
 	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
-		return NULL;	
-	
+		return NULL;
+
 	return &(_prj.clu[cluster].grp[group].resHandle[id & 0xFFFF]);
 }
 
@@ -376,7 +376,7 @@ uint32 ResMan::resOffset(uint32 id) {
 		id = _srIdList[id & 0xFFFF];
 	uint8 cluster = (uint8)((id >> 24) - 1);
 	uint8 group = (uint8)(id >> 16);
-	
+
 	if (cluster >= _prj.noClu || group >= _prj.clu[cluster].noGrp)
 		return 0;
 

@@ -219,7 +219,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		file->open(soundFileName);
 		soundResourceLength = file->size();
 		context->isBigEndian = true;
-	} else 
+	} else
 #endif
 	{
 		ResourceData* resourceData = context->getResourceData(resourceId);

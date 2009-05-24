@@ -38,7 +38,7 @@
 
 namespace Common {
 
-VirtualKeyboardParser::VirtualKeyboardParser(VirtualKeyboard *kbd) 
+VirtualKeyboardParser::VirtualKeyboardParser(VirtualKeyboard *kbd)
 	: XMLParser(), _keyboard(kbd) {
 }
 
@@ -59,7 +59,7 @@ bool VirtualKeyboardParser::closedKeyCallback(ParserNode *node) {
 			return parserError("Initial mode of keyboard pack not defined");
 	} else if (node->name.equalsIgnoreCase("mode")) {
 		if (!_layoutParsed) {
-			return parserError("'%s' layout missing from '%s' mode", 
+			return parserError("'%s' layout missing from '%s' mode",
 				_mode->resolution.c_str(), _mode->name.c_str());
 		}
 	}
@@ -119,7 +119,7 @@ bool VirtualKeyboardParser::parserCallback_mode(ParserNode *node) {
 	String resolutions = node->values["resolutions"];
 	StringTokenizer tok (resolutions, " ,");
 
-	// select best resolution simply by minimising the difference between the 
+	// select best resolution simply by minimising the difference between the
 	// overlay size and the resolution dimensions.
 	// TODO: improve this by giving preference to a resolution that is smaller
 	// than the overlay res (so the keyboard can't be too big for the screen)
@@ -200,7 +200,7 @@ bool VirtualKeyboardParser::parserCallback_event(ParserNode *node) {
 			delete evt;
 			return parserError("Key modifier element must contain modifier attributes");
 		}
-		
+
 		evt->type = VirtualKeyboard::kVKEventModifier;
 		byte *flags = (byte*) malloc(sizeof(byte));
 		*(flags) = parseFlags(node->values["modifiers"]);

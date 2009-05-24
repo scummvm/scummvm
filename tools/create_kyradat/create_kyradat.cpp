@@ -344,7 +344,7 @@ const ExtractFilename extractFilenames[] = {
 	{ lolSpellbookAnim, k3TypeRaw16to8, "MBOOKA.DEF" },
 	{ lolSpellbookCoords, k3TypeRaw16to8, "MBOOKC.DEF" },
 	{ lolHealShapeFrames, kTypeRawData, "MHEAL.SHP" },
-	{ lolLightningDefs, kTypeRawData, "MLGHTNG.DEF" },	
+	{ lolLightningDefs, kTypeRawData, "MLGHTNG.DEF" },
 	{ lolFireballCoords, lolTypeRaw16, "MFIREBLL.DEF" },
 
 	{ -1, 0, 0 }

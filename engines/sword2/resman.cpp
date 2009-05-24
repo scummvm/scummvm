@@ -217,7 +217,7 @@ bool ResourceManager::init() {
 
 	file.close();
 
-	// We check the presence of resource files in cd.inf 
+	// We check the presence of resource files in cd.inf
 	// This is ok in PC version, but in PSX version we don't
 	// have cd.inf so we'll have to skip this.
 	if (!Sword2Engine::isPsx()) {
@@ -264,7 +264,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 
 	// FIXME: In PSX edition, not all top menu icons are present (TOP menu is not used).
 	// Though, at present state, the engine still ask for the resources.
-	if (Sword2Engine::isPsx()) { // We need to "rewire" missing icons 
+	if (Sword2Engine::isPsx()) { // We need to "rewire" missing icons
 		if (res == 342) res = 364; // Rewire RESTORE ICON to SAVE ICON
 	}
 
@@ -273,7 +273,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 	if (!_resList[res].ptr) {
 		// Fetch the correct file and read in the correct portion.
 		uint16 cluFileNum = _resConvTable[res * 2]; // points to the number of the ascii filename
-		
+
 		assert(cluFileNum != 0xffff);
 
 		// Relative resource within the file
@@ -286,7 +286,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		// of the CDs, remember which one so that we can play the
 		// correct speech and music.
 
-		if (Sword2Engine::isPsx()) // We have only one disk in PSX version 
+		if (Sword2Engine::isPsx()) // We have only one disk in PSX version
 			setCD(CD1);
 		else
 			setCD(_resFiles[cluFileNum].cd);
@@ -513,7 +513,7 @@ uint8 ResourceManager::fetchType(byte *ptr) {
 	if (!Sword2Engine::isPsx()) {
 		return ptr[0];
 	} else { // in PSX version, some files got a "garbled" resource header, with type stored in ninth byte
-		if (ptr[0]) { 
+		if (ptr[0]) {
 			return ptr[0];
 		} else if (ptr[8]) {
 			return ptr[8];

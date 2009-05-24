@@ -76,7 +76,7 @@ public:
 
 	/**
 	 * Creates the specific driver with a specific type setup.
-	 */ 
+	 */
 	static OPL *create(DriverId driver, OplType type);
 
 	/**
@@ -86,7 +86,7 @@ public:
 	static OPL *create(OplType type = kOpl2) { return create(detect(type), type); }
 
 private:
-	static const EmulatorDescription _drivers[];	
+	static const EmulatorDescription _drivers[];
 };
 
 class OPL {

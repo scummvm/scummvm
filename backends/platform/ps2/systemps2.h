@@ -84,7 +84,7 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayWidth(void);
 	virtual int16 getOverlayHeight(void);
-	
+
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);

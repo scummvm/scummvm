@@ -295,7 +295,7 @@ Audio::AudioStream *makeCLUStream(Common::File *file, int size) {
 }
 
 Audio::AudioStream *makePSXCLUStream(Common::File *file, int size) {
-	
+
 	// Buffer audio file data, and ask MemoryReadStream to dispose of it
 	// when not needed anymore.
 
