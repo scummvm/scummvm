@@ -689,10 +689,10 @@ void GfxTinyGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 		assert(c >= 32 && c <= 127);
 		const uint8 *ptr = Font::emerFont[c - 32];
 		for (int py = 0; py < 13; py++) {
-			if ((py + y) < 480) {
+			if ((py + y) < 480 && (py + y) >= 0) {
 				int line = ptr[12 - py];
 				for (int px = 0; px < 8; px++) {
-					if ((px + x) < 640) {
+					if ((px + x) < 640 && (px + x) >= 0) {
 						int pixel = line & 0x80;
 						line <<= 1;
 						if (pixel)
@@ -823,24 +823,28 @@ void GfxTinyGL::drawRectangle(PrimitiveObject *primitive) {
 	uint16 c = ((color.red() & 0xF8) << 8) | ((color.green() & 0xFC) << 3) | (color.blue() >> 3);
 
 	if (primitive->isFilled()) {
-		for (; y1 <= y2; y1++) {
-			for (int x = x1; x <= x2; x++) {
-				WRITE_LE_UINT16(dst + 640 * y1 + x, c);
-			}
-		}
+		for (; y1 <= y2; y1++)
+			if (y1 >= 0 && y1 < 480)
+				for (int x = x1; x <= x2; x++)
+					if (x >= 0 && x < 640)
+						WRITE_LE_UINT16(dst + 640 * y1 + x, c);
 	} else {
-		for (int x = x1; x <= x2; x++) {
-			WRITE_LE_UINT16(dst + 640 * y1 + x, c);
-		}
-		for (int x = x1; x <= x2; x++) {
-			WRITE_LE_UINT16(dst + 640 * y2 + x, c);
-		}
-		for (int y = y1; y <= y2; y++) {
-			WRITE_LE_UINT16(dst + 640 * y + x1, c);
-		}
-		for (int y = y1; y <= y2; y++) {
-			WRITE_LE_UINT16(dst + 640 * y + x2, c);
-		}
+		if (y1 >= 0 && y1 < 480)
+			for (int x = x1; x <= x2; x++)
+				if (x >= 0 && x < 640)
+					WRITE_LE_UINT16(dst + 640 * y1 + x, c);
+		if (y2 >= 0 && y2 < 480)
+			for (int x = x1; x <= x2; x++)
+				if (x >= 0 && x < 640)
+					WRITE_LE_UINT16(dst + 640 * y2 + x, c);
+		if (x1 >= 0 && x1 < 640)
+			for (int y = y1; y <= y2; y++)
+				if (y >= 0 && y < 480)
+					WRITE_LE_UINT16(dst + 640 * y + x1, c);
+		if (x2 >= 0 && x2 < 640)
+			for (int y = y1; y <= y2; y++)
+				if (y >= 0 && y < 480)
+					WRITE_LE_UINT16(dst + 640 * y + x2, c);
 	}
 }
 
@@ -858,7 +862,8 @@ void GfxTinyGL::drawLine(PrimitiveObject *primitive) {
 
 	for (int x = x1; x <= x2; x++) {
 		int y = (int)(m * x) + b;
-		WRITE_LE_UINT16(dst + 640 * y + x, c);
+		if (x >= 0 && x < 640 && y >= 0 && y < 480)
+			WRITE_LE_UINT16(dst + 640 * y + x, c);
 	}
 }
 
@@ -882,12 +887,14 @@ void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
 	b = (int)(-m * x1 + y1);
 	for (int x = x1; x <= x2; x++) {
 		int y = (int)(m * x) + b;
-		WRITE_LE_UINT16(dst + 640 * y + x, c);
+		if (x >= 0 && x < 640 && y >= 0 && y < 480)
+			WRITE_LE_UINT16(dst + 640 * y + x, c);
 	}
 	m = (y4 - y3) / (x4 - x3);
 	b = (int)(-m * x3 + y3);
 	for (int x = x3; x <= x4; x++) {
 		int y = (int)(m * x) + b;
-		WRITE_LE_UINT16(dst + 640 * y + x, c);
+		if (x >= 0 && x < 640 && y >= 0 && y < 480)
+			WRITE_LE_UINT16(dst + 640 * y + x, c);
 	}
 }
