@@ -268,8 +268,10 @@ static void io_read() {
 			int m;  // match result
 			if (c == NEED_OTHER) {
 				char z;
-				f->read(&z, 1);
-				c = z;
+				if (f->read(&z, 1) != 1)
+					c = EOF;
+				else
+					c = z;
 			}
 			m = luaI_singlematch((c == EOF) ? 0 : (char)c, p, &ep);
 			if (m) {
