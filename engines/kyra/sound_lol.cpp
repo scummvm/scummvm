@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_LOL
+
 #include "kyra/sound.h"
 #include "kyra/lol.h"
 #include "kyra/resource.h"
@@ -296,3 +298,6 @@ int LoLEngine::snd_stopMusic() {
 }
 
 } // end of namespace Kyra
+
+#endif // ENABLE_LOL
+

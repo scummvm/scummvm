@@ -25,7 +25,6 @@ MODULE_OBJS := \
 	resource_intern.o \
 	saveload.o \
 	saveload_lok.o \
-	saveload_lol.o \
 	saveload_hof.o \
 	saveload_mr.o \
 	scene_v1.o \
@@ -56,7 +55,6 @@ MODULE_OBJS := \
 	sound_towns.o \
 	sound.o \
 	sound_lok.o \
-	sound_lol.o \
 	sprites.o \
 	staticres.o \
 	text.o \
@@ -76,10 +74,12 @@ MODULE_OBJS += \
 	gui_lol.o \
 	items_lol.o \
 	lol.o \
+	saveload_lol.o \
 	scene_lol.o \
 	screen_lol.o \
 	script_lol.o \
 	sequences_lol.o \
+	sound_lol.o \
 	sprites_lol.o \
 	text_lol.o \
 	timer_lol.o
