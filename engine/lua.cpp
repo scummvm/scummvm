@@ -2201,32 +2201,29 @@ static void GetTextSpeed() {
 }
 
 static void SetTextSpeed() {
-	int speed;
+	lua_Object speedObj = lua_getparam(1);
+	if (!lua_isnumber(speedObj)
+		return;
 
-	speed = lua_getnumber(lua_getparam(1));
+	int speed = lua_getnumber(speedObj);
 	g_grim->setTextSpeed(speed);
 }
 
 static void MakeTextObject() {
 	TextObject *textObject = new TextObject(false);
-	lua_Object tableObj;
-	const char *line;
+	lua_Object textObj = lua_getparam(1);
+	if (!lua_isstring(textObj))
+		return;
 
-	line = lua_getstring(lua_getparam(1));
+	const char *line = lua_getstring(textObj);
 	Common::String text = line;
-	tableObj = lua_getparam(2);
-	textObject->setDefaults(&blastTextDefaults);
 
+	textObject->setDefaults(&blastTextDefaults);
+	lua_Object tableObj = lua_getparam(2);
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
 
-	while (TextObjectExists((char *)text.c_str()))
-		text += TEXT_NULL;
-
-	//printf("Make: %s\n", (char *)text.c_str());
-
 	textObject->setText((char *)text.c_str());
-
 	textObject->createBitmap();
 	g_grim->registerTextObject(textObject);
 
