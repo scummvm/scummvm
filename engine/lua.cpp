@@ -2345,18 +2345,24 @@ static void DrawPolygon() {
 
 static void DrawLine() {
 	Common::Point p1, p2;
-	lua_Object tableObj;
 	Color color;
+	lua_Object x1Obj = lua_getparam(1);
+	lua_Object y1Obj = lua_getparam(2);
+	lua_Object x2Obj = lua_getparam(3);
+	lua_Object y2Obj = lua_getparam(4);
+	lua_Object tableObj = lua_getparam(5);
 
-	p1.x = lua_getnumber(lua_getparam(1));
-	p1.y = lua_getnumber(lua_getparam(2));
-	p2.x = lua_getnumber(lua_getparam(3));
-	p2.y = lua_getnumber(lua_getparam(4));
-	tableObj = lua_getparam(5);
-	color._vals[0] = 255;
-	color._vals[1] = 255;
-	color._vals[2] = 255;
+	if (!lua_isnumber(x1Obj) || !lua_isnumber(y1Obj) || !lua_isnumber(x2Obj) || !lua_isnumber(y2Obj)) {
+		lua_pushnil();
+		return;
+	}
 
+	p1.x = lua_getnumber(x1Obj);
+	p1.y = lua_getnumber(y1Obj);
+	p2.x = lua_getnumber(x2Obj);
+	p2.y = lua_getnumber(y2Obj);
+
+	int layer = 2;
 	if (lua_istable(tableObj)) {
 		lua_pushobject(tableObj);
 		lua_pushstring("color");
@@ -2364,10 +2370,15 @@ static void DrawLine() {
 		if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID_BE('COLR')) {
 			color = static_cast<Color *>(lua_getuserdata(colorObj));
 		}
+		lua_pushobject(tableObj);
+		lua_pushstring("layer");
+		lua_Object layerObj = lua_gettable();
+		if (lua_isnumber(layerObj))
+			layer = lua_getnumber(layerObj);
 	}
 
 	PrimitiveObject *p = new PrimitiveObject();
-	p->createLine(p1, p2, color);
+	p->createLine(p1, p2, color); // TODO Add layer support
 	g_grim->registerPrimitiveObject(p);
 	lua_pushusertag(p, MKID_BE('PRIM'));
 }
@@ -2497,9 +2508,6 @@ static void DrawRectangle() {
 	p1.y = lua_getnumber(objY1);
 	p2.x = lua_getnumber(objX2);
 	p2.y = lua_getnumber(objY2);
-	color._vals[0] = 255;
-	color._vals[1] = 255;
-	color._vals[2] = 255;
 	bool filled = false;
 
 	if (lua_istable(tableObj)){
@@ -2540,9 +2548,6 @@ static void BlastRect() {
 	p1.y = lua_getnumber(objY1);
 	p2.x = lua_getnumber(objX2);
 	p2.y = lua_getnumber(objY2);
-	color._vals[0] = 255;
-	color._vals[1] = 255;
-	color._vals[2] = 255;
 	bool filled = false;
 
 	if (lua_istable(tableObj)){
