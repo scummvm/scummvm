@@ -30,6 +30,9 @@
 #include "common/file.h"
 #include "common/archive.h"
 
+#include "sound/audiostream.h"
+#include "sound/mixer.h"			// for SoundHandle
+
 #include "sci/engine/vm.h"          // for Object
 #include "sci/decompressor.h"
 
@@ -297,6 +300,32 @@ protected:
 	uint16 *_ptr;
 	int16 _syncTime, _syncCue;
 	//bool _syncStarted;	// not used
+};
+
+class AudioResource {
+public:
+	AudioResource();
+	~AudioResource();
+
+	void setAudioRate(uint16 audioRate) { _audioRate = audioRate; }
+	void setAudioLang(int16 lang);
+
+	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
+	int getAudioPosition();
+	Audio::AudioStream* getAudioStream(uint16 audioNumber, int* sampleLen);
+	Audio::AudioStream* getAudioStream(Resource* audioRes, int* sampleLen);
+
+	void stop() { g_system->getMixer()->stopHandle(_audioHandle); }
+	void pause() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
+	void resume() { g_system->getMixer()->pauseHandle(_audioHandle, false); }
+
+private:
+	Audio::SoundHandle _audioHandle;
+	uint16 _audioRate;
+	int16 _lang;
+	byte *_audioMap;
+
+	bool findAudEntry(uint16 audioNumber, byte& volume, uint32& offset, uint32& size);
 };
 
 } // End of namespace Sci

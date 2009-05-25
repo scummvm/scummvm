@@ -367,6 +367,7 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	self->flags = flags;
 	self->debug = 0; /* Disable all debugging by default */
 	self->soundSync = NULL;
+	self->audioResource = NULL;
 
 	if (flags & SFX_STATE_FLAG_NOSOUND) {
 		player = NULL;
@@ -443,6 +444,12 @@ void sfx_exit(sfx_state_t *self) {
 
 	if (strcmp(player->name, "new") == 0)
 		g_system->getMixer()->stopAll();
+
+	// Delete audio resources for CD talkie games
+	if (self->audioResource) {
+		delete self->audioResource;
+		self->audioResource = 0;
+	}
 }
 
 void sfx_suspend(sfx_state_t *self, int suspend) {

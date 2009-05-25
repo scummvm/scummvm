@@ -55,7 +55,8 @@ struct sfx_state_t {
 	song_t *song; /* Active song, or start of active song chain */
 	int suspended; /* Whether we are suspended */
 	unsigned int debug; /* Debug flags */
-	ResourceSync *soundSync; /* Used by kDoSync for speech syncing in talkie games */
+	ResourceSync *soundSync; /* Used by kDoSync for speech syncing in CD talkie games */
+	AudioResource *audioResource; /* Used for audio resources in CD talkie games */
 };
 
 /***********/

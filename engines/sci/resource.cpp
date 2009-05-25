@@ -1159,4 +1159,113 @@ void ResourceSync::stopSync() {
 	//syncStarted = false;	// not used
 }
 
+
+AudioResource::AudioResource() {
+	_audioRate = 0;
+	_lang = 0;
+	_audioMap = 0;
+}
+
+AudioResource::~AudioResource() { 
+	delete _audioMap;
+	_audioMap = 0;
+}
+
+void AudioResource::setAudioLang(int16 lang) {
+	// TODO: CD Audio (used for example in the end credits of KQ6CD)
+	if (lang != -1) {
+		_lang = lang;
+
+		char filename[40];
+		sprintf(filename, "AUDIO%03d.MAP", _lang);
+
+		Common::File* audioMapFile = new Common::File();
+		if (audioMapFile->open(filename)) {
+			// The audio map is freed in the destructor
+			_audioMap = new byte[audioMapFile->size()];
+			audioMapFile->read(_audioMap, audioMapFile->size());
+			audioMapFile->close();
+			delete audioMapFile;
+		} else {
+			_audioMap = 0;
+		}
+	}
+}
+
+int AudioResource::getAudioPosition() {
+	if (g_system->getMixer()->isSoundHandleActive(_audioHandle)) {
+		return g_system->getMixer()->getSoundElapsedTime(_audioHandle) * 6 / 100; // return elapsed time in ticks
+	} else {
+		return -1; // Sound finished
+	}
+}
+
+bool AudioResource::findAudEntry(uint16 audioNumber, byte& volume, uint32& offset, uint32& size) {
+	// AUDIO00X.MAP contains 10-byte entries:
+	// w nEntry
+	// dw offset+volume (as in resource.map)
+	// dw size
+	// ending with 10 0xFFs
+	uint16 n;
+	uint32 off;
+
+	if (_audioMap == 0)
+		return false;
+
+	byte *ptr = _audioMap;
+	while ((n = READ_UINT16(ptr)) != 0xFFFF) {
+		if (n == audioNumber) {
+			off = READ_LE_UINT32(ptr + 2);
+			size = READ_LE_UINT32(ptr + 6);
+			volume = off >> 28;
+			offset = off & 0x0FFFFFFF;
+			return true;
+		}
+		ptr += 10;
+	}
+
+	return false;
+}
+
+Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int* sampleLen) {
+	Audio::AudioStream *audioStream = 0;
+	byte volume;
+	uint32 offset;
+	uint32 size;
+
+	if (findAudEntry(audioNumber, volume, offset, size)) {
+		uint32 start = offset * 1000 / _audioRate;
+		uint32 duration = size * 1000 / _audioRate;
+
+		char filename[40];
+		sprintf(filename, "AUDIO%03d.%03d", _lang, volume);
+
+		// Try to load compressed
+		audioStream = Audio::AudioStream::openStreamFile(filename, start, duration); 
+		if (!audioStream) { 
+			// Compressed file load failed, try to load original raw data
+			byte *soundbuff = (byte *)malloc(size);
+			Common::File* audioFile = new Common::File();
+			if (audioFile->open(filename)) {
+				audioFile->seek(offset);
+				audioFile->read(soundbuff, size);
+				audioFile->close();
+				delete audioFile;
+
+				audioStream = Audio::makeLinearInputStream(soundbuff, size,	_audioRate,
+						Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+			}
+		}
+
+		*sampleLen = size * 60 / _audioRate;
+	}
+
+	return audioStream;
+}
+
+Audio::AudioStream* AudioResource::getAudioStream(Resource* audioRes, int* sampleLen) {
+	*sampleLen = audioRes->size * 60 / _audioRate;
+	return Audio::makeLinearInputStream(audioRes->data, audioRes->size, _audioRate, Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+}
+
 } // End of namespace Sci
