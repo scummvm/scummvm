@@ -978,6 +978,16 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 
 	CORO_BEGIN_CODE(_ctx);
 
+	// FIXME: (PSX_THIEF_BUG) this fixes a (script?) bug in Discworld PSX:
+	// If the player follows immediately the thief that steals the evocation book
+	// from the "past" unseen university, the stack seems to get loaded with wrong
+	// values and the game crashes when going into past-ankh map, if instead the 
+	// player interacts with other objects or goes back to L-space, the past-ankh
+	// map works perfectly.
+	// This is just a workaround.
+	if (TinselV1PSX && hFilm == 4 && actorid == 77)
+		return;
+
 	pFilm = (const FILM *)LockMem(hFilm);
 	PPINIT ppi;
 

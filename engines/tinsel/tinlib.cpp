@@ -3833,6 +3833,12 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 
 	bool bQuick = hold != 0;
 	PMOVER pMover = GetMover(actor);
+	
+	// FIXME: This is part of the workaround for PSX_THIEF_BUG,
+	// See the other code and description in PlayFilm() (play.cpp)
+	if (TinselV1PSX && actor == 77 && hFilm == 0)
+		return;
+
 	assert(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);
