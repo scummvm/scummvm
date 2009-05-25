@@ -596,12 +596,13 @@ int gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b, in
 
 // Wrapper for gfxop_set_color
 int gfxop_set_color(GfxState *state, gfx_color_t *colorOut, gfx_color_t &colorIn) {
-	if (colorIn.mask & GFX_MASK_VISUAL)
-		return gfxop_set_color(state, colorOut, colorIn.visual.r, colorIn.visual.g, colorIn.visual.b,
-			colorIn.alpha, colorIn.priority, colorIn.control);
-	else
-		return gfxop_set_color(state, colorOut, -1, -1, -1, colorIn.alpha,
-			colorIn.priority, colorIn.control);
+	return gfxop_set_color(state, colorOut,
+	              (colorIn.mask & GFX_MASK_VISUAL) ? colorIn.visual.r : -1,
+	              (colorIn.mask & GFX_MASK_VISUAL) ? colorIn.visual.g : -1,
+	              (colorIn.mask & GFX_MASK_VISUAL) ? colorIn.visual.b : -1,
+	              (colorIn.mask & GFX_MASK_VISUAL) ? colorIn.alpha : -1,
+	              (colorIn.mask & GFX_MASK_PRIORITY) ? colorIn.priority : -1,
+	              (colorIn.mask & GFX_MASK_CONTROL) ? colorIn.control : -1);
 }
 
 int gfxop_set_system_color(GfxState *state, unsigned int index, gfx_color_t *color) {
