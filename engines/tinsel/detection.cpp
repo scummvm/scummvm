@@ -307,6 +307,29 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
+	{	// multilanguage PSX demo
+		{
+			"dw",
+			"CD demo",
+			{
+				{"dw.scn", 0, "6247d8cd742fd0c56534e8eb71552a8b", 339784},
+				{"english.smp", 0, NULL, -1},
+				{"french.txt", 0, NULL, -1},
+				{"german.txt", 0, NULL, -1},
+				{"italian.txt", 0, NULL, -1},
+				{"spanish.txt", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPSX,
+			ADGF_DEMO
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_SCNFILES,
+		TINSEL_V1,
+	},
+
 #if 0
 	{	// English Saturn CD
 		{
