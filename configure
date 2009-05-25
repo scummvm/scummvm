@@ -54,6 +54,21 @@ if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
 	unset ac_TEMP_PATH
 fi
 
+
+# Add an engine: id name build subengines
+add_engine() {
+	_engines="${_engines} ${1}"
+	eval _engine_${1}_name='${2}'
+	eval _engine_${1}_build='${3}'
+	eval _engine_${1}_subengines='${4}'
+	for sub in ${4}; do
+		eval _engine_${sub}_sub=yes
+	done
+}
+
+add_engine grim "Grim" yes
+
+
 #
 # Default settings
 #
@@ -67,6 +82,8 @@ _backend=sdl
 _endian=unknown
 _need_memalign=no
 _have_x86=no
+_dynamic_modules=no
+_plugins_default=static
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -205,7 +222,7 @@ find_sdlconfig() {
 #
 get_system_exe_extension() {
 	case $1 in
-	mingw* | os2-emx*)
+	mingw* | *os2-emx)
 		_exeext=".exe"
 		;;
 	arm-riscos)
@@ -243,6 +260,205 @@ Try \`$0 --help' for more information." >&2
 
 
 #
+# Engine handling functions
+#
+
+# Get the name of the engine
+get_engine_name() {
+	eval echo \$_engine_$1_name
+}
+
+# Will this engine be built?
+get_engine_build() {
+	eval echo \$_engine_$1_build
+}
+
+# Get the subengines
+get_engine_subengines() {
+	eval echo \$_engine_$1_subengines
+}
+
+# Ask if this is a subengine
+get_engine_sub() {
+	sub=`eval echo \\$_engine_$1_sub`
+	if test -z "$sub" ; then
+		sub=no
+	fi
+	echo $sub
+}
+
+# Enable *all* engines
+engine_enable_all() {
+	for engine in $_engines; do
+		eval _engine_${engine}_build=yes
+	done
+}
+
+# Disable *all* engines
+engine_disable_all() {
+	for engine in $_engines; do
+		eval _engine_${engine}_build=no
+	done
+}
+
+# Enable the given engine
+engine_enable() {
+	# Get the parameter
+	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
+		eng=`echo $1 | cut -d '=' -f 1`
+		opt=`echo $1 | cut -d '=' -f 2`
+	else
+		eng=$1
+		opt=yes
+	fi
+	engine=`echo $eng | sed 's/-/_/g'`
+
+	# Filter the parameter for the subengines
+	if test "`get_engine_sub ${engine}`" != "no" -a "$opt" != "yes" ; then
+		option_error
+		return
+	fi
+
+	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
+		if test "`get_engine_name ${engine}`" != "" ; then
+			eval _engine_${engine}_build=$opt
+		else
+			option_error
+		fi
+	else
+		option_error
+	fi
+}
+
+# Disable the given engine
+engine_disable() {
+	# Filter malformed options
+	if ( echo $1 | grep '=' ) 2> /dev/null > /dev/null ; then
+		option_error
+		return
+	fi
+
+	engine=`echo $1 | sed 's/-/_/g'`
+	if test "`get_engine_name ${engine}`" != "" ; then
+		eval _engine_${engine}_build=no
+	else
+		option_error
+	fi
+}
+
+# Show the configure help line for a given engine
+show_engine_help() {
+	if test `get_engine_build $1` = yes ; then
+		option="disable"
+		do="don't "
+	else
+		option="enable"
+		do=""
+	fi
+	name=`get_engine_name $1`
+	option_help ${option}-${1} "${do}build the ${name} engine"
+	for sub in `get_engine_subengines $1`; do
+		show_subengine_help $sub $1
+	done
+}
+
+# Show the configure help line for a given subengine
+show_subengine_help() {
+	if test `get_engine_build $1` = yes ; then
+		option="disable"
+		do="exclude"
+	else
+		option="enable"
+		do="include"
+	fi
+	name=`get_engine_name $1`
+	parent=`get_engine_name $2`
+	option_help ${option}-${1} "${do} the ${name} in ${parent} engine"
+}
+
+# Prepare the strings about the engines to build
+prepare_engine_build_strings() {
+	string=`get_engine_build_string $1 static`
+	if test -n "$string" ; then
+		_engines_built_static="${_engines_built_static}#$string@"
+	fi
+
+	string=`get_engine_build_string $1 dynamic`
+	if test -n "$string" ; then
+		_engines_built_dynamic="${_engines_built_dynamic}#$string@"
+	fi
+
+	string=`get_engine_build_string $1 no`
+	if test -n "$string" ; then
+		_engines_skipped="${_engines_skipped}#$string@"
+	fi
+}
+
+# Get the string about building an engine
+get_engine_build_string() {
+	engine_string=""
+	engine_build=`get_engine_build $1`
+	show=no
+
+	# Check if the current engine should be shown for the current status
+	if test $engine_build = $2 ; then
+		show=yes
+	else
+		# Test for disabled sub-engines
+		if test $2 = no ; then
+			for subeng in `get_engine_subengines $1` ; do
+				if test `get_engine_build $subeng` = no ; then
+					engine_build=no
+					show=yes
+				fi
+			done
+		fi
+	fi
+
+	# Convert static/dynamic to yes to ease the check of subengines
+	if test $engine_build != no ; then
+		engine_build=yes
+	fi
+
+	# The engine should be shown, build the string
+	if test $show = yes ; then
+		build_string_func=get_${1}_build_string
+		if ( type $build_string_func | grep function ) 2> /dev/null > /dev/null ; then
+			engine_string=`$build_string_func $1 $engine_build`
+		else
+			engine_string=`get_subengines_build_string $1 $engine_build`
+		fi
+
+		engine_string="`get_engine_name $1` $engine_string"
+	fi
+
+	echo $engine_string
+}
+
+# Get the string about building subengines
+get_subengines_build_string() {
+	all=yes
+	subengine_string=$3
+	for subeng in `get_engine_subengines $1` ; do
+		if test `get_engine_build $subeng` = $2 ; then
+			subengine_string="$subengine_string [`get_engine_name $subeng`]"
+		else
+			all=no
+		fi
+	done
+	if test $2 != no ; then
+		if test -n "$subengine_string" ; then
+			if test $all = yes ; then
+				subengine_string="[all games]"
+			fi
+		fi
+	fi
+
+	echo $subengine_string
+}
+
+
+#
 # Greet user
 #
 echo "Running Residual configure..."
@@ -259,6 +475,12 @@ echo "Configure run on" `date` > $TMPLOG
 
 for parm in "$@" ; do
 	if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
+		for engine in $_engines; do
+			if test `get_engine_sub $engine` = no ; then
+				engines_help="$engines_help`show_engine_help $engine`
+"
+			fi
+		done
 		cat << EOF
 
 Usage: $0 [OPTIONS]...
@@ -281,13 +503,18 @@ Special configuration feature:
                                           wii for Nintendo Wii
                                           gamecube for Nintendo Gamecube
                                           iphone for Apple iPhone
-                                          psp for PlayStation Portable
+                                          psp for PlayStation Portable 
 
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
   --enable-profiling       enable building with gprof profile information
   --enable-release         set flags to build release binary
+  --enable-all-engines     enable all engines
+  --disable-all-engines    disable all engines
+$engines_help
+  --enable-plugins         enable the support for dynamic plugins
+  --default-dynamic        make plugins dynamic by default
 
 Optional Libraries:
   --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
@@ -332,6 +559,8 @@ for ac_option in $@; do
 	--disable-flac)           _flac=no        ;;
 	--enable-mad)             _mad=yes        ;;
 	--disable-mad)            _mad=no         ;;
+	--enable-plugins)         _dynamic_modules=yes ;;
+	--default-dynamic)        _plugins_default=dynamic ;;
 	--with-ogg-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		OGG_CFLAGS="-I$arg/include"
@@ -405,6 +634,12 @@ for ac_option in $@; do
 		;;
 	--libdir=*)
 		_libdir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--enable-all-engines)
+		engine_enable_all
+		;;
+	--disable-all-engines)
+		engine_disable_all
 		;;
 	--enable-*)
 		engine_enable `echo $ac_option | cut -d '-' -f 4-`
@@ -751,8 +986,14 @@ echo "$_have_x86"
 echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
-	linux* | uclinux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux*)
-		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
+	linux* | uclinux* | openbsd* | netbsd* | bsd* | sunos* | hpux*)
+		DEFINES="$DEFINES -DUNIX"
+		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
+		;;
+	freebsd*)
+		DEFINES="$DEFINES -DUNIX"
+		LDFLAGS="$LDFLAGS -L/usr/local/lib"
+		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
 		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
 		;;
 	beos*)
@@ -863,7 +1104,7 @@ if test -n "$_host"; then
 			;;
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2X -DUSE_ARM_SOUND_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG -DUSE_ARM_SOUND_ASM"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			LDFLAGS="$LDFLAGS -static"
 			_endian=little
@@ -942,7 +1183,6 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			_backend="dc"
-			_build_scalers="no"
 			_ar="$_host_alias-ar cru"
 			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
@@ -989,6 +1229,7 @@ if test -n "$_host"; then
 			_ar="$_host_alias-ar cru"
 			_ranlib=$_host_alias-ranlib
 			_backend="psp"
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/psp/psp.mk'
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
@@ -1063,6 +1304,112 @@ esac
 add_to_config_h_if_yes $_have_x86 '#define HAVE_X86'
 
 add_to_config_h_if_yes $_need_memalign '#define SYSTEM_NEED_ALIGNMENT'
+
+
+#
+# Check whether plugin support is requested and possible
+#
+echo_n "Checking whether building plugins was requested... "
+echo "$_dynamic_modules"
+_mak_plugins=
+_def_plugin="/* -> plugins disabled */"
+
+if test "$_dynamic_modules" = yes ; then
+	echo_n "Checking whether building plugins is supported... "
+	case $_host_os in
+	linux*)
+_def_plugin='
+#define PLUGIN_PREFIX	"lib"
+#define PLUGIN_SUFFIX	".so"
+'
+_mak_plugins='
+DYNAMIC_MODULES := 1
+PLUGIN_PREFIX := lib
+PLUGIN_SUFFIX := .so
+PLUGIN_EXTRA_DEPS =
+CXXFLAGS        += -DDYNAMIC_MODULES
+CXXFLAGS        += -fpic
+PLUGIN_LDFLAGS  += -shared
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+LIBS            += -ldl
+'
+		;;
+	freebsd*)
+_def_plugin='
+#define PLUGIN_PREFIX	"lib"
+#define PLUGIN_SUFFIX	".so"
+'
+_mak_plugins='
+DYNAMIC_MODULES := 1
+PLUGIN_PREFIX := lib
+PLUGIN_SUFFIX := .so
+PLUGIN_EXTRA_DEPS =
+CXXFLAGS        += -DDYNAMIC_MODULES
+CXXFLAGS        += -fpic
+PLUGIN_LDFLAGS  += -shared
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
+'
+		;;
+	darwin*)
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plugin"
+'
+_mak_plugins='
+DYNAMIC_MODULES := 1
+PLUGIN_PREFIX :=
+PLUGIN_SUFFIX := .plugin
+PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
+CXXFLAGS        += -DDYNAMIC_MODULES
+PLUGIN_LDFLAGS  += -bundle -bundle_loader $(EXECUTABLE) -exported_symbols_list "$(srcdir)/plugin.exp"
+PRE_OBJS_FLAGS  := -all_load
+POST_OBJS_FLAGS :=
+LIBS            += -ldl
+'
+		;;
+	*mingw32*)
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".dll"
+'
+_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .dll
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+CXXFLAGS			+= -DDYNAMIC_MODULES
+PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libresidual.a
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libresidual.a
+'
+		;;
+	dreamcast)
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plg"
+'
+_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .plg
+PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE)
+CXXFLAGS			+= -DDYNAMIC_MODULES
+PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms -L$(ronindir)/lib
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+'
+		;;
+	*)
+		_dynamic_modules=no
+		_mak_plugins=
+		_def_plugin=
+		;;
+	esac
+	echo "$_dynamic_modules"
+fi
+
 
 #
 # Check for math lib
@@ -1214,7 +1561,12 @@ test -z "$_datadir" && _datadir="$_prefix/share"
 test -z "$_libdir" && _libdir="$_prefix/lib"
 
 DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/residual\\\""
+DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir/residual\\\""
 
+
+echo_n "Backend... "
+echo_n "$_backend"
+echo
 
 #
 # Backend related stuff
@@ -1235,7 +1587,7 @@ case $_backend in
 		;;
 	iphone)
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
-		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
@@ -1298,6 +1650,86 @@ wii | gamecube | psp)
 	;;
 esac
 
+#
+# Engine selection
+#
+_engines_built_static=""
+_engines_built_dynamic=""
+_engines_skipped=""
+
+for engine in $_engines; do
+	if test "`get_engine_sub $engine`" = "no" ; then
+		# It's a main engine
+		if test `get_engine_build $engine` = no ; then
+			isbuilt=no
+		else
+			# If dynamic plugins aren't supported, mark
+			# all the engines as static
+			if test $_dynamic_modules = no ; then
+				eval _engine_${engine}_build=static
+			else
+				# If it wasn't explicitly marked as static or
+				# dynamic, use the configured default
+				if test `get_engine_build $engine` = yes ; then
+					eval _engine_${engine}_build=${_plugins_default}
+				fi
+			fi
+
+			# Prepare the defines
+			if test `get_engine_build $engine` = dynamic ; then
+				isbuilt=DYNAMIC_PLUGIN
+			else
+				eval _engine_${engine}_build=static
+				isbuilt=STATIC_PLUGIN
+			fi
+		fi
+
+		# Prepare the information to be shown
+		prepare_engine_build_strings $engine
+	else
+		# It's a subengine, just say yes or no
+		if test "`get_engine_build $engine`" = "no" ; then
+			isbuilt=no
+		else
+			isbuilt=1
+		fi
+	fi
+
+	# Save the settings
+	defname="ENABLE_`echo $engine | tr '[a-z]' '[A-Z]'`"
+	if test "$isbuilt" = "no" ; then
+		add_line_to_config_mk "# $defname"
+	else
+		add_line_to_config_mk "$defname = $isbuilt"
+	fi
+done
+
+#
+# Show which engines ("frontends") are to be built
+#
+echo
+if test -n "$_engines_built_static" ; then
+	echo "Engines (builtin):"
+	echo $_engines_built_static | sed 's/@/\
+/g
+s/#/    /g'
+fi
+
+if test -n "$_engines_built_dynamic" ; then
+	echo "Engines (plugins):"
+	echo $_engines_built_dynamic | sed 's/@/\
+/g
+s/#/    /g'
+fi
+
+if test -n "$_engines_skipped" ; then
+	echo "Engines Skipped:"
+	echo $_engines_skipped | sed 's/@/\
+/g
+s/#/    /g'
+fi
+
+
 echo
 echo "Creating config.h"
 cat > config.h << EOF
@@ -1327,6 +1759,9 @@ $_def_tremor
 $_def_flac
 $_def_mad
 $_def_zlib
+
+/* Plugin settings */
+$_def_plugin
 
 #endif /* CONFIG_H */
 EOF

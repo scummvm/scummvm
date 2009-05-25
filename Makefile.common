@@ -8,25 +8,25 @@
 # The default build target: just build the residual executable
 ######################################################################
 
-all: $(EXECUTABLE) 
+all: $(EXECUTABLE) plugins
 
 
 ######################################################################
 # Module settings
 ######################################################################
 
-MODULES := tools $(MODULES)
+PLUGINS :=
+MODULES := tools base $(MODULES)
+
+-include $(srcdir)/engines/engines.mk
 
 # After the game specific modules follow the shared modules
 MODULES += \
-	backends \
-	engines/grim \
-	engines/grim/imuse \
-	engines/grim/lua \
-	engines/grim/smush \
-	common \
+	engines \
 	graphics \
-	sound
+	sound \
+	backends \
+	common \
 
 
 ######################################################################
@@ -44,10 +44,10 @@ CPPFLAGS := $(DEFINES) $(INCLUDES)
 DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
 DEPFILES =
 
-# Make engine/version.o depend on all other object files. This way if anything is
+# Make base/version.o depend on all other object files. This way if anything is
 # changed, it causes version.cpp to be recompiled. This in turn ensures that
-# the build date in gResidualBuildDate is correct.
-engine/version.o: $(filter-out engine/libengine.a,$(OBJS))
+# the build date in gScummVMBuildDate is correct.
+base/version.o: $(filter-out base/libbase.a,$(OBJS))
 
 # The build rule for the Residual executable
 $(EXECUTABLE): $(OBJS)
@@ -91,11 +91,12 @@ endif
 ######################################################################
 
 # AmigaOS4's grep has a problem with "./" in pathnames, so use cat.
-VERSION = $(shell cat "${srcdir}/engines/grim/internal_version.h" | grep RESIDUAL_VERSION | cut -d\" -f2)
+VERSION = $(shell cat "${srcdir}/base/internal_version.h" | grep RESIDUAL_VERSION | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
 VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
+
 
 ######################################################################
 # Get Subversion's working copy information
@@ -108,7 +109,7 @@ ifeq ($(origin SVNREV), undefined)
 VER_SVNREV := $(shell LANG=C svn info $(SVNROOT) | grep "^Revision" | cut -d ' ' -f 2)
 endif
 else
-SVNROOT := https://residual.svn.sourceforge.net/svnroot/residual/residual/trunk/
+SVNROOT := https://resisual.svn.sourceforge.net/svnroot/residual/residual/trunk/
 endif
 
 # Define the Subversion revision if available, either autodetected or
@@ -153,21 +154,15 @@ endif
 
 DISTNAME := residual-$(DISTVERSION)
 DISTDIR := dist
-VERFILE := $(DISTDIR)/$(DISTNAME)/engines/grim/internal_version.h
+VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
-ifeq ($(shell svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
-SVNROOT := $(srcdir)
-else
-SVNROOT := https://residual.svn.sourceforge.net/svnroot/residual/residual/trunk/
-endif
-
-$(VERFILE): $(srcdir)/engines/grim/internal_version.h
+$(VERFILE): $(srcdir)/base/internal_version.h
 	@$(RM_REC) $(DISTDIR)
 	@$(MKDIR) $(DISTDIR)
 	svn export $(SVNROOT) $(DISTDIR)/$(DISTNAME)
 ifneq ($(origin VER_SVNREV), undefined)
 	@# Use the current SVN revision as a default for the snapshot sources
-	@svn cat $(SVNROOT)/engines/grim/internal_version.h | sed -e \
+	@svn cat $(SVNROOT)/base/internal_version.h | sed -e \
 		"s/^#define RESIDUAL_SVN_REVISION$$/#define RESIDUAL_SVN_REVISION \"$(VER_SVNREV)\"/g" \
 		> $(VERFILE)
 endif
@@ -189,4 +184,7 @@ dist-src: \
 	@#DEB-src?
 
 
-.PHONY: all clean distclean dist-src
+# Plugin files
+DIST_FILES_PLUGINS:=$(addprefix $(srcdir)/,$(PLUGINS))
+
+.PHONY: all clean distclean plugins dist-src

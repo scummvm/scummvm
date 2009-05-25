@@ -36,6 +36,29 @@ $(MODULE): $(TOOL-$(MODULE))
 clean-tools: clean-$(MODULE)
 
 else
+ifdef PLUGIN
+################################################
+# Build rule for dynamic (loadable) plugins
+################################################
+PLUGIN-$(MODULE) := plugins/$(PLUGIN_PREFIX)$(notdir $(MODULE))$(PLUGIN_SUFFIX)
+$(PLUGIN-$(MODULE)): $(MODULE_OBJS-$(MODULE)) $(PLUGIN_EXTRA_DEPS)
+	$(MKDIR) plugins
+	$(CXX) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) $(PLUGIN_LDFLAGS) -o $@
+
+# Reset PLUGIN var
+PLUGIN:=
+
+# Add to "plugins" target
+plugins: $(PLUGIN-$(MODULE))
+
+# Add to the PLUGINS variable
+PLUGINS += $(PLUGIN-$(MODULE))
+
+# Pseudo target for comfort, allows for "make common", "make gui" etc.
+$(MODULE): $(PLUGIN-$(MODULE))
+clean-plugins: clean-$(MODULE)
+
+else
 ################################################
 # Build rule for static modules/plugins
 ################################################
@@ -53,6 +76,7 @@ $(MODULE_LIB-$(MODULE)): $(MODULE_OBJS-$(MODULE))
 # Pseudo target for comfort, allows for "make common", "make gui" etc.
 $(MODULE): $(MODULE_LIB-$(MODULE))
 
+endif # PLUGIN
 endif # TOOL_EXECUTABLE
 
 ###############################################

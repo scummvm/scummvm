@@ -17,12 +17,19 @@ install: all
 	$(INSTALL) -c -m 644 "$(srcdir)/icons/residual.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/residual/"
 	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING.LGPL" "$(srcdir)/COPYING.GPL" "$(srcdir)/NEWS" "$(srcdir)/README" "$(srcdir)/TODO" "$(DESTDIR)$(PREFIX)/share/doc/residual/"
+ifdef DYNAMIC_MODULES
+	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)/residual/"
+	$(INSTALL) -c -s -m 644 $(DIST_FILES_PLUGINS) "$(DESTDIR)$(LIBDIR)/residual/"
+endif
 
 uninstall:
 	rm -f "$(DESTDIR)$(BINDIR)/$(EXECUTABLE)"
 	#rm -f "$(DESTDIR)$(MANDIR)/man6/residual.6"
 	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/residual/"
+ifdef DYNAMIC_MODULES
+	rm -rf "$(DESTDIR)$(LIBDIR)/residual/"
+endif
 
 deb:
 	ln -sf dists/debian;
@@ -42,7 +49,7 @@ bundle: residual-static $(srcdir)/dists/macosx/Info.plist
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp residual-static $(bundle_name)/Contents/MacOS/residual
 	chmod 755 $(bundle_name)/Contents/MacOS/residual
-	strip $(bundle_name)/Contents/MacOS/residual
+	$(STRIP) $(bundle_name)/Contents/MacOS/residual
 
 iphonebundle: $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
