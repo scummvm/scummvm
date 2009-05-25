@@ -1208,7 +1208,7 @@ int AudioResource::getAudioPosition() {
 	}
 }
 
-bool AudioResource::findAudEntry(uint16 audioNumber, byte& volume, uint32& offset, uint32& size) {
+bool AudioResource::findAudEntryKQ5CD(uint16 audioNumber, byte& volume, uint32& offset, uint32& size) {
 	// AUDIO00X.MAP contains 10-byte entries:
 	// w nEntry
 	// dw offset+volume (as in resource.map)
@@ -1235,13 +1235,13 @@ bool AudioResource::findAudEntry(uint16 audioNumber, byte& volume, uint32& offse
 	return false;
 }
 
-Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int* sampleLen) {
+Audio::AudioStream* AudioResource::getAudioStreamKQ5CD(uint16 audioNumber, int* sampleLen) {
 	Audio::AudioStream *audioStream = 0;
 	byte volume;
 	uint32 offset;
 	uint32 size;
 
-	if (findAudEntry(audioNumber, volume, offset, size)) {
+	if (findAudEntryKQ5CD(audioNumber, volume, offset, size)) {
 		uint32 start = offset * 1000 / _audioRate;
 		uint32 duration = size * 1000 / _audioRate;
 
@@ -1271,9 +1271,95 @@ Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int* sampl
 	return audioStream;
 }
 
-Audio::AudioStream* AudioResource::getAudioStream(Resource* audioRes, int* sampleLen) {
+bool AudioResource::findAudEntryKQ6Floppy(uint16 audioNumber, uint32& offset) {
+	// 65535.MAP contains 8-byte entries:
+	// w nEntry
+	// dw offset
+	// w unknown
+	uint16 n;
+	offset = 0;
+	int cur = 0;
+	int fileSize = 0;
+
+	// Load audio map
+	Common::File* audioMapFile = new Common::File();
+	if (audioMapFile->open("65535.map")) {
+		_audioMap = new byte[audioMapFile->size()];
+		audioMapFile->read(_audioMap, audioMapFile->size());
+		fileSize = audioMapFile->size();
+		audioMapFile->close();
+		delete audioMapFile;
+	} else {
+		_audioMap = 0;
+		return false;
+	}
+
+	byte *ptr = _audioMap;
+	while (cur < fileSize) {
+		n = READ_UINT16(ptr);
+		if (n == audioNumber) {
+			offset = READ_LE_UINT32(ptr + 2);
+			delete[] _audioMap;
+			_audioMap = 0;
+			return true;
+		}
+		ptr += 8;
+		cur += 8;
+	}
+
+	delete[] _audioMap;
+	_audioMap = 0;
+	return false;
+}
+
+Audio::AudioStream* AudioResource::getAudioStreamKQ6Floppy(uint16 audioNumber, int* sampleLen) {
+	Audio::AudioStream *audioStream = 0;
+	uint32 offset;
+	uint32 size;
+
+	if (findAudEntryKQ6Floppy(audioNumber, offset)) {
+		Common::File* audioFile = new Common::File();
+		if (audioFile->open("resource.aud")) {
+			audioFile->seek(offset);
+			// Read audio file info
+			// Audio files are actually Sierra Audio files.
+			// Check here for more info: http://wiki.multimedia.cx/index.php?title=Sierra_Audio
+			audioFile->readByte();			// skip version
+			audioFile->readByte();			// skip header size
+			audioFile->readUint32LE();		// skip "SOL" + 0
+			_audioRate = audioFile->readUint16LE();
+			audioFile->readByte();			// skip flags
+			size = audioFile->readUint16LE();
+			byte *soundbuff = (byte *)malloc(size);
+			audioFile->read(soundbuff, size); 
+			audioFile->close();
+			delete audioFile;
+
+			audioStream = Audio::makeLinearInputStream(soundbuff, size,	_audioRate,
+				Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+		}
+
+		*sampleLen = size * 60 / _audioRate;
+	}
+
+	return audioStream;
+}
+
+Audio::AudioStream* AudioResource::getAudioStreamKQ5CD(Resource* audioRes, int* sampleLen) {
 	*sampleLen = audioRes->size * 60 / _audioRate;
 	return Audio::makeLinearInputStream(audioRes->data, audioRes->size, _audioRate, Audio::Mixer::FLAG_UNSIGNED, 0, 0);
 }
+
+Audio::AudioStream* AudioResource::getAudioStreamKQ6Floppy(Resource* audioRes, int* sampleLen) {
+	// Read audio file info
+	// Audio files are actually Sierra Audio files.
+	// Check here for more info: http://wiki.multimedia.cx/index.php?title=Sierra_Audio
+	_audioRate = READ_UINT16(audioRes->data + 6);
+	uint32 size = READ_UINT16(audioRes->data + 9);
+
+	*sampleLen = size * 60 / _audioRate;
+	return Audio::makeLinearInputStream(audioRes->data + 11, size, _audioRate, Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+}
+
 
 } // End of namespace Sci

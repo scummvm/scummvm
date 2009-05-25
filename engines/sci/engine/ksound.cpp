@@ -797,7 +797,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_GET_AUDIO_CAPABILITY : {
-		return NULL_REG;
+		return make_reg(0, 1);//NULL_REG;
 	}
 	case _K_SCI1_SOUND_PLAY_HANDLE : {
 		int looping = GET_SEL32V(obj, loop);
@@ -996,6 +996,11 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 // Used for speech playback in CD games
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	printf("kDoAudio called with %d parameters: ", argc);
+	for (int i = 0; i < argc; i++)
+		printf("%d, ", SKPV(i));
+	printf("\n");
+
 	Audio::Mixer *mixer = g_system->getMixer();
 	int sampleLen = 0;
 
@@ -1012,11 +1017,20 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		// Try to load from an external patch file first
 		Sci::Resource* audioRes = s->resmgr->findResource(kResourceTypeAudio, UKPV(1), 1);
 
-		if (audioRes) {
-			audioStream = s->sound.audioResource->getAudioStream(audioRes, &sampleLen);
-		} else {
-			// No patch file found, read it from the audio volume
-			audioStream = s->sound.audioResource->getAudioStream(UKPV(1), &sampleLen);
+		if (s->_gameName == "KQ5") {
+			if (audioRes) {
+				audioStream = s->sound.audioResource->getAudioStreamKQ5CD(audioRes, &sampleLen);
+			} else {
+				// No patch file found, read it from the audio volume
+				audioStream = s->sound.audioResource->getAudioStreamKQ5CD(UKPV(1), &sampleLen);
+			}
+		} else if (s->_gameName == "Kq6") {
+			if (audioRes) {
+				audioStream = s->sound.audioResource->getAudioStreamKQ6Floppy(audioRes, &sampleLen);
+			} else {
+				// No patch file found, read it from the audio volume
+				audioStream = s->sound.audioResource->getAudioStreamKQ6Floppy(UKPV(1), &sampleLen);
+			}
 		}
 
 		if (audioStream)

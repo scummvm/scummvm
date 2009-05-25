@@ -312,8 +312,12 @@ public:
 
 	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
 	int getAudioPosition();
-	Audio::AudioStream* getAudioStream(uint16 audioNumber, int* sampleLen);
-	Audio::AudioStream* getAudioStream(Resource* audioRes, int* sampleLen);
+
+	// TODO: these need better names
+	Audio::AudioStream* getAudioStreamKQ5CD(uint16 audioNumber, int* sampleLen);
+	Audio::AudioStream* getAudioStreamKQ5CD(Resource* audioRes, int* sampleLen);
+	Audio::AudioStream* getAudioStreamKQ6Floppy(uint16 audioNumber, int* sampleLen);
+	Audio::AudioStream* getAudioStreamKQ6Floppy(Resource* audioRes, int* sampleLen);
 
 	void stop() { g_system->getMixer()->stopHandle(_audioHandle); }
 	void pause() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
@@ -325,7 +329,9 @@ private:
 	int16 _lang;
 	byte *_audioMap;
 
-	bool findAudEntry(uint16 audioNumber, byte& volume, uint32& offset, uint32& size);
+	// TODO: these need better names
+	bool findAudEntryKQ5CD(uint16 audioNumber, byte& volume, uint32& offset, uint32& size);
+	bool findAudEntryKQ6Floppy(uint16 audioNumber, uint32& offset);
 };
 
 } // End of namespace Sci
