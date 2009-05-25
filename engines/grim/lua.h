@@ -30,7 +30,7 @@
 
 namespace Graphics {
 	class Vector3d;
-};
+}
 
 namespace Grim {
 
