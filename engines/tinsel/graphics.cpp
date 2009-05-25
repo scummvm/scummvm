@@ -770,7 +770,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 						break;
 					case 0x44: // PSX 4-bit CLUT
 						memset(psxMapperTable, 0, 16);
-						psxPaletteMapper(pObj->pPal, (uint16*)(srcPtr + sizeof(uint16)), psxMapperTable);
+						psxPaletteMapper(pObj->pPal, srcPtr + sizeof(uint16), psxMapperTable);
 
 						psxFourBitClut = true;
 						psxSkipBytes = READ_LE_UINT32(p + sizeof(uint32) * 5) << 4; // Fetch number of bytes we have to skip

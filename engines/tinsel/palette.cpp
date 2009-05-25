@@ -94,26 +94,28 @@ static int maxDACQ = 0;
 /**
  * Map PSX palettes to original palette from resource file
  */
-void psxPaletteMapper(PALQ *originalPal, uint16 *psxClut, byte *mapperTable) {
+void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 	PALETTE *pal = (PALETTE *)LockMem(originalPal->hPal);
 	bool colorFound = false;
+	uint16 clutEntry = 0;
 
 	for (int j = 0; j < 16; j++) {
-		if(!(psxClut[j] & 0x8000)) {
+		clutEntry = READ_LE_UINT16(psxClut + (sizeof(uint16) * j));
+		if(clutEntry) {
 			for (int i = 0; (i < pal->numColours) && !colorFound; i++) {
 				// get R G B values in the same way as psx format converters
 				uint16 psxEquivalent = (uint16)((uint32)(PSXGetRValue(pal->palRGB[i]) >> 3) | 
 									((PSXGetGValue(pal->palRGB[i]) >> 3) << 5) |
 									((PSXGetBValue(pal->palRGB[i]) >> 3) << 10));
 
-				if (psxEquivalent == psxClut[j]) {
+				if (psxEquivalent == clutEntry) {
 					mapperTable[j] = i + 1;
 					colorFound = true;
 				}
 			}
 			// FIXME: This is just to hack around a bug that causes some text to appear
 			// black, i still have to find the correct fix for this.
-			if(psxClut[j] == 0x7EC0 && !colorFound) mapperTable[j] = 197; 
+			if(clutEntry == 0x7EC0 && !colorFound) mapperTable[j] = 197;
 			colorFound = false;
 		} else {
 			mapperTable[j] = 0;
