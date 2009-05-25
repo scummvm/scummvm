@@ -3336,6 +3336,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	const char *filename = kernel_dereference_char_pointer(s, argv[0], 0);
 	int framerate = UKPV(1); // FIXME: verify
+	int frameNr = 0;
 	SeqDecoder seq;
 
 	if (!seq.loadFile(filename)) {
@@ -3346,6 +3347,10 @@ reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bool play = true;
 	while (play) {
 		gfx_pixmap_t *pixmap = seq.getFrame(play);
+
+		if (frameNr++ == 0)
+			pixmap->palette->forceInto(s->gfx_state->driver->mode->palette);
+
 		gfx_xlate_pixmap(pixmap, s->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
 		GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset)));
 		gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
@@ -3383,11 +3388,8 @@ reg_t kSetVideoMode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// (320x240 resolution, although the intro in KQ6 is 320x200).
 	// Refer to http://en.wikipedia.org/wiki/Mode_X
 
-	//warning("STUB: SetVideoMode %d", UKPV(0));
+	warning("STUB: SetVideoMode %d", UKPV(0));
 
-	// We (ab)use this kernel function to free tagged resources when the
-	// intro of KQ6 starts. This fixes some palette issues in the intro.
-	s->gfx_state->gfxResMan->freeTaggedResources();
 	return s->r_acc;
 }
 
