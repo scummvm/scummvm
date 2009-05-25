@@ -1167,7 +1167,7 @@ AudioResource::AudioResource() {
 }
 
 AudioResource::~AudioResource() { 
-	delete _audioMap;
+	delete[] _audioMap;
 	_audioMap = 0;
 }
 
