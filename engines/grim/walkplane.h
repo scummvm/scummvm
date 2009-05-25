@@ -30,6 +30,8 @@
 
 #include "engines/grim/vector3d.h"
 
+namespace Grim {
+
 class TextSplitter;
 
 class Sector {
@@ -75,4 +77,7 @@ private:
 
 	Vector3d _normal;
 };
+
+} // end of namespace Grim
+
 #endif

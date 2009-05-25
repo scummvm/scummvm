@@ -9,6 +9,7 @@
 #include "engines/grim/lua/lmem.h"
 #include "engines/grim/lua/lstate.h"
 
+namespace Grim {
 
 /*-------------------------------------------------------
 **  Auxiliary buffer
@@ -62,3 +63,4 @@ char *luaL_buffer() {
 	return L->Mbuffbase;
 }
 
+} // end of namespace Grim

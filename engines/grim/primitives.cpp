@@ -26,6 +26,8 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/primitives.h"
 
+namespace Grim {
+
 PrimitiveObject::PrimitiveObject() {
 	memset(&_color, 0, sizeof(Color));
 	_filled = false;
@@ -106,3 +108,5 @@ void PrimitiveObject::setPos(int x, int y) {
 		}
 	}
 }
+
+} // end of namespace Grim

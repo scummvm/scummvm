@@ -21,6 +21,8 @@
 #include "engines/grim/lua/lvm.h"
 
 
+namespace Grim {
+
 char lua_ident[] = "$Lua: " LUA_VERSION " " LUA_COPYRIGHT " $\n"
 "$Autores:  " LUA_AUTHORS " $";
 
@@ -491,5 +493,7 @@ lua_Object lua_setfallback(const char *name, lua_CFunction fallback) {
 	do_unprotectedrun(luaT_setfallback, 2, 1);
 	return put_luaObjectonTop();
 }
+
+} // end of namespace Grim
 
 #endif

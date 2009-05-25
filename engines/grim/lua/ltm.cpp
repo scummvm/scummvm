@@ -10,7 +10,9 @@
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lstate.h"
 #include "engines/grim/lua/ltm.h"
+#include "engines/grim/lua/lapi.h"
 
+namespace Grim {
 
 const char *luaT_eventname[] = {  // ORDER IM
 	"gettable", "settable", "index", "getglobal", "setglobal", "add",
@@ -149,8 +151,6 @@ const char *luaT_travtagmethods(int32 (*fn)(TObject *)) {
 */
 #ifdef LUA_COMPAT2_5
 
-#include "lapi.h"
-
 void errorFB() {
 	lua_Object o = lua_getparam(1);
 	if (lua_isstring(o))
@@ -226,6 +226,8 @@ void luaT_setfallback() {
 	else
 		lua_pushcfunction(replace);
 }
+
+} // end of namespace Grim
 
 #endif
 

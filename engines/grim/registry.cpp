@@ -26,6 +26,8 @@
 #include "engines/grim/registry.h"
 #include "engines/grim/cmd_line.h"
 
+namespace Grim {
+
 Registry *g_registry = NULL;
 
 // SpewOnError
@@ -206,3 +208,5 @@ void Registry::save() {
 
 	_dirty = false;
 }
+
+} // end of namespace Grim

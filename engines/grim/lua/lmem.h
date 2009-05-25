@@ -9,6 +9,8 @@
 
 #include "common/sys.h"
 
+namespace Grim {
+
 // memory error messages
 #define codeEM		"code size overflow"
 #define constantEM	"constant table overflow"
@@ -31,6 +33,7 @@ extern int32 numblocks;
 extern int32 totalmem;
 #endif
 
+} // end of namespace Grim
 
 #endif
 

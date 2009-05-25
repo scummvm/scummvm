@@ -28,6 +28,8 @@
 
 #include "common/sys.h"
 
+namespace Grim {
+
 class Blocky16 {
 private:
 
@@ -60,5 +62,7 @@ public:
 	void deinit();
 	void decode(byte *dst, const byte *src);
 };
+
+} // end of namespace Grim
 
 #endif

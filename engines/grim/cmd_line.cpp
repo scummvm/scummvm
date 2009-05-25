@@ -28,6 +28,8 @@
 #include "engines/grim/cmd_line.h"
 #include "engines/grim/version.h"
 
+namespace Grim {
+
 #define DETECTOR_TESTING_HACK
 
 static const char USAGE_STRING[] =
@@ -422,3 +424,5 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 
 	return true;
 }
+
+} // end of namespace Grim

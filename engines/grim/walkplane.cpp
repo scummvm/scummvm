@@ -28,6 +28,8 @@
 #include "engines/grim/walkplane.h"
 #include "engines/grim/textsplit.h"
 
+namespace Grim {
+
 void Sector::load(TextSplitter &ts) {
 //	float height = 12345.f; // Yaz: this is in the original code...
 	char buf[256];
@@ -61,7 +63,7 @@ void Sector::load(TextSplitter &ts) {
 		_type = 0x4000;
 	else if (strstr(buf, "chernobyl"))
 		_type = 0x8000;
-	else if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
+	else if (Common::getDebugLevel() == DEBUG_ERROR || Common::getDebugLevel() == DEBUG_ALL)
 		error("Unknown sector type '%s' in room setup", buf);
 
 	ts.scanString(" default visibility %256s", 1, buf);
@@ -122,7 +124,7 @@ bool Sector::isPointInSector(Vector3d point) const {
 		}
 		if (!heightOK) {
 /* Use this for debugging problems at height interfaces
-			if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
+			if (Common::getDebugLevel() == DEBUG_NORMAL || Common::getDebugLevel() == DEBUG_ALL) {
 				printf("Rejected trigger due to height: %s (%f)\n", _name.c_str(), _height);
 				printf("Actor Z: %f\n", point.z());
 				for (int i = 0; i < _numVertices; i++)
@@ -227,3 +229,5 @@ void Sector::getExitInfo(Vector3d start, Vector3d dir,
 	Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
 	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) / dot(dir, edgeNormal)) * dir;
 }
+
+} // end of namespace Grim

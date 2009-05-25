@@ -25,10 +25,6 @@
 
 #include "common/sys.h"
 
-namespace Common {
-	class String;
-}
-
 #ifndef COMMON_DEBUG_H
 #define COMMON_DEBUG_H
 
@@ -46,12 +42,15 @@ enum enDebugLevels {
 	DEBUG_CHORES,
 	DEBUG_ALL
 };
-extern enDebugLevels gDebugLevel;
+
+namespace Common {
+	class String;
+
+	enDebugLevels getDebugLevel();
+}
+
 extern const char *debug_levels[];
 extern const char *debug_descriptions[];
-
-// Hacky toggles for experimental / debug code (defined/set in main.cpp)
-extern bool SHOWFPS_GLOBAL;
 
 void error(const char *fmt, ...);
 

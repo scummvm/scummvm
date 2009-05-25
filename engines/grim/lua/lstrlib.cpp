@@ -9,6 +9,8 @@
 #include "engines/grim/lua/lua.h"
 #include "engines/grim/lua/lualib.h"
 
+namespace Grim {
+
 static void addnchar(const char *s, int32 n) {
 	char *b = luaL_openspace(n);
 	strncpy(b, s, n);
@@ -488,3 +490,5 @@ static struct luaL_reg strlib[] = {
 void strlib_open() {
 	luaL_openlib(strlib, (sizeof(strlib) / sizeof(strlib[0])));
 }
+
+} // end of namespace Grim

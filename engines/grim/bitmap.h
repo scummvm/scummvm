@@ -28,6 +28,8 @@
 
 #include "engines/grim/resource.h"
 
+namespace Grim {
+
 class Bitmap : public Resource {
 public:
 	// Construct a bitmap from the given data.
@@ -65,5 +67,7 @@ public:
 	bool _hasTransparency;
 	char _filename[32];
 };
+
+} // end of namespace Grim
 
 #endif

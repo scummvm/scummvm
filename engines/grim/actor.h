@@ -30,6 +30,8 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/vector3d.h"
 
+namespace Grim {
+
 class TextObject;
 class Sector;
 
@@ -228,5 +230,7 @@ private:
 
 	friend class GrimEngine;
 };
+
+} // end of namespace Grim
 
 #endif

@@ -9,6 +9,8 @@
 
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 #ifdef LUA_DEBUG
 #include "engines/grim/lua/lauxlib.h"
 #define LUA_INTERNALERROR(s)	luaL_verror("INTERNAL ERROR - %s [%s:%d]", (s), __FILE__, __LINE__)
@@ -142,5 +144,7 @@ void luaO_insertlist(GCnode *root, GCnode *node);
 
 #define luaO_memup(d, s, n)		memmove(d, s, n)
 #define luaO_memdown(d, s, n)	memmove(d, s, n)
+
+} // end of namespace Grim
 
 #endif

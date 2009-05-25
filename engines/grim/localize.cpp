@@ -30,6 +30,8 @@
 #include "engines/grim/localize.h"
 #include "engines/grim/grim.h"
 
+namespace Grim {
+
 Localizer *g_localizer = NULL;
 
 static int sortCallback(const void *entry1, const void *entry2) {
@@ -123,3 +125,5 @@ Localizer::~Localizer() {
 		delete[] _entries[i].translation;
 	}
 }
+
+} // end of namespace Grim

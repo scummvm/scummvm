@@ -15,6 +15,8 @@
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lmem.h"
 
+namespace Grim {
+
 void luaL_argerror(int32 numarg, const char *extramsg) {
 	const char *funcname;
 	lua_getobjname(lua_stackedfunction(0), &funcname);
@@ -101,3 +103,4 @@ void luaL_verror(const char *fmt, ...) {
 	lua_error(buff);
 }
 
+} // end of namespace Grim

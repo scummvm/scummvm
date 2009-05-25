@@ -27,6 +27,8 @@
 
 #include "engines/grim/textsplit.h"
 
+namespace Grim {
+
 // FIXME: Replace this with a proper parser (this is just too dodgy :)
 int residual_vsscanf(const char *str, int field_count, const char *format, va_list ap) {
 	unsigned int f01 = va_arg(ap, long);
@@ -160,3 +162,5 @@ void TextSplitter::TextLines::setData(char *data, int length) {
 	memcpy(_lineData, data, _lineLength);
 	_lineData[_lineLength - 1] = 0;
 }
+
+} // end of namespace Grim

@@ -28,6 +28,8 @@
 
 #include "engines/grim/model.h"
 
+namespace Grim {
+
 class KeyframeAnim : public Resource {
 public:
 	KeyframeAnim(const char *filename, const char *data, int len);
@@ -73,5 +75,7 @@ private:
 
 	KeyframeNode **_nodes;
 };
+
+} // end of namespace Grim
 
 #endif

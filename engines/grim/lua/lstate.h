@@ -11,6 +11,8 @@
 
 #include <setjmp.h>
 
+namespace Grim {
+
 #define MAX_C_BLOCKS 10
 #define GARBAGE_BLOCK 150
 
@@ -119,5 +121,7 @@ void luaI_switchtask(lua_Task *t);
 
 // Create a new task and switch to it
 lua_Task *luaI_newtask();
+
+} // end of namespace Grim
 
 #endif

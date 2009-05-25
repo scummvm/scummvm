@@ -30,6 +30,8 @@
 
 #include "engines/grim/resource.h"
 
+namespace Grim {
+
 class CMap : public Resource {
 public:
 	// Load a colormap from the given data.
@@ -42,5 +44,7 @@ public:
 	// The color data, in RGB format
 	char _colors[256 * 3];
 };
+
+} // end of namespace Grim
 
 #endif

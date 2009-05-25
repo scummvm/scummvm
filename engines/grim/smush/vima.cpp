@@ -25,6 +25,8 @@
 
 #include "common/endian.h"
 
+namespace Grim {
+
 static int16 imcTable1[] = {
 	  7,     8,     9,    10,    11,    12,    13,    14,    16,    17,
 	 19,    21,    23,    25,    28,    31,    34,    37,    41,    45,
@@ -196,3 +198,5 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 		}
 	}
 }
+
+} // end of namespace Grim

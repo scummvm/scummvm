@@ -14,6 +14,8 @@ namespace Common {
 	class File;
 }
 
+namespace Grim {
+
 // For Lua only
 #define zopen	luaZ_mopen
 
@@ -41,5 +43,6 @@ struct zio {
 	byte buffer[ZBSIZE];		// buffer
 };
 
+} // end of namespace Grim
 
 #endif

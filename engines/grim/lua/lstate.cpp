@@ -23,6 +23,8 @@
 #include "engines/grim/lua/lualib.h"
 #include "engines/grim/lua/luadebug.h"
 
+namespace Grim {
+
 LState *lua_state = NULL;
 
 int32 globalTaskSerialId;
@@ -141,7 +143,7 @@ void lua_open() {
 	luaT_init();
 	luaB_predefine();
 	luaL_addlibtolist(stdErrorRimFunc, (sizeof(stdErrorRimFunc) / sizeof(stdErrorRimFunc[0])));
-	if (gDebugLevel == DEBUG_LUA || gDebugLevel == DEBUG_ALL)
+	if (Common::getDebugLevel() == DEBUG_LUA || Common::getDebugLevel() == DEBUG_ALL)
 		lua_callhook = callHook;
 }
 
@@ -220,3 +222,5 @@ struct lua_Task *luaI_newtask() {
 	result->id = globalTaskSerialId++;
 	return result;
 }
+
+} // end of namespace Grim

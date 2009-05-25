@@ -28,11 +28,13 @@
 
 #include "common/str.h"
 
-class LuaFile;
-
 namespace Common {
 	class File;
 }
+
+namespace Grim {
+
+class LuaFile;
 
 class Block {
 public:
@@ -77,5 +79,7 @@ private:
 
 	LabEntry *findFilename(const char *filename) const;
 };
+
+} // end of namespace Grim
 
 #endif

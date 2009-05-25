@@ -37,6 +37,8 @@
 #include <GL/glu.h>
 #endif
 
+namespace Grim {
+
 class GfxOpenGL : public GfxBase {
 public:
 	GfxOpenGL();
@@ -118,5 +120,7 @@ private:
 };
 
 #endif
+
+} // end of namespace Grim
 
 #endif

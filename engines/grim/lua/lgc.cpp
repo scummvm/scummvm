@@ -16,6 +16,8 @@
 #include "engines/grim/lua/ltm.h"
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 static int32 markobject (TObject *o);
 
 /*
@@ -253,3 +255,4 @@ void luaC_checkGC() {
 		lua_collectgarbage(0);
 }
 
+} // end of namespace Grim

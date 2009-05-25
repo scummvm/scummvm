@@ -30,6 +30,8 @@
 #include "engines/grim/imuse/imuse_sndmgr.h"
 #include "engines/grim/imuse/imuse_mcmp_mgr.h"
 
+namespace Grim {
+
 ImuseSndMgr::ImuseSndMgr() {
 	for (int l = 0; l < MAX_IMUSE_SOUNDS; l++) {
 		memset(&_sounds[l], 0, sizeof(SoundDesc));
@@ -338,3 +340,5 @@ int32 ImuseSndMgr::getDataFromRegion(SoundDesc *sound, int region, byte **buf, i
 
 	return size;
 }
+
+} // end of namespace Grim

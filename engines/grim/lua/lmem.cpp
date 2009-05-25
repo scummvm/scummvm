@@ -9,6 +9,8 @@
 #include "engines/grim/lua/lstate.h"
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 int32 luaM_growaux(void **block, int32 nelems, int32 size, const char *errormsg, int32 limit) {
 	if (nelems >= limit)
 		lua_error(errormsg);
@@ -85,3 +87,5 @@ void *luaM_realloc(void *block, int32 size) {
 }
 
 #endif
+
+} // end of namespace Grim

@@ -28,6 +28,8 @@
 #include "engines/grim/material.h"
 #include "engines/grim/gfx_base.h"
 
+namespace Grim {
+
 Material::Material(const char *filename, const char *data, int len, const CMap &cmap) :
 		Resource(filename), _cmap((CMap *) &cmap) {
 	if (len < 4 || memcmp(data, "MAT ", 4) != 0)
@@ -39,7 +41,7 @@ Material::Material(const char *filename, const char *data, int len, const CMap &
 	_height = READ_LE_UINT32(data + 80 + _numImages * 40);
 
 	if (_width == 0 || _height == 0) {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+		if (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
 			warning("skip load texture: bad texture size (%dx%d) for texture %s", _width, _height, filename);
 		return;
 	}
@@ -60,3 +62,5 @@ Material::~Material() {
 		return;
 	g_driver->destroyMaterial(this);
 }
+
+} // end of namespace Grim

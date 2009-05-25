@@ -28,6 +28,8 @@
 
 #include "engines/grim/savegame.h"
 
+namespace Grim {
+
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'
 #define SAVEGAME_VERSION		1
@@ -225,3 +227,5 @@ void SaveGame::writeByte(byte data) {
 	_sectionBuffer[_sectionSize] = data;
 	_sectionSize++;
 }
+
+} // end of namespace Grim

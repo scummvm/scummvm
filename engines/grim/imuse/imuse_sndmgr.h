@@ -29,6 +29,8 @@
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 
+namespace Grim {
+
 class McmpMgr;
 class Block;
 
@@ -113,5 +115,7 @@ public:
 
 	int32 getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size);
 };
+
+} // end of namespace Grim
 
 #endif

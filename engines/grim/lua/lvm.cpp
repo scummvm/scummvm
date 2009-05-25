@@ -18,6 +18,8 @@
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lvm.h"
 
+namespace Grim {
+
 #define skip_word(pc)	(pc += 2)
 #define get_word(pc)	((*((pc) + 1) << 8)|(*(pc)))
 #define next_word(pc)   (pc += 2, get_word(pc - 2))
@@ -710,3 +712,4 @@ setline:
 	}
 }
 
+} // end of namespace Grim

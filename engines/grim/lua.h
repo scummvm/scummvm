@@ -30,6 +30,8 @@
 
 class Vector3d;
 
+namespace Grim {
+
 // Register Residual builtin functions and structures
 void register_lua();
 
@@ -59,5 +61,7 @@ Vector3d tableToVector(lua_Object table);
 
 // get a function stored in a table
 lua_Object getTableFunction(lua_Object table, const char *name);
+
+} // end of namespace Grim
 
 #endif

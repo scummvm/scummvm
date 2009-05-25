@@ -10,6 +10,7 @@
 
 #include "engines/grim/lua/lobject.h"
 
+namespace Grim {
 
 void luaS_init();
 TaggedString *luaS_createudata(void *udata, int32 tag);
@@ -25,5 +26,7 @@ void luaS_freeall();
 
 extern TaggedString EMPTY;
 #define NUM_HASHS  61
+
+} // end of namespace Grim
 
 #endif

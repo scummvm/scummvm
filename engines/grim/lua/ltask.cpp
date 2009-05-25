@@ -5,6 +5,8 @@
 #include "ldo.h"
 #include "lvm.h"
 
+namespace Grim {
+
 void pause_scripts() {
 	lua_Task *t;
 
@@ -287,3 +289,5 @@ void lua_runtasks() {
 		luaI_switchtask(old_task);
 	}
 }
+
+} // end of namespace Grim

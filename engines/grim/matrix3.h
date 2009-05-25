@@ -29,7 +29,7 @@
 #include "engines/grim/vector3d.h"
 
 // matrix 3 is a rotation matrix
-class Matrix3{
+class Matrix3 {
 public:
 	Vector3d _right;
 	Vector3d _up;

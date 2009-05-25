@@ -9,6 +9,8 @@
 #include "engines/grim/lua/lua.h"
 #include "engines/grim/lua/lualib.h"
 
+namespace Grim {
+
 #ifndef LOCAL_PI
 #define LOCAL_PI          (3.14159265358979323846)
 #endif
@@ -149,3 +151,4 @@ void lua_mathlibopen() {
 	lua_setglobal("PI");
 }
 
+} // end of namespace Grim

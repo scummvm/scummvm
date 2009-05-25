@@ -28,6 +28,8 @@
 
 #include "engines/grim/resource.h"
 
+namespace Grim {
+
 class Material : public Resource {
 public:
 	// Load a texture from the given data.
@@ -50,5 +52,7 @@ public:
 	int _width, _height;
 	void *_textures;
 };
+
+} // end of namespace Grim
 
 #endif

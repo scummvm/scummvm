@@ -29,6 +29,8 @@
 #include "engines/grim/lab.h"
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 static int sortCallback(const void *entry1, const void *entry2) {
 	return strcasecmp(((Lab::LabEntry *)entry1)->filename, ((Lab::LabEntry *)entry2)->filename);
 }
@@ -156,3 +158,5 @@ void Lab::close() {
 	_entries = NULL;
 	_numEntries = 0;
 }
+
+} // end of namespace Grim

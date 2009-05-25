@@ -28,6 +28,8 @@
 
 #include "common/sys.h"
 
+namespace Grim {
+
 class Color {
 public:
 	byte _vals[3];
@@ -56,5 +58,7 @@ public:
 		return *this;
 	}
 };
+
+} // end of namespace Grim
 
 #endif

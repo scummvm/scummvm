@@ -12,6 +12,7 @@
 #include "engines/grim/lua/lstring.h"
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
 
 #define gcsizestring(l)	(1 + (l / 64))  // "weight" for a string with length 'l'
 
@@ -241,3 +242,4 @@ int32 luaS_globaldefined(const char *name) {
 	return ts->globalval.ttype != LUA_T_NIL;
 }
 
+} // end of namespace Grim

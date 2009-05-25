@@ -10,6 +10,8 @@
 #include "engines/grim/lua/lmem.h"
 #include "engines/grim/lua/lstate.h"
 
+namespace Grim {
+
 #define gcsizeproto(p)	5  /* approximate "weight" for a prototype */
 #define gcsizeclosure(c) 1  /* approximate "weight" for a closure */
 
@@ -86,3 +88,4 @@ char *luaF_getlocalname (TProtoFunc *func, int32 local_number, int32 line) {
 	return varname;
 }
 
+} // end of namespace Grim

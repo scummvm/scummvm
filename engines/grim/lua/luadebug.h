@@ -11,6 +11,8 @@
 
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 typedef lua_Object lua_Function;
 
 typedef void (*lua_LHFunction)(int32 line);
@@ -27,6 +29,8 @@ int32 lua_setlocal(lua_Function func, int32 local_number);
 extern lua_LHFunction lua_linehook;
 extern lua_CHFunction lua_callhook;
 extern int32 lua_debug;
+
+} // end of namespace Grim
 
 
 #endif

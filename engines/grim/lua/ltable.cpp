@@ -11,6 +11,8 @@
 #include "engines/grim/lua/ltable.h"
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 #define gcsize(n)		(1 + (n / 16))
 #define nuse(t)			((t)->nuse)
 #define nodevector(t)	((t)->node)
@@ -232,3 +234,5 @@ Node *luaH_next(TObject *o, TObject *r) {
 		return hashnext(t, i + 1);
 	}
 }
+
+} // end of namespace Grim

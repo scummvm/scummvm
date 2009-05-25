@@ -28,6 +28,8 @@
 
 #include "engines/grim/bitmap.h"
 
+namespace Grim {
+
 class ObjectState {
 public:
 	enum Position {
@@ -67,5 +69,7 @@ private:
 	Position _pos;
 	ResPtr<Bitmap> _bitmap, _zbitmap;
 };
+
+} // end of namespace Grim
 
 #endif

@@ -16,6 +16,7 @@
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lzio.h"
 
+namespace Grim {
 
 int32 lua_debug = 0;
 
@@ -439,3 +440,4 @@ fraction:
 	}
 }
 
+} // end of namespace Grim

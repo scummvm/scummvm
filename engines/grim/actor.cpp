@@ -31,6 +31,8 @@
 #include "engines/grim/smush/smush.h"
 #include "engines/grim/imuse/imuse.h"
 
+namespace Grim {
+
 int g_winX1, g_winY1, g_winX2, g_winY2;
 
 Actor::Actor(const char *name) :
@@ -456,11 +458,11 @@ void Actor::popCostume() {
 		else
 			newCost = _costumeStack.back();
 		if (!newCost) {
-			if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
+			if (Common::getDebugLevel() == DEBUG_NORMAL || Common::getDebugLevel() == DEBUG_ALL)
 				printf("Popped (freed) the last costume for an actor.\n");
 		}
 	} else {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+		if (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
 			warning("Attempted to pop (free) a costume when the stack is empty!");
 	}
 }
@@ -730,3 +732,4 @@ void Actor::clearShadowPlanes() {
 	}
 }
 
+} // end of namespace Grim

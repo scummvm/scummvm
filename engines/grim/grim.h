@@ -28,6 +28,8 @@
 
 #include "engines/grim/textobject.h"
 
+namespace Grim {
+
 class Actor;
 class SaveGame;
 
@@ -38,6 +40,8 @@ class SaveGame;
 #define ENGINE_MODE_DRAW	4
 
 extern int g_flags;
+
+extern bool SHOWFPS_GLOBAL;
 
 #define GF_DEMO		1
 
@@ -277,5 +281,7 @@ enum {
 };
 
 extern const ControlDescriptor controls[];
+
+} // end of namespace Grim
 
 #endif

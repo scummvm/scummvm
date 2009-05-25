@@ -10,6 +10,7 @@
 
 #include "lobject.h"
 
+namespace Grim {
 
 void luaC_checkGC();
 TObject* luaC_getref(int32 ref);
@@ -17,5 +18,6 @@ int32 luaC_ref(TObject *o, int32 lock);
 void luaC_hashcallIM(Hash *l);
 void luaC_strcallIM(TaggedString *l);
 
+} // end of namespace Grim
 
 #endif

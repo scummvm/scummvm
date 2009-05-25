@@ -30,6 +30,8 @@
 
 #include "engines/grim/color.h"
 
+namespace Grim {
+
 class PrimitiveObject {
 public:
 	PrimitiveObject();
@@ -65,5 +67,7 @@ private:
 	int _type;
 	Bitmap *_bitmap;
 };
+
+} // end of namespace Grim
 
 #endif

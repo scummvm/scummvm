@@ -34,6 +34,8 @@
 
 #include "engines/grim/imuse/imuse.h"
 
+namespace Grim {
+
 // Entries in the system.controls table
 
 const ControlDescriptor controls[] = {
@@ -805,7 +807,7 @@ void GrimEngine::setSceneLock(const char *name, bool lockStatus) {
 	Scene *scene = findScene(name);
 
 	if (!scene) {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+		if (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
 			warning("Scene object '%s' not found in list!", name);
 		return;
 	}
@@ -863,3 +865,5 @@ float GrimEngine::getControlAxis(int num) {
 bool GrimEngine::getControlState(int num) {
 	return _controlsState[num];
 }
+
+} // end of namespace Grim

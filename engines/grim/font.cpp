@@ -1,4 +1,4 @@
-/* Residual - Virtual machine to run LucasArts' 3D adventure games
+﻿/* Residual - Virtual machine to run LucasArts' 3D adventure games
  *
  * Residual is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
@@ -26,6 +26,8 @@
 #include "common/endian.h"
 
 #include "engines/grim/font.h"
+
+namespace Grim {
 
 Font::Font(const char *filename, const char *data, int /*len*/) :
 	Resource(filename) {
@@ -99,7 +101,7 @@ uint16 Font::getCharIndex(unsigned char c) {
 		if (_charIndex[i] == c2)
 			return i;
 	}
-	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+	if (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
 		warning("The requsted character (code 0x%x) does not correspond to anything in the font data!", c2);
 	// If we couldn't find the character then default to
 	// the first character in the font so that something
@@ -205,3 +207,5 @@ const uint8 Font::emerFont[][13] = {
 {0x00, 0x00, 0xf0, 0x18, 0x18, 0x18, 0x1c, 0x0f, 0x1c, 0x18, 0x18, 0x18, 0xf0},
 {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x8f, 0xf1, 0x60, 0x00, 0x00, 0x00}
 };
+
+} // end of namespace Grim

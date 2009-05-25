@@ -25,6 +25,8 @@
 
 #include "engines/grim/objectstate.h"
 
+namespace Grim {
+
 ObjectState::ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible) :
 		_setupID(setupID), _pos(pos) {
 	_bitmap = g_resourceloader->loadBitmap(bitmap);
@@ -44,3 +46,5 @@ ObjectState::~ObjectState() {
 	if (_zbitmap)
 		g_resourceloader->uncache(_zbitmap->getFilename());
 }
+
+} // end of namespace Grim

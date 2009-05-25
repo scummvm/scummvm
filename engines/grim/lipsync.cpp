@@ -27,6 +27,8 @@
 
 #include "engines/grim/lipsync.h"
 
+namespace Grim {
+
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE
 
@@ -111,3 +113,5 @@ const LipSync::PhonemeAnim LipSync::_animTable[] = {
 };
 
 const int LipSync::_animTableSize = sizeof(LipSync::_animTable) / sizeof(LipSync::_animTable[0]);
+
+} // end of namespace Grim

@@ -50,6 +50,20 @@
 	#define fflush(file)						DS::std_fflush(file)
 #endif
 
+namespace Common {
+
+namespace {
+
+static enDebugLevels gDebugLevel = DEBUG_NONE;
+
+}
+
+enDebugLevels getDebugLevel() {
+	return gDebugLevel;
+}
+
+}	// End of namespace Common
+
 #ifndef DISABLE_TEXT_CONSOLE
 
 static void debugHelper(const char *s, va_list va, bool caret = true) {
@@ -90,7 +104,7 @@ void debug(const char *s, ...) {
 void debug(int level, const char *s, ...) {
 	va_list va;
 
-	if (level > gDebugLevel)
+	if (level > Common::getDebugLevel())
 		return;
 
 	va_start(va, s);
@@ -213,4 +227,3 @@ const char *debug_descriptions[] = {
 	"Chore debug messages will be printed",
 	"All debug messages will be printed",
 };
-

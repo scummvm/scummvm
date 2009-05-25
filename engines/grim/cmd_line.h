@@ -28,8 +28,12 @@
 
 #include "common/config-manager.h"
 
+namespace Grim {
+
 void registerDefaults();
 Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv);
 bool processSettings(Common::String &command, Common::StringMap &settings);
+
+} // end of namespace Grim
 
 #endif

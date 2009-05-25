@@ -15,6 +15,8 @@
 #include "engines/grim/lua/lstring.h"
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 PointerId makeIdFromPointer(void *ptr) {
 	PointerId pointer;
 
@@ -425,3 +427,5 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 
 	printf("lua_Save() finished.\n");
 }
+
+} // end of namespace Grim

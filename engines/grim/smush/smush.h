@@ -37,6 +37,8 @@
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
 
+namespace Grim {
+
 struct SavePos {
 	uint32 filePos;
 	z_stream streamBuf;
@@ -121,5 +123,7 @@ private:
 };
 
 extern Smush *g_smush;
+
+} // end of namespace Grim
 
 #endif

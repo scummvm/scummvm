@@ -30,6 +30,8 @@
 
 #include "graphics/tinygl/zgl.h"
 
+namespace Grim {
+
 class GfxTinyGL : public GfxBase {
 public:
 	GfxTinyGL();
@@ -109,5 +111,7 @@ private:
 	int _smushHeight;
 	byte *_storedDisplay;
 };
+
+} // end of namespace Grim
 
 #endif

@@ -9,6 +9,8 @@
 
 #include "common/file.h"
 
+namespace Grim {
+
 int32 zgeteoz(ZIO *) {
 	return EOZ;
 }
@@ -37,3 +39,5 @@ int32 zread (ZIO *z, void *b, int32 n) {
 	}
 	return 0;
 }
+
+} // end of namespace Grim

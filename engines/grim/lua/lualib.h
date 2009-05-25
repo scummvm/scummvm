@@ -10,6 +10,8 @@
 
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 void lua_iolibopen();
 void lua_strlibopen();
 void lua_mathlibopen();
@@ -24,6 +26,8 @@ void lua_iolibclose();
 // Auxiliary functions (private)
 
 int32 luaI_singlematch(int32 c, const char *p, const char **ep);
+
+} // end of namespace Grim
 
 #endif
 

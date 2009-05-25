@@ -21,12 +21,15 @@
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
 #include <sys/stat.h>
-#include <time.h>
 #endif
+
+#include <time.h>
 
 #ifdef _WIN32
 #include <direct.h>
 #endif
+
+namespace Grim {
 
 #define CLOSEDTAG	2
 #define IOTAG		1
@@ -442,3 +445,5 @@ void lua_iolibclose() {
 	delete g_stdout;
 	delete g_stderr;
 }
+
+} // end of namespace Grim

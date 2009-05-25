@@ -11,6 +11,8 @@
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lstate.h"
 
+namespace Grim {
+
 /*
 * WARNING: if you change the order of this enumeration,
 * grep "ORDER IM"
@@ -57,5 +59,7 @@ TObject *luaT_gettagmethod(int32 t, const char *event);
 const char *luaT_travtagmethods(int32 (*fn)(TObject *));
 
 void luaT_setfallback();  // only if LUA_COMPAT2_5
+
+} // end of namespace Grim
 
 #endif

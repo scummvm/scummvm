@@ -26,6 +26,8 @@
 #ifndef IMUSE_TABLES_H
 #define IMUSE_TABLES_H
 
+namespace Grim {
+
 struct ImuseTable {
 	byte opcode;
 	int16 soundId;
@@ -36,5 +38,7 @@ struct ImuseTable {
 	byte pan;
 	char filename[32];
 };
+
+} // end of namespace Grim
 
 #endif

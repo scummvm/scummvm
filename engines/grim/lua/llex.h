@@ -10,6 +10,8 @@
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lzio.h"
 
+namespace Grim {
+
 #define MAX_IFS 5
 
 // "ifstate" keeps the state of each nested $if the lexical is dealing with.
@@ -33,5 +35,7 @@ typedef struct LexState {
 void luaX_init();
 void luaX_setinput(ZIO *z);
 char *luaX_lasttoken();
+
+} // end of namespace Grim
 
 #endif

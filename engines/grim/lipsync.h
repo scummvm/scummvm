@@ -28,6 +28,8 @@
 
 #include "engines/grim/resource.h"
 
+namespace Grim {
+
 class LipSync : public Resource {
 public:
 	LipSync(const char *filename, const char *data, int len);
@@ -53,6 +55,8 @@ private:
 	static const PhonemeAnim _animTable[];
 	static const int _animTableSize;
 };
+
+} // end of namespace Grim
 
 #endif
 

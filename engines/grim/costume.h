@@ -28,6 +28,8 @@
 
 #include "engines/grim/model.h"
 
+namespace Grim {
+
 #define DEFAULT_COLORMAP "item.cmp"
 
 typedef uint32 tag32;
@@ -150,5 +152,7 @@ private:
 	Chore *_chores;
 	Matrix4 _matrix;
 };
+
+} // end of namespace Grim
 
 #endif

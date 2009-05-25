@@ -10,6 +10,8 @@
 #include "engines/grim/lua/lstring.h"
 #include "engines/grim/lua/lundump.h"
 
+namespace Grim {
+
 static float conv_float(const byte *data) {
 	const byte *udata = data;
 	byte fdata[4];
@@ -182,3 +184,5 @@ TProtoFunc *luaU_undump1(ZIO *Z) {
 		luaL_verror("%s is not a Lua binary file", zname(Z));
 	return NULL;
 }
+
+} // end of namespace Grim

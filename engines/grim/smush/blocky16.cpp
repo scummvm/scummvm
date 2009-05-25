@@ -28,6 +28,8 @@
 
 #include "engines/grim/smush/blocky16.h"
 
+namespace Grim {
+
 #if defined(SYSTEM_NEED_ALIGNMENT)
 
 #define COPY_4X1_LINE(dst, src)			\
@@ -825,3 +827,5 @@ void Blocky16::decode(byte *dst, const byte *src) {
 	}
 	_prevSeqNb = seq_nb;
 }
+
+} // end of namespace Grim

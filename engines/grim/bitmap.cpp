@@ -28,13 +28,15 @@
 #include "engines/grim/bitmap.h"
 #include "engines/grim/gfx_base.h"
 
+namespace Grim {
+
 static void decompress_codec3(const char *compressed, char *result);
 
 Bitmap::Bitmap(const char *filename, const char *data, int len) :
 		Resource(filename) {
 
 	if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
-		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
+		if (Common::getDebugLevel() == DEBUG_BITMAPS || Common::getDebugLevel() == DEBUG_ERROR || Common::getDebugLevel() == DEBUG_ALL)
 			error("Invalid magic loading bitmap");
 	}
 
@@ -84,7 +86,7 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 
 Bitmap::Bitmap(const char *data, int width, int height, const char *filename) :
 		Resource(filename) {
-	if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
+	if (Common::getDebugLevel() == DEBUG_BITMAPS || Common::getDebugLevel() == DEBUG_NORMAL || Common::getDebugLevel() == DEBUG_ALL)
 		printf("New bitmap loaded: %s\n", filename);
 	strcpy(_filename, filename);
 	_currImage = 1;
@@ -169,3 +171,5 @@ static void decompress_codec3(const char *compressed, char *result) {
 		}
 	}
 }
+
+} // end of namespace Grim

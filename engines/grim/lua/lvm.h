@@ -11,6 +11,7 @@
 #include "engines/grim/lua/ldo.h"
 #include "engines/grim/lua/lobject.h"
 
+namespace Grim {
 
 #define tonumber(o) ((ttype(o) != LUA_T_NUMBER) && (luaV_tonumber(o) != 0))
 #define tostring(o) ((ttype(o) != LUA_T_STRING) && (luaV_tostring(o) != 0))
@@ -25,5 +26,7 @@ void luaV_getglobal(TaggedString *ts);
 void luaV_setglobal(TaggedString *ts);
 StkId luaV_execute(CallInfo *ci);
 void luaV_closure(int32 nelems);
+
+} // end of namespace Grim
 
 #endif

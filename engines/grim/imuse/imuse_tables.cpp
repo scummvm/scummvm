@@ -27,6 +27,8 @@
 
 #include "engines/grim/imuse/imuse_tables.h"
 
+namespace Grim {
+
 ImuseTable grimStateMusicTable[] = {
 	{0, 1000,   0, 0, 60, 127,   0, ""},
 	{0, 1999,   0, 0, 60, 127,   0, ""},
@@ -288,3 +290,5 @@ ImuseTable grimDemoSeqMusicTable[] = {
 	{3, 2100,   0, 0, 60, 127,   0, "Rope Climb.IMC"},
 	{0,   -1,   0, 0,  0,   0,   0, ""}
 };
+
+} // end of namespace Grim

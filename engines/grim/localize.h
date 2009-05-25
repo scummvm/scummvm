@@ -28,6 +28,8 @@
 
 #include "common/array.h"
 
+namespace Grim {
+
 class Localizer {
 public:
 	Common::String localize(const char *str) const;
@@ -46,5 +48,7 @@ private:
 };
 
 extern Localizer *g_localizer;
+
+} // end of namespace Grim
 
 #endif

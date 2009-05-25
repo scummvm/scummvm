@@ -23,6 +23,8 @@
 
 #include "common/file.h"
 
+namespace Grim {
+
 #ifndef STACK_LIMIT
 #define STACK_LIMIT     6000
 #endif
@@ -453,3 +455,5 @@ int32 lua_dobuffer(const char *buff, int32 size, const char *name) {
 	status = do_main(&z, buff[0] == ID_CHUNK);
 	return status;
 }
+
+} // end of namespace Grim

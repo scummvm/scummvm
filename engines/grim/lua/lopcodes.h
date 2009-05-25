@@ -7,6 +7,8 @@
 #ifndef lopcodes_h
 #define lopcodes_h
 
+namespace Grim {
+
 /*
 ** NOTICE: variants of the same opcode must be consecutive: First, those
 ** with byte parameter, then with built-in parameters, and last with
@@ -173,5 +175,7 @@ typedef enum {
 #define RFIELDS_PER_FLUSH 32	// records (SETMAP)
 #define LFIELDS_PER_FLUSH 64    // lists (SETLIST)
 #define ZEROVARARG	64
+
+} // end of namespace Grim
 
 #endif

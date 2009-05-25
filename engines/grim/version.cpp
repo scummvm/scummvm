@@ -21,6 +21,8 @@
 #include "engines/grim/internal_version.h"
 #include "engines/grim/version.h"
 
+namespace Grim {
+
 const char *gResidualVersion = RESIDUAL_VERSION;
 const char *gResidualBuildDate = __DATE__ " " __TIME__;
 const char *gResidualVersionDate = RESIDUAL_VERSION " (" __DATE__ " " __TIME__ ")";
@@ -47,3 +49,4 @@ const char *gResidualFeatures = ""
 #endif
 	;
 
+} // end of namespace Grim

@@ -30,6 +30,8 @@
 #include "engines/grim/scene.h"
 #include "engines/grim/primitives.h"
 
+namespace Grim {
+
 struct Shadow;
 
 class GfxBase {
@@ -118,5 +120,7 @@ protected:
 };
 
 extern GfxBase *g_driver;
+
+} // end of namespace Grim
 
 #endif

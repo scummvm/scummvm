@@ -28,6 +28,8 @@
 
 #include "engines/grim/resource.h"
 
+namespace Grim {
+
 class Font : public Resource {
 public:
 	Font(const char *filename, const char *data, int len);
@@ -63,5 +65,7 @@ private:
 	CharHeader *_charHeaders;
 	byte *_fontData;
 };
+
+} // end of namespace Grim
 
 #endif

@@ -41,9 +41,10 @@
 #endif
 #include "engines/grim/gfx_tinygl.h"
 
+namespace Grim {
+
 // Hacky global toggles for experimental/debug code
 bool SHOWFPS_GLOBAL, TINYGL_GLOBAL;
-enDebugLevels gDebugLevel = DEBUG_NONE;
 
 static bool g_lua_initialized = false;
 GfxBase *g_driver = NULL;
@@ -83,11 +84,11 @@ extern "C" int residual_main(int argc, char *argv[]) {
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
 	if (settings.contains("debuglevel")) {
-		gDebugLevel = (enDebugLevels)strtol(settings["debuglevel"].c_str(), 0, 10);
-		printf("Debuglevel (from command line): %d\n", gDebugLevel);
+//		Common::getDebugLevel() = (enDebugLevels)strtol(settings["debuglevel"].c_str(), 0, 10);
+		printf("Debuglevel (from command line): %d\n", Common::getDebugLevel());
 		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
-	} else if (ConfMan.hasKey("debuglevel"))
-		gDebugLevel = (enDebugLevels)ConfMan.getInt("debuglevel");
+	}// else if (ConfMan.hasKey("debuglevel"))
+//		Common::getDebugLevel() = (enDebugLevels)ConfMan.getInt("debuglevel");
 
 	if (settings.contains("debugflags")) {
 		specialDebug = settings["debugflags"];
@@ -213,3 +214,5 @@ void quit() {
 	Common::ConfigManager::destroy();
 	Common::SearchManager::destroy();
 }
+
+} // end of namespace Grim

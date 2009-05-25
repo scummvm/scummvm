@@ -29,6 +29,8 @@
 
 #include "engines/grim/imuse/imuse_mcmp_mgr.h"
 
+namespace Grim {
+
 uint16 imuseDestTable[5786];
 
 McmpMgr::McmpMgr() {
@@ -155,3 +157,5 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 
 	return final_size;
 }
+
+} // end of namespace Grim

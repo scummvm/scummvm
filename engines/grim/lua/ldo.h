@@ -11,6 +11,7 @@
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lstate.h"
 
+namespace Grim {
 
 #define MULT_RET        255
 
@@ -41,5 +42,6 @@ void luaD_gcIM(TObject *o);
 void luaD_travstack(int32 (*fn)(TObject *));
 void luaD_checkstack(int32 n);
 
+} // end of namespace Grim
 
 #endif

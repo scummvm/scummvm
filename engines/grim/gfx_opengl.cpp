@@ -34,6 +34,8 @@
 
 #ifdef USE_OPENGL
 
+namespace Grim {
+
 GfxOpenGL::GfxOpenGL() {
 	_storedDisplay = NULL;
 	_emergFont = 0;
@@ -1124,5 +1126,7 @@ void GfxOpenGL::drawPolygon(PrimitiveObject *primitive) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 }
+
+} // end of namespace Grim
 
 #endif

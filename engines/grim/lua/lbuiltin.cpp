@@ -19,6 +19,7 @@
 #include "engines/grim/lua/ltm.h"
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
 
 static void pushstring(TaggedString *s) {
 	TObject o;
@@ -508,3 +509,4 @@ void luaB_predefine() {
 	lua_setglobal("_VERSION");
 }
 
+} // end of namespace Grim

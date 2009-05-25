@@ -28,6 +28,8 @@
 
 #include "common/savefile.h"
 
+namespace Grim {
+
 class SaveGame {
 public:
 	SaveGame(const char *filename, bool saving);
@@ -56,5 +58,7 @@ protected:
 	uint32 _sectionPtr;
 	byte *_sectionBuffer;
 };
+
+} // end of namespace Grim
 
 #endif

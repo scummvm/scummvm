@@ -15,6 +15,8 @@
 #include "engines/grim/lua/lstring.h"
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 RestoreCallback restoreCallbackPtr = NULL;
 
 static void restoreObjectValue(TObject *object, RestoreSint32 restoreSint32, RestoreUint32 restoreUint32) {
@@ -580,3 +582,5 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 
 	printf("lua_Restore() finished.\n");
 }
+
+} // end of namespace Grim

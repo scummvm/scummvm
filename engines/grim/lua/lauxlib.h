@@ -11,6 +11,7 @@
 
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
 
 struct luaL_reg {
 	const char *name;
@@ -47,5 +48,6 @@ int32 luaL_newbuffer(int32 size);
 void luaL_oldbuffer(int32 old);
 char *luaL_buffer();
 
+} // end of namespace Grim
 
 #endif

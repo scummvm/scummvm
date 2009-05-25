@@ -28,6 +28,8 @@
 
 #include "common/str.h"
 
+namespace Grim {
+
 class Registry {
 public:
 	const char *get(const char *key, const char *defval) const;
@@ -65,5 +67,7 @@ private:
 };
 
 extern Registry *g_registry;
+
+} // end of namespace Grim
 
 #endif

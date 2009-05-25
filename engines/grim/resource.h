@@ -30,7 +30,7 @@
 
 #include "engines/grim/lab.h"
 
-#include <map>
+namespace Grim {
 
 class Bitmap;
 class CMap;
@@ -144,5 +144,7 @@ inline void Resource::deref() {
 		delete this;
 	}
 }
+
+} // end of namespace Grim
 
 #endif

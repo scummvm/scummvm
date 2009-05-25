@@ -25,6 +25,8 @@
 
 #include "engines/grim/textobject.h"
 
+namespace Grim {
+
 Common::String parseMsgText(const char *msg, char *msgId);
 
 TextObjectDefaults sayLineDefaults;
@@ -247,9 +249,11 @@ void TextObject::draw() {
 				x = 0;
 
 			g_driver->drawTextBitmap(x, height + y, _textObjectHandle[i]);
-		} else if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+		} else if (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
 			warning("TextObject::draw: Unknown justification code (%d)!", _justify);
 
 		height += _font->getHeight();
 	}
 }
+
+} // end of namespace Grim

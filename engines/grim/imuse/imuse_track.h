@@ -28,6 +28,8 @@
 
 #include "engines/grim/imuse/imuse_sndmgr.h"
 
+namespace Grim {
+
 enum {
 	kFlagUnsigned = 1 << 0,
 	kFlag16Bits = 1 << 1,
@@ -87,5 +89,7 @@ struct Track {
 		return type;
 	}
 };
+
+} // end of namespace Grim
 
 #endif

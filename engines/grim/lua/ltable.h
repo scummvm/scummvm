@@ -9,6 +9,8 @@
 
 #include "engines/grim/lua/lobject.h"
 
+namespace Grim {
+
 #define node(t, i)	(&(t)->node[i])
 #define ref(n)		(&(n)->ref)
 #define val(n)		(&(n)->val)
@@ -21,5 +23,7 @@ TObject *luaH_set(Hash *t, TObject *ref);
 Node *luaH_next(TObject *o, TObject *r);
 Node *hashnodecreate(int32 nhash);
 int32 present(Hash *t, TObject *key);
+
+} // end of namespace Grim
 
 #endif

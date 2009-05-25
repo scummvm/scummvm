@@ -32,6 +32,8 @@
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_tinygl.h"
 
+namespace Grim {
+
 // below funcs lookAt, transformPoint and tgluProject are from Mesa glu sources
 static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx,
 		TGLfloat centery, TGLfloat centerz, TGLfloat upx, TGLfloat upy, TGLfloat upz) {
@@ -898,3 +900,5 @@ void GfxTinyGL::drawPolygon(PrimitiveObject *primitive) {
 			WRITE_LE_UINT16(dst + 640 * y + x, c);
 	}
 }
+
+} // end of namespace Grim

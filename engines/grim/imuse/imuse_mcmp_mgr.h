@@ -26,6 +26,8 @@
 #ifndef MCMP_MGR_H
 #define MCMP_MGR_H
 
+namespace Grim {
+
 class McmpMgr {
 private:
 
@@ -53,5 +55,7 @@ public:
 	bool openSound(const char *filename, byte **resPtr, int &offsetData);
 	int32 decompressSample(int32 offset, int32 size, byte **comp_final);
 };
+
+} // end of namespace Grim
 
 #endif

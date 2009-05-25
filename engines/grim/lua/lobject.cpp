@@ -7,6 +7,8 @@
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lua.h"
 
+namespace Grim {
+
 const char *luaO_typenames[] = { // ORDER LUA_T
 	"userdata", "number", "string", "table", "function", "function", "task",
 	"nil", "function", "mark", "mark", "mark", "line", NULL
@@ -75,3 +77,5 @@ void luaO_insertlist(GCnode *root, GCnode *node) {
 	root->next = node;
 	node->marked = 0;
 }
+
+} // end of namespace Grim

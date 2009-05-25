@@ -29,6 +29,8 @@
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_base.h"
 
+namespace Grim {
+
 struct TextObjectDefaults {
 	Color fgColor;
 	int x, y;
@@ -100,5 +102,7 @@ protected:
 	int *_bitmapWidthPtr;
 	GfxBase::TextObjectHandle **_textObjectHandle;
 };
+
+} // end of namespace Grim
 
 #endif

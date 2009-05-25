@@ -28,6 +28,8 @@
 
 #include "engines/grim/imuse/imuse_track.h"
 
+namespace Grim {
+
 #define MAX_IMUSE_TRACKS 16
 #define MAX_IMUSE_FADETRACKS 16
 
@@ -107,5 +109,7 @@ public:
 };
 
 extern Imuse *g_imuse;
+
+} // end of namespace Grim
 
 #endif

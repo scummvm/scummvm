@@ -30,6 +30,8 @@
 #include "engines/grim/walkplane.h"
 #include "engines/grim/objectstate.h"
 
+namespace Grim {
+
 // The Lua code calls this a "set".
 
 class Scene {
@@ -134,5 +136,7 @@ private:
 	typedef Common::List<ObjectState*> StateList;
 	StateList _states;
 };
+
+} // end of namespace Grim
 
 #endif

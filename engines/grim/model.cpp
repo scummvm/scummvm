@@ -31,6 +31,8 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/gfx_base.h"
 
+namespace Grim {
+
 Model::Model(const char *filename, const char *data, int len, const CMap &cmap) :
 		Resource(filename), _numMaterials(0), _numGeosets(0) {
 
@@ -330,7 +332,7 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 		_rootHierNode[num]._totalWeight = 1;
 	}
 
-	if (!ts.eof() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
+	if (!ts.eof() && (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL))
 		warning("Unexpected junk at end of model text");
 }
 
@@ -361,7 +363,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	// In data001/rope_scale.3do, the shadow line is missing
 	if (sscanf(ts.currentLine(), "shadow %d", &_shadow) < 1) {
 		_shadow = 0;
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
+		if (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
 			warning("Missing shadow directive in model");
 	} else
 		ts.nextLine();
@@ -516,3 +518,5 @@ void Model::Face::draw(float *vertices, float *vertNormals, float *textureVerts)
 	_material->select();
 	g_driver->drawModelFace(this, vertices, vertNormals, textureVerts);
 }
+
+} // end of namespace Grim

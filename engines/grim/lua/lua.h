@@ -13,6 +13,15 @@
 #ifndef lua_h
 #define lua_h
 
+namespace Common {
+	class String;
+	class SeekableReadStream;
+	class WriteStream;
+	class File;
+}
+
+namespace Grim {
+
 #define LUA_VERSION		"Lua 3.1 (alpha)"
 #define LUA_COPYRIGHT	"Copyright (C) 1994-1998 TeCGraf, PUC-Rio"
 #define LUA_AUTHORS 	"W. Celes, R. Ierusalimschy & L. H. de Figueiredo"
@@ -31,13 +40,6 @@ struct PointerId {
 
 PointerId makeIdFromPointer(void *ptr);
 void *makePointerFromId(PointerId ptr);
-
-namespace Common {
-	class String;
-	class SeekableReadStream;
-	class WriteStream;
-	class File;
-}
 
 class LuaFile {
 public:
@@ -185,7 +187,6 @@ lua_Object lua_setfallback(const char *event, lua_CFunction fallback);
 
 #endif
 
-#endif
 
 /******************************************************************************
 * Copyright (c) 1994-1998 TeCGraf, PUC-Rio.  All rights reserved.
@@ -220,3 +221,7 @@ lua_Object lua_setfallback(const char *event, lua_CFunction fallback);
 * Luiz Henrique de Figueiredo at TeCGraf, PUC-Rio.
 * This implementation contains no third-party code.
 ******************************************************************************/
+
+} // end of namespace Grim
+
+#endif

@@ -10,6 +10,8 @@
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lzio.h"
 
+namespace Grim {
+
 #define ID_CHUNK		27              // ESC
 #define ID_FUNCTION		'#'
 #define ID_END			'$'
@@ -23,6 +25,8 @@
 #define IsMain(f)			(f->lineDefined == 0)
 
 TProtoFunc* luaU_undump1(ZIO* Z);      // load one chunk
+
+} // end of namespace Grim
 
 #endif
 

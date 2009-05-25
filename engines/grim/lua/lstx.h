@@ -1,12 +1,14 @@
-typedef union
-{
-  int vInt;
-  float vReal;
-  char *pChar;
-  long vLong;
-  TaggedString *pTStr;
-  TProtoFunc *pFunc;
+namespace Grim {
+
+typedef union {
+	int vInt;
+	float vReal;
+	char *pChar;
+	long vLong;
+	TaggedString *pTStr;
+	TProtoFunc *pFunc;
 } YYSTYPE;
+
 #define	WRONGTOKEN	258
 #define	NIL	259
 #define	IF	260
@@ -37,3 +39,5 @@ typedef union
 
 
 extern YYSTYPE luaY_lval;
+
+} // end of namespace Grim

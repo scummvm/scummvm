@@ -29,6 +29,8 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/matrix4.h"
 
+namespace Grim {
+
 class TextSplitter;
 
 class Model : public Resource {
@@ -136,5 +138,7 @@ public:
 	int _numHierNodes;
 	HierNode *_rootHierNode;
 };
+
+} // end of namespace Grim
 
 #endif
