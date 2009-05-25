@@ -25,6 +25,8 @@
 
 #include "graphics/matrix3.h"
 
+namespace Graphics {
+
 void Matrix3::setAsIdentity() {
 	_right.set(1.f, 0.f, 0.f);
 	_up.set(0.f, 1.f, 0.f);
@@ -184,3 +186,4 @@ void Matrix3::transform(Vector3d* v) {
 	v->set(x, y, z);
 }
 
+} // end of namespace Graphics

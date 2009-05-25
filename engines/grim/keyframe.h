@@ -57,7 +57,7 @@ private:
 
 		float _frame;
 		int _flags;
-		Vector3d _pos, _dpos;
+		Graphics::Vector3d _pos, _dpos;
 		float _pitch, _yaw, _roll, _dpitch, _dyaw, _droll;
 	};
 

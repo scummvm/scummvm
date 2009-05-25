@@ -28,7 +28,9 @@
 
 #include "engines/grim/lua/lua.h"
 
-class Vector3d;
+namespace Graphics {
+	class Vector3d;
+};
 
 namespace Grim {
 
@@ -57,7 +59,7 @@ lua_Object getTableValue(lua_Object table, const char *name);
 lua_Object getIndexedTableValue(lua_Object table, int index);
 
 // make a Vector3d object from coordinate table values
-Vector3d tableToVector(lua_Object table);
+Graphics::Vector3d tableToVector(lua_Object table);
 
 // get a function stored in a table
 lua_Object getTableFunction(lua_Object table, const char *name);

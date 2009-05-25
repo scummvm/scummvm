@@ -456,12 +456,12 @@ static void SetActorVisibility() {
 
 static void PutActorAt() {
 	Actor *act = check_actor(1);
-	act->setPos(Vector3d(luaL_check_number(2), luaL_check_number(3), luaL_check_number(4)));
+	act->setPos(Graphics::Vector3d(luaL_check_number(2), luaL_check_number(3), luaL_check_number(4)));
 }
 
 static void GetActorPos() {
 	Actor *act = check_actor(1);
-	Vector3d pos = act->pos();
+	Graphics::Vector3d pos = act->pos();
 	// It is important to process this request for all actors,
 	// even for actors not within the active scene
 	lua_pushnumber(pos.x());
@@ -504,14 +504,14 @@ static void GetAngleBetweenActors() {
 }
 
 static void GetActorYawToPoint() {
-	Vector3d yawVector;
+	Graphics::Vector3d yawVector;
 
 	Actor *act = check_actor(1);
 	lua_Object param2 = lua_getparam(2);
 	// when this gets called by the tube-switcher guy it's sending
 	// only two things: an actor and a table with components x, y, z
 	if (lua_isnumber(param2)) {
-		yawVector = Vector3d(luaL_check_number(2), luaL_check_number(3), luaL_check_number(4));
+		yawVector = Graphics::Vector3d(luaL_check_number(2), luaL_check_number(3), luaL_check_number(4));
 	} else if (lua_istable(param2)) {
 		yawVector = tableToVector(param2);
 	} else {
@@ -571,7 +571,7 @@ static void SetActorReflection() {
 
 static void GetActorPuckVector() {
 	Actor *act = check_actor(1);
-	Vector3d result = act->puckVector();
+	Graphics::Vector3d result = act->puckVector();
 	lua_pushnumber(result.x());
 	lua_pushnumber(result.y());
 	lua_pushnumber(result.z());
@@ -579,7 +579,7 @@ static void GetActorPuckVector() {
 
 static void WalkActorTo() {
 	Actor *act = check_actor(1);
-	act->walkTo(Vector3d(luaL_check_number(2), luaL_check_number(3), luaL_check_number(4)));
+	act->walkTo(Graphics::Vector3d(luaL_check_number(2), luaL_check_number(3), luaL_check_number(4)));
 }
 
 static void IsActorMoving() {
@@ -910,7 +910,7 @@ static void IsActorChoring() {
 
 static void ActorLookAt() {
 	lua_Object x, y, z, rate;
-	Vector3d vector;
+	Graphics::Vector3d vector;
 	Actor *act;
 
 	act = check_actor(1);
@@ -999,8 +999,8 @@ static void TurnActorTo() {
 	}
 
 	// Find the vector pointing from the actor to the desired location
-	Vector3d turnToVector(x, y, z);
-	Vector3d lookVector = turnToVector - act->pos();
+	Graphics::Vector3d turnToVector(x, y, z);
+	Graphics::Vector3d lookVector = turnToVector - act->pos();
 	// find the angle the requested position is around the unit circle
 	yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
@@ -1034,12 +1034,12 @@ static void WalkActorVector() {
 	moveVert = luaL_check_number(4);
 
 	// Get the direction the camera is pointing
-	Vector3d cameraVector = g_grim->currScene()->_currSetup->_interest - g_grim->currScene()->_currSetup->_pos;
+	Graphics::Vector3d cameraVector = g_grim->currScene()->_currSetup->_interest - g_grim->currScene()->_currSetup->_pos;
 	// find the angle the camera direction is around the unit circle
 	float cameraYaw = cameraVector.unitCircleAngle();
 
 	// Handle the turning
-	Vector3d adjustVector(moveHoriz, moveVert, 0);
+	Graphics::Vector3d adjustVector(moveHoriz, moveVert, 0);
 	// find the angle the adjust vector is around the unit circle
 	float adjustYaw = adjustVector.unitCircleAngle();
 
@@ -1070,7 +1070,7 @@ static void RotateVector() {
 	param1 = lua_getparam(1);
 	param2 = lua_getparam(2);
 	if (lua_istable(param1) && lua_istable(param2)) {
-		Vector3d vec1 = tableToVector(param1);
+		Graphics::Vector3d vec1 = tableToVector(param1);
 		lua_Object rotateObject = getTableValue(param2, "y");
 		float rotate, currAngle, newAngle;
 
@@ -1079,10 +1079,10 @@ static void RotateVector() {
 		if (rotateObject == 0)
 			rotateObject = getIndexedTableValue(param2, 2);
 		rotate = lua_getnumber(rotateObject);
-		Vector3d baseVector(sin(0.0f), cos(0.0f), 0);
+		Graphics::Vector3d baseVector(sin(0.0f), cos(0.0f), 0);
 		currAngle = angle(baseVector, vec1) * (180 / LOCAL_PI);
 		newAngle = (currAngle - rotate) * (LOCAL_PI / 180);
-		Vector3d vec2(sin(newAngle), cos(newAngle), 0);
+		Graphics::Vector3d vec2(sin(newAngle), cos(newAngle), 0);
 		vec2 *= vec1.magnitude();
 
 		result = lua_createtable();
@@ -1240,7 +1240,7 @@ static void SetActorShadowPoint() {
 	float y = luaL_check_number(3);
 	float z = luaL_check_number(4);
 
-	act->setShadowPoint(Vector3d(x, y, z));
+	act->setShadowPoint(Graphics::Vector3d(x, y, z));
 }
 
 static void SetActorShadowPlane() {
@@ -1485,7 +1485,7 @@ static void GetPointSector() {
 	yparam = lua_getparam(2);
 	zparam = lua_getparam(3);
 	if (lua_isnumber(xparam) && lua_isnumber(yparam) && lua_isnumber(zparam)) {
-		Vector3d point(x, y, z);
+		Graphics::Vector3d point(x, y, z);
 
 		// Find the point in any available sector
 		result = g_grim->currScene()->findPointSector(point, 0xFFFF);
@@ -1856,7 +1856,7 @@ static void RestoreIMuse() {
 }
 
 static void SetSoundPosition() {
-	Vector3d pos;
+	Graphics::Vector3d pos;
 	int minVolume = 10;
 	int maxVolume = 127;
 
@@ -3786,7 +3786,7 @@ void setTableValue(lua_Object table, const char *name, lua_Object newvalue) {
 /* Obtain the x, y, and z coordinates from a LUA table
  * and then create a Vector3d object with these values
  */
-Vector3d tableToVector(lua_Object table) {
+Graphics::Vector3d tableToVector(lua_Object table) {
 	lua_Object xparam, yparam, zparam;
 	float x, y, z;
 
@@ -3802,7 +3802,7 @@ Vector3d tableToVector(lua_Object table) {
 	x = lua_getnumber(xparam);
 	y = lua_getnumber(yparam);
 	z = lua_getnumber(zparam);
-	return Vector3d(x, y, z);
+	return Graphics::Vector3d(x, y, z);
 }
 
 lua_Object getEventHandler(const char *name) {

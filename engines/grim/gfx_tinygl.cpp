@@ -188,11 +188,11 @@ void GfxTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	tglRotatef(roll, 0, 0, -1);
 }
 
-void GfxTinyGL::positionCamera(Vector3d pos, Vector3d interest) {
-	Vector3d up_vec(0, 0, 1);
+void GfxTinyGL::positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) {
+	Graphics::Vector3d up_vec(0, 0, 1);
 
 	if (pos.x() == interest.x() && pos.y() == interest.y())
-		up_vec = Vector3d(0, 1, 0);
+		up_vec = Graphics::Vector3d(0, 1, 0);
 
 	lookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
@@ -211,7 +211,7 @@ bool GfxTinyGL::isHardwareAccelerated() {
 	return false;
 }
 
-static void tglShadowProjection(Vector3d light, Vector3d plane, Vector3d normal, bool dontNegate) {
+static void tglShadowProjection(Graphics::Vector3d light, Graphics::Vector3d plane, Graphics::Vector3d normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;
@@ -276,7 +276,7 @@ void GfxTinyGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, in
 	TGLfloat winX, winY, winZ;
 
 	for (int i = 0; i < model->_numFaces; i++) {
-		Vector3d v;
+		Graphics::Vector3d v;
 		float* pVertices;
 
 		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
@@ -346,7 +346,7 @@ void GfxTinyGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, in
 	}*/
 }
 
-void GfxTinyGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
+void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
@@ -453,7 +453,7 @@ void GfxTinyGL::drawModelFace(const Model::Face *face, float *vertices, float *v
 	tglEnd();
 }
 
-void GfxTinyGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) {
+void GfxTinyGL::translateViewpoint(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	tglPushMatrix();
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());

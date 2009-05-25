@@ -58,7 +58,7 @@ public:
 	void update();
 	void setupTextures();
 	void draw();
-	void setPosRotate(Vector3d pos, float pitch, float yaw, float roll);
+	void setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll);
 
 	class Component {
 	public:
@@ -69,7 +69,7 @@ public:
 		void setColormap(CMap *c);
 		bool visible();
 		Component *parent() { return _parent; }
-		virtual void setMatrix(Matrix4) { };
+		virtual void setMatrix(Graphics::Matrix4) { };
 		virtual void init() { }
 		virtual void setKey(int) { }
 		virtual void setMapName(char *) { }
@@ -85,7 +85,7 @@ public:
 		int _parentID;
 		bool _visible;
 		Component *_parent, *_child, *_sibling;
-		Matrix4 _matrix;
+		Graphics::Matrix4 _matrix;
 		Costume *_cost;
 		void setCostume(Costume *cost) { _cost = cost; }
 		void setParent(Component *newParent);
@@ -150,7 +150,7 @@ private:
 	ResPtr<CMap> _cmap;
 	int _numChores;
 	Chore *_chores;
-	Matrix4 _matrix;
+	Graphics::Matrix4 _matrix;
 };
 
 } // end of namespace Grim

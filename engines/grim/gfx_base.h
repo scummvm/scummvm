@@ -53,13 +53,13 @@ public:
 	virtual bool isHardwareAccelerated() = 0;
 
 	virtual void setupCamera(float fov, float nclip, float fclip, float roll) = 0;
-	virtual void positionCamera(Vector3d pos, Vector3d interest) = 0;
+	virtual void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) = 0;
 
 	virtual void clearScreen() = 0;
 	virtual void flipBuffer() = 0;
 
 	virtual void getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2) = 0;
-	virtual void startActorDraw(Vector3d pos, float yaw, float pitch, float roll) = 0;
+	virtual void startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll) = 0;
 	virtual void finishActorDraw() = 0;
 	virtual void setShadow(Shadow *shadow) = 0;
 	virtual void drawShadowPlanes() = 0;
@@ -69,7 +69,7 @@ public:
 
 	virtual void set3DMode() = 0;
 
-	virtual void translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) = 0;
+	virtual void translateViewpoint(Graphics::Vector3d pos, float pitch, float yaw, float roll) = 0;
 	virtual void translateViewpoint() = 0;
 
 	virtual void drawHierachyNode(const Model::HierNode *node) = 0;

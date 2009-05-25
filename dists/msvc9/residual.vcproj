@@ -525,22 +525,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\grim\matrix3.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\grim\matrix3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\grim\matrix4.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\grim\matrix4.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\grim\model.cpp"
 				>
 			</File>
@@ -610,10 +594,6 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\grim\textsplit.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\grim\vector3d.h"
 				>
 			</File>
 			<File
@@ -1065,6 +1045,26 @@
 		<Filter
 			Name="graphics"
 			>
+			<File
+				RelativePath="..\..\graphics\matrix3.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\matrix3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\matrix4.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\matrix4.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\vector3d.h"
+				>
+			</File>
 			<Filter
 				Name="tinygl"
 				>

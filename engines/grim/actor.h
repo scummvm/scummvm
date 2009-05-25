@@ -41,7 +41,7 @@ extern int g_winX1, g_winY1, g_winX2, g_winY2;
 
 struct Shadow {
 	Common::String name;
-	Vector3d pos;
+	Graphics::Vector3d pos;
 	SectorListType planeList;
 	byte *shadowMask;
 	bool active;
@@ -57,17 +57,17 @@ public:
 
 	void setTalkColor(const Color& c) { _talkColor = c; }
 	Color talkColor() const { return _talkColor; }
-	void setPos(Vector3d pos) { _pos = pos; }
+	void setPos(Graphics::Vector3d pos) { _pos = pos; }
 	// When the actor is walking report where the actor is going to and
 	// not the actual current position, this fixes some scene change
 	// change issues with the Bone Wagon (along with other fixes)
-	Vector3d pos() const {
+	Graphics::Vector3d pos() const {
 		if (_walking)
 			return _destPos;
 		else
 			return _pos;
 	}
-	void walkTo(Vector3d p);
+	void walkTo(Graphics::Vector3d p);
 	void stopWalking() { _walking = false; }
 	bool isWalking() const;
 	void setRot(float pitch, float yaw, float roll);
@@ -88,14 +88,14 @@ public:
 	void setLooking(bool lookingMode) { _lookingMode = lookingMode; }
 
 	float angleTo(const Actor &a) const;
-	float yawTo(Vector3d p) const;
+	float yawTo(Graphics::Vector3d p) const;
 
 	bool inSet(const char *name) const {
 		return _setName == name;
 	}
 	void walkForward();
 	void setReflection(float angle) { _reflectionAngle = angle; }
-	Vector3d puckVector() const;
+	Graphics::Vector3d puckVector() const;
 	void turn(int dir);
 
 	void sayLine(const char *msg, const char *msgId);
@@ -128,7 +128,7 @@ public:
 	}
 
 	void setActiveShadow(int shadowId);
-	void setShadowPoint(Vector3d pos);
+	void setShadowPoint(Graphics::Vector3d pos);
 	void setShadowPlane(const char *name);
 	void addShadowPlane(const char *name);
 	void clearShadowPlanes();
@@ -148,7 +148,7 @@ public:
 	void setLookAtVectorZero() {
 		_lookAtVector.set(0.f, 0.f, 0.f);
 	}
-	void setLookAtVector(Vector3d vector) {
+	void setLookAtVector(Graphics::Vector3d vector) {
 		_lookAtVector = vector;
 	}
 	void setLookAtRate(float rate) {
@@ -163,7 +163,7 @@ private:
 	Common::String _name;
 	Common::String _setName;    // The actual current set
 	Color _talkColor;
-	Vector3d _pos;
+	Graphics::Vector3d _pos;
 	float _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;
 
@@ -181,7 +181,7 @@ private:
 
 	// Variables for walking to a point
 	bool _walking;
-	Vector3d _destPos;
+	Graphics::Vector3d _destPos;
 
 	// chores
 	Costume *_restCostume;
@@ -223,7 +223,7 @@ private:
 	}
 
 	// lookAt
-	Vector3d _lookAtVector;
+	Graphics::Vector3d _lookAtVector;
 	float _lookAtRate;
 
 	int _winX1, _winY1, _winX2, _winY2;

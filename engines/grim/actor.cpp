@@ -102,7 +102,7 @@ void Actor::turnTo(float pitch, float yaw, float roll) {
 		_turning = false;
 }
 
-void Actor::walkTo(Vector3d p) {
+void Actor::walkTo(Graphics::Vector3d p) {
 	// For now, this is just the ignoring-boxes version (which afaict
 	// isn't even in the original).  This will eventually need a
 	// following-boxes version also.
@@ -135,10 +135,9 @@ void Actor::walkForward() {
 	float dist = g_grim->perSecond(_walkRate);
 	float yaw_rad = _yaw * (LOCAL_PI / 180), pitch_rad = _pitch * (LOCAL_PI / 180);
 	//float yaw;
-	Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
-		cos(yaw_rad) * cos(pitch_rad),
-		sin(pitch_rad));
-	Vector3d destPos = _pos + forwardVec * dist;
+	Graphics::Vector3d forwardVec(-sin(yaw_rad) * cos(pitch_rad),
+		cos(yaw_rad) * cos(pitch_rad), sin(pitch_rad));
+	Graphics::Vector3d destPos = _pos + forwardVec * dist;
 
 	if (! _constrain) {
 		_pos += forwardVec * dist;
@@ -163,7 +162,7 @@ void Actor::walkForward() {
 
 	while (currSector) {
 		prevSector = currSector;
-		Vector3d puckVector = currSector->projectToPuckVector(forwardVec);
+		Graphics::Vector3d puckVector = currSector->projectToPuckVector(forwardVec);
 		puckVector /= puckVector.magnitude();
 		currSector->getExitInfo(_pos, puckVector, &ei);
 		float exitDist = (ei.exitPoint - _pos).magnitude();
@@ -201,9 +200,9 @@ void Actor::walkForward() {
 	setYaw(_yaw + turnAmt * turnDir);
 }
 
-Vector3d Actor::puckVector() const {
+Graphics::Vector3d Actor::puckVector() const {
 	float yaw_rad = _yaw * (LOCAL_PI / 180);
-	Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
+	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
 
 	Sector *sector = g_grim->currScene()->findPointSector(_pos, 0x1000);
 	if (!sector)
@@ -287,15 +286,15 @@ void Actor::turn(int dir) {
 
 float Actor::angleTo(const Actor &a) const {
 	float yaw_rad = _yaw * (LOCAL_PI / 180);
-	Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
-	Vector3d delta = a.pos() - _pos;
+	Graphics::Vector3d forwardVec(-sin(yaw_rad), cos(yaw_rad), 0);
+	Graphics::Vector3d delta = a.pos() - _pos;
 	delta.z() = 0;
 
 	return angle(forwardVec, delta) * (180 / LOCAL_PI);
 }
 
-float Actor::yawTo(Vector3d p) const {
-	Vector3d dpos = p - _pos;
+float Actor::yawTo(Graphics::Vector3d p) const {
+	Graphics::Vector3d dpos = p - _pos;
 
 	if (dpos.x() == 0 && dpos.y() == 0)
 		return 0;
@@ -518,7 +517,7 @@ void Actor::update() {
 	}
 
 	if (_walking) {
-		Vector3d dir = _destPos - _pos;
+		Graphics::Vector3d dir = _destPos - _pos;
 		float dist = dir.magnitude();
 
 		if (dist > 0)
@@ -713,7 +712,7 @@ void Actor::setActivateShadow(int shadowId, bool state) {
 	_shadowArray[shadowId].active = state;
 }
 
-void Actor::setShadowPoint(Vector3d pos) {
+void Actor::setShadowPoint(Graphics::Vector3d pos) {
 	assert(_activeShadowSlot != -1);
 
 	_shadowArray[_activeShadowSlot].pos = pos;

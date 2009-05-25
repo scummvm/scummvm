@@ -52,7 +52,7 @@ public:
 		void draw() const;
 		void addChild(HierNode *child);
 		void removeChild(HierNode *child);
-		void setMatrix(Matrix4 matrix);
+		void setMatrix(Graphics::Matrix4 matrix);
 		void update();
 
 		char _name[64];
@@ -60,16 +60,16 @@ public:
 		int _flags, _type;
 		int _depth, _numChildren;
 		HierNode *_parent, *_child, *_sibling;
-		Vector3d _pos, _pivot;
+		Graphics::Vector3d _pos, _pivot;
 		float _pitch, _yaw, _roll;
-		Vector3d _animPos;
+		Graphics::Vector3d _animPos;
 		float _animPitch, _animYaw, _animRoll;
 		bool _meshVisible, _hierVisible;
 		int _priority, _totalWeight;
 		bool _initialized;
-		Matrix4 _matrix;
-		Matrix4 _localMatrix;
-		Matrix4 _pivotMatrix;
+		Graphics::Matrix4 _matrix;
+		Graphics::Matrix4 _localMatrix;
+		Graphics::Matrix4 _pivotMatrix;
 	};
 
 	HierNode *copyHierarchy();
@@ -87,7 +87,7 @@ public:
 		float _extraLight;
 		int _numVertices;
 		int *_vertices, *_texVertices;
-		Vector3d _normal;
+		Graphics::Vector3d _normal;
 	};
 
 	struct Mesh {
@@ -114,7 +114,7 @@ public:
 
 		int _numFaces;
 		Face *_faces;
-		Matrix4 _matrix;
+		Graphics::Matrix4 _matrix;
 	};
 
 	struct Geoset {
@@ -131,7 +131,7 @@ public:
 	int _numMaterials;
 	char (*_materialNames)[32];
 	ResPtr<Material> *_materials;
-	Vector3d _insertOffset;
+	Graphics::Vector3d _insertOffset;
 	int _numGeosets;
 	Geoset *_geosets;
 	float _radius;

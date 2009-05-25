@@ -28,6 +28,8 @@
 
 #include "graphics/vector3d.h"
 
+namespace Graphics {
+
 // matrix 3 is a rotation matrix
 class Matrix3 {
 public:
@@ -85,5 +87,7 @@ public:
 private:
 };
 
-#endif // MATRIX_HH
+} // end of namespace Graphics
+
+#endif
 

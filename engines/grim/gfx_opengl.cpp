@@ -93,11 +93,11 @@ void GfxOpenGL::setupCamera(float fov, float nclip, float fclip, float roll) {
 	glRotatef(roll, 0, 0, -1);
 }
 
-void GfxOpenGL::positionCamera(Vector3d pos, Vector3d interest) {
-	Vector3d up_vec(0, 0, 1);
+void GfxOpenGL::positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest) {
+	Graphics::Vector3d up_vec(0, 0, 1);
 
 	if (pos.x() == interest.x() && pos.y() == interest.y())
-		up_vec = Vector3d(0, 1, 0);
+		up_vec = Graphics::Vector3d(0, 1, 0);
 
 	gluLookAt(pos.x(), pos.y(), pos.z(), interest.x(), interest.y(), interest.z(), up_vec.x(), up_vec.y(), up_vec.z());
 }
@@ -114,7 +114,7 @@ bool GfxOpenGL::isHardwareAccelerated() {
 	return true;
 }
 
-static void glShadowProjection(Vector3d light, Vector3d plane, Vector3d normal, bool dontNegate) {
+static void glShadowProjection(Graphics::Vector3d light, Graphics::Vector3d plane, Graphics::Vector3d normal, bool dontNegate) {
 	// Based on GPL shadow projection example by
 	// (c) 2002-2003 Phaetos <phaetos@gaffga.de>
 	float d, c;
@@ -179,7 +179,7 @@ void GfxOpenGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, in
 	GLdouble winX, winY, winZ;
 
 	for (int i = 0; i < model->_numFaces; i++) {
-		Vector3d v;
+		Graphics::Vector3d v;
 		float* pVertices;
 
 		for (int j = 0; j < model->_faces[i]._numVertices; j++) {
@@ -234,7 +234,7 @@ void GfxOpenGL::getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, in
 	*y2 = (int)bottom;
 }
 
-void GfxOpenGL::startActorDraw(Vector3d pos, float yaw, float pitch, float roll) {
+void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll) {
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
@@ -343,7 +343,7 @@ void GfxOpenGL::drawModelFace(const Model::Face *face, float *vertices, float *v
 	glDisable(GL_ALPHA_TEST);
 }
 
-void GfxOpenGL::translateViewpoint(Vector3d pos, float pitch, float yaw, float roll) {
+void GfxOpenGL::translateViewpoint(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 

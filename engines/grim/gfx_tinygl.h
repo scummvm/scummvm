@@ -42,7 +42,7 @@ public:
 	const char *getVideoDeviceName();
 
 	void setupCamera(float fov, float nclip, float fclip, float roll);
-	void positionCamera(Vector3d pos, Vector3d interest);
+	void positionCamera(Graphics::Vector3d pos, Graphics::Vector3d interest);
 
 	void clearScreen();
 	void flipBuffer();
@@ -51,7 +51,7 @@ public:
 
 	void getBoundingBoxPos(const Model::Mesh *model, int *x1, int *y1, int *x2, int *y2);
 
-	void startActorDraw(Vector3d pos, float yaw, float pitch, float roll);
+	void startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, float roll);
 	void finishActorDraw();
 	void setShadow(Shadow *shadow);
 	void drawShadowPlanes();
@@ -61,7 +61,7 @@ public:
 
 	void set3DMode();
 
-	void translateViewpoint(Vector3d pos, float pitch, float yaw, float roll);
+	void translateViewpoint(Graphics::Vector3d pos, float pitch, float yaw, float roll);
 	void translateViewpoint();
 
 	void drawHierachyNode(const Model::HierNode *node);

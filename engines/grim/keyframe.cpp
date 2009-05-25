@@ -156,11 +156,11 @@ void KeyframeAnim::animate(Model::HierNode *nodes, float time, int priority1, in
 void KeyframeAnim::KeyframeEntry::loadBinary(const char *&data) {
 	_frame = get_float(data);
 	_flags = READ_LE_UINT32(data + 4);
-	_pos = get_vector3d(data + 8);
+	_pos = Graphics::get_vector3d(data + 8);
 	_pitch = get_float(data + 20);
 	_yaw = get_float(data + 24);
 	_roll = get_float(data + 28);
-	_dpos = get_vector3d(data + 32);
+	_dpos = Graphics::get_vector3d(data + 32);
 	_dpitch = get_float(data + 44);
 	_dyaw = get_float(data + 48);
 	_droll = get_float(data + 52);
@@ -192,8 +192,8 @@ void KeyframeAnim::KeyframeNode::loadText(TextSplitter &ts) {
 		ts.scanString(" %f %f %f %f %f %f", 6, &dx, &dy, &dz, &dp, &dyaw, &dr);
 		_entries[which]._frame = frame;
 		_entries[which]._flags = flags;
-		_entries[which]._pos = Vector3d(x, y, z);
-		_entries[which]._dpos = Vector3d(dx, dy, dz);
+		_entries[which]._pos = Graphics::Vector3d(x, y, z);
+		_entries[which]._dpos = Graphics::Vector3d(dx, dy, dz);
 		_entries[which]._pitch = p;
 		_entries[which]._yaw = yaw;
 		_entries[which]._roll = r;
@@ -225,7 +225,7 @@ void KeyframeAnim::KeyframeNode::animate(Model::HierNode &node, float frame, int
 	}
 
 	float dt = frame - _entries[low]._frame;
-	Vector3d pos = _entries[low]._pos + dt * _entries[low]._dpos;
+	Graphics::Vector3d pos = _entries[low]._pos + dt * _entries[low]._dpos;
 	float pitch = _entries[low]._pitch + dt * _entries[low]._dpitch;
 	float yaw = _entries[low]._yaw + dt * _entries[low]._dyaw;
 	float roll = _entries[low]._roll + dt * _entries[low]._droll;

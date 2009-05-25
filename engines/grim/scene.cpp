@@ -222,7 +222,7 @@ void Scene::drawBitmaps(ObjectState::Position stage) {
 	}
 }
 
-Sector *Scene::findPointSector(Vector3d p, int flags) {
+Sector *Scene::findPointSector(Graphics::Vector3d p, int flags) {
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors + i;
 		if ((sector->type() & flags) && sector->visible() && sector->isPointInSector(p))
@@ -231,16 +231,16 @@ Sector *Scene::findPointSector(Vector3d p, int flags) {
 	return NULL;
 }
 
-void Scene::findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt) {
+void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vector3d *closestPt) {
 	Sector *resultSect = NULL;
-	Vector3d resultPt = p;
+	Graphics::Vector3d resultPt = p;
 	float minDist = 0.0;
 
 	for (int i = 0; i < _numSectors; i++) {
 		Sector *sector = _sectors + i;
 		if ((sector->type() & 0x1000) == 0 || !sector->visible())
 			continue;
-		Vector3d closestPt = sector->closestPoint(p);
+		Graphics::Vector3d closestPt = sector->closestPoint(p);
 		float thisDist = (closestPt - p).magnitude();
 		if (!resultSect || thisDist < minDist) {
 			resultSect = sector;
@@ -272,9 +272,9 @@ ObjectState *Scene::findState(const char *filename) {
 	return NULL;
 }
 
-void Scene::setSoundPosition(const char *soundName, Vector3d pos) {
-	Vector3d cameraPos = _currSetup->_pos;
-	Vector3d vector, vector2;
+void Scene::setSoundPosition(const char *soundName, Graphics::Vector3d pos) {
+	Graphics::Vector3d cameraPos = _currSetup->_pos;
+	Graphics::Vector3d vector, vector2;
 	vector.set(fabs(cameraPos.x() - pos.x()), fabs(cameraPos.y() - pos.y()), fabs(cameraPos.z() - pos.z()));
 	float distance = vector.magnitude();
 	float maxDistance = 8.0f;

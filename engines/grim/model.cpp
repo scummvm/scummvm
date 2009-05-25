@@ -74,7 +74,7 @@ void Model::loadBinary(const char *data, const CMap &cmap) {
 	for (int i = 0; i < _numHierNodes; i++)
 		_rootHierNode[i].loadBinary(data, _rootHierNode, _geosets[0]);
 	_radius = get_float(data);
-	_insertOffset = get_vector3d(data + 40);
+	_insertOffset = Graphics::get_vector3d(data + 40);
 }
 
 Model::~Model() {
@@ -160,7 +160,7 @@ int Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
 	int texPtr = READ_LE_UINT32(data + 28);
 	int materialPtr = READ_LE_UINT32(data + 32);
 	_extraLight = get_float(data + 48);
-	_normal = get_vector3d(data + 64);
+	_normal = Graphics::get_vector3d(data + 64);
 	data += 76;
 
 	_vertices = new int[_numVertices];
@@ -206,8 +206,8 @@ void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, 
 	_numChildren = READ_LE_UINT32(data + 88);
 	int childPtr = READ_LE_UINT32(data + 92);
 	int siblingPtr = READ_LE_UINT32(data + 96);
-	_pivot = get_vector3d(data + 100);
-	_pos = get_vector3d(data + 112);
+	_pivot = Graphics::get_vector3d(data + 100);
+	_pos = Graphics::get_vector3d(data + 112);
 	_pitch = get_float(data + 124);
 	_yaw = get_float(data + 128);
 	_roll = get_float(data + 132);
@@ -322,11 +322,11 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 			_rootHierNode[num]._sibling = NULL;
 
 		_rootHierNode[num]._numChildren = numChildren;
-		_rootHierNode[num]._pos = Vector3d(x, y, z);
+		_rootHierNode[num]._pos = Graphics::Vector3d(x, y, z);
 		_rootHierNode[num]._pitch = pitch;
 		_rootHierNode[num]._yaw = yaw;
 		_rootHierNode[num]._roll = roll;
-		_rootHierNode[num]._pivot = Vector3d(pivotx, pivoty, pivotz);
+		_rootHierNode[num]._pivot = Graphics::Vector3d(pivotx, pivoty, pivotz);
 		_rootHierNode[num]._meshVisible = true;
 		_rootHierNode[num]._hierVisible = true;
 		_rootHierNode[num]._totalWeight = 1;
@@ -447,7 +447,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		int num;
 		float x, y, z;
 		ts.scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
-		_faces[num]._normal = Vector3d(x, y, z);
+		_faces[num]._normal = Graphics::Vector3d(x, y, z);
 	}
 }
 
@@ -473,7 +473,7 @@ void Model::HierNode::removeChild(HierNode *child) {
 	}
 }
 
-void Model::HierNode::setMatrix(Matrix4 matrix) {
+void Model::HierNode::setMatrix(Graphics::Matrix4 matrix) {
 	_matrix = matrix;
 }
 

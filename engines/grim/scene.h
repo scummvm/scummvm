@@ -61,7 +61,7 @@ public:
 
 	void setupLights();
 
-	void setSoundPosition(const char *soundName, Vector3d pos);
+	void setSoundPosition(const char *soundName, Graphics::Vector3d pos);
 	void setSoundParameters(int minVolume, int maxVolume);
 	void getSoundParameters(int *minVolume, int *maxVolume);
 
@@ -84,8 +84,8 @@ public:
 		else
 			return NULL;
 	}
-	Sector *findPointSector(Vector3d p, int flags);
-	void findClosestSector(Vector3d p, Sector **sect, Vector3d *closestPt);
+	Sector *findPointSector(Graphics::Vector3d p, int flags);
+	void findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vector3d *closestPt);
 
 	void addObjectState(ObjectState *s) {
 		_states.push_back(s);
@@ -105,7 +105,7 @@ public:
 		void setupCamera() const;
 		Common::String _name;
 		ResPtr<Bitmap> _bkgndBm, _bkgndZBm;
-		Vector3d _pos, _interest;
+		Graphics::Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
 	};
 
@@ -113,7 +113,7 @@ public:
 		void load(TextSplitter &ts);
 		Common::String _name;
 		Common::String _type;
-		Vector3d _pos, _dir;
+		Graphics::Vector3d _pos, _dir;
 		Color _color;
 		float _intensity, _umbraangle, _penumbraangle;
 	};

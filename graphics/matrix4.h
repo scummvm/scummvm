@@ -28,6 +28,8 @@
 
 #include "graphics/matrix3.h"
 
+namespace Graphics {
+
 // matrix 4 is a rotation matrix + position
 class Matrix4 {
 public:
@@ -59,5 +61,6 @@ public:
 private:
 };
 
-#endif // MATRIX_HH
+} // end of namespace Graphics
 
+#endif

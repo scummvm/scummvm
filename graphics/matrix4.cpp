@@ -25,6 +25,8 @@
 
 #include "graphics/matrix4.h"
 
+namespace Graphics {
+
 Matrix4::Matrix4() {
 	_pos.set(0.f, 0.f, 0.f);
 	_rot.setAsIdentity();
@@ -38,3 +40,4 @@ void Matrix4::translate(float x, float y, float z) {
 	_pos += v;
 }
 
+} // end of namespace Graphics

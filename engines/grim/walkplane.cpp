@@ -34,7 +34,7 @@ void Sector::load(TextSplitter &ts) {
 //	float height = 12345.f; // Yaz: this is in the original code...
 	char buf[256];
 	int id = 0, i = 0;
-	Vector3d tempVert;
+	Graphics::Vector3d tempVert;
 
 	// Sector NAMES can be null, but ts isn't flexible enough
 	if (strlen(ts.currentLine()) > strlen(" sector"))
@@ -75,7 +75,7 @@ void Sector::load(TextSplitter &ts) {
 		error("Invalid visibility spec: %s", buf);
 	ts.scanString(" height %f", 1, &_height);
 	ts.scanString(" numvertices %d", 1, &_numVertices);
-	_vertices = new Vector3d[_numVertices + 1];
+	_vertices = new Graphics::Vector3d[_numVertices + 1];
 
 	ts.scanString(" vertices: %f %f %f", 3, &_vertices[0].x(), &_vertices[0].y(), &_vertices[0].z());
 	for (i = 1; i < _numVertices; i++)
@@ -94,7 +94,7 @@ void Sector::setVisible(bool visible) {
 	_visible = visible;
 }
 
-bool Sector::isPointInSector(Vector3d point) const {
+bool Sector::isPointInSector(Graphics::Vector3d point) const {
 	// The algorithm: for each edge A->B, check whether the z-component
 	// of (B-A) x (P-A) is >= 0.  Then the point is at least in the
 	// cylinder above&below the polygon.  (This works because the polygons'
@@ -136,45 +136,45 @@ bool Sector::isPointInSector(Vector3d point) const {
 	}
 
 	for (int i = 0; i < _numVertices; i++) {
-		Vector3d edge = _vertices[i + 1] - _vertices[i];
-		Vector3d delta = point - _vertices[i];
+		Graphics::Vector3d edge = _vertices[i + 1] - _vertices[i];
+		Graphics::Vector3d delta = point - _vertices[i];
 		if (edge.x() * delta.y() < edge.y() * delta.x())
 			return false;
 	}
 	return true;
 }
 
-Vector3d Sector::projectToPlane(Vector3d point) const {
+Graphics::Vector3d Sector::projectToPlane(Graphics::Vector3d point) const {
 	if (_normal.z() == 0)
 		error("Trying to walk along vertical plane");
 
 	// Formula: return p - (n . (p - v_0))/(n . k) k
-	Vector3d result = point;
+	Graphics::Vector3d result = point;
 	result.z() -= dot(_normal, point - _vertices[0]) / _normal.z();
 	return result;
 }
 
-Vector3d Sector::projectToPuckVector(Vector3d v) const {
+Graphics::Vector3d Sector::projectToPuckVector(Graphics::Vector3d v) const {
 	if (_normal.z() == 0)
 		error("Trying to walk along vertical plane");
 
-	Vector3d result = v;
+	Graphics::Vector3d result = v;
 	result.z() -= dot(_normal, v) / _normal.z();
 	return result;
 }
 
 // Find the closest point on the walkplane to the given point
-Vector3d Sector::closestPoint(Vector3d point) const {
+Graphics::Vector3d Sector::closestPoint(Graphics::Vector3d point) const {
 	// First try to project to the plane
-	Vector3d p2 = point;
+	Graphics::Vector3d p2 = point;
 	p2 -= (dot(_normal, p2 - _vertices[0])) * _normal;
 	if (isPointInSector(p2))
 		return p2;
 
 	// Now try to project to some edge
 	for (int i = 0; i < _numVertices; i++) {
-		Vector3d edge = _vertices[i + 1] - _vertices[i];
-		Vector3d delta = point - _vertices[i];
+		Graphics::Vector3d edge = _vertices[i + 1] - _vertices[i];
+		Graphics::Vector3d delta = point - _vertices[i];
 		float scalar = dot(delta, edge) / dot(edge, edge);
 		if (scalar >= 0 && scalar <= 1 && delta.x() * edge.y() > delta.y() * edge.x())
 			// That last test is just whether the z-component
@@ -196,8 +196,7 @@ Vector3d Sector::closestPoint(Vector3d point) const {
 	return _vertices[index];
 }
 
-void Sector::getExitInfo(Vector3d start, Vector3d dir,
-			struct ExitInfo *result) {
+void Sector::getExitInfo(Graphics::Vector3d start, Graphics::Vector3d dir, struct ExitInfo *result) {
 	start = projectToPlane(start);
 	dir = projectToPuckVector(dir);
 
@@ -209,7 +208,7 @@ void Sector::getExitInfo(Vector3d start, Vector3d dir,
 	// positive z-component.
 	int i;
 	for (i = 0; i < _numVertices; i++) {
-		Vector3d delta = _vertices[i] - start;
+		Graphics::Vector3d delta = _vertices[i] - start;
 		if (delta.x() * dir.y() > delta.y() * dir.x())
 			break;
 	}
@@ -218,7 +217,7 @@ void Sector::getExitInfo(Vector3d start, Vector3d dir,
 	// z-component.
 	while (i < _numVertices) {
 		i++;
-		Vector3d delta = _vertices[i] - start;
+		Graphics::Vector3d delta = _vertices[i] - start;
 		if (delta.x() * dir.y() <= delta.y() * dir.x())
 			break;
 	}
@@ -226,7 +225,7 @@ void Sector::getExitInfo(Vector3d start, Vector3d dir,
 	result->edgeDir = _vertices[i] - _vertices[i - 1];
 	result->angleWithEdge = angle(dir, result->edgeDir);
 
-	Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
+	Graphics::Vector3d edgeNormal(result->edgeDir.y(), -result->edgeDir.x(), 0);
 	result->exitPoint = start + (dot(_vertices[i] - start, edgeNormal) / dot(dir, edgeNormal)) * dir;
 }
 

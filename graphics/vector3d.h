@@ -27,6 +27,9 @@
 #define ENGINE_VECTOR3D_H
 
 #include "common/sys.h"
+#include "common/endian.h"
+
+namespace Graphics {
 
 class Vector3d {
 public:
@@ -168,28 +171,10 @@ inline bool operator ==(const Vector3d& v1, const Vector3d& v2) {
 	return v1.x() == v2.x() && v1.y() == v2.y() && v1.z() == v2.z();
 }
 
-#if defined(SYSTEM_BIG_ENDIAN)
-
-inline float get_float(const char *data) {
-	const unsigned char *udata = reinterpret_cast<const unsigned char *>(data);
-	unsigned char fdata[4];
-	fdata[0] = udata[3];
-	fdata[1] = udata[2];
-	fdata[2] = udata[1];
-	fdata[3] = udata[0];
-	return *(reinterpret_cast<const float *>(fdata));
-}
-
-#else
-
-inline float get_float(const char *data) {
-	return *(reinterpret_cast<const float *>(data));
-}
-#endif
-
 inline Vector3d get_vector3d(const char *data) {
 	return Vector3d(get_float(data), get_float(data + 4), get_float(data + 8));
 }
 
+} // end of namespace Graphics
 
 #endif

@@ -120,7 +120,7 @@ public:
 	void update();
 	void reset();
 	void resetColormap();
-	void setMatrix(Matrix4 matrix) { _matrix = matrix; };
+	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
 	~ModelComponent();
 
 	Model::HierNode *hierarchy() { return _hier; }
@@ -130,7 +130,7 @@ protected:
 	Common::String _filename;
 	ResPtr<Model> _obj;
 	Model::HierNode *_hier;
-	Matrix4 _matrix;
+	Graphics::Matrix4 _matrix;
 };
 
 class MainModelComponent : public ModelComponent {
@@ -161,7 +161,7 @@ public:
 	void reset();
 	~MeshComponent() { }
 
-	void setMatrix(Matrix4 matrix) { _matrix = matrix; };
+	void setMatrix(Graphics::Matrix4 matrix) { _matrix = matrix; };
 
 	Model::HierNode *node() { return _node; }
 
@@ -169,7 +169,7 @@ private:
 	Common::String _name;
 	int _num;
 	Model::HierNode *_node;
-	Matrix4 _matrix;
+	Graphics::Matrix4 _matrix;
 };
 
 BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
@@ -606,7 +606,7 @@ void SoundComponent::setKey(int val) {
 		// then it will just use the existing handle
 		g_imuse->startSfx(_soundName.c_str());
 		if (g_grim->currScene() && g_currentUpdatedActor) {
-			Vector3d pos = g_currentUpdatedActor->pos();
+			Graphics::Vector3d pos = g_currentUpdatedActor->pos();
 			g_grim->currScene()->setSoundPosition(_soundName.c_str(), pos);
 		}
 		break;
@@ -1016,7 +1016,7 @@ void Costume::setHead(int joint1, int joint2, int joint3, float maxRoll, float m
 	_head.maxYaw = maxYaw;
 }
 
-void Costume::setPosRotate(Vector3d pos, float pitch, float yaw, float roll) {
+void Costume::setPosRotate(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	_matrix._pos = pos;
 	_matrix._rot.buildFromPitchYawRoll(pitch, yaw, roll);
 }
