@@ -63,7 +63,7 @@ void Sector::load(TextSplitter &ts) {
 		_type = 0x4000;
 	else if (strstr(buf, "chernobyl"))
 		_type = 0x8000;
-	else if (Common::getDebugLevel() == DEBUG_ERROR || Common::getDebugLevel() == DEBUG_ALL)
+	else if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 		error("Unknown sector type '%s' in room setup", buf);
 
 	ts.scanString(" default visibility %256s", 1, buf);
@@ -124,7 +124,7 @@ bool Sector::isPointInSector(Graphics::Vector3d point) const {
 		}
 		if (!heightOK) {
 /* Use this for debugging problems at height interfaces
-			if (Common::getDebugLevel() == DEBUG_NORMAL || Common::getDebugLevel() == DEBUG_ALL) {
+			if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
 				printf("Rejected trigger due to height: %s (%f)\n", _name.c_str(), _height);
 				printf("Actor Z: %f\n", point.z());
 				for (int i = 0; i < _numVertices; i++)

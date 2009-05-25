@@ -34,8 +34,6 @@
 #include <ctype.h>
 #include <math.h>
 
-extern "C" int residual_main(int argc, char *argv[]);
-
 #ifndef _MSC_VER
 #include <dirent.h>
 #include <unistd.h>

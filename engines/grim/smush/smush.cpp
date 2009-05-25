@@ -176,12 +176,12 @@ void Smush::handleFrame() {
 			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;100;0;0;0;0;0;2;0;
 			//  Lola engine room (loops a limited number of times?):
 			//  MakeAnim animation type 'Bl16' parameters: 6000;8000;90;1;0;0;0;0;2;0;
-			if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_NORMAL || Common::getDebugLevel() == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				printf("Announcement data: %s\n", anno);
 			// It looks like the announcement data is actually for setting some of the
 			// header parameters, not for any looping purpose
 		} else {
-			if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_NORMAL || Common::getDebugLevel() == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				printf("Announcement header not understood: %s\n", anno);
 		}
 		delete[] anno;
@@ -204,7 +204,7 @@ void Smush::handleFrame() {
 			else
 				handleWave(frame + pos + 8 + 4, decompressed_size);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
-		} else if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_ERROR || Common::getDebugLevel() == DEBUG_ALL) {
+		} else if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL) {
 			error("Smush::handleFrame() unknown tag");
 		}
 	} while (pos < size);
@@ -243,7 +243,7 @@ void Smush::handleFramesHeader() {
 			_freq = READ_LE_UINT32(f_header + pos + 8);
 			_channels = READ_LE_UINT32(f_header + pos + 12);
 			pos += 20;
-		} else if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_ERROR || Common::getDebugLevel() == DEBUG_ALL){
+		} else if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL){
 			error("Smush::handleFramesHeader() unknown tag");
 		}
 	} while (pos < size);
@@ -283,7 +283,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	_speed = READ_LE_UINT32(s_header + 14);
 	flags = READ_LE_UINT16(s_header + 18);
 	// Output information for checking out the flags
-	if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_NORMAL || Common::getDebugLevel() == DEBUG_ALL) {
+	if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
 		printf("SMUSH Flags:");
 		for (int i = 0; i < 16; i++)
 			printf(" %d", (flags & (1 << i)) != 0);
@@ -313,7 +313,7 @@ void Smush::stop() {
 bool Smush::play(const char *filename, int x, int y) {
 	deinit();
 
-	if (Common::getDebugLevel() == DEBUG_SMUSH)
+	if (gDebugLevel == DEBUG_SMUSH)
 		printf("Playing video '%s'.\n", filename);
 
 	// Load the video
@@ -342,7 +342,7 @@ struct SavePos *zlibFile::getPos() {
 	uint32 position = _handle->pos();
 
 	if (position == ((uint32)  -1)) {
-		if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("zlibFile::open() unable to find start position! %m");
 		return NULL;
 	}
@@ -383,7 +383,7 @@ bool zlibFile::open(const char *filename) {
 	memset(_inBuf, 0, BUFFER_SIZE);
 
 	if (_handle) {
-		if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("zlibFile::open() File %s already opened", filename);
 		return false;
 	}
@@ -393,7 +393,7 @@ bool zlibFile::open(const char *filename) {
 
 	_handle = g_resourceloader->openNewStreamFile(filename);
 	if (!_handle->isOpen()) {
-		if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("zlibFile::open() zlibFile %s not found", filename);
 		return false;
 	}
@@ -407,7 +407,7 @@ bool zlibFile::open(const char *filename) {
 
 	// Xtra & Comment
 	if (flags & 0x04 || flags & 0x10) {
-		if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_ERROR || Common::getDebugLevel() == DEBUG_ALL) {
+		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL) {
 			error("zlibFile::open() Unsupported header flag");
 		}
 		return false;
@@ -427,7 +427,7 @@ bool zlibFile::open(const char *filename) {
 	_stream.zfree = NULL;
 	_stream.opaque = Z_NULL;
 
-	if (inflateInit2(&_stream, -15) != Z_OK && (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_ERROR || Common::getDebugLevel() == DEBUG_ALL))
+	if (inflateInit2(&_stream, -15) != Z_OK && (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL))
 		error("zlibFile::open() inflateInit2 failed");
 
 	_stream.next_in = NULL;
@@ -458,7 +458,7 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 	bool fileEOF = false;
 
 	if (!_handle->isOpen()) {
-		if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_ERROR || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
 			error("zlibFile::read() File is not open!");
 		return 0;
 	}
@@ -484,19 +484,19 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 		if (result == Z_STREAM_END) { // EOF
 			// "Stream end" is zlib's way of saying that it's done after the current call,
 			// so as long as no calls are made after we've received this message we're OK
-			if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_NORMAL || Common::getDebugLevel() == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 				printf("zlibFile::read() Stream ended\n");
 			_fileDone = true;
 			break;
 		}
 		if (result == Z_DATA_ERROR) {
-			if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("zlibFile::read() Decompression error");
 			_fileDone = true;
 			break;
 		}
 		if (result != Z_OK || fileEOF) {
-			if (Common::getDebugLevel() == DEBUG_SMUSH || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("zlibFile::read() Unknown decomp result: %d/%d", result, fileEOF);
 			_fileDone = true;
 			break;

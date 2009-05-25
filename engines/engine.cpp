@@ -36,7 +36,7 @@
 #include "common/timer.h"
 #include "common/savefile.h"
 #include "common/system.h"
-#include "mixer/mixer.h"
+#include "sound/mixer.h"
 #include "engines/metaengine.h"
 
 #ifdef _WIN32_WCE

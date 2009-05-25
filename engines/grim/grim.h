@@ -26,6 +26,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include "engines/engine.h"
+
 #include "engines/grim/textobject.h"
 
 namespace Grim {
@@ -39,9 +41,20 @@ class SaveGame;
 #define ENGINE_MODE_SMUSH	3
 #define ENGINE_MODE_DRAW	4
 
-extern int g_flags;
+enum GrimGameType {
+	GType_GRIM = 1,
+	GType_MONKEY
+};
 
-extern bool SHOWFPS_GLOBAL;
+enum GrimGameFeatures {
+	GF_DEMO =   1 << 0
+};
+
+struct GrimGameDescription;
+
+typedef Common::HashMap<Common::String, const char *> StringPtrHashMap;
+
+extern int g_flags;
 
 #define GF_DEMO		1
 
@@ -50,8 +63,28 @@ struct ControlDescriptor {
 	int key;
 };
 
-class GrimEngine {
+class GrimEngine : public Engine {
+
+protected:
+	// Engine APIs
+	virtual Common::Error run();
+
 public:
+
+	GrimEngine(OSystem *syst, const GrimGameDescription *gameDesc);
+	virtual ~GrimEngine();
+
+	int getGameType() const;
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
+
+	bool loadSaveDirectory(void);
+	void makeSystemMenu(void);
+	int modifyGameSpeed(int speedChange);
+	int getTimerDelay() const;
+
+	const GrimGameDescription *_gameDescription;
 
 	void setMode(int mode) { _mode = mode; }
 	int getMode() { return _mode; }
@@ -184,9 +217,6 @@ public:
 	const char *_savegameFileName;
 	SaveGame *_savedState;
 
-	GrimEngine();
-	~GrimEngine();
-
 private:
 
 	void handleButton(int operation, int key, int keyModifier, uint16 ascii);
@@ -207,6 +237,8 @@ private:
 	unsigned int _frameCounter;
 	unsigned int _timeAccum;
 	unsigned _speedLimitMs;
+	bool _showFps;
+	bool _softRenderer;
 
 	bool *_controlsEnabled;
 	bool *_controlsState;

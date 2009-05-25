@@ -174,7 +174,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 
 	Block *b = getFileBlock(filename);
 	if (!b) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
-		if (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Could not find bitmap %s", filename);
 		return NULL;
 	}
@@ -272,7 +272,7 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 
 	Block *b = getFileBlock(filename);
 	if (!b) {
-		if (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Could not find lipsync file %s", filename);
 		result = NULL;
 	} else {

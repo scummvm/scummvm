@@ -42,7 +42,7 @@ void Imuse::setMusicState(int stateId) {
 	}
 	assert(num != -1);
 
-	if (Common::getDebugLevel() == DEBUG_IMUSE || Common::getDebugLevel() == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
 		printf("Imuse::setMusicState(): SoundId %d, filename: %s\n", _stateMusicTable[l].soundId, _stateMusicTable[l].filename);
 
 	if (_curMusicState == num)
@@ -73,7 +73,7 @@ int Imuse::setMusicSequence(int seqId) {
 
 	assert(num != -1);
 
-	if (Common::getDebugLevel() == DEBUG_IMUSE || Common::getDebugLevel() == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ALL)
 		printf("Imuse::setMusicSequence(): SoundId %d, filename: %s\n", _seqMusicTable[l].soundId, _seqMusicTable[l].filename);
 
 	if (_curMusicSeq == num)

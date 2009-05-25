@@ -143,7 +143,7 @@ void lua_open() {
 	luaT_init();
 	luaB_predefine();
 	luaL_addlibtolist(stdErrorRimFunc, (sizeof(stdErrorRimFunc) / sizeof(stdErrorRimFunc[0])));
-	if (Common::getDebugLevel() == DEBUG_LUA || Common::getDebugLevel() == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_LUA || gDebugLevel == DEBUG_ALL)
 		lua_callhook = callHook;
 }
 

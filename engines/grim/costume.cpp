@@ -189,14 +189,14 @@ void BitmapComponent::setKey(int val) {
 	// bitmaps were not loading with the scene. This was because they were requested
 	// as a different case then they were stored (tu_0_dorcu_door_open versus
 	// TU_0_DORCU_door_open), which was causing problems in the string comparison.
-	if (Common::getDebugLevel() == DEBUG_BITMAPS || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 		warning("Missing scene bitmap: %s", bitmap);
 
 /* In case you feel like drawing the missing bitmap anyway...
 	// Assume that all objects the scene file forgot about are OBJSTATE_STATE class
 	state = new ObjectState(0, ObjectState::OBJSTATE_STATE, bitmap, NULL, true);
 	if (!state) {
-		if (Common::getDebugLevel() == DEBUG_BITMAPS || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Couldn't find bitmap %s in current scene", _filename.c_str());
 		return;
 	}
@@ -238,7 +238,7 @@ void ModelComponent::init() {
 		// Get the default colormap if we haven't found
 		// a valid colormap
 		if (!cmap) {
-			if (Common::getDebugLevel() == DEBUG_MODEL || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
 
 			cmap = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
@@ -260,7 +260,7 @@ void ModelComponent::init() {
 
 		if (mc)
 			mc->node()->addChild(_hier);
-		else if (Common::getDebugLevel() == DEBUG_MODEL || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		else if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of model %s wasn't a mesh", _filename.c_str());
 	}
 }
@@ -439,7 +439,7 @@ void KeyframeComponent::setKey(int val) {
 		_active = false;
 		break;
 	default:
-		if (Common::getDebugLevel() == DEBUG_MODEL || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Unknown key %d for keyframe %s", val, _keyf->filename());
 	}
 }
@@ -474,7 +474,7 @@ void KeyframeComponent::update() {
 				_currTime = animLength;
 				break;
 			default:
-				if (Common::getDebugLevel() == DEBUG_MODEL || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+				if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 					warning("Unknown repeat mode %d for keyframe %s", _repeatMode, _keyf->filename());
 		}
 	}
@@ -486,7 +486,7 @@ void KeyframeComponent::init() {
 	if (mc)
 		_hier = mc->hierarchy();
 	else {
-		if (Common::getDebugLevel() == DEBUG_MODEL || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of %s was not a model", _keyf->filename());
 		_hier = NULL;
 	}
@@ -504,7 +504,7 @@ void MeshComponent::init() {
 	if (mc)
 		_node = mc->hierarchy() + _num;
 	else {
-		if (Common::getDebugLevel() == DEBUG_MODEL || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Parent of mesh %d was not a model", _num);
 		_node = NULL;
 	}
@@ -527,7 +527,7 @@ MaterialComponent::MaterialComponent(Costume::Component *parent, int parentID, c
 		Costume::Component(parent, parentID, tag), _filename(filename),
 		_num(0) {
 
-	if (Common::getDebugLevel() == DEBUG_MODEL || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+	if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 		warning("Constructing MaterialComponent %s", filename);
 }
 
@@ -536,7 +536,7 @@ void MaterialComponent::init() {
 
 	if (!cmap) {
 		// Use the default colormap if we're still drawing a blank
-		if (Common::getDebugLevel() == DEBUG_MODEL || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("MaterialComponent::init on %s", _filename.c_str());
 
 		cmap = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
@@ -617,7 +617,7 @@ void SoundComponent::setKey(int val) {
 		g_imuse->setHookId(_soundName.c_str(), 0x80);
 		break;
 	default:
-		if (Common::getDebugLevel() == DEBUG_MODEL || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Unknown key %d for sound %s", val, _soundName.c_str());
 	}
 }
@@ -702,7 +702,7 @@ Costume::Costume(const char *filename, const char *data, int len, Costume *prevC
 		_chores[id]._length = length;
 		_chores[id]._numTracks = tracks;
 		memcpy(_chores[id]._name, name, 32);
-		if (Common::getDebugLevel() == DEBUG_ALL || Common::getDebugLevel() == DEBUG_CHORES)
+		if (gDebugLevel == DEBUG_ALL || gDebugLevel == DEBUG_CHORES)
 			printf("Loaded chore: %s\n", name);
 	}
 
@@ -929,7 +929,7 @@ Model::HierNode *Costume::getModelNodes() {
 
 void Costume::playChoreLooping(int num) {
 	if (num < 0 || num >= _numChores) {
-		if (Common::getDebugLevel() == DEBUG_CHORES || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Requested chore number %d is outside the range of chores (0-%d)!", num, _numChores);
 		return;
 	}
@@ -938,7 +938,7 @@ void Costume::playChoreLooping(int num) {
 
 void Costume::playChore(int num) {
 	if (num < 0 || num >= _numChores) {
-		if (Common::getDebugLevel() == DEBUG_CHORES || Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Requested chore number %d is outside the range of chores (0-%d)!", num, _numChores);
 		return;
 	}

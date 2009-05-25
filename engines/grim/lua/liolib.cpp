@@ -14,8 +14,9 @@
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lualib.h"
 
+#include "base/commandLine.h"
+
 #include "engines/grim/resource.h"
-#include "engines/grim/cmd_line.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/savegame.h"
 

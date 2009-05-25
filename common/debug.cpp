@@ -50,19 +50,7 @@
 	#define fflush(file)						DS::std_fflush(file)
 #endif
 
-namespace Common {
-
-namespace {
-
-static enDebugLevels gDebugLevel = DEBUG_NONE;
-
-}
-
-enDebugLevels getDebugLevel() {
-	return gDebugLevel;
-}
-
-}	// End of namespace Common
+enDebugLevels gDebugLevel = DEBUG_NONE;
 
 #ifndef DISABLE_TEXT_CONSOLE
 
@@ -104,7 +92,7 @@ void debug(const char *s, ...) {
 void debug(int level, const char *s, ...) {
 	va_list va;
 
-	if (level > Common::getDebugLevel())
+	if (level > gDebugLevel)
 		return;
 
 	va_start(va, s);
@@ -162,7 +150,7 @@ void NORETURN error(const char *s, ...) {
 #ifdef __SYMBIAN32__
 	Symbian::FatalError(buf_output);
 #endif
-	// Finally exit. quit() will terminate the program if g_driver is present
+	// Finally exit.
 	if (g_system)
 		g_system->quit();
 

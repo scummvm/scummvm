@@ -24,6 +24,9 @@
  */
 
 #include "common/events.h"
+#include "common/config-manager.h"
+
+#include "engines/engine.h"
 
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
@@ -31,10 +34,18 @@
 #include "engines/grim/smush/smush.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/registry.h"
+#include "engines/grim/resource.h"
+#include "engines/grim/localize.h"
+#include "engines/grim/gfx_tinygl.h"
+#include "engines/grim/gfx_opengl.h"
+
+#include "engines/grim/lua/lualib.h"
 
 #include "engines/grim/imuse/imuse.h"
 
 namespace Grim {
+
+static bool g_lua_initialized = false;
 
 // Entries in the system.controls table
 
@@ -208,8 +219,7 @@ const ControlDescriptor controls[] = {
 #define CHAR_KEY(k) ((k >= 'a' && k <= 'z') || (k >= 'A' && k <= 'Z') || (k >= '0' && k <= '9') || k == ' ')
 
 GrimEngine *g_grim = NULL;
-
-extern Imuse *g_imuse;
+GfxBase *g_driver = NULL;
 int g_imuseState = -1;
 int g_flags = 0;
 
@@ -218,9 +228,44 @@ extern Common::StringList::const_iterator g_filesiter;
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
 
-GrimEngine::GrimEngine() :
-		_currScene(NULL), _selectedActor(NULL) {
+struct GameSettings {
+	const char *gameid;
+	const char *description;
+	byte id;
+	uint32 features;
+	const char *detectname;
+};
 
+static const GameSettings grimSettings[] = {
+	{"grim", "Grim game", 0, 0, 0},
+
+	{NULL, NULL, 0, 0, NULL}
+};
+
+GrimEngine::GrimEngine(OSystem *syst, const GrimGameDescription *gameDesc) :
+		Engine(syst), _gameDescription(gameDesc), _currScene(NULL), _selectedActor(NULL) {
+	g_grim = this;
+
+	g_registry = new Registry();
+
+	_showFps = (tolower(g_registry->get("show_fps", "FALSE")[0]) == 't');
+	_softRenderer = (tolower(g_registry->get("soft_renderer", "FALSE")[0]) == 't');
+
+	Common::FSNode dir(_gameDataDir);
+	SearchMan.addDirectory(dir.getPath(), dir, 0, 1);
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+
+	g_resourceloader = new ResourceLoader();
+	g_localizer = new Localizer();
+	g_smush = new Smush();
+	g_imuse = new Imuse(20);
+
+	_currScene = NULL;
+	_selectedActor = NULL;
 	_controlsEnabled = new bool[KEYCODE_EXTRA_LAST];
 	_controlsState = new bool[KEYCODE_EXTRA_LAST];
 	for (int i = 0; i < KEYCODE_EXTRA_LAST; i++) {
@@ -281,6 +326,87 @@ GrimEngine::~GrimEngine() {
 
 	killPrimitiveObjects();
 	killTextObjects();
+
+	if (g_lua_initialized) {
+		lua_removelibslists();
+		lua_close();
+		lua_iolibclose();
+		g_lua_initialized = false;
+	}
+	if (g_registry) {
+		g_registry->save();
+		delete g_registry;
+		g_registry = NULL;
+	}
+	delete g_smush;
+	g_smush = NULL;
+	delete g_imuse;
+	g_imuse = NULL;
+	delete g_localizer;
+	g_localizer = NULL;
+	delete g_resourceloader;
+	g_resourceloader = NULL;
+	delete g_driver;
+	g_driver = NULL;
+}
+
+Common::Error GrimEngine::run() {
+	bool fullscreen = (tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
+	bool opengl = false;
+
+	if (!_softRenderer) {
+		if (g_system->hasFeature(OSystem::kFeatureOpenGL))
+			opengl = true;
+		else
+			error("gfx backend doesn't support hardware rendering");
+	}
+
+	if (_softRenderer)
+		g_driver = new GfxTinyGL();
+#ifdef USE_OPENGL
+	else
+		g_driver = new GfxOpenGL();
+#else
+	else
+		error("gfx backend doesn't support hardware rendering");
+#endif
+
+	g_driver->setupScreen(640, 480, fullscreen, opengl);
+
+	Bitmap *splash_bm = NULL;
+	if (!(g_flags & GF_DEMO))
+		splash_bm = g_resourceloader->loadBitmap("splash.bm");
+	if (splash_bm)
+		splash_bm->ref();
+
+	g_driver->clearScreen();
+
+	if (!(g_flags & GF_DEMO))
+		splash_bm->draw();
+
+	g_driver->flipBuffer();
+
+	if (splash_bm)
+		splash_bm->deref();
+
+	lua_iolibopen();
+	lua_strlibopen();
+	lua_mathlibopen();
+
+	register_lua();
+	g_lua_initialized = true;
+
+	bundle_dofile("_system.lua");
+
+	lua_pushnil();		// resumeSave
+	lua_pushnil();		// bootParam - not used in scripts
+//	lua_pushnumber(0);		// bootParam
+	lua_call("BOOT");
+
+	g_grim->setMode(ENGINE_MODE_NORMAL);
+	g_grim->mainLoop();
+
+	return Common::kNoError;
 }
 
 void GrimEngine::handleButton(int operation, int key, int /*keyModifier*/, uint16 ascii) {
@@ -434,7 +560,7 @@ void GrimEngine::updateDisplayScene() {
 				if (frame != _prevSmushFrame) {
 					_prevSmushFrame = g_smush->getFrame();
 					g_driver->drawSmushFrame(g_smush->getX(), g_smush->getY());
-					if (SHOWFPS_GLOBAL)
+					if (_showFps)
 						g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 				} else
 					_doFlip = false;
@@ -533,13 +659,13 @@ void GrimEngine::updateDisplayScene() {
 }
 
 void GrimEngine::doFlip() {
-	if (SHOWFPS_GLOBAL && _doFlip)
+	if (_showFps && _doFlip)
 		g_driver->drawEmergString(550, 25, _fps, Color(255, 255, 255));
 
 	if (_doFlip && _flipEnable)
 		g_driver->flipBuffer();
 
-	if (SHOWFPS_GLOBAL && _doFlip && _mode != ENGINE_MODE_DRAW) {
+	if (_showFps && _doFlip && _mode != ENGINE_MODE_DRAW) {
 		_frameCounter++;
 		_timeAccum += _frameTime;
 		if (_timeAccum > 500) {
@@ -807,7 +933,7 @@ void GrimEngine::setSceneLock(const char *name, bool lockStatus) {
 	Scene *scene = findScene(name);
 
 	if (!scene) {
-		if (Common::getDebugLevel() == DEBUG_WARN || Common::getDebugLevel() == DEBUG_ALL)
+		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("Scene object '%s' not found in list!", name);
 		return;
 	}

@@ -29,6 +29,8 @@
 #include "common/events.h"
 #include "common/util.h"
 
+#include "base/main.h"
+
 #include "backends/platform/sdl/sdl_driver.h"
 
 #ifdef UNIX

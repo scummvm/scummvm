@@ -45,9 +45,9 @@ enum enDebugLevels {
 
 namespace Common {
 	class String;
-
-	enDebugLevels getDebugLevel();
 }
+
+extern enDebugLevels gDebugLevel;
 
 extern const char *debug_levels[];
 extern const char *debug_descriptions[];

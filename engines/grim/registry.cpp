@@ -24,7 +24,8 @@
  */
 
 #include "engines/grim/registry.h"
-#include "engines/grim/cmd_line.h"
+
+#include "base/commandLine.h"
 
 namespace Grim {
 
