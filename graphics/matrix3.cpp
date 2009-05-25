@@ -23,7 +23,7 @@
  *
  */
 
-#include "engines/grim/matrix3.h"
+#include "graphics/matrix3.h"
 
 void Matrix3::setAsIdentity() {
 	_right.set(1.f, 0.f, 0.f);

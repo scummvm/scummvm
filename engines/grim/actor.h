@@ -28,7 +28,7 @@
 
 #include "engines/grim/color.h"
 #include "engines/grim/resource.h"
-#include "engines/grim/vector3d.h"
+#include "graphics/vector3d.h"
 
 namespace Grim {
 

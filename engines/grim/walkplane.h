@@ -28,7 +28,7 @@
 
 #include "common/str.h"
 
-#include "engines/grim/vector3d.h"
+#include "graphics/vector3d.h"
 
 namespace Grim {
 

@@ -27,7 +27,7 @@
 #define MODEL_H
 
 #include "engines/grim/resource.h"
-#include "engines/grim/matrix4.h"
+#include "graphics/matrix4.h"
 
 namespace Grim {
 
