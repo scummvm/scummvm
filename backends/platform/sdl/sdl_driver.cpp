@@ -605,7 +605,9 @@ byte *OSystem_SDL::setupScreen(int screenW, int screenH, bool fullscreen, bool a
 	uint32 sdlflags;
 	int bpp;
 
+#ifdef USE_OPENGL
 	_opengl = accel3d;
+#endif
 	_fullscreen = fullscreen;
 
 #ifdef USE_OPENGL
@@ -658,23 +660,29 @@ byte *OSystem_SDL::setupScreen(int screenW, int screenH, bool fullscreen, bool a
 }
 
 void OSystem_SDL::setFullscreenMode(bool enable) {
+#ifdef USE_OPENGL
 	if (_opengl) {
 		warning("Switching on fly to Fullscreen mode is not allowed");
 		// switching to fullscreen mode it cause lost of texture
 		// and after that recreating
 		// for now it's not allowed
 	} else {
+#endif
 		warning("Switching on fly to Fullscreen mode is not allowed");
 		// We used to use SDL_WM_ToggleFullScreen() to switch to fullscreen
 		// mode, but since that was deemed too buggy for ScummVM it's probably
 		// too buggy for Residual as well.
+#ifdef USE_OPENGL
 	}
+#endif
 }
 
 void OSystem_SDL::updateScreen() {
+#ifdef USE_OPENGL
 	if (_opengl)
 		SDL_GL_SwapBuffers();
 	else
+#endif
 		SDL_Flip(_screen);
 }
 

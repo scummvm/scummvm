@@ -119,8 +119,8 @@ private:
 	byte *_storedDisplay;
 };
 
-#endif
-
 } // end of namespace Grim
+
+#endif
 
 #endif
