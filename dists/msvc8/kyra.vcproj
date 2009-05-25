@@ -511,6 +511,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sound_lol.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sound_midi.cpp"
 			>
 		</File>
