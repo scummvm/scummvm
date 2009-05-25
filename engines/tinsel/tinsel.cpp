@@ -972,12 +972,12 @@ Common::Error TinselEngine::run() {
 
 	// Load game from specified slot, if any
 	//
-	// TODO: We might want to think about taking care of possible errors
-	// when loading the save state.
+	// TODO: We might want to think about properly taking care of possible
+	// errors when loading the save state.
 
 	if (ConfMan.hasKey("save_slot")) {
-		loadGameState(ConfMan.getInt("save_slot"));
-		loadingFromGMM = true;
+		if (loadGameState(ConfMan.getInt("save_slot")) == Common::kNoError)
+			loadingFromGMM = true;
 	}
 
 	// Foreground loop
