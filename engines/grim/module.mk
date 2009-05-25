@@ -16,8 +16,6 @@ MODULE_OBJS := \
 	lua.o \
 	main.o \
 	material.o \
-	matrix3.o \
-	matrix4.o \
 	model.o \
 	objectstate.o \
 	primitives.o \
