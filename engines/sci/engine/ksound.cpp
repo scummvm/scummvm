@@ -999,6 +999,9 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Audio::Mixer *mixer = g_system->getMixer();
 	int sampleLen = 0;
 
+	if (!s->sound.audioResource)
+		s->sound.audioResource = new AudioResource();
+
 	switch (UKPV(0)) {
 	case kSci1AudioWPlay:
 	case kSci1AudioPlay: {
@@ -1039,13 +1042,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, UKPV(1));
 		break;
 	case kSci1AudioLanguage:
-		if (s->sound.audioResource)
-			delete s->sound.audioResource;
-
-		// The audio resource is freed when freeing all resources
-		s->sound.audioResource = new AudioResource();
 		s->sound.audioResource->setAudioLang(SKPV(1));
-
 		break;
 	default:
 		warning("kDoAudio: Unhandled case %d", UKPV(0));
