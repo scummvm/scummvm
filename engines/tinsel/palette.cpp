@@ -101,9 +101,15 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 
 	memset(mapperTable, 0, 16);
 
-	for (int j = 0; j < 16; j++) {
+	for (int j = 1; j < 16; j++) {
 		clutEntry = READ_LE_UINT16(psxClut + (sizeof(uint16) * j));
 		if(clutEntry) {
+			if (clutEntry == 0x7EC0) { // This is an already known value, used by the in-game text
+				mapperTable[j] = 232; 
+				continue;
+			}
+			
+			// Check for correspondent color
 			for (int i = 0; (i < pal->numColours) && !colorFound; i++) {
 				// get R G B values in the same way as psx format converters
 				uint16 psxEquivalent = (uint16)((uint32)(PSXGetRValue(pal->palRGB[i]) >> 3) | 
@@ -115,14 +121,9 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 					colorFound = true;
 				}
 			}
-			// FIXME: This is just to hack around a bug that causes some text to appear
-			// black, i still have to find the correct fix for this.
-			if(clutEntry == 0x7EC0 && !colorFound) mapperTable[j] = 197;
 			colorFound = false;
-		} else if (!clutEntry && j) { // The rest of the colours are zeroes
+		} else { // The rest of the entries are zeroes
 			return;
-		} else { // Skip first entry
-			mapperTable[j] = 0;
 		}
 	}
 }
