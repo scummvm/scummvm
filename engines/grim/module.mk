@@ -3,7 +3,6 @@ MODULE := engines/grim
 MODULE_OBJS := \
 	actor.o \
 	bitmap.o \
-	cmd_line.o \
 	costume.o \
 	font.o \
 	gfx_opengl.o \
@@ -14,7 +13,6 @@ MODULE_OBJS := \
 	lipsync.o \
 	localize.o \
 	lua.o \
-	main.o \
 	material.o \
 	model.o \
 	objectstate.o \
@@ -25,7 +23,6 @@ MODULE_OBJS := \
 	scene.o \
 	textobject.o \
 	textsplit.o \
-	version.o \
 	walkplane.o
 
 # Include common rules
