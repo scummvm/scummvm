@@ -996,11 +996,6 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 // Used for speech playback in CD games
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	printf("kDoAudio called with %d parameters: ", argc);
-	for (int i = 0; i < argc; i++)
-		printf("%d, ", SKPV(i));
-	printf("\n");
-
 	Audio::Mixer *mixer = g_system->getMixer();
 	int sampleLen = 0;
 
