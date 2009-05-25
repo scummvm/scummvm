@@ -443,17 +443,15 @@ void MidiDriver_Adlib::voiceOn(int voice, int note, int velocity) {
 
 	_voices[voice].age = 0;
 
-	if (channel == 9) {
+	if ((channel == 9) && _rhythmKeyMap) {
 		patch = CLIP(note, 27, 88) + 101;
 	} else {
 		patch = _channels[channel].patch;
 	}
 
 	// Set patch if different from current patch
-	if ((patch != _voices[voice].patch) && _playSwitch) {
-		_voices[voice].patch = patch;
+	if ((patch != _voices[voice].patch) && _playSwitch)
 		setPatch(voice, patch);
-	}
 
 	_voices[voice].velocity = velocity;
 	setNote(voice, note, true);
@@ -567,9 +565,10 @@ void MidiDriver_Adlib::setVelocityReg(int regOffset, int velocity, int kbScaleLe
 void MidiDriver_Adlib::setPatch(int voice, int patch) {
 	if ((patch < 0) || ((uint)patch >= _patches.size())) {
 		warning("ADLIB: Invalid patch %i requested", patch);
-		return;
+		patch = 0;
 	}
 
+	_voices[voice].patch = patch;
 	AdlibModulator &mod = _patches[patch].mod;
 
 	// Set the common settings for both operators
