@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	actor.o \
 	bitmap.o \
 	costume.o \
+	detection.o \
 	font.o \
 	gfx_opengl.o \
 	gfx_tinygl.o \
