@@ -985,7 +985,15 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			resId = RESOURCE_HASH(type, number);
 			// adding new resource only if it does not exist
 			if (_resMap.contains(resId) == false) {
-				res = new Resource;
+				switch (type) {
+				case kResourceTypeSync:
+					res = new ResourceSync;
+					break;
+				default:
+					res = new Resource;
+					break;
+				}
+
 				_resMap.setVal(resId, res);
 				res->type = (ResourceType)type;
 				res->number = number;
