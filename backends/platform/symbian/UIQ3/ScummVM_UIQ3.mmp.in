@@ -109,6 +109,7 @@ SOURCEPATH ..\..\..\..\
 SOURCE backends\platform\sdl\events.cpp
 SOURCE backends\platform\sdl\graphics.cpp
 SOURCE backends\platform\sdl\sdl.cpp
+SOURCE backends\platform\sdl\hardwarekeys.cpp
 SOURCE backends\fs\symbian\symbian-fs-factory.cpp
 SOURCE backends\platform\symbian\src\SymbianOS.cpp
 SOURCE backends\platform\symbian\src\SymbianActions.cpp
