@@ -147,7 +147,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_trueLightTable1 = 0;
 	_levelShapeProperties = 0;
 	_levelShapes = 0;
-	_scriptAssignedLevelShape = 0;
+	_specialGuiShape = 0;
+	_specialGuiShapeX = _specialGuiShapeY = _specialGuiShapeShadowFlag = 0;
 	_blockDrawingBuffer = 0;
 	_sceneWindowBuffer = 0;
 	memset(_doorShapes, 0, sizeof(_doorShapes));
@@ -192,8 +193,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_environmentSfx = _environmentSfxVol = _envSfxDistThreshold = 0;
 	_envSfxUseQueue = false;
 	_envSfxNumTracksInQueue = 0;
-	memset (_envSfxQueuedTracks, 0, sizeof(_envSfxQueuedTracks));
-	memset (_envSfxQueuedBlocks, 0, sizeof(_envSfxQueuedBlocks));
+	memset(_envSfxQueuedTracks, 0, sizeof(_envSfxQueuedTracks));
+	memset(_envSfxQueuedBlocks, 0, sizeof(_envSfxQueuedBlocks));
 
 	_sceneDrawVarDown = _sceneDrawVarRight = _sceneDrawVarLeft = _wllProcessFlag = 0;
 	_partyPosX = _partyPosY = 0;
@@ -355,7 +356,6 @@ LoLEngine::~LoLEngine() {
 	delete[] _monsters;
 	delete[] _levelBlockProperties;
 	delete[] _monsterProperties;
-	delete[] _scriptAssignedLevelShape;
 
 	delete[] _levelFileData;
 	delete[] _vcnExpTable;

@@ -738,6 +738,7 @@ private:
 	int olol_getNextActiveCharacter(EMCState *script);
 	int olol_paralyzePoisonCharacter(EMCState *script);
 	int olol_drawCharPortrait(EMCState *script);
+	int olol_assignSpecialGuiShape(EMCState *script);
 	int olol_placeInventoryItemInHand(EMCState *script);
 	int olol_castSpell(EMCState *script);
 	int olol_pitDrop(EMCState *script);
@@ -933,7 +934,7 @@ private:
 	void drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawDecorations(int index);
 	void drawBlockEffects(int index, int type);
-	void drawScriptShapes(int pageNum);
+	void drawSpecialGuiShape(int pageNum);
 	void setWallType(int block, int wall, int val);
 	void updateDrawPage2();
 
@@ -979,7 +980,7 @@ private:
 	void pitDropScroll(int numSteps);
 	void shakeScene(int duration, int width, int height, int restore);
 
-	int smoothScrollDrawSpecialShape(int pageNum);
+	int smoothScrollDrawSpecialGuiShape(int pageNum);
 
 	OpenDoorState _openDoorState[3];
 	int _blockDoor;
@@ -1010,7 +1011,11 @@ private:
 	uint8 *_sceneWindowBuffer;
 	LevelShapeProperty *_levelShapeProperties;
 	uint8 **_levelShapes;
-	uint8 *_scriptAssignedLevelShape;
+
+	uint8 *_specialGuiShape;
+	uint16 _specialGuiShapeX;
+	uint16 _specialGuiShapeY;
+	uint16 _specialGuiShapeShadowFlag;
 
 	char _lastSuppFile[12];
 	char _lastOverridePalFile[12];

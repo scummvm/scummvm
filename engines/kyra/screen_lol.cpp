@@ -319,6 +319,56 @@ void Screen_LoL::restoreSceneWindow(int srcPageNum, int dstPageNum) {
 		addDirtyRect(112, 0, 176, 120);
 }
 
+void Screen_LoL::clearGuiShapeMemory(int pageNum) {
+	uint8 *dst = getPagePtr(pageNum) + 0x79b0;
+	for (int i = 0; i < 23; i++) {
+		memset(dst, 0, 176);
+		dst += 320;
+	}
+}
+
+void Screen_LoL::copyGuiShapeFromSceneBackupBuffer(int srcPageNum,  uint8 *dstBuffer) {
+	uint8 *src = getPagePtr(srcPageNum) + 0x79c3;
+	uint8 *dst = dstBuffer;
+
+	for (int i = 0; i < 23; i++) {
+		uint8 len = 0;
+		uint8 v = 0;
+
+		do {
+			v = *src++;
+			len++;
+		} while (!v);
+
+		*dst++ = len;
+		
+		len = 69 - len;
+		memcpy(dst, src, len);
+		src += (len + 251);
+		dst += len;		
+	}
+}
+
+void Screen_LoL::copyGuiShapeToSurface(uint8 *srcBuffer, int dstPageNum) {
+	uint8 *src = srcBuffer;
+	uint8 *dst = getPagePtr(dstPageNum) + 0xe7c3;
+
+	for (int i = 0; i < 23; i++) {
+		uint8 v = *src++;
+		uint8 len = 69 - v;
+		dst += v;
+		memcpy(dst, src, len);
+		src += (len - 1);
+		dst += len;
+		
+		for (int ii = 0; ii < len; ii++)
+			*dst++ = *src--;
+
+		src += (len + 1);
+		dst += (v + 38);	
+	}
+}
+
 void Screen_LoL::smoothScrollZoomStepTop(int srcPageNum, int dstPageNum, int x, int y) {
 	uint8 *src = getPagePtr(srcPageNum) + 0xa500 + y * 176 + x;
 	uint8 *dst = getPagePtr(dstPageNum) + 0xa500;

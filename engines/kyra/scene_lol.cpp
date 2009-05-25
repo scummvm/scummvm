@@ -850,8 +850,10 @@ bool LoLEngine::clickedShape(int shapeIndex) {
 	while (shapeIndex) {
 		uint16 s = _levelShapeProperties[shapeIndex].shapeIndex[1];
 
-		if (s == 0xffff)
+		if (s == 0xffff) {
+			shapeIndex = _levelShapeProperties[shapeIndex].next;
 			continue;
+		}
 
 		int w = _levelShapes[s][3];
 		int h = _levelShapes[s][2];
@@ -1002,12 +1004,12 @@ void LoLEngine::movePartySmoothScrollUp(int speed) {
 	int d = 0;
 
 	if (_sceneDrawPage2 == 2) {
-		d = smoothScrollDrawSpecialShape(6);
+		d = smoothScrollDrawSpecialGuiShape(6);
 		gui_drawScene(6);
 		_screen->backupSceneWindow(6, 12);
 		_screen->backupSceneWindow(2, 6);
 	} else {
-		d = smoothScrollDrawSpecialShape(2);
+		d = smoothScrollDrawSpecialGuiShape(2);
 		gui_drawScene(2);
 		_screen->backupSceneWindow(2, 12);
 		_screen->backupSceneWindow(6, 6);
@@ -1018,8 +1020,8 @@ void LoLEngine::movePartySmoothScrollUp(int speed) {
 		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
 		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
 
-		//if (d)
-		//	unk(_tempBuffer5120, page2);
+		if (d)
+			_screen->copyGuiShapeToSurface(_tempBuffer5120, 2);
 
 		_screen->restoreSceneWindow(2, 0);
 		_screen->updateScreen();
@@ -1029,8 +1031,8 @@ void LoLEngine::movePartySmoothScrollUp(int speed) {
 			i++;
 	}
 
-	//if (d)
-	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	if (d)
+		_screen->copyGuiShapeToSurface(_tempBuffer5120, 12);
 
 	if (_sceneDefaultUpdate != 2) {
 		_screen->restoreSceneWindow(12, 0);
@@ -1044,7 +1046,7 @@ void LoLEngine::movePartySmoothScrollDown(int speed) {
 	if (!_smoothScrollingEnabled)
 		return;
 
-	//int d = smoothScrollDrawSpecialShape(2);
+	int d = smoothScrollDrawSpecialGuiShape(2);
 	gui_drawScene(2);
 	_screen->backupSceneWindow(2, 6);
 
@@ -1053,8 +1055,8 @@ void LoLEngine::movePartySmoothScrollDown(int speed) {
 		_screen->smoothScrollZoomStepTop(6, 2, _scrollXTop[i], _scrollYTop[i]);
 		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
 
-		//if (d)
-		//	unk(_tempBuffer5120, page2);
+		if (d)
+			_screen->copyGuiShapeToSurface(_tempBuffer5120, 2);
 
 		_screen->restoreSceneWindow(2, 0);
 		_screen->updateScreen();
@@ -1064,8 +1066,8 @@ void LoLEngine::movePartySmoothScrollDown(int speed) {
 			i++;
 	}
 
-	//if (d)
-	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	if (d)
+		_screen->copyGuiShapeToSurface(_tempBuffer5120, 12);
 
 	if (_sceneDefaultUpdate != 2) {
 		_screen->restoreSceneWindow(6, 0);
@@ -1146,14 +1148,14 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 
 	speed <<= 1;
 
-	//int d = smoothScrollDrawSpecialShape(_sceneDrawPage1);
+	int d = smoothScrollDrawSpecialGuiShape(_sceneDrawPage1);
 	gui_drawScene(_sceneDrawPage1);
-	int dp = _sceneDrawPage2 == 2 ? _sceneDrawPage2 : _sceneDrawPage1;
+	int dp = _sceneDrawPage2 == 2 ? _sceneDrawPage2 : _sceneDrawPage1;	
 
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep1(_sceneDrawPage1, _sceneDrawPage2, dp);
-	//if (d)
-	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	if (d)
+		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1161,8 +1163,8 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep2(_sceneDrawPage1, _sceneDrawPage2, dp);
-	//if (d)
-	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	if (d)
+		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1170,15 +1172,15 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep3(_sceneDrawPage1, _sceneDrawPage2, dp);
-	//if (d)
-	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	if (d)
+		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
 	delayUntil(_smoothScrollTimer);
 
 	if (_sceneDefaultUpdate != 2) {
-		drawScriptShapes(_sceneDrawPage1);
+		drawSpecialGuiShape(_sceneDrawPage1);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 	}
@@ -1190,14 +1192,14 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 
 	speed <<= 1;
 
-	//int d = smoothScrollDrawSpecialShape(_sceneDrawPage1);
+	int d = smoothScrollDrawSpecialGuiShape(_sceneDrawPage1);
 	gui_drawScene(_sceneDrawPage1);
 	int dp = _sceneDrawPage2 == 2 ? _sceneDrawPage2 : _sceneDrawPage1;
 
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep3(_sceneDrawPage2, _sceneDrawPage1, dp);
-	//if (d)
-	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	if (d)
+		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1205,8 +1207,8 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep2(_sceneDrawPage2, _sceneDrawPage1, dp);
-	//if (d)
-	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	if (d)
+		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1214,15 +1216,15 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep1(_sceneDrawPage2, _sceneDrawPage1, dp);
-	//if (d)
-	//	unk(_tempBuffer5120, _scrollSceneBuffer);
+	if (d)
+		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
 	delayUntil(_smoothScrollTimer);
 
 	if (_sceneDefaultUpdate != 2) {
-		drawScriptShapes(_sceneDrawPage1);
+		drawSpecialGuiShape(_sceneDrawPage1);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 	}
@@ -1298,11 +1300,14 @@ void LoLEngine::shakeScene(int duration, int width, int height, int restore) {
 	}
 }
 
-int LoLEngine::smoothScrollDrawSpecialShape(int pageNum) {
-	// TODO
-	if(!_scriptAssignedLevelShape)
+int LoLEngine::smoothScrollDrawSpecialGuiShape(int pageNum) {
+	if(!_specialGuiShape)
 		return 0;
-	return 0;
+
+	_screen->clearGuiShapeMemory(pageNum);
+	_screen->drawShape(pageNum, _specialGuiShape, _specialGuiShapeX, _specialGuiShapeY, 2, 0);
+	_screen->copyGuiShapeFromSceneBackupBuffer(pageNum, _tempBuffer5120);
+	return 1;
 }
 
 void LoLEngine::drawScene(int pageNum) {
@@ -1321,7 +1326,7 @@ void LoLEngine::drawScene(int pageNum) {
 	drawSceneShapes();
 
 	if (!pageNum) {
-		drawScriptShapes(_sceneDrawPage1);
+		drawSpecialGuiShape(_sceneDrawPage1);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, _sceneDrawPage2, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, _sceneDrawPage1, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -2036,9 +2041,14 @@ void LoLEngine::drawBlockEffects(int index, int type) {
 	}
 }
 
-void LoLEngine::drawScriptShapes(int pageNum) {
-	if (!_scriptAssignedLevelShape)
+void LoLEngine::drawSpecialGuiShape(int pageNum) {
+	if (!_specialGuiShape)
 		return;
+
+	_screen->drawShape(pageNum, _specialGuiShape, _specialGuiShapeX, _specialGuiShapeY, 2, 0);
+
+	if (_specialGuiShapeShadowFlag & 1)
+		_screen->drawShape(pageNum, _specialGuiShape, _specialGuiShapeX + _specialGuiShape[3], _specialGuiShapeY, 2, 1);
 }
 
 } // end of namespace Kyra

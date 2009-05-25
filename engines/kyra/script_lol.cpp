@@ -1867,6 +1867,21 @@ int LoLEngine::olol_drawCharPortrait(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_assignSpecialGuiShape(%p)  (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	if (stackPos(0)) {	
+		_specialGuiShape = _levelShapes[_levelShapeProperties[_wllShapeMap[stackPos(0)]].shapeIndex[stackPos(1)]];
+		_specialGuiShapeX = stackPos(2);
+		_specialGuiShapeY = stackPos(3);
+		_specialGuiShapeShadowFlag = stackPos(4);
+
+	} else {
+		_specialGuiShape = 0;
+		_specialGuiShapeX = _specialGuiShapeY = _specialGuiShapeShadowFlag = 0;
+	}
+	return 1;
+}
+
 int LoLEngine::olol_placeInventoryItemInHand(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_placeInventoryItemInHand(%p)  (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int itemType = stackPos(0);
@@ -2499,7 +2514,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 
 	// 0xA4
-	OpcodeUnImpl();
+	Opcode(olol_assignSpecialGuiShape);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
