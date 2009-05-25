@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ENGINE_MATRIX4_H
-#define ENGINE_MATRIX4_H
+#ifndef GRAPHICS_MATRIX4_H
+#define GRAPHICS_MATRIX4_H
 
 #include "graphics/matrix3.h"
 

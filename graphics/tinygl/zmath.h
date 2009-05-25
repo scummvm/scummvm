@@ -1,5 +1,5 @@
-#ifndef __ZMATH__
-#define __ZMATH__
+#ifndef GRAPHICS_TINYGL_ZMATH_H
+#define GRAPHICS_TINYGL_ZMATH_H
 
 // Matrix & Vertex
 

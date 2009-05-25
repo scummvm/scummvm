@@ -1,8 +1,8 @@
 
 // The following constants come from Mesa
 
-#ifndef TGL_H
-#define TGL_H
+#ifndef GRAPHICS_TGL_H
+#define GRAPHICS_TGL_H
 
 #define TGL_VERSION_1_1 1
 

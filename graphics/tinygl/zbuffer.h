@@ -1,5 +1,5 @@
-#ifndef _tgl_zbuffer_h_
-#define _tgl_zbuffer_h_
+#ifndef GRAPHICS_TINYGL_ZBUFFER_H_
+#define GRAPHICS_TINYGL_ZBUFFER_H_
 
 // Z buffer
 

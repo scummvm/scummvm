@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ENGINE_VECTOR3D_H
-#define ENGINE_VECTOR3D_H
+#ifndef GRAPHICS_VECTOR3D_H
+#define GRAPHICS_VECTOR3D_H
 
 #include "common/sys.h"
 #include "common/endian.h"

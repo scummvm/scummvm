@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ENGINE_MATRIX3_H
-#define ENGINE_MATRIX3_H
+#ifndef GRAPHICS_MATRIX3_H
+#define GRAPHICS_MATRIX3_H
 
 #include "graphics/vector3d.h"
 

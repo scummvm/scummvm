@@ -1,5 +1,5 @@
-#ifndef _tgl_specbuf_h_
-#define _tgl_specbuf_h_
+#ifndef GRAPHICS_TINYGL_SPECBUF_H
+#define GRAPHICS_TINYGL_SPECBUF_H
 
 // Max # of specular light pow buffers
 #define MAX_SPECULAR_BUFFERS 8
