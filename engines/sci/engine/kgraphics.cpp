@@ -2477,7 +2477,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfx_color_t black;
 	gfx_color_t lWhite;
 	int priority;
-	int argextra = argc == 13 ? 4 : 0; // Triggers in PQ3
+	int argextra = argc == 13 ? 4 : 0; // Triggers in PQ3 and SCI1.1 games
 
 	y = SKPV(0);
 	x = SKPV(1);
@@ -2530,8 +2530,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 							s->titlebar_port->_font, lWhite, black, argv[4 + argextra].segment ?
 							kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL, flags);
 
-	// PQ3 has the interpreter store underBits implicitly.
-	// The feature was promptly removed after its release, never to be seen again.
+	// PQ3 and SCI1.1 games have the interpreter store underBits implicitly
 	if (argextra)
 		gfxw_port_auto_restore_background(s->visual, window, gfx_rect(SKPV(5), SKPV(4), SKPV(7) - SKPV(5), SKPV(6) - SKPV(4)));
 
