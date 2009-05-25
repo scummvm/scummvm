@@ -7,6 +7,8 @@
 #include "graphics/tinygl/zbuffer.h"
 #include "graphics/tinygl/zmath.h"
 
+namespace TinyGL {
+
 enum {
 
 #define ADD_OP(a,b,c) OP_ ## a ,
@@ -94,15 +96,15 @@ typedef union {
 	int i;
 	unsigned int ui;
 	void *p;
-} TGLParam;
+} GLParam;
 
-typedef struct TGLParamBuffer {
-	TGLParam ops[OP_BUFFER_MAX_SIZE];
-	struct TGLParamBuffer *next;
-} TGLParamBuffer;
+typedef struct GLParamBuffer {
+	GLParam ops[OP_BUFFER_MAX_SIZE];
+	struct GLParamBuffer *next;
+} GLParamBuffer;
 
 typedef struct GLList {
-	TGLParamBuffer *first_op_buffer;
+	GLParamBuffer *first_op_buffer;
 	// TODO: extensions for an hash table or a better allocating scheme
 } GLList;
 
@@ -175,7 +177,7 @@ typedef struct GLContext {
 	GLSharedState shared_state;
 
 	// current list
-	TGLParamBuffer *current_op_buffer;
+	GLParamBuffer *current_op_buffer;
 	int current_op_buffer_index;
 	int exec_flag, compile_flag, print_flag;
 
@@ -273,7 +275,7 @@ typedef struct GLContext {
 
 extern GLContext *gl_ctx;
 
-void gl_add_op(TGLParam *p);
+void gl_add_op(GLParam *p);
 
 // clip.c
 void gl_transform_to_viewport(GLContext *c, GLVertex *v);
@@ -310,6 +312,9 @@ GLContext *gl_get_context();
 // specular buffer "api"
 GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float shininess);
 
+void glInit(void *zbuffer);
+void glClose();
+
 #ifdef DEBUG
 #define dprintf fprintf
 #else
@@ -322,7 +327,7 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 
 // glopXXX functions
 
-#define ADD_OP(a,b,c) void glop ## a (GLContext *, TGLParam *);
+#define ADD_OP(a,b,c) void glop ## a (GLContext *, GLParam *);
 #include "opinfo.h"
 
 // this clip epsilon is needed to avoid some rounding errors after
@@ -337,4 +342,6 @@ static inline int gl_clipcode(float x, float y, float z, float w1) {
 	return (x < -w) | ((x > w) << 1) | ((y < -w) << 2) | ((y > w) << 3) | ((z < -w) << 4) | ((z > w) << 5);
 }
 
-#endif // _tgl_zgl_h_
+} // end of namespace TinyGL
+
+#endif

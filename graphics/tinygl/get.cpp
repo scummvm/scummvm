@@ -2,7 +2,7 @@
 #include "graphics/tinygl/zgl.h"
 
 void tglGetIntegerv(int pname,int *params) {
-	GLContext *c=gl_get_context();
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	switch (pname) {
 	case TGL_VIEWPORT:
@@ -35,7 +35,7 @@ void tglGetIntegerv(int pname,int *params) {
 void tglGetFloatv(int pname, float *v) {
 	int i;
 	int mnr = 0; // just a trick to return the correct matrix
-	GLContext *c = gl_get_context();
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	switch (pname) {
 	case TGL_TEXTURE_MATRIX:
 		mnr++; 

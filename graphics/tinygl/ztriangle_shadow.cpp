@@ -1,6 +1,8 @@
 
 #include "graphics/tinygl/zbuffer.h"
 
+namespace TinyGL {
+
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
 void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2) {
@@ -362,3 +364,5 @@ void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, 
 		}
 	}
 }
+
+} // end of namespace TinyGL

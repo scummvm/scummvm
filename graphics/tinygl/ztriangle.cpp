@@ -1,7 +1,7 @@
 
-#include <stdlib.h>
-
 #include "graphics/tinygl/zbuffer.h"
+
+namespace TinyGL {
 
 #define ZCMP(z, zpix) ((z) >= (zpix))
 
@@ -488,3 +488,5 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 		}
 	}
 }
+
+} // end of namespace TinyGL

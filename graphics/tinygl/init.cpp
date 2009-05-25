@@ -1,6 +1,8 @@
 
 #include "graphics/tinygl/zgl.h"
 
+namespace TinyGL {
+
 GLContext *gl_ctx;
 
 void initSharedState(GLContext *c) {
@@ -23,7 +25,7 @@ void endSharedState(GLContext *c) {
 	gl_free(s->texture_hash_table);
 }
 
-void tglInit(void *zbuffer1) {
+void glInit(void *zbuffer1) {
 	ZBuffer *zbuffer = (ZBuffer *)zbuffer1;
 	GLContext *c;
 	GLViewport *v;
@@ -179,8 +181,10 @@ void tglInit(void *zbuffer1) {
 	c->depth_test = 0;
 }
 
-void tglClose() {
+void glClose() {
 	GLContext *c = gl_get_context();
 	endSharedState(c);
 	gl_free(c);
 }
+
+} // end of namespace TinyGL

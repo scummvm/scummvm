@@ -1,11 +1,9 @@
-// Some simple mathematical functions. Don't look for some logic in
-// the function names :-)
 
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include "common/sys.h"
 
 #include "graphics/tinygl/zmath.h"
+
+namespace TinyGL {
 
 void gl_M4_Id(M4 *a) {
 	int i, j;
@@ -270,3 +268,5 @@ V4 gl_V4_New(float x, float y, float z, float w) {
 	a.W = w;
 	return a;
 }
+
+} // end of namespace TinyGL

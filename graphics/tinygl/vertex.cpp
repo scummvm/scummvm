@@ -1,9 +1,9 @@
 
 #include "graphics/tinygl/zgl.h"
 
-#include <string.h>
+namespace TinyGL {
 
-void glopNormal(GLContext *c, TGLParam *p) {
+void glopNormal(GLContext *c, GLParam *p) {
 	V3 v;
 
 	v.X = p[1].f;
@@ -16,18 +16,18 @@ void glopNormal(GLContext *c, TGLParam *p) {
 	c->current_normal.W = 0;
 }
 
-void glopTexCoord(GLContext *c, TGLParam *p) {
+void glopTexCoord(GLContext *c, GLParam *p) {
 	c->current_tex_coord.X = p[1].f;
 	c->current_tex_coord.Y = p[2].f;
 	c->current_tex_coord.Z = p[3].f;
 	c->current_tex_coord.W = p[4].f;
 }
 
-void glopEdgeFlag(GLContext *c, TGLParam *p) {
+void glopEdgeFlag(GLContext *c, GLParam *p) {
 	c->current_edge_flag = p[1].i;
 }
 
-void glopColor(GLContext *c, TGLParam *p){
+void glopColor(GLContext *c, GLParam *p){
 	c->current_color.X = p[1].f;
 	c->current_color.Y = p[2].f;
 	c->current_color.Z = p[3].f;
@@ -37,7 +37,7 @@ void glopColor(GLContext *c, TGLParam *p){
 	c->longcurrent_color[2] = p[7].ui;
 
 	if (c->color_material_enabled) {
-		TGLParam q[7];
+		GLParam q[7];
 		q[0].op = OP_Material;
 		q[1].i = c->current_color_material_mode;
 		q[2].i = c->current_color_material_type;
@@ -64,7 +64,7 @@ void gl_eval_viewport(GLContext *c) {
 	v->scale.Z = (float)(-((zsize - 0.5) / 2.0));
 }
 
-void glopBegin(GLContext *c, TGLParam *p) {
+void glopBegin(GLContext *c, GLParam *p) {
 	int type;
 	M4 tmp;
 
@@ -188,7 +188,7 @@ static inline void gl_vertex_transform(GLContext *c, GLVertex *v) {
 	v->clip_code = gl_clipcode(v->pc.X, v->pc.Y, v->pc.Z, v->pc.W);
 }
 
-void glopVertex(GLContext *c, TGLParam *p) {
+void glopVertex(GLContext *c, GLParam *p) {
 	GLVertex *v;
 	int n, i, cnt;
 
@@ -325,7 +325,7 @@ void glopVertex(GLContext *c, TGLParam *p) {
 	c->vertex_n = n;
 }
 
-void glopEnd(GLContext *c, TGLParam *) {
+void glopEnd(GLContext *c, GLParam *) {
 	assert(c->in_begin == 1);
 
 	if (c->begin_type == TGL_LINE_LOOP) {
@@ -341,3 +341,5 @@ void glopEnd(GLContext *c, TGLParam *) {
 	}
 	c->in_begin = 0;
 }
+
+} // end of namespace TinyGL

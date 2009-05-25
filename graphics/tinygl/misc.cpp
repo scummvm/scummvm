@@ -1,7 +1,9 @@
 
 #include "graphics/tinygl/zgl.h"
 
-void glopViewport(GLContext *c, TGLParam *p) {
+namespace TinyGL {
+
+void glopViewport(GLContext *c, GLParam *p) {
 	int xsize, ysize, xmin, ymin, xsize_req, ysize_req;
 
 	xmin = p[1].i;
@@ -36,7 +38,7 @@ void glopViewport(GLContext *c, TGLParam *p) {
 	}
 }
 
-void glopEnableDisable(GLContext *c, TGLParam *p) {
+void glopEnableDisable(GLContext *c, GLParam *p) {
 	int code = p[1].i;
 	int v = p[2].i;
 
@@ -99,22 +101,22 @@ void glopEnableDisable(GLContext *c, TGLParam *p) {
 	}
 }
 
-void glopShadeModel(GLContext *c, TGLParam *p) {
+void glopShadeModel(GLContext *c, GLParam *p) {
 	int code = p[1].i;
 	c->current_shade_model = code;
 }
 
-void glopCullFace(GLContext *c, TGLParam *p) {
+void glopCullFace(GLContext *c, GLParam *p) {
 	int code = p[1].i;
 	c->current_cull_face = code;
 }
 
-void glopFrontFace(GLContext *c, TGLParam *p) {
+void glopFrontFace(GLContext *c, GLParam *p) {
 	int code = p[1].i;
 	c->current_front_face = code;
 }
 
-void glopPolygonMode(GLContext *c, TGLParam *p) {
+void glopPolygonMode(GLContext *c, GLParam *p) {
 	int face = p[1].i;
 	int mode = p[2].i;
   
@@ -134,11 +136,13 @@ void glopPolygonMode(GLContext *c, TGLParam *p) {
 	}
 }
 
-void glopHint(GLContext *, TGLParam *) {
+void glopHint(GLContext *, GLParam *) {
 	// do nothing
 }
 
-void  glopPolygonOffset(GLContext *c, TGLParam *p) {
+void  glopPolygonOffset(GLContext *c, GLParam *p) {
 	c->offset_factor = p[1].f;
 	c->offset_units = p[2].f;
 }
+
+} // end of namespace TinyGL

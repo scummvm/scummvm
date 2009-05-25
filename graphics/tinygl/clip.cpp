@@ -1,6 +1,8 @@
 
 #include "graphics/tinygl/zgl.h"
 
+namespace TinyGL {
+
 // fill triangle profile
 // #define TINYGL_PROFILE
 
@@ -433,3 +435,5 @@ void gl_draw_triangle_point(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *
 	if (p2->edge_flag)
 		ZB_plot(c->zb, &p2->zp);
 }
+
+} // end of namespace TinyGL

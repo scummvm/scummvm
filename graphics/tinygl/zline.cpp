@@ -1,6 +1,8 @@
 
 #include "graphics/tinygl/zbuffer.h"
 
+namespace TinyGL {
+
 #define ZCMP(z,zpix) ((z) >= (zpix))
 
 void ZB_plot(ZBuffer * zb, ZBufferPoint * p) {
@@ -68,3 +70,5 @@ void ZB_line(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2) {
 		ZB_line_interp(zb, p1, p2);
 	}
 }
+
+} // end of namespace TinyGL

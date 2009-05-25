@@ -1,7 +1,9 @@
 
 #include "graphics/tinygl/zgl.h"
 
-void glopMaterial(GLContext *c, TGLParam *p) {
+namespace TinyGL {
+
+void glopMaterial(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
 	float *v = &p[3].f;
@@ -50,7 +52,7 @@ void glopMaterial(GLContext *c, TGLParam *p) {
 	}
 }
 
-void glopColorMaterial(GLContext *c, TGLParam *p) {
+void glopColorMaterial(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	int type = p[2].i;
 
@@ -58,7 +60,7 @@ void glopColorMaterial(GLContext *c, TGLParam *p) {
 	c->current_color_material_type = type;
 }
 
-void glopLight(GLContext *c, TGLParam *p) {
+void glopLight(GLContext *c, GLParam *p) {
 	int light=p[1].i;
 	int type=p[2].i;
 	V4 v;
@@ -131,7 +133,7 @@ void glopLight(GLContext *c, TGLParam *p) {
 	}
 }
   
-void glopLightModel(GLContext *c, TGLParam *p) {
+void glopLightModel(GLContext *c, GLParam *p) {
 	int pname = p[1].i;
 	float *v = &p[2].f;
 	int i;
@@ -309,3 +311,5 @@ void gl_shade_vertex(GLContext *c, GLVertex *v) {
 	v->color.v[2] = clampf(B, 0, 1);
 	v->color.v[3] = A;
 }
+
+} // end of namespace TinyGL

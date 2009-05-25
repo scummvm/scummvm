@@ -1,6 +1,8 @@
 
 #include "graphics/tinygl/zgl.h"
 
+namespace TinyGL {
+
 // image conversion
 
 void gl_convertRGB_to_5R6G5B8A(unsigned short *pixmap, unsigned char *rgba, int xsize, int ysize) {
@@ -140,3 +142,5 @@ void gl_resizeImageNoInterpolate(unsigned char *dest, int xsize_dest, int ysize_
 		y1 += y1inc;
 	}
 }
+
+} // end of namespace TinyGL

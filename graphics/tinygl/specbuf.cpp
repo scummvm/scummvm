@@ -1,6 +1,8 @@
 
 #include "graphics/tinygl/zgl.h"
 
+namespace TinyGL {
+
 static void calc_buf(GLSpecBuf *buf, const float shininess) {
 	int i;
 	float val, inc;
@@ -44,3 +46,5 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i, const float s
 	calc_buf(oldest, shininess);
 	return oldest;
 }
+
+} // end of namespace TinyGL

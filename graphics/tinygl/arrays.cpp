@@ -6,13 +6,15 @@
 #define NORMAL_ARRAY	0x0004
 #define TEXCOORD_ARRAY	0x0008
 
-void glopArrayElement(GLContext *c, TGLParam *param) {
+namespace TinyGL {
+
+void glopArrayElement(GLContext *c, GLParam *param) {
 	int i;
 	int states = c->client_states;
 	int idx = param[1].i;
 
 	if (states & COLOR_ARRAY) {
-		TGLParam p[5];
+		GLParam p[5];
 		int size = c->color_array_size; 
 		i = idx * (size + c->color_array_stride);
 		p[1].f = c->color_array[i];
@@ -37,7 +39,7 @@ void glopArrayElement(GLContext *c, TGLParam *param) {
 		c->current_tex_coord.W = size > 3 ? c->texcoord_array[i + 3] : 1.0f;
 	}
 	if (states & VERTEX_ARRAY) {
-		TGLParam p[5];
+		GLParam p[5];
 		int size = c->vertex_array_size;
 		i = idx * (size + c->vertex_array_stride);
 		p[1].f = c->vertex_array[i];
@@ -49,18 +51,18 @@ void glopArrayElement(GLContext *c, TGLParam *param) {
 }
 
 void glArrayElement(TGLint i) {
-	TGLParam p[2];
+	GLParam p[2];
 	p[0].op = OP_ArrayElement;
 	p[1].i = i;
 	gl_add_op(p);
 }
 
-void glopEnableClientState(GLContext *c, TGLParam *p) {
+void glopEnableClientState(GLContext *c, GLParam *p) {
 	c->client_states |= p[1].i;
 }
 
 void glEnableClientState(TGLenum array) {
-	TGLParam p[2];
+	GLParam p[2];
 	p[0].op = OP_EnableClientState;
 
 	switch(array) {
@@ -83,12 +85,12 @@ void glEnableClientState(TGLenum array) {
 	gl_add_op(p);
 }
 
-void glopDisableClientState(GLContext *c, TGLParam *p) {
+void glopDisableClientState(GLContext *c, GLParam *p) {
 	c->client_states &= p[1].i;
 }
 
 void glDisableClientState(TGLenum array) {
-	TGLParam p[2];
+	GLParam p[2];
 	p[0].op = OP_DisableClientState;
     
 	switch(array) {
@@ -111,14 +113,14 @@ void glDisableClientState(TGLenum array) {
 	gl_add_op(p);
 }
 
-void glopVertexPointer(GLContext *c, TGLParam *p) {
+void glopVertexPointer(GLContext *c, GLParam *p) {
 	c->vertex_array_size = p[1].i;
 	c->vertex_array_stride = p[2].i;
 	c->vertex_array = (float *)p[3].p;
 }
 
 void  glVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
-	TGLParam p[4];
+	GLParam p[4];
 	assert(type == TGL_FLOAT);
 	p[0].op = OP_VertexPointer;
 	p[1].i = size;
@@ -127,14 +129,14 @@ void  glVertexPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid 
 	gl_add_op(p);
 }
 
-void glopColorPointer(GLContext *c, TGLParam *p) {
+void glopColorPointer(GLContext *c, GLParam *p) {
 	c->color_array_size = p[1].i;
 	c->color_array_stride = p[2].i;
 	c->color_array = (float *)p[3].p;  
 }
 
 void  glColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
-	TGLParam p[4];
+	GLParam p[4];
 	assert(type == TGL_FLOAT);
 	p[0].op = OP_ColorPointer;
 	p[1].i = size;
@@ -143,30 +145,32 @@ void  glColorPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *
 	gl_add_op(p);
 }
 
-void glopNormalPointer(GLContext *c, TGLParam *p) {
+void glopNormalPointer(GLContext *c, GLParam *p) {
 	c->normal_array_stride = p[1].i;
 	c->normal_array = (float *)p[2].p;
 }
 
 void glNormalPointer(TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
-	TGLParam p[3];
+	GLParam p[3];
 	assert(type == TGL_FLOAT);
 	p[0].op = OP_NormalPointer;
 	p[1].i = stride;
 	p[2].p = (void *)pointer;
 }
 
-void glopTexCoordPointer(GLContext *c, TGLParam *p) {
+void glopTexCoordPointer(GLContext *c, GLParam *p) {
 	c->texcoord_array_size = p[1].i;
 	c->texcoord_array_stride = p[2].i;
 	c->texcoord_array = (float *)p[3].p;
 }
 
 void glTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoid *pointer) {
-	TGLParam p[4];
+	GLParam p[4];
 	assert(type == TGL_FLOAT);
 	p[0].op = OP_TexCoordPointer;
 	p[1].i = size;
 	p[2].i = stride;
 	p[3].p = (void *)pointer;
 }
+
+} // end of namespace TinyGL

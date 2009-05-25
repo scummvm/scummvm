@@ -142,7 +142,7 @@ GfxTinyGL::GfxTinyGL() {
 GfxTinyGL::~GfxTinyGL() {
 	delete[] _storedDisplay;
 	if (_zb) {
-		tglClose();
+		TinyGL::glClose();
 		ZB_close(_zb);
 	}
 }
@@ -157,8 +157,8 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen, bool acc
 
 	g_system->setWindowCaption("Residual: Software 3D Renderer");
 
-	_zb = ZB_open(screenW, screenH, ZB_MODE_5R6G5B, buffer);
-	tglInit(_zb);
+	_zb = TinyGL::ZB_open(screenW, screenH, ZB_MODE_5R6G5B, buffer);
+	TinyGL::glInit(_zb);
 
 	_storedDisplay = new byte[640 * 480 * 2];
 	memset(_storedDisplay, 0, 640 * 480 * 2);

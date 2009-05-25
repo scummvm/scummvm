@@ -1,6 +1,8 @@
 #ifndef GRAPHICS_TINYGL_SPECBUF_H
 #define GRAPHICS_TINYGL_SPECBUF_H
 
+namespace TinyGL {
+
 // Max # of specular light pow buffers
 #define MAX_SPECULAR_BUFFERS 8
 // # of entries in specular buffer
@@ -19,4 +21,6 @@ GLSpecBuf *specbuf_get_buffer(GLContext *c, const int shininess_i,
                               const float shininess);
 void specbuf_cleanup(GLContext *c); // free all memory used
 
-#endif // _tgl_specbuf_h_
+} // end of namespace TinyGL
+
+#endif

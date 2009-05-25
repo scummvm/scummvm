@@ -1,6 +1,8 @@
 
 #include "graphics/tinygl/zgl.h"
 
+namespace TinyGL {
+
 void gl_print_matrix(const float *m) {
 	int i;
 
@@ -13,7 +15,7 @@ static inline void gl_matrix_update(GLContext *c) {
 	c->matrix_model_projection_updated = (c->matrix_mode <= 1);
 }
 
-void glopMatrixMode(GLContext *c, TGLParam *p) {
+void glopMatrixMode(GLContext *c, GLParam *p) {
 	int mode = p[1].i;
 	switch (mode) {
 	case TGL_MODELVIEW:
@@ -30,11 +32,11 @@ void glopMatrixMode(GLContext *c, TGLParam *p) {
 	}
 }
 
-void glopLoadMatrix(GLContext *c, TGLParam *p) {
+void glopLoadMatrix(GLContext *c, GLParam *p) {
 	M4 *m;
 	int i;
   
-	TGLParam *q;
+	GLParam *q;
 
 	m = c->matrix_stack_ptr[c->matrix_mode];
 	q = p + 1;
@@ -50,17 +52,17 @@ void glopLoadMatrix(GLContext *c, TGLParam *p) {
 	gl_matrix_update(c);
 }
 
-void glopLoadIdentity(GLContext *c, TGLParam *) {
+void glopLoadIdentity(GLContext *c, GLParam *) {
 	gl_M4_Id(c->matrix_stack_ptr[c->matrix_mode]);
 
 	gl_matrix_update(c);
 }
 
-void glopMultMatrix(GLContext *c, TGLParam *p) {
+void glopMultMatrix(GLContext *c, GLParam *p) {
 	M4 m;
 	int i;
 
-	TGLParam *q;
+	GLParam *q;
 	q = p + 1;
 
 	for (i = 0; i < 4; i++) {
@@ -77,7 +79,7 @@ void glopMultMatrix(GLContext *c, TGLParam *p) {
 }
 
 
-void glopPushMatrix(GLContext *c, TGLParam *) {
+void glopPushMatrix(GLContext *c, GLParam *) {
 	int n = c->matrix_mode;
 	M4 *m;
 
@@ -90,7 +92,7 @@ void glopPushMatrix(GLContext *c, TGLParam *) {
 	gl_matrix_update(c);
 }
 
-void glopPopMatrix(GLContext *c, TGLParam *) {
+void glopPopMatrix(GLContext *c, GLParam *) {
 	int n=c->matrix_mode;
 
 	assert(c->matrix_stack_ptr[n] > c->matrix_stack[n]);
@@ -98,7 +100,7 @@ void glopPopMatrix(GLContext *c, TGLParam *) {
 	gl_matrix_update(c);
 }
 
-void glopRotate(GLContext *c, TGLParam *p) {
+void glopRotate(GLContext *c, GLParam *p) {
 	M4 m;
 	float u[3];
 	float angle;
@@ -167,7 +169,7 @@ void glopRotate(GLContext *c, TGLParam *p) {
 	gl_matrix_update(c);
 }
 
-void glopScale(GLContext *c, TGLParam *p) {
+void glopScale(GLContext *c, GLParam *p) {
 	float *m;
 	float x = p[1].f, y = p[2].f, z = p[3].f;
 
@@ -180,7 +182,7 @@ void glopScale(GLContext *c, TGLParam *p) {
 	gl_matrix_update(c);
 }
 
-void glopTranslate(GLContext *c, TGLParam *p) {
+void glopTranslate(GLContext *c, GLParam *p) {
 	float *m;
 	float x = p[1].f, y = p[2].f, z = p[3].f;
 
@@ -194,7 +196,7 @@ void glopTranslate(GLContext *c, TGLParam *p) {
 	gl_matrix_update(c);
 }
 
-void glopFrustum(GLContext *c, TGLParam *p) {
+void glopFrustum(GLContext *c, GLParam *p) {
 	float *r;
 	M4 m;
 	float left = p[1].f;
@@ -222,3 +224,5 @@ void glopFrustum(GLContext *c, TGLParam *p) {
 
 	gl_matrix_update(c);
 }
+
+} // end of namespace TinyGL

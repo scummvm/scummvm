@@ -1,13 +1,15 @@
 
 #include "graphics/tinygl/zgl.h"
 
+namespace TinyGL {
+
 static const char *op_table_str[] = {
 #define ADD_OP(a, b, c) "gl" #a " " #c,
 
 #include "graphics/tinygl/opinfo.h"
 };
 
-static void (*op_table_func[])(GLContext *, TGLParam *) = {
+static void (*op_table_func[])(GLContext *, GLParam *) = {
 #define ADD_OP(a, b, c) glop ## a ,
 
 #include "graphics/tinygl/opinfo.h"
@@ -28,7 +30,7 @@ static GLList *find_list(GLContext *c, unsigned int list) {
 }
 
 static void delete_list(GLContext *c, int list) {
-	TGLParamBuffer *pb, *pb1;
+	GLParamBuffer *pb, *pb1;
 	GLList *l;
 
 	l = find_list(c, list);
@@ -48,10 +50,10 @@ static void delete_list(GLContext *c, int list) {
 
 static GLList *alloc_list(GLContext *c, int list) {
 	GLList *l;
-	TGLParamBuffer *ob;
+	GLParamBuffer *ob;
 
 	l = (GLList *)gl_zalloc(sizeof(GLList));
-	ob = (TGLParamBuffer *)gl_zalloc(sizeof(TGLParamBuffer));
+	ob = (GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
 
 	ob->next = NULL;
 	l->first_op_buffer = ob;
@@ -62,7 +64,7 @@ static GLList *alloc_list(GLContext *c, int list) {
 	return l;
 }
 
-void gl_print_op(FILE *f, TGLParam *p) {
+void gl_print_op(FILE *f, GLParam *p) {
 	int op;
 	const char *s;
 
@@ -90,9 +92,9 @@ void gl_print_op(FILE *f, TGLParam *p) {
 }
 
 
-void gl_compile_op(GLContext *c, TGLParam *p) {
+void gl_compile_op(GLContext *c, GLParam *p) {
 	int op, op_size;
-	TGLParamBuffer *ob, *ob1;
+	GLParamBuffer *ob, *ob1;
 	int index,i;
 
 	op = p[0].op;
@@ -103,7 +105,7 @@ void gl_compile_op(GLContext *c, TGLParam *p) {
 	// we should be able to add a NextBuffer opcode
 	if ((index + op_size) > (OP_BUFFER_MAX_SIZE - 2)) {
 
-		ob1 = (TGLParamBuffer *)gl_zalloc(sizeof(TGLParamBuffer));
+		ob1 = (GLParamBuffer *)gl_zalloc(sizeof(GLParamBuffer));
 		ob1->next = NULL;
 
 		ob->next = ob1;
@@ -122,7 +124,7 @@ void gl_compile_op(GLContext *c, TGLParam *p) {
 	c->current_op_buffer_index = index;
 }
 
-void gl_add_op(TGLParam *p) {
+void gl_add_op(GLParam *p) {
 	GLContext *c=gl_get_context();
 	int op;
 
@@ -139,16 +141,16 @@ void gl_add_op(TGLParam *p) {
 }
 
 // this opcode is never called directly
-void glopEndList(GLContext *, TGLParam *) {
+void glopEndList(GLContext *, GLParam *) {
 	assert(0);
 }
 
 // this opcode is never called directly
-void glopNextBuffer(GLContext *, TGLParam *) {
+void glopNextBuffer(GLContext *, GLParam *) {
 	assert(0);
 }
 
-void glopCallList(GLContext *c, TGLParam *p) {
+void glopCallList(GLContext *c, GLParam *p) {
 	GLList *l;
 	int list, op;
 
@@ -163,7 +165,7 @@ void glopCallList(GLContext *c, TGLParam *p) {
 		if (op == OP_EndList)
 			break;
 		if (op == OP_NextBuffer) {
-			p =(TGLParam *)p[1].p;
+			p =(GLParam *)p[1].p;
 		} else {
 			op_table_func[op](c,p);
 			p += op_table_size[op];
@@ -192,7 +194,7 @@ void glNewList(unsigned int list, int mode) {
 
 void glEndList() {
 	GLContext *c = gl_get_context();
-	TGLParam p[1];
+	GLParam p[1];
 
 	assert(c->compile_flag == 1);
   
@@ -234,3 +236,5 @@ unsigned int glGenLists(int range) {
 	}
 	return 0;
 }
+
+} // end of namespace TinyGL

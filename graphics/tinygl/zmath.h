@@ -1,6 +1,8 @@
 #ifndef GRAPHICS_TINYGL_ZMATH_H
 #define GRAPHICS_TINYGL_ZMATH_H
 
+namespace TinyGL {
+
 // Matrix & Vertex
 
 typedef struct {
@@ -49,5 +51,7 @@ V3 gl_V3_New(float x, float y, float z);
 V4 gl_V4_New(float x, float y, float z, float w);
 
 int gl_Matrix_Inv(float *r, float *m, int n);
+
+} // end of namespace TinyGL
 
 #endif

@@ -1,12 +1,11 @@
 
 // Z buffer: 16,32 bits Z / 16 bits color
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
+#include "common/sys.h"
 
 #include "graphics/tinygl/zbuffer.h"
+
+namespace TinyGL {
 
 ZBuffer *ZB_open(int xsize, int ysize, int mode, void *frame_buffer) {
 	ZBuffer *zb;
@@ -193,3 +192,5 @@ void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, in
 		}
 	}
 }
+
+} // end of namespace TinyGL

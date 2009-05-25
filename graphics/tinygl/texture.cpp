@@ -3,6 +3,8 @@
 
 #include "graphics/tinygl/zgl.h"
 
+namespace TinyGL {
+
 static GLTexture *find_texture(GLContext *c, int h) {
 	GLTexture *t;
 
@@ -63,42 +65,7 @@ void glInitTextures(GLContext *c) {
 	c->current_texture = find_texture(c, 0);
 }
 
-void tglGenTextures(int n, unsigned int *textures) {
-	GLContext *c = gl_get_context();
-	int max, i;
-	GLTexture *t;
-
-	max = 0;
-	for (i = 0; i < TEXTURE_HASH_TABLE_SIZE; i++) {
-		t = c->shared_state.texture_hash_table[i];
-		while (t) {
-			if (t->handle > max)
-				max = t->handle;
-			t = t->next;
-		}
-	}
-	for (i = 0; i < n; i++) {
-		textures[i] = max + i + 1;
-	}
-}
-
-void tglDeleteTextures(int n, const unsigned int *textures) {
-	GLContext *c = gl_get_context();
-	int i;
-	GLTexture *t;
-
-	for (i = 0; i < n; i++) {
-		t = find_texture(c, textures[i]);
-		if (t) {
-			if (t == c->current_texture) {
-				tglBindTexture(TGL_TEXTURE_2D, 0);
-			}
-			free_texture(c, textures[i]);
-		}
-	}
-}
-
-void glopBindTexture(GLContext *c, TGLParam *p) {
+void glopBindTexture(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int texture = p[2].i;
 	GLTexture *t;
@@ -112,7 +79,7 @@ void glopBindTexture(GLContext *c, TGLParam *p) {
 	c->current_texture = t;
 }
 
-void glopTexImage2D(GLContext *c, TGLParam *p) {
+void glopTexImage2D(GLContext *c, GLParam *p) {
 	int target = p[1].i;
 	int level = p[2].i;
 	int components = p[3].i;
@@ -158,7 +125,7 @@ void glopTexImage2D(GLContext *c, TGLParam *p) {
 }
 
 // TODO: not all tests are done
-void glopTexEnv(GLContext *, TGLParam *p) {
+void glopTexEnv(GLContext *, GLParam *p) {
 	int target = p[1].i;
 	int pname = p[2].i;
 	int param = p[3].i;
@@ -176,7 +143,7 @@ error:
 }
 
 // TODO: not all tests are done
-void glopTexParameter(GLContext *, TGLParam *p) {
+void glopTexParameter(GLContext *, GLParam *p) {
 	int target = p[1].i;
 	int pname = p[2].i;
 	int param = p[3].i;
@@ -197,11 +164,48 @@ error:
 	}
 }
 
-void glopPixelStore(GLContext *, TGLParam *p) {
+void glopPixelStore(GLContext *, GLParam *p) {
 	int pname = p[1].i;
 	int param = p[2].i;
 
 	if (pname != TGL_UNPACK_ALIGNMENT || param != 1) {
 		error("glPixelStore: unsupported option");
+	}
+}
+
+} // end of namespace TinyGL
+
+void tglGenTextures(int n, unsigned int *textures) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	int max, i;
+	TinyGL::GLTexture *t;
+
+	max = 0;
+	for (i = 0; i < TEXTURE_HASH_TABLE_SIZE; i++) {
+		t = c->shared_state.texture_hash_table[i];
+		while (t) {
+			if (t->handle > max)
+				max = t->handle;
+			t = t->next;
+		}
+	}
+	for (i = 0; i < n; i++) {
+		textures[i] = max + i + 1;
+	}
+}
+
+void tglDeleteTextures(int n, const unsigned int *textures) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	int i;
+	TinyGL::GLTexture *t;
+
+	for (i = 0; i < n; i++) {
+		t = TinyGL::find_texture(c, textures[i]);
+		if (t) {
+			if (t == c->current_texture) {
+				tglBindTexture(TGL_TEXTURE_2D, 0);
+			}
+			TinyGL::free_texture(c, textures[i]);
+		}
 	}
 }

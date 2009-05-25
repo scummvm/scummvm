@@ -1,6 +1,8 @@
 #ifndef GRAPHICS_TINYGL_ZBUFFER_H_
 #define GRAPHICS_TINYGL_ZBUFFER_H_
 
+namespace TinyGL {
+
 // Z buffer
 
 #define ZB_Z_BITS 16
@@ -93,4 +95,6 @@ void gl_free(void *p);
 void *gl_malloc(int size);
 void *gl_zalloc(int size);
 
-#endif // _tgl_zbuffer_h_ 
+} // end of namespace TinyGL
+
+#endif
