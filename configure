@@ -987,11 +987,11 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	linux* | uclinux* | openbsd* | netbsd* | bsd* | sunos* | hpux*)
-		DEFINES="$DEFINES -DUNIX"
+		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
 		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
 		;;
 	freebsd*)
-		DEFINES="$DEFINES -DUNIX"
+		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
 		LDFLAGS="$LDFLAGS -L/usr/local/lib"
 		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
 		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
