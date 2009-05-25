@@ -99,6 +99,8 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 	bool colorFound = false;
 	uint16 clutEntry = 0;
 
+	memset(mapperTable, 0, 16);
+
 	for (int j = 0; j < 16; j++) {
 		clutEntry = READ_LE_UINT16(psxClut + (sizeof(uint16) * j));
 		if(clutEntry) {
@@ -117,7 +119,9 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 			// black, i still have to find the correct fix for this.
 			if(clutEntry == 0x7EC0 && !colorFound) mapperTable[j] = 197;
 			colorFound = false;
-		} else {
+		} else if (!clutEntry && j) { // The rest of the colours are zeroes
+			return;
+		} else { // Skip first entry
 			mapperTable[j] = 0;
 		}
 	}

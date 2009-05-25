@@ -769,7 +769,6 @@ void DrawObject(DRAWOBJECT *pObj) {
 						}
 						break;
 					case 0x44: // PSX 4-bit CLUT
-						memset(psxMapperTable, 0, 16);
 						psxPaletteMapper(pObj->pPal, srcPtr + sizeof(uint16), psxMapperTable);
 
 						psxFourBitClut = true;
