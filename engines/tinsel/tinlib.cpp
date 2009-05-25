@@ -1599,7 +1599,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, int 
  */
 static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 	// FIXME: This is a workaround for the FIXME below
-	if (GetMidiVolume() == 0)
+	if (GetMidiVolume() == 0 || TinselV1PSX)
 		return;
 
 	CORO_BEGIN_CONTEXT;
@@ -3834,11 +3834,6 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 	bool bQuick = hold != 0;
 	PMOVER pMover = GetMover(actor);
 	
-	// FIXME: This is part of the workaround for PSX_THIEF_BUG,
-	// See the other code and description in PlayFilm() (play.cpp)
-	if (TinselV1PSX && actor == 77 && hFilm == 0)
-		return;
-
 	assert(pMover); // Can't walk a non-moving actor
 
 	CORO_BEGIN_CODE(_ctx);
