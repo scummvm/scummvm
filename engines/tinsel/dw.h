@@ -46,6 +46,7 @@ typedef int HPOLYGON;
 #define	SAMPLE_INDEX		"english.idx"	// sample index filename
 #define	MIDI_FILE		"midi.dat"	// all MIDI sequences
 #define	INDEX_FILENAME		"index"		// name of index file
+#define PSX_INDEX_FILENAME	"index.dat" // name of index file in psx version
 
 #define	NO_SCNHANDLES		300		// number of memory handles for scenes
 #define	MASTER_SCNHANDLE	0		// master scene memory handle

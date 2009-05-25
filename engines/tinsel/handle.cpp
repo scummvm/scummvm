@@ -112,14 +112,14 @@ void SetupHandleTable(void) {
 	MEMHANDLE *pH;
 	Common::File f;
 
-	if (f.open(INDEX_FILENAME)) {
+	if (f.open(TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME)) {
 		// get size of index file
 		len = f.size();
 
 		if (len > 0) {
 			if ((len % RECORD_SIZE) != 0) {
 				// index file is corrupt
-				error(FILE_IS_CORRUPT, INDEX_FILENAME);
+				error(FILE_IS_CORRUPT, TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME);
 			}
 
 			// calc number of handles
@@ -145,16 +145,16 @@ void SetupHandleTable(void) {
 
 			if (f.ioFailed()) {
 				// index file is corrupt
-				error(FILE_IS_CORRUPT, INDEX_FILENAME);
+				error(FILE_IS_CORRUPT, (TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME));
 			}
 
 			// close the file
 			f.close();
 		} else {	// index file is corrupt
-			error(FILE_IS_CORRUPT, INDEX_FILENAME);
+			error(FILE_IS_CORRUPT, (TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME));
 		}
 	} else {	// cannot find the index file
-		error(CANNOT_FIND_FILE, INDEX_FILENAME);
+		error(CANNOT_FIND_FILE, (TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME));
 	}
 
 	// allocate memory nodes and load all permanent graphics

@@ -31,6 +31,7 @@
 namespace Tinsel {
 
 #define	INDEX_FILENAME		"index"		// name of scene index file
+#define PSX_INDEX_FILENAME	"index.dat" // name of scene index in psx version
 #define	INDEXFILE_LENGTH	12			// length of filenames in the MEMHANDLE structure
 
 #define	GLOBALS_FILENAME	"gdata"		// name of globals file
