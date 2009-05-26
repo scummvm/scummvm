@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCENE_H
-#define SCENE_H
+#ifndef GRIM_SCENE_H
+#define GRIM_SCENE_H
 
 #include "engines/grim/color.h"
 #include "engines/grim/walkplane.h"

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SMUSH_PLAYER_H
-#define SMUSH_PLAYER_H
+#ifndef GRIM_SMUSH_PLAYER_H
+#define GRIM_SMUSH_PLAYER_H
 
 #ifdef __SYMBIAN32__
 #include <zlib\zlib.h>

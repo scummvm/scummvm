@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef llex_h
-#define llex_h
+#ifndef GRIM_LLEX_H
+#define GRIM_LLEX_H
 
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lzio.h"

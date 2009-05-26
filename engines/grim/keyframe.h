@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef KEYFRAME_H
-#define KEYFRAME_H
+#ifndef GRIM_KEYFRAME_H
+#define GRIM_KEYFRAME_H
 
 #include "engines/grim/model.h"
 

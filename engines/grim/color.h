@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef GRIM_COLOR_H
+#define GRIM_COLOR_H
 
 #include "common/sys.h"
 

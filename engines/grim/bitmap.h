@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef BITMAP_H
-#define BITMAP_H
+#ifndef GRIM_BITMAP_H
+#define GRIM_BITMAP_H
 
 #include "engines/grim/resource.h"
 

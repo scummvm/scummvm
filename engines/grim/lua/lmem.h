@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lmem_h
-#define lmem_h
+#ifndef GRIM_LMEM_H
+#define GRIM_LEME_H
 
 #include "common/sys.h"
 

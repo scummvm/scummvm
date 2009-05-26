@@ -5,8 +5,8 @@
 */
 
 
-#ifndef lzio_h
-#define lzio_h
+#ifndef GRIM_LZIO_H
+#define GRIM_LZIO_H
 
 #include <common/sys.h>
 

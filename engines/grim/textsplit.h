@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef TEXTSPLIT_HH
-#define TEXTSPLIT_HH
+#ifndef GRIM_TEXTSPLIT_HH
+#define GRIM_TEXTSPLIT_HH
 
 namespace Grim {
 

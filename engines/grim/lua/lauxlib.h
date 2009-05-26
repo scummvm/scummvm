@@ -5,8 +5,8 @@
 */
 
 
-#ifndef auxlib_h
-#define auxlib_h
+#ifndef GRIM_AUXLIB_H
+#define GRIM_AUXLIB_H
 
 
 #include "engines/grim/lua/lua.h"

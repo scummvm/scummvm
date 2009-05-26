@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef MCMP_MGR_H
-#define MCMP_MGR_H
+#ifndef GRIM_MCMP_MGR_H
+#define GRIM_MCMP_MGR_H
 
 namespace Grim {
 

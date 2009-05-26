@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef LAB_H
-#define LAB_H
+#ifndef GRIM_LAB_H
+#define GRIM_LAB_H
 
 #include "common/str.h"
 

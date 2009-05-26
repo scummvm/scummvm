@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef OSTATE_H
-#define OSTATE_H
+#ifndef GRIM_OSTATE_H
+#define GRIM_OSTATE_H
 
 #include "engines/grim/bitmap.h"
 

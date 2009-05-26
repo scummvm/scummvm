@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lapi_h
-#define lapi_h
+#ifndef GRIM_LAPI_H
+#define GRIM_LAPI_H
 
 
 #include "engines/grim/lua/lua.h"

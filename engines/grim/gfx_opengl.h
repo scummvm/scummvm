@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GFX_OPENGL_H
-#define GFX_OPENGL_H
+#ifndef GRIM_GFX_OPENGL_H
+#define GRIM_GFX_OPENGL_H
 
 #include "engines/grim/gfx_base.h"
 

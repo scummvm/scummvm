@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef LUA_HH
-#define LUA_HH
+#ifndef GRIM_LUA_HH
+#define GRIM_LUA_HH
 
 #include "engines/grim/lua/lua.h"
 

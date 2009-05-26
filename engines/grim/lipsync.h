@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef LIPSYNC_H
-#define LIPSYNC_H
+#ifndef GRIM_LIPSYNC_H
+#define GRIM_LIPSYNC_H
 
 #include "engines/grim/resource.h"
 

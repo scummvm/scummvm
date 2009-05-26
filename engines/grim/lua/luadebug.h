@@ -5,8 +5,8 @@
 */
 
 
-#ifndef luadebug_h
-#define luadebug_h
+#ifndef GRIM_LUADEBUG_H
+#define GRIM_LUADEBUG_H
 
 
 #include "engines/grim/lua/lua.h"

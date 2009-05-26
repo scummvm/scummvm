@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef LOCALIZE_H
-#define LOCALIZE_H
+#ifndef GRIM_LOCALIZE_H
+#define GRIM_LOCALIZE_H
 
 #include "common/array.h"
 

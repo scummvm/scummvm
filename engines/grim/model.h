@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef GRIM_MODEL_H
+#define GRIM_MODEL_H
 
 #include "engines/grim/resource.h"
 #include "graphics/matrix4.h"

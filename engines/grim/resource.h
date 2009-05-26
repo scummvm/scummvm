@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef RESOURCE_H
-#define RESOURCE_H
+#ifndef GRIM_RESOURCE_H
+#define GRIM_RESOURCE_H
 
 #include "common/archive.h"
 

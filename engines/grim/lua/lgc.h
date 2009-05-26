@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lgc_h
-#define lgc_h
+#ifndef GRIM_LGC_H
+#define GRIM_LGC_H
 
 
 #include "lobject.h"

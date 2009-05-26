@@ -5,8 +5,8 @@
 */
 
 
-#ifndef lualib_h
-#define lualib_h
+#ifndef GRIM_LUALIB_H
+#define GRIM_LUALIB_H
 
 #include "engines/grim/lua/lua.h"
 

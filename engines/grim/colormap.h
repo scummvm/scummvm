@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef COLORMAP_H
-#define COLORMAP_H
+#ifndef GRIM_COLORMAP_H
+#define GRIM_COLORMAP_H
 
 #include "common/endian.h"
 

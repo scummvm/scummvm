@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef REGISTRY_HH
-#define REGISTRY_HH
+#ifndef GRIM_REGISTRY_H
+#define GRIM_REGISTRY_H
 
 #include "common/str.h"
 

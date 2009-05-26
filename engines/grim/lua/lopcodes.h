@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lopcodes_h
-#define lopcodes_h
+#ifndef GRIM_LOPCODES_H
+#define GRIM_LOPCODES_H
 
 namespace Grim {
 

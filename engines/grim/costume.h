@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef COSTUME_H
-#define COSTUME_H
+#ifndef GRIM_COSTUME_H
+#define GRIM_COSTUME_H
 
 #include "engines/grim/model.h"
 

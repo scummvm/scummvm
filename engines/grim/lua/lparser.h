@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lparser_h
-#define lparser_h
+#ifndef GRIM_LPARSER_H
+#define GRIM_LPARSER_H
 
 #include "lobject.h"
 #include "lzio.h"

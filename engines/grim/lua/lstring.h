@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lstring_h
-#define lstring_h
+#ifndef LSTRING_H
+#define LSTRING_H
 
 
 #include "engines/grim/lua/lobject.h"

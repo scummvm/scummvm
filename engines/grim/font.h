@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef FONT_H
-#define FONT_H
+#ifndef GRIM_FONT_H
+#define GRIM_FONT_H
 
 #include "engines/grim/resource.h"
 

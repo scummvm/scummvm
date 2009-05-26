@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef IMUSE_SNDMGR_H
-#define IMUSE_SNDMGR_H
+#ifndef GRIM_IMUSE_SNDMGR_H
+#define GRIM_IMUSE_SNDMGR_H
 
 #include "sound/mixer.h"
 #include "sound/audiostream.h"

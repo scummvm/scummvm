@@ -1,5 +1,5 @@
-#ifndef ltask_h
-#define ltask_h
+#ifndef GRIM_LTASK_H
+#define GRIM_LTASK_H
 
 #include "engines/grim/lua/lua.h"
 #include "engines/grim/lua/lstate.h"

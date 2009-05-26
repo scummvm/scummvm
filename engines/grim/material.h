@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef MATERIAL_H
-#define MATERIAL_H
+#ifndef GRIM_MATERIAL_H
+#define GRIM_MATERIAL_H
 
 #include "engines/grim/resource.h"
 

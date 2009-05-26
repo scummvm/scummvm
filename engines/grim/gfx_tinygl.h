@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GFX_TINYGL_H
-#define GFX_TINYGL_H
+#ifndef GRIM_GFX_TINYGL_H
+#define GRIM_GFX_TINYGL_H
 
 #include "engines/grim/gfx_base.h"
 

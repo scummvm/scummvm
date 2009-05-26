@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef ltm_h
-#define ltm_h
+#ifndef GRIM_LTM_H
+#define GRIM_LTM_H
 
 
 #include "engines/grim/lua/lobject.h"

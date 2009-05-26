@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef WALKPLANE_H
-#define WALKPLANE_H
+#ifndef GRIM_WALKPLANE_H
+#define GRIM_WALKPLANE_H
 
 #include "common/str.h"
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef PRIMITIVESOBJECT_H
-#define PRIMITIVESOBJECT_H
+#ifndef GRIM_PRIMITIVESOBJECT_H
+#define GRIM_PRIMITIVESOBJECT_H
 
 #include "common/rect.h"
 

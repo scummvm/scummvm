@@ -1,3 +1,7 @@
+
+#ifndef LSTXING_H
+#define LSTX_H
+
 namespace Grim {
 
 typedef union {
@@ -41,3 +45,5 @@ typedef union {
 extern YYSTYPE luaY_lval;
 
 } // end of namespace Grim
+
+#endif

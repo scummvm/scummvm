@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef BLOCKY16_H
-#define BLOCKY16_H
+#ifndef GRIM_BLOCKY16_H
+#define GRIM_BLOCKY16_H
 
 #include "common/sys.h"
 

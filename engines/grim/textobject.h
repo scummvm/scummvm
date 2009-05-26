@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef TEXTOBJECT_H
-#define TEXTOBJECT_H
+#ifndef GRIM_TEXTOBJECT_H
+#define GRIM_TEXTOBJECT_H
 
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_base.h"

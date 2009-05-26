@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SAVEGAME_H
-#define SAVEGAME_H
+#ifndef GRIM_SAVEGAME_H
+#define GRIM_SAVEGAME_H
 
 #include "common/savefile.h"
 

@@ -10,8 +10,8 @@
 #include "common/sys.h"
 #include "common/str.h"
 
-#ifndef lua_h
-#define lua_h
+#ifndef GRIM_LUA_H
+#define GRIM_LUA_H
 
 namespace Common {
 	class String;

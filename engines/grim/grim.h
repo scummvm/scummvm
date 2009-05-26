@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef GRIM_ENGINE_H
+#define GRIM_ENGINE_H
 
 #include "engines/engine.h"
 

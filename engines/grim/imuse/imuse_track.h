@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef IMUSE_TRACK_H
-#define IMUSE_TRACK_H
+#ifndef GRIM_IMUSE_TRACK_H
+#define GRIM_IMUSE_TRACK_H
 
 #include "engines/grim/imuse/imuse_sndmgr.h"
 

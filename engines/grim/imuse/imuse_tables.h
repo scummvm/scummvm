@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef IMUSE_TABLES_H
-#define IMUSE_TABLES_H
+#ifndef GRIM_IMUSE_TABLES_H
+#define GRIM_IMUSE_TABLES_H
 
 namespace Grim {
 

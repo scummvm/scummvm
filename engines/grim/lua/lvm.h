@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lvm_h
-#define lvm_h
+#ifndef GRIM_LVM_H
+#define GRIM_LVM_H
 
 
 #include "engines/grim/lua/ldo.h"

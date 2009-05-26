@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ACTOR_H
-#define ACTOR_H
+#ifndef GRIM_ACTOR_H
+#define GRIM_ACTOR_H
 
 #include "engines/grim/color.h"
 #include "engines/grim/resource.h"

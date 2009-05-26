@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lbuiltin_h
-#define lbuiltin_h
+#ifndef GRIM_LBUILTIN_H
+#define GRIM_LBUILTIN_H
 
 namespace Grim {
 

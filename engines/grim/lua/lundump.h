@@ -4,8 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
-#ifndef lundump_h
-#define lundump_h
+#ifndef GRIM_LUNDUMP_H
+#define GRIM_LUNDUMP_H
 
 #include "engines/grim/lua/lobject.h"
 #include "engines/grim/lua/lzio.h"
