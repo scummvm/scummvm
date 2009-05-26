@@ -43,7 +43,7 @@
 				AdditionalOptions="/wd 4996"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;USE_ZLIB;USE_OPENGL;SDL_BACKEND"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;USE_ZLIB;USE_OPENGL;SDL_BACKEND;ENABLE_GRIM"
 				RuntimeLibrary="1"
 				EnableEnhancedInstructionSet="2"
 				FloatingPointModel="2"

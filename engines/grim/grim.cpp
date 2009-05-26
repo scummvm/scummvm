@@ -247,22 +247,18 @@ GrimEngine::GrimEngine(OSystem *syst, const GrimGameDescription *gameDesc) :
 	g_grim = this;
 
 	g_registry = new Registry();
+	g_resourceloader = NULL;
+	g_localizer = NULL;
+	g_smush = NULL;
+	g_imuse = NULL;
 
 	_showFps = (tolower(g_registry->get("show_fps", "FALSE")[0]) == 't');
 	_softRenderer = (tolower(g_registry->get("soft_renderer", "FALSE")[0]) == 't');
-
-	Common::FSNode dir(_gameDataDir);
-	SearchMan.addDirectory(dir.getPath(), dir, 0, 1);
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
-	g_resourceloader = new ResourceLoader();
-	g_localizer = new Localizer();
-	g_smush = new Smush();
-	g_imuse = new Imuse(20);
 
 	_currScene = NULL;
 	_selectedActor = NULL;
@@ -351,6 +347,11 @@ GrimEngine::~GrimEngine() {
 }
 
 Common::Error GrimEngine::run() {
+	g_resourceloader = new ResourceLoader();
+	g_localizer = new Localizer();
+	g_smush = new Smush();
+	g_imuse = new Imuse(20);
+
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
 	bool opengl = false;
 
