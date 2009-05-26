@@ -642,6 +642,8 @@ void vocabulary_get_knames(ResourceManager *resmgr, Common::StringList &names) {
 		break;
 	case SCI_VERSION_1_1:
 		vocabulary_get_knames1(resmgr, names);
+		// KQ6CD calls unimplemented function 0x26
+                names[0x26] = "Dummy";
 		break;
 #ifdef ENABLE_SCI32
 	case SCI_VERSION_32:

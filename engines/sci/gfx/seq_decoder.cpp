@@ -34,7 +34,7 @@ SeqDecoder::~SeqDecoder() {
 	closeFile();
 }
 
-bool SeqDecoder::loadFile(const char *fileName) {
+bool SeqDecoder::loadFile(Common::String fileName) {
 	closeFile();
 
 	_fileStream = SearchMan.createReadStreamForMember(fileName);

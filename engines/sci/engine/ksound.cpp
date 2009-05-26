@@ -797,7 +797,8 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_GET_AUDIO_CAPABILITY : {
-		return make_reg(0, 1);//NULL_REG;
+		// Tests for digital audio support
+		return make_reg(0, 1);
 	}
 	case _K_SCI1_SOUND_PLAY_HANDLE : {
 		int looping = GET_SEL32V(obj, loop);
@@ -1051,7 +1052,12 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, UKPV(1));
 		break;
 	case kSci1AudioLanguage:
-		s->sound.audioResource->setAudioLang(SKPV(1));
+		if (argc == 1) {
+			// In SCI1.1: tests for digital audio support
+			return make_reg(0, 1);
+		} else {
+			s->sound.audioResource->setAudioLang(SKPV(1));
+		}
 		break;
 	default:
 		warning("kDoAudio: Unhandled case %d", UKPV(0));

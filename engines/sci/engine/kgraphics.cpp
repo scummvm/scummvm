@@ -3330,7 +3330,7 @@ reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int frameNr = 0;
 	SeqDecoder seq;
 
-	if (!seq.loadFile(filename)) {
+	if (!seq.loadFile(filename) && !seq.loadFile(Common::String("SEQ/") + filename)) {
 		warning("Failed to open movie file %s", filename);
 		return s->r_acc;
 	}

@@ -32,7 +32,7 @@ class SeqDecoder {
 public:
 	SeqDecoder() : _fileStream(0), _palette(0) { }
 	~SeqDecoder();
-	bool loadFile(const char *fileName);
+	bool loadFile(Common::String fileName);
 	void closeFile();
 	gfx_pixmap_t *getFrame(bool &hasNext);
 
