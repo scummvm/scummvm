@@ -663,8 +663,6 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 #define DUMMY_MESSAGE "Message not found!"
 
-static MessageState state;	// FIXME: Avoid static vars
-
 enum kMessageFunc {
 	K_MESSAGE_GET,
 	K_MESSAGE_NEXT,
@@ -710,8 +708,8 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		reg_t retval;
 
 		if (func == K_MESSAGE_GET) {
-			state.loadRes(s->resmgr, UKPV(1), true);
-			state.findTuple(tuple);
+			s->_msgState.loadRes(s->resmgr, UKPV(1), true);
+			s->_msgState.findTuple(tuple);
 
 			if (isGetMessage)
 				bufferReg = (argc == 4 ? argv[3] : NULL_REG);
@@ -721,12 +719,12 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			bufferReg = (argc == 2 ? argv[1] : NULL_REG);
 		}
 
-		if (state.getMessage()) {
-			str = state.getText();
+		if (s->_msgState.getMessage()) {
+			str = s->_msgState.getText();
 			if (isGetMessage)
 				retval = bufferReg;
 			else
-				retval = make_reg(0, state.getTalker());
+				retval = make_reg(0, s->_msgState.getTalker());
 		} else {
 			str = DUMMY_MESSAGE;
 			retval = NULL_REG;
@@ -747,7 +745,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					*buffer = 0;
 			}
 
-			state.gotoNext();
+			s->_msgState.gotoNext();
 		}
 
 		return retval;
@@ -780,8 +778,8 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 	case K_MESSAGE_LASTMESSAGE: {
-		MessageTuple msg = state.getLastTuple();
-		int module = state.getLastModule();
+		MessageTuple msg = s->_msgState.getLastTuple();
+		int module = s->_msgState.getLastModule();
 		byte *buffer = kernel_dereference_bulk_pointer(s, argv[1], 10);
 
 		if (buffer) {

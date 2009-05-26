@@ -39,6 +39,7 @@ namespace Common {
 #include "sci/vocabulary.h"
 #include "sci/resource.h"
 #include "sci/engine/kernel.h"	// for kfunct_sig_pair_t
+#include "sci/engine/message.h"		// for MessageState
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_system.h"
@@ -262,6 +263,8 @@ public:
 	Common::Array<opcode> _opcodes;
 
 	selector_map_t selector_map; /**< Shortcut list for important selectors */
+
+	MessageState _msgState;
 
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 };
