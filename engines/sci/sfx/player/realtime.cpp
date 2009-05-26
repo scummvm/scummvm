@@ -28,7 +28,7 @@
 ** enough, I guess.  */
 
 #include "sci/tools.h"
-#include "sci/sfx/player.h"
+#include "sci/sfx/player/realtime.h"
 #include "sci/sfx/sequencer.h"
 #include "sci/sfx/iterator.h"
 #include "sci/sfx/core.h"
@@ -38,8 +38,6 @@
 namespace Sci {
 
 static sfx_sequencer_t *seq;
-
-extern sfx_player_t sfx_player_realtime;
 
 /* Playing mechanism */
 

@@ -27,7 +27,7 @@
 
 #include "common/util.h"
 #include "common/file.h"
-#include "sci/sfx/player.h"
+#include "sci/sfx/player/polled.h"
 #include "sci/sfx/softseq.h"
 #include "sci/sfx/iterator.h"
 
@@ -252,8 +252,6 @@ static int ppf_poll(int frame_size, byte *dest, int size) {
 
 	return size; /* Apparently, we wrote all that was requested */
 }
-
-extern sfx_player_t sfx_player_polled;
 
 /*=======================*/
 /* Player implementation */

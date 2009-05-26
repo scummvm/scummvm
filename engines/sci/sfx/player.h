@@ -28,10 +28,10 @@
 #ifndef SCI_SFX_SFX_PLAYER_H
 #define SCI_SFX_SFX_PLAYER_H
 
+#include "common/scummsys.h"
+
 #include "sci/resource.h"
 #include "sci/sfx/iterator.h"
-
-#include "common/scummsys.h"
 
 namespace Sci {
 

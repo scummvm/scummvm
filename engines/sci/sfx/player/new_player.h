@@ -23,34 +23,15 @@
  *
  */
 
+#ifndef SCI_SFX_SFX_PLAYER_NEW_H
+#define SCI_SFX_SFX_PLAYER_NEW_H
+
 #include "sci/sfx/player.h"
 
 namespace Sci {
 
-extern sfx_player_t sfx_player_realtime;
-extern sfx_player_t sfx_player_polled;
-extern sfx_player_t sfx_player_player;
-
-sfx_player_t *sfx_players[] = {
-	&sfx_player_player,
-	&sfx_player_polled,
-	&sfx_player_realtime,
-	NULL
-};
-
-sfx_player_t *sfx_find_player(char *name) {
-	if (!name) {
-		/* Implement platform policy here */
-
-		return sfx_players[0];
-	} else {
-		int n = 0;
-		while (sfx_players[n] &&
-		        scumm_stricmp(sfx_players[n]->name, name))
-			++n;
-
-		return sfx_players[n];
-	}
-}
+extern sfx_player_t sfx_new_player;
 
 } // End of namespace Sci
+
+#endif

@@ -24,7 +24,7 @@
  */
 
 #include "sci/tools.h"
-#include "sci/sfx/player.h"
+#include "sci/sfx/player/new_player.h"
 #include "sci/sfx/sequencer.h"
 #include "sci/sfx/iterator.h"
 #include "sci/sfx/core.h"
@@ -36,7 +36,6 @@
 
 namespace Sci {
 
-extern sfx_player_t sfx_player_player;
 static MidiPlayer *mididrv;
 
 static SongIterator *play_it = NULL;
@@ -135,7 +134,7 @@ static Common::Error player_init(ResourceManager *resmgr, int expected_latency) 
 
 	assert(mididrv);
 
-	sfx_player_player.polyphony = mididrv->getPolyphony();
+	sfx_new_player.polyphony = mididrv->getPolyphony();
 
 	tempo = mididrv->getBaseTempo();
     uint32 time = g_system->getMillis();
@@ -230,7 +229,7 @@ static Common::Error player_exit(void) {
 	return Common::kNoError;
 }
 
-sfx_player_t sfx_player_player = {
+sfx_player_t sfx_new_player = {
 	"new",
 	"0.1",
 	&player_set_option,
