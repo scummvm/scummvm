@@ -240,9 +240,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION('c', "config")
 			END_OPTION
 
-			DO_OPTION_INT('b', "boot-param")
-			END_OPTION
-
 			DO_OPTION_OPT('d', "debuglevel", "0")
 			END_OPTION
 
@@ -281,18 +278,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("engine-speed")
-			END_OPTION
-
-			DO_LONG_OPTION("manny-state")
-			END_OPTION
-
-			DO_LONG_OPTION("movement")
-			END_OPTION
-
-			DO_LONG_OPTION("transcript")
-			END_OPTION
-
-			DO_LONG_OPTION("game-devel-mode")
 			END_OPTION
 
 			DO_LONG_OPTION("gamma")
