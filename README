@@ -1,12 +1,11 @@
-Residual: A LucasArts 3D game interpreter
+Residual: A 3D game interpreter
 
 Last updated:    $Date$
 ------------------------------------------------------------------------------
 
 What is Residual?
 -----------------
-Residual allow to play LucasArts' LUA-based 3D adventures, such as
-Grim Fandango.
+Residual allow to play 3D games such as Grim Fandango.
 
 Residual utilizes OpenGL for 3d graphics hardware acceleration.
 A software renderer is also included for machines without hardware OpenGL.
