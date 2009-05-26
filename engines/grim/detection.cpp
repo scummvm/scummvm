@@ -56,14 +56,35 @@ static const PlainGameDescriptor grimGames[] = {
 namespace Grim {
 
 static const GrimGameDescription gameDescriptions[] = {
-
 	{
-		// Grim English version
+		// Grim Fandago English version
 		{
 			"grim",
 			0,
 			AD_ENTRY1s("grim.tab", "cfb333d6aec260c905151b6b98ef71e8", 362212),
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+	},
+	{
+		// Grim Fandago German version
+		{
+			"grim",
+			0,
+			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 362212), // by garrythefish
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+	},
+	{
+		// Grim Fandago Spanish version
+		{
+			"grim",
+			0,
+			AD_ENTRY1s("grim.tab", "b1460cd029f13718f7f62c2403e047ec", 362212), // by jvprat
+			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
 		},
