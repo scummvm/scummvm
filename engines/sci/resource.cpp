@@ -1328,7 +1328,7 @@ Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int *sampl
 	bool found = false;
 	byte *data = 0;
 	char filename[40];
-	byte flags;
+	byte flags = 0;
 
 	// Try to load from an external patch file first
 	Sci::Resource* audioRes = _resMgr->findResource(kResourceTypeAudio, audioNumber, 1);
