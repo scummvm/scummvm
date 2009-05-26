@@ -296,7 +296,8 @@ reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!src) {
 		warning("Attempt to strcpy FROM invalid pointer %04x:%04x",
 		          PRINT_REG(argv[1]));
-		return NULL_REG;
+		*dest = 0;
+		return argv[1];
 	}
 
 	if (argc > 2) {
@@ -631,6 +632,11 @@ reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *str = kernel_dereference_char_pointer(s, argv[0], 0);
+
+	if (!str) {
+		warning("StrLen: invalid pointer %04x:%04x", PRINT_REG(argv[0]));
+		return NULL_REG;
+	}
 
 	return make_reg(0, strlen(str));
 }

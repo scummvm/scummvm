@@ -141,8 +141,8 @@ SciKernelFunction kfunct_mappers[] = {
 	/*47*/	DEFUN("StrEnd", kStrEnd, "r"),
 	/*48*/	DEFUN("StrCat", kStrCat, "rr"),
 	/*49*/	DEFUN("StrCmp", kStrCmp, "rri*"),
-	/*4a*/	DEFUN("StrLen", kStrLen, "r"),
-	/*4b*/	DEFUN("StrCpy", kStrCpy, "rri*"),
+	/*4a*/	DEFUN("StrLen", kStrLen, "Zr"),
+	/*4b*/	DEFUN("StrCpy", kStrCpy, "rZri*"),
 	/*4c*/	DEFUN("Format", kFormat, "r.*"),
 	/*4d*/	DEFUN("GetFarText", kGetFarText, "iir"),
 	/*4e*/	DEFUN("ReadNumber", kReadNumber, "r"),
@@ -922,6 +922,9 @@ int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *a
 static void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entries, int align) {
 	int maxsize;
 	void *retval = s->seg_manager->dereference(pointer, &maxsize);
+
+	if (!retval)
+		return NULL;
 
 	if (pointer.offset & (align - 1)) {
 		warning("Unaligned pointer read: %04x:%04x expected with %d alignment", PRINT_REG(pointer), align);
