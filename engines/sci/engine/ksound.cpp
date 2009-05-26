@@ -1008,8 +1008,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case kSci1AudioPlay: {
 		s->sound.audioResource->stop();
 
-		Audio::AudioStream *audioStream = 
-			audioStream = s->sound.audioResource->getAudioStream(UKPV(1), &sampleLen);
+		Audio::AudioStream *audioStream = s->sound.audioResource->getAudioStream(UKPV(1), &sampleLen);
 
 		if (audioStream)
 			mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->sound.audioResource->getAudioHandle(), audioStream);
