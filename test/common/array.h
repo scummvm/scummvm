@@ -124,6 +124,29 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array2.size(), (unsigned int)3);
 	}
 
+	struct SafeInt {
+		int val;
+		SafeInt() : val(0) {}
+		SafeInt(int v) : val(v) {}
+		~SafeInt() { val = -1; }
+		bool operator==(int v) {
+			return val == v;
+		}
+	};
+
+	void test_push_back_ex() {
+		// This test makes sure that inserting an element invalidates
+		// references/iterators/pointers to elements in the array itself
+		// only *after* their value has been copied.
+		Common::Array<SafeInt> array;
+
+		array.push_back(42);
+		for (int i = 0; i < 40; ++i) {
+			array.push_back(array[0]);
+			TS_ASSERT_EQUALS(array[i], 42);
+		}
+	}
+
 	void test_copy_constructor() {
 		Common::Array<int> array1;
 
