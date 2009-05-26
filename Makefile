@@ -9,7 +9,7 @@ srcdir      ?= .
 
 DEFINES     := -DHAVE_CONFIG_H
 LDFLAGS     :=
-INCLUDES    := -I. -I$(srcdir) -I$(srcdir)/engines
+INCLUDES    := -I. -I$(srcdir)
 LIBS        :=
 OBJS        :=
 DEPDIR      := .deps
