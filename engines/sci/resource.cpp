@@ -1358,6 +1358,7 @@ Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int *sampl
 	if (_sciVersion < SCI_VERSION_1_1) {
 		found = findAudEntrySCI1(audioNumber, volume, offset, size);
 		sprintf(filename, "AUDIO%03d.%03d", _lang, volume);
+		flags |= Audio::Mixer::FLAG_UNSIGNED;
 	} else {
 		found = findAudEntrySCI11(audioNumber, offset);
 		strcpy(filename, "RESOURCE.AUD");
