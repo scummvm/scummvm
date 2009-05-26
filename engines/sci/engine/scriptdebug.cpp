@@ -1221,7 +1221,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	reg_t retval = make_reg(pos.segment, pos.offset + 1);
 	uint16 param_value;
 	int opsize;
-	int opcode;
+	uint opcode;
 	int bytecount = 1;
 	int i = 0;
 
@@ -1298,7 +1298,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	if (print_bw_tag)
 		sciprintf("[%c] ", opsize ? 'B' : 'W');
-	sciprintf("%s", s->_opcodes[opcode].name.c_str());
+	sciprintf("%s", opcode < s->_opcodes.size() ? s->_opcodes[opcode].name.c_str() : "undefined");
 
 	i = 0;
 	while (g_opcode_formats[opcode][i]) {

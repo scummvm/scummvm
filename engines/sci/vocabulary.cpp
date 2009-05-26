@@ -122,7 +122,7 @@ bool vocab_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringLis
 	return true;
 }
 
-void vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &o) {
+bool vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &o) {
 	int count, i = 0;
 	Resource* r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES, 0);
 
@@ -131,27 +131,23 @@ void vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &o) {
 	// if the resource couldn't be loaded, leave
 	if (r == NULL) {
 		warning("unable to load vocab.%03d", VOCAB_RESOURCE_OPCODES);
-		return;
+		return false;
 	}
 
 	count = READ_LE_UINT16(r->data);
 
-	o.resize(256);
+	o.resize(count);
 	for (i = 0; i < count; i++) {
 		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
 		int len = READ_LE_UINT16(r->data + offset) - 2;
 		o[i].type = READ_LE_UINT16(r->data + offset + 2);
-		o[i].number = i;
 		o[i].name = Common::String((char *)r->data + offset + 4, len);
 #if 1 //def VOCABULARY_DEBUG
 		printf("Opcode %02X: %s, %d\n", i, o[i].name.c_str(), o[i].type);
 #endif
 	}
-	for (i = count; i < 256; i++) {
-		o[i].type = 0;
-		o[i].number = i;
-		o[i].name = "undefined";
-	}
+
+	return true;
 }
 
 bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {

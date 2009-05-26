@@ -79,6 +79,8 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
 	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
+//	DCmd_Register("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
+	DCmd_Register("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
 	DCmd_Register("kernelnames",		WRAP_METHOD(Console, cmdKernelNames));
 	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
@@ -116,6 +118,27 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdOpcodes(int argc, const char **argv) {
+	Common::Array<opcode> opcodes;
+
+	if (!vocab_get_opcodes(_vm->getResMgr(), opcodes)) {
+		DebugPrintf("No opcode name table found!\n");
+		return true;
+	}
+
+	DebugPrintf("Opcode names in numeric order [index: type name]:\n");
+	for (uint seeker = 0; seeker < opcodes.size(); seeker++) {
+		opcode &op = opcodes[seeker];
+		DebugPrintf("%03x: %03x %20s | ", seeker, op.type, op.name.c_str());
+		if ((seeker % 3) == 2)
+			DebugPrintf("\n");
+	}
+
+	DebugPrintf("\n");
+
+	return true;
+}
+
 bool Console::cmdSelectors(int argc, const char **argv) {
 	Common::StringList selectorNames;
 
@@ -127,7 +150,7 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 	DebugPrintf("Selector names in numeric order:\n");
 	for (uint seeker = 0; seeker < selectorNames.size(); seeker++) {
 		DebugPrintf("%03x: %20s | ", seeker, selectorNames[seeker].c_str());
-		if (seeker % 3 == 0)
+		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
 
@@ -149,7 +172,7 @@ bool Console::cmdKernelNames(int argc, const char **argv) {
 	DebugPrintf("Selector names in numeric order:\n");
 	for (uint seeker = 0; seeker < kernelNames.size(); seeker++) {
 		DebugPrintf("%03x: %20s | ", seeker, kernelNames[seeker].c_str());
-		if (seeker % 3 == 0)
+		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
 

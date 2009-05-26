@@ -44,6 +44,8 @@ public:
 
 private:
 	bool cmdGetVersion(int argc, const char **argv);
+//	bool cmdClasses(int argc, const char **argv);	// TODO
+	bool cmdOpcodes(int argc, const char **argv);
 	bool cmdSelectors(int argc, const char **argv);
 	bool cmdKernelNames(int argc, const char **argv);
 	bool cmdSuffixes(int argc, const char **argv);

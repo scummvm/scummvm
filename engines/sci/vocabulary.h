@@ -48,7 +48,6 @@ class ResourceManager;
 
 struct opcode {
 	int type;
-	int number;
 	Common::String name;
 };
 
@@ -186,14 +185,15 @@ struct parse_tree_node_t {
 
 /**
  * Fills the given StringList with selector names.
- * Returns true upon success, false oterwise.
+ * Returns true upon success, false otherwise.
  */
 bool vocab_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringList &selectorNames);
 
 /**
  * Obtain the list of opcodes.
+ * Returns true upon success, false otherwise.
  */
-void vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &opcodes);
+bool vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &opcodes);
 
 /**
  * Fills a StringList with kernel function names.
