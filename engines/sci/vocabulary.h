@@ -39,11 +39,11 @@ class ResourceManager;
 
 /*#define VOCABULARY_DEBUG */
 
+/** The string used to identify the "unknown" SCI0 function for each game */
 #define SCRIPT_UNKNOWN_FUNCTION_STRING "[Unknown]"
-/* The string used to identify the "unknown" SCI0 function for each game */
 
+/** Number of bytes allocated on the heap to store bad words if parsing fails */
 #define PARSE_HEAP_SIZE 64
-/* Number of bytes allocated on the heap to store bad words if parsing fails */
 
 
 struct opcode {
@@ -52,17 +52,22 @@ struct opcode {
 	Common::String name;
 };
 
-#define VOCAB_RESOURCE_OPCODES 998
-#define VOCAB_RESOURCE_KNAMES 999
+enum {
+	VOCAB_RESOURCE_CLASSES = 996,
+	VOCAB_RESOURCE_SNAMES = 997,
+	VOCAB_RESOURCE_OPCODES = 998,
+	VOCAB_RESOURCE_KNAMES = 999,
 
-#define VOCAB_RESOURCE_SCI0_MAIN_VOCAB 0
-#define VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES 900
-#define VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB 901
+	VOCAB_RESOURCE_SCI0_MAIN_VOCAB = 0,
+	VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES = 900,
+	VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB = 901,
 
-#define VOCAB_RESOURCE_SCI1_MAIN_VOCAB 900
-#define VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES 901
-#define VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB 902
-#define VOCAB_RESOURCE_SCI1_CHAR_TRANSFORMS 913
+	VOCAB_RESOURCE_SCI1_MAIN_VOCAB = 900,
+	VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES = 901,
+	VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB = 902,
+	VOCAB_RESOURCE_SCI1_CHAR_TRANSFORMS = 913
+};
+
 
 enum {
 	VOCAB_CLASS_PREPOSITION = 0x01,
@@ -75,8 +80,6 @@ enum {
 	VOCAB_CLASS_IMPERATIVE_VERB = 0x80,
 	VOCAB_CLASS_NUMBER = 0x001
 };
-
-extern const char *class_names[]; /* Vocabulary class names */
 
 #define VOCAB_CLASS_ANYWORD 0xff
 /* Anywords are ignored by the parser */
@@ -181,23 +184,16 @@ struct parse_tree_node_t {
 
 
 
-/*FIXME: These need freeing functions...*/
-
-#if 0
-int *vocabulary_get_classes(ResourceManager *resmgr, int *count);
-int vocabulary_get_class_count(ResourceManager *resmgr);
-#endif
-
 /**
  * Fills the given StringList with selector names.
  * Returns true upon success, false oterwise.
  */
-bool vocabulary_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringList &selectorNames);
+bool vocab_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringList &selectorNames);
 
 /**
  * Obtain the list of opcodes.
  */
-void vocabulary_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &opcodes);
+void vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &opcodes);
 
 /**
  * Fills a StringList with kernel function names.
@@ -207,7 +203,7 @@ void vocabulary_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &opco
  * The resulting list has the same format regardless of the format of the
  * name table of the resource (the format changed between version 0 and 1).
  */
-void vocabulary_get_knames(ResourceManager *resmgr, Common::StringList &names);
+void vocab_get_knames(ResourceManager *resmgr, Common::StringList &names);
 
 
 /**

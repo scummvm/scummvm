@@ -41,7 +41,7 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 	s->parser_lastmatch_word = SAID_NO_MATCH;
 	s->parser_rules = NULL;
 
-	sciprintf("Initializing vocabulary\n");
+	debug(2, "Initializing vocabulary");
 
 	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA && vocab_get_words(s->resmgr, s->_parserWords)) {
 		vocab_get_suffixes(s->resmgr, s->_parserSuffixes);
@@ -49,14 +49,14 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 			// Now build a GNF grammar out of this
 			s->parser_rules = vocab_build_gnf(s->_parserBranches);
 	} else {
-		sciprintf("Assuming that this game does not use a parser.\n");
+		debug(2, "Assuming that this game does not use a parser.");
 		s->parser_rules = NULL;
 	}
 
-	vocabulary_get_opcodes(s->resmgr, s->_opcodes);
+	vocab_get_opcodes(s->resmgr, s->_opcodes);
 
-	if (!vocabulary_get_snames(s->resmgr, (s->flags & GF_SCI0_OLD), s->_selectorNames)) {
-		sciprintf("_init_vocabulary(): Could not retrieve selector names (vocab.997)!\n");
+	if (!vocab_get_snames(s->resmgr, (s->flags & GF_SCI0_OLD), s->_selectorNames)) {
+		warning("_init_vocabulary(): Could not retrieve selector names");
 		return 1;
 	}
 
@@ -70,7 +70,7 @@ int _reset_graphics_input(EngineState *s) {
 	Resource *resource;
 	int font_nr;
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
-	sciprintf("Initializing graphics\n");
+	debug(2, "Initializing graphics");
 
 	if (s->resmgr->_sciVersion <= SCI_VERSION_01 || (s->flags & GF_SCI1_EGA)) {
 		int i;
@@ -101,7 +101,7 @@ int _reset_graphics_input(EngineState *s) {
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal11(999, resource->data, resource->size));
 				s->resmgr->unlockResource(resource, 999, kResourceTypePalette);
 			} else {
-				sciprintf("Couldn't find the default palette!\n");
+				debug(2, "Couldn't find the default palette!");
 			}
 		}
 	}
@@ -135,7 +135,7 @@ int _reset_graphics_input(EngineState *s) {
 	} while ((!resource) && (font_nr < sci_max_resource_nr[s->resmgr->_sciVersion]));
 
 	if (!resource) {
-		sciprintf("No text font was found.\n");
+		debug(2, "No text font was found.");
 		return 1;
 	}
 
@@ -203,7 +203,7 @@ int game_init_graphics(EngineState *s) {
 }
 
 static void _free_graphics_input(EngineState *s) {
-	sciprintf("Freeing graphics\n");
+	debug(2, "Freeing graphics");
 
 	delete s->visual;
 
@@ -280,7 +280,7 @@ int create_class_table_sci11(EngineState *s) {
 					classnr = READ_LE_UINT16((byte*)seeker_ptr + 10);
 					if (classnr >= (int)s->_classtable.size()) {
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
+							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
 							        classnr, scriptnr, scriptnr, seeker_offset);
 							return 1;
 						}
@@ -347,7 +347,7 @@ static int create_class_table_sci0(EngineState *s) {
 					if (classnr >= (int)s->_classtable.size()) {
 
 						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x\n",
+							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
 							        classnr, scriptnr, scriptnr, seeker);
 							return 1;
 						}
@@ -391,18 +391,18 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	else
 		result = create_class_table_sci0(s);
 
-	s->seg_manager = new SegManager(s->version >= SCI_VERSION_1_1);
-	s->gc_countdown = GC_INTERVAL - 1;
-
 	if (result) {
-		sciprintf("Failed to initialize class table\n");
+		debug(2, "Failed to initialize class table");
 		return 1;
 	}
+
+	s->seg_manager = new SegManager(s->version >= SCI_VERSION_1_1);
+	s->gc_countdown = GC_INTERVAL - 1;
 
 	SegmentId script_000_segment = script_get_segment(s, 0, SCRIPT_GET_LOCK);
 
 	if (script_000_segment <= 0) {
-		sciprintf("Failed to instantiate script.000\n");
+		debug(2, "Failed to instantiate script.000");
 		return 1;
 	}
 
@@ -426,7 +426,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
 
-	vocabulary_get_knames(s->resmgr, s->_kernelNames);
+	vocab_get_knames(s->resmgr, s->_kernelNames);
 	script_map_kernel(s);
 	// Maps the kernel functions
 
@@ -443,7 +443,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	else
 		s->seg_manager->setExportWidth(0);
 
-	sciprintf("Engine initialized\n");
+	debug(2, "Engine initialized");
 
 	s->pic_priority_table = NULL;
 	s->_pics.clear();
@@ -471,7 +471,7 @@ void script_set_gamestate_save_dir(EngineState *s, reg_t path) {
 #endif
 
 void script_free_vm_memory(EngineState *s) {
-	sciprintf("Freeing VM memory\n");
+	debug(2, "Freeing VM memory");
 
 	s->_classtable.clear();
 
@@ -483,7 +483,7 @@ void script_free_vm_memory(EngineState *s) {
 void script_free_engine(EngineState *s) {
 	script_free_vm_memory(s);
 
-	sciprintf("Freeing state-dependant data\n");
+	debug(2, "Freeing state-dependant data");
 
 	s->_kfuncTable.clear();
 
@@ -527,7 +527,7 @@ int game_init(EngineState *s) {
 	s->stack_top = s->stack_base + VM_STACK_SIZE;
 
 	if (!script_instantiate(s, 0)) {
-		sciprintf("game_init(): Could not instantiate script 0\n");
+		warning("game_init(): Could not instantiate script 0");
 		return 1;
 	}
 
@@ -568,13 +568,12 @@ int game_init(EngineState *s) {
 	const char *tmp = obj_get_name(s, game_obj);
 
 	if (!tmp) {
-		sciprintf("Error: script.000, export 0 (%04x:%04x) does not\n"
-		          " yield an object with a name -> sanity check failed\n", PRINT_REG(game_obj));
+		warning("Error: script.000, export 0 (%04x:%04x) does not yield an object with a name -> sanity check failed", PRINT_REG(game_obj));
 		return 1;
 	}
 	s->_gameName = tmp;
 
-	sciprintf(" \"%s\" at %04x:%04x\n", s->_gameName.c_str(), PRINT_REG(game_obj));
+	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(game_obj));
 
 	s->game_obj = game_obj;
 
@@ -603,7 +602,7 @@ int game_exit(EngineState *s) {
 
 	s->_synonyms.clear();
 
-	sciprintf("Freeing miscellaneous data...\n");
+	debug(2, "Freeing miscellaneous data...");
 
 	// TODO Free parser segment here
 

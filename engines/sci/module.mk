@@ -9,7 +9,6 @@ MODULE_OBJS = \
 	sci.o \
 	tools.o \
 	vocabulary.o \
-	vocab_debug.o \
 	engine/game.o \
 	engine/gc.o \
 	engine/grammar.o \

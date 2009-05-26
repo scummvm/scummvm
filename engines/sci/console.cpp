@@ -119,7 +119,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 bool Console::cmdSelectors(int argc, const char **argv) {
 	Common::StringList selectorNames;
 
-	if (!vocabulary_get_snames(_vm->getResMgr(), (_vm->getFlags() & GF_SCI0_OLD), selectorNames)) {
+	if (!vocab_get_snames(_vm->getResMgr(), (_vm->getFlags() & GF_SCI0_OLD), selectorNames)) {
 		DebugPrintf("No selector name table found!\n");
 		return true;
 	}
@@ -139,7 +139,7 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 bool Console::cmdKernelNames(int argc, const char **argv) {
 	Common::StringList kernelNames;
 
-	vocabulary_get_knames(_vm->getResMgr(), kernelNames);
+	vocab_get_knames(_vm->getResMgr(), kernelNames);
 
 	if (kernelNames.empty()) {
 		DebugPrintf("No kernel name table found!\n");
@@ -290,7 +290,7 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 		return true;
 	}
 
-	if (!vocabulary_get_snames(_vm->getResMgr(), (_vm->getFlags() & GF_SCI0_OLD), selectorNames)) {
+	if (!vocab_get_snames(_vm->getResMgr(), (_vm->getFlags() & GF_SCI0_OLD), selectorNames)) {
 		DebugPrintf("No selector name table found!\n");
 		return true;
 	}

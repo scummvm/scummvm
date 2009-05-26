@@ -529,7 +529,7 @@ int kfree(EngineState *s, reg_t handle) {
 
 
 // Alternative kernel func names retriever. Required for KQ1/SCI (at least).
-static void _vocabulary_get_knames0alt(const Resource *r, Common::StringList &names) {
+static void _vocab_get_knames0alt(const Resource *r, Common::StringList &names) {
 	uint idx = 0;
 
 	while (idx < r->size) {
@@ -542,7 +542,7 @@ static void _vocabulary_get_knames0alt(const Resource *r, Common::StringList &na
 	names.push_back(SCRIPT_UNKNOWN_FUNCTION_STRING);
 }
 
-static void vocabulary_get_knames0(ResourceManager *resmgr, Common::StringList &names) {
+static void vocab_get_knames0(ResourceManager *resmgr, Common::StringList &names) {
 	int count, i, index = 2, empty_to_add = 1;
 	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
 
@@ -556,7 +556,7 @@ static void vocabulary_get_knames0(ResourceManager *resmgr, Common::StringList &
 	count = READ_LE_UINT16(r->data);
 
 	if (count > 1023) {
-		_vocabulary_get_knames0alt(r, names);
+		_vocab_get_knames0alt(r, names);
 		return;
 	}
 
@@ -580,7 +580,7 @@ static void vocabulary_get_knames0(ResourceManager *resmgr, Common::StringList &
 	}
 }
 
-static void vocabulary_get_knames1(ResourceManager *resmgr, Common::StringList &names) {
+static void vocab_get_knames1(ResourceManager *resmgr, Common::StringList &names) {
 	// vocab.999/999.voc is notoriously unreliable in SCI1 games, and should not be used
 	// We hardcode the default SCI1 kernel names here (i.e. the ones inside the "special"
 	// 999.voc file from FreeSCI). All SCI1 games seem to be working with this change, but
@@ -595,7 +595,7 @@ static void vocabulary_get_knames1(ResourceManager *resmgr, Common::StringList &
 }
 
 #ifdef ENABLE_SCI32
-static void vocabulary_get_knames11(ResourceManager *resmgr, Common::StringList &names) {
+static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &names) {
 /*
  999.voc format for SCI1.1 games:
 	[b] # of kernel functions
@@ -621,13 +621,13 @@ static void vocabulary_get_knames11(ResourceManager *resmgr, Common::StringList 
 }
 #endif
 
-void vocabulary_get_knames(ResourceManager *resmgr, Common::StringList &names) {
+void vocab_get_knames(ResourceManager *resmgr, Common::StringList &names) {
 	names.clear();
 
 	switch (resmgr->_sciVersion) {
 	case SCI_VERSION_0:
 	case SCI_VERSION_01:
-		vocabulary_get_knames0(resmgr, names);
+		vocab_get_knames0(resmgr, names);
 		break;
 	case SCI_VERSION_01_VGA:
 	case SCI_VERSION_01_VGA_ODD:
@@ -635,19 +635,19 @@ void vocabulary_get_knames(ResourceManager *resmgr, Common::StringList &names) {
 		// Having more vocabulary names (like in SCI1) doesn't seem to have any
 		// ill effects, other than resulting in unmapped functions towards the
 		// end, which are never used by the game interpreter anyway
-		// return vocabulary_get_knames0(resmgr, count);
+		// return vocab_get_knames0(resmgr, count);
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
-		vocabulary_get_knames1(resmgr, names);
+		vocab_get_knames1(resmgr, names);
 		break;
 	case SCI_VERSION_1_1:
-		vocabulary_get_knames1(resmgr, names);
+		vocab_get_knames1(resmgr, names);
 		// KQ6CD calls unimplemented function 0x26
                 names[0x26] = "Dummy";
 		break;
 #ifdef ENABLE_SCI32
 	case SCI_VERSION_32:
-		vocabulary_get_knames11(resmgr, names);
+		vocab_get_knames11(resmgr, names);
 #endif
 		break;
 	default:
