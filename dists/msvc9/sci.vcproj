@@ -539,42 +539,6 @@
 				>
 			</File>
 			<Filter
-				Name="device"
-				>
-				<File
-					RelativePath="..\..\engines\sci\sfx\device\devices.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="player"
-				>
-				<File
-					RelativePath="..\..\engines\sci\sfx\player\player.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\player\players.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\player\polled.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\player\realtime.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="seq"
-				>
-				<File
-					RelativePath="..\..\engines\sci\sfx\seq\sequencers.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="softseq"
 				>
 				<File
@@ -590,10 +554,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\opl2.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\engines\sci\sfx\softseq\pcjr.cpp"
 					>
 				</File>
@@ -601,16 +561,24 @@
 					RelativePath="..\..\engines\sci\sfx\softseq\pcjr.h"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="player"
+				>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\pcspeaker.cpp"
+					RelativePath="..\..\engines\sci\sfx\player\new_player.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\SN76496.cpp"
+					RelativePath="..\..\engines\sci\sfx\player\new_player.h"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="seq"
+				>
 				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\softsequencers.cpp"
+					RelativePath="..\..\engines\sci\sfx\seq\sequencers.cpp"
 					>
 				</File>
 			</Filter>
@@ -673,10 +641,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\uinput.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\vocab_debug.cpp"
 			>
 		</File>
 		<File
