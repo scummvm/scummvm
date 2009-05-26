@@ -1,63 +1,71 @@
-Residual Team:
-**************
-   James Brown           - Core developer
-   Pawel Kolodziejski    - Core developer. SMUSH, iMUSE implemention
-
-Contributors:
+Residual Team
 *************
-   If you have contributed to this project then you deserve to be on this
-   list. Contact us and we'll add you.
+  Project Leader
+  --------------
+     Pawel Kolodziejski   
 
-   Torbjorn Andersson    - Various code fixes
-   Ori Avtalion          - Lipsync, LAF support
-   Marcus Comstedt       - Dreamcast port
-   Andrea Corna          - Improved font support, patch extractor
-   Jonathan Gray         - Various code fixes
-   Vincent Hamm          - Various engine code
-   Erich Hoover          - x86-64, various fixes and comments, menu support,
-                           improved state support
-   Travis Howell         - Various code fixes, Windows daily builds
-   Joost Peters          - Various code fixes
-   Christian Neumair     - Various optimisation patches
-   Daniel Schepler       - Initial engine codebase, LUA support
-   Pino Toscano          - Debian GNU/Linux maintainer
-   Lionel Ulmer          - OpenGL optimisations
+  Engine Teams
+  ------------
+    Grim Team:
+       James Brown           - Core developer
+       Pawel Kolodziejski    - Core developer. SMUSH, iMUSE implemention
 
-ScummVM code:
-*************
-   Residual use some ScummVM code like common, mixer and imuse code.
-   Copyrights for this code belongs to persons listed below. If you are
-   missed in this list contact us and we'll add you.
 
-   Torbjorn Andersson   
-   Chris Apers          
-   Bertrand Augereau    
-   James Brown          
-   Jamieson Christian   
-   Robert Goeffringmann 
-   Jonathan Gray        
-   Vincent Hamm         
-   Ruediger Hanke       
-   Max Horn             
-   Filippos Karapetis   
-   Oliver Kiehl         
-   Pawel Kolodziejski   
-   Andrew Kurushin      
-   Claudio Matsuoka     
-   Gregory Montoir      
-   Kostas Nakos         
-   Willem Jan Palenstijn
-   Lars Persson         
-   Kari Salminen        
-   Eugene Sandulenko    
-   Johannes Schickel    
-   Ludvig Strigeus      
-   Lionel Ulmer         
-   Jordi Vilalta        
-   Robin Watts          
-   agent-q              
-   arisme               
-   peres                
+    Grim Contributors:
+       If you have contributed to this engine then you deserve to be on this
+       list. Contact us and we'll add you.
+
+       Torbjorn Andersson    - Various code fixes
+       Ori Avtalion          - Lipsync, LAF support
+       Marcus Comstedt       - Dreamcast port
+       Andrea Corna          - Improved font support, patch extractor
+       Jonathan Gray         - Various code fixes
+       Vincent Hamm          - Various engine code
+       Erich Hoover          - x86-64, various fixes and comments, menu
+                               support, improved state support
+       Travis Howell         - Various code fixes, Windows port
+       Joost Peters          - Various code fixes
+       Christian Neumair     - Various optimisation patches
+       Daniel Schepler       - Initial engine codebase, LUA support
+       Pino Toscano          - Debian GNU/Linux package files
+       Lionel Ulmer          - OpenGL optimisations
+
+
+  ScummVM code
+  ------------
+     Residual use some ScummVM common code. Copyrights for this code belongs
+     to persons listed below. If you are missed in this list contact us and
+     we'll add you.
+
+     Torbjorn Andersson   
+     Chris Apers          
+     Bertrand Augereau    
+     James Brown          
+     Jamieson Christian   
+     Robert Goeffringmann 
+     Jonathan Gray        
+     Vincent Hamm         
+     Ruediger Hanke       
+     Max Horn             
+     Filippos Karapetis   
+     Oliver Kiehl         
+     Pawel Kolodziejski   
+     Andrew Kurushin      
+     Claudio Matsuoka     
+     Gregory Montoir      
+     Kostas Nakos         
+     Willem Jan Palenstijn
+     Lars Persson         
+     Kari Salminen        
+     Eugene Sandulenko    
+     Johannes Schickel    
+     Ludvig Strigeus      
+     Lionel Ulmer         
+     Jordi Vilalta        
+     Robin Watts          
+     agent-q              
+     arisme               
+     peres                
 
 Special thanks to
 *****************
