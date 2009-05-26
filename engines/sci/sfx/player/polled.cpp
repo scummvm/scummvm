@@ -36,6 +36,7 @@
 
 namespace Sci {
 
+// TODO: Turn the following static vars into member vars
 static SongIterator *play_it;
 static int play_paused = 0;
 static sfx_softseq_t *seq;
@@ -48,7 +49,7 @@ static int new_song = 0;
 #define TIME_INC 60
 static int time_counter = 0;
 
-static void pp_tell_synth(int buf_nr, byte *buf) {
+void PolledPlayer::tell_synth(int buf_nr, byte *buf) {
 	seq->handle_command(seq, buf[0], buf_nr - 1, buf + 1);
 }
 
@@ -262,15 +263,7 @@ static int ppf_poll(int frame_size, byte *dest, int size) {
 /* API implementation */
 /*--------------------*/
 
-static void pp_timer_callback() {
-	/* Hey, we're polled anyway ;-) */
-}
-
-static Common::Error pp_set_option(char *name, char *value) {
-	return Common::kUnknownError;
-}
-
-static Common::Error pp_init(ResourceManager *resmgr, int expected_latency) {
+Common::Error PolledPlayer::init(ResourceManager *resmgr, int expected_latency) {
 	if (!g_system->getMixer()->isReady())
 		return Common::kUnknownError;
 
@@ -307,15 +300,16 @@ static Common::Error pp_init(ResourceManager *resmgr, int expected_latency) {
 
 	seq->set_volume(seq, volume);
 
+	// FIXME: Keep a SoundHandle and use that to stop the feed in the exit method
 	PolledPlayerAudioStream *newStream = new PolledPlayerAudioStream(seq->pcm_conf);
 	// FIXME: Is this sound type appropriate?
 	g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, 0, newStream);
 
-	sfx_player_polled.polyphony = seq->polyphony;
+	this->polyphony = seq->polyphony;
 	return Common::kNoError;
 }
 
-static Common::Error pp_add_iterator(SongIterator *it, uint32 start_time) {
+Common::Error PolledPlayer::add_iterator(SongIterator *it, uint32 start_time) {
 	SongIterator *old = play_it;
 
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(seq->playmask));
@@ -340,12 +334,7 @@ static Common::Error pp_add_iterator(SongIterator *it, uint32 start_time) {
 	return Common::kNoError;
 }
 
-static Common::Error pp_fade_out() {
-	warning(__FILE__": Attempt to fade out- not implemented yet");
-	return Common::kUnknownError;
-}
-
-static Common::Error pp_stop() {
+Common::Error PolledPlayer::stop() {
 	SongIterator *it = play_it;
 
 	play_it = NULL;
@@ -357,7 +346,7 @@ static Common::Error pp_stop() {
 	return Common::kNoError;
 }
 
-static Common::Error pp_send_iterator_message(const SongIterator::Message &msg) {
+Common::Error PolledPlayer::iterator_message(const SongIterator::Message &msg) {
 	if (!play_it)
 		return Common::kUnknownError;
 
@@ -365,14 +354,14 @@ static Common::Error pp_send_iterator_message(const SongIterator::Message &msg) 
 	return Common::kNoError;
 }
 
-static Common::Error pp_pause() {
+Common::Error PolledPlayer::pause() {
 	play_paused = 1;
 	seq->set_volume(seq, 0);
 
 	return Common::kNoError;
 }
 
-static Common::Error pp_resume() {
+Common::Error PolledPlayer::resume() {
 	if (!play_it) {
 		play_paused = 0;
 		return Common::kNoError; /* Nothing to resume */
@@ -388,7 +377,7 @@ static Common::Error pp_resume() {
 	return Common::kNoError;
 }
 
-static Common::Error pp_exit() {
+Common::Error PolledPlayer::exit() {
 	seq->exit(seq);
 	delete play_it;
 	play_it = NULL;
@@ -396,21 +385,9 @@ static Common::Error pp_exit() {
 	return Common::kNoError;
 }
 
-sfx_player_t sfx_player_polled = {
-	"polled",
-	"0.1",
-	&pp_set_option,
-	&pp_init,
-	&pp_add_iterator,
-	&pp_fade_out,
-	&pp_stop,
-	&pp_send_iterator_message,
-	&pp_pause,
-	&pp_resume,
-	&pp_exit,
-	&pp_timer_callback,
-	&pp_tell_synth,
-	0 /* polyphony */
-};
+PolledPlayer::PolledPlayer() {
+	name = "polled";
+	version = "0.1";
+}
 
 } // End of namespace Sci

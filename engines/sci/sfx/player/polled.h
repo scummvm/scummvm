@@ -30,7 +30,19 @@
 
 namespace Sci {
 
-extern sfx_player_t sfx_player_polled;
+class PolledPlayer : public SfxPlayer {
+public:
+	PolledPlayer();
+
+	virtual Common::Error init(ResourceManager *resmgr, int expected_latency);
+	virtual Common::Error add_iterator(SongIterator *it, uint32 start_time);
+	virtual Common::Error stop();
+	virtual Common::Error iterator_message(const SongIterator::Message &msg);
+	virtual Common::Error pause();
+	virtual Common::Error resume();
+	virtual Common::Error exit();
+	virtual void tell_synth(int buf_nr, byte *buf);
+};
 
 } // End of namespace Sci
 

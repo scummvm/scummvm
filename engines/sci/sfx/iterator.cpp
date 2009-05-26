@@ -127,22 +127,22 @@ void SongIteratorChannel::init(int id_, int offset_, int end_) {
 }
 
 void SongIteratorChannel::resetSynthChannels() {
+	extern SfxPlayer *player;	// FIXME
 	byte buf[5];
-	tell_synth_func *tell = sfx_get_player_tell_func();
 
 	for (int i = 0; i < MIDI_CHANNELS; i++) {
 		if (playmask & (1 << i)) {
 			buf[0] = 0xe0 | i; /* Pitch bend */
 			buf[1] = 0x80; /* Wheel center */
 			buf[2] = 0x40;
-			if (tell)
-				tell(3, buf);
+			if (player)
+				player->tell_synth(3, buf);
 
 			buf[0] = 0xb0 | i; // Set control
 			buf[1] = 0x40; // Hold pedal
 			buf[2] = 0x00; // Off
-			if (tell)
-				tell(3, buf);
+			if (player)
+				player->tell_synth(3, buf);
 			/* TODO: Reset other controls? */
 		}
 	}

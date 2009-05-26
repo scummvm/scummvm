@@ -27,7 +27,9 @@
 
 #include "sci/tools.h"
 #include "sci/sfx/core.h"
-#include "sci/sfx/player.h"
+#include "sci/sfx/player/new_player.h"
+#include "sci/sfx/player/polled.h"
+#include "sci/sfx/player/realtime.h"
 #include "sci/sfx/sci_midi.h"
 
 #include "common/system.h"
@@ -44,7 +46,7 @@ namespace Sci {
 int sciprintf(char *msg, ...);
 #endif
 
-static sfx_player_t *player = NULL;
+SfxPlayer *player = NULL;		// FIXME: Avoid static vars
 
 
 int sfx_pcm_available() {
@@ -54,13 +56,6 @@ int sfx_pcm_available() {
 void sfx_reset_player() {
 	if (player)
 		player->stop();
-}
-
-tell_synth_func *sfx_get_player_tell_func() {
-	if (player)
-		return player->tell_synth;
-	else
-		return NULL;
 }
 
 int sfx_get_player_polyphony() {
@@ -306,8 +301,7 @@ static void _update_multi_song(sfx_state_t *self) {
 				sciprintf("[SFX] Stopping song %lx\n", oldseeker->handle);
 			}
 			if (player && oldseeker->it)
-				player->iterator_message
-				(SongIterator::Message(oldseeker->it->ID, SIMSG_STOP));
+				player->iterator_message(SongIterator::Message(oldseeker->it->ID, SIMSG_STOP));
 			oldseeker->next_playing = NULL; /* Clear this pointer; we don't need the tag anymore */
 		}
 
@@ -352,7 +346,6 @@ int sfx_play_iterator_pcm(SongIterator *it, song_handle_t handle) {
 
 #define DELAY (1000000 / SFX_TICKS_PER_SEC)
 
-
 static void _sfx_timer_callback(void *data) {
 	/* First run the player, to give it a chance to fill
 	** the audio buffer  */
@@ -375,7 +368,10 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 		return;
 	}
 
-	player = sfx_find_player(NULL);
+	// TODO: Implement platform policy here?
+	player = new NewPlayer();
+	//player = new PolledPlayer();
+	//player = new RealtimePlayer();
 
 
 #ifdef DEBUG_SONG_API
@@ -391,6 +387,7 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 		player = NULL;
 	} else if (player->init(resmgr, DELAY / 1000)) {
 		sciprintf("[SFX] Song player '%s' reported error, disabled\n", player->name);
+		delete player;
 		player = NULL;
 	}
 
@@ -406,16 +403,15 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	// We initialise the timer last, so there is no possibility of the
 	// timer callback being triggered while the mixer or player are
 	// still being initialized.
-
-	if (g_system->getMixer()->isReady() || (player && player->maintenance)) {
+	if (strcmp(player->name, "realtime") == 0) {
+		// FIXME: Merge this timer code into RealtimePlayer itself
 		if (!g_system->getTimerManager()->installTimerProc(&_sfx_timer_callback, DELAY, NULL)) {
 			warning("[SFX] " __FILE__": Timer failed to initialize");
 			warning("[SFX] Disabled sound support");
+			delete player;
 			player = NULL;
-			return;
 		}
-	} /* With no PCM device and no player, we don't need a timer */
-
+	}
 }
 
 void sfx_exit(sfx_state_t *self) {
@@ -429,8 +425,6 @@ void sfx_exit(sfx_state_t *self) {
 	fprintf(stderr, "[sfx-core] Uninitialising\n");
 #endif
 
-	song_lib_free(self->songlib);
-
 	// WARNING: The mixer may hold feeds from the player, so we must
 	// stop the mixer BEFORE stopping the player.
 	// FIXME Player "new" frees its own feeds, so we only need to stop any
@@ -438,12 +432,18 @@ void sfx_exit(sfx_state_t *self) {
 	if (strcmp(player->name, "new") != 0)
 		g_system->getMixer()->stopAll();
 
-	if (player)
+	// FIXME: change players to stop their own audio streams
+	if (player) {
 		// See above: This must happen AFTER stopping the mixer
 		player->exit();
+		delete player;
+		player = 0;
+	}
 
 	if (strcmp(player->name, "new") == 0)
 		g_system->getMixer()->stopAll();
+
+	song_lib_free(self->songlib);
 
 	// Delete audio resources for CD talkie games
 	if (self->audioResource) {
@@ -715,7 +715,6 @@ static const song_handle_t midi_send_base = 0xffff0000;
 Common::Error sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel,
 	int command, int arg1, int arg2) {
 	byte buffer[5];
-	tell_synth_func *tell = sfx_get_player_tell_func();
 
 	/* Yes, in that order. SCI channel mutes are actually done via
 	   a counting semaphore. 0 means to decrement the counter, 1
@@ -753,8 +752,8 @@ Common::Error sfx_send_midi(sfx_state_t *self, song_handle_t handle, int channel
 		return Common::kUnknownError;
 	}
 
-	if (tell)
-		tell(MIDI_cmdlen[command >> 4], buffer);
+	if (player)
+		player->tell_synth(MIDI_cmdlen[command >> 4], buffer);
 	return Common::kNoError;
 }
 

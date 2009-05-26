@@ -37,13 +37,14 @@
 
 namespace Sci {
 
-static sfx_sequencer_t *seq;
-
 /* Playing mechanism */
 
 static inline int delta_time(const uint32 comp, const uint32 base) {
 	return long(comp) - long(base);
 }
+
+// TODO: Turn the following static vars into member vars
+static sfx_sequencer_t *seq;
 
 static SongIterator *play_it = NULL;
 static uint32 play_last_time;
@@ -105,11 +106,11 @@ static void play_song(SongIterator *it, uint32 *wakeup_time, int writeahead_time
 		}
 }
 
-static void rt_tell_synth(int buf_nr, byte *buf) {
+void RealtimePlayer::tell_synth(int buf_nr, byte *buf) {
 	seq->event(buf[0], buf_nr - 1, buf + 1);
 }
 
-static void rt_timer_callback(void) {
+void RealtimePlayer::maintenance() {
 	if (play_it && !play_it_done) {
 		if (!play_moredelay) {
 			int delta = delta_time(play_last_time, g_system->getMillis());
@@ -145,11 +146,7 @@ static Resource *find_patch(ResourceManager *resmgr, const char *seq_name, int p
 
 /* API implementation */
 
-static Common::Error rt_set_option(char *name, char *value) {
-	return Common::kUnknownError;
-}
-
-static Common::Error rt_init(ResourceManager *resmgr, int expected_latency) {
+Common::Error RealtimePlayer::init(ResourceManager *resmgr, int expected_latency) {
 	Resource *res = NULL, *res2 = NULL;
 	void *seq_dev = NULL;
 
@@ -160,7 +157,7 @@ static Common::Error rt_init(ResourceManager *resmgr, int expected_latency) {
 		return Common::kUnknownError;
 	}
 
-	sfx_player_realtime.polyphony = seq->polyphony;
+	this->polyphony = seq->polyphony;
 
 	res = find_patch(resmgr, seq->name, seq->patchfile);
 	res2 = find_patch(resmgr, seq->name, seq->patchfile2);
@@ -189,7 +186,7 @@ static Common::Error rt_init(ResourceManager *resmgr, int expected_latency) {
 	return Common::kNoError;
 }
 
-static Common::Error rt_add_iterator(SongIterator *it, uint32 start_time) {
+Common::Error RealtimePlayer::add_iterator(SongIterator *it, uint32 start_time) {
 	if (seq->reset_timer) /* Restart timer counting if possible */
 		seq->reset_timer(start_time);
 
@@ -204,12 +201,7 @@ static Common::Error rt_add_iterator(SongIterator *it, uint32 start_time) {
 	return Common::kNoError;
 }
 
-static Common::Error rt_fade_out(void) {
-	warning(__FILE__": Attempt to fade out- not implemented yet");
-	return Common::kUnknownError;
-}
-
-static Common::Error rt_stop(void) {
+Common::Error RealtimePlayer::stop(void) {
 	SongIterator *it = play_it;
 
 	play_it = NULL;
@@ -221,7 +213,7 @@ static Common::Error rt_stop(void) {
 	return Common::kNoError;
 }
 
-static Common::Error rt_send_iterator_message(const SongIterator::Message &msg) {
+Common::Error RealtimePlayer::iterator_message(const SongIterator::Message &msg) {
 	if (!play_it)
 		return Common::kUnknownError;
 
@@ -229,7 +221,7 @@ static Common::Error rt_send_iterator_message(const SongIterator::Message &msg) 
 	return Common::kNoError;
 }
 
-static Common::Error rt_pause(void) {
+Common::Error RealtimePlayer::pause(void) {
 	play_pause_started = g_system->getMillis();
 	// Also, indicate that we haven't modified the time counter yet
 	play_pause_counter = play_pause_started;
@@ -242,12 +234,12 @@ static Common::Error rt_pause(void) {
 		return seq->allstop();
 }
 
-static Common::Error rt_resume(void) {
+Common::Error RealtimePlayer::resume(void) {
 	play_paused = 0;
 	return Common::kNoError;
 }
 
-static Common::Error rt_exit(void) {
+Common::Error RealtimePlayer::exit(void) {
 	if (seq->close()) {
 		warning("[SFX] Sequencer reported error on close");
 		return Common::kUnknownError;
@@ -256,21 +248,9 @@ static Common::Error rt_exit(void) {
 	return Common::kNoError;
 }
 
-sfx_player_t sfx_player_realtime = {
-	"realtime",
-	"0.1",
-	&rt_set_option,
-	&rt_init,
-	&rt_add_iterator,
-	&rt_fade_out,
-	&rt_stop,
-	&rt_send_iterator_message,
-	&rt_pause,
-	&rt_resume,
-	&rt_exit,
-	&rt_timer_callback,
-	&rt_tell_synth,
-	0 /* polyphony */
-};
+RealtimePlayer::RealtimePlayer() {
+	name = "realtime";
+	version = "0.1";
+}
 
 } // End of namespace Sci

@@ -35,20 +35,19 @@
 
 namespace Sci {
 
-typedef void tell_synth_func(int buf_nr, byte *buf);
-
-struct sfx_player_t {
+class SfxPlayer {
+public:
 	const char *name;
 	const char *version;
 
-	Common::Error (*set_option)(char *name, char *value);
-	/* Sets an option for player timing mechanism
-	** Parameters: (char *) name: The name describing what to set
-	**             (char *) value: The value to set
-	** Returns   : (int) Common::kNoError, or Common::kUnknownError if the name wasn't understood
-	*/
+	/** Number of voices that can play simultaneously */
+	int polyphony;
 
-	Common::Error (*init)(ResourceManager *resmgr, int expected_latency);
+public:
+	SfxPlayer() : name(0), version(0), polyphony(0) {}
+	virtual ~SfxPlayer() {}
+
+	virtual Common::Error init(ResourceManager *resmgr, int expected_latency) = 0;
 	/* Initializes the player
 	** Parameters: (ResourceManager *) resmgr: A resource manager for driver initialization
 	**             (int) expected_latency: Expected delay in between calls to 'maintenance'
@@ -56,7 +55,7 @@ struct sfx_player_t {
 	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	Common::Error (*add_iterator)(SongIterator *it, uint32 start_time);
+	virtual Common::Error add_iterator(SongIterator *it, uint32 start_time) = 0;
 	/* Adds an iterator to the song player
 	** Parameters: (songx_iterator_t *) it: The iterator to play
 	**             (uint32) start_time: The time to assume as the
@@ -68,17 +67,12 @@ struct sfx_player_t {
 	** to add iterators onto their already existing iterators
 	*/
 
-	Common::Error (*fade_out)();
-	/* Fades out the currently playing song (within two seconds
-	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
-	*/
-
-	Common::Error (*stop)();
+	virtual Common::Error stop() = 0;
 	/* Stops the currently playing song and deletes the associated iterator
 	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	Common::Error (*iterator_message)(const SongIterator::Message &msg);
+	virtual Common::Error iterator_message(const SongIterator::Message &msg) = 0;
 	/* Transmits a song iterator message to the active song
 	** Parameters: (SongIterator::Message) msg: The message to transmit
 	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
@@ -87,47 +81,33 @@ struct sfx_player_t {
 	** and re-start playing, so it is preferred that it is present
 	*/
 
-	Common::Error (*pause)(); /* OPTIONAL -- may be NULL */
+	virtual Common::Error pause() = 0;
 	/* Pauses song playing
 	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	Common::Error (*resume)(); /* OPTIONAL -- may be NULL */
+	virtual Common::Error resume() = 0;
 	/* Resumes song playing after a pause
 	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	Common::Error (*exit)();
+	virtual Common::Error exit() = 0;
 	/* Stops the player
 	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
 
-	void (*maintenance)(); /* OPTIONAL -- may be NULL */
+	virtual void maintenance() {}
 	/* Regularly called maintenance function
 	** This function is called frequently and regularly (if present), it can be
 	** used to emit sound.
 	*/
 
-	tell_synth_func *tell_synth;
+	virtual void tell_synth(int buf_nr, byte *buf) = 0;
 	/* Pass a raw MIDI event to the synth
 	Parameters: (int) argc: Length of buffer holding the midi event
 	           (byte *) argv: The buffer itself
 	*/
-
-	int polyphony; /* Number of voices that can play simultaneously */
-
 };
-
-sfx_player_t *sfx_find_player(char *name);
-/* Looks up a player by name or finds the default player
-** Parameters: (char *) name: Name of the player to look up, or NULL for dedault
-** Returns   : (sfx_player_t *) The player requested, or NULL if none was found
-*/
-
-tell_synth_func *sfx_get_player_tell_func();
-/* Gets the callback function of the player in use.
-** Returns:   (tell_synth_func *) The callback function.
-*/
 
 int sfx_get_player_polyphony();
 /* Determines the polyphony of the player in use

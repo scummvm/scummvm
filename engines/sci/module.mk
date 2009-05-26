@@ -64,7 +64,6 @@ MODULE_OBJS = \
 	sfx/songlib.o \
 	sfx/device/devices.o \
 	sfx/player/new_player.o \
-	sfx/player/players.o \
 	sfx/player/polled.o \
 	sfx/player/realtime.o \
 	sfx/seq/gm.o \

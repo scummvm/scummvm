@@ -30,7 +30,20 @@
 
 namespace Sci {
 
-extern sfx_player_t sfx_player_realtime;
+class RealtimePlayer : public SfxPlayer {
+public:
+	RealtimePlayer();
+
+	virtual Common::Error init(ResourceManager *resmgr, int expected_latency);
+	virtual Common::Error add_iterator(SongIterator *it, uint32 start_time);
+	virtual Common::Error stop();
+	virtual Common::Error iterator_message(const SongIterator::Message &msg);
+	virtual Common::Error pause();
+	virtual Common::Error resume();
+	virtual Common::Error exit();
+	virtual void maintenance();
+	virtual void tell_synth(int buf_nr, byte *buf);
+};
 
 } // End of namespace Sci
 

@@ -36,6 +36,7 @@
 
 namespace Sci {
 
+// TODO: Turn the following static vars into member vars
 static MidiPlayer *mididrv;
 
 static SongIterator *play_it = NULL;
@@ -89,7 +90,7 @@ static void play_song(SongIterator *it) {
 	}
 }
 
-static void player_tell_synth(int buf_nr, byte *buf) {
+void NewPlayer::tell_synth(int buf_nr, byte *buf) {
 	byte op1 = (buf_nr < 2 ? 0 : buf[1]);
 	byte op2 = (buf_nr < 3 ? 0 : buf[2]);
 
@@ -97,25 +98,18 @@ static void player_tell_synth(int buf_nr, byte *buf) {
 }
 
 static void player_timer_callback(void *refCon) {
-	mutex->lock();
+	Common::StackLock lock(*mutex);
+
 	if (play_it && !play_it_done && !play_paused) {
 		play_song(play_it);
 	}
 
 	current_time = current_time.addFrames(1);
-	mutex->unlock();
-}
-
-static void player_void_callback(void) {
 }
 
 /* API implementation */
 
-static Common::Error player_set_option(char *name, char *value) {
-	return Common::kUnknownError;
-}
-
-static Common::Error player_init(ResourceManager *resmgr, int expected_latency) {
+Common::Error NewPlayer::init(ResourceManager *resmgr, int expected_latency) {
 	MidiDriverType musicDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB);
 
 	switch(musicDriver) {
@@ -134,7 +128,7 @@ static Common::Error player_init(ResourceManager *resmgr, int expected_latency) 
 
 	assert(mididrv);
 
-	sfx_new_player.polyphony = mididrv->getPolyphony();
+	this->polyphony = mididrv->getPolyphony();
 
 	tempo = mididrv->getBaseTempo();
     uint32 time = g_system->getMillis();
@@ -150,7 +144,7 @@ static Common::Error player_init(ResourceManager *resmgr, int expected_latency) 
 	return Common::kNoError;
 }
 
-static Common::Error player_add_iterator(SongIterator *it, uint32 start_time) {
+Common::Error NewPlayer::add_iterator(SongIterator *it, uint32 start_time) {
 	mutex->lock();
 	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(mididrv->getPlayMask()));
 	SIMSG_SEND(it, SIMSG_SET_RHYTHM(mididrv->hasRhythmChannel()));
@@ -168,12 +162,7 @@ static Common::Error player_add_iterator(SongIterator *it, uint32 start_time) {
 	return Common::kNoError;
 }
 
-static Common::Error player_fade_out(void) {
-	warning("Attempt to fade out - not implemented yet");
-	return Common::kUnknownError;
-}
-
-static Common::Error player_stop(void) {
+Common::Error NewPlayer::stop(void) {
 	debug(3, "Player: Stopping song iterator %p", (void *)play_it);
 	mutex->lock();
 	delete play_it;
@@ -185,41 +174,39 @@ static Common::Error player_stop(void) {
 	return Common::kNoError;
 }
 
-static Common::Error player_send_iterator_message(const SongIterator::Message &msg) {
-	mutex->lock();
+Common::Error NewPlayer::iterator_message(const SongIterator::Message &msg) {
+	Common::StackLock lock(*mutex);
 	if (!play_it) {
-		mutex->unlock();
 		return Common::kUnknownError;
 	}
 
 	songit_handle_message(&play_it, msg);
-	mutex->unlock();
 
 	return Common::kNoError;
 }
 
-static Common::Error player_pause(void) {
-	mutex->lock();
+Common::Error NewPlayer::pause(void) {
+	Common::StackLock lock(*mutex);
+
 	play_paused = 1;
 	play_pause_diff = wakeup_time.msecsDiff(current_time);
 
 	mididrv->playSwitch(false);
-	mutex->unlock();
 
 	return Common::kNoError;
 }
 
-static Common::Error player_resume(void) {
-	mutex->lock();
+Common::Error NewPlayer::resume(void) {
+	Common::StackLock lock(*mutex);
+
 	wakeup_time = Audio::Timestamp(current_time.msecs() + play_pause_diff, SFX_TICKS_PER_SEC);
 	mididrv->playSwitch(true);
 	play_paused = 0;
-	mutex->unlock();
 
 	return Common::kNoError;
 }
 
-static Common::Error player_exit(void) {
+Common::Error NewPlayer::exit(void) {
 	mididrv->close();
 	delete mididrv;
 	delete mutex;
@@ -229,22 +216,9 @@ static Common::Error player_exit(void) {
 	return Common::kNoError;
 }
 
-sfx_player_t sfx_new_player = {
-	"new",
-	"0.1",
-	&player_set_option,
-	&player_init,
-	&player_add_iterator,
-	&player_fade_out,
-	&player_stop,
-	&player_send_iterator_message,
-	&player_pause,
-	&player_resume,
-	&player_exit,
-	&player_void_callback,
-	&player_tell_synth,
-	0 /* polyphony */
-};
+NewPlayer::NewPlayer() {
+	name = "new";
+	version = "0.1";
+}
 
 } // End of namespace Sci
-
