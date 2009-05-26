@@ -448,44 +448,42 @@ sub add_paragraph {
 #
 
 begin_credits("Credits");
-  begin_section("Residual Team");
-  begin_section("Project Leader");
-	  begin_persons();
-		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
-	  end_persons();
-  end_section();
+    begin_section("Residual Team");
+	begin_section("Project Leader");
+	    begin_persons();
+		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+	    end_persons();
+	end_section();
 
-  begin_section("Engine Teams");
-  begin_section("Grim Team");
-	  begin_persons();
-		  add_person("James Brown", "ender", "Core developer");
-		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Core developer. SMUSH, iMUSE implemention");
-	  end_persons();
-  end_section();
+	begin_section("Engine Teams");
+	    begin_section("Grim");
+		add_person("James Brown", "ender", "Core developer");
+		add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Core developer. SMUSH, iMUSE implemention");
+	    end_section();
 
-  begin_section("Grim Contributors");
-	  add_paragraph(
-	  "If you have contributed to this engine then you deserve to be on this ".
-	  "list. Contact us and we'll add you.");
-	  begin_persons();
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Various code fixes");
-		  add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support");
-		  add_person("Marcus Comstedt", "", "Dreamcast port");
-		  add_person("Andrea Corna", "Yak Bizzarro", "Improved font support, patch extractor");
-		  add_person("Jonathan Gray", "khalek", "Various code fixes");
-		  add_person("Vincent Hamm", "yazoo", "Various engine code");
-		  add_person("Erich Hoover", "Compholio", "x86-64, various fixes and comments, menu support, improved state support");
-		  add_person("Travis Howell", "Kirben", "Various code fixes, Windows port");
-		  add_person("Joost Peters", "joostp", "Various code fixes");
-		  add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");
-		  add_person("Daniel Schepler", "", "Initial engine codebase, LUA support");
-		  add_person("Pino Toscano", "pinotree", "Debian GNU/Linux package files");
-		  add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
-	  end_persons();
-  end_section();
-  end_section();
+	    begin_section("Grim Contributors");
+		add_paragraph(
+		"If you have contributed to this engine then you deserve to be on this ".
+		"list. Contact us and we'll add you.");
+		add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "Various code fixes");
+		add_person("Ori Avtalion", "salty-horse", "Lipsync, LAF support");
+		add_person("Marcus Comstedt", "", "Dreamcast port");
+		add_person("Andrea Corna", "Yak Bizzarro", "Improved font support, patch extractor");
+		add_person("Jonathan Gray", "khalek", "Various code fixes");
+		add_person("Vincent Hamm", "yazoo", "Various engine code");
+		add_person("Erich Hoover", "Compholio", "x86-64, various fixes and comments, menu support, improved state support");
+		add_person("Travis Howell", "Kirben", "Various code fixes, Windows port");
+		add_person("Joost Peters", "joostp", "Various code fixes");
+		add_person("Christian Neumair", "mannythegnome", "Various optimisation patches");
+		add_person("Daniel Schepler", "", "Initial engine codebase, LUA support");
+		add_person("Pino Toscano", "pinotree", "Debian GNU/Linux package files");
+		add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
+	    end_section();
 
-  begin_section("ScummVM code");
+	end_section();
+    end_section();
+
+    begin_section("ScummVM code");
 	  add_paragraph(
 	  "Residual use some ScummVM common code. ".
 	  "Copyrights for this code belongs to persons listed below. ".
@@ -521,9 +519,7 @@ begin_credits("Credits");
 		  add_person("", "arisme", "");
 		  add_person("", "peres", "");
 	  end_persons();
-
-  end_section();
-  end_section();
+    end_section();
 
   # HACK!
   $max_name_width = 16;
