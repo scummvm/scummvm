@@ -69,11 +69,7 @@ MODULE_OBJS = \
 	sfx/seq/sequencers.o \
 	sfx/softseq/adlib.o \
 	sfx/softseq/amiga.o \
-	sfx/softseq/pcjr.o \
-	sfx/softseq/opl2.o \
-	sfx/softseq/pcspeaker.o \
-	sfx/softseq/SN76496.o \
-	sfx/softseq/softsequencers.o
+	sfx/softseq/pcjr.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SCI), DYNAMIC_PLUGIN)
