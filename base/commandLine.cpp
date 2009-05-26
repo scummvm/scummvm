@@ -466,8 +466,15 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		} else {
 #ifndef DISABLE_COMMAND_LINE
 			usage("Unrecognized game target '%s'", command.c_str());
+#else
+			return false;
 #endif // DISABLE_COMMAND_LINE
 		}
+	} else {
+#ifndef DISABLE_COMMAND_LINE
+			printf(HELP_STRING, s_appName);
+#endif // DISABLE_COMMAND_LINE
+			return false;
 	}
 
 
