@@ -51,6 +51,15 @@ md5table
     Used to convert scumm-md5.txt into a SCUMM header file, or alternatively
     PHP code for our website.
 
+create_drascula
+---------------
+    Stores a lot of hardcoded data of Drascula in a data file, based on the game's
+    original source code. This includes the game's character map, item locations,
+    several hardcoded arrays used in animations, room script logic, talk sequence
+    logic and all of the game's texts (mostly the dialog subtitles) in English,
+    Spanish, German, French and Italian. This tool is used to create the drascula.dat
+    file.
+
 create_kyradat
 --------------
     Extracts various static data from the original game executables. This includes
