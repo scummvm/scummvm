@@ -8,9 +8,8 @@ Standards-Version: 3.8.0
 Package: residual
 Architecture: any
 Depends: ${shlibs:Depends}
-Description: free implementation of LucasArts' LUA-based 3D adventures interpreter
- Residual to allow play LucasArts' LUA-based 3D adventures, such as
- Grim Fandango.
+Description: A 3D game interpreter which allow to play LucasArts' LUA-based
+ 3D adventures such as Grim Fandango.
  .
  Residual utilizes OpenGL for 3D graphics hardware acceleration.
  A software renderer is also included for machines without hardware OpenGL.
