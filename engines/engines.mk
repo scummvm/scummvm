@@ -1,2 +1,4 @@
-DEFINES +=
+ifdef ENABLE_GRIM
+DEFINES += -DENABLE_GRIM=$(ENABLE_GRIM)
 MODULES += engines/grim
+endif
