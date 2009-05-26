@@ -1199,6 +1199,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
+	{
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "e0767783ff662ed93665446665693aef", 4371238),
+			HB_ISR,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
 	{ // Supplied by Arshlan in the forums
 		{
 			"lostintime",
@@ -1450,6 +1463,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"disk0.stk", 0, 0
 	},
+	{
+		{
+			"fascination",
+			"VGA 3 disks edition",
+			AD_ENTRY1s("intro.stk", "d6e45ce548598727e2b5587a99718eba", 1055909),
+			HB_ISR,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeFascination,
+		kFeaturesAdlib,
+		"intro.stk", 0, 0
+	},
 	//Provided by Sanguine
 	{
 		{
@@ -1544,6 +1570,19 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"geisha",
+			"",
+			AD_ENTRY1s("disk1.stk", "f4d4d9d20f7ad1f879fc417d47faba89", 336732),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+		},
+		kGameTypeGeisha,
+		kFeaturesNone,
+		"disk1.stk", "intro.tot", 0
+	},
+	{
+		{
 			"lostintime",
 			"Demo",
 			AD_ENTRY1("demo.stk", "c06f8cc20eb239d4c71f225ce3093edf"),
@@ -1574,6 +1613,19 @@ static const GOBGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1s("intro.stk", "32b0f57f5ae79a9ae97e8011df38af42", 157084),
 			EN_GRB,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob3",
+			"",
+			AD_ENTRY1s("intro.stk", "904fc32032295baa3efb3a41f17db611", 178582),
+			HB_ISR,
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
