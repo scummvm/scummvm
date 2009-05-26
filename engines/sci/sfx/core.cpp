@@ -438,8 +438,10 @@ void sfx_exit(sfx_state_t *self) {
 		player = 0;
 	}
 
-	if (strcmp(player->name, "new") == 0)
-		g_system->getMixer()->stopAll();
+	// FIXME: player is deleted here by the code above, so this will crash.
+	// Is that code needed?
+	//if (strcmp(player->name, "new") == 0)
+	//	g_system->getMixer()->stopAll();
 
 	song_lib_free(self->songlib);
 
