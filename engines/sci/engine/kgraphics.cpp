@@ -2369,14 +2369,14 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
+		// Notify the graphics resource manager that the pic port bounds changed
+		s->gfx_state->gfxResMan->changePortBounds(UKPV(5), UKPV(4), UKPV(3) + UKPV(5), UKPV(2) + UKPV(4));
+
 		// LSL6 calls kSetPort to extend the screen to draw the GUI. If we free all resources
 		// here, the background picture is freed too, and this makes everything a big mess.
 		// FIXME/TODO: This code really needs to be rewritten to conform to the original behavior
 		if (s->_gameName != "LSL6") {
 			s->gfx_state->pic_port_bounds = gfx_rect(UKPV(5), UKPV(4), UKPV(3), UKPV(2));
-
-			// Notify the graphics resource manager that the pic port bounds changed
-			s->gfx_state->gfxResMan->changePortBounds(UKPV(5), UKPV(4), UKPV(3) - UKPV(5), UKPV(2) - UKPV(4));
 
 			// FIXME: Should really only invalidate all loaded pic resources here;
 			// this is overkill
