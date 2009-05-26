@@ -127,6 +127,7 @@ void SongIteratorChannel::init(int id_, int offset_, int end_) {
 }
 
 void SongIteratorChannel::resetSynthChannels() {
+#if 0
 	extern SfxPlayer *player;	// FIXME
 	byte buf[5];
 
@@ -146,6 +147,7 @@ void SongIteratorChannel::resetSynthChannels() {
 			/* TODO: Reset other controls? */
 		}
 	}
+#endif
 }
 
 static int _parse_sci_midi_command(BaseSongIterator *self, byte *buf,
