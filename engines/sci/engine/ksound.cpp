@@ -1001,37 +1001,18 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int sampleLen = 0;
 
 	if (!s->sound.audioResource)
-		s->sound.audioResource = new AudioResource();
+		s->sound.audioResource = new AudioResource(s->resmgr, s->version);
 
 	switch (UKPV(0)) {
 	case kSci1AudioWPlay:
 	case kSci1AudioPlay: {
 		s->sound.audioResource->stop();
 
-		Audio::AudioStream *audioStream = 0;
-
-		// Try to load from an external patch file first
-		Sci::Resource* audioRes = s->resmgr->findResource(kResourceTypeAudio, UKPV(1), 1);
-
-		if (s->_gameName == "KQ5") {
-			if (audioRes) {
-				audioStream = s->sound.audioResource->getAudioStreamKQ5CD(audioRes, &sampleLen);
-			} else {
-				// No patch file found, read it from the audio volume
-				audioStream = s->sound.audioResource->getAudioStreamKQ5CD(UKPV(1), &sampleLen);
-			}
-		} else if (s->_gameName == "Kq6") {
-			if (audioRes) {
-				audioStream = s->sound.audioResource->getAudioStreamKQ6Floppy(audioRes, &sampleLen);
-			} else {
-				// No patch file found, read it from the audio volume
-				audioStream = s->sound.audioResource->getAudioStreamKQ6Floppy(UKPV(1), &sampleLen);
-			}
-		}
+		Audio::AudioStream *audioStream = 
+			audioStream = s->sound.audioResource->getAudioStream(UKPV(1), &sampleLen);
 
 		if (audioStream)
 			mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->sound.audioResource->getAudioHandle(), audioStream);
-
 		}
 		return make_reg(0, sampleLen);		// return sample length in ticks
 	case kSci1AudioStop:

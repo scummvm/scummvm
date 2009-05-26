@@ -56,6 +56,13 @@ const char *sci_version_types[] = {
 
 const int sci_max_resource_nr[] = {65536, 1000, 2048, 2048, 2048, 65536, 65536, 65536};
 
+enum SolFlags {
+	kSolFlagCompressed = 1 << 0,
+	kSolFlagUnknown    = 1 << 1,
+	kSolFlag16Bit      = 1 << 2,
+	kSolFlagIsSigned   = 1 << 3
+};
+
 const char *sci_error_types[] = {
 	"No error",
 	"I/O error",
@@ -1168,19 +1175,28 @@ void ResourceSync::stopSync() {
 }
 
 
-AudioResource::AudioResource() {
+AudioResource::AudioResource(ResourceManager *resMgr, int sciVersion) {
+	_resMgr = resMgr;
+	_sciVersion = sciVersion;
 	_audioRate = 0;
 	_lang = 0;
-	_audioMap = 0;
+	_audioMapSCI1 = 0;
+	_audioMapSCI11 = 0;
 }
 
-AudioResource::~AudioResource() { 
-	delete[] _audioMap;
-	_audioMap = 0;
+AudioResource::~AudioResource() {
+	if (_sciVersion < SCI_VERSION_1_1) {
+		if (_audioMapSCI1) {
+			delete[] _audioMapSCI1;
+			_audioMapSCI1 = 0;
+		}
+	} else {
+		_resMgr->unlockResource(_audioMapSCI11, 65535, kResourceTypeMap);
+	}
 }
 
+// Used in SCI1 games
 void AudioResource::setAudioLang(int16 lang) {
-	// TODO: CD Audio (used for example in the end credits of KQ6CD)
 	if (lang != -1) {
 		_lang = lang;
 
@@ -1190,12 +1206,12 @@ void AudioResource::setAudioLang(int16 lang) {
 		Common::File* audioMapFile = new Common::File();
 		if (audioMapFile->open(filename)) {
 			// The audio map is freed in the destructor
-			_audioMap = new byte[audioMapFile->size()];
-			audioMapFile->read(_audioMap, audioMapFile->size());
+			_audioMapSCI1 = new byte[audioMapFile->size()];
+			audioMapFile->read(_audioMapSCI1, audioMapFile->size());
 			audioMapFile->close();
 			delete audioMapFile;
 		} else {
-			_audioMap = 0;
+			_audioMapSCI1 = 0;
 		}
 	}
 }
@@ -1208,7 +1224,7 @@ int AudioResource::getAudioPosition() {
 	}
 }
 
-bool AudioResource::findAudEntryKQ5CD(uint16 audioNumber, byte& volume, uint32& offset, uint32& size) {
+bool AudioResource::findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &offset, uint32 &size) {
 	// AUDIO00X.MAP contains 10-byte entries:
 	// w nEntry
 	// dw offset+volume (as in resource.map)
@@ -1217,10 +1233,10 @@ bool AudioResource::findAudEntryKQ5CD(uint16 audioNumber, byte& volume, uint32& 
 	uint16 n;
 	uint32 off;
 
-	if (_audioMap == 0)
+	if (_audioMapSCI1 == 0)
 		return false;
 
-	byte *ptr = _audioMap;
+	byte *ptr = _audioMapSCI1;
 	while ((n = READ_UINT16(ptr)) != 0xFFFF) {
 		if (n == audioNumber) {
 			off = READ_LE_UINT32(ptr + 2);
@@ -1235,33 +1251,147 @@ bool AudioResource::findAudEntryKQ5CD(uint16 audioNumber, byte& volume, uint32& 
 	return false;
 }
 
-Audio::AudioStream* AudioResource::getAudioStreamKQ5CD(uint16 audioNumber, int* sampleLen) {
+bool AudioResource::findAudEntrySCI11(uint16 audioNumber, uint32 &offset) {
+	// 65535.MAP contains 6-byte entries:
+	// w nEntry
+	// dw offset
+	// ending with 6 0xFFs
+	uint16 n;
+	offset = 0;
+	uint16 cur = 0;
+
+	if (!_audioMapSCI11)
+		_audioMapSCI11 = _resMgr->findResource(kResourceTypeMap, 65535, 1);
+
+	byte *ptr = _audioMapSCI11->data;
+	while (cur < _audioMapSCI11->size) {
+		n = READ_UINT16(ptr);
+		offset = READ_UINT32(ptr + 2);
+
+		// Check if we reached the end
+		if (n == 0xFF && offset == 0xFFFF)
+			return false;
+
+		if (n == audioNumber)
+			return true;
+
+		ptr += 6;
+		cur += 6;
+	}
+
+	return false;
+}
+
+// Sierra SOL audio file reader
+// Check here for more info: http://wiki.multimedia.cx/index.php?title=Sierra_Audio
+// TODO: improve this for later versions of the format, as this currently only reads
+// raw PCM encoded files (not ADPCM compressed ones)
+byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 *size, uint16 *audioRate, byte *flags) {
+	byte audioFlags;
+	byte version = audioStream->readByte();
+
+	if (version != 0x8D) {
+		warning("SOL audio version is newer than the expected one");
+		return NULL;
+	}
+
+	audioStream->readByte();				// skip header size (1 byte), usually 0B (11 bytes)
+	audioStream->readUint32LE();			// skip "SOL" + 0 (4 bytes)
+	*audioRate = audioStream->readUint16LE();
+	audioFlags = audioStream->readByte();
+
+	if (audioFlags & kSolFlagCompressed) {
+		warning("ADPCM compressed SOL files are not supported yet");
+		return NULL;
+	}
+
+	// Convert the SOL stream flags to our own format
+	*flags = 0;
+	if (audioFlags & kSolFlag16Bit)
+		*flags |= Audio::Mixer::FLAG_16BITS;
+	if (!(audioFlags & kSolFlagIsSigned))
+		*flags |= Audio::Mixer::FLAG_UNSIGNED;
+
+	*size = audioStream->readUint16LE();
+
+	// We assume that the sound data is raw PCM
+	byte *buffer = new byte[*size];
+	audioStream->read(buffer, *size);
+	return buffer;
+}
+
+Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int *sampleLen) {
 	Audio::AudioStream *audioStream = 0;
 	byte volume;
 	uint32 offset;
 	uint32 size;
+	bool found = false;
+	byte *data = 0;
+	char filename[40];
+	byte flags;
 
-	if (findAudEntryKQ5CD(audioNumber, volume, offset, size)) {
-		uint32 start = offset * 1000 / _audioRate;
-		uint32 duration = size * 1000 / _audioRate;
+	// Try to load from an external patch file first
+	Sci::Resource* audioRes = _resMgr->findResource(kResourceTypeAudio, audioNumber, 1);
+	if (audioRes) {
+		if (_sciVersion < SCI_VERSION_1_1) {
+			size = audioRes->size;
+			data = audioRes->data;
+		} else {
+			// TODO: this is disabled for now, as for some reason the resource manager returns
+			// only the data chunk of the audio file, and not its headers
+			/*
+			Common::MemoryReadStream *memStream = 
+				new Common::MemoryReadStream(audioRes->data, audioRes->size, true);
+			data = readSOLAudio(memStream, &size, &_audioRate, &flags);
+			delete memStream;
+			*/
+		}
 
-		char filename[40];
+		if (data) {
+			*sampleLen = size * 60 / _audioRate;
+			return Audio::makeLinearInputStream(data, size, _audioRate, 
+											flags | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
+		}
+	}
+
+	// Patch file not found, load it from the audio file
+	if (_sciVersion < SCI_VERSION_1_1) {
+		found = findAudEntrySCI1(audioNumber, volume, offset, size);
 		sprintf(filename, "AUDIO%03d.%03d", _lang, volume);
+	} else {
+		found = findAudEntrySCI11(audioNumber, offset);
+		strcpy(filename, "RESOURCE.AUD");
+	}
 
-		// Try to load compressed
-		audioStream = Audio::AudioStream::openStreamFile(filename, start, duration); 
+	if (found) {
+		if (_sciVersion < SCI_VERSION_1_1) {
+			uint32 start = offset * 1000 / _audioRate;
+			uint32 duration = size * 1000 / _audioRate;
+		
+			// Try to load compressed
+			audioStream = Audio::AudioStream::openStreamFile(filename, start, duration); 
+		}
+
 		if (!audioStream) { 
 			// Compressed file load failed, try to load original raw data
-			byte *soundbuff = (byte *)malloc(size);
 			Common::File* audioFile = new Common::File();
 			if (audioFile->open(filename)) {
 				audioFile->seek(offset);
-				audioFile->read(soundbuff, size);
+
+				if (_sciVersion < SCI_VERSION_1_1) {
+					data = (byte *)malloc(size);
+					audioFile->read(data, size);
+				} else {
+					data = readSOLAudio(audioFile, &size, &_audioRate, &flags);
+				}
+
 				audioFile->close();
 				delete audioFile;
 
-				audioStream = Audio::makeLinearInputStream(soundbuff, size,	_audioRate,
-						Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, 0, 0);
+				if (data) {
+					audioStream = Audio::makeLinearInputStream(data, size, _audioRate,
+													flags | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
+				}
 			}
 		}
 
@@ -1270,96 +1400,5 @@ Audio::AudioStream* AudioResource::getAudioStreamKQ5CD(uint16 audioNumber, int* 
 
 	return audioStream;
 }
-
-bool AudioResource::findAudEntryKQ6Floppy(uint16 audioNumber, uint32& offset) {
-	// 65535.MAP contains 8-byte entries:
-	// w nEntry
-	// dw offset
-	// w unknown
-	uint16 n;
-	offset = 0;
-	int cur = 0;
-	int fileSize = 0;
-
-	// Load audio map
-	Common::File* audioMapFile = new Common::File();
-	if (audioMapFile->open("65535.map")) {
-		_audioMap = new byte[audioMapFile->size()];
-		audioMapFile->read(_audioMap, audioMapFile->size());
-		fileSize = audioMapFile->size();
-		audioMapFile->close();
-		delete audioMapFile;
-	} else {
-		_audioMap = 0;
-		return false;
-	}
-
-	byte *ptr = _audioMap;
-	while (cur < fileSize) {
-		n = READ_UINT16(ptr);
-		if (n == audioNumber) {
-			offset = READ_LE_UINT32(ptr + 2);
-			delete[] _audioMap;
-			_audioMap = 0;
-			return true;
-		}
-		ptr += 8;
-		cur += 8;
-	}
-
-	delete[] _audioMap;
-	_audioMap = 0;
-	return false;
-}
-
-Audio::AudioStream* AudioResource::getAudioStreamKQ6Floppy(uint16 audioNumber, int* sampleLen) {
-	Audio::AudioStream *audioStream = 0;
-	uint32 offset;
-	uint32 size;
-
-	if (findAudEntryKQ6Floppy(audioNumber, offset)) {
-		Common::File* audioFile = new Common::File();
-		if (audioFile->open("resource.aud")) {
-			audioFile->seek(offset);
-			// Read audio file info
-			// Audio files are actually Sierra Audio files.
-			// Check here for more info: http://wiki.multimedia.cx/index.php?title=Sierra_Audio
-			audioFile->readByte();			// skip version
-			audioFile->readByte();			// skip header size
-			audioFile->readUint32LE();		// skip "SOL" + 0
-			_audioRate = audioFile->readUint16LE();
-			audioFile->readByte();			// skip flags
-			size = audioFile->readUint16LE();
-			byte *soundbuff = (byte *)malloc(size);
-			audioFile->read(soundbuff, size); 
-			audioFile->close();
-			delete audioFile;
-
-			audioStream = Audio::makeLinearInputStream(soundbuff, size,	_audioRate,
-				Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED, 0, 0);
-		}
-
-		*sampleLen = size * 60 / _audioRate;
-	}
-
-	return audioStream;
-}
-
-Audio::AudioStream* AudioResource::getAudioStreamKQ5CD(Resource* audioRes, int* sampleLen) {
-	*sampleLen = audioRes->size * 60 / _audioRate;
-	return Audio::makeLinearInputStream(audioRes->data, audioRes->size, _audioRate, Audio::Mixer::FLAG_UNSIGNED, 0, 0);
-}
-
-Audio::AudioStream* AudioResource::getAudioStreamKQ6Floppy(Resource* audioRes, int* sampleLen) {
-	// Read audio file info
-	// Audio files are actually Sierra Audio files.
-	// Check here for more info: http://wiki.multimedia.cx/index.php?title=Sierra_Audio
-	_audioRate = READ_UINT16(audioRes->data + 6);
-	uint32 size = READ_UINT16(audioRes->data + 9);
-
-	*sampleLen = size * 60 / _audioRate;
-	return Audio::makeLinearInputStream(audioRes->data + 11, size, _audioRate, Audio::Mixer::FLAG_UNSIGNED, 0, 0);
-}
-
 
 } // End of namespace Sci

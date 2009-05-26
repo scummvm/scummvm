@@ -304,7 +304,7 @@ protected:
 
 class AudioResource {
 public:
-	AudioResource();
+	AudioResource(ResourceManager *resMgr, int sciVersion);
 	~AudioResource();
 
 	void setAudioRate(uint16 audioRate) { _audioRate = audioRate; }
@@ -313,11 +313,7 @@ public:
 	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
 	int getAudioPosition();
 
-	// TODO: these need better names
-	Audio::AudioStream* getAudioStreamKQ5CD(uint16 audioNumber, int* sampleLen);
-	Audio::AudioStream* getAudioStreamKQ5CD(Resource* audioRes, int* sampleLen);
-	Audio::AudioStream* getAudioStreamKQ6Floppy(uint16 audioNumber, int* sampleLen);
-	Audio::AudioStream* getAudioStreamKQ6Floppy(Resource* audioRes, int* sampleLen);
+	Audio::AudioStream* getAudioStream(uint16 audioNumber, int *sampleLen);
 
 	void stop() { g_system->getMixer()->stopHandle(_audioHandle); }
 	void pause() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
@@ -327,11 +323,13 @@ private:
 	Audio::SoundHandle _audioHandle;
 	uint16 _audioRate;
 	int16 _lang;
-	byte *_audioMap;
+	byte *_audioMapSCI1;
+	Resource *_audioMapSCI11;
+	ResourceManager *_resMgr;
+	int _sciVersion;
 
-	// TODO: these need better names
-	bool findAudEntryKQ5CD(uint16 audioNumber, byte& volume, uint32& offset, uint32& size);
-	bool findAudEntryKQ6Floppy(uint16 audioNumber, uint32& offset);
+	bool findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &offset, uint32 &size);
+	bool findAudEntrySCI11(uint16 audioNumber, uint32 &offset);
 };
 
 } // End of namespace Sci
