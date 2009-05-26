@@ -72,12 +72,7 @@ static const char HELP_STRING[] =
 	"  --savepath=PATH          Path to where savegames are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
-	"  --game-devel-mode=BOOL   Set the turn on/off game engine development mode: TRUE/FALSE\n"
-	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
-	"  --gamma=FLOAT            Set the gamma correction\n"
 	"  --show-fps=BOOL          Set the turn on/off display FPS info: TRUE/FALSE\n"
-	"  --engine-speed=NUM       Set engine speed (default: 30)\n"
-	"  -b, --boot-param=NUM     Pass number to the boot script (boot param)\n"
 	"\n"
 ;
 #endif
@@ -122,8 +117,6 @@ void registerDefaults() {
 	ConfMan.registerDefault("fullscreen", "FALSE");
 	ConfMan.registerDefault("gamma", "1.0");
 	ConfMan.registerDefault("show_fps", "FALSE");
-	ConfMan.registerDefault("engine_speed", "30");
-	ConfMan.registerDefault("game_devel_mode", "");
 
 	ConfMan.registerDefault("joystick", "1");
 
