@@ -1,4 +1,4 @@
-/* Residual - Virtual machine to run LucasArts' 3D adventure games
+/* Residual - A 3D game interpreter
  *
  * Residual is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the AUTHORS
