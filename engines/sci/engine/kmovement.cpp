@@ -231,11 +231,13 @@ reg_t kInitBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define MOVING_ON_X (((axis == _K_BRESEN_AXIS_X)&&bi1) || dx)
 #define MOVING_ON_Y (((axis == _K_BRESEN_AXIS_Y)&&bi1) || dy)
 
-static enum {
+enum Movecnt {
 	IGNORE_MOVECNT,
 	INCREMENT_MOVECNT,
 	UNINITIALIZED
-} handle_movecnt = UNINITIALIZED;
+};
+
+static Movecnt handle_movecnt = UNINITIALIZED;	// FIXME: Avoid static vars
 
 int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
 

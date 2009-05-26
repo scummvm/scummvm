@@ -663,7 +663,7 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 #define DUMMY_MESSAGE "Message not found!"
 
-static MessageState state;
+static MessageState state;	// FIXME: Avoid static vars
 
 enum kMessageFunc {
 	K_MESSAGE_GET,

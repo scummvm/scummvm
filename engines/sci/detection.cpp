@@ -3357,7 +3357,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
  * The fallback game descriptor used by the SCI engine's fallbackDetector.
  * Contents of this struct are to be overwritten by the fallbackDetector.
  */
-static SciGameDescription g_fallbackDesc = {
+static SciGameDescription s_fallbackDesc = {
 	{
 		"",
 		"",
@@ -3463,23 +3463,23 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 
 	// Set some defaults
-	g_fallbackDesc.desc.gameid = "sci";
-	g_fallbackDesc.desc.extra = "";
-	g_fallbackDesc.desc.language = Common::UNK_LANG;
-	g_fallbackDesc.desc.platform = exePlatform;
-	g_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
-	g_fallbackDesc.version = SCI_VERSION_0;
+	s_fallbackDesc.desc.gameid = "sci";
+	s_fallbackDesc.desc.extra = "";
+	s_fallbackDesc.desc.language = Common::UNK_LANG;
+	s_fallbackDesc.desc.platform = exePlatform;
+	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
+	s_fallbackDesc.version = SCI_VERSION_0;
 
 	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
 	printf("translation), please, report the data above, including the following\n");
 	printf("version number, from the game's executable:\n");
 
 	// Try to parse the executable version
-	if (getSciVersionFromString(exeVersionString, &g_fallbackDesc.version, g_fallbackDesc.desc.platform)) {
+	if (getSciVersionFromString(exeVersionString, &s_fallbackDesc.version, s_fallbackDesc.desc.platform)) {
 		printf("Detected version: %s, parsed SCI version: %s\n",
-					exeVersionString.c_str(), versionNames[g_fallbackDesc.version]);
+					exeVersionString.c_str(), versionNames[s_fallbackDesc.version]);
 
-		return (const ADGameDescription *)&g_fallbackDesc;
+		return (const ADGameDescription *)&s_fallbackDesc;
 	} else {
 		printf("Couldn't parse the interpreter version: %s (by executable scan)\n",
 			exeVersionString.c_str());

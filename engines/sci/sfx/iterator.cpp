@@ -1368,9 +1368,9 @@ TeeSongIterator::~TeeSongIterator() {
 
 
 int TeeSongIterator::nextCommand(byte *buf, int *result) {
-	static int ready_masks[2] = {TEE_LEFT_READY, TEE_RIGHT_READY};
-	static int active_masks[2] = {TEE_LEFT_ACTIVE, TEE_RIGHT_ACTIVE};
-	static int pcm_masks[2] = {TEE_LEFT_PCM, TEE_RIGHT_PCM};
+	static const int ready_masks[2] = {TEE_LEFT_READY, TEE_RIGHT_READY};
+	static const int active_masks[2] = {TEE_LEFT_ACTIVE, TEE_RIGHT_ACTIVE};
+	static const int pcm_masks[2] = {TEE_LEFT_PCM, TEE_RIGHT_PCM};
 	int i;
 	int retid;
 
@@ -1497,7 +1497,7 @@ int TeeSongIterator::nextCommand(byte *buf, int *result) {
 }
 
 Audio::AudioStream *TeeSongIterator::getAudioStream() {
-	static int pcm_masks[2] = {TEE_LEFT_PCM, TEE_RIGHT_PCM};
+	static const int pcm_masks[2] = {TEE_LEFT_PCM, TEE_RIGHT_PCM};
 	int i;
 
 	for (i = TEE_LEFT; i <= TEE_RIGHT; i++)

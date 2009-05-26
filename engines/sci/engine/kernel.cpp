@@ -47,7 +47,7 @@ struct SciKernelFunction {
 	const char *signature;  /* kfunct signature */
 };
 
-static int sci_max_allowed_unknown_kernel_functions[] = {
+static const int sci_max_allowed_unknown_kernel_functions[] = {
 	0,
 	0x72, // SCI0
 	0x7b, // SCI01/EGA

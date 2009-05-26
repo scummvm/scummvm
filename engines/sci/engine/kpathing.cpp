@@ -244,11 +244,8 @@ struct PathfindingState {
 	~PathfindingState() {
 		free(vertex_index);
 
-		if (_prependPoint)
-			delete _prependPoint;
-
-		if (_appendPoint)
-			delete _appendPoint;
+		delete _prependPoint;
+		delete _appendPoint;
 
 		for (PolygonList::iterator it = polygons.begin(); it != polygons.end(); ++it) {
 			delete *it;
@@ -257,7 +254,7 @@ struct PathfindingState {
 };
 
 
-static Vertex *vertex_cur;	// FIXME
+static Vertex *s_vertex_cur;	// FIXME: Avoid static vars
 
 // FIXME: Temporary hack to deal with points in reg_ts
 static bool polygon_is_reg_t(const byte *list, int size) {
@@ -286,8 +283,7 @@ static Common::Point read_point(const byte *list, int is_reg_t, int offset) {
 /**
  * Checks whether two polygons are equal
  */
-static bool polygons_equal(EngineState *s, reg_t p1, reg_t p2)
-{
+static bool polygons_equal(EngineState *s, reg_t p1, reg_t p2) {
 	// Check for same type
 	if (KP_UINT(GET_SEL32(p1, type)) != KP_UINT(GET_SEL32(p2, type)))
 		return false;
@@ -618,12 +614,12 @@ static void fix_vertex_order(Polygon *polygon) {
 
 static int vertex_compare(const void *a, const void *b) {
 	// Compares two vertices by angle (first) and distance (second) in relation
-	// to vertex_cur. The angle is relative to the horizontal line extending
-	// right from vertex_cur, and increases clockwise
+	// to s_vertex_cur. The angle is relative to the horizontal line extending
+	// right from s_vertex_cur, and increases clockwise
 	// Parameters: (const void *) a, b: The vertices
 	// Returns   : (int) -1 if a is smaller than b, 1 if a is larger than b, and
 	//                   0 if a and b are equal
-	const Common::Point &p0 = vertex_cur->v;
+	const Common::Point &p0 = s_vertex_cur->v;
 	const Common::Point &p1 = (*(Vertex **) a)->v;
 	const Common::Point &p2 = (*(Vertex **) b)->v;
 
@@ -664,7 +660,7 @@ static int vertex_compare(const void *a, const void *b) {
 	return -1;
 }
 
-static void clockwise(const Vertex *v, const Common::Point *&p1, const Common::Point *&p2) {
+static void clockwise(const Vertex *vertex_cur, const Vertex *v, const Common::Point *&p1, const Common::Point *&p2) {
 	// Orders the points of an edge clockwise around vertex_cur. If all three
 	// points are collinear the original order is used
 	// Parameters: (const Vertex *) v: The first vertex of the edge
@@ -688,7 +684,7 @@ static void clockwise(const Vertex *v, const Common::Point *&p1, const Common::P
  * @param b				the second edge
  * @return true if a is closer to vertex_cur than b, false otherwise
  */
-static bool edgeIsCloser(const Vertex *a, const Vertex *b) {
+static bool edgeIsCloser(const Vertex *vertex_cur, const Vertex *a, const Vertex *b) {
 	const Common::Point *v1, *v2, *w1, *w2;
 
 	// Check for comparison of the same edge
@@ -700,8 +696,8 @@ static bool edgeIsCloser(const Vertex *a, const Vertex *b) {
 
 	// Order vertices clockwise so we know vertex_cur is to the right of
 	// directed edges (v1, v2) and (w1, w2)
-	clockwise(a, v1, v2);
-	clockwise(b, w1, w2);
+	clockwise(vertex_cur, a, v1, v2);
+	clockwise(vertex_cur, b, w1, w2);
 
 	// At this point we know that one edge must lie entirely to one side
 	// of the other, as the edges are not collinear and cannot intersect
@@ -741,13 +737,14 @@ static int inside(const Common::Point &p, Vertex *vertex) {
 
 /**
  * Determines whether or not a vertex is visible from vertex_cur.
+ * @param vertex_cur	the base vertex
  * @param vertex		the vertex
  * @param vertex_prev	the previous vertex in the sort order, or NULL
  * @param visible		true if vertex_prev is visible, false otherwise
  * @param intersected	the list of edges intersected by the sweeping line
  * @return true if vertex is visible from vertex_cur, false otherwise
  */
-static bool visible(Vertex *vertex, Vertex *vertex_prev, bool visible, const VertexList &intersected) {
+static bool visible(Vertex *vertex_cur, Vertex *vertex, Vertex *vertex_prev, bool visible, const VertexList &intersected) {
 	const Common::Point &p = vertex_cur->v;
 	const Common::Point &w = vertex->v;
 
@@ -771,14 +768,14 @@ static bool visible(Vertex *vertex, Vertex *vertex_prev, bool visible, const Ver
 	const Vertex *edge = *it++;
 
 	for (; it != intersected.end(); ++it) {
-		if (edgeIsCloser(*it, edge))
+		if (edgeIsCloser(vertex_cur, *it, edge))
 			edge = *it;
 	}
 
 	const Common::Point *p1, *p2;
 
 	// Check for intersection with sweeping line before vertex
-	clockwise(edge, p1, p2);
+	clockwise(vertex_cur, edge, p1, p2);
 	if (left(*p2, *p1, p) && left(*p1, *p2, w))
 		return false;
 
@@ -788,17 +785,17 @@ static bool visible(Vertex *vertex, Vertex *vertex_prev, bool visible, const Ver
 /**
  * Returns a list of all vertices that are visible from a particular vertex.
  * @param s				the pathfinding state
- * @param vert			the vertex
+ * @param vertex_cur	the vertex
  * @return list of vertices that are visible from vert
  */
-static VertexList *visible_vertices(PathfindingState *s, Vertex *vert) {
+static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
 	// List of edges intersected by the sweeping line
 	VertexList intersected;
 	VertexList *visVerts = new VertexList();
-	const Common::Point &p = vert->v;
+	const Common::Point &p = vertex_cur->v;
 
 	// Sort vertices by angle (first) and distance (second)
-	vertex_cur = vert;
+	s_vertex_cur = vertex_cur;
 	qsort(s->vertex_index, s->vertices, sizeof(Vertex *), vertex_compare);
 
 	for (PolygonList::iterator it = s->polygons.begin(); it != s->polygons.end(); ++it) {
@@ -812,7 +809,7 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vert) {
 				const Common::Point *high, *low;
 
 				// Add edges that intersect the initial position of the sweeping line
-				clockwise(vertex, high, low);
+				clockwise(vertex_cur, vertex, high, low);
 
 				if ((high->y < p.y) && (low->y >= p.y) && (*low != p))
 					intersected.push_front(vertex);
@@ -822,12 +819,12 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vert) {
 
 	int is_visible = 1;
 
-	// The first vertex will be vertex_cur, so we skip it
+	// The first vertex will be s_vertex_cur, so we skip it
 	for (int i = 1; i < s->vertices; i++) {
 		Vertex *v1;
 
 		// Compute visibility of vertex_index[i]
-		is_visible = visible(s->vertex_index[i], s->vertex_index[i - 1], is_visible, intersected);
+		is_visible = visible(s_vertex_cur, s->vertex_index[i], s->vertex_index[i - 1], is_visible, intersected);
 
 		// Update visibility matrix
 		if (is_visible)

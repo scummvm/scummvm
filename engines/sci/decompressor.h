@@ -178,7 +178,7 @@ public:
 
 protected:
 	int unpackDCL(byte *dest);
-	int huffman_lookup(int *tree);
+	int huffman_lookup(const int *tree);
 };
 
 #ifdef ENABLE_SCI32

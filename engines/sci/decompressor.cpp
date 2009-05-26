@@ -594,7 +594,7 @@ void DecompressorLZW::reorderView(byte *src, byte *dest) {
 // Leaf node
 #define LN(pos, value)  ((value) | HUFFMAN_LEAF),
 
-static int length_tree[] = {
+static const int length_tree[] = {
 	BN(0, 1, 2)
 	BN(1, 3, 4)     BN(2, 5, 6)
 	BN(3, 7, 8)     BN(4, 9, 10)    BN(5, 11, 12)  LN(6, 1)
@@ -606,7 +606,7 @@ static int length_tree[] = {
 	0 // We need something witout a comma at the end
 };
 
-static int distance_tree[] = {
+static const int distance_tree[] = {
 	BN(0, 1, 2)
 	BN(1, 3, 4)       BN(2, 5, 6)
 	//
@@ -649,7 +649,7 @@ static int distance_tree[] = {
 	0 // We need something witout a comma at the end
 };
 
-static int ascii_tree[] = {
+static const int ascii_tree[] = {
 	BN(0, 1, 2)       BN(1, 3, 4)       BN(2, 5, 6)       BN(3, 7, 8)
 	BN(4, 9, 10)      BN(5, 11, 12)     BN(6, 13, 14)     BN(7, 15, 16)
 	BN(8, 17, 18)     BN(9, 19, 20)     BN(10, 21, 22)    BN(11, 23, 24)
@@ -798,7 +798,7 @@ int DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
 }
 
 
-int DecompressorDCL::huffman_lookup(int *tree) {
+int DecompressorDCL::huffman_lookup(const int *tree) {
 	int pos = 0;
 	int bit;
 

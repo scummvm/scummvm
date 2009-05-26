@@ -360,7 +360,6 @@ extern int oldx, oldy;
 
 reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::Point newpos;
-	static Common::Point oldpos(0, 0);
 
 	newpos = s->gfx_state->pointer_pos;
 
@@ -377,8 +376,6 @@ reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (newpos.x < 0) newpos.x = 0;
 		if (newpos.y < 0) newpos.y = 0;
-
-		oldpos = newpos;
 	}
 
 	GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
@@ -471,9 +468,9 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 	delete port;
 }
 
-static int activated_icon_bar = 0;
-static int port_origin_x = 0;
-static int port_origin_y = 0;
+static bool activated_icon_bar = false;	// FIXME: Avoid static vars
+static int port_origin_x = 0;	// FIXME: Avoid static vars
+static int port_origin_y = 0;	// FIXME: Avoid static vars
 
 reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	rect_t area;
@@ -1783,7 +1780,7 @@ void _k_view_list_mark_free(EngineState *s, reg_t off) {
 	}
 }
 
-static int _k_animate_ran = 0;
+static bool _k_animate_ran = false;	// FIXME: Avoid static vars
 
 int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, int funct_nr, int argc, reg_t *argv) {
 // disposes all list members flagged for disposal; funct_nr is the invoking kfunction
@@ -1791,7 +1788,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 	int signal;
 	int dropped = 0;
 
-	_k_animate_ran = 0;
+	_k_animate_ran = false;
 
 	if (widget) {
 		int retval;
@@ -1870,10 +1867,11 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 	return dropped;
 }
 
-
-#define _K_MAKE_VIEW_LIST_CYCLE 1
-#define _K_MAKE_VIEW_LIST_CALC_PRIORITY 2
-#define _K_MAKE_VIEW_LIST_DRAW_TO_CONTROL_MAP 4
+enum {
+	_K_MAKE_VIEW_LIST_CYCLE = 1,
+	_K_MAKE_VIEW_LIST_CALC_PRIORITY = 2,
+	_K_MAKE_VIEW_LIST_DRAW_TO_CONTROL_MAP = 4
+};
 
 static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, int nr, int funct_nr, int argc, reg_t *argv) {
 	short oldloop, oldcel;
@@ -2100,7 +2098,7 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 
 static void _k_update_signals_in_view_list(GfxList *old_list, GfxList *new_list) {
 	// O(n^2)... a bit painful, but much faster than the redraws it helps prevent
-	GfxDynView *old_widget = (GfxDynView *) old_list->_contents;
+	GfxDynView *old_widget = (GfxDynView *)old_list->_contents;
 
 	/* Traverses all old widgets, updates them with signals from the new widgets.
 	** This is done to avoid evil hacks in widget.c; widgets with unique IDs are
@@ -2332,7 +2330,7 @@ reg_t kGetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (activated_icon_bar && argc == 6) {
 		port_origin_x = port_origin_y = 0;
-		activated_icon_bar = 0;
+		activated_icon_bar = false;
 		return s->r_acc;
 	}
 
@@ -2367,7 +2365,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (SKPV(0) == -10) {
 			s->port->draw(gfxw_point_zero); // Update the port we're leaving
 			s->port = s->iconbar_port;
-			activated_icon_bar = 1;
+			activated_icon_bar = true;
 			return s->r_acc;
 		}
 
@@ -2974,7 +2972,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int open_animation = 0;
 
 	process_sound_events(s); // Take care of incoming events (kAnimate is called semi-regularly)
-	_k_animate_ran = 1; // Used by some of the invoked functions to check for recursion, which may,
+	_k_animate_ran = true; // Used by some of the invoked functions to check for recursion, which may,
 						// after all, damage the cast list
 
 	if (cast_list_ref.segment) {

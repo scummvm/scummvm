@@ -95,6 +95,7 @@ bool FileHandle::isOpen() const {
 
 
 
+// FIXME: Avoid static vars
 static int _savegame_indices_nr = -1; // means 'uninitialized'
 
 struct SavegameDesc {
@@ -103,6 +104,7 @@ struct SavegameDesc {
 	int time;
 };
 
+// FIXME: Avoid static vars
 static SavegameDesc _savegame_indices[MAX_SAVEGAME_NR];
 
 

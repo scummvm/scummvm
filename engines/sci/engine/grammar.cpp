@@ -42,7 +42,7 @@ namespace Sci {
 #define TOKEN_NON_NT (TOKEN_OPAREN | TOKEN_TERMINAL_CLASS | TOKEN_TERMINAL_GROUP | TOKEN_STUFFING_WORD)
 #define TOKEN_TERMINAL (TOKEN_TERMINAL_CLASS | TOKEN_TERMINAL_GROUP)
 
-int _allocd_rules = 0;
+static int _allocd_rules = 0;	// FIXME: Avoid static vars
 
 static void vocab_print_rule(parse_rule_t *rule) {
 	int i;
@@ -420,8 +420,7 @@ int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words
 	return vocab_gnf_parse(nodes, words, branch0, rules, 0);
 }
 
-static int
-_vbpt_pareno(parse_tree_node_t *nodes, int *pos, int base) {
+static int _vbpt_pareno(parse_tree_node_t *nodes, int *pos, int base) {
 	// Opens parentheses
 	nodes[base].content.branches[0] = (*pos) + 1;
 	nodes[++(*pos)].type = PARSE_TREE_NODE_BRANCH;

@@ -66,8 +66,6 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 	return 0;
 }
 
-extern int _allocd_rules;
-
 int _reset_graphics_input(EngineState *s) {
 	Resource *resource;
 	int font_nr;
