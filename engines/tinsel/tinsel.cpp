@@ -836,6 +836,21 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	// Add DW2 subfolder to search path in case user is running directly from the CDs
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("dw2"));
 
+	// Add subfolders needed for psx versions of Discworld 1	
+	if(TinselV1PSX) {
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("MIDI"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("SAMPLES"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXAB"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXC"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXDG"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXHL"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXMO"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXP"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXRS"));
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXTW"));
+	}
+
 	const GameSettings *g;
 
 	const char *gameid = ConfMan.get("gameid").c_str();
