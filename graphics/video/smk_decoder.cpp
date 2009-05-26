@@ -123,6 +123,7 @@ public:
 		uint32 bit = _bs.getBit();
 		assert(bit);
 
+		_tree.reserve(256);
 		decodeTree(0);
 
 		bit = _bs.getBit();
@@ -227,6 +228,7 @@ BigHuffmanTree::BigHuffmanTree(BitStream &bs)
 
 	_last[0] = _last[1] = _last[2] = 0xffffffff;
 
+	_tree.reserve(256);
 	decodeTree(0, 0);
 	bit = _bs.getBit();
 	assert(!bit);
