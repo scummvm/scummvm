@@ -57,3 +57,9 @@ create_kyradat
     room tables in kyra1, various hardcoded language strings in both kyra1 and kyra2,
     script data for the sequence players of kyra1 and kyra2 and other static data.
     This tool is used to create the kyra.dat file.
+
+create_lure
+-----------
+    Extracts various static data from each of the different language versions of the
+    game executables. This includes character animations, game scripts, and other
+    static data. This tool creates the lure.dat file.
