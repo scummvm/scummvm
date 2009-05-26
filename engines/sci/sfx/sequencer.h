@@ -30,7 +30,6 @@
 #include "common/scummsys.h"
 
 #include "common/error.h"
-#include "sci/sfx/device.h"
 
 namespace Sci {
 

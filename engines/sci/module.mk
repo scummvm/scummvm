@@ -62,10 +62,7 @@ MODULE_OBJS = \
 	sfx/core.o \
 	sfx/iterator.o \
 	sfx/songlib.o \
-	sfx/device/devices.o \
 	sfx/player/new_player.o \
-	sfx/player/polled.o \
-	sfx/player/realtime.o \
 	sfx/seq/gm.o \
 	sfx/seq/instrument-map.o \
 	sfx/seq/map-mt32-to-gm.o \
