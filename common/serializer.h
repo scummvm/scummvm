@@ -127,34 +127,6 @@ public:
 	 */
 	Version getVersion() const { return _version; }
 
-	/**
-	 * Sync a 'magic id' of up to 256 bytes, and return whether it matched.
-	 * When saving, this will simply write out the magic id and return true.
-	 * When loading, this will read the specified number of bytes, compare it
-	 * to the given magic id and return true on a match, false otherwise.
-	 *
-	 * A typical magic id is a FOURCC like 'MAGI'.
-	 *
-	 * @param magic		magic id as a byte sequence
-	 * @param size		length of the magic id in bytes
-	 * @return true if the magic id matched, false otherwise
-	 *
-	 * @todo Should this have minVersion/maxVersion params, too?
-	 */
-	bool syncMagic(const char *magic, byte size) {
-		char buf[256];
-		bool match;
-		if (isSaving()) {
-			_saveStream->write(magic, size);
-			match = true;
-		} else {
-			_loadStream->read(buf, size);
-			match = (0 == memcmp(buf, magic, size));
-		}
-		_bytesSynced += size;
-		return match;
-	}
-
 
 	/**
 	 * Return the total number of bytes synced so far.
@@ -190,6 +162,35 @@ public:
 		else
 			_saveStream->write(buf, size);
 		_bytesSynced += size;
+	}
+
+	/**
+	 * Sync a 'magic id' of up to 256 bytes, and return whether it matched.
+	 * When saving, this will simply write out the magic id and return true.
+	 * When loading, this will read the specified number of bytes, compare it
+	 * to the given magic id and return true on a match, false otherwise.
+	 *
+	 * A typical magic id is a FOURCC like 'MAGI'.
+	 *
+	 * @param magic		magic id as a byte sequence
+	 * @param size		length of the magic id in bytes
+	 * @return true if the magic id matched, false otherwise
+	 */
+	bool matchBytes(const char *magic, byte size, Version minVersion = 0, Version maxVersion = kLastVersion) {
+		if (_version < minVersion || _version > maxVersion)
+			return true;	// Ignore anything which is not supposed to be present in this save game version
+
+		bool match;
+		if (isSaving()) {
+			_saveStream->write(magic, size);
+			match = true;
+		} else {
+			char buf[256];
+			_loadStream->read(buf, size);
+			match = (0 == memcmp(buf, magic, size));
+		}
+		_bytesSynced += size;
+		return match;
 	}
 
 	/**

@@ -43,7 +43,7 @@ public:
 	void readVersioned_v1(Common::SeekableReadStream *stream, Common::Serializer::Version version) {
 		Common::Serializer  ser(stream, 0);
 
-		TS_ASSERT(ser.syncMagic("MAGI", 4));
+		TS_ASSERT(ser.matchBytes("MAGI", 4));
 
 		TS_ASSERT(ser.syncVersion(1));
 		TS_ASSERT_EQUALS(ser.getVersion(), version);
@@ -64,7 +64,7 @@ public:
 	void readVersioned_v2(Common::SeekableReadStream *stream, Common::Serializer::Version version) {
 		Common::Serializer  ser(stream, 0);
 
-		TS_ASSERT(ser.syncMagic("MAGI", 4));
+		TS_ASSERT(ser.matchBytes("MAGI", 4));
 
 		TS_ASSERT(ser.syncVersion(2));
 		TS_ASSERT_EQUALS(ser.getVersion(), version);
