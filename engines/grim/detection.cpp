@@ -72,7 +72,7 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"grim",
 			0,
-			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 362212), // by garrythefish
+			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 362212), // TODO crrect to proper size
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
@@ -83,7 +83,7 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"grim",
 			0,
-			AD_ENTRY1s("grim.tab", "b1460cd029f13718f7f62c2403e047ec", 372709), // by jvprat
+			AD_ENTRY1s("grim.tab", "b1460cd029f13718f7f62c2403e047ec", 372709),
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
