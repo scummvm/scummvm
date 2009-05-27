@@ -22,6 +22,9 @@
  * $Id$
  */
 
+#ifndef SOUND_SOFTSYNTH_EMUMIDI_H
+#define SOUND_SOFTSYNTH_EMUMIDI_H
+
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -109,3 +112,5 @@ public:
 	}
 	bool endOfData() const { return false; }
 };
+
+#endif
