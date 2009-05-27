@@ -1420,7 +1420,7 @@ prevented music for these games from working on platforms that do not
 support MIDI, or soundcards that do not provide MIDI drivers (e.g. many
 soundcards will not play MIDI under Linux). ScummVM can now emulate MIDI
 mode using sampled waves and AdLib, FluidSynth MIDI emulation or MT-32
-emulation using the -eAdLib, -efluidsynth or -emt32 options
+emulation using the -eadlib, -efluidsynth or -emt32 options
 respectively.  However, if you are capable of using native MIDI, we
 recommend using one of the MIDI modes below for best sound.
 
