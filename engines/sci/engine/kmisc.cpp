@@ -165,7 +165,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
 		if (!s->seg_manager->allocDynmem(UKPV(1), "kMemory() critical", &s->r_acc)) {
-			error("Critical heap allocation failed\n");
+			error("Critical heap allocation failed");
 			script_error_flag = script_debug_flag = 1;
 		}
 		return s->r_acc;
@@ -175,7 +175,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	case K_MEMORY_FREE :
 		if (s->seg_manager->freeDynmem(argv[1])) {
-			error("Attempt to kMemory::free() non-dynmem pointer %04x:%04x!\n", PRINT_REG(argv[1]));
+			error("Attempt to kMemory::free() non-dynmem pointer %04x:%04x", PRINT_REG(argv[1]));
 		}
 		break;
 	case K_MEMORY_MEMCPY : {
@@ -201,7 +201,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (!ref) {
 			// This occurs in KQ5CD when interacting with certain objects
-			warning("Attempt to poke invalid memory at %04x:%04x!\n", PRINT_REG(argv[1]));
+			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 		if (s->seg_manager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
@@ -215,7 +215,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (!ref) {
 			// This occurs in KQ5CD when interacting with certain objects
-			warning("Attempt to poke invalid memory at %04x:%04x!\n", PRINT_REG(argv[1]));
+			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 
@@ -223,7 +223,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {
-				error("Attempt to poke memory reference %04x:%04x to %04x:%04x!\n", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
+				error("Attempt to poke memory reference %04x:%04x to %04x:%04x", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
 				WRITE_LE_UINT16(ref, argv[2].offset); // ?
 			}

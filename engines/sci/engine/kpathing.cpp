@@ -1655,13 +1655,8 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case 3 : {
 		reg_t retval;
 		Polygon *polygon = convert_polygon(s, argv[2]);
-
-		if (polygon->type == POLY_CONTAINED_ACCESS) {
-			sciprintf("[avoidpath] Warning: containment test performed on contained access polygon\n");
-
-			// Semantics unknown, assume barred access semantics
-			polygon->type = POLY_BARRED_ACCESS;
-		}
+		// Override polygon type to prevent inverted result for contained access polygons
+		polygon->type = POLY_BARRED_ACCESS;
 
 		retval = make_reg(0, contained(start, polygon) != CONT_OUTSIDE);
 		delete polygon;

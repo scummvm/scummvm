@@ -383,7 +383,7 @@ reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_DEVICE_INFO_IS_FLOPPY:
 		input_s = kernel_dereference_char_pointer(s, argv[1], 0);
-		debug(3, "K_DEVICE_INFO_IS_FLOPPY(%s)\n", input_s);
+		debug(3, "K_DEVICE_INFO_IS_FLOPPY(%s)", input_s);
 		return NULL_REG; /* Never */
 
 	/* SCI uses these in a less-than-portable way to delete savegames.
@@ -411,7 +411,7 @@ reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	default:
 		// TODO: Not all sub-commands are handled. E.g. KQ5CD calls sub-command 5
-		warning("Unknown DeviceInfo() sub-command: %d\n", mode);
+		warning("Unknown DeviceInfo() sub-command: %d", mode);
 		break;
 	}
 
@@ -853,7 +853,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, exists);
 	}
 	default :
-		error("Unknown FileIO() sub-command: %d\n", func_nr);
+		error("Unknown FileIO() sub-command: %d", func_nr);
 	}
 
 	return s->r_acc;
