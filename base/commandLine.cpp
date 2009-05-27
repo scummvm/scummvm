@@ -417,13 +417,15 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 
 #endif // DISABLE_COMMAND_LINE
 
+	Common::String gameId;
+	if (command.empty())
+		gameId = ConfMan.get("gameid", Common::ConfigManager::kApplicationDomain);
+	else
+		gameId = command;
 
-	// If a target was specified, check whether there is either a game
-	// domain (i.e. a target) matching this argument, or alternatively
-	// whether there is a gameid matching that name.
-	if (!command.empty()) {
-		GameDescriptor gd = EngineMan.findGame(command);
-		if (ConfMan.hasGameDomain(command) || !gd.gameid().empty()) {
+	if (!gameId.empty()) {
+		GameDescriptor gd = EngineMan.findGame(gameId);
+		if (ConfMan.hasGameDomain(gameId) || !gd.gameid().empty()) {
 			bool idCameFromCommandLine = false;
 
 			// WORKAROUND: Fix for bug #1719463: "DETECTOR: Launching
@@ -432,11 +434,11 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 			// We designate gameids which come strictly from command line
 			// so AdvancedDetector will not save config file with invalid
 			// gameid in case target autoupgrade was performed
-			if (!ConfMan.hasGameDomain(command)) {
+			if (!ConfMan.hasGameDomain(gameId)) {
 				idCameFromCommandLine = true;
 			}
 
-			ConfMan.setActiveDomain(command);
+			ConfMan.setActiveDomain(gameId);
 
 			if (idCameFromCommandLine)
 				ConfMan.set("id_came_from_command_line", "1");
