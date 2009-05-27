@@ -150,8 +150,8 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	Common::StringTokenizer tokenizer(edebuglevels, " ,");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
-//		if (!enableDebugChannel(token))
-//			warning("Engine does not support debug level '%s'", token.c_str());
+		if (!enableDebugChannel(token))
+			warning("Engine does not support debug level '%s'", token.c_str());
 	}
 
 	// Inform backend that the engine is about to be run
@@ -162,6 +162,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 	// Inform backend that the engine finished
 	system.engineDone();
+
+	// We clear all debug levels again even though the engine should do it
+	Common::clearAllDebugChannels();
 
 	// Free up memory
 	delete engine;
@@ -204,7 +207,7 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
 	if (settings.contains("debuglevel")) {
-		gDebugLevel = strtol(settings["debuglevel"].c_str(), 0, 10);
+		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
 		printf("Debuglevel (from command line): %d\n", gDebugLevel);
 		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
 	} else if (ConfMan.hasKey("debuglevel"))
