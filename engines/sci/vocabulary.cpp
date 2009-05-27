@@ -141,7 +141,8 @@ bool vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &o) {
 		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
 		int len = READ_LE_UINT16(r->data + offset) - 2;
 		o[i].type = READ_LE_UINT16(r->data + offset + 2);
-		o[i].name = Common::String((char *)r->data + offset + 4, len);
+		// QFG3 has empty opcodes
+		o[i].name = len > 0 ? Common::String((char *)r->data + offset + 4, len) : "Dummy";
 #if 1 //def VOCABULARY_DEBUG
 		printf("Opcode %02X: %s, %d\n", i, o[i].name.c_str(), o[i].type);
 #endif

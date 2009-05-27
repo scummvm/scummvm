@@ -276,8 +276,8 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 	else if (color < s->gfx_state->gfxResMan->getColorCount())
 		return s->gfx_state->gfxResMan->getColor(color);
 	else {
-		error("Color index %d out of bounds for pic %d (%d max)", color, s->gfx_state->pic_nr, s->gfx_state->gfxResMan->getColorCount());
-		BREAKPOINT();
+		// Happens in the beginning of EcoQuest 2, when the dialog box of the customs officer shows up
+		warning("Color index %d out of bounds for pic %d (%d max)", color, s->gfx_state->pic_nr, s->gfx_state->gfxResMan->getColorCount());
 		return PaletteEntry(0,0,0);
 	}
 }
