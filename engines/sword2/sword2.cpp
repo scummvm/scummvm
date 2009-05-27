@@ -69,7 +69,7 @@ static const GameSettings sword2_settings[] = {
 	{"sword2", "Broken Sword 2: The Smoking Mirror", 0, "players.clu" },
 	{"sword2alt", "Broken Sword 2: The Smoking Mirror (alt)", 0, "r2ctlns.ocx" },
 	{"sword2psx", "Broken Sword 2: The Smoking Mirror (PlayStation)", 0, "screens.clu"},
-	{"sword2psxdemo", "Broken Sword 2: The Smoking Mirror (PlayStation/Demo)", Sword2::GF_DEMO, "rdemo.str"},
+	{"sword2psxdemo", "Broken Sword 2: The Smoking Mirror (PlayStation/Demo)", Sword2::GF_DEMO, "screens.clu"},
 	{"sword2demo", "Broken Sword 2: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu" },
 	{NULL, NULL, 0, NULL}
 };
