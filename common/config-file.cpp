@@ -89,7 +89,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 	// TODO: Detect if a section occurs multiple times (or likewise, if
 	// a key occurs multiple times inside one section).
 
-	while (!stream.eos() && !stream.ioFailed()) {
+	while (!stream.eos() && !stream.err()) {
 		lineno++;
 
 		// Read a line
@@ -189,7 +189,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 	if (!section.name.empty())
 		_sections.push_back(section);
 
-	return (!stream.ioFailed() || stream.eos());
+	return (!stream.err() || stream.eos());
 }
 
 bool ConfigFile::saveToFile(const String &filename) {
@@ -252,7 +252,7 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 	}
 
 	stream.flush();
-	return !stream.ioFailed();
+	return !stream.err();
 }
 
 

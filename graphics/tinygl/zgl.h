@@ -1,7 +1,7 @@
 #ifndef _tgl_zgl_h_
 #define _tgl_zgl_h_
 
-#include "common/debug.h"
+#include "common/util.h"
 
 #include "graphics/tinygl/gl.h"
 #include "graphics/tinygl/zbuffer.h"

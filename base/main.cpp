@@ -204,11 +204,11 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
 	if (settings.contains("debuglevel")) {
-		gDebugLevel = (enDebugLevels)strtol(settings["debuglevel"].c_str(), 0, 10);
+		gDebugLevel = strtol(settings["debuglevel"].c_str(), 0, 10);
 		printf("Debuglevel (from command line): %d\n", gDebugLevel);
 		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
 	} else if (ConfMan.hasKey("debuglevel"))
-		gDebugLevel = (enDebugLevels)ConfMan.getInt("debuglevel");
+		gDebugLevel = ConfMan.getInt("debuglevel");
 
 	if (settings.contains("debugflags")) {
 		specialDebug = settings["debugflags"];

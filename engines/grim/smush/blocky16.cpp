@@ -24,7 +24,7 @@
  */
 
 #include "common/endian.h"
-#include "common/debug.h"
+#include "common/util.h"
 
 #include "engines/grim/smush/blocky16.h"
 

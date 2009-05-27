@@ -40,6 +40,7 @@
 #define IS_ALIGNED(value, alignment) \
           ((((size_t)value) & ((alignment) - 1)) == 0)
 
+
 #ifdef MIN
 #undef MIN
 #endif
@@ -100,15 +101,15 @@ private:
 	uint         _tokenEnd;   //!< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
 };
 
-
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is
  * customizable.
  * @param data	the data to be dumped
  * @param len	the lenght of that data
  * @param bytesPerLine	number of bytes to print per line (default: 16)
+ * @param startOffset	shift the shown offsets by the starting offset (default: 0)
  */
-extern void hexdump(const byte * data, int len, int bytesPerLine = 16);
+extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int startOffset = 0);
 
 
 /**
@@ -200,7 +201,6 @@ extern Language parseLanguage(const String &str);
 extern const char *getLanguageCode(Language id);
 extern const char *getLanguageDescription(Language id);
 
-
 /**
  * List of game platforms. Specifying a platform for a target can be used to
  * give the game engines a hint for which platform the game data file are.
@@ -248,5 +248,29 @@ extern const char *getPlatformDescription(Platform id);
 
 
 }	// End of namespace Common
+
+
+#if defined(__GNUC__)
+void error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN;
+#else
+void NORETURN error(const char *s, ...);
+#endif
+
+#ifdef DISABLE_TEXT_CONSOLE
+
+inline int printf(const char *s, ...) { return 0; }
+
+inline void warning(const char *s, ...) {}
+
+#else
+
+/**
+ * Print a warning message to the text console (stderr).
+ * Automatically prepends the text "WARNING: " and appends
+ * an exclamation mark and a newline.
+ */
+void warning(const char *s, ...) GCC_PRINTF(1, 2);
+
+#endif
 
 #endif

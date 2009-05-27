@@ -64,7 +64,7 @@ SaveGame::~SaveGame() {
 	if (_saving) {
 		_outSaveFile->writeUint32BE(SAVEGAME_FOOTERTAG);
 		_outSaveFile->finalize();
-		if (_outSaveFile->ioFailed())
+		if (_outSaveFile->err())
 			warning("SaveGame::~SaveGame() Can't write file. (Disk full?)");
 		delete _outSaveFile;
 	} else {

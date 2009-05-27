@@ -102,7 +102,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 	// TODO: Detect if a domain occurs multiple times (or likewise, if
 	// a key occurs multiple times inside one domain).
 
-	while (!stream.eos() && !stream.ioFailed()) {
+	while (!stream.eos() && !stream.err()) {
 		lineno++;
 
 		// Read a line

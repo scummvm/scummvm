@@ -4,29 +4,33 @@
  * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
-
- * This library is distributed in the hope that it will be useful,
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
  *
  */
 
-#include "common/sys.h"
 #include "common/debug.h"
-#include "common/str.h"
-#include "common/system.h"
+#include "common/util.h"
+#include "common/hashmap.h"
+
+#include "engines/engine.h"
+
+#include <stdarg.h>	// For va_list etc.
+
 
 #ifdef __PLAYSTATION2__
 	// for those replaced fopen/fread/etc functions
@@ -50,7 +54,99 @@
 	#define fflush(file)						DS::std_fflush(file)
 #endif
 
-enDebugLevels gDebugLevel = DEBUG_NONE;
+
+namespace Common {
+
+namespace {
+
+typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugLevelMap;
+
+static DebugLevelMap gDebugLevels;
+static uint32 gDebugLevelsEnabled = 0;
+
+struct DebugLevelComperator {
+	bool operator()(const DebugChannel &l, const DebugChannel &r) {
+		return (l.name.compareToIgnoreCase(r.name) < 0);
+	}
+};
+
+}
+
+bool addDebugChannel(uint32 level, const String &name, const String &description) {
+	if (gDebugLevels.contains(name)) {
+		warning("Duplicate declaration of engine debug level '%s'", name.c_str());
+	}
+	gDebugLevels[name] = DebugChannel(level, name, description);
+
+	return true;
+}
+
+void clearAllDebugChannels() {
+	gDebugLevelsEnabled = 0;
+	gDebugLevels.clear();
+}
+
+bool enableDebugChannel(const String &name) {
+	DebugLevelMap::iterator i = gDebugLevels.find(name);
+
+	if (i != gDebugLevels.end()) {
+		gDebugLevelsEnabled |= i->_value.level;
+		i->_value.enabled = true;
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool disableDebugChannel(const String &name) {
+	DebugLevelMap::iterator i = gDebugLevels.find(name);
+
+	if (i != gDebugLevels.end()) {
+		gDebugLevelsEnabled &= ~i->_value.level;
+		i->_value.enabled = false;
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+DebugChannelList listDebugChannels() {
+	DebugChannelList tmp;
+	for (DebugLevelMap::iterator i = gDebugLevels.begin(); i != gDebugLevels.end(); ++i)
+		tmp.push_back(i->_value);
+	sort(tmp.begin(), tmp.end(), DebugLevelComperator());
+
+	return tmp;
+}
+
+bool isDebugChannelEnabled(uint32 level) {
+	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	if (gDebugLevel == 11)
+		return true;
+//	return gDebugLevelsEnabled & (1 << level);
+	return (gDebugLevelsEnabled & level) != 0;
+}
+
+bool isDebugChannelEnabled(const String &name) {
+	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	if (gDebugLevel == 11)
+		return true;
+
+	// Search for the debug level with the given name and check if it is enabled
+	DebugLevelMap::iterator i = gDebugLevels.find(name);
+	if (i != gDebugLevels.end())
+		return i->_value.enabled;
+	return false;
+}
+
+
+}	// End of namespace Common
+
+
+int gDebugLevel = -1;
 
 #ifndef DISABLE_TEXT_CONSOLE
 
@@ -59,7 +155,7 @@ static void debugHelper(const char *s, va_list va, bool caret = true) {
 	char buf[STRINGBUFLEN];
 	vsnprintf(in_buf, STRINGBUFLEN, s, va);
 
-	strcpy(buf, in_buf);
+	strncpy(buf, in_buf, STRINGBUFLEN);
 
 	if (caret) {
 		buf[STRINGBUFLEN-2] = '\0';
@@ -98,120 +194,44 @@ void debug(int level, const char *s, ...) {
 	va_start(va, s);
 	debugHelper(s, va);
 	va_end(va);
+
 }
 
-#endif
-
-void NORETURN error(const char *s, ...) {
-	char buf_input[STRINGBUFLEN];
-	char buf_output[STRINGBUFLEN];
+void debugN(int level, const char *s, ...) {
 	va_list va;
 
-	// Generate the full error message
+	if (level > gDebugLevel)
+		return;
+
 	va_start(va, s);
-	vsnprintf(buf_input, STRINGBUFLEN, s, va);
+	debugHelper(s, va, false);
 	va_end(va);
-
-	strcpy(buf_output, buf_input);
-
-	// Print the error message to stderr
-	fprintf(stderr, "%s!\n", buf_output);
-
-	buf_output[STRINGBUFLEN-3] = '\0';
-	buf_output[STRINGBUFLEN-2] = '\0';
-	buf_output[STRINGBUFLEN-1] = '\0';
-	strcat(buf_output, "!\n");
-
-
-	// Print the error message to stderr
-	fputs(buf_output, stderr);
-
-#if defined( USE_WINDBG )
-#if defined( _WIN32_WCE )
-	TCHAR buf_output_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf_output, strlen(buf_output) + 1, buf_output_unicode, sizeof(buf_output_unicode));
-	OutputDebugString(buf_output_unicode);
-#ifndef DEBUG
-	drawError(buf_output);
-#else
-	int cmon_break_into_the_debugger_if_you_please = *(int *)(buf_output + 1);	// bus error
-	printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
-#endif
-#else
-	OutputDebugString(buf_output);
-#endif
-#endif
-
-#ifdef PALMOS_MODE
-	extern void PalmFatalError(const char *err);
-	PalmFatalError(buf_output);
-#endif
-
-#ifdef __SYMBIAN32__
-	Symbian::FatalError(buf_output);
-#endif
-	// Finally exit.
-	if (g_system)
-		g_system->quit();
-
-	exit(1);
 }
 
-#ifndef DISABLE_TEXT_CONSOLE
-
-void warning(const char *s, ...) {
-	char buf[STRINGBUFLEN];
+void debugC(int level, uint32 debugChannels, const char *s, ...) {
 	va_list va;
 
+	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	if (gDebugLevel != 11)
+		if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & debugChannels))
+			return;
+
 	va_start(va, s);
-	vsnprintf(buf, STRINGBUFLEN, s, va);
+	debugHelper(s, va);
 	va_end(va);
+}
 
-#if !defined (__SYMBIAN32__)
-	fprintf(stderr, "WARNING: %s!\n", buf);
-#endif
+void debugC(uint32 debugChannels, const char *s, ...) {
+	va_list va;
 
-#if defined( USE_WINDBG )
-	strcat(buf, "\n");
-#if defined( _WIN32_WCE )
-	TCHAR buf_unicode[1024];
-	MultiByteToWideChar(CP_ACP, 0, buf, strlen(buf) + 1, buf_unicode, sizeof(buf_unicode));
-	OutputDebugString(buf_unicode);
-#else
-	OutputDebugString(buf);
-#endif
-#endif
+	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	if (gDebugLevel != 11)
+		if (!(Common::gDebugLevelsEnabled & debugChannels))
+			return;
+
+	va_start(va, s);
+	debugHelper(s, va);
+	va_end(va);
 }
 
 #endif
-
-
-const char *debug_levels[] = {
-	"NONE",
-	"NORMAL",
-	"WARN",
-	"ERROR",
-	"FUNC",
-	"BITMAP",
-	"MODEL",
-	"STUB",
-	"SMUSH",
-	"IMUSE",
-	"CHORE",
-	"ALL"
-};
-
-const char *debug_descriptions[] = {
-	"No debug messages will be printed (default)",
-	"\"Normal\" debug messages will be printed",
-	"Warning debug messages will be printed",
-	"Error debug messages will be printed",
-	"Function (normal and stub) debug messages will be printed",
-	"Bitmap debug messages will be printed",
-	"Model debug messages will be printed",
-	"Stub (missing function) debug messages will be printed",
-	"SMUSH (video) debug messages will be printed",
-	"IMUSE (audio) debug messages will be printed",
-	"Chore debug messages will be printed",
-	"All debug messages will be printed",
-};

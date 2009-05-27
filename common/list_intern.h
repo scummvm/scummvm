@@ -160,7 +160,7 @@ namespace ListInternal {
 	bool operator==(const Iterator<T>& a, const ConstIterator<T>& b) {
 		return a._node == b._node;
 	}
-	
+
 	template<typename T>
 	bool operator!=(const Iterator<T>& a, const ConstIterator<T>& b) {
 		return a._node != b._node;
