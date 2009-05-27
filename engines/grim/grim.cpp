@@ -274,7 +274,7 @@ GrimEngine::GrimEngine(OSystem *syst, const GrimGameDescription *gameDesc) :
 	_flipEnable = true;
 	int speed = atol(g_registry->get("engine_speed", "30"));
 	if (speed == 0)
-		_speedLimitMs = 0;
+		_speedLimitMs = 30;
 	else if (speed < 0 || speed > 100)
 		_speedLimitMs = 33;
 	else
