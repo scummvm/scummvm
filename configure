@@ -988,13 +988,13 @@ echo $_host_os
 case $_host_os in
 	linux* | uclinux* | openbsd* | netbsd* | bsd* | sunos* | hpux*)
 		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
-		LIBS="$LIBS -lGL -L/usr/X11/lib"
+		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
 		;;
 	freebsd*)
 		DEFINES="$DEFINES -DUNIX -DUSE_OPENGL"
 		LDFLAGS="$LDFLAGS -L/usr/local/lib"
 		CXXFLAGS="$CXXFLAGS -I/usr/local/include"
-		LIBS="$LIBS -lGL -L/usr/X11/lib"
+		LIBS="$LIBS -lGL -lGLU -L/usr/X11/lib"
 		;;
 	beos*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1028,7 +1028,7 @@ case $_host_os in
 		;;
 	mingw*)
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0 -DUSE_OPENGL"
-		LIBS="$LIBS -lmingw32 -lopengl32"
+		LIBS="$LIBS -lmingw32 -lopengl32 -lglu32"
 		OBJS="$OBJS residualico.o"
 		;;
 	os2-emx*)
@@ -1041,7 +1041,7 @@ case $_host_os in
 		DEFINES="$DEFINES -DMINIGL -DUSE_OPENGL"
 		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
 		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
-		LIBS="$LIBS -lGL"
+		LIBS="$LIBS -lGL -lGLU"
 		type_1_byte='char'
 		type_2_byte='short'
 		type_4_byte='long'
