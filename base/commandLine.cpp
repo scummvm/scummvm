@@ -65,7 +65,6 @@ static const char HELP_STRING[] =
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-127 (default: 127)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-127 (default: 127)\n"
 	"  --speech-mode=NUM        Set the mode of speech 1-Text only, 2-Voice Only, 3-Voice and Text\n"
-	"  --text-speed=NUM         Set talk speed for games (default: 7)\n"
 	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: TRUE/FALSE\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  --debugflags=FLAGS       Enables engine specific debug flags\n"
@@ -108,17 +107,11 @@ void registerDefaults() {
 	ConfMan.registerDefault("voice_volume", 127);
 	ConfMan.registerDefault("speech_mode", "3");
 
-	ConfMan.registerDefault("boot_param", "");
-	ConfMan.registerDefault("text_speed", "70");
-
 	ConfMan.registerDefault("path", ".");
 
 	ConfMan.registerDefault("soft_renderer", "TRUE");
 	ConfMan.registerDefault("fullscreen", "FALSE");
-	ConfMan.registerDefault("gamma", "1.0");
 	ConfMan.registerDefault("show_fps", "FALSE");
-
-	ConfMan.registerDefault("joystick", "1");
 
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
