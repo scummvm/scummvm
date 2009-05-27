@@ -88,15 +88,21 @@ namespace Sci {
 
 enum AudioCommands {
 	// TODO: find the difference between kSci1AudioWPlay and kSci1AudioPlay
-	kSci1AudioWPlay = 1, /* Plays an audio stream */
-	kSci1AudioPlay = 2, /* Plays an audio stream */
-	kSci1AudioStop = 3, /* Stops an audio stream */
-	kSci1AudioPause = 4, /* Pauses an audio stream */
-	kSci1AudioResume = 5, /* Resumes an audio stream */
-	kSci1AudioPosition = 6, /* Return current position in audio stream */
-	kSci1AudioRate = 7, /* Return audio rate */
-	kSci1AudioVolume = 8, /* Return audio volume */
-	kSci1AudioLanguage = 9 /* Return audio language */
+	kSciAudioWPlay = 1, /* Plays an audio stream */
+	kSciAudioPlay = 2, /* Plays an audio stream */
+	kSciAudioStop = 3, /* Stops an audio stream */
+	kSciAudioPause = 4, /* Pauses an audio stream */
+	kSciAudioResume = 5, /* Resumes an audio stream */
+	kSciAudioPosition = 6, /* Return current position in audio stream */
+	kSciAudioRate = 7, /* Return audio rate */
+	kSciAudioVolume = 8, /* Return audio volume */
+	kSciAudioLanguage = 9 /* Return audio language */
+};
+
+enum AudioSyncCommands {
+	kSciAudioSyncStart = 0,
+	kSciAudioSyncNext = 1,
+	kSciAudioSyncStop = 2
 };
 
 #define SCI1_SOUND_FLAG_MAY_PAUSE        1 /* Only here for completeness; The interpreter doesn't touch this bit */
@@ -1004,8 +1010,8 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->sound.audioResource = new AudioResource(s->resmgr, s->version);
 
 	switch (UKPV(0)) {
-	case kSci1AudioWPlay:
-	case kSci1AudioPlay:
+	case kSciAudioWPlay:
+	case kSciAudioPlay:
 		s->sound.audioResource->stop();
 
 		if (argc == 2) {			// KQ5CD, KQ6 floppy
@@ -1020,24 +1026,24 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			warning("kDoAudio: Play called with an unknown number of parameters (%d)", argc);
 		}
 		return make_reg(0, sampleLen);		// return sample length in ticks
-	case kSci1AudioStop:
+	case kSciAudioStop:
 		s->sound.audioResource->stop();
 		break;
-	case kSci1AudioPause:
+	case kSciAudioPause:
 		s->sound.audioResource->pause();
 		break;
-	case kSci1AudioResume:
+	case kSciAudioResume:
 		s->sound.audioResource->resume();
 		break;
-	case kSci1AudioPosition:
+	case kSciAudioPosition:
 		return make_reg(0, s->sound.audioResource->getAudioPosition());
-	case kSci1AudioRate:
+	case kSciAudioRate:
 		s->sound.audioResource->setAudioRate(UKPV(1));
 		break;
-	case kSci1AudioVolume:
+	case kSciAudioVolume:
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, UKPV(1));
 		break;
-	case kSci1AudioLanguage:
+	case kSciAudioLanguage:
 		if (argc == 1) {
 			// In SCI1.1: tests for digital audio support
 			return make_reg(0, 1);
@@ -1054,36 +1060,41 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (UKPV(0)) {
-	case 0:	// start sync
-		//printf("kDoSync: start sync\n");
-		if (s->sound.soundSync) {
-			s->resmgr->unlockResource(s->sound.soundSync, s->sound.soundSync->number, kResourceTypeSync);
-		}
+	case kSciAudioSyncStart:
+		if (argc == 3) {			// KQ5CD, KQ6 floppy
+			if (s->sound.soundSync) {
+				s->resmgr->unlockResource(s->sound.soundSync, s->sound.soundSync->number, kResourceTypeSync);
+			}
 
-		// Load sound sync resource and lock it
-		s->sound.soundSync = (ResourceSync *)s->resmgr->findResource(kResourceTypeSync, UKPV(2), 1);
+			// Load sound sync resource and lock it
+			s->sound.soundSync = (ResourceSync *)s->resmgr->findResource(kResourceTypeSync, UKPV(2), 1);
 
-		if (s->sound.soundSync) {
-			s->sound.soundSync->startSync(s, argv[1]);
-		} else {
-			// Notify the scripts to stop sound sync
-			PUT_SEL32V(argv[1], syncCue, -1);
+			if (s->sound.soundSync) {
+				s->sound.soundSync->startSync(s, argv[1]);
+			} else {
+				// Notify the scripts to stop sound sync
+				PUT_SEL32V(argv[1], syncCue, -1);
+			}
+		} else if (argc == 7) {		// SQ4CD or newer
+			warning("kDoSync: Start called with new semantics - 6 parameters: %d %d %d %d %d %d", UKPV(1), UKPV(2), UKPV(3), UKPV(4), UKPV(5), UKPV(6));
+		} else {					// Hopefully, this should never happen
+			warning("kDoSync: Start called with an unknown number of parameters (%d)", argc);
 		}
 		break;
-	case 1:	// next sync
-		//printf("kDoSync: next sync\n");
+	case kSciAudioSyncNext:
 		if (s->sound.soundSync) {
 			s->sound.soundSync->nextSync(s, argv[1]);
 		}
 		break;
-	case 2:	// stop sync
-		//printf("kDoSync: stop sync\n");
+	case kSciAudioSyncStop:
 		if (s->sound.soundSync) {
 			s->sound.soundSync->stopSync();
 			s->resmgr->unlockResource(s->sound.soundSync, s->sound.soundSync->number, kResourceTypeSync);
 			s->sound.soundSync = NULL;
 		}
 		break;
+	default:
+		warning("kDoSync: Unhandled case %d", UKPV(0));
 	}
 
 	return s->r_acc;
