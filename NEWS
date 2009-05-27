@@ -5,7 +5,11 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Games:
    - Added support for Discworld.
    - Added support for Discworld 2 - Missing Presumed ...!?
-
+   - Added support for Return to Zork
+   - Added support for Leather Goddesses of Phobos 2
+   - Added support for The Manhole
+   - Added support for Rodney's Funscreen
+   
  General:
    - Added experimental AdLib emulator from DOSBox.
 
