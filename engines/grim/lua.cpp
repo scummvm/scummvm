@@ -1920,21 +1920,27 @@ static void luaFileFindFirst() {
 }
 
 void setFrameTime(float frameTime) {
-	lua_pushobject(lua_getglobal("system"));
+	lua_pushobject(lua_getref(refSystemTable));
 	lua_pushstring("frameTime");
 	lua_pushnumber(frameTime);
 	lua_settable();
 }
 
 void setMovieTime(float movieTime) {
-	lua_pushobject(lua_getglobal("system"));
+	lua_pushobject(lua_getref(refSystemTable));
 	lua_pushstring("movieTime");
 	lua_pushnumber(movieTime);
 	lua_settable();
 }
 
 void PerSecond() {
-	float rate = luaL_check_number(1);
+	lua_Object rateObj = lua_getparam(1);
+
+	if (!lua_isnumber(rateObj)) {
+		lua_pushnil();
+		return;
+	}
+	float rate = lua_getnumber(rateObj);
 	lua_pushnumber(g_grim->perSecond(rate));
 }
 
