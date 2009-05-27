@@ -1905,18 +1905,23 @@ static void luaFileFindNext() {
 }
 
 static void luaFileFindFirst() {
-	const char *extension = luaL_check_string(1);
-	lua_getparam(2);
+	lua_Object extObj = lua_getparam(1);
+	if (!lua_isstring(extObj)) {
+		lua_pushnil();
+		return;
+	}
+		
 	FileFindDispose();
 
+	const char *extension = lua_getstring(extObj);
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	g_listfiles = saveFileMan->listSavefiles(extension);
 	g_filesiter = g_listfiles.begin();
 
 	if (g_filesiter == g_listfiles.end())
 		lua_pushnil();
-
-	luaFileFindNext();
+	else
+		luaFileFindNext();
 }
 
 void setFrameTime(float frameTime) {
