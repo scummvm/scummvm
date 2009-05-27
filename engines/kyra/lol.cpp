@@ -432,7 +432,7 @@ Common::Error LoLEngine::init() {
 	KyraEngine_v1::init();
 	initStaticResource();
 
-	_envSfxDistThreshold = (MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB) == MD_ADLIB || ConfMan.getBool("multi_midi")) ? 15 : 3;
+	_envSfxDistThreshold = _sound->getSfxType() == Sound::kAdlib ? 15 : 3;
 
 	_gui = new GUI_LoL(this);
 	assert(_gui);

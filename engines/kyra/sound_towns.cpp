@@ -25,7 +25,7 @@
 
 #include "common/system.h"
 #include "kyra/resource.h"
-#include "kyra/sound.h"
+#include "kyra/sound_intern.h"
 #include "kyra/screen.h"
 
 #include "sound/audiocd.h"

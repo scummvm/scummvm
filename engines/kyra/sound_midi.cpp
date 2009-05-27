@@ -23,7 +23,7 @@
  *
  */
 
-#include "kyra/sound.h"
+#include "kyra/sound_intern.h"
 #include "kyra/resource.h"
 
 #include "common/system.h"
@@ -438,7 +438,7 @@ void MidiOutput::stopNotesOnChannel(int channel) {
 
 #pragma mark -
 
-SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *driver) : Sound(vm, mixer) {
+SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *driver, kType type) : Sound(vm, mixer) {
 	_driver = driver;
 	_output = 0;
 
@@ -453,6 +453,20 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 
 	_musicVolume = _sfxVolume = 0;
 	_fadeMusicOut = false;
+
+	_type = type;
+	assert(_type == kMidiMT32 || _type == kMidiGM || _type == kPCSpkr);
+
+	// Only General MIDI isn't a Roland MT-32 MIDI implemenation,
+	// even the PC Speaker driver is a Roland MT-32 based MIDI implementation.
+	// Thus we set "_nativeMT32" for all types except Gerneral MIDI to true.
+	_nativeMT32 = (_type != kMidiGM);
+
+	// KYRA1 does not include any General MIDI tracks, thus we have
+	// to overwrite the internal type with MT32 to get the correct
+	// file extension.
+	if (_vm->game() == GI_KYRA1 && _type == kMidiGM)
+		_type = kMidiMT32;
 }
 
 SoundMidiPC::~SoundMidiPC() {
@@ -469,23 +483,10 @@ SoundMidiPC::~SoundMidiPC() {
 		delete[] _sfxFile;
 
 	delete[] _musicFile;
-
-	_nativeMT32 = false;
-	_useC55 = false;
-}
-
-void SoundMidiPC::hasNativeMT32(bool nativeMT32) {
-	_nativeMT32 = nativeMT32;
-
-	// C55 is XMIDI for General MIDI instruments
-	if (!_nativeMT32 && _vm->game() != GI_KYRA1)
-		_useC55 = true;
-	else
-		_useC55 = false;
 }
 
 bool SoundMidiPC::init() {
-	_output = new MidiOutput(_vm->_system, _driver, _nativeMT32, !_useC55);
+	_output = new MidiOutput(_vm->_system, _driver, _nativeMT32, (_type != kMidiGM));
 	assert(_output);
 
 	updateVolumeSettings();
@@ -502,7 +503,7 @@ bool SoundMidiPC::init() {
 
 	_output->setTimerCallback(this, SoundMidiPC::onTimer);
 
-	if (_nativeMT32) {
+	if (_nativeMT32 && _type == kMidiMT32) {
 		const char *midiFile = 0;
 		const char *pakFile = 0;
 		if (_vm->gameFlags().gameID == GI_KYRA1) {
@@ -581,9 +582,7 @@ void SoundMidiPC::loadSoundFile(uint file) {
 
 void SoundMidiPC::loadSoundFile(Common::String file) {
 	Common::StackLock lock(_mutex);
-
-	file += _useC55 ? ".C55" : ".XMI";
-	file.toUppercase();
+	file = getFileName(file);
 
 	if (_mFileName == file)
 		return;
@@ -624,8 +623,7 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 	if (_vm->gameFlags().gameID == GI_KYRA1)
 		return;
 
-	file += _useC55 ? ".C55" : ".XMI";
-	file.toUppercase();
+	file = getFileName(file);
 
 	if (_sFileName == file)
 		return;
@@ -738,6 +736,21 @@ void SoundMidiPC::onTimer(void *data) {
 		midi->_output->setSoundSource(i+1);
 		midi->_sfx[i]->onTimer();
 	}
+}
+
+Common::String SoundMidiPC::getFileName(const Common::String &str) {
+	Common::String file = str;
+	if (_type == kMidiMT32)
+		file += ".XMI";
+	else if (_type == kMidiGM)
+		file += ".C55";
+	else if (_type == kPCSpkr)
+		file += ".PCS";
+
+	if (_vm->resource()->exists(file.c_str()))
+		return file;
+
+	return str + ".XMI";
 }
 
 } // end of namespace Kyra

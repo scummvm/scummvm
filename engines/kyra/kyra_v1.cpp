@@ -29,7 +29,7 @@
 #include "sound/mixer.h"
 
 #include "kyra/kyra_v1.h"
-#include "kyra/sound.h"
+#include "kyra/sound_intern.h"
 #include "kyra/resource.h"
 #include "kyra/screen.h"
 #include "kyra/text.h"
@@ -103,7 +103,7 @@ Common::Error KyraEngine_v1::init() {
 
 	if (!_flags.useDigSound) {
 		// We prefer AdLib over MIDI, since generally AdLib is better supported
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB);
+		int midiDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_MIDI | MDT_ADLIB);
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)
@@ -119,17 +119,31 @@ Common::Error KyraEngine_v1::init() {
 			_sound = new SoundAdlibPC(this, _mixer);
 			assert(_sound);
 		} else {
-			bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+			Sound::kType type;
 
-			MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+			if (midiDriver == MD_MT32 || ConfMan.getBool("native_mt32"))
+				type = Sound::kMidiMT32;
+			else if (midiDriver == MD_PCSPK)
+				type = Sound::kPCSpkr;
+			else
+				type = Sound::kMidiGM;
+
+
+			MidiDriver *driver = 0;
+		   
+			if (midiDriver == MD_PCSPK) {
+				driver = new MidiDriver_PCSpeaker(_mixer);
+			} else {
+				driver = MidiDriver::createMidi(midiDriver);
+				if (type == Sound::kMidiMT32)
+					driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+			}
+
 			assert(driver);
-			if (native_mt32)
-				driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-			SoundMidiPC *soundMidiPc = new SoundMidiPC(this, _mixer, driver);
+			SoundMidiPC *soundMidiPc = new SoundMidiPC(this, _mixer, driver, type);
 			_sound = soundMidiPc;
 			assert(_sound);
-			soundMidiPc->hasNativeMT32(native_mt32);
 
 			// Unlike some SCUMM games, it's not that the MIDI sounds are
 			// missing. It's just that at least at the time of writing they

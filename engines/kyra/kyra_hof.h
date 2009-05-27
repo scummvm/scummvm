@@ -309,6 +309,8 @@ protected:
 	static const int _mt32SfxMapSize;
 	static const int8 _gmSfxMap[];
 	static const int _gmSfxMapSize;
+	static const int8 _pcSpkSfxMap[];
+	static const int _pcSpkSfxMapSize;
 
 	AudioDataStruct _soundData[3];
 protected:

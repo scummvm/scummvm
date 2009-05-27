@@ -29,6 +29,8 @@
 #include "kyra/lol.h"
 #include "kyra/resource.h"
 
+#include "sound/audiostream.h"
+
 namespace Kyra {
 
 bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {

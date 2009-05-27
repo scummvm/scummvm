@@ -1529,7 +1529,9 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
 			track = track < _mt32SfxMapSize ? _mt32SfxMap[track] - 1 : -1;
 		else if (_sound->getSfxType() == Sound::kMidiGM)
-			track = track < _gmSfxMapSize ? _gmSfxMap[track] - 1: -1;
+			track = track < _gmSfxMapSize ? _gmSfxMap[track] - 1 : -1;
+		else if (_sound->getSfxType() == Sound::kPCSpkr)
+			track = track < _pcSpkSfxMapSize ? _pcSpkSfxMap[track] - 1 : -1;
 
 		if (track != -1)
 			KyraEngine_v1::snd_playSoundEffect(track);
