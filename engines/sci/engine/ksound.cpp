@@ -1076,6 +1076,7 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				PUT_SEL32V(argv[1], syncCue, -1);
 			}
 		} else if (argc == 7) {		// SQ4CD or newer
+			// TODO
 			warning("kDoSync: Start called with new semantics - 6 parameters: %d %d %d %d %d %d", UKPV(1), UKPV(2), UKPV(3), UKPV(4), UKPV(5), UKPV(6));
 		} else {					// Hopefully, this should never happen
 			warning("kDoSync: Start called with an unknown number of parameters (%d)", argc);

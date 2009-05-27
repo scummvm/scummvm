@@ -264,7 +264,8 @@ static uint8 *create_cursor(gfx_driver_t *drv, gfx_pixmap_t *pointer, int mode)
 		for (int xc = 0; xc < pointer->index_width; xc++) {
 			uint8 color = *src;
 			// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
-			if (color < pointer->palette->size())
+			// Note that some cursors don't have a palette in SQ5
+			if (pointer->palette && color < pointer->palette->size())
 				color = pointer->palette->getColor(color).parent_index;
 			for (int scalectr = 0; scalectr < drv->mode->xfact; scalectr++) {
 				*pos++ = color;
@@ -287,9 +288,14 @@ static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer, Common:
 		S->pointer_data = create_cursor(drv, pointer, 1);
 
 		// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
+		// Note that some cursors don't have a palette in SQ5
 		uint8 color_key = GFX_CURSOR_TRANSPARENT;
-		if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && ((unsigned int)pointer->color_key < pointer->palette->size()))
+		if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && (pointer->palette && (unsigned int)pointer->color_key < pointer->palette->size()))
 			color_key = pointer->palette->getColor(pointer->color_key).parent_index;
+		// Some cursors in SQ5 don't have a palette. The cursor palette seems to use 64 colors, so setting the color key to 63 works
+		// TODO: Is this correct?
+		if (!pointer->palette)
+			color_key = 63;
 
 		g_system->setMouseCursor(S->pointer_data, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
 		g_system->showMouse(true);

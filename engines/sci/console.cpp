@@ -88,6 +88,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("man",				WRAP_METHOD(Console, cmdMan));
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
+	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
 }
 
 Console::~Console() {
@@ -319,6 +320,12 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 	}
 
 	script_dissect(_vm->getResMgr(), atoi(argv[1]), selectorNames);
+
+	return true;
+}
+
+bool Console::cmdRoomNumber(int argc, const char **argv) {
+	DebugPrintf("Current room number is %d\n", g_EngineState->currentRoomNumber());
 
 	return true;
 }

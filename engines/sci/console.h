@@ -53,6 +53,7 @@ private:
 	bool cmdMan(int argc, const char **argv);
 	bool cmdHexDump(int argc, const char **argv);
 	bool cmdDissectScript(int argc, const char **argv);
+	bool cmdRoomNumber(int argc, const char **argv);
 
 private:
 	SciEngine *_vm;
