@@ -28,6 +28,8 @@
 #include "common/timer.h"
 #include "common/mutex.h"
 
+class OSystem;
+
 struct TimerSlot;
 
 class DefaultTimerManager : public Common::TimerManager {

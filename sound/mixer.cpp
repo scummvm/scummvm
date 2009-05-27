@@ -24,7 +24,6 @@
  */
 
 #include "common/util.h"
-#include "common/debug.h"
 #include "common/system.h"
 
 #include "sound/mixer_intern.h"

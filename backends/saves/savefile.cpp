@@ -49,7 +49,7 @@ bool SaveFileManager::renameSavefile(const char *oldFilename, const char *newFil
 
 		if (buffer && outFile) {
 			inFile->read(buffer, size);
-			bool error = inFile->ioFailed();
+			bool error = inFile->err();
 			delete inFile;
 			inFile = 0;
 

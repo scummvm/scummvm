@@ -140,6 +140,7 @@ public:
 	bool endOfData() const			{ return _ptr >= _end; }
 
 	int getRate() const				{ return _rate; }
+	int32 getTotalPlayTime() const	{ return _playtime; }
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>

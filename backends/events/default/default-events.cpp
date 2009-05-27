@@ -24,8 +24,8 @@
 
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
-#include "common/config-manager.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "backends/events/default/default-events.h"
 
 #define RECORD_SIGNATURE 0x54455354
@@ -223,6 +223,8 @@ DefaultEventManager::~DefaultEventManager() {
 		delete _recordTimeFile;
 
 		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordTempFileName.c_str());
+
+		assert(_playbackFile);
 
 		_recordFile = g_system->getSavefileManager()->openForSaving(_recordFileName.c_str());
 		_recordFile->writeUint32LE(RECORD_SIGNATURE);

@@ -35,7 +35,7 @@
 	// for those replaced fopen/fread/etc functions
 	typedef unsigned long	uint64;
 	typedef signed long	int64;
-	#include "platforms/ps2/fileio.h"
+	#include "backends/platform/ps2/fileio.h"
 
 	#define fopen(a, b)			ps2_fopen(a, b)
 	#define fclose(a)			ps2_fclose(a)

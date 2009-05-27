@@ -208,4 +208,6 @@ protected:
 
 };
 
+extern Engine *g_engine;
+
 #endif
