@@ -1852,31 +1852,61 @@ static void SetSoundPosition() {
 	Graphics::Vector3d pos;
 	int minVolume = 10;
 	int maxVolume = 127;
+	float someParam = 0;
+	int argId = 1;
+	lua_Object paramObj;
 
 	if (g_grim->currScene()) {
 		g_grim->currScene()->getSoundParameters(&minVolume, &maxVolume);
 	}
 
-	const char *soundName = lua_getstring(lua_getresult(1));
-
-	if (isActor(lua_getparam(2))) {
-		Actor *act = check_actor(2);
-		if (act) {
-			pos = act->pos();
-		} else {
-			return;
-		}
-		minVolume = lua_getnumber(lua_getparam(3));
-		maxVolume = lua_getnumber(lua_getparam(4));
-	} else if (lua_isnumber(lua_getparam(2))) {
-		error("SetSoundPosition() Position x,y,z as params is not suported.");
-	} else {
+	lua_Object nameObj = lua_getparam(argId++);
+	if (!lua_isnumber(nameObj) && !lua_isstring(nameObj))
 		return;
+
+	lua_Object actorObj = lua_getparam(argId++);
+	if (lua_isuserdata(actorObj) && lua_tag(actorObj) == MKID_BE('ACTR')) {
+		Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+		if (!actor)
+			return;
+		pos = actor->pos();
+	} else if (lua_isnumber(actorObj)) {
+		float x = lua_getnumber(actorObj);
+		float y = lua_getnumber(argId++);
+		float z = lua_getnumber(argId++);
+		pos.set(x, y, z);
+	}
+
+	paramObj = lua_getparam(argId++);
+	if (lua_isnumber(paramObj)) {
+		minVolume = lua_getnumber(paramObj);
+		if (minVolume > 127)
+			minVolume = 127;
+	}
+	paramObj = lua_getparam(argId++);
+	if (lua_isnumber(paramObj)) {
+		maxVolume = lua_getnumber(paramObj);
+		if (maxVolume > 127)
+			maxVolume = 127;
+		else if (maxVolume < minVolume)
+			maxVolume = minVolume;
+	}
+
+	paramObj = lua_getparam(argId++);
+	if (lua_isnumber(paramObj)) {
+		someParam = lua_getnumber(paramObj);
+		if (someParam < 0.0)
+			someParam = 0.0;
 	}
 
 	if (g_grim->currScene()) {
-		g_grim->currScene()->setSoundParameters(minVolume, maxVolume);
-		g_grim->currScene()->setSoundPosition(soundName, pos);
+		if (lua_isnumber(nameObj))
+			error("SetSoundPosition: number is not yet supported");
+		else {
+			const char *soundName = lua_getstring(nameObj);
+			g_grim->currScene()->setSoundParameters(minVolume, maxVolume);
+			g_grim->currScene()->setSoundPosition(soundName, pos);
+		}
 	}
 }
 
