@@ -29,17 +29,17 @@
 #include <string.h>
 
 struct lab_header {
-  uint32_t magic;
-  uint32_t magic2;
-  uint32_t num_entries;
-  uint32_t string_table_size;
+	uint32_t magic;
+	uint32_t magic2;
+	uint32_t num_entries;
+	uint32_t string_table_size;
 };
 
 struct lab_entry {
-  uint32_t fname_offset;
-  uint32_t start;
-  uint32_t size;
-  uint32_t reserved;
+	uint32_t fname_offset;
+	uint32_t start;
+	uint32_t size;
+	uint32_t reserved;
 };
 
 uint16_t READ_LE_UINT16(const void *ptr) {
@@ -52,49 +52,47 @@ uint32_t READ_LE_UINT32(const void *ptr) {
 }
 
 int main(int argc, char **argv) {
-  FILE *infile, *outfile;
-  struct lab_header head;
-  struct lab_entry *entries;
-  char *str_table;
-  uint32_t i;
-  off_t offset;
+	FILE *infile, *outfile;
+	struct lab_header head;
+	struct lab_entry *entries;
+	char *str_table;
+	uint32_t i;
+	off_t offset;
 
-  infile = fopen(argv[1], "rb");
-  if (infile == 0)
-  {
-    printf("can't open source file: %s\n", argv[1]);
-    exit(1);
-  }
+	infile = fopen(argv[1], "rb");
+	if (infile == 0) {
+		printf("can't open source file: %s\n", argv[1]);
+		exit(1);
+	}
 
-  fread(&head.magic, 1, 4, infile);
-  fread(&head.magic2, 1, 4, infile);
-  uint32_t num, s_size;
-  fread(&num, 1, 4, infile);
-  fread(&s_size, 1, 4, infile);
-  head.num_entries = READ_LE_UINT32(&num);
-  head.string_table_size = READ_LE_UINT32(&s_size);
-  if (0 != memcmp(&head.magic, "LABN", 4))
-  {
-    printf("There is no LABN header in source file\n");
-    exit(1);
-  }
+	fread(&head.magic, 1, 4, infile);
+	fread(&head.magic2, 1, 4, infile);
+	uint32_t num, s_size;
+	fread(&num, 1, 4, infile);
+	fread(&s_size, 1, 4, infile);
+	head.num_entries = READ_LE_UINT32(&num);
+	head.string_table_size = READ_LE_UINT32(&s_size);
+	if (0 != memcmp(&head.magic, "LABN", 4)) {
+		printf("There is no LABN header in source file\n");
+		exit(1);
+	}
 
-  entries = (struct lab_entry *)malloc(head.num_entries * sizeof(struct lab_entry));
-  fread(entries, 1, head.num_entries * sizeof(struct lab_entry), infile);
+	entries = (struct lab_entry *)malloc(head.num_entries * sizeof(struct lab_entry));
+	fread(entries, 1, head.num_entries * sizeof(struct lab_entry), infile);
 
-  str_table = (char *)malloc(head.string_table_size);
-  fread(str_table, 1, head.string_table_size, infile);
+	str_table = (char *)malloc(head.string_table_size);
+	fread(str_table, 1, head.string_table_size, infile);
 
-  for (i = 0; i < head.num_entries; i++) {
-    outfile = fopen(str_table + READ_LE_UINT32(&entries[i].fname_offset), "wb");
-    offset = READ_LE_UINT32(&entries[i].start);
-    char *buf = (char *)malloc(READ_LE_UINT32(&entries[i].size));
-    fseek(infile, offset, SEEK_SET);
-    fread(buf, 1, READ_LE_UINT32(&entries[i].size), infile);
-    fwrite(buf, 1, READ_LE_UINT32(&entries[i].size), outfile);
-    fclose(outfile);
-  }
+	for (i = 0; i < head.num_entries; i++) {
+		outfile = fopen(str_table + READ_LE_UINT32(&entries[i].fname_offset), "wb");
+		offset = READ_LE_UINT32(&entries[i].start);
+		char *buf = (char *)malloc(READ_LE_UINT32(&entries[i].size));
+		fseek(infile, offset, SEEK_SET);
+		fread(buf, 1, READ_LE_UINT32(&entries[i].size), infile);
+		fwrite(buf, 1, READ_LE_UINT32(&entries[i].size), outfile);
+		fclose(outfile);
+	}
 
-  fclose(infile);
-  return 0;
+	fclose(infile);
+	return 0;
 }
