@@ -123,7 +123,13 @@ void gfxr_init_static_palette() {
 	if (!gfx_sci0_pic_colors) {
 		gfx_sci0_pic_colors = new Palette(256);
 		gfx_sci0_pic_colors->name = "gfx_sci0_pic_colors";
-		for (int i = 0; i < 256; i++) {
+		// TODO: Discover the exact purpose of gfx_sci0_pic_colors
+		// For now, we set the first 16 colours to the standard EGA palette,
+		// and fill the remaining entries with slight variations
+		for (int i = 0; i < 16; i++) {
+			gfx_sci0_pic_colors->setColor(i,gfx_sci0_image_colors[0][i].r, gfx_sci0_image_colors[0][i].g, gfx_sci0_image_colors[0][i].b);
+		}
+		for (int i = 16; i < 256; i++) {
 			byte r = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].r,
 			                  gfx_sci0_image_colors[sci0_palette][i >> 4].r);
 			byte g = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].g,
