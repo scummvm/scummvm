@@ -486,6 +486,7 @@ static bool _c_single_seg_info(EngineState *s, int nr) {
 				          i, ht->_table[i].size, ht->_table[i].mem, ht->_table[i].type);
 			}
 	}
+	break;
 
 	case MEM_OBJ_DYNMEM: {
 		sciprintf("dynmem (%s): %d bytes\n",
