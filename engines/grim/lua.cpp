@@ -158,13 +158,6 @@ static inline Bitmap *check_bitmapobject(int num) {
 	return NULL;
 }
 
-static inline int check_control(int num) {
-	int val = lua_getnumber(lua_getparam(num));
-	if (val < 0 || val >= KEYCODE_EXTRA_LAST)
-		luaL_argerror(num, "control identifier out of range");
-	return val;
-}
-
 static inline bool getbool(int num) {
 	return !lua_isnil(lua_getparam(num));
 }
@@ -1946,21 +1939,48 @@ void PerSecond() {
 }
 
 void EnableControl() {
-	int num = check_control(1);
+	lua_Object numObj = lua_getparam(1);
+
+	if (!lua_isnumber(numObj)) {
+		lua_pushnil();
+		return;
+	}
+	int num = lua_getnumber(numObj);
+	if (num < 0 || num >= KEYCODE_EXTRA_LAST)
+		error("control identifier out of range");
+
 	g_grim->enableControl(num);
 }
 
 void DisableControl() {
-	int num = check_control(1);
+	lua_Object numObj = lua_getparam(1);
+
+	if (!lua_isnumber(numObj)) {
+		lua_pushnil();
+		return;
+	}
+	int num = lua_getnumber(numObj);
+	if (num < 0 || num >= KEYCODE_EXTRA_LAST)
+		error("control identifier out of range");
+
 	g_grim->disableControl(num);
 }
 
 void GetControlState() {
-	int num = check_control(1);
+	lua_Object numObj = lua_getparam(1);
+
+	if (!lua_isnumber(numObj))
+		return;
+
+	int num = lua_getnumber(numObj);
+	if (num < 0 || num >= KEYCODE_EXTRA_LAST)
+		error("control identifier out of range");
 	if (num >= KEYCODE_AXIS_JOY1_X && num <= KEYCODE_AXIS_MOUSE_Z)
 		lua_pushnumber(g_grim->getControlAxis(num));
-	else
-		pushbool(g_grim->getControlState(num));
+	else {
+		pushbool(g_grim->getControlState(num)); // key down, originaly it push number if key down
+		//pushnil or number, what is is ?
+	}
 }
 
 static void killBitmapPrimitives(Bitmap *bitmap) {
