@@ -438,7 +438,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->bp_list = NULL; // No breakpoints defined
 	s->have_bp = 0;
 
-	if (s->flags & GF_SCI1_LOFSABSOLUTE && s->version < SCI_VERSION_1_1)
+	if ((s->flags & GF_SCI1_LOFSABSOLUTE) && s->version < SCI_VERSION_1_1)
 		s->seg_manager->setExportWidth(1);
 	else
 		s->seg_manager->setExportWidth(0);

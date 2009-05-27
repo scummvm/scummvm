@@ -201,7 +201,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (!ref) {
 			// This occurs in KQ5CD when interacting with certain objects
-			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
+			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 		if (s->seg_manager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
@@ -214,7 +214,6 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		byte *ref = kernel_dereference_bulk_pointer(s, argv[1], 2);
 
 		if (!ref) {
-			// This occurs in KQ5CD when interacting with certain objects
 			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
