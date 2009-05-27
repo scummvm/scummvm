@@ -121,10 +121,10 @@ Common::Error KyraEngine_v1::init() {
 		} else {
 			Sound::kType type;
 
-			if (midiDriver == MD_MT32 || ConfMan.getBool("native_mt32"))
-				type = Sound::kMidiMT32;
-			else if (midiDriver == MD_PCSPK)
+			if (midiDriver == MD_PCSPK)
 				type = Sound::kPCSpkr;
+			else if (midiDriver == MD_MT32 || ConfMan.getBool("native_mt32"))
+				type = Sound::kMidiMT32;
 			else
 				type = Sound::kMidiGM;
 
