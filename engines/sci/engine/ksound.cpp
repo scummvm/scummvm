@@ -1005,13 +1005,19 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	switch (UKPV(0)) {
 	case kSci1AudioWPlay:
-	case kSci1AudioPlay: {
+	case kSci1AudioPlay:
 		s->sound.audioResource->stop();
 
-		Audio::AudioStream *audioStream = s->sound.audioResource->getAudioStream(UKPV(1), &sampleLen);
+		if (argc == 2) {			// KQ5CD, KQ6 floppy
+			Audio::AudioStream *audioStream = s->sound.audioResource->getAudioStream(UKPV(1), &sampleLen);
 
-		if (audioStream)
-			mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->sound.audioResource->getAudioHandle(), audioStream);
+			if (audioStream)
+				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->sound.audioResource->getAudioHandle(), audioStream);
+		} else if (argc == 6) {		// SQ4CD or newer
+			// TODO
+			warning("kDoAudio: Play called with new semantics - 5 parameters: %d %d %d %d %d", UKPV(1), UKPV(2), UKPV(3), UKPV(4), UKPV(5));
+		} else {					// Hopefully, this should never happen
+			warning("kDoAudio: Play called with an unknown number of parameters (%d)", argc);
 		}
 		return make_reg(0, sampleLen);		// return sample length in ticks
 	case kSci1AudioStop:

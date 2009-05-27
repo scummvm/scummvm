@@ -3072,7 +3072,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 4 - English DOS CD (from the Space Quest Collection)
 	// Executable scanning reports "1.001.064", VERSION file reports "1.0"
-	{{"sq4", "", {
+	{{"sq4", "CD", {
 		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
 		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0},
