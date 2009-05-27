@@ -42,15 +42,15 @@ clean-tools:
 
 tools/delua$(EXEEXT): $(srcdir)/tools/delua.cpp
 	$(MKDIR) tools/$(DEPDIR)
-	$(CXX) $(CFLAGS) $(DEFINES) -DHAVE_CONFIG_H -I. -I$(srcdir) -I$(srcdir)/engine -I$(srcdir)/engine/lua -Wall \
-	engine/localize.o engine/registry.o \
-	engine/lua/lapi.o engine/lua/lauxlib.o engine/lua/lbuffer.o engine/lua/lbuiltin.o \
-	engine/lua/ldo.o engine/lua/lfunc.o engine/lua/lgc.o engine/lua/liolib.o \
-	engine/lua/llex.o engine/lua/lmathlib.o engine/lua/lmem.o engine/lua/lobject.o \
-	engine/lua/lparser.o engine/lua/lrestore.o engine/lua/lsave.o engine/lua/lstate.o \
-	engine/lua/lstring.o engine/lua/lstrlib.o engine/lua/ltable.o engine/lua/ltask.o \
-	engine/lua/ltm.o engine/lua/lundump.o engine/lua/lvm.o engine/lua/lzio.o \
-	-Lcommon -lcommon $(LIBS) -o $@ $<
+	$(CXX) $(CFLAGS) $(DEFINES) -DHAVE_CONFIG_H -I. -I$(srcdir) -I$(srcdir)/engines/grim -I$(srcdir)/engines/grim/lua -Wall \
+	engines/grim/localize.o engines/grim/registry.o \
+	engines/grim/lua/lapi.o engines/grim/lua/lauxlib.o engines/grim/lua/lbuffer.o engines/grim/lua/lbuiltin.o \
+	engines/grim/lua/ldo.o engines/grim/lua/lfunc.o engines/grim/lua/lgc.o engines/grim/lua/liolib.o \
+	engines/grim/lua/llex.o engines/grim/lua/lmathlib.o engines/grim/lua/lmem.o engines/grim/lua/lobject.o \
+	engines/grim/lua/lstx.o engines/grim/lua/lrestore.o engines/grim/lua/lsave.o engines/grim/lua/lstate.o \
+	engines/grim/lua/lstring.o engines/grim/lua/lstrlib.o engines/grim/lua/ltable.o engines/grim/lua/ltask.o \
+	engines/grim/lua/ltm.o engines/grim/lua/lundump.o engines/grim/lua/lvm.o engines/grim/lua/lzio.o \
+	-Lcommon -lcommon -o $@ $<
 
 tools/mat2ppm$(EXEEXT): $(srcdir)/tools/mat2ppm.cpp
 	$(MKDIR) tools/$(DEPDIR)

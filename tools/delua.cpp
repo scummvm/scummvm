@@ -27,11 +27,6 @@
 #include <common/file.h>
 #include <common/str.h>
 
-#include <engine/lua/lua.h>
-#include <engine/lua/lundump.h>
-#include <engine/lua/lopcodes.h>
-#include <engine/lua/lzio.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -44,14 +39,27 @@
 #include <list>
 #include <set>
 
-#include <engine/localize.h>
-#include <engine/resource.h>
+#include <engines/grim/lua/lua.h>
+#include <engines/grim/lua/lundump.h>
+#include <engines/grim/lua/lopcodes.h>
+#include <engines/grim/lua/lzio.h>
+#include <engines/grim/lua/lobject.h>
+#include <engines/grim/localize.h>
+#include <engines/grim/resource.h>
+
+
+namespace Grim {
+
+class Actor;
+class Color;
+class ResourceLoader;
 
 // hacks below for shutup linker
 int g_flags = 0;
 ResourceLoader *g_resourceloader = NULL;
-enDebugLevels debugLevel = DEBUG_NONE;
 LuaFile *ResourceLoader::openNewStreamLua(const char *filename) const { return NULL; }
+Actor *check_actor(int num) { return NULL; }
+Color *check_color(int num) { return NULL; }
 
 static bool translateStrings = false;
 
@@ -79,6 +87,7 @@ std::string localname(TProtoFunc *tf, int n) {
 			}
 		}
 	}
+	return "";
 }
 
 class Expression {
@@ -115,13 +124,13 @@ public:
 	StringExpr(byte *p, TaggedString *txt) : Expression(p), text(txt) { }
 	TaggedString *text;
 	bool validIdentifier() const {
-		if (text->u.s.len == 0)
+		if (strlen(text->str) == 0)
 			return false;
 		if (isdigit(text->str[0]))
 			return false;
 		if (text->str[0] >= '0' && text->str[0] <= '9')
 			return false;
-		for (int i = 0; i < text->u.s.len; i++) {
+		for (unsigned int i = 0; i < strlen(text->str); i++) {
 			char c = text->str[i];
 			if ((! isalnum(text->str[0])) && c != '_')
 				return false;
@@ -135,7 +144,7 @@ public:
 		};
 
 		os << "\"";
-		std::string str(text->str, text->u.s.len);
+		std::string str(text->str);
 		if (translateStrings)
 			str = g_localizer->localize(str.c_str()).c_str();
 		for (std::string::iterator i = str.begin(); i != str.end(); i++) {
@@ -575,7 +584,7 @@ void Decompiler::decompileRange(byte *start, byte *end) {
 	// repeat/until loop starting at that point.
 	std::map<byte *, byte *> rev_iffupjmp_map;
 
-	for (byte *scan = start; end == NULL || scan < end; Scan += instr_lens[*scan]) {
+	for (byte *scan = start; end == NULL || scan < end; scan += instr_lens[*scan]) {
 		if (*scan == IFFUPJMP)
 			rev_iffupjmp_map[scan + 2 - scan[1]] = scan;
 		else if (*scan == IFFUPJMPW)
@@ -1258,11 +1267,13 @@ void decompile(std::ostream &os, TProtoFunc *tf, std::string indent_str, Express
 	}
 }
 
+}
+
 int main(int argc, char *argv[]) {
 	int filename_pos = 1;
 
 	if (argc > 1 && strcmp(argv[1], "-t") == 0) {
-		translateStrings = true;
+		Grim::translateStrings = true;
 		filename_pos = 2;
 	}
 	if (argc != filename_pos + 1) {
@@ -1276,19 +1287,19 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	lua_open();
-	ZIO z;
+	Grim::lua_open();
+	Grim::ZIO z;
 	int size = f.size();
 	char *buff = new char[size];
 	f.read(buff, size);
 
-	luaZ_mopen(&z, buff, size, "(buffer)");
-	TProtoFunc *tf = luaU_undump1(&z);
+	Grim::luaZ_mopen(&z, buff, size, "(buffer)");
+	Grim::TProtoFunc *tf = Grim::luaU_undump1(&z);
 	f.close();
 
-	decompile(std::cout, tf, "", NULL, 0);
+	Grim::decompile(std::cout, tf, "", NULL, 0);
 
 	delete[] buff;
-	lua_close();
+	Grim::lua_close();
 	return 0;
 }
