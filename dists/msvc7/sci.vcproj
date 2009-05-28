@@ -361,6 +361,9 @@
 				RelativePath="..\..\engines\sci\sfx\iterator_internal.h">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\sfx\misc.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\sfx\player.h">
 			</File>
 			<File
@@ -397,15 +400,6 @@
 				</File>
 				<File
 					RelativePath="..\..\engines\sci\sfx\softseq\pcjr.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="player">
-				<File
-					RelativePath="..\..\engines\sci\sfx\player\new_player.cpp">
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\player\new_player.h">
 				</File>
 			</Filter>
 			<Filter
