@@ -27,8 +27,12 @@
 
 #include "sci/tools.h"
 #include "sci/sfx/core.h"
-#include "sci/sfx/player/new_player.h"
+#include "sci/sfx/iterator.h"
+#include "sci/sfx/misc.h"
 #include "sci/sfx/sci_midi.h"
+
+#include "sci/sfx/softseq/pcjr.h"
+#include "sci/sfx/softseq/adlib.h"
 
 #include "common/system.h"
 #include "common/timer.h"
@@ -38,13 +42,293 @@
 
 namespace Sci {
 
-/*#define DEBUG_SONG_API*/
-/*#define DEBUG_CUES*/
-#ifdef DEBUG_CUES
-int sciprintf(char *msg, ...);
-#endif
-
+class SfxPlayer;
 SfxPlayer *player = NULL;		// FIXME: Avoid static vars
+
+
+#pragma mark -
+
+
+class SfxPlayer {
+public:
+	/** Number of voices that can play simultaneously */
+	int _polyphony;
+
+public:
+	SfxPlayer() : _polyphony(0) {}
+	virtual ~SfxPlayer() {}
+
+	virtual Common::Error init(ResourceManager *resmgr, int expected_latency) = 0;
+	/* Initializes the player
+	** Parameters: (ResourceManager *) resmgr: A resource manager for driver initialization
+	**             (int) expected_latency: Expected delay in between calls to 'maintenance'
+	**                   (in microseconds)
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
+	*/
+
+	virtual Common::Error add_iterator(SongIterator *it, uint32 start_time) = 0;
+	/* Adds an iterator to the song player
+	** Parameters: (songx_iterator_t *) it: The iterator to play
+	**             (uint32) start_time: The time to assume as the
+	**                        time the first MIDI command executes at
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
+	** The iterator should not be cloned (to avoid memory leaks) and
+	** may be modified according to the needs of the player.
+	** Implementors may use the 'sfx_iterator_combine()' function
+	** to add iterators onto their already existing iterators
+	*/
+
+	virtual Common::Error stop() = 0;
+	/* Stops the currently playing song and deletes the associated iterator
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
+	*/
+
+	virtual Common::Error iterator_message(const SongIterator::Message &msg) = 0;
+	/* Transmits a song iterator message to the active song
+	** Parameters: (SongIterator::Message) msg: The message to transmit
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
+	** OPTIONAL -- may be NULL
+	** If this method is not present, sending messages will stop
+	** and re-start playing, so it is preferred that it is present
+	*/
+
+	virtual Common::Error pause() = 0;
+	/* Pauses song playing
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
+	*/
+
+	virtual Common::Error resume() = 0;
+	/* Resumes song playing after a pause
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
+	*/
+
+	virtual Common::Error exit() = 0;
+	/* Stops the player
+	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
+	*/
+
+	virtual void tell_synth(int buf_nr, byte *buf) = 0;
+	/* Pass a raw MIDI event to the synth
+	Parameters: (int) argc: Length of buffer holding the midi event
+	           (byte *) argv: The buffer itself
+	*/
+};
+
+#pragma mark -
+
+class NewPlayer : public SfxPlayer {
+protected:
+	MidiPlayer *_mididrv;
+
+	SongIterator *_iterator;
+	Audio::Timestamp _wakeupTime;
+	Audio::Timestamp _currentTime;
+	uint32 _pauseTimeDiff;
+
+	bool _paused;
+	bool _iteratorIsDone;
+	uint32 _tempo;
+
+	Common::Mutex *_mutex;
+	int _volume;
+
+	void play_song(SongIterator *it);
+	static void player_timer_callback(void *refCon);
+
+public:
+	NewPlayer();
+
+	virtual Common::Error init(ResourceManager *resmgr, int expected_latency);
+	virtual Common::Error add_iterator(SongIterator *it, uint32 start_time);
+	virtual Common::Error stop();
+	virtual Common::Error iterator_message(const SongIterator::Message &msg);
+	virtual Common::Error pause();
+	virtual Common::Error resume();
+	virtual Common::Error exit();
+	virtual void tell_synth(int buf_nr, byte *buf);
+};
+
+NewPlayer::NewPlayer() {
+	_mididrv = 0;
+
+	_iterator = NULL;
+	_pauseTimeDiff = 0;
+
+	_paused = false;
+	_iteratorIsDone = false;
+	_tempo = 0;
+
+	_mutex = 0;
+	_volume = 15;
+}
+
+void NewPlayer::play_song(SongIterator *it) {
+	while (_iterator && _wakeupTime.msecsDiff(_currentTime) <= 0) {
+		int delay;
+		byte buf[8];
+		int result;
+
+		switch ((delay = songit_next(&(_iterator),
+		                             buf, &result,
+		                             IT_READER_MASK_ALL
+		                             | IT_READER_MAY_FREE
+		                             | IT_READER_MAY_CLEAN))) {
+
+		case SI_FINISHED:
+			delete _iterator;
+			_iterator = NULL;
+			_iteratorIsDone = true;
+			return;
+
+		case SI_IGNORE:
+		case SI_LOOP:
+		case SI_RELATIVE_CUE:
+		case SI_ABSOLUTE_CUE:
+			break;
+
+		case SI_PCM:
+			sfx_play_iterator_pcm(_iterator, 0);
+			break;
+
+		case 0:
+			static_cast<MidiDriver *>(_mididrv)->send(buf[0], buf[1], buf[2]);
+
+			break;
+
+		default:
+			_wakeupTime = _wakeupTime.addFrames(delay);
+		}
+	}
+}
+
+void NewPlayer::tell_synth(int buf_nr, byte *buf) {
+	byte op1 = (buf_nr < 2 ? 0 : buf[1]);
+	byte op2 = (buf_nr < 3 ? 0 : buf[2]);
+
+	static_cast<MidiDriver *>(_mididrv)->send(buf[0], op1, op2);
+}
+
+void NewPlayer::player_timer_callback(void *refCon) {
+	NewPlayer *thePlayer = (NewPlayer *)refCon;
+	assert(refCon);
+	Common::StackLock lock(*thePlayer->_mutex);
+
+	if (thePlayer->_iterator && !thePlayer->_iteratorIsDone && !thePlayer->_paused) {
+		thePlayer->play_song(thePlayer->_iterator);
+	}
+
+	thePlayer->_currentTime = thePlayer->_currentTime.addFrames(1);
+}
+
+/* API implementation */
+
+Common::Error NewPlayer::init(ResourceManager *resmgr, int expected_latency) {
+	MidiDriverType musicDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB);
+
+	switch(musicDriver) {
+	case MD_ADLIB:
+		_mididrv = new MidiPlayer_Adlib();
+		break;
+	case MD_PCJR:
+		_mididrv = new MidiPlayer_PCJr();
+		break;
+	case MD_PCSPK:
+		_mididrv = new MidiPlayer_PCSpeaker();
+		break;
+	default:
+		break;
+	}
+
+	assert(_mididrv);
+
+	_polyphony = _mididrv->getPolyphony();
+
+	_tempo = _mididrv->getBaseTempo();
+    uint32 time = g_system->getMillis();
+	_currentTime = Audio::Timestamp(time, 1000000 / _tempo);
+	_wakeupTime = Audio::Timestamp(time, SFX_TICKS_PER_SEC);
+
+	_mutex = new Common::Mutex();
+
+	_mididrv->setTimerCallback(this, player_timer_callback);
+	_mididrv->open(resmgr);
+	_mididrv->setVolume(_volume);
+
+	return Common::kNoError;
+}
+
+Common::Error NewPlayer::add_iterator(SongIterator *it, uint32 start_time) {
+	Common::StackLock lock(*_mutex);
+	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(_mididrv->getPlayMask()));
+	SIMSG_SEND(it, SIMSG_SET_RHYTHM(_mididrv->hasRhythmChannel()));
+
+	if (_iterator == NULL) {
+		// Resync with clock
+		_currentTime = Audio::Timestamp(g_system->getMillis(), 1000000 / _tempo);
+		_wakeupTime = Audio::Timestamp(start_time, SFX_TICKS_PER_SEC);
+	}
+
+	_iterator = sfx_iterator_combine(_iterator, it);
+	_iteratorIsDone = false;
+
+	return Common::kNoError;
+}
+
+Common::Error NewPlayer::stop(void) {
+	debug(3, "Player: Stopping song iterator %p", (void *)_iterator);
+	Common::StackLock lock(*_mutex);
+	delete _iterator;
+	_iterator = NULL;
+	for (int i = 0; i < MIDI_CHANNELS; i++)
+		static_cast<MidiDriver *>(_mididrv)->send(0xb0 + i, SCI_MIDI_CHANNEL_NOTES_OFF, 0);
+
+	return Common::kNoError;
+}
+
+Common::Error NewPlayer::iterator_message(const SongIterator::Message &msg) {
+	Common::StackLock lock(*_mutex);
+	if (!_iterator) {
+		return Common::kUnknownError;
+	}
+
+	songit_handle_message(&_iterator, msg);
+
+	return Common::kNoError;
+}
+
+Common::Error NewPlayer::pause(void) {
+	Common::StackLock lock(*_mutex);
+
+	_paused = true;
+	_pauseTimeDiff = _wakeupTime.msecsDiff(_currentTime);
+
+	_mididrv->playSwitch(false);
+
+	return Common::kNoError;
+}
+
+Common::Error NewPlayer::resume(void) {
+	Common::StackLock lock(*_mutex);
+
+	_wakeupTime = Audio::Timestamp(_currentTime.msecs() + _pauseTimeDiff, SFX_TICKS_PER_SEC);
+	_mididrv->playSwitch(true);
+	_paused = false;
+
+	return Common::kNoError;
+}
+
+Common::Error NewPlayer::exit(void) {
+	_mididrv->close();
+	delete _mididrv;
+	delete _mutex;
+	delete _iterator;
+	_iterator = NULL;
+
+	return Common::kNoError;
+}
+
+
+#pragma mark -
 
 
 int sfx_pcm_available() {
@@ -54,6 +338,11 @@ int sfx_pcm_available() {
 void sfx_reset_player() {
 	if (player)
 		player->stop();
+}
+
+void sfx_player_tell_synth(int buf_nr, byte *buf) {
+	if (player)
+		player->tell_synth(buf_nr, buf);
 }
 
 int sfx_get_player_polyphony() {

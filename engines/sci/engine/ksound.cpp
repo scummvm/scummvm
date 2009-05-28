@@ -25,7 +25,9 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/sfx/player.h"
+//#include "sci/sfx/player.h"
+#include "sci/sfx/iterator.h"
+#include "sci/sfx/misc.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/vm.h"		// for Object
 

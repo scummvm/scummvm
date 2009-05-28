@@ -24,8 +24,8 @@
  */
 
 /* Sound engine */
-#ifndef SCI_SFX_SFX_ENGINE_H
-#define SCI_SFX_SFX_ENGINE_H
+#ifndef SCI_SFX_CORE_H
+#define SCI_SFX_CORE_H
 
 #include "common/error.h"
 #include "sci/sfx/songlib.h"
@@ -170,6 +170,7 @@ Common::Error sfx_send_midi(SfxState *self, song_handle_t handle, int channel,
 	int command, int arg1, int arg2);
 
 
+
 } // End of namespace Sci
 
-#endif // SCI_SFX_SFX_ENGINE_H
+#endif // SCI_SFX_CORE_H

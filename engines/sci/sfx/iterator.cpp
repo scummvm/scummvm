@@ -28,7 +28,7 @@
 #include "common/util.h"
 
 #include "sci/sfx/iterator_internal.h"
-#include "sci/sfx/player.h"
+#include "sci/sfx/misc.h"	// for sfx_player_tell_synth
 #include "sci/tools.h"
 
 #include "sound/audiostream.h"
@@ -126,8 +126,6 @@ void SongIteratorChannel::init(int id_, int offset_, int end_) {
 	saw_notes = 0;
 }
 
-extern SfxPlayer *player;	// FIXME
-
 void SongIteratorChannel::resetSynthChannels() {
 	byte buf[5];
 
@@ -136,14 +134,12 @@ void SongIteratorChannel::resetSynthChannels() {
 			buf[0] = 0xe0 | i; /* Pitch bend */
 			buf[1] = 0x80; /* Wheel center */
 			buf[2] = 0x40;
-			if (player)
-				player->tell_synth(3, buf);
+			sfx_player_tell_synth(3, buf);
 
 			buf[0] = 0xb0 | i; // Set control
 			buf[1] = 0x40; // Hold pedal
 			buf[2] = 0x00; // Off
-			if (player)
-				player->tell_synth(3, buf);
+			sfx_player_tell_synth(3, buf);
 			/* TODO: Reset other controls? */
 		}
 	}
