@@ -1813,7 +1813,7 @@ static void ImFadeParam() {
 		g_imuse->setFadePan(soundName, value, duration);
 		break;
 	default:
-		error("ImFadeParam(%s, %h, %d, %d)", soundName, opcode, value, duration);
+		error("ImFadeParam(%s, %x, %d, %d)", soundName, opcode, value, duration);
 		break;
 	}
 }
