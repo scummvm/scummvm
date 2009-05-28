@@ -72,7 +72,7 @@ static const GrimGameDescription gameDescriptions[] = {
 		{
 			"grim",
 			0,
-			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 362212), // TODO crrect to proper size
+			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 398592),
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS
