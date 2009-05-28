@@ -168,34 +168,32 @@ SECTION .text
 ; interpolate16_7_1
 ; Mix two pixels with weight 7 and 1, respectively: (c1*7+c2)/8;
 %macro Interp3 2
-	; ((p1&kLowBitsMask)<<2)
+	; ((c1&kLowBitsMask)<<2)
 	mov ecx,eax
 	and ecx,[_hqx_lowbits]
 	shl ecx,2
-	
-	; + ((p1&kLow2Bits)<<1)
+
+	; + ((c1&kLow2Bits)<<1)
 	mov edx,eax
 	and edx,[_hqx_low2bits]
-	shl edx,1
-	add ecx,edx
-	
-	; + (p1&kLow3Bits)
+	lea ecx, [ecx + 2*edx]
+
+	; + (c1&kLow3Bits)
 	mov edx,eax
 	and edx,[_hqx_low3bits]
 	add ecx,edx
-	
-	; + (p2&kLow3Bits)
+
+	; + (c2&kLow3Bits)
 	mov edx,%2
 	and edx,[_hqx_low3bits]
 	add ecx,edx
-	
+
 	; & kLow3Bits  -> ecx
 	and ecx,[_hqx_low3bits]
-	
-	; compute ((p1*7+p2) - ecx) >> 3;
-	mov edx,eax
-	shl edx,3
-	sub edx,eax
+
+	; compute ((c1*7+c2) - ecx) >> 3;
+	lea edx,[8*eax]
+	add ecx,eax
 	sub edx,ecx
 	mov ecx,%2
 	add edx,ecx
@@ -207,39 +205,36 @@ SECTION .text
 ; interpolate16_2_7_7
 ; Mix three pixels with weight 2, 7, and 7, respectively: (c1*2+(c2+c3)*7)/16;
 %macro Interp4 3
-	; unpack c2
+	; unpack c2 to edx
 	mov edx, %2
 	shl edx, 16
 	or  edx, %2
 	and edx, [_hqx_green_redBlue_Mask]
-	
-	; unpack c3
+
+	; unpack c3 to ecx
 	mov ecx, %3
 	shl ecx, 16
 	or  ecx, %3
 	and ecx, [_hqx_green_redBlue_Mask]
-	
-	; sum c2 and c3
-	add edx, ecx
 
-	; multiply (c2+c3) by 7
-	;imul edx, 7	; imul works, too, but might be slower on older systems?
-	mov ecx, edx
-	shl edx, 3
+	; sum c2 and c3 -> store in ecx
+	add ecx, edx
+
+	; multiply (c2+c3) by 7 -> store in edx
+	lea edx, [ecx*8]
 	sub edx, ecx
-	
-	; unpack eax and multiply by 2
+
+	; unpack c1
 	mov ecx, eax
 	shl ecx, 16
 	or  ecx, eax
 	and ecx, [_hqx_green_redBlue_Mask]
-	add ecx, ecx	; multiply by 2
-	
-	; sum 2*eax + 7*(c2+c3), divide by 16, mask the result
-	add edx, ecx
+
+	; sum 2*c1 + 7*(c2+c3), divide by 16, mask the result
+	lea edx, [edx + 2*ecx]
 	shr edx, 4
 	and edx, [_hqx_green_redBlue_Mask]
-	
+
 	; finally, repack the mixed pixel
 	mov ecx, edx
 	shr ecx, 16
@@ -253,7 +248,7 @@ SECTION .text
 %macro Interp5 3
     mov edx,%2
     mov ecx,%3
-     
+
     xor edx,ecx       ; xor pixels
     mov [tmpData],edx ; store tmp result
     xor edx,ecx       ; restore original value of edx (avoids a reload)
