@@ -58,7 +58,7 @@ void sfx_reset_player() {
 
 int sfx_get_player_polyphony() {
 	if (player)
-		return player->polyphony;
+		return player->_polyphony;
 	else
 		return 0;
 }
@@ -344,14 +344,6 @@ int sfx_play_iterator_pcm(SongIterator *it, song_handle_t handle) {
 
 #define DELAY (1000000 / SFX_TICKS_PER_SEC)
 
-static void _sfx_timer_callback(void *data) {
-	/* First run the player, to give it a chance to fill
-	** the audio buffer  */
-
-	if (player)
-		player->maintenance();
-}
-
 void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	song_lib_init(&self->songlib);
 	self->song = NULL;
@@ -360,17 +352,12 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	self->soundSync = NULL;
 	self->audioResource = NULL;
 
+	player = NULL;
+
 	if (flags & SFX_STATE_FLAG_NOSOUND) {
-		player = NULL;
-		sciprintf("[SFX] Sound disabled.\n");
+		warning("[SFX] Sound disabled");
 		return;
 	}
-
-	// TODO: Implement platform policy here?
-	player = new NewPlayer();
-	//player = new PolledPlayer();
-	//player = new RealtimePlayer();
-
 
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Initialising: flags=%x\n", flags);
@@ -381,67 +368,36 @@ void sfx_init(sfx_state_t *self, ResourceManager *resmgr, int flags) {
 	/*-------------------*/
 
 	if (!resmgr) {
-		sciprintf("[SFX] Warning: No resource manager present, cannot initialise player\n");
-		player = NULL;
-	} else if (player->init(resmgr, DELAY / 1000)) {
-		sciprintf("[SFX] Song player '%s' reported error, disabled\n", player->name);
-		delete player;
-		player = NULL;
+		warning("[SFX] Warning: No resource manager present, cannot initialise player");
+		return;
 	}
 
-	if (!player)
+	player = new NewPlayer();
+
+	if (!player) {
 		sciprintf("[SFX] No song player found\n");
-	else
-		sciprintf("[SFX] Using song player '%s', v%s\n", player->name, player->version);
+		return;
+	}
 
-	/*------------------*/
-	/* Initialise timer */
-	/*------------------*/
-
-	// We initialise the timer last, so there is no possibility of the
-	// timer callback being triggered while the mixer or player are
-	// still being initialized.
-	if (strcmp(player->name, "realtime") == 0) {
-		// FIXME: Merge this timer code into RealtimePlayer itself
-		if (!g_system->getTimerManager()->installTimerProc(&_sfx_timer_callback, DELAY, NULL)) {
-			warning("[SFX] " __FILE__": Timer failed to initialize");
-			warning("[SFX] Disabled sound support");
-			delete player;
-			player = NULL;
-		}
+	if (player->init(resmgr, DELAY / 1000)) {
+		warning("[SFX] Song player reported error, disabled");
+		delete player;
+		player = NULL;
 	}
 }
 
 void sfx_exit(sfx_state_t *self) {
-	g_system->getTimerManager()->removeTimerProc(&_sfx_timer_callback);
-
-	// The timer API guarantees no more callbacks are running or will be
-	// run from this point onward, so we can now safely exit the mixer and
-	// player.
-
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Uninitialising\n");
 #endif
 
-	// WARNING: The mixer may hold feeds from the player, so we must
-	// stop the mixer BEFORE stopping the player.
-	// FIXME Player "new" frees its own feeds, so we only need to stop any
-	// remaining sfx feeds after stopping the player.
-	if (strcmp(player->name, "new") != 0)
-		g_system->getMixer()->stopAll();
-
-	// FIXME: change players to stop their own audio streams
 	if (player) {
-		// See above: This must happen AFTER stopping the mixer
 		player->exit();
 		delete player;
 		player = 0;
 	}
 
-	// FIXME: player is deleted here by the code above, so this will crash.
-	// Is that code needed?
-	//if (strcmp(player->name, "new") == 0)
-	//	g_system->getMixer()->stopAll();
+	g_system->getMixer()->stopAll();
 
 	song_lib_free(self->songlib);
 

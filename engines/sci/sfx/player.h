@@ -37,14 +37,11 @@ namespace Sci {
 
 class SfxPlayer {
 public:
-	const char *name;
-	const char *version;
-
 	/** Number of voices that can play simultaneously */
-	int polyphony;
+	int _polyphony;
 
 public:
-	SfxPlayer() : name(0), version(0), polyphony(0) {}
+	SfxPlayer() : _polyphony(0) {}
 	virtual ~SfxPlayer() {}
 
 	virtual Common::Error init(ResourceManager *resmgr, int expected_latency) = 0;
@@ -94,12 +91,6 @@ public:
 	virtual Common::Error exit() = 0;
 	/* Stops the player
 	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
-	*/
-
-	virtual void maintenance() {}
-	/* Regularly called maintenance function
-	** This function is called frequently and regularly (if present), it can be
-	** used to emit sound.
 	*/
 
 	virtual void tell_synth(int buf_nr, byte *buf) = 0;

@@ -36,37 +36,36 @@
 
 namespace Sci {
 
-// TODO: Turn the following static vars into member vars
-static MidiPlayer *mididrv;
+NewPlayer::NewPlayer() {
+	_mididrv = 0;
 
-static SongIterator *play_it = NULL;
-static Audio::Timestamp wakeup_time;
-static Audio::Timestamp current_time;
-static uint32 play_pause_diff;
+	_iterator = NULL;
+	_pauseTimeDiff = 0;
 
-static int play_paused = 0;
-static int play_it_done = 0;
-static uint32 tempo;
+	_paused = false;
+	_iteratorIsDone = false;
+	_tempo = 0;
 
-static Common::Mutex *mutex;
-static int volume = 15;
+	_mutex = 0;
+	_volume = 15;
+}
 
-static void play_song(SongIterator *it) {
-	while (play_it && wakeup_time.msecsDiff(current_time) <= 0) {
+void NewPlayer::play_song(SongIterator *it) {
+	while (_iterator && _wakeupTime.msecsDiff(_currentTime) <= 0) {
 		int delay;
 		byte buf[8];
 		int result;
 
-		switch ((delay = songit_next(&(play_it),
+		switch ((delay = songit_next(&(_iterator),
 		                             buf, &result,
 		                             IT_READER_MASK_ALL
 		                             | IT_READER_MAY_FREE
 		                             | IT_READER_MAY_CLEAN))) {
 
 		case SI_FINISHED:
-			delete play_it;
-			play_it = NULL;
-			play_it_done = 1;
+			delete _iterator;
+			_iterator = NULL;
+			_iteratorIsDone = true;
 			return;
 
 		case SI_IGNORE:
@@ -76,16 +75,16 @@ static void play_song(SongIterator *it) {
 			break;
 
 		case SI_PCM:
-			sfx_play_iterator_pcm(play_it, 0);
+			sfx_play_iterator_pcm(_iterator, 0);
 			break;
 
 		case 0:
-			static_cast<MidiDriver *>(mididrv)->send(buf[0], buf[1], buf[2]);
+			static_cast<MidiDriver *>(_mididrv)->send(buf[0], buf[1], buf[2]);
 
 			break;
 
 		default:
-			wakeup_time = wakeup_time.addFrames(delay);
+			_wakeupTime = _wakeupTime.addFrames(delay);
 		}
 	}
 }
@@ -94,17 +93,19 @@ void NewPlayer::tell_synth(int buf_nr, byte *buf) {
 	byte op1 = (buf_nr < 2 ? 0 : buf[1]);
 	byte op2 = (buf_nr < 3 ? 0 : buf[2]);
 
-	static_cast<MidiDriver *>(mididrv)->send(buf[0], op1, op2);
+	static_cast<MidiDriver *>(_mididrv)->send(buf[0], op1, op2);
 }
 
-static void player_timer_callback(void *refCon) {
-	Common::StackLock lock(*mutex);
+void NewPlayer::player_timer_callback(void *refCon) {
+	NewPlayer *player = (NewPlayer *)refCon;
+	assert(refCon);
+	Common::StackLock lock(*player->_mutex);
 
-	if (play_it && !play_it_done && !play_paused) {
-		play_song(play_it);
+	if (player->_iterator && !player->_iteratorIsDone && !player->_paused) {
+		player->play_song(player->_iterator);
 	}
 
-	current_time = current_time.addFrames(1);
+	player->_currentTime = player->_currentTime.addFrames(1);
 }
 
 /* API implementation */
@@ -114,111 +115,104 @@ Common::Error NewPlayer::init(ResourceManager *resmgr, int expected_latency) {
 
 	switch(musicDriver) {
 	case MD_ADLIB:
-		mididrv = new MidiPlayer_Adlib();
+		_mididrv = new MidiPlayer_Adlib();
 		break;
 	case MD_PCJR:
-		mididrv = new MidiPlayer_PCJr();
+		_mididrv = new MidiPlayer_PCJr();
 		break;
 	case MD_PCSPK:
-		mididrv = new MidiPlayer_PCSpeaker();
+		_mididrv = new MidiPlayer_PCSpeaker();
 		break;
 	default:
 		break;
 	}
 
-	assert(mididrv);
+	assert(_mididrv);
 
-	this->polyphony = mididrv->getPolyphony();
+	_polyphony = _mididrv->getPolyphony();
 
-	tempo = mididrv->getBaseTempo();
+	_tempo = _mididrv->getBaseTempo();
     uint32 time = g_system->getMillis();
-	current_time = Audio::Timestamp(time, 1000000 / tempo);
-	wakeup_time = Audio::Timestamp(time, SFX_TICKS_PER_SEC);
+	_currentTime = Audio::Timestamp(time, 1000000 / _tempo);
+	_wakeupTime = Audio::Timestamp(time, SFX_TICKS_PER_SEC);
 
-	mutex = new Common::Mutex();
+	_mutex = new Common::Mutex();
 
-	mididrv->setTimerCallback(NULL, player_timer_callback);
-	mididrv->open(resmgr);
-	mididrv->setVolume(volume);
+	_mididrv->setTimerCallback(this, player_timer_callback);
+	_mididrv->open(resmgr);
+	_mididrv->setVolume(_volume);
 
 	return Common::kNoError;
 }
 
 Common::Error NewPlayer::add_iterator(SongIterator *it, uint32 start_time) {
-	mutex->lock();
-	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(mididrv->getPlayMask()));
-	SIMSG_SEND(it, SIMSG_SET_RHYTHM(mididrv->hasRhythmChannel()));
+	Common::StackLock lock(*_mutex);
+	SIMSG_SEND(it, SIMSG_SET_PLAYMASK(_mididrv->getPlayMask()));
+	SIMSG_SEND(it, SIMSG_SET_RHYTHM(_mididrv->hasRhythmChannel()));
 
-	if (play_it == NULL) {
+	if (_iterator == NULL) {
 		// Resync with clock
-		current_time = Audio::Timestamp(g_system->getMillis(), 1000000 / tempo);
-		wakeup_time = Audio::Timestamp(start_time, SFX_TICKS_PER_SEC);
+		_currentTime = Audio::Timestamp(g_system->getMillis(), 1000000 / _tempo);
+		_wakeupTime = Audio::Timestamp(start_time, SFX_TICKS_PER_SEC);
 	}
 
-	play_it = sfx_iterator_combine(play_it, it);
-	play_it_done = 0;
-	mutex->unlock();
+	_iterator = sfx_iterator_combine(_iterator, it);
+	_iteratorIsDone = false;
 
 	return Common::kNoError;
 }
 
 Common::Error NewPlayer::stop(void) {
-	debug(3, "Player: Stopping song iterator %p", (void *)play_it);
-	mutex->lock();
-	delete play_it;
-	play_it = NULL;
+	debug(3, "Player: Stopping song iterator %p", (void *)_iterator);
+	Common::StackLock lock(*_mutex);
+	delete _iterator;
+	_iterator = NULL;
 	for (int i = 0; i < MIDI_CHANNELS; i++)
-		static_cast<MidiDriver *>(mididrv)->send(0xb0 + i, SCI_MIDI_CHANNEL_NOTES_OFF, 0);
-	mutex->unlock();
+		static_cast<MidiDriver *>(_mididrv)->send(0xb0 + i, SCI_MIDI_CHANNEL_NOTES_OFF, 0);
 
 	return Common::kNoError;
 }
 
 Common::Error NewPlayer::iterator_message(const SongIterator::Message &msg) {
-	Common::StackLock lock(*mutex);
-	if (!play_it) {
+	Common::StackLock lock(*_mutex);
+	if (!_iterator) {
 		return Common::kUnknownError;
 	}
 
-	songit_handle_message(&play_it, msg);
+	songit_handle_message(&_iterator, msg);
 
 	return Common::kNoError;
 }
 
 Common::Error NewPlayer::pause(void) {
-	Common::StackLock lock(*mutex);
+	Common::StackLock lock(*_mutex);
 
-	play_paused = 1;
-	play_pause_diff = wakeup_time.msecsDiff(current_time);
+	_paused = true;
+	_pauseTimeDiff = _wakeupTime.msecsDiff(_currentTime);
 
-	mididrv->playSwitch(false);
+	_mididrv->playSwitch(false);
 
 	return Common::kNoError;
 }
 
 Common::Error NewPlayer::resume(void) {
-	Common::StackLock lock(*mutex);
+	Common::StackLock lock(*_mutex);
 
-	wakeup_time = Audio::Timestamp(current_time.msecs() + play_pause_diff, SFX_TICKS_PER_SEC);
-	mididrv->playSwitch(true);
-	play_paused = 0;
+	_wakeupTime = Audio::Timestamp(_currentTime.msecs() + _pauseTimeDiff, SFX_TICKS_PER_SEC);
+	_mididrv->playSwitch(true);
+	_paused = false;
 
 	return Common::kNoError;
 }
 
 Common::Error NewPlayer::exit(void) {
-	mididrv->close();
-	delete mididrv;
-	delete mutex;
-	delete play_it;
-	play_it = NULL;
+	_mididrv->close();
+	delete _mididrv;
+	delete _mutex;
+	delete _iterator;
+	_iterator = NULL;
 
 	return Common::kNoError;
-}
-
-NewPlayer::NewPlayer() {
-	name = "new";
-	version = "0.1";
 }
 
 } // End of namespace Sci

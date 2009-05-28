@@ -30,7 +30,28 @@
 
 namespace Sci {
 
+class MidiPlayer;
+class SongIterator;
+
 class NewPlayer : public SfxPlayer {
+protected:
+	MidiPlayer *_mididrv;
+
+	SongIterator *_iterator;
+	Audio::Timestamp _wakeupTime;
+	Audio::Timestamp _currentTime;
+	uint32 _pauseTimeDiff;
+
+	bool _paused;
+	bool _iteratorIsDone;
+	uint32 _tempo;
+
+	Common::Mutex *_mutex;
+	int _volume;
+
+	void play_song(SongIterator *it);
+	static void player_timer_callback(void *refCon);
+
 public:
 	NewPlayer();
 
