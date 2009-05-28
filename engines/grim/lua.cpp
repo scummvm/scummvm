@@ -902,64 +902,64 @@ static void IsActorChoring() {
 }
 
 static void ActorLookAt() {
-	lua_Object x, y, z, rate;
 	Graphics::Vector3d vector;
-	Actor *act;
+	float rate = 0.0f; // FIXME what should be default ?
 
-	act = check_actor(1);
-	x = lua_getparam(2);
-	y = lua_getparam(3);
-	z = lua_getparam(4);
-	rate = lua_getparam(5);
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object xObj = lua_getparam(2);
+	lua_Object yObj = lua_getparam(3);
+	lua_Object zObj = lua_getparam(4);
+	lua_Object rateObj = lua_getparam(5);
 
-	if (lua_isnumber(rate))
-		act->setLookAtRate(lua_getnumber(rate));
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	if (!actor->currentCostume())
+		return;
+
+	if (lua_isnumber(rateObj))
+		actor->setLookAtRate(lua_getnumber(rateObj));
 
 	// Look at nothing
-	if (lua_isnil(x)) {
-		if (act->isLookAtVectorZero())
+	if (lua_isnil(xObj)) {
+		if (actor->isLookAtVectorZero())
 			return;
 
-		act->setLookAtVectorZero();
-		act->setLooking(true);
-		if (lua_isnumber(y))
-			act->setLookAtRate(lua_getnumber(y));
-	} else if (lua_isnumber(x)) { // look at xyz
-		float fX;
+		actor->setLookAtVectorZero();
+		if (lua_isnumber(yObj))
+			actor->setLookAtRate(lua_getnumber(yObj));
+	} else if (lua_isnumber(xObj)) { // look at xyz
 		float fY;
 		float fZ;
 
-		if (lua_isnumber(x))
-			fX = lua_getnumber(x);
-		else
-			fX = 0.f;
+		float fX = lua_getnumber(xObj);
 
-		if (lua_isnumber(y))
-			fY = lua_getnumber(y);
+		if (lua_isnumber(yObj))
+			fY = lua_getnumber(yObj);
 		else
-			fY = 0.f;
+			fY = 0.0f;
 
-		if (lua_isnumber(z))
-			fZ = lua_getnumber(z);
+		if (lua_isnumber(zObj))
+			fZ = lua_getnumber(zObj);
 		else
-			fZ = 0.f;
+			fZ = 0.0f;
 
 		vector.set(fX, fY, fZ);
-		act->setLookAtVector(vector);
-	} else if (isActor(x)) { // look at another actor
-		Actor *lookedAct = check_actor(x);
+		actor->setLookAtVector(vector);
+	} else if (lua_isuserdata(xObj) && lua_tag(xObj) == MKID_BE('ACTR')) { // look at another actor
+		Actor *lookedAct = static_cast<Actor *>(lua_getuserdata(xObj));
 
-		act->setLookAtVector(lookedAct->pos());
+		actor->setLookAtVector(lookedAct->pos());
 
-		if (lua_isnumber(y))
-			act->setLookAtRate(lua_getnumber(y));
+		if (lua_isnumber(yObj))
+			actor->setLookAtRate(lua_getnumber(yObj));
 	} else {
 		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("ActorLookAt: Don't know what to look at!");
 		return;
 	}
 
-	act->setLooking(true);
+	actor->setLooking(true);
 }
 
 /* Turn the actor to a point specified in the 3D space,
