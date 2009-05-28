@@ -301,14 +301,12 @@ private:
 	int _rate;
 
 	struct Channel {
-		uint8 volume;
 		uint8 pitchBendLow, pitchBendHigh;
-		uint8 expression;
 		uint8 hold;
 		uint8 modulation;
 		uint8 voiceProtect;
 		uint8 noteCount;
-	} _channel[16];
+	} _channel[2];
 
 	void resetController(int channel);
 
@@ -316,8 +314,7 @@ private:
 		bool enabled;
 		uint8 hardwareChannel;
 		uint8 midiChannel;
-		uint8 note1, note2;
-		uint8 velocity;
+		uint8 note;
 		bool processHold;
 		uint8 flags;
 		uint8 hardwareFlags;
@@ -326,7 +323,7 @@ private:
 		uint16 precedence;
 	} _note[2];
 
-	void noteOn(int channel, int note, int velocity);
+	void noteOn(int channel, int note);
 	void noteOff(int channel, int note);
 
 	void turnNoteOn(int note);
@@ -342,7 +339,6 @@ private:
 	uint8 _timerValue;
 	void onTimer();
 
-	static const uint8 _velocityTable[];
 	static const uint8 _noteTable1[];
 	static const uint8 _noteTable2[];
 };

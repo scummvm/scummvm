@@ -64,7 +64,10 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 	uint8 param1 = (data >>  8) & 0xFF;
 	uint8 param2 = (data >> 16) & 0xFF;
 
-	uint8 flags = 0;
+	uint8 flags = 0x00;
+
+	if (channel > 1)
+		return;
 
 	switch (data & 0xF0) {
 	case 0x80:	// note off
@@ -76,7 +79,7 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 			return;
 
 		if (param2)
-			noteOn(channel, param1, param2);
+			noteOn(channel, param1);
 		else
 			noteOff(channel, param1);
 		return;
@@ -85,12 +88,6 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 		switch (param1) {
 		case 0x01:	// modulation
 			_channel[channel].modulation = param2;
-			flags = 0x00;
-			break;
-
-		case 0x07:	// volume
-			_channel[channel].volume = param2;
-			flags = 0x40;
 			break;
 
 		case 0x40:	// hold
@@ -107,15 +104,9 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 			_channel[channel].hold = 0;
 			resetController(channel);
 			_channel[channel].modulation = 0;
-			_channel[channel].expression = 0x7F;
 			_channel[channel].pitchBendLow = 0;
 			_channel[channel].pitchBendHigh = 0x40;
-			flags = 0x41;
-			break;
-
-		case 0xB0:	// expression
-			_channel[channel].expression = param2;
-			flags = 0x40;
+			flags = 0x01;
 			break;
 
 		default:
@@ -144,11 +135,11 @@ void MidiDriver_PCSpeaker::send(uint32 data) {
 void MidiDriver_PCSpeaker::resetController(int channel) {
 	for (int i = 0; i < 2; ++i) {
 		if (_note[i].enabled && _note[i].midiChannel == channel && _note[i].processHold)
-			noteOff(channel, _note[i].note2);
+			noteOff(channel, _note[i].note);
 	}
 }
 
-void MidiDriver_PCSpeaker::noteOn(int channel, int note, int velocity) {
+void MidiDriver_PCSpeaker::noteOn(int channel, int note) {
 	int n = 0;
 
 	while (n < 2 && _note[n].enabled)
@@ -158,13 +149,12 @@ void MidiDriver_PCSpeaker::noteOn(int channel, int note, int velocity) {
 		return;
 
 	_note[n].midiChannel = channel;
-	_note[n].note1 = _note[n].note2 = note;
-	_note[n].velocity = _velocityTable[((uint8)velocity) >> 3];
+	_note[n].note = note;
 	_note[n].enabled = true;
 	_note[n].processHold = false;
 	_note[n].hardwareFlags = 0x20;
 	_note[n].priority = 0x7FFF;
-	_note[n].flags = 0x41;
+	_note[n].flags = 0x01;
 
 	turnNoteOn(n);
 }
@@ -174,7 +164,7 @@ void MidiDriver_PCSpeaker::turnNoteOn(int note) {
 		_note[note].hardwareChannel = 0;
 		++_channel[_note[note].midiChannel].noteCount;
 		_hardwareChannel[0] = _note[note].midiChannel;
-		_note[note].flags = 0x41;
+		_note[note].flags = 0x01;
 
 		setupTone(note);
 	} else {
@@ -235,7 +225,7 @@ void MidiDriver_PCSpeaker::overwriteNote(int note) {
 		_note[newNote].hardwareChannel = _note[note].hardwareChannel;
 		++_channel[_note[newNote].midiChannel].noteCount;
 		_hardwareChannel[_note[note].hardwareChannel] = _note[newNote].midiChannel;
-		_note[newNote].flags = 0x41;
+		_note[newNote].flags = 0x01;
 
 		setupTone(newNote);
 	} while (--totalNotes);
@@ -243,7 +233,7 @@ void MidiDriver_PCSpeaker::overwriteNote(int note) {
 
 void MidiDriver_PCSpeaker::noteOff(int channel, int note) {
 	for (int i = 0; i < 2; ++i) {
-		if (_note[i].enabled && _note[i].note1 == note && _note[i].midiChannel == channel) {
+		if (_note[i].enabled && _note[i].note == note && _note[i].midiChannel == channel) {
 			if (_channel[i].hold < 0x40) {
 				turnNoteOff(i);
 				_note[i].enabled = false;
@@ -272,8 +262,6 @@ void MidiDriver_PCSpeaker::setupTone(int note) {
 	if (_note[note].hardwareChannel == 0xFF)
 		return;
 
-	if (_note[note].flags & 0x40)
-		_note[note].flags &= 0xBF;
 	if (!(_note[note].flags & 0x01))
 		return;
 
@@ -283,7 +271,7 @@ void MidiDriver_PCSpeaker::setupTone(int note) {
 		const int midiChannel = _note[note].midiChannel;
 		uint16 pitchBend = (_channel[midiChannel].pitchBendHigh << 7) | _channel[midiChannel].pitchBendLow;
 
-		int noteValue = _note[note].note2;
+		int noteValue = _note[note].note;
 
 		noteValue -= 24;
 		do {
@@ -350,11 +338,6 @@ void MidiDriver_PCSpeaker::onTimer() {
 		}
 	}*/
 }
-
-const uint8 MidiDriver_PCSpeaker::_velocityTable[] = {
-	0x52, 0x55, 0x58, 0x5B, 0x5E, 0x61, 0x64, 0x67,
-	0x6A, 0x6D, 0x70, 0x73, 0x76, 0x79, 0x7C, 0x7F
-};
 
 const uint8 MidiDriver_PCSpeaker::_noteTable1[] = {
 	0x88, 0xB5, 0x4E, 0x40, 0x41, 0xCD, 0xC4, 0x3D,
