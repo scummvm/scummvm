@@ -2427,7 +2427,7 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 	}
 
 	for (i = 0; i < numFireBalls; i++)
-		delete[] fireballState[i];
+		delete fireballState[i];
 
 	_screen->setCurPage(cp);
 	_screen->copyPage(12, 0);
