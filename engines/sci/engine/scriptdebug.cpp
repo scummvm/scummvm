@@ -2358,8 +2358,8 @@ static int c_sfx_remove(EngineState *s, const Common::Array<cmd_param_t> &cmdPar
 	int handle = FROBNICATE_HANDLE(id);
 
 	if (id.segment) {
-		sfx_song_set_status(&s->_sound, handle, SOUND_STATUS_STOPPED);
-		sfx_remove_song(&s->_sound, handle);
+		s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+		s->_sound.sfx_remove_song(handle);
 		PUT_SEL32V(id, signal, -1);
 		PUT_SEL32V(id, nodePtr, 0);
 		PUT_SEL32V(id, handle, 0);
@@ -3257,7 +3257,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		const char *commandstring;
 
 		// Suspend music playing
-		sfx_suspend(&s->_sound, 1);
+		s->_sound.sfx_suspend(true);
 
 		commandstring = _debug_get_input();
 
@@ -3270,7 +3270,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		sciprintf("\n");
 
 		// Resume music playing
-		sfx_suspend(&s->_sound, 0);
+		s->_sound.sfx_suspend(false);
 	}
 }
 

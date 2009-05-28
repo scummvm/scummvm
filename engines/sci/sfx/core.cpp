@@ -333,10 +333,10 @@ int sfx_get_player_polyphony() {
 		return 0;
 }
 
-static void _freeze_time(SfxState *self) {
+void SfxState::freezeTime() {
 	/* Freezes the top song delay time */
 	const Audio::Timestamp ctime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
-	song_t *song = self->_song;
+	song_t *song = _song;
 
 	while (song) {
 		song->_delay = song->_wakeupTime.frameDiff(ctime);
@@ -347,10 +347,10 @@ static void _freeze_time(SfxState *self) {
 	}
 }
 
-static void _thaw_time(SfxState *self) {
-	/* inverse of _freeze_time() */
+void SfxState::thawTime() {
+	/* inverse of freezeTime() */
 	const Audio::Timestamp ctime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
-	song_t *song = self->_song;
+	song_t *song = _song;
 
 	while (song) {
 		song->_wakeupTime = ctime.addFrames(song->_delay);
@@ -383,8 +383,8 @@ static void _dump_playing_list(SfxState *self, char *msg) {
 }
 #endif
 
-static void _dump_songs(SfxState *self) {
 #if 0
+static void _dump_songs(SfxState *self) {
 	song_t *song = self->_song;
 
 	fprintf(stderr, "Cue iterators:\n");
@@ -400,23 +400,23 @@ static void _dump_songs(SfxState *self) {
 		fprintf(stderr, "Audio iterator:\n");
 		player->iterator_message(SongIterator::Message(0, SIMSG_PRINT(1)));
 	}
-#endif
 }
+#endif
 
-static int is_playing(SfxState *self, song_t *song) {
-	song_t *playing_song = self->_song;
+bool SfxState::isPlaying(song_t *song) {
+	song_t *playing_song = _song;
 
-	/*	_dump_playing_list(self, "is-playing");*/
+	/*	_dump_playing_list(this, "is-playing");*/
 
 	while (playing_song) {
 		if (playing_song == song)
-			return 1;
+			return true;
 		playing_song = playing_song->next_playing;
 	}
-	return 0;
+	return false;
 }
 
-static void _sfx_set_song_status(SfxState *self, song_t *song, int status) {
+void SfxState::setSongStatus(song_t *song, int status) {
 	const Audio::Timestamp ctime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
 
 	switch (status) {
@@ -444,7 +444,7 @@ static void _sfx_set_song_status(SfxState *self, song_t *song, int status) {
 			song->_wakeupTime = ctime;
 		}
 
-		if (is_playing(self, song))
+		if (isPlaying(song))
 			status = SOUND_STATUS_PLAYING;
 		else
 			status = SOUND_STATUS_WAITING;
@@ -460,11 +460,11 @@ static void _sfx_set_song_status(SfxState *self, song_t *song, int status) {
 }
 
 /* Update internal state iff only one song may be played */
-static void _update_single_song(SfxState *self) {
-	song_t *newsong = song_lib_find_active(self->_songlib);
+void SfxState::updateSingleSong() {
+	song_t *newsong = song_lib_find_active(_songlib);
 
-	if (newsong != self->_song) {
-		_freeze_time(self); /* Store song delay time */
+	if (newsong != _song) {
+		freezeTime(); /* Store song delay time */
 
 		if (player)
 			player->stop();
@@ -475,25 +475,23 @@ static void _update_single_song(SfxState *self) {
 
 			/* Change song */
 			if (newsong->status == SOUND_STATUS_WAITING)
-				_sfx_set_song_status(self, newsong,
-				                     SOUND_STATUS_PLAYING);
+				setSongStatus(newsong, SOUND_STATUS_PLAYING);
 
 			/* Change instrument mappings */
 		} else {
 			/* Turn off sound */
 		}
-		if (self->_song) {
-			if (self->_song->status == SOUND_STATUS_PLAYING)
-				_sfx_set_song_status(self, newsong,
-				                     SOUND_STATUS_WAITING);
+		if (_song) {
+			if (_song->status == SOUND_STATUS_PLAYING)
+				setSongStatus(newsong, SOUND_STATUS_WAITING);
 		}
 
-		if (self->_debug & SFX_DEBUG_SONGS) {
+		if (_debug & SFX_DEBUG_SONGS) {
 			sciprintf("[SFX] Changing active song:");
-			if (!self->_song)
+			if (!_song)
 				sciprintf(" New song:");
 			else
-				sciprintf(" pausing %08lx, now playing", self->_song->handle);
+				sciprintf(" pausing %08lx, now playing", _song->handle);
 
 			if (newsong)
 				sciprintf(" %08lx\n", newsong->handle);
@@ -502,8 +500,8 @@ static void _update_single_song(SfxState *self) {
 		}
 
 
-		self->_song = newsong;
-		_thaw_time(self); /* Recover song delay time */
+		_song = newsong;
+		thawTime(); /* Recover song delay time */
 
 		if (newsong && player) {
 			SongIterator *clonesong = newsong->it->clone(newsong->_delay);
@@ -514,17 +512,17 @@ static void _update_single_song(SfxState *self) {
 }
 
 
-static void _update_multi_song(SfxState *self) {
-	song_t *oldfirst = self->_song;
+void SfxState::updateMultiSong() {
+	song_t *oldfirst = _song;
 	song_t *oldseeker;
-	song_t *newsong = song_lib_find_active(self->_songlib);
+	song_t *newsong = song_lib_find_active(_songlib);
 	song_t *newseeker;
 	song_t not_playing_anymore; /* Dummy object, referenced by
 				    ** songs which are no longer
 				    ** active.  */
 
-	/*	_dump_playing_list(self, "before");*/
-	_freeze_time(self); /* Store song delay time */
+	/*	_dump_playing_list(this, "before");*/
+	freezeTime(); /* Store song delay time */
 
 	if (!newsong)
 		return;
@@ -549,23 +547,21 @@ static void _update_multi_song(SfxState *self) {
 	for (newseeker = newsong; newseeker;
 	        newseeker = newseeker->next_playing) {
 		newseeker->next_playing
-		= song_lib_find_next_active(self->_songlib,
-		                            newseeker);
+		= song_lib_find_next_active(_songlib, newseeker);
 
 		if (newseeker == newseeker->next_playing) { BREAKPOINT(); }
 	}
 	/* We now need to update the currently playing song list, because we're
 	** going to use some functions that require this list to be in a sane
-	** state (particularly is_playing(), indirectly */
-	self->_song = newsong;
+	** state (particularly isPlaying(), indirectly */
+	_song = newsong;
 
 	/* Third, stop all old songs */
 	for (oldseeker = oldfirst; oldseeker;
 	        oldseeker = oldseeker->next_stopping)
 		if (oldseeker->next_playing == &not_playing_anymore) {
-			_sfx_set_song_status(self, oldseeker,
-			                     SOUND_STATUS_SUSPENDED);
-			if (self->_debug & SFX_DEBUG_SONGS) {
+			setSongStatus(oldseeker, SOUND_STATUS_SUSPENDED);
+			if (_debug & SFX_DEBUG_SONGS) {
 				sciprintf("[SFX] Stopping song %lx\n", oldseeker->handle);
 			}
 			if (player && oldseeker->it)
@@ -575,27 +571,26 @@ static void _update_multi_song(SfxState *self) {
 
 	for (newseeker = newsong; newseeker; newseeker = newseeker->next_playing) {
 		if (newseeker->status != SOUND_STATUS_PLAYING && player) {
-			if (self->_debug & SFX_DEBUG_SONGS)
+			if (_debug & SFX_DEBUG_SONGS)
 				sciprintf("[SFX] Adding song %lx\n", newseeker->it->ID);
 
 			SongIterator *clonesong = newseeker->it->clone(newseeker->_delay);
 			player->add_iterator(clonesong, g_system->getMillis());
 		}
-		_sfx_set_song_status(self, newseeker,
-		                     SOUND_STATUS_PLAYING);
+		setSongStatus(newseeker, SOUND_STATUS_PLAYING);
 	}
 
-	self->_song = newsong;
-	_thaw_time(self);
-	/*	_dump_playing_list(self, "after");*/
+	_song = newsong;
+	thawTime();
+	/*	_dump_playing_list(this, "after");*/
 }
 
 /* Update internal state */
-static void _update(SfxState *self) {
-	if (self->_flags & SFX_STATE_FLAG_MULTIPLAY)
-		_update_multi_song(self);
+void SfxState::update() {
+	if (_flags & SFX_STATE_FLAG_MULTIPLAY)
+		updateMultiSong();
 	else
-		_update_single_song(self);
+		updateSingleSong();
 }
 
 int sfx_play_iterator_pcm(SongIterator *it, song_handle_t handle) {
@@ -614,13 +609,13 @@ int sfx_play_iterator_pcm(SongIterator *it, song_handle_t handle) {
 
 #define DELAY (1000000 / SFX_TICKS_PER_SEC)
 
-void sfx_init(SfxState *self, ResourceManager *resmgr, int flags) {
-	song_lib_init(&self->_songlib);
-	self->_song = NULL;
-	self->_flags = flags;
-	self->_debug = 0; /* Disable all debugging by default */
-	self->_soundSync = NULL;
-	self->_audioResource = NULL;
+void SfxState::sfx_init(ResourceManager *resmgr, int flags) {
+	song_lib_init(&_songlib);
+	_song = NULL;
+	_flags = flags;
+	_debug = 0; /* Disable all debugging by default */
+	_soundSync = NULL;
+	_audioResource = NULL;
 
 	player = NULL;
 
@@ -656,7 +651,7 @@ void sfx_init(SfxState *self, ResourceManager *resmgr, int flags) {
 	}
 }
 
-void sfx_exit(SfxState *self) {
+void SfxState::sfx_exit() {
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Uninitialising\n");
 #endif
@@ -666,55 +661,55 @@ void sfx_exit(SfxState *self) {
 
 	g_system->getMixer()->stopAll();
 
-	song_lib_free(self->_songlib);
+	song_lib_free(_songlib);
 
 	// Delete audio resources for CD talkie games
-	if (self->_audioResource) {
-		delete self->_audioResource;
-		self->_audioResource = 0;
+	if (_audioResource) {
+		delete _audioResource;
+		_audioResource = 0;
 	}
 }
 
-void sfx_suspend(SfxState *self, int suspend) {
+void SfxState::sfx_suspend(bool suspend) {
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Suspending? = %d\n", suspend);
 #endif
-	if (suspend && (!self->_suspended)) {
+	if (suspend && (!_suspended)) {
 		/* suspend */
 
-		_freeze_time(self);
+		freezeTime();
 		if (player)
 			player->pause();
 		/* Suspend song player */
 
-	} else if (!suspend && (self->_suspended)) {
+	} else if (!suspend && (_suspended)) {
 		/* unsuspend */
 
-		_thaw_time(self);
+		thawTime();
 		if (player)
 			player->resume();
 
 		/* Unsuspend song player */
 	}
 
-	self->_suspended = suspend;
+	_suspended = suspend;
 }
 
-int sfx_poll(SfxState *self, song_handle_t *handle, int *cue) {
-	if (!self->_song)
+int SfxState::sfx_poll(song_handle_t *handle, int *cue) {
+	if (!_song)
 		return 0; /* No milk today */
 
-	*handle = self->_song->handle;
+	*handle = _song->handle;
 
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Polling any (%08lx)\n", *handle);
 #endif
-	return sfx_poll_specific(self, *handle, cue);
+	return sfx_poll_specific(*handle, cue);
 }
 
-int sfx_poll_specific(SfxState *self, song_handle_t handle, int *cue) {
+int SfxState::sfx_poll_specific(song_handle_t handle, int *cue) {
 	const Audio::Timestamp ctime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
-	song_t *song = self->_song;
+	song_t *song = _song;
 
 	while (song && song->handle != handle)
 		song = song->next_playing;
@@ -722,7 +717,7 @@ int sfx_poll_specific(SfxState *self, song_handle_t handle, int *cue) {
 	if (!song)
 		return 0; /* Song not playing */
 
-	if (self->_debug & SFX_DEBUG_CUES) {
+	if (_debug & SFX_DEBUG_CUES) {
 		fprintf(stderr, "[SFX:CUE] Polled song %08lx ", handle);
 	}
 
@@ -736,13 +731,13 @@ int sfx_poll_specific(SfxState *self, song_handle_t handle, int *cue) {
 		switch (result) {
 
 		case SI_FINISHED:
-			_sfx_set_song_status(self, song, SOUND_STATUS_STOPPED);
-			_update(self);
+			setSongStatus(song, SOUND_STATUS_STOPPED);
+			update();
 			/* ...fall through... */
 		case SI_LOOP:
 		case SI_RELATIVE_CUE:
 		case SI_ABSOLUTE_CUE:
-			if (self->_debug & SFX_DEBUG_CUES) {
+			if (_debug & SFX_DEBUG_CUES) {
 				sciprintf(" => ");
 
 				if (result == SI_FINISHED)
@@ -766,7 +761,7 @@ int sfx_poll_specific(SfxState *self, song_handle_t handle, int *cue) {
 			break;
 		}
 	}
-	if (self->_debug & SFX_DEBUG_CUES) {
+	if (_debug & SFX_DEBUG_CUES) {
 		fprintf(stderr, "\n");
 	}
 }
@@ -776,8 +771,8 @@ int sfx_poll_specific(SfxState *self, song_handle_t handle, int *cue) {
 /*  Song basics  */
 /*****************/
 
-int sfx_add_song(SfxState *self, SongIterator *it, int priority, song_handle_t handle, int number) {
-	song_t *song = song_lib_find(self->_songlib, handle);
+int SfxState::sfx_add_song(SongIterator *it, int priority, song_handle_t handle, int number) {
+	song_t *song = song_lib_find(_songlib, handle);
 
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Adding song: %08lx at %d, it=%p\n", handle, priority, it);
@@ -791,13 +786,13 @@ int sfx_add_song(SfxState *self, SongIterator *it, int priority, song_handle_t h
 
 	/* If we're already playing this, stop it */
 	/* Tell player to shut up */
-	_dump_songs(self);
+//	_dump_songs(this);
 
 	if (player)
 		player->iterator_message(SongIterator::Message(handle, SIMSG_STOP));
 
 	if (song) {
-		_sfx_set_song_status(self, song, SOUND_STATUS_STOPPED);
+		setSongStatus( song, SOUND_STATUS_STOPPED);
 
 		fprintf(stderr, "Overwriting old song (%08lx) ...\n", handle);
 		if (song->status == SOUND_STATUS_PLAYING
@@ -807,7 +802,7 @@ int sfx_add_song(SfxState *self, SongIterator *it, int priority, song_handle_t h
 			delete it;
 			return -1;
 		} else
-			song_lib_remove(self->_songlib, handle); /* No duplicates */
+			song_lib_remove(_songlib, handle); /* No duplicates */
 
 	}
 
@@ -816,22 +811,22 @@ int sfx_add_song(SfxState *self, SongIterator *it, int priority, song_handle_t h
 	song->hold = 0;
 	song->loops = 0;
 	song->_wakeupTime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
-	song_lib_add(self->_songlib, song);
-	self->_song = NULL; /* As above */
-	_update(self);
+	song_lib_add(_songlib, song);
+	_song = NULL; /* As above */
+	update();
 
 	return 0;
 }
 
-void sfx_remove_song(SfxState *self, song_handle_t handle) {
+void SfxState::sfx_remove_song(song_handle_t handle) {
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Removing song: %08lx\n", handle);
 #endif
-	if (self->_song && self->_song->handle == handle)
-		self->_song = NULL;
+	if (_song && _song->handle == handle)
+		_song = NULL;
 
-	song_lib_remove(self->_songlib, handle);
-	_update(self);
+	song_lib_remove(_songlib, handle);
+	update();
 }
 
 
@@ -842,25 +837,24 @@ void sfx_remove_song(SfxState *self, song_handle_t handle) {
 
 #define ASSERT_SONG(s) if (!(s)) { warning("Looking up song handle %08lx failed in %s, L%d", handle, __FILE__, __LINE__); return; }
 
-void sfx_song_set_status(SfxState *self, song_handle_t handle, int status) {
-	song_t *song = song_lib_find(self->_songlib, handle);
+void SfxState::sfx_song_set_status(song_handle_t handle, int status) {
+	song_t *song = song_lib_find(_songlib, handle);
 	ASSERT_SONG(song);
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Setting song status to %d"
 	        " (0:stop, 1:play, 2:susp, 3:wait): %08lx\n", status, handle);
 #endif
 
-	_sfx_set_song_status(self, song, status);
+	setSongStatus(song, status);
 
-	_update(self);
+	update();
 }
 
-void sfx_song_set_fade(SfxState *self, song_handle_t handle,
-	fade_params_t *params) {
+void SfxState::sfx_song_set_fade(song_handle_t handle, fade_params_t *params) {
 #ifdef DEBUG_SONG_API
 	static const char *stopmsg[] = {"??? Should not happen", "Do not stop afterwards", "Stop afterwards"};
 #endif
-	song_t *song = song_lib_find(self->_songlib, handle);
+	song_t *song = song_lib_find(_songlib, handle);
 
 	ASSERT_SONG(song);
 
@@ -873,11 +867,11 @@ void sfx_song_set_fade(SfxState *self, song_handle_t handle,
 
 	SIMSG_SEND_FADE(song->it, params);
 
-	_update(self);
+	update();
 }
 
-void sfx_song_renice(SfxState *self, song_handle_t handle, int priority) {
-	song_t *song = song_lib_find(self->_songlib, handle);
+void SfxState::sfx_song_renice(song_handle_t handle, int priority) {
+	song_t *song = song_lib_find(_songlib, handle);
 	ASSERT_SONG(song);
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Renicing song %08lx to %d\n",
@@ -886,11 +880,11 @@ void sfx_song_renice(SfxState *self, song_handle_t handle, int priority) {
 
 	song->priority = priority;
 
-	_update(self);
+	update();
 }
 
-void sfx_song_set_loops(SfxState *self, song_handle_t handle, int loops) {
-	song_t *song = song_lib_find(self->_songlib, handle);
+void SfxState::sfx_song_set_loops(song_handle_t handle, int loops) {
+	song_t *song = song_lib_find(_songlib, handle);
 	SongIterator::Message msg = SongIterator::Message(handle, SIMSG_SET_LOOPS(loops));
 	ASSERT_SONG(song);
 
@@ -906,8 +900,8 @@ void sfx_song_set_loops(SfxState *self, song_handle_t handle, int loops) {
 		player->iterator_message(msg);
 }
 
-void sfx_song_set_hold(SfxState *self, song_handle_t handle, int hold) {
-	song_t *song = song_lib_find(self->_songlib, handle);
+void SfxState::sfx_song_set_hold(song_handle_t handle, int hold) {
+	song_t *song = song_lib_find(_songlib, handle);
 	SongIterator::Message msg = SongIterator::Message(handle, SIMSG_SET_HOLD(hold));
 	ASSERT_SONG(song);
 
@@ -930,7 +924,7 @@ static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
 
 static const song_handle_t midi_send_base = 0xffff0000;
 
-Common::Error sfx_send_midi(SfxState *self, song_handle_t handle, int channel,
+Common::Error SfxState::sfx_send_midi(song_handle_t handle, int channel,
 	int command, int arg1, int arg2) {
 	byte buffer[5];
 
@@ -975,22 +969,22 @@ Common::Error sfx_send_midi(SfxState *self, song_handle_t handle, int channel,
 	return Common::kNoError;
 }
 
-int sfx_get_volume(SfxState *self) {
+int SfxState::sfx_get_volume() {
 	warning("FIXME: Implement volume");
 	return 0;
 }
 
-void sfx_set_volume(SfxState *self, int volume) {
+void SfxState::sfx_set_volume(int volume) {
 	warning("FIXME: Implement volume");
 }
 
-void sfx_all_stop(SfxState *self) {
+void SfxState::sfx_all_stop() {
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] All stop\n");
 #endif
 
-	song_lib_free(self->_songlib);
-	_update(self);
+	song_lib_free(_songlib);
+	update();
 }
 
 } // End of namespace Sci

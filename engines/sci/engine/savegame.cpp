@@ -720,7 +720,7 @@ static void reconstruct_sounds(EngineState *s) {
 		oldstatus = seeker->status;
 		seeker->status = SOUND_STATUS_STOPPED;
 		seeker->it = ff;
-		sfx_song_set_status(&s->_sound, seeker->handle, oldstatus);
+		s->_sound.sfx_song_set_status(seeker->handle, oldstatus);
 		seeker = seeker->next;
 	}
 }
@@ -770,7 +770,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	retval->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
-	sfx_exit(&s->_sound);
+	s->_sound.sfx_exit();
 
 	// Set exec stack base to zero
 	retval->execution_stack_base = 0;
@@ -784,7 +784,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->resmgr = s->resmgr;
 
 	temp = retval->_sound._songlib;
-	sfx_init(&retval->_sound, retval->resmgr, s->sfx_init_flags);
+	retval->_sound.sfx_init(retval->resmgr, s->sfx_init_flags);
 	retval->sfx_init_flags = s->sfx_init_flags;
 	song_lib_free(retval->_sound._songlib);
 	retval->_sound._songlib = temp;

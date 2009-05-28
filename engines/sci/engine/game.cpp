@@ -220,7 +220,7 @@ int game_init_sound(EngineState *s, int sound_flags) {
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;
-	sfx_init(&s->_sound, s->resmgr, sound_flags);
+	s->_sound.sfx_init(s->resmgr, sound_flags);
 
 	return 0;
 }
@@ -593,7 +593,7 @@ int game_exit(EngineState *s) {
 	s->_executionStack.clear();
 
 	if (!s->successor) {
-		sfx_exit(&s->_sound);
+		s->_sound.sfx_exit();
 		// Reinit because some other code depends on having a valid state
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
 	}
