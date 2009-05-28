@@ -34,6 +34,9 @@
 namespace Sci {
 
 
+/** The string used to identify the "unknown" SCI0 function for each game */
+#define SCRIPT_UNKNOWN_FUNCTION_STRING "[Unknown]"
+
 enum KernelFunctionType {
 	KF_NEW = 1,
 	KF_NONE = -1, /**< No mapping, but name is known */

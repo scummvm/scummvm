@@ -39,9 +39,6 @@ class ResourceManager;
 
 /*#define VOCABULARY_DEBUG */
 
-/** The string used to identify the "unknown" SCI0 function for each game */
-#define SCRIPT_UNKNOWN_FUNCTION_STRING "[Unknown]"
-
 /** Number of bytes allocated on the heap to store bad words if parsing fails */
 #define PARSE_HEAP_SIZE 64
 
@@ -215,18 +212,19 @@ void vocab_get_knames(ResourceManager *resmgr, Common::StringList &names);
 bool vocab_get_words(ResourceManager *resmgr, WordMap &words);
 
 
+/**
+ * Loads all suffixes from the suffix vocabulary.
+ * @param resmgr Resource manager the resources are read from
+ * @return true on success, false on failure
+ */
 bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
-/* Loads all suffixes from the suffix vocabulary.
-** Parameters: (ResourceManager*) resmgr: Resource manager the resources are
-**                               read from
-** Returns   : true on success, false on failure
-*/
 
+/**
+ * Frees all suffixes in the given list.
+ * @param resmgr The resource manager to free from
+ * @param suffixes: The suffixes to free
+ */
 void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
-/* Frees all suffixes in the given list.
-** Parameters: (ResourceManager *) resmgr: The resource manager to free from
-**             (SuffixList) suffixes: The suffixes to free
-*/
 
 /**
  * Retrieves all grammar rules from the resource data.
@@ -236,8 +234,6 @@ void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
  */
 bool vocab_get_branches(ResourceManager *resmgr, Common::Array<parse_tree_branch_t> &branches);
 
-ResultWord vocab_lookup_word(const char *word, int word_len,
-	const WordMap &words, const SuffixList &suffixes);
 /* Looks up a single word in the words and suffixes list
 ** Parameters: (char *) word: Pointer to the word to look up
 **             (int) word_len: Length of the word to look up
@@ -245,10 +241,10 @@ ResultWord vocab_lookup_word(const char *word, int word_len,
 **             (SuffixList) suffixes: List of suffixes
 ** Returns   : (const ResultWordList &) A list containing 1 or 0 words
 */
+ResultWord vocab_lookup_word(const char *word, int word_len,
+	const WordMap &words, const SuffixList &suffixes);
 
 
-bool vocab_tokenize_string(ResultWordList &retval, const char *sentence,
-	const WordMap &words, const SuffixList &suffixes, char **error);
 /* Tokenizes a string and compiles it into word_ts.
 ** Parameters: (char *) sentence: The sentence to examine
 **             (const WordMap &) words: The words to scan for
@@ -260,9 +256,10 @@ bool vocab_tokenize_string(ResultWordList &retval, const char *sentence,
 ** if not, *error points to a malloc'd copy of the offending word.
 ** The returned list may contain anywords.
 */
+bool vocab_tokenize_string(ResultWordList &retval, const char *sentence,
+	const WordMap &words, const SuffixList &suffixes, char **error);
 
 
-parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches);
 /* Constructs the Greibach Normal Form of the grammar supplied in 'branches'
 ** Parameters: (parse_tree_branch_t *) branches: The parser's branches
 ** Returns   : (parse_rule_list_t *): Pointer to a list of singly linked
@@ -272,16 +269,15 @@ parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &bra
 ** branch[0] is used only for a few magical incantations, as it is treated
 ** specially by the SCI parser.
 */
+parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches);
 
 
-void vocab_free_rule_list(parse_rule_list_t *rule_list);
 /* Frees a parser rule list as returned by vocab_build_gnf()
 ** Parameters: (parse_rule_list_t *) rule_list: The rule list to free
 */
+void vocab_free_rule_list(parse_rule_list_t *rule_list);
 
 
-int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words,
-	const parse_tree_branch_t &branch0, parse_rule_list_t *rules);
 /* Builds a parse tree from a list of words
 ** Parameters: (parse_tree_node_t *) nodes: A node list to store the tree in (must have
 **                                          at least VOCAB_TREE_NODES entries)
@@ -293,23 +289,24 @@ int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words
 **             or if the sentence structure in 'words' is not part of the language
 **             described by the grammar passed in 'rules'.
 */
+int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words,
+	const parse_tree_branch_t &branch0, parse_rule_list_t *rules);
 
-void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
 /* Prints a parse tree
 ** Parameters: (const char *) tree_name: Name of the tree to dump (free-form)
 **             (parse_tree_node_t *) nodes: The nodes containing the parse tree
 */
+void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
 
 
 
-
-int said(EngineState *s, byte *spec, int verbose);
 /* Builds a parse tree from a spec and compares it to a parse tree
 ** Parameters: (EngineState *) s: The affected state
 **             (byte *) spec: Pointer to the spec to build
 **             (int) verbose: Whether to display the parse tree after building it
 ** Returns   : (int) 1 on a match, 0 otherwise
 */
+int said(EngineState *s, byte *spec, int verbose);
 
 /**
  * Gets any word from the specified group. For debugging only.
@@ -319,19 +316,19 @@ int said(EngineState *s, byte *spec, int verbose);
 const char *vocab_get_any_group_word(int group, const WordMap &words);
 
 
-void vocab_decypher_said_block(EngineState *s, byte *pos);
 /* Decyphers a said block and dumps its content via sciprintf.
 ** Parameters: (EngineState *) s: The state to use
 **             (byte *) pos: Pointer to the data to dump
 ** For debugging only.
 */
+void vocab_decypher_said_block(EngineState *s, byte *pos);
 
 
-void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms);
 /* Synonymizes a token list
 ** Parameters: (ResultWordList &) words: The word list to synonymize
 **             (const SynonymList &) synonyms: Synonym list
 */
+void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms);
 
 int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 	const parse_tree_branch_t &branch0, parse_rule_list_t *tlist, int verbose);

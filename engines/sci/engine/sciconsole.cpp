@@ -34,8 +34,6 @@
 
 namespace Sci {
 
-#ifdef SCI_CONSOLE
-
 // console commands
 
 static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // lists various types of things
@@ -918,7 +916,5 @@ static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams
 
 	return 0;
 }
-
-#endif // SCI_CONSOLE
 
 } // End of namespace Sci

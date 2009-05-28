@@ -38,8 +38,6 @@
 #include "sci/engine/state.h"
 #include "sci/engine/vm_types.h"
 
-#define SCI_CONSOLE
-
 namespace Sci {
 
 struct gfx_pixmap_t;

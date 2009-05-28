@@ -45,28 +45,26 @@ namespace Sci {
 /** The maximum allowed size for a compressed or decompressed resource */
 #define SCI_MAX_RESOURCE_SIZE 0x0400000
 
-/*** RESOURCE STATUS TYPES ***/
+/** Resource status types */
 enum ResourceStatus {
 	kResStatusNoMalloc = 0,
 	kResStatusAllocated,
-	kResStatusEnqueued, /* In the LRU queue */
-	kResStatusLocked /* Allocated and in use */
+	kResStatusEnqueued, /**< In the LRU queue */
+	kResStatusLocked /**< Allocated and in use */
 };
 
-/*** INITIALIZATION RESULT TYPES ***/
-#define SCI_ERROR_IO_ERROR 1
-#define SCI_ERROR_INVALID_RESMAP_ENTRY 2
-/* Invalid resource.map entry */
-#define SCI_ERROR_RESMAP_NOT_FOUND 3
-#define SCI_ERROR_NO_RESOURCE_FILES_FOUND 4
-/* No resource at all was found */
-#define SCI_ERROR_UNKNOWN_COMPRESSION 5
-#define SCI_ERROR_DECOMPRESSION_ERROR 6
-/* sanity checks failed during decompression */
-#define SCI_ERROR_RESOURCE_TOO_BIG 8
-/* Resource size exceeds SCI_MAX_RESOURCE_SIZE */
+/** Initialization result types */
+enum {
+	SCI_ERROR_IO_ERROR = 1,
+	SCI_ERROR_INVALID_RESMAP_ENTRY = 2,	/**< Invalid resource.map entry */
+	SCI_ERROR_RESMAP_NOT_FOUND = 3,
+	SCI_ERROR_NO_RESOURCE_FILES_FOUND = 4,	/**< No resource at all was found */
+	SCI_ERROR_UNKNOWN_COMPRESSION = 5,
+	SCI_ERROR_DECOMPRESSION_ERROR = 6,	/**< sanity checks failed during decompression */
+	SCI_ERROR_RESOURCE_TOO_BIG = 8	/**< Resource size exceeds SCI_MAX_RESOURCE_SIZE */
 
-/* the first critical error number */
+	/* the first critical error number */
+};
 
 #define SCI_VERSION_1 SCI_VERSION_1_EARLY
 
@@ -92,7 +90,7 @@ enum ResSourceType {
 
 extern const char *sci_error_types[];
 extern const char *sci_version_types[];
-extern const int sci_max_resource_nr[]; /* Highest possible resource numbers */
+extern const int sci_max_resource_nr[]; /**< Highest possible resource numbers */
 
 
 enum ResourceType {
@@ -128,7 +126,7 @@ const char *getResourceTypeSuffix(ResourceType restype);
 /* Used for autodetection */
 
 
-// resource type for SCI1 resource.map file
+/** resource type for SCI1 resource.map file */
 struct resource_index_t {
 	uint16 wOffset;
 	uint16 wSize;
@@ -156,20 +154,20 @@ public:
 	byte *data;
 	uint16 number;
 	ResourceType type;
-	uint32 id;	// contains number and type.
+	uint32 id;	//!< contains number and type.
 	unsigned int size;
-	unsigned int file_offset; /* Offset in file */
+	unsigned int file_offset; /**< Offset in file */
 	ResourceStatus status;
-	unsigned short lockers; /* Number of places where this resource was locked */
+	unsigned short lockers; /**< Number of places where this resource was locked */
 	ResourceSource *source;
 };
 
 
 class ResourceManager {
 public:
-	int _sciVersion; /* SCI resource version to use */
-	int _mapVersion; // RESOURCE.MAP version
-	int _volVersion; // RESOURCE.0xx version
+	int _sciVersion; //!< SCI resource version to use */
+	int _mapVersion; //!< RESOURCE.MAP version
+	int _volVersion; //!< RESOURCE.0xx version
 
 	/**
 	 * Creates a new SCI resource manager.
@@ -184,13 +182,14 @@ public:
 	ResourceManager(int version, int maxMemory);
 	~ResourceManager();
 
-	//! Looks up a resource's data
-	/**	@param type: The resource type to look for
-	 *	@param number: The resource number to search
-	 *	@param lock: non-zero iff the resource should be locked
-	 *	@return (Resource *): The resource, or NULL if it doesn't exist
-	 *	@note Locked resources are guaranteed not to have their contents freed until
-	 *		they are unlocked explicitly (by unlockResource).
+	/**
+	 * Looks up a resource's data.
+	 * @param type: The resource type to look for
+	 * @param number: The resource number to search
+	 * @param lock: non-zero iff the resource should be locked
+	 * @return (Resource *): The resource, or NULL if it doesn't exist
+	 * @note Locked resources are guaranteed not to have their contents freed until
+	 *       they are unlocked explicitly (by unlockResource).
 	 */
 	Resource *findResource(ResourceType type, int number, int lock);
 
@@ -215,37 +214,42 @@ public:
 	Resource *testResource(ResourceType type, int number);
 
 protected:
-	int _maxMemory; // Config option: Maximum total byte number allocated
+	int _maxMemory; //!< Config option: Maximum total byte number allocated
 	ResourceSource *_sources;
-	int _memoryLocked;	// Amount of resource bytes in locked memory
-	int _memoryLRU;		// Amount of resource bytes under LRU control
-	Common::List<Resource *> _LRU; // Last Resource Used list
+	int _memoryLocked;	//!< Amount of resource bytes in locked memory
+	int _memoryLRU;		//!< Amount of resource bytes under LRU control
+	Common::List<Resource *> _LRU; //!< Last Resource Used list
 	Common::HashMap<uint32, Resource *> _resMap;
-	Common::List<Common::File *> _volumeFiles; // list of opened volume files
+	Common::List<Common::File *> _volumeFiles; //!< list of opened volume files
 
-	/* Add a path to the resource manager's list of sources.
-	** Returns: A pointer to the added source structure, or NULL if an error occurred.
-	*/
+	/**
+	 * Add a path to the resource manager's list of sources.
+	 * @return a pointer to the added source structure, or NULL if an error occurred.
+	 */
 	ResourceSource *addPatchDir(const char *path);
 
 	ResourceSource *getVolume(ResourceSource *map, int volume_nr);
 
-	//! Add a volume to the resource manager's list of sources.
-	/** @param map		The map associated with this volume
-	 *	@param filename	The name of the volume to add
-	 *	@param extended_addressing	1 if this volume uses extended addressing,
-	 *                                        0 otherwise.
-	 *	@return A pointer to the added source structure, or NULL if an error occurred.
+	/**
+	 * Add a volume to the resource manager's list of sources.
+	 * @param map		The map associated with this volume
+	 * @param filename	The name of the volume to add
+	 * @param extended_addressing	1 if this volume uses extended addressing,
+	 *                              0 otherwise.
+	 * @return A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addVolume(ResourceSource *map, const char *filename,
 	                          int number, int extended_addressing);
-	//! Add an external (i.e. separate file) map resource to the resource manager's list of sources.
-	/**	@param file_name	 The name of the volume to add
-	 *	@return		A pointer to the added source structure, or NULL if an error occurred.
+	/**
+	 * Add an external (i.e., separate file) map resource to the resource manager's list of sources.
+	 * @param file_name	 The name of the volume to add
+	 * @return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addExternalMap(const char *file_name);
-	//! Scans newly registered resource sources for resources, earliest addition first.
-	/** @param detected_version: Pointer to the detected version number,
+
+	/**
+	 * Scans newly registered resource sources for resources, earliest addition first.
+	 * @param detected_version: Pointer to the detected version number,
 	 *					 used during startup. May be NULL.
 	 * @return One of SCI_ERROR_*.
 	 */
@@ -264,21 +268,23 @@ protected:
 	int detectMapVersion();
 	int detectVolVersion();
 
-	/* Reads the SCI0 resource.map file from a local directory
-	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
-	*/
+	/**
+	 * Reads the SCI0 resource.map file from a local directory.
+	 * @return 0 on success, an SCI_ERROR_* code otherwise
+	 */
 	int readResourceMapSCI0(ResourceSource *map);
 
-	/* Reads the SCI1 resource.map file from a local directory
-	** Returns   : (int) 0 on success, an SCI_ERROR_* code otherwise
-	*/
+	/**
+	 * Reads the SCI1 resource.map file from a local directory.
+	 * @return 0 on success, an SCI_ERROR_* code otherwise
+	 */
 	int readResourceMapSCI1(ResourceSource *map);
 
 	/**--- Patch management functions ---*/
 
-	//! Reads patch files from a local directory
-	/** @paramParameters: ResourceSource *source
-	  */
+	/**
+	 * Reads patch files from a local directory.
+	 */
 	void readResourcePatches(ResourceSource *source);
 	void processPatch(ResourceSource *source, ResourceType restype, int resnumber);
 
@@ -287,6 +293,7 @@ protected:
 	void removeFromLRU(Resource *res);
 };
 
+// Used for speech playback in CD games
 class ResourceSync : public Resource {
 public:
 	ResourceSync() {}
@@ -302,6 +309,7 @@ protected:
 	//bool _syncStarted;	// not used
 };
 
+// Used for speech playback in CD games
 class AudioResource {
 public:
 	AudioResource(ResourceManager *resMgr, int sciVersion);

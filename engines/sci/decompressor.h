@@ -23,12 +23,13 @@
  *
  */
 
-#ifndef SCI_SCICORE_DECOMPRESSOR_H
-#define SCI_SCICORE_DECOMPRESSOR_H
+#ifndef SCI_DECOMPRESSOR_H
+#define SCI_DECOMPRESSOR_H
 
 #include "common/file.h"
 
 namespace Sci {
+
 enum ResourceCompression {
 	kCompUnknown = -1,
 	kCompNone = 0,
@@ -42,10 +43,11 @@ enum ResourceCompression {
 #endif
 	kCompDCL
 };
-//----------------------------------------------
-// Base class for decompressors
-// Simply copies nPacked bytes from src to dest
-//----------------------------------------------
+
+/**
+ * Base class for decompressors.
+ * Simply copies nPacked bytes from src to dest.
+ */
 class Decompressor {
 public:
 	Decompressor() {}
@@ -116,9 +118,9 @@ protected:
 	byte *_dest;
 };
 
-//----------------------------------------------
-// Huffman decompressor
-//----------------------------------------------
+/**
+ * Huffman decompressor
+ */
 class DecompressorHuffman : public Decompressor {
 public:
 	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
@@ -129,10 +131,10 @@ protected:
 	byte *_nodes;
 };
 
-//----------------------------------------------
-// LZW-like decompressor for SCI01/SCI1
-// TODO: Needs clean-up of post-processing fncs
-//----------------------------------------------
+/**
+ * LZW-like decompressor for SCI01/SCI1.
+ * TODO: Needs clean-up of post-processing fncs
+ */
 class DecompressorLZW : public Decompressor {
 public:
 	DecompressorLZW(int nCompression) {
@@ -169,9 +171,9 @@ protected:
 	int _compression;
 };
 
-//----------------------------------------------
-// DCL decompressor for SCI1.1
-//----------------------------------------------
+/**
+ * DCL decompressor for SCI1.1
+ */
 class DecompressorDCL : public Decompressor {
 public:
 	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
@@ -182,9 +184,9 @@ protected:
 };
 
 #ifdef ENABLE_SCI32
-//----------------------------------------------
-// STACpack decompressor for SCI32
-//----------------------------------------------
+/**
+ * STACpack decompressor for SCI32
+ */
 class DecompressorLZS : public Decompressor {
 public:
 	int unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);

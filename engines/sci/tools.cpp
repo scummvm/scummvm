@@ -46,11 +46,9 @@ int sci_ffs(int bits) {
 	return retval;
 }
 
-#ifdef SCI_CONSOLE
-
 bool g_redirect_sciprintf_to_gui = false;
 
-int sciprintf(const char *fmt, ...) {
+void sciprintf(const char *fmt, ...) {
 	va_list argp;
 
 	assert(fmt);
@@ -77,10 +75,6 @@ int sciprintf(const char *fmt, ...) {
 	printf("%s", buf);
 
 	free(buf);
-
-	return 1;
 }
-
-#endif // SCI_CONSOLE
 
 } // End of namespace Sci

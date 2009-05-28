@@ -139,7 +139,7 @@ static void AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, i
 
 		if ((ytotal + xl) < 0) {
 			fprintf(stderr, "AARGH-%d\n", __LINE__);
-			BREAKPOINT()
+			BREAKPOINT();
 		}
 		if ((ytotal + xr + 1) > 64000) {
 			fprintf(stderr, "AARGH-%d\n", __LINE__);

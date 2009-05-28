@@ -31,19 +31,18 @@
 
 namespace Sci {
 
-int sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
-/* Prints a string to the console stack
-** Parameters: fmt: a printf-style format string
-**             ...: Additional parameters as defined in fmt
-** Returns   : (int) 1
-** Implementation is in src/console.c
-*/
+/**
+ * Prints a string to the console stack.
+ * @param fmt	a printf-style format string
+ * @param  Additional parameters as defined in fmt
+ */
+void sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 
 /** Find first set bit in bits and return its index. Returns 0 if bits is 0. */
 int sci_ffs(int bits);
 
 
-#  define BREAKPOINT() { error("Breakpoint in %s, line %d\n", __FILE__, __LINE__); }
+#define BREAKPOINT() do { error("Breakpoint in %s, line %d\n", __FILE__, __LINE__); } while(0)
 
 } // End of namespace Sci
 
