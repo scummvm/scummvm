@@ -89,6 +89,17 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS
 		},
 	},
+	{
+		// Grim Fandago Italian version
+		{
+			"grim",
+			0,
+			AD_ENTRY1s("grim.tab", "2d99c796b7a4e5c421cae49dc29dab6c", 369071),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+	},
 
 
 	{ AD_TABLE_END_MARKER }
