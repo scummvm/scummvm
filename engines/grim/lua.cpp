@@ -1588,35 +1588,46 @@ static void MakeSectorActive() {
 
 // Scene functions
 static void LockSet() {
-	const char *name;
+	lua_Object nameObj = lua_getparam(1);
+	if (!lua_isstring(nameObj))
+		return;
 
-	name = luaL_check_string(1);
-	// We should lock the set so it isn't destroyed
+	const char *name = lua_getstring(nameObj);
+	// TODO implement proper locking
 	g_grim->setSceneLock(name, true);
 }
 
 static void UnLockSet() {
-	const char *name;
+	lua_Object nameObj = lua_getparam(1);
+	if (!lua_isstring(nameObj))
+		return;
 
-	name = luaL_check_string(1);
-	// We should unlock the set so it can be destroyed again
+	const char *name = lua_getstring(nameObj);
+	// TODO implement proper unlocking
 	g_grim->setSceneLock(name, false);
 }
 
 static void MakeCurrentSet() {
-	const char *name;
+	lua_Object nameObj = lua_getparam(1);
+	if (!lua_isstring(nameObj)) {
+		// TODO setting current set null
+		return;
+	}
 
-	name = luaL_check_string(1);
+	const char *name = lua_getstring(nameObj);
 	if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 		printf("Entered new scene '%s'.\n", name);
 	g_grim->setScene(name);
 }
 
 static void MakeCurrentSetup() {
-	int num, prevSetup;
+	lua_Object setupObj = lua_getparam(1);
+	if (!lua_isnumber(setupObj))
+		return;
 
-	num = lua_getnumber(lua_getparam(1));
-	prevSetup = g_grim->currScene()->setup();
+	int num = lua_getnumber(lua_getparam(1));
+	// FIXME there are differences here
+	int prevSetup = g_grim->currScene()->setup();
 	g_grim->currScene()->setSetup(num);
 
 	lua_beginblock();
@@ -1644,33 +1655,43 @@ static void MakeCurrentSetup() {
  * in the Petrified Forest.
  */
 static void GetCurrentSetup() {
-	const char *name;
-	Scene *scene;
+	lua_Object nameObj = lua_getparam(1);
+	if (!lua_isstring(nameObj))
+		return;
 
-	name = luaL_check_string(1);
-	scene = g_grim->findScene(name);
+	const char *name = lua_getstring(nameObj);
+
+	// FIXME there are some big difference here !
+	Scene *scene = g_grim->findScene(name);
 	if (!scene) {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("GetCurrentSetup() Requested scene (%s) is not loaded!", name);
+		warning("GetCurrentSetup() Requested scene (%s) is not loaded!", name);
 		lua_pushnil();
 		return;
 	}
 	lua_pushnumber(scene->setup());
 }
 
-// FIXME: Function only spits back what it's given
 static void GetShrinkPos() {
-	double x, y, z, r;
+	lua_Object xObj = lua_getparam(1);
+	lua_Object yObj = lua_getparam(2);
+	lua_Object zObj = lua_getparam(3);
+	lua_Object rObj = lua_getparam(4);
 
-	x = luaL_check_number(1);
-	y = luaL_check_number(2);
-	z = luaL_check_number(3);
-	r = luaL_check_number(4);
-	lua_pushnumber(x);
-	lua_pushnumber(y);
-	lua_pushnumber(z);
-	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-		warning("Stub function GetShrinkPos(%g,%g,%g,%g) called", x, y, z, r);
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj) || !lua_isnumber(rObj))
+		return;
+
+	float x = lua_getnumber(1);
+	float y = lua_getnumber(2);
+	float z = lua_getnumber(3);
+	float r = lua_getnumber(4);
+	Graphics::Vector3d pos;
+	pos.set(x, y, z);
+
+	// TODO
+	//UnShrinkBoxes();
+	// lua_pusnumber 1, 2, 3 or lua_pushnil
+
+	warning("Stub function GetShrinkPos(%g,%g,%g,%g) called", x, y, z, r);
 }
 
 // Sound functions
