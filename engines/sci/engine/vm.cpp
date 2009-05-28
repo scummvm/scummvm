@@ -506,10 +506,6 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 	xstack.type = EXEC_STACK_TYPE_CALL; // Normal call
 
 	s->_executionStack.push_back(xstack);
-	// FIXME: push_back can cause the storage of _executionStack to be reallocated.
-	// As a result, any pointers to a member of _executionStack becomes invalid.
-	// This can cause severe breakage since run_vm does exactly that...
-
 	return &(s->_executionStack.back());
 }
 
@@ -978,13 +974,15 @@ void run_vm(EngineState *s, int restoring) {
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
 			           + 1 + restadjust;
 			StackPtr call_base = xs->sp - argc;
-
+			StackPtr cur_sp = xs->sp;
 			xs->sp[1].offset += restadjust;
+			xs->sp = call_base;
+
+			// NB: add_exec_stack_entry can re-allocate the execution stacks
 			xs_new = add_exec_stack_entry(s, make_reg(xs->addr.pc.segment, xs->addr.pc.offset + opparams[0]),
-			                              xs->sp, xs->objp, (validate_arithmetic(*call_base)) + restadjust,
+			                              cur_sp, xs->objp, (validate_arithmetic(*call_base)) + restadjust,
 			                              call_base, NULL_SELECTOR, xs->objp, s->_executionStack.size()-1, xs->local_segment);
 			restadjust = 0; // Used up the &rest adjustment
-			xs->sp = call_base;
 
 			s->_executionStackPosChanged = true;
 			break;
