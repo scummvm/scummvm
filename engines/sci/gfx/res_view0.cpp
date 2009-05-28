@@ -116,47 +116,6 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 	return retval;
 }
 
-static int gfxr_draw_loop0(gfxr_loop_t *dest, int id, int loop, byte *resource, int offset, int size, gfxr_view_t *view, int mirrored) {
-	int i;
-	int cels_nr = READ_LE_UINT16(resource + offset);
-
-	if (READ_LE_UINT16(resource + offset + 2)) {
-		GFXWARN("View %02x:(%d): Gray magic %04x in loop, expected white\n", id, loop, READ_LE_UINT16(resource + offset + 2));
-	}
-
-	if (cels_nr * 2 + 4 + offset > size) {
-		GFXERROR("View %02x:(%d): Offset array for %d cels extends beyond resource space\n", id, loop, cels_nr);
-		dest->cels_nr = 0; /* Mark as "delete no cels" */
-		dest->cels = NULL;
-		return 1;
-	}
-
-	dest->cels = (gfx_pixmap_t**)malloc(sizeof(gfx_pixmap_t *) * cels_nr);
-
-	for (i = 0; i < cels_nr; i++) {
-		int cel_offset = READ_LE_UINT16(resource + offset + 4 + (i << 1));
-		gfx_pixmap_t *cel = NULL;
-
-		if (cel_offset >= size) {
-			GFXERROR("View %02x:(%d/%d) supposed to be at illegal offset 0x%04x\n", id, loop, i, cel_offset);
-			cel = NULL;
-		} else
-			cel = gfxr_draw_cel0(id, loop, i, resource + cel_offset, size - cel_offset, view, mirrored);
-
-
-		if (!cel) {
-			dest->cels_nr = i;
-			return 1;
-		}
-
-		dest->cels[i] = cel;
-	}
-
-	dest->cels_nr = cels_nr;
-
-	return 0;
-}
-
 #define V0_LOOPS_NR_OFFSET 0
 #define V0_FIRST_LOOP_OFFSET 8
 #define V0_MIRROR_LIST_OFFSET 2
@@ -200,7 +159,6 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 	view->loops = (gfxr_loop_t*)malloc(sizeof(gfxr_loop_t) * ((view->loops_nr) ? view->loops_nr : 1)); /* Alloc 1 if no loop */
 
 	for (i = 0; i < view->loops_nr; i++) {
-		int error_token = 0;
 		int loop_offset = READ_LE_UINT16(resource + V0_FIRST_LOOP_OFFSET + (i << 1));
 		int mirrored = resource[mirror_bytepos] & mirror_bitpos;
 
@@ -209,16 +167,12 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 			mirror_bitpos = 1;
 		}
 
-		if (loop_offset >= size) {
-			GFXERROR("View %04x:(%d) supposed to be at illegal offset 0x%04x\n", id, i, loop_offset);
-			error_token = 1;
-		}
+		view->loops[i].cels_nr = READ_LE_UINT16(resource + loop_offset);
+		view->loops[i].cels = (gfx_pixmap_t**)calloc(view->loops[i].cels_nr, sizeof(gfx_pixmap_t *));
 
-		if (error_token || gfxr_draw_loop0(view->loops + i, id, i, resource, loop_offset, size, view, mirrored)) {
-			// An error occured
-			view->loops_nr = i;
-			gfxr_free_view(view);
-			return NULL;
+		for (int j = 0; j < view->loops[i].cels_nr; j++) {
+			int cel_offset = READ_LE_UINT16(resource + loop_offset + 4 + (j << 1));
+			view->loops[i].cels[j] = gfxr_draw_cel0(id, i, j, resource + cel_offset, size - cel_offset, view, mirrored);
 		}
 	}
 

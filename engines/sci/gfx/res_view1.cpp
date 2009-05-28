@@ -49,11 +49,6 @@ namespace Sci {
 #define V2_CELS_NUM 4
 #define V2_LOOP_OFFSET 14
 
-#define NEXT_RUNLENGTH_BYTE(n) \
-	if (literal_pos == runlength_pos) \
-		literal_pos += n; \
-	runlength_pos += n;
-
 #define NEXT_LITERAL_BYTE(n) \
 	if (literal_pos == runlength_pos) \
 		runlength_pos += n; \
@@ -74,7 +69,10 @@ static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *
 		int readbytes = 0;
 		int color = 0;
 
-		NEXT_RUNLENGTH_BYTE(1);
+		if (literal_pos == runlength_pos)
+			literal_pos += 1;
+	
+		runlength_pos += 1;
 
 		if (op & V1_RLE) {
 			bytes = op & 0x3f;
