@@ -65,6 +65,7 @@ private:
 	uint32 lastTick, lastTickDebug;
 
 	void initialize(void);
+	void deinitialise(void);
 	bool loadLanguageStrings();
 	bool makeLoad(char *saveName);
 	void mainLoop();

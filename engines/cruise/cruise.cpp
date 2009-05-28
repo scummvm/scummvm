@@ -102,12 +102,13 @@ Common::Error CruiseEngine::run() {
 
 	mainLoop();
 
+	deinitialise();
+
 	return Common::kNoError;
 }
 
 void CruiseEngine::initialize() {
 	PCFadeFlag = 0;
-	workBuffer = (uint8 *) mallocAndZero(8192);
 
 	/*volVar1 = 0;
 	 * fileData1 = 0; */
@@ -134,6 +135,11 @@ void CruiseEngine::initialize() {
 	_driver = MidiDriver::createMidi(midiDriver);
 	if (_mt32)
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+}
+
+void CruiseEngine::deinitialise() {
+	polyStructNorm.clear();
+	polyStructExp.clear();
 }
 
 bool CruiseEngine::loadLanguageStrings() {

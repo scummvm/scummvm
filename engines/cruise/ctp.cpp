@@ -28,14 +28,12 @@
 
 namespace Cruise {
 
-uint8 *workBuffer;
-uint8 *polyStruct;
-uint8 *adrStructPoly;
-uint8 *polyStructNorm;
-uint8 *polyStructExp;
-
 uint8 *ctpVar17;
-uint8 *polyStruct0;
+
+Common::Array<CtStruct> polyStructNorm;
+Common::Array<CtStruct> polyStructExp;
+Common::Array<CtStruct> *polyStructs = NULL;
+Common::Array<CtStruct> *polyStruct = NULL;
 
 int currentWalkBoxCenterX;
 int currentWalkBoxCenterY;
@@ -135,7 +133,7 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 }
 
 // this process the walkboxes
-void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
+void makeCtStruct(Common::Array<CtStruct> &lst, int16 table[][40], int num, int z) {
 	int minX = 1000;
 	int maxX = -1;
 
@@ -149,11 +147,8 @@ void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 
 	renderCTPWalkBox(&table[num][0], currentWalkBoxCenterX, currentWalkBoxCenterY,  currentWalkBoxCenterX, currentWalkBoxCenterY, z + 0x200);
 
-	int16* a1;
-	int16* a2;
-
-	a1 = a2 = (int16*)str;
-	a2 += sizeof(int16*) / sizeof(int16) + 6; // skip header
+	lst.push_back(CtStruct());
+	CtStruct &ct = lst[lst.size() - 1];
 
 	int16* XArray = XMIN_XMAX;
 	int minY = *XArray++;
@@ -170,23 +165,16 @@ void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 		if (x2 > maxX)
 			maxX = x2;
 
-		*a2++ = x1;
-		*a2++ = x2;
+		ct.slices.push_back(CtEntry(x1, x2));
 		i++;
 	}
-	*(int16**)a1 = a2;
 
-	adrStructPoly = (uint8*)a2;
-
-	*(uint16**)a2 = (uint16*) - 1; //chained list terminator
-
-	a1 += sizeof(int16*);
-	*a1++ = num;
-	*a1++ = walkboxColor[num];
-	*a1++ = minX;
-	*a1++ = maxX;
-	*a1++ = minY;
-	*a1++ = minY + i + 2;
+	ct.num = num;
+	ct.colour = walkboxColor[num];
+	ct.bounds.left = minX;
+	ct.bounds.right = maxX;
+	ct.bounds.top = minY;
+	ct.bounds.bottom = minY + i;
 }
 
 int getNode(int nodeResult[2], int nodeId) {
@@ -332,34 +320,19 @@ int initCt(const char *ctpName) {
 
 	computeAllDistance(distanceTable, ctp_routeCoordCount);	// process path-finding stuff
 
-	polyStruct = polyStructNorm = adrStructPoly = workBuffer;
-
-	ptr = (uint8 *) polyStruct;
+	// Load the polyStructNorm list
 
 	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
-		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, 0);
+		makeCtStruct(polyStructNorm, ctp_walkboxTable, i, 0);
 	}
 
-	polyStructExp = adrStructPoly += sizeof(int16 *);
+	// Load the polyStructExp list
 
 	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
-		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, walkboxZoom[i] * 20);
+		makeCtStruct(polyStructExp, ctp_walkboxTable, i, walkboxZoom[i] * 20);
 	}
 
-	int ctSize = (adrStructPoly - ptr) + sizeof(int16 *); // for now, the +sizeof(int16 *) is a safe zone
-	adrStructPoly = polyStructNorm = polyStruct = (uint8 *) malloc(ctSize);
-
-	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
-		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, 0);
-	}
-
-	polyStructExp = adrStructPoly += sizeof(int16 *);
-
-	for (int i = numberOfWalkboxes - 1; i >= 0; i--) {
-		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, walkboxZoom[i] * 20);
-	}
-
-	polyStruct0 = polyStructNorm;
+	polyStruct = polyStructs = &polyStructNorm;
 
 	return (1);
 }

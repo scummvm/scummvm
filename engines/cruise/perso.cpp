@@ -46,7 +46,9 @@ void freeCTP(void) {
 	}
 
 	if (polyStruct) {
-		free(polyStruct);
+		polyStructNorm.clear();
+		polyStructExp.clear();
+		polyStruct = NULL;
 	}
 
 	ctpVar17 = NULL;

@@ -558,6 +558,8 @@ static void syncSongs(Common::Serializer &s) {
 static void syncCT(Common::Serializer &s) {
 	int v = (polyStruct) ? 1 : 0;
 	s.syncAsSint32LE(v);
+	if (s.isLoading())
+		polyStruct = (v != 0) ? &polyStructNorm : NULL;
 
 	if (v == 0)
 		// There is no further data to load or save

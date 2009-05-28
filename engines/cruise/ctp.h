@@ -26,6 +26,8 @@
 #ifndef CRUISE_CTP_H
 #define CRUISE_CTP_H
 
+#include "common/rect.h"
+
 namespace Cruise {
 
 struct ctpVar19SubStruct {
@@ -42,14 +44,30 @@ struct ctpVar19Struct {
 	ctpVar19SubStruct subStruct;
 };
 
-extern uint8 *workBuffer;
-extern uint8 *polyStruct;
-extern uint8 *adrStructPoly;
-extern uint8 *polyStructNorm;
-extern uint8 *polyStructExp;
+class CtEntry {
+public:
+	CtEntry(int16 xs, int16 xe) { minX = xs; maxX = xe; }
+	CtEntry() { minX = 0; maxX = 0; }
+
+	int16 minX;
+	int16 maxX;
+};
+
+class CtStruct {
+public:
+	CtStruct *next;
+	int16 num;
+	int16 colour;
+	Common::Rect bounds;
+	Common::Array<CtEntry> slices;
+};
 
 extern uint8 *ctpVar17;
-extern uint8 *polyStruct0;
+
+extern Common::Array<CtStruct> polyStructNorm;
+extern Common::Array<CtStruct> polyStructExp;
+extern Common::Array<CtStruct> *polyStructs;
+extern Common::Array<CtStruct> *polyStruct;
 
 int initCt(const char * ctpName);
 int computeDistance(int varX, int varY, int paramX, int paramY);

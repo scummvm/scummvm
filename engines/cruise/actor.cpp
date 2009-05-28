@@ -73,37 +73,22 @@ int nclick_noeud;
 int flag_aff_chemin;
 
 void getPixel(int x, int y) {
-	int x_min, x_max, y_min, y_max;
 
-	int16* polygone = (int16*)polyStruct0;
-	int16* next;
+	for (uint i = 0; i < polyStructs->size(); ++i) {
+		CtStruct &ct = (*polyStructs)[i];
+		numPoly = ct.num;
 
-	while ((next = *(int16**)polygone) != (int16 *) - 1) {
-		polygone += sizeof(uint16*);
-
-		int16* tableau = polygone + 2;
-
-		x_min = *tableau++;
-		x_max = *tableau++;
-		y_min = *tableau++;
-		y_max = *tableau++;
-
-		numPoly = *polygone++;
-
-		if (walkboxState[numPoly] == 0 && ((x >= x_min && x <= x_max) && (y >= y_min && y <= y_max))) {
+		if (walkboxState[numPoly] == 0 && ct.bounds.contains(x, y)) {
 			// click was in given box
-			int u = y - y_min;
-			tableau += u * 2;
-			x_min = *tableau++;
-			x_max = *tableau++;
+			int u = y - ct.bounds.top;
+			CtEntry &cte = ct.slices[u];
 
-			if ((x >= x_min && x <= x_max)) {
+			if ((x >= cte.minX && x <= cte.maxX)) {
 				flag_obstacle = walkboxColor[numPoly];
 
 				return;
 			}
 		}
-		polygone = next;
 	}
 
 	flag_obstacle = 0;
@@ -188,7 +173,7 @@ void polydroite(int x1, int y1, int x2, int y2) {
 		return;
 	}
 
-	while (--cx) {
+	while (--cx >= 0) {
 		if (dx > 0) {
 			ax += mD0;
 			bx += mD1;
@@ -279,7 +264,7 @@ void poly2(int x1, int y1, int x2, int y2) {
 		return;
 	}
 
-	while (--cx) {
+	while (--cx >= 0) {
 		if (dx > 0) {
 			ax += mD0;
 			bx += mD1;
@@ -308,7 +293,7 @@ int point_proche(int16 table[][2]) {
 	int x1, y1, i, x, y, p;
 	int d1 = 1000;
 
-	polyStruct0 = polyStructNorm;
+	polyStructs = &polyStructNorm;
 
 	if (nclick_noeud == 1) {
 		x = x_mouse;
@@ -316,19 +301,19 @@ int point_proche(int16 table[][2]) {
 		x1 = table_ptselect[0][0];
 		y1 = table_ptselect[0][1];
 
-		polyStruct0 = polyStructExp;
+		polyStructs = &polyStructExp;
 
 		getPixel(x, y);
 
 		if (!flag_obstacle) {
-			polyStruct0 = polyStructNorm;
+			polyStructs = &polyStructNorm;
 
 			getPixel(x, y);
 
 			if (flag_obstacle) {
 				polydroite(x1, y1, x, y);
 			}
-			polyStruct0 = polyStructExp;
+			polyStructs = &polyStructExp;
 		}
 		if (!flag_obstacle) {	/* dans flag_obstacle --> couleur du point */
 			x1 = table_ptselect[0][0];
@@ -340,7 +325,7 @@ int point_proche(int16 table[][2]) {
 			y_mouse = Y;
 		}
 	}
-	polyStruct0 = polyStructNorm;
+	polyStructs = &polyStructNorm;
 
 	p = -1;
 	for (i = 0; i < ctp_routeCoordCount; i++) {
@@ -468,7 +453,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	table_ptselect[*nclick][0] = x_mouse;
 	table_ptselect[*nclick][1] = y_mouse;
 	(*nclick)++;
-	polyStruct0 = polyStructNorm;
+	polyStructs = &polyStructNorm;
 
 	if (*nclick == 2) {	// second point
 		x1 = table_ptselect[0][0];
@@ -479,7 +464,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 			return;
 		}
 		flag_aff_chemin = 1;
-		polyStruct0 = polyStructExp;
+		polyStructs = &polyStructExp;
 
 		// can we go there directly ?
 		polydroite(x1, y1, x2, y2);
@@ -487,7 +472,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 		if (!flag_obstacle) {
 			solution0[0][0] = x1;
 			solution0[0][1] = y1;
-			polyStruct0 = polyStructExp;
+			polyStructs = &polyStructExp;
 
 			poly2(x2, y2, ctp_routeCoords[select_noeud[1]][0],
 			      ctp_routeCoords[select_noeud[1]][1]);
@@ -531,7 +516,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 					solution0[++i][1] =
 					    ctp_routeCoords[p1][1];
 				}
-				polyStruct0 = polyStructExp;
+				polyStructs = &polyStructExp;
 				poly2(x2, y2,
 				      ctp_routeCoords[select_noeud[1]][0],
 				      ctp_routeCoords[select_noeud[1]][1]);
@@ -556,7 +541,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 					while (flag_obstacle && i != d) {
 						x2 = solution0[i][0];
 						y2 = solution0[i][1];
-						polyStruct0 = polyStructExp;
+						polyStructs = &polyStructExp;
 						polydroite(x1, y1, x2, y2);
 						i--;
 					}
@@ -636,7 +621,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 	}
 
 	nclick_noeud = 0;
-	polyStruct0 = polyStructNorm;
+	polyStructs = &polyStructNorm;
 	flag_aff_chemin = 0;
 
 	if (x == destX && y == destY) {
