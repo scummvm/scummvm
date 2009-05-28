@@ -56,6 +56,9 @@ public:
 	/** Adds a number of frames to a timestamp. */
 	Timestamp addFrames(int frames) const;
 
+	/** Adds a number of milliseconds to a timestamp. */
+	Timestamp addMsecs(int ms) const;
+
 	/** Computes the difference (# of frames) between this timestamp and b. */
 	int frameDiff(const Timestamp &b) const;
 

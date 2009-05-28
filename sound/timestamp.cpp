@@ -53,6 +53,12 @@ Timestamp Timestamp::addFrames(int frames) const {
 	return timestamp;
 }
 
+Timestamp Timestamp::addMsecs(int ms) const {
+	Timestamp timestamp(*this);
+	timestamp._msecs += ms;
+	return timestamp;
+}
+
 int Timestamp::frameDiff(const Timestamp &b) const {
 	assert(_frameRate == b._frameRate);
 
