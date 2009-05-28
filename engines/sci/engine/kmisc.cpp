@@ -37,7 +37,9 @@ namespace Sci {
 reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE; // This appears to help
-	s->_executionStack.resize(s->execution_stack_base + 1);
+
+	shrink_execution_stack(s, s->execution_stack_base + 1);
+
 	script_abort_flag = 1; // Force vm to abort ASAP
 	return NULL_REG;
 }

@@ -1142,6 +1142,11 @@ Object *obj_get(EngineState *s, reg_t offset);
 ** Returns   : (Object *) The object in question, or NULL if there is none
 */
 
+void shrink_execution_stack(EngineState *s, uint size);
+/* Shrink execution stack to size.
+** Contains an assert it is not already smaller.
+*/
+
 } // End of namespace Sci
 
 #endif // SCI_ENGINE_VM_H

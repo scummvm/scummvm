@@ -1114,7 +1114,8 @@ int c_restore_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) 
 
 		script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
 		_debugstate_valid = 0;
-		s->_executionStack.resize(s->execution_stack_base + 1);
+
+		shrink_execution_stack(s, s->execution_stack_base + 1);
 		return 0;
 	} else {
 		sciprintf("Restoring gamestate '%s' failed.\n", cmdParams[0].str);
@@ -1539,8 +1540,11 @@ static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 	}
 
 	sciprintf("Call stack (current base: 0x%x):\n", s->execution_stack_base);
-	for (uint i = 0; i < s->_executionStack.size(); i++) {
-		ExecStack &call = s->_executionStack[i];
+	Common::List<ExecStack>::iterator iter;
+	uint i = 0;
+	for (iter = s->_executionStack.begin();
+	     iter != s->_executionStack.end(); ++iter, ++i) {
+		ExecStack &call = *iter;
 		const char *objname = obj_get_name(s, call.sendp);
 		int paramc, totalparamc;
 
@@ -2146,7 +2150,7 @@ static int c_set_acc(EngineState *s, const Common::Array<cmd_param_t> &cmdParams
 static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t object = cmdParams[0].reg;
 	const char *selector_name = cmdParams[1].str;
-	StackPtr stackframe = s->_executionStack[0].sp;
+	StackPtr stackframe = s->_executionStack.front().sp;
 	int selector_id;
 	unsigned int i;
 	ExecStack *xstack;
@@ -2180,8 +2184,11 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	for (i = 2; i < cmdParams.size(); i++)
 		stackframe[i] = cmdParams[i].reg;
 
-	xstack = add_exec_stack_entry(s, fptr, s->_executionStack[0].sp + cmdParams.size(), object, cmdParams.size() - 2,
-									s->_executionStack[0].sp - 1, 0, object, s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
+	xstack = add_exec_stack_entry(s, fptr,
+	                 s->_executionStack.front().sp + cmdParams.size(),
+	                 object, cmdParams.size() - 2,
+	                 s->_executionStack.front().sp - 1, 0, object,
+	                 s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = selector_id;
 	xstack->type = selector_type == kSelectorVariable ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
 

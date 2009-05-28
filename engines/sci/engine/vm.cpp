@@ -974,15 +974,13 @@ void run_vm(EngineState *s, int restoring) {
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
 			           + 1 + restadjust;
 			StackPtr call_base = xs->sp - argc;
-			StackPtr cur_sp = xs->sp;
 			xs->sp[1].offset += restadjust;
-			xs->sp = call_base;
 
-			// NB: add_exec_stack_entry can re-allocate the execution stacks
 			xs_new = add_exec_stack_entry(s, make_reg(xs->addr.pc.segment, xs->addr.pc.offset + opparams[0]),
-			                              cur_sp, xs->objp, (validate_arithmetic(*call_base)) + restadjust,
+			                              xs->sp, xs->objp, (validate_arithmetic(*call_base)) + restadjust,
 			                              call_base, NULL_SELECTOR, xs->objp, s->_executionStack.size()-1, xs->local_segment);
 			restadjust = 0; // Used up the &rest adjustment
+			xs->sp = call_base;
 
 			s->_executionStackPosChanged = true;
 			break;
@@ -1078,7 +1076,6 @@ void run_vm(EngineState *s, int restoring) {
 
 				// Not reached the base, so let's do a soft return
 				s->_executionStack.pop_back();
-				xs = old_xs - 1;
 				s->_executionStackPosChanged = true;
 				xs = &(s->_executionStack.back());
 
@@ -1445,9 +1442,8 @@ void run_vm(EngineState *s, int restoring) {
 
 //#ifndef DISABLE_VALIDATIONS
 		if (xs != &(s->_executionStack.back())) {
-			warning("xs is stale (%d/%p vs %d/%p); last command was %02x\n",
-					(int)(xs - &s->_executionStack[0]), (void *)xs,
-					s->_executionStack.size()-1, (void *)&(s->_executionStack.back()),
+			warning("xs is stale (%p vs %p); last command was %02x\n",
+					(void *)xs, (void *)&(s->_executionStack.back()),
 					opnumber);
 		}
 //#endif
@@ -2093,5 +2089,15 @@ void quit_vm() {
 	_debug_seeking = 0;
 	_debug_step_running = 0;
 }
+
+void shrink_execution_stack(EngineState *s, uint size) {
+	assert(s->_executionStack.size() >= size);
+	Common::List<ExecStack>::iterator iter;
+	iter = s->_executionStack.begin();
+	for (uint i = 0; i < size; ++i)
+		++iter;
+	s->_executionStack.erase(iter, s->_executionStack.end());
+}
+
 
 } // End of namespace Sci

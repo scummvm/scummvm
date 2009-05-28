@@ -97,8 +97,10 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 #endif
 
 	// Init: Execution Stack
-	for (i = 0; i < s->_executionStack.size(); i++) {
-		ExecStack &es = s->_executionStack[i];
+	Common::List<ExecStack>::iterator iter;
+	for (iter = s->_executionStack.begin();
+	     iter != s->_executionStack.end(); ++iter) {
+		ExecStack &es = *iter;
 
 		if (es.type != EXEC_STACK_TYPE_KERNEL) {
 			wm.push(es.objp);
