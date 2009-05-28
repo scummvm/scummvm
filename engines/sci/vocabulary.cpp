@@ -32,7 +32,7 @@
 
 namespace Sci {
 
-int vocab_version;
+static int vocab_version;	// FIXME: Avoid static vars
 
 #define VOCAB_RESOURCE_PARSE_TREE_BRANCHES vocab_version == 1 ? \
 					   VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES : \
@@ -239,6 +239,8 @@ const char *vocab_get_any_group_word(int group, const WordMap &words) {
 }
 
 bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
+	// FIXME: This call relies on vocab_version being set, which is done by vocab_get_words.
+	// So vocab_get_words *must* be called before vocab_get_branches gets called
 	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 1);
 	unsigned int seeker = 1;
 
@@ -274,6 +276,8 @@ bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 }
 
 void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
+	// FIXME: This call relies on vocab_version being set, which is done by vocab_get_words.
+	// So vocab_get_words *must* be called before vocab_get_branches gets called
 	resmgr->unlockResource(resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 0),
 	                     VOCAB_RESOURCE_SUFFIX_VOCAB, kResourceTypeVocab);
 
@@ -281,6 +285,8 @@ void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 }
 
 bool vocab_get_branches(ResourceManager * resmgr, Common::Array<parse_tree_branch_t> &branches) {
+	// FIXME: This call relies on vocab_version being set, which is done by vocab_get_words.
+	// So vocab_get_words *must* be called before vocab_get_branches gets called
 	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_PARSE_TREE_BRANCHES, 0);
 
 	branches.clear();
