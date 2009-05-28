@@ -168,7 +168,7 @@ void polydroite(int x1, int y1, int x2, int y2) {
 	X = modelVar9;
 	Y = modelVar10;
 
-	if (flag_obstacle == 0) {
+	if ((flag_obstacle == 0) || (cx == 0)) {
 		flag_obstacle = 1;
 		return;
 	}
@@ -259,7 +259,7 @@ void poly2(int x1, int y1, int x2, int y2) {
 	X = modelVar9;
 	Y = modelVar10;
 
-	if (flag_obstacle != 0) {
+	if ((flag_obstacle != 0) || (cx == 0)) {
 		flag_obstacle = 1;
 		return;
 	}
