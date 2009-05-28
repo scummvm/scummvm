@@ -1685,33 +1685,32 @@ enum ImuseParam {
 };
 
 static void ImStartSound() {
-	int priority, group;
-	const char *soundName;
+	lua_Object nameObj = lua_getparam(1);
+	lua_Object priorityObj = lua_getparam(2);
+	lua_Object groupObj = lua_getparam(3);
 
-	soundName = luaL_check_string(1);
-	priority = lua_getnumber(lua_getparam(2));
-	group = lua_getnumber(lua_getparam(3));
+	if (!lua_isstring(nameObj) && !lua_isnumber(nameObj))
+		return;
+	if (!lua_isnumber(priorityObj) || !lua_isnumber(groupObj))
+		return;
+
+	const char *soundName = lua_getstring(nameObj);
+	int priority = lua_getnumber(priorityObj);
+	int group = lua_getnumber(groupObj);
 
 	// Start the sound with the appropriate settings
 	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority, NULL)) {
+		// FIXME actually it's pushnumber from result of startSound
 		lua_pushstring(soundName);
-	} else {
-		// Allow soft failing when loading sounds, hard failing when not
-		if (priority == 127) {
-			if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("ImStartSound failed to load '%s'", soundName);
-		} else {
-			if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-				error("ImStartSound failed to start '%s'", soundName);
-		}
-		lua_pushnil();
 	}
 }
 
 static void ImStopSound() {
-	const char *soundName;
+	lua_Object nameObj = lua_getparam(1);
+	if (lua_isnumber(nameObj))
+		error("ImStopsound: name from value not supported");
 
-	soundName = luaL_check_string(1);
+	const char *soundName = lua_getstring(nameObj);
 	g_imuse->stopSound(soundName);
 }
 
@@ -1736,7 +1735,10 @@ static void ImSetVoiceEffect() {
 }
 
 static void ImSetMusicVol() {
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, lua_getnumber(lua_getparam(1)));
+	lua_Object volObj = lua_getparam(1);
+	if (!lua_isnumber(volObj))
+		return;
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, lua_getnumber(volObj));
 }
 
 static void ImGetMusicVol() {
@@ -1744,7 +1746,10 @@ static void ImGetMusicVol() {
 }
 
 static void ImSetVoiceVol() {
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, lua_getnumber(lua_getparam(1)));
+	lua_Object volObj = lua_getparam(1);
+	if (!lua_isnumber(volObj))
+		return;
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, lua_getnumber(volObj));
 }
 
 static void ImGetVoiceVol() {
@@ -1752,7 +1757,10 @@ static void ImGetVoiceVol() {
 }
 
 static void ImSetSfxVol() {
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, lua_getnumber(lua_getparam(1)));
+	lua_Object volObj = lua_getparam(1);
+	if (!lua_isnumber(volObj))
+		return;
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, lua_getnumber(volObj));
 }
 
 static void ImGetSfxVol() {
@@ -1760,12 +1768,22 @@ static void ImGetSfxVol() {
 }
 
 static void ImSetParam() {
-	int param, value;
-	const char *soundName;
+	lua_Object nameObj = lua_getparam(1);
+	lua_Object paramObj = lua_getparam(2);
+	lua_Object valueObj = lua_getparam(3);
 
-	soundName = luaL_check_string(1);
-	param = lua_getnumber(lua_getparam(2));
-	value = lua_getnumber(lua_getparam(3));
+	if (lua_isnumber(nameObj))
+		error("ImSetParam: getting name from number is not supported");
+	if (!lua_isstring(nameObj)) {
+		lua_pushnumber(-1.0);
+		return;
+	}
+
+	const char *soundName = lua_getstring(nameObj);
+	int param = lua_getnumber(paramObj);
+	int value = lua_getnumber(valueObj);
+	if (value < 0)
+		value = 0;
 	switch (param) {
 	case IM_SOUND_VOL:
 		g_imuse->setVolume(soundName, value);
@@ -1774,18 +1792,23 @@ static void ImSetParam() {
 		g_imuse->setPan(soundName, value);
 		break;
 	default:
-		lua_pushnil();
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("ImSetParam() Unimplemented %d, %d", param, value);
+		error("ImSetParam() Unimplemented %d", param);
 	}
 }
 
 void ImGetParam() {
-	const char *soundName;
-	int param;
+	lua_Object nameObj = lua_getparam(1);
+	lua_Object paramObj = lua_getparam(2);
 
-	soundName = luaL_check_string(1);
-	param = lua_getnumber(lua_getparam(2));
+	if (lua_isnumber(nameObj))
+		error("ImGetParam: getting name from number is not supported");
+	if (!lua_isstring(nameObj)) {
+		lua_pushnumber(-1.0);
+		return;
+	}
+
+	const char *soundName = lua_getstring(nameObj);
+	int param = lua_getnumber(paramObj);
 	switch (param) {
 	case IM_SOUND_PLAY_COUNT:
 		lua_pushnumber(g_imuse->getCountPlayedTracks(soundName));
@@ -1794,20 +1817,32 @@ void ImGetParam() {
 		lua_pushnumber(g_imuse->getVolume(soundName));
 		break;
 	default:
-		lua_pushnil();
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("ImGetParam() Unimplemented %d", param);
+		error("ImGetParam() Unimplemented %d", param);
 	}
 }
 
 static void ImFadeParam() {
-	int opcode, value, duration;
-	const char *soundName;
+	lua_Object nameObj = lua_getparam(1);
+	lua_Object opcodeObj = lua_getparam(2);
+	lua_Object valueObj = lua_getparam(3);
+	lua_Object durationObj = lua_getparam(4);
 
-	soundName = luaL_check_string(1);
-	opcode = lua_getnumber(lua_getparam(2));
-	value = lua_getnumber(lua_getparam(3));
-	duration = lua_getnumber(lua_getparam(4));
+	if (!lua_isstring(nameObj) && !lua_isnumber(nameObj)) {
+		lua_pushnumber(0);
+		return;
+	}
+	if (!lua_isnumber(opcodeObj) || !lua_isnumber(valueObj) || !lua_isnumber(durationObj))
+		return;
+
+	if (lua_isnumber(nameObj)) {
+		error("ImFadeParam: getting name from number is not supported");
+	}
+	const char *soundName = lua_getstring(nameObj);
+	int opcode = lua_getnumber(opcodeObj);
+	int value = lua_getnumber(valueObj);
+	if (value < 0)
+		value = 0;
+	int duration = lua_getnumber(durationObj);
 	switch (opcode) {
 	case IM_SOUND_PAN:
 		g_imuse->setFadePan(soundName, value, duration);
@@ -1819,13 +1854,20 @@ static void ImFadeParam() {
 }
 
 static void ImSetState() {
-	g_imuseState = lua_getnumber(lua_getparam(1));
+	lua_Object stateObj = lua_getparam(1);
+	if (!lua_isnumber(stateObj))
+		return;
+
+	int state = lua_getnumber(stateObj);
+	g_imuseState = lua_getnumber(stateObj);
 }
 
 static void ImSetSequence() {
-	int state;
+	lua_Object stateObj = lua_getparam(1);
+	if (!lua_isnumber(stateObj))
+		return;
 
-	state = lua_getnumber(lua_getparam(1));
+	int state = lua_getnumber(stateObj);
 	lua_pushnumber(g_imuse->setMusicSequence(state));
 }
 
