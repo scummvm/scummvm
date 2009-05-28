@@ -966,57 +966,101 @@ static void ActorLookAt() {
  * circle and not just a difference in angles.
  */
 static void TurnActorTo() {
-	float x, y, z, yaw;
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object xObj = lua_getparam(2);
+	lua_Object yObj = lua_getparam(3);
+	lua_Object zObj = lua_getparam(4);
+	float x, y, z;
 
-	act = check_actor(1);
-	if (lua_isnumber(lua_getparam(2))) {
-		x = luaL_check_number(2);
-		y = luaL_check_number(3);
-		z = luaL_check_number(4);
-	} else if (isActor(2)) {
-		Actor *destActor;
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR')) {
+		lua_pushnil();
+		return;
+	}
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 
-		destActor = check_actor(2);
+	if (lua_isuserdata(xObj) && lua_tag(xObj) == MKID_BE('ACTR')) {
+		Actor *destActor = static_cast<Actor *>(lua_getuserdata(xObj));
 		x = destActor->pos().x();
 		y = destActor->pos().y();
 		z = destActor->pos().z();
 	} else {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("TurnActorTo() parameter type not understood");
-		return;
+		x = lua_getnumber(xObj);
+		y = lua_getnumber(yObj);
+		z = lua_getnumber(zObj);
 	}
 
+	// TODO turning stuff below is not complete
+	
 	// Find the vector pointing from the actor to the desired location
 	Graphics::Vector3d turnToVector(x, y, z);
-	Graphics::Vector3d lookVector = turnToVector - act->pos();
+	Graphics::Vector3d lookVector = turnToVector - actor->pos();
 	// find the angle the requested position is around the unit circle
-	yaw = lookVector.unitCircleAngle();
+	float yaw = lookVector.unitCircleAngle();
 	// yaw is offset from forward by 90 degrees
 	yaw -= 90.0f;
-	act->turnTo(0, yaw, 0);
+	actor->turnTo(0, yaw, 0);
 
 	// Game will lock in elevator if this doesn't return false
 	pushbool(false);
 }
 
-/* PointActorAt seems to be an alias for TurnActorTo
- */
 static void PointActorAt() {
-	TurnActorTo();
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object xObj = lua_getparam(2);
+	lua_Object yObj = lua_getparam(3);
+	lua_Object zObj = lua_getparam(4);
+	float x, y, z;
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR')) {
+		lua_pushnil();
+		return;
+	}
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	if (lua_isuserdata(xObj) && lua_tag(xObj) == MKID_BE('ACTR')) {
+		Actor *destActor = static_cast<Actor *>(lua_getuserdata(xObj));
+		x = destActor->pos().x();
+		y = destActor->pos().y();
+		z = destActor->pos().z();
+	} else {
+		x = lua_getnumber(xObj);
+		y = lua_getnumber(yObj);
+		z = lua_getnumber(zObj);
+	}
+
+	// TODO turning stuff below is not complete
+	
+	// Find the vector pointing from the actor to the desired location
+	Graphics::Vector3d turnToVector(x, y, z);
+	Graphics::Vector3d lookVector = turnToVector - actor->pos();
+	// find the angle the requested position is around the unit circle
+	float yaw = lookVector.unitCircleAngle();
+	// yaw is offset from forward by 90 degrees
+	yaw -= 90.0f;
+	actor->turnTo(0, yaw, 0);
+
+	// Game will lock in elevator if this doesn't return false
+	pushbool(false);
 }
 
-/* WalkActorVector handles the movement of the selected actor
- * when the game is in "Camera-Relative Movement Mode"
- *
- * NOTE: The usage for paramaters 1 and 5 are as-yet unknown.
- */
 static void WalkActorVector() {
-	float moveHoriz, moveVert, yaw;
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object actor2Obj = lua_getparam(2);
+	lua_Object xObj = lua_getparam(3);
+	lua_Object yObj = lua_getparam(4);
+	lua_Object zObj = lua_getparam(5);
+	lua_Object param6Obj = lua_getparam(6);
 
-	// Second option is the actor returned by GetCameraActor
-	act = check_actor(2);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR') ||
+			!lua_isuserdata(actor2Obj) || lua_tag(actor2Obj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	Actor *actor2 = static_cast<Actor *>(lua_getuserdata(actor2Obj));
+
+	// TODO whole below part need rewrote to much original
+	float moveHoriz, moveVert, yaw;
+
 	// Third option is the "left/right" movement
 	moveHoriz = luaL_check_number(3);
 	// Fourth Option is the "up/down" movement
@@ -1042,10 +1086,10 @@ static void WalkActorVector() {
 	if (yaw >= 360.0f)
 		yaw -= 360.0f;
 	// set the new direction or walk forward
-	if (act->yaw() != yaw)
-		act->turnTo(0, yaw, 0);
+	if (actor2->yaw() != yaw)
+		actor2->turnTo(0, yaw, 0);
 	else
-		act->walkForward();
+		actor2->walkForward();
 }
 
 /* RotateVector takes a vector and rotates it around
@@ -1054,6 +1098,58 @@ static void WalkActorVector() {
  * getting on and off of the Bone Wagon.
  */
 static void RotateVector() {
+/*
+	lua_Object vecObj = lua_getparam(1);
+	lua_Object rotObj = lua_getparam(2);
+	lua_Object resObj;
+	Graphics::Vector3d vec, rot, resVec;
+	float x, y, z;
+
+	if (!lua_istable(param1) || !lua_istable(param2)) {
+		lua_pushnil();
+		return;
+	}
+
+	lua_pushobject(vecObj);
+	lua_pushstring("x");
+	x = lua_getnumber(lua_gettable());
+	lua_pushobject(vecObj);
+	lua_pushstring("y");
+	y = lua_getnumber(lua_gettable());
+	lua_pushobject(vecObj);
+	lua_pushstring("z");
+	z = lua_getnumber(lua_gettable());
+	vec.set(x, y, z);
+
+	lua_pushobject(rotObj);
+	lua_pushstring("x");
+	x = lua_getnumber(lua_gettable());
+	lua_pushobject(rotObj);
+	lua_pushstring("y");
+	y = lua_getnumber(lua_gettable());
+	lua_pushobject(rotObj);
+	lua_pushstring("z");
+	z = lua_getnumber(lua_gettable());
+	rot.set(x, y, z);
+
+	// TODO rotate vector
+
+	resObj = lua_createtable();
+	lua_pushobject(resObj);
+	lua_pushtring("x");
+	lua_pushnumber(vec.x());
+	lua_settable();
+	lua_pushobject(resObj);
+	lua_pushtring("y");
+	lua_pushnumber(vec.y());
+	lua_settable();
+	lua_pushobject(resObj);
+	lua_pushtring("z");
+	lua_pushnumber(vec.z());
+	lua_settable();
+
+	lua_pushobject(resObj);
+*/
 	lua_Object param1, param2, result;
 
 	param1 = lua_getparam(1);
