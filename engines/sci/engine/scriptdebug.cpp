@@ -555,7 +555,7 @@ int objinfo(EngineState *s, reg_t pos);
 void song_lib_dump(const songlib_t &songlib, int line);
 
 static int c_songlib_print(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	song_lib_dump(s->sound.songlib, __LINE__);
+	song_lib_dump(s->_sound._songlib, __LINE__);
 
 	return 0;
 }
@@ -2343,7 +2343,7 @@ static int c_sfx_debuglog(EngineState *s, const Common::Array<cmd_param_t> &cmdP
 		{"Song cue polling and delivery", 'c', SFX_DEBUG_CUES}
 	};
 
-	return c_handle_config_update(sfx_debug_modes, SFX_DEBUG_MODES, "sound subsystem", (int *)&(s->sound.debug), cmdParams);
+	return c_handle_config_update(sfx_debug_modes, SFX_DEBUG_MODES, "sound subsystem", (int *)&(s->_sound._debug), cmdParams);
 }
 
 static int c_sfx_remove(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
@@ -2351,8 +2351,8 @@ static int c_sfx_remove(EngineState *s, const Common::Array<cmd_param_t> &cmdPar
 	int handle = FROBNICATE_HANDLE(id);
 
 	if (id.segment) {
-		sfx_song_set_status(&s->sound, handle, SOUND_STATUS_STOPPED);
-		sfx_remove_song(&s->sound, handle);
+		sfx_song_set_status(&s->_sound, handle, SOUND_STATUS_STOPPED);
+		sfx_remove_song(&s->_sound, handle);
 		PUT_SEL32V(id, signal, -1);
 		PUT_SEL32V(id, nodePtr, 0);
 		PUT_SEL32V(id, handle, 0);
@@ -3250,7 +3250,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		const char *commandstring;
 
 		// Suspend music playing
-		sfx_suspend(&s->sound, 1);
+		sfx_suspend(&s->_sound, 1);
 
 		commandstring = _debug_get_input();
 
@@ -3263,7 +3263,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		sciprintf("\n");
 
 		// Resume music playing
-		sfx_suspend(&s->sound, 0);
+		sfx_suspend(&s->_sound, 0);
 	}
 }
 

@@ -37,7 +37,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	gfx_state = 0;
 	old_screen = 0;
 
-	memset(&sound, 0, sizeof(sound));	// FIXME: Remove this once/if we C++ify sfx_state_t
 	sfx_init_flags = 0;
 	sound_volume = 0;
 	sound_mute = 0;

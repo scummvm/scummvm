@@ -231,8 +231,8 @@ void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	sync_reg_t(s, obj.reg);
 }
 
-static void sync_sfx_state_t(Common::Serializer &s, sfx_state_t &obj) {
-	sync_songlib_t(s, obj.songlib);
+static void sync_sfx_state_t(Common::Serializer &s, SfxState &obj) {
+	sync_songlib_t(s, obj._songlib);
 }
 
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
@@ -268,7 +268,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 
 	syncArray<Class>(s, _classtable);
 
-	sync_sfx_state_t(s, sound);
+	sync_sfx_state_t(s, _sound);
 }
 
 void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
@@ -695,10 +695,10 @@ static void reconstruct_sounds(EngineState *s) {
 	song_t *seeker;
 	SongIteratorType it_type = s->resmgr->_sciVersion >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
 
-	if (s->sound.songlib.lib)
-		seeker = *(s->sound.songlib.lib);
+	if (s->_sound._songlib.lib)
+		seeker = *(s->_sound._songlib.lib);
 	else {
-		song_lib_init(&s->sound.songlib);
+		song_lib_init(&s->_sound._songlib);
 		seeker = NULL;
 	}
 
@@ -720,7 +720,7 @@ static void reconstruct_sounds(EngineState *s) {
 		oldstatus = seeker->status;
 		seeker->status = SOUND_STATUS_STOPPED;
 		seeker->it = ff;
-		sfx_song_set_status(&s->sound, seeker->handle, oldstatus);
+		sfx_song_set_status(&s->_sound, seeker->handle, oldstatus);
 		seeker = seeker->next;
 	}
 }
@@ -770,7 +770,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	retval->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
-	sfx_exit(&s->sound);
+	sfx_exit(&s->_sound);
 
 	// Set exec stack base to zero
 	retval->execution_stack_base = 0;
@@ -783,11 +783,11 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	retval->resmgr = s->resmgr;
 
-	temp = retval->sound.songlib;
-	sfx_init(&retval->sound, retval->resmgr, s->sfx_init_flags);
+	temp = retval->_sound._songlib;
+	sfx_init(&retval->_sound, retval->resmgr, s->sfx_init_flags);
 	retval->sfx_init_flags = s->sfx_init_flags;
-	song_lib_free(retval->sound.songlib);
-	retval->sound.songlib = temp;
+	song_lib_free(retval->_sound._songlib);
+	retval->_sound._songlib = temp;
 
 	_reset_graphics_input(retval);
 	reconstruct_stack(retval);
@@ -851,11 +851,11 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->pic_priority_table = (int*)gfxop_get_pic_metainfo(retval->gfx_state);
 	retval->_gameName = obj_get_name(retval, retval->game_obj);
 
-	retval->sound.it = NULL;
-	retval->sound.flags = s->sound.flags;
-	retval->sound.song = NULL;
-	retval->sound.suspended = s->sound.suspended;
-	retval->sound.debug = s->sound.debug;
+	retval->_sound._it = NULL;
+	retval->_sound._flags = s->_sound._flags;
+	retval->_sound._song = NULL;
+	retval->_sound._suspended = s->_sound._suspended;
+	retval->_sound._debug = s->_sound._debug;
 	reconstruct_sounds(retval);
 
 	// Message state:
