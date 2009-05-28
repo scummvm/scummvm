@@ -508,6 +508,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sound_intern.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sound_lok.cpp"
 			>
 		</File>
@@ -517,6 +521,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\sound_midi.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\sound_pcspk.cpp"
 			>
 		</File>
 		<File

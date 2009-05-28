@@ -359,6 +359,9 @@
 			RelativePath="..\..\engines\kyra\sound_digital.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sound_intern.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sound_lok.cpp">
 		</File>
 		<File
@@ -369,6 +372,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\sound_towns.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\sound_pcspk.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\sprites.cpp">
