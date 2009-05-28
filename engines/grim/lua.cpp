@@ -952,8 +952,6 @@ static void ActorLookAt() {
 		if (lua_isnumber(yObj))
 			actor->setLookAtRate(lua_getnumber(yObj));
 	} else {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("ActorLookAt: Don't know what to look at!");
 		return;
 	}
 
