@@ -42,12 +42,9 @@ namespace Sci {
 #define V1_RLE_BG 0x40 // background fill
 
 #define V2_HEADER_SIZE 0
-#define V2_LOOPS_NUM 2
-#define V2_PALETTE_OFFSET 8
 #define V2_BYTES_PER_LOOP 12
 #define V2_BYTES_PER_CEL 13
 
-#define V2_IS_MIRROR 1
 #define V2_COPY_OF_LOOP 2
 #define V2_CELS_NUM 4
 #define V2_LOOP_OFFSET 14
@@ -150,16 +147,8 @@ static int decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, 
 
 	while (writepos < pixmap_size && pos < size) {
 		int op = resource[pos++];
-		int bytes;
-		int color;
-
-		if (op & 0x07) {
-			bytes = op & 0x07;
-			color = op >> 3;
-		} else {
-			bytes = op >> 3;
-			color = color_key;
-		}
+		int bytes = (op & 0x07) ? op & 0x07 : op >> 3;
+		int color = (op & 0x07) ? op >> 3 : color_key;
 
 		if (mirrored) {
 			while (bytes--) {
@@ -233,176 +222,64 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 	return retval;
 }
 
-static int gfxr_draw_loop1(gfxr_loop_t *dest, int id, int loop, int mirrored, byte *resource, int offset, int size, gfxr_view_t *view, int amiga_game) {
-	int i;
-	int cels_nr = READ_LE_UINT16(resource + offset);
-
-	if (READ_LE_UINT16(resource + offset + 2)) {
-		GFXWARN("View %02x:(%d): Gray magic %04x in loop, expected white\n", id, loop, READ_LE_UINT16(resource + offset + 2));
-	}
-
-	if (cels_nr * 2 + 4 + offset > size) {
-		GFXERROR("View %02x:(%d): Offset array for %d cels extends beyond resource space\n", id, loop, cels_nr);
-		dest->cels_nr = 0; // Mark as "delete no cels"
-		dest->cels = NULL;
-		return 1;
-	}
-
-	dest->cels = (gfx_pixmap_t**)malloc(sizeof(gfx_pixmap_t *) * cels_nr);
-
-	for (i = 0; i < cels_nr; i++) {
-		int cel_offset = READ_LE_UINT16(resource + offset + 4 + (i << 1));
-		gfx_pixmap_t *cel;
-
-		if (cel_offset >= size) {
-			GFXERROR("View %02x:(%d/%d) supposed to be at illegal offset 0x%04x\n", id, loop, i, cel_offset);
-			cel = NULL;
-		} else
-			cel = gfxr_draw_cel1(id, loop, i, mirrored, resource + cel_offset, resource + cel_offset, size - cel_offset, view, amiga_game, false);
-
-		if (!cel) {
-			dest->cels_nr = i;
-			return 1;
-		}
-
-		dest->cels[i] = cel;
-	}
-
-	dest->cels_nr = cels_nr;
-
-	return 0;
-}
-
-gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_pal) {
-	int i;
-	int palette_offset;
-	gfxr_view_t *view;
-	int mirror_mask;
+gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_pal, bool isSci11) {
+	uint16 palOffset = READ_LE_UINT16(resource + V1_PALETTE_OFFSET + (isSci11 ? 2 : 0));
+	uint16 headerSize = isSci11 ? READ_LE_UINT16(resource + V2_HEADER_SIZE) : 0;
+	byte* seeker = resource + headerSize;
+	uint16 loopOffset = 0;
 	int amiga_game = 0;
+	gfxr_view_t *view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
 
-	if (size < V1_FIRST_LOOP_OFFSET + 8) {
-		GFXERROR("Attempt to draw empty view %04x\n", id);
-		return NULL;
-	}
-
-	view = (gfxr_view_t*)malloc(sizeof(gfxr_view_t));
 	view->ID = id;
 	view->flags = 0;
+	view->loops_nr = READ_LE_UINT16(resource + V1_LOOPS_NR_OFFSET + (isSci11 ? 2 : 0)) & 0xFF;
 
-	view->loops_nr = resource[V1_LOOPS_NR_OFFSET];
-	palette_offset = READ_LE_UINT16(resource + V1_PALETTE_OFFSET);
-	mirror_mask = READ_LE_UINT16(resource + V1_MIRROR_MASK);
-
-	if (view->loops_nr * 2 + V1_FIRST_LOOP_OFFSET > size) {
-		GFXERROR("View %04x: Not enough space in resource to accomodate for the claimed %d loops\n", id, view->loops_nr);
-		free(view);
-		return NULL;
-	}
-
-	if (palette_offset > 0) {
-		if (palette_offset > size) {
-			GFXERROR("Palette is outside of view %04x\n", id);
-			free(view);
-			return NULL;
-		}
-		if (!(view->palette = gfxr_read_pal1(id, resource + palette_offset, size - palette_offset))) {
-			GFXERROR("view %04x: Palette reading failed. Aborting...\n", id);
-			free(view);
-			return NULL;
-		}
+	if (palOffset > 0) {
+		if (!isSci11)
+			view->palette = gfxr_read_pal1(id, resource + palOffset, size - palOffset);
+		else
+			view->palette = gfxr_read_pal11(id, resource + palOffset, size - palOffset);
 	} else if (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR) {
 		// Assume we're running an amiga game.
 		amiga_game = 1;
 		view->palette = static_pal->getref();
 	} else {
-		GFXWARN("view %04x: Doesn't have a palette. Can SCI handle this?\n", view->ID);
 		view->palette = NULL;
 	}
 
-	view->loops = (gfxr_loop_t*)malloc(sizeof(gfxr_loop_t) * view->loops_nr);
-
-	for (i = 0; i < view->loops_nr; i++) {
-		int error_token = 0;
-		int loop_offset = READ_LE_UINT16(resource + V1_FIRST_LOOP_OFFSET + (i << 1));
-
-		if (loop_offset >= size) {
-			GFXERROR("View %04x:(%d) supposed to be at illegal offset 0x%04x\n", id, i, loop_offset);
-			error_token = 1;
-		}
-
-		if (error_token || gfxr_draw_loop1(view->loops + i, id, i, mirror_mask & (1 << i), resource, loop_offset, size, view, amiga_game)) {
-			// An error occured
-			view->loops_nr = i;
-			gfxr_free_view(view);
-			return NULL;
-		}
-	}
-
-	return view;
-}
-
-gfxr_loop_t *gfxr_draw_loop11(int id, int loop, int mirrored, byte *resource_base, byte *loop_base, int size, int cels_nr,
-	gfxr_loop_t *result, gfxr_view_t *view, int bytes_per_cel) {
-	byte *seeker = loop_base;
-	int i;
-
-	result->cels_nr = cels_nr;
-	result->cels = (gfx_pixmap_t **)malloc(sizeof(gfx_pixmap_t *) * cels_nr);
-
-	for (i = 0; i < cels_nr; i++) {
-		result->cels[i] = gfxr_draw_cel1(id, loop, i, mirrored, resource_base, seeker, size, view, 0, true);
-		seeker += bytes_per_cel;
-	}
-
-	return result;
-}
-
-gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size) {
-	gfxr_view_t *view;
-	int header_size = READ_LE_UINT16(resource + V2_HEADER_SIZE);
-	int palette_offset = READ_LE_UINT16(resource + V2_PALETTE_OFFSET);
-	int bytes_per_loop = resource[V2_BYTES_PER_LOOP];
-	int loops_num = resource[V2_LOOPS_NUM];
-	int bytes_per_cel = resource[V2_BYTES_PER_CEL];
-	int i;
-	byte *seeker;
-
-	view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
-
-	memset(view, 0, sizeof(gfxr_view_t));
-	view->ID = id;
-	view->flags = 0;
-
-	view->loops_nr = loops_num;
 	view->loops = (gfxr_loop_t *)calloc(view->loops_nr, sizeof(gfxr_loop_t));
 
-	if (palette_offset > 0) {
-		// There is no indication of size here, but this is certainly large enough
-		view->palette = gfxr_read_pal11(id, resource + palette_offset, 1284);
-	} else {
-		// View has no palette
-		view->palette = NULL;
-	}
+	for (int i = 0; i < view->loops_nr; i++) {
+		if (!isSci11) {
+			bool mirrored = READ_LE_UINT16(resource + V1_MIRROR_MASK) & (1 << i);
+			loopOffset = READ_LE_UINT16(resource + V1_FIRST_LOOP_OFFSET + (i << 1));
+			view->loops[i].cels_nr = READ_LE_UINT16(resource + loopOffset);
+			view->loops[i].cels = (gfx_pixmap_t**)calloc(view->loops[i].cels_nr, sizeof(gfx_pixmap_t *));
 
-	seeker = resource + header_size;
-	for (i = 0; i < view->loops_nr; i++) {
-		int loop_offset = READ_LE_UINT16(seeker + V2_LOOP_OFFSET);
-		int cels = seeker[V2_CELS_NUM];
-		// int mirrored = seeker[V2_IS_MIRROR];
-		int copy_entry = seeker[V2_COPY_OF_LOOP];
+			for (int j = 0; j < view->loops[i].cels_nr; j++) {
+				int cel_offset = READ_LE_UINT16(resource + loopOffset + 4 + (j << 1));
+				view->loops[i].cels[j] = gfxr_draw_cel1(id, i, j, mirrored, 
+														resource + cel_offset, 
+														resource + cel_offset, 
+														size - cel_offset, 
+														view, amiga_game, false);
+			}
+		} else {
+			byte copy_entry = seeker[V2_COPY_OF_LOOP];
+			bool mirrored = (copy_entry != 255);
+			byte *buf = !mirrored ? seeker : resource + headerSize + copy_entry * resource[V2_BYTES_PER_LOOP];
+			loopOffset = READ_LE_UINT16(buf + V2_LOOP_OFFSET);
+			view->loops[i].cels_nr = buf[V2_CELS_NUM];
+			view->loops[i].cels = (gfx_pixmap_t**)calloc(view->loops[i].cels_nr, sizeof(gfx_pixmap_t *));
 
-		if (copy_entry == 255)
-			gfxr_draw_loop11(id, i, 0, resource, resource + loop_offset, size, cels, view->loops + i,
-			                 view, bytes_per_cel);
-		else {
-			byte *temp = resource + header_size + copy_entry * bytes_per_loop;
-			loop_offset = READ_LE_UINT16(temp + V2_LOOP_OFFSET);
-			cels = temp[V2_CELS_NUM];
-			gfxr_draw_loop11(id, i, 1, resource, resource + loop_offset, size, cels,
-			                 view->loops + i, view, bytes_per_cel);
+			byte* cellSeeker = resource + loopOffset;
+			for (int j = 0; j < view->loops[i].cels_nr; j++) {
+				view->loops[i].cels[j] = gfxr_draw_cel1(id, i, j, mirrored, resource, cellSeeker, size, view, 0, true);
+				cellSeeker += resource[V2_BYTES_PER_CEL];
+			}
+
+			seeker += resource[V2_BYTES_PER_LOOP];
 		}
-
-		seeker += bytes_per_loop;
 	}
 
 	return view;

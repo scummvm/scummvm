@@ -499,8 +499,6 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 	return pic;
 }
 
-gfxr_view_t *gfxr_draw_view11(int id, byte *resource, int size);
-
 gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_VIEW];
 	gfx_resource_t *res = NULL;
@@ -523,9 +521,9 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 		else if (_version == SCI_VERSION_01 || !_isVGA)
 			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, palette);
 		else if (_version >= SCI_VERSION_01_VGA && _version <= SCI_VERSION_1_LATE)
-			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, _staticPalette);
+			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, _staticPalette, false);
 		else if (_version >= SCI_VERSION_1_1)
-			view = gfxr_draw_view11(resid, viewRes->data, viewRes->size);
+			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, 0, true);
 
 		if (_isVGA) {
 			if (!view->palette) {

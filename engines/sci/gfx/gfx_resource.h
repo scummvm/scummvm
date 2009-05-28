@@ -282,7 +282,7 @@ Palette *gfxr_read_pal11(int id, byte *resource, int size);
 ** Returns   : (Palette *) Palette with the colors
 */
 
-gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_pal);
+gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_pal, bool isSci11);
 /* Calculates an SCI1 view
 ** Parameters: (int) id: Resource ID of the view
 **             (byte *) resource: Pointer to the resource to read
