@@ -902,9 +902,6 @@ static void IsActorChoring() {
 }
 
 static void ActorLookAt() {
-	Graphics::Vector3d vector;
-	float rate = 0.0f; // FIXME what should be default ?
-
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object xObj = lua_getparam(2);
 	lua_Object yObj = lua_getparam(3);
@@ -944,6 +941,7 @@ static void ActorLookAt() {
 		else
 			fZ = 0.0f;
 
+		Graphics::Vector3d vector;
 		vector.set(fX, fY, fZ);
 		actor->setLookAtVector(vector);
 	} else if (lua_isuserdata(xObj) && lua_tag(xObj) == MKID_BE('ACTR')) { // look at another actor
