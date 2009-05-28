@@ -128,6 +128,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_currentDirection = 0;
 	_currentBlock = 0;
 	_compassDirection = _compassDirectionIndex = -1;
+	_compassStep = 0;
 	memset(_visibleBlockIndex, 0, sizeof(_visibleBlockIndex));
 
 	_smoothScrollModeNormal = 1;
@@ -148,7 +149,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_levelShapeProperties = 0;
 	_levelShapes = 0;
 	_specialGuiShape = 0;
-	_specialGuiShapeX = _specialGuiShapeY = _specialGuiShapeShadowFlag = 0;
+	_specialGuiShapeX = _specialGuiShapeY = _specialGuiShapeMirrorFlag = 0;
 	_blockDrawingBuffer = 0;
 	_sceneWindowBuffer = 0;
 	memset(_doorShapes, 0, sizeof(_doorShapes));

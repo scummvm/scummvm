@@ -57,6 +57,7 @@ private:
 	Button *_backUpButtonList;
 	bool _buttonListChanged;
 	uint16 _flagsModifier;
+	uint8 _mouseClick;
 
 	int scrollUp(Button *button) { return 0; }
 	int scrollDown(Button *button) { return 0; }

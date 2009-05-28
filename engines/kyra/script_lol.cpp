@@ -1873,11 +1873,11 @@ int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
 		_specialGuiShape = _levelShapes[_levelShapeProperties[_wllShapeMap[stackPos(0)]].shapeIndex[stackPos(1)]];
 		_specialGuiShapeX = stackPos(2);
 		_specialGuiShapeY = stackPos(3);
-		_specialGuiShapeShadowFlag = stackPos(4);
+		_specialGuiShapeMirrorFlag = stackPos(4);
 
 	} else {
 		_specialGuiShape = 0;
-		_specialGuiShapeX = _specialGuiShapeY = _specialGuiShapeShadowFlag = 0;
+		_specialGuiShapeX = _specialGuiShapeY = _specialGuiShapeMirrorFlag = 0;
 	}
 	return 1;
 }

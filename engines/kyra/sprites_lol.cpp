@@ -265,7 +265,7 @@ void LoLEngine::placeMonster(MonsterInPlay *monster, uint16 x, uint16 y) {
 	_levelBlockProperties[monster->block].direction = 5;
 	checkSceneUpdateNeed(monster->block);
 
-	if (monster->properties->sounds[0] == 0 || cont == false)
+	if (monster->properties->sounds[0] == 0 || monster->properties->sounds[0] == 255 || cont == false)
 		return;
 
 	if ((!(monster->properties->flags & 0x100) || ((monster->currentSubFrame & 1) == 0)) && monster->block == t)

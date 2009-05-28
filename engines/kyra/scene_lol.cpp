@@ -2047,7 +2047,7 @@ void LoLEngine::drawSpecialGuiShape(int pageNum) {
 
 	_screen->drawShape(pageNum, _specialGuiShape, _specialGuiShapeX, _specialGuiShapeY, 2, 0);
 
-	if (_specialGuiShapeShadowFlag & 1)
+	if (_specialGuiShapeMirrorFlag & 1)
 		_screen->drawShape(pageNum, _specialGuiShape, _specialGuiShapeX + _specialGuiShape[3], _specialGuiShapeY, 2, 1);
 }
 

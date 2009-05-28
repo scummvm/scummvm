@@ -503,6 +503,7 @@ private:
 
 	void gui_updateInput();
 	void gui_triggerEvent(int eventType);
+	void removeInputTop();
 	void gui_enableDefaultPlayfieldButtons();
 	void gui_enableSequenceButtons(int x, int y, int w, int h, int enableFlags);
 	void gui_specialSceneRestoreButtons();
@@ -1015,7 +1016,7 @@ private:
 	uint8 *_specialGuiShape;
 	uint16 _specialGuiShapeX;
 	uint16 _specialGuiShapeY;
-	uint16 _specialGuiShapeShadowFlag;
+	uint16 _specialGuiShapeMirrorFlag;
 
 	char _lastSuppFile[12];
 	char _lastOverridePalFile[12];

@@ -746,7 +746,7 @@ void LoLEngine::gui_updateInput() {
 
 void LoLEngine::gui_triggerEvent(int eventType) {
 	Common::Event evt;
-	memset(&evt, 0, sizeof(Common::Event));
+	memset(&evt, 0, sizeof(Common::Event));	
 	evt.mouse.x = _mouseX;
 	evt.mouse.y = _mouseY;
 
@@ -811,6 +811,19 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 	removeInputTop();
 	_eventList.push_back(Event(evt, true));
 	_preserveEvents = true;
+}
+
+void LoLEngine::removeInputTop() {
+	if (!_eventList.empty()) {		
+		if (_eventList.begin()->event.type == Common::EVENT_LBUTTONDOWN)
+			_gui->_mouseClick = 1;
+		else if (_eventList.begin()->event.type == Common::EVENT_RBUTTONDOWN)
+			_gui->_mouseClick = 2;
+		else
+			_gui->_mouseClick = 0;
+
+		_eventList.erase(_eventList.begin());
+	}
 }
 
 void LoLEngine::gui_enableDefaultPlayfieldButtons() {
@@ -1814,6 +1827,7 @@ GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollDown);
 	_specialProcessButton = _backUpButtonList = 0;
 	_flagsModifier = 0;
+	_mouseClick = 0;
 	_buttonListChanged = false;
 }
 
@@ -1910,7 +1924,14 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 
 	if (_backUpButtonList != buttonList || _buttonListChanged) {
 		_specialProcessButton = 0;
-		//flagsModifier |= 0x2200;
+
+		_flagsModifier = 0;
+		if (_mouseClick == 1)
+			_flagsModifier |= 0x200;
+		if (_mouseClick == 2)
+			_flagsModifier |= 0x2000;
+		_mouseClick = 0;
+		
 		_backUpButtonList = buttonList;
 		_buttonListChanged = false;
 
