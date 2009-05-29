@@ -284,11 +284,15 @@ public:
 	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 	void loadSoundFile(Common::String file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 
+	void loadSfxFile(Common::String file) { _sfx->loadSoundFile(file); }
+
 	void playTrack(uint8 track) { _music->playTrack(track); }
 	void haltTrack() { _music->haltTrack(); }
 	bool isPlaying() const { return _music->isPlaying() | _sfx->isPlaying(); }
 
 	void playSoundEffect(uint8 track) { _sfx->playSoundEffect(track); }
+
+	void stopAllSoundEffects() { _sfx->stopAllSoundEffects(); }
 
 	void beginFadeOut() { _music->beginFadeOut(); }
 private:
