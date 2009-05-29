@@ -33,6 +33,8 @@
 
 namespace Cruise {
 
+const int SPACE_WIDTH = 4;
+
 /**
  * Determines the line size by finding the highest character in the given font set
  */
@@ -74,7 +76,7 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 		} else if (charData >= 0) {
 			lineLength += wordSpacingWidth + (int16)FROM_LE_16(fontData[charData].charWidth);
 		} else if (ch == ' ') {
-			lineLength += wordSpacingWidth + 5;
+			lineLength += wordSpacingWidth + SPACE_WIDTH;
 			localString = tempPtr;
 		}
 
@@ -246,11 +248,11 @@ int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
 			temp_cc = counter;
 			temp_pc = pixelCount;
 
-			if (pixelCount + wordSpacingWidth + 5 >=
+			if (pixelCount + wordSpacingWidth + SPACE_WIDTH >=
 			        inRightBorder_X) {
 				finish = 1;
 			} else {
-				pixelCount += wordSpacingWidth + 5;
+				pixelCount += wordSpacingWidth + SPACE_WIDTH;
 			}
 		} else {
 			if (character == '|' || !character) {
@@ -407,7 +409,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 
 			if (character) {
 				if (character == ' ' || character == 0x7C) {
-					drawPosPixel_X += wordSpacingWidth + 5;	// if char = "space" adjust word starting postion (don't render space though);
+					drawPosPixel_X += wordSpacingWidth + SPACE_WIDTH;	// if char = "space" adjust word starting postion (don't render space though);
 				} else {
 					if (charData >= 0) {
 						const FontEntry &fe = fontPtr_Desc[charData];
