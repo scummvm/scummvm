@@ -297,7 +297,7 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 		Resource *resource = _vm->getResMgr()->findResource(res, resNum, 0);
 		if (resource) {
 			Common::hexdump(resource->data, resource->size, 16, 0);
-			DebugPrintf("Resource %s.%03d not has been dumped to standard output\n", argv[1], resNum);
+			DebugPrintf("Resource %s.%03d has been dumped to standard output\n", argv[1], resNum);
 		} else {
 			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
 		}
@@ -332,9 +332,9 @@ bool Console::cmdRoomNumber(int argc, const char **argv) {
 }
 
 bool Console::cmdResourceSize(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc != 3) {
 		DebugPrintf("Shows the size of a resource\n");
-		DebugPrintf("Usage: %s <resource number>\n", argv[0]);
+		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
 		return true;
 	}
 
