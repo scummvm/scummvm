@@ -183,7 +183,7 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern += ".???";
 
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
@@ -192,7 +192,7 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				saveDesc = file->c_str();
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));

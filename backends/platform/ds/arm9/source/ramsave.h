@@ -122,11 +122,11 @@ public:
 
 	DSSaveFile *openSavefile(const char *filename, bool saveOrLoad);
 
-	virtual Common::OutSaveFile* openForSaving(const char* filename) { return openSavefile(filename, true); }
-	virtual Common::InSaveFile* openForLoading(const char* filename) { return openSavefile(filename, false); }
+	virtual Common::OutSaveFile* openForSaving(const Common::String &filename) { return openSavefile(filename.c_str(), true); }
+	virtual Common::InSaveFile* openForLoading(const Common::String &filename) { return openSavefile(filename.c_str(), false); }
 
-	virtual bool removeSavefile(const char *filename);
-	virtual Common::StringList listSavefiles(const char *pattern);
+	virtual bool removeSavefile(const Common::String &filename);
+	virtual Common::StringList listSavefiles(const Common::String &pattern);
 
 	void flushToSaveRAM();
 
@@ -144,7 +144,7 @@ public:
 	static void setExtraData(int data);
 
 protected:
-	DSSaveFile *makeSaveFile(const char *filename, bool saveOrLoad);
+	DSSaveFile *makeSaveFile(const Common::String &filename, bool saveOrLoad);
 };
 
 #endif

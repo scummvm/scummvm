@@ -286,7 +286,7 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern += ".0??";
 
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
@@ -295,7 +295,7 @@ SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(file->c_str() + file->size() - 2);
 
 		if (slotNum >= 0 && slotNum <= 99) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				Common::String saveDesc = in->readLine();
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
@@ -316,7 +316,7 @@ void ParallactionMetaEngine::removeSaveState(const char *target, int slot) const
 	Common::String filename = target;
 	filename += extension;
 
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PARALLACTION)

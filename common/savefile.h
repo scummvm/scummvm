@@ -110,21 +110,21 @@ public:
 	 * @param name	the name of the savefile
 	 * @return pointer to an OutSaveFile, or NULL if an error occured.
 	 */
-	virtual OutSaveFile *openForSaving(const char *name) = 0;
+	virtual OutSaveFile *openForSaving(const String &name) = 0;
 
 	/**
 	 * Open the file with the specified name in the given directory for loading.
 	 * @param name	the name of the savefile
 	 * @return pointer to an InSaveFile, or NULL if an error occured.
 	 */
-	virtual InSaveFile *openForLoading(const char *name) = 0;
+	virtual InSaveFile *openForLoading(const String &name) = 0;
 
 	/**
 	 * Removes the given savefile from the system.
 	 * @param name the name of the savefile to be removed.
 	 * @return true if no error occurred, false otherwise.
 	 */
-	virtual bool removeSavefile(const char *name) = 0;
+	virtual bool removeSavefile(const String &name) = 0;
 
 	/**
 	 * Renames the given savefile.
@@ -132,7 +132,7 @@ public:
 	 * @param newName New name.
 	 * @return true if no error occurred. false otherwise.
 	 */
-	virtual bool renameSavefile(const char *oldName, const char *newName);
+	virtual bool renameSavefile(const String &oldName, const String &newName);
 
 	/**
 	 * Request a list of available savegames with a given DOS-style pattern,
@@ -142,7 +142,7 @@ public:
 	 * @return list of strings for all present file names.
 	 * @see Common::matchString()
 	 */
-	virtual Common::StringList listSavefiles(const char *pattern) = 0;
+	virtual StringList listSavefiles(const String &pattern) = 0;
 };
 
 } // End of namespace Common

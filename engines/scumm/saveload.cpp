@@ -158,7 +158,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	} else {
 		filename = makeSavegameName(slot, compat);
 	}
-	if (!(out = _saveFileMan->openForSaving(filename.c_str())))
+	if (!(out = _saveFileMan->openForSaving(filename)))
 		return false;
 
 	saveFailed = false;
@@ -222,7 +222,7 @@ bool ScummEngine_v4::savePreparedSavegame(int slot, char *desc) {
 	// open savegame file
 	if (success) {
 		filename = makeSavegameName(slot, false);
-		if (!(out = _saveFileMan->openForSaving(filename.c_str()))) {
+		if (!(out = _saveFileMan->openForSaving(filename))) {
 			success = false;
 		}
 	}
@@ -284,7 +284,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	} else {
 		filename = makeSavegameName(slot, compat);
 	}
-	if (!(in = _saveFileMan->openForLoading(filename.c_str())))
+	if (!(in = _saveFileMan->openForLoading(filename)))
 		return false;
 
 	if (!loadSaveGameHeader(in, hdr)) {
@@ -562,7 +562,7 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 	prefix.setChar('*', prefix.size()-2);
 	prefix.setChar(0, prefix.size()-1);
 	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
-	files = _saveFileMan->listSavefiles(prefix.c_str());
+	files = _saveFileMan->listSavefiles(prefix);
 
 	for (Common::StringList::const_iterator file = files.begin(); file != files.end(); ++file) {
 		//Obtain the last 2 digits of the filename, since they correspond to the save slot
@@ -584,7 +584,7 @@ bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
 
 	desc.clear();
 	Common::String filename = makeSavegameName(slot, false);
-	in = _saveFileMan->openForLoading(filename.c_str());
+	in = _saveFileMan->openForLoading(filename);
 	if (in) {
 		result = Scumm::getSavegameName(in, desc, _game.heversion);
 		delete in;
@@ -626,7 +626,7 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int sl
 		return  0;
 
 	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename.c_str()))) {
+	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
 		return 0;
 	}
 
@@ -664,7 +664,7 @@ bool ScummEngine::loadInfosFromSlot(const char *target, int slot, InfoStuff *stu
 		return  0;
 
 	Common::String filename = makeSavegameName(target, slot, false);
-	if (!(in = g_system->getSavefileManager()->openForLoading(filename.c_str()))) {
+	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
 		return false;
 	}
 

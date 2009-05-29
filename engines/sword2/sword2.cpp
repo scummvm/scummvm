@@ -188,7 +188,7 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern += ".???";
 
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
@@ -197,7 +197,7 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				in->readUint32LE();
 				in->read(saveDesc, SAVE_DESCRIPTION_LEN);
@@ -219,7 +219,7 @@ void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += extension;
 
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) const {

@@ -1192,7 +1192,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	pattern += ".???";
 
 	Common::StringList filenames;
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	filenames = saveFileMan->listSavefiles(pattern);
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
@@ -1201,7 +1201,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				if (Kyra::KyraEngine_v1::readSaveHeader(in, false, header) == Kyra::KyraEngine_v1::kRSHENoError) {
 					// Workaround for old savegames using 'German' as description for kyra3 start savegame (slot 0)
@@ -1226,12 +1226,12 @@ void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
 		return;
 
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Kyra::KyraEngine_v1::getSavegameFilename(target, slot);
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (in) {
 		Kyra::KyraEngine_v1::SaveHeader header;

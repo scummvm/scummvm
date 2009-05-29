@@ -116,7 +116,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 
 	if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
 		// Try to open file, abort if not possible
-		inFile = saveFileMan->openForLoading(wrappedName.c_str());
+		inFile = saveFileMan->openForLoading(wrappedName);
 		// If no matching savestate exists: fall back to reading from a regular file
 		if (!inFile)
 			inFile = SearchMan.createReadStreamForMember(filename);
@@ -124,7 +124,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 			warning("file_open(_K_FILE_MODE_OPEN_OR_FAIL) failed to open file '%s'", filename);
 	} else if (mode == _K_FILE_MODE_CREATE) {
 		// Create the file, destroying any content it might have had
-		outFile = saveFileMan->openForSaving(wrappedName.c_str());
+		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
 			warning("file_open(_K_FILE_MODE_CREATE) failed to create file '%s'", filename);
 	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
@@ -331,7 +331,7 @@ void delete_savegame(EngineState *s, int savedir_nr) {
 	sciprintf("Deleting savegame '%s'\n", filename.c_str());
 
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	saveFileMan->removeSavefile(filename.c_str());
+	saveFileMan->removeSavefile(filename);
 }
 
 enum {
@@ -444,12 +444,12 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
 	// Load all saves
-	Common::StringList saveNames = saveFileMan->listSavefiles(((SciEngine *)g_engine)->getSavegamePattern().c_str());
+	Common::StringList saveNames = saveFileMan->listSavefiles(((SciEngine *)g_engine)->getSavegamePattern());
 
 	for (Common::StringList::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
 		Common::String filename = *iter;
 		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename.c_str()))) {
+		if ((in = saveFileMan->openForLoading(filename))) {
 			SavegameMetadata meta;
 			if (!get_savegame_metadata(in, &meta)) {
 				// invalid
@@ -490,7 +490,7 @@ reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
 	Common::SeekableReadStream *in;
-	if ((in = saveFileMan->openForLoading(filename.c_str()))) {
+	if ((in = saveFileMan->openForLoading(filename))) {
 		// found a savegame file
 
 		SavegameMetadata meta;
@@ -525,7 +525,7 @@ reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	for (uint i = 0; i < saves.size(); i++) {
 		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(saves[i].id);
 		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename.c_str()))) {
+		if ((in = saveFileMan->openForLoading(filename))) {
 			// found a savegame file
 
 			SavegameMetadata meta;
@@ -605,7 +605,7 @@ reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_id);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out;
-	if (!(out = saveFileMan->openForSaving(filename.c_str()))) {
+	if (!(out = saveFileMan->openForSaving(filename))) {
 		warning("Error opening savegame \"%s\" for writing", filename.c_str());
 		s->r_acc = NULL_REG;
 		return NULL_REG;
@@ -646,7 +646,7 @@ reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
 		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename.c_str()))) {
+		if ((in = saveFileMan->openForLoading(filename))) {
 			// found a savegame file
 
 			EngineState *newstate = gamestate_restore(s, in);
@@ -781,7 +781,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 		const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(name);
-		saveFileMan->removeSavefile(wrappedName.c_str());
+		saveFileMan->removeSavefile(wrappedName);
 		// TODO/FIXME: Should we return something (like, a bool indicating
 		// whether deleting the save succeeded or failed)?
 		break;

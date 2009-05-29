@@ -193,7 +193,7 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern += ".s??";
 
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
@@ -203,7 +203,7 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 		slotNum = atoi(file->c_str() + file->size() - 2);
 
 		if (slotNum >= 0 && slotNum <= 99) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				for (int i = 0; i < 3; i++)
 					in->readUint32BE();
@@ -226,7 +226,7 @@ void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += extension;
 
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

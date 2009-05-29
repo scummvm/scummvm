@@ -309,7 +309,7 @@ int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) 
 	int i;
 
 	const Common::String pattern = target +  ".???";
-	Common::StringList files = saveFileMan->listSavefiles(pattern.c_str());
+	Common::StringList files = saveFileMan->listSavefiles(pattern);
 
 	numSfiles = 0;
 
@@ -318,7 +318,7 @@ int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) 
 			break;
 
 		const Common::String &fname = *file;
-		Common::InSaveFile *f = saveFileMan->openForLoading(fname.c_str());
+		Common::InSaveFile *f = saveFileMan->openForLoading(fname);
 		if (f == NULL) {
 			continue;
 		}

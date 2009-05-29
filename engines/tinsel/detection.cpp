@@ -569,7 +569,7 @@ extern bool MoviePlaying();
 SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern = pattern + ".???";
-	Common::StringList files = g_system->getSavefileManager()->listSavefiles(pattern.c_str());
+	Common::StringList files = g_system->getSavefileManager()->listSavefiles(pattern);
 	sort(files.begin(), files.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
@@ -579,7 +579,7 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 		slotNum = atoi(file->c_str() + file->size() - 3);
 
 		const Common::String &fname = *file;
-		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fname.c_str());
+		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fname);
 		if (in) {
 			in->readUint32LE();		// skip id
 			in->readUint32LE();		// skip size

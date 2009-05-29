@@ -144,7 +144,7 @@ GBAMPSaveFileManager::~GBAMPSaveFileManager() {
 
 }
 
-GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrLoad) {
+GBAMPSaveFile *GBAMPSaveFileManager::openSavefile(const char *name, bool saveOrLoad) {
 	char fileSpec[128];
 
 	strcpy(fileSpec, getSavePath());
@@ -156,7 +156,7 @@ GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrL
 	}
 
 //	consolePrintf("Opening the file: %s\n", fileSpec);
-	GBAMPSaveFile* sf = new GBAMPSaveFile(fileSpec, saveOrLoad);
+	GBAMPSaveFile *sf = new GBAMPSaveFile(fileSpec, saveOrLoad);
 	if (sf->isOpen()) {
 //		consolePrintf("Ok");
 		return sf;
@@ -180,7 +180,7 @@ const char *GBAMPSaveFileManager::getSavePath() const {
 	return dir;
 }
 
-Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
+Common::StringList GBAMPSaveFileManager::listSavefiles(const Common::String &pattern) {
 
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	char name[256];
@@ -225,7 +225,7 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 			}
 
 
-			if (Common::matchString(name, pattern)) {
+			if (Common::matchString(name, pattern.c_str())) {
 				list.push_back(name);
 			}
 		}
@@ -236,5 +236,3 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) {
 
 	return list;
 }
-
-

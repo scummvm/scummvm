@@ -210,7 +210,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		ext.toUppercase();
 		if (isdigit(ext[0]) && isdigit(ext[1]) && isdigit(ext[2])){
 			int slotNum = atoi(ext.c_str());
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum]));
 				delete in;

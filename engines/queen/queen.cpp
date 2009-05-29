@@ -141,7 +141,7 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	char saveDesc[32];
 	Common::String pattern("queen.s??");
 
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
@@ -150,7 +150,7 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(file->c_str() + file->size() - 2);
 
 		if (slotNum >= 0 && slotNum <= 99) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				for (int i = 0; i < 4; i++)
 					in->readUint32BE();
@@ -171,7 +171,7 @@ void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
 	filename += extension;
 
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) const {

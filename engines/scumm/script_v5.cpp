@@ -1756,7 +1756,7 @@ void ScummEngine_v5::o5_roomOps() {
 				error("SO_SAVE_STRING: Unsupported filename %s\n", filename.c_str());
 			}
 
-			Common::OutSaveFile *file = _saveFileMan->openForSaving(filename.c_str());
+			Common::OutSaveFile *file = _saveFileMan->openForSaving(filename);
 			if (file != NULL) {
 				byte *ptr;
 				ptr = getResourceAddress(rtString, a);
@@ -1781,7 +1781,7 @@ void ScummEngine_v5::o5_roomOps() {
 				error("SO_LOAD_STRING: Unsupported filename %s\n", filename.c_str());
 			}
 
-			Common::InSaveFile *file = _saveFileMan->openForLoading(filename.c_str());
+			Common::InSaveFile *file = _saveFileMan->openForLoading(filename);
 			if (file != NULL) {
 				byte *ptr;
 				int len = 256, cnt = 0;

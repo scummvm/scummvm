@@ -230,7 +230,7 @@ void GroovieMetaEngine::removeSaveState(const char *target, int slot) const {
 	}
 
 	Common::String filename = SaveLoad::getSlotSaveName(target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor GroovieMetaEngine::querySaveMetaInfos(const char *target, int slot) const {

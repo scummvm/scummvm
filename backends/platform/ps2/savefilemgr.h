@@ -37,10 +37,10 @@ public:
 	Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen);
 	virtual ~Ps2SaveFileManager();
 
-	virtual Common::InSaveFile *openForLoading(const char *filename);
-	virtual Common::OutSaveFile *openForSaving(const char *filename);
-	virtual Common::StringList listSavefiles(const char *regex);
-	virtual bool removeSavefile(const char *filename);
+	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
+	virtual Common::OutSaveFile *openForSaving(const Common::String &filename);
+	virtual Common::StringList listSavefiles(const Common::String &pattern);
+	virtual bool removeSavefile(const Common::String &filename);
 
 	// void writeSaveNonblocking(char *name, void *buf, uint32 size);
 	// void saveThread(void);

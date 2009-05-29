@@ -363,7 +363,7 @@ void ScummEngine_v4::saveIQPoints() {
 	Common::OutSaveFile *file;
 	Common::String filename = _targetName + ".iq";
 
-	file = _saveFileMan->openForSaving(filename.c_str());
+	file = _saveFileMan->openForSaving(filename);
 	if (file != NULL) {
 		byte *ptr = getResourceAddress(rtString, STRINGID_IQ_EPISODE);
 		if (ptr) {
@@ -379,7 +379,7 @@ void ScummEngine_v4::loadIQPoints(byte *ptr, int size) {
 	Common::InSaveFile *file;
 	Common::String filename = _targetName + ".iq";
 
-	file = _saveFileMan->openForLoading(filename.c_str());
+	file = _saveFileMan->openForLoading(filename);
 	if (file != NULL) {
 		byte *tmp = (byte*)malloc(size);
 		int nread = file->read(tmp, size);
@@ -464,7 +464,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 
 		listSavegames(avail_saves, ARRAYSIZE(avail_saves));
 		Common::String filename = makeSavegameName(slot, false);
-		if (avail_saves[slot] && (file = _saveFileMan->openForLoading(filename.c_str()))) {
+		if (avail_saves[slot] && (file = _saveFileMan->openForLoading(filename))) {
 			result = 6; // save file exists
 			delete file;
 		} else

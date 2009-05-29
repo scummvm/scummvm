@@ -50,7 +50,7 @@ SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 
 	// Get the list of savefiles
 	Common::String pattern = target + ".00?";
-	Common::StringList savefiles = g_system->getSavefileManager()->listSavefiles(pattern.c_str());
+	Common::StringList savefiles = g_system->getSavefileManager()->listSavefiles(pattern);
 
 	// Sort the list of filenames
 	sort(savefiles.begin(), savefiles.end());
@@ -80,7 +80,7 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 
 	// Open the savefile
 	Common::String savename = getSlotSaveName(target, slot);
-	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(savename.c_str());
+	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(savename);
 	if (!savefile) {
 		return NULL;
 	}
@@ -154,7 +154,7 @@ Common::OutSaveFile *SaveLoad::openForSaving(const Common::String &target, int s
 
 	// Open the savefile
 	Common::String savename = getSlotSaveName(target, slot);
-	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(savename.c_str());
+	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(savename);
 	if (!savefile) {
 		return NULL;
 	}

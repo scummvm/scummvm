@@ -88,12 +88,12 @@ Common::String SaveLoad::genSaveFileName(uint slot) {
 
 Common::InSaveFile *SaveLoad::getInSaveFile(uint slot) {
 	Common::String name = genSaveFileName(slot);
-	return _saveFileMan->openForLoading(name.c_str());
+	return _saveFileMan->openForLoading(name);
 }
 
 Common::OutSaveFile *SaveLoad::getOutSaveFile(uint slot) {
 	Common::String name = genSaveFileName(slot);
-	return _saveFileMan->openForSaving(name.c_str());
+	return _saveFileMan->openForSaving(name);
 }
 
 
@@ -307,7 +307,7 @@ void SaveLoadChooser::reflowLayout() {
 
 int SaveLoad::buildSaveFileList(Common::StringList& l) {
 	Common::String pattern = _saveFilePrefix + ".???";
-	Common::StringList filenames = _saveFileMan->listSavefiles(pattern.c_str());
+	Common::StringList filenames = _saveFileMan->listSavefiles(pattern);
 
 	Common::String s;
 
@@ -439,7 +439,7 @@ void SaveLoad_ns::renameOldSavefiles() {
 	for (i = 0; i < NUM_SAVESLOTS; i++) {
 		exists[i] = false;
 		Common::String name = genOldSaveFileName(i);
-		Common::InSaveFile *f = _saveFileMan->openForLoading(name.c_str());
+		Common::InSaveFile *f = _saveFileMan->openForLoading(name);
 		if (f) {
 			exists[i] = true;
 			num++;
@@ -468,7 +468,7 @@ void SaveLoad_ns::renameOldSavefiles() {
 		if (exists[i]) {
 			Common::String oldName = genOldSaveFileName(i);
 			Common::String newName = genSaveFileName(i);
-			if (_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str())) {
+			if (_saveFileMan->renameSavefile(oldName, newName)) {
 				success++;
 			} else {
 				warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError(),

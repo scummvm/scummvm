@@ -569,13 +569,13 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 	Common::String pattern = target;
 	pattern += ".?";
-	Common::StringList filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::StringList filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());
 	Common::StringList::const_iterator file = filenames.begin();
 
 	Common::String filename = target;
 	filename += ".dir";
-	Common::InSaveFile *in = saveFileMan->openForLoading(filename.c_str());
+	Common::InSaveFile *in = saveFileMan->openForLoading(filename);
 	if (in) {
 		int8 ch;
 		char saveDesc[20];

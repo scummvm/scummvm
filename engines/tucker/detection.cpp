@@ -164,7 +164,7 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::String pattern = Tucker::generateGameStateFileName(target, 0, true);
-		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern.c_str());
+		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 		bool slotsTable[Tucker::kLastSaveSlot + 1];
 		memset(slotsTable, 0, sizeof(slotsTable));
 		SaveStateList saveList;
@@ -172,7 +172,7 @@ public:
 			int slot;
 			const char *ext = strrchr(file->c_str(), '.');
 			if (ext && (slot = atoi(ext + 1)) >= 0 && slot <= Tucker::kLastSaveSlot) {
-				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(file->c_str());
+				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 				if (in) {
 					slotsTable[slot] = true;
 					delete in;
@@ -195,7 +195,7 @@ public:
 
 	virtual void removeSaveState(const char *target, int slot) const {
 		Common::String filename = Tucker::generateGameStateFileName(target, slot);
-		g_system->getSavefileManager()->removeSavefile(filename.c_str());
+		g_system->getSavefileManager()->removeSavefile(filename);
 	}
 };
 

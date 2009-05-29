@@ -791,7 +791,7 @@ bool Control::restoreFromFile(void) {
 void Control::readSavegameDescriptions(void) {
 	char saveName[40];
 	Common::String pattern = "sword1.???";
-	Common::StringList filenames = _saveFileMan->listSavefiles(pattern.c_str());
+	Common::StringList filenames = _saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	_saveNames.clear();
@@ -809,7 +809,7 @@ void Control::readSavegameDescriptions(void) {
 
 		if (slotNum >= 0 && slotNum <= 999) {
 			num++;
-			Common::InSaveFile *in = _saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = _saveFileMan->openForLoading(*file);
 			if (in) {
 				in->readUint32LE();	// header
 				in->read(saveName, 40);
@@ -847,7 +847,7 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 
 bool Control::savegamesExist(void) {
 	Common::String pattern = "sword1.???";
-	Common::StringList saveNames = _saveFileMan->listSavefiles(pattern.c_str());
+	Common::StringList saveNames = _saveFileMan->listSavefiles(pattern);
 	return saveNames.size() > 0;
 }
 

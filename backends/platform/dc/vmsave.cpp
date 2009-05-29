@@ -318,13 +318,13 @@ public:
 class VMSaveManager : public Common::SaveFileManager {
 public:
 
-  virtual Common::OutSaveFile *openForSaving(const char *filename) {
-	return Common::wrapCompressedWriteStream(new OutVMSave(filename));
+  virtual Common::OutSaveFile *openForSaving(const Common::String &filename) {
+	return Common::wrapCompressedWriteStream(new OutVMSave(filename.c_str()));
   }
 
-  virtual Common::InSaveFile *openForLoading(const char *filename) {
+  virtual Common::InSaveFile *openForLoading(const Common::String &filename) {
 	InVMSave *s = new InVMSave();
-	if (s->readSaveGame(filename)) {
+	if (s->readSaveGame(filename.c_str())) {
 	  return Common::wrapCompressedReadStream(s);
 	} else {
 	  delete s;
@@ -332,11 +332,11 @@ public:
 	}
   }
 
-  virtual bool removeSavefile(const char *filename) {
-	return ::deleteSaveGame(filename);
+  virtual bool removeSavefile(const Common::String &filename) {
+	return ::deleteSaveGame(filename.c_str());
   }
 
-  virtual Common::StringList listSavefiles(const char *glob);
+  virtual Common::StringList listSavefiles(const Common::String &pattern);
 };
 
 void OutVMSave::finalize()
@@ -421,12 +421,12 @@ uint32 OutVMSave::write(const void *buf, uint32 cnt)
 }
 
 
-Common::StringList VMSaveManager::listSavefiles(const char *glob)
+Common::StringList VMSaveManager::listSavefiles(const Common::String &pattern)
 {
   Common::StringList list;
 
   for (int i=0; i<24; i++)
-    tryList(glob, i, list);
+    tryList(pattern.c_str(), i, list);
 
   return list;
 }

@@ -727,7 +727,7 @@ int GUI_v2::deleteMenu(Button *caller) {
 			break;
 		Common::String oldName = _vm->getSavegameFilename(*i);
 		Common::String newName = _vm->getSavegameFilename(*i-1);
-		_vm->_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str());
+		_vm->_saveFileMan->renameSavefile(oldName, newName);
 	}
 	_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 9 : 17;
 	return 0;

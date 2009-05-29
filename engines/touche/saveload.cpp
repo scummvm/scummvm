@@ -324,7 +324,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 Common::Error ToucheEngine::saveGameState(int num, const char *description) {
 	bool saveOk = false;
 	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
-	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName.c_str());
+	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);
 	if (f) {
 		f->writeUint16LE(kCurrentGameStateVersion);
 		f->writeUint16LE(0);
@@ -347,7 +347,7 @@ Common::Error ToucheEngine::saveGameState(int num, const char *description) {
 Common::Error ToucheEngine::loadGameState(int num) {
 	bool loadOk = false;
 	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
-	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName.c_str());
+	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName);
 	if (f) {
 		uint16 version = f->readUint16LE();
 		if (version < kCurrentGameStateVersion) {

@@ -358,9 +358,9 @@ void DSSaveFileManager::listFiles() {
 
 DSSaveFileManager* DSSaveFileManager::instancePtr = NULL;
 
-DSSaveFile *DSSaveFileManager::openSavefile(const char* filename, bool saveOrLoad) {
+DSSaveFile *DSSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
 	for (int r = 0; r < 8; r++) {
-		if (gbaSave[r].isValid() && (gbaSave[r].matches((char *) filename))) {
+		if (gbaSave[r].isValid() && (gbaSave[r].matches(filename))) {
 //			consolePrintf("Matched save %d (%d)\n", r, gbaSave[r].getSize());
 			gbaSave[r].reset();
 			//consolePrintf("reset ");
@@ -384,17 +384,17 @@ DSSaveFile* DSSaveFile::clone() {
 	return new DSSaveFile(&save, saveCompressed, saveData);
 }
 
-void DSSaveFileManager::deleteFile(char* name) {
+void DSSaveFileManager::deleteFile(const char* name) {
 //	consolePrintf("Deleting %s", name);
 	for (int r = 0; r < 8; r++) {
-		if (gbaSave[r].isValid() && (gbaSave[r].matches((char *) name))) {
+		if (gbaSave[r].isValid() && (gbaSave[r].matches(name))) {
 			gbaSave[r].deleteFile();
 		}
 	}
 	flushToSaveRAM();
 }
 
-bool DSSaveFileManager::removeSavefile(const char *filename) {
+bool DSSaveFileManager::removeSavefile(const Common::String &filename) {
 	consolePrintf("DSSaveFileManager::removeSavefile : Not implemented yet.\n");
 	assert(false);
 	//TODO: Implement this. Most likely, you just have to use the code of deleteFile?
@@ -402,7 +402,7 @@ bool DSSaveFileManager::removeSavefile(const char *filename) {
 }
 
 
-Common::StringList DSSaveFileManager::listSavefiles(const char *pattern) {
+Common::StringList DSSaveFileManager::listSavefiles(const Common::String &pattern) {
 	consolePrintf("DSSaveFileManager::listSavefiles : Not implemented yet.\n");
 	assert(false);
 	return Common::StringList();
@@ -424,7 +424,7 @@ void DSSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) 
 
 	for (int saveNum = 0; saveNum < num; saveNum++) {
 		for (int r = 0; r < 8; r++) {
-			if (gbaSave[r].isValid() && (gbaSave[r].matches((char *) prefix, saveNum))) {
+			if (gbaSave[r].isValid() && (gbaSave[r].matches(prefix, saveNum))) {
 				marks[saveNum] = true;
 			}
 		}

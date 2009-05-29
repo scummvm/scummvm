@@ -994,7 +994,7 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = target;
 	pattern += ".s??";
 
-	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
@@ -1003,7 +1003,7 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(file->c_str() + file->size() - 2);
 
 		if (slotNum >= 0 && slotNum <= 99) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				Scumm::getSavegameName(in, saveDesc, 0);	// FIXME: heversion?!?
 				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
@@ -1017,12 +1017,12 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 
 void ScummMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
-	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (!in)
 		return SaveStateDescriptor();

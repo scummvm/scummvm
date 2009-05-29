@@ -221,7 +221,7 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 		slotNum = atoi(file->c_str() + file->size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 999) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				in->readUint32LE();	// header
 				in->read(saveName, 40);

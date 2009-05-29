@@ -66,13 +66,13 @@ public:
 
 	GBAMPSaveFile *openSavefile(const char *filename, bool saveOrLoad);
 
-	virtual Common::OutSaveFile* openForSaving(const char* filename) { return openSavefile(filename, true); }
-	virtual Common::InSaveFile* openForLoading(const char* filename) { return openSavefile(filename, false); }
+	virtual Common::OutSaveFile* openForSaving(const Common::String &filename) { return openSavefile(filename.c_str(), true); }
+	virtual Common::InSaveFile* openForLoading(const Common::String &filename) { return openSavefile(filename.c_str(), false); }
 
-	virtual bool removeSavefile(const char *filename) { return false; } // TODO: Implement this
-	virtual Common::StringList listSavefiles(const char *pattern);
+	virtual bool removeSavefile(const Common::String &filename) { return false; } // TODO: Implement this
+	virtual Common::StringList listSavefiles(const Common::String &pattern);
 
-	void deleteFile(char* name);
+	void deleteFile(const Common::String &name);
 	void listFiles();
 
 	const char *getSavePath() const;

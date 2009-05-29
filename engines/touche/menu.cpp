@@ -377,11 +377,11 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 						menuData.saveLoadDescriptionsTable[i][0] = 0;
 					}
 					Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), 0, true);
-					Common::StringList filenames = _saveFileMan->listSavefiles(gameStateFileName.c_str());
+					Common::StringList filenames = _saveFileMan->listSavefiles(gameStateFileName);
 					for (Common::StringList::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
 						int i = getGameStateFileSlot(it->c_str());
 						if (i >= 0 && i < kMaxSaveStates) {
-							Common::InSaveFile *f = _saveFileMan->openForLoading(it->c_str());
+							Common::InSaveFile *f = _saveFileMan->openForLoading(*it);
 							if (f) {
 								readGameStateDescription(f, menuData.saveLoadDescriptionsTable[i], 32);
 								delete f;

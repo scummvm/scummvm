@@ -298,7 +298,7 @@ int GUI::redrawShadedButtonCallback(Button *button) {
 
 void GUI::updateSaveList() {
 	Common::String pattern = _vm->_targetName + ".???";
-	Common::StringList saveFileList = _vm->_saveFileMan->listSavefiles(pattern.c_str());
+	Common::StringList saveFileList = _vm->_saveFileMan->listSavefiles(pattern);
 	_saveSlots.clear();
 
 	for (Common::StringList::const_iterator i = saveFileList.begin(); i != saveFileList.end(); ++i) {

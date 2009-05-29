@@ -168,7 +168,7 @@ bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 
 SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = Touche::generateGameStateFileName(target, 0, true);
-	Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern.c_str());
+	Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 	bool slotsTable[Touche::kMaxSaveStates];
 	memset(slotsTable, 0, sizeof(slotsTable));
 	SaveStateList saveList;
@@ -181,7 +181,7 @@ SaveStateList ToucheMetaEngine::listSaves(const char *target) const {
 	for (int slot = 0; slot < Touche::kMaxSaveStates; ++slot) {
 		if (slotsTable[slot]) {
 			Common::String file = Touche::generateGameStateFileName(target, slot);
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(file.c_str());
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(file);
 			if (in) {
 				char description[64];
 				Touche::readGameStateDescription(in, description, sizeof(description) - 1);
@@ -201,7 +201,7 @@ int ToucheMetaEngine::getMaximumSaveSlot() const {
 
 void ToucheMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = Touche::generateGameStateFileName(target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TOUCHE)

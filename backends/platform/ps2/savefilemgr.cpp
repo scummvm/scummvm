@@ -82,7 +82,7 @@ void Ps2SaveFileManager::mcSplit(char *full, char *game, char *ext) {
 	// TODO
 }
 
-Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
+Common::InSaveFile *Ps2SaveFileManager::openForLoading(const Common::String &filename) {
 	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
 	Common::SeekableReadStream *sf;
 
@@ -93,33 +93,35 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 
 	if (_getDev(savePath) == MC_DEV) {
 	// if (strncmp(savePath.getPath().c_str(), "mc0:", 4) == 0) {
-		char *game=0, *ext=0, path[32], temp[32];
+		char path[32];
 
 		// FIXME : hack for indy4 iq-points
-		if (strcmp(filename, "iq-points") == 0) {
+		if (filename == "iq-points") {
 			mcCheck("mc0:ScummVM/indy4");
 			sprintf(path, "mc0:ScummVM/indy4/iq-points");
 		}
 		// FIXME : hack for bs1 saved games
-		else if (strcmp(filename, "SAVEGAME.INF") == 0) {
+		else if (filename == "SAVEGAME.INF") {
 			mcCheck("mc0:ScummVM/sword1");
 			sprintf(path, "mc0:ScummVM/sword1/SAVEGAME.INF");
 		}
 		else {
-			printf("MC : filename = %s\n", filename);
-			strcpy(temp, filename);
+			char temp[32];
+			printf("MC : filename = %s\n", filename.c_str());
+			strcpy(temp, filename.c_str());
 
 			// mcSplit(temp, game, ext);
-			game = strdup(strtok(temp, "."));
-			ext = strdup(strtok(NULL, "*"));
+			char *game = strdup(strtok(temp, "."));
+			char *ext = strdup(strtok(NULL, "*"));
 			sprintf(path, "mc0:ScummVM/%s", game); // per game path
 
 			// mcCheck(path); // needed on load ?
 			sprintf(path, "mc0:ScummVM/%s/%s.sav", game, ext);
+
+			free(game);
+			free(ext);
 		}
 
-        free(game);
-        free(ext);
 
 		Common::FSNode file(path);
 
@@ -142,11 +144,11 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const char *filename) {
 	return Common::wrapCompressedReadStream(sf);
 }
 
-Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
+Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &filename) {
 	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
 	Common::WriteStream *sf;
 
-	printf("openForSaving : %s\n", filename);
+	printf("openForSaving : %s\n", filename.c_str());
 
 	if (!savePath.exists() || !savePath.isDirectory())
 		return NULL;
@@ -155,33 +157,35 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
 
 	if (_getDev(savePath) == MC_DEV) {
 	// if (strncmp(savePath.getPath().c_str(), "mc0:", 4) == 0) {
-		char *game=0, *ext=0, path[32], temp[32];
+		char path[32];
 
 		// FIXME : hack for indy4 iq-points
-		if (strcmp(filename, "iq-points") == 0) {
+		if (filename == "iq-points") {
 			mcCheck("mc0:ScummVM/indy4");
 			sprintf(path, "mc0:ScummVM/indy4/iq-points");
 		}
 		// FIXME : hack for bs1 saved games
-        else if (strcmp(filename, "SAVEGAME.INF") == 0) {
+        else if (filename == "SAVEGAME.INF") {
             mcCheck("mc0:ScummVM/sword1");
             sprintf(path, "mc0:ScummVM/sword1/SAVEGAME.INF");
         }
 		else {
-			strcpy(temp, filename);
+			char temp[32];
+			strcpy(temp, filename.c_str());
 
 			// mcSplit(temp, game, ext);
-			game = strdup(strtok(temp, "."));
-			ext = strdup(strtok(NULL, "*"));
+			char *game = strdup(strtok(temp, "."));
+			char *ext = strdup(strtok(NULL, "*"));
 			sprintf(path, "mc0:ScummVM/%s", game); // per game path
 			mcCheck(path);
 			sprintf(path, "mc0:ScummVM/%s/%s.sav", game, ext);
+
+			free(game);
+			free(ext);
 		}
 
 		Common::FSNode file(path);
 		sf = file.createWriteStream();
-		free(game);
-		free(ext);
 	} else {
 		Common::FSNode file = savePath.getChild(filename);
 		sf = file.createWriteStream();
@@ -191,7 +195,7 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
 	return Common::wrapCompressedWriteStream(sf);
 }
 
-bool Ps2SaveFileManager::removeSavefile(const char *filename) {
+bool Ps2SaveFileManager::removeSavefile(const Common::String &filename) {
 	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
 	Common::FSNode file;
 
@@ -200,12 +204,12 @@ bool Ps2SaveFileManager::removeSavefile(const char *filename) {
 
 	if (_getDev(savePath) == MC_DEV) {
 	// if (strncmp(savePath.getPath().c_str(), "mc0:", 4) == 0) {
-		char *game=0, *ext=0, path[32], temp[32];
-		strcpy(temp, filename);
+		char path[32], temp[32];
+		strcpy(temp, filename.c_str());
 
 		// mcSplit(temp, game, ext);
-		game = strdup(strtok(temp, "."));
-		ext = strdup(strtok(NULL, "*"));
+		char *game = strdup(strtok(temp, "."));
+		char *ext = strdup(strtok(NULL, "*"));
 		sprintf(path, "mc0:ScummVM/%s", game); // per game path
 		mcCheck(path);
 		sprintf(path, "mc0:ScummVM/%s/%s.sav", game, ext);
@@ -224,7 +228,7 @@ bool Ps2SaveFileManager::removeSavefile(const char *filename) {
 	return true;
 }
 
-Common::StringList Ps2SaveFileManager::listSavefiles(const char *pattern) {
+Common::StringList Ps2SaveFileManager::listSavefiles(const Common::String &pattern) {
 	Common::FSNode savePath(ConfMan.get("savepath")); // TODO: is this fast?
 	Common::String _dir;
 	Common::String search;
