@@ -1948,7 +1948,7 @@ bool Inter_v1::o1_strToLong(OpFuncParams &params) {
 
 	strVar = _vm->_parse->parseVarIndex();
 	strncpy0(str, GET_VARO_STR(strVar), 19);
-	res = atol(str);
+	res = atoi(str);
 
 	destVar = _vm->_parse->parseVarIndex();
 	WRITE_VAR_OFFSET(destVar, res);
