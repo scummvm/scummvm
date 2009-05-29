@@ -1433,20 +1433,20 @@ void adlib_getsample(Bit16s* sndptr, Bits numsamples) {
 		if (adlibreg[0x105]&1) {
 			// convert to 16bit samples (stereo)
 			for (i=0;i<endsamples;i++) {
-				clipit16(outbufl[i],sndptr++);
-				clipit16(outbufr[i],sndptr++);
+				clipit16(outbufl[i] * 2,sndptr++);
+				clipit16(outbufr[i] * 2,sndptr++);
 			}
 		} else {
 			// convert to 16bit samples (mono)
 			for (i=0;i<endsamples;i++) {
-				clipit16(outbufl[i],sndptr++);
-				clipit16(outbufl[i],sndptr++);
+				clipit16(outbufl[i] * 2,sndptr++);
+				clipit16(outbufl[i] * 2,sndptr++);
 			}
 		}
 #else
 		// convert to 16bit samples
 		for (i=0;i<endsamples;i++)
-			clipit16(outbufl[i],sndptr++);
+			clipit16(outbufl[i] * 2,sndptr++);
 #endif
 
 	}
