@@ -399,8 +399,9 @@ bool GobEngine::initGameParts() {
 		_saveLoad = new SaveLoad_v4(this, _targetName.c_str());
 		break;
 
-	case kGameTypeArchibald:
-	case kGameTypeSpirou:
+	case kGameTypePlaytoon:
+	case kGameTypePlaytnCk:
+	case kGameTypeBambou:
 	case kGameTypeDynasty:
 		_init = new Init_v3(this);
 		_video = new Video_v2(this);

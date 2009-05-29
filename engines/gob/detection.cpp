@@ -62,12 +62,17 @@ static const PlainGameDescriptor gobGames[] = {
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 	{"dynasty", "The Last Dynasty"},
 	{"urban", "Urban Runner"},
-	{"archibald", "Playtoon 1 - Uncle Archibald"},
-	{"spirou", "Playtoon 2 - Spirou"},
+	{"archi", "Playtoon 1 - Uncle Archibald"},
+	{"spirou", "Playtoon 2 - The counterfeit collaborator"},
+	{"chato", "Playtoon 3 - The Secret of the Castle"},
+	{"manda", "Playtoon 4 - The Mandarine Prince"},
+	{"wakan", "Playtoon 5 - The Stone of Wakan"},
+	{"playtnck2", "Playtoon Construction Kit 2 - Les chevaliers"},
+	{"bambou", "Playtoon Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
 	{"adibou4", "Adibou v4"},
-	{"adibouunknown", "Adibou (not supported)"},
+	{"adibouunknown", "Adibou (not yet supported)"},
 	{0, 0}
 };
 
@@ -2592,33 +2597,41 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"spirou",
+			"archi",
 			"",
-			AD_ENTRY1s("intro2.stk", "5e214cec5041d6a4a810feba8ddaaa92",247576),
-			UNK_LANG,
+			{
+				{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
+				{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
-		kGameTypeSpirou,
+		kGameTypePlaytoon,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
 	{
 		{
-			"archibald",
-			"",
-			AD_ENTRY1s("intro2.stk", "9aa412f5b8a1ee1761cb7b26e97fbd56",247094),
-			UNK_LANG,
-			kPlatformWindows,
+			"archi",
+			"Pack mes histoires animées",
+			{
+				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
+				{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
-		kGameTypeArchibald,
+		kGameTypePlaytoon,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
 	{
 		{
-			"archibald",
+			"archi",
 			"Non-Interactive Demo",
 			{
 				{"play123.scn", 0, "4689a31f543915e488c3bc46ea358add", 258},
@@ -2634,13 +2647,13 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
-		kGameTypeArchibald,
+		kGameTypePlaytoon,
 		kFeatures640 | kFeaturesSCNDemo,
 		0, 0, 3
 	},
 	{
 		{
-			"archibald",
+			"archi",
 			"Non-Interactive Demo",
 			{
 				{"e.scn", 0, "8a0db733c3f77be86e74e8242e5caa61", 124},
@@ -2651,13 +2664,13 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
-		kGameTypeArchibald,
+		kGameTypePlaytoon,
 		kFeatures640 | kFeaturesSCNDemo,
 		0, 0, 4
 	},
 	{
 		{
-			"archibald",
+			"archi",
 			"Non-Interactive Demo",
 			{
 				{"i.scn", 0, "8b3294474d39970463663edd22341730", 285},
@@ -2672,13 +2685,13 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
-		kGameTypeArchibald,
+		kGameTypePlaytoon,
 		kFeatures640 | kFeaturesSCNDemo,
 		0, 0, 5
 	},
 	{
 		{
-			"archibald",
+			"archi",
 			"Non-Interactive Demo",
 			{
 				{"s.scn", 0, "1f527010626b5490761f16ba7a6f639a", 251},
@@ -2692,9 +2705,110 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
-		kGameTypeArchibald,
+		kGameTypePlaytoon,
 		kFeatures640 | kFeaturesSCNDemo,
 		0, 0, 6
+	},
+	{
+		{
+			"spirou",
+			"",
+			{
+				{"playtoon.stk", 0, "55a85036dd93cce93532d8f743d90074", 17467154},
+				{"spirou.stk", 0, "e3e1b6148dd72fafc3637f1a8e5764f5", 9812043},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"chato",
+			"",
+			{
+				{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
+				{"chato.stk", 0, "4fa4ed96a427c344e9f916f9f236598d", 6033793},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"chato",
+			"Pack mes histoires animées",
+			{
+				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
+				{"chato.stk", 0, "4fa4ed96a427c344e9f916f9f236598d", 6033793},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"wakan",
+			"",
+			{
+				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
+				{"wakan.stk", 0, "f493bf82851bc5ba74d57de6b7e88df8", 5520153},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"bambou",
+			"",
+			{
+				{"intro.stk", 0, "2f8db6963ff8d72a8331627ebda918f4", 3613238},
+				{"bambou.itk", 0, "0875914d31126d0749313428f10c7768", 114440192},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeBambou,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"playtnck2",
+			"",
+			{
+				{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
+				{NULL, 0, NULL, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytnCk,
+		kFeatures640,
+		"intro2.stk", 0, 0
 	},
 	{
 		{
@@ -3098,6 +3212,97 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
+			"archi",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"spirou",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"chato",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"manda",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"wakan",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"playtnck2",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytnCk,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"bambou",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeBambou,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
 			"fascination",
 			"unknown",
 			AD_ENTRY1(0, 0),
@@ -3152,9 +3357,16 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[10], { "intro.stk", "commun1.itk", "musmac1.mid", 0 } },
 	{ &fallbackDescs[11], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
 	{ &fallbackDescs[12], { "intro.stk", "cd1.itk", "objet1.itk", 0 } },
-	{ &fallbackDescs[13], { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[14], { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[15], { "adif41.stk", "adim41.stk", 0 } },
+	{ &fallbackDescs[13], { "playtoon.stk", "archi.stk", 0 } },
+	{ &fallbackDescs[14], { "playtoon.stk", "spirou.stk", 0 } },
+	{ &fallbackDescs[15], { "playtoon.stk", "chato.stk", 0 } },
+	{ &fallbackDescs[16], { "playtoon.stk", "manda.stk", 0 } },
+	{ &fallbackDescs[17], { "playtoon.stk", "wakan.stk", 0 } },
+	{ &fallbackDescs[18], { "playtoon.stk", 0 } },
+	{ &fallbackDescs[19], { "intro.stk", "bambou.itk", 0 } },
+	{ &fallbackDescs[20], { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
+	{ &fallbackDescs[21], { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
+	{ &fallbackDescs[22], { "adif41.stk", "adim41.stk", 0 } },
 	{ 0, { 0 } }
 };
 
