@@ -59,11 +59,24 @@ bool Sound::voiceFileIsPresent(const char *file) {
 	return false;
 }
 
+bool Sound::isVoicePresent(const char *file) {
+	char filenamebuffer[25];
+
+	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
+		strcpy(filenamebuffer, file);
+		strcat(filenamebuffer, _supportedCodecs[i].fileext);
+
+		if (_vm->resource()->exists(filenamebuffer))
+			return true;
+	}
+
+	return false;
+}
+
 int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx) {
 	Audio::AudioStream *audioStream = getVoiceStream(file);
 
 	if (!audioStream) {
-		warning("Couldn't load sound file '%s'", file);
 		return 0;
 	}
 
@@ -83,11 +96,17 @@ Audio::AudioStream *Sound::getVoiceStream(const char *file) {
 		Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filenamebuffer);
 		if (!stream)
 			continue;
+
 		audioStream = _supportedCodecs[i].streamFunc(stream, true, 0, 0, 1);
 		break;
 	}
 
-	return audioStream;
+	if (!audioStream) {
+		warning("Couldn't load sound file '%s'", file);
+		return 0;
+	} else {
+		return audioStream;
+	}
 }
 
 bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle, uint8 volume, bool isSfx) {

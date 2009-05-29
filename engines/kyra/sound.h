@@ -178,6 +178,14 @@ public:
 	virtual bool voiceFileIsPresent(const char *file);
 
 	/**
+	 * Checks whether a voice file with the given name is present
+	 *
+	 * @param file		file name
+	 * @return true if available, false otherwise
+	 */
+	bool isVoicePresent(const char *file);
+
+	/**
 	 * Plays the specified voice file.
 	 *
 	 * Also before starting to play the

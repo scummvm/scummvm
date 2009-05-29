@@ -547,7 +547,7 @@ int LoLEngine::selectionCharInfo(int character) {
 
 	selectionCharInfoIntro(vocFilename);
 	if (_charSelectionInfoResult == -1) {
-		while (_charSelectionInfoResult == -1) {
+		while (_charSelectionInfoResult == -1 && !shouldQuit()) {
 			_charSelectionInfoResult = selectionCharAccept();
 			_system->delayMillis(10);
 		}
@@ -581,8 +581,10 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 	file[4] = '0';
 
 	while (_charSelectionInfoResult == -1 && !shouldQuit()) {
-		if (!_sound->voicePlay(file, &_speechHandle))
+		if (!_sound->isVoicePresent(file))
 			break;
+
+		_sound->voicePlay(file, &_speechHandle);
 
 		int i = 0;
 		while (_sound->voiceIsPlaying(&_speechHandle) && _charSelectionInfoResult == -1 && !shouldQuit()) {
@@ -590,7 +592,7 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 			_screen->updateScreen();
 
 			uint32 nextFrame = _system->getMillis() + 8 * _tickLength;
-			while (nextFrame > _system->getMillis() && _charSelectionInfoResult == -1) {
+			while (nextFrame > _system->getMillis() && _charSelectionInfoResult == -1 && !shouldQuit()) {
 				_charSelectionInfoResult = selectionCharAccept();
 				_system->delayMillis(10);
 			}
