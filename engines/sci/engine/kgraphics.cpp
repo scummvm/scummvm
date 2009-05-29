@@ -302,8 +302,15 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 
 reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
-	case 1 :	// set cursor according to the first parameter
-		GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, SKPV(0)));
+	case 1 :
+		if (s->version < SCI_VERSION_1_1) {
+			// Pre-SCI1.1: set cursor according to the first parameter
+			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, SKPV(0)));
+		} else {
+			// SCI1.1: Hide cursor
+			if (SKPV(0) == 0)
+				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER));
+		}
 		break;
 	case 2 :
 		if (s->version < SCI_VERSION_1_1) {

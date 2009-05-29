@@ -32,18 +32,6 @@
 
 namespace Sci {
 
-static int vocab_version;	// FIXME: Avoid static vars
-
-#define VOCAB_RESOURCE_PARSE_TREE_BRANCHES vocab_version == 1 ? \
-					   VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES : \
-					   VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES
-
-#define VOCAB_RESOURCE_SUFFIX_VOCAB vocab_version==1 ? \
-				    VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB : \
-				    VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB
-
-
-
 #if 0
 
 /**
@@ -156,12 +144,10 @@ bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
 	char currentword[256] = ""; // They're not going to use words longer than 255 ;-)
 	int currentwordpos = 0;
 
-	Resource *resource;
-
 	// First try to load the SCI0 vocab resource.
-	resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
-	vocab_version = 0;
-
+	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
+	int vocab_version = 0;
+ 
 	if (!resource) {
 		warning("SCI0: Could not find a main vocabulary, trying SCI01");
 		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
@@ -239,15 +225,16 @@ const char *vocab_get_any_group_word(int group, const WordMap &words) {
 }
 
 bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
-	// FIXME: This call relies on vocab_version being set, which is done by vocab_get_words.
-	// So vocab_get_words *must* be called before vocab_get_branches gets called
-	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 1);
-	unsigned int seeker = 1;
+	// Determine if we got a SCI0 vocabulary loaded
+	Resource* resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 1);
+	if (!resource)
+		// No SCI0 vocabulary? Try SCI1
+		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 1);
 
-	if (!resource) {
-		warning("Could not find suffix vocabulary");
-		return false; // Not critical
-	}
+	if (!resource)
+		return false; // No vocabulary found
+
+	unsigned int seeker = 1;
 
 	while ((seeker < resource->size - 1) && (resource->data[seeker + 1] != 0xff)) {
 		suffix_t suffix;
@@ -276,25 +263,30 @@ bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 }
 
 void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
-	// FIXME: This call relies on vocab_version being set, which is done by vocab_get_words.
-	// So vocab_get_words *must* be called before vocab_get_branches gets called
-	resmgr->unlockResource(resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SUFFIX_VOCAB, 0),
-	                     VOCAB_RESOURCE_SUFFIX_VOCAB, kResourceTypeVocab);
+	// Determine if we got a SCI0 vocabulary loaded
+	Resource* resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
+	if (resource && resource->status == kResStatusLocked) {
+		resmgr->unlockResource(resource, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, kResourceTypeVocab);
+	} else {
+		// No SCI0 vocabulary? Try SCI1
+		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
+		if (resource && resource->status == kResStatusLocked)
+			resmgr->unlockResource(resource, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, kResourceTypeVocab);
+	}
 
 	suffixes.clear();
 }
 
 bool vocab_get_branches(ResourceManager * resmgr, Common::Array<parse_tree_branch_t> &branches) {
-	// FIXME: This call relies on vocab_version being set, which is done by vocab_get_words.
-	// So vocab_get_words *must* be called before vocab_get_branches gets called
-	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_PARSE_TREE_BRANCHES, 0);
+	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES, 0);
+	if (!resource)
+		// No SCI0 parser tree? Try SCI1
+		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES, 0);
 
 	branches.clear();
 
-	if (!resource) {
-		fprintf(stderr, "No parser tree data found!\n");
-		return false;
-	}
+	if (!resource)
+		return false;		// No parser tree data found
 
 	int branches_nr = resource->size / 20;
 

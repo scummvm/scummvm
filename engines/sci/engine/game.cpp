@@ -265,6 +265,8 @@ int create_class_table_sci11(EngineState *s) {
 		}
 	}
 
+	s->resmgr->unlockResource(vocab996, 996, kResourceTypeVocab);
+	vocab996 = NULL;
 	return 0;
 }
 
