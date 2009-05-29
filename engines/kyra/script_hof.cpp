@@ -153,7 +153,7 @@ int KyraEngine_HoF::o2_meanWhileScene(EMCState *script) {
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 	if (!scumm_stricmp(cpsfile, "_MEANWIL.CPS") && _flags.lang == Common::JA_JPN) {
 		Screen::FontId o = _screen->setFont(Screen::FID_6_FNT);
-		_screen->printText((const char*)jpSubtitle, 140, 176, 255, 132);
+		_screen->printText((const char *)jpSubtitle, 140, 176, 255, 132);
 		_screen->setFont(o);
 	}
 	_screen->updateScreen();
@@ -1150,8 +1150,8 @@ int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 
 int KyraEngine_HoF::o2_customChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_customChat(%p) ('%s', %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
-	strcpy((char*)_unkBuf500Bytes, stackPosString(0));
-	_chatText = (char*)_unkBuf500Bytes;
+	strcpy((char *)_unkBuf500Bytes, stackPosString(0));
+	_chatText = (char *)_unkBuf500Bytes;
 	_chatObject = stackPos(1);
 
 	_chatVocHigh = _chatVocLow = -1;
@@ -1438,8 +1438,8 @@ int KyraEngine_HoF::o2a_setCharacterFrame(EMCState *script) {
 #pragma mark -
 
 int KyraEngine_HoF::t2_initChat(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::t2_initChat(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
-	_chatText = (const char*)tim->text + READ_LE_UINT16(tim->text + (param[0] << 1));
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::t2_initChat(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
+	_chatText = (const char *)tim->text + READ_LE_UINT16(tim->text + (param[0] << 1));
 	_chatObject = param[1];
 
 	if (_flags.lang == Common::JA_JPN) {
@@ -1454,13 +1454,13 @@ int KyraEngine_HoF::t2_initChat(const TIM *tim, const uint16 *param) {
 }
 
 int KyraEngine_HoF::t2_updateSceneAnim(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::t2_updateSceneAnim(%p, %p) (%d, %d)", (const void*)tim, (const void*)param, param[0], param[1]);
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::t2_updateSceneAnim(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
 	updateSceneAnim(param[1], param[0]);
 	return 0;
 }
 
 int KyraEngine_HoF::t2_resetChat(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::t2_resetChat(%p, %p) ()", (const void*)tim, (const void*)param);
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::t2_resetChat(%p, %p) ()", (const void *)tim, (const void *)param);
 	_text->restoreScreen();
 	_chatText = 0;
 	_chatObject = -1;
@@ -1468,7 +1468,7 @@ int KyraEngine_HoF::t2_resetChat(const TIM *tim, const uint16 *param) {
 }
 
 int KyraEngine_HoF::t2_playSoundEffect(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::t2_playSoundEffect(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::t2_playSoundEffect(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	snd_playSoundEffect(*param);
 	return 0;
 }

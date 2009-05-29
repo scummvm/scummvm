@@ -127,12 +127,12 @@ void KyraEngine_MR::showMessage(const char *string, uint8 c0, uint8 c1) {
 }
 
 void KyraEngine_MR::showMessageFromCCode(int string, uint8 c0, int) {
-	showMessage((const char*)getTableEntry(_cCodeFile, string), c0, 0xF0);
+	showMessage((const char *)getTableEntry(_cCodeFile, string), c0, 0xF0);
 }
 
 void KyraEngine_MR::updateItemCommand(int item, int str, uint8 c0) {
 	char buffer[100];
-	char *src = (char*)getTableEntry(_itemFile, item);
+	char *src = (char *)getTableEntry(_itemFile, item);
 
 	while (*src != ' ')
 		++src;
@@ -142,7 +142,7 @@ void KyraEngine_MR::updateItemCommand(int item, int str, uint8 c0) {
 
 	strcpy(buffer, src);
 	strcat(buffer, " ");
-	strcat(buffer, (const char*)getTableEntry(_cCodeFile, str));
+	strcat(buffer, (const char *)getTableEntry(_cCodeFile, str));
 
 	showMessage(buffer, c0, 0xF0);
 }
@@ -313,7 +313,7 @@ void KyraEngine_MR::drawMalcolmsMoodText() {
 	if (queryGameFlag(0x219))
 		return;
 
-	const char *string = (const char*)getTableEntry(_cCodeFile, stringId[_malcolmsMood]);
+	const char *string = (const char *)getTableEntry(_cCodeFile, stringId[_malcolmsMood]);
 
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
 	_screen->_charWidth = -2;
@@ -603,7 +603,7 @@ int KyraEngine_MR::buttonMoodChange(Button *button) {
 }
 
 int KyraEngine_MR::buttonShowScore(Button *button) {
-	strcpy(_stringBuffer, (const char*)getTableEntry(_cCodeFile, 18));
+	strcpy(_stringBuffer, (const char *)getTableEntry(_cCodeFile, 18));
 
 	char *buffer = _stringBuffer;
 
@@ -646,12 +646,12 @@ int KyraEngine_MR::buttonJesterStaff(Button *button) {
 			_screen->showMouse();
 		} else {
 			if (queryGameFlag(0x2F))
-				objectChat((const char*)getTableEntry(_cCodeFile, 20), 0, 204, 20);
+				objectChat((const char *)getTableEntry(_cCodeFile, 20), 0, 204, 20);
 			else
-				objectChat((const char*)getTableEntry(_cCodeFile, 25), 0, 204, 25);
+				objectChat((const char *)getTableEntry(_cCodeFile, 25), 0, 204, 25);
 		}
 	} else {
-		objectChat((const char*)getTableEntry(_cCodeFile, 30), 0, 204, 30);
+		objectChat((const char *)getTableEntry(_cCodeFile, 30), 0, 204, 30);
 	}
 	return 0;
 }

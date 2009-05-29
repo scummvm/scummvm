@@ -554,7 +554,7 @@ void KyraEngine_HoF::bookPrintText(int dstPage, const uint8 *str, int x, int y, 
 	_screen->_charWidth = -2;
 
 	_screen->hideMouse();
-	_screen->printText((const char*)str, x, y, color, (_flags.lang == Common::JA_JPN) ? 0xf6 : 0);
+	_screen->printText((const char *)str, x, y, color, (_flags.lang == Common::JA_JPN) ? 0xf6 : 0);
 	_screen->showMouse();
 
 	_screen->_charWidth = 0;

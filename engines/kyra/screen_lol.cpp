@@ -65,7 +65,7 @@ bool Screen_LoL::init() {
 	if (Screen::init()) {
 		_screenDimTable = _use16ColorMode ? _screenDimTable16C : _screenDimTable256C;
 		_customDimTable = new ScreenDim*[_screenDimTableCount];
-		memset(_customDimTable, 0, sizeof(ScreenDim*) * _screenDimTableCount);
+		memset(_customDimTable, 0, sizeof(ScreenDim *)* _screenDimTableCount);
 		return true;
 	}
 	return false;
@@ -341,11 +341,11 @@ void Screen_LoL::copyGuiShapeFromSceneBackupBuffer(int srcPageNum,  uint8 *dstBu
 		} while (!v);
 
 		*dst++ = len;
-		
+
 		len = 69 - len;
 		memcpy(dst, src, len);
 		src += (len + 251);
-		dst += len;		
+		dst += len;
 	}
 }
 
@@ -360,12 +360,12 @@ void Screen_LoL::copyGuiShapeToSurface(uint8 *srcBuffer, int dstPageNum) {
 		memcpy(dst, src, len);
 		src += (len - 1);
 		dst += len;
-		
+
 		for (int ii = 0; ii < len; ii++)
 			*dst++ = *src--;
 
 		src += (len + 1);
-		dst += (v + 38);	
+		dst += (v + 38);
 	}
 }
 

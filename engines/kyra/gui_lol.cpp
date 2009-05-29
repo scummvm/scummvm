@@ -747,7 +747,7 @@ void LoLEngine::gui_updateInput() {
 
 void LoLEngine::gui_triggerEvent(int eventType) {
 	Common::Event evt;
-	memset(&evt, 0, sizeof(Common::Event));	
+	memset(&evt, 0, sizeof(Common::Event));
 	evt.mouse.x = _mouseX;
 	evt.mouse.y = _mouseY;
 
@@ -815,7 +815,7 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 }
 
 void LoLEngine::removeInputTop() {
-	if (!_eventList.empty()) {		
+	if (!_eventList.empty()) {
 		if (_eventList.begin()->event.type == Common::EVENT_LBUTTONDOWN)
 			_gui->_mouseClick = 1;
 		else if (_eventList.begin()->event.type == Common::EVENT_RBUTTONDOWN)
@@ -1891,7 +1891,7 @@ void GUI_LoL::processButton(Button *button) {
 
 	case 1:
 		_screen->hideMouse();
-		_screen->printText((const char*)dataPtr, x, y, val2, val3);
+		_screen->printText((const char *)dataPtr, x, y, val2, val3);
 		_screen->showMouse();
 		break;
 
@@ -1932,7 +1932,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 		if (_mouseClick == 2)
 			_flagsModifier |= 0x2000;
 		_mouseClick = 0;
-		
+
 		_backUpButtonList = buttonList;
 		_buttonListChanged = false;
 

@@ -36,7 +36,7 @@ TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm
 	_scriptParameter(0), _animWidth(0), _animColor1(0), _animColor2(0), _animFlag(true), _lineCount(0),
 	_printFlag(false), _lineWidth(0), _numCharsTotal(0), _numCharsLeft(0), _numCharsPrinted(0) {
 
-	memset(_stringParameters, 0, 15 * sizeof(char*));
+	memset(_stringParameters, 0, 15 * sizeof(char *));
 	_buffer = new char[600];
 	memset(_buffer, 0, 600);
 
@@ -219,7 +219,7 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 	va_list args;
 	va_start(args, str);
 
-	vsnprintf((char*) _buffer, 240, str, args);
+	vsnprintf((char *)_buffer, 240, str, args);
 
 	va_end(args);
 
@@ -365,7 +365,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 				snprintf(_scriptParaString, 11, "%d", va_arg(args, int));
 				_tempString2 = _scriptParaString;
 			} else if (a == 's') {
-				_tempString2 = va_arg(args, char*);
+				_tempString2 = va_arg(args, char *);
 			} else {
 				break;
 			}

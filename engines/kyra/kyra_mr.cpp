@@ -1392,7 +1392,7 @@ bool KyraEngine_MR::updateScore(int scoreId, int strId) {
 	_scoreFlagTable[scoreIndex] |= (1 << scoreBit);
 
 	_screen->hideMouse();
-	strcpy(_stringBuffer, (const char*)getTableEntry(_scoreFile, strId));
+	strcpy(_stringBuffer, (const char *)getTableEntry(_scoreFile, strId));
 	strcat(_stringBuffer, ":        ");
 
 	assert(scoreId < _scoreTableSize);

@@ -1905,7 +1905,7 @@ void LoLEngine::initStaticResource() {
 		_staticres->unloadId(lolLightningDefs);
 	}
 
-	_fireBallCoords = (const int16*) _staticres->loadRawDataBe16(lolFireballCoords, _fireBallCoordsSize);
+	_fireBallCoords = (const int16*)_staticres->loadRawDataBe16(lolFireballCoords, _fireBallCoordsSize);
 
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(95);

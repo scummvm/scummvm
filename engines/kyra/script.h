@@ -63,7 +63,7 @@ struct EMCState {
 };
 
 #define stackPos(x) (script->stack[script->sp+x])
-#define stackPosString(x) ((const char*)&script->dataPtr->text[READ_BE_UINT16(&script->dataPtr->text[stackPos(x)<<1])])
+#define stackPosString(x) ((const char *)&script->dataPtr->text[READ_BE_UINT16(&script->dataPtr->text[stackPos(x)<<1])])
 
 class Resource;
 class KyraEngine_v1;
@@ -116,24 +116,24 @@ protected:
 
 	const OpcodeEntry *_opcodes;
 private:
-	void op_jmp(EMCState*);
-	void op_setRetValue(EMCState*);
-	void op_pushRetOrPos(EMCState*);
-	void op_push(EMCState*);
-	void op_pushReg(EMCState*);
-	void op_pushBPNeg(EMCState*);
-	void op_pushBPAdd(EMCState*);
-	void op_popRetOrPos(EMCState*);
-	void op_popReg(EMCState*);
-	void op_popBPNeg(EMCState*);
-	void op_popBPAdd(EMCState*);
-	void op_addSP(EMCState*);
-	void op_subSP(EMCState*);
-	void op_sysCall(EMCState*);
-	void op_ifNotJmp(EMCState*);
-	void op_negate(EMCState*);
-	void op_eval(EMCState*);
-	void op_setRetAndJmp(EMCState*);
+	void op_jmp(EMCState *);
+	void op_setRetValue(EMCState *);
+	void op_pushRetOrPos(EMCState *);
+	void op_push(EMCState *);
+	void op_pushReg(EMCState *);
+	void op_pushBPNeg(EMCState *);
+	void op_pushBPAdd(EMCState *);
+	void op_popRetOrPos(EMCState *);
+	void op_popReg(EMCState *);
+	void op_popBPNeg(EMCState *);
+	void op_popBPAdd(EMCState *);
+	void op_addSP(EMCState *);
+	void op_subSP(EMCState *);
+	void op_sysCall(EMCState *);
+	void op_ifNotJmp(EMCState *);
+	void op_negate(EMCState *);
+	void op_eval(EMCState *);
+	void op_setRetAndJmp(EMCState *);
 };
 } // end of namespace Kyra
 

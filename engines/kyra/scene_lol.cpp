@@ -180,8 +180,8 @@ void LoLEngine::loadLevelWallData(int index, bool mapShapes) {
 }
 
 int LoLEngine::assignLevelShapes(int index) {
-	uint16 *p1 = (uint16 *) _tempBuffer5120;
-	uint16 *p2 = (uint16 *) (_tempBuffer5120 + 4000);
+	uint16 *p1 = (uint16 *)_tempBuffer5120;
+	uint16 *p2 = (uint16 *)(_tempBuffer5120 + 4000);
 
 	uint16 r = p2[index];
 	if (r)
@@ -461,7 +461,7 @@ void LoLEngine::resetItems(int flag) {
 		MonsterInPlay *r = 0;
 
 		while (id & 0x8000) {
-			r = (MonsterInPlay*)findObject(id);
+			r = (MonsterInPlay *)findObject(id);
 			id = r->nextAssignedObject;
 		}
 
@@ -1150,7 +1150,7 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 
 	int d = smoothScrollDrawSpecialGuiShape(_sceneDrawPage1);
 	gui_drawScene(_sceneDrawPage1);
-	int dp = _sceneDrawPage2 == 2 ? _sceneDrawPage2 : _sceneDrawPage1;	
+	int dp = _sceneDrawPage2 == 2 ? _sceneDrawPage2 : _sceneDrawPage1;
 
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep1(_sceneDrawPage1, _sceneDrawPage2, dp);

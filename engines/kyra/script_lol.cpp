@@ -1869,7 +1869,7 @@ int LoLEngine::olol_drawCharPortrait(EMCState *script) {
 
 int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_assignSpecialGuiShape(%p)  (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
-	if (stackPos(0)) {	
+	if (stackPos(0)) {
 		_specialGuiShape = _levelShapes[_levelShapeProperties[_wllShapeMap[stackPos(0)]].shapeIndex[stackPos(1)]];
 		_specialGuiShapeX = stackPos(2);
 		_specialGuiShapeY = stackPos(3);
@@ -2035,21 +2035,21 @@ int LoLEngine::olol_getLanguage(EMCState *script) {
 #pragma mark -
 
 int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::t2_playSoundEffect(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::t2_playSoundEffect(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	_screen->getFadeParams(_screen->getPalette(0), param[0], _tim->_palDelayInc, _tim->_palDiff);
 	_tim->_palDelayAcc = 0;
 	return 1;
 }
 
 int LoLEngine::tlol_loadPalette(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadPalette(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadPalette(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	const char *palFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
 	_screen->loadPalette(palFile, _screen->getPalette(0));
 	return 1;
 }
 
 int LoLEngine::tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setupPaletteFadeEx(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setupPaletteFadeEx(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
 
 	_screen->getFadeParams(_screen->getPalette(0), param[0], _tim->_palDelayInc, _tim->_palDiff);
@@ -2059,7 +2059,7 @@ int LoLEngine::tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_processWsaFrame(%p, %p) (%d, %d, %d, %d, %d)",
-		(const void*)tim, (const void*)param, param[0], param[1], param[2], param[3], param[4]);
+		(const void *)tim, (const void *)param, param[0], param[1], param[2], param[3], param[4]);
 	TIMInterpreter::Animation *anim = (TIMInterpreter::Animation *)tim->wsa[param[0]].anim;
 	const int frame = param[1];
 	const int x2 = param[2];
@@ -2084,25 +2084,25 @@ int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
 }
 
 int LoLEngine::tlol_displayText(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_displayText(%p, %p) (%d, %d)", (const void*)tim, (const void*)param, param[0], (int16)param[1]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_displayText(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], (int16)param[1]);
 	_tim->displayText(param[0], param[1]);
 	return 1;
 }
 
 int LoLEngine::tlol_initSceneWindowDialogue(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_initSceneWindowDialogue(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_initSceneWindowDialogue(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	initSceneWindowDialogue(param[0]);
 	return 1;
 }
 
 int LoLEngine::tlol_restoreAfterSceneWindowDialogue(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_restoreAfterSceneWindowDialogue(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_restoreAfterSceneWindowDialogue(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	restoreAfterSceneWindowDialogue(param[0]);
 	return 1;
 }
 
 int LoLEngine::tlol_giveItem(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_giveItem(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_giveItem(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	int item = makeItem(param[0], param[1], param[2]);
 	if (addItemToInventory(item))
 		return 1;
@@ -2112,7 +2112,7 @@ int LoLEngine::tlol_giveItem(const TIM *tim, const uint16 *param) {
 }
 
 int LoLEngine::tlol_setPartyPosition(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setPartyPosition(%p, %p) (%d, %d)", (const void*)tim, (const void*)param, param[0], param[1]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setPartyPosition(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
 	if (param[0] == 1) {
 		_currentDirection = param[1];
 	} else if (param[0] == 0) {
@@ -2124,7 +2124,7 @@ int LoLEngine::tlol_setPartyPosition(const TIM *tim, const uint16 *param) {
 }
 
 int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeClearWindow(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeClearWindow(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	uint8 *tmp = 0;
 
 	switch (param[0]) {
@@ -2174,7 +2174,7 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 }
 
 int LoLEngine::tlol_copyRegion(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_copyRegion(%p, %p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void*)tim, (const void*)param, param[0], param[1], param[2], param[3], param[4], param[5], param[6], param[7]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_copyRegion(%p, %p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)tim, (const void *)param, param[0], param[1], param[2], param[3], param[4], param[5], param[6], param[7]);
 	_screen->copyRegion(param[0], param[1], param[2], param[3], param[4], param[5], param[6], param[7], Screen::CR_NO_P_CHECK);
 	if (!param[7])
 		_screen->updateScreen();
@@ -2182,13 +2182,13 @@ int LoLEngine::tlol_copyRegion(const TIM *tim, const uint16 *param) {
 }
 
 int LoLEngine::tlol_characterChat(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_characterChat(%p, %p) (%d, %d, %d)", (const void*)tim, (const void*)param, param[0], param[1], param[2]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_characterChat(%p, %p) (%d, %d, %d)", (const void *)tim, (const void *)param, param[0], param[1], param[2]);
 	playCharacterScriptChat(param[0], param[1], 1, getLangString(param[2]), 0, param, 3);
 	return 1;
 }
 
 int LoLEngine::tlol_drawScene(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_drawScene(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_drawScene(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	gui_drawScene(param[0]);
 	//if (_sceneDrawPage2 != 2 && param[0] == 2)
 	//	_screen->copyRegion(112 << 3, 0, 112 << 3, 0, 176 << 3, 120, _sceneDrawPage2, 2, Screen::CR_NO_P_CHECK);
@@ -2196,13 +2196,13 @@ int LoLEngine::tlol_drawScene(const TIM *tim, const uint16 *param) {
 }
 
 int LoLEngine::tlol_update(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_update(%p, %p)", (const void*)tim, (const void*)param);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_update(%p, %p)", (const void *)tim, (const void *)param);
 	update();
 	return 1;
 }
 
 int LoLEngine::tlol_clearTextField(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_clearTextField(%p, %p)", (const void*)tim, (const void*)param);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_clearTextField(%p, %p)", (const void *)tim, (const void *)param);
 	if (_currentControlMode && !textEnabled())
 		return 1;
 	_screen->setScreenDim(5);
@@ -2214,38 +2214,38 @@ int LoLEngine::tlol_clearTextField(const TIM *tim, const uint16 *param) {
 }
 
 int LoLEngine::tlol_loadSoundFile(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadSoundFile(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadSoundFile(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	snd_loadSoundFile(param[0]);
 	return 1;
 }
 
 int LoLEngine::tlol_playMusicTrack(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playMusicTrack(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playMusicTrack(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	snd_playTrack(param[0]);
 	return 1;
 }
 
 int LoLEngine::tlol_playDialogueTalkText(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playDialogueTalkText(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playDialogueTalkText(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	if (!snd_playCharacterSpeech(param[0], 0, 0) || textEnabled())
 		_txt->printDialogueText(4, getLangString(param[0]), 0, param, 1);
 	return 1;
 }
 
 int LoLEngine::tlol_playSoundEffect(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playSoundEffect(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_playSoundEffect(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	snd_playSoundEffect(param[0], -1);
 	return 1;
 }
 
 int LoLEngine::tlol_startBackgroundAnimation(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_startBackgroundAnimation(%p, %p) (%d, %d)", (const void*)tim, (const void*)param, param[0], param[1]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_startBackgroundAnimation(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
 	_tim->startBackgroundAnimation(param[0], param[1]);
 	return 1;
 }
 
 int LoLEngine::tlol_stopBackgroundAnimation(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_stopBackgroundAnimation(%p, %p) (%d)", (const void*)tim, (const void*)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_stopBackgroundAnimation(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	_tim->stopBackgroundAnimation(param[0]);
 	return 1;
 }

@@ -109,7 +109,7 @@ int KyraEngine_MR::o3_setCharacterFacing(EMCState *script) {
 
 int KyraEngine_MR::o3_showSceneFileMessage(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_showSceneFileMessage(%p) (%d)", (const void *)script, stackPos(0));
-	showMessage((const char*)getTableEntry(_scenesFile, stackPos(0)), 0xFF, 0xF0);
+	showMessage((const char *)getTableEntry(_scenesFile, stackPos(0)), 0xFF, 0xF0);
 	return 0;
 }
 
@@ -197,7 +197,7 @@ int KyraEngine_MR::o3_addItemToCurScene(EMCState *script) {
 int KyraEngine_MR::o3_objectChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_objectChat(%p) (%d)", (const void *)script, stackPos(0));
 	int id = stackPos(0);
-	const char *str = (const char*)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
+	const char *str = (const char *)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
 	if (str) {
 		objectChat(str, 0, _vocHigh, id);
 		playStudioSFX(str);
@@ -240,7 +240,7 @@ int KyraEngine_MR::o3_countInventoryItemInstances(EMCState *script) {
 int KyraEngine_MR::o3_npcChatSequence(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_npcChatSequence(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int id = stackPos(0);
-	const char *str = (const char*)getTableEntry(_sceneStrings, id);
+	const char *str = (const char *)getTableEntry(_sceneStrings, id);
 	if (str)
 		npcChatSequence(str, stackPos(1), _vocHigh, id);
 	return 0;
@@ -249,7 +249,7 @@ int KyraEngine_MR::o3_npcChatSequence(EMCState *script) {
 int KyraEngine_MR::o3_badConscienceChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_badConscienceChat(%p) (%d)", (const void *)script, stackPos(0));
 	int id = stackPos(0);
-	const char *str = (const char*)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
+	const char *str = (const char *)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
 	badConscienceChat(str, _vocHigh, id);
 	return 0;
 }
@@ -829,7 +829,7 @@ int KyraEngine_MR::o3_blockOutWalkableRegion(EMCState *script) {
 
 int KyraEngine_MR::o3_showSceneStringsMessage(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_showSceneStringsMessage(%p) (%d)", (const void *)script, stackPos(0));
-	showMessage((const char*)getTableEntry(_sceneStrings, stackPos(0)), 0xFF, 0xF0);
+	showMessage((const char *)getTableEntry(_sceneStrings, stackPos(0)), 0xFF, 0xF0);
 	return 0;
 }
 
@@ -842,7 +842,7 @@ int KyraEngine_MR::o3_showGoodConscience(EMCState *script) {
 int KyraEngine_MR::o3_goodConscienceChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_goodConscienceChat(%p) (%d)", (const void *)script, stackPos(0));
 	int id = stackPos(0);
-	const char *str = (const char*)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
+	const char *str = (const char *)getTableEntry(_useActorBuffer ? _actorFile : _sceneStrings, id);
 	goodConscienceChat(str, _vocHigh, id);
 	return 0;
 }

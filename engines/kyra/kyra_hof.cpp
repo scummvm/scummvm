@@ -886,7 +886,7 @@ uint8 *KyraEngine_HoF::getTableEntry(uint8 *buffer, int id) {
 }
 
 char *KyraEngine_HoF::getTableString(int id, uint8 *buffer, int decode) {
-	char *string = (char*)getTableEntry(buffer, id);
+	char *string = (char *)getTableEntry(buffer, id);
 
 	if (decode && _flags.lang != Common::JA_JPN) {
 		Util::decodeString1(string, _internStringBuf);
@@ -951,15 +951,15 @@ void KyraEngine_HoF::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 		*src = toupper(*src);
 	}
 
-	strcpy((char*)_unkBuf500Bytes, src);
+	strcpy((char *)_unkBuf500Bytes, src);
 
 	if (str2 > 0) {
 		if (_flags.lang != Common::JA_JPN)
-			strcat((char*)_unkBuf500Bytes, " ");
-		strcat((char*)_unkBuf500Bytes, getTableString(str2, _cCodeBuffer, 1));
+			strcat((char *)_unkBuf500Bytes, " ");
+		strcat((char *)_unkBuf500Bytes, getTableString(str2, _cCodeBuffer, 1));
 	}
 
-	showMessage((char*)_unkBuf500Bytes, palIndex);
+	showMessage((char *)_unkBuf500Bytes, palIndex);
 }
 
 void KyraEngine_HoF::fadeMessagePalette() {
@@ -1882,10 +1882,10 @@ void KyraEngine_HoF::listItemsInCauldron() {
 				if (*str == 37)
 					str += 2;
 			}
-			strcpy((char*)_unkBuf500Bytes, "...");
-			strcat((char*)_unkBuf500Bytes, str);
-			strcat((char*)_unkBuf500Bytes, "...");
-			objectChat((const char*)_unkBuf500Bytes, 0, 0x83, _cauldronTable[i]+54);
+			strcpy((char *)_unkBuf500Bytes, "...");
+			strcat((char *)_unkBuf500Bytes, str);
+			strcat((char *)_unkBuf500Bytes, "...");
+			objectChat((const char *)_unkBuf500Bytes, 0, 0x83, _cauldronTable[i]+54);
 		}
 
 		char *str = buffer;
@@ -1894,10 +1894,10 @@ void KyraEngine_HoF::listItemsInCauldron() {
 			if (*str == 37)
 				str += 2;
 		}
-		strcpy((char*)_unkBuf500Bytes, "...");
-		strcat((char*)_unkBuf500Bytes, str);
-		strcat((char*)_unkBuf500Bytes, ".");
-		objectChat((const char*)_unkBuf500Bytes, 0, 0x83, _cauldronTable[itemsInCauldron-1]+54);
+		strcpy((char *)_unkBuf500Bytes, "...");
+		strcat((char *)_unkBuf500Bytes, str);
+		strcat((char *)_unkBuf500Bytes, ".");
+		objectChat((const char *)_unkBuf500Bytes, 0, 0x83, _cauldronTable[itemsInCauldron-1]+54);
 	}
 }
 

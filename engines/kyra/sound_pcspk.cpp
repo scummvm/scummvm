@@ -41,7 +41,7 @@ MidiDriver_PCSpeaker::MidiDriver_PCSpeaker(Audio::Mixer *mixer)
 
 	for (int i = 0; i < 2; ++i)
 		_note[i].hardwareChannel = 0xFF;
-	
+
 	_speaker = new Audio::PCSpeaker(_rate);
 	assert(_speaker);
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
@@ -221,7 +221,7 @@ void MidiDriver_PCSpeaker::overwriteNote(int note) {
 
 		turnNoteOff(_note[note].hardwareChannel);
 		_note[note].enabled = false;
-	
+
 		_note[newNote].hardwareChannel = _note[note].hardwareChannel;
 		++_channel[_note[newNote].midiChannel].noteCount;
 		_hardwareChannel[_note[note].hardwareChannel] = _note[newNote].midiChannel;

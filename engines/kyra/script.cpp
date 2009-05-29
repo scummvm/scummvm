@@ -186,7 +186,7 @@ bool EMCInterpreter::run(EMCState *script) {
 
 	// Should be no Problem at all to cast to uint32 here, since that's the biggest ptrdiff the original
 	// would allow, of course that's not realistic to happen to be somewhere near the limit of uint32 anyway.
-	const uint32 instOffset = (uint32)((const byte*)script->ip - (const byte*)script->dataPtr->data);
+	const uint32 instOffset = (uint32)((const byte *)script->ip - (const byte *)script->dataPtr->data);
 	int16 code = *script->ip++;
 	int16 opcode = (code >> 8) & 0x1F;
 

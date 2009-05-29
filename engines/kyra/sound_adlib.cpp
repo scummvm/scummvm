@@ -846,7 +846,7 @@ void AdlibDriver::writeOPL(byte reg, byte val) {
 
 void AdlibDriver::initChannel(Channel &channel) {
 	debugC(9, kDebugLevelSound, "initChannel(%lu)", (long)(&channel - _channels));
-	memset(&channel.dataptr, 0, sizeof(Channel) - ((char*)&channel.dataptr - (char*)&channel));
+	memset(&channel.dataptr, 0, sizeof(Channel) - ((char *)&channel.dataptr - (char *)&channel));
 
 	channel.tempo = 0xFF;
 	channel.priority = 0;

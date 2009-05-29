@@ -130,7 +130,7 @@ Common::Error KyraEngine_v1::init() {
 
 
 			MidiDriver *driver = 0;
-		   
+
 			if (midiDriver == MD_PCSPK) {
 				driver = new MidiDriver_PCSpeaker(_mixer);
 			} else {

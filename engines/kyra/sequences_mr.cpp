@@ -187,8 +187,8 @@ void KyraEngine_MR::eelScript() {
 		hideInventory();
 	removeHandItem();
 
-	objectChat((const char*)getTableEntry(_cCodeFile, 35), 0, 204, 35);
-	objectChat((const char*)getTableEntry(_cCodeFile, 40), 0, 204, 40);
+	objectChat((const char *)getTableEntry(_cCodeFile, 35), 0, 204, 35);
+	objectChat((const char *)getTableEntry(_cCodeFile, 40), 0, 204, 40);
 
 	setGameFlag(0xD1);
 

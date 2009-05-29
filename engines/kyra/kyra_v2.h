@@ -157,7 +157,7 @@ protected:
 	void addItemToAnimList(int item);
 	void deleteItemAnimEntry(int item);
 
-	virtual void animSetupPaletteEntry(AnimObj *) {}
+	virtual void animSetupPaletteEntry(AnimObj *){}
 
 	virtual void setCharacterAnimDim(int w, int h) = 0;
 	virtual void resetCharacterAnimDim() = 0;

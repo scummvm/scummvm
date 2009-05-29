@@ -285,7 +285,7 @@ void Towns_EuphonyFmChannel::pitchBend(int16 value) {
 }
 
 void Towns_EuphonyFmChannel::nextTick(int32 *outbuf, int buflen) {
-	_voice->nextTick((int*) outbuf, buflen);
+	_voice->nextTick((int *)outbuf, buflen);
 }
 
 void Towns_EuphonyFmChannel::rate(uint16 r) {
@@ -376,13 +376,13 @@ void Towns_EuphonyPcmChannel::controlChange(byte control, byte value) {
 void Towns_EuphonyPcmChannel::sysEx_customInstrument(uint32 type, const byte *fmInst) {
 	if (type == 0x80) {
 		for (uint8 i = 0; i < 8; i++) {
-			const byte * const* pos = (const byte * const*) fmInst;
+			const byte * const* pos = (const byte * const *)fmInst;
 			for (uint8 ii = 0; ii < 10; ii++) {
 				if (_voice->id[i] == *(pos[ii] + 8)) {
 					if (!_voice->_snd[i])
 						_voice->_snd[i] = new Voice::Snd;
 					memset (_voice->_snd[i]->name, 0, 9);
-					memcpy (_voice->_snd[i]->name, (const char*) pos[ii], 8);
+					memcpy (_voice->_snd[i]->name, (const char *)pos[ii], 8);
 					_voice->_snd[i]->id = READ_LE_UINT32(pos[ii] + 8);
 					_voice->_snd[i]->numSamples = READ_LE_UINT32(pos[ii] + 12);
 					_voice->_snd[i]->loopStart = READ_LE_UINT32(pos[ii] + 16);
@@ -396,7 +396,7 @@ void Towns_EuphonyPcmChannel::sysEx_customInstrument(uint32 type, const byte *fm
 		}
 	} else {
 		memset (_voice->name, 0, 9);
-		memcpy (_voice->name, (const char*) fmInst, 8);
+		memcpy (_voice->name, (const char *)fmInst, 8);
 
 		for (uint8 i = 0; i < 8; i++) {
 			_voice->split[i] = READ_LE_UINT16(fmInst + 16 + 2 * i);
@@ -578,7 +578,7 @@ Towns_EuphonyDriver::Towns_EuphonyDriver(Audio::Mixer *mixer)
 	_channel[14] = _channel[15] = 0;
 
 	_fmInstruments = _waveInstruments = 0;
-	memset(_waveSounds, 0, sizeof(uint8*) * 10);
+	memset(_waveSounds, 0, sizeof(uint8*)* 10);
 
 	rate(getRate());
 	fading(0);
@@ -687,7 +687,7 @@ void Towns_EuphonyDriver::send(byte chan, uint32 b) {
 		for (int i = 0; i < 8; i++) {
 			if (_channel[chan] == _wChannel[i]) {
 				_channel[chan]->sysEx_customInstrument(0, _waveInstruments + param1 * 0x80);
-				_channel[chan]->sysEx_customInstrument(0x80, (const byte*) _waveSounds);
+				_channel[chan]->sysEx_customInstrument(0x80, (const byte *)_waveSounds);
 				break;
 			}
 		}
@@ -887,7 +887,7 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 			_tempo[0] = (tempo >> 16) & 0xff;
 			_tempo[1] = (tempo >> 8) & 0xff;
 			_tempo[2] = tempo & 0xff;
-			info.ext.data = (byte*) _tempo;
+			info.ext.data = (byte *)_tempo;
 			pos += 6;
 			loop = false;
 		} else if (cmd == 0xFD || cmd == 0xFE) {
@@ -968,7 +968,7 @@ void Towns_EuphonyParser::setup() {
 	_mode = data + 0x374;
 	_channel = data + 0x394;
 	_adjVelo = data + 0x3B4;
-	_adjNote = (int8*) data + 0x3D4;
+	_adjNote = (int8*)data + 0x3D4;
 
 	_nextBaseTickStep = _firstBaseTickStep = data[0x804];
 	_initialTempo = calculateTempo((data[0x805] > 0xfc) ? 0x5a : data[0x805]);
@@ -3242,7 +3242,7 @@ void TownsPC98_OpnCore::generateTables() {
 	WRITE_BE_UINT32(_oprRates + 36, _numChan == 6 ? 0x00001010 : 0x00081018);
 	memset(_oprRates, 0x90, 32);
 	memset(_oprRates + 96, 0x80, 32);
-	uint8 *dst = (uint8*) _oprRates + 40;
+	uint8 *dst = (uint8*)_oprRates + 40;
 	for (int i = 0; i < 40; i += 4)
 		WRITE_BE_UINT32(dst + i, 0x00081018);
 	for (int i = 0; i < 48; i += 4)
@@ -3256,7 +3256,7 @@ void TownsPC98_OpnCore::generateTables() {
 	delete[] _oprRateshift;
 	_oprRateshift = new uint8[128];
 	memset(_oprRateshift, 0, 128);
-	dst = (uint8*) _oprRateshift + 32;
+	dst = (uint8*)_oprRateshift + 32;
 	for (int i = 11; i; i--) {
 		memset(dst, i, 4);
 		dst += 4;
@@ -4258,7 +4258,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 	bool compressed = (READ_LE_UINT16(src) & 1) ? true : false;
 	src += 2;
 	uint32 outsize = READ_LE_UINT32(src);
-	uint8 *sfx = (uint8*) malloc(outsize);
+	uint8 *sfx = (uint8*)malloc(outsize);
 	uint8 *dst = sfx;
 	src += 4;
 

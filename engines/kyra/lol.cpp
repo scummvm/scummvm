@@ -1547,8 +1547,8 @@ void LoLEngine::fadeText() {
 }
 
 void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage) {
-	uint16 *p1 = (uint16*) _tempBuffer5120;
-	uint16 *p2 = (uint16*) (_tempBuffer5120 + 640);
+	uint16 *p1 = (uint16*)_tempBuffer5120;
+	uint16 *p2 = (uint16*)(_tempBuffer5120 + 640);
 
 	for (int i = 0; i < w; i++)
 		p1[i] = i;
@@ -3563,7 +3563,7 @@ bool LoLEngine::updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOff
 }
 
 void LoLEngine::loadMapLegendData(int level) {
-	uint16 *legendData= (uint16*) _tempBuffer5120;
+	uint16 *legendData= (uint16*)_tempBuffer5120;
 	for (int i = 0; i < 32; i++) {
 		legendData[i * 6] = 0xffff;
 		legendData[i * 6 + 5] = 0xffff;

@@ -114,7 +114,7 @@ void GUI_v2::processButton(Button *button) {
 
 	case 1:
 		_screen->hideMouse();
-		_screen->printText((const char*)dataPtr, x, y, val2, val3);
+		_screen->printText((const char *)dataPtr, x, y, val2, val3);
 		_screen->showMouse();
 		break;
 

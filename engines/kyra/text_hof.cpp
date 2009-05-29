@@ -543,7 +543,7 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 						deinitTalkObject(activeTimSequence);
 						activeTimSequence = -1;
 					}
-					objectChat((const char*) _unkBuf500Bytes, 0, vocHi, vocLo);
+					objectChat((const char *)_unkBuf500Bytes, 0, vocHi, vocLo);
 				} else {
 					if (activeTimSequence != nextTimSequence ) {
 						if (activeTimSequence > -1) {

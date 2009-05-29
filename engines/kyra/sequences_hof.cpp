@@ -2554,7 +2554,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 			else
 				cH = d->h;
 
-			char *str = (char*)ptr;
+			char *str = (char *)ptr;
 
 			ptr = (uint8*)strpbrk(str, mark);
 			if (!ptr)
@@ -2597,7 +2597,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 				cH -= (textData[cnt].height + (textData[cnt].height >> 3));
 
 			textData[cnt + 1].y = cH;
-			textData[cnt + 1].text = (uint8*) str;
+			textData[cnt + 1].text = (uint8*)str;
 			cnt++;
 		}
 
@@ -2607,7 +2607,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 		bool palCycle = 0;
 
 		while (cnt2 < cnt) {
-			const char *str = (const char*)textData[cnt2 + 1].text;
+			const char *str = (const char *)textData[cnt2 + 1].text;
 			const char *str2 = str;
 			int16 cW = textData[cnt2 + 1].x - 10;
 			int16 cH = textData[cnt2 + 1].y;
@@ -2657,7 +2657,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 		_screen->updateScreen();
 
 		if (textData[1].y < -10) {
-			textData[1].text += strlen((char*)textData[1].text);
+			textData[1].text += strlen((char *)textData[1].text);
 			textData[1].text[0] = textData[1].unk1;
 			cnt--;
 			memcpy(&textData[1], &textData[2], cnt * sizeof(ScrollTextData));
