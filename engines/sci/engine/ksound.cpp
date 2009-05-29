@@ -997,13 +997,24 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->_sound._audioResource->stop();
 
 		if (argc == 2) {			// KQ5CD, KQ6 floppy
-			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(UKPV(1), &sampleLen);
+			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(UKPV(1), 65535, &sampleLen);
 
 			if (audioStream)
 				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
 		} else if (argc == 6) {		// SQ4CD or newer
-			// TODO
-			warning("kDoAudio: Play called with new semantics - 5 parameters: %d %d %d %d %d", UKPV(1), UKPV(2), UKPV(3), UKPV(4), UKPV(5));
+			uint32 volume = UKPV(1);
+			// Make a BE number
+			uint32 audioNumber = (((UKPV(2) & 0xFF) << 24) & 0xFF000000) |
+								 (((UKPV(3) & 0xFF) << 16) & 0x00FF0000) |
+								 (((UKPV(4) & 0xFF) <<  8) & 0x0000FF00) |
+								 ( (UKPV(5) & 0xFF)        & 0x000000FF);
+
+			printf("%d %d %d %d -> %d\n", UKPV(2), UKPV(3), UKPV(4), UKPV(5), audioNumber);	// debugging
+
+			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(audioNumber, UKPV(1), &sampleLen);
+
+			if (audioStream)
+				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
 		} else {					// Hopefully, this should never happen
 			warning("kDoAudio: Play called with an unknown number of parameters (%d)", argc);
 		}

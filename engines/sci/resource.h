@@ -321,7 +321,7 @@ public:
 	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
 	int getAudioPosition();
 
-	Audio::AudioStream* getAudioStream(uint16 audioNumber, int *sampleLen);
+	Audio::AudioStream* getAudioStream(uint32 audioNumber, uint32 volume, int *sampleLen);
 
 	void stop() { g_system->getMixer()->stopHandle(_audioHandle); }
 	void pause() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
@@ -337,7 +337,7 @@ private:
 	int _sciVersion;
 
 	bool findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &offset, uint32 &size);
-	bool findAudEntrySCI11(uint16 audioNumber, uint32 &offset);
+	bool findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset);
 };
 
 } // End of namespace Sci

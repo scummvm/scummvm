@@ -1191,7 +1191,8 @@ AudioResource::~AudioResource() {
 			_audioMapSCI1 = 0;
 		}
 	} else {
-		_resMgr->unlockResource(_audioMapSCI11, 65535, kResourceTypeMap);
+		if (_audioMapSCI11)
+			_resMgr->unlockResource(_audioMapSCI11, _audioMapSCI11->number, kResourceTypeMap);
 	}
 }
 
@@ -1251,32 +1252,50 @@ bool AudioResource::findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &o
 	return false;
 }
 
-bool AudioResource::findAudEntrySCI11(uint16 audioNumber, uint32 &offset) {
+bool AudioResource::findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset) {
+	// KQ6 floppy
+	// ==========
 	// 65535.MAP contains 6-byte entries:
 	// w nEntry
 	// dw offset
 	// ending with 6 0xFFs
-	uint16 n;
+	// haven't checked the CD version yet
+
+	// KQ6 CD
+	// ======
+	// The other map files start with a 4-byte header and contain 7-byte entries:
+	// dw nEntry
+	// w unknown (offset? it can't be. Perhaps audio entry?)
+	// b unknown (almost always 0, probably some sort of volume?)
+	// ending with 8 0xFFs
+
+	uint32 n;
 	offset = 0;
 	uint16 cur = 0;
+	int offs = (volume == 65535) ? 0 : 1;
+
+	if (_audioMapSCI11 && _audioMapSCI11->number != volume) {
+		_resMgr->unlockResource(_audioMapSCI11, _audioMapSCI11->number, kResourceTypeMap);
+		_audioMapSCI11 = 0;
+	}
 
 	if (!_audioMapSCI11)
-		_audioMapSCI11 = _resMgr->findResource(kResourceTypeMap, 65535, 1);
+		_audioMapSCI11 = _resMgr->findResource(kResourceTypeMap, volume, 1);
 
-	byte *ptr = _audioMapSCI11->data;
+	byte *ptr = _audioMapSCI11->data + ((volume == 65535) ? 0 : 4);
 	while (cur < _audioMapSCI11->size) {
-		n = READ_UINT16(ptr);
-		offset = READ_UINT32(ptr + 2);
+		n = (volume == 65535) ? READ_UINT16(ptr) : TO_BE_32(READ_UINT32(ptr));
+		offset = (volume == 65535) ? READ_UINT32(ptr + 2) : READ_UINT16(ptr + 4);	// TODO
 
-		// Check if we reached the end
-		if (n == 0xFF && offset == 0xFFFF)
-			return false;
-
-		if (n == audioNumber)
+		if (n == audioNumber) {
+			// TODO: find out what these are
+			if (volume != 65535)
+				printf("audio entry found: %d %d %d\n", ptr[4], ptr[5], ptr[6]);
 			return true;
+		}
 
-		ptr += 6;
-		cur += 6;
+		ptr += 6 + offs;
+		cur += 6 + offs;
 	}
 
 	return false;
@@ -1288,10 +1307,10 @@ bool AudioResource::findAudEntrySCI11(uint16 audioNumber, uint32 &offset) {
 // raw PCM encoded files (not ADPCM compressed ones)
 byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 *size, uint16 *audioRate, byte *flags) {
 	byte audioFlags;
-	byte version = audioStream->readByte();
+	byte type = audioStream->readByte();
 
-	if (version != 0x8D) {
-		warning("SOL audio version is newer than the expected one");
+	if (type != 0x8D) {
+		warning("SOL audio type should be 0x8D, but it's %d", type);
 		return NULL;
 	}
 
@@ -1320,15 +1339,18 @@ byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 *size, uint16
 	return buffer;
 }
 
-Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int *sampleLen) {
+Audio::AudioStream* AudioResource::getAudioStream(uint32 audioNumber, uint32 volume, int *sampleLen) {
 	Audio::AudioStream *audioStream = 0;
-	byte volume;
 	uint32 offset;
 	uint32 size;
 	bool found = false;
 	byte *data = 0;
 	char filename[40];
 	byte flags = 0;
+
+#if 0
+	// TODO: this is disabled for now, as the resource manager returns
+	// only the data chunk of the audio file, and not its headers
 
 	// Try to load from an external patch file first
 	Sci::Resource* audioRes = _resMgr->findResource(kResourceTypeAudio, audioNumber, 1);
@@ -1337,14 +1359,10 @@ Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int *sampl
 			size = audioRes->size;
 			data = audioRes->data;
 		} else {
-			// TODO: this is disabled for now, as for some reason the resource manager returns
-			// only the data chunk of the audio file, and not its headers
-			/*
 			Common::MemoryReadStream *memStream = 
 				new Common::MemoryReadStream(audioRes->data, audioRes->size, true);
 			data = readSOLAudio(memStream, &size, &_audioRate, &flags);
 			delete memStream;
-			*/
 		}
 
 		if (data) {
@@ -1353,18 +1371,32 @@ Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int *sampl
 											flags | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
 		}
 	}
+#endif
 
 	// Patch file not found, load it from the audio file
 	if (_sciVersion < SCI_VERSION_1_1) {
-		found = findAudEntrySCI1(audioNumber, volume, offset, size);
-		sprintf(filename, "AUDIO%03d.%03d", _lang, volume);
+		byte sci1Volume;
+		found = findAudEntrySCI1(audioNumber, sci1Volume, offset, size);
+		sprintf(filename, "AUDIO%03d.%03d", _lang, sci1Volume);
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 	} else {
-		found = findAudEntrySCI11(audioNumber, offset);
+		found = findAudEntrySCI11(audioNumber, volume, offset);
 		strcpy(filename, "RESOURCE.AUD");
+		// TODO: resource.sfx. Perhaps its files are read with map 65535?
+		/*
+		if (Common::File::exists("RESOURCE.SFX") && volume == 65535) {
+			strcpy(filename, "RESOURCE.SFX");
+		} else {
+			strcpy(filename, "RESOURCE.AUD");
+		}
+		*/
 	}
 
 	if (found) {
+#if 0
+		// TODO: This tries to load directly from the KQ5CD audio file with MP3/OGG/FLAC
+		// compression. Once we got a tool to compress this file AND update the map file
+		// at the same time, we can use this code to play compressed audio.
 		if (_sciVersion < SCI_VERSION_1_1) {
 			uint32 start = offset * 1000 / _audioRate;
 			uint32 duration = size * 1000 / _audioRate;
@@ -1372,6 +1404,7 @@ Audio::AudioStream* AudioResource::getAudioStream(uint16 audioNumber, int *sampl
 			// Try to load compressed
 			audioStream = Audio::AudioStream::openStreamFile(filename, start, duration); 
 		}
+#endif
 
 		if (!audioStream) { 
 			// Compressed file load failed, try to load original raw data
