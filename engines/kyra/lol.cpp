@@ -2340,18 +2340,18 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 	_screen->copyPage(0, 12);
 
 	int fireBallWH = (d << 4) * -1;
-	int numFireBalls = 1;
+	int numFireballs = 1;
 	if (fbCnt > 3)
-		numFireBalls = fbCnt - 3;
+		numFireballs = fbCnt - 3;
 
 	FireballState *fireballState[3];
 	memset(fireballState, 0, sizeof(fireballState));
-	for (i = 0; i < numFireBalls; i++)
+	for (i = 0; i < numFireballs; i++)
 		fireballState[i] = new FireballState(i);
 
 	_screen->copyPage(12, drawPage1);
 
-	for (i = 0; i < numFireBalls;) {
+	for (i = 0; i < numFireballs;) {
 		_screen->setCurPage(drawPage1);
 		uint32 ctime = _system->getMillis();
 
@@ -2407,8 +2407,8 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 						i++;
 					}
 
-					static const uint8 fireBallSfx[] = { 98, 167, 167, 168 };
-					snd_playSoundEffect(fireBallSfx[d], -1);
+					static const uint8 fireballSfx[] = { 98, 167, 167, 168 };
+					snd_playSoundEffect(fireballSfx[d], -1);
 
 				} else {
 					fb->progress -= fb->step;
@@ -2426,7 +2426,7 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 		_screen->copyPage(12, drawPage1);
 	}
 
-	for (i = 0; i < numFireBalls; i++)
+	for (i = 0; i < numFireballs; i++)
 		delete fireballState[i];
 
 	_screen->setCurPage(cp);

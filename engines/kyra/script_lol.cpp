@@ -1882,6 +1882,25 @@ int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_changeItemTypeOrFlag(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_changeItemTypeOrFlag(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	if (stackPos(0) < 1)
+		return 0;
+
+	ItemInPlay *i = &_itemsInPlay[stackPos(0)];
+	int r = stackPos(2) & 0x1fff;
+
+	if (stackPos(1) == 4) {
+		i->itemPropertyIndex = r;
+		return r;
+	} else if (stackPos(1) == 15) {		
+		i->shpCurFrame_flg = (i->shpCurFrame_flg & 0xe000) | r;
+		return r;
+	}
+
+	return -1;
+}
+
 int LoLEngine::olol_placeInventoryItemInHand(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_placeInventoryItemInHand(%p)  (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int itemType = stackPos(0);
@@ -2523,7 +2542,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_changeItemTypeOrFlag);
 
 	// 0xAC
 	Opcode(olol_placeInventoryItemInHand);

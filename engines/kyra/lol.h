@@ -740,6 +740,7 @@ private:
 	int olol_paralyzePoisonCharacter(EMCState *script);
 	int olol_drawCharPortrait(EMCState *script);
 	int olol_assignSpecialGuiShape(EMCState *script);
+	int olol_changeItemTypeOrFlag(EMCState *script);
 	int olol_placeInventoryItemInHand(EMCState *script);
 	int olol_castSpell(EMCState *script);
 	int olol_pitDrop(EMCState *script);
