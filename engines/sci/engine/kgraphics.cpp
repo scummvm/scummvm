@@ -304,12 +304,16 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1 :
 		if (s->version < SCI_VERSION_1_1) {
-			// Pre-SCI1.1: set cursor according to the first parameter
-			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, SKPV(0)));
+			if (SKPV(0) == 0 || SKPV(0) == 1 || SKPV(0) == -1) {
+				// Newer (SCI1.1) semantics: show/hide cursor
+				g_system->showMouse(SKPV(0) != 0);
+			} else {
+				// Pre-SCI1.1: set cursor according to the first parameter
+				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, SKPV(0)));
+			}
 		} else {
-			// SCI1.1: Hide cursor
-			if (SKPV(0) == 0)
-				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER));
+			// SCI1.1: Show/hide cursor
+			g_system->showMouse(SKPV(0) != 0);
 		}
 		break;
 	case 2 :
@@ -325,10 +329,9 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			// this would open the menu on top. LSL5 is an exception, as the game can open
 			// the menu when the player presses a button during the intro, but the cursor is
 			// not placed on (x, 0) or (x, 1)
-			int param2 = SKPV(1);
-			if (param2 == 0 || param2 == 1 || param2 == -1) {
+			if (SKPV(1) == 0 || SKPV(1) == 1 || SKPV(1) == -1) {
 				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
-							param2 == 0 ? GFXOP_NO_POINTER : SKPV(0)));
+							SKPV(1) == 0 ? GFXOP_NO_POINTER : SKPV(0)));
 			} else {	// newer (SCI1.1) semantics: set pointer position
 				GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
 							Common::Point(UKPV(0), UKPV(1))));
