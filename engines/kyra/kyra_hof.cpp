@@ -471,8 +471,6 @@ void KyraEngine_HoF::runLoop() {
 				break;
 		}
 
-		checkAutosave();
-
 		if (_system->getMillis() > _nextIdleAnim)
 			showIdleAnim();
 

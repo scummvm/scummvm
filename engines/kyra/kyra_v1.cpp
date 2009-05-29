@@ -243,6 +243,9 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 	updateInput();
 	_isSaveAllowed = false;
 
+	if (mainLoop)
+		checkAutosave();
+
 	int keys = 0;
 	int8 mouseWheel = 0;
 

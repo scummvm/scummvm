@@ -403,8 +403,6 @@ void KyraEngine_LoK::mainLoop() {
 	while (!shouldQuit()) {
 		int32 frameTime = (int32)_system->getMillis();
 
-		checkAutosave();
-
 		if (_currentCharacter->sceneId == 210) {
 			updateKyragemFading();
 			if (seq_playEnd() && _deathHandler != 8)
