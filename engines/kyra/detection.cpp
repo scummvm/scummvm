@@ -1204,7 +1204,8 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				if (Kyra::KyraEngine_v1::readSaveHeader(in, false, header) == Kyra::KyraEngine_v1::kRSHENoError) {
-					// Workaround for old savegames using 'German' as description for kyra3 start savegame (slot 0)
+					// WORKAROUND: Old savegames are using 'German' as description for kyra3 restart game save (slot 0),
+					// since that looks odd we replace it by "New Game".
 					if (slotNum == 0 && header.gameID == Kyra::GI_KYRA3)
 						header.description = "New Game";
 
@@ -1221,7 +1222,9 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 int KyraMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void KyraMetaEngine::removeSaveState(const char *target, int slot) const {
-	// In Kyra games slot 0 can't be deleted, it's for restarting the game(s)
+	// In Kyra games slot 0 can't be deleted, it's for restarting the game(s).
+	// An exception makes Lands of Lore here, it does not have any way to restart the
+	// game except via its main menu.
 	if (slot == 0 && !ConfMan.getDomain(target)->get("gameid").equalsIgnoreCase("lol"))
 		return;
 
@@ -1244,7 +1247,13 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 			SaveStateDescriptor desc(slot, header.description);
 
 			bool lolGame = ConfMan.getDomain(target)->get("gameid").equalsIgnoreCase("lol");
+
+			// Slot 0 is used for the 'restart game' save in all three Kyrandia games, thus
+			// we prevent it from being deleted.
 			desc.setDeletableFlag(slot != 0 || lolGame);
+
+			// We don't allow quick saves (slot 990 till 998) to be overwritten.
+			// The same goes for the 'Autosave', which is slot 999.
 			desc.setWriteProtectedFlag((slot == 0 && !lolGame) || slot >= 990);
 			desc.setThumbnail(header.thumbnail);
 
