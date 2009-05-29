@@ -90,7 +90,6 @@ int LoLEngine::processPrologue() {
 			break;
 
 		case 3:		// Load game
-			// For now fall through
 			//processSelection = 3;
 			break;
 
