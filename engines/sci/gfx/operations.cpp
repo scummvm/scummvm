@@ -1049,9 +1049,6 @@ int gfxop_clear_box(GfxState *state, rect_t box) {
 	_gfxop_full_pointer_refresh(state);
 	_gfxop_add_dirty(state, box);
 	DDIRTY(stderr, "[]  clearing box %d %d %d %d\n", GFX_PRINT_RECT(box));
-	if (box.x == 29 && box.y == 77 && (sci0_palette == 1)) {
-		BREAKPOINT();
-	}
 
 	_gfxop_clip(&box, gfx_rect(0, 0, 320, 200));
 #ifdef PRECISE_PRIORITY_MAP

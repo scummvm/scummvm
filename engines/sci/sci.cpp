@@ -55,44 +55,6 @@ const char *versionNames[9] = {
 	"SCI32"
 };
 
-
-int c_quit(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	script_abort_flag = 1; // Terminate VM
-	_debugstate_valid = 0;
-	_debug_seeking = 0;
-	_debug_step_running = 0;
-	return 0;
-}
-
-int c_die(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	exit(0); //
-	return 0;
-}
-
-static void init_console() {
-	con_hook_command(&c_quit, "quit", "", "console: Quits gracefully");
-	con_hook_command(&c_die, "die", "", "console: Quits ungracefully");
-
-	/*
-	con_hook_int(&(gfx_options.buffer_pics_nr), "buffer_pics_nr",
-		"Number of pics to buffer in LRU storage\n");
-	con_hook_int(&(gfx_options.pic0_dither_mode), "pic0_dither_mode",
-		"Mode to use for pic0 dithering\n");
-	con_hook_int(&(gfx_options.pic0_dither_pattern), "pic0_dither_pattern",
-		"Pattern to use for pic0 dithering\n");
-	con_hook_int(&(gfx_options.pic0_unscaled), "pic0_unscaled",
-		"Whether pic0 should be drawn unscaled\n");
-	con_hook_int(&(gfx_options.dirty_frames), "dirty_frames",
-		"Dirty frames management\n");
-	*/
-	con_hook_int(&gfx_crossblit_alpha_threshold, "alpha_threshold",
-	             "Alpha threshold for crossblitting\n");
-	con_hook_int(&sci0_palette, "sci0_palette",
-	             "SCI0 palette- 0: EGA, 1:AGI/Amiga, 2:Grayscale\n");
-	con_hook_int(&sci01_priority_table_flags, "sci01_priority_table_flags",
-	             "SCI01 priority table debugging flags: 1:Disable, 2:Print on change\n");
-}
-
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 		: Engine(syst), _gameDescription(desc) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -160,8 +122,6 @@ Common::Error SciEngine::run() {
 	} */
 
 	// FIXME/TODO: Move some of the stuff below to init()
-
-	init_console(); /* So we can get any output */
 
 	script_debug_flag = 0;
 
@@ -238,7 +198,6 @@ Common::Error SciEngine::run() {
 	// since we cannot let the game control where saves are stored)
 	script_set_gamestate_save_dir(gamestate, "/");
 
-	gfx_crossblit_alpha_threshold = 0x90;
 	GfxState gfx_state;
 	gfx_state.driver = &gfx_driver_scummvm;
 

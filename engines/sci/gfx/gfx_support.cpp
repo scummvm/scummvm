@@ -32,9 +32,6 @@
 
 namespace Sci {
 
-int gfx_crossblit_alpha_threshold = 128;
-
-
 #define LINEMACRO(startx, starty, deltalinear, deltanonlinear, linearvar, nonlinearvar, \
                   linearend, nonlinearstart, linearmod, nonlinearmod) \
 	incrNE = ((deltalinear) > 0) ? (deltalinear) : -(deltalinear); \
@@ -313,6 +310,12 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 		alpha += shift_nr;
 #endif
 	}
+
+		/**
+		 * Crossblitting functions use this value as threshold for distinguishing
+		 * between transparent and opaque wrt alpha values.
+		 */
+		int gfx_crossblit_alpha_threshold = 0x90;	// was 128
 
 		if (alpha_mask & 0xff)
 			alpha_min = ((alpha_mask * gfx_crossblit_alpha_threshold) >> 8) & alpha_mask;

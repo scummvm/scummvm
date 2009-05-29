@@ -85,11 +85,13 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("kernelnames",		WRAP_METHOD(Console, cmdKernelNames));
 	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
 	DCmd_Register("kernelwords",		WRAP_METHOD(Console, cmdKernelWords));
-	DCmd_Register("man",				WRAP_METHOD(Console, cmdMan));
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
 	DCmd_Register("size",				WRAP_METHOD(Console, cmdResourceSize));
+	DCmd_Register("restypes",			WRAP_METHOD(Console, cmdResourceTypes));
+	DCmd_Register("sci0_palette",		WRAP_METHOD(Console, cmdSci0Palette));
+	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
 }
 
 Console::~Console() {
@@ -231,53 +233,14 @@ bool Console::cmdKernelWords(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdMan(int argc, const char **argv) {
-#if 0
-	int section = 0;
-	unsigned int i;
-	char *name = cmd_params[0].str;
-	char *c = strchr(name, '.');
-	cmd_mm_entry_t *entry = 0;
-
-	if (c) {
-		*c = 0;
-		section = atoi(c + 1);
-	}
-
-	if (section < 0 || section >= CMD_MM_ENTRIES) {
-		DebugPrintf("Invalid section %d\n", section);
-		return true;
-	}
-
-	DebugPrintf("section:%d\n", section);
-	if (section)
-		entry = cmd_mm_find(name, section - 1);
-	else
-		for (i = 0; i < CMD_MM_ENTRIES && !section; i++) {
-			if ((entry = cmd_mm_find(name, i)))
-				section = i + 1;
-		}
-
-	if (!entry) {
-		DebugPrintf("No manual entry\n");
-		return true;
-	}
-
-	DebugPrintf("-- %s: %s.%d\n", cmd_mm[section - 1].name, name, section);
-	cmd_mm[section - 1].print(entry, 1);
-
-#endif
-	return true;
-}
-
 bool Console::cmdHexDump(int argc, const char **argv) {
 	if (argc != 3) {
 		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
-		DebugPrintf("The 20 valid resource types are:\n");
+		DebugPrintf("The %d valid resource types are:\n", kResourceTypeInvalid);
 		// There are 20 resource types supported by SCI1.1
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < kResourceTypeInvalid; i++) {
 			DebugPrintf("%s", getResourceTypeName((ResourceType) i));
-			DebugPrintf((i < 19) ? ", " : "\n");
+			DebugPrintf((i < kResourceTypeInvalid - 1) ? ", " : "\n");
 		}
 
 		return true;
@@ -358,6 +321,53 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::cmdResourceTypes(int argc, const char **argv) {
+	DebugPrintf("The %d valid resource types are:\n", kResourceTypeInvalid);
+	for (int i = 0; i < kResourceTypeInvalid; i++) {
+		DebugPrintf("%s", getResourceTypeName((ResourceType) i));
+		DebugPrintf((i < kResourceTypeInvalid - 1) ? ", " : "\n");
+	}
+
+	return true;
+}
+
+extern int sci0_palette;
+
+bool Console::cmdSci0Palette(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Set the SCI0 palette to use - 0: EGA, 1: AGI/Amiga, 2: Grayscale\n");
+		return true;
+	}
+
+	sci0_palette = atoi(argv[1]);
+	// TODO: the current room has to be changed to reset the palette of the views
+	game_init_graphics(g_EngineState);
+
+	return false;
+}
+
+bool Console::cmdExit(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("exit game - exit gracefully\n");
+		DebugPrintf("exit now - exit ungracefully\n");
+		return true;
+	}
+
+	if (!scumm_stricmp(argv[1], "game")) {
+		// Quit gracefully
+		script_abort_flag = 1; // Terminate VM
+		_debugstate_valid = 0;
+		_debug_seeking = 0;
+		_debug_step_running = 0;
+
+	} else if (!scumm_stricmp(argv[1], "now")) {
+		// Quit ungracefully
+		exit(0);
+	}
+
+	return false;
 }
 
 } // End of namespace Sci

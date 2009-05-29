@@ -170,8 +170,6 @@ int kernel_oops(EngineState *s, const char *file, int line, const char *reason);
 
 /******************** Priority macros/functions ********************/
 
-extern int sci01_priority_table_flags; /* 1: delete, 2: print */
-
 int _find_priority_band(EngineState *s, int band);
 /* Finds the position of the priority band specified
 ** Parameters: (EngineState *) s: State to search in

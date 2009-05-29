@@ -37,7 +37,6 @@ namespace Sci {
 // console commands
 
 static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // lists various types of things
-static int c_man(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // 'manual page'
 static int c_set(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // sets an int variable
 static int c_print(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // prints a variable
 //static int c_objinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // shows some info about one class
@@ -162,7 +161,6 @@ void con_init() {
 
 		// Hook up some commands
 		con_hook_command(&c_list, "list", "s*", "Lists various things (try 'list')");
-		con_hook_command(&c_man, "man", "s", "Gives a short description of something");
 		con_hook_command(&c_print, "print", "s", "Prints an int variable");
 		con_hook_command(&c_set, "set", "si", "Sets an int variable");
 		con_hook_command(&c_hexgrep, "hexgrep", "shh*", "Searches some resources for a\n"
@@ -191,6 +189,20 @@ void con_init() {
 		              "    a list of addresses and indices is provided.\n"
 		              "    ?obj.idx may be used to disambiguate 'obj'\n"
 		              "    by the index 'idx'.\n");
+
+			// These were in sci.cpp
+			/*
+			con_hook_int(&(gfx_options.buffer_pics_nr), "buffer_pics_nr",
+				"Number of pics to buffer in LRU storage\n");
+			con_hook_int(&(gfx_options.pic0_dither_mode), "pic0_dither_mode",
+				"Mode to use for pic0 dithering\n");
+			con_hook_int(&(gfx_options.pic0_dither_pattern), "pic0_dither_pattern",
+				"Pattern to use for pic0 dithering\n");
+			con_hook_int(&(gfx_options.pic0_unscaled), "pic0_unscaled",
+				"Whether pic0 should be drawn unscaled\n");
+			con_hook_int(&(gfx_options.dirty_frames), "dirty_frames",
+				"Dirty frames management\n");
+			*/
 	}
 }
 
@@ -731,7 +743,6 @@ static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		          "vars       - lists all variables\n"
 		          "docs       - lists all misc. documentation\n"
 		          "\n"
-		          "restypes   - lists all resource types\n"
 		          "[resource] - lists all [resource]s");
 	} else if (cmdParams.size() == 1) {
 		const char *mm_subsects[3] = {"cmds", "vars", "docs"};
@@ -749,11 +760,6 @@ static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 			if (!s) {
 				sciprintf("You need a state to do that!\n");
 				return 1;
-			}
-
-			else if (strcmp("restypes", cmdParams[0].str) == 0) {
-				for (i = 0; i < kResourceTypeInvalid; i++)
-					sciprintf("%s\n", getResourceTypeName((ResourceType)i));
 			} else {
 				ResourceType res = parseResourceType(cmdParams[0].str);
 				if (res == kResourceTypeInvalid)
@@ -767,43 +773,6 @@ static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		}
 	} else
 		sciprintf("list can only be used with one argument");
-	return 0;
-}
-
-static int c_man(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int section = 0;
-	uint i;
-	Common::String name = cmdParams[0].str;
-	const char *c = strchr(name.c_str(), '.');
-	cmd_mm_entry_t *entry = 0;
-
-	if (c) {
-		section = atoi(c + 1);
-		name = Common::String(name.begin(), c);
-	}
-
-	if (section < 0 || section >= CMD_MM_ENTRIES) {
-		sciprintf("Invalid section %d\n", section);
-		return 1;
-	}
-
-	sciprintf("section:%d\n", section);
-	if (section)
-		entry = cmd_mm_find(name.c_str(), section - 1);
-	else
-		for (i = 0; i < CMD_MM_ENTRIES && !section; i++) {
-			if ((entry = cmd_mm_find(name.c_str(), i)))
-				section = i + 1;
-		}
-
-	if (!entry) {
-		sciprintf("No manual entry\n");
-		return 1;
-	}
-
-	sciprintf("-- %s: %s.%d\n", cmd_mm[section - 1].name, name.c_str(), section);
-	cmd_mm[section - 1].print(entry, 1);
-
 	return 0;
 }
 

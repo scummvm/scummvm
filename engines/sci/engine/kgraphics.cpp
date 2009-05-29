@@ -987,8 +987,6 @@ reg_t kOnControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr);
 
-int sci01_priority_table_flags = 0;
-
 #define K_DRAWPIC_FLAG_MIRRORED (1 << 14)
 
 reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -1049,18 +1047,6 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->port = s->picture_port;
 
 	s->pic_priority_table = gfxop_get_pic_metainfo(s->gfx_state);
-
-	if (sci01_priority_table_flags & 0x2) {
-		if (s->pic_priority_table) {
-			int i;
-			fprintf(stderr, "---------------------------\nPriority table:\n");
-			for (i = 0; i < 16; i++)
-				fprintf(stderr, "\t%d:\t%d\n", i, s->pic_priority_table[i]);
-			fprintf(stderr, "---------------------------\n");
-		}
-	}
-	if (sci01_priority_table_flags & 0x1)
-		s->pic_priority_table = NULL;
 
 	if (argc > 1)
 		s->pic_animate = SKPV(1) & 0xff; // The animation used during kAnimate() later on
