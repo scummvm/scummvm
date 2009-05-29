@@ -1002,7 +1002,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			if (audioStream)
 				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
 		} else if (argc == 6) {		// SQ4CD or newer
-			uint32 volume = UKPV(1);
+			//uint32 volume = UKPV(1);
 			// Make a BE number
 			uint32 audioNumber = (((UKPV(2) & 0xFF) << 24) & 0xFF000000) |
 								 (((UKPV(3) & 0xFF) << 16) & 0x00FF0000) |
