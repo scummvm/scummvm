@@ -3729,7 +3729,7 @@ bool LoLEngine::automapProcessButtons(int inputFlag) {
 	while (inputFlag == 199 || inputFlag == 200) {
 		inputFlag = checkInput(0, false);
 		removeInputTop();
-		delay (_tickLength);
+		delay(_tickLength);
 	}
 
 	if (r == 0) {
