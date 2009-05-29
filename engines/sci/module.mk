@@ -54,8 +54,7 @@ MODULE_OBJS = \
 	gfx/res_font.o \
 	gfx/res_pal.o \
 	gfx/res_pic.o \
-	gfx/res_view0.o \
-	gfx/res_view1.o \
+	gfx/res_view.o \
 	gfx/seq_decoder.o \
 	sfx/core.o \
 	sfx/iterator.o \
