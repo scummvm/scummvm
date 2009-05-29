@@ -63,7 +63,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"dynasty", "The Last Dynasty"},
 	{"urban", "Urban Runner"},
 	{"archi", "Playtoon 1 - Uncle Archibald"},
-	{"spirou", "Playtoon 2 - The counterfeit collaborator"},
+	{"spirou", "Playtoon 2 - The Case of the Counterfeit Collaborator"},
 	{"chato", "Playtoon 3 - The Secret of the Castle"},
 	{"manda", "Playtoon 4 - The Mandarine Prince"},
 	{"wakan", "Playtoon 5 - The Stone of Wakan"},
@@ -2632,6 +2632,23 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"archi",
+			"",
+			{
+				{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
+				{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
+				{NULL, 0, NULL, 0}
+			},
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"archi",
 			"Non-Interactive Demo",
 			{
 				{"play123.scn", 0, "4689a31f543915e488c3bc46ea358add", 258},
@@ -2753,6 +2770,23 @@ static const GOBGameDescription gameDescriptions[] = {
 				{NULL, 0, NULL, 0}
 			},
 			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"chato",
+			"",
+			{
+				{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
+				{"chato.stk", 0, "3c6cb3ac8a5a7cf681a19971a92a748d", 6033791},
+				{NULL, 0, NULL, 0}
+			},
+			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS
 		},
