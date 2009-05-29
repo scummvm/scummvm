@@ -778,7 +778,7 @@ int SfxState::sfx_add_song(SongIterator *it, int priority, song_handle_t handle,
 	fprintf(stderr, "[sfx-core] Adding song: %08lx at %d, it=%p\n", handle, priority, it);
 #endif
 	if (!it) {
-		fprintf(stderr, "[SFX] Attempt to add empty song with handle %08lx\n", handle);
+		warning("[SFX] Attempt to add empty song with handle %08lx", handle);
 		return -1;
 	}
 

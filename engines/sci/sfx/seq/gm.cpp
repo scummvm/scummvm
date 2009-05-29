@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/util.h"
+
 #include "sci/tools.h"
 #include "sci/sfx/sequencer.h"
 #include "sci/sfx/device.h"
@@ -36,7 +38,7 @@ static Common::Error midi_gm_open(int patch_len, byte *data, int patch2_len, byt
 	sfx_instrument_map_t *instrument_map = sfx_instrument_map_load_sci(data, patch_len);
 
 	if (!instrument_map) {
-		fprintf(stderr, "[GM]  No GM instrument map found, trying MT-32 instrument map..\n");
+		warning("[GM]  No GM instrument map found, trying MT-32 instrument map..");
 		instrument_map = sfx_instrument_map_mt32_to_gm(data2, patch2_len);
 	}
 

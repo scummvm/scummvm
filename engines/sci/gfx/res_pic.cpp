@@ -468,7 +468,7 @@ static void _gfxr_fill_ellipse(gfxr_pic_t *pic, byte *buffer, int linewidth, int
 				break;
 
 			default:
-				fprintf(stderr, "%s L%d: Invalid ellipse fill mode!\n", __FILE__, __LINE__);
+				warning(" to %s,%d", __FILE__, __LINE__);
 				return;
 
 			}
@@ -770,7 +770,7 @@ static void _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, in
 	end.y = ey;
 
 	if (ex >= pic->visual_map->index_width || ey >= pic->visual_map->index_height || x < 0 || y < 0) {
-		fprintf(stderr, "While drawing pic0: INVALID LINE %d,%d,%d,%d\n",
+		warning("While drawing pic0: INVALID LINE %d,%d,%d,%d",
 		        start.x, start.y, end.x, end.y);
 		return;
 	}

@@ -163,7 +163,7 @@ static int _parse_sci_midi_command(BaseSongIterator *self, byte *buf,
 	}
 
 	if (cmd == 0xfe) {
-		fprintf(stderr, "song iterator subsystem: Corrupted sound resource detected.\n");
+		warning("song iterator subsystem: Corrupted sound resource detected.");
 		return SI_FINISHED;
 	}
 

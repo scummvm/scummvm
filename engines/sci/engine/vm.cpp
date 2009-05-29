@@ -514,8 +514,7 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 #endif
 
 void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
-	fprintf(stderr, "Fatal VM error in %s, L%d; aborting...\n", file, line);
-	error("Could not recover, exitting...\n");
+	error("Fatal VM error in %s, L%d; aborting...", file, line);
 }
 
 static Script *script_locate_by_segment(EngineState *s, SegmentId seg) {

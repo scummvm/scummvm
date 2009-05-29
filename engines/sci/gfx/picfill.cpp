@@ -74,10 +74,7 @@ static void AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, i
 		if (xl > old_xr) // No fillable strip above the last one
 			return;
 
-		if ((ytotal + xl) < 0) {
-			fprintf(stderr, "AARGH-%d\n", __LINE__);
-			BREAKPOINT();
-		}
+		assert((ytotal + xl) >= 0);
 
 		xr = xl;
 		while (xr < 320 && !(pic->aux_map[ytotal + xr] & clipmask)) {
@@ -85,10 +82,7 @@ static void AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, i
 			++xr;
 		}
 
-		if ((ytotal + xr) > 64000) {
-			fprintf(stderr, "AARGH-%d\n", __LINE__);
-			BREAKPOINT();
-		}
+		assert((ytotal + xr) <= 64000);
 
 		--xr;
 
@@ -137,14 +131,8 @@ static void AUXBUF_FILL_HELPER(gfxr_pic_t *pic, int old_xl, int old_xr, int y, i
 			}
 		}
 
-		if ((ytotal + xl) < 0) {
-			fprintf(stderr, "AARGH-%d\n", __LINE__);
-			BREAKPOINT();
-		}
-		if ((ytotal + xr + 1) > 64000) {
-			fprintf(stderr, "AARGH-%d\n", __LINE__);
-			BREAKPOINT();
-		}
+		assert((ytotal + xl) >= 0);
+		assert((ytotal + xr + 1) <= 64000);
 
 		if (control)
 			memset(pic->control_map->index_data + ytotal + xl, control, xr - xl + 1);

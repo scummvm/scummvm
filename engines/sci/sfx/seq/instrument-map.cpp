@@ -151,7 +151,7 @@ sfx_instrument_map_t *sfx_instrument_map_load_sci(byte *data, size_t size) {
 		return NULL;
 
 	if (size < PATCH_MIN_SIZE) {
-		fprintf(stderr, "[instrument-map] Instrument map too small:  %d of %d\n", (int) size, PATCH_MIN_SIZE);
+		warning("[instrument-map] Instrument map too small:  %d of %d", (int) size, PATCH_MIN_SIZE);
 		return NULL;
 	}
 
@@ -161,12 +161,12 @@ sfx_instrument_map_t *sfx_instrument_map_load_sci(byte *data, size_t size) {
 	map->initialisation_block_size = (int16)READ_LE_UINT16(data + PATCH_INIT_DATA_SIZE_LE);
 	if (map->initialisation_block_size) {
 		if (size < PATCH_MIN_SIZE + map->initialisation_block_size) {
-			fprintf(stderr, "[instrument-map] Instrument map too small for initialisation block:  %d of %d\n", (int) size, PATCH_MIN_SIZE);
+			warning("[instrument-map] Instrument map too small for initialisation block:  %d of %d", (int) size, PATCH_MIN_SIZE);
 			return NULL;
 		}
 
 		if (size > PATCH_MIN_SIZE + map->initialisation_block_size)
-			fprintf(stderr, "[instrument-map] Instrument larger than required by initialisation block:  %d of %d\n", (int) size, PATCH_MIN_SIZE);
+			warning("[instrument-map] Instrument larger than required by initialisation block:  %d of %d", (int) size, PATCH_MIN_SIZE);
 
 		if (map->initialisation_block_size != 0) {
 			map->initialisation_block = (byte *)malloc(map->initialisation_block_size);
@@ -254,7 +254,7 @@ static void close_decorated(decorated_midi_writer_t *self) {
 static int bound_hard_127(int i, const char *descr) {
 	int r = BOUND_127(i);
 	if (r != i)
-		fprintf(stderr, "[instrument-map] Hard-clipping %02x to %02x in %s\n", i, r, descr);
+		warning("[instrument-map] Hard-clipping %02x to %02x in %s", i, r, descr);
 	return r;
 }
 
@@ -423,7 +423,7 @@ static void init(midi_writer_t *writer, byte *data, size_t len) {
 			byte *find = (byte *) memchr(data + offset, 0xf7, len - offset);
 
 			if (!find) {
-				fprintf(stderr, "[instrument-map] Failed to find end of sysex message\n");
+				warning("[instrument-map] Failed to find end of sysex message");
 				return;
 			}
 
@@ -455,7 +455,7 @@ static void init(midi_writer_t *writer, byte *data, size_t len) {
 		}
 
 		if (args + offset > len) {
-			fprintf(stderr, "[instrument-map] Insufficient bytes remaining for MIDI command %02x\n", op);
+			warning("[instrument-map] Insufficient bytes remaining for MIDI command %02x", op);
 			return;
 		}
 

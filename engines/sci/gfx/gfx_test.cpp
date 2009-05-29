@@ -297,7 +297,7 @@ int gfxr_interpreter_calculate_pic(gfx_resstate_t *state, gfxr_pic_t *scaled_pic
 		break;
 
 	default:
-		fprintf(stderr, "Attempt to reference invalid pic #%d\n", nr);
+		warning("Attempt to reference invalid pic #%d", nr);
 	}
 
 	printf(">> resource manager retrieved pic #%d\n", nr);
@@ -481,7 +481,7 @@ gfx_pixmap_t *gfxr_interpreter_get_cursor(gfx_resstate_t *state, int nr, void *i
 		break;
 
 	default:
-		fprintf(stderr, "Attempt to load invalid pointer %d\n", nr);
+		warning("Attempt to load invalid pointer %d", nr);
 		gfx_free_pixmap(state->driver, cursor);
 		return NULL;
 	}
@@ -1081,7 +1081,7 @@ int main(int argc, char **argv) {
 		case 'x':
 			set_mode = xres = atoi(optarg);
 			if (xres < 1) {
-				fprintf(stderr, "Invalid x scale factor!\n");
+				warning("Invalid x scale factor!");
 				return 1;
 			}
 			break;
@@ -1089,7 +1089,7 @@ int main(int argc, char **argv) {
 		case 'y':
 			set_mode = yres = atoi(optarg);
 			if (yres < 1) {
-				fprintf(stderr, "Invalid y scale factor!\n");
+				warning("Invalid y scale factor!");
 				return 1;
 			}
 			break;
@@ -1097,13 +1097,13 @@ int main(int argc, char **argv) {
 		case 'c':
 			set_mode = color_mode = atoi(optarg);
 			if (color_mode < 1 || color_mode > 4) {
-				fprintf(stderr, "Invalid number of bytes per pixel!\n");
+				warning("Invalid number of bytes per pixel!");
 				return 1;
 			}
 			break;
 
 		default:
-			fprintf(stderr, "Run 'gfx_test -h' for help\n");
+			warning("Run 'gfx_test -h' for help");
 			return 1;
 		}
 
@@ -1128,17 +1128,17 @@ int main(int argc, char **argv) {
 		}
 
 		if (init_driver(drv)) {
-			fprintf(stderr, "Initialization failed!\n");
+			warning("Initialization failed!");
 			return 1;
 		}
 
 		do_tests(tests);
 
 		if (gfxop_exit(state)) {
-			fprintf(stderr, "Something weird happened while exitting...\n");
+			warning("Something weird happened while exitting...");
 		}
 	} else {
-		fprintf(stderr, "No graphics driver found!\n");
+		warning("No graphics driver found!");
 		return 1;
 	}
 

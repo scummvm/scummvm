@@ -489,7 +489,7 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 
 int kernel_oops(EngineState *s, const char *file, int line, const char *reason) {
 	sciprintf("Kernel Oops in file %s, line %d: %s\n", file, line, reason);
-	fprintf(stderr, "Kernel Oops in file %s, line %d: %s\n", file, line, reason);
+	warning("Kernel Oops in file %s, line %d: %s", file, line, reason);
 	script_debug_flag = script_error_flag = 1;
 	return 0;
 }

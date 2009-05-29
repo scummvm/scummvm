@@ -1085,7 +1085,7 @@ int gfxop_set_visible_map(GfxState *state, gfx_map_mask_t visible_map) {
 		break;
 
 	default:
-		fprintf(stderr, "Invalid display map %d selected!\n", visible_map);
+		warning("Invalid display map %d selected!", visible_map);
 		return GFX_ERROR;
 	}
 

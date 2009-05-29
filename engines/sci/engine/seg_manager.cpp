@@ -1087,7 +1087,7 @@ void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, 
 			warning("Request for outgoing script-object reference at %04x:%04x yielded invalid index %d", PRINT_REG(addr), idx);
 		}
 	} else {
-		/*		fprintf(stderr, "Unexpected request for outgoing script-object references at %04x:%04x\n", PRINT_REG(addr));*/
+		/*		warning("Unexpected request for outgoing script-object references at %04x:%04x", PRINT_REG(addr));*/
 		/* Happens e.g. when we're looking into strings */
 	}
 }
@@ -1109,7 +1109,7 @@ void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *par
 //	assert(addr.segment == _segId);
 
 	if (!clone_table->isValidEntry(addr.offset)) {
-		fprintf(stderr, "Unexpected request for outgoing references from clone at %04x:%04x\n", PRINT_REG(addr));
+		warning("Unexpected request for outgoing references from clone at %04x:%04x", PRINT_REG(addr));
 //		BREAKPOINT();
 		return;
 	}

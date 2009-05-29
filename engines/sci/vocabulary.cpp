@@ -166,7 +166,7 @@ bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
 		seeker = 26 * 2; // vocab.000 starts with 26 16-bit pointers which we don't use
 
 	if (resource->size < seeker) {
-		fprintf(stderr, "Invalid main vocabulary encountered: Too small\n");
+		warning("Invalid main vocabulary encountered: Too small");
 		return false;
 		// Now this ought to be critical, but it'll just cause parse() and said() not to work
 	}
@@ -291,7 +291,7 @@ bool vocab_get_branches(ResourceManager * resmgr, Common::Array<parse_tree_branc
 	int branches_nr = resource->size / 20;
 
 	if (branches_nr == 0) {
-		fprintf(stderr, "Parser tree data is empty!\n");
+		warning("Parser tree data is empty!");
 		return false;
 	}
 

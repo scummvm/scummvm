@@ -176,7 +176,7 @@ void test_simple_it() {
 	ASSERT_NEXT(4);
 	ASSERT_CUE(2);
 	ASSERT_SIT;
-//	fprintf(stderr, "XXX => %d\n", songit_next(&it, data, &result, IT_READER_MASK_ALL));
+//	warning("XXX => %d", songit_next(&it, data, &result, IT_READER_MASK_ALL));
 	ASSERT_NEXT(35);
 	ASSERT_NEXT(SI_FINISHED);
 	ASSERT_SIT;
@@ -418,6 +418,6 @@ int main(int argc, char **argv) {
 	test_iterator_sci0_loop();
 	test_iterator_sci0_mark_loop();
 	if (errors != 0)
-		fprintf(stderr, "[ERROR] %d errors total.\n", errors);
+		warning("[ERROR] %d errors total.", errors);
 	return (errors != 0);
 }
