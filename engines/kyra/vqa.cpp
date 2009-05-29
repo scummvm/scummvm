@@ -343,7 +343,6 @@ bool VQAMovie::open(const char *filename) {
 		default:
 			warning("VQAMovie::open: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
 			_file->seek(size, SEEK_CUR);
-			break;
 		}
 	}
 
@@ -507,7 +506,6 @@ void VQAMovie::displayFrame(uint frameNum) {
 				default:
 					warning("VQAMovie::displayFrame: Unknown `VQFR' sub-tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
 					_file->seek(size, SEEK_CUR);
-					break;
 				}
 
 			}
@@ -517,7 +515,6 @@ void VQAMovie::displayFrame(uint frameNum) {
 		default:
 			warning("VQAMovie::displayFrame: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
 			_file->seek(size, SEEK_CUR);
-			break;
 		}
 	}
 
@@ -636,7 +633,6 @@ void VQAMovie::play() {
 			default:
 				warning("VQAMovie::play: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
 				_file->seek(size, SEEK_CUR);
-				break;
 			}
 		}
 	}

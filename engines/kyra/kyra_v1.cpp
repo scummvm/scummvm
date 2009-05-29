@@ -330,7 +330,6 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 					break;
 				default:
 					keys = 0;
-					break;
 				}
 
 				// When we got an keypress, which we might need to handle,
@@ -557,7 +556,6 @@ void KyraEngine_v1::writeSettings() {
 	default:	// Voice & Text
 		speechMute = false;
 		subtitles = true;
-		break;
 	}
 
 	if (_sound) {

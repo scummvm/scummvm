@@ -387,7 +387,6 @@ void Sprites::updateSceneAnims() {
 		default:
 			warning("Unsupported anim command %X in script %i", READ_LE_UINT16(data), i);
 			data += 2;
-			break;
 		}
 
 		if (update)
@@ -488,7 +487,6 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 			default:
 				warning("Unknown code in DAT file '%s' offset %d: %x", filename, int(data - _dat), READ_LE_UINT16(data));
 				data += 2;
-				break;
 			}
 		}
 	} else {

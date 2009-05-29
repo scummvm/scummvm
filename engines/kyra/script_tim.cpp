@@ -158,7 +158,6 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 
 		default:
 			warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk->id), chunk->size, filename);
-			break;
 		}
 	}
 
@@ -1124,42 +1123,41 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 			_vm->gui_notifyButtonListChanged();
 
 		switch (e) {
-			case 43:
-			case 61:
-				_vm->snd_stopSpeech(true);
-				//_dlgTimer = 0;
-				res = _dialogueHighlightedButton + 1;
-				break;
+		case 43:
+		case 61:
+			_vm->snd_stopSpeech(true);
+			//_dlgTimer = 0;
+			res = _dialogueHighlightedButton + 1;
+			break;
 
-			case 92:
-			case 97:
-				if (_dialogueNumButtons > 1 && _dialogueHighlightedButton > 0)
-					_dialogueHighlightedButton--;
-				break;
+		case 92:
+		case 97:
+			if (_dialogueNumButtons > 1 && _dialogueHighlightedButton > 0)
+				_dialogueHighlightedButton--;
+			break;
 
-			case 96:
-			case 102:
-				if (_dialogueNumButtons > 1 && _dialogueHighlightedButton < (_dialogueNumButtons - 1))
-					_dialogueHighlightedButton++;
-				break;
+		case 96:
+		case 102:
+			if (_dialogueNumButtons > 1 && _dialogueHighlightedButton < (_dialogueNumButtons - 1))
+				_dialogueHighlightedButton++;
+			break;
 
-			case 200:
-			case 202:
-				x = _dialogueButtonPosX;
+		case 200:
+		case 202:
+			x = _dialogueButtonPosX;
 
-				for (int i = 0; i < _dialogueNumButtons; i++) {
-					if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
-						_dialogueHighlightedButton = i;
-						res = _dialogueHighlightedButton + 1;
-						break;
-					}
-					x += _dialogueButtonXoffs;
+			for (int i = 0; i < _dialogueNumButtons; i++) {
+				if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
+					_dialogueHighlightedButton = i;
+					res = _dialogueHighlightedButton + 1;
+					break;
 				}
+				x += _dialogueButtonXoffs;
+			}
+			break;
 
-				break;
-
-			default:
-				break;
+		default:
+			break;
 		}
 	}
 

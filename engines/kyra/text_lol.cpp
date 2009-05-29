@@ -269,7 +269,6 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 				break;
 			default:
 				eos = true;
-				break;
 			}
 			break;
 		case ' ':
@@ -434,8 +433,6 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 
 			if ((_textDimData[sdx].column + _lineWidth) > (sd->w << 3))
 				printLine(_currentLine);
-
-			break;
 		}
 
 		c = parseCommand();

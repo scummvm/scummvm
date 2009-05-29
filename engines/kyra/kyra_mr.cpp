@@ -317,7 +317,6 @@ Common::Error KyraEngine_MR::go() {
 			uninitMainMenu();
 			quitGame();
 			running = false;
-			break;
 		}
 	}
 
@@ -1496,7 +1495,6 @@ void KyraEngine_MR::writeSettings() {
 	case 0:
 	default:
 		_flags.lang = Common::EN_ANY;
-		break;
 	}
 
 	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)

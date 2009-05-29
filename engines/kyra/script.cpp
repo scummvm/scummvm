@@ -109,7 +109,6 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 		default:
 			warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk->id), chunk->size, filename);
-			break;
 		}
 	}
 
@@ -237,7 +236,6 @@ void EMCInterpreter::op_pushRetOrPos(EMCState *script) {
 
 	default:
 		script->ip = 0;
-		break;
 	}
 }
 
@@ -274,7 +272,6 @@ void EMCInterpreter::op_popRetOrPos(EMCState *script) {
 
 	default:
 		script->ip = 0;
-		break;
 	}
 }
 
@@ -340,7 +337,6 @@ void EMCInterpreter::op_negate(EMCState *script) {
 	default:
 		warning("Unknown negation func: %d", _parameter);
 		script->ip = 0;
-		break;
 	}
 }
 
@@ -427,7 +423,6 @@ void EMCInterpreter::op_eval(EMCState *script) {
 	default:
 		warning("Unknown evaluate func: %d", _parameter);
 		error = true;
-		break;
 	}
 
 	if (error)

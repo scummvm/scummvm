@@ -327,7 +327,6 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 						buttonList->flags2 |= 2;
 					}
 					_specialProcessButton = buttonList;
-					break;
 				}
 			}
 		}

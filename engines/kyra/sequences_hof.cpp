@@ -1811,22 +1811,22 @@ int KyraEngine_HoF::seq_lolDemoScene1(WSAMovie_v2 *wsaObj, int x, int y, int frm
 
 int KyraEngine_HoF::seq_lolDemoScene2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (_seqFrameCounter - 17) {
-		case 0:
-			_seqFrameDelay = 8;
-			break;
-		case 3:
-		case 6:
-		case 9:
-			seq_playTalkText(8);
-			break;
-		case 15:
-			seq_playTalkText(9);
-			break;
-		case 18:
-			seq_playTalkText(2);
-			break;
-		default:
-			break;
+	case 0:
+		_seqFrameDelay = 8;
+		break;
+	case 3:
+	case 6:
+	case 9:
+		seq_playTalkText(8);
+		break;
+	case 15:
+		seq_playTalkText(9);
+		break;
+	case 18:
+		seq_playTalkText(2);
+		break;
+	default:
+		break;
 	}
 	_seqFrameCounter++;
 	return frm;
@@ -1844,32 +1844,32 @@ int KyraEngine_HoF::seq_lolDemoScene3(WSAMovie_v2 *wsaObj, int x, int y, int frm
 
 int KyraEngine_HoF::seq_lolDemoScene4(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (_seqFrameCounter) {
-		case 11:
-		case 14:
-		case 17:
-		case 20:
-			seq_playTalkText(8);
-			break;
-		case 22:
-			seq_playTalkText(11);
-			break;
-		case 24:
-			seq_playTalkText(8);
-			break;
-		case 30:
-			seq_playTalkText(15);
-			break;
-		case 34:
-			seq_playTalkText(14);
-			break;
-		case 38:
-			seq_playTalkText(13);
-			break;
-		case 42:
-			seq_playTalkText(12);
-			break;
-		default:
-			break;
+	case 11:
+	case 14:
+	case 17:
+	case 20:
+		seq_playTalkText(8);
+		break;
+	case 22:
+		seq_playTalkText(11);
+		break;
+	case 24:
+		seq_playTalkText(8);
+		break;
+	case 30:
+		seq_playTalkText(15);
+		break;
+	case 34:
+		seq_playTalkText(14);
+		break;
+	case 38:
+		seq_playTalkText(13);
+		break;
+	case 42:
+		seq_playTalkText(12);
+		break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -1878,30 +1878,30 @@ int KyraEngine_HoF::seq_lolDemoScene4(WSAMovie_v2 *wsaObj, int x, int y, int frm
 
 int KyraEngine_HoF::seq_lolDemoScene5(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 	switch (_seqFrameCounter++) {
-		case 0:
-		case 4:
-		case 6:
-		case 8:
-		case 10:
-		case 14:
-		case 16:
-		case 18:
-		case 20:
-		case 22:
-		case 24:
-		case 26:
-		case 28:
-		case 30:
-			seq_playTalkText(15);
-			break;
-		case 32:
-			seq_playTalkText(16);
-			break;
-		case 42:
-			seq_playTalkText(6);
-			break;
-		default:
-			break;
+	case 0:
+	case 4:
+	case 6:
+	case 8:
+	case 10:
+	case 14:
+	case 16:
+	case 18:
+	case 20:
+	case 22:
+	case 24:
+	case 26:
+	case 28:
+	case 30:
+		seq_playTalkText(15);
+		break;
+	case 32:
+		seq_playTalkText(16);
+		break;
+	case 42:
+		seq_playTalkText(6);
+		break;
+	default:
+		break;
 	}
 	return frm;
 }
@@ -2054,28 +2054,28 @@ void KyraEngine_HoF::seq_sequenceCommand(int command) {
 	case 0:
 		memset(pal, 0, 0x300);
 		_screen->fadePalette(pal, 36);
-		memcpy (_screen->getPalette(0), pal, 0x300);
-		memcpy (_screen->getPalette(1), pal, 0x300);
+		memcpy(_screen->getPalette(0), pal, 0x300);
+		memcpy(_screen->getPalette(1), pal, 0x300);
 		break;
 
 	case 1:
 		memset(pal, 0x3F, 0x300);
 		seq_playTalkText(_rnd.getRandomBit());
 		_screen->fadePalette(pal, 16);
-		memcpy (_screen->getPalette(0), pal, 0x300);
-		memcpy (_screen->getPalette(1), pal, 0x300);
+		memcpy(_screen->getPalette(0), pal, 0x300);
+		memcpy(_screen->getPalette(1), pal, 0x300);
 		break;
 
 	case 3:
 		_screen->copyPage(2, 0);
 		_screen->fadePalette(_screen->getPalette(0), 16);
-		memcpy (_screen->getPalette(1), _screen->getPalette(0), 0x300);
+		memcpy(_screen->getPalette(1), _screen->getPalette(0), 0x300);
 		break;
 
 	case 4:
 		_screen->copyPage(2, 0);
 		_screen->fadePalette(_screen->getPalette(0), 36);
-		memcpy (_screen->getPalette(1), _screen->getPalette(0), 0x300);
+		memcpy(_screen->getPalette(1), _screen->getPalette(0), 0x300);
 		break;
 
 	case 5:
@@ -2095,8 +2095,8 @@ void KyraEngine_HoF::seq_sequenceCommand(int command) {
 	case 8:
 		memset(pal, 0, 0x300);
 		_screen->fadePalette(pal, 16);
-		memcpy (_screen->getPalette(0), pal, 0x300);
-		memcpy (_screen->getPalette(1), pal, 0x300);
+		memcpy(_screen->getPalette(0), pal, 0x300);
+		memcpy(_screen->getPalette(1), pal, 0x300);
 
 		delay(120 * _tickLength);
 		break;
@@ -2112,8 +2112,8 @@ void KyraEngine_HoF::seq_sequenceCommand(int command) {
 		//pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = 0x3f;
 
 		_screen->fadePalette(pal, 64);
-		memcpy (_screen->getPalette(0), pal, 0x300);
-		memcpy (_screen->getPalette(1), pal, 0x300);
+		memcpy(_screen->getPalette(0), pal, 0x300);
+		memcpy(_screen->getPalette(1), pal, 0x300);
 		break;
 
 	default:
@@ -2404,7 +2404,6 @@ bool KyraEngine_HoF::seq_processNextSubFrame(int wsaNum) {
 		default:
 			currentFrame = _activeWSA[wsaNum].endFrame - 1;
 			res = true;
-			break;
 		}
 	}
 
@@ -2590,7 +2589,6 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 				break;
 			default:
 				textData[cnt + 1].x = (((d->w << 3) - _screen->getTextWidth(str)) >> 1) + 1;
-				break;
 			}
 
 			if (textData[cnt].unk1 == 5)

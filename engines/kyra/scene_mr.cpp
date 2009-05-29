@@ -223,7 +223,6 @@ void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 
 		default:
 			x2 = y2 = -1;
-			break;
 		}
 
 		if (x2 >= 316)
@@ -740,7 +739,6 @@ int KyraEngine_MR::checkSceneChange() {
 
 	default:
 		newScene = _mainCharacter.sceneId;
-		break;
 	}
 
 	if (newScene == 0xFFFF)

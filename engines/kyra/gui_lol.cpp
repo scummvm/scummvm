@@ -2111,7 +2111,6 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 						buttonList->flags2 |= 2;
 					}
 					_specialProcessButton = buttonList;
-					break;
 				}
 			}
 		}

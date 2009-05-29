@@ -924,7 +924,6 @@ int KyraEngine_LoK::processSceneChange(int *table, int unk1, int frameReset) {
 		default:
 			++table;
 			forceContinue = true;
-			break;
 		}
 
 		returnValue = changeScene(_currentCharacter->facing);
@@ -1084,7 +1083,6 @@ int KyraEngine_LoK::changeScene(int facing) {
 
 	default:
 		sceneId = _roomTable[_currentCharacter->sceneId].westExit;
-		break;
 	}
 
 	if (sceneId == 0xFFFF)

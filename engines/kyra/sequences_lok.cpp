@@ -845,7 +845,6 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
 		red = 33;
 		green = 66;
 		blue = 100;
-		break;
 	}
 	red   = (uint8)((double)red   * 0.63);
 	green = (uint8)((double)green * 0.63);
@@ -1793,7 +1792,6 @@ void KyraEngine_LoK::drawJewelsFadeOutEnd(int jewel) {
 
 	default:
 		newDelay = 3600;
-		break;
 	}
 
 	setGameFlag(0xF1);

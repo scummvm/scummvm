@@ -2746,7 +2746,6 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 		break;
 	default:
 		error("Unhandled bitmap compression %d", compType);
-		break;
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
@@ -2983,7 +2982,6 @@ int SJIStoFMTChunk(int f, int s) { // copied from scumm\charset.cpp
 		break;
 	default:
 		debug(4, "Invalid Char! f %x s %x base %x c %d p %d", f, s, base, c, p);
-		return 0;
 	}
 
 	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);

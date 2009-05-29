@@ -100,7 +100,6 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 	default:
 		warning("unsupported language, switching back to English");
 		_lang = 0;
-		break;
 	}
 }
 

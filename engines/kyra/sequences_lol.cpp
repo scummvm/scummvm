@@ -98,7 +98,6 @@ int LoLEngine::processPrologue() {
 		default:
 			quitGame();
 			updateInput();
-			break;
 		}
 	}
 

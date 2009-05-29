@@ -79,8 +79,8 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 	uint8 *tmpPal1 = new uint8[64];
 	uint8 *tmpPal2 = new uint8[256];
 	uint16 *tmpPal3 = new uint16[256];
-	memset (tmpPal1, 0, 64);
-	memset (tmpPal2, 0, 256);
+	memset(tmpPal1, 0, 64);
+	memset(tmpPal2, 0, 256);
 
 	for (int i = 0; i < 64; i++) {
 		tmpPal1[i] = *p;
@@ -92,7 +92,7 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 	for (int i = 0; i < 16; i++) {
 		int pos = (monsterIndex << 4) + i;
 		memcpy(tmpPal2, _monsterShapes[pos] + 10, 256);
-		memset (tmpPal3, 0xff, 512);
+		memset(tmpPal3, 0xff, 512);
 		uint8 numCol = *tmpPal2;
 
 		for (int ii = 0; ii < numCol; ii++) {
@@ -960,7 +960,7 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 		r = CLIP(r, 0, 7);
 		ovl = _screen->getLevelOverlay(r);
 	} else {
-		memset (tmpOvl + 1, tblValue, 15);
+		memset(tmpOvl + 1, tblValue, 15);
 		tmpOvl[0] = 0;
 		table = tmpOvl;
 		ovl = _screen->getLevelOverlay(7);

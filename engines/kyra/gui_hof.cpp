@@ -78,7 +78,6 @@ void KyraEngine_HoF::setupLangButtonShapes() {
 	default:
 		_inventoryButtons[0].data0ShapePtr = _buttonShapes[6];
 		_inventoryButtons[0].data1ShapePtr = _inventoryButtons[0].data2ShapePtr = _buttonShapes[7];
-		break;
 	}
 }
 
@@ -437,7 +436,6 @@ void KyraEngine_HoF::loadBookBkgd() {
 		default:
 			warning("loadBookBkgd unsupported language");
 			filename[1] = 'E';
-			break;
 		}
 	} else {
 		if (!_bookCurPage)

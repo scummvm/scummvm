@@ -1887,7 +1887,7 @@ void LoLEngine::initStaticResource() {
 
 	tmp = _staticres->loadRawData(lolMapCursorOvl, tmpSize);
 	_mapCursorOverlay = new uint8[tmpSize];
-	memcpy (_mapCursorOverlay, tmp, tmpSize);
+	memcpy(_mapCursorOverlay, tmp, tmpSize);
 	_staticres->unloadId(lolMapCursorOvl);
 
 	_updateSpellBookCoords = _staticres->loadRawData(lolSpellbookCoords, _updateSpellBookCoordsSize);

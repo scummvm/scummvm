@@ -216,7 +216,6 @@ void KyraEngine_MR::eelScript() {
 	default:
 		resetGameFlag(0x171);
 		runAnimationScript("EELS00.EMC", 0, 0, 1, 1);
-		break;
 	}
 
 	changeChapter(2, 29, 0, 4);

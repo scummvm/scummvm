@@ -1042,7 +1042,6 @@ int KyraEngine_LoK::o1_walkCharacterToPoint(EMCState *script) {
 		default:
 			++curPos;
 			forceContinue = true;
-			break;
 		}
 
 		if (forceContinue || !running)
@@ -1236,7 +1235,6 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 
 	default:
 		palIndex = 8;
-		break;
 	}
 	if (_brandonStatusBit & 2) {
 		if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&

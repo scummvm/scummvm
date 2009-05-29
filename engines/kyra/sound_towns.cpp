@@ -381,8 +381,8 @@ void Towns_EuphonyPcmChannel::sysEx_customInstrument(uint32 type, const byte *fm
 				if (_voice->id[i] == *(pos[ii] + 8)) {
 					if (!_voice->_snd[i])
 						_voice->_snd[i] = new Voice::Snd;
-					memset (_voice->_snd[i]->name, 0, 9);
-					memcpy (_voice->_snd[i]->name, (const char *)pos[ii], 8);
+					memset(_voice->_snd[i]->name, 0, 9);
+					memcpy(_voice->_snd[i]->name, (const char *)pos[ii], 8);
 					_voice->_snd[i]->id = READ_LE_UINT32(pos[ii] + 8);
 					_voice->_snd[i]->numSamples = READ_LE_UINT32(pos[ii] + 12);
 					_voice->_snd[i]->loopStart = READ_LE_UINT32(pos[ii] + 16);
@@ -395,8 +395,8 @@ void Towns_EuphonyPcmChannel::sysEx_customInstrument(uint32 type, const byte *fm
 			}
 		}
 	} else {
-		memset (_voice->name, 0, 9);
-		memcpy (_voice->name, (const char *)fmInst, 8);
+		memset(_voice->name, 0, 9);
+		memcpy(_voice->name, (const char *)fmInst, 8);
 
 		for (uint8 i = 0; i < 8; i++) {
 			_voice->split[i] = READ_LE_UINT16(fmInst + 16 + 2 * i);
@@ -3173,7 +3173,6 @@ void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 
 	default:
 		warning("TownsPC98_OpnDriver: UNKNOWN ADDRESS %d", regAddress);
-		break;
 	}
 }
 

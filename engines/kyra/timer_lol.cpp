@@ -123,60 +123,60 @@ void LoLEngine::timerSpecialCharacterUpdate(int timerNum) {
 			}
 
 			switch (_characters[i].characterUpdateEvents[ii] - 1) {
-				case 0:
-					if (_characters[i].weaponHit) {
-						_characters[i].weaponHit = 0;
-						_characters[i].characterUpdateDelay[ii] = calcMonsterSkillLevel(i, 6);
-						if (_characters[i].characterUpdateDelay[ii] > v)
-							v = _characters[i].characterUpdateDelay[ii];
-					} else {
-						_characters[i].flags &= 0xfffb;
-					}
+			case 0:
+				if (_characters[i].weaponHit) {
+					_characters[i].weaponHit = 0;
+					_characters[i].characterUpdateDelay[ii] = calcMonsterSkillLevel(i, 6);
+					if (_characters[i].characterUpdateDelay[ii] > v)
+						v = _characters[i].characterUpdateDelay[ii];
+				} else {
+					_characters[i].flags &= 0xfffb;
+				}
 
-					gui_drawCharPortraitWithStats(i);
-					break;
+				gui_drawCharPortraitWithStats(i);
+				break;
 
-				case 1:
-					_characters[i].damageSuffered = 0;
-					gui_drawCharPortraitWithStats(i);
-					break;
+			case 1:
+				_characters[i].damageSuffered = 0;
+				gui_drawCharPortraitWithStats(i);
+				break;
 
-				case 2:
-					_characters[i].flags &= 0xffbf;
-					gui_drawCharPortraitWithStats(i);
-					break;
+			case 2:
+				_characters[i].flags &= 0xffbf;
+				gui_drawCharPortraitWithStats(i);
+				break;
 
-				case 3:
-					v = _rnd.getRandomNumberRng(1, 2);
-					if (inflictDamage(i, v, 0x8000, 0, 0x80)) {
-						_txt->printMessage(2, getLangString(0x4022), _characters[i].name);
-						_characters[i].characterUpdateDelay[ii] = 10;
-						if (_characters[i].characterUpdateDelay[ii] > v)
-							v = _characters[i].characterUpdateDelay[ii];
-					}
-					break;
+			case 3:
+				v = _rnd.getRandomNumberRng(1, 2);
+				if (inflictDamage(i, v, 0x8000, 0, 0x80)) {
+					_txt->printMessage(2, getLangString(0x4022), _characters[i].name);
+					_characters[i].characterUpdateDelay[ii] = 10;
+					if (_characters[i].characterUpdateDelay[ii] > v)
+						v = _characters[i].characterUpdateDelay[ii];
+				}
+				break;
 
-				case 4:
-					_characters[i].flags &= 0xfeff;
-					_txt->printMessage(0, getLangString(0x4027), _characters[i].name);
-					gui_drawCharPortraitWithStats(i);
-					break;
+			case 4:
+				_characters[i].flags &= 0xfeff;
+				_txt->printMessage(0, getLangString(0x4027), _characters[i].name);
+				gui_drawCharPortraitWithStats(i);
+				break;
 
-				case 5:
-					setTemporaryFaceFrame(i, 0, 0, 1);
-					break;
+			case 5:
+				setTemporaryFaceFrame(i, 0, 0, 1);
+				break;
 
-				case 6:
-					_characters[i].flags &= 0xefff;
-					gui_drawCharPortraitWithStats(i);
-					break;
+			case 6:
+				_characters[i].flags &= 0xefff;
+				gui_drawCharPortraitWithStats(i);
+				break;
 
-				case 7:
-					restoreSwampPalette();
-					break;
+			case 7:
+				restoreSwampPalette();
+				break;
 
-				default:
-					break;
+			default:
+				break;
 			}
 
 			if (_characters[i].characterUpdateDelay[ii] <= 0)

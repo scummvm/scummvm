@@ -68,7 +68,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	default:
 		warning("unsupported language, switching back to English");
 		_lang = 0;
-		break;
 	}
 
 	_chargenFrameTable = _flags.isTalkie ? _chargenFrameTableTalkie : _chargenFrameTableFloppy;

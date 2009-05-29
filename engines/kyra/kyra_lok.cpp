@@ -940,7 +940,6 @@ void KyraEngine_LoK::writeSettings() {
 		break;
 	default:	// Clickable
 		talkspeed = 0;
-		break;
 	}
 
 	ConfMan.setInt("talkspeed", talkspeed);

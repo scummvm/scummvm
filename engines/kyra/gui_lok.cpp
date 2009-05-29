@@ -884,7 +884,6 @@ void GUI_LoK::setupControls(Menu &menu) {
 		break;
 	default:
 		menu.item[2].itemString = "ERROR";
-		break;
 	}
 
 	int textControl = 3;
@@ -913,7 +912,6 @@ void GUI_LoK::setupControls(Menu &menu) {
 			break;
 		default:
 			menu.item[3].itemString = "ERROR";
-			break;
 		}
 	} else {
 		menu.item[4].enabled = 0;
@@ -935,7 +933,6 @@ void GUI_LoK::setupControls(Menu &menu) {
 		break;
 	default:
 		menu.item[textControl].itemString = "ERROR";
-		break;
 	}
 
 	initMenuLayout(menu);

@@ -405,7 +405,6 @@ void SeqPlayer::s1_copyRegionSpecial() {
 		break;
 	default:
 		error("Invalid subopcode %d for s1_copyRegionSpecial", so);
-		break;
 	}
 }
 
