@@ -207,7 +207,7 @@ void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr, int xOffset, int
 	int j;
 	const uint8 *fontPtr_Data2 = fontPtr_Data + height * 2;
 
-	outBufferPtr += yOffset * width * 2 + xOffset;
+	outBufferPtr += yOffset * width + xOffset;
 
 	for (i = 0; i < height; i++) {	// y++
 		uint16 bitSet1 = READ_BE_UINT16(fontPtr_Data);
@@ -223,7 +223,7 @@ void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr, int xOffset, int
 			bitSet1 <<= 1;
 			bitSet2 <<= 1;
 		}
-		outBufferPtr += (width * 2) - charWidth;
+		outBufferPtr += width - charWidth;
 	}
 }
 
@@ -421,7 +421,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 						           FROM_LE_16(fe.charHeight),
 								   FROM_LE_16(fe.v1),
 						           stringRenderBufferSize,
-						           stringWidth / 2,
+						           stringWidth,
 								   (int16)FROM_LE_16(fe.charWidth));
 
 						drawPosPixel_X +=
