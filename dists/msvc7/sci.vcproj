@@ -322,10 +322,7 @@
 				RelativePath="..\..\engines\sci\gfx\res_pic.cpp">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\res_view0.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\res_view1.cpp">
+				RelativePath="..\..\engines\sci\gfx\res_view.cpp">
 			</File>
 			<File
 				RelativePath="..\..\engines\sci\gfx\seq_decoder.cpp">
@@ -336,12 +333,6 @@
 		</Filter>
 		<Filter
 			Name="sfx">
-			<File
-				RelativePath="..\..\engines\sci\sfx\adlib_sbi.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\adlib_sbi.h">
-			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\core.cpp">
 			</File>

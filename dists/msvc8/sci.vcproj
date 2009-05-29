@@ -458,11 +458,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\gfx\res_view0.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\res_view1.cpp"
+				RelativePath="..\..\engines\sci\gfx\res_view.cpp"
 				>
 			</File>
 			<File
@@ -477,14 +473,6 @@
 		<Filter
 			Name="sfx"
 			>
-			<File
-				RelativePath="..\..\engines\sci\sfx\adlib_sbi.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\adlib_sbi.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\engines\sci\sfx\core.cpp"
 				>
