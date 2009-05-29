@@ -106,13 +106,6 @@ int con_hook_command(ConCommand command, const char *name, const char *param, co
 ** as no element beyond strlen(cmd_params[x].str)+1 is accessed.
 */
 
-int con_hook_page(const char *topic, const char *body);
-/* Hooks a general information page to the manual page system
-** Parameters: (const char *) topic: The topic name
-**             (const char *) body: The text body to assign to the topic
-** Returns   : (int) 0 on success
-*/
-
 int con_hook_int(int *pointer, const char *name, const char *description);
 /* Adds an int to the list of modifyable ints.
 ** Parameters: pointer: Pointer to the int to add to the list

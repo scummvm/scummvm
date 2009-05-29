@@ -293,7 +293,9 @@ protected:
 	void removeFromLRU(Resource *res);
 };
 
-// Used for speech playback in CD games
+/**
+ * Used for lip and animation syncing in CD talkie games
+ */
 class ResourceSync : public Resource {
 public:
 	ResourceSync() {}
@@ -309,7 +311,10 @@ protected:
 	//bool _syncStarted;	// not used
 };
 
-// Used for speech playback in CD games
+/**
+ * Used for speech playback and digital music playback
+ * in CD talkie games
+ */
 class AudioResource {
 public:
 	AudioResource(ResourceManager *resMgr, int sciVersion);

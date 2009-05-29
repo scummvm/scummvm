@@ -167,42 +167,19 @@ void con_init() {
 		                 "  particular sequence of bytes, re-\n  presented as hexadecimal numbers.\n\n"
 		                 "EXAMPLES:\n  hexgrep script e8 03 c8 00\n  hexgrep pic.042 fe");
 
-		con_hook_page("addresses", "Passing address parameters\n\n"
-		              "  Address parameters may be passed in one of\n"
-		              "  three forms:\n"
-		              "  - ssss:oooo -- where 'ssss' denotes a\n"
-		              "    segment and 'oooo' an offset. Example:\n"
-		              "    \"a:c5\" would address something in seg-\n"
-		              "    ment 0xa at offset 0xc5.\n"
-		              "  - &scr:oooo -- where 'scr' is a script number\n"
-		              "    and oooo an offset within that script; will\n"
-		              "    fail if the script is not currently loaded\n"
-		              "  - $REG -- where 'REG' is one of 'PC', 'ACC',\n"
-		              "    'PREV' or 'OBJ': References the address\n"
-		              "    indicated by the register of this name.\n"
-		              "  - $REG+n (or -n) -- Like $REG, but modifies\n"
-		              "    the offset part by a specific amount (which\n"
-		              "    is specified in hexadecimal).\n"
-		              "  - ?obj -- Looks up an object with the specified\n"
-		              "    name, uses its address. This will abort if\n"
-		              "    the object name is ambiguous; in that case,\n"
-		              "    a list of addresses and indices is provided.\n"
-		              "    ?obj.idx may be used to disambiguate 'obj'\n"
-		              "    by the index 'idx'.\n");
-
-			// These were in sci.cpp
-			/*
-			con_hook_int(&(gfx_options.buffer_pics_nr), "buffer_pics_nr",
-				"Number of pics to buffer in LRU storage\n");
-			con_hook_int(&(gfx_options.pic0_dither_mode), "pic0_dither_mode",
-				"Mode to use for pic0 dithering\n");
-			con_hook_int(&(gfx_options.pic0_dither_pattern), "pic0_dither_pattern",
-				"Pattern to use for pic0 dithering\n");
-			con_hook_int(&(gfx_options.pic0_unscaled), "pic0_unscaled",
-				"Whether pic0 should be drawn unscaled\n");
-			con_hook_int(&(gfx_options.dirty_frames), "dirty_frames",
-				"Dirty frames management\n");
-			*/
+		// These were in sci.cpp
+		/*
+		con_hook_int(&(gfx_options.buffer_pics_nr), "buffer_pics_nr",
+			"Number of pics to buffer in LRU storage\n");
+		con_hook_int(&(gfx_options.pic0_dither_mode), "pic0_dither_mode",
+			"Mode to use for pic0 dithering\n");
+		con_hook_int(&(gfx_options.pic0_dither_pattern), "pic0_dither_pattern",
+			"Pattern to use for pic0 dithering\n");
+		con_hook_int(&(gfx_options.pic0_unscaled), "pic0_unscaled",
+			"Whether pic0 should be drawn unscaled\n");
+		con_hook_int(&(gfx_options.dirty_frames), "dirty_frames",
+			"Dirty frames management\n");
+		*/
 	}
 }
 
@@ -210,6 +187,20 @@ static inline int clone_is_used(CloneTable *t, int idx) {
 	return t->isValidEntry(idx);
 }
 
+/**
+ * Address parameters may be passed in one of three forms:
+ * - ssss:oooo -- where 'ssss' denotes a segment and 'oooo' an offset.
+ *   Example: "a:c5" would address something in segment 0xa at offset 0xc5.
+ * - &scr:oooo -- where 'scr' is a script number and oooo an offset within that script; will
+ *   fail if the script is not currently loaded
+ * - $REG -- where 'REG' is one of 'PC', 'ACC', 'PREV' or 'OBJ': References the address
+ *   indicated by the register of this name.
+ * - $REG+n (or -n) -- Like $REG, but modifies the offset part by a specific amount (which
+ *   is specified in hexadecimal).
+ * - ?obj -- Looks up an object with the specified name, uses its address. This will abort if
+ *   the object name is ambiguous; in that case, a list of addresses and indices is provided.
+ *   ?obj.idx may be used to disambiguate 'obj' by the index 'idx'.
+**/
 int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on success
 	int rel_offsetting = 0;
 	const char *offsetting = NULL;
@@ -588,15 +579,6 @@ static cmd_mm_entry_t *con_alloc_page_entry(int ID) {
 
 	entry = cmd_mm[ID].entries++;
 	return (cmd_mm_entry_t *)(((byte *)cmd_mm[ID].data) + entry * cmd_mm[ID].size_per_entry);
-}
-
-int con_hook_page(const char *name, const char *body) {
-	cmd_page_t *page = (cmd_page_t *)con_alloc_page_entry(CMD_MM_DOC);
-
-	page->name = name;
-	page->description = body;
-
-	return 0;
 }
 
 int con_hook_command(ConCommand command, const char *name, const char *param, const char *description) {

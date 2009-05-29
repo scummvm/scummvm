@@ -3213,39 +3213,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 
 			con_hook_int(&script_gc_interval, "gc-interval", "Number of kernel calls in between gcs");
 			con_hook_int(&debug_sleeptime_factor, "sleep-factor", "Factor to multiply with wait times\n  Set to 0 to speed up games");
-
-			con_hook_page("codebugging",
-			              "Co-debugging allows to run two (sufficiently\n"
-			              "  recent) versions of FreeSCI concurrently,\n"
-			              "  with one acting as a client of the other.\n"
-			              "    Co-debugging can be started by calling\n"
-			              "  'codebug' (see codebug.1); note that the\n"
-			              "  argument passed to it must be a version of\n"
-			              "  FreeSCI that performs fflush(NULL) before\n"
-			              "  each read; only late 0.3.3-devel and later\n"
-			              "  have this property.\n\n"
-			              "  In co-debug mode, all commands are sent to\n"
-			              "  both programs, UNLESS one of the following\n"
-			              "  prefixes is used:\n\n"
-			              "    '.' : Only sends to the foreground version\n"
-			              "    ':' : Only sends to tbe background version\n\n"
-			              "  For example, when running 0.3.3 from within\n"
-			              "  0.6.0, \".version\" would determine the version\n"
-			              "  as 0.6.0, and \"0.3.3\" would be returned for\n"
-			              "  \":version\". Both versions would be print\n"
-			              "  if only \"version\" was invoked, each result\n"
-			              "  coming from a different process.\n\n"
-			              "COLORS\n\n"
-			              "  Whenever possible, the background process will\n"
-			              "  have its output marked by a non-default color\n"
-			              "  (usually red).\n\n"
-			              "TROUBLESHOOTING\n\n"
-			              "  If the background version appears to be silent,\n"
-			              "  make sure it is calling fflush(NULL) before\n"
-			              "  reading input.\n\n"
-			              "SEE ALSO\n\n"
-			              "  codebug.1");
-
 		} // If commands were not hooked up
 	}
 
