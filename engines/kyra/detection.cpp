@@ -1111,7 +1111,10 @@ public:
 	}
 
 	const char *getOriginalCopyright() const {
-		return "The Legend of Kyrandia (C) Westwood Studios";
+		return "The Legend of Kyrandia (C) Westwood Studios"
+#ifdef ENABLE_LOL
+				"\nLands of Lore (C) Westwood Studios";
+#endif
 	}
 
 	bool hasFeature(MetaEngineFeature f) const;
