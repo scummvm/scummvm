@@ -40,7 +40,6 @@ static int c_list(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); 
 static int c_man(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // 'manual page'
 static int c_set(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // sets an int variable
 static int c_print(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // prints a variable
-static int c_size(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // displays the size of a resource
 //static int c_objinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // shows some info about one class
 //static int c_objmethods(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Disassembles all methods of a class
 static int c_hexgrep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams); // Searches a string in one resource or resource class
@@ -166,7 +165,6 @@ void con_init() {
 		con_hook_command(&c_man, "man", "s", "Gives a short description of something");
 		con_hook_command(&c_print, "print", "s", "Prints an int variable");
 		con_hook_command(&c_set, "set", "si", "Sets an int variable");
-		con_hook_command(&c_size, "size", "si", "Displays the size of a resource");
 		con_hook_command(&c_hexgrep, "hexgrep", "shh*", "Searches some resources for a\n"
 		                 "  particular sequence of bytes, re-\n  presented as hexadecimal numbers.\n\n"
 		                 "EXAMPLES:\n  hexgrep script e8 03 c8 00\n  hexgrep pic.042 fe");
@@ -825,21 +823,6 @@ static int c_print(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) 
 		sciprintf("%d", *(var->var.intp));
 	else
 		sciprintf("Not defined.");
-
-	return 0;
-}
-
-static int c_size(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	ResourceType res = parseResourceType(cmdParams[0].str);
-	if (res == kResourceTypeInvalid)
-		sciprintf("Resource type '%s' is not valid\n", cmdParams[0].str);
-	else {
-		Resource *resource = s->resmgr->findResource(res, cmdParams[1].val, 0);
-		if (resource) {
-			sciprintf("Size: %d\n", resource->size);
-		} else
-			sciprintf("Resource %s.%03d not found\n", cmdParams[0].str, cmdParams[1].val);
-	}
 
 	return 0;
 }

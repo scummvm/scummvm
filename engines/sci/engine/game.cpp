@@ -323,7 +323,7 @@ static int create_class_table_sci0(EngineState *s) {
 
 					// Map the class ID to the script the corresponding class is contained in
 					// The script number is found in vocab.996, if it exists
-					if (!vocab996 || classnr >= vocab996->size >> 2)
+					if (!vocab996 || (uint32)classnr >= vocab996->size >> 2)
 						sugg_script = -1;
 					else
 						sugg_script = (int16)READ_LE_UINT16(vocab996->data + 2 + (classnr << 2));

@@ -89,6 +89,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
+	DCmd_Register("size",				WRAP_METHOD(Console, cmdResourceSize));
 }
 
 Console::~Console() {
@@ -326,6 +327,35 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 
 bool Console::cmdRoomNumber(int argc, const char **argv) {
 	DebugPrintf("Current room number is %d\n", g_EngineState->currentRoomNumber());
+
+	return true;
+}
+
+bool Console::cmdResourceSize(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Shows the size of a resource\n");
+		DebugPrintf("Usage: %s <resource number>\n", argv[0]);
+		return true;
+	}
+
+	int resNum = atoi(argv[2]);
+	if (resNum == 0) {
+		DebugPrintf("The resource number specified is not a number");
+		return true;
+	}
+
+	ResourceType res = parseResourceType(argv[1]);
+
+	if (res == kResourceTypeInvalid)
+		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
+	else {
+		Resource *resource = _vm->getResMgr()->findResource(res, resNum, 0);
+		if (resource) {
+			DebugPrintf("Resource size: %d\n", resource->size);
+		} else {
+			DebugPrintf("Resource %s.%03d not found\n", argv[1], resNum);
+		}
+	}
 
 	return true;
 }
