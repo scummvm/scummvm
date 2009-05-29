@@ -1851,9 +1851,10 @@ void CruiseEngine::mainLoop(void) {
 					removeFinishedScripts(&relHead);
 					removeFinishedScripts(&procHead);
 
+					// Draw the next screen
 					processAnimation();
-
-					flip();
+					mainDraw(0);
+					flipScreen();
 
 					// not exactly this
 					manageEvents();
