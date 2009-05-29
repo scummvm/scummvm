@@ -219,34 +219,6 @@ int game_init_sound(EngineState *s, int sound_flags) {
 	return 0;
 }
 
-
-/* Maps a class ID to the script the corresponding class is contained in
-   Returns the script number suggested by vocab.996, or -1 if there's none */
-static int suggested_script(Resource *res, unsigned int classId) {
-	int offset;
-
-	if (!res || classId >= res->size >> 2)
-		return -1;
-
-	offset = 2 + (classId << 2);
-
-	return (int16)READ_LE_UINT16(res->data + offset);
-}
-
-#if 0
-// Unreferenced - removed
-int test_cursor_style(EngineState *s) {
-	int resource_nr = 0;
-	int ok = 0;
-
-	do {
-		ok |= s->resmgr->testResource(kResourceTypeCursor, resource_nr++) != NULL;
-	} while (resource_nr < 1000 && !ok);
-
-	return ok;
-}
-#endif
-
 int create_class_table_sci11(EngineState *s) {
 	int scriptnr;
 	unsigned int seeker_offset;
@@ -349,7 +321,12 @@ static int create_class_table_sci0(EngineState *s) {
 						s->_classtable.resize(classnr + 1); // Adjust maximum number of entries
 					}
 
-					sugg_script = suggested_script(vocab996, classnr);
+					// Map the class ID to the script the corresponding class is contained in
+					// The script number is found in vocab.996, if it exists
+					if (!vocab996 || classnr >= vocab996->size >> 2)
+						sugg_script = -1;
+					else
+						sugg_script = (int16)READ_LE_UINT16(vocab996->data + 2 + (classnr << 2));
 
 					// First, test whether the script hasn't been claimed, or if it's been claimed by the wrong script
 
@@ -454,15 +431,6 @@ void script_set_gamestate_save_dir(EngineState *s, const char *path) {
 }
 
 void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int len);
-
-#if 0
-// Unreferenced - removed
-void script_set_gamestate_save_dir(EngineState *s, reg_t path) {
-	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
-	reg_t *srcbuf = kernel_dereference_reg_pointer(s, path, 1);
-	internal_stringfrag_strncpy(s, str->value, srcbuf, MAX_SAVE_DIR_SIZE);
-}
-#endif
 
 void script_free_vm_memory(EngineState *s) {
 	debug(2, "Freeing VM memory");
