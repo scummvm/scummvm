@@ -126,13 +126,7 @@ enum SciGameFlags {
 	/* Applies to all versions from 1.000.510 onwards
 	** kDoSound() is different than in earlier SCI1 versions.
 	*/
-	GF_SCI1_NEWDOSOUND		= (1 << 5),
-
-	/*
-	** Newer SCI1 games (like KQ5 CD and EcoQuest 1) use
-	** different semantics in kSetCursor(), like SCI1.1 games
-	*/
-	GF_SCI1_NEWSETCURSOR	= (1 << 6)
+	GF_SCI1_NEWDOSOUND		= (1 << 5)
 };
 
 class SciEngine : public Engine {

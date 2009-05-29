@@ -302,53 +302,56 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 
 reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
-	case 1 :
-		if (UKPV(0) == 0) {
-			s->save_mouse_pointer_view = s->mouse_pointer_view;
-			s->save_mouse_pointer_loop = s->mouse_pointer_loop;
-			s->save_mouse_pointer_cel = s->mouse_pointer_cel;
-			s->mouse_pointer_view = s->mouse_pointer_loop = s->mouse_pointer_cel = -1;
-			gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER);
-		} else {
-			s->mouse_pointer_view = s->save_mouse_pointer_view;
-			s->mouse_pointer_loop = s->save_mouse_pointer_loop;
-			s->mouse_pointer_cel = s->save_mouse_pointer_cel;
-		}
+	case 1 :	// set cursor according to the first parameter
+		GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, SKPV(0)));
+		break;
 	case 2 :
-	case 4 :
-		if (s->version >= SCI_VERSION_1_1 || (s->flags & GF_SCI1_NEWSETCURSOR)) {
-			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, Common::Point(UKPV(0), UKPV(1))));
-		} else {
-			if (SKPV_OR_ALT(1, 1)) {
-				s->mouse_pointer_view = SKPV(0);
-			} else
-				s->mouse_pointer_view = GFXOP_NO_POINTER;
-
-			s->mouse_pointer_loop = s->mouse_pointer_cel = 0; // Not used with cursor-format pointers
-
-			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, s->mouse_pointer_view));
-
-			if (argc > 2) {
-				Common::Point newpos = Common::Point(SKPV(2) + s->port->_bounds.x, SKPV(3) + s->port->_bounds.y);
-				GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
+		if (s->version < SCI_VERSION_1_1) {
+			// Pre-SCI1.1: set cursor according to the first parameter, and toggle its
+			// visibility based on the second parameter
+			// Some late SCI1 games actually use the SCI1.1 version of this call (EcoQuest 1
+			// and KQ5 CD, but I haven't seen this case happen), but we can determine the
+			// semantics from the second parameter passed.
+			// Rationale: with the older behavior, the second parameter can either be 0 
+			// (hide cursor) or 1/-1 (show cursor). This could be problematic if the engine
+			// tries to place the cursor at (x, 0) or (x, 1), but no SCI1 game does that, as
+			// this would open the menu on top. LSL5 is an exception, as the game can open
+			// the menu when the player presses a button during the intro, but the cursor is
+			// not placed on (x, 0) or (x, 1)
+			int param2 = SKPV(1);
+			if (param2 == 0 || param2 == 1 || param2 == -1) {
+				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
+							param2 == 0 ? GFXOP_NO_POINTER : SKPV(0)));
+			} else {	// newer (SCI1.1) semantics: set pointer position
+				GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
+							Common::Point(UKPV(0), UKPV(1))));
 			}
+		} else {
+			// SCI1.1 and newer: set pointer position
+			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
+						Common::Point(UKPV(0), UKPV(1))));
 		}
 		break;
-	case 3 : {
-		GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), NULL));
-		s->mouse_pointer_view = UKPV(0);
-		s->mouse_pointer_loop = UKPV(1);
-		s->mouse_pointer_cel = UKPV(2);
-		break;
-	}
-	case 9 : {
-		Common::Point hotspot = Common::Point(SKPV(3), SKPV(4));
+	case 4 :
+		GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
+					UKPV(0) == 0 ? GFXOP_NO_POINTER : SKPV(0)));
 
-//		sciprintf("Setting hotspot at %d/%d\n", hotspot.x, hotspot.y);
-
-		gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), &hotspot);
+		// Set pointer position, if requested
+		if (argc > 2) {
+			Common::Point newpos = Common::Point(SKPV(2) + s->port->_bounds.x, SKPV(3) + s->port->_bounds.y);
+			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
+		}
 		break;
-	}
+	case 3 :
+	case 5 :
+	case 9 :
+		if (argc > 3) {
+			Common::Point hotspot = Common::Point(SKPV(3), SKPV(4));
+			GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), &hotspot));
+		} else {
+			GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), NULL));
+		}
+		break;
 	default :
 		error("kSetCursor: Unhandled case: %d arguments given", argc);
 		break;

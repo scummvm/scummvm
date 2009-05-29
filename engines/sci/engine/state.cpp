@@ -56,13 +56,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	game_time = 0;
 
-	mouse_pointer_view = 0;
-	mouse_pointer_loop = 0;
-	mouse_pointer_cel = 0;
-	save_mouse_pointer_view = 0;
-	save_mouse_pointer_loop = 0;
-	save_mouse_pointer_cel = 0;
-
 	port = 0;
 
 	memset(ega_colors, 0, sizeof(ega_colors));

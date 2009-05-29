@@ -151,13 +151,6 @@ public:
 
 	long game_time; /**< Counted at 60 ticks per second, reset during start time */
 
-	int mouse_pointer_view; /**< Mouse pointer resource, or -1 if disabled */
-	int mouse_pointer_loop; /**< Mouse pointer resource, or -1 if disabled */
-	int mouse_pointer_cel; /**< Mouse pointer resource, or -1 if disabled */
-	int save_mouse_pointer_view; /**< Temporary storage for mouse pointer resource, when the pointer is hidden */
-	int save_mouse_pointer_loop; /**< Temporary storage for mouse pointer resource, when the pointer is hidden */
-	int save_mouse_pointer_cel; /**< Temporary storage for mouse pointer resource, when the pointer is hidden */
-
 	GfxPort *port; /**< The currently active port */
 
 	gfx_color_t ega_colors[16]; /**< The 16 EGA colors- for SCI0(1) */

@@ -1208,13 +1208,12 @@ int gfxop_set_pointer_cursor(GfxState *state, int nr) {
 }
 
 int gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot) {
-	int real_loop = loop;
-	int real_cel = cel;
-	gfx_pixmap_t *new_pointer = NULL;
-
 	BASIC_CHECKS(GFX_FATAL);
 
-	new_pointer = _gfxr_get_cel(state, nr, &real_loop, &real_cel, 0); // FIXME: For now, don't palettize pointers
+	int real_loop = loop;
+	int real_cel = cel;
+	// FIXME: For now, don't palettize pointers
+	gfx_pixmap_t *new_pointer = _gfxr_get_cel(state, nr, &real_loop, &real_cel, 0);
 
 	if (!new_pointer) {
 		GFXWARN("Attempt to set invalid pointer #%d\n", nr);
