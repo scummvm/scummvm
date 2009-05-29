@@ -57,7 +57,6 @@ MODULE_OBJS = \
 	gfx/res_view0.o \
 	gfx/res_view1.o \
 	gfx/seq_decoder.o \
-	sfx/adlib_sbi.o \
 	sfx/core.o \
 	sfx/iterator.o \
 	sfx/songlib.o \
