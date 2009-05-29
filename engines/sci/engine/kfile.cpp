@@ -35,6 +35,11 @@
 
 namespace Sci {
 
+enum {
+	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
+};
+
+
 
 /*
  * Note on how file I/O is implemented: In ScummVM, one can not create/write
@@ -93,19 +98,6 @@ bool FileHandle::isOpen() const {
 	return _in || _out;
 }
 
-
-
-// FIXME: Avoid static vars
-static int _savegame_indices_nr = -1; // means 'uninitialized'
-
-struct SavegameDesc {
-	int id;
-	int date;
-	int time;
-};
-
-// FIXME: Avoid static vars
-static SavegameDesc _savegame_indices[MAX_SAVEGAME_NR];
 
 
 enum {
@@ -432,6 +424,13 @@ reg_t kCheckFreeSpace(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, 1);
 }
 
+
+struct SavegameDesc {
+	int id;
+	int date;
+	int time;
+};
+
 static int _savegame_index_struct_compare(const void *a, const void *b) {
 	SavegameDesc *A = (SavegameDesc *)a;
 	SavegameDesc *B = (SavegameDesc *)b;
@@ -441,15 +440,14 @@ static int _savegame_index_struct_compare(const void *a, const void *b) {
 	return B->time - A->time;
 }
 
-static void update_savegame_indices() {
-	int i;
-
-	_savegame_indices_nr = 0;
-
+void listSavegames(Common::Array<SavegameDesc> &saves) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
-	for (i = 0; i < MAX_SAVEGAME_NR; i++) {
-		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(i);
+	// Load all saves
+	Common::StringList saveNames = saveFileMan->listSavefiles(((SciEngine *)g_engine)->getSavegamePattern().c_str());
+
+	for (Common::StringList::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
+		Common::String filename = *iter;
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename.c_str()))) {
 			SavegameMetadata meta;
@@ -460,15 +458,18 @@ static void update_savegame_indices() {
 			}
 			delete in;
 
-			fprintf(stderr, "Savegame in %s file ok\n", filename.c_str());
-			_savegame_indices[_savegame_indices_nr].id = i;
-			_savegame_indices[_savegame_indices_nr].date = meta.savegame_date;
-			_savegame_indices[_savegame_indices_nr].time = meta.savegame_time;
-			_savegame_indices_nr++;
+			SavegameDesc desc;
+			desc.id = strtol(filename.end() - 3, NULL, 10);
+			desc.date = meta.savegame_date;
+			desc.time = meta.savegame_time;
+			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
+
+			saves.push_back(desc);
 		}
 	}
 
-	qsort(_savegame_indices, _savegame_indices_nr, sizeof(SavegameDesc), _savegame_index_struct_compare);
+	// Sort the list by creation date of the saves
+	qsort(saves.begin(), saves.size(), sizeof(SavegameDesc), _savegame_index_struct_compare);
 }
 
 reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -476,12 +477,11 @@ reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int savedir_nr = UKPV(1);
 
 	debug(3, "kCheckSaveGame(%s, %d)", game_id, savedir_nr);
-	if (_savegame_indices_nr < 0) {
-		warning("Savegame index list not initialized");
-		update_savegame_indices();
-	}
 
-	savedir_nr = _savegame_indices[savedir_nr].id;
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+
+	savedir_nr = saves[savedir_nr].id;
 
 	if (savedir_nr > MAX_SAVEGAME_NR - 1) {
 		return NULL_REG;
@@ -513,16 +513,17 @@ reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *nametarget = kernel_dereference_char_pointer(s, argv[1], 0);
 	reg_t nametarget_base = argv[1];
 	reg_t *nameoffsets = kernel_dereference_reg_pointer(s, argv[2], 0);
-	int i;
 
 	debug(3, "kGetSaveFiles(%s,%s)", game_id, nametarget);
-	update_savegame_indices();
+
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
 
 	s->r_acc = NULL_REG;
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
-	for (i = 0; i < _savegame_indices_nr; i++) {
-		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(_savegame_indices[i].id);
+	for (uint i = 0; i < saves.size(); i++) {
+		Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(saves[i].id);
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename.c_str()))) {
 			// found a savegame file
@@ -567,35 +568,37 @@ reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id, savedir_nr, game_description, version);
 	s->game_version = version;
 
-	update_savegame_indices();
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
 
 	fprintf(stderr, "savedir_nr = %d\n", savedir_nr);
 
-	if (savedir_nr >= 0 && savedir_nr < _savegame_indices_nr)
+	if (savedir_nr >= 0 && (uint)savedir_nr < saves.size()) {
 		// Overwrite
-		savedir_id = _savegame_indices[savedir_nr].id;
-	else if (savedir_nr >= 0 && savedir_nr < MAX_SAVEGAME_NR) {
-		int i = 0;
+		savedir_id = saves[savedir_nr].id;
+	} else if (savedir_nr >= 0 && savedir_nr < MAX_SAVEGAME_NR) {
+		uint i = 0;
 
 		fprintf(stderr, "searching for hole\n");
 
 		savedir_id = 0;
 
 		// First, look for holes
-		while (i < _savegame_indices_nr) {
-			if (_savegame_indices[i].id == savedir_id) {
+		while (i < saves.size()) {
+			if (saves[i].id == savedir_id) {
 				++savedir_id;
 				i = 0;
-			} else ++i;
+			} else
+				++i;
 		}
 		if (savedir_id >= MAX_SAVEGAME_NR) {
-			sciprintf("Internal error: Free savegame ID is %d, shouldn't happen!\n", savedir_id);
+			warning("Internal error: Free savegame ID is %d, shouldn't happen!", savedir_id);
 			return NULL_REG;
 		}
 
-		// This loop terminates when savedir_id is not in [x | ex. n. _savegame_indices[n].id = x]
+		// This loop terminates when savedir_id is not in [x | ex. n. saves	[n].id = x]
 	} else {
-		sciprintf("Savegame ID %d is not allowed!\n", savedir_nr);
+		warning("Savegame ID %d is not allowed!", savedir_nr);
 		return NULL_REG;
 	}
 
@@ -603,19 +606,19 @@ reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out;
 	if (!(out = saveFileMan->openForSaving(filename.c_str()))) {
-		sciprintf("Error opening savegame \"%s\" for writing\n", filename.c_str());
+		warning("Error opening savegame \"%s\" for writing", filename.c_str());
 		s->r_acc = NULL_REG;
 		return NULL_REG;
 	}
 
 	if (gamestate_save(s, out, game_description)) {
-		sciprintf("Saving the game failed.\n");
+		warning("Saving the game failed.");
 		s->r_acc = NULL_REG;
 	} else {
 		out->finalize();
 		if (out->err()) {
 			delete out;
-			sciprintf("Writing the savegame failed.\n");
+			warning("Writing the savegame failed.");
 			s->r_acc = NULL_REG;
 		} else {
 			delete out;
@@ -634,12 +637,10 @@ reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	debug(3, "kRestoreGame(%s,%d)", game_id, savedir_nr);
 
-	if (_savegame_indices_nr < 0) {
-		warning("Savegame index list not initialized");
-		update_savegame_indices();
-	}
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
 
-	savedir_nr = _savegame_indices[savedir_nr].id;
+	savedir_nr = saves[savedir_nr].id;
 
 	if (savedir_nr > -1) {
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();

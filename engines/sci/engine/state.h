@@ -78,8 +78,6 @@ enum {
 	CURRENT_SAVEGAME_VERSION = 9,
 	MINIMUM_SAVEGAME_VERSION = 9,
 
-	MAX_SAVEGAME_NR = 20, /**< Maximum number of savegames */
-
 	MAX_SAVE_DIR_SIZE = MAXPATHLEN
 };
 
