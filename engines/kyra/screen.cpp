@@ -1109,7 +1109,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	va_list args;
 	va_start(args, flags);
 
-	static int drawShapeVar2[] = {
+	static const int drawShapeVar2[] = {
 		1, 3, 2, 5, 4, 3, 2, 1
 	};
 
@@ -1413,14 +1413,11 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	uint8 *d = dst;
 
+	bool normalPlot = true;
 	while (true) {
-		bool normalPlot = true;
-		if (flags & 0x800)
-			normalPlot = (curY > _maskMinY && curY < _maskMaxY);
-
-		while (!(scaleCounterV & 0xff00)) {
+		while (!(scaleCounterV & 0xFF00)) {
 			scaleCounterV += _dsScaleH;
-			if (!(scaleCounterV & 0xff00)) {
+			if (!(scaleCounterV & 0xFF00)) {
 				_dsTmpWidth = shapeWidth;
 				int cnt = shapeWidth;
 				(this->*_dsScaleSkip)(d, s, cnt);
@@ -1437,6 +1434,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			if (_dsTmpWidth) {
 				cnt += shpWidthScaled1;
 				if (cnt > 0) {
+					if (flags & 0x800)
+						normalPlot = (curY > _maskMinY && curY < _maskMaxY);
 					_dsPlot = normalPlot ? dsPlot2 : dsPlot3;
 					(this->*_dsProcessLine)(d, s, cnt, scaleState);
 				}
@@ -1447,10 +1446,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			dst += dsPitch;
 			d = dst;
 			++curY;
+
 			if (!--shapeHeight)
 				return;
+
 			scaleCounterV -= 0x100;
-		} while (scaleCounterV & 0xff00);
+		} while (scaleCounterV & 0xFF00);
 	}
 
 	va_end(args);
