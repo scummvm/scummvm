@@ -777,6 +777,19 @@ static void GetActorCostumeDepth() {
 	lua_pushnumber(act->costumeStackDepth());
 }
 
+static void PrintActorCostumes() {
+	// dummy
+}
+
+static void LoadCostume() {
+	lua_Object nameObj = lua_getparam(1);
+	if (lua_isstring(nameObj)) {
+		const char *name = lua_getstring(nameObj);
+		g_resourceloader->loadCostume(name, NULL);
+	} else
+		lua_pushnil();
+}
+
 static void PlayActorChore() {
 	Actor *act;
 	int num;
@@ -3413,8 +3426,6 @@ STUB_FUNC(GetCameraLookVector)
 STUB_FUNC(SetCameraRoll)
 STUB_FUNC(SetCameraInterest)
 STUB_FUNC(GetCameraPosition)
-STUB_FUNC(LoadCostume)
-STUB_FUNC(PrintActorCostumes)
 STUB_FUNC(SpewStartup)
 STUB_FUNC(PreRender)
 STUB_FUNC(GetSectorOppositeEdge)
