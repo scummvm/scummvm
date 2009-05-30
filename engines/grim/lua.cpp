@@ -67,50 +67,6 @@ static int refTextObjectPan;
 
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 
-static inline bool isObject(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT'))
-		return true;
-	return false;
-}
-
-static inline bool isActor(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('ACTR'))
-		return true;
-	return false;
-}
-
-static inline bool isColor(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('COLR'))
-		return true;
-	return false;
-}
-
-static inline bool isFont(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('FONT'))
-		return true;
-	return false;
-}
-
-static inline bool isBitmapObject(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('VBUF'))
-		return true;
-	return false;
-}
-
-// Helper functions to ensure the arguments we get are what we expect
-static inline ObjectState *check_object(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT'))
-		return static_cast<ObjectState *>(lua_getuserdata(param));
-	luaL_argerror(num, "objectstate expected");
-	return NULL;
-}
-
 Actor *check_actor(int num) {
 	lua_Object param = lua_getparam(num);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('ACTR'))
@@ -124,38 +80,6 @@ Color *check_color(int num) {
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('COLR'))
 		return static_cast<Color *>(lua_getuserdata(param));
 	luaL_argerror(num, "color expected");
-	return NULL;
-}
-
-static inline Font *check_font(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('FONT'))
-		return static_cast<Font *>(lua_getuserdata(param));
-	luaL_argerror(num, "font expected");
-	return NULL;
-}
-
-static inline PrimitiveObject *check_primobject(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('PRIM'))
-		return static_cast<PrimitiveObject *>(lua_getuserdata(param));
-	luaL_argerror(num, "primitive expected");
-	return NULL;
-}
-
-static inline TextObject *check_textobject(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('TEXT'))
-		return static_cast<TextObject *>(lua_getuserdata(param));
-	luaL_argerror(num, "textobject expected");
-	return NULL;
-}
-
-static inline Bitmap *check_bitmapobject(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('VBUF'))
-		return static_cast<Bitmap *>(lua_getuserdata(param));
-	luaL_argerror(num, "image object expected");
 	return NULL;
 }
 
@@ -359,9 +283,10 @@ static void SetSayLineDefaults() {
 			break;
 
 		key_text = lua_getstring(key);
-		if (strmatch(key_text, "font"))
-			sayLineDefaults.font = check_font(2);
-		else
+		if (strmatch(key_text, "font")) {
+			lua_Object param = lua_getparam(2);
+			sayLineDefaults.font =  static_cast<Font *>(lua_getuserdata(param));
+		} else
 			error("Unknown SetSayLineDefaults key %s", key_text);
 	}
 }
@@ -2360,12 +2285,18 @@ static void GetImage() {
 }
 
 static void FreeImage() {
-	Bitmap *bitmap = check_bitmapobject(1);
+	lua_Object param = lua_getparam(1);
+	if (!lua_isuserdata(param) || lua_tag(param) != MKID_BE('VBUF'))
+		return;
+	Bitmap *bitmap = static_cast<Bitmap *>(lua_getuserdata(param));
 	killBitmapPrimitives(bitmap);
 }
 
 static void BlastImage() {
-	Bitmap *bitmap = check_bitmapobject(1);
+	lua_Object param = lua_getparam(1);
+	if (!lua_isuserdata(param) || lua_tag(param) != MKID_BE('VBUF'))
+		return;
+	Bitmap *bitmap = static_cast<Bitmap *>(lua_getuserdata(param));
 	lua_Object xObj = lua_getparam(2);
 	lua_Object yObj = lua_getparam(3);
 	if (!lua_isnumber(xObj) || !lua_isnumber(yObj))
@@ -2828,15 +2759,15 @@ static void ChangePrimitive() {
 	Color color;
 
 	lua_Object param1 = lua_getparam(1);
-	if (!lua_isuserdata(param1))
+	if (!lua_isuserdata(param1) || lua_tag(param1) != MKID_BE('PRIM'))
 		return;
 
 	lua_Object tableObj = lua_getparam(2);
 	if (!lua_istable(tableObj))
 		return;
 
-	psearch = check_primobject(1);
-	
+	psearch = static_cast<PrimitiveObject *>(lua_getuserdata(param1));
+
 	for (GrimEngine::PrimitiveListType::const_iterator i = g_grim->primitivesBegin(); i != g_grim->primitivesEnd(); i++) {
 		PrimitiveObject *p = *i;
 		if (p->getP1().x == psearch->getP1().x && p->getP2().x == psearch->getP2().x
@@ -3045,7 +2976,10 @@ static void NewObjectState() {
 }
 
 static void FreeObjectState() {
-	ObjectState *state = check_object(1);
+	lua_Object param = lua_getparam(1);
+	if (!lua_isuserdata(param) || lua_tag(param) != MKID_BE('STAT'))
+		return;
+	ObjectState *state =  static_cast<ObjectState *>(lua_getuserdata(param));
 	g_grim->currScene()->deleteObjectState(state);
 }
 
@@ -3068,7 +3002,10 @@ static void SendObjectToFront() {
 }
 
 static void SetObjectType() {
-	ObjectState *state = check_object(1);
+	lua_Object param = lua_getparam(1);
+	if (!lua_isuserdata(param) || lua_tag(param) != MKID_BE('STAT'))
+		return;
+	ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
 	int val = (int)lua_getnumber(lua_getparam(2));
 	ObjectState::Position pos = (ObjectState::Position)val;
 	state->setPos(pos);
