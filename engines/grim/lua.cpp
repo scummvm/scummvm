@@ -67,28 +67,6 @@ static int refTextObjectPan;
 
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 
-static Costume *get_costume(Actor *a, int param, const char *called_from) {
-	Costume *result;
-	if (lua_isnil(lua_getparam(param))) {
-		result = a->currentCostume();
-		if (!result && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
-			warning("Actor %s has no costume [%s]", a->name(), called_from);
-	} else {
-		result = a->findCostume(lua_getstring(lua_getparam(param)));
-		if (!result && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
-			warning("Actor %s has no costume %s [%s]", a->name(), lua_getstring(lua_getparam(param)), called_from);
-	}
-	return result;
-}
-
-Actor *check_actor(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('ACTR'))
-		return static_cast<Actor *>(lua_getuserdata(param));
-	luaL_argerror(num, "actor expected");
-	return NULL;
-}
-
 static inline bool getbool(int num) {
 	return !lua_isnil(lua_getparam(num));
 }
@@ -3816,7 +3794,7 @@ void concatFallback() {
 		else if (lua_isstring(params[i]))
 			sprintf(strPtr, lua_getstring(params[i]));
 		else if (lua_tag(params[i]) == MKID_BE('ACTR')) {
-			Actor *a = check_actor(params[i]);
+			Actor *a = static_cast<Actor *>(lua_getuserdata(params[i]));
 			sprintf(strPtr, "(actor%d:%s)", (long)a,
 				(a->currentCostume() && a->currentCostume()->getModelNodes()) ?
 				a->currentCostume()->getModelNodes()->_name : "");
