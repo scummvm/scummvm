@@ -485,7 +485,7 @@ static void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int 
 	int full_offset = (yoffset * pic->mode->yfact + offset) * pic->mode->xfact;
 
 	if (yoffset + offset >= 64000) {
-		BREAKPOINT();
+		error("_gfxr_auxplot_brush() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
 	}
 
 	switch (brush_mode) {

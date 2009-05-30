@@ -540,7 +540,9 @@ void SfxState::updateMultiSong() {
 		oldseeker->next_stopping = oldseeker->next_playing;
 		oldseeker->next_playing = &not_playing_anymore;
 
-		if (oldseeker == oldseeker->next_playing) { BREAKPOINT(); }
+		if (oldseeker == oldseeker->next_playing) { 
+			error("updateMultiSong() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+		}
 	}
 
 	/* Second, re-generate the new song queue. */
@@ -549,7 +551,9 @@ void SfxState::updateMultiSong() {
 		newseeker->next_playing
 		= song_lib_find_next_active(_songlib, newseeker);
 
-		if (newseeker == newseeker->next_playing) { BREAKPOINT(); }
+		if (newseeker == newseeker->next_playing) { 
+			error("updateMultiSong() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+		}
 	}
 	/* We now need to update the currently playing song list, because we're
 	** going to use some functions that require this list to be in a sane

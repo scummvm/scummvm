@@ -441,7 +441,7 @@ static int _sci_midi_process_state(BaseSongIterator *self, byte *buf, int *resul
 
 	default:
 		warning("Invalid iterator state %d!", channel->state);
-		BREAKPOINT();
+		error("Breakpoint in %s, line %d\n", __FILE__, __LINE__);
 		return SI_FINISHED;
 	}
 }
@@ -1290,7 +1290,7 @@ static void songit_tee_death_notification(TeeSongIterator *self, SongIterator *c
 		self->_status &= ~TEE_RIGHT_ACTIVE;
 		self->_children[TEE_RIGHT].it = NULL;
 	} else {
-		BREAKPOINT();
+		error("songit_tee_death_notification() failed: Breakpoint in %s, line %d\n", __FILE__, __LINE__);
 	}
 }
 
@@ -1580,7 +1580,7 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask) {
 		if (retval == SI_MORPH) {
 			fprintf(stderr, "  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
 			if (!SIMSG_SEND((*it), SIMSG_ACK_MORPH)) {
-				BREAKPOINT();
+				error("SI_MORPH failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
 			} else
 				fprintf(stderr, "SI_MORPH successful\n");
 		}

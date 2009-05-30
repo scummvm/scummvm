@@ -41,9 +41,6 @@ void sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
 /** Find first set bit in bits and return its index. Returns 0 if bits is 0. */
 int sci_ffs(int bits);
 
-
-#define BREAKPOINT() do { error("Breakpoint in %s, line %d\n", __FILE__, __LINE__); } while(0)
-
 } // End of namespace Sci
 
 #endif // SCI_TOOLS_H

@@ -248,7 +248,6 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 
 		if (!parent) {
 			error("Attempted widget mass destruction by a snapshot");
-			BREAKPOINT();
 		}
 
 		reparentize_primary_widget_lists(s, (GfxPort *) parent);
@@ -1842,7 +1841,6 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 						SCIkdebug(SCIkGRAPHICS, "Adding view at %04x:%04x to background\n", PRINT_REG(obj));
 						if (!(gfxw_remove_id(widget->_parent, widget->_ID, widget->_subID) == widget)) {
 							error("Attempt to remove view with ID %x:%x from list failed!\n", widget->_ID, widget->_subID);
-							BREAKPOINT();
 						}
 
 						s->drop_views->add(GFXWC(s->drop_views), gfxw_picviewize_dynview(widget));
@@ -1961,7 +1959,6 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 
 	if (!*widget_list) {
 		error("make_view_list with widget_list == ()\n");
-		BREAKPOINT();
 	};
 
 	assert_primary_widget_lists(s);
@@ -1970,7 +1967,6 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 
 	if (!list) { // list sanity check
 		error("Attempt to make list from non-list!\n");
-		BREAKPOINT();
 	}
 
 	node = lookup_node(s, list->first);

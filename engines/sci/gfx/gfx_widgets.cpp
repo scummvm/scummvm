@@ -264,7 +264,7 @@ void gfxw_remove_widget_from_container(GfxContainer *container, GfxWidget *widge
 
 	if (!container) {
 		GFXERROR("Attempt to remove widget from NULL container!\n");
-		BREAKPOINT();
+		error("gfxw_remove_widget_from_container() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
 	}
 
 	seekerp = &(container->_contents);
@@ -286,7 +286,7 @@ void gfxw_remove_widget_from_container(GfxContainer *container, GfxWidget *widge
 		widget->print(1);
 		sciprintf("Container:");
 		widget->print(1);
-		BREAKPOINT();
+		error("gfxw_remove_widget_from_container() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
 		return;
 	}
 
@@ -826,7 +826,7 @@ GfxText::~GfxText() {
 		GfxState *state = _visual ? _visual->_gfxState : NULL;
 		if (!state) {
 			GFXERROR("Attempt to free text without supplying mode to free it from!\n");
-			BREAKPOINT();
+			error("GfxText destructor failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
 		} else {
 			gfxop_free_text(state, _textHandle);
 			_textHandle = NULL;
@@ -1330,9 +1330,7 @@ int _gfxwop_ordered_add(GfxContainer *container, GfxWidget *widget, int compare_
 		widget->print(3);
 		sciprintf("\nList:");
 		container->print(3);
-		BREAKPOINT();
-
-		return 1;
+		error("Breakpoint in %s, line %d\n", __FILE__, __LINE__);
 	}
 
 	if (_gfxw_container_id_equals(container, widget))

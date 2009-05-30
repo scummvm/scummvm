@@ -535,7 +535,7 @@ void SegManager::heapRelocate(reg_t block) {
 				for (k = 0; k < scr->_objects.size(); k++)
 					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
 				sciprintf("Triggering breakpoint...\n");
-				BREAKPOINT();
+				error("Breakpoint in %s, line %d\n", __FILE__, __LINE__);
 			}
 		}
 	}
