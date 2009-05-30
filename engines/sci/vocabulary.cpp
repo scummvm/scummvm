@@ -226,10 +226,10 @@ const char *vocab_get_any_group_word(int group, const WordMap &words) {
 
 bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 	// Determine if we got a SCI0 vocabulary loaded
-	Resource* resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 1);
+	Resource* resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 1);
 	if (!resource)
 		// No SCI0 vocabulary? Try SCI1
-		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 1);
+		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 1);
 
 	if (!resource)
 		return false; // No vocabulary found
@@ -264,14 +264,14 @@ bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 
 void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 	// Determine if we got a SCI0 vocabulary loaded
-	Resource* resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
+	Resource* resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 0);
 	if (resource && resource->status == kResStatusLocked) {
-		resmgr->unlockResource(resource, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, kResourceTypeVocab);
+		resmgr->unlockResource(resource, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, kResourceTypeVocab);
 	} else {
 		// No SCI0 vocabulary? Try SCI1
-		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
+		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 0);
 		if (resource && resource->status == kResStatusLocked)
-			resmgr->unlockResource(resource, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, kResourceTypeVocab);
+			resmgr->unlockResource(resource, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, kResourceTypeVocab);
 	}
 
 	suffixes.clear();
