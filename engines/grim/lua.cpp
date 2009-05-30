@@ -4554,23 +4554,6 @@ lua_Object getIndexedTableValue(lua_Object table, int index) {
 	return lua_getresult(2);
 }
 
-void setTableValue(lua_Object table, const char *name, int newvalue) {
-	lua_pushobject(table);
-	lua_pushstring(name);
-	lua_pushnumber(newvalue);
-	lua_settable();
-}
-
-void setTableValue(lua_Object table, const char *name, lua_Object newvalue) {
-	lua_pushobject(table);
-	lua_pushstring(name);
-	if (newvalue == 0)
-		lua_pushnil();
-	else
-		lua_pushobject(newvalue);
-	lua_settable();
-}
-
 /* Obtain the x, y, and z coordinates from a LUA table
  * and then create a Vector3d object with these values
  */
