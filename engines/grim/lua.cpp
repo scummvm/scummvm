@@ -1516,14 +1516,13 @@ static void WalkActorVector() {
  * getting on and off of the Bone Wagon.
  */
 static void RotateVector() {
-/*
 	lua_Object vecObj = lua_getparam(1);
 	lua_Object rotObj = lua_getparam(2);
 	lua_Object resObj;
 	Graphics::Vector3d vec, rot, resVec;
 	float x, y, z;
 
-	if (!lua_istable(param1) || !lua_istable(param2)) {
+	if (!lua_istable(vecObj) || !lua_istable(rotObj)) {
 		lua_pushnil();
 		return;
 	}
@@ -1550,66 +1549,32 @@ static void RotateVector() {
 	z = lua_getnumber(lua_gettable());
 	rot.set(x, y, z);
 
-	// TODO rotate vector
+	// TODO implement proper code
+	float rotate, currAngle, newAngle;
+	rotate = rot.y();
+	Graphics::Vector3d baseVector(sin(0.0f), cos(0.0f), 0);
+	currAngle = angle(baseVector, vec) * (180 / LOCAL_PI);
+	newAngle = (currAngle - rotate) * (LOCAL_PI / 180);
+	Graphics::Vector3d vec2(sin(newAngle), cos(newAngle), 0);
+	vec2 *= vec.magnitude();
+	vec = vec2;
+
 
 	resObj = lua_createtable();
 	lua_pushobject(resObj);
-	lua_pushtring("x");
+	lua_pushstring("x");
 	lua_pushnumber(vec.x());
 	lua_settable();
 	lua_pushobject(resObj);
-	lua_pushtring("y");
+	lua_pushstring("y");
 	lua_pushnumber(vec.y());
 	lua_settable();
 	lua_pushobject(resObj);
-	lua_pushtring("z");
+	lua_pushstring("z");
 	lua_pushnumber(vec.z());
 	lua_settable();
 
 	lua_pushobject(resObj);
-*/
-	lua_Object param1, param2, result;
-
-	param1 = lua_getparam(1);
-	param2 = lua_getparam(2);
-	if (lua_istable(param1) && lua_istable(param2)) {
-		Graphics::Vector3d vec1 = tableToVector(param1);
-		lua_Object rotateObject = getTableValue(param2, "y");
-		float rotate, currAngle, newAngle;
-
-		// The signpost uses an indexed table (1,2,3) instead of
-		// a value-based table (x,y,z)
-		if (rotateObject == 0)
-			rotateObject = getIndexedTableValue(param2, 2);
-		rotate = lua_getnumber(rotateObject);
-		Graphics::Vector3d baseVector(sin(0.0f), cos(0.0f), 0);
-		currAngle = angle(baseVector, vec1) * (180 / LOCAL_PI);
-		newAngle = (currAngle - rotate) * (LOCAL_PI / 180);
-		Graphics::Vector3d vec2(sin(newAngle), cos(newAngle), 0);
-		vec2 *= vec1.magnitude();
-
-		result = lua_createtable();
-		lua_pushobject(result);
-		lua_pushstring("x");
-		lua_pushnumber(vec2.x());
-		lua_settable();
-		lua_pushobject(result);
-		lua_pushstring("y");
-		lua_pushnumber(vec2.y());
-		lua_settable();
-		lua_pushobject(result);
-		lua_pushstring("z");
-		lua_pushnumber(vec2.z());
-		lua_settable();
-	} else {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("RotateVector() parameter type not understood!");
-		// This will likely cause a crash since LUA is expecting
-		// a table out of this function
-		lua_pushnil();
-		return;
-	}
-	lua_pushobject(result);
 }
 
 /* Set the pitch of the actor to the requested value,
