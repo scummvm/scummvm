@@ -842,8 +842,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->have_bp = s->have_bp;
 	retval->bp_list = s->bp_list;
 
-	retval->debug_mode = s->debug_mode;
-
 	retval->kernel_opt_flags = 0;
 	retval->have_mouse_flag = 1;
 

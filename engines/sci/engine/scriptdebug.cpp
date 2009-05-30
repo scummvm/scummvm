@@ -28,7 +28,6 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/engine/gc.h"
-#include "sci/engine/kdebug.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
@@ -2001,41 +2000,6 @@ static int c_handle_config_update(const generic_config_flag_t *flags, int flags_
 	return 0;
 }
 
-const generic_config_flag_t SCIk_Debug_Names[SCIk_DEBUG_MODES] = {
-	{"Lists and nodes", 'l', (1 << 1)},
-	{"Graphics", 'g', (1 << 2)},
-	{"Character handling", 'c', (1 << 3)},
-	{"Memory management", 'm', (1 << 4)},
-	{"Function parameter checks", 'f', (1 << SCIkFUNCCHK_NR)},
-	{"Bresenham algorithms", 'b', (1 << 6)},
-	{"Audio subsystem", 'a', (1 << SCIkSOUNDCHK_NR)},
-	{"System graphics driver", 'd', (1 << SCIkGFXDRIVER_NR)},
-	{"Base setter results", 's', (1 << SCIkBASESETTER_NR)},
-	{"Parser", 'p', (1 << SCIkPARSER_NR)},
-	{"Menu handling", 'M', (1 << 11)},
-	{"Said specs", 'S', (1 << 12)},
-	{"File I/O", 'F', (1 << 13)},
-	{"Time", 't', (1 << 14)},
-	{"Room numbers", 'r', (1 << 15)},
-	{"FreeSCI 0.3.3 kernel emulation", 'e', (1 << 16)},
-	{"Pathfinding", 'P', (1 << SCIkAVOIDPATH_NR)}
-} ;
-
-void set_debug_mode(EngineState *s, int mode, const char *areas) {
-	char *param = (char*)malloc(strlen(areas) + 2);
-
-	param[0] = (mode) ? '+' : '-';
-	strcpy(param + 1, areas);
-
-	handle_config_update(SCIk_Debug_Names, SCIk_DEBUG_MODES, "VM and kernel", (int *)&(s->debug_mode), param);
-
-	free(param);
-}
-
-int c_debuglog(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	return c_handle_config_update(SCIk_Debug_Names, SCIk_DEBUG_MODES, "VM and kernel", (int *)&(s->debug_mode), cmdParams);
-}
-
 #define SFX_DEBUG_MODES 2
 #define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
 
@@ -2484,30 +2448,28 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
 	// Do we support a separate console?
 
-	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {
-		int old_debugstate = _debugstate_valid;
+	int old_debugstate = _debugstate_valid;
 
-		p_var_segs = segids;
-		p_vars = variables;
-		p_var_max = variables_nr;
-		p_var_base = variables_base;
-		p_pc = pc;
-		p_sp = sp;
-		p_pp = pp;
-		p_objp = objp;
-		p_restadjust = restadjust;
-		sciprintf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
-		_debugstate_valid = 1;
-		disassemble(s, *pc, 0, 1);
-		if (_debug_seeking == _DEBUG_SEEK_GLOBAL)
-			sciprintf("Global %d (0x%x) = %04x:%04x\n", _debug_seek_special,
-			          _debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[_debug_seek_special]));
+	p_var_segs = segids;
+	p_vars = variables;
+	p_var_max = variables_nr;
+	p_var_base = variables_base;
+	p_pc = pc;
+	p_sp = sp;
+	p_pp = pp;
+	p_objp = objp;
+	p_restadjust = restadjust;
+	sciprintf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
+	_debugstate_valid = 1;
+	disassemble(s, *pc, 0, 1);
+	if (_debug_seeking == _DEBUG_SEEK_GLOBAL)
+		sciprintf("Global %d (0x%x) = %04x:%04x\n", _debug_seek_special,
+		          _debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[_debug_seek_special]));
 
-		_debugstate_valid = old_debugstate;
+	_debugstate_valid = old_debugstate;
 
-		if (!script_debug_flag)
-			return;
-	}
+	if (!script_debug_flag)
+		return;
 
 	if (_debug_seeking && !bp) { // Are we looking for something special?
 		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
@@ -2613,17 +2575,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_sret, "sret", "", "Steps forward until ret is called\n  on the current execution stack\n  level.");
 			con_hook_command(c_resource_id, "resource_id", "i", "Identifies a resource number by\n"
 			                 "  splitting it up in resource type\n  and resource number.");
-			con_hook_command(c_debuglog, "debuglog", "!s*", "Sets the debug log modes.\n  Possible parameters:\n"
-			                 "  +x (sets debugging for x)\n  -x (unsets debugging for x)\n\nPossible values"
-			                 " for x:\n  u: Unimpl'd/stubbed stuff\n  l: Lists and nodes\n  g: Graphics\n"
-			                 "  c: Character handling\n  m: Memory management\n  f: Function call checks\n"
-			                 "  b: Bresenham details\n  a: Audio\n  d: System gfx management\n  s: Base setter\n"
-			                 "  p: Parser\n  M: The menu system\n  S: Said specs\n  F: File I/O\n  t: GetTime\n"
-			                 "  e: 0.3.3 kernel emulation\n  r: Room numbers\n  P: Pathfinding\n"
-			                 "  *: Everything\n\n"
-			                 "  If invoked withour parameters,\n  it will list all activated\n  debug options.\n\n"
-			                 "SEE ALSO\n"
-			                 "  gfx_debuglog.1, sfx_debuglog.1\n");
 			con_hook_command(c_visible_map, "set_vismap", "i", "Sets the visible map.\n  Default is 0 (visual).\n"
 			                 "  Other useful values are:\n  1: Priority\n  2: Control\n  3: Auxiliary\n");
 			con_hook_command(c_statusbar, "statusbar", "ii", "Sets the colors of the status bar. Also controllable from the script.\n");
@@ -2777,12 +2728,8 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 
 /*
 			con_hook_int(&script_debug_flag, "script_debug_flag", "Set != 0 to enable debugger\n");
-			con_hook_int(&script_checkloads_flag, "script_checkloads_flag", "Set != 0 to display information\n"
-			             "  when scripts are loaded or unloaded");
 			con_hook_int(&script_abort_flag, "script_abort_flag", "Set != 0 to abort execution\n");
 			con_hook_int(&script_step_counter, "script_step_counter", "# of executed SCI operations\n");
-			con_hook_int(&sci_debug_flags, "debug_flags", "Debug flags:\n  0x0001: Log each command executed\n"
-			             "  0x0002: Break on warnings\n  \0x0004: Print VM warnings\n");
 			con_hook_int(&_weak_validations, "weak_validations", "Set != 0 to turn some validation errors\n"
 			             "  into warnings\n");
 

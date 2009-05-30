@@ -35,6 +35,7 @@ namespace Sci {
 
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
+//#define DEBUG_AVOIDPATH	//enable for avoidpath debugging
 
 static void POLY_GET_POINT(const byte *p, int i, Common::Point &pt) {
 	pt.x = (int16)READ_LE_UINT16((p) + (i) * POLY_POINT_SIZE);
@@ -308,6 +309,8 @@ static bool polygons_equal(EngineState *s, reg_t p1, reg_t p2) {
 	return true;
 }
 
+#ifdef DEBUG_AVOIDPATH
+
 static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int type) {
 	// Colors for polygon debugging.
 	// Green: Total access
@@ -395,6 +398,8 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 		node = lookup_node(s, node->succ);
 	}
 }
+
+#endif	// DEBUG_AVOIDPATH
 
 static void print_polygon(EngineState *s, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
@@ -1623,15 +1628,15 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	// Sentinel
 	POLY_SET_POINT(oref, offset, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
-	if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
-		sciprintf("[avoidpath] Returning path:");
-		for (int i = 0; i < offset; i++) {
-			Common::Point pt;
-			POLY_GET_POINT(oref, i, pt);
-			sciprintf(" (%i, %i)", pt.x, pt.y);
-		}
-		sciprintf("\n");
+#ifdef DEBUG_AVOIDPATH
+	sciprintf("[avoidpath] Returning path:");
+	for (int i = 0; i < offset; i++) {
+		Common::Point pt;
+		POLY_GET_POINT(oref, i, pt);
+		sciprintf(" (%i, %i)", pt.x, pt.y);
 	}
+	sciprintf("\n");
+#endif
 
 	return output;
 }
@@ -1639,16 +1644,16 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::Point start = Common::Point(SKPV(0), SKPV(1));
 
-	if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
-		GfxPort *port = s->picture_port;
+#ifdef DEBUG_AVOIDPATH
+	GfxPort *port = s->picture_port;
 
-		if (!port->_decorations) {
-			port->_decorations = gfxw_new_list(gfx_rect(0, 0, 320, 200), 0);
-			port->_decorations->setVisual(port->_visual);
-		} else {
-			port->_decorations->free_contents(port->_decorations);
-		}
+	if (!port->_decorations) {
+		port->_decorations = gfxw_new_list(gfx_rect(0, 0, 320, 200), 0);
+		port->_decorations->setVisual(port->_visual);
+	} else {
+		port->_decorations->free_contents(port->_decorations);
 	}
+#endif
 
 	switch (argc) {
 
@@ -1671,16 +1676,16 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		reg_t output;
 		PathfindingState *p;
 
-		if (s->debug_mode & (1 << SCIkAVOIDPATH_NR)) {
-			sciprintf("[avoidpath] Pathfinding input:\n");
-			draw_point(s, start, 1);
-			draw_point(s, end, 0);
+#ifdef DEBUG_AVOIDPATH
+		sciprintf("[avoidpath] Pathfinding input:\n");
+		draw_point(s, start, 1);
+		draw_point(s, end, 0);
 
-			if (poly_list.segment) {
-				print_input(s, poly_list, start, end, opt);
-				draw_input(s, poly_list, start, end, opt);
-			}
+		if (poly_list.segment) {
+			print_input(s, poly_list, start, end, opt);
+			draw_input(s, poly_list, start, end, opt);
 		}
+#endif
 
 		p = convert_polygon_set(s, poly_list, start, end, opt);
 

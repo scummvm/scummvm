@@ -499,7 +499,7 @@ reg_t kalloc(EngineState *s, const char *type, int space) {
 	reg_t reg;
 
 	s->seg_manager->alloc_hunk_entry(type, space, &reg);
-	SCIkdebug(SCIkMEM, "Allocated %d at hunk %04x:%04x (%s)\n", space, PRINT_REG(reg), type);
+	debugC(2, kDebugLevelMemory, "Allocated %d at hunk %04x:%04x (%s)\n", space, PRINT_REG(reg), type);
 
 	return reg;
 }

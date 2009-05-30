@@ -793,8 +793,6 @@ extern int script_debug_flag;
 /** Set to 1 to move pc back to last position, even though action is executed */
 extern int script_error_flag;
 
-/** Displays the numbers of scripts when they are (un)loaded */
-extern int script_checkloads_flag;
 
 #define SCRIPT_ABORT_WITH_REPLAY 1025
 

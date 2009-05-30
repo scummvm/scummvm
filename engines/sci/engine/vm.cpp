@@ -30,7 +30,6 @@
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
-#include "sci/engine/kdebug.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/seg_manager.h"
@@ -48,7 +47,7 @@ reg_t NULL_REG = {0, 0};
 
 int script_abort_flag = 0; // Set to 1 to abort execution
 int script_error_flag = 0; // Set to 1 if an error occured, reset each round by the VM
-int script_checkloads_flag = 0; // Print info when scripts get (un)loaded
+int script_debug_flag = 0; // Set to 1 for script debugging
 int script_step_counter = 0; // Counts the number of steps executed
 int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs
 
@@ -66,17 +65,14 @@ static reg_t _dummy_register;
 
 static reg_t &validate_property(Object *obj, int index) {
 	if (!obj) {
-		if (sci_debug_flags & 4)
-			sciprintf("[VM] Sending to disposed object!\n");
+		debugC(2, kDebugLevelVM, "[VM] Sending to disposed object!\n");
 		_dummy_register = NULL_REG;
 		return _dummy_register;
 	}
 
 	if (index < 0 || (uint)index >= obj->_variables.size()) {
-		if (sci_debug_flags & 4)
-			sciprintf("[VM] Invalid property #%d (out of [0..%d]) requested!\n", index,
-			          obj->_variables.size());
-
+		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!\n", 
+			index, obj->_variables.size());
 		_dummy_register = NULL_REG;
 		return _dummy_register;
 	}
@@ -89,8 +85,8 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 		return sp;
 
 	script_debug_flag = script_error_flag = 1;
-	if (sci_debug_flags & 4)
-		sciprintf("[VM] Stack index %d out of valid range [%d..%d]\n", (int)(sp - s->stack_base), 0, (int)(s->stack_top - s->stack_base - 1));
+	debugC(2, kDebugLevelVM, "[VM] Stack index %d out of valid range [%d..%d]\n", 
+		(int)(sp - s->stack_base), 0, (int)(s->stack_top - s->stack_base - 1));
 	return 0;
 }
 
@@ -98,8 +94,7 @@ static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		if (!_weak_validations)
 			script_debug_flag = script_error_flag = 1;
-		if (sci_debug_flags & 4)
-			sciprintf("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+		debugC(2, kDebugLevelVM, "[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
 		return 0;
 	}
 
@@ -110,8 +105,7 @@ static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		if (!_weak_validations)
 			script_debug_flag = script_error_flag = 1;
-		if (sci_debug_flags & 4)
-			sciprintf("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+		debugC(2, kDebugLevelVM, "[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
 		return 0;
 	}
 
@@ -650,10 +644,6 @@ void run_vm(EngineState *s, int restoring) {
 #ifndef DISABLE_VALIDATIONS
 				code_buf_size = scr->buf_size;
 #endif
-				/*if (!obj) {
-					SCIkdebug(SCIkWARNING, "Running with non-existant self= %04x:%04x\n", PRINT_REG(xs->objp));
-				}*/
-
 				local_script = script_locate_by_segment(s, xs->local_segment);
 				if (!local_script) {
 					warning("Could not find local script from segment %x", xs->local_segment);
@@ -689,6 +679,8 @@ void run_vm(EngineState *s, int restoring) {
 		if (script_abort_flag)
 			return; // Emergency
 
+// TODO: re-enable this
+#if 0
 		// Debug if this has been requested:
 		if (script_debug_flag || sci_debug_flags) {
 			script_debug(s, &(xs->addr.pc), &(xs->sp), &(xs->fp), &(xs->objp), &restadjust, variables_seg, variables, variables_base,
@@ -700,6 +692,7 @@ void run_vm(EngineState *s, int restoring) {
 			             breakpointFlag);
 			breakpointFlag = false;
 		}
+#endif
 
 #ifndef DISABLE_VALIDATIONS
 		if (xs->sp < xs->fp)
@@ -1955,8 +1948,7 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 	// Explanation: I'm starting to believe that this work is done by SCI itself.
 	scr->markDeleted();
 
-	if (script_checkloads_flag)
-		sciprintf("Unloaded script 0x%x.\n", script_nr);
+	debugC(kDebugLevelScripts, "Unloaded script 0x%x.\n", script_nr);
 
 	return;
 }

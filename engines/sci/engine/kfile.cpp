@@ -152,26 +152,26 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	// FIXME: The old FreeSCI code for opening a file. Left as a reference, as apparently
 	// the implementation below used to work well enough.
 
-	SCIkdebug(SCIkFILE, "Opening file %s with mode %d\n", filename, mode);
+	debugC(2, kDebugLevelFile, "Opening file %s with mode %d\n", filename, mode);
 	if ((mode == _K_FILE_MODE_OPEN_OR_FAIL) || (mode == _K_FILE_MODE_OPEN_OR_CREATE)) {
 		file = sci_fopen(filename, "r" FO_BINARY "+"); // Attempt to open existing file
-		SCIkdebug(SCIkFILE, "Opening file %s with mode %d\n", filename, mode);
+		debugC(2, kDebugLevelFile, "Opening file %s with mode %d\n", filename, mode);
 		if (!file) {
-			SCIkdebug(SCIkFILE, "Failed. Attempting to copy from resource dir...\n");
+			debugC(2, kDebugLevelFile, "Failed. Attempting to copy from resource dir...\n");
 			file = f_open_mirrored(s, filename);
 			if (file)
-				SCIkdebug(SCIkFILE, "Success!\n");
+				debugC(2, kDebugLevelFile, "Success!\n");
 			else
-				SCIkdebug(SCIkFILE, "Not found.\n");
+				debugC(2, kDebugLevelFile, "Not found.\n");
 		}
 	}
 
 	if ((!file) && ((mode == _K_FILE_MODE_OPEN_OR_CREATE) || (mode == _K_FILE_MODE_CREATE))) {
 		file = sci_fopen(filename, "w" FO_BINARY "+"); /* Attempt to create file */
-		SCIkdebug(SCIkFILE, "Creating file %s with mode %d\n", filename, mode);
+		debugC(2, kDebugLevelFile, "Creating file %s with mode %d\n", filename, mode);
 	}
 	if (!file) { // Failed
-		SCIkdebug(SCIkFILE, "file_open() failed\n");
+		debugC(2, kDebugLevelFile, "file_open() failed\n");
 		s->r_acc = make_reg(0, 0xffff);
 		return;
 	}
@@ -219,7 +219,7 @@ static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
 }
 
 void file_close(EngineState *s, int handle) {
-	SCIkdebug(SCIkFILE, "Closing file %d\n", handle);
+	debugC(2, kDebugLevelFile, "Closing file %d\n", handle);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f)
@@ -233,7 +233,7 @@ reg_t kFClose(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 void fwrite_wrapper(EngineState *s, int handle, char *data, int length) {
-	SCIkdebug(SCIkFILE, "fwrite()'ing \"%s\" to handle %d\n", data, handle);
+	debugC(2, kDebugLevelFile, "fwrite()'ing \"%s\" to handle %d\n", data, handle);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
@@ -256,7 +256,7 @@ reg_t kFPuts(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
-	SCIkdebug(SCIkFILE, "FGets'ing %d bytes from handle %d\n", maxsize, handle);
+	debugC(2, kDebugLevelFile, "FGets'ing %d bytes from handle %d\n", maxsize, handle);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
@@ -268,11 +268,11 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	}
 	f->_in->readLine_NEW(dest, maxsize);
 
-	SCIkdebug(SCIkFILE, "FGets'ed \"%s\"\n", dest);
+	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"\n", dest);
 }
 
 static void fread_wrapper(EngineState *s, char *dest, int bytes, int handle) {
-	SCIkdebug(SCIkFILE, "fread()'ing %d bytes from handle %d\n", bytes, handle);
+	debugC(2, kDebugLevelFile, "fread()'ing %d bytes from handle %d\n", bytes, handle);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)

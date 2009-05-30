@@ -505,7 +505,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		gfx_color_t gfxcolor = graph_map_color(s, SKPV(5), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1));
 
-		SCIkdebug(SCIkGRAPHICS, "draw_line((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
+		debugC(2, kDebugLevelGraphics, "draw_line((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
 		          SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(5), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1), gfxcolor.mask);
 
 		redraw_port = 1;
@@ -557,7 +557,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		color.mask = (byte)UKPV(5);
 
-		SCIkdebug(SCIkGRAPHICS, "fill_box_any((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
+		debugC(2, kDebugLevelGraphics, "fill_box_any((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
 		          SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(6), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1), UKPV(5));
 
 		// FIXME/TODO: this is not right, as some of the dialogs are drawn *behind* some widgets. But at least it works for now
@@ -569,7 +569,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_UPDATE_BOX: {
 
-		SCIkdebug(SCIkGRAPHICS, "update_box(%d, %d, %d, %d)\n", SKPV(1), SKPV(2), SKPV(3), SKPV(4));
+		debugC(2, kDebugLevelGraphics, "update_box(%d, %d, %d, %d)\n", SKPV(1), SKPV(2), SKPV(3), SKPV(4));
 
 		area.x += s->port->zone.x;
 		area.y += s->port->zone.y;
@@ -582,7 +582,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_GRAPH_REDRAW_BOX: {
 
 
-		SCIkdebug(SCIkGRAPHICS, "redraw_box(%d, %d, %d, %d)\n", SKPV(1), SKPV(2), SKPV(3), SKPV(4));
+		debugC(2, kDebugLevelGraphics, "redraw_box(%d, %d, %d, %d)\n", SKPV(1), SKPV(2), SKPV(3), SKPV(4));
 
 		area.x += s->port->zone.x;
 		area.y += s->port->zone.y;
@@ -598,7 +598,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_ADJUST_PRIORITY:
 
-		SCIkdebug(SCIkGRAPHICS, "adjust_priority(%d, %d)\n", SKPV(1), SKPV(2));
+		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)\n", SKPV(1), SKPV(2));
 		s->priority_first = SKPV(1) - 10;
 		s->priority_last = SKPV(2) - 10;
 		break;
@@ -631,13 +631,13 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (!text || !*text || !dest) { // Empty text
 		dest[2] = dest[3] = make_reg(0, 0);
-		SCIkdebug(SCIkSTRINGS, "GetTextSize: Empty string\n");
+		debugC(2, kDebugLevelStrings, "GetTextSize: Empty string\n");
 		return s->r_acc;
 	}
 
 	GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text, maxwidth ? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
 	                                 &width, &height, 0, NULL, NULL, NULL));
-	SCIkdebug(SCIkSTRINGS, "GetTextSize '%s' -> %dx%d\n", text, width, height);
+	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text, width, height);
 
 	dest[2] = make_reg(0, height);
 //	dest[3] = make_reg(0, maxwidth? maxwidth : width);
@@ -755,12 +755,12 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 	if (other_area.left >= 320 || other_area.top >= 190 || area.right >= 320 || area.bottom >= 190)
 		return 0; // Out of scope
 
-	SCIkdebug(SCIkBRESEN, "OtherSignal=%04x, z=%04x obj=%04x:%04x\n", other_signal, (other_signal & view_mask), PRINT_REG(other_obj));
+	debugC(2, kDebugLevelBresen, "OtherSignal=%04x, z=%04x obj=%04x:%04x\n", other_signal, (other_signal & view_mask), PRINT_REG(other_obj));
 
 	if ((other_signal & (view_mask)) == 0) {
 		// check whether the other object ignores actors
 
-		SCIkdebug(SCIkBRESEN, "  against (%d,%d) to (%d,%d)\n", other_area.left, other_area.top, other_area.right, other_area.bottom);
+		debugC(2, kDebugLevelBresen, "  against (%d,%d) to (%d,%d)\n", other_area.left, other_area.top, other_area.right, other_area.bottom);
 
 		if (area.intersects(other_area))
 			return 1;
@@ -768,7 +768,7 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 		** covers the coordinate (0,0) */
 	}
 
-	SCIkdebug(SCIkBRESEN, " (no)\n");
+	debugC(2, kDebugLevelBresen, " (no)\n");
 	return 0;
 }
 
@@ -793,7 +793,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 	zone = gfx_rect(abs_zone.left + port->zone.x, abs_zone.top + port->zone.y, abs_zone.width(), abs_zone.height());
 
 	signal = GET_SEL32V(obj, signal);
-	SCIkdebug(SCIkBRESEN, "Checking collision: (%d,%d) to (%d,%d) ([%d..%d]x[%d..%d]), obj=%04x:%04x, sig=%04x, cliplist=%04x:%04x\n",
+	debugC(2, kDebugLevelBresen, "Checking collision: (%d,%d) to (%d,%d) ([%d..%d]x[%d..%d]), obj=%04x:%04x, sig=%04x, cliplist=%04x:%04x\n",
 	          GFX_PRINT_RECT(zone), abs_zone.left, abs_zone.right, abs_zone.top, abs_zone.bottom,
 	          PRINT_REG(obj), signal, PRINT_REG(cliplist_ref));
 
@@ -801,9 +801,9 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 
 	retval = !(illegal_bits & (edgehit = gfxop_scan_bitmask(s->gfx_state, zone, GFX_MASK_CONTROL)));
 
-	SCIkdebug(SCIkBRESEN, "edgehit = %04x (illegalBits %04x)\n", edgehit, illegal_bits);
+	debugC(2, kDebugLevelBresen, "edgehit = %04x (illegalBits %04x)\n", edgehit, illegal_bits);
 	if (retval == 0) {
-		SCIkdebug(SCIkBRESEN, " -> %04x\n", retval);
+		debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
 		return not_register(s, NULL_REG); // Can't BeHere
 	}
 
@@ -813,7 +813,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 	        && s->dyn_views) { // ...check against all stop-updated dynviews
 		GfxDynView *widget = (GfxDynView *)s->dyn_views->_contents;
 
-		SCIkdebug(SCIkBRESEN, "Checking vs dynviews:\n");
+		debugC(2, kDebugLevelBresen, "Checking vs dynviews:\n");
 
 		while (widget) {
 			if (widget->_ID && (widget->signal & _K_VIEW_SIG_FLAG_STOPUPD)
@@ -828,7 +828,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 
 	if (signal & GASEOUS_VIEW_MASK_ACTIVE) {
 		retval = signal & GASEOUS_VIEW_MASK_ACTIVE; // CanBeHere- it's either being disposed, or it ignores actors anyway
-		SCIkdebug(SCIkBRESEN, " -> %04x\n", retval);
+		debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
 		return not_register(s, make_reg(0, retval)); // CanBeHere
 	}
 
@@ -842,14 +842,14 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 
 		while (node) { // Check each object in the list against our bounding rectangle
 			reg_t other_obj = node->value;
-			SCIkdebug(SCIkBRESEN, "  comparing against %04x:%04x\n", PRINT_REG(other_obj));
+			debugC(2, kDebugLevelBresen, "  comparing against %04x:%04x\n", PRINT_REG(other_obj));
 
 			if (!is_object(s, other_obj)) {
 				warning("CanBeHere() cliplist contains non-object %04x:%04x", PRINT_REG(other_obj));
 			} else if (other_obj != obj) { // Clipping against yourself is not recommended
 
 				if (collides_with(s, abs_zone, other_obj, 0, GASEOUS_VIEW_MASK_PASSIVE, funct_nr, argc, argv)) {
-					SCIkdebug(SCIkBRESEN, " -> %04x\n", retval);
+					debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
 					return not_register(s, NULL_REG);
 				}
 
@@ -860,7 +860,7 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
 
 	if (!retval)
 		retval = 1;
-	SCIkdebug(SCIkBRESEN, " -> %04x\n", retval);
+	debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
 
 	return not_register(s, make_reg(0, retval));
 }  // CanBeHere
@@ -936,7 +936,7 @@ reg_t kNumLoops(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	SCIkdebug(SCIkGRAPHICS, "NumLoops(view.%d) = %d\n", view, loops_nr);
+	debugC(2, kDebugLevelGraphics, "NumLoops(view.%d) = %d\n", view, loops_nr);
 
 	return make_reg(0, loops_nr);
 }
@@ -955,7 +955,7 @@ reg_t kNumCels(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	SCIkdebug(SCIkGRAPHICS, "NumCels(view.%d, %d) = %d\n", view, loop, cel + 1);
+	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", view, loop, cel + 1);
 
 	return make_reg(0, cel + 1);
 }
@@ -994,8 +994,6 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
 
-	CHECK_THIS_KERNEL_FUNCTION;
-
 	dp.nr = SKPV(0);
 	dp.palette = SKPV_OR_ALT(3, 0);
 
@@ -1018,7 +1016,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->old_screen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 10, 320, 190));
 
-	SCIkdebug(SCIkGRAPHICS, "Drawing pic.%03d\n", SKPV(0));
+	debugC(2, kDebugLevelGraphics, "Drawing pic.%03d\n", SKPV(0));
 
 	if (add_to_pic) {
 		s->_pics.push_back(dp);
@@ -1099,7 +1097,7 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 		if (loop != oldloop) {
 			loop = 0;
 			PUT_SEL32V(object, loop, 0);
-			SCIkdebug(SCIkGRAPHICS, "Resetting loop for %04x:%04x!\n", PRINT_REG(object));
+			debugC(2, kDebugLevelGraphics, "Resetting loop for %04x:%04x!\n", PRINT_REG(object));
 		}
 
 		if (cel != oldcel) {
@@ -1118,7 +1116,7 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 	yend = y /* - ymod */ + 1;
 	ybase = yend - ystep;
 
-	SCIkdebug(SCIkBASESETTER, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
+	debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
 	          x, y, xmod, ymod, xsize, ysize, xbase, ybase, xend, yend);
 
 	retval.left = xbase;
@@ -1591,7 +1589,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	switch (type) {
 	case K_CONTROL_BUTTON:
-		SCIkdebug(SCIkGRAPHICS, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
+		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, text, font_nr,
 		                          (int8)(state & kControlStateFramed), (int8)inverse, (int8)(state & kControlStateDisabled)));
 		break;
@@ -1599,14 +1597,14 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	case K_CONTROL_TEXT:
 		mode = (gfx_alignment_t) GET_SEL32V(obj, mode);
 
-		SCIkdebug(SCIkGRAPHICS, "drawing text %04x:%04x to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
+		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
 
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, text, font_nr, mode,
 									(int8)(!!(state & kControlStateDitherFramed)), (int8)inverse));
 		break;
 
 	case K_CONTROL_EDIT:
-		SCIkdebug(SCIkGRAPHICS, "drawing edit control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
+		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
 
 		max = GET_SEL32V(obj, max);
 		cursor = GET_SEL32V(obj, cursor);
@@ -1620,7 +1618,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	case K_CONTROL_ICON:
 
-		SCIkdebug(SCIkGRAPHICS, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y - 1);
+		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y - 1);
 
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_icon_control(s->port, obj, area, view, loop, cel,
 		                          (int8)(state & kControlStateFramed), (int8)inverse));
@@ -1637,7 +1635,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		int entry_size = GET_SEL32V(obj, x);
 		int i;
 
-		SCIkdebug(SCIkGRAPHICS, "drawing list control %04x to %d,%d, diff %d\n", obj, x, y, SCI_MAX_SAVENAME_LENGTH);
+		debugC(2, kDebugLevelGraphics, "drawing list control %04x to %d,%d, diff %d\n", obj, x, y, SCI_MAX_SAVENAME_LENGTH);
 		cursor = GET_SEL32V(obj, cursor) - text_pos.offset;
 
 		entries_nr = 0;
@@ -1687,7 +1685,7 @@ static void draw_rect_to_control_map(EngineState *s, Common::Rect abs_zone) {
 
 	gfxop_set_color(s->gfx_state, &color, -1, -1, -1, -1, -1, 0xf);
 
-	SCIkdebug(SCIkGRAPHICS, "    adding control block (%d,%d)to(%d,%d)\n", abs_zone.left, abs_zone.top, abs_zone.right, abs_zone.bottom);
+	debugC(2, kDebugLevelGraphics, "    adding control block (%d,%d)to(%d,%d)\n", abs_zone.left, abs_zone.top, abs_zone.right, abs_zone.bottom);
 
 	box = gfxw_new_box(s->gfx_state, gfx_rect(abs_zone.left, abs_zone.top, abs_zone.width(),
 						abs_zone.height()), color, color, GFX_BOX_SHADE_FLAT);
@@ -1835,10 +1833,10 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 						graph_restore_box(s, under_bits);
 					}
 
-					SCIkdebug(SCIkGRAPHICS, "Freeing %04x:%04x with signal=%04x\n", PRINT_REG(obj), signal);
+					debugC(2, kDebugLevelGraphics, "Freeing %04x:%04x with signal=%04x\n", PRINT_REG(obj), signal);
 
 					if (!(signal & _K_VIEW_SIG_FLAG_HIDDEN)) {
-						SCIkdebug(SCIkGRAPHICS, "Adding view at %04x:%04x to background\n", PRINT_REG(obj));
+						debugC(2, kDebugLevelGraphics, "Adding view at %04x:%04x to background\n", PRINT_REG(obj));
 						if (!(gfxw_remove_id(widget->_parent, widget->_ID, widget->_subID) == widget)) {
 							error("Attempt to remove view with ID %x:%x from list failed!\n", widget->_ID, widget->_subID);
 						}
@@ -1850,7 +1848,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 						widget->draw_bounds.x += s->dyn_views->_bounds.x - widget->_parent->_bounds.x;
 						dropped = 1;
 					} else {
-						SCIkdebug(SCIkGRAPHICS, "Deleting view at %04x:%04x\n", PRINT_REG(obj));
+						debugC(2, kDebugLevelGraphics, "Deleting view at %04x:%04x\n", PRINT_REG(obj));
 						widget->_flags |= GFXW_FLAG_VISIBLE;
 						gfxw_annihilate(widget);
 						return -1; // restart: Done in Animate()
@@ -1881,7 +1879,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	int z;
 	GfxDynView *widget;
 
-	SCIkdebug(SCIkGRAPHICS, " - Adding %04x:%04x\n", PRINT_REG(obj));
+	debugC(2, kDebugLevelGraphics, " - Adding %04x:%04x\n", PRINT_REG(obj));
 
 	obj = obj;
 
@@ -1921,17 +1919,17 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	if (lookup_selector(s, obj, s->selector_map.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
 		under_bitsp = NULL;
 		under_bits = NULL_REG;
-		SCIkdebug(SCIkGRAPHICS, "Object at %04x:%04x has no underBits\n", PRINT_REG(obj));
+		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no underBits\n", PRINT_REG(obj));
 	} else
 		under_bits = *((reg_t *)under_bitsp);
 
 	if (lookup_selector(s, obj, s->selector_map.signal, &(signalp), NULL) != kSelectorVariable) {
 		signalp = NULL;
 		signal = 0;
-		SCIkdebug(SCIkGRAPHICS, "Object at %04x:%04x has no signal selector\n", PRINT_REG(obj));
+		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no signal selector\n", PRINT_REG(obj));
 	} else {
 		signal = signalp->offset;
-		SCIkdebug(SCIkGRAPHICS, "    with signal = %04x\n", signal);
+		debugC(2, kDebugLevelGraphics, "    with signal = %04x\n", signal);
 	}
 
 	widget = gfxw_new_dyn_view(s->gfx_state, pos, z, view_nr, loop, cel, palette, -1, -1, ALIGN_CENTER, ALIGN_BOTTOM, nr);
@@ -1980,7 +1978,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 
 			if (!(signal & _K_VIEW_SIG_FLAG_FROZEN)) {
 
-				SCIkdebug(SCIkGRAPHICS, "  invoking %04x:%04x::doit()\n", PRINT_REG(obj));
+				debugC(2, kDebugLevelGraphics, "  invoking %04x:%04x::doit()\n", PRINT_REG(obj));
 				invoke_selector(INV_SEL(obj, doit, 1), 0); // Call obj::doit() if neccessary
 			}
 		}
@@ -2045,7 +2043,7 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 		// their clipped nsRect drawn to the control map
 		if (view->signal & _K_VIEW_SIG_FLAG_STOP_UPDATE) {
 			view->signal |= _K_VIEW_SIG_FLAG_STOPUPD;
-			SCIkdebug(SCIkGRAPHICS, "Setting magic STOP_UPD for %04x:%04x\n", PRINT_REG(obj));
+			debugC(2, kDebugLevelGraphics, "Setting magic STOP_UPD for %04x:%04x\n", PRINT_REG(obj));
 		}
 
 		if ((options & _K_MAKE_VIEW_LIST_DRAW_TO_CONTROL_MAP))
@@ -2079,7 +2077,7 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 			}
 		}
 
-		SCIkdebug(SCIkGRAPHICS, "  dv[%04x:%04x]: signal %04x -> %04x\n", PRINT_REG(obj), oldsignal, view->signal);
+		debugC(2, kDebugLevelGraphics, "  dv[%04x:%04x]: signal %04x -> %04x\n", PRINT_REG(obj), oldsignal, view->signal);
 
 		// Never happens
 /*		if (view->signal & 0) {
@@ -2143,7 +2141,7 @@ static void _k_raise_topmost_in_view_list(EngineState *s, GfxList *list, GfxDynV
 
 		// step 11
 		if ((view->signal & (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == 0) {
-			SCIkdebug(SCIkGRAPHICS, "Forcing precedence 2 at [%04x:%04x] with %04x\n", PRINT_REG(make_reg(view->_ID, view->_subID)), view->signal);
+			debugC(2, kDebugLevelGraphics, "Forcing precedence 2 at [%04x:%04x] with %04x\n", PRINT_REG(make_reg(view->_ID, view->_subID)), view->signal);
 			view->force_precedence = 2;
 
 			if ((view->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_HIDDEN)) == _K_VIEW_SIG_FLAG_REMOVE) {
@@ -2168,7 +2166,7 @@ static void _k_redraw_view_list(EngineState *s, GfxList *list) {
 	GfxDynView *view = (GfxDynView *) list->_contents;
 	while (view) {
 
-		SCIkdebug(SCIkGRAPHICS, "  dv[%04x:%04x]: signal %04x\n", make_reg(view->_ID, view->_subID), view->signal);
+		debugC(2, kDebugLevelGraphics, "  dv[%04x:%04x]: signal %04x\n", make_reg(view->_ID, view->_subID), view->signal);
 
 		// step 1 of subalgorithm
 		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
@@ -2184,12 +2182,12 @@ static void _k_redraw_view_list(EngineState *s, GfxList *list) {
 			}
 		}
 
-		SCIkdebug(SCIkGRAPHICS, "    at substep 6: signal %04x\n", view->signal);
+		debugC(2, kDebugLevelGraphics, "    at substep 6: signal %04x\n", view->signal);
 
 		if (view->signal & _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)
 			view->signal &= ~(_K_VIEW_SIG_FLAG_STOP_UPDATE | _K_VIEW_SIG_FLAG_UPDATED | _K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_FORCE_UPDATE);
 
-		SCIkdebug(SCIkGRAPHICS, "    at substep 11/14: signal %04x\n", view->signal);
+		debugC(2, kDebugLevelGraphics, "    at substep 11/14: signal %04x\n", view->signal);
 
 		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
 			if (view->signal & _K_VIEW_SIG_FLAG_HIDDEN)
@@ -2199,7 +2197,7 @@ static void _k_redraw_view_list(EngineState *s, GfxList *list) {
 		} else if (!(view->signal & _K_VIEW_SIG_FLAG_HIDDEN))
 			view->force_precedence = 1;
 
-		SCIkdebug(SCIkGRAPHICS, "    -> signal %04x\n", view->signal);
+		debugC(2, kDebugLevelGraphics, "    -> signal %04x\n", view->signal);
 
 		view = (GfxDynView *)view->_next;
 	}
@@ -2302,16 +2300,16 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		pic_views = gfxw_new_list(s->picture_port->_bounds, 1);
 
-		SCIkdebug(SCIkGRAPHICS, "Preparing picview list...\n");
+		debugC(2, kDebugLevelGraphics, "Preparing picview list...\n");
 		_k_make_view_list(s, &pic_views, list, 0, funct_nr, argc, argv);
 		_k_prepare_view_list(s, pic_views, _K_MAKE_VIEW_LIST_DRAW_TO_CONTROL_MAP);
 		// Store pic views for later re-use
 
-		SCIkdebug(SCIkGRAPHICS, "Drawing picview list...\n");
+		debugC(2, kDebugLevelGraphics, "Drawing picview list...\n");
 		ADD_TO_CURRENT_PICTURE_PORT(pic_views);
 		_k_draw_view_list(s, pic_views, _K_DRAW_VIEW_LIST_NONDISPOSEABLE | _K_DRAW_VIEW_LIST_DISPOSEABLE | _K_DRAW_VIEW_LIST_PICVIEW);
 		// Draw relative to the bottom center
-		SCIkdebug(SCIkGRAPHICS, "Returning.\n");
+		debugC(2, kDebugLevelGraphics, "Returning.\n");
 	}
 	reparentize_primary_widget_lists(s, s->port);
 
@@ -2412,7 +2410,7 @@ reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	SCIkdebug(SCIkGRAPHICS, "DrawCel((%d,%d), (view.%d, %d, %d), p=%d)\n", x, y, view, loop, cel, priority);
+	debugC(2, kDebugLevelGraphics, "DrawCel((%d,%d), (view.%d, %d, %d), p=%d)\n", x, y, view, loop, cel, priority);
 
 	new_view = gfxw_new_view(s->gfx_state, Common::Point(x, y), view, loop, cel, 0, priority, -1,
 	                         ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET);
@@ -2501,7 +2499,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bgcolor.mask |= priority >= 0 ? GFX_MASK_PRIORITY : 0;
 	bgcolor.alpha = 0;
 	bgcolor.control = -1;
-	SCIkdebug(SCIkGRAPHICS, "New window with params %d, %d, %d, %d\n", SKPV(0), SKPV(1), SKPV(2), SKPV(3));
+	debugC(2, kDebugLevelGraphics, "New window with params %d, %d, %d, %d\n", SKPV(0), SKPV(1), SKPV(2), SKPV(3));
 
 	fgcolor.visual = get_pic_color(s, SKPV_OR_ALT(7 + argextra, 0));
 	fgcolor.mask = GFX_MASK_VISUAL;
@@ -2597,7 +2595,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 	GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320, 190), Common::Point(0, 10)));
 	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 
-	//SCIkdebug(SCIkGRAPHICS, "Animating pic opening type %x\n", s->pic_animate);
+	//debugC(2, kDebugLevelGraphics, "Animating pic opening type %x\n", s->pic_animate);
 
 	gfxop_enable_dirty_frames(s->gfx_state);
 
@@ -3006,11 +3004,11 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		SCIkdebug(SCIkGRAPHICS, "Handling Dynviews (..step 9 inclusive):\n");
+		debugC(2, kDebugLevelGraphics, "Handling Dynviews (..step 9 inclusive):\n");
 		_k_prepare_view_list(s, templist, _K_MAKE_VIEW_LIST_CALC_PRIORITY);
 
 		if (s->pic_not_valid) {
-			SCIkdebug(SCIkGRAPHICS, "PicNotValid=%d -> Subalgorithm:\n");
+			debugC(2, kDebugLevelGraphics, "PicNotValid=%d -> Subalgorithm:\n");
 			_k_redraw_view_list(s, templist);
 		}
 
@@ -3076,7 +3074,7 @@ reg_t kShakeScreen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int i;
 
 	if (directions & ~3)
-		SCIkdebug(SCIkGRAPHICS, "ShakeScreen(): Direction bits are %x (unknown)\n", directions);
+		debugC(2, kDebugLevelGraphics, "ShakeScreen(): Direction bits are %x (unknown)\n", directions);
 
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
 
@@ -3168,19 +3166,19 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			area.x = UKPV(argpt++);
 			area.y = UKPV(argpt++);
-			SCIkdebug(SCIkGRAPHICS, "Display: set_coords(%d, %d)\n", area.x, area.y);
+			debugC(2, kDebugLevelGraphics, "Display: set_coords(%d, %d)\n", area.x, area.y);
 			break;
 
 		case K_DISPLAY_SET_ALIGNMENT:
 
 			halign = (gfx_alignment_t)KP_SINT(argv[argpt++]);
-			SCIkdebug(SCIkGRAPHICS, "Display: set_align(%d)\n", halign);
+			debugC(2, kDebugLevelGraphics, "Display: set_align(%d)\n", halign);
 			break;
 
 		case K_DISPLAY_SET_COLOR:
 
 			temp = KP_SINT(argv[argpt++]);
-			SCIkdebug(SCIkGRAPHICS, "Display: set_color(%d)\n", temp);
+			debugC(2, kDebugLevelGraphics, "Display: set_color(%d)\n", temp);
 			if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA) && temp >= 0 && temp <= 15)
 				color0 = (s->ega_colors[temp]);
 			else
@@ -3197,7 +3195,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		case K_DISPLAY_SET_BGCOLOR:
 
 			temp = KP_SINT(argv[argpt++]);
-			SCIkdebug(SCIkGRAPHICS, "Display: set_bg_color(%d)\n", temp);
+			debugC(2, kDebugLevelGraphics, "Display: set_bg_color(%d)\n", temp);
 			if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA && temp >= 0 && temp <= 15)
 				bg_color = s->ega_colors[temp];
 			else
@@ -3214,14 +3212,14 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		case K_DISPLAY_SET_GRAYTEXT:
 
 			gray = KP_SINT(argv[argpt++]);
-			SCIkdebug(SCIkGRAPHICS, "Display: set_graytext(%d)\n", gray);
+			debugC(2, kDebugLevelGraphics, "Display: set_graytext(%d)\n", gray);
 			break;
 
 		case K_DISPLAY_SET_FONT:
 
 			font_nr = KP_UINT(argv[argpt++]);
 
-			SCIkdebug(SCIkGRAPHICS, "Display: set_font(\"font.%03d\")\n", font_nr);
+			debugC(2, kDebugLevelGraphics, "Display: set_font(\"font.%03d\")\n", font_nr);
 			break;
 
 		case K_DISPLAY_WIDTH:
@@ -3230,18 +3228,18 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			if (area.width == 0)
 				area.width = MAX_TEXT_WIDTH_MAGIC_VALUE;
 
-			SCIkdebug(SCIkGRAPHICS, "Display: set_width(%d)\n", area.width);
+			debugC(2, kDebugLevelGraphics, "Display: set_width(%d)\n", area.width);
 			break;
 
 		case K_DISPLAY_SAVE_UNDER:
 
 			save_under = true;
-			SCIkdebug(SCIkGRAPHICS, "Display: set_save_under()\n");
+			debugC(2, kDebugLevelGraphics, "Display: set_save_under()\n");
 			break;
 
 		case K_DISPLAY_RESTORE_UNDER:
 
-			SCIkdebug(SCIkGRAPHICS, "Display: restore_under(%04x)\n", UKPV(argpt));
+			debugC(2, kDebugLevelGraphics, "Display: restore_under(%04x)\n", UKPV(argpt));
 			graph_restore_box(s, argv[argpt++]);
 			update_immediately = true;
 			argpt++;
@@ -3250,12 +3248,12 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		case K_DONT_UPDATE_IMMEDIATELY:
 
 			update_immediately = false;
-			SCIkdebug(SCIkGRAPHICS, "Display: set_dont_update()\n");
+			debugC(2, kDebugLevelGraphics, "Display: set_dont_update()\n");
 			argpt++;
 			break;
 
 		default:
-			SCIkdebug(SCIkGRAPHICS, "Unknown Display() command %x\n", UKPV(argpt - 1));
+			debugC(2, kDebugLevelGraphics, "Unknown Display() command %x\n", UKPV(argpt - 1));
 			return NULL_REG;
 		}
 	}
@@ -3301,17 +3299,17 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->r_acc = graph_save_box(s, save_area);
 		text_handle->_serial++; // This is evil!
 
-		SCIkdebug(SCIkGRAPHICS, "Saving (%d, %d) size (%d, %d) as %04x:%04x\n", save_area.x, save_area.y, save_area.width, save_area.height, s->r_acc);
+		debugC(2, kDebugLevelGraphics, "Saving (%d, %d) size (%d, %d) as %04x:%04x\n", save_area.x, save_area.y, save_area.width, save_area.height, s->r_acc);
 	}
 
-	SCIkdebug(SCIkGRAPHICS, "Display: Commiting text '%s'\n", text);
+	debugC(2, kDebugLevelGraphics, "Display: Commiting text '%s'\n", text);
 
 	//ADD_TO_CURRENT_PICTURE_PORT(text_handle);
 
 	ADD_TO_CURRENT_PICTURE_PORT(text_handle);
 	if ((!s->pic_not_valid) && update_immediately) { // Refresh if drawn to valid picture
 		FULL_REDRAW();
-		SCIkdebug(SCIkGRAPHICS, "Refreshing display...\n");
+		debugC(2, kDebugLevelGraphics, "Refreshing display...\n");
 	}
 
 	return s->r_acc;

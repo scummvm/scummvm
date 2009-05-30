@@ -141,7 +141,7 @@ reg_t kNewList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	List *l;
 	l = s->seg_manager->alloc_List(&listbase);
 	l->first = l->last = NULL_REG;
-	SCIkdebug(SCIkNODES, "New listbase at %04x:%04x\n", PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "New listbase at %04x:%04x\n", PRINT_REG(listbase));
 
 	return listbase; // Return list base address
 }
@@ -192,7 +192,7 @@ reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 reg_t kNewNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = _k_new_node(s, argv[0], argv[1]);
 
-	SCIkdebug(SCIkNODES, "New nodebase at %04x:%04x\n", PRINT_REG(s->r_acc));
+	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x\n", PRINT_REG(s->r_acc));
 
 	return s->r_acc;
 }
@@ -236,7 +236,7 @@ void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = lookup_list(s, listbase);
 	Node *new_n = lookup_node(s, nodebase);
 
-	SCIkdebug(SCIkNODES, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
@@ -260,7 +260,7 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	List *l = lookup_list(s, listbase);
 	Node *new_n = lookup_node(s, nodebase);
 
-	SCIkdebug(SCIkNODES, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
@@ -365,27 +365,27 @@ reg_t kFindKey(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t key = argv[1];
 	reg_t list_pos = argv[0];
 
-	SCIkdebug(SCIkNODES, "Looking for key %04x:%04x in list %04x:%04x\n", PRINT_REG(key), PRINT_REG(list_pos));
+	debugC(2, kDebugLevelNodes, "Looking for key %04x:%04x in list %04x:%04x\n", PRINT_REG(key), PRINT_REG(list_pos));
 
 	if (!sane_listp(s, list_pos))
 		error("List at %04x:%04x is not sane anymore", PRINT_REG(list_pos));
 
 	node_pos = lookup_list(s, list_pos)->first;
 
-	SCIkdebug(SCIkNODES, "First node at %04x:%04x\n", PRINT_REG(node_pos));
+	debugC(2, kDebugLevelNodes, "First node at %04x:%04x\n", PRINT_REG(node_pos));
 
 	while (!node_pos.isNull()) {
 		Node *n = lookup_node(s, node_pos);
 		if (n->key == key) {
-			SCIkdebug(SCIkNODES, " Found key at %04x:%04x\n", PRINT_REG(node_pos));
+			debugC(2, kDebugLevelNodes, " Found key at %04x:%04x\n", PRINT_REG(node_pos));
 			return node_pos;
 		}
 
 		node_pos = n->succ;
-		SCIkdebug(SCIkNODES, "NextNode at %04x:%04x\n", PRINT_REG(node_pos));
+		debugC(2, kDebugLevelNodes, "NextNode at %04x:%04x\n", PRINT_REG(node_pos));
 	}
 
-	SCIkdebug(SCIkNODES, "Looking for key without success\n");
+	debugC(2, kDebugLevelNodes, "Looking for key without success\n");
 	return NULL_REG;
 }
 

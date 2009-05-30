@@ -42,20 +42,23 @@ enum kDebugLevels {
 	kDebugLevelNodes      = 1 << 1,
 	kDebugLevelGraphics   = 1 << 2,
 	kDebugLevelStrings    = 1 << 3,
-	kDebugLevelMem        = 1 << 4,
+	kDebugLevelMemory     = 1 << 4,
 	kDebugLevelFuncCheck  = 1 << 5,
 	kDebugLevelBresen     = 1 << 6,
 	kDebugLevelSound      = 1 << 7,
 	kDebugLevelGfxDriver  = 1 << 8,
 	kDebugLevelBaseSetter = 1 << 9,
 	kDebugLevelParser     = 1 << 10,
-	kDebugLevelMenu       = 1 << 11,
-	kDebugLevelSaid       = 1 << 12,
-	kDebugLevelFile       = 1 << 13,
-	kDebugLevelTime       = 1 << 14,
-	kDebugLevelRoom       = 1 << 15,
-	kDebugLevelAvoidPath  = 1 << 16,
-	kDebugLevelDclInflate = 1 << 17
+	// FIXME: seems that debug level 11 is special (check debugC in common/debug.cpp)
+	kDebugLevelMenu       = 1 << 12,
+	kDebugLevelSaid       = 1 << 13,
+	kDebugLevelFile       = 1 << 14,
+	kDebugLevelTime       = 1 << 15,
+	kDebugLevelRoom       = 1 << 16,
+	kDebugLevelAvoidPath  = 1 << 17,
+	kDebugLevelDclInflate = 1 << 18,
+	kDebugLevelVM         = 1 << 19,
+	kDebugLevelScripts    = 1 << 20
 };
 
 struct SciGameDescription {

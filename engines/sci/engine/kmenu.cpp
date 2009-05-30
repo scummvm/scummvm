@@ -146,14 +146,14 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			menu_mode = 1;
 
 		else if ((type == SCI_EVT_SAID) || message) { /* Don't claim 0 keyboard event */
-			SCIkdebug(SCIkMENU, "Menu: Got %s event: %04x/%04x\n",
+			debugC(2, kDebugLevelMenu, "Menu: Got %s event: %04x/%04x\n",
 			          ((type == SCI_EVT_SAID) ? "SAID" : "KBD"), message, modifiers);
 
 			for (menuc = 0; menuc < (int)s->_menubar->_menus.size(); menuc++)
 				for (itemc = 0; itemc < (int)s->_menubar->_menus[menuc]._items.size(); itemc++) {
 					item = &s->_menubar->_menus[menuc]._items[itemc];
 
-					SCIkdebug(SCIkMENU, "Menu: Checking against %s: %04x/%04x (type %d, %s)\n",
+					debugC(2, kDebugLevelMenu, "Menu: Checking against %s: %04x/%04x (type %d, %s)\n",
 					          !item->_text.empty() ? item->_text.c_str() : "--bar--", item->_key, item->_modifiers,
 					          item->_type, item->_enabled ? "enabled" : "disabled");
 
@@ -163,12 +163,18 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					             && item->matchKey(message, modifiers))
 					            || ((type == SCI_EVT_SAID) /* Said event */
 					                && (item->_flags & MENU_ATTRIBUTE_FLAGS_SAID)
-					                && (said(s, item->_said, (s->debug_mode & (1 << SCIkPARSER_NR))) != SAID_NO_MATCH)
+					                && (said(s, item->_said, 
+#ifdef DEBUG_PARSER
+					                1
+#else
+									0
+#endif
+									) != SAID_NO_MATCH)
 					               )
 					           )
 					   ) {
 						/* Claim the event */
-						SCIkdebug(SCIkMENU, "Menu: Event CLAIMED for %d/%d\n", menuc, itemc);
+						debugC(2, kDebugLevelMenu, "Menu: Event CLAIMED for %d/%d\n", menuc, itemc);
 						claimed = true;
 						menu_nr = menuc;
 						item_nr = itemc;
@@ -328,7 +334,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		} else
 			s->r_acc = NULL_REG;
 
-		SCIkdebug(SCIkMENU, "Menu: Claim -> %04x\n", s->r_acc.offset);
+		debugC(2, kDebugLevelMenu, "Menu: Claim -> %04x\n", s->r_acc.offset);
 	} else
 		s->r_acc = NULL_REG; /* Not claimed */
 

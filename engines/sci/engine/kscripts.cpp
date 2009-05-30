@@ -188,7 +188,7 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	SCIkdebug(SCIkMEM, "Attempting to clone from %04x:%04x\n", PRINT_REG(parent_addr));
+	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x\n", PRINT_REG(parent_addr));
 
 	clone_obj = s->seg_manager->alloc_Clone(&clone_addr);
 
@@ -225,7 +225,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (victim_obj->_variables[SCRIPT_INFO_SELECTOR].offset != SCRIPT_INFO_CLONE) {
-		//SCIkwarn("Attempt to dispose something other than a clone at %04x\n", offset);
+		//warning("Attempt to dispose something other than a clone at %04x\n", offset);
 		// SCI silently ignores this behaviour; some games actually depend on it
 		return s->r_acc;
 	}

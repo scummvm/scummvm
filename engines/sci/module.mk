@@ -13,7 +13,6 @@ MODULE_OBJS = \
 	engine/gc.o \
 	engine/grammar.o \
 	engine/intmap.o \
-	engine/kdebug.o \
 	engine/kernel.o \
 	engine/kevent.o \
 	engine/kfile.o \

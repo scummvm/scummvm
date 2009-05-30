@@ -93,20 +93,27 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (s->debug_mode & (1 << SCIkPARSER_NR)) {
-		SCIkdebug(SCIkPARSER, "Said block:", 0);
+#ifdef DEBUG_PARSER
+		debugC(2, kDebugLevelParser, "Said block:", 0);
 		vocab_decypher_said_block(s, said_block);
-	}
+#endif
 
 	if (s->parser_event.isNull() || (GET_SEL32V(s->parser_event, claimed))) {
 		return NULL_REG;
 	}
 
-	new_lastmatch = said(s, said_block, (s->debug_mode & (1 << SCIkPARSER_NR)));
+	new_lastmatch = said(s, said_block, 
+#ifdef DEBUG_PARSER
+		1
+#else
+		0
+#endif
+		);
 	if (new_lastmatch  != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
 
-		if (s->debug_mode & (1 << SCIkPARSER_NR))
-			sciprintf("Match.\n");
+#ifdef DEBUG_PARSER
+		sciprintf("Match.\n");
+#endif
 
 		s->r_acc = make_reg(0, 1);
 
@@ -150,7 +157,7 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			synonyms = s->seg_manager->getScript(seg)->getSynonyms();
 			if (synonyms) {
-				SCIkdebug(SCIkPARSER, "Setting %d synonyms for script.%d\n",
+				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d\n",
 				          synonyms_nr, script);
 
 				if (synonyms_nr > 16384) {
@@ -173,7 +180,7 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		node = lookup_node(s, node->succ);
 	}
 
-	SCIkdebug(SCIkPARSER, "A total of %d synonyms are active now.\n", s->_synonyms.size());
+	debugC(2, kDebugLevelParser, "A total of %d synonyms are active now.\n", s->_synonyms.size());
 
 	return s->r_acc;
 }
@@ -207,12 +214,12 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		s->r_acc = make_reg(0, 1);
 
-		if (s->debug_mode & (1 << SCIkPARSER_NR)) {
-			SCIkdebug(SCIkPARSER, "Parsed to the following blocks:\n", 0);
+#ifdef DEBUG_PARSER
+			debugC(2, kDebugLevelParser, "Parsed to the following blocks:\n", 0);
 
 			for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-				SCIkdebug(SCIkPARSER, "   Type[%04x] Group[%04x]\n", i->_class, i->_group);
-		}
+				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+#endif
 
 		if (vocab_build_parse_tree(s->parser_nodes, words, s->_parserBranches[0],
 		                           s->parser_rules))
@@ -226,13 +233,15 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			invoke_selector(INV_SEL(s->game_obj, syntaxFail, 0), 2, s->parser_base, stringpos);
 			/* Issue warning */
 
-			SCIkdebug(SCIkPARSER, "Tree building failed\n");
+			debugC(2, kDebugLevelParser, "Tree building failed\n");
 
 		} else {
 			s->parser_valid = 1;
 			PUT_SEL32V(event, claimed, 0);
-			if (s->debug_mode & (1 << SCIkPARSER_NR))
-				vocab_dump_parse_tree("Parse-tree", s->parser_nodes);
+
+#ifdef DEBUG_PARSER
+			vocab_dump_parse_tree("Parse-tree", s->parser_nodes);
+#endif
 		}
 
 	} else {
@@ -242,7 +251,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (error) {
 			char *pbase_str = kernel_dereference_char_pointer(s, s->parser_base, 0);
 			strcpy(pbase_str, error);
-			SCIkdebug(SCIkPARSER, "Word unknown: %s\n", error);
+			debugC(2, kDebugLevelParser, "Word unknown: %s\n", error);
 			/* Issue warning: */
 
 			invoke_selector(INV_SEL(s->game_obj, wordFail, 0), 2, s->parser_base, stringpos);
@@ -440,7 +449,7 @@ reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	source = kernel_lookup_text(s, position, index);
 
-	SCIkdebug(SCIkSTRINGS, "Formatting \"%s\"\n", source);
+	debugC(2, kDebugLevelStrings, "Formatting \"%s\"\n", source);
 
 
 	arguments = (int*)malloc(sizeof(int) * argc);

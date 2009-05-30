@@ -115,6 +115,7 @@ enum AudioSyncCommands {
 
 #define SCI1_SOUND_FLAG_MAY_PAUSE        1 /* Only here for completeness; The interpreter doesn't touch this bit */
 #define SCI1_SOUND_FLAG_SCRIPTED_PRI     2 /* but does touch this */
+//#define DEBUG_SOUND	// enable for sound debugging
 
 #define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
 #define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
@@ -168,26 +169,26 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 		switch (result) {
 
 		case SI_LOOP:
-			SCIkdebug(SCIkSOUND, "[process-sound] Song %04x:%04x looped (to %d)\n",
+			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x looped (to %d)\n",
 			          PRINT_REG(obj), cue);
 			/*			PUT_SEL32V(obj, loops, GET_SEL32V(obj, loop) - 1);*/
 			PUT_SEL32V(obj, signal, -1);
 			break;
 
 		case SI_RELATIVE_CUE:
-			SCIkdebug(SCIkSOUND, "[process-sound] Song %04x:%04x received relative cue %d\n",
+			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received relative cue %d\n",
 			          PRINT_REG(obj), cue);
 			PUT_SEL32V(obj, signal, cue + 0x7f);
 			break;
 
 		case SI_ABSOLUTE_CUE:
-			SCIkdebug(SCIkSOUND, "[process-sound] Song %04x:%04x received absolute cue %d\n",
+			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received absolute cue %d\n",
 			          PRINT_REG(obj), cue);
 			PUT_SEL32V(obj, signal, cue);
 			break;
 
 		case SI_FINISHED:
-			SCIkdebug(SCIkSOUND, "[process-sound] Song %04x:%04x finished\n",
+			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished\n",
 			          PRINT_REG(obj));
 			PUT_SEL32V(obj, signal, -1);
 			PUT_SEL32V(obj, state, _K_SOUND_STATUS_STOPPED);
@@ -209,63 +210,63 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	             GET_SEL32V(obj, number) :
 	             -1; /* We were not going to use it anyway */
 
-	if (s->debug_mode & (1 << SCIkSOUNDCHK_NR)) {
-		int i;
+#ifdef DEBUG_SOUND
+	int i;
 
-		SCIkdebug(SCIkSOUND, "Command 0x%x", command);
-		switch (command) {
-		case 0:
-			sciprintf("[InitObj]");
-			break;
-		case 1:
-			sciprintf("[Play]");
-			break;
-		case 2:
-			sciprintf("[NOP]");
-			break;
-		case 3:
-			sciprintf("[DisposeHandle]");
-			break;
-		case 4:
-			sciprintf("[SetSoundOn(?)]");
-			break;
-		case 5:
-			sciprintf("[Stop]");
-			break;
-		case 6:
-			sciprintf("[Suspend]");
-			break;
-		case 7:
-			sciprintf("[Resume]");
-			break;
-		case 8:
-			sciprintf("[Get(Set?)Volume]");
-			break;
-		case 9:
-			sciprintf("[Signal: Obj changed]");
-			break;
-		case 10:
-			sciprintf("[Fade(?)]");
-			break;
-		case 11:
-			sciprintf("[ChkDriver]");
-			break;
-		case 12:
-			sciprintf("[PlayNextSong (formerly StopAll)]");
-			break;
-		default:
-			sciprintf("[unknown]");
-			break;
-		}
-
-		sciprintf("(");
-		for (i = 1; i < argc; i++) {
-			sciprintf("%04x:%04x", PRINT_REG(argv[i]));
-			if (i + 1 < argc)
-				sciprintf(", ");
-		}
-		sciprintf(")\n");
+	debugC(2, kDebugLevelSound, "Command 0x%x", command);
+	switch (command) {
+	case 0:
+		sciprintf("[InitObj]");
+		break;
+	case 1:
+		sciprintf("[Play]");
+		break;
+	case 2:
+		sciprintf("[NOP]");
+		break;
+	case 3:
+		sciprintf("[DisposeHandle]");
+		break;
+	case 4:
+		sciprintf("[SetSoundOn(?)]");
+		break;
+	case 5:
+		sciprintf("[Stop]");
+		break;
+	case 6:
+		sciprintf("[Suspend]");
+		break;
+	case 7:
+		sciprintf("[Resume]");
+		break;
+	case 8:
+		sciprintf("[Get(Set?)Volume]");
+		break;
+	case 9:
+		sciprintf("[Signal: Obj changed]");
+		break;
+	case 10:
+		sciprintf("[Fade(?)]");
+		break;
+	case 11:
+		sciprintf("[ChkDriver]");
+		break;
+	case 12:
+		sciprintf("[PlayNextSong (formerly StopAll)]");
+		break;
+	default:
+		sciprintf("[unknown]");
+		break;
 	}
+
+	sciprintf("(");
+	for (i = 1; i < argc; i++) {
+		sciprintf("%04x:%04x", PRINT_REG(argv[i]));
+		if (i + 1 < argc)
+			sciprintf(", ");
+	}
+	sciprintf(")\n");
+#endif	// DEBUG_SOUND
 
 
 	switch (command) {
@@ -390,11 +391,11 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	             GET_SEL32V(obj, number) :
 	             -1; /* We were not going to use it anyway */
 
-	if ((s->debug_mode & (1 << SCIkSOUNDCHK_NR))
-	        && command != _K_SCI01_SOUND_UPDATE_CUES) {
+#ifdef DEBUG_SOUND
+	if (command != _K_SCI01_SOUND_UPDATE_CUES) {
 		int i;
 
-		SCIkdebug(SCIkSOUND, "Command 0x%x", command);
+		debugC(2, kDebugLevelSound, "Command 0x%x", command);
 		switch (command) {
 		case 0:
 			sciprintf("[MasterVolume]");
@@ -454,6 +455,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 		sciprintf(")\n");
 	}
+#endif
 
 	switch (command) {
 	case _K_SCI01_SOUND_MASTER_VOLME : {
@@ -538,7 +540,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->_sound.sfx_song_set_loops(handle, looping);
 		s->_sound.sfx_song_renice(handle, pri);
 
-		SCIkdebug(SCIkSOUND, "[sound01-update-handle] -- CUE %04x:%04x");
+		debugC(2, kDebugLevelSound, "[sound01-update-handle] -- CUE %04x:%04x");
 
 		PUT_SEL32V(obj, signal, signal);
 		PUT_SEL32V(obj, min, min);
@@ -590,7 +592,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case SI_ABSOLUTE_CUE:
 			signal = cue;
-			SCIkdebug(SCIkSOUND, "---    [CUE] %04x:%04x Absolute Cue: %d\n",
+			debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d\n",
 			          PRINT_REG(obj), signal);
 
 			PUT_SEL32V(obj, signal, signal);
@@ -598,7 +600,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case SI_RELATIVE_CUE:
 			signal = cue;
-			SCIkdebug(SCIkSOUND, "---    [CUE] %04x:%04x Relative Cue: %d\n",
+			debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Relative Cue: %d\n",
 			          PRINT_REG(obj), cue);
 
 			/* FIXME to match commented-out semantics
@@ -609,7 +611,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			break;
 
 		case SI_FINISHED:
-			SCIkdebug(SCIkSOUND, "---    [FINISHED] %04x:%04x\n", PRINT_REG(obj));
+			debugC(2, kDebugLevelSound, "---    [FINISHED] %04x:%04x\n", PRINT_REG(obj));
 			PUT_SEL32V(obj, signal, 0xffff);
 			break;
 
@@ -682,13 +684,11 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	             GET_SEL32V(obj, number) :
 	             -1; /* We were not going to use it anyway */
 
-	CHECK_THIS_KERNEL_FUNCTION;
-
-	if ((s->debug_mode & (1 << SCIkSOUNDCHK_NR))
-	        && command != _K_SCI1_SOUND_UPDATE_CUES) {
+#ifdef DEBUG_SOUND
+	if (command != _K_SCI1_SOUND_UPDATE_CUES) {
 		int i;
 
-		SCIkdebug(SCIkSOUND, "Command 0x%x", command);
+		debugC(2, kDebugLevelSound, "Command 0x%x", command);
 		switch (command) {
 		case 0:
 			sciprintf("[MasterVolume]");
@@ -766,6 +766,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 		sciprintf(")\n");
 	}
+#endif	// DEBUG_SOUND
 
 	switch (command) {
 	case _K_SCI1_SOUND_MASTER_VOLME : {

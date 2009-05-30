@@ -220,7 +220,6 @@ public:
 	/* Debugger data: */
 	Breakpoint *bp_list;   /**< List of breakpoints */
 	int have_bp;  /**< Bit mask specifying which types of breakpoints are used in bp_list */
-	unsigned int debug_mode; /**< Contains flags for the various debug modes */
 
 	/* System strings */
 	SegmentId sys_strings_segment;

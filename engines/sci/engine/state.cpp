@@ -109,7 +109,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	parser_lastmatch_word = 0;
 	bp_list = 0;
 	have_bp = 0;
-	debug_mode = 0;
 	sys_strings_segment = 0;
 	sys_strings = 0;
 	string_frag_segment = 0;

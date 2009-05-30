@@ -71,7 +71,7 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	Common::addDebugChannel(kDebugLevelNodes, "Lists", "Lists and nodes debugging");
 	Common::addDebugChannel(kDebugLevelGraphics, "Graphics", "Graphics debugging");
 	Common::addDebugChannel(kDebugLevelStrings, "Strings", "Strings debugging");
-	Common::addDebugChannel(kDebugLevelMem, "Memory", "Memory debugging");
+	Common::addDebugChannel(kDebugLevelMemory, "Memory", "Memory debugging");
 	Common::addDebugChannel(kDebugLevelFuncCheck, "Func", "Function parameter debugging");
 	Common::addDebugChannel(kDebugLevelBresen, "Bresenham", "Bresenham algorithms debugging");
 	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
@@ -85,6 +85,8 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	Common::addDebugChannel(kDebugLevelRoom, "Room", "Room number debugging");
 	Common::addDebugChannel(kDebugLevelAvoidPath, "Pathfinding", "Pathfinding debugging");
 	Common::addDebugChannel(kDebugLevelDclInflate, "DCL", "DCL inflate debugging");
+	Common::addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
+	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
 
 	printf("SciEngine::SciEngine\n");
 }

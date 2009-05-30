@@ -30,7 +30,6 @@
 #include "common/debug.h"
 #include "common/rect.h"
 
-#include "sci/engine/kdebug.h"
 #include "sci/uinput.h"
 
 namespace Sci {
@@ -44,7 +43,7 @@ extern int _debug_seeking;
 extern int _debug_step_running;
 
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
-
+//#define DEBUG_PARSER	// enable for parser debugging
 
 /* Formerly, the heap macros were here; they have been deprecated, however. */
 
@@ -102,25 +101,6 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index);
 
 /******************** Debug functionality ********************/
 #define KERNEL_OOPS(reason) kernel_oops(s, __FILE__, __LINE__, reason)
-
-#ifdef SCI_KERNEL_DEBUG
-
-#define CHECK_THIS_KERNEL_FUNCTION if (s->debug_mode & (1 << SCIkFUNCCHK_NR)) {\
-	int i;\
-	sciprintf("Kernel CHECK: %s[%x](", s->_kernelNames[funct_nr].c_str(), funct_nr); \
-	for (i = 0; i < argc; i++) { \
-		sciprintf("%04x", 0xffff & UKPV(i)); \
-		if (i+1 < argc) sciprintf(", "); \
-	} \
-	sciprintf(")\n"); \
-} \
-
-#else /* !SCI_KERNEL_DEBUG */
-
-#define CHECK_THIS_KERNEL_FUNCTION
-
-#endif /* !SCI_KERNEL_DEBUG */
-
 
 bool is_object(EngineState *s, reg_t obj);
 /* Checks whether a heap address contains an object

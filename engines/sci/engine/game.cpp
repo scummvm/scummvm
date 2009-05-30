@@ -520,7 +520,6 @@ int game_init(EngineState *s) {
 	s->game_start_time = g_system->getMillis();
 	s->last_wait_time = s->game_start_time;
 
-	s->debug_mode = 0x0; // Disable all debugging
 	s->onscreen_console = 0; // No onscreen console unless explicitly requested
 
 	srand(g_system->getMillis()); // Initialize random number generator
