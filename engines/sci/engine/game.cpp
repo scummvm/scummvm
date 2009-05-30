@@ -168,10 +168,10 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->_pics.clear();
 
-	s->visual->add(GFXWC(s->visual), s->wm_port);
-	s->visual->add(GFXWC(s->visual), s->titlebar_port);
-	s->visual->add(GFXWC(s->visual), s->picture_port);
-	s->visual->add(GFXWC(s->visual), s->iconbar_port);
+	s->visual->add((GfxContainer *)s->visual, s->wm_port);
+	s->visual->add((GfxContainer *)s->visual, s->titlebar_port);
+	s->visual->add((GfxContainer *)s->visual, s->picture_port);
+	s->visual->add((GfxContainer *)s->visual, s->iconbar_port);
 	// Add ports to visual
 
 	s->port = s->picture_port; // Currently using the picture port

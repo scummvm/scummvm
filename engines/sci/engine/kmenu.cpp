@@ -288,7 +288,7 @@ reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				delete port;
 
 				port = sciw_new_menu(s, s->titlebar_port, s->_menubar, menu_nr);
-				s->wm_port->add(GFXWC(s->wm_port), port);
+				s->wm_port->add((GfxContainer *)s->wm_port, port);
 
 				if (item_nr > -1)
 					old_item = -42; /* Enforce redraw in next step */

@@ -82,9 +82,6 @@ struct GfxWidget;
 /*********************************/
 
 
-#define GFXWC(foo) ((GfxContainer *) foo)
-/* Typecasts a container widget to gfxw_container_widget_t *. */
-
 /* gfxw_point_zero is declared in gfx/widgets.cpp */
 extern Common::Point gfxw_point_zero;
 

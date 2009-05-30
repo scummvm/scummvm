@@ -1229,7 +1229,7 @@ static int _gfxwop_container_add(GfxContainer *container, GfxWidget *widget) {
 	if (_parentize_widget(container, widget))
 		return 1;
 
-	if (!(GFXW_IS_LIST(widget) && (!GFXWC(widget)->_contents))) { // Don't dirtify self on empty lists
+	if (!(GFXW_IS_LIST(widget) && (!((GfxContainer *)widget)->_contents))) { // Don't dirtify self on empty lists
 		DDIRTY(stderr, "container_add: dirtify DOWNWARDS (%d,%d,%d,%d, 1)\n", GFX_PRINT_RECT(widget->_bounds));
 		_gfxw_dirtify_container(container, widget);
 	}
@@ -1797,7 +1797,7 @@ void _gfxw_free_contents_appropriately(GfxContainer *container, gfxw_snapshot_t 
 			delete widget;
 		} else {
 			if (GFXW_IS_CONTAINER(widget))
-				_gfxw_free_contents_appropriately(GFXWC(widget), snapshot, priority);
+				_gfxw_free_contents_appropriately((GfxContainer *)widget, snapshot, priority);
 		}
 
 		widget = next;
@@ -1805,7 +1805,7 @@ void _gfxw_free_contents_appropriately(GfxContainer *container, gfxw_snapshot_t 
 }
 
 gfxw_snapshot_t *gfxw_restore_snapshot(GfxVisual *visual, gfxw_snapshot_t *snapshot) {
-	_gfxw_free_contents_appropriately(GFXWC(visual), snapshot, MAGIC_FREE_NUMBER);
+	_gfxw_free_contents_appropriately((GfxContainer *)visual, snapshot, MAGIC_FREE_NUMBER);
 
 	return snapshot;
 }
@@ -1828,7 +1828,7 @@ void gfxw_annihilate(GfxWidget *widget) {
 	delete widget;
 
 	if (free_overdrawn)
-		_gfxw_free_contents_appropriately(GFXWC(visual), &snapshot, widget_priority);
+		_gfxw_free_contents_appropriately((GfxContainer *)visual, &snapshot, widget_priority);
 }
 
 GfxDynView *gfxw_picviewize_dynview(GfxDynView *dynview) {

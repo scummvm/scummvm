@@ -41,6 +41,8 @@ namespace Sci {
 
 extern EngineState *g_EngineState;
 
+int _kdebug_cheap_event_hack = 0;
+
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
@@ -71,6 +73,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("visual_state",		WRAP_METHOD(Console, cmdVisualState));
 	DCmd_Register("dynamic_views",		WRAP_METHOD(Console, cmdDynamicViews));
 	DCmd_Register("dropped_views",		WRAP_METHOD(Console, cmdDroppedViews));
+	DCmd_Register("simkey",				WRAP_METHOD(Console, cmdSimulateKey));
+	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
+	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
 	DCmd_Register("gc",					WRAP_METHOD(Console, cmdInvokeGC));
 	DCmd_Register("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
@@ -605,6 +610,121 @@ bool Console::cmdDroppedViews(int argc, const char **argv) {
 		DebugPrintf("The list is empty.\n");
 
 	return true;
+}
+
+bool Console::cmdSimulateKey(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Simulate a keypress with the specified scancode\n");
+		DebugPrintf("Usage: %s <key scan code>\n", argv[0]);
+		return true;
+	}
+
+	_kdebug_cheap_event_hack = atoi(argv[1]);
+
+	return true;
+}
+
+bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
+	DebugPrintf("Segment table:\n");
+
+	for (uint i = 0; i < g_EngineState->seg_manager->_heap.size(); i++) {
+		MemObject *mobj = g_EngineState->seg_manager->_heap[i];
+		if (mobj && mobj->getType()) {
+			DebugPrintf(" [%04x] ", i);
+
+			switch (mobj->getType()) {
+			case MEM_OBJ_SCRIPT:
+				DebugPrintf("S  script.%03d l:%d ", (*(Script *)mobj).nr, (*(Script *)mobj).lockers);
+				break;
+
+			case MEM_OBJ_CLONES:
+				DebugPrintf("C  clones (%d allocd)", (*(CloneTable *)mobj).entries_used);
+				break;
+
+			case MEM_OBJ_LOCALS:
+				DebugPrintf("V  locals %03d", (*(LocalVariables *)mobj).script_id);
+				break;
+
+			case MEM_OBJ_STACK:
+				DebugPrintf("D  data stack (%d)", (*(DataStack *)mobj).nr);
+				break;
+
+			case MEM_OBJ_SYS_STRINGS:
+				DebugPrintf("Y  system string table");
+				break;
+
+			case MEM_OBJ_LISTS:
+				DebugPrintf("L  lists (%d)", (*(ListTable *)mobj).entries_used);
+				break;
+
+			case MEM_OBJ_NODES:
+				DebugPrintf("N  nodes (%d)", (*(NodeTable *)mobj).entries_used);
+				break;
+
+			case MEM_OBJ_HUNK:
+				DebugPrintf("H  hunk (%d)", (*(HunkTable *)mobj).entries_used);
+				break;
+
+			case MEM_OBJ_DYNMEM:
+				DebugPrintf("M  dynmem: %d bytes", (*(DynMem *)mobj)._size);
+				break;
+
+			case MEM_OBJ_STRING_FRAG:
+				DebugPrintf("F  string fragments");
+				break;
+
+			default:
+				DebugPrintf("I  Invalid (type = %x)", mobj->getType());
+				break;
+			}
+
+			DebugPrintf("  seg_ID = %d \n", mobj->getSegMgrId());
+		}
+	}
+	DebugPrintf("\n");
+
+	return true;
+}
+
+bool Console::cmdShowMap(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Shows one of the screen maps\n");
+		DebugPrintf("Usage: %s <screen map>\n", argv[0]);
+		DebugPrintf("Screen maps:\n");
+		DebugPrintf("- 0: visual map (back buffer)\n");
+		DebugPrintf("- 1: priority map (back buffer)\n");
+		DebugPrintf("- 2: control map (static buffer)\n");
+		return true;
+	}
+
+	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
+
+	int map = atoi(argv[1]);
+
+	switch (map) {
+	case 0:
+		g_EngineState->visual->add_dirty_abs((GfxContainer *)g_EngineState->visual, gfx_rect(0, 0, 320, 200), 0);
+		g_EngineState->visual->draw(Common::Point(0, 0));
+		break;
+
+	case 1:
+		gfx_xlate_pixmap(g_EngineState->gfx_state->pic->priority_map, g_EngineState->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
+		gfxop_draw_pixmap(g_EngineState->gfx_state, g_EngineState->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
+		break;
+
+	case 2:
+		gfx_xlate_pixmap(g_EngineState->gfx_state->control_map, g_EngineState->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
+		gfxop_draw_pixmap(g_EngineState->gfx_state, g_EngineState->gfx_state->control_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
+		break;
+
+	default:
+		DebugPrintf("Map %d is not available.\n", map);
+		return true;
+	}
+
+	gfxop_update(g_EngineState->gfx_state);
+
+	return false;
 }
 
 bool Console::cmdInvokeGC(int argc, const char **argv) {

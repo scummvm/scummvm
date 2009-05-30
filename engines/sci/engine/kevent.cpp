@@ -28,10 +28,12 @@
 #include "sci/engine/kernel.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
+#include "sci/console.h"	// for _kdebug_cheap_event_hack
 
 namespace Sci {
 
 int stop_on_event = 0;
+extern int _kdebug_cheap_event_hack;
 
 #define SCI_VARIABLE_GAME_SPEED 3
 

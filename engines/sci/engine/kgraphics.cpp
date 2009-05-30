@@ -69,18 +69,18 @@ enum {
 
 #define ADD_TO_CURRENT_PORT(widget) \
 	{if (s->port)				   \
-		s->port->add(GFXWC(s->port), widget); \
+		s->port->add((GfxContainer *)s->port, widget); \
 	else \
-		s->picture_port->add(GFXWC(s->visual), widget);}
+		s->picture_port->add((GfxContainer *)s->visual, widget);}
 
 #define ADD_TO_CURRENT_PICTURE_PORT(widget) \
 	{if (s->port)				   \
-		s->port->add(GFXWC(s->port), widget); \
+		s->port->add((GfxContainer *)s->port, widget); \
 	else \
-		s->picture_port->add(GFXWC(s->picture_port), widget);}
+		s->picture_port->add((GfxContainer *)s->picture_port, widget);}
 
 #define ADD_TO_WINDOW_PORT(widget) \
-	s->wm_port->add(GFXWC(s->wm_port), widget);
+	s->wm_port->add((GfxContainer *)s->wm_port, widget);
 
 #define FULL_REDRAW()\
 	if (s->visual) \
@@ -147,7 +147,7 @@ static void reparentize_primary_widget_lists(EngineState *s, GfxPort *newport) {
 	if (s->dyn_views) {
 		gfxw_remove_widget_from_container(s->dyn_views->_parent, s->dyn_views);
 
-		newport->add(GFXWC(newport), s->dyn_views);
+		newport->add((GfxContainer *)newport, s->dyn_views);
 	}
 }
 
@@ -476,7 +476,7 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 		s->dyn_views = NULL;
 	}
 
-	port->_parent->add(GFXWC(port->_parent), newport);
+	port->_parent->add((GfxContainer *)port->_parent, newport);
 	delete port;
 }
 
@@ -562,7 +562,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		// FIXME/TODO: this is not right, as some of the dialogs are drawn *behind* some widgets. But at least it works for now
 		//ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));	// old code
-		s->picture_port->add(GFXWC(s->picture_port), gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));
+		s->picture_port->add((GfxContainer *)s->picture_port, gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));
 
 	}
 	break;
@@ -587,7 +587,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		area.x += s->port->zone.x;
 		area.y += s->port->zone.y;
 
-		if (s->dyn_views && s->dyn_views->_parent == GFXWC(s->port))
+		if (s->dyn_views && s->dyn_views->_parent == (GfxContainer *)s->port)
 			s->dyn_views->draw(Common::Point(0, 0));
 
 		gfxop_update_box(s->gfx_state, area);
@@ -1039,9 +1039,9 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
-	s->visual->add(GFXWC(s->visual), s->picture_port);
-	s->visual->add(GFXWC(s->visual), s->wm_port);
-	s->visual->add(GFXWC(s->visual), s->iconbar_port);
+	s->visual->add((GfxContainer *)s->visual, s->picture_port);
+	s->visual->add((GfxContainer *)s->visual, s->wm_port);
+	s->visual->add((GfxContainer *)s->visual, s->iconbar_port);
 
 	s->port = s->picture_port;
 
@@ -1843,7 +1843,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 							error("Attempt to remove view with ID %x:%x from list failed!\n", widget->_ID, widget->_subID);
 						}
 
-						s->drop_views->add(GFXWC(s->drop_views), gfxw_picviewize_dynview(widget));
+						s->drop_views->add((GfxContainer *)s->drop_views, gfxw_picviewize_dynview(widget));
 
 						draw_obj_to_control_map(s, widget);
 						widget->draw_bounds.y += s->dyn_views->_bounds.y - widget->_parent->_bounds.y;
@@ -1992,7 +1992,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 
 		tempWidget = _k_make_dynview_obj(s, obj, options, sequence_nr--, funct_nr, argc, argv);
 		if (tempWidget)
-			GFX_ASSERT((*widget_list)->add(GFXWC(*widget_list), tempWidget));
+			GFX_ASSERT((*widget_list)->add((GfxContainer *)(*widget_list), tempWidget));
 
 		node = lookup_node(s, next_node); // Next node
 	}
@@ -2158,7 +2158,7 @@ static void _k_raise_topmost_in_view_list(EngineState *s, GfxList *list, GfxDynV
 		else
 			gfxw_show_widget(view);
 
-		list->add(GFXWC(list), view);
+		list->add((GfxContainer *)list, view);
 
 		_k_raise_topmost_in_view_list(s, list, next);
 	}
@@ -2219,7 +2219,7 @@ void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 	// Draws list_nr members of list to s->pic.
 	GfxDynView *widget = (GfxDynView *) list->_contents;
 
-	if (GFXWC(s->port) != GFXWC(s->dyn_views->_parent))
+	if ((GfxContainer *)s->port != (GfxContainer *)s->dyn_views->_parent)
 		return; // Return if the pictures are meant for a different port
 
 	while (widget) {
@@ -2434,11 +2434,11 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	if (s->dyn_views && GFXWC(s->dyn_views->_parent) == GFXWC(goner)) {
+	if (s->dyn_views && (GfxContainer *)s->dyn_views->_parent == (GfxContainer *)goner) {
 		reparentize_primary_widget_lists(s, (GfxPort *) goner->_parent);
 	}
 
-	if (s->drop_views && GFXWC(s->drop_views->_parent) == GFXWC(goner))
+	if (s->drop_views && (GfxContainer *)s->drop_views->_parent == (GfxContainer *)goner)
 		s->drop_views = NULL; // Kill it
 
 	pred = gfxw_remove_port(s->visual, goner);
@@ -2982,7 +2982,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	assert_primary_widget_lists(s);
 
 	if (!s->dyn_views->_contents // Only reparentize empty dynview list
-	        && ((GFXWC(s->port) != GFXWC(s->dyn_views->_parent)) // If dynviews are on other port...
+	        && (((GfxContainer *)s->port != (GfxContainer *)s->dyn_views->_parent) // If dynviews are on other port...
 	            || (s->dyn_views->_next))) // ... or not on top of the view list
 		reparentize_primary_widget_lists(s, s->port);
 
@@ -2996,7 +2996,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		assert_primary_widget_lists(s);
 
 		if (!s->dyn_views->_contents // Only reparentize empty dynview list
-		        && ((GFXWC(s->port) != GFXWC(s->dyn_views->_parent)) // If dynviews are on other port...
+		        && (((GfxContainer *)s->port != (GfxContainer *)s->dyn_views->_parent) // If dynviews are on other port...
 		            || (s->dyn_views->_next))) // ... or not on top of the view list
 			reparentize_primary_widget_lists(s, s->port);
 		// End of doit() recovery code
@@ -3020,12 +3020,12 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		_k_raise_topmost_in_view_list(s, s->dyn_views, (GfxDynView *)templist->_contents);
 
 		delete templist;
-		s->dyn_views->free_tagged(GFXWC(s->dyn_views)); // Free obsolete dynviews
+		s->dyn_views->free_tagged((GfxContainer *)s->dyn_views); // Free obsolete dynviews
 	} // if (cast_list)
 
 	if (open_animation) {
 		gfxop_clear_box(s->gfx_state, gfx_rect(0, 10, 320, 190)); // Propagate pic
-		s->visual->add_dirty_abs(GFXWC(s->visual), gfx_rect_fullscreen, 0);
+		s->visual->add_dirty_abs((GfxContainer *)s->visual, gfx_rect_fullscreen, 0);
 		// Mark screen as dirty so picviews will be drawn correctly
 		FULL_REDRAW();
 
@@ -3055,7 +3055,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		if ((reparentize | retval)
-		        && (GFXWC(s->port) == GFXWC(s->dyn_views->_parent)) // If dynviews are on the same port...
+		        && ((GfxContainer *)s->port == (GfxContainer *)s->dyn_views->_parent) // If dynviews are on the same port...
 		        && (s->dyn_views->_next)) // ... and not on top of the view list...
 			reparentize_primary_widget_lists(s, s->port); // ...then reparentize.
 

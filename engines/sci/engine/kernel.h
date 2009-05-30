@@ -38,8 +38,6 @@ namespace Sci {
 struct Node;	// from vm.h
 struct List;	// from vm.h
 
-extern int _kdebug_cheap_event_hack;
-extern int _kdebug_cheap_soundcue_hack;
 extern int stop_on_event;
 
 extern int _debug_seeking;

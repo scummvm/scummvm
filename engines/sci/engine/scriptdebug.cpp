@@ -76,9 +76,6 @@ static int *p_var_max; // May be NULL even in valid state!
 
 static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 0};
 
-int _kdebug_cheap_event_hack = 0;
-int _kdebug_cheap_soundcue_hack = -1;
-
 char inputbuf[256] = "";
 
 union cmd_param_t {
@@ -296,69 +293,6 @@ int c_sfx_01_track(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) 
 	}
 
 	midi_hexdump(song->data + offset, song->size, offset);
-
-	return 0;
-}
-
-int c_segtable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	uint i;
-
-	sciprintf("  ---- segment table ----\n");
-	for (i = 0; i < s->seg_manager->_heap.size(); i++) {
-		MemObject *mobj = s->seg_manager->_heap[i];
-		if (mobj && mobj->getType()) {
-			sciprintf(" [%04x] ", i);
-
-			switch (mobj->getType()) {
-			case MEM_OBJ_SCRIPT:
-				sciprintf("S  script.%03d l:%d ", (*(Script *)mobj).nr, (*(Script *)mobj).lockers);
-				break;
-
-			case MEM_OBJ_CLONES:
-				sciprintf("C  clones (%d allocd)", (*(CloneTable *)mobj).entries_used);
-				break;
-
-			case MEM_OBJ_LOCALS:
-				sciprintf("V  locals %03d", (*(LocalVariables *)mobj).script_id);
-				break;
-
-			case MEM_OBJ_STACK:
-				sciprintf("D  data stack (%d)", (*(DataStack *)mobj).nr);
-				break;
-
-			case MEM_OBJ_SYS_STRINGS:
-				sciprintf("Y  system string table");
-				break;
-
-			case MEM_OBJ_LISTS:
-				sciprintf("L  lists (%d)", (*(ListTable *)mobj).entries_used);
-				break;
-
-			case MEM_OBJ_NODES:
-				sciprintf("N  nodes (%d)", (*(NodeTable *)mobj).entries_used);
-				break;
-
-			case MEM_OBJ_HUNK:
-				sciprintf("H  hunk (%d)", (*(HunkTable *)mobj).entries_used);
-				break;
-
-			case MEM_OBJ_DYNMEM:
-				sciprintf("M  dynmem: %d bytes", (*(DynMem *)mobj)._size);
-				break;
-
-			case MEM_OBJ_STRING_FRAG:
-				sciprintf("F  string fragments");
-				break;
-
-			default:
-				sciprintf("I  Invalid (type = %x)", mobj->getType());
-				break;
-			}
-
-			sciprintf("  seg_ID = %d \n", mobj->getSegMgrId());
-		}
-	}
-	sciprintf("\n");
 
 	return 0;
 }
@@ -1636,41 +1570,6 @@ static int c_gfx_print_widget(EngineState *s, const Common::Array<cmd_param_t> &
 }
 #endif
 
-static int c_gfx_show_map(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int map = cmdParams[0].val;
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-
-	switch (map) {
-	case 0:
-		s->visual->add_dirty_abs(GFXWC(s->visual), gfx_rect(0, 0, 320, 200), 0);
-		s->visual->draw(Common::Point(0, 0));
-		break;
-
-	case 1:
-		gfx_xlate_pixmap(s->gfx_state->pic->priority_map, s->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
-		gfxop_draw_pixmap(s->gfx_state, s->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
-		break;
-
-	case 2:
-		gfx_xlate_pixmap(s->gfx_state->control_map, s->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
-		gfxop_draw_pixmap(s->gfx_state, s->gfx_state->control_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
-		break;
-
-	default:
-		sciprintf("Map %d is not available.\n", map);
-		return 1;
-	}
-
-	gfxop_update(s->gfx_state);
-
-	return 0;
-}
-
 static int c_gfx_draw_cel(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int view = cmdParams[0].val;
 	int loop = cmdParams[1].val;
@@ -2178,12 +2077,6 @@ int c_gfx_debuglog(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) 
 	return c_handle_config_update(gfx_debug_modes, GFX_DEBUG_MODES, "graphics subsystem", (int *)&(drv->debug_flags), cmdParams);
 }
 
-int c_simkey(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_kdebug_cheap_event_hack = cmdParams[0].val;
-
-	return 0;
-}
-
 static int c_is_sample(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
 	SongIterator *songit;
@@ -2211,12 +2104,6 @@ static int c_is_sample(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 		sciprintf("Valid song, but not a sample.\n");
 
 	delete songit;
-
-	return 0;
-}
-
-int c_simsoundcue(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_kdebug_cheap_soundcue_hack = cmdParams[0].val;
 
 	return 0;
 }
@@ -2739,7 +2626,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  gfx_debuglog.1, sfx_debuglog.1\n");
 			con_hook_command(c_visible_map, "set_vismap", "i", "Sets the visible map.\n  Default is 0 (visual).\n"
 			                 "  Other useful values are:\n  1: Priority\n  2: Control\n  3: Auxiliary\n");
-			con_hook_command(c_simkey, "simkey", "i", "Simulates a keypress with the\n  specified scancode.\n");
 			con_hook_command(c_statusbar, "statusbar", "ii", "Sets the colors of the status bar. Also controllable from the script.\n");
 			con_hook_command(c_bpx, "bpx", "s", "Sets a breakpoint on the execution of\n  the specified method.\n\n  EXAMPLE:\n"
 			                 "  bpx ego::doit\n\n  May also be used to set a breakpoint\n  that applies whenever an object\n"
@@ -2802,8 +2688,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_gfx_drawpic, "gfx_drawpic", "ii*", "Draws a pic resource\n\nUSAGE\n  gfx_drawpic <nr> [<pal> [<fl>]]\n"
 			                 "  where <nr> is the number of the pic resource\n  to draw\n  <pal> is the optional default\n  palette for the pic (0 is"
 			                 "\n  assumed if not specified)\n  <fl> are any pic draw flags (default\n  is 1)");
-			con_hook_command(c_gfx_show_map, "gfx_show_map", "i", "Shows one of the screen maps\n  Semantics of the int parameter:\n"
-			                 "    0: visual map (back buffer)\n    1: priority map (back buf.)\n    2: control map (static buf.)");
 			con_hook_command(c_gfx_fill_screen, "gfx_fill_screen", "i", "Fills the screen with one\n  of the EGA colors\n");
 			con_hook_command(c_gfx_draw_rect, "gfx_draw_rect", "iiiii", "Draws a rectangle to the screen\n  with one of the EGA colors\n\nUSAGE\n\n"
 			                 "  gfx_draw_rect <x> <y> <xl> <yl> <color>");
@@ -2826,10 +2710,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_gfx_priority, "gfx_priority", "i*", "Prints information about priority\n  bands\nUSAGE\n\n  gfx_priority\n\n"
 			                 "  will print the min and max values\n  for the priority bands\n\n  gfx_priority <val>\n\n  Print start of the priority\n"
 			                 "  band for the specified\n  priority\n");
-			con_hook_command(c_segtable, "segtable", "!",
-			                 "Gives a short listing of all segments\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  seginfo.1");
 			con_hook_command(c_segkill, "segkill", "!i*",
 			                 "Deletes the specified segment\n\n"
 			                 "USAGE\n\n"

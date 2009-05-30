@@ -183,8 +183,6 @@ void run_gc(EngineState *s) {
 	SegManager *sm = s->seg_manager;
 
 #ifdef DEBUG_GC
-	extern int c_segtable(EngineState *s);
-	c_segtable(s);
 	sciprintf("[GC] Running...\n");
 	memset(&(deallocator.segcount), 0, sizeof(int) * (MEM_OBJ_MAX + 1));
 #endif
