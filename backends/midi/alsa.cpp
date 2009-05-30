@@ -231,7 +231,7 @@ int MidiDriver_ALSA::parse_addr(const char *arg, int *client, int *port) {
 	char *p;
 
 	if (isdigit(*arg)) {
-		if ((p = strpbrk(arg, ADDR_DELIM)) == NULL)
+		if ((p = (char *)strpbrk(arg, ADDR_DELIM)) == NULL)
 			return -1;
 		*client = atoi(arg);
 		*port = atoi(p + 1);
