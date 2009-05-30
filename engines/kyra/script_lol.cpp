@@ -227,7 +227,7 @@ int LoLEngine::olol_testGameFlag(EMCState *script) {
 
 int LoLEngine::olol_loadLevelGraphics(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLevelGraphics(%p) (%s, %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	loadLevelGraphics(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), (stackPos(5) == -1) ? 0 : stackPosString(5));
+	loadLevelGraphics(stackPosString(0), stackPos(1), stackPos(2), (uint16)stackPos(3), (uint16)stackPos(4), (stackPos(5) == -1) ? 0 : stackPosString(5));
 	return 1;
 }
 
@@ -1893,6 +1893,35 @@ int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_findInventoryItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_findInventoryItem(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	if (stackPos(0) == 0) {
+		for (int i = 0; i < 48; i++) {
+			if (!_inventory[i])
+				continue;
+			if (_itemsInPlay[_inventory[i]].itemPropertyIndex == stackPos(2))
+				return 0;
+		}
+	}
+	int cur = stackPos(1);
+	int last = cur;
+	if (stackPos(1) == -1) {
+		cur = 0;
+		last = 4;
+	}		
+	for (;cur < last; cur++) {
+		if (!(_characters[cur].flags & 1))
+			continue;
+		for (int i = 0; i < 11; i++) {
+			if (!_characters[cur].items[i])
+				continue;
+			if (_itemsInPlay[_characters[cur].items[i]].itemPropertyIndex == stackPos(2))
+				return cur;
+		}		
+	}
+	return -1;
+}
+
 int LoLEngine::olol_changeItemTypeOrFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_changeItemTypeOrFlag(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (stackPos(0) < 1)
@@ -2545,7 +2574,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0xA4
 	Opcode(olol_assignSpecialGuiShape);
-	OpcodeUnImpl();
+	Opcode(olol_findInventoryItem);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 

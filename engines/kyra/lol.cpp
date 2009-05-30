@@ -833,7 +833,7 @@ void LoLEngine::startupNew() {
 	_currentLevel = 1;
 
 	giveCredits(41, 0);
-	_inventory[0] = makeItem(216, 0, 0);
+	_inventory[0] = makeItem(132, 0, 0);
 	_inventory[1] = makeItem(217, 0, 0);
 	_inventory[2] = makeItem(218, 0, 0);
 
