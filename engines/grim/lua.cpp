@@ -1709,64 +1709,75 @@ static void ShutUpActor() {
  * the requested coordinate (x,y,z).
  */
 static void GetPointSector() {
-	lua_Object xparam, yparam, zparam;
-	Sector *result;
-	float x = 0.0f, y = 0.0f, z = 0.0f;
+	lua_Object xObj = lua_getparam(1);
+	lua_Object yObj = lua_getparam(2);
+	lua_Object zObj = lua_getparam(3);
+	lua_Object typeObj = lua_getparam(4);
+	int sectorType;
 
-	xparam = lua_getparam(1);
-	yparam = lua_getparam(2);
-	zparam = lua_getparam(3);
-	if (lua_isnumber(xparam) && lua_isnumber(yparam) && lua_isnumber(zparam)) {
-		Graphics::Vector3d point(x, y, z);
-
-		// Find the point in any available sector
-		result = g_grim->currScene()->findPointSector(point, 0xFFFF);
-	} else {
-		result = NULL;
-	}
-	if (!result) {
-		if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-			error("GetPointSector() passed an unhandled type or failed to find any matching sector!");
-		lua_pushnil();
-		lua_pushnil();
+	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj)) {
 		lua_pushnil();
 		return;
 	}
-	lua_pushnumber(result->id());
-	lua_pushstring(const_cast<char *>(result->name()));
-	lua_pushnumber(result->type());
-}
+	if (lua_isnil(typeObj))
+		sectorType = 0x2000;
+	else
+		sectorType = lua_getnumber(typeObj);
 
-static void GetActorSector() {
-	Actor *act;
-	int sectorType;
+	float x = lua_getnumber(xObj);
+	float y = lua_getnumber(yObj);
+	float z = lua_getnumber(zObj);
 
-	act = check_actor(1);
-	sectorType = lua_getnumber(lua_getparam(2));
-	Sector *result = g_grim->currScene()->findPointSector(act->pos(), sectorType);
+	Graphics::Vector3d point(x, y, z);
+	Sector *result = g_grim->currScene()->findPointSector(point, sectorType);
 	if (result) {
 		lua_pushnumber(result->id());
 		lua_pushstring(const_cast<char *>(result->name()));
 		lua_pushnumber(result->type());
 	} else {
 		lua_pushnil();
-		lua_pushnil();
+	}
+}
+
+static void GetActorSector() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object typeObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+	if (!lua_isnumber(typeObj))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	int sectorType = lua_getnumber(typeObj);
+	Sector *result = g_grim->currScene()->findPointSector(actor->pos(), sectorType);
+	if (result) {
+		lua_pushnumber(result->id());
+		lua_pushstring(const_cast<char *>(result->name()));
+		lua_pushnumber(result->type());
+	} else {
 		lua_pushnil();
 	}
 }
 
 static void IsActorInSector() {
-	int i, numSectors;
-	const char *name;
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object nameObj = lua_getparam(2);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+	if (!lua_isstring(nameObj)) {
+		lua_pushnil();
+		return;
+	}
 
-	act = check_actor(1);
-	name = luaL_check_string(2);
-	numSectors = g_grim->currScene()->getSectorCount();
-	for (i = 0; i < numSectors; i++) {
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	const char *name = lua_getstring(nameObj);
+
+	int numSectors = g_grim->currScene()->getSectorCount();
+	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = g_grim->currScene()->getSectorBase(i);
-		if (sector->visible() && strmatch(sector->name(), name)) {
-			if (sector->isPointInSector(act->pos())) {
+		if (strmatch(sector->name(), name)) {
+			if (sector->isPointInSector(actor->pos())) {
 				lua_pushnumber(sector->id());
 				lua_pushstring((char *)sector->name());
 				lua_pushnumber(sector->type());
@@ -1775,54 +1786,41 @@ static void IsActorInSector() {
 		}
 	}
 	lua_pushnil();
-	lua_pushnil();
-	lua_pushnil();
 }
 
 static void MakeSectorActive() {
-	lua_Object sectorName;
-	bool visible;
-	int i = 0, numSectors;
+	lua_Object sectorObj = lua_getparam(1);
 
-	
-	sectorName = lua_getparam(1);
-	visible = !lua_isnil(lua_getparam(2));
+	if (!lua_isnumber(sectorObj) && !lua_isstring(sectorObj))
+		return;
+
 	// FIXME: This happens on initial load. Are we initting something in the wrong order?
-	if (!g_grim->currScene() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)) {
+	if (!g_grim->currScene()) {
 		warning("!!!! Trying to call MakeSectorActive without a scene!");
 		return;
 	}
 
-	if (g_grim->currScene())
-		numSectors = g_grim->currScene()->getSectorCount();
-	else
-		numSectors = 0;
-
-	if (lua_isstring(sectorName)) {
-		const char *name = luaL_check_string(1);
-
-		for (i = 0; i < numSectors; i++) {
+	bool visible = !lua_isnil(lua_getparam(2));
+	int numSectors = g_grim->currScene()->getSectorCount();
+	if (lua_isstring(sectorObj)) {
+		const char *name = lua_getstring(sectorObj);
+		for (int i = 0; i < numSectors; i++) {
 			Sector *sector = g_grim->currScene()->getSectorBase(i);
 			if (strmatch(sector->name(), name)) {
 				sector->setVisible(visible);
 				return;
 			}
 		}
-	} else if (lua_isnumber(sectorName)) {
-		int id = lua_getnumber(lua_getparam(1));
-
-		for (i = 0; i < numSectors; i++) {
+	} else if (lua_isnumber(sectorObj)) {
+		int id = lua_getnumber(sectorObj);
+		for (int i = 0; i < numSectors; i++) {
 			Sector *sector = g_grim->currScene()->getSectorBase(i);
 			if (sector->id() == id) {
 				sector->setVisible(visible);
 				return;
 			}
 		}
-	} else if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL){
-		warning("MakeSectorActive Parameter is not a sector ID or Name");
-		return;
-	} else
-		return;
+	}
 }
 
 // Scene functions
