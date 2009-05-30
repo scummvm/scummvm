@@ -33,6 +33,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/gc.h"
 #include "sci/gfx/gfx_state_internal.h"
+#include "sci/gfx/gfx_widgets.h"	// for gfxw_find_port
 #include "sci/vocabulary.h"
 
 #include "common/savefile.h"
@@ -69,12 +70,15 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
 	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
 	DCmd_Register("current_port",		WRAP_METHOD(Console, cmdCurrentPort));
+	DCmd_Register("print_port",			WRAP_METHOD(Console, cmdPrintPort));
 	DCmd_Register("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
 	DCmd_Register("visual_state",		WRAP_METHOD(Console, cmdVisualState));
 	DCmd_Register("dynamic_views",		WRAP_METHOD(Console, cmdDynamicViews));
 	DCmd_Register("dropped_views",		WRAP_METHOD(Console, cmdDroppedViews));
 	DCmd_Register("simkey",				WRAP_METHOD(Console, cmdSimulateKey));
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
+	DCmd_Register("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
+	DCmd_Register("segment_kill",		WRAP_METHOD(Console, cmdKillSegment));
 	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
 	DCmd_Register("gc",					WRAP_METHOD(Console, cmdInvokeGC));
 	DCmd_Register("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
@@ -562,9 +566,40 @@ bool Console::cmdParserWords(int argc, const char **argv) {
 
 bool Console::cmdCurrentPort(int argc, const char **argv) {
 	if (!g_EngineState->port)
-		DebugPrintf("Current port number: none.\n");
+		DebugPrintf("There is no port active currently.\n");
 	else
-		DebugPrintf("Current port number: %d\n", g_EngineState->port->_ID);
+		DebugPrintf("Current port ID: %d\n", g_EngineState->port->_ID);
+
+	return true;
+}
+
+bool Console::cmdPrintPort(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Prints information about a port\n");
+		DebugPrintf("%s current - prints information about the current port\n", argv[0]);
+		DebugPrintf("%s <ID> - prints information about the port with the specified ID\n", argv[0]);
+		return true;
+	}
+
+	GfxPort *port;
+	
+	if (!scumm_stricmp(argv[1], "current")) {
+		port = g_EngineState->port;
+		if (!port)
+			DebugPrintf("There is no active port currently\n");
+		else
+			port->print(0);
+	} else {
+		if (!g_EngineState->visual) {
+			DebugPrintf("Visual is uninitialized\n");
+		} else {
+			port = gfxw_find_port(g_EngineState->visual, atoi(argv[1]));
+			if (!port)
+				DebugPrintf("No such port\n");
+			else
+				port->print(0);
+		}
+	}
 
 	return true;
 }
@@ -682,6 +717,208 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 		}
 	}
 	DebugPrintf("\n");
+
+	return true;
+}
+
+bool Console::segmentInfo(int nr) {
+	DebugPrintf("[%04x] ", nr);
+
+	if ((nr < 0) || ((uint)nr >= g_EngineState->seg_manager->_heap.size()) || !g_EngineState->seg_manager->_heap[nr])
+		return false;
+
+	MemObject *mobj = g_EngineState->seg_manager->_heap[nr];
+
+	switch (mobj->getType()) {
+
+	case MEM_OBJ_SCRIPT: {
+		Script *scr = (Script *)mobj;
+		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, (uint)scr->buf_size, (uint)scr->buf_size);
+		if (scr->export_table)
+			DebugPrintf("  Exports: %4d at %d\n", scr->exports_nr, (int)(((byte *)scr->export_table) - ((byte *)scr->buf)));
+		else
+			DebugPrintf("  Exports: none\n");
+
+		DebugPrintf("  Synonyms: %4d\n", scr->synonyms_nr);
+
+		if (scr->locals_block)
+			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->locals_block->_locals.size(), scr->locals_segment);
+		else
+			DebugPrintf("  Locals : none\n");
+
+		DebugPrintf("  Objects: %4d\n", scr->_objects.size());
+		for (uint i = 0; i < scr->_objects.size(); i++) {
+			DebugPrintf("    ");
+			// Object header
+			Object *obj = obj_get(g_EngineState, scr->_objects[i].pos);
+			if (obj)
+				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(scr->_objects[i].pos), 
+							obj_get_name(g_EngineState, scr->_objects[i].pos), obj->_variables.size(), obj->methods_nr);
+		}
+	}
+	break;
+
+	case MEM_OBJ_LOCALS: {
+		LocalVariables *locals = (LocalVariables *)mobj;
+		DebugPrintf("locals for script.%03d\n", locals->script_id);
+		DebugPrintf("  %d (0x%x) locals\n", locals->_locals.size(), locals->_locals.size());
+	}
+	break;
+
+	case MEM_OBJ_STACK: {
+		DataStack *stack = (DataStack *)mobj;
+		DebugPrintf("stack\n");
+		DebugPrintf("  %d (0x%x) entries\n", stack->nr, stack->nr);
+	}
+	break;
+
+	case MEM_OBJ_SYS_STRINGS: {
+		DebugPrintf("system string table - viewing currently disabled\n");
+#if 0
+		SystemStrings *strings = &(mobj->data.sys_strings);
+
+		for (int i = 0; i < SYS_STRINGS_MAX; i++)
+			if (strings->strings[i].name)
+				DebugPrintf("  %s[%d]=\"%s\"\n", strings->strings[i].name, strings->strings[i].max_size, strings->strings[i].value);
+#endif
+	}
+	break;
+
+	case MEM_OBJ_CLONES: {
+		CloneTable *ct = (CloneTable *)mobj;
+
+		DebugPrintf("clones\n");
+
+		for (uint i = 0; i < ct->_table.size(); i++)
+			if (ct->isValidEntry(i)) {
+				reg_t objpos;
+				objpos.offset = i;
+				objpos.segment = nr;
+				DebugPrintf("  [%04x] %s; copy of ", i, obj_get_name(g_EngineState, objpos));
+				// Object header
+				Object *obj = obj_get(g_EngineState, ct->_table[i].pos);
+				if (obj)
+					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].pos), 
+								obj_get_name(g_EngineState, ct->_table[i].pos), obj->_variables.size(), obj->methods_nr);
+			}
+	}
+	break;
+
+	case MEM_OBJ_LISTS: {
+		ListTable *lt = (ListTable *)mobj;
+
+		DebugPrintf("lists\n");
+		for (uint i = 0; i < lt->_table.size(); i++)
+			if (lt->isValidEntry(i)) {
+				DebugPrintf("  [%04x]: ", i);
+				printList(&(lt->_table[i]));
+			}
+	}
+	break;
+
+	case MEM_OBJ_NODES: {
+		DebugPrintf("nodes (total %d)\n", (*(NodeTable *)mobj).entries_used);
+		break;
+	}
+
+	case MEM_OBJ_HUNK: {
+		HunkTable *ht = (HunkTable *)mobj;
+
+		DebugPrintf("hunk  (total %d)\n", ht->entries_used);
+		for (uint i = 0; i < ht->_table.size(); i++)
+			if (ht->isValidEntry(i)) {
+				DebugPrintf("    [%04x] %d bytes at %p, type=%s\n",
+				          i, ht->_table[i].size, ht->_table[i].mem, ht->_table[i].type);
+			}
+	}
+	break;
+
+	case MEM_OBJ_DYNMEM: {
+		DebugPrintf("dynmem (%s): %d bytes\n",
+		          (*(DynMem *)mobj)._description ? (*(DynMem *)mobj)._description : "no description", (*(DynMem *)mobj)._size);
+
+		Common::hexdump((*(DynMem *)mobj)._buf, (*(DynMem *)mobj)._size, 16, 0);
+	}
+	break;
+
+	case MEM_OBJ_STRING_FRAG: {
+		DebugPrintf("string frags\n");
+		break;
+	}
+
+	default :
+		DebugPrintf("Invalid type %d\n", mobj->getType());
+		break;
+	}
+
+	DebugPrintf("\n");
+	return true;
+}
+
+void Console::printList(List *l) {
+	reg_t pos = l->first;
+	reg_t my_prev = NULL_REG;
+
+	DebugPrintf("\t<\n");
+
+	while (!pos.isNull()) {
+		Node *node;
+		NodeTable *nt = (NodeTable *)GET_SEGMENT(*g_EngineState->seg_manager, pos.segment, MEM_OBJ_NODES);
+
+		if (!nt || !nt->isValidEntry(pos.offset)) {
+			DebugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
+			          PRINT_REG(pos));
+			return;
+		}
+
+		node = &(nt->_table[pos.offset]);
+
+		sciprintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
+
+		if (my_prev != node->pred)
+			DebugPrintf("   WARNING: current node gives %04x:%04x as predecessor!\n",
+			          PRINT_REG(node->pred));
+
+		my_prev = pos;
+		pos = node->succ;
+	}
+
+	if (my_prev != l->last)
+		DebugPrintf("   WARNING: Last node was expected to be %04x:%04x, was %04x:%04x!\n",
+		          PRINT_REG(l->last), PRINT_REG(my_prev));
+	DebugPrintf("\t>\n");
+}
+
+bool Console::cmdSegmentInfo(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Provides information on the specified segment(s)\n");
+		DebugPrintf("Usage: %s <segment number>\n", argv[0]);
+		DebugPrintf("<segment number> can be a number, which shows the information of the segment with\n");
+		DebugPrintf("the specified number, or \"all\" to show information on all active segments");
+		return true;
+	}
+
+	if (!scumm_stricmp(argv[1], "all")) {
+		for (uint i = 0; i < g_EngineState->seg_manager->_heap.size(); i++)
+			segmentInfo(i);
+	} else {
+		int nr = atoi(argv[1]);
+		if (!segmentInfo(nr))
+			DebugPrintf("Segment %04x does not exist\n", nr);
+	}
+
+	return true;
+}
+
+
+bool Console::cmdKillSegment(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Deletes the specified segment\n");
+		DebugPrintf("Usage: %s <segment number>\n", argv[0]);
+		return true;
+	}
+
+	g_EngineState->seg_manager->getScript(atoi(argv[1]))->setLockers(0);
 
 	return true;
 }

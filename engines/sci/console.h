@@ -63,16 +63,22 @@ private:
 	bool cmdClassTable(int argc, const char **argv);
 	bool cmdParserWords(int argc, const char **argv);
 	bool cmdCurrentPort(int argc, const char **argv);
+	bool cmdPrintPort(int argc, const char **argv);
 	bool cmdParseGrammar(int argc, const char **argv);
 	bool cmdVisualState(int argc, const char **argv);
 	bool cmdDynamicViews(int argc, const char **argv);
 	bool cmdDroppedViews(int argc, const char **argv);
 	bool cmdSimulateKey(int argc, const char **argv);
 	bool cmdPrintSegmentTable(int argc, const char **argv);
+	bool cmdSegmentInfo(int argc, const char **argv);
+	bool cmdKillSegment(int argc, const char **argv);
 	bool cmdShowMap(int argc, const char **argv);
 	bool cmdInvokeGC(int argc, const char **argv);
 	bool cmdGCObjects(int argc, const char **argv);
 	bool cmdExit(int argc, const char **argv);
+
+	bool segmentInfo(int nr);
+	void printList(List *l);
 
 private:
 	SciEngine *_vm;

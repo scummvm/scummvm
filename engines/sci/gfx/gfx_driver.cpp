@@ -307,7 +307,6 @@ static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer, Common:
 gfx_driver_t gfx_driver_scummvm = {
 	NULL,
 	0, 0,
-	0,		// flags here
 	0,
 	NULL,
 	scummvm_init,

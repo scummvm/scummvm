@@ -296,176 +296,6 @@ int c_sfx_01_track(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) 
 	return 0;
 }
 
-static void print_obj_head(EngineState *s, reg_t pos) {
-	Object *obj = obj_get(s, pos);
-
-	if (!obj)
-		return;
-
-	sciprintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
-				obj->_variables.size(), obj->methods_nr);
-}
-
-static void print_list(EngineState *s, List *l) {
-	reg_t pos = l->first;
-	reg_t my_prev = NULL_REG;
-
-	sciprintf("\t<\n");
-
-	while (!pos.isNull()) {
-		Node *node;
-		NodeTable *nt = (NodeTable *)GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_NODES);
-
-		if (!nt || !nt->isValidEntry(pos.offset)) {
-			sciprintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
-			          PRINT_REG(pos));
-			return;
-		}
-
-		node = &(nt->_table[pos.offset]);
-
-		sciprintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
-
-		if (my_prev != node->pred)
-			sciprintf("   WARNING: current node gives %04x:%04x as predecessor!\n",
-			          PRINT_REG(node->pred));
-
-		my_prev = pos;
-		pos = node->succ;
-	}
-
-	if (my_prev != l->last)
-		sciprintf("   WARNING: Last node was expected to be %04x:%04x, was %04x:%04x!\n",
-		          PRINT_REG(l->last), PRINT_REG(my_prev));
-	sciprintf("\t>\n");
-}
-
-static bool _c_single_seg_info(EngineState *s, int nr) {
-	sciprintf("[%04x] ", nr);
-
-	if ((nr < 0) || ((uint)nr >= s->seg_manager->_heap.size()) || !s->seg_manager->_heap[nr])
-		return false;
-
-	MemObject *mobj = s->seg_manager->_heap[nr];
-
-	switch (mobj->getType()) {
-
-	case MEM_OBJ_SCRIPT: {
-		Script *scr = (Script *)mobj;
-		sciprintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, (uint)scr->buf_size, (uint)scr->buf_size);
-		if (scr->export_table)
-			sciprintf("  Exports: %4d at %d\n", scr->exports_nr, (int)(((byte *)scr->export_table) - ((byte *)scr->buf)));
-		else
-			sciprintf("  Exports: none\n");
-
-		sciprintf("  Synynms: %4d\n", scr->synonyms_nr);
-
-		if (scr->locals_block)
-			sciprintf("  Locals : %4d in segment 0x%x\n", scr->locals_block->_locals.size(), scr->locals_segment);
-		else
-			sciprintf("  Locals : none\n");
-
-		sciprintf("  Objects: %4d\n", scr->_objects.size());
-		for (uint i = 0; i < scr->_objects.size(); i++) {
-			sciprintf("    ");
-			print_obj_head(s, scr->_objects[i].pos);
-		}
-	}
-	break;
-
-	case MEM_OBJ_LOCALS: {
-		LocalVariables *locals = (LocalVariables *)mobj;
-		sciprintf("locals for script.%03d\n", locals->script_id);
-		sciprintf("  %d (0x%x) locals\n", locals->_locals.size(), locals->_locals.size());
-	}
-	break;
-
-	case MEM_OBJ_STACK: {
-		DataStack *stack = (DataStack *)mobj;
-		sciprintf("stack\n");
-		sciprintf("  %d (0x%x) entries\n", stack->nr, stack->nr);
-	}
-	break;
-
-	case MEM_OBJ_SYS_STRINGS: {
-		sciprintf("system string table - viewing currently disabled\n");
-#if 0
-		SystemStrings *strings = &(mobj->data.sys_strings);
-
-		for (int i = 0; i < SYS_STRINGS_MAX; i++)
-			if (strings->strings[i].name)
-				sciprintf("  %s[%d]=\"%s\"\n", strings->strings[i].name, strings->strings[i].max_size, strings->strings[i].value);
-#endif
-	}
-	break;
-
-	case MEM_OBJ_CLONES: {
-		CloneTable *ct = (CloneTable *)mobj;
-
-		sciprintf("clones\n");
-
-		for (uint i = 0; i < ct->_table.size(); i++)
-			if (ct->isValidEntry(i)) {
-				reg_t objpos;
-				objpos.offset = i;
-				objpos.segment = nr;
-				sciprintf("  [%04x] %s; copy of ", i, obj_get_name(s, objpos));
-				print_obj_head(s, ct->_table[i].pos);
-			}
-	}
-	break;
-
-	case MEM_OBJ_LISTS: {
-		ListTable *lt = (ListTable *)mobj;
-
-		sciprintf("lists\n");
-		for (uint i = 0; i < lt->_table.size(); i++)
-			if (lt->isValidEntry(i)) {
-				sciprintf("  [%04x]: ", i);
-				print_list(s, &(lt->_table[i]));
-			}
-	}
-	break;
-
-	case MEM_OBJ_NODES: {
-		sciprintf("nodes (total %d)\n", (*(NodeTable *)mobj).entries_used);
-		break;
-	}
-
-	case MEM_OBJ_HUNK: {
-		HunkTable *ht = (HunkTable *)mobj;
-
-		sciprintf("hunk  (total %d)\n", ht->entries_used);
-		for (uint i = 0; i < ht->_table.size(); i++)
-			if (ht->isValidEntry(i)) {
-				sciprintf("    [%04x] %d bytes at %p, type=%s\n",
-				          i, ht->_table[i].size, ht->_table[i].mem, ht->_table[i].type);
-			}
-	}
-	break;
-
-	case MEM_OBJ_DYNMEM: {
-		sciprintf("dynmem (%s): %d bytes\n",
-		          (*(DynMem *)mobj)._description ? (*(DynMem *)mobj)._description : "no description", (*(DynMem *)mobj)._size);
-
-		Common::hexdump((*(DynMem *)mobj)._buf, (*(DynMem *)mobj)._size, 16, 0);
-	}
-	break;
-
-	case MEM_OBJ_STRING_FRAG: {
-		sciprintf("string frags\n");
-		break;
-	}
-
-	default :
-		sciprintf("Invalid type %d\n", mobj->getType());
-		break;
-	}
-
-	sciprintf("\n");
-	return true;
-}
-
 static int show_node(EngineState *s, reg_t addr) {
 	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
@@ -554,10 +384,13 @@ static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 			sciprintf("list\n");
 
+			// TODO: printList has been moved to console.cpp
+			/*
 			if (l)
-				print_list(s, l);
+				printList(l);
 			else
 				sciprintf("Invalid list.\n");
+			*/
 		}
 		break;
 
@@ -610,17 +443,6 @@ static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-int c_segkill(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	uint i = 0;
-
-	while (i < cmdParams.size()) {
-		int nr = cmdParams[i++].val;
-
-		s->seg_manager->getScript(nr)->setLockers(0);
-	}
-	return 0;
-}
-
 static int c_mousepos(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	sci_event_t event;
 
@@ -629,24 +451,6 @@ static int c_mousepos(EngineState *s, const Common::Array<cmd_param_t> &cmdParam
 	while (event = gfxop_get_event(s->gfx_state, SCI_EVT_MOUSE_RELEASE), event.type != SCI_EVT_MOUSE_RELEASE) {};
 
 	sciprintf("Mouse pointer at (%d, %d)\n", s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
-
-	return 0;
-}
-
-int c_seginfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	uint i = 0;
-
-	if (cmdParams.size()) {
-		while (i < cmdParams.size()) {
-			int nr = cmdParams[i++].val;
-			if (!_c_single_seg_info(s, nr))
-				sciprintf("Segment %04x does not exist\n", nr);
-		}
-	} else {
-		for (i = 0; i < s->seg_manager->_heap.size(); i++) {
-			_c_single_seg_info(s, i);
-		}
-	}
 
 	return 0;
 }
@@ -1454,7 +1258,7 @@ static int c_visible_map(EngineState *s, const Common::Array<cmd_param_t> &cmdPa
 		return 1;
 	}
 
-	//WARNING(fixme!)
+	// TODO
 #if 0
 	if (s->onscreen_console)
 		con_restore_screen(s, s->osc_backup);
@@ -1466,33 +1270,6 @@ static int c_visible_map(EngineState *s, const Common::Array<cmd_param_t> &cmdPa
 	if (s->onscreen_console)
 		s->osc_backup = con_backup_screen(s);
 #endif
-	return 0;
-}
-
-static int c_gfx_print_port(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	GfxPort *port;
-
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	port = s->port;
-
-	if (cmdParams.size() > 0) {
-		if (s->visual) {
-			port = gfxw_find_port(s->visual, cmdParams[0].val);
-		} else {
-			sciprintf("visual is uninitialized.\n");
-			return 1;
-		}
-	}
-
-	if (port)
-		port->print(0);
-	else
-		sciprintf("No such port.\n");
-
 	return 0;
 }
 
@@ -2027,20 +1804,6 @@ static int c_sfx_remove(EngineState *s, const Common::Array<cmd_param_t> &cmdPar
 	return 0;
 }
 
-#define GFX_DEBUG_MODES 4
-
-int c_gfx_debuglog(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	gfx_driver_t *drv = s->gfx_state->driver;
-	const generic_config_flag_t gfx_debug_modes[GFX_DEBUG_MODES] = {
-		{ "Mouse Pointer", 'p', GFX_DEBUG_POINTER},
-		{ "Updates", 'u', GFX_DEBUG_UPDATES},
-		{ "Pixmap operations", 'x', GFX_DEBUG_PIXMAPS},
-		{ "Basic operations", 'b', GFX_DEBUG_BASIC},
-	};
-
-	return c_handle_config_update(gfx_debug_modes, GFX_DEBUG_MODES, "graphics subsystem", (int *)&(drv->debug_flags), cmdParams);
-}
-
 static int c_is_sample(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
 	SongIterator *songit;
@@ -2167,7 +1930,9 @@ int objinfo(EngineState *s, reg_t pos) {
 		return 1;
 	}
 
-	print_obj_head(s, pos);
+	// Object header
+	sciprintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
+				obj->_variables.size(), obj->methods_nr);
 
 	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
 		var_container = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
@@ -2608,34 +2373,12 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "    Deactivates the debug features listed in X\n\n"
 			                 "  Debug features:\n"
 			                 "    s: Active song changes\n"
-			                 "    c: Song cues\n"
-			                 "SEE ALSO\n"
-			                 "  debuglog.1, gfx_debuglog.1\n");
-			con_hook_command(c_gfx_debuglog, "gfx_debuglog", "s*",
-			                 "Sets or prints the gfx driver's debug\n"
-			                 "settings\n\n"
-			                 "USAGE\n\n"
-			                 "  gfx_debuglog {[+|-][p|u|x|b]+}*\n\n"
-			                 "  gfx_debuglog\n\n"
-			                 "    Prints current settings\n\n"
-			                 "  gfx_debuglog +X\n\n"
-			                 "    Activates all debug features listed in X\n\n"
-			                 "  gfx_debuglog -X\n\n"
-			                 "    Deactivates the debug features listed in X\n\n"
-			                 "  Debug features:\n"
-			                 "    p: Pointer\n"
-			                 "    u: Updates\n"
-			                 "    x: Pixmaps\n"
-			                 "    b: Basic features\n\n"
-			                 "SEE ALSO\n"
-			                 "  debuglog.1, sfx_debuglog.1\n");
+			                 "    c: Song cues\n");
 
 #ifdef GFXW_DEBUG_WIDGETS
 			con_hook_command(c_gfx_print_widget, "gfx_print_widget", "i*", "If called with no parameters, it\n  shows which widgets are active.\n"
 			                 "  With parameters, it lists the\n  widget corresponding to the\n  numerical index specified (for\n  each parameter).");
 #endif
-			con_hook_command(c_gfx_print_port, "gfx_print_port", "i*", "Displays all information about the\n  specified port,"
-			                 " or the current port\n  if no port was specified.");
 			con_hook_command(c_gfx_drawpic, "gfx_drawpic", "ii*", "Draws a pic resource\n\nUSAGE\n  gfx_drawpic <nr> [<pal> [<fl>]]\n"
 			                 "  where <nr> is the number of the pic resource\n  to draw\n  <pal> is the optional default\n  palette for the pic (0 is"
 			                 "\n  assumed if not specified)\n  <fl> are any pic draw flags (default\n  is 1)");
@@ -2661,19 +2404,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_gfx_priority, "gfx_priority", "i*", "Prints information about priority\n  bands\nUSAGE\n\n  gfx_priority\n\n"
 			                 "  will print the min and max values\n  for the priority bands\n\n  gfx_priority <val>\n\n  Print start of the priority\n"
 			                 "  band for the specified\n  priority\n");
-			con_hook_command(c_segkill, "segkill", "!i*",
-			                 "Deletes the specified segment\n\n"
-			                 "USAGE\n\n"
-			                 "  segkill <nr>\n");
-			con_hook_command(c_seginfo, "seginfo", "!i*",
-			                 "Explains the specified segment\n\n"
-			                 "USAGE\n\n"
-			                 "  seginfo\n"
-			                 "  seginfo <nr>\n"
-			                 "  Either explains all active segments\n"
-			                 "  (no parameter) or the specified one.\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  segtable.1");
 			con_hook_command(c_vo, "vo", "!a",
 			                 "Examines an object\n\n"
 			                 "SEE ALSO\n\n"

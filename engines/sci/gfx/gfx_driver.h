@@ -42,11 +42,6 @@ enum gfx_buffer_t {
 #define GFX_CAPABILITY_SHADING (1<<0)
 #define GFX_CAPABILITY_STIPPLED_LINES (1<<6)
 
-#define GFX_DEBUG_POINTER (1<<0)
-#define GFX_DEBUG_UPDATES (1<<1)
-#define GFX_DEBUG_PIXMAPS (1<<2)
-#define GFX_DEBUG_BASIC (1<<3) /* Basic geometric ops (lines, boxes, etc) */
-
 /* Principial graphics driver architecture
 ** ---------------------------------------
 **
@@ -91,9 +86,6 @@ struct gfx_driver_t { /* Graphics driver */
 	** GFX_CAPABILITY_STIPPLED_LINES: The driver is able to draw stippled lines
 	**    horizontally and vertically (xl = 0 or yl = 0).
 	*/
-
-	unsigned int debug_flags; /* Driver debug flags */
-
 
 	/*** Initialization ***/
 
