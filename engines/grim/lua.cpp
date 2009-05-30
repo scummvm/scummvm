@@ -1200,95 +1200,141 @@ static void RotateVector() {
  * the Petrified Forest
  */
 static void SetActorPitch() {
-	lua_Object param2;
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object pitchObj = lua_getparam(2);
 
-	act = check_actor(1);
-	param2 = lua_getparam(2);
-	if (lua_isnumber(param2)) {
-		float pitch = lua_getnumber(param2);
-
-		act->setRot(pitch, act->yaw(), act->roll());
-	} else {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("SetActorPitch() parameter type not understood!");
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
 		return;
-	}
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	float pitch = lua_getnumber(pitchObj);
+	actor->setRot(pitch, actor->yaw(), actor->roll());
 }
 
 static void SetActorLookRate() {
-	Actor *act;
-	float rate;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object rateObj = lua_getparam(2);
 
-	act = check_actor(1);
-	rate = luaL_check_number(2);
-	act->setLookAtRate(rate);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	if (!lua_isnumber(rateObj))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	if (!actor->currentCostume())
+		return;
+
+	float rate = lua_getnumber(rateObj);
+	actor->setLookAtRate(rate);
 }
 
 static void GetActorLookRate() {
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
 
-	act = check_actor(1);
-	lua_pushnumber(act->lookAtRate());
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	if (!actor->currentCostume())
+		lua_pushnil();
+	else
+		lua_pushnumber(actor->lookAtRate());
 }
 
 static void SetActorHead() {
-	float maxRoll, maxPitch, maxYaw;
-	int joint1, joint2, joint3;
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object joint1Obj = lua_getparam(2);
+	lua_Object joint2Obj = lua_getparam(3);
+	lua_Object joint3Obj = lua_getparam(4);
+	lua_Object maxRollObj = lua_getparam(5);
+	lua_Object maxPitchObj = lua_getparam(6);
+	lua_Object maxYawObj = lua_getparam(7);
 
-	act = check_actor(1);
-	joint1 = lua_getnumber(lua_getparam(2));
-	joint2 = lua_getnumber(lua_getparam(3));
-	joint3 = lua_getnumber(lua_getparam(4));
-	maxRoll = luaL_check_number(5);
-	maxPitch = luaL_check_number(6);
-	maxYaw = luaL_check_number(7);
-	act->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+	if (!lua_isnumber(joint1Obj) || !lua_isnumber(joint2Obj) || !lua_isnumber(joint3Obj) ||
+			!lua_isnumber(maxRollObj) || !lua_isnumber(maxPitchObj) || !lua_isnumber(maxYawObj))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	int joint1 = lua_getnumber(joint1Obj);
+	int joint2 = lua_getnumber(joint2Obj);
+	int joint3 = lua_getnumber(joint3Obj);
+	float maxRoll = lua_getnumber(maxRollObj);
+	float maxPitch = lua_getnumber(maxPitchObj);
+	float maxYaw = lua_getnumber(maxYawObj);
+
+	actor->setHead(joint1, joint2, joint3, maxRoll, maxPitch, maxYaw);
 }
 
 static void PutActorAtInterest() {
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
 
-	act = check_actor(1);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 	if (!g_grim->currScene())
 		return;
 
-	act->setPos(g_grim->currScene()->_currSetup->_interest);
+	actor->setPos(g_grim->currScene()->_currSetup->_interest);
 }
 
 static void SetActorFollowBoxes() {
-	Actor *act;
-	bool mode;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object modeObj = lua_getparam(2);
+	bool mode = true;
 
-	act = check_actor(1);
-	mode = !lua_isnil(lua_getparam(2));
-	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-		warning("SetActorFollowBoxes() not implemented");
-	// that is not walkbox walking, but temporary hack
-	// act->enableWalkbox(mode);
-	act->setConstrain(mode);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	if (modeObj == LUA_NOOBJECT || lua_isnil(modeObj))
+		mode = false;
+
+	warning("SetActorFollowBoxes() not implemented");
+	// TODO that is not walkbox walking, but temporary hack
+	// actor->enableWalkbox(mode);
+	actor->setConstrain(mode);
 }
 
 static void SetActorConstrain() {
-//	Actor *act = check_actor(1);
-//	bool constrain = !lua_isnil(lua_getparam(2));
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object constrainObj = lua_getparam(2);
 
-	// that below should be enabled, but for now it's disabled realated to
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	bool constrain = !lua_isnil(constrainObj);
+
+	// FIXME that below should be enabled, but for now it's disabled realated to
 	// above func SetActorFollowBoxes.
-//	act->setConstrain(constrain);
+//	actor->setConstrain(constrain);
 }
 
 static void GetVisibleThings() {
-	lua_Object result = lua_createtable();
-	Actor *sel;
+	lua_Object actorObj = lua_getparam(1);
+	Actor *actor;
+	if (lua_isnil(actorObj)) {
+		if (g_grim->selectedActor())
+			actor = g_grim->selectedActor();
+		else
+			return;
+	} else if (lua_isuserdata(actorObj) && lua_tag(actorObj) == MKID_BE('ACTR')) {
+		actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	}
 
-	sel = g_grim->selectedActor();
+	lua_Object result = lua_createtable();
+
+	// TODO verify code below
 	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); i++) {
 		if (!(*i)->inSet(g_grim->sceneName()))
 			continue;
 		// Consider the active actor visible
-		if (sel == (*i) || sel->angleTo(*(*i)) < 90) {
+		if (actor == (*i) || actor->angleTo(*(*i)) < 90) {
 			lua_pushobject(result);
 			lua_pushusertag(*i, MKID_BE('ACTR'));
 			lua_pushnumber(1);
@@ -1307,57 +1353,106 @@ static void SetShadowColor() {
 }
 
 static void KillActorShadows() {
-	Actor *act = check_actor(1);
+	lua_Object actorObj = lua_getparam(1);
 
-	act->clearShadowPlanes();
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR')) {
+		lua_pushnil();
+		return;
+	}
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	actor->clearShadowPlanes();
 }
 
 static void SetActiveShadow() {
-	Actor *act = check_actor(1);
-	int shadowId = lua_getnumber(lua_getparam(2));
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object shadowIdObj = lua_getparam(2);
 
-	act->setActiveShadow(shadowId);
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		lua_pushnil();
+		return;
+	}
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	int shadowId = lua_getnumber(shadowIdObj);
+	actor->setActiveShadow(shadowId);
 }
 
 static void SetActorShadowPoint() {
-	Actor *act = check_actor(1);
-	float x = luaL_check_number(2);
-	float y = luaL_check_number(3);
-	float z = luaL_check_number(4);
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object xObj = lua_getparam(2);
+	lua_Object yObj = lua_getparam(3);
+	lua_Object zObj = lua_getparam(4);
 
-	act->setShadowPoint(Graphics::Vector3d(x, y, z));
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		lua_pushnil();
+		return;
+	}
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	float x = lua_getnumber(xObj);
+	float y = lua_getnumber(yObj);
+	float z = lua_getnumber(zObj);
+
+	actor->setShadowPoint(Graphics::Vector3d(x, y, z));
 }
 
 static void SetActorShadowPlane() {
-	Actor *act = check_actor(1);
-	const char *name = lua_getstring(lua_getparam(2));
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object nameObj = lua_getparam(2);
 
-	act->setShadowPlane(name);
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		lua_pushnil();
+		return;
+	}
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	const char *name = lua_getstring(nameObj);
+
+	actor->setShadowPlane(name);
 }
 
 static void AddShadowPlane() {
-	Actor *act = check_actor(1);
-	const char *name = lua_getstring(lua_getparam(2));
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object nameObj = lua_getparam(2);
 
-	act->addShadowPlane(name);
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		lua_pushnil();
+		return;
+	}
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	const char *name = lua_getstring(nameObj);
+
+	actor->addShadowPlane(name);
 }
 
 static void ActivateActorShadow() {
-	Actor *act = check_actor(1);
-	int shadowId = lua_getnumber(lua_getparam(2));
-	bool state = getbool(3);
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object shadowIdObj = lua_getparam(2);
+	lua_Object stateObj = lua_getparam(3);
 
-	act->setActivateShadow(shadowId, state);
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		lua_pushnil();
+		return;
+	}
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	int shadowId = lua_getnumber(shadowIdObj);
+	bool state = !lua_isnil(stateObj);
+
+	actor->setActivateShadow(shadowId, state);
 	g_grim->flagRefreshShadowMask(true);
 }
 
 static void SetActorShadowValid() {
-	Actor *act = check_actor(1);
-	int valid = lua_getnumber(lua_getparam(2));
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object numObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || actorObj == LUA_NOOBJECT) {
+		lua_pushnil();
+		return;
+	}
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	int valid = lua_getnumber(numObj);
 
 	warning("SetActorShadowValid(%d) unknown purpose", valid);
 
-	act->setShadowValid(valid);
+	actor->setShadowValid(valid);
 }
 
 // 0 - translate from '/msgId/'
