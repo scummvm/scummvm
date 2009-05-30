@@ -23,10 +23,7 @@
  *
  */
 
-#include "base/plugins.h"
-
 #include "engines/advancedDetector.h"
-#include "common/file.h"
 
 #include "engines/grim/grim.h"
 
@@ -44,16 +41,11 @@ Common::Language GrimEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-}
-
 static const PlainGameDescriptor grimGames[] = {
 	{"grim", "Grim Fandango"},
 	{"monkey", "Escape From Monkey Island"},
 	{0, 0}
 };
-
-
-namespace Grim {
 
 static const GrimGameDescription gameDescriptions[] = {
 	{
@@ -114,13 +106,11 @@ static const ADFileBasedFallback grimFallback[] = {
 	{0, {0}}
 };
 
-} // End of namespace Grim
-
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Grim::gameDescriptions,
+	(const byte *)gameDescriptions,
 	// Size of that superset structure
-	sizeof(Grim::GrimGameDescription),
+	sizeof(GrimGameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
 	// List of all engine targets
@@ -130,7 +120,7 @@ static const ADParams detectionParams = {
 	// Name of single gameid (optional)
 	"grim",
 	// List of files for file-based fallback detection (optional)
-	Grim::grimFallback,
+	grimFallback,
 	// Flags
 	0
 };
@@ -151,15 +141,17 @@ public:
 };
 
 bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Grim::GrimGameDescription *gd = (const Grim::GrimGameDescription *)desc;
+	const GrimGameDescription *gd = (const GrimGameDescription *)desc;
 	if (gd) {
-		*engine = new Grim::GrimEngine(syst, gd);
+		*engine = new GrimEngine(syst, gd);
 	}
 	return gd != 0;
 }
 
+} // End of namespace Grim
+
 #if PLUGIN_ENABLED_DYNAMIC(GRIM)
-	REGISTER_PLUGIN_DYNAMIC(GRIM, PLUGIN_TYPE_ENGINE, GrimMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(GRIM, PLUGIN_TYPE_ENGINE, Grim::GrimMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(GRIM, PLUGIN_TYPE_ENGINE, GrimMetaEngine);
+	REGISTER_PLUGIN_STATIC(GRIM, PLUGIN_TYPE_ENGINE, Grim::GrimMetaEngine);
 #endif
