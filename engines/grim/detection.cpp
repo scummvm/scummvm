@@ -33,14 +33,6 @@ struct GrimGameDescription {
 	ADGameDescription desc;
 };
 
-uint32 GrimEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-Common::Language GrimEngine::getLanguage() const {
-	return _gameDescription->desc.language;
-}
-
 static const PlainGameDescriptor grimGames[] = {
 	{"grim", "Grim Fandango"},
 	{"monkey", "Escape From Monkey Island"},

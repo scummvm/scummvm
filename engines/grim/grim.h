@@ -74,11 +74,6 @@ public:
 	GrimEngine(OSystem *syst, const GrimGameDescription *gameDesc);
 	virtual ~GrimEngine();
 
-	int getGameType() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
-
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
 	int modifyGameSpeed(int speedChange);
