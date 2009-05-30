@@ -62,6 +62,9 @@ private:
 	bool cmdRestartGame(int argc, const char **argv);
 	bool cmdClassTable(int argc, const char **argv);
 	bool cmdParserWords(int argc, const char **argv);
+	bool cmdDrawPic(int argc, const char **argv);
+	bool cmdDrawRect(int argc, const char **argv);
+	bool cmdFillScreen(int argc, const char **argv);
 	bool cmdCurrentPort(int argc, const char **argv);
 	bool cmdPrintPort(int argc, const char **argv);
 	bool cmdParseGrammar(int argc, const char **argv);

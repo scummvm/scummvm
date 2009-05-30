@@ -137,8 +137,6 @@ public:
 
 	byte pic_not_valid; /**< Is 0 if the background picture is "valid" */
 	byte pic_is_new; /**< New pic was loaded or port was opened */
-	byte onscreen_console;  /**< Use the onscreen console for debugging */
-	byte *osc_backup; /**< Backup of the pre-onscreen console screen data */
 
 	int *pic_priority_table; /**< 16 entries with priorities or NULL if not present */
 

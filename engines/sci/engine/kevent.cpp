@@ -94,14 +94,10 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			sciprintf("Debug mode activated\n");
 			script_debug_flag = 1; // Enter debug mode
 			_debug_seeking = _debug_step_running = 0;
-			s->onscreen_console = 0;
 		} else if ((e.buckybits & SCI_EVM_CTRL) && (e.data == '`')) {
+			sciprintf("Debug mode activated\n");
 			script_debug_flag = 1; // Enter debug mode
 			_debug_seeking = _debug_step_running = 0;
-			s->onscreen_console = 1;
-		} else if ((e.buckybits & SCI_EVM_CTRL) && (e.data == '1')) {
-			if (s->visual)
-				s->visual->print(0);
 		} else {
 			PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);

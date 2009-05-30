@@ -69,6 +69,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
 	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
 	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
+	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
+	DCmd_Register("draw_rect",			WRAP_METHOD(Console, cmdDrawRect));
+	DCmd_Register("fill_screen",		WRAP_METHOD(Console, cmdFillScreen));
 	DCmd_Register("current_port",		WRAP_METHOD(Console, cmdCurrentPort));
 	DCmd_Register("print_port",			WRAP_METHOD(Console, cmdPrintPort));
 	DCmd_Register("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
@@ -507,7 +510,7 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 		shrink_execution_stack(g_EngineState, g_EngineState->execution_stack_base + 1);
 		return 0;
 	} else {
-		sciprintf("Restoring gamestate '%s' failed.\n", argv[1]);
+		DebugPrintf("Restoring gamestate '%s' failed.\n", argv[1]);
 		return 1;
 	}
 
@@ -562,6 +565,66 @@ bool Console::cmdParserWords(int argc, const char **argv) {
 	DebugPrintf("%d words\n", g_EngineState->_parserWords.size());
 
 	return true;
+}
+
+bool Console::cmdDrawPic(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Draws a pic resource\n");
+		DebugPrintf("Usage: %s <nr> [<pal>] [<fl>]\n", argv[0]);
+		DebugPrintf("where <nr> is the number of the pic resource to draw\n");
+		DebugPrintf("<pal> is the optional default palette for the pic (default: 0)\n");
+		DebugPrintf("<fl> are any pic draw flags (default: 1)\n");
+		return true;
+	}
+
+	int flags = 1, default_palette = 0;
+
+	if (argc > 2)
+		default_palette = atoi(argv[2]);
+
+	if (argc == 4)
+		flags = atoi(argv[3]);
+
+	gfxop_new_pic(g_EngineState->gfx_state, atoi(argv[1]), flags, default_palette);
+	gfxop_clear_box(g_EngineState->gfx_state, gfx_rect(0, 0, 320, 200));
+	gfxop_update(g_EngineState->gfx_state);
+	gfxop_sleep(g_EngineState->gfx_state, 0);
+
+	return false;
+}
+
+bool Console::cmdDrawRect(int argc, const char **argv) {
+	if (argc != 6) {
+		DebugPrintf("Draws a rectangle to the screen with one of the EGA colors\n");
+		DebugPrintf("Usage: %s <x> <y> <width> <height> <color>\n", argv[0]);
+		DebugPrintf("where <color> is the EGA color to use (0-15)\n");
+		return true;
+	}
+
+	int col = CLIP<int>(atoi(argv[5]), 0, 15);
+
+	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
+	gfxop_fill_box(g_EngineState->gfx_state, gfx_rect(atoi(argv[1]), atoi(argv[2]), 
+										atoi(argv[3]), atoi(argv[4])), g_EngineState->ega_colors[col]);
+	gfxop_update(g_EngineState->gfx_state);
+
+	return false;
+}
+
+bool Console::cmdFillScreen(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Fills the screen with one of the EGA colors\n");
+		DebugPrintf("Usage: %s <color>\n", argv[0]);
+		DebugPrintf("where <color> is the EGA color to use (0-15)\n");
+		return true;
+	}
+
+	int col = CLIP<int>(atoi(argv[1]), 0, 15);
+
+	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
+	gfxop_fill_box(g_EngineState->gfx_state, gfx_rect_fullscreen, g_EngineState->ega_colors[col]);
+	gfxop_update(g_EngineState->gfx_state);
+	return false;
 }
 
 bool Console::cmdCurrentPort(int argc, const char **argv) {
@@ -873,7 +936,7 @@ void Console::printList(List *l) {
 
 		node = &(nt->_table[pos.offset]);
 
-		sciprintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
+		DebugPrintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
 		if (my_prev != node->pred)
 			DebugPrintf("   WARNING: current node gives %04x:%04x as predecessor!\n",

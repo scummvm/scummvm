@@ -1260,15 +1260,9 @@ static int c_visible_map(EngineState *s, const Common::Array<cmd_param_t> &cmdPa
 
 	// TODO
 #if 0
-	if (s->onscreen_console)
-		con_restore_screen(s, s->osc_backup);
-
 	if (cmdParams[0].val <= 3)
 		s->pic_visible_map = cmdParams[0].val;
 	c_redraw_screen(s);
-
-	if (s->onscreen_console)
-		s->osc_backup = con_backup_screen(s);
 #endif
 	return 0;
 }
@@ -1289,29 +1283,6 @@ static int c_gfx_priority(EngineState *s, const Common::Array<cmd_param_t> &cmdP
 	} else {
 		sciprintf("Priority bands start at y=%d\nThey end at y=%d\n", s->priority_first, s->priority_last);
 	}
-
-	return 0;
-}
-
-static int c_gfx_drawpic(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int flags = 1, default_palette = 0;
-
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (cmdParams.size() > 1) {
-		default_palette = cmdParams[1].val;
-
-		if (cmdParams.size() > 2)
-			flags = cmdParams[2].val;
-	}
-
-	gfxop_new_pic(s->gfx_state, cmdParams[0].val, flags, default_palette);
-	gfxop_clear_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
-	gfxop_update(s->gfx_state);
-	gfxop_sleep(s->gfx_state, 0);
 
 	return 0;
 }
@@ -1359,42 +1330,6 @@ static int c_gfx_draw_cel(EngineState *s, const Common::Array<cmd_param_t> &cmdP
 
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
 	gfxop_draw_cel(s->gfx_state, view, loop, cel, Common::Point(160, 100), s->ega_colors[0], palette);
-	gfxop_update(s->gfx_state);
-
-	return 0;
-}
-
-static int c_gfx_fill_screen(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int col = cmdParams[0].val;
-
-	if (!s) {
-		sciprintf("Not in debug state!\n");
-		return 1;
-	}
-
-	if (col < 0 || col > 15)
-		col = 0;
-
-	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-	gfxop_fill_box(s->gfx_state, gfx_rect_fullscreen, s->ega_colors[col]);
-	gfxop_update(s->gfx_state);
-
-	return 0;
-}
-
-static int c_gfx_draw_rect(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int col = cmdParams[4].val;
-
-	if (!s) {
-		sciprintf("Not in debug state!\n");
-		return 1;
-	}
-
-	if (col < 0 || col > 15)
-		col = 0;
-
-	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-	gfxop_fill_box(s->gfx_state, gfx_rect(cmdParams[0].val, cmdParams[1].val, cmdParams[2].val, cmdParams[3].val), s->ega_colors[col]);
 	gfxop_update(s->gfx_state);
 
 	return 0;
@@ -2287,12 +2222,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_gfx_print_widget, "gfx_print_widget", "i*", "If called with no parameters, it\n  shows which widgets are active.\n"
 			                 "  With parameters, it lists the\n  widget corresponding to the\n  numerical index specified (for\n  each parameter).");
 #endif
-			con_hook_command(c_gfx_drawpic, "gfx_drawpic", "ii*", "Draws a pic resource\n\nUSAGE\n  gfx_drawpic <nr> [<pal> [<fl>]]\n"
-			                 "  where <nr> is the number of the pic resource\n  to draw\n  <pal> is the optional default\n  palette for the pic (0 is"
-			                 "\n  assumed if not specified)\n  <fl> are any pic draw flags (default\n  is 1)");
-			con_hook_command(c_gfx_fill_screen, "gfx_fill_screen", "i", "Fills the screen with one\n  of the EGA colors\n");
-			con_hook_command(c_gfx_draw_rect, "gfx_draw_rect", "iiiii", "Draws a rectangle to the screen\n  with one of the EGA colors\n\nUSAGE\n\n"
-			                 "  gfx_draw_rect <x> <y> <xl> <yl> <color>");
 			con_hook_command(c_gfx_propagate_rect,
 			                 "gfx_propagate_rect",
 			                 "iiiii",

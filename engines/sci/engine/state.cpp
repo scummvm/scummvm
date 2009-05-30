@@ -46,9 +46,7 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	pic_not_valid = 0;
 	pic_is_new = 0;
-	onscreen_console = 0;
-	osc_backup = 0;
-
+	
 	pic_priority_table = 0;
 
 	status_bar_foreground = 0;
