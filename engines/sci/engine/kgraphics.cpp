@@ -1967,10 +1967,10 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 		error("Attempt to make list from non-list!\n");
 	}
 
-	node = lookup_node(s, list->first);
+	reg_t next_node = list->first;
+	node = lookup_node(s, next_node);
 	while (node) {
 		reg_t obj = node->value; // The object we're using
-		reg_t next_node;
 		GfxDynView *tempWidget;
 
 		if (options & _K_MAKE_VIEW_LIST_CYCLE) {
@@ -1980,6 +1980,11 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 
 				debugC(2, kDebugLevelGraphics, "  invoking %04x:%04x::doit()\n", PRINT_REG(obj));
 				invoke_selector(INV_SEL(obj, doit, 1), 0); // Call obj::doit() if neccessary
+
+
+				// Lookup node again, since the NodeTable it was in may
+				// have been re-allocated.
+				node = lookup_node(s, next_node);
 			}
 		}
 
