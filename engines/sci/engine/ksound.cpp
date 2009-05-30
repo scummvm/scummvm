@@ -540,7 +540,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->_sound.sfx_song_set_loops(handle, looping);
 		s->_sound.sfx_song_renice(handle, pri);
 
-		debugC(2, kDebugLevelSound, "[sound01-update-handle] -- CUE %04x:%04x");
+		debugC(2, kDebugLevelSound, "[sound01-update-handle] -- CUE %04x:%04x", PRINT_REG(obj));
 
 		PUT_SEL32V(obj, signal, signal);
 		PUT_SEL32V(obj, min, min);

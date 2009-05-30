@@ -380,7 +380,7 @@ static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 			break;
 
 		case KSIG_LIST: {
-			List *l = lookup_list(s, reg);
+			//List *l = lookup_list(s, reg);
 
 			sciprintf("list\n");
 

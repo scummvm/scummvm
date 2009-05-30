@@ -1635,7 +1635,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		int entry_size = GET_SEL32V(obj, x);
 		int i;
 
-		debugC(2, kDebugLevelGraphics, "drawing list control %04x to %d,%d, diff %d\n", obj, x, y, SCI_MAX_SAVENAME_LENGTH);
+		debugC(2, kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d\n", PRINT_REG(obj), x, y, SCI_MAX_SAVENAME_LENGTH);
 		cursor = GET_SEL32V(obj, cursor) - text_pos.offset;
 
 		entries_nr = 0;
@@ -2166,7 +2166,7 @@ static void _k_redraw_view_list(EngineState *s, GfxList *list) {
 	GfxDynView *view = (GfxDynView *) list->_contents;
 	while (view) {
 
-		debugC(2, kDebugLevelGraphics, "  dv[%04x:%04x]: signal %04x\n", make_reg(view->_ID, view->_subID), view->signal);
+		debugC(2, kDebugLevelGraphics, "  dv[%04x:%04x]: signal %04x\n", PRINT_REG(make_reg(view->_ID, view->_subID)), view->signal);
 
 		// step 1 of subalgorithm
 		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
@@ -3008,7 +3008,7 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		_k_prepare_view_list(s, templist, _K_MAKE_VIEW_LIST_CALC_PRIORITY);
 
 		if (s->pic_not_valid) {
-			debugC(2, kDebugLevelGraphics, "PicNotValid=%d -> Subalgorithm:\n");
+			debugC(2, kDebugLevelGraphics, "PicNotValid=%d -> Subalgorithm:\n", s->pic_not_valid);
 			_k_redraw_view_list(s, templist);
 		}
 
@@ -3299,7 +3299,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->r_acc = graph_save_box(s, save_area);
 		text_handle->_serial++; // This is evil!
 
-		debugC(2, kDebugLevelGraphics, "Saving (%d, %d) size (%d, %d) as %04x:%04x\n", save_area.x, save_area.y, save_area.width, save_area.height, s->r_acc);
+		debugC(2, kDebugLevelGraphics, "Saving (%d, %d) size (%d, %d) as %04x:%04x\n", save_area.x, save_area.y, save_area.width, save_area.height, PRINT_REG(s->r_acc));
 	}
 
 	debugC(2, kDebugLevelGraphics, "Display: Commiting text '%s'\n", text);
