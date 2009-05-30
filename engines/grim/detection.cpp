@@ -105,6 +105,15 @@ static const GrimGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER }
 };
 
+static const GrimGameDescription fallbackGameDescriptions[] = {
+	{{"grim", 0, {{0, 0, 0, 0}}, Common::UNK_LANG, Common::kPlatformPC, ADGF_NO_FLAGS}}
+};
+
+static const ADFileBasedFallback grimFallback[] = {
+	{&fallbackGameDescriptions[0], {"grim.tab"}},
+	{0, {0}}
+};
+
 } // End of namespace Grim
 
 static const ADParams detectionParams = {
@@ -121,7 +130,7 @@ static const ADParams detectionParams = {
 	// Name of single gameid (optional)
 	"grim",
 	// List of files for file-based fallback detection (optional)
-	0,
+	Grim::grimFallback,
 	// Flags
 	0
 };
