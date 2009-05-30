@@ -101,7 +101,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_monsterShapesEx = 0;
 	_gameShapeMap = 0;
 	memset(_monsterAnimType, 0, 3);
-	_pageSavedFlag = false;
 	_healOverlay = 0;
 	_swarmSpellStatus = 0;
 
@@ -833,7 +832,7 @@ void LoLEngine::startupNew() {
 	_currentLevel = 1;
 
 	giveCredits(41, 0);
-	_inventory[0] = makeItem(132, 0, 0);
+	_inventory[0] = makeItem(216, 0, 0);
 	_inventory[1] = makeItem(217, 0, 0);
 	_inventory[2] = makeItem(218, 0, 0);
 
@@ -1633,25 +1632,6 @@ void LoLEngine::updateSequenceBackgroundAnimations() {
 
 	for (int i = 0; i < 6; i++)
 		_tim->updateBackgroundAnimation(i);
-}
-
-void LoLEngine::savePage5() {
-	if (_pageSavedFlag)
-		return;
-
-	_screen->copyRegionToBuffer(5, 0, 0, 320, 200, _pageBuffer2);
-	_pageSavedFlag = true;
-}
-
-void LoLEngine::restorePage5() {
-	if (!_pageSavedFlag)
-		return;
-
-	for (int i = 0; i < 6; i++)
-		_tim->freeAnimStruct(i);
-
-	_screen->copyBlockToPage(5, 0, 0, 320, 200, _pageBuffer2);
-	_pageSavedFlag = false;
 }
 
 void LoLEngine::loadTalkFile(int index) {

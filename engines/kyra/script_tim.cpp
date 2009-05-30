@@ -1065,6 +1065,13 @@ void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int la
 	}
 }
 
+int TIMInterpreter_LoL::resetAnimationLastPart(int animIndex) {
+	Animation *anim = &_animations[animIndex];
+	int8 res = -1;
+	SWAP(res, anim->lastPart);
+	return res;
+}
+
 void TIMInterpreter_LoL::drawDialogueButtons() {
 	int cp = _screen->setCurPage(0);
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);

@@ -1729,13 +1729,19 @@ int LoLEngine::olol_removeLevelItem(EMCState *script) {
 
 int LoLEngine::olol_savePage5(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_savePage5(%p)", (const void *)script);
-	savePage5();
+	// Not implemented: The original code uses this to back up and restore page 5 which is used
+	// to load WSA files. Since our WSA player provides its own memory buffers we don't
+	// need to use page 5.
 	return 1;
 }
 
 int LoLEngine::olol_restorePage5(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restorePage5(%p)", (const void *)script);
-	restorePage5();
+	// Not implemented: The original code uses this to back up and restore page 5 which is used
+	// to load WSA files. Since our WSA player provides its own memory buffers we don't
+	// need to use page 5.
+	for (int i = 0; i < 6; i++)
+		_tim->freeAnimStruct(i);
 	return 1;
 }
 
@@ -1869,7 +1875,7 @@ int LoLEngine::olol_paralyzePoisonCharacter(EMCState *script) {
 }
 
 int LoLEngine::olol_drawCharPortrait(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drawCharPortrait(%p)  (%d)", (const void *)script, stackPos(0));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drawCharPortrait(%p) (%d)", (const void *)script, stackPos(0));
 	int charNum = stackPos(0);
 	if (charNum == -1)
 		gui_drawAllCharPortraitsWithStats();
@@ -1878,8 +1884,13 @@ int LoLEngine::olol_drawCharPortrait(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_getAnimationLastPart(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getAnimationLastPart(%p) (%d)", (const void *)script, stackPos(0));
+	return _tim->resetAnimationLastPart(stackPos(0));
+}
+
 int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_assignSpecialGuiShape(%p)  (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_assignSpecialGuiShape(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	if (stackPos(0)) {
 		_specialGuiShape = _levelShapes[_levelShapeProperties[_wllShapeMap[stackPos(0)]].shapeIndex[stackPos(1)]];
 		_specialGuiShapeX = stackPos(2);
@@ -1894,7 +1905,7 @@ int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
 }
 
 int LoLEngine::olol_findInventoryItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_findInventoryItem(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_findInventoryItem(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (stackPos(0) == 0) {
 		for (int i = 0; i < 48; i++) {
 			if (!_inventory[i])
@@ -1922,8 +1933,16 @@ int LoLEngine::olol_findInventoryItem(EMCState *script) {
 	return -1;
 }
 
+int LoLEngine::olol_restoreFadePalette(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreFadePalette(%p)", (const void *)script);
+	memcpy(_screen->_currentPalette, _screen->getPalette(1), 384);
+	_screen->fadePalette(_screen->_currentPalette, 10);
+	_screen->_fadeFlag = 0;
+	return 1;
+}
+
 int LoLEngine::olol_changeItemTypeOrFlag(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_changeItemTypeOrFlag(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_changeItemTypeOrFlag(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (stackPos(0) < 1)
 		return 0;
 
@@ -2047,6 +2066,17 @@ int LoLEngine::olol_enableControls(EMCState *script) {
 int LoLEngine::olol_gasExplosion(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_gasExplosion(%p) (%d)", (const void *)script, stackPos(0));
 	processGasExplosion(stackPos(0));
+	return 1;
+}
+
+int LoLEngine::olol_calcNewBlockPosition(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_calcNewBlockPosition(%p)  (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return calcNewBlockPosition(stackPos(0), stackPos(1));
+}
+
+int LoLEngine::olol_updateDrawPage2(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_updateDrawPage2(%p)", (const void *)script);
+	updateDrawPage2();
 	return 1;
 }
 
@@ -2576,12 +2606,12 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_getAnimationLastPart);
 
 	// 0xA4
 	Opcode(olol_assignSpecialGuiShape);
 	Opcode(olol_findInventoryItem);
-	OpcodeUnImpl();
+	Opcode(olol_restoreFadePalette);
 	OpcodeUnImpl();
 
 	// 0xA8
@@ -2606,11 +2636,11 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_enableControls);
 	OpcodeUnImpl();
 	Opcode(olol_gasExplosion);
-	OpcodeUnImpl();
+	Opcode(olol_calcNewBlockPosition);
 
 	// 0xB8
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_updateDrawPage2);
 	OpcodeUnImpl();
 	Opcode(olol_characterSays);
 

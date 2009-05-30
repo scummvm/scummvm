@@ -77,11 +77,10 @@ void TextDisplayer_LoL::setupField(bool mode) {
 
 			for (int i = 177; i > 141; i--) {
 				uint32 endTime = _vm->_system->getMillis() + _vm->_tickLength;
-				_screen->hideMouse();
 				_screen->copyRegion(83, i, 83, i - 1, 235, 3, 0, 0, Screen::CR_NO_P_CHECK);
 				_screen->copyRegion(83, i + 1, 83, i + 1, 235, 1, 2, 0, Screen::CR_NO_P_CHECK);
+				_vm->updateInput();
 				_screen->updateScreen();
-				_screen->showMouse();
 				_vm->delayUntil(endTime);
 			}
 
@@ -98,7 +97,7 @@ void TextDisplayer_LoL::setupField(bool mode) {
 }
 
 void TextDisplayer_LoL::expandField() {
-	uint8 *tmp = _vm->_pageBuffer1 + 1300;
+	uint8 *tmp = _vm->_pageBuffer1 + 13000;
 
 	if (_vm->textEnabled()) {
 		_vm->_fadeText = false;
@@ -110,10 +109,9 @@ void TextDisplayer_LoL::expandField() {
 
 		for (int i = 140; i < 177; i++) {
 			uint32 endTime = _vm->_system->getMillis() + _vm->_tickLength;
-			_screen->hideMouse();
 			_screen->copyRegion(0, 0, 83, i, 235, 3, 2, 0, Screen::CR_NO_P_CHECK);
+			_vm->updateInput();
 			_screen->updateScreen();
-			_screen->showMouse();
 			_vm->delayUntil(endTime);
 		}
 

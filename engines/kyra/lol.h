@@ -740,8 +740,10 @@ private:
 	int olol_getNextActiveCharacter(EMCState *script);
 	int olol_paralyzePoisonCharacter(EMCState *script);
 	int olol_drawCharPortrait(EMCState *script);
+	int olol_getAnimationLastPart(EMCState *script);
 	int olol_assignSpecialGuiShape(EMCState *script);
 	int olol_findInventoryItem(EMCState *script);
+	int olol_restoreFadePalette(EMCState *script);
 	int olol_changeItemTypeOrFlag(EMCState *script);
 	int olol_placeInventoryItemInHand(EMCState *script);
 	int olol_castSpell(EMCState *script);
@@ -750,6 +752,8 @@ private:
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
 	int olol_gasExplosion(EMCState *script);
+	int olol_calcNewBlockPosition(EMCState *script);
+	int olol_updateDrawPage2(EMCState *script);
 	int olol_characterSays(EMCState *script);
 	int olol_queueSpeech(EMCState *script);
 	int olol_getItemPrice(EMCState *script);
@@ -816,9 +820,7 @@ private:
 	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
 	void generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags);
 	void updateSequenceBackgroundAnimations();
-	void savePage5();
-	void restorePage5();
-
+	
 	bool _dialogueField;
 	uint8 **_itemIconShapes;
 	int _numItemIconShapes;
@@ -835,8 +837,6 @@ private:
 	int _gameShapeMapSize;
 
 	uint8 *_characterFaceShapes[40][3];
-
-	bool _pageSavedFlag;
 
 	// characters
 	bool addCharacter(int id);

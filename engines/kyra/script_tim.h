@@ -144,6 +144,7 @@ public:
 	virtual void stopBackgroundAnimation(int animIndex) {}
 	virtual void updateBackgroundAnimation(int animIndex) {}
 	virtual void playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay) {}
+	virtual int resetAnimationLastPart(int animIndex) { return -1; }
 
 	virtual void resetDialogueState(TIM *tim) {}
 
@@ -238,6 +239,7 @@ public:
 	void stopBackgroundAnimation(int animIndex);
 	void updateBackgroundAnimation(int animIndex);
 	void playAnimationPart(int animIndex, int firstFrame, int lastFrame, int delay);
+	int resetAnimationLastPart(int animIndex);
 
 private:
 	KyraEngine_v1 *vm();
