@@ -4501,46 +4501,6 @@ lua_Object getTableValue(lua_Object table, const char *name) {
 	return 0;
 }
 
-lua_Object getIndexedTableValue(lua_Object table, int index) {
-	if (!lua_istable(table)) {
-		error("getIndexedTableValue(): Parameter not a table!");
-		return 0;
-	}
-	lua_pushobject(table);
-	if (index == 1)
-		lua_pushnil();
-	else
-		lua_pushnumber(index - 1);
-	// If the call to "next" fails then register an error
-	if (lua_call("next") != 0) {
-		error("getIndexedTableValue failed to get next key!");
-		return 0;
-	}
-	return lua_getresult(2);
-}
-
-/* Obtain the x, y, and z coordinates from a LUA table
- * and then create a Vector3d object with these values
- */
-Graphics::Vector3d tableToVector(lua_Object table) {
-	lua_Object xparam, yparam, zparam;
-	float x, y, z;
-
-	if (!lua_istable(table))
-		error("tableToVector passed a LUA object that is not a table!");
-
-	xparam = getTableValue(table, "x");
-	yparam = getTableValue(table, "y");
-	zparam = getTableValue(table, "z");
-	if (!lua_isnumber(xparam) || !lua_isnumber(yparam) || !lua_isnumber(zparam))
-		error("tableToVector passed a LUA table that does not contain vector coordinates!");
-
-	x = lua_getnumber(xparam);
-	y = lua_getnumber(yparam);
-	z = lua_getnumber(zparam);
-	return Graphics::Vector3d(x, y, z);
-}
-
 lua_Object getEventHandler(const char *name) {
 	lua_Object system_table = lua_getglobal("system");
 	return getTableFunction(system_table, name);
