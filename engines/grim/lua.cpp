@@ -1635,7 +1635,7 @@ static void SayLine() {
 	Common::String msg;
 	lua_Object paramObj = lua_getparam(paramId++);
 
-	if (lua_isuserdata(paramObj) && lua_tag(paramObj) == MKID_BE('ACTR')
+	if ((lua_isuserdata(paramObj) && lua_tag(paramObj) == MKID_BE('ACTR'))
 			|| lua_isstring(paramObj) || lua_istable(paramObj)) {
 		Actor *actor = NULL;//some_Actor, maybe some current actor
 		if (lua_isuserdata(paramObj) && lua_tag(paramObj) == MKID_BE('ACTR')) {
@@ -1692,7 +1692,7 @@ static void InputDialog() {
 static void IsMessageGoing() {
 	lua_Object actorObj = lua_getparam(1);
 
-	if (!actorObj || lua_isuserdata(actorObj) && lua_tag(actorObj) == MKID_BE('ACTR') || lua_isnil(actorObj)) {
+	if (!actorObj || (lua_isuserdata(actorObj) && lua_tag(actorObj) == MKID_BE('ACTR')) || lua_isnil(actorObj)) {
 		if (lua_isuserdata(actorObj) && lua_tag(actorObj) == MKID_BE('ACTR')) {
 			Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 			if (actor) {
