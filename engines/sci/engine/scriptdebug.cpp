@@ -32,7 +32,6 @@
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
-#include "sci/engine/sciconsole.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
@@ -82,12 +81,36 @@ int _kdebug_cheap_soundcue_hack = -1;
 
 char inputbuf[256] = "";
 
+union cmd_param_t {
+	int32 val;
+	const char *str;
+	reg_t reg;
+};
+
+typedef int (*ConCommand)(EngineState *s, const Common::Array<cmd_param_t> &cmdParams);
+
+struct cmd_mm_entry_t {
+	const char *name;
+	const char *description;
+}; // All later structures must "extend" this
+
+struct cmd_command_t : public cmd_mm_entry_t {
+	ConCommand command;
+	const char *param;
+};
+
 #if 0
 // Unused
 #define LOOKUP_SPECIES(species) (\
 	(species >= 1000) ? species : *(s->_classtable[species].scriptposp) \
 		+ s->_classtable[species].class_offset)
 #endif
+
+// Dummy function, so that it compiles
+int con_hook_command(ConCommand command, const char *name, const char *param, const char *description) {
+
+	return 0;
+}
 
 static const char *_debug_get_input() {
 	char newinpbuf[256];
@@ -3200,7 +3223,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  gc-list-freeable.1, gc-list-reachable.1,\n"
 			                 "  gc.1, gc-normalise.1");
 
-
+/*
 			con_hook_int(&script_debug_flag, "script_debug_flag", "Set != 0 to enable debugger\n");
 			con_hook_int(&script_checkloads_flag, "script_checkloads_flag", "Set != 0 to display information\n"
 			             "  when scripts are loaded or unloaded");
@@ -3213,6 +3236,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 
 			con_hook_int(&script_gc_interval, "gc-interval", "Number of kernel calls in between gcs");
 			con_hook_int(&debug_sleeptime_factor, "sleep-factor", "Factor to multiply with wait times\n  Set to 0 to speed up games");
+*/
 		} // If commands were not hooked up
 	}
 
@@ -3232,8 +3256,8 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		if (commandstring && (commandstring[0] == '.' || commandstring[0] == ':'))
 			skipfirst = 1;
 
-		if (commandstring && commandstring[0] != ':')
-			con_parse(s, commandstring + skipfirst);
+		//if (commandstring && commandstring[0] != ':')
+		//	con_parse(s, commandstring + skipfirst);
 		sciprintf("\n");
 
 		// Resume music playing

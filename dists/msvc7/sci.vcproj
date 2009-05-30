@@ -190,12 +190,6 @@
 				RelativePath="..\..\engines\sci\engine\savegame.h">
 			</File>
 			<File
-				RelativePath="..\..\engines\sci\engine\sciconsole.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\sciconsole.h">
-			</File>
-			<File
 				RelativePath="..\..\engines\sci\engine\script.h">
 			</File>
 			<File

@@ -30,7 +30,6 @@ MODULE_OBJS = \
 	engine/message.o \
 	engine/said.o \
 	engine/savegame.o \
-	engine/sciconsole.o \
 	engine/script.o \
 	engine/scriptdebug.o \
 	engine/seg_manager.o \

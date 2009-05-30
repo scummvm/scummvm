@@ -29,51 +29,11 @@
 #include "sci/console.h"
 #include "sci/resource.h"
 #include "sci/vocabulary.h"
+#include "sci/engine/state.h"
 
 namespace Sci {
 
 extern EngineState *g_EngineState;
-extern bool g_redirect_sciprintf_to_gui;
-
-class ConsoleFunc : public Common::Functor2<int, const char **, bool> {
-public:
-	ConsoleFunc(const ConCommand &func, const char *param) : _func(func), _param(param) {}
-
-	bool isValid() const { return _func != 0; }
-	bool operator()(int argc, const char **argv) const {
-#if 1
-		// FIXME: Evil hack: recreate the original input string
-		Common::String tmp = argv[0];
-		for (int i = 1; i < argc; ++i) {
-			tmp += ' ';
-			tmp += argv[i];
-		}
-		g_redirect_sciprintf_to_gui = true;
-		con_parse(g_EngineState, tmp.c_str());
-		sciprintf("\n");
-		g_redirect_sciprintf_to_gui = false;
-
-		return true;
-#else
-		Common::Array<cmd_param_t> cmdParams;
-		for (int i = 1; i < argc; ++i) {
-			cmd_param_t tmp;
-			tmp.str = argv[i];
-			// TODO: Convert argc/argv suitable, using _param
-			cmdParams.push_back(tmp);
-		}
-		assert(g_EngineState);
-		return !(*_func)(g_EngineState, cmdParams);
-#endif
-	}
-private:
-	EngineState *_s;
-	const ConCommand _func;
-	const char *_param;
-};
-
-
-
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -91,7 +51,23 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("size",				WRAP_METHOD(Console, cmdResourceSize));
 	DCmd_Register("restypes",			WRAP_METHOD(Console, cmdResourceTypes));
 	DCmd_Register("sci0_palette",		WRAP_METHOD(Console, cmdSci0Palette));
+	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
+	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
+
+	// These were in sci.cpp
+	/*
+	con_hook_int(&(gfx_options.buffer_pics_nr), "buffer_pics_nr",
+		"Number of pics to buffer in LRU storage\n");
+	con_hook_int(&(gfx_options.pic0_dither_mode), "pic0_dither_mode",
+		"Mode to use for pic0 dithering\n");
+	con_hook_int(&(gfx_options.pic0_dither_pattern), "pic0_dither_pattern",
+		"Pattern to use for pic0 dithering\n");
+	con_hook_int(&(gfx_options.pic0_unscaled), "pic0_unscaled",
+		"Whether pic0 should be drawn unscaled\n");
+	con_hook_int(&(gfx_options.dirty_frames), "dirty_frames",
+		"Dirty frames management\n");
+	*/
 }
 
 Console::~Console() {
@@ -107,11 +83,6 @@ static ResourceType parseResourceType(const char *resid) {
 
 	return res;
 }
-
-void Console::con_hook_command(ConCommand command, const char *name, const char *param, const char *description) {
-	DCmd_Register(name, new ConsoleFunc(command, param));
-}
-
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
 	int ver = _vm->getVersion();
@@ -236,13 +207,7 @@ bool Console::cmdKernelWords(int argc, const char **argv) {
 bool Console::cmdHexDump(int argc, const char **argv) {
 	if (argc != 3) {
 		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
-		DebugPrintf("The %d valid resource types are:\n", kResourceTypeInvalid);
-		// There are 20 resource types supported by SCI1.1
-		for (int i = 0; i < kResourceTypeInvalid; i++) {
-			DebugPrintf("%s", getResourceTypeName((ResourceType) i));
-			DebugPrintf((i < kResourceTypeInvalid - 1) ? ", " : "\n");
-		}
-
+		cmdResourceTypes(argc, argv);
 		return true;
 	}
 
@@ -346,6 +311,101 @@ bool Console::cmdSci0Palette(int argc, const char **argv) {
 	game_init_graphics(g_EngineState);
 
 	return false;
+}
+
+bool Console::cmdHexgrep(int argc, const char **argv) {
+	if (argc < 4) {
+		DebugPrintf("Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers.\n");
+		DebugPrintf("Usage: %s <resource type> <resource number> <search string>\n", argv[0]);
+		DebugPrintf("<resource number> can be a specific resource number, or \"all\" for all of the resources of the specified type\n", argv[0]);
+		DebugPrintf("EXAMPLES:\n  hexgrep script all e8 03 c8 00\n  hexgrep pic 042 fe");
+		cmdResourceTypes(argc, argv);
+		return true;
+	}
+
+	ResourceType restype = parseResourceType(argv[1]);
+	int resNumber = 0, resMax = 0;
+	char seekString[500];
+	Resource *script = NULL;
+
+	if (restype == kResourceTypeInvalid) {
+		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
+		return true;
+	}
+
+	if (!scumm_stricmp(argv[2], "all")) {
+		resNumber = 0;
+		resMax = 999;
+	} else {
+		resNumber = resMax = atoi(argv[2]);
+	}
+
+	strcpy(seekString, argv[3]);
+
+	// Construct the seek string
+	for (int i = 4; i < argc; i++) {
+		strcat(seekString, argv[i]);
+	}
+
+	for (; resNumber <= resMax; resNumber++) {
+		if ((script = _vm->getResMgr()->findResource(restype, resNumber, 0))) {
+			unsigned int seeker = 0, seekerold = 0;
+			uint32 comppos = 0;
+			int output_script_name = 0;
+
+			while (seeker < script->size) {
+				if (script->data[seeker] == seekString[comppos]) {
+					if (comppos == 0)
+						seekerold = seeker;
+
+					comppos++;
+
+					if (comppos == strlen(seekString)) {
+						comppos = 0;
+						seeker = seekerold + 1;
+
+						if (!output_script_name) {
+							DebugPrintf("\nIn %s.%03d:\n", getResourceTypeName((ResourceType)restype), resNumber);
+							output_script_name = 1;
+						}
+						DebugPrintf("   0x%04x\n", seekerold);
+					}
+				} else
+					comppos = 0;
+
+				seeker++;
+			}
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdList(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Lists all of the resources of a given type\n");
+		cmdResourceTypes(argc, argv);
+		return true;
+	}
+
+
+	ResourceType res = parseResourceType(argv[1]);
+	if (res == kResourceTypeInvalid)
+		DebugPrintf("Unknown resource type: '%s'\n", argv[1]);
+	else {
+		int j = 0;
+		for (int i = 0; i < sci_max_resource_nr[_vm->getResMgr()->_sciVersion]; i++) {
+			if (_vm->getResMgr()->testResource(res, i)) {
+				DebugPrintf("%s.%03d | ", getResourceTypeName((ResourceType)res), i);
+				if (j % 5 == 0)
+					DebugPrintf("\n");
+				j++;
+			}
+		}
+		DebugPrintf("\n");
+	}
+
+	return true;
 }
 
 bool Console::cmdExit(int argc, const char **argv) {

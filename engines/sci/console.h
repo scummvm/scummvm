@@ -29,7 +29,6 @@
 #define SCI_CONSOLE_H
 
 #include "gui/debugger.h"
-#include "sci/engine/sciconsole.h"
 
 namespace Sci {
 
@@ -39,8 +38,6 @@ class Console : public GUI::Debugger {
 public:
 	Console(SciEngine *vm);
 	virtual ~Console();
-
-	void con_hook_command(ConCommand command, const char *name, const char *param, const char *description);
 
 private:
 	bool cmdGetVersion(int argc, const char **argv);
@@ -56,6 +53,8 @@ private:
 	bool cmdResourceSize(int argc, const char **argv);
 	bool cmdResourceTypes(int argc, const char **argv);
 	bool cmdSci0Palette(int argc, const char **argv);
+	bool cmdHexgrep(int argc, const char **argv);
+	bool cmdList(int argc, const char **argv);
 	bool cmdExit(int argc, const char **argv);
 
 private:

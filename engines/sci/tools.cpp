@@ -25,7 +25,6 @@
 
 #include "sci/tools.h"
 #include "sci/engine/state.h"
-#include "sci/engine/sciconsole.h"
 
 #include "sci/sci.h"	// For _console only
 #include "sci/console.h"	// For _console only
