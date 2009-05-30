@@ -338,14 +338,6 @@ static int show_node(EngineState *s, reg_t addr) {
 
 int objinfo(EngineState *s, reg_t pos);
 
-void song_lib_dump(const songlib_t &songlib, int line);
-
-static int c_songlib_print(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	song_lib_dump(s->_sound._songlib, __LINE__);
-
-	return 0;
-}
-
 static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t reg = cmdParams[0].reg;
 	reg_t reg_end = cmdParams.size() > 1 ? cmdParams[1].reg : NULL_REG;
@@ -1108,21 +1100,6 @@ static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 		sciprintf("\n");
 	}
 
-	return 0;
-}
-
-static int c_visible_map(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	// TODO
-#if 0
-	if (cmdParams[0].val <= 3)
-		s->pic_visible_map = cmdParams[0].val;
-	c_redraw_screen(s);
-#endif
 	return 0;
 }
 
@@ -2038,8 +2015,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_sret, "sret", "", "Steps forward until ret is called\n  on the current execution stack\n  level.");
 			con_hook_command(c_resource_id, "resource_id", "i", "Identifies a resource number by\n"
 			                 "  splitting it up in resource type\n  and resource number.");
-			con_hook_command(c_visible_map, "set_vismap", "i", "Sets the visible map.\n  Default is 0 (visual).\n"
-			                 "  Other useful values are:\n  1: Priority\n  2: Control\n  3: Auxiliary\n");
 			con_hook_command(c_bpx, "bpx", "s", "Sets a breakpoint on the execution of\n  the specified method.\n\n  EXAMPLE:\n"
 			                 "  bpx ego::doit\n\n  May also be used to set a breakpoint\n  that applies whenever an object\n"
 			                 "  of a specific type is touched:\n  bpx foo::\n");
@@ -2087,8 +2062,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "Steps until the global variable with the\n"
 			                 "specified index is modified.\n\nSEE ALSO\n\n"
 			                 "  s.1, snk.1, so.1, bpx.1");
-			con_hook_command(c_songlib_print, "songlib_print", "",
-			                 "");
 			con_hook_command(c_type, "type", "!a",
 			                 "Determines the type of a value\n\n"
 			                 "SEE ALSO\n\n  addresses.3, vo.1");

@@ -80,6 +80,7 @@ private:
 	bool cmdSegmentInfo(int argc, const char **argv);
 	bool cmdKillSegment(int argc, const char **argv);
 	bool cmdShowMap(int argc, const char **argv);
+	bool cmdSongLib(int argc, const char **argv);
 	bool cmdInvokeGC(int argc, const char **argv);
 	bool cmdGCObjects(int argc, const char **argv);
 	bool cmdExit(int argc, const char **argv);

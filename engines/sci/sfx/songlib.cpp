@@ -196,21 +196,4 @@ void song_lib_set_restore_behavior(const songlib_t &songlib, song_handle_t handl
 	seeker->restore_behavior = action;
 }
 
-void song_lib_dump(const songlib_t &songlib, int line) {
-	song_t *seeker = *(songlib.lib);
-
-	fprintf(debug_stream, "L%d:", line);
-	do {
-		fprintf(debug_stream, "    %p", (void *)seeker);
-
-		if (seeker) {
-			fprintf(debug_stream, "[%04lx,p=%d,s=%d]->", seeker->handle, seeker->priority, seeker->status);
-			seeker = seeker->next;
-		}
-		fprintf(debug_stream, "\n");
-	} while (seeker);
-	fprintf(debug_stream, "\n");
-
-}
-
 } // End of namespace Sci

@@ -35,6 +35,7 @@
 #include "sci/gfx/gfx_gui.h"	// for sciw_set_status_bar
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gfx/gfx_widgets.h"	// for gfxw_find_port
+#include "sci/sfx/songlib.h"	// for songlib_t
 #include "sci/vocabulary.h"
 
 #include "common/savefile.h"
@@ -89,6 +90,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
 	DCmd_Register("segment_kill",		WRAP_METHOD(Console, cmdKillSegment));
 	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
+	DCmd_Register("songlib",			WRAP_METHOD(Console, cmdSongLib));
 	DCmd_Register("gc",					WRAP_METHOD(Console, cmdInvokeGC));
 	DCmd_Register("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
@@ -345,8 +347,7 @@ bool Console::cmdSci0Palette(int argc, const char **argv) {
 	}
 
 	sci0_palette = atoi(argv[1]);
-	// TODO: the current room has to be changed to reset the palette of the views
-	game_init_graphics(g_EngineState);
+	cmdRedrawScreen(argc, argv);
 
 	return false;
 }
@@ -1135,6 +1136,25 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 	gfxop_update(g_EngineState->gfx_state);
 
 	return false;
+}
+
+bool Console::cmdSongLib(int argc, const char **argv) {
+	DebugPrintf("Song library:\n");
+
+	song_t *seeker = *(g_EngineState->_sound._songlib.lib);
+
+	do {
+		DebugPrintf("    %p", (void *)seeker);
+
+		if (seeker) {
+			DebugPrintf("[%04lx,p=%d,s=%d]->", seeker->handle, seeker->priority, seeker->status);
+			seeker = seeker->next;
+		}
+		DebugPrintf("\n");
+	} while (seeker);
+	DebugPrintf("\n");
+
+	return true;
 }
 
 bool Console::cmdInvokeGC(int argc, const char **argv) {
