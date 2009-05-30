@@ -2080,6 +2080,15 @@ int LoLEngine::olol_updateDrawPage2(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_setMouseCursor(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setMouseCursor(%p) (%d)", (const void *)script, stackPos(0));
+	if (stackPos(0) == 1)
+		setMouseCursorToIcon(133);
+	else
+		setMouseCursorToItemInHand();
+	return 1;
+}
+
 int LoLEngine::olol_characterSays(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterSays(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (stackPos(0) == -1) {
@@ -2641,7 +2650,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0xB8
 	OpcodeUnImpl();
 	Opcode(olol_updateDrawPage2);
-	OpcodeUnImpl();
+	Opcode(olol_setMouseCursor);
 	Opcode(olol_characterSays);
 
 	// 0xBC

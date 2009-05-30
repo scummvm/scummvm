@@ -754,6 +754,7 @@ private:
 	int olol_gasExplosion(EMCState *script);
 	int olol_calcNewBlockPosition(EMCState *script);
 	int olol_updateDrawPage2(EMCState *script);
+	int olol_setMouseCursor(EMCState *script);
 	int olol_characterSays(EMCState *script);
 	int olol_queueSpeech(EMCState *script);
 	int olol_getItemPrice(EMCState *script);
