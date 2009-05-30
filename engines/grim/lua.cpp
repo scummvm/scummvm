@@ -1156,128 +1156,189 @@ static void LoadCostume() {
 }
 
 static void PlayActorChore() {
-	Actor *act;
-	int num;
-	Costume *cost;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object choreObj = lua_getparam(2);
+	lua_Object costumeObj = lua_getparam(3);
 
-	act = check_actor(1);
-	num = lua_getnumber(lua_getparam(2));
-	cost = get_costume(act, 3, "playActorChore");
-	if (!cost) {
-		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Actor costume not found, unable to perform chore.");
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	Costume *costume;
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
+
+	if (!lua_isnumber(choreObj)) {
+		lua_pushnil();
+		return;
+	}
+	int chore = lua_getnumber(choreObj);
+
+	if (!costume) {
+		lua_pushnil();
 		return;
 	}
 
-	cost->playChore(num);
+	costume->playChore(chore);
+	pushbool(true);
 }
 
 static void CompleteActorChore() {
-	Costume *cost;
-	Actor *act;
-	int num;
-	// CompleteActorChore appears to be an alias for PlayActorChore
-	// Except that we should jump to the last frame of the chore
-	//
-	// Example: When Manny puts the message tube back in his office
-	// the animation automatically puts the tube back into place
-	// and then calls this function to show the closed graphic
-	//
-	// Note: This does not appear to function entirely as it should
-	// TODO: Make this operation work better
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object choreObj = lua_getparam(2);
+	lua_Object costumeObj = lua_getparam(3);
 
-	act = check_actor(1);
-	num = lua_getnumber(lua_getparam(2));
-	cost = get_costume(act, 3, "completeActorChore");
-	if (!cost) {
-		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Actor costume not found, unable to perform chore.");
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	Costume *costume;
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
+
+	if (!lua_isnumber(choreObj)) {
+		lua_pushnil();
+		return;
+	}
+	int chore = lua_getnumber(choreObj);
+
+	if (!costume) {
+		lua_pushnil();
 		return;
 	}
 
-	cost->setChoreLastFrame(num);
+	costume->setChoreLastFrame(chore);
+	pushbool(true);
 }
 
 static void PlayActorChoreLooping() {
-	Actor *act;
-	int num;
-	Costume *cost;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object choreObj = lua_getparam(2);
+	lua_Object costumeObj = lua_getparam(3);
 
-	act = check_actor(1);
-	num = lua_getnumber(lua_getparam(2));
-	cost = get_costume(act, 3, "playActorChoreLooping");
-	if (!cost)
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
 		return;
 
-	cost->playChoreLooping(num);
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	Costume *costume;
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
+
+	if (!lua_isnumber(choreObj)) {
+		lua_pushnil();
+		return;
+	}
+	int chore = lua_getnumber(choreObj);
+
+	if (!costume) {
+		lua_pushnil();
+		return;
+	}
+
+	costume->playChoreLooping(chore);
+	pushbool(true);
 }
 
 static void SetActorChoreLooping() {
-	Actor *act;
-	int num;
-	bool val;
-	Costume *cost;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object choreObj = lua_getparam(2);
+	lua_Object modeObj = lua_getparam(3);
+	lua_Object costumeObj = lua_getparam(4);
 
-	act = check_actor(1);
-	num = lua_getnumber(lua_getparam(2));
-	val = getbool(3);
-	cost = get_costume(act, 4, "setActorChoreLooping");
-	if (!cost)
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
 		return;
 
-	cost->setChoreLooping(num, val);
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	Costume *costume;
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
+
+	if (!costume)
+		return;
+
+	if (lua_isnumber(choreObj)) {
+		int chore = lua_getnumber(choreObj);
+		costume->setChoreLooping(chore, getbool(modeObj));
+	} else if (lua_isnil(choreObj)) {
+		error("SetActorChoreLooping: implement nil case");
+	}
 }
 
 static void StopActorChore() {
-	Actor *act;
-	Costume *cost;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object choreObj = lua_getparam(2);
+	lua_Object costumeObj = lua_getparam(3);
 
-	act = check_actor(1);
-	cost = get_costume(act, 3, "stopActorChore");
-	if (!cost)
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
 		return;
 
-	if (lua_isnil(lua_getparam(2)))
-		cost->stopChores();
-	else
-		cost->stopChore(lua_getnumber(lua_getparam(2)));
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	Costume *costume;
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
+
+	if (!costume)
+		return;
+
+	if (lua_isnumber(choreObj)) {
+		int chore = lua_getnumber(choreObj);
+		costume->stopChore(chore);
+	} else if (lua_isnil(choreObj)) {
+		costume->stopChores();
+	}
 }
 
 static void IsActorChoring() {
-	bool excludeLooping;
-	lua_Object param2;
-	Costume *cost;
-	Actor *act;
-	int result = -1;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object choreObj = lua_getparam(2);
+	lua_Object excludeLoopObj = lua_getparam(3);
+	lua_Object costumeObj = lua_getparam(4);
 
-	act = check_actor(1);
-	excludeLooping = getbool(3);
-	cost = get_costume(act, 4, "isActorChoring");
-	if (!cost) {
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+
+	Costume *costume;
+	if (!findCostume(costumeObj, actor, &costume))
+		return;
+
+	if (!costume) {
 		lua_pushnil();
 		return;
 	}
 
-	// This function can be called with "nil" to get the current
-	// chore, a number to check to see if that chore ID is
-	// running, or a string that will check to see if the
-	// chore of a particular name is running
-	param2 = lua_getparam(2);
-	if (lua_isnil(param2))
-		result = cost->isChoring(excludeLooping);
-	else if (lua_isnumber(param2))
-		result = cost->isChoring(lua_getnumber(lua_getparam(2)), excludeLooping);
-	else if (lua_isstring(param2))
-		result = cost->isChoring(lua_getstring(param2), excludeLooping);
-	else {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("IsActorChoring: LUA Parameter 2 is of unhandled type!");
+	bool excludeLoop = getbool(excludeLoopObj);
+	if (lua_isnumber(choreObj)) {
+		int chore = lua_getnumber(choreObj);
+		if (costume->isChoring(lua_getnumber(chore), excludeLoop) != -1) {
+			lua_pushobject(choreObj);
+			pushbool(true);
+		} else
+			lua_pushnil();
+		return;
+	} else if (lua_isnil(choreObj)) {
+		int chore;
+		chore = costume->isChoring(excludeLoop);
+		if (chore != -1) {
+			lua_pushnumber(chore);
+			pushbool(true);
+			return;
+		}
+		chore = costume->isChoring(false);
+		if (chore != -1) {
+			lua_pushnumber(chore);
+			pushbool(true);
+			return;
+		}
 	}
 
-	if (result < 0)
-		lua_pushnil();
-	else
-		lua_pushnumber(result);
+	pushbool(false);
 }
 
 static void ActorLookAt() {
