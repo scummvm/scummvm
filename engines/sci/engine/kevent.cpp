@@ -34,6 +34,7 @@ namespace Sci {
 
 int stop_on_event = 0;
 extern int _kdebug_cheap_event_hack;
+extern bool _kdebug_track_mouse_clicks;
 
 #define SCI_VARIABLE_GAME_SPEED 3
 
@@ -45,10 +46,8 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int modifier_mask = s->version <= SCI_VERSION_0 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
 
 	if (s->kernel_opt_flags & KERNEL_OPT_FLAG_GOT_2NDEVENT) {
-		// Penalty time- too many requests to this function without
-		// waiting!
+		// Penalty time- too many requests to this function without waiting!
 		int delay = s->script_000->locals_block->_locals[SCI_VARIABLE_GAME_SPEED].offset;
-
 		gfxop_sleep(s->gfx_state, delay * 1000 / 60);
 	}
 
@@ -111,6 +110,12 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case SCI_EVT_MOUSE_RELEASE:
 	case SCI_EVT_MOUSE_PRESS: {
 		int extra_bits = 0;
+
+		// track left buttton clicks, if requested
+		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && _kdebug_track_mouse_clicks) {
+			((SciEngine *)g_engine)->_console->DebugPrintf("Mouse clicked at %d, %d\n", 
+						s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
+		}
 
 		if (mask & e.type) {
 			switch (e.data) {

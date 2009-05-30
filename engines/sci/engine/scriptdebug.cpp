@@ -443,18 +443,6 @@ static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-static int c_mousepos(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	sci_event_t event;
-
-	sciprintf("Click somewhere in the game window...\n");
-
-	while (event = gfxop_get_event(s->gfx_state, SCI_EVT_MOUSE_RELEASE), event.type != SCI_EVT_MOUSE_RELEASE) {};
-
-	sciprintf("Mouse pointer at (%d, %d)\n", s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
-
-	return 0;
-}
-
 int c_debuginfo(EngineState *s) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
@@ -528,69 +516,6 @@ int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 }
 #endif
 
-int c_sim_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	unsigned int i;
-	const char *operators = ",&/()[]#<>";
-
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (cmdParams.size() == 0) {
-		s->parser_valid = 0;
-		return 0;
-	}
-
-	for (i = 0; i < cmdParams.size(); i++) {
-		int flag = 0;
-		Common::String token = cmdParams[i].str;
-
-		if (token.size() == 1) {// could be an operator
-			int j = 0;
-			while (operators[j] && (operators[j] != token[0]))
-				j++;
-			if (operators[j]) {
-				s->parser_nodes[i].type = 1;
-				s->parser_nodes[i].content.value = j + 0xf0;
-				flag = 1; // found an operator
-			}
-		}
-
-		if (!flag) {
-			const char *openb = strchr(token.c_str(), '['); // look for opening braces
-			ResultWord result;
-
-			if (openb)
-				token = Common::String(token.begin(), openb);	// remove them and the rest
-
-			result = vocab_lookup_word(token.c_str(), token.size(), s->_parserWords, s->_parserSuffixes);
-
-			if (result._class != -1) {
-				s->parser_nodes[i].type = 0;
-				s->parser_nodes[i].content.value = result._group;
-			} else { // group name was specified directly?
-				int val = strtol(token.c_str(), NULL, 0);
-				if (val) {
-					s->parser_nodes[i].type = 0;
-					s->parser_nodes[i].content.value = val;
-				} else { // invalid and not matched
-					sciprintf("Couldn't interpret '%s'\n", token.c_str());
-					s->parser_valid = 0;
-					return 1;
-				}
-			}
-		}
-
-	}
-
-	s->parser_nodes[cmdParams.size()].type = -1; // terminate
-
-	s->parser_valid = 2;
-
-	return 0;
-}
-
 int c_viewinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int view = cmdParams[0].val;
 	int palette = cmdParams[1].val;
@@ -630,51 +555,6 @@ int c_viewinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 			}
 		}
 	}
-
-	return 0;
-}
-
-int c_list_sentence_fragments(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	for (uint i = 0; i < s->_parserBranches.size(); i++) {
-		int j = 0;
-
-		sciprintf("R%02d: [%x] ->", i, s->_parserBranches[i].id);
-		while ((j < 10) && s->_parserBranches[i].data[j]) {
-			int dat = s->_parserBranches[i].data[j++];
-
-			switch (dat) {
-			case VOCAB_TREE_NODE_COMPARE_TYPE:
-				dat = s->_parserBranches[i].data[j++];
-				sciprintf(" C(%x)", dat);
-				break;
-
-			case VOCAB_TREE_NODE_COMPARE_GROUP:
-				dat = s->_parserBranches[i].data[j++];
-				sciprintf(" WG(%x)", dat);
-				break;
-
-			case VOCAB_TREE_NODE_FORCE_STORAGE:
-				dat = s->_parserBranches[i].data[j++];
-				sciprintf(" FORCE(%x)", dat);
-				break;
-
-			default:
-				if (dat > VOCAB_TREE_NODE_LAST_WORD_STORAGE) {
-					int dat2 = s->_parserBranches[i].data[j++];
-					sciprintf(" %x[%x]", dat, dat2);
-				} else
-					sciprintf(" ?%x?", dat);
-			}
-		}
-		sciprintf("\n");
-	}
-
-	sciprintf("%d rules.\n", s->_parserBranches.size());
 
 	return 0;
 }
@@ -1108,27 +988,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	} // (heappos == *p_pc)
 
 	return retval;
-}
-
-int c_dumpnodes(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int end = MIN<int>(cmdParams[0].val, VOCAB_TREE_NODES);
-	int i;
-
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	for (i = 0; i < end; i++) {
-		sciprintf(" Node %03x: ", i);
-		if (s->parser_nodes[i].type == PARSE_TREE_NODE_LEAF)
-			sciprintf("Leaf: %04x\n", s->parser_nodes[i].content.value);
-		else
-			sciprintf("Branch: ->%04x, ->%04x\n", s->parser_nodes[i].content.branches[0],
-			          s->parser_nodes[i].content.branches[1]);
-	}
-
-	return 0;
 }
 
 static const char *varnames[] = {"global", "local", "temp", "param"};
@@ -1998,24 +1857,6 @@ int c_type(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-int c_statusbar(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	s->titlebar_port->_color = s->ega_colors[cmdParams[0].val];
-	s->titlebar_port->_bgcolor = s->ega_colors[cmdParams[1].val];
-
-	s->status_bar_foreground = cmdParams[0].val;
-	s->status_bar_background = cmdParams[1].val;
-
-	sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, s->status_bar_foreground, s->status_bar_background);
-	gfxop_update(s->gfx_state);
-
-	return 0;
-}
-
 static void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
 		sciprintf("  %04x:%04x\n", PRINT_REG(addr));
@@ -2199,7 +2040,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  splitting it up in resource type\n  and resource number.");
 			con_hook_command(c_visible_map, "set_vismap", "i", "Sets the visible map.\n  Default is 0 (visual).\n"
 			                 "  Other useful values are:\n  1: Priority\n  2: Control\n  3: Auxiliary\n");
-			con_hook_command(c_statusbar, "statusbar", "ii", "Sets the colors of the status bar. Also controllable from the script.\n");
 			con_hook_command(c_bpx, "bpx", "s", "Sets a breakpoint on the execution of\n  the specified method.\n\n  EXAMPLE:\n"
 			                 "  bpx ego::doit\n\n  May also be used to set a breakpoint\n  that applies whenever an object\n"
 			                 "  of a specific type is touched:\n  bpx foo::\n");
@@ -2207,12 +2047,8 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_bplist, "bplist", "", "Lists all breakpoints.\n");
 			con_hook_command(c_bpdel, "bpdel", "i", "Deletes a breakpoint with specified index.");
 			con_hook_command(c_go, "go", "", "Executes the script.\n");
-			con_hook_command(c_dumpnodes, "dumpnodes", "i", "shows the specified number of nodes\nfrom the parse node tree");
-			con_hook_command(c_mousepos, "mousepos", "", "Reveal the location of a mouse click.\n\n");
 			con_hook_command(c_viewinfo, "viewinfo", "ii", "Displays the number of loops\n  and cels of each loop"
 			                 " for the\n  specified view resource and palette.");
-			con_hook_command(c_list_sentence_fragments, "list_sentence_fragments", "", "Lists all sentence fragments (which\n"
-			                 "  are used to build Parse trees).");
 			con_hook_command(c_parse, "parse", "s", "Parses a sequence of words and prints\n  the resulting parse tree.\n"
 			                 "  The word sequence must be provided as a\n  single string.");
 			con_hook_command(c_set_parse_nodes, "set_parse_nodes", "s*", "Sets the contents of all parse nodes.\n"

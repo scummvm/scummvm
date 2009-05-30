@@ -61,6 +61,8 @@ private:
 	bool cmdRestoreGame(int argc, const char **argv);
 	bool cmdRestartGame(int argc, const char **argv);
 	bool cmdClassTable(int argc, const char **argv);
+	bool cmdSentenceFragments(int argc, const char **argv);
+	bool cmdParserNodes(int argc, const char **argv);
 	bool cmdParserWords(int argc, const char **argv);
 	bool cmdDrawPic(int argc, const char **argv);
 	bool cmdDrawRect(int argc, const char **argv);
@@ -71,7 +73,9 @@ private:
 	bool cmdVisualState(int argc, const char **argv);
 	bool cmdDynamicViews(int argc, const char **argv);
 	bool cmdDroppedViews(int argc, const char **argv);
+	bool cmdStatusBarColors(int argc, const char **argv);
 	bool cmdSimulateKey(int argc, const char **argv);
+	bool cmdTrackMouse(int argc, const char **argv);
 	bool cmdPrintSegmentTable(int argc, const char **argv);
 	bool cmdSegmentInfo(int argc, const char **argv);
 	bool cmdKillSegment(int argc, const char **argv);

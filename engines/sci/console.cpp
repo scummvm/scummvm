@@ -32,6 +32,7 @@
 #include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/gc.h"
+#include "sci/gfx/gfx_gui.h"	// for sciw_set_status_bar
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gfx/gfx_widgets.h"	// for gfxw_find_port
 #include "sci/vocabulary.h"
@@ -43,6 +44,7 @@ namespace Sci {
 extern EngineState *g_EngineState;
 
 int _kdebug_cheap_event_hack = 0;
+bool _kdebug_track_mouse_clicks = false;
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -68,6 +70,8 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
 	DCmd_Register("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
 	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
+	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
+	DCmd_Register("parser_nodes",		WRAP_METHOD(Console, cmdParserNodes));
 	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
 	DCmd_Register("draw_rect",			WRAP_METHOD(Console, cmdDrawRect));
@@ -78,7 +82,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("visual_state",		WRAP_METHOD(Console, cmdVisualState));
 	DCmd_Register("dynamic_views",		WRAP_METHOD(Console, cmdDynamicViews));
 	DCmd_Register("dropped_views",		WRAP_METHOD(Console, cmdDroppedViews));
+	DCmd_Register("status_bar",			WRAP_METHOD(Console, cmdStatusBarColors));
 	DCmd_Register("simkey",				WRAP_METHOD(Console, cmdSimulateKey));
+	DCmd_Register("track_mouse",		WRAP_METHOD(Console, cmdTrackMouse));
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
 	DCmd_Register("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
 	DCmd_Register("segment_kill",		WRAP_METHOD(Console, cmdKillSegment));
@@ -553,6 +559,70 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdSentenceFragments(int argc, const char **argv) {
+	DebugPrintf("Sentence fragments (used to build Parse trees\n");
+
+	for (uint i = 0; i < g_EngineState->_parserBranches.size(); i++) {
+		int j = 0;
+
+		DebugPrintf("R%02d: [%x] ->", i, g_EngineState->_parserBranches[i].id);
+		while ((j < 10) && g_EngineState->_parserBranches[i].data[j]) {
+			int dat = g_EngineState->_parserBranches[i].data[j++];
+
+			switch (dat) {
+			case VOCAB_TREE_NODE_COMPARE_TYPE:
+				dat = g_EngineState->_parserBranches[i].data[j++];
+				DebugPrintf(" C(%x)", dat);
+				break;
+
+			case VOCAB_TREE_NODE_COMPARE_GROUP:
+				dat = g_EngineState->_parserBranches[i].data[j++];
+				DebugPrintf(" WG(%x)", dat);
+				break;
+
+			case VOCAB_TREE_NODE_FORCE_STORAGE:
+				dat = g_EngineState->_parserBranches[i].data[j++];
+				DebugPrintf(" FORCE(%x)", dat);
+				break;
+
+			default:
+				if (dat > VOCAB_TREE_NODE_LAST_WORD_STORAGE) {
+					int dat2 = g_EngineState->_parserBranches[i].data[j++];
+					DebugPrintf(" %x[%x]", dat, dat2);
+				} else
+					DebugPrintf(" ?%x?", dat);
+			}
+		}
+		DebugPrintf("\n");
+	}
+
+	DebugPrintf("%d rules.\n", g_EngineState->_parserBranches.size());
+
+	return true;
+}
+
+bool Console::cmdParserNodes(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Shows the specified number of nodes from the parse node tree\n");
+		DebugPrintf("Usage: %s <nr>\n", argv[0]);
+		DebugPrintf("where <nr> is the number of nodes to show from the parse node tree\n");
+		return true;
+	}
+
+	int end = MIN<int>(atoi(argv[1]), VOCAB_TREE_NODES);
+
+	for (int i = 0; i < end; i++) {
+		DebugPrintf(" Node %03x: ", i);
+		if (g_EngineState->parser_nodes[i].type == PARSE_TREE_NODE_LEAF)
+			DebugPrintf("Leaf: %04x\n", g_EngineState->parser_nodes[i].content.value);
+		else
+			DebugPrintf("Branch: ->%04x, ->%04x\n", g_EngineState->parser_nodes[i].content.branches[0],
+			          g_EngineState->parser_nodes[i].content.branches[1]);
+	}
+
+	return true;
+}
+
 bool Console::cmdParserWords(int argc, const char **argv) {
 	if (g_EngineState->_parserWords.empty()) {
 		DebugPrintf("No words.\n");
@@ -710,6 +780,26 @@ bool Console::cmdDroppedViews(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdStatusBarColors(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Sets the colors of the status bar\n");
+		DebugPrintf("Usage: %s <foreground color> <background color>\n", argv[0]);
+		return true;
+	}
+
+	g_EngineState->titlebar_port->_color = g_EngineState->ega_colors[atoi(argv[1])];
+	g_EngineState->titlebar_port->_bgcolor = g_EngineState->ega_colors[atoi(argv[2])];
+
+	g_EngineState->status_bar_foreground = atoi(argv[1]);
+	g_EngineState->status_bar_background = atoi(argv[2]);
+
+	sciw_set_status_bar(g_EngineState, g_EngineState->titlebar_port, g_EngineState->_statusBarText, 
+							g_EngineState->status_bar_foreground, g_EngineState->status_bar_background);
+	gfxop_update(g_EngineState->gfx_state);
+
+	return false;
+}
+
 bool Console::cmdSimulateKey(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Simulate a keypress with the specified scancode\n");
@@ -718,6 +808,26 @@ bool Console::cmdSimulateKey(int argc, const char **argv) {
 	}
 
 	_kdebug_cheap_event_hack = atoi(argv[1]);
+
+	return true;
+}
+
+bool Console::cmdTrackMouse(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Toggles mouse position tracking\n");
+		DebugPrintf("Usage: %s <on/off>\n", argv[0]);
+		DebugPrintf("If switched on, left mouse clicks will print\n");
+		DebugPrintf("the coordinates clicked in the debug console\n");
+		return true;
+	}
+
+	if (!scumm_stricmp(argv[1], "on")) {
+		_kdebug_track_mouse_clicks = true;
+		DebugPrintf("Mouse tracking turned on\n");
+	} else if (!scumm_stricmp(argv[1], "off")) {
+		_kdebug_track_mouse_clicks = false;
+		DebugPrintf("Mouse tracking turned off\n");
+	}
 
 	return true;
 }
