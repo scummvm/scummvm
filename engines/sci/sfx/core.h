@@ -54,6 +54,9 @@ public:	// FIXME, make private
 	AudioResource *_audioResource; /**< Used for audio resources in CD talkie games */
 
 public:
+	SfxState();
+	~SfxState();
+
 	/***********/
 	/* General */
 	/***********/

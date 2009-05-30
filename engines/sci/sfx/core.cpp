@@ -334,6 +334,20 @@ int sfx_get_player_polyphony() {
 		return 0;
 }
 
+SfxState::SfxState() {
+	_it = NULL;
+	_flags = 0;
+	memset(&_songlib, 0, sizeof(_songlib));
+	_song = NULL;
+	_suspended = 0;
+	_soundSync = 0;
+	_audioResource = 0;
+}
+
+SfxState::~SfxState() {
+}
+
+
 void SfxState::freezeTime() {
 	/* Freezes the top song delay time */
 	const Audio::Timestamp ctime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
