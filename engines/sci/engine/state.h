@@ -226,9 +226,6 @@ public:
 	SegmentId string_frag_segment;
 
 	/* Parser data: */
-	WordMap _parserWords;
-	SuffixList _parserSuffixes;
-	Common::Array<parse_tree_branch_t> _parserBranches;
 	parse_rule_list_t *parser_rules; /**< GNF rules used in the parser algorithm */
 	parse_tree_node_t parser_nodes[VOCAB_TREE_NODES]; /**< The parse tree */
 
@@ -243,16 +240,13 @@ public:
 	SegManager *seg_manager;
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
-	Common::StringList _selectorNames;
-	Common::StringList _kernelNames; /**< List of kernel names */
-
 	Common::Array<kfunct_sig_pair_t> _kfuncTable; /**< Table of kernel functions */
-
-	Common::Array<opcode> _opcodes;
 
 	selector_map_t selector_map; /**< Shortcut list for important selectors */
 
 	MessageState _msgState;
+
+	Vocabulary *_vocabulary;
 
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 };

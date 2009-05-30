@@ -178,61 +178,72 @@ struct parse_tree_node_t {
 	} content;
 };
 
+class Vocabulary {
+public:
+	Vocabulary(EngineState *s);
+	~Vocabulary();
+
+	/**
+	* Loads the vocabulary selector names.
+	* Returns true upon success, false otherwise.
+	*/
+	bool getSelectorNames();
+
+	/**
+	 * Fills the given Array with opcodes.
+	 * @return true on success, false on failure
+	 */
+	bool getOpcodes();
+
+	/**
+	 * Fills the given StringList with kernel function names.
+	 *
+	 * This function reads the kernel function name table from resource_map,
+	 * and fills the given StringList with them.
+	 * The resulting list has the same format regardless of the format of the
+	 * name table of the resource (the format changed between version 0 and 1).
+	 * @return true on success, false on failure
+	 */
+	bool getKernelNames();
+
+	/**
+	 * Gets all words from the main vocabulary.
+	 * @return true on success, false on failure
+	 */
+	bool getParserWords();
+
+	/**
+	 * Loads all suffixes from the suffix vocabulary.
+	 * @return true on success, false on failure
+	 */
+	bool getSuffixes();
+
+	/**
+	 * Frees all suffixes in the given list.
+	 * @param suffixes: The suffixes to free
+	 */
+	void freeSuffixes();
+
+	/**
+	 * Retrieves all grammar rules from the resource data.
+	 * @param branches		The rules are stored into this Array
+	 * @return true on success, false on error
+	 */
+	bool getBranches();
 
 
-/**
- * Fills the given StringList with selector names.
- * Returns true upon success, false otherwise.
- */
-bool vocab_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringList &selectorNames);
+	Common::StringList _selectorNames;
+	Common::Array<opcode> _opcodes;
+	Common::StringList _kernelNames;
+	WordMap _parserWords;
+	SuffixList _parserSuffixes;
+	Common::Array<parse_tree_branch_t> _parserBranches;
 
-/**
- * Obtain the list of opcodes.
- * Returns true upon success, false otherwise.
- */
-bool vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &opcodes);
-
-/**
- * Fills a StringList with kernel function names.
- *
- * This function reads the kernel function name table from resource_map,
- * and fills the given StringList with them.
- * The resulting list has the same format regardless of the format of the
- * name table of the resource (the format changed between version 0 and 1).
- */
-void vocab_get_knames(ResourceManager *resmgr, Common::StringList &names);
-
-
-/**
- * Gets all words from the main vocabulary.
- * @param resmr		The resource manager to read from
- * @param words		A list of all words
- * @return true on success, false on failure
- */
-bool vocab_get_words(ResourceManager *resmgr, WordMap &words);
-
-
-/**
- * Loads all suffixes from the suffix vocabulary.
- * @param resmgr Resource manager the resources are read from
- * @return true on success, false on failure
- */
-bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
-
-/**
- * Frees all suffixes in the given list.
- * @param resmgr The resource manager to free from
- * @param suffixes: The suffixes to free
- */
-void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes);
-
-/**
- * Retrieves all grammar rules from the resource data.
- * @param resmgr		Resource manager the rules are	read from
- * @param branches		The rules are stored into this Array
- * @return true on success, false on error
- */
-bool vocab_get_branches(ResourceManager *resmgr, Common::Array<parse_tree_branch_t> &branches);
+private:
+	ResourceManager *_resmgr;
+	bool _isOldSci0;
+	int _vocabVersion;
+};
 
 /* Looks up a single word in the words and suffixes list
 ** Parameters: (char *) word: Pointer to the word to look up

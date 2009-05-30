@@ -824,15 +824,15 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// static parser information:
 	retval->parser_rules = s->parser_rules;
-	retval->_parserWords = s->_parserWords;
-	retval->_parserSuffixes = s->_parserSuffixes;
-	retval->_parserBranches = s->_parserBranches;
+	retval->_vocabulary->_parserWords = s->_vocabulary->_parserWords;
+	retval->_vocabulary->_parserSuffixes = s->_vocabulary->_parserSuffixes;
+	retval->_vocabulary->_parserBranches = s->_vocabulary->_parserBranches;
 
 	// static VM/Kernel information:
-	retval->_selectorNames = s->_selectorNames;
-	retval->_kernelNames = s->_kernelNames;
+	retval->_vocabulary->_selectorNames = s->_vocabulary->_selectorNames;
+	retval->_vocabulary->_kernelNames = s->_vocabulary->_kernelNames;
 	retval->_kfuncTable = s->_kfuncTable;
-	retval->_opcodes = s->_opcodes;
+	retval->_vocabulary->_opcodes = s->_vocabulary->_opcodes;
 
 	memcpy(&(retval->selector_map), &(s->selector_map), sizeof(selector_map_t));
 

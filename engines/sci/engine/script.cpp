@@ -109,8 +109,8 @@ void script_adjust_opcode_formats(int res_version) {
 }
 
 int script_find_selector(EngineState *s, const char *selectorname) {
-	for (uint pos = 0; pos < s->_selectorNames.size(); ++pos) {
-		if (s->_selectorNames[pos] == selectorname)
+	for (uint pos = 0; pos < s->_vocabulary->_selectorNames.size(); ++pos) {
+		if (s->_vocabulary->_selectorNames[pos] == selectorname)
 			return pos;
 	}
 
@@ -303,18 +303,15 @@ static void script_dump_class(char *data, int seeker, int objsize, const Common:
 	}
 }
 
-void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringList &selectorNames) {
+void script_dissect(ResourceManager *resmgr, int res_no, WordMap &parserWords, const Common::StringList &selectorNames) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
 	Resource *script = resmgr->findResource(kResourceTypeScript, res_no, 0);
-	WordMap words;
 
 	if (!script) {
 		sciprintf("Script not found!\n");
 		return;
 	}
-
-	vocab_get_words(resmgr, words);
 
 	while (_seeker < script->size) {
 		int objtype = (int16)READ_LE_UINT16(script->data + _seeker);
@@ -399,7 +396,8 @@ void script_dissect(ResourceManager *resmgr, int res_no, const Common::StringLis
 					}
 				} else {
 					nextitem = nextitem << 8 | script->data [seeker++];
-					sciprintf("%s[%03x] ", vocab_get_any_group_word(nextitem, words), nextitem);
+					// TODO
+					sciprintf("%s[%03x] ", vocab_get_any_group_word(nextitem, parserWords), nextitem);
 				}
 			}
 			sciprintf("\n");

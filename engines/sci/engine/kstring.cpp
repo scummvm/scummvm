@@ -203,7 +203,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	bool res = vocab_tokenize_string(words, string, s->_parserWords, s->_parserSuffixes, &error);
+	bool res = vocab_tokenize_string(words, string, s->_vocabulary->_parserWords, s->_vocabulary->_parserSuffixes, &error);
 	s->parser_valid = 0; /* not valid */
 
 	if (res && !words.empty()) {
@@ -221,7 +221,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 #endif
 
-		if (vocab_build_parse_tree(s->parser_nodes, words, s->_parserBranches[0],
+		if (vocab_build_parse_tree(s->parser_nodes, words, s->_vocabulary->_parserBranches[0],
 		                           s->parser_rules))
 			syntax_fail = 1; /* Building a tree failed */
 

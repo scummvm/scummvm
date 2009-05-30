@@ -37,35 +37,6 @@
 
 namespace Sci {
 
-static int _init_vocabulary(EngineState *s) { // initialize vocabulary and related resources
-	s->parser_lastmatch_word = SAID_NO_MATCH;
-	s->parser_rules = NULL;
-
-	debug(2, "Initializing vocabulary");
-
-	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA && vocab_get_words(s->resmgr, s->_parserWords)) {
-		vocab_get_suffixes(s->resmgr, s->_parserSuffixes);
-		if (vocab_get_branches(s->resmgr, s->_parserBranches))
-			// Now build a GNF grammar out of this
-			s->parser_rules = vocab_build_gnf(s->_parserBranches, 0);
-	} else {
-		debug(2, "Assuming that this game does not use a parser.");
-		s->parser_rules = NULL;
-	}
-
-	vocab_get_opcodes(s->resmgr, s->_opcodes);
-
-	if (!vocab_get_snames(s->resmgr, (s->flags & GF_SCI0_OLD), s->_selectorNames)) {
-		warning("_init_vocabulary(): Could not retrieve selector names");
-		return 1;
-	}
-
-	script_map_selectors(s, &(s->selector_map));
-	// Maps a few special selectors for later use
-
-	return 0;
-}
-
 int _reset_graphics_input(EngineState *s) {
 	Resource *resource;
 	int font_nr;
@@ -399,12 +370,14 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
 
-	vocab_get_knames(s->resmgr, s->_kernelNames);
+	s->_vocabulary = new Vocabulary(s);	// TODO: delete
+
+	// TODO: move this inside the Vocabulary constructor
+	// Map a few special selectors for later use
+	script_map_selectors(s, &(s->selector_map));
+
 	script_map_kernel(s);
 	// Maps the kernel functions
-
-	if (_init_vocabulary(s))
-		return 1;
 
 	s->restarting_flags = SCI_GAME_IS_NOT_RESTARTING;
 
@@ -451,14 +424,7 @@ void script_free_engine(EngineState *s) {
 
 	s->_kfuncTable.clear();
 
-	s->_parserWords.clear();
-	vocab_free_suffixes(s->resmgr, s->_parserSuffixes);
-	s->_parserBranches.clear();
 	vocab_free_rule_list(s->parser_rules);
-
-	s->_selectorNames.clear();
-	s->_kernelNames.clear();
-	s->_opcodes.clear();
 }
 
 void script_free_breakpoints(EngineState *s) {

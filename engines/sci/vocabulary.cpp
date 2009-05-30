@@ -32,7 +32,270 @@
 
 namespace Sci {
 
-static int vocab_version = 0;	// FIXME: Avoid non-cpnst global vars
+/** The string used to identify the "unknown" SCI0 function for each game */
+#define SCRIPT_UNKNOWN_FUNCTION_STRING "[Unknown]"
+
+// Default kernel name table
+#define SCI0_KNAMES_WELL_DEFINED 0x6e
+#define SCI0_KNAMES_DEFAULT_ENTRIES_NR 0x72
+#define SCI1_KNAMES_DEFAULT_ENTRIES_NR 0x89
+
+static const char *sci0_default_knames[SCI0_KNAMES_DEFAULT_ENTRIES_NR] = {
+	/*0x00*/ "Load",
+	/*0x01*/ "UnLoad",
+	/*0x02*/ "ScriptID",
+	/*0x03*/ "DisposeScript",
+	/*0x04*/ "Clone",
+	/*0x05*/ "DisposeClone",
+	/*0x06*/ "IsObject",
+	/*0x07*/ "RespondsTo",
+	/*0x08*/ "DrawPic",
+	/*0x09*/ "Show",
+	/*0x0a*/ "PicNotValid",
+	/*0x0b*/ "Animate",
+	/*0x0c*/ "SetNowSeen",
+	/*0x0d*/ "NumLoops",
+	/*0x0e*/ "NumCels",
+	/*0x0f*/ "CelWide",
+	/*0x10*/ "CelHigh",
+	/*0x11*/ "DrawCel",
+	/*0x12*/ "AddToPic",
+	/*0x13*/ "NewWindow",
+	/*0x14*/ "GetPort",
+	/*0x15*/ "SetPort",
+	/*0x16*/ "DisposeWindow",
+	/*0x17*/ "DrawControl",
+	/*0x18*/ "HiliteControl",
+	/*0x19*/ "EditControl",
+	/*0x1a*/ "TextSize",
+	/*0x1b*/ "Display",
+	/*0x1c*/ "GetEvent",
+	/*0x1d*/ "GlobalToLocal",
+	/*0x1e*/ "LocalToGlobal",
+	/*0x1f*/ "MapKeyToDir",
+	/*0x20*/ "DrawMenuBar",
+	/*0x21*/ "MenuSelect",
+	/*0x22*/ "AddMenu",
+	/*0x23*/ "DrawStatus",
+	/*0x24*/ "Parse",
+	/*0x25*/ "Said",
+	/*0x26*/ "SetSynonyms",
+	/*0x27*/ "HaveMouse",
+	/*0x28*/ "SetCursor",
+	/*0x29*/ "FOpen",
+	/*0x2a*/ "FPuts",
+	/*0x2b*/ "FGets",
+	/*0x2c*/ "FClose",
+	/*0x2d*/ "SaveGame",
+	/*0x2e*/ "RestoreGame",
+	/*0x2f*/ "RestartGame",
+	/*0x30*/ "GameIsRestarting",
+	/*0x31*/ "DoSound",
+	/*0x32*/ "NewList",
+	/*0x33*/ "DisposeList",
+	/*0x34*/ "NewNode",
+	/*0x35*/ "FirstNode",
+	/*0x36*/ "LastNode",
+	/*0x37*/ "EmptyList",
+	/*0x38*/ "NextNode",
+	/*0x39*/ "PrevNode",
+	/*0x3a*/ "NodeValue",
+	/*0x3b*/ "AddAfter",
+	/*0x3c*/ "AddToFront",
+	/*0x3d*/ "AddToEnd",
+	/*0x3e*/ "FindKey",
+	/*0x3f*/ "DeleteKey",
+	/*0x40*/ "Random",
+	/*0x41*/ "Abs",
+	/*0x42*/ "Sqrt",
+	/*0x43*/ "GetAngle",
+	/*0x44*/ "GetDistance",
+	/*0x45*/ "Wait",
+	/*0x46*/ "GetTime",
+	/*0x47*/ "StrEnd",
+	/*0x48*/ "StrCat",
+	/*0x49*/ "StrCmp",
+	/*0x4a*/ "StrLen",
+	/*0x4b*/ "StrCpy",
+	/*0x4c*/ "Format",
+	/*0x4d*/ "GetFarText",
+	/*0x4e*/ "ReadNumber",
+	/*0x4f*/ "BaseSetter",
+	/*0x50*/ "DirLoop",
+	/*0x51*/ "CanBeHere",
+	/*0x52*/ "OnControl",
+	/*0x53*/ "InitBresen",
+	/*0x54*/ "DoBresen",
+	/*0x55*/ "DoAvoider",
+	/*0x56*/ "SetJump",
+	/*0x57*/ "SetDebug",
+	/*0x58*/ "InspectObj",
+	/*0x59*/ "ShowSends",
+	/*0x5a*/ "ShowObjs",
+	/*0x5b*/ "ShowFree",
+	/*0x5c*/ "MemoryInfo",
+	/*0x5d*/ "StackUsage",
+	/*0x5e*/ "Profiler",
+	/*0x5f*/ "GetMenu",
+	/*0x60*/ "SetMenu",
+	/*0x61*/ "GetSaveFiles",
+	/*0x62*/ "GetCWD",
+	/*0x63*/ "CheckFreeSpace",
+	/*0x64*/ "ValidPath",
+	/*0x65*/ "CoordPri",
+	/*0x66*/ "StrAt",
+	/*0x67*/ "DeviceInfo",
+	/*0x68*/ "GetSaveDir",
+	/*0x69*/ "CheckSaveGame",
+	/*0x6a*/ "ShakeScreen",
+	/*0x6b*/ "FlushResources",
+	/*0x6c*/ "SinMult",
+	/*0x6d*/ "CosMult",
+	/*0x6e*/ "SinDiv",
+	/*0x6f*/ "CosDiv",
+	/*0x70*/ "Graph",
+	/*0x71*/ SCRIPT_UNKNOWN_FUNCTION_STRING
+};
+
+static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
+	/*0x00*/ "Load",
+	/*0x01*/ "UnLoad",
+	/*0x02*/ "ScriptID",
+	/*0x03*/ "DisposeScript",
+	/*0x04*/ "Clone",
+	/*0x05*/ "DisposeClone",
+	/*0x06*/ "IsObject",
+	/*0x07*/ "RespondsTo",
+	/*0x08*/ "DrawPic",
+	/*0x09*/ "Show",
+	/*0x0a*/ "PicNotValid",
+	/*0x0b*/ "Animate",
+	/*0x0c*/ "SetNowSeen",
+	/*0x0d*/ "NumLoops",
+	/*0x0e*/ "NumCels",
+	/*0x0f*/ "CelWide",
+	/*0x10*/ "CelHigh",
+	/*0x11*/ "DrawCel",
+	/*0x12*/ "AddToPic",
+	/*0x13*/ "NewWindow",
+	/*0x14*/ "GetPort",
+	/*0x15*/ "SetPort",
+	/*0x16*/ "DisposeWindow",
+	/*0x17*/ "DrawControl",
+	/*0x18*/ "HiliteControl",
+	/*0x19*/ "EditControl",
+	/*0x1a*/ "TextSize",
+	/*0x1b*/ "Display",
+	/*0x1c*/ "GetEvent",
+	/*0x1d*/ "GlobalToLocal",
+	/*0x1e*/ "LocalToGlobal",
+	/*0x1f*/ "MapKeyToDir",
+	/*0x20*/ "DrawMenuBar",
+	/*0x21*/ "MenuSelect",
+	/*0x22*/ "AddMenu",
+	/*0x23*/ "DrawStatus",
+	/*0x24*/ "Parse",
+	/*0x25*/ "Said",
+	/*0x26*/ "SetSynonyms",
+	/*0x27*/ "HaveMouse",
+	/*0x28*/ "SetCursor",
+	/*0x29*/ "SaveGame",
+	/*0x2a*/ "RestoreGame",
+	/*0x2b*/ "RestartGame",
+	/*0x2c*/ "GameIsRestarting",
+	/*0x2d*/ "DoSound",
+	/*0x2e*/ "NewList",
+	/*0x2f*/ "DisposeList",
+	/*0x30*/ "NewNode",
+	/*0x31*/ "FirstNode",
+	/*0x32*/ "LastNode",
+	/*0x33*/ "EmptyList",
+	/*0x34*/ "NextNode",
+	/*0x35*/ "PrevNode",
+	/*0x36*/ "NodeValue",
+	/*0x37*/ "AddAfter",
+	/*0x38*/ "AddToFront",
+	/*0x39*/ "AddToEnd",
+	/*0x3a*/ "FindKey",
+	/*0x3b*/ "DeleteKey",
+	/*0x3c*/ "Random",
+	/*0x3d*/ "Abs",
+	/*0x3e*/ "Sqrt",
+	/*0x3f*/ "GetAngle",
+	/*0x40*/ "GetDistance",
+	/*0x41*/ "Wait",
+	/*0x42*/ "GetTime",
+	/*0x43*/ "StrEnd",
+	/*0x44*/ "StrCat",
+	/*0x45*/ "StrCmp",
+	/*0x46*/ "StrLen",
+	/*0x47*/ "StrCpy",
+	/*0x48*/ "Format",
+	/*0x49*/ "GetFarText",
+	/*0x4a*/ "ReadNumber",
+	/*0x4b*/ "BaseSetter",
+	/*0x4c*/ "DirLoop",
+	/*0x4d*/ "CanBeHere",
+	/*0x4e*/ "OnControl",
+	/*0x4f*/ "InitBresen",
+	/*0x50*/ "DoBresen",
+	/*0x51*/ "Platform",
+	/*0x52*/ "SetJump",
+	/*0x53*/ "SetDebug",
+	/*0x54*/ "InspectObj",
+	/*0x55*/ "ShowSends",
+	/*0x56*/ "ShowObjs",
+	/*0x57*/ "ShowFree",
+	/*0x58*/ "MemoryInfo",
+	/*0x59*/ "StackUsage",
+	/*0x5a*/ "Profiler",
+	/*0x5b*/ "GetMenu",
+	/*0x5c*/ "SetMenu",
+	/*0x5d*/ "GetSaveFiles",
+	/*0x5e*/ "GetCWD",
+	/*0x5f*/ "CheckFreeSpace",
+	/*0x60*/ "ValidPath",
+	/*0x61*/ "CoordPri",
+	/*0x62*/ "StrAt",
+	/*0x63*/ "DeviceInfo",
+	/*0x64*/ "GetSaveDir",
+	/*0x65*/ "CheckSaveGame",
+	/*0x66*/ "ShakeScreen",
+	/*0x67*/ "FlushResources",
+	/*0x68*/ "SinMult",
+	/*0x69*/ "CosMult",
+	/*0x6a*/ "SinDiv",
+	/*0x6b*/ "CosDiv",
+	/*0x6c*/ "Graph",
+	/*0x6d*/ "Joystick",
+	/*0x6e*/ "ShiftScreen",
+	/*0x6f*/ "Palette",
+	/*0x70*/ "MemorySegment",
+	/*0x71*/ "MoveCursor",
+	/*0x72*/ "Memory",
+	/*0x73*/ "ListOps",
+	/*0x74*/ "FileIO",
+	/*0x75*/ "DoAudio",
+	/*0x76*/ "DoSync",
+	/*0x77*/ "AvoidPath",
+	/*0x78*/ "Sort",
+	/*0x79*/ "ATan",
+	/*0x7a*/ "Lock",
+	/*0x7b*/ "StrSplit",
+	/*0x7c*/ "Message",
+	/*0x7d*/ "IsItSkip",
+	/*0x7e*/ "MergePoly",
+	/*0x7f*/ "ResCheck",
+	/*0x80*/ "AssertPalette",
+	/*0x81*/ "TextColors",
+	/*0x82*/ "TextFonts",
+	/*0x83*/ "Record",
+	/*0x84*/ "PlayBack",
+	/*0x85*/ "ShowMovie",
+	/*0x86*/ "SetVideoMode",
+	/*0x87*/ "SetQuitStr",
+	/*0x88*/ "DbugStr"
+};
 
 #if 0
 
@@ -86,10 +349,45 @@ int vocab_get_class_count(ResourceManager *resmgr) {
 
 #endif
 
-bool vocab_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringList &selectorNames) {
+Vocabulary::Vocabulary(EngineState *s) : _resmgr(s->resmgr), _isOldSci0(s->flags & GF_SCI0_OLD) {
+	s->parser_lastmatch_word = SAID_NO_MATCH;
+	s->parser_rules = NULL;
+	_vocabVersion = 0;
+
+	debug(2, "Initializing vocabulary");
+
+	if (_resmgr->_sciVersion < SCI_VERSION_01_VGA && getParserWords()) {
+		getSuffixes();
+		if (getBranches())
+			// Now build a GNF grammar out of this
+			s->parser_rules = vocab_build_gnf(_parserBranches, 0);
+	} else {
+		debug(2, "Assuming that this game does not use a parser.");
+		s->parser_rules = NULL;
+	}
+
+	getOpcodes();
+
+	if (!getSelectorNames()) {
+		error("Vocabulary: Could not retrieve selector names");
+	}
+
+	getKernelNames();
+}
+
+Vocabulary::~Vocabulary() {
+	_parserWords.clear();
+	_selectorNames.clear();
+	_opcodes.clear();
+	_kernelNames.clear();
+	_parserBranches.clear();
+	freeSuffixes();
+}
+
+bool Vocabulary::getSelectorNames() {
 	int count;
 
-	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES, 0);
+	Resource *r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES, 0);
 
 	if (!r) // No such resource?
 		return false;
@@ -101,22 +399,22 @@ bool vocab_get_snames(ResourceManager *resmgr, bool isOldSci0, Common::StringLis
 		int len = READ_LE_UINT16(r->data + offset);
 
 		Common::String tmp((const char *)r->data + offset + 2, len);
-		selectorNames.push_back(tmp);
+		_selectorNames.push_back(tmp);
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
-		if (isOldSci0)
-			selectorNames.push_back(tmp);
+		if (_isOldSci0)
+			_selectorNames.push_back(tmp);
 	}
 
 	return true;
 }
 
-bool vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &o) {
+bool Vocabulary::getOpcodes() {
 	int count, i = 0;
-	Resource* r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES, 0);
+	Resource* r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES, 0);
 
-	o.clear();
+	_opcodes.clear();
 
 	// if the resource couldn't be loaded, leave
 	if (r == NULL) {
@@ -126,33 +424,33 @@ bool vocab_get_opcodes(ResourceManager *resmgr, Common::Array<opcode> &o) {
 
 	count = READ_LE_UINT16(r->data);
 
-	o.resize(count);
+	_opcodes.resize(count);
 	for (i = 0; i < count; i++) {
 		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
 		int len = READ_LE_UINT16(r->data + offset) - 2;
-		o[i].type = READ_LE_UINT16(r->data + offset + 2);
+		_opcodes[i].type = READ_LE_UINT16(r->data + offset + 2);
 		// QFG3 has empty opcodes
-		o[i].name = len > 0 ? Common::String((char *)r->data + offset + 4, len) : "Dummy";
+		_opcodes[i].name = len > 0 ? Common::String((char *)r->data + offset + 4, len) : "Dummy";
 #if 1 //def VOCABULARY_DEBUG
-		printf("Opcode %02X: %s, %d\n", i, o[i].name.c_str(), o[i].type);
+		printf("Opcode %02X: %s, %d\n", i, _opcodes[i].name.c_str(), _opcodes[i].type);
 #endif
 	}
 
 	return true;
 }
 
-bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
+bool Vocabulary::getParserWords() {
 
 	char currentword[256] = ""; // They're not going to use words longer than 255 ;-)
 	int currentwordpos = 0;
 
 	// First try to load the SCI0 vocab resource.
-	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
+	Resource *resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
  
 	if (!resource) {
 		warning("SCI0: Could not find a main vocabulary, trying SCI01");
-		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
-		vocab_version = 1;
+		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
+		_vocabVersion = 1;
 	}
 
 	if (!resource) {
@@ -161,7 +459,7 @@ bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
 	}
 
 	unsigned int seeker;
-	if (vocab_version == 1)
+	if (_vocabVersion == 1)
 		seeker = 255 * 2; // vocab.900 starts with 255 16-bit pointers which we don't use
 	else
 		seeker = 26 * 2; // vocab.000 starts with 26 16-bit pointers which we don't use
@@ -172,14 +470,14 @@ bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
 		// Now this ought to be critical, but it'll just cause parse() and said() not to work
 	}
 
-	words.clear();
+	_parserWords.clear();
 
 	while (seeker < resource->size) {
 		byte c;
 
 		currentwordpos = resource->data[seeker++]; // Parts of previous words may be re-used
 
-		if (vocab_version == 1) {
+		if (_vocabVersion == 1) {
 			c = 1;
 			while (seeker < resource->size && currentwordpos < 255 && c) {
 				c = resource->data[seeker++];
@@ -187,7 +485,7 @@ bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
 			}
 			if (seeker == resource->size) {
 				warning("SCI1: Vocabulary not usable, disabling");
-				words.clear();
+				_parserWords.clear();
 				return false;
 			}
 		} else {
@@ -206,7 +504,7 @@ bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
 		newWord._group = (resource->data[seeker + 2]) | ((c & 0x0f) << 8);
 
 		// Add the word to the list
-		words[currentword] = newWord;
+		_parserWords[currentword] = newWord;
 
 		seeker += 3;
 	}
@@ -225,14 +523,14 @@ const char *vocab_get_any_group_word(int group, const WordMap &words) {
 	return "{invalid}";
 }
 
-bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
+bool Vocabulary::getSuffixes() {
 	// Determine if we can find a SCI1 suffix vocabulary first
 	Resource* resource = NULL;
 	
-	if (vocab_version == 0)
-		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 1);
+	if (_vocabVersion == 0)
+		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 1);
 	else
-		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 1);
+		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 1);
 
 	if (!resource)
 		return false; // No vocabulary found
@@ -259,35 +557,35 @@ bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 		suffix.result_class = (int16)READ_BE_UINT16(resource->data + seeker);
 		seeker += 3; // Next entry
 
-		suffixes.push_back(suffix);
+		_parserSuffixes.push_back(suffix);
 	}
 
 	return true;
 }
 
-void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
+void Vocabulary::freeSuffixes() {
 	Resource* resource = NULL;
 	
-	if (vocab_version == 0)
-		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 0);
+	if (_vocabVersion == 0)
+		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 0);
 	else
-		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 0);
+		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 0);
 	
 	if (resource && resource->status == kResStatusLocked)
-		resmgr->unlockResource(resource, resource->number, kResourceTypeVocab);
+		_resmgr->unlockResource(resource, resource->number, kResourceTypeVocab);
 
-	suffixes.clear();
+	_parserSuffixes.clear();
 }
 
-bool vocab_get_branches(ResourceManager * resmgr, Common::Array<parse_tree_branch_t> &branches) {
+bool Vocabulary::getBranches() {
 	Resource *resource = NULL;
 
-	if (vocab_version == 0)
-		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES, 0);
+	if (_vocabVersion == 0)
+		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES, 0);
 	else
-		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES, 0);
+		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES, 0);
 
-	branches.clear();
+	_parserBranches.clear();
 
 	if (!resource)
 		return false;		// No parser tree data found
@@ -299,21 +597,21 @@ bool vocab_get_branches(ResourceManager * resmgr, Common::Array<parse_tree_branc
 		return false;
 	}
 
-	branches.resize(branches_nr);
+	_parserBranches.resize(branches_nr);
 
 	for (int i = 0; i < branches_nr; i++) {
 		byte *base = resource->data + i * 20;
 
-		branches[i].id = (int16)READ_LE_UINT16(base);
+		_parserBranches[i].id = (int16)READ_LE_UINT16(base);
 
 		for (int k = 0; k < 9; k++)
-			branches[i].data[k] = READ_LE_UINT16(base + 2 + 2 * k);
+			_parserBranches[i].data[k] = READ_LE_UINT16(base + 2 + 2 * k);
 
-		branches[i].data[9] = 0; // Always terminate
+		_parserBranches[i].data[9] = 0; // Always terminate
 	}
 
-	if (!branches[branches_nr - 1].id) // branch lists may be terminated by empty rules
-		branches.remove_at(branches_nr - 1);
+	if (!_parserBranches[branches_nr - 1].id) // branch lists may be terminated by empty rules
+		_parserBranches.remove_at(branches_nr - 1);
 
 	return true;
 }
@@ -383,7 +681,7 @@ void vocab_decypher_said_block(EngineState *s, byte *addr) {
 
 		if (nextitem < 0xf0) {
 			nextitem = nextitem << 8 | *addr++;
-			sciprintf(" %s[%03x]", vocab_get_any_group_word(nextitem, s->_parserWords), nextitem);
+			sciprintf(" %s[%03x]", vocab_get_any_group_word(nextitem, s->_vocabulary->_parserWords), nextitem);
 
 			nextitem = 42; // Make sure that group 0xff doesn't abort
 		} else switch (nextitem) {
@@ -554,6 +852,135 @@ void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms)
 		for (SynonymList::const_iterator sync = synonyms.begin(); sync != synonyms.end(); ++sync)
 			if (i->_group == sync->replaceant)
 				i->_group = sync->replacement;
+}
+
+// Alternative kernel func names retriever. Required for KQ1/SCI (at least).
+static void _vocab_get_knames0alt(const Resource *r, Common::StringList &names) {
+	uint idx = 0;
+
+	while (idx < r->size) {
+		Common::String tmp((const char *)r->data + idx);
+		names.push_back(tmp);
+		idx += tmp.size() + 1;
+	}
+
+	// The mystery kernel function- one in each SCI0 package
+	names.push_back(SCRIPT_UNKNOWN_FUNCTION_STRING);
+}
+
+static void vocab_get_knames0(ResourceManager *resmgr, Common::StringList &names) {
+	int count, i, index = 2, empty_to_add = 1;
+	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
+
+	if (!r) { // No kernel name table found? Fall back to default table
+		names.resize(SCI0_KNAMES_DEFAULT_ENTRIES_NR);
+		for (i = 0; i < SCI0_KNAMES_DEFAULT_ENTRIES_NR; i++)
+			names[i] = sci0_default_knames[i];
+		return;
+	}
+
+	count = READ_LE_UINT16(r->data);
+
+	if (count > 1023) {
+		_vocab_get_knames0alt(r, names);
+		return;
+	}
+
+	if (count < SCI0_KNAMES_WELL_DEFINED) {
+		empty_to_add = SCI0_KNAMES_WELL_DEFINED - count;
+		sciprintf("Less than %d kernel functions; adding %d\n", SCI0_KNAMES_WELL_DEFINED, empty_to_add);
+	}
+
+	names.resize(count + 1 + empty_to_add);
+
+	for (i = 0; i < count; i++) {
+		int offset = READ_LE_UINT16(r->data + index);
+		int len = READ_LE_UINT16(r->data + offset);
+		//fprintf(stderr,"Getting name %d of %d...\n", i, count);
+		index += 2;
+		names[i] = Common::String((const char *)r->data + offset + 2, len);
+	}
+
+	for (i = 0; i < empty_to_add; i++) {
+		names[count + i] = SCRIPT_UNKNOWN_FUNCTION_STRING;
+	}
+}
+
+static void vocab_get_knames1(ResourceManager *resmgr, Common::StringList &names) {
+	// vocab.999/999.voc is notoriously unreliable in SCI1 games, and should not be used
+	// We hardcode the default SCI1 kernel names here (i.e. the ones inside the "special"
+	// 999.voc file from FreeSCI). All SCI1 games seem to be working with this change, but
+	// if any SCI1 game has different kernel vocabulary names, it might not work. It seems
+	// that all SCI1 games use the same kernel vocabulary names though, so this seems to be
+	// a safe change. If there's any SCI1 game with different kernel vocabulary names, we can
+	// add special flags to it to our detector
+
+	names.resize(SCI1_KNAMES_DEFAULT_ENTRIES_NR);
+	for (int i = 0; i < SCI1_KNAMES_DEFAULT_ENTRIES_NR; i++)
+		names[i] = sci1_default_knames[i];
+}
+
+#ifdef ENABLE_SCI32
+static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &names) {
+/*
+ 999.voc format for SCI1.1 games:
+	[b] # of kernel functions
+	[w] unknown
+	[offset to function name info]
+		...
+    {[w name-len][function name]}
+		...
+*/
+	//unsigned int size = 64, pos = 3;
+	int len;
+	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
+	if(r == NULL) // failed to open vocab.999 (happens with SCI1 demos)
+		return; // FIXME: should return a default table for this engine
+	const byte nCnt = *r->data;
+
+	names.resize(nCnt);
+	for (int i = 0; i < nCnt; i++) {
+		int off = READ_LE_UINT16(r->data + 2 * i + 2);
+		len = READ_LE_UINT16(r->data + off);
+		names[i] = Common::String((char *)r->data + off + 2, len);
+	}
+}
+#endif
+
+bool Vocabulary::getKernelNames() {
+	_kernelNames.clear();
+
+	switch (_resmgr->_sciVersion) {
+	case SCI_VERSION_0:
+	case SCI_VERSION_01:
+		vocab_get_knames0(_resmgr, _kernelNames);
+		break;
+	case SCI_VERSION_01_VGA:
+	case SCI_VERSION_01_VGA_ODD:
+		// HACK: KQ5 needs the SCI1 default vocabulary names to work correctly.
+		// Having more vocabulary names (like in SCI1) doesn't seem to have any
+		// ill effects, other than resulting in unmapped functions towards the
+		// end, which are never used by the game interpreter anyway
+		// return vocab_get_knames0(resmgr, count);
+	case SCI_VERSION_1_EARLY:
+	case SCI_VERSION_1_LATE:
+		vocab_get_knames1(_resmgr, _kernelNames);
+		break;
+	case SCI_VERSION_1_1:
+		vocab_get_knames1(_resmgr, _kernelNames);
+		// KQ6CD calls unimplemented function 0x26
+                _kernelNames[0x26] = "Dummy";
+		break;
+#ifdef ENABLE_SCI32
+	case SCI_VERSION_32:
+		vocab_get_knames11(_resmgr, _kernelNames);
+#endif
+		break;
+	default:
+		break;
+	}
+
+	return true;
 }
 
 } // End of namespace Sci

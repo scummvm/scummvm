@@ -322,7 +322,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			Breakpoint *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->_selectorNames[selector].c_str());
+			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->_vocabulary->_selectorNames[selector].c_str());
 
 			bp = s->bp_list;
 			while (bp) {
