@@ -1659,10 +1659,16 @@ loop:
 }
 
 static void InputDialog() {
+	lua_Object str1Obj = lua_getparam(1);
+	lua_Object str2Obj = lua_getparam(2);
 	int c, i = 0;
 	char buf[512];
 
-	fprintf(stderr, "%s %s: ", luaL_check_string(1), luaL_check_string(2));
+	if (!lua_isstring(str1Obj) || !lua_isstring(str2Obj)) {
+		lua_pushnil();
+		return;
+	}
+	fprintf(stderr, "%s %s: ", lua_getstring(str1Obj), lua_getstring(str2Obj));
 	while (i < 512 && (c = fgetc(stdin)) != EOF && c != '\n')
 		buf[i++] = c;
 	buf[i] = '\0';
@@ -1671,22 +1677,31 @@ static void InputDialog() {
 }
 
 static void IsMessageGoing() {
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
 
-	if (lua_getparam(1) == LUA_NOOBJECT) {
-		pushbool(g_imuse->isVoicePlaying());
-	} else {
-		act = check_actor(1);
-		pushbool(act->talking());
-	}
+	if (!actorObj || lua_isuserdata(actorObj) && lua_tag(actorObj) == MKID_BE('ACTR') || lua_isnil(actorObj)) {
+		if (lua_isuserdata(actorObj) && lua_tag(actorObj) == MKID_BE('ACTR')) {
+			Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+			if (actor) {
+				pushbool(actor->talking());
+			}
+		} else {
+			// TODO
+			// this part code check something more
+			pushbool(g_imuse->isVoicePlaying());
+		}
+	} else
+		lua_pushnil();
 }
 
 static void ShutUpActor() {
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
 
-	act = check_actor(1);
-	if (act)
-		act->shutUp();
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	if (actor)
+		actor->shutUp();
 }
 
 // Sector functions
