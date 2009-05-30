@@ -47,7 +47,7 @@ static int _init_vocabulary(EngineState *s) { // initialize vocabulary and relat
 		vocab_get_suffixes(s->resmgr, s->_parserSuffixes);
 		if (vocab_get_branches(s->resmgr, s->_parserBranches))
 			// Now build a GNF grammar out of this
-			s->parser_rules = vocab_build_gnf(s->_parserBranches);
+			s->parser_rules = vocab_build_gnf(s->_parserBranches, 0);
 	} else {
 		debug(2, "Assuming that this game does not use a parser.");
 		s->parser_rules = NULL;

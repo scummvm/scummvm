@@ -854,20 +854,6 @@ int c_sim_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-int c_classtable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	sciprintf("Available classes:\n");
-	for (uint i = 0; i < s->_classtable.size(); i++)
-		if (s->_classtable[i].reg.segment)
-			sciprintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i, PRINT_REG(s->_classtable[i].reg), s->_classtable[i].script);
-
-	return 0;
-}
-
 int c_viewinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int view = cmdParams[0].val;
 	int palette = cmdParams[1].val;
@@ -1076,102 +1062,6 @@ int c_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		sciprintf("Unknown word: '%s'\n", error);
 		free(error);
 	}
-
-	return 0;
-}
-
-int c_save_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int omit_check = cmdParams[0].str[0] == '_';
-
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (!omit_check) {
-		int result = 0;
-		for (uint i = 0; i < s->_fileHandles.size(); i++)
-			if (s->_fileHandles[i].isOpen())
-				result++;
-
-		if (result) {
-			sciprintf("Game state has %d open file handles.\n", result);
-			sciprintf("Save to '_%s' to ignore this check.\nGame was NOT saved.\n", cmdParams[0].str);
-			return 1;
-		}
-	}
-
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::OutSaveFile *out;
-	if (!(out = saveFileMan->openForSaving(cmdParams[0].str))) {
-		sciprintf("Error opening savegame \"%s\" for writing\n", cmdParams[0].str);
-		return 0;
-	}
-
-	// TODO: enable custom descriptions? force filename into a specific format?
-	if (gamestate_save(s, out, "debugging")) {
-		sciprintf("Saving the game state to '%s' failed\n", cmdParams[0].str);
-	}
-
-	return 0;
-}
-
-int c_restore_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	EngineState *newstate = NULL;
-
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::SeekableReadStream *in;
-	if (!(in = saveFileMan->openForLoading(cmdParams[0].str))) {
-		// found a savegame file
-		newstate = gamestate_restore(s, in);
-		delete in;
-	}
-
-	if (newstate) {
-		s->successor = newstate; // Set successor
-
-		script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
-		_debugstate_valid = 0;
-
-		shrink_execution_stack(s, s->execution_stack_base + 1);
-		return 0;
-	} else {
-		sciprintf("Restoring gamestate '%s' failed.\n", cmdParams[0].str);
-		return 1;
-	}
-}
-
-int c_restart_game(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	unsigned int i;
-
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	for (i = 0; i < cmdParams.size(); i++) {
-		if ((strcmp(cmdParams[0].str, "-r") == 0) || (strcmp(cmdParams[0].str, "--replay") == 0))
-			s->restarting_flags |= SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
-		else
-			if ((strcmp(cmdParams[0].str, "-p") == 0) || (strcmp(cmdParams[0].str, "--play") == 0))
-				s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
-			else {
-				sciprintf("Invalid parameter '%s'\n", cmdParams[0].str);
-				return 1;
-			}
-	}
-
-	sciprintf("Restarting\n");
-
-	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
-
-	script_abort_flag = 1;
-	_debugstate_valid = 0;
 
 	return 0;
 }
@@ -1625,32 +1515,6 @@ static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 	return 0;
 }
 
-static int c_redraw_screen(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	s->visual->draw(Common::Point(0, 0));
-	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
-	gfxop_update(s->gfx_state);
-	gfxop_sleep(s->gfx_state, 0);
-
-	return 0;
-}
-
-static int c_clear_screen(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	gfxop_clear_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
-	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
-
-	return 0;
-}
-
 static int c_visible_map(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!s) {
 		sciprintf("Not in debug state\n");
@@ -1669,20 +1533,6 @@ static int c_visible_map(EngineState *s, const Common::Array<cmd_param_t> &cmdPa
 	if (s->onscreen_console)
 		s->osc_backup = con_backup_screen(s);
 #endif
-	return 0;
-}
-
-static int c_gfx_current_port(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (!s->port)
-		sciprintf("none.\n");
-	else
-		sciprintf("%d\n", s->port->_ID);
-
 	return 0;
 }
 
@@ -2234,26 +2084,6 @@ static int c_resource_id(EngineState *s, const Common::Array<cmd_param_t> &cmdPa
 	return 0;
 }
 
-static int c_listclones(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-#if 0
-	int i, j = 0;
-
-	sciprintf("Listing all logged clones:\n");
-
-	for (i = 0; i < SCRIPT_MAX_CLONES; i++) {
-		if (s->clone_list[i]) {
-			sciprintf("  Clone at %04x\n", s->clone_list[i]);
-			j++;
-		}
-	}
-
-	sciprintf("Total of %d clones.\n", j);
-#endif
-	sciprintf("This function is temporarily disabled.\n");
-
-	return 0;
-}
-
 struct generic_config_flag_t {
 	const char *name;
 	const char option;
@@ -2403,25 +2233,6 @@ int c_gfx_debuglog(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) 
 	};
 
 	return c_handle_config_update(gfx_debug_modes, GFX_DEBUG_MODES, "graphics subsystem", (int *)&(drv->debug_flags), cmdParams);
-}
-
-int c_dump_words(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (s->_parserWords.empty()) {
-		sciprintf("No words.\n");
-		return 0;
-	}
-
-	for (WordMap::iterator i = s->_parserWords.begin(); i != s->_parserWords.end(); ++i)
-		sciprintf("%s: C %03x G %03x\n", i->_key.c_str(), i->_value._class, i->_value._group);
-
-	sciprintf("%d words\n", s->_parserWords.size());
-
-	return 0;
 }
 
 int c_simkey(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
@@ -2736,17 +2547,6 @@ int c_bpdel(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-int c_gnf(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	vocab_gnf_dump(s->_parserBranches);
-
-	return 0;
-}
-
 int c_se(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	stop_on_event = 1;
 	_debugstate_valid = script_debug_flag = script_error_flag = 0;
@@ -2802,17 +2602,6 @@ int c_statusbar(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 	sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, s->status_bar_foreground, s->status_bar_background);
 	gfxop_update(s->gfx_state);
-
-	return 0;
-}
-
-int c_sci_version(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	sciprintf("Emulating SCI version %s\n", versionNames[s->version]);
 
 	return 0;
 }
@@ -2997,7 +2786,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_sfx_remove, "sfx_remove", "!a", "Kills a playing sound.");
 			con_hook_command(c_debuginfo, "registers", "", "Displays all current register values");
 			con_hook_command(c_vmvars, "vmvars", "!sia*", "Displays or changes variables in the VM\n\nFirst parameter is either g(lobal), l(ocal), t(emp) or p(aram).\nSecond parameter is the var number\nThird parameter (if specified) is the value to set the variable to");
-			con_hook_command(c_sci_version, "sci_version", "", "Prints the SCI version currently being emulated");
 			con_hook_command(c_vmvarlist, "vmvarlist", "!", "Displays the addresses of variables in the VM");
 			con_hook_command(c_step, "s", "i*", "Executes one or several operations\n\nEXAMPLES\n\n"
 			                 "    s 4\n\n  Execute 4 commands\n\n    s\n\n  Execute next command");
@@ -3016,20 +2804,16 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "\n\nSEE ALSO\n\n  vo.1, accobj.1");
 			con_hook_command(c_accobj, "accobj", "!", "Displays information about an\n  object or class at the\n"
 			                 "address indexed by acc.\n\nSEE ALSO\n\n  obj.1, vo.1");
-			con_hook_command(c_classtable, "classtable", "", "Lists all available classes");
 			con_hook_command(c_stack, "stack", "i", "Dumps the specified number of stack elements");
 			con_hook_command(c_backtrace, "bt", "", "Dumps the send/self/super/call/calle/callb stack");
 			con_hook_command(c_snk, "snk", "s*", "Steps forward until it hits the next\n  callk operation.\n"
 			                 "  If invoked with a parameter, it will\n  look for that specific callk.\n");
 			con_hook_command(c_se, "se", "", "Steps forward until an SCI event is received.\n");
-			con_hook_command(c_listclones, "clonetable", "", "Lists all registered clones");
 			con_hook_command(c_set_acc, "set_acc", "!a", "Sets the accumulator");
 			con_hook_command(c_send, "send", "!asa*", "Sends a message to an object\nExample: send ?fooScript cue");
 			con_hook_command(c_sret, "sret", "", "Steps forward until ret is called\n  on the current execution stack\n  level.");
 			con_hook_command(c_resource_id, "resource_id", "i", "Identifies a resource number by\n"
 			                 "  splitting it up in resource type\n  and resource number.");
-			con_hook_command(c_clear_screen, "clear_screen", "", "Clears the screen, shows the\n  background pic and picviews");
-			con_hook_command(c_redraw_screen, "redraw_screen", "", "Redraws the screen");
 			con_hook_command(c_debuglog, "debuglog", "!s*", "Sets the debug log modes.\n  Possible parameters:\n"
 			                 "  +x (sets debugging for x)\n  -x (unsets debugging for x)\n\nPossible values"
 			                 " for x:\n  u: Unimpl'd/stubbed stuff\n  l: Lists and nodes\n  g: Graphics\n"
@@ -3053,11 +2837,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_bpdel, "bpdel", "i", "Deletes a breakpoint with specified index.");
 			con_hook_command(c_go, "go", "", "Executes the script.\n");
 			con_hook_command(c_dumpnodes, "dumpnodes", "i", "shows the specified number of nodes\nfrom the parse node tree");
-			con_hook_command(c_save_game, "save_game", "s", "Saves the current game state to\n  the hard disk");
-			con_hook_command(c_restore_game, "restore_game", "s", "Restores a saved game from the\n  hard disk");
-			con_hook_command(c_restart_game, "restart", "s*", "Restarts the game.\n\nUSAGE\n\n  restart [-r] [-p]"
-			                 " [--play] [--replay]\n\n  There are two ways to restart an SCI\n  game:\n"
-			                 "  play (-p) calls the game object's play()\n    method\n  replay (-r) calls the replay() method");
 			con_hook_command(c_mousepos, "mousepos", "", "Reveal the location of a mouse click.\n\n");
 			con_hook_command(c_viewinfo, "viewinfo", "ii", "Displays the number of loops\n  and cels of each loop"
 			                 " for the\n  specified view resource and palette.");
@@ -3065,7 +2844,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  are used to build Parse trees).");
 			con_hook_command(c_parse, "parse", "s", "Parses a sequence of words and prints\n  the resulting parse tree.\n"
 			                 "  The word sequence must be provided as a\n  single string.");
-			con_hook_command(c_gnf, "gnf", "", "Displays the Parse grammar\n  in strict GNF");
 			con_hook_command(c_set_parse_nodes, "set_parse_nodes", "s*", "Sets the contents of all parse nodes.\n"
 			                 "  Input token must be separated by\n  blanks.");
 			con_hook_command(c_sfx_debuglog, "sfx_debuglog", "s*",
@@ -3108,7 +2886,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  With parameters, it lists the\n  widget corresponding to the\n  numerical index specified (for\n  each parameter).");
 #endif
 			con_hook_command(c_gfx_flush_resources, "gfx_free_widgets", "", "Frees all dynamically allocated\n  widgets (for memory profiling).\n");
-			con_hook_command(c_gfx_current_port, "gfx_current_port", "", "Determines the current port number");
 			con_hook_command(c_gfx_print_port, "gfx_print_port", "i*", "Displays all information about the\n  specified port,"
 			                 " or the current port\n  if no port was specified.");
 			con_hook_command(c_gfx_print_visual, "gfx_print_visual", "", "Displays all information about the\n  current widget state");
@@ -3117,7 +2894,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_gfx_drawpic, "gfx_drawpic", "ii*", "Draws a pic resource\n\nUSAGE\n  gfx_drawpic <nr> [<pal> [<fl>]]\n"
 			                 "  where <nr> is the number of the pic resource\n  to draw\n  <pal> is the optional default\n  palette for the pic (0 is"
 			                 "\n  assumed if not specified)\n  <fl> are any pic draw flags (default\n  is 1)");
-			con_hook_command(c_dump_words, "dumpwords", "", "Lists all parser words");
 			con_hook_command(c_gfx_show_map, "gfx_show_map", "i", "Shows one of the screen maps\n  Semantics of the int parameter:\n"
 			                 "    0: visual map (back buffer)\n    1: priority map (back buf.)\n    2: control map (static buf.)");
 			con_hook_command(c_gfx_fill_screen, "gfx_fill_screen", "i", "Fills the screen with one\n  of the EGA colors\n");

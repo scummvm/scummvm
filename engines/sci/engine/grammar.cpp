@@ -43,6 +43,8 @@ namespace Sci {
 
 static int _allocd_rules = 0;	// FIXME: Avoid static vars
 
+int getAllocatedRulesCount() { return _allocd_rules; }
+
 static void vocab_print_rule(parse_rule_t *rule) {
 	int i;
 	int wspace = 0;
@@ -342,7 +344,7 @@ static parse_rule_list_t *_vocab_clone_rule_list_by_id(parse_rule_list_t *list, 
 	return result;
 }
 
-parse_rule_list_t *_vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches, int verbose) {
+parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches, int verbose) {
 	int iterations = 0;
 	int last_termrules, termrules = 0;
 	int ntrules_nr;
@@ -401,17 +403,6 @@ parse_rule_list_t *_vocab_build_gnf(const Common::Array<parse_tree_branch_t> &br
 	}
 
 	return tlist;
-}
-
-parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches) {
-	return _vocab_build_gnf(branches, 0);
-}
-
-void vocab_gnf_dump(const Common::Array<parse_tree_branch_t> &branches) {
-	parse_rule_list_t *tlist = _vocab_build_gnf(branches, 1);
-
-	sciprintf("%d allocd rules\n", _allocd_rules);
-	vocab_free_rule_list(tlist);
 }
 
 int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words,

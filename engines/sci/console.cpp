@@ -29,7 +29,12 @@
 #include "sci/console.h"
 #include "sci/resource.h"
 #include "sci/vocabulary.h"
+#include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
+#include "sci/gfx/gfx_state_internal.h"
+#include "sci/vocabulary.h"
+
+#include "common/savefile.h"
 
 namespace Sci {
 
@@ -42,17 +47,26 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 //	DCmd_Register("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
 	DCmd_Register("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
-	DCmd_Register("kernelnames",		WRAP_METHOD(Console, cmdKernelNames));
+	DCmd_Register("kernel_names",		WRAP_METHOD(Console, cmdKernelNames));
 	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
-	DCmd_Register("kernelwords",		WRAP_METHOD(Console, cmdKernelWords));
+	DCmd_Register("kernel_words",		WRAP_METHOD(Console, cmdKernelWords));
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
 	DCmd_Register("size",				WRAP_METHOD(Console, cmdResourceSize));
-	DCmd_Register("restypes",			WRAP_METHOD(Console, cmdResourceTypes));
+	DCmd_Register("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
 	DCmd_Register("sci0_palette",		WRAP_METHOD(Console, cmdSci0Palette));
 	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
+	DCmd_Register("clear_screen",		WRAP_METHOD(Console, cmdClearScreen));
+	DCmd_Register("redraw_screen",		WRAP_METHOD(Console, cmdRedrawScreen));
+	DCmd_Register("save_game",			WRAP_METHOD(Console, cmdSaveGame));
+	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
+	DCmd_Register("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
+	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
+	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
+	DCmd_Register("current_port",		WRAP_METHOD(Console, cmdCurrentPort));
+	DCmd_Register("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
 
 	// These were in sci.cpp
@@ -408,10 +422,156 @@ bool Console::cmdList(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdClearScreen(int argc, const char **argv) {
+	gfxop_clear_box(g_EngineState->gfx_state, gfx_rect(0, 0, 320, 200));
+	gfxop_update_box(g_EngineState->gfx_state, gfx_rect(0, 0, 320, 200));
+	return false;
+}
+
+bool Console::cmdRedrawScreen(int argc, const char **argv) {
+	g_EngineState->visual->draw(Common::Point(0, 0));
+	gfxop_update_box(g_EngineState->gfx_state, gfx_rect(0, 0, 320, 200));
+	gfxop_update(g_EngineState->gfx_state);
+	gfxop_sleep(g_EngineState->gfx_state, 0);
+	return false;
+}
+
+bool Console::cmdSaveGame(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Save the current game state to the hard disk\n");
+		DebugPrintf("Usage: %s <filename>\n", argv[0]);
+		return true;
+	}
+
+	int result = 0;
+	for (uint i = 0; i < g_EngineState->_fileHandles.size(); i++)
+		if (g_EngineState->_fileHandles[i].isOpen())
+			result++;
+
+	if (result)
+		DebugPrintf("Note: Game state has %d open file handles.\n", result);
+
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::OutSaveFile *out;
+	if (!(out = saveFileMan->openForSaving(argv[1]))) {
+		DebugPrintf("Error opening savegame \"%s\" for writing\n", argv[1]);
+		return true;
+	}
+
+	// TODO: enable custom descriptions? force filename into a specific format?
+	if (gamestate_save(g_EngineState, out, "debugging")) {
+		DebugPrintf("Saving the game state to '%s' failed\n", argv[1]);
+	}
+
+	return true;
+}
+
+bool Console::cmdRestoreGame(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Restores a saved game from the hard disk\n");
+		DebugPrintf("Usage: %s <filename>\n", argv[0]);
+		return true;
+	}
+
+	EngineState *newstate = NULL;
+
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::SeekableReadStream *in;
+	if (!(in = saveFileMan->openForLoading(argv[1]))) {
+		// found a savegame file
+		newstate = gamestate_restore(g_EngineState, in);
+		delete in;
+	}
+
+	if (newstate) {
+		g_EngineState->successor = newstate; // Set successor
+
+		script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
+		_debugstate_valid = 0;
+
+		shrink_execution_stack(g_EngineState, g_EngineState->execution_stack_base + 1);
+		return 0;
+	} else {
+		sciprintf("Restoring gamestate '%s' failed.\n", argv[1]);
+		return 1;
+	}
+
+	return false;
+}
+
+bool Console::cmdRestartGame(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Restarts the game. There are two ways to restart a SCI game:\n");
+		DebugPrintf("%s play - calls the game object's play() method\n", argv[0]);
+		DebugPrintf("%s replay - calls the replay() methody\n", argv[0]);
+		return true;
+	}
+
+	if (!scumm_stricmp(argv[1], "play")) {
+		g_EngineState->restarting_flags |= SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
+	} else if (!scumm_stricmp(argv[1], "replay")) {
+		g_EngineState->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
+	} else {
+		DebugPrintf("Invalid usage of %s\n", argv[0]);
+		return true;
+	}
+
+	g_EngineState->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
+	script_abort_flag = 1;
+	_debugstate_valid = 0;
+
+	return false;
+}
+
+bool Console::cmdClassTable(int argc, const char **argv) {
+	DebugPrintf("Available classes:\n");
+	for (uint i = 0; i < g_EngineState->_classtable.size(); i++) {
+		if (g_EngineState->_classtable[i].reg.segment) {
+			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i, 
+					PRINT_REG(g_EngineState->_classtable[i].reg), g_EngineState->_classtable[i].script);
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdParserWords(int argc, const char **argv) {
+	if (g_EngineState->_parserWords.empty()) {
+		DebugPrintf("No words.\n");
+		return true;
+	}
+
+	for (WordMap::iterator i = g_EngineState->_parserWords.begin(); i != g_EngineState->_parserWords.end(); ++i)
+		DebugPrintf("%s: C %03x G %03x\n", i->_key.c_str(), i->_value._class, i->_value._group);
+
+	DebugPrintf("%d words\n", g_EngineState->_parserWords.size());
+
+	return true;
+}
+
+bool Console::cmdCurrentPort(int argc, const char **argv) {
+	if (!g_EngineState->port)
+		DebugPrintf("Current port number: none.\n");
+	else
+		DebugPrintf("Current port number: %d\n", g_EngineState->port->_ID);
+
+	return true;
+}
+
+bool Console::cmdParseGrammar(int argc, const char **argv) {
+	DebugPrintf("Parse grammar, in strict GNF:\n");
+
+	parse_rule_list_t *tlist = vocab_build_gnf(g_EngineState->_parserBranches, 1);
+	DebugPrintf("%d allocd rules\n", getAllocatedRulesCount());
+	vocab_free_rule_list(tlist);
+
+	return true;
+}
+
 bool Console::cmdExit(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("exit game - exit gracefully\n");
-		DebugPrintf("exit now - exit ungracefully\n");
+		DebugPrintf("%s game - exit gracefully\n", argv[0]);
+		DebugPrintf("%s now - exit ungracefully\n", argv[0]);
 		return true;
 	}
 

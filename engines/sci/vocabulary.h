@@ -269,7 +269,7 @@ bool vocab_tokenize_string(ResultWordList &retval, const char *sentence,
 ** branch[0] is used only for a few magical incantations, as it is treated
 ** specially by the SCI parser.
 */
-parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches);
+parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches, int verbose);
 
 
 /* Frees a parser rule list as returned by vocab_build_gnf()
@@ -333,7 +333,7 @@ void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms)
 int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 	const parse_tree_branch_t &branch0, parse_rule_list_t *tlist, int verbose);
 
-void vocab_gnf_dump(const Common::Array<parse_tree_branch_t> &branches);
+int getAllocatedRulesCount();
 
 } // End of namespace Sci
 

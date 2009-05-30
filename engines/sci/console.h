@@ -55,6 +55,15 @@ private:
 	bool cmdSci0Palette(int argc, const char **argv);
 	bool cmdHexgrep(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
+	bool cmdClearScreen(int argc, const char **argv);
+	bool cmdRedrawScreen(int argc, const char **argv);
+	bool cmdSaveGame(int argc, const char **argv);
+	bool cmdRestoreGame(int argc, const char **argv);
+	bool cmdRestartGame(int argc, const char **argv);
+	bool cmdClassTable(int argc, const char **argv);
+	bool cmdParserWords(int argc, const char **argv);
+	bool cmdCurrentPort(int argc, const char **argv);
+	bool cmdParseGrammar(int argc, const char **argv);
 	bool cmdExit(int argc, const char **argv);
 
 private:
