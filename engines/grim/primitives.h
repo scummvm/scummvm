@@ -57,7 +57,7 @@ public:
 	Color getColor() { return _color; }
 	bool isFilled() { return _filled; }
 	void draw();
-	bool isBitmap() { return _type == 2; }
+	bool isBitmap() { return _type == BITMAP; }
 	Bitmap *getBitmapHandle() { assert(_bitmap); return _bitmap; }
 
 private:
