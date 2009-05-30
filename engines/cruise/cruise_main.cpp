@@ -1889,6 +1889,9 @@ void CruiseEngine::mainLoop(void) {
 				removeCell(&cellHead, autoOvl, autoMsg, 5, masterScreen);
 				autoMsg = -1;
 			}
+		} else {
+			// Keep ScummVM being responsive even when displayOn is false
+			g_system->updateScreen();
 		}
 
 		manageEvents();
