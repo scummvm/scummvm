@@ -130,13 +130,8 @@ static void saveObjectValue(TObject *object, SaveSint32 saveSint32, SaveUint32 s
 			}
 			break;
 		default:
-			if (object->ttype == MKID_BE('ACTR') || object->ttype == MKID_BE('COLR') || object->ttype == MKID_BE('STAT') || object->ttype == MKID_BE('FONT')
-						|| object->ttype == MKID_BE('VBUF') || object->ttype == MKID_BE('PRIM') || object->ttype == MKID_BE('TEXT')) {
-				saveUint32(makeIdFromPointer(object->value.ts).low);
-				saveUint32(makeIdFromPointer(object->value.ts).hi);
-			} else {
-				error("saveObjectValue: Unsupported object type");
-			}
+			saveUint32(makeIdFromPointer(object->value.ts).low);
+			saveUint32(makeIdFromPointer(object->value.ts).hi);
 	}
 }
 

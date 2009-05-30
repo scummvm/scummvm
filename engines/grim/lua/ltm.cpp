@@ -172,10 +172,22 @@ static void fillvalids(IMS e, TObject *func) {
 			*luaT_getim(t, e) = *func;
 }
 
+static luaL_reg tmFB[] = {
+	{"  typeFB", typeFB},
+	{"  errorFB", errorFB},
+	{"  nilFB", nilFB}
+};
+
+static bool tmFBAdded = false;
+
 void luaT_setfallback() {
 	static const char *oldnames [] = { "error", "getglobal", "arith", "order", NULL };
 	TObject oldfunc;
 	lua_CFunction replace;
+	if (!tmFBAdded) {
+		luaL_addlibtolist(tmFB, (sizeof(tmFB) / sizeof(tmFB[0])));
+		tmFBAdded = true;
+	}
 	const char *name = luaL_check_string(1);
 	lua_Object func = lua_getparam(2);
 	luaL_arg_check(lua_isfunction(func), 2, "function expected");

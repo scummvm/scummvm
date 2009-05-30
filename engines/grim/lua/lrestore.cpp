@@ -99,15 +99,10 @@ static void restoreObjectValue(TObject *object, RestoreSint32 restoreSint32, Res
 			}
 			break;
 		default:
-			if (object->ttype == MKID_BE('ACTR') || object->ttype == MKID_BE('COLR') || object->ttype == MKID_BE('STAT') || object->ttype == MKID_BE('FONT')
-					|| object->ttype == MKID_BE('VBUF') || object->ttype == MKID_BE('PRIM') || object->ttype == MKID_BE('TEXT')) {
-				PointerId ptr;
-				ptr.low = restoreUint32();
-				ptr.hi = restoreUint32();
-				object->value.ts = (TaggedString *)makePointerFromId(ptr);
-			} else {
-				error("restoreObjectValue: Unsupported object type");
-			}
+			PointerId ptr;
+			ptr.low = restoreUint32();
+			ptr.hi = restoreUint32();
+			object->value.ts = (TaggedString *)makePointerFromId(ptr);
 	}
 }
 
