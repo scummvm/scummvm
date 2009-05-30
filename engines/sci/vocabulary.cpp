@@ -32,6 +32,8 @@
 
 namespace Sci {
 
+int vocab_version = 0;
+
 #if 0
 
 /**
@@ -146,7 +148,6 @@ bool vocab_get_words(ResourceManager *resmgr, WordMap &words) {
 
 	// First try to load the SCI0 vocab resource.
 	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
-	int vocab_version = 0;
  
 	if (!resource) {
 		warning("SCI0: Could not find a main vocabulary, trying SCI01");
@@ -226,10 +227,12 @@ const char *vocab_get_any_group_word(int group, const WordMap &words) {
 
 bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 	// Determine if we can find a SCI1 suffix vocabulary first
-	Resource* resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 1);
-	if (!resource)
-		// No SCI1 vocabulary? Try SCI0
+	Resource* resource = NULL;
+	
+	if (vocab_version == 0)
 		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 1);
+	else
+		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 1);
 
 	if (!resource)
 		return false; // No vocabulary found
@@ -263,26 +266,26 @@ bool vocab_get_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
 }
 
 void vocab_free_suffixes(ResourceManager *resmgr, SuffixList &suffixes) {
-	// Determine if we got a SCI1 vocabulary loaded
-	Resource* resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 0);
-	if (resource && resource->status == kResStatusLocked) {
-		resmgr->unlockResource(resource, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, kResourceTypeVocab);
-	} else {
-		// No SCI1 vocabulary? Try SCI0
+	Resource* resource = NULL;
+	
+	if (vocab_version == 0)
 		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 0);
-		if (resource && resource->status == kResStatusLocked)
-			resmgr->unlockResource(resource, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, kResourceTypeVocab);
-	}
+	else
+		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 0);
+	
+	if (resource && resource->status == kResStatusLocked)
+		resmgr->unlockResource(resource, resource->number, kResourceTypeVocab);
 
 	suffixes.clear();
 }
 
 bool vocab_get_branches(ResourceManager * resmgr, Common::Array<parse_tree_branch_t> &branches) {
-	// Determine if we can find a SCI1 parser tree first
-	Resource *resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES, 0);
-	if (!resource)
-		// No SCI1 parser tree? Try SCI0
+	Resource *resource = NULL;
+
+	if (vocab_version == 0)
 		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES, 0);
+	else
+		resource = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES, 0);
 
 	branches.clear();
 
