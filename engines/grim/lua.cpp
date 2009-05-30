@@ -1018,106 +1018,128 @@ static void SetActorWalkDominate() {
 	bool mode = lua_isnil(modeObj) != 0;
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 	// TODO implement missing function
-//	actor->setWalkDominate(mode);
-/*
-	lua_Object param2;
-	Actor *act;
-
-	act = check_actor(1);
-	if (!act) {
-		lua_pushnil();
-		return;
-	}
-	param2 = lua_getparam(2);
-	if (lua_isnil(param2)) {
-		lua_pushnil();
-	} else if (lua_isnumber(param2)) {
-		int walkcode = lua_getnumber(lua_getparam(2));
-
-		if (walkcode != 1) {
-			warning("Unknown SetActorWalkDominate 'walking code' value: %d", walkcode);
-			lua_pushnil();
-			return;
-		}
-		// When Manny is pursued out of the dam area by a demon
-		// beaver he needs to stop his walk chore
-		act->stopWalking();
-		lua_pushnumber(walkcode);
-	} else {
-		warning("Unknown SetActorWalkDominate parameter!");
-		lua_pushnil();
-	}
-	*/
+	//actor->setWalkDominate(mode);
 }
 
 static void SetActorColormap() {
-	const char *mapname;
-	CMap *_cmap;
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object nameObj = lua_getparam(2);
 
-	act = check_actor(1);
-	mapname = luaL_check_string(2);
-	_cmap = g_resourceloader->loadColormap(mapname);
-	act->setColormap(mapname);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	if (lua_isstring(nameObj)) {
+		const char *name = lua_getstring(nameObj);
+		g_resourceloader->loadColormap(name);
+		actor->setColormap(name);
+	} else if (lua_isnil(nameObj)) {
+		error("SetActorColormap: implement remove cmap");
+		// remove ?
+	}
 }
 
 static void TurnActor() {
-	Actor *act;
-	int dir;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object dirObj = lua_getparam(2);
 
-	act = check_actor(1);
-	dir = lua_getnumber(lua_getparam(2));
-	act->turn(dir);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	if (!lua_isnumber(dirObj))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	int dir = lua_getnumber(dirObj);
+	// TODO verify. need clear mode walking
+	actor->turn(dir);
 }
 
 static void PushActorCostume() {
-	Actor *act;
-	const char *costumeName;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object nameObj = lua_getparam(2);
 
-	act = check_actor(1);
-	costumeName = luaL_check_string(2);
-	act->pushCostume(costumeName);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	if (!lua_isstring(nameObj))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	const char *costumeName = lua_getstring(nameObj);
+	actor->pushCostume(costumeName);
 }
 
 static void SetActorCostume() {
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object costumeObj = lua_getparam(2);
 
-	act = check_actor(1);
-	if (lua_isnil(lua_getparam(2)))
-		act->clearCostumes();
-	else {
-		const char *costumeName = luaL_check_string(2);
-		act->setCostume(costumeName);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	if (lua_isnil(costumeObj)) {
+		actor->clearCostumes();
+		pushbool(true);
+		return;
 	}
+	if (!lua_isstring(costumeObj)) {
+		pushbool(false);
+		return;
+	}
+
+	const char *costumeName = lua_getstring(costumeObj);
+	actor->setCostume(costumeName);
+	pushbool(true);
 }
 
 static void GetActorCostume() {
-	Actor *act;
-	Costume *c;
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object costumeObj = lua_getparam(2);
 
-	act = check_actor(1);
-	c = act->currentCostume();
-	if (!c) {
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR')) {
 		lua_pushnil();
-		if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
-			printf("GetActorCostume() on '%s' when actor has no costume!", act->name());
 		return;
 	}
-	lua_pushstring(const_cast<char *>(c->filename()));
+
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	Costume *costume = actor->currentCostume();
+	if (lua_isnil(costumeObj)) {
+		// dummy
+	} else if (lua_isnumber(costumeObj)) {
+		int num = lua_getnumber(costumeObj);
+		error("GetActorCostume: implement number Id");
+	} else
+		return;
+
+	if (costume)
+		lua_pushstring(const_cast<char *>(costume->filename()));
+	else
+		lua_pushnil();
 }
 
 static void PopActorCostume() {
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
+		return;
 
-	act = check_actor(1);
-	act->popCostume();
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	if (actor->currentCostume()) {
+		lua_pushstring(const_cast<char *>(actor->currentCostume()->filename()));
+		actor->popCostume();
+	} else
+		lua_pushnil();
 }
 
 static void GetActorCostumeDepth() {
-	Actor *act;
+	lua_Object actorObj = lua_getparam(1);
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR')) {
+		lua_pushnil();
+		return;
+	}
 
-	act = check_actor(1);
-	lua_pushnumber(act->costumeStackDepth());
+	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	lua_pushnumber(actor->costumeStackDepth());
 }
 
 static void PrintActorCostumes() {
