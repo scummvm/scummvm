@@ -327,9 +327,9 @@ void Screen_LoL::clearGuiShapeMemory(int pageNum) {
 	}
 }
 
-void Screen_LoL::copyGuiShapeFromSceneBackupBuffer(int srcPageNum,  uint8 *dstBuffer) {
+void Screen_LoL::copyGuiShapeFromSceneBackupBuffer(int srcPageNum,  int dstPageNum) {
 	uint8 *src = getPagePtr(srcPageNum) + 0x79c3;
-	uint8 *dst = dstBuffer;
+	uint8 *dst = getPagePtr(dstPageNum);
 
 	for (int i = 0; i < 23; i++) {
 		uint8 len = 0;
@@ -349,8 +349,8 @@ void Screen_LoL::copyGuiShapeFromSceneBackupBuffer(int srcPageNum,  uint8 *dstBu
 	}
 }
 
-void Screen_LoL::copyGuiShapeToSurface(uint8 *srcBuffer, int dstPageNum) {
-	uint8 *src = srcBuffer;
+void Screen_LoL::copyGuiShapeToSurface(int srcPageNum, int dstPageNum) {
+	uint8 *src = getPagePtr(srcPageNum);
 	uint8 *dst = getPagePtr(dstPageNum) + 0xe7c3;
 
 	for (int i = 0; i < 23; i++) {

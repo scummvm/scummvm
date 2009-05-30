@@ -56,8 +56,8 @@ public:
 	void backupSceneWindow(int srcPageNum, int dstPageNum);
 	void restoreSceneWindow(int srcPageNum, int dstPageNum);
 	void clearGuiShapeMemory(int pageNum);
-	void copyGuiShapeFromSceneBackupBuffer(int srcPageNum, uint8 *dstBuffer);
-	void copyGuiShapeToSurface(uint8 *srcBuffer, int dstPageNum);
+	void copyGuiShapeFromSceneBackupBuffer(int srcPageNum, int dstPageNum);
+	void copyGuiShapeToSurface(int srcPageNum, int dstPageNum);
 	void smoothScrollZoomStepTop(int srcPageNum, int dstPageNum, int x, int y);
 	void smoothScrollZoomStepBottom(int srcPageNum, int dstPageNum, int x, int y);
 	void smoothScrollHorizontalStep(int pageNum, int x, int u2, int w);

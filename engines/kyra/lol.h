@@ -749,6 +749,7 @@ private:
 	int olol_paletteFlash(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
+	int olol_gasExplosion(EMCState *script);
 	int olol_characterSays(EMCState *script);
 	int olol_queueSpeech(EMCState *script);
 	int olol_getItemPrice(EMCState *script);
@@ -982,7 +983,9 @@ private:
 	void movePartySmoothScrollTurnRight(int speed);
 
 	void pitDropScroll(int numSteps);
+
 	void shakeScene(int duration, int width, int height, int restore);
+	void processGasExplosion(int soundId);
 
 	int smoothScrollDrawSpecialGuiShape(int pageNum);
 

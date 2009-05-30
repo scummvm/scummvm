@@ -1021,7 +1021,7 @@ void LoLEngine::movePartySmoothScrollUp(int speed) {
 		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
 
 		if (d)
-			_screen->copyGuiShapeToSurface(_tempBuffer5120, 2);
+			_screen->copyGuiShapeToSurface(14, 2);
 
 		_screen->restoreSceneWindow(2, 0);
 		_screen->updateScreen();
@@ -1032,7 +1032,7 @@ void LoLEngine::movePartySmoothScrollUp(int speed) {
 	}
 
 	if (d)
-		_screen->copyGuiShapeToSurface(_tempBuffer5120, 12);
+		_screen->copyGuiShapeToSurface(14, 12);
 
 	if (_sceneDefaultUpdate != 2) {
 		_screen->restoreSceneWindow(12, 0);
@@ -1056,7 +1056,7 @@ void LoLEngine::movePartySmoothScrollDown(int speed) {
 		_screen->smoothScrollZoomStepBottom(6, 2, _scrollXBottom[i], _scrollYBottom[i]);
 
 		if (d)
-			_screen->copyGuiShapeToSurface(_tempBuffer5120, 2);
+			_screen->copyGuiShapeToSurface(14, 2);
 
 		_screen->restoreSceneWindow(2, 0);
 		_screen->updateScreen();
@@ -1067,7 +1067,7 @@ void LoLEngine::movePartySmoothScrollDown(int speed) {
 	}
 
 	if (d)
-		_screen->copyGuiShapeToSurface(_tempBuffer5120, 12);
+		_screen->copyGuiShapeToSurface(14, 12);
 
 	if (_sceneDefaultUpdate != 2) {
 		_screen->restoreSceneWindow(6, 0);
@@ -1155,7 +1155,7 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep1(_sceneDrawPage1, _sceneDrawPage2, dp);
 	if (d)
-		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
+		_screen->copyGuiShapeToSurface(14, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1164,7 +1164,7 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep2(_sceneDrawPage1, _sceneDrawPage2, dp);
 	if (d)
-		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
+		_screen->copyGuiShapeToSurface(14, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1173,7 +1173,7 @@ void LoLEngine::movePartySmoothScrollTurnLeft(int speed) {
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep3(_sceneDrawPage1, _sceneDrawPage2, dp);
 	if (d)
-		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
+		_screen->copyGuiShapeToSurface(14, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1199,7 +1199,7 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep3(_sceneDrawPage2, _sceneDrawPage1, dp);
 	if (d)
-		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
+		_screen->copyGuiShapeToSurface(14, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1208,7 +1208,7 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep2(_sceneDrawPage2, _sceneDrawPage1, dp);
 	if (d)
-		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
+		_screen->copyGuiShapeToSurface(14, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1217,7 +1217,7 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 	_smoothScrollTimer = _system->getMillis() + speed * _tickLength;
 	_screen->smoothScrollTurnStep1(_sceneDrawPage2, _sceneDrawPage1, dp);
 	if (d)
-		_screen->copyGuiShapeToSurface(_tempBuffer5120, dp);
+		_screen->copyGuiShapeToSurface(14, dp);
 	_screen->restoreSceneWindow(dp, 0);
 	_screen->updateScreen();
 	fadeText();
@@ -1300,13 +1300,62 @@ void LoLEngine::shakeScene(int duration, int width, int height, int restore) {
 	}
 }
 
+void LoLEngine::processGasExplosion(int soundId) {
+	int cp = _screen->setCurPage(2);
+	_screen->copyPage(0, 12);
+
+	static const uint8 sounds[] = { 0x62, 0xA7, 0xA7, 0xA8 };
+	snd_playSoundEffect(sounds[soundId], -1);
+
+	uint16 targetBlock = 0;
+	int dist = getSpellTargetBlock(_currentBlock, _currentDirection, 3, targetBlock);
+
+	uint8 *p1 = _screen->getPalette(1);
+	uint8 *p2 = _screen->getPalette(3);
+
+	if (dist) {
+		WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+		char file[13];
+		snprintf(file, 13, "gasexp%0d.wsa", dist);
+		mov->open(file, 1, 0);
+		if (!mov->opened())
+			error("Gas: Unable to load gasexp.wsa");
+
+		playSpellAnimation(mov, 0, 6, 1, (176 - mov->width()) / 2 + 112, (120 - mov->height()) / 2, 0, 0, 0, 0, false);
+
+		mov->close();
+		delete mov;
+
+	} else {
+		memcpy(p2, p1, 768);
+
+		for (int i = 1; i < 128; i++)
+			p2[i * 3] = 0x3f;
+
+		uint32 ctime = _system->getMillis();
+		while (_screen->fadePaletteStep(_screen->_currentPalette, p2, _system->getMillis() - ctime, 10))
+			updateInput();
+
+		ctime = _system->getMillis();
+		while (_screen->fadePaletteStep(p2, _screen->_currentPalette, _system->getMillis() - ctime, 50))
+			updateInput();
+	}
+	
+	_screen->copyPage(12, 2);
+	_screen->setCurPage(cp);
+
+	updateDrawPage2();
+	_sceneUpdateRequired = true;
+	gui_drawScene(0);
+}
+
 int LoLEngine::smoothScrollDrawSpecialGuiShape(int pageNum) {
 	if(!_specialGuiShape)
 		return 0;
 
 	_screen->clearGuiShapeMemory(pageNum);
 	_screen->drawShape(pageNum, _specialGuiShape, _specialGuiShapeX, _specialGuiShapeY, 2, 0);
-	_screen->copyGuiShapeFromSceneBackupBuffer(pageNum, _tempBuffer5120);
+	_screen->copyGuiShapeFromSceneBackupBuffer(pageNum, 14);
 	return 1;
 }
 

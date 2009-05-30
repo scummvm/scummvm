@@ -2044,6 +2044,12 @@ int LoLEngine::olol_enableControls(EMCState *script) {
 	return gui_enableControls();
 }
 
+int LoLEngine::olol_gasExplosion(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_gasExplosion(%p) (%d)", (const void *)script, stackPos(0));
+	processGasExplosion(stackPos(0));
+	return 1;
+}
+
 int LoLEngine::olol_characterSays(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterSays(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (stackPos(0) == -1) {
@@ -2599,7 +2605,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0xB4
 	Opcode(olol_enableControls);
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_gasExplosion);
 	OpcodeUnImpl();
 
 	// 0xB8
