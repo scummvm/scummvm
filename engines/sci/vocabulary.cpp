@@ -32,7 +32,7 @@
 
 namespace Sci {
 
-int vocab_version = 0;
+static int vocab_version = 0;	// FIXME: Avoid non-cpnst global vars
 
 #if 0
 

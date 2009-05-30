@@ -255,7 +255,7 @@ struct PathfindingState {
 };
 
 
-static Vertex *s_vertex_cur;	// FIXME: Avoid static vars
+static Vertex *s_vertex_cur;	// FIXME: Avoid non-cpnst global vars
 
 // FIXME: Temporary hack to deal with points in reg_ts
 static bool polygon_is_reg_t(const byte *list, int size) {

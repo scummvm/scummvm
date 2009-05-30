@@ -44,7 +44,7 @@
 namespace Sci {
 
 class SfxPlayer;
-SfxPlayer *player = NULL;		// FIXME: Avoid static vars
+SfxPlayer *player = NULL;	// FIXME: Avoid non-cpnst global vars
 
 
 #pragma mark -

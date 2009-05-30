@@ -1382,7 +1382,7 @@ static int _gfxop_numlockify(int c) {
 }
 
 static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
-	static int _modifierStates = 0;	// FIXME: EVIL HACK
+	static int _modifierStates = 0;	// FIXME: Avoid non-cpnst global vars
 	sci_event_t input = { SCI_EVT_NONE, 0, 0, 0 };
 
 	Common::EventManager *em = g_system->getEventManager();
