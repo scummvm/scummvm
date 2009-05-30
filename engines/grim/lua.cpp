@@ -61,8 +61,9 @@ static int refTextObjectDuration;
 static int refTextObjectCenter;
 static int refTextObjectLJustify;
 static int refTextObjectRJustify;
-static int refTextObjvVolume;
+static int refTextObjectVolume;
 static int refTextObjectBackground;
+static int refTextObjectPan;
 
 #define strmatch(src, dst)		(strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 
@@ -1484,12 +1485,17 @@ Common::String parseMsgText(const char *msg, char *msgId) {
 }
 
 static void TextFileGetLine() {
-	char textBuf[512];
-	textBuf[0] = 0;
-	const char *filename;
+	char textBuf[1000];
+	lua_Object nameObj = lua_getparam(1);
+	lua_Object posObj = lua_getparam(2);
 	Common::SeekableReadStream *file;
 
-	filename = luaL_check_string(1);
+	if (lua_isnil(nameObj) || lua_isnil(posObj)) {
+		lua_pushnil();
+		return;
+	}
+
+	const char *filename = lua_getstring(nameObj);
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	file = saveFileMan->openForLoading(filename);
 	if (!file) {
@@ -1497,22 +1503,26 @@ static void TextFileGetLine() {
 		return;
 	}
 
-	int pos = lua_getnumber(lua_getparam(2));
+	int pos = lua_getnumber(posObj);
 	file->seek(pos, SEEK_SET);
-	file->readLine_NEW(textBuf, 512);
+	file->readLine_NEW(textBuf, 1000);
 	delete file;
 
 	lua_pushstring(textBuf);
 }
 
 static void TextFileGetLineCount() {
-	char textBuf[512];
-	const char *filename;
-	Common::SeekableReadStream *file;
+	char textBuf[1000];
+	lua_Object nameObj = lua_getparam(1);
 
-	filename = luaL_check_string(1);
+	if (lua_isnil(nameObj)) {
+		lua_pushnil();
+		return;
+	}
+
+	const char *filename = luaL_check_string(1);
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	file = saveFileMan->openForLoading(filename);
+	Common::SeekableReadStream *file = saveFileMan->openForLoading(filename);
 	if (!file) {
 		lua_pushnil();
 		return;
@@ -1529,7 +1539,7 @@ static void TextFileGetLineCount() {
 		int pos = file->pos();
 		lua_pushnumber(pos);
 		lua_settable();
-		file->readLine_NEW(textBuf, 512);
+		file->readLine_NEW(textBuf, 1000);
 		line++;
 	}
 	delete file;
@@ -1544,80 +1554,107 @@ static void TextFileGetLineCount() {
 // Localization function
 
 static void LocalizeString() {
-	char msgId[32], buf[640];
-	const char *str, *result;
+	char msgId[50], buf[1000];
+	lua_Object strObj = lua_getparam(1);
 
-	str = luaL_check_string(1);
-	// If the string that we're passed isn't localized yet then
-	// construct the localized string, otherwise spit back what
-	// we've been given
-	if (str[0] == '/' && str[strlen(str)-1] == '/') {
-		Common::String msg = parseMsgText(str, msgId);
-		sprintf(buf, "/%s/%s", msgId, msg.c_str());
-		result = buf;
-	} else {
-		result = str;
+	if (lua_isstring(strObj)) {
+		const char *str = lua_getstring(strObj);
+		// If the string that we're passed isn't localized yet then
+		// construct the localized string, otherwise spit back what
+		// we've been given
+		if (str[0] == '/' && str[strlen(str) - 1] == '/') {
+			Common::String msg = parseMsgText(str, msgId);
+			sprintf(buf, "/%s/%s", msgId, msg.c_str());
+			str = buf;
+		}
+		lua_pushstring(str);
 	}
-	lua_pushstring(result);
+}
+
+static void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, int *pan, int *x, int *y) {
+	lua_Object tableObj;
+
+	lua_pushobject(paramObj);
+	lua_pushobject(lua_getref(refTextObjectX));
+	tableObj = lua_gettable();
+	if (lua_isnumber(tableObj)) {
+		if (*x)
+			*x = lua_getnumber(tableObj);
+	}
+
+	lua_pushobject(paramObj);
+	lua_pushobject(lua_getref(refTextObjectY));
+	tableObj = lua_gettable();
+	if (lua_isnumber(tableObj)) {
+		if (*y)
+			*y = lua_getnumber(tableObj);
+	}
+
+	lua_pushobject(paramObj);
+	lua_pushobject(lua_getref(refTextObjectBackground));
+	tableObj = lua_gettable();
+	if (!lua_isnil(tableObj)) {
+		if (*background)
+			*background = 0;
+	}
+
+	lua_pushobject(paramObj);
+	lua_pushobject(lua_getref(refTextObjectVolume));
+	tableObj = lua_gettable();
+	if (lua_isnumber(tableObj)) {
+		if (*vol)
+			*vol = lua_getnumber(tableObj);
+	}
+
+	lua_pushobject(paramObj);
+	lua_pushobject(lua_getref(refTextObjectPan));
+	tableObj = lua_gettable();
+	if (lua_isnumber(tableObj)) {
+		if (*pan)
+			*pan = lua_getnumber(tableObj);
+	}
 }
 
 static void SayLine() {
-	int /*vol = 64, */paramId = 2;
-	char msgId[32];
+	int vol = 127, buffer = 64, paramId = 1, x = -1, y = -1;
+	bool background = true;
+	char msgId[50];
 	Common::String msg;
-	lua_Object paramObj;
-	Actor *act;
+	lua_Object paramObj = lua_getparam(paramId++);
 
-	paramObj = lua_getparam(paramId++);
-	act = check_actor(1);
-	if (!lua_isnil(paramObj)) {
-		do {
-			if (lua_isstring(paramObj)) {
-				const char *tmpstr = lua_getstring(paramObj);
-				msg = parseMsgText(tmpstr, msgId);
-			} else if (lua_isnumber(paramObj)) {
-				// ignore
-			} else if (lua_istable(paramObj)) {
-				const char *key_text = NULL;
-				lua_Object key = LUA_NOOBJECT;
-				for (;;) {
-					lua_pushobject(paramObj);
-					if (key_text)
-						lua_pushobject(key);
-					else
-						lua_pushnil();
-					// If the call to "next" fails then register an error
-					if (lua_call("next") != 0) {
-						error("SayLine failed to get next key!");
-						return;
-					}
-					key = lua_getresult(1);
-					if (lua_isnil(key))
-						break;
-					warning("SayLine() not null table");
-					key_text = lua_getstring(key);
-					if (strmatch(key_text, "x"))
-						/*int x = */atoi(lua_getstring(lua_getresult(2)));
-					else if (strmatch(key_text, "y"))
-						/*int y = */atoi(lua_getstring(lua_getresult(2)));
-					else if (strmatch(key_text, "background"))
-						/*const char *backgorund = */lua_getstring(lua_getresult(2));
-					else if (strmatch(key_text, "skip_log"))
-						/*int skip_log = */atoi(lua_getstring(lua_getresult(2)));
-					else
-						error("Unknown SayLine key '%s' = '%s'", key_text, lua_getstring(lua_getresult(2)));
+	if (lua_isuserdata(paramObj) && lua_tag(paramObj) == MKID_BE('ACTR')
+			|| lua_isstring(paramObj) || lua_istable(paramObj)) {
+		Actor *actor = NULL;//some_Actor, maybe some current actor
+		if (lua_isuserdata(paramObj) && lua_tag(paramObj) == MKID_BE('ACTR')) {
+			actor = static_cast<Actor *>(lua_getuserdata(paramObj));
+			paramObj = lua_getparam(paramId++);
+		}
+		if (actor) {
+			if (lua_isnil(paramObj)) {
+loop:
+				if (!msg.empty()) {
+					actor->sayLine(msg.c_str(), msgId); //background, vol, pan, x, y
 				}
 			} else {
-					error("SayLine() unknown type of param");
+				while (1) {
+					if (!lua_isstring(paramObj) && !lua_isnumber(paramObj) && !lua_istable(paramObj))
+						break;
+					if (lua_istable(paramObj))
+						parseSayLineTable(paramObj, &background, &vol, &buffer, &x, &y);
+					else {
+						if (lua_isnumber(paramObj))
+							background = false;
+						else {
+							const char *tmpstr = lua_getstring(paramObj);
+							msg = parseMsgText(tmpstr, msgId);
+						}
+					}
+					paramObj = lua_getparam(paramId++);
+					if (lua_isnil(paramObj))
+						goto loop;
+				}
 			}
-			paramObj = lua_getparam(paramId++);
-		} while (!lua_isnil(paramObj));
-		if (msg.empty()) {
-			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("SayLine: Did not find a message ID!");
-			return;
 		}
-		act->sayLine(msg.c_str(), msgId);
 	}
 }
 
@@ -3966,9 +4003,9 @@ void register_lua() {
 	lua_pushstring("rjustify");
 	refTextObjectRJustify = lua_ref(true);
 	lua_pushstring("volume");
-	refTextObjvVolume = lua_ref(true);
-//	lua_pushstring(&text_buffer);
-//	refTextObjectBuffer = lua_ref(true);
+	refTextObjectVolume = lua_ref(true);
+	lua_pushstring("pan");
+	refTextObjectPan = lua_ref(true);
 	lua_pushstring("background");
 	refTextObjectBackground = lua_ref(true);
 }
