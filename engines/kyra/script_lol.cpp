@@ -338,7 +338,7 @@ int LoLEngine::olol_getItemPara(EMCState *script) {
 	case 16:
 		return p->flags;
 	case 17:
-		return (p->skill << 8) | p->might;
+		return (p->skill << 8) | ((uint8)p->might);
 	default:
 		break;
 	}
