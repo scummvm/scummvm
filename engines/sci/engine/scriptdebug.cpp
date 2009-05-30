@@ -1583,48 +1583,6 @@ static int c_gfx_priority(EngineState *s, const Common::Array<cmd_param_t> &cmdP
 	return 0;
 }
 
-static int c_gfx_print_visual(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (s->visual)
-		s->visual->print(0);
-	else
-		sciprintf("visual is uninitialized.\n");
-
-	return 0;
-}
-
-static int c_gfx_print_dynviews(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (!s->dyn_views)
-		sciprintf("No dynview list active.\n");
-	else
-		s->dyn_views->print(0);
-
-	return 0;
-}
-
-static int c_gfx_print_dropviews(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (!s->drop_views)
-		sciprintf("No dropped dynview list active.\n");
-	else
-		s->drop_views->print(0);
-
-	return 0;
-}
-
 static int c_gfx_drawpic(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int flags = 1, default_palette = 0;
 
@@ -1866,21 +1824,6 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 #endif
 }
 #endif
-
-static int c_gfx_flush_resources(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER);
-	sciprintf("Flushing resources...\n");
-	delete s->visual;
-	s->gfx_state->gfxResMan->freeAllResources();
-	s->visual = NULL;
-
-	return 0;
-}
 
 static int c_gfx_update_zone(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
@@ -2278,12 +2221,6 @@ int c_simsoundcue(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-#define ASSERT_PARAMS(number) \
-	if (cmdParams.size() <= number) {\
-		sciprintf("Operation '%s' needs %d parameters\n", op, number); \
-		return 1;\
-	}
-
 #define GETRECT(ll, rr, tt, bb) \
 	ll = GET_SELECTOR(pos, ll); \
 	rr = GET_SELECTOR(pos, rr); \
@@ -2606,12 +2543,6 @@ int c_statusbar(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-// int c_sleep(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-//	sleep(cmdParams[0].val);
-//
-//	return 0;
-// }
-
 static void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
 		sciprintf("  %04x:%04x\n", PRINT_REG(addr));
@@ -2658,25 +2589,6 @@ static int c_gc_normalise(EngineState *s, const Common::Array<cmd_param_t> &cmdP
 
 	addr = mobj->findCanonicAddress(s->seg_manager, addr);
 	sciprintf(" %04x:%04x\n", PRINT_REG(addr));
-
-	return 0;
-}
-
-static int c_gc(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	run_gc(s);
-
-	return 0;
-}
-
-static int c_gc_list_reachable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	reg_t_hash_map *use_map = find_all_used_references(s);
-
-	sciprintf("Reachable references (normalised):\n");
-	for (reg_t_hash_map::iterator i = use_map->begin(); i != use_map->end(); ++i) {
-		sciprintf(" - %04x:%04x\n", PRINT_REG(i->_key));
-	}
-
-	delete use_map;
 
 	return 0;
 }
@@ -2885,12 +2797,8 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_gfx_print_widget, "gfx_print_widget", "i*", "If called with no parameters, it\n  shows which widgets are active.\n"
 			                 "  With parameters, it lists the\n  widget corresponding to the\n  numerical index specified (for\n  each parameter).");
 #endif
-			con_hook_command(c_gfx_flush_resources, "gfx_free_widgets", "", "Frees all dynamically allocated\n  widgets (for memory profiling).\n");
 			con_hook_command(c_gfx_print_port, "gfx_print_port", "i*", "Displays all information about the\n  specified port,"
 			                 " or the current port\n  if no port was specified.");
-			con_hook_command(c_gfx_print_visual, "gfx_print_visual", "", "Displays all information about the\n  current widget state");
-			con_hook_command(c_gfx_print_dynviews, "gfx_print_dynviews", "", "Shows the dynview list");
-			con_hook_command(c_gfx_print_dropviews, "gfx_print_dropviews", "", "Shows the list of dropped\n  dynviews");
 			con_hook_command(c_gfx_drawpic, "gfx_drawpic", "ii*", "Draws a pic resource\n\nUSAGE\n  gfx_drawpic <nr> [<pal> [<fl>]]\n"
 			                 "  where <nr> is the number of the pic resource\n  to draw\n  <pal> is the optional default\n  palette for the pic (0 is"
 			                 "\n  assumed if not specified)\n  <fl> are any pic draw flags (default\n  is 1)");
@@ -2967,8 +2875,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  sfx-01-track <song> <offset>\n\n"
 			                 "SEE ALSO\n\n"
 			                 "  sfx-01-header.1\n\n");
-//			con_hook_command(c_sleep, "sleep", "i", "Suspends everything for the\n"
-//			                 " specified number of seconds");
 			con_hook_command(c_gc_show_reachable, "gc-list-reachable", "!a",
 			                 "Prints all addresses directly reachable from\n"
 			                 "  the memory object specified as parameter.\n\n"
@@ -2988,16 +2894,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "SEE ALSO\n\n"
 			                 "  gc-list-freeable.1, gc-list-reachable.1, gc.1,\n"
 			                 "  gc-all-reachable.1");
-			con_hook_command(c_gc, "gc", "",
-			                 "Performs garbage collection.\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  gc-list-freeable.1, gc-list-reachable.1,\n"
-			                 "  gc-all-reachable.1, gc-normalise.1");
-			con_hook_command(c_gc_list_reachable, "gc-all-reachable", "",
-			                 "Lists all reachable objects, normalised.\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  gc-list-freeable.1, gc-list-reachable.1,\n"
-			                 "  gc.1, gc-normalise.1");
 
 /*
 			con_hook_int(&script_debug_flag, "script_debug_flag", "Set != 0 to enable debugger\n");

@@ -64,6 +64,11 @@ private:
 	bool cmdParserWords(int argc, const char **argv);
 	bool cmdCurrentPort(int argc, const char **argv);
 	bool cmdParseGrammar(int argc, const char **argv);
+	bool cmdVisualState(int argc, const char **argv);
+	bool cmdDynamicViews(int argc, const char **argv);
+	bool cmdDroppedViews(int argc, const char **argv);
+	bool cmdInvokeGC(int argc, const char **argv);
+	bool cmdGCObjects(int argc, const char **argv);
 	bool cmdExit(int argc, const char **argv);
 
 private:

@@ -31,6 +31,7 @@
 #include "sci/vocabulary.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
+#include "sci/engine/gc.h"
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/vocabulary.h"
 
@@ -67,6 +68,11 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
 	DCmd_Register("current_port",		WRAP_METHOD(Console, cmdCurrentPort));
 	DCmd_Register("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
+	DCmd_Register("visual_state",		WRAP_METHOD(Console, cmdVisualState));
+	DCmd_Register("dynamic_views",		WRAP_METHOD(Console, cmdDynamicViews));
+	DCmd_Register("dropped_views",		WRAP_METHOD(Console, cmdDroppedViews));
+	DCmd_Register("gc",					WRAP_METHOD(Console, cmdInvokeGC));
+	DCmd_Register("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
 
 	// These were in sci.cpp
@@ -564,6 +570,58 @@ bool Console::cmdParseGrammar(int argc, const char **argv) {
 	parse_rule_list_t *tlist = vocab_build_gnf(g_EngineState->_parserBranches, 1);
 	DebugPrintf("%d allocd rules\n", getAllocatedRulesCount());
 	vocab_free_rule_list(tlist);
+
+	return true;
+}
+
+bool Console::cmdVisualState(int argc, const char **argv) {
+	DebugPrintf("State of the current visual widget:\n");
+
+	if (g_EngineState->visual)
+		g_EngineState->visual->print(0);
+	else
+		DebugPrintf("The visual widget is uninitialized.\n");
+
+	return true;
+}
+
+bool Console::cmdDynamicViews(int argc, const char **argv) {
+	DebugPrintf("List of active dynamic views:\n");
+
+	if (g_EngineState->dyn_views)
+		g_EngineState->dyn_views->print(0);
+	else
+		DebugPrintf("The list is empty.\n");
+
+	return true;
+}
+
+bool Console::cmdDroppedViews(int argc, const char **argv) {
+	DebugPrintf("List of dropped dynamic views:\n");
+
+	if (g_EngineState->drop_views)
+		g_EngineState->drop_views->print(0);
+	else
+		DebugPrintf("The list is empty.\n");
+
+	return true;
+}
+
+bool Console::cmdInvokeGC(int argc, const char **argv) {
+	DebugPrintf("Performing garbage collection...\n");
+	run_gc(g_EngineState);
+	return true;
+}
+
+bool Console::cmdGCObjects(int argc, const char **argv) {
+	reg_t_hash_map *use_map = find_all_used_references(g_EngineState);
+
+	DebugPrintf("Reachable object references (normalised):\n");
+	for (reg_t_hash_map::iterator i = use_map->begin(); i != use_map->end(); ++i) {
+		DebugPrintf(" - %04x:%04x\n", PRINT_REG(i->_key));
+	}
+
+	delete use_map;
 
 	return true;
 }
