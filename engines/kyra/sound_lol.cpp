@@ -58,7 +58,6 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	char file3[13];
 	file3[0] = 0;
 
-	Audio::AudioStream *as = 0;
 	Common::List<Audio::AudioStream *> newSpeechList;
 
 	snprintf(pattern2, sizeof(pattern2), "%02d", id & 0x4000 ? 0 : _curTlkFile);
@@ -69,8 +68,8 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 		snprintf(pattern1, sizeof(pattern1), "%03d", id);
 	} else {
 		snprintf(file3, sizeof(file3), "@%04d%c.%s", id - 1000, (char)speaker, pattern2);
-		if ((as = _sound->getVoiceStream(file3)) != 0)
-			newSpeechList.push_back(as);
+		if (_sound->isVoicePresent(file3))
+			newSpeechList.push_back(_sound->getVoiceStream(file3));
 	}
 
 	if (!file3[0]) {
@@ -78,10 +77,10 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 			char symbol = '0' + i;
 			snprintf(file1, sizeof(file1), "%s%c%c.%s", pattern1, (char)speaker, symbol, pattern2);
 			snprintf(file2, sizeof(file2), "%s%c%c.%s", pattern1, '_', symbol, pattern2);
-			if ((as = _sound->getVoiceStream(file1)) != 0)
-				newSpeechList.push_back(as);
-			else if ((as = _sound->getVoiceStream(file2)) != 0)
-				newSpeechList.push_back(as);
+			if (_sound->isVoicePresent(file1))
+				newSpeechList.push_back(_sound->getVoiceStream(file1));
+			if (_sound->isVoicePresent(file2))
+				newSpeechList.push_back(_sound->getVoiceStream(file2));
 			else
 				break;
 		}
@@ -102,8 +101,13 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 	_speechList = newSpeechList;
 
 	_activeVoiceFileTotalTime = 0;
-	for (Common::List<Audio::AudioStream *>::const_iterator i = _speechList.begin(); i != _speechList.end(); ++i)
-		_activeVoiceFileTotalTime += (*i)->getTotalPlayTime();
+	for (Common::List<Audio::AudioStream *>::iterator i = _speechList.begin(); i != _speechList.end(); ++i) {
+		// Just in case any file loading failed: Remove the bad streams here.
+		if (!*i)
+			i = _speechList.erase(i);
+		else
+			_activeVoiceFileTotalTime += (*i)->getTotalPlayTime();
+	}
 
 	_sound->playVoiceStream(*_speechList.begin(), &_speechHandle);
 	_speechList.pop_front();
