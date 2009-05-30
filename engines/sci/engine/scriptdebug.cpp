@@ -1708,86 +1708,8 @@ struct generic_config_flag_t {
 	unsigned int flag;
 };
 
-static void handle_config_update(const generic_config_flag_t *flags_list, int flags_nr, const char *subsystem,
-								 int *active_options_p, const char *changestring /* or NULL to display*/) {
-	if (!changestring) {
-		int j;
-
-		sciprintf("Logging in %s:\n", subsystem);
-		if (!(*active_options_p))
-			sciprintf("  (nothing)\n");
-
-		for (j = 0; j < flags_nr; j++)
-			if (*active_options_p & flags_list[j].flag) {
-				sciprintf("  - %s (%c)\n", flags_list[j].name, flags_list[j].option);
-			}
-	} else {
-		int mode;
-		int j = 0;
-		int flags = 0;
-
-		if (changestring[0] == '-')
-			mode = 0;
-		else if (changestring[0] == '+')
-			mode = 1;
-		else {
-			sciprintf("Mode spec must start with '+' or '-' in '%s'\n", changestring);
-			return;
-		}
-
-		while (changestring[++j]) {
-			int k;
-			int flag = 0;
-
-			if (changestring[j] == '*')
-				flags = ~0; // Everything
-			else
-				for (k = 0; !flag && k < flags_nr; k++)
-					if (flags_list[k].option == changestring[j])
-						flag = flags_list[k].flag;
-
-			if (!flag) {
-				sciprintf("Invalid/unknown mode flag '%c'\n", changestring[j]);
-				return;
-			}
-			flags |= flag;
-		}
-
-		if (mode) // +
-			*active_options_p |= flags;
-		else // -
-			*active_options_p &= ~flags;
-	}
-}
-
-static int c_handle_config_update(const generic_config_flag_t *flags, int flags_nr, const char *subsystem,
-			int *active_options_p, const Common::Array<cmd_param_t> &cmdParams) {
-
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (cmdParams.size() == 0)
-		handle_config_update(flags, flags_nr, subsystem, active_options_p, 0);
-
-	for (uint i = 0; i < cmdParams.size(); i++)
-		handle_config_update(flags, flags_nr, subsystem, active_options_p, cmdParams[i].str);
-
-	return 0;
-}
-
 #define SFX_DEBUG_MODES 2
 #define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
-
-static int c_sfx_debuglog(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	const generic_config_flag_t sfx_debug_modes[SFX_DEBUG_MODES] = {
-		{"Song activation/deactivation", 's', SFX_DEBUG_SONGS},
-		{"Song cue polling and delivery", 'c', SFX_DEBUG_CUES}
-	};
-
-	return c_handle_config_update(sfx_debug_modes, SFX_DEBUG_MODES, "sound subsystem", (int *)&(s->_sound._debug), cmdParams);
-}
 
 static int c_sfx_remove(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t id = cmdParams[0].reg;
@@ -1810,20 +1732,20 @@ static int c_is_sample(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 	Audio::AudioStream *data;
 
 	if (!song) {
-		sciprintf("Not a sound resource.\n");
+		warning("Not a sound resource");
 		return 1;
 	}
 
 	songit = songit_new(song->data, song->size, SCI_SONG_ITERATOR_TYPE_SCI0, 0xcaffe /* What do I care about the ID? */);
 
 	if (!songit) {
-		sciprintf("Error-- Could not convert to song iterator\n");
+		warning("Error-- Could not convert to song iterator");
 		return 1;
 	}
 
 	if ((data = songit->getAudioStream())) {
 /*
-		sciprintf("\nIs sample (encoding %dHz/%s/%04x).\n", data->conf.rate, (data->conf.stereo) ?
+		warning("\nIs sample (encoding %dHz/%s/%04x).", data->conf.rate, (data->conf.stereo) ?
 		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
 */
 		delete data;
@@ -2360,20 +2282,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  The word sequence must be provided as a\n  single string.");
 			con_hook_command(c_set_parse_nodes, "set_parse_nodes", "s*", "Sets the contents of all parse nodes.\n"
 			                 "  Input token must be separated by\n  blanks.");
-			con_hook_command(c_sfx_debuglog, "sfx_debuglog", "s*",
-			                 "Sets or prints the sound subsystem debug\n"
-			                 "settings\n\n"
-			                 "USAGE\n\n"
-			                 "  sfx_debuglog {[+|-][p|u|x|b]+}*\n\n"
-			                 "  sfx_debuglog\n\n"
-			                 "    Prints current settings\n\n"
-			                 "  sfx_debuglog +X\n\n"
-			                 "    Activates all debug features listed in X\n\n"
-			                 "  sfx_debuglog -X\n\n"
-			                 "    Deactivates the debug features listed in X\n\n"
-			                 "  Debug features:\n"
-			                 "    s: Active song changes\n"
-			                 "    c: Song cues\n");
 
 #ifdef GFXW_DEBUG_WIDGETS
 			con_hook_command(c_gfx_print_widget, "gfx_print_widget", "i*", "If called with no parameters, it\n  shows which widgets are active.\n"

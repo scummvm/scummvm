@@ -26,6 +26,7 @@
 /* Sound subsystem core: Event handler, sound player dispatching */
 
 #include "sci/tools.h"
+#include "sci/sci.h"
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
 #include "sci/sfx/misc.h"
@@ -486,20 +487,25 @@ void SfxState::updateSingleSong() {
 				setSongStatus(newsong, SOUND_STATUS_WAITING);
 		}
 
-		if (_debug & SFX_DEBUG_SONGS) {
-			sciprintf("[SFX] Changing active song:");
-			if (!_song)
-				sciprintf(" New song:");
-			else
-				sciprintf(" pausing %08lx, now playing", _song->handle);
-
-			if (newsong)
-				sciprintf(" %08lx\n", newsong->handle);
-			else
-				sciprintf(" none\n");
+		Common::String debugMessage = "[SFX] Changing active song:";
+		if (!_song) {
+			debugMessage += " New song:";
+		} else {
+			char tmp[50];
+			sprintf(tmp, " pausing %08lx, now playing ", _song->handle);
+			debugMessage += tmp;
 		}
 
+		if (newsong) {
+			char tmp[20];
+			sprintf(tmp, "%08lx\n", newsong->handle);
+			debugMessage += tmp;
+		} else {
+			debugMessage += " none\n";
+		}
 
+		debugC(2, kDebugLevelSound, debugMessage.c_str());
+				
 		_song = newsong;
 		thawTime(); /* Recover song delay time */
 
@@ -565,9 +571,8 @@ void SfxState::updateMultiSong() {
 	        oldseeker = oldseeker->next_stopping)
 		if (oldseeker->next_playing == &not_playing_anymore) {
 			setSongStatus(oldseeker, SOUND_STATUS_SUSPENDED);
-			if (_debug & SFX_DEBUG_SONGS) {
-				sciprintf("[SFX] Stopping song %lx\n", oldseeker->handle);
-			}
+			debugC(2, kDebugLevelSound, "[SFX] Stopping song %lx\n", oldseeker->handle);
+
 			if (player && oldseeker->it)
 				player->iterator_message(SongIterator::Message(oldseeker->it->ID, SIMSG_STOP));
 			oldseeker->next_playing = NULL; /* Clear this pointer; we don't need the tag anymore */
@@ -575,8 +580,7 @@ void SfxState::updateMultiSong() {
 
 	for (newseeker = newsong; newseeker; newseeker = newseeker->next_playing) {
 		if (newseeker->status != SOUND_STATUS_PLAYING && player) {
-			if (_debug & SFX_DEBUG_SONGS)
-				sciprintf("[SFX] Adding song %lx\n", newseeker->it->ID);
+			debugC(2, kDebugLevelSound, "[SFX] Adding song %lx\n", newseeker->it->ID);
 
 			SongIterator *clonesong = newseeker->it->clone(newseeker->_delay);
 			player->add_iterator(clonesong, g_system->getMillis());
@@ -617,7 +621,6 @@ void SfxState::sfx_init(ResourceManager *resmgr, int flags) {
 	song_lib_init(&_songlib);
 	_song = NULL;
 	_flags = flags;
-	_debug = 0; /* Disable all debugging by default */
 	_soundSync = NULL;
 	_audioResource = NULL;
 
@@ -644,7 +647,7 @@ void SfxState::sfx_init(ResourceManager *resmgr, int flags) {
 	player = new SfxPlayer();
 
 	if (!player) {
-		sciprintf("[SFX] No song player found\n");
+		warning("[SFX] No song player found");
 		return;
 	}
 
@@ -721,9 +724,7 @@ int SfxState::sfx_poll_specific(song_handle_t handle, int *cue) {
 	if (!song)
 		return 0; /* Song not playing */
 
-	if (_debug & SFX_DEBUG_CUES) {
-		fprintf(stderr, "[SFX:CUE] Polled song %08lx ", handle);
-	}
+	debugC(2, kDebugLevelSound, "[SFX:CUE] Polled song %08lx ", handle);
 
 	while (1) {
 		if (song->_wakeupTime.frameDiff(ctime) > 0)
@@ -741,19 +742,14 @@ int SfxState::sfx_poll_specific(song_handle_t handle, int *cue) {
 		case SI_LOOP:
 		case SI_RELATIVE_CUE:
 		case SI_ABSOLUTE_CUE:
-			if (_debug & SFX_DEBUG_CUES) {
-				sciprintf(" => ");
+			if (result == SI_FINISHED)
+				debugC(2, kDebugLevelSound, " => finished");
+			else {
+				if (result == SI_LOOP)
+					debugC(2, kDebugLevelSound, " => Loop: %d (0x%x)", *cue, *cue);
+				else
+					debugC(2, kDebugLevelSound, " => Cue: %d (0x%x)", *cue, *cue);
 
-				if (result == SI_FINISHED)
-					sciprintf("finished\n");
-				else {
-					if (result == SI_LOOP)
-						sciprintf("Loop: ");
-					else
-						sciprintf("Cue: ");
-
-					sciprintf("%d (0x%x)", *cue, *cue);
-				}
 			}
 			return result;
 
@@ -765,9 +761,7 @@ int SfxState::sfx_poll_specific(song_handle_t handle, int *cue) {
 			break;
 		}
 	}
-	if (_debug & SFX_DEBUG_CUES) {
-		fprintf(stderr, "\n");
-	}
+
 }
 
 
@@ -939,8 +933,7 @@ Common::Error SfxState::sfx_send_midi(song_handle_t handle, int channel,
 
 	if (command == 0xb0 &&
 	        arg1 == SCI_MIDI_CHANNEL_MUTE) {
-		sciprintf("TODO: channel mute (channel %d %s)!\n", channel,
-		          channel_state[arg2]);
+		warning("TODO: channel mute (channel %d %s)!", channel, channel_state[arg2]);
 		/* We need to have a GET_PLAYMASK interface to use
 		   here. SET_PLAYMASK we've got.
 		*/
@@ -964,7 +957,7 @@ Common::Error SfxState::sfx_send_midi(song_handle_t handle, int channel,
 		buffer[2] = (arg1 & 0xff00) >> 7;
 		break;
 	default:
-		sciprintf("Unexpected explicit MIDI command %02x\n", command);
+		warning("Unexpected explicit MIDI command %02x", command);
 		return Common::kUnknownError;
 	}
 

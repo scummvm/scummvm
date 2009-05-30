@@ -154,9 +154,6 @@ GfxWidget::GfxWidget(gfxw_widget_type_t type_) {
 static int verify_widget(GfxWidget *widget) {
 	if (!widget) {
 		GFXERROR("Attempt to use NULL widget\n");
-#ifdef GFXW_DEBUG_WIDGETS
-		BREAKPOINT();
-#endif
 		return 1;
 	} else if (widget->_magic != GFXW_MAGIC_VALID) {
 		if (widget->_magic == GFXW_MAGIC_INVALID) {
@@ -164,9 +161,6 @@ static int verify_widget(GfxWidget *widget) {
 		} else {
 			GFXERROR("Attempt to use non-widget\n");
 		}
-#ifdef GFXW_DEBUG_WIDGETS
-		BREAKPOINT();
-#endif
 		return 1;
 	}
 	return 0;

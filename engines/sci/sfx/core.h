@@ -43,11 +43,6 @@ struct fade_params_t;
 ** simultaneously ? */
 #define SFX_STATE_FLAG_NOSOUND	 (1 << 1) /* Completely disable sound playing */
 
-
-#define SFX_DEBUG_SONGS		(1 << 0) /* Debug song changes */
-#define SFX_DEBUG_CUES		(1 << 1) /* Debug cues, loops, and
-** song completions */
-
 class SfxState {
 public:	// FIXME, make private
 	SongIterator *_it; /**< The song iterator at the heart of things */
@@ -55,7 +50,6 @@ public:	// FIXME, make private
 	songlib_t _songlib; /**< Song library */
 	song_t *_song; /**< Active song, or start of active song chain */
 	bool _suspended; /**< Whether we are suspended */
-	uint _debug; /**< Debug flags */
 	ResourceSync *_soundSync; /**< Used by kDoSync for speech syncing in CD talkie games */
 	AudioResource *_audioResource; /**< Used for audio resources in CD talkie games */
 

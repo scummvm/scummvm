@@ -853,7 +853,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_sound._flags = s->_sound._flags;
 	retval->_sound._song = NULL;
 	retval->_sound._suspended = s->_sound._suspended;
-	retval->_sound._debug = s->_sound._debug;
 	reconstruct_sounds(retval);
 
 	// Message state:
