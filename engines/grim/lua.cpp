@@ -75,14 +75,6 @@ Actor *check_actor(int num) {
 	return NULL;
 }
 
-Color *check_color(int num) {
-	lua_Object param = lua_getparam(num);
-	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('COLR'))
-		return static_cast<Color *>(lua_getuserdata(param));
-	luaL_argerror(num, "color expected");
-	return NULL;
-}
-
 static inline bool getbool(int num) {
 	return !lua_isnil(lua_getparam(num));
 }
@@ -124,7 +116,12 @@ static void new_dofile() {
 static void PrintDebug() {
 	if (gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL) {
 		Common::String msg("Debug: ");
-		msg += Common::String(luaL_check_string(1)) + "\n";
+		lua_Object strObj = lua_getparam(1);
+		if (lua_isnil(strObj))
+			msg += "(nil)";
+		if (!lua_isstring(strObj))
+			return;
+		msg += Common::String(lua_getstring(strObj)) + "\n";
 		printf(msg.c_str());
 	}
 }
@@ -132,7 +129,12 @@ static void PrintDebug() {
 static void PrintError() {
 	if (gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL) {
 		Common::String msg("Error: ");
-		msg += Common::String(luaL_check_string(1)) + "\n";
+		lua_Object strObj = lua_getparam(1);
+		if (lua_isnil(strObj))
+			msg += "(nil)";
+		if (!lua_isstring(strObj))
+			return;
+		msg += Common::String(lua_getstring(strObj)) + "\n";
 		printf(msg.c_str());
 	}
 }
@@ -140,7 +142,12 @@ static void PrintError() {
 static void PrintWarning() {
 	if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL) {
 		Common::String msg("Warning: ");
-		msg += Common::String(luaL_check_string(1)) + "\n";
+		lua_Object strObj = lua_getparam(1);
+		if (lua_isnil(strObj))
+			msg += "(nil)";
+		if (!lua_isstring(strObj))
+			return;
+		msg += Common::String(lua_getstring(strObj)) + "\n";
 		printf(msg.c_str());
 	}
 }
@@ -150,15 +157,16 @@ static void FunctionName() {
 	char buf[256];
 	const char *filename;
 	int32 line;
+	lua_Object param1 = lua_getparam(1);
 
-	if (!lua_isfunction(lua_getparam(1))) {
+	if (!lua_isfunction(param1)) {
 		sprintf(buf, "function InvalidArgsToFunctionName");
 		lua_pushstring(buf);
 		return;
 	}
 
-	lua_funcinfo(lua_getparam(1), &filename, &line);
-	switch (*lua_getobjname(lua_getparam(1), &name)) {
+	lua_funcinfo(param1, &filename, &line);
+	switch (*lua_getobjname(param1, &name)) {
 	case 'g':
 		sprintf(buf, "function %.100s", name);
 		break;
@@ -177,7 +185,7 @@ static void FunctionName() {
 			}
 		}
 	}
-	int curr_line = lua_currentline(lua_getparam(1));
+	int curr_line = lua_currentline(param1);
 	if (curr_line > 0)
 		sprintf(buf + strlen(buf), " at line %d", curr_line);
 	if (filename)
@@ -186,8 +194,12 @@ static void FunctionName() {
 }
 
 static void CheckForFile() {
-	const char *filename = luaL_check_string(1);
+	lua_Object strObj = lua_getparam(1);
 
+	if (!lua_isstring(strObj))
+		return;
+
+	const char *filename = lua_getstring(strObj);
 	pushbool(g_resourceloader->fileExists(filename));
 }
 
@@ -201,21 +213,48 @@ static byte clamp_color(int c) {
 }
 
 static void MakeColor() {
-	Color *c = new Color (clamp_color(lua_getnumber(lua_getparam(1))),
-			clamp_color(lua_getnumber(lua_getparam(2))), clamp_color(lua_getnumber(lua_getparam(3))));
+	lua_Object rObj = lua_getparam(1);
+	lua_Object gObj = lua_getparam(2);
+	lua_Object bObj = lua_getparam(3);
+	int r, g, b;
+
+	if (!lua_isnumber(rObj))
+		r = 0;
+	else
+		r = clamp_color(lua_getnumber(rObj));
+
+	if (!lua_isnumber(gObj))
+		g = 0;
+	else
+		g = clamp_color(lua_getnumber(gObj));
+
+	if (!lua_isnumber(bObj))
+		b = 0;
+	else
+		b = clamp_color(lua_getnumber(bObj));
+
+	Color *c = new Color (r, g ,b);
 	lua_pushusertag(c, MKID_BE('COLR'));
 }
 
 static void GetColorComponents() {
-	Color *c = check_color(1);
+	lua_Object colorObj = lua_getparam(1);
+	Color *c = static_cast<Color *>(lua_getuserdata(colorObj));
 	lua_pushnumber(c->red());
 	lua_pushnumber(c->green());
 	lua_pushnumber(c->blue());
 }
 
 static void ReadRegistryValue() {
-	const char *key = luaL_check_string(1);
+	lua_Object keyObj = lua_getparam(1);
+
+	if (!lua_isstring(keyObj)) {
+		lua_pushnil();
+		return;
+	}
+	const char *key = lua_getstring(keyObj);
 	const char *val = g_registry->get(key, "");
+	// this opcode can return lua_pushnumber due binary nature of some registry entries, but not implemented
 	if (val[0] == 0)
 		lua_pushnil();
 	else
@@ -223,8 +262,18 @@ static void ReadRegistryValue() {
 }
 
 static void WriteRegistryValue() {
-	const char *key = luaL_check_string(1);
-	const char *val = luaL_check_string(2);
+	lua_Object keyObj = lua_getparam(1);
+	lua_Object valObj = lua_getparam(2);
+
+	if (!lua_isstring(keyObj))
+		return;
+
+	if (!lua_isstring(valObj))
+		return;
+
+	// this opcode can get lua_getnumber due binary nature of some registry entries, but not implemented
+	const char *key = lua_getstring(keyObj);
+	const char *val = lua_getstring(valObj);
 	g_registry->set(key, val);
 }
 
@@ -293,8 +342,11 @@ static void SetSayLineDefaults() {
 
 static void SetActorTalkColor() {
 	Actor *act = check_actor(1);
-	Color *c = check_color(2);
-	act->setTalkColor(*c);
+	lua_Object colorObj = lua_getparam(2);
+	if (lua_isuserdata(colorObj) && lua_tag(colorObj) == MKID_BE('COLR')) {
+		Color *c = static_cast<Color *>(lua_getuserdata(colorObj));
+		act->setTalkColor(*c);
+	}
 }
 
 static void GetActorTalkColor() {

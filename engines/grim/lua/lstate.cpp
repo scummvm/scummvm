@@ -73,9 +73,6 @@ void lua_resetglobals() {
 	luaX_init();
 }
 
-Actor *check_actor(int num);
-Color *check_color(int num);
-
 void callHook(lua_Function func, const char *filename, int line) {
 	const char *name, *type;
 	FILE *output = stdout;
@@ -99,10 +96,10 @@ void callHook(lua_Function func, const char *filename, int line) {
 				fprintf(output, "{...}");
 			else if (lua_isuserdata(lua_getparam(i))) {
 				if (lua_tag(lua_getparam(i)) == MKID_BE('ACTR')) {
-					Actor *a = check_actor(i);
+					Actor *a = static_cast<Actor *>(lua_getuserdata(lua_getparam(i)));
 					fprintf(output, "<actor \"%s\">", a->name());
 				} else if (lua_tag(lua_getparam(i)) == MKID_BE('COLR')) {
-					Color *c = check_color(i);
+					Color *c = static_cast<Color *>(lua_getuserdata(lua_getparam(i)));
 					fprintf(output, "<color #%02x%02x%02x>", c->red(), c->green(), c->blue());
 				} else
 					fprintf(output, "<userdata %p>", lua_getuserdata(lua_getparam(i)));
