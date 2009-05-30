@@ -994,6 +994,21 @@ const KYRAGameDescription adGameDescs[] = {
 			"lol",
 			0,
 			{
+				{ "WESTWOOD.1", 0, "c656aa9a2b4032d341e3dc8e3525b917", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		LOL_FLOPPY_CMP_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			0,
+			{
 				{ "WESTWOOD.1", 0, "3c61cb7de5b2ec452f5851f5075207ee", -1 },
 				{ 0, 0, 0, 0 }
 			},
