@@ -1791,6 +1791,17 @@ int LoLEngine::olol_assignCustomSfx(EMCState *script) {
 	return 0;
 }
 
+int LoLEngine::olol_findAssignedMonster(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_findAssignedMonster(%p)  (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	uint16 o = stackPos(1) == -1 ? _levelBlockProperties[stackPos(0)].assignedObjects : findObject(stackPos(1))->nextAssignedObject;
+	while (o) {
+		if (o & 0x8000)
+			return o & 0x7fff;		
+		o = findObject(o)->nextAssignedObject;
+	}
+	return -1;
+}
+
 int LoLEngine::olol_checkBlockForMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkBlockForMonster(%p)  (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	uint16 block = stackPos(0);
@@ -2511,7 +2522,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x94
 	Opcode(olol_assignCustomSfx);
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_findAssignedMonster);
 	Opcode(olol_checkBlockForMonster);
 
 	// 0x98

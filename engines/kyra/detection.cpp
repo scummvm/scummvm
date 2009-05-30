@@ -1009,6 +1009,22 @@ const KYRAGameDescription adGameDescs[] = {
 			"lol",
 			"Extracted",
 			{
+				{ "GENERAL.PAK", 0, "2aaa30e120c08af87196820e9dd4bf73", -1 },
+				{ "CHAPTER7.PAK", 0, "eb92bf7ebb4e890add1233a6b0c810ff", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
+	{
+		{
+			"lol",
+			"Extracted",
+			{
 				{ "GENERAL.PAK", 0, "996e66e81054d36249907a1d8158da3d", -1 },
 				{ "CHAPTER7.PAK", 0, "cabee57f00d6d84b65a732b6868a4959", -1 },
 				{ 0, 0, 0, 0 }

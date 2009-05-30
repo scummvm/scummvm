@@ -730,6 +730,7 @@ private:
 	int olol_prepareSpecialScene(EMCState *script);
 	int olol_restoreAfterSpecialScene(EMCState *script);
 	int olol_assignCustomSfx(EMCState *script);
+	int olol_findAssignedMonster(EMCState *script);
 	int olol_checkBlockForMonster(EMCState *script);
 	int olol_transformRegion(EMCState *script);
 	int olol_calcCoordinatesAddDirectionOffset(EMCState *script);
