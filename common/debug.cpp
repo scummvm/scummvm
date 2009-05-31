@@ -122,7 +122,7 @@ DebugChannelList listDebugChannels() {
 }
 
 bool isDebugChannelEnabled(uint32 level) {
-	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel == 11)
 		return true;
 //	return gDebugLevelsEnabled & (1 << level);
@@ -130,7 +130,7 @@ bool isDebugChannelEnabled(uint32 level) {
 }
 
 bool isDebugChannelEnabled(const String &name) {
-	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel == 11)
 		return true;
 
@@ -217,7 +217,7 @@ void debugN(int level, const char *s, ...) {
 void debugC(int level, uint32 debugChannels, const char *s, ...) {
 	va_list va;
 
-	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
 		if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & debugChannels))
 			return;
@@ -230,7 +230,7 @@ void debugC(int level, uint32 debugChannels, const char *s, ...) {
 void debugC(uint32 debugChannels, const char *s, ...) {
 	va_list va;
 
-	// FIXME: Seems gDebugLevel 11 has a special meaning? Document that!
+	// Debug level 11 turns on all special debug level messages
 	if (gDebugLevel != 11)
 		if (!(Common::gDebugLevelsEnabled & debugChannels))
 			return;
