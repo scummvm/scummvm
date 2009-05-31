@@ -83,7 +83,7 @@ bool SaveLoad::load(const char *fileName, int16 dataVar, int32 size, int32 offse
 		const char *desc = getDescription(fileName);
 
 		if (!desc)
-			desc = "Unkown";
+			desc = "Unknown";
 
 		warning("Could not load %s (\"%s\" (%d, %d, %d))",
 				desc, fileName, dataVar, size, offset);
@@ -109,7 +109,7 @@ bool SaveLoad::save(const char *fileName, int16 dataVar, int32 size, int32 offse
 		const char *desc = getDescription(fileName);
 
 		if (!desc)
-			desc = "Unkown";
+			desc = "Unknown";
 
 		warning("Could not save %s (\"%s\" (%d, %d, %d))",
 				desc, fileName, dataVar, size, offset);
