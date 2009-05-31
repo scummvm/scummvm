@@ -480,9 +480,9 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 	delete port;
 }
 
-static bool activated_icon_bar = false;	// FIXME: Avoid non-cpnst global vars
-static int port_origin_x = 0;	// FIXME: Avoid non-cpnst global vars
-static int port_origin_y = 0;	// FIXME: Avoid non-cpnst global vars
+static bool activated_icon_bar = false;	// FIXME: Avoid non-const global vars
+static int port_origin_x = 0;	// FIXME: Avoid non-const global vars
+static int port_origin_y = 0;	// FIXME: Avoid non-const global vars
 
 reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	rect_t area;
@@ -1776,7 +1776,7 @@ void _k_view_list_mark_free(EngineState *s, reg_t off) {
 	}
 }
 
-static bool _k_animate_ran = false;	// FIXME: Avoid non-cpnst global vars
+static bool _k_animate_ran = false;	// FIXME: Avoid non-const global vars
 
 int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, int funct_nr, int argc, reg_t *argv) {
 // disposes all list members flagged for disposal; funct_nr is the invoking kfunction

@@ -41,7 +41,7 @@ namespace Sci {
 #define TOKEN_NON_NT (TOKEN_OPAREN | TOKEN_TERMINAL_CLASS | TOKEN_TERMINAL_GROUP | TOKEN_STUFFING_WORD)
 #define TOKEN_TERMINAL (TOKEN_TERMINAL_CLASS | TOKEN_TERMINAL_GROUP)
 
-static int _allocd_rules = 0;	// FIXME: Avoid non-cpnst global vars
+static int _allocd_rules = 0;	// FIXME: Avoid non-const global vars
 
 int getAllocatedRulesCount() { return _allocd_rules; }
 

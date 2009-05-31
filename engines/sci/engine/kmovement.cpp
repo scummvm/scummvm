@@ -237,7 +237,7 @@ enum Movecnt {
 	UNINITIALIZED
 };
 
-static Movecnt handle_movecnt = UNINITIALIZED;	// FIXME: Avoid non-cpnst global vars
+static Movecnt handle_movecnt = UNINITIALIZED;	// FIXME: Avoid non-const global vars
 
 /**
  * Address parameters may be passed in one of three forms:
