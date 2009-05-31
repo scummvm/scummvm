@@ -1298,16 +1298,9 @@ int processInput(void) {
 		buttonDown = 0;
 	}
 
-	if (userDelay) {
+	if (userDelay && !userWait) {
 		userDelay--;
 		return 0;
-	}
-
-	// Player Menu - test for both buttons or the F10 key
-	if (((button & MB_BOTH) == MB_BOTH) || (keyboardCode == Common::KEYCODE_F10)) {
-		changeCursor(CURSOR_NORMAL);
-		keyboardCode = Common::KEYCODE_INVALID;
-		return (playerMenu(mouseX, mouseY));
 	}
 
 	// Check for Exit 'X' key
@@ -1341,6 +1334,20 @@ int processInput(void) {
 		keyboardCode = Common::KEYCODE_INVALID;
 		_vm->pauseEngine(false);
 		mouseOn();
+		return 0;
+	}
+
+	// Player Menu - test for both buttons or the F10 key
+	if (((button & MB_BOTH) == MB_BOTH) || (keyboardCode == Common::KEYCODE_F10)) {
+		changeCursor(CURSOR_NORMAL);
+		keyboardCode = Common::KEYCODE_INVALID;
+		return (playerMenu(mouseX, mouseY));
+	}
+
+	if (userWait) {
+		// Check for left mouse button click or Space to end user waiting
+		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == MB_LEFT))
+			userWait = 0;
 		return 0;
 	}
 
@@ -1759,9 +1766,17 @@ void CruiseEngine::mainLoop(void) {
 //      t_start=Osystem_GetTicks();
 
 //      readKeyboard();
+		bool isUserWait = userWait != 0;
+
 		playerDontAskQuit = processInput();
 		if (playerDontAskQuit)
 			break;
+
+		if (isUserWait && !userWait) {
+			// User waiting has ended
+			changeScriptParamInList(-1, -1, &procHead, 9999, 0);
+			changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+		}
 
 		if (enableUser) {
 			userEnabled = 1;
@@ -1799,7 +1814,7 @@ void CruiseEngine::mainLoop(void) {
 				PCFadeFlag = 0;
 
 			/*if (!PCFadeFlag)*/
-			{
+			if (userWait != 2) {
 				mainDraw(0);
 				flipScreen();
 			}
@@ -1840,11 +1855,16 @@ void CruiseEngine::mainLoop(void) {
 				changeCursor(CURSOR_NORMAL);
 			}
 
-			if (userWait) {
-				int16 mouseButton = 0;
-				checkInput(&mouseButton);
+			if (isUserWait) {
+				// User Wait handling
+				if (userWait == 1) {
+					// Initial step
+					++userWait;
+					mainDraw(0);
+					flipScreen();
+				} else {
+					// Standard handling
 
-				while (!mouseButton) {
 					manageScripts(&relHead);
 					manageScripts(&procHead);
 
@@ -1853,18 +1873,9 @@ void CruiseEngine::mainLoop(void) {
 
 					// Draw the next screen
 					processAnimation();
-					mainDraw(0);
-					flipScreen();
-
-					// not exactly this
-					manageEvents();
-
-					checkInput(&mouseButton);
+					gfxModuleData_flipScreen();
 				}
-
-				changeScriptParamInList(-1, -1, &procHead, 9999, 0);
-				changeScriptParamInList(-1, -1, &relHead, 9999, 0);
-				userWait = 0;
+				continue;
 			}
 
 			// wait for character to finish auto track
