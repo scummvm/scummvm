@@ -3019,7 +3019,12 @@ const ScreenDim Screen_LoL::_screenDimTable256C[] = {
 	{ 0x0F, 0x06, 0x14, 0x6E, 0x01, 0x00, 0x00, 0x00 },
 	{ 0x1A, 0xBE, 0x0A, 0x07, 0xFE, 0x01, 0x00, 0x00 },
 	{ 0x0B, 0x8C, 0x10, 0x33, 0x3D, 0x01, 0x00, 0x00 },	// Main menu box (5 entries, CD version only)
-	{ 0x0B, 0x8C, 0x10, 0x23, 0x3D, 0x01, 0x00, 0x00 }	// Main menu box (3 entries, floppy version only)
+	{ 0x0B, 0x8C, 0x10, 0x23, 0x3D, 0x01, 0x00, 0x00 },	// Main menu box (3 entries, floppy version only)
+
+	{ 0x01, 0x20, 0x26, 0x80, 0xDC, 0xFD, 0x00, 0x00 },	// Credits
+	{ 0x09, 0x29, 0x08, 0x2C, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x19, 0x29, 0x08, 0x2C, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x01, 0x02, 0x26, 0x14, 0x00, 0x0F, 0x0E, 0x00 }
 };
 
 const ScreenDim Screen_LoL::_screenDimTable16C[] = {
@@ -3041,7 +3046,12 @@ const ScreenDim Screen_LoL::_screenDimTable16C[] = {
 	{ 0x0F, 0x06, 0x14, 0x6E, 0x44, 0x00, 0x00, 0x00 },
 	{ 0x1A, 0xBE, 0x0A, 0x07, 0x33, 0x44, 0x00, 0x00 },
 	{ 0x0B, 0x8C, 0x10, 0x33, 0x33, 0x44, 0x00, 0x00 },	// Main menu box (5 entries, not used here)
-	{ 0x0B, 0x8C, 0x10, 0x23, 0x33, 0x44, 0x00, 0x00 }	// Main menu box (3 entries)
+	{ 0x0B, 0x8C, 0x10, 0x23, 0x33, 0x44, 0x00, 0x00 },	// Main menu box (3 entries)
+
+	{ 0x01, 0x20, 0x26, 0x80, 0xDC, 0xFD, 0x00, 0x00 },	// Credits (TODO: Check this!)
+	{ 0x09, 0x29, 0x08, 0x2C, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x19, 0x29, 0x08, 0x2C, 0x00, 0x00, 0x00, 0x00 },
+	{ 0x01, 0x02, 0x26, 0x14, 0x00, 0x0F, 0x0E, 0x00 }
 };
 
 const int Screen_LoL::_screenDimTableCount = ARRAYSIZE(Screen_LoL::_screenDimTable256C);
@@ -3157,6 +3167,68 @@ const int8 LoLEngine::_mapCoords[12][4] = {
 };
 
 const uint8 LoLEngine::_numClock2Timers = ARRAYSIZE(LoLEngine::_clock2Timers);
+
+const char * const LoLEngine::_outroShapeFileTable[] = {
+	"AMAZON.SHP", "ARCHRSLG.SHP", "AVIANWRM.SHP", "BANDIT.SHP", "BOAR.SHP", "CABAL.SHP",
+	"GUARD.SHP", "HAG.SHP", "HORNET.SHP", "HURZELL.SHP", "IRONGRZR.SHP", "KNOWLES.SHP",
+	"LIZARD.SHP", "MANTHA.SHP", "MINOTAUR.SHP", "MORIBUND.SHP", "ORC.SHP", "ORCLDR.SHP",
+	"PENTROG.SHP", "RATMAN.SHP", "ROCKLING.SHP", "SCAVNGR.SHP", "STARK.SHP",
+	"SWAMPCIT.SHP", "SWAMPMON.SHP", "THUG.SHP", "VIPER.SHP", "XEOB.SHP"
+};
+
+const uint8 LoLEngine::_outroFrameTable[] = {
+	 0,  0,  0,  0,  0,  1,  2,  3,
+	 0,  1,  2,  3,  8,  9, 10, 11,
+	 8,  9, 10, 11,  4,  5,  6,  7
+};
+
+const int16 LoLEngine::_outroRightMonsterPos[] = {
+	205,  55, 205,  55, 205,  55, 205,  55,
+	205,  56, 207,  57, 208,  58, 210,  59,
+	213,  60, 216,  61, 220,  61, 225,  61,
+	230,  61, 235,  61, 240,  61, 240,  61,
+	240,  61, 240,  61, 240,  61, 240,  61,
+	240,  61, 265,  61, 290,  61, 315,  61
+};
+
+const int16 LoLEngine::_outroLeftMonsterPos[] = {
+	 92,  55,  92,  55,  92,  55,  92,  55,
+	 92,  56,  90,  57,  85,  58,  77,  59,
+	 67,  60,  57,  61,  47,  61,  35,  61,
+	 35,  61,  35,  61,  35,  61,  35,  61,
+	 35,  61,  35,  61,  35,  61,  35,  61,
+	 35,  61,  10,  61, -20,  61, -45,  61
+};
+
+const int16 LoLEngine::_outroRightDoorPos[] = {
+	200,  41, 200,  29, 200,  17, 200,   5,
+	200,  -7, 200,  -7, 200,  -7, 200,  -7,
+	200,   5, 200,  17, 200,  29, 200,  41,
+	200,  41, 200,  41, 200,  41, 200,  41,
+	200,  41, 200,  41, 200,  41, 200,  41,
+	200,  41, 200,  41, 200,  41, 200,  41
+};
+
+const int16 LoLEngine::_outroLeftDoorPos[] = {
+	 72,  41,  72,  29,  72,  17,  72,   5,
+	 72,  -7,  72,  -7,  72,  -7,  72,  -7,
+	 72,   5,  72,  17,  72,  29,  72,  41,
+	 72,  41,  72,  41,  72,  41,  72,  41,
+	 72,  41,  72,  41,  72,  41,  72,  41,
+	 72,  41,  72,  41,  72,  41,  72,  41
+};
+
+const int LoLEngine::_outroMonsterScaleTableX[] = {
+	0x050, 0x050, 0x050, 0x050, 0x050, 0x05D, 0x070, 0x085,
+	0x0A0, 0x0C0, 0x0E2, 0x100, 0x100, 0x100, 0x100, 0x100,
+	0x100, 0x100, 0x100, 0x100, 0x100, 0x100, 0x100, 0x100
+};
+
+const int LoLEngine::_outroMonsterScaleTableY[] = {
+	0x04C, 0x04C, 0x04C, 0x04C, 0x04C, 0x059, 0x06B, 0x080,
+	0x099, 0x0B8, 0x0D9, 0x100, 0x100, 0x100, 0x100, 0x100,
+	0x100, 0x100, 0x100, 0x100, 0x100, 0x100, 0x100, 0x100
+};
 
 #endif // ENABLE_LOL
 

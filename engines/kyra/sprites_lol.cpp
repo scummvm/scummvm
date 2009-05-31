@@ -117,7 +117,7 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 	delete[] tmpPal1;
 	delete[] tmpPal2;
 	delete[] tmpPal3;
-	delete[]  tsh;
+	delete[] tsh;
 }
 
 void LoLEngine::releaseMonsterShapes(int monsterIndex) {

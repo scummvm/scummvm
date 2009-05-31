@@ -393,6 +393,24 @@ private:
 	void showOutro(int character, bool maxDifficulty);
 	void setupEpilogueData(bool load);
 
+	void showCredits();
+	void processCredits(char *text, int dimState, int page, int delay);
+	void loadOutroShapes(int file, uint8 **storage);
+
+	uint8 _outroShapeTable[256];
+
+	// TODO: Consider moving these tables to kyra.dat
+	static const char * const _outroShapeFileTable[];
+	static const uint8 _outroFrameTable[];
+
+	static const int16 _outroRightMonsterPos[];
+	static const int16 _outroLeftMonsterPos[];
+	static const int16 _outroRightDoorPos[];
+	static const int16 _outroLeftDoorPos[];
+
+	static const int _outroMonsterScaleTableX[];
+	static const int _outroMonsterScaleTableY[];
+
 	// timers
 	void setupTimers();
 	void enableTimer(int id);

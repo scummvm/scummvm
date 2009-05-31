@@ -1024,7 +1024,7 @@ void KyraEngine_LoK::seq_playEnding() {
 }
 
 void KyraEngine_LoK::seq_playCredits() {
-	static const uint8 colorMap[] = { 0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	static const uint8 colorMap[] = { 0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static const char stringTerms[] = { 0x5, 0xd, 0x0};
 	static const int numStrings = 250;
 

@@ -750,9 +750,8 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	assert(outro);
 	outro->lolCharacter = character;
 
-	_screen->loadFont(Screen::FID_8_FNT, "NEW8P.FNT");
+	_screen->loadFont(Screen::FID_6_FNT, "NEW6P.FNT");
 	_screen->loadFont(Screen::FID_INTRO_FNT, "INTRO.FNT");
-	_screen->setFont(Screen::FID_8_FNT);
 
 	_tim->resetFinishedFlag();
 	_tim->setLangData("LOLFINAL.DIP");
@@ -780,6 +779,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 		_system->delayMillis(10);
 		_screen->updateScreen();
 	}
+	removeInputTop();
 	_screen->showMouse();
 	_sound->voiceStop();
 	_sound->beginFadeOut();
@@ -793,7 +793,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 
 	_screen->fadeToBlack(30);
 
-	//XXX
+	showCredits();
 
 	switch (character) {
 	case 0:
@@ -825,7 +825,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	_screen->fadePalette(_screen->getPalette(0), 30, 0);
 
 	while (!checkInput(0) && !shouldQuit())
-		delay(1);
+		delay(_tickLength);
 
 	_screen->fadeToBlack(30);
 
@@ -833,6 +833,269 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	delete _tim;
 	_tim = timBackUp;
 	setupEpilogueData(false);
+}
+
+void LoLEngine::showCredits() {
+	for (int i = 0; i < 255; ++i)
+		_outroShapeTable[i] = i;
+	_outroShapeTable[256] = 0;
+
+	_sound->haltTrack();
+	_sound->loadSoundFile("LOREFINL");
+	_sound->playTrack(4);
+
+	_screen->hideMouse();
+
+	static const uint8 colorMap[] = { 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x72, 0x6F, 0x6F, 0x6D };
+	_screen->setTextColorMap(colorMap);
+	_screen->_charWidth = 0;
+
+	_screen->loadBitmap("ROOM.CPS", 2, 2, _screen->getPalette(0));
+	memset(_screen->getPalette(0) + 764, 0, 3);
+	_screen->fadeToBlack(30);
+
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+
+	char *credits = (char *)_res->fileData("CREDITS.TXT", 0);
+	processCredits(credits, 19, 4, 5);
+	delete[] credits;
+
+	uint32 endTime = _system->getMillis() + 120 * _tickLength;
+	while (endTime > _system->getMillis() && !shouldQuit()) {
+		if (checkInput(0))
+			break;
+		delay(_tickLength);
+	}
+
+	_sound->beginFadeOut();
+	_screen->fadeToBlack(30);
+
+	_screen->clearCurPage();
+	_screen->updateScreen();
+	_screen->showMouse();
+}
+
+void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
+	if (!t)
+		return;
+
+	_screen->setScreenDim(dimState);
+	_screen->clearPage(page);
+	_screen->clearPage(6);
+
+	_screen->loadBitmap("DOOR.SHP", 5, 5, 0);
+	uint8 *doorShape = _screen->makeShapeCopy(_screen->getCPagePtr(5), 0);
+	assert(doorShape);
+
+	_screen->drawShape(0, doorShape, 0, 0, 20, 0x10);
+	_screen->drawShape(0, doorShape, 0, 0, 21, 0x11);
+
+	int curShapeFile = 0;
+	uint8 *shapes[12];
+	memset(shapes, 0, sizeof(shapes));
+
+	loadOutroShapes(curShapeFile++, shapes);
+	uint8 *monsterPal = _res->fileData("MONSTERS.PAL", 0);
+	assert(monsterPal);
+
+	memcpy(_screen->getPalette(0) + 88 * 3, monsterPal + 0 * 3, 40 * 3);
+	_screen->fadePalette(_screen->getPalette(0), 30);
+
+	uint32 waitTimer = _system->getMillis();
+
+	struct CreditsString {
+		int16 x, y;
+		char *str;
+		uint8 code;
+		uint8 height;
+		uint8 alignment;
+	} strings[36];
+	memset(strings, 0, sizeof(strings));
+
+	int countStrings = 0;
+	char *str = t;
+
+	int frameCounter = 0;
+	int monsterAnimFrame = 0;
+	bool needNewShape = false;
+	bool doorRedraw = true;
+
+	uint8 *animBlock = new uint8[40960];
+	assert(animBlock);
+	memset(animBlock, 0, 40960);
+
+	do {
+		while (_system->getMillis() < waitTimer && !shouldQuit())
+			delay(_tickLength);
+		waitTimer = _system->getMillis() + delayTime * _tickLength;
+
+		while (countStrings < 35 && str[0]) {
+			int y = 0;
+
+			if (!countStrings) {
+				y = _screen->_curDim->h;
+			} else {
+				y = strings[countStrings].y + strings[countStrings].height;
+				y += strings[countStrings].height >> 3;
+			}
+
+			char *curString = str;
+			str = (char *)strpbrk(str, "\x05\x0D");
+			if (!str)
+				str = strchr(curString, 0);
+
+			CreditsString &s = strings[countStrings + 1];
+			s.code = str[0];
+			str[0] = 0;
+
+			if (s.code)
+				++str;
+
+			s.alignment = 0;
+			if (*curString == 3 || *curString == 4)
+				s.alignment = *curString++;
+
+			_screen->setFont(Screen::FID_6_FNT);
+
+			if (*curString == 1 || *curString == 2)
+				++curString;
+			s.height = _screen->getFontHeight();
+
+			if (s.alignment == 3)
+				s.x = 0;
+			else if (s.alignment == 4)
+				s.x = 300 - _screen->getTextWidth(curString);
+			else
+				s.x = ((_screen->_curDim->w << 3) - _screen->getTextWidth(curString)) / 2;
+
+			if (strings[countStrings].code == 5)
+				y -= strings[countStrings].height + (strings[countStrings].height >> 3);
+
+			s.y = y;
+			s.str = curString;
+			++countStrings;
+		}
+
+		++frameCounter;
+		if (frameCounter % 3) {
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, page, Screen::CR_NO_P_CHECK);
+		} else {
+			if (!monsterAnimFrame && doorRedraw) {
+				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, page, Screen::CR_NO_P_CHECK);
+				_screen->drawShape(page, doorShape, 0, 0, 20, 0x10);
+				_screen->drawShape(page, doorShape, 0, 0, 21, 0x11);
+
+				--frameCounter;
+				doorRedraw = false;
+			} else {
+				if (!monsterAnimFrame)
+					_screen->setScreenPalette(_screen->getPalette(0));
+
+				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, page, Screen::CR_NO_P_CHECK);
+
+				uint8 *monsterShape = shapes[_outroFrameTable[monsterAnimFrame]];
+
+				int doorSD = 0;
+				int doorX = 0, doorY = 0;
+				int monsterX = 0, monsterY = 0;
+
+				bool isRightMonster = ((curShapeFile - 1) & 1) != 0;
+
+				if (isRightMonster) {
+					doorSD = 21;
+					doorX = _outroRightDoorPos[monsterAnimFrame * 2 + 0];
+					doorY = _outroRightDoorPos[monsterAnimFrame * 2 + 1];
+
+					monsterX = _outroRightMonsterPos[monsterAnimFrame * 2 + 0];
+					monsterY = _outroRightMonsterPos[monsterAnimFrame * 2 + 1];
+					
+					_screen->drawShape(page, doorShape, 0, 0, 20, 0x10);
+				} else {
+					doorSD = 20;
+					doorX = _outroLeftDoorPos[monsterAnimFrame * 2 + 0];
+					doorY = _outroLeftDoorPos[monsterAnimFrame * 2 + 1];
+
+					monsterX = _outroLeftMonsterPos[monsterAnimFrame * 2 + 0];
+					monsterY = _outroLeftMonsterPos[monsterAnimFrame * 2 + 1];
+
+					_screen->drawShape(page, doorShape, 0, 0, 21, 0x11);
+				}
+
+				if (monsterAnimFrame >= 8)
+					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 20) ? 0 : 1);
+
+				_screen->drawShape(page, monsterShape, monsterX, monsterY, 0, 0x104 | ((!isRightMonster | (monsterAnimFrame < 20)) ? 0 : 1), _outroShapeTable, 1, _outroMonsterScaleTableX[monsterAnimFrame], _outroMonsterScaleTableY[monsterAnimFrame]);
+
+				if (monsterAnimFrame < 8)
+					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 20) ? 0 : 1);
+
+				_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 6, Screen::CR_NO_P_CHECK);
+				doorRedraw = true;
+
+				monsterAnimFrame = (monsterAnimFrame + 1) % 24;
+				needNewShape = !monsterAnimFrame;
+			}
+		}
+
+		for (int i = 0; i < countStrings; ++i) {
+			CreditsString &s = strings[i+1];
+			int x = s.x, y = s.y;
+
+			if (y < _screen->_curDim->h) {
+				_screen->_curPage = page;
+				_screen->setFont(Screen::FID_6_FNT);
+				_screen->printText(s.str, (_screen->_curDim->sx << 3) + x, _screen->_curDim->sy + y, 0xDC, 0x00);
+				_screen->_curPage = 0;
+			}
+			
+			--s.y;
+		}
+		
+		_screen->copyToPage0(_screen->_curDim->sy, _screen->_curDim->h, page, animBlock);
+
+		if (strings[1].y < -10) {
+			strings[1].str += strlen(strings[1].str);
+			strings[1].str[0] = strings[1].code;
+			--countStrings;
+			memmove(&strings[1], &strings[2], countStrings * sizeof(CreditsString));
+		}
+
+		if (needNewShape) {
+			++curShapeFile;
+			if (curShapeFile == 16)
+				curShapeFile += 2;
+			if (curShapeFile == 6)
+				curShapeFile += 2;
+			curShapeFile = curShapeFile % 28;
+
+			loadOutroShapes(curShapeFile, shapes);
+			memcpy(_screen->getPalette(0) + 88 * 3, monsterPal + curShapeFile * 40 * 3, 40 * 3);
+			_screen->setScreenPalette(_screen->getPalette(0));
+
+			needNewShape = false;
+		}
+
+		_screen->updateScreen();
+	} while (countStrings && !checkInput(0) && !shouldQuit());
+	removeInputTop();
+
+	delete[] animBlock;
+	delete[] doorShape;
+	delete[] monsterPal;
+	for (int i = 0; i < 12; ++i)
+		delete[] shapes[i];
+}
+
+void LoLEngine::loadOutroShapes(int file, uint8 **storage) {
+	_screen->loadBitmap(_outroShapeFileTable[file], 5, 5, 0);
+	
+	for (int i = 0; i < 12; ++i) {
+		delete[] storage[i];
+		if (i < 8)
+			storage[i] = _screen->makeShapeCopy(_screen->getCPagePtr(5), i);
+		else
+			storage[i] = _screen->makeShapeCopy(_screen->getCPagePtr(5), i+4);
+	}
 }
 
 } // end of namespace Kyra
