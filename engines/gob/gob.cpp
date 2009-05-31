@@ -68,8 +68,6 @@ const Common::Language GobEngine::_gobToScummVMLang[] = {
 };
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
-	_vm = this;
-
 	_sound     = 0; _mult     = 0; _game   = 0;
 	_global    = 0; _dataIO   = 0; _goblin = 0;
 	_vidPlayer = 0; _init     = 0; _inter  = 0;
@@ -112,18 +110,18 @@ const char *GobEngine::getLangDesc(int16 language) const {
 }
 
 void GobEngine::validateLanguage() {
-	if (_vm->_global->_languageWanted != _vm->_global->_language) {
+	if (_global->_languageWanted != _global->_language) {
 		warning("Your game version doesn't support the requested language %s",
-				getLangDesc(_vm->_global->_languageWanted));
+				getLangDesc(_global->_languageWanted));
 
-		if (((_vm->_global->_languageWanted == 2) && (_vm->_global->_language == 5)) ||
-		    ((_vm->_global->_languageWanted == 5) && (_vm->_global->_language == 2)))
-			warning("Using %s instead", getLangDesc(_vm->_global->_language));
+		if (((_global->_languageWanted == 2) && (_global->_language == 5)) ||
+		    ((_global->_languageWanted == 5) && (_global->_language == 2)))
+			warning("Using %s instead", getLangDesc(_global->_language));
 		else
 			warning("Using the first language available: %s",
-					getLangDesc(_vm->_global->_language));
+					getLangDesc(_global->_language));
 
-		_vm->_global->_languageWanted = _vm->_global->_language;
+		_global->_languageWanted = _global->_language;
 	}
 }
 
@@ -134,9 +132,9 @@ void GobEngine::validateVideoMode(int16 videoMode) {
 }
 
 Endianness GobEngine::getEndianness() const {
-	if ((_vm->getPlatform() == Common::kPlatformAmiga) ||
-	    (_vm->getPlatform() == Common::kPlatformMacintosh) ||
-	    (_vm->getPlatform() == Common::kPlatformAtariST))
+	if ((getPlatform() == Common::kPlatformAmiga) ||
+	    (getPlatform() == Common::kPlatformMacintosh) ||
+	    (getPlatform() == Common::kPlatformAtariST))
 		return kEndiannessBE;
 
 	return kEndiannessLE;
@@ -267,13 +265,13 @@ void GobEngine::pauseEngineIntern(bool pause) {
 	} else {
 		uint32 duration = _system->getMillis() - _pauseStart;
 
-		_vm->_vidPlayer->notifyPaused(duration);
-		_vm->_util->notifyPaused(duration);
+		_vidPlayer->notifyPaused(duration);
+		_util->notifyPaused(duration);
 
-		_vm->_game->_startTimeKey += duration;
-		_vm->_draw->_cursorTimeKey += duration;
-		if (_vm->_inter->_soundEndTimeKey != 0)
-			_vm->_inter->_soundEndTimeKey += duration;
+		_game->_startTimeKey += duration;
+		_draw->_cursorTimeKey += duration;
+		if (_inter->_soundEndTimeKey != 0)
+			_inter->_soundEndTimeKey += duration;
 	}
 
 	_mixer->pauseAll(pause);

@@ -136,8 +136,6 @@ struct GOBGameDescription;
 
 class GobEngine : public Engine {
 private:
-	GobEngine *_vm;
-
 	GameType _gameType;
 	int32 _features;
 	Common::Platform _platform;
