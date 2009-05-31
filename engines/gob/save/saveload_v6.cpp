@@ -281,9 +281,9 @@ void SaveLoad_v6::GameHandler::refreshProps() {
 
 
 SaveLoad_v6::SaveLoad_v6(GobEngine *vm, const char *targetName) :
-		SaveLoad(vm, targetName) {
+		SaveLoad(vm) {
 
-	_gameHandler = new GameHandler(vm, _targetName);
+	_gameHandler = new GameHandler(vm, targetName);
 
 	_saveFiles[0].handler = _gameHandler;
 }

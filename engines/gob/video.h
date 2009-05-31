@@ -183,7 +183,7 @@ public:
 			int16 srcHeight, int16 x, int16 y, int16 transp,
 			SurfaceDesc *destDesc) = 0;
 
-	virtual void init(const char *target = "") { }
+	virtual void init() {}
 
 	virtual void setPrePalette() { }
 
@@ -233,7 +233,7 @@ public:
 	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top,
 			int16 right, int16 bottom, int16 color);
 
-	virtual void init(const char *target = "");
+	virtual void init();
 
 	virtual void setPrePalette();
 

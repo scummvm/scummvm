@@ -783,10 +783,9 @@ bool SaveContainer::isSave(Common::SeekableReadStream &stream) {
 }
 
 
-SaveReader::SaveReader(uint32 partCount, uint32 slot, const char *fileName) :
-	SaveContainer(partCount, slot) {
+SaveReader::SaveReader(uint32 partCount, uint32 slot, const Common::String &fileName) :
+	SaveContainer(partCount, slot), _fileName(fileName) {
 
-	_fileName = strdupcpy(fileName);
 	_stream = 0;
 
 	_loaded = false;
@@ -795,14 +794,12 @@ SaveReader::SaveReader(uint32 partCount, uint32 slot, const char *fileName) :
 SaveReader::SaveReader(uint32 partCount, uint32 slot, Common::SeekableReadStream &stream) :
 	SaveContainer(partCount, slot) {
 
-	_fileName = 0;
 	_stream = &stream;
 
 	_loaded = false;
 }
 
 SaveReader::~SaveReader() {
-	delete[] _fileName;
 }
 
 // Open the save and read it
@@ -811,7 +808,7 @@ bool SaveReader::load() {
 	Common::InSaveFile *in = 0;
 	Common::SeekableReadStream *stream;
 
-	if (_fileName) {
+	if (!_fileName.empty()) {
 		in = openSave();
 
 		if (!in)
@@ -852,8 +849,8 @@ bool SaveReader::readPart(uint32 partN, SavePart *part) const {
 	return true;
 }
 
-Common::InSaveFile *SaveReader::openSave(const char *fileName) {
-	if (!fileName)
+Common::InSaveFile *SaveReader::openSave(const Common::String &fileName) {
+	if (fileName.empty())
 		return 0;
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
@@ -899,7 +896,7 @@ bool SaveReader::getInfo(Common::SeekableReadStream &stream, SavePartInfo &info)
 	return result;
 }
 
-bool SaveReader::getInfo(const char *fileName, SavePartInfo &info) {
+bool SaveReader::getInfo(const Common::String &fileName, SavePartInfo &info) {
 	Common::InSaveFile *in = openSave(fileName);
 
 	if (!in)
@@ -912,14 +909,15 @@ bool SaveReader::getInfo(const char *fileName, SavePartInfo &info) {
 	return result;
 }
 
-SaveWriter::SaveWriter(uint32 partCount, uint32 slot, const char *fileName) :
+SaveWriter::SaveWriter(uint32 partCount, uint32 slot) :
 	SaveContainer(partCount, slot) {
+}
 
-	_fileName = strdupcpy(fileName);
+SaveWriter::SaveWriter(uint32 partCount, uint32 slot, const Common::String &fileName) :
+	SaveContainer(partCount, slot), _fileName(fileName) {
 }
 
 SaveWriter::~SaveWriter() {
-	delete[] _fileName;
 }
 
 bool SaveWriter::writePart(uint32 partN, const SavePart *part) {
@@ -958,14 +956,15 @@ bool SaveWriter::save() {
 }
 
 bool SaveWriter::canSave() const {
-	if (!_fileName)
+	// FIXME: The logic here is the opposite from what I (Fingolfin) would expect ?!?
+	if (!_fileName.empty())
 		return false;
 	
 	return true;
 }
 
-Common::OutSaveFile *SaveWriter::openSave(const char *fileName) {
-	if (!fileName)
+Common::OutSaveFile *SaveWriter::openSave(const Common::String &fileName) {
+	if (fileName.empty())
 		return 0;
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();

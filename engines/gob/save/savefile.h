@@ -296,7 +296,7 @@ protected:
 /** Reads a save. */
 class SaveReader : public SaveContainer {
 public:
-	SaveReader(uint32 partCount, uint32 slot, const char *fileName);
+	SaveReader(uint32 partCount, uint32 slot, const Common::String &fileName);
 	SaveReader(uint32 partCount, uint32 slot, Common::SeekableReadStream &stream);
 	~SaveReader();
 
@@ -308,22 +308,23 @@ public:
 	/** Find and read the save's info part. */
 	static bool getInfo(Common::SeekableReadStream &stream, SavePartInfo &info);
 	/** Find and read the save's info part. */
-	static bool getInfo(const char *fileName, SavePartInfo &info);
+	static bool getInfo(const Common::String &fileName, SavePartInfo &info);
 
 protected:
-	char *_fileName;
+	Common::String _fileName;
 	Common::SeekableReadStream *_stream;
 
 	bool _loaded;
 
-	static Common::InSaveFile *openSave(const char *fileName);
+	static Common::InSaveFile *openSave(const Common::String &fileName);
 	Common::InSaveFile *openSave();
 };
 
 /** Writes a save. */
 class SaveWriter: public SaveContainer {
 public:
-	SaveWriter(uint32 partCount, uint32 slot, const char *fileName = 0);
+	SaveWriter(uint32 partCount, uint32 slot);
+	SaveWriter(uint32 partCount, uint32 slot, const Common::String &fileName);
 	~SaveWriter();
 
 	bool writePart(uint32 partN, const SavePart *part);
@@ -333,12 +334,12 @@ public:
 protected:
 	bool save();
 
-	char *_fileName;
+	Common::String _fileName;
 
 	/** Is everything ready for saving? */
 	bool canSave() const;
 
-	static Common::OutSaveFile *openSave(const char *fileName);
+	static Common::OutSaveFile *openSave(const Common::String &fileName);
 	Common::OutSaveFile *openSave();
 };
 

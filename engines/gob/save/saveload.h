@@ -48,7 +48,7 @@ public:
 	 *
 	 *  @param targetName The game's target name. Used as a base for the save names.
 	 */
-	SaveLoad(GobEngine *vm, const char *targetName);
+	SaveLoad(GobEngine *vm);
 	virtual ~SaveLoad();
 
 	/** "foo\bar\quux.bla" => "quux.bla". */
@@ -66,8 +66,6 @@ public:
 
 protected:
 	GobEngine *_vm;
-
-	char *_targetName;
 
 	virtual SaveHandler *getHandler(const char *fileName) const;
 	virtual const char *getDescription(const char *fileName) const;

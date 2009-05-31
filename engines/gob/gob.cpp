@@ -106,9 +106,6 @@ GobEngine::~GobEngine() {
 
 	// Stop all mixer streams (except for the permanent ones).
 	_vm->_mixer->stopAll();
-
-	delete[] _startStk;
-	delete[] _startTot;
 }
 
 const char *GobEngine::getLangDesc(int16 language) const {
@@ -191,7 +188,7 @@ Common::Error GobEngine::run() {
 	}
 
 	_video->setSize(is640());
-	_video->init(_targetName.c_str());
+	_video->init();
 
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (isCD())
@@ -413,7 +410,7 @@ bool GobEngine::initGameParts() {
 		_map = new Map_v4(this);
 		_goblin = new Goblin_v4(this);
 		_scenery = new Scenery_v2(this);
-		_saveLoad = new SaveLoad(this, _targetName.c_str());
+		_saveLoad = new SaveLoad(this);
 		break;
 
 	case kGameTypeAdibou4:

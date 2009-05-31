@@ -1136,7 +1136,7 @@ bool Inter_v1::o1_callSub(OpFuncParams &params) {
 
 	// Skipping the copy protection screen in Gobliiins
 	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob1) && (offset == 3905)
-			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot)) {
+			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot.c_str())) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return false;
 	}

@@ -34,16 +34,14 @@
 
 namespace Gob {
 
-SaveConverter::SaveConverter(GobEngine *vm, const char *fileName) : _vm(vm) {
-	_fileName = strdupcpy(fileName);
+SaveConverter::SaveConverter(GobEngine *vm, const Common::String &fileName)
+: _vm(vm), _fileName(fileName) {
 
 	_data = 0;
 	_stream = 0;
 }
 
 SaveConverter::~SaveConverter() {
-	delete[] _fileName;
-
 	delete _stream;
 	delete[] _data;
 }
@@ -56,16 +54,13 @@ void SaveConverter::clear() {
 	_stream = 0;
 }
 
-void SaveConverter::setFileName(const char *fileName) {
+void SaveConverter::setFileName(const Common::String &fileName) {
 	clear();
-
-	delete[] _fileName;
-
-	_fileName = strdupcpy(fileName);
+	_fileName = fileName;
 }
 
 Common::InSaveFile *SaveConverter::openSave() const {
-	if (!_fileName)
+	if (_fileName.empty())
 		return 0;
 
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();

@@ -27,6 +27,7 @@
 #define GOB_VIDEOPLAYER_H
 
 #include "common/array.h"
+#include "common/str.h"
 
 #include "graphics/video/coktelvideo/coktelvideo.h"
 
@@ -126,7 +127,7 @@ private:
 		private:
 			GobEngine *_vm;
 
-			char *_fileName;
+			Common::String _fileName;
 			DataStream *_stream;
 			Graphics::CoktelVideo *_video;
 			Graphics::CoktelVideo::State _state;

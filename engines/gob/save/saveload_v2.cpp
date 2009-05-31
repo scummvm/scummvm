@@ -260,10 +260,10 @@ void SaveLoad_v2::GameHandler::buildIndex(byte *buffer) const {
 
 
 SaveLoad_v2::SaveLoad_v2(GobEngine *vm, const char *targetName) :
-		SaveLoad(vm, targetName) {
+		SaveLoad(vm) {
 
-	_gameHandler = new GameHandler(vm, _targetName);
-	_notesHandler = new NotesHandler(600, vm, _targetName);
+	_gameHandler = new GameHandler(vm, targetName);
+	_notesHandler = new NotesHandler(600, vm, targetName);
 	_tempSpriteHandler = new TempSpriteHandler(vm);
 
 	_saveFiles[0].handler = _gameHandler;

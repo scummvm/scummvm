@@ -162,8 +162,8 @@ public:
 	uint16 _height;
 	uint8 _mode;
 
-	char *_startStk;
-	char *_startTot;
+	Common::String _startStk;
+	Common::String _startTot;
 	uint32 _demoIndex;
 
 	bool _copyProtection;

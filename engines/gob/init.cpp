@@ -91,10 +91,10 @@ void Init::initGame() {
 	initVideo();
 
 	if (!_vm->isDemo()) {
-		handle2 = _vm->_dataIO->openData(_vm->_startStk);
+		handle2 = _vm->_dataIO->openData(_vm->_startStk.c_str());
 		if (handle2 >= 0) {
 			_vm->_dataIO->closeData(handle2);
-			_vm->_dataIO->openDataFile(_vm->_startStk);
+			_vm->_dataIO->openDataFile(_vm->_startStk.c_str());
 		}
 	}
 
@@ -167,7 +167,7 @@ void Init::initGame() {
 		delete[] infBuf;
 	}
 
-	strcpy(buffer, _vm->_startTot);
+	strcpy(buffer, _vm->_startTot.c_str());
 	handle = _vm->_dataIO->openData(buffer);
 
 	if (handle >= 0) {

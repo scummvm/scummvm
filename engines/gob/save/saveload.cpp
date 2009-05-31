@@ -35,12 +35,10 @@
 
 namespace Gob {
 
-SaveLoad::SaveLoad(GobEngine *vm, const char *targetName) : _vm(vm) {
-	_targetName = strdupcpy(targetName);
+SaveLoad::SaveLoad(GobEngine *vm) : _vm(vm) {
 }
 
 SaveLoad::~SaveLoad() {
-	delete[] _targetName;
 }
 
 const char *SaveLoad::stripPath(const char *fileName) {

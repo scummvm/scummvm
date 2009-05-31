@@ -3468,14 +3468,14 @@ namespace Gob {
 
 void GobEngine::initGame(const GOBGameDescription *gd) {
 	if (gd->startTotBase == 0)
-		_startTot = strdupcpy("intro.tot");
+		_startTot = "intro.tot";
 	else
-		_startTot = strdupcpy(gd->startTotBase);
+		_startTot = gd->startTotBase;
 
 	if (gd->startStkBase == 0)
-		_startStk = strdupcpy("intro.stk");
+		_startStk = "intro.stk";
 	else
-		_startStk = strdupcpy(gd->startStkBase);
+		_startStk = gd->startStkBase;
 
 	_demoIndex = gd->demoIndex;
 

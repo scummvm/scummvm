@@ -40,13 +40,13 @@ class SaveWriter;
 /** A wrapping stream class for old saves. */
 class SaveConverter : public Common::SeekableReadStream {
 public:
-	SaveConverter(GobEngine *vm, const char *fileName = 0);
+	SaveConverter(GobEngine *vm, const Common::String &fileName);
 	virtual ~SaveConverter();
 
 	/** Clear the converter. */
 	virtual void clear();
 	/** Set the filename on which to operate. */
-	virtual void setFileName(const char *fileName);
+	virtual void setFileName(const Common::String &fileName);
 
 	/** Is it actually an old save? */
 	virtual int isOldSave(Common::InSaveFile **save = 0) const = 0;
@@ -74,7 +74,7 @@ public:
 protected:
 	GobEngine *_vm;
 
-	char *_fileName;
+	Common::String _fileName;
 
 	byte *_data;
 	Common::MemoryReadStream *_stream;

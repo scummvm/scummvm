@@ -491,21 +491,21 @@ bool SaveLoad_v3::ScreenshotHandler::save(int16 dataVar, int32 size, int32 offse
 
 
 SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName, ScreenshotType sShotType) :
-		SaveLoad(vm, targetName) {
+		SaveLoad(vm) {
 
 	_sShotType = sShotType;
 
 	// The Amiga version doesn't use screenshots
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
-		_gameHandler = new GameHandler(vm, _targetName, false);
+		_gameHandler = new GameHandler(vm, targetName, false);
 		_screenshotHandler = 0;
 	} else {
-		_gameHandler = new GameHandler(vm, _targetName, true);
+		_gameHandler = new GameHandler(vm, targetName, true);
 		_screenshotHandler = new ScreenshotHandler(vm, _gameHandler, sShotType);
 	}
 	
 	_tempSpriteHandler = new TempSpriteHandler(vm);
-	_notesHandler = new NotesHandler(2560, vm, _targetName);
+	_notesHandler = new NotesHandler(2560, vm, targetName);
 
 	_saveFiles[0].handler = _gameHandler;
 	_saveFiles[1].handler = _screenshotHandler;

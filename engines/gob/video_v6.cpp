@@ -57,7 +57,7 @@ void Video_v6::setPrePalette() {
 
 }
 
-void Video_v6::init(const char *target) {
+void Video_v6::init() {
 	initOSD();
 
 	buildPalLUT();

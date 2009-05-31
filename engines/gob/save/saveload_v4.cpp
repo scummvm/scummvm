@@ -485,9 +485,9 @@ bool SaveLoad_v4::ScreenPropsHandler::save(int16 dataVar, int32 size, int32 offs
 
 
 SaveLoad_v4::SaveLoad_v4(GobEngine *vm, const char *targetName) :
-		SaveLoad(vm, targetName) {
+		SaveLoad(vm) {
 
-	_gameHandler = new GameHandler(vm, _targetName);
+	_gameHandler = new GameHandler(vm, targetName);
 	_curProps    = new CurScreenPropsHandler(vm);
 	for (int i = 0; i < 10; i++)
 		_props[i] = new ScreenPropsHandler(vm, i, _curProps, _gameHandler);

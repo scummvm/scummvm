@@ -215,9 +215,7 @@ int16 DataIO::file_open(const char *path) {
 	if (i == MAX_FILES)
 		return -1;
 
-	file_getHandle(i)->open(path);
-
-	if (file_getHandle(i)->isOpen())
+	if (file_getHandle(i)->open(path))
 		return i;
 
 	return -1;

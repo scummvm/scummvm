@@ -41,7 +41,7 @@ namespace Gob {
 
 const char *VideoPlayer::_extensions[] = { "IMD", "VMD", "RMD" };
 
-VideoPlayer::Video::Video(GobEngine *vm) : _vm(vm), _fileName(0), _stream(0), _video(0) {
+VideoPlayer::Video::Video(GobEngine *vm) : _vm(vm), _stream(0), _video(0) {
 }
 
 VideoPlayer::Video::~Video() {
@@ -78,7 +78,7 @@ bool VideoPlayer::Video::open(const char *fileName, Type which) {
 		return false;
 	}
 
-	_fileName = strdupcpy(fileName);
+	_fileName = fileName;
 
 	_defaultX = _video->getX();
 	_defaultY = _video->getY();
@@ -89,11 +89,9 @@ bool VideoPlayer::Video::open(const char *fileName, Type which) {
 void VideoPlayer::Video::close() {
 	delete _video;
 	delete _stream;
-	delete[] _fileName;
 
 	_video = 0;
 	_stream = 0;
-	_fileName = 0;
 	memset(&_state, 0, sizeof(Graphics::CoktelVideo::State));
 	_defaultX = _defaultY = 0;
 }
@@ -103,7 +101,7 @@ bool VideoPlayer::Video::isOpen() const {
 }
 
 const char *VideoPlayer::Video::getFileName() const {
-	return _fileName ? _fileName : "";
+	return _fileName.c_str();
 }
 
 Graphics::CoktelVideo *VideoPlayer::Video::getVideo() {

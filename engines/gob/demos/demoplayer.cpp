@@ -128,7 +128,7 @@ void DemoPlayer::playVideo(const char *fileName) {
 	uint32 waitTime = 0;
 	char *file, *filePtr;
 
-	file = filePtr = strdupcpy(fileName);
+	file = filePtr = strdup(fileName);
 
 	// Trimming spaces front
 	while (*file == ' ')
@@ -168,7 +168,7 @@ void DemoPlayer::playVideo(const char *fileName) {
 	}
 
 
-	delete[] filePtr;
+	free(filePtr);
 }
 
 void DemoPlayer::playVideoNormal() {
@@ -177,11 +177,9 @@ void DemoPlayer::playVideoNormal() {
 
 void DemoPlayer::playVideoDoubled() {
 	const char *fileNameOpened = _vm->_vidPlayer->getFileName();
-	char *fileName = strdupcpy(fileNameOpened);
-
 	_vm->_vidPlayer->primaryClose();
 
-	if (_vm->_vidPlayer->primaryOpen(fileName, 0, -1, VideoPlayer::kFlagOtherSurface)) {
+	if (_vm->_vidPlayer->primaryOpen(fileNameOpened, 0, -1, VideoPlayer::kFlagOtherSurface)) {
 		for (int i = 0; i < _vm->_vidPlayer->getFramesCount(); i++) {
 			if (_vm->_vidPlayer->primaryPlay(i, i))
 				break;
@@ -200,8 +198,6 @@ void DemoPlayer::playVideoDoubled() {
 			_vm->_video->retrace();
 		}
 	}
-
-	delete[] fileName;
 }
 
 void DemoPlayer::evaluateVideoMode(const char *mode) {
