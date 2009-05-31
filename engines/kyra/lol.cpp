@@ -3294,6 +3294,61 @@ void LoLEngine::restoreSwampPalette() {
 }
 
 void LoLEngine::launchMagicViper() {
+	_partyAwake = true;
+
+	int d = 0;	
+	for (uint16 b = _currentBlock; d < 3; d++) {
+		uint16 o = _levelBlockProperties[b].assignedObjects;
+		if (o & 0x8000)
+			break;
+		b = calcNewBlockPosition(b, _currentDirection);
+		if (_wllWallFlags[_levelBlockProperties[b].walls[_currentDirection ^ 2]] & 7)
+			break;
+	}
+
+	_screen->copyPage(0, 12);
+	snd_playSoundEffect(148, -1);
+
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	int numFrames = mov->open("viper.wsa", 1, 0);
+	if (!mov->opened())
+		error("Viper: Unable to load viper.wsa");
+	
+	static const uint8 viperAnimData[] = { 15, 25, 20, 10, 25, 20, 5, 25, 20, 0, 25, 20 };
+	const uint8 *v = &viperAnimData[d * 3];
+	int frm = v[0];
+	
+	for (bool running = true; running;) {
+		uint32 etime = _system->getMillis() + 5 * _tickLength;
+		_screen->copyPage(12, 2);
+		
+		if (frm == v[2])
+			snd_playSoundEffect(172, -1);
+
+		mov->displayFrame(frm++ % numFrames, 2, 112, 0, 0x5000, _trueLightTable1, _trueLightTable2);
+		_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		delayUntil(etime);
+
+		if (frm > v[1])
+			running = false;
+	}
+	
+	mov->close();
+	delete mov;
+
+	_screen->copyPage(12, 0);
+	_screen->copyPage(12, 2);
+
+	int t = _rnd.getRandomNumberRng(1, 4);
+
+	for (int i = 0; i < 4; i++) {
+		if (!(_characters[i].flags & 1)) {
+			t = t % 4;
+			continue;
+		}
+		inflictDamage(t, _currentLevel + 10, 0x8000, 2, 0x86);
+	}
 }
 
 void LoLEngine::breakIceWall(uint8 *pal1, uint8 *pal2) {

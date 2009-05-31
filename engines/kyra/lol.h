@@ -1211,7 +1211,7 @@ private:
 	void removeDrawObjectFromBlock(LevelBlockProperty *l, int id);
 	void assignMonsterToBlock(uint16 *assignedBlockObjects, int id);
 	void giveItemToMonster(MonsterInPlay *monster, uint16 item);
-	int checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, int testFlag, int wallFlag);
+	int checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 objectWidth, uint16 testFlag, uint16 wallFlag);
 	int checkBlockForWallsAndSufficientSpace(int block, int x, int y, int objectWidth, int testFlag, int wallFlag);
 	int calcMonsterSkillLevel(int id, int a);
 	int checkBlockOccupiedByParty(int x, int y, int testFlag);

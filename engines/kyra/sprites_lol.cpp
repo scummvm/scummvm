@@ -384,10 +384,10 @@ void LoLEngine::assignMonsterToBlock(uint16 *assignedBlockObjects, int id) {
 	*assignedBlockObjects = id;
 }
 
-int LoLEngine::checkBlockBeforeObjectPlacement(int x, int y, int objectWidth, int testFlag, int wallFlag) {
+int LoLEngine::checkBlockBeforeObjectPlacement(uint16 x, uint16 y, uint16 objectWidth, uint16 testFlag, uint16 wallFlag) {
 	_objectLastDirection = 0;
-	int x2 = 0;
-	int y2 = 0;
+	uint16 x2 = 0;
+	uint16 y2 = 0;
 	int xOffs = 0;
 	int yOffs = 0;
 	int flag = 0;
