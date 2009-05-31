@@ -337,6 +337,10 @@ LoLEngine::~LoLEngine() {
 		delete *i;
 	_timIntroOpcodes.clear();
 
+	for (Common::Array<const TIMOpcode*>::iterator i = _timOutroOpcodes.begin(); i != _timOutroOpcodes.end(); ++i)
+		delete *i;
+	_timOutroOpcodes.clear();
+
 	for (Common::Array<const TIMOpcode*>::iterator i = _timIngameOpcodes.begin(); i != _timIngameOpcodes.end(); ++i)
 		delete *i;
 	_timIngameOpcodes.clear();

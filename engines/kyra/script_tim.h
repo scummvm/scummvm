@@ -80,6 +80,11 @@ struct TIM {
 	uint8 *text;
 
 	const Common::Array<const TIMOpcode*> *opcodes;
+
+	// TODO: Get rid of this ugly HACK to allow the
+	// Lands of Lore outro to be working properly.
+	bool isLoLOutro;
+	uint8 lolCharacter;
 };
 
 class TIMInterpreter {
@@ -134,6 +139,7 @@ public:
 	void refreshTimersAfterPause(uint32 elapsedTime);
 
 	void displayText(uint16 textId, int16 flags);
+	void displayText(uint16 textId, int16 flags, uint8 color);
 	void setupTextPalette(uint index, int fadePalette);
 
 	virtual void drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {}
@@ -154,9 +160,6 @@ public:
 	int _abortFlag;
 
 protected:
-	virtual KyraEngine_v1 *vm();
-	virtual Screen_v2 *screen();
-
 	KyraEngine_v1 *_vm;
 	Screen_v2 *_screen;
 	OSystem *_system;
@@ -242,9 +245,6 @@ public:
 	int resetAnimationLastPart(int animIndex);
 
 private:
-	KyraEngine_v1 *vm();
-	Screen_v2 *screen();
-
 	void update();
 	void checkSpeechProgress();
 

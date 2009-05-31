@@ -2191,7 +2191,10 @@ int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_displayText(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_displayText(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], (int16)param[1]);
-	_tim->displayText(param[0], param[1]);
+	if (tim->isLoLOutro)
+		_tim->displayText(param[0], param[1], param[2]);
+	else
+		_tim->displayText(param[0], param[1]);
 	return 1;
 }
 
@@ -2353,6 +2356,87 @@ int LoLEngine::tlol_startBackgroundAnimation(const TIM *tim, const uint16 *param
 int LoLEngine::tlol_stopBackgroundAnimation(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_stopBackgroundAnimation(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	_tim->stopBackgroundAnimation(param[0]);
+	return 1;
+}
+
+int LoLEngine::tlol_fadeInScene(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeInScene(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
+	const char *sceneFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
+	const char *overlayFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[1]<<1)));
+
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
+
+	char filename[32];
+	strcpy(filename, sceneFile);
+	strcat(filename, ".CPS");
+
+	_screen->loadBitmap(filename, 7, 5, _screen->getPalette(0));
+
+	filename[0] = 0;
+
+	if (_flags.isTalkie) {
+		strcpy(filename, _languageExt[_lang]);
+		strcat(filename, "/");
+	}
+
+	strcat(filename, overlayFile);
+	uint8 *overlay = _res->fileData(filename, 0);
+
+	for (int i = 0; i < 3; ++i) {
+		uint32 endTime = _system->getMillis() + 10 * _tickLength;
+		_screen->copyBlockAndApplyOverlayOutro(4, 2, overlay);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		delayUntil(endTime);
+	}
+
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 4, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 4, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+	delete[] overlay;
+
+	return 1;
+}
+
+int LoLEngine::tlol_unusedResourceFunc(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_unusedResourceFunc(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
+	// The original used 0x6 / 0x7 for some resource caching, we don't need this.
+	return 1;
+}
+
+int LoLEngine::tlol_fadeInPalette(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeInPalette(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
+	const char *bitmap = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
+	uint8 palette[768];
+	_screen->loadBitmap(bitmap, 3, 3, palette);
+	_screen->fadePalette(palette, param[1]);
+	return 1;
+}
+
+int LoLEngine::tlol_fadeOutSound(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeOutSound(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
+	_sound->beginFadeOut();
+	return 1;
+}
+
+int LoLEngine::tlol_displayAnimFrame(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_displayAnimFrame(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
+
+	TIMInterpreter::Animation *anim = (TIMInterpreter::Animation *)tim->wsa[param[0]].anim;
+	if (param[1] == 0xFFFF) {
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+	} else {
+		anim->wsa->displayFrame(param[1], 2, anim->x, anim->y, 0);
+		_screen->copyRegion(anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->width(), anim->wsa->height(), 2, 0);
+	}
+
+	return 1;
+}
+
+int LoLEngine::tlol_delayForChat(const TIM *tim, const uint16 *param) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_delayForChat(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
+	if (!speechEnabled())
+		delay(param[0]);
 	return 1;
 }
 
@@ -2676,6 +2760,33 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeTim(tlol_processWsaFrame);
 	OpcodeTim(tlol_displayText);
 	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+
+	_timOutroOpcodes.reserve(16);
+	SetTimOpcodeTable(_timOutroOpcodes);
+
+	// 0x00
+	OpcodeTim(tlol_setupPaletteFade);
+	OpcodeTimUnImpl();
+	OpcodeTim(tlol_loadPalette);
+	OpcodeTim(tlol_setupPaletteFadeEx);
+
+	// 0x04
+	OpcodeTimUnImpl();
+	OpcodeTim(tlol_fadeInScene);
+	OpcodeTim(tlol_unusedResourceFunc);
+	OpcodeTim(tlol_unusedResourceFunc);
+
+	// 0x08
+	OpcodeTim(tlol_fadeInPalette);
+	OpcodeTimUnImpl();
+	OpcodeTimUnImpl();
+	OpcodeTim(tlol_fadeOutSound);
+
+	// 0x0C
+	OpcodeTim(tlol_displayAnimFrame);
+	OpcodeTim(tlol_delayForChat);
+	OpcodeTim(tlol_displayText);
 	OpcodeTimUnImpl();
 
 	_timIngameOpcodes.reserve(17);

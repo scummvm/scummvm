@@ -82,6 +82,8 @@ public:
 	void copyBlockAndApplyOverlay(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl);
 	void applyOverlaySpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, int flag, uint8 *ovl);
 
+	void copyBlockAndApplyOverlayOutro(int srcPage, int dstPage, const uint8 *ovl);
+
 	uint8 getShapePaletteSize(const uint8 *shp);
 
 	uint8 *_paletteOverlay1;

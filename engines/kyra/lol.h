@@ -773,6 +773,16 @@ private:
 	int tlol_processWsaFrame(const TIM *tim, const uint16 *param);
 	int tlol_displayText(const TIM *tim, const uint16 *param);
 
+	Common::Array<const TIMOpcode*> _timOutroOpcodes;
+	int tlol_fadeInScene(const TIM *tim, const uint16 *param);
+	int tlol_unusedResourceFunc(const TIM *tim, const uint16 *param);
+	int tlol_fadeInPalette(const TIM *tim, const uint16 *param);
+	int tlol_fadeSoundOut(const TIM *tim, const uint16 *param);
+	int tlol_displayAnimFrame(const TIM *tim, const uint16 *param);
+	int tlol_delayForChat(const TIM *tim, const uint16 *param);
+	int tlol_fadeOutSound(const TIM *tim, const uint16 *param);
+
+	Common::Array<const TIMOpcode*> _timIngameOpcodes;
 	int tlol_initSceneWindowDialogue(const TIM *tim, const uint16 *param);
 	int tlol_restoreAfterSceneWindowDialogue(const TIM *tim, const uint16 *param);
 	int tlol_giveItem(const TIM *tim, const uint16 *param);
@@ -789,8 +799,6 @@ private:
 	int tlol_playSoundEffect(const TIM *tim, const uint16 *param);
 	int tlol_startBackgroundAnimation(const TIM *tim, const uint16 *param);
 	int tlol_stopBackgroundAnimation(const TIM *tim, const uint16 *param);
-
-	Common::Array<const TIMOpcode*> _timIngameOpcodes;
 
 	// translation
 	int _lang;

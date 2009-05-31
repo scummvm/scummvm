@@ -738,6 +738,37 @@ void Screen_LoL::applyOverlaySpecial(int page1, int x1, int y1, int page2, int x
 		addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
 }
 
+void Screen_LoL::copyBlockAndApplyOverlayOutro(int srcPage, int dstPage, const uint8 *ovl) {
+	if (!ovl)
+		return;
+
+	const byte *src = getCPagePtr(srcPage);
+	byte *dst = getPagePtr(dstPage);
+
+	for (int y = 0; y < 200; ++y) {
+		for (int x = 0; x < 80; ++x) {
+			uint32 srcData = READ_LE_UINT32(src); src += 4;
+			uint32 dstData = READ_LE_UINT32(dst);
+			uint16 offset = 0;
+
+			offset = ((srcData & 0xFF) << 8) + (dstData & 0xFF);
+			*dst++ = ovl[offset];
+
+			offset = (srcData & 0xFF00) + ((dstData & 0xFF00) >> 8);
+			*dst++ = ovl[offset];
+
+			srcData >>= 16;
+			dstData >>= 16;
+
+			offset = ((srcData & 0xFF) << 8) + (dstData & 0xFF);
+			*dst++ = ovl[offset];
+
+			offset = (srcData & 0xFF00) + ((dstData & 0xFF00) >> 8);
+			*dst++ = ovl[offset];
+		}
+	}
+}
+
 void Screen_LoL::calcBoundariesIntern(int dstX, int dstY, int width, int height) {
 	_internBlockWidth = _internBlockWidth2 = width;
 	_internBlockHeight = height;

@@ -42,6 +42,9 @@ public:
 
 	virtual bool opened() { return _opened; }
 
+	virtual int xAdd() const { return 0; }
+	virtual int yAdd() const { return 0; }
+
 	virtual int width() const = 0;
 	virtual int height() const = 0;
 

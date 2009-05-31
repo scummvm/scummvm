@@ -98,7 +98,7 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	_textDisplayed = false;
 	_textAreaBuffer = new uint8[320*40];
 	assert(_textAreaBuffer);
-	_drawPage2 = (vm()->gameFlags().isDemo && vm()->gameFlags().gameID == GI_LOL) ? 0 : 8;
+	_drawPage2 = (_vm->gameFlags().isDemo && _vm->gameFlags().gameID == GI_LOL) ? 0 : 8;
 
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
 	_abortFlag = 0;
@@ -117,10 +117,10 @@ TIMInterpreter::~TIMInterpreter() {
 }
 
 TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode *> *opcodes) {
-	if (!vm()->resource()->exists(filename))
+	if (!_vm->resource()->exists(filename))
 		return 0;
 
-	Common::SeekableReadStream *stream = vm()->resource()->createReadStream(filename);
+	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 	if (!stream)
 		error("Couldn't open TIM file '%s'", filename);
 
@@ -176,6 +176,9 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	strncpy(tim->filename, filename, 13);
 	tim->filename[12] = 0;
 
+	tim->isLoLOutro = (_vm->gameFlags().gameID == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
+	tim->lolCharacter = 0;
+
 	return tim;
 }
 
@@ -191,7 +194,7 @@ void TIMInterpreter::unload(TIM *&tim) const {
 
 void TIMInterpreter::setLangData(const char *filename) {
 	delete[] _langData;
-	_langData = vm()->resource()->fileData(filename, 0);
+	_langData = _vm->resource()->fileData(filename, 0);
 }
 
 int TIMInterpreter::exec(TIM *tim, bool loop) {
@@ -254,11 +257,11 @@ int TIMInterpreter::exec(TIM *tim, bool loop) {
 				if (cur.ip) {
 					cur.ip += cur.ip[0];
 					cur.lastTime = cur.nextTime;
-					cur.nextTime += (cur.ip[1] ) * vm()->tickLength();
+					cur.nextTime += (cur.ip[1] ) * _vm->tickLength();
 				}
 			}
 		}
-	} while (loop && !vm()->shouldQuit());
+	} while (loop && !_vm->shouldQuit());
 
 	return _currentTim->clickedButton;
 }
@@ -279,7 +282,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	char *text = getTableEntry(textId);
 
 	if (_textDisplayed) {
-		screen()->copyBlockToPage(0, 0, 160, 320, 40, _textAreaBuffer);
+		_screen->copyBlockToPage(0, 0, 160, 320, 40, _textAreaBuffer);
 		_textDisplayed = false;
 	}
 
@@ -298,7 +301,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	}
 
 	if (filename[0])
-		vm()->sound()->voicePlay(filename);
+		_vm->sound()->voicePlay(filename);
 
 	if (text[0] == '$')
 		text = strchr(text + 1, '$') + 1;
@@ -308,13 +311,13 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	if (flags < 0) {
 		static const uint8 colorMap[] = { 0x00, 0xF0, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-		screen()->setFont(Screen::FID_8_FNT);
-		screen()->setTextColorMap(colorMap);
-		screen()->_charWidth = -2;
+		_screen->setFont(Screen::FID_8_FNT);
+		_screen->setTextColorMap(colorMap);
+		_screen->_charWidth = -2;
 	}
 
-	screen()->_charOffset = -4;
-	screen()->copyRegionToBuffer(0, 0, 160, 320, 40, _textAreaBuffer);
+	_screen->_charOffset = -4;
+	_screen->copyRegionToBuffer(0, 0, 160, 320, 40, _textAreaBuffer);
 	_textDisplayed = true;
 
 	char backupChar = 0;
@@ -330,14 +333,14 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 			nextLine[0] = '\0';
 		}
 
-		int width = screen()->getTextWidth(str);
+		int width = _screen->getTextWidth(str);
 
 		if (flags >= 0)
-			screen()->printText(str, (320 - width) >> 1, 160 + heightAdd, 0xF0, 0x00);
+			_screen->printText(str, (320 - width) >> 1, 160 + heightAdd, 0xF0, 0x00);
 		else
-			screen()->printText(str, (320 - width) >> 1, 188, 0xF0, 0x00);
+			_screen->printText(str, (320 - width) >> 1, 188, 0xF0, 0x00);
 
-		heightAdd += screen()->getFontHeight();
+		heightAdd += _screen->getFontHeight();
 		str += strlen(str);
 
 		if (backupChar) {
@@ -346,14 +349,66 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 		}
 	}
 
-	screen()->_charOffset = 0;
+	_screen->_charOffset = 0;
 
 	if (flags < 0) {
 		static const uint8 colorMap[] = { 0x00, 0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0x00, 0x00, 0x00, 0x00 };
 
-		screen()->setFont(Screen::FID_INTRO_FNT);
-		screen()->setTextColorMap(colorMap);
-		screen()->_charWidth = 0;
+		_screen->setFont(Screen::FID_INTRO_FNT);
+		_screen->setTextColorMap(colorMap);
+		_screen->_charWidth = 0;
+	}
+}
+
+void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
+	if (!_vm->textEnabled() && !(textId & 0x8000))
+		return;
+
+	char *text = getTableEntry(textId & 0x7FFF);
+
+	if (flags > 0)
+		_screen->copyBlockToPage(0, 0, 0, 320, 40, _textAreaBuffer);
+
+	if (flags == 255)
+		return;
+
+	_screen->setFont(Screen::FID_INTRO_FNT);
+
+	static const uint8 colorMap[] = { 0x00, 0xA0, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	_screen->setTextColorMap(colorMap);
+	_screen->_charWidth = 0;
+	_screen->_charOffset = -4;
+
+	if (!flags)
+		_screen->copyRegionToBuffer(0, 0, 0, 320, 40, _textAreaBuffer);
+	
+	char backupChar = 0;
+	char *str = text;
+	int y = 0;
+
+	while (str[0]) {
+		char *nextLine = strchr(str, '\r');
+
+		backupChar = 0;
+		if (nextLine) {
+			backupChar = nextLine[0];
+			nextLine[0] = '\0';
+		}
+
+		int width = _screen->getTextWidth(str);
+
+		if (flags >= 0)
+			_screen->printText(str, (320 - width) >> 1, y, color, 0x00);
+		else
+			_screen->printText(str, 0, y, color, 0x00);
+
+		y += _screen->getFontHeight() - 4;
+		str += strlen(str);
+
+		if (backupChar) {
+			nextLine[0] = backupChar;
+			++str;
+		}
 	}
 }
 
@@ -368,7 +423,7 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 	};
 
 	for (int i = 0; i < 15; ++i) {
-		uint8 *palette = screen()->getPalette(0) + (240 + i) * 3;
+		uint8 *palette = _screen->getPalette(0) + (240 + i) * 3;
 
 		uint8 c1 = (((15 - i) << 2) * palTable[index*3+0]) / 100;
 		uint8 c2 = (((15 - i) << 2) * palTable[index*3+1]) / 100;
@@ -380,19 +435,11 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 	}
 
 	if (!fadePalette && !_palDiff) {
-		screen()->setScreenPalette(screen()->getPalette(0));
+		_screen->setScreenPalette(_screen->getPalette(0));
 	} else {
-		screen()->getFadeParams(screen()->getPalette(0), fadePalette, _palDelayInc, _palDiff);
+		_screen->getFadeParams(_screen->getPalette(0), fadePalette, _palDelayInc, _palDiff);
 		_palDelayAcc = 0;
 	}
-}
-
-KyraEngine_v1 *TIMInterpreter::vm() {
-	return _vm;
-}
-
-Screen_v2 *TIMInterpreter::screen() {
-	return _screen;
 }
 
 TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags) {
@@ -400,9 +447,9 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 	anim->x = x;
 	anim->y = y;
 	anim->wsaCopyParams = wsaFlags;
-	const bool isLoLDemo = vm()->gameFlags().isDemo && vm()->gameFlags().gameID == GI_LOL;
+	const bool isLoLDemo = _vm->gameFlags().isDemo && _vm->gameFlags().gameID == GI_LOL;
 
-	_drawPage2 = isLoLDemo ? 0 : 8;
+	_drawPage2 = (isLoLDemo || _currentTim->isLoLOutro) ? 0 : 8;
 
 	uint16 wsaOpenFlags = 0;
 	if (isLoLDemo) {
@@ -420,14 +467,14 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 	char file[32];
 	snprintf(file, 32, "%s.WSA", filename);
 
-	if (vm()->resource()->exists(file)) {
+	if (_vm->resource()->exists(file)) {
 		if (isLoLDemo)
 			anim->wsa = new WSAMovie_v1(_vm);
 		else
 			anim->wsa = new WSAMovie_v2(_vm, _screen);
 		assert(anim->wsa);
 
-		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? screen()->getPalette(0) : 0);
+		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? _screen->getPalette(0) : 0);
 	}
 
 	if (anim->wsa && anim->wsa->opened()) {
@@ -453,50 +500,50 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		}
 
 		if (wsaFlags & 2) {
-			screen()->fadePalette(screen()->getPalette(1), 15, 0);
-			screen()->clearPage(_drawPage2);
+			_screen->fadePalette(_screen->getPalette(1), 15, 0);
+			_screen->clearPage(_drawPage2);
 			if (_drawPage2)
-				screen()->checkedPageUpdate(8, 4);
-			screen()->updateScreen();
+				_screen->checkedPageUpdate(8, 4);
+			_screen->updateScreen();
 		}
 
 		if (wsaFlags & 4) {
 			snprintf(file, 32, "%s.CPS", filename);
 
-			if (vm()->resource()->exists(file)) {
-				screen()->loadBitmap(file, 3, 3, screen()->getPalette(0));
-				screen()->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
+			if (_vm->resource()->exists(file)) {
+				_screen->loadBitmap(file, 3, 3, _screen->getPalette(0));
+				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 				if (_drawPage2)
-					screen()->checkedPageUpdate(8, 4);
-				screen()->updateScreen();
+					_screen->checkedPageUpdate(8, 4);
+				_screen->updateScreen();
 			}
 
 			anim->wsa->displayFrame(0, 0, x, y, 0);
 		}
 
 		if (wsaFlags & 2)
-			screen()->fadePalette(screen()->getPalette(0), 30, 0);
+			_screen->fadePalette(_screen->getPalette(0), 30, 0);
 	} else {
 		if (wsaFlags & 2) {
-			screen()->fadePalette(screen()->getPalette(1), 15, 0);
-			screen()->clearPage(_drawPage2);
+			_screen->fadePalette(_screen->getPalette(1), 15, 0);
+			_screen->clearPage(_drawPage2);
 			if (_drawPage2)
-				screen()->checkedPageUpdate(8, 4);
-			screen()->updateScreen();
+				_screen->checkedPageUpdate(8, 4);
+			_screen->updateScreen();
 		}
 
 		snprintf(file, 32, "%s.CPS", filename);
 
-		if (vm()->resource()->exists(file)) {
-			screen()->loadBitmap(file, 3, 3, screen()->getPalette(0));
-			screen()->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
+		if (_vm->resource()->exists(file)) {
+			_screen->loadBitmap(file, 3, 3, _screen->getPalette(0));
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 			if (_drawPage2)
-				screen()->checkedPageUpdate(8, 4);
-			screen()->updateScreen();
+				_screen->checkedPageUpdate(8, 4);
+			_screen->updateScreen();
 		}
 
 		if (wsaFlags & 2)
-			screen()->fadePalette(screen()->getPalette(0), 30, 0);
+			_screen->fadePalette(_screen->getPalette(0), 30, 0);
 	}
 
 	return anim;
@@ -636,12 +683,15 @@ int TIMInterpreter::cmd_wsaDisplayFrame(const uint16 *param) {
 	if (anim.wsa)
 		anim.wsa->displayFrame(frame, page, anim.x, anim.y, anim.wsaCopyParams & 0xF0FF, 0, 0);
 	if (!page)
-		screen()->updateScreen();
+		_screen->updateScreen();
 	return 1;
 }
 
 int TIMInterpreter::cmd_displayText(const uint16 *param) {
-	displayText(param[0], param[1]);
+	if (_currentTim->isLoLOutro)
+		displayText(param[0], param[1], 0xF2);
+	else
+		displayText(param[0], param[1]);
 	return 1;
 }
 
@@ -650,6 +700,32 @@ int TIMInterpreter::cmd_loadVocFile(const uint16 *param) {
 	const int index = param[1];
 
 	_vocFiles[index] = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (stringId << 1)));
+
+	if (index == 2 && _currentTim->isLoLOutro) {
+		_vocFiles[index] = "CONGRATA.VOC";
+
+		switch (_currentTim->lolCharacter) {
+		case 0:
+			_vocFiles[index].setChar('K', 7);
+			break;
+
+		case 1:
+			_vocFiles[index].setChar('A', 7);
+			break;
+
+		case 2:
+			_vocFiles[index].setChar('M', 7);
+			break;
+
+		case 3:
+			_vocFiles[index].setChar('C', 7);
+			break;
+
+		default:
+			break;
+		}
+	}
+
 	for (int i = 0; i < 4; ++i)
 		_vocFiles[index].deleteLastChar();
 	return 1;
@@ -666,11 +742,11 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 	const int volume = (param[1] * 255) / 100;
 
 	if (index < ARRAYSIZE(_vocFiles) && !_vocFiles[index].empty())
-		vm()->sound()->voicePlay(_vocFiles[index].c_str(), 0, volume, true);
+		_vm->sound()->voicePlay(_vocFiles[index].c_str(), 0, volume, true);
 	else if (index == 7 && !_vm->gameFlags().isTalkie)
-		vm()->sound()->playTrack(index);
+		_vm->sound()->playTrack(index);
 	else
-		vm()->sound()->playSoundEffect(index);
+		_vm->sound()->playSoundEffect(index);
 
 	return 1;
 }
@@ -678,15 +754,15 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 int TIMInterpreter::cmd_loadSoundFile(const uint16 *param) {
 	const char *file = (const char *)(_currentTim->text + READ_LE_UINT16(_currentTim->text + (param[0]<<1)));
 
-	vm()->sound()->loadSoundFile(file);
-	if (vm()->gameFlags().gameID == GI_LOL)
-		vm()->sound()->loadSfxFile(file);
+	_vm->sound()->loadSoundFile(file);
+	if (_vm->gameFlags().gameID == GI_LOL)
+		_vm->sound()->loadSfxFile(file);
 
 	return 1;
 }
 
 int TIMInterpreter::cmd_playMusicTrack(const uint16 *param) {
-	vm()->sound()->playTrack(param[0]);
+	_vm->sound()->playTrack(param[0]);
 	return 1;
 }
 
@@ -705,9 +781,9 @@ int TIMInterpreter::cmd_continueLoop(const uint16 *param) {
 
 	uint16 factor = param[0];
 	if (factor) {
-		const uint32 random = vm()->_rnd.getRandomNumberRng(0, 0x8000);
+		const uint32 random = _vm->_rnd.getRandomNumberRng(0, 0x8000);
 		uint32 waitTime = (random * factor) / 0x8000;
-		func.nextTime += waitTime * vm()->tickLength();
+		func.nextTime += waitTime * _vm->tickLength();
 	}
 
 	return -2;
@@ -764,7 +840,7 @@ int TIMInterpreter::cmd_stopFuncNow(const uint16 *param) {
 }
 
 int TIMInterpreter::cmd_stopAllFuncs(const uint16 *param) {
-	while (_currentTim->dlgFunc == -1 && _currentTim->clickedButton == 0 && !vm()->shouldQuit()) {
+	while (_currentTim->dlgFunc == -1 && _currentTim->clickedButton == 0 && !_vm->shouldQuit()) {
 		update();
 		_currentTim->clickedButton = processDialogue();
 	}
@@ -903,14 +979,6 @@ int TIMInterpreter_LoL::freeAnimStruct(int index) {
 	memset(anim->parts, 0, TIM::kAnimParts * sizeof(AnimPart));
 
 	return 1;
-}
-
-KyraEngine_v1 *TIMInterpreter_LoL::vm() {
-	return _vm;
-}
-
-Screen_v2 *TIMInterpreter_LoL::screen() {
-	return _screen;
 }
 
 void TIMInterpreter_LoL::advanceToOpcode(int opcode) {
