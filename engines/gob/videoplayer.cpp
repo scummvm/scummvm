@@ -92,6 +92,7 @@ void VideoPlayer::Video::close() {
 
 	_video = 0;
 	_stream = 0;
+	_fileName.clear();
 	memset(&_state, 0, sizeof(Graphics::CoktelVideo::State));
 	_defaultX = _defaultY = 0;
 }
