@@ -56,33 +56,6 @@ public:
 	/** Calculates the slot remainder, for error checking. */
 	virtual int getSlotRemainder(int32 offset) const = 0;
 
-	/** Build the save file name. */
-	virtual char *build(int slot) const = 0;
-	/** Build the save file name. */
-	virtual char *build() const = 0;
-
-	/** Returns the highest filled slot number. */
-	virtual uint32 getSlotMax() const;
-
-	/** Returns the size of all existing slots + the index. */
-	virtual int32 tallyUpFiles(uint32 slotSize, uint32 indexSize) const;
-
-	/** Creates an index in buffer. */
-	virtual void buildIndex(byte *buffer, SavePartInfo &info,
-			SaveConverter *converter = 0) const;
-
-	virtual bool exists(const char *name) const;
-	virtual bool exists(int slot) const;
-	virtual bool exists() const;
-
-	virtual Common::InSaveFile *openRead(const char *name) const;
-	virtual Common::InSaveFile *openRead(int slot) const;
-	virtual Common::InSaveFile *openRead() const;
-
-	virtual Common::OutSaveFile *openWrite(const char *name) const;
-	virtual Common::OutSaveFile *openWrite(int slot) const;
-	virtual Common::OutSaveFile *openWrite() const;
-
 protected:
 	GobEngine *_vm;
 	char *_base;
@@ -97,8 +70,22 @@ public:
 			const char *extStub);
 	~SlotFileIndexed();
 
+	/** Build the save file name. */
 	char *build(int slot) const;
-	char *build() const;
+
+	/** Returns the highest filled slot number. */
+	virtual uint32 getSlotMax() const;
+
+	/** Returns the size of all existing slots + the index. */
+	virtual int32 tallyUpFiles(uint32 slotSize, uint32 indexSize) const;
+
+	/** Creates an index in buffer. */
+	virtual void buildIndex(byte *buffer, SavePartInfo &info,
+			SaveConverter *converter = 0) const;
+
+	virtual bool exists(int slot) const;
+	virtual Common::InSaveFile *openRead(int slot) const;
+	virtual Common::OutSaveFile *openWrite(int slot) const;
 
 protected:
 	char *_ext;
@@ -113,8 +100,12 @@ public:
 	int getSlot(int32 offset) const;
 	int getSlotRemainder(int32 offset) const;
 
-	char *build(int slot) const;
+	/** Build the save file name. */
 	char *build() const;
+
+	virtual bool exists() const;
+	virtual Common::InSaveFile *openRead() const;
+	virtual Common::OutSaveFile *openWrite() const;
 
 protected:
 	char *_ext;

@@ -50,7 +50,7 @@ const char *SlotFile::getBase() const {
 	return _base;
 }
 
-uint32 SlotFile::getSlotMax() const {
+uint32 SlotFileIndexed::getSlotMax() const {
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *in;
 
@@ -73,7 +73,7 @@ uint32 SlotFile::getSlotMax() const {
 	return 0;
 }
 
-int32 SlotFile::tallyUpFiles(uint32 slotSize, uint32 indexSize) const {
+int32 SlotFileIndexed::tallyUpFiles(uint32 slotSize, uint32 indexSize) const {
 	uint32 maxSlot = getSlotMax();
 
 	if (maxSlot == 0)
@@ -82,7 +82,7 @@ int32 SlotFile::tallyUpFiles(uint32 slotSize, uint32 indexSize) const {
 	return ((maxSlot * slotSize) + indexSize);
 }
 
-void SlotFile::buildIndex(byte *buffer, SavePartInfo &info,
+void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
 		SaveConverter *converter) const {
 
 	uint32 descLength = info.getDescMaxLength();
@@ -114,69 +114,56 @@ void SlotFile::buildIndex(byte *buffer, SavePartInfo &info,
 	}
 }
 
-bool SlotFile::exists(const char *name) const {
-	Common::InSaveFile *in = openRead(name);
-	bool result = (in != 0);
-	delete in;
-	return result;
-}
-
-bool SlotFile::exists(int slot) const {
+bool SlotFileIndexed::exists(int slot) const {
 	Common::InSaveFile *in = openRead(slot);
 	bool result = (in != 0);
 	delete in;
 	return result;
 }
 
-bool SlotFile::exists() const {
+bool SlotFileStatic::exists() const {
 	Common::InSaveFile *in = openRead();
 	bool result = (in != 0);
 	delete in;
 	return result;
 }
 
-Common::InSaveFile *SlotFile::openRead(const char *name) const {
+Common::InSaveFile *SlotFileIndexed::openRead(int slot) const {
+	char *name = build(slot);
 	if (!name)
 		return 0;
-
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-
-	return saveMan->openForLoading(name);
-}
-
-Common::InSaveFile *SlotFile::openRead(int slot) const {
-	char *name = build(slot);
-	Common::InSaveFile *result = openRead(name);
+	Common::InSaveFile *result = saveMan->openForLoading(name);
 	delete[] name;
 	return result;
 }
 
-Common::InSaveFile *SlotFile::openRead() const {
+Common::InSaveFile *SlotFileStatic::openRead() const {
 	char *name = build();
-	Common::InSaveFile *result = openRead(name);
-	delete[] name;
-	return result;
-}
-
-Common::OutSaveFile *SlotFile::openWrite(const char *name) const {
 	if (!name)
 		return 0;
-
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-
-	return saveMan->openForSaving(name);
-}
-
-Common::OutSaveFile *SlotFile::openWrite(int slot) const {
-	char *name = build(slot);
-	Common::OutSaveFile *result = openWrite(name);
+	Common::InSaveFile *result = saveMan->openForLoading(name);
 	delete[] name;
 	return result;
 }
 
-Common::OutSaveFile *SlotFile::openWrite() const {
+Common::OutSaveFile *SlotFileIndexed::openWrite(int slot) const {
+	char *name = build(slot);
+	if (!name)
+		return 0;
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::OutSaveFile *result = saveMan->openForSaving(name);
+	delete[] name;
+	return result;
+}
+
+Common::OutSaveFile *SlotFileStatic::openWrite() const {
 	char *name = build();
-	Common::OutSaveFile *result = openWrite(name);
+	if (!name)
+		return 0;
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::OutSaveFile *result = saveMan->openForSaving(name);
 	delete[] name;
 	return result;
 }
@@ -205,11 +192,6 @@ char *SlotFileIndexed::build(int slot) const {
 	return slotFile;
 }
 
-char *SlotFileIndexed::build() const {
-	return 0;
-}
-
-
 SlotFileStatic::SlotFileStatic(GobEngine *vm, const char *base,
 		const char *ext) : SlotFile(vm, 1, base) {
 
@@ -226,10 +208,6 @@ int SlotFileStatic::getSlot(int32 offset) const {
 
 int SlotFileStatic::getSlotRemainder(int32 offset) const {
 	return -1;
-}
-
-char *SlotFileStatic::build(int slot) const {
-	return 0;
 }
 
 char *SlotFileStatic::build() const {

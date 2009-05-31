@@ -459,8 +459,12 @@ SaveLoad_v4::ScreenPropsHandler::~ScreenPropsHandler() {
 }
 
 int32 SaveLoad_v4::ScreenPropsHandler::getSize() {
+	// FIXME: It makes no sense to call exists() here, since
+	// _file is a SlotFileIndexed file
+/*
 	if (_file->exists())
 		return 256000;
+*/
 
 	return 0;
 }
