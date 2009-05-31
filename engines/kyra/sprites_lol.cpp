@@ -123,14 +123,27 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 void LoLEngine::releaseMonsterShapes(int monsterIndex) {
 	for (int i = 0; i < 16; i++) {
 		int pos = (monsterIndex << 4) + i;
+		int pos2 = (monsterIndex << 4) + 16;
 		if (_monsterShapes[pos]) {
+			uint8 *t = _monsterShapes[pos];
 			delete[] _monsterShapes[pos];
-			_monsterShapes[pos] = 0;
+			for (int ii = pos; ii < pos2; ii++) {
+				if (_monsterShapes[ii] == t)
+					_monsterShapes[ii] = 0;
+			}			
 		}
 
 		if (_monsterPalettes[pos]) {
 			delete[] _monsterPalettes[pos];
 			_monsterPalettes[pos] = 0;
+		}
+	}
+
+	for (int i = 0; i < 192; i++) {
+		int pos = (monsterIndex * 192) + i;
+		if (_monsterShapesEx[pos]) {
+			delete[] _monsterShapesEx[pos];
+			_monsterShapesEx[pos] = 0;			
 		}
 	}
 }

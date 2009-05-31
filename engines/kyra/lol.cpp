@@ -314,21 +314,12 @@ LoLEngine::~LoLEngine() {
 		delete[] _healiShapes;
 	}
 
-	if (_monsterShapes) {
-		for (int i = 0; i < 48; i++)
-			delete[]  _monsterShapes[i];
-		delete[] _monsterShapes;
-	}
-	if (_monsterPalettes) {
-		for (int i = 0; i < 48; i++)
-			delete[]  _monsterPalettes[i];
-		delete[] _monsterPalettes;
-	}
-	if (_monsterShapesEx) {
-		for (int i = 0; i < 576; i++)
-			delete[]  _monsterShapesEx[i];
-		delete[] _monsterShapesEx;
-	}
+	for (int i = 0; i < 3; i++)
+		releaseMonsterShapes(i);
+
+	delete[] _monsterShapes;
+	delete[] _monsterPalettes;	
+	delete[] _monsterShapesEx;
 
 	if (_automapShapes)
 		delete[] _automapShapes;
