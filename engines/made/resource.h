@@ -56,9 +56,8 @@ struct ResourceSlot;
 
 class Resource {
 public:
-	ResourceSlot *slot;
+	ResourceSlot *_slot;
 	virtual ~Resource();
-	virtual void load(byte *buffer, int size) = 0;
 };
 
 class PictureResource : public Resource {
@@ -231,7 +230,7 @@ protected:
 
 			if (loadResource(slot, buffer, size)) {
 				res = new T();
-				res->slot = slot;
+				res->_slot = slot;
 				res->load(buffer, size);
 				addResourceToCache(slot, res);
 				delete[] buffer;

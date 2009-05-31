@@ -506,7 +506,7 @@ void ResourceReader::loadIndex(ResourceSlots *slots) {
 }
 
 void ResourceReader::freeResource(Resource *resource) {
-	tossResourceFromCache(resource->slot);
+	tossResourceFromCache(resource->_slot);
 }
 
 bool ResourceReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &size) {
@@ -525,8 +525,9 @@ bool ResourceReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &siz
 
 ResourceSlot *ResourceReader::getResourceSlot(uint32 resType, uint index) {
 	ResourceSlots *slots = _resSlots[resType];
+	assert(slots);
 	if (index >= 1 && index < slots->size()) {
-		return &slots->operator[](index);
+		return &(*slots)[index];
 	} else {
 		return NULL;
 	}
