@@ -134,8 +134,8 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 
 bool Console::cmdOpcodes(int argc, const char **argv) {
 	DebugPrintf("Opcode names in numeric order [index: type name]:\n");
-	for (uint seeker = 0; seeker < g_EngineState->_vocabulary->_opcodes.size(); seeker++) {
-		opcode &op = g_EngineState->_vocabulary->_opcodes[seeker];
+	for (uint seeker = 0; seeker < g_EngineState->_vocabulary->getOpcodesSize(); seeker++) {
+		opcode op = g_EngineState->_vocabulary->getOpcode(seeker);
 		DebugPrintf("%03x: %03x %20s | ", seeker, op.type, op.name.c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
@@ -148,8 +148,8 @@ bool Console::cmdOpcodes(int argc, const char **argv) {
 
 bool Console::cmdSelectors(int argc, const char **argv) {
 	DebugPrintf("Selector names in numeric order:\n");
-	for (uint seeker = 0; seeker < g_EngineState->_vocabulary->_selectorNames.size(); seeker++) {
-		DebugPrintf("%03x: %20s | ", seeker, g_EngineState->_vocabulary->_selectorNames[seeker].c_str());
+	for (uint seeker = 0; seeker < g_EngineState->_vocabulary->getSelectorNamesSize(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, g_EngineState->_vocabulary->getSelectorName(seeker).c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
@@ -161,8 +161,8 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 bool Console::cmdKernelNames(int argc, const char **argv) {
 	DebugPrintf("Selector names in numeric order:\n");
-	for (uint seeker = 0; seeker <  g_EngineState->_vocabulary->_kernelNames.size(); seeker++) {
-		DebugPrintf("%03x: %20s | ", seeker, g_EngineState->_vocabulary->_kernelNames[seeker].c_str());
+	for (uint seeker = 0; seeker <  g_EngineState->_vocabulary->getKernelNamesSize(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, g_EngineState->_vocabulary->getKernelName(seeker).c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
@@ -215,15 +215,13 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 }
 
 bool Console::cmdDissectScript(int argc, const char **argv) {
-	Common::StringList selectorNames;
-
 	if (argc != 2) {
 		DebugPrintf("Examines a script\n");
 		DebugPrintf("Usage: %s <script number>\n", argv[0]);
 		return true;
 	}
 
-	script_dissect(_vm->getResMgr(), atoi(argv[1]), g_EngineState->_vocabulary);
+	g_EngineState->_vocabulary->dissectScript(atoi(argv[1]));
 
 	return true;
 }

@@ -502,13 +502,6 @@ reg_t kalloc(EngineState *s, const char *type, int space) {
 	return reg;
 }
 
-bool has_kernel_function(EngineState *s, const char *kname) {
-	Common::StringList::const_iterator it
-		= Common::find(s->_vocabulary->_kernelNames.begin(), s->_vocabulary->_kernelNames.end(), kname);
-
-	return (it != s->_vocabulary->_kernelNames.end());
-}
-
 // Returns a pointer to the memory indicated by the specified handle
 byte *kmem(EngineState *s, reg_t handle) {
 	HunkTable *ht = (HunkTable *)GET_SEGMENT(*s->seg_manager, handle.segment, MEM_OBJ_HUNK);
@@ -610,7 +603,7 @@ void kernel_compile_signature(const char **s) {
 int script_map_kernel(EngineState *s) {
 	int mapped = 0;
 	int ignored = 0;
-	uint functions_nr = s->_vocabulary->_kernelNames.size();
+	uint functions_nr = s->_vocabulary->getKernelNamesSize();
 	uint max_functions_nr = sci_max_allowed_unknown_kernel_functions[s->resmgr->_sciVersion];
 
 	if (functions_nr < max_functions_nr) {
@@ -627,8 +620,8 @@ int script_map_kernel(EngineState *s) {
 		int seeker, found = -1;
 		Common::String sought_name;
 
-		if (functnr < s->_vocabulary->_kernelNames.size())
-			sought_name = s->_vocabulary->_kernelNames[functnr];
+		if (functnr < s->_vocabulary->getKernelNamesSize())
+			sought_name = s->_vocabulary->getKernelName(functnr);
 
 		if (!sought_name.empty())
 			for (seeker = 0; (found == -1) && kfunct_mappers[seeker].type != KF_TERMINATOR; seeker++)
@@ -637,7 +630,7 @@ int script_map_kernel(EngineState *s) {
 
 		if (found == -1) {
 			if (!sought_name.empty()) {
-				warning("Kernel function %s[%x] unmapped", s->_vocabulary->_kernelNames[functnr].c_str(), functnr);
+				warning("Kernel function %s[%x] unmapped", s->_vocabulary->getKernelName(functnr).c_str(), functnr);
 				s->_kfuncTable[functnr].fun = kNOP;
 			} else {
 				warning("Flagging kernel function %x as unknown", functnr);
@@ -667,7 +660,7 @@ int script_map_kernel(EngineState *s) {
 
 	} // for all functions requesting to be mapped
 
-	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, s->_vocabulary->_kernelNames.size(), mapped);
+	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, s->_vocabulary->getKernelNamesSize(), mapped);
 	if (ignored)
 		sciprintf(" and ignoring %d", ignored);
 	sciprintf(".\n");

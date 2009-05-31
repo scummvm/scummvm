@@ -108,21 +108,10 @@ void script_adjust_opcode_formats(int res_version) {
 	}
 }
 
-int script_find_selector(Common::StringList *selectorNames, const char *selectorname) {
-	for (uint pos = 0; pos < selectorNames->size(); ++pos) {
-		if ((*selectorNames)[pos] == selectorname)
-			return pos;
-	}
+#define FIND_SELECTOR(_slc_) _selectorMap._slc_ = findSelector(#_slc_)
+#define FIND_SELECTOR2(_slc_, _slcstr_) _selectorMap._slc_ = findSelector(_slcstr_)
 
-	warning("Could not map '%s' to any selector", selectorname);
-
-	return -1;
-}
-
-#define FIND_SELECTOR(_slc_) map->_slc_ = script_find_selector(selectorNames, #_slc_)
-#define FIND_SELECTOR2(_slc_, _slcstr_) map->_slc_ = script_find_selector(selectorNames, _slcstr_)
-
-void script_map_selectors(Common::StringList *selectorNames, selector_map_t *map) {
+void Vocabulary::mapSelectors() {
 	FIND_SELECTOR(init);
 	FIND_SELECTOR(play);
 	FIND_SELECTOR(replay);
@@ -213,7 +202,7 @@ void script_map_selectors(Common::StringList *selectorNames, selector_map_t *map
 	FIND_SELECTOR(syncTime);
 }
 
-static void script_dump_object(char *data, int seeker, int objsize, const Common::StringList &selectorNames) {
+void Vocabulary::dumpScriptObject(char *data, int seeker, int objsize) {
 	int selectors, overloads, selectorsize;
 	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
 	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
@@ -249,14 +238,14 @@ static void script_dump_object(char *data, int seeker, int objsize, const Common
 		while (overloads--) {
 			int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker));
 
-			sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)selectorNames.size()) ? selectorNames[selector].c_str() : "<?>");
+			sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>");
 			sciprintf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors*2 + 2) & 0xffff);
 
 			seeker += 2;
 		}
 }
 
-static void script_dump_class(char *data, int seeker, int objsize, const Common::StringList &selectorNames) {
+void Vocabulary::dumpScriptClass(char *data, int seeker, int objsize) {
 	int selectors, overloads, selectorsize;
 	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
 	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
@@ -280,7 +269,7 @@ static void script_dump_class(char *data, int seeker, int objsize, const Common:
 	while (selectors--) {
 		int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker) + selectorsize);
 
-		sciprintf("  [%03x] %s = 0x%x\n", 0xffff & selector, (selector >= 0 && selector < (int)selectorNames.size()) ? selectorNames[selector].c_str() : "<?>",
+		sciprintf("  [%03x] %s = 0x%x\n", 0xffff & selector, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>",
 		          (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
 
 		seeker += 2;
@@ -294,19 +283,19 @@ static void script_dump_class(char *data, int seeker, int objsize, const Common:
 
 	while (overloads--) {
 		int selector = (int16)READ_LE_UINT16((unsigned char *)data + (seeker));
-		fprintf(stderr, "selector=%d; selectorNames.size() =%d\n", selector, selectorNames.size());
-		sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)selectorNames.size()) ?
-		          selectorNames[selector].c_str() : "<?>");
+		fprintf(stderr, "selector=%d; selectorNames.size() =%d\n", selector, _selectorNames.size());
+		sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ?
+		          _selectorNames[selector].c_str() : "<?>");
 		sciprintf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors * 2 + 2) & 0xffff);
 
 		seeker += 2;
 	}
 }
 
-void script_dissect(ResourceManager *resmgr, int res_no, Vocabulary *vocab) {
+void Vocabulary::dissectScript(int scriptNumber) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
-	Resource *script = resmgr->findResource(kResourceTypeScript, res_no, 0);
+	Resource *script = _resmgr->findResource(kResourceTypeScript, scriptNumber, 0);
 
 	if (!script) {
 		sciprintf("Script not found!\n");
@@ -337,7 +326,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, Vocabulary *vocab) {
 
 		switch (objtype) {
 		case SCI_OBJ_OBJECT:
-			script_dump_object((char *)script->data, seeker, objsize, vocab->_selectorNames);
+			dumpScriptObject((char *)script->data, seeker, objsize);
 			break;
 
 		case SCI_OBJ_CODE: {
@@ -396,7 +385,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, Vocabulary *vocab) {
 					}
 				} else {
 					nextitem = nextitem << 8 | script->data [seeker++];
-					sciprintf("%s[%03x] ", vocab->getAnyWordFromGroup(nextitem), nextitem);
+					sciprintf("%s[%03x] ", getAnyWordFromGroup(nextitem), nextitem);
 				}
 			}
 			sciprintf("\n");
@@ -414,7 +403,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, Vocabulary *vocab) {
 		break;
 
 		case SCI_OBJ_CLASS:
-			script_dump_class((char *)script->data, seeker, objsize, vocab->_selectorNames);
+			dumpScriptClass((char *)script->data, seeker, objsize);
 			break;
 
 		case SCI_OBJ_EXPORTS: {

@@ -1076,14 +1076,6 @@ void quit_vm();
 ** Returns   : (void)
 */
 
-void script_map_selectors(Common::StringList *selectorNames, selector_map_t *map);
-/* Maps special selectors
-** Parameters: (Common::StringList *) selectorNames: The selector information
-**             (selector_map_t *) map: Pointer to the selector map to map
-** Returns   : (void)
-** Called by script_run();
-*/
-
 int script_map_kernel(EngineState *s);
 /* Maps kernel functions
 ** Parameters: (EngineState *) s: The state which the _kernelNames are retrieved from
@@ -1097,14 +1089,6 @@ reg_t kalloc(EngineState *s, const char *type, int space);
 **             (const char *) type: A free-form type description string (static)
 **             (int) space: The space to allocate
 ** Returns   : (reg_t) The handle
-*/
-
-bool has_kernel_function(EngineState *s, const char *kname);
-/* Detects whether a particular kernel function is required in the game
-** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
-**             (const char *) kname: The name of the desired kernel function
-** Returns   : (bool) 1 if the kernel function is listed in the kernel table,
-**                   0 otherwise
 */
 
 byte *kmem(EngineState *s, reg_t handle);

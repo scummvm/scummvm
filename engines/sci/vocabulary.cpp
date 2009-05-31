@@ -109,7 +109,7 @@ Vocabulary::Vocabulary(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr
 	}
 
 	// Map a few special selectors for later use
-	script_map_selectors(&_selectorNames, &_selectorMap);
+	mapSelectors();
 
 	getKernelNames();
 }
@@ -546,6 +546,33 @@ void Vocabulary::copyParserListsTo(SuffixList &parserSuffixes, parse_rule_list_t
 	parserRules = *_parserRules;
 	parserBranches = _parserBranches;
 	parserWords = _parserWords;
+}
+
+void Vocabulary::copyKernelListsFrom(Vocabulary *voc) {
+	voc->copyKernelListsTo(_opcodes, _selectorNames, _kernelNames);
+}
+
+void Vocabulary::copyKernelListsTo(Common::Array<opcode> &opcodes, Common::StringList &selectorNames, 
+								   Common::StringList &kernelNames) {
+	_opcodes = opcodes;
+	_selectorNames = selectorNames;
+	_kernelNames = kernelNames;
+}
+
+int Vocabulary::findSelector(const char *selectorName) {
+	for (uint pos = 0; pos < _selectorNames.size(); ++pos) {
+		if (_selectorNames[pos] == selectorName)
+			return pos;
+	}
+
+	warning("Could not map '%s' to any selector", selectorName);
+
+	return -1;
+}
+
+bool Vocabulary::hasKernelFunction(const char *functionName) {
+	Common::StringList::const_iterator it = Common::find(_kernelNames.begin(), _kernelNames.end(), functionName);
+	return (it != _kernelNames.end());
 }
 
 void _vocab_recursive_ptree_dump_treelike(parse_tree_node_t *nodes, int nr, int prevnr) {

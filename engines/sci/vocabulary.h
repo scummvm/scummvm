@@ -267,12 +267,46 @@ public:
 	void copyParserListsTo(SuffixList &parserSuffixes, parse_rule_list_t &parserRules, 
 							Common::Array<parse_tree_branch_t> &parserBranches, WordMap &parserWords);
 
+	/**
+	 * Copies the kernel lists from another vocabulary
+	 */
+	void copyKernelListsFrom(Vocabulary *voc);
+
+	/**
+	 * Gets the internal kernel lists, for vocabulary copying
+	 */
+	void copyKernelListsTo(Common::Array<opcode> &opcodes, Common::StringList &selectorNames, 
+							Common::StringList &kernelNames);
+
 	uint getParserBranchesSize() { return _parserBranches.size(); }
 	parse_tree_branch_t getParseTreeBranch(int number) { return _parserBranches[number]; }
 
-	Common::StringList _selectorNames;
-	Common::Array<opcode> _opcodes;
-	Common::StringList _kernelNames;
+	uint getOpcodesSize() { return _opcodes.size(); }
+	opcode getOpcode(uint opcode) { return _opcodes[opcode]; }
+
+	uint getSelectorNamesSize() { return _selectorNames.size(); }
+	Common::String getSelectorName(uint selector) { return _selectorNames[selector]; }
+
+	/* Determines the selector ID of a selector by its name
+	**             (const char *) selectorName: Name of the selector to look up
+	** Returns   : (int) The appropriate selector ID, or -1 on error
+	*/
+	int findSelector(const char *selectorName);
+
+	/* Detects whether a particular kernel function is required in the game
+	**             (const char *) functionName: The name of the desired kernel function
+	** Returns   : (bool) true if the kernel function is listed in the kernel table,
+	**                   false otherwise
+	*/
+	bool hasKernelFunction(const char *functionName);
+
+	uint getKernelNamesSize() { return _kernelNames.size(); }
+	Common::String getKernelName(uint number) { return _kernelNames[number]; }
+
+	// Script dissection/dumping functions
+	void dissectScript(int scriptNumber);
+	void dumpScriptObject(char *data, int seeker, int objsize);
+	void dumpScriptClass(char *data, int seeker, int objsize);
 
 	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
 
@@ -282,6 +316,11 @@ private:
 	* Returns true upon success, false otherwise.
 	*/
 	bool getSelectorNames();
+
+	/* Maps special selectors
+	** Returns   : (void)
+	*/
+	void mapSelectors();
 
 	/**
 	 * Fills the given Array with opcodes.
@@ -333,6 +372,13 @@ private:
 	ResourceManager *_resmgr;
 	bool _isOldSci0;
 	VocabularyVersions _vocabVersion;
+
+	// Kernel-related lists
+	// List of opcodes, loaded from vocab.998. This list is only used for debugging
+	// purposes, as we hardcode the list of opcodes in the sci_opcodes enum (script.h)
+	Common::Array<opcode> _opcodes;
+	Common::StringList _selectorNames;
+	Common::StringList _kernelNames;
 
 	// Parser-related lists
 	SuffixList _parserSuffixes;

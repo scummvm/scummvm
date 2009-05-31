@@ -826,10 +826,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_vocabulary->copyParserListsFrom(s->_vocabulary);
 
 	// static VM/Kernel information:
-	retval->_vocabulary->_selectorNames = s->_vocabulary->_selectorNames;
-	retval->_vocabulary->_kernelNames = s->_vocabulary->_kernelNames;
+	retval->_vocabulary->copyKernelListsFrom(s->_vocabulary);
 	retval->_kfuncTable = s->_kfuncTable;
-	retval->_vocabulary->_opcodes = s->_vocabulary->_opcodes;
 
 	memcpy(&(retval->_vocabulary->_selectorMap), &(s->_vocabulary->_selectorMap), sizeof(selector_map_t));
 

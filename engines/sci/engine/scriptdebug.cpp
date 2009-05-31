@@ -699,8 +699,8 @@ int c_stack(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 }
 
 const char *selector_name(EngineState *s, int selector) {
-	if (selector >= 0 && selector < (int)s->_vocabulary->_selectorNames.size())
-		return s->_vocabulary->_selectorNames[selector].c_str();
+	if (selector >= 0 && selector < (int)s->_vocabulary->getSelectorNamesSize())
+		return s->_vocabulary->getSelectorName(selector).c_str();
 	else
 		return "--INVALID--";
 }
@@ -822,7 +822,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	if (print_bw_tag)
 		sciprintf("[%c] ", opsize ? 'B' : 'W');
-	sciprintf("%s", opcode < s->_vocabulary->_opcodes.size() ? s->_vocabulary->_opcodes[opcode].name.c_str() : "undefined");
+	sciprintf("%s", s->_vocabulary->getOpcode(opcode).name.c_str());
 
 	i = 0;
 	while (g_opcode_formats[opcode][i]) {
@@ -858,7 +858,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 			if (opcode == op_callk)
 				sciprintf(" %s[%x]", (param_value < s->_kfuncTable.size()) ?
-							((param_value < s->_vocabulary->_kernelNames.size()) ? s->_vocabulary->_kernelNames[param_value].c_str() : "[Unknown(postulated)]")
+							((param_value < s->_vocabulary->getKernelNamesSize()) ? s->_vocabulary->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
 			else
 				sciprintf(opsize ? " %02x" : " %04x", param_value);
@@ -948,7 +948,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				if (!name)
 					name = "<invalid>";
 
-				sciprintf("  %s::%s[", name, (selector > s->_vocabulary->_selectorNames.size()) ? "<invalid>" : selector_name(s, selector));
+				sciprintf("  %s::%s[", name, (selector > s->_vocabulary->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
 
 				switch (lookup_selector(s, called_obj_addr, selector, &val_ref, &fun_ref)) {
 				case kSelectorMethod:
@@ -1058,12 +1058,12 @@ static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			sciprintf(" %x:[%x]  k%s(", i, call.origin, s->_vocabulary->_kernelNames[-(call.selector)-42].c_str());
+			sciprintf(" %x:[%x]  k%s(", i, call.origin, s->_vocabulary->getKernelName(-(call.selector) - 42).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
 			sciprintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
-			          objname,s->_vocabulary->_selectorNames[call.selector].c_str());
+			          objname,s->_vocabulary->getSelectorName(call.selector).c_str());
 			break;
 		}
 
@@ -1318,7 +1318,7 @@ static int c_disasm_addr(EngineState *s, const Common::Array<cmd_param_t> &cmdPa
 
 static int c_disasm(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Object *obj = obj_get(s, cmdParams[0].reg);
-	int selector_id = script_find_selector(&s->_vocabulary->_selectorNames, cmdParams[1].str);
+	int selector_id = s->_vocabulary->findSelector(cmdParams[1].str);
 	reg_t addr;
 
 	if (!obj) {
@@ -1367,8 +1367,8 @@ static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		callk_index = strtoul(cmdParams [0].str, &endptr, 0);
 		if (*endptr != '\0') {
 			callk_index = -1;
-			for (uint i = 0; i < s->_vocabulary->_kernelNames.size(); i++)
-				if (cmdParams [0].str == s->_vocabulary->_kernelNames[i]) {
+			for (uint i = 0; i < s->_vocabulary->getKernelNamesSize(); i++)
+				if (cmdParams [0].str == s->_vocabulary->getKernelName(i)) {
 					callk_index = i;
 					break;
 				}
@@ -1420,7 +1420,7 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t *vptr;
 	reg_t fptr;
 
-	selector_id = script_find_selector(&s->_vocabulary->_selectorNames, selector_name);
+	selector_id = s->_vocabulary->findSelector(selector_name);
 
 	if (selector_id < 0) {
 		sciprintf("Unknown selector: \"%s\"\n", selector_name);

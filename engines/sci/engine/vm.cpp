@@ -322,7 +322,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			Breakpoint *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->_vocabulary->_selectorNames[selector].c_str());
+			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->_vocabulary->getSelectorName(selector).c_str());
 
 			bp = s->bp_list;
 			while (bp) {
@@ -346,8 +346,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
-			sciprintf("Send to invalid selector 0x%x of object at %04x:%04x\n", 0xffff & selector, PRINT_REG(send_obj));
-
 			// WORKAROUND: LSL6 tries to access the invalid 'keep' selector of the game object.
 			// FIXME: Find out if this is a game bug.
 			if ((s->_gameName == "LSL6") && (selector == 0x18c)) {
@@ -356,6 +354,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			}
 
 			script_error_flag = script_debug_flag = 1;
+
+			error("Send to invalid selector 0x%x of object at %04x:%04x\n", 0xffff & selector, PRINT_REG(send_obj));
 
 			break;
 
