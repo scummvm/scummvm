@@ -95,7 +95,6 @@ reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	sciprintf("Debug mode activated\n");
 
-	script_debug_flag = 1; // Enter debug mode
 	_debug_seeking = _debug_step_running = 0;
 	return s->r_acc;
 }
@@ -168,7 +167,6 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
 		if (!s->seg_manager->allocDynmem(UKPV(1), "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
-			script_error_flag = script_debug_flag = 1;
 		}
 		return s->r_acc;
 		break;

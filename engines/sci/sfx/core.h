@@ -112,9 +112,8 @@ public:
 	** Parameters: (SongIterator *) it: The iterator describing the song
 	**             (int) priority: Initial song priority (higher <-> more important)
 	**             (song_handle_t) handle: The handle to associate with the song
-	** Returns   : (int) 0 on success, nonzero on error
 	*/
-	int sfx_add_song(SongIterator *it, int priority, song_handle_t handle, int resnum);
+	void sfx_add_song(SongIterator *it, int priority, song_handle_t handle, int resnum);
 
 
 	/* Deletes a song and its associated song iterator from the song queue

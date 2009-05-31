@@ -783,15 +783,15 @@ int SfxState::sfx_poll_specific(song_handle_t handle, int *cue) {
 /*  Song basics  */
 /*****************/
 
-int SfxState::sfx_add_song(SongIterator *it, int priority, song_handle_t handle, int number) {
+void SfxState::sfx_add_song(SongIterator *it, int priority, song_handle_t handle, int number) {
 	song_t *song = song_lib_find(_songlib, handle);
 
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Adding song: %08lx at %d, it=%p\n", handle, priority, it);
 #endif
 	if (!it) {
-		warning("[SFX] Attempt to add empty song with handle %08lx", handle);
-		return -1;
+		error("[SFX] Attempt to add empty song with handle %08lx", handle);
+		return;
 	}
 
 	it->init();
@@ -809,10 +809,10 @@ int SfxState::sfx_add_song(SongIterator *it, int priority, song_handle_t handle,
 		fprintf(stderr, "Overwriting old song (%08lx) ...\n", handle);
 		if (song->status == SOUND_STATUS_PLAYING
 		        || song->status == SOUND_STATUS_SUSPENDED) {
-			warning("Unexpected (error): Song %ld still playing/suspended (%d)",
-			        handle, song->status);
 			delete it;
-			return -1;
+			error("Unexpected (error): Song %ld still playing/suspended (%d)",
+			        handle, song->status);
+			return;
 		} else
 			song_lib_remove(_songlib, handle); /* No duplicates */
 
@@ -827,7 +827,7 @@ int SfxState::sfx_add_song(SongIterator *it, int priority, song_handle_t handle,
 	_song = NULL; /* As above */
 	update();
 
-	return 0;
+	return;
 }
 
 void SfxState::sfx_remove_song(song_handle_t handle) {

@@ -1400,7 +1400,6 @@ static int c_sret(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 static int c_go(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	_debug_seeking = 0;
 	_debugstate_valid = 0;
-	script_debug_flag = 0;
 	return 0;
 }
 
@@ -1795,7 +1794,7 @@ int c_bpdel(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 int c_se(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	stop_on_event = 1;
-	_debugstate_valid = script_debug_flag = script_error_flag = 0;
+	_debugstate_valid = 0;
 
 	return 0;
 }
@@ -1907,9 +1906,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		          _debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[_debug_seek_special]));
 
 	_debugstate_valid = old_debugstate;
-
-	if (!script_debug_flag)
-		return;
 
 	if (_debug_seeking && !bp) { // Are we looking for something special?
 		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);

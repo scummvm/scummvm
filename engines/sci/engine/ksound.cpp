@@ -119,7 +119,6 @@ enum AudioSyncCommands {
 
 #define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
 #define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
-#define SCRIPT_ASSERT_ZERO(fun) do { if (fun) script_debug_flag = script_error_flag = 1; } while(0)
 
 
 static void script_set_priority(EngineState *s, reg_t obj, int priority) {
@@ -273,11 +272,9 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case _K_SCI0_SOUND_INIT_HANDLE:
 		if (obj.segment) {
 			sciprintf("Initializing song number %d\n", GET_SEL32V(obj, number));
-			SCRIPT_ASSERT_ZERO(s->_sound.sfx_add_song(
-			                                build_iterator(s, number,
-			                                               SCI_SONG_ITERATOR_TYPE_SCI0,
-			                                               handle),
-			                                0, handle, number));
+			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI0,
+			                                               handle), 0, handle, number);
+
 			PUT_SEL32V(obj, state, _K_SOUND_STATUS_INITIALIZED);
 			PUT_SEL32(obj, handle, obj); /* ``sound handle'': we use the object address */
 		}
@@ -508,11 +505,8 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (obj.segment && (s->resmgr->testResource(kResourceTypeSound, number))) {
 			sciprintf("Initializing song number %d\n", number);
-			SCRIPT_ASSERT_ZERO(s->_sound.sfx_add_song(
-			                                build_iterator(s, number,
-			                                               SCI_SONG_ITERATOR_TYPE_SCI1,
-			                                               handle),
-			                                0, handle, number));
+			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
+			                                      handle), 0, handle, number);
 			PUT_SEL32(obj, nodePtr, obj);
 			PUT_SEL32(obj, handle, obj);
 		}
@@ -819,11 +813,8 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			}
 
 			sciprintf("Initializing song number %d\n", number);
-			SCRIPT_ASSERT_ZERO(s->_sound.sfx_add_song(
-			                                build_iterator(s, number,
-			                                               SCI_SONG_ITERATOR_TYPE_SCI1,
-			                                               handle),
-			                                0, handle, number));
+			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
+			                          handle), 0, handle, number);
 			PUT_SEL32(obj, nodePtr, obj);
 			PUT_SEL32(obj, handle, obj);
 		}
@@ -848,11 +839,8 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (obj.segment && (s->resmgr->testResource(kResourceTypeSound, number))) {
 			sciprintf("Initializing song number %d\n", number);
-			SCRIPT_ASSERT_ZERO(s->_sound.sfx_add_song(
-			                                build_iterator(s, number,
-			                                               SCI_SONG_ITERATOR_TYPE_SCI1,
-			                                               handle),
-			                                0, handle, number));
+			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
+			                                    handle), 0, handle, number);
 			PUT_SEL32(obj, nodePtr, obj);
 			PUT_SEL32(obj, handle, obj);
 		}

@@ -37,7 +37,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
 		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
 		//sciprintf("%s, L%d: Attempt to use non-node %04x:%04x as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
-		//script_debug_flag = script_error_flag = 1;
+		//script_debug_flag = 1;
 		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}
@@ -45,8 +45,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 	NodeTable *nt = (NodeTable *)mobj;
 
 	if (!nt->isValidEntry(addr.offset)) {
-		sciprintf("Attempt to use non-node %04x:%04x as list node\n", PRINT_REG(addr));
-		script_debug_flag = script_error_flag = 1;
+		error("Attempt to use non-node %04x:%04x as list node\n", PRINT_REG(addr));
 		return NULL;
 	}
 
@@ -57,16 +56,14 @@ List *lookup_list(EngineState *s, reg_t addr) {
 	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (!mobj) {
-		sciprintf("Attempt to use non-list %04x:%04x as list\n", PRINT_REG(addr));
-		script_debug_flag = script_error_flag = 1;
+		error("Attempt to use non-list %04x:%04x as list\n", PRINT_REG(addr));
 		return NULL;
 	}
 
 	ListTable *lt = (ListTable *)mobj;
 
 	if (!lt->isValidEntry(addr.offset)) {
-		sciprintf("Attempt to use non-list %04x:%04x as list\n", PRINT_REG(addr));
-		script_debug_flag = script_error_flag = 1;
+		error("Attempt to use non-list %04x:%04x as list\n", PRINT_REG(addr));
 		return NULL;
 	}
 
@@ -284,7 +281,6 @@ reg_t kNextNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0])) {
 		error("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
-		script_error_flag = script_debug_flag = 0;
 		return NULL_REG;
 	}
 
@@ -303,7 +299,6 @@ reg_t kNodeValue(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0])) {
 		error("List node at %04x:%04x is not sane", PRINT_REG(argv[0]));
-		script_debug_flag = script_error_flag = 0;
 		return NULL_REG;
 	}
 

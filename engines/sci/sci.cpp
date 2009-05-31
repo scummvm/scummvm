@@ -124,8 +124,6 @@ Common::Error SciEngine::run() {
 
 	// FIXME/TODO: Move some of the stuff below to init()
 
-	script_debug_flag = 0;
-
 	sci_version_t version;
 	int res_version = getResourceVersion();
 

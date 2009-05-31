@@ -91,11 +91,9 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case SCI_EVT_KEYBOARD:
 		if ((e.buckybits & SCI_EVM_LSHIFT) && (e.buckybits & SCI_EVM_RSHIFT) && (e.data == '-')) {
 			sciprintf("Debug mode activated\n");
-			script_debug_flag = 1; // Enter debug mode
 			_debug_seeking = _debug_step_running = 0;
 		} else if ((e.buckybits & SCI_EVM_CTRL) && (e.data == '`')) {
 			sciprintf("Debug mode activated\n");
-			script_debug_flag = 1; // Enter debug mode
 			_debug_seeking = _debug_step_running = 0;
 		} else {
 			PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
@@ -142,7 +140,6 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if ((s->r_acc.offset) && (stop_on_event)) {
 		stop_on_event = 0;
-		script_debug_flag = 1;
 	}
 
 	return s->r_acc;

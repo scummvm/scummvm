@@ -46,8 +46,6 @@ reg_t NULL_REG = {0, 0};
 
 
 int script_abort_flag = 0; // Set to 1 to abort execution
-int script_error_flag = 0; // Set to 1 if an error occured, reset each round by the VM
-int script_debug_flag = 0; // Set to 1 for script debugging
 int script_step_counter = 0; // Counts the number of steps executed
 int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs
 
@@ -84,8 +82,7 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	if (sp >= s->stack_base && sp < s->stack_top)
 		return sp;
 
-	script_debug_flag = script_error_flag = 1;
-	debugC(2, kDebugLevelVM, "[VM] Stack index %d out of valid range [%d..%d]\n", 
+	error("[VM] Stack index %d out of valid range [%d..%d]\n", 
 		(int)(sp - s->stack_base), 0, (int)(s->stack_top - s->stack_base - 1));
 	return 0;
 }
@@ -93,8 +90,7 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		if (!_weak_validations)
-			script_debug_flag = script_error_flag = 1;
-		debugC(2, kDebugLevelVM, "[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
 		return 0;
 	}
 
@@ -103,9 +99,10 @@ static int validate_arithmetic(reg_t reg) {
 
 static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		if (!_weak_validations)
-			script_debug_flag = script_error_flag = 1;
 		debugC(2, kDebugLevelVM, "[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+		if (!_weak_validations) {
+			error("signed_validate_arithmetic failed");
+		}
 		return 0;
 	}
 
@@ -125,8 +122,9 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 		else
 			sciprintf("(out of range [%d..%d])", 0, max - 1);
 		sciprintf(" in %s, line %d\n", __FILE__, line);
-		if (!_weak_validations)
-			script_debug_flag = script_error_flag = 1;
+		if (!_weak_validations) {
+			error("validate_variable failed");
+		}
 
 #ifdef STRICT_READ
 		return 1;
@@ -186,8 +184,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define OBJ_PROPERTY(o, p) (validate_property(o, p))
 
 int script_error(EngineState *s, const char *file, int line, const char *reason) {
-	sciprintf("Script error in file %s, line %d: %s\n", file, line, reason);
-	script_debug_flag = script_error_flag = 1;
+	error("Script error in file %s, line %d: %s\n", file, line, reason);
 	return 0;
 }
 #define CORE_ERROR(area, msg) script_error(s, "[" area "] " __FILE__, __LINE__, msg)
@@ -200,8 +197,7 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 	}
 
 	if (classnr < 0 || (int)s->_classtable.size() <= classnr || s->_classtable[classnr].script < 0) {
-		warning("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, s->_classtable.size());
-		script_error_flag = script_debug_flag = 1;
+		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, s->_classtable.size());
 		return NULL_REG;
 	} else {
 		Class *the_class = &s->_classtable[classnr];
@@ -209,9 +205,8 @@ reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
 			script_get_segment(s, the_class->script, lock);
 
 			if (!the_class->reg.segment) {
-				warning("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
+				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
 				          " Entering debugger.", classnr, the_class->script, the_class->script);
-				script_error_flag = script_debug_flag = 1;
 				return NULL_REG;
 			}
 		} else
@@ -249,8 +244,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 
 	int temp = s->seg_manager->validateExportFunc(pubfunct, seg);
 	if (!temp) {
-		sciprintf("Request for invalid exported function 0x%x of script 0x%x\n", pubfunct, script);
-		script_error_flag = script_debug_flag = 1;
+		error("Request for invalid exported function 0x%x of script 0x%x\n", pubfunct, script);
 		return NULL;
 	}
 
@@ -265,7 +259,6 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		while (bp) {
 			if (bp->type == BREAK_EXPORT && bp->data.address == bpaddress) {
 				sciprintf("Break on script %d, export %d\n", script, pubfunct);
-				script_debug_flag = 1;
 				breakpointFlag = true;
 				break;
 			}
@@ -332,7 +325,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 				if (bp->type == BREAK_SELECTOR && !strncmp(bp->data.name, method_name, cmplen)) {
 					sciprintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
-					script_debug_flag = print_send_action = 1;
+					print_send_action = 1;
 					breakpointFlag = true;
 					break;
 				}
@@ -352,8 +345,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				debug("LSL6 detected, continuing...");
 				break;
 			}
-
-			script_error_flag = script_debug_flag = 1;
 
 			error("Send to invalid selector 0x%x of object at %04x:%04x\n", 0xffff & selector, PRINT_REG(send_obj));
 
@@ -519,8 +510,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, base.segment);
 
 	if (!mobj) {
-		script_debug_flag = script_error_flag = 1;
-		sciprintf("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x!", offset, PRINT_REG(base));
+		error("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x!", offset, PRINT_REG(base));
 		return NULL_REG;
 	}
 
@@ -674,8 +664,6 @@ void run_vm(EngineState *s, int restoring) {
 
 		}
 
-		script_error_flag = 0; // Set error condition to false
-
 		if (script_abort_flag)
 			return; // Emergency
 
@@ -750,8 +738,7 @@ void run_vm(EngineState *s, int restoring) {
 
 			case Script_Invalid:
 			default:
-				sciprintf("opcode %02x: Invalid!", opcode);
-				script_debug_flag = script_error_flag = 1;
+				error("opcode %02x: Invalid", opcode);
 			}
 
 		// TODO: Replace the following by an opcode table, and several methods for
@@ -770,9 +757,8 @@ void run_vm(EngineState *s, int restoring) {
 				// Pointer arithmetics!
 				if (s->r_acc.segment) {
 					if (r_temp.segment) {
-						sciprintf("Error: Attempt to add two pointers, stack=%04x:%04x and acc=%04x:%04x!\n",
+						error("Attempt to add two pointers, stack=%04x:%04x and acc=%04x:%04x",
 						          PRINT_REG(r_temp), PRINT_REG(s->r_acc));
-						script_debug_flag = script_error_flag = 1;
 						offset = 0;
 					} else {
 						r_ptr = s->r_acc;
@@ -797,9 +783,8 @@ void run_vm(EngineState *s, int restoring) {
 				// Pointer arithmetics!
 				if (s->r_acc.segment) {
 					if (r_temp.segment) {
-						sciprintf("Error: Attempt to subtract two pointers, stack=%04x:%04x and acc=%04x:%04x!\n",
+						error("Attempt to subtract two pointers, stack=%04x:%04x and acc=%04x:%04x",
 						          PRINT_REG(r_temp), PRINT_REG(s->r_acc));
-						script_debug_flag = script_error_flag = 1;
 						offset = 0;
 					} else {
 						r_ptr = s->r_acc;
@@ -988,8 +973,7 @@ void run_vm(EngineState *s, int restoring) {
 			}
 
 			if (opparams[0] >= (int)s->_kfuncTable.size()) {
-				sciprintf("Invalid kernel function 0x%x requested\n", opparams[0]);
-				script_debug_flag = script_error_flag = 1;
+				error("Invalid kernel function 0x%x requested\n", opparams[0]);
 			} else {
 				int argc = ASSERT_ARITHMETIC(xs->sp[0]);
 
@@ -998,8 +982,7 @@ void run_vm(EngineState *s, int restoring) {
 
 				if (s->_kfuncTable[opparams[0]].signature
 				        && !kernel_matches_signature(s, s->_kfuncTable[opparams[0]].signature, argc, xs->sp + 1)) {
-					sciprintf("[VM] Invalid arguments to kernel call %x\n", opparams[0]);
-					script_debug_flag = script_error_flag = 1;
+					error("[VM] Invalid arguments to kernel call %x\n", opparams[0]);
 				} else {
 					s->r_acc = s->_kfuncTable[opparams[0]].fun(s, opparams[0], argc, xs->sp + 1);
 				}
@@ -1225,9 +1208,8 @@ void run_vm(EngineState *s, int restoring) {
 
 #ifndef DISABLE_VALIDATIONS
 			if (s->r_acc.offset >= code_buf_size) {
-				sciprintf("VM: lofsa operation overflowed: %04x:%04x beyond end"
+				error("VM: lofsa operation overflowed: %04x:%04x beyond end"
 				          " of script (at %04x)\n", PRINT_REG(s->r_acc), code_buf_size);
-				script_error_flag = script_debug_flag = 1;
 			}
 #endif
 			break;
@@ -1241,9 +1223,8 @@ void run_vm(EngineState *s, int restoring) {
 				r_temp.offset = xs->addr.pc.offset + opparams[0];
 #ifndef DISABLE_VALIDATIONS
 			if (r_temp.offset >= code_buf_size) {
-				sciprintf("VM: lofss operation overflowed: %04x:%04x beyond end"
+				error("VM: lofss operation overflowed: %04x:%04x beyond end"
 				          " of script (at %04x)\n", PRINT_REG(r_temp), code_buf_size);
-				script_error_flag = script_debug_flag = 1;
 			}
 #endif
 			PUSH32(r_temp);
@@ -1439,12 +1420,15 @@ void run_vm(EngineState *s, int restoring) {
 					opnumber);
 		}
 //#endif
+
+#if 0
 		if (script_error_flag) {
 			_debug_step_running = 0; // Stop multiple execution
 			_debug_seeking = 0; // Stop special seeks
 			xs->addr.pc.offset = old_pc_offset;
 			xs->sp = old_sp;
 		} else
+#endif
 			++script_step_counter;
 	}
 }
@@ -1652,8 +1636,7 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 	} else {
 		scr = s->seg_manager->allocateScript(s, script_nr, &seg_id);
 		if (!scr) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
-			sciprintf("Not enough heap space for script size 0x%x of script 0x%x, should this happen?`\n", (*script)->size, script_nr);
-			script_debug_flag = script_error_flag = 1;
+			error("Not enough heap space for script size 0x%x of script 0x%x (Should this happen?)", (*script)->size, script_nr);
 			return 0;
 		}
 	}
@@ -1754,11 +1737,10 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 			int species;
 			species = scr->getHeap(addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
 			if (species < 0 || species >= (int)s->_classtable.size()) {
-				sciprintf("Invalid species %d(0x%x) not in interval "
+				error("Invalid species %d(0x%x) not in interval "
 				          "[0,%d) while instantiating script %d\n",
 				          species, species, s->_classtable.size(),
 				          script_nr);
-				script_debug_flag = script_error_flag = 1;
 				return 1;
 			}
 
@@ -2021,7 +2003,7 @@ int game_run(EngineState **_s) {
 	_init_stack_base_with_selector(s, s->_vocabulary->_selectorMap.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
-	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base) || script_error_flag) {
+	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base)) {
 		objinfo(s, s->game_obj);
 		sciprintf("Failed to run the game! Aborting...\n");
 		return 1;

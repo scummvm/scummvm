@@ -749,9 +749,8 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, SegmentId seg) {
 			int species = READ_LE_UINT16(seeker + 10);
 
 			if (species < 0 || species >= (int)s->_classtable.size()) {
-				sciprintf("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
+				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
 				          species, species, s->_classtable.size(), scr->nr);
-				script_debug_flag = script_error_flag = 1;
 				return;
 			}
 
