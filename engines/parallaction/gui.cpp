@@ -60,7 +60,7 @@ void Parallaction::runGuiFrame() {
 	}
 
 	if (!_menuHelper) {
-		error("No menu helper defined!");
+		error("No menu helper defined");
 	}
 
 	bool res = _menuHelper->run();

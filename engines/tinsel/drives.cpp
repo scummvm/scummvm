@@ -54,10 +54,10 @@ void CdCD(CORO_PARAM) {
 			//        functions. If these functions really get called while a CD
 			//        change is requested, this needs to be resolved.
 			if (coroParam == nullContext)
-				error("CdCD needs context!");
+				error("CdCD needs context");
 			CORO_SLEEP(1);
 		} else
-			error("No current process in CdCD()!");
+			error("No current process in CdCD()");
 	}
 
 	CORO_END_CODE;

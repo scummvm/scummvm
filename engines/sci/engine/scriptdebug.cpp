@@ -1516,7 +1516,7 @@ static int c_is_sample(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 
 	if ((data = songit->getAudioStream())) {
 /*
-		warning("\nIs sample (encoding %dHz/%s/%04x).", data->conf.rate, (data->conf.stereo) ?
+		warning("\nIs sample (encoding %dHz/%s/%04x)", data->conf.rate, (data->conf.stereo) ?
 		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
 */
 		delete data;

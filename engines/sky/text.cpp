@@ -279,7 +279,7 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 
 		if (pixelWidth <= lineWidth) {
 			if (*(lastSpace-1) == 10)
-				error("line width exceeded!");
+				error("line width exceeded");
 
 			*(lastSpace-1) = 10;
 			lineWidth = 0;
@@ -296,7 +296,7 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool centre, uint16 
 	numLines++;
 
 	if (numLines > MAX_NO_LINES)
-		error("Maximum no. of lines exceeded!");
+		error("Maximum no. of lines exceeded");
 
 	uint32 dtLineSize = pixelWidth * _charHeight;
 	uint32 numBytes = (dtLineSize * numLines) + sizeof(DataFileHeader) + 4;

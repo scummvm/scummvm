@@ -147,7 +147,7 @@ void RemapDialog::reflowLayout() {
 	_colCount = (areaW - scrollbarWidth) / colWidth;
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
 	if (_colCount <= 0 || _rowCount <= 0)
-		error("Remap dialog too small to display any keymaps!");
+		error("Remap dialog too small to display any keymaps");
 
 	_scrollBar->resize(areaX + areaW - scrollbarWidth, areaY, scrollbarWidth, areaH);
 	_scrollBar->_entriesPerPage = _rowCount;

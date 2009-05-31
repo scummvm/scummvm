@@ -596,7 +596,7 @@ bool Vocabulary::getBranches() {
 	int branches_nr = resource->size / 20;
 
 	if (branches_nr == 0) {
-		warning("Parser tree data is empty!");
+		warning("Parser tree data is empty");
 		return false;
 	}
 

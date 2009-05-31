@@ -54,7 +54,7 @@ Keymap::~Keymap() {
 
 void Keymap::addAction(Action *action) {
 	if (findAction(action->id))
-		error("Action with id %s already in KeyMap!", action->id);
+		error("Action with id %s already in KeyMap", action->id);
 
 	_actions.push_back(action);
 }

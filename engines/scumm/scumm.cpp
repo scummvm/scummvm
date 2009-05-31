@@ -1635,7 +1635,7 @@ void ScummEngine::setupMusic(int midi) {
 		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK)	{
 			midiDriver = MD_NULL;
 			_musicType = MDT_NONE;
-			warning("MIDI driver depends on sound mixer, switching to null MIDI driver\n");
+			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
 		}
 	}
 

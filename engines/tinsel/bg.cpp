@@ -162,7 +162,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 		for (;;) {
 			for (int i = 0; i < bgReels; i++) {
 				if (StepAnimScript(&thisAnim[i]) == ScriptFinished)
-					error("Background animation has finished!");
+					error("Background animation has finished");
 			}
 
 			CORO_SLEEP(1);

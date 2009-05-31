@@ -100,7 +100,7 @@ enum {
 		if (val == GFX_ERROR) \
 			warning("GFX subsystem returned error on \"" #x "\""); \
 		else {\
-			error("GFX subsystem fatal error condition on \"" #x "\"!\n"); \
+			error("GFX subsystem fatal error condition on \"" #x "\""); \
 			vm_handle_fatal_error(s, __LINE__, __FILE__); \
 		} \
 	}\
@@ -109,7 +109,7 @@ enum {
 #define ASSERT(x) { \
 	int val = !!(x); \
 	if (!val) { \
-		error("Fatal error condition on \"" #x "\"!\n"); \
+		error("Fatal error condition on \"" #x "\""); \
 		BREAKPOINT(); \
 		vm_handle_fatal_error(s, __LINE__, __FILE__); \
 	} \
@@ -1801,7 +1801,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 				reg_t under_bits = NULL_REG;
 
 				if (!is_object(s, obj)) {
-					error("Non-object %04x:%04x present in view list during delete time\n", PRINT_REG(obj));
+					error("Non-object %04x:%04x present in view list during delete time", PRINT_REG(obj));
 					obj = NULL_REG;
 				} else
 					if (widget->under_bitsp) { // Is there a bg picture left to clean?
@@ -1838,7 +1838,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 					if (!(signal & _K_VIEW_SIG_FLAG_HIDDEN)) {
 						debugC(2, kDebugLevelGraphics, "Adding view at %04x:%04x to background\n", PRINT_REG(obj));
 						if (!(gfxw_remove_id(widget->_parent, widget->_ID, widget->_subID) == widget)) {
-							error("Attempt to remove view with ID %x:%x from list failed!\n", widget->_ID, widget->_subID);
+							error("Attempt to remove view with ID %x:%x from list failed", widget->_ID, widget->_subID);
 						}
 
 						s->drop_views->add((GfxContainer *)s->drop_views, gfxw_picviewize_dynview(widget));
@@ -1956,7 +1956,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 	GfxDynView *widget;
 
 	if (!*widget_list) {
-		error("make_view_list with widget_list == ()\n");
+		error("make_view_list with widget_list == ()");
 	};
 
 	assert_primary_widget_lists(s);
@@ -1964,7 +1964,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 	// Yes, this _does_ happen!
 
 	if (!list) { // list sanity check
-		error("Attempt to make list from non-list!\n");
+		error("Attempt to make list from non-list");
 	}
 
 	reg_t next_node = list->first;
@@ -2284,7 +2284,7 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		                                priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0);
 
 		if (!widget) {
-			error("Attempt to single-add invalid picview (%d/%d/%d)\n", view, loop, cel);
+			error("Attempt to single-add invalid picview (%d/%d/%d)", view, loop, cel);
 		} else {
 			widget->_ID = -1;
 			if (control >= 0) {
@@ -2348,7 +2348,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		new_port = gfxw_find_port(s->visual, port_nr);
 
 		if (!new_port) {
-			error("Invalid port %04x requested\n", port_nr);
+			error("Invalid port %04x requested", port_nr);
 			return NULL_REG;
 		}
 
@@ -2387,7 +2387,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	default :
-		error("SetPort was called with %d parameters\n", argc);
+		error("SetPort was called with %d parameters", argc);
 		break;
 	}
 
@@ -2405,13 +2405,13 @@ reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 /*
 	if (!view) {
-		error("Attempt to draw non-existing view.%03d\n", view);
+		error("Attempt to draw non-existing view.%03d", view);
 		return;
 	}
 */
 
 	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
-		error("Attempt to draw non-existing view.%03d\n", view);
+		error("Attempt to draw non-existing view.%03d", view);
 		return s->r_acc;
 	}
 
@@ -2433,7 +2433,7 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	goner = gfxw_find_port(s->visual, goner_nr);
 	if ((goner_nr < 3) || (goner == NULL)) {
-		error("Removal of invalid window %04x requested\n", goner_nr);
+		error("Removal of invalid window %04x requested", goner_nr);
 		return s->r_acc;
 	}
 
@@ -2593,7 +2593,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
 
 	if (!newscreen) {
-		error("Failed to allocate 'newscreen'!\n");
+		error("Failed to allocate 'newscreen'");
 		return;
 	}
 
@@ -3160,7 +3160,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (!text) {
-		error("Display with invalid reference %04x:%04x!\n", PRINT_REG(textp));
+		error("Display with invalid reference %04x:%04x", PRINT_REG(textp));
 		return NULL_REG;
 	}
 
@@ -3292,7 +3292,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	text_handle = gfxw_new_text(s->gfx_state, area, font_nr, text, halign, ALIGN_TOP, color0, *color1, bg_color, 0);
 
 	if (!text_handle) {
-		error("Display: Failed to create text widget!\n");
+		error("Display: Failed to create text widget");
 		return NULL_REG;
 	}
 

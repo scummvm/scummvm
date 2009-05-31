@@ -278,7 +278,7 @@ void AdLib::setKey(byte voice, byte note, bool on, bool spec) {
 	writeOPL(0xB0 + voice, (freq >> 8) | (octa << 2) | 0x20 * on);
 
 	if (!freq)
-		warning("Voice %d, note %02X unknown\n", voice, note);
+		warning("Voice %d, note %02X unknown", voice, note);
 }
 
 void AdLib::setVolume(byte voice, byte volume) {

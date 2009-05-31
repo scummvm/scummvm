@@ -485,7 +485,7 @@ static void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int 
 	int full_offset = (yoffset * pic->mode->yfact + offset) * pic->mode->xfact;
 
 	if (yoffset + offset >= 64000) {
-		error("_gfxr_auxplot_brush() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+		error("_gfxr_auxplot_brush() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 	}
 
 	switch (brush_mode) {
@@ -1621,7 +1621,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 		case PIC_OP_TERMINATE:
 			p0printf("Terminator\n");
-			//warning( "ARTIFACT REMOVAL CODE is commented out!")
+			//warning( "ARTIFACT REMOVAL CODE is commented out")
 			//_gfxr_vismap_remove_artifacts();
 			return;
 

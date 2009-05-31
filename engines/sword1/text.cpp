@@ -64,7 +64,7 @@ Text::~Text(void) {
 uint32 Text::lowTextManager(uint8 *ascii, int32 width, uint8 pen) {
 	_textCount++;
 	if (_textCount > MAX_TEXT_OBS)
-		error("Text::lowTextManager: MAX_TEXT_OBS exceeded!");
+		error("Text::lowTextManager: MAX_TEXT_OBS exceeded");
 	uint32 textObjId = (TEXT_sect * ITM_PER_SEC) - 1;
 	do {
 		textObjId++;

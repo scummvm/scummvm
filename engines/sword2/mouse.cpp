@@ -1046,7 +1046,7 @@ void Mouse::mouseOnOff() {
 				setLuggage(_currentLuggageResource);
 			}
 		} else {
-			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script!", _mouseTouching, _vm->_resman->fetchName(_mouseTouching));
+			error("ERROR: mouse.pointer==0 for object %d (%s) - update logic script", _mouseTouching, _vm->_resman->fetchName(_mouseTouching));
 		}
 	} else if (_oldMouseTouching && !_mouseTouching) {
 		// the cursor has moved off something - reset cursor to

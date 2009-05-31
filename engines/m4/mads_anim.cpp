@@ -344,7 +344,7 @@ void TextviewView::processCommand() {
 
 		//TODO: Proper handling of the sound drivers/sounds
 		//if (!_soundDriverLoaded)
-		//	error("Attempted to set sound without loading any driver\n");
+		//	error("Attempted to set sound without loading any driver");
 
 	} else if (!strncmp(commandStr, "COLOR", 5) && ((commandStr[5] == '0') || (commandStr[5] == '1'))) {
 		// Set the text colors

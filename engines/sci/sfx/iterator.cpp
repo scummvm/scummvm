@@ -69,14 +69,14 @@ BaseSongIterator::BaseSongIterator(byte *data, uint size, songit_id_t id)
 
 #define CHECK_FOR_END_ABSOLUTE(offset) \
 	if (offset > self->_data.size()) { \
-		warning("Reached end of song without terminator (%x/%x) at %d!", offset, self->_data.size(), __LINE__); \
+		warning("Reached end of song without terminator (%x/%x) at %d", offset, self->_data.size(), __LINE__); \
 		return SI_FINISHED; \
 	}
 
 #define CHECK_FOR_END(offset_augment) \
 	if ((channel->offset + (offset_augment)) > channel->end) { \
 		channel->state = SI_STATE_FINISHED; \
-		warning("Reached end of track %d without terminator (%x+%x/%x) at %d!", channel->id, channel->offset, offset_augment, channel->end, __LINE__); \
+		warning("Reached end of track %d without terminator (%x+%x/%x) at %d", channel->id, channel->offset, offset_augment, channel->end, __LINE__); \
 		return SI_FINISHED; \
 	}
 
@@ -384,7 +384,7 @@ static int _sci_midi_process_state(BaseSongIterator *self, byte *buf, int *resul
 	}
 
 	case SI_STATE_UNINITIALISED:
-		warning("Attempt to read command from uninitialized iterator!");
+		warning("Attempt to read command from uninitialized iterator");
 		self->init();
 		return self->nextCommand(buf, result);
 
@@ -440,8 +440,8 @@ static int _sci_midi_process_state(BaseSongIterator *self, byte *buf, int *resul
 	}
 
 	default:
-		warning("Invalid iterator state %d!", channel->state);
-		error("Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+		warning("Invalid iterator state %d", channel->state);
+		error("Breakpoint in %s, line %d", __FILE__, __LINE__);
 		return SI_FINISHED;
 	}
 }
@@ -487,7 +487,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 		Common::Array<byte>::iterator iter = Common::find(self->_data.begin() + offset, self->_data.end(), SCI0_END_OF_SONG);
 
 		if (iter == self->_data.end()) {
-			warning("Playing unterminated song!");
+			warning("Playing unterminated song");
 			return 1;
 		}
 
@@ -520,7 +520,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 		int d = offset + SCI0_PCM_DATA_OFFSET + size - self->_data.size();
 
 		warning("PCM advertizes %d bytes of data, but %d"
-		        " bytes are trailing in the resource!",
+		        " bytes are trailing in the resource",
 		        size, self->_data.size() - (offset + SCI0_PCM_DATA_OFFSET));
 
 		if (d > 0)
@@ -1290,7 +1290,7 @@ static void songit_tee_death_notification(TeeSongIterator *self, SongIterator *c
 		self->_status &= ~TEE_RIGHT_ACTIVE;
 		self->_children[TEE_RIGHT].it = NULL;
 	} else {
-		error("songit_tee_death_notification() failed: Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+		error("songit_tee_death_notification() failed: Breakpoint in %s, line %d", __FILE__, __LINE__);
 	}
 }
 
@@ -1580,7 +1580,7 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask) {
 		if (retval == SI_MORPH) {
 			fprintf(stderr, "  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
 			if (!SIMSG_SEND((*it), SIMSG_ACK_MORPH)) {
-				error("SI_MORPH failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+				error("SI_MORPH failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 			} else
 				fprintf(stderr, "SI_MORPH successful\n");
 		}

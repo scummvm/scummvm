@@ -592,13 +592,13 @@ reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				++i;
 		}
 		if (savedir_id >= MAX_SAVEGAME_NR) {
-			warning("Internal error: Free savegame ID is %d, shouldn't happen!", savedir_id);
+			warning("Internal error: Free savegame ID is %d, shouldn't happen", savedir_id);
 			return NULL_REG;
 		}
 
 		// This loop terminates when savedir_id is not in [x | ex. n. saves	[n].id = x]
 	} else {
-		warning("Savegame ID %d is not allowed!", savedir_nr);
+		warning("Savegame ID %d is not allowed", savedir_nr);
 		return NULL_REG;
 	}
 

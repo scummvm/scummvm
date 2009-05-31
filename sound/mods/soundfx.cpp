@@ -221,7 +221,7 @@ void SoundFx::updateEffects(int ch) {
 		case 4: // ledoff, disable low-pass filter
 		case 7: // set step up
 		case 8: // set step down
-			warning("Unhandled effect %d\n", _effects[ch]);
+			warning("Unhandled effect %d", _effects[ch]);
 			break;
 		}
 	}

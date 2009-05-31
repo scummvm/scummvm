@@ -250,7 +250,7 @@ byte *kmem(EngineState *s, reg_t handle) {
 	HunkTable *ht = (HunkTable *)GET_SEGMENT(*s->seg_manager, handle.segment, MEM_OBJ_HUNK);
 
 	if (!ht || !ht->isValidEntry(handle.offset)) {
-		warning("Error: kmem() with invalid handle\n");
+		warning("Error: kmem() with invalid handle");
 		return NULL;
 	}
 
@@ -281,7 +281,7 @@ void kernel_compile_signature(const char **s) {
 		v = 0;
 
 		if (ellipsis) {
-			error("Failed compiling kernel function signature '%s': non-terminal ellipsis '%c'\n", *s, *src);
+			error("Failed compiling kernel function signature '%s': non-terminal ellipsis '%c'", *s, *src);
 		}
 
 		do {

@@ -673,7 +673,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 			cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
 			if (len) {
 #ifndef USE_FLAC
-				error("FLAC library compiled support needed!");
+				error("FLAC library compiled support needed");
 #endif
 				soundMode = 3;
 			}
@@ -682,7 +682,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 				cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
 				if (len) {
 #ifndef USE_VORBIS
-					error("Vorbis library compiled support needed!");
+					error("Vorbis library compiled support needed");
 #endif
 					soundMode = 2;
 				}
@@ -692,7 +692,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 				cmpFile = soundDesc->bundle->getFile(fileName, offs, len);
 				if (len) {
 #ifndef USE_MAD
-					error("Mad library compiled support needed!");
+					error("Mad library compiled support needed");
 #endif
 					soundMode = 1;
 				}

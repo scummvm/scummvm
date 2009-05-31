@@ -161,7 +161,7 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				          synonyms_nr, script);
 
 				if (synonyms_nr > 16384) {
-					error("Segtable corruption: script.%03d has %d synonyms!\n",
+					error("Segtable corruption: script.%03d has %d synonyms",
 					         script, synonyms_nr);
 					/* We used to reset the corrupted value here. I really don't think it's appropriate.
 					 * Lars */

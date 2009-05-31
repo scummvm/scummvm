@@ -299,7 +299,7 @@ void CharsetRendererCommon::setCurID(int32 id) {
 
 	_fontPtr = _vm->getResourceAddress(rtCharset, id);
 	if (_fontPtr == 0)
-		error("CharsetRendererCommon::setCurID: charset %d not found!", id);
+		error("CharsetRendererCommon::setCurID: charset %d not found", id);
 
 	if (_vm->_game.version == 4)
 		_fontPtr += 17;
@@ -321,7 +321,7 @@ void CharsetRendererV3::setCurID(int32 id) {
 
 	_fontPtr = _vm->getResourceAddress(rtCharset, id);
 	if (_fontPtr == 0)
-		error("CharsetRendererCommon::setCurID: charset %d not found!", id);
+		error("CharsetRendererCommon::setCurID: charset %d not found", id);
 
 	_bitDepth = 1;
 	_numChars = _fontPtr[4];

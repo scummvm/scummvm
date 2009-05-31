@@ -264,7 +264,7 @@ void ResourceManager::loadResource(Resource *res) {
 	file->seek(res->file_offset, SEEK_SET);
 	int error = decompress(res, file);
 	if (error) {
-		warning("Error %d occured while reading %s.%03d from resource file: %s\n",
+		warning("Error %d occured while reading %s.%03d from resource file: %s",
 		        error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
 		res->unalloc();
 	}

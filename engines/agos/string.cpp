@@ -939,7 +939,7 @@ char *AGOSEngine_PN::unctok(char *c, int n) {
 
 void AGOSEngine_PN::uncomstr(char *c, uint32 x) {
 	if (x > _textBaseSize)
-		error("UNCOMSTR: TBASE over-run\n");
+		error("UNCOMSTR: TBASE over-run");
 	while (_textBase[x]) {
 		if (_textBase[x] < 244) {
 			c = unctok(c, _textBase[x]);
@@ -1070,7 +1070,7 @@ void AGOSEngine_PN::pobjd(int n, int m) {
 
 void AGOSEngine_PN::ptext(uint32 tptr) {
 	if (tptr > _textBaseSize)
-		error("ptext: attempt to print beyond end of TBASE\n");
+		error("ptext: attempt to print beyond end of TBASE");
 
 	while (_textBase[tptr]) {
 		if (_textBase[tptr] < 244) {

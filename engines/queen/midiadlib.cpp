@@ -163,7 +163,7 @@ void AdlibMidiDriver::send(uint32 b) {
 		adlibSetPitchBend(channel, param1 | (param2 << 7));
 		break;
 	default:
-//		warning("Unhandled cmd %d channel %d (0x%X)\n", cmd, channel, b);
+//		warning("Unhandled cmd %d channel %d (0x%X)", cmd, channel, b);
 		break;
 	}
 }

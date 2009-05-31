@@ -1095,7 +1095,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 
 		// Check for a buffer overflow
 		if (dst >= end)
-			error("convertMessageToString: buffer overflow!");
+			error("convertMessageToString: buffer overflow");
 	}
 	*dst = 0;
 
@@ -1144,7 +1144,7 @@ int ScummEngine_v72he::convertMessageToString(const byte *msg, byte *dst, int ds
 
 		// Check for a buffer overflow
 		if (dst >= end)
-			error("convertMessageToString: buffer overflow!");
+			error("convertMessageToString: buffer overflow");
 	}
 	*dst = 0;
 
@@ -1362,7 +1362,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 				// That was another index entry
 				_languageIndexSize++;
 			} else {
-				error("Unknown language.bnd entry found: '%s'\n", ptr);
+				error("Unknown language.bnd entry found: '%s'", ptr);
 			}
 
 			// Skip over newlines (and turn them into null bytes)

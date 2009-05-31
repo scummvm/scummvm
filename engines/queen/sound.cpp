@@ -321,7 +321,7 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 		headerSize = SB_HEADER_SIZE_V110;
 		break;
 	default:
-		warning("Unhandled SB file version %d, defaulting to 104\n", version);
+		warning("Unhandled SB file version %d, defaulting to 104", version);
 		headerSize = SB_HEADER_SIZE_V104;
 		break;
 	}

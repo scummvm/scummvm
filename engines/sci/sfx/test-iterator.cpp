@@ -30,7 +30,7 @@
 
 using namespace Sci;
 
-#define ASSERT_S(x) if (!(x)) { error("Failed assertion in L%d: " #x "\n", __LINE__); return; }
+#define ASSERT_S(x) if (!(x)) { error("Failed assertion in L%d: " #x, __LINE__); return; }
 #define ASSERT(x) ASSERT_S(x)
 
 /* Tests the song iterators */
@@ -104,7 +104,7 @@ int simple_it_next(SongIterator *_self, unsigned char *buf, int *result) {
 }
 
 Audio::AudioStream *simple_it_pcm_feed(SongIterator *_self) {
-	error("No PCM feed!\n");
+	error("No PCM feed");
 	return NULL;
 }
 
@@ -418,6 +418,6 @@ int main(int argc, char **argv) {
 	test_iterator_sci0_loop();
 	test_iterator_sci0_mark_loop();
 	if (errors != 0)
-		warning("[ERROR] %d errors total.", errors);
+		warning("[ERROR] %d errors total", errors);
 	return (errors != 0);
 }

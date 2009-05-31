@@ -118,7 +118,7 @@ SCNHANDLE GetMoverTalkReel(PMOVER pActor, TFTYPE dirn) {
 		return pActor->talkReels[pActor->scale-1][RIGHTREEL];
 
 	default:
-		error("GetMoverTalkReel() - illegal direction!");
+		error("GetMoverTalkReel() - illegal direction");
 	}
 }
 

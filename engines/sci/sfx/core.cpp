@@ -561,7 +561,7 @@ void SfxState::updateMultiSong() {
 		oldseeker->next_playing = &not_playing_anymore;
 
 		if (oldseeker == oldseeker->next_playing) { 
-			error("updateMultiSong() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+			error("updateMultiSong() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 		}
 	}
 
@@ -572,7 +572,7 @@ void SfxState::updateMultiSong() {
 		= song_lib_find_next_active(_songlib, newseeker);
 
 		if (newseeker == newseeker->next_playing) { 
-			error("updateMultiSong() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+			error("updateMultiSong() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 		}
 	}
 	/* We now need to update the currently playing song list, because we're
@@ -947,7 +947,7 @@ Common::Error SfxState::sfx_send_midi(song_handle_t handle, int channel,
 
 	if (command == 0xb0 &&
 	        arg1 == SCI_MIDI_CHANNEL_MUTE) {
-		warning("TODO: channel mute (channel %d %s)!", channel, channel_state[arg2]);
+		warning("TODO: channel mute (channel %d %s)", channel, channel_state[arg2]);
 		/* We need to have a GET_PLAYMASK interface to use
 		   here. SET_PLAYMASK we've got.
 		*/

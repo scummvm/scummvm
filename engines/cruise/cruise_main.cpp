@@ -290,7 +290,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	for (i = 0; i < 64; i++) {
 		if (preloadData[i].ptr) {
 			if (!strcmp(preloadData[i].name, name)) {
-				error("Unsupported code in loadFIleSub1 !");
+				error("Unsupported code in loadFIleSub1");
 			}
 		}
 	}

@@ -836,7 +836,7 @@ bool Intro::commandFlirt(uint16 *&data) {
 				_skySound->playSound(1, *data++, 0);
 				break;
 			default:
-				error("Unknown FLIRT command %X\n", command);
+				error("Unknown FLIRT command %X", command);
 			}
 		}
 		if (!escDelay(50)) {

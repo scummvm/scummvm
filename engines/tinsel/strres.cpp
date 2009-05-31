@@ -139,7 +139,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 		// close the file
 		f.close();
 	} else {	// the file must be compressed
-		error("Compression handling has been removed!");
+		error("Compression handling has been removed");
 	}
 }
 

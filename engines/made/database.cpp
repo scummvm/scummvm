@@ -348,7 +348,7 @@ int16 GameDatabase::setObjectProperty(int16 objectIndex, int16 propertyId, int16
 		if (propertyFlag == 1) {
 			WRITE_LE_UINT16(property, value);
 		} else {
-			warning("GameDatabase::setObjectProperty(%04X, %04X, %04X) Trying to set constant property\n",
+			warning("GameDatabase::setObjectProperty(%04X, %04X, %04X) Trying to set constant property",
 				objectIndex, propertyId, value);
 		}
 		return value;

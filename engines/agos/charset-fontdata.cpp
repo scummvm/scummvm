@@ -1922,7 +1922,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 			src = english_simonFont + (chr - 32) * 8;
 			break;
 		default:
-			error("windowDrawChar: Unknown language %d\n", _language);
+			error("windowDrawChar: Unknown language %d", _language);
 		}
 	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
 		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
@@ -1946,7 +1946,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 			src = english_waxworksFont + (chr - 32) * 8;
 			break;
 		default:
-			error("windowDrawChar: Unknown language %d\n", _language);
+			error("windowDrawChar: Unknown language %d", _language);
 		}
 	} else if (getGameType() == GType_ELVIRA1) {
 		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;

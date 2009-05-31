@@ -184,7 +184,7 @@ void MidiDriver_Adlib::send(uint32 b) {
 		// Aftertouch in the OPL thing?
 		break;
 	default:
-		warning("ADLIB: Unknown event %02x\n", command);
+		warning("ADLIB: Unknown event %02x", command);
 	}
 }
 

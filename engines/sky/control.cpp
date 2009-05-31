@@ -1195,15 +1195,15 @@ void Control::importOldCompact(Compact* destCpt, uint8 **srcPos, uint16 numElems
 	uint16 saveType;
 	LODSW(*srcPos, saveType);
 	if ((saveType & (SAVE_EXT | SAVE_TURNP)) && (numElems < 54))
-		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
+		error("Cpt %s: Savedata doesn't match cpt size (%d)", name, numElems);
 	if ((saveType & SAVE_MEGA0) && (numElems < 54 + 13))
-		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
+		error("Cpt %s: Savedata doesn't match cpt size (%d)", name, numElems);
 	if ((saveType & SAVE_MEGA1) && (numElems < 54 + 13 + 13))
-		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
+		error("Cpt %s: Savedata doesn't match cpt size (%d)", name, numElems);
 	if ((saveType & SAVE_MEGA2) && (numElems < 54 + 13 + 13 + 13))
-		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
+		error("Cpt %s: Savedata doesn't match cpt size (%d)", name, numElems);
 	if ((saveType & SAVE_MEGA3) && (numElems < 54 + 13 + 13 + 13))
-		error("Cpt %s: Savedata doesn't match cpt size (%d)!\n", name, numElems);
+		error("Cpt %s: Savedata doesn't match cpt size (%d)", name, numElems);
 	if (saveType & SAVE_GRAFX) {
 		uint16 graphType, target, pos;
 		LODSW(*srcPos, graphType);

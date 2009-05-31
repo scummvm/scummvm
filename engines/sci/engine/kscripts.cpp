@@ -71,7 +71,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 	slc_type = lookup_selector(s, object, selector_id, NULL, &address);
 
 	if (slc_type == kSelectorNone) {
-		error("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)\n",
+		error("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)",
 		         s->_vocabulary->_selectorNames[selector_id].c_str(), PRINT_REG(object), fname, line);
 		if (noinvalid == 0)
 			KERNEL_OOPS("Not recoverable: VM was halted\n");
@@ -193,7 +193,7 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	clone_obj = s->seg_manager->alloc_Clone(&clone_addr);
 
 	if (!clone_obj) {
-		error("Cloning %04x:%04x failed-- internal error!\n", PRINT_REG(parent_addr));
+		error("Cloning %04x:%04x failed-- internal error", PRINT_REG(parent_addr));
 		return NULL_REG;
 	}
 
@@ -219,13 +219,13 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 underBits;
 
 	if (!victim_obj) {
-		error("Attempt to dispose non-class/object at %04x:%04x\n",
+		error("Attempt to dispose non-class/object at %04x:%04x",
 		         PRINT_REG(victim_addr));
 		return s->r_acc;
 	}
 
 	if (victim_obj->_variables[SCRIPT_INFO_SELECTOR].offset != SCRIPT_INFO_CLONE) {
-		//warning("Attempt to dispose something other than a clone at %04x\n", offset);
+		//warning("Attempt to dispose something other than a clone at %04x", offset);
 		// SCI silently ignores this behaviour; some games actually depend on it
 		return s->r_acc;
 	}
@@ -268,12 +268,12 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (!scr->exports_nr) {
 		// FIXME: Is this fatal? This occurs in SQ4CD
-		warning("Script 0x%x does not have a dispatch table\n", script);
+		warning("Script 0x%x does not have a dispatch table", script);
 		return NULL_REG;
 	}
 
 	if (index > scr->exports_nr) {
-		error("Dispatch index too big: %d > %d\n", index, scr->exports_nr);
+		error("Dispatch index too big: %d > %d", index, scr->exports_nr);
 		return NULL_REG;
 	}
 

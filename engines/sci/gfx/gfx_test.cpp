@@ -1081,7 +1081,7 @@ int main(int argc, char **argv) {
 		case 'x':
 			set_mode = xres = atoi(optarg);
 			if (xres < 1) {
-				warning("Invalid x scale factor!");
+				warning("Invalid x scale factor");
 				return 1;
 			}
 			break;
@@ -1089,7 +1089,7 @@ int main(int argc, char **argv) {
 		case 'y':
 			set_mode = yres = atoi(optarg);
 			if (yres < 1) {
-				warning("Invalid y scale factor!");
+				warning("Invalid y scale factor");
 				return 1;
 			}
 			break;
@@ -1097,7 +1097,7 @@ int main(int argc, char **argv) {
 		case 'c':
 			set_mode = color_mode = atoi(optarg);
 			if (color_mode < 1 || color_mode > 4) {
-				warning("Invalid number of bytes per pixel!");
+				warning("Invalid number of bytes per pixel");
 				return 1;
 			}
 			break;
@@ -1128,7 +1128,7 @@ int main(int argc, char **argv) {
 		}
 
 		if (init_driver(drv)) {
-			warning("Initialization failed!");
+			warning("Initialization failed");
 			return 1;
 		}
 
@@ -1138,7 +1138,7 @@ int main(int argc, char **argv) {
 			warning("Something weird happened while exitting...");
 		}
 	} else {
-		warning("No graphics driver found!");
+		warning("No graphics driver found");
 		return 1;
 	}
 

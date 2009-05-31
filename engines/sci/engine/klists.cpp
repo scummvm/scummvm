@@ -151,12 +151,12 @@ reg_t kDisposeList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (!l) {
 		// FIXME: This should be an error, but it's turned to a warning for now
-		warning("Attempt to dispose non-list at %04x:%04x!\n", PRINT_REG(argv[0]));
+		warning("Attempt to dispose non-list at %04x:%04x", PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 
 	if (!sane_listp(s, argv[0]))
-		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
 
 /*	if (!l->first.isNull()) {
 		reg_t n_addr = l->first;
@@ -203,7 +203,7 @@ reg_t kFirstNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	List *l = lookup_list(s, argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
-		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
 
 	if (l)
 		return l->first;
@@ -215,7 +215,7 @@ reg_t kLastNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	List *l = lookup_list(s, argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
-		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
 
 	if (l)
 		return l->last;
@@ -227,7 +227,7 @@ reg_t kEmptyList(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	List *l = lookup_list(s, argv[0]);
 
 	if (!l || !sane_listp(s, argv[0]))
-		error("List at %04x:%04x is invalid or not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List at %04x:%04x is invalid or not sane anymore", PRINT_REG(argv[0]));
 
 	return make_reg(0, ((l) ? l->first.isNull() : 0));
 }
@@ -240,9 +240,9 @@ void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
-		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
-		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(listbase));
+		error("List at %04x:%04x is not sane anymore", PRINT_REG(listbase));
 
 	new_n->succ = l->first;
 	new_n->pred = NULL_REG;
@@ -264,9 +264,9 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 
 	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
-		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
+		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
 	if (!l || !sane_listp(s, listbase))
-		error("List at %04x:%04x is not sane anymore!\n", PRINT_REG(listbase));
+		error("List at %04x:%04x is not sane anymore", PRINT_REG(listbase));
 
 	new_n->succ = NULL_REG;
 	new_n->pred = l->last;
@@ -283,7 +283,7 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 reg_t kNextNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0])) {
-		error("List node at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
 		script_error_flag = script_debug_flag = 0;
 		return NULL_REG;
 	}
@@ -294,7 +294,7 @@ reg_t kNextNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kPrevNode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0]))
-		error("List node at %04x:%04x is not sane anymore!\n", PRINT_REG(argv[0]));
+		error("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
 
 	return n->pred;
 }

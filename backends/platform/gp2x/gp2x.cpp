@@ -129,7 +129,7 @@ void OSystem_GP2X::initBackend() {
 	if (stat(savePath, &sb) == -1)
 		if (errno == ENOENT) // Create the dir if it does not exist
 			if (mkdir(savePath, 0755) != 0)
-				warning("mkdir for '%s' failed!", savePath);
+				warning("mkdir for '%s' failed", savePath);
 
 	ConfMan.registerDefault("savepath", savePath);
 
@@ -144,7 +144,7 @@ void OSystem_GP2X::initBackend() {
 	if (stat(enginedataPath, &sb) == -1)
 		if (errno == ENOENT) // Create the dir if it does not exist
 			if (mkdir(enginedataPath, 0755) != 0)
-				warning("mkdir for '%s' failed!", enginedataPath);
+				warning("mkdir for '%s' failed", enginedataPath);
 
 	//FIXME: Do not use File::addDefaultDirectory, rather implement OSystem::addSysArchivesToSearchSet() !
 	Common::File::addDefaultDirectory(enginedataPath);

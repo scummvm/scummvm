@@ -484,7 +484,8 @@ void Script::makeGoewinFollow(uint16 v1, uint16 v2, uint16 v3) {
 
 void Script::doorClose(uint16 hotspotId, uint16 v2, uint16 v3) {
 	RoomExitJoinData *joinRec = Resources::getReference().getExitJoin(hotspotId);
-	if (!joinRec) error("Tried to close a non-door");
+	if (!joinRec)
+		error("Tried to close a non-door");
 	joinRec->blocked = 1;
 }
 
@@ -511,7 +512,8 @@ void Script::fixGoewin(uint16 v1, uint16 v2, uint16 v3) {
 
 void Script::doorOpen(uint16 hotspotId, uint16 v2, uint16 v3) {
 	RoomExitJoinData *joinRec = Resources::getReference().getExitJoin(hotspotId);
-	if (!joinRec) error("Tried to close a non-door");
+	if (!joinRec)
+		error("Tried to close a non-door");
 	joinRec->blocked = 0;
 }
 

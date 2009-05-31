@@ -823,12 +823,12 @@ int DecompressorDCL::unpackDCL(byte* dest) {
 	if (mode == DCL_ASCII_MODE) {
 		//warning("DCL-INFLATE: Decompressing ASCII mode (untested)");
 	} else if (mode) {
-		warning("DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01\n", mode);
+		warning("DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01", mode);
 		return -1;
 	}
 
 	if (length_param < 3 || length_param > 6)
-		warning("Unexpected length_param value %d (expected in [3,6])\n", length_param);
+		warning("Unexpected length_param value %d (expected in [3,6])", length_param);
 
 	while (_dwWrote < _szUnpacked) {
 		if (getBitsLSB(1)) { // (length,distance) pair

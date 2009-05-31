@@ -830,7 +830,7 @@ void SoundMgr::playSound() {
 		if (_playingSound != -1) {
 			if (_vm->_game.sounds[_playingSound]->type() == AGI_SOUND_MIDI) {
 				playMidiSound();
-				//warning("playSound: Trying to play an Apple IIGS MIDI sound. Not yet implemented!");
+				//warning("playSound: Trying to play an Apple IIGS MIDI sound. Not yet implemented");
 			} else if (_vm->_game.sounds[_playingSound]->type() == AGI_SOUND_SAMPLE) {
 				//debugC(3, kDebugLevelSound, "playSound: Trying to play an Apple IIGS sample");
 				playSampleSound();

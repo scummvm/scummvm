@@ -283,7 +283,7 @@ int16 Game_v1::addNewCollision(int16 id, uint16 left, uint16 top,
 
 		return i;
 	}
-	error("Game_v1::addNewCollision(): Collision array full!\n");
+	error("Game_v1::addNewCollision(): Collision array full");
 	return 0;
 }
 

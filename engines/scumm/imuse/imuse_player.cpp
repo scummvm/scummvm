@@ -101,7 +101,7 @@ bool Player::startSound(int sound, MidiDriver *midi, bool passThrough) {
 	// but we'll go ahead and do a similar check.
 	ptr = _se->findStartOfSound(sound);
 	if (!ptr) {
-		error("Player::startSound(): Couldn't find start of sound %d!", sound);
+		error("Player::startSound(): Couldn't find start of sound %d", sound);
 		return false;
 	}
 
@@ -800,7 +800,7 @@ int Player::query_part_param(int param, byte chan) {
 				return part->_vol;
 			case 16:
 // FIXME: Need to know where this occurs...
-error("Trying to cast instrument (%d, %d) -- please tell Fingolfin\n", param, chan);
+error("Trying to cast instrument (%d, %d) -- please tell Fingolfin", param, chan);
 // In old versions of the code, this used to return part->_program.
 // This was changed in revision 2.29 of imuse.cpp (where this code used
 // to reside).

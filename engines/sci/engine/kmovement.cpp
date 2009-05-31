@@ -623,7 +623,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)\n", PRINT_REG(avoider), destx, desty);
 
 	if (invoke_selector(INV_SEL(mover, doit, 1) , 0)) {
-		error("Mover %04x:%04x of avoider %04x:%04x doesn't have a doit() funcselector\n", PRINT_REG(mover), PRINT_REG(avoider));
+		error("Mover %04x:%04x of avoider %04x:%04x doesn't have a doit() funcselector", PRINT_REG(mover), PRINT_REG(avoider));
 		return NULL_REG;
 	}
 

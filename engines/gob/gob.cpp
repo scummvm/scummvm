@@ -136,7 +136,7 @@ void GobEngine::validateLanguage() {
 void GobEngine::validateVideoMode(int16 videoMode) {
 	if ((videoMode != 0x10) && (videoMode != 0x13) &&
 		  (videoMode != 0x14) && (videoMode != 0x18))
-		error("Video mode 0x%X is not supported!", videoMode);
+		error("Video mode 0x%X is not supported", videoMode);
 }
 
 Endianness GobEngine::getEndianness() const {

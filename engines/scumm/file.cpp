@@ -304,7 +304,7 @@ bool ScummDiskImage::open(const Common::String &filename) {
 
 	signature = fileReadUint16LE();
 	if (signature != 0x0A31) {
-		error("ScummDiskImage::open(): signature not found in disk 1!");
+		error("ScummDiskImage::open(): signature not found in disk 1");
 		return false;
 	}
 
@@ -316,12 +316,12 @@ bool ScummDiskImage::open(const Common::String &filename) {
 		File::seek(143104);
 		signature = fileReadUint16LE();
 		if (signature != 0x0032)
-			error("Error: signature not found in disk 2!\n");
+			error("Error: signature not found in disk 2");
 	} else {
 		File::seek(0);
 		signature = fileReadUint16LE();
 		if (signature != 0x0132)
-			error("Error: signature not found in disk 2!\n");
+			error("Error: signature not found in disk 2");
 	}
 
 

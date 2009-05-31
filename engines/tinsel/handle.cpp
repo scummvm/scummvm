@@ -299,7 +299,7 @@ void LoadFile(MEMHANDLE *pH, bool bWarn) {
 	char szFilename[sizeof(pH->szName) + 1];
 
 	if (pH->filesize & fCompressed) {
-		error("Compression handling has been removed!");
+		error("Compression handling has been removed");
 	}
 
 	// extract and zero terminate the filename
@@ -383,7 +383,7 @@ byte *LockMem(SCNHANDLE offset) {
 	} else if (handle == cdPlayHandle) {
 		// Must be in currently loaded/loadable range
 		if (offset < cdBaseHandle || offset >= cdTopHandle)
-			error("Overlapping (in time) CD-plays!");
+			error("Overlapping (in time) CD-plays");
 
 		if (pH->pNode->pBaseAddr && (pH->filesize & fLoaded))
 			// already allocated and loaded

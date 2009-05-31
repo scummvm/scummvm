@@ -893,7 +893,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 
 
 	if (lastRealDir == 99) {
-		error("SlidyWalkAnimatorlast direction error\n");
+		error("SlidyWalkAnimatorlast direction error");
 	}
 	//****************************************************************************
 	// SLIDY

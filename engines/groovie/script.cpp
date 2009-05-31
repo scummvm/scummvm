@@ -1513,7 +1513,7 @@ void Script::o_hotspot_outrect() {
 	bool contained = rect.contains(mousepos);
 
 	if (!contained) {
-		error("hotspot-outrect unimplemented!");
+		error("hotspot-outrect unimplemented");
 		// TODO: what to do with address?
 	}
 }

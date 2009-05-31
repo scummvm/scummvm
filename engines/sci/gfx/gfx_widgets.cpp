@@ -258,7 +258,7 @@ void gfxw_remove_widget_from_container(GfxContainer *container, GfxWidget *widge
 
 	if (!container) {
 		GFXERROR("Attempt to remove widget from NULL container!\n");
-		error("gfxw_remove_widget_from_container() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+		error("gfxw_remove_widget_from_container() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 	}
 
 	seekerp = &(container->_contents);
@@ -280,7 +280,7 @@ void gfxw_remove_widget_from_container(GfxContainer *container, GfxWidget *widge
 		widget->print(1);
 		sciprintf("Container:");
 		widget->print(1);
-		error("gfxw_remove_widget_from_container() failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+		error("gfxw_remove_widget_from_container() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 		return;
 	}
 
@@ -760,7 +760,7 @@ GfxDynView::GfxDynView(GfxState *state, Common::Point pos_, int z_, int view_, i
 	_type = GFXW_DYN_VIEW;
 
 	if (!state) {
-		error("Attempt to create view widget with NULL state!\n");
+		error("Attempt to create view widget with NULL state");
 	}
 
 	if (gfxop_get_cel_parameters(state, view_, loop_, cel_, &width, &height, &offset)) {
@@ -820,7 +820,7 @@ GfxText::~GfxText() {
 		GfxState *state = _visual ? _visual->_gfxState : NULL;
 		if (!state) {
 			GFXERROR("Attempt to free text without supplying mode to free it from!\n");
-			error("GfxText destructor failed. Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+			error("GfxText destructor failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 		} else {
 			gfxop_free_text(state, _textHandle);
 			_textHandle = NULL;
@@ -1324,7 +1324,7 @@ int _gfxwop_ordered_add(GfxContainer *container, GfxWidget *widget, int compare_
 		widget->print(3);
 		sciprintf("\nList:");
 		container->print(3);
-		error("Breakpoint in %s, line %d\n", __FILE__, __LINE__);
+		error("Breakpoint in %s, line %d", __FILE__, __LINE__);
 	}
 
 	if (_gfxw_container_id_equals(container, widget))
@@ -1512,7 +1512,7 @@ int GfxPort::draw(const Common::Point &pos) {
 GfxPort::~GfxPort() {
 	if (_visual) {
 		if (_ID < 0 || _ID >= (int)_visual->_portRefs.size()) {
-			error("Attempt to free port #%d; allowed: [0..%d]!\n", _ID, _visual->_portRefs.size());
+			error("Attempt to free port #%d; allowed: [0..%d]", _ID, _visual->_portRefs.size());
 		}
 
 		if (_visual->_portRefs[_ID] != this) {

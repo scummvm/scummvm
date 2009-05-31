@@ -480,7 +480,7 @@ void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		break;
 
 	default:
-		error("Bad ID %04X('%s') found in index file directory!", blocktype,
+		error("Bad ID %04X('%s') found in index file directory", blocktype,
 				tag2str(blocktype));
 	}
 }

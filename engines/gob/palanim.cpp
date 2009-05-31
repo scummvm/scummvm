@@ -83,7 +83,7 @@ bool PalAnim::fadeStep(int16 oper) {
 	byte newBlue;
 
 	if (_vm->_global->_colorCount != 256)
-		error("PalAnim::fadeStep(): Only 256 color mode is supported!");
+		error("PalAnim::fadeStep(): Only 256 color mode is supported");
 
 	if (oper == 0) {
 		if (_vm->_global->_setAllPalette) {

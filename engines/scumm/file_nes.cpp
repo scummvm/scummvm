@@ -983,7 +983,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 		break;
 
 	default:
-		error("extract_resource - unknown resource type %d specified!", type);
+		error("extract_resource - unknown resource type %d specified", type);
 	}
 
 	return reslen;
@@ -1225,7 +1225,7 @@ bool ScummNESFile::generateIndex() {
 				lfl_index.costume_addr[78] = TO_LE_16(respos);
 				break;
 			default:
-				error("Unindexed entry found!");
+				error("Unindexed entry found");
 				break;
 			}
 			respos += extractResource(0, &entry->type->langs[_ROMset][entry->index], entry->type->type);

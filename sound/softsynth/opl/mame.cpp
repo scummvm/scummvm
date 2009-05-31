@@ -1175,10 +1175,10 @@ unsigned char OPLRead(FM_OPL *OPL,int a) {
 	/* data port */
 	switch(OPL->address) {
 	case 0x05: /* KeyBoard IN */
-		warning("OPL:read unmapped KEYBOARD port\n");
+		warning("OPL:read unmapped KEYBOARD port");
 		return 0;
 	case 0x19: /* I/O DATA    */
-		warning("OPL:read unmapped I/O port\n");
+		warning("OPL:read unmapped I/O port");
 		return 0;
 	case 0x1a: /* PCM-DATA    */
 		return 0;

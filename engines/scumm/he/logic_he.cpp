@@ -446,7 +446,7 @@ void LogicHEfunshop::op_1004(int32 *args) {
 		(int32)data[2], (int32)data[3], (int32)data[6], (int32)data[7], &x, &y);
 
 	if (s != 1) {
-		error("LogicHEfunshop::op_1004: Your shape has defied the laws of physics\n");
+		error("LogicHEfunshop::op_1004: Your shape has defied the laws of physics");
 		return;
 	}
 

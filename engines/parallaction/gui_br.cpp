@@ -414,12 +414,12 @@ public:
 			break;
 
 		case 2:	// save
-			warning("Saving is not supported yet!");
+			warning("Saving is not supported yet");
 			_vm->_saveLoad->saveGame();
 			break;
 
 		case 3:	// load
-			warning("Loading is not supported yet!");
+			warning("Loading is not supported yet");
 			close = _vm->_saveLoad->loadGame();
 			break;
 

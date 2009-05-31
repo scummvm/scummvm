@@ -101,7 +101,7 @@ int32 opcodeType0(void) {
 			pushVar(*address);
 			return (0);
 		} else {
-			error("Unsupported code in opcodeType0 case 1!");
+			error("Unsupported code in opcodeType0 case 1");
 		}
 
 		return (0);
@@ -194,7 +194,7 @@ int32 opcodeType1(void)	{
 			return (0);
 		}
 		default:
-			error("Unsupported code in opcodeType1 case 1!");
+			error("Unsupported code in opcodeType1 case 1");
 		}
 
 		break;

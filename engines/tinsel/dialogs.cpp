@@ -1107,7 +1107,7 @@ static void PrimeSceneHopper(void) {
 	pBuffer = (char *)malloc(size);
 	if (pBuffer == NULL)
 		// cannot alloc buffer for index
-		error(NO_MEM, "Scene hopper data\n");
+		error(NO_MEM, "Scene hopper data");
 
 	// load data
 	if (f.read(pBuffer, size) != size)

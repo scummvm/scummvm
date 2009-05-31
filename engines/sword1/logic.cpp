@@ -256,7 +256,7 @@ void Logic::processLogic(Object *compact, uint32 id) {
 			break;
 
 		default:
-			error("Fatal error: compact %d's logic == %X!", id, compact->o_logic);
+			error("Fatal error: compact %d's logic == %X", id, compact->o_logic);
 			break;
 		}
 	} while (logicRet);
@@ -447,7 +447,7 @@ int Logic::scriptManager(Object *compact, uint32 id) {
 			if (compact->o_tree.o_script_level)
 				compact->o_tree.o_script_level--;
 			else
-				error("ScriptManager: basescript %d for cpt %d ended!", script, id);
+				error("ScriptManager: basescript %d for cpt %d ended", script, id);
 		} else
 			compact->o_tree.o_script_pc[level] = ret;
 	} while (!ret);
@@ -475,9 +475,9 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 	int32 offset;
 	int32 pc;
 	if (memcmp(scriptModule->type, "Script", 6))
-		error("Invalid script module!");
+		error("Invalid script module");
 	if (scriptModule->version != SCRIPT_VERSION)
-		error("Illegal script version!");
+		error("Illegal script version");
 	if (scriptNum < 0)
 		error("negative script number");
 	if ((uint32)scriptNum >= scriptModule->decomp_length)
@@ -1511,7 +1511,7 @@ int Logic::fnIsFacing(Object *cpt, int32 id, int32 targetId, int32 b, int32 c, i
 		y = target->o_ycoord;
 		dir = target->o_dir;
 	} else
-		error("fnIsFacing:: Target isn't a mega!");
+		error("fnIsFacing:: Target isn't a mega");
 
 	int32 lookDir = whatTarget(x, y, cpt->o_xcoord, cpt->o_ycoord);
 	lookDir -= dir;

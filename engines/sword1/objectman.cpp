@@ -136,7 +136,7 @@ uint32 ObjectMan::lastTextNumber(int section) {
 Object *ObjectMan::fetchObject(uint32 id) {
 	uint8 *addr = _cptData[id / ITM_PER_SEC];
 	if (!addr)
-		error("fetchObject: section %d is not open!", id / ITM_PER_SEC);
+		error("fetchObject: section %d is not open", id / ITM_PER_SEC);
 	id &= ITM_ID;
 	// DON'T do endian conversion here. it's already done.
 	return (Object*)(addr + *(uint32*)(addr + (id + 1)*4));
@@ -144,7 +144,7 @@ Object *ObjectMan::fetchObject(uint32 id) {
 
 uint32 ObjectMan::fetchNoObjects(int section) {
 	if (_cptData[section] == NULL)
-		error("fetchNoObjects: section %d is not open!", section);
+		error("fetchNoObjects: section %d is not open", section);
 	return *(uint32*)_cptData[section];
 }
 

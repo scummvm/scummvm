@@ -230,7 +230,7 @@ void ResMan::dumpRes(uint32 id) {
 
 Header *ResMan::lockScript(uint32 scrID) {
 	if (!_scriptList[scrID / ITM_PER_SEC])
-		error("Script id %d not found.\n", scrID);
+		error("Script id %d not found", scrID);
 	scrID = _scriptList[scrID / ITM_PER_SEC];
 #ifdef SCUMM_BIG_ENDIAN
 	openScriptResourceBigEndian(scrID);
@@ -266,7 +266,7 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 		clusFile->seek( resOffset(id) );
 		clusFile->read( memHandle->data, size);
 		if (clusFile->ioFailed()) {
-			error("Can't read %d bytes from offset %d from cluster file %s\nResource ID: %d (%08X)\n", size, resOffset(id), _prj.clu[(id >> 24) - 1].label, id, id);
+			error("Can't read %d bytes from offset %d from cluster file %s\nResource ID: %d (%08X)", size, resOffset(id), _prj.clu[(id >> 24) - 1].label, id, id);
 		}
 	} else
 		_memMan->setCondition(memHandle, MEM_DONT_FREE);
@@ -282,7 +282,7 @@ void ResMan::resClose(uint32 id) {
 	if (!handle)
 		return;
 	if (!handle->refCount) {
-		warning("Resource Manager fail: unlocking object with refCount 0. Id: %d\n", id);
+		warning("Resource Manager fail: unlocking object with refCount 0. Id: %d", id);
 	} else {
 		handle->refCount--;
 		if (!handle->refCount)

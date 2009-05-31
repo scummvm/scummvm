@@ -427,14 +427,14 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 
 DECLARE_INSTRUCTION_OPCODE(put) {
 	// NOTE: there is not a single occurrence of PUT in the scripts
-	warning("PUT instruction is not implemented!");
+	warning("PUT instruction is not implemented");
 }
 
 
 
 DECLARE_INSTRUCTION_OPCODE(wait) {
 	// NOTE: there is not a single occurrence of WAIT in the scripts
-	warning("WAIT instruction is not implemented!");
+	warning("WAIT instruction is not implemented");
 }
 
 
@@ -475,7 +475,7 @@ DECLARE_INSTRUCTION_OPCODE(mask) {
 DECLARE_INSTRUCTION_OPCODE(print) {
 	// NOTE: there is not a single occurrence of PRINT in the scripts
 	// I suppose it was used for debugging
-	warning("PRINT instruction is not implemented!");
+	warning("PRINT instruction is not implemented");
 }
 
 DECLARE_INSTRUCTION_OPCODE(text) {

@@ -129,7 +129,7 @@ void Screen::setFullPalette(int32 palRes) {
 			setPalette(0, 256, _vm->fetchPalette(data), RDPAL_INSTANT);
 			_vm->_resman->closeResource(_thisScreen.background_layer_id);
 		} else
-			error("setFullPalette(0) called, but no current screen available!");
+			error("setFullPalette(0) called, but no current screen available");
 	}
 
 	if (palRes != CONTROL_PANEL_PALETTE)

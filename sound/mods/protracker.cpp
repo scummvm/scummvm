@@ -313,7 +313,7 @@ void ProtrackerStream::updateRow() {
 				_patternDelay = ey;
 				break;
 			default:
-				warning("Unimplemented effect %X\n", note.effect);
+				warning("Unimplemented effect %X", note.effect);
 			}
 			break;
 
@@ -326,7 +326,7 @@ void ProtrackerStream::updateRow() {
 			}
 			break;
 		default:
-			warning("Unimplemented effect %X\n", note.effect);
+			warning("Unimplemented effect %X", note.effect);
 		}
 	}
 }

@@ -69,7 +69,7 @@ Keymapper::~Keymapper() {
 
 void Keymapper::registerHardwareKeySet(HardwareKeySet *keys) {
 	if (_hardwareKeys)
-		error("Hardware key set already registered!");
+		error("Hardware key set already registered");
 
 	if (!keys) {
 		warning("No hardware keys are supplied");

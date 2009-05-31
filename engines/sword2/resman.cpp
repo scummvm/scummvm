@@ -478,7 +478,7 @@ void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
 	_resFiles[fileNum].numEntries = tableSize / 8;
 	file->read(_resFiles[fileNum].entryTab, tableSize);
 	if (file->ioFailed())
-		error("unable to read index table from file %s\n", _resFiles[fileNum].fileName);
+		error("unable to read index table from file %s", _resFiles[fileNum].fileName);
 
 #ifdef SCUMM_BIG_ENDIAN
 	for (int tabCnt = 0; tabCnt < _resFiles[fileNum].numEntries * 2; tabCnt++)
@@ -568,7 +568,7 @@ void ResourceManager::checkMemUsage() {
 			tmp->ptr = NULL;
 			_usedMem -= tmp->size;
 		} else {
-			warning("%d bytes of memory used, but cache list is empty!\n", _usedMem);
+			warning("%d bytes of memory used, but cache list is empty", _usedMem);
 			return;
 		}
 	}

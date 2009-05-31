@@ -284,7 +284,7 @@ void LzhDecompressor::make_table(uint nchar, byte bitlen[], uint tablebits, uint
 	for (i = 1; i <= 16; i++)
 		start[i + 1] = start[i] + (count[i] << (16 - i));
 	if (start[17] != (uint16)(1U << 16))
-		error("LzhDecompressor::make_table() Bad table\n");
+		error("LzhDecompressor::make_table() Bad table");
 	jutbits = 16 - tablebits;
 	for (i = 1; i <= tablebits; i++) {
 		start[i] >>= jutbits;

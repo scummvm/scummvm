@@ -412,7 +412,7 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 				y = od.y_pos + (int32)READ_LE_UINT32(&imhd->v8.hotspot[state].y);
 				break;
 			default:
-				error("Unsupported image header version %d\n", FROM_LE_32(imhd->v8.version));
+				error("Unsupported image header version %d", FROM_LE_32(imhd->v8.version));
 			}
 		} else if (_game.version == 7) {
 			x = od.x_pos + (int16)READ_LE_UINT16(&imhd->v7.hotspot[state].x);

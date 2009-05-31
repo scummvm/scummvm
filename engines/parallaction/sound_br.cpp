@@ -102,7 +102,7 @@ void MidiParser_MSC::parseMetaEvent(EventInfo &info) {
 	if (type == 0x51) {
 		info.ext.data = _position._play_pos;
 	} else {
-		warning("unknown meta event 0x%02X\n", type);
+		warning("unknown meta event 0x%02X", type);
 		info.ext.type = 0;
 	}
 

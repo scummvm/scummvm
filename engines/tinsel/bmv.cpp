@@ -740,12 +740,12 @@ static void InitialiseBMV(void) {
 	// Grab the data buffer
 	bigBuffer = (byte *)malloc(NUM_SLOTS * SLOT_SIZE);
 	if (bigBuffer == NULL)
-		error(NO_MEM, "FMV data buffer\n");
+		error(NO_MEM, "FMV data buffer");
 
 	// Screen buffer (2 lines more than screen
 	screenBuffer = (byte *)malloc(SCREEN_WIDTH * (SCREEN_HIGH + 2));
 	if (screenBuffer == NULL)
-		error(NO_MEM, "FMV screen buffer\n");
+		error(NO_MEM, "FMV screen buffer");
 
 	// Pass the sceen buffer to the decompresser
 	InitBMV(screenBuffer);

@@ -229,7 +229,7 @@ void ScummEngine::setBoxScale(int box, int scale) {
 	if (_game.version == 8)
 		ptr->v8.scale = TO_LE_32(scale);
 	else if (_game.version <= 2)
-		error("This should not ever be called!");
+		error("This should not ever be called");
 	else
 		ptr->old.scale = TO_LE_16(scale);
 }

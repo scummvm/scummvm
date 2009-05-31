@@ -161,7 +161,7 @@ void Player_V3A::startSound(int nr) {
 	assert(data);
 
 	if ((_vm->_game.id != GID_INDY3) && (_vm->_game.id != GID_LOOM))
-		error("player_v3a - unknown game!");
+		error("player_v3a - unknown game");
 
 	if (!_isinit) {
 		int i;

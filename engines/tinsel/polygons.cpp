@@ -1272,7 +1272,7 @@ HPOLYGON FirstPathPoly(void) {
 		if (Polys[i]->polyType == PATH)
 			return i;
 	}
-	error("FirstPathPoly() - no PATH polygons!");
+	error("FirstPathPoly() - no PATH polygons");
 	return NOPOLY;
 }
 
@@ -1460,7 +1460,7 @@ static void SetExBlocks() {
 				Polys[i]->polyType = EX_BLOCK;
 #ifdef DEBUG
 			else
-				error("Impossible message!");
+				error("Impossible message");
 #endif
 		}
 	}
@@ -1785,7 +1785,7 @@ static void KillDeadPolygons(void) {
 				break;
 
 			default:
-				error("Impossible message!");
+				error("Impossible message");
 			}
 		}
 	}

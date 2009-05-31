@@ -44,7 +44,7 @@ void Parallaction_br::_c_ferrcycle(void*) {
 }
 
 void Parallaction_br::_c_lipsinc(void*) {
-	warning("Unexpected lipsinc routine call! Please notify the team!");
+	warning("Unexpected lipsinc routine call! Please notify the team");
 }
 
 void Parallaction_br::_c_albcycle(void*) {

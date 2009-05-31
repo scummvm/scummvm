@@ -125,7 +125,7 @@ int MidiDriver_QT::open() {
 	return 0;
 
 bail:
-	error("Init QT failed %x %x %d\n", (int)qtNoteAllocator, (int)qtNoteChannel, (int)qtErr);
+	error("Init QT failed %x %x %d", (int)qtNoteAllocator, (int)qtNoteChannel, (int)qtErr);
 
 	dispose();
 

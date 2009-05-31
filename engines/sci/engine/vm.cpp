@@ -629,7 +629,7 @@ void run_vm(EngineState *s, int restoring) {
 			scr = script_locate_by_segment(s, xs->addr.pc.segment);
 			if (!scr) {
 				// No script? Implicit return via fake instruction buffer
-				warning("Running on non-existant script in segment %x!", xs->addr.pc.segment);
+				warning("Running on non-existant script in segment %x", xs->addr.pc.segment);
 				code_buf = _fake_return_buffer;
 #ifndef DISABLE_VALIDATIONS
 				code_buf_size = 2;
@@ -1434,7 +1434,7 @@ void run_vm(EngineState *s, int restoring) {
 
 //#ifndef DISABLE_VALIDATIONS
 		if (xs != &(s->_executionStack.back())) {
-			warning("xs is stale (%p vs %p); last command was %02x\n",
+			warning("xs is stale (%p vs %p); last command was %02x",
 					(void *)xs, (void *)&(s->_executionStack.back()),
 					opnumber);
 		}

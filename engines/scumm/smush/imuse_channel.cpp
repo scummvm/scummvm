@@ -162,7 +162,8 @@ void ImuseChannel::decode() {
 			byte *old = _tbuffer;
 			int new_size = remaining_size + _tbufferSize;
 			_tbuffer = new byte[new_size];
-			if (!_tbuffer)  error("imuse_channel failed to allocate memory");
+			if (!_tbuffer)
+				error("imuse_channel failed to allocate memory");
 			memcpy(_tbuffer, old, _tbufferSize);
 			delete[] old;
 			memcpy(_tbuffer + _tbufferSize, _sbuffer + _sbufferSize - remaining_size, remaining_size);

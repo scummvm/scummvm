@@ -98,7 +98,7 @@ void EventManager::fnIssueEvent(Object *compact, int32 id, int32 event, int32 de
 	while (_eventPendingList[evSlot].delay)
 		evSlot++;
 	if (evSlot >= TOTAL_EVENT_SLOTS)
-		error("EventManager ran out of event slots!");
+		error("EventManager ran out of event slots");
 	_eventPendingList[evSlot].delay = delay;
 	_eventPendingList[evSlot].eventNumber = event;
 }

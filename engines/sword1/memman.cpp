@@ -37,7 +37,7 @@ MemMan::MemMan(void) {
 MemMan::~MemMan(void) {
 	flush();
 	if (_alloced)
-		warning("deleting MemMan, still %d bytes alloced\n", _alloced);
+		warning("deleting MemMan, still %d bytes alloced", _alloced);
 }
 
 void MemMan::alloc(MemHandle *bsMem, uint32 pSize, uint16 pCond) {

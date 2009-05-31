@@ -4244,7 +4244,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case ACTORREF:
 		// Common to both DW1 & DW2
 		if (!TinselV0)
-			error("actorref isn't a real function!");
+			error("actorref isn't a real function");
 		return 0;
 
 	case ACTORRGB:
@@ -4377,7 +4377,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case CALLSCENE:
 		// DW2 only
-		error("CallScene isn't a real function!");
+		error("CallScene isn't a real function");
 
 	case CALLTAG:
 		// DW2 only
@@ -4433,7 +4433,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case CDPLAY:
 		// Common to both DW1 & DW2
-		error("cdplay isn't a real function!");
+		error("cdplay isn't a real function");
 
 	case CLEARHOOKSCENE:
 		// Common to both DW1 & DW2
@@ -4477,7 +4477,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case CUTSCENE:
 		// DW1 only
-		error("cutscene isn't a real function!");
+		error("cutscene isn't a real function");
 
 	case DECCONVW:
 		// Common to both DW1 & DW2
@@ -4500,7 +4500,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case DECFLAGS:
 		// Common to both DW1 & DW2
 		if (TinselV2)
-			error("DecFlags() is obsolete!");
+			error("DecFlags() is obsolete");
 
 		DecFlags(pp[0]);
 		return -1;
@@ -4591,7 +4591,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DROPOUT:
 		// DW1 only
-		error("DropOut (%d)\n", pp[0]);
+		error("DropOut (%d)", pp[0]);
 
 	case EFFECTACTOR:
 		// Common to both DW1 & DW2
@@ -4614,7 +4614,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case ESCAPEOFF:
 	case ESCAPEON:
 		// Common to both DW1 & DW2
-		error("Escape isn't a real function!");
+		error("Escape isn't a real function");
 
 	case EVENT:
 		// Common to both DW1 & DW2
@@ -4666,7 +4666,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case GLOBALVAR:
 		// DW1 only
-		error("GlobalVar isn't a real function!");
+		error("GlobalVar isn't a real function");
 
 	case GRABMOVIE:
 		// DW2 only
@@ -4794,7 +4794,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case KILLACTOR:
 		// DW1 only
 		if (TinselV2)
-			error("KillActor() was not expected to be required!");
+			error("KillActor() was not expected to be required");
 
 		KillActor(pp[0]);
 		return -1;
@@ -4826,7 +4826,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case LOCALVAR:
 		// DW2 only
-		error("LocalVar isn't a real function!");
+		error("LocalVar isn't a real function");
 
 	case MOVECURSOR:
 		// Common to both DW1 & DW2
@@ -4941,7 +4941,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case PLAYRTF:
 		// Common to both DW1 & DW2
-		error("playrtf only applies to cdi!");
+		error("playrtf only applies to cdi");
 
 	case PLAYSAMPLE:
 		// Common to both DW1 & DW2

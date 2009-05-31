@@ -100,7 +100,7 @@ int loadOverlay(const char *scriptName) {
 	fileIdx = findFileInDisks(fileName);
 
 	if (fileIdx < 0) {
-		warning("Unable to load overlay %s !", scriptName);
+		warning("Unable to load overlay %s", scriptName);
 		//releaseScript(scriptName);
 		return (-18);
 	}
