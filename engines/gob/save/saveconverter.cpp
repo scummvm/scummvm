@@ -72,7 +72,7 @@ void SaveConverter::displayWarning() const {
 	        "save is broken and can't be used anymore. Sorry for the inconvenience");
 }
 
-char *SaveConverter::getDescription(const char *fileName) {
+char *SaveConverter::getDescription(const Common::String &fileName) {
 	setFileName(fileName);
 	return getDescription();
 }
@@ -357,7 +357,7 @@ bool SaveConverter::seek(int32 offset, int whence) {
 
 
 SaveConverter_Notes::SaveConverter_Notes(GobEngine *vm, uint32 notesSize,
-		const char *fileName) : SaveConverter(vm, fileName) {
+		const Common::String &fileName) : SaveConverter(vm, fileName) {
 
 	_size = notesSize;
 }

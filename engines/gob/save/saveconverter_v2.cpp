@@ -33,7 +33,7 @@
 
 namespace Gob {
 
-SaveConverter_v2::SaveConverter_v2(GobEngine *vm, const char *fileName) :
+SaveConverter_v2::SaveConverter_v2(GobEngine *vm, const Common::String &fileName) :
 	SaveConverter(vm, fileName) {
 }
 

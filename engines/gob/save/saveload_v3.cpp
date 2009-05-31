@@ -302,9 +302,9 @@ bool SaveLoad_v3::GameHandler::createReader(int slot) {
 		return (_reader != 0);
 
 	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
-		char *slotFile = _slotFile->build(slot);
+		Common::String slotFile = _slotFile->build(slot);
 		
-		if (!slotFile)
+		if (slotFile.empty())
 			return false;
 
 		delete _reader;
@@ -313,7 +313,6 @@ bool SaveLoad_v3::GameHandler::createReader(int slot) {
 		if (converter.isOldSave()) {
 			// Old save, plug the converter in
 			if (!converter.load()) {
-				delete[] slotFile;
 				return false;
 			}
 
@@ -322,8 +321,6 @@ bool SaveLoad_v3::GameHandler::createReader(int slot) {
 		} else
 			_reader = new SaveReader(_usesScreenshots ? 3 : 2, slot, slotFile);
 		
-		delete[] slotFile;
-
 		if (!_reader->load()) {
 			delete _reader;
 			_reader = 0;
@@ -340,15 +337,13 @@ bool SaveLoad_v3::GameHandler::createWriter(int slot) {
 		return (_writer != 0);
 
 	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
-		char *slotFile = _slotFile->build(slot);
+		Common::String slotFile = _slotFile->build(slot);
 		
-		if (!slotFile)
+		if (slotFile.empty())
 			return false;
 
 		delete _writer;
 		_writer = new SaveWriter(_usesScreenshots ? 3 : 2, slot, slotFile);
-		
-		delete[] slotFile;
 	}
 
 	return true;
@@ -378,15 +373,13 @@ void SaveLoad_v3::ScreenshotHandler::File::buildIndex(byte *buffer) const {
 	Common::InSaveFile *in;
 
 	for (uint32 i = 0; i < _slotCount; i++, buffer++) {
-		char *slotFile = build(i);
+		Common::String slotFile = build(i);
 
-		if (slotFile && ((in = saveMan->openForLoading(slotFile)))) {
+		if (!slotFile.empty() && ((in = saveMan->openForLoading(slotFile)))) {
 			delete in;
 			*buffer = 1;
 		} else
 			*buffer = 0;
-
-		delete[] slotFile;
 	}
 }
 

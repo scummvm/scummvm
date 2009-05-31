@@ -56,7 +56,7 @@ public:
 	virtual bool load() = 0;
 
 	/** Set the name and return the description. */
-	char *getDescription(const char *fileName);
+	char *getDescription(const Common::String &fileName);
 	/** Get the current fileName's description. */
 	char *getDescription() const;
 
@@ -108,7 +108,7 @@ private:
 /** A wrapper for old notes saves. */
 class SaveConverter_Notes : public SaveConverter {
 public:
-	SaveConverter_Notes(GobEngine *vm, uint32 notesSize, const char *fileName = 0);
+	SaveConverter_Notes(GobEngine *vm, uint32 notesSize, const Common::String &fileName = "");
 	~SaveConverter_Notes();
 
 	int isOldSave(Common::InSaveFile **save = 0) const;
@@ -125,7 +125,7 @@ private:
 /** A wrapper for old v2-style saves (Gobliins 2, Ween: The Prophecy and Bargon Attack). */
 class SaveConverter_v2 : public SaveConverter {
 public:
-	SaveConverter_v2(GobEngine *vm, const char *fileName = 0);
+	SaveConverter_v2(GobEngine *vm, const Common::String &fileName = "");
 	~SaveConverter_v2();
 
 	int isOldSave(Common::InSaveFile **save = 0) const;
@@ -144,7 +144,7 @@ private:
 /** A wrapper for old v3-style saves (Goblins 3 and Lost in Time). */
 class SaveConverter_v3 : public SaveConverter {
 public:
-	SaveConverter_v3(GobEngine *vm, const char *fileName = 0);
+	SaveConverter_v3(GobEngine *vm, const Common::String &fileName = "");
 	~SaveConverter_v3();
 
 	int isOldSave(Common::InSaveFile **save = 0) const;
@@ -166,7 +166,7 @@ private:
 /** A wrapper for old v4-style saves (Woodruff). */
 class SaveConverter_v4 : public SaveConverter {
 public:
-	SaveConverter_v4(GobEngine *vm, const char *fileName = 0);
+	SaveConverter_v4(GobEngine *vm, const Common::String &fileName = "");
 	~SaveConverter_v4();
 
 	int isOldSave(Common::InSaveFile **save = 0) const;
@@ -185,7 +185,7 @@ private:
 /** A wrapper for old v6-style saves (Urban Runner). */
 class SaveConverter_v6 : public SaveConverter {
 public:
-	SaveConverter_v6(GobEngine *vm, const char *fileName = 0);
+	SaveConverter_v6(GobEngine *vm, const Common::String &fileName = "");
 	~SaveConverter_v6();
 
 	int isOldSave(Common::InSaveFile **save = 0) const;

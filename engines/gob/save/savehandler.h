@@ -45,11 +45,8 @@ public:
 	 *  @param slotCount Number of slots.
 	 *  @param base The file's base string.
 	 */
-	SlotFile(GobEngine *vm, uint32 slotCount, const char *base);
+	SlotFile(GobEngine *vm, uint32 slotCount, const Common::String &base);
 	virtual ~SlotFile();
-
-	/** Returns the base string. */
-	virtual const char *getBase() const;
 
 	/** Calculates which slot to use. */
 	virtual int getSlot(int32 offset) const = 0;
@@ -58,7 +55,7 @@ public:
 
 protected:
 	GobEngine *_vm;
-	char *_base;
+	Common::String _base;
 
 	uint32 _slotCount;
 };
@@ -66,12 +63,12 @@ protected:
 /** An indexed slot file ("foobar.s00", "foobar.s01", ...). */
 class SlotFileIndexed : public SlotFile {
 public:
-	SlotFileIndexed(GobEngine *vm, uint32 slotCount, const char *base,
-			const char *extStub);
+	SlotFileIndexed(GobEngine *vm, uint32 slotCount, const Common::String &base,
+			const Common::String &extStub);
 	~SlotFileIndexed();
 
 	/** Build the save file name. */
-	char *build(int slot) const;
+	Common::String build(int slot) const;
 
 	/** Returns the highest filled slot number. */
 	virtual uint32 getSlotMax() const;
@@ -88,27 +85,27 @@ public:
 	virtual Common::OutSaveFile *openWrite(int slot) const;
 
 protected:
-	char *_ext;
+	Common::String _ext;
 };
 
 /** A static slot file ("foo.bar"). */
 class SlotFileStatic : public SlotFile {
 public:
-	SlotFileStatic(GobEngine *vm, const char *base, const char *ext);
+	SlotFileStatic(GobEngine *vm, const Common::String &base, const Common::String &ext);
 	~SlotFileStatic();
 
 	int getSlot(int32 offset) const;
 	int getSlotRemainder(int32 offset) const;
 
 	/** Build the save file name. */
-	char *build() const;
+	Common::String build() const;
 
 	virtual bool exists() const;
 	virtual Common::InSaveFile *openRead() const;
 	virtual Common::OutSaveFile *openWrite() const;
 
 protected:
-	char *_ext;
+	Common::String _ext;
 };
 
 /** A handler for a specific save file. */
@@ -158,7 +155,7 @@ protected:
 /** A handler for notes. */
 class NotesHandler : public SaveHandler {
 public:
-	NotesHandler(uint32 notesSize, GobEngine *vm, const char *target);
+	NotesHandler(uint32 notesSize, GobEngine *vm, const Common::String &target);
 	~NotesHandler();
 
 	int32 getSize();
@@ -168,7 +165,7 @@ public:
 private:
 	class File : public SlotFileStatic {
 	public:
-		File(GobEngine *vm, const char *base);
+		File(GobEngine *vm, const Common::String &base);
 		~File();
 	};
 

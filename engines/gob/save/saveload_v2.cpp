@@ -124,7 +124,7 @@ bool SaveLoad_v2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 			return false;
 		}
 
-		char *slotFile = _slotFile->build(slot);
+		Common::String slotFile = _slotFile->build(slot);
 
 		SaveReader *reader = 0;
 		SaveConverter_v2 converter(_vm, slotFile);
@@ -148,8 +148,6 @@ bool SaveLoad_v2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 			delete reader;
 			return false;
 		}
-
-		delete[] slotFile;
 
 		if (!reader->readPart(0, &info)) {
 			delete reader;
@@ -220,14 +218,12 @@ bool SaveLoad_v2::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 
 		_hasIndex = false;
 
-		char *slotFile = _slotFile->build(slot);
+		Common::String slotFile = _slotFile->build(slot);
 
 		SaveWriter writer(2, slot, slotFile);
 		SavePartInfo info(kSlotNameLength, (uint32) _vm->getGameType(), 0,
 				_vm->getEndianness(), varSize);
 		SavePartVars vars(_vm, varSize);
-
-		delete[] slotFile;
 
 		// Write the description
 		info.setDesc(_index + (slot * kSlotNameLength), kSlotNameLength);

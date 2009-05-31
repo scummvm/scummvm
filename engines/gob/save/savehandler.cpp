@@ -37,17 +37,12 @@
 
 namespace Gob {
 
-SlotFile::SlotFile(GobEngine *vm, uint32 slotCount, const char *base) : _vm(vm) {
-	_base = strdupcpy(base);
+SlotFile::SlotFile(GobEngine *vm, uint32 slotCount, const Common::String &base) : _vm(vm) {
+	_base = base;
 	_slotCount = slotCount;
 }
 
 SlotFile::~SlotFile() {
-	delete[] _base;
-}
-
-const char *SlotFile::getBase() const {
-	return _base;
 }
 
 uint32 SlotFileIndexed::getSlotMax() const {
@@ -56,13 +51,12 @@ uint32 SlotFileIndexed::getSlotMax() const {
 
 	// Find the last filled save slot and base the save file size calculate on that
 	for (int i = (_slotCount - 1); i >= 0; i--) {
-		char *slotFile = build(i);
+		Common::String slotFile = build(i);
 
-		if (!slotFile)
+		if (slotFile.empty())
 			continue;
 
 		in = saveMan->openForLoading(slotFile);
-		delete[] slotFile;
 
 		if (in) {
 			delete in;
@@ -89,9 +83,9 @@ void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
 
 	// Iterate over all files
 	for (uint32 i = 0; i < _slotCount; i++, buffer += descLength) {
-		char *slotFile = build(i);
+		Common::String slotFile = build(i);
 
-		if (slotFile) {
+		if (!slotFile.empty()) {
 			char *desc = 0;
 
 			if (converter && (desc = converter->getDescription(slotFile)))
@@ -109,8 +103,6 @@ void SlotFileIndexed::buildIndex(byte *buffer, SavePartInfo &info,
 		} else
 			// No valid slot, fill with 0
 			memset(buffer, 0, descLength);
-
-		delete[] slotFile;
 	}
 }
 
@@ -121,85 +113,51 @@ bool SlotFileIndexed::exists(int slot) const {
 	return result;
 }
 
-bool SlotFileStatic::exists() const {
-	Common::InSaveFile *in = openRead();
-	bool result = (in != 0);
-	delete in;
-	return result;
-}
-
 Common::InSaveFile *SlotFileIndexed::openRead(int slot) const {
-	char *name = build(slot);
-	if (!name)
+	Common::String name = build(slot);
+	if (name.empty())
 		return 0;
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *result = saveMan->openForLoading(name);
-	delete[] name;
-	return result;
-}
-
-Common::InSaveFile *SlotFileStatic::openRead() const {
-	char *name = build();
-	if (!name)
-		return 0;
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::InSaveFile *result = saveMan->openForLoading(name);
-	delete[] name;
 	return result;
 }
 
 Common::OutSaveFile *SlotFileIndexed::openWrite(int slot) const {
-	char *name = build(slot);
-	if (!name)
+	Common::String name = build(slot);
+	if (name.empty())
 		return 0;
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *result = saveMan->openForSaving(name);
-	delete[] name;
-	return result;
-}
-
-Common::OutSaveFile *SlotFileStatic::openWrite() const {
-	char *name = build();
-	if (!name)
-		return 0;
-	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
-	Common::OutSaveFile *result = saveMan->openForSaving(name);
-	delete[] name;
 	return result;
 }
 
 
 SlotFileIndexed::SlotFileIndexed(GobEngine *vm, uint32 slotCount,
-		const char *base, const char *extStub) : SlotFile(vm, slotCount, base) {
+		const Common::String &base, const Common::String &extStub) : SlotFile(vm, slotCount, base) {
 
-	_ext = strdupcpy(extStub);
+	_ext = extStub;
 }
 
 SlotFileIndexed::~SlotFileIndexed() {
-	delete[] _ext;
 }
 
-char *SlotFileIndexed::build(int slot) const {
+Common::String SlotFileIndexed::build(int slot) const {
 	if ((slot < 0) || (((uint32) slot) >= _slotCount))
-		return 0;
+		return Common::String();
 
-	size_t len = strlen(_base) + strlen(_ext) + 4;
+	char buf[4];
+	snprintf(buf, sizeof(buf), "%02d", slot);
 
-	char *slotFile = new char[len];
-
-	snprintf(slotFile, len, "%s.%s%02d", _base, _ext, slot);
-
-	return slotFile;
+	return _base + "." + _ext + buf;
 }
 
-SlotFileStatic::SlotFileStatic(GobEngine *vm, const char *base,
-		const char *ext) : SlotFile(vm, 1, base) {
+SlotFileStatic::SlotFileStatic(GobEngine *vm, const Common::String &base,
+		const Common::String &ext) : SlotFile(vm, 1, base) {
 
-	_ext = strdupcat(".", ext);
+	_ext = "." + ext;
 }
 
 SlotFileStatic::~SlotFileStatic() {
-	delete[] _ext;
 }
 
 int SlotFileStatic::getSlot(int32 offset) const {
@@ -210,8 +168,33 @@ int SlotFileStatic::getSlotRemainder(int32 offset) const {
 	return -1;
 }
 
-char *SlotFileStatic::build() const {
-	return strdupcat(_base, _ext);
+Common::String SlotFileStatic::build() const {
+	return _base + _ext;
+}
+
+bool SlotFileStatic::exists() const {
+	Common::InSaveFile *in = openRead();
+	bool result = (in != 0);
+	delete in;
+	return result;
+}
+
+Common::InSaveFile *SlotFileStatic::openRead() const {
+	Common::String name = build();
+	if (name.empty())
+		return 0;
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *result = saveMan->openForLoading(name);
+	return result;
+}
+
+Common::OutSaveFile *SlotFileStatic::openWrite() const {
+	Common::String name = build();
+	if (name.empty())
+		return 0;
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::OutSaveFile *result = saveMan->openForSaving(name);
+	return result;
 }
 
 
@@ -357,14 +340,14 @@ bool TempSpriteHandler::usesPalette(int32 size) {
 }
 
 
-NotesHandler::File::File(GobEngine *vm, const char *base) :
+NotesHandler::File::File(GobEngine *vm, const Common::String &base) :
 	SlotFileStatic(vm, base, "blo") {
 }
 
 NotesHandler::File::~File() {
 }
 
-NotesHandler::NotesHandler(uint32 notesSize, GobEngine *vm, const char *target) :
+NotesHandler::NotesHandler(uint32 notesSize, GobEngine *vm, const Common::String &target) :
 	SaveHandler(vm) {
 
 	_notesSize = notesSize;
@@ -380,9 +363,9 @@ NotesHandler::~NotesHandler() {
 }
 
 int32 NotesHandler::getSize() {
-	char *fileName = _file->build();
+	Common::String fileName = _file->build();
 
-	if (!fileName)
+	if (fileName.empty())
 		return -1;
 
 	Common::InSaveFile *saveFile;
@@ -400,8 +383,6 @@ int32 NotesHandler::getSize() {
 	SaveReader reader(1, 0, fileName);
 	SaveHeader header;
 
-	delete[] fileName;
-
 	if (!reader.load())
 		return -1;
 
@@ -416,9 +397,9 @@ bool NotesHandler::load(int16 dataVar, int32 size, int32 offset) {
 	if ((dataVar < 0) || (size < 0) || (offset < 0))
 		return false;
 
-	char *fileName = _file->build();
+	Common::String fileName = _file->build();
 
-	if (!fileName)
+	if (fileName.empty())
 		return false;
 
 	SaveReader *reader;
@@ -436,8 +417,6 @@ bool NotesHandler::load(int16 dataVar, int32 size, int32 offset) {
 		reader = new SaveReader(1, 0, fileName);
 
 	SavePartVars vars(_vm, _notesSize);
-
-	delete[] fileName;
 
 	if (!reader->load()) {
 		delete reader;
@@ -462,15 +441,13 @@ bool NotesHandler::save(int16 dataVar, int32 size, int32 offset) {
 	if ((dataVar < 0) || (size < 0) || (offset < 0))
 		return false;
 
-	char *fileName = _file->build();
+	Common::String fileName = _file->build();
 
-	if (!fileName)
+	if (fileName.empty())
 		return false;
 
 	SaveWriter writer(1, 0, fileName);
 	SavePartVars vars(_vm, _notesSize);
-
-	delete[] fileName;
 
 	if (!vars.readFrom(dataVar, offset, size))
 		return false;
