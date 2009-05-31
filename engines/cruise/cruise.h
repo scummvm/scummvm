@@ -42,7 +42,8 @@ enum CruiseGameType {
 	GType_CRUISE = 1
 };
 
-#define GAME_FRAME_DELAY 40
+#define GAME_FRAME_DELAY_1 50
+#define GAME_FRAME_DELAY_2 100
 
 #define MAX_LANGUAGE_STRINGS 25
 
@@ -63,13 +64,15 @@ private:
 	Common::StringList _langStrings;
 	CursorType _savedCursor;
 	uint32 lastTick, lastTickDebug;
+	int _gameSpeed;
+	bool _speedFlag;
 
 	void initialize(void);
 	void deinitialise(void);
 	bool loadLanguageStrings();
 	bool makeLoad(char *saveName);
 	void mainLoop();
-
+	int processInput(void);
 protected:
 	// Engine APIs
 	virtual Common::Error run();

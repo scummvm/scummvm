@@ -109,6 +109,8 @@ Common::Error CruiseEngine::run() {
 
 void CruiseEngine::initialize() {
 	PCFadeFlag = 0;
+	_gameSpeed = GAME_FRAME_DELAY_1;
+	_speedFlag = false;
 
 	/*volVar1 = 0;
 	 * fileData1 = 0; */

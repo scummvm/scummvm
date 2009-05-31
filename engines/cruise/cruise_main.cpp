@@ -1273,7 +1273,7 @@ bool checkInput(int16 *buttonPtr) {
 	return false;
 }
 
-int processInput(void) {
+int CruiseEngine::processInput(void) {
 	int16 mouseX = 0;
 	int16 mouseY = 0;
 	int16 button = 0;
@@ -1349,6 +1349,18 @@ int processInput(void) {
 		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == MB_LEFT))
 			userWait = 0;
 		return 0;
+	}
+
+	// Handle any changes in game speed
+	if (_speedFlag) {
+		if ((keyboardCode == Common::KEYCODE_KP_PLUS) && (_gameSpeed >= 30)) {
+			_gameSpeed -= 10;
+			keyboardCode = Common::KEYCODE_INVALID;
+		}
+		if ((keyboardCode == Common::KEYCODE_KP_MINUS) && (_gameSpeed <= 200)) {
+			_gameSpeed += 10;
+			keyboardCode = Common::KEYCODE_INVALID;
+		}
 	}
 
 	if (!userEnabled) {
@@ -1735,7 +1747,7 @@ void CruiseEngine::mainLoop(void) {
 
 		if (!bFastMode) {
 			// Delay for the specified amount of time, but still respond to events
-			while (currentTick < lastTick + GAME_FRAME_DELAY) {
+			while (currentTick < lastTick + _gameSpeed) {
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
 
@@ -1759,6 +1771,12 @@ void CruiseEngine::mainLoop(void) {
 			break;
 
 		lastTick = g_system->getMillis();
+
+		// Handle switchover in game speed after intro
+		if (!_speedFlag && canLoadGameStateCurrently()) {
+			_speedFlag = true;
+			_gameSpeed = GAME_FRAME_DELAY_2;
+		}
 
 		// Handle the next frame
 
