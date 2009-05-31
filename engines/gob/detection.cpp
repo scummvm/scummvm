@@ -404,7 +404,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "f5f028ee39c456fa51fa63b606583918", 313472},
 				{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformWindows,
@@ -421,7 +421,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
 				{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			DE_DEU,
 			kPlatformWindows,
@@ -490,7 +490,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "b45b984ee8017efd6ea965b9becd4d66", 828443},
 				{"musmac1.mid", 0, "7f96f491448c7a001b32df89cf8d2af2", 1658},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			UNK_LANG,
 			kPlatformMacintosh,
@@ -507,7 +507,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "a13ecb4f6d8fd881ebbcc02e45cb5475", 837275},
 				{"musmac1.mid", 0, "7f96f491448c7a001b32df89cf8d2af2", 1658},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformMacintosh,
@@ -771,7 +771,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "285d7340f98ebad65d465585da12910b", 837286},
 				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformWindows,
@@ -788,7 +788,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
 				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			DE_DEU,
 			kPlatformWindows,
@@ -805,7 +805,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
 				{"ween.ins", 0, "d2cb24292c9ddafcad07e23382027218", 87800},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			EN_GRB,
 			kPlatformAmiga,
@@ -861,7 +861,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "dffd1ab98fe76150d6933329ca6f4cc4", 459458},
 				{"ween.ins", 0, "d2cb24292c9ddafcad07e23382027218", 87800},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			IT_ITA,
 			kPlatformAmiga,
@@ -878,7 +878,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "bfd9d02faf3d8d60a2cf744f95eb48dd", 456570},
 				{"music__5.snd", 0, "7d1819b9981ecddd53d3aacbc75f1cc8", 13446},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			EN_GRB,
 			kPlatformAtariST,
@@ -1168,7 +1168,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "0b72992f5d8b5e6e0330572a5753ea25", 256490},
 				{"mod.babayaga", 0, "43484cde74e0860785f8e19f0bc776d1", 60248},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			UNK_LANG,
 			kPlatformAmiga,
@@ -1263,7 +1263,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "af98bcdc70e1f1c1635577fd726fe7f1", 3937310},
 				{"musmac1.mid", 0, "ae7229bb09c6abe4e60a2768b24bc890", 9398},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformMacintosh,
@@ -1658,7 +1658,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
 				{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			DE_DEU,
 			kPlatformWindows,
@@ -1675,7 +1675,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "32b0f57f5ae79a9ae97e8011df38af42", 157084},
 				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			EN_GRB,
 			kPlatformMacintosh,
@@ -1939,7 +1939,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "edd7403e5dc2a14459d2665a4c17714d", 209534},
 				{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformWindows,
@@ -2082,7 +2082,7 @@ static const GOBGameDescription gameDescriptions[] = {
 				{"postc.imd", 0, "24accbcc8b83a9c2be4bd82849a2bd29", 415637},
 				{"tum.imd", 0, "0993d4810ec9deb3f77c5e92095320fd", 20330},
 				{"tumi.imd", 0, "bf53f229480d694de0947fe3366fbec6", 248952},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			EN_ANY,
 			kPlatformPC,
@@ -2424,7 +2424,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"demo.scn", 0, "16bb85fc5f8e519147b60475dbf33962", 89},
 				{"wooddem3.vmd", 0, "a1700596172c2d4e264760030c3a3d47", 8994250},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			EN_ANY,
 			kPlatformPC,
@@ -2585,7 +2585,7 @@ static const GOBGameDescription gameDescriptions[] = {
 				{"wdemo.s24", 0, "14ac9bd51db7a075d69ddb144904b271", 87},
 				{"demo.vmd", 0, "65d04715d871c292518b56dd160b0161", 9091237},
 				{"urband.vmd", 0, "60343891868c91854dd5c82766c70ecc", 922461},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			EN_ANY,
 			kPlatformPC,
@@ -2602,7 +2602,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
 				{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -2619,7 +2619,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
 				{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -2636,7 +2636,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
 				{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			DE_DEU,
 			kPlatformPC,
@@ -2658,7 +2658,7 @@ static const GOBGameDescription gameDescriptions[] = {
 				{"generik.vmd", 0, "b46bdd64b063e86927fb2826500ad512", 603242},
 				{"genespi.vmd", 0, "b7611916f32a370ae9832962fc17ef72", 758719},
 				{"spirou.vmd", 0, "8513dbf7ac51c057b21d371d6b217b47", 2550788},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			EN_ANY,
 			kPlatformPC,
@@ -2675,7 +2675,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"e.scn", 0, "8a0db733c3f77be86e74e8242e5caa61", 124},
 				{"demarchg.vmd", 0, "d14a95da7d8792faf5503f649ffcbc12", 5619415},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			EN_ANY,
 			kPlatformPC,
@@ -2696,7 +2696,7 @@ static const GOBGameDescription gameDescriptions[] = {
 				{"demo5.vmd", 0, "2abb7b6a26406c984f389f0b24b5e28e", 13290970},
 				{"demoita.vmd", 0, "b4c0622d14c8749965cd0f5dfca4cf4b", 1183566},
 				{"wooddem3.vmd", 0, "a1700596172c2d4e264760030c3a3d47", 8994250},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			IT_ITA,
 			kPlatformPC,
@@ -2716,7 +2716,7 @@ static const GOBGameDescription gameDescriptions[] = {
 				{"demboues.vmd", 0, "3a0caa10c98ef92a15942f8274075b43", 3535838},
 				{"demo5.vmd", 0, "2abb7b6a26406c984f389f0b24b5e28e", 13290970},
 				{"wooddem3.vmd", 0, "a1700596172c2d4e264760030c3a3d47", 8994250},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			ES_ESP,
 			kPlatformPC,
@@ -2733,7 +2733,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"playtoon.stk", 0, "55a85036dd93cce93532d8f743d90074", 17467154},
 				{"spirou.stk", 0, "e3e1b6148dd72fafc3637f1a8e5764f5", 9812043},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -2750,7 +2750,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
 				{"chato.stk", 0, "4fa4ed96a427c344e9f916f9f236598d", 6033793},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -2767,7 +2767,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
 				{"chato.stk", 0, "4fa4ed96a427c344e9f916f9f236598d", 6033793},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -2784,7 +2784,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
 				{"chato.stk", 0, "3c6cb3ac8a5a7cf681a19971a92a748d", 6033791},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			DE_DEU,
 			kPlatformPC,
@@ -2801,7 +2801,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
 				{"wakan.stk", 0, "f493bf82851bc5ba74d57de6b7e88df8", 5520153},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -2818,7 +2818,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "2f8db6963ff8d72a8331627ebda918f4", 3613238},
 				{"bambou.itk", 0, "0875914d31126d0749313428f10c7768", 114440192},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -2834,7 +2834,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			"",
 			{
 				{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -2993,7 +2993,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"intro.stk", 0, "092707829555f27706920e4cacf1fada", 8737958},
 				{"appbou2.itk", 0, "f7bf045f6bdce5a7607c720e36704f33", 200005632},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			IT_ITA,
 			kPlatformPC,
@@ -3010,7 +3010,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"adibou.stk", 0, "977d2449d398f3df23238d718fca35b5", 61097},
 				{"magic.stk", 0, "9776765dead3e338a32c43bf344b5819", 302664},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -3027,7 +3027,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"adi_exerciser.pak", 0, "585db904fe745ab560886a13500ed5f2", 73207668},
 				{"adi_texts.pak", 0, "79c73034e0a098d2a45a70ba95f6eace", 10656},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -3044,7 +3044,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"adi_exerciser.pak", 0, "7e4574ea8a8e77585fb17f5c8d7a7831", 65789907},
 				{"adi_texts.pak", 0, "79c73034e0a098d2a45a70ba95f6eace", 10656},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
@@ -3061,7 +3061,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"adi_exerciser.pak", 0, "a2d7dec00cd5a6e2f2b8bfc225df490e", 136669275},
 				{"adi_texts.pak", 0, "eb09da3d13770c34bf77e4f94744d5f5", 10616},
-				{NULL, 0, NULL, 0}
+				{0, 0, 0, 0}
 			},
 			FR_FRA,
 			kPlatformPC,
