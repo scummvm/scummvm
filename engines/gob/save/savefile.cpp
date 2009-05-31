@@ -956,11 +956,7 @@ bool SaveWriter::save() {
 }
 
 bool SaveWriter::canSave() const {
-	// FIXME: The logic here is the opposite from what I (Fingolfin) would expect ?!?
-	if (!_fileName.empty())
-		return false;
-	
-	return true;
+	return (!_fileName.empty());
 }
 
 Common::OutSaveFile *SaveWriter::openSave(const Common::String &fileName) {
