@@ -67,32 +67,32 @@ public:
 
 
 	const uint8 *getAddressVar8(uint32 var) const;
-	uint8 *getAddressVar8(uint32 var, uint32 n = 1);
+	uint8 *getAddressVar8(uint32 var);
 
 	const uint16 *getAddressVar16(uint32 var) const;
-	uint16 *getAddressVar16(uint32 var, uint32 n = 1);
+	uint16 *getAddressVar16(uint32 var);
 
 	const uint32 *getAddressVar32(uint32 var) const;
-	uint32 *getAddressVar32(uint32 var, uint32 n = 1);
+	uint32 *getAddressVar32(uint32 var);
 
 	const char *getAddressVarString(uint32 var) const;
-	char *getAddressVarString(uint32 var, uint32 n = 0xFFFFFFFF);
+	char *getAddressVarString(uint32 var);
 
 	const uint8 *getAddressOff8(uint32 offset) const;
-	uint8 *getAddressOff8(uint32 offset, uint32 n = 1);
+	uint8 *getAddressOff8(uint32 offset);
 
 	const uint16 *getAddressOff16(uint32 offset) const;
-	uint16 *getAddressOff16(uint32 offset, uint32 n = 1);
+	uint16 *getAddressOff16(uint32 offset);
 
 	const uint32 *getAddressOff32(uint32 offset) const;
-	uint32 *getAddressOff32(uint32 offset, uint32 n = 1);
+	uint32 *getAddressOff32(uint32 offset);
 
 	const char *getAddressOffString(uint32 offset) const;
-	char *getAddressOffString(uint32 offset, uint32 n = 0xFFFFFFFF);
+	char *getAddressOffString(uint32 offset);
 
 
-	bool copyTo(uint32 offset, byte *variables, byte *sizes, uint32 n) const;
-	bool copyFrom(uint32 offset, const byte *variables, const byte *sizes, uint32 n);
+	bool copyTo(uint32 offset, byte *variables, uint32 n) const;
+	bool copyFrom(uint32 offset, const byte *variables, uint32 n);
 
 protected:
 	virtual void write8(byte *buf, uint8 data) const = 0;
@@ -104,20 +104,10 @@ protected:
 	virtual uint32 read32(const byte *buf) const = 0;
 
 private:
-	// Basically the number of additional bytes occupied
-	static const byte kSize8 = 0;
-	static const byte kSize16 = 1;
-	static const byte kSize32 = 3;
-
 	uint32 _size;
-
 	byte *_vars;
-	byte *_sizes;
 
-	void clear();
-	void clearSize(uint32 offset);
-	void writeSize(uint32 offset, byte n);
-	void writeSizeString(uint32 offset, uint32 length);
+  void clear();
 };
 
 class VariablesLE : public Variables {
@@ -151,23 +141,23 @@ protected:
 };
 
 class VariableReference {
-	public:
-		VariableReference();
-		VariableReference(Variables &vars, uint32 offset,
-				Variables::Type type = Variables::kVariableType32);
-		~VariableReference();
+public:
+	VariableReference();
+	VariableReference(Variables &vars, uint32 offset,
+			Variables::Type type = Variables::kVariableType32);
+	~VariableReference();
 
-		void set(Variables &vars, uint32 offset, Variables::Type type = Variables::kVariableType32);
+	void set(Variables &vars, uint32 offset, Variables::Type type = Variables::kVariableType32);
 
-		VariableReference &operator=(uint32 value);
-		VariableReference &operator+=(uint32 value);
-		VariableReference &operator*=(uint32 value);
-		operator uint32();
+	VariableReference &operator=(uint32 value);
+	VariableReference &operator+=(uint32 value);
+	VariableReference &operator*=(uint32 value);
+	operator uint32();
 
-	private:
-		Variables *_vars;
-		uint32 _offset;
-		Variables::Type _type;
+private:
+	Variables *_vars;
+	uint32 _offset;
+	Variables::Type _type;
 };
 
 } // End of namespace Gob

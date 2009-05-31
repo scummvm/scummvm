@@ -49,6 +49,22 @@ inline char *strdupcpy(const char *str) {
 	return nstr;
 }
 
+/** A strcat that new[]s the buffer. */
+inline char *strdupcat(const char *str1, const char *str2) {
+	if (!str1 || !str2)
+		return 0;
+
+	size_t len1 = strlen(str1);
+	size_t len2 = strlen(str2);
+
+	char *nstr = new char[len1 + len2 + 1];
+
+	memcpy(nstr, str1, len1);
+	memcpy(nstr + len1, str2, len2 + 1);
+
+	return nstr;
+}
+
 /** A "smart" reference counting templated class. */
 template<typename T>
 class ReferenceCounter {

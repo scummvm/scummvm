@@ -56,12 +56,12 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	uint32 passPos;
 
 	var = _vm->_parse->parseVarIndex();
-	variables = _vm->_inter->_variables->getAddressOff8(var, 0);
+	variables = _vm->_inter->_variables->getAddressOff8(var);
 
 	id = _vm->_inter->load16();
 
 	if (id == -1) {
-		_passMap = (int8 *) _vm->_inter->_variables->getAddressOff8(var, 0);
+		_passMap = (int8 *) _vm->_inter->_variables->getAddressOff8(var);
 		return;
 	}
 
@@ -105,7 +105,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	tmpPos = mapData.pos();
 	mapData.seek(passPos);
 	if ((variables != 0) &&
-	    (variables != _vm->_inter->_variables->getAddressOff8(0, 0))) {
+	    (variables != _vm->_inter->_variables->getAddressOff8(0))) {
 
 		_passMap = (int8 *) variables;
 		mapHeight = _screenHeight / _tilesHeight;
@@ -114,7 +114,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		for (int i = 0; i < mapHeight; i++) {
 			for (int j = 0; j < mapWidth; j++)
 				setPass(j, i, mapData.readSByte());
-			_vm->_inter->_variables->getAddressOff8(var + i * _passWidth, mapWidth);
+			_vm->_inter->_variables->getAddressOff8(var + i * _passWidth);
 		}
 	}
 	mapData.seek(tmpPos);

@@ -46,11 +46,6 @@ MODULE_OBJS := \
 	parse.o \
 	parse_v1.o \
 	parse_v2.o \
-	saveload.o \
-	saveload_v2.o \
-	saveload_v3.o \
-	saveload_v4.o \
-	saveload_v6.o \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \
@@ -63,6 +58,18 @@ MODULE_OBJS := \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \
+	save/savefile.o \
+	save/savehandler.o \
+	save/saveload.o \
+	save/saveload_v2.o \
+	save/saveload_v3.o \
+	save/saveload_v4.o \
+	save/saveload_v6.o \
+	save/saveconverter.o \
+	save/saveconverter_v2.o \
+	save/saveconverter_v3.o \
+	save/saveconverter_v4.o \
+	save/saveconverter_v6.o \
 	sound/sound.o \
 	sound/sounddesc.o \
 	sound/pcspeaker.o \

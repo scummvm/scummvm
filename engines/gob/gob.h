@@ -65,8 +65,8 @@ class SaveLoad;
 #define READ_VARO_UINT32(off)       _vm->_inter->_variables->readOff32(off)
 #define READ_VARO_UINT16(off)       _vm->_inter->_variables->readOff16(off)
 #define READ_VARO_UINT8(off)        _vm->_inter->_variables->readOff8(off)
-#define GET_VAR_STR(var)            _vm->_inter->_variables->getAddressVarString(var, 0)
-#define GET_VARO_STR(off)           _vm->_inter->_variables->getAddressOffString(off, 0)
+#define GET_VAR_STR(var)            _vm->_inter->_variables->getAddressVarString(var)
+#define GET_VARO_STR(off)           _vm->_inter->_variables->getAddressOffString(off)
 #define GET_VAR_FSTR(var)           _vm->_inter->_variables->getAddressVarString(var)
 #define GET_VARO_FSTR(off)          _vm->_inter->_variables->getAddressOffString(off)
 
@@ -78,11 +78,14 @@ class SaveLoad;
 #define VAR(var)                    READ_VAR_UINT32(var)
 
 
+// WARNING: Reordering these will invalidate save games!
 enum Endianness {
 	kEndiannessLE,
 	kEndiannessBE
 };
 
+// WARNING: Reordering these will invalidate save games!
+//          Add new games to the bottom of the list.
 enum GameType {
 	kGameTypeNone = 0,
 	kGameTypeGob1,

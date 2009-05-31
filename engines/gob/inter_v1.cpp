@@ -948,8 +948,7 @@ void Inter_v1::o1_initMult() {
 			_vm->_mult->_objects[i].pPosY = new VariableReference(*_vm->_inter->_variables, offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
-				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim,
-						_vm->_global->_inter_animDataSize);
+				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -2234,7 +2233,7 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 		if (((dataVar >> 2) == 59) && (size == 4))
 			WRITE_VAR(59, stream->readUint32LE());
 		else
-			retSize = stream->read((byte *) _variables->getAddressOff8(dataVar, size), size);
+			retSize = stream->read((byte *) _variables->getAddressOff8(dataVar), size);
 
 		if (retSize == size)
 			WRITE_VAR(1, 0);

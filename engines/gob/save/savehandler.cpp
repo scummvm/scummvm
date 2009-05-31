@@ -1,0 +1,503 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#include "common/endian.h"
+
+#include "gob/gob.h"
+#include "gob/save/savehandler.h"
+#include "gob/save/savefile.h"
+#include "gob/save/saveconverter.h"
+#include "gob/global.h"
+#include "gob/video.h"
+#include "gob/draw.h"
+#include "gob/variables.h"
+#include "gob/inter.h"
+
+namespace Gob {
+
+SlotFile::SlotFile(GobEngine *vm, uint32 slotCount, const char *base) : _vm(vm) {
+	_base = strdupcpy(base);
+	_slotCount = slotCount;
+}
+
+SlotFile::~SlotFile() {
+	delete[] _base;
+}
+
+const char *SlotFile::getBase() const {
+	return _base;
+}
+
+uint32 SlotFile::getSlotMax() const {
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *in;
+
+	// Find the last filled save slot and base the save file size calculate on that
+	for (int i = (_slotCount - 1); i >= 0; i--) {
+		char *slotFile = build(i);
+
+		if (!slotFile)
+			continue;
+
+		in = saveMan->openForLoading(slotFile);
+		delete[] slotFile;
+
+		if (in) {
+			delete in;
+			return i + 1;
+		}
+	}
+
+	return 0;
+}
+
+int32 SlotFile::tallyUpFiles(uint32 slotSize, uint32 indexSize) const {
+	uint32 maxSlot = getSlotMax();
+
+	if (maxSlot == 0)
+		return -1;
+
+	return ((maxSlot * slotSize) + indexSize);
+}
+
+void SlotFile::buildIndex(byte *buffer, SavePartInfo &info,
+		SaveConverter *converter) const {
+
+	uint32 descLength = info.getDescMaxLength();
+
+	// Iterate over all files
+	for (uint32 i = 0; i < _slotCount; i++, buffer += descLength) {
+		char *slotFile = build(i);
+
+		if (slotFile) {
+			char *desc = 0;
+
+			if (converter && (desc = converter->getDescription(slotFile)))
+				// Old style save
+				memcpy(buffer, desc, descLength);
+			else if (SaveReader::getInfo(slotFile, info))
+				// New style save
+				memcpy(buffer, info.getDesc(), descLength);
+			else
+				// No known format, fill with 0
+				memset(buffer, 0, descLength);
+
+			delete[] desc;
+
+		} else
+			// No valid slot, fill with 0
+			memset(buffer, 0, descLength);
+
+		delete[] slotFile;
+	}
+}
+
+bool SlotFile::exists(const char *name) const {
+	Common::InSaveFile *in = openRead(name);
+	bool result = (in != 0);
+	delete in;
+	return result;
+}
+
+bool SlotFile::exists(int slot) const {
+	Common::InSaveFile *in = openRead(slot);
+	bool result = (in != 0);
+	delete in;
+	return result;
+}
+
+bool SlotFile::exists() const {
+	Common::InSaveFile *in = openRead();
+	bool result = (in != 0);
+	delete in;
+	return result;
+}
+
+Common::InSaveFile *SlotFile::openRead(const char *name) const {
+	if (!name)
+		return 0;
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+
+	return saveMan->openForLoading(name);
+}
+
+Common::InSaveFile *SlotFile::openRead(int slot) const {
+	char *name = build(slot);
+	Common::InSaveFile *result = openRead(name);
+	delete[] name;
+	return result;
+}
+
+Common::InSaveFile *SlotFile::openRead() const {
+	char *name = build();
+	Common::InSaveFile *result = openRead(name);
+	delete[] name;
+	return result;
+}
+
+Common::OutSaveFile *SlotFile::openWrite(const char *name) const {
+	if (!name)
+		return 0;
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+
+	return saveMan->openForSaving(name);
+}
+
+Common::OutSaveFile *SlotFile::openWrite(int slot) const {
+	char *name = build(slot);
+	Common::OutSaveFile *result = openWrite(name);
+	delete[] name;
+	return result;
+}
+
+Common::OutSaveFile *SlotFile::openWrite() const {
+	char *name = build();
+	Common::OutSaveFile *result = openWrite(name);
+	delete[] name;
+	return result;
+}
+
+
+SlotFileIndexed::SlotFileIndexed(GobEngine *vm, uint32 slotCount,
+		const char *base, const char *extStub) : SlotFile(vm, slotCount, base) {
+
+	_ext = strdupcpy(extStub);
+}
+
+SlotFileIndexed::~SlotFileIndexed() {
+	delete[] _ext;
+}
+
+char *SlotFileIndexed::build(int slot) const {
+	if ((slot < 0) || (((uint32) slot) >= _slotCount))
+		return 0;
+
+	size_t len = strlen(_base) + strlen(_ext) + 4;
+
+	char *slotFile = new char[len];
+
+	snprintf(slotFile, len, "%s.%s%02d", _base, _ext, slot);
+
+	return slotFile;
+}
+
+char *SlotFileIndexed::build() const {
+	return 0;
+}
+
+
+SlotFileStatic::SlotFileStatic(GobEngine *vm, const char *base,
+		const char *ext) : SlotFile(vm, 1, base) {
+
+	_ext = strdupcat(".", ext);
+}
+
+SlotFileStatic::~SlotFileStatic() {
+	delete[] _ext;
+}
+
+int SlotFileStatic::getSlot(int32 offset) const {
+	return -1;
+}
+
+int SlotFileStatic::getSlotRemainder(int32 offset) const {
+	return -1;
+}
+
+char *SlotFileStatic::build(int slot) const {
+	return 0;
+}
+
+char *SlotFileStatic::build() const {
+	return strdupcat(_base, _ext);
+}
+
+
+SaveHandler::SaveHandler(GobEngine *vm) : _vm(vm) {
+}
+
+SaveHandler::~SaveHandler() {
+}
+
+uint32 SaveHandler::getVarSize(GobEngine *vm) {
+	// Sanity checks
+	if (!vm || !vm->_inter || !vm->_inter->_variables)
+		return 0;
+
+	return vm->_inter->_variables->getSize();
+}
+
+
+TempSpriteHandler::TempSpriteHandler(GobEngine *vm) : SaveHandler(vm) {
+	_sprite = 0;
+}
+
+TempSpriteHandler::~TempSpriteHandler() {
+	delete _sprite;
+}
+
+int32 TempSpriteHandler::getSize() {
+	if (!_sprite)
+		return -1;
+
+	return _sprite->getSize();
+}
+
+bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
+	// Sprite available?
+	if (!_sprite)
+		return false;
+
+	// Sprite requested?
+	if (!isSprite(size))
+		return false;
+
+	// Index sane?
+	int index = getIndex(size);
+	if ((index < 0) || (index >= SPRITES_COUNT))
+		return false;
+
+	SurfaceDesc *sprite = _vm->_draw->_spritesArray[index];
+
+	// Target sprite exists?
+	if (!sprite)
+		return false;
+
+	// Load the sprite
+	if (!_sprite->writeSprite(sprite))
+		return false;
+
+	// Handle palette
+	if (usesPalette(size)) {
+		if (!_sprite->writePalette((byte *) _vm->_global->_pPaletteDesc->vgaPal))
+			return false;
+
+		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+	}
+
+	if (index == 21) {
+		// We wrote into the backbuffer, blit
+		_vm->_draw->forceBlit();
+		_vm->_video->retrace();
+	} else if (index == 20)
+		// We wrote into the frontbuffer, retrace
+		_vm->_video->retrace();
+
+	return true;
+}
+
+bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
+	SurfaceDesc *sprite;
+
+	if (!createSprite(dataVar, size, offset, &sprite))
+		return false;
+
+	// Save the sprite
+	if (!_sprite->readSprite(sprite))
+		return false;
+
+	// Handle palette
+	if (usesPalette(size)) {
+		if (!_sprite->readPalette((const byte *) _vm->_global->_pPaletteDesc->vgaPal))
+			return false;
+	}
+
+	return true;
+}
+
+bool TempSpriteHandler::createSprite(int16 dataVar, int32 size,
+		int32 offset, SurfaceDesc **sprite) {
+
+	delete _sprite;
+	_sprite = 0;
+
+	// Sprite requested?
+	if (!isSprite(size))
+		return false;
+
+	// Index sane?
+	int index = getIndex(size);
+	if ((index < 0) || (index >= SPRITES_COUNT))
+		return false;
+
+	SurfaceDesc *sprt = _vm->_draw->_spritesArray[index];
+
+	// Sprite exists?
+	if (!sprt)
+		return false;
+
+	// Create a new temporary sprite
+	_sprite = new SavePartSprite(sprt->getWidth(), sprt->getHeight());
+
+	if (sprite)
+		*sprite = sprt;
+
+	return true;
+}
+
+// A negative size is the flag for using a sprite
+bool TempSpriteHandler::isSprite(int32 size) {
+	return (size < 0);
+}
+
+// Contruct the index
+int TempSpriteHandler::getIndex(int32 size) {
+	// Palette flag
+	if (size < -1000)
+		size += 1000;
+
+	return (-size - 1);
+}
+
+// A size smaller than -1000 indicates palette usage
+bool TempSpriteHandler::usesPalette(int32 size) {
+	return (size < -1000);
+}
+
+
+NotesHandler::File::File(GobEngine *vm, const char *base) :
+	SlotFileStatic(vm, base, "blo") {
+}
+
+NotesHandler::File::~File() {
+}
+
+NotesHandler::NotesHandler(uint32 notesSize, GobEngine *vm, const char *target) :
+	SaveHandler(vm) {
+
+	_notesSize = notesSize;
+
+	_file = new File(vm, target);
+
+	_notes = new SavePartVars(vm, _notesSize);
+}
+
+NotesHandler::~NotesHandler() {
+	delete _file;
+	delete _notes;
+}
+
+int32 NotesHandler::getSize() {
+	char *fileName = _file->build();
+
+	if (!fileName)
+		return -1;
+
+	Common::InSaveFile *saveFile;
+
+	SaveConverter_Notes converter(_vm, _notesSize, fileName);
+	if (converter.isOldSave(&saveFile)) {
+		// Old save, get the size olden-style
+
+		int32 size = saveFile->size();
+
+		delete saveFile;
+		return size;
+	}
+
+	SaveReader reader(1, 0, fileName);
+	SaveHeader header;
+
+	delete[] fileName;
+
+	if (!reader.load())
+		return -1;
+
+	if (!reader.readPartHeader(0, &header))
+		return -1;
+
+	// Return the part's size
+	return header.getSize();
+}
+
+bool NotesHandler::load(int16 dataVar, int32 size, int32 offset) {
+	if ((dataVar < 0) || (size < 0) || (offset < 0))
+		return false;
+
+	char *fileName = _file->build();
+
+	if (!fileName)
+		return false;
+
+	SaveReader *reader;
+
+	SaveConverter_Notes converter(_vm, _notesSize, fileName);
+	if (converter.isOldSave()) {
+		// Old save, plug the converter in
+		if (!converter.load())
+			return false;
+
+		reader = new SaveReader(1, 0, converter);
+
+	} else
+		// New save, load directly
+		reader = new SaveReader(1, 0, fileName);
+
+	SavePartVars vars(_vm, _notesSize);
+
+	delete[] fileName;
+
+	if (!reader->load()) {
+		delete reader;
+		return false;
+	}
+
+	if (!reader->readPart(0, &vars)) {
+		delete reader;
+		return false;
+	}
+
+	if (!vars.writeInto(dataVar, offset, size)) {
+		delete reader;
+		return false;
+	}
+
+	delete reader;
+	return true;
+}
+
+bool NotesHandler::save(int16 dataVar, int32 size, int32 offset) {
+	if ((dataVar < 0) || (size < 0) || (offset < 0))
+		return false;
+
+	char *fileName = _file->build();
+
+	if (!fileName)
+		return false;
+
+	SaveWriter writer(1, 0, fileName);
+	SavePartVars vars(_vm, _notesSize);
+
+	delete[] fileName;
+
+	if (!vars.readFrom(dataVar, offset, size))
+		return false;
+
+	return writer.writePart(0, &vars);
+}
+
+} // End of namespace Gob

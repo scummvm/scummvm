@@ -35,14 +35,12 @@ Variables::Variables(uint32 size) {
 	_size = size;
 
 	_vars = new byte[_size];
-	_sizes = new byte[_size];
 
 	clear();
 }
 
 Variables::~Variables() {
 	delete[] _vars;
-	delete[] _sizes;
 }
 
 uint32 Variables::getSize() const {
@@ -51,39 +49,6 @@ uint32 Variables::getSize() const {
 
 void Variables::clear() {
 	memset(_vars, 0, _size);
-
-	// All variables are 32 bit wide per default
-	memset(_sizes, 0, _size);
-	for (uint32 i = 0; i < _size; i += 4)
-		_sizes[i] = kSize32;
-}
-
-void Variables::clearSize(uint32 offset) {
-	uint32 inVar = offset % 4;
-	uint32 varOff = (offset >> 2) << 2;
-
-	// Clearing out the old size
-	for (uint32 i = 0; i < 4; i++) {
-		if (_sizes[varOff + i] == kSize32)
-			_sizes[varOff + i] = kSize8;
-		else if ((inVar == (i + 1)) && (_sizes[varOff + i] == kSize16))
-			_sizes[varOff + i] = kSize8;
-	}
-}
-
-void Variables::writeSize(uint32 offset, byte n) {
-	clearSize(offset);
-
-	_sizes[offset] = n;
-	// Setting following bytes of size to 8 bit, for easy clearing out afterwards
-	for (; n > 0; n--)
-		_sizes[offset + n] = kSize8;
-}
-
-void Variables::writeSizeString(uint32 offset, uint32 length) {
-	clearSize(offset);
-
-	memset(_sizes + offset, kSize8, length);
 }
 
 void Variables::writeVar8(uint32 var, uint8 value) {
@@ -104,22 +69,18 @@ void Variables::writeVarString(uint32 var, const char *value) {
 
 void Variables::writeOff8(uint32 offset, uint8 value) {
 	write8(_vars + offset, value);
-	writeSize(offset, kSize8);
 }
 
 void Variables::writeOff16(uint32 offset, uint16 value) {
 	write16(_vars + offset, value);
-	writeSize(offset, kSize16);
 }
 
 void Variables::writeOff32(uint32 offset, uint32 value) {
 	write32(_vars + offset, value);
-	writeSize(offset, kSize32);
 }
 
 void Variables::writeOffString(uint32 offset, const char *value) {
 	strcpy((char *) (_vars + offset), value);
-	writeSizeString(offset, strlen(value));
 }
 
 uint8 Variables::readVar8(uint32 var) const {
@@ -158,42 +119,39 @@ const uint8 *Variables::getAddressVar8(uint32 var) const {
 	return getAddressOff8(var * 4);
 }
 
-uint8 *Variables::getAddressVar8(uint32 var, uint32 n) {
-	return getAddressOff8(var * 4, n);
+uint8 *Variables::getAddressVar8(uint32 var) {
+	return getAddressOff8(var * 4);
 }
 
 const uint16 *Variables::getAddressVar16(uint32 var) const {
 	return getAddressOff16(var * 4);
 }
 
-uint16 *Variables::getAddressVar16(uint32 var, uint32 n) {
-	return getAddressOff16(var * 4, n);
+uint16 *Variables::getAddressVar16(uint32 var) {
+	return getAddressOff16(var * 4);
 }
 
 const uint32 *Variables::getAddressVar32(uint32 var) const {
 	return getAddressOff32(var * 4);
 }
 
-uint32 *Variables::getAddressVar32(uint32 var, uint32 n) {
-	return getAddressOff32(var * 4, n);
+uint32 *Variables::getAddressVar32(uint32 var) {
+	return getAddressOff32(var * 4);
 }
 
 const char *Variables::getAddressVarString(uint32 var) const {
 	return getAddressOffString(var * 4);
 }
 
-char *Variables::getAddressVarString(uint32 var, uint32 n) {
-	return getAddressOffString(var * 4, n);
+char *Variables::getAddressVarString(uint32 var) {
+	return getAddressOffString(var * 4);
 }
 
 const uint8 *Variables::getAddressOff8(uint32 offset) const {
 	return ((const uint8 *) (_vars + offset));
 }
 
-uint8 *Variables::getAddressOff8(uint32 offset, uint32 n) {
-	for (uint32 i = 0; i < n; i++)
-		writeSize(offset + i, kSize8);
-
+uint8 *Variables::getAddressOff8(uint32 offset) {
 	return ((uint8 *) (_vars + offset));
 }
 
@@ -201,10 +159,7 @@ const uint16 *Variables::getAddressOff16(uint32 offset) const {
 	return ((const uint16 *) (_vars + offset));
 }
 
-uint16 *Variables::getAddressOff16(uint32 offset, uint32 n) {
-	for (uint32 i = 0; i < n; i++)
-		writeSize(offset + i * 2, kSize16);
-
+uint16 *Variables::getAddressOff16(uint32 offset) {
 	return ((uint16 *) (_vars + offset));
 }
 
@@ -212,10 +167,7 @@ const uint32 *Variables::getAddressOff32(uint32 offset) const {
 	return ((const uint32 *) (_vars + offset));
 }
 
-uint32 *Variables::getAddressOff32(uint32 offset, uint32 n) {
-	for (uint32 i = 0; i < n; i++)
-		writeSize(offset + i * 4, kSize32);
-
+uint32 *Variables::getAddressOff32(uint32 offset) {
 	return ((uint32 *) (_vars + offset));
 }
 
@@ -223,30 +175,25 @@ const char *Variables::getAddressOffString(uint32 offset) const {
 	return ((const char *) (_vars + offset));
 }
 
-char *Variables::getAddressOffString(uint32 offset, uint32 n) {
-	writeSizeString(offset, (n == 0xFFFFFFFF) ? strlen((char *) (_vars + offset)) : n);
-
+char *Variables::getAddressOffString(uint32 offset) {
 	return ((char *) (_vars + offset));
 }
 
-bool Variables::copyTo(uint32 offset, byte *variables, byte *sizes, uint32 n) const {
+bool Variables::copyTo(uint32 offset, byte *variables, uint32 n) const {
 	if ((offset + n) > _size)
 		return false;
 
 	if (variables)
 		memcpy(variables, _vars + offset, n);
-	if (sizes)
-		memcpy(sizes, _sizes + offset, n);
 
 	return true;
 }
 
-bool Variables::copyFrom(uint32 offset, const byte *variables, const byte *sizes, uint32 n) {
-	if (((offset + n) > _size) || !variables || !sizes)
+bool Variables::copyFrom(uint32 offset, const byte *variables, uint32 n) {
+	if (((offset + n) > _size) || !variables)
 		return false;
 
 	memcpy(_vars + offset, variables, n);
-	memcpy(_sizes + offset, sizes, n);
 
 	return true;
 }

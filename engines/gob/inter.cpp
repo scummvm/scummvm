@@ -56,7 +56,6 @@ Inter::Inter(GobEngine *vm) : _vm(vm) {
 	_soundStopVal = 0;
 
 	memset(_varStack, 0, 300);
-	memset(_varSizesStack, 0, 300);
 	_varStackPos = 0;
 
 	_noBusyWait = false;

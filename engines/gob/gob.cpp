@@ -47,7 +47,7 @@
 #include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/videoplayer.h"
-#include "gob/saveload.h"
+#include "gob/save/saveload.h"
 
 namespace Gob {
 
@@ -368,7 +368,7 @@ bool GobEngine::initGameParts() {
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v3(this);
 		_scenery = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_v3(this, _targetName.c_str());
+		_saveLoad = new SaveLoad_v3(this, _targetName.c_str(), SaveLoad_v3::kScreenshotTypeGob3);
 		break;
 
 	case kGameTypeLostInTime:
@@ -382,7 +382,7 @@ bool GobEngine::initGameParts() {
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v3(this);
 		_scenery = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_v3(this, _targetName.c_str(), 4768, 0, 50);
+		_saveLoad = new SaveLoad_v3(this, _targetName.c_str(), SaveLoad_v3::kScreenshotTypeLost);
 		break;
 
 	case kGameTypeWoodruff:
@@ -413,7 +413,7 @@ bool GobEngine::initGameParts() {
 		_map = new Map_v4(this);
 		_goblin = new Goblin_v4(this);
 		_scenery = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_v4(this, _targetName.c_str());
+		_saveLoad = new SaveLoad(this, _targetName.c_str());
 		break;
 
 	case kGameTypeAdibou4:

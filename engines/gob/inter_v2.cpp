@@ -42,7 +42,7 @@
 #include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/video.h"
-#include "gob/saveload.h"
+#include "gob/save/saveload.h"
 #include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
 
@@ -890,8 +890,7 @@ void Inter_v2::o2_initMult() {
 			_vm->_mult->_objects[i].pPosY = new VariableReference(*_vm->_inter->_variables, offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
-				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim,
-						_vm->_global->_inter_animDataSize);
+				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -1162,23 +1161,18 @@ void Inter_v2::o2_pushVars() {
 			varOff = _vm->_parse->parseVarIndex();
 			_vm->_global->_inter_execPtr++;
 
-			_variables->copyTo(varOff, _varStack + _varStackPos,
-					_varSizesStack + _varStackPos,
-					_vm->_global->_inter_animDataSize * 4);
+			_variables->copyTo(varOff, _varStack + _varStackPos, _vm->_global->_inter_animDataSize * 4);
 
 			_varStackPos += _vm->_global->_inter_animDataSize * 4;
 			_varStack[_varStackPos] = _vm->_global->_inter_animDataSize * 4;
-			_varSizesStack[_varStackPos] = _vm->_global->_inter_animDataSize * 4;
 
 		} else {
 			if (evalExpr(&varOff) != 20)
 				_vm->_global->_inter_resVal = 0;
 
 			memcpy(_varStack + _varStackPos, &_vm->_global->_inter_resVal, 4);
-			memcpy(_varSizesStack + _varStackPos, &_vm->_global->_inter_resVal, 4);
 			_varStackPos += 4;
 			_varStack[_varStackPos] = 4;
-			_varSizesStack[_varStackPos] = 4;
 		}
 	}
 }
@@ -1186,19 +1180,15 @@ void Inter_v2::o2_pushVars() {
 void Inter_v2::o2_popVars() {
 	byte count;
 	int16 varOff;
-	int16 sizeV;
-	int16 sizeS;
+	int16 size;
 
 	count = *_vm->_global->_inter_execPtr++;
 	for (int i = 0; i < count; i++) {
 		varOff = _vm->_parse->parseVarIndex();
-		sizeV = _varStack[--_varStackPos];
-		sizeS = _varSizesStack[_varStackPos];
-		assert(sizeV == sizeS);
+		size = _varStack[--_varStackPos];
 
-		_varStackPos -= sizeV;
-		_variables->copyFrom(varOff, _varStack + _varStackPos,
-				_varSizesStack + _varStackPos, sizeV);
+		_varStackPos -= size;
+		_variables->copyFrom(varOff, _varStack + _varStackPos, size);
 	}
 }
 
@@ -1934,7 +1924,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 		size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
 	}
 
-	buf = _variables->getAddressOff8(dataVar, size);
+	buf = _variables->getAddressOff8(dataVar);
 
 	if (_vm->_global->_inter_resStr[0] == 0) {
 		WRITE_VAR(1, size);

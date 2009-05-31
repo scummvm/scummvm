@@ -554,7 +554,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 					*valPtr = (int16) READ_VARO_UINT16(varPos + temp * 2 + offset * 2);
 				else if (operation == OP_ARRAY_STR) {
 					*valPtr = encodePtr(_vm->_inter->_variables->getAddressOff8(
-								varPos + temp * 4 + offset * _vm->_global->_inter_animDataSize * 4, 0),
+								varPos + temp * 4 + offset * _vm->_global->_inter_animDataSize * 4),
 							kInterVar);
 					if (*_vm->_global->_inter_execPtr == 13) {
 						_vm->_global->_inter_execPtr++;
@@ -612,7 +612,7 @@ int16 Parse_v2::parseExpr(byte stopToken, byte *arg_2) {
 			case OP_LOAD_VAR_STR:
 				*operPtr = OP_LOAD_IMM_STR;
 				temp = _vm->_inter->load16() * 4;
-				*valPtr = encodePtr(_vm->_inter->_variables->getAddressOff8(varPos + temp, 0), kInterVar);
+				*valPtr = encodePtr(_vm->_inter->_variables->getAddressOff8(varPos + temp), kInterVar);
 				if (*_vm->_global->_inter_execPtr == 13) {
 					_vm->_global->_inter_execPtr++;
 					temp += parseValExpr(OP_END_MARKER);
