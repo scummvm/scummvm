@@ -659,7 +659,7 @@ int c_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
 			sciprintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 
-		if (vocab_gnf_parse(s->parser_nodes, words, s->_vocabulary->_parserBranches[0], s->parser_rules, 1))
+		if (s->_vocabulary->parseGNF(s->parser_nodes, words, true))
 			syntax_fail = 1; // Building a tree failed
 
 		if (syntax_fail)

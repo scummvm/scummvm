@@ -372,7 +372,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 	s->parser_lastmatch_word = SAID_NO_MATCH;
 
-	s->_vocabulary = new Vocabulary(s);
+	s->_vocabulary = new Vocabulary(s->resmgr, (s->flags & GF_SCI0_OLD));
 
 	script_map_kernel(s);
 	// Maps the kernel functions
@@ -421,8 +421,6 @@ void script_free_engine(EngineState *s) {
 	debug(2, "Freeing state-dependant data");
 
 	s->_kfuncTable.clear();
-
-	vocab_free_rule_list(s->parser_rules);
 
 	delete s->_vocabulary;
 }

@@ -30,6 +30,7 @@
 
 #include "sci/tools.h"
 #include "sci/vocabulary.h"
+#include "sci/console.h"
 
 namespace Sci {
 
@@ -229,10 +230,10 @@ static parse_rule_t *_vsatisfy_rule(parse_rule_t *rule, const ResultWord &input)
 		return NULL;
 }
 
-void vocab_free_rule_list(parse_rule_list_t *list) {
+void Vocabulary::freeRuleList(parse_rule_list_t *list) {
 	if (list) {
 		_vfree(list->rule);
-		vocab_free_rule_list(list->next); // Yep, this is slow and memory-intensive.
+		freeRuleList(list->next); // Yep, this is slow and memory-intensive.
 		free(list);
 	}
 }
@@ -344,15 +345,16 @@ static parse_rule_list_t *_vocab_clone_rule_list_by_id(parse_rule_list_t *list, 
 	return result;
 }
 
-parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches, int verbose) {
+parse_rule_list_t *Vocabulary::buildGNF(bool verbose) {
 	int iterations = 0;
 	int last_termrules, termrules = 0;
 	int ntrules_nr;
 	parse_rule_list_t *ntlist = NULL;
 	parse_rule_list_t *tlist, *new_tlist;
+	Sci::Console *con = ((SciEngine *)g_engine)->_console;
 
-	for (uint i = 1; i < branches.size(); i++) { // branch rule 0 is treated specially
-		parse_rule_t *rule = _vbuild_rule(&branches[i]);
+	for (uint i = 1; i < _parserBranches.size(); i++) { // branch rule 0 is treated specially
+		parse_rule_t *rule = _vbuild_rule(&_parserBranches[i]);
 		if (!rule)
 			return NULL;
 		ntlist = _vocab_add_rule(ntlist, rule);
@@ -362,7 +364,7 @@ parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &bra
 	ntrules_nr = _vocab_rule_list_length(ntlist);
 
 	if (verbose)
-		sciprintf("Starting with %d rules\n", ntrules_nr);
+		con->DebugPrintf("Starting with %d rules\n", ntrules_nr);
 
 	new_tlist = tlist;
 	tlist = NULL;
@@ -391,23 +393,22 @@ parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &bra
 		termrules = _vocab_rule_list_length(new_new_tlist);
 
 		if (verbose)
-			sciprintf("After iteration #%d: %d new term rules\n", ++iterations, termrules);
+			con->DebugPrintf("After iteration #%d: %d new term rules\n", ++iterations, termrules);
 
 	} while (termrules && (iterations < 30));
 
-	vocab_free_rule_list(ntlist);
+	freeRuleList(ntlist);
 
 	if (verbose) {
-		sciprintf("\nGNF rules:\n");
+		con->DebugPrintf("\nGNF rules:\n");
 		vocab_print_rule_list(tlist);
+		con->DebugPrintf("%d allocd rules\n", getAllocatedRulesCount());
+		con->DebugPrintf("Freeing rule list...\n");
+		freeRuleList(tlist);
+		return NULL;
 	}
 
 	return tlist;
-}
-
-int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words,
-	const parse_tree_branch_t &branch0, parse_rule_list_t *rules) {
-	return vocab_gnf_parse(nodes, words, branch0, rules, 0);
 }
 
 static int _vbpt_pareno(parse_tree_node_t *nodes, int *pos, int base) {
@@ -475,10 +476,10 @@ static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_r
 	return rulepos;
 }
 
-int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
-	const parse_tree_branch_t &branch0, parse_rule_list_t *tlist, int verbose) {
+int Vocabulary::parseGNF(parse_tree_node_t *nodes, const ResultWordList &words, bool verbose) {
+	Sci::Console *con = ((SciEngine *)g_engine)->_console;
 	// Get the start rules:
-	parse_rule_list_t *work = _vocab_clone_rule_list_by_id(tlist, branch0.data[1]);
+	parse_rule_list_t *work = _vocab_clone_rule_list_by_id(_parserRules, _parserBranches[0].data[1]);
 	parse_rule_list_t *results = NULL;
 	int word = 0;
 	const int words_nr = words.size();
@@ -490,7 +491,7 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 		parse_rule_list_t *seeker, *subseeker;
 
 		if (verbose)
-			sciprintf("Adding word %d...\n", word);
+			con->DebugPrintf("Adding word %d...\n", word);
 
 		seeker = work;
 		while (seeker) {
@@ -501,13 +502,13 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 		}
 
 		if (reduced_rules == NULL) {
-			vocab_free_rule_list(work);
+			freeRuleList(work);
 			if (verbose)
-				sciprintf("No results.\n");
+				con->DebugPrintf("No results.\n");
 			return 1;
 		}
 
-		vocab_free_rule_list(work);
+		freeRuleList(work);
 
 		if (word + 1 < words_nr) {
 			seeker = reduced_rules;
@@ -516,7 +517,7 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 				if (seeker->rule->specials_nr) {
 					int my_id = seeker->rule->data[seeker->rule->first_special];
 
-					subseeker = tlist;
+					subseeker = _parserRules;
 					while (subseeker) {
 						if (subseeker->rule->id == my_id)
 							new_work = _vocab_add_rule(new_work, _vinsert(seeker->rule, subseeker->rule));
@@ -527,16 +528,16 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 
 				seeker = seeker->next;
 			}
-			vocab_free_rule_list(reduced_rules);
+			freeRuleList(reduced_rules);
 		} else // last word
 			new_work = reduced_rules;
 
 		work = new_work;
 		if (verbose)
-			sciprintf("Now at %d candidates\n", _vocab_rule_list_length(work));
+			con->DebugPrintf("Now at %d candidates\n", _vocab_rule_list_length(work));
 		if (work == NULL) {
 			if (verbose)
-				sciprintf("No results.\n");
+				con->DebugPrintf("No results.\n");
 			return 1;
 		}
 	}
@@ -544,9 +545,9 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 	results = work;
 
 	if (verbose) {
-		sciprintf("All results (excluding the surrounding '(141 %03x' and ')'):\n", branch0.id);
+		con->DebugPrintf("All results (excluding the surrounding '(141 %03x' and ')'):\n", _parserBranches[0].id);
 		vocab_print_rule_list(results);
-		sciprintf("\n");
+		con->DebugPrintf("\n");
 	}
 
 	// now use the first result
@@ -566,12 +567,12 @@ int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
 
 		pos = 2;
 
-		temp = _vbpt_append(nodes, &pos, 2, branch0.id);
+		temp = _vbpt_append(nodes, &pos, 2, _parserBranches[0].id);
 		//_vbpt_write_subexpression(nodes, &pos, results[_vocab_rule_list_length(results)].rule, 0, temp);
 		_vbpt_write_subexpression(nodes, &pos, results->rule, 0, temp);
 	}
 
-	vocab_free_rule_list(results);
+	freeRuleList(results);
 
 	return 0;
 }

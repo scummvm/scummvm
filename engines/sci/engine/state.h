@@ -226,7 +226,6 @@ public:
 	SegmentId string_frag_segment;
 
 	/* Parser data: */
-	parse_rule_list_t *parser_rules; /**< GNF rules used in the parser algorithm */
 	parse_tree_node_t parser_nodes[VOCAB_TREE_NODES]; /**< The parse tree */
 
 	int parser_valid; /**< If something has been correctly parsed */

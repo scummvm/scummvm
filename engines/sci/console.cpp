@@ -56,7 +56,8 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
 	DCmd_Register("kernel_names",		WRAP_METHOD(Console, cmdKernelNames));
 	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
-	DCmd_Register("kernel_words",		WRAP_METHOD(Console, cmdKernelWords));
+	DCmd_Register("parser_nodes",		WRAP_METHOD(Console, cmdParserNodes));
+	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
@@ -72,8 +73,6 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
 	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
 	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
-	DCmd_Register("parser_nodes",		WRAP_METHOD(Console, cmdParserNodes));
-	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
 	DCmd_Register("draw_rect",			WRAP_METHOD(Console, cmdDrawRect));
 	DCmd_Register("fill_screen",		WRAP_METHOD(Console, cmdFillScreen));
@@ -174,32 +173,13 @@ bool Console::cmdKernelNames(int argc, const char **argv) {
 }
 
 bool Console::cmdSuffixes(int argc, const char **argv) {
-	char word_buf[256], alt_buf[256];
-
-	int i = 0;
-	for (SuffixList::const_iterator suf = g_EngineState->_vocabulary->_parserSuffixes.begin(); suf != g_EngineState->_vocabulary->_parserSuffixes.end(); ++suf) {
-		strncpy(word_buf, suf->word_suffix, suf->word_suffix_length);
-		word_buf[suf->word_suffix_length] = 0;
-		strncpy(alt_buf, suf->alt_suffix, suf->alt_suffix_length);
-		alt_buf[suf->alt_suffix_length] = 0;
-
-		DebugPrintf("%4d: (%03x) -%12s  =>  -%12s (%03x)\n", i, suf->class_mask, word_buf, alt_buf, suf->result_class);
-		++i;
-	}
+	g_EngineState->_vocabulary->printSuffixes();
 
 	return true;
 }
 
-bool Console::cmdKernelWords(int argc, const char **argv) {
-	int j = 0;
-	for (WordMap::iterator i = g_EngineState->_vocabulary->_parserWords.begin(); i != g_EngineState->_vocabulary->_parserWords.end(); ++i) {
-		DebugPrintf("%4d: %03x [%03x] %20s |", j, i->_value._class, i->_value._group, i->_key.c_str());
-		if (j % 3 == 0)
-			DebugPrintf("\n");
-		j++;
-	}
-
-	DebugPrintf("\n");
+bool Console::cmdParserWords(int argc, const char **argv) {
+	g_EngineState->_vocabulary->printParserWords();
 
 	return true;
 }
@@ -518,32 +498,32 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 bool Console::cmdSentenceFragments(int argc, const char **argv) {
 	DebugPrintf("Sentence fragments (used to build Parse trees\n");
 
-	for (uint i = 0; i < g_EngineState->_vocabulary->_parserBranches.size(); i++) {
+	for (uint i = 0; i < g_EngineState->_vocabulary->getParserBranchesSize(); i++) {
 		int j = 0;
 
-		DebugPrintf("R%02d: [%x] ->", i, g_EngineState->_vocabulary->_parserBranches[i].id);
-		while ((j < 10) && g_EngineState->_vocabulary->_parserBranches[i].data[j]) {
-			int dat = g_EngineState->_vocabulary->_parserBranches[i].data[j++];
+		DebugPrintf("R%02d: [%x] ->", i, g_EngineState->_vocabulary->getParseTreeBranch(i).id);
+		while ((j < 10) && g_EngineState->_vocabulary->getParseTreeBranch(i).data[j]) {
+			int dat = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
 
 			switch (dat) {
 			case VOCAB_TREE_NODE_COMPARE_TYPE:
-				dat = g_EngineState->_vocabulary->_parserBranches[i].data[j++];
+				dat = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
 				DebugPrintf(" C(%x)", dat);
 				break;
 
 			case VOCAB_TREE_NODE_COMPARE_GROUP:
-				dat = g_EngineState->_vocabulary->_parserBranches[i].data[j++];
+				dat = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
 				DebugPrintf(" WG(%x)", dat);
 				break;
 
 			case VOCAB_TREE_NODE_FORCE_STORAGE:
-				dat = g_EngineState->_vocabulary->_parserBranches[i].data[j++];
+				dat = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
 				DebugPrintf(" FORCE(%x)", dat);
 				break;
 
 			default:
 				if (dat > VOCAB_TREE_NODE_LAST_WORD_STORAGE) {
-					int dat2 = g_EngineState->_vocabulary->_parserBranches[i].data[j++];
+					int dat2 = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
 					DebugPrintf(" %x[%x]", dat, dat2);
 				} else
 					DebugPrintf(" ?%x?", dat);
@@ -552,7 +532,7 @@ bool Console::cmdSentenceFragments(int argc, const char **argv) {
 		DebugPrintf("\n");
 	}
 
-	DebugPrintf("%d rules.\n", g_EngineState->_vocabulary->_parserBranches.size());
+	DebugPrintf("%d rules.\n", g_EngineState->_vocabulary->getParserBranchesSize());
 
 	return true;
 }
@@ -575,20 +555,6 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 			DebugPrintf("Branch: ->%04x, ->%04x\n", g_EngineState->parser_nodes[i].content.branches[0],
 			          g_EngineState->parser_nodes[i].content.branches[1]);
 	}
-
-	return true;
-}
-
-bool Console::cmdParserWords(int argc, const char **argv) {
-	if (g_EngineState->_vocabulary->_parserWords.empty()) {
-		DebugPrintf("No words.\n");
-		return true;
-	}
-
-	for (WordMap::iterator i = g_EngineState->_vocabulary->_parserWords.begin(); i != g_EngineState->_vocabulary->_parserWords.end(); ++i)
-		DebugPrintf("%s: C %03x G %03x\n", i->_key.c_str(), i->_value._class, i->_value._group);
-
-	DebugPrintf("%d words\n", g_EngineState->_vocabulary->_parserWords.size());
 
 	return true;
 }
@@ -696,9 +662,7 @@ bool Console::cmdPrintPort(int argc, const char **argv) {
 bool Console::cmdParseGrammar(int argc, const char **argv) {
 	DebugPrintf("Parse grammar, in strict GNF:\n");
 
-	parse_rule_list_t *tlist = vocab_build_gnf(g_EngineState->_vocabulary->_parserBranches, 1);
-	DebugPrintf("%d allocd rules\n", getAllocatedRulesCount());
-	vocab_free_rule_list(tlist);
+	g_EngineState->_vocabulary->buildGNF(true);
 
 	return true;
 }

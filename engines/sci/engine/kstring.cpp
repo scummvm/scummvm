@@ -95,7 +95,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 #ifdef DEBUG_PARSER
 		debugC(2, kDebugLevelParser, "Said block:", 0);
-		vocab_decypher_said_block(s, said_block);
+		s->_vocabulary->decypherSaidBlock(said_block);
 #endif
 
 	if (s->parser_event.isNull() || (GET_SEL32V(s->parser_event, claimed))) {
@@ -221,8 +221,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 #endif
 
-		if (vocab_build_parse_tree(s->parser_nodes, words, s->_vocabulary->_parserBranches[0],
-		                           s->parser_rules))
+		if (s->_vocabulary->parseGNF(s->parser_nodes, words))
 			syntax_fail = 1; /* Building a tree failed */
 
 		if (syntax_fail) {

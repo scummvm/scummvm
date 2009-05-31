@@ -804,7 +804,7 @@ int said(EngineState *s, byte *spec, int verbose) {
 	if (s->parser_valid) {
 		if (said_parse_spec(s, spec)) {
 			sciprintf("Offending spec was: ");
-			vocab_decypher_said_block(s, spec);
+			s->_vocabulary->decypherSaidBlock(spec);
 			return SAID_NO_MATCH;
 		}
 

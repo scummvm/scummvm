@@ -111,7 +111,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	sys_strings = 0;
 	string_frag_segment = 0;
 
-	parser_rules = 0;
 	memset(parser_nodes, 0, sizeof(parser_nodes));
 
 	parser_valid = 0;

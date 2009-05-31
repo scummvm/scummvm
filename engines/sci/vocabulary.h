@@ -178,11 +178,105 @@ struct parse_tree_node_t {
 	} content;
 };
 
+enum VocabularyVersions {
+	kVocabularySCI0 = 0,
+	kVocabularySCI1 = 1
+};
+
 class Vocabulary {
 public:
-	Vocabulary(EngineState *s);
+	Vocabulary(ResourceManager *resmgr, bool isOldSci0);
 	~Vocabulary();
 
+	/**
+	 * Gets any word from the specified group. For debugging only.
+	 * @param group		Group number
+	 */
+	const char *getAnyWordFromGroup(int group);
+
+
+	/* Looks up a single word in the words and suffixes list
+	** Parameters: (char *) word: Pointer to the word to look up
+	**             (int) word_len: Length of the word to look up
+	** Returns   : (const ResultWordList &) A list containing 1 or 0 words
+	*/
+	ResultWord lookupWord(const char *word, int word_len);
+
+
+	/* Tokenizes a string and compiles it into word_ts.
+	** Parameters: (char *) sentence: The sentence to examine
+	**             (char **) error: Points to a malloc'd copy of the offending text or to NULL on error
+	**             (ResultWordList) retval: A list of word_ts containing the result, or NULL.
+	** Returns   : true on success, false on failure
+	** On error, NULL is returned. If *error is NULL, the sentence did not contain any useful words;
+	** if not, *error points to a malloc'd copy of the offending word.
+	** The returned list may contain anywords.
+	*/
+	bool tokenizeString(ResultWordList &retval, const char *sentence, char **error);
+
+	/* Builds a parse tree from a list of words, using a set of Greibach Normal Form rules
+	** Parameters: (parse_tree_node_t *) nodes: A node list to store the tree in (must have
+	**                                          at least VOCAB_TREE_NODES entries)
+	**             (const ResultWordList &) words: The words to build the tree from
+	**             (parse_tree_branch_t *) branche0: The zeroeth original branch of the
+	**                                     original CNF parser grammar
+	**             bool verbose: Set to true for debugging
+	** Returns   : 0 on success, 1 if the tree couldn't be built in VOCAB_TREE_NODES nodes
+	**             or if the sentence structure in 'words' is not part of the language
+	**             described by the grammar passed in 'rules'.
+	*/
+	int parseGNF(parse_tree_node_t *nodes, const ResultWordList &words, bool verbose = false);
+
+	/* Constructs the Greibach Normal Form of the grammar supplied in 'branches'
+	**             bool verbose: Set to true for debugging.
+	**             If true, the list is freed before the function ends
+	** Returns   : (parse_rule_list_t *): Pointer to a list of singly linked
+	**                                    GNF rules describing the same language
+	**                                    that was described by 'branches'
+	** The original SCI rules are in almost-CNF (Chomsky Normal Form). Note that
+	** branch[0] is used only for a few magical incantations, as it is treated
+	** specially by the SCI parser.
+	*/
+	parse_rule_list_t *buildGNF(bool verbose = false);
+
+	/* Decyphers a said block and dumps its content via sciprintf.
+	** Parameters: (EngineState *) s: The state to use
+	**             (byte *) pos: Pointer to the data to dump
+	** For debugging only.
+	*/
+	void decypherSaidBlock(byte *pos);
+
+	/**
+	 * Prints the parser suffixes to the debug console
+	 */
+	void printSuffixes();
+
+	/**
+	 * Prints the parser words to the debug console
+	 */
+	void printParserWords();
+
+	/**
+	 * Copies the parser lists from another vocabulary
+	 */
+	void copyParserListsFrom(Vocabulary *voc);
+
+	/**
+	 * Gets the internal parser lists, for vocabulary copying
+	 */
+	void copyParserListsTo(SuffixList &parserSuffixes, parse_rule_list_t &parserRules, 
+							Common::Array<parse_tree_branch_t> &parserBranches, WordMap &parserWords);
+
+	uint getParserBranchesSize() { return _parserBranches.size(); }
+	parse_tree_branch_t getParseTreeBranch(int number) { return _parserBranches[number]; }
+
+	Common::StringList _selectorNames;
+	Common::Array<opcode> _opcodes;
+	Common::StringList _kernelNames;
+
+	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
+
+private:
 	/**
 	* Loads the vocabulary selector names.
 	* Returns true upon success, false otherwise.
@@ -231,77 +325,21 @@ public:
 	 */
 	bool getBranches();
 
-	/**
-	 * Gets any word from the specified group. For debugging only.
-	 * @param group		Group number
-	 */
-	const char *getAnyWordFromGroup(int group);
-
-
-	/* Looks up a single word in the words and suffixes list
-	** Parameters: (char *) word: Pointer to the word to look up
-	**             (int) word_len: Length of the word to look up
-	** Returns   : (const ResultWordList &) A list containing 1 or 0 words
+	/* Frees a parser rule list as returned by vocab_build_gnf()
+	** Parameters: (parse_rule_list_t *) rule_list: The rule list to free
 	*/
-	ResultWord lookupWord(const char *word, int word_len);
+	void freeRuleList(parse_rule_list_t *rule_list);
 
-
-	/* Tokenizes a string and compiles it into word_ts.
-	** Parameters: (char *) sentence: The sentence to examine
-	**             (char **) error: Points to a malloc'd copy of the offending text or to NULL on error
-	**             (ResultWordList) retval: A list of word_ts containing the result, or NULL.
-	** Returns   : true on success, false on failure
-	** On error, NULL is returned. If *error is NULL, the sentence did not contain any useful words;
-	** if not, *error points to a malloc'd copy of the offending word.
-	** The returned list may contain anywords.
-	*/
-	bool tokenizeString(ResultWordList &retval, const char *sentence, char **error);
-
-	Common::StringList _selectorNames;
-	Common::Array<opcode> _opcodes;
-	Common::StringList _kernelNames;
-	WordMap _parserWords;
-	SuffixList _parserSuffixes;
-	Common::Array<parse_tree_branch_t> _parserBranches;
-	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
-
-private:
 	ResourceManager *_resmgr;
 	bool _isOldSci0;
-	int _vocabVersion;
+	VocabularyVersions _vocabVersion;
+
+	// Parser-related lists
+	SuffixList _parserSuffixes;
+	parse_rule_list_t *_parserRules; /**< GNF rules used in the parser algorithm */
+	Common::Array<parse_tree_branch_t> _parserBranches;
+	WordMap _parserWords;
 };
-
-/* Constructs the Greibach Normal Form of the grammar supplied in 'branches'
-** Parameters: (parse_tree_branch_t *) branches: The parser's branches
-** Returns   : (parse_rule_list_t *): Pointer to a list of singly linked
-**                                    GNF rules describing the same language
-**                                    that was described by 'branches'
-** The original SCI rules are in almost-CNF (Chomsky Normal Form). Note that
-** branch[0] is used only for a few magical incantations, as it is treated
-** specially by the SCI parser.
-*/
-parse_rule_list_t *vocab_build_gnf(const Common::Array<parse_tree_branch_t> &branches, int verbose);
-
-
-/* Frees a parser rule list as returned by vocab_build_gnf()
-** Parameters: (parse_rule_list_t *) rule_list: The rule list to free
-*/
-void vocab_free_rule_list(parse_rule_list_t *rule_list);
-
-
-/* Builds a parse tree from a list of words
-** Parameters: (parse_tree_node_t *) nodes: A node list to store the tree in (must have
-**                                          at least VOCAB_TREE_NODES entries)
-**             (const ResultWordList &) words: The words to build the tree from
-**             (parse_tree_branch_t *) branche0: The zeroeth original branch of the
-**                                     original CNF parser grammar
-**             (parse_rule_list *) rules: The GNF ruleset to parse with
-** Returns   : 0 on success, 1 if the tree couldn't be built in VOCAB_TREE_NODES nodes
-**             or if the sentence structure in 'words' is not part of the language
-**             described by the grammar passed in 'rules'.
-*/
-int vocab_build_parse_tree(parse_tree_node_t *nodes, const ResultWordList &words,
-	const parse_tree_branch_t &branch0, parse_rule_list_t *rules);
 
 /* Prints a parse tree
 ** Parameters: (const char *) tree_name: Name of the tree to dump (free-form)
@@ -320,22 +358,11 @@ void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
 int said(EngineState *s, byte *spec, int verbose);
 
 
-/* Decyphers a said block and dumps its content via sciprintf.
-** Parameters: (EngineState *) s: The state to use
-**             (byte *) pos: Pointer to the data to dump
-** For debugging only.
-*/
-void vocab_decypher_said_block(EngineState *s, byte *pos);
-
-
 /* Synonymizes a token list
 ** Parameters: (ResultWordList &) words: The word list to synonymize
 **             (const SynonymList &) synonyms: Synonym list
 */
 void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms);
-
-int vocab_gnf_parse(parse_tree_node_t *nodes, const ResultWordList &words,
-	const parse_tree_branch_t &branch0, parse_rule_list_t *tlist, int verbose);
 
 int getAllocatedRulesCount();
 
