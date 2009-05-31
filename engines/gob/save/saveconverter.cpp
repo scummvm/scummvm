@@ -30,7 +30,6 @@
 #include "gob/save/saveconverter.h"
 #include "gob/save/savefile.h"
 #include "gob/save/savehandler.h"
-#include "gob/helper.h"
 
 namespace Gob {
 

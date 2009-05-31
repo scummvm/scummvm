@@ -25,7 +25,6 @@
 
 #include "gob/save/saveload.h"
 #include "gob/save/saveconverter.h"
-#include "gob/helper.h"
 #include "gob/inter.h"
 #include "gob/variables.h"
 

@@ -28,7 +28,6 @@
 
 #include "gob/gob.h"
 #include "gob/save/saveload.h"
-#include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/video.h"
 #include "gob/draw.h"
