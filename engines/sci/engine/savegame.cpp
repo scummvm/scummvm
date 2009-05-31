@@ -823,15 +823,18 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->game_start_time = g_system->getMillis() - retval->game_time * 1000;
 
 	// static parser information:
-	retval->_vocabulary->copyParserListsFrom(s->_vocabulary);
-
-	// static VM/Kernel information:
-	retval->_vocabulary->copyKernelListsFrom(s->_vocabulary);
-	retval->_kfuncTable = s->_kfuncTable;
-
-	memcpy(&(retval->_vocabulary->_selectorMap), &(s->_vocabulary->_selectorMap), sizeof(selector_map_t));
+	assert(0 == retval->_vocabulary);
+	retval->_vocabulary = s->_vocabulary;
+//	s->_vocabulary = 0;	// FIXME: We should set s->_vocabulary to 0 here,
+// else it could be freed when the old EngineState is freed. Luckily, this freeing currently
+// never happens, so we don't need to. This is lucky, because the fact that the kernel function
+// and selector tables are stored in the Vocabulary (????) makes it impossible for us to
+// free the vocabulary here.
 
 	retval->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
+
+	// static VM/Kernel information:
+	retval->_kfuncTable = s->_kfuncTable;
 
 	// Copy breakpoint information from current game instance
 	retval->have_bp = s->have_bp;
@@ -841,7 +844,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->have_mouse_flag = 1;
 
 	retval->successor = NULL;
-	retval->pic_priority_table = (int*)gfxop_get_pic_metainfo(retval->gfx_state);
+	retval->pic_priority_table = (int *)gfxop_get_pic_metainfo(retval->gfx_state);
 	retval->_gameName = obj_get_name(retval, retval->game_obj);
 
 	retval->_sound._it = NULL;

@@ -256,52 +256,30 @@ public:
 	 */
 	void printParserWords();
 
-	/**
-	 * Copies the parser lists from another vocabulary
-	 */
-	void copyParserListsFrom(Vocabulary *voc);
+	uint getParserBranchesSize() const { return _parserBranches.size(); }
+	const parse_tree_branch_t &getParseTreeBranch(int number) const { return _parserBranches[number]; }
 
-	/**
-	 * Gets the internal parser lists, for vocabulary copying
-	 */
-	void copyParserListsTo(SuffixList &parserSuffixes, parse_rule_list_t &parserRules, 
-							Common::Array<parse_tree_branch_t> &parserBranches, WordMap &parserWords);
+	uint getOpcodesSize() const { return _opcodes.size(); }
+	const opcode &getOpcode(uint opcode) const { return _opcodes[opcode]; }
 
-	/**
-	 * Copies the kernel lists from another vocabulary
-	 */
-	void copyKernelListsFrom(Vocabulary *voc);
-
-	/**
-	 * Gets the internal kernel lists, for vocabulary copying
-	 */
-	void copyKernelListsTo(Common::Array<opcode> &opcodes, Common::StringList &selectorNames, 
-							Common::StringList &kernelNames);
-
-	uint getParserBranchesSize() { return _parserBranches.size(); }
-	parse_tree_branch_t getParseTreeBranch(int number) { return _parserBranches[number]; }
-
-	uint getOpcodesSize() { return _opcodes.size(); }
-	opcode getOpcode(uint opcode) { return _opcodes[opcode]; }
-
-	uint getSelectorNamesSize() { return _selectorNames.size(); }
-	Common::String getSelectorName(uint selector) { return _selectorNames[selector]; }
+	uint getSelectorNamesSize() const { return _selectorNames.size(); }
+	const Common::String &getSelectorName(uint selector) const { return _selectorNames[selector]; }
 
 	/* Determines the selector ID of a selector by its name
 	**             (const char *) selectorName: Name of the selector to look up
 	** Returns   : (int) The appropriate selector ID, or -1 on error
 	*/
-	int findSelector(const char *selectorName);
+	int findSelector(const char *selectorName) const;
 
 	/* Detects whether a particular kernel function is required in the game
 	**             (const char *) functionName: The name of the desired kernel function
 	** Returns   : (bool) true if the kernel function is listed in the kernel table,
 	**                   false otherwise
 	*/
-	bool hasKernelFunction(const char *functionName);
+	bool hasKernelFunction(const char *functionName) const;
 
-	uint getKernelNamesSize() { return _kernelNames.size(); }
-	Common::String getKernelName(uint number) { return _kernelNames[number]; }
+	uint getKernelNamesSize() const { return _kernelNames.size(); }
+	const Common::String &getKernelName(uint number) const { return _kernelNames[number]; }
 
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber);

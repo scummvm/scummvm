@@ -171,9 +171,6 @@ bool Vocabulary::getOpcodes() {
 		_opcodes[i].type = READ_LE_UINT16(r->data + offset + 2);
 		// QFG3 has empty opcodes
 		_opcodes[i].name = len > 0 ? Common::String((char *)r->data + offset + 4, len) : "Dummy";
-#if 1 //def VOCABULARY_DEBUG
-		printf("Opcode %02X: %s, %d\n", i, _opcodes[i].name.c_str(), _opcodes[i].type);
-#endif
 	}
 
 	return true;
@@ -536,30 +533,7 @@ void Vocabulary::printParserWords() {
 	con->DebugPrintf("\n");
 }
 
-void Vocabulary::copyParserListsFrom(Vocabulary *voc) {
-	voc->copyParserListsTo(_parserSuffixes, *_parserRules, _parserBranches, _parserWords);
-}
-
-void Vocabulary::copyParserListsTo(SuffixList &parserSuffixes, parse_rule_list_t &parserRules, 
-									Common::Array<parse_tree_branch_t> &parserBranches, WordMap &parserWords) {
-	parserSuffixes = _parserSuffixes;
-	parserRules = *_parserRules;
-	parserBranches = _parserBranches;
-	parserWords = _parserWords;
-}
-
-void Vocabulary::copyKernelListsFrom(Vocabulary *voc) {
-	voc->copyKernelListsTo(_opcodes, _selectorNames, _kernelNames);
-}
-
-void Vocabulary::copyKernelListsTo(Common::Array<opcode> &opcodes, Common::StringList &selectorNames, 
-								   Common::StringList &kernelNames) {
-	_opcodes = opcodes;
-	_selectorNames = selectorNames;
-	_kernelNames = kernelNames;
-}
-
-int Vocabulary::findSelector(const char *selectorName) {
+int Vocabulary::findSelector(const char *selectorName) const {
 	for (uint pos = 0; pos < _selectorNames.size(); ++pos) {
 		if (_selectorNames[pos] == selectorName)
 			return pos;
@@ -570,7 +544,7 @@ int Vocabulary::findSelector(const char *selectorName) {
 	return -1;
 }
 
-bool Vocabulary::hasKernelFunction(const char *functionName) {
+bool Vocabulary::hasKernelFunction(const char *functionName) const {
 	Common::StringList::const_iterator it = Common::find(_kernelNames.begin(), _kernelNames.end(), functionName);
 	return (it != _kernelNames.end());
 }

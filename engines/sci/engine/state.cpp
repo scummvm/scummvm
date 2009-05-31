@@ -120,6 +120,8 @@ EngineState::EngineState() : _dirseeker(this) {
 	seg_manager = 0;
 	gc_countdown = 0;
 
+	_vocabulary = 0;
+
 	successor = 0;
 }
 
