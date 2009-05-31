@@ -114,8 +114,10 @@ bool LoLEngine::checkSceneUpdateNeed(int func) {
 
 int LoLEngine::olol_setWallType(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setWallType(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	if (_wllWallFlags[stackPos(2)] & 4)
-		deleteMonstersFromBlock(stackPos(0));
+	if (stackPos(2) != -1) {
+		if (_wllWallFlags[stackPos(2)] & 4)
+			deleteMonstersFromBlock(stackPos(0));
+	}
 	setWallType(stackPos(0), stackPos(1), stackPos(2));
 	return 1;
 }
@@ -227,7 +229,7 @@ int LoLEngine::olol_testGameFlag(EMCState *script) {
 
 int LoLEngine::olol_loadLevelGraphics(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLevelGraphics(%p) (%s, %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	loadLevelGraphics(stackPosString(0), stackPos(1), stackPos(2), (uint16)stackPos(3), (uint16)stackPos(4), (stackPos(5) == -1) ? 0 : stackPosString(5));
+	loadLevelGraphics(stackPosString(0), stackPos(1), stackPos(2), stackPos(3) == -1 ? -1 : (uint16)stackPos(3), stackPos(4) == -1 ? -1 : (uint16)stackPos(4), (stackPos(5) == -1) ? 0 : stackPosString(5));
 	return 1;
 }
 

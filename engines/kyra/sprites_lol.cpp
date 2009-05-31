@@ -506,6 +506,7 @@ int LoLEngine::calcMonsterSkillLevel(int id, int a) {
 	const uint16 *c = getCharacterOrMonsterStats(id);
 	int r = (a << 8) / c[4];
 
+	/*
 	if (!(id & 0x8000))
 		r = (r * _monsterModifiers[3 + _monsterDifficulty]) >> 8;
 
@@ -514,9 +515,18 @@ int LoLEngine::calcMonsterSkillLevel(int id, int a) {
 	if (_characters[id].skillLevels[1] <= 3)
 		return r;
 	else if (_characters[id].skillLevels[1] <= 7)
-		return (r- (r >> 2));
+		return (r- (r >> 2));*/
 
-	return (r- (r >> 1));
+	if (id & 0x8000) {
+		r = (r * _monsterModifiers[3 + _monsterDifficulty]) >> 8;
+	} else {
+		if (_characters[id].skillLevels[1] > 7)
+			r = (r- (r >> 1));
+		else if (_characters[id].skillLevels[1] > 3 && _characters[id].skillLevels[1] <= 7)
+			r = (r- (r >> 2));			
+	}
+
+	return r;
 }
 
 int LoLEngine::checkBlockOccupiedByParty(int x, int y, int testFlag) {
