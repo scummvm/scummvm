@@ -47,7 +47,7 @@ MODULE_OBJS := \
 	lab.o \
 	lipsync.o \
 	localize.o \
-	lua.o \
+	lua_v1.o \
 	material.o \
 	model.o \
 	objectstate.o \
