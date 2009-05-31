@@ -145,6 +145,27 @@ class StringTestSuite : public CxxTest::TestSuite
 		Common::String foo6("123456789012");
 		foo6 += foo6;
 		TS_ASSERT_EQUALS(foo6, "123456789012""123456789012");
+
+		// "foo7" and "foo8" will purely operate on internal storage.
+		Common::String foo7("1234");
+		foo7 += foo7.c_str();
+		TS_ASSERT_EQUALS(foo7, "1234""1234");
+
+		Common::String foo8("1234");
+		foo8 += foo8;
+		TS_ASSERT_EQUALS(foo8, "1234""1234");
+
+		Common::String foo9("123456789012345678901234567889012");
+		foo9 = foo9.c_str();
+		TS_ASSERT_EQUALS(foo9, "123456789012345678901234567889012");
+		foo9 = foo9;
+		TS_ASSERT_EQUALS(foo9, "123456789012345678901234567889012");
+
+		Common::String foo10("1234");
+		foo10 = foo10.c_str();
+		TS_ASSERT_EQUALS(foo10, "1234");
+		foo10 = foo10;
+		TS_ASSERT_EQUALS(foo10, "1234");
 	}
 
 	void test_hasPrefix() {
