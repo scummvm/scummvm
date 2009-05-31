@@ -44,7 +44,7 @@ public:
 	GfxOpenGL();
 	virtual ~GfxOpenGL();
 
-	byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	byte *setupScreen(int screenW, int screenH, bool fullscreen);
 
 	const char *getVideoDeviceName();
 

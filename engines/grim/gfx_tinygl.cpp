@@ -147,8 +147,8 @@ GfxTinyGL::~GfxTinyGL() {
 	}
 }
 
-byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
-	byte *buffer = g_system->setupScreen(screenW, screenH, fullscreen, accel3d);
+byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
+	byte *buffer = g_system->setupScreen(screenW, screenH, fullscreen, false);
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;

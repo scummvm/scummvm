@@ -48,7 +48,7 @@ public:
 		int height;
 	};
 
-	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
+	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen) = 0;
 
 	virtual bool isHardwareAccelerated() = 0;
 

@@ -47,8 +47,8 @@ GfxOpenGL::~GfxOpenGL() {
 		glDeleteLists(_emergFont, 128);
 }
 
-byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
-	g_system->setupScreen(screenW, screenH, fullscreen, accel3d);
+byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
+	g_system->setupScreen(screenW, screenH, fullscreen, true);
 
 	_screenWidth = screenW;
 	_screenHeight = screenH;

@@ -338,14 +338,9 @@ Common::Error GrimEngine::run() {
 	g_imuse = new Imuse(20);
 
 	bool fullscreen = (tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
-	bool opengl = false;
 
-	if (!_softRenderer) {
-		if (g_system->hasFeature(OSystem::kFeatureOpenGL))
-			opengl = true;
-		else
-			error("gfx backend doesn't support hardware rendering");
-	}
+	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL))
+		error("gfx backend doesn't support hardware rendering");
 
 	if (_softRenderer)
 		g_driver = new GfxTinyGL();
@@ -357,7 +352,7 @@ Common::Error GrimEngine::run() {
 		error("gfx backend doesn't support hardware rendering");
 #endif
 
-	g_driver->setupScreen(640, 480, fullscreen, opengl);
+	g_driver->setupScreen(640, 480, fullscreen);
 
 	Bitmap *splash_bm = NULL;
 	if (!(g_flags & GF_DEMO))

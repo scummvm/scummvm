@@ -37,7 +37,7 @@ public:
 	GfxTinyGL();
 	virtual ~GfxTinyGL();
 
-	byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
+	byte *setupScreen(int screenW, int screenH, bool fullscreen);
 
 	const char *getVideoDeviceName();
 
