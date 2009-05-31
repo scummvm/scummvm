@@ -343,7 +343,7 @@ struct SavePos *zlibFile::getPos() {
 
 	if (position == ((uint32)  -1)) {
 		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("zlibFile::open() unable to find start position! %m");
+			warning("zlibFile::open() unable to find start position!");
 		return NULL;
 	}
 	pos = new SavePos;
@@ -365,7 +365,7 @@ bool zlibFile::setPos(struct SavePos *pos) {
 	}
 	_handle->seek(pos->filePos, SEEK_SET);
 	if (_handle->ioFailed()) {
-		warning("Unable to rewind SMUSH movie (seek failed)! %m");
+		warning("Unable to rewind SMUSH movie (seek failed)!");
 		return false;
 	}
 	memcpy(_inBuf, pos->tmpBuf, BUFFER_SIZE);
