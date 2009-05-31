@@ -214,7 +214,11 @@ public:
 
 private:
 
-	void handleButton(int operation, int key, int keyModifier, uint16 ascii);
+	void handleControls(int operation, int key, int keyModifier, uint16 ascii);
+	void handleChars(int operation, int key, int keyModifier, uint16 ascii);
+	void handleUserPaint();
+	void handleExit();
+	void handlePause();
 
 	Scene *_currScene;
 	int _mode, _previousMode;

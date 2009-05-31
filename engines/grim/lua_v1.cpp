@@ -45,7 +45,7 @@ extern Imuse *g_imuse;
 Common::StringList g_listfiles;
 Common::StringList::const_iterator g_filesiter;
 
-static int refSystemTable;
+int refSystemTable;
 static int refTypeOverride;
 static int refOldConcatFallback;
 static int refTextObjectX;
@@ -4266,49 +4266,6 @@ lua_Object getTableFunction(lua_Object table, const char *name) {
 	}
 
 	return handler;
-}
-
-lua_Object getTableValue(lua_Object table, const char *name) {
-	const char *key_text = NULL;
-	lua_Object key = LUA_NOOBJECT;
-
-	if (!lua_istable(table)) {
-		error("getTableValue(): Parameter not a table");
-		return 0;
-	}
-
-	for (;;) {
-		lua_pushobject(table);
-		if (key_text)
-			lua_pushobject(key);
-		else
-			lua_pushnil();
-
-		// If getTableValue is called against a bad value
-		// that it doesn't understand then an infinite loop
-		// will be set up repeating the same error.
-		if (lua_call("next") != 0) {
-			error("getTableValue could not find the next key");
-			return 0;
-		}
-		key = lua_getresult(1);
-		if (lua_isnil(key))
-			break;
-		// If this function is called against a table that is
-		// indexed (rather than keyed) then return zero so
-		// the indexed version can be called instead.  This
-		// operation cannot be done automatically since the
-		// index number needs to be known in order to obtain
-		// the correct value.
-		if (lua_isnumber(key))
-			return 0;
-
-		key_text = lua_getstring(key);
-		if (strmatch(key_text, name))
-			return lua_getresult(2);
-	}
-
-	return 0;
 }
 
 lua_Object getEventHandler(const char *name) {
