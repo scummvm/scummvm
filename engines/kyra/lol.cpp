@@ -408,6 +408,9 @@ LoLEngine::~LoLEngine() {
 	for (Common::List<Audio::AudioStream *>::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
 		delete *i;
 	_speechList.clear();
+
+	_emc->unload(&_itemScript);
+	_emc->unload(&_scriptData);
 }
 
 Screen *LoLEngine::screen() {

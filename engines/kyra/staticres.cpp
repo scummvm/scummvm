@@ -1031,8 +1031,8 @@ bool StaticResource::loadCharData(const char *filename, void *&ptr, int &size) {
 			t->characterUpdateDelay[ii] = file->readByte();
 	};
 
+	delete file;
 	ptr = charData;
-
 	return true;
 }
 
@@ -1060,8 +1060,8 @@ bool StaticResource::loadSpellData(const char *filename, void *&ptr, int &size) 
 		t->flags = file->readUint16LE();
 	};
 
+	delete file;
 	ptr = spellData;
-
 	return true;
 }
 
@@ -1082,8 +1082,9 @@ bool StaticResource::loadCompassData(const char *filename, void *&ptr, int &size
 		t->flags = file->readByte();
 	};
 
-	ptr = defs;
 
+	delete file;
+	ptr = defs;
 	return true;
 }
 
@@ -1105,8 +1106,8 @@ bool StaticResource::loadFlyingObjectData(const char *filename, void *&ptr, int 
 		t->flipFlags = file->readByte();
 	};
 
+	delete file;
 	ptr = defs;
-
 	return true;
 }
 
@@ -1123,8 +1124,8 @@ bool StaticResource::loadRawDataBe16(const char *filename, void *&ptr, int &size
 	for (int i = 0; i < size; i++)
 		r[i] = file->readUint16BE();
 
+	delete file;
 	ptr = r;
-
 	return true;
 }
 
@@ -1141,8 +1142,8 @@ bool StaticResource::loadRawDataBe32(const char *filename, void *&ptr, int &size
 	for (int i = 0; i < size; i++)
 		r[i] = file->readUint32BE();
 
+	delete file;
 	ptr = r;
-
 	return true;
 }
 
@@ -1168,8 +1169,8 @@ bool StaticResource::loadButtonDefs(const char *filename, void *&ptr, int &size)
 		r[i].screenDim = file->readUint16BE();
 	}
 
+	delete file;
 	ptr = r;
-
 	return true;
 }
 #endif // ENABLE_LOL

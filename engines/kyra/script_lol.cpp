@@ -39,6 +39,7 @@ void LoLEngine::runInitScript(const char *filename, int optionalFunc) {
 	EMCData scriptData;
 	EMCState scriptState;
 	memset(&scriptData, 0, sizeof(EMCData));
+	_emc->unload(&_scriptData);
 	_emc->load(filename, &scriptData, &_opcodes);
 
 	_emc->init(&scriptState, &scriptData);
@@ -58,6 +59,7 @@ void LoLEngine::runInitScript(const char *filename, int optionalFunc) {
 }
 
 void LoLEngine::runInfScript(const char *filename) {
+	_emc->unload(&_scriptData);
 	_emc->load(filename, &_scriptData, &_opcodes);
 	runLevelScript(0x400, -1);
 }
