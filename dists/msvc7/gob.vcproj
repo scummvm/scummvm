@@ -353,22 +353,52 @@
 			RelativePath="..\..\engines\gob\parse_v2.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\saveload.cpp">
+			RelativePath="..\..\engines\gob\save\savefile.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\saveload.h">
+			RelativePath="..\..\engines\gob\save\savefile.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\saveload_v2.cpp">
+			RelativePath="..\..\engines\gob\save\savehandler.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\saveload_v3.cpp">
+			RelativePath="..\..\engines\gob\save\savehandler.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\saveload_v4.cpp">
+			RelativePath="..\..\engines\gob\save\saveload.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\saveload_v6.cpp">
+			RelativePath="..\..\engines\gob\save\saveload.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload_v3.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload_v4.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload_v6.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveconverter.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveconverter.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveconverter_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveconverter_v3.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveconverter_v4.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveconverter_v6.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\scenery.cpp">
