@@ -103,9 +103,6 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 
 GobEngine::~GobEngine() {
 	deinitGameParts();
-
-	// Stop all mixer streams (except for the permanent ones).
-	_vm->_mixer->stopAll();
 }
 
 const char *GobEngine::getLangDesc(int16 language) const {
