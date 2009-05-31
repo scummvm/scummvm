@@ -2392,7 +2392,6 @@ int LoLEngine::tlol_fadeInScene(const TIM *tim, const uint16 *param) {
 		delayUntil(endTime);
 	}
 
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, 4, 2, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	delete[] overlay;
@@ -2426,7 +2425,7 @@ int LoLEngine::tlol_displayAnimFrame(const TIM *tim, const uint16 *param) {
 
 	TIMInterpreter::Animation *anim = (TIMInterpreter::Animation *)tim->wsa[param[0]].anim;
 	if (param[1] == 0xFFFF) {
-		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 	} else {
 		anim->wsa->displayFrame(param[1], 2, anim->x, anim->y, 0);
 		_screen->copyRegion(anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->width(), anim->wsa->height(), 2, 0);

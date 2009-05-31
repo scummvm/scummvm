@@ -389,6 +389,10 @@ private:
 
 	static const uint8 _charInfoFrameTable[];
 
+	// outro
+	void showOutro(int character, bool maxDifficulty);
+	void setupEpilogueData(bool load);
+
 	// timers
 	void setupTimers();
 	void enableTimer(int id);

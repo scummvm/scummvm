@@ -678,6 +678,163 @@ void LoLEngine::showStarcraftLogo() {
 	delete ci;
 }
 
+// outro
+
+void LoLEngine::setupEpilogueData(bool load) {
+	static const char * const fileListCD[] = {
+		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", 
+		"FINALE.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
+	};
+
+	const char * const *fileList = _flags.isTalkie ? fileListCD : 0;
+	assert(fileList);
+
+	char filename[32];
+	for (uint i = 0; fileList[i]; ++i) {
+		filename[0] = '\0';
+
+		if (_flags.isTalkie) {
+			strcpy(filename, _languageExt[_lang]);
+			strcat(filename, "/");
+		}
+
+		strcat(filename, fileList[i]);
+
+		if (load) {
+			if (!_res->loadPakFile(filename))
+				error("Couldn't load file: '%s'", filename);
+		} else {
+			_res->unloadPakFile(filename);
+		}
+	}
+
+	_screen->clearPage(0);
+	_screen->clearPage(3);
+
+	if (load) {
+		_sound->setSoundList(&_soundData[kMusicFinale]);
+
+		// We have three sound.dat files, one for the intro, one for the
+		// end sequence and one for ingame, each contained in a different
+		// PAK file. Therefore a new call to loadSoundFile() is required
+		// whenever the PAK file configuration changes.
+		if (_flags.platform == Common::kPlatformPC98)
+			_sound->loadSoundFile("SOUND.DAT");
+	} else {
+		uint8 *pal = _screen->getPalette(0);
+		memset(pal, 0, 768);
+		_screen->setScreenPalette(pal);
+
+		if (shouldQuit())
+			return;
+
+		_eventList.clear();
+		_sound->setSoundList(0);
+	}
+}
+
+void LoLEngine::showOutro(int character, bool maxDifficulty) {
+	setupEpilogueData(true);
+	TIMInterpreter *timBackUp = _tim;
+	_tim = new TIMInterpreter(this, _screen, _system);
+
+	uint8 *pal = _screen->getPalette(0);
+	memset(pal, 0, 768);
+	_screen->setScreenPalette(pal);
+
+	_screen->clearPage(0);
+	_screen->clearPage(4);
+	_screen->clearPage(8);
+
+	TIM *outro = _tim->load("LOLFINAL.TIM", &_timOutroOpcodes);
+	assert(outro);
+	outro->lolCharacter = character;
+
+	_screen->loadFont(Screen::FID_8_FNT, "NEW8P.FNT");
+	_screen->loadFont(Screen::FID_INTRO_FNT, "INTRO.FNT");
+	_screen->setFont(Screen::FID_8_FNT);
+
+	_tim->resetFinishedFlag();
+	_tim->setLangData("LOLFINAL.DIP");
+
+	_screen->hideMouse();
+
+	uint32 palNextFadeStep = 0;
+	while (!_tim->finished() && !shouldQuit() && !skipFlag()) {
+		updateInput();
+		_tim->exec(outro, false);
+
+		if (_tim->_palDiff) {
+			if (palNextFadeStep < _system->getMillis()) {
+				_tim->_palDelayAcc += _tim->_palDelayInc;
+				palNextFadeStep = _system->getMillis() + ((_tim->_palDelayAcc >> 8) * _tickLength);
+				_tim->_palDelayAcc &= 0xFF;
+
+				if (!_screen->fadePalStep(_screen->getPalette(0), _tim->_palDiff)) {
+					_screen->setScreenPalette(_screen->getPalette(0));
+					_tim->_palDiff = 0;
+				}
+			}
+		}
+
+		_system->delayMillis(10);
+		_screen->updateScreen();
+	}
+	_screen->showMouse();
+	_sound->voiceStop();
+	_sound->beginFadeOut();
+
+	_eventList.clear();
+
+	_tim->unload(outro);
+
+	for (int i = 0; i < TIM::kWSASlots; i++)
+		_tim->freeAnimStruct(i);
+
+	_screen->fadeToBlack(30);
+
+	//XXX
+
+	switch (character) {
+	case 0:
+		_screen->loadBitmap("KIERAN.CPS", 3, 3, _screen->getPalette(0));
+		break;
+
+	case 1:
+		_screen->loadBitmap("AK'SHEL.CPS", 3, 3, _screen->getPalette(0));
+		break;
+
+	case 2:
+		_screen->loadBitmap("MICHAEL.CPS", 3, 3, _screen->getPalette(0));
+		break;
+
+	case 3:
+		_screen->loadBitmap("CONRAD.CPS", 3, 3, _screen->getPalette(0));
+		break;
+
+	default:
+		_screen->clearPage(3);
+		memset(_screen->getPalette(0), 0, 768);
+		break;
+	}
+
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+	if (maxDifficulty)
+		_tim->displayText(0x8000, 0, 0xDC);
+	_screen->updateScreen();
+	_screen->fadePalette(_screen->getPalette(0), 30, 0);
+
+	while (!checkInput(0) && !shouldQuit())
+		delay(1);
+
+	_screen->fadeToBlack(30);
+
+	_tim->clearLangData();
+	delete _tim;
+	_tim = timBackUp;
+	setupEpilogueData(false);
+}
+
 } // end of namespace Kyra
 
 #endif // ENABLE_LOL
