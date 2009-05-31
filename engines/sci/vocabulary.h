@@ -195,11 +195,12 @@ public:
 	const char *getAnyWordFromGroup(int group);
 
 
-	/* Looks up a single word in the words and suffixes list
-	** Parameters: (char *) word: Pointer to the word to look up
-	**             (int) word_len: Length of the word to look up
-	** Returns   : (const ResultWordList &) A list containing 1 or 0 words
-	*/
+	/**
+	 * Looks up a single word in the words and suffixes list.
+	 * @param word		pointer to the word to look up
+	 * @param word_len	length of the word to look up
+	 * @return the matching word (or (-1,-1) if there was no match)
+	 */
 	ResultWord lookupWord(const char *word, int word_len);
 
 
@@ -239,22 +240,22 @@ public:
 	*/
 	parse_rule_list_t *buildGNF(bool verbose = false);
 
-	/* Decyphers a said block and dumps its content via sciprintf.
-	** Parameters: (EngineState *) s: The state to use
-	**             (byte *) pos: Pointer to the data to dump
-	** For debugging only.
-	*/
-	void decypherSaidBlock(byte *pos);
+	/**
+	 * Deciphers a said block and dumps its content via sciprintf.
+	 * For debugging only.
+	 * @param pos	pointer to the data to dump
+	 */
+	void decipherSaidBlock(byte *pos);
 
 	/**
-	 * Prints the parser suffixes to the debug console
+	 * Prints the parser suffixes to the debug console.
 	 */
-	void printSuffixes();
+	void printSuffixes() const;
 
 	/**
-	 * Prints the parser words to the debug console
+	 * Prints the parser words to the debug console.
 	 */
-	void printParserWords();
+	void printParserWords() const;
 
 	uint getParserBranchesSize() const { return _parserBranches.size(); }
 	const parse_tree_branch_t &getParseTreeBranch(int number) const { return _parserBranches[number]; }
@@ -293,7 +294,7 @@ private:
 	* Loads the vocabulary selector names.
 	* Returns true upon success, false otherwise.
 	*/
-	bool getSelectorNames();
+	bool loadSelectorNames();
 
 	/* Maps special selectors
 	** Returns   : (void)
@@ -301,33 +302,33 @@ private:
 	void mapSelectors();
 
 	/**
-	 * Fills the given Array with opcodes.
+	 * Loads the opcode names (only used for debugging).
 	 * @return true on success, false on failure
 	 */
-	bool getOpcodes();
+	bool loadOpcodes();
 
 	/**
-	 * Fills the given StringList with kernel function names.
+	 * Loads the kernel function names.
 	 *
 	 * This function reads the kernel function name table from resource_map,
-	 * and fills the given StringList with them.
+	 * and fills the _kernelNames array with them.
 	 * The resulting list has the same format regardless of the format of the
 	 * name table of the resource (the format changed between version 0 and 1).
 	 * @return true on success, false on failure
 	 */
-	bool getKernelNames();
+	bool loadKernelNames();
 
 	/**
-	 * Gets all words from the main vocabulary.
+	 * Loads all words from the main vocabulary.
 	 * @return true on success, false on failure
 	 */
-	bool getParserWords();
+	bool loadParserWords();
 
 	/**
 	 * Loads all suffixes from the suffix vocabulary.
 	 * @return true on success, false on failure
 	 */
-	bool getSuffixes();
+	bool loadSuffixes();
 
 	/**
 	 * Frees all suffixes in the given list.

@@ -906,7 +906,7 @@ static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &name
 }
 #endif
 
-bool Vocabulary::getKernelNames() {
+bool Vocabulary::loadKernelNames() {
 	_kernelNames.clear();
 
 	switch (_resmgr->_sciVersion) {

@@ -499,29 +499,30 @@ bool Console::cmdSentenceFragments(int argc, const char **argv) {
 	for (uint i = 0; i < g_EngineState->_vocabulary->getParserBranchesSize(); i++) {
 		int j = 0;
 
-		DebugPrintf("R%02d: [%x] ->", i, g_EngineState->_vocabulary->getParseTreeBranch(i).id);
-		while ((j < 10) && g_EngineState->_vocabulary->getParseTreeBranch(i).data[j]) {
-			int dat = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
+		const parse_tree_branch_t &branch = g_EngineState->_vocabulary->getParseTreeBranch(i);
+		DebugPrintf("R%02d: [%x] ->", i, branch.id);
+		while ((j < 10) && branch.data[j]) {
+			int dat = branch.data[j++];
 
 			switch (dat) {
 			case VOCAB_TREE_NODE_COMPARE_TYPE:
-				dat = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
+				dat = branch.data[j++];
 				DebugPrintf(" C(%x)", dat);
 				break;
 
 			case VOCAB_TREE_NODE_COMPARE_GROUP:
-				dat = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
+				dat = branch.data[j++];
 				DebugPrintf(" WG(%x)", dat);
 				break;
 
 			case VOCAB_TREE_NODE_FORCE_STORAGE:
-				dat = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
+				dat = branch.data[j++];
 				DebugPrintf(" FORCE(%x)", dat);
 				break;
 
 			default:
 				if (dat > VOCAB_TREE_NODE_LAST_WORD_STORAGE) {
-					int dat2 = g_EngineState->_vocabulary->getParseTreeBranch(i).data[j++];
+					int dat2 = branch.data[j++];
 					DebugPrintf(" %x[%x]", dat, dat2);
 				} else
 					DebugPrintf(" ?%x?", dat);

@@ -92,8 +92,8 @@ Vocabulary::Vocabulary(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr
 
 	debug(2, "Initializing vocabulary");
 
-	if (_resmgr->_sciVersion < SCI_VERSION_01_VGA && getParserWords()) {
-		getSuffixes();
+	if (_resmgr->_sciVersion < SCI_VERSION_01_VGA && loadParserWords()) {
+		loadSuffixes();
 		if (getBranches())
 			// Now build a GNF grammar out of this
 			_parserRules = buildGNF();
@@ -102,16 +102,16 @@ Vocabulary::Vocabulary(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr
 		_parserRules = NULL;
 	}
 
-	getOpcodes();
+	loadOpcodes();
 
-	if (!getSelectorNames()) {
+	if (!loadSelectorNames()) {
 		error("Vocabulary: Could not retrieve selector names");
 	}
 
 	// Map a few special selectors for later use
 	mapSelectors();
 
-	getKernelNames();
+	loadKernelNames();
 }
 
 Vocabulary::~Vocabulary() {
@@ -124,7 +124,7 @@ Vocabulary::~Vocabulary() {
 	freeSuffixes();
 }
 
-bool Vocabulary::getSelectorNames() {
+bool Vocabulary::loadSelectorNames() {
 	int count;
 
 	Resource *r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES, 0);
@@ -150,7 +150,7 @@ bool Vocabulary::getSelectorNames() {
 	return true;
 }
 
-bool Vocabulary::getOpcodes() {
+bool Vocabulary::loadOpcodes() {
 	int count, i = 0;
 	Resource* r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES, 0);
 
@@ -176,7 +176,7 @@ bool Vocabulary::getOpcodes() {
 	return true;
 }
 
-bool Vocabulary::getParserWords() {
+bool Vocabulary::loadParserWords() {
 
 	char currentword[256] = ""; // They're not going to use words longer than 255 ;-)
 	int currentwordpos = 0;
@@ -260,7 +260,7 @@ const char *Vocabulary::getAnyWordFromGroup(int group) {
 	return "{invalid}";
 }
 
-bool Vocabulary::getSuffixes() {
+bool Vocabulary::loadSuffixes() {
 	// Determine if we can find a SCI1 suffix vocabulary first
 	Resource* resource = NULL;
 	
@@ -410,7 +410,7 @@ ResultWord Vocabulary::lookupWord(const char *word, int word_len) {
 	return retval;
 }
 
-void Vocabulary::decypherSaidBlock(byte *addr) {
+void Vocabulary::decipherSaidBlock(byte *addr) {
 	int nextitem;
 
 	do {
@@ -503,7 +503,7 @@ bool Vocabulary::tokenizeString(ResultWordList &retval, const char *sentence, ch
 	return true;
 }
 
-void Vocabulary::printSuffixes() {
+void Vocabulary::printSuffixes() const {
 	char word_buf[256], alt_buf[256];
 	Sci::Console *con = ((SciEngine *)g_engine)->_console;
 
@@ -519,7 +519,7 @@ void Vocabulary::printSuffixes() {
 	}
 }
 
-void Vocabulary::printParserWords() {
+void Vocabulary::printParserWords() const {
 	Sci::Console *con = ((SciEngine *)g_engine)->_console;
 
 	int j = 0;

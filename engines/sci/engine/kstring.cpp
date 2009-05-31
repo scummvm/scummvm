@@ -95,7 +95,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 #ifdef DEBUG_PARSER
 		debugC(2, kDebugLevelParser, "Said block:", 0);
-		s->_vocabulary->decypherSaidBlock(said_block);
+		s->_vocabulary->decipherSaidBlock(said_block);
 #endif
 
 	if (s->parser_event.isNull() || (GET_SEL32V(s->parser_event, claimed))) {
