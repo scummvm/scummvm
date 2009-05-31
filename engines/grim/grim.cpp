@@ -823,13 +823,6 @@ void GrimEngine::mainLoop() {
 				if (_mode != ENGINE_MODE_DRAW && (event.kbd.ascii == 'q')) {
 					handleExit();
 					break;
-				}
-				if (event.kbd.ascii == 'r' && event.kbd.flags & Common::KBD_CTRL) {
-					handleDebugLoadResource();
-				} else if (event.kbd.ascii == 'x' && event.kbd.flags & Common::KBD_CTRL) {
-					handleExit();
-				} else if (event.kbd.ascii == 'p' && event.kbd.flags & Common::KBD_CTRL) {
-					handlePause();
 				} else {
 					handleChars(event.type, event.kbd.keycode, event.kbd.flags, event.kbd.ascii);
 				}
