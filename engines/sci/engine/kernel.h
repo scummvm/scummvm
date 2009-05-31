@@ -49,7 +49,7 @@ extern int _debug_step_running;
 
 /******************** Selector functionality ********************/
 
-#define GET_SEL32(_o_, _slc_) read_selector(s, _o_, s->selector_map._slc_, __FILE__, __LINE__)
+#define GET_SEL32(_o_, _slc_) read_selector(s, _o_, s->_vocabulary->_selectorMap._slc_, __FILE__, __LINE__)
 #define GET_SEL32V(_o_, _slc_) (GET_SEL32(_o_, _slc_).offset)
 #define GET_SEL32SV(_o_, _slc_) ((int16)(GET_SEL32(_o_, _slc_).offset))
 /* Retrieves a selector from an object
@@ -60,8 +60,8 @@ extern int _debug_step_running;
 ** selector_map_t and mapped in script.c.
 */
 
-#define PUT_SEL32(_o_, _slc_, _val_) write_selector(s, _o_, s->selector_map._slc_, _val_, __FILE__, __LINE__)
-#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(s, _o_, s->selector_map._slc_, make_reg(0, _val_), __FILE__, __LINE__)
+#define PUT_SEL32(_o_, _slc_, _val_) write_selector(s, _o_, s->_vocabulary->_selectorMap._slc_, _val_, __FILE__, __LINE__)
+#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(s, _o_, s->_vocabulary->_selectorMap._slc_, make_reg(0, _val_), __FILE__, __LINE__)
 /* Writes a selector value to an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be written to
 **             (selector_name) selector: The selector to read
@@ -73,7 +73,7 @@ extern int _debug_step_running;
 
 
 #define INV_SEL(_object_, _selector_, _noinvalid_) \
-	s, _object_,  s->selector_map._selector_, _noinvalid_, funct_nr, argv, argc, __FILE__, __LINE__
+	s, _object_,  s->_vocabulary->_selectorMap._selector_, _noinvalid_, funct_nr, argv, argc, __FILE__, __LINE__
 /* Kludge for use with invoke_selector(). Used for compatibility with compilers that can't
 ** handle vararg macros.
 */

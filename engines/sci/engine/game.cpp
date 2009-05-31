@@ -370,11 +370,9 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
 
-	s->_vocabulary = new Vocabulary(s);	// TODO: delete
+	s->parser_lastmatch_word = SAID_NO_MATCH;
 
-	// TODO: move this inside the Vocabulary constructor
-	// Map a few special selectors for later use
-	script_map_selectors(s, &(s->selector_map));
+	s->_vocabulary = new Vocabulary(s);
 
 	script_map_kernel(s);
 	// Maps the kernel functions
@@ -425,6 +423,8 @@ void script_free_engine(EngineState *s) {
 	s->_kfuncTable.clear();
 
 	vocab_free_rule_list(s->parser_rules);
+
+	delete s->_vocabulary;
 }
 
 void script_free_breakpoints(EngineState *s) {

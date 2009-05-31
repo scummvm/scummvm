@@ -1076,9 +1076,9 @@ void quit_vm();
 ** Returns   : (void)
 */
 
-void script_map_selectors(EngineState *s, selector_map_t *map);
+void script_map_selectors(Common::StringList *selectorNames, selector_map_t *map);
 /* Maps special selectors
-** Parameters: (EngineState *) s: The state from which the selector information should be taken
+** Parameters: (Common::StringList *) selectorNames: The selector information
 **             (selector_map_t *) map: Pointer to the selector map to map
 ** Returns   : (void)
 ** Called by script_run();

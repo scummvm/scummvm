@@ -350,9 +350,9 @@ int vocab_get_class_count(ResourceManager *resmgr) {
 #endif
 
 Vocabulary::Vocabulary(EngineState *s) : _resmgr(s->resmgr), _isOldSci0(s->flags & GF_SCI0_OLD) {
-	s->parser_lastmatch_word = SAID_NO_MATCH;
 	s->parser_rules = NULL;
 	_vocabVersion = 0;
+	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
 	debug(2, "Initializing vocabulary");
 
@@ -371,6 +371,9 @@ Vocabulary::Vocabulary(EngineState *s) : _resmgr(s->resmgr), _isOldSci0(s->flags
 	if (!getSelectorNames()) {
 		error("Vocabulary: Could not retrieve selector names");
 	}
+
+	// Map a few special selectors for later use
+	script_map_selectors(&_selectorNames, &_selectorMap);
 
 	getKernelNames();
 }
@@ -512,11 +515,11 @@ bool Vocabulary::getParserWords() {
 	return true;
 }
 
-const char *vocab_get_any_group_word(int group, const WordMap &words) {
+const char *Vocabulary::getAnyWordFromGroup(int group) {
 	if (group == VOCAB_MAGIC_NUMBER_GROUP)
 		return "{number}";
 
-	for (WordMap::const_iterator i = words.begin(); i != words.end(); ++i)
+	for (WordMap::const_iterator i = _parserWords.begin(); i != _parserWords.end(); ++i)
 		if (i->_value._group == group)
 			return i->_key.c_str();
 
@@ -617,7 +620,7 @@ bool Vocabulary::getBranches() {
 }
 
 
-ResultWord vocab_lookup_word(const char *word, int word_len, const WordMap &words, const SuffixList &suffixes) {
+ResultWord Vocabulary::lookupWord(const char *word, int word_len) {
 	Common::String tempword(word, word_len);
 
 	// Remove all dashes from tempword
@@ -629,15 +632,15 @@ ResultWord vocab_lookup_word(const char *word, int word_len, const WordMap &word
 	}
 
 	// Look it up:
-	WordMap::iterator dict_word = words.find(tempword);
+	WordMap::iterator dict_word = _parserWords.find(tempword);
 
 	// Match found? Return it!
-	if (dict_word != words.end()) {
+	if (dict_word != _parserWords.end()) {
 		return dict_word->_value;
 	}
 
 	// Now try all suffixes
-	for (SuffixList::const_iterator suffix = suffixes.begin(); suffix != suffixes.end(); ++suffix)
+	for (SuffixList::const_iterator suffix = _parserSuffixes.begin(); suffix != _parserSuffixes.end(); ++suffix)
 		if (suffix->alt_suffix_length <= word_len) {
 
 			int suff_index = word_len - suffix->alt_suffix_length;
@@ -650,9 +653,9 @@ ResultWord vocab_lookup_word(const char *word, int word_len, const WordMap &word
 				// ...and append "correct" suffix
 				tempword2 += Common::String(suffix->word_suffix, suffix->word_suffix_length);
 
-				dict_word = words.find(tempword2);
+				dict_word = _parserWords.find(tempword2);
 
-				if ((dict_word != words.end()) && (dict_word->_value._class & suffix->class_mask)) { // Found it?
+				if ((dict_word != _parserWords.end()) && (dict_word->_value._class & suffix->class_mask)) { // Found it?
 					// Use suffix class
 					ResultWord tmp = dict_word->_value;
 					tmp._class = suffix->result_class;
@@ -681,7 +684,7 @@ void vocab_decypher_said_block(EngineState *s, byte *addr) {
 
 		if (nextitem < 0xf0) {
 			nextitem = nextitem << 8 | *addr++;
-			sciprintf(" %s[%03x]", vocab_get_any_group_word(nextitem, s->_vocabulary->_parserWords), nextitem);
+			sciprintf(" %s[%03x]", s->_vocabulary->getAnyWordFromGroup(nextitem), nextitem);
 
 			nextitem = 42; // Make sure that group 0xff doesn't abort
 		} else switch (nextitem) {
@@ -723,8 +726,7 @@ void vocab_decypher_said_block(EngineState *s, byte *addr) {
 	sciprintf("\n");
 }
 
-bool vocab_tokenize_string(ResultWordList &retval, const char *sentence, const WordMap &words,
-	const SuffixList &suffixes, char **error) {
+bool Vocabulary::tokenizeString(ResultWordList &retval, const char *sentence, char **error) {
 	const char *lastword = sentence;
 	int pos_in_sentence = 0;
 	char c;
@@ -744,8 +746,7 @@ bool vocab_tokenize_string(ResultWordList &retval, const char *sentence, const W
 		else {
 			if (wordlen) { // Finished a word?
 
-				ResultWord lookup_result =
-				    vocab_lookup_word(lastword, wordlen, words, suffixes);
+				ResultWord lookup_result = lookupWord(lastword, wordlen);
 				// Look it up
 
 				if (lookup_result._class == -1) { // Not found?

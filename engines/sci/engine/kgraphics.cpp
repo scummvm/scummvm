@@ -1076,7 +1076,7 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 	x = GET_SEL32SV(object, x);
 	original_y = y = GET_SEL32SV(object, y);
 
-	if (s->selector_map.z > -1)
+	if (s->_vocabulary->_selectorMap.z > -1)
 		z = GET_SEL32SV(object, z);
 	else
 		z = 0;
@@ -1130,7 +1130,7 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 void _k_base_setter(EngineState *s, reg_t object) {
 	Common::Rect absrect = set_base(s, object);
 
-	if (lookup_selector(s, object, s->selector_map.brLeft, NULL, NULL) != kSelectorVariable)
+	if (lookup_selector(s, object, s->_vocabulary->_selectorMap.brLeft, NULL, NULL) != kSelectorVariable)
 		return; // non-fatal
 
 	// Note: there was a check here for a very old version of SCI, which supposedly needed
@@ -1211,7 +1211,7 @@ Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 	x = GET_SEL32SV(object, x);
 	y = GET_SEL32SV(object, y);
 
-	if (s->selector_map.z > -1)
+	if (s->_vocabulary->_selectorMap.z > -1)
 		z = GET_SEL32SV(object, z);
 	else
 		z = 0;
@@ -1235,7 +1235,7 @@ Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 static void _k_set_now_seen(EngineState *s, reg_t object) {
 	Common::Rect absrect = get_nsrect(s, object, 0);
 
-	if (lookup_selector(s, object, s->selector_map.nsTop, NULL, NULL) != kSelectorVariable) {
+	if (lookup_selector(s, object, s->_vocabulary->_selectorMap.nsTop, NULL, NULL) != kSelectorVariable) {
 		return;
 	} // This isn't fatal
 
@@ -1720,7 +1720,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_PRIVATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == _K_VIEW_SIG_FLAG_PRIVATE) {
 		 */
 		if ((widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == 0) {
-			int has_nsrect = lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == kSelectorVariable;
+			int has_nsrect = lookup_selector(s, obj, s->_vocabulary->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
 
 			if (has_nsrect) {
 				int temp;
@@ -1742,7 +1742,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 			}
 #ifdef DEBUG_LSRECT
 			else
-				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL));
+				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s, obj, s->_vocabulary->_selectorMap.nsBottom, NULL, NULL));
 #endif
 
 			if (widget->signal & _K_VIEW_SIG_FLAG_HIDDEN)
@@ -1894,7 +1894,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	loop = oldloop = sign_extend_byte(GET_SEL32V(obj, loop));
 	cel = oldcel = sign_extend_byte(GET_SEL32V(obj, cel));
 
-	if (s->selector_map.palette)
+	if (s->_vocabulary->_selectorMap.palette)
 		palette = GET_SEL32V(obj, palette);
 	else
 		palette = 0;
@@ -1916,14 +1916,14 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 		PUT_SEL32V(obj, cel, cel);
 	}
 
-	if (lookup_selector(s, obj, s->selector_map.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s, obj, s->_vocabulary->_selectorMap.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
 		under_bitsp = NULL;
 		under_bits = NULL_REG;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no underBits\n", PRINT_REG(obj));
 	} else
 		under_bits = *((reg_t *)under_bitsp);
 
-	if (lookup_selector(s, obj, s->selector_map.signal, &(signalp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s, obj, s->_vocabulary->_selectorMap.signal, &(signalp), NULL) != kSelectorVariable) {
 		signalp = NULL;
 		signal = 0;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no signal selector\n", PRINT_REG(obj));
@@ -2015,7 +2015,7 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 	while (view) {
 		reg_t obj = make_reg(view->_ID, view->_subID);
 		int priority, _priority;
-		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s, obj, s->selector_map.nsBottom, NULL, NULL) == kSelectorVariable;
+		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s, obj, s->_vocabulary->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
 		int oldsignal = view->signal;
 
 		_k_set_now_seen(s, obj);

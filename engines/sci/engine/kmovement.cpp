@@ -462,7 +462,7 @@ static void bresenham_autodetect(EngineState *s) {
 			return;
 		}
 
-		if (lookup_selector(s, motion_class, s->selector_map.doit, NULL, &fptr) != kSelectorMethod) {
+		if (lookup_selector(s, motion_class, s->_vocabulary->_selectorMap.doit, NULL, &fptr) != kSelectorMethod) {
 			warning("bresenham_autodetect failed");
 			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 			return;
@@ -557,7 +557,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d\n", x, y, bdi);
 
-	if (s->selector_map.cantBeHere != -1)
+	if (s->_vocabulary->_selectorMap.cantBeHere != -1)
 		invoke_selector(INV_SEL(client, cantBeHere, 0), 0);
 	else
 		invoke_selector(INV_SEL(client, canBeHere, 0), 0);

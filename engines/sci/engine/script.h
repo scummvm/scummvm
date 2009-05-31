@@ -51,7 +51,7 @@ enum ScriptObjectTypes {
 	SCI_OBJ_LOCALVARS
 };
 
-void script_dissect(ResourceManager *resmgr, int res_no, WordMap &parserWords, const Common::StringList &selectorNames);
+void script_dissect(ResourceManager *resmgr, int res_no, Vocabulary *vocab);
 
 /* Opcode formats as used by script.c */
 enum opcode_format {
@@ -203,7 +203,7 @@ extern opcode_format g_opcode_formats[128][4];
 
 void script_adjust_opcode_formats(int res_version);
 
-int script_find_selector(EngineState *s, const char *selector_name);
+int script_find_selector(Common::StringList *selectorNames, const char *selector_name);
 /* Determines the selector ID of a selector by its name
 ** Parameters: (state_t *) s: VM state
 **             (char *) selector_name: Name of the selector to look up

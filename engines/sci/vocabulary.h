@@ -231,6 +231,31 @@ public:
 	 */
 	bool getBranches();
 
+	/**
+	 * Gets any word from the specified group. For debugging only.
+	 * @param group		Group number
+	 */
+	const char *getAnyWordFromGroup(int group);
+
+
+	/* Looks up a single word in the words and suffixes list
+	** Parameters: (char *) word: Pointer to the word to look up
+	**             (int) word_len: Length of the word to look up
+	** Returns   : (const ResultWordList &) A list containing 1 or 0 words
+	*/
+	ResultWord lookupWord(const char *word, int word_len);
+
+
+	/* Tokenizes a string and compiles it into word_ts.
+	** Parameters: (char *) sentence: The sentence to examine
+	**             (char **) error: Points to a malloc'd copy of the offending text or to NULL on error
+	**             (ResultWordList) retval: A list of word_ts containing the result, or NULL.
+	** Returns   : true on success, false on failure
+	** On error, NULL is returned. If *error is NULL, the sentence did not contain any useful words;
+	** if not, *error points to a malloc'd copy of the offending word.
+	** The returned list may contain anywords.
+	*/
+	bool tokenizeString(ResultWordList &retval, const char *sentence, char **error);
 
 	Common::StringList _selectorNames;
 	Common::Array<opcode> _opcodes;
@@ -238,38 +263,13 @@ public:
 	WordMap _parserWords;
 	SuffixList _parserSuffixes;
 	Common::Array<parse_tree_branch_t> _parserBranches;
+	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
 
 private:
 	ResourceManager *_resmgr;
 	bool _isOldSci0;
 	int _vocabVersion;
 };
-
-/* Looks up a single word in the words and suffixes list
-** Parameters: (char *) word: Pointer to the word to look up
-**             (int) word_len: Length of the word to look up
-**             (const WordMap &) words: List of words
-**             (SuffixList) suffixes: List of suffixes
-** Returns   : (const ResultWordList &) A list containing 1 or 0 words
-*/
-ResultWord vocab_lookup_word(const char *word, int word_len,
-	const WordMap &words, const SuffixList &suffixes);
-
-
-/* Tokenizes a string and compiles it into word_ts.
-** Parameters: (char *) sentence: The sentence to examine
-**             (const WordMap &) words: The words to scan for
-**             (SuffixList) suffixes: suffixes to scan for
-**             (char **) error: Points to a malloc'd copy of the offending text or to NULL on error
-**             (ResultWordList) retval: A list of word_ts containing the result, or NULL.
-** Returns   : true on success, false on failure
-** On error, NULL is returned. If *error is NULL, the sentence did not contain any useful words;
-** if not, *error points to a malloc'd copy of the offending word.
-** The returned list may contain anywords.
-*/
-bool vocab_tokenize_string(ResultWordList &retval, const char *sentence,
-	const WordMap &words, const SuffixList &suffixes, char **error);
-
 
 /* Constructs the Greibach Normal Form of the grammar supplied in 'branches'
 ** Parameters: (parse_tree_branch_t *) branches: The parser's branches
@@ -318,13 +318,6 @@ void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
 ** Returns   : (int) 1 on a match, 0 otherwise
 */
 int said(EngineState *s, byte *spec, int verbose);
-
-/**
- * Gets any word from the specified group. For debugging only.
- * @param group		Group number
- * @param words		List of words
- */
-const char *vocab_get_any_group_word(int group, const WordMap &words);
 
 
 /* Decyphers a said block and dumps its content via sciprintf.

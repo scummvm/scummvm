@@ -648,7 +648,7 @@ int c_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 	string = cmdParams[0].str;
 	sciprintf("Parsing '%s'\n", string);
-	bool res = vocab_tokenize_string(words, string, s->_vocabulary->_parserWords, s->_vocabulary->_parserSuffixes, &error);
+	bool res = s->_vocabulary->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
 
@@ -1232,10 +1232,10 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 	}
 
 
-	is_view = (lookup_selector(s, pos, s->selector_map.x, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->selector_map.brLeft, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->selector_map.signal, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->selector_map.nsTop, NULL) == kSelectorVariable);
+	is_view = (lookup_selector(s, pos, s->_vocabulary->_selectorMap.x, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->_vocabulary->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->_vocabulary->_selectorMap.signal, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->_vocabulary->_selectorMap.nsTop, NULL) == kSelectorVariable);
 
 	if (!is_view) {
 		sciprintf("Not a dynamic View object.\n");
@@ -1318,7 +1318,7 @@ static int c_disasm_addr(EngineState *s, const Common::Array<cmd_param_t> &cmdPa
 
 static int c_disasm(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Object *obj = obj_get(s, cmdParams[0].reg);
-	int selector_id = script_find_selector(s, cmdParams[1].str);
+	int selector_id = script_find_selector(&s->_vocabulary->_selectorNames, cmdParams[1].str);
 	reg_t addr;
 
 	if (!obj) {
@@ -1420,7 +1420,7 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t *vptr;
 	reg_t fptr;
 
-	selector_id = script_find_selector(s, selector_name);
+	selector_id = script_find_selector(&s->_vocabulary->_selectorNames, selector_name);
 
 	if (selector_id < 0) {
 		sciprintf("Unknown selector: \"%s\"\n", selector_name);
@@ -1567,7 +1567,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	int have_rects = 0;
 	Common::Rect nsrect, nsrect_clipped, brrect;
 
-	if (lookup_selector(s, pos, s->selector_map.nsBottom, NULL) == kSelectorVariable) {
+	if (lookup_selector(s, pos, s->_vocabulary->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
 		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
 		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
 		GETRECT(brLeft, brRight, brBottom, brTop);
@@ -1581,7 +1581,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	x = GET_SELECTOR(pos, x);
 	y = GET_SELECTOR(pos, y);
 	priority = GET_SELECTOR(pos, priority);
-	if (s->selector_map.z > 0) {
+	if (s->_vocabulary->_selectorMap.z > 0) {
 		z = GET_SELECTOR(pos, z);
 		sciprintf("(%d,%d,%d)\n", x, y, z);
 	} else

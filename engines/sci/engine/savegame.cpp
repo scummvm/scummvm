@@ -834,7 +834,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_kfuncTable = s->_kfuncTable;
 	retval->_vocabulary->_opcodes = s->_vocabulary->_opcodes;
 
-	memcpy(&(retval->selector_map), &(s->selector_map), sizeof(selector_map_t));
+	memcpy(&(retval->_vocabulary->_selectorMap), &(s->_vocabulary->_selectorMap), sizeof(selector_map_t));
 
 	retval->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 

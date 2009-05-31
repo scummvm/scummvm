@@ -108,9 +108,9 @@ void script_adjust_opcode_formats(int res_version) {
 	}
 }
 
-int script_find_selector(EngineState *s, const char *selectorname) {
-	for (uint pos = 0; pos < s->_vocabulary->_selectorNames.size(); ++pos) {
-		if (s->_vocabulary->_selectorNames[pos] == selectorname)
+int script_find_selector(Common::StringList *selectorNames, const char *selectorname) {
+	for (uint pos = 0; pos < selectorNames->size(); ++pos) {
+		if ((*selectorNames)[pos] == selectorname)
 			return pos;
 	}
 
@@ -119,10 +119,10 @@ int script_find_selector(EngineState *s, const char *selectorname) {
 	return -1;
 }
 
-#define FIND_SELECTOR(_slc_) map->_slc_ = script_find_selector(s, #_slc_)
-#define FIND_SELECTOR2(_slc_, _slcstr_) map->_slc_ = script_find_selector(s, _slcstr_)
+#define FIND_SELECTOR(_slc_) map->_slc_ = script_find_selector(selectorNames, #_slc_)
+#define FIND_SELECTOR2(_slc_, _slcstr_) map->_slc_ = script_find_selector(selectorNames, _slcstr_)
 
-void script_map_selectors(EngineState *s, selector_map_t *map) {
+void script_map_selectors(Common::StringList *selectorNames, selector_map_t *map) {
 	FIND_SELECTOR(init);
 	FIND_SELECTOR(play);
 	FIND_SELECTOR(replay);
@@ -303,7 +303,7 @@ static void script_dump_class(char *data, int seeker, int objsize, const Common:
 	}
 }
 
-void script_dissect(ResourceManager *resmgr, int res_no, WordMap &parserWords, const Common::StringList &selectorNames) {
+void script_dissect(ResourceManager *resmgr, int res_no, Vocabulary *vocab) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
 	Resource *script = resmgr->findResource(kResourceTypeScript, res_no, 0);
@@ -337,7 +337,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, WordMap &parserWords, c
 
 		switch (objtype) {
 		case SCI_OBJ_OBJECT:
-			script_dump_object((char *)script->data, seeker, objsize, selectorNames);
+			script_dump_object((char *)script->data, seeker, objsize, vocab->_selectorNames);
 			break;
 
 		case SCI_OBJ_CODE: {
@@ -396,8 +396,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, WordMap &parserWords, c
 					}
 				} else {
 					nextitem = nextitem << 8 | script->data [seeker++];
-					// TODO
-					sciprintf("%s[%03x] ", vocab_get_any_group_word(nextitem, parserWords), nextitem);
+					sciprintf("%s[%03x] ", vocab->getAnyWordFromGroup(nextitem), nextitem);
 				}
 			}
 			sciprintf("\n");
@@ -415,7 +414,7 @@ void script_dissect(ResourceManager *resmgr, int res_no, WordMap &parserWords, c
 		break;
 
 		case SCI_OBJ_CLASS:
-			script_dump_class((char *)script->data, seeker, objsize, selectorNames);
+			script_dump_class((char *)script->data, seeker, objsize, vocab->_selectorNames);
 			break;
 
 		case SCI_OBJ_EXPORTS: {

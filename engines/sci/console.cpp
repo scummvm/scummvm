@@ -243,7 +243,7 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 		return true;
 	}
 
-	script_dissect(_vm->getResMgr(), atoi(argv[1]), g_EngineState->_vocabulary->_parserWords, g_EngineState->_vocabulary->_selectorNames);
+	script_dissect(_vm->getResMgr(), atoi(argv[1]), g_EngineState->_vocabulary);
 
 	return true;
 }

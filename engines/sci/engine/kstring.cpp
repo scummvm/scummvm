@@ -203,7 +203,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	bool res = vocab_tokenize_string(words, string, s->_vocabulary->_parserWords, s->_vocabulary->_parserSuffixes, &error);
+	bool res = s->_vocabulary->tokenizeString(words, string, &error);
 	s->parser_valid = 0; /* not valid */
 
 	if (res && !words.empty()) {
