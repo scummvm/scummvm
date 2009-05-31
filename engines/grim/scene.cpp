@@ -208,7 +208,7 @@ void Scene::setSetup(int num) {
 	// Looks like num is zero-based so >= should work to find values
 	// that are out of the range of valid setups
 	if (num >= _numSetups || num < 0) {
-		error("Failed to change scene setup, value out of range!");
+		error("Failed to change scene setup, value out of range");
 		return;
 	}
 	_currSetup = _setups + num;
@@ -265,7 +265,7 @@ ObjectState *Scene::findState(const char *filename) {
 			return *i;
 		if (strcasecmp(file, filename) == 0) {
 			if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-				warning("State object request '%s' matches object '%s' but is the wrong case!", filename, file);
+				warning("State object request '%s' matches object '%s' but is the wrong case", filename, file);
 			return *i;
 		}
 	}

@@ -310,7 +310,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 	textName += ".txt";
 
 	if (msgId[0] == 0) {
-		error("Actor::sayLine: No message ID for text!");
+		error("Actor::sayLine: No message ID for text");
 		return;
 	}
 

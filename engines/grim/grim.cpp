@@ -481,13 +481,13 @@ void GrimEngine::handleDebugLoadResource() {
 		resource = (void *)1;
 	} else if (strstr(buf, ".mat")) {
 		CMap *cmap = g_resourceloader->loadColormap("item.cmp");
-		warning("Default colormap applied to resources loaded in this fashion!");
+		warning("Default colormap applied to resources loaded in this fashion");
 		resource = (void *)g_resourceloader->loadMaterial(buf, *cmap);
 	} else {
-		warning("Resource type not understood!");
+		warning("Resource type not understood");
 	}
 	if (!resource)
-		warning("Requested resouce (%s) not found!");
+		warning("Requested resouce (%s) not found");
 }
 
 void GrimEngine::drawPrimitives() {
@@ -822,7 +822,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *savedState) {
 		char *data = screenshot->getData();
 		savedState->write(data, size);
 	} else {
-		error("Unable to store screenshot!");
+		error("Unable to store screenshot");
 	}
 	savedState->endSection();
 	delete screenshot;
@@ -920,7 +920,7 @@ void GrimEngine::setSceneLock(const char *name, bool lockStatus) {
 
 	if (!scene) {
 		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Scene object '%s' not found in list!", name);
+			warning("Scene object '%s' not found in list", name);
 		return;
 	}
 	// Change the locking status

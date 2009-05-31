@@ -166,7 +166,7 @@ void Imuse::setPriority(const char *soundName, int priority) {
 	changeTrack = findTrack(soundName);
 	// Check to make sure we found the track
 	if (changeTrack == NULL) {
-		warning("Unable to find track '%s' to change priority!", soundName);
+		warning("Unable to find track '%s' to change priority", soundName);
 		return;
 	}
 	changeTrack->priority = priority;
@@ -178,7 +178,7 @@ void Imuse::setVolume(const char *soundName, int volume) {
 
 	changeTrack = findTrack(soundName);
 	if (changeTrack == NULL) {
-		warning("Unable to find track '%s' to change volume!", soundName);
+		warning("Unable to find track '%s' to change volume", soundName);
 		return;
 	}
 	changeTrack->vol = volume * 1000;
@@ -190,7 +190,7 @@ void Imuse::setPan(const char *soundName, int pan) {
 
 	changeTrack = findTrack(soundName);
 	if (changeTrack == NULL) {
-		warning("Unable to find track '%s' to change pan!", soundName);
+		warning("Unable to find track '%s' to change pan", soundName);
 		return;
 	}
 	changeTrack->pan = pan * 1000;
@@ -202,7 +202,7 @@ int Imuse::getVolume(const char *soundName) {
 
 	getTrack = findTrack(soundName);
 	if (getTrack == NULL) {
-		warning("Unable to find track '%s' to get volume!", soundName);
+		warning("Unable to find track '%s' to get volume", soundName);
 		return 0;
 	}
 	return getTrack->vol / 1000;
@@ -214,7 +214,7 @@ void Imuse::setHookId(const char *soundName, int hookId) {
 
 	changeTrack = findTrack(soundName);
 	if (changeTrack == NULL) {
-		warning("Unable to find track '%s' to change hook id!", soundName);
+		warning("Unable to find track '%s' to change hook id", soundName);
 		return;
 	}
 	changeTrack->curHookId = hookId;
@@ -244,7 +244,7 @@ void Imuse::selectVolumeGroup(const char *soundName, int volGroupId) {
 
 	changeTrack = findTrack(soundName);
 	if (changeTrack == NULL) {
-		warning("Unable to find track '%s' to change volume group id!", soundName);
+		warning("Unable to find track '%s' to change volume group id", soundName);
 		return;
 	}
 	changeTrack->volGroupId = volGroupId;
@@ -256,7 +256,7 @@ void Imuse::setFadeVolume(const char *soundName, int destVolume, int duration) {
 
 	changeTrack = findTrack(soundName);
 	if (changeTrack == NULL) {
-		warning("Unable to find track '%s' to change fade volume!", soundName);
+		warning("Unable to find track '%s' to change fade volume", soundName);
 		return;
 	}
 	changeTrack->volFadeDelay = duration;
@@ -271,7 +271,7 @@ void Imuse::setFadePan(const char *soundName, int destPan, int duration) {
 
 	changeTrack = findTrack(soundName);
 	if (changeTrack == NULL) {
-		warning("Unable to find track '%s' to change fade pan!", soundName);
+		warning("Unable to find track '%s' to change fade pan", soundName);
 		return;
 	}
 	changeTrack->panFadeDelay = duration;

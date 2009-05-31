@@ -51,7 +51,7 @@ Localizer::Localizer() {
 			break;
 	}
 	if (!f.isOpen()) {
-		error("Localizer::Localizer: Unable to find localization information (grim.tab)!");
+		error("Localizer::Localizer: Unable to find localization information (grim.tab)");
 		return;
 	}
 

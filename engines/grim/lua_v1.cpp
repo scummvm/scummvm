@@ -2178,7 +2178,7 @@ static void MakeSectorActive() {
 
 	// FIXME: This happens on initial load. Are we initting something in the wrong order?
 	if (!g_grim->currScene()) {
-		warning("!!!! Trying to call MakeSectorActive without a scene!");
+		warning("!!!! Trying to call MakeSectorActive without a scene");
 		return;
 	}
 
@@ -2283,7 +2283,7 @@ static void GetCurrentSetup() {
 	// FIXME there are some big difference here !
 	Scene *scene = g_grim->findScene(name);
 	if (!scene) {
-		warning("GetCurrentSetup() Requested scene (%s) is not loaded!", name);
+		warning("GetCurrentSetup() Requested scene (%s) is not loaded", name);
 		lua_pushnil();
 		return;
 	}
@@ -3501,7 +3501,7 @@ static void GetSaveGameImage() {
 		lua_pushusertag(screenshot, MKID_BE('VBUF'));
 	} else {
 		lua_pushnil();
-		warning("Could not restore screenshot from file!");
+		warning("Could not restore screenshot from file");
 		return;
 	}
 	savedState->endSection();
@@ -3516,7 +3516,7 @@ static void SubmitSaveGameData() {
 
 	savedState = g_grim->savedState();
 	if (!savedState)
-		error("Cannot obtain saved game!");
+		error("Cannot obtain saved game");
 	savedState->beginSection('SUBS');
 	int count = 0;
 	for (;;) {
@@ -4463,7 +4463,7 @@ lua_Object getTableValue(lua_Object table, const char *name) {
 	lua_Object key = LUA_NOOBJECT;
 
 	if (!lua_istable(table)) {
-		error("getTableValue(): Parameter not a table!");
+		error("getTableValue(): Parameter not a table");
 		return 0;
 	}
 
@@ -4478,7 +4478,7 @@ lua_Object getTableValue(lua_Object table, const char *name) {
 		// that it doesn't understand then an infinite loop
 		// will be set up repeating the same error.
 		if (lua_call("next") != 0) {
-			error("getTableValue could not find the next key!");
+			error("getTableValue could not find the next key");
 			return 0;
 		}
 		key = lua_getresult(1);

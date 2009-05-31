@@ -83,7 +83,7 @@ void POSIXSaveFileManager::checkPath(const Common::FSNode &dir) {
 			if (mkdir(path.c_str(), 0755) != 0) {
 				// mkdir could fail for various reasons: The parent dir doesn't exist,
 				// or is not writeable, the path could be completly bogus, etc.
-				warning("mkdir for '%s' failed!", path.c_str());
+				warning("mkdir for '%s' failed", path.c_str());
 				perror("mkdir");
 
 				switch (errno) {

@@ -250,7 +250,7 @@ void TextObject::draw() {
 
 			g_driver->drawTextBitmap(x, height + y, _textObjectHandle[i]);
 		} else if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("TextObject::draw: Unknown justification code (%d)!", _justify);
+			warning("TextObject::draw: Unknown justification code (%d)", _justify);
 
 		height += _font->getHeight();
 	}

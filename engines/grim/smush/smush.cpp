@@ -343,7 +343,7 @@ struct SavePos *zlibFile::getPos() {
 
 	if (position == ((uint32)  -1)) {
 		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("zlibFile::open() unable to find start position!");
+			warning("zlibFile::open() unable to find start position");
 		return NULL;
 	}
 	pos = new SavePos;
@@ -356,21 +356,21 @@ struct SavePos *zlibFile::getPos() {
 
 bool zlibFile::setPos(struct SavePos *pos) {
 	if (!pos) {
-		warning("Unable to rewind SMUSH movie (no position passed)!");
+		warning("Unable to rewind SMUSH movie (no position passed)");
 		return false;
 	}
 	if (!_handle || !_handle->isOpen()) {
-		warning("Unable to rewind SMUSH movie (invalid handle)!");
+		warning("Unable to rewind SMUSH movie (invalid handle)");
 		return false;
 	}
 	_handle->seek(pos->filePos, SEEK_SET);
 	if (_handle->ioFailed()) {
-		warning("Unable to rewind SMUSH movie (seek failed)!");
+		warning("Unable to rewind SMUSH movie (seek failed)");
 		return false;
 	}
 	memcpy(_inBuf, pos->tmpBuf, BUFFER_SIZE);
 	if (inflateCopy(&_stream, &pos->streamBuf) != Z_OK) {
-		warning("Unable to rewind SMUSH movie (z-lib copy handle failed)!");
+		warning("Unable to rewind SMUSH movie (z-lib copy handle failed)");
 		return false;
 	}
 	_fileDone = false;
@@ -459,7 +459,7 @@ uint32 zlibFile::read(void *ptr, uint32 len) {
 
 	if (!_handle->isOpen()) {
 		if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
-			error("zlibFile::read() File is not open!");
+			error("zlibFile::read() File is not open");
 		return 0;
 	}
 

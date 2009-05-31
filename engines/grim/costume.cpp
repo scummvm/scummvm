@@ -930,7 +930,7 @@ Model::HierNode *Costume::getModelNodes() {
 void Costume::playChoreLooping(int num) {
 	if (num < 0 || num >= _numChores) {
 		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Requested chore number %d is outside the range of chores (0-%d)!", num, _numChores);
+			warning("Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
 	_chores[num].playLooping();
@@ -939,7 +939,7 @@ void Costume::playChoreLooping(int num) {
 void Costume::playChore(int num) {
 	if (num < 0 || num >= _numChores) {
 		if (gDebugLevel == DEBUG_CHORES || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Requested chore number %d is outside the range of chores (0-%d)!", num, _numChores);
+			warning("Requested chore number %d is outside the range of chores (0-%d)", num, _numChores);
 		return;
 	}
 	_chores[num].play();

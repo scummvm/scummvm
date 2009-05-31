@@ -106,7 +106,7 @@ int32 Imuse::getPosIn60HzTicks(const char *soundName) {
 	// Warn the user if the track was not found
 	if (getTrack == NULL) {
 		if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Sound '%s' could not be found to get ticks!", soundName);
+			warning("Sound '%s' could not be found to get ticks", soundName);
 		return false;
 	}
 
@@ -157,7 +157,7 @@ void Imuse::stopSound(const char *soundName) {
 	// Warn the user if the track was not found
 	if (removeTrack == NULL) {
 		if (gDebugLevel == DEBUG_IMUSE || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Sound track '%s' could not be found to stop!", soundName);
+			warning("Sound track '%s' could not be found to stop", soundName);
 		return;
 	}
 	flushTrack(removeTrack);

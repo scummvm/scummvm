@@ -633,7 +633,7 @@ void GfxOpenGL::destroyMaterial(Material *material) {
 
 void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	//	if (num != 0) {
-	//		warning("Animation not handled yet in GL texture path !");
+	//		warning("Animation not handled yet in GL texture path");
 	//	}
 	if (y + h == 480) {
 		glRasterPos2i(x, _screenHeight - 1);
