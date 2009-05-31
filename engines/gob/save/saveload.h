@@ -176,7 +176,6 @@ protected:
 		bool saveScreenshot(int slot, const SavePartSprite *screenshot);
 		bool loadScreenshot(int slot, SavePartSprite *screenshot);
 
-	private:
 		/** Slot file construction. */
 		class File : public SlotFileIndexed {
 		public:
@@ -187,6 +186,7 @@ protected:
 			int getSlot(int32 offset) const;
 			int getSlotRemainder(int32 offset) const;
 		};
+	private:
 
 		File *_slotFile;
 
@@ -298,7 +298,6 @@ protected:
 		bool saveScreenProps(int slot, const byte *props);
 		bool loadScreenProps(int slot, byte *props);
 
-	private:
 		/** Slot file construction. */
 		class File : public SlotFileIndexed {
 		public:
@@ -310,6 +309,7 @@ protected:
 			int getSlotRemainder(int32 offset) const;
 		};
 
+	private:
 		bool _firstSize;
 
 		byte _props[500];
