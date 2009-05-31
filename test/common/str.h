@@ -118,6 +118,35 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 	}
 
+	void test_self_asignment() {
+		Common::String foo1("12345678901234567890123456789012");
+		foo1 = foo1.c_str() + 2;
+		TS_ASSERT_EQUALS(foo1, "345678901234567890123456789012");
+
+		Common::String foo2("123456789012");
+		foo2 = foo2.c_str() + 2;
+		TS_ASSERT_EQUALS(foo2, "3456789012");
+
+		// "foo3" and "foo4" will be using allocated storage from construction on.
+		Common::String foo3("12345678901234567890123456789012");
+		foo3 += foo3.c_str();
+		TS_ASSERT_EQUALS(foo3, "12345678901234567890123456789012""12345678901234567890123456789012");
+
+		Common::String foo4("12345678901234567890123456789012");
+		foo4 += foo4;
+		TS_ASSERT_EQUALS(foo4, "12345678901234567890123456789012""12345678901234567890123456789012");
+
+		// Based on our current Common::String implementation "foo5" and "foo6" will first use the internal storage,
+		// and on "operator +=" they will change to allocated memory.
+		Common::String foo5("123456789012");
+		foo5 += foo5.c_str();
+		TS_ASSERT_EQUALS(foo5, "123456789012""123456789012");
+
+		Common::String foo6("123456789012");
+		foo6 += foo6;
+		TS_ASSERT_EQUALS(foo6, "123456789012""123456789012");
+	}
+
 	void test_hasPrefix() {
 		Common::String str("this/is/a/test, haha");
 		TS_ASSERT_EQUALS(str.hasPrefix(""), true);
