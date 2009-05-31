@@ -432,14 +432,14 @@ SaveLoad_v4::ScreenPropsHandler::File::File(const SaveLoad_v4::GameHandler::File
 	_slot = slot;
 }
 
-SaveLoad_v4::ScreenPropsHandler::File::File::~File() {
+SaveLoad_v4::ScreenPropsHandler::File::~File() {
 }
 
-int SaveLoad_v4::ScreenPropsHandler::File::File::getSlot(int32 offset) const {
+int SaveLoad_v4::ScreenPropsHandler::File::getSlot(int32 offset) const {
 	return _slot;
 }
 
-int SaveLoad_v4::ScreenPropsHandler::File::File::getSlotRemainder(int32 offset) const {
+int SaveLoad_v4::ScreenPropsHandler::File::getSlotRemainder(int32 offset) const {
 	return 0;
 }
 
