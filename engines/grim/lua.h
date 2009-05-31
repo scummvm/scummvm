@@ -46,24 +46,6 @@ void setFrameTime(float frameTime);
 // Set smush.movieTime
 void setMovieTime(float movieTime);
 
-// Get the event handler function with the given name, pushing the handler
-// object if appropriate
-lua_Object getEventHandler(const char *name);
-
-// set the value for a table item
-void setTableValue(lua_Object table, const char *name, int newvalue);
-void setTableValue(lua_Object table, const char *name, lua_Object newvalue);
-
-// get the value of a table item
-lua_Object getTableValue(lua_Object table, const char *name);
-lua_Object getIndexedTableValue(lua_Object table, int index);
-
-// make a Vector3d object from coordinate table values
-Graphics::Vector3d tableToVector(lua_Object table);
-
-// get a function stored in a table
-lua_Object getTableFunction(lua_Object table, const char *name);
-
 } // end of namespace Grim
 
 #endif

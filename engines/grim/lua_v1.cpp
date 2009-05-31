@@ -2239,6 +2239,37 @@ static void MakeCurrentSet() {
 	g_grim->setScene(name);
 }
 
+static void cameraChangeHandle(int prev, int next) {
+	lua_beginblock();
+
+	lua_pushobject(lua_getref(refSystemTable));
+	lua_pushstring("camChangeHandler");
+	lua_Object func = lua_gettable();
+
+	if (lua_isfunction(func)) {
+		lua_pushnumber(prev);
+		lua_pushnumber(next);
+		lua_callfunction(func);
+	}
+
+	lua_endblock();
+}
+
+static void cameraPostChangeHandle(int num) {
+	lua_beginblock();
+
+	lua_pushobject(lua_getref(refSystemTable));
+	lua_pushstring("postCamChangeHandler");
+	lua_Object func = lua_gettable();
+
+	if (lua_isfunction(func)) {
+		lua_pushnumber(num);
+		lua_callfunction(func);
+	}
+
+	lua_endblock();
+}
+
 static void MakeCurrentSetup() {
 	lua_Object setupObj = lua_getparam(1);
 	if (!lua_isnumber(setupObj))
@@ -2249,22 +2280,8 @@ static void MakeCurrentSetup() {
 	int prevSetup = g_grim->currScene()->setup();
 	g_grim->currScene()->setSetup(num);
 
-	lua_beginblock();
-	lua_Object camChangeHandler = getEventHandler("camChangeHandler");
-	if (camChangeHandler != LUA_NOOBJECT) {
-		lua_pushnumber(prevSetup);
-		lua_pushnumber(num);
-		lua_callfunction(camChangeHandler);
-	}
-	lua_endblock();
-
-	lua_beginblock();
-	lua_Object postCamChangeHandler = getEventHandler("postCamChangeHandler");
-	if (postCamChangeHandler != LUA_NOOBJECT) {
-		lua_pushnumber(num);
-		lua_callfunction(postCamChangeHandler);
-	}
-	lua_endblock();
+	cameraChangeHandle(prevSetup, num);
+	cameraPostChangeHandle(num);
 }
 
 /* Find the requested scene and return the current setup
@@ -4240,37 +4257,6 @@ int bundle_dofile(const char *filename) {
 	int result = lua_dobuffer(const_cast<char *>(b->data()), b->len(), const_cast<char *>(filename));
 	delete b;
 	return result;
-}
-
-lua_Object getTableFunction(lua_Object table, const char *name) {
-	lua_pushobject(table);
-	lua_pushstring(const_cast<char *>(name));
-	lua_Object handler = lua_gettable();
-
-	if (lua_isnil(handler))
-		return LUA_NOOBJECT;
-
-	if (lua_istable(handler)) {
-		lua_pushobject(handler);	// Push handler object
-		lua_pushobject(handler);	// For gettable
-		lua_pushstring(const_cast<char *>(name));
-		handler = lua_gettable();
-		if (lua_isnil(handler))
-			return LUA_NOOBJECT;
-	}
-
-	if (!lua_isfunction(handler)) {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Invalid event handler %s", name);
-		return LUA_NOOBJECT;
-	}
-
-	return handler;
-}
-
-lua_Object getEventHandler(const char *name) {
-	lua_Object system_table = lua_getglobal("system");
-	return getTableFunction(system_table, name);
 }
 
 } // end of namespace Grim
