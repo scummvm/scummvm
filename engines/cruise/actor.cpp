@@ -349,7 +349,7 @@ int point_proche(int16 table[][2]) {
 #define NBNOEUD 20
 
 int16 select_noeud[3];
-char solution[20 + 1];
+int8 solution[20 + 1];
 
 int prem;
 int prem2;
@@ -357,9 +357,9 @@ int dist_chemin;
 int idsol;
 int solmax;
 
-char fl[NBNOEUD + 1];
-char sol[NBNOEUD + 1];
-char Fsol[NBNOEUD + 1];
+int8 fl[NBNOEUD + 1];
+int8 sol[NBNOEUD + 1];
+int8 Fsol[NBNOEUD + 1];
 
 int D;
 
