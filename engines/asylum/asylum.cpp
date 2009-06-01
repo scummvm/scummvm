@@ -48,7 +48,10 @@ Common::Error AsylumEngine::run() {
 	GraphicResource* g = new GraphicResource;
 	
 	g->loadResource("res.001");
-	
+	g->dump();
+    g->loadResource("res.000");
+    g->dump();
+
 	delete g;
 	
 	return Common::kNoError;
