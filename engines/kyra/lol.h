@@ -773,6 +773,7 @@ private:
 	int olol_paletteFlash(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
+	int olol_shakeScene(EMCState *script);
 	int olol_gasExplosion(EMCState *script);
 	int olol_calcNewBlockPosition(EMCState *script);
 	int olol_fadeScene(EMCState *script);

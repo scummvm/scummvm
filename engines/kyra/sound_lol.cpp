@@ -79,7 +79,7 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 			snprintf(file2, sizeof(file2), "%s%c%c.%s", pattern1, '_', symbol, pattern2);
 			if (_sound->isVoicePresent(file1))
 				newSpeechList.push_back(_sound->getVoiceStream(file1));
-			if (_sound->isVoicePresent(file2))
+			else if (_sound->isVoicePresent(file2))
 				newSpeechList.push_back(_sound->getVoiceStream(file2));
 			else
 				break;

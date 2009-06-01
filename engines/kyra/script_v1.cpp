@@ -45,8 +45,11 @@ int KyraEngine_v1::o1_resetGameFlag(EMCState *script) {
 
 int KyraEngine_v1::o1_getRand(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	assert(stackPos(0) < stackPos(1));
-	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
+	int min = stackPos(0);
+	int max = stackPos(1);
+	if (max < min)
+		SWAP(min, max);
+	return _rnd.getRandomNumberRng(min, max);
 }
 
 int KyraEngine_v1::o1_hideMouse(EMCState *script) {
