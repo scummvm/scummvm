@@ -58,7 +58,7 @@ Common::Platform CruiseEngine::getPlatform() const {
 
 static const PlainGameDescriptor cruiseGames[] = {
 	{"cruise", "Cinematique evo.2 engine game"},
-	{"cruise", "Cruise for a corpse"},
+	{"cruise", "Cruise for a Corpse"},
 	{0, 0}
 };
 
