@@ -258,7 +258,6 @@ static void syncOverlays2(Common::Serializer &s) {
 			// save BSS
 			s.syncAsSint16LE(ovlData->sizeOfData4);
 			if (ovlData->sizeOfData4)
-				// FIXME: Endian and structure packing problems for this data pointer
 				s.syncBytes(ovlData->data4Ptr, ovlData->sizeOfData4);
 
 			// save variables
@@ -344,8 +343,6 @@ void syncScript(Common::Serializer &s, scriptInstanceStruct *entry) {
 		s.syncAsSint16LE(ptr->varA);
 
 		if (ptr->varA) {
-			// FIXME: This code is not endian safe, and breaks if struct
-			// packing changes. Read/write the members one by one instead.
 			if (s.isLoading())
 				ptr->var6 = (byte *)mallocAndZero(ptr->varA);
 			s.syncBytes(ptr->var6, ptr->varA);
