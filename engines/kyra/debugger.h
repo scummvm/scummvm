@@ -47,9 +47,9 @@ protected:
 	bool cmd_loadPalette(int argc, const char **argv);
 	bool cmd_showFacings(int argc, const char **argv);
 	bool cmd_gameSpeed(int argc, const char **argv);
-	bool cmd_listFlags(int argc, const char **argv);
-	bool cmd_toggleFlag(int argc, const char **argv);
-	bool cmd_queryFlag(int argc, const char **argv);
+	virtual bool cmd_listFlags(int argc, const char **argv);
+	virtual bool cmd_toggleFlag(int argc, const char **argv);
+	virtual bool cmd_queryFlag(int argc, const char **argv);
 	bool cmd_listTimers(int argc, const char **argv);
 	bool cmd_setTimerCountdown(int argc, const char **argv);
 };
@@ -95,6 +95,20 @@ protected:
 	KyraEngine_HoF *_vm;
 
 	bool cmd_passcodes(int argc, const char **argv);
+};
+
+class LoLEngine;
+
+class Debugger_LoL : public Debugger {
+public:
+	Debugger_LoL(LoLEngine *vm);
+
+protected:
+	LoLEngine *_vm;
+
+	bool cmd_listFlags(int argc, const char **argv);
+	bool cmd_toggleFlag(int argc, const char **argv);
+	bool cmd_queryFlag(int argc, const char **argv);
 };
 
 } // End of namespace Kyra

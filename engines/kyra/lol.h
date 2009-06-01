@@ -292,6 +292,7 @@ class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
 friend class TIMInterpreter_LoL;
+friend class Debugger_LoL;
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine();

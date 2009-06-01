@@ -32,6 +32,7 @@
 #include "kyra/sound.h"
 #include "kyra/timer.h"
 #include "kyra/util.h"
+#include "kyra/debugger.h"
 
 #include "sound/voc.h"
 #include "sound/audiostream.h"
@@ -540,6 +541,9 @@ Common::Error LoLEngine::init() {
 	_spellProcs.push_back(new SpellProc(this, 0));
 	_spellProcs.push_back(new SpellProc(this, 0));
 	_spellProcs.push_back(new SpellProc(this, &LoLEngine::castGuardian));
+
+	_debugger = new Debugger_LoL(this);
+	assert(_debugger);
 
 	return Common::kNoError;
 }
