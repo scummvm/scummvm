@@ -1780,23 +1780,28 @@ uint16 *LoLEngine::getCharacterOrMonsterProtectionAgainstItems(int id) {
 }
 
 void LoLEngine::delay(uint32 millis, bool doUpdate, bool) {
-	int del = (int)(millis);
-	while (del > 0 && !shouldQuit()) {
+	while (millis && !shouldQuit()) {
 		if (doUpdate)
 			update();
 		else
 			updateInput();
-		int step = del >= _tickLength ? _tickLength : del;
+
+		uint32 step = MIN<uint32>(millis, _tickLength);
 		_system->delayMillis(step);
-		del -= step;
+		millis -= step;
 	}
 }
 
 void LoLEngine::delayUntil(uint32 timeStamp) {
-	int del = (int)(timeStamp - _system->getMillis());
-	while (del > 0) {
+	const uint32 curTime = _system->getMillis();
+	if (curTime < timeStamp)
+		return;
+
+	uint32 del = timeStamp - curTime;
+	while (del) {
 		updateInput();
-		int step = del >= _tickLength ? _tickLength : del;
+
+		uint32 step = MIN<uint32>(del, _tickLength);
 		_system->delayMillis(step);
 		del -= step;
 	}
