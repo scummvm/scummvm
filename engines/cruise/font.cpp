@@ -45,7 +45,7 @@ int32 getLineHeight(int16 charCount, const FontEntry *fontPtr) {
 		return (0);
 
 	for (int i = 0; i < charCount; ++i) {
-		int charHeight = FROM_LE_16(fontPtr[i].charHeight);
+		int charHeight = fontPtr[i].charHeight;
 		if (charHeight > highestChar) highestChar = charHeight;
 	}
 
@@ -74,7 +74,7 @@ int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
 			lineLength = rightBorder_X;
 			localString = tempPtr;
 		} else if (charData >= 0) {
-			lineLength += wordSpacingWidth + (int16)FROM_LE_16(fontData[charData].charWidth);
+			lineLength += wordSpacingWidth + (int16)fontData[charData].charWidth;
 		} else if (ch == ' ') {
 			lineLength += wordSpacingWidth + SPACE_WIDTH;
 			localString = tempPtr;
@@ -127,7 +127,7 @@ void loadFNT(const char *fileName) {
 
 			FontEntry *fe = (FontEntry *)(_systemFNT + sizeof(FontInfo));
 
-			for (int i = 0; i < FROM_LE_16(f->numChars); ++i, ++fe) {
+			for (int i = 0; i < f->numChars; ++i, ++fe) {
 				bigEndianLongToNative(&fe->offset);	// Flip 32-bit offset field
 				flipGen(&fe->v1, 8);	// Flip remaining 16-bit fields
 			}
@@ -244,7 +244,7 @@ int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
 			} else {
 				if (charData) {
 					if (pixelCount + wordSpacingWidth +
-							(int16)FROM_LE_16(fontData[charData].charWidth) >= inRightBorder_X) {
+							(int16)fontData[charData].charWidth >= inRightBorder_X) {
 						finish = 1;
 						if (temp_pc) {
 							pixelCount = temp_pc;
@@ -252,7 +252,7 @@ int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
 						}
 					} else {
 						pixelCount += wordSpacingWidth +
-							(int16)FROM_LE_16(fontData[charData].charWidth);
+							(int16)fontData[charData].charWidth;
 					}
 				}
 			}
@@ -318,12 +318,12 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 	}
 
 	fontPtr_Desc = (const FontEntry *)((const uint8 *)fontPtr + sizeof(FontInfo));
-	fontPtr_Data = (const uint8 *)fontPtr + FROM_LE_32(fontPtr->offset);
+	fontPtr_Data = (const uint8 *)fontPtr + fontPtr->offset;
 
-	lineHeight = getLineHeight(FROM_LE_16(fontPtr->numChars), fontPtr_Desc);
+	lineHeight = getLineHeight(fontPtr->numChars, fontPtr_Desc);
 
-	wordSpacingWidth = FROM_LE_16(fontPtr->hSpacing);
-	wordSpacingHeight = FROM_LE_16(fontPtr->vSpacing);
+	wordSpacingWidth = fontPtr->hSpacing;
+	wordSpacingHeight = fontPtr->vSpacing;
 
 	// if right border is higher then screenwidth (+ spacing), adjust border
 	if (inRightBorder_X > 310) {
@@ -399,19 +399,19 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 						const FontEntry &fe = fontPtr_Desc[charData];
 
 						// should ist be stringRenderBufferSize/2 for the second last param?
-						renderWord((const uint8 *)fontPtr_Data + FROM_LE_32(fe.offset),
+						renderWord((const uint8 *)fontPtr_Data + fe.offset,
 						           currentStrRenderBuffer,
 						           drawPosPixel_X,
-						           FROM_LE_16(fe.height2) - FROM_LE_16(fe.charHeight) +
+						           fe.height2 - fe.charHeight +
 						           lineHeight + heightOffset,
-						           FROM_LE_16(fe.charHeight),
-								   FROM_LE_16(fe.v1),
+						           fe.charHeight,
+							   fe.v1,
 						           stringRenderBufferSize,
 						           stringWidth,
-								   (int16)FROM_LE_16(fe.charWidth));
+								   (int16)fe.charWidth);
 
 						drawPosPixel_X +=
-						    wordSpacingWidth + (int16)FROM_LE_16(fe.charWidth);
+						    wordSpacingWidth + (int16)fe.charWidth;
 					}
 				}
 			} else {
