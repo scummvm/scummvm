@@ -1232,27 +1232,25 @@ void LoLEngine::movePartySmoothScrollTurnRight(int speed) {
 
 void LoLEngine::pitDropScroll(int numSteps) {
 	_screen->copyRegionSpecial(0, 320, 200, 112, 0, 6, 176, 120, 0, 0, 176, 120, 0);
-	uint32 ctime = 0;
-	int del = 0;
+	uint32 etime = 0;
 
 	for (int i = 0; i < numSteps; i++) {
-		ctime = _system->getMillis();
+		etime = _system->getMillis() + _tickLength;
 		int ys = ((30720 / numSteps) * i) >> 8;
 		_screen->copyRegionSpecial(6, 176, 120, 0, ys, 0, 320, 200, 112, 0, 176, 120 - ys, 0);
 		_screen->copyRegionSpecial(2, 320, 200, 112, 0, 0, 320, 200, 112, 120 - ys, 176, ys, 0);
 		_screen->updateScreen();
 
-		del = _tickLength -	(_system->getMillis() - ctime);
-		if (del > 0)
-			delay(del);
+		delayUntil(etime);
 	}
+
+	etime = _system->getMillis() + _tickLength;
 
 	_screen->copyRegionSpecial(2, 320, 200, 112, 0, 0, 320, 200, 112, 0, 176, 120, 0);
 	_screen->updateScreen();
 
-	del = _tickLength -	(_system->getMillis() - ctime);
-	if (del > 0)
-		delay(del);
+	delayUntil(etime);
+
 	updateDrawPage2();
 }
 
