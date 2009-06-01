@@ -82,8 +82,7 @@ int16 Op_Exec(void) {
 	int ovlIdx;
 	uint8 *ptr;
 	uint8 *ptr2;
-
-	short int popTable[256];	// TODO: check original size;
+	int16 popTable[200];
 
 	int numOfArgToPop = popVar();
 
@@ -164,7 +163,7 @@ int16 Op_Narrator(void) {
 	return (0);
 }
 
-int16 Op_GetMouseX(void) {	// TODO: implement properly
+int16 Op_GetMouseX(void) {
 	int16 dummy;
 	int16 mouseX;
 	int16 mouseY;
@@ -175,7 +174,7 @@ int16 Op_GetMouseX(void) {	// TODO: implement properly
 	return (mouseX);
 }
 
-int16 Op_GetMouseY(void) {	// TODO: implement properly
+int16 Op_GetMouseY(void) {
 	int16 dummy;
 	int16 mouseX;
 	int16 mouseY;
@@ -313,7 +312,7 @@ int16 Op_UnmergeBackgroundIncrust(void) {
 }
 
 int16 Op_FreePreload(void) {
-	// TODO: implement
+	// TODO: See if this is needed
 	debug(1, "Op_FreePreload not implemented");
 	return (0);
 }
