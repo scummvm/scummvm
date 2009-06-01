@@ -372,7 +372,8 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 
 	s->parser_lastmatch_word = SAID_NO_MATCH;
 
-	s->_vocabulary = new Vocabulary(s->resmgr, (s->flags & GF_SCI0_OLD));
+	s->_kernel = new Kernel(s->resmgr, (s->flags & GF_SCI0_OLD));
+	s->_vocabulary = new Vocabulary(s->resmgr);
 
 	script_map_kernel(s);
 	// Maps the kernel functions
@@ -423,6 +424,7 @@ void script_free_engine(EngineState *s) {
 	s->_kfuncTable.clear();
 
 	delete s->_vocabulary;
+	delete s->_kernel;
 }
 
 void script_free_breakpoints(EngineState *s) {

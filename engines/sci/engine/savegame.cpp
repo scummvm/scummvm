@@ -827,13 +827,16 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_vocabulary = s->_vocabulary;
 //	s->_vocabulary = 0;	// FIXME: We should set s->_vocabulary to 0 here,
 // else it could be freed when the old EngineState is freed. Luckily, this freeing currently
-// never happens, so we don't need to. This is lucky, because the fact that the kernel function
-// and selector tables are stored in the Vocabulary (????) makes it impossible for us to
-// free the vocabulary here.
+// never happens, so we don't need to. 
 
 	retval->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 
 	// static VM/Kernel information:
+	retval->_kernel = s->_kernel;
+	assert(0 == retval->_kernel);
+//	s->_kernel = 0;	// FIXME: We should set s->_kernel to 0 here,
+// else it could be freed when the old EngineState is freed. Luckily, this freeing currently
+// never happens, so we don't need to. 
 	retval->_kfuncTable = s->_kfuncTable;
 
 	// Copy breakpoint information from current game instance

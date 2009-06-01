@@ -236,7 +236,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	sciprintf("Unimplemented syscall: %s[%x](", s->_vocabulary->getKernelName(funct_nr).c_str(), funct_nr);
+	sciprintf("Unimplemented syscall: %s[%x](", s->_kernel->getKernelName(funct_nr).c_str(), funct_nr);
 
 	for (int i = 0; i < argc; i++) {
 		sciprintf("%04x:%04x", PRINT_REG(argv[i]));

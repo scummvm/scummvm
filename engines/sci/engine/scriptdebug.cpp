@@ -699,8 +699,8 @@ int c_stack(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 }
 
 const char *selector_name(EngineState *s, int selector) {
-	if (selector >= 0 && selector < (int)s->_vocabulary->getSelectorNamesSize())
-		return s->_vocabulary->getSelectorName(selector).c_str();
+	if (selector >= 0 && selector < (int)s->_kernel->getSelectorNamesSize())
+		return s->_kernel->getSelectorName(selector).c_str();
 	else
 		return "--INVALID--";
 }
@@ -822,7 +822,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	if (print_bw_tag)
 		sciprintf("[%c] ", opsize ? 'B' : 'W');
-	sciprintf("%s", s->_vocabulary->getOpcode(opcode).name.c_str());
+	sciprintf("%s", s->_kernel->getOpcode(opcode).name.c_str());
 
 	i = 0;
 	while (g_opcode_formats[opcode][i]) {
@@ -858,7 +858,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 			if (opcode == op_callk)
 				sciprintf(" %s[%x]", (param_value < s->_kfuncTable.size()) ?
-							((param_value < s->_vocabulary->getKernelNamesSize()) ? s->_vocabulary->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
+							((param_value < s->_kernel->getKernelNamesSize()) ? s->_kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
 			else
 				sciprintf(opsize ? " %02x" : " %04x", param_value);
@@ -948,7 +948,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				if (!name)
 					name = "<invalid>";
 
-				sciprintf("  %s::%s[", name, (selector > s->_vocabulary->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
+				sciprintf("  %s::%s[", name, (selector > s->_kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
 
 				switch (lookup_selector(s, called_obj_addr, selector, &val_ref, &fun_ref)) {
 				case kSelectorMethod:
@@ -1058,12 +1058,12 @@ static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			sciprintf(" %x:[%x]  k%s(", i, call.origin, s->_vocabulary->getKernelName(-(call.selector) - 42).c_str());
+			sciprintf(" %x:[%x]  k%s(", i, call.origin, s->_kernel->getKernelName(-(call.selector) - 42).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
 			sciprintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
-			          objname,s->_vocabulary->getSelectorName(call.selector).c_str());
+			          objname,s->_kernel->getSelectorName(call.selector).c_str());
 			break;
 		}
 
@@ -1232,10 +1232,10 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 	}
 
 
-	is_view = (lookup_selector(s, pos, s->_vocabulary->_selectorMap.x, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_vocabulary->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_vocabulary->_selectorMap.signal, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_vocabulary->_selectorMap.nsTop, NULL) == kSelectorVariable);
+	is_view = (lookup_selector(s, pos, s->_kernel->_selectorMap.x, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->_kernel->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->_kernel->_selectorMap.signal, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->_kernel->_selectorMap.nsTop, NULL) == kSelectorVariable);
 
 	if (!is_view) {
 		sciprintf("Not a dynamic View object.\n");
@@ -1318,7 +1318,7 @@ static int c_disasm_addr(EngineState *s, const Common::Array<cmd_param_t> &cmdPa
 
 static int c_disasm(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	Object *obj = obj_get(s, cmdParams[0].reg);
-	int selector_id = s->_vocabulary->findSelector(cmdParams[1].str);
+	int selector_id = s->_kernel->findSelector(cmdParams[1].str);
 	reg_t addr;
 
 	if (!obj) {
@@ -1367,8 +1367,8 @@ static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		callk_index = strtoul(cmdParams [0].str, &endptr, 0);
 		if (*endptr != '\0') {
 			callk_index = -1;
-			for (uint i = 0; i < s->_vocabulary->getKernelNamesSize(); i++)
-				if (cmdParams [0].str == s->_vocabulary->getKernelName(i)) {
+			for (uint i = 0; i < s->_kernel->getKernelNamesSize(); i++)
+				if (cmdParams [0].str == s->_kernel->getKernelName(i)) {
 					callk_index = i;
 					break;
 				}
@@ -1419,7 +1419,7 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t *vptr;
 	reg_t fptr;
 
-	selector_id = s->_vocabulary->findSelector(selector_name);
+	selector_id = s->_kernel->findSelector(selector_name);
 
 	if (selector_id < 0) {
 		sciprintf("Unknown selector: \"%s\"\n", selector_name);
@@ -1566,7 +1566,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	int have_rects = 0;
 	Common::Rect nsrect, nsrect_clipped, brrect;
 
-	if (lookup_selector(s, pos, s->_vocabulary->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
+	if (lookup_selector(s, pos, s->_kernel->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
 		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
 		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
 		GETRECT(brLeft, brRight, brBottom, brTop);
@@ -1580,7 +1580,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	x = GET_SELECTOR(pos, x);
 	y = GET_SELECTOR(pos, y);
 	priority = GET_SELECTOR(pos, priority);
-	if (s->_vocabulary->_selectorMap.z > 0) {
+	if (s->_kernel->_selectorMap.z > 0) {
 		z = GET_SELECTOR(pos, z);
 		sciprintf("(%d,%d,%d)\n", x, y, z);
 	} else

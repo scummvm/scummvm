@@ -111,7 +111,7 @@ void script_adjust_opcode_formats(int res_version) {
 #define FIND_SELECTOR(_slc_) _selectorMap._slc_ = findSelector(#_slc_)
 #define FIND_SELECTOR2(_slc_, _slcstr_) _selectorMap._slc_ = findSelector(_slcstr_)
 
-void Vocabulary::mapSelectors() {
+void Kernel::mapSelectors() {
 	FIND_SELECTOR(init);
 	FIND_SELECTOR(play);
 	FIND_SELECTOR(replay);
@@ -202,7 +202,7 @@ void Vocabulary::mapSelectors() {
 	FIND_SELECTOR(syncTime);
 }
 
-void Vocabulary::dumpScriptObject(char *data, int seeker, int objsize) {
+void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {
 	int selectors, overloads, selectorsize;
 	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
 	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
@@ -245,7 +245,7 @@ void Vocabulary::dumpScriptObject(char *data, int seeker, int objsize) {
 		}
 }
 
-void Vocabulary::dumpScriptClass(char *data, int seeker, int objsize) {
+void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
 	int selectors, overloads, selectorsize;
 	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
 	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
@@ -292,7 +292,7 @@ void Vocabulary::dumpScriptClass(char *data, int seeker, int objsize) {
 	}
 }
 
-void Vocabulary::dissectScript(int scriptNumber) {
+void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
 	Resource *script = _resmgr->findResource(kResourceTypeScript, scriptNumber, 0);
@@ -385,7 +385,7 @@ void Vocabulary::dissectScript(int scriptNumber) {
 					}
 				} else {
 					nextitem = nextitem << 8 | script->data [seeker++];
-					sciprintf("%s[%03x] ", getAnyWordFromGroup(nextitem), nextitem);
+					sciprintf("%s[%03x] ", vocab->getAnyWordFromGroup(nextitem), nextitem);
 				}
 			}
 			sciprintf("\n");

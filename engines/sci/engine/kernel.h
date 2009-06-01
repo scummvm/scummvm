@@ -31,6 +31,7 @@
 #include "common/rect.h"
 
 #include "sci/uinput.h"
+#include "sci/vocabulary.h"
 
 namespace Sci {
 
@@ -45,7 +46,82 @@ extern int _debug_step_running;
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 //#define DEBUG_PARSER	// enable for parser debugging
 
-/* Formerly, the heap macros were here; they have been deprecated, however. */
+struct opcode {
+	int type;
+	Common::String name;
+};
+
+class Kernel {
+public:
+	Kernel(ResourceManager *resmgr, bool isOldSci0);
+	~Kernel();
+
+	uint getOpcodesSize() const { return _opcodes.size(); }
+	const opcode &getOpcode(uint opcode) const { return _opcodes[opcode]; }
+
+	uint getSelectorNamesSize() const { return _selectorNames.size(); }
+	const Common::String &getSelectorName(uint selector) const { return _selectorNames[selector]; }
+
+	uint getKernelNamesSize() const { return _kernelNames.size(); }
+	const Common::String &getKernelName(uint number) const { return _kernelNames[number]; }
+
+	/* Determines the selector ID of a selector by its name
+	**             (const char *) selectorName: Name of the selector to look up
+	** Returns   : (int) The appropriate selector ID, or -1 on error
+	*/
+	int findSelector(const char *selectorName) const;
+
+	/* Detects whether a particular kernel function is required in the game
+	**             (const char *) functionName: The name of the desired kernel function
+	** Returns   : (bool) true if the kernel function is listed in the kernel table,
+	**                   false otherwise
+	*/
+	bool hasKernelFunction(const char *functionName) const;
+
+	// Script dissection/dumping functions
+	void dissectScript(int scriptNumber, Vocabulary *vocab);
+	void dumpScriptObject(char *data, int seeker, int objsize);
+	void dumpScriptClass(char *data, int seeker, int objsize);
+
+	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
+private:
+	/**
+	 * Loads the kernel function names.
+	 *
+	 * This function reads the kernel function name table from resource_map,
+	 * and fills the _kernelNames array with them.
+	 * The resulting list has the same format regardless of the format of the
+	 * name table of the resource (the format changed between version 0 and 1).
+	 * @return true on success, false on failure
+	 */
+	bool loadKernelNames();
+
+	/**
+	* Loads the kernel selector names.
+	* Returns true upon success, false otherwise.
+	*/
+	bool loadSelectorNames(bool isOldSci0);
+
+	/* Maps special selectors
+	** Returns   : (void)
+	*/
+	void mapSelectors();
+
+	/**
+	 * Loads the opcode names (only used for debugging).
+	 * @return true on success, false on failure
+	 */
+	bool loadOpcodes();
+
+	ResourceManager *_resmgr;
+
+	// Kernel-related lists
+	// List of opcodes, loaded from vocab.998. This list is only used for debugging
+	// purposes, as we hardcode the list of opcodes in the sci_opcodes enum (script.h)
+	Common::Array<opcode> _opcodes;
+	Common::StringList _selectorNames;
+	Common::StringList _kernelNames;
+};
 
 /******************** Selector functionality ********************/
 
@@ -54,7 +130,7 @@ enum SelectorInvocation {
 	kContinueOnInvalidSelector = 1
 };
 
-#define GET_SEL32(_o_, _slc_) read_selector(s, _o_, s->_vocabulary->_selectorMap._slc_, __FILE__, __LINE__)
+#define GET_SEL32(_o_, _slc_) read_selector(s, _o_, s->_kernel->_selectorMap._slc_, __FILE__, __LINE__)
 #define GET_SEL32V(_o_, _slc_) (GET_SEL32(_o_, _slc_).offset)
 #define GET_SEL32SV(_o_, _slc_) ((int16)(GET_SEL32(_o_, _slc_).offset))
 /* Retrieves a selector from an object
@@ -65,8 +141,8 @@ enum SelectorInvocation {
 ** selector_map_t and mapped in script.c.
 */
 
-#define PUT_SEL32(_o_, _slc_, _val_) write_selector(s, _o_, s->_vocabulary->_selectorMap._slc_, _val_, __FILE__, __LINE__)
-#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(s, _o_, s->_vocabulary->_selectorMap._slc_, make_reg(0, _val_), __FILE__, __LINE__)
+#define PUT_SEL32(_o_, _slc_, _val_) write_selector(s, _o_, s->_kernel->_selectorMap._slc_, _val_, __FILE__, __LINE__)
+#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(s, _o_, s->_kernel->_selectorMap._slc_, make_reg(0, _val_), __FILE__, __LINE__)
 /* Writes a selector value to an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be written to
 **             (selector_name) selector: The selector to read
@@ -78,7 +154,7 @@ enum SelectorInvocation {
 
 
 #define INV_SEL(_object_, _selector_, _noinvalid_) \
-	s, _object_,  s->_vocabulary->_selectorMap._selector_, _noinvalid_, funct_nr, argv, argc, __FILE__, __LINE__
+	s, _object_,  s->_kernel->_selectorMap._selector_, _noinvalid_, funct_nr, argv, argc, __FILE__, __LINE__
 /* Kludge for use with invoke_selector(). Used for compatibility with compilers that can't
 ** handle vararg macros.
 */

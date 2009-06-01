@@ -315,7 +315,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			Breakpoint *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->_vocabulary->getSelectorName(selector).c_str());
+			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->_kernel->getSelectorName(selector).c_str());
 
 			bp = s->bp_list;
 			while (bp) {
@@ -1959,7 +1959,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 			script_init_engine(s, s->version);
 			game_init(s);
 			sfx_reset_player();
-			_init_stack_base_with_selector(s, s->_vocabulary->_selectorMap.play);
+			_init_stack_base_with_selector(s, s->_kernel->_selectorMap.play);
 
 			send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 
@@ -1979,7 +1979,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 					sciprintf("Restarting with replay()\n");
 					s->_executionStack.clear(); // Restart with replay
 
-					_init_stack_base_with_selector(s, s->_vocabulary->_selectorMap.replay);
+					_init_stack_base_with_selector(s, s->_kernel->_selectorMap.replay);
 
 					send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 				}
@@ -2000,7 +2000,7 @@ int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
 	sciprintf(" Calling %s::play()\n", s->_gameName.c_str());
-	_init_stack_base_with_selector(s, s->_vocabulary->_selectorMap.play); // Call the play selector
+	_init_stack_base_with_selector(s, s->_kernel->_selectorMap.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
 	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base)) {

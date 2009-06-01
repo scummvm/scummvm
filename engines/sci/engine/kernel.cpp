@@ -469,7 +469,80 @@ SciKernelFunction kfunct_mappers[] = {
 	{KF_TERMINATOR, NULL, NULL, NULL} // Terminator
 };
 
-static const char *argtype_description[] = { "Undetermined (WTF?)", "List", "Node", "Object", "Reference", "Arithmetic" };
+static const char *argtype_description[] = { "Undetermined", "List", "Node", "Object", "Reference", "Arithmetic" };
+
+Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
+	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
+
+	loadKernelNames();
+
+	loadOpcodes();
+
+	if (!loadSelectorNames(isOldSci0)) {
+		error("Kernel: Could not retrieve selector names");
+	}
+
+	// Map a few special selectors for later use
+	mapSelectors();
+}
+
+Kernel::~Kernel() {
+	_selectorNames.clear();
+	_opcodes.clear();
+	_kernelNames.clear();
+}
+
+bool Kernel::loadSelectorNames(bool isOldSci0) {
+	int count;
+
+	Resource *r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES, 0);
+
+	if (!r) // No such resource?
+		return false;
+
+	count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
+
+	for (int i = 0; i < count; i++) {
+		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
+		int len = READ_LE_UINT16(r->data + offset);
+
+		Common::String tmp((const char *)r->data + offset + 2, len);
+		_selectorNames.push_back(tmp);
+
+		// Early SCI versions used the LSB in the selector ID as a read/write
+		// toggle. To compensate for that, we add every selector name twice.
+		if (isOldSci0)
+			_selectorNames.push_back(tmp);
+	}
+
+	return true;
+}
+
+bool Kernel::loadOpcodes() {
+	int count, i = 0;
+	Resource* r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES, 0);
+
+	_opcodes.clear();
+
+	// if the resource couldn't be loaded, leave
+	if (r == NULL) {
+		warning("unable to load vocab.%03d", VOCAB_RESOURCE_OPCODES);
+		return false;
+	}
+
+	count = READ_LE_UINT16(r->data);
+
+	_opcodes.resize(count);
+	for (i = 0; i < count; i++) {
+		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
+		int len = READ_LE_UINT16(r->data + offset) - 2;
+		_opcodes[i].type = READ_LE_UINT16(r->data + offset + 2);
+		// QFG3 has empty opcodes
+		_opcodes[i].name = len > 0 ? Common::String((char *)r->data + offset + 4, len) : "Dummy";
+	}
+
+	return true;
+}
 
 // Allocates a set amount of memory for a specified use and returns a handle to it.
 reg_t kalloc(EngineState *s, const char *type, int space) {
@@ -582,7 +655,7 @@ void kernel_compile_signature(const char **s) {
 int script_map_kernel(EngineState *s) {
 	int mapped = 0;
 	int ignored = 0;
-	uint functions_nr = s->_vocabulary->getKernelNamesSize();
+	uint functions_nr = s->_kernel->getKernelNamesSize();
 	uint max_functions_nr = (s->resmgr->_sciVersion == SCI_VERSION_0) ? 0x72 : 0x7b;
 
 	if (functions_nr < max_functions_nr) {
@@ -599,8 +672,8 @@ int script_map_kernel(EngineState *s) {
 		int seeker, found = -1;
 		Common::String sought_name;
 
-		if (functnr < s->_vocabulary->getKernelNamesSize())
-			sought_name = s->_vocabulary->getKernelName(functnr);
+		if (functnr < s->_kernel->getKernelNamesSize())
+			sought_name = s->_kernel->getKernelName(functnr);
 
 		if (!sought_name.empty())
 			for (seeker = 0; (found == -1) && kfunct_mappers[seeker].type != KF_TERMINATOR; seeker++)
@@ -609,7 +682,7 @@ int script_map_kernel(EngineState *s) {
 
 		if (found == -1) {
 			if (!sought_name.empty()) {
-				warning("Kernel function %s[%x] unmapped", s->_vocabulary->getKernelName(functnr).c_str(), functnr);
+				warning("Kernel function %s[%x] unmapped", s->_kernel->getKernelName(functnr).c_str(), functnr);
 				s->_kfuncTable[functnr].fun = kNOP;
 			} else {
 				warning("Flagging kernel function %x as unknown", functnr);
@@ -639,7 +712,7 @@ int script_map_kernel(EngineState *s) {
 
 	} // for all functions requesting to be mapped
 
-	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, s->_vocabulary->getKernelNamesSize(), mapped);
+	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, s->_kernel->getKernelNamesSize(), mapped);
 	if (ignored)
 		sciprintf(" and ignoring %d", ignored);
 	sciprintf(".\n");
@@ -885,7 +958,7 @@ static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &name
 }
 #endif
 
-bool Vocabulary::loadKernelNames() {
+bool Kernel::loadKernelNames() {
 	_kernelNames.clear();
 
 	switch (_resmgr->_sciVersion) {

@@ -121,6 +121,7 @@ EngineState::EngineState() : _dirseeker(this) {
 	gc_countdown = 0;
 
 	_vocabulary = 0;
+	_kernel = 0;
 
 	successor = 0;
 }

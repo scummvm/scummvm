@@ -244,6 +244,7 @@ public:
 	MessageState _msgState;
 
 	Vocabulary *_vocabulary;
+	Kernel *_kernel;
 
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 };
@@ -257,7 +258,7 @@ public:
 PaletteEntry get_pic_color(EngineState *s, int color);
 
 static inline reg_t not_register(EngineState *s, reg_t r) {
-	if (s->_vocabulary->_selectorMap.cantBeHere != -1)
+	if (s->_kernel->_selectorMap.cantBeHere != -1)
 		return make_reg(0, !r.offset);
 	else
 		return r;

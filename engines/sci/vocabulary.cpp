@@ -85,10 +85,9 @@ int vocab_get_class_count(ResourceManager *resmgr) {
 
 #endif
 
-Vocabulary::Vocabulary(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr), _isOldSci0(isOldSci0) {
+Vocabulary::Vocabulary(ResourceManager *resmgr) : _resmgr(resmgr) {
 	_parserRules = NULL;
 	_vocabVersion = kVocabularySCI0;
-	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
 	debug(2, "Initializing vocabulary");
 
@@ -101,79 +100,13 @@ Vocabulary::Vocabulary(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr
 		debug(2, "Assuming that this game does not use a parser.");
 		_parserRules = NULL;
 	}
-
-	loadOpcodes();
-
-	if (!loadSelectorNames()) {
-		error("Vocabulary: Could not retrieve selector names");
-	}
-
-	// Map a few special selectors for later use
-	mapSelectors();
-
-	loadKernelNames();
 }
 
 Vocabulary::~Vocabulary() {
 	freeRuleList(_parserRules);
 	_parserWords.clear();
-	_selectorNames.clear();
-	_opcodes.clear();
-	_kernelNames.clear();
 	_parserBranches.clear();
 	freeSuffixes();
-}
-
-bool Vocabulary::loadSelectorNames() {
-	int count;
-
-	Resource *r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES, 0);
-
-	if (!r) // No such resource?
-		return false;
-
-	count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
-
-	for (int i = 0; i < count; i++) {
-		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
-		int len = READ_LE_UINT16(r->data + offset);
-
-		Common::String tmp((const char *)r->data + offset + 2, len);
-		_selectorNames.push_back(tmp);
-
-		// Early SCI versions used the LSB in the selector ID as a read/write
-		// toggle. To compensate for that, we add every selector name twice.
-		if (_isOldSci0)
-			_selectorNames.push_back(tmp);
-	}
-
-	return true;
-}
-
-bool Vocabulary::loadOpcodes() {
-	int count, i = 0;
-	Resource* r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES, 0);
-
-	_opcodes.clear();
-
-	// if the resource couldn't be loaded, leave
-	if (r == NULL) {
-		warning("unable to load vocab.%03d", VOCAB_RESOURCE_OPCODES);
-		return false;
-	}
-
-	count = READ_LE_UINT16(r->data);
-
-	_opcodes.resize(count);
-	for (i = 0; i < count; i++) {
-		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
-		int len = READ_LE_UINT16(r->data + offset) - 2;
-		_opcodes[i].type = READ_LE_UINT16(r->data + offset + 2);
-		// QFG3 has empty opcodes
-		_opcodes[i].name = len > 0 ? Common::String((char *)r->data + offset + 4, len) : "Dummy";
-	}
-
-	return true;
 }
 
 bool Vocabulary::loadParserWords() {
@@ -533,7 +466,7 @@ void Vocabulary::printParserWords() const {
 	con->DebugPrintf("\n");
 }
 
-int Vocabulary::findSelector(const char *selectorName) const {
+int Kernel::findSelector(const char *selectorName) const {
 	for (uint pos = 0; pos < _selectorNames.size(); ++pos) {
 		if (_selectorNames[pos] == selectorName)
 			return pos;
@@ -544,7 +477,7 @@ int Vocabulary::findSelector(const char *selectorName) const {
 	return -1;
 }
 
-bool Vocabulary::hasKernelFunction(const char *functionName) const {
+bool Kernel::hasKernelFunction(const char *functionName) const {
 	Common::StringList::const_iterator it = Common::find(_kernelNames.begin(), _kernelNames.end(), functionName);
 	return (it != _kernelNames.end());
 }

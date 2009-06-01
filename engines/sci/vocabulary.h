@@ -42,12 +42,6 @@ class ResourceManager;
 /** Number of bytes allocated on the heap to store bad words if parsing fails */
 #define PARSE_HEAP_SIZE 64
 
-
-struct opcode {
-	int type;
-	Common::String name;
-};
-
 enum {
 	VOCAB_RESOURCE_CLASSES = 996,
 	VOCAB_RESOURCE_SNAMES = 997,
@@ -185,7 +179,7 @@ enum VocabularyVersions {
 
 class Vocabulary {
 public:
-	Vocabulary(ResourceManager *resmgr, bool isOldSci0);
+	Vocabulary(ResourceManager *resmgr);
 	~Vocabulary();
 
 	/**
@@ -260,64 +254,7 @@ public:
 	uint getParserBranchesSize() const { return _parserBranches.size(); }
 	const parse_tree_branch_t &getParseTreeBranch(int number) const { return _parserBranches[number]; }
 
-	uint getOpcodesSize() const { return _opcodes.size(); }
-	const opcode &getOpcode(uint opcode) const { return _opcodes[opcode]; }
-
-	uint getSelectorNamesSize() const { return _selectorNames.size(); }
-	const Common::String &getSelectorName(uint selector) const { return _selectorNames[selector]; }
-
-	/* Determines the selector ID of a selector by its name
-	**             (const char *) selectorName: Name of the selector to look up
-	** Returns   : (int) The appropriate selector ID, or -1 on error
-	*/
-	int findSelector(const char *selectorName) const;
-
-	/* Detects whether a particular kernel function is required in the game
-	**             (const char *) functionName: The name of the desired kernel function
-	** Returns   : (bool) true if the kernel function is listed in the kernel table,
-	**                   false otherwise
-	*/
-	bool hasKernelFunction(const char *functionName) const;
-
-	uint getKernelNamesSize() const { return _kernelNames.size(); }
-	const Common::String &getKernelName(uint number) const { return _kernelNames[number]; }
-
-	// Script dissection/dumping functions
-	void dissectScript(int scriptNumber);
-	void dumpScriptObject(char *data, int seeker, int objsize);
-	void dumpScriptClass(char *data, int seeker, int objsize);
-
-	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
-
 private:
-	/**
-	* Loads the vocabulary selector names.
-	* Returns true upon success, false otherwise.
-	*/
-	bool loadSelectorNames();
-
-	/* Maps special selectors
-	** Returns   : (void)
-	*/
-	void mapSelectors();
-
-	/**
-	 * Loads the opcode names (only used for debugging).
-	 * @return true on success, false on failure
-	 */
-	bool loadOpcodes();
-
-	/**
-	 * Loads the kernel function names.
-	 *
-	 * This function reads the kernel function name table from resource_map,
-	 * and fills the _kernelNames array with them.
-	 * The resulting list has the same format regardless of the format of the
-	 * name table of the resource (the format changed between version 0 and 1).
-	 * @return true on success, false on failure
-	 */
-	bool loadKernelNames();
-
 	/**
 	 * Loads all words from the main vocabulary.
 	 * @return true on success, false on failure
@@ -349,15 +286,7 @@ private:
 	void freeRuleList(parse_rule_list_t *rule_list);
 
 	ResourceManager *_resmgr;
-	bool _isOldSci0;
 	VocabularyVersions _vocabVersion;
-
-	// Kernel-related lists
-	// List of opcodes, loaded from vocab.998. This list is only used for debugging
-	// purposes, as we hardcode the list of opcodes in the sci_opcodes enum (script.h)
-	Common::Array<opcode> _opcodes;
-	Common::StringList _selectorNames;
-	Common::StringList _kernelNames;
 
 	// Parser-related lists
 	SuffixList _parserSuffixes;
