@@ -623,11 +623,13 @@ int executeScripts(scriptInstanceStruct *ptr) {
 	positionInStack = 0;
 
 	do {
+#ifdef SKIP_INTRO
 		if (currentScriptPtr->scriptOffset == 290
 		        && currentScriptPtr->overlayNumber == 4
 		        && currentScriptPtr->scriptNumber == 0) {
 			currentScriptPtr->scriptOffset = 923;
 		}
+#endif
 		opcodeType = getByteFromScript();
 
 		//	printf("opType: %d\n",(opcodeType&0xFB)>>3);
