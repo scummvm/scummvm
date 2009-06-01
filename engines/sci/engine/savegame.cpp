@@ -780,6 +780,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->animation_delay = s->animation_delay;
 	retval->animation_granularity = s->animation_granularity;
 	retval->gfx_state = s->gfx_state;
+	retval->old_screen = 0;
 
 	retval->resmgr = s->resmgr;
 
@@ -832,8 +833,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 
 	// static VM/Kernel information:
-	retval->_kernel = s->_kernel;
 	assert(0 == retval->_kernel);
+	retval->_kernel = s->_kernel;
 //	s->_kernel = 0;	// FIXME: We should set s->_kernel to 0 here,
 // else it could be freed when the old EngineState is freed. Luckily, this freeing currently
 // never happens, so we don't need to. 

@@ -424,7 +424,9 @@ void script_free_engine(EngineState *s) {
 	s->_kfuncTable.clear();
 
 	delete s->_vocabulary;
+	s->_vocabulary = 0;
 	delete s->_kernel;
+	s->_kernel = 0;
 }
 
 void script_free_breakpoints(EngineState *s) {
