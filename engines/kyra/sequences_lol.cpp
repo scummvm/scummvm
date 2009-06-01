@@ -842,7 +842,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 void LoLEngine::showCredits() {
 	for (int i = 0; i < 255; ++i)
 		_outroShapeTable[i] = i;
-	_outroShapeTable[256] = 0;
+	_outroShapeTable[255] = 0;
 
 	_sound->haltTrack();
 	_sound->loadSoundFile("LOREFINL");
@@ -859,6 +859,8 @@ void LoLEngine::showCredits() {
 	_screen->fadeToBlack(30);
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+
+	_screen->_charOffset = 0;
 
 	char *credits = (char *)_res->fileData("CREDITS.TXT", 0);
 	processCredits(credits, 19, 4, 5);
@@ -913,7 +915,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 		uint8 code;
 		uint8 height;
 		uint8 alignment;
-	} strings[36];
+	} strings[37];
 	memset(strings, 0, sizeof(strings));
 
 	int countStrings = 0;
@@ -977,6 +979,57 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 
 			s.y = y;
 			s.str = curString;
+
+			// WORKAROUND: The original did supply some texts, which wouldn't fit on one line.
+			// To display them properly, we will break them into two separate entries. The original
+			// just did not display these lines at all. (At least not in LordHoto's tests with DOSBox).
+			if (s.x + _screen->getTextWidth(s.str) > Screen::SCREEN_W) {
+				char *nextLine = 0;
+				char *lastSeparator = 0;
+
+				int backupX = s.x;
+
+				while (s.x + _screen->getTextWidth(s.str) > Screen::SCREEN_W) {
+					char *sep = strrchr(s.str, ' ');
+
+					if (lastSeparator)
+						*lastSeparator = ' ';
+
+					lastSeparator = sep;
+
+					if (lastSeparator) {
+						*lastSeparator = 0;
+						nextLine = lastSeparator + 1;
+
+						s.x = MAX(((_screen->_curDim->w << 3) - _screen->getTextWidth(s.str)) / 2, 0);
+					} else {
+						// It seems we ca not find any whitespace, thus we are better safe and
+						// do not break up the line into two parts. (This is just paranoia)
+						nextLine = 0;
+						break;
+					}
+				}
+
+				s.x = backupX;
+
+				if (nextLine) {
+					++countStrings;
+
+					// Center old string
+					s.alignment = 0;
+					s.x = ((_screen->_curDim->w << 3) - _screen->getTextWidth(s.str)) / 2;
+
+					// Add new string, also centered
+					CreditsString &n = strings[countStrings + 1];
+					n.y = s.y + s.height + (s.height >> 3);
+					n.height = s.height;
+					n.alignment = 0;
+					n.code = s.code;
+					n.str = nextLine;
+					n.x = ((_screen->_curDim->w << 3) - _screen->getTextWidth(n.str)) / 2;
+				}
+			}
+
 			++countStrings;
 		}
 

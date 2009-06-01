@@ -1004,6 +1004,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	while (1) {
 		uint c = *str++;
 		c &= 0xFF;
+
 		if (c == 0) {
 			break;
 		} else if (c == '\r') {
@@ -1014,10 +1015,10 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 			if (x + charWidth > SCREEN_W) {
 				x = x_start;
 				y += charHeight + _charOffset;
-				if (y >= SCREEN_H) {
+				if (y >= SCREEN_H)
 					break;
-				}
 			}
+
 			if (c <= 0x7F || !_useSJIS) {
 				drawCharANSI(c, x, y);
 				charHeight = charHeightFnt;
@@ -1028,6 +1029,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 				charHeight = SJIS_CHARSIZE >> 1;
 				drawCharSJIS(c, x, y);
 			}
+
 			x += charWidth;
 		}
 	}

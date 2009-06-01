@@ -242,6 +242,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_timer3Para = 0;
 	_scriptCharacterCycle = 0;
 	_partyDeathFlag = -1;
+
+	memset(&_itemScript, 0, sizeof(_itemScript));
 }
 
 LoLEngine::~LoLEngine() {
