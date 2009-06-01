@@ -278,6 +278,10 @@ void LoLEngine::placeMonster(MonsterInPlay *monster, uint16 x, uint16 y) {
 	_levelBlockProperties[monster->block].direction = 5;
 	checkSceneUpdateNeed(monster->block);
 
+	// WORKAROUND: Some monsters in the white tower have sound id's of 0xff. This is definitely a bug, since the
+	// last valid track number is 249 and there is no specific handling for 0xff. Nonetheless this wouldn't
+	// cause problems in the original code, because it just so happens that the invalid memory address points 
+	// to an entry in _ingameGMSoundIndex which just so happens to have a value of -1
 	if (monster->properties->sounds[0] == 0 || monster->properties->sounds[0] == 255 || cont == false)
 		return;
 
