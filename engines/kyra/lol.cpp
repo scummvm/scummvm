@@ -1798,7 +1798,7 @@ void LoLEngine::delayUntil(uint32 timeStamp) {
 		return;
 
 	uint32 del = timeStamp - curTime;
-	while (del) {
+	while (del && !shouldQuit()) {
 		updateInput();
 
 		uint32 step = MIN<uint32>(del, _tickLength);
