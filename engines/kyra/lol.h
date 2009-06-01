@@ -1327,7 +1327,7 @@ private:
 	void processMagicHeal(int charNum, int spellLevel);
 	void processMagicIce(int charNum, int spellLevel);
 	void processMagicFireball(int charNum, int spellLevel);
-	void processMagicHandOfFate(int charNum, int spellLevel);
+	void processMagicHandOfFate(int spellLevel);
 	void processMagicMistOfDoom(int charNum, int spellLevel);
 	void processMagicLightning(int charNum, int spellLevel);
 	void processMagicFog();
@@ -1381,7 +1381,7 @@ private:
 	// fight
 	int battleHitSkillTest(int16 attacker, int16 target, int skill);
 	int calcInflictableDamage(int16 attacker, int16 target, int hitType);
-	int inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int deathFlag);
+	int inflictDamage(int16 target, int damage, int16 attacker, int skill, int deathFlag);
 	void characterHitpointsZero(int16 charNum, int a);
 	void removeCharacterEffects(LoLCharacter *c, int first, int last);
 	int calcInflictableDamagePerItem(int16 attacker, int16 target, uint16 itemMight, int index, int hitType);

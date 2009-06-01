@@ -1887,7 +1887,7 @@ int LoLEngine::castFireball(ActiveSpell *a) {
 }
 
 int LoLEngine::castHandOfFate(ActiveSpell *a) {
-	processMagicHandOfFate(a->charNum, a->level);
+	processMagicHandOfFate(a->level);
 	return 1;
 }
 
@@ -2415,7 +2415,83 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 	runLevelScriptCustom(bl, 0x20, charNum, 3, 0, 0);
 }
 
-void LoLEngine::processMagicHandOfFate(int charNum, int spellLevel) {
+void LoLEngine::processMagicHandOfFate(int spellLevel) {
+	int cp = _screen->setCurPage(2);
+	_screen->copyPage(0, 12);
+
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	mov->open("hand.wsa", 1, 0);
+	if (!mov->opened())
+		error("Hand: Unable to load HAND.WSA");
+
+	static const uint8 frames[] = { 17, 26, 11, 16, 27, 35, 27, 35, 0, 75 };
+
+	snd_playSoundEffect(173, -1);
+	playSpellAnimation(mov, 0, 10, 3, 112, 0, 0, 0, 0, 0, false);
+	snd_playSoundEffect(151, -1);
+	playSpellAnimation(mov, frames[spellLevel * 2] , frames[spellLevel * 2 + 1], 3, 112, 0, 0, 0, 0, 0, false);
+	snd_playSoundEffect(18, -1);
+	playSpellAnimation(mov, 10, 0, 3, 112, 0, 0, 0, 0, 0, false);
+
+	mov->close();
+	delete mov;
+
+	_screen->setCurPage(cp);
+	_screen->copyPage(12, 2);
+	gui_drawScene(2);
+
+	if (spellLevel < 2) {
+		uint16 b1 = calcNewBlockPosition(_currentBlock, _currentDirection);
+		uint16 b2 = calcNewBlockPosition(b1, _currentDirection);
+		
+		if (!testWallFlag(b2, 0, 4)) {
+			if (!(_levelBlockProperties[b2].assignedObjects & 0x8000)) {
+				checkSceneUpdateNeed(b1);
+				
+				uint16 dir = (_currentDirection << 1);
+				uint16 o = _levelBlockProperties[b1].assignedObjects;
+				while (o & 0x8000) {
+					uint16 o2 = o;
+					MonsterInPlay *m = &_monsters[o & 0x7fff];
+					o = findObject(o)->nextAssignedObject;
+					int nX = 0;
+					int nY = 0;
+
+					getNextStepCoords(m->x, m->y, nX, nY, dir);
+					for (int i = 0; i < 7; i++)
+						getNextStepCoords(nX, nY, nX, nY, dir);
+
+					placeMonster(m, nX, nY);
+					runLevelScriptCustom(b2, 0x800, -1, o2, 0, 0);
+				}
+			}
+		}
+
+	} else {
+		uint16 b1 = calcNewBlockPosition(_currentBlock, _currentDirection);
+		checkSceneUpdateNeed(b1);
+
+		static const uint16 damage[] = { 75, 125, 175 };
+		uint16 o = _levelBlockProperties[b1].assignedObjects;
+
+		while (o & 0x8000) {
+			uint16 t = o;
+			o = findObject(o)->nextAssignedObject;
+			// This might be a bug in the original code, but using
+			// the hand of fate spell won't give any experience points
+			int dmg = calcInflictableDamagePerItem(-1, t, damage[spellLevel - 2], 0x80, 1);
+			inflictDamage(t, dmg, -1, 3, 0x80);
+		}
+	}
+
+	if (_currentLevel == 29)
+		_screen->copyPage(12, 2);
+
+	_screen->copyPage(2, 0);
+	_screen->updateScreen();
+
+	gui_drawScene(2);
+	updateDrawPage2();
 }
 
 void LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
@@ -2906,7 +2982,7 @@ int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) 
 	return res;
 }
 
-int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int deathFlag) {
+int LoLEngine::inflictDamage(int16 target, int damage, int16 attacker, int skill, int deathFlag) {
 	MonsterInPlay *m = 0;
 	LoLCharacter *c = 0;
 
