@@ -112,7 +112,7 @@ int16 Op_Exec(void) {
 	ptr2 = ptr;
 
 	for (i = 0; i < numOfArgToPop; i++) {
-		saveShort(ptr2, popTable[i]);
+		WRITE_BE_UINT16(ptr2, popTable[i]);
 		ptr2 += 2;
 	}
 

@@ -95,7 +95,7 @@ int32 opcodeType0(void) {
 
 		if (size == 1) {
 			address += index;
-			pushVar(loadShort(address));
+			pushVar((int16)READ_BE_UINT16(address));
 			return (0);
 		} else if (size == 2) {
 			pushVar(*address);
@@ -186,7 +186,7 @@ int32 opcodeType1(void)	{
 
 		switch (type2) {
 		case 1: {
-			saveShort(ptr + var_A + offset * 2, var);
+			WRITE_BE_UINT16(ptr + var_A + offset * 2, var);
 			return 0;
 		}
 		case 2: {

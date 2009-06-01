@@ -79,14 +79,6 @@ int getNumObjectsByClass(int scriptIdx, int param) {
 	return (counter);
 }
 
-void saveShort(void *ptr, short int var) {
-	WRITE_BE_UINT16(ptr, var);
-}
-
-int16 loadShort(void *ptr) {
-	return (int16)READ_BE_UINT16(ptr);
-}
-
 void resetFileEntryRange(int param1, int param2) {
 	int i;
 
