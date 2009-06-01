@@ -311,20 +311,6 @@ struct SciKernelFunction {
 	const char *signature;  /* kfunct signature */
 };
 
-static const int sci_max_allowed_unknown_kernel_functions[] = {
-	0,
-	0x72, // SCI0
-	0x7b, // SCI01/EGA
-	0x7b, // SCI01/VGA
-	0x7b, // SCI01/VGA ODD
-	0x7b, // SCI1/EARLY
-	0x7b, // SCI1/LATE
-	0x7b, // SCI1.1
-#ifdef ENABLE_SCI32
-	0x0, // SCI32
-#endif
-};
-
 #define DEFUN(nm, cname, sig) {KF_NEW, nm, cname, sig}
 #define NOFUN(nm) {KF_NONE, nm, NULL, NULL}
 
@@ -603,7 +589,7 @@ int script_map_kernel(EngineState *s) {
 	int mapped = 0;
 	int ignored = 0;
 	uint functions_nr = s->_vocabulary->getKernelNamesSize();
-	uint max_functions_nr = sci_max_allowed_unknown_kernel_functions[s->resmgr->_sciVersion];
+	uint max_functions_nr = (s->resmgr->_sciVersion == SCI_VERSION_0) ? 0x72 : 0x7b;
 
 	if (functions_nr < max_functions_nr) {
 		warning("SCI version believed to have %d kernel"
