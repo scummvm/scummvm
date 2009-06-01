@@ -1292,7 +1292,6 @@ private:
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
-	void delayUntil(uint32 timeStamp);
 	uint8 getRandomNumberSpecial();
 
 	uint8 _compassBroken;

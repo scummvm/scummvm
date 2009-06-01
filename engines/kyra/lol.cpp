@@ -1792,21 +1792,6 @@ void LoLEngine::delay(uint32 millis, bool doUpdate, bool) {
 	}
 }
 
-void LoLEngine::delayUntil(uint32 timeStamp) {
-	const uint32 curTime = _system->getMillis();
-	if (curTime < timeStamp)
-		return;
-
-	uint32 del = timeStamp - curTime;
-	while (del && !shouldQuit()) {
-		updateInput();
-
-		uint32 step = MIN<uint32>(del, _tickLength);
-		_system->delayMillis(step);
-		del -= step;
-	}
-}
-
 uint8 LoLEngine::getRandomNumberSpecial() {
 	uint8 a = _rndSpecial & 0xff;
 	uint8 b = (_rndSpecial >> 8) & 0xff;
