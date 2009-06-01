@@ -354,6 +354,8 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
 
+	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charWidth);
+
 	while (c) {
 		char a = tolower(_ctrl[1]);
 
@@ -371,6 +373,8 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 			_ctrl[2] = _ctrl[1] = 0;
 			c = parseCommand();
 		}
+
+		uint16 dv = _textDimData[sdx].column / (_screen->getFontWidth() + _screen->_charWidth);
 
 		switch (c - 1) {
 		case 0:
@@ -390,7 +394,12 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 			break;
 
 		case 8:
-			//TODO
+			printLine(_currentLine);
+			dv = _textDimData[sdx].column / (_screen->getFontWidth() + _screen->_charWidth);
+			dv = ((dv + 8) & 0xfff8) - 1;
+			if (dv >= charsPerLine)
+				dv = 0;
+			_textDimData[sdx].column = (_screen->getFontWidth() + _screen->_charWidth) * dv;
 			break;
 
 		case 11:

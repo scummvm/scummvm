@@ -578,15 +578,16 @@ int LoLEngine::selectionCharInfo(int character) {
 void LoLEngine::selectionCharInfoIntro(char *file) {
 	int index = 0;
 	file[4] = '0';
+	bool processAnim = true;
 
 	while (_charSelectionInfoResult == -1 && !shouldQuit()) {
-		if (!_sound->isVoicePresent(file))
+		if (_speechFlag && !_sound->isVoicePresent(file))
 			break;
 
 		_sound->voicePlay(file, &_speechHandle);
 
 		int i = 0;
-		while (_sound->voiceIsPlaying(&_speechHandle) && _charSelectionInfoResult == -1 && !shouldQuit()) {
+		while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && _charSelectionInfoResult == -1 && !shouldQuit()) {
 			_screen->drawShape(0, _screen->getPtrToShape(_screen->getCPagePtr(9), _charInfoFrameTable[i]), 11, 130, 0, 0);
 			_screen->updateScreen();
 
@@ -596,7 +597,10 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 				_system->delayMillis(10);
 			}
 
-			i = (i + 1) % 32;
+			if (_speechFlag || processAnim)
+				i = (i + 1) % 32;
+			if (i == 0)
+				processAnim = false;
 		}
 
 		_sound->voiceStop(&_speechHandle);

@@ -2722,7 +2722,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_assignSpecialGuiShape);
 	Opcode(olol_findInventoryItem);
 	Opcode(olol_restoreFadePalette);
-	OpcodeUnImpl();
+	Opcode(olol_calcNewBlockPosition);
 
 	// 0xA8
 	OpcodeUnImpl();
