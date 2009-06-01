@@ -2480,7 +2480,7 @@ void LoLEngine::processMagicHandOfFate(int spellLevel) {
 			// This might be a bug in the original code, but using
 			// the hand of fate spell won't give any experience points
 			int dmg = calcInflictableDamagePerItem(-1, t, damage[spellLevel - 2], 0x80, 1);
-			inflictDamage(t, dmg, -1, 3, 0x80);
+			inflictDamage(t, dmg, 0xffff, 3, 0x80);
 		}
 	}
 
@@ -2982,7 +2982,7 @@ int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) 
 	return res;
 }
 
-int LoLEngine::inflictDamage(int16 target, int damage, int16 attacker, int skill, int deathFlag) {
+int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int deathFlag) {
 	MonsterInPlay *m = 0;
 	LoLCharacter *c = 0;
 
