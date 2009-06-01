@@ -775,6 +775,7 @@ private:
 	int olol_enableControls(EMCState *script);
 	int olol_gasExplosion(EMCState *script);
 	int olol_calcNewBlockPosition(EMCState *script);
+	int olol_fadeScene(EMCState *script);
 	int olol_updateDrawPage2(EMCState *script);
 	int olol_setMouseCursor(EMCState *script);
 	int olol_characterSays(EMCState *script);

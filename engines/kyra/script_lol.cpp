@@ -2078,6 +2078,14 @@ int LoLEngine::olol_calcNewBlockPosition(EMCState *script) {
 	return calcNewBlockPosition(stackPos(0), stackPos(1));
 }
 
+int LoLEngine::olol_fadeScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeScene(%p)", (const void *)script);
+	gui_drawScene(2);
+	transformRegion(112, 0, 112, 0, 176, 120, 2, 0);
+	updateDrawPage2();
+	return 1;
+}
+
 int LoLEngine::olol_updateDrawPage2(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_updateDrawPage2(%p)", (const void *)script);
 	updateDrawPage2();
@@ -2735,7 +2743,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_calcNewBlockPosition);
 
 	// 0xB8
-	OpcodeUnImpl();
+	Opcode(olol_fadeScene);
 	Opcode(olol_updateDrawPage2);
 	Opcode(olol_setMouseCursor);
 	Opcode(olol_characterSays);
