@@ -555,6 +555,27 @@ static void syncSongs(Common::Serializer &s) {
 	}
 }
 
+static void syncPerso(Common::Serializer &s, persoStruct &p) {
+	s.syncAsSint16LE(p.inc_droite);
+	s.syncAsSint16LE(p.inc_droite0);
+	s.syncAsSint16LE(p.inc_chemin);
+
+	for (int i = 0; i < 400; ++i) {
+		s.syncAsSint16LE(p.coordinates[i].x);
+		s.syncAsSint16LE(p.coordinates[i].y);
+	}
+
+	for (int i = 0; i < NUM_NODES + 3; ++i) {
+		s.syncAsSint16LE(p.solution[i][0]);
+		s.syncAsSint16LE(p.solution[i][1]);
+	}
+	
+	s.syncAsSint16LE(p.inc_jo1);
+	s.syncAsSint16LE(p.inc_jo2);
+	s.syncAsSint16LE(p.dir_perso);
+	s.syncAsSint16LE(p.inc_jo0);
+}
+
 static void syncCT(Common::Serializer &s) {
 	int v = (polyStruct) ? 1 : 0;
 	s.syncAsSint32LE(v);
@@ -583,12 +604,8 @@ static void syncCT(Common::Serializer &s) {
 			// Set up the pointer for the next structure
 			persoTable[i] = (v == 0) ? NULL : (persoStruct *)mallocAndZero(sizeof(persoStruct));
 
-		if (v != 0) {
-			// FIXME: This code is not endian safe, and breaks if struct
-			// packing changes. Read/write the members one by one instead.
-			assert(sizeof(persoStruct) == 0x6AA);
-			s.syncBytes((byte *)persoTable[i], 0x6AA);
-		}
+		if (v != 0)
+			syncPerso(s, *persoTable[i]);
 	}
 }
 
