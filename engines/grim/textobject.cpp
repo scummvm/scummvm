@@ -48,7 +48,7 @@ void TextObject::setText(char *text) {
 	if (strlen(text) < sizeof(_textID))
 		strcpy(_textID, text);
 	else {
-		error("Text ID exceeded maximum length (%d): %s", sizeof(_textID), text);
+		error("Text ID exceeded maximum length (%d): %s", (int)sizeof(_textID), text);
 		// this should be good enough to still be unique
 		// but for debug purposes lets make this crash the program so we know about it
 		strncpy(_textID, text, sizeof(_textID));

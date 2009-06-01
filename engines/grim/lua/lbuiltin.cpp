@@ -137,7 +137,7 @@ static const char *to_string(lua_Object obj) {
 		}
 	case LUA_T_USERDATA:
 		{
-			sprintf(buff, "userdata: %p", o->value.ts->globalval.value.ts);
+			sprintf(buff, "userdata: %p", (void *)o->value.ts->globalval.value.ts);
 			return buff;
 		}
 	case LUA_T_TASK:

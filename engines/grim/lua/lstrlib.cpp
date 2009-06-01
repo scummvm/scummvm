@@ -309,8 +309,8 @@ init:
 static void str_find() {
 	const char *s = luaL_check_string(1);
 	const char *p = luaL_check_string(2);
-	uint32 init = (uint32)luaL_opt_number(3, 1) - 1;
-	luaL_arg_check(0 <= init && init <= strlen(s), 3, "out of range");
+	int32 init = (uint32)luaL_opt_number(3, 1) - 1;
+	luaL_arg_check(0 <= init && init <= (int32)strlen(s), 3, "out of range");
 	if (lua_getparam(4) != LUA_NOOBJECT || !strpbrk(p, SPECIALS)) {  // no special characters?
 			const char *s2 = strstr(s + init, p);
 			if (s2) {

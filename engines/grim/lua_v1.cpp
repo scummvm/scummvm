@@ -199,17 +199,17 @@ static void MakeColor() {
 	if (!lua_isnumber(rObj))
 		r = 0;
 	else
-		r = clamp_color(lua_getnumber(rObj));
+		r = clamp_color((int)lua_getnumber(rObj));
 
 	if (!lua_isnumber(gObj))
 		g = 0;
 	else
-		g = clamp_color(lua_getnumber(gObj));
+		g = clamp_color((int)lua_getnumber(gObj));
 
 	if (!lua_isnumber(bObj))
 		b = 0;
 	else
-		b = clamp_color(lua_getnumber(bObj));
+		b = clamp_color((int)lua_getnumber(bObj));
 
 	Color *c = new Color (r, g ,b);
 	lua_pushusertag(c, MKID_BE('COLR'));
@@ -272,7 +272,7 @@ static void GetActorTimeScale() {
 	lua_Object actorObj = lua_getparam(1);
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
 		return;
-	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+/*	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));*/
 	// TODO lua_pushnumber(actor->getTimeScale());
 	// return 1 so the game doesn't halt when Manny attempts
 	// to pick up the fire extinguisher
@@ -307,7 +307,7 @@ static void setDefaultObjectParams(TextObjectDefaults *defaults, lua_Object tabl
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			defaults->x = lua_getnumber(keyObj);
+			defaults->x = (int)lua_getnumber(keyObj);
 		}
 	}
 
@@ -316,7 +316,7 @@ static void setDefaultObjectParams(TextObjectDefaults *defaults, lua_Object tabl
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			defaults->y = lua_getnumber(keyObj);
+			defaults->y = (int)lua_getnumber(keyObj);
 		}
 	}
 
@@ -334,7 +334,7 @@ static void setDefaultObjectParams(TextObjectDefaults *defaults, lua_Object tabl
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			defaults->width = lua_getnumber(keyObj);
+			defaults->width = (int)lua_getnumber(keyObj);
 		}
 	}
 
@@ -343,7 +343,7 @@ static void setDefaultObjectParams(TextObjectDefaults *defaults, lua_Object tabl
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			defaults->height = lua_getnumber(keyObj);
+			defaults->height = (int)lua_getnumber(keyObj);
 		}
 	}
 
@@ -409,7 +409,7 @@ static void setDefaultObjectParams(TextObjectDefaults *defaults, lua_Object tabl
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
 			//defaults->duration = lua_getnumber(key);
-			warning("setDefaultObjectParams: dummy Duration: %d", lua_getnumber(keyObj));
+			warning("setDefaultObjectParams: dummy Duration: %f", lua_getnumber(keyObj));
 		}
 	}
 }
@@ -449,7 +449,7 @@ static bool findCostume(lua_Object costumeObj, Actor *actor, Costume **costume) 
 	if (lua_isnil(costumeObj))
 		return true;
 	if (lua_isnumber(costumeObj)) {
-		int num = lua_getnumber(costumeObj);
+/*		int num = (int)lua_getnumber(costumeObj);*/
 		error("findCostume: search by Id not implemented");
 		// TODO get costume by ID ?
 	}
@@ -478,7 +478,7 @@ static void SetActorRestChore() {
 	if (lua_isnil(choreObj)) {
 		chore = -1;
 	} else {
-		chore = lua_getnumber(choreObj);
+		chore = (int)lua_getnumber(choreObj);
 	}
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
@@ -503,7 +503,7 @@ static void SetActorWalkChore() {
 	if (lua_isnil(choreObj)) {
 		chore = -1;
 	} else {
-		chore = lua_getnumber(choreObj);
+		chore = (int)lua_getnumber(choreObj);
 	}
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
@@ -524,8 +524,8 @@ static void SetActorTurnChores() {
 	}
 
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	int leftChore = lua_getnumber(leftChoreObj);
-	int rightChore = lua_getnumber(rightChoreObj);
+	int leftChore = (int)lua_getnumber(leftChoreObj);
+	int rightChore = (int)lua_getnumber(rightChoreObj);
 
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
@@ -546,7 +546,7 @@ static void SetActorTalkChore() {
 		return;
 	}
 
-	int index = lua_getnumber(indexObj);
+	int index = (int)lua_getnumber(indexObj);
 	if (index < 1 || index > 16)
 		return;
 
@@ -555,7 +555,7 @@ static void SetActorTalkChore() {
 	if (lua_isnil(choreObj)) {
 		chore = -1;
 	} else {
-		chore = lua_getnumber(choreObj);
+		chore = (int)lua_getnumber(choreObj);
 	}
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
@@ -583,7 +583,7 @@ static void SetActorMumblechore() {
 	if (lua_isnil(choreObj)) {
 		chore = -1;
 	} else {
-		chore = lua_getnumber(choreObj);
+		chore = (int)lua_getnumber(choreObj);
 	}
 	if (!findCostume(costumeObj, actor, &costume))
 		return;
@@ -905,8 +905,8 @@ static void SetVideoDevices() {
 	int devId;
 	int modeId;
 
-	devId = lua_getnumber(lua_getparam(1));
-	modeId = lua_getnumber(lua_getparam(2));
+	devId = (int)lua_getnumber(lua_getparam(1));
+	modeId = (int)lua_getnumber(lua_getparam(2));
 	// ignore setting video devices
 }
 
@@ -929,7 +929,7 @@ static void Enumerate3DDevices() {
 	lua_Object numObj = lua_getparam(1);
 	if (!lua_isnumber(numObj))
 		return;
-	int num = lua_getnumber(numObj);
+/*	int num = (int)lua_getnumber(numObj);*/
 	lua_pushobject(result);
 	lua_pushnumber(-1.0);
 	if (g_driver->isHardwareAccelerated()) {
@@ -971,7 +971,7 @@ static void GetActorNodeLocation() {
 	if (!actor->currentCostume() || !actor->currentCostume()->getModelNodes())
 		return;
 
-	int node = lua_getnumber(nodeObj);
+	int node = (int)lua_getnumber(nodeObj);
 
 	Model::HierNode *allNodes = actor->currentCostume()->getModelNodes();
 
@@ -988,14 +988,14 @@ static void GetActorNodeLocation() {
  */
 static void SetActorWalkDominate() {
 	lua_Object actorObj = lua_getparam(1);
-	lua_Object modeObj = lua_getparam(2);
+//	lua_Object modeObj = lua_getparam(2);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
 		return;
 
-	bool mode = lua_isnil(modeObj) != 0;
+/*	bool mode = lua_isnil(modeObj) != 0;
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	// TODO implement missing function
+*/	// TODO implement missing function
 	//actor->setWalkDominate(mode);
 }
 
@@ -1028,7 +1028,7 @@ static void TurnActor() {
 		return;
 
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	int dir = lua_getnumber(dirObj);
+	int dir = (int)lua_getnumber(dirObj);
 	// TODO verify. need clear mode walking
 	actor->turn(dir);
 }
@@ -1085,7 +1085,7 @@ static void GetActorCostume() {
 	if (lua_isnil(costumeObj)) {
 		// dummy
 	} else if (lua_isnumber(costumeObj)) {
-		int num = lua_getnumber(costumeObj);
+/*		int num = (int)lua_getnumber(costumeObj);*/
 		error("GetActorCostume: implement number Id");
 	} else
 		return;
@@ -1151,7 +1151,7 @@ static void PlayActorChore() {
 		lua_pushnil();
 		return;
 	}
-	int chore = lua_getnumber(choreObj);
+	int chore = (int)lua_getnumber(choreObj);
 
 	if (!costume) {
 		lua_pushnil();
@@ -1180,7 +1180,7 @@ static void CompleteActorChore() {
 		lua_pushnil();
 		return;
 	}
-	int chore = lua_getnumber(choreObj);
+	int chore = (int)lua_getnumber(choreObj);
 
 	if (!costume) {
 		lua_pushnil();
@@ -1209,7 +1209,7 @@ static void PlayActorChoreLooping() {
 		lua_pushnil();
 		return;
 	}
-	int chore = lua_getnumber(choreObj);
+	int chore = (int)lua_getnumber(choreObj);
 
 	if (!costume) {
 		lua_pushnil();
@@ -1239,7 +1239,7 @@ static void SetActorChoreLooping() {
 		return;
 
 	if (lua_isnumber(choreObj)) {
-		int chore = lua_getnumber(choreObj);
+		int chore = (int)lua_getnumber(choreObj);
 		costume->setChoreLooping(chore, getbool(modeObj));
 	} else if (lua_isnil(choreObj)) {
 		error("SetActorChoreLooping: implement nil case");
@@ -1264,7 +1264,7 @@ static void StopActorChore() {
 		return;
 
 	if (lua_isnumber(choreObj)) {
-		int chore = lua_getnumber(choreObj);
+		int chore = (int)lua_getnumber(choreObj);
 		costume->stopChore(chore);
 	} else if (lua_isnil(choreObj)) {
 		costume->stopChores();
@@ -1293,8 +1293,8 @@ static void IsActorChoring() {
 
 	bool excludeLoop = getbool(excludeLoopObj);
 	if (lua_isnumber(choreObj)) {
-		int chore = lua_getnumber(choreObj);
-		if (costume->isChoring(lua_getnumber(chore), excludeLoop) != -1) {
+		int chore = (int)lua_getnumber(choreObj);
+		if (costume->isChoring((int)lua_getnumber(chore), excludeLoop) != -1) {
 			lua_pushobject(choreObj);
 			pushbool(true);
 		} else
@@ -1464,16 +1464,16 @@ static void PointActorAt() {
 static void WalkActorVector() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object actor2Obj = lua_getparam(2);
-	lua_Object xObj = lua_getparam(3);
-	lua_Object yObj = lua_getparam(4);
-	lua_Object zObj = lua_getparam(5);
-	lua_Object param6Obj = lua_getparam(6);
+//	lua_Object xObj = lua_getparam(3);
+//	lua_Object yObj = lua_getparam(4);
+//	lua_Object zObj = lua_getparam(5);
+//	lua_Object param6Obj = lua_getparam(6);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR') ||
 			!lua_isuserdata(actor2Obj) || lua_tag(actor2Obj) != MKID_BE('ACTR'))
 		return;
 
-	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+//	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 	Actor *actor2 = static_cast<Actor *>(lua_getuserdata(actor2Obj));
 
 	// TODO whole below part need rewrote to much original
@@ -1641,9 +1641,9 @@ static void SetActorHead() {
 		return;
 
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	int joint1 = lua_getnumber(joint1Obj);
-	int joint2 = lua_getnumber(joint2Obj);
-	int joint3 = lua_getnumber(joint3Obj);
+	int joint1 = (int)lua_getnumber(joint1Obj);
+	int joint2 = (int)lua_getnumber(joint2Obj);
+	int joint3 = (int)lua_getnumber(joint3Obj);
 	float maxRoll = lua_getnumber(maxRollObj);
 	float maxPitch = lua_getnumber(maxPitchObj);
 	float maxYaw = lua_getnumber(maxYawObj);
@@ -1685,13 +1685,13 @@ static void SetActorFollowBoxes() {
 
 static void SetActorConstrain() {
 	lua_Object actorObj = lua_getparam(1);
-	lua_Object constrainObj = lua_getparam(2);
+//	lua_Object constrainObj = lua_getparam(2);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
 		return;
 
-	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	bool constrain = !lua_isnil(constrainObj);
+//	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+//	bool constrain = !lua_isnil(constrainObj);
 
 	// FIXME that below should be enabled, but for now it's disabled realated to
 	// above func SetActorFollowBoxes.
@@ -1728,9 +1728,9 @@ static void GetVisibleThings() {
 }
 
 static void SetShadowColor() {
-	int r = lua_getnumber(lua_getparam(1));
-	int g = lua_getnumber(lua_getparam(2));
-	int b = lua_getnumber(lua_getparam(3));
+	int r = (int)lua_getnumber(lua_getparam(1));
+	int g = (int)lua_getnumber(lua_getparam(2));
+	int b = (int)lua_getnumber(lua_getparam(3));
 
 	g_driver->setShadowColor(r, g, b);
 }
@@ -1755,7 +1755,7 @@ static void SetActiveShadow() {
 		return;
 	}
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	int shadowId = lua_getnumber(shadowIdObj);
+	int shadowId = (int)lua_getnumber(shadowIdObj);
 	actor->setActiveShadow(shadowId);
 }
 
@@ -1815,7 +1815,7 @@ static void ActivateActorShadow() {
 		return;
 	}
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	int shadowId = lua_getnumber(shadowIdObj);
+	int shadowId = (int)lua_getnumber(shadowIdObj);
 	bool state = !lua_isnil(stateObj);
 
 	actor->setActivateShadow(shadowId, state);
@@ -1831,7 +1831,7 @@ static void SetActorShadowValid() {
 		return;
 	}
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	int valid = lua_getnumber(numObj);
+	int valid = (int)lua_getnumber(numObj);
 
 	warning("SetActorShadowValid(%d) unknown purpose", valid);
 
@@ -1885,7 +1885,7 @@ static void TextFileGetLine() {
 		return;
 	}
 
-	int pos = lua_getnumber(posObj);
+	int pos = (int)lua_getnumber(posObj);
 	file->seek(pos, SEEK_SET);
 	file->readLine_NEW(textBuf, 1000);
 	delete file;
@@ -1961,7 +1961,7 @@ static void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, i
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
 		if (*x)
-			*x = lua_getnumber(tableObj);
+			*x = (int)lua_getnumber(tableObj);
 	}
 
 	lua_pushobject(paramObj);
@@ -1969,7 +1969,7 @@ static void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, i
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
 		if (*y)
-			*y = lua_getnumber(tableObj);
+			*y = (int)lua_getnumber(tableObj);
 	}
 
 	lua_pushobject(paramObj);
@@ -1985,7 +1985,7 @@ static void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, i
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
 		if (*vol)
-			*vol = lua_getnumber(tableObj);
+			*vol = (int)lua_getnumber(tableObj);
 	}
 
 	lua_pushobject(paramObj);
@@ -1993,7 +1993,7 @@ static void parseSayLineTable(lua_Object paramObj, bool *background, int *vol, i
 	tableObj = lua_gettable();
 	if (lua_isnumber(tableObj)) {
 		if (*pan)
-			*pan = lua_getnumber(tableObj);
+			*pan = (int)lua_getnumber(tableObj);
 	}
 }
 
@@ -2104,7 +2104,7 @@ static void GetPointSector() {
 	if (lua_isnil(typeObj))
 		sectorType = 0x2000;
 	else
-		sectorType = lua_getnumber(typeObj);
+		sectorType = (int)lua_getnumber(typeObj);
 
 	float x = lua_getnumber(xObj);
 	float y = lua_getnumber(yObj);
@@ -2131,7 +2131,7 @@ static void GetActorSector() {
 		return;
 
 	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-	int sectorType = lua_getnumber(typeObj);
+	int sectorType = (int)lua_getnumber(typeObj);
 	Sector *result = g_grim->currScene()->findPointSector(actor->pos(), sectorType);
 	if (result) {
 		lua_pushnumber(result->id());
@@ -2194,7 +2194,7 @@ static void MakeSectorActive() {
 			}
 		}
 	} else if (lua_isnumber(sectorObj)) {
-		int id = lua_getnumber(sectorObj);
+		int id = (int)lua_getnumber(sectorObj);
 		for (int i = 0; i < numSectors; i++) {
 			Sector *sector = g_grim->currScene()->getSectorBase(i);
 			if (sector->id() == id) {
@@ -2275,7 +2275,7 @@ static void MakeCurrentSetup() {
 	if (!lua_isnumber(setupObj))
 		return;
 
-	int num = lua_getnumber(lua_getparam(1));
+	int num = (int)lua_getnumber(lua_getparam(1));
 	// FIXME there are differences here
 	int prevSetup = g_grim->currScene()->setup();
 	g_grim->currScene()->setSetup(num);
@@ -2352,8 +2352,8 @@ static void ImStartSound() {
 		return;
 
 	const char *soundName = lua_getstring(nameObj);
-	int priority = lua_getnumber(priorityObj);
-	int group = lua_getnumber(groupObj);
+	int priority = (int)lua_getnumber(priorityObj);
+	int group = (int)lua_getnumber(groupObj);
 
 	// Start the sound with the appropriate settings
 	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority, NULL)) {
@@ -2395,7 +2395,7 @@ static void ImSetMusicVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, lua_getnumber(volObj));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (int)lua_getnumber(volObj));
 }
 
 static void ImGetMusicVol() {
@@ -2406,7 +2406,7 @@ static void ImSetVoiceVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, lua_getnumber(volObj));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (int)lua_getnumber(volObj));
 }
 
 static void ImGetVoiceVol() {
@@ -2417,7 +2417,7 @@ static void ImSetSfxVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, lua_getnumber(volObj));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (int)lua_getnumber(volObj));
 }
 
 static void ImGetSfxVol() {
@@ -2437,8 +2437,8 @@ static void ImSetParam() {
 	}
 
 	const char *soundName = lua_getstring(nameObj);
-	int param = lua_getnumber(paramObj);
-	int value = lua_getnumber(valueObj);
+	int param = (int)lua_getnumber(paramObj);
+	int value = (int)lua_getnumber(valueObj);
 	if (value < 0)
 		value = 0;
 	switch (param) {
@@ -2465,7 +2465,7 @@ void ImGetParam() {
 	}
 
 	const char *soundName = lua_getstring(nameObj);
-	int param = lua_getnumber(paramObj);
+	int param = (int)lua_getnumber(paramObj);
 	switch (param) {
 	case IM_SOUND_PLAY_COUNT:
 		lua_pushnumber(g_imuse->getCountPlayedTracks(soundName));
@@ -2495,11 +2495,11 @@ static void ImFadeParam() {
 		error("ImFadeParam: getting name from number is not supported");
 	}
 	const char *soundName = lua_getstring(nameObj);
-	int opcode = lua_getnumber(opcodeObj);
-	int value = lua_getnumber(valueObj);
+	int opcode = (int)lua_getnumber(opcodeObj);
+	int value = (int)lua_getnumber(valueObj);
 	if (value < 0)
 		value = 0;
-	int duration = lua_getnumber(durationObj);
+	int duration = (int)lua_getnumber(durationObj);
 	switch (opcode) {
 	case IM_SOUND_PAN:
 		g_imuse->setFadePan(soundName, value, duration);
@@ -2515,8 +2515,7 @@ static void ImSetState() {
 	if (!lua_isnumber(stateObj))
 		return;
 
-	int state = lua_getnumber(stateObj);
-	g_imuseState = lua_getnumber(stateObj);
+	g_imuseState = (int)lua_getnumber(stateObj);
 }
 
 static void ImSetSequence() {
@@ -2524,7 +2523,7 @@ static void ImSetSequence() {
 	if (!lua_isnumber(stateObj))
 		return;
 
-	int state = lua_getnumber(stateObj);
+	int state = (int)lua_getnumber(stateObj);
 	lua_pushnumber(g_imuse->setMusicSequence(state));
 }
 
@@ -2576,15 +2575,15 @@ static void SetSoundPosition() {
 		pos.set(x, y, z);
 	}
 
-	paramObj = lua_getparam(argId++);
+	paramObj = (int)lua_getparam(argId++);
 	if (lua_isnumber(paramObj)) {
-		minVolume = lua_getnumber(paramObj);
+		minVolume = (int)lua_getnumber(paramObj);
 		if (minVolume > 127)
 			minVolume = 127;
 	}
 	paramObj = lua_getparam(argId++);
 	if (lua_isnumber(paramObj)) {
-		maxVolume = lua_getnumber(paramObj);
+		maxVolume = (int)lua_getnumber(paramObj);
 		if (maxVolume > 127)
 			maxVolume = 127;
 		else if (maxVolume < minVolume)
@@ -2593,7 +2592,7 @@ static void SetSoundPosition() {
 
 	paramObj = lua_getparam(argId++);
 	if (lua_isnumber(paramObj)) {
-		someParam = lua_getnumber(paramObj);
+		someParam = (int)lua_getnumber(paramObj);
 		if (someParam < 0.0)
 			someParam = 0.0;
 	}
@@ -2685,7 +2684,7 @@ void EnableControl() {
 		lua_pushnil();
 		return;
 	}
-	int num = lua_getnumber(numObj);
+	int num = (int)lua_getnumber(numObj);
 	if (num < 0 || num >= KEYCODE_EXTRA_LAST)
 		error("control identifier out of range");
 
@@ -2699,7 +2698,7 @@ void DisableControl() {
 		lua_pushnil();
 		return;
 	}
-	int num = lua_getnumber(numObj);
+	int num = (int)lua_getnumber(numObj);
 	if (num < 0 || num >= KEYCODE_EXTRA_LAST)
 		error("control identifier out of range");
 
@@ -2712,7 +2711,7 @@ void GetControlState() {
 	if (!lua_isnumber(numObj))
 		return;
 
-	int num = lua_getnumber(numObj);
+	int num = (int)lua_getnumber(numObj);
 	if (num < 0 || num >= KEYCODE_EXTRA_LAST)
 		error("control identifier out of range");
 	if (num >= KEYCODE_AXIS_JOY1_X && num <= KEYCODE_AXIS_MOUSE_Z)
@@ -2763,9 +2762,9 @@ static void BlastImage() {
 	if (!lua_isnumber(xObj) || !lua_isnumber(yObj))
 		return;
 
-	int x = lua_getnumber(xObj);
-	int y = lua_getnumber(yObj);
-	bool transparent = getbool(4); // TODO transparent/masked copy into display
+	int x = (int)lua_getnumber(xObj);
+	int y = (int)lua_getnumber(yObj);
+//	bool transparent = getbool(4); // TODO transparent/masked copy into display
 	bitmap->setX(x);
 	bitmap->setY(y);
 	g_driver->createBitmap(bitmap);
@@ -2780,7 +2779,7 @@ void setTextObjectParams(TextObject *textObject, lua_Object tableObj) {
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			textObject->setX(lua_getnumber(keyObj));
+			textObject->setX((int)lua_getnumber(keyObj));
 		}
 	}
 
@@ -2789,7 +2788,7 @@ void setTextObjectParams(TextObject *textObject, lua_Object tableObj) {
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			textObject->setY(lua_getnumber(keyObj));
+			textObject->setY((int)lua_getnumber(keyObj));
 		}
 	}
 
@@ -2807,7 +2806,7 @@ void setTextObjectParams(TextObject *textObject, lua_Object tableObj) {
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			textObject->setWidth(lua_getnumber(keyObj));
+			textObject->setWidth((int)lua_getnumber(keyObj));
 		}
 	}
 
@@ -2816,7 +2815,7 @@ void setTextObjectParams(TextObject *textObject, lua_Object tableObj) {
 	keyObj = lua_gettable();
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
-			textObject->setHeight(lua_getnumber(keyObj));
+			textObject->setHeight((int)lua_getnumber(keyObj));
 		}
 	}
 
@@ -2882,7 +2881,7 @@ void setTextObjectParams(TextObject *textObject, lua_Object tableObj) {
 	if (keyObj) {
 		if (lua_isnumber(keyObj)) {
 			//textObject->setDuration(lua_getnumber(key));
-			warning("setTextObjectParams: dummy Duration: %d", lua_getnumber(keyObj));
+			warning("setTextObjectParams: dummy Duration: %d", (int)lua_getnumber(keyObj));
 		}
 	}
 }
@@ -2955,7 +2954,7 @@ static void SetTextSpeed() {
 	if (!lua_isnumber(speedObj))
 		return;
 
-	int speed = lua_getnumber(speedObj);
+	int speed = (int)lua_getnumber(speedObj);
 	g_grim->setTextSpeed(speed);
 }
 
@@ -3004,7 +3003,7 @@ static void GetTextCharPosition() {
 	lua_Object textObj = lua_getparam(1);
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKID_BE('TEXT')) {
 		TextObject *textObject = static_cast<TextObject *>(lua_getuserdata(textObj));
-		int pos = lua_getnumber(lua_getparam(2));
+		int pos = (int)lua_getnumber(lua_getparam(2));
 		lua_pushnumber(textObject->getTextCharPosition(pos));
 	}
 }
@@ -3036,7 +3035,7 @@ static void SetOffscreenTextPos() {
 static void SetSpeechMode() {
 	int mode;
 
-	mode = lua_getnumber(lua_getparam(1));
+	mode = (int)lua_getnumber(lua_getparam(1));
 	if (mode >= 1 && mode <= 3)
 		g_grim->setSpeechMode(mode);
 }
@@ -3074,10 +3073,10 @@ static void StartMovie() {
 		return;
 	}
 	if (!lua_isnil(lua_getparam(3)))
-		x = lua_getnumber(lua_getparam(3));
+		x = (int)lua_getnumber(lua_getparam(3));
 
 	if (!lua_isnil(lua_getparam(4)))
-		y = lua_getnumber(lua_getparam(4));
+		y = (int)lua_getnumber(lua_getparam(4));
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 	pushbool(g_smush->play(lua_getstring(name), x, y));
@@ -3131,7 +3130,7 @@ static void DrawPolygon() {
 		lua_pushstring("layer");
 		lua_Object layerObj = lua_gettable();
 		if (lua_isnumber(layerObj))
-			layer = lua_getnumber(layerObj);
+			layer = (int)lua_getnumber(layerObj);
 	}
 
 	// This code support static 4 points polygon as game doesn't use other than that.
@@ -3189,10 +3188,10 @@ static void DrawLine() {
 		return;
 	}
 
-	p1.x = lua_getnumber(x1Obj);
-	p1.y = lua_getnumber(y1Obj);
-	p2.x = lua_getnumber(x2Obj);
-	p2.y = lua_getnumber(y2Obj);
+	p1.x = (int)lua_getnumber(x1Obj);
+	p1.y = (int)lua_getnumber(y1Obj);
+	p2.x = (int)lua_getnumber(x2Obj);
+	p2.y = (int)lua_getnumber(y2Obj);
 
 	int layer = 2;
 	if (lua_istable(tableObj)) {
@@ -3206,7 +3205,7 @@ static void DrawLine() {
 		lua_pushstring("layer");
 		lua_Object layerObj = lua_gettable();
 		if (lua_isnumber(layerObj))
-			layer = lua_getnumber(layerObj);
+			layer = (int)lua_getnumber(layerObj);
 	}
 
 	PrimitiveObject *p = new PrimitiveObject();
@@ -3265,9 +3264,9 @@ static void ChangePrimitive() {
 		int x = 0;
 		int y = 0;
 		if (lua_isnumber(xoffset))
-			x = lua_getnumber(xoffset);
+			x = (int)lua_getnumber(xoffset);
 		if (lua_isnumber(yoffset))
-			y = lua_getnumber(yoffset);
+			y = (int)lua_getnumber(yoffset);
 		// TODO pmodify->setOffets(x, y);
 		assert(0);
 	}
@@ -3282,9 +3281,9 @@ static void ChangePrimitive() {
 		int x = -1;
 		int y = -1;
 		if (lua_isnumber(xobj))
-			x = lua_getnumber(xobj);
+			x = (int)lua_getnumber(xobj);
 		if (lua_isnumber(yobj))
-			y = lua_getnumber(yobj);
+			y = (int)lua_getnumber(yobj);
 		pmodify->setPos(x, y);
 	}
 
@@ -3298,9 +3297,9 @@ static void ChangePrimitive() {
 		int x = -1;
 		int y = -1;
 		if (lua_isnumber(x2))
-			x = lua_getnumber(x2);
+			x = (int)lua_getnumber(x2);
 		if (lua_isnumber(y2))
-			y = lua_getnumber(y2);
+			y = (int)lua_getnumber(y2);
 		// TODO pmodify->setSize(x, y);
 		assert(0);
 	}
@@ -3315,9 +3314,9 @@ static void ChangePrimitive() {
 		int x = -1;
 		int y = -1;
 		if (lua_isnumber(width))
-			x = lua_getnumber(width);
+			x = (int)lua_getnumber(width);
 		if (lua_isnumber(height))
-			y = lua_getnumber(height);
+			y = (int)lua_getnumber(height);
 		// TODO pmodify->setSize(x, y);
 		assert(0);
 	}
@@ -3336,10 +3335,10 @@ static void DrawRectangle() {
 		lua_pushnil();
 		return;
 	}
-	p1.x = lua_getnumber(objX1);
-	p1.y = lua_getnumber(objY1);
-	p2.x = lua_getnumber(objX2);
-	p2.y = lua_getnumber(objY2);
+	p1.x = (int)lua_getnumber(objX1);
+	p1.y = (int)lua_getnumber(objY1);
+	p2.x = (int)lua_getnumber(objX2);
+	p2.y = (int)lua_getnumber(objY2);
 	bool filled = false;
 
 	if (lua_istable(tableObj)){
@@ -3376,10 +3375,10 @@ static void BlastRect() {
 		lua_pushnil();
 		return;
 	}
-	p1.x = lua_getnumber(objX1);
-	p1.y = lua_getnumber(objY1);
-	p2.x = lua_getnumber(objX2);
-	p2.y = lua_getnumber(objY2);
+	p1.x = (int)lua_getnumber(objX1);
+	p1.y = (int)lua_getnumber(objY1);
+	p2.x = (int)lua_getnumber(objX2);
+	p2.y = (int)lua_getnumber(objY2);
 	bool filled = false;
 
 	if (lua_istable(tableObj)){
@@ -3408,10 +3407,10 @@ static void DimScreen() {
 }
 
 static void DimRegion() {
-	int x = lua_getnumber(lua_getparam(1));
-	int y = lua_getnumber(lua_getparam(2));
-	int w = lua_getnumber(lua_getparam(3));
-	int h = lua_getnumber(lua_getparam(4));
+	int x = (int)lua_getnumber(lua_getparam(1));
+	int y = (int)lua_getnumber(lua_getparam(2));
+	int w = (int)lua_getnumber(lua_getparam(3));
+	int h = (int)lua_getnumber(lua_getparam(4));
 	float level = lua_getnumber(lua_getparam(5));
 	g_driver->dimRegion(x, y, w, h, level);
 }
@@ -3422,7 +3421,7 @@ static void GetDiskFreeSpace() {
 }
 
 static void NewObjectState() {
-	int setupID = lua_getnumber(lua_getparam(1));
+	int setupID = (int)lua_getnumber(lua_getparam(1));
 	int val = (int)lua_getnumber(lua_getparam(2));
 	ObjectState::Position pos = (ObjectState::Position)val;
 	const char *bitmap = lua_getstring(lua_getparam(3));
@@ -3477,8 +3476,8 @@ static void GetCurrentScript() {
 }
 
 static void ScreenShot() {
-	int width = lua_getnumber(lua_getparam(1));
-	int height = lua_getnumber(lua_getparam(2));
+	int width = (int)lua_getnumber(lua_getparam(1));
+	int height = (int)lua_getnumber(lua_getparam(2));
 	int mode = g_grim->getMode();
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 	g_grim->updateDisplayScene();
@@ -3649,7 +3648,7 @@ static void LightMgrSetChange() {
 }
 
 static void SetAmbientLight() {
-	int mode = lua_getnumber(lua_getparam(1));
+	int mode = (int)lua_getnumber(lua_getparam(1));
 	if (mode == 0) {
 		if (g_grim->currScene()) {
 			g_grim->currScene()->setLightEnableState(true);
@@ -3777,7 +3776,7 @@ void concatFallback() {
 			sprintf(strPtr, lua_getstring(params[i]));
 		else if (lua_tag(params[i]) == MKID_BE('ACTR')) {
 			Actor *a = static_cast<Actor *>(lua_getuserdata(params[i]));
-			sprintf(strPtr, "(actor%d:%s)", (long)a,
+			sprintf(strPtr, "(actor%p:%s)", (void *)a,
 				(a->currentCostume() && a->currentCostume()->getModelNodes()) ?
 				a->currentCostume()->getModelNodes()->_name : "");
 		} else {
