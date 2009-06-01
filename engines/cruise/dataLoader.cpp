@@ -229,9 +229,7 @@ fileTypeEnum getFileType(const char *name) {
 }
 
 int getNumMaxEntiresInSet(uint8 *ptr) {
-	uint16 numEntries = *(uint16 *)(ptr + 4);
-	flipShort(&numEntries);
-
+	uint16 numEntries = READ_BE_UINT16(ptr + 4);
 	return numEntries;
 }
 
@@ -351,9 +349,7 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 	uint32 fontSize;
 
 	ptr2 += 4;
-	memcpy(&loadFileVar1, ptr2, 4);
-
-	flipLong(&loadFileVar1);
+	loadFileVar1 = READ_BE_UINT32(ptr2);
 
 	if (destIdx == -1) {
 		fileIndex = createResFileEntry(loadFileVar1, 1, loadFileVar1, 1);
@@ -365,8 +361,7 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 
 	memcpy(destPtr, ptr2, loadFileVar1);
 
-	memcpy(&fontSize, ptr2, 4);
-	flipLong(&fontSize);
+	fontSize = READ_BE_UINT32(ptr2);
 
 	if (destPtr != NULL) {
 		int32 i;
@@ -374,14 +369,14 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 
 		destPtr = filesDatabase[fileIndex].subData.ptr;
 
-		flipLong((int32 *) destPtr);
-		flipLong((int32 *)(destPtr + 4));
+		bigEndianLongToNative((int32 *) destPtr);
+		bigEndianLongToNative((int32 *)(destPtr + 4));
 		flipGen(destPtr + 8, 6);
 
 		currentPtr = destPtr + 14;
 
 		for (i = 0; i < *(int16 *)(destPtr + 8); i++) {
-			flipLong((int32 *) currentPtr);
+			bigEndianLongToNative((int32 *) currentPtr);
 			currentPtr += 4;
 
 			flipGen(currentPtr, 8);

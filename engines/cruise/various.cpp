@@ -30,15 +30,6 @@ namespace Cruise {
 uint16 remdo = 0;
 uint16 PCFadeFlag;
 
-int16 readB16(void *ptr) {
-	int16 temp;
-
-	temp = *(int16 *) ptr;
-	flipShort(&temp);
-
-	return temp;
-}
-
 char *getText(int textIndex, int overlayIndex) {
 	if (!overlayTable[overlayIndex].ovlData) {
 		return NULL;

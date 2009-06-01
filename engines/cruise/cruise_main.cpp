@@ -613,14 +613,14 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 
 								dataPtr ++;
 
-								offset = *(dataPtr++);
-								flipShort(&offset);
+								offset = (int16)READ_BE_UINT16(dataPtr);
+								dataPtr++;
 
-								newX = *(dataPtr++);
-								flipShort(&newX);
+								newX = (int16)READ_BE_UINT16(dataPtr);
+								dataPtr++;
 
-								newY = *(dataPtr++);
-								flipShort(&newY);
+								newY = (int16)READ_BE_UINT16(dataPtr);
+								dataPtr++;
 
 								offset += j;
 

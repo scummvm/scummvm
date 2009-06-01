@@ -147,7 +147,7 @@ void gfxModuleData_setPal256(const byte *ptr) {
 	for (i = 0; i < 256; i++) {
 #define convertRatio 36.571428571428571428571428571429
 		uint16 atariColor = *ptr;
-		//flipShort(&atariColor);
+		//bigEndianShortToNative(&atariColor);
 		ptr ++;
 
 		R = (int)(convertRatio * ((atariColor & 0x700) >> 8));

@@ -24,6 +24,7 @@
  */
 
 #include "cruise/cruise_main.h"
+#include "common/endian.h"
 #include "common/util.h"
 
 namespace Cruise {
@@ -242,20 +243,20 @@ int initCt(const char *ctpName) {
 		return (0);
 	}
 
-	ctp_routeCoordCount = readB16(dataPointer); // get the number of nods
+	ctp_routeCoordCount = (int16)READ_BE_UINT16(dataPointer); // get the number of nods
 	dataPointer += 2;
 
 	for (int i = 0; i < 7; i++) {
-		segementSizeTable[i] = readB16(dataPointer);
+		segementSizeTable[i] = (int16)READ_BE_UINT16(dataPointer);
 		dataPointer += 2;
 	}
 
 	// get the path-finding coordinates
 	ASSERT((segementSizeTable[0] % 4) == 0);
 	for (int i = 0; i < segementSizeTable[0] / 4; i++) {
-		ctp_routeCoords[i][0] = readB16(dataPointer);
+		ctp_routeCoords[i][0] = (int16)READ_BE_UINT16(dataPointer);
 		dataPointer += 2;
-		ctp_routeCoords[i][1] = readB16(dataPointer);
+		ctp_routeCoords[i][1] = (int16)READ_BE_UINT16(dataPointer);
 		dataPointer += 2;
 	}
 
@@ -263,7 +264,7 @@ int initCt(const char *ctpName) {
 	ASSERT((segementSizeTable[1] % 20) == 0);
 	for (int i = 0; i < segementSizeTable[1] / 20; i++) {
 		for (int j = 0; j < 10; j++) {
-			ctp_routes[i][j] = readB16(dataPointer);
+			ctp_routes[i][j] = (int16)READ_BE_UINT16(dataPointer);
 			dataPointer += 2;
 		}
 	}
@@ -272,7 +273,7 @@ int initCt(const char *ctpName) {
 	ASSERT((segementSizeTable[2] % 80) == 0);
 	for (int i = 0; i < segementSizeTable[2] / 80; i++) {
 		for (int j = 0; j < 40; j++) {
-			ctp_walkboxTable[i][j] = readB16(dataPointer);
+			ctp_walkboxTable[i][j] = (int16)READ_BE_UINT16(dataPointer);
 			dataPointer += 2;
 		}
 	}
@@ -286,14 +287,14 @@ int initCt(const char *ctpName) {
 		// Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
 		ASSERT((segementSizeTable[3] % 2) == 0);
 		for (int i = 0; i < segementSizeTable[3] / 2; i++) {
-			walkboxColor[i] = readB16(dataPointer);
+			walkboxColor[i] = (int16)READ_BE_UINT16(dataPointer);
 			dataPointer += 2;
 		}
 
 		// change indicator, walkbox type can change, i.e. blocked by object (values are either 0x00 or 0x01)
 		ASSERT((segementSizeTable[4] % 2) == 0);
 		for (int i = 0; i < segementSizeTable[4] / 2; i++) {
-			walkboxState[i] = readB16(dataPointer);
+			walkboxState[i] = (int16)READ_BE_UINT16(dataPointer);
 			dataPointer += 2;
 		}
 	}
@@ -301,14 +302,14 @@ int initCt(const char *ctpName) {
 	//
 	ASSERT((segementSizeTable[5] % 2) == 0);
 	for (int i = 0; i < segementSizeTable[5] / 2; i++) {
-		walkboxColorIndex[i] = readB16(dataPointer);
+		walkboxColorIndex[i] = (int16)READ_BE_UINT16(dataPointer);
 		dataPointer += 2;
 	}
 
 	//
 	ASSERT((segementSizeTable[6] % 2) == 0);
 	for (int i = 0; i < segementSizeTable[6] / 2; i++) {
-		walkboxZoom[i] = readB16(dataPointer);
+		walkboxZoom[i] = (int16)READ_BE_UINT16(dataPointer);
 		dataPointer += 2;
 	}
 	free(ptr);

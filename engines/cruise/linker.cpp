@@ -184,7 +184,7 @@ int updateScriptImport(int ovlIdx) {
 									*(ptr + 1) = out2;
 									*(int16 *)(ptr + 2) = ptrDest2->idx;
 
-									flipShort((int16 *)(ptr + 2));
+									bigEndianShortToNative((int16 *)(ptr + 2));
 								} else {
 									if (param2 == 20 || param2 == 30 || param2 == 40 || param2 == 50) {	// this patch a double push
 										uint8 *ptr = ptrData + temp;
@@ -194,7 +194,7 @@ int updateScriptImport(int ovlIdx) {
 
 										*(int16 *)(ptr + 4) = ptrDest2->idx;
 
-										flipShort((int16 *)(ptr + 4));
+										bigEndianShortToNative((int16 *)(ptr + 4));
 									} else {
 										int var_4 = ptrDest2->var4;
 
@@ -215,7 +215,7 @@ int updateScriptImport(int ovlIdx) {
 
 										*(int16 *)(ptrData + temp + 2) = ptrDest2->idx;
 
-										flipShort
+										bigEndianShortToNative
 										(
 										    (int16
 										     *)

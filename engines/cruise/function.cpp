@@ -143,7 +143,7 @@ int16 Op_AddProc(void) {
 		for (long int i = 0; i < pop1; i++) {
 			int16* ptr = (int16*)(procBss + i * 2);
 			*ptr = param[i];
-			flipShort(ptr);
+			bigEndianShortToNative(ptr);
 		}
 	}
 

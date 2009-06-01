@@ -110,8 +110,8 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 	currentVolumeFile.read(&volumeNumberOfEntry, 2);
 	currentVolumeFile.read(&volumeSizeOfEntry, 2);
 
-	flipShort(&volumeNumberOfEntry);
-	flipShort(&volumeSizeOfEntry);
+	bigEndianShortToNative(&volumeNumberOfEntry);
+	bigEndianShortToNative(&volumeSizeOfEntry);
 
 	volumeNumEntry = volumeNumberOfEntry;
 
@@ -136,9 +136,9 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 	}
 
 	for (i = 0; i < volumeNumEntry; i++) {
-		flipLong(&volumePtrToFileDescriptor[i].offset);
-		flipLong(&volumePtrToFileDescriptor[i].size);
-		flipLong(&volumePtrToFileDescriptor[i].extSize);
+		bigEndianLongToNative(&volumePtrToFileDescriptor[i].offset);
+		bigEndianLongToNative(&volumePtrToFileDescriptor[i].size);
+		bigEndianLongToNative(&volumePtrToFileDescriptor[i].extSize);
 	}
 
 	strcpy(currentBaseName, entry->ident);
@@ -356,10 +356,10 @@ int16 readVolCnf(void) {
 	}
 
 	fileHandle.read(&numOfDisks, 2);
-	flipShort(&numOfDisks);
+	bigEndianShortToNative(&numOfDisks);
 
 	fileHandle.read(&sizeHEntry, 2);
-	flipShort(&sizeHEntry);	// size of one header entry - 20 bytes
+	bigEndianShortToNative(&sizeHEntry);	// size of one header entry - 20 bytes
 
 	for (i = 0; i < numOfDisks; i++) {
 		//      fread(&volumeData[i],20,1,fileHandle);
@@ -368,16 +368,16 @@ int16 readVolCnf(void) {
 		fileHandle.read(&volumeData[i].diskNumber, 2);
 		fileHandle.read(&volumeData[i].size, 4);
 
-		flipShort(&volumeData[i].diskNumber);
+		bigEndianShortToNative(&volumeData[i].diskNumber);
 		debug(1, "Disk number: %d", volumeData[i].diskNumber);
-		flipLong(&volumeData[i].size);
+		bigEndianLongToNative(&volumeData[i].size);
 	}
 
 	for (i = 0; i < numOfDisks; i++) {
 		dataFileName *ptr;
 
 		fileHandle.read(&volumeData[i].size, 4);
-		flipLong(&volumeData[i].size);
+		bigEndianLongToNative(&volumeData[i].size);
 
 		ptr = (dataFileName *) mallocAndZero(volumeData[i].size);
 

@@ -25,6 +25,7 @@
 
 #include "cruise/cruise_main.h"
 #include "cruise/polys.h"
+#include "common/endian.h"
 #include "common/util.h"
 
 namespace Cruise {
@@ -163,14 +164,14 @@ void flipPoly(int fileId, int16 *dataPtr, int scale, char** newFrame, int X, int
 
 		dataPtr ++;
 
-		offset = *(dataPtr++);
-		flipShort(&offset);
+		offset = (int16)READ_BE_UINT16(dataPtr);
+		dataPtr++;
 
-		newX = *(dataPtr++);
-		flipShort(&newX);
+		newX = (int16)READ_BE_UINT16(dataPtr);
+		dataPtr++;
 
-		newY = *(dataPtr++);
-		flipShort(&newY);
+		newY = (int16)READ_BE_UINT16(dataPtr);
+		dataPtr++;
 
 		offset += fileId;
 
@@ -828,10 +829,8 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 			m_color = *dataPointer;	// color
 			dataPointer += 2;
 
-			minimumScale = *(uint16 *)(dataPointer);
+			minimumScale = READ_BE_UINT16(dataPointer);
 			dataPointer += 2;
-
-			flipShort(&minimumScale);
 
 			if ((minimumScale <= scale)) {
 				if (m_flipLeftRight) {
@@ -989,10 +988,8 @@ bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX
 			m_color = *dataPointer;	// color
 			dataPointer += 2;
 
-			minimumScale = *(uint16 *)(dataPointer);
+			minimumScale = READ_BE_UINT16(dataPointer);
 			dataPointer += 2;
-
-			flipShort(&minimumScale);
 
 			if ((minimumScale <= scale)) {
 				if (m_flipLeftRight) {

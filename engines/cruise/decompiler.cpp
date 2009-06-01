@@ -243,12 +243,9 @@ char getByteFromDecompScriptReal(void) {
 }
 
 void getShortFromDecompScript(char *buffer) {
-	short int var =
-	    *(int16 *)(currentDecompScript + currentDecompScriptPtr->var4);
+	int16 var = (int16)READ_BE_UINT16(currentDecompScript + currentDecompScriptPtr->var4);
 
 	currentDecompScriptPtr->var4 = currentDecompScriptPtr->var4 + 2;
-
-	flipShort(&var);
 
 	if (var == -1) {
 		resolveDecompShort(buffer);
@@ -260,13 +257,10 @@ void getShortFromDecompScript(char *buffer) {
 	sprintf(buffer, "%d", var);
 }
 
-short int getShortFromDecompScriptReal(void) {
-	short int var =
-	    *(int16 *)(currentDecompScript + currentDecompScriptPtr->var4);
+int16 getShortFromDecompScriptReal(void) {
+	int16 var = (int16)READ_BE_UINT16(currentDecompScript + currentDecompScriptPtr->var4);
 
 	currentDecompScriptPtr->var4 = currentDecompScriptPtr->var4 + 2;
-
-	flipShort(&var);
 
 	return var;
 }

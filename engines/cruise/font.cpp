@@ -121,14 +121,14 @@ void loadFNT(const char *fileName) {
 			// Flip structure values from BE to LE for font files - this is for consistency
 			// with font resources, which are in LE formatt
 			FontInfo *f = (FontInfo *)_systemFNT;
-			flipLong(&f->offset);
-			flipLong(&f->size);
+			bigEndianLongToNative(&f->offset);
+			bigEndianLongToNative(&f->size);
 			flipGen(&f->numChars, 6);	// numChars, hSpacing, and vSpacing
 
 			FontEntry *fe = (FontEntry *)(_systemFNT + sizeof(FontInfo));
 
 			for (int i = 0; i < FROM_LE_16(f->numChars); ++i, ++fe) {
-				flipLong(&fe->offset);	// Flip 32-bit offset field
+				bigEndianLongToNative(&fe->offset);	// Flip 32-bit offset field
 				flipGen(&fe->v1, 8);	// Flip remaining 16-bit fields
 			}
 		}
@@ -170,28 +170,12 @@ void freeSystem(void) {
 	free(_systemFNT);
 }
 
-void flipShort(int16 *var) {
-	uint8 *varPtr = (uint8 *) var;
-	SWAP(varPtr[0], varPtr[1]);
+void bigEndianShortToNative(void *var) {
+	WRITE_UINT16(var, READ_BE_UINT16(var));
 }
 
-void flipShort(uint16 *var) {
-	uint8 *varPtr = (uint8 *) var;
-	SWAP(varPtr[0], varPtr[1]);
-}
-
-void flipLong(int32 *var) {
-	uint8 *varPtr = (uint8 *)var;
-
-	SWAP(varPtr[0], varPtr[3]);
-	SWAP(varPtr[1], varPtr[2]);
-}
-
-void flipLong(uint32 *var) {
-	uint8 *varPtr = (uint8 *)var;
-
-	SWAP(varPtr[0], varPtr[3]);
-	SWAP(varPtr[1], varPtr[2]);
+void bigEndianLongToNative(void *var) {
+	WRITE_UINT32(var, READ_BE_UINT32(var));
 }
 
 void flipGen(void *var, int32 length) {
@@ -199,7 +183,7 @@ void flipGen(void *var, int32 length) {
 	short int *varPtr = (int16 *) var;
 
 	for (i = 0; i < (length / 2); i++) {
-		flipShort(&varPtr[i]);
+		bigEndianShortToNative(&varPtr[i]);
 	}
 }
 

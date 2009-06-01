@@ -55,10 +55,8 @@ void initSystem(void);
 void freeSystem(void);
 
 //////////////////////////////////////////////////
-void flipShort(int16 * var);
-void flipShort(uint16 * var);
-void flipLong(int32 * var);	// TODO: move away
-void flipLong(uint32 * var);	// TODO: move away
+void bigEndianShortToNative(void *var);
+void bigEndianLongToNative(void *var);	// TODO: move away
 void flipGen(void *var, int32 length);
 
 int32 getLineHeight(int16 charCount, const FontEntry *fontPtr, const uint8 *fontPrt_Desc);	// fontProc1
