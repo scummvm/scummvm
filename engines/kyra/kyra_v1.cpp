@@ -341,18 +341,16 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP: {
-			Common::Point pos = getMousePos();
-			_mouseX = pos.x;
-			_mouseY = pos.y;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
 			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
 			breakLoop = true;
 			} break;
 
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP: {
-			Common::Point pos = getMousePos();
-			_mouseX = pos.x;
-			_mouseY = pos.y;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
 			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 201 : (202 | 0x800));
 			breakLoop = true;
 			} break;
