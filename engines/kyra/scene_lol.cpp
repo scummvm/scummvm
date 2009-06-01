@@ -1244,7 +1244,7 @@ void LoLEngine::pitDropScroll(int numSteps) {
 
 		del = _tickLength -	(_system->getMillis() - ctime);
 		if (del > 0)
-			delay(del, false, true);
+			delay(del);
 	}
 
 	_screen->copyRegionSpecial(2, 320, 200, 112, 0, 0, 320, 200, 112, 0, 176, 120, 0);
@@ -1252,7 +1252,7 @@ void LoLEngine::pitDropScroll(int numSteps) {
 
 	del = _tickLength -	(_system->getMillis() - ctime);
 	if (del > 0)
-		delay(del, false, true);
+		delay(del);
 	updateDrawPage2();
 }
 

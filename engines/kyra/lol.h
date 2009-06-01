@@ -1291,7 +1291,7 @@ private:
 	int _monsterScaleWHSize;
 
 	// misc
-	void delay(uint32 millis, bool cUpdate = false, bool iUpdate = false);
+	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
 	void delayUntil(uint32 timeStamp);
 	uint8 getRandomNumberSpecial();
 

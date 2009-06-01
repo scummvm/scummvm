@@ -90,10 +90,10 @@ bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
 		return false;
 
 	while (_sound->voiceIsPlaying(&_speechHandle))
-		delay(_tickLength, true, false);
+		delay(_tickLength, true);
 
 	while (_sound->allVoiceChannelsPlaying())
-		delay(_tickLength, false, true);
+		delay(_tickLength);
 
 	for (Common::List<Audio::AudioStream *>::iterator i = _speechList.begin(); i != _speechList.end(); ++i)
 		delete *i;

@@ -1779,12 +1779,12 @@ uint16 *LoLEngine::getCharacterOrMonsterProtectionAgainstItems(int id) {
 	return (id & 0x8000) ? _monsters[id & 0x7fff].properties->protectionAgainstItems : _characters[id].protectionAgainstItems;
 }
 
-void LoLEngine::delay(uint32 millis, bool cUpdate, bool iUpdate) {
+void LoLEngine::delay(uint32 millis, bool doUpdate, bool) {
 	int del = (int)(millis);
 	while (del > 0 && !shouldQuit()) {
-		if (cUpdate)
+		if (doUpdate)
 			update();
-		if (iUpdate)
+		else
 			updateInput();
 		int step = del >= _tickLength ? _tickLength : del;
 		_system->delayMillis(step);
@@ -2402,7 +2402,7 @@ void LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 
 		int del = _tickLength - (_system->getMillis() - ctime);
 		if (del > 0)
-			delay(del, false, true);
+			delay(del);
 
 		_screen->checkedPageUpdate(drawPage1, drawPage2);
 		_screen->updateScreen();
@@ -2849,7 +2849,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			int step = del > _tickLength ? _tickLength : del;
 
 			if (!pal1 || !pal2) {
-				delay(step, false, true);
+				delay(step);
 				del -= step;
 				continue;
 			}
@@ -2857,7 +2857,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			if (!_screen->fadePaletteStep(pal1, pal2, _system->getMillis() - startTime, _tickLength * fadeDelay) && !mov)
 				return;
 
-			delay(step, false, true);
+			delay(step);
 			del -= step;
 		} while (del > 0);
 
