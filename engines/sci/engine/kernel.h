@@ -49,6 +49,11 @@ extern int _debug_step_running;
 
 /******************** Selector functionality ********************/
 
+enum SelectorInvocation {
+	kStopOnInvalidSelector = 0,
+	kContinueOnInvalidSelector = 1
+};
+
 #define GET_SEL32(_o_, _slc_) read_selector(s, _o_, s->_vocabulary->_selectorMap._slc_, __FILE__, __LINE__)
 #define GET_SEL32V(_o_, _slc_) (GET_SEL32(_o_, _slc_).offset)
 #define GET_SEL32SV(_o_, _slc_) ((int16)(GET_SEL32(_o_, _slc_).offset))
@@ -81,7 +86,7 @@ extern int _debug_step_running;
 
 reg_t read_selector(EngineState *s, reg_t object, Selector selector_id, const char *fname, int line);
 void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t value, const char *fname, int line);
-int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid, int kfunct,
+int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, int kfunct,
 	StackPtr k_argp, int k_argc, const char *fname, int line, int argc, ...);
 
 
@@ -100,7 +105,6 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index);
 
 
 /******************** Debug functionality ********************/
-#define KERNEL_OOPS(reason) kernel_oops(s, __FILE__, __LINE__, reason)
 
 bool is_object(EngineState *s, reg_t obj);
 /* Checks whether a heap address contains an object
@@ -136,14 +140,6 @@ byte *kernel_dereference_bulk_pointer(EngineState *s, reg_t pointer, int entries
 **                        to, or NULL on error or if not enugh entries
 **                        were available
 ** reg_t dereferenciation also assures alignedness of data.
-*/
-
-int kernel_oops(EngineState *s, const char *file, int line, const char *reason);
-/* Halts script execution and informs the user about an internal kernel error or failed assertion
-** Parameters: (EngineState *) s: The state to use
-**            (const char *) file: The file the oops occured in
-**            (int) line: The line the oops occured in
-**            (const char *) reason: Reason for the kernel oops
 */
 
 /******************** Priority macros/functions ********************/

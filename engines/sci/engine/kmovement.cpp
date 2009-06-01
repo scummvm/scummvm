@@ -558,9 +558,9 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d\n", x, y, bdi);
 
 	if (s->_vocabulary->_selectorMap.cantBeHere != -1)
-		invoke_selector(INV_SEL(client, cantBeHere, 0), 0);
+		invoke_selector(INV_SEL(client, cantBeHere, kStopOnInvalidSelector), 0);
 	else
-		invoke_selector(INV_SEL(client, canBeHere, 0), 0);
+		invoke_selector(INV_SEL(client, canBeHere, kStopOnInvalidSelector), 0);
 
 	s->r_acc = not_register(s, s->r_acc);
 
@@ -577,7 +577,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (s->version > SCI_VERSION_0)
 		if (completed)
-			invoke_selector(INV_SEL(mover, moveDone, 0), 0);
+			invoke_selector(INV_SEL(mover, moveDone, kStopOnInvalidSelector), 0);
 
 	return make_reg(0, completed);
 }
@@ -622,7 +622,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)\n", PRINT_REG(avoider), destx, desty);
 
-	if (invoke_selector(INV_SEL(mover, doit, 1) , 0)) {
+	if (invoke_selector(INV_SEL(mover, doit, kContinueOnInvalidSelector) , 0)) {
 		error("Mover %04x:%04x of avoider %04x:%04x doesn't have a doit() funcselector", PRINT_REG(mover), PRINT_REG(avoider));
 		return NULL_REG;
 	}
@@ -631,7 +631,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!mover.segment) // Mover has been disposed?
 		return s->r_acc; // Return gracefully.
 
-	if (invoke_selector(INV_SEL(client, isBlocked, 1) , 0)) {
+	if (invoke_selector(INV_SEL(client, isBlocked, kContinueOnInvalidSelector) , 0)) {
 		error("Client %04x:%04x of avoider %04x:%04x doesn't"
 		         " have an isBlocked() funcselector", PRINT_REG(client), PRINT_REG(avoider));
 		return NULL_REG;
@@ -662,7 +662,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			debugC(2, kDebugLevelBresen, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)\n", oldx, oldy, angle, move_x, move_y);
 
-			if (invoke_selector(INV_SEL(client, canBeHere, 1) , 0)) {
+			if (invoke_selector(INV_SEL(client, canBeHere, kContinueOnInvalidSelector) , 0)) {
 				error("Client %04x:%04x of avoider %04x:%04x doesn't"
 				         " have a canBeHere() funcselector", PRINT_REG(client), PRINT_REG(avoider));
 				return NULL_REG;
@@ -696,7 +696,7 @@ reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, angle);
 
 		if (looper.segment) {
-			if (invoke_selector(INV_SEL(looper, doit, 1), 2, angle, client)) {
+			if (invoke_selector(INV_SEL(looper, doit, kContinueOnInvalidSelector), 2, angle, client)) {
 				error("Looper %04x:%04x of avoider %04x:%04x doesn't"
 				         " have a doit() funcselector", PRINT_REG(looper), PRINT_REG(avoider));
 			} else

@@ -56,7 +56,7 @@ void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t va
 		*address = value;
 }
 
-int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid, int kfunct,
+int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, int kfunct,
 	StackPtr k_argp, int k_argc, const char *fname, int line, int argc, ...) {
 	va_list argp;
 	int i;
@@ -71,10 +71,10 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, int noinvalid
 	slc_type = lookup_selector(s, object, selector_id, NULL, &address);
 
 	if (slc_type == kSelectorNone) {
-		error("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)",
+		warning("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)",
 		         s->_vocabulary->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
-		if (noinvalid == 0)
-			KERNEL_OOPS("Not recoverable: VM was halted\n");
+		if (noinvalid == kStopOnInvalidSelector)
+			error("[Kernel] Not recoverable: VM was halted\n");
 		return 1;
 	}
 	if (slc_type == kSelectorVariable) // Swallow silently

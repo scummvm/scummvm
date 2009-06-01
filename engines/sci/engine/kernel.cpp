@@ -471,12 +471,6 @@ SciKernelFunction kfunct_mappers[] = {
 
 static const char *argtype_description[] = { "Undetermined (WTF?)", "List", "Node", "Object", "Reference", "Arithmetic" };
 
-int kernel_oops(EngineState *s, const char *file, int line, const char *reason) {
-	sciprintf("Kernel Oops in file %s, line %d: %s\n", file, line, reason);
-	error("Kernel Oops in file %s, line %d: %s", file, line, reason);
-	return 0;
-}
-
 // Allocates a set amount of memory for a specified use and returns a handle to it.
 reg_t kalloc(EngineState *s, const char *type, int space) {
 	reg_t reg;

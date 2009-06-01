@@ -175,7 +175,7 @@ reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 	Node *n = s->seg_manager->alloc_Node(&nodebase);
 
 	if (!n) {
-		KERNEL_OOPS("Out of memory while creating a node");
+		error("[Kernel] Out of memory while creating a node");
 		return NULL_REG;
 	}
 
@@ -458,7 +458,7 @@ reg_t kSort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	i = 0;
 	while (node) {
-		invoke_selector(INV_SEL(order_func, doit, 0), 1, node->value);
+		invoke_selector(INV_SEL(order_func, doit, kStopOnInvalidSelector), 1, node->value);
 		temp_array[i].key = node->key;
 		temp_array[i].value = node->value;
 		temp_array[i].order = s->r_acc;

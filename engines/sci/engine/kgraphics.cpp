@@ -1818,7 +1818,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 					}
 
 				if (is_object(s, obj)) {
-					if (invoke_selector(INV_SEL(obj, delete_, 1), 0))
+					if (invoke_selector(INV_SEL(obj, delete_, kContinueOnInvalidSelector), 0))
 						warning("Object at %04x:%04x requested deletion, but does not have a delete funcselector", PRINT_REG(obj));
 					if (_k_animate_ran) {
 						warning("Object at %04x:%04x invoked kAnimate() during deletion", PRINT_REG(obj));
@@ -1979,7 +1979,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 			if (!(signal & _K_VIEW_SIG_FLAG_FROZEN)) {
 
 				debugC(2, kDebugLevelGraphics, "  invoking %04x:%04x::doit()\n", PRINT_REG(obj));
-				invoke_selector(INV_SEL(obj, doit, 1), 0); // Call obj::doit() if neccessary
+				invoke_selector(INV_SEL(obj, doit, kContinueOnInvalidSelector), 0); // Call obj::doit() if neccessary
 
 
 				// Lookup node again, since the NodeTable it was in may
