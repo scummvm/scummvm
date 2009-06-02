@@ -18,7 +18,7 @@ int GraphicResource::loadResource(Common::String filename)
     Common::File* file = new Common::File;
 
     if(!file || !file->open(filename)){
-        printf( "failed to load file\n");        
+        printf("failed to load file\n");        
         return -1;    
     }
 
