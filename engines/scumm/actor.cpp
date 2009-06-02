@@ -1505,6 +1505,9 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 }
 
 void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
+	// HE palette number must be set, before setting the costume palette
+	bcr->_paletteNum = _hePaletteNum;
+
 	Actor::prepareDrawActorCostume(bcr);
 
 	bcr->_actorX += _heOffsX;
@@ -1517,7 +1520,6 @@ void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 	}
 
 	bcr->_skipLimbs = (_heSkipLimbs != 0);
-	bcr->_paletteNum = _hePaletteNum;
 
 	if (_vm->_game.heversion >= 80 && _heNoTalkAnimation == 0 && _animProgress == 0) {
 		if (_vm->getTalkingActor() == _number && !_vm->_string[0].no_talk_anim) {
