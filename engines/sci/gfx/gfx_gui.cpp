@@ -171,7 +171,7 @@ GfxPort *sciw_new_window(EngineState *s,
 		area.height -= 1; // Normal windows are drawn one pixel too small.
 
 	sciw_make_window_fit(&area, s->wm_port);
-	win = gfxw_new_port(visual, s->wm_port, area, color, bgcolor);
+	win = new GfxPort(visual, area, color, bgcolor);
 
 	win->_font = font;
 	win->title_text = title;

@@ -51,6 +51,15 @@ struct opcode {
 	Common::String name;
 };
 
+/* Generic description: */
+typedef reg_t kfunct(EngineState *s, int funct_nr, int argc, reg_t *argv);
+
+struct kfunct_sig_pair_t {
+	kfunct *fun; /* The actual function */
+	const char *signature;  /* kfunct signature */
+	Common::String orig_name; /* Original name, in case we couldn't map it */
+};
+
 class Kernel {
 public:
 	Kernel(ResourceManager *resmgr, bool isOldSci0);
@@ -84,6 +93,8 @@ public:
 	void dumpScriptClass(char *data, int seeker, int objsize);
 
 	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
+	Common::Array<kfunct_sig_pair_t> _kfuncTable; /**< Table of kernel functions */
+
 private:
 	/**
 	 * Loads the kernel function names.
@@ -106,6 +117,11 @@ private:
 	** Returns   : (void)
 	*/
 	void mapSelectors();
+
+	/* Maps kernel functions
+	** Returns   : (void)
+	*/
+	void mapFunctions();
 
 	/**
 	 * Loads the opcode names (only used for debugging).
@@ -340,18 +356,6 @@ List *lookup_list(EngineState *s, reg_t addr);
 
 
 /******************** Kernel functions ********************/
-
-/* Generic description: */
-typedef reg_t kfunct(EngineState *s, int funct_nr, int argc, reg_t *argv);
-
-struct kfunct_sig_pair_t {
-	kfunct *fun; /* The actual function */
-	const char *signature;  /* kfunct signature */
-	Common::String orig_name; /* Original name, in case we couldn't map it */
-};
-
-
-
 
 // New kernel functions
 reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv);

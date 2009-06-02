@@ -232,7 +232,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 
 	while (port_nr > 2 && !(s->port->_flags & GFXW_FLAG_IMMUNE_TO_SNAPSHOTS) && (gfxw_widget_matches_snapshot(*ptr, s->port))) {
 		// This shouldn't ever happen, actually, since windows (ports w/ ID > 2) should all be immune
-		GfxPort *newport = gfxw_find_port(s->visual, port_nr);
+		GfxPort *newport = s->visual->getPort(port_nr);
 		error("Port %d is not immune against snapshots", s->port->_ID);
 		port_nr--;
 		if (newport)
@@ -1031,10 +1031,10 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	delete s->picture_port;
 	delete s->iconbar_port;
 
-	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
-	s->picture_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
+	s->wm_port = new GfxPort(s->visual, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
+	s->picture_port = new GfxPort(s->visual, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
 
-	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
+	s->iconbar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
 	s->visual->add((GfxContainer *)s->visual, s->picture_port);
@@ -2345,7 +2345,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		   iconbar_port that does not exist in SSCI. */
 		if (port_nr == (unsigned int) - 1) port_nr = s->iconbar_port->_ID;
 
-		new_port = gfxw_find_port(s->visual, port_nr);
+		new_port = s->visual->getPort(port_nr);
 
 		if (!new_port) {
 			error("Invalid port %04x requested", port_nr);
@@ -2431,7 +2431,7 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	GfxPort *goner;
 	GfxPort *pred;
 
-	goner = gfxw_find_port(s->visual, goner_nr);
+	goner = s->visual->getPort(goner_nr);
 	if ((goner_nr < 3) || (goner == NULL)) {
 		error("Removal of invalid window %04x requested", goner_nr);
 		return s->r_acc;

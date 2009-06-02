@@ -1440,10 +1440,6 @@ void _gfxw_set_ops_VISUAL(GfxContainer *visual) {
 	                        _gfxwop_container_add_dirty, _gfxwop_container_add);
 }
 
-GfxVisual *gfxw_new_visual(GfxState *state, int font) {
-	return new GfxVisual(state, font);
-}
-
 GfxVisual::GfxVisual(GfxState *state, int font)
 	: GfxContainer(gfx_rect(0, 0, 320, 200), GFXW_VISUAL) {
 
@@ -1609,10 +1605,6 @@ void _gfxw_set_ops_PORT(GfxContainer *widget) {
 	                        _gfxwop_port_add_dirty, _gfxwop_port_add);
 }
 
-GfxPort *gfxw_new_port(GfxVisual *visual, GfxPort *predecessor, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor) {
-	return new GfxPort(visual, area, fgcolor, bgcolor);
-}
-
 GfxPort::GfxPort(GfxVisual *visual_, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor_)
 	: GfxContainer(area, GFXW_PORT) {
 	VERIFY_WIDGET(visual_);
@@ -1657,13 +1649,6 @@ GfxPort *gfxw_remove_port(GfxVisual *visual, GfxPort *port) {
 		parent = (GfxPort *)parent->_parent; // Ascend through ancestors
 
 	return parent;
-}
-
-GfxPort *gfxw_find_port(GfxVisual *visual, int ID) {
-	if (ID < 0 || ID >= (int)visual->_portRefs.size())
-		return NULL;
-
-	return visual->_portRefs[ID];
 }
 
 GfxPort *gfxw_find_default_port(GfxVisual *visual) {

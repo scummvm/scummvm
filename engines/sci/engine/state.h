@@ -234,8 +234,6 @@ public:
 	SegManager *seg_manager;
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
-	Common::Array<kfunct_sig_pair_t> _kfuncTable; /**< Table of kernel functions */
-
 	MessageState _msgState;
 
 	Vocabulary *_vocabulary;

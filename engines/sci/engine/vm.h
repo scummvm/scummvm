@@ -1069,13 +1069,6 @@ void quit_vm();
 ** Returns   : (void)
 */
 
-int script_map_kernel(EngineState *s);
-/* Maps kernel functions
-** Parameters: (EngineState *) s: The state which the _kernelNames are retrieved from
-** Returns   : (void)
-** This function reads from and writes to s. It is called by script_run().
-*/
-
 reg_t kalloc(EngineState *s, const char *type, int space);
 /* Allocates "kernel" memory and returns a handle suitable to be passed on to SCI scripts
 ** Parameters: (EngineState *) s: Pointer to the EngineState to operate on

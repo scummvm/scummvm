@@ -104,11 +104,11 @@ int _reset_graphics_input(EngineState *s) {
 		return 1;
 	}
 
-	s->visual = gfxw_new_visual(s->gfx_state, font_nr);
+	s->visual = new GfxVisual(s->gfx_state, font_nr);
 
-	s->wm_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
+	s->wm_port = new GfxPort(s->visual, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
 
-	s->iconbar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
+	s->iconbar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
 	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
@@ -124,9 +124,9 @@ int _reset_graphics_input(EngineState *s) {
 		bgcolor.visual = s->gfx_state->resstate->static_palette[255];
 		bgcolor.mask = GFX_MASK_VISUAL;
 #endif
-		s->titlebar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 10), fgcolor, bgcolor);
+		s->titlebar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 10), fgcolor, bgcolor);
 	} else {
-		s->titlebar_port = gfxw_new_port(s->visual, NULL, gfx_rect(0, 0, 320, 10), s->ega_colors[0], s->ega_colors[15]);
+		s->titlebar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 10), s->ega_colors[0], s->ega_colors[15]);
 	}
 	s->titlebar_port->_color.mask |= GFX_MASK_PRIORITY;
 	s->titlebar_port->_color.priority = 11;
@@ -135,7 +135,7 @@ int _reset_graphics_input(EngineState *s) {
 	s->titlebar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
 	// but this is correct
-	s->picture_port = gfxw_new_port(s->visual, NULL, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
+	s->picture_port = new GfxPort(s->visual, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
 
 	s->_pics.clear();
 
@@ -373,9 +373,6 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->_kernel = new Kernel(s->resmgr, (s->flags & GF_SCI0_OLD));
 	s->_vocabulary = new Vocabulary(s->resmgr);
 
-	script_map_kernel(s);
-	// Maps the kernel functions
-
 	s->restarting_flags = SCI_GAME_IS_NOT_RESTARTING;
 
 	s->bp_list = NULL; // No breakpoints defined
@@ -418,8 +415,6 @@ void script_free_engine(EngineState *s) {
 	script_free_vm_memory(s);
 
 	debug(2, "Freeing state-dependant data");
-
-	s->_kfuncTable.clear();
 
 	delete s->_vocabulary;
 	s->_vocabulary = 0;

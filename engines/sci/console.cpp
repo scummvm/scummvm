@@ -34,7 +34,7 @@
 #include "sci/engine/gc.h"
 #include "sci/gfx/gfx_gui.h"	// for sciw_set_status_bar
 #include "sci/gfx/gfx_state_internal.h"
-#include "sci/gfx/gfx_widgets.h"	// for gfxw_find_port
+#include "sci/gfx/gfx_widgets.h"	// for getPort
 #include "sci/sfx/songlib.h"	// for songlib_t
 #include "sci/vocabulary.h"
 
@@ -647,7 +647,7 @@ bool Console::cmdPrintPort(int argc, const char **argv) {
 		if (!g_EngineState->visual) {
 			DebugPrintf("Visual is uninitialized\n");
 		} else {
-			port = gfxw_find_port(g_EngineState->visual, atoi(argv[1]));
+			port = g_EngineState->visual->getPort(atoi(argv[1]));
 			if (!port)
 				DebugPrintf("No such port\n");
 			else

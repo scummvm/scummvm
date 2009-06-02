@@ -837,7 +837,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 //	s->_kernel = 0;	// FIXME: We should set s->_kernel to 0 here,
 // else it could be freed when the old EngineState is freed. Luckily, this freeing currently
 // never happens, so we don't need to. 
-	retval->_kfuncTable = s->_kfuncTable;
 
 	// Copy breakpoint information from current game instance
 	retval->have_bp = s->have_bp;

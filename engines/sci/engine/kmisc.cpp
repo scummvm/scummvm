@@ -248,7 +248,7 @@ reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	warning("Kernel function 0x%02x (%s) invoked: unmapped", funct_nr, s->_kfuncTable[funct_nr].orig_name.c_str());
+	warning("Kernel function 0x%02x (%s) invoked: unmapped", funct_nr, s->_kernel->_kfuncTable[funct_nr].orig_name.c_str());
 	return NULL_REG;
 }
 

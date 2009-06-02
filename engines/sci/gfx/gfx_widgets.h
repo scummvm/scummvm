@@ -311,36 +311,6 @@ GfxList *gfxw_new_list(rect_t area, int sorted);
 ** List widgets are also referred to as Display Lists.
 */
 
-GfxVisual *gfxw_new_visual(GfxState *state, int font);
-/* Creates a new visual widget
-** Parameters: (GfxState *) state: The graphics state
-**             (int) font: The default font number for contained ports
-** Returns   : (GfxList *) A newly allocated visual widget
-** Visual widgets are containers for port widgets.
-*/
-
-
-GfxPort *gfxw_new_port(GfxVisual *visual, GfxPort *predecessor, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);
-/* Creates a new port widget with the default settings
-** Paramaters: (GfxVisual *) visual: The visual the port is added to
-**             (GfxPort *) predecessor: The port's predecessor
-**             (rect_t) area: The screen area covered by the port (absolute position)
-**             (gfx_color_t) fgcolor: Foreground drawing color
-**             (gfx_color_t) bgcolor: Background color
-** Returns   : (GfxPort *) A newly allocated port widget
-** A port differentiates itself from a list in that it contains additional information,
-** and an optional title (stored in a display list).
-** Ports are assigned implicit IDs identifying their position within the port stack.
-*/
-
-GfxPort *gfxw_find_port(GfxVisual *visual, int ID);
-/* Retrieves a port with the specified ID
-** Parameters: (GfxVisual *) visual: The visual the port is to be retrieved from
-**             (int) ID: The port's ID
-** Returns   : (GfxPort *) The requested port, or NULL if it didn't exist
-** This function is O(1).
-*/
-
 GfxPort *gfxw_find_default_port(GfxVisual *visual);
 /* Retrieves the default port from a visual
 ** Parameters: (GfxVisual *) visual: The visual the port should be retrieved from

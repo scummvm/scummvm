@@ -482,6 +482,9 @@ Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
 		error("Kernel: Could not retrieve selector names");
 	}
 
+	// Map the kernel functions
+	mapFunctions();
+
 	// Map a few special selectors for later use
 	mapSelectors();
 }
@@ -490,6 +493,7 @@ Kernel::~Kernel() {
 	_selectorNames.clear();
 	_opcodes.clear();
 	_kernelNames.clear();
+	_kfuncTable.clear();
 }
 
 bool Kernel::loadSelectorNames(bool isOldSci0) {
@@ -652,11 +656,11 @@ void kernel_compile_signature(const char **s) {
 	*s = result; // Write back
 }
 
-int script_map_kernel(EngineState *s) {
+void Kernel::mapFunctions() {
 	int mapped = 0;
 	int ignored = 0;
-	uint functions_nr = s->_kernel->getKernelNamesSize();
-	uint max_functions_nr = (s->resmgr->_sciVersion == SCI_VERSION_0) ? 0x72 : 0x7b;
+	uint functions_nr = getKernelNamesSize();
+	uint max_functions_nr = (_resmgr->_sciVersion == SCI_VERSION_0) ? 0x72 : 0x7b;
 
 	if (functions_nr < max_functions_nr) {
 		warning("SCI version believed to have %d kernel"
@@ -666,14 +670,14 @@ int script_map_kernel(EngineState *s) {
 		functions_nr = max_functions_nr;
 	}
 
-	s->_kfuncTable.resize(functions_nr);
+	_kfuncTable.resize(functions_nr);
 
 	for (uint functnr = 0; functnr < functions_nr; functnr++) {
 		int seeker, found = -1;
 		Common::String sought_name;
 
-		if (functnr < s->_kernel->getKernelNamesSize())
-			sought_name = s->_kernel->getKernelName(functnr);
+		if (functnr < getKernelNamesSize())
+			sought_name = getKernelName(functnr);
 
 		if (!sought_name.empty())
 			for (seeker = 0; (found == -1) && kfunct_mappers[seeker].type != KF_TERMINATOR; seeker++)
@@ -682,27 +686,27 @@ int script_map_kernel(EngineState *s) {
 
 		if (found == -1) {
 			if (!sought_name.empty()) {
-				warning("Kernel function %s[%x] unmapped", s->_kernel->getKernelName(functnr).c_str(), functnr);
-				s->_kfuncTable[functnr].fun = kNOP;
+				warning("Kernel function %s[%x] unmapped", getKernelName(functnr).c_str(), functnr);
+				_kfuncTable[functnr].fun = kNOP;
 			} else {
 				warning("Flagging kernel function %x as unknown", functnr);
-				s->_kfuncTable[functnr].fun = k_Unknown;
+				_kfuncTable[functnr].fun = k_Unknown;
 			}
 
-			s->_kfuncTable[functnr].signature = NULL;
-			s->_kfuncTable[functnr].orig_name = sought_name;
+			_kfuncTable[functnr].signature = NULL;
+			_kfuncTable[functnr].orig_name = sought_name;
 		} else
 			switch (kfunct_mappers[found].type) {
 			case KF_NONE:
-				s->_kfuncTable[functnr].signature = NULL;
+				_kfuncTable[functnr].signature = NULL;
 				++ignored;
 				break;
 
 			case KF_NEW:
-				s->_kfuncTable[functnr].fun = kfunct_mappers[found].fun;
-				s->_kfuncTable[functnr].signature = kfunct_mappers[found].signature;
-				s->_kfuncTable[functnr].orig_name.clear();
-				kernel_compile_signature(&(s->_kfuncTable[functnr].signature));
+				_kfuncTable[functnr].fun = kfunct_mappers[found].fun;
+				_kfuncTable[functnr].signature = kfunct_mappers[found].signature;
+				_kfuncTable[functnr].orig_name.clear();
+				kernel_compile_signature(&(_kfuncTable[functnr].signature));
 				++mapped;
 				break;
 			case KF_TERMINATOR:
@@ -712,12 +716,12 @@ int script_map_kernel(EngineState *s) {
 
 	} // for all functions requesting to be mapped
 
-	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, s->_kernel->getKernelNamesSize(), mapped);
+	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, getKernelNamesSize(), mapped);
 	if (ignored)
 		sciprintf(" and ignoring %d", ignored);
 	sciprintf(".\n");
 
-	return 0;
+	return;
 }
 
 int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {

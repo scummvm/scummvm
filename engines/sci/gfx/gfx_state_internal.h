@@ -345,6 +345,10 @@ public:
 	virtual int draw(const Common::Point &pos);
 	virtual void print(int indentation) const;
 	virtual int setVisual(GfxVisual *);
+
+	GfxPort *getPort(int portId) {
+		return (portId < 0 || portId >= (int)_portRefs.size()) ? NULL : _portRefs[portId];
+	}
 };
 
 #define GFXW_IS_PORT(widget) ((widget)->_type == GFXW_PORT)
@@ -361,6 +365,16 @@ struct GfxPort : public GfxContainer {
 	byte gray_text; /**< Whether text is 'grayed out' (dithered) */
 
 public:
+	/* Creates a new port widget with the default settings
+	** Paramaters: (GfxVisual *) visual: The visual the port is added to
+	**             (GfxPort *) predecessor: The port's predecessor
+	**             (rect_t) area: The screen area covered by the port (absolute position)
+	**             (gfx_color_t) fgcolor: Foreground drawing color
+	**             (gfx_color_t) bgcolor: Background color
+	** A port differentiates itself from a list in that it contains additional information,
+	** and an optional title (stored in a display list).
+	** Ports are assigned implicit IDs identifying their position within the port stack.
+	*/
 	GfxPort(GfxVisual *visual, rect_t area, gfx_color_t fgcolor, gfx_color_t bgcolor);
 	~GfxPort();
 
