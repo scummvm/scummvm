@@ -18,6 +18,7 @@ public:
 	
 	uint32 getSize() { return _size; }
 	uint32 getNumEntries() { return _numEntries; }
+	ResourceItem getResource( uint32 pos );
 	
 private:
 	uint32 getNextValidOffset( uint8 startPos );

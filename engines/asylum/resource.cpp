@@ -65,11 +65,11 @@ int Resource::load( Common::String filename )
 		if( _items[k].size > 0 ){				
 			_items[k].data = (unsigned char*)malloc(_items[k].size);
 			file->seek( _items[k].offset, SEEK_SET );
-			file->read( _items[k].data, _items[k].size );
+			file->read( _items[k].data, _items[k].size );	
+			printf( "[%d] %c%c%c%c\n", k, _items[k].data[0], _items[k].data[1],_items[k].data[2],_items[k].data[3] );								
 		}
 	}
-	
-	//_items[0].save( "test.dat" );
+		
 	
 	file->close();
 	file = NULL;
@@ -88,6 +88,13 @@ uint32 Resource::getNextValidOffset( uint8 startPos )
 	}
 	
 	return _size;
+}
+
+ResourceItem Resource::getResource( uint32 pos )
+{
+	if( pos >= 0 && pos < _size ){
+		return _items[pos];
+	}
 }
 
 void Resource::dump()

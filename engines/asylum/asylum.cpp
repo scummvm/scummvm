@@ -26,6 +26,7 @@
 
 #include "asylum/asylum.h"
 #include "asylum/resource.h"
+#include "asylum/graphics.h"
 
 namespace Asylum {
 
@@ -45,12 +46,17 @@ AsylumEngine::~AsylumEngine() {
 Common::Error AsylumEngine::run() {
 	initGraphics(640, 480, true);
 		
-	Resource* g = new Resource;
+	Resource* res = new Resource;
 	
-	g->load("res.001");
-	g->dump();
-   
-	delete g;	
+	res->load("res.001");
+	res->dump();
+    
+	GraphicResource *gres = new GraphicResource( res->getResource(0) );
+	gres->dump();
+	
+	
+	delete res;	
+	delete gres;
 	
 	return Common::kNoError;
 }
