@@ -854,7 +854,7 @@ private:
 	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
 	void generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags);
 	void updateSequenceBackgroundAnimations();
-	
+
 	bool _dialogueField;
 	uint8 **_itemIconShapes;
 	int _numItemIconShapes;

@@ -686,7 +686,7 @@ void LoLEngine::showStarcraftLogo() {
 
 void LoLEngine::setupEpilogueData(bool load) {
 	static const char * const fileListCD[] = {
-		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", 
+		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK",
 		"FINALE.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
 	};
 
@@ -1065,7 +1065,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 
 					monsterX = _outroRightMonsterPos[monsterAnimFrame * 2 + 0];
 					monsterY = _outroRightMonsterPos[monsterAnimFrame * 2 + 1];
-					
+
 					_screen->drawShape(page, doorShape, 0, 0, 20, 0x10);
 				} else {
 					doorSD = 20;
@@ -1104,10 +1104,10 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 				_screen->printText(s.str, (_screen->_curDim->sx << 3) + x, _screen->_curDim->sy + y, 0xDC, 0x00);
 				_screen->_curPage = 0;
 			}
-			
+
 			--s.y;
 		}
-		
+
 		_screen->copyToPage0(_screen->_curDim->sy, _screen->_curDim->h, page, animBlock);
 
 		if (strings[1].y < -10) {
@@ -1145,7 +1145,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 
 void LoLEngine::loadOutroShapes(int file, uint8 **storage) {
 	_screen->loadBitmap(_outroShapeFileTable[file], 5, 5, 0);
-	
+
 	for (int i = 0; i < 12; ++i) {
 		delete[] storage[i];
 		if (i < 8)

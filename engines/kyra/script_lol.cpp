@@ -1806,7 +1806,7 @@ int LoLEngine::olol_findAssignedMonster(EMCState *script) {
 	uint16 o = stackPos(1) == -1 ? _levelBlockProperties[stackPos(0)].assignedObjects : findObject(stackPos(1))->nextAssignedObject;
 	while (o) {
 		if (o & 0x8000)
-			return o & 0x7fff;		
+			return o & 0x7fff;
 		o = findObject(o)->nextAssignedObject;
 	}
 	return -1;
@@ -1923,7 +1923,7 @@ int LoLEngine::olol_findInventoryItem(EMCState *script) {
 	if (stackPos(1) == -1) {
 		cur = 0;
 		last = 4;
-	}		
+	}
 	for (;cur < last; cur++) {
 		if (!(_characters[cur].flags & 1))
 			continue;
@@ -1932,7 +1932,7 @@ int LoLEngine::olol_findInventoryItem(EMCState *script) {
 				continue;
 			if (_itemsInPlay[_characters[cur].items[i]].itemPropertyIndex == stackPos(2))
 				return cur;
-		}		
+		}
 	}
 	return -1;
 }
@@ -1956,7 +1956,7 @@ int LoLEngine::olol_changeItemTypeOrFlag(EMCState *script) {
 	if (stackPos(1) == 4) {
 		i->itemPropertyIndex = r;
 		return r;
-	} else if (stackPos(1) == 15) {		
+	} else if (stackPos(1) == 15) {
 		i->shpCurFrame_flg = (i->shpCurFrame_flg & 0xe000) | r;
 		return r;
 	}

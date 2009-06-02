@@ -130,7 +130,7 @@ void LoLEngine::releaseMonsterShapes(int monsterIndex) {
 			for (int ii = pos; ii < pos2; ii++) {
 				if (_monsterShapes[ii] == t)
 					_monsterShapes[ii] = 0;
-			}			
+			}
 		}
 
 		if (_monsterPalettes[pos]) {
@@ -143,7 +143,7 @@ void LoLEngine::releaseMonsterShapes(int monsterIndex) {
 		int pos = (monsterIndex * 192) + i;
 		if (_monsterShapesEx[pos]) {
 			delete[] _monsterShapesEx[pos];
-			_monsterShapesEx[pos] = 0;			
+			_monsterShapesEx[pos] = 0;
 		}
 	}
 }
@@ -280,7 +280,7 @@ void LoLEngine::placeMonster(MonsterInPlay *monster, uint16 x, uint16 y) {
 
 	// WORKAROUND: Some monsters in the white tower have sound id's of 0xff. This is definitely a bug, since the
 	// last valid track number is 249 and there is no specific handling for 0xff. Nonetheless this wouldn't
-	// cause problems in the original code, because it just so happens that the invalid memory address points 
+	// cause problems in the original code, because it just so happens that the invalid memory address points
 	// to an entry in _ingameGMSoundIndex which just so happens to have a value of -1
 	if (monster->properties->sounds[0] == 0 || monster->properties->sounds[0] == 255 || cont == false)
 		return;
@@ -538,9 +538,9 @@ int LoLEngine::calcMonsterSkillLevel(int id, int a) {
 		r = (r * _monsterModifiers[3 + _monsterDifficulty]) >> 8;
 	} else {
 		if (_characters[id].skillLevels[1] > 7)
-			r = (r- (r >> 1));
+			r = (r - (r >> 1));
 		else if (_characters[id].skillLevels[1] > 3 && _characters[id].skillLevels[1] <= 7)
-			r = (r- (r >> 2));			
+			r = (r - (r >> 2));
 	}
 
 	return r;

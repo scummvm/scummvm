@@ -1338,7 +1338,7 @@ void LoLEngine::processGasExplosion(int soundId) {
 		while (_screen->fadePaletteStep(p2, _screen->_currentPalette, _system->getMillis() - ctime, 50))
 			updateInput();
 	}
-	
+
 	_screen->copyPage(12, 2);
 	_screen->setCurPage(cp);
 

@@ -381,7 +381,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 
 	if (!flags)
 		_screen->copyRegionToBuffer(0, 0, 0, 320, 40, _textAreaBuffer);
-	
+
 	char backupChar = 0;
 	char *str = text;
 	int y = 0;

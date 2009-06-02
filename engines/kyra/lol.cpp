@@ -321,7 +321,7 @@ LoLEngine::~LoLEngine() {
 		releaseMonsterShapes(i);
 
 	delete[] _monsterShapes;
-	delete[] _monsterPalettes;	
+	delete[] _monsterPalettes;
 	delete[] _monsterShapesEx;
 
 	if (_automapShapes)
@@ -2439,11 +2439,11 @@ void LoLEngine::processMagicHandOfFate(int spellLevel) {
 	if (spellLevel < 2) {
 		uint16 b1 = calcNewBlockPosition(_currentBlock, _currentDirection);
 		uint16 b2 = calcNewBlockPosition(b1, _currentDirection);
-		
+
 		if (!testWallFlag(b2, 0, 4)) {
 			if (!(_levelBlockProperties[b2].assignedObjects & 0x8000)) {
 				checkSceneUpdateNeed(b1);
-				
+
 				uint16 dir = (_currentDirection << 1);
 				uint16 o = _levelBlockProperties[b1].assignedObjects;
 				while (o & 0x8000) {
@@ -3368,7 +3368,7 @@ void LoLEngine::restoreSwampPalette() {
 void LoLEngine::launchMagicViper() {
 	_partyAwake = true;
 
-	int d = 0;	
+	int d = 0;
 	for (uint16 b = _currentBlock; d < 3; d++) {
 		uint16 o = _levelBlockProperties[b].assignedObjects;
 		if (o & 0x8000)
@@ -3385,15 +3385,15 @@ void LoLEngine::launchMagicViper() {
 	int numFrames = mov->open("viper.wsa", 1, 0);
 	if (!mov->opened())
 		error("Viper: Unable to load viper.wsa");
-	
+
 	static const uint8 viperAnimData[] = { 15, 25, 20, 10, 25, 20, 5, 25, 20, 0, 25, 20 };
 	const uint8 *v = &viperAnimData[d * 3];
 	int frm = v[0];
-	
+
 	for (bool running = true; running;) {
 		uint32 etime = _system->getMillis() + 5 * _tickLength;
 		_screen->copyPage(12, 2);
-		
+
 		if (frm == v[2])
 			snd_playSoundEffect(172, -1);
 
@@ -3405,7 +3405,7 @@ void LoLEngine::launchMagicViper() {
 		if (frm > v[1])
 			running = false;
 	}
-	
+
 	mov->close();
 	delete mov;
 
