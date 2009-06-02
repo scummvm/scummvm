@@ -25,7 +25,7 @@
 #include "common/file.h"
 
 #include "asylum/asylum.h"
-#include "asylum/graphics.cpp"
+#include "asylum/resource.h"
 
 namespace Asylum {
 
@@ -44,15 +44,13 @@ AsylumEngine::~AsylumEngine() {
 
 Common::Error AsylumEngine::run() {
 	initGraphics(640, 480, true);
+		
+	Resource* g = new Resource;
 	
-	GraphicResource* g = new GraphicResource;
-	
-	g->loadResource("res.001");
+	g->load("res.001");
 	g->dump();
-    g->loadResource("res.000");
-    g->dump();
-
-	delete g;
+   
+	delete g;	
 	
 	return Common::kNoError;
 }
