@@ -1499,6 +1499,14 @@ int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
 	int includeMonsters = stackPos(3);
 	int includeItems = stackPos(5);
 
+	// WORKAROUND for script bug
+	// Items would vanish when thrown towards the stairs
+	// in white tower level 3.
+	if (_currentLevel == 21 && level == 21 && block == 0x3e0) {
+		level = 20;
+		block = 0x0247;
+	}
+
 	while (o) {
 		int l = o;
 		o = findObject(o)->nextAssignedObject;
