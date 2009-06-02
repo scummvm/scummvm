@@ -462,6 +462,7 @@ bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
 
 #pragma mark -
 
+#ifdef ENABLE_LOL
 Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
 }
 
@@ -511,6 +512,7 @@ bool Debugger_LoL::cmd_queryFlag(int argc, const char **argv) {
 
 	return true;
 }
+#endif // ENABLE_LOL
 
 } // End of namespace Kyra
 

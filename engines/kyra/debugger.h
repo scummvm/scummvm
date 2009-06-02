@@ -97,6 +97,7 @@ protected:
 	bool cmd_passcodes(int argc, const char **argv);
 };
 
+#ifdef ENABLE_LOL
 class LoLEngine;
 
 class Debugger_LoL : public Debugger {
@@ -110,6 +111,7 @@ protected:
 	bool cmd_toggleFlag(int argc, const char **argv);
 	bool cmd_queryFlag(int argc, const char **argv);
 };
+#endif // ENABLE_LOL
 
 } // End of namespace Kyra
 
