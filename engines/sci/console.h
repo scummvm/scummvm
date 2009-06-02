@@ -36,6 +36,7 @@ class SciEngine;
 
 // Refer to the "addresses" command on how to pass address parameters
 int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
+int printObject(EngineState *s, reg_t pos);
 
 class Console : public GUI::Debugger {
 public:
@@ -100,19 +101,26 @@ private:
 	bool cmdGCNormalize(int argc, const char **argv);
 	bool cmdVMVarlist(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
+	bool cmdViewListNode(int argc, const char **argv);
 	bool cmdValueType(int argc, const char **argv);
+	bool cmdViewObject(int argc, const char **argv);
+	bool cmdViewActiveObject(int argc, const char **argv);
+	bool cmdViewAccumulatorObject(int argc, const char **argv);
 	bool cmdSleepFactor(int argc, const char **argv);
 	bool cmdIsSample(int argc, const char **argv);
 	bool cmdSfx01Header(int argc, const char **argv);
 	bool cmdSfx01Track(int argc, const char **argv);
 	bool cmdScriptSteps(int argc, const char **argv);
 	bool cmdSetAccumulator(int argc, const char **argv);
+	bool cmdBreakpointList(int argc, const char **argv);
+	bool cmdBreakpointDelete(int argc, const char **argv);
 	bool cmdExit(int argc, const char **argv);
 	bool cmdAddresses(int argc, const char **argv);
 	bool cmdStopSfx(int argc, const char **argv);
 
 	bool segmentInfo(int nr);
 	void printList(List *l);
+	int printNode(reg_t addr);
 
 private:
 	SciEngine *_vm;

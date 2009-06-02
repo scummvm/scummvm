@@ -53,189 +53,6 @@ bool _kdebug_track_mouse_clicks = false;
 int _weak_validations = 1; // Some validation errors are reduced to warnings if non-0
 
 
-int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on success
-	int rel_offsetting = 0;
-	const char *offsetting = NULL;
-	// Non-NULL: Parse end of string for relative offsets
-	char *endptr;
-
-	if (*str == '$') { // Register
-		rel_offsetting = 1;
-
-		if (!scumm_strnicmp(str + 1, "PC", 2)) {
-			*dest = s->_executionStack.back().addr.pc;
-			offsetting = str + 3;
-		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
-			*dest = s->_executionStack.back().addr.pc;
-			offsetting = str + 2;
-		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
-			*dest = s->r_prev;
-			offsetting = str + 5;
-		} else if (!scumm_strnicmp(str + 1, "ACC", 3)) {
-			*dest = s->r_acc;
-			offsetting = str + 4;
-		} else if (!scumm_strnicmp(str + 1, "A", 1)) {
-			*dest = s->r_acc;
-			offsetting = str + 2;
-		} else if (!scumm_strnicmp(str + 1, "OBJ", 3)) {
-			*dest = s->_executionStack.back().objp;
-			offsetting = str + 4;
-		} else if (!scumm_strnicmp(str + 1, "O", 1)) {
-			*dest = s->_executionStack.back().objp;
-			offsetting = str + 2;
-		} else
-			return 1; // No matching register
-
-		if (!*offsetting)
-			offsetting = NULL;
-		else if (*offsetting != '+' && *offsetting != '-')
-			return 1;
-	} else if (*str == '&') {
-		int script_nr;
-		// Look up by script ID
-		char *colon = (char *)strchr(str, ':');
-
-		if (!colon)
-			return 1;
-		*colon = 0;
-		offsetting = colon + 1;
-
-		script_nr = strtol(str + 1, &endptr, 10);
-
-		if (*endptr)
-			return 1;
-
-		dest->segment = s->seg_manager->segGet(script_nr);
-
-		if (!dest->segment) {
-			return 1;
-		}
-	} else if (*str == '?') {
-		int index = -1;
-		int times_found = 0;
-		char *tmp;
-		const char *str_objname;
-		char *str_suffix;
-		char suffchar = 0;
-		uint i;
-		// Parse obj by name
-
-		tmp = (char *)strchr(str, '+');
-		str_suffix = (char *)strchr(str, '-');
-		if (tmp < str_suffix)
-			str_suffix = tmp;
-		if (str_suffix) {
-			suffchar = (*str_suffix);
-			*str_suffix = 0;
-		}
-
-		tmp = (char *)strchr(str, '.');
-
-		if (tmp) {
-			*tmp = 0;
-			index = strtol(tmp + 1, &endptr, 16);
-			if (*endptr)
-				return -1;
-		}
-
-		str_objname = str + 1;
-
-		// Now all values are available; iterate over all objects.
-		for (i = 0; i < s->seg_manager->_heap.size(); i++) {
-			MemObject *mobj = s->seg_manager->_heap[i];
-			int idx = 0;
-			int max_index = 0;
-
-			if (mobj) {
-				if (mobj->getType() == MEM_OBJ_SCRIPT)
-					max_index = (*(Script *)mobj)._objects.size();
-				else if (mobj->getType() == MEM_OBJ_CLONES)
-					max_index = (*(CloneTable *)mobj)._table.size();
-			}
-
-			while (idx < max_index) {
-				int valid = 1;
-				Object *obj = NULL;
-				reg_t objpos;
-				objpos.offset = 0;
-				objpos.segment = i;
-
-				if (mobj->getType() == MEM_OBJ_SCRIPT) {
-					obj = &(*(Script *)mobj)._objects[idx];
-					objpos.offset = obj->pos.offset;
-				} else if (mobj->getType() == MEM_OBJ_CLONES) {
-					obj = &((*(CloneTable *)mobj)._table[idx]);
-					objpos.offset = idx;
-					valid = ((CloneTable *)mobj)->isValidEntry(idx);
-				}
-
-				if (valid) {
-					const char *objname = obj_get_name(s, objpos);
-					if (!strcmp(objname, str_objname)) {
-						// Found a match!
-						if ((index < 0) && (times_found > 0)) {
-							if (times_found == 1) {
-								// First time we realized the ambiguity
-								printf("Ambiguous:\n");
-								printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(*dest), str_objname);
-							}
-							printf("  %3x: [%04x:%04x] %s\n", times_found, PRINT_REG(objpos), str_objname);
-						}
-						if (index < 0 || times_found == index)
-							*dest = objpos;
-						++times_found;
-					}
-				}
-				++idx;
-			}
-
-		}
-
-		if (!times_found)
-			return 1;
-
-		if (times_found > 1 && index < 0) {
-			printf("Ambiguous: Aborting.\n");
-			return 1; // Ambiguous
-		}
-
-		if (times_found <= index)
-			return 1; // Not found
-
-		offsetting = str_suffix;
-		if (offsetting)
-			*str_suffix = suffchar;
-		rel_offsetting = 1;
-	} else {
-		char *colon = (char *)strchr(str, ':');
-
-		if (!colon) {
-			offsetting = str;
-			dest->segment = 0;
-		} else {
-			*colon = 0;
-			offsetting = colon + 1;
-
-			dest->segment = strtol(str, &endptr, 16);
-			if (*endptr)
-				return 1;
-		}
-	}
-	if (offsetting) {
-		int val = strtol(offsetting, &endptr, 16);
-
-		if (rel_offsetting)
-			dest->offset += val;
-		else
-			dest->offset = val;
-
-		if (*endptr)
-			return 1;
-	}
-
-	return 0;
-}
-
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
@@ -311,10 +128,16 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
+	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
+	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	// VM
 	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
 	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
 	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
+	DCmd_Register("view_object",		WRAP_METHOD(Console, cmdViewListNode));
+	DCmd_Register("view_object",		WRAP_METHOD(Console, cmdViewObject));
+	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
+	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
 	DCmd_Register("sleep_factor",		WRAP_METHOD(Console, cmdSleepFactor));
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
 
@@ -1356,40 +1179,6 @@ bool Console::segmentInfo(int nr) {
 	return true;
 }
 
-void Console::printList(List *l) {
-	reg_t pos = l->first;
-	reg_t my_prev = NULL_REG;
-
-	DebugPrintf("\t<\n");
-
-	while (!pos.isNull()) {
-		Node *node;
-		NodeTable *nt = (NodeTable *)GET_SEGMENT(*g_EngineState->seg_manager, pos.segment, MEM_OBJ_NODES);
-
-		if (!nt || !nt->isValidEntry(pos.offset)) {
-			DebugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
-			          PRINT_REG(pos));
-			return;
-		}
-
-		node = &(nt->_table[pos.offset]);
-
-		DebugPrintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
-
-		if (my_prev != node->pred)
-			DebugPrintf("   WARNING: current node gives %04x:%04x as predecessor!\n",
-			          PRINT_REG(node->pred));
-
-		my_prev = pos;
-		pos = node->succ;
-	}
-
-	if (my_prev != l->last)
-		DebugPrintf("   WARNING: Last node was expected to be %04x:%04x, was %04x:%04x!\n",
-		          PRINT_REG(l->last), PRINT_REG(my_prev));
-	DebugPrintf("\t>\n");
-}
-
 bool Console::cmdSegmentInfo(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Provides information on the specified segment(s)\n");
@@ -1700,6 +1489,66 @@ bool Console::cmdValueType(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdViewListNode(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Examines the list node at the given address.\n");
+		DebugPrintf("Usage: %s <address>\n", argv[0]);
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t addr;
+	
+	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	printNode(addr);
+	return true;
+}
+
+bool Console::cmdViewObject(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Examines the object at the given address.\n");
+		DebugPrintf("Usage: %s <address>\n", argv[0]);
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t addr;
+	
+	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	DebugPrintf("Information on the object at the given address:\n");
+	printObject(g_EngineState, addr);
+
+	return true;
+}
+
+bool Console::cmdViewActiveObject(int argc, const char **argv) {
+	DebugPrintf("Information on the currently active object or class:\n");
+
+#if 0
+	// TODO: p_objp
+	printObject(g_EngineState, *p_objp);
+#endif
+
+	return true;
+}
+
+bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
+	DebugPrintf("Information on the currently active object or class at the address indexed by the accumulator:\n");
+	printObject(g_EngineState, g_EngineState->r_acc);
+
+	return true;
+}
+
 bool Console::cmdSleepFactor(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Factor to multiply with wait times in kWait().\n");
@@ -1737,6 +1586,82 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 	}
 
 	g_EngineState->r_acc = val;
+
+	return true;
+}
+
+bool Console::cmdBreakpointList(int argc, const char **argv) {
+	Breakpoint *bp = g_EngineState->bp_list;
+	int i = 0;
+	int bpdata;
+
+	DebugPrintf("Breakpoint list:\n");
+
+	while (bp) {
+		DebugPrintf("  #%i: ", i);
+		switch (bp->type) {
+		case BREAK_SELECTOR:
+			DebugPrintf("Execute %s\n", bp->data.name);
+			break;
+		case BREAK_EXPORT:
+			bpdata = bp->data.address;
+			DebugPrintf("Execute script %d, export %d\n", bpdata >> 16, bpdata & 0xFFFF);
+			break;
+		}
+
+		bp = bp->next;
+		i++;
+	}
+
+	return true;
+}
+
+bool Console::cmdBreakpointDelete(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Deletes a breakpoint with the specified index.\n");
+		DebugPrintf("Usage: %s <breakpoint index>\n", argv[0]);
+		return true;
+	}
+
+	Breakpoint *bp, *bp_next, *bp_prev;
+	int i = 0, found = 0;
+	int type;
+	int idx = atoi(argv[1]);
+
+	// Find breakpoint with given index
+	bp_prev = NULL;
+	bp = g_EngineState->bp_list;
+	while (bp && i < idx) {
+		bp_prev = bp;
+		bp = bp->next;
+		i++;
+	}
+	if (!bp) {
+		DebugPrintf("Invalid breakpoint index %i\n", idx);
+		return true;
+	}
+
+	// Delete it
+	bp_next = bp->next;
+	type = bp->type;
+	if (type == BREAK_SELECTOR) free(bp->data.name);
+	free(bp);
+	if (bp_prev)
+		bp_prev->next = bp_next;
+	else
+		g_EngineState->bp_list = bp_next;
+
+	// Check if there are more breakpoints of the same type. If not, clear
+	// the respective bit in s->have_bp.
+	for (bp = g_EngineState->bp_list; bp; bp = bp->next) {
+		if (bp->type == type) {
+			found = 1;
+			break;
+		}
+	}
+
+	if (!found)
+		g_EngineState->have_bp &= ~type;
 
 	return true;
 }
@@ -2034,6 +1959,314 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 	DebugPrintf("   ?obj.idx may be used to disambiguate 'obj' by the index 'idx'.\n");
 
 	return true;
+}
+
+int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on success
+	int rel_offsetting = 0;
+	const char *offsetting = NULL;
+	// Non-NULL: Parse end of string for relative offsets
+	char *endptr;
+
+	if (*str == '$') { // Register
+		rel_offsetting = 1;
+
+		if (!scumm_strnicmp(str + 1, "PC", 2)) {
+			*dest = s->_executionStack.back().addr.pc;
+			offsetting = str + 3;
+		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
+			*dest = s->_executionStack.back().addr.pc;
+			offsetting = str + 2;
+		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
+			*dest = s->r_prev;
+			offsetting = str + 5;
+		} else if (!scumm_strnicmp(str + 1, "ACC", 3)) {
+			*dest = s->r_acc;
+			offsetting = str + 4;
+		} else if (!scumm_strnicmp(str + 1, "A", 1)) {
+			*dest = s->r_acc;
+			offsetting = str + 2;
+		} else if (!scumm_strnicmp(str + 1, "OBJ", 3)) {
+			*dest = s->_executionStack.back().objp;
+			offsetting = str + 4;
+		} else if (!scumm_strnicmp(str + 1, "O", 1)) {
+			*dest = s->_executionStack.back().objp;
+			offsetting = str + 2;
+		} else
+			return 1; // No matching register
+
+		if (!*offsetting)
+			offsetting = NULL;
+		else if (*offsetting != '+' && *offsetting != '-')
+			return 1;
+	} else if (*str == '&') {
+		int script_nr;
+		// Look up by script ID
+		char *colon = (char *)strchr(str, ':');
+
+		if (!colon)
+			return 1;
+		*colon = 0;
+		offsetting = colon + 1;
+
+		script_nr = strtol(str + 1, &endptr, 10);
+
+		if (*endptr)
+			return 1;
+
+		dest->segment = s->seg_manager->segGet(script_nr);
+
+		if (!dest->segment) {
+			return 1;
+		}
+	} else if (*str == '?') {
+		int index = -1;
+		int times_found = 0;
+		char *tmp;
+		const char *str_objname;
+		char *str_suffix;
+		char suffchar = 0;
+		uint i;
+		// Parse obj by name
+
+		tmp = (char *)strchr(str, '+');
+		str_suffix = (char *)strchr(str, '-');
+		if (tmp < str_suffix)
+			str_suffix = tmp;
+		if (str_suffix) {
+			suffchar = (*str_suffix);
+			*str_suffix = 0;
+		}
+
+		tmp = (char *)strchr(str, '.');
+
+		if (tmp) {
+			*tmp = 0;
+			index = strtol(tmp + 1, &endptr, 16);
+			if (*endptr)
+				return -1;
+		}
+
+		str_objname = str + 1;
+
+		// Now all values are available; iterate over all objects.
+		for (i = 0; i < s->seg_manager->_heap.size(); i++) {
+			MemObject *mobj = s->seg_manager->_heap[i];
+			int idx = 0;
+			int max_index = 0;
+
+			if (mobj) {
+				if (mobj->getType() == MEM_OBJ_SCRIPT)
+					max_index = (*(Script *)mobj)._objects.size();
+				else if (mobj->getType() == MEM_OBJ_CLONES)
+					max_index = (*(CloneTable *)mobj)._table.size();
+			}
+
+			while (idx < max_index) {
+				int valid = 1;
+				Object *obj = NULL;
+				reg_t objpos;
+				objpos.offset = 0;
+				objpos.segment = i;
+
+				if (mobj->getType() == MEM_OBJ_SCRIPT) {
+					obj = &(*(Script *)mobj)._objects[idx];
+					objpos.offset = obj->pos.offset;
+				} else if (mobj->getType() == MEM_OBJ_CLONES) {
+					obj = &((*(CloneTable *)mobj)._table[idx]);
+					objpos.offset = idx;
+					valid = ((CloneTable *)mobj)->isValidEntry(idx);
+				}
+
+				if (valid) {
+					const char *objname = obj_get_name(s, objpos);
+					if (!strcmp(objname, str_objname)) {
+						// Found a match!
+						if ((index < 0) && (times_found > 0)) {
+							if (times_found == 1) {
+								// First time we realized the ambiguity
+								printf("Ambiguous:\n");
+								printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(*dest), str_objname);
+							}
+							printf("  %3x: [%04x:%04x] %s\n", times_found, PRINT_REG(objpos), str_objname);
+						}
+						if (index < 0 || times_found == index)
+							*dest = objpos;
+						++times_found;
+					}
+				}
+				++idx;
+			}
+
+		}
+
+		if (!times_found)
+			return 1;
+
+		if (times_found > 1 && index < 0) {
+			printf("Ambiguous: Aborting.\n");
+			return 1; // Ambiguous
+		}
+
+		if (times_found <= index)
+			return 1; // Not found
+
+		offsetting = str_suffix;
+		if (offsetting)
+			*str_suffix = suffchar;
+		rel_offsetting = 1;
+	} else {
+		char *colon = (char *)strchr(str, ':');
+
+		if (!colon) {
+			offsetting = str;
+			dest->segment = 0;
+		} else {
+			*colon = 0;
+			offsetting = colon + 1;
+
+			dest->segment = strtol(str, &endptr, 16);
+			if (*endptr)
+				return 1;
+		}
+	}
+	if (offsetting) {
+		int val = strtol(offsetting, &endptr, 16);
+
+		if (rel_offsetting)
+			dest->offset += val;
+		else
+			dest->offset = val;
+
+		if (*endptr)
+			return 1;
+	}
+
+	return 0;
+}
+
+const char *selector_name(EngineState *s, int selector) {
+	if (selector >= 0 && selector < (int)s->_kernel->getSelectorNamesSize())
+		return s->_kernel->getSelectorName(selector).c_str();
+	else
+		return "--INVALID--";
+}
+
+void Console::printList(List *l) {
+	reg_t pos = l->first;
+	reg_t my_prev = NULL_REG;
+
+	DebugPrintf("\t<\n");
+
+	while (!pos.isNull()) {
+		Node *node;
+		NodeTable *nt = (NodeTable *)GET_SEGMENT(*g_EngineState->seg_manager, pos.segment, MEM_OBJ_NODES);
+
+		if (!nt || !nt->isValidEntry(pos.offset)) {
+			DebugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
+			          PRINT_REG(pos));
+			return;
+		}
+
+		node = &(nt->_table[pos.offset]);
+
+		DebugPrintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
+
+		if (my_prev != node->pred)
+			DebugPrintf("   WARNING: current node gives %04x:%04x as predecessor!\n",
+			          PRINT_REG(node->pred));
+
+		my_prev = pos;
+		pos = node->succ;
+	}
+
+	if (my_prev != l->last)
+		DebugPrintf("   WARNING: Last node was expected to be %04x:%04x, was %04x:%04x!\n",
+		          PRINT_REG(l->last), PRINT_REG(my_prev));
+	DebugPrintf("\t>\n");
+}
+
+int Console::printNode(reg_t addr) {
+	MemObject *mobj = GET_SEGMENT(*g_EngineState->seg_manager, addr.segment, MEM_OBJ_LISTS);
+
+	if (mobj) {
+		ListTable *lt = (ListTable *)mobj;
+		List *list;
+
+		if (!lt->isValidEntry(addr.offset)) {
+			DebugPrintf("Address does not contain a list\n");
+			return 1;
+		}
+
+		list = &(lt->_table[addr.offset]);
+
+		DebugPrintf("%04x:%04x : first x last = (%04x:%04x, %04x:%04x)\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
+	} else {
+		NodeTable *nt;
+		Node *node;
+		mobj = GET_SEGMENT(*g_EngineState->seg_manager, addr.segment, MEM_OBJ_NODES);
+
+		if (!mobj) {
+			DebugPrintf("Segment #%04x is not a list or node segment\n", addr.segment);
+			return 1;
+		}
+
+		nt = (NodeTable *)mobj;
+
+		if (!nt->isValidEntry(addr.offset)) {
+			DebugPrintf("Address does not contain a node\n");
+			return 1;
+		}
+		node = &(nt->_table[addr.offset]);
+
+		DebugPrintf("%04x:%04x : prev x next = (%04x:%04x, %04x:%04x); maps %04x:%04x -> %04x:%04x\n",
+		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
+	}
+
+	return 0;
+}
+
+int printObject(EngineState *s, reg_t pos) {
+	Object *obj = obj_get(s, pos);
+	Object *var_container = obj;
+	int i;
+
+	if (!obj) {
+		sciprintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
+		return 1;
+	}
+
+	// Object header
+	sciprintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
+				obj->_variables.size(), obj->methods_nr);
+
+	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
+		var_container = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+	sciprintf("  -- member variables:\n");
+	for (i = 0; (uint)i < obj->_variables.size(); i++) {
+		sciprintf("    ");
+		if (i < var_container->variable_names_nr) {
+			sciprintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
+		} else
+			sciprintf("p#%x = ", i);
+
+		reg_t val = obj->_variables[i];
+		sciprintf("%04x:%04x", PRINT_REG(val));
+
+		Object *ref = obj_get(s, val);
+		if (ref)
+			sciprintf(" (%s)", obj_get_name(s, val));
+
+		sciprintf("\n");
+	}
+	sciprintf("  -- methods:\n");
+	for (i = 0; i < obj->methods_nr; i++) {
+		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
+		sciprintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
+	}
+	if (s->seg_manager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
+		sciprintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
+
+	return 0;
 }
 
 } // End of namespace Sci

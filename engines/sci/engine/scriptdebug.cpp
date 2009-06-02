@@ -120,47 +120,7 @@ static const char *_debug_get_input() {
 	return inputbuf;
 }
 
-static int show_node(EngineState *s, reg_t addr) {
-	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
-
-	if (mobj) {
-		ListTable *lt = (ListTable *)mobj;
-		List *list;
-
-		if (!lt->isValidEntry(addr.offset)) {
-			sciprintf("Address does not contain a list\n");
-			return 1;
-		}
-
-		list = &(lt->_table[addr.offset]);
-
-		sciprintf("%04x:%04x : first x last = (%04x:%04x, %04x:%04x)\n", PRINT_REG(addr), PRINT_REG(list->first), PRINT_REG(list->last));
-	} else {
-		NodeTable *nt;
-		Node *node;
-		mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_NODES);
-
-		if (!mobj) {
-			sciprintf("Segment #%04x is not a list or node segment\n", addr.segment);
-			return 1;
-		}
-
-		nt = (NodeTable *)mobj;
-
-		if (!nt->isValidEntry(addr.offset)) {
-			sciprintf("Address does not contain a node\n");
-			return 1;
-		}
-		node = &(nt->_table[addr.offset]);
-
-		sciprintf("%04x:%04x : prev x next = (%04x:%04x, %04x:%04x); maps %04x:%04x -> %04x:%04x\n",
-		          PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(node->succ), PRINT_REG(node->key), PRINT_REG(node->value));
-	}
-
-	return 0;
-}
-
-int objinfo(EngineState *s, reg_t pos);
+extern int printObject(EngineState *s, reg_t pos);
 
 static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t reg = cmdParams[0].reg;
@@ -212,12 +172,15 @@ static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 		case KSIG_NODE:
 			sciprintf("list node\n");
-			show_node(s, reg);
+			// TODO: printNode has been moved to console.cpp
+			/*
+			printNode(s, reg);
+			*/
 			break;
 
 		case KSIG_OBJECT:
 			sciprintf("object\n");
-			objinfo(s, reg);
+			printObject(s, reg);
 			break;
 
 		case KSIG_REF: {
@@ -255,22 +218,6 @@ static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 			found = 1;
 		}
 	}
-
-	return 0;
-}
-
-int c_debuginfo(EngineState *s) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	sciprintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), *p_restadjust);
-
-	if (!s->_executionStack.empty()) {
-		sciprintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
-	} else
-		sciprintf("<no execution stack: pc,obj,fp omitted>\n");
 
 	return 0;
 }
@@ -452,12 +399,7 @@ int c_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-const char *selector_name(EngineState *s, int selector) {
-	if (selector >= 0 && selector < (int)s->_kernel->getSelectorNamesSize())
-		return s->_kernel->getSelectorName(selector).c_str();
-	else
-		return "--INVALID--";
-}
+extern const char *selector_name(EngineState *s, int selector);
 
 int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 	Object *obj = obj_get(s, objp);
@@ -1211,68 +1153,6 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 #endif
 #undef GETRECT
 
-int objinfo(EngineState *s, reg_t pos) {
-	Object *obj = obj_get(s, pos);
-	Object *var_container = obj;
-	int i;
-
-	if (!obj) {
-		sciprintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
-		return 1;
-	}
-
-	// Object header
-	sciprintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
-				obj->_variables.size(), obj->methods_nr);
-
-	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-		var_container = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
-	sciprintf("  -- member variables:\n");
-	for (i = 0; (uint)i < obj->_variables.size(); i++) {
-		sciprintf("    ");
-		if (i < var_container->variable_names_nr) {
-			sciprintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
-		} else
-			sciprintf("p#%x = ", i);
-
-		reg_t val = obj->_variables[i];
-		sciprintf("%04x:%04x", PRINT_REG(val));
-
-		Object *ref = obj_get(s, val);
-		if (ref)
-			sciprintf(" (%s)", obj_get_name(s, val));
-
-		sciprintf("\n");
-	}
-	sciprintf("  -- methods:\n");
-	for (i = 0; i < obj->methods_nr; i++) {
-		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
-		sciprintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
-	}
-	if (s->seg_manager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
-		sciprintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
-
-	return 0;
-}
-
-int c_vo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	return objinfo(s, cmdParams[0].reg);
-}
-
-int c_obj(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	return objinfo(s, *p_objp);
-}
-
-int c_accobj(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	return objinfo(s, s->r_acc);
-}
-
-int c_shownode(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	reg_t addr = cmdParams[0].reg;
-
-	return show_node(s, addr);
-}
-
 // Breakpoint commands
 
 static Breakpoint *bp_alloc(EngineState *s) {
@@ -1319,74 +1199,6 @@ int c_bpe(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	bp->type = BREAK_EXPORT;
 	bp->data.address = (cmdParams [0].val << 16 | cmdParams [1].val);
 	s->have_bp |= BREAK_EXPORT;
-
-	return 0;
-}
-
-int c_bplist(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Breakpoint *bp;
-	int i = 0;
-	int bpdata;
-
-	bp = s->bp_list;
-	while (bp) {
-		sciprintf("  #%i: ", i);
-		switch (bp->type) {
-		case BREAK_SELECTOR:
-			sciprintf("Execute %s\n", bp->data.name);
-			break;
-		case BREAK_EXPORT:
-			bpdata = bp->data.address;
-			sciprintf("Execute script %d, export %d\n", bpdata >> 16, bpdata & 0xFFFF);
-			break;
-		}
-
-		bp = bp->next;
-		i++;
-	}
-
-	return 0;
-}
-
-int c_bpdel(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Breakpoint *bp, *bp_next, *bp_prev;
-	int i = 0, found = 0;
-	int type;
-
-	// Find breakpoint with given index
-	bp_prev = NULL;
-	bp = s->bp_list;
-	while (bp && i < cmdParams [0].val) {
-		bp_prev = bp;
-		bp = bp->next;
-		i++;
-	}
-	if (!bp) {
-		sciprintf("Invalid breakpoint index %i\n", cmdParams [0].val);
-		return 1;
-	}
-
-	// Delete it
-	bp_next = bp->next;
-	type = bp->type;
-	if (type == BREAK_SELECTOR) free(bp->data.name);
-	free(bp);
-	if (bp_prev)
-		bp_prev->next = bp_next;
-	else
-		s->bp_list = bp_next;
-
-	// Check if there are more breakpoints of the same type. If not, clear
-	// the respective bit in s->have_bp.
-	for (bp = s->bp_list; bp; bp = bp->next) {
-		if (bp->type == type) {
-			found = 1;
-			break;
-		}
-	}
-
-	if (!found)
-		s->have_bp &= ~type;
 
 	return 0;
 }
@@ -1487,8 +1299,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		p_vars = variables;
 		p_var_max = variables_nr;
 		p_var_base = variables_base;
-
-		c_debuginfo(s);
+		
 		sciprintf("Step #%d\n", script_step_counter);
 		disassemble(s, *pc, 0, 1);
 
@@ -1509,10 +1320,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  c<x> : Disassemble <x> bytes\n"
 			                 "  bc   : Print bytecode\n\n");
 			con_hook_command(c_disasm, "disasm", "!as", "Disassembles a method by name\n\nUSAGE\n\n  disasm <obj> <method>\n\n");
-			con_hook_command(c_obj, "obj", "!", "Displays information about the\n  currently active object/class.\n"
-			                 "\n\nSEE ALSO\n\n  vo.1, accobj.1");
-			con_hook_command(c_accobj, "accobj", "!", "Displays information about an\n  object or class at the\n"
-			                 "address indexed by acc.\n\nSEE ALSO\n\n  obj.1, vo.1");
 			con_hook_command(c_backtrace, "bt", "", "Dumps the send/self/super/call/calle/callb stack");
 			con_hook_command(c_snk, "snk", "s*", "Steps forward until it hits the next\n  callk operation.\n"
 			                 "  If invoked with a parameter, it will\n  look for that specific callk.\n");
@@ -1523,8 +1330,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  bpx ego::doit\n\n  May also be used to set a breakpoint\n  that applies whenever an object\n"
 			                 "  of a specific type is touched:\n  bpx foo::\n");
 			con_hook_command(c_bpe, "bpe", "ii", "Sets a breakpoint on the execution of specified exported function.\n");
-			con_hook_command(c_bplist, "bplist", "", "Lists all breakpoints.\n");
-			con_hook_command(c_bpdel, "bpdel", "i", "Deletes a breakpoint with specified index.");
 			con_hook_command(c_go, "go", "", "Executes the script.\n");
 			con_hook_command(c_parse, "parse", "s", "Parses a sequence of words and prints\n  the resulting parse tree.\n"
 			                 "  The word sequence must be provided as a\n  single string.");
@@ -1541,19 +1346,12 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_gfx_draw_viewobj, "draw_viewobj", "i", "Draws the nsRect and brRect of a\n  dynview object.\n\n  nsRect is green, brRect\n"
 			                 "  is blue.\n");
 #endif
-			con_hook_command(c_vo, "vo", "!a",
-			                 "Examines an object\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  addresses.3, type.1");
 			con_hook_command(c_vr, "vr", "!aa*",
 			                 "Examines an arbitrary reference\n\n");
 			con_hook_command(c_sg, "sg", "!i",
 			                 "Steps until the global variable with the\n"
 			                 "specified index is modified.\n\nSEE ALSO\n\n"
 			                 "  s.1, snk.1, so.1, bpx.1");
-			con_hook_command(c_shownode, "shownode", "!a",
-			                 "Prints information about a list node\n"
-			                 "  or list base.\n\n");
 /*
 			con_hook_int(&script_abort_flag, "script_abort_flag", "Set != 0 to abort execution\n");
 */
