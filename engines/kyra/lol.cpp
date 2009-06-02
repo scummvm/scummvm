@@ -1278,7 +1278,7 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 
 			i += step;
 
-			_smoothScrollTimer = _system->getMillis() + _tickLength;
+			uint32 delayTimer = _system->getMillis() + _tickLength;
 
 			gui_drawLiveMagicBar(barData[type][0] + _activeCharsXpos[charNum], 175, i, 0, pointsMax, 5, 32, barData[type][1], 1, barData[type][3]);
 			_screen->printText(getLangString(barData[type][4]), barData[type][0] + _activeCharsXpos[charNum], 144, barData[type][2], 0);
@@ -1289,7 +1289,7 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 				step = -step;
 			}
 
-			delayUntil(_smoothScrollTimer);
+			delayUntil(delayTimer);
 		}
 	}
 
@@ -1964,7 +1964,7 @@ void LoLEngine::processMagicSpark(int charNum, int spellLevel) {
 	}
 
 	for (int i = 0, d = ((spellLevel << 1) + 12); i < d; i++) {
-		_smoothScrollTimer = _system->getMillis() + 4 * _tickLength;
+		uint32 delayTimer = _system->getMillis() + 4 * _tickLength;
 		_screen->copyPage(12, 2);
 
 		for (int ii = 0; ii <= spellLevel; ii++) {
@@ -1980,7 +1980,7 @@ void LoLEngine::processMagicSpark(int charNum, int spellLevel) {
 		}
 
 		if (i < d - 1)
-			delayUntil(_smoothScrollTimer);
+			delayUntil(delayTimer);
 	}
 
 	mov->close();
@@ -2068,7 +2068,7 @@ void LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 	snd_playSoundEffect(68, -1);
 
 	for (int i = 0; i < 16; i++) {
-		_smoothScrollTimer = _system->getMillis() + 4 * _tickLength;
+		uint32 delayTimer = _system->getMillis() + 4 * _tickLength;
 
 		for (charNum = ch; charNum < n; charNum++) {
 			if (!(_characters[charNum].flags & 1))
@@ -2091,7 +2091,7 @@ void LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 			_screen->updateScreen();
 		}
 
-		delayUntil(_smoothScrollTimer);
+		delayUntil(delayTimer);
 	}
 
 	for (charNum = ch; charNum < n; charNum++) {
@@ -2541,12 +2541,12 @@ void LoLEngine::processMagicFog() {
 	snd_playSoundEffect(145, -1);
 
 	for (int curFrame = 0; curFrame < numFrames; curFrame++) {
-		_smoothScrollTimer = _system->getMillis() + 3 * _tickLength;
+		uint32 delayTimer = _system->getMillis() + 3 * _tickLength;
 		_screen->copyPage(12, 2);
 		mov->displayFrame(curFrame % numFrames, 2, 112, 0, 0x5000, _trueLightTable1, _trueLightTable2);
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayUntil(_smoothScrollTimer);
+		delayUntil(delayTimer);
 	}
 
 	mov->close();
@@ -2700,7 +2700,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 		_screen->copyPage(3, 10);
 		for (int i = 0; i < 9; i++) {
 			int h = (slot + 1) * 9 + i + 1;
-			_smoothScrollTimer = _system->getMillis() + _tickLength;
+			uint32 delayTimer = _system->getMillis() + _tickLength;
 			_screen->copyPage(10, 3);
 			_screen->copyRegion(216, 0, 8, 0, 96, 120, 3, 3, Screen::CR_NO_P_CHECK);
 			_screen->copyRegion(112, 0, 12, 0, 87, 15, 2, 2, Screen::CR_NO_P_CHECK);
@@ -2723,7 +2723,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 			_screen->copyRegion(8, 0, 8, 0, 96, 120, 3, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 
-			delayUntil(_smoothScrollTimer);
+			delayUntil(delayTimer);
 		}
 	}
 
@@ -2749,7 +2749,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 	playSpellAnimation(mov, 26, 52, 5, _activeCharsXpos[charNum], 148, 0, 0, 0, 0, true);
 
 	for (int i = 16; i > 0; i--) {
-		_smoothScrollTimer = _system->getMillis() + _tickLength;
+		uint32 delayTimer = _system->getMillis() + _tickLength;
 		_screen->copyPage(12, 2);
 
 		int wsaX = vX + (((((cX - vX) << 8) / 16) * i) >> 8) - 16;
@@ -2760,7 +2760,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 		_screen->copyRegion(wsaX, wsaY, wsaX, wsaY, mov->width() + 48, mov->height() + 48, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 
-		delayUntil(_smoothScrollTimer);
+		delayUntil(delayTimer);
 	}
 
 	mov->close();
@@ -2817,7 +2817,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 	bool fin = false;
 
 	while (!fin) {
-		_smoothScrollTimer = _system->getMillis() + _tickLength * frameDelay;
+		uint32 delayTimer = _system->getMillis() + _tickLength * frameDelay;
 
 		if (mov || callback)
 			_screen->copyPage(12, 2);
@@ -2833,7 +2833,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			_screen->updateScreen();
 		}
 
-		int del = _smoothScrollTimer - _system->getMillis();
+		int del = delayTimer - _system->getMillis();
 		do {
 
 			int step = del > _tickLength ? _tickLength : del;
@@ -3564,7 +3564,7 @@ void LoLEngine::displayAutomap() {
 	_screen->copyPage(2, 0);
 	_screen->updateScreen();
 	_screen->fadePalette(_screen->getPalette(3), 10);
-	_smoothScrollTimer = _system->getMillis() + 8 * _tickLength;
+	uint32 delayTimer = _system->getMillis() + 8 * _tickLength;
 
 	while (!exitAutomap && !shouldQuit()) {
 		if (_mapUpdateNeeded) {
@@ -3574,9 +3574,9 @@ void LoLEngine::displayAutomap() {
 			_mapUpdateNeeded = false;
 		}
 
-		if (_system->getMillis() >= _smoothScrollTimer) {
+		if (_system->getMillis() >= delayTimer) {
 			redrawMapCursor();
-			_smoothScrollTimer = _system->getMillis() + 8 * _tickLength;
+			delayTimer = _system->getMillis() + 8 * _tickLength;
 		}
 
 		int f = checkInput(0) & 0xff;

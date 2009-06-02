@@ -1026,7 +1026,6 @@ private:
 	OpenDoorState _openDoorState[3];
 	int _blockDoor;
 
-	uint32 _smoothScrollTimer;
 	int _smoothScrollModeNormal;
 
 	const uint8 *_scrollXTop;

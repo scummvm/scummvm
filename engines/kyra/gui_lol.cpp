@@ -1375,12 +1375,12 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		KyraEngine_v1::snd_playSoundEffect(99);
 
 		for (int i = 0; i < 25; i++) {
-			_smoothScrollTimer = _system->getMillis() + 7 * _tickLength;
+			uint32 delayTimer = _system->getMillis() + 7 * _tickLength;
 			_screen->copyRegion(button->x, button->y - 3, 0, 0, 25, 27, 2, 2);
 			wsa->displayFrame(i, 2, 0, 0, 0x4000);
 			_screen->copyRegion(0, 0, button->x, button->y - 3, 25, 27, 2, 0);
 			_screen->updateScreen();
-			delayUntil(_smoothScrollTimer);
+			delayUntil(delayTimer);
 		}
 
 		_screen->showMouse();
