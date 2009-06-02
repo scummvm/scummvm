@@ -1069,11 +1069,6 @@ static int c_go(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-static int c_set_acc(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	s->r_acc = cmdParams[0].reg;
-	return 0;
-}
-
 static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t object = cmdParams[0].reg;
 	const char *selector_name = cmdParams[1].str;
@@ -1130,30 +1125,6 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-
-struct generic_config_flag_t {
-	const char *name;
-	const char option;
-	unsigned int flag;
-};
-
-#define SFX_DEBUG_MODES 2
-#define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
-
-static int c_sfx_remove(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	reg_t id = cmdParams[0].reg;
-	int handle = FROBNICATE_HANDLE(id);
-
-	if (id.segment) {
-		s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-		s->_sound.sfx_remove_song(handle);
-		PUT_SEL32V(id, signal, -1);
-		PUT_SEL32V(id, nodePtr, 0);
-		PUT_SEL32V(id, handle, 0);
-	}
-
-	return 0;
-}
 
 #define GETRECT(ll, rr, tt, bb) \
 	ll = GET_SELECTOR(pos, ll); \
@@ -1427,90 +1398,6 @@ int c_se(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-int c_type(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int t = determine_reg_type(s, cmdParams[0].reg, 1);
-	int invalid = t & KSIG_INVALID;
-
-	switch (t & ~KSIG_INVALID) {
-	case 0:
-		sciprintf("Invalid");
-		break;
-
-	case KSIG_LIST:
-		sciprintf("List");
-		break;
-
-	case KSIG_OBJECT:
-		sciprintf("Object");
-		break;
-
-	case KSIG_REF:
-		sciprintf("Reference");
-		break;
-
-	case KSIG_ARITHMETIC:
-		sciprintf("Arithmetic");
-		break;
-
-	default:
-		sciprintf("Erroneous unknown type %02x(%d decimal)\n", t, t);
-	}
-
-	sciprintf("%s\n", invalid ? " (invalid)" : "");
-
-	return 0;
-}
-
-static void _print_address(void * _, reg_t addr) {
-	if (addr.segment)
-		sciprintf("  %04x:%04x\n", PRINT_REG(addr));
-}
-
-static int c_gc_show_reachable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	reg_t addr = cmdParams[0].reg;
-
-	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, addr.segment);
-	if (!mobj) {
-		sciprintf("Unknown segment : %x\n", addr.segment);
-		return 1;
-	}
-
-	sciprintf("Reachable from %04x:%04x:\n", PRINT_REG(addr));
-	mobj->listAllOutgoingReferences(s, addr, NULL, _print_address);
-
-	return 0;
-}
-
-static int c_gc_show_freeable(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	reg_t addr = cmdParams[0].reg;
-
-	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, addr.segment);
-	if (!mobj) {
-		sciprintf("Unknown segment : %x\n", addr.segment);
-		return 1;
-	}
-
-	sciprintf("Freeable in segment %04x:\n", addr.segment);
-	mobj->listAllDeallocatable(addr.segment, NULL, _print_address);
-
-	return 0;
-}
-
-static int c_gc_normalise(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	reg_t addr = cmdParams[0].reg;
-
-	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, addr.segment);
-	if (!mobj) {
-		sciprintf("Unknown segment : %x\n", addr.segment);
-		return 1;
-	}
-
-	addr = mobj->findCanonicAddress(s->seg_manager, addr);
-	sciprintf(" %04x:%04x\n", PRINT_REG(addr));
-
-	return 0;
-}
-
 void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *objp, int *restadjust,
 	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
 	// Do we support a separate console?
@@ -1608,7 +1495,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		if (_debug_commands_not_hooked) {
 			_debug_commands_not_hooked = 0;
 
-			con_hook_command(c_sfx_remove, "sfx_remove", "!a", "Kills a playing sound.");
 			con_hook_command(c_vmvars, "vmvars", "!sia*", "Displays or changes variables in the VM\n\nFirst parameter is either g(lobal), l(ocal), t(emp) or p(aram).\nSecond parameter is the var number\nThird parameter (if specified) is the value to set the variable to");
 			con_hook_command(c_step, "s", "i*", "Executes one or several operations\n\nEXAMPLES\n\n"
 			                 "    s 4\n\n  Execute 4 commands\n\n    s\n\n  Execute next command");
@@ -1631,7 +1517,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_snk, "snk", "s*", "Steps forward until it hits the next\n  callk operation.\n"
 			                 "  If invoked with a parameter, it will\n  look for that specific callk.\n");
 			con_hook_command(c_se, "se", "", "Steps forward until an SCI event is received.\n");
-			con_hook_command(c_set_acc, "set_acc", "!a", "Sets the accumulator");
 			con_hook_command(c_send, "send", "!asa*", "Sends a message to an object\nExample: send ?fooScript cue");
 			con_hook_command(c_sret, "sret", "", "Steps forward until ret is called\n  on the current execution stack\n  level.");
 			con_hook_command(c_bpx, "bpx", "s", "Sets a breakpoint on the execution of\n  the specified method.\n\n  EXAMPLE:\n"
@@ -1666,32 +1551,9 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "Steps until the global variable with the\n"
 			                 "specified index is modified.\n\nSEE ALSO\n\n"
 			                 "  s.1, snk.1, so.1, bpx.1");
-			con_hook_command(c_type, "type", "!a",
-			                 "Determines the type of a value\n\n"
-			                 "SEE ALSO\n\n  addresses.3, vo.1");
 			con_hook_command(c_shownode, "shownode", "!a",
 			                 "Prints information about a list node\n"
 			                 "  or list base.\n\n");
-			con_hook_command(c_gc_show_reachable, "gc-list-reachable", "!a",
-			                 "Prints all addresses directly reachable from\n"
-			                 "  the memory object specified as parameter.\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  gc-list-freeable.1, gc-normalise.1, gc.1,\n"
-			                 "  gc-all-reachable.1");
-			con_hook_command(c_gc_show_freeable, "gc-list-freeable", "!a",
-			                 "Prints all addresses freeable in the segment\n"
-			                 "  associated with the address (offset is ignored).\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  gc-list-freeable.1, gc-normalise.1, gc.1,\n"
-			                 "  gc-all-reachable.1");
-			con_hook_command(c_gc_normalise, "gc-normalise", "!a",
-			                 "Prints the \"normal\" address of a given address,\n"
-			                 "  i.e. the address we would free in order to free\n"
-			                 "  the object associated with the original address.\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  gc-list-freeable.1, gc-list-reachable.1, gc.1,\n"
-			                 "  gc-all-reachable.1");
-
 /*
 			con_hook_int(&script_abort_flag, "script_abort_flag", "Set != 0 to abort execution\n");
 */

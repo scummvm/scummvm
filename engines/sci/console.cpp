@@ -32,6 +32,7 @@
 #include "sci/engine/savegame.h"
 #include "sci/engine/state.h"
 #include "sci/engine/gc.h"
+#include "sci/engine/kernel_types.h"	// for determine_reg_type
 #include "sci/gfx/gfx_gui.h"	// for sciw_set_status_bar
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gfx/gfx_widgets.h"	// for getPort
@@ -51,6 +52,190 @@ int _kdebug_cheap_event_hack = 0;
 bool _kdebug_track_mouse_clicks = false;
 int _weak_validations = 1; // Some validation errors are reduced to warnings if non-0
 
+
+int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on success
+	int rel_offsetting = 0;
+	const char *offsetting = NULL;
+	// Non-NULL: Parse end of string for relative offsets
+	char *endptr;
+
+	if (*str == '$') { // Register
+		rel_offsetting = 1;
+
+		if (!scumm_strnicmp(str + 1, "PC", 2)) {
+			*dest = s->_executionStack.back().addr.pc;
+			offsetting = str + 3;
+		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
+			*dest = s->_executionStack.back().addr.pc;
+			offsetting = str + 2;
+		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
+			*dest = s->r_prev;
+			offsetting = str + 5;
+		} else if (!scumm_strnicmp(str + 1, "ACC", 3)) {
+			*dest = s->r_acc;
+			offsetting = str + 4;
+		} else if (!scumm_strnicmp(str + 1, "A", 1)) {
+			*dest = s->r_acc;
+			offsetting = str + 2;
+		} else if (!scumm_strnicmp(str + 1, "OBJ", 3)) {
+			*dest = s->_executionStack.back().objp;
+			offsetting = str + 4;
+		} else if (!scumm_strnicmp(str + 1, "O", 1)) {
+			*dest = s->_executionStack.back().objp;
+			offsetting = str + 2;
+		} else
+			return 1; // No matching register
+
+		if (!*offsetting)
+			offsetting = NULL;
+		else if (*offsetting != '+' && *offsetting != '-')
+			return 1;
+	} else if (*str == '&') {
+		int script_nr;
+		// Look up by script ID
+		char *colon = (char *)strchr(str, ':');
+
+		if (!colon)
+			return 1;
+		*colon = 0;
+		offsetting = colon + 1;
+
+		script_nr = strtol(str + 1, &endptr, 10);
+
+		if (*endptr)
+			return 1;
+
+		dest->segment = s->seg_manager->segGet(script_nr);
+
+		if (!dest->segment) {
+			return 1;
+		}
+	} else if (*str == '?') {
+		int index = -1;
+		int times_found = 0;
+		char *tmp;
+		const char *str_objname;
+		char *str_suffix;
+		char suffchar = 0;
+		uint i;
+		// Parse obj by name
+
+		tmp = (char *)strchr(str, '+');
+		str_suffix = (char *)strchr(str, '-');
+		if (tmp < str_suffix)
+			str_suffix = tmp;
+		if (str_suffix) {
+			suffchar = (*str_suffix);
+			*str_suffix = 0;
+		}
+
+		tmp = (char *)strchr(str, '.');
+
+		if (tmp) {
+			*tmp = 0;
+			index = strtol(tmp + 1, &endptr, 16);
+			if (*endptr)
+				return -1;
+		}
+
+		str_objname = str + 1;
+
+		// Now all values are available; iterate over all objects.
+		for (i = 0; i < s->seg_manager->_heap.size(); i++) {
+			MemObject *mobj = s->seg_manager->_heap[i];
+			int idx = 0;
+			int max_index = 0;
+
+			if (mobj) {
+				if (mobj->getType() == MEM_OBJ_SCRIPT)
+					max_index = (*(Script *)mobj)._objects.size();
+				else if (mobj->getType() == MEM_OBJ_CLONES)
+					max_index = (*(CloneTable *)mobj)._table.size();
+			}
+
+			while (idx < max_index) {
+				int valid = 1;
+				Object *obj = NULL;
+				reg_t objpos;
+				objpos.offset = 0;
+				objpos.segment = i;
+
+				if (mobj->getType() == MEM_OBJ_SCRIPT) {
+					obj = &(*(Script *)mobj)._objects[idx];
+					objpos.offset = obj->pos.offset;
+				} else if (mobj->getType() == MEM_OBJ_CLONES) {
+					obj = &((*(CloneTable *)mobj)._table[idx]);
+					objpos.offset = idx;
+					valid = ((CloneTable *)mobj)->isValidEntry(idx);
+				}
+
+				if (valid) {
+					const char *objname = obj_get_name(s, objpos);
+					if (!strcmp(objname, str_objname)) {
+						// Found a match!
+						if ((index < 0) && (times_found > 0)) {
+							if (times_found == 1) {
+								// First time we realized the ambiguity
+								printf("Ambiguous:\n");
+								printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(*dest), str_objname);
+							}
+							printf("  %3x: [%04x:%04x] %s\n", times_found, PRINT_REG(objpos), str_objname);
+						}
+						if (index < 0 || times_found == index)
+							*dest = objpos;
+						++times_found;
+					}
+				}
+				++idx;
+			}
+
+		}
+
+		if (!times_found)
+			return 1;
+
+		if (times_found > 1 && index < 0) {
+			printf("Ambiguous: Aborting.\n");
+			return 1; // Ambiguous
+		}
+
+		if (times_found <= index)
+			return 1; // Not found
+
+		offsetting = str_suffix;
+		if (offsetting)
+			*str_suffix = suffchar;
+		rel_offsetting = 1;
+	} else {
+		char *colon = (char *)strchr(str, ':');
+
+		if (!colon) {
+			offsetting = str;
+			dest->segment = 0;
+		} else {
+			*colon = 0;
+			offsetting = colon + 1;
+
+			dest->segment = strtol(str, &endptr, 16);
+			if (*endptr)
+				return 1;
+		}
+	}
+	if (offsetting) {
+		int val = strtol(offsetting, &endptr, 16);
+
+		if (rel_offsetting)
+			dest->offset += val;
+		else
+			dest->offset = val;
+
+		if (*endptr)
+			return 1;
+	}
+
+	return 0;
+}
+
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
@@ -60,7 +245,6 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
 	DCmd_Register("kernel_names",		WRAP_METHOD(Console, cmdKernelNames));
 	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
-	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("weak_validations",	WRAP_METHOD(Console, cmdWeakValidations));
 	// Parser
 	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
@@ -113,17 +297,26 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("gc",					WRAP_METHOD(Console, cmdGCInvoke));
 	DCmd_Register("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
 	DCmd_Register("gc_interval",		WRAP_METHOD(Console, cmdGCInterval));
-	// VM
-	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
-	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
-	DCmd_Register("sleep_factor",		WRAP_METHOD(Console, cmdSleepFactor));
-	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
-	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
+	DCmd_Register("gc_reachable",		WRAP_METHOD(Console, cmdGCShowReachable));
+	DCmd_Register("gc_freeable",		WRAP_METHOD(Console, cmdGCShowFreeable));
+	DCmd_Register("gc_normalize",		WRAP_METHOD(Console, cmdGCNormalize));
 	// Music/SFX
 	DCmd_Register("songlib",			WRAP_METHOD(Console, cmdSongLib));
 	DCmd_Register("is_sample",			WRAP_METHOD(Console, cmdIsSample));
 	DCmd_Register("sfx01_header",		WRAP_METHOD(Console, cmdSfx01Header));
 	DCmd_Register("sfx01_track",		WRAP_METHOD(Console, cmdSfx01Track));
+	DCmd_Register("stop_sfx",			WRAP_METHOD(Console, cmdStopSfx));
+	// Script
+	DCmd_Register("addresses",			WRAP_METHOD(Console, cmdAddresses));
+	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
+	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
+	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
+	// VM
+	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
+	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
+	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
+	DCmd_Register("sleep_factor",		WRAP_METHOD(Console, cmdSleepFactor));
+	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
 
 	// These were in sci.cpp
 	/*
@@ -219,16 +412,16 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 	DebugPrintf("Current register values:\n");
 #if 0
 		// TODO: p_restadjust
-	sciprintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(g_EngineState->r_acc), PRINT_REG(g_EngineState->r_prev), *p_restadjust);
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(g_EngineState->r_acc), PRINT_REG(g_EngineState->r_prev), *p_restadjust);
 #endif
 
 	if (!g_EngineState->_executionStack.empty()) {
 #if 0
 		// TODO: p_pc, p_objp, p_pp, p_sp
-		sciprintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
+		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
 #endif
 	} else
-		sciprintf("<no execution stack: pc,obj,fp omitted>\n");
+		DebugPrintf("<no execution stack: pc,obj,fp omitted>\n");
 
 	return true;
 }
@@ -1324,6 +1517,99 @@ bool Console::cmdGCInterval(int argc, const char **argv) {
 	return true;
 }
 
+// TODO/FIXME: This should be using DebugPrintf
+void _print_address(void * _, reg_t addr) {
+	if (addr.segment)
+		sciprintf("  %04x:%04x\n", PRINT_REG(addr));
+}
+
+bool Console::cmdGCShowReachable(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Prints all addresses directly reachable from the memory object specified as parameter.\n");
+		DebugPrintf("Usage: %s <address>\n", argv[0]);
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t addr;
+	
+	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	MemObject *mobj = GET_SEGMENT_ANY(*g_EngineState->seg_manager, addr.segment);
+	if (!mobj) {
+		DebugPrintf("Unknown segment : %x\n", addr.segment);
+		return 1;
+	}
+
+	DebugPrintf("Reachable from %04x:%04x:\n", PRINT_REG(addr));
+	mobj->listAllOutgoingReferences(g_EngineState, addr, NULL, _print_address);
+
+	return true;
+}
+
+bool Console::cmdGCShowFreeable(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Prints all addresses freeable in the segment associated with the\n");
+		DebugPrintf("given address (offset is ignored).\n");
+		DebugPrintf("Usage: %s <address>\n", argv[0]);
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t addr;
+	
+	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	MemObject *mobj = GET_SEGMENT_ANY(*g_EngineState->seg_manager, addr.segment);
+	if (!mobj) {
+		DebugPrintf("Unknown segment : %x\n", addr.segment);
+		return true;
+	}
+
+	DebugPrintf("Freeable in segment %04x:\n", addr.segment);
+	mobj->listAllDeallocatable(addr.segment, NULL, _print_address);
+
+	return true;
+}
+
+bool Console::cmdGCNormalize(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Prints the \"normal\" address of a given address,\n");
+		DebugPrintf("i.e. the address we would free in order to free\n");
+		DebugPrintf("the object associated with the original address.\n");
+		DebugPrintf("Usage: %s <address>\n", argv[0]);
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t addr;
+	
+	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	MemObject *mobj = GET_SEGMENT_ANY(*g_EngineState->seg_manager, addr.segment);
+	if (!mobj) {
+		DebugPrintf("Unknown segment : %x\n", addr.segment);
+		return true;
+	}
+
+	addr = mobj->findCanonicAddress(g_EngineState->seg_manager, addr);
+	DebugPrintf(" %04x:%04x\n", PRINT_REG(addr));
+
+	return true;
+}
+
 bool Console::cmdVMVarlist(int argc, const char **argv) {
 	const char *varnames[] = {"global", "local", "temp", "param"};
 
@@ -1368,6 +1654,52 @@ bool Console::cmdStack(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdValueType(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Determines the type of a value.\n");
+		DebugPrintf("The type can be one of the following:\n");
+		DebugPrintf("Invalid, list, object, reference or arithmetic\n");
+		DebugPrintf("Usage: %s <address>\n", argv[0]);
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t val;
+	
+	if (parse_reg_t(g_EngineState, argv[1], &val)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	int t = determine_reg_type(g_EngineState, val, 1);
+	int invalid = t & KSIG_INVALID;
+
+	switch (t & ~KSIG_INVALID) {
+	case 0:
+		DebugPrintf("Invalid");
+		break;
+	case KSIG_LIST:
+		DebugPrintf("List");
+		break;
+	case KSIG_OBJECT:
+		DebugPrintf("Object");
+		break;
+	case KSIG_REF:
+		DebugPrintf("Reference");
+		break;
+	case KSIG_ARITHMETIC:
+		DebugPrintf("Arithmetic");
+		break;
+	default:
+		DebugPrintf("Erroneous unknown type %02x(%d decimal)\n", t, t);
+	}
+
+	DebugPrintf("%s\n", invalid ? " (invalid)" : "");
+
+	return true;
+}
+
 bool Console::cmdSleepFactor(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Factor to multiply with wait times in kWait().\n");
@@ -1385,6 +1717,27 @@ bool Console::cmdSleepFactor(int argc, const char **argv) {
 
 bool Console::cmdScriptSteps(int argc, const char **argv) {
 	DebugPrintf("Number of executed SCI operations: %d\n", script_step_counter);
+	return true;
+}
+
+bool Console::cmdSetAccumulator(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Sets the accumulator.\n");
+		DebugPrintf("Usage: %s <address>\n", argv[0]);
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t val;
+	
+	if (parse_reg_t(g_EngineState, argv[1], &val)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	g_EngineState->r_acc = val;
+
 	return true;
 }
 
@@ -1613,6 +1966,37 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdStopSfx(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Stops a playing sound\n");
+		DebugPrintf("Usage: %s <address>\n", argv[0]);
+		DebugPrintf("Where <address> is the address of the sound to stop.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t id;
+	
+	if (parse_reg_t(g_EngineState, argv[1], &id)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	int handle = id.segment << 16 | id.offset;	// frobnicate handle
+	EngineState* s = g_EngineState;		// for PUT_SEL32V
+
+	if (id.segment) {
+		g_EngineState->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+		g_EngineState->_sound.sfx_remove_song(handle);
+		PUT_SEL32V(id, signal, -1);
+		PUT_SEL32V(id, nodePtr, 0);
+		PUT_SEL32V(id, handle, 0);
+	}
+
+	return true;
+}
+
 bool Console::cmdExit(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("%s game - exit gracefully\n", argv[0]);
@@ -1633,6 +2017,23 @@ bool Console::cmdExit(int argc, const char **argv) {
 	}
 
 	return false;
+}
+
+bool Console::cmdAddresses(int argc, const char **argv) {
+	DebugPrintf("Address parameters may be passed in one of three forms:\n");
+	DebugPrintf(" - ssss:oooo -- where 'ssss' denotes a segment and 'oooo' an offset.\n");
+	DebugPrintf("   Example: \"a:c5\" would address something in segment 0xa at offset 0xc5.\n");
+	DebugPrintf(" - &scr:oooo -- where 'scr' is a script number and oooo an offset within that script; will\n");
+	DebugPrintf("   fail if the script is not currently loaded\n");
+	DebugPrintf(" - $REG -- where 'REG' is one of 'PC', 'ACC', 'PREV' or 'OBJ': References the address\n");
+	DebugPrintf("   indicated by the register of this name.\n");
+	DebugPrintf(" - $REG+n (or -n) -- Like $REG, but modifies the offset part by a specific amount (which\n");
+	DebugPrintf("   is specified in hexadecimal).\n");
+	DebugPrintf(" - ?obj -- Looks up an object with the specified name, uses its address. This will abort if\n");
+	DebugPrintf("   the object name is ambiguous; in that case, a list of addresses and indices is provided.\n");
+	DebugPrintf("   ?obj.idx may be used to disambiguate 'obj' by the index 'idx'.\n");
+
+	return true;
 }
 
 } // End of namespace Sci

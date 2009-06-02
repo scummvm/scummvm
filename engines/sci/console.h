@@ -34,6 +34,9 @@ namespace Sci {
 
 class SciEngine;
 
+// Refer to the "addresses" command on how to pass address parameters
+int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
+
 class Console : public GUI::Debugger {
 public:
 	Console(SciEngine *vm);
@@ -92,14 +95,21 @@ private:
 	bool cmdGCInvoke(int argc, const char **argv);
 	bool cmdGCObjects(int argc, const char **argv);
 	bool cmdGCInterval(int argc, const char **argv);
+	bool cmdGCShowReachable(int argc, const char **argv);
+	bool cmdGCShowFreeable(int argc, const char **argv);
+	bool cmdGCNormalize(int argc, const char **argv);
 	bool cmdVMVarlist(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
+	bool cmdValueType(int argc, const char **argv);
 	bool cmdSleepFactor(int argc, const char **argv);
 	bool cmdIsSample(int argc, const char **argv);
 	bool cmdSfx01Header(int argc, const char **argv);
 	bool cmdSfx01Track(int argc, const char **argv);
 	bool cmdScriptSteps(int argc, const char **argv);
+	bool cmdSetAccumulator(int argc, const char **argv);
 	bool cmdExit(int argc, const char **argv);
+	bool cmdAddresses(int argc, const char **argv);
+	bool cmdStopSfx(int argc, const char **argv);
 
 	bool segmentInfo(int nr);
 	void printList(List *l);
