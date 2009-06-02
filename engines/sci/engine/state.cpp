@@ -42,7 +42,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	sound_mute = 0;
 
 	restarting_flags = 0;
-	have_mouse_flag = 0;
 
 	pic_not_valid = 0;
 	pic_is_new = 0;
@@ -72,7 +71,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	drop_views = 0;
 
-	animation_delay = 0;
 	animation_granularity = 0;
 
 	_menubar = 0;
@@ -104,7 +102,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	parser_event = NULL_REG;
 	script_000 = 0;
 
-	parser_lastmatch_word = 0;
 	bp_list = 0;
 	have_bp = 0;
 	sys_strings_segment = 0;

@@ -133,7 +133,6 @@ public:
 	unsigned int sound_mute; /**< 0 = not, else == saved value */
 
 	byte restarting_flags; /**< Flags used for restarting */
-	byte have_mouse_flag;  /**< Do we have a hardware pointing device? */
 
 	byte pic_not_valid; /**< Is 0 if the background picture is "valid" */
 	byte pic_is_new; /**< New pic was loaded or port was opened */
@@ -162,10 +161,8 @@ public:
 	int pic_animate; /**< The animation used by Animate() to display the picture */
 
 	GfxList *dyn_views; /**< Pointers to pic and dynamic view lists */
-
 	GfxList *drop_views; /**< A list Animate() can dump dropped dynviews into */
 
-	long animation_delay; /**< A delay factor for pic opening animations. Defaults to 500. */
 	int animation_granularity; /**< Number of animation steps to perform betwen updates for transition animations */
 
 	Menubar *_menubar; /**< The menu bar */
@@ -212,8 +209,6 @@ public:
 	Script *script_000;  /**< script 000, e.g. for globals */
 
 	uint16 currentRoomNumber() const { return KP_UINT(script_000->locals_block->_locals[13]); }
-
-	int parser_lastmatch_word; /**< Position of the input word the parser last matched on, or SAID_NO_MATCH */
 
 	/* Debugger data: */
 	Breakpoint *bp_list;   /**< List of breakpoints */

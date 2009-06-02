@@ -370,8 +370,6 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
 
-	s->parser_lastmatch_word = SAID_NO_MATCH;
-
 	s->_kernel = new Kernel(s->resmgr, (s->flags & GF_SCI0_OLD));
 	s->_vocabulary = new Vocabulary(s->resmgr);
 

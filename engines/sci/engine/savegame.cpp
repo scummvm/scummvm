@@ -777,7 +777,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Now copy all current state information
 	// Graphics and input state:
-	retval->animation_delay = s->animation_delay;
 	retval->animation_granularity = s->animation_granularity;
 	retval->gfx_state = s->gfx_state;
 	retval->old_screen = 0;
@@ -845,7 +844,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->bp_list = s->bp_list;
 
 	retval->kernel_opt_flags = 0;
-	retval->have_mouse_flag = 1;
 
 	retval->successor = NULL;
 	retval->pic_priority_table = (int *)gfxop_get_pic_metainfo(retval->gfx_state);

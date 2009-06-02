@@ -120,10 +120,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (new_lastmatch != SAID_PARTIAL_MATCH)
 			PUT_SEL32V(s->parser_event, claimed, 1);
 
-		s->parser_lastmatch_word = new_lastmatch;
-
 	} else {
-		s->parser_lastmatch_word = SAID_NO_MATCH;
 		return NULL_REG;
 	}
 	return s->r_acc;
@@ -195,8 +192,6 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t event = argv[1];
 
 	s->parser_event = event;
-
-	s->parser_lastmatch_word = SAID_NO_MATCH;
 
 	if (s->parser_valid == 2) {
 		sciprintf("Parsing skipped: Parser in simparse mode\n");
