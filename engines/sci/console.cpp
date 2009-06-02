@@ -1611,7 +1611,7 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 }
 
 bool Console::cmdVMVarlist(int argc, const char **argv) {
-	const char *varnames[] = {"global", "local", "temp", "param"};
+	//const char *varnames[] = {"global", "local", "temp", "param"};
 
 	DebugPrintf("Addresses of variables in the VM:\n");
 
