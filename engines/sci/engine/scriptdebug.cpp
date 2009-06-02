@@ -46,14 +46,12 @@
 
 namespace Sci {
 
-extern int debug_sleeptime_factor;
 int _debugstate_valid = 0; // Set to 1 while script_debug is running
 int _debug_step_running = 0; // Set to >0 to allow multiple stepping
 int _debug_commands_not_hooked = 1; // Commands not hooked to the console yet?
 int _debug_seeking = 0; // Stepping forward until some special condition is met
 int _debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
 int _debug_seek_special = 0;  // Used for special seeks(1)
-int _weak_validations = 1; // Some validation errors are reduced to warnings if non-0
 reg_t _debug_seek_reg = NULL_REG;  // Used for special seeks(2)
 
 #define _DEBUG_SEEK_NOTHING 0
@@ -72,8 +70,6 @@ static SegmentId *p_var_segs;
 static reg_t **p_vars;
 static reg_t **p_var_base;
 static int *p_var_max; // May be NULL even in valid state!
-
-static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 0};
 
 char inputbuf[256] = "";
 
@@ -122,178 +118,6 @@ static const char *_debug_get_input() {
 	}
 
 	return inputbuf;
-}
-
-static int _parse_ticks(byte *data, int *offset_p, int size) {
-	int ticks = 0;
-	int tempticks;
-	int offset = 0;
-
-	do {
-		tempticks = data[offset++];
-		ticks += (tempticks == SCI_MIDI_TIME_EXPANSION_PREFIX) ? SCI_MIDI_TIME_EXPANSION_LENGTH : tempticks;
-	} while (tempticks == SCI_MIDI_TIME_EXPANSION_PREFIX && offset < size);
-
-	if (offset_p)
-		*offset_p = offset;
-
-	return ticks;
-}
-
-static void midi_hexdump(byte *data, int size, int notational_offset) { // Specialised for SCI01 tracks (this affects the way cumulative cues are treated )
-	int offset = 0;
-	int prev = 0;
-
-	if (*data == 0xf0) // SCI1 priority spec
-		offset = 8;
-
-	while (offset < size) {
-		int old_offset = offset;
-		int offset_mod;
-		int time = _parse_ticks(data + offset, &offset_mod, size);
-		int cmd;
-		int pleft;
-		int firstarg = 0;
-		int i;
-		int blanks = 0;
-
-		offset += offset_mod;
-		fprintf(stderr, "  [%04x] %d\t",
-		        old_offset + notational_offset, time);
-
-		cmd = data[offset];
-		if (!(cmd & 0x80)) {
-			cmd = prev;
-			if (prev < 0x80) {
-				fprintf(stderr, "Track broken at %x after"
-				        " offset mod of %d\n",
-				        offset + notational_offset, offset_mod);
-				Common::hexdump(data, size, 16, notational_offset);
-				return;
-			}
-			fprintf(stderr, "(rs %02x) ", cmd);
-			blanks += 8;
-		} else {
-			++offset;
-			fprintf(stderr, "%02x ", cmd);
-			blanks += 3;
-		}
-		prev = cmd;
-
-		pleft = MIDI_cmdlen[cmd >> 4];
-		if (SCI_MIDI_CONTROLLER(cmd) && data[offset] == SCI_MIDI_CUMULATIVE_CUE)
-			--pleft; // This is SCI(0)1 specific
-
-		for (i = 0; i < pleft; i++) {
-			if (i == 0)
-				firstarg = data[offset];
-			fprintf(stderr, "%02x ", data[offset++]);
-			blanks += 3;
-		}
-
-		while (blanks < 16) {
-			blanks += 4;
-			fprintf(stderr, "    ");
-		}
-
-		while (blanks < 20) {
-			++blanks;
-			fprintf(stderr, " ");
-		}
-
-		if (cmd == SCI_MIDI_EOT)
-			fprintf(stderr, ";; EOT");
-		else if (cmd == SCI_MIDI_SET_SIGNAL) {
-			if (firstarg == SCI_MIDI_SET_SIGNAL_LOOP)
-				fprintf(stderr, ";; LOOP point");
-			else
-				fprintf(stderr, ";; CUE (%d)", firstarg);
-		} else if (SCI_MIDI_CONTROLLER(cmd)) {
-			if (firstarg == SCI_MIDI_CUMULATIVE_CUE)
-				fprintf(stderr, ";; CUE (cumulative)");
-			else if (firstarg == SCI_MIDI_RESET_ON_SUSPEND)
-				fprintf(stderr, ";; RESET-ON-SUSPEND flag");
-		}
-		fprintf(stderr, "\n");
-
-		if (old_offset >= offset) {
-			fprintf(stderr, "-- Not moving forward anymore,"
-			        " aborting (%x/%x)\n", offset, old_offset);
-			return;
-		}
-	}
-}
-
-int c_sfx_01_header_dump(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
-
-	if (!song) {
-		sciprintf("Doesn't exist\n");
-		return 1;
-	}
-
-	uint32 offset = 0;
-
-	sciprintf("SCI01 song track mappings:\n");
-
-	if (*song->data == 0xf0) // SCI1 priority spec
-		offset = 8;
-
-	if (song->size <= 0)
-		return 1;
-
-	while (song->data[offset] != 0xff) {
-		byte device_id = song->data[offset];
-		sciprintf("* Device %02x:\n", device_id);
-		offset++;
-
-		if (offset + 1 >= song->size)
-			return 1;
-
-		while (song->data[offset] != 0xff) {
-			int track_offset;
-			int end;
-			byte header1, header2;
-
-			if (offset + 7 >= song->size)
-				return 1;
-
-			offset += 2;
-
-			track_offset = READ_LE_UINT16(song->data + offset);
-			header1 = song->data[track_offset];
-			header2 = song->data[track_offset+1];
-			track_offset += 2;
-
-			end = READ_LE_UINT16(song->data + offset + 2);
-			sciprintf("  - %04x -- %04x", track_offset, track_offset + end);
-
-			if (track_offset == 0xfe)
-				sciprintf(" (PCM data)\n");
-			else
-				sciprintf(" (channel %d, special %d, %d playing notes, %d foo)\n",
-				          header1 & 0xf, header1 >> 4, header2 & 0xf, header2 >> 4);
-			offset += 4;
-		}
-		offset++;
-	}
-
-	return 0;
-}
-
-int c_sfx_01_track(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
-
-	int offset = cmdParams[1].val;
-
-	if (!song) {
-		sciprintf("Doesn't exist\n");
-		return 1;
-	}
-
-	midi_hexdump(song->data + offset, song->size, offset);
-
-	return 0;
 }
 
 static int show_node(EngineState *s, reg_t addr) {
@@ -451,10 +275,6 @@ int c_debuginfo(EngineState *s) {
 	return 0;
 }
 
-int c_debuginfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	return c_debuginfo(s);
-}
-
 int c_step(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	_debugstate_valid = 0;
 	if (cmdParams.size() && (cmdParams[0].val > 0))
@@ -507,49 +327,6 @@ int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 #endif
-
-int c_viewinfo(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int view = cmdParams[0].val;
-	int palette = cmdParams[1].val;
-	int loops, i;
-	gfxr_view_t *view_pixmaps = NULL;
-	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
-
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-	sciprintf("Resource view.%d ", view);
-
-	loops = gfxop_lookup_view_get_loops(s->gfx_state, view);
-
-	if (loops < 0)
-		sciprintf("does not exist.\n");
-	else {
-		sciprintf("has %d loops:\n", loops);
-
-		for (i = 0; i < loops; i++) {
-			int j, cels;
-
-			sciprintf("Loop %d: %d cels.\n", i, cels = gfxop_lookup_view_get_cels(s->gfx_state, view, i));
-			for (j = 0; j < cels; j++) {
-				int width;
-				int height;
-				Common::Point mod;
-
-				// Show pixmap on screen
-				view_pixmaps = s->gfx_state->gfxResMan->getView(view, &i, &j, palette);
-				gfxop_draw_cel(s->gfx_state, view, i, j, Common::Point(0,0), transparent, palette);
-
-				gfxop_get_cel_parameters(s->gfx_state, view, i, j, &width, &height, &mod);
-
-				sciprintf("   cel %d: size %dx%d, adj+(%d,%d)\n", j, width, height, mod.x, mod.y);
-			}
-		}
-	}
-
-	return 0;
-}
 
 enum {
 	_parse_eoi,
@@ -670,29 +447,6 @@ int c_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	} else {
 		sciprintf("Unknown word: '%s'\n", error);
 		free(error);
-	}
-
-	return 0;
-}
-
-int c_stack(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (s->_executionStack.empty()) {
-		sciprintf("No exec stack!");
-		return 1;
-	}
-
-	ExecStack &xs = s->_executionStack.back();
-
-	for (int i = cmdParams[0].val ; i > 0; i--) {
-		if ((xs.sp - xs.fp - i) == 0)
-			sciprintf("-- temp variables --\n");
-		if (xs.sp - i >= s->stack_base)
-			sciprintf("ST:%04x = %04x:%04x\n", PRINT_STK(xs.sp - i), PRINT_REG(xs.sp[-i]));
 	}
 
 	return 0;
@@ -982,23 +736,9 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	return retval;
 }
 
-static const char *varnames[] = {"global", "local", "temp", "param"};
-static const char *varabbrev = "gltp";
-
-int c_vmvarlist(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int i;
-
-	for (i = 0;i < 4;i++) {
-		sciprintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(p_var_segs[i], p_vars[i] - p_var_base[i])));
-		if (p_var_max)
-			sciprintf("  total %d", p_var_max[i]);
-		sciprintf("\n");
-	}
-
-	return 0;
-}
-
 int c_vmvars(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	const char *varnames[] = {"global", "local", "temp", "param"};
+	const char *varabbrev = "gltp";
 	const char *vartype_pre = strchr(varabbrev, *cmdParams[0].str);
 	int vartype;
 	int idx = cmdParams[1].val;
@@ -1103,26 +843,6 @@ static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdPara
 	return 0;
 }
 
-static int c_gfx_priority(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (cmdParams.size()) {
-		int zone = cmdParams[0].val;
-		if (zone < 0)
-			zone = 0;
-		if (zone > 15) zone = 15;
-
-		sciprintf("Zone %x starts at y=%d\n", zone, PRIORITY_BAND_FIRST(zone));
-	} else {
-		sciprintf("Priority bands start at y=%d\nThey end at y=%d\n", s->priority_first, s->priority_last);
-	}
-
-	return 0;
-}
-
 #ifdef GFXW_DEBUG_WIDGETS
 extern GfxWidget *debug_widgets[];
 extern int debug_widget_pos;
@@ -1152,50 +872,6 @@ static int c_gfx_print_widget(EngineState *s, const Common::Array<cmd_param_t> &
 	return 0;
 }
 #endif
-
-static int c_gfx_draw_cel(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int view = cmdParams[0].val;
-	int loop = cmdParams[1].val;
-	int cel = cmdParams[2].val;
-	int palette = cmdParams[3].val;
-
-	if (!s) {
-		sciprintf("Not in debug state!\n");
-		return 1;
-	}
-
-	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-	gfxop_draw_cel(s->gfx_state, view, loop, cel, Common::Point(160, 100), s->ega_colors[0], palette);
-	gfxop_update(s->gfx_state);
-
-	return 0;
-}
-
-static int c_gfx_propagate_rect(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int map = cmdParams[4].val;
-	rect_t rect;
-
-	if (!s) {
-		sciprintf("Not in debug state!\n");
-		return 1;
-	}
-
-	if (map < 0 || map > 1)
-		map = 0;
-
-	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-
-	rect = gfx_rect(cmdParams[0].val, cmdParams[1].val, cmdParams[2].val, cmdParams[3].val);
-
-	if (map == 1)
-		gfxop_clear_box(s->gfx_state, rect);
-	else
-		gfxop_update_box(s->gfx_state, rect);
-	gfxop_update(s->gfx_state);
-	gfxop_sleep(s->gfx_state, 0);
-
-	return 0;
-}
 
 #define GETRECT(ll, rr, tt, bb) \
 	ll = GET_SELECTOR(pos, ll); \
@@ -1270,16 +946,6 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 #endif
 }
 #endif
-
-static int c_gfx_update_zone(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	return s->gfx_state->driver->update(s->gfx_state->driver, gfx_rect(cmdParams[0].val, cmdParams[1].val, cmdParams[2].val, cmdParams[3].val),
-										Common::Point(cmdParams[0].val, cmdParams[1].val), GFX_BUFFER_FRONT);
-}
 
 static int c_disasm_addr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t vpc = cmdParams[0].reg;
@@ -1464,13 +1130,6 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-static int c_resource_id(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int id = cmdParams[0].val;
-
-	sciprintf("%s.%d (0x%x)\n", getResourceTypeName((ResourceType)(id >> 11)), id & 0x7ff, id & 0x7ff);
-
-	return 0;
-}
 
 struct generic_config_flag_t {
 	const char *name;
@@ -1492,37 +1151,6 @@ static int c_sfx_remove(EngineState *s, const Common::Array<cmd_param_t> &cmdPar
 		PUT_SEL32V(id, nodePtr, 0);
 		PUT_SEL32V(id, handle, 0);
 	}
-
-	return 0;
-}
-
-static int c_is_sample(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, cmdParams[0].val, 0);
-	SongIterator *songit;
-	Audio::AudioStream *data;
-
-	if (!song) {
-		warning("Not a sound resource");
-		return 1;
-	}
-
-	songit = songit_new(song->data, song->size, SCI_SONG_ITERATOR_TYPE_SCI0, 0xcaffe /* What do I care about the ID? */);
-
-	if (!songit) {
-		warning("Error-- Could not convert to song iterator");
-		return 1;
-	}
-
-	if ((data = songit->getAudioStream())) {
-/*
-		warning("\nIs sample (encoding %dHz/%s/%04x)", data->conf.rate, (data->conf.stereo) ?
-		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
-*/
-		delete data;
-	} else
-		sciprintf("Valid song, but not a sample.\n");
-
-	delete songit;
 
 	return 0;
 }
@@ -1981,9 +1609,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			_debug_commands_not_hooked = 0;
 
 			con_hook_command(c_sfx_remove, "sfx_remove", "!a", "Kills a playing sound.");
-			con_hook_command(c_debuginfo, "registers", "", "Displays all current register values");
 			con_hook_command(c_vmvars, "vmvars", "!sia*", "Displays or changes variables in the VM\n\nFirst parameter is either g(lobal), l(ocal), t(emp) or p(aram).\nSecond parameter is the var number\nThird parameter (if specified) is the value to set the variable to");
-			con_hook_command(c_vmvarlist, "vmvarlist", "!", "Displays the addresses of variables in the VM");
 			con_hook_command(c_step, "s", "i*", "Executes one or several operations\n\nEXAMPLES\n\n"
 			                 "    s 4\n\n  Execute 4 commands\n\n    s\n\n  Execute next command");
 #if 0
@@ -2001,7 +1627,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "\n\nSEE ALSO\n\n  vo.1, accobj.1");
 			con_hook_command(c_accobj, "accobj", "!", "Displays information about an\n  object or class at the\n"
 			                 "address indexed by acc.\n\nSEE ALSO\n\n  obj.1, vo.1");
-			con_hook_command(c_stack, "stack", "i", "Dumps the specified number of stack elements");
 			con_hook_command(c_backtrace, "bt", "", "Dumps the send/self/super/call/calle/callb stack");
 			con_hook_command(c_snk, "snk", "s*", "Steps forward until it hits the next\n  callk operation.\n"
 			                 "  If invoked with a parameter, it will\n  look for that specific callk.\n");
@@ -2009,8 +1634,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_set_acc, "set_acc", "!a", "Sets the accumulator");
 			con_hook_command(c_send, "send", "!asa*", "Sends a message to an object\nExample: send ?fooScript cue");
 			con_hook_command(c_sret, "sret", "", "Steps forward until ret is called\n  on the current execution stack\n  level.");
-			con_hook_command(c_resource_id, "resource_id", "i", "Identifies a resource number by\n"
-			                 "  splitting it up in resource type\n  and resource number.");
 			con_hook_command(c_bpx, "bpx", "s", "Sets a breakpoint on the execution of\n  the specified method.\n\n  EXAMPLE:\n"
 			                 "  bpx ego::doit\n\n  May also be used to set a breakpoint\n  that applies whenever an object\n"
 			                 "  of a specific type is touched:\n  bpx foo::\n");
@@ -2018,8 +1641,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_bplist, "bplist", "", "Lists all breakpoints.\n");
 			con_hook_command(c_bpdel, "bpdel", "i", "Deletes a breakpoint with specified index.");
 			con_hook_command(c_go, "go", "", "Executes the script.\n");
-			con_hook_command(c_viewinfo, "viewinfo", "ii", "Displays the number of loops\n  and cels of each loop"
-			                 " for the\n  specified view resource and palette.");
 			con_hook_command(c_parse, "parse", "s", "Parses a sequence of words and prints\n  the resulting parse tree.\n"
 			                 "  The word sequence must be provided as a\n  single string.");
 			con_hook_command(c_set_parse_nodes, "set_parse_nodes", "s*", "Sets the contents of all parse nodes.\n"
@@ -2029,25 +1650,12 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_gfx_print_widget, "gfx_print_widget", "i*", "If called with no parameters, it\n  shows which widgets are active.\n"
 			                 "  With parameters, it lists the\n  widget corresponding to the\n  numerical index specified (for\n  each parameter).");
 #endif
-			con_hook_command(c_gfx_propagate_rect,
-			                 "gfx_propagate_rect",
-			                 "iiiii",
-			                 "Propagates a lower gfx buffer to a\n"
-			                 "  higher gfx buffer.\n\nUSAGE\n\n"
-			                 "  gfx_propagate_rect <x> <y> <xl> <yl> <buf>\n");
-			con_hook_command(c_gfx_update_zone, "gfx_update_zone", "iiii", "Propagates a rectangular area from\n  the back buffer to the front buffer"
-			                 "\n\nUSAGE\n\n"
-			                 "  gfx_update_zone <x> <y> <xl> <yl>");
+
 #if 0
 			// TODO: Re-enable con:draw_viewobj
 			con_hook_command(c_gfx_draw_viewobj, "draw_viewobj", "i", "Draws the nsRect and brRect of a\n  dynview object.\n\n  nsRect is green, brRect\n"
 			                 "  is blue.\n");
 #endif
-			con_hook_command(c_gfx_draw_cel, "gfx_draw_cel", "iiii", "Draws a single view\n  cel to the center of the\n  screen\n\n"
-			                 "USAGE\n  gfx_draw_cel <view> <loop> <cel> <palette>\n");
-			con_hook_command(c_gfx_priority, "gfx_priority", "i*", "Prints information about priority\n  bands\nUSAGE\n\n  gfx_priority\n\n"
-			                 "  will print the min and max values\n  for the priority bands\n\n  gfx_priority <val>\n\n  Print start of the priority\n"
-			                 "  band for the specified\n  priority\n");
 			con_hook_command(c_vo, "vo", "!a",
 			                 "Examines an object\n\n"
 			                 "SEE ALSO\n\n"
@@ -2064,20 +1672,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_shownode, "shownode", "!a",
 			                 "Prints information about a list node\n"
 			                 "  or list base.\n\n");
-			con_hook_command(c_is_sample, "is-sample", "i",
-			                 "Tests whether a given sound resource\n"
-			                 "  is a PCM sample, and displays infor-\n"
-			                 "  mation on it if it is.\n\n");
-			con_hook_command(c_sfx_01_header_dump, "sfx-01-header", "i",
-			                 "Dumps the header of an SCI01 song\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  sfx-01-track.1\n\n");
-			con_hook_command(c_sfx_01_track, "sfx-01-track", "ii",
-			                 "Dumps a track from an SCI01 song\n\n"
-			                 "USAGE\n\n"
-			                 "  sfx-01-track <song> <offset>\n\n"
-			                 "SEE ALSO\n\n"
-			                 "  sfx-01-header.1\n\n");
 			con_hook_command(c_gc_show_reachable, "gc-list-reachable", "!a",
 			                 "Prints all addresses directly reachable from\n"
 			                 "  the memory object specified as parameter.\n\n"
@@ -2099,14 +1693,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  gc-all-reachable.1");
 
 /*
-			con_hook_int(&script_debug_flag, "script_debug_flag", "Set != 0 to enable debugger\n");
 			con_hook_int(&script_abort_flag, "script_abort_flag", "Set != 0 to abort execution\n");
-			con_hook_int(&script_step_counter, "script_step_counter", "# of executed SCI operations\n");
-			con_hook_int(&_weak_validations, "weak_validations", "Set != 0 to turn some validation errors\n"
-			             "  into warnings\n");
-
-			con_hook_int(&script_gc_interval, "gc-interval", "Number of kernel calls in between gcs");
-			con_hook_int(&debug_sleeptime_factor, "sleep-factor", "Factor to multiply with wait times\n  Set to 0 to speed up games");
 */
 		} // If commands were not hooked up
 	}

@@ -36,8 +36,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 	if (!mobj) {
 		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
 		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
-		//sciprintf("%s, L%d: Attempt to use non-node %04x:%04x as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
-		//script_debug_flag = 1;
+		//error("%s, L%d: Attempt to use non-node %04x:%04x as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
 		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}

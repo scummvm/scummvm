@@ -27,6 +27,7 @@
 #include "common/events.h"
 
 #include "sci/sci.h"
+#include "sci/console.h"	// for debug_sleeptime_factor
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
@@ -646,7 +647,7 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-int debug_sleeptime_factor = 1;
+extern int debug_sleeptime_factor;
 
 reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint32 time;

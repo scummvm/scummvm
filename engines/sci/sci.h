@@ -139,6 +139,7 @@ public:
 
 	// Engine APIs
 	virtual Common::Error run();
+	void pauseEngineIntern(bool pause);
 	virtual GUI::Debugger *getDebugger();
 
 	const char* getGameID() const;

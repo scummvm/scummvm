@@ -308,4 +308,10 @@ Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 	return name;
 }
 
+void SciEngine::pauseEngineIntern(bool pause) {
+	// TODO: pause music and game script execution here
+
+	_mixer->pauseAll(pause);
+}
+
 } // End of namespace Sci

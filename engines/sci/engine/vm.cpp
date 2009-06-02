@@ -27,6 +27,7 @@
 #include "common/stack.h"
 
 #include "sci/sci.h"
+#include "sci/console.h"	// for _weak_validations
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
@@ -1609,7 +1610,6 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 
 	if (!*script || (s->version >= SCI_VERSION_1_1 && !heap)) {
 		sciprintf("Script 0x%x requested but not found\n", script_nr);
-		//script_debug_flag = script_error_flag = 1;
 		if (s->version >= SCI_VERSION_1_1) {
 			if (*heap)
 				sciprintf("Inconsistency: heap resource WAS found\n");

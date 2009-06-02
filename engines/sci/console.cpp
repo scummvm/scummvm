@@ -36,6 +36,8 @@
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gfx/gfx_widgets.h"	// for getPort
 #include "sci/sfx/songlib.h"	// for songlib_t
+#include "sci/sfx/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
+#include "sci/sfx/sci_midi.h"
 #include "sci/vocabulary.h"
 
 #include "common/savefile.h"
@@ -44,55 +46,84 @@ namespace Sci {
 
 extern EngineState *g_EngineState;
 
+int debug_sleeptime_factor = 1;
 int _kdebug_cheap_event_hack = 0;
 bool _kdebug_track_mouse_clicks = false;
+int _weak_validations = 1; // Some validation errors are reduced to warnings if non-0
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
+	// Kernel
 //	DCmd_Register("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
 	DCmd_Register("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
 	DCmd_Register("kernel_names",		WRAP_METHOD(Console, cmdKernelNames));
+	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
+	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
+	DCmd_Register("weak_validations",	WRAP_METHOD(Console, cmdWeakValidations));
+	// Parser
 	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
+	DCmd_Register("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
 	DCmd_Register("parser_nodes",		WRAP_METHOD(Console, cmdParserNodes));
 	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
+	// Resources
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
-	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
-	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
-	DCmd_Register("size",				WRAP_METHOD(Console, cmdResourceSize));
+	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
+	DCmd_Register("resource_size",		WRAP_METHOD(Console, cmdResourceSize));
 	DCmd_Register("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
-	DCmd_Register("sci0_palette",		WRAP_METHOD(Console, cmdSci0Palette));
-	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
-	DCmd_Register("clear_screen",		WRAP_METHOD(Console, cmdClearScreen));
-	DCmd_Register("redraw_screen",		WRAP_METHOD(Console, cmdRedrawScreen));
+	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
+	// Game
 	DCmd_Register("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
 	DCmd_Register("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
+	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
+	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
+	// Graphics
+	DCmd_Register("sci0_palette",		WRAP_METHOD(Console, cmdSci0Palette));
+	DCmd_Register("clear_screen",		WRAP_METHOD(Console, cmdClearScreen));
+	DCmd_Register("redraw_screen",		WRAP_METHOD(Console, cmdRedrawScreen));
 	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
 	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
 	DCmd_Register("draw_rect",			WRAP_METHOD(Console, cmdDrawRect));
+	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
+	DCmd_Register("view_info",			WRAP_METHOD(Console, cmdViewInfo));
+	DCmd_Register("update_zone",		WRAP_METHOD(Console, cmdUpdateZone));
+	DCmd_Register("propagate_zone",		WRAP_METHOD(Console, cmdPropagateZone));
 	DCmd_Register("fill_screen",		WRAP_METHOD(Console, cmdFillScreen));
 	DCmd_Register("current_port",		WRAP_METHOD(Console, cmdCurrentPort));
 	DCmd_Register("print_port",			WRAP_METHOD(Console, cmdPrintPort));
-	DCmd_Register("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
 	DCmd_Register("visual_state",		WRAP_METHOD(Console, cmdVisualState));
+	DCmd_Register("flush_visual",		WRAP_METHOD(Console, cmdFlushPorts));
 	DCmd_Register("dynamic_views",		WRAP_METHOD(Console, cmdDynamicViews));
 	DCmd_Register("dropped_views",		WRAP_METHOD(Console, cmdDroppedViews));
+	DCmd_Register("priority_bands",		WRAP_METHOD(Console, cmdPriorityBands));
 	DCmd_Register("status_bar",			WRAP_METHOD(Console, cmdStatusBarColors));
+	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
+	// Events
 	DCmd_Register("simkey",				WRAP_METHOD(Console, cmdSimulateKey));
 	DCmd_Register("track_mouse",		WRAP_METHOD(Console, cmdTrackMouse));
+	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
 	DCmd_Register("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
 	DCmd_Register("segment_kill",		WRAP_METHOD(Console, cmdKillSegment));
-	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
-	DCmd_Register("songlib",			WRAP_METHOD(Console, cmdSongLib));
-	DCmd_Register("gc",					WRAP_METHOD(Console, cmdInvokeGC));
+	// Garbage collection
+	DCmd_Register("gc",					WRAP_METHOD(Console, cmdGCInvoke));
 	DCmd_Register("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
+	DCmd_Register("gc_interval",		WRAP_METHOD(Console, cmdGCInterval));
+	// VM
+	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
+	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
+	DCmd_Register("sleep_factor",		WRAP_METHOD(Console, cmdSleepFactor));
+	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
+	// Music/SFX
+	DCmd_Register("songlib",			WRAP_METHOD(Console, cmdSongLib));
+	DCmd_Register("is_sample",			WRAP_METHOD(Console, cmdIsSample));
+	DCmd_Register("sfx01_header",		WRAP_METHOD(Console, cmdSfx01Header));
+	DCmd_Register("sfx01_track",		WRAP_METHOD(Console, cmdSfx01Track));
 
 	// These were in sci.cpp
 	/*
@@ -184,6 +215,24 @@ bool Console::cmdParserWords(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdRegisters(int argc, const char **argv) {
+	DebugPrintf("Current register values:\n");
+#if 0
+		// TODO: p_restadjust
+	sciprintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(g_EngineState->r_acc), PRINT_REG(g_EngineState->r_prev), *p_restadjust);
+#endif
+
+	if (!g_EngineState->_executionStack.empty()) {
+#if 0
+		// TODO: p_pc, p_objp, p_pp, p_sp
+		sciprintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
+#endif
+	} else
+		sciprintf("<no execution stack: pc,obj,fp omitted>\n");
+
+	return true;
+}
+
 bool Console::cmdHexDump(int argc, const char **argv) {
 	if (argc != 3) {
 		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
@@ -214,6 +263,19 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdResourceId(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Identifies a resource number by splitting it up in resource type and resource number\n");
+		DebugPrintf("Usage: %s <resource number>\n", argv[0]);
+		return true;
+	}
+
+	int id = atoi(argv[1]);
+	DebugPrintf("%s.%d (0x%x)\n", getResourceTypeName((ResourceType)(id >> 11)), id & 0x7ff, id & 0x7ff);
+
+	return true;
+}
+
 bool Console::cmdDissectScript(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Examines a script\n");
@@ -222,6 +284,26 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 	}
 
 	g_EngineState->_kernel->dissectScript(atoi(argv[1]), g_EngineState->_vocabulary);
+
+	return true;
+}
+
+bool Console::cmdWeakValidations(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Turns some validation errors into warnings\n");
+		DebugPrintf("Usage: %s <on/off>\n", argv[0]);
+		DebugPrintf("Weak validations are currently %s\n", (_weak_validations ? "on" : "off"));
+		return true;
+	}
+
+	DebugPrintf("Weak validations are currently %s\n", (_weak_validations ? "on" : "off"));
+	if (!scumm_stricmp(argv[1], "on")) {
+		DebugPrintf("Turning weak validations on\n");
+		_weak_validations = 1;
+	} else if (!scumm_stricmp(argv[1], "off")) {
+		DebugPrintf("Turning weak validations off\n");
+		_weak_validations = 0;
+	}
 
 	return true;
 }
@@ -602,6 +684,116 @@ bool Console::cmdDrawRect(int argc, const char **argv) {
 	return false;
 }
 
+bool Console::cmdDrawCel(int argc, const char **argv) {
+	if (argc != 4) {
+		DebugPrintf("Draws a single view cel to the center of the\n  screen\n\n");
+		DebugPrintf("Usage: %s <view> <loop> <cel> <palette>\n", argv[0]);
+		return true;
+	}
+
+	int view = atoi(argv[1]);
+	int loop = atoi(argv[2]);
+	int cel = atoi(argv[3]);
+	int palette = atoi(argv[4]);
+
+	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
+	gfxop_draw_cel(g_EngineState->gfx_state, view, loop, cel, Common::Point(160, 100), g_EngineState->ega_colors[0], palette);
+	gfxop_update(g_EngineState->gfx_state);
+
+	return false;
+}
+
+bool Console::cmdViewInfo(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Displays the number of loops and cels of each loop\n");
+		DebugPrintf("for the specified view resource and palette.");
+		DebugPrintf("Usage: %s <view> <palette>\n", argv[0]);
+		return true;
+	}
+
+	int view = atoi(argv[1]);
+	int palette = atoi(argv[2]);
+	int loops, i;
+	gfxr_view_t *view_pixmaps = NULL;
+	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
+
+	DebugPrintf("Resource view.%d ", view);
+
+	loops = gfxop_lookup_view_get_loops(g_EngineState->gfx_state, view);
+
+	if (loops < 0)
+		DebugPrintf("does not exist.\n");
+	else {
+		DebugPrintf("has %d loops:\n", loops);
+
+		for (i = 0; i < loops; i++) {
+			int j, cels;
+
+			DebugPrintf("Loop %d: %d cels.\n", i, cels = gfxop_lookup_view_get_cels(g_EngineState->gfx_state, view, i));
+			for (j = 0; j < cels; j++) {
+				int width;
+				int height;
+				Common::Point mod;
+
+				// Show pixmap on screen
+				view_pixmaps = g_EngineState->gfx_state->gfxResMan->getView(view, &i, &j, palette);
+				gfxop_draw_cel(g_EngineState->gfx_state, view, i, j, Common::Point(0,0), transparent, palette);
+
+				gfxop_get_cel_parameters(g_EngineState->gfx_state, view, i, j, &width, &height, &mod);
+
+				DebugPrintf("   cel %d: size %dx%d, adj+(%d,%d)\n", j, width, height, mod.x, mod.y);
+			}
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdUpdateZone(int argc, const char **argv) {
+	if (argc != 4) {
+		DebugPrintf("Propagates a rectangular area from the back buffer to the front buffer\n");
+		DebugPrintf("Usage: %s <x> <y> <width> <height>\n", argv[0]);
+		return true;
+	}
+
+	int x = atoi(argv[1]);
+	int y = atoi(argv[2]);
+	int width = atoi(argv[3]);
+	int height = atoi(argv[4]);
+
+	g_EngineState->gfx_state->driver->update(g_EngineState->gfx_state->driver, gfx_rect(x, y, width, height),
+										Common::Point(x, y), GFX_BUFFER_FRONT);
+
+	return false;
+}
+
+bool Console::cmdPropagateZone(int argc, const char **argv) {
+	if (argc != 5) {
+		DebugPrintf("Propagates a rectangular area from a lower graphics buffer to a higher one\n");
+		DebugPrintf("Usage: %s <x> <y> <width> <height> <map>\n", argv[0]);
+		DebugPrintf("Where <map> can be 0 or 1\n");
+		return true;
+	}
+
+	int x = atoi(argv[1]);
+	int y = atoi(argv[2]);
+	int width = atoi(argv[3]);
+	int height = atoi(argv[4]);
+	int map = CLIP<int>(atoi(argv[5]), 0, 1);
+	rect_t rect = gfx_rect(x, y, width, height);
+
+	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
+
+	if (map == 1)
+		gfxop_clear_box(g_EngineState->gfx_state, rect);
+	else
+		gfxop_update_box(g_EngineState->gfx_state, rect);
+	gfxop_update(g_EngineState->gfx_state);
+	gfxop_sleep(g_EngineState->gfx_state, 0);
+
+	return false;
+}
+
 bool Console::cmdFillScreen(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Fills the screen with one of the EGA colors\n");
@@ -615,6 +807,7 @@ bool Console::cmdFillScreen(int argc, const char **argv) {
 	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
 	gfxop_fill_box(g_EngineState->gfx_state, gfx_rect_fullscreen, g_EngineState->ega_colors[col]);
 	gfxop_update(g_EngineState->gfx_state);
+
 	return false;
 }
 
@@ -677,6 +870,16 @@ bool Console::cmdVisualState(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdFlushPorts(int argc, const char **argv) {
+	gfxop_set_pointer_cursor(g_EngineState->gfx_state, GFXOP_NO_POINTER);
+	DebugPrintf("Flushing dynamically allocated ports (for memory profiling)...\n");
+	delete g_EngineState->visual;
+	g_EngineState->gfx_state->gfxResMan->freeAllResources();
+	g_EngineState->visual = NULL;
+
+	return true;
+}
+
 bool Console::cmdDynamicViews(int argc, const char **argv) {
 	DebugPrintf("List of active dynamic views:\n");
 
@@ -695,6 +898,19 @@ bool Console::cmdDroppedViews(int argc, const char **argv) {
 		g_EngineState->drop_views->print(0);
 	else
 		DebugPrintf("The list is empty.\n");
+
+	return true;
+}
+
+bool Console::cmdPriorityBands(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Priority bands start at y=%d. They end at y=%d\n", g_EngineState->priority_first, g_EngineState->priority_last);
+		DebugPrintf("Use %d <priority band> to print the start of priority for the specified priority band (0 - 15)\n", argv[0]);
+		return true;
+	}
+
+	int zone = CLIP<int>(atoi(argv[1]), 0, 15);
+	DebugPrintf("Zone %x starts at y=%d\n", zone, _find_priority_band(g_EngineState, zone));
 
 	return true;
 }
@@ -1075,7 +1291,7 @@ bool Console::cmdSongLib(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdInvokeGC(int argc, const char **argv) {
+bool Console::cmdGCInvoke(int argc, const char **argv) {
 	DebugPrintf("Performing garbage collection...\n");
 	run_gc(g_EngineState);
 	return true;
@@ -1090,6 +1306,309 @@ bool Console::cmdGCObjects(int argc, const char **argv) {
 	}
 
 	delete use_map;
+
+	return true;
+}
+
+bool Console::cmdGCInterval(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Sets the number of kernel calls in between garbage collections.\n");
+		DebugPrintf("Usage: %s <number>\n", argv[0]);
+		DebugPrintf("Number of kernel calls in between garbage collections is currently %d.", script_gc_interval);
+		return true;
+	}
+
+	DebugPrintf("Number of kernel calls in between garbage collections was %d, setting it to %d\n", script_gc_interval, atoi(argv[1]));
+	script_gc_interval = atoi(argv[1]);
+
+	return true;
+}
+
+bool Console::cmdVMVarlist(int argc, const char **argv) {
+	const char *varnames[] = {"global", "local", "temp", "param"};
+
+	DebugPrintf("Addresses of variables in the VM:\n");
+
+#if 0
+	// TODO: p_var_segs, p_vars, p_var_base, p_var_max
+
+	for (int i = 0; i < 4; i++) {
+		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(p_var_segs[i], p_vars[i] - p_var_base[i])));
+		if (p_var_max)
+			DebugPrintf("  total %d", p_var_max[i]);
+		DebugPrintf("\n");
+	}
+#endif
+
+	return true;
+}
+
+bool Console::cmdStack(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Dumps the specified number of stack elements.\n");
+		DebugPrintf("Usage: %s <elements>\n", argv[0]);
+		return true;
+	}
+
+	if (g_EngineState->_executionStack.empty()) {
+		DebugPrintf("No exec stack!");
+		return true;
+	}
+
+	ExecStack &xs = g_EngineState->_executionStack.back();
+	int nr = atoi(argv[1]);
+
+	for (int i = nr; i > 0; i--) {
+		if ((xs.sp - xs.fp - i) == 0)
+			DebugPrintf("-- temp variables --\n");
+		if (xs.sp - i >= g_EngineState->stack_base)
+			DebugPrintf("ST:%04x = %04x:%04x\n", (unsigned)(xs.sp - i - g_EngineState->stack_base), PRINT_REG(xs.sp[-i]));
+	}
+
+	return true;
+}
+
+bool Console::cmdSleepFactor(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Factor to multiply with wait times in kWait().\n");
+		DebugPrintf("Set to 0 to speed up games.\n");
+		DebugPrintf("Usage: %s <factor>\n", argv[0]);
+		DebugPrintf("Sleep factor is currently %d.", debug_sleeptime_factor);
+		return true;
+	}
+
+	DebugPrintf("Sleep factor was %d, setting it to %d\n", debug_sleeptime_factor, atoi(argv[1]));
+	debug_sleeptime_factor = atoi(argv[1]);
+
+	return true;
+}
+
+bool Console::cmdScriptSteps(int argc, const char **argv) {
+	DebugPrintf("Number of executed SCI operations: %d\n", script_step_counter);
+	return true;
+}
+
+bool Console::cmdIsSample(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Tests whether a given sound resource is a PCM sample, \n");
+		DebugPrintf("and displays information on it if it is.\n");
+		DebugPrintf("Usage: %s <sample id>\n", argv[0]);
+		return true;
+	}
+
+	Resource *song = _vm->getResMgr()->findResource(kResourceTypeSound, atoi(argv[1]), 0);
+	SongIterator *songit;
+	Audio::AudioStream *data;
+
+	if (!song) {
+		DebugPrintf("Not a sound resource!\n");
+		return true;
+	}
+
+	songit = songit_new(song->data, song->size, SCI_SONG_ITERATOR_TYPE_SCI0, 0xcaffe /* What do I care about the ID? */);
+
+	if (!songit) {
+		DebugPrintf("Could not convert to song iterator!\n");
+		return true;
+	}
+
+	if ((data = songit->getAudioStream())) {
+		// TODO
+/*
+		DebugPrintf("\nIs sample (encoding %dHz/%s/%04x)", data->conf.rate, (data->conf.stereo) ?
+		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
+*/
+		delete data;
+	} else
+		DebugPrintf("Valid song, but not a sample.\n");
+
+	delete songit;
+
+	return true;
+}
+
+bool Console::cmdSfx01Header(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Dumps the header of a SCI01 song\n");
+		DebugPrintf("Usage: %s <track>\n", argv[0]);
+		return true;
+	}
+
+	Resource *song = _vm->getResMgr()->findResource(kResourceTypeSound, atoi(argv[1]), 0);
+
+	if (!song) {
+		DebugPrintf("Doesn't exist\n");
+		return true;
+	}
+
+	uint32 offset = 0;
+
+	DebugPrintf("SCI01 song track mappings:\n");
+
+	if (*song->data == 0xf0) // SCI1 priority spec
+		offset = 8;
+
+	if (song->size <= 0)
+		return 1;
+
+	while (song->data[offset] != 0xff) {
+		byte device_id = song->data[offset];
+		DebugPrintf("* Device %02x:\n", device_id);
+		offset++;
+
+		if (offset + 1 >= song->size)
+			return 1;
+
+		while (song->data[offset] != 0xff) {
+			int track_offset;
+			int end;
+			byte header1, header2;
+
+			if (offset + 7 >= song->size)
+				return 1;
+
+			offset += 2;
+
+			track_offset = READ_LE_UINT16(song->data + offset);
+			header1 = song->data[track_offset];
+			header2 = song->data[track_offset+1];
+			track_offset += 2;
+
+			end = READ_LE_UINT16(song->data + offset + 2);
+			DebugPrintf("  - %04x -- %04x", track_offset, track_offset + end);
+
+			if (track_offset == 0xfe)
+				DebugPrintf(" (PCM data)\n");
+			else
+				DebugPrintf(" (channel %d, special %d, %d playing notes, %d foo)\n",
+				          header1 & 0xf, header1 >> 4, header2 & 0xf, header2 >> 4);
+			offset += 4;
+		}
+		offset++;
+	}
+
+	return true;
+}
+
+static int _parse_ticks(byte *data, int *offset_p, int size) {
+	int ticks = 0;
+	int tempticks;
+	int offset = 0;
+
+	do {
+		tempticks = data[offset++];
+		ticks += (tempticks == SCI_MIDI_TIME_EXPANSION_PREFIX) ? SCI_MIDI_TIME_EXPANSION_LENGTH : tempticks;
+	} while (tempticks == SCI_MIDI_TIME_EXPANSION_PREFIX && offset < size);
+
+	if (offset_p)
+		*offset_p = offset;
+
+	return ticks;
+}
+
+// Specialised for SCI01 tracks (this affects the way cumulative cues are treated)
+static void midi_hexdump(byte *data, int size, int notational_offset) {
+	int offset = 0;
+	int prev = 0;
+	const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 2, 0};
+
+	if (*data == 0xf0) // SCI1 priority spec
+		offset = 8;
+
+	while (offset < size) {
+		int old_offset = offset;
+		int offset_mod;
+		int time = _parse_ticks(data + offset, &offset_mod, size);
+		int cmd;
+		int pleft;
+		int firstarg = 0;
+		int i;
+		int blanks = 0;
+
+		offset += offset_mod;
+		printf("  [%04x] %d\t",
+		        old_offset + notational_offset, time);
+
+		cmd = data[offset];
+		if (!(cmd & 0x80)) {
+			cmd = prev;
+			if (prev < 0x80) {
+				printf("Track broken at %x after"
+				        " offset mod of %d\n",
+				        offset + notational_offset, offset_mod);
+				Common::hexdump(data, size, 16, notational_offset);
+				return;
+			}
+			printf("(rs %02x) ", cmd);
+			blanks += 8;
+		} else {
+			++offset;
+			printf("%02x ", cmd);
+			blanks += 3;
+		}
+		prev = cmd;
+
+		pleft = MIDI_cmdlen[cmd >> 4];
+		if (SCI_MIDI_CONTROLLER(cmd) && data[offset] == SCI_MIDI_CUMULATIVE_CUE)
+			--pleft; // This is SCI(0)1 specific
+
+		for (i = 0; i < pleft; i++) {
+			if (i == 0)
+				firstarg = data[offset];
+			printf("%02x ", data[offset++]);
+			blanks += 3;
+		}
+
+		while (blanks < 16) {
+			blanks += 4;
+			printf("    ");
+		}
+
+		while (blanks < 20) {
+			++blanks;
+			printf(" ");
+		}
+
+		if (cmd == SCI_MIDI_EOT)
+			printf(";; EOT");
+		else if (cmd == SCI_MIDI_SET_SIGNAL) {
+			if (firstarg == SCI_MIDI_SET_SIGNAL_LOOP)
+				printf(";; LOOP point");
+			else
+				printf(";; CUE (%d)", firstarg);
+		} else if (SCI_MIDI_CONTROLLER(cmd)) {
+			if (firstarg == SCI_MIDI_CUMULATIVE_CUE)
+				printf(";; CUE (cumulative)");
+			else if (firstarg == SCI_MIDI_RESET_ON_SUSPEND)
+				printf(";; RESET-ON-SUSPEND flag");
+		}
+		printf("\n");
+
+		if (old_offset >= offset) {
+			printf("-- Not moving forward anymore,"
+			        " aborting (%x/%x)\n", offset, old_offset);
+			return;
+		}
+	}
+}
+
+bool Console::cmdSfx01Track(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Dumps a track of a SCI01 song\n");
+		DebugPrintf("Usage: %s <track> <offset>\n", argv[0]);
+		return true;
+	}
+
+	Resource *song = _vm->getResMgr()->findResource(kResourceTypeSound, atoi(argv[1]), 0);
+
+	int offset = atoi(argv[2]);
+
+	if (!song) {
+		DebugPrintf("Doesn't exist\n");
+		return true;
+	}
+
+	midi_hexdump(song->data + offset, song->size, offset);
 
 	return true;
 }

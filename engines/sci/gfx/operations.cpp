@@ -1455,8 +1455,8 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 			input.character = ev.kbd.ascii;
 
 			// Debug console
-			if (ev.kbd.flags == Common::KBD_CTRL && ev.kbd.keycode == Common::KEYCODE_d) {
-
+			if (ev.kbd.flags == Common::KBD_CTRL && ev.kbd.keycode == Common::KEYCODE_d) {	
+				// Open debug console
 				((Sci::SciEngine*)g_engine)->_console->attach();
 				((Sci::SciEngine*)g_engine)->_console->onFrame();
 
