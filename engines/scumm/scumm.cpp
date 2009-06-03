@@ -1181,7 +1181,10 @@ void ScummEngine::setupScumm() {
 
 	int maxHeapThreshold = -1;
 
-	if (_game.features & GF_NEW_COSTUMES) {
+	if (_game.features & GF_16BIT_COLOR) {
+		// 16Bit color games require double the memory, due to increased resource sizes.
+		maxHeapThreshold = 12 * 1024 * 1024;
+	} else if (_game.features & GF_NEW_COSTUMES) {
 		// Since the new costumes are very big, we increase the heap limit, to avoid having
 		// to constantly reload stuff from the data files.
 		maxHeapThreshold = 6 * 1024 * 1024;
