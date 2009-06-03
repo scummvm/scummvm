@@ -19,34 +19,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef ASYLUM_ENGINE_H
-#define ASYLUM_ENGINE_H
-
 #include "engines/engine.h"
 
+#include "asylum/screen.h"
 
 namespace Asylum {
 
-class Screen;
-
-class AsylumEngine: public Engine {
-public:
+Screen::Screen(OSystem *system)
+{
+	initGraphics(SCREEN_WIDTH, SCREEN_DEPTH, true);
 	
-	AsylumEngine(OSystem *system, Common::Language language);
-	virtual ~AsylumEngine();
+	_system = system;
+	_frontBuf = _backBuf = NULL;
+	_updatePalette = false;
+	_fullRefresh = false;
+}
 
-	// Engine APIs
-	Common::Error init();
-	Common::Error go();
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;	
-private:
-	Common::Language _language;
-	Common::RandomSource _rnd;
+Screen::~Screen()
+{
+}
 
-	Screen *_screen;
-};
+void clearScreen(){
 
-} // namespace Asylum
+}
 
-#endif
+void updateScreen(){
+}
+
+void updateRect(Common::Rect *r){
+}
+
+void setPalette(uint8 * palette){
+}
+
+void drawLine(int x0, int y0, int x1, int y1, uint8 colour){
+}
+
+} // end of namespace Asylum

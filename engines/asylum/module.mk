@@ -2,8 +2,9 @@ MODULE := engines/asylum
 
 MODULE_OBJS := \
 	detection.o \
-    graphics.o \
+	graphics.o \
 	resource.o \
+	screen.o \
 	asylum.o
 
 # This module can be built as a plugin
