@@ -358,47 +358,6 @@ int c_set_parse_nodes(EngineState *s, const Common::Array<cmd_param_t> &cmdParam
 	return 0;
 }
 
-// parses with a GNF rule set
-
-int c_parse(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	ResultWordList words;
-	char *error;
-	const char *string;
-
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	string = cmdParams[0].str;
-	sciprintf("Parsing '%s'\n", string);
-	bool res = s->_vocabulary->tokenizeString(words, string, &error);
-	if (res && !words.empty()) {
-		int syntax_fail = 0;
-
-		vocab_synonymize_tokens(words, s->_synonyms);
-
-		sciprintf("Parsed to the following blocks:\n");
-
-		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
-			sciprintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
-
-		if (s->_vocabulary->parseGNF(s->parser_nodes, words, true))
-			syntax_fail = 1; // Building a tree failed
-
-		if (syntax_fail)
-			sciprintf("Building a tree failed.\n");
-		else
-			vocab_dump_parse_tree("debug-parse-tree", s->parser_nodes);
-
-	} else {
-		sciprintf("Unknown word: '%s'\n", error);
-		free(error);
-	}
-
-	return 0;
-}
-
 extern const char *selector_name(EngineState *s, int selector);
 
 int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
@@ -678,44 +637,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	return retval;
 }
 
-int c_vmvars(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	const char *varnames[] = {"global", "local", "temp", "param"};
-	const char *varabbrev = "gltp";
-	const char *vartype_pre = strchr(varabbrev, *cmdParams[0].str);
-	int vartype;
-	int idx = cmdParams[1].val;
-
-	if (!vartype_pre) {
-		sciprintf("Invalid variable type '%c'\n", *cmdParams[0].str);
-		return 1;
-	}
-	vartype = vartype_pre - varabbrev;
-
-	if (idx < 0) {
-		sciprintf("Invalid: negative index\n");
-		return 1;
-	}
-	if ((p_var_max) && (p_var_max[vartype] <= idx)) {
-		sciprintf("Max. index is %d (0x%x)\n", p_var_max[vartype], p_var_max[vartype]);
-		return 1;
-	}
-
-	switch (cmdParams.size()) {
-	case 2:
-		sciprintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(p_vars[vartype][idx]));
-		break;
-
-	case 3:
-		p_vars[vartype][idx] = cmdParams[2].reg;
-		break;
-
-	default:
-		sciprintf("Too many arguments\n");
-	}
-
-	return 0;
-}
-
 static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (!_debugstate_valid) {
 		sciprintf("Not in debug state\n");
@@ -824,9 +745,7 @@ static int c_gfx_print_widget(EngineState *s, const Common::Array<cmd_param_t> &
 #if 0
 // Unreferenced - removed
 static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-#ifdef __GNUC__
-#warning "Re-implement con:gfx_draw_viewobj"
-#endif
+// TODO: Re-implement gfx_draw_viewobj
 #if 0
 	HeapPtr pos = (HeapPtr)(cmdParams[0].val);
 	int is_view;
@@ -873,15 +792,10 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 	nsBottom += 10;
 
 	gfxop_fill_box(s->gfx_state, gfx_rect(nsLeft, nsTop, nsRight - nsLeft + 1, nsBottom - nsTop + 1), s->ega_colors[2]);
-
 	gfxop_fill_box(s->gfx_state, gfx_rect(brLeft, brTop, brRight - brLeft + 1, brBottom - brTop + 1), s->ega_colors[1]);
-
 	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y - 1, 3, 3), s->ega_colors[0]);
-
 	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y, 3, 1), s->ega_colors[priority]);
-
 	gfxop_fill_box(s->gfx_state, gfx_rect(x, y - 1, 1, 3), s->ega_colors[priority]);
-
 	gfxop_update(s->gfx_state);
 
 	return 0;
@@ -1155,54 +1069,6 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 
 // Breakpoint commands
 
-static Breakpoint *bp_alloc(EngineState *s) {
-	Breakpoint *bp;
-
-	if (s->bp_list) {
-		bp = s->bp_list;
-		while (bp->next)
-			bp = bp->next;
-		bp->next = (Breakpoint *)malloc(sizeof(Breakpoint));
-		bp = bp->next;
-	} else {
-		s->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
-		bp = s->bp_list;
-	}
-
-	bp->next = NULL;
-
-	return bp;
-}
-
-int c_bpx(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Breakpoint *bp;
-
-	/* Note: We can set a breakpoint on a method that has not been loaded yet.
-	   Thus, we can't check whether the command argument is a valid method name.
-	   A breakpoint set on an invalid method name will just never trigger. */
-
-	bp = bp_alloc(s);
-
-	bp->type = BREAK_SELECTOR;
-	bp->data.name = (char *)malloc(strlen(cmdParams [0].str) + 1);
-	strcpy(bp->data.name, cmdParams [0].str);
-	s->have_bp |= BREAK_SELECTOR;
-
-	return 0;
-}
-
-int c_bpe(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Breakpoint *bp;
-
-	bp = bp_alloc(s);
-
-	bp->type = BREAK_EXPORT;
-	bp->data.address = (cmdParams [0].val << 16 | cmdParams [1].val);
-	s->have_bp |= BREAK_EXPORT;
-
-	return 0;
-}
-
 int c_se(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	stop_on_event = 1;
 	_debugstate_valid = 0;
@@ -1306,7 +1172,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		if (_debug_commands_not_hooked) {
 			_debug_commands_not_hooked = 0;
 
-			con_hook_command(c_vmvars, "vmvars", "!sia*", "Displays or changes variables in the VM\n\nFirst parameter is either g(lobal), l(ocal), t(emp) or p(aram).\nSecond parameter is the var number\nThird parameter (if specified) is the value to set the variable to");
 			con_hook_command(c_step, "s", "i*", "Executes one or several operations\n\nEXAMPLES\n\n"
 			                 "    s 4\n\n  Execute 4 commands\n\n    s\n\n  Execute next command");
 #if 0
@@ -1326,13 +1191,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_se, "se", "", "Steps forward until an SCI event is received.\n");
 			con_hook_command(c_send, "send", "!asa*", "Sends a message to an object\nExample: send ?fooScript cue");
 			con_hook_command(c_sret, "sret", "", "Steps forward until ret is called\n  on the current execution stack\n  level.");
-			con_hook_command(c_bpx, "bpx", "s", "Sets a breakpoint on the execution of\n  the specified method.\n\n  EXAMPLE:\n"
-			                 "  bpx ego::doit\n\n  May also be used to set a breakpoint\n  that applies whenever an object\n"
-			                 "  of a specific type is touched:\n  bpx foo::\n");
-			con_hook_command(c_bpe, "bpe", "ii", "Sets a breakpoint on the execution of specified exported function.\n");
 			con_hook_command(c_go, "go", "", "Executes the script.\n");
-			con_hook_command(c_parse, "parse", "s", "Parses a sequence of words and prints\n  the resulting parse tree.\n"
-			                 "  The word sequence must be provided as a\n  single string.");
 			con_hook_command(c_set_parse_nodes, "set_parse_nodes", "s*", "Sets the contents of all parse nodes.\n"
 			                 "  Input token must be separated by\n  blanks.");
 

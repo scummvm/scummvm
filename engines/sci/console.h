@@ -58,6 +58,7 @@ private:
 	bool cmdParserNodes(int argc, const char **argv);
 	bool cmdParserWords(int argc, const char **argv);
 	bool cmdSentenceFragments(int argc, const char **argv);
+	bool cmdParse(int argc, const char **argv);
 	// Resources
 	bool cmdHexDump(int argc, const char **argv);
 	bool cmdResourceId(int argc, const char **argv);
@@ -115,11 +116,15 @@ private:
 	bool cmdRegisters(int argc, const char **argv);
 	bool cmdDissectScript(int argc, const char **argv);
 	bool cmdSetAccumulator(int argc, const char **argv);
+	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);
+	bool cmdBreakpointExecMethod(int argc, const char **argv);
+	bool cmdBreakpointExecFunction(int argc, const char **argv);
 	// VM
 	bool cmdScriptSteps(int argc, const char **argv);
 	bool cmdVMVarlist(int argc, const char **argv);
+	bool cmdVMVars(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
 	bool cmdValueType(int argc, const char **argv);
 	bool cmdViewListNode(int argc, const char **argv);

@@ -77,6 +77,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("parser_nodes",		WRAP_METHOD(Console, cmdParserNodes));
 	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
 	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
+	DCmd_Register("parse",				WRAP_METHOD(Console, cmdParse));
 	// Resources
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
@@ -134,11 +135,15 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
+	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
+	DCmd_Register("bp_exec_method",		WRAP_METHOD(Console, cmdBreakpointExecMethod));
+	DCmd_Register("bp_exec_function",	WRAP_METHOD(Console, cmdBreakpointExecFunction));
 	// VM
 	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
+	DCmd_Register("vm_vars",			WRAP_METHOD(Console, cmdVMVars));
 	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
 	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
 	DCmd_Register("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
@@ -188,6 +193,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" parser_nodes - Shows the specified number of nodes from the parse node tree\n");
 	DebugPrintf(" parser_words - Shows the words from the parse node tree\n");
 	DebugPrintf(" sentence_fragments - Shows the sentence fragments (used to build Parse trees)\n");
+	DebugPrintf(" parse - Parses a sequence of words and prints the resulting parse tree\n");
 	DebugPrintf("\n");
 	DebugPrintf("Resources:\n");
 	DebugPrintf(" hexdump - Dumps the specified resource to standard output\n");
@@ -254,12 +260,17 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" registers - Shows the current register values\n");
 	DebugPrintf(" dissect_script - Examines a script\n");
 	DebugPrintf(" set_acc - Sets the accumulator\n");
+	DebugPrintf("\n");
+	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list - Lists the current breakpoints\n");
 	DebugPrintf(" bp_del - Deletes a breakpoint with the specified index\n");
+	DebugPrintf(" bp_exec_method - Sets a breakpoint on the execution of the specified method\n");
+	DebugPrintf(" bp_exec_function - Sets a breakpoint on the execution of the specified exported function\n");
 	DebugPrintf("\n");
 	DebugPrintf("VM:\n");
 	DebugPrintf(" script_steps - Shows the number of executed SCI operations\n");
 	DebugPrintf(" vm_varlist - Shows the addresses of variables in the VM\n");
+	DebugPrintf(" vm_vars - Displays or changes variables in the VM\n");
 	DebugPrintf(" stack - Lists the specified number of stack elements\n");
 	DebugPrintf(" value_type - Determines the type of a value\n");
 	DebugPrintf(" view_listnode - Examines the list node at the given address\n");
@@ -722,6 +733,51 @@ bool Console::cmdSentenceFragments(int argc, const char **argv) {
 	}
 
 	DebugPrintf("%d rules.\n", g_EngineState->_vocabulary->getParserBranchesSize());
+
+	return true;
+}
+
+bool Console::cmdParse(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Parses a sequence of words with a GNF rule set and prints the resulting parse tree\n");
+		DebugPrintf("Usage: %s <word1> <word2> ... <wordn>\n", argv[0]);
+		return true;
+	}
+
+	ResultWordList words;
+	char *error;
+	char string[1000];
+
+	// Construct the string
+	strcpy(string, argv[2]);
+	for (int i = 2; i < argc; i++) {
+		strcat(string, argv[i]);
+	}
+
+	DebugPrintf("Parsing '%s'\n", string);
+	bool res = g_EngineState->_vocabulary->tokenizeString(words, string, &error);
+	if (res && !words.empty()) {
+		int syntax_fail = 0;
+
+		vocab_synonymize_tokens(words, g_EngineState->_synonyms);
+
+		DebugPrintf("Parsed to the following blocks:\n");
+
+		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
+			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+
+		if (g_EngineState->_vocabulary->parseGNF(g_EngineState->parser_nodes, words, true))
+			syntax_fail = 1; // Building a tree failed
+
+		if (syntax_fail)
+			DebugPrintf("Building a tree failed.\n");
+		else
+			vocab_dump_parse_tree("debug-parse-tree", g_EngineState->parser_nodes);
+
+	} else {
+		DebugPrintf("Unknown word: '%s'\n", error);
+		free(error);
+	}
 
 	return true;
 }
@@ -1464,6 +1520,63 @@ bool Console::cmdVMVarlist(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdVMVars(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Displays or changes variables in the VM\n");
+		DebugPrintf("Usage: %s <type> <varnum> [<value>]\n", argv[0]);
+		DebugPrintf("First parameter is either g(lobal), l(ocal), t(emp) or p(aram).\n");
+		DebugPrintf("Second parameter is the var number\n");
+		DebugPrintf("Third parameter (if specified) is the value to set the variable to, in address form\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	const char *varnames[] = {"global", "local", "temp", "param"};
+	const char *varabbrev = "gltp";
+	const char *vartype_pre = strchr(varabbrev, *argv[1]);
+	int vartype;
+	int idx = atoi(argv[2]);
+
+	if (!vartype_pre) {
+		DebugPrintf("Invalid variable type '%c'\n", *argv[1]);
+		return true;
+	}
+
+	vartype = vartype_pre - varabbrev;
+
+	if (idx < 0) {
+		DebugPrintf("Invalid: negative index\n");
+		return true;
+	}
+
+#if 0
+	// TODO: p_var_max
+	if ((p_var_max) && (p_var_max[vartype] <= idx)) {
+		DebugPrintf("Max. index is %d (0x%x)\n", p_var_max[vartype], p_var_max[vartype]);
+		return true;
+	}
+#endif
+
+	switch (argc) {
+	case 2:
+#if 0
+		// TODO: p_vars
+		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(p_vars[vartype][idx]));
+#endif
+		break;
+	case 3:
+#if 0
+		// TODO: p_vars
+		p_vars[vartype][idx] = parse_reg_t(argv[3]);
+#endif
+		break;
+	default:
+		DebugPrintf("Too many arguments\n");
+	}
+
+	return true;
+}
+
 bool Console::cmdStack(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Lists the specified number of stack elements.\n");
@@ -1693,6 +1806,73 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 
 	if (!found)
 		g_EngineState->have_bp &= ~type;
+
+	return true;
+}
+
+bool Console::cmdBreakpointExecMethod(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Sets a breakpoint on the execution of the specified method.\n");
+		DebugPrintf("Usage: %s <method name>\n", argv[0]);
+		DebugPrintf("Example: %s ego::doit\n", argv[0]);
+		DebugPrintf("May also be used to set a breakpoint that applies whenever an object\n");
+		DebugPrintf("of a specific type is touched: %s foo::\n", argv[0]);
+		return true;
+	}
+
+	/* Note: We can set a breakpoint on a method that has not been loaded yet.
+	   Thus, we can't check whether the command argument is a valid method name.
+	   A breakpoint set on an invalid method name will just never trigger. */
+	Breakpoint *bp;
+	if (g_EngineState->bp_list) {
+		// List exists, append the breakpoint to the end
+		bp = g_EngineState->bp_list;
+		while (bp->next)
+			bp = bp->next;
+		bp->next = (Breakpoint *)malloc(sizeof(Breakpoint));
+		bp = bp->next;
+	} else {
+		// No list, so create the list head
+		g_EngineState->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
+		bp = g_EngineState->bp_list;
+	}
+	bp->next = NULL;
+	bp->type = BREAK_SELECTOR;
+	bp->data.name = (char *)malloc(strlen(argv[1]) + 1);
+	strcpy(bp->data.name, argv[1]);
+	g_EngineState->have_bp |= BREAK_SELECTOR;
+
+	return true;
+}
+
+bool Console::cmdBreakpointExecFunction(int argc, const char **argv) {
+	// TODO/FIXME: Why does this accept 2 parameters (the high and the low part of the address)?"
+	if (argc != 3) {
+		DebugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");
+		DebugPrintf("Usage: %s <addr1> <addr2>\n", argv[0]);
+		return true;
+	}
+
+	/* Note: We can set a breakpoint on a method that has not been loaded yet.
+	   Thus, we can't check whether the command argument is a valid method name.
+	   A breakpoint set on an invalid method name will just never trigger. */
+	Breakpoint *bp;
+	if (g_EngineState->bp_list) {
+		// List exists, append the breakpoint to the end
+		bp = g_EngineState->bp_list;
+		while (bp->next)
+			bp = bp->next;
+		bp->next = (Breakpoint *)malloc(sizeof(Breakpoint));
+		bp = bp->next;
+	} else {
+		// No list, so create the list head
+		g_EngineState->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
+		bp = g_EngineState->bp_list;
+	}
+	bp->next = NULL;
+	bp->type = BREAK_EXPORT;
+	bp->data.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
+	g_EngineState->have_bp |= BREAK_EXPORT;
 
 	return true;
 }
