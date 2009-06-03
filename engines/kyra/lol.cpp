@@ -2665,8 +2665,8 @@ void LoLEngine::processMagicSwarm(int charNum, int damage) {
 }
 
 void LoLEngine::processMagicGuardian(int charNum) {
-	uint16 targetBlock = 0;
-	int dist = getSpellTargetBlock(_currentBlock, _currentDirection, 3, targetBlock);
+	//uint16 targetBlock = 0;
+	//int dist = getSpellTargetBlock(_currentBlock, _currentDirection, 3, targetBlock);
 
 	int cp = _screen->setCurPage(2);
 	_screen->copyPage(0, 2);
@@ -2682,7 +2682,7 @@ void LoLEngine::processMagicGuardian(int charNum) {
 	_screen->copyPage(2, 12);
 	
 	uint16 bl = calcNewBlockPosition(_currentBlock, _currentDirection);
-	bool a = (_levelBlockProperties[bl].assignedObjects & 0x8000) ? true : false;
+	//bool a = (_levelBlockProperties[bl].assignedObjects & 0x8000) ? true : false;
 	inflictMagicalDamageForBlock(bl, charNum, 200, 0x80);
 
 	_screen->copyPage(12, 2);
