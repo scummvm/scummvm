@@ -124,10 +124,7 @@ enum GameFeatures {
 	GF_HE_985             = 1 << 14,
 
 	/** HE games with 16 bit color */
-	GF_16BIT_COLOR         = 1 << 15,
-
-	/** HE games which use sprites for subtitles */
-	GF_HE_NOSUBTITLES      = 1 << 16
+	GF_16BIT_COLOR         = 1 << 15
 };
 
 /* SCUMM Debug Channels */

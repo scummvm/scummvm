@@ -635,7 +635,7 @@ void ScummEngine::CHARSET_1() {
 			if (_game.version <= 3) {
 				_charset->printChar(c, false);
 			} else {
-				if (_game.features & GF_HE_NOSUBTITLES) {
+				if (_game.features & GF_16BIT_COLOR) {
 					// HE games which use sprites for subtitles
 				} else if (_game.heversion >= 60 && !ConfMan.getBool("subtitles") && _sound->isSoundRunning(1)) {
 					// Special case for HE games
