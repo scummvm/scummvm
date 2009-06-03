@@ -25,6 +25,7 @@
 #include "common/file.h"
 
 #include "asylum/asylum.h"
+#include "asylum/screen.h"
 #include "asylum/resource.h"
 #include "asylum/graphics.h"
 
@@ -41,11 +42,24 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
 AsylumEngine::~AsylumEngine() {
 	//Common::clearAllDebugChannels();	
+	delete _screen;
 }
 
 Common::Error AsylumEngine::run() {
-	initGraphics(640, 480, true);
-		
+	Common::Error err;
+	err = init();
+	if (err != Common::kNoError)
+		return err;
+	return go();
+}
+
+Common::Error AsylumEngine::init() {
+	_screen = new Screen(_system); 
+
+	return Common::kNoError;
+}
+
+Common::Error AsylumEngine::go() {
 	Resource* res = new Resource;
 	
 	res->load("res.001");
