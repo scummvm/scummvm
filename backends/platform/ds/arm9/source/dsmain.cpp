@@ -619,25 +619,17 @@ void displayMode8Bit() {
 	SUB_BG3_CR = BG_BMP8_512x256;
 
 	SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
-    	SUB_BG3_XDY = 0;
-    	SUB_BG3_YDX = 0;
+	SUB_BG3_XDY = 0;
+	SUB_BG3_YDX = 0;
 	SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);
 
 
 
-	if (consoleEnable)
-	{
+	if (consoleEnable) {
 		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true);
-
 		// Move the cursor to the bottom of the screen using ANSI escape code
 		consolePrintf("\033[23;0f");
 	}
-//	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(2), (u16*)CHAR_BASE_BLOCK(0), 16);
-//	consoleSetWindow(NULL, 0, 0, 32, 24);
-//	consolePrintSet(0, 23);
-/*	while (1) {
-		printf("Hello world");
-	}*/
 
 
 	for (int r = 0; r < 32 * 32; r++) {
@@ -658,9 +650,6 @@ void displayMode8Bit() {
 
 	// Restore palette entry used by text in the front-end
 //	PALETTE_SUB[255] = savedPalEntry255;
-
-
-
 
 
 	#ifdef HEAVY_LOGGING
@@ -1564,10 +1553,6 @@ void addEventsToQueue() {
 					}
 
 				}
-
-
-
-
 			}
 
 
@@ -1593,8 +1578,6 @@ void addEventsToQueue() {
 					showOptionsDialog();
 				}
 			}
-
-
 		}
 
 		if (!getIndyFightState() && !((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_X)) {
@@ -1608,12 +1591,9 @@ void addEventsToQueue() {
 
 		if (!keyboardEnable) {
 
-			if ((tapScreenClicks) && (getIsDisplayMode8Bit()))
-			{
+			if ((tapScreenClicks) && (getIsDisplayMode8Bit())) {
 				doScreenTapMode(system);
-			}
-			else
-			{
+			} else {
 				doButtonSelectMode(system);
 			}
 

@@ -585,7 +585,7 @@ int main(int argc, char ** argv) {
 
   //enable sound
 //  powerOn(POWER_SOUND);
-  SOUND_CR = SOUND_ENABLE | SOUND_VOL(0x7F);
+  REG_SOUNDCNT = SOUND_ENABLE | SOUND_VOL(0x7F);
   IPC->soundData = 0;
   IPC->reset = false;
 
