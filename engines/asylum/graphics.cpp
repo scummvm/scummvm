@@ -30,14 +30,14 @@ namespace Asylum {
 GraphicResource::GraphicResource( ResourceItem item )
 {	
 	int pos = 0;
-	_tagValue      = READ_UINT32(item.data);
-	_flag          = READ_UINT32(item.data); pos+=4;
-	_contentOffset = READ_UINT32(item.data); pos+=4;
-	_unknown1      = READ_UINT32(item.data); pos+=4;
-	_unknown2      = READ_UINT32(item.data); pos+=4;
-	_unknown3      = READ_UINT32(item.data); pos+=4;
-	_numEntries    = READ_UINT32(item.data); pos+=4;
-	_maxWidthSize  = READ_UINT16(item.data); pos+=2;
+	_tagValue      = READ_UINT32(item.data+pos); pos+=4;
+	_flag          = READ_UINT32(item.data+pos); pos+=4;
+	_contentOffset = READ_UINT32(item.data+pos); pos+=4;
+	_unknown1      = READ_UINT32(item.data+pos); pos+=4;
+	_unknown2      = READ_UINT32(item.data+pos); pos+=4;
+	_unknown3      = READ_UINT32(item.data+pos); pos+=4;
+	_numEntries    = READ_UINT32(item.data+pos); pos+=4;
+	_maxWidthSize  = READ_UINT16(item.data+pos); pos+=2;
 }
 
 GraphicResource::~GraphicResource()
