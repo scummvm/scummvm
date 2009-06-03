@@ -2035,6 +2035,15 @@ int LoLEngine::olol_pitDrop(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_increaseSkill(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_increaseSkill(%p)  (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	LoLCharacter *c = &_characters[stackPos(0)];
+	int s = stackPos(1);
+	int l = c->skillLevels[s];
+	increaseExperience(stackPos(0), s, _expRequirements[l] - c->experiencePts[s]);
+	return c->skillLevels[s] - l;
+}
+
 int LoLEngine::olol_paletteFlash(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_paletteFlash(%p) (%d)", (const void *)script, stackPos(0));
 	uint8 *s = _screen->getPalette(1);
@@ -2742,7 +2751,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_placeInventoryItemInHand);
 	Opcode(olol_castSpell);
 	Opcode(olol_pitDrop);
-	OpcodeUnImpl();
+	Opcode(olol_increaseSkill);
 
 	// 0xB0
 	Opcode(olol_paletteFlash);

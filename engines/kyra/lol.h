@@ -779,6 +779,7 @@ private:
 	int olol_placeInventoryItemInHand(EMCState *script);
 	int olol_castSpell(EMCState *script);
 	int olol_pitDrop(EMCState *script);
+	int olol_increaseSkill(EMCState *script);
 	int olol_paletteFlash(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
