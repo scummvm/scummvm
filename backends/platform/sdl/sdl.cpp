@@ -196,6 +196,9 @@ OSystem_SDL::OSystem_SDL()
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
 	_hwscreen(0), _screen(0), _tmpscreen(0),
+#ifdef ENABLE_16BIT
+	_screen16(0), 
+#endif
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
 	_samplesPerSec(0),

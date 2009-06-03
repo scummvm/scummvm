@@ -407,6 +407,20 @@ bool OSystem_SDL::loadGFXMode() {
 		}
 	}
 
+#ifdef ENABLE_16BIT
+	//
+	// Create the surface that contains the 16 bit game data
+	//
+	_screen16 = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight,
+						16,
+						0x7C00,
+						0x3E0,
+						0x1F,
+						0); //555, not 565
+	if (_screen16 == NULL)
+		error("allocating _screen16 failed");
+#endif
+
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
 	//
@@ -484,10 +498,17 @@ bool OSystem_SDL::loadGFXMode() {
 }
 
 void OSystem_SDL::unloadGFXMode() {
+#ifdef ENABLE_16BIT
+	if (_screen16) {
+		SDL_FreeSurface(_screen16);
+		_screen16 = NULL;
+	}
+#else
 	if (_screen) {
 		SDL_FreeSurface(_screen);
 		_screen = NULL;
 	}
+#endif
 
 	if (_hwscreen) {
 		SDL_FreeSurface(_hwscreen);
@@ -519,14 +540,23 @@ void OSystem_SDL::unloadGFXMode() {
 }
 
 bool OSystem_SDL::hotswapGFXMode() {
+#ifdef ENABLE_16BIT
+	if (!_screen16)
+#else
 	if (!_screen)
+#endif
 		return false;
 
 	// Keep around the old _screen & _overlayscreen so we can restore the screen data
 	// after the mode switch.
+#ifdef ENABLE_16BIT
+	SDL_Surface *old_screen = _screen16;
+	_screen16 = NULL;
+#else
 	SDL_Surface *old_screen = _screen;
-	SDL_Surface *old_overlayscreen = _overlayscreen;
 	_screen = NULL;
+#endif
+	SDL_Surface *old_overlayscreen = _overlayscreen;
 	_overlayscreen = NULL;
 
 	// Release the HW screen surface
@@ -544,7 +574,11 @@ bool OSystem_SDL::hotswapGFXMode() {
 	if (!loadGFXMode()) {
 		unloadGFXMode();
 
+#ifdef ENABLE_16BIT
+		_screen16 = old_screen;
+#else
 		_screen = old_screen;
+#endif
 		_overlayscreen = old_overlayscreen;
 
 		return false;
@@ -554,7 +588,11 @@ bool OSystem_SDL::hotswapGFXMode() {
 	SDL_SetColors(_screen, _currentPalette, 0, 256);
 
 	// Restore old screen content
+#ifdef ENABLE_16BIT
+	SDL_BlitSurface(old_screen, NULL, _screen16, NULL);
+#else
 	SDL_BlitSurface(old_screen, NULL, _screen, NULL);
+#endif
 	SDL_BlitSurface(old_overlayscreen, NULL, _overlayscreen, NULL);
 
 	// Free the old surfaces
@@ -636,7 +674,11 @@ void OSystem_SDL::internUpdateScreen() {
 #endif
 
 	if (!_overlayVisible) {
+#ifdef ENABLE_16BIT
+		origSurf = _screen16;
+#else
 		origSurf = _screen;
+#endif
 		srcSurf = _tmpscreen;
 		width = _videoMode.screenWidth;
 		height = _videoMode.screenHeight;
@@ -781,6 +823,12 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	assert (_transactionMode == kTransactionNone);
 	assert(src);
 
+#ifdef ENABLE_16BIT
+	if (_screen16 == NULL) {
+		warning("OSystem_SDL::copyRectToScreen: _screen16 == NULL");
+		return;
+	}
+#endif
 	if (_screen == NULL) {
 		warning("OSystem_SDL::copyRectToScreen: _screen == NULL");
 		return;
@@ -829,11 +877,29 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	}
 
 	// Try to lock the screen surface
+#ifdef ENABLE_16BIT
+	if (SDL_LockSurface(_screen16) == -1)
+#else
 	if (SDL_LockSurface(_screen) == -1)
+#endif
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
+#ifdef ENABLE_16BIT
+	byte *dst = (byte *)_screen16->pixels + y * _videoMode.screenWidth * 2 + x * 2;
+	if (_videoMode.screenWidth == w && pitch == w * 2) {
+		memcpy(dst, src, h*w*2);
+	} else {
+		do {
+			memcpy(dst, src, w * 2);
+			src += pitch;
+			dst += _videoMode.screenWidth * 2;
+		} while (--h);
+	}
 
+	// Unlock the screen surface
+	SDL_UnlockSurface(_screen16);
+#else
+	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
 	if (_videoMode.screenWidth == pitch && pitch == w) {
 		memcpy(dst, src, h*w);
 	} else {
@@ -846,6 +912,7 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 
 	// Unlock the screen surface
 	SDL_UnlockSurface(_screen);
+#endif
 }
 
 Graphics::Surface *OSystem_SDL::lockScreen() {
@@ -859,14 +926,26 @@ Graphics::Surface *OSystem_SDL::lockScreen() {
 	_screenIsLocked = true;
 
 	// Try to lock the screen surface
+#ifdef ENABLE_16BIT
+	if (SDL_LockSurface(_screen16) == -1)
+#else
 	if (SDL_LockSurface(_screen) == -1)
+#endif
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
+#ifdef ENABLE_16BIT
+	_framebuffer.pixels = _screen16->pixels;
+	_framebuffer.w = _screen16->w;
+	_framebuffer.h = _screen16->h;
+	_framebuffer.pitch = _screen16->pitch;
+	_framebuffer.bytesPerPixel = 2;
+#else
 	_framebuffer.pixels = _screen->pixels;
 	_framebuffer.w = _screen->w;
 	_framebuffer.h = _screen->h;
 	_framebuffer.pitch = _screen->pitch;
 	_framebuffer.bytesPerPixel = 1;
+#endif
 
 	return &_framebuffer;
 }
@@ -879,7 +958,11 @@ void OSystem_SDL::unlockScreen() {
 	_screenIsLocked = false;
 
 	// Unlock the screen surface
+#ifdef ENABLE_16BIT
+	SDL_UnlockSurface(_screen16);
+#else
 	SDL_UnlockSurface(_screen);
+#endif
 
 	// Trigger a full screen update
 	_forceFull = true;
@@ -1054,8 +1137,13 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 	// since we don't actually set the palette until the screen is updated.
 	// But it could indicate a programming error, so let's warn about it.
 
+#ifdef ENABLE_16BIT
+	if (!_screen16)
+		warning("OSystem_SDL::setPalette: _screen16 == NULL");
+#else
 	if (!_screen)
 		warning("OSystem_SDL::setPalette: _screen == NULL");
+#endif
 
 	const byte *b = colors;
 	uint i;
@@ -1179,7 +1267,11 @@ void OSystem_SDL::clearOverlay() {
 	dst.x = dst.y = 1;
 	src.w = dst.w = _videoMode.screenWidth;
 	src.h = dst.h = _videoMode.screenHeight;
+#ifdef ENABLE_16BIT
+	if (SDL_BlitSurface(_screen16, &src, _tmpscreen, &dst) != 0)
+#else
 	if (SDL_BlitSurface(_screen, &src, _tmpscreen, &dst) != 0)
+#endif
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
 
 	SDL_LockSurface(_tmpscreen);

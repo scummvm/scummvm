@@ -227,6 +227,9 @@ protected:
 
 	// unseen game screen
 	SDL_Surface *_screen;
+#ifdef ENABLE_16BIT
+	SDL_Surface *_screen16;
+#endif
 
 	// temporary screen (for scalers)
 	SDL_Surface *_tmpscreen;

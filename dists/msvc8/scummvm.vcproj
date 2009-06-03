@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="scummvm"
 	ProjectGUID="{8434CB15-D08F-427D-9E6D-581AE5B28440}"
 	RootNamespace="scummvm"
@@ -43,7 +43,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU;ENABLE_AGI;ENABLE_AGOS;ENABLE_CINE;ENABLE_CRUISE;ENABLE_DRASCULA;ENABLE_GOB;ENABLE_IGOR;ENABLE_KYRA;ENABLE_LURE;ENABLE_M4;ENABLE_MADE;ENABLE_PARALLACTION;ENABLE_QUEEN;ENABLE_SAGA;ENABLE_SCI;ENABLE_SCUMM;ENABLE_SKY;ENABLE_SWORD1;ENABLE_SWORD2;ENABLE_TOUCHE;ENABLE_SCUMM_7_8;ENABLE_HE;ENABLE_TINSEL;ENABLE_TUCKER;ENABLE_GROOVIE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU;ENABLE_AGI;ENABLE_AGOS;ENABLE_CINE;ENABLE_CRUISE;ENABLE_DRASCULA;ENABLE_GOB;ENABLE_IGOR;ENABLE_KYRA;ENABLE_LURE;ENABLE_M4;ENABLE_MADE;ENABLE_PARALLACTION;ENABLE_QUEEN;ENABLE_SAGA;ENABLE_SCI;ENABLE_SCUMM;ENABLE_SKY;ENABLE_SWORD1;ENABLE_SWORD2;ENABLE_TOUCHE;ENABLE_SCUMM_7_8;ENABLE_HE;ENABLE_TINSEL;ENABLE_TUCKER;ENABLE_GROOVIE; ENABLE_16BIT"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -98,6 +98,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -190,6 +193,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
