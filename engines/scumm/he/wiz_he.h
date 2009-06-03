@@ -73,13 +73,13 @@ struct WizParameters {
 	int resDefImgW;
 	int resDefImgH;
 	int sourceImage;
-	int lineUnk1;
-	int lineUnk2;
+	int params1;
+	int params2;
 	uint8 remapColor[256];
 	uint8 remapIndex[256];
 	int remapNum;
 	int dstResNum;
-	byte fillColor;
+	uint16 fillColor;
 	byte string1[4096];
 	byte string2[4096];
 	int field_2399;
@@ -133,7 +133,7 @@ enum WizProcessFlags {
 	kWPFFillColor = 0x20000,
 	kWPFClipBox2 = 0x40000,
 	kWPFMaskImg = 0x80000,
-	kWPFThickLine = 0x100000
+	kWPFParams = 0x100000
 };
 
 enum {
@@ -209,9 +209,9 @@ public:
 	template<int type> static void decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr = NULL, const uint8 *xmapPtr = NULL);
 	template<int type> void decompress16BitWizImage(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr = NULL, const uint8 *xmapPtr = NULL);
 	template<int type> static void decompressRawWizImage(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr = NULL);
-	int isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint bitdepth);
-	uint8 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint bitDepth, uint8 color);
-	uint8 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint bitDepth, uint8 color);
+	int isWizPixelNonTransparent(const uint8 *data, int x, int y, int w, int h, uint8 bitdepth);
+	uint16 getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, uint16 color);
+	uint16 getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint8 bitDepth, uint16 color);
 	void computeWizHistogram(uint32 *histogram, const uint8 *data, const Common::Rect& rCapt);
 	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect& rCapt);
 
