@@ -619,6 +619,9 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		assert(heOffset >= 0 && heOffset < size);
 
+		// FIXME: Disabled sound offsets, due to asserts been triggered
+		heOffset = 0;
+
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
 		_heChannel[heChannel].priority = priority;
@@ -638,13 +641,13 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		if (compType == 17) {
 			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
-			if (_heChannel[heChannel].timer)
-				_heChannel[heChannel].timer = size * 1000 / rate;
-
 			sound = (char *)malloc(size * 4);
 			size = voxStream->readBuffer((int16*)sound, size * 2);
 			size *= 2; // 16bits.
 			delete voxStream;
+
+			if (_heChannel[heChannel].timer)
+				_heChannel[heChannel].timer = size * 1000 / rate;
 
 			flags |= Audio::Mixer::FLAG_AUTOFREE;
 			_mixer->playRaw(type, &_heSoundChannels[heChannel], sound + heOffset, size - heOffset, rate, flags, soundID);
