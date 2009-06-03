@@ -288,6 +288,14 @@ struct FireballState {
 	uint8 finProgress;
 };
 
+struct MistOfDoomAnimData {
+	uint8 part1First;
+	uint8 part1Last;
+	uint8 part2First;
+	uint8 part2Last;
+	uint8 sound;
+};
+
 class LoLEngine : public KyraEngine_v1 {
 friend class GUI_LoL;
 friend class TextDisplayer_LoL;
@@ -1367,6 +1375,8 @@ private:
 	int _numHealShapes;
 	uint8 **_healiShapes;
 	int _numHealiShapes;
+
+	static const MistOfDoomAnimData _mistAnimData[];
 
 	const uint8 *_updateSpellBookCoords;
 	int _updateSpellBookCoordsSize;

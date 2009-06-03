@@ -1236,6 +1236,9 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 		{ 0x21, 0xA2, 0xA0, 0x00, 0x4253 }
 	};
 
+	if (charNum > 3)
+		return;
+	
 	LoLCharacter *c = &_characters[charNum];
 	if (!(c->flags & 1))
 		return;
@@ -2491,6 +2494,38 @@ void LoLEngine::processMagicHandOfFate(int spellLevel) {
 }
 
 void LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
+	static const uint8 mistDamage[] = { 30, 70, 110, 200 };
+	
+	_envSfxUseQueue = true;	
+	inflictMagicalDamageForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum, mistDamage[spellLevel], 0x80);
+	_envSfxUseQueue = false;
+
+	int cp = _screen->setCurPage(2);
+	_screen->copyPage(0, 2);
+	gui_drawScene(2);
+	_screen->copyPage(2, 12);
+
+	snd_playSoundEffect(155, -1);
+
+	char wsafile[13];
+	snprintf(wsafile, 13, "mists%0d.wsa", spellLevel + 1);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	mov->open(wsafile, 1, 0);
+	if (!mov->opened())
+		error("Mist: Unable to load mists.wsa");
+
+	snd_playSoundEffect(_mistAnimData[spellLevel].sound, -1);
+	playSpellAnimation(mov, _mistAnimData[spellLevel].part1First, _mistAnimData[spellLevel].part1Last, 7, 112, 0, 0, 0, 0, 0, false);
+	playSpellAnimation(mov, _mistAnimData[spellLevel].part2First, _mistAnimData[spellLevel].part2Last, 14, 112, 0, 0, 0, 0, 0, false);
+
+	mov->close();
+	delete mov;
+
+	_screen->setCurPage(cp);
+	_screen->copyPage(12, 0);
+
+	updateDrawPage2();
+	this->snd_playQueuedEffects();	
 }
 
 void LoLEngine::processMagicLightning(int charNum, int spellLevel) {
@@ -2833,13 +2868,13 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			_screen->updateScreen();
 		}
 
-		int del = delayTimer - _system->getMillis();
+		int del = (int)(delayTimer - _system->getMillis());
 		do {
-
 			int step = del > _tickLength ? _tickLength : del;
 
 			if (!pal1 || !pal2) {
-				delay(step);
+				if (del > 0)
+					delay(step);
 				del -= step;
 				continue;
 			}
@@ -2847,7 +2882,8 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			if (!_screen->fadePaletteStep(pal1, pal2, _system->getMillis() - startTime, _tickLength * fadeDelay) && !mov)
 				return;
 
-			delay(step);
+			if (del > 0)
+				delay(step);
 			del -= step;
 		} while (del > 0);
 
@@ -2855,7 +2891,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			continue;
 
 		curFrame += dir;
-		if (curFrame == lastFrame)
+		if ((dir > 0 && curFrame >= lastFrame) || (dir < 0 && curFrame < lastFrame))
 			fin = true;
 	}
 
@@ -3015,6 +3051,19 @@ int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int ski
 		}
 
 	} else {
+		if (target > 3) {
+			// WORKAROUND for script bug
+			int i = 0;
+			for (; i < 4; i++) {
+				if (_characters[i].id == target) {
+					target = i;
+					break;
+				}
+			}
+			if (i == 4)
+				return 0;
+		}
+
 		c = &_characters[target];
 		if (!(c->flags & 1) || (c->flags & 8))
 			return 0;

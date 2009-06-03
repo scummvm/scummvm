@@ -3159,6 +3159,8 @@ const uint8 LoLEngine::_clock2Timers[] = {
 	0x51, 0x52, 0x08, 0x09, 0x0A
 };
 
+const uint8 LoLEngine::_numClock2Timers = ARRAYSIZE(LoLEngine::_clock2Timers);
+
 const int8 LoLEngine::_mapCoords[12][4] = {
 	{  0,  7,  0, -5 }, { -5,  0,  6,  0 }, {  7,  5,  7,  1 },
 	{  5,  6,  4,  6 }, {  0,  7,  0, -1 }, { -3,  0,  6,  0 },
@@ -3166,7 +3168,13 @@ const int8 LoLEngine::_mapCoords[12][4] = {
 	{  3,  1,  3,  1 }, { -1,  6, -1, -8 }, { -7, -1,  5, -1 }
 };
 
-const uint8 LoLEngine::_numClock2Timers = ARRAYSIZE(LoLEngine::_clock2Timers);
+const MistOfDoomAnimData LoLEngine::_mistAnimData[] = {
+	{  0,   7,   7,  13, 155 },
+	{  0,  16,  16,  17, 155 },
+	{  0,  24,  24,  24, 174 },
+	{  0,  19,  19,  19, 174 },
+	{  0,  16,  16,  17, 175 },
+};
 
 const char * const LoLEngine::_outroShapeFileTable[] = {
 	"AMAZON.SHP", "ARCHRSLG.SHP", "AVIANWRM.SHP", "BANDIT.SHP", "BOAR.SHP", "CABAL.SHP",

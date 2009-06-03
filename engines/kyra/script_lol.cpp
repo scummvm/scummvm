@@ -1423,7 +1423,7 @@ int LoLEngine::olol_checkForCertainPartyMember(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_checkForCertainPartyMember(%p) (%d)", (const void *)script, stackPos(0));
 	for (int i = 0; i < 4; i++) {
 		if (_characters[i].flags & 9 && _characters[i].id == stackPos(0))
-			return true;
+			return 1;
 	}
 	return 0;
 }
