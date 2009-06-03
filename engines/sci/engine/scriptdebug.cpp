@@ -120,108 +120,6 @@ static const char *_debug_get_input() {
 	return inputbuf;
 }
 
-extern int printObject(EngineState *s, reg_t pos);
-
-static int c_vr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	reg_t reg = cmdParams[0].reg;
-	reg_t reg_end = cmdParams.size() > 1 ? cmdParams[1].reg : NULL_REG;
-	int type_mask = determine_reg_type(s, reg, 1);
-	int filter;
-	int found = 0;
-
-	sciprintf("%04x:%04x is of type 0x%x%s: ", PRINT_REG(reg), type_mask & ~KSIG_INVALID, type_mask & KSIG_INVALID ? " (invalid)" : "");
-
-	type_mask &= ~KSIG_INVALID;
-
-	if (reg.segment == 0 && reg.offset == 0) {
-		sciprintf("Null.\n");
-		return 0;
-	}
-
-	if (reg_end.segment != reg.segment) {
-		sciprintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
-		reg_end = NULL_REG;
-	}
-
-	for (filter = 1; filter < 0xf000; filter <<= 1) {
-		int type = type_mask & filter;
-
-		if (found && type) {
-			sciprintf("--- Alternatively, it could be a ");
-		}
-
-
-		switch (type) {
-		case 0:
-			break;
-
-		case KSIG_LIST: {
-			//List *l = lookup_list(s, reg);
-
-			sciprintf("list\n");
-
-			// TODO: printList has been moved to console.cpp
-			/*
-			if (l)
-				printList(l);
-			else
-				sciprintf("Invalid list.\n");
-			*/
-		}
-		break;
-
-		case KSIG_NODE:
-			sciprintf("list node\n");
-			// TODO: printNode has been moved to console.cpp
-			/*
-			printNode(s, reg);
-			*/
-			break;
-
-		case KSIG_OBJECT:
-			sciprintf("object\n");
-			printObject(s, reg);
-			break;
-
-		case KSIG_REF: {
-			int size;
-			unsigned char *block = s->seg_manager->dereference(reg, &size);
-
-			sciprintf("raw data\n");
-
-			if (reg_end.segment != 0 && size < reg_end.offset - reg.offset) {
-				sciprintf("Block end out of bounds (size %d). Resetting.\n", size);
-				reg_end = NULL_REG;
-			}
-
-			if (reg_end.segment != 0 && (size >= reg_end.offset - reg.offset))
-				size = reg_end.offset - reg.offset;
-
-			if (reg_end.segment != 0)
-				sciprintf("Block size less than or equal to %d\n", size);
-
-			Common::hexdump(block, size, 16, 0);
-		}
-		break;
-
-		case KSIG_ARITHMETIC:
-			sciprintf("arithmetic value\n  %d (%04x)\n", (int16) reg.offset, reg.offset);
-			break;
-
-		default:
-			sciprintf("unknown type %d.\n", type);
-
-		}
-
-		if (type) {
-			sciprintf("\n");
-			found = 1;
-		}
-	}
-
-	return 0;
-}
-
 int c_step(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	_debugstate_valid = 0;
 	if (cmdParams.size() && (cmdParams[0].val > 0))
@@ -635,75 +533,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	} // (heappos == *p_pc)
 
 	return retval;
-}
-
-static int c_backtrace(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	sciprintf("Call stack (current base: 0x%x):\n", s->execution_stack_base);
-	Common::List<ExecStack>::iterator iter;
-	uint i = 0;
-	for (iter = s->_executionStack.begin();
-	     iter != s->_executionStack.end(); ++iter, ++i) {
-		ExecStack &call = *iter;
-		const char *objname = obj_get_name(s, call.sendp);
-		int paramc, totalparamc;
-
-		switch (call.type) {
-
-		case EXEC_STACK_TYPE_CALL: {// Normal function
-			sciprintf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
-			          selector_name(s, call.selector));
-		}
-		break;
-
-		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			sciprintf(" %x:[%x]  k%s(", i, call.origin, s->_kernel->getKernelName(-(call.selector) - 42).c_str());
-			break;
-
-		case EXEC_STACK_TYPE_VARSELECTOR:
-			sciprintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
-			          objname,s->_kernel->getSelectorName(call.selector).c_str());
-			break;
-		}
-
-		totalparamc = call.argc;
-
-		if (totalparamc > 16)
-			totalparamc = 16;
-
-		for (paramc = 1; paramc <= totalparamc; paramc++) {
-			sciprintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
-
-			if (paramc < call.argc)
-				sciprintf(", ");
-		}
-
-		if (call.argc > 16)
-			sciprintf("...");
-
-		sciprintf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
-		if (call.type == EXEC_STACK_TYPE_CALL) {
-			sciprintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
-			if (call.sp == CALL_SP_CARRY)
-				sciprintf(" sp,fp:carry");
-			else {
-				sciprintf(" sp=ST:%04x", PRINT_STK(call.sp));
-				sciprintf(" fp=ST:%04x", PRINT_STK(call.fp));
-			}
-		} else
-			sciprintf(" pc:none");
-
-		sciprintf(" argp:ST:%04x", PRINT_STK(call.variables_argp));
-		if (call.type == EXEC_STACK_TYPE_CALL)
-			sciprintf(" script: %d", (*(Script *)s->seg_manager->_heap[call.addr.pc.segment]).nr);
-		sciprintf("\n");
-	}
-
-	return 0;
 }
 
 #ifdef GFXW_DEBUG_WIDGETS
@@ -1185,7 +1014,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			                 "  c<x> : Disassemble <x> bytes\n"
 			                 "  bc   : Print bytecode\n\n");
 			con_hook_command(c_disasm, "disasm", "!as", "Disassembles a method by name\n\nUSAGE\n\n  disasm <obj> <method>\n\n");
-			con_hook_command(c_backtrace, "bt", "", "Dumps the send/self/super/call/calle/callb stack");
 			con_hook_command(c_snk, "snk", "s*", "Steps forward until it hits the next\n  callk operation.\n"
 			                 "  If invoked with a parameter, it will\n  look for that specific callk.\n");
 			con_hook_command(c_se, "se", "", "Steps forward until an SCI event is received.\n");
@@ -1205,8 +1033,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_gfx_draw_viewobj, "draw_viewobj", "i", "Draws the nsRect and brRect of a\n  dynview object.\n\n  nsRect is green, brRect\n"
 			                 "  is blue.\n");
 #endif
-			con_hook_command(c_vr, "vr", "!aa*",
-			                 "Examines an arbitrary reference\n\n");
 			con_hook_command(c_sg, "sg", "!i",
 			                 "Steps until the global variable with the\n"
 			                 "specified index is modified.\n\nSEE ALSO\n\n"

@@ -135,6 +135,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
+	DCmd_Register("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
 	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
@@ -147,6 +148,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
 	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
 	DCmd_Register("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
+	DCmd_Register("view_reference",		WRAP_METHOD(Console, cmdViewReference));
 	DCmd_Register("view_object",		WRAP_METHOD(Console, cmdViewObject));
 	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
 	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
@@ -270,6 +272,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" registers - Shows the current register values\n");
 	DebugPrintf(" dissect_script - Examines a script\n");
 	DebugPrintf(" set_acc - Sets the accumulator\n");
+	DebugPrintf(" backtrace - Dumps the send/self/super/call/calle/callb stack\n");
 	DebugPrintf("\n");
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list - Lists the current breakpoints\n");
@@ -284,6 +287,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" stack - Lists the specified number of stack elements\n");
 	DebugPrintf(" value_type - Determines the type of a value\n");
 	DebugPrintf(" view_listnode - Examines the list node at the given address\n");
+	DebugPrintf(" view_reference - Examines an arbitrary reference\n");
 	DebugPrintf(" view_object - Examines the object at the given address\n");
 	DebugPrintf(" active_object - Shows information on the currently active object or class\n");
 	DebugPrintf(" acc_object - Shows information on the object or class at the address indexed by the accumulator\n");
@@ -300,6 +304,13 @@ ResourceType parseResourceType(const char *resid) {
 			res = (ResourceType)i;
 
 	return res;
+}
+
+const char *selector_name(EngineState *s, int selector) {
+	if (selector >= 0 && selector < (int)s->_kernel->getSelectorNamesSize())
+		return s->_kernel->getSelectorName(selector).c_str();
+	else
+		return "--INVALID--";
 }
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
@@ -1576,7 +1587,12 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	case 3:
 #if 0
 		// TODO: p_vars
-		p_vars[vartype][idx] = parse_reg_t(argv[3]);
+
+		if (parse_reg_t(g_EngineState, argv[3], &p_vars[vartype][idx])) {
+			DebugPrintf("Invalid address passed.\n");
+			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			return true;
+		}
 #endif
 		break;
 	default:
@@ -1677,6 +1693,117 @@ bool Console::cmdViewListNode(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdViewReference(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Examines an arbitrary reference.\n");
+		DebugPrintf("Usage: %s <start address> [<end address>]\n", argv[0]);
+		DebugPrintf("Where <start address> is the starting address to examine\n");
+		DebugPrintf("<end address>, if provided, is the address where examining ends at\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	reg_t reg = NULL_REG;
+	reg_t reg_end = NULL_REG;
+
+	if (parse_reg_t(g_EngineState, argv[1], &reg)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	if (argc > 2) {
+		if (parse_reg_t(g_EngineState, argv[2], &reg_end)) {
+			DebugPrintf("Invalid address passed.\n");
+			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			return true;
+		}
+	}
+
+	int type_mask = determine_reg_type(g_EngineState, reg, 1);
+	int filter;
+	int found = 0;
+
+	DebugPrintf("%04x:%04x is of type 0x%x%s: ", PRINT_REG(reg), type_mask & ~KSIG_INVALID, type_mask & KSIG_INVALID ? " (invalid)" : "");
+
+	type_mask &= ~KSIG_INVALID;
+
+	if (reg.segment == 0 && reg.offset == 0) {
+		DebugPrintf("Null.\n");
+		return true;
+	}
+
+	if (reg_end.segment != reg.segment) {
+		DebugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
+		reg_end = NULL_REG;
+	}
+
+	for (filter = 1; filter < 0xf000; filter <<= 1) {
+		int type = type_mask & filter;
+
+		if (found && type) {
+			DebugPrintf("--- Alternatively, it could be a ");
+		}
+
+
+		switch (type) {
+		case 0:
+			break;
+		case KSIG_LIST: {
+			List *l = lookup_list(g_EngineState, reg);
+
+			DebugPrintf("list\n");
+
+			if (l)
+				printList(l);
+			else
+				DebugPrintf("Invalid list.\n");
+		}
+			break;
+		case KSIG_NODE:
+			DebugPrintf("list node\n");
+			printNode(reg);
+			break;
+		case KSIG_OBJECT:
+			DebugPrintf("object\n");
+			printObject(g_EngineState, reg);
+			break;
+		case KSIG_REF: {
+			int size;
+			unsigned char *block = g_EngineState->seg_manager->dereference(reg, &size);
+
+			DebugPrintf("raw data\n");
+
+			if (reg_end.segment != 0 && size < reg_end.offset - reg.offset) {
+				DebugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
+				reg_end = NULL_REG;
+			}
+
+			if (reg_end.segment != 0 && (size >= reg_end.offset - reg.offset))
+				size = reg_end.offset - reg.offset;
+
+			if (reg_end.segment != 0)
+				DebugPrintf("Block size less than or equal to %d\n", size);
+
+			Common::hexdump(block, size, 16, 0);
+			}
+			break;
+		case KSIG_ARITHMETIC:
+			DebugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.offset, reg.offset);
+			break;
+		default:
+			DebugPrintf("unknown type %d.\n", type);
+		}
+
+		if (type) {
+			DebugPrintf("\n");
+			found = 1;
+		}
+	}
+
+	return true;
+}
+
 bool Console::cmdViewObject(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Examines the object at the given address.\n");
@@ -1740,6 +1867,74 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 
 	g_EngineState->r_acc = val;
 
+	return true;
+}
+
+bool Console::cmdBacktrace(int argc, const char **argv) {
+	DebugPrintf("Dumping the send/self/super/call/calle/callb stack:\n");
+
+	DebugPrintf("Call stack (current base: 0x%x):\n", g_EngineState->execution_stack_base);
+	Common::List<ExecStack>::iterator iter;
+	uint i = 0;
+
+	for (iter = g_EngineState->_executionStack.begin();
+	     iter != g_EngineState->_executionStack.end(); ++iter, ++i) {
+		ExecStack &call = *iter;
+		const char *objname = obj_get_name(g_EngineState, call.sendp);
+		int paramc, totalparamc;
+
+		switch (call.type) {
+
+		case EXEC_STACK_TYPE_CALL: {// Normal function
+			sciprintf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
+			          selector_name(g_EngineState, call.selector));
+		}
+		break;
+
+		case EXEC_STACK_TYPE_KERNEL: // Kernel function
+			sciprintf(" %x:[%x]  k%s(", i, call.origin, g_EngineState->_kernel->getKernelName(-(call.selector) - 42).c_str());
+			break;
+
+		case EXEC_STACK_TYPE_VARSELECTOR:
+			sciprintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
+			          objname, g_EngineState->_kernel->getSelectorName(call.selector).c_str());
+			break;
+		}
+
+		totalparamc = call.argc;
+
+		if (totalparamc > 16)
+			totalparamc = 16;
+
+		for (paramc = 1; paramc <= totalparamc; paramc++) {
+			sciprintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
+
+			if (paramc < call.argc)
+				sciprintf(", ");
+		}
+
+		if (call.argc > 16)
+			sciprintf("...");
+
+		sciprintf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
+		if (call.type == EXEC_STACK_TYPE_CALL) {
+			sciprintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
+			if (call.sp == CALL_SP_CARRY)
+				sciprintf(" sp,fp:carry");
+			else {
+				sciprintf(" sp=ST:%04x", (unsigned)(call.sp - g_EngineState->stack_base));
+				sciprintf(" fp=ST:%04x", (unsigned)(call.fp - g_EngineState->stack_base));
+			}
+		} else
+			sciprintf(" pc:none");
+
+		sciprintf(" argp:ST:%04x", (unsigned)(call.variables_argp - g_EngineState->stack_base));
+		if (call.type == EXEC_STACK_TYPE_CALL)
+			sciprintf(" script: %d", (*(Script *)g_EngineState->seg_manager->_heap[call.addr.pc.segment]).nr);
+		sciprintf("\n");
+	}
+
+	return 0;
 	return true;
 }
 
@@ -2362,13 +2557,6 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 	}
 
 	return 0;
-}
-
-const char *selector_name(EngineState *s, int selector) {
-	if (selector >= 0 && selector < (int)s->_kernel->getSelectorNamesSize())
-		return s->_kernel->getSelectorName(selector).c_str();
-	else
-		return "--INVALID--";
 }
 
 void Console::printList(List *l) {

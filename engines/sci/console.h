@@ -118,6 +118,7 @@ private:
 	bool cmdRegisters(int argc, const char **argv);
 	bool cmdDissectScript(int argc, const char **argv);
 	bool cmdSetAccumulator(int argc, const char **argv);
+	bool cmdBacktrace(int argc, const char **argv);
 	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);
@@ -130,6 +131,7 @@ private:
 	bool cmdStack(int argc, const char **argv);
 	bool cmdValueType(int argc, const char **argv);
 	bool cmdViewListNode(int argc, const char **argv);
+	bool cmdViewReference(int argc, const char **argv);
 	bool cmdViewObject(int argc, const char **argv);
 	bool cmdViewActiveObject(int argc, const char **argv);
 	bool cmdViewAccumulatorObject(int argc, const char **argv);
