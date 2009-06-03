@@ -36,12 +36,10 @@ typedef	uint32	COLORREF;
 #define TINSEL_RGB(r,g,b)	((COLORREF)TO_LE_32(((uint8)(r)|((uint16)(g)<<8))|(((uint32)(uint8)(b))<<16)))
 
 #define TINSEL_GetRValue(rgb)	((uint8)(FROM_LE_32(rgb)))
-#define TINSEL_GetGValue(rgb)	((uint8)(((uint16)(FROM_LE_32(rgb))) >> 8))
+#define TINSEL_GetGValue(rgb)	((uint8)(((uint16)(FROM_LE_32(rgb)))>>8))
 #define TINSEL_GetBValue(rgb)	((uint8)((FROM_LE_32(rgb))>>16))
 
-#define PSXGetRValue(rgb)	((uint8)(FROM_LE_32(rgb) & 0x000000f8))
-#define PSXGetGValue(rgb)	((uint8)(FROM_LE_32((rgb) >> 8) & 0x000000f8))
-#define PSXGetBValue(rgb)	((uint8)(FROM_LE_32((rgb) >> 16) & 0x000000f8))
+#define TINSEL_PSX_RGB(r,g,b) ((uint16)TO_LE_16(((uint8)(r))|((uint16)(g)<<5)|(((uint16)(b))<<10)))
 
 enum {
 	MAX_COLOURS		= 256,	//!< maximum number of colours - for VGA 256

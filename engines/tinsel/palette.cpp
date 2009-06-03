@@ -112,9 +112,7 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 			// Check for correspondent color
 			for (int i = 0; (i < pal->numColours) && !colorFound; i++) {
 				// get R G B values in the same way as psx format converters
-				uint16 psxEquivalent = (uint16)((uint32)(PSXGetRValue(pal->palRGB[i]) >> 3) | 
-									((PSXGetGValue(pal->palRGB[i]) >> 3) << 5) |
-									((PSXGetBValue(pal->palRGB[i]) >> 3) << 10));
+				uint16 psxEquivalent = TINSEL_PSX_RGB(TINSEL_GetRValue(pal->palRGB[i]) >> 3, TINSEL_GetGValue(pal->palRGB[i]) >> 3, TINSEL_GetBValue(pal->palRGB[i]) >> 3); 
 
 				if (psxEquivalent == clutEntry) {
 					mapperTable[j] = i + 1;
