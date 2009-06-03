@@ -1252,50 +1252,92 @@ bool AudioResource::findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &o
 	return false;
 }
 
-bool AudioResource::findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset) {
-	// KQ6 floppy
-	// ==========
-	// 65535.MAP contains 6-byte entries:
+bool AudioResource::findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset, bool getSync, uint32 *size) {
+	// 65535.MAP structure:
+	// =========
+	// 6 byte entries:
 	// w nEntry
 	// dw offset
-	// ending with 6 0xFFs
-	// haven't checked the CD version yet
 
-	// KQ6 CD
-	// ======
-	// The other map files start with a 4-byte header and contain 7-byte entries:
-	// dw nEntry
-	// w unknown (offset? it can't be. Perhaps audio entry?)
-	// b unknown (almost always 0, probably some sort of volume?)
-	// ending with 8 0xFFs
+	// Other map files:
+	// ===============
+	// Header:
+	// dw baseOffset
+	// Followed by 7 or 11-byte entries:
+	// b noun
+	// b verb
+	// b cond
+	// b seq
+	// tb cOffset (cumulative offset)
+	// w syncSize (iff seq has bits 7 and 6 set)
+	// w syncAscSize (iff seq has bits 7 and 6 set)
 
 	uint32 n;
 	offset = 0;
-	uint16 cur = 0;
-	int offs = (volume == 65535) ? 0 : 1;
 
 	if (_audioMapSCI11 && _audioMapSCI11->number != volume) {
 		_resMgr->unlockResource(_audioMapSCI11, _audioMapSCI11->number, kResourceTypeMap);
 		_audioMapSCI11 = 0;
 	}
 
-	if (!_audioMapSCI11)
+	if (!_audioMapSCI11) {
 		_audioMapSCI11 = _resMgr->findResource(kResourceTypeMap, volume, 1);
+	}
 
-	byte *ptr = _audioMapSCI11->data + ((volume == 65535) ? 0 : 4);
-	while (cur < _audioMapSCI11->size) {
-		n = (volume == 65535) ? READ_UINT16(ptr) : TO_BE_32(READ_UINT32(ptr));
-		offset = (volume == 65535) ? READ_UINT32(ptr + 2) : READ_UINT16(ptr + 4);	// TODO
+	byte *ptr = _audioMapSCI11->data;
 
-		if (n == audioNumber) {
-			// TODO: find out what these are
-			if (volume != 65535)
-				printf("audio entry found: %d %d %d\n", ptr[4], ptr[5], ptr[6]);
-			return true;
+	if (volume == 65535) {
+		while (ptr < _audioMapSCI11->data + _audioMapSCI11->size) {
+			n = READ_UINT16(ptr);
+			ptr += 2;
+
+			if (n == 0xffff)
+				break;
+
+			offset = READ_UINT32(ptr);
+			ptr += 4;
+
+			if (n == audioNumber)
+				return true;
 		}
+	} else {
+		offset = READ_UINT32(ptr);
+		ptr += 4;
 
-		ptr += 6 + offs;
-		cur += 6 + offs;
+		while (ptr < _audioMapSCI11->data + _audioMapSCI11->size) {
+			n = READ_BE_UINT32(ptr);
+			ptr += 4;
+
+			if (n == 0xffffffff)
+				break;
+
+			offset += (READ_UINT16(ptr) | (ptr[2] << 16));
+			ptr += 3;
+
+			int syncSkip = 0;
+
+			if ((n & 0xc0) == 0xc0) {
+				n ^= 0xc0;
+
+				if (getSync) {
+					if (size)
+						*size = READ_UINT16(ptr);
+				} else {
+					syncSkip = READ_UINT16(ptr) + READ_UINT16(ptr + 2);
+					offset += syncSkip;
+				}
+
+				if (n == audioNumber)
+					return true;
+
+				ptr += 4;
+			} else {
+				if (n == audioNumber)
+					return !getSync;
+			}
+
+			offset -= syncSkip;
+		}
 	}
 
 	return false;
@@ -1314,28 +1356,53 @@ byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 *size, uint16
 		return NULL;
 	}
 
-	audioStream->readByte();				// skip header size (1 byte), usually 0B (11 bytes)
+	int headerSize = audioStream->readByte();
 	audioStream->readUint32LE();			// skip "SOL" + 0 (4 bytes)
 	*audioRate = audioStream->readUint16LE();
 	audioFlags = audioStream->readByte();
-
-	if (audioFlags & kSolFlagCompressed) {
-		warning("ADPCM compressed SOL files are not supported yet");
-		return NULL;
-	}
 
 	// Convert the SOL stream flags to our own format
 	*flags = 0;
 	if (audioFlags & kSolFlag16Bit)
 		*flags |= Audio::Mixer::FLAG_16BITS;
-	if (!(audioFlags & kSolFlagIsSigned))
+	if ((audioFlags & kSolFlagCompressed) || !(audioFlags & kSolFlagIsSigned))
 		*flags |= Audio::Mixer::FLAG_UNSIGNED;
 
 	*size = audioStream->readUint16LE();
 
-	// We assume that the sound data is raw PCM
-	byte *buffer = new byte[*size];
-	audioStream->read(buffer, *size);
+	if (headerSize == 12)
+		*size |= audioStream->readByte() << 16;
+
+	byte *buffer;
+
+	if (audioFlags & kSolFlagCompressed) {
+		if (audioFlags & kSolFlag16Bit) {
+			warning("Unsupported DPCM mode");
+			return NULL;
+		}
+
+		buffer = new byte[*size * 2];
+
+		byte sample = 0x80;
+
+		for (uint i = 0; i < *size; i++) {
+			const int delta[] = {0, 1, 2, 3, 6, 10, 15, 21, -21, -15, -10, -6, -3, -2, -1, -0};
+
+			byte b = audioStream->readByte();
+
+			sample += delta[b >> 4];
+			buffer[i * 2] = sample;
+			sample += delta[b & 0xf];
+			buffer[i * 2 + 1] = sample;
+		}
+
+		*size *= 2;
+	} else {
+		// We assume that the sound data is raw PCM
+		buffer = new byte[*size];
+		audioStream->read(buffer, *size);
+	}
+
 	return buffer;
 }
 
@@ -1417,6 +1484,8 @@ Audio::AudioStream* AudioResource::getAudioStream(uint32 audioNumber, uint32 vol
 					audioFile->read(data, size);
 				} else {
 					data = readSOLAudio(audioFile, &size, &_audioRate, &flags);
+					if (!data)
+						return NULL;
 				}
 
 				audioFile->close();

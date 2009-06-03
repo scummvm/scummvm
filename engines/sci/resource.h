@@ -342,7 +342,7 @@ private:
 	int _sciVersion;
 
 	bool findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &offset, uint32 &size);
-	bool findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset);
+	bool findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset, bool getSync = false, uint32 *size = NULL);
 };
 
 } // End of namespace Sci
