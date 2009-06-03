@@ -1267,21 +1267,21 @@ void LoLEngine::shakeScene(int duration, int width, int height, int restore) {
 		int x1, y1, x2, y2, w, h;
 		if (s1 >= 0) {
 			x1 = 112;
-			x2 = 112;
+			x2 = 112 + s1;
 			w = 176 - s1;
 		} else {
 			x1 = 112 - s1;
-			x2 = 112 + s1;
+			x2 = 112;
 			w = 176 + s1;
 		}
 
 		if (s2 >= 0) {
 			y1 = 0;
-			y2 = 0;
+			y2 = s2;
 			h = 120 - s2;
 		} else {
 			y1 = -s2;
-			y2 = s2;
+			y2 = 0;
 			h = 120 + s2;
 		}
 
