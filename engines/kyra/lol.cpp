@@ -1915,7 +1915,7 @@ int LoLEngine::castUnk(ActiveSpell *a) {
 }
 
 int LoLEngine::castGuardian(ActiveSpell *a) {
-	processMagicGuardian(a->charNum, a->level);
+	processMagicGuardian(a->charNum);
 	return 1;
 }
 
@@ -2655,6 +2655,7 @@ void LoLEngine::processMagicSwarm(int charNum, int damage) {
 	mov->close();
 
 	_screen->copyPage(12, 0);
+	_screen->updateScreen();
 	updateDrawPage2();
 
 	snd_playQueuedEffects();
@@ -2663,7 +2664,41 @@ void LoLEngine::processMagicSwarm(int charNum, int damage) {
 	delete mov;
 }
 
-void LoLEngine::processMagicGuardian(int charNum, int spellLevel) {
+void LoLEngine::processMagicGuardian(int charNum) {
+	uint16 targetBlock = 0;
+	int dist = getSpellTargetBlock(_currentBlock, _currentDirection, 3, targetBlock);
+
+	int cp = _screen->setCurPage(2);
+	_screen->copyPage(0, 2);
+	_screen->copyPage(2, 12);
+
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	mov->open("guardian.wsa", 0, 0);
+	if (!mov->opened())
+		error("Guardian: Unable to load guardian.wsa");
+	snd_playSoundEffect(156, -1);
+	playSpellAnimation(mov, 0, 37, 2, 112, 0, 0, 0, 0, 0, false);
+
+	_screen->copyPage(2, 12);
+	
+	uint16 bl = calcNewBlockPosition(_currentBlock, _currentDirection);
+	bool a = (_levelBlockProperties[bl].assignedObjects & 0x8000) ? true : false;
+	inflictMagicalDamageForBlock(bl, charNum, 200, 0x80);
+
+	_screen->copyPage(12, 2);
+	updateDrawPage2();
+	gui_drawScene(2);
+
+	_screen->copyPage(2, 12);
+	snd_playSoundEffect(176, -1);
+	playSpellAnimation(mov, 38, 48, 8, 112, 0, 0, 0, 0, 0, false);
+	
+	mov->close();
+	delete mov;
+
+	_screen->setCurPage(cp);
+	gui_drawPlayField();
+	updateDrawPage2();
 }
 
 void LoLEngine::callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y) {

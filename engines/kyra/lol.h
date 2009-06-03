@@ -1340,7 +1340,7 @@ private:
 	void processMagicLightning(int charNum, int spellLevel);
 	void processMagicFog();
 	void processMagicSwarm(int charNum, int damage);
-	void processMagicGuardian(int charNum, int spellLevel);
+	void processMagicGuardian(int charNum);
 
 	void callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y);
 	void callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y);
