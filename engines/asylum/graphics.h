@@ -64,7 +64,7 @@ private:
     uint8 _width;
     uint8 _height;
     uint8 _dataSize;     // data block size
-    unsigned char *_data;
+    uint8 *_data;
 	
 }; // end of class GraphicAsset
 

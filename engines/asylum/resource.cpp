@@ -116,6 +116,7 @@ ResourceItem Resource::getResource( uint32 pos )
 	if( pos >= 0 && pos < _size ){
 		return _items[pos];
 	}
+	return ResourceItem();
 }
 
 void Resource::dump()
@@ -146,6 +147,7 @@ int ResourceItem::save( Common::String filename )
     fd = fopen(filename.c_str(),"wb+");
     fwrite( data, size, 1, fd);
     fclose(fd);
+	return 1;
 }
 
 } // end of namespace Asylum
