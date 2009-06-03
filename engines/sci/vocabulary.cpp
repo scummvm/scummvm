@@ -438,7 +438,7 @@ bool Vocabulary::tokenizeString(ResultWordList &retval, const char *sentence, ch
 
 void Vocabulary::printSuffixes() const {
 	char word_buf[256], alt_buf[256];
-	Sci::Console *con = ((SciEngine *)g_engine)->_console;
+	GUI::Debugger *con = ((SciEngine *)g_engine)->getDebugger();
 
 	int i = 0;
 	for (SuffixList::const_iterator suf = _parserSuffixes.begin(); suf != _parserSuffixes.end(); ++suf) {
@@ -453,7 +453,7 @@ void Vocabulary::printSuffixes() const {
 }
 
 void Vocabulary::printParserWords() const {
-	Sci::Console *con = ((SciEngine *)g_engine)->_console;
+	GUI::Debugger *con = ((SciEngine *)g_engine)->getDebugger();
 
 	int j = 0;
 	for (WordMap::iterator i = _parserWords.begin(); i != _parserWords.end(); ++i) {

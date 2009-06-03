@@ -1457,8 +1457,8 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 			// Debug console
 			if (ev.kbd.flags == Common::KBD_CTRL && ev.kbd.keycode == Common::KEYCODE_d) {	
 				// Open debug console
-				((Sci::SciEngine*)g_engine)->_console->attach();
-				((Sci::SciEngine*)g_engine)->_console->onFrame();
+				((Sci::SciEngine*)g_engine)->getDebugger()->attach();
+				((Sci::SciEngine*)g_engine)->getDebugger()->onFrame();
 
 				// Clear keyboard event
 				input.type = SCI_EVT_NONE;

@@ -169,6 +169,16 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 Console::~Console() {
 }
 
+void Console::preEnter() {
+	g_EngineState->_sound.sfx_suspend(true);
+	_vm->_mixer->pauseAll(true);
+}
+
+void Console::postEnter() {
+	g_EngineState->_sound.sfx_suspend(false);
+	_vm->_mixer->pauseAll(false);
+}
+
 bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("\n");
 	DebugPrintf("Variables\n");
@@ -1408,10 +1418,9 @@ bool Console::cmdGCObjects(int argc, const char **argv) {
 	return true;
 }
 
-// TODO/FIXME: This should be using DebugPrintf
 void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
-		sciprintf("  %04x:%04x\n", PRINT_REG(addr));
+		((SciEngine *)g_engine)->getDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
 }
 
 bool Console::cmdGCShowReachable(int argc, const char **argv) {

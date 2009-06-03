@@ -144,37 +144,37 @@ Common::Error SciEngine::run() {
 	map_MIDI_instruments(_resmgr);
 #endif
 
-	EngineState *gamestate = new EngineState();
-	gamestate->resmgr = _resmgr;
-	gamestate->gfx_state = NULL;
-	gamestate->flags = getFlags();
+	_gamestate = new EngineState();
+	_gamestate->resmgr = _resmgr;
+	_gamestate->gfx_state = NULL;
+	_gamestate->flags = getFlags();
 
 	// Verify that we haven't got an invalid game detection entry
 	if (version < SCI_VERSION_1_EARLY) {
 		// SCI0/SCI01
-		if (gamestate->flags & GF_SCI1_EGA ||
-			gamestate->flags & GF_SCI1_LOFSABSOLUTE ||
-			gamestate->flags & GF_SCI1_NEWDOSOUND) {
+		if (_gamestate->flags & GF_SCI1_EGA ||
+			_gamestate->flags & GF_SCI1_LOFSABSOLUTE ||
+			_gamestate->flags & GF_SCI1_NEWDOSOUND) {
 			error("This game entry is erroneous. It's marked as SCI0/SCI01, but it has SCI1 flags set");
 		}
 	} else if (version >= SCI_VERSION_1_EARLY && version <= SCI_VERSION_1_LATE) {
 		// SCI1
 
-		if (gamestate->flags & GF_SCI0_OLD ||
-			gamestate->flags & GF_SCI0_OLDGFXFUNCS ||
-			gamestate->flags & GF_SCI0_OLDGETTIME) {
+		if (_gamestate->flags & GF_SCI0_OLD ||
+			_gamestate->flags & GF_SCI0_OLDGFXFUNCS ||
+			_gamestate->flags & GF_SCI0_OLDGETTIME) {
 			error("This game entry is erroneous. It's marked as SCI1, but it has SCI0 flags set");
 		}
 	} else if (version == SCI_VERSION_1_1 || version == SCI_VERSION_32) {
-		if (gamestate->flags & GF_SCI1_EGA ||
-			gamestate->flags & GF_SCI1_LOFSABSOLUTE ||
-			gamestate->flags & GF_SCI1_NEWDOSOUND) {
+		if (_gamestate->flags & GF_SCI1_EGA ||
+			_gamestate->flags & GF_SCI1_LOFSABSOLUTE ||
+			_gamestate->flags & GF_SCI1_NEWDOSOUND) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI1 flags set");
 		}
 
-		if (gamestate->flags & GF_SCI0_OLD ||
-			gamestate->flags & GF_SCI0_OLDGFXFUNCS ||
-			gamestate->flags & GF_SCI0_OLDGETTIME) {
+		if (_gamestate->flags & GF_SCI0_OLD ||
+			_gamestate->flags & GF_SCI0_OLDGFXFUNCS ||
+			_gamestate->flags & GF_SCI0_OLDGETTIME) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI0 flags set");
 		}
 
@@ -183,11 +183,11 @@ Common::Error SciEngine::run() {
 		error ("Unknown SCI version in game entry");
 	}
 
-	if (script_init_engine(gamestate, version))
+	if (script_init_engine(_gamestate, version))
 		return Common::kUnknownError;
 
 
-	if (game_init(gamestate)) { /* Initialize */
+	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
 		// TODO: Add an "init failed" error?
 		return Common::kUnknownError;
@@ -195,13 +195,13 @@ Common::Error SciEngine::run() {
 
 	// Set the savegame dir (actually, we set it to a fake value,
 	// since we cannot let the game control where saves are stored)
-	script_set_gamestate_save_dir(gamestate, "/");
+	script_set_gamestate_save_dir(_gamestate, "/");
 
 	GfxState gfx_state;
 	gfx_state.driver = &gfx_driver_scummvm;
 
-	gamestate->animation_granularity = 4;
-	gamestate->gfx_state = &gfx_state;
+	_gamestate->animation_granularity = 4;
+	_gamestate->gfx_state = &gfx_state;
 
 	// Default config:
 	gfx_options_t gfx_options;
@@ -232,25 +232,25 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	if (game_init_graphics(gamestate)) { // Init interpreter graphics
+	if (game_init_graphics(_gamestate)) { // Init interpreter graphics
 		warning("Game initialization failed: Error in GFX subsystem. Aborting...");
 		return Common::kUnknownError;
 	}
 
-	if (game_init_sound(gamestate, 0)) {
+	if (game_init_sound(_gamestate, 0)) {
 		warning("Game initialization failed: Error in sound subsystem. Aborting...");
 		return Common::kUnknownError;
 	}
 
 	printf("Emulating SCI version %s\n", versionNames[version]);
 
-	game_run(&gamestate); // Run the game
+	game_run(&_gamestate); // Run the game
 
-	game_exit(gamestate);
-	script_free_engine(gamestate); // Uninitialize game state
-	script_free_breakpoints(gamestate);
+	game_exit(_gamestate);
+	script_free_engine(_gamestate); // Uninitialize game state
+	script_free_breakpoints(_gamestate);
 
-	delete gamestate;
+	delete _gamestate;
 
 	delete _resmgr;
 
@@ -309,8 +309,7 @@ Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 }
 
 void SciEngine::pauseEngineIntern(bool pause) {
-	// TODO: pause music and game script execution here
-
+	_gamestate->_sound.sfx_suspend(pause);
 	_mixer->pauseAll(pause);
 }
 
