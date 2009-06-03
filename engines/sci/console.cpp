@@ -48,26 +48,35 @@ namespace Sci {
 extern EngineState *g_EngineState;
 
 int debug_sleeptime_factor = 1;
-int _kdebug_cheap_event_hack = 0;
-bool _kdebug_track_mouse_clicks = false;
-int _weak_validations = 1; // Some validation errors are reduced to warnings if non-0
+int debug_simulated_key = 0;
+bool debug_track_mouse_clicks = false;
+bool debug_weak_validations = false;
 
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
+	// Variables
+	DVar_Register("sleeptime_factor",	&debug_sleeptime_factor, DVAR_INT, 0);
+	DVar_Register("gc_interval",		&script_gc_interval, DVAR_INT, 0);
+	DVar_Register("simulated_key",		&debug_simulated_key, DVAR_INT, 0);
+	DVar_Register("track_mouse_clicks",	&debug_track_mouse_clicks, DVAR_BOOL, 0);
+	DVar_Register("weak_validations",	&debug_weak_validations, DVAR_BOOL, 0);
+
+	// General
+	DCmd_Register("help",				WRAP_METHOD(Console, cmdHelp));
 	// Kernel
 //	DCmd_Register("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
 	DCmd_Register("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
-	DCmd_Register("kernel_names",		WRAP_METHOD(Console, cmdKernelNames));
-	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
-	DCmd_Register("weak_validations",	WRAP_METHOD(Console, cmdWeakValidations));
+	DCmd_Register("functions",			WRAP_METHOD(Console, cmdKernelFunctions));
+	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
 	// Parser
 	DCmd_Register("suffixes",			WRAP_METHOD(Console, cmdSuffixes));
 	DCmd_Register("parse_grammar",		WRAP_METHOD(Console, cmdParseGrammar));
 	DCmd_Register("parser_nodes",		WRAP_METHOD(Console, cmdParserNodes));
 	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
+	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
 	// Resources
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
@@ -81,31 +90,29 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("restart_game",		WRAP_METHOD(Console, cmdRestartGame));
 	DCmd_Register("version",			WRAP_METHOD(Console, cmdGetVersion));
 	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
-	// Graphics
+	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
+	// Screen
 	DCmd_Register("sci0_palette",		WRAP_METHOD(Console, cmdSci0Palette));
 	DCmd_Register("clear_screen",		WRAP_METHOD(Console, cmdClearScreen));
 	DCmd_Register("redraw_screen",		WRAP_METHOD(Console, cmdRedrawScreen));
-	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
-	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
+	DCmd_Register("fill_screen",		WRAP_METHOD(Console, cmdFillScreen));
+	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
+	DCmd_Register("update_zone",		WRAP_METHOD(Console, cmdUpdateZone));
+	DCmd_Register("propagate_zone",		WRAP_METHOD(Console, cmdPropagateZone));
+	DCmd_Register("priority_bands",		WRAP_METHOD(Console, cmdPriorityBands));
+	// Graphics
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
 	DCmd_Register("draw_rect",			WRAP_METHOD(Console, cmdDrawRect));
 	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
 	DCmd_Register("view_info",			WRAP_METHOD(Console, cmdViewInfo));
-	DCmd_Register("update_zone",		WRAP_METHOD(Console, cmdUpdateZone));
-	DCmd_Register("propagate_zone",		WRAP_METHOD(Console, cmdPropagateZone));
-	DCmd_Register("fill_screen",		WRAP_METHOD(Console, cmdFillScreen));
+	// GUI
 	DCmd_Register("current_port",		WRAP_METHOD(Console, cmdCurrentPort));
 	DCmd_Register("print_port",			WRAP_METHOD(Console, cmdPrintPort));
 	DCmd_Register("visual_state",		WRAP_METHOD(Console, cmdVisualState));
 	DCmd_Register("flush_visual",		WRAP_METHOD(Console, cmdFlushPorts));
 	DCmd_Register("dynamic_views",		WRAP_METHOD(Console, cmdDynamicViews));
 	DCmd_Register("dropped_views",		WRAP_METHOD(Console, cmdDroppedViews));
-	DCmd_Register("priority_bands",		WRAP_METHOD(Console, cmdPriorityBands));
 	DCmd_Register("status_bar",			WRAP_METHOD(Console, cmdStatusBarColors));
-	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
-	// Events
-	DCmd_Register("simkey",				WRAP_METHOD(Console, cmdSimulateKey));
-	DCmd_Register("track_mouse",		WRAP_METHOD(Console, cmdTrackMouse));
 	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
 	DCmd_Register("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
@@ -113,7 +120,6 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	// Garbage collection
 	DCmd_Register("gc",					WRAP_METHOD(Console, cmdGCInvoke));
 	DCmd_Register("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
-	DCmd_Register("gc_interval",		WRAP_METHOD(Console, cmdGCInterval));
 	DCmd_Register("gc_reachable",		WRAP_METHOD(Console, cmdGCShowReachable));
 	DCmd_Register("gc_freeable",		WRAP_METHOD(Console, cmdGCShowFreeable));
 	DCmd_Register("gc_normalize",		WRAP_METHOD(Console, cmdGCNormalize));
@@ -125,21 +131,20 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("stop_sfx",			WRAP_METHOD(Console, cmdStopSfx));
 	// Script
 	DCmd_Register("addresses",			WRAP_METHOD(Console, cmdAddresses));
+	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
-	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	// VM
+	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
 	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
 	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
-	DCmd_Register("view_object",		WRAP_METHOD(Console, cmdViewListNode));
+	DCmd_Register("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
 	DCmd_Register("view_object",		WRAP_METHOD(Console, cmdViewObject));
 	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
 	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
-	DCmd_Register("sleep_factor",		WRAP_METHOD(Console, cmdSleepFactor));
-	DCmd_Register("exit",				WRAP_METHOD(Console, cmdExit));
 
 	// These were in sci.cpp
 	/*
@@ -159,7 +164,113 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 Console::~Console() {
 }
 
-static ResourceType parseResourceType(const char *resid) {
+bool Console::cmdHelp(int argc, const char **argv) {
+	DebugPrintf("\n");
+	DebugPrintf("Variables\n");
+	DebugPrintf("---------\n");
+	DebugPrintf("sleeptime_factor: Factor to multiply with wait times in kWait()\n");
+	DebugPrintf("gc_interval: Number of kernel calls in between garbage collections\n");
+	DebugPrintf("simulated_key: Add a key with the specified scan code to the event list\n");
+	DebugPrintf("track_mouse_clicks: Toggles mouse click tracking to the console\n");
+	DebugPrintf("weak_validations: Turns some validation errors into warnings\n");
+	DebugPrintf("\n");
+	DebugPrintf("Commands\n");
+	DebugPrintf("--------\n");
+	DebugPrintf("Kernel:\n");
+	DebugPrintf(" opcodes - Lists the opcode names\n");
+	DebugPrintf(" selectors - Lists the selector names\n");
+	DebugPrintf(" functions - Lists the kernel functions\n");
+	DebugPrintf(" class_table - Shows the available classes\n");
+	DebugPrintf("\n");
+	DebugPrintf("Parser:\n");
+	DebugPrintf(" suffixes - Lists the vocabulary suffixes\n");
+	DebugPrintf(" parse_grammar - Shows the parse grammar, in strict GNF\n");
+	DebugPrintf(" parser_nodes - Shows the specified number of nodes from the parse node tree\n");
+	DebugPrintf(" parser_words - Shows the words from the parse node tree\n");
+	DebugPrintf(" sentence_fragments - Shows the sentence fragments (used to build Parse trees)\n");
+	DebugPrintf("\n");
+	DebugPrintf("Resources:\n");
+	DebugPrintf(" hexdump - Dumps the specified resource to standard output\n");
+	DebugPrintf(" resource_id - Identifies a resource number by splitting it up in resource type and resource number\n");
+	DebugPrintf(" resource_size - Shows the size of a resource\n");
+	DebugPrintf(" resource_types - Shows the valid resource types\n");
+	DebugPrintf(" list - Lists all the resources of a given type\n");
+	DebugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
+	DebugPrintf("\n");
+	DebugPrintf("Game:\n");
+	DebugPrintf(" save_game - Saves the current game state to the hard disk\n");
+	DebugPrintf(" restore_game - Restores a saved game from the hard disk\n");
+	DebugPrintf(" restart_game - Restarts the game\n");
+	DebugPrintf(" version - Shows the resource and interpreter versions\n");
+	DebugPrintf(" room - Shows the current room number\n");
+	DebugPrintf(" exit - Exits the game\n");
+	DebugPrintf("\n");
+	DebugPrintf("Screen:\n");
+	DebugPrintf(" sci0_palette - Sets the SCI0 palette to use (EGA, Amiga or grayscale)\n");
+	DebugPrintf(" clear_screen - Clears the screen\n");
+	DebugPrintf(" redraw_screen - Redraws the screen\n");
+	DebugPrintf(" fill_screen - Fills the screen with one of the EGA colors\n");
+	DebugPrintf(" show_map - Shows one of the screen maps (visual, priority or control)\n");
+	DebugPrintf(" update_zone - Propagates a rectangular area from the back buffer to the front buffer\n");
+	DebugPrintf(" propagate_zone - Propagates a rectangular area from a lower graphics buffer to a higher one\n");
+	DebugPrintf(" priority_bands - Shows information about priority bands\n");
+	DebugPrintf("\n");
+	DebugPrintf("Graphics:\n");
+	DebugPrintf(" draw_pic - Draws a pic resource\n");
+	DebugPrintf(" draw_rect - Draws a rectangle to the screen with one of the EGA colors\n");
+	DebugPrintf(" draw_cel - Draws a single view cel to the center of the screen\n");
+	DebugPrintf(" view_info - Displays information for the specified view\n");
+	DebugPrintf("\n");
+	DebugPrintf("GUI:\n");
+	DebugPrintf(" current_port - Shows the ID of the currently active port\n");
+	DebugPrintf(" print_port - Prints information about a port\n");
+	DebugPrintf(" visual_state - Shows the state of the current visual widget\n");
+	DebugPrintf(" flush_visual - Flushes dynamically allocated ports (for memory profiling)\n");
+	DebugPrintf(" dynamic_views - Lists active dynamic views\n");
+	DebugPrintf(" dropped_views - Lists dropped dynamic views\n");
+	DebugPrintf(" status_bar - Sets the colors of the status bar\n");
+	DebugPrintf("\n");
+	DebugPrintf("Segments:\n");
+	DebugPrintf(" segment_table - Lists all segments\n");
+	DebugPrintf(" segment_info - Provides information on the specified segment\n");
+	DebugPrintf(" segment_kill - Deletes the specified segment\n");
+	DebugPrintf("\n");
+	DebugPrintf("Garbage collection:\n");
+	DebugPrintf(" gc - Invokes the garbage collector\n");
+	DebugPrintf(" gc_objects - Lists all reachable objects, normalized\n");
+	DebugPrintf(" gc_reachable - Lists all addresses directly reachable from a given memory object\n");
+	DebugPrintf(" gc_freeable - Lists all addresses freeable in a given segment\n");
+	DebugPrintf(" gc_normalize - Prints the \"normal\" address of a given address\n");
+	DebugPrintf("\n");
+	DebugPrintf("Music/SFX:\n");
+	DebugPrintf(" songlib - Shows the song library\n");
+	DebugPrintf(" is_sample - Shows information on a given sound resource, if it's a PCM sample\n");
+	DebugPrintf(" sfx01_header - Dumps the header of a SCI01 song\n");
+	DebugPrintf(" sfx01_track - Dumps a track of a SCI01 song\n");
+	DebugPrintf(" stop_sfx - Stops a playing sound\n");
+	DebugPrintf("\n");
+	DebugPrintf("Script:\n");
+	DebugPrintf(" addresses - Provides information on how to pass addresses\n");
+	DebugPrintf(" registers - Shows the current register values\n");
+	DebugPrintf(" dissect_script - Examines a script\n");
+	DebugPrintf(" set_acc - Sets the accumulator\n");
+	DebugPrintf(" bp_list - Lists the current breakpoints\n");
+	DebugPrintf(" bp_del - Deletes a breakpoint with the specified index\n");
+	DebugPrintf("\n");
+	DebugPrintf("VM:\n");
+	DebugPrintf(" script_steps - Shows the number of executed SCI operations\n");
+	DebugPrintf(" vm_varlist - Shows the addresses of variables in the VM\n");
+	DebugPrintf(" stack - Lists the specified number of stack elements\n");
+	DebugPrintf(" value_type - Determines the type of a value\n");
+	DebugPrintf(" view_listnode - Examines the list node at the given address\n");
+	DebugPrintf(" view_object - Examines the object at the given address\n");
+	DebugPrintf(" active_object - Shows information on the currently active object or class\n");
+	DebugPrintf(" acc_object - Shows information on the object or class at the address indexed by the accumulator\n");
+	DebugPrintf("\n");
+	return true;
+}
+
+ResourceType parseResourceType(const char *resid) {
 	// Gets the resource number of a resource string, or returns -1
 	ResourceType res = kResourceTypeInvalid;
 
@@ -206,8 +317,8 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdKernelNames(int argc, const char **argv) {
-	DebugPrintf("Selector names in numeric order:\n");
+bool Console::cmdKernelFunctions(int argc, const char **argv) {
+	DebugPrintf("Kernel function names in numeric order:\n");
 	for (uint seeker = 0; seeker <  g_EngineState->_kernel->getKernelNamesSize(); seeker++) {
 		DebugPrintf("%03x: %20s | ", seeker, g_EngineState->_kernel->getKernelName(seeker).c_str());
 		if ((seeker % 3) == 2)
@@ -251,6 +362,7 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 
 bool Console::cmdHexDump(int argc, const char **argv) {
 	if (argc != 3) {
+		DebugPrintf("Dumps the specified resource to standard output\n");
 		DebugPrintf("Usage: %s <resource type> <resource number>\n", argv[0]);
 		cmdResourceTypes(argc, argv);
 		return true;
@@ -304,26 +416,6 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdWeakValidations(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Turns some validation errors into warnings\n");
-		DebugPrintf("Usage: %s <on/off>\n", argv[0]);
-		DebugPrintf("Weak validations are currently %s\n", (_weak_validations ? "on" : "off"));
-		return true;
-	}
-
-	DebugPrintf("Weak validations are currently %s\n", (_weak_validations ? "on" : "off"));
-	if (!scumm_stricmp(argv[1], "on")) {
-		DebugPrintf("Turning weak validations on\n");
-		_weak_validations = 1;
-	} else if (!scumm_stricmp(argv[1], "off")) {
-		DebugPrintf("Turning weak validations off\n");
-		_weak_validations = 0;
-	}
-
-	return true;
-}
-
 bool Console::cmdRoomNumber(int argc, const char **argv) {
 	DebugPrintf("Current room number is %d\n", g_EngineState->currentRoomNumber());
 
@@ -373,7 +465,7 @@ extern int sci0_palette;
 
 bool Console::cmdSci0Palette(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Set the SCI0 palette to use - 0: EGA, 1: AGI/Amiga, 2: Grayscale\n");
+		DebugPrintf("Sets the SCI0 palette to use - 0: EGA, 1: AGI/Amiga, 2: Grayscale\n");
 		return true;
 	}
 
@@ -453,7 +545,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 
 bool Console::cmdList(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Lists all of the resources of a given type\n");
+		DebugPrintf("Lists all the resources of a given type\n");
 		cmdResourceTypes(argc, argv);
 		return true;
 	}
@@ -494,7 +586,7 @@ bool Console::cmdRedrawScreen(int argc, const char **argv) {
 
 bool Console::cmdSaveGame(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Save the current game state to the hard disk\n");
+		DebugPrintf("Saves the current game state to the hard disk\n");
 		DebugPrintf("Usage: %s <filename>\n", argv[0]);
 		return true;
 	}
@@ -592,7 +684,7 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 }
 
 bool Console::cmdSentenceFragments(int argc, const char **argv) {
-	DebugPrintf("Sentence fragments (used to build Parse trees\n");
+	DebugPrintf("Sentence fragments (used to build Parse trees)\n");
 
 	for (uint i = 0; i < g_EngineState->_vocabulary->getParserBranchesSize(); i++) {
 		int j = 0;
@@ -702,7 +794,7 @@ bool Console::cmdDrawRect(int argc, const char **argv) {
 
 bool Console::cmdDrawCel(int argc, const char **argv) {
 	if (argc != 4) {
-		DebugPrintf("Draws a single view cel to the center of the\n  screen\n\n");
+		DebugPrintf("Draws a single view cel to the center of the screen\n");
 		DebugPrintf("Usage: %s <view> <loop> <cel> <palette>\n", argv[0]);
 		return true;
 	}
@@ -949,38 +1041,6 @@ bool Console::cmdStatusBarColors(int argc, const char **argv) {
 	gfxop_update(g_EngineState->gfx_state);
 
 	return false;
-}
-
-bool Console::cmdSimulateKey(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Simulate a keypress with the specified scancode\n");
-		DebugPrintf("Usage: %s <key scan code>\n", argv[0]);
-		return true;
-	}
-
-	_kdebug_cheap_event_hack = atoi(argv[1]);
-
-	return true;
-}
-
-bool Console::cmdTrackMouse(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Toggles mouse position tracking\n");
-		DebugPrintf("Usage: %s <on/off>\n", argv[0]);
-		DebugPrintf("If switched on, left mouse clicks will print\n");
-		DebugPrintf("the coordinates clicked in the debug console\n");
-		return true;
-	}
-
-	if (!scumm_stricmp(argv[1], "on")) {
-		_kdebug_track_mouse_clicks = true;
-		DebugPrintf("Mouse tracking turned on\n");
-	} else if (!scumm_stricmp(argv[1], "off")) {
-		_kdebug_track_mouse_clicks = false;
-		DebugPrintf("Mouse tracking turned off\n");
-	}
-
-	return true;
 }
 
 bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
@@ -1292,20 +1352,6 @@ bool Console::cmdGCObjects(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdGCInterval(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Sets the number of kernel calls in between garbage collections.\n");
-		DebugPrintf("Usage: %s <number>\n", argv[0]);
-		DebugPrintf("Number of kernel calls in between garbage collections is currently %d.", script_gc_interval);
-		return true;
-	}
-
-	DebugPrintf("Number of kernel calls in between garbage collections was %d, setting it to %d\n", script_gc_interval, atoi(argv[1]));
-	script_gc_interval = atoi(argv[1]);
-
-	return true;
-}
-
 // TODO/FIXME: This should be using DebugPrintf
 void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
@@ -1420,7 +1466,7 @@ bool Console::cmdVMVarlist(int argc, const char **argv) {
 
 bool Console::cmdStack(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Dumps the specified number of stack elements.\n");
+		DebugPrintf("Lists the specified number of stack elements.\n");
 		DebugPrintf("Usage: %s <elements>\n", argv[0]);
 		return true;
 	}
@@ -1545,21 +1591,6 @@ bool Console::cmdViewActiveObject(int argc, const char **argv) {
 bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class at the address indexed by the accumulator:\n");
 	printObject(g_EngineState, g_EngineState->r_acc);
-
-	return true;
-}
-
-bool Console::cmdSleepFactor(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Factor to multiply with wait times in kWait().\n");
-		DebugPrintf("Set to 0 to speed up games.\n");
-		DebugPrintf("Usage: %s <factor>\n", argv[0]);
-		DebugPrintf("Sleep factor is currently %d.", debug_sleeptime_factor);
-		return true;
-	}
-
-	DebugPrintf("Sleep factor was %d, setting it to %d\n", debug_sleeptime_factor, atoi(argv[1]));
-	debug_sleeptime_factor = atoi(argv[1]);
 
 	return true;
 }

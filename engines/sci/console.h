@@ -44,79 +44,88 @@ public:
 	virtual ~Console();
 
 private:
-	bool cmdGetVersion(int argc, const char **argv);
+	// General
+	bool cmdHelp(int argc, const char **argv);
+	// Kernel
 //	bool cmdClasses(int argc, const char **argv);	// TODO
 	bool cmdOpcodes(int argc, const char **argv);
 	bool cmdSelectors(int argc, const char **argv);
-	bool cmdKernelNames(int argc, const char **argv);
+	bool cmdKernelFunctions(int argc, const char **argv);
+	bool cmdClassTable(int argc, const char **argv);
+	// Parser
 	bool cmdSuffixes(int argc, const char **argv);
+	bool cmdParseGrammar(int argc, const char **argv);
+	bool cmdParserNodes(int argc, const char **argv);
+	bool cmdParserWords(int argc, const char **argv);
+	bool cmdSentenceFragments(int argc, const char **argv);
+	// Resources
 	bool cmdHexDump(int argc, const char **argv);
 	bool cmdResourceId(int argc, const char **argv);
-	bool cmdDissectScript(int argc, const char **argv);
-	bool cmdWeakValidations(int argc, const char **argv);
-	bool cmdRoomNumber(int argc, const char **argv);
 	bool cmdResourceSize(int argc, const char **argv);
 	bool cmdResourceTypes(int argc, const char **argv);
-	bool cmdSci0Palette(int argc, const char **argv);
-	bool cmdHexgrep(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
-	bool cmdClearScreen(int argc, const char **argv);
-	bool cmdRedrawScreen(int argc, const char **argv);
+	bool cmdHexgrep(int argc, const char **argv);
+	// Game
 	bool cmdSaveGame(int argc, const char **argv);
 	bool cmdRestoreGame(int argc, const char **argv);
 	bool cmdRestartGame(int argc, const char **argv);
-	bool cmdClassTable(int argc, const char **argv);
-	bool cmdSentenceFragments(int argc, const char **argv);
-	bool cmdParserNodes(int argc, const char **argv);
-	bool cmdParserWords(int argc, const char **argv);
-	bool cmdRegisters(int argc, const char **argv);
+	bool cmdGetVersion(int argc, const char **argv);
+	bool cmdRoomNumber(int argc, const char **argv);
+	bool cmdExit(int argc, const char **argv);
+	// Screen
+	bool cmdSci0Palette(int argc, const char **argv);
+	bool cmdClearScreen(int argc, const char **argv);
+	bool cmdRedrawScreen(int argc, const char **argv);
+	bool cmdFillScreen(int argc, const char **argv);
+	bool cmdShowMap(int argc, const char **argv);
+	bool cmdUpdateZone(int argc, const char **argv);
+	bool cmdPropagateZone(int argc, const char **argv);
+	bool cmdPriorityBands(int argc, const char **argv);
+	// Graphics
 	bool cmdDrawPic(int argc, const char **argv);
 	bool cmdDrawRect(int argc, const char **argv);
 	bool cmdDrawCel(int argc, const char **argv);
 	bool cmdViewInfo(int argc, const char **argv);
-	bool cmdUpdateZone(int argc, const char **argv);
-	bool cmdPropagateZone(int argc, const char **argv);
-	bool cmdFillScreen(int argc, const char **argv);
+	// GUI
 	bool cmdCurrentPort(int argc, const char **argv);
 	bool cmdPrintPort(int argc, const char **argv);
-	bool cmdParseGrammar(int argc, const char **argv);
 	bool cmdVisualState(int argc, const char **argv);
 	bool cmdFlushPorts(int argc, const char **argv);
 	bool cmdDynamicViews(int argc, const char **argv);
 	bool cmdDroppedViews(int argc, const char **argv);
-	bool cmdPriorityBands(int argc, const char **argv);
 	bool cmdStatusBarColors(int argc, const char **argv);
-	bool cmdSimulateKey(int argc, const char **argv);
-	bool cmdTrackMouse(int argc, const char **argv);
+	// Segments
 	bool cmdPrintSegmentTable(int argc, const char **argv);
 	bool cmdSegmentInfo(int argc, const char **argv);
 	bool cmdKillSegment(int argc, const char **argv);
-	bool cmdShowMap(int argc, const char **argv);
-	bool cmdSongLib(int argc, const char **argv);
+	// Garbage collection
 	bool cmdGCInvoke(int argc, const char **argv);
 	bool cmdGCObjects(int argc, const char **argv);
-	bool cmdGCInterval(int argc, const char **argv);
 	bool cmdGCShowReachable(int argc, const char **argv);
 	bool cmdGCShowFreeable(int argc, const char **argv);
 	bool cmdGCNormalize(int argc, const char **argv);
-	bool cmdVMVarlist(int argc, const char **argv);
-	bool cmdStack(int argc, const char **argv);
-	bool cmdViewListNode(int argc, const char **argv);
-	bool cmdValueType(int argc, const char **argv);
-	bool cmdViewObject(int argc, const char **argv);
-	bool cmdViewActiveObject(int argc, const char **argv);
-	bool cmdViewAccumulatorObject(int argc, const char **argv);
-	bool cmdSleepFactor(int argc, const char **argv);
+	// Music/SFX
+	bool cmdSongLib(int argc, const char **argv);
 	bool cmdIsSample(int argc, const char **argv);
 	bool cmdSfx01Header(int argc, const char **argv);
 	bool cmdSfx01Track(int argc, const char **argv);
-	bool cmdScriptSteps(int argc, const char **argv);
+	bool cmdStopSfx(int argc, const char **argv);
+	// Script
+	bool cmdAddresses(int argc, const char **argv);
+	bool cmdRegisters(int argc, const char **argv);
+	bool cmdDissectScript(int argc, const char **argv);
 	bool cmdSetAccumulator(int argc, const char **argv);
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);
-	bool cmdExit(int argc, const char **argv);
-	bool cmdAddresses(int argc, const char **argv);
-	bool cmdStopSfx(int argc, const char **argv);
+	// VM
+	bool cmdScriptSteps(int argc, const char **argv);
+	bool cmdVMVarlist(int argc, const char **argv);
+	bool cmdStack(int argc, const char **argv);
+	bool cmdValueType(int argc, const char **argv);
+	bool cmdViewListNode(int argc, const char **argv);
+	bool cmdViewObject(int argc, const char **argv);
+	bool cmdViewActiveObject(int argc, const char **argv);
+	bool cmdViewAccumulatorObject(int argc, const char **argv);
 
 	bool segmentInfo(int nr);
 	void printList(List *l);

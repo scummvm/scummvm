@@ -28,13 +28,13 @@
 #include "sci/engine/kernel.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
-#include "sci/console.h"	// for _kdebug_cheap_event_hack
+#include "sci/console.h"	// for debug_simulated_key
 
 namespace Sci {
 
 int stop_on_event = 0;
-extern int _kdebug_cheap_event_hack;
-extern bool _kdebug_track_mouse_clicks;
+extern int debug_simulated_key;
+extern bool debug_track_mouse_clicks;
 
 #define SCI_VARIABLE_GAME_SPEED 3
 
@@ -53,13 +53,13 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
-	if (_kdebug_cheap_event_hack && (mask & SCI_EVT_KEYBOARD)) {
+	if (debug_simulated_key && (mask & SCI_EVT_KEYBOARD)) {
 		PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
-		PUT_SEL32V(obj, message, _kdebug_cheap_event_hack);
+		PUT_SEL32V(obj, message, debug_simulated_key);
 		PUT_SEL32V(obj, modifiers, SCI_EVM_NUMLOCK); // Numlock on
 		PUT_SEL32V(obj, x, s->gfx_state->pointer_pos.x);
 		PUT_SEL32V(obj, y, s->gfx_state->pointer_pos.y);
-		_kdebug_cheap_event_hack = 0;
+		debug_simulated_key = 0;
 		return make_reg(0, 1);
 	}
 
@@ -110,7 +110,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int extra_bits = 0;
 
 		// track left buttton clicks, if requested
-		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && _kdebug_track_mouse_clicks) {
+		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && debug_track_mouse_clicks) {
 			((SciEngine *)g_engine)->_console->DebugPrintf("Mouse clicked at %d, %d\n", 
 						s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 		}

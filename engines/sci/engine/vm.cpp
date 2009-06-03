@@ -27,7 +27,7 @@
 #include "common/stack.h"
 
 #include "sci/sci.h"
-#include "sci/console.h"	// for _weak_validations
+#include "sci/console.h"	// for debug_weak_validations
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
@@ -52,7 +52,7 @@ int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs
 
 extern int _debug_step_running;
 extern int _debug_seeking;
-extern int _weak_validations;
+extern bool debug_weak_validations;
 
 
 static bool breakpointFlag = false;
@@ -90,7 +90,9 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		if (!_weak_validations)
+		if (debug_weak_validations)
+			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+		else
 			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
 		return 0;
 	}
@@ -100,10 +102,10 @@ static int validate_arithmetic(reg_t reg) {
 
 static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		debugC(2, kDebugLevelVM, "[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
-		if (!_weak_validations) {
-			error("signed_validate_arithmetic failed");
-		}
+		if (debug_weak_validations)
+			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+		else
+			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
 		return 0;
 	}
 
@@ -117,15 +119,22 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 	const char *names[4] = {"global", "local", "temp", "param"};
 
 	if (index < 0 || index >= max) {
-		sciprintf("[VM] Attempt to use invalid %s variable %04x ", names[type], index);
+		char txt[200];
+		char tmp[40];
+		sprintf(txt, "[VM] Attempt to use invalid %s variable %04x ", names[type], index);
 		if (max == 0)
-			sciprintf("(variable type invalid)");
-		else
-			sciprintf("(out of range [%d..%d])", 0, max - 1);
-		sciprintf(" in %s, line %d\n", __FILE__, line);
-		if (!_weak_validations) {
-			error("validate_variable failed");
+			strcat(txt, "(variable type invalid)");
+		else {
+			sprintf(tmp, "(out of range [%d..%d])", 0, max - 1);
+			strcat(txt, tmp);
 		}
+		sprintf(tmp, " in %s, line %d\n", __FILE__, line);
+		strcat(txt, tmp);
+
+		if (debug_weak_validations)
+			warning(txt);
+		else
+			error(txt);
 
 #ifdef STRICT_READ
 		return 1;
@@ -139,7 +148,7 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 				sciprintf("[VM] Access within stack boundaries; access granted.\n");
 				return 0;
 			}
-		};
+		}
 #endif
 	}
 
