@@ -22,9 +22,12 @@
 #ifndef ASYLUM_UTILS_H
 #define ASYLUM_UTILS_H
 
+#include "common/endian.h"
+
+
 namespace Asylum {
 	
-uint32 read32( unsigned char *value, int offset )
+uint32 read32( uint8 *value, int offset )
 {
 	uint32 val = (byte)value[offset] | 
 				 (byte)value[offset + 1] << 8 | 
@@ -33,7 +36,7 @@ uint32 read32( unsigned char *value, int offset )
 	return val;
 }	
 
-uint16 read16( unsigned char *value, int offset )
+uint16 read16( uint8 *value, int offset )
 {
 	uint16 val = (byte)value[offset] | (byte)value[offset + 1] << 8;
 	return val;

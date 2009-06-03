@@ -20,8 +20,8 @@
  */
 
 #include "asylum/graphics.h"
-#include "asylum/utils.h"
 
+#include "common/endian.h"
 #include "common/file.h"
 #include "common/stream.h"
 
@@ -30,14 +30,14 @@ namespace Asylum {
 GraphicResource::GraphicResource( ResourceItem item )
 {	
 	int pos = 0;
-	_tagValue      = read32(item.data, pos);	
-	_flag          = read32(item.data, pos+=4);
-	_contentOffset = read32(item.data, pos+=4);
-	_unknown1      = read32(item.data, pos+=4);
-	_unknown2      = read32(item.data, pos+=4);
-	_unknown3      = read32(item.data, pos+=4);
-	_numEntries    = read32(item.data, pos+=4);
-	_maxWidthSize  = read16(item.data, pos+=2);
+	_tagValue      = READ_UINT32(item.data);
+	_flag          = READ_UINT32(item.data); pos+=4;
+	_contentOffset = READ_UINT32(item.data); pos+=4;
+	_unknown1      = READ_UINT32(item.data); pos+=4;
+	_unknown2      = READ_UINT32(item.data); pos+=4;
+	_unknown3      = READ_UINT32(item.data); pos+=4;
+	_numEntries    = READ_UINT32(item.data); pos+=4;
+	_maxWidthSize  = READ_UINT16(item.data); pos+=2;
 }
 
 GraphicResource::~GraphicResource()
