@@ -1551,7 +1551,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-	const char *varnames[] = {"global", "local", "temp", "param"};
+	//const char *varnames[] = {"global", "local", "temp", "param"};
 	const char *varabbrev = "gltp";
 	const char *vartype_pre = strchr(varabbrev, *argv[1]);
 	int vartype;
