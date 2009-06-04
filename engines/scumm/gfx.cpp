@@ -1956,13 +1956,11 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 }
 
 void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y, int w, int h) {
-	assert(_vm->_bitDepth == 1);
-
 	const byte *bmap_ptr = _vm->findResourceData(MKID_BE('BMAP'), ptr);
 	assert(bmap_ptr);
 
 	byte code = *bmap_ptr++;
-	int scrX = _vm->_screenStartStrip * 8;
+	int scrX = _vm->_screenStartStrip * 8 * _vm->_bitDepth;
 
 	if (code == 8 || code == 9) {
 		Common::Rect rScreen(0, 0, vs->w, vs->h);
