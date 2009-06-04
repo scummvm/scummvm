@@ -1487,6 +1487,12 @@ byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 *size, uint16
 	}
 
 	int headerSize = audioStream->readByte();
+
+	if (headerSize != 11 && headerSize != 12) {
+		warning("SOL audio header of size %i not supported", headerSize);
+		return NULL;
+	}
+
 	audioStream->readUint32LE();			// skip "SOL" + 0 (4 bytes)
 	*audioRate = audioStream->readUint16LE();
 	audioFlags = audioStream->readByte();
@@ -1498,10 +1504,12 @@ byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 *size, uint16
 	if (!(audioFlags & kSolFlagIsSigned))
 		*flags |= Audio::Mixer::FLAG_UNSIGNED;
 
-	*size = audioStream->readUint16LE();
+	*size = audioStream->readUint32LE();
 
-	if (headerSize == 12)
-		*size |= audioStream->readByte() << 16;
+	if (headerSize == 12) {
+		// Unknown byte
+		audioStream->readByte();
+	}
 
 	byte *buffer;
 
