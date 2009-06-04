@@ -26,6 +26,7 @@
 // Script debugger functionality. Absolutely not threadsafe.
 
 #include "sci/sci.h"
+#include "sci/debug.h"
 #include "sci/engine/state.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/kernel_types.h"
@@ -46,13 +47,13 @@
 
 namespace Sci {
 
-int _debugstate_valid = 0; // Set to 1 while script_debug is running
-int _debug_step_running = 0; // Set to >0 to allow multiple stepping
-int _debug_commands_not_hooked = 1; // Commands not hooked to the console yet?
-int _debug_seeking = 0; // Stepping forward until some special condition is met
-int _debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
-int _debug_seek_special = 0;  // Used for special seeks(1)
-reg_t _debug_seek_reg = NULL_REG;  // Used for special seeks(2)
+int g_debugstate_valid = 0; // Set to 1 while script_debug is running
+int g_debug_step_running = 0; // Set to >0 to allow multiple stepping
+static bool s_debug_commands_hooked = false; // Commands hooked to the console yet?
+int g_debug_seeking = 0; // Stepping forward until some special condition is met
+static int s_debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
+static int s_debug_seek_special = 0;  // Used for special seeks(1)
+static reg_t s_debug_seek_reg = NULL_REG;  // Used for special seeks(2)
 
 #define _DEBUG_SEEK_NOTHING 0
 #define _DEBUG_SEEK_CALLK 1 // Step forward until callk is found
@@ -121,9 +122,9 @@ static const char *_debug_get_input() {
 }
 
 int c_step(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_debugstate_valid = 0;
+	g_debugstate_valid = 0;
 	if (cmdParams.size() && (cmdParams[0].val > 0))
-		_debug_step_running = cmdParams[0].val - 1;
+		g_debug_step_running = cmdParams[0].val - 1;
 
 	return 0;
 }
@@ -133,39 +134,39 @@ int c_step(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int opcode, opnumber;
 
-	if (!_debugstate_valid) {
+	if (!g_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
 
-	_debugstate_valid = 0;
+	g_debugstate_valid = 0;
 	opcode = s->_heap[*p_pc];
 	opnumber = opcode >> 1;
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
 	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
-		_debug_seeking = _DEBUG_SEEK_SO;
-		_debug_seek_level = s->_executionStack.size()-1;
-		// Store in _debug_seek_special the offset of the next command after send
+		g_debug_seeking = _DEBUG_SEEK_SO;
+		s_debug_seek_level = s->_executionStack.size()-1;
+		// Store in s_debug_seek_special the offset of the next command after send
 		switch (opcode) {
 		case 0x46: // calle W
-			_debug_seek_special = *p_pc + 5;
+			s_debug_seek_special = *p_pc + 5;
 			break;
 
 		case 0x44: // callb W
 		case 0x47: // calle B
 		case 0x56: // super W
-			_debug_seek_special = *p_pc + 4;
+			s_debug_seek_special = *p_pc + 4;
 			break;
 
 		case 0x45: // callb B
 		case 0x57: // super B
 		case 0x4A: // send W
 		case 0x54: // self W
-			_debug_seek_special = *p_pc + 3;
+			s_debug_seek_special = *p_pc + 3;
 			break;
 
 		default:
-			_debug_seek_special = *p_pc + 2;
+			s_debug_seek_special = *p_pc + 2;
 		}
 	}
 
@@ -319,7 +320,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	opsize = scr[pos.offset];
 	opcode = opsize >> 1;
 
-	if (!_debugstate_valid) {
+	if (!g_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return retval;
 	}
@@ -540,7 +541,7 @@ extern GfxWidget *debug_widgets[];
 extern int debug_widget_pos;
 
 static int c_gfx_print_widget(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
+	if (!g_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
@@ -695,9 +696,9 @@ static int c_disasm(EngineState *s, const Common::Array<cmd_param_t> &cmdParams)
 }
 
 static int c_sg(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_debug_seeking = _DEBUG_SEEK_GLOBAL;
-	_debug_seek_special = cmdParams[0].val;
-	_debugstate_valid = 0;
+	g_debug_seeking = _DEBUG_SEEK_GLOBAL;
+	s_debug_seek_special = cmdParams[0].val;
+	g_debugstate_valid = 0;
 
 	return 0;
 }
@@ -706,7 +707,7 @@ static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int callk_index;
 	char *endptr;
 
-	if (!_debugstate_valid) {
+	if (!g_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
@@ -730,27 +731,27 @@ static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 			}
 		}
 
-		_debug_seeking = _DEBUG_SEEK_SPECIAL_CALLK;
-		_debug_seek_special = callk_index;
-		_debugstate_valid = 0;
+		g_debug_seeking = _DEBUG_SEEK_SPECIAL_CALLK;
+		s_debug_seek_special = callk_index;
+		g_debugstate_valid = 0;
 	} else {
-		_debug_seeking = _DEBUG_SEEK_CALLK;
-		_debugstate_valid = 0;
+		g_debug_seeking = _DEBUG_SEEK_CALLK;
+		g_debugstate_valid = 0;
 	}
 
 	return 0;
 }
 
 static int c_sret(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_debug_seeking = _DEBUG_SEEK_LEVEL_RET;
-	_debug_seek_level = s->_executionStack.size()-1;
-	_debugstate_valid = 0;
+	g_debug_seeking = _DEBUG_SEEK_LEVEL_RET;
+	s_debug_seek_level = s->_executionStack.size()-1;
+	g_debugstate_valid = 0;
 	return 0;
 }
 
 static int c_go(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_debug_seeking = 0;
-	_debugstate_valid = 0;
+	g_debug_seeking = 0;
+	g_debugstate_valid = 0;
 	return 0;
 }
 
@@ -899,8 +900,8 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 // Breakpoint commands
 
 int c_se(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	stop_on_event = 1;
-	_debugstate_valid = 0;
+	g_stop_on_event = 1;
+	g_debugstate_valid = 0;
 
 	return 0;
 }
@@ -909,7 +910,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
 	// Do we support a separate console?
 
-	int old_debugstate = _debugstate_valid;
+	int old_debugstate = g_debugstate_valid;
 
 	p_var_segs = segids;
 	p_vars = variables;
@@ -921,15 +922,15 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	p_objp = objp;
 	p_restadjust = restadjust;
 	sciprintf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
-	_debugstate_valid = 1;
+	g_debugstate_valid = 1;
 	disassemble(s, *pc, 0, 1);
-	if (_debug_seeking == _DEBUG_SEEK_GLOBAL)
-		sciprintf("Global %d (0x%x) = %04x:%04x\n", _debug_seek_special,
-		          _debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[_debug_seek_special]));
+	if (g_debug_seeking == _DEBUG_SEEK_GLOBAL)
+		sciprintf("Global %d (0x%x) = %04x:%04x\n", s_debug_seek_special,
+		          s_debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[s_debug_seek_special]));
 
-	_debugstate_valid = old_debugstate;
+	g_debugstate_valid = old_debugstate;
 
-	if (_debug_seeking && !bp) { // Are we looking for something special?
+	if (g_debug_seeking && !bp) { // Are we looking for something special?
 		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
 
 		if (mobj) {
@@ -941,9 +942,9 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			int paramb1 = pc->offset + 1 >= code_buf_size ? 0 : code_buf[pc->offset + 1];
 			int paramf1 = (opcode & 1) ? paramb1 : (pc->offset + 2 >= code_buf_size ? 0 : (int16)READ_LE_UINT16(code_buf + pc->offset + 1));
 
-			switch (_debug_seeking) {
+			switch (g_debug_seeking) {
 			case _DEBUG_SEEK_SPECIAL_CALLK:
-				if (paramb1 != _debug_seek_special)
+				if (paramb1 != s_debug_seek_special)
 					return;
 
 			case _DEBUG_SEEK_CALLK: {
@@ -953,13 +954,13 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			}
 
 			case _DEBUG_SEEK_LEVEL_RET: {
-				if ((op != op_ret) || (_debug_seek_level < (int)s->_executionStack.size()-1))
+				if ((op != op_ret) || (s_debug_seek_level < (int)s->_executionStack.size()-1))
 					return;
 				break;
 			}
 
 			case _DEBUG_SEEK_SO:
-				if ((*pc != _debug_seek_reg) || (int)s->_executionStack.size()-1 != _debug_seek_level)
+				if ((*pc != s_debug_seek_reg) || (int)s->_executionStack.size()-1 != s_debug_seek_level)
 					return;
 				break;
 
@@ -971,20 +972,20 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 					return; // param or temp
 				if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
 					return; // locals and not running in script.000
-				if (paramf1 != _debug_seek_special)
+				if (paramf1 != s_debug_seek_special)
 					return; // CORRECT global?
 				break;
 
 			}
 
-			_debug_seeking = _DEBUG_SEEK_NOTHING;
+			g_debug_seeking = _DEBUG_SEEK_NOTHING;
 			// OK, found whatever we were looking for
 		}
 	}
 
-	_debugstate_valid = (_debug_step_running == 0);
+	g_debugstate_valid = (g_debug_step_running == 0);
 
-	if (_debugstate_valid) {
+	if (g_debugstate_valid) {
 		p_pc = pc;
 		p_sp = sp;
 		p_pp = pp;
@@ -998,8 +999,8 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		sciprintf("Step #%d\n", script_step_counter);
 		disassemble(s, *pc, 0, 1);
 
-		if (_debug_commands_not_hooked) {
-			_debug_commands_not_hooked = 0;
+		if (!s_debug_commands_hooked) {
+			s_debug_commands_hooked = true;
 
 			con_hook_command(c_step, "s", "i*", "Executes one or several operations\n\nEXAMPLES\n\n"
 			                 "    s 4\n\n  Execute 4 commands\n\n    s\n\n  Execute next command");
@@ -1043,10 +1044,10 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		} // If commands were not hooked up
 	}
 
-	if (_debug_step_running)
-		_debug_step_running--;
+	if (g_debug_step_running)
+		g_debug_step_running--;
 
-	while (_debugstate_valid) {
+	while (g_debugstate_valid) {
 		int skipfirst = 0;
 		const char *commandstring;
 

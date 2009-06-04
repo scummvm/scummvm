@@ -38,11 +38,6 @@ namespace Sci {
 struct Node;	// from vm.h
 struct List;	// from vm.h
 
-extern int stop_on_event;
-
-extern int _debug_seeking;
-extern int _debug_step_running;
-
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 //#define DEBUG_PARSER	// enable for parser debugging
 

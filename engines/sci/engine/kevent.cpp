@@ -28,13 +28,12 @@
 #include "sci/engine/kernel.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
-#include "sci/console.h"	// for debug_simulated_key
+#include "sci/console.h"
+#include "sci/debug.h"	// for g_debug_simulated_key
 
 namespace Sci {
 
-int stop_on_event = 0;
-extern int debug_simulated_key;
-extern bool debug_track_mouse_clicks;
+int g_stop_on_event = 0;
 
 #define SCI_VARIABLE_GAME_SPEED 3
 
@@ -53,13 +52,13 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
-	if (debug_simulated_key && (mask & SCI_EVT_KEYBOARD)) {
+	if (g_debug_simulated_key && (mask & SCI_EVT_KEYBOARD)) {
 		PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
-		PUT_SEL32V(obj, message, debug_simulated_key);
+		PUT_SEL32V(obj, message, g_debug_simulated_key);
 		PUT_SEL32V(obj, modifiers, SCI_EVM_NUMLOCK); // Numlock on
 		PUT_SEL32V(obj, x, s->gfx_state->pointer_pos.x);
 		PUT_SEL32V(obj, y, s->gfx_state->pointer_pos.y);
-		debug_simulated_key = 0;
+		g_debug_simulated_key = 0;
 		return make_reg(0, 1);
 	}
 
@@ -91,10 +90,10 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case SCI_EVT_KEYBOARD:
 		if ((e.buckybits & SCI_EVM_LSHIFT) && (e.buckybits & SCI_EVM_RSHIFT) && (e.data == '-')) {
 			sciprintf("Debug mode activated\n");
-			_debug_seeking = _debug_step_running = 0;
+			g_debug_seeking = g_debug_step_running = 0;
 		} else if ((e.buckybits & SCI_EVM_CTRL) && (e.data == '`')) {
 			sciprintf("Debug mode activated\n");
-			_debug_seeking = _debug_step_running = 0;
+			g_debug_seeking = g_debug_step_running = 0;
 		} else {
 			PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);
@@ -110,7 +109,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int extra_bits = 0;
 
 		// track left buttton clicks, if requested
-		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && debug_track_mouse_clicks) {
+		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && g_debug_track_mouse_clicks) {
 			((SciEngine *)g_engine)->getDebugger()->DebugPrintf("Mouse clicked at %d, %d\n", 
 						s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 		}
@@ -138,8 +137,8 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->r_acc = NULL_REG; // Unknown or no event
 	}
 
-	if ((s->r_acc.offset) && (stop_on_event)) {
-		stop_on_event = 0;
+	if ((s->r_acc.offset) && (g_stop_on_event)) {
+		g_stop_on_event = 0;
 	}
 
 	return s->r_acc;

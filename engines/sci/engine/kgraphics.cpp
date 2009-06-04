@@ -27,7 +27,7 @@
 #include "common/events.h"
 
 #include "sci/sci.h"
-#include "sci/console.h"	// for debug_sleeptime_factor
+#include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
@@ -369,8 +369,6 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-extern int oldx, oldy;
-
 reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::Point newpos;
 
@@ -647,8 +645,6 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-extern int debug_sleeptime_factor;
-
 reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint32 time;
 	int sleep_time = UKPV(0);
@@ -660,7 +656,7 @@ reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Reset optimization flags: Game is playing along nicely anyway
 	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT | KERNEL_OPT_FLAG_GOT_2NDEVENT);
 
-	sleep_time *= debug_sleeptime_factor;
+	sleep_time *= g_debug_sleeptime_factor;
 	GFX_ASSERT(gfxop_sleep(s->gfx_state, sleep_time * 1000 / 60));
 
 	return s->r_acc;

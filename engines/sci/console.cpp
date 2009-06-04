@@ -27,6 +27,7 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
+#include "sci/debug.h"
 #include "sci/resource.h"
 #include "sci/vocabulary.h"
 #include "sci/engine/savegame.h"
@@ -47,21 +48,21 @@ namespace Sci {
 
 extern EngineState *g_EngineState;
 
-int debug_sleeptime_factor = 1;
-int debug_simulated_key = 0;
-bool debug_track_mouse_clicks = false;
-bool debug_weak_validations = true;
+int g_debug_sleeptime_factor = 1;
+int g_debug_simulated_key = 0;
+bool g_debug_track_mouse_clicks = false;
+bool g_debug_weak_validations = true;
 
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
 	// Variables
-	DVar_Register("sleeptime_factor",	&debug_sleeptime_factor, DVAR_INT, 0);
+	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
 	DVar_Register("gc_interval",		&script_gc_interval, DVAR_INT, 0);
-	DVar_Register("simulated_key",		&debug_simulated_key, DVAR_INT, 0);
-	DVar_Register("track_mouse_clicks",	&debug_track_mouse_clicks, DVAR_BOOL, 0);
-	DVar_Register("weak_validations",	&debug_weak_validations, DVAR_BOOL, 0);
+	DVar_Register("simulated_key",		&g_debug_simulated_key, DVAR_INT, 0);
+	DVar_Register("track_mouse_clicks",	&g_debug_track_mouse_clicks, DVAR_BOOL, 0);
+	DVar_Register("weak_validations",	&g_debug_weak_validations, DVAR_BOOL, 0);
 
 	// General
 	DCmd_Register("help",				WRAP_METHOD(Console, cmdHelp));
@@ -667,7 +668,7 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 		g_EngineState->successor = newstate; // Set successor
 
 		script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
-		_debugstate_valid = 0;
+		g_debugstate_valid = 0;
 
 		shrink_execution_stack(g_EngineState, g_EngineState->execution_stack_base + 1);
 		return 0;
@@ -698,7 +699,7 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 
 	g_EngineState->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	script_abort_flag = 1;
-	_debugstate_valid = 0;
+	g_debugstate_valid = 0;
 
 	return false;
 }
@@ -2347,9 +2348,9 @@ bool Console::cmdExit(int argc, const char **argv) {
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
 		script_abort_flag = 1; // Terminate VM
-		_debugstate_valid = 0;
-		_debug_seeking = 0;
-		_debug_step_running = 0;
+		g_debugstate_valid = 0;
+		g_debug_seeking = 0;
+		g_debug_step_running = 0;
 
 	} else if (!scumm_stricmp(argv[1], "now")) {
 		// Quit ungracefully

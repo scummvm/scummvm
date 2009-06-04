@@ -28,6 +28,7 @@
 #include <time.h>	// FIXME: For struct tm
 
 #include "sci/sci.h"
+#include "sci/debug.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
@@ -95,7 +96,7 @@ reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	sciprintf("Debug mode activated\n");
 
-	_debug_seeking = _debug_step_running = 0;
+	g_debug_seeking = g_debug_step_running = 0;
 	return s->r_acc;
 }
 

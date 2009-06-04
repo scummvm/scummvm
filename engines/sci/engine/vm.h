@@ -806,11 +806,6 @@ extern int script_gc_interval;
 extern int script_step_counter;
 
 
-extern int _debugstate_valid;
-extern int _debug_seeking;
-extern int _debug_step_running;
-
-
 typedef int kernel_function(struct EngineState *s);
 
 extern kernel_function* kfuncs[];
