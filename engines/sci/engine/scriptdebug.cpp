@@ -271,7 +271,7 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 
 	selectors = obj->_variables.size();
 
-	if (s->version < SCI_VERSION_1_1)
+	if (s->_version < SCI_VERSION_1_1)
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
@@ -466,7 +466,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			int stackframe = (scr[pos.offset + 2] >> 1) + (*p_restadjust);
 			int argc = ((*p_sp)[- stackframe - 1]).offset;
 
-			if (!(s->flags & GF_SCI0_OLD))
+			if (!(s->_flags & GF_SCI0_OLD))
 				argc += (*p_restadjust);
 
 			sciprintf(" Kernel params: (");

@@ -273,7 +273,7 @@ static void bresenham_autodetect(EngineState *s) {
 		}
 
 		buf = s->seg_manager->getScript(fptr.segment)->buf + fptr.offset;
-		handle_movecnt = (s->version <= SCI_VERSION_0 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
+		handle_movecnt = (s->_version <= SCI_VERSION_0 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
 		sciprintf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
 	} else {
 		warning("bresenham_autodetect failed");
@@ -292,7 +292,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int completed = 0;
 	int max_movcnt = GET_SEL32V(client, moveSpeed);
 
-	if (s->version > SCI_VERSION_0)
+	if (s->_version > SCI_VERSION_0)
 		signal &= ~_K_VIEW_SIG_FLAG_HIT_OBSTACLE;
 
 	if (handle_movecnt == UNINITIALIZED)
@@ -379,7 +379,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		completed = 1;
 	}
 
-	if (s->version > SCI_VERSION_0)
+	if (s->_version > SCI_VERSION_0)
 		if (completed)
 			invoke_selector(INV_SEL(mover, moveDone, kStopOnInvalidSelector), 0);
 

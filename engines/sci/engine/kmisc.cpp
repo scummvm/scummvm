@@ -121,7 +121,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	g_system->getTimeAndDate(loc_time);
 	start_time = g_system->getMillis() - s->game_start_time;
 
-	if ((s->flags & GF_SCI0_OLDGETTIME) && argc) { // Use old semantics
+	if ((s->_flags & GF_SCI0_OLDGETTIME) && argc) { // Use old semantics
 		retval = (loc_time.tm_hour % 12) * 3600 + loc_time.tm_min * 60 + loc_time.tm_sec;
 		debugC(2, kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
 		return make_reg(0, retval);

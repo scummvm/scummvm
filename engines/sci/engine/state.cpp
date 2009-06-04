@@ -27,7 +27,8 @@
 
 namespace Sci {
 
-EngineState::EngineState() : _dirseeker(this) {
+EngineState::EngineState(ResourceManager *res, sci_version_t version, uint32 flags)
+: resmgr(res), _version(version), _flags(flags), _dirseeker(this) {
 	widget_serial_counter = 0;
 
 	resmgr = 0;
@@ -79,9 +80,6 @@ EngineState::EngineState() : _dirseeker(this) {
 	priority_last = 0;
 
 	last_wait_time = 0;
-
-	version = 0;
-	flags = 0;
 
 	kernel_opt_flags = 0;
 

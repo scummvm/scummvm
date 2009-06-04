@@ -971,7 +971,7 @@ void run_vm(EngineState *s, int restoring) {
 			gc_countdown(s);
 
 			xs->sp -= (opparams[1] >> 1) + 1;
-			if (!(s->flags & GF_SCI0_OLD)) {
+			if (!(s->_flags & GF_SCI0_OLD)) {
 				xs->sp -= restadjust;
 				s->r_amp_rest = 0; // We just used up the restadjust, remember?
 			}
@@ -981,7 +981,7 @@ void run_vm(EngineState *s, int restoring) {
 			} else {
 				int argc = ASSERT_ARITHMETIC(xs->sp[0]);
 
-				if (!(s->flags & GF_SCI0_OLD))
+				if (!(s->_flags & GF_SCI0_OLD))
 					argc += restadjust;
 
 				if (s->_kernel->_kernelFuncs[opparams[0]].signature
@@ -998,7 +998,7 @@ void run_vm(EngineState *s, int restoring) {
 				xs_new = &(s->_executionStack.back());
 				s->_executionStackPosChanged = true;
 
-				if (!(s->flags & GF_SCI0_OLD))
+				if (!(s->_flags & GF_SCI0_OLD))
 					restadjust = s->r_amp_rest;
 
 			}
@@ -1201,10 +1201,10 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x39: // lofsa
 			s->r_acc.segment = xs->addr.pc.segment;
 
-			if (s->version >= SCI_VERSION_1_1) {
+			if (s->_version >= SCI_VERSION_1_1) {
 				s->r_acc.offset = opparams[0] + local_script->script_size;
 			} else {
-				if (s->flags & GF_SCI1_LOFSABSOLUTE)
+				if (s->_flags & GF_SCI1_LOFSABSOLUTE)
 					s->r_acc.offset = opparams[0];
 				else
 					s->r_acc.offset = xs->addr.pc.offset + opparams[0];
@@ -1221,7 +1221,7 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x3a: // lofss
 			r_temp.segment = xs->addr.pc.segment;
 
-			if (s->flags & GF_SCI1_LOFSABSOLUTE)
+			if (s->_flags & GF_SCI1_LOFSABSOLUTE)
 				r_temp.offset = opparams[0];
 			else
 				r_temp.offset = xs->addr.pc.offset + opparams[0];
@@ -1441,7 +1441,7 @@ static int _obj_locate_varselector(EngineState *s, Object *obj, Selector slc) {
 	// Determines if obj explicitly defines slc as a varselector
 	// Returns -1 if not found
 
-	if (s->version < SCI_VERSION_1_1) {
+	if (s->_version < SCI_VERSION_1_1) {
 		int varnum = obj->variable_names_nr;
 		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
 		int i;
@@ -1514,7 +1514,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
 	// toggle, meaning that we must remove it for selector lookup.
-	if (s->flags & GF_SCI0_OLD)
+	if (s->_flags & GF_SCI0_OLD)
 		selector_id &= ~1;
 
 	if (!obj) {
@@ -1608,12 +1608,12 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 	*was_new = 1;
 
 	*script = s->resmgr->findResource(kResourceTypeScript, script_nr, 0);
-	if (s->version >= SCI_VERSION_1_1)
+	if (s->_version >= SCI_VERSION_1_1)
 		*heap = s->resmgr->findResource(kResourceTypeHeap, script_nr, 0);
 
-	if (!*script || (s->version >= SCI_VERSION_1_1 && !heap)) {
+	if (!*script || (s->_version >= SCI_VERSION_1_1 && !heap)) {
 		sciprintf("Script 0x%x requested but not found\n", script_nr);
-		if (s->version >= SCI_VERSION_1_1) {
+		if (s->_version >= SCI_VERSION_1_1) {
 			if (*heap)
 				sciprintf("Inconsistency: heap resource WAS found\n");
 			else if (*script)
@@ -1680,7 +1680,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 
 	Script *scr = s->seg_manager->getScript(seg_id);
 
-	if (s->flags & GF_SCI0_OLD) {
+	if (s->_flags & GF_SCI0_OLD) {
 		//
 		int locals_nr = READ_LE_UINT16(script->data);
 
@@ -1849,14 +1849,14 @@ int script_instantiate_sci11(EngineState *s, int script_nr) {
 }
 
 int script_instantiate(EngineState *s, int script_nr) {
-	if (s->version >= SCI_VERSION_1_1)
+	if (s->_version >= SCI_VERSION_1_1)
 		return script_instantiate_sci11(s, script_nr);
 	else
 		return script_instantiate_sci0(s, script_nr);
 }
 
 void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
-	reg_t reg = make_reg(seg, (s->flags & GF_SCI0_OLD) ? 2 : 0);
+	reg_t reg = make_reg(seg, (s->_flags & GF_SCI0_OLD) ? 2 : 0);
 	int objtype, objlength;
 	Script *scr = s->seg_manager->getScript(seg);
 
@@ -1900,7 +1900,7 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 }
 
 void script_uninstantiate(EngineState *s, int script_nr) {
-	reg_t reg = make_reg(0, (s->flags & GF_SCI0_OLD) ? 2 : 0);
+	reg_t reg = make_reg(0, (s->_flags & GF_SCI0_OLD) ? 2 : 0);
 
 	reg.segment = s->seg_manager->segGet(script_nr);
 	Script *scr = script_locate_by_segment(s, reg.segment);
@@ -1921,7 +1921,7 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 		if (s->_classtable[i].reg.segment == reg.segment)
 			s->_classtable[i].reg = NULL_REG;
 
-	if (s->version < SCI_VERSION_1_1)
+	if (s->_version < SCI_VERSION_1_1)
 		script_uninstantiate_sci0(s, script_nr, reg.segment);
 	else
 		sciprintf("FIXME: Add proper script uninstantiation for SCI 1.1\n");
@@ -1959,7 +1959,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 
 			game_exit(s);
 			script_free_engine(s);
-			script_init_engine(s, s->version);
+			script_init_engine(s);
 			game_init(s);
 			sfx_reset_player();
 			_init_stack_base_with_selector(s, s->_kernel->_selectorMap.play);

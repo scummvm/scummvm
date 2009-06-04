@@ -124,10 +124,9 @@ Common::Error SciEngine::run() {
 
 	// FIXME/TODO: Move some of the stuff below to init()
 
-	sci_version_t version;
+	const sci_version_t version = getVersion();
+	const uint32 flags = getFlags();
 	int res_version = getResourceVersion();
-
-	version = getVersion();
 
 	_resmgr = new ResourceManager(res_version, 256 * 1024);
 
@@ -144,37 +143,34 @@ Common::Error SciEngine::run() {
 	map_MIDI_instruments(_resmgr);
 #endif
 
-	_gamestate = new EngineState();
-	_gamestate->resmgr = _resmgr;
-	_gamestate->gfx_state = NULL;
-	_gamestate->flags = getFlags();
+	_gamestate = new EngineState(_resmgr, version, flags);
 
 	// Verify that we haven't got an invalid game detection entry
 	if (version < SCI_VERSION_1_EARLY) {
 		// SCI0/SCI01
-		if (_gamestate->flags & GF_SCI1_EGA ||
-			_gamestate->flags & GF_SCI1_LOFSABSOLUTE ||
-			_gamestate->flags & GF_SCI1_NEWDOSOUND) {
+		if (flags & GF_SCI1_EGA ||
+			flags & GF_SCI1_LOFSABSOLUTE ||
+			flags & GF_SCI1_NEWDOSOUND) {
 			error("This game entry is erroneous. It's marked as SCI0/SCI01, but it has SCI1 flags set");
 		}
 	} else if (version >= SCI_VERSION_1_EARLY && version <= SCI_VERSION_1_LATE) {
 		// SCI1
 
-		if (_gamestate->flags & GF_SCI0_OLD ||
-			_gamestate->flags & GF_SCI0_OLDGFXFUNCS ||
-			_gamestate->flags & GF_SCI0_OLDGETTIME) {
+		if (flags & GF_SCI0_OLD ||
+			flags & GF_SCI0_OLDGFXFUNCS ||
+			flags & GF_SCI0_OLDGETTIME) {
 			error("This game entry is erroneous. It's marked as SCI1, but it has SCI0 flags set");
 		}
 	} else if (version == SCI_VERSION_1_1 || version == SCI_VERSION_32) {
-		if (_gamestate->flags & GF_SCI1_EGA ||
-			_gamestate->flags & GF_SCI1_LOFSABSOLUTE ||
-			_gamestate->flags & GF_SCI1_NEWDOSOUND) {
+		if (flags & GF_SCI1_EGA ||
+			flags & GF_SCI1_LOFSABSOLUTE ||
+			flags & GF_SCI1_NEWDOSOUND) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI1 flags set");
 		}
 
-		if (_gamestate->flags & GF_SCI0_OLD ||
-			_gamestate->flags & GF_SCI0_OLDGFXFUNCS ||
-			_gamestate->flags & GF_SCI0_OLDGETTIME) {
+		if (flags & GF_SCI0_OLD ||
+			flags & GF_SCI0_OLDGFXFUNCS ||
+			flags & GF_SCI0_OLDGETTIME) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI0 flags set");
 		}
 
@@ -183,7 +179,7 @@ Common::Error SciEngine::run() {
 		error ("Unknown SCI version in game entry");
 	}
 
-	if (script_init_engine(_gamestate, version))
+	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
 
 

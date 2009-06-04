@@ -109,7 +109,7 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState();
+	EngineState(ResourceManager *res, sci_version_t version, uint32 flags);
 	virtual ~EngineState();
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
@@ -117,6 +117,9 @@ public:
 	int widget_serial_counter; /**< Used for savegames */
 
 	ResourceManager *resmgr; /**< The resource manager */
+
+	const sci_version_t _version; /**< The approximated patchlevel of the version to emulate */
+	const uint32 _flags;			/**< Specific game flags */
 
 	Common::String _gameName; /**< Designation of the primary object (which inherits from Game) */
 	char *game_version;
@@ -173,9 +176,6 @@ public:
 
 	uint32 game_start_time; /**< The time at which the interpreter was started */
 	uint32 last_wait_time; /**< The last time the game invoked Wait() */
-
-	sci_version_t version; /**< The approximated patchlevel of the version to emulate */
-	uint32 flags;			/**< Specific game flags */
 
 	unsigned int kernel_opt_flags; /**< Kernel optimization flags- used for performance tweaking */
 

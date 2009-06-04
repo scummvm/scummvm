@@ -154,7 +154,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	song_handle_t handle;
 	int cue;
 
-	if (s->version >= SCI_VERSION_01)
+	if (s->_version >= SCI_VERSION_01)
 		return;
 	/* SCI01 and later explicitly poll for everything */
 
@@ -964,9 +964,9 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (s->version >= SCI_VERSION_1_1 || s->flags & GF_SCI1_NEWDOSOUND)
+	if (s->_version >= SCI_VERSION_1_1 || s->_flags & GF_SCI1_NEWDOSOUND)
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
-	else if (s->version >= SCI_VERSION_01)
+	else if (s->_version >= SCI_VERSION_01)
 		return kDoSound_SCI01(s, funct_nr, argc, argv);
 	else
 		return kDoSound_SCI0(s, funct_nr, argc, argv);
@@ -978,7 +978,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int sampleLen = 0;
 
 	if (!s->_sound._audioResource)
-		s->_sound._audioResource = new AudioResource(s->resmgr, s->version);
+		s->_sound._audioResource = new AudioResource(s->resmgr, s->_version);
 
 	switch (UKPV(0)) {
 	case kSciAudioWPlay:

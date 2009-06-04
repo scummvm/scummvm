@@ -67,12 +67,12 @@ struct Object;
 #define SCRIPT_FUNCTAREAPTR_MAGIC 8 -8
 
 /** Offset of the name pointer */
-#define SCRIPT_NAME_OFFSET (s->version < SCI_VERSION_1_1 ? 14 -8 : 16)
-#define SCRIPT_NAME_SELECTOR (s->version < SCI_VERSION_1_1 ? 3 : 8)
+#define SCRIPT_NAME_OFFSET (s->_version < SCI_VERSION_1_1 ? 14 -8 : 16)
+#define SCRIPT_NAME_SELECTOR (s->_version < SCI_VERSION_1_1 ? 3 : 8)
 
 /** Object-relative offset of the -info- selector */
-#define SCRIPT_INFO_OFFSET (s->version < SCI_VERSION_1_1 ? 12 -8 : 14)
-#define SCRIPT_INFO_SELECTOR (s->version < SCI_VERSION_1_1 ? 2 : 7)
+#define SCRIPT_INFO_OFFSET (s->_version < SCI_VERSION_1_1 ? 12 -8 : 14)
+#define SCRIPT_INFO_SELECTOR (s->_version < SCI_VERSION_1_1 ? 2 : 7)
 
 /** Flag fo the -info- selector */
 #define SCRIPT_INFO_CLONE 0x0001
@@ -84,18 +84,18 @@ struct Object;
 /** Magical object identifier */
 #define SCRIPT_OBJECT_MAGIC_NUMBER 0x1234
 /** Offset of this identifier */
-#define SCRIPT_OBJECT_MAGIC_OFFSET (s->version < SCI_VERSION_1_1 ? -8 : 0)
+#define SCRIPT_OBJECT_MAGIC_OFFSET (s->_version < SCI_VERSION_1_1 ? -8 : 0)
 
 /** Script-relative offset of the species ID */
 #define SCRIPT_SPECIES_OFFSET 8 -8
 
-#define SCRIPT_SUPERCLASS_OFFSET (s->version < SCI_VERSION_1_1 ? 10 -8 : 12)
+#define SCRIPT_SUPERCLASS_OFFSET (s->_version < SCI_VERSION_1_1 ? 10 -8 : 12)
 
 /*---------------------------------*/
 /* Script selector index variables */
 /*---------------------------------*/
-#define SCRIPT_SPECIES_SELECTOR (s->version < SCI_VERSION_1_1 ? 0 : 5)
-#define SCRIPT_SUPERCLASS_SELECTOR (s->version < SCI_VERSION_1_1 ? 1 : 6)
+#define SCRIPT_SPECIES_SELECTOR (s->_version < SCI_VERSION_1_1 ? 0 : 5)
+#define SCRIPT_SUPERCLASS_SELECTOR (s->_version < SCI_VERSION_1_1 ? 1 : 6)
 #define SCRIPT_CLASSSCRIPT_SELECTOR 4
 
 /** Magic adjustment value for lofsa and lofss */
@@ -402,7 +402,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 ** Returns   : (void)
 */
 
-int script_init_engine(EngineState *s, sci_version_t version);
+int script_init_engine(EngineState *s);
 /* Initializes a EngineState block
 ** Parameters: (EngineState *) s: The state to initialize
 ** Returns   : 0 on success, 1 if vocab.996 (the class table) is missing or corrupted

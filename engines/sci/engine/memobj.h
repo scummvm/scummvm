@@ -215,16 +215,16 @@ struct CodeBlock {
 };
 
 #define VM_OBJECT_GET_VARSELECTOR(obj, i)  \
-	(s->version < SCI_VERSION_1_1 ? \
+	(s->_version < SCI_VERSION_1_1 ? \
 	 READ_LE_UINT16(obj->base_obj + obj->_variables.size() * 2 + i*2) : \
 	 *(obj->base_vars + i))
 #define VM_OBJECT_READ_PROPERTY(obj, i) (obj->_variables[i])
 #define VM_OBJECT_GET_FUNCSELECTOR(obj, i) \
-	(s->version < SCI_VERSION_1_1 ? \
+	(s->_version < SCI_VERSION_1_1 ? \
 	 READ_LE_UINT16((byte *) (obj->base_method + i)) : \
 	 READ_LE_UINT16((byte *) (obj->base_method + i*2 + 1)))
 #define VM_OBJECT_READ_FUNCTION(obj, i) \
-	(s->version < SCI_VERSION_1_1 ? \
+	(s->_version < SCI_VERSION_1_1 ? \
 	 make_reg(obj->pos.segment, \
 		 READ_LE_UINT16((byte *) (obj->base_method \
 				 + obj->methods_nr + 1 \
