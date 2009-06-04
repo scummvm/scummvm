@@ -954,6 +954,7 @@ public:
 	int _screenTop;
 
 	Common::RenderMode _renderMode;
+	uint8 _bitDepth;
 
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles
@@ -1039,7 +1040,8 @@ protected:
 	virtual void palManipulateInit(int resID, int start, int end, int time);
 	void palManipulate();
 public:
-	int convert16BitColor(uint16 color, uint8 r, uint8 g, uint8 b);
+	uint8 *getHEPaletteSlot(uint16 palSlot);
+	uint16 get16BitColor(uint8 r, uint8 g, uint8 b);
 	int remapPaletteColor(int r, int g, int b, int threshold);		// Used by Actor::remapActorPalette
 protected:
 	void moveMemInPalRes(int start, int end, byte direction);
@@ -1115,7 +1117,7 @@ public:
 	// HE specific
 	byte _HEV7ActorPalette[256];
 	uint8 *_hePalettes;
-	int16 *_hePaletteCache;
+	uint16 _hePaletteSlot;
 
 protected:
 	int _shadowPaletteSize;

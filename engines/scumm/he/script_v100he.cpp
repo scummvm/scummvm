@@ -2152,8 +2152,9 @@ void ScummEngine_v100he::o100_systemOps() {
 }
 
 void ScummEngine_v100he::o100_cursorCommand() {
-	int a, i;
+	int a, b, i;
 	int args[16];
+
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
@@ -2168,12 +2169,12 @@ void ScummEngine_v100he::o100_cursorCommand() {
 	case 0x80:
 	case 0x81:
 		a = pop();
-		_wiz->loadWizCursor(a);
+		_wiz->loadWizCursor(a, 0);
 		break;
 	case 0x82:
-		pop();
+		b = pop();
 		a = pop();
-		_wiz->loadWizCursor(a);
+		_wiz->loadWizCursor(a, b);
 		break;
 	case 0x86:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;
@@ -2576,7 +2577,8 @@ void ScummEngine_v100he::o100_getWizData() {
 }
 
 void ScummEngine_v100he::o100_getPaletteData() {
-	int b, c, d, e;
+	int c, d, e;
+	int r, g, b;
 	int palSlot, color;
 
 	byte subOp = fetchScriptByte();
@@ -2585,7 +2587,10 @@ void ScummEngine_v100he::o100_getPaletteData() {
 	case 13:
 		c = pop();
 		b = pop();
-		push(getHEPaletteColorComponent(1, b, c));
+		if (_game.features & GF_16BIT_COLOR)
+			push(getHEPalette16BitColorComponent(b, c));
+		else
+			push(getHEPaletteColorComponent(1, b, c));
 		break;
 	case 20:
 		color = pop();
@@ -2596,20 +2601,30 @@ void ScummEngine_v100he::o100_getPaletteData() {
 		e = pop();
 		d = pop();
 		palSlot = pop();
-		pop();
-		c = pop();
 		b = pop();
-		push(getHEPaletteSimilarColor(palSlot, b, c, d, e));
+		g = pop();
+		r = pop();
+		push(getHEPaletteSimilarColor(palSlot, r, g, d, e));
 		break;
 	case 53:
-		pop();
-		c = pop();
-		c = MAX(0, c);
-		c = MIN(c, 255);
 		b = pop();
 		b = MAX(0, b);
 		b = MIN(b, 255);
-		push(getHEPaletteSimilarColor(1, b, c, 10, 245));
+		g = pop();
+		g = MAX(0, g);
+		g = MIN(g, 255);
+		r = pop();
+		r = MAX(0, r);
+		r = MIN(r, 255);
+		if (_game.features & GF_16BIT_COLOR) {
+			uint32 ar = ((r >> 3) << 10) & 0xFFFF;
+			uint32 ag = ((g >> 3) <<  5) & 0xFFFF;
+			uint32 ab = ((b >> 3) <<  0) & 0xFFFF;
+			uint32 col = ar | ag | ab;
+			push(col);
+		} else {
+			push(getHEPaletteSimilarColor(1, r, g, 10, 245));
+		}
 		break;
 	case 73:
 		c = pop();

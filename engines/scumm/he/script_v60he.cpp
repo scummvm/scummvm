@@ -115,6 +115,8 @@ int ScummEngine_v60he::convertFilePath(byte *dst) {
 	int r = 0;
 	if (dst[0] == '.' && dst[1] == '/') { // Game Data Path
 		r = 2;
+	} else if (dst[2] == 'b' && dst[5] == 'k') { // Backyard Basketball INI
+		r = 13;
 	} else if (dst[0] == '*' && dst[1] == '/') { // Save Game Path (HE72 - HE100)
 		r = 2;
 	} else if (dst[0] == 'c' && dst[1] == ':') { // Save Game Path (HE60 - HE71)

@@ -60,7 +60,7 @@ protected:
 	uint16 _codec;
 
 	// actor _palette
-	byte _palette[256];
+	uint16 _palette[256];
 	bool _useBompPalette;
 
 	// pointer to various parts of the costume resource

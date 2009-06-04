@@ -1253,7 +1253,7 @@ void ScummEngine_v90he::o90_setSpriteGroupInfo() {
 
 void ScummEngine_v90he::o90_getWizData() {
 	byte filename[4096];
-	int state, resId;
+	int resId, state, type;
 	int32 w, h;
 	int32 x, y;
 
@@ -1317,9 +1317,10 @@ void ScummEngine_v90he::o90_getWizData() {
 		push(computeWizHistogram(resId, state, x, y, w, h));
 		break;
 	case 139:
-		pop();
-		pop();
-		push(0);
+		type = pop();
+		state = pop();
+		resId = pop();
+		push(_wiz->getWizImageData(resId, state, type));
 		break;
 	case 141:
 		pop();
@@ -2099,7 +2100,8 @@ void ScummEngine_v90he::o90_getObjectData() {
 }
 
 void ScummEngine_v90he::o90_getPaletteData() {
-	int b, c, d, e;
+	int c, d, e;
+	int r, g, b;
 	int palSlot, color;
 
 	byte subOp = fetchScriptByte();
@@ -2109,10 +2111,10 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		e = pop();
 		d = pop();
 		palSlot = pop();
-		pop();
-		c = pop();
 		b = pop();
-		push(getHEPaletteSimilarColor(palSlot, b, c, d, e));
+		g = pop();
+		r = pop();
+		push(getHEPaletteSimilarColor(palSlot, r, g, d, e));
 		break;
 	case 52:
 		c = pop();
@@ -2128,17 +2130,31 @@ void ScummEngine_v90he::o90_getPaletteData() {
 	case 132:
 		c = pop();
 		b = pop();
-		push(getHEPaletteColorComponent(1, b, c));
+		if (_game.features & GF_16BIT_COLOR)
+			push(getHEPalette16BitColorComponent(b, c));
+		else
+			push(getHEPaletteColorComponent(1, b, c));
 		break;
 	case 217:
-		pop();
-		c = pop();
-		c = MAX(0, c);
-		c = MIN(c, 255);
 		b = pop();
 		b = MAX(0, b);
 		b = MIN(b, 255);
-		push(getHEPaletteSimilarColor(1, b, c, 10, 245));
+		g = pop();
+		g = MAX(0, g);
+		g = MIN(g, 255);
+		r = pop();
+		r = MAX(0, r);
+		r = MIN(r, 255);
+
+		if (_game.features & GF_16BIT_COLOR) {
+			uint32 ar = ((r >> 3) << 10) & 0xFFFF;
+			uint32 ag = ((g >> 3) <<  5) & 0xFFFF;
+			uint32 ab = ((b >> 3) <<  0) & 0xFFFF;
+			uint32 col = ar | ag | ab;
+			push(col);
+		} else {
+			push(getHEPaletteSimilarColor(1, r, g, 10, 245));
+		}
 		break;
 	default:
 		error("o90_getPaletteData: Unknown case %d", subOp);
