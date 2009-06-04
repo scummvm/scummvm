@@ -88,7 +88,6 @@ enum ResSourceType {
 #define SCI1_RESMAP_ENTRIES_SIZE 6
 #define SCI11_RESMAP_ENTRIES_SIZE 5
 
-extern const char *sci_error_types[];
 extern const char *sci_version_types[];
 extern const int sci_max_resource_nr[]; /**< Highest possible resource numbers */
 
@@ -118,8 +117,6 @@ enum ResourceType {
 };
 
 const char *getResourceTypeName(ResourceType restype);
-// Suffixes for SCI1 patch files
-const char *getResourceTypeSuffix(ResourceType restype);
 
 #define sci0_last_resource kResourceTypePatch
 #define sci1_last_resource kResourceTypeHeap
@@ -141,8 +138,11 @@ struct ResourceSource {
 	ResourceSource *next;
 };
 
+class ResourceManager;
+
 /** Class for storing resources in memory */
 class Resource {
+	friend class ResourceManager;
 public:
 	Resource();
 	~Resource();
@@ -155,10 +155,11 @@ public:
 	uint16 number;
 	ResourceType type;
 	uint32 id;	//!< contains number and type.
-	unsigned int size;
-	unsigned int file_offset; /**< Offset in file */
+	uint32 size;
+protected:
+	uint32 file_offset; /**< Offset in file */
 	ResourceStatus status;
-	unsigned short lockers; /**< Number of places where this resource was locked */
+	uint16 lockers; /**< Number of places where this resource was locked */
 	ResourceSource *source;
 };
 
@@ -191,7 +192,7 @@ public:
 	 * @note Locked resources are guaranteed not to have their contents freed until
 	 *       they are unlocked explicitly (by unlockResource).
 	 */
-	Resource *findResource(ResourceType type, int number, int lock);
+	Resource *findResource(ResourceType type, int number, bool lock);
 
 	/* Unlocks a previously locked resource
 	**             (Resource *) res: The resource to free
@@ -291,6 +292,8 @@ protected:
 	void printLRU();
 	void addToLRU(Resource *res);
 	void removeFromLRU(Resource *res);
+
+	int guessSciVersion();
 };
 
 /**

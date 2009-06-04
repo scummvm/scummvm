@@ -63,7 +63,7 @@ enum SolFlags {
 	kSolFlagIsSigned   = 1 << 3
 };
 
-const char *sci_error_types[] = {
+static const char *sci_error_types[] = {
 	"No error",
 	"I/O error",
 	"Resource is empty (size 0)",
@@ -78,7 +78,7 @@ const char *sci_error_types[] = {
 };
 
 // These are the 20 resource types supported by SCI1.1
-const char *resourceTypeNames[] = {
+static const char *resourceTypeNames[] = {
 	"view", "pic", "script", "text", "sound",
 	"memory", "vocab", "font", "cursor",
 	"patch", "bitmap", "palette", "cdaudio",
@@ -86,7 +86,7 @@ const char *resourceTypeNames[] = {
 	"audio36", "sync36"
 };
 
-const char *resourceTypeSuffixes[] = {
+static const char *resourceTypeSuffixes[] = {
 	"v56", "p56", "scr", "tex", "snd",
 	"   ", "voc", "fon", "cur", "pat",
 	"bit", "pal", "cda", "aud", "syn",
@@ -96,13 +96,6 @@ const char *resourceTypeSuffixes[] = {
 const char *getResourceTypeName(ResourceType restype) {
 	return resourceTypeNames[restype];
 }
-
-const char *getResourceTypeSuffix(ResourceType restype) {
-	return resourceTypeSuffixes[restype];
-}
-
-typedef int decomp_funct(Resource *result, Common::ReadStream &stream, int sci_version);
-typedef void patch_sprintf_funct(char *string, Resource *res);
 
 //-- Resource main functions --
 Resource::Resource() {
@@ -290,7 +283,7 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 	return compressionMethod;
 }
 
-int sci_test_view_type(ResourceManager *mgr) {
+int ResourceManager::guessSciVersion() {
 	Common::File file;
 	char filename[MAXPATHLEN];
 	int compression;
@@ -298,7 +291,7 @@ int sci_test_view_type(ResourceManager *mgr) {
 	int i;
 
 	for (i = 0; i < 1000; i++) {
-		res = mgr->testResource(kResourceTypeView, i);
+		res = testResource(kResourceTypeView, i);
 
 		if (!res)
 			continue;
@@ -322,7 +315,7 @@ int sci_test_view_type(ResourceManager *mgr) {
 
 	// Try the same thing with pics
 	for (i = 0; i < 1000; i++) {
-		res = mgr->testResource(kResourceTypePic, i);
+		res = testResource(kResourceTypePic, i);
 
 		if (!res)
 			continue;
@@ -442,14 +435,14 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		switch (_mapVersion) {
 		case SCI_VERSION_0:
 			if (testResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB)) {
-				version = sci_test_view_type(this) ? SCI_VERSION_01_VGA : SCI_VERSION_0;
+				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
 			} else if (testResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB)) {
-				version = sci_test_view_type(this);
+				version = guessSciVersion();
 				if (version != SCI_VERSION_01_VGA) {
 					version = testResource(kResourceTypeVocab, 912) ? SCI_VERSION_0 : SCI_VERSION_01;
 				}
 			} else {
-				version = sci_test_view_type(this) ? SCI_VERSION_01_VGA : SCI_VERSION_0;
+				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
 			}
 			break;
 		case SCI_VERSION_01_VGA_ODD:
@@ -586,7 +579,7 @@ void ResourceManager::freeOldResources(int last_invulnerable) {
 	}
 }
 
-Resource *ResourceManager::findResource(ResourceType type, int number, int lock) {
+Resource *ResourceManager::findResource(ResourceType type, int number, bool lock) {
 	Resource *retval;
 
 	if (number >= sci_max_resource_nr[_sciVersion]) {
@@ -863,7 +856,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 		SearchMan.listMatchingMembers(files, mask);
 		// SCI1 and later naming - nnn.typ
 		mask = "*.";
-		mask += getResourceTypeSuffix((ResourceType)i);
+		mask += resourceTypeSuffixes[i];
 		SearchMan.listMatchingMembers(files, mask);
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); x++) {
 			bAdd = false;
