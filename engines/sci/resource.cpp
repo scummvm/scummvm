@@ -1231,7 +1231,7 @@ bool AudioResource::findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &o
 		return false;
 
 	byte *ptr = _audioMapSCI1;
-	while ((n = READ_UINT16(ptr)) != 0xFFFF) {
+	while ((n = READ_LE_UINT16(ptr)) != 0xFFFF) {
 		if (n == audioNumber) {
 			off = READ_LE_UINT32(ptr + 2);
 			size = READ_LE_UINT32(ptr + 6);
@@ -1264,7 +1264,7 @@ bool AudioResource::findAudEntrySCI11Late(uint32 audioNumber, uint32 &offset, bo
 
 	byte *ptr = _audioMapSCI11->data;
 
-	offset = READ_UINT32(ptr);
+	offset = READ_LE_UINT32(ptr);
 	ptr += 4;
 
 	while (ptr < _audioMapSCI11->data + _audioMapSCI11->size) {
@@ -1274,7 +1274,7 @@ bool AudioResource::findAudEntrySCI11Late(uint32 audioNumber, uint32 &offset, bo
 		if (n == 0xffffffff)
 			break;
 
-		offset += (READ_UINT16(ptr) | (ptr[2] << 16));
+		offset += READ_LE_UINT24(ptr);
 		ptr += 3;
 
 		int syncSkip = 0;
@@ -1284,9 +1284,9 @@ bool AudioResource::findAudEntrySCI11Late(uint32 audioNumber, uint32 &offset, bo
 
 			if (getSync) {
 				if (size)
-					*size = READ_UINT16(ptr);
+					*size = READ_LE_UINT16(ptr);
 			} else {
-				syncSkip = READ_UINT16(ptr);
+				syncSkip = READ_LE_UINT16(ptr);
 			}
 
 			ptr += 2;
@@ -1295,7 +1295,7 @@ bool AudioResource::findAudEntrySCI11Late(uint32 audioNumber, uint32 &offset, bo
 				n ^= 0x40;
 
 				if (!getSync)
-					syncSkip += READ_UINT16(ptr);
+					syncSkip += READ_LE_UINT16(ptr);
 
 				ptr += 2;
 			}
@@ -1339,10 +1339,10 @@ bool AudioResource::findAudEntrySCI11Early(uint32 audioNumber, uint32 &offset, b
 		if (n == 0xffffffff)
 			break;
 
-		offset = READ_UINT32(ptr);
+		offset = READ_LE_UINT32(ptr);
 		ptr += 4;
 
-		int syncSize = READ_UINT16(ptr);
+		int syncSize = READ_LE_UINT16(ptr);
 		ptr += 2;
 
 		if (n == audioNumber) {
@@ -1383,13 +1383,13 @@ bool AudioResource::findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 
 
 	if (volume == 65535) {
 		while (ptr < _audioMapSCI11->data + _audioMapSCI11->size) {
-			n = READ_UINT16(ptr);
+			n = READ_LE_UINT16(ptr);
 			ptr += 2;
 
 			if (n == 0xffff)
 				break;
 
-			offset = READ_UINT32(ptr);
+			offset = READ_LE_UINT32(ptr);
 			ptr += 4;
 
 			if (n == audioNumber)
