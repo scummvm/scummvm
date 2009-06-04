@@ -50,7 +50,7 @@ extern EngineState *g_EngineState;
 int debug_sleeptime_factor = 1;
 int debug_simulated_key = 0;
 bool debug_track_mouse_clicks = false;
-bool debug_weak_validations = false;
+bool debug_weak_validations = true;
 
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
