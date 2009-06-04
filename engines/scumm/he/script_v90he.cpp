@@ -2147,11 +2147,7 @@ void ScummEngine_v90he::o90_getPaletteData() {
 		r = MIN(r, 255);
 
 		if (_game.features & GF_16BIT_COLOR) {
-			uint32 ar = ((r >> 3) << 10) & 0xFFFF;
-			uint32 ag = ((g >> 3) <<  5) & 0xFFFF;
-			uint32 ab = ((b >> 3) <<  0) & 0xFFFF;
-			uint32 col = ar | ag | ab;
-			push(col);
+			push(get16BitColor(r, g, b));
 		} else {
 			push(getHEPaletteSimilarColor(1, r, g, 10, 245));
 		}

@@ -289,7 +289,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	} while ((uint16)mask);
 }
 
-void AkosRenderer::setPalette(byte *new_palette) {
+void AkosRenderer::setPalette(uint16 *new_palette) {
 	uint size, i;
 
 	size = _vm->getResourceDataSize(akpl);

@@ -107,7 +107,7 @@ public:
 	int16 _actorHitX, _actorHitY;
 	bool _actorHitResult;
 
-	void setPalette(byte *_palette);
+	void setPalette(uint16 *_palette);
 	void setFacing(const Actor *a);
 	void setCostume(int costume, int shadow);
 

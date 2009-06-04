@@ -145,7 +145,7 @@ public:
 	}
 	virtual ~BaseCostumeRenderer() {}
 
-	virtual void setPalette(byte *palette) = 0;
+	virtual void setPalette(uint16 *palette) = 0;
 	virtual void setFacing(const Actor *a) = 0;
 	virtual void setCostume(int costume, int shadow) = 0;
 
