@@ -47,12 +47,12 @@ struct opcode {
 };
 
 /* Generic description: */
-typedef reg_t kfunct(EngineState *s, int funct_nr, int argc, reg_t *argv);
+typedef reg_t KernelFunc(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
-struct kfunct_sig_pair_t {
-	kfunct *fun; /* The actual function */
-	const char *signature;  /* kfunct signature */
-	Common::String orig_name; /* Original name, in case we couldn't map it */
+struct KernelFuncWithSignature {
+	KernelFunc *fun; /**< The actual function */
+	const char *signature;  /**< KernelFunc signature */
+	Common::String orig_name; /**< Original name, in case we couldn't map it */
 };
 
 class Kernel {
@@ -88,7 +88,7 @@ public:
 	void dumpScriptClass(char *data, int seeker, int objsize);
 
 	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
-	Common::Array<kfunct_sig_pair_t> _kfuncTable; /**< Table of kernel functions */
+	Common::Array<KernelFuncWithSignature> _kfuncTable; /**< Table of kernel functions */
 
 private:
 	/**

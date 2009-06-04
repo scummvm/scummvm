@@ -1646,7 +1646,7 @@ bool Console::cmdValueType(int argc, const char **argv) {
 		return true;
 	}
 
-	int t = determine_reg_type(g_EngineState, val, 1);
+	int t = determine_reg_type(g_EngineState, val, true);
 	int invalid = t & KSIG_INVALID;
 
 	switch (t & ~KSIG_INVALID) {

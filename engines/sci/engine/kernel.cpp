@@ -298,16 +298,16 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x88*/ "DbugStr"
 };
 
-enum KernelFunctionType {
+enum KernelFuncType {
 	KF_NEW = 1,
 	KF_NONE = -1, /**< No mapping, but name is known */
 	KF_TERMINATOR = -42 /**< terminates kfunct_mappers */
 };
 
 struct SciKernelFunction {
-	KernelFunctionType type;
+	KernelFuncType type;
 	const char *name;
-	kfunct *fun; /* The actual function */
+	KernelFunc *fun; /* The actual function */
 	const char *signature;  /* kfunct signature */
 };
 
@@ -469,7 +469,14 @@ SciKernelFunction kfunct_mappers[] = {
 	{KF_TERMINATOR, NULL, NULL, NULL} // Terminator
 };
 
-static const char *argtype_description[] = { "Undetermined", "List", "Node", "Object", "Reference", "Arithmetic" };
+static const char *argtype_description[] = {
+	"Undetermined",
+	"List",
+	"Node",
+	"Object",
+	"Reference",
+	"Arithmetic"
+};
 
 Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
@@ -490,10 +497,6 @@ Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
 }
 
 Kernel::~Kernel() {
-	_selectorNames.clear();
-	_opcodes.clear();
-	_kernelNames.clear();
-	_kfuncTable.clear();
 }
 
 bool Kernel::loadSelectorNames(bool isOldSci0) {
@@ -577,7 +580,7 @@ int kfree(EngineState *s, reg_t handle) {
 	return 0;
 }
 
-void kernel_compile_signature(const char **s) {
+static void kernel_compile_signature(const char **s) {
 	const char *src = *s;
 	char *result;
 	int ellipsis = 0;
@@ -724,7 +727,7 @@ void Kernel::mapFunctions() {
 	return;
 }
 
-int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
+int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid) {
 	MemObject *mobj;
 
 	if (!reg.segment) {
@@ -806,9 +809,10 @@ const char *kernel_argtype_description(int type) {
 	return argtype_description[sci_ffs(type)];
 }
 
-int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *argv) {
+bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const reg_t *argv) {
+	// Always "match" if no signature is given
 	if (!sig)
-		return 1;
+		return true;
 
 	while (*sig && argc) {
 		if ((*sig & KSIG_ANY) != KSIG_ANY) {
@@ -816,17 +820,17 @@ int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *a
 
 			if (!type) {
 				sciprintf("[KERN] Could not determine type of ref %04x:%04x; failing signature check\n", PRINT_REG(*argv));
-				return 0;
+				return false;
 			}
 
 			if (type & KSIG_INVALID) {
 				sciprintf("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid\n",
 				          PRINT_REG(*argv), kernel_argtype_description(type));
-				return 0;
+				return false;
 			}
 
 			if (!(type & *sig))
-				return 0;
+				return false;
 
 		}
 		if (!(*sig & KSIG_ELLIPSIS))
@@ -836,7 +840,7 @@ int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *a
 	}
 
 	if (argc)
-		return 0; // Too many arguments
+		return false; // Too many arguments
 	else
 		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
 }
