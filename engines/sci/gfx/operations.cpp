@@ -1326,28 +1326,8 @@ int _gfxop_shiftify(int c) {
 		}
 	}
 
-	switch (c) {
-	case SCI_K_F1 :
-		return SCI_K_SHIFT_F1;
-	case SCI_K_F2 :
-		return SCI_K_SHIFT_F2;
-	case SCI_K_F3 :
-		return SCI_K_SHIFT_F3;
-	case SCI_K_F4 :
-		return SCI_K_SHIFT_F4;
-	case SCI_K_F5 :
-		return SCI_K_SHIFT_F5;
-	case SCI_K_F6 :
-		return SCI_K_SHIFT_F6;
-	case SCI_K_F7 :
-		return SCI_K_SHIFT_F7;
-	case SCI_K_F8 :
-		return SCI_K_SHIFT_F8;
-	case SCI_K_F9 :
-		return SCI_K_SHIFT_F9;
-	case SCI_K_F10 :
-		return SCI_K_SHIFT_F10;
-	}
+	if (c >= SCI_K_F1 && c <= SCI_K_F10)
+		return c + 25;
 
 	return c;
 }
@@ -1488,7 +1468,7 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 				// SCI_K_SHIFT_F1 == 84 << 8
 				input.data = SCI_K_F1 + ((input.data - Common::KEYCODE_F1)<<8);
 				if (input.buckybits & (SCI_EVM_LSHIFT | SCI_EVM_RSHIFT))
-					input.character = input.data + SCI_K_SHIFT_F1 - SCI_K_F1;
+					input.character = input.data + 25;
 				else
 					input.character = input.data;
 			} else {

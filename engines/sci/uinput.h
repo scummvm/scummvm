@@ -72,17 +72,20 @@ struct sci_event_t {
 #define SCI_K_TAB '\t'
 #define SCI_K_SHIFT_TAB (0xf << 8)
 
-#define SCI_K_END (79 << 8)
-#define SCI_K_DOWN (80 << 8)
-#define SCI_K_PGDOWN (81 << 8)
-#define SCI_K_LEFT (75 << 8)
-#define SCI_K_CENTER (76 << 8)
-#define SCI_K_RIGHT (77 << 8)
-#define SCI_K_HOME (71 << 8)
-#define SCI_K_UP (72 << 8)
-#define SCI_K_PGUP (73 << 8)
-#define SCI_K_INSERT (82 << 8)
-#define SCI_K_DELETE (83 << 8)
+#define SCI_K_HOME (71 << 8)	// 7
+#define SCI_K_UP (72 << 8)		// 8
+#define SCI_K_PGUP (73 << 8)	// 9
+//
+#define SCI_K_LEFT (75 << 8)	// 4 
+#define SCI_K_CENTER (76 << 8)	// 5
+#define SCI_K_RIGHT (77 << 8)	// 6
+//
+#define SCI_K_END (79 << 8)		// 1
+#define SCI_K_DOWN (80 << 8)	// 2
+#define SCI_K_PGDOWN (81 << 8)	// 3
+//
+#define SCI_K_INSERT (82 << 8)	// 0
+#define SCI_K_DELETE (83 << 8)	// .
 
 #define SCI_K_F1 (59<<8)
 #define SCI_K_F2 (60<<8)
@@ -94,17 +97,6 @@ struct sci_event_t {
 #define SCI_K_F8 (66<<8)
 #define SCI_K_F9 (67<<8)
 #define SCI_K_F10 (68<<8)
-
-#define SCI_K_SHIFT_F1 (84<<8)
-#define SCI_K_SHIFT_F2 (85<<8)
-#define SCI_K_SHIFT_F3 (86<<8)
-#define SCI_K_SHIFT_F4 (87<<8)
-#define SCI_K_SHIFT_F5 (88<<8)
-#define SCI_K_SHIFT_F6 (89<<8)
-#define SCI_K_SHIFT_F7 (90<<8)
-#define SCI_K_SHIFT_F8 (91<<8)
-#define SCI_K_SHIFT_F9 (92<<8)
-#define SCI_K_SHIFT_F10 (93<<8)
 
 /*Values for buckybits */
 #define SCI_EVM_RSHIFT          (1<<0)
