@@ -976,7 +976,7 @@ void run_vm(EngineState *s, int restoring) {
 				s->r_amp_rest = 0; // We just used up the restadjust, remember?
 			}
 
-			if (opparams[0] >= (int)s->_kernel->_kfuncTable.size()) {
+			if (opparams[0] >= (int)s->_kernel->_kernelFuncs.size()) {
 				error("Invalid kernel function 0x%x requested\n", opparams[0]);
 			} else {
 				int argc = ASSERT_ARITHMETIC(xs->sp[0]);
@@ -984,11 +984,11 @@ void run_vm(EngineState *s, int restoring) {
 				if (!(s->flags & GF_SCI0_OLD))
 					argc += restadjust;
 
-				if (s->_kernel->_kfuncTable[opparams[0]].signature
-				        && !kernel_matches_signature(s, s->_kernel->_kfuncTable[opparams[0]].signature, argc, xs->sp + 1)) {
+				if (s->_kernel->_kernelFuncs[opparams[0]].signature
+				        && !kernel_matches_signature(s, s->_kernel->_kernelFuncs[opparams[0]].signature, argc, xs->sp + 1)) {
 					error("[VM] Invalid arguments to kernel call %x\n", opparams[0]);
 				} else {
-					s->r_acc = s->_kernel->_kfuncTable[opparams[0]].fun(s, opparams[0], argc, xs->sp + 1);
+					s->r_acc = s->_kernel->_kernelFuncs[opparams[0]].fun(s, opparams[0], argc, xs->sp + 1);
 				}
 				// Call kernel function
 

@@ -298,21 +298,14 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x88*/ "DbugStr"
 };
 
-enum KernelFuncType {
-	KF_NEW = 1,
-	KF_NONE = -1, /**< No mapping, but name is known */
-	KF_TERMINATOR = -42 /**< terminates kfunct_mappers */
-};
-
 struct SciKernelFunction {
-	KernelFuncType type;
 	const char *name;
 	KernelFunc *fun; /* The actual function */
 	const char *signature;  /* kfunct signature */
 };
 
-#define DEFUN(nm, cname, sig) {KF_NEW, nm, cname, sig}
-#define NOFUN(nm) {KF_NONE, nm, NULL, NULL}
+#define DEFUN(name, fun, sig) {name, fun, sig}
+#define NOFUN(name) {name, NULL, NULL}
 
 SciKernelFunction kfunct_mappers[] = {
 	/*00*/	DEFUN("Load", kLoad, "iii*"),
@@ -434,8 +427,8 @@ SciKernelFunction kfunct_mappers[] = {
 	/*6f*/	DEFUN("6f", kTimesCos, "ii"),
 	/*70*/	DEFUN("Graph", kGraph, ".*"),
 	/*71*/	DEFUN("Joystick", kJoystick, ".*"),
-	/*72*/	NOFUN(NULL),
-	/*73*/	NOFUN(NULL),
+	/*72*/	NOFUN("unknown72"),
+	/*73*/	NOFUN("unknown73"),
 
 	// Experimental functions
 	/*74*/	DEFUN("FileIO", kFileIO, "i.*"),
@@ -464,9 +457,9 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("SetVideoMode", kSetVideoMode, "i"),
 
 	// Special and NOP stuff
-	{KF_NEW, NULL, k_Unknown, NULL},
+	{NULL, k_Unknown, NULL},
 
-	{KF_TERMINATOR, NULL, NULL, NULL} // Terminator
+	{NULL, NULL, NULL} // Terminator
 };
 
 static const char *argtype_description[] = {
@@ -673,50 +666,49 @@ void Kernel::mapFunctions() {
 		functions_nr = max_functions_nr;
 	}
 
-	_kfuncTable.resize(functions_nr);
+	_kernelFuncs.resize(functions_nr);
 
 	for (uint functnr = 0; functnr < functions_nr; functnr++) {
-		int seeker, found = -1;
-		Common::String sought_name;
+		int found = -1;
 
+		// First, get the name, if known, of the kernel function with number functnr
+		Common::String sought_name;
 		if (functnr < getKernelNamesSize())
 			sought_name = getKernelName(functnr);
 
-		if (!sought_name.empty())
-			for (seeker = 0; (found == -1) && kfunct_mappers[seeker].type != KF_TERMINATOR; seeker++)
-				if (kfunct_mappers[seeker].name && sought_name == kfunct_mappers[seeker].name)
-					found = seeker; // Found a kernel function with the same name!
+		// If the name is known, look it up in kfunct_mappers. This table
+		// maps kernel func names to actual function (pointers).
+		if (!sought_name.empty()) {
+			for (uint seeker = 0; (found == -1) && kfunct_mappers[seeker].name; seeker++)
+				if (sought_name == kfunct_mappers[seeker].name)
+					found = seeker; // Found a kernel function with the correct name!
+		}
+
+		// Reset the table entry
+		_kernelFuncs[functnr].fun = NULL;
+		_kernelFuncs[functnr].signature = NULL;
+		_kernelFuncs[functnr].orig_name = sought_name;
 
 		if (found == -1) {
 			if (!sought_name.empty()) {
-				warning("Kernel function %s[%x] unmapped", getKernelName(functnr).c_str(), functnr);
-				_kfuncTable[functnr].fun = kNOP;
+				// No match but a name was given -> NOP
+				warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functnr);
+				_kernelFuncs[functnr].fun = kNOP;
 			} else {
+				// No match and no name was given -> must be an unknown opcode
 				warning("Flagging kernel function %x as unknown", functnr);
-				_kfuncTable[functnr].fun = k_Unknown;
+				_kernelFuncs[functnr].fun = k_Unknown;
 			}
-
-			_kfuncTable[functnr].signature = NULL;
-			_kfuncTable[functnr].orig_name = sought_name;
-		} else
-			switch (kfunct_mappers[found].type) {
-			case KF_NONE:
-				_kfuncTable[functnr].signature = NULL;
-				++ignored;
-				break;
-
-			case KF_NEW:
-				_kfuncTable[functnr].fun = kfunct_mappers[found].fun;
-				_kfuncTable[functnr].signature = kfunct_mappers[found].signature;
-				_kfuncTable[functnr].orig_name.clear();
-				kernel_compile_signature(&(_kfuncTable[functnr].signature));
+		} else {
+			// A match in kfunct_mappers was found
+			if (kfunct_mappers[found].fun) {
+				_kernelFuncs[functnr].fun = kfunct_mappers[found].fun;
+				_kernelFuncs[functnr].signature = kfunct_mappers[found].signature;
+				kernel_compile_signature(&(_kernelFuncs[functnr].signature));
 				++mapped;
-				break;
-			case KF_TERMINATOR:
-				error("Unexpectedly encountered KF_TERMINATOR");
-				break;
-			}
-
+			} else
+				++ignored;
+		}
 	} // for all functions requesting to be mapped
 
 	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, getKernelNamesSize(), mapped);

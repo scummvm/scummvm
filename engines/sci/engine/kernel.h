@@ -88,7 +88,7 @@ public:
 	void dumpScriptClass(char *data, int seeker, int objsize);
 
 	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
-	Common::Array<KernelFuncWithSignature> _kfuncTable; /**< Table of kernel functions */
+	Common::Array<KernelFuncWithSignature> _kernelFuncs; /**< Table of kernel functions */
 
 private:
 	/**

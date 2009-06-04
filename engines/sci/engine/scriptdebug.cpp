@@ -411,7 +411,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			}
 
 			if (opcode == op_callk)
-				sciprintf(" %s[%x]", (param_value < s->_kernel->_kfuncTable.size()) ?
+				sciprintf(" %s[%x]", (param_value < s->_kernel->_kernelFuncs.size()) ?
 							((param_value < s->_kernel->getKernelNamesSize()) ? s->_kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
 			else
