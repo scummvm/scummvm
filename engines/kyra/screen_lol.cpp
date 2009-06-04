@@ -589,6 +589,16 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 		va_end(args);
 	}
 
+	//		_internDimH: h0
+//		_internDimW: w0
+//		_internDimDstX: x1
+//		_internDimDstY: y1
+//		_internBlockWidth: w1
+//		_internBlockHeight: h1
+//		_internDimU5: x2
+//		_internDimU6: y2
+//		_internBlockWidth2: w2
+
 	_internDimX = _internDimY = 0;
 	_internDimW = w1;
 	_internDimH = h1;

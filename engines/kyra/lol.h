@@ -1326,21 +1326,22 @@ private:
 	int castLightning(ActiveSpell *a);
 	int castFog(ActiveSpell *a);
 	int castSwarm(ActiveSpell *a);
-	int castUnk(ActiveSpell *a);
+	int castVaelansCube(ActiveSpell *a);
 	int castGuardian(ActiveSpell *a);
 	int castHealOnSingleCharacter(ActiveSpell *a);
 
-	void processMagicSpark(int charNum, int spellLevel);
-	void processMagicHealSelectTarget();
-	void processMagicHeal(int charNum, int spellLevel);
-	void processMagicIce(int charNum, int spellLevel);
-	void processMagicFireball(int charNum, int spellLevel);
-	void processMagicHandOfFate(int spellLevel);
-	void processMagicMistOfDoom(int charNum, int spellLevel);
-	void processMagicLightning(int charNum, int spellLevel);
-	void processMagicFog();
-	void processMagicSwarm(int charNum, int damage);
-	void processMagicGuardian(int charNum);
+	int processMagicSpark(int charNum, int spellLevel);
+	int processMagicHealSelectTarget();
+	int processMagicHeal(int charNum, int spellLevel);
+	int processMagicIce(int charNum, int spellLevel);
+	int processMagicFireball(int charNum, int spellLevel);
+	int processMagicHandOfFate(int spellLevel);
+	int processMagicMistOfDoom(int charNum, int spellLevel);
+	int processMagicLightning(int charNum, int spellLevel);
+	int processMagicFog();
+	int processMagicSwarm(int charNum, int damage);
+	int processMagicVaelansCube();
+	int processMagicGuardian(int charNum);
 
 	void callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y);
 	void callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y);
