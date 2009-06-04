@@ -1447,7 +1447,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	case 1:
 		if (flags & 0x80) {
 			dst = _vm->getMaskBuffer(0, 0, 1);
-			dstPitch = _vm->_bitDepth;
+			dstPitch /= _vm->_bitDepth;
 			copyWizImageWithMask(dst, wizd, dstPitch, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
 		} else if (flags & 0x100) {
 			dst = _vm->getMaskBuffer(0, 0, 1);
