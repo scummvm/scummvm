@@ -65,10 +65,16 @@ public:
 	inline int getSegMgrId() const { return _segmgrId; }
 
 	/**
+	 * Check whether the given offset into this memory object is valid,
+	 * i.e., suitable for passing to dereference.
+	 */
+	virtual bool isValidOffset(uint16 offset) const = 0;
+
+	/**
 	 * Dereferences a raw memory pointer.
-	 * @param reg   reference to dereference
-	 * @param size  if not NULL, set to the theoretical maximum size of the referenced data block
-	 * @return              the data block referenced
+	 * @param reg	reference to dereference
+	 * @param size	if not NULL, set to the theoretical maximum size of the referenced data block
+	 * @return		the data block referenced
 	 */
 	virtual byte *dereference(reg_t pointer, int *size);
 
@@ -108,6 +114,8 @@ public:
 
 // TODO: Implement the following class
 struct StringFrag : public MemObject {
+	virtual bool isValidOffset(uint16 offset) const { return false; }
+
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
@@ -150,6 +158,7 @@ public:
 		}
 	}
 
+	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -177,6 +186,7 @@ public:
 		script_id = 0;
 	}
 
+	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
 	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
@@ -286,6 +296,7 @@ public:
 
 	void freeScript();
 
+	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
 	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
@@ -344,15 +355,6 @@ public:
 
 
 	/**
-	 * Copies a byte string into a script's heap representation.
-	 * @param dst	script-relative offset of the destination area
-	 * @param src	pointer to the data source location
-	 * @param n		number of bytes to copy
-	 */
-	void mcpyInOut(int dst, const void *src, size_t n);
-
-
-	/**
 	 * Marks the script as deleted.
 	 * This will not actually delete the script.  If references remain present on the
 	 * heap or the stack, the script will stay in memory in a quasi-deleted state until
@@ -378,12 +380,20 @@ public:
 	}
 
 	/**
+	 * Copies a byte string into a script's heap representation.
+	 * @param dst	script-relative offset of the destination area
+	 * @param src	pointer to the data source location
+	 * @param n		number of bytes to copy
+	 */
+	void mcpyInOut(int dst, const void *src, size_t n);
+
+
+	/**
 	 * Retrieves a 16 bit value from within a script's heap representation.
 	 * @param offset	offset to read from
 	 * @return the value read from the specified location
 	 */
 	int16 getHeap(uint16 offset) const;
-
 };
 
 /** Data stack */
@@ -401,6 +411,7 @@ public:
 		entries = NULL;
 	}
 
+	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
 	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
@@ -472,7 +483,11 @@ public:
 		}
 	}
 
-	bool isValidEntry(int idx) {
+	virtual bool isValidOffset(uint16 offset) const {
+		return isValidEntry(offset);
+	}
+
+	bool isValidEntry(int idx) const {
 		return idx >= 0 && (uint)idx < _table.size() && _table[idx].next_free == idx;
 	}
 
@@ -543,6 +558,7 @@ public:
 		_buf = NULL;
 	}
 
+	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
 	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);

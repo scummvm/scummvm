@@ -729,12 +729,14 @@ void Kernel::mapFunctions() {
 
 int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid) {
 	MemObject *mobj;
+	int type = 0;
 
 	if (!reg.segment) {
+		type = KSIG_ARITHMETIC;
 		if (!reg.offset)
-			return KSIG_ARITHMETIC | KSIG_NULL;
+			type |= KSIG_NULL;
 
-		return KSIG_ARITHMETIC;
+		return type;
 	}
 
 	if ((reg.segment >= s->seg_manager->_heap.size()) || !s->seg_manager->_heap[reg.segment])
@@ -755,52 +757,31 @@ int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid) {
 			return KSIG_REF;
 
 	case MEM_OBJ_CLONES:
-		if (allow_invalid || ((CloneTable *)mobj)->isValidEntry(reg.offset))
-			return KSIG_OBJECT;
-		else
-			return KSIG_OBJECT | KSIG_INVALID;
+		type = KSIG_OBJECT;
+		break;
 
 	case MEM_OBJ_LOCALS:
-		if (allow_invalid || reg.offset < (*(LocalVariables *)mobj)._locals.size() * sizeof(reg_t))
-			return KSIG_REF;
-		else
-			return KSIG_REF | KSIG_INVALID;
-
 	case MEM_OBJ_STACK:
-		if (allow_invalid || reg.offset < (*(DataStack *)mobj).nr * sizeof(reg_t))
-			return KSIG_REF;
-		else
-			return KSIG_REF | KSIG_INVALID;
-
 	case MEM_OBJ_SYS_STRINGS:
-		if (allow_invalid || (reg.offset < SYS_STRINGS_MAX
-		                      && (*(SystemStrings *)mobj).strings[reg.offset].name))
-			return KSIG_REF;
-		else
-			return KSIG_REF | KSIG_INVALID;
+	case MEM_OBJ_DYNMEM:
+		type = KSIG_REF;
+		break;
 
 	case MEM_OBJ_LISTS:
-		if (allow_invalid || ((ListTable *)mobj)->isValidEntry(reg.offset))
-			return KSIG_LIST;
-		else
-			return KSIG_LIST | KSIG_INVALID;
+		type = KSIG_LIST;
+		break;
 
 	case MEM_OBJ_NODES:
-		if (allow_invalid || ((NodeTable *)mobj)->isValidEntry(reg.offset))
-			return KSIG_NODE;
-		else
-			return KSIG_NODE | KSIG_INVALID;
-
-	case MEM_OBJ_DYNMEM:
-		if (allow_invalid || reg.offset < (*(DynMem *)mobj)._size)
-			return KSIG_REF;
-		else
-			return KSIG_REF | KSIG_INVALID;
+		type = KSIG_NODE;
+		break;
 
 	default:
 		return 0;
-
 	}
+
+	if (!allow_invalid && !mobj->isValidOffset(reg.offset))
+		type |= KSIG_INVALID;
+	return type;
 }
 
 const char *kernel_argtype_description(int type) {

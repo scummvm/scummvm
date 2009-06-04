@@ -89,21 +89,6 @@ void Script::freeScript() {
 	_codeBlocks.clear();
 }
 
-// memory operations
-
-void Script::mcpyInOut(int dst, const void *src, size_t n) {
-	if (buf) {
-		assert(dst + n <= buf_size);
-		memcpy(buf + dst, src, n);
-	}
-}
-
-int16 Script::getHeap(uint16 offset) const {
-	assert(offset + 1 < (int)buf_size);
-	return READ_LE_UINT16(buf + offset);
-//	return (buf[offset] | (buf[offset+1]) << 8);
-}
-
 void Script::incrementLockers() {
 	lockers++;
 }
@@ -147,10 +132,29 @@ int Script::getSynonymsNr() const {
 	return synonyms_nr;
 }
 
+// memory operations
+
+void Script::mcpyInOut(int dst, const void *src, size_t n) {
+	if (buf) {
+		assert(dst + n <= buf_size);
+		memcpy(buf + dst, src, n);
+	}
+}
+
+int16 Script::getHeap(uint16 offset) const {
+	assert(offset + 1 < (int)buf_size);
+	return READ_LE_UINT16(buf + offset);
+//	return (buf[offset] | (buf[offset+1]) << 8);
+}
+
 byte *MemObject::dereference(reg_t pointer, int *size) {
 	error("Error: Trying to dereference pointer %04x:%04x to inappropriate segment",
 		          PRINT_REG(pointer));
 	return NULL;
+}
+
+bool Script::isValidOffset(uint16 offset) const {
+	return offset < buf_size;
 }
 
 byte *Script::dereference(reg_t pointer, int *size) {
@@ -161,40 +165,50 @@ byte *Script::dereference(reg_t pointer, int *size) {
 	}
 	if (size)
 		*size = buf_size - pointer.offset;
-	return (byte *)(buf + pointer.offset);
+	return buf + pointer.offset;
+}
+
+bool LocalVariables::isValidOffset(uint16 offset) const {
+	return offset < _locals.size() * sizeof(reg_t);
 }
 
 byte *LocalVariables::dereference(reg_t pointer, int *size) {
+	if (size)
+		*size = _locals.size() * sizeof(reg_t);
+
 	// FIXME: The following doesn't seem to be endian safe.
 	// To fix this, we'd have to always treat the reg_t
 	// values stored here as in the little endian format.
-	int count = _locals.size() * sizeof(reg_t);
 	byte *base = (byte *)&_locals[0];
-
-	if (size)
-		*size = count;
-
 	return base + pointer.offset;
+}
+
+bool DataStack::isValidOffset(uint16 offset) const {
+	return offset < nr * sizeof(reg_t);
 }
 
 byte *DataStack::dereference(reg_t pointer, int *size) {
-	int count = nr * sizeof(reg_t);
-	byte *base = (byte *)entries;
-
 	if (size)
-		*size = count;
+		*size = nr * sizeof(reg_t);
 
+	byte *base = (byte *)entries;
 	return base + pointer.offset;
 }
 
+bool DynMem::isValidOffset(uint16 offset) const {
+	return offset < _size;
+}
+
 byte *DynMem::dereference(reg_t pointer, int *size) {
-	int count = _size;
-	byte *base = (byte *)_buf;
-
 	if (size)
-		*size = count;
+		*size = _size;
 
+	byte *base = (byte *)_buf;
 	return base + pointer.offset;
+}
+
+bool SystemStrings::isValidOffset(uint16 offset) const {
+	return offset < SYS_STRINGS_MAX && strings[offset].name;
 }
 
 byte *SystemStrings::dereference(reg_t pointer, int *size) {
