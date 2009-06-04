@@ -713,7 +713,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_MESSAGE_NEXT: {
 		reg_t bufferReg;
 		char *buffer = NULL;
-		const char *str;
+		Common::String str;
 		reg_t retval;
 
 		if (func == K_MESSAGE_GET) {
@@ -735,18 +735,18 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			else
 				retval = make_reg(0, s->_msgState.getTalker());
 		} else {
-			str = DUMMY_MESSAGE;
+			str = Common::String(DUMMY_MESSAGE);
 			retval = NULL_REG;
 		}
 
 		if (!bufferReg.isNull()) {
-			int len = strlen(str) + 1;
+			int len = str.size() + 1;
 			buffer = kernel_dereference_char_pointer(s, bufferReg, len);
 
 			if (buffer) {
-				strcpy(buffer, str);
+				strcpy(buffer, str.c_str());
 			} else {
-				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str);
+				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str.c_str());
 
 				// Set buffer to empty string if possible
 				buffer = kernel_dereference_char_pointer(s, bufferReg, 1);
@@ -763,7 +763,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		MessageState tempState;
 
 		if (tempState.loadRes(s->resmgr, UKPV(1), false) && tempState.findTuple(tuple) && tempState.getMessage())
-			return make_reg(0, strlen(tempState.getText()) + 1);
+			return make_reg(0, tempState.getText().size() + 1);
 		else
 			return NULL_REG;
 	}
