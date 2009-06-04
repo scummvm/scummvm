@@ -1252,14 +1252,8 @@ bool AudioResource::findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &o
 	return false;
 }
 
-bool AudioResource::findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset, bool getSync, uint32 *size) {
-	// 65535.MAP structure:
-	// =========
-	// 6 byte entries:
-	// w nEntry
-	// dw offset
-
-	// Other map files:
+bool AudioResource::findAudEntrySCI11Late(uint32 audioNumber, uint32 &offset, bool getSync, uint32 *size) {
+	// Map structure:
 	// ===============
 	// Header:
 	// dw baseOffset
@@ -1271,6 +1265,114 @@ bool AudioResource::findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 
 	// tb cOffset (cumulative offset)
 	// w syncSize (iff seq has bit 7 set)
 	// w syncAscSize (iff seq has bit 6 set)
+
+	uint32 n;
+	offset = 0;
+
+	byte *ptr = _audioMapSCI11->data;
+
+	offset = READ_UINT32(ptr);
+	ptr += 4;
+
+	while (ptr < _audioMapSCI11->data + _audioMapSCI11->size) {
+		n = READ_BE_UINT32(ptr);
+		ptr += 4;
+
+		if (n == 0xffffffff)
+			break;
+
+		offset += (READ_UINT16(ptr) | (ptr[2] << 16));
+		ptr += 3;
+
+		int syncSkip = 0;
+
+		if (n & 0x80) {
+			n ^= 0x80;
+
+			if (getSync) {
+				if (size)
+					*size = READ_UINT16(ptr);
+			} else {
+				syncSkip = READ_UINT16(ptr);
+			}
+
+			ptr += 2;
+
+			if (n & 0x40) {
+				n ^= 0x40;
+
+				if (!getSync)
+					syncSkip += READ_UINT16(ptr);
+
+				ptr += 2;
+			}
+
+			offset += syncSkip;
+
+			if (n == audioNumber)
+				return true;
+
+		} else {
+			if (n == audioNumber)
+				return !getSync;
+		}
+
+		offset -= syncSkip;
+	}
+
+	return false;
+}
+
+bool AudioResource::findAudEntrySCI11Early(uint32 audioNumber, uint32 &offset, bool getSync, uint32 *size) {
+	// Map structure:
+	// ===============
+	// 10-byte entries:
+	// b noun
+	// b verb
+	// b cond
+	// b seq
+	// dw offset
+	// w syncSize + syncAscSize
+
+	uint32 n;
+	offset = 0;
+
+	byte *ptr = _audioMapSCI11->data;
+
+	while (ptr < _audioMapSCI11->data + _audioMapSCI11->size) {
+		n = READ_BE_UINT32(ptr);
+		ptr += 4;
+
+		if (n == 0xffffffff)
+			break;
+
+		offset = READ_UINT32(ptr);
+		ptr += 4;
+
+		int syncSize = READ_UINT16(ptr);
+		ptr += 2;
+
+		if (n == audioNumber) {
+			if (getSync) {
+				if (size)
+					*size = syncSize;
+				return true;
+			} else {
+				offset += syncSize;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool AudioResource::findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset, bool getSync, uint32 *size) {
+	// 65535.MAP structure:
+	// =========
+	// 6 byte entries:
+	// w nEntry
+	// dw offset
 
 	uint32 n;
 	offset = 0;
@@ -1301,53 +1403,16 @@ bool AudioResource::findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 
 				return true;
 		}
 	} else {
-		offset = READ_UINT32(ptr);
-		ptr += 4;
-
-		while (ptr < _audioMapSCI11->data + _audioMapSCI11->size) {
-			n = READ_BE_UINT32(ptr);
-			ptr += 4;
-
-			if (n == 0xffffffff)
-				break;
-
-			offset += (READ_UINT16(ptr) | (ptr[2] << 16));
-			ptr += 3;
-
-			int syncSkip = 0;
-
-			if (n & 0x80) {
-				n ^= 0x80;
-
-				if (getSync) {
-					if (size)
-						*size = READ_UINT16(ptr);
-				} else {
-					syncSkip = READ_UINT16(ptr);
-				}
-
-				ptr += 2;
-
-				if (n & 0x40) {
-					n ^= 0x40;
-
-					if (!getSync)
-						syncSkip += READ_UINT16(ptr);
-
-					ptr += 2;
-				}
-
-				offset += syncSkip;
-
-				if (n == audioNumber)
-					return true;
-
-			} else {
-				if (n == audioNumber)
-					return !getSync;
-			}
-
-			offset -= syncSkip;
+		// In early SCI1.1 the map is terminated with 10x 0xff, in late SCI1.1
+		// with 11x 0xff. If we look at the 11th last byte in an early SCI1.1
+		// map, this will be the high byte of the Sync length of the last entry.
+		// As Sync resources are relative small, we should never encounter a
+		// Sync with a size of 0xffnn. As such, the following heuristic should be
+		// sufficient to tell these map formats apart.
+		if (_audioMapSCI11->size >= 11 && (ptr[_audioMapSCI11->size - 11] == 0xff))
+			return findAudEntrySCI11Late(audioNumber, offset, getSync, size);
+		else {
+			return findAudEntrySCI11Early(audioNumber, offset, getSync, size);
 		}
 	}
 
