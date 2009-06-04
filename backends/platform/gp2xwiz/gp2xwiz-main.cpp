@@ -23,7 +23,7 @@
  *
  */
 
-#include <common/scummsys.h>
+#include "common/scummsys.h"
 #include <SDL/SDL.h>
 
 #include "backends/platform/gp2xwiz/gp2xwiz-sdl.h"
