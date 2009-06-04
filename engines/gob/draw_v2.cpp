@@ -649,7 +649,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	int16 spriteLeft = _spriteLeft;
 	int16 spriteTop = _spriteTop;
 	int16 spriteRight = _spriteRight;
-	int16 spriteBottom = _spriteLeft;
+	int16 spriteBottom = _spriteBottom;
 	int16 destSpriteX = _destSpriteX;
 	int16 destSpriteY = _destSpriteY;
 	int16 destSurface = _destSurface;
@@ -913,7 +913,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	_spriteLeft = spriteLeft;
 	_spriteTop = spriteTop;
 	_spriteRight = spriteRight;
-	_spriteLeft = spriteBottom;
+	_spriteBottom = spriteBottom;
 	_destSpriteX = destSpriteX;
 	_destSpriteY = destSpriteY;
 	_destSurface = destSurface;
