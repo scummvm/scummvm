@@ -769,13 +769,13 @@ enum BreakpointType {
 	 * Break when selector is executed. data contains (char *) selector name
 	 * (in the format Object::Method)
 	 */
-	BREAK_SELECTOR = 1,
+	BREAK_SELECTOR,
 
 	/**
 	 * Break when an exported function is called. data contains
 	 * script_no << 16 | export_no.
 	 */
-	BREAK_EXPORT = 2
+	BREAK_EXPORT
 };
 
 struct Breakpoint {
@@ -797,7 +797,9 @@ struct Breakpoint {
 extern int script_abort_flag;
 
 /** Number of kernel calls in between gcs; should be < 50000 */
-#define GC_INTERVAL 32768
+enum {
+	GC_INTERVAL = 32768
+};
 
 /** Initially GC_DELAY, can be set at runtime */
 extern int script_gc_interval;
@@ -805,11 +807,6 @@ extern int script_gc_interval;
 /** Number of steps executed */
 extern int script_step_counter;
 
-
-typedef int kernel_function(struct EngineState *s);
-
-extern kernel_function* kfuncs[];
-extern int max_instance;
 
 /**
  * Executes function pubfunct of the specified script.

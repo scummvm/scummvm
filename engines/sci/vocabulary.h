@@ -278,7 +278,7 @@ private:
 	 * @param branches		The rules are stored into this Array
 	 * @return true on success, false on error
 	 */
-	bool getBranches();
+	bool loadBranches();
 
 	/* Frees a parser rule list as returned by vocab_build_gnf()
 	** Parameters: (parse_rule_list_t *) rule_list: The rule list to free
