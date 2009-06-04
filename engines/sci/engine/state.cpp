@@ -31,8 +31,6 @@ EngineState::EngineState(ResourceManager *res, sci_version_t version, uint32 fla
 : resmgr(res), _version(version), _flags(flags), _dirseeker(this) {
 	widget_serial_counter = 0;
 
-	resmgr = 0;
-
 	game_version = 0;
 
 	gfx_state = 0;
