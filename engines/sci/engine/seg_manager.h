@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "sci/engine/vm.h"
+#include "sci/engine/memobj.h"
 
 namespace Sci {
 

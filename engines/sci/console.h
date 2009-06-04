@@ -33,6 +33,7 @@
 namespace Sci {
 
 class SciEngine;
+struct List;
 
 // Refer to the "addresses" command on how to pass address parameters
 int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
