@@ -769,7 +769,7 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 	return 0;
 }
 
-reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
+reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	reg_t cliplist_ref = KP_ALT(1, NULL_REG);
 	List *cliplist = NULL;
