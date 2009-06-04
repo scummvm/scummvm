@@ -7,10 +7,12 @@ MODULE_OBJS := \
 	fs/stdiostream.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
 	fs/posix/posix-fs-factory.o \
+	fs/psp/psp-fs-factory.o \
 	fs/windows/windows-fs-factory.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	saves/posix/posix-saves.o \
+	saves/psp/psp-saves.o \
 	timer/default/default-timer.o
 
 # Include common rules
