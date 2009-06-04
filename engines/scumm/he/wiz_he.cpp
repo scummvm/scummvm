@@ -450,7 +450,7 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstPitch, int d
 	if (!calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, srcRect, dstRect)) {
 		return;
 	}
-	dstw = dstw / 8;
+	dstPitch /= 8;
 	dst += dstRect.top * dstPitch + dstRect.left / 8;
 
 	const uint8 *dataPtr, *dataPtrNext;
@@ -1447,9 +1447,11 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	case 1:
 		if (flags & 0x80) {
 			dst = _vm->getMaskBuffer(0, 0, 1);
+			dstPitch = _vm->_bitDepth;
 			copyWizImageWithMask(dst, wizd, dstPitch, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
 		} else if (flags & 0x100) {
 			dst = _vm->getMaskBuffer(0, 0, 1);
+			dstPitch /= _vm->_bitDepth;
 			copyWizImageWithMask(dst, wizd, dstPitch, cw, ch, x1, y1, width, height, &rScreen, 0, 1);
 		} else {
 			copyWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr, _vm->_bitDepth);
