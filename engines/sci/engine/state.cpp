@@ -126,5 +126,8 @@ EngineState::EngineState() : _dirseeker(this) {
 EngineState::~EngineState() {
 }
 
+uint16 EngineState::currentRoomNumber() const {
+	return KP_UINT(script_000->locals_block->_locals[13]);
+}
 
 } // End of namespace Sci

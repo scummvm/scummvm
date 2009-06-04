@@ -48,7 +48,6 @@ namespace Common {
 namespace Sci {
 
 class Menubar;
-struct kfunct_sig_pair_t;	// from kernel.h
 
 struct GfxState;
 struct GfxPort;
@@ -208,7 +207,7 @@ public:
 	reg_t parser_event; /**< The event passed to Parse() and later used by Said() */
 	Script *script_000;  /**< script 000, e.g. for globals */
 
-	uint16 currentRoomNumber() const { return KP_UINT(script_000->locals_block->_locals[13]); }
+	uint16 currentRoomNumber() const;
 
 	/* Debugger data: */
 	Breakpoint *bp_list;   /**< List of breakpoints */
@@ -250,6 +249,13 @@ public:
  */
 PaletteEntry get_pic_color(EngineState *s, int color);
 
+// FIXME: Document this strange function.
+// It seems to negate the given register but only if the "cantBeHere" exists.
+// My guess: Since some SCI versions have cantBeHere and some have canBeHere,
+// this function allows unifying the code, making it look identical for both
+// kinds of SCI games. That's fine, but the name not_register is rather
+// misleading. A different name (and a different place for declaring this)
+// would be highly welcome.
 static inline reg_t not_register(EngineState *s, reg_t r) {
 	if (s->_kernel->_selectorMap.cantBeHere != -1)
 		return make_reg(0, !r.offset);
