@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Run ScummVM, important this bit.
+./scummvm.wiz --fullscreen --gfx-mode=1x --config=$(pwd)/.scummvmrc 
+
+# Sync the SD card to check that everything is written.
+sync
+
+# Return to the GPH menu screen
+cd /usr/gp2x
+exec /usr/gp2x/gp2xmenu
