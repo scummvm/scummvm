@@ -1301,8 +1301,6 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 }
 
 byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
-	return 0;
-
 #ifdef ENABLE_HE
 	Common::Rect src, dst;
 
