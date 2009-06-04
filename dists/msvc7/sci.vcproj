@@ -169,6 +169,12 @@
 				RelativePath="..\..\engines\sci\engine\kstring.cpp">
 			</File>
 			<File
+				RelativePath="..\..\engines\sci\engine\memobj.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\sci\engine\memobj.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\sci\engine\message.cpp">
 			</File>
 			<File
@@ -393,6 +399,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\console.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\sci\debug.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\sci\decompressor.cpp">
