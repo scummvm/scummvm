@@ -69,7 +69,7 @@ struct LoLCharacter {
 	int16 nextAnimUpdateCountdown;
 	uint16 items[11];
 	uint8 skillLevels[3];
-	uint8 skillModifiers[3];
+	int8 skillModifiers[3];
 	int32 experiencePts[3];
 	uint8 characterUpdateEvents[5];
 	uint8 characterUpdateDelay[5];

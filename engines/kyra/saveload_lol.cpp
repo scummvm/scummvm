@@ -85,7 +85,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		for (int ii = 0; ii < 3; ii++)
 			c->skillLevels[ii] = in.readByte();
 		for (int ii = 0; ii < 3; ii++)
-			c->skillModifiers[ii] = in.readByte();
+			c->skillModifiers[ii] = in.readSByte();
 		for (int ii = 0; ii < 3; ii++)
 			c->experiencePts[ii] = in.readUint32BE();
 		for (int ii = 0; ii < 5; ii++)
@@ -294,7 +294,7 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 		for (int ii = 0; ii < 3; ii++)
 			out->writeByte(c->skillLevels[ii]);
 		for (int ii = 0; ii < 3; ii++)
-			out->writeByte(c->skillModifiers[ii]);
+			out->writeSByte(c->skillModifiers[ii]);
 		for (int ii = 0; ii < 3; ii++)
 			out->writeUint32BE(c->experiencePts[ii]);
 		for (int ii = 0; ii < 5; ii++)
