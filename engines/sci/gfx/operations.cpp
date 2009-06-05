@@ -265,8 +265,9 @@ static int _gfxop_draw_pixmap(gfx_driver_t *driver, gfx_pixmap_t *pxm, int prior
 }
 
 static void _gfxop_full_pointer_refresh(GfxState *state) {
-	state->pointer_pos.x = state->driver->pointer_x / state->driver->mode->xfact;
-	state->pointer_pos.y = state->driver->pointer_y / state->driver->mode->yfact;
+	Common::Point mousePoint = g_system->getEventManager()->getMousePos();
+	state->pointer_pos.x = mousePoint.x / state->driver->mode->xfact;
+	state->pointer_pos.y = mousePoint.y / state->driver->mode->yfact;
 }
 
 static int _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t buffer);
@@ -448,12 +449,6 @@ int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options,
 	init_aux_pixmap(&(state->static_priority_map));
 
 	return GFX_OK;
-}
-
-int gfxop_set_parameter(GfxState *state, char *attribute, char *value) {
-	BASIC_CHECKS(GFX_FATAL);
-
-	return state->driver->set_parameter(state->driver, attribute, value);
 }
 
 int gfxop_exit(GfxState *state) {
@@ -822,8 +817,7 @@ static int _gfxop_draw_line_clipped(GfxState *state, Common::Point start, Common
 			GFXWARN("Attempt to draw stippled line which is neither an hbar nor a vbar: (%d,%d) -- (%d,%d)\n", start.x, start.y, end.x, end.y);
 			return GFX_ERROR;
 		}
-		if (!(state->driver->capabilities & GFX_CAPABILITY_STIPPLED_LINES))
-			return simulate_stippled_line_draw(state->driver, skipone, start, end, color, line_mode);
+		return simulate_stippled_line_draw(state->driver, skipone, start, end, color, line_mode);
 	}
 
 	if ((retval = state->driver->draw_line(state->driver, start, end, color, line_mode, line_style))) {
@@ -923,8 +917,7 @@ int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t 
 	BASIC_CHECKS(GFX_FATAL);
 	_gfxop_full_pointer_refresh(state);
 
-	if (PALETTE_MODE || !(state->driver->capabilities & GFX_CAPABILITY_SHADING))
-		shade_type = GFX_BOX_SHADE_FLAT;
+	shade_type = GFX_BOX_SHADE_FLAT;
 
 
 	_gfxop_add_dirty(state, box);
@@ -1244,9 +1237,7 @@ int gfxop_set_pointer_position(GfxState *state, Common::Point pos) {
 		return 0; // Not fatal
 	}
 
-	state->driver->pointer_x = pos.x * state->driver->mode->xfact;
-	state->driver->pointer_y = pos.y * state->driver->mode->yfact;
-	g_system->warpMouse(state->driver->pointer_x, state->driver->pointer_y);
+	g_system->warpMouse(pos.x * state->driver->mode->xfact, pos.y * state->driver->mode->yfact);
 
 	_gfxop_full_pointer_refresh(state);
 	return 0;
@@ -1373,8 +1364,6 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 
 	// Don't generate events for mouse movement
 	while (found && ev.type == Common::EVENT_MOUSEMOVE) {
-		drv->pointer_x = ev.mouse.x;
-		drv->pointer_y = ev.mouse.y;
 		found = em->pollEvent(ev);
 	}
 
@@ -1538,26 +1527,18 @@ static sci_event_t scummvm_get_event(gfx_driver_t *drv) {
 		case Common::EVENT_LBUTTONDOWN:
 			input.type = SCI_EVT_MOUSE_PRESS;
 			input.data = 1;
-			drv->pointer_x = p.x;
-			drv->pointer_y = p.y;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			input.type = SCI_EVT_MOUSE_PRESS;
 			input.data = 2;
-			drv->pointer_x = p.x;
-			drv->pointer_y = p.y;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			input.type = SCI_EVT_MOUSE_RELEASE;
 			input.data = 1;
-			drv->pointer_x = p.x;
-			drv->pointer_y = p.y;
 			break;
 		case Common::EVENT_RBUTTONUP:
 			input.type = SCI_EVT_MOUSE_RELEASE;
 			input.data = 2;
-			drv->pointer_x = p.x;
-			drv->pointer_y = p.y;
 			break;
 
 			// Misc events

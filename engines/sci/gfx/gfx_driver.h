@@ -38,10 +38,6 @@ enum gfx_buffer_t {
 };
 
 
-/* graphics driver hints */
-#define GFX_CAPABILITY_SHADING (1<<0)
-#define GFX_CAPABILITY_STIPPLED_LINES (1<<6)
-
 /* Principial graphics driver architecture
 ** ---------------------------------------
 **
@@ -71,37 +67,7 @@ struct gfx_driver_t { /* Graphics driver */
 
 	gfx_mode_t *mode; /* Currently active mode, NULL if no mode is active */
 
-	int pointer_x, pointer_y; /* Mouse pointer position */
-
-	int capabilities; /* The driver's capabilities: A list of flags that may
-	                  ** be pre-defined or set after a successful initialization.
-	                  */
-	/* Capability flags:
-	**
-	** The words MUST, SHOULD and MAY are to be interpreted as described in
-	** the IETF RFC 1123.
-	**
-	** GFX_CAPABILITY_SHADING: draw_filled_rect() supports drawing shaded
-	**    rectangles.
-	** GFX_CAPABILITY_STIPPLED_LINES: The driver is able to draw stippled lines
-	**    horizontally and vertically (xl = 0 or yl = 0).
-	*/
-
 	/*** Initialization ***/
-
-	int (*set_parameter)(gfx_driver_t *drv, char *attribute, char *value);
-	/* Sets a driver-specific parameter
-	** Parameters: (gfx_driver_t *) drv: Pointer to the affected driver
-	**             (char *) attribute: Name of the attribute/parameter to set
-	**             (char *) value: The value to set, or NULL to query the value
-	** Returns   : (int) GFX_OK or GFX_FATAL, which signals a fatal error
-	**                   condition.
-	** This function should make extensive use of sciprintf() to signal invalid
-	** values or unapplicable attributes.
-	** Note that it may be called either before initialization (to interpret
-	** config file or command line parameters) or afterwars (from the command
-	** console).
-	*/
 
 	int (*init)(gfx_driver_t *drv, int xres, int yres,
 	                     int bytespp);
