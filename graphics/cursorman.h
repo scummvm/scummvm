@@ -64,6 +64,13 @@ public:
 	 */
 	void popCursor();
 
+#ifdef ENABLE_16BIT
+	//HACK This is such a incredible hack
+	//I really need to make the one method 
+	//work under multiple bitdepths
+	void pushCursor16(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor = 65535, int targetScale = 1);
+	void popCursor16();
+#endif
 	/**
 	 * Replace the current cursor on the stack. If the stack is empty, the
 	 * cursor is pushed instead. It's a slightly more optimized way of
@@ -137,7 +144,37 @@ public:
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	CursorManager();
+#ifdef ENABLE_16BIT
+	struct Cursor16 {
+		byte *_data;
+		bool _visible;
+		uint _width;
+		uint _height;
+		int _hotspotX;
+		int _hotspotY;
+		uint16 _keycolor;
+		byte _targetScale;
 
+		uint _size;
+
+		Cursor16(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor = 65535, int targetScale = 1) {
+			_size = w * h * 2;
+			_data = new byte[_size];
+			if (data && _data)
+				memcpy(_data, data, _size);
+			_width = w;
+			_height = h;
+			_hotspotX = hotspotX;
+			_hotspotY = hotspotY;
+			_keycolor = keycolor;
+			_targetScale = targetScale;
+		}
+
+		~Cursor16() {
+			delete[] _data;
+		}
+	};
+#endif
 	struct Cursor {
 		byte *_data;
 		bool _visible;
@@ -197,6 +234,9 @@ private:
 	};
 
 	Common::Stack<Cursor *> _cursorStack;
+#ifdef ENABLE_16BIT
+	Common::Stack<Cursor16 *> _cursor16Stack;
+#endif
 	Common::Stack<Palette *> _cursorPaletteStack;
 };
 

@@ -462,8 +462,12 @@ void ThemeEngine::disable() {
 	_system->hideOverlay();
 
 	if (_useCursor) {
+#ifdef ENABLE_16BIT
+		CursorMan.popCursor16();
+#else
 		CursorMan.popCursorPalette();
 		CursorMan.popCursor();
+#endif
 	}
 
 	_enabled = false;

@@ -56,6 +56,33 @@ bool CursorManager::showMouse(bool visible) {
 	// Should work, even if there's just a dummy cursor on the stack.
 	return g_system->showMouse(visible);
 }
+#ifdef ENABLE_16BIT
+void CursorManager::pushCursor16(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor, int targetScale) {
+	Cursor16 *cur = new Cursor16(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
+
+	cur->_visible = isVisible();
+	_cursor16Stack.push(cur);
+
+	if (buf) {
+		g_system->setMouseCursor16(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
+	}
+}
+
+void CursorManager::popCursor16() {
+	if (_cursor16Stack.empty())
+		return;
+
+	Cursor16 *cur = _cursor16Stack.pop();
+	delete cur;
+
+	if (!_cursorStack.empty()) {
+		cur = _cursor16Stack.top();
+		g_system->setMouseCursor16(cur->_data, cur->_width, cur->_height, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_targetScale);
+	}
+
+	g_system->showMouse(isVisible());
+}
+#endif
 
 void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
 	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
@@ -104,7 +131,7 @@ void CursorManager::popAllCursors() {
 //HACK Made a separate method to avoid massive linker errors on every engine
 void CursorManager::replaceCursor16(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor, int targetScale) {
 	if (_cursorStack.empty()) {
-		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
+		pushCursor16(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
 		return;
 	}
 
