@@ -158,6 +158,7 @@ void SoundHE::stopSound(int sound) {
 		if (_heChannel[i].sound == sound) {
 			_heChannel[i].sound = 0;
 			_heChannel[i].priority = 0;
+			_heChannel[i].rate = 0;
 			_heChannel[i].timer = 0;
 			_heChannel[i].sbngBlock = 0;
 			_heChannel[i].codeOffs = 0;
@@ -196,6 +197,7 @@ void SoundHE::stopSoundChannel(int chan) {
 
 	_heChannel[chan].sound = 0;
 	_heChannel[chan].priority = 0;
+	_heChannel[chan].rate = 0;
 	_heChannel[chan].timer = 0;
 	_heChannel[chan].sbngBlock = 0;
 	_heChannel[chan].codeOffs = 0;
@@ -254,7 +256,7 @@ int SoundHE::getSoundPos(int sound) {
 	}
 
 	if (_mixer->isSoundHandleActive(_heSoundChannels[chan]) && chan != -1) {
-		int time =  _vm->getHETimer(chan + 4) * 11025 / 1000;
+		int time =  _vm->getHETimer(chan + 4) * _heChannel[chan].rate / 1000;
 		return time;
 	} else {
 		return 0;
@@ -360,7 +362,7 @@ void SoundHE::processSoundCode() {
 			continue;
 		}
 
-		tmr = _vm->getHETimer(chan + 4) * 11025 / 1000;
+		tmr = _vm->getHETimer(chan + 4) * _heChannel[chan].rate / 1000;
 		tmr += _vm->VAR(_vm->VAR_SOUNDCODE_TMR);
 		if (tmr < 0)
 			tmr = 0;
@@ -407,6 +409,7 @@ void SoundHE::processSoundCode() {
 
 			_heChannel[chan].sound = 0;
 			_heChannel[chan].priority = 0;
+			_heChannel[chan].rate = 0;
 			_heChannel[chan].timer = 0;
 			_heChannel[chan].sbngBlock = 0;
 			_heChannel[chan].codeOffs = 0;
@@ -625,6 +628,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
 		_heChannel[heChannel].priority = priority;
+		_heChannel[heChannel].rate = rate;
 		_heChannel[heChannel].sbngBlock = (codeOffs != -1) ? 1 : 0;
 		_heChannel[heChannel].codeOffs = codeOffs;
 		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));
@@ -646,6 +650,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			size *= 2; // 16bits.
 			delete voxStream;
 
+			_heChannel[heChannel].rate = rate;
 			if (_heChannel[heChannel].timer)
 				_heChannel[heChannel].timer = size * 1000 / rate;
 
@@ -696,6 +701,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
 		_heChannel[heChannel].priority = priority;
+		_heChannel[heChannel].rate = rate;
 		_heChannel[heChannel].sbngBlock = (codeOffs != -1) ? 1 : 0;
 		_heChannel[heChannel].codeOffs = codeOffs;
 		memset(_heChannel[heChannel].soundVars, 0, sizeof(_heChannel[heChannel].soundVars));

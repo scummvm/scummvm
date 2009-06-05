@@ -53,6 +53,7 @@ public: // Used by createSound()
 		int sound;
 		int codeOffs;
 		int priority;
+		int rate;
 		int timer;
 		int sbngBlock;
 		int soundVars[27];
