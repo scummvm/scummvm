@@ -36,7 +36,6 @@ namespace Sci {
 struct _scummvm_driver_state {
 	gfx_pixmap_t *priority[2];
 	byte *visual[2];
-	uint8 *pointer_data;
 	int xsize, ysize;
 };
 
@@ -53,7 +52,6 @@ static int scummvm_init(gfx_driver_t *drv, int xfact, int yfact, int bytespp) {
 	S->xsize = xfact * 320;
 	S->ysize = yfact * 200;
 
-	S->pointer_data = NULL;
 	//S->buckystate = 0;
 
 	for (i = 0; i < 2; i++) {
@@ -93,9 +91,6 @@ static void scummvm_exit(gfx_driver_t *drv) {
 			delete[] S->visual[i];
 			S->visual[i] = NULL;
 		}
-
-		delete[] S->pointer_data;
-		S->pointer_data = NULL;
 
 		delete S;
 	}
@@ -284,8 +279,7 @@ static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer, Common:
 	if ((pointer == NULL) || (hotspot == NULL)) {
 		g_system->showMouse(false);
 	} else {
-		delete[] S->pointer_data;
-		S->pointer_data = create_cursor(drv, pointer, 1);
+		uint8 *cursorData = create_cursor(drv, pointer, 1);
 
 		// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
 		// Note that some cursors don't have a palette in SQ5
@@ -297,8 +291,11 @@ static int scummvm_set_pointer(gfx_driver_t *drv, gfx_pixmap_t *pointer, Common:
 		if (!pointer->palette)
 			color_key = 63;
 
-		g_system->setMouseCursor(S->pointer_data, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
+		g_system->setMouseCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
 		g_system->showMouse(true);
+
+		delete[] cursorData;
+		cursorData = 0;
 	}
 
 	return GFX_OK;
