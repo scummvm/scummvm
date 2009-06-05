@@ -38,10 +38,15 @@ class Screen {
 public:
     Screen(OSystem *system);
     ~Screen();
-	
+
+	void setFrontBuffer(int x, int y, int width, int height, uint8 *buffer);
+	void setBackBuffer(int x, int y, int width, int height, uint8 *buffer);
+	void copyBuffer(int x, int y, int width, int height, uint8 *src, uint8 *dst);
+	void copyBuffer(int xs, int ys, int xd, int yd, int width, int height, uint8 *src, uint8 *dst);
+
 	void clearScreen();
 	void updateScreen();
-	void updateScreen(int x0, int y0, int x1, int y1, int width, int height, uint8 *buffer);
+	void updateScreen(int x, int y, int width, int height);
 
 	void setPalette(uint8 *palette);
 
