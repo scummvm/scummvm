@@ -1357,7 +1357,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 			palPtr = _vm->_hePalettes + _paletteNum * _vm->_hePaletteSlot + 768;
 		} else if (rgbs) {
 			for (uint i = 0; i < 256; i++)
-				_palette[i] = _vm->get16BitColor(rgbs[i * 3 + 0], rgbs[i * 3 + 1], rgbs[i * 3 + 2]);
+				WRITE_LE_UINT16(_palette + i, _vm->get16BitColor(rgbs[i * 3 + 0], rgbs[i * 3 + 1], rgbs[i * 3 + 2]));
 			palPtr = (uint8 *)_palette;
 		}
 	} else if (_vm->_game.heversion >= 99) {
