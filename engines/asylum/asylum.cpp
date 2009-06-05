@@ -25,40 +25,54 @@
 #include "common/file.h"
 
 #include "asylum/asylum.h"
+#include "asylum/screen.h"
 #include "asylum/resource.h"
 #include "asylum/graphics.h"
 
 namespace Asylum {
 
-AsylumEngine::AsylumEngine( OSystem *system, Common::Language language )
-	: Engine( system ) {
+AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
+        : Engine(system) {
 
-	Common::File::addDefaultDirectory( _gameDataDir.getChild("Data") );
-	Common::File::addDefaultDirectory( _gameDataDir.getChild("Vids") );
+        Common::File::addDefaultDirectory(_gameDataDir.getChild("Data"));
+        Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
 
-	_eventMan->registerRandomSource( _rnd, "asylum");
+        _eventMan->registerRandomSource(_rnd, "asylum");
 }
 
 AsylumEngine::~AsylumEngine() {
-	//Common::clearAllDebugChannels();
+        //Common::clearAllDebugChannels();
+        delete _screen;
 }
 
 Common::Error AsylumEngine::run() {
-	initGraphics( 640, 480, true );
+        Common::Error err;
+        err = init();
+        if (err != Common::kNoError)
+                return err;
+        return go();
+}
 
-	Resource* res = new Resource;
+Common::Error AsylumEngine::init() {
+        _screen = new Screen(_system);
 
-	res->load( "res.001" );
-	res->dump();
+        return Common::kNoError;
+}
 
-	GraphicResource *gres = new GraphicResource( res->getResource(23) );
-	gres->dump();
+Common::Error AsylumEngine::go() {
+        Resource* res = new Resource;
+
+        res->load("res.001");
+        res->dump();
+
+        GraphicResource *gres = new GraphicResource( res->getResource(0) );
+        gres->dump();
 
 
-	delete res;
-	delete gres;
+        delete res;
+        delete gres;
 
-	return Common::kNoError;
+        return Common::kNoError;
 }
 
 } // namespace Asylum

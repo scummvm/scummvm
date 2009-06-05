@@ -35,12 +35,11 @@ class GraphicResource {
 public:
     GraphicResource( ResourceItem item );
     ~GraphicResource();
-    
+
 	void dump();
-	
+
 private:
-    Common::String _filename;    
-    uint32 _packSize;
+    Common::String _filename;
     uint32 _tagValue;
     uint32 _flag;
     uint32 _contentOffset;
@@ -49,25 +48,26 @@ private:
     uint32 _unknown3;
     uint16 _numEntries;
     uint16 _maxWidthSize;
+
 	Common::Array<GraphicAsset> _items;
-	
+
 }; // end of class GraphicResource
 
 class GraphicAsset {
 public:
     GraphicAsset();
     ~GraphicAsset();
-		
+
     uint32 size;
     uint32 flag;
-    uint16 x;  
-    uint16 y; 
+    uint16 x;
+    uint16 y;
     uint16 width;
-    uint16 height;        
+    uint16 height;
 	unsigned char *data;
-	
-	void dump();		
-	
+
+	void dump();
+
 }; // end of class GraphicAsset
 
 } // end of namespace Asylum

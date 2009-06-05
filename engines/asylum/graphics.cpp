@@ -22,6 +22,7 @@
 #include "asylum/graphics.h"
 #include "asylum/utils.h"
 
+#include "common/endian.h"
 #include "common/file.h"
 #include "common/stream.h"
 
@@ -31,35 +32,26 @@ GraphicResource::GraphicResource( ResourceItem item )
 {
 	int pos = 0;
 
-	_packSize = item.size;
-
-	// DEBUG
-	// This logic is somewhat flawed, as the Flag value is
-	// getting the tag value, and the tag value is getting
-	// junk data, but the rest seems to be correct.
-	// Since this is still a test though, it'll likely
-	// be re-written at some point
-
-	_tagValue      = read32( item.data, pos );
-	_flag          = read32( item.data, pos );
-	_contentOffset = read32( item.data, pos );
-	_unknown1      = read32( item.data, pos );
-	_unknown2      = read32( item.data, pos );
-	_unknown3      = read32( item.data, pos );
-	_numEntries    = read16( item.data, pos );
-	_maxWidthSize  = read16( item.data, pos );
+	_tagValue      = READ_UINT32( item.data + pos ); pos += 4;
+	_flag          = READ_UINT32( item.data + pos ); pos += 4;
+	_contentOffset = READ_UINT32( item.data + pos ); pos += 4;
+	_unknown1      = READ_UINT32( item.data + pos ); pos += 4;
+	_unknown2      = READ_UINT32( item.data + pos ); pos += 4;
+	_unknown3      = READ_UINT32( item.data + pos ); pos += 4;
+	_numEntries    = READ_UINT16( item.data + pos ); pos += 2;
+	_maxWidthSize  = READ_UINT16( item.data + pos ); pos += 2;
 
 	Common::Array<uint32> offsets;
 
 	// read the individual asset offsets
 	for( int i = 0; i < _numEntries; i++ ){
-		offsets.push_back( read32(item.data, pos) );
+		offsets.push_back( READ_UINT32(item.data + pos) ); pos += 4;
 	}
 
 	for( int i = 0; i < _numEntries; i++ ){
 		GraphicAsset* gra = new GraphicAsset;
 
-		uint32 size;
+		uint32 size = 0;
 
 		// Allocate size based on offset differences
 		// TODO
@@ -67,7 +59,7 @@ GraphicResource::GraphicResource( ResourceItem item )
 		if( i < _numEntries - 1 ){
 			size = offsets[i + 1] - offsets[i];
 		}else{
-			size = _packSize - offsets[i];
+			size = item.size - offsets[i];
 		}
 
 		gra->size = size;
@@ -78,11 +70,11 @@ GraphicResource::GraphicResource( ResourceItem item )
 		}
 
 		int entryPos = 0;
-		gra->flag   = read32( gra->data, entryPos );
-		gra->x      = read16( gra->data, entryPos );
-		gra->y      = read16( gra->data, entryPos );
-		gra->width  = read16( gra->data, entryPos );
-		gra->height = read16( gra->data, entryPos );
+		gra->flag   = READ_UINT32( gra->data + entryPos ); entryPos += 4;
+		gra->x      = READ_UINT16( gra->data + entryPos ); entryPos += 2;
+		gra->y      = READ_UINT16( gra->data + entryPos ); entryPos += 2;
+		gra->width  = READ_UINT16( gra->data + entryPos ); entryPos += 2;
+		gra->height = READ_UINT16( gra->data + entryPos );
 
 		_items.push_back( *gra );
 
