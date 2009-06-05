@@ -46,32 +46,26 @@ GraphicResource::GraphicResource(ResourceItem item) {
 		offsets.push_back(READ_UINT32(item.data + pos)); pos += 4;
 	}
 
+	// read each asset
 	for (int i = 0; i < _numEntries; i++) {
 		GraphicAsset* gra = new GraphicAsset;
 
-		uint32 size = 0;
+		pos = offsets[i] + _contentOffset;
 
-		// Allocate size based on offset differences
-		// TODO Handle zero sized entries
-		if( i < _numEntries - 1 ) {
-			size = offsets[i + 1] - offsets[i];
-		}else {
-			size = item.size - offsets[i];
+		gra->size   = READ_UINT32(item.data + pos); pos += 4;
+		gra->flag   = READ_UINT32(item.data + pos); pos += 4;
+		gra->x      = READ_UINT16(item.data + pos); pos += 2;
+		gra->y      = READ_UINT16(item.data + pos); pos += 2;
+		gra->height = READ_UINT16(item.data + pos); pos += 2;
+		gra->width  = READ_UINT16(item.data + pos); pos += 2;
+
+		// allocate space for data and fill the array from
+		// the end of the header block (read in above) to
+		// the length specified by gra->size
+		gra->data = (unsigned char*)malloc(gra->size - 16);
+		for (uint32 j = 0; j < gra->size - 16; j++) {
+			gra->data[j] = item.data[j + pos];
 		}
-
-		gra->size = size;
-		gra->data = (unsigned char*)malloc(size);
-
-		for (uint32 j = 0; j < size; j++) {
-			gra->data[j] = item.data[j + offsets[i] + _contentOffset];
-		}
-
-		int entryPos = 0;
-		gra->flag   = READ_UINT32(gra->data + entryPos); entryPos += 4;
-		gra->x      = READ_UINT16(gra->data + entryPos); entryPos += 2;
-		gra->y      = READ_UINT16(gra->data + entryPos); entryPos += 2;
-		gra->width  = READ_UINT16(gra->data + entryPos); entryPos += 2;
-		gra->height = READ_UINT16(gra->data + entryPos);
 
 		_items.push_back(*gra);
 
@@ -97,7 +91,7 @@ GraphicAsset::~GraphicAsset() {
 }
 
 void GraphicAsset::dump() {
-	printf( "Size: %d, Flag %d, Width: %d, Height: %d, x:%d, y: %d\n", size, flag, width, height, x, y );
+	printf( "Size: %d, Flag %d, Width: %d, Height: %d, x: %d, y: %d\n", size, flag, width, height, x, y );
 }
 
 int GraphicAsset::save(Common::String filename) {

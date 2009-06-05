@@ -65,7 +65,7 @@ Common::Error AsylumEngine::go() {
         res->load("res.001");
         res->dump();
 
-        GraphicResource *gres = new GraphicResource( res->getResource(0) );
+        GraphicResource *gres = new GraphicResource( res->getResource(1) );
         gres->dump();
 
 
