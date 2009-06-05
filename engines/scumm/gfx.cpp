@@ -231,6 +231,9 @@ GdiV2::~GdiV2() {
 	free(_roomStrips);
 }
 
+Gdi16Bit::Gdi16Bit(ScummEngine *vm) : Gdi(vm) {
+}
+
 void Gdi::init() {
 	_numStrips = _vm->_screenWidth / 8;
 
@@ -2803,12 +2806,8 @@ void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int h
 
 	int x = width;
 	while (1) {
-		if (!transpCheck || color != _transparentColor) {
-			if (_vm->_game.features & GF_16BIT_COLOR)
-				WRITE_UINT16(dst, READ_LE_UINT16(_vm->_hePalettes + 2048 + color * 2));
-			else
-				*dst = _roomPalette[color];
-		}
+		if (!transpCheck || color != _transparentColor)
+			writeRoomColor(dst, color);
 		dst += _vm->_bitDepth;
 		--x;
 		if (x == 0) {
@@ -2896,12 +2895,8 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 		int x = 8;
 		do {
 			FILL_BITS;
-			if (!transpCheck || color != _transparentColor) {
-				if (_vm->_game.features & GF_16BIT_COLOR)
-					WRITE_UINT16(dst, READ_LE_UINT16(_vm->_hePalettes + 2048 + color * 2));
-				else
-					*dst = _roomPalette[color] + _paletteMod;
-			}
+			if (!transpCheck || color != _transparentColor)
+				writeRoomColor(dst, color);
 			dst += _vm->_bitDepth;
 
 		againPos:
@@ -2927,12 +2922,8 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 							if (!--height)
 								return;
 						}
-						if (!transpCheck || color != _transparentColor) {
-							if (_vm->_game.features & GF_16BIT_COLOR)
-								WRITE_UINT16(dst, READ_LE_UINT16(_vm->_hePalettes + 2048 + color * 2));
-							else
-								*dst = _roomPalette[color] + _paletteMod;
-						}
+						if (!transpCheck || color != _transparentColor)
+							writeRoomColor(dst, color);
 						dst += _vm->_bitDepth;
 					} while (--reps);
 					bits >>= 8;
@@ -2956,12 +2947,8 @@ void Gdi::drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, 
 		int x = 8;
 		do {
 			FILL_BITS;
-			if (!transpCheck || color != _transparentColor) {
-				if (_vm->_game.features & GF_16BIT_COLOR)
-					WRITE_UINT16(dst, READ_LE_UINT16(_vm->_hePalettes + 2048 + color * 2));
-				else
-					*dst = _roomPalette[color] + _paletteMod;
-			}
+			if (!transpCheck || color != _transparentColor)
+				writeRoomColor(dst, color);
 			dst += _vm->_bitDepth;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -2993,12 +2980,8 @@ void Gdi::drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height, 
 		int h = height;
 		do {
 			FILL_BITS;
-			if (!transpCheck || color != _transparentColor) {
-				if (_vm->_game.features & GF_16BIT_COLOR)
-					WRITE_UINT16(dst, READ_LE_UINT16(_vm->_hePalettes + 2048 + color * 2));
-				else
-					*dst = _roomPalette[color] + _paletteMod;
-			}
+			if (!transpCheck || color != _transparentColor)
+				writeRoomColor(dst, color);
 			dst += dstPitch;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -3065,12 +3048,8 @@ void Gdi::drawStripRaw(byte *dst, int dstPitch, const byte *src, int height, con
 		do {
 			for (x = 0; x < 8; x ++) {
 				byte color = *src++;
-				if (!transpCheck || color != _transparentColor) {
-					if (_vm->_game.features & GF_16BIT_COLOR)
-						WRITE_UINT16(dst + x * 2, READ_LE_UINT16(_vm->_hePalettes + 2048 + color * 2));
-					else
-						dst[x] = _roomPalette[color] + _paletteMod;
-				}
+				if (!transpCheck || color != _transparentColor)
+					writeRoomColor(dst + x * _vm->_bitDepth, color);
 			}
 			dst += dstPitch;
 		} while (--height);
@@ -3192,6 +3171,14 @@ void Gdi::unkDecode11(byte *dst, int dstPitch, const byte *src, int height) cons
 
 #undef NEXT_ROW
 #undef READ_BIT_256
+
+void Gdi16Bit::writeRoomColor(byte *dst, byte color) const {
+	WRITE_UINT16(dst, READ_LE_UINT16(_vm->_hePalettes + 2048 + color * 2));
+}
+
+void Gdi::writeRoomColor(byte *dst, byte color) const {
+	*dst = _roomPalette[color] + _paletteMod;
+}
 
 
 #pragma mark -

@@ -215,6 +215,7 @@ protected:
 	void drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const;
 
 	void drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int height, const bool transpCheck) const;
+	virtual void writeRoomColor(byte *dst, byte color) const;
 
 	/* Mask decompressors */
 	void decompressTMSK(byte *dst, const byte *tmsk, const byte *src, int height) const;
@@ -359,6 +360,13 @@ public:
 	~GdiV2();
 
 	virtual void roomChanged(byte *roomptr);
+};
+
+class Gdi16Bit : public Gdi {
+protected:
+	virtual void writeRoomColor(byte *dst, byte color) const;
+public:
+	Gdi16Bit(ScummEngine *vm);
 };
 
 } // End of namespace Scumm

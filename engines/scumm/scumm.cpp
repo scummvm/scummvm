@@ -109,7 +109,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _currentScript(0xFF), // Let debug() work on init stage
 	  _messageDialog(0), _pauseDialog(0), _scummMenuDialog(0), _versionDialog(0) {
 
-	if (_game.platform == Common::kPlatformNES) {
+	if (_game.features & GF_16BIT_COLOR) {
+		_gdi = new Gdi16Bit(this);
+	} else if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
 	} else if (_game.version <= 1) {
 		_gdi = new GdiV1(this);
