@@ -73,7 +73,7 @@ void lua_resetglobals() {
 	luaX_init();
 }
 
-void callHook(lua_Function func, const char *filename, int line) {
+void callHook(lua_Function func, const char *filename, int32 line) {
 	const char *name, *type;
 	FILE *output = stdout;
 	int i;
