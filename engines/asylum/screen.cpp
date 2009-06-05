@@ -25,34 +25,33 @@
 
 namespace Asylum {
 
-Screen::Screen(OSystem *system)
-{
+Screen::Screen(OSystem *system) {
 	initGraphics(SCREEN_WIDTH, SCREEN_DEPTH, true);
-	
+
 	_system = system;
 	_frontBuf = _backBuf = NULL;
 	_updatePalette = false;
 	_fullRefresh = false;
 }
 
-Screen::~Screen()
-{
+Screen::~Screen() {
 }
 
-void clearScreen(){
+void clearScreen() {
 
 }
 
-void updateScreen(){
+void updateScreen() {
+
 }
 
-void updateRect(Common::Rect *r){
+void updateRect(Common::Rect *r) {
 }
 
-void setPalette(uint8 * palette){
+void setPalette(uint8 * palette) {
 }
 
-void drawLine(int x0, int y0, int x1, int y1, uint8 colour){
+void drawLine(int x0, int y0, int x1, int y1, uint8 colour) {
 }
 
 } // end of namespace Asylum

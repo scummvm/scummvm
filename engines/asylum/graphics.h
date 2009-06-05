@@ -33,7 +33,7 @@ class GraphicAsset;
 
 class GraphicResource {
 public:
-    GraphicResource( ResourceItem item );
+    GraphicResource(ResourceItem item);
     ~GraphicResource();
 
 	void dump();
@@ -67,6 +67,7 @@ public:
 	unsigned char *data;
 
 	void dump();
+	int save(Common::String filename);
 
 }; // end of class GraphicAsset
 
