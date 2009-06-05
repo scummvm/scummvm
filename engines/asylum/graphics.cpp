@@ -20,7 +20,6 @@
  */
 
 #include "asylum/graphics.h"
-#include "asylum/utils.h"
 
 #include "common/endian.h"
 #include "common/file.h"
