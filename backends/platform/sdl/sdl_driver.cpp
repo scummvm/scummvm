@@ -640,6 +640,9 @@ byte *OSystem_SDL::setupScreen(int screenW, int screenH, bool fullscreen, bool a
 	if (_opengl) {
 		int glflag;
 
+		// apply atribute again for sure based on SDL docs
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
 		SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &glflag);
 		warning("INFO: GL RED bits: %d", glflag);
 		SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &glflag);
