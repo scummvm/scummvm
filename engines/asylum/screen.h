@@ -30,6 +30,8 @@ class OSystem;
 #define	SCREEN_WIDTH	640
 #define	SCREEN_DEPTH	400
 
+#define PAL_SIZE		256
+
 namespace Asylum {
 
 class Screen {
@@ -39,9 +41,9 @@ public:
 	
 	void clearScreen();
 	void updateScreen();
-	void updateRect(Common::Rect *r);
+	void updateScreen(int x0, int y0, int x1, int y1, int width, int height, uint8 *buffer);
 
-	void setPalette(uint8 * palette);
+	void setPalette(uint8 *palette);
 
 	void drawLine(int x0, int y0, int x1, int y1, uint8 colour);
 
@@ -52,7 +54,7 @@ private:
 	uint8  *_backBuf;
 	bool   _fullRefresh;
 
-	uint8 _currentPalette[256 * 4];
+	uint8 _currentPalette[PAL_SIZE * 4];
 	bool   _updatePalette;
 }; // end of class Screen
 
