@@ -30,21 +30,51 @@ Screen::Screen(OSystem *system){
 	initGraphics(SCREEN_WIDTH, SCREEN_DEPTH, true);
 
 	_system = system;
-	_frontBuf = _backBuf = NULL;
 	_updatePalette = false;
 	_fullRefresh = false;
+
+	_frontBuf = (uint8 *)malloc(sizeof(uint8)*SCREEN_WIDTH * SCREEN_DEPTH);
+	_backBuf = (uint8 *)malloc(sizeof(uint8)*SCREEN_WIDTH * SCREEN_DEPTH);
 }
 
 Screen::~Screen(){
+	if(_frontBuf){
+		free(_frontBuf);
+	}
+	if(_backBuf){
+		free(_backBuf);
+	}
 }
 
+void Screen::setFrontBuffer(int x, int y, int width, int height, uint8 *buffer){
+	copyBuffer(x, y, width, height, _frontBuf, buffer);
+}
+
+void Screen::setBackBuffer(int x, int y, int width, int height, uint8 *buffer){
+	copyBuffer(x, y, width, height, _backBuf, buffer);
+}
+
+void Screen::copyBuffer(int x, int y, int width, int height, uint8 *src, uint8 *dst){
+	copyBuffer(x, y, 0, 0, width, height, src, dst);
+}
+
+void Screen::copyBuffer(int xs, int ys, int xd, int yd, int width, int height, uint8 *src, uint8 *dst){
+	
+}
+
+
 void Screen::clearScreen(){
+	memset(_frontBuf, 0, sizeof(uint8)*SCREEN_WIDTH * SCREEN_DEPTH);
+	updateScreen();
 }
 
 void Screen::updateScreen(){
+	updateScreen(0, 0, SCREEN_WIDTH, SCREEN_DEPTH);
 }
 
-void Screen::updateScreen(int x0, int y0, int x1, int y1, int width, int height, uint8 *buffer){
+void Screen::updateScreen(int x, int y, int width, int height){
+	_system->copyRectToScreen(_frontBuf, SCREEN_WIDTH, x, y, width, height);
+	_system->updateScreen();
 }
 
 void Screen::setPalette(uint8 *palette){
