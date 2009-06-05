@@ -85,7 +85,7 @@ int Resource::load(Common::String filename) {
 	// populate the data
 	for (uint8 k = 0; k < _numEntries; k++) {
 		if (_items[k].size > 0) {
-			_items[k].data = (unsigned char*)malloc(_items[k].size);
+			_items[k].data = (uint8*)malloc(_items[k].size);
 			file->seek(_items[k].offset, SEEK_SET);
 			file->read(_items[k].data, _items[k].size);
 

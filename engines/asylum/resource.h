@@ -66,7 +66,7 @@ public:
 
 	uint32 offset;
 	uint32 size;
-	unsigned char *data;
+	uint8 *data;
 
 }; // end of class ResourceItem
 

@@ -64,7 +64,7 @@ public:
     uint16 y;
     uint16 width;
     uint16 height;
-	unsigned char *data;
+	uint8 *data;
 
 	void dump();
 	int save(Common::String filename);
