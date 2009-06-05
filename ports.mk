@@ -187,8 +187,8 @@ aos4dist: $(EXECUTABLE)
 	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)_SVN
 	cp icons/residual.info $(AOS4PATH)/$(EXECUTABLE)_SVN.info
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
-	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING_LGPL.txt
-	cp $(srcdir)/COPYING.GPL $(AOS4PATH)/COPYING_GPL.txt
+	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING.LGPL.txt
+	cp $(srcdir)/COPYING.GPL $(AOS4PATH)/COPYING.GPL.txt
 	cp $(srcdir)/NEWS $(AOS4PATH)/NEWS.txt
 	cp $(srcdir)/README $(AOS4PATH)/README.txt
 	cp $(srcdir)/TODO $(AOS4PATH)/TODO.txt
