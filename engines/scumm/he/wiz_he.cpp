@@ -659,7 +659,7 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const u
 
 						code = -xoff;
 					}
-					dstPtr += dstInc;
+					dstPtr += dstInc * code;
 					w -= code;
 				} else if (code & 2) {
 					code = (code >> 2) + 1;
