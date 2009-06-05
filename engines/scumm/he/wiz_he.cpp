@@ -1800,14 +1800,12 @@ void Wiz::loadWizCursor(int resId, int palette) {
 	}
 
 	const Common::Rect *r = NULL;
-	_vm->_bitDepth = 1;
 	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, _vm->getHEPaletteSlot(palette));
-	_vm->_bitDepth = (_vm->_game.features & GF_16BIT_COLOR) ? 2 : 1;
 
 	int32 cw, ch;
 	getWizImageDim(resId, 0, cw, ch);
 	_vm->setCursorHotspot(x, y);
-	_vm->setCursorFromBuffer(cursor, cw, ch, cw);
+	_vm->setCursorFromBuffer(cursor, cw, ch, cw * _vm->_bitDepth);
 
 	// Since we set up cursor palette for default cursor, disable it now
 	CursorMan.disableCursorPalette(true);

@@ -111,7 +111,13 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 }
 
 void ScummEngine::updateCursor() {
-	const int transColor = (_game.heversion >= 80) ? 5 : 255;
+	//HACK Put the 16-bit mapped color, and
+	//hope no other palette entry shares it
+	int transColor = (_game.heversion >= 80) ? 5 : 255;
+	if (_game.features & GF_16BIT_COLOR && _hePalettes) 
+		transColor = READ_LE_UINT16(_hePalettes + 2048 + transColor * 2);
+	else
+		transColor = 0;
 	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
 							(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
@@ -138,7 +144,7 @@ void ScummEngine::setCursorFromBuffer(const byte *ptr, int width, int height, in
 	uint size;
 	byte *dst;
 
-	size = width * height;
+	size = width * height * _bitDepth;
 	if (size > sizeof(_grabbedCursor))
 		error("grabCursor: grabbed cursor too big");
 
@@ -148,8 +154,8 @@ void ScummEngine::setCursorFromBuffer(const byte *ptr, int width, int height, in
 
 	dst = _grabbedCursor;
 	for (; height; height--) {
-		memcpy(dst, ptr, width);
-		dst += width;
+		memcpy(dst, ptr, width * _bitDepth);
+		dst += width * _bitDepth;
 		ptr += pitch;
 	}
 

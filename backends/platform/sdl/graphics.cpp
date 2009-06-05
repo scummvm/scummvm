@@ -1438,8 +1438,13 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 
 	free(_mouseData);
 
+#ifdef ENABLE_16BIT
+	_mouseData = (byte *)malloc(w * h * 2);
+	memcpy(_mouseData, buf, w * h * 2);
+#else
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
+#endif
 	blitCursor();
 }
 
@@ -1481,12 +1486,24 @@ void OSystem_SDL::blitCursor() {
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
 			color = *srcPtr;
+#ifdef ENABLE_16BIT
+			if (color != _mouseKeyColor) {	// transparent, don't draw
+				int8 r = ((*(uint16 *)srcPtr >> 10) & 0x1F) << 3;
+				int8 g = ((*(uint16 *)srcPtr >> 5) & 0x1F) << 3;
+				int8 b = (*(uint16 *)srcPtr & 0x1F) << 3;
+				*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
+					r, g, b);
+			}
+			dstPtr += 2;
+			srcPtr += 2;
+#else
 			if (color != _mouseKeyColor) {	// transparent, don't draw
 				*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
 					palette[color].r, palette[color].g, palette[color].b);
 			}
 			dstPtr += 2;
 			srcPtr++;
+#endif
 		}
 		dstPtr += _mouseOrigSurface->pitch - w * 2;
 	}

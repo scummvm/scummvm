@@ -876,7 +876,7 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 
 void ClassicCostumeRenderer::setPalette(uint16 *palette) {
 	int i;
-	byte color;
+	byte color = 0;
 
 	if (_loaded._format == 0x57) {
 		for (i = 0; i < 13; i++)

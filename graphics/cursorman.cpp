@@ -108,7 +108,11 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	}
 
 	Cursor *cur = _cursorStack.top();
+#ifdef ENABLE_16BIT
+	uint size = w * h * 2;
+#else
 	uint size = w * h;
+#endif
 
 	if (cur->_size < size) {
 		delete[] cur->_data;

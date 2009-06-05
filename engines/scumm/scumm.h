@@ -974,7 +974,10 @@ protected:
 		byte animate, animateIndex;
 		int8 state;
 	} _cursor;
-	byte _grabbedCursor[8192];
+
+	// HACK Double the array size to handle 16-bit images.
+	// this should be dynamically allocated based on game depth instead.
+	byte _grabbedCursor[16384]; 
 	byte _currentCursor;
 
 	byte _newEffect, _switchRoomEffect2, _switchRoomEffect;
