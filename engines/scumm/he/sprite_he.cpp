@@ -151,6 +151,7 @@ int Sprite::findSpriteWithClassOf(int x_pos, int y_pos, int spriteGroupId, int t
 			if (spi->maskImage) {
 				int32 x1, x2, y1, y2;
 
+				image = spi->maskImage;
 				imageState = spi->curImageState % _vm->_wiz->getWizImageStates(spi->maskImage);
 
 				pos[0].x = x_pos - spi->pos.x;
