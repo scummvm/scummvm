@@ -63,6 +63,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DVar_Register("simulated_key",		&g_debug_simulated_key, DVAR_INT, 0);
 	DVar_Register("track_mouse_clicks",	&g_debug_track_mouse_clicks, DVAR_BOOL, 0);
 	DVar_Register("weak_validations",	&g_debug_weak_validations, DVAR_BOOL, 0);
+	DVar_Register("script_abort_flag",	&script_abort_flag, DVAR_INT, 0);
 
 	// General
 	DCmd_Register("help",				WRAP_METHOD(Console, cmdHelp));
@@ -115,6 +116,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("dynamic_views",		WRAP_METHOD(Console, cmdDynamicViews));
 	DCmd_Register("dropped_views",		WRAP_METHOD(Console, cmdDroppedViews));
 	DCmd_Register("status_bar",			WRAP_METHOD(Console, cmdStatusBarColors));
+#ifdef GFXW_DEBUG_WIDGETS
+	DCmd_Register("print_widget",		WRAP_METHOD(Console, cmdPrintWidget));
+#endif
 	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
 	DCmd_Register("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
@@ -182,6 +186,14 @@ void Console::postEnter() {
 	_vm->_mixer->pauseAll(false);
 }
 
+
+#if 0
+// Unused
+#define LOOKUP_SPECIES(species) (\
+	(species >= 1000) ? species : *(s->_classtable[species].scriptposp) \
+		+ s->_classtable[species].class_offset)
+#endif
+
 bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("\n");
 	DebugPrintf("Variables\n");
@@ -191,6 +203,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("simulated_key: Add a key with the specified scan code to the event list\n");
 	DebugPrintf("track_mouse_clicks: Toggles mouse click tracking to the console\n");
 	DebugPrintf("weak_validations: Turns some validation errors into warnings\n");
+	DebugPrintf("script_abort_flag: Set to 1 to abort script execution. Set to 2 to force a replay afterwards\n");
 	DebugPrintf("\n");
 	DebugPrintf("Commands\n");
 	DebugPrintf("--------\n");
@@ -248,6 +261,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" dynamic_views - Lists active dynamic views\n");
 	DebugPrintf(" dropped_views - Lists dropped dynamic views\n");
 	DebugPrintf(" status_bar - Sets the colors of the status bar\n");
+#ifdef GFXW_DEBUG_WIDGETS
+	DebugPrintf(" print_widget - Shows active widgets (no params) or information on the specified widget indices\n");
+#endif
 	DebugPrintf("\n");
 	DebugPrintf("Segments:\n");
 	DebugPrintf(" segment_table - Lists all segments\n");
@@ -667,7 +683,7 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 	if (newstate) {
 		g_EngineState->successor = newstate; // Set successor
 
-		script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
+		script_abort_flag = 2; // Abort current game with replay
 		g_debugstate_valid = 0;
 
 		shrink_execution_stack(g_EngineState, g_EngineState->execution_stack_base + 1);
@@ -2677,5 +2693,226 @@ int printObject(EngineState *s, reg_t pos) {
 
 	return 0;
 }
+
+#define GETRECT(ll, rr, tt, bb) \
+	ll = GET_SELECTOR(pos, ll); \
+	rr = GET_SELECTOR(pos, rr); \
+	tt = GET_SELECTOR(pos, tt); \
+	bb = GET_SELECTOR(pos, bb);
+
+#if 0
+// TODO Re-implement this
+static void viewobjinfo(EngineState *s, HeapPtr pos) {
+	char *signals[16] = {
+		"stop_update",
+		"updated",
+		"no_update",
+		"hidden",
+		"fixed_priority",
+		"always_update",
+		"force_update",
+		"remove",
+		"frozen",
+		"is_extra",
+		"hit_obstacle",
+		"doesnt_turn",
+		"no_cycler",
+		"ignore_horizon",
+		"ignore_actor",
+		"dispose!"
+	};
+
+	int x, y, z, priority;
+	int cel, loop, view, signal;
+	int nsLeft, nsRight, nsBottom, nsTop;
+	int lsLeft, lsRight, lsBottom, lsTop;
+	int brLeft, brRight, brBottom, brTop;
+	int i;
+	int have_rects = 0;
+	Common::Rect nsrect, nsrect_clipped, brrect;
+
+	if (lookup_selector(s, pos, s->_kernel->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
+		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
+		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
+		GETRECT(brLeft, brRight, brBottom, brTop);
+		have_rects = 1;
+	}
+
+	GETRECT(view, loop, signal, cel);
+
+	sciprintf("\n-- View information:\ncel %d/%d/%d at ", view, loop, cel);
+
+	x = GET_SELECTOR(pos, x);
+	y = GET_SELECTOR(pos, y);
+	priority = GET_SELECTOR(pos, priority);
+	if (s->_kernel->_selectorMap.z > 0) {
+		z = GET_SELECTOR(pos, z);
+		sciprintf("(%d,%d,%d)\n", x, y, z);
+	} else
+		sciprintf("(%d,%d)\n", x, y);
+
+	if (priority == -1)
+		sciprintf("No priority.\n\n");
+	else
+		sciprintf("Priority = %d (band starts at %d)\n\n", priority, PRIORITY_BAND_FIRST(priority));
+
+	if (have_rects) {
+		sciprintf("nsRect: [%d..%d]x[%d..%d]\n", nsLeft, nsRight, nsTop, nsBottom);
+		sciprintf("lsRect: [%d..%d]x[%d..%d]\n", lsLeft, lsRight, lsTop, lsBottom);
+		sciprintf("brRect: [%d..%d]x[%d..%d]\n", brLeft, brRight, brTop, brBottom);
+	}
+
+	nsrect = get_nsrect(s, pos, 0);
+	nsrect_clipped = get_nsrect(s, pos, 1);
+	brrect = set_base(s, pos);
+	sciprintf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend, nsrect.y, nsrect.yend);
+	sciprintf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x, nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
+	sciprintf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend, brrect.y, brrect.yend);
+	sciprintf("\n signals = %04x:\n", signal);
+
+	for (i = 0; i < 16; i++)
+		if (signal & (1 << i))
+			sciprintf("  %04x: %s\n", 1 << i, signals[i]);
+}
+#endif
+#undef GETRECT
+
+#define GETRECT(ll, rr, tt, bb) \
+	ll = GET_SELECTOR(pos, ll); \
+	rr = GET_SELECTOR(pos, rr); \
+	tt = GET_SELECTOR(pos, tt); \
+	bb = GET_SELECTOR(pos, bb);
+
+#if 0
+// Draws the nsRect and brRect of a dynview object. nsRect is green, brRect is blue.
+// TODO: Re-implement this
+static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	HeapPtr pos = (HeapPtr)(cmdParams[0].val);
+	int is_view;
+	int x, y, priority;
+	int nsLeft, nsRight, nsBottom, nsTop;
+	int brLeft, brRight, brBottom, brTop;
+
+	if (!s) {
+		sciprintf("Not in debug state!\n");
+		return 1;
+	}
+
+	if ((pos < 4) || (pos > 0xfff0)) {
+		sciprintf("Invalid address.\n");
+		return 1;
+	}
+
+	if (((int16)READ_LE_UINT16(s->heap + pos + SCRIPT_OBJECT_MAGIC_OFFSET)) != SCRIPT_OBJECT_MAGIC_NUMBER) {
+		sciprintf("Not an object.\n");
+		return 0;
+	}
+
+
+	is_view = (lookup_selector(s, pos, s->_kernel->_selectorMap.x, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->_kernel->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->_kernel->_selectorMap.signal, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, s->_kernel->_selectorMap.nsTop, NULL) == kSelectorVariable);
+
+	if (!is_view) {
+		sciprintf("Not a dynamic View object.\n");
+		return 0;
+	}
+
+	x = GET_SELECTOR(pos, x);
+	y = GET_SELECTOR(pos, y);
+	priority = GET_SELECTOR(pos, priority);
+	GETRECT(brLeft, brRight, brBottom, brTop);
+	GETRECT(nsLeft, nsRight, nsBottom, nsTop);
+	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
+
+	brTop += 10;
+	brBottom += 10;
+	nsTop += 10;
+	nsBottom += 10;
+
+	gfxop_fill_box(s->gfx_state, gfx_rect(nsLeft, nsTop, nsRight - nsLeft + 1, nsBottom - nsTop + 1), s->ega_colors[2]);
+	gfxop_fill_box(s->gfx_state, gfx_rect(brLeft, brTop, brRight - brLeft + 1, brBottom - brTop + 1), s->ega_colors[1]);
+	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y - 1, 3, 3), s->ega_colors[0]);
+	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y, 3, 1), s->ega_colors[priority]);
+	gfxop_fill_box(s->gfx_state, gfx_rect(x, y - 1, 1, 3), s->ega_colors[priority]);
+	gfxop_update(s->gfx_state);
+
+	return 0;
+}
+#endif
+#undef GETRECT
+
+#if 0
+// Executes one operation skipping over sends
+// TODO Re-implement this
+int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+	int opcode, opnumber;
+
+	if (!g_debugstate_valid) {
+		sciprintf("Not in debug state\n");
+		return 1;
+	}
+
+	g_debugstate_valid = 0;
+	opcode = s->_heap[*p_pc];
+	opnumber = opcode >> 1;
+	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
+	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
+		g_debug_seeking = _DEBUG_SEEK_SO;
+		s_debug_seek_level = s->_executionStack.size()-1;
+		// Store in s_debug_seek_special the offset of the next command after send
+		switch (opcode) {
+		case 0x46: // calle W
+			s_debug_seek_special = *p_pc + 5;
+			break;
+
+		case 0x44: // callb W
+		case 0x47: // calle B
+		case 0x56: // super W
+			s_debug_seek_special = *p_pc + 4;
+			break;
+
+		case 0x45: // callb B
+		case 0x57: // super B
+		case 0x4A: // send W
+		case 0x54: // self W
+			s_debug_seek_special = *p_pc + 3;
+			break;
+
+		default:
+			s_debug_seek_special = *p_pc + 2;
+		}
+	}
+
+	return 0;
+}
+#endif
+
+#ifdef GFXW_DEBUG_WIDGETS
+extern GfxWidget *debug_widgets[];
+extern int debug_widget_pos;
+
+// If called with no parameters, it shows which widgets are active
+// With parameters, it lists the widget corresponding to the numerical index specified (for each parameter).
+bool Console::cmdPrintWidget(int argc, const char **argv) {
+	if (argc > 1) {
+		for (int i = 0; i < argc; i++) {
+			int widget_nr = atoi(argv[1]);
+
+			DebugPrintf("===== Widget #%d:\n", widget_nr);
+			debug_widgets[widget_nr]->print(0);
+		}
+	} else if (debug_widget_pos > 1) {
+		DebugPrintf("Widgets 0-%d are active\n", debug_widget_pos - 1);
+	} else if (debug_widget_pos == 1) {
+		DebugPrintf("Widget 0 is active\n");
+	} else {
+		DebugPrintf("No widgets are active\n");
+	}
+
+	return true;
+}
+#endif
 
 } // End of namespace Sci

@@ -46,7 +46,7 @@ reg_t NULL_REG = {0, 0};
 #undef STRICT_READ // Disallows reading from out-of-bounds parameters and locals
 
 
-int script_abort_flag = 0; // Set to 1 to abort execution	// FIXME: Avoid non-const global vars
+int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a replay afterwards	// FIXME: Avoid non-const global vars
 int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
 int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME: Avoid non-const global vars
 
@@ -1978,7 +1978,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 				s = successor;
 				g_EngineState = s;
 
-				if (script_abort_flag == SCRIPT_ABORT_WITH_REPLAY) {
+				if (script_abort_flag == 2) {
 					sciprintf("Restarting with replay()\n");
 					s->_executionStack.clear(); // Restart with replay
 

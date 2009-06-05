@@ -654,7 +654,7 @@ reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			if (newstate) {
 				s->successor = newstate;
-				script_abort_flag = SCRIPT_ABORT_WITH_REPLAY; // Abort current game
+				script_abort_flag = 2; // Abort current game with replay
 				shrink_execution_stack(s, s->execution_stack_base + 1);
 			} else {
 				s->r_acc = make_reg(0, 1);
