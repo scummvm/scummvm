@@ -19,56 +19,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef ASYLUM_GRAPHICS_H
-#define ASYLUM_GRAPHICS_H
-
-#include "common/str.h"
-#include "common/array.h"
-
-#include "asylum/resource.h"
+#ifndef ASYLUM_UTILS_H
+#define ASYLUM_UTILS_H
 
 namespace Asylum {
 
-class GraphicAsset;
+/**
+ * Read a 4-byte little-endian uint from the array
+ * starting at the given offset, updating the
+ * offset pointer
+ */
+uint32 read32( unsigned char *value, int &offset )
+{
+	uint32 val = (byte)value[offset] |
+				 (byte)value[offset + 1] << 8  |
+				 (byte)value[offset + 2] << 16 |
+				 (byte)value[offset + 3] << 24;
 
-class GraphicResource {
-public:
-    GraphicResource( ResourceItem item );
-    ~GraphicResource();
-    
-	void dump();
-	
-private:
-    Common::String _filename;    
-    uint32 _packSize;
-    uint32 _tagValue;
-    uint32 _flag;
-    uint32 _contentOffset;
-    uint32 _unknown1;
-    uint32 _unknown2;
-    uint32 _unknown3;
-    uint16 _numEntries;
-    uint16 _maxWidthSize;
-	Common::Array<GraphicAsset> _items;
-	
-}; // end of class GraphicResource
+	offset += 4;
 
-class GraphicAsset {
-public:
-    GraphicAsset();
-    ~GraphicAsset();
-		
-    uint32 size;
-    uint32 flag;
-    uint16 x;  
-    uint16 y; 
-    uint16 width;
-    uint16 height;        
-	unsigned char *data;
-	
-	void dump();		
-	
-}; // end of class GraphicAsset
+	return val;
+}
+
+/**
+ * Read a 2-byte little-endian uint from the array
+ * starting at the given offset, updating the offset
+ * pointer
+ *
+ */
+uint16 read16( unsigned char *value, int &offset )
+{
+	uint16 val = (byte)value[offset] | (byte)value[offset + 1] << 8;
+
+	offset += 2;
+
+	return val;
+}
+
 
 } // end of namespace Asylum
 

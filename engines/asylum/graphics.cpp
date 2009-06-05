@@ -20,24 +20,74 @@
  */
 
 #include "asylum/graphics.h"
+#include "asylum/utils.h"
 
-#include "common/endian.h"
 #include "common/file.h"
 #include "common/stream.h"
 
 namespace Asylum {
 
 GraphicResource::GraphicResource( ResourceItem item )
-{	
+{
 	int pos = 0;
-	_tagValue      = READ_UINT32(item.data+pos); pos+=4;
-	_flag          = READ_UINT32(item.data+pos); pos+=4;
-	_contentOffset = READ_UINT32(item.data+pos); pos+=4;
-	_unknown1      = READ_UINT32(item.data+pos); pos+=4;
-	_unknown2      = READ_UINT32(item.data+pos); pos+=4;
-	_unknown3      = READ_UINT32(item.data+pos); pos+=4;
-	_numEntries    = READ_UINT32(item.data+pos); pos+=4;
-	_maxWidthSize  = READ_UINT16(item.data+pos); pos+=2;
+
+	_packSize = item.size;
+
+	// DEBUG
+	// This logic is somewhat flawed, as the Flag value is
+	// getting the tag value, and the tag value is getting
+	// junk data, but the rest seems to be correct.
+	// Since this is still a test though, it'll likely
+	// be re-written at some point
+
+	_tagValue      = read32( item.data, pos );
+	_flag          = read32( item.data, pos );
+	_contentOffset = read32( item.data, pos );
+	_unknown1      = read32( item.data, pos );
+	_unknown2      = read32( item.data, pos );
+	_unknown3      = read32( item.data, pos );
+	_numEntries    = read16( item.data, pos );
+	_maxWidthSize  = read16( item.data, pos );
+
+	Common::Array<uint32> offsets;
+
+	// read the individual asset offsets
+	for( int i = 0; i < _numEntries; i++ ){
+		offsets.push_back( read32(item.data, pos) );
+	}
+
+	for( int i = 0; i < _numEntries; i++ ){
+		GraphicAsset* gra = new GraphicAsset;
+
+		uint32 size;
+
+		// Allocate size based on offset differences
+		// TODO
+		// Handle zero sized entries
+		if( i < _numEntries - 1 ){
+			size = offsets[i + 1] - offsets[i];
+		}else{
+			size = _packSize - offsets[i];
+		}
+
+		gra->size = size;
+		gra->data = (unsigned char*)malloc(size);
+
+		for( uint32 j = 0; j < size; j++ ){
+			gra->data[j] = item.data[j + offsets[i] + _contentOffset];
+		}
+
+		int entryPos = 0;
+		gra->flag   = read32( gra->data, entryPos );
+		gra->x      = read16( gra->data, entryPos );
+		gra->y      = read16( gra->data, entryPos );
+		gra->width  = read16( gra->data, entryPos );
+		gra->height = read16( gra->data, entryPos );
+
+		_items.push_back( *gra );
+
+		gra->dump();
+	}
 }
 
 GraphicResource::~GraphicResource()
@@ -45,8 +95,25 @@ GraphicResource::~GraphicResource()
 }
 
 void GraphicResource::dump()
-{   
+{
     printf( "Tag %d, Flag %d, ConOffset %d, U1 %d, U2 %d, U3 %d, Entries %d, MaxWidthSize %d\n", _tagValue, _flag, _contentOffset, _unknown1, _unknown2, _unknown3, _numEntries, _maxWidthSize );
+}
+
+//////////////////
+// GraphicAsset //
+//////////////////
+
+GraphicAsset::GraphicAsset()
+{
+}
+
+GraphicAsset::~GraphicAsset()
+{
+}
+
+void GraphicAsset::dump()
+{
+	printf( "Size: %d, Flag %d, Width: %d, Height: %d, x:%d, y: %d\n", size, flag, width, height, x, y );
 }
 
 } // end of namespace Asylum

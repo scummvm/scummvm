@@ -77,8 +77,11 @@ int Resource::load( Common::String filename )
 		}
 		_items[j].size = getNextValidOffset( j+1 ) - _items[j].offset;		
 		
+		// DEBUG
+		/*
 		printf( "[%d] ", j );
 		_items[j].dump();
+		*/
 	}
 	
 	// populate the data
@@ -87,7 +90,10 @@ int Resource::load( Common::String filename )
 			_items[k].data = (unsigned char*)malloc(_items[k].size);
 			file->seek( _items[k].offset, SEEK_SET );
 			file->read( _items[k].data, _items[k].size );	
-			printf( "[%d] %c%c%c%c\n", k, _items[k].data[0], _items[k].data[1],_items[k].data[2],_items[k].data[3] );								
+			
+			// DEBUG
+			// Print the data file's header			
+			// printf( "[%d] %c%c%c%c\n", k, _items[k].data[0], _items[k].data[1],_items[k].data[2],_items[k].data[3] );								
 		}
 	}
 		
@@ -116,7 +122,6 @@ ResourceItem Resource::getResource( uint32 pos )
 	if( pos >= 0 && pos < _size ){
 		return _items[pos];
 	}
-	return ResourceItem();
 }
 
 void Resource::dump()
@@ -144,10 +149,9 @@ void ResourceItem::dump()
 int ResourceItem::save( Common::String filename )
 {
 	FILE *fd;
-    fd = fopen(filename.c_str(),"wb+");
-    fwrite( data, size, 1, fd);
-    fclose(fd);
-	return 1;
+    fd = fopen( filename.c_str(), "wb+" );
+    fwrite( data, size, 1, fd );
+    fclose( fd );
 }
 
 } // end of namespace Asylum

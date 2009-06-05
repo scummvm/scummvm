@@ -24,10 +24,7 @@
 
 #include "engines/engine.h"
 
-
 namespace Asylum {
-
-class Screen;
 
 class AsylumEngine: public Engine {
 public:
@@ -36,15 +33,11 @@ public:
 	virtual ~AsylumEngine();
 
 	// Engine APIs
-	Common::Error init();
-	Common::Error go();
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;	
 private:
 	Common::Language _language;
 	Common::RandomSource _rnd;
-
-	Screen *_screen;
 };
 
 } // namespace Asylum
