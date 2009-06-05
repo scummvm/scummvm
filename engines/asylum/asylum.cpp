@@ -72,6 +72,24 @@ Common::Error AsylumEngine::go() {
         delete res;
         delete gres;
 
+        // DEBUG
+        // Control loop test. Basically just keep the
+        // ScummVM window alive until ESC is pressed.
+        // This will facilitate drawing tests ;)
+        bool end = false;
+		Common::EventManager *em = _system->getEventManager();
+		while (!end) {
+			Common::Event ev;
+			if (em->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_KEYDOWN) {
+					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+						end = true;
+					//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
+				}
+			}
+			_system->delayMillis(10);
+		}
+
         return Common::kNoError;
 }
 
