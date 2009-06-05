@@ -100,6 +100,37 @@ void CursorManager::popAllCursors() {
 	g_system->showMouse(isVisible());
 }
 
+#ifdef ENABLE_16BIT
+//HACK Made a separate method to avoid massive linker errors on every engine
+void CursorManager::replaceCursor16(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor, int targetScale) {
+	if (_cursorStack.empty()) {
+		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
+		return;
+	}
+
+	Cursor *cur = _cursorStack.top();
+
+	uint size = w * h * 2;
+
+	if (cur->_size < size) {
+		delete[] cur->_data;
+		cur->_data = new byte[size];
+		cur->_size = size;
+	}
+
+	if (buf && cur->_data)
+		memcpy(cur->_data, buf, size);
+
+	cur->_width = w;
+	cur->_height = h;
+	cur->_hotspotX = hotspotX;
+	cur->_hotspotY = hotspotY;
+	cur->_keycolor = keycolor;
+	cur->_targetScale = targetScale;
+
+	g_system->setMouseCursor16(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
+}
+#endif
 
 void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
 	if (_cursorStack.empty()) {
@@ -108,11 +139,8 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	}
 
 	Cursor *cur = _cursorStack.top();
-#ifdef ENABLE_16BIT
-	uint size = w * h * 2;
-#else
+
 	uint size = w * h;
-#endif
 
 	if (cur->_size < size) {
 		delete[] cur->_data;

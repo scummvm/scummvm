@@ -1403,6 +1403,49 @@ void OSystem_SDL::warpMouse(int x, int y) {
 	}
 }
 
+#ifdef ENABLE_16BIT
+void OSystem_SDL::setMouseCursor16(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint16 keycolor, int cursorTargetScale) {
+	if (w == 0 || h == 0)
+		return;
+
+	_mouseCurState.hotX = hotspot_x;
+	_mouseCurState.hotY = hotspot_y;
+
+	_mouseKeyColor = keycolor;
+
+	_cursorTargetScale = cursorTargetScale;
+
+	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
+		_mouseCurState.w = w;
+		_mouseCurState.h = h;
+
+		if (_mouseOrigSurface)
+			SDL_FreeSurface(_mouseOrigSurface);
+
+		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
+		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+						_mouseCurState.w + 2,
+						_mouseCurState.h + 2,
+						16,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
+
+		if (_mouseOrigSurface == NULL)
+			error("allocating _mouseOrigSurface failed");
+		SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
+	}
+
+	free(_mouseData);
+
+	_mouseData = (byte *)malloc(w * h * 2);
+	memcpy(_mouseData, buf, w * h * 2);
+
+	blitCursor();
+}
+#endif
+
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 	if (w == 0 || h == 0)
 		return;
@@ -1438,13 +1481,9 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 
 	free(_mouseData);
 
-#ifdef ENABLE_16BIT
-	_mouseData = (byte *)malloc(w * h * 2);
-	memcpy(_mouseData, buf, w * h * 2);
-#else
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
-#endif
+
 	blitCursor();
 }
 

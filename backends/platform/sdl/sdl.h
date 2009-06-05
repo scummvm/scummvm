@@ -112,6 +112,10 @@ public:
 	virtual void warpMouse(int x, int y); // overloaded by CE backend (FIXME)
 
 	// Set the bitmap that's used when drawing the cursor.
+#ifdef ENABLE_16BIT
+	//HACK Made a second method as a quick and dirty workaround to avoid linker errors with engine libs
+	virtual void setMouseCursor16(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint16 keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
+#endif
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
 
 	// Set colors of cursor palette

@@ -77,6 +77,10 @@ public:
 	 * @param keycolor	the index for the transparent color
 	 * @param targetScale	the scale for which the cursor is designed
 	 */
+#ifdef ENABLE_16BIT
+	//HACK made a separate method to avoid massive linker errors on every engine.
+	void replaceCursor16(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor = 65535, int targetScale = 1);
+#endif
 	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
 
 	/**
