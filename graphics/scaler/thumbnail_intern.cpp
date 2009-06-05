@@ -99,7 +99,8 @@ static bool grabScreen565(Graphics::Surface *surf) {
 	if (!screen)
 		return false;
 
-	assert(screen->bytesPerPixel == 1 && screen->pixels != 0);
+	assert(screen->bytesPerPixel == 1 || screen->bytesPerPixel == 2);
+	assert(screen->pixels != 0);
 
 	byte palette[256 * 4];
 	g_system->grabPalette(&palette[0], 0, 256);
