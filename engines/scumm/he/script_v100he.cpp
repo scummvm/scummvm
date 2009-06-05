@@ -2506,7 +2506,7 @@ void ScummEngine_v100he::o100_getWizData() {
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(_wiz->getWizPixelColor(resId, state, x, y, 0));
+		push(_wiz->getWizPixelColor(resId, state, x, y));
 		break;
 	case 26:
 		resId = pop();

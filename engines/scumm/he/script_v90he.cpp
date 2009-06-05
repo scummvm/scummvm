@@ -1300,7 +1300,7 @@ void ScummEngine_v90he::o90_getWizData() {
 		x = pop();
 		state = pop();
 		resId = pop();
-		push(_wiz->getWizPixelColor(resId, state, x, y, 0));
+		push(_wiz->getWizPixelColor(resId, state, x, y));
 		break;
 	case 130:
 		h = pop();
