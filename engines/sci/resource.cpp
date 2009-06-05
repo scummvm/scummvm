@@ -1616,7 +1616,7 @@ Audio::AudioStream* AudioResource::getAudioStream(uint32 audioNumber, uint32 vol
 			}
 		}
 
-		*sampleLen = (Audio::Mixer::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
+		*sampleLen = (flags & Audio::Mixer::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
 	} else {
 		warning("Failed to find audio entry (%i, %i, %i, %i, %i)", volume, (audioNumber >> 24) & 0xff,
 				(audioNumber >> 16) & 0xff, (audioNumber >> 8) & 0xff, audioNumber & 0xff);
