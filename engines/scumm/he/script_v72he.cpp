@@ -1572,7 +1572,7 @@ void ScummEngine_v72he::o72_rename() {
 }
 
 void ScummEngine_v72he::o72_getPixel() {
-	byte area;
+	uint16 area;
 
 	int y = pop();
 	int x = pop();
@@ -1587,11 +1587,17 @@ void ScummEngine_v72he::o72_getPixel() {
 	switch (subOp) {
 	case 9: // HE 100
 	case 218:
-		area = *vs->getBackPixels(x, y - vs->topline);
+		if (_game.features & GF_16BIT_COLOR)
+			area = READ_UINT16(vs->getBackPixels(x, y - vs->topline));
+		else
+			area = *vs->getBackPixels(x, y - vs->topline);
 		break;
 	case 8: // HE 100
 	case 219:
-		area = *vs->getPixels(x, y - vs->topline);
+		if (_game.features & GF_16BIT_COLOR)
+			area = READ_UINT16(vs->getPixels(x, y - vs->topline));
+		else
+			area = *vs->getPixels(x, y - vs->topline);
 		break;
 	default:
 		error("o72_getPixel: default case %d", subOp);

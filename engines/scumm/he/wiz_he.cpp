@@ -369,7 +369,7 @@ void Wiz::writeColor(uint8 *dstPtr, int dstType, uint16 color) {
 	}
 }
 
-void Wiz::copy16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
+void Wiz::copy16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *xmapPtr) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
 		dst += r2.top * dstPitch + r2.left * 2;
@@ -382,7 +382,7 @@ void Wiz::copy16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstT
 			r1.translate(dx, 0);
 		}
 		if (xmapPtr) {
-			decompress16BitWizImage<kWizXMap>(dst, dstPitch, dstType, src, r1, flags, palPtr, xmapPtr);
+			decompress16BitWizImage<kWizXMap>(dst, dstPitch, dstType, src, r1, flags, xmapPtr);
 		} else {
 			decompress16BitWizImage<kWizCopy>(dst, dstPitch, dstType, src, r1, flags);
 		}
@@ -608,7 +608,7 @@ void Wiz::write16BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, cons
 }
 
 template <int type>
-void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
+void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *xmapPtr) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 code;
 	uint8 *dstPtr, *dstPtrNext;
@@ -616,9 +616,6 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const u
 
 	if (type == kWizXMap) {
 		assert(xmapPtr != 0);
-	}
-	if (type == kWizRMap) {
-		assert(palPtr != 0);
 	}
 
 	dstPtr = dst;
@@ -683,7 +680,7 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const u
 						write16BitColor<type>(dstPtr, dataPtr, dstType, xmapPtr);
 						dstPtr += dstInc;
 					}
-					dataPtr+= 2;
+					dataPtr += 2;
 				} else {
 					code = (code >> 2) + 1;
 					if (xoff > 0) {
@@ -1464,7 +1461,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		// TODO: Unknown image type
 		break;
 	case 5:
-		copy16BitWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr);
+		copy16BitWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, xmapPtr);
 		break;
 	default:
 		error("drawWizImage: Unhandled wiz compression type %d", comp);
