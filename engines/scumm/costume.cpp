@@ -876,15 +876,15 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 
 void ClassicCostumeRenderer::setPalette(uint16 *palette) {
 	int i;
-	byte color = 0;
+	byte color;
 
 	if (_loaded._format == 0x57) {
 		for (i = 0; i < 13; i++)
-			_palette[i] = color;
+			_palette[i] = palette[i];
 	} else if (_vm->_game.features & GF_OLD_BUNDLE) {
 		if (_vm->getCurrentLights() & LIGHTMODE_actor_use_colors) {
 			for (i = 0; i < 16; i++)
-				_palette[i] = color;
+				_palette[i] = palette[i];
 		} else {
 			for (i = 0; i < 16; i++)
 				_palette[i] = 8;
