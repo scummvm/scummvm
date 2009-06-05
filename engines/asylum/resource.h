@@ -30,19 +30,23 @@ namespace Asylum {
 class ResourceItem;
 
 class Resource {
-public:    
+public:
 	Resource();
     ~Resource();
-    
-	int load( Common::String filename );
+
+	int load(Common::String filename);
 	void dump();
-	
-	uint32 getSize() { return _size; }
-	uint32 getNumEntries() { return _numEntries; }
-	ResourceItem getResource( uint32 pos );
-	
+
+	uint32 getSize() {
+		return _size;
+	}
+	uint32 getNumEntries() {
+		return _numEntries;
+	}
+	ResourceItem getResource(uint32 pos);
+
 private:
-	uint32 getNextValidOffset( uint8 startPos );
+	uint32 getNextValidOffset(uint8 startPos);
 
     Common::String _filename;
 	bool _loaded;
@@ -56,12 +60,12 @@ class ResourceItem {
 public:
 	ResourceItem();
 	~ResourceItem();
-	
-	void dump();		
-	int save( Common::String filename );
-	
+
+	void dump();
+	int save(Common::String filename);
+
 	uint32 offset;
-	uint32 size; 		
+	uint32 size;
 	unsigned char *data;
 
 }; // end of class ResourceItem

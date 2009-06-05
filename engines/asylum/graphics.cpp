@@ -28,66 +28,62 @@
 
 namespace Asylum {
 
-GraphicResource::GraphicResource( ResourceItem item )
-{
+GraphicResource::GraphicResource(ResourceItem item) {
 	int pos = 0;
 
-	_tagValue      = READ_UINT32( item.data + pos ); pos += 4;
-	_flag          = READ_UINT32( item.data + pos ); pos += 4;
-	_contentOffset = READ_UINT32( item.data + pos ); pos += 4;
-	_unknown1      = READ_UINT32( item.data + pos ); pos += 4;
-	_unknown2      = READ_UINT32( item.data + pos ); pos += 4;
-	_unknown3      = READ_UINT32( item.data + pos ); pos += 4;
-	_numEntries    = READ_UINT16( item.data + pos ); pos += 2;
-	_maxWidthSize  = READ_UINT16( item.data + pos ); pos += 2;
+	_tagValue      = READ_UINT32(item.data + pos); pos += 4;
+	_flag          = READ_UINT32(item.data + pos); pos += 4;
+	_contentOffset = READ_UINT32(item.data + pos); pos += 4;
+	_unknown1      = READ_UINT32(item.data + pos); pos += 4;
+	_unknown2      = READ_UINT32(item.data + pos); pos += 4;
+	_unknown3      = READ_UINT32(item.data + pos); pos += 4;
+	_numEntries    = READ_UINT16(item.data + pos); pos += 2;
+	_maxWidthSize  = READ_UINT16(item.data + pos); pos += 2;
 
 	Common::Array<uint32> offsets;
 
 	// read the individual asset offsets
-	for( int i = 0; i < _numEntries; i++ ){
-		offsets.push_back( READ_UINT32(item.data + pos) ); pos += 4;
+	for (int i = 0; i < _numEntries; i++) {
+		offsets.push_back(READ_UINT32(item.data + pos)); pos += 4;
 	}
 
-	for( int i = 0; i < _numEntries; i++ ){
+	for (int i = 0; i < _numEntries; i++) {
 		GraphicAsset* gra = new GraphicAsset;
 
 		uint32 size = 0;
 
 		// Allocate size based on offset differences
-		// TODO
-		// Handle zero sized entries
-		if( i < _numEntries - 1 ){
+		// TODO Handle zero sized entries
+		if( i < _numEntries - 1 ) {
 			size = offsets[i + 1] - offsets[i];
-		}else{
+		}else {
 			size = item.size - offsets[i];
 		}
 
 		gra->size = size;
 		gra->data = (unsigned char*)malloc(size);
 
-		for( uint32 j = 0; j < size; j++ ){
+		for (uint32 j = 0; j < size; j++) {
 			gra->data[j] = item.data[j + offsets[i] + _contentOffset];
 		}
 
 		int entryPos = 0;
-		gra->flag   = READ_UINT32( gra->data + entryPos ); entryPos += 4;
-		gra->x      = READ_UINT16( gra->data + entryPos ); entryPos += 2;
-		gra->y      = READ_UINT16( gra->data + entryPos ); entryPos += 2;
-		gra->width  = READ_UINT16( gra->data + entryPos ); entryPos += 2;
-		gra->height = READ_UINT16( gra->data + entryPos );
+		gra->flag   = READ_UINT32(gra->data + entryPos); entryPos += 4;
+		gra->x      = READ_UINT16(gra->data + entryPos); entryPos += 2;
+		gra->y      = READ_UINT16(gra->data + entryPos); entryPos += 2;
+		gra->width  = READ_UINT16(gra->data + entryPos); entryPos += 2;
+		gra->height = READ_UINT16(gra->data + entryPos);
 
-		_items.push_back( *gra );
+		_items.push_back(*gra);
 
 		gra->dump();
 	}
 }
 
-GraphicResource::~GraphicResource()
-{
+GraphicResource::~GraphicResource() {
 }
 
-void GraphicResource::dump()
-{
+void GraphicResource::dump() {
     printf( "Tag %d, Flag %d, ConOffset %d, U1 %d, U2 %d, U3 %d, Entries %d, MaxWidthSize %d\n", _tagValue, _flag, _contentOffset, _unknown1, _unknown2, _unknown3, _numEntries, _maxWidthSize );
 }
 
@@ -95,17 +91,23 @@ void GraphicResource::dump()
 // GraphicAsset //
 //////////////////
 
-GraphicAsset::GraphicAsset()
-{
+GraphicAsset::GraphicAsset() {
 }
 
-GraphicAsset::~GraphicAsset()
-{
+GraphicAsset::~GraphicAsset() {
 }
 
-void GraphicAsset::dump()
-{
+void GraphicAsset::dump() {
 	printf( "Size: %d, Flag %d, Width: %d, Height: %d, x:%d, y: %d\n", size, flag, width, height, x, y );
+}
+
+int GraphicAsset::save(Common::String filename) {
+	FILE *fd;
+	fd = fopen(filename.c_str(), "wb+");
+	fwrite(data, size, 1, fd);
+	fclose(fd);
+
+	return 0;
 }
 
 } // end of namespace Asylum
