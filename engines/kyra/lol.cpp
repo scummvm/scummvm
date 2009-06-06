@@ -2713,11 +2713,11 @@ int LoLEngine::processMagicVaelansCube() {
 	uint16 o = _levelBlockProperties[bl].assignedObjects;
 	while (o & 0x8000) {
 		MonsterInPlay *m = &_monsters[o & 0x7fff];
-		o = m->nextAssignedObject;
 		if (m->properties->flags & 0x1000) {
 			inflictDamage(o, 100, 0xffff, 0, 0x80);
 			v = 1;
 		}
+		o = m->nextAssignedObject;
 	}
 
 	ctime = _system->getMillis();
@@ -3079,14 +3079,14 @@ int LoLEngine::battleHitSkillTest(int16 attacker, int16 target, int skill) {
 		sk = 100 - _monsters[target & 0x7fff].properties->skillLevel;
 	} else {
 		hitChanceModifier = _characters[attacker].defaultModifiers[0];
-		uint8 m = _characters[attacker].skillModifiers[skill];
+		int8 m = _characters[attacker].skillModifiers[skill];
 		if (skill == 1)
 			m *= 3;
 		sk = 100 - (_characters[attacker].skillLevels[skill] + m);
 	}
 
 	if (target & 0x8000) {
-		evadeChanceModifier = _monsters[target & 0x7fff].properties->fightingStats[3];
+		evadeChanceModifier = (_monsterModifiers[9 + _monsterDifficulty] * _monsters[target & 0x7fff].properties->fightingStats[3]) >> 8;
 		_monsters[target & 0x7fff].flags |= 0x10;
 	} else {
 		evadeChanceModifier = _characters[target].defaultModifiers[3];
@@ -3096,7 +3096,7 @@ int LoLEngine::battleHitSkillTest(int16 attacker, int16 target, int skill) {
 	if (r >= sk)
 		return 2;
 
-	uint16 v = ((_monsterModifiers[9 + _monsterDifficulty] * evadeChanceModifier) & 0xffffff00) / hitChanceModifier;
+	uint16 v = (evadeChanceModifier << 8) / hitChanceModifier;
 
 	if (r < v)
 		return 0;
