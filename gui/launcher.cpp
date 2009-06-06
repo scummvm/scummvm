@@ -631,15 +631,18 @@ void LauncherDialog::addGame() {
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 			MassAddDialog massAddDlg(_browser->getResult());
 
+			// Save current game position, so on cancel cursor will move back
 			ConfMan.set("temp_selection", _domains[_list->getSelected()], ConfigManager::kApplicationDomain);
 
 			massAddDlg.runModal();
 
+			// Update the ListWidget and force a redraw
+			updateListing();
+
+			// Set cursor to first detected game
 			selectGame(ConfMan.get("temp_selection", ConfigManager::kApplicationDomain));
 			ConfMan.removeKey("temp_selection", ConfigManager::kApplicationDomain);
 
-			// Update the ListWidget and force a redraw
-			updateListing();
 			draw();
 		}
 
