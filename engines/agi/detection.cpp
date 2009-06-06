@@ -51,7 +51,7 @@ uint32 AgiBase::getGameID() const {
 }
 
 uint32 AgiBase::getFeatures() const {
-	return _gameDescription->features;
+	return _gameFeatures;
 }
 
 Common::Platform AgiBase::getPlatform() const {
@@ -72,6 +72,14 @@ uint16 AgiBase::getGameType() const {
 
 const char *AgiBase::getGameMD5() const {
 	return _gameDescription->desc.filesDescriptions[0].md5;
+}
+
+void AgiBase::initFeatures(void) {
+	_gameFeatures = _gameDescription->features;
+}
+
+void AgiBase::setFeature(uint32 feature) {
+	_gameFeatures |= feature;
 }
 
 }

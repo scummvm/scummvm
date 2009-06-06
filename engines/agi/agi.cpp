@@ -627,6 +627,8 @@ AgiButtonStyle::AgiButtonStyle(Common::RenderMode renderMode) {
 
 AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_noSaveLoadAllowed = false;
+
+	initFeatures();
 }
 
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
@@ -641,6 +643,8 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	for (g = agiSettings; g->gameid; ++g)
 		if (!scumm_stricmp(g->gameid, gameid))
 			_gameId = g->id;
+
+	parseFeatures();
 
 	_rnd = new Common::RandomSource();
 	syst->getEventManager()->registerRandomSource(*_rnd, "agi");
@@ -836,6 +840,47 @@ void AgiEngine::syncSoundSettings() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+}
+
+void AgiEngine::parseFeatures(void) {
+	if (!ConfMan.hasKey("features"))
+		return;
+
+	char *features = strdup(ConfMan.get("features").c_str());
+	const char *feature[100];
+	int numFeatures = 0;
+
+	char *tok = strtok(features, " ");
+	if (tok) {
+		do {
+			feature[numFeatures++] = tok;
+		} while ((tok = strtok(NULL, " ")) != NULL);
+	} else {
+		feature[numFeatures++] = features;
+	}
+
+	const struct Flags {
+		const char *name;
+		uint32 flag;
+	} flags[] = {
+		{ "agimouse", GF_AGIMOUSE },
+		{ "agds", GF_AGDS },
+		{ "agi256", GF_AGI256 },
+		{ "agi256-2", GF_AGI256_2 },
+		{ "agipal", GF_AGIPAL },
+		{ 0, 0 }
+	};
+
+	for (int i = 0; i < numFeatures; i++) {
+		for (const Flags *flag = flags; flag->name; flag++) {
+			if (!scumm_stricmp(feature[i], flag->name)) {
+				debug(0, "Added feature: %s", flag->name);
+
+				setFeature(flag->flag);
+				break;
+			}
+		}
+	}
 }
 
 } // End of namespace Agi

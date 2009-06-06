@@ -750,6 +750,9 @@ public:
 	void flipflag(int);
 
 	const AGIGameDescription *_gameDescription;
+
+	uint32 _gameFeatures;
+
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
@@ -757,6 +760,8 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	const char *getGameMD5() const;
+	void initFeatures(void);
+	void setFeature(uint32 feature);
 
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const char *desc);
@@ -796,7 +801,7 @@ private:
 	int checkCollision(VtEntry *v);
 	int checkPosition(VtEntry *v);
 
-	uint32 matchVersion(uint32 crc);
+	void parseFeatures(void);
 
 	int _firstSlot;
 
