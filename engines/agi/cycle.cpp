@@ -432,7 +432,7 @@ int AgiEngine::runGame() {
 			break;
 		}
 
-		setvar(vFreePages, 255); // Set amount of free memory to the maximum value
+		setvar(vFreePages, 180); // Set amount of free memory to realistic value
 		setvar(vMaxInputChars, 38);
 		_game.inputMode = INPUT_NONE;
 		_game.inputEnabled = 0;

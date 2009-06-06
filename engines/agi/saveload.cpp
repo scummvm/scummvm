@@ -304,7 +304,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 	for (i = 0; i < MAX_VARS; i++)
 		_game.vars[i] = in->readByte();
 
-	setvar(vFreePages, 255); // Set amount of free memory to the maximum value (Overwriting the just loaded value)
+	setvar(vFreePages, 180); // Set amount of free memory to realistic value (Overwriting the just loaded value)
 
 	_game.horizon = in->readSint16BE();
 	_game.lineStatus = in->readSint16BE();
