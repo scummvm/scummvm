@@ -509,6 +509,9 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
+	if (_guioptions & Common::GUIO_NOMIDI)
+		enabled = false;
+
 	_enableMIDISettings = enabled;
 
 	_soundFontButton->setEnabled(enabled);

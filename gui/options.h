@@ -153,6 +153,7 @@ private:
 
 	CheckboxWidget *_muteCheckbox;
 
+protected:
 	//
 	// Game GUI options
 	//

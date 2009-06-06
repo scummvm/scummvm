@@ -230,6 +230,9 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
 
+	if (_guioptions & Common::GUIO_NOMIDI)
+		_globalMIDIOverride->setEnabled(false);
+
 	addMIDIControls(tab, "GameOptions_MIDI.");
 
 	//
