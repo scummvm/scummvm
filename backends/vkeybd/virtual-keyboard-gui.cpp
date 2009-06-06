@@ -117,8 +117,12 @@ void VirtualKeyboardGUI::setupDisplayArea(Rect& r, OverlayColor forecolor) {
 	if (!fontIsSuitable(_dispFont, r)) {
 		_dispFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		if (!fontIsSuitable(_dispFont, r)) {
-			_displayEnabled = false;
-			return;
+			/* FIXME: We 'ab'use the kConsoleFont to get a font that fits in a small display_area on 320*240 keyboard images */
+			_dispFont = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+			if (!fontIsSuitable(_dispFont, r)) {
+				_displayEnabled = false;
+				return;
+			}
 		}
 	}
 	_dispX = _kbdBound.left + r.left;
