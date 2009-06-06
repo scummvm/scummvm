@@ -39,6 +39,12 @@ Resource::~Resource() {
 	}
 }
 
+int Resource::load(uint32 resource) {
+	char file[20];
+	sprintf(file, RES_FILE_PREFIX, resource);
+	return load(Common::String(file));
+}
+
 int Resource::load(Common::String filename) {
 	_filename = filename;
 
