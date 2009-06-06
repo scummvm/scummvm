@@ -131,11 +131,11 @@ void Menu::newMenuSelected(int i) {
 	drawMenuOption(i);
 }
 
-bool Menu::mouseOverText(unsigned int line, unsigned int col, char *s) {
+bool Menu::mouseOverText(int line, int col, char *s) {
 	if (g_mouse.x < col * CHAR_COLS)
 		return false;
 
-	if (g_mouse.x > (col + strlen(s)) * CHAR_COLS)
+	if (g_mouse.x > (int)(col + strlen(s)) * CHAR_COLS)
 		return false;
 
 	if (g_mouse.y < line * CHAR_LINES)

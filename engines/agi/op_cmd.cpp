@@ -632,7 +632,9 @@ cmd(set_simple) {
 }
 
 cmd(pop_script) {
-	report("pop.script\n");
+	if (g_agi->getVersion() >= 0x2915) {
+		report("pop.script\n");
+	}
 }
 
 cmd(hold_key) {
@@ -642,7 +644,9 @@ cmd(hold_key) {
 }
 
 cmd(discard_sound) {
-	report("discard.sound\n");
+	if (g_agi->getVersion() >= 0x2936) {
+		report("discard.sound\n");
+	}
 }
 
 cmd(hide_mouse) {
@@ -669,7 +673,9 @@ cmd(show_mouse) {
 }
 
 cmd(fence_mouse) {
-	report("fence.mouse\n");
+	g_agi->_game.mouseFence.moveTo(p0, p1);
+	g_agi->_game.mouseFence.setWidth(p2 - p0);
+	g_agi->_game.mouseFence.setHeight(p3 - p1);
 }
 
 cmd(release_key) {
@@ -1512,8 +1518,11 @@ cmd(push_script) {
 		game.vars[27] = g_mouse.button;
 		game.vars[28] = g_mouse.x / 2;
 		game.vars[29] = g_mouse.y;
-	} else
-		report("push.script\n");
+	} else {
+		if (g_agi->getVersion() >= 0x2915) {
+			report("push.script\n");
+		}
+	}
 }
 
 cmd(set_pri_base) {

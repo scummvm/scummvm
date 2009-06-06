@@ -211,8 +211,8 @@ struct gameIdList {
 
 struct Mouse {
 	int button;
-	unsigned int x;
-	unsigned int y;
+	int x;
+	int y;
 };
 
 // Used by AGI Mouse protocol 1.0 for v27 (i.e. button pressed -variable).
@@ -591,9 +591,11 @@ struct AgiGame {
 	// view table
 	VtEntry viewTable[MAX_VIEWTABLE];
 
-	int32 ver;								/**< detected game version */
+	int32 ver;						/**< detected game version */
 
-	int simpleSave;						/**< select simple savegames */
+	int simpleSave;					/**< select simple savegames */
+
+	Common::Rect mouseFence;		/**< rectangle set by fence.mouse command */
 };
 
 class AgiLoader {

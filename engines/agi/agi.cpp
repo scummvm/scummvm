@@ -103,6 +103,20 @@ void AgiEngine::processEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			g_mouse.x = event.mouse.x;
 			g_mouse.y = event.mouse.y;
+
+			if (!_game.mouseFence.isEmpty()) {
+				if (g_mouse.x < _game.mouseFence.left)
+					g_mouse.x = _game.mouseFence.left;
+				if (g_mouse.x > _game.mouseFence.right)
+					g_mouse.x = _game.mouseFence.right;
+				if (g_mouse.y < _game.mouseFence.top)
+					g_mouse.y = _game.mouseFence.top;
+				if (g_mouse.y > _game.mouseFence.bottom)
+					g_mouse.y = _game.mouseFence.bottom;
+
+				g_system->warpMouse(g_mouse.x, g_mouse.y);
+			}
+
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
@@ -472,6 +486,8 @@ int AgiEngine::agiInit() {
 #endif
 
 	_egoHoldKey = false;
+
+	_game.mouseFence.setWidth(0); // Reset
 
 	return ec;
 }

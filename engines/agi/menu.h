@@ -80,7 +80,7 @@ private:
 	void drawMenuOption(int hMenu);
 	void drawMenuOptionHilite(int hMenu, int vMenu);
 	void newMenuSelected(int i);
-	bool mouseOverText(unsigned int line, unsigned int col, char *s);
+	bool mouseOverText(int line, int col, char *s);
 
 };
 
