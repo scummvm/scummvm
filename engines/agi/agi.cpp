@@ -309,6 +309,16 @@ void AgiEngine::releaseImageStack(void) {
 	_imageStack.clear();
 }
 
+void AgiEngine::pause(uint32 msec) {
+	uint32 endTime = _system->getMillis() + msec;
+
+	while (_system->getMillis() < endTime) {
+		processEvents();
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
+}
+
 void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 		int16 p4, int16 p5, int16 p6, int16 p7) {
 	ImageStackElement pnew;

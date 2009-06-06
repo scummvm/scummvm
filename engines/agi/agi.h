@@ -828,6 +828,8 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7);
 	void releaseImageStack();
 
+	void pause(uint32 msec);
+
 	Console *_console;
 
 	int agiInit();

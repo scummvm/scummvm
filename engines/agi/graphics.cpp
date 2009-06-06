@@ -1013,7 +1013,14 @@ static const byte busyAmigaMouseCursor[] = {
 	1,1,1,1,1,1,1,1,1,1,1,1,1
 };
 
-void GfxMgr::setCursor(bool amigaStyleCursor) {
+void GfxMgr::setCursor(bool amigaStyleCursor, bool busy) {
+	if (busy) {
+		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+		CursorMan.replaceCursor(busyAmigaMouseCursor, 13, 16, 7, 8, 0);
+
+		return;
+	}
+
 	if (!amigaStyleCursor) {
 		CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
 		CursorMan.replaceCursor(sciMouseCursor, 11, 16, 1, 1, 0);
@@ -1155,6 +1162,8 @@ void GfxMgr::doUpdate() {
 	update.y1 = MAX_INT;
 	update.x2 = 0;
 	update.y2 = 0;
+
+	g_system->updateScreen();
 }
 
 /**
