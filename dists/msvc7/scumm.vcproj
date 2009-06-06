@@ -485,6 +485,9 @@
 			RelativePath="..\..\engines\scumm\player_v2a.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\player_v2cms.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\player_v3a.cpp">
 		</File>
 		<File
