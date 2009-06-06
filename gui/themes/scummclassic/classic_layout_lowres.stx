@@ -247,6 +247,12 @@
 						type = 'SmallLabel'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8' center = 'true'>
+				<space size = '110' />
+				<widget name = 'vcMuteCheckbox'
+						type = 'Checkbox'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
@@ -595,6 +601,13 @@
 				/>
 				<widget name = 'vcSpeechLabel'
 						type = 'SmallLabel'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8' center = 'true'>
+				<space size = '110' />
+				<widget name = 'vcMuteCheckbox'
+						type = 'Checkbox'
+						width = '80'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>

@@ -231,43 +231,45 @@
 	</dialog>
 	
 	<dialog name = 'GlobalOptions_Volume' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
-				<widget name = 'vcMusicText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcMusicSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcMusicLabel'
-						type = 'SmallLabel'
-				/>
+		<layout type = 'horizontal' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '8'>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+					<widget name = 'vcMusicText'
+							type = 'OptionsLabel'
+					/>
+					<widget name = 'vcMusicSlider'
+							type = 'Slider'
+					/>
+					<widget name = 'vcMusicLabel'
+							type = 'SmallLabel'
+					/>
+				</layout>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+					<widget name = 'vcSfxText'
+							type = 'OptionsLabel'
+					/>
+					<widget name = 'vcSfxSlider'
+							type = 'Slider'
+					/>
+					<widget name = 'vcSfxLabel'
+							type = 'SmallLabel'
+					/>
+				</layout>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+					<widget name = 'vcSpeechText'
+							type = 'OptionsLabel'
+					/>
+					<widget name = 'vcSpeechSlider'
+							type = 'Slider'
+					/>
+					<widget name = 'vcSpeechLabel'
+							type = 'SmallLabel'
+					/>
+				</layout>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
-				<widget name = 'vcSfxText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcSfxSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcSfxLabel'
-						type = 'SmallLabel'
-						width = "40"
-				/>
-				<space/>
+			<layout type = 'vertical' padding = '24, 0, 24, 0' center = 'true'>
 				<widget name = 'vcMuteCheckbox'
 						type = 'Checkbox'
-				/>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
-				<widget name = 'vcSpeechText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcSpeechSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcSpeechLabel'
-						type = 'SmallLabel'
 				/>
 			</layout>
 		</layout>
@@ -576,43 +578,50 @@
 	</dialog>
 	
 	<dialog name = 'ScummConfig' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
-				<widget name = 'vcMusicText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcMusicSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcMusicLabel'
-						type = 'SmallLabel'
-				/>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
-				<widget name = 'vcSfxText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcSfxSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcSfxLabel'
-						type = 'SmallLabel'
-						width = "40"
-				/>
-			</layout>
-				<widget name = 'vcMuteCheckbox'
-						type = 'Checkbox'
-				/>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
-				<widget name = 'vcSpeechText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcSpeechSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcSpeechLabel'
-						type = 'SmallLabel'
-				/>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<layout type = 'vertical' padding = '0, 0, 0, 0' center = 'true'>
+					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+						<widget name = 'vcMusicText'
+								type = 'OptionsLabel'
+						/>
+						<widget name = 'vcMusicSlider'
+								type = 'Slider'
+						/>
+						<widget name = 'vcMusicLabel'
+								type = 'SmallLabel'
+						/>
+					</layout>
+					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+						<widget name = 'vcSfxText'
+								type = 'OptionsLabel'
+						/>
+						<widget name = 'vcSfxSlider'
+								type = 'Slider'
+						/>
+						<widget name = 'vcSfxLabel'
+								type = 'SmallLabel'
+						/>
+					</layout>
+					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+						<widget name = 'vcSpeechText'
+								type = 'OptionsLabel'
+						/>
+						<widget name = 'vcSpeechSlider'
+								type = 'Slider'
+						/>
+						<widget name = 'vcSpeechLabel'
+								type = 'SmallLabel'
+						/>
+					</layout>
+				</layout>
+
+				<layout type = 'vertical' padding = '24, 24, 24, 24' center = 'true'>
+					<widget name = 'vcMuteCheckbox'
+							type = 'Checkbox'
+							width = '80'   <!-- FIXME: Why this is needed? -->
+					/>
+				</layout>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
 				<widget name = 'subToggleDesc'
