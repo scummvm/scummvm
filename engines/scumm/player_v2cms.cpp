@@ -1121,14 +1121,14 @@ void Player_V2CMS::execute_cmd(ChannelInfo *channel) {
 			switch (opcode) {
 			case 0xf8: // set hull curve
 				debug(7, "channels[%d]: hull curve %2d",
-				channel - _channels, *script_ptr);
+				(uint)(channel - _channels), *script_ptr);
 				channel->d.hull_curve = hull_offsets[*script_ptr / 2];
 				script_ptr++;
 				break;
 
 			case 0xf9: // set freqmod curve
 				debug(7, "channels[%d]: freqmod curve %2d",
-				channel - _channels, *script_ptr);
+				(uint)(channel - _channels), *script_ptr);
 				channel->d.freqmod_table = freqmod_offsets[*script_ptr / 4];
 				channel->d.freqmod_modulo = freqmod_lengths[*script_ptr / 4];
 				script_ptr++;
@@ -1199,7 +1199,7 @@ void Player_V2CMS::execute_cmd(ChannelInfo *channel) {
 				value = READ_LE_UINT16 (script_ptr);
 				channel->array[opcode / 2] = value;
 				debug(7, "channels[%d]: set param %2d = %5d",
-						channel - &_channels[0], opcode, value);
+						(uint)(channel - _channels), opcode, value);
 				script_ptr += 2;
 				if (opcode == 14) {
 				    /* tempo var */
@@ -1227,7 +1227,7 @@ void Player_V2CMS::execute_cmd(ChannelInfo *channel) {
 					note &= 0x7f;
 					if (note == 0x7f) {
 						debug(8, "channels[%d]: pause %d",
-							  channel - _channels, channel->d.time_left);
+							  (uint)(channel - _channels), channel->d.time_left);
 						goto end;
 					}
 				} else {
@@ -1236,7 +1236,7 @@ void Player_V2CMS::execute_cmd(ChannelInfo *channel) {
 
 					if ((opcode & 0x10)) {
 						debug(8, "channels[%d]: pause %d",
-							  channel - _channels, channel->d.time_left);
+							  (uint)(channel - _channels), channel->d.time_left);
 						goto end;
 					}
 
@@ -1245,7 +1245,7 @@ void Player_V2CMS::execute_cmd(ChannelInfo *channel) {
 				}
 
 				debug(8, "channels[%d]: @%04x note: %3d+%d len: %2d hull: %d mod: %d/%d/%d %s",
-						dest_channel - channel, script_ptr ? script_ptr - _current_data - 2 : 0,
+						(uint)(dest_channel - channel), script_ptr ? (uint)(script_ptr - _current_data - 2) : 0,
 						note, (signed short) dest_channel->d.transpose, channel->d.time_left,
 						dest_channel->d.hull_curve, dest_channel->d.freqmod_table,
 						dest_channel->d.freqmod_incr,dest_channel->d.freqmod_multiplier,
