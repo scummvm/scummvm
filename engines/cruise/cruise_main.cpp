@@ -376,7 +376,7 @@ uint8 *mainProc14(uint16 overlay, uint16 idx) {
 	return NULL;
 }
 
-int initAllData(void) {
+void CruiseEngine::initAllData(void) {
 	int i;
 
 	setupFuncArray();
@@ -514,7 +514,9 @@ int initAllData(void) {
 
 	strcpy(lastOverlay, "AUTO00");
 
-	return (bootOverlayNumber);
+	_gameSpeed = GAME_FRAME_DELAY_1;
+
+	return;
 }
 
 int removeFinishedScripts(scriptInstanceStruct *ptrHandle) {

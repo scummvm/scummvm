@@ -105,6 +105,7 @@ public:
 	virtual bool canSaveGameStateCurrently();
 
 	const CRUISEGameDescription *_gameDescription;
+	void initAllData(void);
 
 	Common::RandomSource _rnd;
 };
