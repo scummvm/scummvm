@@ -3644,7 +3644,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeWoodruff,
+		kGameTypeUrban,
 		kFeatures640 | kFeaturesSCNDemo,
 		"", "", 8
 	}
