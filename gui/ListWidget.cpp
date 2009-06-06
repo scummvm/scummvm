@@ -548,6 +548,10 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 	filt = filter;
 
 	filt.toLowercase();
+
+	if (_filter == filt) // Filter was not changed
+		return;
+
 	_filter = filt;
 
 	if (_filter == "") {
