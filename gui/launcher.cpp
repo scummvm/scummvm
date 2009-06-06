@@ -652,68 +652,77 @@ void LauncherDialog::addGame() {
 	// 3) Display the 'Edit' dialog for that item, letting the user specify
 	//    an alternate description (to distinguish multiple versions of the
 	//    game, e.g. 'Monkey German' and 'Monkey English') and set default
-	//    options for that game.
+	//    options for that game
+	// 4) If no game is found in the specified directory, return to the
+	//    dialog.
 
-	if (_browser->runModal() > 0) {
-		// User made his choice...
-		Common::FSNode dir(_browser->getResult());
-		Common::FSList files;
-		if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-			MessageDialog alert("ScummVM couldn't open the specified directory!");
-			alert.runModal();
-			return;
-		}
+	bool looping;
+	do {
+		looping = false;
 
-		// ...so let's determine a list of candidates, games that
-		// could be contained in the specified directory.
-		GameList candidates(EngineMan.detectGames(files));
-
-		int idx;
-		if (candidates.empty()) {
-			// No game was found in the specified directory
-			MessageDialog alert("ScummVM could not find any game in the specified directory!");
-			alert.runModal();
-			idx = -1;
-		} else if (candidates.size() == 1) {
-			// Exact match
-			idx = 0;
-		} else {
-			// Display the candidates to the user and let her/him pick one
-			StringList list;
-			for (idx = 0; idx < (int)candidates.size(); idx++)
-				list.push_back(candidates[idx].description());
-
-			ChooserDialog dialog("Pick the game:");
-			dialog.setList(list);
-			idx = dialog.runModal();
-		}
-		if (0 <= idx && idx < (int)candidates.size()) {
-			GameDescriptor result = candidates[idx];
-
-			// TODO: Change the detectors to set "path" !
-			result["path"] = dir.getPath();
-
-			Common::String domain = addGameToConf(result);
-
-			// Display edit dialog for the new entry
-			EditGameDialog editDialog(domain, result.description());
-			if (editDialog.runModal() > 0) {
-				// User pressed OK, so make changes permanent
-
-				// Write config to disk
-				ConfMan.flushToDisk();
-
-				// Update the ListWidget, select the new item, and force a redraw
-				updateListing();
-				selectGame(editDialog.getDomain());
-				draw();
-			} else {
-				// User aborted, remove the the new domain again
-				ConfMan.removeGameDomain(domain);
+		if (_browser->runModal() > 0) {
+			// User made his choice...
+			Common::FSNode dir(_browser->getResult());
+			Common::FSList files;
+			if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+				MessageDialog alert("ScummVM couldn't open the specified directory!");
+				alert.runModal();
+				return;
 			}
 
+			// ...so let's determine a list of candidates, games that
+			// could be contained in the specified directory.
+			GameList candidates(EngineMan.detectGames(files));
+
+			int idx;
+			if (candidates.empty()) {
+				// No game was found in the specified directory
+				MessageDialog alert("ScummVM could not find any game in the specified directory!");
+				alert.runModal();
+				idx = -1;
+
+				looping = true;
+			} else if (candidates.size() == 1) {
+				// Exact match
+				idx = 0;
+			} else {
+				// Display the candidates to the user and let her/him pick one
+				StringList list;
+				for (idx = 0; idx < (int)candidates.size(); idx++)
+					list.push_back(candidates[idx].description());
+
+				ChooserDialog dialog("Pick the game:");
+				dialog.setList(list);
+				idx = dialog.runModal();
+			}
+			if (0 <= idx && idx < (int)candidates.size()) {
+				GameDescriptor result = candidates[idx];
+
+				// TODO: Change the detectors to set "path" !
+				result["path"] = dir.getPath();
+
+				Common::String domain = addGameToConf(result);
+
+				// Display edit dialog for the new entry
+				EditGameDialog editDialog(domain, result.description());
+				if (editDialog.runModal() > 0) {
+					// User pressed OK, so make changes permanent
+
+					// Write config to disk
+					ConfMan.flushToDisk();
+
+					// Update the ListWidget, select the new item, and force a redraw
+					updateListing();
+					selectGame(editDialog.getDomain());
+					draw();
+				} else {
+					// User aborted, remove the the new domain again
+					ConfMan.removeGameDomain(domain);
+				}
+
+			}
 		}
-	}
+	} while (looping);
 }
 
 Common::String addGameToConf(const GameDescriptor &result) {
