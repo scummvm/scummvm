@@ -489,6 +489,11 @@ int AgiEngine::agiInit() {
 
 	_game.mouseFence.setWidth(0); // Reset
 
+	_game.lastController = 0;
+	for (i = 0; i < MAX_DIRS; i++)
+		_game.controllerOccured[i] = false;
+
+
 	return ec;
 }
 

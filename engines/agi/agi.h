@@ -63,6 +63,7 @@ typedef signed int Err;
 #define MAX_WORDS	20
 #define	MAX_STRINGS	24		// MAX_STRINGS + 1 used for get.num
 #define MAX_STRINGLEN	40
+#define MAX_CONTROLLERS 39
 
 #define	_EMPTY		0xfffff
 #define	EGO_OWNED	0xff
@@ -334,9 +335,9 @@ enum AgiSlowliness {
 	kPausePicture = 500
 };
 
-struct AgiEvent {
-	uint16 data;
-	uint8 occured;
+struct AgiController {
+	uint16 keycode;
+	uint8 controller;
 };
 
 struct AgiObject {
@@ -573,7 +574,10 @@ struct AgiGame {
 
 	unsigned int numObjects;
 
-	AgiEvent evKeyp[MAX_DIRS];  /**< keyboard keypress events */
+	bool controllerOccured[MAX_DIRS];  /**< keyboard keypress events */
+	AgiController controllers[MAX_CONTROLLERS];
+	int lastController;
+
 	char strings[MAX_STRINGS + 1][MAX_STRINGLEN]; /**< strings */
 
 	// directory entries for resources

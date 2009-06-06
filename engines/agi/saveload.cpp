@@ -382,7 +382,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 
 	// Those are not serialized
 	for (i = 0; i < MAX_DIRS; i++) {
-		_game.evKeyp[i].occured = false;
+		_game.controllerOccured[i] = false;
 	}
 
 	for (i = 0; i < MAX_STRINGS; i++)

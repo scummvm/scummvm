@@ -100,7 +100,7 @@ void AgiEngine::resetControllers() {
 	int i;
 
 	for (i = 0; i < MAX_DIRS; i++) {
-		_game.evKeyp[i].occured = false;
+		_game.controllerOccured[i] = false;
 	}
 }
 
@@ -370,9 +370,6 @@ int AgiEngine::playGame() {
 
 int AgiEngine::runGame() {
 	int i, ec = errOK;
-
-	for (i = 0; i < MAX_DIRS; i++)
-		memset(&_game.evKeyp[i], 0, sizeof(struct AgiEvent));
 
 	// Execute the game
 	do {

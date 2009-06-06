@@ -1408,12 +1408,13 @@ cmd(set_key) {
 
 	debugC(4, kDebugLevelScripts, "%d %d %d", p0, p1, p2);
 
-	if (game.evKeyp[p2].data != 0)	// TBC sets c23 (ESC) twice!
-		return;
-
 	key = 256 * p1 + p0;
-	game.evKeyp[p2].data = key;
-	game.evKeyp[p2].occured = false;
+
+	game.controllers[game.lastController].keycode = key;
+	game.controllers[game.lastController].controller = p2;
+	game.lastController++;
+
+	game.controllerOccured[p2] = false;
 }
 
 cmd(set_string) {

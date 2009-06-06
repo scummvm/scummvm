@@ -126,7 +126,7 @@ static uint8 testKeypressed() {
 }
 
 static uint8 testController(uint8 cont) {
-	return game.evKeyp[cont].occured;
+	return (game.controllerOccured[cont] ? 1 : 0);
 }
 
 static uint8 testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {

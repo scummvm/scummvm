@@ -120,11 +120,11 @@ int AgiEngine::handleController(int key) {
 
 	debugC(3, kDebugLevelInput, "key = %04x", key);
 
-	for (i = 0; i < MAX_DIRS; i++) {
-		if (_game.evKeyp[i].data == key) {
-			debugC(3, kDebugLevelInput, "event %d: key press", i);
-			_game.evKeyp[i].occured = true;
-			report("event AC:%i occured\n", i);
+	for (i = 0; i < _game.lastController; i++) {
+		if (_game.controllers[i].keycode == key) {
+			debugC(3, kDebugLevelInput, "event %d: key press", _game.controllers[i].controller);
+			_game.controllerOccured[_game.controllers[i].controller] = true;
+			report("event AC:%i occured\n", _game.controllers[i].controller);
 			return true;
 		}
 	}
