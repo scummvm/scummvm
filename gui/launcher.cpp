@@ -529,7 +529,6 @@ LauncherDialog::LauncherDialog()
 	_list = new ListWidget(this, "Launcher.GameList", kListSearchCmd);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
-	_list->enableQuickSelect(false);
 
 
 	// Populate the list
@@ -928,11 +927,6 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSearchCmd:
 		_list->setFilter(_searchWidget->getEditString());
-		break;
-	case kListSearchCmd:
-		_searchWidget->setEditString(_list->getQuickSelectString());
-		_searchWidget->draw();
-		_list->setFilter(_list->getQuickSelectString());
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
