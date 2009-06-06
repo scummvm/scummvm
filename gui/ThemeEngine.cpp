@@ -50,6 +50,10 @@
 
 namespace GUI {
 
+const char * const ThemeEngine::kImageLogo = "logo.bmp";
+const char * const ThemeEngine::kImageLogoSmall = "logo_small.bmp";
+const char * const ThemeEngine::kImageSearch = "search.bmp";
+
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
 

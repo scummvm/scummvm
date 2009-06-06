@@ -182,12 +182,10 @@ public:
 		kShadingLuminance	//!< Converting colors to luminance for unused areas
 	};
 
-	//! Special image ids for images used in the GUI
-	enum kThemeImages {
-		kImageLogo = 0,		//!< ScummVM logo used in the launcher
-		kImageLogoSmall,	//!< ScummVM logo used in the GMM
-		kImageSearch		//!< Search tool image used in the launcher
-	};
+	// Special image ids for images used in the GUI
+	static const char * const kImageLogo;		//!< ScummVM logo used in the launcher
+	static const char * const kImageLogoSmall;	//!< ScummVM logo used in the GMM
+	static const char * const kImageSearch;	//!< Search tool image used in the launcher
 
 	/**
 	 * Graphics mode enumeration.
@@ -422,17 +420,8 @@ public:
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
 
-	const Graphics::Surface *getImageSurface(const kThemeImages n) const {
-		switch (n) {
-		case kImageLogo:
-			return _bitmaps.contains("logo.bmp") ? _bitmaps["logo.bmp"] : 0;
-		case kImageLogoSmall:
-			return _bitmaps.contains("logo_small.bmp") ? _bitmaps["logo_small.bmp"] : 0;
-		case kImageSearch:
-			return _bitmaps.contains("search.bmp") ? _bitmaps["search.bmp"] : 0;
-		default:
-			return 0;
-		}
+	const Graphics::Surface *getImageSurface(const Common::String &name) const {
+		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
 
 	/**
