@@ -64,30 +64,36 @@ namespace Sci {
 #define KSIG_ALLOW_INV  0x20
 #define KSIG_INVALID	KSIG_ALLOW_INV
 
-int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *argv);
-/* Determines whether a list of registers matches a given signature
-** Parameters: (EngineState *) s: The state to operate on
-**             (char *) sig: The signature to test against
-**             (int) argc: Number of arguments to test
-**             (reg_t *) argv: Argument list
-** Returns   : (int) 0 iff the signature was not matched
-*/
+/**
+ * Determines whether a list of registers matches a given signature.
+ * If no signature is given (i.e., if sig is NULL), this is always
+ * treated as a match.
+ *
+ * @param s		state to operate on
+ * @param sig	signature to test against
+ * @param argc	number of arguments to test
+ * @param argv	argument list
+ * @return true if the signature was matched, false otherwise
+ */
+bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const reg_t *argv);
 
-int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid);
-/* Determines the type of the object indicated by reg
-** Parameters: (EngineState *) s: The state to operate on
-**             (reg_t) reg: The register to check
-**	       (int) allow_invalid: Allow invalid pointer values
-** Returns   : one of KSIG_* below KSIG_NULL.
-**	       KSIG_INVALID set if the type of reg can be determined, but is invalid.
-**	       0 on error.
-*/
+/**
+ * Determines the type of the object indicated by reg.
+ * @param s					state to operate on
+ * @param reg				register to check
+ * @param allow_invalid		determines whether invalid pointer (=offset) values are allowed
+ * @return one of KSIG_* below KSIG_NULL.
+ *	       KSIG_INVALID set if the type of reg can be determined, but is invalid.
+ *	       0 on error.
+ */
+int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid);
 
+/**
+ * Returns a textual description of the type of an object.
+ * @param type		type value to describe
+ * @return pointer to a (static) descriptive string
+ */
 const char *kernel_argtype_description(int type);
-/* Returns a textual description of the type of an object
-** Parameters: (int) type: The type value to describe
-** Returns: (const char *) Pointer to a (static) descriptive string
-*/
 
 } // End of namespace Sci
 

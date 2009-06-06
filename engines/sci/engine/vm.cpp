@@ -27,7 +27,7 @@
 #include "common/stack.h"
 
 #include "sci/sci.h"
-#include "sci/console.h"	// for debug_weak_validations
+#include "sci/debug.h"	// for g_debug_weak_validations
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/intmap.h"
@@ -46,17 +46,13 @@ reg_t NULL_REG = {0, 0};
 #undef STRICT_READ // Disallows reading from out-of-bounds parameters and locals
 
 
-int script_abort_flag = 0; // Set to 1 to abort execution
-int script_step_counter = 0; // Counts the number of steps executed
-int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs
-
-extern int _debug_step_running;
-extern int _debug_seeking;
-extern bool debug_weak_validations;
+int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a replay afterwards	// FIXME: Avoid non-const global vars
+int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
+int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME: Avoid non-const global vars
 
 
-static bool breakpointFlag = false;
-static reg_t _dummy_register;
+static bool breakpointFlag = false;	// FIXME: Avoid non-const global vars
+static reg_t _dummy_register;		// FIXME: Avoid non-const global vars
 
 // validation functionality
 
@@ -90,7 +86,7 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		if (debug_weak_validations)
+		if (g_debug_weak_validations)
 			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
 		else
 			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
@@ -102,7 +98,7 @@ static int validate_arithmetic(reg_t reg) {
 
 static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		if (debug_weak_validations)
+		if (g_debug_weak_validations)
 			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
 		else
 			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
@@ -121,17 +117,15 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 	if (index < 0 || index >= max) {
 		char txt[200];
 		char tmp[40];
-		sprintf(txt, "[VM] Attempt to use invalid %s variable %04x ", names[type], index);
+		sprintf(txt, "[VM] validate_variable(): Attempt to use invalid %s variable %04x ", names[type], index);
 		if (max == 0)
 			strcat(txt, "(variable type invalid)");
 		else {
 			sprintf(tmp, "(out of range [%d..%d])", 0, max - 1);
 			strcat(txt, tmp);
 		}
-		sprintf(tmp, " in %s, line %d\n", __FILE__, line);
-		strcat(txt, tmp);
 
-		if (debug_weak_validations)
+		if (g_debug_weak_validations)
 			warning(txt);
 		else
 			error(txt);
@@ -402,7 +396,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			default:
 				sciprintf("Send error: Variable selector %04x in %04x:%04x called with %04x params\n", selector, PRINT_REG(send_obj), argc);
 				script_debug_flag = 1; // Enter debug mode
-				_debug_seeking = _debug_step_running = 0;
+				g_debug_seeking = g_debug_step_running = 0;
 #endif
 			}
 			break;
@@ -977,24 +971,24 @@ void run_vm(EngineState *s, int restoring) {
 			gc_countdown(s);
 
 			xs->sp -= (opparams[1] >> 1) + 1;
-			if (!(s->flags & GF_SCI0_OLD)) {
+			if (!(s->_flags & GF_SCI0_OLD)) {
 				xs->sp -= restadjust;
 				s->r_amp_rest = 0; // We just used up the restadjust, remember?
 			}
 
-			if (opparams[0] >= (int)s->_kernel->_kfuncTable.size()) {
+			if (opparams[0] >= (int)s->_kernel->_kernelFuncs.size()) {
 				error("Invalid kernel function 0x%x requested\n", opparams[0]);
 			} else {
 				int argc = ASSERT_ARITHMETIC(xs->sp[0]);
 
-				if (!(s->flags & GF_SCI0_OLD))
+				if (!(s->_flags & GF_SCI0_OLD))
 					argc += restadjust;
 
-				if (s->_kernel->_kfuncTable[opparams[0]].signature
-				        && !kernel_matches_signature(s, s->_kernel->_kfuncTable[opparams[0]].signature, argc, xs->sp + 1)) {
+				if (s->_kernel->_kernelFuncs[opparams[0]].signature
+				        && !kernel_matches_signature(s, s->_kernel->_kernelFuncs[opparams[0]].signature, argc, xs->sp + 1)) {
 					error("[VM] Invalid arguments to kernel call %x\n", opparams[0]);
 				} else {
-					s->r_acc = s->_kernel->_kfuncTable[opparams[0]].fun(s, opparams[0], argc, xs->sp + 1);
+					s->r_acc = s->_kernel->_kernelFuncs[opparams[0]].fun(s, opparams[0], argc, xs->sp + 1);
 				}
 				// Call kernel function
 
@@ -1004,7 +998,7 @@ void run_vm(EngineState *s, int restoring) {
 				xs_new = &(s->_executionStack.back());
 				s->_executionStackPosChanged = true;
 
-				if (!(s->flags & GF_SCI0_OLD))
+				if (!(s->_flags & GF_SCI0_OLD))
 					restadjust = s->r_amp_rest;
 
 			}
@@ -1207,10 +1201,10 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x39: // lofsa
 			s->r_acc.segment = xs->addr.pc.segment;
 
-			if (s->version >= SCI_VERSION_1_1) {
+			if (s->_version >= SCI_VERSION_1_1) {
 				s->r_acc.offset = opparams[0] + local_script->script_size;
 			} else {
-				if (s->flags & GF_SCI1_LOFSABSOLUTE)
+				if (s->_flags & GF_SCI1_LOFSABSOLUTE)
 					s->r_acc.offset = opparams[0];
 				else
 					s->r_acc.offset = xs->addr.pc.offset + opparams[0];
@@ -1227,7 +1221,7 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x3a: // lofss
 			r_temp.segment = xs->addr.pc.segment;
 
-			if (s->flags & GF_SCI1_LOFSABSOLUTE)
+			if (s->_flags & GF_SCI1_LOFSABSOLUTE)
 				r_temp.offset = opparams[0];
 			else
 				r_temp.offset = xs->addr.pc.offset + opparams[0];
@@ -1433,8 +1427,8 @@ void run_vm(EngineState *s, int restoring) {
 
 #if 0
 		if (script_error_flag) {
-			_debug_step_running = 0; // Stop multiple execution
-			_debug_seeking = 0; // Stop special seeks
+			g_debug_step_running = 0; // Stop multiple execution
+			g_debug_seeking = 0; // Stop special seeks
 			xs->addr.pc.offset = old_pc_offset;
 			xs->sp = old_sp;
 		} else
@@ -1447,7 +1441,7 @@ static int _obj_locate_varselector(EngineState *s, Object *obj, Selector slc) {
 	// Determines if obj explicitly defines slc as a varselector
 	// Returns -1 if not found
 
-	if (s->version < SCI_VERSION_1_1) {
+	if (s->_version < SCI_VERSION_1_1) {
 		int varnum = obj->variable_names_nr;
 		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
 		int i;
@@ -1520,7 +1514,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
 	// toggle, meaning that we must remove it for selector lookup.
-	if (s->flags & GF_SCI0_OLD)
+	if (s->_flags & GF_SCI0_OLD)
 		selector_id &= ~1;
 
 	if (!obj) {
@@ -1614,12 +1608,12 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 	*was_new = 1;
 
 	*script = s->resmgr->findResource(kResourceTypeScript, script_nr, 0);
-	if (s->version >= SCI_VERSION_1_1)
+	if (s->_version >= SCI_VERSION_1_1)
 		*heap = s->resmgr->findResource(kResourceTypeHeap, script_nr, 0);
 
-	if (!*script || (s->version >= SCI_VERSION_1_1 && !heap)) {
+	if (!*script || (s->_version >= SCI_VERSION_1_1 && !heap)) {
 		sciprintf("Script 0x%x requested but not found\n", script_nr);
-		if (s->version >= SCI_VERSION_1_1) {
+		if (s->_version >= SCI_VERSION_1_1) {
 			if (*heap)
 				sciprintf("Inconsistency: heap resource WAS found\n");
 			else if (*script)
@@ -1686,7 +1680,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 
 	Script *scr = s->seg_manager->getScript(seg_id);
 
-	if (s->flags & GF_SCI0_OLD) {
+	if (s->_flags & GF_SCI0_OLD) {
 		//
 		int locals_nr = READ_LE_UINT16(script->data);
 
@@ -1855,14 +1849,14 @@ int script_instantiate_sci11(EngineState *s, int script_nr) {
 }
 
 int script_instantiate(EngineState *s, int script_nr) {
-	if (s->version >= SCI_VERSION_1_1)
+	if (s->_version >= SCI_VERSION_1_1)
 		return script_instantiate_sci11(s, script_nr);
 	else
 		return script_instantiate_sci0(s, script_nr);
 }
 
 void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
-	reg_t reg = make_reg(seg, (s->flags & GF_SCI0_OLD) ? 2 : 0);
+	reg_t reg = make_reg(seg, (s->_flags & GF_SCI0_OLD) ? 2 : 0);
 	int objtype, objlength;
 	Script *scr = s->seg_manager->getScript(seg);
 
@@ -1906,7 +1900,7 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 }
 
 void script_uninstantiate(EngineState *s, int script_nr) {
-	reg_t reg = make_reg(0, (s->flags & GF_SCI0_OLD) ? 2 : 0);
+	reg_t reg = make_reg(0, (s->_flags & GF_SCI0_OLD) ? 2 : 0);
 
 	reg.segment = s->seg_manager->segGet(script_nr);
 	Script *scr = script_locate_by_segment(s, reg.segment);
@@ -1927,7 +1921,7 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 		if (s->_classtable[i].reg.segment == reg.segment)
 			s->_classtable[i].reg = NULL_REG;
 
-	if (s->version < SCI_VERSION_1_1)
+	if (s->_version < SCI_VERSION_1_1)
 		script_uninstantiate_sci0(s, script_nr, reg.segment);
 	else
 		sciprintf("FIXME: Add proper script uninstantiation for SCI 1.1\n");
@@ -1965,7 +1959,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 
 			game_exit(s);
 			script_free_engine(s);
-			script_init_engine(s, s->version);
+			script_init_engine(s);
 			game_init(s);
 			sfx_reset_player();
 			_init_stack_base_with_selector(s, s->_kernel->_selectorMap.play);
@@ -1984,7 +1978,7 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 				s = successor;
 				g_EngineState = s;
 
-				if (script_abort_flag == SCRIPT_ABORT_WITH_REPLAY) {
+				if (script_abort_flag == 2) {
 					sciprintf("Restarting with replay()\n");
 					s->_executionStack.clear(); // Restart with replay
 
@@ -2067,9 +2061,9 @@ const char *obj_get_name(EngineState *s, reg_t pos) {
 
 void quit_vm() {
 	script_abort_flag = 1; // Terminate VM
-	_debugstate_valid = 0;
-	_debug_seeking = 0;
-	_debug_step_running = 0;
+	g_debugstate_valid = 0;
+	g_debug_seeking = 0;
+	g_debug_step_running = 0;
 }
 
 void shrink_execution_stack(EngineState *s, uint size) {

@@ -28,6 +28,7 @@
 #include <time.h>	// FIXME: For struct tm
 
 #include "sci/sci.h"
+#include "sci/debug.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
@@ -95,7 +96,7 @@ reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	sciprintf("Debug mode activated\n");
 
-	_debug_seeking = _debug_step_running = 0;
+	g_debug_seeking = g_debug_step_running = 0;
 	return s->r_acc;
 }
 
@@ -120,7 +121,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	g_system->getTimeAndDate(loc_time);
 	start_time = g_system->getMillis() - s->game_start_time;
 
-	if ((s->flags & GF_SCI0_OLDGETTIME) && argc) { // Use old semantics
+	if ((s->_flags & GF_SCI0_OLDGETTIME) && argc) { // Use old semantics
 		retval = (loc_time.tm_hour % 12) * 3600 + loc_time.tm_min * 60 + loc_time.tm_sec;
 		debugC(2, kDebugLevelTime, "GetTime(timeofday) returns %d", retval);
 		return make_reg(0, retval);
@@ -248,7 +249,7 @@ reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	warning("Kernel function 0x%02x (%s) invoked: unmapped", funct_nr, s->_kernel->_kfuncTable[funct_nr].orig_name.c_str());
+	warning("Kernel function 0x%02x (%s) invoked: unmapped", funct_nr, s->_kernel->_kernelFuncs[funct_nr].orig_name.c_str());
 	return NULL_REG;
 }
 

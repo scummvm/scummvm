@@ -807,14 +807,14 @@ void SfxState::sfx_add_song(SongIterator *it, int priority, song_handle_t handle
 		setSongStatus( song, SOUND_STATUS_STOPPED);
 
 		fprintf(stderr, "Overwriting old song (%08lx) ...\n", handle);
-		if (song->status == SOUND_STATUS_PLAYING
-		        || song->status == SOUND_STATUS_SUSPENDED) {
+		if (song->status == SOUND_STATUS_PLAYING || song->status == SOUND_STATUS_SUSPENDED) {
 			delete it;
 			error("Unexpected (error): Song %ld still playing/suspended (%d)",
 			        handle, song->status);
 			return;
-		} else
+		} else {
 			song_lib_remove(_songlib, handle); /* No duplicates */
+		}
 
 	}
 

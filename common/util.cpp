@@ -271,7 +271,7 @@ const PlatformDescription g_platforms[] = {
 	{"nes", "nes", "nes", "NES", kPlatformNES},
 	{"segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD},
 	{"windows", "win", "win", "Windows", kPlatformWindows},
-	{"playstation", "psx", "PSX", "Playstation", kPlatformPSX},
+	{"playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX},
 
 
 	{0, 0, 0, "Default", kPlatformUnknown}

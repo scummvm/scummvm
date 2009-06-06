@@ -40,6 +40,8 @@ unsigned int timer = 0;
 
 gfxEntryStruct* linkedMsgList = NULL;
 
+extern bool isBlack;
+
 void drawBlackSolidBoxSmall() {
 //  gfxModuleData.drawSolidBox(64,100,256,117,0);
 	drawSolidBox(64, 100, 256, 117, 0);
@@ -1712,6 +1714,8 @@ void CruiseEngine::mainLoop(void) {
 	//int32 t_start,t_left;
 	//uint32 t_end;
 	//int32 q=0;                     /* Dummy */
+	int16 mouseX, mouseY;
+	int16 mouseButton;
 
 	int enableUser = 0;
 
@@ -1793,13 +1797,15 @@ void CruiseEngine::mainLoop(void) {
 			enableUser = 0;
 		}
 
-		manageScripts(&relHead);
-		manageScripts(&procHead);
+		if (userWait < 1) {
+			manageScripts(&relHead);
+			manageScripts(&procHead);
 
-		removeFinishedScripts(&relHead);
-		removeFinishedScripts(&procHead);
+			removeFinishedScripts(&relHead);
+			removeFinishedScripts(&procHead);
 
-		processAnimation();
+			processAnimation();
+		}
 
 		if (remdo) {
 			// ASSERT(0);
@@ -1824,17 +1830,13 @@ void CruiseEngine::mainLoop(void) {
 				PCFadeFlag = 0;
 
 			/*if (!PCFadeFlag)*/
-			if (userWait != 2) {
+			if (!isUserWait) {
 				mainDraw(0);
 				flipScreen();
 			}
 
 			if (userEnabled && !userWait && !autoTrack) {
 				if (currentActiveMenu == -1) {
-					int16 mouseX;
-					int16 mouseY;
-					int16 mouseButton;
-
 					static int16 oldMouseX = -1;
 					static int16 oldMouseY = -1;
 
@@ -1869,9 +1871,14 @@ void CruiseEngine::mainLoop(void) {
 				// User Wait handling
 				if (userWait == 1) {
 					// Initial step
+					do {
+						// Make sure any previous mouse press is released
+						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
+					} while (mouseButton != 0);
+
 					++userWait;
-					mainDraw(0);
-					flipScreen();
+//					mainDraw(0);
+//					flipScreen();
 				} else {
 					// Standard handling
 
@@ -1881,9 +1888,16 @@ void CruiseEngine::mainLoop(void) {
 					removeFinishedScripts(&relHead);
 					removeFinishedScripts(&procHead);
 
-					// Draw the next screen
-					processAnimation();
-					gfxModuleData_flipScreen();
+					if (isBlack) {
+						// This is a bit of a hack to ensure that user waits directly after a palette fade
+						// have time to restore the palette before waiting starts
+						mainDraw(0);
+						flipScreen();
+					} else {
+						// Draw the next screen
+						processAnimation();
+						gfxModuleData_flipScreen();
+					}
 				}
 				continue;
 			}

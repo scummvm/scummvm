@@ -33,6 +33,7 @@
 namespace Sci {
 
 class SciEngine;
+struct List;
 
 // Refer to the "addresses" command on how to pass address parameters
 int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
@@ -97,6 +98,7 @@ private:
 	bool cmdDynamicViews(int argc, const char **argv);
 	bool cmdDroppedViews(int argc, const char **argv);
 	bool cmdStatusBarColors(int argc, const char **argv);
+	bool cmdPrintWidget(int argc, const char **argv);
 	// Segments
 	bool cmdPrintSegmentTable(int argc, const char **argv);
 	bool cmdSegmentInfo(int argc, const char **argv);

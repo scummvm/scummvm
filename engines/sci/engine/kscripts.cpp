@@ -169,7 +169,7 @@ reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		uint seq = UKPV(5);
 		warning("ResCheck: checking for currently unsupported %s resource: module %i; tuple (%i, %i, %i, %i)",
 				getResourceTypeName(restype), module, noun, verb, cond, seq);
-		return NULL_REG;
+		return make_reg(0, 1);
 	}
 	default:
 		Resource *res = s->resmgr->testResource(restype, UKPV(1));

@@ -298,21 +298,14 @@ static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x88*/ "DbugStr"
 };
 
-enum KernelFunctionType {
-	KF_NEW = 1,
-	KF_NONE = -1, /**< No mapping, but name is known */
-	KF_TERMINATOR = -42 /**< terminates kfunct_mappers */
-};
-
 struct SciKernelFunction {
-	KernelFunctionType type;
 	const char *name;
-	kfunct *fun; /* The actual function */
+	KernelFunc *fun; /* The actual function */
 	const char *signature;  /* kfunct signature */
 };
 
-#define DEFUN(nm, cname, sig) {KF_NEW, nm, cname, sig}
-#define NOFUN(nm) {KF_NONE, nm, NULL, NULL}
+#define DEFUN(name, fun, sig) {name, fun, sig}
+#define NOFUN(name) {name, NULL, NULL}
 
 SciKernelFunction kfunct_mappers[] = {
 	/*00*/	DEFUN("Load", kLoad, "iii*"),
@@ -434,8 +427,8 @@ SciKernelFunction kfunct_mappers[] = {
 	/*6f*/	DEFUN("6f", kTimesCos, "ii"),
 	/*70*/	DEFUN("Graph", kGraph, ".*"),
 	/*71*/	DEFUN("Joystick", kJoystick, ".*"),
-	/*72*/	NOFUN(NULL),
-	/*73*/	NOFUN(NULL),
+	/*72*/	NOFUN("unknown72"),
+	/*73*/	NOFUN("unknown73"),
 
 	// Experimental functions
 	/*74*/	DEFUN("FileIO", kFileIO, "i.*"),
@@ -464,12 +457,19 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("SetVideoMode", kSetVideoMode, "i"),
 
 	// Special and NOP stuff
-	{KF_NEW, NULL, k_Unknown, NULL},
+	{NULL, k_Unknown, NULL},
 
-	{KF_TERMINATOR, NULL, NULL, NULL} // Terminator
+	{NULL, NULL, NULL} // Terminator
 };
 
-static const char *argtype_description[] = { "Undetermined", "List", "Node", "Object", "Reference", "Arithmetic" };
+static const char *argtype_description[] = {
+	"Undetermined",
+	"List",
+	"Node",
+	"Object",
+	"Reference",
+	"Arithmetic"
+};
 
 Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
@@ -490,10 +490,6 @@ Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
 }
 
 Kernel::~Kernel() {
-	_selectorNames.clear();
-	_opcodes.clear();
-	_kernelNames.clear();
-	_kfuncTable.clear();
 }
 
 bool Kernel::loadSelectorNames(bool isOldSci0) {
@@ -577,7 +573,7 @@ int kfree(EngineState *s, reg_t handle) {
 	return 0;
 }
 
-void kernel_compile_signature(const char **s) {
+static void kernel_compile_signature(const char **s) {
 	const char *src = *s;
 	char *result;
 	int ellipsis = 0;
@@ -670,50 +666,49 @@ void Kernel::mapFunctions() {
 		functions_nr = max_functions_nr;
 	}
 
-	_kfuncTable.resize(functions_nr);
+	_kernelFuncs.resize(functions_nr);
 
 	for (uint functnr = 0; functnr < functions_nr; functnr++) {
-		int seeker, found = -1;
-		Common::String sought_name;
+		int found = -1;
 
+		// First, get the name, if known, of the kernel function with number functnr
+		Common::String sought_name;
 		if (functnr < getKernelNamesSize())
 			sought_name = getKernelName(functnr);
 
-		if (!sought_name.empty())
-			for (seeker = 0; (found == -1) && kfunct_mappers[seeker].type != KF_TERMINATOR; seeker++)
-				if (kfunct_mappers[seeker].name && sought_name == kfunct_mappers[seeker].name)
-					found = seeker; // Found a kernel function with the same name!
+		// If the name is known, look it up in kfunct_mappers. This table
+		// maps kernel func names to actual function (pointers).
+		if (!sought_name.empty()) {
+			for (uint seeker = 0; (found == -1) && kfunct_mappers[seeker].name; seeker++)
+				if (sought_name == kfunct_mappers[seeker].name)
+					found = seeker; // Found a kernel function with the correct name!
+		}
+
+		// Reset the table entry
+		_kernelFuncs[functnr].fun = NULL;
+		_kernelFuncs[functnr].signature = NULL;
+		_kernelFuncs[functnr].orig_name = sought_name;
 
 		if (found == -1) {
 			if (!sought_name.empty()) {
-				warning("Kernel function %s[%x] unmapped", getKernelName(functnr).c_str(), functnr);
-				_kfuncTable[functnr].fun = kNOP;
+				// No match but a name was given -> NOP
+				warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functnr);
+				_kernelFuncs[functnr].fun = kNOP;
 			} else {
+				// No match and no name was given -> must be an unknown opcode
 				warning("Flagging kernel function %x as unknown", functnr);
-				_kfuncTable[functnr].fun = k_Unknown;
+				_kernelFuncs[functnr].fun = k_Unknown;
 			}
-
-			_kfuncTable[functnr].signature = NULL;
-			_kfuncTable[functnr].orig_name = sought_name;
-		} else
-			switch (kfunct_mappers[found].type) {
-			case KF_NONE:
-				_kfuncTable[functnr].signature = NULL;
-				++ignored;
-				break;
-
-			case KF_NEW:
-				_kfuncTable[functnr].fun = kfunct_mappers[found].fun;
-				_kfuncTable[functnr].signature = kfunct_mappers[found].signature;
-				_kfuncTable[functnr].orig_name.clear();
-				kernel_compile_signature(&(_kfuncTable[functnr].signature));
+		} else {
+			// A match in kfunct_mappers was found
+			if (kfunct_mappers[found].fun) {
+				_kernelFuncs[functnr].fun = kfunct_mappers[found].fun;
+				_kernelFuncs[functnr].signature = kfunct_mappers[found].signature;
+				kernel_compile_signature(&(_kernelFuncs[functnr].signature));
 				++mapped;
-				break;
-			case KF_TERMINATOR:
-				error("Unexpectedly encountered KF_TERMINATOR");
-				break;
-			}
-
+			} else
+				++ignored;
+		}
 	} // for all functions requesting to be mapped
 
 	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, getKernelNamesSize(), mapped);
@@ -724,14 +719,16 @@ void Kernel::mapFunctions() {
 	return;
 }
 
-int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
+int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid) {
 	MemObject *mobj;
+	int type = 0;
 
 	if (!reg.segment) {
+		type = KSIG_ARITHMETIC;
 		if (!reg.offset)
-			return KSIG_ARITHMETIC | KSIG_NULL;
+			type |= KSIG_NULL;
 
-		return KSIG_ARITHMETIC;
+		return type;
 	}
 
 	if ((reg.segment >= s->seg_manager->_heap.size()) || !s->seg_manager->_heap[reg.segment])
@@ -752,52 +749,31 @@ int determine_reg_type(EngineState *s, reg_t reg, int allow_invalid) {
 			return KSIG_REF;
 
 	case MEM_OBJ_CLONES:
-		if (allow_invalid || ((CloneTable *)mobj)->isValidEntry(reg.offset))
-			return KSIG_OBJECT;
-		else
-			return KSIG_OBJECT | KSIG_INVALID;
+		type = KSIG_OBJECT;
+		break;
 
 	case MEM_OBJ_LOCALS:
-		if (allow_invalid || reg.offset < (*(LocalVariables *)mobj)._locals.size() * sizeof(reg_t))
-			return KSIG_REF;
-		else
-			return KSIG_REF | KSIG_INVALID;
-
 	case MEM_OBJ_STACK:
-		if (allow_invalid || reg.offset < (*(DataStack *)mobj).nr * sizeof(reg_t))
-			return KSIG_REF;
-		else
-			return KSIG_REF | KSIG_INVALID;
-
 	case MEM_OBJ_SYS_STRINGS:
-		if (allow_invalid || (reg.offset < SYS_STRINGS_MAX
-		                      && (*(SystemStrings *)mobj).strings[reg.offset].name))
-			return KSIG_REF;
-		else
-			return KSIG_REF | KSIG_INVALID;
+	case MEM_OBJ_DYNMEM:
+		type = KSIG_REF;
+		break;
 
 	case MEM_OBJ_LISTS:
-		if (allow_invalid || ((ListTable *)mobj)->isValidEntry(reg.offset))
-			return KSIG_LIST;
-		else
-			return KSIG_LIST | KSIG_INVALID;
+		type = KSIG_LIST;
+		break;
 
 	case MEM_OBJ_NODES:
-		if (allow_invalid || ((NodeTable *)mobj)->isValidEntry(reg.offset))
-			return KSIG_NODE;
-		else
-			return KSIG_NODE | KSIG_INVALID;
-
-	case MEM_OBJ_DYNMEM:
-		if (allow_invalid || reg.offset < (*(DynMem *)mobj)._size)
-			return KSIG_REF;
-		else
-			return KSIG_REF | KSIG_INVALID;
+		type = KSIG_NODE;
+		break;
 
 	default:
 		return 0;
-
 	}
+
+	if (!allow_invalid && !mobj->isValidOffset(reg.offset))
+		type |= KSIG_INVALID;
+	return type;
 }
 
 const char *kernel_argtype_description(int type) {
@@ -806,9 +782,10 @@ const char *kernel_argtype_description(int type) {
 	return argtype_description[sci_ffs(type)];
 }
 
-int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *argv) {
+bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const reg_t *argv) {
+	// Always "match" if no signature is given
 	if (!sig)
-		return 1;
+		return true;
 
 	while (*sig && argc) {
 		if ((*sig & KSIG_ANY) != KSIG_ANY) {
@@ -816,17 +793,17 @@ int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *a
 
 			if (!type) {
 				sciprintf("[KERN] Could not determine type of ref %04x:%04x; failing signature check\n", PRINT_REG(*argv));
-				return 0;
+				return false;
 			}
 
 			if (type & KSIG_INVALID) {
 				sciprintf("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid\n",
 				          PRINT_REG(*argv), kernel_argtype_description(type));
-				return 0;
+				return false;
 			}
 
 			if (!(type & *sig))
-				return 0;
+				return false;
 
 		}
 		if (!(*sig & KSIG_ELLIPSIS))
@@ -836,7 +813,7 @@ int kernel_matches_signature(EngineState *s, const char *sig, int argc, reg_t *a
 	}
 
 	if (argc)
-		return 0; // Too many arguments
+		return false; // Too many arguments
 	else
 		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
 }

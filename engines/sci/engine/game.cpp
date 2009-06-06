@@ -43,7 +43,7 @@ int _reset_graphics_input(EngineState *s) {
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 	debug(2, "Initializing graphics");
 
-	if (s->resmgr->_sciVersion <= SCI_VERSION_01 || (s->flags & GF_SCI1_EGA)) {
+	if (s->resmgr->_sciVersion <= SCI_VERSION_01 || (s->_flags & GF_SCI1_EGA)) {
 		int i;
 
 		for (i = 0; i < 16; i++) {
@@ -66,7 +66,7 @@ int _reset_graphics_input(EngineState *s) {
 		} else {
 			resource = s->resmgr->findResource(kResourceTypePalette, 999, 1);
 			if (resource) {
-				if (s->version < SCI_VERSION_1_1)
+				if (s->_version < SCI_VERSION_1_1)
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1(999, resource->data, resource->size));
 				else
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal11(999, resource->data, resource->size));
@@ -89,7 +89,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->priority_first = 42; // Priority zone 0 ends here
 
-	if (s->flags & GF_SCI0_OLDGFXFUNCS)
+	if (s->_flags & GF_SCI0_OLDGFXFUNCS)
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;
@@ -259,7 +259,7 @@ static int create_class_table_sci0(EngineState *s) {
 		Resource *script = s->resmgr->findResource(kResourceTypeScript, scriptnr, 0);
 
 		if (script) {
-			if (s->flags & GF_SCI0_OLD)
+			if (s->_flags & GF_SCI0_OLD)
 				magic_offset = seeker = 2;
 			else
 				magic_offset = seeker = 0;
@@ -324,13 +324,12 @@ static int create_class_table_sci0(EngineState *s) {
 }
 
 // Architectural stuff: Init/Unintialize engine
-int script_init_engine(EngineState *s, sci_version_t version) {
+int script_init_engine(EngineState *s) {
 	int result;
 
 	s->kernel_opt_flags = 0;
-	s->version = version;
 
-	if (s->version >= SCI_VERSION_1_1)
+	if (s->_version >= SCI_VERSION_1_1)
 		result = create_class_table_sci11(s);
 	else
 		result = create_class_table_sci0(s);
@@ -340,7 +339,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 		return 1;
 	}
 
-	s->seg_manager = new SegManager(s->version >= SCI_VERSION_1_1);
+	s->seg_manager = new SegManager(s->_version >= SCI_VERSION_1_1);
 	s->gc_countdown = GC_INTERVAL - 1;
 
 	SegmentId script_000_segment = script_get_segment(s, 0, SCRIPT_GET_LOCK);
@@ -370,7 +369,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
 
-	s->_kernel = new Kernel(s->resmgr, (s->flags & GF_SCI0_OLD));
+	s->_kernel = new Kernel(s->resmgr, (s->_flags & GF_SCI0_OLD));
 	s->_vocabulary = new Vocabulary(s->resmgr);
 
 	s->restarting_flags = SCI_GAME_IS_NOT_RESTARTING;
@@ -378,7 +377,7 @@ int script_init_engine(EngineState *s, sci_version_t version) {
 	s->bp_list = NULL; // No breakpoints defined
 	s->have_bp = 0;
 
-	if ((s->flags & GF_SCI1_LOFSABSOLUTE) && s->version < SCI_VERSION_1_1)
+	if ((s->_flags & GF_SCI1_LOFSABSOLUTE) && s->_version < SCI_VERSION_1_1)
 		s->seg_manager->setExportWidth(1);
 	else
 		s->seg_manager->setExportWidth(0);

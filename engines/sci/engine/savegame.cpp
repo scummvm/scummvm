@@ -458,7 +458,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	SavegameMetadata meta;
 	meta.savegame_version = CURRENT_SAVEGAME_VERSION;
 	meta.savegame_name = savename;
-	meta.version = s->version;
+	meta.version = s->_version;
 	meta.game_version = s->game_version;
 	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
@@ -497,7 +497,7 @@ static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
 }
 
 static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
-	if (s->flags & GF_SCI0_OLD)
+	if (s->_flags & GF_SCI0_OLD)
 		buf += 2;
 
 	do {
@@ -545,7 +545,7 @@ static void load_script(EngineState *s, SegmentId seg) {
 	assert(scr->buf);
 
 	script = s->resmgr->findResource(kResourceTypeScript, scr->nr, 0);
-	if (s->version >= SCI_VERSION_1_1)
+	if (s->_version >= SCI_VERSION_1_1)
 		heap = s->resmgr->findResource(kResourceTypeHeap, scr->nr, 0);
 
 	memcpy(scr->buf, script->data, script->size);
@@ -759,11 +759,9 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
-	retval = new EngineState();
+	retval = new EngineState(s->resmgr, s->_version, s->_flags);
 
 	// Copy some old data
-	retval->version = s->version;
-	retval->flags = s->flags;
 	retval->gfx_state = s->gfx_state;
 	retval->sound_mute = s->sound_mute;
 	retval->sound_volume = s->sound_volume;
@@ -780,8 +778,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->animation_granularity = s->animation_granularity;
 	retval->gfx_state = s->gfx_state;
 	retval->old_screen = 0;
-
-	retval->resmgr = s->resmgr;
 
 	temp = retval->_sound._songlib;
 	retval->_sound.sfx_init(retval->resmgr, s->sfx_init_flags);

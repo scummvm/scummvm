@@ -27,10 +27,9 @@
 
 namespace Sci {
 
-EngineState::EngineState() : _dirseeker(this) {
+EngineState::EngineState(ResourceManager *res, sci_version_t version, uint32 flags)
+: resmgr(res), _version(version), _flags(flags), _dirseeker(this) {
 	widget_serial_counter = 0;
-
-	resmgr = 0;
 
 	game_version = 0;
 
@@ -80,9 +79,6 @@ EngineState::EngineState() : _dirseeker(this) {
 
 	last_wait_time = 0;
 
-	version = 0;
-	flags = 0;
-
 	kernel_opt_flags = 0;
 
 	_fileHandles.resize(5);
@@ -126,5 +122,8 @@ EngineState::EngineState() : _dirseeker(this) {
 EngineState::~EngineState() {
 }
 
+uint16 EngineState::currentRoomNumber() const {
+	return KP_UINT(script_000->locals_block->_locals[13]);
+}
 
 } // End of namespace Sci

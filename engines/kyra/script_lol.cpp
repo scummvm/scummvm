@@ -1896,6 +1896,31 @@ int LoLEngine::olol_drawCharPortrait(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_removeInventoryItem(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_removeInventoryItem(%p) (%d)", (const void *)script, stackPos(0));
+	int itemType = stackPos(0);
+	for (int i = 0; i < 48; i++) {
+		if (!_inventory[i] || _itemsInPlay[_inventory[i]].itemPropertyIndex != itemType)
+			continue;
+		_inventory[i] = 0;
+		gui_drawInventory();
+		return 1;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		if (!(_characters[i].flags & 1))
+			continue;
+
+		for (int ii = 0; ii < 11; ii++) {
+			if (!_characters[i].items[ii] || _itemsInPlay[_characters[i].items[ii]].itemPropertyIndex != itemType)
+				continue;
+			_characters[i].items[ii] = 0;
+			return 1;
+		}
+	}
+	return 0;
+}
+
 int LoLEngine::olol_getAnimationLastPart(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getAnimationLastPart(%p) (%d)", (const void *)script, stackPos(0));
 	return _tim->resetAnimationLastPart(stackPos(0));
@@ -2730,7 +2755,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_drawCharPortrait);
 
 	// 0xA0
-	OpcodeUnImpl();
+	Opcode(olol_removeInventoryItem);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(olol_getAnimationLastPart);

@@ -54,7 +54,7 @@ public:
 	MessageTuple getRefTuple();
 	int getMessage();
 	void gotoNext();
-	char *getText();
+	Common::String getText();
 	int getTalker();
 	int getLength();
 	MessageTuple &getLastTuple();

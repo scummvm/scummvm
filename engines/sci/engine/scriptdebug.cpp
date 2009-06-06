@@ -26,6 +26,7 @@
 // Script debugger functionality. Absolutely not threadsafe.
 
 #include "sci/sci.h"
+#include "sci/debug.h"
 #include "sci/engine/state.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/kernel_types.h"
@@ -46,13 +47,12 @@
 
 namespace Sci {
 
-int _debugstate_valid = 0; // Set to 1 while script_debug is running
-int _debug_step_running = 0; // Set to >0 to allow multiple stepping
-int _debug_commands_not_hooked = 1; // Commands not hooked to the console yet?
-int _debug_seeking = 0; // Stepping forward until some special condition is met
-int _debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
-int _debug_seek_special = 0;  // Used for special seeks(1)
-reg_t _debug_seek_reg = NULL_REG;  // Used for special seeks(2)
+int g_debugstate_valid = 0; // Set to 1 while script_debug is running
+int g_debug_step_running = 0; // Set to >0 to allow multiple stepping
+static bool s_debug_commands_hooked = false; // Commands hooked to the console yet?
+int g_debug_seeking = 0; // Stepping forward until some special condition is met
+static int s_debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
+static int s_debug_seek_special = 0;  // Used for special seeks(1)
 
 #define _DEBUG_SEEK_NOTHING 0
 #define _DEBUG_SEEK_CALLK 1 // Step forward until callk is found
@@ -91,87 +91,19 @@ struct cmd_command_t : public cmd_mm_entry_t {
 	const char *param;
 };
 
-#if 0
-// Unused
-#define LOOKUP_SPECIES(species) (\
-	(species >= 1000) ? species : *(s->_classtable[species].scriptposp) \
-		+ s->_classtable[species].class_offset)
-#endif
-
 // Dummy function, so that it compiles
 int con_hook_command(ConCommand command, const char *name, const char *param, const char *description) {
 
 	return 0;
 }
 
-static const char *_debug_get_input() {
-	char newinpbuf[256];
-
-	printf("> ");
-	if (!fgets(newinpbuf, 254, stdin))
-		return NULL;
-
-	size_t l = strlen(newinpbuf);
-	if (l > 0 && newinpbuf[0] != '\n') {
-		if (newinpbuf[l-1] == '\n') newinpbuf[l-1] = 0;
-		memcpy(inputbuf, newinpbuf, 256);
-	}
-
-	return inputbuf;
-}
-
 int c_step(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_debugstate_valid = 0;
+	g_debugstate_valid = 0;
 	if (cmdParams.size() && (cmdParams[0].val > 0))
-		_debug_step_running = cmdParams[0].val - 1;
+		g_debug_step_running = cmdParams[0].val - 1;
 
 	return 0;
 }
-
-#if 0
-// TODO Re-implement con:so
-int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int opcode, opnumber;
-
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	_debugstate_valid = 0;
-	opcode = s->_heap[*p_pc];
-	opnumber = opcode >> 1;
-	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
-	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
-		_debug_seeking = _DEBUG_SEEK_SO;
-		_debug_seek_level = s->_executionStack.size()-1;
-		// Store in _debug_seek_special the offset of the next command after send
-		switch (opcode) {
-		case 0x46: // calle W
-			_debug_seek_special = *p_pc + 5;
-			break;
-
-		case 0x44: // callb W
-		case 0x47: // calle B
-		case 0x56: // super W
-			_debug_seek_special = *p_pc + 4;
-			break;
-
-		case 0x45: // callb B
-		case 0x57: // super B
-		case 0x4A: // send W
-		case 0x54: // self W
-			_debug_seek_special = *p_pc + 3;
-			break;
-
-		default:
-			_debug_seek_special = *p_pc + 2;
-		}
-	}
-
-	return 0;
-}
-#endif
 
 enum {
 	_parse_eoi,
@@ -270,7 +202,7 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 
 	selectors = obj->_variables.size();
 
-	if (s->version < SCI_VERSION_1_1)
+	if (s->_version < SCI_VERSION_1_1)
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
@@ -319,7 +251,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	opsize = scr[pos.offset];
 	opcode = opsize >> 1;
 
-	if (!_debugstate_valid) {
+	if (!g_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return retval;
 	}
@@ -410,7 +342,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			}
 
 			if (opcode == op_callk)
-				sciprintf(" %s[%x]", (param_value < s->_kernel->_kfuncTable.size()) ?
+				sciprintf(" %s[%x]", (param_value < s->_kernel->_kernelFuncs.size()) ?
 							((param_value < s->_kernel->getKernelNamesSize()) ? s->_kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
 			else
@@ -465,7 +397,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			int stackframe = (scr[pos.offset + 2] >> 1) + (*p_restadjust);
 			int argc = ((*p_sp)[- stackframe - 1]).offset;
 
-			if (!(s->flags & GF_SCI0_OLD))
+			if (!(s->_flags & GF_SCI0_OLD))
 				argc += (*p_restadjust);
 
 			sciprintf(" Kernel params: (");
@@ -535,103 +467,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	return retval;
 }
 
-#ifdef GFXW_DEBUG_WIDGETS
-extern GfxWidget *debug_widgets[];
-extern int debug_widget_pos;
-
-static int c_gfx_print_widget(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	if (!_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (cmdParams.size()) {
-		unsigned int i;
-		for (i = 0; i < cmdParams.size() ; i++) {
-			int widget_nr = cmdParams[i].val;
-
-			sciprintf("===== Widget #%d:\n", widget_nr);
-			debug_widgets[widget_nr]->print(0);
-		}
-
-	} else if (debug_widget_pos > 1)
-		sciprintf("Widgets 0-%d are active\n", debug_widget_pos - 1);
-	else if (debug_widget_pos == 1)
-		sciprintf("Widget 0 is active\n");
-	else
-		sciprintf("No widgets are active\n");
-
-	return 0;
-}
-#endif
-
-#define GETRECT(ll, rr, tt, bb) \
-	ll = GET_SELECTOR(pos, ll); \
-	rr = GET_SELECTOR(pos, rr); \
-	tt = GET_SELECTOR(pos, tt); \
-	bb = GET_SELECTOR(pos, bb);
-
-#if 0
-// Unreferenced - removed
-static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-// TODO: Re-implement gfx_draw_viewobj
-#if 0
-	HeapPtr pos = (HeapPtr)(cmdParams[0].val);
-	int is_view;
-	int x, y, priority;
-	int nsLeft, nsRight, nsBottom, nsTop;
-	int brLeft, brRight, brBottom, brTop;
-
-	if (!s) {
-		sciprintf("Not in debug state!\n");
-		return 1;
-	}
-
-	if ((pos < 4) || (pos > 0xfff0)) {
-		sciprintf("Invalid address.\n");
-		return 1;
-	}
-
-	if (((int16)READ_LE_UINT16(s->heap + pos + SCRIPT_OBJECT_MAGIC_OFFSET)) != SCRIPT_OBJECT_MAGIC_NUMBER) {
-		sciprintf("Not an object.\n");
-		return 0;
-	}
-
-
-	is_view = (lookup_selector(s, pos, s->_kernel->_selectorMap.x, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_kernel->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_kernel->_selectorMap.signal, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_kernel->_selectorMap.nsTop, NULL) == kSelectorVariable);
-
-	if (!is_view) {
-		sciprintf("Not a dynamic View object.\n");
-		return 0;
-	}
-
-	x = GET_SELECTOR(pos, x);
-	y = GET_SELECTOR(pos, y);
-	priority = GET_SELECTOR(pos, priority);
-	GETRECT(brLeft, brRight, brBottom, brTop);
-	GETRECT(nsLeft, nsRight, nsBottom, nsTop);
-	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
-
-	brTop += 10;
-	brBottom += 10;
-	nsTop += 10;
-	nsBottom += 10;
-
-	gfxop_fill_box(s->gfx_state, gfx_rect(nsLeft, nsTop, nsRight - nsLeft + 1, nsBottom - nsTop + 1), s->ega_colors[2]);
-	gfxop_fill_box(s->gfx_state, gfx_rect(brLeft, brTop, brRight - brLeft + 1, brBottom - brTop + 1), s->ega_colors[1]);
-	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y - 1, 3, 3), s->ega_colors[0]);
-	gfxop_fill_box(s->gfx_state, gfx_rect(x - 1, y, 3, 1), s->ega_colors[priority]);
-	gfxop_fill_box(s->gfx_state, gfx_rect(x, y - 1, 1, 3), s->ega_colors[priority]);
-	gfxop_update(s->gfx_state);
-
-	return 0;
-#endif
-}
-#endif
-
 static int c_disasm_addr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	reg_t vpc = cmdParams[0].reg;
 	int op_count = 1;
@@ -695,9 +530,9 @@ static int c_disasm(EngineState *s, const Common::Array<cmd_param_t> &cmdParams)
 }
 
 static int c_sg(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_debug_seeking = _DEBUG_SEEK_GLOBAL;
-	_debug_seek_special = cmdParams[0].val;
-	_debugstate_valid = 0;
+	g_debug_seeking = _DEBUG_SEEK_GLOBAL;
+	s_debug_seek_special = cmdParams[0].val;
+	g_debugstate_valid = 0;
 
 	return 0;
 }
@@ -706,7 +541,7 @@ static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int callk_index;
 	char *endptr;
 
-	if (!_debugstate_valid) {
+	if (!g_debugstate_valid) {
 		sciprintf("Not in debug state\n");
 		return 1;
 	}
@@ -730,27 +565,27 @@ static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 			}
 		}
 
-		_debug_seeking = _DEBUG_SEEK_SPECIAL_CALLK;
-		_debug_seek_special = callk_index;
-		_debugstate_valid = 0;
+		g_debug_seeking = _DEBUG_SEEK_SPECIAL_CALLK;
+		s_debug_seek_special = callk_index;
+		g_debugstate_valid = 0;
 	} else {
-		_debug_seeking = _DEBUG_SEEK_CALLK;
-		_debugstate_valid = 0;
+		g_debug_seeking = _DEBUG_SEEK_CALLK;
+		g_debugstate_valid = 0;
 	}
 
 	return 0;
 }
 
 static int c_sret(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_debug_seeking = _DEBUG_SEEK_LEVEL_RET;
-	_debug_seek_level = s->_executionStack.size()-1;
-	_debugstate_valid = 0;
+	g_debug_seeking = _DEBUG_SEEK_LEVEL_RET;
+	s_debug_seek_level = s->_executionStack.size()-1;
+	g_debugstate_valid = 0;
 	return 0;
 }
 
 static int c_go(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	_debug_seeking = 0;
-	_debugstate_valid = 0;
+	g_debug_seeking = 0;
+	g_debugstate_valid = 0;
 	return 0;
 }
 
@@ -810,97 +645,11 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	return 0;
 }
 
-
-#define GETRECT(ll, rr, tt, bb) \
-	ll = GET_SELECTOR(pos, ll); \
-	rr = GET_SELECTOR(pos, rr); \
-	tt = GET_SELECTOR(pos, tt); \
-	bb = GET_SELECTOR(pos, bb);
-
-#if 0
-#ifdef __GNUC__
-#warning "Re-implement viewobjinfo"
-#endif
-static void viewobjinfo(EngineState *s, HeapPtr pos) {
-	char *signals[16] = {
-		"stop_update",
-		"updated",
-		"no_update",
-		"hidden",
-		"fixed_priority",
-		"always_update",
-		"force_update",
-		"remove",
-		"frozen",
-		"is_extra",
-		"hit_obstacle",
-		"doesnt_turn",
-		"no_cycler",
-		"ignore_horizon",
-		"ignore_actor",
-		"dispose!"
-	};
-
-	int x, y, z, priority;
-	int cel, loop, view, signal;
-	int nsLeft, nsRight, nsBottom, nsTop;
-	int lsLeft, lsRight, lsBottom, lsTop;
-	int brLeft, brRight, brBottom, brTop;
-	int i;
-	int have_rects = 0;
-	Common::Rect nsrect, nsrect_clipped, brrect;
-
-	if (lookup_selector(s, pos, s->_kernel->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
-		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
-		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
-		GETRECT(brLeft, brRight, brBottom, brTop);
-		have_rects = 1;
-	}
-
-	GETRECT(view, loop, signal, cel);
-
-	sciprintf("\n-- View information:\ncel %d/%d/%d at ", view, loop, cel);
-
-	x = GET_SELECTOR(pos, x);
-	y = GET_SELECTOR(pos, y);
-	priority = GET_SELECTOR(pos, priority);
-	if (s->_kernel->_selectorMap.z > 0) {
-		z = GET_SELECTOR(pos, z);
-		sciprintf("(%d,%d,%d)\n", x, y, z);
-	} else
-		sciprintf("(%d,%d)\n", x, y);
-
-	if (priority == -1)
-		sciprintf("No priority.\n\n");
-	else
-		sciprintf("Priority = %d (band starts at %d)\n\n", priority, PRIORITY_BAND_FIRST(priority));
-
-	if (have_rects) {
-		sciprintf("nsRect: [%d..%d]x[%d..%d]\n", nsLeft, nsRight, nsTop, nsBottom);
-		sciprintf("lsRect: [%d..%d]x[%d..%d]\n", lsLeft, lsRight, lsTop, lsBottom);
-		sciprintf("brRect: [%d..%d]x[%d..%d]\n", brLeft, brRight, brTop, brBottom);
-	}
-
-	nsrect = get_nsrect(s, pos, 0);
-	nsrect_clipped = get_nsrect(s, pos, 1);
-	brrect = set_base(s, pos);
-	sciprintf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend, nsrect.y, nsrect.yend);
-	sciprintf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x, nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
-	sciprintf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend, brrect.y, brrect.yend);
-	sciprintf("\n signals = %04x:\n", signal);
-
-	for (i = 0; i < 16; i++)
-		if (signal & (1 << i))
-			sciprintf("  %04x: %s\n", 1 << i, signals[i]);
-}
-#endif
-#undef GETRECT
-
 // Breakpoint commands
 
 int c_se(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	stop_on_event = 1;
-	_debugstate_valid = 0;
+	g_stop_on_event = 1;
+	g_debugstate_valid = 0;
 
 	return 0;
 }
@@ -909,7 +658,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
 	// Do we support a separate console?
 
-	int old_debugstate = _debugstate_valid;
+	int old_debugstate = g_debugstate_valid;
 
 	p_var_segs = segids;
 	p_vars = variables;
@@ -921,15 +670,15 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	p_objp = objp;
 	p_restadjust = restadjust;
 	sciprintf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
-	_debugstate_valid = 1;
+	g_debugstate_valid = 1;
 	disassemble(s, *pc, 0, 1);
-	if (_debug_seeking == _DEBUG_SEEK_GLOBAL)
-		sciprintf("Global %d (0x%x) = %04x:%04x\n", _debug_seek_special,
-		          _debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[_debug_seek_special]));
+	if (g_debug_seeking == _DEBUG_SEEK_GLOBAL)
+		sciprintf("Global %d (0x%x) = %04x:%04x\n", s_debug_seek_special,
+		          s_debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[s_debug_seek_special]));
 
-	_debugstate_valid = old_debugstate;
+	g_debugstate_valid = old_debugstate;
 
-	if (_debug_seeking && !bp) { // Are we looking for something special?
+	if (g_debug_seeking && !bp) { // Are we looking for something special?
 		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
 
 		if (mobj) {
@@ -941,9 +690,9 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			int paramb1 = pc->offset + 1 >= code_buf_size ? 0 : code_buf[pc->offset + 1];
 			int paramf1 = (opcode & 1) ? paramb1 : (pc->offset + 2 >= code_buf_size ? 0 : (int16)READ_LE_UINT16(code_buf + pc->offset + 1));
 
-			switch (_debug_seeking) {
+			switch (g_debug_seeking) {
 			case _DEBUG_SEEK_SPECIAL_CALLK:
-				if (paramb1 != _debug_seek_special)
+				if (paramb1 != s_debug_seek_special)
 					return;
 
 			case _DEBUG_SEEK_CALLK: {
@@ -953,38 +702,32 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			}
 
 			case _DEBUG_SEEK_LEVEL_RET: {
-				if ((op != op_ret) || (_debug_seek_level < (int)s->_executionStack.size()-1))
+				if ((op != op_ret) || (s_debug_seek_level < (int)s->_executionStack.size()-1))
 					return;
 				break;
 			}
 
-			case _DEBUG_SEEK_SO:
-				if ((*pc != _debug_seek_reg) || (int)s->_executionStack.size()-1 != _debug_seek_level)
-					return;
-				break;
-
 			case _DEBUG_SEEK_GLOBAL:
-
 				if (op < op_sag)
 					return;
 				if ((op & 0x3) > 1)
 					return; // param or temp
 				if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
 					return; // locals and not running in script.000
-				if (paramf1 != _debug_seek_special)
+				if (paramf1 != s_debug_seek_special)
 					return; // CORRECT global?
 				break;
 
 			}
 
-			_debug_seeking = _DEBUG_SEEK_NOTHING;
+			g_debug_seeking = _DEBUG_SEEK_NOTHING;
 			// OK, found whatever we were looking for
 		}
 	}
 
-	_debugstate_valid = (_debug_step_running == 0);
+	g_debugstate_valid = (g_debug_step_running == 0);
 
-	if (_debugstate_valid) {
+	if (g_debugstate_valid) {
 		p_pc = pc;
 		p_sp = sp;
 		p_pp = pp;
@@ -998,15 +741,11 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		sciprintf("Step #%d\n", script_step_counter);
 		disassemble(s, *pc, 0, 1);
 
-		if (_debug_commands_not_hooked) {
-			_debug_commands_not_hooked = 0;
+		if (!s_debug_commands_hooked) {
+			s_debug_commands_hooked = true;
 
 			con_hook_command(c_step, "s", "i*", "Executes one or several operations\n\nEXAMPLES\n\n"
 			                 "    s 4\n\n  Execute 4 commands\n\n    s\n\n  Execute next command");
-#if 0
-			// TODO Re-implement con:so
-			con_hook_command(c_stepover, "so", "", "Executes one operation skipping over sends");
-#endif
 			con_hook_command(c_disasm_addr, "disasm-addr", "!as*", "Disassembles one or more commands\n\n"
 			                 "USAGE\n\n  disasm-addr [startaddr] <options>\n\n"
 			                 "  Valid options are:\n"
@@ -1022,50 +761,15 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_go, "go", "", "Executes the script.\n");
 			con_hook_command(c_set_parse_nodes, "set_parse_nodes", "s*", "Sets the contents of all parse nodes.\n"
 			                 "  Input token must be separated by\n  blanks.");
-
-#ifdef GFXW_DEBUG_WIDGETS
-			con_hook_command(c_gfx_print_widget, "gfx_print_widget", "i*", "If called with no parameters, it\n  shows which widgets are active.\n"
-			                 "  With parameters, it lists the\n  widget corresponding to the\n  numerical index specified (for\n  each parameter).");
-#endif
-
-#if 0
-			// TODO: Re-enable con:draw_viewobj
-			con_hook_command(c_gfx_draw_viewobj, "draw_viewobj", "i", "Draws the nsRect and brRect of a\n  dynview object.\n\n  nsRect is green, brRect\n"
-			                 "  is blue.\n");
-#endif
 			con_hook_command(c_sg, "sg", "!i",
 			                 "Steps until the global variable with the\n"
 			                 "specified index is modified.\n\nSEE ALSO\n\n"
 			                 "  s.1, snk.1, so.1, bpx.1");
-/*
-			con_hook_int(&script_abort_flag, "script_abort_flag", "Set != 0 to abort execution\n");
-*/
 		} // If commands were not hooked up
 	}
 
-	if (_debug_step_running)
-		_debug_step_running--;
-
-	while (_debugstate_valid) {
-		int skipfirst = 0;
-		const char *commandstring;
-
-		// Suspend music playing
-		s->_sound.sfx_suspend(true);
-
-		commandstring = _debug_get_input();
-
-		// Check if a specific destination has been given
-		if (commandstring && (commandstring[0] == '.' || commandstring[0] == ':'))
-			skipfirst = 1;
-
-		//if (commandstring && commandstring[0] != ':')
-		//	con_parse(s, commandstring + skipfirst);
-		sciprintf("\n");
-
-		// Resume music playing
-		s->_sound.sfx_suspend(false);
-	}
+	if (g_debug_step_running)
+		g_debug_step_running--;
 }
 
 } // End of namespace Sci

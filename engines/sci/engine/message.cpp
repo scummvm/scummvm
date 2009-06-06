@@ -153,9 +153,59 @@ int MessageState::getLastModule() {
 	return _lastReturnedModule;
 }
 
-char *MessageState::getText() {
-	int offset = READ_LE_UINT16(_engineCursor.index_record + ((_version == 2101) ? 2 : 5));
-	return (char *)_currentResource->data + offset;
+Common::String MessageState::getText() {
+	char *str = (char *)_currentResource->data + READ_LE_UINT16(_engineCursor.index_record + ((_version == 2101) ? 2 : 5));
+
+	Common::String strippedStr;
+	Common::String skippedSubstr;
+	bool skipping = false;
+
+	for (uint i = 0; i < strlen(str); i++) {
+		if (skipping) {
+			// Skip stage direction
+			skippedSubstr += str[i];
+
+			// Hopefully these locale-dependant functions are good enough
+			if (islower(str[i]) || isdigit(str[i])) {
+				// Lowercase or digit found, this is not a stage direction
+				strippedStr += skippedSubstr;
+				skipping = false;
+			} else if (str[i] == ')') {
+				// End of stage direction, skip trailing white space
+				while ((i + 1 < strlen(str)) && isspace(str[i + 1]))
+					i++;
+				skipping = false;
+			}
+		} else {
+			if (str[i] == '(') {
+				// Start skipping stage direction
+				skippedSubstr = str[i];
+				skipping = true;
+			} else if (str[i] == '\\') {
+				// Escape sequence
+				if ((i + 2 < strlen(str)) && isdigit(str[i + 1]) && isdigit(str[i + 2])) {
+					// Hex escape sequence
+					char hexStr[3];
+
+					hexStr[0] = str[++i];
+					hexStr[1] = str[++i];
+					hexStr[2] = 0;
+
+					char *endptr;
+					int hexNr = strtol(hexStr, &endptr, 16);
+					if (*endptr == 0)
+						strippedStr += hexNr;
+				} else if (i + 1 < strlen(str)) {
+					// Literal escape sequence
+					strippedStr += str[++i];
+				}
+			} else {
+				strippedStr += str[i];
+			}
+		}
+	}
+
+	return strippedStr;
 }
 
 void MessageState::gotoNext() {

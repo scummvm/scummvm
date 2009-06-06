@@ -49,10 +49,8 @@ GfxWidget *debug_widgets[GFXW_DEBUG_WIDGETS];
 int debug_widget_pos = 0;
 
 static void _gfxw_debug_add_widget(GfxWidget *widget) {
-	if (debug_widget_pos == GFXW_DEBUG_WIDGETS) {
-		GFXERROR("WIDGET DEBUG: Allocated the maximum number of %d widgets- Aborting!\n", GFXW_DEBUG_WIDGETS);
-		BREAKPOINT();
-	}
+	if (debug_widget_pos == GFXW_DEBUG_WIDGETS)
+		error("WIDGET DEBUG: Allocated the maximum number of %d widgets- Aborting!\n", GFXW_DEBUG_WIDGETS);
 	debug_widgets[debug_widget_pos++] = widget;
 }
 
@@ -68,13 +66,11 @@ static void _gfxw_debug_remove_widget(GfxWidget *widget) {
 	}
 
 	if (found > 1) {
-		GFXERROR("While removing widget: Found it %d times!\n", found);
-		BREAKPOINT();
+		error("While removing widget: Found it %d times!\n", found);
 	}
 
 	if (found == 0) {
-		GFXERROR("Attempted removal of unregistered widget!\n");
-		BREAKPOINT();
+		error("Attempted removal of unregistered widget!\n");
 	}
 }
 #else // !GFXW_DEBUG_WIDGETS

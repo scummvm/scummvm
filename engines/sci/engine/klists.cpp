@@ -310,7 +310,7 @@ reg_t kAddToFront(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kAddAfter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	List *l =lookup_list(s, argv[0]);
+	List *l = lookup_list(s, argv[0]);
 	Node *firstnode = argv[1].isNull() ? NULL : lookup_node(s, argv[1]);
 	Node *newnode = lookup_node(s, argv[2]);
 
@@ -341,12 +341,11 @@ reg_t kAddAfter(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		else
 			lookup_node(s, oldnext)->pred = argv[2];
 
-		return s->r_acc;
 	} else { // !firstnode
-		// Prepare call to AddToFront...
-		argv[1] = argv[0];
-		return kAddToFront(s, funct_nr, 2, argv + 1); // Set as initial list node
+		_k_add_to_front(s, argv[0], argv[2]); // Set as initial list node
 	}
+
+	return s->r_acc;
 }
 
 reg_t kAddToEnd(EngineState *s, int funct_nr, int argc, reg_t *argv) {

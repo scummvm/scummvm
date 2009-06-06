@@ -2399,7 +2399,7 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 	return ret;
 }
 
-uint8 Wiz::getWizPixelColor(int resNum, int state, int x, int y, int flags) {
+uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 	uint16 color = 0;
 	uint8 *data = _vm->getResourceAddress(rtImage, resNum);
 	assert(data);

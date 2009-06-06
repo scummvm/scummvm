@@ -152,15 +152,6 @@ int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options,
 **                   to provide any useful graphics support
 */
 
-int gfxop_set_parameter(GfxState *state, char *attribute, char *value);
-/* Sets a driver-specific parameter
-** Parameters: (GfxState *) state: The state, encapsulating the driver object to manipulate
-**             (char *) attribute: The attribute to set
-**             (char *) value: The value the attribute should be set to
-** Returns   : (int) GFX_OK on success, GFX_FATAL on fatal error conditions triggered
-**                   by the command
-*/
-
 int gfxop_exit(GfxState *state);
 /* Deinitializes a currently active driver
 ** Parameters: (GfxState *) state: The state encapsulating the driver in question

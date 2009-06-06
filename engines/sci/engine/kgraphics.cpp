@@ -27,7 +27,7 @@
 #include "common/events.h"
 
 #include "sci/sci.h"
-#include "sci/console.h"	// for debug_sleeptime_factor
+#include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
@@ -163,7 +163,7 @@ int _find_view_priority(EngineState *s, int y) {
 				return j;
 		return 14; // Maximum
 	} else {
-		if (!(s->flags & GF_SCI0_OLDGFXFUNCS))
+		if (!(s->_flags & GF_SCI0_OLDGFXFUNCS))
 			return SCI0_VIEW_PRIORITY_14_ZONES(y);
 		else
 			return SCI0_VIEW_PRIORITY(y) == 15 ? 14 : SCI0_VIEW_PRIORITY(y);
@@ -171,7 +171,7 @@ int _find_view_priority(EngineState *s, int y) {
 }
 
 int _find_priority_band(EngineState *s, int nr) {
-	if (!(s->flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 14)) {
+	if (!(s->_flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 14)) {
 		if (nr == 15)
 			return 0xffff;
 		else {
@@ -180,7 +180,7 @@ int _find_priority_band(EngineState *s, int nr) {
 		return 0;
 	}
 
-	if ((s->flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 15)) {
+	if ((s->_flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 15)) {
 		warning("Attempt to get priority band %d", nr);
 		return 0;
 	}
@@ -190,7 +190,7 @@ int _find_priority_band(EngineState *s, int nr) {
 	else {
 		int retval;
 
-		if (!(s->flags & GF_SCI0_OLDGFXFUNCS))
+		if (!(s->_flags & GF_SCI0_OLDGFXFUNCS))
 			retval = SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr);
 		else
 			retval = SCI0_PRIORITY_BAND_FIRST(nr);
@@ -303,8 +303,8 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1 :
-		if (s->version < SCI_VERSION_1_1) {
-			if (SKPV(0) == 0 || SKPV(0) == 1 || SKPV(0) == -1) {
+		if (s->_version < SCI_VERSION_1_1) {
+			if (SKPV(0) <= 1) {
 				// Newer (SCI1.1) semantics: show/hide cursor
 				g_system->showMouse(SKPV(0) != 0);
 			} else {
@@ -317,7 +317,7 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 		break;
 	case 2 :
-		if (s->version < SCI_VERSION_1_1) {
+		if (s->_version < SCI_VERSION_1_1) {
 			// Pre-SCI1.1: set cursor according to the first parameter, and toggle its
 			// visibility based on the second parameter
 			// Some late SCI1 games actually use the SCI1.1 version of this call (EcoQuest 1
@@ -329,7 +329,7 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			// this would open the menu on top. LSL5 is an exception, as the game can open
 			// the menu when the player presses a button during the intro, but the cursor is
 			// not placed on (x, 0) or (x, 1)
-			if (SKPV(1) == 0 || SKPV(1) == 1 || SKPV(1) == -1) {
+			if (SKPV(1) <= 1) {
 				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
 							SKPV(1) == 0 ? GFXOP_NO_POINTER : SKPV(0)));
 			} else {	// newer (SCI1.1) semantics: set pointer position
@@ -368,8 +368,6 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	return s->r_acc;
 }
-
-extern int oldx, oldy;
 
 reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Common::Point newpos;
@@ -647,8 +645,6 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-extern int debug_sleeptime_factor;
-
 reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint32 time;
 	int sleep_time = UKPV(0);
@@ -660,7 +656,7 @@ reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Reset optimization flags: Game is playing along nicely anyway
 	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT | KERNEL_OPT_FLAG_GOT_2NDEVENT);
 
-	sleep_time *= debug_sleeptime_factor;
+	sleep_time *= g_debug_sleeptime_factor;
 	GFX_ASSERT(gfxop_sleep(s->gfx_state, sleep_time * 1000 / 60));
 
 	return s->r_acc;
@@ -689,7 +685,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc,
 
 	angle %= 360;
 
-	if (!(s->flags & GF_SCI0_OLD)) {
+	if (!(s->_flags & GF_SCI0_OLD)) {
 		if (angle < 45)
 			loop = 3;
 		else if (angle < 136)
@@ -773,7 +769,7 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 	return 0;
 }
 
-reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t * argv) {
+reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	reg_t cliplist_ref = KP_ALT(1, NULL_REG);
 	List *cliplist = NULL;
@@ -1001,7 +997,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if ((argc > 1) && (UKPV(1) & K_DRAWPIC_FLAG_MIRRORED))
 		picFlags |= DRAWPIC1_FLAG_MIRRORED;
 
-	if (s->flags & GF_SCI0_OLDGFXFUNCS) {
+	if (s->_flags & GF_SCI0_OLDGFXFUNCS) {
 		if (!SKPV_OR_ALT(2, 0))
 			add_to_pic = 0;
 	} else {
@@ -1054,7 +1050,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->priority_first = 42;
 
-	if (s->flags & GF_SCI0_OLDGFXFUNCS)
+	if (s->_flags & GF_SCI0_OLDGFXFUNCS)
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;
@@ -1139,7 +1135,7 @@ void _k_base_setter(EngineState *s, reg_t object) {
 	// does not exist (earliest one was KQ4 SCI, version 0.000.274). This code is left here
 	// for reference only
 #if 0
-	if (s->version <= SCI_VERSION_0)
+	if (s->_version <= SCI_VERSION_0)
 		--absrect.top; // Compensate for early SCI OB1 'bug'
 #endif
 
@@ -1350,7 +1346,7 @@ static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	 * that game - bringing the save/load dialog on a par with SCI0.
 	 */
 	if (type == K_CONTROL_BUTTON && text && (s->_gameName == "sq4") &&
-			s->version < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
+			s->_version < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 }

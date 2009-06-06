@@ -93,7 +93,7 @@ Vocabulary::Vocabulary(ResourceManager *resmgr) : _resmgr(resmgr) {
 
 	if (_resmgr->_sciVersion < SCI_VERSION_01_VGA && loadParserWords()) {
 		loadSuffixes();
-		if (getBranches())
+		if (loadBranches())
 			// Now build a GNF grammar out of this
 			_parserRules = buildGNF();
 	} else {
@@ -241,13 +241,13 @@ void Vocabulary::freeSuffixes() {
 	else
 		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 0);
 	
-	if (resource && resource->status == kResStatusLocked)
+	if (resource)
 		_resmgr->unlockResource(resource, resource->number, kResourceTypeVocab);
 
 	_parserSuffixes.clear();
 }
 
-bool Vocabulary::getBranches() {
+bool Vocabulary::loadBranches() {
 	Resource *resource = NULL;
 
 	if (_vocabVersion == kVocabularySCI0)
