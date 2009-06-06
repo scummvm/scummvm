@@ -111,6 +111,7 @@ void EditTextWidget::endEditMode() {
 
 void EditTextWidget::abortEditMode() {
 	setEditString(_backupString);
+	sendCommand(_cmd, 0);
 	releaseFocus();
 }
 
