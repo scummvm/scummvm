@@ -120,6 +120,8 @@ void Util::processInput(bool scroll) {
 					_fastMode ^= 1;
 				else if (event.kbd.keycode == Common::KEYCODE_g)
 					_fastMode ^= 2;
+				else if (event.kbd.keycode == Common::KEYCODE_p)
+					_vm->pauseGame();
 				break;
 			}
 			addKeyToBuffer(event.kbd);

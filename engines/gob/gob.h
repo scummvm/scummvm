@@ -29,7 +29,13 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
+#include "gui/dialog.h"
+
 #include "engines/engine.h"
+
+namespace GUI {
+	class StaticTextWidget;
+}
 
 namespace Gob {
 
@@ -134,6 +140,18 @@ enum {
 
 struct GOBGameDescription;
 
+class PauseDialog : public GUI::Dialog {
+public:
+	PauseDialog();
+
+  virtual void reflowLayout();
+	virtual void handleKeyDown(Common::KeyState state);
+
+private:
+	Common::String _message;
+	GUI::StaticTextWidget *_text;
+};
+
 class GobEngine : public Engine {
 private:
 	GameType _gameType;
@@ -188,6 +206,8 @@ public:
 	const char *getLangDesc(int16 language) const;
 	void validateLanguage();
 	void validateVideoMode(int16 videoMode);
+
+	void pauseGame();
 
 	Endianness getEndianness() const;
 	Common::Platform getPlatform() const;

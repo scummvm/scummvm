@@ -31,6 +31,9 @@
 #include "common/md5.h"
 #include "sound/mididrv.h"
 
+#include "gui/GuiManager.h"
+#include "gui/widget.h"
+
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/util.h"
@@ -66,6 +69,37 @@ const Common::Language GobEngine::_gobToScummVMLang[] = {
 	Common::PT_BRA,
 	Common::JA_JPN
 };
+
+
+PauseDialog::PauseDialog() : GUI::Dialog("PauseDialog") {
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
+
+	_message = "Game paused. Press Ctrl+p again to continue.";
+	_text = new GUI::StaticTextWidget(this, 4, 0, 10, 10,
+			_message, Graphics::kTextAlignCenter);
+}
+
+void PauseDialog::reflowLayout() {
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	int width = g_gui.getStringWidth(_message) + 16;
+	int height = g_gui.getFontHeight() + 8;
+
+	_w = width;
+	_h = height;
+	_x = (screenW - width) / 2;
+	_y = (screenH - height) / 2;
+
+	_text->setSize(_w - 8, _h);
+}
+
+void PauseDialog::handleKeyDown(Common::KeyState state) {
+	// Close on CTRL+p
+	if ((state.flags == Common::KBD_CTRL) && (state.keycode == Common::KEYCODE_p))
+		close();
+}
+
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	_sound     = 0; _mult     = 0; _game   = 0;
@@ -275,6 +309,16 @@ void GobEngine::pauseEngineIntern(bool pause) {
 	}
 
 	_mixer->pauseAll(pause);
+}
+
+void GobEngine::pauseGame() {
+	pauseEngineIntern(true);
+
+	PauseDialog pauseDialog;
+
+	pauseDialog.runModal();
+
+	pauseEngineIntern(false);
 }
 
 bool GobEngine::initGameParts() {
