@@ -46,22 +46,32 @@ Screen::~Screen(){
 	}
 }
 
-void Screen::setFrontBuffer(int x, int y, int width, int height, uint8 *buffer){
+void Screen::setFrontBuffer(int32 x, int32 y, int32 width, int32 height, uint8 *buffer){
 	copyBuffer(x, y, width, height, _frontBuf, buffer);
 }
 
-void Screen::setBackBuffer(int x, int y, int width, int height, uint8 *buffer){
+void Screen::setBackBuffer(int32 x, int32 y, int32 width, int32 height, uint8 *buffer){
 	copyBuffer(x, y, width, height, _backBuf, buffer);
 }
 
-void Screen::copyBuffer(int x, int y, int width, int height, uint8 *src, uint8 *dst){
+void Screen::copyBuffer(int32 x, int32 y, int32 width, int32 height, uint8 *src, uint8 *dst){
 	copyBuffer(x, y, 0, 0, width, height, src, dst);
 }
 
-void Screen::copyBuffer(int xs, int ys, int xd, int yd, int width, int height, uint8 *src, uint8 *dst){
-	
+void Screen::copyBuffer(int32 xs, int32 ys, int32 xd, int32 yd, int32 width, int32 height, uint8 *src, uint8 *dst){
+	copyBuffer(xs, ys, 0, 0, width, height, src, dst, SCREEN_WIDTH);
 }
 
+void Screen::copyBuffer(int32 xs, int32 ys, int32 xd, int32 yd, int32 width, int32 height, uint8 *src, uint8 *dst, int32 dstWidth ){
+	src += xs + ys * SCREEN_WIDTH;
+	dst += xd + yd * dstWidth; // destination width
+
+	while(height--){
+		memcpy(dst, src, width);
+		src += SCREEN_WIDTH;
+		dst += dstWidth;
+	}
+}
 
 void Screen::clearScreen(){
 	memset(_frontBuf, 0, sizeof(uint8)*SCREEN_WIDTH * SCREEN_DEPTH);
@@ -72,7 +82,7 @@ void Screen::updateScreen(){
 	updateScreen(0, 0, SCREEN_WIDTH, SCREEN_DEPTH);
 }
 
-void Screen::updateScreen(int x, int y, int width, int height){
+void Screen::updateScreen(int32 x, int32 y, int32 width, int32 height){
 	_system->copyRectToScreen(_frontBuf, SCREEN_WIDTH, x, y, width, height);
 	_system->updateScreen();
 }
@@ -90,7 +100,7 @@ void Screen::setPalette(uint8 *palette){
 	_system->setPalette(_currentPalette, 0, PAL_SIZE);
 }
 
-void Screen::drawLine(int x0, int y0, int x1, int y1, uint8 colour){
+void Screen::drawLine(int32 x0, int32 y0, int32 x1, int32 y1, uint8 colour){
 }
 
 } // end of namespace Asylum

@@ -39,18 +39,19 @@ public:
     Screen(OSystem *system);
     ~Screen();
 
-	void setFrontBuffer(int x, int y, int width, int height, uint8 *buffer);
-	void setBackBuffer(int x, int y, int width, int height, uint8 *buffer);
-	void copyBuffer(int x, int y, int width, int height, uint8 *src, uint8 *dst);
-	void copyBuffer(int xs, int ys, int xd, int yd, int width, int height, uint8 *src, uint8 *dst);
+	void setFrontBuffer(int32 x, int32 y, int32 width, int32 height, uint8 *buffer);
+	void setBackBuffer(int32 x, int32 y, int32 width, int32 height, uint8 *buffer);
+	void copyBuffer(int32 x, int32 y, int32 width, int32 height, uint8 *src, uint8 *dst);
+	void copyBuffer(int32 xs, int32 ys, int32 xd, int32 yd, int32 width, int32 height, uint8 *src, uint8 *dst);
+	void copyBuffer(int32 xs, int32 ys, int32 xd, int32 yd, int32 width, int32 height, uint8 *src, uint8 *dst, int32 dstWidth);
 
 	void clearScreen();
 	void updateScreen();
-	void updateScreen(int x, int y, int width, int height);
+	void updateScreen(int32 x, int32 y, int32 width, int32 height);
 
 	void setPalette(uint8 *palette);
 
-	void drawLine(int x0, int y0, int x1, int y1, uint8 colour);
+	void drawLine(int32 x0, int32 y0, int32 x1, int32 y1, uint8 colour);
 
 private:
 	OSystem *_system;
