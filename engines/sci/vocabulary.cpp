@@ -488,7 +488,7 @@ void _vocab_recursive_ptree_dump_treelike(parse_tree_node_t *nodes, int nr, int 
 		return;
 	}
 
-	if (nodes[nr].type == PARSE_TREE_NODE_LEAF)
+	if (nodes[nr].type == kParseTreeLeafNode)
 		//sciprintf("[%03x]%04x", nr, nodes[nr].content.value);
 		sciprintf("%x", nodes[nr].content.value);
 	else {
@@ -518,7 +518,7 @@ void _vocab_recursive_ptree_dump(parse_tree_node_t *nodes, int nr, int prevnr, i
 	int rbranch = nodes[nr].content.branches[1];
 	int i;
 
-	if (nodes[nr].type == PARSE_TREE_NODE_LEAF) {
+	if (nodes[nr].type == kParseTreeLeafNode) {
 		sciprintf("vocab_dump_parse_tree: Error: consp is nil for element %03x\n", nr);
 		return;
 	}
@@ -529,7 +529,7 @@ void _vocab_recursive_ptree_dump(parse_tree_node_t *nodes, int nr, int prevnr, i
 	}
 
 	if (lbranch) {
-		if (nodes[lbranch].type == PARSE_TREE_NODE_BRANCH) {
+		if (nodes[lbranch].type == kParseTreeBranchNode) {
 			sciprintf("\n");
 			for (i = 0; i < blanks; i++)
 				sciprintf("    ");
@@ -544,7 +544,7 @@ void _vocab_recursive_ptree_dump(parse_tree_node_t *nodes, int nr, int prevnr, i
 	}/* else sciprintf ("nil");*/
 
 	if (rbranch) {
-		if (nodes[rbranch].type == PARSE_TREE_NODE_BRANCH)
+		if (nodes[rbranch].type == kParseTreeBranchNode)
 			_vocab_recursive_ptree_dump(nodes, rbranch, nr, blanks);
 		else
 			sciprintf("%x", nodes[rbranch].content.value);

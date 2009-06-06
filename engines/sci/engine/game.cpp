@@ -499,7 +499,7 @@ int game_init(EngineState *s) {
 	s->game_obj = game_obj;
 
 	// Mark parse tree as unused
-	s->parser_nodes[0].type = PARSE_TREE_NODE_LEAF;
+	s->parser_nodes[0].type = kParseTreeLeafNode;
 	s->parser_nodes[0].content.value = 0;
 
 	s->_menubar = new Menubar(); // Create menu bar

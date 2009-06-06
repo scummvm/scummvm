@@ -139,6 +139,27 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if ((s->r_acc.offset) && (g_stop_on_event)) {
 		g_stop_on_event = 0;
+
+		// A SCI event occured, and we have been asked to stop, so open the debug console
+		GUI::Debugger *con = ((Sci::SciEngine*)g_engine)->getDebugger();
+		con->DebugPrintf("SCI event occured: ");
+		switch (e.type) {
+		case SCI_EVT_QUIT:
+			con->DebugPrintf("quit event\n");
+			break;
+		case SCI_EVT_KEYBOARD:
+			con->DebugPrintf("keyboard event\n");
+			break;
+		case SCI_EVT_MOUSE_RELEASE:
+		case SCI_EVT_MOUSE_PRESS:
+			con->DebugPrintf("mouse click event\n");
+			break;
+		default:
+			con->DebugPrintf("unknown or no event (event type %d)\n", e.type);
+		}
+
+		con->attach();
+		con->onFrame();
 	}
 
 	return s->r_acc;

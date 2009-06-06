@@ -52,7 +52,19 @@ int g_debug_sleeptime_factor = 1;
 int g_debug_simulated_key = 0;
 bool g_debug_track_mouse_clicks = false;
 bool g_debug_weak_validations = true;
+// Script related variables
+int g_debug_seeking = 0; // Stepping forward until some special condition is met
+int g_debug_seek_special = 0;  // Used for special seeks
+int g_debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
 
+enum DebugSeeking {
+	kDebugSeekNothing = 0,
+	kDebugSeekCallk = 1,        // Step forward until callk is found
+	kDebugSeekLevelRet = 2,     // Step forward until returned from this level
+	kDebugSeekSpecialCallk = 3, // Step forward until a /special/ callk is found
+	kDebugSeekSO = 4,           // Step forward until specified PC (after the send command) and stack depth
+	kDebugSeekGlobal = 5        // Step forward until one specified global variable is modified
+};
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -80,6 +92,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
 	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
 	DCmd_Register("parse",				WRAP_METHOD(Console, cmdParse));
+	DCmd_Register("set_parse_nodes",	WRAP_METHOD(Console, cmdSetParseNodes));
 	// Resources
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
@@ -141,6 +154,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
 	DCmd_Register("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
+	DCmd_Register("step_event",			WRAP_METHOD(Console, cmdStepEvent));
+	DCmd_Register("step_ret",			WRAP_METHOD(Console, cmdStepRet));
+	DCmd_Register("step_global",		WRAP_METHOD(Console, cmdStepGlobal));
 	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
@@ -220,6 +236,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" parser_words - Shows the words from the parse node tree\n");
 	DebugPrintf(" sentence_fragments - Shows the sentence fragments (used to build Parse trees)\n");
 	DebugPrintf(" parse - Parses a sequence of words and prints the resulting parse tree\n");
+	DebugPrintf(" set_parse_nodes - Sets the contents of all parse nodes\n");
 	DebugPrintf("\n");
 	DebugPrintf("Resources:\n");
 	DebugPrintf(" hexdump - Dumps the specified resource to standard output\n");
@@ -290,6 +307,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" dissect_script - Examines a script\n");
 	DebugPrintf(" set_acc - Sets the accumulator\n");
 	DebugPrintf(" backtrace - Dumps the send/self/super/call/calle/callb stack\n");
+	DebugPrintf(" step_event - Steps forward until a SCI event is received.\n");
+	DebugPrintf(" step_ret - Steps forward until ret is called on the current execution stack level.\n");
+	DebugPrintf(" step_global - Steps until the global variable with the specified index is modified.\n");
 	DebugPrintf("\n");
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list - Lists the current breakpoints\n");
@@ -387,6 +407,98 @@ bool Console::cmdSuffixes(int argc, const char **argv) {
 
 bool Console::cmdParserWords(int argc, const char **argv) {
 	g_EngineState->_vocabulary->printParserWords();
+
+	return true;
+}
+
+enum {
+	kParseEndOfInput = 0,
+	kParseOpeningParenthesis = 1,
+	kParseClosingParenthesis = 2,
+	kParseNil = 3,
+	kParseNumber = 4
+};
+
+int parseNodes(EngineState *s, int *i, int *pos, int type, int nr, int argc, const char **argv) {
+	int nextToken = 0, nextValue = 0, newPos = 0, oldPos = 0;
+
+	if (type == kParseNil)
+		return 0;
+
+	if (type == kParseNumber) {
+		s->parser_nodes[*pos += 1].type = kParseTreeLeafNode;
+		s->parser_nodes[*pos].content.value = nr;
+		return *pos;
+	}
+	if (type == kParseEndOfInput) {
+		sciprintf("Unbalanced parentheses\n");
+		return -1;
+	}
+	if (type == kParseClosingParenthesis) {
+		sciprintf("Syntax error at token %d\n", *i);
+		return -1;
+	}
+
+	s->parser_nodes[oldPos = ++(*pos)].type = kParseTreeBranchNode;
+
+	for (int j = 0; j <= 1; j++) {
+		if (*i == argc) {
+			nextToken = kParseEndOfInput;
+		} else {
+			const char *token = argv[(*i)++];
+
+			if (!strcmp(token, "(")) {
+				nextToken = kParseOpeningParenthesis;
+			} else if (!strcmp(token, ")")) {
+				nextToken = kParseClosingParenthesis;
+			} else if (!strcmp(token, "nil")) {
+				nextToken = kParseNil;
+			} else {
+				nextValue = strtol(token, NULL, 0);
+				nextToken = kParseNumber;
+			}
+		}
+
+		if ((newPos = s->parser_nodes[oldPos].content.branches[j] = parseNodes(s, i, pos, nextToken, nextValue, argc, argv)) == -1)
+			return -1;
+	}
+
+	const char *token = argv[(*i)++];
+	if (strcmp(token, ")"))
+		sciprintf("Expected ')' at token %d\n", *i);
+
+	return oldPos;
+}
+
+bool Console::cmdSetParseNodes(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Sets the contents of all parse nodes.\n");
+		DebugPrintf("Usage: %s <parse node1> <parse node2> ... <parse noden>\n", argv[0]);
+		DebugPrintf("Tokens should be separated by blanks and enclosed in parentheses\n");
+		return true;
+	}
+
+	int i = 0;
+	int pos = -1;
+	int nextToken = 0, nextValue = 0;
+
+	const char *token = argv[i++];
+
+	if (!strcmp(token, "(")) {
+		nextToken = kParseOpeningParenthesis;
+	} else if (!strcmp(token, ")")) {
+		nextToken = kParseClosingParenthesis;
+	} else if (!strcmp(token, "nil")) {
+		nextToken = kParseNil;
+	} else {
+		nextValue = strtol(token, NULL, 0);
+		nextToken = kParseNumber;
+	}
+
+	if (parseNodes(g_EngineState, &i, &pos, nextToken, nextValue, argc, argv) == -1)
+		return 1;
+
+	vocab_dump_parse_tree("debug-parse-tree", g_EngineState->parser_nodes);
 
 	return true;
 }
@@ -832,7 +944,7 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 
 	for (int i = 0; i < end; i++) {
 		DebugPrintf(" Node %03x: ", i);
-		if (g_EngineState->parser_nodes[i].type == PARSE_TREE_NODE_LEAF)
+		if (g_EngineState->parser_nodes[i].type == kParseTreeLeafNode)
 			DebugPrintf("Leaf: %04x\n", g_EngineState->parser_nodes[i].content.value);
 		else
 			DebugPrintf("Branch: ->%04x, ->%04x\n", g_EngineState->parser_nodes[i].content.branches[0],
@@ -1954,6 +2066,35 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdStepEvent(int argc, const char **argv) {
+	g_stop_on_event = 1;
+	g_debugstate_valid = 0;
+
+	return true;
+}
+
+bool Console::cmdStepRet(int argc, const char **argv) {
+	g_debug_seeking = kDebugSeekLevelRet;
+	g_debug_seek_level = g_EngineState->_executionStack.size() - 1;
+	g_debugstate_valid = 0;
+
+	return true;
+}
+
+bool Console::cmdStepGlobal(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Steps until the global variable with the specified index is modified.\n");
+		DebugPrintf("Usage: %s <global variable index>\n", argv[0]);
+		return true;
+	}
+
+	g_debug_seeking = kDebugSeekGlobal;
+	g_debug_seek_special = atoi(argv[1]);
+	g_debugstate_valid = 0;
+
+	return true;
+}
+
 bool Console::cmdBreakpointList(int argc, const char **argv) {
 	Breakpoint *bp = g_EngineState->bp_list;
 	int i = 0;
@@ -2858,29 +2999,29 @@ int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	opnumber = opcode >> 1;
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
 	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
-		g_debug_seeking = _DEBUG_SEEK_SO;
-		s_debug_seek_level = s->_executionStack.size()-1;
-		// Store in s_debug_seek_special the offset of the next command after send
+		g_debug_seeking = kDebugSeekSO;
+		g_debug_seek_level = s->_executionStack.size()-1;
+		// Store in g_debug_seek_special the offset of the next command after send
 		switch (opcode) {
 		case 0x46: // calle W
-			s_debug_seek_special = *p_pc + 5;
+			g_debug_seek_special = *p_pc + 5;
 			break;
 
 		case 0x44: // callb W
 		case 0x47: // calle B
 		case 0x56: // super W
-			s_debug_seek_special = *p_pc + 4;
+			g_debug_seek_special = *p_pc + 4;
 			break;
 
 		case 0x45: // callb B
 		case 0x57: // super B
 		case 0x4A: // send W
 		case 0x54: // self W
-			s_debug_seek_special = *p_pc + 3;
+			g_debug_seek_special = *p_pc + 3;
 			break;
 
 		default:
-			s_debug_seek_special = *p_pc + 2;
+			g_debug_seek_special = *p_pc + 2;
 		}
 	}
 

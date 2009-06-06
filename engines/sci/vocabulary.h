@@ -160,9 +160,10 @@ struct parse_tree_branch_t {
 	int data[10];
 };
 
-#define PARSE_TREE_NODE_LEAF 0
-#define PARSE_TREE_NODE_BRANCH 1
-
+enum ParseTypes {
+	kParseTreeLeafNode = 0,
+	kParseTreeBranchNode = 1
+};
 
 struct parse_tree_node_t {
 	short type;  /* leaf or branch */

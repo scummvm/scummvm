@@ -59,9 +59,10 @@ private:
 	bool cmdSuffixes(int argc, const char **argv);
 	bool cmdParseGrammar(int argc, const char **argv);
 	bool cmdParserNodes(int argc, const char **argv);
-	bool cmdParserWords(int argc, const char **argv);
+	bool cmdParserWords(int argc, const char **argv);	
 	bool cmdSentenceFragments(int argc, const char **argv);
 	bool cmdParse(int argc, const char **argv);
+	bool cmdSetParseNodes(int argc, const char **argv);
 	// Resources
 	bool cmdHexDump(int argc, const char **argv);
 	bool cmdResourceId(int argc, const char **argv);
@@ -121,6 +122,9 @@ private:
 	bool cmdDissectScript(int argc, const char **argv);
 	bool cmdSetAccumulator(int argc, const char **argv);
 	bool cmdBacktrace(int argc, const char **argv);
+	bool cmdStepEvent(int argc, const char **argv);
+	bool cmdStepRet(int argc, const char **argv);
+	bool cmdStepGlobal(int argc, const char **argv);
 	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);

@@ -49,17 +49,7 @@ namespace Sci {
 
 int g_debugstate_valid = 0; // Set to 1 while script_debug is running
 int g_debug_step_running = 0; // Set to >0 to allow multiple stepping
-static bool s_debug_commands_hooked = false; // Commands hooked to the console yet?
-int g_debug_seeking = 0; // Stepping forward until some special condition is met
-static int s_debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
-static int s_debug_seek_special = 0;  // Used for special seeks(1)
-
-#define _DEBUG_SEEK_NOTHING 0
-#define _DEBUG_SEEK_CALLK 1 // Step forward until callk is found
-#define _DEBUG_SEEK_LEVEL_RET 2 // Step forward until returned from this level
-#define _DEBUG_SEEK_SPECIAL_CALLK 3 // Step forward until a /special/ callk is found
-#define _DEBUG_SEEK_SO 5 // Step forward until specified PC (after the send command) and stack depth
-#define _DEBUG_SEEK_GLOBAL 6 // Step forward until one specified global variable is modified
+extern int g_debug_seek_special;
 
 static reg_t *p_pc;
 static StackPtr *p_sp;
@@ -102,89 +92,6 @@ int c_step(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	if (cmdParams.size() && (cmdParams[0].val > 0))
 		g_debug_step_running = cmdParams[0].val - 1;
 
-	return 0;
-}
-
-enum {
-	_parse_eoi,
-	_parse_token_pareno,
-	_parse_token_parenc,
-	_parse_token_nil,
-	_parse_token_number
-};
-
-int _parse_getinp(int *i, int *nr, const Common::Array<cmd_param_t> &cmdParams) {
-	const char *token;
-
-	if ((unsigned)*i == cmdParams.size())
-		return _parse_eoi;
-
-	token = cmdParams[(*i)++].str;
-
-	if (!strcmp(token, "("))
-		return _parse_token_pareno;
-
-	if (!strcmp(token, ")"))
-		return _parse_token_parenc;
-
-	if (!strcmp(token, "nil"))
-		return _parse_token_nil;
-
-	*nr = strtol(token, NULL, 0);
-
-	return _parse_token_number;
-}
-
-int _parse_nodes(EngineState *s, int *i, int *pos, int type, int nr, const Common::Array<cmd_param_t> &cmdParams) {
-	int nexttk, nextval, newpos, oldpos;
-
-	if (type == _parse_token_nil)
-		return 0;
-
-	if (type == _parse_token_number) {
-		s->parser_nodes[*pos += 1].type = PARSE_TREE_NODE_LEAF;
-		s->parser_nodes[*pos].content.value = nr;
-		return *pos;
-	}
-	if (type == _parse_eoi) {
-		sciprintf("Unbalanced parentheses\n");
-		return -1;
-	}
-	if (type == _parse_token_parenc) {
-		sciprintf("Syntax error at token %d\n", *i);
-		return -1;
-	}
-	s->parser_nodes[oldpos = ++(*pos)].type = PARSE_TREE_NODE_BRANCH;
-
-	nexttk = _parse_getinp(i, &nextval, cmdParams);
-	if ((newpos = s->parser_nodes[oldpos].content.branches[0] = _parse_nodes(s, i, pos, nexttk, nextval, cmdParams)) == -1)
-		return -1;
-
-	nexttk = _parse_getinp(i, &nextval, cmdParams);
-	if ((newpos = s->parser_nodes[oldpos].content.branches[1] = _parse_nodes(s, i, pos, nexttk, nextval, cmdParams)) == -1)
-		return -1;
-
-	if (_parse_getinp(i, &nextval, cmdParams) != _parse_token_parenc)
-		sciprintf("Expected ')' at token %d\n", *i);
-
-	return oldpos;
-}
-
-int c_set_parse_nodes(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	int i = 0;
-	int foo, bar;
-	int pos = -1;
-
-	if (!s) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	bar = _parse_getinp(&i, &foo, cmdParams);
-	if (_parse_nodes(s, &i, &pos, bar, foo, cmdParams) == -1)
-		return 1;
-
-	vocab_dump_parse_tree("debug-parse-tree", s->parser_nodes);
 	return 0;
 }
 
@@ -528,15 +435,10 @@ static int c_disasm(EngineState *s, const Common::Array<cmd_param_t> &cmdParams)
 	return 0;
 }
 
-static int c_sg(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	g_debug_seeking = _DEBUG_SEEK_GLOBAL;
-	s_debug_seek_special = cmdParams[0].val;
-	g_debugstate_valid = 0;
-
-	return 0;
-}
-
 static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
+// TODO: disabled till this is moved in console.cpp
+#if 0
+
 	int callk_index;
 	char *endptr;
 
@@ -564,21 +466,15 @@ static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 			}
 		}
 
-		g_debug_seeking = _DEBUG_SEEK_SPECIAL_CALLK;
-		s_debug_seek_special = callk_index;
+		g_debug_seeking = kDebugSeekSpecialCallk;
+		g_debug_seek_special = callk_index;
 		g_debugstate_valid = 0;
 	} else {
-		g_debug_seeking = _DEBUG_SEEK_CALLK;
+		g_debug_seeking = kDebugSeekCallk;
 		g_debugstate_valid = 0;
 	}
+#endif
 
-	return 0;
-}
-
-static int c_sret(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	g_debug_seeking = _DEBUG_SEEK_LEVEL_RET;
-	s_debug_seek_level = s->_executionStack.size()-1;
-	g_debugstate_valid = 0;
 	return 0;
 }
 
@@ -645,15 +541,10 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 
 // Breakpoint commands
 
-int c_se(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	g_stop_on_event = 1;
-	g_debugstate_valid = 0;
-
-	return 0;
-}
-
 void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *objp, int *restadjust,
 	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
+// TODO: disabled till this is moved in console.cpp
+#if 0
 	// Do we support a separate console?
 
 	int old_debugstate = g_debugstate_valid;
@@ -670,9 +561,9 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	sciprintf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
 	g_debugstate_valid = 1;
 	disassemble(s, *pc, 0, 1);
-	if (g_debug_seeking == _DEBUG_SEEK_GLOBAL)
-		sciprintf("Global %d (0x%x) = %04x:%04x\n", s_debug_seek_special,
-		          s_debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[s_debug_seek_special]));
+	if (g_debug_seeking == kDebugSeekGlobal)
+		sciprintf("Global %d (0x%x) = %04x:%04x\n", g_debug_seek_special,
+		          g_debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[g_debug_seek_special]));
 
 	g_debugstate_valid = old_debugstate;
 
@@ -689,39 +580,40 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			int paramf1 = (opcode & 1) ? paramb1 : (pc->offset + 2 >= code_buf_size ? 0 : (int16)READ_LE_UINT16(code_buf + pc->offset + 1));
 
 			switch (g_debug_seeking) {
-			case _DEBUG_SEEK_SPECIAL_CALLK:
-				if (paramb1 != s_debug_seek_special)
+			case kDebugSeekSpecialCallk:
+				if (paramb1 != g_debug_seek_special)
 					return;
 
-			case _DEBUG_SEEK_CALLK: {
+			case kDebugSeekCallk: {
 				if (op != op_callk)
 					return;
 				break;
 			}
 
-			case _DEBUG_SEEK_LEVEL_RET: {
-				if ((op != op_ret) || (s_debug_seek_level < (int)s->_executionStack.size()-1))
+			case kDebugSeekLevelRet: {
+				if ((op != op_ret) || (g_debug_seek_level < (int)s->_executionStack.size()-1))
 					return;
 				break;
 			}
 
-			case _DEBUG_SEEK_GLOBAL:
+			case kDebugSeekGlobal:
 				if (op < op_sag)
 					return;
 				if ((op & 0x3) > 1)
 					return; // param or temp
 				if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
 					return; // locals and not running in script.000
-				if (paramf1 != s_debug_seek_special)
+				if (paramf1 != g_debug_seek_special)
 					return; // CORRECT global?
 				break;
 
 			}
 
-			g_debug_seeking = _DEBUG_SEEK_NOTHING;
+			g_debug_seeking = kDebugSeekNothing;
 			// OK, found whatever we were looking for
 		}
 	}
+#endif
 
 	g_debugstate_valid = (g_debug_step_running == 0);
 
@@ -739,9 +631,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		sciprintf("Step #%d\n", script_step_counter);
 		disassemble(s, *pc, 0, 1);
 
-		if (!s_debug_commands_hooked) {
-			s_debug_commands_hooked = true;
-
 			con_hook_command(c_step, "s", "i*", "Executes one or several operations\n\nEXAMPLES\n\n"
 			                 "    s 4\n\n  Execute 4 commands\n\n    s\n\n  Execute next command");
 			con_hook_command(c_disasm_addr, "disasm-addr", "!as*", "Disassembles one or more commands\n\n"
@@ -753,17 +642,8 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			con_hook_command(c_disasm, "disasm", "!as", "Disassembles a method by name\n\nUSAGE\n\n  disasm <obj> <method>\n\n");
 			con_hook_command(c_snk, "snk", "s*", "Steps forward until it hits the next\n  callk operation.\n"
 			                 "  If invoked with a parameter, it will\n  look for that specific callk.\n");
-			con_hook_command(c_se, "se", "", "Steps forward until an SCI event is received.\n");
 			con_hook_command(c_send, "send", "!asa*", "Sends a message to an object\nExample: send ?fooScript cue");
-			con_hook_command(c_sret, "sret", "", "Steps forward until ret is called\n  on the current execution stack\n  level.");
 			con_hook_command(c_go, "go", "", "Executes the script.\n");
-			con_hook_command(c_set_parse_nodes, "set_parse_nodes", "s*", "Sets the contents of all parse nodes.\n"
-			                 "  Input token must be separated by\n  blanks.");
-			con_hook_command(c_sg, "sg", "!i",
-			                 "Steps until the global variable with the\n"
-			                 "specified index is modified.\n\nSEE ALSO\n\n"
-			                 "  s.1, snk.1, so.1, bpx.1");
-		} // If commands were not hooked up
 	}
 
 	if (g_debug_step_running)

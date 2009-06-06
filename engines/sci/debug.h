@@ -40,7 +40,10 @@ extern int g_debug_sleeptime_factor;
 extern int g_debug_simulated_key;
 extern bool g_debug_track_mouse_clicks;
 extern bool g_debug_weak_validations;
-
+// Script related variables
+extern int g_debug_seeking;
+extern int g_debug_seek_special;
+extern int g_debug_seek_level;
 
 } // End of namespace Sci
 

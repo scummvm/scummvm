@@ -348,8 +348,8 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		// Set pointer position, if requested
 		if (argc > 2) {
-			Common::Point newpos = Common::Point(SKPV(2) + s->port->_bounds.x, SKPV(3) + s->port->_bounds.y);
-			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
+			Common::Point newPos = Common::Point(SKPV(2) + s->port->_bounds.x, SKPV(3) + s->port->_bounds.y);
+			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newPos));
 		}
 		break;
 	case 3 :
@@ -370,26 +370,26 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	Common::Point newpos;
+	Common::Point newPos;
 
-	newpos = s->gfx_state->pointer_pos;
+	newPos = s->gfx_state->pointer_pos;
 
 	if (argc == 1) {
 		// Case ignored on IBM PC
 	} else {
-		newpos.x = SKPV(0) + s->port->zone.x;
-		newpos.y = SKPV(1) + s->port->zone.y;
+		newPos.x = SKPV(0) + s->port->zone.x;
+		newPos.y = SKPV(1) + s->port->zone.y;
 
-		if (newpos.x > s->port->zone.x + s->port->zone.width)
-			newpos.x = s->port->zone.x + s->port->zone.width;
-		if (newpos.y > s->port->zone.y + s->port->zone.height)
-			newpos.y = s->port->zone.y + s->port->zone.height;
+		if (newPos.x > s->port->zone.x + s->port->zone.width)
+			newPos.x = s->port->zone.x + s->port->zone.width;
+		if (newPos.y > s->port->zone.y + s->port->zone.height)
+			newPos.y = s->port->zone.y + s->port->zone.height;
 
-		if (newpos.x < 0) newpos.x = 0;
-		if (newpos.y < 0) newpos.y = 0;
+		if (newPos.x < 0) newPos.x = 0;
+		if (newPos.y < 0) newPos.y = 0;
 	}
 
-	GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newpos));
+	GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newPos));
 
 	return s->r_acc;
 }
