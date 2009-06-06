@@ -245,7 +245,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		KYRA1_TOWNS_FLAGS
 	},
@@ -261,7 +261,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		KYRA1_TOWNS_SJIS_FLAGS
 	},
@@ -278,7 +278,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC98,
 			ADGF_CD,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		KYRA1_TOWNS_FLAGS
 	},
@@ -294,7 +294,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_CD,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		KYRA1_TOWNS_SJIS_FLAGS
 	},
@@ -663,7 +663,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		KYRA2_TOWNS_FLAGS
 	},
@@ -675,7 +675,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
@@ -687,7 +687,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC98,
 			ADGF_CD,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		KYRA2_TOWNS_FLAGS
 	},
@@ -699,7 +699,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_CD,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
@@ -1104,7 +1104,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		LOL_FLOPPY_FLAGS
 	},
@@ -1121,7 +1121,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		LOL_FLOPPY_FLAGS
 	},
@@ -1138,7 +1138,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		LOL_PC98_SJIS_FLAGS
 	},
@@ -1171,7 +1171,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NONE
+			GUIO_NOSPEECH
 		},
 		LOL_KYRA2_DEMO_FLAGS
 	},
