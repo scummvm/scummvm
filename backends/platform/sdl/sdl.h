@@ -124,7 +124,11 @@ public:
 	// Disables or enables cursor palette
 	void disableCursorPalette(bool disable) {
 		_cursorPaletteDisabled = disable;
+#ifdef ENABLE_16BIT 
+		blitCursor(_cursorBitDepth);
+#else
 		blitCursor();
+#endif
 	}
 
 	// Shaking is used in SCUMM. Set current shake position.
@@ -354,6 +358,9 @@ protected:
 	MousePos _mouseCurState;
 	byte _mouseKeyColor;
 	int _cursorTargetScale;
+#ifdef ENABLE_16BIT
+	uint8 _cursorBitDepth;
+#endif
 	bool _cursorPaletteDisabled;
 	SDL_Surface *_mouseOrigSurface;
 	SDL_Surface *_mouseSurface;

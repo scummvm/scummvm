@@ -332,7 +332,11 @@ void OSystem_SDL::setGraphicsModeIntern() {
 
 	// Even if the old and new scale factors are the same, we may have a
 	// different scaler for the cursor now.
+#ifdef ENABLE_16BIT
+	blitCursor(_cursorBitDepth);
+#else
 	blitCursor();
+#endif
 }
 
 int OSystem_SDL::getGraphicsMode() const {
@@ -600,7 +604,11 @@ bool OSystem_SDL::hotswapGFXMode() {
 	SDL_FreeSurface(old_overlayscreen);
 
 	// Update cursor to new scale
+#ifdef ENABLE_16BIT
+	blitCursor(_cursorBitDepth);
+#else
 	blitCursor();
+#endif
 
 	// Blit everything to the screen
 	internUpdateScreen();
@@ -1163,7 +1171,11 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 
 	// Some games blink cursors with palette
 	if (_cursorPaletteDisabled)
+#ifdef ENABLE_16BIT
+		blitCursor(_cursorBitDepth);
+#else
 		blitCursor();
+#endif
 }
 
 void OSystem_SDL::grabPalette(byte *colors, uint start, uint num) {
@@ -1192,7 +1204,11 @@ void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
 
 	_cursorPaletteDisabled = false;
 
+#ifdef ENABLE_16BIT
+	blitCursor(_cursorBitDepth);
+#else
 	blitCursor();
+#endif
 }
 
 void OSystem_SDL::setShakePos(int shake_pos) {
@@ -1412,7 +1428,7 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 		colmask |= 0xFF;
 	}
 	keycolor &= colmask;
-
+	_cursorBitDepth = bitDepth;
 #else
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 #endif
