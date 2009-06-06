@@ -1406,6 +1406,11 @@ cmd(set_cursor_char) {
 cmd(set_key) {
 	int key;
 
+	if (game.lastController >= MAX_CONTROLLERS) {
+		warning("Number of set.keys exceeded %d", MAX_CONTROLLERS);
+		return;
+	}
+
 	debugC(4, kDebugLevelScripts, "%d %d %d", p0, p1, p2);
 
 	key = 256 * p1 + p0;
