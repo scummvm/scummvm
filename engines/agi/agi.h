@@ -827,6 +827,7 @@ public:
 	bool _restartGame;
 
 	Menu* _menu;
+	bool _menuSelected;
 
 	char _lastSentence[40];
 

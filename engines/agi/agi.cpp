@@ -674,6 +674,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_intobj = NULL;
 
 	_menu = NULL;
+	_menuSelected = false;
 
 	_lastSentence[0] = 0;
 	memset(&_stringdata, 0, sizeof(struct StringData));

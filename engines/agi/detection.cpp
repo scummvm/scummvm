@@ -1178,7 +1178,7 @@ Common::Error AgiBase::saveGameState(int slot, const char *desc) {
 }
 
 bool AgiBase::canLoadGameStateCurrently() {
-	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !_noSaveLoadAllowed && _game.inputEnabled);
+	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !_noSaveLoadAllowed);
 }
 
 bool AgiBase::canSaveGameStateCurrently() {

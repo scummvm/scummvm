@@ -475,8 +475,13 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 	_game.msgBoxTicks = getvar(vWindowReset) * 10;
 	setvar(vKey, 0);
 
+	_menuSelected = false;
+
 	do {
 		if (getflag(fRestoreJustRan))
+			break;
+
+		if (_menuSelected)
 			break;
 
 		mainCycle();

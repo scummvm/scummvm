@@ -383,6 +383,9 @@ bool Menu::keyhandler(int key) {
 						// Fixes bug #1751390 - "LSL: after changing game speed, space key turn unfunctional"
 						if (d->event == 0x20)
 							_vm->_game.evKeyp[d->event].data = d->event + 1;
+
+						_vm->_menuSelected = true;
+
 						goto exit_menu;
 					}
 				}
