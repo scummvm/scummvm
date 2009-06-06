@@ -871,6 +871,14 @@ void LauncherDialog::loadGame(int item) {
 }
 
 void LauncherDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == Common::KEYCODE_TAB) {
+		// Toggle between the game list and the quick search field.
+		if (getFocusWidget() == _searchWidget) {
+			setFocusWidget(_list);
+		} else if (getFocusWidget() == _list) {
+			setFocusWidget(_searchWidget);
+		}
+	}
 	Dialog::handleKeyDown(state);
 	updateButtons();
 }
