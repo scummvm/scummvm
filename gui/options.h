@@ -145,6 +145,8 @@ private:
 	StaticTextWidget *_speechVolumeDesc;
 	SliderWidget *_speechVolumeSlider;
 	StaticTextWidget *_speechVolumeLabel;
+
+	CheckboxWidget *_muteCheckbox;
 };
 
 

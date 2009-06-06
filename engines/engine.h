@@ -176,6 +176,11 @@ public:
 	virtual void syncSoundSettings();
 
 	/**
+	 * Flip mute all sound option.
+	 */
+	virtual void flipMute();
+
+	/**
 	 * Load a game state.
 	 * @param slot	the slot from which a savestate should be loaded
 	 * @return returns kNoError on success, else an error code.

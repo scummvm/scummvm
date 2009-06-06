@@ -304,9 +304,25 @@ void Engine::syncSoundSettings() {
 	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
 	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (mute ? 0 : soundVolumeMusic));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (mute ? 0 : soundVolumeSFX));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (mute ? 0 : soundVolumeSpeech));
+}
+
+void Engine::flipMute() {
+	bool mute = false;
+
+	if (ConfMan.hasKey("mute")) {
+		mute = !ConfMan.getBool("mute");
+	}
+	
+	ConfMan.setBool("mute", mute);
+
+	syncSoundSettings();
 }
 
 Common::Error Engine::loadGameState(int slot) {

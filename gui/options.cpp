@@ -119,6 +119,7 @@ void OptionsDialog::init() {
 	_speechVolumeDesc = 0;
 	_speechVolumeSlider = 0;
 	_speechVolumeLabel = 0;
+	_muteCheckbox = 0;
 	_subToggleDesc = 0;
 	_subToggleButton = 0;
 	_subSpeedDesc = 0;
@@ -240,12 +241,19 @@ void OptionsDialog::open() {
 		vol = ConfMan.getInt("speech_volume", _domain);
 		_speechVolumeSlider->setValue(vol);
 		_speechVolumeLabel->setValue(vol);
+
+		bool val = false;
+		if (ConfMan.hasKey("mute", _domain)) {
+			val = ConfMan.getBool("mute", _domain);
+		} else {
+			ConfMan.setBool("mute", false);
+		}
+		_muteCheckbox->setState(val);
 	}
 
 	// Subtitle options
 	if (_subToggleButton) {
-		int speed;
-		int sliderMaxValue = _subSpeedSlider->getMaxValue();
+		int speed;		int sliderMaxValue = _subSpeedSlider->getMaxValue();
 
 		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute", _domain));
 		_subToggleButton->setLabel(_subModeDesc[_subMode]);
@@ -300,10 +308,12 @@ void OptionsDialog::close() {
 				ConfMan.setInt("music_volume", _musicVolumeSlider->getValue(), _domain);
 				ConfMan.setInt("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
 				ConfMan.setInt("speech_volume", _speechVolumeSlider->getValue(), _domain);
+				ConfMan.setBool("mute", _muteCheckbox->getState(), _domain);
 			} else {
 				ConfMan.removeKey("music_volume", _domain);
 				ConfMan.removeKey("sfx_volume", _domain);
 				ConfMan.removeKey("speech_volume", _domain);
+				ConfMan.removeKey("mute", _domain);
 			}
 		}
 
@@ -514,6 +524,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_speechVolumeDesc->setEnabled(enabled);
 	_speechVolumeSlider->setEnabled(enabled);
 	_speechVolumeLabel->setEnabled(enabled);
+	_muteCheckbox->setEnabled(enabled);
 }
 
 void OptionsDialog::setSubtitleSettingsState(bool enabled) {
@@ -639,6 +650,9 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const String &prefix) {
 	_musicVolumeSlider->setMinValue(0);
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
+
+	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", "Mute All", 0, 0);
+
 
 	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", "SFX volume:");
 	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", kSfxVolumeChanged);

@@ -252,6 +252,11 @@
 				/>
 				<widget name = 'vcSfxLabel'
 						type = 'SmallLabel'
+						width = "40"
+				/>
+				<space/>
+				<widget name = 'vcMuteCheckbox'
+						type = 'Checkbox'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
@@ -592,8 +597,12 @@
 				/>
 				<widget name = 'vcSfxLabel'
 						type = 'SmallLabel'
+						width = "40"
 				/>
 			</layout>
+				<widget name = 'vcMuteCheckbox'
+						type = 'Checkbox'
+				/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
 				<widget name = 'vcSpeechText'
 						type = 'OptionsLabel'

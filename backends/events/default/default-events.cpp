@@ -553,6 +553,11 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				_shouldRTL = true;
 			break;
 
+		case Common::EVENT_MUTE:
+			if (g_engine)
+				g_engine->flipMute();
+			break;
+
 		case Common::EVENT_QUIT:
 			if (ConfMan.getBool("confirm_exit")) {
 				if (_confirmExitDialogActive) {
