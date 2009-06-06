@@ -71,6 +71,8 @@ private:
 	bool Cmd_Step(int argc, const char **argv);
 	bool Cmd_Debug(int argc, const char **argv);
 	bool Cmd_Cont(int argc, const char **argv);
+	bool Cmd_Room(int argc, const char **argv);
+	bool Cmd_BT(int argc, const char **argv);
 
 private:
 	AgiEngine *_vm;

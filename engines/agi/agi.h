@@ -87,6 +87,8 @@ typedef signed int Err;
 #define ADD_PIC 1
 #define ADD_VIEW 2
 
+#define CMD_BSIZE 12
+
 enum AgiGameID {
 	GID_AGIDEMO,
 	GID_BC,
@@ -487,6 +489,11 @@ private:
 	bool _authenticAmiga; ///< Don't use border around buttons in Amiga-style mode.
 };
 
+struct ScriptPos {
+	int script;
+	int curIP;
+};
+
 #define EGO_VIEW_TABLE	0
 #define	HORIZON		36
 #define _WIDTH		160
@@ -532,6 +539,7 @@ struct AgiGame {
 	int inputMode;			/**< keyboard input mode */
 	int inputEnabled;		/**< keyboard input enabled */
 	int lognum;				/**< current logic number */
+	Common::Array<ScriptPos> execStack;
 
 	// internal flags
 	int playerControl;		/**< player is in control */

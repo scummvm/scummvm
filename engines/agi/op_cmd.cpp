@@ -1753,8 +1753,6 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_adj_ego_move_to_x_y
 };
 
-#define CMD_BSIZE 12
-
 /**
  * Execute a logic script
  * @param n  Number of the logic resource to execute
@@ -1765,6 +1763,11 @@ int AgiEngine::runLogic(int n) {
 	uint8 *code = NULL;
 	g_agi = this;
 	int num = 0;
+	ScriptPos sp;
+
+	sp.script = n;
+	sp.curIP = 0;
+	_game.execStack.push_back(sp);
 
 	// If logic not loaded, load it
 	if (~_game.dirLogic[n].flags & RES_LOADED) {
@@ -1795,6 +1798,9 @@ int AgiEngine::runLogic(int n) {
 			}
 		}
 
+		_game.execStack.back().curIP = ip;
+		processEvents();
+
 		switch (op = *(code + ip++)) {
 		case 0xff:	// if (open/close)
 			testIfCode(n);
@@ -1812,6 +1818,7 @@ int AgiEngine::runLogic(int n) {
 			}
 			break;
 		case 0x00:	// return
+			_game.execStack.pop_back();
 			return 1;
 		default:
 			num = logicNamesCmd[op].numArgs;
@@ -1819,13 +1826,15 @@ int AgiEngine::runLogic(int n) {
 			memset(p + num, 0, CMD_BSIZE - num);
 
 			debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logicNamesCmd[op].name, p[0], p[1], p[2]);
-			agiCommand[op] (p);
+			agiCommand[op](p);
 			ip += num;
 		}
 
 		if (_game.exitAllLogics)
 			break;
 	}
+
+	_game.execStack.pop_back();
 
 	return 0;		// after executing new.room()
 }
