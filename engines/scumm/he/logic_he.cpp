@@ -960,6 +960,92 @@ int LogicHEsoccer::op_1021(int32 *args) {
 }
 
 /***********************
+ * Backyard Basketball
+ *
+ */
+
+int LogicHEbasketball::versionID() {
+	return 1;
+}
+
+int32 LogicHEbasketball::dispatch(int op, int numArgs, int32 *args) {
+	int res = 0;
+
+	switch (op) {
+	case 1001:
+		break;
+
+	case 1006:
+		break;
+
+	case 1011:
+		break;
+
+	case 1012:
+		break;
+
+	case 1035:
+		break;
+
+	case 1050:
+		break;
+
+	case 1051:
+		break;
+
+	case 1052:
+		break;
+
+	case 1056:
+		break;
+
+	case 1057:
+		break;
+
+	case 1058:
+		break;
+
+	case 1060:
+		break;
+
+	case 1064:
+		break;
+
+	case 1067:
+		break;
+
+	case 1073:
+		break;
+
+	case 1075:
+		break;
+
+	case 1076:
+		break;
+
+	case 1080:
+		break;
+
+	case 1081:
+		break;
+
+	case 1090:
+		break;
+
+	case 1091:
+		break;
+
+	case 1513:
+		break;
+
+	default:
+		LogicHE::dispatch(op, numArgs, args);
+	}
+
+	return res;
+}
+
+/***********************
  * Moonbase Commander
  *
  */
