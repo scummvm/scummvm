@@ -928,14 +928,14 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 int AgiMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
-	char fileName[MAX_PATH];
+	char fileName[MAXPATHLEN];
 	sprintf(fileName, "%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
 SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	const uint32 AGIflag = MKID_BE('AGI:');
-	char fileName[MAX_PATH];
+	char fileName[MAXPATHLEN];
 	sprintf(fileName, "%s.%03d", target, slot);
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);

@@ -63,19 +63,12 @@ typedef signed int Err;
 #define MAX_WORDS	20
 #define	MAX_STRINGS	24		// MAX_STRINGS + 1 used for get.num
 #define MAX_STRINGLEN	40
-#ifndef MAX_PATH
-#define MAX_PATH	260
-#endif
 
 #define	_EMPTY		0xfffff
 #define	EGO_OWNED	0xff
 
 #define	CRYPT_KEY_SIERRA	"Avis Durgan"
 #define CRYPT_KEY_AGDS		"Alex Simkin"
-
-#ifndef INLINE
-#define INLINE
-#endif
 
 #define	MSG_BOX_COLOUR	0x0f	// White
 #define MSG_BOX_TEXT	0x00	// Black

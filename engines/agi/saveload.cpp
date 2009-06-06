@@ -540,7 +540,7 @@ const char *AgiEngine::getSavegameFilename(int num) {
 }
 
 void AgiEngine::getSavegameDescription(int num, char *buf, bool showEmpty) {
-	char fileName[MAX_PATH];
+	char fileName[MAXPATHLEN];
 	Common::InSaveFile *in;
 
 	debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
@@ -769,7 +769,7 @@ getout:
 }
 
 int AgiEngine::saveGameDialog() {
-	char fileName[MAX_PATH];
+	char fileName[MAXPATHLEN];
 	char *desc;
 	const char *buttons[] = { "Do as I say!", "I regret", NULL };
 	char dstr[200];
@@ -854,7 +854,7 @@ int AgiEngine::saveGameDialog() {
 }
 
 int AgiEngine::saveGameSimple() {
-	char fileName[MAX_PATH];
+	char fileName[MAXPATHLEN];
 
 	sprintf(fileName, "%s", getSavegameFilename(0));
 	int result = saveGame(fileName, "Default savegame");
@@ -864,7 +864,7 @@ int AgiEngine::saveGameSimple() {
 }
 
 int AgiEngine::loadGameDialog() {
-	char fileName[MAX_PATH];
+	char fileName[MAXPATHLEN];
 	int rc, slot = 0;
 	int hm, vm, hp, vp;	// box margins
 	int w;
@@ -905,7 +905,7 @@ int AgiEngine::loadGameDialog() {
 }
 
 int AgiEngine::loadGameSimple() {
-	char fileName[MAX_PATH];
+	char fileName[MAXPATHLEN];
 	int rc = 0;
 
 	sprintf(fileName, "%s", getSavegameFilename(0));

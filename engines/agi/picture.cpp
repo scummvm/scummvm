@@ -231,7 +231,7 @@ void PictureMgr::absoluteDrawLine() {
 /**************************************************************************
 ** okToFill
 **************************************************************************/
-INLINE int PictureMgr::isOkFillHere(int x, int y) {
+int PictureMgr::isOkFillHere(int x, int y) {
 	uint8 p;
 
 	x += _xOffset;

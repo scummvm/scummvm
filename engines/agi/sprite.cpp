@@ -268,7 +268,7 @@ bool SpritesMgr::testNotUpdating(VtEntry *v, AgiEngine *vm) {
 /**
  * Convert sprite priority to y value.
  */
-INLINE int SpritesMgr::prioToY(int p) {
+int SpritesMgr::prioToY(int p) {
 	int i;
 
 	if (p == 0)
