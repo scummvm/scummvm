@@ -661,7 +661,9 @@ cmd(hide_mouse) {
 }
 
 cmd(allow_menu) {
-	report("allow.menu\n");
+	if (g_agi->getVersion() >= 0x3098) {
+		g_agi->setflag(fMenusWork, ((p0 != 0) ? true : false));
+	}
 }
 
 cmd(show_mouse) {
