@@ -307,6 +307,20 @@ static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scal
 }
 #undef XLATE_AS_APPROPRIATE
 
+/* unscaled color index mode: Used in addition to a scaled mode
+** to render the pic resource twice.
+*/
+// FIXME: this is an ugly hack. Perhaps we could do it some other way?
+gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
+	/* xfact */ 1, /* yfact */ 1,
+	/* xsize */ 1, /* ysize */ 1,
+	/* bytespp */ 1,
+	/* flags */ 0,
+	/* palette */ NULL,
+
+	/* color masks */ 0, 0, 0, 0,
+	/* color shifts */ 0, 0, 0, 0
+};
 
 gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_palette, bool scaled) {
 	gfxr_pic_t *npic = NULL;
@@ -331,7 +345,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 			pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
 #else
 		need_unscaled = 0;
-		pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
+		pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
 #endif
 
 		if (!pic) {

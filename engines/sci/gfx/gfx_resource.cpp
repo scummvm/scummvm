@@ -29,17 +29,6 @@
 
 namespace Sci {
 
-gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
-	/* xfact */ 1, /* yfact */ 1,
-	/* bytespp */ 1,
-	/* flags */ 0,
-	/* palette */ NULL,
-
-	/* color masks */ 0, 0, 0, 0,
-	/* color shifts */ 0, 0, 0, 0
-};
-
-
 static void gfxr_free_loop(gfxr_loop_t *loop) {
 	int i;
 

@@ -122,12 +122,6 @@ struct gfxr_view_t {
 	int translation[GFX_SCI0_IMAGE_COLORS_NR];
 };
 
-
-/* unscaled color index mode: Used in addition to a scaled mode
-** to render the pic resource twice. See gfxr_remove_artifacts_pic0().
-*/
-extern gfx_mode_t mode_1x1_color_index;
-
 void gfxr_init_static_palette();
 /* Initializes the static 256 color palette
 ** Parameters: (void)
