@@ -605,6 +605,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE_I("caitlyn", "Demo", "5b8a3cdb2fc05469f8119d49f50fbe98"),
 	FANMADE_I("caitlyn", "", "818469c484cae6dad6f0e9a353f68bf8"),
 	FANMADE("Car Driver (v1.1)", "2311611d2d36d20ccc9da806e6cba157"),
+	FANMADE("Cloak of Darkness (v1.0)", "5ba6e18bf0b53be10db8f2f3831ee3e5"),
 	FANMADE("Coco Coq (English) - Coco Coq In Grostesteing's Base (v.1.0.3)", "97631f8e710544a58bd6da9e780f9320"),
 	FANMADE_L("Coco Coq (French) - Coco Coq Dans la Base de Grostesteing (v1.0.2)", "ef579ebccfe5e356f9a557eb3b2d8649", Common::FR_FRA),
 	FANMADE("Corby's Murder Mystery (v1.0)", "4ebe62ac24c5a8c7b7898c8eb070efe5"),
@@ -761,7 +762,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Save Santa (v1.3)", "f8afdb6efc5af5e7c0228b44633066af"),
 	FANMADE("Schiller (preview 1)", "ade39dea968c959cfebe1cf935d653e9"),
 	FANMADE("Schiller (preview 2)", "62cd1f8fc758bf6b4aa334e553624cef"),
-	FANMADE_IF("serguei1", "(v1.0)", "b86725f067e456e10cdbdf5f58e01dec", GF_AGIMOUSE|GF_AGIPAL),
+	FANMADE_IF("serguei1", "v1.0", "b86725f067e456e10cdbdf5f58e01dec", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE_IF("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE_IF("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE_IF("serguei2", "v0.1.1 Demo", "906ccbc2ddedb29b63141acc6d10cd28", GF_AGIMOUSE),
@@ -806,6 +807,23 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Turks' Quest - Heir to the Planet", "3d19254b737c8b218e5bc4580542b79a"),
 	FANMADE("URI Quest (v0.173 Feb 27)", "3986eefcf546dafc45f920ae91a697c3"),
 	FANMADE("URI Quest (v0.173 Jan 29)", "494150940d34130605a4f2e67ee40b12"),
+	{
+		// V - The Graphical Adveture
+		{
+			"agi-fanmade",
+			"V - The Graphical Adveture (Demo 2)",
+			AD_ENTRY1s("vdir", "c71f5c1e008d352ae9040b77fcf79327", 3080),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GID_FANMADE,
+		GType_V3,
+		GF_FANMADE,
+		0x3149,
+	},
+
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Jan 1)", "ae95f0c77d9a97b61420fd192348b937"),
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Mar 29)", "11d0417b7b886f963d0b36789dac4c8f"),
 	FANMADE("Wizaro (v0.1)", "abeec1eda6eaf8dbc52443ea97ff140c"),
