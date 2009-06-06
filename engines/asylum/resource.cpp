@@ -29,8 +29,11 @@ namespace Asylum {
 // Resource //
 //////////////
 
-Resource::Resource()
-{
+Resource::Resource(){
+}
+
+Resource::Resource(uint32 resource){
+	load(resource);
 }
 
 Resource::~Resource() {

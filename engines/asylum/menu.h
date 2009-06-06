@@ -23,6 +23,9 @@
 #define ASYLUM_MENU_H
 
 #include "asylum/screen.h"
+#include "asylum/resource.h"
+
+#define MENU_PAL_ENTRY		17
 
 namespace Asylum {
 
@@ -44,13 +47,17 @@ private:
 	static const uint32 eyesTable[8];
     
 	/** Background image buffer */
-	uint8 _bkgImageBuf[SCREEN_WIDTH*SCREEN_DEPTH];
+	//uint8 _bkgImageBuf[SCREEN_WIDTH*SCREEN_DEPTH];
 	
 	/** Mouse icon resource image buffer */
 	uint8 *_mouseIconBuf;
 
 	/** Menu palette */
-	uint8 _palette[PAL_SIZE * 4];
+	uint8 _palette[PAL_SIZE];
+
+	// FIXME: this resource shouldn't be here. Must be deleted when a single 
+	// entry could be extracted from resource withou reading entire file.
+	Resource *_res1;
 };
 
 } // namespace Asylum
