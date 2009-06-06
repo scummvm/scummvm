@@ -76,6 +76,7 @@ protected:
 
 	Rect _keymapArea;
 
+	GUI::StaticTextWidget *_kmPopUpDesc;
 	GUI::PopUpWidget *_kmPopUp;
 	//GUI::ContainerWidget *_container;
 	GUI::ScrollBarWidget *_scrollBar;

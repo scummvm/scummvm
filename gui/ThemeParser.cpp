@@ -800,6 +800,15 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 		_theme->getEvaluator()->setVar(var + "Padding.Bottom", paddingB);
 	}
 
+
+	if (node->values.contains("textalign")) {
+		Graphics::TextAlign alignH = Graphics::kTextAlignLeft;
+
+		if((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
+			return parserError("Invalid value for text alignment.");
+
+		_theme->getEvaluator()->setVar(var + "Align", alignH);
+	}
 	return true;
 }
 

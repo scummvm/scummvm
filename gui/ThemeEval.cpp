@@ -66,23 +66,39 @@ bool ThemeEval::getWidgetData(const Common::String &widget, int16 &x, int16 &y, 
 	return _layouts[dialogName]->getWidgetData(widgetName, x, y, w, h);
 }
 
+Graphics::TextAlign ThemeEval::getWidgetTextHAlign(const Common::String &widget) {
+	Common::StringTokenizer tokenizer(widget, ".");
+
+	if (widget.hasPrefix("Dialog."))
+		tokenizer.nextToken();
+
+	Common::String dialogName = "Dialog." + tokenizer.nextToken();
+	Common::String widgetName = tokenizer.nextToken();
+
+	if (!_layouts.contains(dialogName))
+		return Graphics::kTextAlignInvalid;
+
+	return _layouts[dialogName]->getWidgetTextHAlign(widgetName);
+}
 
 void ThemeEval::addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled, Graphics::TextAlign align) {
 	int typeW = -1;
 	int typeH = -1;
+	Graphics::TextAlign typeAlign = Graphics::kTextAlignInvalid;
 
 	if (!type.empty()) {
 		typeW = getVar("Globals." + type + ".Width", -1);
 		typeH = getVar("Globals." + type + ".Height", -1);
+		typeAlign = (Graphics::TextAlign)getVar("Globals." + type + ".Align", Graphics::kTextAlignInvalid);
 	}
 
 	ThemeLayoutWidget *widget = new ThemeLayoutWidget(_curLayout.top(), name,
 								typeW == -1 ? w : typeW,
-								typeH == -1 ? h : typeH);
+								typeH == -1 ? h : typeH,
+								typeAlign == Graphics::kTextAlignInvalid ? align : typeAlign);
 
 	_curLayout.top()->addChild(widget);
 	setVar(_curDialog + "." + name + ".Enabled", enabled ? 1 : 0);
-	setVar(_curDialog + "." + name + ".Align", align);
 }
 
 void ThemeEval::addDialog(const Common::String &name, const Common::String &overlays, bool enabled, int inset) {

@@ -133,7 +133,9 @@ protected:
 	StaticTextWidget *_extraPathWidget;
 	StaticTextWidget *_savePathWidget;
 
+	StaticTextWidget *_langPopUpDesc;
 	PopUpWidget *_langPopUp;
+	StaticTextWidget *_platformPopUpDesc;
 	PopUpWidget *_platformPopUp;
 
 	CheckboxWidget *_globalGraphicsOverride;
@@ -173,7 +175,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description);
 
 	// Language popup
-	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.Lang", "Language:");
+	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", "Language:");
+	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup");
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -182,7 +185,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.Platform", "Platform:");
+	_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", "Platform:");
+	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup");
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;

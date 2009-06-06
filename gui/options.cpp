@@ -477,7 +477,9 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
+	_gfxPopUpDesc->setEnabled(enabled);
 	_gfxPopUp->setEnabled(enabled);
+	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
@@ -488,8 +490,11 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 
+	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
+	_oplPopUpDesc->setEnabled(enabled);
 	_oplPopUp->setEnabled(enabled);
+	_outputRatePopUpDesc->setEnabled(enabled);
 	_outputRatePopUp->setEnabled(enabled);
 }
 
@@ -541,7 +546,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
 	// The GFX mode popup
-	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup", "Graphics mode:");
+	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", "Graphics mode:");
+	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup");
 
 	_gfxPopUp->appendEntry("<default>");
 	_gfxPopUp->appendEntry("");
@@ -551,7 +557,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// RenderMode popup
-	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", "Render mode:");
+	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", "Render mode:");
+	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup");
 	_renderModePopUp->appendEntry("<default>", Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
@@ -570,7 +577,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	// The MIDI mode popup & a label
-	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", "Music driver:");
+	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", "Music driver:");
+	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup");
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
@@ -580,7 +588,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// The OPL emulator popup & a label
-	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup", "AdLib emulator:");
+	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", "AdLib emulator:");
+	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup");
 
 	// Populate it
 	const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
@@ -590,7 +599,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// Sample rate settings
-	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", "Output rate:");
+	_outputRatePopUpDesc = new StaticTextWidget(boss, prefix + "auSampleRatePopupDesc", "Output rate:");
+	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup");
 
 	for (int i = 0; outputRateLabels[i]; i++) {
 		_outputRatePopUp->appendEntry(outputRateLabels[i], outputRateValues[i]);
@@ -754,12 +764,14 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
 
-	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.Renderer", "GUI Renderer:");
+	_rendererPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.RendererPopupDesc", "GUI Renderer:");
+	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.RendererPopup");
 
 	for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
 		_rendererPopUp->appendEntry(GUI::ThemeEngine::_rendererModes[i].name, GUI::ThemeEngine::_rendererModes[i].mode);
 
-	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:");
+	_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", "Autosave:");
+	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopup");
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
 		_autosavePeriodPopUp->appendEntry(savePeriodLabels[i], savePeriodValues[i]);

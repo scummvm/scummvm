@@ -79,10 +79,10 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	_selection = _popUpBoss->_selectedItem;
 
 	// Calculate real popup dimensions
-	_x = _popUpBoss->getAbsX() + _popUpBoss->_labelWidth + _popUpBoss->_labelSpacing;
+	_x = _popUpBoss->getAbsX();
 	_y = _popUpBoss->getAbsY() - _popUpBoss->_selectedItem * kLineHeight;
 	_h = _popUpBoss->_entries.size() * kLineHeight + 2;
-	_w = _popUpBoss->_w - kLineHeight + 2 - _popUpBoss->_labelWidth - _popUpBoss->_labelSpacing;
+	_w = _popUpBoss->_w - kLineHeight + 2;
 
 	_leftPadding = _popUpBoss->_leftPadding;
 	_rightPadding = _popUpBoss->_rightPadding;
@@ -356,13 +356,12 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 // PopUpWidget
 //
 
-PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &label)
-	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(0) {
+PopUpWidget::PopUpWidget(GuiObject *boss, const String &name)
+	: Widget(boss, name), CommandSender(boss) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;
-	_labelWidth = g_gui.xmlEval()->getVar("Globals.PopUpWidget.labelWidth");
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -394,10 +393,8 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 }
 
 void PopUpWidget::reflowLayout() {
-	_labelWidth = g_gui.xmlEval()->getVar("Globals.PopUpWidget.labelWidth");
 	_leftPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Left", 0);
 	_rightPadding = g_gui.xmlEval()->getVar("Globals.PopUpWidget.Padding.Right", 0);
-	_labelSpacing = g_gui.xmlEval()->getVar("Globals.PopUpWidget.labelSpacing", 10);
 
 	Widget::reflowLayout();
 }
@@ -435,17 +432,10 @@ void PopUpWidget::setSelectedTag(uint32 tag) {
 }
 
 void PopUpWidget::drawWidget() {
-	int x = _x + _labelWidth + _labelSpacing;
-	int w = _w - _labelWidth - _labelSpacing;
-
-	// Draw the label, if any
-	if (_labelWidth > 0)
-		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+2+_labelWidth, _y+3+g_gui.theme()->getFontHeight()), _label, _state, Graphics::kTextAlignRight);
-
 	Common::String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
-	g_gui.theme()->drawPopUpWidget(Common::Rect(x, _y, x+w, _y+_h), sel, _leftPadding, _state, Graphics::kTextAlignLeft);
+	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state, Graphics::kTextAlignLeft);
 }
 
 } // End of namespace GUI

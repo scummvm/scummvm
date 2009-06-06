@@ -44,7 +44,8 @@ RemapDialog::RemapDialog()
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
 
-	_kmPopUp = new GUI::PopUpWidget(this, "KeyRemapper.Popup", "Keymap: ");
+	_kmPopUpDesc = new GUI::StaticTextWidget(this, "KeyRemapper.PopupDesc", "Keymap:");
+	_kmPopUp = new GUI::PopUpWidget(this, "KeyRemapper.Popup");
 
 	_scrollBar = new GUI::ScrollBarWidget(this, 0, 0, 0, 0);
 

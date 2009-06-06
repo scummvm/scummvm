@@ -52,7 +52,8 @@ public:
 
 	ThemeLayout(ThemeLayout *p) :
 		_parent(p), _x(0), _y(0), _w(-1), _h(-1),
-		_centered(false), _defaultW(-1), _defaultH(-1) { }
+		_centered(false), _defaultW(-1), _defaultH(-1),
+		_textHAlign(Graphics::kTextAlignInvalid) {}
 
 	virtual ~ThemeLayout() {
 		for (uint i = 0; i < _children.size(); ++i)
@@ -90,6 +91,7 @@ protected:
 
 	void setWidth(int16 width) { _w = width; }
 	void setHeight(int16 height) { _h = height; }
+	void setTextHAlign(Graphics::TextAlign align) { _textHAlign = align; }
 
 	virtual LayoutType getLayoutType() = 0;
 
@@ -98,7 +100,11 @@ protected:
 public:
 	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
 
+	virtual Graphics::TextAlign getWidgetTextHAlign(const Common::String &name);
+
 	void importLayout(ThemeLayout *layout);
+
+	Graphics::TextAlign getTextHAlign() { return _textHAlign; }
 
 #ifdef LAYOUT_DEBUG_DIALOG
 	void debugDraw(Graphics::Surface *screen, const Graphics::Font *font);
@@ -113,6 +119,7 @@ protected:
 	Common::Array<ThemeLayout *> _children;
 	bool _centered;
 	int16 _defaultW, _defaultH;
+	Graphics::TextAlign _textHAlign;
 };
 
 class ThemeLayoutMain : public ThemeLayout {
@@ -190,12 +197,16 @@ protected:
 
 class ThemeLayoutWidget : public ThemeLayout {
 public:
-	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h) : ThemeLayout(p), _name(name) {
+	ThemeLayoutWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align) : ThemeLayout(p), _name(name) {
 		_w = _defaultW = w;
 		_h = _defaultH = h;
+
+		setTextHAlign(align);
 	}
 
 	bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h);
+	Graphics::TextAlign getWidgetTextHAlign(const Common::String &name);
+
 	void reflowLayout() {}
 
 #ifdef LAYOUT_DEBUG_DIALOG

@@ -91,17 +91,22 @@ private:
 	// Graphics controls
 	//
 	bool _enableGraphicSettings;
+	StaticTextWidget *_gfxPopUpDesc;
 	PopUpWidget *_gfxPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_aspectCheckbox;
+	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
 
 	//
 	// Audio controls
 	//
 	bool _enableAudioSettings;
+	StaticTextWidget *_midiPopUpDesc;
 	PopUpWidget *_midiPopUp;
+	StaticTextWidget *_oplPopUpDesc;
 	PopUpWidget *_oplPopUp;
+	StaticTextWidget *_outputRatePopUpDesc;
 	PopUpWidget *_outputRatePopUp;
 
 	//
@@ -175,7 +180,9 @@ protected:
 	// Misc controls
 	//
 	StaticTextWidget *_curTheme;
+	StaticTextWidget *_rendererPopUpDesc;
 	PopUpWidget *_rendererPopUp;
+	StaticTextWidget *_autosavePeriodPopUpDesc;
 	PopUpWidget *_autosavePeriodPopUp;
 };
 
