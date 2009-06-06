@@ -1650,11 +1650,13 @@ Audio::AudioStream* AudioResource::getAudioStream(uint32 audioNumber, uint32 vol
 	byte *data = 0;
 	char filename[40];
 	byte flags = 0;
+	Sci::Resource* audioRes = NULL;
 
 	// Try to load from resource manager
-	if (volume == 65535) {
-		Sci::Resource* audioRes = _resMgr->findResource(kResourceTypeAudio, audioNumber, false);
+	if (volume == 65535)
+		audioRes = _resMgr->findResource(kResourceTypeAudio, audioNumber, false);
 
+	if (audioRes) {
 		if (_sciVersion < SCI_VERSION_1_1) {
 			size = audioRes->size;
 			data = audioRes->data;
