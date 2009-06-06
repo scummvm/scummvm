@@ -198,10 +198,10 @@ protected:
 		byte *freqOutput;
 		byte *octaveOutput;
 		
-		int8 channel;
+		uint8 channel;
 		int8 sustainLevel;
 		int8 attackRate;
-		int8 maxAmpl;
+		uint8 maxAmpl;
 		int8 decayRate;
 		int8 sustainRate;
 		int8 releaseRate;
