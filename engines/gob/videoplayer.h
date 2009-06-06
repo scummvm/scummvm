@@ -45,7 +45,7 @@ public:
 		kFlagFrontSurface = 0x80,
 		kFlagNoVideo = 0x100,
 		kFlagOtherSurface = 0x800,
-		kFlagScreenSurface = 0x1000
+		kFlagScreenSurface = 0x400000
 	};
 
 	enum Type {
@@ -59,7 +59,7 @@ public:
 	~VideoPlayer();
 
 	bool primaryOpen(const char *videoFile, int16 x = -1, int16 y = -1,
-			int16 flags = kFlagFrontSurface, Type which = kVideoTypeTry);
+			int32 flags = kFlagFrontSurface, Type which = kVideoTypeTry);
 	bool primaryPlay(int16 startFrame = -1, int16 lastFrame = -1, int16 breakKey = 27,
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
 			int16 palFrame = -1, int16 endFrame = -1, bool fade = false,

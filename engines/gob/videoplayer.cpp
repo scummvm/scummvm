@@ -227,7 +227,7 @@ bool VideoPlayer::findFile(char *fileName, Type &which) {
 }
 
 bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
-		int16 flags, Type which) {
+		int32 flags, Type which) {
 
 	char fileName[256];
 
