@@ -37,16 +37,16 @@
 #include "engines/metaengine.h"
 
 /* Broken Sword 1 */
-static const PlainGameDescriptor sword1FullSettings =
-	{"sword1", "Broken Sword 1: The Shadow of the Templars"};
-static const PlainGameDescriptor sword1DemoSettings =
-	{"sword1demo", "Broken Sword 1: The Shadow of the Templars (Demo)"};
-static const PlainGameDescriptor sword1MacFullSettings =
-	{"sword1mac", "Broken Sword 1: The Shadow of the Templars (Mac)"};
-static const PlainGameDescriptor sword1MacDemoSettings =
-	{"sword1macdemo", "Broken Sword 1: The Shadow of the Templars (Mac demo)"};
-static const PlainGameDescriptor sword1PSXSettings =
-	{"sword1psx", "Broken Sword 1: The Shadow of the Templars (PlayStation)"};
+static const PlainGameDescriptorGUIOpts sword1FullSettings =
+	{"sword1", "Broken Sword 1: The Shadow of the Templars", Common::GUIO_NOMIDI};
+static const PlainGameDescriptorGUIOpts sword1DemoSettings =
+	{"sword1demo", "Broken Sword 1: The Shadow of the Templars (Demo)", Common::GUIO_NOMIDI};
+static const PlainGameDescriptorGUIOpts sword1MacFullSettings =
+	{"sword1mac", "Broken Sword 1: The Shadow of the Templars (Mac)", Common::GUIO_NOMIDI};
+static const PlainGameDescriptorGUIOpts sword1MacDemoSettings =
+	{"sword1macdemo", "Broken Sword 1: The Shadow of the Templars (Mac demo)", Common::GUIO_NOMIDI};
+static const PlainGameDescriptorGUIOpts sword1PSXSettings =
+	{"sword1psx", "Broken Sword 1: The Shadow of the Templars (PlayStation)", Common::GUIO_NOMIDI};
 
 // check these subdirectories (if present)
 static const char *g_dirNames[] = {	"clusters",	"speech" };
