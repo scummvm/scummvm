@@ -125,6 +125,11 @@ void OptionsDialog::init() {
 	_subSpeedDesc = 0;
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
+
+	// Retrieve game GUI options
+	_guioptions = 0;
+	if (ConfMan.hasKey("guioptions", _domain))
+		_guioptions = parseGameGUIOptions(ConfMan.get("guioptions", _domain));
 }
 
 void OptionsDialog::open() {
@@ -132,6 +137,11 @@ void OptionsDialog::open() {
 
 	// Reset result value
 	setResult(0);
+
+	// Retrieve game GUI options
+	_guioptions = 0;
+	if (ConfMan.hasKey("guioptions", _domain))
+		_guioptions = parseGameGUIOptions(ConfMan.get("guioptions", _domain));
 
 	// Graphic options
 	if (_fullscreenCheckbox) {
@@ -518,28 +528,55 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 }
 
 void OptionsDialog::setVolumeSettingsState(bool enabled) {
+	bool ena;
+
 	_enableVolumeSettings = enabled;
 
-	_musicVolumeDesc->setEnabled(enabled);
-	_musicVolumeSlider->setEnabled(enabled);
-	_musicVolumeLabel->setEnabled(enabled);
-	_sfxVolumeDesc->setEnabled(enabled);
-	_sfxVolumeSlider->setEnabled(enabled);
-	_sfxVolumeLabel->setEnabled(enabled);
-	_speechVolumeDesc->setEnabled(enabled);
-	_speechVolumeSlider->setEnabled(enabled);
-	_speechVolumeLabel->setEnabled(enabled);
+	ena = enabled;
+	if (_guioptions & Common::GUIO_NOMUSIC)
+		ena = false;
+
+	_musicVolumeDesc->setEnabled(ena);
+	_musicVolumeSlider->setEnabled(ena);
+	_musicVolumeLabel->setEnabled(ena);
+
+	ena = enabled;
+	if (_guioptions & Common::GUIO_NOSFX)
+		ena = false;
+
+	_sfxVolumeDesc->setEnabled(ena);
+	_sfxVolumeSlider->setEnabled(ena);
+	_sfxVolumeLabel->setEnabled(ena);
+
+	ena = enabled;
+	if (_guioptions & Common::GUIO_NOSPEECH)
+		ena = false;
+
+	_speechVolumeDesc->setEnabled(ena);
+	_speechVolumeSlider->setEnabled(ena);
+	_speechVolumeLabel->setEnabled(ena);
+
 	_muteCheckbox->setEnabled(enabled);
 }
 
 void OptionsDialog::setSubtitleSettingsState(bool enabled) {
+	bool ena;
 	_enableSubtitleSettings = enabled;
 
-	_subToggleButton->setEnabled(enabled);
-	_subToggleDesc->setEnabled(enabled);
-	_subSpeedDesc->setEnabled(enabled);
-	_subSpeedSlider->setEnabled(enabled);
-	_subSpeedLabel->setEnabled(enabled);
+	ena = enabled;
+	if ((_guioptions & Common::GUIO_NOSUBTITLES) || (_guioptions & Common::GUIO_NOSPEECH))
+		ena = false;
+
+	_subToggleButton->setEnabled(ena);
+	_subToggleDesc->setEnabled(ena);
+
+	ena = enabled;
+	if (_guioptions & Common::GUIO_NOSUBTITLES)
+		ena = false;
+
+	_subSpeedDesc->setEnabled(ena);
+	_subSpeedSlider->setEnabled(ena);
+	_subSpeedLabel->setEnabled(ena);
 }
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
@@ -682,6 +719,11 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const String &prefix) {
 }
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
+	if (_guioptions & Common::GUIO_NOSUBTITLES)
+		return 0; // Speech only
+	if (_guioptions & Common::GUIO_NOSPEECH)
+		return 2; // Subtitles only
+
 	if (!subtitles && !speech_mute) // Speech only
 		return 0;
 	else if (subtitles && !speech_mute) // Speech and subtitles

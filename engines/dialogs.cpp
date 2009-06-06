@@ -277,6 +277,7 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 	//
 
 	addVolumeControls(this, "ScummConfig.");
+	setVolumeSettingsState(true); // could disable controls by GUI options
 
 	//
 	// Subtitle speed and toggle controllers
@@ -285,6 +286,7 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 	if (subtitleControls) {
 		// Global talkspeed range of 0-255
 		addSubtitleControls(this, "ScummConfig.", 255);
+		setSubtitleSettingsState(true); // could disable controls by GUI options
 	}
 
 	//

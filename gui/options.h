@@ -152,6 +152,11 @@ private:
 	StaticTextWidget *_speechVolumeLabel;
 
 	CheckboxWidget *_muteCheckbox;
+
+	//
+	// Game GUI options
+	//
+	uint32 _guioptions;
 };
 
 
