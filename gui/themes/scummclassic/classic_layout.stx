@@ -195,6 +195,7 @@
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
+						textalign = 'right'
 				/>
 				<widget name = 'subToggleButton'
 						width = '150'
@@ -204,6 +205,7 @@
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'subSubtitleSpeedDesc'
 						type = 'OptionsLabel'
+						textalign = 'right'
 				/>
 				<widget name = 'subSubtitleSpeedSlider'
 						type = 'Slider'
@@ -221,6 +223,7 @@
 				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 					<widget name = 'vcMusicText'
 							type = 'OptionsLabel'
+							textalign = 'right'
 					/>
 					<widget name = 'vcMusicSlider'
 							type = 'Slider'
@@ -232,6 +235,7 @@
 				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 					<widget name = 'vcSfxText'
 							type = 'OptionsLabel'
+							textalign = 'right'
 					/>
 					<widget name = 'vcSfxSlider'
 							type = 'Slider'
@@ -243,6 +247,7 @@
 				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 					<widget name = 'vcSpeechText'
 							type = 'OptionsLabel'
+							textalign = 'right'
 					/>
 					<widget name = 'vcSpeechSlider'
 							type = 'Slider'
@@ -438,6 +443,7 @@
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
 				<widget name = 'Id'
 						type = 'OptionsLabel'
+						textalign = 'right'
 				/>
 				<widget name = 'Domain'
 						type = 'PopUp'
@@ -446,6 +452,7 @@
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
 				<widget name = 'Name'
 						type = 'OptionsLabel'
+						textalign = 'right'
 				/>
 				<widget name = 'Desc'
 						type = 'PopUp'
@@ -611,6 +618,7 @@
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
+						textalign = 'right'
 				/>
 				<widget name = 'subToggleButton'
 						width = '158'
@@ -620,6 +628,7 @@
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
 				<widget name = 'subSubtitleSpeedDesc'
 						type = 'OptionsLabel'
+						textalign = 'right'
 				/>
 				<widget name = 'subSubtitleSpeedSlider'
 						type = 'Slider'

@@ -169,6 +169,7 @@ protected:
 					XML_PROP(pos, false)
 					XML_PROP(padding, false)
 					XML_PROP(resolution, false)
+					XML_PROP(textalign, false)
 				KEY_END()
 			KEY_END()
 
@@ -195,6 +196,7 @@ protected:
 						XML_PROP(height, false)
 						XML_PROP(type, false)
 						XML_PROP(enabled, false)
+						XML_PROP(textalign, false)
 					KEY_END()
 
 					XML_KEY(space)

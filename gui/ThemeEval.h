@@ -30,6 +30,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stack.h"
+#include "graphics/font.h"
 
 #include "gui/ThemeLayout.h"
 
@@ -76,7 +77,7 @@ public:
 
 	void addDialog(const Common::String &name, const Common::String &overlays, bool enabled = true, int inset = 0);
 	void addLayout(ThemeLayout::LayoutType type, int spacing, bool center = false);
-	void addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled = true);
+	void addWidget(const Common::String &name, int w, int h, const Common::String &type, bool enabled = true, Graphics::TextAlign align = Graphics::kTextAlignLeft);
 	bool addImportedLayout(const Common::String &name);
 	void addSpace(int size);
 

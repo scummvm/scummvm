@@ -62,6 +62,28 @@ static TextData parseTextDataId(const Common::String &name) {
 	return kTextDataNone;
 }
 
+static Graphics::TextAlign parseTextHAlign(const Common::String &val) {
+	if (val == "left")
+		return Graphics::kTextAlignLeft;
+	else if (val == "right")
+		return Graphics::kTextAlignRight;
+	else if (val == "center")
+		return Graphics::kTextAlignCenter;
+	else
+		return Graphics::kTextAlignInvalid;
+}
+
+static GUI::ThemeEngine::TextAlignVertical parseTextVAlign(const Common::String &val) {
+	if (val == "top")
+		return GUI::ThemeEngine::kTextAlignVTop;
+	else if (val == "center")
+		return GUI::ThemeEngine::kTextAlignVCenter;
+	else if (val == "bottom")
+		return GUI::ThemeEngine::kTextAlignVBottom;
+	else
+		return GUI::ThemeEngine::kTextAlignVInvalid;
+}
+
 
 ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
 
@@ -206,22 +228,10 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 	Graphics::TextAlign alignH;
 	GUI::ThemeEngine::TextAlignVertical alignV;
 
-	if (node->values["horizontal_align"] == "left")
-		alignH = Graphics::kTextAlignLeft;
-	else if (node->values["horizontal_align"] == "right")
-		alignH = Graphics::kTextAlignRight;
-	else if (node->values["horizontal_align"] == "center")
-		alignH = Graphics::kTextAlignCenter;
-	else
+	if ((alignH = parseTextHAlign(node->values["horizontal_align"])) == Graphics::kTextAlignInvalid)
 		return parserError("Invalid value for text alignment.");
 
-	if (node->values["vertical_align"] == "top")
-		alignV = GUI::ThemeEngine::kTextAlignVTop;
-	else if (node->values["vertical_align"] == "center")
-		alignV = GUI::ThemeEngine::kTextAlignVCenter;
-	else if (node->values["vertical_align"] == "bottom")
-		alignV = GUI::ThemeEngine::kTextAlignVBottom;
-	else
+	if ((alignV = parseTextVAlign(node->values["vertical_align"])) == GUI::ThemeEngine::kTextAlignVInvalid)
 		return parserError("Invalid value for text alignment.");
 
 	Common::String id = getParentNode(node)->values["id"];
@@ -566,7 +576,14 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 				return parserError("Corrupted height value in key for %s", var.c_str());
 		}
 
-		_theme->getEvaluator()->addWidget(var, width, height, node->values["type"], enabled);
+		Graphics::TextAlign alignH = Graphics::kTextAlignLeft;
+
+		if (node->values.contains("textalign")) {
+			if((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
+				return parserError("Invalid value for text alignment.");
+		}
+
+		_theme->getEvaluator()->addWidget(var, width, height, node->values["type"], enabled, alignH);
 	}
 
 	return true;

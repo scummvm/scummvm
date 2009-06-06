@@ -31,6 +31,7 @@
 #include "common/fs.h"
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
+#include "graphics/font.h"
 
 #define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.4"
 
@@ -123,6 +124,7 @@ protected:
 public:
 	//! Vertical alignment of the text.
 	enum TextAlignVertical {
+		kTextAlignVInvalid,
 		kTextAlignVBottom,
 		kTextAlignVCenter,
 		kTextAlignVTop
