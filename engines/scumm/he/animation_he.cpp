@@ -75,9 +75,10 @@ void MoviePlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 	if (_vm->_game.features & GF_16BIT_COLOR) {
 		dst += y * pitch + x * 2;
 		do {
-			for (uint i = 0; i < w; i++)
-				WRITE_UINT16(dst + i * 2, src[i]);
-
+			for (uint i = 0; i < w; i++) {
+				uint16 col = READ_LE_UINT16(_vm->_hePalettes + _vm->_hePaletteSlot + 768 + src[i] * 2);
+				WRITE_UINT16(dst + i * 2, col);
+			}
 			dst += pitch;
 			src += w;
 		} while (--h);
