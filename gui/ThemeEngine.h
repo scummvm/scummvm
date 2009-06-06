@@ -32,7 +32,7 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.4"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.5"
 
 namespace Graphics {
 	struct DrawStep;
