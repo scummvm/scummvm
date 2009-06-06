@@ -466,7 +466,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 				sz1 += dszdl_max;
 				tz1 += dtzdl_max;
 			} else {
-				x1 +=dxdy_min;
+				x1 += dxdy_min;
 
 				z1 += dzdl_min;
 
