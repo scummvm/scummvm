@@ -265,12 +265,7 @@ void AgiEngine::checkQuickLoad() {
 	}
 }
 
-int AgiEngine::agiIsKeypressLow() {
-	processEvents();
-	return _keyQueueStart != _keyQueueEnd;
-}
-
-void AgiEngine::agiTimerLow() {
+void AgiEngine::pollTimer(void) {
 	static uint32 m = 0;
 	uint32 dm;
 
@@ -287,14 +282,26 @@ void AgiEngine::agiTimerLow() {
 	m = g_tickTimer;
 }
 
-int AgiEngine::agiGetKeypressLow() {
+bool AgiEngine::isKeypress(void) {
+	processEvents();
+	return _keyQueueStart != _keyQueueEnd;
+}
+
+int AgiEngine::getKeypress(void) {
 	int k;
 
 	while (_keyQueueStart == _keyQueueEnd)	// block
-		agiTimerLow();
+		pollTimer();
+
 	keyDequeue(k);
 
 	return k;
+}
+
+void AgiEngine::clearKeyQueue(void) {
+	while (isKeypress()) {
+		getKeypress();
+	}
 }
 
 void AgiEngine::agiTimerFunctionLow(void *refCon) {
@@ -368,7 +375,7 @@ int AgiEngine::agiInit() {
 	int ec, i;
 
 	debug(2, "initializing");
-	debug(2, "game.ver = 0x%x", _game.ver);
+	debug(2, "game version = 0x%x", getVersion());
 
 	// initialize with adj.ego.move.to.x.y(0, 0) so to speak
 	_game.adjMouseX = _game.adjMouseY = 0;
@@ -408,16 +415,16 @@ int AgiEngine::agiInit() {
 
 	// setup emulation
 
-	switch (_loader->getIntVersion() >> 12) {
+	switch (getVersion() >> 12) {
 	case 2:
 		report("Emulating Sierra AGI v%x.%03x\n",
-				(int)(agiGetRelease() >> 12) & 0xF,
-				(int)(agiGetRelease()) & 0xFFF);
+				(int)(getVersion() >> 12) & 0xF,
+				(int)(getVersion()) & 0xFFF);
 		break;
 	case 3:
 		report("Emulating Sierra AGI v%x.002.%03x\n",
-				(int)(agiGetRelease() >> 12) & 0xF,
-				(int)(agiGetRelease()) & 0xFFF);
+				(int)(getVersion() >> 12) & 0xF,
+				(int)(getVersion()) & 0xFFF);
 		break;
 	}
 
@@ -508,18 +515,6 @@ int AgiEngine::agiDetectGame() {
 	ec = _loader->detectGame();
 
 	return ec;
-}
-
-int AgiEngine::agiVersion() {
-	return _loader->version();
-}
-
-int AgiEngine::agiGetRelease() {
-	return _loader->getIntVersion();
-}
-
-void AgiEngine::agiSetRelease(int n) {
-	_loader->setIntVersion(n);
 }
 
 int AgiEngine::agiLoadResource(int r, int n) {
@@ -629,6 +624,7 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 	_noSaveLoadAllowed = false;
 
 	initFeatures();
+	initVersion();
 }
 
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
@@ -761,8 +757,6 @@ void AgiEngine::initialize() {
 
 	_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
 
-	_game.ver = -1;		// Don't display the conf file warning
-
 	debugC(2, kDebugLevelMain, "Detect game");
 
 
@@ -821,8 +815,6 @@ Common::Error AgiEngine::go() {
 		do {
 			mainCycle();
 		} while (_game.state < STATE_RUNNING);
-		if (_game.ver < 0)
-			_game.ver = 0;	// Enable conf file warning
 	}
 
 	runGame();

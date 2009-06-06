@@ -393,7 +393,7 @@ void AgiEngine::updateViewtable() {
 				break;
 			default:
 				// for KQ4
-				if (agiGetRelease() == 0x3086)
+				if (getVersion() == 0x3086)
 					loop = loopTable4[v->direction];
 				break;
 			}
@@ -401,7 +401,7 @@ void AgiEngine::updateViewtable() {
 
 		// AGI 2.272 (ddp, xmas) doesn't test step_time_count!
 		if (loop != 4 && loop != v->currentLoop) {
-			if (agiGetRelease() <= 0x2272 ||
+			if (getVersion() <= 0x2272 ||
 			    v->stepTimeCount == 1) {
 				setLoop(v, loop);
 			}

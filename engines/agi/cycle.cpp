@@ -191,13 +191,8 @@ int AgiEngine::mainCycle() {
 	unsigned int key, kascii;
 	VtEntry *v = &_game.viewTable[0];
 
-	_gfx->pollTimer();		// msdos driver -> does nothing
+	pollTimer();
 	updateTimer();
-
-	if (_game.ver == 0) {
-		messageBox("Warning: game CRC not listed, assuming AGI version 2.917.");
-		_game.ver = -1;
-	}
 
 	key = doPollKeyboard();
 
@@ -300,7 +295,7 @@ int AgiEngine::playGame() {
 	int ec = errOK;
 
 	debugC(2, kDebugLevelMain, "initializing...");
-	debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
+	debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
 
 	_sound->stopSound();
 	_gfx->clearScreen(0);
@@ -382,7 +377,7 @@ int AgiEngine::runGame() {
 	// Execute the game
 	do {
 		debugC(2, kDebugLevelMain, "game loop");
-		debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
+		debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
 
 		if (agiInit() != errOK)
 			break;

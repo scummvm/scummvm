@@ -844,7 +844,7 @@ cmd(draw) {
 	debugC(4, kDebugLevelScripts, "draw entry %d", vt.entry);
 
 	vt.flags |= UPDATE;
-	if (g_agi->agiGetRelease() >= 0x3000) {
+	if (g_agi->getVersion() >= 0x3000) {
 		g_agi->setLoop(&vt, vt.currentLoop);
 		g_agi->setCel(&vt, vt.currentCel);
 	}
@@ -1067,7 +1067,7 @@ cmd(move_obj) {
 		game.playerControl = false;
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
-	if (g_agi->agiGetRelease() > 0x2272)
+	if (g_agi->getVersion() > 0x2272)
 		g_agi->moveObj(&vt);
 }
 
@@ -1088,7 +1088,7 @@ cmd(move_obj_f) {
 		game.playerControl = false;
 
 	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
-	if (g_agi->agiGetRelease() > 0x2272)
+	if (g_agi->getVersion() > 0x2272)
 		g_agi->moveObj(&vt);
 }
 
@@ -1160,7 +1160,7 @@ cmd(version) {
 
 	sprintf(verMsg, TITLE " v%s", gScummVMVersion);
 
-	ver = g_agi->agiGetRelease();
+	ver = g_agi->getVersion();
 	maj = (ver >> 12) & 0xf;
 	min = ver & 0xfff;
 
@@ -1811,7 +1811,7 @@ int AgiEngine::runLogic(int n) {
 			// timer must keep running even in goto loops,
 			// but AGI engine can't do that :(
 			if (timerHack > 20) {
-				g_gfx->pollTimer();
+				pollTimer();
 				updateTimer();
 				timerHack = 0;
 			}

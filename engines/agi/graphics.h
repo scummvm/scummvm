@@ -95,10 +95,7 @@ public:
 	void setCursor(bool amigaStyleCursor = false, bool busy = false);
 	void setCursorPalette(bool amigaStylePalette = false);
 
-	int keypress();
-	int getKey();
 	void printCharacter(int, int, char, int, int);
-	void pollTimer();
 	int initMachine();
 	int deinitMachine();
 };

@@ -94,8 +94,8 @@ int AgiEngine::doPollKeyboard() {
 	int key = 0;
 
 	// If a key is ready, rip it
-	if (_gfx->keypress()) {
-		key = _gfx->getKey();
+	if (isKeypress()) {
+		key = getKeypress();
 
 		debugC(3, kDebugLevelInput, "key %02x pressed", key);
 	}
@@ -110,7 +110,7 @@ int AgiEngine::handleController(int key) {
 	// AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus
 	// Games with the GF_ESCPAUSE flag need KEY_ESCAPE to pause the game
 	if (key == 0 ||
-		(key == KEY_ESCAPE && agiGetRelease() != 0x3149 && getGameID() != GID_BC && !(getFeatures() & GF_ESCPAUSE)) )
+		(key == KEY_ESCAPE && getVersion() != 0x3149 && getGameID() != GID_BC && !(getFeatures() & GF_ESCPAUSE)) )
 		return false;
 
 	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == KEY_ENTER) &&
@@ -379,19 +379,16 @@ void AgiEngine::handleKeys(int key) {
 int AgiEngine::waitKey() {
 	int key = 0;
 
-	// clear key queue
-	while (_gfx->keypress()) {
-		_gfx->getKey();
-	}
+	clearKeyQueue();
 
 	debugC(3, kDebugLevelInput, "waiting...");
 	while (!(shouldQuit() || _restartGame || getflag(fRestoreJustRan))) {
-		_gfx->pollTimer();	// msdos driver -> does nothing
+		pollTimer();
 		key = doPollKeyboard();
 		if (key == KEY_ENTER || key == KEY_ESCAPE || key == BUTTON_LEFT)
 			break;
 
-		_gfx->pollTimer();
+		pollTimer();
 		updateTimer();
 
 		_gfx->doUpdate();
@@ -402,14 +399,11 @@ int AgiEngine::waitKey() {
 int AgiEngine::waitAnyKey() {
 	int key = 0;
 
-	// clear key queue
-	while (_gfx->keypress()) {
-		_gfx->getKey();
-	}
+	clearKeyQueue();
 
 	debugC(3, kDebugLevelInput, "waiting... (any key)");
 	while (!(shouldQuit() || _restartGame)) {
-		_gfx->pollTimer();	// msdos driver -> does nothing
+		pollTimer();
 		key = doPollKeyboard();
 		if (key)
 			break;

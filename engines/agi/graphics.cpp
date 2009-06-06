@@ -790,18 +790,6 @@ void GfxMgr::putScreen() {
 	putBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
 }
 
-void GfxMgr::pollTimer() {
-	_vm->agiTimerLow();
-}
-
-int GfxMgr::getKey() {
-	return _vm->agiGetKeypressLow();
-}
-
-int GfxMgr::keypress() {
-	return _vm->agiIsKeypressLow();
-}
-
 /*
  * Public functions
  */

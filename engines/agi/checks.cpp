@@ -41,7 +41,7 @@ int AgiEngine::checkPosition(VtEntry *v) {
 	}
 
 	// MH1 needs this, but it breaks LSL1
-	if (agiGetRelease() >= 0x3000) {
+	if (getVersion() >= 0x3000) {
 		if (v->yPos < v->ySize)
 			return 0;
 	}
@@ -212,7 +212,7 @@ void AgiEngine::updatePosition() {
 		if (x < 0) {
 			x = 0;
 			border = 4;
-		} else if (x <= 0 && agiGetRelease() == 0x3086) {	// KQ4
+		} else if (x <= 0 && getVersion() == 0x3086) {	// KQ4
 			x = 0;	// See Sarien bug #590462
 			border = 4;
 		} else if (v->entry == 0 && x == 0 && v->flags & ADJ_EGO_XY) {

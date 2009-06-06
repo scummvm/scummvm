@@ -609,14 +609,10 @@ public:
 	virtual int unloadResource(int, int) = 0;
 	virtual int loadObjects(const char *) = 0;
 	virtual int loadWords(const char *) = 0;
-	virtual int version() = 0;
-	virtual void setIntVersion(int) = 0;
-	virtual int getIntVersion() = 0;
 };
 
 class AgiLoader_v2 : public AgiLoader {
 private:
-	int _intVersion;
 	AgiEngine *_vm;
 
 	int loadDir(AgiDir *agid, const char *fname);
@@ -626,7 +622,6 @@ public:
 
 	AgiLoader_v2(AgiEngine *vm) {
 		_vm = vm;
-		_intVersion = 0;
 	}
 
 	virtual int init();
@@ -636,14 +631,10 @@ public:
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
-	virtual int version();
-	virtual void setIntVersion(int);
-	virtual int getIntVersion();
 };
 
 class AgiLoader_v3 : public AgiLoader {
 private:
-	int _intVersion;
 	AgiEngine *_vm;
 
 	int loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len);
@@ -653,7 +644,6 @@ public:
 
 	AgiLoader_v3(AgiEngine *vm) {
 		_vm = vm;
-		_intVersion = 0;
 	}
 
 	virtual int init();
@@ -663,9 +653,6 @@ public:
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
-	virtual int version();
-	virtual void setIntVersion(int);
-	virtual int getIntVersion();
 };
 
 class GfxMgr;
@@ -728,9 +715,10 @@ public:
 
 	bool _noSaveLoadAllowed;
 
-	virtual void agiTimerLow() = 0;
-	virtual int agiGetKeypressLow() = 0;
-	virtual int agiIsKeypressLow() = 0;
+	virtual void pollTimer(void) = 0;
+	virtual int getKeypress(void) = 0;
+	virtual bool isKeypress(void) = 0;
+	virtual void clearKeyQueue(void) = 0;
 
 	AgiBase(OSystem *syst, const AGIGameDescription *gameDesc);
 
@@ -752,6 +740,7 @@ public:
 	const AGIGameDescription *_gameDescription;
 
 	uint32 _gameFeatures;
+	uint16 _gameVersion;
 
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
@@ -762,6 +751,8 @@ public:
 	const char *getGameMD5() const;
 	void initFeatures(void);
 	void setFeature(uint32 feature);
+	void initVersion(void);
+	void setVersion(uint16 version);
 
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const char *desc);
@@ -849,17 +840,16 @@ public:
 
 	int agiInit();
 	int agiDeinit();
-	int agiVersion();
-	int agiGetRelease();
-	void agiSetRelease(int);
 	int agiDetectGame();
 	int agiLoadResource(int, int);
 	int agiUnloadResource(int, int);
 	void agiUnloadResources();
 
-	virtual void agiTimerLow();
-	virtual int agiGetKeypressLow();
-	virtual int agiIsKeypressLow();
+	virtual void pollTimer(void);
+	virtual int getKeypress(void);
+	virtual bool isKeypress(void);
+	virtual void clearKeyQueue(void);
+
 	static void agiTimerFunctionLow(void *refCon);
 	void initPriTable();
 
@@ -868,23 +858,17 @@ public:
 
 	int getvar(int);
 	void setvar(int, int);
-	void decrypt(uint8 * mem, int len);
+	void decrypt(uint8 *mem, int len);
 	void releaseSprites();
 	int mainCycle();
 	int viewPictures();
-	int parseCli(int, char **);
 	int runGame();
 	void inventory();
-	void listGames();
-	uint32 matchCrc(uint32, char *, int);
-	int v2IdGame();
-	int v3IdGame();
-	int v4IdGame(uint32 ver);
 	void updateTimer();
 	int getAppDir(char *appDir, unsigned int size);
 
-	int setupV2Game(int ver, uint32 crc);
-	int setupV3Game(int ver, uint32 crc);
+	int setupV2Game(int ver);
+	int setupV3Game(int ver);
 
 	void newRoom(int n);
 	void resetControllers();

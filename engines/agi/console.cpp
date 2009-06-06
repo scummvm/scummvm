@@ -135,7 +135,7 @@ bool Console::Cmd_Crc(int argc, const char **argv) {
 bool Console::Cmd_Agiver(int argc, const char **argv) {
 	int ver, maj, min;
 
-	ver = _vm->agiGetRelease();
+	ver = _vm->getVersion();
 	maj = (ver >> 12) & 0xf;
 	min = ver & 0xfff;
 

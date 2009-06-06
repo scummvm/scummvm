@@ -29,18 +29,6 @@
 
 namespace Agi {
 
-int AgiLoader_v2::version() {
-	return 2;
-}
-
-void AgiLoader_v2::setIntVersion(int ver) {
-	_intVersion = ver;
-}
-
-int AgiLoader_v2::getIntVersion() {
-	return _intVersion;
-}
-
 int AgiLoader_v2::detectGame() {
 	if (!Common::File::exists(LOGDIR) ||
 			!Common::File::exists(PICDIR) ||
@@ -48,8 +36,7 @@ int AgiLoader_v2::detectGame() {
 			!Common::File::exists(VIEWDIR))
 		return errInvalidAGIFile;
 
-	_intVersion = 0x2917;	// setup for 2.917
-	return _vm->v2IdGame();
+	return _vm->setupV2Game(_vm->getVersion());
 }
 
 int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {

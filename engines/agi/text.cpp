@@ -371,10 +371,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 
 	_sprites->blitBoth();
 
-	// clear key queue
-	while (_gfx->keypress()) {
-		_gfx->getKey();
-	}
+	clearKeyQueue();
 
 	AllowSyntheticEvents on(this);
 
@@ -383,7 +380,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 		for (i = 0; b[i]; i++)
 			_gfx->drawCurrentStyleButton(bx[i], by[i], b[i], i == active, false, i == 0);
 
-		_gfx->pollTimer();	// msdos driver -> does nothing
+		pollTimer();
 		key = doPollKeyboard();
 		switch (key) {
 		case KEY_ENTER:

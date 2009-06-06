@@ -134,8 +134,6 @@ void PreAgiEngine::initialize() {
 
 	//_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
 
-	_game.ver = -1;		// Don't display the conf file warning
-
 	debugC(2, kDebugLevelMain, "Detect game");
 
 	// clear all resources and events

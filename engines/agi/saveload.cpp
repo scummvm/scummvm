@@ -639,7 +639,7 @@ int AgiEngine::selectSlot() {
 			oldFirstSlot = _firstSlot;
 		}
 
-		_gfx->pollTimer();	// msdos driver -> does nothing
+		pollTimer();
 		key = doPollKeyboard();
 
 		// It may happen that somebody will open GMM while

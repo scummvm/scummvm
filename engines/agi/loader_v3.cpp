@@ -31,18 +31,6 @@
 
 namespace Agi {
 
-int AgiLoader_v3::version() {
-	return 3;
-}
-
-void AgiLoader_v3::setIntVersion(int ver) {
-	_intVersion = ver;
-}
-
-int AgiLoader_v3::getIntVersion() {
-	return _intVersion;
-}
-
 int AgiLoader_v3::detectGame() {
 	int ec = errUnk;
 	bool found = false;
@@ -64,8 +52,8 @@ int AgiLoader_v3::detectGame() {
 			memset(_vm->_game.name, 0, 8);
 			strncpy(_vm->_game.name, f.c_str(), MIN((uint)8, f.size() > 5 ? f.size() - 5 : f.size()));
 			debugC(3, kDebugLevelMain, "game.name = %s", _vm->_game.name);
-			_intVersion = 0x3149;	// setup for 3.002.149
-			ec = _vm->v3IdGame();
+
+			ec = _vm->setupV3Game(_vm->getVersion());
 
 			found = true;
 		}

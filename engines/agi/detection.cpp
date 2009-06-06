@@ -63,7 +63,7 @@ Common::Language AgiBase::getLanguage() const {
 }
 
 uint16 AgiBase::getVersion() const {
-	return _gameDescription->version;
+	return _gameVersion;
 }
 
 uint16 AgiBase::getGameType() const {
@@ -80,6 +80,14 @@ void AgiBase::initFeatures(void) {
 
 void AgiBase::setFeature(uint32 feature) {
 	_gameFeatures |= feature;
+}
+
+void AgiBase::setVersion(uint16 version) {
+	_gameVersion = version;
+}
+
+void AgiBase::initVersion(void) {
+	_gameVersion = _gameDescription->version;
 }
 
 }
