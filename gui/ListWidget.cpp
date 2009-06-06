@@ -33,8 +33,8 @@
 
 namespace GUI {
 
-ListWidget::ListWidget(GuiObject *boss, const String &name)
-	: EditableWidget(boss, name) {
+ListWidget::ListWidget(GuiObject *boss, const String &name, uint32 cmd)
+	: EditableWidget(boss, name), _cmd(cmd) {
 
 	_scrollBar = NULL;
 	_textWidth = NULL;
@@ -60,10 +60,12 @@ ListWidget::ListWidget(GuiObject *boss, const String &name)
 
 	// FIXME: This flag should come from widget definition
 	_editable = true;
+
+	_quickSelect = true;
 }
 
-ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
-	: EditableWidget(boss, x, y, w, h) {
+ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
+	: EditableWidget(boss, x, y, w, h), _cmd(cmd) {
 
 	_scrollBar = NULL;
 	_textWidth = NULL;
@@ -234,8 +236,6 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
-		// TODO: Maybe this should be off by default, and instead we add a
-		// method "enableQuickSelect()" or so ?
 		uint32 time = getMillis();
 		if (_quickSelectTime < time) {
 			_quickSelectStr = (char)state.ascii;
@@ -244,26 +244,29 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		}
 		_quickSelectTime = time + 300;	// TODO: Turn this into a proper constant (kQuickSelectDelay ?)
 
-
-		// FIXME: This is bad slow code (it scans the list linearly each time a
-		// key is pressed); it could be much faster. Only of importance if we have
-		// quite big lists to deal with -- so for now we can live with this lazy
-		// implementation :-)
-		int newSelectedItem = 0;
-		int bestMatch = 0;
-		bool stop;
-		for (StringList::const_iterator i = _list.begin(); i != _list.end(); ++i) {
-			const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop);
-			if (match > bestMatch || stop) {
-				_selectedItem = newSelectedItem;
-				bestMatch = match;
-				if (stop)
-					break;
+		if (_quickSelect) {
+			// FIXME: This is bad slow code (it scans the list linearly each time a
+			// key is pressed); it could be much faster. Only of importance if we have
+			// quite big lists to deal with -- so for now we can live with this lazy
+			// implementation :-)
+			int newSelectedItem = 0;
+			int bestMatch = 0;
+			bool stop;
+			for (StringList::const_iterator i = _list.begin(); i != _list.end(); ++i) {
+				const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop);
+				if (match > bestMatch || stop) {
+					_selectedItem = newSelectedItem;
+					bestMatch = match;
+					if (stop)
+						break;
+				}
+				newSelectedItem++;
 			}
-			newSelectedItem++;
-		}
 
-		scrollToCurrent();
+			scrollToCurrent();
+		} else {
+			sendCommand(_cmd, 0);
+		}
 	} else if (_editMode) {
 		// Class EditableWidget handles all text editing related key presses for us
 		handled = EditableWidget::handleKeyDown(state);
