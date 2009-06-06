@@ -394,8 +394,6 @@ int AgiEngine::agiInit() {
 
 	initWords();
 
-	restartGame = false;
-
 	if (!_menu)
 		_menu = new Menu(this, _gfx, _picture);
 
@@ -678,6 +676,8 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	memset(&_stringdata, 0, sizeof(struct StringData));
 
 	_objects = NULL;
+
+	_restartGame = false;
 
 	_oldMode = -1;
 

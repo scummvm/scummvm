@@ -808,7 +808,7 @@ public:
 
 	uint8 *_intobj;
 	int _oldMode;
-	bool restartGame;
+	bool _restartGame;
 
 	Menu* _menu;
 

@@ -120,7 +120,7 @@ void AgiEngine::interpretCycle() {
 	oldSound = getflag(fSoundOn);
 
 	_game.exitAllLogics = false;
-	while (runLogic(0) == 0 && !(shouldQuit() || restartGame)) {
+	while (runLogic(0) == 0 && !(shouldQuit() || _restartGame)) {
 		_game.vars[vWordNotFound] = 0;
 		_game.vars[vBorderTouchObj] = 0;
 		_game.vars[vBorderCode] = 0;
@@ -369,7 +369,7 @@ int AgiEngine::playGame() {
 			saveGame(getSavegameFilename(0), "Autosave");
 		}
 
-	} while (!(shouldQuit() || restartGame));
+	} while (!(shouldQuit() || _restartGame));
 
 	_sound->stopSound();
 
@@ -390,9 +390,9 @@ int AgiEngine::runGame() {
 		if (agiInit() != errOK)
 			break;
 
-		if (restartGame) {
+		if (_restartGame) {
 			setflag(fRestartGame, true);
-			restartGame = false;
+			_restartGame = false;
 		}
 
 		// Set computer type (v20 i.e. vComputer)
@@ -446,7 +446,7 @@ int AgiEngine::runGame() {
 		ec = playGame();
 		_game.state = STATE_LOADED;
 		agiDeinit();
-	} while (restartGame);
+	} while (_restartGame);
 
 	delete _menu;
 	_menu = NULL;
