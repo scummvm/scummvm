@@ -129,6 +129,7 @@ void ListWidget::setList(const StringList &list) {
 	// Copy everything
 	_list = list;
 	_filter = "";
+	setFilter(_filter, false);
 
 	if (_currentPos >= size)
 		_currentPos = size - 1;
@@ -143,6 +144,9 @@ void ListWidget::setList(const StringList &list) {
 void ListWidget::append(const String &s) {
 	_dataList.push_back(s);
 	_list.push_back(s);
+
+	setFilter(_filter, false);
+
 	scrollBarRecalc();
 }
 
@@ -538,7 +542,7 @@ void ListWidget::reflowLayout() {
 	}
 }
 
-void ListWidget::setFilter(const String &filter) {
+void ListWidget::setFilter(const String &filter, bool redraw) {
 	String filt;
 
 	filt = filter;
@@ -550,23 +554,30 @@ void ListWidget::setFilter(const String &filter) {
 		_list = _dataList;
 	} else {
 		String tmp;
+		int n = 0;
 
 		_list.clear();
+	
+		_listIndex.clear();
 
-		for (StringList::iterator i = _dataList.begin(); i != _dataList.end(); ++i) {
+		for (StringList::iterator i = _dataList.begin(); i != _dataList.end(); ++i, n++) {
 			tmp = *i;
 			tmp.toLowercase();
 			if (tmp.contains(_filter.c_str())) {
 				_list.push_back(*i);
+				_listIndex.push_back(n);
 			}
 		}
 	}
 
 	_currentPos = 0;
 	_selectedItem = -1;
-	scrollBarRecalc();
 
-	draw();
+	if (redraw) {
+		scrollBarRecalc();
+
+		draw();
+	}
 }
 
 } // End of namespace GUI

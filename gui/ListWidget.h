@@ -54,6 +54,7 @@ public:
 protected:
 	StringList		_list;
 	StringList		_dataList;
+	Common::Array<int>		_listIndex;
 	bool			_editable;
 	bool			_editMode;
 	NumberingMode	_numberingMode;
@@ -89,7 +90,7 @@ public:
 	void setList(const StringList &list);
 	void append(const String &s);
 	const StringList &getList()	const			{ return _dataList; }
-	int getSelected() const						{ return _selectedItem; }
+	int getSelected() const						{ return (_filter == "" || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 	void setSelected(int item);
 	const String &getSelectedString() const		{ return _list[_selectedItem]; }
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
@@ -100,7 +101,7 @@ public:
 	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
 	String getQuickSelectString() const 		{ return _quickSelectStr; }
 
-	void setFilter(const String &filter);
+	void setFilter(const String &filter, bool redraw = true);
 
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
