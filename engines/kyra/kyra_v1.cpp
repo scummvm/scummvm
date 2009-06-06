@@ -343,6 +343,10 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		case Common::EVENT_LBUTTONUP: {
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
+			if (_flags.useHiResOverlay) {
+				_mouseX >>= 1;
+				_mouseY >>= 1;
+			}
 			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
 			breakLoop = true;
 			} break;
@@ -351,6 +355,10 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		case Common::EVENT_RBUTTONUP: {
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
+			if (_flags.useHiResOverlay) {
+				_mouseX >>= 1;
+				_mouseY >>= 1;
+			}
 			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 201 : (202 | 0x800));
 			breakLoop = true;
 			} break;
