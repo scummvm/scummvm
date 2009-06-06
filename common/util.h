@@ -205,6 +205,7 @@ enum Platform {
 	kPlatformWindows,
 	kPlatformNES,
 	kPlatformC64,
+	kPlatformCoCo3,
 	kPlatformLinux,
 	kPlatformAcorn,
 	kPlatformSegaCD,

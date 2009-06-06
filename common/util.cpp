@@ -259,6 +259,7 @@ const PlatformDescription g_platforms[] = {
 	{"pc", "dos", "ibm", "DOS", kPlatformPC},
 	{"pc98", "pc98", "pc98", "PC-98", kPlatformPC98},
 	{"wii", "wii", "wii", "Nintendo Wii", kPlatformWii},
+	{"coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3},
 
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
