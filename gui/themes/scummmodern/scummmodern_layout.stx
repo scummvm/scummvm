@@ -721,7 +721,14 @@
 					width = '250'
 					height = 'Globals.Line.Height'
 			/>
-			<space size = '32' />
+			<widget name = 'GameProgressText' 
+					width = '250'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'GameList'
+					width = '480'
+					height = '250'
+			/>
 			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<widget name = 'Ok'
 						type = 'Button'

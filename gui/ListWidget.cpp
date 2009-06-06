@@ -133,6 +133,11 @@ void ListWidget::setList(const StringList &list) {
 	scrollBarRecalc();
 }
 
+void ListWidget::append(const String &s) {
+	_list.push_back(s);
+	scrollBarRecalc();
+}
+
 void ListWidget::scrollTo(int item) {
 	int size = _list.size();
 	if (item >= size)
@@ -443,6 +448,18 @@ void ListWidget::scrollToCurrent() {
 
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();
+}
+
+void ListWidget::scrollToEnd() {
+	if (_currentPos + _entriesPerPage < (int)_list.size()) {
+		_currentPos = _list.size() - _entriesPerPage;
+	} else {
+		return;
+	}
+
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
+	_scrollBar->draw();
 }
 
 void ListWidget::startEditMode() {

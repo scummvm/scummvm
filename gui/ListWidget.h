@@ -81,6 +81,7 @@ public:
 	virtual Widget *findWidget(int x, int y);
 
 	void setList(const StringList &list);
+	void append(const String &s);
 	const StringList &getList()	const			{ return _list; }
 	int getSelected() const						{ return _selectedItem; }
 	void setSelected(int item);
@@ -89,6 +90,7 @@ public:
 	bool isEditable() const						{ return _editable; }
 	void setEditable(bool editable)				{ _editable = editable; }
 	void scrollTo(int item);
+	void scrollToEnd();
 
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);

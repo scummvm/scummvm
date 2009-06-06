@@ -60,6 +60,8 @@ private:
 	Widget *_okButton;
 	StaticTextWidget *_dirProgressText;
 	StaticTextWidget *_gameProgressText;
+
+	ListWidget *_list;
 };
 
 

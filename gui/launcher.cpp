@@ -630,7 +630,13 @@ void LauncherDialog::addGame() {
 							"This could potentially add a huge number of games.", "Yes", "No");
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 			MassAddDialog massAddDlg(_browser->getResult());
+
+			ConfMan.set("temp_selection", _domains[_list->getSelected()], ConfigManager::kApplicationDomain);
+
 			massAddDlg.runModal();
+
+			selectGame(ConfMan.get("temp_selection", ConfigManager::kApplicationDomain));
+			ConfMan.removeKey("temp_selection", ConfigManager::kApplicationDomain);
 
 			// Update the ListWidget and force a redraw
 			updateListing();
