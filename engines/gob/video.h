@@ -54,7 +54,6 @@ public:
 	void setVidMem(byte *vidMem);
 	void resize(int16 width, int16 height);
 	void swap(SurfaceDesc &surf);
-	void swap(SurfaceDesc *surf) { assert(surf); swap(*surf); }
 
 	SurfaceDesc(int16 vidMode, int16 width, int16 height, byte *vidMem = 0);
 	~SurfaceDesc() { if (_ownVidMem) delete[] _vidMem; }

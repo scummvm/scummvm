@@ -78,7 +78,7 @@ public:
 	FontToSprite _fontToSprite[4];
 	Video::FontDesc *_fonts[8];
 
-	SurfaceDescPtr _spritesArray[SPRITES_COUNT];
+	Common::Array<SurfaceDescPtr> _spritesArray;
 
 	int16 _invalidatedCount;
 	int16 _invalidatedTops[30];

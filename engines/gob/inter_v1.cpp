@@ -1910,7 +1910,7 @@ bool Inter_v1::o1_fillRect(OpFuncParams &params) {
 
 	_vm->_draw->_backColor = _vm->_parse->parseValExpr();
 
-	if (!_vm->_draw->_spritesArray[(destSurf > 100) ? (destSurf - 80) : destSurf])
+	if (!_vm->_draw->_spritesArray[(destSurf >= 100) ? (destSurf - 80) : destSurf])
 		return false;
 
 	if (_vm->_draw->_spriteRight < 0) {

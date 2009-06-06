@@ -62,6 +62,8 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 8; i++)
 		_fonts[i] = 0;
 
+	_spritesArray.resize(SPRITES_COUNT);
+
 	_invalidatedCount = 0;
 	for (int i = 0; i < 30; i++) {
 		_invalidatedTops[i] = 0;
