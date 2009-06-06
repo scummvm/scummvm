@@ -1296,7 +1296,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "e0767783ff662ed93665446665693aef", 4371238),
 			HB_ISR,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1580,6 +1581,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			HB_ISR,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesAdlib,
@@ -1692,6 +1694,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypeGeisha,
 		kFeaturesNone,
@@ -1746,7 +1749,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "904fc32032295baa3efb3a41f17db611", 178582),
 			HB_ISR,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2656,7 +2660,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("intro.stk", "b3f8472484b7a1df94557b51e7b6fca0", 2322644),
 			FR_FRA,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		kGameTypeDynasty,
 		kFeatures640,
@@ -2808,7 +2813,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			FR_FRA,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -2927,7 +2933,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			FR_FRA,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -2944,7 +2951,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			DE_DEU,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -2961,7 +2969,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			FR_FRA,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -2978,7 +2987,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			FR_FRA,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -2995,7 +3005,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			DE_DEU,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3012,7 +3023,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			FR_FRA,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3029,7 +3041,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			FR_FRA,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypeBambou,
 		kFeatures640,
@@ -3045,7 +3058,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			},
 			FR_FRA,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytnCk,
 		kFeatures640,
@@ -3487,7 +3501,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3500,7 +3515,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3513,7 +3529,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3526,7 +3543,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3539,7 +3557,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3552,7 +3571,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypePlaytnCk,
 		kFeatures640,
@@ -3565,7 +3585,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		kGameTypeBambou,
 		kFeatures640,
@@ -3620,7 +3641,8 @@ static const GOBGameDescription fallbackDescs[] = {
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		kGameTypeWoodruff,
 		kFeatures640 | kFeaturesSCNDemo,
