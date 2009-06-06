@@ -1312,6 +1312,8 @@ cmd(prevent_input) {
 
 	g_agi->newInputMode(INPUT_NONE);
 	game.inputEnabled = false;
+
+	g_agi->clearPrompt();
 }
 
 cmd(get_string) {

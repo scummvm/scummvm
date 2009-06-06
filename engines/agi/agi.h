@@ -979,6 +979,7 @@ public:
 	char *agiSprintf(const char *);
 	void writeStatus(void);
 	void writePrompt(void);
+	void clearPrompt(void);
 	void clearLines(int, int, int);
 	void flushLines(int, int);
 	bool predictiveDialog(void);
