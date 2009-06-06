@@ -135,12 +135,8 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx) 
 	delete _theme;
 
 	if (_useStdCursor) {
-#ifdef ENABLE_16BIT
-		CursorMan.popCursor16();
-#else
 		CursorMan.popCursorPalette();
 		CursorMan.popCursor();
-#endif
 	}
 
 	//
@@ -386,12 +382,8 @@ void GuiManager::saveState() {
 
 void GuiManager::restoreState() {
 	if (_useStdCursor) {
-#ifdef ENABLE_16BIT
-		CursorMan.popCursor16();
-#else
 		CursorMan.popCursor();
 		CursorMan.popCursorPalette();
-#endif
 	}
 
 	_system->updateScreen();

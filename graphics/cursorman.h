@@ -57,6 +57,9 @@ public:
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
 	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
+#ifdef ENABLE_16BIT
+	void pushCursorReal(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, uint8 bitDepth = 8);
+#endif
 
 	/**
 	 * Pop a cursor from the stack, and restore the previous one to the
@@ -64,13 +67,6 @@ public:
 	 */
 	void popCursor();
 
-#ifdef ENABLE_16BIT
-	//HACK This is such a incredible hack
-	//I really need to make the one method 
-	//work under multiple bitdepths
-	void pushCursor16(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor = 65535, int targetScale = 1);
-	void popCursor16();
-#endif
 	/**
 	 * Replace the current cursor on the stack. If the stack is empty, the
 	 * cursor is pushed instead. It's a slightly more optimized way of
@@ -84,11 +80,11 @@ public:
 	 * @param keycolor	the index for the transparent color
 	 * @param targetScale	the scale for which the cursor is designed
 	 */
+	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
 #ifdef ENABLE_16BIT
 	//HACK made a separate method to avoid massive linker errors on every engine.
-	void replaceCursor16(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor = 65535, int targetScale = 1);
+	void replaceCursorReal(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, uint8 bitDepth = 8);
 #endif
-	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
 
 	/**
 	 * Pop all of the cursors and cursor palettes from their respective stacks.
@@ -144,37 +140,7 @@ public:
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	CursorManager();
-#ifdef ENABLE_16BIT
-	struct Cursor16 {
-		byte *_data;
-		bool _visible;
-		uint _width;
-		uint _height;
-		int _hotspotX;
-		int _hotspotY;
-		uint16 _keycolor;
-		byte _targetScale;
 
-		uint _size;
-
-		Cursor16(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor = 65535, int targetScale = 1) {
-			_size = w * h * 2;
-			_data = new byte[_size];
-			if (data && _data)
-				memcpy(_data, data, _size);
-			_width = w;
-			_height = h;
-			_hotspotX = hotspotX;
-			_hotspotY = hotspotY;
-			_keycolor = keycolor;
-			_targetScale = targetScale;
-		}
-
-		~Cursor16() {
-			delete[] _data;
-		}
-	};
-#endif
 	struct Cursor {
 		byte *_data;
 		bool _visible;
@@ -182,13 +148,33 @@ private:
 		uint _height;
 		int _hotspotX;
 		int _hotspotY;
+#ifdef ENABLE_16BIT
+		uint32 _keycolor;
+		uint8 _bitDepth;
+#else
 		byte _keycolor;
+#endif
 		byte _targetScale;
 
-		uint _size;
 
+		uint _size;
+#ifdef ENABLE_16BIT
+		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, uint8 bitDepth = 8) {
+			uint32 colmask = 0xFF;
+			uint8 byteDepth = bitDepth >> 3;
+			_size = w * h * byteDepth;
+			_bitDepth = bitDepth;
+			for (int i = byteDepth; i > 1; i--) {
+				colmask <<= 8;
+				colmask |= 0xFF;
+			}
+			_keycolor = keycolor & colmask;
+
+#else
 		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1) {
 			_size = w * h;
+			_keycolor = keycolor;
+#endif
 			_data = new byte[_size];
 			if (data && _data)
 				memcpy(_data, data, _size);
@@ -196,7 +182,6 @@ private:
 			_height = h;
 			_hotspotX = hotspotX;
 			_hotspotY = hotspotY;
-			_keycolor = keycolor;
 			_targetScale = targetScale;
 		}
 
@@ -234,9 +219,6 @@ private:
 	};
 
 	Common::Stack<Cursor *> _cursorStack;
-#ifdef ENABLE_16BIT
-	Common::Stack<Cursor16 *> _cursor16Stack;
-#endif
 	Common::Stack<Palette *> _cursorPaletteStack;
 };
 

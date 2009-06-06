@@ -113,10 +113,10 @@ public:
 
 	// Set the bitmap that's used when drawing the cursor.
 #ifdef ENABLE_16BIT
-	//HACK Made a second method as a quick and dirty workaround to avoid linker errors with engine libs
-	virtual void setMouseCursor16(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint16 keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
-#endif
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, uint8 bitDepth = 8); // overloaded by CE backend (FIXME)
+#else
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
+#endif
 
 	// Set colors of cursor palette
 	void setCursorPalette(const byte *colors, uint start, uint num);
@@ -413,7 +413,11 @@ protected:
 
 	virtual void drawMouse(); // overloaded by CE backend
 	virtual void undrawMouse(); // overloaded by CE backend (FIXME)
+#ifdef ENABLE_16BIT
+	virtual void blitCursor(uint8 bitDepth = 8); // overloaded by CE backend (FIXME)
+#else
 	virtual void blitCursor(); // overloaded by CE backend (FIXME)
+#endif
 
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);

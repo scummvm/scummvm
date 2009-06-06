@@ -688,10 +688,10 @@ public:
 	 * @param cursorTargetScale	scale factor which cursor is designed for
 	 */
 #ifdef ENABLE_16BIT
-	//HACK made a second method as a quick and dirty workaround to avoid linker errors with engine libs
-	virtual void setMouseCursor16(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint16 keycolor = 65535, int cursorTargetScale = 1) = 0;
-#endif
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1, uint8 bitDepth = 8) = 0;
+#else
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1) = 0;
+#endif
 
 
 	/**

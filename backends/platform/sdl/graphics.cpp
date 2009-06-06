@@ -1404,49 +1404,19 @@ void OSystem_SDL::warpMouse(int x, int y) {
 }
 
 #ifdef ENABLE_16BIT
-void OSystem_SDL::setMouseCursor16(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint16 keycolor, int cursorTargetScale) {
-	if (w == 0 || h == 0)
-		return;
-
-	_mouseCurState.hotX = hotspot_x;
-	_mouseCurState.hotY = hotspot_y;
-
-	_mouseKeyColor = keycolor;
-
-	_cursorTargetScale = cursorTargetScale;
-
-	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
-		_mouseCurState.w = w;
-		_mouseCurState.h = h;
-
-		if (_mouseOrigSurface)
-			SDL_FreeSurface(_mouseOrigSurface);
-
-		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
-		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_mouseCurState.w + 2,
-						_mouseCurState.h + 2,
-						16,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
-
-		if (_mouseOrigSurface == NULL)
-			error("allocating _mouseOrigSurface failed");
-		SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, uint8 bitDepth) {
+	uint32 colmask = 0xFF;
+	uint8 byteDepth = bitDepth >> 3;
+	for (int i = byteDepth; i > 1; i--) {
+		colmask <<= 8;
+		colmask |= 0xFF;
 	}
+	keycolor &= colmask;
 
-	free(_mouseData);
-
-	_mouseData = (byte *)malloc(w * h * 2);
-	memcpy(_mouseData, buf, w * h * 2);
-
-	blitCursor();
-}
+#else
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 #endif
 
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 	if (w == 0 || h == 0)
 		return;
 
@@ -1480,14 +1450,24 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	}
 
 	free(_mouseData);
+#ifdef ENABLE_16BIT
+	_mouseData = (byte *)malloc(w * h * byteDepth);
+	memcpy(_mouseData, buf, w * h * byteDepth);
 
+	blitCursor(bitDepth);
+#else
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
 
 	blitCursor();
+#endif
 }
 
+#ifdef ENABLE_16BIT
+void OSystem_SDL::blitCursor(uint8 bitDepth) {
+#else
 void OSystem_SDL::blitCursor() {
+#endif
 	byte *dstPtr;
 	const byte *srcPtr = _mouseData;
 	byte color;
@@ -1526,22 +1506,26 @@ void OSystem_SDL::blitCursor() {
 		for (j = 0; j < w; j++) {
 			color = *srcPtr;
 #ifdef ENABLE_16BIT
-			if (color != _mouseKeyColor) {	// transparent, don't draw
-				int8 r = ((*(uint16 *)srcPtr >> 10) & 0x1F) << 3;
-				int8 g = ((*(uint16 *)srcPtr >> 5) & 0x1F) << 3;
-				int8 b = (*(uint16 *)srcPtr & 0x1F) << 3;
-				*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
-					r, g, b);
+			if (bitDepth == 16) {
+				if (color != _mouseKeyColor) {	// transparent, don't draw
+					int8 r = ((*(uint16 *)srcPtr >> 10) & 0x1F) << 3;
+					int8 g = ((*(uint16 *)srcPtr >> 5) & 0x1F) << 3;
+					int8 b = (*(uint16 *)srcPtr & 0x1F) << 3;
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
+						r, g, b);
+				}
+				dstPtr += 2;
+				srcPtr += 2;
+			} else {
+#endif
+				if (color != _mouseKeyColor) {	// transparent, don't draw
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
+						palette[color].r, palette[color].g, palette[color].b);
+				}
+				dstPtr += 2;
+				srcPtr++;
+#ifdef ENABLE_16BIT
 			}
-			dstPtr += 2;
-			srcPtr += 2;
-#else
-			if (color != _mouseKeyColor) {	// transparent, don't draw
-				*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
-					palette[color].r, palette[color].g, palette[color].b);
-			}
-			dstPtr += 2;
-			srcPtr++;
 #endif
 		}
 		dstPtr += _mouseOrigSurface->pitch - w * 2;
