@@ -332,11 +332,7 @@ void OSystem_SDL::setGraphicsModeIntern() {
 
 	// Even if the old and new scale factors are the same, we may have a
 	// different scaler for the cursor now.
-#ifdef ENABLE_16BIT
-	blitCursor(_cursorBitDepth);
-#else
 	blitCursor();
-#endif
 }
 
 int OSystem_SDL::getGraphicsMode() const {
@@ -604,11 +600,7 @@ bool OSystem_SDL::hotswapGFXMode() {
 	SDL_FreeSurface(old_overlayscreen);
 
 	// Update cursor to new scale
-#ifdef ENABLE_16BIT
-	blitCursor(_cursorBitDepth);
-#else
 	blitCursor();
-#endif
 
 	// Blit everything to the screen
 	internUpdateScreen();
@@ -1171,11 +1163,7 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 
 	// Some games blink cursors with palette
 	if (_cursorPaletteDisabled)
-#ifdef ENABLE_16BIT
-		blitCursor(_cursorBitDepth);
-#else
 		blitCursor();
-#endif
 }
 
 void OSystem_SDL::grabPalette(byte *colors, uint start, uint num) {
@@ -1204,11 +1192,7 @@ void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
 
 	_cursorPaletteDisabled = false;
 
-#ifdef ENABLE_16BIT
-	blitCursor(_cursorBitDepth);
-#else
 	blitCursor();
-#endif
 }
 
 void OSystem_SDL::setShakePos(int shake_pos) {
@@ -1469,21 +1453,15 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 #ifdef ENABLE_16BIT
 	_mouseData = (byte *)malloc(w * h * byteDepth);
 	memcpy(_mouseData, buf, w * h * byteDepth);
-
-	blitCursor(bitDepth);
 #else
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
+#endif
 
 	blitCursor();
-#endif
 }
 
-#ifdef ENABLE_16BIT
-void OSystem_SDL::blitCursor(uint8 bitDepth) {
-#else
 void OSystem_SDL::blitCursor() {
-#endif
 	byte *dstPtr;
 	const byte *srcPtr = _mouseData;
 	byte color;
@@ -1522,7 +1500,7 @@ void OSystem_SDL::blitCursor() {
 		for (j = 0; j < w; j++) {
 			color = *srcPtr;
 #ifdef ENABLE_16BIT
-			if (bitDepth == 16) {
+			if (_cursorBitDepth == 16) {
 				if (color != _mouseKeyColor) {	// transparent, don't draw
 					int8 r = ((*(uint16 *)srcPtr >> 10) & 0x1F) << 3;
 					int8 g = ((*(uint16 *)srcPtr >> 5) & 0x1F) << 3;

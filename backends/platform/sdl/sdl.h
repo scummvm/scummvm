@@ -124,11 +124,7 @@ public:
 	// Disables or enables cursor palette
 	void disableCursorPalette(bool disable) {
 		_cursorPaletteDisabled = disable;
-#ifdef ENABLE_16BIT 
-		blitCursor(_cursorBitDepth);
-#else
 		blitCursor();
-#endif
 	}
 
 	// Shaking is used in SCUMM. Set current shake position.
@@ -420,11 +416,7 @@ protected:
 
 	virtual void drawMouse(); // overloaded by CE backend
 	virtual void undrawMouse(); // overloaded by CE backend (FIXME)
-#ifdef ENABLE_16BIT
-	virtual void blitCursor(uint8 bitDepth = 8); // overloaded by CE backend (FIXME)
-#else
 	virtual void blitCursor(); // overloaded by CE backend (FIXME)
-#endif
 
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);
