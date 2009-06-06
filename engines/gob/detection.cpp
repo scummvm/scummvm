@@ -3390,6 +3390,19 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		"adif41.stk", 0, 0
 	},
+	{
+		{
+			"coktelplayer",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640 | kFeaturesSCNDemo,
+		"", "", 8
+	}
 };
 
 static const ADFileBasedFallback fileBased[] = {
@@ -3417,6 +3430,7 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[20], { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
 	{ &fallbackDescs[21], { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
 	{ &fallbackDescs[22], { "adif41.stk", "adim41.stk", 0 } },
+	{ &fallbackDescs[23], { "coktelplayer.scn", 0 } },
 	{ 0, { 0 } }
 };
 

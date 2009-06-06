@@ -50,7 +50,8 @@ DemoPlayer::Script DemoPlayer::_scripts[] = {
 		"slide tumid.imd 1\nslide post.imd 1\nslide posta.imd 1\n"      \
 		"slide postb.imd 1\nslide postc.imd 1\nslide xdome.imd 20\n"    \
 		"slide xant.imd 20\nslide tum.imd 20\nslide voile.imd 20\n"     \
-		"slide int.imd 20\nslide voila.imd 1\nslide voilb.imd 1\n"}
+		"slide int.imd 20\nslide voila.imd 1\nslide voilb.imd 1\n"},
+	{kScriptSourceFile, "coktelplayer.scn"},
 };
 
 DemoPlayer::DemoPlayer(GobEngine *vm) : _vm(vm) {
