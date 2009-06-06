@@ -154,9 +154,13 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
 	DCmd_Register("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
+	DCmd_Register("step",				WRAP_METHOD(Console, cmdStep));
 	DCmd_Register("step_event",			WRAP_METHOD(Console, cmdStepEvent));
 	DCmd_Register("step_ret",			WRAP_METHOD(Console, cmdStepRet));
 	DCmd_Register("step_global",		WRAP_METHOD(Console, cmdStepGlobal));
+	DCmd_Register("step_callk",			WRAP_METHOD(Console, cmdStepCallk));
+	DCmd_Register("disasm",				WRAP_METHOD(Console, cmdDissassemble));
+	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDissassembleAddress));
 	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
@@ -307,9 +311,13 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" dissect_script - Examines a script\n");
 	DebugPrintf(" set_acc - Sets the accumulator\n");
 	DebugPrintf(" backtrace - Dumps the send/self/super/call/calle/callb stack\n");
+	DebugPrintf(" step - Executes one operation (no parameters) or several operations (specified as a parameter) \n");
 	DebugPrintf(" step_event - Steps forward until a SCI event is received.\n");
 	DebugPrintf(" step_ret - Steps forward until ret is called on the current execution stack level.\n");
 	DebugPrintf(" step_global - Steps until the global variable with the specified index is modified.\n");
+	DebugPrintf(" step_callk - Steps forward until it hits the next callk operation, or a specific callk (specified as a parameter)\n");
+	DebugPrintf(" disasm - Disassembles a method by name\n");
+	DebugPrintf(" disasm_addr - Disassembles one or more commands\n");
 	DebugPrintf("\n");
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list - Lists the current breakpoints\n");
@@ -2066,6 +2074,14 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdStep(int argc, const char **argv) {
+	g_debugstate_valid = 0;
+	if (argc == 2 && atoi(argv[1]) > 0)
+		g_debug_step_running = atoi(argv[1]) - 1;
+
+	return true;
+}
+
 bool Console::cmdStepEvent(int argc, const char **argv) {
 	g_stop_on_event = 1;
 	g_debugstate_valid = 0;
@@ -2091,6 +2107,135 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 	g_debug_seeking = kDebugSeekGlobal;
 	g_debug_seek_special = atoi(argv[1]);
 	g_debugstate_valid = 0;
+
+	return true;
+}
+
+bool Console::cmdStepCallk(int argc, const char **argv) {
+	int callk_index;
+	char *endptr;
+
+	if (argc == 2) {
+		/* Try to convert the parameter to a number. If the conversion stops
+		   before end of string, assume that the parameter is a function name
+		   and scan the function table to find out the index. */
+		callk_index = strtoul(argv[1], &endptr, 0);
+		if (*endptr != '\0') {
+			callk_index = -1;
+			for (uint i = 0; i < g_EngineState->_kernel->getKernelNamesSize(); i++)
+				if (argv[1] == g_EngineState->_kernel->getKernelName(i)) {
+					callk_index = i;
+					break;
+				}
+
+			if (callk_index == -1) {
+				DebugPrintf("Unknown kernel function '%s'\n", argv[1]);
+				return true;
+			}
+		}
+
+		g_debug_seeking = kDebugSeekSpecialCallk;
+		g_debug_seek_special = callk_index;
+		g_debugstate_valid = 0;
+	} else {
+		g_debug_seeking = kDebugSeekCallk;
+		g_debugstate_valid = 0;
+	}
+
+	return true;
+}
+
+bool Console::cmdDissassemble(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Disassembles a method by name.\n");
+		DebugPrintf("Usage: %s <object> <method>\n", argv[0]);
+		return true;
+	}
+
+	reg_t objAddr = NULL_REG;
+
+	if (parse_reg_t(g_EngineState, argv[1], &objAddr)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	Object *obj = obj_get(g_EngineState, objAddr);
+	int selector_id = g_EngineState->_kernel->findSelector(argv[2]);
+	reg_t addr;
+
+	if (!obj) {
+		DebugPrintf("Not an object.");
+		return true;
+	}
+
+	if (selector_id < 0) {
+		DebugPrintf("Not a valid selector name.");
+		return true;
+	}
+
+	if (lookup_selector(g_EngineState, objAddr, selector_id, NULL, &addr) != kSelectorMethod) {
+		DebugPrintf("Not a method.");
+		return true;
+	}
+
+	do {
+		// TODO
+		//addr = disassemble(g_EngineState, addr, 0, 0);
+	} while (addr.offset > 0);
+
+	return true;
+}
+
+bool Console::cmdDissassembleAddress(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Disassembles one or more commands.\n");
+		DebugPrintf("Usage: %s [startaddr] <options>\n", argv[0]);
+		DebugPrintf("Valid options are:\n");
+		DebugPrintf(" bwt  : Print byte/word tag\n");
+		DebugPrintf(" c<x> : Disassemble <x> bytes\n");
+		DebugPrintf(" bc   : Print bytecode\n");
+		return true;
+	}
+
+	reg_t vpc = NULL_REG;
+	int op_count = 1;
+	int do_bwc = 0;
+	int do_bytes = 0;
+	int size;
+
+	if (parse_reg_t(g_EngineState, argv[1], &vpc)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	g_EngineState->seg_manager->dereference(vpc, &size);
+	size += vpc.offset; // total segment size
+
+	for (int i = 1; i < argc; i++) {
+		if (!scumm_stricmp(argv[i], "bwt"))
+			do_bwc = 1;
+		else if (!scumm_stricmp(argv[i], "bc"))
+			do_bytes = 1;
+		else if (toupper(argv[i][0]) == 'C')
+			op_count = atoi(argv[i] + 1);
+		else {
+			DebugPrintf("Invalid option '%s'\n", argv[i]);
+			return true;
+		}
+	}
+
+	if (op_count < 0) {
+		DebugPrintf("Invalid op_count\n");
+		return true;
+	}
+
+	do {
+		// TODO
+		//vpc = disassemble(g_EngineState, vpc, do_bwc, do_bytes);
+
+	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--op_count));
 
 	return true;
 }

@@ -87,14 +87,6 @@ int con_hook_command(ConCommand command, const char *name, const char *param, co
 	return 0;
 }
 
-int c_step(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	g_debugstate_valid = 0;
-	if (cmdParams.size() && (cmdParams[0].val > 0))
-		g_debug_step_running = cmdParams[0].val - 1;
-
-	return 0;
-}
-
 extern const char *selector_name(EngineState *s, int selector);
 
 int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
@@ -373,111 +365,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	return retval;
 }
 
-static int c_disasm_addr(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	reg_t vpc = cmdParams[0].reg;
-	int op_count = 1;
-	int do_bwc = 0;
-	int do_bytes = 0;
-	unsigned int i;
-	int invalid = 0;
-	int size;
-
-	s->seg_manager->dereference(vpc, &size);
-	size += vpc.offset; // total segment size
-
-	for (i = 1; i < cmdParams.size(); i++) {
-		if (!scumm_stricmp(cmdParams[i].str, "bwt"))
-			do_bwc = 1;
-		else if (!scumm_stricmp(cmdParams[i].str, "bc"))
-			do_bytes = 1;
-		else if (toupper(cmdParams[i].str[0]) == 'C')
-			op_count = atoi(cmdParams[i].str + 1);
-		else {
-			invalid = 1;
-			sciprintf("Invalid option '%s'\n", cmdParams[i].str);
-		}
-	}
-
-	if (invalid || op_count < 0)
-		return invalid;
-
-	do {
-		vpc = disassemble(s, vpc, do_bwc, do_bytes);
-
-	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--op_count));
-	return 0;
-}
-
-static int c_disasm(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	Object *obj = obj_get(s, cmdParams[0].reg);
-	int selector_id = s->_kernel->findSelector(cmdParams[1].str);
-	reg_t addr;
-
-	if (!obj) {
-		sciprintf("Not an object.");
-		return 1;
-	}
-
-	if (selector_id < 0) {
-		sciprintf("Not a valid selector name.");
-		return 1;
-	}
-
-	if (lookup_selector(s, cmdParams[0].reg, selector_id, NULL, &addr) != kSelectorMethod) {
-		sciprintf("Not a method.");
-		return 1;
-	}
-
-	do {
-		addr = disassemble(s, addr, 0, 0);
-	} while (addr.offset > 0);
-
-	return 0;
-}
-
-static int c_snk(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-// TODO: disabled till this is moved in console.cpp
-#if 0
-
-	int callk_index;
-	char *endptr;
-
-	if (!g_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	if (cmdParams.size() > 0) {
-		/* Try to convert the parameter to a number. If the conversion stops
-		   before end of string, assume that the parameter is a function name
-		   and scan the function table to find out the index. */
-		callk_index = strtoul(cmdParams [0].str, &endptr, 0);
-		if (*endptr != '\0') {
-			callk_index = -1;
-			for (uint i = 0; i < s->_kernel->getKernelNamesSize(); i++)
-				if (cmdParams [0].str == s->_kernel->getKernelName(i)) {
-					callk_index = i;
-					break;
-				}
-
-			if (callk_index == -1) {
-				sciprintf("Unknown kernel function '%s'\n", cmdParams[0].str);
-				return 1;
-			}
-		}
-
-		g_debug_seeking = kDebugSeekSpecialCallk;
-		g_debug_seek_special = callk_index;
-		g_debugstate_valid = 0;
-	} else {
-		g_debug_seeking = kDebugSeekCallk;
-		g_debugstate_valid = 0;
-	}
-#endif
-
-	return 0;
-}
-
 static int c_go(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	g_debug_seeking = 0;
 	g_debugstate_valid = 0;
@@ -631,23 +518,10 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		sciprintf("Step #%d\n", script_step_counter);
 		disassemble(s, *pc, 0, 1);
 
-			con_hook_command(c_step, "s", "i*", "Executes one or several operations\n\nEXAMPLES\n\n"
-			                 "    s 4\n\n  Execute 4 commands\n\n    s\n\n  Execute next command");
-			con_hook_command(c_disasm_addr, "disasm-addr", "!as*", "Disassembles one or more commands\n\n"
-			                 "USAGE\n\n  disasm-addr [startaddr] <options>\n\n"
-			                 "  Valid options are:\n"
-			                 "  bwt  : Print byte/word tag\n"
-			                 "  c<x> : Disassemble <x> bytes\n"
-			                 "  bc   : Print bytecode\n\n");
-			con_hook_command(c_disasm, "disasm", "!as", "Disassembles a method by name\n\nUSAGE\n\n  disasm <obj> <method>\n\n");
-			con_hook_command(c_snk, "snk", "s*", "Steps forward until it hits the next\n  callk operation.\n"
-			                 "  If invoked with a parameter, it will\n  look for that specific callk.\n");
-			con_hook_command(c_send, "send", "!asa*", "Sends a message to an object\nExample: send ?fooScript cue");
-			con_hook_command(c_go, "go", "", "Executes the script.\n");
+		con_hook_command(c_send, "send", "!asa*", "Sends a message to an object\nExample: send ?fooScript cue");
+		con_hook_command(c_go, "go", "", "Executes the script.\n");
 	}
 
-	if (g_debug_step_running)
-		g_debug_step_running--;
 }
 
 } // End of namespace Sci
