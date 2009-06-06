@@ -53,6 +53,7 @@ public:
 	typedef Common::StringList StringList;
 protected:
 	StringList		_list;
+	StringList		_dataList;
 	bool			_editable;
 	bool			_editMode;
 	NumberingMode	_numberingMode;
@@ -73,6 +74,8 @@ protected:
 	int				_bottomPadding;
 	int				_scrollBarWidth;
 
+	String			_filter;
+
 public:
 	ListWidget(GuiObject *boss, const String &name);
 	ListWidget(GuiObject *boss, int x, int y, int w, int h);
@@ -82,7 +85,7 @@ public:
 
 	void setList(const StringList &list);
 	void append(const String &s);
-	const StringList &getList()	const			{ return _list; }
+	const StringList &getList()	const			{ return _dataList; }
 	int getSelected() const						{ return _selectedItem; }
 	void setSelected(int item);
 	const String &getSelectedString() const		{ return _list[_selectedItem]; }
@@ -91,6 +94,8 @@ public:
 	void setEditable(bool editable)				{ _editable = editable; }
 	void scrollTo(int item);
 	void scrollToEnd();
+
+	void setFilter(const String &filter);
 
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);

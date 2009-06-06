@@ -122,7 +122,12 @@ void ListWidget::setList(const StringList &list) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 	int size = list.size();
+	_dataList = list;
+
+	// Copy everything
 	_list = list;
+	_filter = "";
+
 	if (_currentPos >= size)
 		_currentPos = size - 1;
 	if (_currentPos < 0)
@@ -134,6 +139,7 @@ void ListWidget::setList(const StringList &list) {
 }
 
 void ListWidget::append(const String &s) {
+	_dataList.push_back(s);
 	_list.push_back(s);
 	scrollBarRecalc();
 }
@@ -527,6 +533,37 @@ void ListWidget::reflowLayout() {
 		scrollBarRecalc();
 		scrollToCurrent();
 	}
+}
+
+void ListWidget::setFilter(const String &filter) {
+	String filt;
+
+	filt = filter;
+
+	filt.toLowercase();
+	_filter = filt;
+
+	if (_filter == "") {
+		_list = _dataList;
+	} else {
+		String tmp;
+
+		_list.clear();
+
+		for (StringList::iterator i = _dataList.begin(); i != _dataList.end(); ++i) {
+			tmp = *i;
+			tmp.toLowercase();
+			if (tmp.contains(_filter.c_str())) {
+				_list.push_back(*i);
+			}
+		}
+	}
+
+	_currentPos = 0;
+	_selectedItem = -1;
+	scrollBarRecalc();
+
+	draw();
 }
 
 } // End of namespace GUI

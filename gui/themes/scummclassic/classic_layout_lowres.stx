@@ -34,6 +34,8 @@
 
 		<def var = 'ShowLauncherLogo' value = '0'/>
 		<def var = 'ShowGlobalMenuLogo' value = '0'/>
+		<def var = 'ShowSearchPic' value = '0'/>
+
 		<def var = 'ScummSaveLoad.ExtInfo.Visible' value = '0'/>
 
 		<widget name = 'Button'
@@ -87,6 +89,18 @@
 			<widget name = 'Version'
 					height = 'Globals.Line.Height'
 			/>
+			<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
+				<widget name = 'SearchDesc'
+						width = '50'
+						height = 'Globals.Line.Height'
+						textalign = 'right'
+				/>
+				<widget name = 'Search'
+						width = '150'
+						height = 'Globals.Line.Height'
+				/>
+				<space />
+			</layout>
 			<widget name = 'GameList'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'LoadGameButton' 

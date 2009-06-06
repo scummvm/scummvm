@@ -510,8 +510,16 @@ LauncherDialog::LauncherDialog()
 		new ButtonWidget(this, "Launcher.RemoveGameButton", "Remove Game", kRemoveGameCmd, 'R');
 
 	// Search box
-	_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
-	_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+	_searchDesc = 0;
+#ifndef DISABLE_FANCY_THEMES
+	_searchPic = 0;
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
+		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+	} else
+#endif
+		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", "Search:");
+
 	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, kSearchCmd);
 
 	// Add list with game titles
@@ -913,6 +921,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		close();
 		break;
 	case kSearchCmd:
+		_list->setFilter(_searchWidget->getEditString());
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -973,6 +982,29 @@ void LauncherDialog::reflowLayout() {
 			_logo->setNext(0);
 			delete _logo;
 			_logo = 0;
+		}
+	}
+
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		if (!_searchPic)
+			_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
+		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+
+		if (_searchDesc) {
+			removeWidget(_searchDesc);
+			_searchDesc->setNext(0);
+			delete _searchDesc;
+			_searchDesc = 0;
+		}
+	} else {
+		if (!_searchDesc)
+			_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", "Search:");
+
+		if (_searchPic) {
+			removeWidget(_searchPic);
+			_searchPic->setNext(0);
+			delete _searchPic;
+			_searchPic = 0;
 		}
 	}
 #endif
