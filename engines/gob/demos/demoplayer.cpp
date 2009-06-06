@@ -56,6 +56,7 @@ DemoPlayer::Script DemoPlayer::_scripts[] = {
 
 DemoPlayer::DemoPlayer(GobEngine *vm) : _vm(vm) {
 	_doubleMode = false;
+	_rebase0 = false;
 }
 
 DemoPlayer::~DemoPlayer() {
@@ -149,15 +150,19 @@ void DemoPlayer::playVideo(const char *fileName) {
 
 	debugC(1, kDebugDemo, "Playing video \"%s\"", file);
 
-	if (_vm->_vidPlayer->primaryOpen(file)) {
+	int16 x = _rebase0 ? 0 : -1;
+	int16 y = _rebase0 ? 0 : -1;
+	if (_vm->_vidPlayer->primaryOpen(file, x, y)) {
 		bool videoSupportsDouble =
 			((_vm->_vidPlayer->getFeatures() & Graphics::CoktelVideo::kFeaturesSupportsDouble) != 0);
 
 		if (_autoDouble) {
-			int16 width  = _vm->_vidPlayer->getWidth();
-			int16 height = _vm->_vidPlayer->getHeight();
+			int16 defX = _rebase0 ? 0 : _vm->_vidPlayer->getDefaultX();
+			int16 defY = _rebase0 ? 0 : _vm->_vidPlayer->getDefaultY();
+			int16 right  = defX + _vm->_vidPlayer->getWidth()  - 1;
+			int16 bottom = defY + _vm->_vidPlayer->getHeight() - 1;
 
-			_doubleMode = ((width <= 320) && (height <= 200));
+			_doubleMode = ((right < 320) && (bottom < 200));
 		}
 
 		if (_doubleMode) {
@@ -187,7 +192,9 @@ void DemoPlayer::playVideoDoubled() {
 	Common::String fileNameOpened = _vm->_vidPlayer->getFileName();
 	_vm->_vidPlayer->primaryClose();
 
-	if (_vm->_vidPlayer->primaryOpen(fileNameOpened.c_str(), 0, -1,
+	int16 x = _rebase0 ? 0 : -1;
+	int16 y = _rebase0 ? 0 : -1;
+	if (_vm->_vidPlayer->primaryOpen(fileNameOpened.c_str(), x, y,
 				VideoPlayer::kFlagScreenSurface)) {
 
 		for (int i = 0; i < _vm->_vidPlayer->getFramesCount(); i++) {

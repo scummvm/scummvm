@@ -274,8 +274,7 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 
 				surf = _vm->_video->initSurfDesc(_vm->_global->_videoMode,
 						_vm->_width, _vm->_height, 0);
-				_vm->_draw->_spritesArray[x] = surf;
-				x = 0;
+				_vm->_draw->_spritesArray[0] = surf;
 			} else {
 				_backSurf = ((flags & kFlagFrontSurface) == 0);
 				surf = _vm->_draw->_spritesArray[_backSurf ? 21 : 20];

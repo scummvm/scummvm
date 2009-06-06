@@ -46,6 +46,7 @@ protected:
 	GobEngine *_vm;
 	bool _doubleMode;
 	bool _autoDouble;
+	bool _rebase0;
 
 	virtual bool playStream(Common::SeekableReadStream &stream) = 0;
 
