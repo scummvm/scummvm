@@ -646,18 +646,16 @@ cmd(discard_sound) {
 }
 
 cmd(hide_mouse) {
-	report("hide.mouse\n");
+	// WORKAROUND: Turns off current movement that's being caused with the mouse.
+	// This fixes problems with too many popup boxes appearing in the Amiga
+	// Gold Rush's copy protection failure scene (i.e. the hanging scene, logic.192).
+	// Previously multiple popup boxes appeared one after another if you tried
+	// to walk somewhere else than to the right using the mouse.
+	// FIXME: Write a proper implementation using disassembly and
+	//        apply it to other games as well if applicable.
+	game.viewTable[0].flags &= ~ADJ_EGO_XY;
 
-	if (g_agi->getPlatform() == Common::kPlatformAmiga && g_agi->getGameID() == GID_GOLDRUSH) {
-		// WORKAROUND: Turns off current movement that's being caused with the mouse.
-		// This fixes problems with too many popup boxes appearing in the Amiga
-		// Gold Rush's copy protection failure scene (i.e. the hanging scene, logic.192).
-		// Previously multiple popup boxes appeared one after another if you tried
-		// to walk somewhere else than to the right using the mouse.
-		// FIXME: Write a proper implementation using disassembly and
-		//        apply it to other games as well if applicable.
-		game.viewTable[0].flags &= ~ADJ_EGO_XY;
-	}
+	g_system->showMouse(false);
 }
 
 cmd(allow_menu) {
@@ -667,7 +665,7 @@ cmd(allow_menu) {
 }
 
 cmd(show_mouse) {
-	report("show.mouse\n");
+	g_system->showMouse(true);
 }
 
 cmd(fence_mouse) {
