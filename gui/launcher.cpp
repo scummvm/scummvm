@@ -948,8 +948,15 @@ void LauncherDialog::updateButtons() {
 		_removeButton->setEnabled(enable);
 		_removeButton->draw();
 	}
-	if (enable != _loadButton->isEnabled()) {
-		_loadButton->setEnabled(enable);
+
+	int item = _list->getSelected();
+	bool en = enable;
+
+	if (item >= 0)
+		en = !(Common::checkGameGUIOption(Common::GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
+
+	if (en != _loadButton->isEnabled()) {
+		_loadButton->setEnabled(en);
 		_loadButton->draw();
 	}
 
