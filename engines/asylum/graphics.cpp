@@ -78,6 +78,11 @@ GraphicResource::GraphicResource(ResourceItem item) {
 GraphicResource::~GraphicResource() {
 }
 
+GraphicAsset GraphicResource::getGraphicAsset(uint8 index){
+	// TODO bounds check the array accessor
+	return _items[index];
+}
+
 void GraphicResource::dump() {
     printf( "Tag %d, Flag %d, ConOffset %d, U1 %d, U2 %d, U3 %d, Entries %d, MaxWidthSize %d\n", _tagValue, _flag, _contentOffset, _unknown1, _unknown2, _unknown3, _numEntries, _maxWidthSize );
 }

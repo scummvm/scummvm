@@ -47,11 +47,11 @@ Screen::~Screen(){
 }
 
 void Screen::setFrontBuffer(int32 x, int32 y, int32 width, int32 height, uint8 *buffer){
-	copyBuffer(x, y, width, height, _frontBuf, buffer);
+	copyBuffer(x, y, width, height, buffer, _frontBuf);
 }
 
 void Screen::setBackBuffer(int32 x, int32 y, int32 width, int32 height, uint8 *buffer){
-	copyBuffer(x, y, width, height, _backBuf, buffer);
+	copyBuffer(x, y, width, height, buffer, _backBuf);
 }
 
 void Screen::copyBuffer(int32 x, int32 y, int32 width, int32 height, uint8 *src, uint8 *dst){

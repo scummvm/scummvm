@@ -36,6 +36,8 @@ public:
     GraphicResource(ResourceItem item);
     ~GraphicResource();
 
+	GraphicAsset getGraphicAsset(uint8 index);
+
 	void dump();
 
 private:

@@ -43,6 +43,7 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
+	delete _menu;
     delete _screen;
 }
 
@@ -79,11 +80,11 @@ Common::Error AsylumEngine::go() {
     res->load(1);
     res->dump();
 
-    GraphicResource *gres = new GraphicResource( res->getResource(1) );
-    gres->dump();
+    //GraphicResource *gres = new GraphicResource( res->getResource(1) );
+    //gres->dump();
 
     delete res;
-    delete gres;
+    //delete gres;
 
 	_menu->init();
 

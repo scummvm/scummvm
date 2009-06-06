@@ -19,48 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "asylum/menu.h"
-#include "asylum/resource.h"
-#include "asylum/graphics.h"
+#include "common/endian.h"
+
 #include "asylum/palette.h"
 
 namespace Asylum {
 
-// eyes animation index table
-const uint32 Menu::eyesTable[8] = {3, 5, 1, 7, 4, 8, 2, 6};
-
-Menu::Menu(Screen *screen){
-	_screen = screen;
+Palette::Palette(ResourceItem item){
+	int pos = 32; // palettes always start from offset 32
+	for (int i = 0; i < PAL_SIZE; i++) {
+		_buffer[i] = item.data[pos];
+		_buffer[i+1] = item.data[pos+1];
+		_buffer[i+3] = item.data[pos+2];
+		pos+=3;
+	}
 }
 
-Menu::~Menu() {
-	delete _res1;
-}
-
-void Menu::init(){
-	printf("Menu: init()\n");
-	
-	_res1 = new Resource(1);
-
-	// TODO: from address 0041A500 (init background music, setup menu environment like palette, font, gamma level, etc.)
-
-	Palette *tmpPal = new Palette(_res1->getResource(MENU_PAL_ENTRY));
-	memcpy(_palette, tmpPal->_buffer, sizeof(uint8)*256);
-
-	// TESTING...
-	GraphicResource *gres = new GraphicResource(_res1->getResource(0));
-	_screen->setFrontBuffer(0, 0, SCREEN_WIDTH, SCREEN_DEPTH, gres->getGraphicAsset(0).data);
-}
-
-void Menu::run(){
-	//printf("Menu: running...\n");
-
-	_screen->setPalette(_palette);
-
-	// TODO: get background image
-	// blit it into back buffer and front buffer
-	
-	_screen->updateScreen();
+Palette::~Palette() {
+	/*if(_buffer){
+		free(_buffer);
+	}*/
 }
 
 } // namespace Asylum

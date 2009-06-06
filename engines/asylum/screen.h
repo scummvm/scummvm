@@ -28,7 +28,7 @@
 class OSystem;
 
 #define	SCREEN_WIDTH	640
-#define	SCREEN_DEPTH	400
+#define	SCREEN_DEPTH	480
 
 #define PAL_SIZE		256
 

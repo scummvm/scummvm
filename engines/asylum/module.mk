@@ -6,7 +6,8 @@ MODULE_OBJS := \
 	resource.o \
 	asylum.o \
 	screen.o \
-	menu.o
+	menu.o \
+	palette.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)
