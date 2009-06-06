@@ -88,6 +88,7 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"adlib", "AdLib", MD_ADLIB, MDT_ADLIB},
 	{"pcspk", "PC Speaker", MD_PCSPK, MDT_PCSPK},
 	{"pcjr", "IBM PCjr", MD_PCJR, MDT_PCSPK},
+	{"cms", "Creative Music System", MD_CMS, MDT_CMS},
 	{"towns", "FM Towns", MD_TOWNS, MDT_TOWNS},
 #if defined(UNIX)
 	{"timidity", "TiMidity", MD_TIMIDITY, MDT_MIDI},
@@ -236,6 +237,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	// outside the MidiDriver architecture, so
 	// don't create anything for now.
 	case MD_PCSPK:
+	case MD_CMS:
 	case MD_PCJR:      return NULL;
 
 #ifdef USE_FLUIDSYNTH

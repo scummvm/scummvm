@@ -706,6 +706,9 @@ void ScummEngine::resetScummVars() {
 		case MDT_PCSPK:
 			VAR(VAR_SOUNDCARD) = 0;
 			break;
+		case MDT_CMS:
+			VAR(VAR_SOUNDCARD) = 2;
+			break;
 		case MDT_ADLIB:
 			VAR(VAR_SOUNDCARD) = 3;
 			break;
