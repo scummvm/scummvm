@@ -651,7 +651,7 @@ void LauncherDialog::addGame() {
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 			MassAddDialog massAddDlg(_browser->getResult());
 
-			if (_list->getList().size() > 0) {
+			if (_list->getSelected() != -1) {
 				// Save current game position, so on cancel cursor will move back
 				ConfMan.set("temp_selection", _domains[_list->getSelected()], ConfigManager::kApplicationDomain);
 			}
