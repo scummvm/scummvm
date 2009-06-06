@@ -63,6 +63,8 @@ struct ADGameDescription {
 	 * code.
 	 */
 	uint32 flags;
+
+	uint32 guioptions;
 };
 
 /**
@@ -70,7 +72,7 @@ struct ADGameDescription {
  * terminate a list to be passed to the AdvancedDetector API.
  */
 #define AD_TABLE_END_MARKER	\
-	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS }
+	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS, Common::GUIO_NONE }
 
 
 struct ADObsoleteGameID {
@@ -171,6 +173,13 @@ struct ADParams {
 	 * that can be ORed together and passed here.
 	 */
 	uint32 flags;
+
+	/**
+	 * A bitmask of game GUI options which will be added to each
+	 * entry in addition to per-game options. Refer to GameGUIOption
+	 * enum for the list.
+	 */
+	uint32 guioptions;
 };
 
 

@@ -127,6 +127,8 @@ static const PlainGameDescriptor agiGames[] = {
 
 namespace Agi {
 
+using Common::GUIO_NONE;
+
 #define GAME_LVFPN(id,name,fname,md5,size,lang,ver,features,gid,platform,interp) { \
 		{ \
 			id, \
@@ -134,7 +136,8 @@ namespace Agi {
 			AD_ENTRY1s(fname,md5,size),		\
 			lang, \
 			platform, \
-			ADGF_NO_FLAGS \
+			ADGF_NO_FLAGS,					\
+			GUIO_NONE	\
 		}, \
 		gid, \
 		interp, \
@@ -266,7 +269,8 @@ static const AGIGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_GOLDRUSH,
 		GType_V3,
@@ -513,7 +517,8 @@ static const AGIGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_SQ2,
 		GType_V2,
@@ -641,7 +646,8 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "421da3a18004122a966d64ab6bd86d2e"),
 			Common::RU_RUS,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_FANMADE,
 		GType_V2,
@@ -657,7 +663,8 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1("logdir", "aaea5b4a348acb669d13b0e6f22d4dc9"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_GETOUTTASQ,
 		GType_V2,
@@ -817,7 +824,8 @@ static AGIGameDescription g_fallbackDesc = {
 		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 		Common::UNK_LANG,
 		Common::kPlatformPC,
-		ADGF_NO_FLAGS
+		ADGF_NO_FLAGS,
+		GUIO_NONE
 	},
 	GID_FANMADE,
 	GType_V2,
@@ -841,7 +849,9 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI
 };
 
 } // End of namespace Agi

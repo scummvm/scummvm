@@ -77,6 +77,9 @@ static const PlainGameDescriptor tinselGames[] = {
 
 namespace Tinsel {
 
+using Common::GUIO_NONE;
+using Common::GUIO_NOSPEECH;
+
 static const TinselGameDescription gameDescriptions[] = {
 
 	// Note: The following is the (hopefully) definitive list of version details:
@@ -97,7 +100,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			//AD_ENTRY1s("dw.scn", "ccd72f02183d0e96b6e7d8df9492cda8", 23308),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO
+			ADGF_DEMO,
+			GUIO_NOSPEECH
 		},
 		GID_DW1,
 		0,
@@ -115,7 +119,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO
+			ADGF_DEMO,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -130,7 +135,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dw.gra", "c8808ccd988d603dd35dff42013ae7fd", 781656),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
 		},
 		GID_DW1,
 		0,
@@ -148,7 +154,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -172,7 +179,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE
+			ADGF_DROPLANGUAGE,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -194,7 +202,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE
+			ADGF_DROPLANGUAGE,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -216,7 +225,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE
+			ADGF_DROPLANGUAGE,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -238,7 +248,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_DROPLANGUAGE
+			ADGF_DROPLANGUAGE,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -257,7 +268,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -276,7 +288,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::HB_ISR,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -298,7 +311,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPSX,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -320,7 +334,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPSX,
-			ADGF_DEMO
+			ADGF_DEMO,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -340,7 +355,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -357,7 +373,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("dw.scn", "6182c7986eaec893c62fb6ea13a9f225", 774556),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW1,
 		0,
@@ -376,7 +393,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_GRB,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW2,
 		0,
@@ -395,7 +413,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_USA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW2,
 		0,
@@ -414,7 +433,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW2,
 		0,
@@ -433,7 +453,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW2,
 		0,
@@ -453,7 +474,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW2,
 		0,
@@ -472,7 +494,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW2,
 		0,
@@ -492,7 +515,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GID_DW2,
 		0,
@@ -521,7 +545,9 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NONE
 };
 
 class TinselMetaEngine : public AdvancedMetaEngine {

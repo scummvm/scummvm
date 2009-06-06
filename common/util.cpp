@@ -371,6 +371,52 @@ const char *getRenderModeDescription(RenderMode id) {
 	return 0;
 }
 
+const struct GameOpt {
+	uint32 option;
+	const char *desc;
+} g_gameOptions[] = {
+	{ GUIO_NOSUBTITLES, "sndNoSubs" },
+	{ GUIO_NOMUSIC, "sndNoMusic" },
+	{ GUIO_NOSPEECH, "sndNoSpeech" },
+	{ GUIO_NOSFX, "sndNoSFX" },
+	{ GUIO_NOMIDI, "sndNoMIDI" },
+	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
+	{ GUIO_NONE, 0 }
+};
+
+bool checkGameGUIOption(GameGUIOption option, const String &str) {
+	for (int i = 0; g_gameOptions[i].desc; i++) {
+		if (g_gameOptions[i].option & option) {
+			if (str.contains(g_gameOptions[i].desc))
+				return true;
+			else
+				return false;
+		}
+	}
+	return false;
+}
+
+uint32 parseGameGUIOptions(const String &str) {
+	uint32 res = 0;
+
+	for (int i = 0; g_gameOptions[i].desc; i++)
+		if (str.contains(g_gameOptions[i].desc))
+			res |= g_gameOptions[i].option;
+
+	return res;
+}
+
+String getGameGUIOptionsDescription(uint32 options) {
+	String res = "";
+
+	for (int i = 0; g_gameOptions[i].desc; i++)
+		if (options & g_gameOptions[i].option)
+			res += String(g_gameOptions[i].desc) + " ";
+
+	res.trim();
+
+	return res;
+}
 
 }	// End of namespace Common
 
