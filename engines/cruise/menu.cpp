@@ -264,7 +264,7 @@ int playerMenu(int menuX, int menuY) {
 			Op_FadeOut();
 			memset(globalScreen, 0, 320 * 200);
 			initVars();
-			initAllData();
+			_vm->initAllData();
 			changeCursor(CURSOR_NORMAL);
 			userEnabled = 0;
 			break;

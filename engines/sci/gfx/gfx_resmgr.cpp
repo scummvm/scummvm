@@ -46,10 +46,10 @@ namespace Sci {
 
 struct param_struct {
 	int args[4];
-	gfx_driver_t *driver;
+	GfxDriver *driver;
 };
 
-GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager) :
+GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager) :
 				_version(version), _isVGA(isVGA), _options(options), _driver(driver), _resManager(resManager),
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
@@ -268,7 +268,7 @@ void GfxResManager::setStaticPalette(Palette *newPalette)
 	_staticPalette = newPalette;
 	_staticPalette->name = "static palette";
 
-	_staticPalette->mergeInto(_driver->mode->palette);
+	_staticPalette->mergeInto(_driver->getMode()->palette);
 }
 
 #if 0
@@ -307,13 +307,27 @@ static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scal
 }
 #undef XLATE_AS_APPROPRIATE
 
+/* unscaled color index mode: Used in addition to a scaled mode
+** to render the pic resource twice.
+*/
+// FIXME: this is an ugly hack. Perhaps we could do it some other way?
+gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
+	/* xfact */ 1, /* yfact */ 1,
+	/* xsize */ 1, /* ysize */ 1,
+	/* bytespp */ 1,
+	/* flags */ 0,
+	/* palette */ NULL,
+
+	/* color masks */ 0, 0, 0, 0,
+	/* color shifts */ 0, 0, 0, 0
+};
 
 gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_palette, bool scaled) {
 	gfxr_pic_t *npic = NULL;
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_PIC];
 	gfx_resource_t *res = NULL;
 	int hash = getOptionsHash(GFX_RESOURCE_TYPE_PIC);
-	int need_unscaled = (_driver->mode->xfact != 1 || _driver->mode->yfact != 1);
+	int need_unscaled = (_driver->getMode()->xfact != 1 || _driver->getMode()->yfact != 1);
 
 	hash |= (flags << 20) | ((default_palette & 0x7) << 28);
 
@@ -328,10 +342,10 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 			need_unscaled = 0;
 			pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
 		} else
-			pic = gfxr_init_pic(_driver->mode, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
+			pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
 #else
 		need_unscaled = 0;
-		pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
+		pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
 #endif
 
 		if (!pic) {
@@ -382,10 +396,10 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 	}
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	npic = gfxr_pic_xlate_common(res, maps, scaled || _options->pic0_unscaled, 0, _driver->mode,
+	npic = gfxr_pic_xlate_common(res, maps, scaled || _options->pic0_unscaled, 0, _driver->getMode(),
 	                             _options->pic_xlate_filter, _options);
 #else
-	npic = gfxr_pic_xlate_common(res, maps, 1, 0, _driver->mode,
+	npic = gfxr_pic_xlate_common(res, maps, 1, 0, _driver->getMode(),
 	                             GFX_XLATE_FILTER_NONE, _options);
 #endif
 
@@ -446,7 +460,7 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 	gfx_resource_t *res = NULL;
 	int hash = getOptionsHash(GFX_RESOURCE_TYPE_PIC);
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	int need_unscaled = !(_options->pic0_unscaled) && (_driver->mode->xfact != 1 || _driver->mode->yfact != 1);
+	int need_unscaled = !(_options->pic0_unscaled) && (_driver->getMode()->xfact != 1 || _driver->getMode()->yfact != 1);
 #else
 	int need_unscaled = 1;
 #endif
@@ -467,7 +481,7 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 	if (_options->pic0_unscaled) // Unscale priority map, if we scaled it earlier
 #endif
-		_gfxr_unscale_pixmap_index_data(res->scaled_data.pic->priority_map, _driver->mode);
+		_gfxr_unscale_pixmap_index_data(res->scaled_data.pic->priority_map, _driver->getMode());
 
 	// The following two operations are needed when returning scaled maps (which is always the case here)
 #ifdef CUSTOM_GRAPHICS_OPTIONS
@@ -483,15 +497,15 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 	if (_options->pic0_unscaled) // Scale priority map again, if needed
 #endif
-		res->scaled_data.pic->priority_map = gfx_pixmap_scale_index_data(res->scaled_data.pic->priority_map, _driver->mode);
+		res->scaled_data.pic->priority_map = gfx_pixmap_scale_index_data(res->scaled_data.pic->priority_map, _driver->getMode());
 
 	{
 		int old_ID = get_pic_id(res);
 		set_pic_id(res, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, new_nr)); // To ensure that our graphical translation options work properly
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->mode, _options->pic_xlate_filter, _options);
+		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->getMode(), _options->pic_xlate_filter, _options);
 #else
-		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->mode, GFX_XLATE_FILTER_NONE, _options);
+		pic = gfxr_pic_xlate_common(res, GFX_MASK_VISUAL, 1, 1, _driver->getMode(), GFX_XLATE_FILTER_NONE, _options);
 #endif
 		set_pic_id(res, old_ID);
 	}
@@ -590,9 +604,9 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	if (!cel_data->data) {
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 		gfx_get_res_config(_options, cel_data);
-		gfx_xlate_pixmap(cel_data, _driver->mode, _options->view_xlate_filter);
+		gfx_xlate_pixmap(cel_data, _driver->getMode(), _options->view_xlate_filter);
 #else
-		gfx_xlate_pixmap(cel_data, _driver->mode, GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(cel_data, _driver->getMode(), GFX_XLATE_FILTER_NONE);
 #endif
 	}
 
@@ -671,9 +685,9 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 		}
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 		gfx_get_res_config(_options, cursor);
-		gfx_xlate_pixmap(cursor, _driver->mode, _options->cursor_xlate_filter);
+		gfx_xlate_pixmap(cursor, _driver->getMode(), _options->cursor_xlate_filter);
 #else
-		gfx_xlate_pixmap(cursor, _driver->mode, GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(cursor, _driver->getMode(), GFX_XLATE_FILTER_NONE);
 #endif
 
 		res->unscaled_data.pointer = cursor;

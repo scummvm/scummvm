@@ -226,6 +226,7 @@ enum ScummGameId {
 	GID_FUNSHOP,	// Used for all three funshops
 	GID_FOOTBALL,
 	GID_SOCCER,
+	GID_BASKETBALL,
 	GID_MOONBASE,
 	GID_HECUP		// CUP demos
 };

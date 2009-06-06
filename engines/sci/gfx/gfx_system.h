@@ -60,6 +60,7 @@ namespace Sci {
 struct gfx_mode_t {
 
 	int xfact, yfact; /* Horizontal and vertical scaling factors */
+	int xsize, ysize; /* Horizontal and vertical size */
 	int bytespp; /* Bytes per pixel */
 
 	uint32 flags; /* GFX_MODE_FLAG_* Flags- see above */

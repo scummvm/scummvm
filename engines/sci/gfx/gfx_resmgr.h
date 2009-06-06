@@ -88,7 +88,7 @@ typedef Common::HashMap<int, gfx_resource_t *> IntResMap;
 
 class GfxResManager {
 public:
-	GfxResManager(int version, bool isVGA, gfx_options_t *options, gfx_driver_t *driver, ResourceManager *resManager);
+	GfxResManager(int version, bool isVGA, gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager);
 
 	~GfxResManager();
 
@@ -239,13 +239,13 @@ public:
 	void setPaletteIntensity(int16 from, int16 to, int16 intensity) {
 		Palette *pal = _staticPalette->getref();
 
-		for (uint16 i = 0; i < _driver->mode->palette->size(); i++) {
+		for (uint16 i = 0; i < _driver->getMode()->palette->size(); i++) {
 			byte r = pal->getColor(i).r * intensity / 100;
 			byte g = pal->getColor(i).g * intensity / 100;
 			byte b = pal->getColor(i).b * intensity / 100;
 			pal->makeSystemColor(i, PaletteEntry(r, g, b));
 		}
-		pal->mergeInto(_driver->mode->palette);
+		pal->mergeInto(_driver->getMode()->palette);
 		_driver->install_palette(_driver, pal);
 		pal->unmerge();
 		pal->free();
@@ -258,7 +258,7 @@ private:
 	int _version;
 	bool _isVGA;
 	gfx_options_t *_options;
-	gfx_driver_t *_driver;
+	GfxDriver *_driver;
 	Palette *_staticPalette;
 	int _lockCounter; /* Global lock counter; increased for each new resource allocated.
 			  ** The newly allocated resource will then be assigned the new value

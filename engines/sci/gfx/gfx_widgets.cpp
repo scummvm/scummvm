@@ -409,7 +409,7 @@ GfxBox::GfxBox(GfxState *state, rect_t area, gfx_color_t color1, gfx_color_t col
 
 	_flags |= GFXW_FLAG_VISIBLE;
 
-	if ((_color1.mask & GFX_MASK_VISUAL) && ((state && (state->driver->mode->palette)) || (!_color1.alpha && !_color2.alpha)))
+	if ((_color1.mask & GFX_MASK_VISUAL) && ((state && (state->driver->getMode()->palette)) || (!_color1.alpha && !_color2.alpha)))
 		_flags |= GFXW_FLAG_OPAQUE;
 
 	_gfxw_set_ops_BOX(this);

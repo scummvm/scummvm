@@ -3328,9 +3328,9 @@ reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		gfx_pixmap_t *pixmap = seq.getFrame(play);
 
 		if (frameNr++ == 0)
-			pixmap->palette->forceInto(s->gfx_state->driver->mode->palette);
+			pixmap->palette->forceInto(s->gfx_state->driver->getMode()->palette);
 
-		gfx_xlate_pixmap(pixmap, s->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
 		GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset)));
 		gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 		gfx_free_pixmap(pixmap);

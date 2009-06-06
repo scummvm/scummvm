@@ -376,7 +376,7 @@ uint8 *mainProc14(uint16 overlay, uint16 idx) {
 	return NULL;
 }
 
-int initAllData(void) {
+void CruiseEngine::initAllData(void) {
 	int i;
 
 	setupFuncArray();
@@ -514,7 +514,9 @@ int initAllData(void) {
 
 	strcpy(lastOverlay, "AUTO00");
 
-	return (bootOverlayNumber);
+	_gameSpeed = GAME_FRAME_DELAY_1;
+
+	return;
 }
 
 int removeFinishedScripts(scriptInstanceStruct *ptrHandle) {
@@ -1790,6 +1792,9 @@ void CruiseEngine::mainLoop(void) {
 			// User waiting has ended
 			changeScriptParamInList(-1, -1, &procHead, 9999, 0);
 			changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+
+			mainDraw(0);
+			flipScreen();
 		}
 
 		if (enableUser) {
@@ -1881,13 +1886,13 @@ void CruiseEngine::mainLoop(void) {
 //					flipScreen();
 				} else {
 					// Standard handling
-
+/*
 					manageScripts(&relHead);
 					manageScripts(&procHead);
 
 					removeFinishedScripts(&relHead);
 					removeFinishedScripts(&procHead);
-
+*/
 					if (isBlack) {
 						// This is a bit of a hack to ensure that user waits directly after a palette fade
 						// have time to restore the palette before waiting starts

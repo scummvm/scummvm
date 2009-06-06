@@ -62,18 +62,13 @@ enum gfx_buffer_t {
 ** must use a reasonable default value.
 */
 
-// FIXME: Turn this into a class, or get rid of it completely.
-struct gfx_driver_t { /* Graphics driver */
-
-	gfx_mode_t *mode; /* Currently active mode, NULL if no mode is active */
-
+class GfxDriver {
+public:
 	/*** Initialization ***/
 
-	int (*init)(gfx_driver_t *drv, int xres, int yres,
-	                     int bytespp);
+	GfxDriver(int xfact, int yfact, int bytespp);
 	/* Attempts to initialize a specific graphics mode
-	** Parameters: (gfx_driver_t *) drv: The affected driver
-	**             (int x int) xres, yres: Horizontal and vertical scaling
+	** Parameters: (int x int) xres, yres: Horizontal and vertical scaling
 	**                         factors
 	**             (int) bytespp: Any of GFX_COLOR_MODE_*. GFX_COLOR_MODE_INDEX
 	**                   implies color index mode.
@@ -83,14 +78,12 @@ struct gfx_driver_t { /* Graphics driver */
 	** and is used for internal representation of graphical data. The physical
 	** resolution set by the graphics driver may be different for practical
 	** reasons.
-	** Must also set drv->mode, preferably with the gfx_new_mode() function
+	** Must also set _mode, preferably with the gfx_new_mode() function
 	** specified in gfx_tools.h.
 	*/
 
-	void (*exit)(gfx_driver_t *drv);
+	~GfxDriver();
 	/* Uninitializes the current graphics mode
-	** Paramters: (gfx_driver_t *) drv: The driver to uninitialize
-	** Return   : (void)
 	** This function frees all memory allocated by the graphics driver,
 	** including mode and palette information, uninstalls all console commands
 	** introduced by preceeding init() or init_specific() commands, and does any
@@ -101,13 +94,10 @@ struct gfx_driver_t { /* Graphics driver */
 
 	/*** Drawing operations ***/
 
-	int (*draw_line)(gfx_driver_t *drv,
-	                 Common::Point start, Common::Point end,
-	                 gfx_color_t color,
-	                 gfx_line_mode_t line_mode, gfx_line_style_t line_style);
+	int drawLine(Common::Point start, Common::Point end, gfx_color_t color,
+	             gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 	/* Draws a single line to the back buffer.
-	** Parameters: (gfx_driver_t *) drv: The driver affected
-	**             (Common::Point) start: Starting point of the line to draw
+	** Parameters: (Common::Point) start: Starting point of the line to draw
 	**             (Common::Point) end: End point of the line to draw
 	**             (gfx_color_t *) color: The color to draw with
 	**             (int) line_mode: Any of the line modes
@@ -122,12 +112,10 @@ struct gfx_driver_t { /* Graphics driver */
 	** set.
 	*/
 
-	int (*draw_filled_rect)(gfx_driver_t *drv, rect_t rect,
-	                        gfx_color_t color1, gfx_color_t color2,
-	                        gfx_rectangle_fill_t shade_mode);
+	int drawFilledRect(rect_t rect, gfx_color_t color1, gfx_color_t color2,
+	                   gfx_rectangle_fill_t shade_mode);
 	/* Draws a single filled and possibly shaded rectangle to the back buffer.
-	** Parameters: (gfx_driver_t *) drv: The driver affected
-	**             (rect_t *) rect: The rectangle to draw
+	** Parameters: (rect_t *) rect: The rectangle to draw
 	**             (gfx_color_t *) color1, color2: The colors to draw with
 	**             (int) shade_mode: Any of GFX_SHADE_*.
 	** Returns   : (int) GFX_OK or GFX_FATAL
@@ -139,11 +127,10 @@ struct gfx_driver_t { /* Graphics driver */
 
 	/*** Pixmap operations ***/
 
-	int (*draw_pixmap)(gfx_driver_t *drv, gfx_pixmap_t *pxm, int priority,
-	                   rect_t src, rect_t dest, gfx_buffer_t buffer);
+	int drawPixmap(gfx_pixmap_t *pxm, int priority,
+	               rect_t src, rect_t dest, gfx_buffer_t buffer);
 	/* Draws part of a pixmap to the static or back buffer
-	** Parameters: (gfx_driver_t *) drv: The affected driver
-	**             (gfx_pixmap_t *) pxm: The pixmap to draw
+	** Parameters: (gfx_pixmap_t *) pxm: The pixmap to draw
 	**             (int) priority: The priority to draw with, or GFX_NO_PRIORITY
 	**                   to draw on top of everything without setting the
 	**                   priority back buffer
@@ -154,11 +141,9 @@ struct gfx_driver_t { /* Graphics driver */
 	**                   (but should have been) registered.
 	*/
 
-	int (*grab_pixmap)(gfx_driver_t *drv, rect_t src, gfx_pixmap_t *pxm,
-	                   gfx_map_mask_t map);
+	int grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map);
 	/* Grabs an image from the visual or priority back buffer
-	** Parameters: (gfx_driver_t *) drv: The affected driver
-	**             (rect_t) src: The rectangle to grab
+	** Parameters: (rect_t) src: The rectangle to grab
 	**             (gfx_pixmap_t *) pxm: The pixmap structure the data is to
 	**                              be written to
 	**             (int) map: GFX_MASK_VISUAL or GFX_MASK_PRIORITY
@@ -171,11 +156,9 @@ struct gfx_driver_t { /* Graphics driver */
 
 	/*** Buffer operations ***/
 
-	int (*update)(gfx_driver_t *drv, rect_t src, Common::Point dest,
-	              gfx_buffer_t buffer);
+	int update(rect_t src, Common::Point dest, gfx_buffer_t buffer);
 	/* Updates the front buffer or the back buffers
-	** Parameters: (gfx_driver_t *) drv: The affected driver
-	**             (rect_t) src: Source rectangle
+	** Parameters: (rect_t) src: Source rectangle
 	**             (Common::Point) dest: Destination point
 	**             (int) buffer: One of GFX_BUFFER_FRONT or GFX_BUFFER_BACK
 	** Returns   : (int) GFX_OK, GFX_ERROR or GFX_FATAL
@@ -187,11 +170,9 @@ struct gfx_driver_t { /* Graphics driver */
 	** If they aren't, the priority map will not be required to be copied.
 	*/
 
-	int (*set_static_buffer)(gfx_driver_t *drv, gfx_pixmap_t *pic,
-	                         gfx_pixmap_t *priority);
+	int setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority);
 	/* Sets the contents of the static visual and priority buffers
-	** Parameters: (gfx_driver_t *) drv: The affected driver
-	**             (gfx_pixmap_t *) pic: The image defining the new content
+	** Parameters: (gfx_pixmap_t *) pic: The image defining the new content
 	**                              of the visual back buffer
 	**             (gfx_pixmap_t *) priority: The priority map containing
 	**                              the new content of the priority back buffer
@@ -209,10 +190,9 @@ struct gfx_driver_t { /* Graphics driver */
 
 	/*** Mouse pointer operations ***/
 
-	int (*set_pointer)(gfx_driver_t *drv, gfx_pixmap_t *pointer, Common::Point *hotspot);
+	int setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot);
 	/* Sets a new mouse pointer.
-	** Parameters: (gfx_driver_t *) drv: The driver to modify
-	**             (gfx_pixmap_t *) pointer: The pointer to set, or NULL to set
+	** Parameters: (gfx_pixmap_t *) pointer: The pointer to set, or NULL to set
 	**                              no pointer
 	**             (Common::Point *) hotspot: The coordinates of the hotspot,
 	**                               or NULL to set no pointer
@@ -224,9 +204,15 @@ struct gfx_driver_t { /* Graphics driver */
 	** 0, 1, and GFX_COLOR_INDEX_TRANSPARENT are used.
 	*/
 
+	gfx_mode_t *getMode() { return _mode; }
+	byte *getVisual0() { return _visual[0]; }
 
-	void *state; /* Reserved for internal use */
+private:
+	byte *createCursor(gfx_pixmap_t *pointer);
 
+	gfx_pixmap_t *_priority[2];
+	byte *_visual[2];
+	gfx_mode_t *_mode; /* Currently active mode, NULL if no mode is active */
 };
 
 } // End of namespace Sci

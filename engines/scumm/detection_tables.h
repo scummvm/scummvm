@@ -355,7 +355,7 @@ static const GameSettings gameVariantsTable[] = {
 
 	// Uses bink in external files for logos
 	{"Baseball2003", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
-	{"basketball", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY| GF_16BIT_COLOR, UNK},
+	{"basketball", 0, 0, GID_BASKETBALL, 6, 100, MDT_NONE, GF_USE_KEY| GF_16BIT_COLOR, UNK},
 	{"football2002", 0, 0, GID_FOOTBALL, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
 	{"Soccer2004", 0, 0, GID_SOCCER, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK},
 

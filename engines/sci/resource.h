@@ -76,6 +76,7 @@ enum ResSourceType {
 	kSourceVolume = 2,
 	kSourceExtMap = 3,
 	kSourceIntMap = 4,
+	kSourceAudioVolume = 5,
 	kSourceMask = 127
 };
 
@@ -156,6 +157,8 @@ public:
 	ResourceType type;
 	uint32 id;	//!< contains number and type.
 	uint32 size;
+	byte *header;
+	uint32 headerSize;
 protected:
 	uint32 file_offset; /**< Offset in file */
 	ResourceStatus status;
@@ -232,21 +235,27 @@ protected:
 	ResourceSource *getVolume(ResourceSource *map, int volume_nr);
 
 	/**
-	 * Add a volume to the resource manager's list of sources.
-	 * @param map		The map associated with this volume
-	 * @param filename	The name of the volume to add
-	 * @param extended_addressing	1 if this volume uses extended addressing,
-	 *                              0 otherwise.
+	 * Adds a source to the resource manager's list of sources.
+	 * @param map		The map associated with this source
+	 * @param type		The source type
+	 * @param filename	The name of the source to add
 	 * @return A pointer to the added source structure, or NULL if an error occurred.
 	 */
-	ResourceSource *addVolume(ResourceSource *map, const char *filename,
-	                          int number, int extended_addressing);
+	ResourceSource *addSource(ResourceSource *map, ResSourceType type, const char *filename,
+	                          int number);
 	/**
 	 * Add an external (i.e., separate file) map resource to the resource manager's list of sources.
 	 * @param file_name	 The name of the volume to add
 	 * @return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addExternalMap(const char *file_name);
+	/**
+	 * Add an internal (i.e., resource) map to the resource manager's list of sources.
+	 * @param name		The name of the resource to add
+	 * @param resNr		The map resource number
+	 * @return A pointer to the added source structure, or NULL if an error occurred.
+	 */
+	ResourceSource *addInternalMap(const char *name, int resNr);
 
 	/**
 	 * Scans newly registered resource sources for resources, earliest addition first.
@@ -256,11 +265,14 @@ protected:
 	 */
 	int scanNewSources(ResourceSource *source);
 	int addAppropriateSources();
+	int addInternalSources();
 	void freeResourceSources(ResourceSource *rss);
 
 	Common::File *getVolumeFile(const char *filename);
 	void loadResource(Resource *res);
+	bool loadPatch(Resource *res, Common::File &file);
 	bool loadFromPatchFile(Resource *res);
+	bool loadFromAudioVolume(Resource *res);
 	void freeOldResources(int last_invulnerable);
 	int decompress(Resource *res, Common::File *file);
 	int readResourceInfo(Resource *res, Common::File *file, uint32&szPacked, ResourceCompression &compression);
@@ -280,6 +292,12 @@ protected:
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
 	int readResourceMapSCI1(ResourceSource *map);
+
+	/**
+	 * Reads the SCI1.1 65535.map resource
+	 * @return 0 on success, an SCI_ERROR_* code otherwise
+	 */
+	int readMap65535(ResourceSource *map);
 
 	/**--- Patch management functions ---*/
 
