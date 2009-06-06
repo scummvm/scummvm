@@ -369,7 +369,7 @@ int AgiEngine::playGame() {
 }
 
 int AgiEngine::runGame() {
-	int i, ec = errOK;
+	int ec = errOK;
 
 	// Execute the game
 	do {
