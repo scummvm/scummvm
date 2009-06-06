@@ -22,6 +22,7 @@ cp ../../../../COPYING ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
 cp ../../../../COPYRIGHT ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
 cp ../../../../NEWS ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
 cp ../../../../gui/themes/scummmodern.zip ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
+cp ../../../../backends/vkeybd/vkeybd.zip ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
 cp ../../../../dists/pred.dic ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
 cp ../../../../dists/engine-data/* ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/engine-data
 cp ../../../../plugins/* ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/plugins
