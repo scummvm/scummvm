@@ -463,7 +463,7 @@ void Inter_v1::setupOpcodes() {
 		OPCODE(o1_whileDo),
 		/* 08 */
 		OPCODE(o1_if),
-		OPCODE(o1_evaluateStore),
+		OPCODE(o1_assign),
 		OPCODE(o1_loadSpriteToPos),
 		{0, ""},
 		/* 0C */
@@ -1322,7 +1322,7 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 	return false;
 }
 
-bool Inter_v1::o1_evaluateStore(OpFuncParams &params) {
+bool Inter_v1::o1_assign(OpFuncParams &params) {
 	byte *savedPos;
 	int16 token;
 	int16 result;

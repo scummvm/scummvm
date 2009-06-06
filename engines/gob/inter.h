@@ -185,7 +185,7 @@ protected:
 	bool o1_repeatUntil(OpFuncParams &params);
 	bool o1_whileDo(OpFuncParams &params);
 	bool o1_if(OpFuncParams &params);
-	bool o1_evaluateStore(OpFuncParams &params);
+	bool o1_assign(OpFuncParams &params);
 	bool o1_loadSpriteToPos(OpFuncParams &params);
 	bool o1_printText(OpFuncParams &params);
 	bool o1_loadTot(OpFuncParams &params);
@@ -383,7 +383,7 @@ protected:
 	void o2_closeItk();
 	void o2_setImdFrontSurf();
 	void o2_resetImdFrontSurf();
-	bool o2_evaluateStore(OpFuncParams &params);
+	bool o2_assign(OpFuncParams &params);
 	bool o2_printText(OpFuncParams &params);
 	bool o2_animPalInit(OpFuncParams &params);
 	bool o2_addCollision(OpFuncParams &params);
@@ -692,7 +692,7 @@ protected:
 	void o6_openItk();
 
 	bool o6_loadCursor(OpFuncParams &params);
-	bool o6_evaluateStore(OpFuncParams &params);
+	bool o6_assign(OpFuncParams &params);
 	bool o6_palLoad(OpFuncParams &params);
 	bool o6_freeCollision(OpFuncParams &params);
 	bool o6_fillRect(OpFuncParams &params);

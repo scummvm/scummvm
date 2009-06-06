@@ -436,7 +436,7 @@ void Inter_v2::setupOpcodes() {
 		OPCODE(o1_whileDo),
 		/* 08 */
 		OPCODE(o1_if),
-		OPCODE(o2_evaluateStore),
+		OPCODE(o2_assign),
 		OPCODE(o1_loadSpriteToPos),
 		{0, ""},
 		/* 0C */
@@ -1588,7 +1588,7 @@ void Inter_v2::o2_setImdFrontSurf() {
 void Inter_v2::o2_resetImdFrontSurf() {
 }
 
-bool Inter_v2::o2_evaluateStore(OpFuncParams &params) {
+bool Inter_v2::o2_assign(OpFuncParams &params) {
 	byte *savedPos;
 	int16 varOff;
 	int16 token;

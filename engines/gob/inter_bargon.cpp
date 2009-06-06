@@ -456,7 +456,7 @@ void Inter_Bargon::setupOpcodes() {
 		OPCODE(o1_whileDo),
 		/* 08 */
 		OPCODE(o1_if),
-		OPCODE(o2_evaluateStore),
+		OPCODE(o2_assign),
 		OPCODE(o1_loadSpriteToPos),
 		{0, ""},
 		/* 0C */
