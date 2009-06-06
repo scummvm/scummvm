@@ -55,8 +55,6 @@ void EditTextWidget::reflowLayout() {
 	_leftPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Left", 0);
 	_rightPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Right", 0);
 
-	_font = (ThemeEngine::FontStyle)g_gui.xmlEval()->getVar("EditTextWidget.Font", ThemeEngine::kFontStyleNormal);
-
 	EditableWidget::reflowLayout();
 }
 
