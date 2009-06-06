@@ -26,71 +26,87 @@
 
 #include "asylum/asylum.h"
 #include "asylum/screen.h"
+#include "asylum/menu.h"
 #include "asylum/resource.h"
 #include "asylum/graphics.h"
 
 namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
-        : Engine(system) {
+    : Engine(system) {
 
-        Common::File::addDefaultDirectory(_gameDataDir.getChild("Data"));
-        Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
+    Common::File::addDefaultDirectory(_gameDataDir.getChild("Data"));
+    Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
 
-        _eventMan->registerRandomSource(_rnd, "asylum");
+    _eventMan->registerRandomSource(_rnd, "asylum");
 }
 
 AsylumEngine::~AsylumEngine() {
-        //Common::clearAllDebugChannels();
-        delete _screen;
+    //Common::clearAllDebugChannels();
+    delete _screen;
 }
 
 Common::Error AsylumEngine::run() {
-        Common::Error err;
-        err = init();
-        if (err != Common::kNoError)
-                return err;
-        return go();
+    Common::Error err;
+    err = init();
+    if (err != Common::kNoError)
+            return err;
+    return go();
 }
 
+// Will do the same as subroutine at address 0041A500
 Common::Error AsylumEngine::init() {
-        _screen = new Screen(_system);
+	// initialize engine objects
+    _screen = new Screen(_system);
+	_menu = new Menu(_screen);
 
-        return Common::kNoError;
+	// initializing game
+	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
+	// TODO: get hand icon resource before starting main menu
+	// TODO: load startup configurations (address 0041A970)
+	// TODO: setup cinematics (address 0041A880) (probably we won't need it)
+	// TODO: init unknown game stuffs (address 0040F430)
+	
+	// TODO: load smaker intro movie (0)->(mov000.smk)
+	// TODO: if savegame exists on folder, than start NewGame()
+
+    return Common::kNoError;
 }
 
 Common::Error AsylumEngine::go() {
-        Resource* res = new Resource;
+    Resource* res = new Resource;
 
-        res->load("res.001");
-        res->dump();
+    res->load(1);
+    res->dump();
 
-        GraphicResource *gres = new GraphicResource( res->getResource(1) );
-        gres->dump();
+    GraphicResource *gres = new GraphicResource( res->getResource(1) );
+    gres->dump();
 
+    delete res;
+    delete gres;
 
-        delete res;
-        delete gres;
+	_menu->init();
 
-        // DEBUG
-        // Control loop test. Basically just keep the
-        // ScummVM window alive until ESC is pressed.
-        // This will facilitate drawing tests ;)
-        bool end = false;
-		Common::EventManager *em = _system->getEventManager();
-		while (!end) {
-			Common::Event ev;
-			if (em->pollEvent(ev)) {
-				if (ev.type == Common::EVENT_KEYDOWN) {
-					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-						end = true;
-					//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
-				}
+    // DEBUG
+    // Control loop test. Basically just keep the
+    // ScummVM window alive until ESC is pressed.
+    // This will facilitate drawing tests ;)
+    bool end = false;
+	Common::EventManager *em = _system->getEventManager();
+	while (!end) {
+		Common::Event ev;
+		if (em->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+					end = true;
+				//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
 			}
-			_system->delayMillis(10);
 		}
+		_menu->run();
+		_system->delayMillis(10);
+	}
 
-        return Common::kNoError;
+    return Common::kNoError;
 }
 
 } // namespace Asylum

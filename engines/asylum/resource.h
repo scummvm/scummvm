@@ -25,6 +25,10 @@
 #include "common/str.h"
 #include "common/array.h"
 
+#define RES_FILE_PREFIX			"res.0%02d"
+#define RESVOICE_FILE_PREFIX	"res.%d04"
+
+
 namespace Asylum {
 
 class ResourceItem;
@@ -34,6 +38,7 @@ public:
 	Resource();
     ~Resource();
 
+	int load(uint32 resource);
 	int load(Common::String filename);
 	void dump();
 
@@ -44,6 +49,9 @@ public:
 		return _numEntries;
 	}
 	ResourceItem getResource(uint32 pos);
+	
+	// TODO: add new getResource methods which by resource index and position
+	// return ResourceItem without reading the entire resource file
 
 private:
 	uint32 getNextValidOffset(uint8 startPos);

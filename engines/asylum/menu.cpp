@@ -19,36 +19,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef ASYLUM_ENGINE_H
-#define ASYLUM_ENGINE_H
-
-#include "engines/engine.h"
+#include "asylum/menu.h"
+#include "asylum/resource.h"
 
 
 namespace Asylum {
 
-class Screen;
-class Menu;
+// eyes animation index table
+const uint32 Menu::eyesTable[8] = {3, 5, 1, 7, 4, 8, 2, 6};
 
-class AsylumEngine: public Engine {
-public:
+Menu::Menu(Screen *screen){
+	_screen = screen;
+}
 
-    AsylumEngine(OSystem *system, Common::Language language);
-    virtual ~AsylumEngine();
+Menu::~Menu() {
+	if(_bkgImageBuf){
+		free(_bkgImageBuf);
+	}
+	if(_mouseIconBuf){
+		free(_mouseIconBuf);
+	}
+}
 
-    // Engine APIs
-    Common::Error init();
-    Common::Error go();
-    virtual Common::Error run();
-    virtual bool hasFeature(EngineFeature f) const;
-private:
-    Common::Language _language;
-    Common::RandomSource _rnd;
+void Menu::init(){
+	printf("Menu: init()\n");
+	
+	// TODO: from address 0041A500 (init background music, setup menu environment like palette, font, gamma level, etc.)
+}
 
-    Screen *_screen;
-	Menu *_menu;
-};
+void Menu::run(){
+	//printf("Menu: running...\n");
+
+	// TODO: get background image
+	// blit it into back buffer and front buffer
+	
+	_screen->updateScreen();
+}
 
 } // namespace Asylum
-
-#endif
