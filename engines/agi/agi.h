@@ -940,6 +940,7 @@ private:
 	void motionFollowEgo(VtEntry *v);
 	void motionMoveObj(VtEntry *v);
 	void checkMotion(VtEntry *v);
+
 public:
 	void checkAllMotions();
 	void moveObj(VtEntry *);
@@ -947,6 +948,8 @@ public:
 	void fixPosition(int);
 	void updatePosition();
 	int getDirection(int x0, int y0, int x, int y, int s);
+
+	bool _egoHoldKey;
 
 	// Keyboard
 	void initWords();

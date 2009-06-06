@@ -636,7 +636,9 @@ cmd(pop_script) {
 }
 
 cmd(hold_key) {
-	report("hold.key\n");
+	if (g_agi->getVersion() >= 0x3098) {
+		g_agi->_egoHoldKey = true;
+	}
 }
 
 cmd(discard_sound) {
@@ -671,7 +673,9 @@ cmd(fence_mouse) {
 }
 
 cmd(release_key) {
-	report("release.key\n");
+	if (g_agi->getVersion() >= 0x3098) {
+		g_agi->_egoHoldKey = false;
+	}
 }
 
 cmd(adj_ego_move_to_x_y) {

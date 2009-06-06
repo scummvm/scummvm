@@ -246,6 +246,11 @@ void AgiEngine::processEvents() {
 			if (key)
 				keyEnqueue(key);
 			break;
+
+		case Common::EVENT_KEYUP:
+			if (_egoHoldKey)	
+				_game.viewTable[0].direction = 0;
+
 		default:
 			break;
 		}
@@ -465,6 +470,8 @@ int AgiEngine::agiInit() {
 	// is shown.  On the DS version, the word completion feature needs the dictionary too.
 	loadDict();
 #endif
+
+	_egoHoldKey = false;
 
 	return ec;
 }
