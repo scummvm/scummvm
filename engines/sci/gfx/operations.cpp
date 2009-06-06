@@ -413,8 +413,8 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 
 int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options, ResourceManager *resManager,
 			   int xfact, int yfact, gfx_color_mode_t bpp) {
-	int color_depth = bpp ? bpp : 1;
-	int initialized = 0;
+	//int color_depth = bpp ? bpp : 1;
+	//int initialized = 0;
 
 	BASIC_CHECKS(GFX_FATAL);
 
