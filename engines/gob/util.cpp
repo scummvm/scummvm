@@ -235,6 +235,17 @@ int16 Util::checkKey(void) {
 	return translateKey(key);
 }
 
+bool Util::checkKey(int16 &key) {
+	Common::KeyState keyS;
+
+	if (!getKeyFromBuffer(keyS))
+		return false;
+
+	key = translateKey(keyS);
+
+	return true;
+}
+
 void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
 	*pX = mouse.x + _vm->_video->_scrollOffsetX - _vm->_video->_screenDeltaX;

@@ -64,6 +64,7 @@ public:
 	void clearKeyBuf(void);
 	int16 getKey(void);
 	int16 checkKey(void);
+	bool checkKey(int16 &key);
 
 	void getMouseState(int16 *pX, int16 *pY, int16 *pButtons);
 	void setMousePos(int16 x, int16 y);

@@ -153,6 +153,13 @@ void DemoPlayer::playVideo(const char *fileName) {
 		bool videoSupportsDouble =
 			((_vm->_vidPlayer->getFeatures() & Graphics::CoktelVideo::kFeaturesSupportsDouble) != 0);
 
+		if (_autoDouble) {
+			int16 width  = _vm->_vidPlayer->getWidth();
+			int16 height = _vm->_vidPlayer->getHeight();
+
+			_doubleMode = ((width <= 320) && (height <= 200));
+		}
+
 		if (_doubleMode) {
 			if (videoSupportsDouble) {
 				_vm->_vidPlayer->slotSetDoubleMode(-1, true);
@@ -177,13 +184,14 @@ void DemoPlayer::playVideoNormal() {
 }
 
 void DemoPlayer::playVideoDoubled() {
-	const char *fileNameOpened = _vm->_vidPlayer->getFileName();
+	Common::String fileNameOpened = _vm->_vidPlayer->getFileName();
 	_vm->_vidPlayer->primaryClose();
 
-	if (_vm->_vidPlayer->primaryOpen(fileNameOpened, 0, -1, VideoPlayer::kFlagOtherSurface)) {
+	if (_vm->_vidPlayer->primaryOpen(fileNameOpened.c_str(), 0, -1,
+				VideoPlayer::kFlagScreenSurface)) {
+
 		for (int i = 0; i < _vm->_vidPlayer->getFramesCount(); i++) {
-			if (_vm->_vidPlayer->primaryPlay(i, i))
-				break;
+			_vm->_vidPlayer->playFrame(i);
 
 			Graphics::CoktelVideo::State state = _vm->_vidPlayer->getState();
 
@@ -197,6 +205,21 @@ void DemoPlayer::playVideoDoubled() {
 			_vm->_draw->dirtiedRect(_vm->_draw->_frontSurface,
 					state.left * 2, state.top * 2, wD, hD);
 			_vm->_video->retrace();
+
+			_vm->_util->processInput();
+			if (_vm->shouldQuit())
+				break;
+
+			int16 key;
+			bool end = false;
+			while (_vm->_util->checkKey(key))
+				if (key == 0x011B)
+					end = true;
+			if (end)
+				break;
+
+			_vm->_vidPlayer->slotWaitEndFrame();
+
 		}
 	}
 }
@@ -204,10 +227,16 @@ void DemoPlayer::playVideoDoubled() {
 void DemoPlayer::evaluateVideoMode(const char *mode) {
 	debugC(2, kDebugDemo, "Video mode \"%s\"", mode);
 
-	if (!scumm_strnicmp(mode, "VESA", 4))
-		_doubleMode = false;
-	else if (!scumm_strnicmp(mode, "VGA", 3) && _vm->is640())
-		_doubleMode = true;
+	_autoDouble = false;
+	_doubleMode = false;
+
+	// Only applicable when we actually can double
+	if (_vm->is640()) {
+		if (!scumm_strnicmp(mode, "AUTO", 4))
+			_autoDouble = true;
+		else if (!scumm_strnicmp(mode, "VGA", 3) && _vm->is640())
+			_doubleMode = true;
+	}
 }
 
 } // End of namespace Gob
