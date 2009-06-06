@@ -28,6 +28,7 @@ cp ../../../../COPYING ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../COPYRIGHT ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../NEWS ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../gui/themes/scummmodern.zip ./scummvm-gp2x-`date '+%Y-%m-%d'`/
+cp ../../../../backends/vkeybd/vkeybd.zip ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../dists/pred.dic ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../dists/engine-data/* ./scummvm-gp2x-`date '+%Y-%m-%d'`/engine-data
 

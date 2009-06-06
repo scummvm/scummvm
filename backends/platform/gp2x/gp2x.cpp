@@ -33,15 +33,14 @@
 #include "backends/platform/gp2x/gp2x-mem.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
-
+#include "common/debug.h"
 #include "common/events.h"
 #include "common/util.h"
 
-#include "common/debug.h"
 #include "common/file.h"
 #include "base/main.h"
 
-#include "backends/saves/posix/posix-saves.h"
+#include "backends/saves/default/default-saves.h"
 
 #include "backends/timer/default/default-timer.h"
 #include "backends/plugins/posix/posix-provider.h"
@@ -72,15 +71,12 @@ static Uint32 timer_handler(Uint32 interval, void *param) {
 }
 
 int main(int argc, char *argv[]) {
-	//extern OSystem *OSystem_GP2X_create();
-	//g_system = OSystem_GP2X_create();
 	g_system = new OSystem_GP2X();
 	assert(g_system);
 
-	// Check if Plugins are enabled (Using the hacked up GP2X provider)
-	#ifdef DYNAMIC_MODULES
-		PluginManager::instance().addPluginProvider(new GP2XPluginProvider());
-	#endif
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
+#endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
@@ -115,7 +111,8 @@ void OSystem_GP2X::initBackend() {
 	#endif
 
 	char savePath[PATH_MAX+1];
-	char workDirName[PATH_MAX+1]; /* To be passed to getcwd system call. */
+	char workDirName[PATH_MAX+1];
+
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
 		error("Could not obtain current working directory.");
 	} else {
@@ -133,25 +130,9 @@ void OSystem_GP2X::initBackend() {
 
 	ConfMan.registerDefault("savepath", savePath);
 
-	// Setup default extra data path for engine data files to be workingdir/engine-data
+	_savefile = new DefaultSaveFileManager(savePath);
 
-	char enginedataPath[PATH_MAX+1];
-
-	strcpy(enginedataPath, workDirName);
-	strcat(enginedataPath, "/engine-data");
-	printf("Current engine-data directory: %s\n", enginedataPath);
-	//struct stat sb;
-	if (stat(enginedataPath, &sb) == -1)
-		if (errno == ENOENT) // Create the dir if it does not exist
-			if (mkdir(enginedataPath, 0755) != 0)
-				warning("mkdir for '%s' failed", enginedataPath);
-
-	//FIXME: Do not use File::addDefaultDirectory, rather implement OSystem::addSysArchivesToSearchSet() !
-	Common::File::addDefaultDirectory(enginedataPath);
-
-	// Note: Review and clean this, it's OTT at the moment.
-
-	#if defined(DUMP_STDOUT)
+	#ifdef DUMP_STDOUT
 		// The GP2X has a serial console but most users do not use this so we
 		// output all our STDOUT and STDERR to files for debug purposes.
 		char STDOUT_FILE[PATH_MAX+1];
@@ -168,7 +149,7 @@ void OSystem_GP2X::initBackend() {
 
 		/* Redirect standard input and standard output */
 		FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
-		if (newfp == NULL) {	/* This happens on NT */
+		if (newfp == NULL) {
 		#if !defined(stdout)
 			stdout = fopen(STDOUT_FILE, "w");
 		#else
@@ -178,8 +159,9 @@ void OSystem_GP2X::initBackend() {
 			}
 		#endif
 		}
+
 		newfp = freopen(STDERR_FILE, "w", stderr);
-		if (newfp == NULL) {	/* This happens on NT */
+		if (newfp == NULL) {
 		#if !defined(stderr)
 			stderr = fopen(STDERR_FILE, "w");
 		#else
@@ -189,8 +171,10 @@ void OSystem_GP2X::initBackend() {
 			}
 		#endif
 		}
-		setbuf(stderr, NULL);			/* No buffering */
-	#endif // DUMP_STDOUT
+
+		setbuf(stderr, NULL);
+		printf("%s\n", "Debug: STDOUT and STDERR redirected to text files.");
+	#endif /* DUMP_STDOUT */
 
 	_graphicsMutex = createMutex();
 
@@ -199,7 +183,9 @@ void OSystem_GP2X::initBackend() {
 	// Setup other defaults.
 
 	ConfMan.registerDefault("aspect_ratio", true);
-	ConfMan.registerDefault("music_volume", 220); // Up default volume as we use a seperate volume system anyway.
+
+	/* Up default volume values as we use a seperate system level volume anyway. */
+	ConfMan.registerDefault("music_volume", 220);
 	ConfMan.registerDefault("sfx_volume", 220);
 	ConfMan.registerDefault("speech_volume", 220);
 	ConfMan.registerDefault("autosave_period", 3 * 60);	// Trigger autosave every 3 minutes - On low batts 4 mins is about your warning time.
@@ -221,12 +207,6 @@ void OSystem_GP2X::initBackend() {
 	// enable joystick
 	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
 		_joystick = SDL_JoystickOpen(joystick_num);
-	}
-
-	// Create the savefile manager, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_savefile == 0) {
-	_savefile = new POSIXSaveFileManager();
 	}
 
 	// Create and hook up the mixer, if none exists yet (we check for this to
@@ -367,32 +347,37 @@ FilesystemFactory *OSystem_GP2X::getFilesystemFactory() {
 }
 
 void OSystem_GP2X::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	/* Setup default extra data paths for engine data files and plugins */
+	char workDirName[PATH_MAX+1];
 
-#ifdef DATA_PATH
-	// Add the global DATA_PATH to the directory search list
-	// FIXME: We use depth = 4 for now, to match the old code. May want to change that
-	Common::FSNode dataNode(DATA_PATH);
-	if (dataNode.exists() && dataNode.isDirectory()) {
-		s.add(DATA_PATH, new Common::FSDirectory(dataNode, 4), priority);
-	}
-#endif
-
-#if defined(MACOSX) || defined(IPHONE)
-	// Get URL of the Resource directory of the .app bundle
-	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (fileUrl) {
-		// Try to convert the URL to an absolute path
-		UInt8 buf[MAXPATHLEN];
-		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
-			// Success: Add it to the search path
-			Common::String bundlePath((const char *)buf);
-			s.add("__OSX_BUNDLE__", new Common::FSDirectory(bundlePath), priority);
-		}
-		CFRelease(fileUrl);
+	if (getcwd(workDirName, PATH_MAX) == NULL) {
+		error("Error: Could not obtain current working directory.");
 	}
 
-#endif
+	Common::FSNode workdirNode(workDirName);
+	if (workdirNode.exists() && workdirNode.isDirectory()) {
+		s.add("__GP2X_WORKDIR__", new Common::FSDirectory(workDirName), priority);
+	}
 
+	char enginedataPath[PATH_MAX+1];
+
+	strcpy(enginedataPath, workDirName);
+	strcat(enginedataPath, "/engine-data");
+
+	Common::FSNode engineNode(enginedataPath);
+	if (engineNode.exists() && engineNode.isDirectory()) {
+		s.add("__GP2X_ENGDATA__", new Common::FSDirectory(enginedataPath), priority);
+	}
+
+	char pluginsPath[PATH_MAX+1];
+
+	strcpy(pluginsPath, workDirName);
+	strcat(pluginsPath, "/plugins");
+
+	Common::FSNode pluginsNode(pluginsPath);
+	if (pluginsNode.exists() && pluginsNode.isDirectory()) {
+		s.add("__GP2X_PLUGINS__", new Common::FSDirectory(pluginsPath), priority);
+	}
 }
 
 static Common::String getDefaultConfigFileName() {
@@ -478,6 +463,12 @@ void OSystem_GP2X::quit() {
 	SDL_Quit();
 
 	delete getEventManager();
+
+	#ifdef DUMP_STDOUT
+		printf("%s\n", "Debug: STDOUT and STDERR text files closed.");
+		fclose(stdout);
+		fclose(stderr);
+	#endif /* DUMP_STDOUT */
 
 	exit(0);
 }
