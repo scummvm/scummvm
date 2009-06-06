@@ -50,15 +50,14 @@ struct Sprite {
 #undef ALLOC_DEBUG
 
 
-#define POOL_SIZE 68000		/* Gold Rush mine room needs > 50000 */
-	/* Speeder bike challenge needs > 67000 */
+#define POOL_SIZE 68000		// Gold Rush mine room needs > 50000
+							// Speeder bike challenge needs > 67000
 
 void *SpritesMgr::poolAlloc(int size) {
 	uint8 *x;
 
-	/* Adjust size to 32-bit boundary to prevent data misalignment
-	 * errors.
-	 */
+	// Adjust size to 32-bit boundary to prevent data misalignment
+	// errors.
 	size = (size + 3) & ~3;
 
 	x = _poolTop;
@@ -73,9 +72,8 @@ void *SpritesMgr::poolAlloc(int size) {
 	return x;
 }
 
-/* Note: it's critical that pool_release() is called in the exact
-         reverse order of pool_alloc()
-*/
+// Note: it's critical that pool_release() is called in the exact
+//         reverse order of pool_alloc()
 void SpritesMgr::poolRelease(void *s) {
 	_poolTop = (uint8 *)s;
 }
@@ -84,27 +82,25 @@ void SpritesMgr::poolRelease(void *s) {
  * Blitter functions
  */
 
-/* Blit one pixel considering the priorities */
-
+// Blit one pixel considering the priorities
 void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden) {
-	int epr = 0, pr = 0;	/* effective and real priorities */
+	int epr = 0, pr = 0;	// effective and real priorities
 
-	/* CM: priority 15 overrides control lines and is ignored when
-	 *     tracking effective priority. This tweak is needed to fix
-	 *     Sarien bug #451768, and should not affect Sierra games because
-	 *     sprites shouldn't have priority 15 (like the AGI Mouse
-	 *     demo "mouse pointer")
-	 *
-	 * Update: this solution breaks other games, and can't be used.
-	 */
+	// CM: priority 15 overrides control lines and is ignored when
+	//     tracking effective priority. This tweak is needed to fix
+	//     Sarien bug #451768, and should not affect Sierra games because
+	//     sprites shouldn't have priority 15 (like the AGI Mouse
+	//     demo "mouse pointer")
+	//
+	// Update: this solution breaks other games, and can't be used.
 
 	if (p >= end)
 		return;
 
-	/* Check if we're on a control line */
+	// Check if we're on a control line
 	if ((pr = *p & 0xf0) < 0x30) {
 		uint8 *p1;
-		/* Yes, get effective priority going down */
+		// Yes, get effective priority going down
 		for (p1 = p; p1 < end && (epr = *p1 & 0xf0) < 0x30; p1 += width)
 		    ;
 		if (p1 >= end)
@@ -114,9 +110,8 @@ void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, 
 	}
 
 	if (spr >= epr) {
-		/* Keep control line information visible, but put our
-		 * priority over water (0x30) surface
-		 */
+		// Keep control line information visible, but put our
+		// priority over water (0x30) surface
 		if (_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))
 			*(p + FROM_SBUF16_TO_SBUF256_OFFSET) = col; // Write to 256 color buffer
 		else
@@ -124,14 +119,13 @@ void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, 
 
 		*hidden = false;
 
-		/* Except if our priority is 15, which should never happen
-		 * (fixes Sarien bug #451768)
-		 *
-		 * Update: breaks other games, can't be used
-		 *
-		 * if (spr == 0xf0)
-		 *      *p = spr | col;
-		 */
+		// Except if our priority is 15, which should never happen
+		// (fixes Sarien bug #451768)
+		//
+		// Update: breaks other games, can't be used
+		//
+		// if (spr == 0xf0)
+		//      *p = spr | col;
 	}
 }
 
@@ -141,7 +135,7 @@ int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c, bool agi256_2) {
 	int i, j, t, m, col;
 	int hidden = true;
 
-	/* Fixes Sarien bug #477841 (crash in PQ1 map C4 when y == -2) */
+	// Fixes Sarien bug #477841 (crash in PQ1 map C4 when y == -2)
 	if (y < 0)
 		y = 0;
 	if (x < 0)
@@ -253,7 +247,7 @@ void SpritesMgr::objsRestoreArea(Sprite *s) {
  * Condition to determine whether a sprite will be in the 'updating' list.
  */
 bool SpritesMgr::testUpdating(VtEntry *v, AgiEngine *agi) {
-	/* Sanity check (see Sarien bug #779302) */
+	// Sanity check (see Sarien bug #779302)
 	if (~agi->_game.dirView[v->currentView].flags & RES_LOADED)
 		return false;
 
@@ -264,7 +258,7 @@ bool SpritesMgr::testUpdating(VtEntry *v, AgiEngine *agi) {
  * Condition to determine whether a sprite will be in the 'non-updating' list.
  */
 bool SpritesMgr::testNotUpdating(VtEntry *v, AgiEngine *vm) {
-	/* Sanity check (see Sarien bug #779302) */
+	// Sanity check (see Sarien bug #779302)
 	if (~vm->_game.dirView[v->currentView].flags & RES_LOADED)
 		return false;
 
@@ -285,7 +279,7 @@ INLINE int SpritesMgr::prioToY(int p) {
 			return i;
 	}
 
-	return -1;		/* (p - 5) * 12 + 48; */
+	return -1;		// (p - 5) * 12 + 48;
 }
 
 /**
@@ -297,13 +291,13 @@ Sprite *SpritesMgr::newSprite(VtEntry *v) {
 	if (s == NULL)
 		return NULL;
 
-	s->v = v;		/* link sprite to associated view table entry */
+	s->v = v;		// link sprite to associated view table entry
 	s->xPos = v->xPos;
 	s->yPos = v->yPos - v->ySize + 1;
 	s->xSize = v->xSize;
 	s->ySize = v->ySize;
 	s->buffer = (uint8 *)poolAlloc(s->xSize * s->ySize);
-	v->s = s;		/* link view table entry to this sprite */
+	v->s = s;		// link view table entry to this sprite
 
 	return s;
 }
@@ -326,9 +320,8 @@ void SpritesMgr::buildList(SpriteList &l, bool (*test)(VtEntry *, AgiEngine *)) 
 	int yVal[0x100];
 	int minY = 0xff, minIndex = 0;
 
-	/* fill the arrays with all sprites that satisfy the 'test'
-	 * condition and their y values
-	 */
+	// fill the arrays with all sprites that satisfy the 'test'
+	// condition and their y values
 	i = 0;
 	for (v = _vm->_game.viewTable; v < &_vm->_game.viewTable[MAX_VIEWTABLE]; v++) {
 		if ((*test)(v, _vm)) {
@@ -338,11 +331,11 @@ void SpritesMgr::buildList(SpriteList &l, bool (*test)(VtEntry *, AgiEngine *)) 
 		}
 	}
 
-	/* now look for the smallest y value in the array and put that
-	 * sprite in the list
-	 */
+	// now look for the smallest y value in the array and put that
+	// sprite in the list
 	for (j = 0; j < i; j++) {
 		minY = 0xff;
+
 		for (k = 0; k < i; k++) {
 			if (yVal[k] < minY) {
 				minIndex = k;
@@ -376,6 +369,7 @@ void SpritesMgr::freeList(SpriteList &l) {
 	SpriteList::iterator iter;
 	for (iter = l.reverse_begin(); iter != l.end(); ) {
 		Sprite* s = *iter;
+
 		poolRelease(s->buffer);
 		poolRelease(s);
 		iter = l.reverse_erase(iter);
@@ -452,12 +446,15 @@ void SpritesMgr::eraseSprites(SpriteList &l) {
 void SpritesMgr::blitSprites(SpriteList& l) {
 	int hidden;
 	SpriteList::iterator iter;
+
 	for (iter = l.begin(); iter != l.end(); ++iter) {
 		Sprite *s = *iter;
+
 		objsSaveArea(s);
 		debugC(8, kDebugLevelSprites, "s->v->entry = %d (prio %d)", s->v->entry, s->v->priority);
 		hidden = blitCel(s->xPos, s->yPos, s->v->priority, s->v->celData, s->v->viewData->agi256_2);
-		if (s->v->entry == 0) {	/* if ego, update f1 */
+
+		if (s->v->entry == 0) {	// if ego, update f1
 			_vm->setflag(fEgoInvisible, hidden);
 		}
 	}
@@ -475,7 +472,7 @@ void SpritesMgr::commitNonupdSprites() {
 	commitSprites(_sprNonupd);
 }
 
-/* check moves in both lists */
+// check moves in both lists
 void SpritesMgr::commitBoth() {
 	commitUpdSprites();
 	commitNonupdSprites();
@@ -584,10 +581,8 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 
 	_vm->recordImageStackCall(ADD_VIEW, view, loop, cel, x, y, pri, mar);
 
-	/*
-	 * Was hardcoded to 8, changed to pri_table[y] to fix Gold
-	 * Rush (see Sarien bug #587558)
-	 */
+	// Was hardcoded to 8, changed to pri_table[y] to fix Gold
+	// Rush (see Sarien bug #587558)
 	if (pri == 0)
 		pri = _vm->_game.priTable[y];
 
@@ -616,15 +611,13 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 	debugC(4, kDebugLevelSprites, "blit_cel (%d, %d, %d, c)", x, y, pri);
 	blitCel(x1, y1, pri, c, _vm->_game.views[view].agi256_2);
 
-	/* If margin is 0, 1, 2, or 3, the base of the cel is
-	 * surrounded with a rectangle of the corresponding priority.
-	 * If margin >= 4, this extra margin is not shown.
-	 */
+	// If margin is 0, 1, 2, or 3, the base of the cel is
+	// surrounded with a rectangle of the corresponding priority.
+	// If margin >= 4, this extra margin is not shown.
 	if (mar < 4) {
-		/* add rectangle around object, don't clobber control
-		 * info in priority data. The box extends to the end of
-		 * its priority band!
-		 */
+		// add rectangle around object, don't clobber control
+		// info in priority data. The box extends to the end of
+		// its priority band!
 		y3 = (y2 / 12) * 12;
 
 		// SQ1 needs +1 (see Sarien bug #810331)
@@ -640,8 +633,10 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 		for (y = y3; y <= y2; y++) {
 			if ((*p1 >> 4) >= 4)
 				*p1 = (mar << 4) | (*p1 & 0x0f);
+
 			if ((*p2 >> 4) >= 4)
 				*p2 = (mar << 4) | (*p2 & 0x0f);
+
 			p1 += _WIDTH;
 			p2 += _WIDTH;
 		}
@@ -652,8 +647,10 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 		for (x = x1; x <= x2; x++) {
 			if ((*p1 >> 4) >= 4)
 				*p1 = (mar << 4) | (*p1 & 0x0f);
+
 			if ((*p2 >> 4) >= 4)
 				*p2 = (mar << 4) | (*p2 & 0x0f);
+
 			p1++;
 			p2++;
 		}
@@ -718,6 +715,7 @@ void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2) {
 	w = x2 - x1 + 1;
 	q = &_vm->_game.sbuf16c[x1 + _WIDTH * y1];
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
+
 	for (i = y1; i <= y2; i++) {
 		_gfx->putPixelsA(x1, i + offset, w, q);
 		q += _WIDTH;

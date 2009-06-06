@@ -120,7 +120,7 @@ struct VtEntry {
 	uint8 parm2;
 	uint8 parm3;
 	uint8 parm4;
-}; /* struct vt_entry */
+}; // struct vt_entry
 
 } // End of namespace Agi
 

@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "agi/agi.h"
 
 namespace Agi {
@@ -41,16 +39,16 @@ void AgiBase::setflag(int n, int v) {
 
 	set += n >> 3;
 	if (v)
-		*set |= 1 << (n & 0x07);	/* set bit  */
+		*set |= 1 << (n & 0x07);	// set bit
 	else
-		*set &= ~(1 << (n & 0x07));	/* clear bit */
+		*set &= ~(1 << (n & 0x07));	// clear bit
 }
 
 void AgiBase::flipflag(int n) {
 	uint8 *set = (uint8 *)&_game.flags;
 
 	set += n >> 3;
-	*set ^= 1 << (n & 0x07);	/* flip bit */
+	*set ^= 1 << (n & 0x07);	// flip bit
 }
 
 void AgiEngine::setvar(int var, int val) {

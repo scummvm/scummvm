@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "agi/agi.h"
 #include "agi/sprite.h"
 #include "agi/graphics.h"
@@ -68,7 +67,7 @@ void AgiEngine::newRoom(int n) {
 
 	agiLoadResource(rLOGIC, n);
 
-	/* Reposition ego in the new room */
+	// Reposition ego in the new room
 	switch (_game.vars[vBorderTouchEgo]) {
 	case 1:
 		_game.viewTable[0].yPos = _HEIGHT - 1;
@@ -183,12 +182,12 @@ void AgiEngine::oldInputMode() {
 	_game.inputMode = _oldMode;
 }
 
-/* If main_cycle returns false, don't process more events! */
+// If main_cycle returns false, don't process more events!
 int AgiEngine::mainCycle() {
 	unsigned int key, kascii;
 	VtEntry *v = &_game.viewTable[0];
 
-	_gfx->pollTimer();		/* msdos driver -> does nothing */
+	_gfx->pollTimer();		// msdos driver -> does nothing
 	updateTimer();
 
 	if (_game.ver == 0) {
@@ -198,9 +197,8 @@ int AgiEngine::mainCycle() {
 
 	key = doPollKeyboard();
 
-	/* In AGI Mouse emulation mode we must update the mouse-related
-	 * vars in every interpreter cycle.
-	 */
+	// In AGI Mouse emulation mode we must update the mouse-related
+	// vars in every interpreter cycle.
 	if (getFeatures() & GF_AGIMOUSE) {
 		_game.vars[28] = g_mouse.x / 2;
 		_game.vars[29] = g_mouse.y;
@@ -220,7 +218,7 @@ int AgiEngine::mainCycle() {
 		key = 0;
 	}
 
-	/* Click-to-walk mouse interface */
+	// Click-to-walk mouse interface
 	if (_game.playerControl && v->flags & ADJ_EGO_XY) {
 		int toX = v->parm1;
 		int toY = v->parm2;
@@ -257,25 +255,25 @@ process_key:
 				break;
 			handleKeys(key);
 
-			/* if ESC pressed, activate menu before
-			 * accept.input from the interpreter cycle
-			 * sets the input mode to normal again
-			 * (closes: #540856)
-			 */
+			// if ESC pressed, activate menu before
+			// accept.input from the interpreter cycle
+			// sets the input mode to normal again
+			// (closes: #540856)
 			if (key == KEY_ESCAPE) {
 				key = 0;
 				goto process_key;
 			}
 
-			/* commented out to close Sarien bug #438872
-			 * if (key) game.keypress = key;
-			 */
+			// commented out to close Sarien bug #438872
+			// if (key)
+			//    game.keypress = key;
+			
 		}
 		break;
 	case INPUT_GETSTRING:
 		handleController(key);
 		handleGetstring(key);
-		setvar(vKey, 0);	/* clear ENTER key */
+		setvar(vKey, 0);	// clear ENTER key
 		break;
 	case INPUT_MENU:
 		_menu->keyhandler(key);
@@ -307,10 +305,10 @@ int AgiEngine::playGame() {
 	_game.horizon = HORIZON;
 	_game.playerControl = false;
 
-	setflag(fLogicZeroFirsttime, true);	/* not in 2.917 */
-	setflag(fNewRoomExec, true);	/* needed for MUMG and SQ2! */
-	setflag(fSoundOn, true);	/* enable sound */
-	setvar(vTimeDelay, 2);	/* "normal" speed */
+	setflag(fLogicZeroFirsttime, true);	// not in 2.917
+	setflag(fNewRoomExec, true);	// needed for MUMG and SQ2!
+	setflag(fSoundOn, true);	// enable sound
+	setvar(vTimeDelay, 2);	// "normal" speed
 
 	_game.gfxMode = true;
 	_game.clockEnabled = true;
@@ -378,7 +376,7 @@ int AgiEngine::runGame() {
 	for (i = 0; i < MAX_DIRS; i++)
 		memset(&_game.evKeyp[i], 0, sizeof(struct AgiEvent));
 
-	/* Execute the game */
+	// Execute the game
 	do {
 		debugC(2, kDebugLevelMain, "game loop");
 		debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
@@ -411,7 +409,7 @@ int AgiEngine::runGame() {
 			break;
 		}
 
-		setvar(vSoundgen, 1);	/* IBM PC SOUND */
+		setvar(vSoundgen, 1);	// IBM PC SOUND
 
 		// Set monitor type (v26 i.e. vMonitor)
 		switch (_renderMode) {

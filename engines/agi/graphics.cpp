@@ -505,22 +505,22 @@ static const uint8 vgaPalette[256 * 3] = {
 };
 
 static const uint16 cgaMap[16] = {
-	0x0000,			/*  0 - black */
-	0x0d00,			/*  1 - blue */
-	0x0b00,			/*  2 - green */
-	0x0f00,			/*  3 - cyan */
-	0x000b,			/*  4 - red */
-	0x0b0d,			/*  5 - magenta */
-	0x000d,			/*  6 - brown */
-	0x0b0b,			/*  7 - gray */
-	0x0d0d,			/*  8 - dark gray */
-	0x0b0f,			/*  9 - light blue */
-	0x0b0d,			/* 10 - light green */
-	0x0f0d,			/* 11 - light cyan */
-	0x0f0d,			/* 12 - light red */
-	0x0f00,			/* 13 - light magenta */
-	0x0f0b,			/* 14 - yellow */
-	0x0f0f			/* 15 - white */
+	0x0000,			//  0 - black
+	0x0d00,			//  1 - blue
+	0x0b00,			//  2 - green
+	0x0f00,			//  3 - cyan
+	0x000b,			//  4 - red
+	0x0b0d,			//  5 - magenta
+	0x000d,			//  6 - brown
+	0x0b0b,			//  7 - gray
+	0x0d0d,			//  8 - dark gray
+	0x0b0f,			//  9 - light blue
+	0x0b0d,			// 10 - light green
+	0x0f0d,			// 11 - light cyan
+	0x0f0d,			// 12 - light red
+	0x0f00,			// 13 - light magenta
+	0x0f0b,			// 14 - yellow
+	0x0f0f			// 15 - white
 };
 
 struct UpdateBlock {
@@ -540,22 +540,22 @@ GfxMgr::GfxMgr(AgiBase *vm) : _vm(vm) {
 }
 
 
-/*
- *  Layer 4:  640x480?  ==================  User display
- *                              ^
- *                              |  do_update(), put_block()
- *                              |
- *  Layer 3:  640x480?  ==================  Framebuffer
- *                              ^
- *                              |  flush_block(), put_pixels()
- *                              |
- *  Layer 2:  320x200   ==================  AGI engine screen (console), put_pixel()
- *                              |
- *  Layer 1:  160x336   ==================  AGI screen
- *
- *  Upper half (160x168) of Layer 1 is for the normal 16 color & control line/priority info.
- *  Lower half (160x168) of Layer 1 is for the 256 color information (Used with AGI256 & AGI256-2).
- */
+//
+//  Layer 4:  640x480?  ==================  User display
+//                              ^
+//                              |  do_update(), put_block()
+//                              |
+//  Layer 3:  640x480?  ==================  Framebuffer
+//                              ^
+//                              |  flush_block(), put_pixels()
+//                              |
+//  Layer 2:  320x200   ==================  AGI engine screen (console), put_pixel()
+//                              |
+//  Layer 1:  160x336   ==================  AGI screen
+//
+//  Upper half (160x168) of Layer 1 is for the normal 16 color & control line/priority info.
+//  Lower half (160x168) of Layer 1 is for the 256 color information (Used with AGI256 & AGI256-2).
+//
 
 #define SHAKE_MAG 3
 
@@ -638,9 +638,8 @@ void GfxMgr::putTextCharacter(int l, int x, int y, unsigned char c, int fg, int 
 				_agiScreen[xx + yy * GFX_WIDTH] = 15;
 	}
 
-	/* FIXME: we don't want this when we're writing on the
-	 *        console!
-	 */
+	// FIXME: we don't want this when we're writing on the
+	//        console!
 	flushBlock(x, y, x + CHAR_COLS - 1, y + CHAR_LINES - 1);
 }
 
@@ -670,16 +669,16 @@ void GfxMgr::drawFrame(int x1, int y1, int x2, int y2, int c1, int c2) {
 	int y, w;
 	uint8 *p0;
 
-	/* top line */
+	// top line
 	w = x2 - x1 + 1;
 	p0 = &_agiScreen[x1 + y1 * GFX_WIDTH];
 	memset(p0, c1, w);
 
-	/* bottom line */
+	// bottom line
 	p0 = &_agiScreen[x1 + y2 * GFX_WIDTH];
 	memset(p0, c2, w);
 
-	/* side lines */
+	// side lines
 	for (y = y1; y <= y2; y++) {
 		_agiScreen[x1 + y * GFX_WIDTH] = c1;
 		_agiScreen[x2 + y * GFX_WIDTH] = c2;
@@ -890,7 +889,7 @@ int GfxMgr::getAGIPalFileNum() {
 	return _agipalFileNum;
 }
 
-/* put a block onto the screen */
+// put a block onto the screen
 void GfxMgr::gfxPutBlock(int x1, int y1, int x2, int y2) {
 	if (x1 >= GFX_WIDTH)
 		x1 = GFX_WIDTH - 1;
@@ -1151,7 +1150,7 @@ void GfxMgr::doUpdate() {
 		gfxPutBlock(update.x1, update.y1, update.x2, update.y2);
 	}
 
-	/* reset update block variables */
+	// reset update block variables
 	update.x1 = MAX_INT;
 	update.y1 = MAX_INT;
 	update.x2 = 0;

@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "agi/agi.h"
 
 namespace Agi {
@@ -76,7 +74,7 @@ void AgiEngine::motionWander(VtEntry *v) {
 	if (isEgoView(v)) {
 		_game.vars[vEgoDir] = v->direction;
 		while (v->parm1 < 6) {
-			v->parm1 = _rnd->getRandomNumber(50);	/* huh? */
+			v->parm1 = _rnd->getRandomNumber(50);	// huh?
 		}
 	}
 }
@@ -92,10 +90,10 @@ void AgiEngine::motionFollowEgo(VtEntry *v) {
 	objX = v->xPos + v->xSize / 2;
 	objY = v->yPos;
 
-	/* Get direction to reach ego */
+	// Get direction to reach ego
 	dir = getDirection(objX, objY, egoX, egoY, v->parm1);
 
-	/* Already at ego coordinates */
+	// Already at ego coordinates
 	if (dir == 0) {
 		v->direction = 0;
 		v->motion = MOTION_NORMAL;
@@ -126,12 +124,12 @@ void AgiEngine::motionFollowEgo(VtEntry *v) {
 	if (v->parm3 != 0) {
 		int k;
 
-		/* DF: this is ugly and I dont know why this works, but
-		 * other line does not! (watcom complained about lvalue)
-		 *
-		 * if (((int8)v->parm3 -= v->step_size) < 0)
-		 *      v->parm3 = 0;
-		 */
+		// DF: this is ugly and I dont know why this works, but
+		// other line does not! (watcom complained about lvalue)
+		//
+		// if (((int8)v->parm3 -= v->step_size) < 0)
+		//      v->parm3 = 0;
+
 		k = v->parm3;
 		k -= v->stepSize;
 		v->parm3 = k;
@@ -146,7 +144,7 @@ void AgiEngine::motionFollowEgo(VtEntry *v) {
 void AgiEngine::motionMoveObj(VtEntry *v) {
 	v->direction = getDirection(v->xPos, v->yPos, v->parm1, v->parm2, v->stepSize);
 
-	/* Update V6 if ego */
+	// Update V6 if ego
 	if (isEgoView(v))
 		_game.vars[vEgoDir] = v->direction;
 

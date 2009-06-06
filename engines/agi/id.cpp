@@ -41,13 +41,13 @@ int AgiEngine::v2IdGame() {
 	return setupV2Game(ver, 0);
 }
 
-/*
- * Currently, there is no known difference between v3.002.098 -> v3.002.149
- * So version emulated;
- *
- * 0x0086,
- * 0x0149
- */
+//
+// Currently, there is no known difference between v3.002.098 -> v3.002.149
+// So version emulated;
+//
+// 0x0086,
+// 0x0149
+//
 
 int AgiEngine::v3IdGame() {
 	int ver;
@@ -74,7 +74,7 @@ int AgiEngine::setupV2Game(int ver, uint32 crc) {
 	// Should this go above the previous lines, so we can force emulation versions
 	// even for AGDS games? -- dsymonds
 	if (getFeatures() & GF_AGDS)
-		agiSetRelease(ver = 0x2440);	/* ALL AGDS games built for 2.440 */
+		agiSetRelease(ver = 0x2440);	// ALL AGDS games built for 2.440
 
 	report("Setting up for version 0x%04X\n", ver);
 

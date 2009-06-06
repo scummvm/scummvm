@@ -24,7 +24,7 @@
  */
 
 #include "agi/agi.h"
-#include "agi/sprite.h"		/* for commit_both() */
+#include "agi/sprite.h"		// for commit_both()
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 
@@ -35,7 +35,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 	int x1, y1;
 	int maxx, minx, ofoff;
 	int update;
-	/* Note: Must be unsigned to use AGDS cyrillic characters! */
+	// Note: Must be unsigned to use AGDS cyrillic characters!
 #ifdef __DS__
 	// On the DS, a compiler bug causes the text to render incorrectly, because
 	// GCC tries to optimisie out writes to this pointer (tested on DevkitARM v19b and v20)
@@ -45,20 +45,19 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 	const unsigned char *m;
 #endif
 
-	/* kludge! */
+	// kludge!
 	update = 1;
 	if (l == 2) {
 		update = l = 0;
 	}
 
-	/* FR: strings with len == 1 were not printed
-	 */
+	// FR: strings with len == 1 were not printed
 	if (len == 1) {
 		_gfx->putTextCharacter(l, xoff + foff, yoff, *msg, fg, bg, checkerboard);
 		maxx = 1;
 		minx = 0;
 		ofoff = foff;
-		y1 = 0;		/* Check this */
+		y1 = 0;		// Check this
 	} else {
 		maxx = 0;
 		minx = GFX_WIDTH;
@@ -69,7 +68,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 			if (*m >= 0x20 || *m == 1 || *m == 2 || *m == 3) {
 				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
 				// needs fixing, or remove it!
-				/* FIXME */
+				// FIXME
 				int ypos;
 
 				ypos = (y1 * CHAR_LINES) + yoff;
@@ -92,7 +91,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 
 				x1++;
 
-				/* DF: changed the len-1 to len... */
+				// DF: changed the len-1 to len...
 				if (x1 == len && m[len] != '\n')
 					y1++, x1 = foff = 0;
 			} else {
@@ -114,17 +113,18 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 	if (update) {
 		_gfx->scheduleUpdate(foff + xoff + minx, yoff, ofoff + xoff + maxx + CHAR_COLS - 1,
 				yoff + y1 * CHAR_LINES + CHAR_LINES + 1);
-		/* Making synchronous text updates reduces CPU load
-		 * when updating status line and input area
-		 */
+
+		// Making synchronous text updates reduces CPU load
+		// when updating status line and input area
 		_gfx->doUpdate();
 	}
 }
 
-/* len is in characters, not pixels!!
- */
+//
+// len is in characters, not pixels!!
+//
 void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
-	/* if x | y = -1, then centre the box */
+	// if x | y = -1, then center the box
 	int xoff, yoff, lin, h, w;
 	char *msg, *m;
 
@@ -144,7 +144,7 @@ void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
 	m = msg = wordWrapString(agiSprintf(p), &len);
 
 	for (lin = 1; *m; m++) {
-		/* Test \r for MacOS 8 */
+		// Test \r for MacOS 8
 		if (*m == '\n' || *m == '\r')
 			lin++;
 	}
@@ -301,9 +301,9 @@ void AgiEngine::closeWindow() {
 	debugC(4, kDebugLevelText, "closeWindow()");
 
 	_sprites->eraseBoth();
-	eraseTextbox();	/* remove window, if any */
+	eraseTextbox();	// remove window, if any
 	_sprites->blitBoth();
-	_sprites->commitBoth();		/* redraw sprites */
+	_sprites->commitBoth();		// redraw sprites
 	_game.hasWindow = false;
 }
 
@@ -350,7 +350,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 	s = _game.window.x2 - _game.window.x1 + 1 - 5 * CHAR_COLS;
 	debugC(3, kDebugLevelText, "selectionBox(): s = %d", s);
 
-	/* Automatically position buttons */
+	// Automatically position buttons
 	for (i = 0; b[i]; i++) {
 		numButtons++;
 		s -= CHAR_COLS * strlen(b[i]);
@@ -371,7 +371,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 
 	_sprites->blitBoth();
 
-	/* clear key queue */
+	// clear key queue
 	while (_gfx->keypress()) {
 		_gfx->getKey();
 	}
@@ -383,7 +383,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 		for (i = 0; b[i]; i++)
 			_gfx->drawCurrentStyleButton(bx[i], by[i], b[i], i == active, false, i == 0);
 
-		_gfx->pollTimer();	/* msdos driver -> does nothing */
+		_gfx->pollTimer();	// msdos driver -> does nothing
 		key = doPollKeyboard();
 		switch (key) {
 		case KEY_ENTER:
@@ -410,7 +410,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 				}
 			}
 			break;
-		case 0x09:	/* Tab */
+		case 0x09:	// Tab
 			debugC(3, kDebugLevelText, "selectionBox(): Focus change");
 			active++;
 			active %= i;
@@ -449,12 +449,12 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 	blitTextbox(p, lin, col, len);
 
 	if (getflag(fOutputMode)) {
-		/* non-blocking window */
+		// non-blocking window
 		setflag(fOutputMode, false);
 		return 1;
 	}
 
-	/* blocking */
+	// blocking
 
 	setflag(fNoSaveLoadAllowed, true);
 
@@ -469,7 +469,7 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 		return k;
 	}
 
-	/* timed window */
+	// timed window
 
 	debugC(3, kDebugLevelText, "f15==0, v21==%d => timed", getvar(21));
 	_game.msgBoxTicks = getvar(vWindowReset) * 10;
@@ -561,8 +561,8 @@ char *AgiEngine::agiSprintf(const char *s) {
 				}
 
 				if (i == 99) {
-					/* remove all leading 0 */
-					/* don't remove the 3rd zero if 000 */
+					// remove all leading 0
+					// don't remove the 3rd zero if 000
 					for (i = 0; z[i] == '0' && i < 14; i++)
 					    ;
 				} else {
@@ -683,10 +683,9 @@ void AgiEngine::writePrompt() {
  * @param c   color
  */
 void AgiEngine::clearLines(int l1, int l2, int c) {
-	/* do we need to adjust for +8 on topline?
-	 * inc for endline so it matches the correct num
-	 * ie, from 22 to 24 is 3 lines, not 2 lines.
-	 */
+	// do we need to adjust for +8 on topline?
+	// inc for endline so it matches the correct num
+	// ie, from 22 to 24 is 3 lines, not 2 lines.
 
 	l1 *= CHAR_LINES;
 	l2 *= CHAR_LINES;

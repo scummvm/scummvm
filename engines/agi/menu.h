@@ -30,11 +30,11 @@
 
 namespace Agi {
 
-#define MENU_BG		0x0f	/* White */
-#define MENU_DISABLED	0x07	/* Grey */
+#define MENU_BG		0x0f	// White
+#define MENU_DISABLED	0x07	// Grey
 
-#define MENU_FG		0x00	/* Black */
-#define MENU_LINE	0x00	/* Black */
+#define MENU_FG		0x00	// Black
+#define MENU_LINE	0x00	// Black
 
 struct AgiMenu;
 struct AgiMenuOption;

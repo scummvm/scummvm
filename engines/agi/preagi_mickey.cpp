@@ -92,8 +92,10 @@ void Mickey::readOfsData(int offset, int iItem, uint8 *buffer, long buflen) {
 
 	readExe(offset, buffer, buflen);
 	memcpy(ofs, buffer, sizeof(ofs));
+
 	for (int i = 0; i < 256; i++)
 		ofs[i] = buffer[i*2] + 256 * buffer[i*2+1];
+
 	readExe(ofs[iItem] + IDI_MSA_OFS_EXE, buffer, buflen);
 }
 
@@ -375,16 +377,16 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 
 					// Change cursor
 					if (northIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
-						(event.mouse.y >= 0 && event.mouse.y <= 10)) {
+							(event.mouse.y >= 0 && event.mouse.y <= 10)) {
 						_vm->_gfx->setCursorPalette(true);
 					} else if (southIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
-						(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
+								(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
 						_vm->_gfx->setCursorPalette(true);
 					} else if (westIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
-						(event.mouse.x >= 20 && event.mouse.x <= 30)) {
+								(event.mouse.x >= 20 && event.mouse.x <= 30)) {
 						_vm->_gfx->setCursorPalette(true);
 					} else if (eastIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
-						(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
+								(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
 						_vm->_gfx->setCursorPalette(true);
 					} else {
 						_vm->_gfx->setCursorPalette(false);
@@ -394,27 +396,39 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 			case Common::EVENT_LBUTTONUP:
 				// Click to move
 				if (northIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
-					(event.mouse.y >= 0 && event.mouse.y <= 10)) {
-					*sel0 = goIndex; *sel1 = northIndex;
+						(event.mouse.y >= 0 && event.mouse.y <= 10)) {
+					*sel0 = goIndex;
+					*sel1 = northIndex;
+
 					drawMenu(menu, *sel0, *sel1);
+
 					_vm->_gfx->setCursorPalette(false);
 					_clickToMove = true;
 				} else if (southIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
-					(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
-					*sel0 = goIndex; *sel1 = southIndex;
+							(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
+					*sel0 = goIndex;
+					*sel1 = southIndex;
+
 					drawMenu(menu, *sel0, *sel1);
+
 					_vm->_gfx->setCursorPalette(false);
 					_clickToMove = true;
 				} else if (westIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
-					(event.mouse.x >= 20 && event.mouse.x <= 30)) {
-					*sel0 = goIndex; *sel1 = westIndex;
+							(event.mouse.x >= 20 && event.mouse.x <= 30)) {
+					*sel0 = goIndex;
+					*sel1 = westIndex;
+
 					drawMenu(menu, *sel0, *sel1);
+
 					_vm->_gfx->setCursorPalette(false);
 					_clickToMove = true;
 				} else if (eastIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
-					(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
-					*sel0 = goIndex; *sel1 = eastIndex;
+							(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
+					*sel0 = goIndex;
+					*sel1 = eastIndex;
+
 					drawMenu(menu, *sel0, *sel1);
+
 					_vm->_gfx->setCursorPalette(false);
 					_clickToMove = true;
 				} else {
@@ -422,19 +436,26 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 				}
 				return true;
 			case Common::EVENT_RBUTTONUP:
-				*sel0 = 0; *sel1 = -1;
+				*sel0 = 0;
+				*sel1 = -1;
 				return false;
 			case Common::EVENT_WHEELUP:
 				if (iRow < 2) {
 					*sel -= 1;
-					if (*sel < 0) *sel = nWords - 1;
+
+					if (*sel < 0)
+						*sel = nWords - 1;
+
 					drawMenu(menu, *sel0, *sel1);
 				}
 				break;
 			case Common::EVENT_WHEELDOWN:
 				if (iRow < 2) {
 					*sel += 1;
-					if (*sel == nWords) *sel = 0;
+
+					if (*sel == nWords)
+						*sel = 0;
+
 					drawMenu(menu, *sel0, *sel1);
 				}
 				break;
@@ -458,28 +479,45 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 					break;
 				case Common::KEYCODE_8:
 					if (event.kbd.flags & Common::KBD_CTRL) {
-						*sel0 = 0; *sel1 = -1; return false;
+						*sel0 = 0;
+						*sel1 = -1;
+
+						return false;
 					}
 					break;
 				case Common::KEYCODE_ESCAPE:
-					*sel0 = 0; *sel1 = -1; return false;
+					*sel0 = 0;
+					*sel1 = -1;
+
+					return false;
 				case Common::KEYCODE_s:
 					_vm->flipflag(fSoundOn);
 					break;
 				case Common::KEYCODE_c:
 					inventory();
 					drawRoom();
-					*sel0 = 0; *sel1 = -1; return false;
+
+					*sel0 = 0;
+					*sel1 = -1;
+
+					return false;
 				case Common::KEYCODE_b:
 					printRoomDesc();
 					drawMenu(menu, *sel0, *sel1);
-					*sel0 = 0; *sel1 = -1; return false;
+
+					*sel0 = 0;
+					*sel1 = -1;
+
+					return false;
 				case Common::KEYCODE_LEFT:
 				case Common::KEYCODE_KP4:
 				case Common::KEYCODE_4:
 					if (iRow < 2) {
 						*sel -= 1;
-						if (*sel < 0) *sel = nWords - 1;
+
+						if (*sel < 0)
+							*sel = nWords - 1;
+
 						drawMenu(menu, *sel0, *sel1);
 					}
 					break;
@@ -489,7 +527,10 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 				case Common::KEYCODE_6:
 					if (iRow < 2) {
 						*sel += 1;
-						if (*sel == nWords) *sel = 0;
+
+						if (*sel == nWords)
+							*sel = 0;
+
 						drawMenu(menu, *sel0, *sel1);
 					}
 					break;
@@ -529,7 +570,9 @@ void Mickey::getMenuSel(char *buffer, int *sel0, int *sel1) {
 			if (getMenuSelRow(menu, sel0, sel1, 0)) {
 				if (_clickToMove)
 					break;
+
 				*sel1 = 0;
+
 				if (getMenuSelRow(menu, sel0, sel1, 1)) {
 					break;
 				}
@@ -557,6 +600,7 @@ void Mickey::centerMenu(MSA_MENU *menu) {
 		}
 		w += menu->row[iRow].count - 1;
 		x = (40 - w) / 2;	// FIX
+
 		for (iWord = 0; iWord < menu->row[iRow].count; iWord++) {
 			menu->row[iRow].entry[iWord].x0 = x;
 			x += strlen((char *)menu->row[iRow].entry[iWord].szText) + 1;
@@ -688,6 +732,7 @@ void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	Common::File file;
 	if (!file.open(szFile))
 		return;
+
 	uint32 size = file.size();
 	file.read(buffer, size);
 	file.close();
@@ -709,6 +754,7 @@ void Mickey::drawPic(int iPic) {
 	Common::File file;
 	if (!file.open(szFile))
 		return;
+
 	uint32 size = file.size();
 	file.read(buffer, size);
 	file.close();
@@ -742,30 +788,32 @@ void Mickey::drawRoomAnimation() {
 	case IDI_MSA_PIC_SHIP_MARS:
 	case IDI_MSA_PIC_SHIP_URANUS:
 		{
-		// draw blinking ship lights
+			// draw blinking ship lights
 
-		uint8 iColor = 0;
+			uint8 iColor = 0;
 
-		_vm->_picture->setPattern(2, 0);
+			_vm->_picture->setPattern(2, 0);
 
-		for (int i = 0; i < 12; i++) {
-			iColor = _game.nFrame + i;
-			if (iColor > 15) iColor -= 15;
+			for (int i = 0; i < 12; i++) {
+				iColor = _game.nFrame + i;
+				if (iColor > 15)
+					iColor -= 15;
 
-			objLight[1] = iColor;
-			objLight[4] += 7;
+				objLight[1] = iColor;
+				objLight[4] += 7;
 
-			_vm->_picture->setPictureData(objLight);
-			_vm->_picture->setPictureFlags(kPicFCircle);
-			_vm->_picture->drawPicture();
-		}
-		_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+				_vm->_picture->setPictureData(objLight);
+				_vm->_picture->setPictureFlags(kPicFCircle);
+				_vm->_picture->drawPicture();
+			}
+			_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 
 
-		_game.nFrame--;
-		if (_game.nFrame < 0) _game.nFrame = 15;
+			_game.nFrame--;
+			if (_game.nFrame < 0)
+				_game.nFrame = 15;
 
-		playSound(IDI_MSA_SND_PRESS_BLUE);
+			playSound(IDI_MSA_SND_PRESS_BLUE);
 		}
 		break;
 
@@ -773,7 +821,9 @@ void Mickey::drawRoomAnimation() {
 
 		// draw XL30 screen
 		if (_game.fAnimXL30) {
-			if (_game.nFrame > 5) _game.nFrame = 0;
+			if (_game.nFrame > 5)
+				_game.nFrame = 0;
+
 			drawObj((ENUM_MSA_OBJECT)(IDI_MSA_OBJECT_XL31 + _game.nFrame), 0, 4);
 			_game.nFrame++;
 		};
@@ -787,7 +837,8 @@ void Mickey::drawRoomAnimation() {
 			if (!_game.fHasXtal) {
 				switch(_game.iPlanet) {
 				case IDI_MSA_PLANET_VENUS:
-					if (_game.iRmMenu[_game.iRoom] != 2) break;
+					if (_game.iRmMenu[_game.iRoom] != 2)
+						break;
 				default:
 					drawObj(
 						IDI_MSA_OBJECT_CRYSTAL,
@@ -882,6 +933,7 @@ void Mickey::drawLogo() {
 	Common::File infile;
 	if (!infile.open(szFile))
 		return;
+
 	infile.read(buffer, infile.size());
 	infile.close();
 
@@ -947,6 +999,7 @@ bool Mickey::loadGame() {
 		sprintf(szFile, "%s.s%02d", _vm->getTargetName().c_str(), sel);
 		if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile))) {
 			printLine("PLEASE CHECK THE DISK DRIVE");
+
 			if (_vm->getSelection(kSelAnyKey) == 0)
 				return false;
 		} else {
@@ -1063,6 +1116,7 @@ void Mickey::saveGame() {
 		sprintf(szFile, "%s.s%02d", _vm->getTargetName().c_str(), sel);
 		if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile))) {
 			printLine("PLEASE CHECK THE DISK DRIVE");
+
 			if (_vm->getSelection(kSelAnyKey) == 0)
 				return;
 		} else {
@@ -1658,15 +1712,18 @@ bool Mickey::parse(int cmd, int arg) {
 			if (_game.fItem[IDI_MSA_ITEM_WRENCH]) {
 				_game.iRmMenu[_game.iRoom] = 1;
 			}
+
 			printDatMessage(arg);
 		}
 		break;
 	case IDI_MSA_ACTION_USE_WRENCH:
 		_game.fItemUsed[IDI_MSA_ITEM_WRENCH] = true;
 		printDatString(arg);
+
 		if (_game.iRmPic[_game.iRoom] == IDI_MSA_PIC_VENUS_PROBE_1) {
 			_vm->clearRow(22);
 		}
+
 		waitAnyKey();
 		break;
 	case IDI_MSA_ACTION_GET_XTAL_VENUS:
@@ -1685,11 +1742,13 @@ bool Mickey::parse(int cmd, int arg) {
 	case IDI_MSA_ACTION_ENTER_OPENING:
 		if (_game.fItemUsed[IDI_MSA_ITEM_CROWBAR]) {
 			_game.iRoom = IDI_MSA_PIC_NEPTUNE_CASTLE_4;
+
 			return true;
 		} else {
 			if (_game.fItem[IDI_MSA_ITEM_CROWBAR]) {
 				_game.iRmMenu[_game.iRoom] = 2;
 			}
+
 			printDatMessage(arg);
 		}
 		break;
@@ -1707,11 +1766,13 @@ bool Mickey::parse(int cmd, int arg) {
 			if (_game.fItem[IDI_MSA_ITEM_SCARF]) {
 				_game.iRmMenu[_game.iRoom] = 1;
 			}
+
 			printDatMessage(arg);
 		}
 		break;
 	case IDI_MSA_ACTION_TALK_LEADER:
 		_game.iRoom = IDI_MSA_PIC_NEPTUNE_ENTRYWAY;
+
 		printDatMessage(arg);
 		return true;
 	case IDI_MSA_ACTION_GIVE_SCARF:
@@ -1721,6 +1782,7 @@ bool Mickey::parse(int cmd, int arg) {
 		_game.iRmMenu[_game.iRoom] = 0;
 		_game.iRmMenu[IDI_MSA_PIC_EARTH_BEDROOM] = 2;
 		_game.iRoom = IDI_MSA_PIC_NEPTUNE_ENTRYWAY;
+
 		return true;
 
 	// MERCURY
@@ -1740,7 +1802,9 @@ bool Mickey::parse(int cmd, int arg) {
 		_game.iRmObj[_game.iRoom] = 17;
 		_game.iRmMenu[_game.iRoom] = 2;
 		_game.fItem[IDI_MSA_ITEM_SUNGLASSES] = false;
+
 		getXtal(arg);
+
 		break;
 
 	// TITAN (SATURN)
@@ -1751,11 +1815,15 @@ bool Mickey::parse(int cmd, int arg) {
 			_game.iRmMenu[IDI_MSA_PIC_SATURN_LAKE_1] = 1;
 			_game.iRmMenu[IDI_MSA_PIC_SATURN_LAKE_2] = 1;
 		}
+
 		printDatMessage(arg);
+
 		break;
 	case IDI_MSA_ACTION_USE_MATTRESS:
 		_game.iRoom = IDI_MSA_PIC_SATURN_ISLAND;
+
 		printDatMessage(arg);
+
 		return true;
 	case IDI_MSA_ACTION_GET_XTAL_SATURN:
 		if (_game.fHasXtal) {
@@ -1766,7 +1834,9 @@ bool Mickey::parse(int cmd, int arg) {
 		break;
 	case IDI_MSA_ACTION_LEAVE_ISLAND:
 		_game.iRoom = IDI_MSA_PIC_SATURN_LAKE_1;
+
 		printDatMessage(arg);
+
 		return true;
 
 	// PLUTO
@@ -1785,7 +1855,9 @@ bool Mickey::parse(int cmd, int arg) {
 		_game.fItem[IDI_MSA_ITEM_BONE] = false;
 		_game.iRmMenu[_game.iRoom] = 0;
 		_game.iRmObj[_game.iRoom] = 16;
+
 		getXtal(arg);
+
 		break;
 
 	// IO (JUPITER)
@@ -1829,12 +1901,15 @@ bool Mickey::parse(int cmd, int arg) {
 		_game.nItems--;
 		_game.iRmObj[_game.iRoom]++;
 		_game.iRmMenu[_game.iRoom] = 0;
+
 		drawRoom();
+
 		if (_game.nRocks) {
 			printDatMessage(37);
 		} else {
 			printDatMessage(arg);
 		}
+
 		_game.nRocks++;
 		break;
 
@@ -1844,11 +1919,15 @@ bool Mickey::parse(int cmd, int arg) {
 		if (_game.fItem[IDI_MSA_ITEM_FLASHLIGHT]) {
 			_game.iRmMenu[_game.iRoom] = 1;
 		}
+
 		printDatMessage(arg);
+
 		break;
 	case IDI_MSA_ACTION_USE_FLASHLIGHT:
 		_game.iRoom = IDI_MSA_PIC_MARS_TUBE_1;
+
 		printDatMessage(15);
+
 		return true;
 	case IDI_MSA_ACTION_PLUTO_DIG:
 		if (_game.fHasXtal) {
@@ -1869,6 +1948,7 @@ bool Mickey::parse(int cmd, int arg) {
 
 	case IDI_MSA_ACTION_ENTER_TEMPLE:
 		_game.iRoom = IDI_MSA_PIC_URANUS_TEMPLE;
+
 		return true;
 	case IDI_MSA_ACTION_USE_CRYSTAL:
 		if (_game.iRmMenu[_game.iRoom]) {
@@ -1876,8 +1956,11 @@ bool Mickey::parse(int cmd, int arg) {
 		} else {
 			_game.iRmMenu[_game.iRoom] = 1;
 			_game.iRmPic[_game.iRoom] = IDI_MSA_PIC_URANUS_TEMPLE_1;
+
 			drawRoom();
+
 			_game.iRmPic[_game.iRoom] = IDI_MSA_PIC_URANUS_TEMPLE;
+
 			printDatMessage(arg);
 		}
 		break;
@@ -1887,13 +1970,16 @@ bool Mickey::parse(int cmd, int arg) {
 		} else {
 			_game.fTempleDoorOpen = 1;
 			_game.iRmPic[_game.iRoom] = IDI_MSA_PIC_URANUS_TEMPLE_2;
+
 			drawRoom();
+
 			printDatMessage(arg);
 		}
 		break;
 	case IDI_MSA_ACTION_ENTER_DOOR:
 		if (_game.fTempleDoorOpen) {
 			_game.iRoom = IDI_MSA_PIC_URANUS_STEPS;
+
 			return true;
 		} else {
 			printDatMessage(arg);
@@ -1911,7 +1997,9 @@ bool Mickey::parse(int cmd, int arg) {
 		break;
 	case IDI_MSA_ACTION_USE_CROWBAR_1:
 		_game.iRmMenu[_game.iRoom] = 0;
+
 		getXtal(arg);
+
 		break;
 
 	// SPACESHIP
@@ -1935,11 +2023,14 @@ bool Mickey::parse(int cmd, int arg) {
 			if ((_game.iPlanet == _game.iPlanetXtal[_game.nXtals]) || (_game.iPlanet == IDI_MSA_PLANET_EARTH)) {
 				_game.fHasXtal = false;
 				_game.iRoom = IDI_MSA_HOME_PLANET[_game.iPlanet];
+
 				if (_game.iPlanet != IDI_MSA_PLANET_EARTH)
 					insertDisk(1);
+
 				return true;
 			} else {
 				_game.iRoom = IDI_MSA_SHIP_PLANET[_game.iPlanet];
+
 				return true;
 			}
 		} else {
@@ -1953,13 +2044,17 @@ bool Mickey::parse(int cmd, int arg) {
 			} else {
 				_game.fShipDoorOpen = false;
 				_game.iRmPic[_game.iRoom]--;
+
 				drawRoom();
+
 				printDatMessage(2);
 			}
 		} else {
 			_game.fShipDoorOpen = true;
 			_game.iRmPic[_game.iRoom]++;
+
 			drawRoom();
+
 			printDatMessage(14);
 		}
 		break;
@@ -1969,7 +2064,9 @@ bool Mickey::parse(int cmd, int arg) {
 				_game.fSuit = false;
 				_game.iRmMenu[_game.iRoom] = 0;
 				_game.iRmPic[_game.iRoom] -= 2;
+
 				drawRoom();
+
 				printDatMessage(13);
 			} else {
 				printDatMessage(3);
@@ -1979,7 +2076,9 @@ bool Mickey::parse(int cmd, int arg) {
 				_game.fSuit = true;
 				_game.iRmMenu[_game.iRoom] = 1;
 				_game.iRmPic[_game.iRoom] += 2;
+
 				drawRoom();
+
 				printDatMessage(arg);
 			} else {
 				printDatMessage(12);
@@ -1988,11 +2087,11 @@ bool Mickey::parse(int cmd, int arg) {
 		break;
 	case IDI_MSA_ACTION_READ_GAUGE:
 		printDatString(arg);
-		_vm->drawStr(21, 15, IDA_DEFAULT,
-			(const char *)IDS_MSA_TEMP_C[_game.iPlanet]);
-		_vm->drawStr(21, 23, IDA_DEFAULT,
-			(const char *)IDS_MSA_TEMP_F[_game.iPlanet]);
+		_vm->drawStr(21, 15, IDA_DEFAULT, (const char *)IDS_MSA_TEMP_C[_game.iPlanet]);
+		_vm->drawStr(21, 23, IDA_DEFAULT, (const char *)IDS_MSA_TEMP_F[_game.iPlanet]);
+
 		waitAnyKey();
+
 		break;
 	case IDI_MSA_ACTION_PRESS_ORANGE:
 		if (_game.fFlying) {
@@ -2019,12 +2118,18 @@ bool Mickey::parse(int cmd, int arg) {
 		if (_game.fFlying) {
 			_game.fFlying = false;
 			_game.nButtons = 0;
+
 			memset(_game.szAddr, 0, sizeof(_game.szAddr));
+
 			drawRoom();
+
 			printDatString(22);
+
 			_vm->drawStr(IDI_MSA_ROW_PLANET, IDI_MSA_COL_PLANET, IDA_DEFAULT,
 						(const char *)IDS_MSA_PLANETS[_game.iPlanet]);
+
 			waitAnyKey(true);
+
 			showPlanetInfo();
 		} else {
 			printDatMessage(arg);
@@ -2037,11 +2142,15 @@ bool Mickey::parse(int cmd, int arg) {
 			if (getPlanet() != -1) {
 				_game.fFlying = true;
 				_game.iPlanet = getPlanet();
+
 				drawRoom();
+
 				printDatMessage(16);
 			} else {
 				_game.nButtons = 0;
+
 				memset(_game.szAddr, 0, sizeof(_game.szAddr));
+
 				printDatMessage(17);
 			}
 		}
@@ -2060,23 +2169,32 @@ bool Mickey::parse(int cmd, int arg) {
 		} else {
 			_game.iRmMenu[_game.iRoom] = 1;
 			_game.iRmPic[_game.iRoom] = IDI_MSA_PIC_SHIP_KITCHEN_1;
+
 			drawRoom();
+
 			printDatMessage(arg);
 		}
 		break;
 	case IDI_MSA_ACTION_READ_MAP:
 		_game.iRmPic[_game.iRoom] = IDI_MSA_PIC_STAR_MAP;
+
 		drawRoom();
+
 		printDatMessage(46);
 		printDatMessage(47);
 		printDatMessage(48);
+
 		_game.iRmPic[_game.iRoom] = IDI_MSA_PIC_SHIP_BEDROOM;
+
 		drawRoom();
 		break;
 	case IDI_MSA_ACTION_GO_WEST:
 		_game.nButtons = 0;
+
 		memset(_game.szAddr, 0, sizeof(_game.szAddr));
+
 		_game.iRoom = arg;
+
 		return true;
 	}
 

@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/md5.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -291,7 +290,7 @@ void AgiEngine::agiTimerLow() {
 int AgiEngine::agiGetKeypressLow() {
 	int k;
 
-	while (_keyQueueStart == _keyQueueEnd)	/* block */
+	while (_keyQueueStart == _keyQueueEnd)	// block
 		agiTimerLow();
 	keyDequeue(k);
 
@@ -358,16 +357,16 @@ int AgiEngine::agiInit() {
 	debug(2, "initializing");
 	debug(2, "game.ver = 0x%x", _game.ver);
 
-	/* initialize with adj.ego.move.to.x.y(0, 0) so to speak */
+	// initialize with adj.ego.move.to.x.y(0, 0) so to speak
 	_game.adjMouseX = _game.adjMouseY = 0;
 
-	/* reset all flags to false and all variables to 0 */
+	// reset all flags to false and all variables to 0
 	for (i = 0; i < MAX_FLAGS; i++)
 		_game.flags[i] = 0;
 	for (i = 0; i < MAX_VARS; i++)
 		_game.vars[i] = 0;
 
-	/* clear all resources and events */
+	// clear all resources and events
 	for (i = 0; i < MAX_DIRS; i++) {
 		memset(&_game.views[i], 0, sizeof(struct AgiView));
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
@@ -379,7 +378,7 @@ int AgiEngine::agiInit() {
 		memset(&_game.dirSound[i], 0, sizeof(struct AgiDir));
 	}
 
-	/* clear view table */
+	// clear view table
 	for (i = 0; i < MAX_VIEWTABLE; i++)
 		memset(&_game.viewTable[i], 0, sizeof(VtEntry));
 
@@ -392,11 +391,11 @@ int AgiEngine::agiInit() {
 
 	initPriTable();
 
-	/* clear string buffer */
+	// clear string buffer
 	for (i = 0; i < MAX_STRINGS; i++)
 		_game.strings[i][0] = 0;
 
-	/* setup emulation */
+	// setup emulation
 
 	switch (_loader->getIntVersion() >> 12) {
 	case 2:
@@ -427,19 +426,19 @@ int AgiEngine::agiInit() {
 	if (_game.gameFlags & ID_AGDS)
 		report("AGDS mode enabled.\n");
 
-	ec = _loader->init();	/* load vol files, etc */
+	ec = _loader->init();	// load vol files, etc
 
 	if (ec == errOK)
 		ec = _loader->loadObjects(OBJECTS);
 
-	/* note: demogs has no words.tok */
+	// note: demogs has no words.tok
 	if (ec == errOK)
 		ec = _loader->loadWords(WORDS);
 
-	/* FIXME: load IIgs instruments and samples */
-	/* load_instruments("kq.sys16"); */
+	// FIXME: load IIgs instruments and samples
+	// load_instruments("kq.sys16");
 
-	/* Load logic 0 into memory */
+	// Load logic 0 into memory
 	if (ec == errOK)
 		ec = _loader->loadResource(rLOGIC, 0);
 
@@ -459,7 +458,7 @@ int AgiEngine::agiInit() {
 void AgiEngine::agiUnloadResources() {
 	int i;
 
-	/* Make sure logic 0 is always loaded */
+	// Make sure logic 0 is always loaded
 	for (i = 1; i < MAX_DIRS; i++) {
 		_loader->unloadResource(rLOGIC, i);
 	}
@@ -473,8 +472,8 @@ void AgiEngine::agiUnloadResources() {
 int AgiEngine::agiDeinit() {
 	int ec;
 
-	cleanInput();		/* remove all words from memory */
-	agiUnloadResources();	/* unload resources in memory */
+	cleanInput();		// remove all words from memory
+	agiUnloadResources();	// unload resources in memory
 	_loader->unloadResource(rLOGIC, 0);
 	ec = _loader->deinit();
 	unloadObjects();
@@ -744,7 +743,7 @@ void AgiEngine::initialize() {
 
 	_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
 
-	_game.ver = -1;		/* Don't display the conf file warning */
+	_game.ver = -1;		// Don't display the conf file warning
 
 	debugC(2, kDebugLevelMain, "Detect game");
 
@@ -805,7 +804,7 @@ Common::Error AgiEngine::go() {
 			mainCycle();
 		} while (_game.state < STATE_RUNNING);
 		if (_game.ver < 0)
-			_game.ver = 0;	/* Enable conf file warning */
+			_game.ver = 0;	// Enable conf file warning
 	}
 
 	runGame();

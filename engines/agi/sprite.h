@@ -46,9 +46,9 @@ private:
 	uint8 *_spritePool;
 	uint8 *_poolTop;
 
-	/*
-	 * Sprite management functions
-	 */
+	//
+	// Sprite management functions
+	//
 
 	SpriteList _sprUpd;
 	SpriteList _sprNonupd;

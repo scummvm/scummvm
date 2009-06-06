@@ -48,7 +48,7 @@ int AgiLoader_v2::detectGame() {
 			!Common::File::exists(VIEWDIR))
 		return errInvalidAGIFile;
 
-	_intVersion = 0x2917;	/* setup for 2.917 */
+	_intVersion = 0x2917;	// setup for 2.917
 	return _vm->v2IdGame();
 }
 
@@ -75,13 +75,13 @@ int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 
 	fp.read(mem, flen);
 
-	/* set all directory resources to gone */
+	// set all directory resources to gone
 	for (i = 0; i < MAX_DIRS; i++) {
 		agid[i].volume = 0xff;
 		agid[i].offset = _EMPTY;
 	}
 
-	/* build directory entries */
+	// build directory entries
 	for (i = 0; i < flen; i += 3) {
 		agid[i / 3].volume = *(mem + i) >> 4;
 		agid[i / 3].offset = READ_BE_UINT24(mem + i) & (uint32) _EMPTY;
@@ -97,7 +97,7 @@ int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 int AgiLoader_v2::init() {
 	int ec = errOK;
 
-	/* load directory files */
+	// load directory files
 	ec = loadDir(_vm->_game.dirLogic, LOGDIR);
 	if (ec == errOK)
 		ec = loadDir(_vm->_game.dirPic, PICDIR);
@@ -113,10 +113,10 @@ int AgiLoader_v2::deinit() {
 	int ec = errOK;
 
 #if 0
-	/* unload words */
+	// unload words
 	agiV2UnloadWords();
 
-	/* unload objects */
+	// unload objects
 	agiV2UnloadObjects();
 #endif
 
@@ -144,7 +144,7 @@ int AgiLoader_v2::unloadResource(int t, int n) {
 	return errOK;
 }
 
-/*
+/**
  * This function does noting but load a raw resource into memory,
  * if further decoding is required, it must be done by another
  * routine. NULL is returned if unsucsessfull.
@@ -178,15 +178,15 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 		}
 		fp.close();
 	} else {
-		/* we have a bad volume resource */
-		/* set that resource to NA */
+		// we have a bad volume resource
+		// set that resource to NA
 		agid->offset = _EMPTY;
 	}
 
 	return data;
 }
 
-/*
+/**
  * Loads a resource into memory, a raw resource is loaded in
  * with above routine, then further decoded here.
  */
@@ -204,7 +204,7 @@ int AgiLoader_v2::loadResource(int t, int n) {
 			debugC(3, kDebugLevelResources, "loading logic resource %d", n);
 			unloadResource(rLOGIC, n);
 
-			/* load raw resource into data */
+			// load raw resource into data
 			data = loadVolRes(&_vm->_game.dirLogic[n]);
 
 			_vm->_game.logics[n].data = data;
@@ -213,22 +213,21 @@ int AgiLoader_v2::loadResource(int t, int n) {
 			_vm->_game.logics[n].sIP = 2;
 		}
 
-		/* if logic was cached, we get here */
-		/* reset code pointers incase it was cached */
+		// if logic was cached, we get here
+		// reset code pointers incase it was cached
 
 		_vm->_game.logics[n].cIP = _vm->_game.logics[n].sIP;
 		break;
 	case rPICTURE:
-		/* if picture is currently NOT loaded *OR* cacheing is off,
-		 * unload the resource (caching == off) and reload it
-		 */
+		// if picture is currently NOT loaded *OR* cacheing is off,
+		// unload the resource (caching == off) and reload it
 
 		debugC(3, kDebugLevelResources, "loading picture resource %d", n);
 		if (_vm->_game.dirPic[n].flags & RES_LOADED)
 			break;
 
-		/* if loaded but not cached, unload it */
-		/* if cached but not loaded, etc */
+		// if loaded but not cached, unload it
+		// if cached but not loaded, etc
 		unloadResource(rPICTURE, n);
 		data = loadVolRes(&_vm->_game.dirPic[n]);
 
@@ -255,11 +254,10 @@ int AgiLoader_v2::loadResource(int t, int n) {
 		}
 		break;
 	case rVIEW:
-		/* Load a VIEW resource into memory...
-		 * Since VIEWS alter the view table ALL the time
-		 * can we cache the view? or must we reload it all
-		 * the time?
-		 */
+		// Load a VIEW resource into memory...
+		// Since VIEWS alter the view table ALL the time
+		// can we cache the view? or must we reload it all
+		// the time?
 		if (_vm->_game.dirView[n].flags & RES_LOADED)
 			break;
 

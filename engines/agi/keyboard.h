@@ -26,8 +26,6 @@
 #ifndef AGI_KEYBOARD_H
 #define AGI_KEYBOARD_H
 
-
-
 namespace Agi {
 
 #define keyEnqueue(k) do { _keyQueue[_keyQueueEnd++] = (k); \
@@ -51,10 +49,10 @@ public:
 	}
 };
 
-/* QNX4 has a KEY_DOWN defined which we don't need to care about */
+// QNX4 has a KEY_DOWN defined which we don't need to care about
 #undef KEY_DOWN
 
-/* Allegro defines these */
+// Allegro defines these
 #undef KEY_BACKSPACE
 #undef KEY_ENTER
 #undef KEY_LEFT
@@ -79,24 +77,24 @@ public:
 #define KEY_UP_LEFT	0x4700
 #define KEY_UP_RIGHT	0x4900
 
-#define KEY_STATUSLN	0xd900	/* F11 */
-#define KEY_PRIORITY	0xda00	/* F12 */
+#define KEY_STATUSLN	0xd900	// F11
+#define KEY_PRIORITY	0xda00	// F12
 
-#define KEY_PGUP	0x4900	/* Page Up (fixed by Ziv Barber) */
-#define KEY_PGDN	0x5100	/* Page Down */
-#define KEY_HOME	0x4700	/* Home */
-#define KEY_END		0x4f00	/* End * */
+#define KEY_PGUP	0x4900	// Page Up (fixed by Ziv Barber)
+#define KEY_PGDN	0x5100	// Page Down
+#define KEY_HOME	0x4700	// Home
+#define KEY_END		0x4f00	// End *
 
-#define BUTTON_LEFT	0xF101	/* Left mouse button */
-#define BUTTON_RIGHT	0xF202	/* Right mouse button */
-#define WHEEL_UP	0xF203	/* Mouse wheel up */
-#define WHEEL_DOWN	0xF204	/* Mouse wheel down */
+#define BUTTON_LEFT	0xF101	// Left mouse button
+#define BUTTON_RIGHT	0xF202	// Right mouse button
+#define WHEEL_UP	0xF203	// Mouse wheel up
+#define WHEEL_DOWN	0xF204	// Mouse wheel down
 
 #define KEY_SCAN(k)	(k >> 8)
 #define KEY_ASCII(k)	(k & 0xff)
 
 extern uint8 scancodeTable[];
 
-}                             // End of namespace Agi
+} // End of namespace Agi
 
 #endif /* AGI_KEYBOARD_H */

@@ -36,9 +36,8 @@ void AgiEngine::lSetCel(VtEntry *v, int n) {
 
 	currentVl = &_game.views[v->currentView].loop[v->currentLoop];
 
-	/* Added by Amit Vainsencher <amitv@subdimension.com> to prevent
-	 * crash in KQ1 -- not in the Sierra interpreter
-	 */
+	// Added by Amit Vainsencher <amitv@subdimension.com> to prevent
+	// crash in KQ1 -- not in the Sierra interpreter
 	if (currentVl->numCels == 0)
 		return;
 
@@ -64,9 +63,8 @@ void AgiEngine::lSetLoop(VtEntry *v, int n) {
 	ViewLoop *currentVl;
 	debugC(7, kDebugLevelResources, "vt entry #%d, loop = %d", v->entry, n);
 
-	/* Added to avoid crash when leaving the arcade machine in MH1
-	 * -- not in AGI 2.917
-	 */
+	// Added to avoid crash when leaving the arcade machine in MH1
+	// -- not in AGI 2.917
 	if (n >= v->numLoops)
 		n = 0;
 
@@ -154,34 +152,35 @@ int AgiEngine::decodeView(int n) {
 	_game.views[n].agi256_2 = (READ_LE_UINT16(v) == 0xf00f); // Detect AGI256-2 views by their header bytes
 	_game.views[n].descr = READ_LE_UINT16(v + 3) ? (char *)(v + READ_LE_UINT16(v + 3)) : (char *)(v + 3);
 
-	/* if no loops exist, return! */
+	// if no loops exist, return!
 	if ((_game.views[n].numLoops = *(v + 2)) == 0)
 		return errNoLoopsInView;
 
-	/* allocate memory for all views */
+	// allocate memory for all views
 	_game.views[n].loop = (ViewLoop *)
 			calloc(_game.views[n].numLoops, sizeof(ViewLoop));
 
 	if (_game.views[n].loop == NULL)
 		return errNotEnoughMemory;
 
-	/* decode all of the loops in this view */
-	lptr = v + 5;		/* first loop address */
+	// decode all of the loops in this view
+	lptr = v + 5;		// first loop address
 
 	for (loop = 0; loop < _game.views[n].numLoops; loop++, lptr += 2) {
-		lofs = READ_LE_UINT16(lptr);	/* loop header offset */
-		vl = &_game.views[n].loop[loop];	/* the loop struct */
+		lofs = READ_LE_UINT16(lptr);	// loop header offset
+		vl = &_game.views[n].loop[loop];	// the loop struct
 
 		vl->numCels = *(v + lofs);
 		debugC(6, kDebugLevelResources, "view %d, num_cels = %d", n, vl->numCels);
 		vl->cel = (ViewCel *)calloc(vl->numCels, sizeof(ViewCel));
+
 		if (vl->cel == NULL) {
 			free(_game.views[n].loop);
 			_game.views[n].numLoops = 0;
 			return errNotEnoughMemory;
 		}
 
-		/* decode the cells */
+		// decode the cells
 		for (cel = 0; cel < vl->numCels; cel++) {
 			cofs = lofs + READ_LE_UINT16(v + lofs + 1 + (cel * 2));
 			vc = &vl->cel[cel];
@@ -201,17 +200,17 @@ int AgiEngine::decodeView(int n) {
 				vc->mirror = 0;
 			}
 
-			/* skip over width/height/trans|mirror data */
+			// skip over width/height/trans|mirror data
 			cofs += 3;
 
 			vc->data = v + cofs;
-			/* If mirror_loop is pointing to the current loop,
-			 * then this is the original.
-			 */
+
+			// If mirror_loop is pointing to the current loop,
+			// then this is the original.
 			if (vc->mirrorLoop == loop)
 				vc->mirror = 0;
-		}		/* cel */
-	}			/* loop */
+		}		// cel
+	}			// loop
 
 	return errOK;
 }
@@ -227,12 +226,12 @@ void AgiEngine::unloadView(int n) {
 	if (~_game.dirView[n].flags & RES_LOADED)
 		return;
 
-	/* Rebuild sprite list, see Sarien bug #779302 */
+	// Rebuild sprite list, see Sarien bug #779302
 	_sprites->eraseBoth();
 	_sprites->blitBoth();
 	_sprites->commitBoth();
 
-	/* free all the loops */
+	// free all the loops
 	for (x = 0; x < _game.views[n].numLoops; x++)
 		free(_game.views[n].loop[x].cel);
 
@@ -253,7 +252,7 @@ void AgiEngine::setCel(VtEntry *v, int n) {
 
 	lSetCel(v, n);
 
-	/* If position isn't appropriate, update it accordingly */
+	// If position isn't appropriate, update it accordingly
 	clipViewCoordinates(v);
 }
 
@@ -308,6 +307,7 @@ void AgiEngine::setView(VtEntry *v, int n) {
 		if (v->currentView == 118 && v->flags & DRAWN && getGameID() == GID_SQ1) {
 			viewFlags = v->flags;			// Store the flags for the view
 			_sprites->eraseUpdSprites();
+
 			if (v->flags & UPDATE) {
 				v->flags &= ~DRAWN;
 			} else {
@@ -335,6 +335,7 @@ void AgiEngine::setView(VtEntry *v, int n) {
 void AgiEngine::startUpdate(VtEntry *v) {
 	if (~v->flags & UPDATE) {
 		_sprites->eraseBoth();
+
 		v->flags |= UPDATE;
 		_sprites->blitBoth();
 	}
@@ -347,14 +348,14 @@ void AgiEngine::startUpdate(VtEntry *v) {
 void AgiEngine::stopUpdate(VtEntry *v) {
 	if (v->flags & UPDATE) {
 		_sprites->eraseBoth();
+
 		v->flags &= ~UPDATE;
 		_sprites->blitBoth();
 	}
 }
 
-/* loops to use according to direction and number of loops in
- * the view resource
- */
+// loops to use according to direction and number of loops in
+// the view resource
 static int loopTable2[] = {
 	0x04, 0x04, 0x00, 0x00, 0x00, 0x04, 0x01, 0x01, 0x01
 };
@@ -391,14 +392,14 @@ void AgiEngine::updateViewtable() {
 				loop = loopTable4[v->direction];
 				break;
 			default:
-				/* for KQ4 */
+				// for KQ4
 				if (agiGetRelease() == 0x3086)
 					loop = loopTable4[v->direction];
 				break;
 			}
 		}
 
-		/* AGI 2.272 (ddp, xmas) doesn't test step_time_count! */
+		// AGI 2.272 (ddp, xmas) doesn't test step_time_count!
 		if (loop != 4 && loop != v->currentLoop) {
 			if (agiGetRelease() <= 0x2272 ||
 			    v->stepTimeCount == 1) {
