@@ -198,7 +198,7 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 	if (params.flags & kADFlagUseExtraAsHint)
 		desc["extra"] = realDesc->extra;
 
-	if (realDesc->guioptions)
+	if ((realDesc->guioptions | params.guioptions) != 0)
 		desc["guioptions"] = Common::getGameGUIOptionsDescription(realDesc->guioptions | params.guioptions);
 }
 
