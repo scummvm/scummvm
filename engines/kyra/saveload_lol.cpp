@@ -162,7 +162,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		l->direction = 5;
 	}
 
-	for (int i = 0; i < 28; i++) {
+	for (int i = 0; i < 29; i++) {
 		if (!(_hasTempDataFlags & (1 << i)))
 			continue;
 
@@ -357,7 +357,7 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 
 	addLevelItems();
 
-	for (int i = 0; i < 28; i++) {
+	for (int i = 0; i < 29; i++) {
 		LevelTempData *l = _lvlTempData[i];
 		if (!l || !(_hasTempDataFlags & (1 << i)))
 			continue;
