@@ -963,8 +963,7 @@ bool Console::cmdUpdateZone(int argc, const char **argv) {
 	int width = atoi(argv[3]);
 	int height = atoi(argv[4]);
 
-	g_EngineState->gfx_state->driver->update(g_EngineState->gfx_state->driver, gfx_rect(x, y, width, height),
-										Common::Point(x, y), GFX_BUFFER_FRONT);
+	g_EngineState->gfx_state->driver->update(gfx_rect(x, y, width, height), Common::Point(x, y), GFX_BUFFER_FRONT);
 
 	return false;
 }
@@ -1389,12 +1388,12 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		break;
 
 	case 1:
-		gfx_xlate_pixmap(g_EngineState->gfx_state->pic->priority_map, g_EngineState->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(g_EngineState->gfx_state->pic->priority_map, g_EngineState->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
 		gfxop_draw_pixmap(g_EngineState->gfx_state, g_EngineState->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		break;
 
 	case 2:
-		gfx_xlate_pixmap(g_EngineState->gfx_state->control_map, g_EngineState->gfx_state->driver->mode, GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(g_EngineState->gfx_state->control_map, g_EngineState->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
 		gfxop_draw_pixmap(g_EngineState->gfx_state, g_EngineState->gfx_state->control_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		break;
 

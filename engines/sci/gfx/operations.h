@@ -98,7 +98,7 @@ struct GfxState {
 	rect_t clip_zone_unscaled; /* The current UNSCALED clipping zone */
 	rect_t clip_zone; /* The current SCALED clipping zone; a cached scaled version of clip_zone_unscaled */
 
-	gfx_driver_t *driver;
+	GfxDriver *driver;
 
 	int visible_map;
 

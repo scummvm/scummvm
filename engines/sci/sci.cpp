@@ -40,7 +40,7 @@
 
 namespace Sci {
 
-extern gfx_driver_t gfx_driver_scummvm;
+class GfxDriver;
 
 const char *versionNames[9] = {
 	"Autodetected",
@@ -194,10 +194,9 @@ Common::Error SciEngine::run() {
 	script_set_gamestate_save_dir(_gamestate, "/");
 
 	GfxState gfx_state;
-	gfx_state.driver = &gfx_driver_scummvm;
+	_gamestate->gfx_state = &gfx_state;
 
 	_gamestate->animation_granularity = 4;
-	_gamestate->gfx_state = &gfx_state;
 
 	// Default config:
 	gfx_options_t gfx_options;
