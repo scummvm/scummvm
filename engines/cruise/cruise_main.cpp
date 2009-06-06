@@ -1790,6 +1790,9 @@ void CruiseEngine::mainLoop(void) {
 			// User waiting has ended
 			changeScriptParamInList(-1, -1, &procHead, 9999, 0);
 			changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+
+			mainDraw(0);
+			flipScreen();
 		}
 
 		if (enableUser) {
