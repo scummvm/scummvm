@@ -1886,13 +1886,13 @@ void CruiseEngine::mainLoop(void) {
 //					flipScreen();
 				} else {
 					// Standard handling
-
+/*
 					manageScripts(&relHead);
 					manageScripts(&procHead);
 
 					removeFinishedScripts(&relHead);
 					removeFinishedScripts(&procHead);
-
+*/
 					if (isBlack) {
 						// This is a bit of a hack to ensure that user waits directly after a palette fade
 						// have time to restore the palette before waiting starts
