@@ -78,7 +78,7 @@ GfxDriver::~GfxDriver() {
 
 static void drawProc(int x, int y, int c, void *data) {
 	GfxDriver *drv = (GfxDriver *)data;
-	uint8 *p = drv->getVisual0();
+	byte *p = drv->getVisual0();
 	p[y * 320* drv->getMode()->xfact + x] = c;
 }
 
@@ -224,7 +224,7 @@ int GfxDriver::setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
 byte *GfxDriver::createCursor(gfx_pixmap_t *pointer) {
 	int linewidth = pointer->width;
 	int lines = pointer->height;
-	byte *data = new uint8[linewidth*lines];
+	byte *data = new byte[linewidth*lines];
 	byte *linebase = data, *pos;
 	byte *src = pointer->index_data;
 
@@ -232,7 +232,7 @@ byte *GfxDriver::createCursor(gfx_pixmap_t *pointer) {
 		pos = linebase;
 
 		for (int xc = 0; xc < pointer->index_width; xc++) {
-			uint8 color = *src;
+			byte color = *src;
 			// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
 			// Note that some cursors don't have a palette in SQ5
 			if (pointer->palette && color < pointer->palette->size())
@@ -254,11 +254,11 @@ int GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 	if ((pointer == NULL) || (hotspot == NULL)) {
 		g_system->showMouse(false);
 	} else {
-		uint8 *cursorData = createCursor(pointer);
+		byte *cursorData = createCursor(pointer);
 
 		// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
 		// Note that some cursors don't have a palette in SQ5
-		uint8 color_key = GFX_CURSOR_TRANSPARENT;
+		byte color_key = GFX_CURSOR_TRANSPARENT;
 		if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && (pointer->palette && (unsigned int)pointer->color_key < pointer->palette->size()))
 			color_key = pointer->palette->getColor(pointer->color_key).parent_index;
 		// Some cursors in SQ5 don't have a palette. The cursor palette seems to use 64 colors, so setting the color key to 63 works

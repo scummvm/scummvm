@@ -206,7 +206,7 @@ static int _gfxop_install_pixmap(GfxDriver *driver, gfx_pixmap_t *pxm) {
 
 	// TODO: We probably want to only update the colours used by this pixmap
 	// here. This will require updating the 'dirty' system.
-	uint8 paletteData[4*256];
+	byte paletteData[4*256];
 	const uint paletteSize = driver->getMode()->palette->size();
 	for (uint i = 0; i < paletteSize; ++i) {
 		const PaletteEntry& c = (*driver->getMode()->palette)[i];
@@ -989,17 +989,17 @@ int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t 
 		draw_color1.priority = draw_color2.priority = color1.priority;
 
 		if (draw_color1.mask & GFX_MASK_VISUAL) {
-			draw_color1.visual.r = (uint8) COLOR_MIX(visual.r, mod_offset);
-			draw_color1.visual.g = (uint8) COLOR_MIX(visual.g, mod_offset);
-			draw_color1.visual.b = (uint8) COLOR_MIX(visual.b, mod_offset);
-			draw_color1.alpha = (uint8) COLOR_MIX(alpha, mod_offset);
+			draw_color1.visual.r = (byte) COLOR_MIX(visual.r, mod_offset);
+			draw_color1.visual.g = (byte) COLOR_MIX(visual.g, mod_offset);
+			draw_color1.visual.b = (byte) COLOR_MIX(visual.b, mod_offset);
+			draw_color1.alpha = (byte) COLOR_MIX(alpha, mod_offset);
 
 			mod_offset += mod_breadth;
 
-			draw_color2.visual.r = (uint8) COLOR_MIX(visual.r, mod_offset);
-			draw_color2.visual.g = (uint8) COLOR_MIX(visual.g, mod_offset);
-			draw_color2.visual.b = (uint8) COLOR_MIX(visual.b, mod_offset);
-			draw_color2.alpha = (uint8) COLOR_MIX(alpha, mod_offset);
+			draw_color2.visual.r = (byte) COLOR_MIX(visual.r, mod_offset);
+			draw_color2.visual.g = (byte) COLOR_MIX(visual.g, mod_offset);
+			draw_color2.visual.b = (byte) COLOR_MIX(visual.b, mod_offset);
+			draw_color2.alpha = (byte) COLOR_MIX(alpha, mod_offset);
 		}
 		if (reverse)
 			return drv->drawFilledRect(new_box, draw_color2, draw_color1, driver_shade_type);
