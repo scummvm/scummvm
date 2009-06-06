@@ -48,7 +48,7 @@ void Draw_v2::initScreen() {
 
 	initSpriteSurf(21, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0);
 	_backSurface = _spritesArray[21];
-	_vm->_video->clearSurf(_backSurface);
+	_vm->_video->clearSurf(*_backSurface);
 
 	if (!_spritesArray[23]) {
 		initSpriteSurf(23, 32, 16, 2);
@@ -162,8 +162,8 @@ void Draw_v2::animateCursor(int16 cursor) {
 			newY -= hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
 		}
 
-		_vm->_video->clearSurf(_scummvmCursor);
-		_vm->_video->drawSprite(_cursorSprites, _scummvmCursor,
+		_vm->_video->clearSurf(*_scummvmCursor);
+		_vm->_video->drawSprite(*_cursorSprites, *_scummvmCursor,
 				cursorIndex * _cursorWidth, 0,
 				(cursorIndex + 1) * _cursorWidth - 1,
 				_cursorHeight - 1, 0, 0, 0);
@@ -614,7 +614,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 	byte *dataBuf;
 	int16 len;
 	int16 x, y;
-	SurfaceDesc *sourceSurf, *destSurf;
+	SurfaceDescPtr sourceSurf, destSurf;
 	bool deltaVeto;
 	int16 left;
 	int16 ratio;
@@ -711,8 +711,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 		if (!sourceSurf || !destSurf)
 			break;
 
-		_vm->_video->drawSprite(_spritesArray[_sourceSurface],
-				_spritesArray[_destSurface],
+		_vm->_video->drawSprite(*_spritesArray[_sourceSurface],
+				*_spritesArray[_destSurface],
 				_spriteLeft, spriteTop,
 				_spriteLeft + _spriteRight - 1,
 				_spriteTop + _spriteBottom - 1,
@@ -724,13 +724,13 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 	case DRAW_PUTPIXEL:
 		_vm->_video->putPixel(_destSpriteX, _destSpriteY, _frontColor,
-		                      _spritesArray[_destSurface]);
+		                      *_spritesArray[_destSurface]);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _destSpriteX, _destSpriteY);
 		break;
 
 	case DRAW_FILLRECT:
-		_vm->_video->fillRect(_spritesArray[_destSurface], destSpriteX,
+		_vm->_video->fillRect(*_spritesArray[_destSurface], destSpriteX,
 				_destSpriteY, _destSpriteX + _spriteRight - 1,
 				_destSpriteY + _spriteBottom - 1, _backColor);
 
@@ -739,7 +739,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_DRAWLINE:
-		_vm->_video->drawLine(_spritesArray[_destSurface],
+		_vm->_video->drawLine(*_spritesArray[_destSurface],
 		    _destSpriteX, _destSpriteY,
 		    _spriteRight, _spriteBottom, _frontColor);
 
@@ -747,7 +747,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_INVALIDATE:
-		_vm->_video->drawCircle(_spritesArray[_destSurface], _destSpriteX,
+		_vm->_video->drawCircle(*_spritesArray[_destSurface], _destSpriteX,
 				_destSpriteY, _spriteRight, _frontColor);
 
 		dirtiedRect(_destSurface, _destSpriteX - _spriteRight, _destSpriteY - _spriteBottom,
@@ -770,7 +770,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 			_vm->_video->drawPackedSprite(dataBuf,
 					_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
-					_transparency, _spritesArray[_destSurface]);
+					_transparency, *_spritesArray[_destSurface]);
 
 			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 					_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
@@ -786,7 +786,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		_vm->_video->drawPackedSprite(dataBuf,
 		    _spriteRight, _spriteBottom,
 		    _destSpriteX, _destSpriteY,
-		    _transparency, _spritesArray[_destSurface]);
+		    _transparency, *_spritesArray[_destSurface]);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
@@ -807,11 +807,11 @@ void Draw_v2::spriteOperation(int16 operation) {
 					for (int i = 0; i < len; i++, dataBuf += 2) {
 						_vm->_video->drawLetter(READ_LE_UINT16(dataBuf), _destSpriteX,
 								_destSpriteY, _fonts[_fontIndex], _transparency, _frontColor,
-								_backColor, _spritesArray[_destSurface]);
+								_backColor, *_spritesArray[_destSurface]);
 					}
 				} else {
 					drawString(_textToPrint, _destSpriteX, _destSpriteY, _frontColor,
-							_backColor, _transparency, _spritesArray[_destSurface],
+							_backColor, _transparency, *_spritesArray[_destSurface],
 							_fonts[_fontIndex]);
 					_destSpriteX += len * _fonts[_fontIndex]->itemWidth;
 				}
@@ -820,7 +820,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 					if ((someHandle < 0) || (_textToPrint[i] != ' ')) {
 						_vm->_video->drawLetter(_textToPrint[i], _destSpriteX,
 								_destSpriteY, _fonts[_fontIndex], _transparency,
-								_frontColor, _backColor, _spritesArray[_destSurface]);
+								_frontColor, _backColor, *_spritesArray[_destSurface]);
 						_destSpriteX += *(_fonts[_fontIndex]->extraData +
 								(_textToPrint[i] - _fonts[_fontIndex]->startItem));
 					}
@@ -839,8 +839,8 @@ void Draw_v2::spriteOperation(int16 operation) {
 					* _fontToSprite[_fontIndex].height;
 				x = ((_textToPrint[i] - _fontToSprite[_fontIndex].base) % ratio)
 					* _fontToSprite[_fontIndex].width;
-				_vm->_video->drawSprite(_spritesArray[_fontToSprite[_fontIndex].sprite],
-						_spritesArray[_destSurface], x, y,
+				_vm->_video->drawSprite(*_spritesArray[_fontToSprite[_fontIndex].sprite],
+						*_spritesArray[_destSurface], x, y,
 						x + _fontToSprite[_fontIndex].width - 1,
 						y + _fontToSprite[_fontIndex].height - 1,
 						_destSpriteX, _destSpriteY, _transparency);
@@ -854,35 +854,35 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 	case DRAW_DRAWBAR:
 		if (_needAdjust != 2) {
-			_vm->_video->fillRect(_spritesArray[_destSurface],
+			_vm->_video->fillRect(*_spritesArray[_destSurface],
 					_destSpriteX, _spriteBottom - 1,
 					_spriteRight, _spriteBottom, _frontColor);
 
-			_vm->_video->fillRect(_spritesArray[_destSurface],
+			_vm->_video->fillRect(*_spritesArray[_destSurface],
 					_destSpriteX, _destSpriteY,
 					_destSpriteX + 1, _spriteBottom, _frontColor);
 
-			_vm->_video->fillRect(_spritesArray[_destSurface],
+			_vm->_video->fillRect(*_spritesArray[_destSurface],
 					_spriteRight - 1, _destSpriteY,
 					_spriteRight, _spriteBottom, _frontColor);
 
-			_vm->_video->fillRect(_spritesArray[_destSurface],
+			_vm->_video->fillRect(*_spritesArray[_destSurface],
 					_destSpriteX, _destSpriteY,
 					_spriteRight, _destSpriteY + 1, _frontColor);
 		} else {
-			_vm->_video->drawLine(_spritesArray[_destSurface],
+			_vm->_video->drawLine(*_spritesArray[_destSurface],
 					_destSpriteX, _spriteBottom,
 					_spriteRight, _spriteBottom, _frontColor);
 
-			_vm->_video->drawLine(_spritesArray[_destSurface],
+			_vm->_video->drawLine(*_spritesArray[_destSurface],
 					_destSpriteX, _destSpriteY,
 					_destSpriteX, _spriteBottom, _frontColor);
 
-			_vm->_video->drawLine(_spritesArray[_destSurface],
+			_vm->_video->drawLine(*_spritesArray[_destSurface],
 					_spriteRight, _destSpriteY,
 					_spriteRight, _spriteBottom, _frontColor);
 
-			_vm->_video->drawLine(_spritesArray[_destSurface],
+			_vm->_video->drawLine(*_spritesArray[_destSurface],
 					_destSpriteX, _destSpriteY,
 					_spriteRight, _destSpriteY, _frontColor);
 		}
@@ -892,7 +892,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 	case DRAW_CLEARRECT:
 		if ((_backColor != 16) && (_backColor != 144)) {
-			_vm->_video->fillRect(_spritesArray[_destSurface],
+			_vm->_video->fillRect(*_spritesArray[_destSurface],
 			    _destSpriteX, _destSpriteY,
 			    _spriteRight, _spriteBottom,
 			    _backColor);
@@ -902,7 +902,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_FILLRECTABS:
-		_vm->_video->fillRect(_spritesArray[_destSurface],
+		_vm->_video->fillRect(*_spritesArray[_destSurface],
 		    _destSpriteX, _destSpriteY,
 		    _spriteRight, _spriteBottom, _backColor);
 

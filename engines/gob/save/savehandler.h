@@ -27,11 +27,11 @@
 #define GOB_SAVE_SAVEHANDLER_H
 
 #include "common/savefile.h"
+#include "engines/gob/video.h"	// for SurfaceDescPtr
 
 namespace Gob {
 
 class GobEngine;
-class SurfaceDesc;
 class SavePartInfo;
 class SavePartVars;
 class SavePartSprite;
@@ -139,7 +139,7 @@ public:
 
 	/** Create a fitting sprite. */
 	bool createSprite(int16 dataVar, int32 size,
-			int32 offset, SurfaceDesc **sprite = 0);
+			int32 offset, SurfaceDescPtr *sprite = 0);
 
 protected:
 	SavePartSprite *_sprite;

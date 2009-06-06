@@ -772,9 +772,9 @@ void Inter_v4::o4_initScreen() {
 	memset(_vm->_global->_greenPalette, 0, 256);
 	memset(_vm->_global->_bluePalette, 0, 256);
 
-	_vm->_video->_splitSurf = 0;
-	_vm->_draw->_spritesArray[24] = 0;
-	_vm->_draw->_spritesArray[25] = 0;
+	_vm->_video->_splitSurf.reset();
+	_vm->_draw->_spritesArray[24].reset();
+	_vm->_draw->_spritesArray[25].reset();
 
 	_vm->_global->_videoMode = videoMode;
 	_vm->_video->initPrimary(videoMode);
@@ -791,8 +791,8 @@ void Inter_v4::o4_initScreen() {
 	_vm->_util->setScrollOffset();
 
 	if (offY > 0) {
-		_vm->_draw->_spritesArray[24] = new SurfaceDesc(videoMode, _vm->_width, offY);
-		_vm->_draw->_spritesArray[25] = new SurfaceDesc(videoMode, _vm->_width, offY);
+		_vm->_draw->_spritesArray[24] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
+		_vm->_draw->_spritesArray[25] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
 		_vm->_video->_splitSurf = _vm->_draw->_spritesArray[25];
 	}
 }

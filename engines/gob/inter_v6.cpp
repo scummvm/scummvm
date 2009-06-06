@@ -828,13 +828,13 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 	int16 width, height;
 	byte *dataBuf = _vm->_game->loadTotResource(id, 0, &width, &height);
 
-	_vm->_video->fillRect(_vm->_draw->_cursorSprites,
+	_vm->_video->fillRect(*_vm->_draw->_cursorSprites,
 			index * _vm->_draw->_cursorWidth, 0,
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
 
 	_vm->_video->drawPackedSprite(dataBuf, width, height,
-			index * _vm->_draw->_cursorWidth, 0, 0, _vm->_draw->_cursorSprites);
+			index * _vm->_draw->_cursorWidth, 0, 0, *_vm->_draw->_cursorSprites);
 	_vm->_draw->_cursorAnimLow[index] = 0;
 
 	return false;

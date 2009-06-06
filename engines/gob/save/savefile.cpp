@@ -331,17 +331,14 @@ bool SavePartSprite::readPalette(const byte *palette) {
 	return true;
 }
 
-bool SavePartSprite::readSprite(const SurfaceDesc *sprite) {
-	if (!sprite)
-		return false;
-
+bool SavePartSprite::readSprite(const SurfaceDesc &sprite) {
 	// The sprite's dimensions have to fit
-	if (((uint32) sprite->getWidth()) != _width)
+	if (((uint32)sprite.getWidth()) != _width)
 		return false;
-	if (((uint32) sprite->getHeight()) != _height)
+	if (((uint32)sprite.getHeight()) != _height)
 		return false;
 
-	memcpy(_dataSprite, sprite->getVidMem(), _width * _height);
+	memcpy(_dataSprite, sprite.getVidMem(), _width * _height);
 
 	return true;
 }
@@ -360,17 +357,14 @@ bool SavePartSprite::writePalette(byte *palette) const {
 	return true;
 }
 
-bool SavePartSprite::writeSprite(SurfaceDesc *sprite) const {
-	if (!sprite)
-		return false;
-
+bool SavePartSprite::writeSprite(SurfaceDesc &sprite) const {
 	// The sprite's dimensions have to fit
-	if (((uint32) sprite->getWidth()) != _width)
+	if (((uint32)sprite.getWidth()) != _width)
 		return false;
-	if (((uint32) sprite->getHeight()) != _height)
+	if (((uint32)sprite.getHeight()) != _height)
 		return false;
 
-	memcpy(sprite->getVidMem(), _dataSprite, _width * _height);
+	memcpy(sprite.getVidMem(), _dataSprite, _width * _height);
 
 	return true;
 }

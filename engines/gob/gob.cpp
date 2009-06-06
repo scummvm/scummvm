@@ -479,14 +479,14 @@ bool GobEngine::initGameParts() {
 		_global->_mouseMaxX = 640;
 		_global->_mouseMaxY = 480;
 		_mode = 0x18;
-		_global->_primarySurfDesc = new SurfaceDesc(0x18, 640, 480);
+		_global->_primarySurfDesc = SurfaceDescPtr(new SurfaceDesc(0x18, 640, 480));
 	} else {
 		_video->_surfWidth = _width = 320;
 		_video->_surfHeight = _video->_splitHeight1 = _height = 200;
 		_global->_mouseMaxX = 320;
 		_global->_mouseMaxY = 200;
 		_mode = 0x14;
-		_global->_primarySurfDesc = new SurfaceDesc(0x14, 320, 200);
+		_global->_primarySurfDesc = SurfaceDescPtr(new SurfaceDesc(0x14, 320, 200));
 	}
 
 	return true;

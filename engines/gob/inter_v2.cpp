@@ -907,12 +907,12 @@ void Inter_v2::o2_initMult() {
 	    ((oldAnimWidth != _vm->_mult->_animWidth) ||
 			 (oldAnimHeight != _vm->_mult->_animHeight))) {
 		_vm->_draw->freeSprite(22);
-		_vm->_mult->_animSurf = 0;
+		_vm->_mult->_animSurf.reset();
 	}
 
 	_vm->_draw->adjustCoords(0,
 			&_vm->_mult->_animWidth, &_vm->_mult->_animHeight);
-	if (_vm->_mult->_animSurf == 0) {
+	if (!_vm->_mult->_animSurf) {
 		_vm->_draw->initSpriteSurf(22, _vm->_mult->_animWidth,
 				_vm->_mult->_animHeight, 0);
 		_vm->_mult->_animSurf = _vm->_draw->_spritesArray[22];

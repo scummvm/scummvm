@@ -192,7 +192,7 @@ int16 Scenery::loadStatic(char search) {
 			_spriteResId[sprIndex] = sprResId;
 			_vm->_draw->initSpriteSurf(sprIndex, width, height, 2);
 
-			_vm->_video->clearSurf(_vm->_draw->_spritesArray[sprIndex]);
+			_vm->_video->clearSurf(*_vm->_draw->_spritesArray[sprIndex]);
 			_vm->_draw->_destSurface = sprIndex;
 			_vm->_draw->_spriteLeft = sprResId;
 			_vm->_draw->_transparency = 0;
@@ -517,7 +517,7 @@ int16 Scenery::loadAnim(char search) {
 			_animPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex]++;
 		} else {
-			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0;
+			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex];
 				sprIndex--)
 				;
 
@@ -526,7 +526,7 @@ int16 Scenery::loadAnim(char search) {
 			_spriteResId[sprIndex] = sprResId;
 			_vm->_draw->initSpriteSurf(sprIndex, width, height, 2);
 
-			_vm->_video->clearSurf(_vm->_draw->_spritesArray[sprIndex]);
+			_vm->_video->clearSurf(*_vm->_draw->_spritesArray[sprIndex]);
 			_vm->_draw->_destSurface = sprIndex;
 			_vm->_draw->_spriteLeft = sprResId;
 			_vm->_draw->_transparency = 0;

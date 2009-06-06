@@ -28,9 +28,9 @@
 
 #include "common/list.h"
 #include "common/rect.h"
+#include "common/ptr.h"
 
 #include "gob/gob.h"
-#include "gob/helper.h"
 
 namespace Graphics {
 	class PaletteLUT;
@@ -39,9 +39,9 @@ namespace Graphics {
 namespace Gob {
 
 // Some Surfaces are simultaneous in Draw::spritesArray and discrete
-// variables, so it's a references counting class that cleans
-// up its own mess
-class SurfaceDesc : public ReferenceCounter<SurfaceDesc> {
+// variables, so if in doubt you should use a SurfaceDescPtr shared
+// pointer object to refer to any SurfaceDesc.
+class SurfaceDesc {
 public:
 	int16 _vidMode;
 
@@ -65,6 +65,9 @@ private:
 	byte *_vidMem;
 	bool _ownVidMem;
 };
+
+typedef Common::SharedPtr<SurfaceDesc> SurfaceDescPtr;
+
 
 class Video {
 public:
@@ -117,7 +120,7 @@ public:
 	int16 _scrollOffsetX;
 	int16 _scrollOffsetY;
 
-	SurfaceDesc::Ptr _splitSurf;
+	SurfaceDescPtr _splitSurf;
 	int16 _splitHeight1;
 	int16 _splitHeight2;
 	int16 _splitStart;
@@ -129,7 +132,7 @@ public:
 
 	void freeDriver();
 	void initPrimary(int16 mode);
-	SurfaceDesc *initSurfDesc(int16 vidMode, int16 width,
+	SurfaceDescPtr initSurfDesc(int16 vidMode, int16 width,
 			int16 height, int16 flags);
 
 	void setSize(bool defaultTo1XScaler);
@@ -139,24 +142,24 @@ public:
 	void waitRetrace(bool mouse = true);
 	void sparseRetrace(int max);
 
-	void putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest);
-	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top,
+	void putPixel(int16 x, int16 y, int16 color, SurfaceDesc &dest);
+	virtual void fillRect(SurfaceDesc &dest, int16 left, int16 top,
 			int16 right, int16 bottom, int16 color);
-	void drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1,
+	void drawLine(SurfaceDesc &dest, int16 x0, int16 y0, int16 x1, int16 y1,
 				  int16 color);
-	void drawCircle(SurfaceDesc *dest, int16 x0, int16 y0,
+	void drawCircle(SurfaceDesc &dest, int16 x0, int16 y0,
 			int16 radius, int16 color);
-	void clearSurf(SurfaceDesc *dest);
-	void drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
+	void clearSurf(SurfaceDesc &dest);
+	void drawSprite(SurfaceDesc &source, SurfaceDesc &dest,
 			int16 left, int16 top, int16 right, int16 bottom,
 			int16 x, int16 y, int16 transp);
-	void drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest,
+	void drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest,
 	    int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
 	void drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
-			int16 color1, int16 color2, int16 transp, SurfaceDesc *dest);
+			int16 color1, int16 color2, int16 transp, SurfaceDesc &dest);
 	void drawPackedSprite(byte *sprBuf, int16 width, int16 height,
-			int16 x, int16 y, int16 transp, SurfaceDesc *dest);
-	void drawPackedSprite(const char *path, SurfaceDesc *dest,
+			int16 x, int16 y, int16 transp, SurfaceDesc &dest);
+	void drawPackedSprite(const char *path, SurfaceDesc &dest,
 			int width = 320);
 
 	void setPalColor(byte *pal, byte red, byte green, byte blue) {
@@ -181,7 +184,7 @@ public:
 
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth,
 			int16 srcHeight, int16 x, int16 y, int16 transp,
-			SurfaceDesc *destDesc) = 0;
+			SurfaceDesc &destDesc) = 0;
 
 	virtual void init() {}
 
@@ -210,7 +213,7 @@ protected:
 class Video_v1 : public Video {
 public:
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
+			int16 x, int16 y, int16 transp, SurfaceDesc &destDesc);
 
 	Video_v1(GobEngine *vm);
 	virtual ~Video_v1() {}
@@ -219,7 +222,7 @@ public:
 class Video_v2 : public Video_v1 {
 public:
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
+			int16 x, int16 y, int16 transp, SurfaceDesc &destDesc);
 
 	Video_v2(GobEngine *vm);
 	virtual ~Video_v2() {}
@@ -228,9 +231,9 @@ public:
 class Video_v6 : public Video_v2 {
 public:
 	virtual char spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-			int16 x, int16 y, int16 transp, SurfaceDesc *destDesc);
+			int16 x, int16 y, int16 transp, SurfaceDesc &destDesc);
 
-	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top,
+	virtual void fillRect(SurfaceDesc &dest, int16 left, int16 top,
 			int16 right, int16 bottom, int16 color);
 
 	virtual void init();
@@ -245,13 +248,13 @@ private:
 
 	void buildPalLUT();
 
-	void shadeRect(SurfaceDesc *dest,
+	void shadeRect(SurfaceDesc &dest,
 			int16 left, int16 top, int16 right, int16 bottom, byte color, byte strength);
 
-	void drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *surfDesc);
-	void drawYUVData(const byte *srcData, SurfaceDesc *destDesc,
+	void drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc &surfDesc);
+	void drawYUVData(const byte *srcData, SurfaceDesc &destDesc,
 			int16 width, int16 height, int16 x, int16 y);
-	void drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
+	void drawYUV(SurfaceDesc &destDesc, int16 x, int16 y,
 			int16 dataWidth, int16 dataHeight, int16 width, int16 height,
 			const byte *dataY, const byte *dataU, const byte *dataV);
 };
@@ -260,13 +263,13 @@ class VideoDriver {
 public:
 	VideoDriver() {}
 	virtual ~VideoDriver() {}
-	virtual void drawSprite(SurfaceDesc *source, SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
-	virtual void drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
-	virtual void fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
-	virtual void putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) = 0;
-	virtual void drawLetter(unsigned char item, int16 x, int16 y, Video::FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc *dest) = 0;
-	virtual void drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
-	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc *dest) = 0;
+	virtual void drawSprite(SurfaceDesc &source, SurfaceDesc &dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
+	virtual void drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
+	virtual void fillRect(SurfaceDesc &dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
+	virtual void putPixel(int16 x, int16 y, byte color, SurfaceDesc &dest) = 0;
+	virtual void drawLetter(unsigned char item, int16 x, int16 y, Video::FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc &dest) = 0;
+	virtual void drawLine(SurfaceDesc &dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
+	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc &dest) = 0;
 };
 
 } // End of namespace Gob

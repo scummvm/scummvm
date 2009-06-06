@@ -526,7 +526,7 @@ void Game::start(void) {
 
 	for (int i = 0; i < SPRITES_COUNT; i++)
 		_vm->_draw->freeSprite(i);
-	_vm->_draw->_scummvmCursor = 0;
+	_vm->_draw->_scummvmCursor.reset();
 }
 
 // flagbits: 0 = freeInterVariables, 1 = skipPlay

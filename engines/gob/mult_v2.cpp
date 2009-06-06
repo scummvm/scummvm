@@ -565,8 +565,8 @@ void Mult_v2::playMultInit() {
 		_vm->_draw->initSpriteSurf(22, width, height, 0);
 		_animSurf = _vm->_draw->_spritesArray[22];
 
-		_vm->_video->drawSprite(_vm->_draw->_spritesArray[21],
-				_vm->_draw->_spritesArray[22], 0, 0,
+		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[21],
+				*_vm->_draw->_spritesArray[22], 0, 0,
 				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
 
 		for (_counter = 0; _counter < _objCount; _counter++)
@@ -622,8 +622,8 @@ void Mult_v2::drawStatics(bool &stop) {
 			_vm->_scenery->_curStatic = -1;
 		}
 
-		_vm->_video->drawSprite(_vm->_draw->_spritesArray[21],
-				_vm->_draw->_spritesArray[22], 0, 0,
+		_vm->_video->drawSprite(*_vm->_draw->_spritesArray[21],
+				*_vm->_draw->_spritesArray[22], 0, 0,
 				_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0, 0, 0);
 	}
 }

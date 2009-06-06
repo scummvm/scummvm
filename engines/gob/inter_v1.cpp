@@ -808,9 +808,9 @@ void Inter_v1::o1_initCursor() {
 	    (_vm->_draw->_cursorSprites->getWidth() != (width * count))) {
 
 		_vm->_draw->freeSprite(23);
-		_vm->_draw->_cursorSprites = 0;
-		_vm->_draw->_cursorSpritesBack = 0;
-		_vm->_draw->_scummvmCursor = 0;
+		_vm->_draw->_cursorSprites.reset();
+		_vm->_draw->_cursorSpritesBack.reset();
+		_vm->_draw->_scummvmCursor.reset();
 
 		_vm->_draw->_cursorWidth = width;
 		_vm->_draw->_cursorHeight = height;
@@ -963,7 +963,7 @@ void Inter_v1::o1_initMult() {
 	    ((oldAnimWidth != _vm->_mult->_animWidth) ||
 			 (oldAnimHeight != _vm->_mult->_animHeight))) {
 		_vm->_draw->freeSprite(22);
-		_vm->_mult->_animSurf = 0;
+		_vm->_mult->_animSurf.reset();
 	}
 
 	if (!_vm->_mult->_animSurf) {
@@ -972,7 +972,7 @@ void Inter_v1::o1_initMult() {
 		_vm->_mult->_animSurf = _vm->_draw->_spritesArray[22];
 	}
 
-	_vm->_video->drawSprite(_vm->_draw->_backSurface, _vm->_mult->_animSurf,
+	_vm->_video->drawSprite(*_vm->_draw->_backSurface, *_vm->_mult->_animSurf,
 	    _vm->_mult->_animLeft, _vm->_mult->_animTop,
 	    _vm->_mult->_animLeft + _vm->_mult->_animWidth - 1,
 	    _vm->_mult->_animTop + _vm->_mult->_animHeight - 1, 0, 0, 0);
@@ -1177,13 +1177,13 @@ bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 
 	dataBuf = _vm->_game->loadTotResource(id, 0, &width, &height);
 
-	_vm->_video->fillRect(_vm->_draw->_cursorSprites,
+	_vm->_video->fillRect(*_vm->_draw->_cursorSprites,
 			index * _vm->_draw->_cursorWidth, 0,
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
 
 	_vm->_video->drawPackedSprite(dataBuf, width, height,
-			index * _vm->_draw->_cursorWidth, 0, 0, _vm->_draw->_cursorSprites);
+			index * _vm->_draw->_cursorWidth, 0, 0, *_vm->_draw->_cursorSprites);
 	_vm->_draw->_cursorAnimLow[index] = 0;
 
 	return false;
@@ -1531,7 +1531,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 			}
 		}
 		if (!allZero) {
-			_vm->_video->clearSurf(_vm->_draw->_frontSurface);
+			_vm->_video->clearSurf(*_vm->_draw->_frontSurface);
 			_vm->_draw->_noInvalidated57 = true;
 			_vm->_global->_inter_execPtr += 18;
 			return false;

@@ -256,7 +256,7 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 		_ownSurf = false;
 
 		if (!(flags & kFlagNoVideo)) {
-			SurfaceDesc::Ptr surf;
+			SurfaceDescPtr surf;
 
 			if (flags & kFlagOtherSurface) {
 				_ownSurf = true;

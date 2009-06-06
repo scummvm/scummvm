@@ -894,7 +894,7 @@ bool Inter_v3::o3_copySprite(OpFuncParams &params) {
 }
 
 void Inter_v3::o3_wobble(OpGobParams &params) {
-	_vm->_draw->wobble(_vm->_draw->_backSurface);
+	_vm->_draw->wobble(*_vm->_draw->_backSurface);
 }
 
 } // End of namespace Gob

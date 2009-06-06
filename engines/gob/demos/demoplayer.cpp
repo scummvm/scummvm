@@ -200,7 +200,7 @@ void DemoPlayer::playVideoDoubled() {
 			int16 wD = (state.left * 2) + (w * 2);
 			int16 hD = (state.top * 2) + (h * 2);
 
-			_vm->_video->drawSpriteDouble(_vm->_draw->_spritesArray[0], _vm->_draw->_frontSurface,
+			_vm->_video->drawSpriteDouble(*_vm->_draw->_spritesArray[0], *_vm->_draw->_frontSurface,
 					state.left, state.top, state.right, state.bottom, state.left, state.top, 0);
 			_vm->_draw->dirtiedRect(_vm->_draw->_frontSurface,
 					state.left * 2, state.top * 2, wD, hD);

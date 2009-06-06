@@ -76,11 +76,8 @@ void Video_v6::buildPalLUT() {
 }
 
 char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-	    int16 x, int16 y, int16 transp, SurfaceDesc *destDesc) {
-	if (!destDesc)
-		return 1;
-
-	_vm->validateVideoMode(destDesc->_vidMode);
+	    int16 x, int16 y, int16 transp, SurfaceDesc &destDesc) {
+	_vm->validateVideoMode(destDesc._vidMode);
 
 	if ((sprBuf[0] == 1) && (sprBuf[1] == 3)) {
 		drawPacked(sprBuf, x, y, destDesc);
@@ -92,7 +89,7 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	return 1;
 }
 
-void Video_v6::fillRect(SurfaceDesc *dest,
+void Video_v6::fillRect(SurfaceDesc &dest,
 		int16 left, int16 top, int16 right, int16 bottom, int16 color) {
 
 	if (!(color & 0xFF00)) {
@@ -111,27 +108,27 @@ void Video_v6::fillRect(SurfaceDesc *dest,
 		if (top > bottom)
 			SWAP(top, bottom);
 
-		if ((left >= dest->getWidth()) || (right < 0) ||
-		    (top >= dest->getHeight()) || (bottom < 0))
+		if ((left >= dest.getWidth()) || (right < 0) ||
+		    (top >= dest.getHeight()) || (bottom < 0))
 			return;
 
-		left = CLIP(left, (int16) 0, (int16) (dest->getWidth() - 1));
-		top = CLIP(top, (int16) 0, (int16) (dest->getHeight() - 1));
-		right = CLIP(right, (int16) 0, (int16) (dest->getWidth() - 1));
-		bottom = CLIP(bottom, (int16) 0, (int16) (dest->getHeight() - 1));
+		left = CLIP(left, (int16)0, (int16)(dest.getWidth() - 1));
+		top = CLIP(top, (int16)0, (int16)(dest.getHeight() - 1));
+		right = CLIP(right, (int16)0, (int16)(dest.getWidth() - 1));
+		bottom = CLIP(bottom, (int16)0, (int16)(dest.getHeight() - 1));
 	}
 
 	byte strength = 16 - (((uint16) color) >> 12);
 	shadeRect(dest, left, top, right, bottom, color, strength);
 }
 
-void Video_v6::shadeRect(SurfaceDesc *dest,
+void Video_v6::shadeRect(SurfaceDesc &dest,
 		int16 left, int16 top, int16 right, int16 bottom, byte color, byte strength) {
 
 	int width  = right  - left + 1;
 	int height = bottom - top  + 1;
-	int dWidth = dest->getWidth();
-	byte *vidMem = dest->getVidMem() + dWidth * top + left;
+	int dWidth = dest.getWidth();
+	byte *vidMem = dest.getVidMem() + dWidth * top + left;
 
 	byte sY, sU, sV;
 	_palLUT->getEntry(color, sY, sU, sV);
@@ -166,7 +163,7 @@ void Video_v6::shadeRect(SurfaceDesc *dest,
 	delete dither;
 }
 
-void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *surfDesc) {
+void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc &surfDesc) {
 	const byte *data = sprBuf + 2;
 
 	int16 width = READ_LE_UINT16(data);
@@ -192,7 +189,7 @@ void Video_v6::drawPacked(const byte *sprBuf, int16 x, int16 y, SurfaceDesc *sur
 	delete[] uncBuf;
 }
 
-void Video_v6::drawYUVData(const byte *srcData, SurfaceDesc *destDesc,
+void Video_v6::drawYUVData(const byte *srcData, SurfaceDesc &destDesc,
 		int16 width, int16 height, int16 x, int16 y) {
 
 	int16 dataWidth = width;
@@ -211,16 +208,16 @@ void Video_v6::drawYUVData(const byte *srcData, SurfaceDesc *destDesc,
 
 }
 
-void Video_v6::drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
+void Video_v6::drawYUV(SurfaceDesc &destDesc, int16 x, int16 y,
 		int16 dataWidth, int16 dataHeight, int16 width, int16 height,
 		const byte *dataY, const byte *dataU, const byte *dataV) {
 
-	byte *vidMem = destDesc->getVidMem() + y * destDesc->getWidth() + x;
+	byte *vidMem = destDesc.getVidMem() + y * destDesc.getWidth() + x;
 
-	if ((x + width - 1) >= destDesc->getWidth())
-		width = destDesc->getWidth() - x;
-	if ((y + height - 1) >= destDesc->getHeight())
-		height = destDesc->getHeight() - y;
+	if ((x + width - 1) >= destDesc.getWidth())
+		width = destDesc.getWidth() - x;
+	if ((y + height - 1) >= destDesc.getHeight())
+		height = destDesc.getHeight() - y;
 
 	Graphics::SierraLight *dither =
 		new Graphics::SierraLight(width, _palLUT);
@@ -240,7 +237,7 @@ void Video_v6::drawYUV(SurfaceDesc *destDesc, int16 x, int16 y,
 		}
 
 		dither->nextLine();
-		vidMem += destDesc->getWidth();
+		vidMem += destDesc.getWidth();
 	}
 
 	delete dither;

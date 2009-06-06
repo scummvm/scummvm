@@ -162,7 +162,7 @@ public:
 	/** Read a palette into the part. */
 	bool readPalette(const byte *palette);
 	/** Read a sprite into the part. */
-	bool readSprite(const SurfaceDesc *sprite);
+	bool readSprite(const SurfaceDesc &sprite);
 	
 	/** Read size bytes of raw data into the sprite. */
 	bool readSpriteRaw(const byte *data, uint32 size);
@@ -170,7 +170,7 @@ public:
 	/** Write a palette out of the part. */
 	bool writePalette(byte *palette) const;
 	/** Write a sprite out of the part. */
-	bool writeSprite(SurfaceDesc *sprite) const;
+	bool writeSprite(SurfaceDesc &sprite) const;
 
 private:
 	uint32 _width;

@@ -754,9 +754,9 @@ void Inter_v5::o5_initScreen() {
 	memset(_vm->_global->_greenPalette, 0, 256);
 	memset(_vm->_global->_bluePalette, 0, 256);
 
-	_vm->_video->_splitSurf = 0;
-	_vm->_draw->_spritesArray[24] = 0;
-	_vm->_draw->_spritesArray[25] = 0;
+	_vm->_video->_splitSurf.reset();
+	_vm->_draw->_spritesArray[24].reset();
+	_vm->_draw->_spritesArray[25].reset();
 
 	_vm->_global->_videoMode = videoMode;
 	_vm->_video->initPrimary(videoMode);
@@ -773,8 +773,8 @@ void Inter_v5::o5_initScreen() {
 	_vm->_util->setScrollOffset();
 
 	if (offY > 0) {
-		_vm->_draw->_spritesArray[24] = new SurfaceDesc(videoMode, _vm->_width, offY);
-		_vm->_draw->_spritesArray[25] = new SurfaceDesc(videoMode, _vm->_width, offY);
+		_vm->_draw->_spritesArray[24] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
+		_vm->_draw->_spritesArray[25] = SurfaceDescPtr(new SurfaceDesc(videoMode, _vm->_width, offY));
 		_vm->_video->_splitSurf = _vm->_draw->_spritesArray[25];
 	}
 }
@@ -851,7 +851,7 @@ void Inter_v5::o5_getSystemCDSpeed(OpGobParams &params) {
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 89, 112, 144, 0, _vm->_draw->_backSurface, font);
+		_vm->_draw->drawString("100 %", 402, 89, 112, 144, 0, *_vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
 		delete font;
@@ -865,7 +865,7 @@ void Inter_v5::o5_getSystemRAM(OpGobParams &params) {
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 168, 112, 144, 0, _vm->_draw->_backSurface, font);
+		_vm->_draw->drawString("100 %", 402, 168, 112, 144, 0, *_vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
 		delete font;
@@ -879,7 +879,7 @@ void Inter_v5::o5_getSystemCPUSpeed(OpGobParams &params) {
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 248, 112, 144, 0, _vm->_draw->_backSurface, font);
+		_vm->_draw->drawString("100 %", 402, 248, 112, 144, 0, *_vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
 		delete font;
@@ -893,7 +893,7 @@ void Inter_v5::o5_getSystemDrawSpeed(OpGobParams &params) {
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 326, 112, 144, 0, _vm->_draw->_backSurface, font);
+		_vm->_draw->drawString("100 %", 402, 326, 112, 144, 0, *_vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
 		delete font;
@@ -907,7 +907,7 @@ void Inter_v5::o5_totalSystemSpecs(OpGobParams &params) {
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 405, 112, 144, 0, _vm->_draw->_backSurface, font);
+		_vm->_draw->drawString("100 %", 402, 405, 112, 144, 0, *_vm->_draw->_backSurface, font);
 		_vm->_draw->forceBlit();
 
 		delete font;

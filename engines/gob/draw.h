@@ -78,7 +78,7 @@ public:
 	FontToSprite _fontToSprite[4];
 	Video::FontDesc *_fonts[8];
 
-	SurfaceDesc::Ptr _spritesArray[SPRITES_COUNT];
+	SurfaceDescPtr _spritesArray[SPRITES_COUNT];
 
 	int16 _invalidatedCount;
 	int16 _invalidatedTops[30];
@@ -92,8 +92,8 @@ public:
 	bool _paletteCleared;
 	bool _applyPal;
 
-	SurfaceDesc::Ptr _backSurface;
-	SurfaceDesc::Ptr _frontSurface;
+	SurfaceDescPtr _backSurface;
+	SurfaceDescPtr _frontSurface;
 
 	int16 _unusedPalette1[18];
 	int16 _unusedPalette2[16];
@@ -117,9 +117,9 @@ public:
 	int16 _cursorHotspotXVar;
 	int16 _cursorHotspotYVar;
 
-	SurfaceDesc::Ptr _cursorSprites;
-	SurfaceDesc::Ptr _cursorSpritesBack;
-	SurfaceDesc::Ptr _scummvmCursor;
+	SurfaceDescPtr _cursorSprites;
+	SurfaceDescPtr _cursorSpritesBack;
+	SurfaceDescPtr _scummvmCursor;
 
 	int16 _cursorAnim;
 	int8 _cursorAnimLow[40];
@@ -139,12 +139,12 @@ public:
 	void clearPalette();
 
 	void dirtiedRect(int16 surface, int16 left, int16 top, int16 right, int16 bottom);
-	void dirtiedRect(SurfaceDesc::Ptr surface, int16 left, int16 top, int16 right, int16 bottom);
+	void dirtiedRect(SurfaceDescPtr surface, int16 left, int16 top, int16 right, int16 bottom);
 
 	void initSpriteSurf(int16 index, int16 width, int16 height, int16 flags);
 	void freeSprite(int16 index) {
 		assert(index < SPRITES_COUNT);
-		_spritesArray[index] = 0;
+		_spritesArray[index].reset();
 	}
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
 	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {
@@ -152,14 +152,14 @@ public:
 	}
 	int stringLength(const char *str, int16 fontIndex);
 	void drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-			int16 transp, SurfaceDesc *dest, Video::FontDesc *font);
+			int16 transp, SurfaceDesc &dest, Video::FontDesc *font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);
 
 	static const int16 _wobbleTable[360];
-	void wobble(SurfaceDesc *surfDesc);
+	void wobble(SurfaceDesc &surfDesc);
 
 	virtual void initScreen() = 0;
 	virtual void closeScreen() = 0;

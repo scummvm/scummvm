@@ -571,7 +571,7 @@ void Game_v2::prepareStart(void) {
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
 	_vm->_draw->initScreen();
-	_vm->_video->fillRect(_vm->_draw->_frontSurface, 0, 0,
+	_vm->_video->fillRect(*_vm->_draw->_frontSurface, 0, 0,
 			_vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 1);
 
 	_vm->_util->setMousePos(152, 92);

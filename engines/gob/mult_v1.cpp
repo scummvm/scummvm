@@ -234,7 +234,7 @@ void Mult_v1::freeMultKeys() {
 		_animArrayY = 0;
 		_animArrayData = 0;
 
-		_animSurf = 0;
+		_animSurf.reset();
 		_vm->_draw->freeSprite(22);
 
 		_animDataAllocated = false;
@@ -319,8 +319,8 @@ void Mult_v1::playMultInit() {
 				320, 200, 0);
 		_vm->_draw->_spritesArray[22] = _animSurf;
 
-		_vm->_video->drawSprite(_vm->_draw->_backSurface,
-			_animSurf, 0, 0, 319, 199, 0, 0, 0);
+		_vm->_video->drawSprite(*_vm->_draw->_backSurface,
+			*_animSurf, 0, 0, 319, 199, 0, 0, 0);
 
 		_animDataAllocated = true;
 	} else
@@ -349,7 +349,7 @@ void Mult_v1::drawStatics(bool &stop) {
 
 		_vm->_scenery->_curStatic = _multData->staticIndices[_vm->_scenery->_curStatic];
 		_vm->_scenery->renderStatic(_vm->_scenery->_curStatic, _vm->_scenery->_curStaticLayer);
-		_vm->_video->drawSprite(_vm->_draw->_backSurface, _animSurf,
+		_vm->_video->drawSprite(*_vm->_draw->_backSurface, *_animSurf,
 		    0, 0, 319, 199, 0, 0, 0);
 	}
 }

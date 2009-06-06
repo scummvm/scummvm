@@ -42,7 +42,7 @@ void Init_v2::initVideo() {
 
 	_vm->_draw->_frontSurface = _vm->_global->_primarySurfDesc;
 	_vm->_video->initSurfDesc(_vm->_global->_videoMode,
-			_vm->_video->_surfWidth, _vm->_video->_surfHeight, 0x80);
+			_vm->_video->_surfWidth, _vm->_video->_surfHeight, PRIMARY_SURFACE);
 
 	_vm->_global->_mousePresent = 1;
 

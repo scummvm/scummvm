@@ -85,7 +85,6 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 	_palFadingGreen = 0;
 	_palFadingBlue = 0;
 
-	_animSurf = 0;
 	_animLeft = 0;
 	_animTop = 0;
 	_animWidth = 0;
@@ -111,7 +110,7 @@ Mult::~Mult() {
 
 void Mult::initAll(void) {
 	_objects = 0;
-	_animSurf = 0;
+	_animSurf.reset();
 	_renderData = 0;
 
 	_vm->_scenery->init();
@@ -145,7 +144,7 @@ void Mult::freeMult() {
 	_renderObjs = 0;
 	_orderArray = 0;
 
-	_animSurf = 0;
+	_animSurf.reset();
 	_vm->_draw->freeSprite(22);
 }
 
@@ -237,7 +236,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_animArrayData = 0;
 			_orderArray = 0;
 
-			_animSurf = 0;
+			_animSurf.reset();
 			_vm->_draw->freeSprite(22);
 
 			_animDataAllocated = false;

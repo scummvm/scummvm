@@ -50,7 +50,7 @@ Init::Init(GobEngine *vm) : _vm(vm) {
 
 void Init::cleanup() {
 	_vm->_video->freeDriver();
-	_vm->_global->_primarySurfDesc = 0;
+	_vm->_global->_primarySurfDesc.reset();
 
 	_vm->_sound->speakerOff();
 	_vm->_sound->blasterStop(0);
@@ -213,7 +213,7 @@ void Init::initGame() {
 				_vm->_dataIO->closeData(imdHandle);
 				sprBuf = _vm->_dataIO->getData("coktel.ims");
 				_vm->_video->drawPackedSprite(sprBuf, 320, 200, 0, 0, 0,
-						_vm->_draw->_frontSurface);
+						*_vm->_draw->_frontSurface);
 				_vm->_palAnim->fade(_palDesc, 0, 0);
 				_vm->_util->delay(500);
 
