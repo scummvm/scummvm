@@ -32,16 +32,16 @@
 namespace Sci {
 
 reg_t read_selector(EngineState *s, reg_t object, Selector selector_id, const char *file, int line) {
-	reg_t *address;
+	ObjVarRef address;
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != kSelectorVariable)
 		return NULL_REG;
 	else
-		return *address;
+		return *address.getPointer(s);
 }
 
 void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t value, const char *fname, int line) {
-	reg_t *address;
+	ObjVarRef address;
 
 	if ((selector_id < 0) || (selector_id > (int)s->_kernel->getSelectorNamesSize())) {
 		warning("Attempt to write to invalid selector %d of"
@@ -53,7 +53,7 @@ void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t va
 		warning("Selector '%s' of object at %04x:%04x could not be"
 		         " written to (%s L%d)", s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
 	else
-		*address = value;
+		*address.getPointer(s) = value;
 }
 
 int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, int kfunct,

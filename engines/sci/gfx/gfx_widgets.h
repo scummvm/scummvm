@@ -271,7 +271,7 @@ GfxWidget *gfxw_remove_id(GfxContainer *container, int ID, int subID);
 */
 
 
-GfxDynView *gfxw_dyn_view_set_params(GfxDynView *widget, int under_bits, void *under_bitsp, int signal, void *signalp);
+GfxDynView *gfxw_dyn_view_set_params(GfxDynView *widget, int under_bits, const ObjVarRef& under_bitsp, int signal, const ObjVarRef& signalp);
 /* Initializes a dyn view's interpreter attributes
 ** Parameters: (GfxDynView *) widget: The widget affected
 **             (int x void * x int x void *) under_bits, inder_bitsp, signal, signalp: Interpreter-dependant data

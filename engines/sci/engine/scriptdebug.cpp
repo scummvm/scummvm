@@ -413,7 +413,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			int stackframe = (scr[pos.offset + 1] >> 1) + restmod;
 			reg_t *sb = *p_sp;
 			uint16 selector;
-			reg_t *val_ref;
 			reg_t fun_ref;
 
 			while (stackframe > 0) {
@@ -435,7 +434,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 				sciprintf("  %s::%s[", name, (selector > s->_kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
 
-				switch (lookup_selector(s, called_obj_addr, selector, &val_ref, &fun_ref)) {
+				switch (lookup_selector(s, called_obj_addr, selector, 0, &fun_ref)) {
 				case kSelectorMethod:
 					sciprintf("FUNCT");
 					argc += restmod;
@@ -597,7 +596,6 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	unsigned int i;
 	ExecStack *xstack;
 	Object *o;
-	reg_t *vptr;
 	reg_t fptr;
 
 	selector_id = s->_kernel->findSelector(selector_name);
@@ -613,7 +611,7 @@ static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		return 1;
 	}
 
-	SelectorType selector_type = lookup_selector(s, object, selector_id, &vptr, &fptr);
+	SelectorType selector_type = lookup_selector(s, object, selector_id, 0, &fptr);
 
 	if (selector_type == kSelectorNone) {
 		sciprintf("Object does not support selector: \"%s\"\n", selector_name);

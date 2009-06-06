@@ -1698,7 +1698,8 @@ static void draw_obj_to_control_map(EngineState *s, GfxDynView *view) {
 	if (!is_object(s, obj))
 		warning("View %d does not contain valid object reference %04x:%04x", view->_ID, PRINT_REG(obj));
 
-	if (!(view->signalp && (((reg_t *)view->signalp)->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
+	reg_t* sp = view->signalp.getPointer(s);
+	if (!(sp && (sp->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
 		Common::Rect abs_zone = get_nsrect(s, make_reg(view->_ID, view->_subID), 1);
 		draw_rect_to_control_map(s, abs_zone);
 	}
@@ -1749,8 +1750,9 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 		fprintf(stderr, "obj %04x:%04x has pflags %x\n", PRINT_REG(obj), (widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)));
 #endif
 
-		if (widget->signalp) {
-			*((reg_t *)(widget->signalp)) = make_reg(0, widget->signal & 0xffff); /* Write back signal */
+		reg_t* sp = widget->signalp.getPointer(s);
+		if (sp) {
+			*sp = make_reg(0, widget->signal & 0xffff); /* Write back signal */
 		}
 
 		widget = (GfxDynView *)widget->_next;
@@ -1765,7 +1767,7 @@ void _k_view_list_mark_free(EngineState *s, reg_t off) {
 		while (w) {
 			if (w->_ID == off.segment
 			        && w->_subID == off.offset) {
-				w->under_bitsp = NULL;
+				w->under_bitsp.obj = NULL_REG;
 			}
 
 			w = (GfxDynView *)w->_next;
@@ -1792,7 +1794,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 			return -1;
 
 		if (GFXW_IS_DYN_VIEW(widget) && (widget->_ID != GFXW_NO_ID)) {
-			signal = ((reg_t *)widget->signalp)->offset;
+			signal = widget->signalp.getPointer(s)->offset;
 			if (signal & _K_VIEW_SIG_FLAG_DISPOSE_ME) {
 				reg_t obj = make_reg(widget->_ID, widget->_subID);
 				reg_t under_bits = NULL_REG;
@@ -1800,20 +1802,21 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 				if (!is_object(s, obj)) {
 					error("Non-object %04x:%04x present in view list during delete time", PRINT_REG(obj));
 					obj = NULL_REG;
-				} else
-					if (widget->under_bitsp) { // Is there a bg picture left to clean?
-						reg_t mem_handle = *((reg_t*)(widget->under_bitsp));
+				} else {
+					reg_t *ubp = widget->under_bitsp.getPointer(s);
+					if (ubp) { // Is there a bg picture left to clean?
+						reg_t mem_handle = *ubp;
 
 						if (mem_handle.segment) {
 							if (!kfree(s, mem_handle)) {
-								*((reg_t*)(widget->under_bitsp)) = make_reg(0, widget->under_bits = 0);
+								*ubp = make_reg(0, widget->under_bits = 0);
 							} else {
 								warning("Treating viewobj %04x:%04x as no longer present", PRINT_REG(obj));
 								obj = NULL_REG;
 							}
 						}
 					}
-
+				}
 				if (is_object(s, obj)) {
 					if (invoke_selector(INV_SEL(obj, delete_, kContinueOnInvalidSelector), 0))
 						warning("Object at %04x:%04x requested deletion, but does not have a delete funcselector", PRINT_REG(obj));
@@ -1822,11 +1825,12 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 						return dropped;
 					}
 
-					if (widget->under_bitsp)
-						under_bits = *((reg_t*)(widget->under_bitsp));
+					reg_t *ubp = widget->under_bitsp.getPointer(s);
+					if (ubp)
+						under_bits = *ubp;
 
 					if (under_bits.segment) {
-						*((reg_t*)(widget->under_bitsp)) = make_reg(0, 0);
+						*ubp = make_reg(0, 0);
 						graph_restore_box(s, under_bits);
 					}
 
@@ -1871,7 +1875,6 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	int palette;
 	int signal;
 	reg_t under_bits;
-	reg_t *under_bitsp, *signalp;
 	Common::Point pos;
 	int z;
 	GfxDynView *widget;
@@ -1913,19 +1916,21 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 		PUT_SEL32V(obj, cel, cel);
 	}
 
+	ObjVarRef under_bitsp;
 	if (lookup_selector(s, obj, s->_kernel->_selectorMap.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
-		under_bitsp = NULL;
+		under_bitsp.obj = NULL_REG;
 		under_bits = NULL_REG;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no underBits\n", PRINT_REG(obj));
 	} else
-		under_bits = *((reg_t *)under_bitsp);
+		under_bits = *under_bitsp.getPointer(s);
 
+	ObjVarRef signalp;
 	if (lookup_selector(s, obj, s->_kernel->_selectorMap.signal, &(signalp), NULL) != kSelectorVariable) {
-		signalp = NULL;
+		signalp.obj = NULL_REG;
 		signal = 0;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no signal selector\n", PRINT_REG(obj));
 	} else {
-		signal = signalp->offset;
+		signal = signalp.getPointer(s)->offset;
 		debugC(2, kDebugLevelGraphics, "    with signal = %04x\n", signal);
 	}
 
@@ -2000,8 +2005,9 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 	widget = (GfxDynView *)(*widget_list)->_contents;
 
 	while (widget) { // Read back widget values
-		if (widget->signalp)
-			widget->signal = ((reg_t *)(widget->signalp))->offset;
+		reg_t *sp = widget->signalp.getPointer(s);
+		if (sp)
+			widget->signal = sp->offset;
 
 		widget = (GfxDynView *)widget->_next;
 	}
@@ -2227,7 +2233,7 @@ void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 			widget = gfxw_picviewize_dynview(widget);
 
 		if (GFXW_IS_DYN_VIEW(widget) && widget->_ID) {
-			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? ((reg_t *)(widget->signalp))->offset : 0;
+			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? widget->signalp.getPointer(s)->offset : 0;
 
 			if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
 				gfxw_hide_widget(widget);
@@ -2247,7 +2253,7 @@ void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 					else
 						gfxw_show_widget(widget);
 
-					*((reg_t *)(widget->signalp)) = make_reg(0, signal); // Write the changes back
+					*widget->signalp.getPointer(s) = make_reg(0, signal); // Write the changes back
 				};
 
 			} // ...if we're drawing disposeables and this one is disposeable, or if we're drawing non-

@@ -166,9 +166,11 @@ public:
 
 /** This struct is used to buffer the list of send calls in send_selector() */
 struct CallsStruct {
+	reg_t addr_func;
+	reg_t varp_objp;
 	union {
 		reg_t func;
-		reg_t *var;
+		ObjVarRef var;
 	} address;
 	StackPtr argp;
 	int argc;

@@ -201,10 +201,20 @@ struct selector_map_t {
 	Selector syncTime; /**< Used by DoSync() */
 };
 
+// A reference to an object's variable.
+// The object is stored as a reg_t, the variable as an index into _variables
+struct ObjVarRef {
+	reg_t obj;
+	int varindex;
+
+	reg_t* getPointer(EngineState *s) const;
+};
+
+
 struct ViewObject {
 	reg_t obj;
-	reg_t *signalp;    /* Used only indirectly */
-	reg_t *underBitsp; /* The same goes for the handle storage */
+	ObjVarRef signalp;    /* Used only indirectly */
+	ObjVarRef underBitsp; /* The same goes for the handle storage */
 	int underBits; /* Copy of the underbits: Needed for cleanup */
 
 	int x, y;
@@ -231,10 +241,12 @@ enum ExecStackType {
 struct ExecStack {
 	reg_t objp;
 	reg_t sendp; /**< Pointer to the object containing the invoked method */
+
 	union {
-		reg_t *varp; /**< Variable pointer for read/write access */
+		ObjVarRef varp; /**< Variable pointer for r/w access */
 		reg_t pc; /**< Not accurate for the TOS element */
 	} addr;
+
 	StackPtr fp; /**< Frame pointer */
 	StackPtr sp; /**< Stack pointer */
 	int argc;
@@ -246,6 +258,8 @@ struct ExecStack {
 	Selector selector; /**< The selector which was used to call or -1 if not applicable */
 	int origin;   /**< The stack frame position the call was made from, or -1 if it was the initial call.  */
 	ExecStackType type;
+
+	reg_t* getVarPointer(EngineState *s) const;
 };
 
 
@@ -355,13 +369,13 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
  *             (int) argc: 1 for writing, 0 for reading
  *             (StackPtr) argp: Pointer to the address of the data to write -2
  *             (int) selector: Selector name
- *             (reg_t *) address: Heap address of the selector
+ *             (ObjVarRef& ) address: Heap address of the selector
  *             (int) origin: Stack frame which the access originated from
  * Returns   : (ExecStack *): Pointer to the new exec-TOS element
  * This function is called from send_selector only.
  */
 ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp,
-	Selector selector, reg_t *address, int origin);
+	Selector selector, const ObjVarRef& address, int origin);
 
 
 void run_vm(EngineState *s, int restoring);
@@ -428,7 +442,7 @@ void script_free_vm_memory(EngineState *s);
 */
 
 
-SelectorType lookup_selector(EngineState *s, reg_t obj, Selector selectorid, reg_t **vptr, reg_t *fptr);
+SelectorType lookup_selector(EngineState *s, reg_t obj, Selector selectorid, ObjVarRef *varp, reg_t *fptr);
 /* Looks up a selector and returns its type and value
 ** Parameters: (EngineState *) s: The EngineState to use
 **             (reg_t) obj: Address of the object to look the selector up in
@@ -436,11 +450,11 @@ SelectorType lookup_selector(EngineState *s, reg_t obj, Selector selectorid, reg
 ** Returns   : (SelectorType) kSelectorNone if the selector was not found in the object or its superclasses.
 **                            kSelectorVariable if the selector represents an object-relative variable
 **                            kSelectorMethod if the selector represents a method
-**             (reg_t *) *vptr: A pointer to the storage space associated with the selector, if
+**             (ObjVarRef *) *varp: A reference to the selector, if
 **                              it is a variable
 **             (reg_t) *fptr: A reference to the function described by that selector, if it is
 **                            a valid function selector.
-** *vptr is written to iff it is non-NULL and the selector indicates a property of the object.
+** *varindex is written to iff it is non-NULL and the selector indicates a property of the object.
 ** *fptr is written to iff it is non-NULL and the selector indicates a member function of that object.
 */
 

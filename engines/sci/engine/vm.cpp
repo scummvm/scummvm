@@ -280,10 +280,10 @@ static void _exec_varselectors(EngineState *s) {
 		ExecStack &xs = s->_executionStack.back();
 		// varselector access?
 		if (xs.argc) { // write?
-			*(xs.addr.varp) = xs.variables_argp[1];
+			*(xs.getVarPointer(s)) = xs.variables_argp[1];
 
 		} else // No, read
-			s->r_acc = *(xs.addr.varp);
+			s->r_acc = *(xs.getVarPointer(s));
 
 		s->_executionStack.pop_back();
 	}
@@ -294,7 +294,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 // Returns a pointer to the TOS exec_stack element
 	assert(s);
 
-	reg_t *varp;
 	reg_t funcp;
 	int selector;
 	int argc;
@@ -341,6 +340,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		sciprintf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, s->_selectorNames[selector].c_str());
 #endif // VM_DEBUG_SEND
 
+		ObjVarRef varp;
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
 			// WORKAROUND: LSL6 tries to access the invalid 'keep' selector of the game object.
@@ -377,7 +377,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #endif
 				{ // Argument is supplied -> Selector should be set
 					if (print_send_action) {
-						reg_t oldReg = *varp;
+						reg_t oldReg = *varp.getPointer(s);
 						reg_t newReg = argp[1];
 
 						sciprintf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
@@ -454,8 +454,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	return &(s->_executionStack.back());
 }
 
-ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp, Selector selector, reg_t *address, int origin) {
-	ExecStack *xstack = add_exec_stack_entry(s, NULL_REG, address, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
+ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp, Selector selector, const ObjVarRef& address, int origin) {
+	ExecStack *xstack = add_exec_stack_entry(s, NULL_REG, 0, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
 	// Store selector address in sp
 
 	xstack->addr.varp = address;
@@ -1048,9 +1048,9 @@ void run_vm(EngineState *s, int restoring) {
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
 					// varselector access?
 					if (old_xs->argc) // write?
-						*(old_xs->addr.varp) = old_xs->variables_argp[1];
+						*(old_xs->getVarPointer(s)) = old_xs->variables_argp[1];
 					else // No, read
-						s->r_acc = *(old_xs->addr.varp);
+						s->r_acc = *(old_xs->getVarPointer(s));
 				}
 
 				// Not reached the base, so let's do a soft return
@@ -1507,7 +1507,7 @@ static SelectorType _lookup_selector_function(EngineState *s, int seg_id, Object
 	return kSelectorNone;
 }
 
-SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector selector_id, reg_t **vptr, reg_t *fptr) {
+SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector selector_id, ObjVarRef *varp, reg_t *fptr) {
 	Object *obj = obj_get(s, obj_location);
 	Object *species;
 	int index;
@@ -1540,8 +1540,10 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 	if (index >= 0) {
 		// Found it as a variable
-		if (vptr)
-			*vptr = &obj->_variables[index];
+		if (varp) {
+			varp->obj = obj_location;
+			varp->varindex = index;
+		}
 		return kSelectorVariable;
 	}
 
@@ -2075,5 +2077,15 @@ void shrink_execution_stack(EngineState *s, uint size) {
 	s->_executionStack.erase(iter, s->_executionStack.end());
 }
 
+reg_t* ObjVarRef::getPointer(EngineState *s) const {
+	Object *o = obj_get(s, obj);
+	if (!o) return 0;
+	return &(o->_variables[varindex]);
+}
+
+reg_t* ExecStack::getVarPointer(EngineState *s) const {
+	assert(type == EXEC_STACK_TYPE_VARSELECTOR);
+	return addr.varp.getPointer(s);
+}
 
 } // End of namespace Sci

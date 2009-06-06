@@ -681,10 +681,10 @@ int GfxDynView::draw(const Common::Point &pos) {
 	else
 		error("GfxDynView::print: Invalid type %d", _type);
 
-	sciprintf(" SORT=%d z=%d seq=%d (%d/%d/%d)@(%d,%d)[p:%d,c:%d]; sig[%04x@%p]", force_precedence, _z,
+	sciprintf(" SORT=%d z=%d seq=%d (%d/%d/%d)@(%d,%d)[p:%d,c:%d]; sig[%04x@%04X:%04X[%d]]", force_precedence, _z,
 	          sequence, _view, _loop, _cel, _pos.x, _pos.y,
 	          (_color.mask & GFX_MASK_PRIORITY) ? _color.priority : -1,
-	          (_color.mask & GFX_MASK_CONTROL) ? _color.control : -1, signal, signalp);
+	          (_color.mask & GFX_MASK_CONTROL) ? _color.control : -1, signal, signalp.obj.segment, signalp.obj.offset, signalp.varindex);
 }
 
 static int _gfxwop_dyn_view_equals(GfxWidget *widget, GfxWidget *other) {
@@ -794,9 +794,9 @@ GfxDynView::GfxDynView(GfxState *state, Common::Point pos_, int z_, int view_, i
 	draw_bounds = gfx_rect(_pos.x - xalignmod, _pos.y - yalignmod - z_, width, height);
 	_bounds = gfx_rect(_pos.x - offset.x - xalignmod, _pos.y - offset.y - yalignmod - z_, width, height);
 
-	under_bitsp = NULL;
+	under_bitsp.obj = NULL_REG;
 	under_bits = 0;
-	signalp = NULL;
+	signalp.obj = NULL_REG;
 	signal = 0;
 	_z = z_;
 	sequence = sequence_;
@@ -1671,7 +1671,7 @@ GfxWidget *gfxw_set_id(GfxWidget *widget, int ID, int subID) {
 	return widget;
 }
 
-GfxDynView *gfxw_dyn_view_set_params(GfxDynView *widget, int under_bits, void *under_bitsp, int signal, void *signalp) {
+GfxDynView *gfxw_dyn_view_set_params(GfxDynView *widget, int under_bits, const ObjVarRef& under_bitsp, int signal, const ObjVarRef& signalp) {
 	if (!widget)
 		return NULL;
 

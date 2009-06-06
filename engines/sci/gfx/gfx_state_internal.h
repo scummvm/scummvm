@@ -245,7 +245,8 @@ public:
 struct GfxDynView : public GfxView {
 	/* FIXME: This code is specific to SCI */
 	rect_t draw_bounds; /* The correct position to draw to */
-	void *under_bitsp, *signalp;
+	ObjVarRef under_bitsp;
+	ObjVarRef signalp;
 	int under_bits, signal;
 	int _z; /**< The z coordinate: Added to y, but used for sorting */
 	int sequence; /**< Sequence number: For sorting */
