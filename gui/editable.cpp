@@ -28,13 +28,13 @@
 
 namespace GUI {
 
-EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h)
- : Widget(boss, x, y, w, h) {
+EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
+ : Widget(boss, x, y, w, h), CommandSender(boss), _cmd(cmd) {
 	init();
 }
 
-EditableWidget::EditableWidget(GuiObject *boss, const String &name)
- : Widget(boss, name) {
+EditableWidget::EditableWidget(GuiObject *boss, const String &name, uint32 cmd)
+ : Widget(boss, name), CommandSender(boss), _cmd(cmd) {
 	init();
 }
 
@@ -109,6 +109,8 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 			_caretPos--;
 			_editString.deleteChar(_caretPos);
 			dirty = true;
+
+			sendCommand(_cmd, 0);
 		}
 		forcecaret = true;
 		break;
@@ -116,6 +118,8 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		if (_caretPos < (int)_editString.size()) {
 			_editString.deleteChar(_caretPos);
 			dirty = true;
+
+			sendCommand(_cmd, 0);
 		}
 		forcecaret = true;
 		break;
@@ -146,6 +150,8 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 			_caretPos++;
 			dirty = true;
 			forcecaret = true;
+
+			sendCommand(_cmd, 0);
 		} else {
 			handled = false;
 		}

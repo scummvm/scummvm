@@ -34,7 +34,7 @@
 namespace GUI {
 
 ListWidget::ListWidget(GuiObject *boss, const String &name)
-	: EditableWidget(boss, name), CommandSender(boss) {
+	: EditableWidget(boss, name) {
 
 	_scrollBar = NULL;
 	_textWidth = NULL;
@@ -63,7 +63,7 @@ ListWidget::ListWidget(GuiObject *boss, const String &name)
 }
 
 ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
-	: EditableWidget(boss, x, y, w, h), CommandSender(boss) {
+	: EditableWidget(boss, x, y, w, h) {
 
 	_scrollBar = NULL;
 	_textWidth = NULL;

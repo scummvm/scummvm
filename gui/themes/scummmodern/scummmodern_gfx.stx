@@ -99,6 +99,7 @@
 		<bitmap filename = 'checkbox.bmp'/>
 		<bitmap filename = 'checkbox_empty.bmp'/>
 		<bitmap filename = 'logo_small.bmp'/>
+		<bitmap filename = 'search.bmp'/>
 	</bitmaps>
 
 	<fonts>

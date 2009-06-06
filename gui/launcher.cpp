@@ -64,6 +64,7 @@ enum {
 	kRemoveGameCmd = 'REMG',
 	kLoadGameCmd = 'LOAD',
 	kQuitCmd = 'QUIT',
+	kSearchCmd = 'SRCH',
 
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
@@ -508,6 +509,10 @@ LauncherDialog::LauncherDialog()
 	_removeButton =
 		new ButtonWidget(this, "Launcher.RemoveGameButton", "Remove Game", kRemoveGameCmd, 'R');
 
+	// Search box
+	_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
+	_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, kSearchCmd);
 
 	// Add list with game titles
 	_list = new ListWidget(this, "Launcher.GameList");
@@ -906,6 +911,8 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		ConfMan.setActiveDomain("");
 		setResult(-1);
 		close();
+		break;
+	case kSearchCmd:
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);

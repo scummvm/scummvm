@@ -184,8 +184,9 @@ public:
 
 	//! Special image ids for images used in the GUI
 	enum kThemeImages {
-		kImageLogo = 0,		//!< ScummVM Logo used in the launcher
-		kImageLogoSmall		//!< ScummVM logo used in the GMM
+		kImageLogo = 0,		//!< ScummVM logo used in the launcher
+		kImageLogoSmall,	//!< ScummVM logo used in the GMM
+		kImageSearch		//!< Search tool image used in the launcher
 	};
 
 	/**
@@ -422,12 +423,16 @@ public:
 	}
 
 	const Graphics::Surface *getImageSurface(const kThemeImages n) const {
-		if (n == kImageLogo)
+		switch (n) {
+		case kImageLogo:
 			return _bitmaps.contains("logo.bmp") ? _bitmaps["logo.bmp"] : 0;
-		else if (n == kImageLogoSmall)
+		case kImageLogoSmall:
 			return _bitmaps.contains("logo_small.bmp") ? _bitmaps["logo_small.bmp"] : 0;
-
-		return 0;
+		case kImageSearch:
+			return _bitmaps.contains("search.bmp") ? _bitmaps["search.bmp"] : 0;
+		default:
+			return 0;
+		}
 	}
 
 	/**

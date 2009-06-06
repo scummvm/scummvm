@@ -34,6 +34,7 @@ class BrowserDialog;
 class ListWidget;
 class GraphicsWidget;
 class SaveLoadChooser;
+class EditTextWidget;
 
 Common::String addGameToConf(const GameDescriptor &result);
 
@@ -50,6 +51,7 @@ public:
 	virtual void handleKeyUp(Common::KeyState state);
 
 protected:
+	EditTextWidget  *_searchWidget;
 	ListWidget		*_list;
 	ButtonWidget	*_addButton;
 	Widget			*_startButton;
@@ -58,10 +60,13 @@ protected:
 	Widget			*_removeButton;
 #ifndef DISABLE_FANCY_THEMES
 	GraphicsWidget		*_logo;
+	GraphicsWidget		*_searchPic;
 #endif
 	StringList		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;
+
+	String _search;
 
 	virtual void reflowLayout();
 

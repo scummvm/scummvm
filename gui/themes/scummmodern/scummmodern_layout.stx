@@ -104,6 +104,17 @@
 					width = '283'
 					height = '80'
 			/>		
+			<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
+				<widget name = 'SearchPic'
+						width = '16'
+						height = '17'
+				/>		
+				<widget name = 'Search'
+						width = '150'
+						height = 'Globals.Line.Height'
+				/>
+				<space />
+			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'GameList'/>
 				<layout type = 'vertical' padding = '10, 0, 0, 0'>

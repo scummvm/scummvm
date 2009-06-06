@@ -47,7 +47,7 @@ enum {
 };
 
 /* ListWidget */
-class ListWidget : public EditableWidget, public CommandSender {
+class ListWidget : public EditableWidget {
 public:
 	typedef Common::String String;
 	typedef Common::StringList StringList;

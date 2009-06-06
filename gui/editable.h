@@ -36,11 +36,13 @@ namespace GUI {
  * Base class for widgets which need to edit text, like ListWidget and
  * EditTextWidget.
  */
-class EditableWidget : public Widget {
+class EditableWidget : public Widget, public CommandSender {
 public:
 	typedef Common::String String;
 protected:
 	String		_editString;
+
+	uint32		_cmd;
 
 	bool		_caretVisible;
 	uint32		_caretTime;
@@ -53,8 +55,8 @@ protected:
 	ThemeEngine::FontStyle  _font;
 
 public:
-	EditableWidget(GuiObject *boss, int x, int y, int w, int h);
-	EditableWidget(GuiObject *boss, const String &name);
+	EditableWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd = 0);
+	EditableWidget(GuiObject *boss, const String &name, uint32 cmd = 0);
 	virtual ~EditableWidget();
 
 	void init();
