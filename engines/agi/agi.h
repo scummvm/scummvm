@@ -331,8 +331,7 @@ enum {
 	fStatusSelectsItems,
 	fMenusWork,
 	fOutputMode,		// 15
-	fAutoRestart,
-	fNoSaveLoadAllowed
+	fAutoRestart
 };
 
 enum AgiSlowliness {
@@ -725,6 +724,8 @@ public:
 	AgiDebug _debug;
 	AgiGame _game;
 	Common::RandomSource *_rnd;
+
+	bool _noSaveLoadAllowed;
 
 	virtual void agiTimerLow() = 0;
 	virtual int agiGetKeypressLow() = 0;

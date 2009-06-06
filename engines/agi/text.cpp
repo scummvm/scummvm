@@ -340,7 +340,7 @@ int AgiEngine::selectionBox(const char *m, const char **b) {
 	int rc = -1;
 	int bx[5], by[5];
 
-	setflag(fNoSaveLoadAllowed, true);
+	_noSaveLoadAllowed = true;
 
 	_sprites->eraseBoth();
 	blitTextbox(m, -1, -1, -1);
@@ -426,7 +426,7 @@ getout:
 	closeWindow();
 	debugC(2, kDebugLevelText, "selectionBox(): Result = %d", rc);
 
-	setflag(fNoSaveLoadAllowed, false);
+	_noSaveLoadAllowed = false;
 
 	return rc;
 }
@@ -456,7 +456,7 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 
 	// blocking
 
-	setflag(fNoSaveLoadAllowed, true);
+	_noSaveLoadAllowed = true;
 
 	if (_game.vars[vWindowReset] == 0) {
 		int k;
@@ -464,7 +464,7 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 		k = waitKey();
 		closeWindow();
 
-		setflag(fNoSaveLoadAllowed, false);
+		_noSaveLoadAllowed = false;
 
 		return k;
 	}
@@ -492,7 +492,7 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 
 	closeWindow();
 
-	setflag(fNoSaveLoadAllowed, false);
+	_noSaveLoadAllowed = false;
 
 	return 0;
 }

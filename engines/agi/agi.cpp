@@ -626,7 +626,7 @@ AgiButtonStyle::AgiButtonStyle(Common::RenderMode renderMode) {
 }
 
 AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-
+	_noSaveLoadAllowed = false;
 }
 
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
