@@ -1459,7 +1459,7 @@ private:
 	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
 	void generateTempData();
-	LevelTempData *_lvlTempData[28];
+	LevelTempData *_lvlTempData[29];
 };
 
 } // end of namespace Kyra

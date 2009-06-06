@@ -383,7 +383,7 @@ LoLEngine::~LoLEngine() {
 		delete[] _ingameSoundList;
 	}
 
-	for (int i = 0; i < 28; i++) {
+	for (int i = 0; i < 29; i++) {
 		if (_lvlTempData[i]) {
 			delete[] _lvlTempData[i]->wallsXorData;
 			delete[] _lvlTempData[i]->flags;
