@@ -2744,6 +2744,23 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"spirou",
+			"",
+			{
+				{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
+				{"spirou.stk", 0, "91080dc148de1bbd6a97321c1a1facf3", 9817086},
+				{0, 0, 0, 0}
+			},
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
 			"chato",
 			"",
 			{
