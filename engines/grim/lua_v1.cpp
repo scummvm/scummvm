@@ -100,7 +100,7 @@ static void PrintDebug() {
 		if (!lua_isstring(strObj))
 			return;
 		msg += Common::String(lua_getstring(strObj)) + "\n";
-		printf(msg.c_str());
+		printf("%s", msg.c_str());
 	}
 }
 
@@ -113,7 +113,7 @@ static void PrintError() {
 		if (!lua_isstring(strObj))
 			return;
 		msg += Common::String(lua_getstring(strObj)) + "\n";
-		printf(msg.c_str());
+		printf("%s", msg.c_str());
 	}
 }
 
@@ -126,7 +126,7 @@ static void PrintWarning() {
 		if (!lua_isstring(strObj))
 			return;
 		msg += Common::String(lua_getstring(strObj)) + "\n";
-		printf(msg.c_str());
+		printf("%s", msg.c_str());
 	}
 }
 
@@ -3773,7 +3773,7 @@ void concatFallback() {
 		if (lua_isnil(params[i]))
 			sprintf(strPtr, "(nil)");
 		else if (lua_isstring(params[i]))
-			sprintf(strPtr, lua_getstring(params[i]));
+			sprintf(strPtr, "%s", lua_getstring(params[i]));
 		else if (lua_tag(params[i]) == MKID_BE('ACTR')) {
 			Actor *a = static_cast<Actor *>(lua_getuserdata(params[i]));
 			sprintf(strPtr, "(actor%p:%s)", (void *)a,

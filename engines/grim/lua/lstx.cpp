@@ -138,7 +138,7 @@ typedef struct FuncState {
 #define YYPURE	1
 
 
-void luaY_syntaxerror (char *s, char *token)
+void luaY_syntaxerror (const char *s, const char *token)
 {
 	if (token[0] == 0)
 		token = "<eof>";
@@ -147,7 +147,7 @@ void luaY_syntaxerror (char *s, char *token)
 }
 
 
-void luaY_error (char *s)
+void luaY_error (const char *s)
 {
 	luaY_syntaxerror(s, luaX_lasttoken());
 }
@@ -194,7 +194,7 @@ static int code_oparg_at (int pc, OpCode op, int builtin, int arg, int delta)
 		code[pc+1] = arg;
 		return 2;
 	}
-	else if (arg <= MAX_WORD) {
+	else if (arg <= (int)MAX_WORD) {
 		code[pc] = op+1+builtin;
 		code[pc+1] = arg&0xFF;
 		code[pc+2] = arg>>8;

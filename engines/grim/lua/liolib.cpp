@@ -314,7 +314,7 @@ static void io_write() {
 	int32 status = 1;
 	const char *s;
 	while ((s = luaL_opt_string(arg++, NULL)) != NULL)
-		status = status && (f->write(s, strlen(s)) != EOF);
+		status = status && ((int32)f->write(s, strlen(s)) != EOF);
 	pushresult(status);
 }
 

@@ -23,7 +23,7 @@ int32 lua_debug = 0;
 #define next(LS)			(LS->current = zgetc(LS->lex_z))
 
 static struct {
-	char *name;
+	const char *name;
 	int token;
 } reserved [] = {
 	{"and", AND}, {"do", DO}, {"else", ELSE}, {"elseif", ELSEIF},

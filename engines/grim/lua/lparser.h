@@ -14,8 +14,8 @@ namespace Grim {
 
 void luaY_codedebugline(int32 line);
 TProtoFunc *luaY_parser(ZIO *z);
-void luaY_error(char *s);
-void luaY_syntaxerror(char *s, char *token);
+void luaY_error(const char *s);
+void luaY_syntaxerror(const char *s, const char *token);
 
 } // end of namespace Grim
 
