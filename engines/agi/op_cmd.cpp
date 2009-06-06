@@ -521,7 +521,8 @@ cmd(script_size) {
 }
 
 cmd(cancel_line) {
-	report("cancel.line\n");
+	g_agi->_game.inputBuffer[0] = 0;
+	g_agi->writePrompt();
 }
 
 // This implementation is based on observations of Amiga's Gold Rush.
@@ -535,8 +536,6 @@ cmd(cancel_line) {
 // 471 (When walking on the first screen's bridge),
 // 71 (When walking around, using the mouse or the keyboard).
 cmd(obj_status_f) {
-	report("obj.status.f\n");
-
 	const char *cycleDesc;  // Object's cycle description line
 	const char *motionDesc; // Object's motion description line
 	char msg[256];          // The whole object status message
