@@ -1887,6 +1887,7 @@ static void TextFileGetLine() {
 
 	int pos = (int)lua_getnumber(posObj);
 	file->seek(pos, SEEK_SET);
+	memset(textBuf, 0, 1000);
 	file->readLine_NEW(textBuf, 1000);
 	delete file;
 
