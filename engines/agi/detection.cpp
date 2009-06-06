@@ -70,6 +70,10 @@ uint16 AgiBase::getGameType() const {
 	return _gameDescription->gameType;
 }
 
+const char *AgiBase::getGameMD5() const {
+	return _gameDescription->desc.filesDescriptions[0].md5;
+}
+
 }
 
 static const PlainGameDescriptor agiGames[] = {

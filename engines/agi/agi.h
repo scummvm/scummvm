@@ -754,6 +754,8 @@ public:
 	uint16 getGameType() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
+	const char *getGameMD5() const;
+
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const char *desc);
 	bool canLoadGameStateCurrently();

@@ -39,7 +39,7 @@
 #include "agi/keyboard.h"
 #include "agi/menu.h"
 
-#define SAVEGAME_VERSION 4
+#define SAVEGAME_VERSION 5
 
 //
 // Version 0 (Sarien): view table has 64 entries
@@ -47,6 +47,7 @@
 // Version 2 (ScummVM): first ScummVM version
 // Version 3 (ScummVM): added AGIPAL save/load support
 // Version 4 (ScummVM): added thumbnails and save creation date/time
+// Version 5 (ScummVM): Added game md5
 //
 
 namespace Agi {
@@ -95,6 +96,10 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	strcpy(gameIDstring, _game.id);
 	out->write(gameIDstring, 8);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
+
+	const char *tmp = getGameMD5();
+	for (i = 0; i < 32; i++)
+		out->writeByte(tmp[i]);
 
 	for (i = 0; i < MAX_FLAGS; i++)
 		out->writeByte(_game.flags[i]);
@@ -299,6 +304,24 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 
 	strncpy(_game.id, loadId, 8);
 
+	if (saveVersion >= 5) {
+		char md5[32 + 1];
+
+		for (i = 0; i < 32; i++) {
+			md5[i] = in->readByte();
+
+		}
+		md5[i] = 0; // terminate
+
+		debug(0, "Saved game MD5: %s", md5);
+
+		if (strcmp(md5, getGameMD5())) {
+			warning("Game was saved with different gamedata - you may encounter problems");
+
+			debug(0, "You have %s and save is %s.", getGameMD5(), md5);
+		}
+	}
+	
 	for (i = 0; i < MAX_FLAGS; i++)
 		_game.flags[i] = in->readByte();
 	for (i = 0; i < MAX_VARS; i++)
