@@ -43,7 +43,7 @@ void AgiEngine::newRoom(int n) {
 	// Simulate slowww computer.
 	// Many effects rely on it.
 	_gfx->setCursor(_renderMode == Common::kRenderAmiga, true);
-	pause(2000);
+	pause(kPauseRoom);
 	_gfx->setCursor(_renderMode == Common::kRenderAmiga);
 
 	debugC(4, kDebugLevelMain, "*** room %d ***", n);

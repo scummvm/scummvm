@@ -312,11 +312,14 @@ void AgiEngine::releaseImageStack(void) {
 void AgiEngine::pause(uint32 msec) {
 	uint32 endTime = _system->getMillis() + msec;
 
+	_gfx->setCursor(_renderMode == Common::kRenderAmiga, true);
+
 	while (_system->getMillis() < endTime) {
 		processEvents();
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
+	_gfx->setCursor(_renderMode == Common::kRenderAmiga);
 }
 
 void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,

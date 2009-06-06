@@ -335,6 +335,11 @@ enum {
 	fNoSaveLoadAllowed
 };
 
+enum AgiSlowliness {
+	kPauseRoom = 1500,
+	kPausePicture = 500
+};
+
 struct AgiEvent {
 	uint16 data;
 	uint8 occured;

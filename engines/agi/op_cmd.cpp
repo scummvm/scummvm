@@ -626,6 +626,9 @@ cmd(set_simple) {
 		cmd_close_window(NULL);
 		g_picture->showPic();
 		game.pictureShown = 1;
+
+		// Simulate slowww computer. Many effects rely on this
+		g_agi->pause(kPausePicture);
 	}
 }
 
@@ -760,6 +763,9 @@ cmd(draw_pic) {
 	// Fixes bug #1658514: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
 	if (g_agi->getGameID() == GID_SQ1 && _v[p0] == 20)
 		g_agi->setflag(103, false);
+
+	// Simulate slowww computer. Many effects rely on this
+	g_agi->pause(kPausePicture);
 }
 
 cmd(show_pic) {
@@ -792,6 +798,9 @@ cmd(overlay_pic) {
 	g_sprites->blitBoth();
 	game.pictureShown = 0;
 	g_sprites->commitBoth();
+
+	// Simulate slowww computer. Many effects rely on this
+	g_agi->pause(kPausePicture);
 }
 
 cmd(show_pri_screen) {
