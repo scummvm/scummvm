@@ -638,7 +638,7 @@ static int sfx_play_iterator_pcm(SongIterator *it, SongHandle handle) {
 #define DELAY (1000000 / SFX_TICKS_PER_SEC)
 
 void SfxState::sfx_init(ResourceManager *resmgr, int flags) {
-	_songlib.initSounds();
+	_songlib._lib = 0;
 	_song = NULL;
 	_flags = flags;
 	_soundSync = NULL;

@@ -99,15 +99,10 @@ public:
 
 class SongLibrary {
 public:
-	Song **_lib;
-protected:
-	Song *_s;
+	Song *_lib;
 
 public:
-	SongLibrary() {}
-
-	/** Initializes a static song library */
-	void initSounds();
+	SongLibrary() : _lib(0) {}
 
 	/** Frees a song library. */
 	void freeSounds();

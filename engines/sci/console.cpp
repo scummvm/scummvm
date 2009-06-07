@@ -1530,7 +1530,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 bool Console::cmdSongLib(int argc, const char **argv) {
 	DebugPrintf("Song library:\n");
 
-	Song *seeker = *(g_EngineState->_sound._songlib._lib);
+	Song *seeker = g_EngineState->_sound._songlib._lib;
 
 	do {
 		DebugPrintf("    %p", (void *)seeker);

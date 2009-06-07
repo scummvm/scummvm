@@ -408,14 +408,14 @@ static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 	s.syncAsUint32LE(songcount);
 
 	if (s.isLoading()) {
-		obj.initSounds();
+		obj._lib = 0;
 		while (songcount--) {
 			Song *newsong = (Song *)calloc(1, sizeof(Song));
 			sync_song_t(s, *newsong);
 			obj.addSong(newsong);
 		}
 	} else {
-		Song *seeker = *(obj._lib);
+		Song *seeker = obj._lib;
 		while (seeker) {
 			seeker->_restoreTime = seeker->_it->getTimepos();
 			sync_song_t(s, *seeker);
@@ -695,12 +695,7 @@ static void reconstruct_sounds(EngineState *s) {
 	Song *seeker;
 	SongIteratorType it_type = s->resmgr->_sciVersion >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
 
-	if (s->_sound._songlib._lib)
-		seeker = *(s->_sound._songlib._lib);
-	else {
-		s->_sound._songlib.initSounds();
-		seeker = NULL;
-	}
+	seeker = s->_sound._songlib._lib;
 
 	while (seeker) {
 		SongIterator *base, *ff;
