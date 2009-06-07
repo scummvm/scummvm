@@ -363,8 +363,6 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	// In data001/rope_scale.3do, the shadow line is missing
 	if (sscanf(ts.currentLine(), "shadow %d", &_shadow) < 1) {
 		_shadow = 0;
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Missing shadow directive in model");
 	} else
 		ts.nextLine();
 	ts.scanString("geometrymode %d", 1, &_geometryMode);
