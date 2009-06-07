@@ -44,8 +44,6 @@ MODULE_OBJS := \
 	mult_v2.o \
 	palanim.o \
 	parse.o \
-	parse_v1.o \
-	parse_v2.o \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \

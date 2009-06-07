@@ -97,14 +97,15 @@ public:
 	void skipExpr(char stopToken);
 	void printExpr(char stopToken);
 	void printVarIndex(void);
-	virtual int16 parseVarIndex(uint16 *arg_0 = 0, uint16 *arg_4 = 0) = 0;
-	virtual int16 parseValExpr(byte stopToken = 99) = 0;
-	virtual int16 parseExpr(byte stopToken, byte *resultPtr) = 0;
+
+	int16 parseVarIndex(uint16 *arg_0 = 0, uint16 *arg_4 = 0);
+	int16 parseValExpr(byte stopToken = 99);
+	int16 parseExpr(byte stopToken, byte *resultPtr);
 
 	Parse(GobEngine *vm);
 	virtual ~Parse() {}
 
-protected:
+private:
 	enum PointerType {
 		kExecPtr = 0,
 		kInterVar = 1,
@@ -118,29 +119,8 @@ protected:
 
 	void printExpr_internal(char stopToken);
 
+	int16 getOffset(int16 arg_0, byte arg_2, uint32 arg_3, uint16 arg_7, uint16 arg_9);
 	int cmpHelper(byte *operPtr, int32 *valPtr);
-};
-
-class Parse_v1 : public Parse {
-public:
-	Parse_v1(GobEngine *vm);
-	virtual ~Parse_v1() {}
-
-	virtual int16 parseVarIndex(uint16 *arg_0 = 0, uint16 *arg_4 = 0);
-	virtual int16 parseValExpr(byte stopToken = 99);
-	virtual int16 parseExpr(byte stopToken, byte *resultPtr);
-};
-
-class Parse_v2 : public Parse_v1 {
-public:
-	Parse_v2(GobEngine *vm);
-	virtual ~Parse_v2() {}
-
-	virtual int16 getOffset(int16 arg_0, byte arg_2, uint32 arg_3, uint16 arg_7, uint16 arg_9);
-
-	virtual int16 parseVarIndex(uint16 *arg_0 = 0, uint16 *arg_4 = 0);
-	virtual int16 parseValExpr(byte stopToken = 99);
-	virtual int16 parseExpr(byte stopToken, byte *resultPtr);
 };
 
 } // End of namespace Gob
