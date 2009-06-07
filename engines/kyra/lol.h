@@ -1396,14 +1396,14 @@ private:
 	// fight
 	int battleHitSkillTest(int16 attacker, int16 target, int skill);
 	int calcInflictableDamage(int16 attacker, int16 target, int hitType);
-	int inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int deathFlag);
+	int inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int flags);
 	void characterHitpointsZero(int16 charNum, int a);
 	void removeCharacterEffects(LoLCharacter *c, int first, int last);
 	int calcInflictableDamagePerItem(int16 attacker, int16 target, uint16 itemMight, int index, int hitType);
 	void checkForPartyDeath();
 
 	void applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, int16 damage);
-	void applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int deathFlag, int skill, int damage);
+	void applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int flags, int skill, int damage);
 	int removeCharacterItem(int charNum, int itemFlags);
 	int paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw);
 	void paralyzePoisonAllCharacters(int typeFlag, int immunityFlags, int hitChance);
@@ -1420,7 +1420,7 @@ private:
 	uint16 getNearestMonsterFromPos(int x, int y);
 	uint16 getNearestPartyMemberFromPos(int x, int y);
 
-	int _partyDeathFlag;
+	int _partyDamageFlags;
 
 	// magic atlas
 	void displayAutomap();

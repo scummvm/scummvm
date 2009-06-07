@@ -242,7 +242,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_compassTimer = 0;
 	_timer3Para = 0;
 	_scriptCharacterCycle = 0;
-	_partyDeathFlag = -1;
+	_partyDamageFlags = -1;
 
 	memset(&_itemScript, 0, sizeof(_itemScript));
 }
@@ -876,9 +876,9 @@ void LoLEngine::runLoop() {
 		else
 			updateEnvironmentalSfx(0);
 
-		if (_partyDeathFlag != -1) {
+		if (_partyDamageFlags != -1) {
 			checkForPartyDeath();
-			_partyDeathFlag = -1;
+			_partyDamageFlags = -1;
 		}
 
 		delay(_tickLength);
@@ -3113,7 +3113,7 @@ int LoLEngine::calcInflictableDamage(int16 attacker, int16 target, int hitType) 
 	return res;
 }
 
-int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int deathFlag) {
+int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int flags) {
 	MonsterInPlay *m = 0;
 	LoLCharacter *c = 0;
 
@@ -3133,7 +3133,7 @@ int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int ski
 			m->hitPoints = CLIP<int16>(m->hitPoints, 0, m->properties->hitPoints);
 
 			if (!(attacker & 0x8000))
-				applyMonsterDefenseSkill(m, attacker, deathFlag, skill, damage);
+				applyMonsterDefenseSkill(m, attacker, flags, skill, damage);
 
 			snd_queueEnvironmentalSoundEffect(m->properties->sounds[2], m->block);
 			checkSceneUpdateNeed(m->block);
@@ -3173,13 +3173,13 @@ int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int ski
 		setTemporaryFaceFrame(target, 6, 4, 0);
 
 		// check for equipped cloud ring
-		if (deathFlag == 4 && itemEquipped(target, 229))
+		if (flags == 4 && itemEquipped(target, 229))
 			damage >>= 2;
 
 		setCharacterMagicOrHitPoints(target, 0, -damage, 1);
 
 		if (c->hitPointsCur <= 0) {
-			characterHitpointsZero(target, deathFlag);
+			characterHitpointsZero(target, flags);
 		} else {
 			_characters[target].damageSuffered = damage;
 			setCharacterUpdateEvent(target, 2, 4, 1);
@@ -3196,12 +3196,12 @@ int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int ski
 	return damage;
 }
 
-void LoLEngine::characterHitpointsZero(int16 charNum, int deathFlag) {
+void LoLEngine::characterHitpointsZero(int16 charNum, int flags) {
 	LoLCharacter *c = &_characters[charNum];
 	c->hitPointsCur = 0;
 	c->flags |= 8;
 	removeCharacterEffects(c, 1, 5);
-	_partyDeathFlag = deathFlag;
+	_partyDamageFlags = flags;
 }
 
 void LoLEngine::removeCharacterEffects(LoLCharacter *c, int first, int last) {
@@ -3355,7 +3355,7 @@ void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, in
 	}
 }
 
-void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int deathFlag, int skill, int damage) {
+void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int flags, int skill, int damage) {
 	if (_rnd.getRandomNumberRng(1, 100) > monster->properties->defenseSkillChance)
 		return;
 
@@ -3364,32 +3364,33 @@ void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker,
 	switch (monster->properties->defenseSkillType - 1) {
 	case 0:
 	case 1:
-		if ((deathFlag & 0x3f) == 2 || skill)
+		if ((flags & 0x3f) == 2 || skill)
 			return;
 
 		for (int i = 0; i < 3 ; i++) {
 			itm = _characters[attacker].items[i];
 			if (!itm)
 				continue;
-			if ((_itemProperties[_itemsInPlay[itm].itemPropertyIndex].protection & 0x3f) != deathFlag)
+			if ((_itemProperties[_itemsInPlay[itm].itemPropertyIndex].protection & 0x3f) != flags)
 				continue;
 
 			removeCharacterItem(attacker, 0x7fff);
 
 			if (monster->properties->defenseSkillType == 1) {
-				deleteItem(itm);
-				if (characterSays(0x401d, _characters[attacker].id, true))
-					_txt->printMessage(6, getLangString(0x401d));
-			} else {
 				giveItemToMonster(monster, itm);
 				if (characterSays(0x401c, _characters[attacker].id, true))
 					_txt->printMessage(6, getLangString(0x401c));
+
+			} else {
+				deleteItem(itm);
+				if (characterSays(0x401d, _characters[attacker].id, true))
+					_txt->printMessage(6, getLangString(0x401d));
 			}
 		}
 		break;
 
 	case 2:
-		if (!(deathFlag & 0x80))
+		if (!(flags & 0x80))
 			return;
 		monster->flags |= 8;
 		monster->direction = calcMonsterDirection(monster->x, monster->y, _partyPosX, _partyPosY) ^ 4;
@@ -3398,7 +3399,7 @@ void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker,
 		break;
 
 	case 3:
-		if (deathFlag != 3)
+		if (flags != 3)
 			return;
 		monster->hitPoints += damage;
 		if (monster->hitPoints > monster->properties->hitPoints)
@@ -3406,7 +3407,7 @@ void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker,
 		break;
 
 	case 4:
-		if (!(deathFlag & 0x80))
+		if (!(flags & 0x80))
 			return;
 		monster->hitPoints += damage;
 		if (monster->hitPoints > monster->properties->hitPoints)
@@ -3414,7 +3415,7 @@ void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker,
 		break;
 
 	case 5:
-		if ((deathFlag & 0x84) == 0x84)
+		if ((flags & 0x84) == 0x84)
 			monster->numDistAttacks++;
 		break;
 
