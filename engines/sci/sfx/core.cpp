@@ -346,7 +346,6 @@ int sfx_get_player_polyphony() {
 SfxState::SfxState() {
 	_it = NULL;
 	_flags = 0;
-	memset(&_songlib, 0, sizeof(_songlib));
 	_song = NULL;
 	_suspended = 0;
 	_soundSync = 0;
@@ -485,7 +484,7 @@ void SfxState::setSongStatus(Song *song, int status) {
 
 /* Update internal state iff only one song may be played */
 void SfxState::updateSingleSong() {
-	Song *newsong = song_lib_find_active(_songlib);
+	Song *newsong = _songlib.findFirstActive();
 
 	if (newsong != _song) {
 		freezeTime(); /* Store song delay time */
@@ -544,7 +543,7 @@ void SfxState::updateSingleSong() {
 void SfxState::updateMultiSong() {
 	Song *oldfirst = _song;
 	Song *oldseeker;
-	Song *newsong = song_lib_find_active(_songlib);
+	Song *newsong = _songlib.findFirstActive();
 	Song *newseeker;
 	Song not_playing_anymore; /* Dummy object, referenced by
 				    ** songs which are no longer
@@ -575,10 +574,8 @@ void SfxState::updateMultiSong() {
 	}
 
 	/* Second, re-generate the new song queue. */
-	for (newseeker = newsong; newseeker;
-	        newseeker = newseeker->_nextPlaying) {
-		newseeker->_nextPlaying
-		= song_lib_find_next_active(_songlib, newseeker);
+	for (newseeker = newsong; newseeker; newseeker = newseeker->_nextPlaying) {
+		newseeker->_nextPlaying = _songlib.findNextActive(newseeker);
 
 		if (newseeker == newseeker->_nextPlaying) { 
 			error("updateMultiSong() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
@@ -641,7 +638,7 @@ static int sfx_play_iterator_pcm(SongIterator *it, SongHandle handle) {
 #define DELAY (1000000 / SFX_TICKS_PER_SEC)
 
 void SfxState::sfx_init(ResourceManager *resmgr, int flags) {
-	song_lib_init(&_songlib);
+	_songlib.initSounds();
 	_song = NULL;
 	_flags = flags;
 	_soundSync = NULL;
@@ -691,7 +688,7 @@ void SfxState::sfx_exit() {
 
 	g_system->getMixer()->stopAll();
 
-	song_lib_free(_songlib);
+	_songlib.freeSounds();
 
 	// Delete audio resources for CD talkie games
 	if (_audioResource) {
@@ -793,7 +790,7 @@ int SfxState::sfx_poll_specific(SongHandle handle, int *cue) {
 /*****************/
 
 void SfxState::sfx_add_song(SongIterator *it, int priority, SongHandle handle, int number) {
-	Song *song = song_lib_find(_songlib, handle);
+	Song *song = _songlib.findSong(handle);
 
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Adding song: %08lx at %d, it=%p\n", handle, priority, it);
@@ -822,7 +819,7 @@ void SfxState::sfx_add_song(SongIterator *it, int priority, SongHandle handle, i
 			        handle, song->_status);
 			return;
 		} else {
-			song_lib_remove(_songlib, handle); /* No duplicates */
+			_songlib.removeSong(handle); /* No duplicates */
 		}
 
 	}
@@ -832,7 +829,7 @@ void SfxState::sfx_add_song(SongIterator *it, int priority, SongHandle handle, i
 	song->_hold = 0;
 	song->_loops = 0;
 	song->_wakeupTime = Audio::Timestamp(g_system->getMillis(), SFX_TICKS_PER_SEC);
-	song_lib_add(_songlib, song);
+	_songlib.addSong(song);
 	_song = NULL; /* As above */
 	update();
 
@@ -846,7 +843,7 @@ void SfxState::sfx_remove_song(SongHandle handle) {
 	if (_song && _song->_handle == handle)
 		_song = NULL;
 
-	song_lib_remove(_songlib, handle);
+	_songlib.removeSong(handle);
 	update();
 }
 
@@ -859,7 +856,7 @@ void SfxState::sfx_remove_song(SongHandle handle) {
 #define ASSERT_SONG(s) if (!(s)) { warning("Looking up song handle %08lx failed in %s, L%d", handle, __FILE__, __LINE__); return; }
 
 void SfxState::sfx_song_set_status(SongHandle handle, int status) {
-	Song *song = song_lib_find(_songlib, handle);
+	Song *song = _songlib.findSong(handle);
 	ASSERT_SONG(song);
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Setting song status to %d"
@@ -875,7 +872,7 @@ void SfxState::sfx_song_set_fade(SongHandle handle, fade_params_t *params) {
 #ifdef DEBUG_SONG_API
 	static const char *stopmsg[] = {"??? Should not happen", "Do not stop afterwards", "Stop afterwards"};
 #endif
-	Song *song = song_lib_find(_songlib, handle);
+	Song *song = _songlib.findSong(handle);
 
 	ASSERT_SONG(song);
 
@@ -892,7 +889,7 @@ void SfxState::sfx_song_set_fade(SongHandle handle, fade_params_t *params) {
 }
 
 void SfxState::sfx_song_renice(SongHandle handle, int priority) {
-	Song *song = song_lib_find(_songlib, handle);
+	Song *song = _songlib.findSong(handle);
 	ASSERT_SONG(song);
 #ifdef DEBUG_SONG_API
 	fprintf(stderr, "[sfx-core] Renicing song %08lx to %d\n",
@@ -905,7 +902,7 @@ void SfxState::sfx_song_renice(SongHandle handle, int priority) {
 }
 
 void SfxState::sfx_song_set_loops(SongHandle handle, int loops) {
-	Song *song = song_lib_find(_songlib, handle);
+	Song *song = _songlib.findSong(handle);
 	SongIterator::Message msg = SongIterator::Message(handle, SIMSG_SET_LOOPS(loops));
 	ASSERT_SONG(song);
 
@@ -922,7 +919,7 @@ void SfxState::sfx_song_set_loops(SongHandle handle, int loops) {
 }
 
 void SfxState::sfx_song_set_hold(SongHandle handle, int hold) {
-	Song *song = song_lib_find(_songlib, handle);
+	Song *song = _songlib.findSong(handle);
 	SongIterator::Message msg = SongIterator::Message(handle, SIMSG_SET_HOLD(hold));
 	ASSERT_SONG(song);
 
@@ -1003,7 +1000,7 @@ void SfxState::sfx_all_stop() {
 	fprintf(stderr, "[sfx-core] All stop\n");
 #endif
 
-	song_lib_free(_songlib);
+	_songlib.freeSounds();
 	update();
 }
 

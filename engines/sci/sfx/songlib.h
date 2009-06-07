@@ -83,11 +83,6 @@ struct Song {
 };
 
 
-struct SongLibrary {
-	Song **_lib;
-	Song *_s;
-};
-
 /**************************/
 /* Song library commands: */
 /**************************/
@@ -102,78 +97,79 @@ struct SongLibrary {
 Song *song_new(SongHandle handle, SongIterator *it, int priority);
 
 
-/* Initializes a static song library
-** Parameters: (SongLibrary *) songlib: Pointer to the library
-**             to initialize
-** Returns   : (void)
-*/
-void song_lib_init(SongLibrary *songlib);
+class SongLibrary {
+public:
+	Song **_lib;
+	Song *_s;
 
-/* Frees a song library
-** Parameters: (SongLibrary) songlib: The library to free
-** Returns   : (void)
-*/
-void song_lib_free(const SongLibrary &songlib);
+public:
+	SongLibrary() {}
 
-/* Adds a song to a song library.
-** Parameters: (SongLibrary) songlib: An existing sound library, or NULL
-**             (Song *) song: The song to add
-** Returns   : (void)
-*/
-void song_lib_add(const SongLibrary &songlib, Song *song);
+	/** Initializes a static song library */
+	void initSounds();
 
-/* Looks up the song with the specified handle
-** Parameters: (SongLibrary) songlib: An existing sound library, may point to NULL
-**             (SongHandle) handle: The sound handle to look for
-** Returns   : (Song *) The song or NULL if it wasn't found
-*/
-Song *song_lib_find(const SongLibrary &songlib, SongHandle handle);
+	/** Frees a song library. */
+	void freeSounds();
 
-/* Finds the first song playing with the highest priority
-** Parameters: (SongLibrary) songlib: An existing sound library
-** Returns   : (Song *) The song that should be played next, or NULL if there is none
-*/
-Song *song_lib_find_active(const SongLibrary &songlib);
+	/**
+	 * Adds a song to a song library.
+	 * @param song		song to add
+	 */
+	void addSong(Song *song);
 
-/* Finds the next song playing with the highest priority
-** Parameters: (SongLibrary) songlib: The song library to operate on
-**             (Song *) song: A song previously returned from the song library
-** Returns   : (Song *) The next song to play relative to 'song', or
-**                        NULL if none are left
-** The functions 'song_lib_find_active' and 'song_lib_find_next_active
-** allow to iterate over all songs that satisfy the requirement of
-** being 'playable'.
-*/
-Song *song_lib_find_next_active(const SongLibrary &songlib, Song *song);
+	/**
+	 * Looks up the song with the specified handle.
+	 * @param handle	sound handle to look for
+	 * @return the song or NULL if it wasn't found
+	 */
+	Song *findSong(SongHandle handle);
 
-/* Removes a song from the library
-** Parameters: (SongLibrary) songlib: An existing sound library
-**             (SongHandle) handle: Handle of the song to remove
-** Returns   : (int) The status of the song that was removed
-*/
-int song_lib_remove(const SongLibrary &songlib, SongHandle handle);
+	/**
+	 * Finds the first song playing with the highest priority.
+	 * @return the song that should be played next, or NULL if there is none
+	 */
+	Song *findFirstActive();
 
-/* Removes a song from the library and sorts it in again; for use after renicing
-** Parameters: (SongLibrary) songlib: An existing sound library
-**             (Song *) song: The song to work on
-** Returns   : (void)
-*/
-void song_lib_resort(const SongLibrary &songlib, Song *song);
+	/**
+	 * Finds the next song playing with the highest priority.
+	 *
+	 * The functions 'findFirstActive' and 'findNextActive'
+	 * allow to iterate over all songs that satisfy the requirement of
+	 * being 'playable'.
+	 *
+	 * @param song		a song previously returned from the song library
+	 * @return the next song to play relative to 'song', or NULL if none are left
+	 */
+	Song *findNextActive(Song *song);
 
-/* Counts the number of songs in a song library
-** Parameters: (SongLibrary) songlib: The library to count
-** Returns   : (int) The number of songs
-*/
-int song_lib_count(const SongLibrary &songlib);
+	/**
+	 * Removes a song from the library.
+	 * @param handle		handle of the song to remove
+	 * @return the status of the song that was removed
+	 */
+	int removeSong(SongHandle handle);
 
-/* Determines what should be done with the song "handle" when
-** restoring it from a saved game.
-** Parameters: (SongLibrary) songlib: The library that contains the song
-**             (SongHandle) handle: Its handle
-**             (RESTORE_BEHAVIOR) action: The desired action
-*/
-void song_lib_set_restore_behavior(const SongLibrary &songlib, SongHandle handle,
-	RESTORE_BEHAVIOR action);
+	/**
+	 * Removes a song from the library and sorts it in again; for use after renicing.
+	 * @param son		song to work on
+	 */
+	void resortSong(Song *song);
+
+	/**
+	 * Counts the number of songs in a song library.
+	 * @return the number of songs
+	 */
+	int countSongs();
+
+	/**
+	 * Determines what should be done with the song "handle" when restoring
+	 * it from a saved game.
+	 * @param handle	sound handle being restored
+	 * @param action	desired action
+	 */
+	void setSongRestoreBehavior(SongHandle handle,
+		RESTORE_BEHAVIOR action);
+};
 
 } // End of namespace Sci
 

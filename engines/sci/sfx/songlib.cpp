@@ -54,23 +54,23 @@ Song *song_new(SongHandle handle, SongIterator *it, int priority) {
 	return retval;
 }
 
-void song_lib_add(const SongLibrary &songlib, Song *song) {
+void SongLibrary::addSong(Song *song) {
 	Song **seeker = NULL;
 	int pri	= song->_priority;
 
 	if (NULL == song) {
-		sciprintf("song_lib_add(): NULL passed for song\n");
+		sciprintf("addSong(): NULL passed for song\n");
 		return;
 	}
 
-	if (*(songlib._lib) == NULL) {
-		*(songlib._lib) = song;
+	if (*_lib == NULL) {
+		*_lib = song;
 		song->_next = NULL;
 
 		return;
 	}
 
-	seeker = (songlib._lib);
+	seeker = _lib;
 	while (*seeker && ((*seeker)->_priority > pri))
 		seeker = &((*seeker)->_next);
 
@@ -78,29 +78,26 @@ void song_lib_add(const SongLibrary &songlib, Song *song) {
 	*seeker = song;
 }
 
-static void _songfree_chain(Song *song) {
-	/* Recursively free a chain of songs */
-	if (song) {
-		_songfree_chain(song->_next);
+void SongLibrary::initSounds() {
+	_lib = &_s;
+	_s = NULL;
+}
+
+void SongLibrary::freeSounds() {
+	Song *next = *_lib;
+	while (next) {
+		Song *song = next;
 		delete song->_it;
 		song->_it = NULL;
+		next = song->_next;
 		free(song);
 	}
-}
-
-void song_lib_init(SongLibrary *songlib) {
-	songlib->_lib = &(songlib->_s);
-	songlib->_s = NULL;
-}
-
-void song_lib_free(const SongLibrary &songlib) {
-	_songfree_chain(*(songlib._lib));
-	*(songlib._lib) = NULL;
+	*_lib = NULL;
 }
 
 
-Song *song_lib_find(const SongLibrary &songlib, SongHandle handle) {
-	Song *seeker = *(songlib._lib);
+Song *SongLibrary::findSong(SongHandle handle) {
+	Song *seeker = *_lib;
 
 	while (seeker) {
 		if (seeker->_handle == handle)
@@ -111,8 +108,8 @@ Song *song_lib_find(const SongLibrary &songlib, SongHandle handle) {
 	return seeker;
 }
 
-Song *song_lib_find_next_active(const SongLibrary &songlib, Song *other) {
-	Song *seeker = other ? other->_next : *(songlib._lib);
+Song *SongLibrary::findNextActive(Song *other) {
+	Song *seeker = other ? other->_next : *_lib;
 
 	while (seeker) {
 		if ((seeker->_status == SOUND_STATUS_WAITING) ||
@@ -128,19 +125,19 @@ Song *song_lib_find_next_active(const SongLibrary &songlib, Song *other) {
 	return seeker;
 }
 
-Song *song_lib_find_active(const SongLibrary &songlib) {
-	return song_lib_find_next_active(songlib, NULL);
+Song *SongLibrary::findFirstActive() {
+	return findNextActive(NULL);
 }
 
-int song_lib_remove(const SongLibrary &songlib, SongHandle handle) {
+int SongLibrary::removeSong(SongHandle handle) {
 	int retval;
-	Song *goner = *(songlib._lib);
+	Song *goner = *_lib;
 
 	if (!goner)
 		return -1;
 
 	if (goner->_handle == handle)
-		*(songlib._lib) = goner->_next;
+		*_lib = goner->_next;
 
 	else {
 		while ((goner->_next) && (goner->_next->_handle != handle))
@@ -162,11 +159,11 @@ int song_lib_remove(const SongLibrary &songlib, SongHandle handle) {
 	return retval;
 }
 
-void song_lib_resort(const SongLibrary &songlib, Song *song) {
-	if (*(songlib._lib) == song)
-		*(songlib._lib) = song->_next;
+void SongLibrary::resortSong(Song *song) {
+	if (*_lib == song)
+		*_lib = song->_next;
 	else {
-		Song *seeker = *(songlib._lib);
+		Song *seeker = *_lib;
 
 		while (seeker->_next && (seeker->_next != song))
 			seeker = seeker->_next;
@@ -175,11 +172,11 @@ void song_lib_resort(const SongLibrary &songlib, Song *song) {
 			seeker->_next = seeker->_next->_next;
 	}
 
-	song_lib_add(songlib, song);
+	addSong(song);
 }
 
-int song_lib_count(const SongLibrary &songlib) {
-	Song *seeker = *(songlib._lib);
+int SongLibrary::countSongs() {
+	Song *seeker = *_lib;
 	int retval = 0;
 
 	while (seeker) {
@@ -190,8 +187,8 @@ int song_lib_count(const SongLibrary &songlib) {
 	return retval;
 }
 
-void song_lib_set_restore_behavior(const SongLibrary &songlib, SongHandle handle, RESTORE_BEHAVIOR action) {
-	Song *seeker = song_lib_find(songlib, handle);
+void SongLibrary::setSongRestoreBehavior(SongHandle handle, RESTORE_BEHAVIOR action) {
+	Song *seeker = findSong(handle);
 
 	seeker->_restoreBehavior = action;
 }

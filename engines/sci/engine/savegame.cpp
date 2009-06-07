@@ -404,15 +404,15 @@ void StringFrag::saveLoadWithSerializer(Common::Serializer &s) {
 static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 	int songcount = 0;
 	if (s.isSaving())
-		songcount = song_lib_count(obj);
+		songcount = obj.countSongs();
 	s.syncAsUint32LE(songcount);
 
 	if (s.isLoading()) {
-		song_lib_init(&obj);
+		obj.initSounds();
 		while (songcount--) {
 			Song *newsong = (Song *)calloc(1, sizeof(Song));
 			sync_song_t(s, *newsong);
-			song_lib_add(obj, newsong);
+			obj.addSong(newsong);
 		}
 	} else {
 		Song *seeker = *(obj._lib);
@@ -698,7 +698,7 @@ static void reconstruct_sounds(EngineState *s) {
 	if (s->_sound._songlib._lib)
 		seeker = *(s->_sound._songlib._lib);
 	else {
-		song_lib_init(&s->_sound._songlib);
+		s->_sound._songlib.initSounds();
 		seeker = NULL;
 	}
 
@@ -782,7 +782,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	temp = retval->_sound._songlib;
 	retval->_sound.sfx_init(retval->resmgr, s->sfx_init_flags);
 	retval->sfx_init_flags = s->sfx_init_flags;
-	song_lib_free(retval->_sound._songlib);
+	retval->_sound._songlib.freeSounds();
 	retval->_sound._songlib = temp;
 
 	_reset_graphics_input(retval);

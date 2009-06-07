@@ -493,7 +493,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 			s->_sound.sfx_song_set_loops(handle, looping);
 			s->_sound.sfx_song_renice(handle, pri);
-			song_lib_set_restore_behavior(s->_sound._songlib, handle, rb);
+			s->_sound._songlib.setSongRestoreBehavior(handle, rb);
 		}
 
 		break;
@@ -798,7 +798,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
-		Song *song = song_lib_find(s->_sound._songlib, handle);
+		Song *song = s->_sound._songlib.findSong(handle);
 
 		if (GET_SEL32V(obj, nodePtr) && (song && number != song->_resourceNum)) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
