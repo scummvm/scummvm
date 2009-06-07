@@ -601,10 +601,6 @@ Common::Error LoLEngine::go() {
 	enableSysTimer(1);
 	runLoop();
 
-	delete _tim;
-	_tim = 0;
-
-	// TODO: outro
 	return Common::kNoError;
 }
 

@@ -771,12 +771,20 @@ int LoLEngine::getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags) {
 
 		break;
 	case 2:
-		///////
-		// TODO
+		return (m->fightCurTick >= 13) ? 13 : m->fightCurTick;
 		break;
 	case 3:
-		///////
-		// TODO
+		switch (m->mode) {
+		case 5:
+			return m->damageReceived ? 5 : 6;
+		case 8:
+			return (m->fightCurTick + 6);
+		case 11:
+			return 5;
+		default:
+			return m->damageReceived ? 5 : m->currentSubFrame;
+		}
+		
 		break;
 	default:
 		break;
