@@ -1417,7 +1417,7 @@ int LoLEngine::olol_playEndSequence(EMCState *script){
 	_screen->hideMouse();
 	memset(_screen->getPalette(1), 0, 768);
 	
-	showOutro(c, _monsterDifficulty == 2 ? true : false);
+	showOutro(c, (_monsterDifficulty == 2));
 	quitGame();
 
 	return 0;
