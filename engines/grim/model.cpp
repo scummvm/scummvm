@@ -420,8 +420,9 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		if (sscanf(ts.currentLine(), " %d: %d %x %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
 			error("Expected face data, got '%s'", ts.currentLine());
 
+		assert(materialid != -1);
 		_materialid[num] = materialid;
-		_faces[num]._material = materials[_materialid[num]];
+		_faces[num]._material = materials[materialid];
 		_faces[num]._type = (int)type;
 		_faces[num]._geo = geo;
 		_faces[num]._light = light;
