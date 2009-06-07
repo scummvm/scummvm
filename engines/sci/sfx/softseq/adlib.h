@@ -35,7 +35,7 @@ public:
 		kRhythmKeys = 62
 	};
 
-	MidiDriver_Adlib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15), _rhythmKeyMap(0) { }
+	MidiDriver_Adlib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15), _rhythmKeyMap(0), _opl(0) { }
 	~MidiDriver_Adlib() { }
 
 	// MidiDriver
