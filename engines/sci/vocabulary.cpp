@@ -242,7 +242,7 @@ void Vocabulary::freeSuffixes() {
 		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 0);
 	
 	if (resource)
-		_resmgr->unlockResource(resource, resource->number, kResourceTypeVocab);
+		_resmgr->unlockResource(resource, resource->id.number, kResourceTypeVocab);
 
 	_parserSuffixes.clear();
 }

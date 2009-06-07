@@ -67,7 +67,7 @@ GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, Gf
 	} else {
 		Resource *res = resManager->findResource(kResourceTypePalette, 999, 0);
 		if (res && res->data)
-			_staticPalette = gfxr_read_pal1(res->id, res->data, res->size);
+			_staticPalette = gfxr_read_pal1(res->id.number, res->data, res->size);
 	}
 }
 
@@ -97,18 +97,18 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 
 	if (need_unscaled) {
 		if (_version == SCI_VERSION_1_1)
-			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id, _staticPalette, _portBounds);
+			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _staticPalette, _portBounds);
 		else
-			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id, _isVGA, _staticPalette, _portBounds);
+			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _isVGA, _staticPalette, _portBounds);
 	}
 
 	if (scaled_pic && scaled_pic->undithered_buffer)
 		memcpy(scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer, scaled_pic->undithered_buffer_size);
 
 	if (_version == SCI_VERSION_1_1)
-		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id, _staticPalette, _portBounds);
+		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _staticPalette, _portBounds);
 	else
-		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id, _isVGA, _staticPalette, _portBounds);
+		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _isVGA, _staticPalette, _portBounds);
 
 	if (!_isVGA) {
 		if (need_unscaled)
@@ -625,7 +625,7 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 		if (!fontRes || !fontRes->data)
 			return NULL;
 
-		gfx_bitmap_font_t *font = gfxr_read_font(fontRes->id, fontRes->data, fontRes->size);
+		gfx_bitmap_font_t *font = gfxr_read_font(fontRes->id.number, fontRes->data, fontRes->size);
 
 		if (!res) {
 			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));

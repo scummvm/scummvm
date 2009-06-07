@@ -1045,7 +1045,7 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case kSciAudioSyncStart:
 		if (argc == 3) {			// KQ5CD, KQ6 floppy
 			if (s->_sound._soundSync) {
-				s->resmgr->unlockResource(s->_sound._soundSync, s->_sound._soundSync->number, kResourceTypeSync);
+				s->resmgr->unlockResource(s->_sound._soundSync, s->_sound._soundSync->id.number, kResourceTypeSync);
 			}
 
 			// Load sound sync resource and lock it
@@ -1072,7 +1072,7 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case kSciAudioSyncStop:
 		if (s->_sound._soundSync) {
 			s->_sound._soundSync->stopSync();
-			s->resmgr->unlockResource(s->_sound._soundSync, s->_sound._soundSync->number, kResourceTypeSync);
+			s->resmgr->unlockResource(s->_sound._soundSync, s->_sound._soundSync->id.number, kResourceTypeSync);
 			s->_sound._soundSync = NULL;
 		}
 		break;

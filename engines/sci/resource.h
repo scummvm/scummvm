@@ -141,6 +141,38 @@ struct ResourceSource {
 
 class ResourceManager;
 
+class ResourceId {
+public:
+	ResourceType type;
+	uint16 number;
+	uint32 tuple; // Only used for audio36 and sync36
+
+	ResourceId() : type(kResourceTypeInvalid), number(0), tuple(0) { };
+	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0) : type(type_), number(number_), tuple(tuple_) { }
+
+	Common::String toString() {
+		char buf[32];
+
+		snprintf(buf, 32, "%s.%i", getResourceTypeName(type), number);
+		Common::String retStr = buf;
+
+		if (tuple != 0) {
+			snprintf(buf, 32, "(%i, %i, %i, %i)", tuple >> 24, (tuple >> 16) & 0xff, (tuple >> 8) & 0xff, tuple & 0xff);
+			retStr += buf;
+		}
+
+		return retStr;
+	}
+};
+
+struct ResourceIdHash : public Common::UnaryFunction<ResourceId, uint> {
+	uint operator()(ResourceId val) const { return ((uint)((val.type << 16) | val.number)) ^ val.tuple; }
+};
+
+struct ResourceIdEqualTo : public Common::BinaryFunction<ResourceId, ResourceId, bool> {
+	bool operator()(const ResourceId &x, const ResourceId &y) const { return (x.type == y.type) && (x.number == y.number) && (x.tuple == y.tuple); }
+};
+
 /** Class for storing resources in memory */
 class Resource {
 	friend class ResourceManager;
@@ -153,9 +185,7 @@ public:
 // to let the rest of the engine compile without changes
 public:
 	byte *data;
-	uint16 number;
-	ResourceType type;
-	uint32 id;	//!< contains number and type.
+	ResourceId id;
 	uint32 size;
 	byte *header;
 	uint32 headerSize;
@@ -166,6 +196,7 @@ protected:
 	ResourceSource *source;
 };
 
+typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash, ResourceIdEqualTo> ResourceMap;
 
 class ResourceManager {
 public:
@@ -223,7 +254,7 @@ protected:
 	int _memoryLocked;	//!< Amount of resource bytes in locked memory
 	int _memoryLRU;		//!< Amount of resource bytes under LRU control
 	Common::List<Resource *> _LRU; //!< Last Resource Used list
-	Common::HashMap<uint32, Resource *> _resMap;
+	ResourceMap _resMap;
 	Common::List<Common::File *> _volumeFiles; //!< list of opened volume files
 
 	/**
