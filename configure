@@ -110,7 +110,7 @@ _alsa=auto
 _zlib=auto
 _mpeg2=no
 _fluidsynth=auto
-_16bit=no
+_16bit=yes
 _mt32emu=yes
 # Default option behaviour yes/no
 _build_hq_scalers=yes
