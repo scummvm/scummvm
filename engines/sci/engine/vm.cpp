@@ -1947,7 +1947,7 @@ static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
 
 EngineState *g_EngineState = 0;
 
-static EngineState *_game_run(EngineState *s, int restoring) {
+static EngineState *_game_run(EngineState *&s, int restoring) {
 	EngineState *successor = NULL;
 	int game_is_finished = 0;
 	g_EngineState = s;
@@ -2014,7 +2014,7 @@ int game_run(EngineState **_s) {
 		return 1;
 	}
 	// and ENGAGE!
-	*_s = s = _game_run(s, 0);
+	_game_run(*_s, 0);
 
 	sciprintf(" Game::play() finished.\n");
 
