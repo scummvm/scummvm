@@ -5,13 +5,21 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Games:
    - Added support for Discworld.
    - Added support for Discworld 2 - Missing Presumed ...!?
-   - Added support for Return to Zork
-   - Added support for Leather Goddesses of Phobos 2
-   - Added support for The Manhole
-   - Added support for Rodney's Funscreen
+   - Added support for Return to Zork.
+   - Added support for Leather Goddesses of Phobos 2.
+   - Added support for The Manhole.
+   - Added support for Rodney's Funscreen.
    
  General:
    - Added experimental AdLib emulator from DOSBox.
+   - Added quick search to Launcher.
+   - Improved modern GUI theme look.
+   - Added per-game GUI options.
+   - Improved Mass Add dialog.
+
+ AGI:
+   - Increased compatibility for Sierra games.
+   - Implemented all 'unknown' commands.
 
  Beneath a Steel Sky:
    - Changed the game speed to match the original game (previously
