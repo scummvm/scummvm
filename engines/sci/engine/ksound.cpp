@@ -202,7 +202,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 
 
 reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	reg_t obj = KP_ALT(1, NULL_REG);
+	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	uint16 command = argv[0].toUint16();
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
@@ -335,7 +335,7 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case _K_SCI0_SOUND_VOLUME: {
 		/* range from 0x0 to 0xf */
 		/* parameter optional. If present, set.*/
-		int vol = SKPV_OR_ALT(1, -1);
+		int vol = (argc > 1) ? argv[1].toSint16() : -1;
 
 		if (vol != -1)
 			s->_sound.sfx_set_volume(vol << 0xf);
@@ -382,7 +382,7 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 command = argv[0].toUint16();
-	reg_t obj = KP_ALT(1, NULL_REG);
+	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :
@@ -456,7 +456,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	switch (command) {
 	case _K_SCI01_SOUND_MASTER_VOLME : {
-		int vol = SKPV_OR_ALT(1, -1);
+		int vol = (argc > 1) ? argv[1].toSint16() : -1;
 
 		if (vol != -1)
 			s->_sound.sfx_set_volume(vol << 0xf);
@@ -672,7 +672,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 command = argv[0].toUint16();
-	reg_t obj = KP_ALT(1, NULL_REG);
+	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :

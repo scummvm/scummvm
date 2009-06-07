@@ -66,8 +66,8 @@ reg_t kGetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t text = argv[0];
-	int fgcolor = SKPV_OR_ALT(1, s->status_bar_foreground);
-	int bgcolor = SKPV_OR_ALT(2, s->status_bar_background);
+	int fgcolor = (argc > 1) ? argv[1].toSint16() : s->status_bar_foreground;
+	int bgcolor = (argc > 2) ? argv[2].toSint16() : s->status_bar_background;
 
 	s->titlebar_port->_color.visual = get_pic_color(s, fgcolor);
 	s->titlebar_port->_color.mask = GFX_MASK_VISUAL;
@@ -125,7 +125,7 @@ static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
 
 reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t event = argv[0];
-	/*int pause_sound = UKPV_OR_ALT(1, 1);*/ /* FIXME: Do this eventually */
+	/*int pause_sound = (argc > 1) ? argv[1].toUint16() : 1;*/ /* FIXME: Do this eventually */
 	bool claimed = false;
 	int type = GET_SEL32V(event, type);
 	int message = GET_SEL32V(event, message);

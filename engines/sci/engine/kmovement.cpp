@@ -223,8 +223,9 @@ reg_t kInitBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	int deltax = GET_SEL32SV(mover, x) - GET_SEL32SV(client, x);
 	int deltay = GET_SEL32SV(mover, y) - GET_SEL32SV(client, y);
+	int step_factor = (argc < 1) ? argv[1].toUint16() : 1;
 
-	initialize_bresen(s, argc, argv, mover, KP_ALT(1, make_reg(0, 1)).toUint16(), deltax, deltay);
+	initialize_bresen(s, argc, argv, mover, step_factor, deltax, deltay);
 
 	return s->r_acc;
 }

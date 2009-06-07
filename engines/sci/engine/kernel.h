@@ -204,11 +204,6 @@ bool is_object(EngineState *s, reg_t obj);
 
 /* Returns the parameter value or (alt) if not enough parameters were supplied */
 
-#define KP_ALT(x, alt) ((x < argc)? argv[x] : (alt))
-
-#define SKPV_OR_ALT(x,a) KP_ALT(x, make_reg(0, a)).toSint16()
-#define UKPV_OR_ALT(x,a) KP_ALT(x, make_reg(0, a)).toUint16()
-
 reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries);
 byte *kernel_dereference_bulk_pointer(EngineState *s, reg_t pointer, int entries);
 #define kernel_dereference_char_pointer(state, pointer, entries) (char*)kernel_dereference_bulk_pointer(state, pointer, entries)

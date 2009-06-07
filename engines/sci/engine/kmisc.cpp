@@ -127,7 +127,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, retval);
 	}
 
-	int mode = argc > 0 ? UKPV_OR_ALT(0, 0) : 0;
+	int mode = (argc > 0) ? argv[0].toUint16() : 0;
 
 	switch (mode) {
 	case _K_NEW_GETTIME_TICKS :

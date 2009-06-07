@@ -253,7 +253,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 // Returns script dispatch address index in the supplied script
 reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int script = argv[0].toUint16();
-	int index = KP_ALT(1, NULL_REG).toUint16();
+	int index = (argc > 1) ? argv[1].toUint16() : 0;
 
 	SegmentId scriptid = script_get_segment(s, script, SCRIPT_GET_LOAD);
 	Script *scr;

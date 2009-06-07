@@ -101,9 +101,11 @@ reg_t kGetAngle(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kGetDistance(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int xrel = (int)(((float) argv[1].toSint16() - SKPV_OR_ALT(3, 0)) / cos(SKPV_OR_ALT(5, 0) * PI / 180.0)); // This works because cos(0)==1
-	int yrel = argv[0].toSint16() - SKPV_OR_ALT(2, 0);
-
+	int xdiff = (argc > 3) ? argv[3].toSint16() : 0;
+	int ydiff = (argc > 2) ? argv[2].toSint16() : 0;
+	int angle = (argc > 5) ? argv[5].toSint16() : 0;
+	int xrel = (int)(((float) argv[1].toSint16() - xdiff) / cos(angle * PI / 180.0)); // This works because cos(0)==1
+	int yrel = argv[0].toSint16() - ydiff;
 	return make_reg(0, (int16)sqrt((float) xrel*xrel + yrel*yrel));
 }
 
@@ -147,7 +149,7 @@ reg_t kSinDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kTimesTan(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int param = argv[0].toSint16();
-	int scale = SKPV_OR_ALT(1, 1);
+	int scale = (argc > 1) ? argv[1].toSint16() : 1;
 
 	param -= 90;
 	if ((param % 90) == 0) {
@@ -159,7 +161,7 @@ reg_t kTimesTan(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kTimesCot(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int param = argv[0].toSint16();
-	int scale = SKPV_OR_ALT(1, 1);
+	int scale = (argc > 1) ? argv[1].toSint16() : 1;
 
 	if ((param % 90) == 0) {
 		warning("Attempted tan(pi/2)");

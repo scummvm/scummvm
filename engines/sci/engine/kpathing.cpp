@@ -1672,7 +1672,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		Common::Point end = Common::Point(argv[2].toSint16(), argv[3].toSint16());
 		reg_t poly_list = argv[4];
 		//int poly_list_size = argv[5].toUint16();
-		int opt = UKPV_OR_ALT(6, 1);
+		int opt = (argc > 6) ? argv[6].toUint16() : 1;
 		reg_t output;
 		PathfindingState *p;
 

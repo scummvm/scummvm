@@ -397,7 +397,7 @@ reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kShow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int old_map = s->pic_visible_map;
 
-	s->pic_visible_map = (gfx_map_mask_t) UKPV_OR_ALT(0, 1);
+	s->pic_visible_map = (argc > 0) ? (gfx_map_mask_t) argv[0].toUint16() : GFX_MASK_VISUAL;
 
 	switch (s->pic_visible_map) {
 
@@ -501,11 +501,12 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_DRAW_LINE: {
-
-		gfx_color_t gfxcolor = graph_map_color(s, argv[5].toSint16(), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1));
+		int16 priority = (argc > 6) ? argv[6].toSint16() : -1;
+		int16 control = (argc > 7) ? argv[7].toSint16() : -1;
+		gfx_color_t gfxcolor = graph_map_color(s, argv[5].toSint16(), priority, control);
 
 		debugC(2, kDebugLevelGraphics, "draw_line((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
-		          argv[2].toSint16(), argv[1].toSint16(), argv[4].toSint16(), argv[3].toSint16(), argv[5].toSint16(), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1), gfxcolor.mask);
+		          argv[2].toSint16(), argv[1].toSint16(), argv[4].toSint16(), argv[3].toSint16(), argv[5].toSint16(), priority, control, gfxcolor.mask);
 
 		redraw_port = 1;
 
@@ -551,13 +552,14 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_FILL_BOX_ANY: {
-
-		gfx_color_t color = graph_map_color(s, argv[6].toSint16(), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1));
+		int16 priority = (argc > 7) ? argv[7].toSint16() : -1;
+		int16 control = (argc > 8) ? argv[8].toSint16() : -1;
+		gfx_color_t color = graph_map_color(s, argv[6].toSint16(), priority, control);
 
 		color.mask = (byte)argv[5].toUint16();
 
 		debugC(2, kDebugLevelGraphics, "fill_box_any((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
-		          argv[2].toSint16(), argv[1].toSint16(), argv[4].toSint16(), argv[3].toSint16(), argv[6].toSint16(), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1), argv[5].toUint16());
+		          argv[2].toSint16(), argv[1].toSint16(), argv[4].toSint16(), argv[3].toSint16(), argv[6].toSint16(), priority, control, argv[5].toUint16());
 
 		// FIXME/TODO: this is not right, as some of the dialogs are drawn *behind* some widgets. But at least it works for now
 		//ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));	// old code
@@ -620,7 +622,7 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int width, height;
 	char *text = argv[1].segment ? (char *) kernel_dereference_bulk_pointer(s, argv[1], 0) : NULL;
 	reg_t *dest = kernel_dereference_reg_pointer(s, argv[0], 4);
-	int maxwidth = KP_ALT(3, NULL_REG).toUint16();
+	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
 
 	if (maxwidth < 0)
@@ -771,7 +773,7 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 
 reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
-	reg_t cliplist_ref = KP_ALT(1, NULL_REG);
+	reg_t cliplist_ref = (argc > 1) ? argv[1] : NULL_REG;
 	List *cliplist = NULL;
 	GfxPort *port = s->picture_port;
 	uint16 signal;
@@ -987,23 +989,18 @@ void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr
 
 reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	drawn_pic_t dp;
-	int add_to_pic = 1;
+	bool add_to_pic = (argc > 2) ? !argv[2].toSint16() : false;
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
 
+	if (s->_flags & GF_SCI0_OLDGFXFUNCS)
+		add_to_pic = (argc > 2) ? argv[2].toSint16() : false;
+
 	dp.nr = argv[0].toSint16();
-	dp.palette = SKPV_OR_ALT(3, 0);
+	dp.palette = (argc > 3) ? argv[3].toSint16() : 0;
 
 	if ((argc > 1) && (argv[1].toUint16() & K_DRAWPIC_FLAG_MIRRORED))
 		picFlags |= DRAWPIC1_FLAG_MIRRORED;
-
-	if (s->_flags & GF_SCI0_OLDGFXFUNCS) {
-		if (!SKPV_OR_ALT(2, 0))
-			add_to_pic = 0;
-	} else {
-		if (SKPV_OR_ALT(2, 1))
-			add_to_pic = 0;
-	}
 
 	gfxop_disable_dirty_frames(s->gfx_state);
 
@@ -2403,7 +2400,7 @@ reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int cel = argv[2].toSint16();
 	int x = argv[3].toSint16();
 	int y = argv[4].toSint16();
-	int priority = SKPV_OR_ALT(5, -1);
+	int priority = (argc > 5) ? argv[5].toSint16() : -1;
 	GfxView *new_view;
 
 /*
@@ -2490,14 +2487,16 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	flags = argv[5 + argextra].toSint16();
 
-	priority = SKPV_OR_ALT(6 + argextra, -1);
+	priority = (argc > 6 + argextra) ? argv[6 + argextra].toSint16() : -1;
 	bgcolor.mask = 0;
 
-	if (SKPV_OR_ALT(8 + argextra, 255) >= 0) {
+	int16 bgColor = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
+
+	if (bgColor >= 0) {
 		if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
-			bgcolor.visual = get_pic_color(s, SKPV_OR_ALT(8 + argextra, 15));
+			bgcolor.visual = get_pic_color(s, MIN<int>(bgColor, 15));
 		else
-			bgcolor.visual = get_pic_color(s, SKPV_OR_ALT(8 + argextra, 255));
+			bgcolor.visual = get_pic_color(s, bgColor);
 		bgcolor.mask = GFX_MASK_VISUAL;
 	} else {
 		bgcolor.visual = PaletteEntry(0,0,0);
@@ -2509,7 +2508,8 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bgcolor.control = -1;
 	debugC(2, kDebugLevelGraphics, "New window with params %d, %d, %d, %d\n", argv[0].toSint16(), argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16());
 
-	fgcolor.visual = get_pic_color(s, SKPV_OR_ALT(7 + argextra, 0));
+	int16 visualColor = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
+	fgcolor.visual = get_pic_color(s, visualColor);
 	fgcolor.mask = GFX_MASK_VISUAL;
 	fgcolor.control = -1;
 	fgcolor.priority = -1;
@@ -2962,8 +2962,8 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 
 reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Animations are supposed to take a maximum of animation_delay milliseconds.
-	reg_t cast_list_ref = KP_ALT(0, NULL_REG);
-	int cycle = (KP_ALT(1, NULL_REG)).offset;
+	reg_t cast_list_ref = (argc > 0) ? argv[0] : NULL_REG;
+	int cycle = (argc > 1) ? argv[1].toUint16() : 0;
 	List *cast_list = NULL;
 	int open_animation = 0;
 
@@ -3071,8 +3071,8 @@ reg_t kAnimate(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define SHAKE_RIGHT 2
 
 reg_t kShakeScreen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int shakes = SKPV_OR_ALT(0, 1);
-	int directions = SKPV_OR_ALT(1, 1);
+	int shakes = (argc > 0) ? argv[0].toSint16() : 1;
+	int directions = (argc > 1) ? argv[1].toSint16() : 1;
 	gfx_pixmap_t *screen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 0, 320, 200));
 	int i;
 
@@ -3121,7 +3121,7 @@ reg_t kShakeScreen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int argpt;
 	reg_t textp = argv[0];
-	int index = UKPV_OR_ALT(1, 0);
+	int index = (argc > 1) ? argv[1].toUint16() : 0;
 	int temp;
 	bool save_under = false;
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
