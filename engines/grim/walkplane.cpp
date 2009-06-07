@@ -31,7 +31,6 @@
 namespace Grim {
 
 void Sector::load(TextSplitter &ts) {
-//	float height = 12345.f; // Yaz: this is in the original code...
 	char buf[256];
 	int id = 0, i = 0;
 	Graphics::Vector3d tempVert;
@@ -49,8 +48,6 @@ void Sector::load(TextSplitter &ts) {
 	_name = buf;
 	_id = id;
 	ts.scanString(" type %256s", 1, buf);
-
-	// Flags used in function at 4A66C0 (buildWalkPlane)
 
 	if (strstr(buf, "walk"))
 		_type = 0x1000;
