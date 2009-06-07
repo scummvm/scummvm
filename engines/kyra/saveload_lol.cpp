@@ -134,6 +134,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 				flags[i] = in.readUint16BE();
 		}
 
+		memset(_flagsTable, 0, sizeof(_flagsTable));
 		for (uint i = 0; i < ARRAYSIZE(flags); ++i) {
 			for (uint k = 0; k < 16; ++k) {
 				if (flags[i] & (1 << k))
