@@ -37,7 +37,7 @@
 #include "sci/gfx/gfx_gui.h"	// for sciw_set_status_bar
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gfx/gfx_widgets.h"	// for getPort
-#include "sci/sfx/songlib.h"	// for songlib_t
+#include "sci/sfx/songlib.h"	// for SongLibrary
 #include "sci/sfx/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
 #include "sci/sfx/sci_midi.h"
 #include "sci/vocabulary.h"
@@ -1530,14 +1530,14 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 bool Console::cmdSongLib(int argc, const char **argv) {
 	DebugPrintf("Song library:\n");
 
-	song_t *seeker = *(g_EngineState->_sound._songlib.lib);
+	Song *seeker = *(g_EngineState->_sound._songlib._lib);
 
 	do {
 		DebugPrintf("    %p", (void *)seeker);
 
 		if (seeker) {
-			DebugPrintf("[%04lx,p=%d,s=%d]->", seeker->handle, seeker->priority, seeker->status);
-			seeker = seeker->next;
+			DebugPrintf("[%04lx,p=%d,s=%d]->", seeker->_handle, seeker->_priority, seeker->_status);
+			seeker = seeker->_next;
 		}
 		DebugPrintf("\n");
 	} while (seeker);

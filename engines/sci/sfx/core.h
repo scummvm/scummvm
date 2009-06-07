@@ -47,8 +47,8 @@ class SfxState {
 public:	// FIXME, make private
 	SongIterator *_it; /**< The song iterator at the heart of things */
 	uint _flags; /**< SFX_STATE_FLAG_* */
-	songlib_t _songlib; /**< Song library */
-	song_t *_song; /**< Active song, or start of active song chain */
+	SongLibrary _songlib; /**< Song library */
+	Song *_song; /**< Active song, or start of active song chain */
 	bool _suspended; /**< Whether we are suspended */
 	ResourceSync *_soundSync; /**< Used by kDoSync for speech syncing in CD talkie games */
 	AudioResource *_audioResource; /**< Used for audio resources in CD talkie games */
@@ -77,17 +77,17 @@ public:
 
 	/* Polls the sound server for cues etc.
 	** Returns   : (int) 0 if the cue queue is empty, SI_LOOP, SI_CUE, or SI_FINISHED otherwise
-	**             (song_handle_t) *handle: The affected handle
+	**             (SongHandle) *handle: The affected handle
 	**             (int) *cue: The sound cue number (if SI_CUE), or the loop number (if SI_LOOP)
 	*/
-	int sfx_poll(song_handle_t *handle, int *cue);
+	int sfx_poll(SongHandle *handle, int *cue);
 
 	/* Polls the sound server for cues etc.
-	** Parameters: (song_handle_t) handle: The handle to poll
+	** Parameters: (SongHandle) handle: The handle to poll
 	** Returns   : (int) 0 if the cue queue is empty, SI_LOOP, SI_CUE, or SI_FINISHED otherwise
 	**             (int) *cue: The sound cue number (if SI_CUE), or the loop number (if SI_LOOP)
 	*/
-	int sfx_poll_specific(song_handle_t handle, int *cue);
+	int sfx_poll_specific(SongHandle handle, int *cue);
 
 	/* Determines the current global volume settings
 	** Returns   : (int) The global volume, between 0 (silent) and 127 (max. volume)
@@ -111,15 +111,15 @@ public:
 	/* Adds a song to the internal sound library
 	** Parameters: (SongIterator *) it: The iterator describing the song
 	**             (int) priority: Initial song priority (higher <-> more important)
-	**             (song_handle_t) handle: The handle to associate with the song
+	**             (SongHandle) handle: The handle to associate with the song
 	*/
-	void sfx_add_song(SongIterator *it, int priority, song_handle_t handle, int resnum);
+	void sfx_add_song(SongIterator *it, int priority, SongHandle handle, int resnum);
 
 
 	/* Deletes a song and its associated song iterator from the song queue
-	** Parameters: (song_handle_t) handle: The song to remove
+	** Parameters: (SongHandle) handle: The song to remove
 	*/
-	void sfx_remove_song(song_handle_t handle);
+	void sfx_remove_song(SongHandle handle);
 
 
 	/**********************/
@@ -128,48 +128,48 @@ public:
 
 
 	/* Sets the song status, i.e. whether it is playing, suspended, or stopped.
-	** Parameters: (song_handle_t) handle: Handle of the song to modify
+	** Parameters: (SongHandle) handle: Handle of the song to modify
 	**             (int) status: The song status the song should assume
 	** WAITING and PLAYING are set implicitly and essentially describe the same state
 	** as far as this function is concerned.
 	*/
-	void sfx_song_set_status(song_handle_t handle, int status);
+	void sfx_song_set_status(SongHandle handle, int status);
 
 	/* Sets the new song priority
-	** Parameters: (song_handle_t) handle: The handle to modify
+	** Parameters: (SongHandle) handle: The handle to modify
 	**             (int) priority: The priority to set
 	*/
-	void sfx_song_renice(song_handle_t handle, int priority);
+	void sfx_song_renice(SongHandle handle, int priority);
 
 	/* Sets the number of loops for the specified song
-	** Parameters: (song_handle_t) handle: The song handle to reference
+	** Parameters: (SongHandle) handle: The song handle to reference
 	**             (int) loops: Number of loops to set
 	*/
-	void sfx_song_set_loops(song_handle_t handle, int loops);
+	void sfx_song_set_loops(SongHandle handle, int loops);
 
 	/* Sets the number of loops for the specified song
-	** Parameters: (song_handle_t) handle: The song handle to reference
+	** Parameters: (SongHandle) handle: The song handle to reference
 	**             (int) hold: Number of loops to setn
 	*/
-	void sfx_song_set_hold(song_handle_t handle, int hold);
+	void sfx_song_set_hold(SongHandle handle, int hold);
 
 	/* Instructs a song to be faded out
-	** Parameters: (song_handle_t) handle: The song handle to reference
+	** Parameters: (SongHandle) handle: The song handle to reference
 	**             (fade_params_t *) fade_setup: The precise fade-out configuration to use
 	*/
-	void sfx_song_set_fade(song_handle_t handle, fade_params_t *fade_setup);
+	void sfx_song_set_fade(SongHandle handle, fade_params_t *fade_setup);
 
 
 	// Previously undocumented:
-	Common::Error sfx_send_midi(song_handle_t handle, int channel,
+	Common::Error sfx_send_midi(SongHandle handle, int channel,
 		int command, int arg1, int arg2);
 
 protected:
 	void freezeTime();
 	void thawTime();
 
-	bool isPlaying(song_t *song);
-	void setSongStatus(song_t *song, int status);
+	bool isPlaying(Song *song);
+	void setSongStatus(Song *song, int status);
 	void updateSingleSong();
 	void updateMultiSong();
 	void update();

@@ -151,7 +151,7 @@ SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type,
 
 void process_sound_events(EngineState *s) { /* Get all sound events, apply their changes to the heap */
 	int result;
-	song_handle_t handle;
+	SongHandle handle;
 	int cue;
 
 	if (s->_version >= SCI_VERSION_01)
@@ -204,7 +204,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	uint16 command = argv[0].toUint16();
-	song_handle_t handle = FROBNICATE_HANDLE(obj);
+	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :
 	             -1; /* We were not going to use it anyway */
@@ -383,7 +383,7 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
-	song_handle_t handle = FROBNICATE_HANDLE(obj);
+	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :
 	             -1; /* We were not going to use it anyway */
@@ -673,7 +673,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
-	song_handle_t handle = FROBNICATE_HANDLE(obj);
+	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :
 	             -1; /* We were not going to use it anyway */
@@ -798,9 +798,9 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
-		song_t *song = song_lib_find(s->_sound._songlib, handle);
+		Song *song = song_lib_find(s->_sound._songlib, handle);
 
-		if (GET_SEL32V(obj, nodePtr) && (song && number != song->resource_num)) {
+		if (GET_SEL32V(obj, nodePtr) && (song && number != song->_resourceNum)) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			s->_sound.sfx_remove_song(handle);
 			PUT_SEL32(obj, nodePtr, NULL_REG);

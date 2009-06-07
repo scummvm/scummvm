@@ -253,7 +253,6 @@ enum SongIteratorType {
 			    | IT_READER_MASK_CUE	\
 			    | IT_READER_MASK_PCM )
 
-int songit_next(SongIterator **it, byte *buf, int *result, int mask);
 /* Convenience wrapper around it->next
 ** Parameters: (SongIterator **it) Reference to the iterator to access
 **             (byte *) buf: The buffer to write to (needs to be able to
@@ -270,8 +269,8 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask);
 **                   to the lower layers) for 0, the cue value for SI_CUE,
 **                   or the number of loops remaining for SI_LOOP.
 */
+int songit_next(SongIterator **it, byte *buf, int *result, int mask);
 
-SongIterator *songit_new(byte *data, uint size, SongIteratorType type, songit_id_t id);
 /* Constructs a new song iterator object
 ** Parameters: (byte *) data: The song data to iterate over
 **             (uint) size: Number of bytes in the song
@@ -280,26 +279,17 @@ SongIterator *songit_new(byte *data, uint size, SongIteratorType type, songit_id
 ** Returns   : (SongIterator *) A newly allocated but uninitialized song
 **             iterator, or NULL if 'type' was invalid or unsupported
 */
+SongIterator *songit_new(byte *data, uint size, SongIteratorType type, songit_id_t id);
 
 
-int songit_handle_message(SongIterator **it_reg, SongIterator::Message msg);
 /* Handles a message to the song iterator
 ** Parameters: (SongIterator **): A reference to the variable storing the song iterator
 ** Returns   : (int) Non-zero if the message was understood
 ** The song iterator may polymorph as result of msg, so a writeable reference is required.
 */
+int songit_handle_message(SongIterator **it_reg, SongIterator::Message msg);
 
 
-int sfx_play_iterator_pcm(SongIterator *it, unsigned long handle);
-/* Plays a song iterator that found a PCM through a PCM device, if possible
-** Parameters: (SongIterator *) it: The iterator to play
-**             (song_handle_t) handle: Debug handle
-** Returns   : (int) 0 if the effect will not be played, nonzero if it will
-** This assumes that the last call to 'it->next()' returned SI_PCM.
-*/
-
-
-SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
 /* Creates a new song iterator which fast-forwards
 ** Parameters: (SongIterator *) it: The iterator to wrap
 **             (int) delta: The number of ticks to skip
@@ -307,6 +297,7 @@ SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
 **                               which skips all delta times
 **                               until 'delta' has been used up
 */
+SongIterator *new_fast_forward_iterator(SongIterator *it, int delta);
 
 
 
