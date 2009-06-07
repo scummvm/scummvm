@@ -63,11 +63,7 @@ GraphicResource::GraphicResource(ResourceItem item) {
 		// the end of the header block (read in above) to
 		// the length specified by gra->size
 		gra->data = (uint8*)malloc(gra->size - 16);
-		// FIXME This is a very inefficient way to allocate the
-		// necessary space
-		for (uint32 j = 0; j < gra->size - 16; j++) {
-			gra->data[j] = item.data[j + pos];
-		}
+		memcpy(gra->data, item.data + pos, gra->size - 16);
 
 		_items.push_back(*gra);
 
