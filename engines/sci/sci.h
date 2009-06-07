@@ -133,6 +133,7 @@ enum SciGameFlags {
 };
 
 class SciEngine : public Engine {
+	friend class Console;
 public:
 	SciEngine(OSystem *syst, const SciGameDescription *desc);
 	~SciEngine();
