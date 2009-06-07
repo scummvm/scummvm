@@ -811,10 +811,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("URI Quest (v0.173 Feb 27)", "3986eefcf546dafc45f920ae91a697c3"),
 	FANMADE("URI Quest (v0.173 Jan 29)", "494150940d34130605a4f2e67ee40b12"),
 	{
-		// V - The Graphical Adveture
+		// V - The Graphical Adventure
 		{
 			"agi-fanmade",
-			"V - The Graphical Adveture (Demo 2)",
+			"V - The Graphical Adventure (Demo 2)",
 			AD_ENTRY1s("vdir", "c71f5c1e008d352ae9040b77fcf79327", 3080),
 			Common::EN_ANY,
 			Common::kPlatformPC,
