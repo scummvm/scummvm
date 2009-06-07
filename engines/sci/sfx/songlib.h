@@ -50,7 +50,8 @@ enum RESTORE_BEHAVIOR {
 	RESTORE_BEHAVIOR_RESTART /* continue it from where it was */
 };
 
-struct Song {
+class Song {
+public:
 	SongHandle _handle;
 	int _resourceNum; /**<! Resource number */
 	int _priority; /**!< Song priority (more important if priority is higher) */
@@ -80,26 +81,26 @@ struct Song {
 	 * _update_multi_song()
 	 */
 	Song *_nextStopping;
+
+public:
+
+	Song();
+
+	/**
+	 * Initializes a new song.
+	 * @param handle	the sound handle
+	 * @param it		the song
+	 * @param priority	the song's priority
+	 * @return a freshly allocated song
+	 */
+	Song(SongHandle handle, SongIterator *it, int priority);
 };
-
-
-/**************************/
-/* Song library commands: */
-/**************************/
-
-/* Initializes a new song
-** Parameters: (SongHandle) handle: The sound handle
-**             (SongIterator *) it: The song
-**             (int) priority: The song's priority
-** Returns   : (Song *) A freshly allocated song
-** Other values are set to predefined defaults.
-*/
-Song *song_new(SongHandle handle, SongIterator *it, int priority);
 
 
 class SongLibrary {
 public:
 	Song **_lib;
+protected:
 	Song *_s;
 
 public:

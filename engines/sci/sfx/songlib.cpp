@@ -31,27 +31,42 @@ namespace Sci {
 
 #define debug_stream stderr
 
-Song *song_new(SongHandle handle, SongIterator *it, int priority) {
-	Song *retval;
-	retval = (Song *)malloc(sizeof(Song));
+Song::Song() {
+	_handle = 0;
+	_priority = 0;
+	_status = SOUND_STATUS_STOPPED;
 
-#ifdef SATISFY_PURIFY
-	memset(retval, 0, sizeof(Song));
-#endif
+	_restoreBehavior = RESTORE_BEHAVIOR_CONTINUE;
+	_restoreTime = 0;
 
-	retval->_handle = handle;
-	retval->_priority = priority;
-	retval->_next = NULL;
-	retval->_delay = 0;
-	retval->_wakeupTime = Audio::Timestamp();
-	retval->_it = it;
-	retval->_status = SOUND_STATUS_STOPPED;
-	retval->_nextPlaying = NULL;
-	retval->_nextStopping = NULL;
-	retval->_restoreBehavior = RESTORE_BEHAVIOR_CONTINUE;
-	retval->_restoreTime = 0;
+	_loops = 0;
+	_hold = 0;
 
-	return retval;
+	_it = 0;
+	_delay = 0;
+
+	_next = NULL;
+	_nextPlaying = NULL;
+	_nextStopping = NULL;
+}
+
+Song::Song(SongHandle handle, SongIterator *it, int priority) {
+	_handle = handle;
+	_priority = priority;
+	_status = SOUND_STATUS_STOPPED;
+
+	_restoreBehavior = RESTORE_BEHAVIOR_CONTINUE;
+	_restoreTime = 0;
+
+	_loops = 0;
+	_hold = 0;
+
+	_it = it;
+	_delay = 0;
+
+	_next = NULL;
+	_nextPlaying = NULL;
+	_nextStopping = NULL;
 }
 
 void SongLibrary::addSong(Song *song) {
@@ -90,7 +105,7 @@ void SongLibrary::freeSounds() {
 		delete song->_it;
 		song->_it = NULL;
 		next = song->_next;
-		free(song);
+		delete song;
 	}
 	*_lib = NULL;
 }
@@ -154,7 +169,7 @@ int SongLibrary::removeSong(SongHandle handle) {
 	retval = goner->_status;
 
 	delete goner->_it;
-	free(goner);
+	delete goner;
 
 	return retval;
 }

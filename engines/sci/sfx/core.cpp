@@ -824,7 +824,7 @@ void SfxState::sfx_add_song(SongIterator *it, int priority, SongHandle handle, i
 
 	}
 
-	song = song_new(handle, it, priority);
+	song = new Song(handle, it, priority);
 	song->_resourceNum = number;
 	song->_hold = 0;
 	song->_loops = 0;
