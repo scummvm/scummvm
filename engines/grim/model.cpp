@@ -296,7 +296,7 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 		int num, flags, type, mesh, parent, child, sibling, numChildren;
 		float x, y, z, pitch, yaw, roll, pivotx, pivoty, pivotz;
 		char name[64];
-		ts.scanString(" %d: %i %i %d %d %d %d %d %f %f %f %f %f %f %f %f %f %64s",
+		ts.scanString(" %d: %x %x %d %d %d %d %d %f %f %f %f %f %f %f %f %f %64s",
 			18, &num, &flags, &type, &mesh, &parent, &child, &sibling,
 			&numChildren, &x, &y, &z, &pitch, &yaw, &roll, &pivotx, &pivoty, &pivotz, name);
 		_rootHierNode[num]._flags = flags;
@@ -417,7 +417,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		if (ts.eof())
 			error("Expected face data, got EOF");
 
-		if (sscanf(ts.currentLine(), " %d: %d %i %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
+		if (sscanf(ts.currentLine(), " %d: %d %x %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
 			error("Expected face data, got '%s'", ts.currentLine());
 
 		_materialid[num] = materialid;
