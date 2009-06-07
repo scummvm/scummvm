@@ -3429,9 +3429,9 @@ static void NewObjectState() {
 	const char *zbitmap = NULL;
 	if (!lua_isnil(lua_getparam(4)))
 		zbitmap = lua_getstring(lua_getparam(4));
-	bool visible = getbool(5);
+	bool transparency = getbool(5);
 
-	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, visible);
+	ObjectState *state = new ObjectState(setupID, pos, bitmap, zbitmap, true);
 	g_grim->currScene()->addObjectState(state);
 	lua_pushusertag(state, MKID_BE('STAT'));
 }
