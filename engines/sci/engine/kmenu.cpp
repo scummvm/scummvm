@@ -46,11 +46,11 @@ reg_t kAddMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kSetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int index = UKPV(0);
+	int index = argv[0].toUint16();
 	int i = 2;
 
 	while (i < argc) {
-		s->_menubar->setAttribute(s, (index >> 8) - 1, (index & 0xff) - 1, UKPV(i - 1), argv[i]);
+		s->_menubar->setAttribute(s, (index >> 8) - 1, (index & 0xff) - 1, argv[i - 1].toUint16(), argv[i]);
 		i += 2;
 	}
 
@@ -58,9 +58,9 @@ reg_t kSetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kGetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int index = UKPV(0);
+	int index = argv[0].toUint16();
 
-	return s->_menubar->getAttribute((index >> 8) - 1, (index & 0xff) - 1, UKPV(1));
+	return s->_menubar->getAttribute((index >> 8) - 1, (index & 0xff) - 1, argv[1].toUint16());
 }
 
 
@@ -92,7 +92,7 @@ reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kDrawMenuBar(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
-	if (SKPV(0))
+	if (argv[0].toSint16())
 		sciw_set_menubar(s, s->titlebar_port, s->_menubar, -1);
 	else
 		sciw_set_status_bar(s, s->titlebar_port, "", 0, 0);

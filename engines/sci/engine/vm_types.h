@@ -48,6 +48,14 @@ struct reg_t {
 	bool operator!=(const reg_t &x) const {
 		return (offset != x.offset) || (segment != x.segment);
 	}
+
+	uint16 toUint16() const {
+		return offset;
+	}
+
+	int16 toSint16() const {
+		return (int16) offset;
+	}
 };
 
 #define PRINT_REG(r) (0xffff) & (unsigned) (r).segment, (unsigned) (r).offset

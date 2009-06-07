@@ -114,8 +114,8 @@ bool is_object(EngineState *s, reg_t object) {
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
 // This implementation ignores all resource numbers except the first one.
 reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int restype = KP_UINT(argv[0]);
-	int resnr = KP_UINT(argv[1]);
+	int restype = argv[0].toUint16();
+	int resnr = argv[1].toUint16();
 
 	// Request to dynamically allocate hunk memory for later use
 	if (restype == kResourceTypeMemory)
@@ -125,9 +125,9 @@ reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int restype = UKPV(0) & 0x7f;
-	int resnr = UKPV(1);
-	int state = argc > 2 ? UKPV(2) : 1;
+	int restype = argv[0].toUint16() & 0x7f;
+	int resnr = argv[1].toUint16();
+	int state = argc > 2 ? argv[2].toUint16() : 1;
 
 	Resource *which;
 
@@ -145,7 +145,7 @@ reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 // Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
 reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int restype = KP_UINT(argv[0]);
+	int restype = argv[0].toUint16();
 	reg_t resnr = argv[1];
 
 	if (restype == kResourceTypeMemory)
@@ -155,24 +155,24 @@ reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	ResourceType restype = (ResourceType)(UKPV(0) & 0x7f);
+	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
 
 	switch (restype) {
 	case kResourceTypeAudio36:
 	case kResourceTypeSync36: {
 		assert(argc >= 6);
 
-		uint module = UKPV(1);
-		uint noun = UKPV(2);
-		uint verb = UKPV(3);
-		uint cond = UKPV(4);
-		uint seq = UKPV(5);
+		uint module = argv[1].toUint16();
+		uint noun = argv[2].toUint16();
+		uint verb = argv[3].toUint16();
+		uint cond = argv[4].toUint16();
+		uint seq = argv[5].toUint16();
 		warning("ResCheck: checking for currently unsupported %s resource: module %i; tuple (%i, %i, %i, %i)",
 				getResourceTypeName(restype), module, noun, verb, cond, seq);
 		return make_reg(0, 1);
 	}
 	default:
-		Resource *res = s->resmgr->testResource(restype, UKPV(1));
+		Resource *res = s->resmgr->testResource(restype, argv[1].toUint16());
 		return make_reg(0, res != NULL);
 	}
 }
@@ -252,8 +252,8 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 // Returns script dispatch address index in the supplied script
 reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int script = KP_UINT(argv[0]);
-	int index = KP_UINT(KP_ALT(1, NULL_REG));
+	int script = argv[0].toUint16();
+	int index = KP_ALT(1, NULL_REG).toUint16();
 
 	SegmentId scriptid = script_get_segment(s, script, SCRIPT_GET_LOAD);
 	Script *scr;
@@ -313,7 +313,7 @@ reg_t kIsObject(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kRespondsTo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
-	int selector = KP_UINT(argv[1]);
+	int selector = argv[1].toUint16();
 
 	return make_reg(0, is_heap_object(s, obj) && lookup_selector(s, obj, selector, NULL, NULL) != kSelectorNone);
 }

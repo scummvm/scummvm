@@ -38,7 +38,7 @@ int g_stop_on_event = 0;
 #define SCI_VARIABLE_GAME_SPEED 3
 
 reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int mask = UKPV(0);
+	int mask = argv[0].toUint16();
 	reg_t obj = argv[1];
 	sci_event_t e;
 	int oldx, oldy;

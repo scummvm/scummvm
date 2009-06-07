@@ -203,7 +203,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 
 reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = KP_ALT(1, NULL_REG);
-	uint16 command = UKPV(0);
+	uint16 command = argv[0].toUint16();
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :
@@ -381,7 +381,7 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	uint16 command = UKPV(0);
+	uint16 command = argv[0].toUint16();
 	reg_t obj = KP_ALT(1, NULL_REG);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
@@ -487,7 +487,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
-		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) UKPV(2);		/* Too lazy to look up a default value for this */
+		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) argv[2].toUint16();		/* Too lazy to look up a default value for this */
 
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
@@ -551,7 +551,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI01_SOUND_SUSPEND_HANDLE : {
-		int state = UKPV(2);
+		int state = argv[2].toUint16();
 		int setstate = (state) ?
 		               SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING;
 
@@ -647,12 +647,12 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI01_SOUND_MIDI_SEND : {
-		int channel = SKPV(2);
-		int midiCmd = UKPV(3) == 0xff ?
+		int channel = argv[2].toSint16();
+		int midiCmd = argv[3].toUint16() == 0xff ?
 		              0xe0 : /* Pitch wheel */
-		              0xb0; /* UKPV(3) is actually a controller number */
-		int controller = UKPV(3);
-		int param = UKPV(4);
+		              0xb0; /* argv[3].toUint16() is actually a controller number */
+		int controller = argv[3].toUint16();
+		int param = argv[4].toUint16();
 
 		s->_sound.sfx_send_midi(handle,
 		              channel, midiCmd, controller, param);
@@ -662,7 +662,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI01_SOUND_HOLD : {
-		//int flag = SKPV(2);
+		//int flag = argv[2].toSint16();
 		break;
 	}
 	}
@@ -671,7 +671,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	uint16 command = UKPV(0);
+	uint16 command = argv[0].toUint16();
 	reg_t obj = KP_ALT(1, NULL_REG);
 	song_handle_t handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
@@ -866,10 +866,10 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case _K_SCI1_SOUND_FADE_HANDLE : {
 		fade_params_t fade;
 		if (obj.segment) {
-			fade.final_volume = UKPV(2);
-			fade.ticks_per_step = UKPV(3);
-			fade.step_size = UKPV(4);
-			fade.action = UKPV(5) ?
+			fade.final_volume = argv[2].toUint16();
+			fade.ticks_per_step = argv[3].toUint16();
+			fade.step_size = argv[4].toUint16();
+			fade.action = argv[5].toUint16() ?
 			              FADE_ACTION_FADE_AND_STOP :
 			              FADE_ACTION_FADE_AND_CONT;
 
@@ -877,7 +877,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			/* FIXME: The next couple of lines actually STOP the handle, rather
 			** than fading it! */
-			if (UKPV(5)) {
+			if (argv[5].toUint16()) {
 				PUT_SEL32V(obj, signal, -1);
 				PUT_SEL32V(obj, nodePtr, 0);
 				PUT_SEL32V(obj, handle, 0);
@@ -890,7 +890,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_HOLD_HANDLE : {
-		int value = SKPV(2);
+		int value = argv[2].toSint16();
 
 		s->_sound.sfx_song_set_hold(handle, value);
 		break;
@@ -902,7 +902,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_SET_HANDLE_PRIORITY : {
-		int value = SKPV(2);
+		int value = argv[2].toSint16();
 
 		script_set_priority(s, obj, value);
 		break;
@@ -950,7 +950,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	case _K_SCI1_SOUND_MIDI_SEND : {
 		s->_sound.sfx_send_midi(handle,
-		              UKPV(2), UKPV(3), UKPV(4), UKPV(5));
+		              argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(), argv[5].toUint16());
 		break;
 	}
 	case _K_SCI1_SOUND_REVERB : {
@@ -980,27 +980,27 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!s->_sound._audioResource)
 		s->_sound._audioResource = new AudioResource(s->resmgr, s->_version);
 
-	switch (UKPV(0)) {
+	switch (argv[0].toUint16()) {
 	case kSciAudioWPlay:
 	case kSciAudioPlay:
 		s->_sound._audioResource->stop();
 
 		if (argc == 2) {			// KQ5CD, KQ6 floppy
-			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(UKPV(1), 65535, &sampleLen);
+			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(argv[1].toUint16(), 65535, &sampleLen);
 
 			if (audioStream)
 				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
 		} else if (argc == 6) {		// SQ4CD or newer
-			//uint32 volume = UKPV(1);
+			//uint32 volume = argv[1].toUint16();
 			// Make a BE number
-			uint32 audioNumber = (((UKPV(2) & 0xFF) << 24) & 0xFF000000) |
-								 (((UKPV(3) & 0xFF) << 16) & 0x00FF0000) |
-								 (((UKPV(4) & 0xFF) <<  8) & 0x0000FF00) |
-								 ( (UKPV(5) & 0xFF)        & 0x000000FF);
+			uint32 audioNumber = (((argv[2].toUint16() & 0xFF) << 24) & 0xFF000000) |
+								 (((argv[3].toUint16() & 0xFF) << 16) & 0x00FF0000) |
+								 (((argv[4].toUint16() & 0xFF) <<  8) & 0x0000FF00) |
+								 ( (argv[5].toUint16() & 0xFF)        & 0x000000FF);
 
-			printf("%d %d %d %d -> %d\n", UKPV(2), UKPV(3), UKPV(4), UKPV(5), audioNumber);	// debugging
+			printf("%d %d %d %d -> %d\n", argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(), argv[5].toUint16(), audioNumber);	// debugging
 
-			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(audioNumber, UKPV(1), &sampleLen);
+			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(audioNumber, argv[1].toUint16(), &sampleLen);
 
 			if (audioStream)
 				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
@@ -1020,28 +1020,28 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case kSciAudioPosition:
 		return make_reg(0, s->_sound._audioResource->getAudioPosition());
 	case kSciAudioRate:
-		s->_sound._audioResource->setAudioRate(UKPV(1));
+		s->_sound._audioResource->setAudioRate(argv[1].toUint16());
 		break;
 	case kSciAudioVolume:
-		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, UKPV(1));
+		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, argv[1].toUint16());
 		break;
 	case kSciAudioLanguage:
 		if (argc == 1) {
 			// In SCI1.1: tests for digital audio support
 			return make_reg(0, 1);
 		} else {
-			s->_sound._audioResource->setAudioLang(SKPV(1));
+			s->_sound._audioResource->setAudioLang(argv[1].toSint16());
 		}
 		break;
 	default:
-		warning("kDoAudio: Unhandled case %d", UKPV(0));
+		warning("kDoAudio: Unhandled case %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;
 }
 
 reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	switch (UKPV(0)) {
+	switch (argv[0].toUint16()) {
 	case kSciAudioSyncStart:
 		if (argc == 3) {			// KQ5CD, KQ6 floppy
 			if (s->_sound._soundSync) {
@@ -1049,7 +1049,7 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			}
 
 			// Load sound sync resource and lock it
-			s->_sound._soundSync = (ResourceSync *)s->resmgr->findResource(kResourceTypeSync, UKPV(2), 1);
+			s->_sound._soundSync = (ResourceSync *)s->resmgr->findResource(kResourceTypeSync, argv[2].toUint16(), 1);
 
 			if (s->_sound._soundSync) {
 				s->_sound._soundSync->startSync(s, argv[1]);
@@ -1059,7 +1059,7 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			}
 		} else if (argc == 7) {		// SQ4CD or newer
 			// TODO
-			warning("kDoSync: Start called with new semantics - 6 parameters: %d %d %d %d %d %d", UKPV(1), UKPV(2), UKPV(3), UKPV(4), UKPV(5), UKPV(6));
+			warning("kDoSync: Start called with new semantics - 6 parameters: %d %d %d %d %d %d", argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(), argv[5].toUint16(), argv[6].toUint16());
 		} else {					// Hopefully, this should never happen
 			warning("kDoSync: Start called with an unknown number of parameters (%d)", argc);
 		}
@@ -1077,7 +1077,7 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 		break;
 	default:
-		warning("kDoSync: Unhandled case %d", UKPV(0));
+		warning("kDoSync: Unhandled case %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;

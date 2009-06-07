@@ -1226,7 +1226,7 @@ bool Console::cmdDroppedViews(int argc, const char **argv) {
 bool Console::cmdPriorityBands(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Priority bands start at y=%d. They end at y=%d\n", g_EngineState->priority_first, g_EngineState->priority_last);
-		DebugPrintf("Use %d <priority band> to print the start of priority for the specified priority band (0 - 15)\n", argv[0]);
+		DebugPrintf("Use %s <priority band> to print the start of priority for the specified priority band (0 - 15)\n", argv[0]);
 		return true;
 	}
 

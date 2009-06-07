@@ -123,7 +123,7 @@ EngineState::~EngineState() {
 }
 
 uint16 EngineState::currentRoomNumber() const {
-	return KP_UINT(script_000->locals_block->_locals[13]);
+	return script_000->locals_block->_locals[13].toUint16();
 }
 
 } // End of namespace Sci

@@ -304,16 +304,16 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1 :
 		if (s->_version < SCI_VERSION_1_1) {
-			if (SKPV(0) <= 1) {
+			if (argv[0].toSint16() <= 1) {
 				// Newer (SCI1.1) semantics: show/hide cursor
-				g_system->showMouse(SKPV(0) != 0);
+				g_system->showMouse(argv[0].toSint16() != 0);
 			} else {
 				// Pre-SCI1.1: set cursor according to the first parameter
-				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, SKPV(0)));
+				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, argv[0].toSint16()));
 			}
 		} else {
 			// SCI1.1: Show/hide cursor
-			g_system->showMouse(SKPV(0) != 0);
+			g_system->showMouse(argv[0].toSint16() != 0);
 		}
 		break;
 	case 2 :
@@ -329,26 +329,26 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			// this would open the menu on top. LSL5 is an exception, as the game can open
 			// the menu when the player presses a button during the intro, but the cursor is
 			// not placed on (x, 0) or (x, 1)
-			if (SKPV(1) <= 1) {
+			if (argv[1].toSint16() <= 1) {
 				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
-							SKPV(1) == 0 ? GFXOP_NO_POINTER : SKPV(0)));
+							argv[1].toSint16() == 0 ? GFXOP_NO_POINTER : argv[0].toSint16()));
 			} else {	// newer (SCI1.1) semantics: set pointer position
 				GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
-							Common::Point(UKPV(0), UKPV(1))));
+							Common::Point(argv[0].toUint16(), argv[1].toUint16())));
 			}
 		} else {
 			// SCI1.1 and newer: set pointer position
 			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
-						Common::Point(UKPV(0), UKPV(1))));
+						Common::Point(argv[0].toUint16(), argv[1].toUint16())));
 		}
 		break;
 	case 4 :
 		GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
-					UKPV(0) == 0 ? GFXOP_NO_POINTER : SKPV(0)));
+					argv[0].toUint16() == 0 ? GFXOP_NO_POINTER : argv[0].toSint16()));
 
 		// Set pointer position, if requested
 		if (argc > 2) {
-			Common::Point newPos = Common::Point(SKPV(2) + s->port->_bounds.x, SKPV(3) + s->port->_bounds.y);
+			Common::Point newPos = Common::Point(argv[2].toSint16() + s->port->_bounds.x, argv[3].toSint16() + s->port->_bounds.y);
 			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newPos));
 		}
 		break;
@@ -356,10 +356,10 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case 5 :
 	case 9 :
 		if (argc > 3) {
-			Common::Point hotspot = Common::Point(SKPV(3), SKPV(4));
-			GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), &hotspot));
+			Common::Point hotspot = Common::Point(argv[3].toSint16(), argv[4].toSint16());
+			GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), &hotspot));
 		} else {
-			GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, UKPV(0), UKPV(1), UKPV(2), NULL));
+			GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), NULL));
 		}
 		break;
 	default :
@@ -377,8 +377,8 @@ reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (argc == 1) {
 		// Case ignored on IBM PC
 	} else {
-		newPos.x = SKPV(0) + s->port->zone.x;
-		newPos.y = SKPV(1) + s->port->zone.y;
+		newPos.x = argv[0].toSint16() + s->port->zone.x;
+		newPos.y = argv[1].toSint16() + s->port->zone.y;
 
 		if (newPos.x > s->port->zone.x + s->port->zone.width)
 			newPos.x = s->port->zone.x + s->port->zone.width;
@@ -427,7 +427,7 @@ reg_t kShow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kPicNotValid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, s->pic_not_valid);
 	if (argc)
-		s->pic_not_valid = (byte)UKPV(0);
+		s->pic_not_valid = (byte)argv[0].toUint16();
 
 	return s->r_acc;
 }
@@ -488,12 +488,12 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	GfxPort *port = s->port;
 	int redraw_port = 0;
 
-	area = gfx_rect(SKPV(2), SKPV(1) , SKPV(4), SKPV(3));
+	area = gfx_rect(argv[2].toSint16(), argv[1].toSint16() , argv[4].toSint16(), argv[3].toSint16());
 
 	area.width = area.width - area.x; // Since the actual coordinates are absolute
 	area.height = area.height - area.y;
 
-	switch (SKPV(0)) {
+	switch (argv[0].toSint16()) {
 
 	case K_GRAPH_GET_COLORS_NR:
 
@@ -502,10 +502,10 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_DRAW_LINE: {
 
-		gfx_color_t gfxcolor = graph_map_color(s, SKPV(5), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1));
+		gfx_color_t gfxcolor = graph_map_color(s, argv[5].toSint16(), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1));
 
 		debugC(2, kDebugLevelGraphics, "draw_line((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
-		          SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(5), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1), gfxcolor.mask);
+		          argv[2].toSint16(), argv[1].toSint16(), argv[4].toSint16(), argv[3].toSint16(), argv[5].toSint16(), SKPV_OR_ALT(6, -1), SKPV_OR_ALT(7, -1), gfxcolor.mask);
 
 		redraw_port = 1;
 
@@ -513,7 +513,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		// have negative width/height). The actual dirty rectangle is constructed in gfxdr_add_dirty().
 		// FIXME/TODO: We need to change the semantics of this call, so that no fake rectangles are used. As it is, it's
 		// not possible change rect_t to Common::Rect, as we assume that Common::Rect forms a *valid* rectangle.
-		ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_line(Common::Point(SKPV(2), SKPV(1)), Common::Point(SKPV(4), SKPV(3)),
+		ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_line(Common::Point(argv[2].toSint16(), argv[1].toSint16()), Common::Point(argv[4].toSint16(), argv[3].toSint16()),
 		                               gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 
 	}
@@ -552,12 +552,12 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_FILL_BOX_ANY: {
 
-		gfx_color_t color = graph_map_color(s, SKPV(6), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1));
+		gfx_color_t color = graph_map_color(s, argv[6].toSint16(), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1));
 
-		color.mask = (byte)UKPV(5);
+		color.mask = (byte)argv[5].toUint16();
 
 		debugC(2, kDebugLevelGraphics, "fill_box_any((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
-		          SKPV(2), SKPV(1), SKPV(4), SKPV(3), SKPV(6), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1), UKPV(5));
+		          argv[2].toSint16(), argv[1].toSint16(), argv[4].toSint16(), argv[3].toSint16(), argv[6].toSint16(), SKPV_OR_ALT(7, -1), SKPV_OR_ALT(8, -1), argv[5].toUint16());
 
 		// FIXME/TODO: this is not right, as some of the dialogs are drawn *behind* some widgets. But at least it works for now
 		//ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));	// old code
@@ -568,7 +568,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_UPDATE_BOX: {
 
-		debugC(2, kDebugLevelGraphics, "update_box(%d, %d, %d, %d)\n", SKPV(1), SKPV(2), SKPV(3), SKPV(4));
+		debugC(2, kDebugLevelGraphics, "update_box(%d, %d, %d, %d)\n", argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16(), argv[4].toSint16());
 
 		area.x += s->port->zone.x;
 		area.y += s->port->zone.y;
@@ -581,7 +581,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_GRAPH_REDRAW_BOX: {
 
 
-		debugC(2, kDebugLevelGraphics, "redraw_box(%d, %d, %d, %d)\n", SKPV(1), SKPV(2), SKPV(3), SKPV(4));
+		debugC(2, kDebugLevelGraphics, "redraw_box(%d, %d, %d, %d)\n", argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16(), argv[4].toSint16());
 
 		area.x += s->port->zone.x;
 		area.y += s->port->zone.y;
@@ -597,14 +597,14 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_ADJUST_PRIORITY:
 
-		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)\n", SKPV(1), SKPV(2));
-		s->priority_first = SKPV(1) - 10;
-		s->priority_last = SKPV(2) - 10;
+		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)\n", argv[1].toSint16(), argv[2].toSint16());
+		s->priority_first = argv[1].toSint16() - 10;
+		s->priority_last = argv[2].toSint16() - 10;
 		break;
 
 	default:
 
-		warning("Unhandled Graph() operation %04x", SKPV(0));
+		warning("Unhandled Graph() operation %04x", argv[0].toSint16());
 
 	}
 
@@ -620,8 +620,8 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int width, height;
 	char *text = argv[1].segment ? (char *) kernel_dereference_bulk_pointer(s, argv[1], 0) : NULL;
 	reg_t *dest = kernel_dereference_reg_pointer(s, argv[0], 4);
-	int maxwidth = KP_UINT(KP_ALT(3,  NULL_REG));
-	int font_nr = KP_UINT(argv[2]);
+	int maxwidth = KP_ALT(3, NULL_REG).toUint16();
+	int font_nr = argv[2].toUint16();
 
 	if (maxwidth < 0)
 		maxwidth = 0;
@@ -647,7 +647,7 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint32 time;
-	int sleep_time = UKPV(0);
+	int sleep_time = argv[0].toUint16();
 
 	time = g_system->getMillis();
 	s->r_acc = make_reg(0, ((long)time - (long)s->last_wait_time) * 60 / 1000);
@@ -663,15 +663,15 @@ reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kCoordPri(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int y = SKPV(0);
+	int y = argv[0].toSint16();
 
-	return make_reg(0, VIEW_PRIORITY(y));
+	return make_reg(0, _find_view_priority(s, y));
 }
 
 reg_t kPriCoord(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int priority = SKPV(0);
+	int priority = argv[0].toSint16();
 
-	return make_reg(0, PRIORITY_BAND_FIRST(priority));
+	return make_reg(0, _find_priority_band(s, priority));
 }
 
 void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -720,7 +720,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc,
 }
 
 reg_t kDirLoop(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	_k_dirloop(argv[0], UKPV(1), s, funct_nr, argc, argv);
+	_k_dirloop(argv[0], argv[1].toUint16(), s, funct_nr, argc, argv);
 
 	return s->r_acc;
 }
@@ -863,11 +863,11 @@ reg_t kCanBeHere(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }  // CanBeHere
 
 reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int view = SKPV(0);
-	int loop = SKPV(1);
-	int cel = SKPV(2);
-	int y = UKPV(3);
-	int x = UKPV(4);
+	int view = argv[0].toSint16();
+	int loop = argv[1].toSint16();
+	int cel = argv[2].toSint16();
+	int y = argv[3].toUint16();
+	int x = argv[4].toUint16();
 	gfxr_view_t *res = NULL;
 	gfx_pixmap_t *pxm = NULL;
 
@@ -888,9 +888,9 @@ reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kCelHigh(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int view = SKPV(0);
-	int loop = SKPV(1);
-	int cel = SKPV(2);
+	int view = argv[0].toSint16();
+	int loop = argv[1].toSint16();
+	int cel = argv[2].toSint16();
 	int height, width;
 	Common::Point offset;
 
@@ -906,9 +906,9 @@ reg_t kCelHigh(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kCelWide(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int view = SKPV(0);
-	int loop = SKPV(1);
-	int cel = SKPV(2);
+	int view = argv[0].toSint16();
+	int loop = argv[1].toSint16();
+	int cel = argv[2].toSint16();
 	int height, width;
 	Common::Point offset;
 
@@ -967,15 +967,15 @@ reg_t kOnControl(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		map = GFX_MASK_CONTROL;
 	else {
 		arg = 1;
-		map = (gfx_map_mask_t) SKPV(0);
+		map = (gfx_map_mask_t) argv[0].toSint16();
 	}
 
-	ystart = SKPV(arg + 1);
-	xstart = SKPV(arg);
+	ystart = argv[arg + 1].toSint16();
+	xstart = argv[arg].toSint16();
 
 	if (argc > 3) {
-		ylen = SKPV(arg + 3) - ystart;
-		xlen = SKPV(arg + 2) - xstart;
+		ylen = argv[arg + 3].toSint16() - ystart;
+		xlen = argv[arg + 2].toSint16() - xstart;
 	}
 
 	return make_reg(0, gfxop_scan_bitmask(s->gfx_state, gfx_rect(xstart, ystart + 10, xlen, ylen), map));
@@ -991,10 +991,10 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
 
-	dp.nr = SKPV(0);
+	dp.nr = argv[0].toSint16();
 	dp.palette = SKPV_OR_ALT(3, 0);
 
-	if ((argc > 1) && (UKPV(1) & K_DRAWPIC_FLAG_MIRRORED))
+	if ((argc > 1) && (argv[1].toUint16() & K_DRAWPIC_FLAG_MIRRORED))
 		picFlags |= DRAWPIC1_FLAG_MIRRORED;
 
 	if (s->_flags & GF_SCI0_OLDGFXFUNCS) {
@@ -1013,7 +1013,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->old_screen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 10, 320, 190));
 
-	debugC(2, kDebugLevelGraphics, "Drawing pic.%03d\n", SKPV(0));
+	debugC(2, kDebugLevelGraphics, "Drawing pic.%03d\n", argv[0].toSint16());
 
 	if (add_to_pic) {
 		s->_pics.push_back(dp);
@@ -1043,7 +1043,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->pic_priority_table = gfxop_get_pic_metainfo(s->gfx_state);
 
 	if (argc > 1)
-		s->pic_animate = SKPV(1) & 0xff; // The animation used during kAnimate() later on
+		s->pic_animate = argv[1].toSint16() & 0xff; // The animation used during kAnimate() later on
 
 	s->dyn_views = NULL;
 	s->drop_views = NULL;
@@ -1157,9 +1157,9 @@ static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int 
 	int pri_top;
 
 	if (priority == -1)
-		priority = VIEW_PRIORITY(y);
+		priority = _find_view_priority(s, y);
 
-	pri_top = PRIORITY_BAND_FIRST(priority) + 1;
+	pri_top = _find_priority_band(s, priority) + 1;
 	// +1: Don't know why, but this seems to be happening
 
 	if (retval.top < pri_top)
@@ -1251,7 +1251,7 @@ reg_t kSetNowSeen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	switch (UKPV(0)) {
+	switch (argv[0].toUint16()) {
 	case 1:
 		debug(5, "STUB: kPalette() effect 1, direct palette set");
 		break;
@@ -1264,11 +1264,11 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case 4:	{	// Set palette intensity
 #if 0
 		// Colors 0 (black) and 255 (white) cannot be changed
-		int16 from = CLIP<int16>(1, 255, UKPV(2));
-		int16 to = CLIP<int16>(1, 255, UKPV(3));
-		int16 intensity = UKPV(4);
+		int16 from = CLIP<int16>(1, 255, argv[2].toUint16());
+		int16 to = CLIP<int16>(1, 255, argv[3].toUint16());
+		int16 intensity = argv[4].toUint16();
 
-		if (argc < 5 || UKPV(5) == 0) {
+		if (argc < 5 || argv[5].toUint16() == 0) {
 			s->gfx_state->gfxResMan->setPaletteIntensity(from, to, intensity);
 		} else {
 			warning("kPalette: argv[5] != 0");
@@ -1280,9 +1280,9 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 		}
 	case 5: {	// Find closest color
-		int r = UKPV(1);
-		int g = UKPV(2);
-		int b = UKPV(3);
+		int r = argv[1].toUint16();
+		int g = argv[2].toUint16();
+		int b = argv[3].toUint16();
 
 		int i, delta, bestindex = -1, bestdelta = 200000;
 
@@ -1312,7 +1312,7 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		debug(5, "STUB: kPalette() effect 8, set stored palette");
 		break;
 	default:
-		warning("kPalette(): Unimplemented subfunction: %d", UKPV(0));
+		warning("kPalette(): Unimplemented subfunction: %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;
@@ -2275,13 +2275,13 @@ reg_t kAddToPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int view, cel, loop, x, y, priority, control;
 		GfxWidget *widget;
 
-		view = KP_UINT(argv[0]);
-		loop = KP_UINT(argv[1]);
-		cel = KP_UINT(argv[2]);
-		x = KP_SINT(argv[3]);
-		y = KP_SINT(argv[4]) + 1 /* magic + 1 */;
-		priority = KP_SINT(argv[5]);
-		control = KP_SINT(argv[6]);
+		view = argv[0].toUint16();
+		loop = argv[1].toUint16();
+		cel = argv[2].toUint16();
+		x = argv[3].toSint16();
+		y = argv[4].toSint16() + 1 /* magic + 1 */;
+		priority = argv[5].toSint16();
+		control = argv[6].toSint16();
 
 		widget = gfxw_new_dyn_view(s->gfx_state, Common::Point(x, y), 0, view, loop, cel, 0,
 		                                priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0);
@@ -2337,7 +2337,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	switch (argc) {
 	case 1 : {
-		unsigned int port_nr = SKPV(0);
+		unsigned int port_nr = argv[0].toSint16();
 		GfxPort *new_port;
 
 		/* We depart from official semantics here, sorry!
@@ -2360,10 +2360,10 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 	case 6 : {
-		port_origin_y = SKPV(0);
-		port_origin_x = SKPV(1);
+		port_origin_y = argv[0].toSint16();
+		port_origin_x = argv[1].toSint16();
 
-		if (SKPV(0) == -10) {
+		if (argv[0].toSint16() == -10) {
 			s->port->draw(gfxw_point_zero); // Update the port we're leaving
 			s->port = s->iconbar_port;
 			activated_icon_bar = true;
@@ -2371,20 +2371,20 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		// Notify the graphics resource manager that the pic port bounds changed
-		s->gfx_state->gfxResMan->changePortBounds(UKPV(5), UKPV(4), UKPV(3) + UKPV(5), UKPV(2) + UKPV(4));
+		s->gfx_state->gfxResMan->changePortBounds(argv[5].toUint16(), argv[4].toUint16(), argv[3].toUint16() + argv[5].toUint16(), argv[2].toUint16() + argv[4].toUint16());
 
 		// LSL6 calls kSetPort to extend the screen to draw the GUI. If we free all resources
 		// here, the background picture is freed too, and this makes everything a big mess.
 		// FIXME/TODO: This code really needs to be rewritten to conform to the original behavior
 		if (s->_gameName != "LSL6") {
-			s->gfx_state->pic_port_bounds = gfx_rect(UKPV(5), UKPV(4), UKPV(3), UKPV(2));
+			s->gfx_state->pic_port_bounds = gfx_rect(argv[5].toUint16(), argv[4].toUint16(), argv[3].toUint16(), argv[2].toUint16());
 
 			// FIXME: Should really only invalidate all loaded pic resources here;
 			// this is overkill
 			s->gfx_state->gfxResMan->freeAllResources();
 		} else {
 			// WORKAROUND for LSL6
-			printf("SetPort case 6 called in LSL6. Origin: %d, %d - Clip rect: %d, %d, %d, %d\n", SKPV(1), SKPV(0), UKPV(5), UKPV(4), UKPV(3), UKPV(2));
+			printf("SetPort case 6 called in LSL6. Origin: %d, %d - Clip rect: %d, %d, %d, %d\n", argv[1].toSint16(), argv[0].toSint16(), argv[5].toUint16(), argv[4].toUint16(), argv[3].toUint16(), argv[2].toUint16());
 		}
 
 		break;
@@ -2398,11 +2398,11 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int view = SKPV(0);
-	int loop = SKPV(1);
-	int cel = SKPV(2);
-	int x = SKPV(3);
-	int y = SKPV(4);
+	int view = argv[0].toSint16();
+	int loop = argv[1].toSint16();
+	int cel = argv[2].toSint16();
+	int x = argv[3].toSint16();
+	int y = argv[4].toSint16();
 	int priority = SKPV_OR_ALT(5, -1);
 	GfxView *new_view;
 
@@ -2430,7 +2430,7 @@ reg_t kDrawCel(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	unsigned int goner_nr = SKPV(0);
+	unsigned int goner_nr = argv[0].toSint16();
 	GfxPort *goner;
 	GfxPort *pred;
 
@@ -2478,17 +2478,17 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int priority;
 	int argextra = argc == 13 ? 4 : 0; // Triggers in PQ3 and SCI1.1 games
 
-	y = SKPV(0);
-	x = SKPV(1);
-	yl = SKPV(2) - y;
-	xl = SKPV(3) - x;
+	y = argv[0].toSint16();
+	x = argv[1].toSint16();
+	yl = argv[2].toSint16() - y;
+	xl = argv[3].toSint16() - x;
 
 	y += s->wm_port->_bounds.y;
 
 	if (x + xl > 319)
 		x -= ((x + xl) - 319);
 
-	flags = SKPV(5 + argextra);
+	flags = argv[5 + argextra].toSint16();
 
 	priority = SKPV_OR_ALT(6 + argextra, -1);
 	bgcolor.mask = 0;
@@ -2507,7 +2507,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bgcolor.mask |= priority >= 0 ? GFX_MASK_PRIORITY : 0;
 	bgcolor.alpha = 0;
 	bgcolor.control = -1;
-	debugC(2, kDebugLevelGraphics, "New window with params %d, %d, %d, %d\n", SKPV(0), SKPV(1), SKPV(2), SKPV(3));
+	debugC(2, kDebugLevelGraphics, "New window with params %d, %d, %d, %d\n", argv[0].toSint16(), argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16());
 
 	fgcolor.visual = get_pic_color(s, SKPV_OR_ALT(7 + argextra, 0));
 	fgcolor.mask = GFX_MASK_VISUAL;
@@ -2531,7 +2531,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	// PQ3 and SCI1.1 games have the interpreter store underBits implicitly
 	if (argextra)
-		gfxw_port_auto_restore_background(s->visual, window, gfx_rect(SKPV(5), SKPV(4), SKPV(7) - SKPV(5), SKPV(6) - SKPV(4)));
+		gfxw_port_auto_restore_background(s->visual, window, gfx_rect(argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16() - argv[5].toSint16(), argv[6].toSint16() - argv[4].toSint16()));
 
 	ADD_TO_WINDOW_PORT(window);
 	FULL_REDRAW();
@@ -3163,24 +3163,24 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	while (argpt < argc) {
-		switch (UKPV(argpt++)) {
+		switch (argv[argpt++].toUint16()) {
 
 		case K_DISPLAY_SET_COORDS:
 
-			area.x = UKPV(argpt++);
-			area.y = UKPV(argpt++);
+			area.x = argv[argpt++].toUint16();
+			area.y = argv[argpt++].toUint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_coords(%d, %d)\n", area.x, area.y);
 			break;
 
 		case K_DISPLAY_SET_ALIGNMENT:
 
-			halign = (gfx_alignment_t)KP_SINT(argv[argpt++]);
+			halign = (gfx_alignment_t)argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_align(%d)\n", halign);
 			break;
 
 		case K_DISPLAY_SET_COLOR:
 
-			temp = KP_SINT(argv[argpt++]);
+			temp = argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_color(%d)\n", temp);
 			if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA) && temp >= 0 && temp <= 15)
 				color0 = (s->ega_colors[temp]);
@@ -3197,7 +3197,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case K_DISPLAY_SET_BGCOLOR:
 
-			temp = KP_SINT(argv[argpt++]);
+			temp = argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_bg_color(%d)\n", temp);
 			if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA && temp >= 0 && temp <= 15)
 				bg_color = s->ega_colors[temp];
@@ -3214,20 +3214,20 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case K_DISPLAY_SET_GRAYTEXT:
 
-			gray = KP_SINT(argv[argpt++]);
+			gray = argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_graytext(%d)\n", gray);
 			break;
 
 		case K_DISPLAY_SET_FONT:
 
-			font_nr = KP_UINT(argv[argpt++]);
+			font_nr = argv[argpt++].toUint16();
 
 			debugC(2, kDebugLevelGraphics, "Display: set_font(\"font.%03d\")\n", font_nr);
 			break;
 
 		case K_DISPLAY_WIDTH:
 
-			area.width = UKPV(argpt++);
+			area.width = argv[argpt++].toUint16();
 			if (area.width == 0)
 				area.width = MAX_TEXT_WIDTH_MAGIC_VALUE;
 
@@ -3242,7 +3242,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case K_DISPLAY_RESTORE_UNDER:
 
-			debugC(2, kDebugLevelGraphics, "Display: restore_under(%04x)\n", UKPV(argpt));
+			debugC(2, kDebugLevelGraphics, "Display: restore_under(%04x)\n", argv[argpt].toUint16());
 			graph_restore_box(s, argv[argpt++]);
 			update_immediately = true;
 			argpt++;
@@ -3256,7 +3256,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			break;
 
 		default:
-			debugC(2, kDebugLevelGraphics, "Unknown Display() command %x\n", UKPV(argpt - 1));
+			debugC(2, kDebugLevelGraphics, "Unknown Display() command %x\n", argv[argpt - 1].toUint16());
 			return NULL_REG;
 		}
 	}
@@ -3320,7 +3320,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	const char *filename = kernel_dereference_char_pointer(s, argv[0], 0);
-	int framerate = UKPV(1); // FIXME: verify
+	int framerate = argv[1].toUint16(); // FIXME: verify
 	int frameNr = 0;
 	SeqDecoder seq;
 
@@ -3373,7 +3373,7 @@ reg_t kSetVideoMode(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// (320x240 resolution, although the intro in KQ6 is 320x200).
 	// Refer to http://en.wikipedia.org/wiki/Mode_X
 
-	warning("STUB: SetVideoMode %d", UKPV(0));
+	warning("STUB: SetVideoMode %d", argv[0].toUint16());
 
 	return s->r_acc;
 }

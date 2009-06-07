@@ -204,16 +204,10 @@ bool is_object(EngineState *s, reg_t obj);
 
 /* Returns the parameter value or (alt) if not enough parameters were supplied */
 
-
 #define KP_ALT(x, alt) ((x < argc)? argv[x] : (alt))
-#define KP_UINT(x) ((uint16) x.offset)
-#define KP_SINT(x) ((int16) x.offset)
 
-
-#define SKPV(x) KP_SINT(argv[x])
-#define UKPV(x) KP_UINT(argv[x])
-#define SKPV_OR_ALT(x,a) KP_SINT(KP_ALT(x, make_reg(0, a)))
-#define UKPV_OR_ALT(x,a) KP_UINT(KP_ALT(x, make_reg(0, a)))
+#define SKPV_OR_ALT(x,a) KP_ALT(x, make_reg(0, a)).toSint16()
+#define UKPV_OR_ALT(x,a) KP_ALT(x, make_reg(0, a)).toUint16()
 
 reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries);
 byte *kernel_dereference_bulk_pointer(EngineState *s, reg_t pointer, int entries);
@@ -256,11 +250,6 @@ int _find_view_priority(EngineState *s, int y);
 
 #define SCI0_PRIORITY_BAND_FIRST(nr) ((((nr) == 0)? 0 :  \
 	((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 15)))
-
-#define VIEW_PRIORITY(y) _find_view_priority(s, y)
-#define PRIORITY_BAND_FIRST(nr) _find_priority_band(s, nr)
-
-
 
 
 

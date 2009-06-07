@@ -281,7 +281,7 @@ reg_t kStrCmp(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *s2 = kernel_dereference_char_pointer(s, argv[1], 0);
 
 	if (argc > 2)
-		return make_reg(0, strncmp(s1, s2, UKPV(2)));
+		return make_reg(0, strncmp(s1, s2, argv[2].toUint16()));
 	else
 		return make_reg(0, strcmp(s1, s2));
 }
@@ -304,7 +304,7 @@ reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	if (argc > 2) {
-		int length = SKPV(2);
+		int length = argv[2].toSint16();
 
 		if (length >= 0)
 			strncpy(dest, src, length);
@@ -376,19 +376,19 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	        ((strlen(dst) < 2) || (!lsl5PasswordWorkaround && !is_print_str(dst)))) {
 		// SQ4 array handling detected
 #ifndef SCUMM_BIG_ENDIAN
-		int odd = KP_UINT(argv[1]) & 1;
+		int odd = argv[1].toUint16() & 1;
 #else
-		int odd = !(KP_UINT(argv[1]) & 1);
+		int odd = !(argv[1].toUint16() & 1);
 #endif
-		dest2 = ((reg_t *) dest) + (KP_UINT(argv[1]) / 2);
+		dest2 = ((reg_t *) dest) + (argv[1].toUint16() / 2);
 		dest = ((byte *)(&dest2->offset)) + odd;
 	} else
-		dest += KP_UINT(argv[1]);
+		dest += argv[1].toUint16();
 
 	s->r_acc = make_reg(0, *dest);
 
 	if (argc > 2)
-		*dest = KP_SINT(argv[2]); /* Request to modify this char */
+		*dest = argv[2].toSint16(); /* Request to modify this char */
 
 	return s->r_acc;
 }
@@ -423,7 +423,7 @@ reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t dest = argv[0];
 	char *target = (char *) kernel_dereference_bulk_pointer(s, dest, 0);
 	reg_t position = argv[1]; /* source */
-	int index = UKPV(2);
+	int index = argv[2].toUint16();
 	char *source;
 	char *str_base = target;
 	int mode = 0;
@@ -452,7 +452,7 @@ reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #endif
 
 	for (i = startarg; i < argc; i++)
-		arguments[i-startarg] = UKPV(i); /* Parameters are copied to prevent overwriting */
+		arguments[i-startarg] = argv[i].toUint16(); /* Parameters are copied to prevent overwriting */
 
 	while ((xfer = *source++)) {
 		if (xfer == '%') {
@@ -646,13 +646,13 @@ reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	Resource *textres = s->resmgr->findResource(kResourceTypeText, UKPV(0), 0);
+	Resource *textres = s->resmgr->findResource(kResourceTypeText, argv[0].toUint16(), 0);
 	char *seeker;
-	int counter = UKPV(1);
+	int counter = argv[1].toUint16();
 
 
 	if (!textres) {
-		error("text.%d does not exist", UKPV(0));
+		error("text.%d does not exist", argv[0].toUint16());
 		return NULL_REG;
 	}
 
@@ -693,18 +693,18 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (isGetMessage) {
 		func = K_MESSAGE_GET;
 
-		tuple.noun = UKPV(0);
-		tuple.verb = UKPV(2);
+		tuple.noun = argv[0].toUint16();
+		tuple.verb = argv[2].toUint16();
 		tuple.cond = 0;
 		tuple.seq = 1;
 	} else {
-		func = UKPV(0);
+		func = argv[0].toUint16();
 
 		if (argc >= 6) {
-			tuple.noun = UKPV(2);
-			tuple.verb = UKPV(3);
-			tuple.cond = UKPV(4);
-			tuple.seq = UKPV(5);
+			tuple.noun = argv[2].toUint16();
+			tuple.verb = argv[3].toUint16();
+			tuple.cond = argv[4].toUint16();
+			tuple.seq = argv[5].toUint16();
 		}
 	}
 
@@ -717,7 +717,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		reg_t retval;
 
 		if (func == K_MESSAGE_GET) {
-			s->_msgState.loadRes(s->resmgr, UKPV(1), true);
+			s->_msgState.loadRes(s->resmgr, argv[1].toUint16(), true);
 			s->_msgState.findTuple(tuple);
 
 			if (isGetMessage)
@@ -762,7 +762,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_MESSAGE_SIZE: {
 		MessageState tempState;
 
-		if (tempState.loadRes(s->resmgr, UKPV(1), false) && tempState.findTuple(tuple) && tempState.getMessage())
+		if (tempState.loadRes(s->resmgr, argv[1].toUint16(), false) && tempState.findTuple(tuple) && tempState.getMessage())
 			return make_reg(0, tempState.getText().size() + 1);
 		else
 			return NULL_REG;
@@ -772,7 +772,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_MESSAGE_REFNOUN: {
 		MessageState tempState;
 
-		if (tempState.loadRes(s->resmgr, UKPV(1), false) && tempState.findTuple(tuple)) {
+		if (tempState.loadRes(s->resmgr, argv[1].toUint16(), false) && tempState.findTuple(tuple)) {
 			MessageTuple t = tempState.getRefTuple();
 			switch (func) {
 			case K_MESSAGE_REFCOND:
