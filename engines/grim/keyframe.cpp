@@ -104,8 +104,8 @@ void KeyframeAnim::loadBinary(const char *data, int len) {
 
 void KeyframeAnim::loadText(TextSplitter &ts) {
 	ts.expectString("section: header");
-	ts.scanString("flags %i", 1, &_flags);
-	ts.scanString("type %i", 1, &_type);
+	ts.scanString("flags %x", 1, &_flags);
+	ts.scanString("type %x", 1, &_type);
 	ts.scanString("frames %d", 1, &_numFrames);
 	ts.scanString("fps %f", 1, &_fps);
 	ts.scanString("joints %d", 1, &_numJoints);
@@ -186,12 +186,13 @@ void KeyframeAnim::KeyframeNode::loadText(TextSplitter &ts) {
 	ts.scanString("entries %d", 1, &_numEntries);
 	_entries = new KeyframeEntry[_numEntries];
 	for (int i = 0; i < _numEntries; i++) {
-		int which, flags;
+		int which;
+		unsigned flags;
 		float frame, x, y, z, p, yaw, r, dx, dy, dz, dp, dyaw, dr;
-		ts.scanString(" %d: %f %i %f %f %f %f %f %f", 9, &which, &frame, &flags, &x, &y, &z, &p, &yaw, &r);
+		ts.scanString(" %d: %f %x %f %f %f %f %f %f", 9, &which, &frame, &flags, &x, &y, &z, &p, &yaw, &r);
 		ts.scanString(" %f %f %f %f %f %f", 6, &dx, &dy, &dz, &dp, &dyaw, &dr);
 		_entries[which]._frame = frame;
-		_entries[which]._flags = flags;
+		_entries[which]._flags = (int)flags;
 		_entries[which]._pos = Graphics::Vector3d(x, y, z);
 		_entries[which]._dpos = Graphics::Vector3d(dx, dy, dz);
 		_entries[which]._pitch = p;

@@ -42,7 +42,8 @@ public:
 	float length() const { return _numFrames / _fps; }
 
 private:
-	int _flags, _type, _numFrames, _numJoints;
+	unsigned int _flags, _type;
+	int _numFrames, _numJoints;
 	float _fps;
 	int _numMarkers;
 
