@@ -2560,31 +2560,6 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	_system->updateScreen();
 }
 
-void Screen::copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr) {
-	x <<= 3; w <<= 3;
-	const uint8 *src = ptr;
-	uint8 *dst = &_pagePtrs[0][y * SCREEN_W + x];
-	for (int i = 0; i < h; ++i) {
-		memcpy(dst, src, w);
-		src += w;
-		dst += SCREEN_W;
-	}
-
-	addDirtyRect(x, y, w, h);
-	clearOverlayRect(0, x, y, w, h);
-}
-
-void Screen::copyScreenToRect(int x, int y, int w, int h, uint8 *ptr) {
-	x <<= 3; w <<= 3;
-	const uint8 *src = &_pagePtrs[0][y * SCREEN_W + x];
-	uint8 *dst = ptr;
-	for (int i = 0; i < h; ++i) {
-		memcpy(dst, src, w);
-		dst += w;
-		src += SCREEN_W;
-	}
-}
-
 uint8 *Screen::getPalette(int num) {
 	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 6 : 4));
 	if (num == 0)

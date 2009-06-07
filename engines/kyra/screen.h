@@ -258,10 +258,6 @@ protected:
 	};
 
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
-	void restoreMouseRect();
-	void copyMouseToScreen();
-	void copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr);
-	void copyScreenToRect(int x, int y, int w, int h, uint8 *ptr);
 
 	template<bool noXor> static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
 	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
