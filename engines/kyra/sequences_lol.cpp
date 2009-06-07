@@ -799,6 +799,8 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 
 	showCredits();
 
+	_eventList.clear();
+
 	switch (character) {
 	case 0:
 		_screen->loadBitmap("KIERAN.CPS", 3, 3, _screen->getPalette(0));
@@ -929,6 +931,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 	uint8 *animBlock = new uint8[40960];
 	assert(animBlock);
 	memset(animBlock, 0, 40960);
+	int inputFlag = 0;
 
 	do {
 		while (_system->getMillis() < waitTimer && !shouldQuit())
@@ -1133,7 +1136,9 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 		}
 
 		_screen->updateScreen();
-	} while (countStrings && !checkInput(0) && !shouldQuit());
+		inputFlag = checkInput(0);
+		removeInputTop();
+	} while (countStrings && !(inputFlag && !(inputFlag & 0x800)) && !shouldQuit());
 	removeInputTop();
 
 	delete[] animBlock;

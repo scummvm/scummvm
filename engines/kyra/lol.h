@@ -714,6 +714,7 @@ private:
 	int olol_getWallFlags(EMCState *script);
 	int olol_changeMonsterStat(EMCState *script);
 	int olol_getMonsterStat(EMCState *script);
+	int olol_releaseMonsterShapes(EMCState *script);
 	int olol_playCharacterScriptChat(EMCState *script);
 	int olol_playEnvironmentalSfx(EMCState *script);
 	int olol_update(EMCState *script);
@@ -724,6 +725,7 @@ private:
 	int olol_countBlockItems(EMCState *script);
 	int olol_characterSkillTest(EMCState *script);
 	int olol_countAllMonsters(EMCState *script);
+	int olol_playEndSequence(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_calcInflictableDamage(EMCState *script);

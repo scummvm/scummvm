@@ -1280,6 +1280,13 @@ int LoLEngine::olol_getMonsterStat(EMCState *script) {
 	return 0;
 }
 
+int LoLEngine::olol_releaseMonsterShapes(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_releaseMonsterShapes(%p)", (const void *)script);
+	for (int i = 0; i < 3; i++)
+		releaseMonsterShapes(i);	
+	return 0;
+}
+
 int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playCharacterScriptChat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	snd_stopSpeech(1);
@@ -1390,6 +1397,30 @@ int LoLEngine::olol_countAllMonsters(EMCState *script){
 	}
 
 	return res;
+}
+
+int LoLEngine::olol_playEndSequence(EMCState *script){
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playEndSequence(%p)", (const void *)script);
+
+	int c = 0;
+	if (_characters[0].id == -9)
+		c = 1;
+	else if (_characters[0].id == -5)
+		c = 3;	
+	else if (_characters[0].id == -1)
+		c = 2;
+
+	while (snd_updateCharacterSpeech())
+		delay(_tickLength);
+	
+	_eventList.clear();
+	_screen->hideMouse();
+	memset(_screen->getPalette(1), 0, 768);
+	
+	showOutro(c, _monsterDifficulty == 2 ? true : false);
+	quitGame();
+
+	return 0;
 }
 
 int LoLEngine::olol_stopCharacterSpeech(EMCState *script) {
@@ -2713,7 +2744,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x5C
 	Opcode(olol_getMonsterStat);
-	OpcodeUnImpl();
+	Opcode(olol_releaseMonsterShapes);
 	Opcode(olol_playCharacterScriptChat);
 	Opcode(olol_update);
 
@@ -2731,7 +2762,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x68
 	Opcode(olol_countAllMonsters);
-	OpcodeUnImpl();
+	Opcode(olol_playEndSequence);
 	Opcode(olol_stopCharacterSpeech);
 	Opcode(olol_setPaletteBrightness);
 

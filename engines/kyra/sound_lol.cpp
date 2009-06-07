@@ -160,7 +160,7 @@ void LoLEngine::snd_stopSpeech(bool setFlag) {
 }
 
 void LoLEngine::snd_playSoundEffect(int track, int volume) {
-	if (track == 1 && (_lastSfxTrack == -1 || _lastSfxTrack == 1))
+	if ((track == 1 && (_lastSfxTrack == -1 || _lastSfxTrack == 1)) || shouldQuit())
 		return;
 
 	_lastSfxTrack = track;
@@ -202,7 +202,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 }
 
 void LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
-	if (!_sound->sfxEnabled())
+	if (!_sound->sfxEnabled() || shouldQuit())
 		return;
 
 	if (_environmentSfx)
