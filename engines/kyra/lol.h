@@ -782,6 +782,7 @@ private:
 	int olol_pitDrop(EMCState *script);
 	int olol_increaseSkill(EMCState *script);
 	int olol_paletteFlash(EMCState *script);
+	int olol_restoreMagicShroud(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
 	int olol_shakeScene(EMCState *script);

@@ -2099,6 +2099,65 @@ int LoLEngine::olol_paletteFlash(EMCState *script) {
 	return 0;
 }
 
+int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreMagicShroud(%p)", (const void *)script);
+
+	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	mov->open("DARKLITE.WSA", 2, 0);
+	if (!mov->opened())
+		return 0;
+
+	_screen->hideMouse();
+
+	uint8 *fadeTab = new uint8[21504];
+	uint8 *tpal1 = fadeTab;
+	uint8 *tpal2 = tpal1 + 768;
+	uint8 *tpal3 = tpal2 + 768;
+	uint8 *tpal4 = 0;
+	_screen->loadPalette("LITEPAL1.COL", tpal1);
+	tpal2 = _screen->generateFadeTable(tpal3, 0, tpal1, 21);
+	_screen->loadPalette("LITEPAL2.COL", tpal2);
+	tpal4 = tpal2;
+	tpal2 += 768;
+	_screen->loadPalette("LITEPAL3.COL", tpal1);
+	_screen->generateFadeTable(tpal2, tpal4, tpal1, 4);
+
+	for (int i = 0; i < 21; i++) {
+		uint32 etime = _system->getMillis() + 20 * _tickLength;
+		mov->displayFrame(i, 0, 0, 0, 0);
+		_screen->updateScreen();
+		_screen->setScreenPalette(tpal3);
+		tpal3 += 768;
+		if (i == 2 || i == 5 || i == 8 || i == 11 || i == 13 || i == 15 || i == 17 || i == 19)
+			snd_playSoundEffect(95, -1);
+		delayUntil(etime);
+	}
+
+	snd_playSoundEffect(91, -1);
+	_screen->fadePalette(tpal3, 300);
+	tpal3 += 768;
+
+	for (int i = 22; i < 38; i++) {
+		uint32 etime = _system->getMillis() + 12 * _tickLength;
+		mov->displayFrame(i, 0, 0, 0, 0);
+		_screen->updateScreen();
+		if (i == 22 || i == 24 || i == 28 || i == 32) {
+			snd_playSoundEffect(131, -1);
+			_screen->setScreenPalette(tpal3);
+			tpal3 += 768;
+		}
+		delayUntil(etime);
+	}
+
+	mov->close();
+	delete mov;	
+	delete[] fadeTab;
+
+	_screen->showMouse();
+
+	return 1;
+}
+
 int LoLEngine::olol_disableControls(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_disableControls(%p) (%d)", (const void *)script, stackPos(0));
 	return gui_disableControls(stackPos(0));
@@ -2780,7 +2839,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0xB0
 	Opcode(olol_paletteFlash);
-	OpcodeUnImpl();
+	Opcode(olol_restoreMagicShroud);
 	Opcode(olol_dummy1); // anim buffer select?
 	Opcode(olol_disableControls);
 
