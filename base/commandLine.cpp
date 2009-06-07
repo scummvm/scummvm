@@ -807,13 +807,13 @@ void upgradeTargets() {
 
 		// Update the language setting but only if none has been set yet.
 		if (lang == Common::UNK_LANG && g->language() != Common::UNK_LANG) {
-			printf("  -> set lang to '%s'\n", Common::getLanguageCode(g->language()));
+			printf("  -> set language to '%s'\n", Common::getLanguageCode(g->language()));
 			dom["language"] = (*g)["language"];
 		}
 
 		// Update the platform setting but only if none has been set yet.
 		if (plat == Common::kPlatformUnknown && g->platform() != Common::kPlatformUnknown) {
-			printf("  -> set plat to '%s'\n", Common::getPlatformCode(g->platform()));
+			printf("  -> set platform to '%s'\n", Common::getPlatformCode(g->platform()));
 			dom["platform"] = (*g)["platform"];
 		}
 
