@@ -465,53 +465,6 @@ bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
 #ifdef ENABLE_LOL
 Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
 }
-
-bool Debugger_LoL::cmd_listFlags(int argc, const char **argv) {
-	for (int i = 0, p = 0; i < (int)sizeof(_vm->_gameFlags)*8; ++i, ++p) {
-		const uint8 index = (i >> 4);
-		const uint8 offset = i & 0xF;
-
-		DebugPrintf("(%-3i): %-2i", i, (_vm->_gameFlags[index] >> offset) & 1);
-		if (p == 5) {
-			DebugPrintf("\n");
-			p -= 6;
-		}
-	}
-	DebugPrintf("\n");
-	return true;
-}
-
-bool Debugger_LoL::cmd_toggleFlag(int argc, const char **argv) {
-	if (argc > 1) {
-		uint flag = atoi(argv[1]);
-
-		const uint8 index = (flag >> 4);
-		const uint8 offset = flag & 0xF;
-
-		_vm->_gameFlags[index] ^= _vm->_gameFlags[index] & (1 << offset);
-
-		DebugPrintf("Flag %i is now %i\n", flag, (_vm->_gameFlags[index] >> offset) & 1);
-	} else {
-		DebugPrintf("Syntax: toggleflag <flag>\n");
-	}
-
-	return true;
-}
-
-bool Debugger_LoL::cmd_queryFlag(int argc, const char **argv) {
-	if (argc > 1) {
-		uint flag = atoi(argv[1]);
-
-		const uint8 index = (flag >> 4);
-		const uint8 offset = flag & 0xF;
-
-		DebugPrintf("Flag %i is %i\n", flag, (_vm->_gameFlags[index] >> offset) & 1);
-	} else {
-		DebugPrintf("Syntax: queryflag <flag>\n");
-	}
-
-	return true;
-}
 #endif // ENABLE_LOL
 
 } // End of namespace Kyra

@@ -36,7 +36,7 @@
 namespace Kyra {
 
 void LoLEngine::loadLevel(int index) {
-	_gameFlags[36] |= 0x800;
+	_flagsTable[73] |= 0x08;
 	setMouseCursorToIcon(0x85);
 	_nextScriptFunc = 0;
 
@@ -398,7 +398,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		memcpy(_screen->getPalette(2) + 384, _screen->_currentPalette + 384, 384);
 		delete[] swampPal;
 
-		if (_gameFlags[26] & 4) {
+		if (_flagsTable[52] & 0x04) {
 			uint8 *pal0 = _screen->_currentPalette;
 			uint8 *pal2 = _screen->getPalette(2);
 			for (int i = 1; i < 768; i++)
@@ -524,14 +524,14 @@ bool LoLEngine::testWallInvisibility(int block, int direction) {
 }
 
 void LoLEngine::resetLampStatus() {
-	_gameFlags[15] |= 0x400;
+	_flagsTable[31] |= 0x04;
 	_lampEffect = -1;
 	updateLampStatus();
 }
 
 void LoLEngine::setLampMode(bool lampOn) {
-	_gameFlags[15] &= 0xFBFF;
-	if (!(_gameFlags[15] & 0x800) || !lampOn)
+	_flagsTable[31] &= 0xFB;
+	if (!(_flagsTable[30] & 0x08) || !lampOn)
 		return;
 
 	_screen->drawShape(0, _gameShapes[43], 291, 56, 0, 0);
@@ -542,7 +542,7 @@ void LoLEngine::updateLampStatus() {
 	uint8 newLampEffect = 0;
 	uint8 tmpOilStatus = 0;
 
-	if ((_updateFlags & 4) || !(_gameFlags[15] & 0x800))
+	if ((_updateFlags & 4) || !(_flagsTable[31] & 0x08))
 		return;
 
 	if (!_brightness || !_lampOilStatus) {
@@ -584,7 +584,7 @@ void LoLEngine::updateLampStatus() {
 }
 
 void LoLEngine::updateCompass() {
-	if (!(_gameFlags[15] & 0x4000) || (_updateFlags & 4))
+	if (!(_flagsTable[31] & 0x40) || (_updateFlags & 4))
 		return;
 
 	if (_compassDirection == -1) {
@@ -651,12 +651,12 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 	_sceneDefaultUpdate = 1;
 
 	calcCoordinates(_partyPosX, _partyPosY, _currentBlock, 0x80, 0x80);
-	_gameFlags[36] &= 0xfdff;
+	_flagsTable[73] &= 0xFD;
 
 	runLevelScript(opos, 4);
 	runLevelScript(npos, 1);
 
-	if (!(_gameFlags[36] & 0x200)) {
+	if (!(_flagsTable[73] & 0x02)) {
 		initTextFading(2, 0);
 
 		if (_sceneDefaultUpdate) {

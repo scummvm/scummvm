@@ -470,15 +470,18 @@ void KyraEngine_v1::resetSkipFlag(bool removeEvent) {
 
 
 int KyraEngine_v1::setGameFlag(int flag) {
+	assert((flag >> 3) >= 0 && (flag >> 3) <= ARRAYSIZE(_flagsTable));
 	_flagsTable[flag >> 3] |= (1 << (flag & 7));
 	return 1;
 }
 
 int KyraEngine_v1::queryGameFlag(int flag) const {
+	assert((flag >> 3) >= 0 && (flag >> 3) <= ARRAYSIZE(_flagsTable));
 	return ((_flagsTable[flag >> 3] >> (flag & 7)) & 1);
 }
 
 int KyraEngine_v1::resetGameFlag(int flag) {
+	assert((flag >> 3) >= 0 && (flag >> 3) <= ARRAYSIZE(_flagsTable));
 	_flagsTable[flag >> 3] &= ~(1 << (flag & 7));
 	return 0;
 }

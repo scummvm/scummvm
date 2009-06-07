@@ -34,26 +34,26 @@ namespace Kyra {
 void LoLEngine::gui_drawPlayField() {
 	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, 0);
 
-	if (_gameFlags[15] & 0x4000) {
+	if (_flagsTable[31] & 0x40) {
 		// copy compass shape
 		static const int cx[] = { 112, 152, 224 };
 		_screen->copyRegion(cx[_lang], 32, 288, 0, 32, 32, 2, 2, Screen::CR_NO_P_CHECK);
 		_compassDirection = -1;
 	}
 
-	if (_gameFlags[15] & 0x1000)
+	if (_flagsTable[31] & 0x10)
 		// draw automap book
 		_screen->drawShape(2, _gameShapes[78], 290, 32, 0, 0);
 
 	int cp = _screen->setCurPage(2);
 
-	if (_gameFlags[15] & 0x2000) {
+	if (_flagsTable[31] & 0x20) {
 		gui_drawScroll();
 	} else {
 		_selectedSpell = 0;
 	}
 
-	if (_gameFlags[15] & 0x800)
+	if (_flagsTable[31] & 0x08)
 		resetLampStatus();
 
 	updateDrawPage2();
@@ -548,7 +548,7 @@ void LoLEngine::gui_drawMoneyBox(int pageNum) {
 }
 
 void LoLEngine::gui_drawCompass() {
-	if (!(_gameFlags[15] & 0x4000))
+	if (!(_flagsTable[31] & 0x40))
 		return;
 
 	if (_compassDirection == -1) {
@@ -606,7 +606,7 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 	static const int16 buttonX[] = { 0x0056, 0x0128, 0x000C, 0x0021, 0x0122, 0x000C, 0x0021, 0x0036, 0x000C, 0x0021, 0x0036 };
 	static const int16 buttonY[] = { 0x00B4, 0x00B4, 0x00B4, 0x00B4, 0x0020, 0x0084, 0x0084, 0x0084, 0x0096, 0x0096, 0x0096 };
 
-	if (shapeIndex == 78 && !(_gameFlags[15] & 0x1000))
+	if (shapeIndex == 78 && !(_flagsTable[31] & 0x10))
 		return;
 
 	if (_currentControlMode && _needSceneRestore)
@@ -836,7 +836,7 @@ void LoLEngine::gui_enableDefaultPlayfieldButtons() {
 	gui_setFaceFramesControlButtons(29, 0);
 	gui_setFaceFramesControlButtons(25, 33);
 
-	if (_gameFlags[15] & 0x2000)
+	if (_flagsTable[31] & 0x20)
 		gui_initMagicScrollButtons();
 }
 
@@ -1752,7 +1752,7 @@ int LoLEngine::clickedMoneyBox(Button *button) {
 }
 
 int LoLEngine::clickedCompass(Button *button) {
-	if (!(_gameFlags[15] & 0x4000))
+	if (!(_flagsTable[31] & 0x40))
 		return 0;
 
 	if (_compassBroken) {
@@ -1766,7 +1766,7 @@ int LoLEngine::clickedCompass(Button *button) {
 }
 
 int LoLEngine::clickedAutomap(Button *button) {
-	if (!(_gameFlags[15] & 0x1000))
+	if (!(_flagsTable[31] & 0x10))
 		return 0;
 
 	removeInputTop();
@@ -1778,7 +1778,7 @@ int LoLEngine::clickedAutomap(Button *button) {
 }
 
 int LoLEngine::clickedLamp(Button *button) {
-	if (!(_gameFlags[15] & 0x800))
+	if (!(_flagsTable[31] & 0x08))
 		return 0;
 
 	if (_itemsInPlay[_itemInHand].itemPropertyIndex == 248) {

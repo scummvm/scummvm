@@ -627,7 +627,6 @@ private:
 	uint16 _currentBlock;
 	bool _sceneUpdateRequired;
 	int16 _visibleBlockIndex[18];
-	uint16 _gameFlags[40];
 	int16 _globalScriptVars[24];
 
 	// emc opcode

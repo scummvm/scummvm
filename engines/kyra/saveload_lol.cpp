@@ -119,15 +119,33 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	_inventoryCurItem = in.readSint16BE();
 	_itemInHand = in.readSint16BE();
 	_lastMouseRegion = in.readSint16BE();
-	if (header.version == 14) {
-		for (int i = 0; i < 16; i++)
-			_gameFlags[i] = in.readUint16BE();
-		_gameFlags[26] = in.readUint16BE();
-		_gameFlags[36] = in.readUint16BE();
+
+	if (header.version <= 15) {
+		uint16 flags[40];
+		memset(flags, 0, sizeof(flags));
+
+		if (header.version == 14) {
+			for (int i = 0; i < 16; i++)
+				flags[i] = in.readUint16BE();
+			flags[26] = in.readUint16BE();
+			flags[36] = in.readUint16BE();
+		} else if (header.version == 15) {
+			for (int i = 0; i < 40; i++)
+				flags[i] = in.readUint16BE();
+		}
+
+		for (uint i = 0; i < ARRAYSIZE(flags); ++i) {
+			for (uint k = 0; k < 16; ++k) {
+				if (flags[i] & (1 << k))
+					setGameFlag(((i << 4) & 0xFFF0) | (k & 0x000F));
+			}
+		}
 	} else {
-		for (int i = 0; i < 40; i++)
-			_gameFlags[i] = in.readUint16BE();
+		uint32 flagsSize = in.readUint32BE();
+		assert(flagsSize <= sizeof(_flagsTable));
+		in.read(_flagsTable, flagsSize);
 	}
+
 	for (int i = 0; i < 24; i++)
 		_globalScriptVars[i] = in.readUint16BE();
 	_brightness = in.readByte();
@@ -245,7 +263,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	loadLevel(_currentLevel);
 	gui_drawPlayField();
 	timerSpecialCharacterUpdate(0);
-	_gameFlags[36] |= 0x800;
+	_flagsTable[73] |= 0x08;
 
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
@@ -323,8 +341,8 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 	out->writeSint16BE(_inventoryCurItem);
 	out->writeSint16BE(_itemInHand);
 	out->writeSint16BE(_lastMouseRegion);
-	for (int i = 0; i < 40; i++)
-		out->writeUint16BE(_gameFlags[i]);
+	out->writeUint32BE(ARRAYSIZE(_flagsTable));
+	out->write(_flagsTable, ARRAYSIZE(_flagsTable));
 	for (int i = 0; i < 24; i++)
 		out->writeUint16BE(_globalScriptVars[i]);
 	out->writeByte(_brightness);

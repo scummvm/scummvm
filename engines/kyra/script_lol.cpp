@@ -206,12 +206,10 @@ int LoLEngine::olol_delay(EMCState *script) {
 int LoLEngine::olol_setGameFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGameFlag(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 
-	assert((stackPos(0) >> 4) < 40);
-
 	if (stackPos(1))
-		_gameFlags[stackPos(0) >> 4] |= (1 << (stackPos(0) & 0x0f));
+		setGameFlag(stackPos(0));
 	else
-		_gameFlags[stackPos(0) >> 4] &= (~(1 << (stackPos(0) & 0x0f)));
+		resetGameFlag(stackPos(0));
 
 	return 1;
 }
@@ -221,12 +219,7 @@ int LoLEngine::olol_testGameFlag(EMCState *script) {
 	if (stackPos(0) < 0)
 		return 0;
 
-	assert((stackPos(0) >> 4) < 40);
-
-	if (_gameFlags[stackPos(0) >> 4] & (1 << (stackPos(0) & 0x0f)))
-		return 1;
-
-	return 0;
+	return queryGameFlag(stackPos(0));
 }
 
 int LoLEngine::olol_loadLevelGraphics(EMCState *script) {

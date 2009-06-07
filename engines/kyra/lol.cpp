@@ -500,7 +500,6 @@ Common::Error LoLEngine::init() {
 	_flyingObjects = new FlyingObject[8];
 	memset(_flyingObjects, 0, 8 * sizeof(FlyingObject));
 
-	memset(_gameFlags, 0, sizeof(_gameFlags));
 	memset(_globalScriptVars, 0, sizeof(_globalScriptVars));
 
 	_levelFileData = 0;
@@ -643,7 +642,7 @@ void LoLEngine::loadItemIconShapes() {
 }
 
 void LoLEngine::setMouseCursorToIcon(int icon) {
-	_gameFlags[15] |= 0x200;
+	_flagsTable[31] |= 0x02;
 	int i = _itemProperties[_itemsInPlay[_itemInHand].itemPropertyIndex].shpIndex;
 	if (i == icon)
 		return;
@@ -651,7 +650,7 @@ void LoLEngine::setMouseCursorToIcon(int icon) {
 }
 
 void LoLEngine::setMouseCursorToItemInHand() {
-	_gameFlags[15] &= 0xFDFF;
+	_flagsTable[31] &= 0xFD;
 	int o = (_itemInHand == 0) ? 0 : 10;
 	_screen->setMouseCursor(o, o, getItemIconShapePtr(_itemInHand));
 }
@@ -856,7 +855,7 @@ void LoLEngine::runLoop() {
 	enableSysTimer(2);
 
 	bool _runFlag = true;
-	_gameFlags[36] |= 0x800;
+	_flagsTable[73] |= 0x08;
 
 	while (!shouldQuit() && _runFlag) {
 		if (_nextScriptFunc) {
@@ -891,10 +890,10 @@ void LoLEngine::update() {
 	if (_updateCharNum != -1 && _system->getMillis() > _updatePortraitNext)
 		updatePortraitSpeechAnim();
 
-	if (_gameFlags[15] & 0x800 || !(_updateFlags & 4))
+	if (_flagsTable[31] & 0x08 || !(_updateFlags & 4))
 		updateLampStatus();
 
-	if (_gameFlags[15] & 0x4000 && !(_updateFlags & 4) && (_compassDirection == -1 || (_currentDirection << 6) != _compassDirection || _compassStep))
+	if (_flagsTable[31] & 0x40 && !(_updateFlags & 4) && (_compassDirection == -1 || (_currentDirection << 6) != _compassDirection || _compassStep))
 		updateCompass();
 
 	snd_updateCharacterSpeech();
@@ -1595,7 +1594,7 @@ void LoLEngine::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness
 	memcpy(dst, src, 0x300);
 	_screen->loadSpecialColors(dst);
 	brightness = (8 - brightness) << 5;
-	if (modifier >= 0 && modifier < 8 && _gameFlags[15] & 0x800) {
+	if (modifier >= 0 && modifier < 8 && (_flagsTable[31] & 0x08)) {
 		brightness = 256 - ((((modifier & 0xfffe) << 5) * (256 - brightness)) >> 8);
 		if (brightness < 0)
 			brightness = 0;
@@ -2124,12 +2123,12 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	uint8 *tpal = new uint8[768];
 	uint8 *swampCol = new uint8[768];
 
-	if (_currentLevel == 11 && !(_gameFlags[26] & 4)) {
+	if (_currentLevel == 11 && !(_flagsTable[52] & 0x04)) {
 		uint8 *sc = _screen->_currentPalette;
 		uint8 *dc = _screen->getPalette(2);
 		for (int i = 1; i < 768; i++)
 			SWAP(sc[i], dc[i]);
-		_gameFlags[26] |= 4;
+		_flagsTable[52] |= 0x04;
 		static const uint8 freezeTimes[] =  { 20, 28, 40, 60 };
 		setCharacterUpdateEvent(charNum, 8, freezeTimes[spellLevel], 1);
 	}
@@ -3496,7 +3495,7 @@ void LoLEngine::stunCharacter(int charNum) {
 }
 
 void LoLEngine::restoreSwampPalette() {
-	_gameFlags[26] &= 0xfffb;
+	_flagsTable[52] &= 0xFB;
 	if (_currentLevel != 11)
 		return;
 
@@ -3761,7 +3760,7 @@ void LoLEngine::displayAutomap() {
 }
 
 void LoLEngine::updateAutoMap(uint16 block) {
-	if (!(_gameFlags[15] & 0x1000))
+	if (!(_flagsTable[31] & 0x10))
 		return;
 	_levelBlockProperties[block].flags |= 7;
 

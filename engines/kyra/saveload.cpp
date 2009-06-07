@@ -30,7 +30,7 @@
 
 #include "kyra/kyra_v1.h"
 
-#define CURRENT_SAVE_VERSION 15
+#define CURRENT_SAVE_VERSION 16
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
