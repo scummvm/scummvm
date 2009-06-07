@@ -90,7 +90,7 @@ public:
 	void setList(const StringList &list);
 	void append(const String &s);
 	const StringList &getList()	const			{ return _dataList; }
-	int getSelected() const						{ return (_filter == "" || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
+	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 	void setSelected(int item);
 	const String &getSelectedString() const		{ return _list[_selectedItem]; }
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
