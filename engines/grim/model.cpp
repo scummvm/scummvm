@@ -293,14 +293,15 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 	ts.scanString("hierarchy nodes %d", 1, &_numHierNodes);
 	_rootHierNode = new HierNode[_numHierNodes];
 	for (int i = 0; i < _numHierNodes; i++) {
-		int num, flags, type, mesh, parent, child, sibling, numChildren;
+		int num, mesh, parent, child, sibling, numChildren;
+		unsigned int flags, type;
 		float x, y, z, pitch, yaw, roll, pivotx, pivoty, pivotz;
 		char name[64];
 		ts.scanString(" %d: %x %x %d %d %d %d %d %f %f %f %f %f %f %f %f %f %64s",
 			18, &num, &flags, &type, &mesh, &parent, &child, &sibling,
 			&numChildren, &x, &y, &z, &pitch, &yaw, &roll, &pivotx, &pivoty, &pivotz, name);
-		_rootHierNode[num]._flags = flags;
-		_rootHierNode[num]._type = type;
+		_rootHierNode[num]._flags = (int)flags;
+		_rootHierNode[num]._type = (int)type;
 		if (mesh < 0)
 			_rootHierNode[num]._mesh = NULL;
 		else
@@ -408,7 +409,8 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	_faces = new Face[_numFaces];
 	_materialid = new int[_numFaces];
 	for (int i = 0; i < _numFaces; i++) {
-		int num, materialid, type, geo, light, tex, verts;
+		int num, materialid, geo, light, tex, verts;
+		unsigned int type;
 		float extralight;
 		int readlen;
 
@@ -420,7 +422,7 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 
 		_materialid[num] = materialid;
 		_faces[num]._material = materials[_materialid[num]];
-		_faces[num]._type = type;
+		_faces[num]._type = (int)type;
 		_faces[num]._geo = geo;
 		_faces[num]._light = light;
 		_faces[num]._tex = tex;
