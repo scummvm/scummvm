@@ -440,6 +440,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\inter_playtoon.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\map.cpp"
 			>
 		</File>
@@ -489,14 +493,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\parse.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\parse_v1.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\parse_v2.cpp"
 			>
 		</File>
 		<File

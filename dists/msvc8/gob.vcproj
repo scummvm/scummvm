@@ -491,14 +491,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\parse_v1.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\parse_v2.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\gob\save\savefile.h"
 			>
 		</File>
