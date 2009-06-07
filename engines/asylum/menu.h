@@ -53,7 +53,7 @@ private:
 	uint8 *_mouseIconBuf;
 
 	/** Menu palette */
-	uint8 _palette[PAL_SIZE];
+	uint8 _palette[PAL_SIZE*3];
 
 	// FIXME: this resource shouldn't be here. Must be deleted when a single 
 	// entry could be extracted from resource withou reading entire file.

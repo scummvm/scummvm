@@ -34,7 +34,7 @@ class Palette {
 public:
     Palette(ResourceItem item);
     ~Palette();
-	uint8 _buffer[PAL_SIZE];
+	uint8 _buffer[PAL_SIZE*3];
 };
 
 } // namespace Asylum

@@ -51,6 +51,8 @@ public:
 
 	void setPalette(uint8 *palette);
 
+	void setGammaLevel(double gamma);
+
 	void drawLine(int32 x0, int32 y0, int32 x1, int32 y1, uint8 colour);
 
 private:
