@@ -416,17 +416,13 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 
 	for (int i = 1; i < _numFrames + 2; ++i) {
 		_frameOffsTable[i] = READ_LE_UINT32(wsaData);
+		if (_frameOffsTable[i])
+			_frameOffsTable[i] -= frameDataOffs;
 		wsaData += 4;
 	}
 
-	for (int i = 1; i < _numFrames; ++i)
-		_frameOffsTable[i] -= frameDataOffs;
-
-	// WSA movies without last frame offset need special treatment
-	if (_frameOffsTable[_numFrames + 1])
-		_frameOffsTable[_numFrames] -= frameDataOffs;
-	else
-		_frameOffsTable[_numFrames] = 0;
+	if (!_frameOffsTable[_numFrames + 1])
+		_flags |= WF_NO_LAST_FRAME;
 
 	// skip palette
 	wsaData += offsPal;
@@ -477,13 +473,13 @@ void WSAMovie_v2::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
 	int frameCount;
 	if (_currentFrame < frameNum) {
 		frameCount = _numFrames - frameNum + _currentFrame;
-		if (diffCount > frameCount)
+		if (diffCount > frameCount && !(_flags & WF_NO_LAST_FRAME))
 			frameStep = -1;
 		else
 			frameCount = diffCount;
 	} else {
 		frameCount = _numFrames - _currentFrame + frameNum;
-		if (frameCount >= diffCount) {
+		if (frameCount >= diffCount || (_flags & WF_NO_LAST_FRAME)) {
 			frameStep = -1;
 			frameCount = diffCount;
 		}

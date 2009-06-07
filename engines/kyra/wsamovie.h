@@ -80,6 +80,7 @@ public:
 
 	enum WSAFlags {
 		WF_OFFSCREEN_DECODE = 0x10,
+		WF_NO_LAST_FRAME = 0x20,
 		WF_NO_FIRST_FRAME = 0x40,
 		WF_HAS_PALETTE = 0x100,
 		WF_XOR = 0x200
