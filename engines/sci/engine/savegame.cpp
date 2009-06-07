@@ -798,8 +798,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		str = &retval->sys_strings->strings[i];
 		char *data = (char *)str->value;
 		if (data) {
-			str->value = (reg_t *)calloc(str->max_size+1, sizeof(char));	// FIXME -- sizeof(char) or sizeof(reg_t) ??
-			strncpy((char *)str->value, data, str->max_size+1);		// FIXME -- strncpy or internal_stringfrag_strncpy ?
+			str->value = (reg_t *)calloc(str->max_size + 1, sizeof(reg_t));
+			strncpy((char *)str->value, data, str->max_size + 1);		// FIXME -- strncpy or internal_stringfrag_strncpy ?
 			free(data);
 		}
 	}
