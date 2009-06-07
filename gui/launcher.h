@@ -63,6 +63,7 @@ protected:
 	GraphicsWidget		*_searchPic;
 #endif
 	StaticTextWidget	*_searchDesc;
+	ButtonWidget	*_searchClearButton;
 	StringList		_domains;
 	BrowserDialog	*_browser;
 	SaveLoadChooser	*_loadDialog;

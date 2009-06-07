@@ -66,6 +66,7 @@ enum {
 	kQuitCmd = 'QUIT',
 	kSearchCmd = 'SRCH',
 	kListSearchCmd = 'LSSR',
+	kSearchClearCmd = 'SRCL',
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
 	kCmdGlobalAudioOverride = 'OSFX',
@@ -524,6 +525,7 @@ LauncherDialog::LauncherDialog()
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", "Search:");
 
 	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, kSearchCmd);
+	_searchClearButton = new ButtonWidget(this, "Launcher.SearchClearButton", "C", kSearchClearCmd, 0);
 
 	// Add list with game titles
 	_list = new ListWidget(this, "Launcher.GameList", kListSearchCmd);
@@ -935,6 +937,10 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSearchCmd:
 		_list->setFilter(_searchWidget->getEditString());
+		break;
+	case kSearchClearCmd:
+		_searchWidget->setEditString("");
+		_list->setFilter("");
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);

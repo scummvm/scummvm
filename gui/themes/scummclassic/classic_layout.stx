@@ -106,6 +106,10 @@
 						width = '150'
 						height = 'Globals.Line.Height'
 				/>
+				<widget name = 'SearchClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
 				<space />
 			</layout>
 			<widget name = 'GameList'/>
