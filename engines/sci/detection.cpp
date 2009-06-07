@@ -1544,6 +1544,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_1
 	},
 
+	// Larry 1 VGA Remake - Russian DOS
+	// Executable scanning reports "1.000.510", VERSION file reports "2.0"
+	// SCI interpreter version 1.000.510
+	{{"lsl1sci", "VGA Remake", {
+		{"resource.map", 0, "b54413d35e206d21ae2b2bdb092bd13a", 3198},
+		{"resource.000", 0, "0d7b2afa666bd36d9535a15d3a837a66", 928566},
+		{"resource.001", 0, "bc8ca10c807515d959cbd91f9ba47735", 1123759},
+		{"resource.002", 0, "b7409ab32bc3bee2d6cce887cd33f2b6", 1092160},
+		{NULL, 0, NULL, 0}}, Common::RU_RUS, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		GF_FOR_SCI1_510_OR_LATER,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1
+	},
+
 	// Larry 2 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version 0.000.572
