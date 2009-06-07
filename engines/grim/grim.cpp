@@ -694,6 +694,10 @@ void GrimEngine::updateDisplayScene() {
 		// Background objects are drawn underneath everything except the background
 		// There are a bunch of these, especially in the tube-switcher room
 		_currScene->drawBitmaps(ObjectState::OBJSTATE_BACKGROUND);
+
+		// Underlay objects are just above the background
+		_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
+
 		// State objects are drawn on top of other things, such as the flag
 		// on Manny's message tube
 		_currScene->drawBitmaps(ObjectState::OBJSTATE_STATE);
@@ -715,9 +719,6 @@ void GrimEngine::updateDisplayScene() {
 			else
 				g_driver->releaseSmushFrame();
 		}
-
-		// Underlay objects are just above the background
-		_currScene->drawBitmaps(ObjectState::OBJSTATE_UNDERLAY);
 
 		_currScene->setupCamera();
 
