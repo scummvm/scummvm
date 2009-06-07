@@ -30,7 +30,6 @@
 #include "graphics/video/smk_decoder.h"
 
 #include "common/archive.h"
-#include "common/array.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
@@ -488,16 +487,17 @@ bool SmackerDecoder::loadFile(const char *fileName) {
 	for (i = 0; i < _videoInfo.frameCount; ++i)
 		_frameTypes[i] = _fileStream->readByte();
 
-	Common::Array<byte> huffmanTrees;
-	huffmanTrees.resize(_header.treesSize);
-	_fileStream->read(&huffmanTrees[0], _header.treesSize);
+	byte *huffmanTrees = new byte[_header.treesSize];
+	_fileStream->read(huffmanTrees, _header.treesSize);
 
-	BitStream bs(&huffmanTrees[0], _header.treesSize);
+	BitStream bs(huffmanTrees, _header.treesSize);
 
 	_MMapTree = new BigHuffmanTree(bs, _header.mMapSize);
 	_MClrTree = new BigHuffmanTree(bs, _header.mClrSize);
 	_FullTree = new BigHuffmanTree(bs, _header.fullSize);
 	_TypeTree = new BigHuffmanTree(bs, _header.typeSize);
+
+	delete[] huffmanTrees;
 
 	_videoFrameBuffer = (byte *)malloc(2 * _videoInfo.width * _videoInfo.height);
 	memset(_videoFrameBuffer, 0, 2 * _videoInfo.width * _videoInfo.height);
