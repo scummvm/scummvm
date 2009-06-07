@@ -123,7 +123,7 @@ enum AudioSyncCommands {
 
 static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 	int song_nr = GET_SEL32V(obj, number);
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, song_nr, 0);
+	Resource *song = s->resmgr->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
 	int flags = GET_SEL32V(obj, flags);
 
 	if (priority == -1) {
@@ -140,7 +140,7 @@ static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 }
 
 SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id) {
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, song_nr, 0);
+	Resource *song = s->resmgr->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
 
 	if (!song)
 		return NULL;
@@ -503,7 +503,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		//int vol = GET_SEL32V(obj, vol);
 		//int pri = GET_SEL32V(obj, pri);
 
-		if (obj.segment && (s->resmgr->testResource(kResourceTypeSound, number))) {
+		if (obj.segment && (s->resmgr->testResource(ResourceId(kResourceTypeSound, number)))) {
 			sciprintf("Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                      handle), 0, handle, number);
@@ -807,7 +807,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		if (!GET_SEL32V(obj, nodePtr) && obj.segment) {
-			if (!s->resmgr->testResource(kResourceTypeSound, number)) {
+			if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
 				sciprintf("Could not open song number %d\n", number);
 				return NULL_REG;
 			}
@@ -837,7 +837,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			s->_sound.sfx_remove_song(handle);
 		}
 
-		if (obj.segment && (s->resmgr->testResource(kResourceTypeSound, number))) {
+		if (obj.segment && (s->resmgr->testResource(ResourceId(kResourceTypeSound, number)))) {
 			sciprintf("Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                    handle), 0, handle, number);
@@ -991,14 +991,11 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			if (audioStream)
 				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
 		} else if (argc == 6) {		// SQ4CD or newer
-			//uint32 volume = argv[1].toUint16();
 			// Make a BE number
 			uint32 audioNumber = (((argv[2].toUint16() & 0xFF) << 24) & 0xFF000000) |
 								 (((argv[3].toUint16() & 0xFF) << 16) & 0x00FF0000) |
 								 (((argv[4].toUint16() & 0xFF) <<  8) & 0x0000FF00) |
 								 ( (argv[5].toUint16() & 0xFF)        & 0x000000FF);
-
-			printf("%d %d %d %d -> %d\n", argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(), argv[5].toUint16(), audioNumber);	// debugging
 
 			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(audioNumber, argv[1].toUint16(), &sampleLen);
 
@@ -1042,28 +1039,34 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
-	case kSciAudioSyncStart:
-		if (argc == 3) {			// KQ5CD, KQ6 floppy
-			if (s->_sound._soundSync) {
-				s->resmgr->unlockResource(s->_sound._soundSync, s->_sound._soundSync->id.number, kResourceTypeSync);
-			}
+	case kSciAudioSyncStart: {
+		ResourceId id;
 
-			// Load sound sync resource and lock it
-			s->_sound._soundSync = (ResourceSync *)s->resmgr->findResource(kResourceTypeSync, argv[2].toUint16(), 1);
+		if (s->_sound._soundSync)
+			s->resmgr->unlockResource(s->_sound._soundSync);
 
-			if (s->_sound._soundSync) {
-				s->_sound._soundSync->startSync(s, argv[1]);
-			} else {
-				// Notify the scripts to stop sound sync
-				PUT_SEL32V(argv[1], syncCue, -1);
-			}
-		} else if (argc == 7) {		// SQ4CD or newer
-			// TODO
-			warning("kDoSync: Start called with new semantics - 6 parameters: %d %d %d %d %d %d", argv[1].toUint16(), argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(), argv[5].toUint16(), argv[6].toUint16());
-		} else {					// Hopefully, this should never happen
+		// Load sound sync resource and lock it
+		if (argc == 3) {
+			id = ResourceId(kResourceTypeSync, argv[2].toUint16());
+		} else if (argc == 7) {
+			id = ResourceId(kResourceTypeSync36, argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(),
+							argv[5].toUint16(), argv[6].toUint16());
+		} else {
 			warning("kDoSync: Start called with an unknown number of parameters (%d)", argc);
+			return s->r_acc;
+		}
+
+		s->_sound._soundSync = (ResourceSync *)s->resmgr->findResource(id, 1);
+
+		if (s->_sound._soundSync) {
+			s->_sound._soundSync->startSync(s, argv[1]);
+		} else {
+			warning("DoSync: failed to find resource %s", id.toString().c_str());
+			// Notify the scripts to stop sound sync
+			PUT_SEL32V(argv[1], syncCue, -1);
 		}
 		break;
+	}
 	case kSciAudioSyncNext:
 		if (s->_sound._soundSync) {
 			s->_sound._soundSync->nextSync(s, argv[1]);
@@ -1072,7 +1075,7 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case kSciAudioSyncStop:
 		if (s->_sound._soundSync) {
 			s->_sound._soundSync->stopSync();
-			s->resmgr->unlockResource(s->_sound._soundSync, s->_sound._soundSync->id.number, kResourceTypeSync);
+			s->resmgr->unlockResource(s->_sound._soundSync);
 			s->_sound._soundSync = NULL;
 		}
 		break;

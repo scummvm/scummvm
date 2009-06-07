@@ -544,9 +544,9 @@ static void load_script(EngineState *s, SegmentId seg) {
 	scr->buf = (byte *)malloc(scr->buf_size);
 	assert(scr->buf);
 
-	script = s->resmgr->findResource(kResourceTypeScript, scr->nr, 0);
+	script = s->resmgr->findResource(ResourceId(kResourceTypeScript, scr->nr), 0);
 	if (s->_version >= SCI_VERSION_1_1)
-		heap = s->resmgr->findResource(kResourceTypeHeap, scr->nr, 0);
+		heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, scr->nr), 0);
 
 	memcpy(scr->buf, script->data, script->size);
 	if (s->seg_manager->isSci1_1)

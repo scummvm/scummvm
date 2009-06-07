@@ -548,7 +548,7 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _vm->getResMgr()->findResource(res, resNum, 0);
+		Resource *resource = _vm->getResMgr()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			Common::hexdump(resource->data, resource->size, 16, 0);
 			DebugPrintf("Resource %s.%03d has been dumped to standard output\n", argv[1], resNum);
@@ -609,7 +609,7 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _vm->getResMgr()->findResource(res, resNum, 0);
+		Resource *resource = _vm->getResMgr()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			DebugPrintf("Resource size: %d\n", resource->size);
 		} else {
@@ -679,7 +679,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	}
 
 	for (; resNumber <= resMax; resNumber++) {
-		if ((script = _vm->getResMgr()->findResource(restype, resNumber, 0))) {
+		if ((script = _vm->getResMgr()->findResource(ResourceId(restype, resNumber), 0))) {
 			unsigned int seeker = 0, seekerold = 0;
 			uint32 comppos = 0;
 			int output_script_name = 0;
@@ -713,7 +713,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 }
 
 bool Console::cmdList(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2) {
 		DebugPrintf("Lists all the resources of a given type\n");
 		cmdResourceTypes(argc, argv);
 		return true;
@@ -724,16 +724,38 @@ bool Console::cmdList(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Unknown resource type: '%s'\n", argv[1]);
 	else {
-		int j = 0;
-		for (int i = 0; i < sci_max_resource_nr[_vm->getResMgr()->_sciVersion]; i++) {
-			if (_vm->getResMgr()->testResource(res, i)) {
-				DebugPrintf("%s.%03d | ", getResourceTypeName((ResourceType)res), i);
-				if (j % 5 == 0)
-					DebugPrintf("\n");
-				j++;
+		int number = -1;
+
+		if ((res == kResourceTypeAudio36) || (res == kResourceTypeSync36)) {
+			if (argc != 3) {
+				DebugPrintf("Please specify map number\n");
+				return true;
 			}
+			number = atoi(argv[2]);
+		}
+
+		Common::List<ResourceId> *resources = _vm->getResMgr()->listResources(res, number);
+		sort(resources->begin(), resources->end(), ResourceIdLess());
+		Common::List<ResourceId>::iterator itr = resources->begin();
+
+		int cnt = 0;
+		while (itr != resources->end()) {
+			if (number == -1) {
+				DebugPrintf("%8i", itr->number);
+				if (++cnt % 10 == 0)
+					DebugPrintf("\n");
+			}
+			else if (number == (int)itr->number) {
+				DebugPrintf("(%3i, %3i, %3i, %3i)   ", (itr->tuple >> 24) & 0xff, (itr->tuple >> 16) & 0xff,
+							(itr->tuple >> 8) & 0xff, itr->tuple & 0xff);
+				if (++cnt % 4 == 0)
+					DebugPrintf("\n");
+			}
+			itr++;
 		}
 		DebugPrintf("\n");
+
+		delete resources;
 	}
 
 	return true;
@@ -2391,7 +2413,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _vm->getResMgr()->findResource(kResourceTypeSound, atoi(argv[1]), 0);
+	Resource *song = _vm->getResMgr()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 	SongIterator *songit;
 	Audio::AudioStream *data;
 
@@ -2429,7 +2451,7 @@ bool Console::cmdSfx01Header(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _vm->getResMgr()->findResource(kResourceTypeSound, atoi(argv[1]), 0);
+	Resource *song = _vm->getResMgr()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 
 	if (!song) {
 		DebugPrintf("Doesn't exist\n");
@@ -2594,7 +2616,7 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _vm->getResMgr()->findResource(kResourceTypeSound, atoi(argv[1]), 0);
+	Resource *song = _vm->getResMgr()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 
 	int offset = atoi(argv[2]);
 

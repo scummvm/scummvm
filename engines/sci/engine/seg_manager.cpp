@@ -129,8 +129,8 @@ Script *SegManager::allocateScript(EngineState *s, int script_nr, SegmentId *seg
 }
 
 void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
-	Resource *script = s->resmgr->findResource(kResourceTypeScript, script_nr, 0);
-	Resource *heap = s->resmgr->findResource(kResourceTypeHeap, script_nr, 0);
+	Resource *script = s->resmgr->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	Resource *heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 
 	scr.script_size = script->size;
 	scr.heap_size = 0; // Set later

@@ -295,7 +295,7 @@ void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
 void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
-	Resource *script = _resmgr->findResource(kResourceTypeScript, scriptNumber, 0);
+	Resource *script = _resmgr->findResource(ResourceId(kResourceTypeScript, scriptNumber), 0);
 
 	if (!script) {
 		sciprintf("Script not found!\n");

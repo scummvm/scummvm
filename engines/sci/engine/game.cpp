@@ -64,13 +64,13 @@ int _reset_graphics_input(EngineState *s) {
 			s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1_amiga(file));
 			file.close();
 		} else {
-			resource = s->resmgr->findResource(kResourceTypePalette, 999, 1);
+			resource = s->resmgr->findResource(ResourceId(kResourceTypePalette, 999), 1);
 			if (resource) {
 				if (s->_version < SCI_VERSION_1_1)
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1(999, resource->data, resource->size));
 				else
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal11(999, resource->data, resource->size));
-				s->resmgr->unlockResource(resource, 999, kResourceTypePalette);
+				s->resmgr->unlockResource(resource);
 			} else {
 				debug(2, "Couldn't find the default palette!");
 			}
@@ -96,7 +96,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	font_nr = -1;
 	do {
-		resource = s->resmgr->testResource(kResourceTypeFont, ++font_nr);
+		resource = s->resmgr->testResource(ResourceId(kResourceTypeFont, ++font_nr));
 	} while ((!resource) && (font_nr < sci_max_resource_nr[s->resmgr->_sciVersion]));
 
 	if (!resource) {
@@ -196,7 +196,7 @@ int create_class_table_sci11(EngineState *s) {
 	char *seeker_ptr;
 	int classnr;
 
-	Resource *vocab996 = s->resmgr->findResource(kResourceTypeVocab, 996, 1);
+	Resource *vocab996 = s->resmgr->findResource(ResourceId(kResourceTypeVocab, 996), 1);
 
 	if (!vocab996)
 		s->_classtable.resize(20);
@@ -204,7 +204,7 @@ int create_class_table_sci11(EngineState *s) {
 		s->_classtable.resize(vocab996->size >> 2);
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
-		Resource *heap = s->resmgr->findResource(kResourceTypeHeap, scriptnr, 0);
+		Resource *heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, scriptnr), 0);
 
 		if (heap) {
 			int global_vars = READ_LE_UINT16(heap->data + 2);
@@ -236,7 +236,7 @@ int create_class_table_sci11(EngineState *s) {
 		}
 	}
 
-	s->resmgr->unlockResource(vocab996, 996, kResourceTypeVocab);
+	s->resmgr->unlockResource(vocab996);
 	vocab996 = NULL;
 	return 0;
 }
@@ -247,7 +247,7 @@ static int create_class_table_sci0(EngineState *s) {
 	int classnr;
 	int magic_offset; // For strange scripts in older SCI versions
 
-	Resource *vocab996 = s->resmgr->findResource(kResourceTypeVocab, 996, 1);
+	Resource *vocab996 = s->resmgr->findResource(ResourceId(kResourceTypeVocab, 996), 1);
 
 	if (!vocab996)
 		s->_classtable.resize(20);
@@ -256,7 +256,7 @@ static int create_class_table_sci0(EngineState *s) {
 
 	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
 		int objtype = 0;
-		Resource *script = s->resmgr->findResource(kResourceTypeScript, scriptnr, 0);
+		Resource *script = s->resmgr->findResource(ResourceId(kResourceTypeScript, scriptnr), 0);
 
 		if (script) {
 			if (s->_flags & GF_SCI0_OLD)
@@ -318,7 +318,7 @@ static int create_class_table_sci0(EngineState *s) {
 
 		}
 	}
-	s->resmgr->unlockResource(vocab996, 996, kResourceTypeVocab);
+	s->resmgr->unlockResource(vocab996);
 	vocab996 = NULL;
 	return 0;
 }

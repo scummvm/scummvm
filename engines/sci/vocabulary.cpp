@@ -62,7 +62,7 @@ int *vocab_get_classes(ResourceManager *resmgr, int* count) {
 	int *c;
 	unsigned int i;
 
-	if ((r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES, 0)) == NULL)
+	if ((r = resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES), 0)) == NULL)
 		return 0;
 
 	c = (int *)malloc(sizeof(int) * r->size / 2);
@@ -77,7 +77,7 @@ int *vocab_get_classes(ResourceManager *resmgr, int* count) {
 int vocab_get_class_count(ResourceManager *resmgr) {
 	Resource* r;
 
-	if ((r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES, 0)) == 0)
+	if ((r = resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES), 0)) == 0)
 		return 0;
 
 	return r->size / 4;
@@ -115,11 +115,11 @@ bool Vocabulary::loadParserWords() {
 	int currentwordpos = 0;
 
 	// First try to load the SCI0 vocab resource.
-	Resource *resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB, 0);
+	Resource *resource = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB), 0);
  
 	if (!resource) {
 		warning("SCI0: Could not find a main vocabulary, trying SCI01");
-		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB, 0);
+		resource = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB), 0);
 		_vocabVersion = kVocabularySCI1;
 	}
 
@@ -198,9 +198,9 @@ bool Vocabulary::loadSuffixes() {
 	Resource* resource = NULL;
 	
 	if (_vocabVersion == kVocabularySCI0)
-		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 1);
+		resource = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 1);
 	else
-		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 1);
+		resource = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB), 1);
 
 	if (!resource)
 		return false; // No vocabulary found
@@ -237,12 +237,12 @@ void Vocabulary::freeSuffixes() {
 	Resource* resource = NULL;
 	
 	if (_vocabVersion == kVocabularySCI0)
-		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB, 0);
+		resource = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 0);
 	else
-		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB, 0);
+		resource = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB), 0);
 	
 	if (resource)
-		_resmgr->unlockResource(resource, resource->id.number, kResourceTypeVocab);
+		_resmgr->unlockResource(resource);
 
 	_parserSuffixes.clear();
 }
@@ -251,9 +251,9 @@ bool Vocabulary::loadBranches() {
 	Resource *resource = NULL;
 
 	if (_vocabVersion == kVocabularySCI0)
-		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES, 0);
+		resource = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES), 0);
 	else
-		resource = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES, 0);
+		resource = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES), 0);
 
 	_parserBranches.clear();
 

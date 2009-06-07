@@ -125,19 +125,27 @@ reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int restype = argv[0].toUint16() & 0x7f;
-	int resnr = argv[1].toUint16();
 	int state = argc > 2 ? argv[2].toUint16() : 1;
+	ResourceType type = (ResourceType)(argv[0].toUint16() & 0x7f);
+	ResourceId id = ResourceId(type, argv[1].toUint16());
 
 	Resource *which;
 
 	switch (state) {
 	case 1 :
-		s->resmgr->findResource((ResourceType)restype, resnr, 1);
+		s->resmgr->findResource(id, 1);
 		break;
 	case 0 :
-		which = s->resmgr->findResource((ResourceType)restype, resnr, 0);
-		s->resmgr->unlockResource(which, resnr, (ResourceType)restype);
+		which = s->resmgr->findResource(id, 0);
+
+		if (which)
+			s->resmgr->unlockResource(which);
+		else {
+			if (id.type == kResourceTypeInvalid)
+				warning("[Resmgr] Attempt to unlock resource %i of invalid type %i", id.number, type);
+			else
+				warning("[Resmgr] Attempt to unlock non-existant resource %s", id.toString().c_str());
+		}
 		break;
 	}
 	return s->r_acc;
@@ -155,26 +163,23 @@ reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	Resource *res = NULL;
 	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
 
-	switch (restype) {
-	case kResourceTypeAudio36:
-	case kResourceTypeSync36: {
-		assert(argc >= 6);
+	if ((restype == kResourceTypeAudio36) || (restype == kResourceTypeSync36)) {
+		if (argc >= 6) {
+			uint noun = argv[2].toUint16() & 0xff;
+			uint verb = argv[3].toUint16() & 0xff;
+			uint cond = argv[4].toUint16() & 0xff;
+			uint seq = argv[5].toUint16() & 0xff;
 
-		uint module = argv[1].toUint16();
-		uint noun = argv[2].toUint16();
-		uint verb = argv[3].toUint16();
-		uint cond = argv[4].toUint16();
-		uint seq = argv[5].toUint16();
-		warning("ResCheck: checking for currently unsupported %s resource: module %i; tuple (%i, %i, %i, %i)",
-				getResourceTypeName(restype), module, noun, verb, cond, seq);
-		return make_reg(0, 1);
+			res = s->resmgr->testResource(ResourceId(restype, argv[1].toUint16(), noun, verb, cond, seq));
+		}
+	} else {
+		res = s->resmgr->testResource(ResourceId(restype, argv[1].toUint16()));
 	}
-	default:
-		Resource *res = s->resmgr->testResource(restype, argv[1].toUint16());
-		return make_reg(0, res != NULL);
-	}
+
+	return make_reg(0, res != NULL);
 }
 
 reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {

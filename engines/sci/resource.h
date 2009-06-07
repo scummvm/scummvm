@@ -148,7 +148,18 @@ public:
 	uint32 tuple; // Only used for audio36 and sync36
 
 	ResourceId() : type(kResourceTypeInvalid), number(0), tuple(0) { };
-	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0) : type(type_), number(number_), tuple(tuple_) { }
+
+	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0) : type(type_), number(number_), tuple(tuple_) {
+		if ((type < kResourceTypeView) || (type > kResourceTypeInvalid))
+			type = kResourceTypeInvalid;
+	}
+
+	ResourceId(ResourceType type_, uint16 number_, byte noun, byte verb, byte cond, byte seq) : type(type_), number(number_) {
+		tuple = (noun << 24) | (verb << 16) | (cond << 8) | seq;
+
+		if ((type < kResourceTypeView) || (type > kResourceTypeInvalid))
+			type = kResourceTypeInvalid;
+	}
 
 	Common::String toString() {
 		char buf[32];
@@ -171,6 +182,13 @@ struct ResourceIdHash : public Common::UnaryFunction<ResourceId, uint> {
 
 struct ResourceIdEqualTo : public Common::BinaryFunction<ResourceId, ResourceId, bool> {
 	bool operator()(const ResourceId &x, const ResourceId &y) const { return (x.type == y.type) && (x.number == y.number) && (x.tuple == y.tuple); }
+};
+
+struct ResourceIdLess : public Common::BinaryFunction<ResourceId, ResourceId, bool> {
+	bool operator()(const ResourceId &x, const ResourceId &y) const {
+		return (x.type < y.type) || ((x.type == y.type) && (x.number < y.number))
+			    || ((x.type == y.type) && (x.number == y.number) && (x.tuple < y.tuple));
+	}
 };
 
 /** Class for storing resources in memory */
@@ -219,26 +237,22 @@ public:
 
 	/**
 	 * Looks up a resource's data.
-	 * @param type: The resource type to look for
-	 * @param number: The resource number to search
+	 * @param id: The resource type to look for
 	 * @param lock: non-zero iff the resource should be locked
 	 * @return (Resource *): The resource, or NULL if it doesn't exist
 	 * @note Locked resources are guaranteed not to have their contents freed until
 	 *       they are unlocked explicitly (by unlockResource).
 	 */
-	Resource *findResource(ResourceType type, int number, bool lock);
+	Resource *findResource(ResourceId id, bool lock);
 
 	/* Unlocks a previously locked resource
 	**             (Resource *) res: The resource to free
-	**             (int) number: Number of the resource to check (ditto)
-	**             (ResourceType) type: Type of the resource to check (for error checking)
 	** Returns   : (void)
 	*/
-	void unlockResource(Resource *res, int restype, ResourceType resnum);
+	void unlockResource(Resource *res);
 
 	/* Tests whether a resource exists
-	**             (ResourceType) type: Type of the resource to check
-	**             (int) number: Number of the resource to check
+	**             (ResourceId) id: Id of the resource to check
 	** Returns   : (Resource *) non-NULL if the resource exists, NULL otherwise
 	** This function may often be much faster than finding the resource
 	** and should be preferred for simple tests.
@@ -246,7 +260,15 @@ public:
 	** it should be used with care, as it may be unallocated.
 	** Use scir_find_resource() if you want to use the data contained in the resource.
 	*/
-	Resource *testResource(ResourceType type, int number);
+	Resource *testResource(ResourceId id);
+
+	/**
+	 * Returns a list of all resources of the specified type.
+	 * @param type: The resource type to look for
+	 * @param mapNumber: For audio36 and sync36, limit search to this map
+	 * @return: The resource list
+	 */
+	Common::List<ResourceId> *listResources(ResourceType type, int mapNumber = -1);
 
 protected:
 	int _maxMemory; //!< Config option: Maximum total byte number allocated
@@ -307,6 +329,7 @@ protected:
 	void freeOldResources(int last_invulnerable);
 	int decompress(Resource *res, Common::File *file);
 	int readResourceInfo(Resource *res, Common::File *file, uint32&szPacked, ResourceCompression &compression);
+	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0);
 
 	/**--- Resource map decoding functions ---*/
 	int detectMapVersion();
@@ -325,10 +348,10 @@ protected:
 	int readResourceMapSCI1(ResourceSource *map);
 
 	/**
-	 * Reads the SCI1.1 65535.map resource
+	 * Reads SCI1.1 MAP resources
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
-	int readMap65535(ResourceSource *map);
+	int readMap(ResourceSource *map);
 
 	/**--- Patch management functions ---*/
 

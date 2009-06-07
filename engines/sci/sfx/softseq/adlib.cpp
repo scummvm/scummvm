@@ -627,7 +627,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 	assert(resmgr != NULL);
 
 	// Load up the patch.003 file, parse out the instruments
-	Resource *res = resmgr->findResource(kResourceTypePatch, 3, 0);
+	Resource *res = resmgr->findResource(ResourceId(kResourceTypePatch, 3), 0);
 
 	if (!res) {
 		warning("ADLIB: Failed to load patch.003");

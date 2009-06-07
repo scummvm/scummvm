@@ -65,7 +65,7 @@ GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, Gf
 		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
 #endif
 	} else {
-		Resource *res = resManager->findResource(kResourceTypePalette, 999, 0);
+		Resource *res = resManager->findResource(ResourceId(kResourceTypePalette, 999), 0);
 		if (res && res->data)
 			_staticPalette = gfxr_read_pal1(res->id.number, res->data, res->size);
 	}
@@ -77,7 +77,7 @@ GfxResManager::~GfxResManager() {
 }
 
 int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic, int flags, int default_palette, int nr) {
-	Resource *res = _resManager->findResource(kResourceTypePic, nr, 0);
+	Resource *res = _resManager->findResource(ResourceId(kResourceTypePic, nr), 0);
 	int need_unscaled = unscaled_pic != NULL;
 	gfxr_pic0_params_t style, basic_style;
 
@@ -524,7 +524,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	res = resMap.contains(nr) ? resMap[nr] : NULL;
 
 	if (!res || res->mode != hash) {
-		Resource *viewRes = _resManager->findResource(kResourceTypeView, nr, 0);
+		Resource *viewRes = _resManager->findResource(ResourceId(kResourceTypeView, nr), 0);
 		if (!viewRes || !viewRes->data)
 			return NULL;
 
@@ -621,7 +621,7 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
 	if (!res || res->mode != hash) {
-		Resource *fontRes = _resManager->findResource(kResourceTypeFont, num, 0);
+		Resource *fontRes = _resManager->findResource(ResourceId(kResourceTypeFont, num), 0);
 		if (!fontRes || !fontRes->data)
 			return NULL;
 
@@ -658,7 +658,7 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
 	if (!res || res->mode != hash) {
-		Resource *cursorRes = _resManager->findResource(kResourceTypeCursor, num, 0);
+		Resource *cursorRes = _resManager->findResource(ResourceId(kResourceTypeCursor, num), 0);
 		if (!cursorRes || !cursorRes->data)
 			return NULL;
 

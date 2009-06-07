@@ -1609,9 +1609,9 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 
 	*was_new = 1;
 
-	*script = s->resmgr->findResource(kResourceTypeScript, script_nr, 0);
+	*script = s->resmgr->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 	if (s->_version >= SCI_VERSION_1_1)
-		*heap = s->resmgr->findResource(kResourceTypeHeap, script_nr, 0);
+		*heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 
 	if (!*script || (s->_version >= SCI_VERSION_1_1 && !heap)) {
 		sciprintf("Script 0x%x requested but not found\n", script_nr);

@@ -495,7 +495,7 @@ Kernel::~Kernel() {
 bool Kernel::loadSelectorNames(bool isOldSci0) {
 	int count;
 
-	Resource *r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES, 0);
+	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
 
 	if (!r) // No such resource?
 		return false;
@@ -520,7 +520,7 @@ bool Kernel::loadSelectorNames(bool isOldSci0) {
 
 bool Kernel::loadOpcodes() {
 	int count, i = 0;
-	Resource* r = _resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES, 0);
+	Resource* r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES), 0);
 
 	_opcodes.clear();
 
@@ -862,7 +862,7 @@ static void _vocab_get_knames0alt(const Resource *r, Common::StringList &names) 
 
 static void vocab_get_knames0(ResourceManager *resmgr, Common::StringList &names) {
 	int count, i, index = 2, empty_to_add = 1;
-	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
+	Resource *r = resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES), 0);
 
 	if (!r) { // No kernel name table found? Fall back to default table
 		names.resize(SCI0_KNAMES_DEFAULT_ENTRIES_NR);
@@ -925,7 +925,7 @@ static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &name
 */
 	//unsigned int size = 64, pos = 3;
 	int len;
-	Resource *r = resmgr->findResource(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES, 0);
+	Resource *r = resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES), 0);
 	if(r == NULL) // failed to open vocab.999 (happens with SCI1 demos)
 		return; // FIXME: should return a default table for this engine
 	const byte nCnt = *r->data;
