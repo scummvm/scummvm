@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 };
 
 static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &gameDescriptions[0], { "SNTRM.DAT", 0 } }, // default to english version
+	{ &gameDescriptions[0], { "DATA/SNTRM.DAT", 0 } }, // default to english version
 	{ 0, { 0 } }
 };
 
