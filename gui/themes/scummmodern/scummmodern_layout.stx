@@ -805,12 +805,13 @@
 				/>
 				<widget name = 'Popup'
 						type = 'PopUp'
-						width = '500'
+						width = '400'
+						height = 'Globals.Line.Height'
 				/>
 			</layout>
 			<widget name = 'KeymapArea'
 					width = '600'
-					height = '378'
+					height = '280'
 			/>
 			<widget name = 'Close'
 					type = 'Button'

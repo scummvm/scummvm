@@ -44,6 +44,10 @@
 				size = '85, 12'
 		/>
 
+		<def var = 'KeyRemapper.Spacing' value = '5'/>
+		<def var = 'KeyRemapper.LabelWidth' value = '80'/>
+		<def var = 'KeyRemapper.ButtonWidth' value = '60'/>
+
 		<widget name = 'OptionsLabel'
 				size = '100, Globals.Line.Height'
 				textalign = 'right'
@@ -770,6 +774,27 @@
 						type = 'Button'
 				/>
 			</layout>
+		</layout>
+	</dialog>
+	<dialog name = 'KeyRemapper' overlays = 'screen_center' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '10' center = 'true'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'PopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'Popup'
+						type = 'PopUp'
+						width = '150'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<widget name = 'KeymapArea'
+					width = '300'
+					height = '120'
+			/>
+			<widget name = 'Close'
+					type = 'Button'
+			/>
 		</layout>
 	</dialog>
 </layout_info>

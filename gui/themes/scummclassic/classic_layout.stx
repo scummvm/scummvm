@@ -37,6 +37,10 @@
 		
 		<def var = 'ScummSaveLoad.ExtInfo.Visible' value = '1'/>
 
+		<def var = 'KeyRemapper.Spacing' value = '10'/>
+		<def var = 'KeyRemapper.LabelWidth' value = '100'/>
+		<def var = 'KeyRemapper.ButtonWidth' value = '80'/>
+
 		<widget name = 'OptionsLabel'
 				size = '110, Globals.Line.Height'
 				textalign = 'right'
@@ -776,6 +780,27 @@
 						type = 'Button'
 				/>
 			</layout>
+		</layout>
+	</dialog>
+	<dialog name = 'KeyRemapper' overlays = 'screen_center' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 32, 8' spacing = '10' center = 'true'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'PopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'Popup'
+						type = 'PopUp'
+						width = '400'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<widget name = 'KeymapArea'
+					width = '600'
+					height = '280'
+			/>
+			<widget name = 'Close'
+					type = 'Button'
+			/>
 		</layout>
 	</dialog>
 </layout_info>
