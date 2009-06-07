@@ -1436,19 +1436,17 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_1_1
 	},
 
-#if 0
-	// FIXME: add resource.msg, since the other files are the same as in the spanish version
-	// Laura Bow 2 v1.1 - German DOS Floppy (from Tobis87, updated info from  markcoolio in bug report #2723787))
-	// SCI interpreter version 1.001.069 (just a guess)
+	// Laura Bow 2 v1.1 - German DOS Floppy (from Tobis87, updated info from  markcoolio in bug report #2723787, updated info from #2797962))
+	// Executable scanning reports "2.000.274"
 	{{"laurabow2", "", {
 		{"resource.map", 0, "3b6dfbcda210bbc3f23fd1927113bf98", 6483},
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
+		{"resource.msg", 0, "795c928cd00dfec9fbc62ebcd12e1f65", 303185},
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_1_1
 	},
-#endif
 
 	// Laura Bow 2 - Spanish DOS CD (from jvprat)
 	// Executable scanning reports "2.000.274", VERSION file reports "1.000.000, May 10, 1994"
