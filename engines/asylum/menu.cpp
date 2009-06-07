@@ -45,7 +45,7 @@ void Menu::init(){
 	// TODO: from address 0041A500 (init background music, setup menu environment like palette, font, gamma level, etc.)
 
 	Palette *tmpPal = new Palette(_res1->getResource(MENU_PAL_ENTRY));
-	memcpy(_palette, tmpPal->_buffer, sizeof(uint8)*256);
+	memcpy(_palette, tmpPal->_buffer, sizeof(uint8)*256*3);
 
 	// TESTING...
 	GraphicResource *gres = new GraphicResource(_res1->getResource(0));

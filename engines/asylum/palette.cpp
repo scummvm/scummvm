@@ -26,19 +26,10 @@
 namespace Asylum {
 
 Palette::Palette(ResourceItem item){
-	int pos = 32; // palettes always start from offset 32
-	for (int i = 0; i < PAL_SIZE; i++) {
-		_buffer[i] = item.data[pos];
-		_buffer[i+1] = item.data[pos+1];
-		_buffer[i+3] = item.data[pos+2];
-		pos+=3;
-	}
+	memcpy(_buffer, item.data+32, sizeof(uint8)*256*3); // palettes always start from offset 32
 }
 
 Palette::~Palette() {
-	/*if(_buffer){
-		free(_buffer);
-	}*/
 }
 
 } // namespace Asylum

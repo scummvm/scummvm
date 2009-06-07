@@ -97,7 +97,18 @@ void Screen::setPalette(uint8 *palette){
 		*p++ = 0;
 	}
 
+	setGammaLevel(0.5);
+
 	_system->setPalette(_currentPalette, 0, PAL_SIZE);
+}
+
+// FIXME: improve gamma correction
+void Screen::setGammaLevel(double gamma){
+	uint8 LUT[768];
+	for(int g=0;g<768;++g)
+		LUT[g] = (unsigned char) (255.f * pow((double)g/255.0, gamma));
+	for(int i=0;i<768;++i)
+		_currentPalette[i] = LUT[ _currentPalette[i] ];
 }
 
 void Screen::drawLine(int32 x0, int32 y0, int32 x1, int32 y1, uint8 colour){
