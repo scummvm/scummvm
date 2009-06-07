@@ -264,6 +264,9 @@ String& String::operator  =(char c) {
 }
 
 String &String::operator +=(const char *str) {
+	if (_str <= str && str <= _str + _size)
+		return operator+=(Common::String(str));
+
 	int len = strlen(str);
 	if (len > 0) {
 		ensureCapacity(_size + len, true);
@@ -275,6 +278,9 @@ String &String::operator +=(const char *str) {
 }
 
 String &String::operator +=(const String &str) {
+	if (&str == this)
+		return operator+=(Common::String(str));
+
 	int len = str._size;
 	if (len > 0) {
 		ensureCapacity(_size + len, true);
