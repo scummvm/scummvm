@@ -74,8 +74,7 @@ private:
 };
 
 bool BitStream::getBit() {
-	if (_bitCount == 0)
-	{
+	if (_bitCount == 0) {
 		assert(_buf < _end);
 		_curByte = *_buf++;
 		_bitCount = 8;
@@ -146,8 +145,7 @@ private:
 };
 
 SmallHuffmanTree::SmallHuffmanTree(BitStream &bs)
-	: _treeSize(0), _bs(bs)
-{
+	: _treeSize(0), _bs(bs) {
 	uint32 bit = _bs.getBit();
 	assert(bit);
 
@@ -239,8 +237,7 @@ private:
 };
 
 BigHuffmanTree::BigHuffmanTree(BitStream &bs, int allocSize)
-	: _bs(bs)
-{
+	: _bs(bs) {
 	uint32 bit = _bs.getBit();
 	if (!bit) {
 		_tree = new uint32[1];
