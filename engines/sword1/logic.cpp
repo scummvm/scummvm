@@ -524,7 +524,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 		case IT_PUSHVARIABLE:
 			debug(9, "IT_PUSHVARIABLE: ScriptVar[%d] => %d", scriptCode[pc], _scriptVars[scriptCode[pc]]);
 			varNum = scriptCode[pc++];
-			if (SwordEngine::_systemVars.isDemo) {
+			if (SwordEngine::_systemVars.isDemo && SwordEngine::isPc()) {
 				if (varNum >= 397) // BS1 Demo has different number of script variables
 					varNum++;
 				if (varNum >= 699)
@@ -615,7 +615,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 		case IT_POPVAR:         // pop a variable
 			debug(9, "IT_POPVAR: ScriptVars[%d] = %d", scriptCode[pc], stack[stackIdx-1]);
 			varNum = scriptCode[pc++];
-			if (SwordEngine::_systemVars.isDemo) {
+			if (SwordEngine::_systemVars.isDemo && SwordEngine::isPc()) {
 				if (varNum >= 397) // BS1 Demo has different number of script variables
 					varNum++;
 				if (varNum >= 699)

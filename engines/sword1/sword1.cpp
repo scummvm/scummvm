@@ -48,7 +48,9 @@ SystemVars SwordEngine::_systemVars;
 SwordEngine::SwordEngine(OSystem *syst)
 	: Engine(syst) {
 
-	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo"))
+	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo")	||
+		!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo") ||
+		!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))
 		_features = GF_DEMO;
 	else
 		_features = 0;
@@ -59,11 +61,14 @@ SwordEngine::SwordEngine(OSystem *syst)
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("SPEECH"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("VIDEO"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("SMACKSHI"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("ENGLISH"));//PSX Demo
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("ITALIAN"));//PSX Demo
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("clusters"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("music"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("speech"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("smackshi"));
+	
 }
 
 SwordEngine::~SwordEngine() {
@@ -85,7 +90,8 @@ Common::Error SwordEngine::init() {
 	if ( 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
 	     0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") )
 		_systemVars.platform = Common::kPlatformMacintosh;
-	else if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psx"))
+	else if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psx")	||
+			 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1psxdemo")	)
 		_systemVars.platform = Common::kPlatformPSX;
 	else
 		_systemVars.platform = Common::kPlatformWindows;
@@ -321,17 +327,17 @@ const CdFile SwordEngine::_psxCdFileList[] = { // PSX edition has only one cd
 	{ "syria.clu", FLAG_CD1 },
 	{ "train.clu", FLAG_CD1 },
 	{ "train.plx", FLAG_CD1 },
-	{ "compacts.clu", FLAG_CD1 | FLAG_IMMED },
-	{ "general.clu", FLAG_CD1 | FLAG_IMMED },
-	{ "maps.clu", FLAG_CD1 },
-	{ "paris1.clu", FLAG_CD1 },
-	{ "scripts.clu", FLAG_CD1 | FLAG_IMMED },
-	{ "swordres.rif", FLAG_CD1 | FLAG_IMMED },
-	{ "text.clu", FLAG_CD1 },
-	{ "speech.dat", FLAG_SPEECH1 },
-	{ "speech.tab", FLAG_SPEECH1 },
-	{ "speech.inf", FLAG_SPEECH1 },
-	{ "speech.lis", FLAG_SPEECH1 }
+	{ "compacts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "general.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "maps.clu", FLAG_CD1 | FLAG_DEMO },
+	{ "paris1.clu", FLAG_CD1 | FLAG_DEMO},
+	{ "scripts.clu", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "swordres.rif", FLAG_CD1 | FLAG_DEMO | FLAG_IMMED },
+	{ "text.clu", FLAG_CD1 | FLAG_DEMO },
+	{ "speech.dat", FLAG_SPEECH1 | FLAG_DEMO },
+	{ "speech.tab", FLAG_SPEECH1 | FLAG_DEMO },
+	{ "speech.inf", FLAG_SPEECH1 | FLAG_DEMO },
+	{ "speech.lis", FLAG_SPEECH1 | FLAG_DEMO }
 };
 
 void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
@@ -439,8 +445,9 @@ void SwordEngine::checkCdFiles(void) { // check if we're running from cd, hdd or
 			if (Common::File::exists(_psxCdFileList[fcnt].name)) {
 				fileExists[fcnt] = true;
 				flagsToBool(foundTypes, _psxCdFileList[fcnt].flags);
-				isFullVersion = true;
-				cd2FilesFound = true;
+			if (!(_psxCdFileList[fcnt].flags & FLAG_DEMO))
+					isFullVersion = true;
+					cd2FilesFound = true;
 			} else {
 				flagsToBool(missingTypes, _psxCdFileList[fcnt].flags);
 				fileExists[fcnt] = false;

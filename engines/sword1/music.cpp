@@ -272,7 +272,7 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 
 	tableFile.close();
 
-	if (size != 0xffffffff) {
+	if (size != 0xffffffff && size) {
 		_file.seek(offset, SEEK_SET);
 		_audioSource = new Audio::VagStream(_file.readStream(size), loop);
 		fadeUp();
