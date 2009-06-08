@@ -278,7 +278,7 @@ void DefaultEventManager::init() {
 	if (ConfMan.hasKey("vkeybd_pack_name")) {
 		_vk->loadKeyboardPack(ConfMan.get("vkeybd_pack_name"));
 	} else {
-		_vk->loadKeyboardPack("vkeybd");
+		_vk->loadKeyboardPack("vkeybd_default");
 	}
 #endif
 }

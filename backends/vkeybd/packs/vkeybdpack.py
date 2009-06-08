@@ -4,6 +4,11 @@ import sys
 import re
 import os
 import zipfile
+try:
+    import zlib
+    compression = zipfile.ZIP_DEFLATED
+except:
+    compression = zipfile.ZIP_STORED
 
 PACK_FILE_EXTENSIONS = ('.xml', '.bmp')
 
@@ -14,12 +19,14 @@ def buildPack(packName):
 	
 	zf = zipfile.ZipFile(packName + ".zip", 'w')
 	
+	zf.compress_type = zipfile.ZIP_DEFLATED
+
 	print ("Building '" + packName + "' pack:")
 	os.chdir(packName)
 
 	for filename in os.listdir('.'):
 		if os.path.isfile(filename) and not filename[0] == '.' and filename.endswith(PACK_FILE_EXTENSIONS):
-			zf.write(filename, './' + filename)
+			zf.write(filename, './' + filename, compress_type=compression)
 			print ("    Adding file: " + filename)
 			
 	os.chdir('../')
@@ -30,24 +37,7 @@ def buildAllPacks():
 	for f in os.listdir('.'):
 		if os.path.isdir(os.path.join('.', f)) and not f[0] == '.':
 			buildPack(f)
-			
-def parseSTX(pack_file, def_file):
-	comm = re.compile("<!--(.*?)-->", re.DOTALL)
-	head = re.compile("<\?(.*?)\?>")
 
-	output = ""
-	for line in pack_file:
-		output +=  line.rstrip("\r\n\t ").lstrip() + " \n"
-	
-	output = re.sub(comm, "", output)
-	output = re.sub(head, "", output)
-	output = output.replace("\t", " ").replace("  ", " ").replace("\"", "'")
-	output = output.replace(" = ", "=").replace(", ", ",")
-		
-	for line in output.splitlines():
-		if line and not line.isspace():
-			def_file.write("\"" + line + "\"\n")
-	
 def printUsage():
 	print ("===============================================")
 	print ("ScummVM Virtual Keyboard Pack Generation Script")
