@@ -44,7 +44,7 @@ public:
 	GfxOpenGL();
 	virtual ~GfxOpenGL();
 
-	byte *setupScreen(int screenW, int screenH, bool fullscreen);
+byte *setupScreen(int screenW, int screenH, bool fullscreen);
 
 	const char *getVideoDeviceName();
 
@@ -68,8 +68,8 @@ public:
 
 	void set3DMode();
 
-	void translateViewpoint(Graphics::Vector3d pos, float pitch, float yaw, float roll);
-	void translateViewpoint();
+	void translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll);
+	void translateViewpointFinish();
 
 	void drawHierachyNode(const Model::HierNode *node);
 	void drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts);

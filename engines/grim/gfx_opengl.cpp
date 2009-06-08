@@ -343,7 +343,7 @@ void GfxOpenGL::drawModelFace(const Model::Face *face, float *vertices, float *v
 	glDisable(GL_ALPHA_TEST);
 }
 
-void GfxOpenGL::translateViewpoint(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
+void GfxOpenGL::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
@@ -353,12 +353,12 @@ void GfxOpenGL::translateViewpoint(Graphics::Vector3d pos, float pitch, float ya
 	glRotatef(roll, 0, 1, 0);
 }
 
-void GfxOpenGL::translateViewpoint() {
+void GfxOpenGL::translateViewpointFinish() {
 	glPopMatrix();
 }
 
 void GfxOpenGL::drawHierachyNode(const Model::HierNode *node) {
-	translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
+	translateViewpointStart(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
 	if (node->_hierVisible) {
 		if (node->_mesh && node->_meshVisible) {
 			glPushMatrix();
@@ -373,7 +373,7 @@ void GfxOpenGL::drawHierachyNode(const Model::HierNode *node) {
 			glMatrixMode(GL_MODELVIEW);
 		}
 	}
-	translateViewpoint();
+	translateViewpointFinish();
 
 	if (node->_sibling)
 		node->_sibling->draw();

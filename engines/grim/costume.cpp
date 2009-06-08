@@ -308,9 +308,9 @@ void translateObject(Model::HierNode *node, bool reset) {
 		translateObject(node->_parent, reset);
 
 	if (reset)
-		g_driver->translateViewpoint();
+		g_driver->translateViewpointFinish();
 	else
-		g_driver->translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
+		g_driver->translateViewpointStart(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
 }
 
 void ModelComponent::draw() {

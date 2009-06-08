@@ -453,7 +453,7 @@ void GfxTinyGL::drawModelFace(const Model::Face *face, float *vertices, float *v
 	tglEnd();
 }
 
-void GfxTinyGL::translateViewpoint(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
+void GfxTinyGL::translateViewpointStart(Graphics::Vector3d pos, float pitch, float yaw, float roll) {
 	tglPushMatrix();
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
@@ -462,12 +462,12 @@ void GfxTinyGL::translateViewpoint(Graphics::Vector3d pos, float pitch, float ya
 	tglRotatef(roll, 0, 1, 0);
 }
 
-void GfxTinyGL::translateViewpoint() {
+void GfxTinyGL::translateViewpointFinish() {
 	tglPopMatrix();
 }
 
 void GfxTinyGL::drawHierachyNode(const Model::HierNode *node) {
-	translateViewpoint(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
+	translateViewpointStart(node->_animPos / node->_totalWeight, node->_animPitch / node->_totalWeight, node->_animYaw / node->_totalWeight, node->_animRoll / node->_totalWeight);
 	if (node->_hierVisible) {
 		if (node->_mesh && node->_meshVisible) {
 			tglPushMatrix();
@@ -482,7 +482,7 @@ void GfxTinyGL::drawHierachyNode(const Model::HierNode *node) {
 			tglMatrixMode(TGL_MODELVIEW);
 		}
 	}
-	translateViewpoint();
+	translateViewpointFinish();
 
 	if (node->_sibling)
 		node->_sibling->draw();
