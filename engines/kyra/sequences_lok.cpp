@@ -1353,7 +1353,7 @@ int KyraEngine_LoK::handleBeadState() {
 	switch (_beadStateVar) {
 	case 0:
 		if (beadState1.x != -1 && _endSequenceBackUpRect) {
-			_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+			_screen->copyBlockToPage(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 			_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 		}
 
@@ -1367,7 +1367,7 @@ int KyraEngine_LoK::handleBeadState() {
 	case 1:
 		if (beadState1.x != -1) {
 			if (_endSequenceBackUpRect) {
-				_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+				_screen->copyBlockToPage(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 			}
 			beadState1.x = -1;
@@ -1402,14 +1402,14 @@ int KyraEngine_LoK::handleBeadState() {
 					beadState1.dstY = beadState1.y;
 					return 0;
 				} else {
-					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+					_screen->copyBlockToPage(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 					_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 					beadState1.x = x;
 					beadState1.y = y;
 				}
 			}
 
-			_screen->copyCurPageBlock(x >> 3, y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+			_screen->copyRegionToBuffer(_screen->_curPage, x, y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 			_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
 
 			if (_lastDisplayedPanPage > 17)
@@ -1422,12 +1422,12 @@ int KyraEngine_LoK::handleBeadState() {
 	case 3:
 		if (_system->getMillis() >= timer1) {
 			timer1 = _system->getMillis() + 4 * _tickLength;
-			_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+			_screen->copyBlockToPage(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 			_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 
 			beadState1.x = beadState1.dstX + table1[beadState1.tableIndex];
 			beadState1.y = beadState1.dstY + table2[beadState1.tableIndex];
-			_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+			_screen->copyRegionToBuffer(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 
 			_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], beadState1.x, beadState1.y, 0, 0);
 			if (_lastDisplayedPanPage >= 17)
@@ -1476,11 +1476,11 @@ int KyraEngine_LoK::handleBeadState() {
 					_beadStateVar = 0;
 				}
 			} else {
-				_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+				_screen->copyBlockToPage(_screen->_curPage, beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 				beadState1.x = x;
 				beadState1.y = y;
-				_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+				_screen->copyRegionToBuffer(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 				_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
 				if (_lastDisplayedPanPage > 17) {
 					_lastDisplayedPanPage = 0;
@@ -1496,7 +1496,7 @@ int KyraEngine_LoK::handleBeadState() {
 			int x = 0, y = 0;
 			if (processBead(beadState1.x, beadState1.y, x, y, &beadState2)) {
 				if (beadState2.dstX == 290) {
-					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+					_screen->copyBlockToPage(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 					uint32 nextRun = 0;
 					for (int i = 0; i < 8; ++i) {
 						nextRun = _system->getMillis() + _tickLength;
@@ -1513,7 +1513,7 @@ int KyraEngine_LoK::handleBeadState() {
 					}
 					initBeadState(beadState1.x, beadState1.y, 63, 60, 12, &beadState2);
 				} else {
-					_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+					_screen->copyBlockToPage(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 					_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 					beadState1.x = -1;
 					beadState1.tableIndex = 0;
@@ -1521,11 +1521,11 @@ int KyraEngine_LoK::handleBeadState() {
 					_malcolmFlag = 9;
 				}
 			} else {
-				_screen->copyFromCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+				_screen->copyBlockToPage(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 				beadState1.x = x;
 				beadState1.y = y;
-				_screen->copyCurPageBlock(beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+				_screen->copyRegionToBuffer(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 				_screen->drawShape(2, _panPagesTable[_lastDisplayedPanPage++], x, y, 0, 0);
 				if (_lastDisplayedPanPage > 17)
 					_lastDisplayedPanPage = 0;

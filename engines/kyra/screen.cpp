@@ -656,63 +656,6 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 	}
 }
 
-void Screen::copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src) {
-	if (x < 0)
-		x = 0;
-	else if (x >= 40)
-		return;
-
-	if (x + w > 40)
-		w = 40 - x;
-
-	if (y < 0)
-		y = 0;
-	else if (y >= 200)
-		return;
-
-	if (y + h > 200)
-		h = 200 - y;
-
-	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
-
-	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x*8, y, w*8, h);
-
-	clearOverlayRect(_curPage, x*8, y, w*8, h);
-
-	while (h--) {
-		memcpy(dst, src, w*8);
-		dst += SCREEN_W;
-		src += w*8;
-	}
-}
-
-void Screen::copyCurPageBlock(int x, int y, int w, int h, uint8 *dst) {
-	assert(dst);
-	if (x < 0)
-		x = 0;
-	else if (x >= 40)
-		return;
-
-	if (x + w > 40)
-		w = 40 - x;
-
-	if (y < 0)
-		y = 0;
-	else if (y >= 200)
-		return;
-
-	if (y + h > 200)
-		h = 200 - y;
-
-	const uint8 *src = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
-	while (h--) {
-		memcpy(dst, src, w*8);
-		dst += w*8;
-		src += SCREEN_W;
-	}
-}
-
 void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent) {
 	assert(sx >= 0 && w <= SCREEN_W);
 	int x;

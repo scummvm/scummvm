@@ -196,7 +196,7 @@ void SeqPlayer::s1_shuffleScreen() {
 	_screen->shuffleScreen(0, 16, 320, 128, 2, 0, 0, false);
 	_screen->_curPage = 2;
 	if (_specialBuffer)
-		_screen->copyCurPageBlock(0, 16, 40, 128, _specialBuffer);
+		_screen->copyRegionToBuffer(_screen->_curPage, 0, 16, 40, 128, _specialBuffer);
 	_screen->_curPage = 0;
 }
 
@@ -451,7 +451,7 @@ void SeqPlayer::s1_allocTempBuffer() {
 			assert(_specialBuffer);
 			int page = _screen->_curPage;
 			_screen->_curPage = 0;
-			_screen->copyCurPageBlock(0, 0, 320, 128, _specialBuffer);
+			_screen->copyRegionToBuffer(_screen->_curPage, 0, 0, 320, 128, _specialBuffer);
 			_screen->_curPage = page;
 		}
 	}

@@ -110,10 +110,6 @@ public:
 
 	// page cur. functions
 	int setCurPage(int pageNum);
-
-	void copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src);
-	void copyCurPageBlock(int x, int y, int w, int h, uint8 *dst);
-
 	void clearCurPage();
 
 	// page 0 functions
