@@ -27,8 +27,6 @@
 #include "asylum/asylum.h"
 #include "asylum/screen.h"
 
-#include "asylum/bundles/graphicbundle.h"
-
 namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
