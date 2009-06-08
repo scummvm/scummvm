@@ -29,12 +29,12 @@ namespace Asylum {
 Screen::Screen(OSystem *system){
 	initGraphics(SCREEN_WIDTH, SCREEN_DEPTH, true);
 
-	_system = system;
+	_system        = system;
 	_updatePalette = false;
-	_fullRefresh = false;
+	_fullRefresh   = false;
 
 	_frontBuf = (uint8 *)malloc(sizeof(uint8)*SCREEN_WIDTH * SCREEN_DEPTH);
-	_backBuf = (uint8 *)malloc(sizeof(uint8)*SCREEN_WIDTH * SCREEN_DEPTH);
+	_backBuf  = (uint8 *)malloc(sizeof(uint8)*SCREEN_WIDTH * SCREEN_DEPTH);
 }
 
 Screen::~Screen(){
@@ -97,7 +97,7 @@ void Screen::setPalette(uint8 *palette){
 		*p++ = 0;
 	}
 
-	//setGammaLevel(0.5);
+	//setGammaLevel(0.9);
 
 	_system->setPalette(_currentPalette, 0, PAL_SIZE);
 }
