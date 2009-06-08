@@ -1409,6 +1409,9 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsOffscreenLeft /= _dsScaleW;
 	}
 
+	if (shapeHeight <= 0 || shpWidthScaled1 <= 0)
+		return;
+
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, shpWidthScaled1, shapeHeight);
 	clearOverlayRect(pageNum, x, y, shpWidthScaled1, shapeHeight);
