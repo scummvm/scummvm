@@ -27,8 +27,8 @@
 #include "asylum/asylum.h"
 #include "asylum/screen.h"
 #include "asylum/menu.h"
-#include "asylum/resource.h"
-#include "asylum/graphics.h"
+
+#include "asylum/bundles/graphicbundle.h"
 
 namespace Asylum {
 
@@ -43,8 +43,8 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
-	delete _menu;
     delete _screen;
+	delete _resMgr;
 }
 
 Common::Error AsylumEngine::run() {
@@ -58,8 +58,9 @@ Common::Error AsylumEngine::run() {
 // Will do the same as subroutine at address 0041A500
 Common::Error AsylumEngine::init() {
 	// initialize engine objects
-    _screen = new Screen(_system);
-	_menu = new Menu(_screen);
+
+	_screen = new Screen(_system);
+	_resMgr = new ResourceManager;
 
 	// initializing game
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
@@ -67,7 +68,7 @@ Common::Error AsylumEngine::init() {
 	// TODO: load startup configurations (address 0041A970)
 	// TODO: setup cinematics (address 0041A880) (probably we won't need it)
 	// TODO: init unknown game stuffs (address 0040F430)
-	
+
 	// TODO: load smaker intro movie (0)->(mov000.smk)
 	// TODO: if savegame exists on folder, than start NewGame()
 
@@ -75,20 +76,10 @@ Common::Error AsylumEngine::init() {
 }
 
 Common::Error AsylumEngine::go() {
-    Resource* res = new Resource;
 
-    res->load(1);
-    res->dump();
+	showMainMenu();
 
-    //GraphicResource *gres = new GraphicResource( res->getResource(1) );
-    //gres->dump();
-
-    delete res;
-    //delete gres;
-
-	_menu->init();
-
-    // DEBUG
+	// DEBUG
     // Control loop test. Basically just keep the
     // ScummVM window alive until ESC is pressed.
     // This will facilitate drawing tests ;)
@@ -103,11 +94,21 @@ Common::Error AsylumEngine::go() {
 				//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
 			}
 		}
-		_menu->run();
 		_system->delayMillis(10);
 	}
 
     return Common::kNoError;
+}
+
+void AsylumEngine::showMainMenu() {
+	// eyes animation index table
+	//const uint32 eyesTable[8] = {3, 5, 1, 7, 4, 8, 2, 6};
+	_screen->setFrontBuffer(
+			0, 0,
+			SCREEN_WIDTH, SCREEN_DEPTH,
+			_resMgr->getGraphic("res.001",0).getEntry(0).data);
+	_screen->setPalette(_resMgr->getPalette("res.001", 17).data);
+	_screen->updateScreen();
 }
 
 } // namespace Asylum

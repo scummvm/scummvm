@@ -24,6 +24,7 @@
 
 #include "engines/engine.h"
 
+#include "asylum/resourcemanager.h"
 
 namespace Asylum {
 
@@ -41,12 +42,16 @@ public:
     Common::Error go();
     virtual Common::Error run();
     virtual bool hasFeature(EngineFeature f) const;
+
 private:
-    Common::Language _language;
+    Common::Language     _language;
     Common::RandomSource _rnd;
 
-    Screen *_screen;
-	Menu *_menu;
+    ResourceManager *_resMgr;
+    Screen          *_screen;
+
+    void showMainMenu();
+
 };
 
 } // namespace Asylum
