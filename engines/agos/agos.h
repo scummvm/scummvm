@@ -848,6 +848,7 @@ protected:
 
 	void skipSpeech();
 
+	const char *getPixelLength(const char *string, uint16 maxWidth, uint16 &pixels);
 	bool printNameOf(Item *item, uint x, uint y);
 	bool printTextOf(uint a, uint x, uint y);
 	void printVerbOf(uint hitarea_id);
