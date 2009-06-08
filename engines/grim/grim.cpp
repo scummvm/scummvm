@@ -616,6 +616,37 @@ void GrimEngine::handleDebugLoadResource() {
 		warning("Requested resouce (%s) not found", buf);
 }
 
+static void cameraChangeHandle(int prev, int next) {
+	lua_beginblock();
+
+	lua_pushobject(lua_getref(refSystemTable));
+	lua_pushstring("camChangeHandler");
+	lua_Object func = lua_gettable();
+
+	if (lua_isfunction(func)) {
+		lua_pushnumber(prev);
+		lua_pushnumber(next);
+		lua_callfunction(func);
+	}
+
+	lua_endblock();
+}
+
+static void cameraPostChangeHandle(int num) {
+	lua_beginblock();
+
+	lua_pushobject(lua_getref(refSystemTable));
+	lua_pushstring("postCamChangeHandler");
+	lua_Object func = lua_gettable();
+
+	if (lua_isfunction(func)) {
+		lua_pushnumber(num);
+		lua_callfunction(func);
+	}
+
+	lua_endblock();
+}
+
 void GrimEngine::drawPrimitives() {
 	// Draw Primitives
 	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
@@ -1077,6 +1108,14 @@ void GrimEngine::setScene(Scene *scene) {
 		removeScene(lastScene);
 		delete lastScene;
 	}
+}
+
+void GrimEngine::makeCurrentSetup(int num) {
+	int prevSetup = g_grim->currScene()->setup();
+	g_grim->currScene()->setSetup(num);
+
+	cameraChangeHandle(prevSetup, num);
+	cameraPostChangeHandle(num);
 }
 
 void GrimEngine::setTextSpeed(int speed) {

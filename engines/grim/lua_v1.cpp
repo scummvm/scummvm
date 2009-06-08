@@ -1240,7 +1240,7 @@ static void SetActorChoreLooping() {
 
 	if (lua_isnumber(choreObj)) {
 		int chore = (int)lua_getnumber(choreObj);
-		costume->setChoreLooping(chore, getbool(modeObj));
+		costume->setChoreLooping(chore, getbool(3));
 	} else if (lua_isnil(choreObj)) {
 		error("SetActorChoreLooping: implement nil case");
 	}
@@ -1274,7 +1274,6 @@ static void StopActorChore() {
 static void IsActorChoring() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
-	lua_Object excludeLoopObj = lua_getparam(3);
 	lua_Object costumeObj = lua_getparam(4);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
@@ -1291,24 +1290,17 @@ static void IsActorChoring() {
 		return;
 	}
 
-	bool excludeLoop = getbool(excludeLoopObj);
+	bool excludeLoop = getbool(3);
 	if (lua_isnumber(choreObj)) {
 		int chore = (int)lua_getnumber(choreObj);
-		if (costume->isChoring((int)lua_getnumber(chore), excludeLoop) != -1) {
+		if (costume->isChoring(chore, excludeLoop) != -1) {
 			lua_pushobject(choreObj);
 			pushbool(true);
 		} else
 			lua_pushnil();
 		return;
 	} else if (lua_isnil(choreObj)) {
-		int chore;
-		chore = costume->isChoring(excludeLoop);
-		if (chore != -1) {
-			lua_pushnumber(chore);
-			pushbool(true);
-			return;
-		}
-		chore = costume->isChoring(false);
+		int chore = costume->isChoring(excludeLoop);
 		if (chore != -1) {
 			lua_pushnumber(chore);
 			pushbool(true);
@@ -1316,7 +1308,7 @@ static void IsActorChoring() {
 		}
 	}
 
-	pushbool(false);
+	lua_pushnil();
 }
 
 static void ActorLookAt() {
@@ -2240,49 +2232,13 @@ static void MakeCurrentSet() {
 	g_grim->setScene(name);
 }
 
-static void cameraChangeHandle(int prev, int next) {
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("camChangeHandler");
-	lua_Object func = lua_gettable();
-
-	if (lua_isfunction(func)) {
-		lua_pushnumber(prev);
-		lua_pushnumber(next);
-		lua_callfunction(func);
-	}
-
-	lua_endblock();
-}
-
-static void cameraPostChangeHandle(int num) {
-	lua_beginblock();
-
-	lua_pushobject(lua_getref(refSystemTable));
-	lua_pushstring("postCamChangeHandler");
-	lua_Object func = lua_gettable();
-
-	if (lua_isfunction(func)) {
-		lua_pushnumber(num);
-		lua_callfunction(func);
-	}
-
-	lua_endblock();
-}
-
 static void MakeCurrentSetup() {
 	lua_Object setupObj = lua_getparam(1);
 	if (!lua_isnumber(setupObj))
 		return;
 
 	int num = (int)lua_getnumber(lua_getparam(1));
-	// FIXME there are differences here
-	int prevSetup = g_grim->currScene()->setup();
-	g_grim->currScene()->setSetup(num);
-
-	cameraChangeHandle(prevSetup, num);
-	cameraPostChangeHandle(num);
+	g_grim->makeCurrentSetup(num);
 }
 
 /* Find the requested scene and return the current setup

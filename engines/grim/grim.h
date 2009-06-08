@@ -121,6 +121,7 @@ public:
 	void setScene(Scene *scene);
 	Scene *currScene() { return _currScene; }
 	const char *sceneName() const { return _currScene->name(); }
+	void makeCurrentSetup(int num);
 
 	// Scene registration
 	typedef Common::List<Scene *> SceneListType;
