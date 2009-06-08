@@ -51,11 +51,17 @@ public:
 	}
 
 	void setNumber(int val) {
-		_bitmap->setNumber(val);
-		if (_zbitmap)
-			_zbitmap->setNumber(val);
+		if (val) {
+			_bitmap->setNumber(val);
+			if (_zbitmap)
+				_zbitmap->setNumber(val);
+		}
+
+		_visibility = val != 0;
 	}
 	void draw() {
+		if (!_visibility)
+			return;
 		_bitmap->draw();
 		if (_zbitmap)
 			_zbitmap->draw();
@@ -63,6 +69,7 @@ public:
 
 private:
 
+	bool _visibility;
 	int _setupID;
 	Position _pos;
 	ResPtr<Bitmap> _bitmap, _zbitmap;
