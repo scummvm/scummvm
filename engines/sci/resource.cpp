@@ -131,24 +131,17 @@ void Resource::unalloc() {
 ResourceSource *ResourceManager::addExternalMap(const char *file_name) {
 	ResourceSource *newsrc = new ResourceSource();
 
-	// Add the new source to the SLL of sources
-	newsrc->next = _sources;
-	_sources = newsrc;
-
 	newsrc->source_type = kSourceExtMap;
 	newsrc->location_name = file_name;
 	newsrc->scanned = false;
 	newsrc->associated_map = NULL;
 
+	_sources.push_back(newsrc);
 	return newsrc;
 }
 
 ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const char *filename, int number) {
 	ResourceSource *newsrc = new ResourceSource();
-
-	// Add the new source to the SLL of sources
-	newsrc->next = _sources;
-	_sources = newsrc;
 
 	newsrc->source_type = type;
 	newsrc->scanned = false;
@@ -156,31 +149,27 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
 
+	_sources.push_back(newsrc);
 	return newsrc;
 }
 
 ResourceSource *ResourceManager::addPatchDir(const char *dirname) {
 	ResourceSource *newsrc = new ResourceSource();
 
-	// Add the new source to the SLL of sources
-	newsrc->next = _sources;
-	_sources = newsrc;
-
 	newsrc->source_type = kSourceDirectory;
 	newsrc->scanned = false;
 	newsrc->location_name = dirname;
 
+	_sources.push_back(newsrc);
 	return 0;
 }
 
 ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
-	ResourceSource *seeker = _sources;
-
-	while (seeker) {
-		if ((seeker->source_type == kSourceVolume || seeker->source_type == kSourceAudioVolume)
-			&& seeker->associated_map == map && seeker->volume_number == volume_nr)
-			return seeker;
-		seeker = seeker->next;
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		ResourceSource *src = *it;
+		if ((src->source_type == kSourceVolume || src->source_type == kSourceAudioVolume)
+			&& src->associated_map == map && src->volume_number == volume_nr)
+			return src;
 	}
 
 	return NULL;
@@ -228,21 +217,11 @@ bool ResourceManager::loadFromPatchFile(Resource *res) {
 	return loadPatch(res, file);
 }
 
-bool ResourceManager::loadFromAudioVolume(Resource *res) {
-	Common::File file;
-	const char *filename = res->source->location_name.c_str();
-	if (file.open(filename) == false) {
-		warning("Failed to open audio volume %s", filename);
-		res->unalloc();
-		return false;
-	}
-
-	file.seek(res->file_offset, SEEK_SET);
-
+bool ResourceManager::loadFromAudioVolume(Resource *res, Common::File &file) {
 	ResourceType type = (ResourceType)(file.readByte() & 0x7f);
 	if (((res->id.type == kResourceTypeAudio || res->id.type == kResourceTypeAudio36) && (type != kResourceTypeAudio))
 		|| ((res->id.type == kResourceTypeSync || res->id.type == kResourceTypeSync36) && (type != kResourceTypeSync))) {
-		warning("Resource type mismatch loading %s from %s", res->id.toString().c_str(), filename);
+		warning("Resource type mismatch loading %s from %s", res->id.toString().c_str(), file.getName());
 		res->unalloc();
 		return false;
 	}
@@ -302,10 +281,7 @@ void ResourceManager::loadResource(Resource *res) {
 
 	if (res->source->source_type == kSourcePatch && loadFromPatchFile(res))
 		return;
-	if (res->source->source_type == kSourceAudioVolume) {
-		loadFromAudioVolume(res);
-		return;
-	}
+
 	// Either loading from volume or patch loading failed
 	file = getVolumeFile(res->source->location_name.c_str());
 	if (!file) {
@@ -314,13 +290,17 @@ void ResourceManager::loadResource(Resource *res) {
 		return;
 	}
 	file->seek(res->file_offset, SEEK_SET);
-	int error = decompress(res, file);
-	if (error) {
-		warning("Error %d occured while reading %s from resource file: %s",
-		        error, res->id.toString().c_str(), sci_error_types[error]);
-		res->unalloc();
-	}
 
+	if (res->source->source_type == kSourceAudioVolume) {
+		loadFromAudioVolume(res, *file);
+	} else {
+		int error = decompress(res, file);
+		if (error) {
+			warning("Error %d occured while reading %s from resource file: %s",
+				    error, res->id.toString().c_str(), sci_error_types[error]);
+			res->unalloc();
+		}
+	}
 }
 
 Resource *ResourceManager::testResource(ResourceId id) {
@@ -417,7 +397,6 @@ int ResourceManager::addAppropriateSources() {
 		addSource(map, kSourceVolume, name.c_str(), number);
 	}
 	addPatchDir(".");
-	// TODO: add RESOURCE.AUD and RESOURCE.SFX for SCI1.1 games
 	if (Common::File::exists("MESSAGE.MAP"))
 		addSource(addExternalMap("MESSAGE.MAP"), kSourceVolume, "RESOURCE.MSG", 0);
 	return 1;
@@ -441,52 +420,37 @@ int ResourceManager::addInternalSources() {
 	return 1;
 }
 
-int ResourceManager::scanNewSources(ResourceSource *source) {
-	if (!source)
-		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
+void ResourceManager::scanNewSources() {
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		ResourceSource *source = *it;
 
-	int resource_error = 0;
-	if (source->next)
-		scanNewSources(source->next);
-
-	if (!source->scanned) {
-		source->scanned = true;
-		switch (source->source_type) {
-		case kSourceDirectory:
-			readResourcePatches(source);
-			break;
-		case kSourceExtMap:
-			if (_mapVersion < SCI_VERSION_1)
-				resource_error = readResourceMapSCI0(source);
-			else
-				resource_error = readResourceMapSCI1(source);
-
-			if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
-				// FIXME: Try reading w/o resource.map
-				resource_error = SCI_ERROR_NO_RESOURCE_FILES_FOUND;
+		if (!source->scanned) {
+			source->scanned = true;
+			switch (source->source_type) {
+			case kSourceDirectory:
+				readResourcePatches(source);
+				break;
+			case kSourceExtMap:
+				if (_mapVersion < SCI_VERSION_1)
+					readResourceMapSCI0(source);
+				else
+					readResourceMapSCI1(source);
+				break;
+			case kSourceIntMap:
+				readMap(source);
+				break;
+			default:
+				break;
 			}
-
-			if (resource_error == SCI_ERROR_NO_RESOURCE_FILES_FOUND) {
-				// Initialize empty resource manager
-				_resMap.clear();
-				resource_error = 0;
-			}
-			break;
-		case kSourceIntMap:
-			resource_error = readMap(source);
-			break;
-		default:
-			break;
 		}
 	}
-	return resource_error;
 }
 
-void ResourceManager::freeResourceSources(ResourceSource *rss) {
-	if (rss) {
-		freeResourceSources(rss->next);
-		delete rss;
-	}
+void ResourceManager::freeResourceSources() {
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it)
+		delete *it;
+
+	_sources.clear();
 }
 
 ResourceManager::ResourceManager(int version, int maxMemory) {
@@ -495,7 +459,6 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	_memoryLRU = 0;
 	_LRU.clear();
 	_resMap.clear();
-	_sources = NULL;
 	_sciVersion = version;
 
 	addAppropriateSources();
@@ -510,9 +473,9 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	debug("Using resource map version %d %s", _mapVersion, sci_version_types[_mapVersion]);
 	debug("Using volume version %d %s", _volVersion, sci_version_types[_volVersion]);
 
-	scanNewSources(_sources);
+	scanNewSources();
 	addInternalSources();
-	scanNewSources(_sources);
+	scanNewSources();
 
 	if (version == SCI_VERSION_AUTODETECT)
 		switch (_mapVersion) {
@@ -591,7 +554,7 @@ ResourceManager::~ResourceManager() {
 		delete itr->_value;
 		itr ++;
 	}
-	freeResourceSources(_sources);
+	freeResourceSources();
 	_resMap.empty();
 
 	Common::List<Common::File *>::iterator it = _volumeFiles.begin();
@@ -738,14 +701,15 @@ void ResourceManager::unlockResource(Resource *res) {
 int ResourceManager::detectMapVersion() {
 	Common::File file;
 	byte buff[6];
-	ResourceSource *rsrc = _sources;
-	// looking for extarnal map among sources
-	while (rsrc) {
+	ResourceSource *rsrc;
+
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		rsrc = *it;
+
 		if (rsrc->source_type == kSourceExtMap) {
 			file.open(rsrc->location_name);
 			break;
 		}
-		rsrc = rsrc->next;
 	}
 	if (file.isOpen() == false) {
 		warning("Failed to open resource map file");
@@ -799,14 +763,14 @@ int ResourceManager::detectMapVersion() {
 
 int ResourceManager::detectVolVersion() {
 	Common::File file;
-	ResourceSource *rsrc = _sources;
-	// looking for a volume among sources
-	while (rsrc) {
+	ResourceSource *rsrc;
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		rsrc = *it;
+
 		if (rsrc->source_type == kSourceVolume) {
 			file.open(rsrc->location_name);
 			break;
 		}
-		rsrc = rsrc->next;
 	}
 	if (file.isOpen() == false) {
 		warning("Failed to open volume file");

@@ -272,7 +272,7 @@ public:
 
 protected:
 	int _maxMemory; //!< Config option: Maximum total byte number allocated
-	ResourceSource *_sources;
+	Common::List<ResourceSource *> _sources;
 	int _memoryLocked;	//!< Amount of resource bytes in locked memory
 	int _memoryLRU;		//!< Amount of resource bytes under LRU control
 	Common::List<Resource *> _LRU; //!< Last Resource Used list
@@ -316,16 +316,16 @@ protected:
 	 *					 used during startup. May be NULL.
 	 * @return One of SCI_ERROR_*.
 	 */
-	int scanNewSources(ResourceSource *source);
+	void scanNewSources();
 	int addAppropriateSources();
 	int addInternalSources();
-	void freeResourceSources(ResourceSource *rss);
+	void freeResourceSources();
 
 	Common::File *getVolumeFile(const char *filename);
 	void loadResource(Resource *res);
 	bool loadPatch(Resource *res, Common::File &file);
 	bool loadFromPatchFile(Resource *res);
-	bool loadFromAudioVolume(Resource *res);
+	bool loadFromAudioVolume(Resource *res, Common::File &file);
 	void freeOldResources(int last_invulnerable);
 	int decompress(Resource *res, Common::File *file);
 	int readResourceInfo(Resource *res, Common::File *file, uint32&szPacked, ResourceCompression &compression);
