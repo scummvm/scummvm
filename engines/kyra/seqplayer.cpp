@@ -194,21 +194,18 @@ void SeqPlayer::s1_copyWaitTicks() {
 
 void SeqPlayer::s1_shuffleScreen() {
 	_screen->shuffleScreen(0, 16, 320, 128, 2, 0, 0, false);
-	_screen->_curPage = 2;
 	if (_specialBuffer)
-		_screen->copyRegionToBuffer(_screen->_curPage, 0, 16, 40, 128, _specialBuffer);
+		_screen->copyRegionToBuffer(2, 0, 16, 320, 128, _specialBuffer);
 	_screen->_curPage = 0;
 }
 
 void SeqPlayer::s1_copyView() {
-	int y = 128;
-	if (!_copyViewOffs)
-		y -= 8;
+	int h = !_copyViewOffs ? 120 : 128;
 
 	if (_specialBuffer && !_copyViewOffs)
-		_screen->copyToPage0(16, y, 3, _specialBuffer);
+		_screen->copyToPage0(16, h, 3, _specialBuffer);
 	else
-		_screen->copyRegion(0, 16, 0, 16, 320, y, 2, 0);
+		_screen->copyRegion(0, 16, 0, 16, 320, h, 2, 0);
 }
 
 void SeqPlayer::s1_loopInit() {
@@ -449,10 +446,7 @@ void SeqPlayer::s1_allocTempBuffer() {
 		if (!_specialBuffer && !_copyViewOffs) {
 			_specialBuffer = new uint8[40960];
 			assert(_specialBuffer);
-			int page = _screen->_curPage;
-			_screen->_curPage = 0;
-			_screen->copyRegionToBuffer(_screen->_curPage, 0, 0, 320, 128, _specialBuffer);
-			_screen->_curPage = page;
+			_screen->copyRegionToBuffer(2, 0, 16, 320, 128, _specialBuffer);
 		}
 	}
 }
