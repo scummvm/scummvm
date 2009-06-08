@@ -90,14 +90,16 @@ void Screen::updateScreen(int32 x, int32 y, int32 width, int32 height){
 void Screen::setPalette(uint8 *palette){
 	uint8 *p = _currentPalette;
 
+	double pi = 3.1415926535;
+
 	for (int i = 0; i < PAL_SIZE; i++) {
-		*p++ = *palette++;
-		*p++ = *palette++;
-		*p++ = *palette++;
+		*p++ = *palette++ * 10;
+		*p++ = *palette++ * 10;
+		*p++ = *palette++ * 10;
 		*p++ = 0;
 	}
 
-	setGammaLevel(0.5);
+	//setGammaLevel(0.5);
 
 	_system->setPalette(_currentPalette, 0, PAL_SIZE);
 }
