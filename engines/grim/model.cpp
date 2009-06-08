@@ -238,7 +238,6 @@ void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, 
 
 	_meshVisible = true;
 	_hierVisible = true;
-	_totalWeight = 1;
 	_initialized = true;
 }
 
