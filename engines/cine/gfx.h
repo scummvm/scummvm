@@ -35,8 +35,7 @@ namespace Cine {
  */
 struct palBg {
 	byte *bg; ///< Background data
-	byte *hiPal; ///< 256 color palette
-	uint16 *lowPal; ///< 16 color palette
+	Cine::Palette pal; ///< Background color palette
 	char name[15]; ///< Background filename
 };
 
@@ -46,10 +45,10 @@ struct palBg {
  * without calling drawFrame() all the time
  */
 class FWRenderer : public Common::NonCopyable {
+protected:
 private:
 	byte *_background; ///< Current background
 	char _bgName[13]; ///< Background filename
-	uint16 *_palette; ///< 16 color backup palette
 
 	Common::String _cmd; ///< Player command string
 
@@ -57,10 +56,10 @@ protected:
 	static const int _screenSize = 320 * 200; ///< Screen size
 	static const int _screenWidth = 320; ///< Screen width
 	static const int _screenHeight = 200; ///< Screen height
-	static const int _lowPalSize = 16; ///< 16 color palette size
 
 	byte *_backBuffer; ///< Screen backbuffer
-	uint16 *_activeLowPal; ///< Active 16 color palette
+	Cine::Palette _backupPal; ///< The backup color palette
+	Cine::Palette _activePal; ///< The active color palette
 	int _changePal; ///< Load active palette to video backend on next frame
 	bool _showCollisionPage; ///< Should we show the collision page instead of the back buffer? Used for debugging.
 
@@ -132,13 +131,11 @@ class OSRenderer : public FWRenderer {
 private:
 	// FIXME: Background table's size is probably 8 instead of 9. Check to make sure and correct if necessary.
 	palBg _bgTable[9]; ///< Table of backgrounds loaded into renderer
-	byte *_activeHiPal; ///< Active 256 color palette
 	unsigned int _currentBg; ///< Current background
 	unsigned int _scrollBg; ///< Current scroll background
 	unsigned int _bgShift; ///< Background shift
 
 protected:
-	static const int _hiPalSize = 256 * 3; ///< 256 color palette size
 
 	void drawSprite(const objectStruct &obj);
 	int drawChar(char character, int x, int y);
@@ -169,14 +166,11 @@ public:
 	void saveBgNames(Common::OutSaveFile &fHandle);
 	const char *getBgName(uint idx = 0) const;
 
-	void refreshPalette();
 	void reloadPalette();
 	void restorePalette(Common::SeekableReadStream &fHandle);
 	void savePalette(Common::OutSaveFile &fHandle);
-	void rotatePalette(int a, int b, int c);
 	void transformPalette(int first, int last, int r, int g, int b);
 
-	void fadeToBlack();
 };
 
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);

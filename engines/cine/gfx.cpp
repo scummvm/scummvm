@@ -90,9 +90,9 @@ static const byte cursorPalette[] = {
 
 /*! \brief Initialize renderer
  */
-FWRenderer::FWRenderer() : _background(NULL), _palette(NULL), _cmd(""),
+FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 	_cmdY(0), _messageBg(0), _backBuffer(new byte[_screenSize]),
-	_activeLowPal(NULL), _changePal(0), _showCollisionPage(false) {
+	_activePal(), _changePal(0), _showCollisionPage(false) {
 
 	assert(_backBuffer);
 
@@ -104,21 +104,17 @@ FWRenderer::FWRenderer() : _background(NULL), _palette(NULL), _cmd(""),
  */
 FWRenderer::~FWRenderer() {
 	delete[] _background;
-	delete[] _palette;
 	delete[] _backBuffer;
-	delete[] _activeLowPal;
 }
 
 /* \brief Reset renderer state
  */
 void FWRenderer::clear() {
 	delete[] _background;
-	delete[] _palette;
-	delete[] _activeLowPal;
 
 	_background = NULL;
-	_palette = NULL;
-	_activeLowPal = NULL;
+	_backupPal.clear();
+	_activePal.clear();
 
 	memset(_backBuffer, 0, _screenSize);
 
@@ -550,59 +546,39 @@ void FWRenderer::setCommand(Common::String cmd) {
 /*! \brief Refresh current palette
  */
 void FWRenderer::refreshPalette() {
-	int i;
-	byte pal[16*4];
-
-	assert(_activeLowPal);
-
-	for (i = 0; i < 16; i++) {
-		pal[i * 4 + 2] = ((_activeLowPal[i] & 0x007) >> 0) * 32;
-		pal[i * 4 + 1] = ((_activeLowPal[i] & 0x070) >> 4) * 32;
-		pal[i * 4 + 0] = ((_activeLowPal[i] & 0x700) >> 8) * 32;
-		pal[i * 4 + 3] = 0;
-	}
-
-	g_system->setPalette(pal, 0, 16);
+	assert(_activePal.isValid() && !_activePal.empty());
+	_activePal.setGlobalOSystemPalette();
 	_changePal = 0;
 }
 
 /*! \brief Load palette of current background
  */
 void FWRenderer::reloadPalette() {
-	assert(_palette);
-
-	if (!_activeLowPal) {
-		_activeLowPal = new uint16[_lowPalSize];
-	}
-
-	assert(_activeLowPal);
-
-	memcpy(_activeLowPal, _palette, _lowPalSize * sizeof (uint16));
+	assert(_backupPal.isValid() && !_backupPal.empty());
+	_activePal = _backupPal;
 	_changePal = 1;
 }
 
 /*! \brief Load background into renderer
  * \param bg Raw background data
+ * \todo Combine with OSRenderer's version of loadBg16
  */
 void FWRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 	assert(idx == 0);
-	int i;
 
 	if (!_background) {
 		_background = new byte[_screenSize];
 	}
 
-	if (!_palette) {
-		_palette = new uint16[_lowPalSize];
-	}
-
-	assert(_background && _palette);
+	assert(_background);
 
 	strcpy(_bgName, name);
 
-	for (i = 0; i < _lowPalSize; i++, bg += 2) {
-		_palette[i] = READ_BE_UINT16(bg);
-	}
+	// Load the 16 color palette
+	_backupPal.load(bg, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
+
+	// Jump over the palette data to the background data
+	bg += kLowPalNumBytes;
 
 	gfxConvertSpriteToRaw(_background, bg, 160, 200);
 }
@@ -668,25 +644,15 @@ const char *FWRenderer::getBgName(uint idx) const {
  * \param fHandle Savefile open for reading
  */
 void FWRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
-	int i;
+	byte buf[kLowPalNumBytes];
 
-	if (!_palette) {
-		_palette = new uint16[_lowPalSize];
-	}
+	// Load the active 16 color palette from file
+	fHandle.read(buf, kLowPalNumBytes);
+	_activePal.load(buf, sizeof(buf), kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
 
-	if (!_activeLowPal) {
-		_activeLowPal = new uint16[_lowPalSize];
-	}
-
-	assert(_palette && _activeLowPal);
-
-	for (i = 0; i < _lowPalSize; i++) {
-		_activeLowPal[i] = fHandle.readUint16BE();
-	}
-
-	for (i = 0; i < _lowPalSize; i++) {
-		_palette[i] = fHandle.readUint16BE();
-	}
+	// Load the backup 16 color palette from file
+	fHandle.read(buf, kLowPalNumBytes);
+	_backupPal.load(buf, sizeof(buf), kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
 
 	_changePal = 1;
 }
@@ -695,58 +661,59 @@ void FWRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
  * \param fHandle Savefile open for writing
  */
 void FWRenderer::savePalette(Common::OutSaveFile &fHandle) {
-	int i;
+	byte buf[kLowPalNumBytes];
 
-	assert(_palette && _activeLowPal);
+	// Make sure the active palette has the correct format and color count
+	assert(_activePal.colorFormat() == kLowPalFormat);	
+	assert(_activePal.colorCount() == kLowPalNumColors);
 
-	for (i = 0; i < _lowPalSize; i++) {
-		fHandle.writeUint16BE(_activeLowPal[i]);
-	}
+	// Make sure the backup palette has the correct format and color count
+	assert(_backupPal.colorFormat() == kLowPalFormat);
+	assert(_backupPal.colorCount() == kLowPalNumColors);
 
-	for (i = 0; i < _lowPalSize; i++) {
-		fHandle.writeUint16BE(_palette[i]);
-	}
+	// Write the active palette to the file
+	_activePal.save(buf, sizeof(buf), CINE_BIG_ENDIAN);
+	fHandle.write(buf, kLowPalNumBytes);
+
+	// Write the backup palette to the file
+	_backupPal.save(buf, sizeof(buf), CINE_BIG_ENDIAN);
+	fHandle.write(buf, kLowPalNumBytes);
 }
 
 /*! \brief Write active and backup palette to save
  * \param fHandle Savefile open for writing
+ * \todo Add support for saving the palette in the 16 color version of Operation Stealth.
+ *       Possibly combine with FWRenderer's savePalette-method?
  */
 void OSRenderer::savePalette(Common::OutSaveFile &fHandle) {
-	int i;
+	byte buf[kHighPalNumBytes];
 
-	assert(_activeHiPal);
+	// Make sure the active palette has the correct format and color count
+	assert(_activePal.colorFormat() == kHighPalFormat);
+	assert(_activePal.colorCount() == kHighPalNumColors);
 
 	// Write the active 256 color palette.
-	for (i = 0; i < _hiPalSize; i++) {
-		fHandle.writeByte(_activeHiPal[i]);
-	}
+	_activePal.save(buf, sizeof(buf), CINE_LITTLE_ENDIAN);
+	fHandle.write(buf, kHighPalNumBytes);
 
 	// Write the active 256 color palette a second time.
 	// FIXME: The backup 256 color palette should be saved here instead of the active one.
-	for (i = 0; i < _hiPalSize; i++) {
-		fHandle.writeByte(_activeHiPal[i]);
-	}
+	fHandle.write(buf, kHighPalNumBytes);
 }
 
 /*! \brief Restore active and backup palette from save
  * \param fHandle Savefile open for reading
  */
 void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
-	int i;
+	byte buf[kHighPalNumBytes];
 
-	if (!_activeHiPal) {
-		_activeHiPal = new byte[_hiPalSize];
-	}
-
-	assert(_activeHiPal);
-
-	for (i = 0; i < _hiPalSize; i++) {
-		_activeHiPal[i] = fHandle.readByte();
-	}
+	// Load the active 256 color palette from file
+	fHandle.read(buf, kHighPalNumBytes);
+	_activePal.load(buf, sizeof(buf), kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
 
 	// Jump over the backup 256 color palette.
 	// FIXME: Load the backup 256 color palette and use it properly.
-	fHandle.seek(_hiPalSize, SEEK_CUR);
+	fHandle.seek(kHighPalNumBytes, SEEK_CUR);
 
 	_changePal = 1;
 }
@@ -754,10 +721,10 @@ void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
 /*! \brief Rotate active palette
  * \param a First color to rotate
  * \param b Last color to rotate
- * \param c Possibly rotation step, must be equal to 1 at the moment
+ * \param c Possibly rotation step, must be 0 or 1 at the moment
  */
 void FWRenderer::rotatePalette(int a, int b, int c) {
-	palRotate(_activeLowPal, a, b, c);
+	_activePal.rotateRight(a, b, c);
 	refreshPalette();
 }
 
@@ -769,12 +736,11 @@ void FWRenderer::rotatePalette(int a, int b, int c) {
  * \param b Blue channel transformation
  */
 void FWRenderer::transformPalette(int first, int last, int r, int g, int b) {
-	if (!_activeLowPal) {
-		_activeLowPal = new uint16[_lowPalSize];
-		memset(_activeLowPal, 0, _lowPalSize * sizeof (uint16));
+	if (!_activePal.isValid() || _activePal.empty()) {
+		_activePal = Cine::Palette(kLowPalFormat, kLowPalNumColors);
 	}
 
-	transformPaletteRange(_activeLowPal, _palette, first, last, r, g, b);
+	_backupPal.saturatedAddColor(_activePal, first, last, r, g, b);
 	refreshPalette();
 }
 
@@ -889,22 +855,16 @@ void FWRenderer::drawInputBox(const char *info, const char *input, int cursor, i
 }
 
 /*! \brief Fade to black
+ * \bug Operation Stealth sometimes seems to fade to black using
+ * transformPalette resulting in double fadeout
  */
 void FWRenderer::fadeToBlack() {
-	// FIXME: _activeLowPal is invalid when starting Operation Stealth
-	// Adding this sanity check fixes a crash when the game
-	// starts, but I'm not sure if this is the best place to check it
-	if (!_activeLowPal) {
-		warning("_activeLowPal is invalid");
-		return;
-	}
-
-	assert(_activeLowPal);
+	assert(_activePal.isValid() && !_activePal.empty());
 
 	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 16; j++) {
-			_activeLowPal[j] = transformColor(_activeLowPal[j], -1, -1, -1);
-		}
+		// Fade out the whole palette by 1/7th
+		// (Operation Stealth used 36 / 252, which is 1 / 7. Future Wars used 1 / 7 directly).
+		_activePal.saturatedAddNormalizedGray(_activePal, 0, _activePal.colorCount() - 1, -1, 7);
 
 		refreshPalette();
 		g_system->updateScreen();
@@ -914,14 +874,13 @@ void FWRenderer::fadeToBlack() {
 
 /*! \brief Initialize Operation Stealth renderer
  */
-OSRenderer::OSRenderer() : _activeHiPal(NULL), _currentBg(0), _scrollBg(0),
+OSRenderer::OSRenderer() : FWRenderer(), _currentBg(0), _scrollBg(0),
 	_bgShift(0) {
 
 	int i;
 	for (i = 0; i < 9; i++) {
 		_bgTable[i].bg = NULL;
-		_bgTable[i].lowPal = NULL;
-		_bgTable[i].hiPal = NULL;
+		_bgTable[i].pal.clear();
 		memset(_bgTable[i].name, 0, sizeof (_bgTable[i].name));
 	}
 }
@@ -929,29 +888,20 @@ OSRenderer::OSRenderer() : _activeHiPal(NULL), _currentBg(0), _scrollBg(0),
 /*! \brief Destroy Operation Stealth renderer
  */
 OSRenderer::~OSRenderer() {
-	delete[] _activeHiPal;
-
 	for (int i = 0; i < 9; i++) {
 		delete[] _bgTable[i].bg;
-		delete[] _bgTable[i].lowPal;
-		delete[] _bgTable[i].hiPal;
+		_bgTable[i].pal.clear();
 	}
 }
 
 /*! \brief Reset Operation Stealth renderer state
  */
 void OSRenderer::clear() {
-	delete[] _activeHiPal;
-	_activeHiPal = NULL;
-
 	for (int i = 0; i < 9; i++) {
 		delete[] _bgTable[i].bg;
-		delete[] _bgTable[i].lowPal;
-		delete[] _bgTable[i].hiPal;
 
 		_bgTable[i].bg = NULL;
-		_bgTable[i].lowPal = NULL;
-		_bgTable[i].hiPal = NULL;
+		_bgTable[i].pal.clear();
 		memset(_bgTable[i].name, 0, sizeof (_bgTable[i].name));
 	}
 
@@ -1159,28 +1109,6 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	}
 }
 
-/*! \brief Refresh current palette
- */
-void OSRenderer::refreshPalette() {
-	if (!_activeHiPal) {
-		FWRenderer::refreshPalette();
-		return;
-	}
-
-	int i;
-	byte pal[256*4];
-
-	for (i = 0; i < 256; i++) {
-		pal[i * 4 + 0] = _activeHiPal[i * 3 + 0];
-		pal[i * 4 + 1] = _activeHiPal[i * 3 + 1];
-		pal[i * 4 + 2] = _activeHiPal[i * 3 + 2];
-		pal[i * 4 + 3] = 0;
-	}
-
-	g_system->setPalette(pal, 0, 256);
-	_changePal = 0;
-}
-
 /*! \brief Load palette of current background
  */
 void OSRenderer::reloadPalette() {
@@ -1188,47 +1116,10 @@ void OSRenderer::reloadPalette() {
 	// and 14, shift background has it right
 	palBg *bg = _bgShift ? &_bgTable[_scrollBg] : &_bgTable[_currentBg];
 
-	assert(bg->lowPal || bg->hiPal);
+	assert(bg->pal.isValid() && !(bg->pal.empty()));
 
-	if (bg->lowPal) {
-		if (!_activeLowPal) {
-			_activeLowPal = new uint16[_lowPalSize];
-		}
-
-		assert(_activeLowPal);
-
-		delete[] _activeHiPal;
-		_activeHiPal = NULL;
-
-		memcpy(_activeLowPal, bg->lowPal, _lowPalSize * sizeof (uint16));
-	} else {
-		if (!_activeHiPal) {
-			_activeHiPal = new byte[_hiPalSize];
-		}
-
-		assert(_activeHiPal);
-
-		delete[] _activeLowPal;
-		_activeLowPal = NULL;
-
-		memcpy(_activeHiPal, bg->hiPal, _hiPalSize);
-	}
+	_activePal = bg->pal;
 	_changePal = 1;
-}
-
-/*! \brief Rotate active palette
- * \param a First color to rotate
- * \param b Last color to rotate
- * \param c Possibly rotation step, must be equal to 1 at the moment
- */
-void OSRenderer::rotatePalette(int a, int b, int c) {
-	if (_activeLowPal) {
-		FWRenderer::rotatePalette(a, b, c);
-		return;
-	}
-
-	palRotate(_activeHiPal, a, b, c);
-	refreshPalette();
 }
 
 /*! \brief Copy part of backup palette to active palette and transform
@@ -1241,28 +1132,12 @@ void OSRenderer::rotatePalette(int a, int b, int c) {
 void OSRenderer::transformPalette(int first, int last, int r, int g, int b) {
 	palBg *bg = _bgShift ? &_bgTable[_scrollBg] : &_bgTable[_currentBg];
 
-	if (!bg->lowPal) {
-		if (!_activeHiPal) {
-			_activeHiPal = new byte[_hiPalSize];
-			memset(_activeHiPal, 0, _hiPalSize);
-		}
-
-		delete[] _activeLowPal;
-		_activeLowPal = NULL;
-
-		transformPaletteRange(_activeHiPal, bg->hiPal, first, last, r, g, b);
-	} else {
-		if (!_activeLowPal) {
-			_activeLowPal = new uint16[_lowPalSize];
-			memset(_activeLowPal, 0, _lowPalSize * sizeof (uint16));
-		}
-
-		delete[] _activeHiPal;
-		_activeHiPal = NULL;
-
-		transformPaletteRange(_activeLowPal, bg->lowPal, first, last, r, g, b);
+	// Initialize active palette to current background's palette format and size if they differ
+	if (_activePal.colorFormat() != bg->pal.colorFormat() || _activePal.colorCount() != bg->pal.colorCount()) {
+		_activePal = Cine::Palette(bg->pal.colorFormat(), bg->pal.colorCount());
 	}
 
+	bg->pal.saturatedAddColor(_activePal, first, last, r, g, b, kLowPalFormat);
 	refreshPalette();
 }
 
@@ -1270,29 +1145,24 @@ void OSRenderer::transformPalette(int first, int last, int r, int g, int b) {
  * \param bg Raw background data
  * \param name Background filename
  * \param pos Background index
+ * \todo Combine with FWRenderer's version of loadBg16
  */
 void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
-	int i;
 	assert(idx < 9);
 
 	if (!_bgTable[idx].bg) {
 		_bgTable[idx].bg = new byte[_screenSize];
 	}
 
-	if (!_bgTable[idx].lowPal) {
-		_bgTable[idx].lowPal = new uint16[_lowPalSize];
-	}
-
-	assert(_bgTable[idx].bg && _bgTable[idx].lowPal);
-
-	delete[] _bgTable[idx].hiPal;
-	_bgTable[idx].hiPal = NULL;
+	assert(_bgTable[idx].bg);
 
 	strcpy(_bgTable[idx].name, name);
 
-	for (i = 0; i < _lowPalSize; i++, bg += 2) {
-		_bgTable[idx].lowPal[i] = READ_BE_UINT16(bg);
-	}
+	// Load the 16 color palette
+	_bgTable[idx].pal.load(bg, kLowPalNumBytes, kLowPalFormat, kLowPalNumColors, CINE_BIG_ENDIAN);
+
+	// Jump over the palette data to the background data
+	bg += kLowPalNumBytes;
 
 	gfxConvertSpriteToRaw(_bgTable[idx].bg, bg, 160, 200);
 }
@@ -1317,18 +1187,11 @@ void OSRenderer::loadBg256(const byte *bg, const char *name, unsigned int idx) {
 		_bgTable[idx].bg = new byte[_screenSize];
 	}
 
-	if (!_bgTable[idx].hiPal) {
-		_bgTable[idx].hiPal = new byte[_hiPalSize];
-	}
-
-	assert(_bgTable[idx].bg && _bgTable[idx].hiPal);
-
-	delete[] _bgTable[idx].lowPal;
-	_bgTable[idx].lowPal = NULL;
+	assert(_bgTable[idx].bg);
 
 	strcpy(_bgTable[idx].name, name);
-	memcpy(_bgTable[idx].hiPal, bg, _hiPalSize);
-	memcpy(_bgTable[idx].bg, bg + _hiPalSize, _screenSize);
+	_bgTable[idx].pal.load(bg, kHighPalNumBytes, kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
+	memcpy(_bgTable[idx].bg, bg + kHighPalNumBytes, _screenSize);
 }
 
 /*! \brief Load 256 color CT data as background into renderer
@@ -1344,7 +1207,7 @@ void OSRenderer::loadCt256(const byte *ct, const char *name) {
  */
 void OSRenderer::selectBg(unsigned int idx) {
 	assert(idx < 9 && _bgTable[idx].bg);
-	assert(_bgTable[idx].lowPal || _bgTable[idx].hiPal);
+	assert(_bgTable[idx].pal.isValid() && !(_bgTable[idx].pal.empty()));
 
 	_currentBg = idx;
 	reloadPalette();
@@ -1393,11 +1256,8 @@ void OSRenderer::removeBg(unsigned int idx) {
 	}
 
 	delete[] _bgTable[idx].bg;
-	delete[] _bgTable[idx].lowPal;
-	delete[] _bgTable[idx].hiPal;
 	_bgTable[idx].bg = NULL;
-	_bgTable[idx].lowPal = NULL;
-	_bgTable[idx].hiPal = NULL;
+	_bgTable[idx].pal.clear();
 	memset(_bgTable[idx].name, 0, sizeof (_bgTable[idx].name));
 }
 
@@ -1410,27 +1270,6 @@ void OSRenderer::saveBgNames(Common::OutSaveFile &fHandle) {
 const char *OSRenderer::getBgName(uint idx) const {
 	assert(idx < 9);
 	return _bgTable[idx].name;
-}
-
-/*! \brief Fade to black
- * \bug Operation Stealth sometimes seems to fade to black using
- * transformPalette resulting in double fadeout
- */
-void OSRenderer::fadeToBlack() {
-	if (!_activeHiPal) {
-		FWRenderer::fadeToBlack();
-		return;
-	}
-
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < _hiPalSize; j++) {
-			_activeHiPal[j] = CLIP(_activeHiPal[j] - 32, 0, 255);
-		}
-
-		refreshPalette();
-		g_system->updateScreen();
-		g_system->delayMillis(50);
-	}
 }
 
 void setMouseCursor(int cursor) {
