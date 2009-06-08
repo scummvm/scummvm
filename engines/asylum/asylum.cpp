@@ -26,7 +26,6 @@
 
 #include "asylum/asylum.h"
 #include "asylum/screen.h"
-#include "asylum/menu.h"
 
 #include "asylum/bundles/graphicbundle.h"
 
