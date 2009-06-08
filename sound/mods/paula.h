@@ -41,10 +41,10 @@ class Paula : public AudioStream {
 public:
 	static const int NUM_VOICES = 4;
 	enum {
-		kPalSystemClock		= 7093790,
-		kNtscSystemClock	= 7159090,
-		kPalCiaClock		= kPalSystemClock / 10,
-		kNtscCiaClock		= kNtscSystemClock / 10
+		kPalSystemClock  = 7093790,
+		kNtscSystemClock = 7159090,
+		kPalCiaClock     = kPalSystemClock / 10,
+		kNtscCiaClock    = kNtscSystemClock / 10
 	};
 
 	Paula(bool stereo = false, int rate = 44100, uint interruptFreq = 0);
