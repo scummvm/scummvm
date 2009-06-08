@@ -2549,7 +2549,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"2CD",
 
 			{
-	{ "game22",		GAME_BASEFILE,	"629762ea9ca9ee9ff85f4774d219f5c7", 259576},
+	{ "game33",		GAME_BASEFILE,	"cda37c422c04dde8b8ab3405178b3ef9", 266565},
 	{ "save.999",		GAME_RESTFILE,	"71512fc98501a8071a26b683a31dde78", 3360},
 	{ "tbllist",		GAME_TBLFILE,	"0bbfee8e69739111eb36b0d138da8ddf", 668},
 	{ NULL, 0, NULL, 0}
