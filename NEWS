@@ -3,44 +3,44 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 0.14.0 (2009-??-??)
  New Games:
-   - Added support for Discworld.
+   - Added support for Discworld
    - Added support for Discworld 2 - Missing Presumed ...!?
-   - Added support for Return to Zork.
-   - Added support for Leather Goddesses of Phobos 2.
-   - Added support for The Manhole.
-   - Added support for Rodney's Funscreen.
+   - Added support for Return to Zork
+   - Added support for Leather Goddesses of Phobos 2
+   - Added support for The Manhole
+   - Added support for Rodney's Funscreen
    
  General:
-   - Added experimental AdLib emulator from DOSBox.
-   - Added quick search to Launcher.
-   - Improved modern GUI theme look.
-   - Added per-game GUI options.
-   - Improved Mass Add dialog.
+   - Added experimental AdLib emulator from DOSBox
+   - Added quick search to Launcher
+   - Improved modern GUI theme look
+   - Added per-game GUI options
+   - Improved Mass Add dialog
 
  AGI:
-   - Increased compatibility for Sierra games.
-   - Implemented all 'unknown' commands.
+   - Increased compatibility for Sierra games
+   - Implemented all 'unknown' commands
 
  Beneath a Steel Sky:
    - Changed the game speed to match the original game (previously
-     it ran too fast).
+     it ran too fast)
 
  Broken Sword 1:
-   - Added support for the original cutscenes. 
-   - Dropped support for the now obsolete MPEG2 cutscenes.
-   - Added support for the PlayStation version.
+   - Added support for the original cutscenes
+   - Dropped support for the now obsolete MPEG2 cutscenes
+   - Added support for the PlayStation version
 
  Broken Sword 2:
-   - Added support for the original cutscenes. 
-   - Dropped support for the now obsolete MPEG2 cutscenes.
-   - Dropped support for playing cutscene sound without the video.
-   - Added support for the PlayStation version.
+   - Added support for the original cutscenes 
+   - Dropped support for the now obsolete MPEG2 cutscenes
+   - Dropped support for playing cutscene sound without the video
+   - Added support for the PlayStation version
 
  KYRA:
-   - Added support for PC Speaker based music and sound effects.
+   - Added support for PC Speaker based music and sound effects
 
  New Ports:
-   - Added GP2X Wiz port.
+   - Added GP2X Wiz port
 
 0.13.1 (2009-04-27)    
  AGOS:
