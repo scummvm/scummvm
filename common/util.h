@@ -270,12 +270,12 @@ extern const char *getRenderModeCode(RenderMode id);
 extern const char *getRenderModeDescription(RenderMode id);
 
 enum GameGUIOption {
-	GUIO_NONE			= 0,
+	GUIO_NONE		= 0,
 	GUIO_NOSUBTITLES	= (1 << 0),
 	GUIO_NOMUSIC		= (1 << 1),
 	GUIO_NOSPEECH		= (1 << 2),
-	GUIO_NOSFX			= (1 << 3),
-	GUIO_NOMIDI			= (1 << 4),
+	GUIO_NOSFX		= (1 << 3),
+	GUIO_NOMIDI		= (1 << 4),
 	GUIO_NOLAUNCHLOAD	= (1 << 5)
 };
 
