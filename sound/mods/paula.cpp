@@ -27,8 +27,8 @@
 
 namespace Audio {
 
-Paula::Paula(bool stereo, int rate, int interruptFreq) :
-		_stereo(stereo), _rate(rate), _intFreq(interruptFreq) {
+Paula::Paula(bool stereo, int rate, uint interruptFreq) :
+		_stereo(stereo), _rate(rate), _periodScale((kPalSystemClock / 2.0) / rate), _intFreq(interruptFreq) {
 
 	clearVoices();
 	_voice[0].panning = 63;
@@ -36,10 +36,11 @@ Paula::Paula(bool stereo, int rate, int interruptFreq) :
 	_voice[2].panning = 191;
 	_voice[3].panning = 63;
 
-	if (_intFreq <= 0)
+	if (_intFreq == 0)
 		_intFreq = _rate;
 
-	_curInt = _intFreq;
+	_curInt = 0;
+	_timerBase = 1;
 	_playing = false;
 	_end = true;
 }
@@ -55,8 +56,10 @@ void Paula::clearVoice(byte voice) {
 	_voice[voice].length = 0;
 	_voice[voice].lengthRepeat = 0;
 	_voice[voice].period = 0;
+	_voice[voice].periodRepeat = 0;
 	_voice[voice].volume = 0;
 	_voice[voice].offset = 0;
+	_voice[voice].dmaCount = 0;
 }
 
 int Paula::readBuffer(int16 *buffer, const int numSamples) {
@@ -95,18 +98,17 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 
 		// Handle 'interrupts'. This gives subclasses the chance to adjust the channel data
 		// (e.g. insert new samples, do pitch bending, whatever).
-		if (_curInt == _intFreq) {
+		if (_curInt == 0) {
+			_curInt = _intFreq;
 			interrupt();
-			_curInt = 0;
 		}
 
 		// Compute how many samples to generate: at most the requested number of samples,
 		// of course, but we may stop earlier when an 'interrupt' is expected.
-		const int nSamples = MIN(samples, _intFreq - _curInt);
+		const uint nSamples = MIN((uint)samples, _curInt);
 
 		// Loop over the four channels of the emulated Paula chip
 		for (int voice = 0; voice < NUM_VOICES; voice++) {
-
 			// No data, or paused -> skip channel
 			if (!_voice[voice].data || (_voice[voice].period <= 0))
 				continue;
@@ -115,8 +117,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 			// the requested output sampling rate (typicall 44.1 kHz or 22.05 kHz)
 			// as well as the "period" of the channel we are processing right now,
 			// to compute the correct output 'rate'.
-			const double frequency = (7093789.2 / 2.0) / _voice[voice].period;
-			frac_t rate = doubleToFrac(frequency / _rate);
+			frac_t rate = doubleToFrac(_periodScale / _voice[voice].period);
 
 			// Cap the volume
 			_voice[voice].volume = MIN((byte) 0x40, _voice[voice].volume);
@@ -126,6 +127,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 			frac_t offset = _voice[voice].offset;
 			frac_t sLen = intToFrac(_voice[voice].length);
 			const int8 *data = _voice[voice].data;
+			int dmaCount = _voice[voice].dmaCount;
 			int16 *p = buffer;
 			int end = 0;
 			int neededSamples = nSamples;
@@ -141,21 +143,27 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 
 			// If we have not yet generated enough samples, and looping is active: loop!
 			if (neededSamples > 0 && _voice[voice].lengthRepeat > 2) {
-
 				// At this point we know that we have used up all samples in the buffer, so reset it.
 				_voice[voice].data = data = _voice[voice].dataRepeat;
 				_voice[voice].length = _voice[voice].lengthRepeat;
 				sLen = intToFrac(_voice[voice].length);
 
+				if (_voice[voice].period != _voice[voice].periodRepeat) {
+					_voice[voice].period = _voice[voice].periodRepeat;
+					rate = doubleToFrac(_periodScale / _rate);
+				}
+
 				// If the "rate" exceeds the sample rate, we would have to perform constant
 				// wrap arounds. So, apply the first step of the euclidean algorithm to
 				// achieve the same more efficiently: Take rate modulo sLen
+				// TODO: This messes up dmaCount
 				if (sLen < rate)
 					rate %= sLen;
 
 				// Repeat as long as necessary.
 				while (neededSamples > 0) {
-					offset = 0;
+					offset &= FRAC_LO_MASK;
+					dmaCount++;
 
 					// Compute the number of samples to generate (see above) and mix 'em.
 					end = MIN(neededSamples, (int)((sLen - offset + rate - 1) / rate));
@@ -164,12 +172,19 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 				}
 			}
 
+			// TODO correctly handle setting registers after last 2 bytes red from channel
+			if (offset > sLen) {
+				offset &= FRAC_LO_MASK;
+				dmaCount++;
+			}
+
 			// Write back the cached data
 			_voice[voice].offset = offset;
+			_voice[voice].dmaCount = dmaCount;
 
 		}
 		buffer += _stereo ? nSamples * 2 : nSamples;
-		_curInt += nSamples;
+		_curInt -= nSamples;
 		samples -= nSamples;
 	}
 	return numSamples;

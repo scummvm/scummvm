@@ -295,6 +295,40 @@ static void setupKeymapper(OSystem &system) {
 
 }
 
+#if 1
+void tfmxmain(int argc, const char * const argv[]);
+
+extern "C" int scummvm_main(int argc, const char * const argv[]) {
+	Common::String specialDebug;
+	Common::String command;
+
+	// Verify that the backend has been initialized (i.e. g_system has been set).
+	assert(g_system);
+	OSystem &system = *g_system;
+
+	// Register config manager defaults
+	Base::registerDefaults();
+
+	// Load the plugins.
+	PluginManager::instance().loadPlugins();
+
+	// Init the backend. Must take place after all config data (including
+	// the command line params) was read.
+	system.initBackend();
+
+	// pass control to my own main-function, including arguments
+	tfmxmain(argc,argv);
+
+	PluginManager::instance().unloadPlugins();
+	PluginManager::destroy();
+	Common::ConfigManager::destroy();
+	Common::SearchManager::destroy();
+	GUI::GuiManager::destroy();
+
+	return 0;
+}
+#else
+
 extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::String specialDebug;
 	Common::String command;
@@ -415,3 +449,5 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	return 0;
 }
+
+#endif

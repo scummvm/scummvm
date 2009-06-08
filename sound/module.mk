@@ -29,6 +29,7 @@ MODULE_OBJS := \
 	mods/paula.o \
 	mods/rjp1.o \
 	mods/soundfx.o \
+	mods/tfmx.o \
 	softsynth/adlib.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
