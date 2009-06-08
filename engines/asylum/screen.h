@@ -31,7 +31,7 @@ class OSystem;
 #define	SCREEN_DEPTH	480
 
 #define PAL_SIZE		256
-#define BRIGHTNESS		10
+#define BRIGHTNESS		7
 
 namespace Asylum {
 
@@ -65,6 +65,7 @@ private:
 
 	uint8 _currentPalette[PAL_SIZE * 4];
 	bool   _updatePalette;
+
 }; // end of class Screen
 
 } // end of namespace Asylum
