@@ -876,7 +876,7 @@ reg_t kIsItSkip(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	res = s->gfx_state->gfxResMan->getView(view, &loop, &cel, 0);
 
 	if (!res) {
-		GFXWARN("Attempt to get cel parameters for invalid view %d\n", view);
+		warning("[GFX] Attempt to get cel parameters for invalid view %d", view);
 		return make_reg(0, -1);
 	}
 

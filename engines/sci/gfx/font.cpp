@@ -104,7 +104,7 @@ bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments, gfx_bitmap
 				}
 
 				if (last_breakpoint == 0) {
-					GFXWARN("Warning: maxsize %d too small for '%s'\n", max_width, text);
+					warning("[GFX] maxsize %d too small for '%s'", max_width, text);
 				}
 
 				if (last_breakpoint > maxwidth)
@@ -197,7 +197,7 @@ gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int cha
 
 	int colors_nr = !!fg0 + !!fg1 + !!bg;
 	if (colors_nr == 0) {
-		GFXWARN("Pixmap would have zero colors, resetting!\n");
+		warning("[GFX] Pixmap would have zero colors, resetting");
 		colors_nr = 3;
 		hack = 1;
 		fg0 = fg1 = bg = &dummy;

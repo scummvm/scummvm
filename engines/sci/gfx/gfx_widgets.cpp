@@ -1270,7 +1270,7 @@ static int _gfxwop_list_equals(GfxWidget *widget, GfxWidget *other) {
 		return 0;
 
 	if (!GFXW_IS_LIST(widget)) {
-		GFXWARN("_gfxwop_list_equals(): Method called on non-list!\n");
+		warning("[GFX] _gfxwop_list_equals(): Method called on non-list");
 		widget->print(0);
 		sciprintf("\n");
 		return 0;
@@ -1508,7 +1508,7 @@ GfxPort::~GfxPort() {
 		}
 
 		if (_visual->_portRefs[_ID] != this) {
-			GFXWARN("While freeing port %d: Port is at %p, but port list indicates %p", _ID, (void *)this, (void *)_visual->_portRefs[_ID]);
+			warning("[GFX] While freeing port %d: Port is at %p, but port list indicates %p", _ID, (void *)this, (void *)_visual->_portRefs[_ID]);
 		} else
 			_visual->_portRefs[_ID] = NULL;
 
@@ -1542,7 +1542,7 @@ int GfxPort::setVisual(GfxVisual *visual) {
 
 	if (_decorations)
 		if (_decorations->setVisual(visual)) {
-			GFXWARN("Setting the visual for decorations failed for port ");
+			warning("[GFX] Setting the visual for decorations failed for port ");
 			this->print(1);
 			return 1;
 		}
@@ -1631,7 +1631,7 @@ GfxPort *gfxw_remove_port(GfxVisual *visual, GfxPort *port) {
 	VERIFY_WIDGET(port);
 
 	if (!visual->_contents) {
-		GFXWARN("Attempt to remove port from empty visual\n");
+		warning("[GFX] Attempt to remove port from empty visual");
 		return NULL;
 	}
 

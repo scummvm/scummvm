@@ -59,10 +59,10 @@ GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, Gf
 	if (_version < SCI_VERSION_01_VGA || !_isVGA) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
 	} else if (_version == SCI_VERSION_1_1) {
-		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
+		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #ifdef ENABLE_SCI32
 	} else if (_version == SCI_VERSION_32) {
-		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
+		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #endif
 	} else {
 		Resource *res = resManager->findResource(ResourceId(kResourceTypePalette, 999), 0);
@@ -201,7 +201,7 @@ void gfxr_free_resource(gfx_resource_t *resource, int type) {
 		break;
 
 	default:
-		GFXWARN("Attempt to free invalid resource type %d\n", type);
+		warning("[GFX] Attempt to free invalid resource type %d", type);
 	}
 
 	free(resource);
@@ -473,7 +473,7 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 		res = resMap.contains(old_nr) ? resMap[old_nr] : NULL;
 
 		if (!res) {
-			GFXWARN("Attempt to add pic %d to non-existing pic %d\n", new_nr, old_nr);
+			warning("[GFX] Attempt to add pic %d to non-existing pic %d", new_nr, old_nr);
 			return NULL;
 		}
 	}
@@ -578,26 +578,26 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	*loop = CLIP<int>(*loop, 0, view->loops_nr - 1);
 
 	if (*loop < 0) {
-		GFXWARN("View %d has no loops\n", nr);
+		warning("[GFX] View %d has no loops", nr);
 		return NULL;
 	}
 
 	loop_data = view->loops + (*loop);
 	if (loop_data == NULL) {
-		GFXWARN("Trying to load invalid loop %d of view %d\n", *loop, nr);
+		warning("[GFX] Trying to load invalid loop %d of view %d", *loop, nr);
 		return NULL;
 	}
 
 	*cel = CLIP<int>(*cel, 0, loop_data->cels_nr - 1);
 
 	if (*cel < 0) {
-		GFXWARN("View %d loop %d has no cels\n", nr, *loop);
+		warning("[GFX] View %d loop %d has no cels", nr, *loop);
 		return NULL;
 	}
 
 	cel_data = loop_data->cels[*cel];
 	if (loop_data == NULL) {
-		GFXWARN("Trying to load invalid view/loop/cel %d/%d/%d\n", nr, *loop, *cel);
+		warning("[GFX] Trying to load invalid view/loop/cel %d/%d/%d", nr, *loop, *cel);
 		return NULL;
 	}
 
@@ -663,7 +663,7 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 			return NULL;
 
 		if (_version >= SCI_VERSION_1_1) {
-			GFXWARN("Attempt to retrieve cursor in SCI1.1 or later\n");
+			warning("[GFX] Attempt to retrieve cursor in SCI1.1 or later");
 			return NULL;
 		}
 

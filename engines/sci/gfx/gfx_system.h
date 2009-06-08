@@ -37,12 +37,6 @@ namespace Sci {
 
 /* General output macros */
 #  define GFXERROR sciprintf("GFX Error: %s, L%d:", __FILE__, __LINE__); error
-#  define GFXWARN sciprintf("GFX Warning: %s, L%d:", __FILE__, __LINE__); warning
-#  ifdef GFX_DEBUG
-#    define GFXDEBUG sciprintf("GFX-debug: %s, L%d:", __FILE__, __LINE__); sciprintf
-#  else /* !GFX_DEBUG */
-#    define GFXDEBUG if (0) printf
-#  endif /* !GFX_DEBUG */
 
 /***********************/
 /*** Data structures ***/
