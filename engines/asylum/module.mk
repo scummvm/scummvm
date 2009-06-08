@@ -9,8 +9,7 @@ MODULE_OBJS := \
 	asylum.o \
 	detection.o \
 	resourcemanager.o \
-	screen.o \
-	menu.o
+	screen.o
 	
 
 # This module can be built as a plugin
