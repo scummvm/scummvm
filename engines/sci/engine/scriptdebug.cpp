@@ -61,32 +61,6 @@ static reg_t **p_vars;
 static reg_t **p_var_base;
 static int *p_var_max; // May be NULL even in valid state!
 
-char inputbuf[256] = "";
-
-union cmd_param_t {
-	int32 val;
-	const char *str;
-	reg_t reg;
-};
-
-typedef int (*ConCommand)(EngineState *s, const Common::Array<cmd_param_t> &cmdParams);
-
-struct cmd_mm_entry_t {
-	const char *name;
-	const char *description;
-}; // All later structures must "extend" this
-
-struct cmd_command_t : public cmd_mm_entry_t {
-	ConCommand command;
-	const char *param;
-};
-
-// Dummy function, so that it compiles
-int con_hook_command(ConCommand command, const char *name, const char *param, const char *description) {
-
-	return 0;
-}
-
 extern const char *selector_name(EngineState *s, int selector);
 
 int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
@@ -365,68 +339,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	return retval;
 }
 
-static int c_go(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	g_debug_seeking = 0;
-	g_debugstate_valid = 0;
-	return 0;
-}
-
-static int c_send(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
-	reg_t object = cmdParams[0].reg;
-	const char *selector_name = cmdParams[1].str;
-	StackPtr stackframe = s->_executionStack.front().sp;
-	int selector_id;
-	unsigned int i;
-	ExecStack *xstack;
-	Object *o;
-	reg_t fptr;
-
-	selector_id = s->_kernel->findSelector(selector_name);
-
-	if (selector_id < 0) {
-		sciprintf("Unknown selector: \"%s\"\n", selector_name);
-		return 1;
-	}
-
-	o = obj_get(s, object);
-	if (o == NULL) {
-		sciprintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
-		return 1;
-	}
-
-	SelectorType selector_type = lookup_selector(s, object, selector_id, 0, &fptr);
-
-	if (selector_type == kSelectorNone) {
-		sciprintf("Object does not support selector: \"%s\"\n", selector_name);
-		return 1;
-	}
-
-	stackframe[0] = make_reg(0, selector_id);
-	stackframe[1] = make_reg(0, cmdParams.size() - 2);
-
-	for (i = 2; i < cmdParams.size(); i++)
-		stackframe[i] = cmdParams[i].reg;
-
-	xstack = add_exec_stack_entry(s, fptr,
-	                 s->_executionStack.front().sp + cmdParams.size(),
-	                 object, cmdParams.size() - 2,
-	                 s->_executionStack.front().sp - 1, 0, object,
-	                 s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-	xstack->selector = selector_id;
-	xstack->type = selector_type == kSelectorVariable ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
-
-	// Now commit the actual function:
-	xstack = send_selector(s, object, object, stackframe, cmdParams.size() - 2, stackframe);
-
-	xstack->sp += cmdParams.size();
-	xstack->fp += cmdParams.size();
-
-	s->_executionStackPosChanged = true;
-
-	return 0;
-}
-
-// Breakpoint commands
 
 void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *objp, int *restadjust,
 	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
@@ -517,9 +429,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		
 		sciprintf("Step #%d\n", script_step_counter);
 		disassemble(s, *pc, 0, 1);
-
-		con_hook_command(c_send, "send", "!asa*", "Sends a message to an object\nExample: send ?fooScript cue");
-		con_hook_command(c_go, "go", "", "Executes the script.\n");
 	}
 
 }

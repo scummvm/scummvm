@@ -129,6 +129,8 @@ private:
 	bool cmdStepCallk(int argc, const char **argv);
 	bool cmdDissassemble(int argc, const char **argv);
 	bool cmdDissassembleAddress(int argc, const char **argv);
+	bool cmdSend(int argc, const char **argv);
+	bool cmdGo(int argc, const char **argv);
 	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);

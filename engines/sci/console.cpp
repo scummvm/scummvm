@@ -159,6 +159,8 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("step_callk",			WRAP_METHOD(Console, cmdStepCallk));
 	DCmd_Register("disasm",				WRAP_METHOD(Console, cmdDissassemble));
 	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDissassembleAddress));
+	DCmd_Register("send",				WRAP_METHOD(Console, cmdSend));
+	DCmd_Register("go",					WRAP_METHOD(Console, cmdGo));
 	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
@@ -316,6 +318,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" step_callk - Steps forward until it hits the next callk operation, or a specific callk (specified as a parameter)\n");
 	DebugPrintf(" disasm - Disassembles a method by name\n");
 	DebugPrintf(" disasm_addr - Disassembles one or more commands\n");
+	DebugPrintf(" send - Sends a message to an object\n");
+	DebugPrintf(" go - Executes the script\n");
 	DebugPrintf("\n");
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list - Lists the current breakpoints\n");
@@ -2256,6 +2260,87 @@ bool Console::cmdDissassembleAddress(int argc, const char **argv) {
 		//vpc = disassemble(_vm->_gamestate, vpc, do_bwc, do_bytes);
 
 	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--op_count));
+
+	return true;
+}
+
+bool Console::cmdSend(int argc, const char **argv) {
+	if (argc < 3) {
+		DebugPrintf("Sends a message to an object.\n");
+		DebugPrintf("Usage: %s <object> <selector name> <param1> <param2> ... <paramn>\n", argv[0]);
+		DebugPrintf("Example: send ?fooScript cue\n");
+		return true;
+	}
+
+	reg_t object;
+	
+	if (parse_reg_t(_vm->_gamestate, argv[1], &object)) {
+		DebugPrintf("Invalid address passed for parameter 1.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+	
+	const char *selector_name = argv[2];
+	StackPtr stackframe = _vm->_gamestate->_executionStack.front().sp;
+	int selector_id;
+	int i;
+	ExecStack *xstack;
+	Object *o;
+	reg_t fptr;
+
+	selector_id = _vm->_gamestate->_kernel->findSelector(selector_name);
+
+	if (selector_id < 0) {
+		sciprintf("Unknown selector: \"%s\"\n", selector_name);
+		return 1;
+	}
+
+	o = obj_get(_vm->_gamestate, object);
+	if (o == NULL) {
+		sciprintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
+		return 1;
+	}
+
+	SelectorType selector_type = lookup_selector(_vm->_gamestate, object, selector_id, 0, &fptr);
+
+	if (selector_type == kSelectorNone) {
+		sciprintf("Object does not support selector: \"%s\"\n", selector_name);
+		return 1;
+	}
+
+	stackframe[0] = make_reg(0, selector_id);
+	stackframe[1] = make_reg(0, argc - 3);	// -object -selector name -command name
+
+	for (i = 3; i < argc; i++) {
+		if (parse_reg_t(_vm->_gamestate, argv[i], &stackframe[i])) {
+			DebugPrintf("Invalid address passed for parameter %d.\n", i);
+			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			return true;
+		}
+	}
+
+	xstack = add_exec_stack_entry(_vm->_gamestate, fptr,
+	                 _vm->_gamestate->_executionStack.front().sp + argc,
+	                 object, argc - 3,
+	                 _vm->_gamestate->_executionStack.front().sp - 1, 0, object,
+	                 _vm->_gamestate->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
+	xstack->selector = selector_id;
+	xstack->type = selector_type == kSelectorVariable ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
+
+	// Now commit the actual function:
+	xstack = send_selector(_vm->_gamestate, object, object, stackframe, argc - 3, stackframe);
+
+	xstack->sp += argc;
+	xstack->fp += argc;
+
+	_vm->_gamestate->_executionStackPosChanged = true;
+
+	return true;
+}
+
+bool Console::cmdGo(int argc, const char **argv) {
+	g_debug_seeking = 0;
+	g_debugstate_valid = 0;
 
 	return true;
 }
