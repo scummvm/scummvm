@@ -26,7 +26,7 @@
 #ifndef GRAPHICS_PIXELFORMAT_H
 #define GRAPHICS_PIXELFORMAT_H
 
-#include "common/scummsys.h"
+#include "common/sys.h"
 
 namespace Graphics {
 
