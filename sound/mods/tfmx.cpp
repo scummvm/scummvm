@@ -51,7 +51,7 @@ Tfmx::Tfmx(int rate, bool stereo)
 	_playerCtx.song = -1;
 
 	for (int i = 0; i < kNumVoices; ++i) 
-		_channelCtx[i].paulaChannel = i;
+		_channelCtx[i].paulaChannel = (byte)i;
 }
 
 Tfmx::~Tfmx() {
@@ -103,13 +103,29 @@ void Tfmx::effects(ChannelContext &channel) {
 	else
 		channel.sfxLocked = false;
 
+	// addBegin
+
 	// TODO: macroNote pending?
 	if (0) {
 		channel.sfxLocked = false;
 		// TODO: macronote
 	}
 
-	// vibratio
+	// vibrato
+	if (channel.vibLength) {
+		channel.vibValue += channel.vibDelta;
+		const uint16 setPeriod = (channel.period * ((1 << 11) + channel.vibValue)) >> 11;
+
+		if (!channel.portaRate)
+			Paula::setChannelPeriod(channel.paulaChannel, setPeriod);
+
+		if (--channel.vibCount == 0) {
+			channel.vibCount = channel.vibLength;
+			channel.vibDelta = -channel.vibDelta;
+		}
+	}
+
+
 
 	// porta
 
@@ -127,9 +143,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 
 	switch (macroPtr[0]) {
 	case 0x00:	// Reset + DMA Off. Parameters: deferWait, addset, vol
-		channel.envReset = 0;
-		channel.vibReset = 0;
-		channel.portaRate = 0;
+		clearEffects(channel);
 		// FT
 	case 0x13:	// DMA Off. Parameters:  deferWait, addset, vol
 		// TODO: implement PArameters
@@ -200,12 +214,15 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		return false;
 
 	case 0x1F:	// AddPrevNote. Parameters: Note, Finetune(W)
+		temp = channel.prevNote;
+		goto setNote;
 	case 0x08:	// AddNote. Parameters: Note, Finetune(W)
-		temp = (macroPtr[0] == 0x08) ? channel.note : channel.prevNote;
+		temp = channel.note;
 		// Fallthrough to SetNote
+setNote:
 	case 0x09: {	// SetNote. Parameters: Note, Finetune(W)
 		const uint16 noteInt = noteIntervalls[(temp + macroPtr[1]) & 0x3F];
-		const uint16 finetune = READ_BE_UINT16(&macroPtr[2]) + channel.fineTune + 0x0100;
+		const uint16 finetune = READ_BE_UINT16(&macroPtr[2]) + channel.fineTune + (1 << 8);
 		channel.portaDestPeriod = (uint16)((noteInt * finetune) >> 8);
 		if (!channel.portaRate) {
 			channel.period = channel.portaDestPeriod;
@@ -216,7 +233,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 
 	case 0x0A:	// Clear Effects
 		channel.envReset = 0;
-		channel.vibReset = 0;
+		channel.vibLength = 0;
 		channel.portaRate = 0;
 		return true;
 
@@ -226,8 +243,14 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		return true;
 
 	case 0x0C:	// Vibrato. Parameters: Speed, intensity
-		macroPtr[1];
-		macroPtr[3];
+		channel.vibLength = macroPtr[1];
+		channel.vibCount = macroPtr[1] / 2;
+		channel.vibDelta = macroPtr[3];
+		if (!channel.portaRate) {
+			// TODO: unnecessary command?
+			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+			channel.vibValue = 0;
+		}
 		return true;
 
 	case 0x0D:	// Add Volume. Parameters: unknown, volume
@@ -295,7 +318,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		temp = READ_BE_UINT16(&macroPtr[2]);
 		assert(!(temp & 1));
 		channel.sampleStart += temp & 0xFFFE;
-		channel.sampleLen -= (temp / 2);
+		channel.sampleLen -= (uint16)(temp / 2);
 		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
 		Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
 		return true;
@@ -604,10 +627,9 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 			channel.keyUp = false;
 			break;
 		case 6:	// Vibratio
-			channel.vibReset = param1 & 0xFE;
-			channel.vibTime = param1 / 2;
-			channel.vibFlag = 1;
-			channel.vibOffset = 0;
+			channel.vibLength = param1 & 0xFE;
+			channel.vibCount = param1 / 2;
+			channel.vibValue = 0;
 			break;
 		case 7:	// Envelope
 			channel.envRate = param1;
@@ -745,10 +767,13 @@ void Tfmx::doMacro(int macro, int note) {
 
 	for (int i = 0; i < kNumVoices; ++i) {
 		_channelCtx[i].sfxLocked = false;
+		_channelCtx[i].sfxLockTime = -1;
+		clearEffects(_channelCtx[i]);
+		_channelCtx[i].vibValue = 0;
 		stopChannel(_channelCtx[i]);
 	}
 
-	noteCommand(note, macro, channel, 0);
+	noteCommand((uint8)note, (uint8)macro, (uint8)channel, 0);
 
 	setTimerBaseValue(kPalCiaClock);
 	setInterruptFreqUnscaled(kPalDefaultCiaVal);
@@ -787,6 +812,9 @@ void Tfmx::doSong(int songPos) {
 
 	for (int i = 0; i < kNumVoices; ++i) {
 		_channelCtx[i].sfxLocked = false;
+		_channelCtx[i].sfxLockTime = -1;
+		clearEffects(_channelCtx[i]);
+		_channelCtx[i].vibValue = 0;
 		stopChannel(_channelCtx[i]);
 	}
 

@@ -150,7 +150,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 
 				if (_voice[voice].period != _voice[voice].periodRepeat) {
 					_voice[voice].period = _voice[voice].periodRepeat;
-					rate = doubleToFrac(_periodScale / _rate);
+					rate = doubleToFrac(_periodScale / _voice[voice].period);
 				}
 
 				// If the "rate" exceeds the sample rate, we would have to perform constant

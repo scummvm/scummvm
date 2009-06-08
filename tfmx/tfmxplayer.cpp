@@ -111,7 +111,7 @@ void tfmxmain(const int argc, const char *const argv[]) {
 				debug( "play Macro %02X", param);
 				dumpMacro(*player, 0x11);
 				playflag = 1;
-				player->doMacro(param,0x40);
+				player->doMacro(param,0x1B);
 				++i;
 			}
 			break;
@@ -129,9 +129,9 @@ void tfmxmain(const int argc, const char *const argv[]) {
 
 	if (!playflag) {
 		playflag = 1;
-		//player->doMacro(20,0x40);
-		player->doSong(4);
-		dumpTrackstepsBySong(*player, 4);
+		player->doMacro(0x17,0x1B);
+		//player->doSong(4);
+		//dumpTrackstepsBySong(*player, 4);
 	}
 
 

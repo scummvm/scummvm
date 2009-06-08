@@ -122,7 +122,7 @@ public:
 		uint32	macroOffset;
 		uint32	macroReturnOffset;
 		uint16	macroStep;
-		uint32	macroReturnStep;
+		uint16	macroReturnStep;
 		uint8	macroLoopCount;
 		bool	macroRun;
 
@@ -142,7 +142,7 @@ public:
 		uint8	relVol;
 		uint8	note;
 		uint8	prevNote;
-		uint16	fineTune;
+		int16	fineTune;
 
 		uint16	portaDestPeriod;
 		uint16	portaPeriod;
@@ -155,15 +155,14 @@ public:
 		uint8	envRate;
 		uint8	envEndVolume;
 
-		int16	vibOffset;
-		int8	vibWidth;
-		uint8	vibFlag;
-		uint8	vibReset;
-		uint8	vibTime;
+		uint8	vibLength;
+		uint8	vibCount;
+		int16	vibValue;
+		int8	vibDelta;
 
 		uint8	addBeginTime;
 		uint8	addBeginReset;
-		int32	addBegin;
+		int16	addBeginDelta;
 	} _channelCtx[kNumVoices];
 
 	struct PatternContext {
@@ -209,6 +208,14 @@ public:
 		channel.macroRun = true;
 		channel.macroLoopCount = 0xFF;
 		channel.countDmaInterrupts = false;
+	}
+
+	void clearEffects(ChannelContext &channel) {
+		channel.envReset = 0;
+
+		channel.vibLength = 0;
+
+		channel.portaRate = 0;
 	}
 
 	void stopChannel(ChannelContext &channel) {
