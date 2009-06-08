@@ -157,6 +157,9 @@ public:
 		#if PLUGIN_ENABLED_STATIC(TUCKER)
 		LINK_PLUGIN(TUCKER)
 		#endif
+		#if PLUGIN_ENABLED_STATIC(DRACI)
+		LINK_PLUGIN(DRACI)
+		#endif
 
 		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
