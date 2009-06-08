@@ -1223,7 +1223,6 @@ static void PlayActorChoreLooping() {
 static void SetActorChoreLooping() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object choreObj = lua_getparam(2);
-	lua_Object modeObj = lua_getparam(3);
 	lua_Object costumeObj = lua_getparam(4);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKID_BE('ACTR'))
