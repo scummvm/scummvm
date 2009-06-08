@@ -979,25 +979,25 @@ void KyraEngine_MR::albumSwitchPages(int oldPage, int newPage, int srcPage) {
 
 		_screen->copyRegion(260, 7, 260, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x32, 0xBA, srcPage, 0, 2);
 
 		_screen->copyRegion(210, 7, 210, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->copyRegion(160, 7, 160, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0x10, 0x07, 0x6E, 0x07, 0x96, 0xBA, 0x32, 0xBA, 2, 0, 2);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0x10, 0x07, 0x3C, 0x07, 0x96, 0xBA, 0x64, 0xBA, 2, 0, 2);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->copyRegion(10, 7, 10, 7, 150, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -1006,25 +1006,25 @@ void KyraEngine_MR::albumSwitchPages(int oldPage, int newPage, int srcPage) {
 
 		_screen->copyRegion(10, 7, 10, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0x0A, 0x07, 0x6E, 0x07, 0x96, 0xBA, 0x32, 0xBA, srcPage, 0, 2);
 
 		_screen->copyRegion(60, 7, 60, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->copyRegion(110, 7, 110, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x32, 0xBA, 2, 0, 2);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x64, 0xBA, 2, 0, 2);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->copyRegion(160, 7, 160, 7, 150, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();

@@ -428,6 +428,9 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 		memcpy(dst + x2 + cdm.sx, _wsaFrameAnimBuffer + na, w2);
 		dst += 320;
 	} while (++nb < h2);
+
+	if (!dstPage)
+		addDirtyRect(x2, y2, w2, h2);
 }
 
 bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2) {
