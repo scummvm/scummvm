@@ -407,6 +407,9 @@ public:
 		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switchting aspect ratio correction mode */
 		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switchting fullscreen mode */
 		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switchting the GFX graphics mode (setGraphicsMode) */
+#ifdef ENABLE_16BIT
+		kTransactionPixelFormatNotSupported = (1 << 4), /**< Failed setting the color format (function not yet implemented) */
+#endif
 		kTransactionSizeChangeFailed = (1 << 3)		/**< Failed switchting the screen dimensions (initSize) */
 	};
 
@@ -604,6 +607,14 @@ public:
 	 * @see Graphics::PixelFormat
 	 */
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
+
+#ifdef ENABLE_16BIT
+	/**
+	 * Returns the pixel format description of the game screen.
+	 * @see Graphics::PixelFormat
+	 */
+	virtual Graphics::PixelFormat getScreenFormat() const = 0;
+#endif
 
 	/**
 	 * Reset the overlay.

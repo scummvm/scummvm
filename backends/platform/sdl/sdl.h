@@ -178,6 +178,12 @@ public:
 
 	// Overlay
 	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
+
+#ifdef ENABLE_16BIT
+	// Game screen
+	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
+#endif
+
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
@@ -232,7 +238,12 @@ protected:
 	// unseen game screen
 	SDL_Surface *_screen;
 #ifdef ENABLE_16BIT
-	SDL_Surface *_screen16;
+	Graphics::PixelFormat _screenFormat;
+
+	//HACK This is a temporary hack to get 16-bit graphics
+	//displaying quickly, which will be removed in favor of 
+	//configuring the format of _screen on a per-game basis
+	SDL_Surface *_screen16;	
 #endif
 
 	// temporary screen (for scalers)
