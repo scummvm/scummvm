@@ -2363,6 +2363,62 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
+			DE_DEU,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeInca2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
+			IT_ITA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeInca2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
+			ES_ESP,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeInca2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "d33011df8758ac64ca3dca77c7719001", 908612),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeInca2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"inca2",
 			"Non-Interactive Demo",
 			{
 				{"cons.imd", 0, "f896ba0c4a1ac7f7260d342655980b49", 17804},
