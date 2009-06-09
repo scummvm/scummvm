@@ -844,6 +844,42 @@ static const GOBGameDescription gameDescriptions[] = {
 				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
 				{0, 0, 0, 0}
 			},
+			EN_USA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
+				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob2",
+			"",
+			{
+				{"intro.stk", 0, "25a99827cd59751a80bed9620fb677a0", 893302},
+				{"musmac1.mid", 0, "834e55205b710d0af5f14a6f2320dd8e", 8661},
+				{0, 0, 0, 0}
+			},
 			DE_DEU,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
