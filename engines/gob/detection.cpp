@@ -1788,6 +1788,42 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
+	{
+		{
+			"gob3",
+			"",
+			{
+				{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
+				{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob3",
+			"",
+			{
+				{"intro.stk", 0, "16b014bf32dbd6ab4c5163c44f56fed1", 445104},
+				{"musmac1.mid", 0, "948c546cad3a9de5bff3fe4107c82bf1", 6404},
+				{0, 0, 0, 0}
+			},
+			EN_GRB,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
 	{ // Supplied by fac76 in bug report #1742716
 		{
 			"gob3",
