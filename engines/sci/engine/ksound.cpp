@@ -1027,7 +1027,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			// In SCI1.1: tests for digital audio support
 			return make_reg(0, 1);
 		} else {
-			s->_sound._audioResource->setAudioLang(argv[1].toSint16());
+			s->resmgr->setAudioLanguage(argv[1].toSint16());
 		}
 		break;
 	default:
