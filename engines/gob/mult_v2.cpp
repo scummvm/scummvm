@@ -269,6 +269,19 @@ void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 
 	_multData->imdFiles = new char[size * 14];
 	memcpy(_multData->imdFiles, _vm->_global->_inter_execPtr, size * 14);
+
+	// WORKAROUND: The Windows version of Lost in Time has VMD not IMD files,
+	//             but they are still referenced as IMD.
+	if ((_vm->getGameType() == kGameTypeLostInTime) &&
+	    (_vm->getPlatform() == Common::kPlatformWindows)) {
+
+		for (int i = 0; i < size; i++) {
+			char *dot = strrchr(_multData->imdFiles + (i * 14), '.');
+			if (dot)
+				*dot = '\0';
+		}
+	}
+
 	_vm->_global->_inter_execPtr += size * 14;
 	data.seek(2, SEEK_CUR);
 	for (int i = 0; i < 4; i++) {
