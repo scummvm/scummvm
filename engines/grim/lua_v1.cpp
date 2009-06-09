@@ -3403,7 +3403,6 @@ static void SendObjectToBack() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT')) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
-		// moving object to top in list ?
 		g_grim->currScene()->moveObjectStateToFirst(state);
 	}
 }
@@ -3412,7 +3411,6 @@ static void SendObjectToFront() {
 	lua_Object param = lua_getparam(1);
 	if (lua_isuserdata(param) && lua_tag(param) == MKID_BE('STAT')) {
 		ObjectState *state = static_cast<ObjectState *>(lua_getuserdata(param));
-		// moving object to last in list ?
 		g_grim->currScene()->moveObjectStateToLast(state);
 	}
 }
