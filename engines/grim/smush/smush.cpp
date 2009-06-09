@@ -32,7 +32,6 @@
 
 namespace Grim {
 
-#define SMUSH_LOOPMOVIE(x)		(x & 0x000001)
 #define SMUSH_ALTSPEED(x)		(x & 0x000004)
 
 #define ANNO_HEADER "MakeAnim animation type 'Bl16' parameters: "
@@ -250,7 +249,7 @@ void Smush::handleFramesHeader() {
 	delete[] f_header;
 }
 
-bool Smush::setupAnim(const char *file, int x, int y) {
+bool Smush::setupAnim(const char *file, bool looping, int x, int y) {
 	uint32 tag;
 	int32 size;
 	int16 flags;
@@ -298,7 +297,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 		printf("Bad time: %d, suggested: %d\n", (int)_speed, (int)(2 * _speed));
 		_speed = 66667;
 	}
-	_videoLooping = SMUSH_LOOPMOVIE(flags);
+	_videoLooping = looping;
 	_startPos = NULL; // Set later
 	delete[] s_header;
 
@@ -310,14 +309,14 @@ void Smush::stop() {
 	g_grim->setMode(ENGINE_MODE_NORMAL);
 }
 
-bool Smush::play(const char *filename, int x, int y) {
+bool Smush::play(const char *filename, bool looping, int x, int y) {
 	deinit();
 
 	if (gDebugLevel == DEBUG_SMUSH)
 		printf("Playing video '%s'.\n", filename);
 
 	// Load the video
-	if (!setupAnim(filename, x, y))
+	if (!setupAnim(filename, looping, x, y))
 		return false;
 
 	handleFramesHeader();

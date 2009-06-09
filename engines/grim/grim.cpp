@@ -601,7 +601,7 @@ void GrimEngine::handleDebugLoadResource() {
 	else if (strstr(buf, ".lip"))
 		resource = (void *)g_resourceloader->loadLipSync(buf);
 	else if (strstr(buf, ".snm"))
-		resource = (void *)g_smush->play(buf, 0, 0);
+		resource = (void *)g_smush->play(buf, false, 0, 0);
 	else if (strstr(buf, ".wav") || strstr(buf, ".imu")) {
 		g_imuse->startSfx(buf);
 		resource = (void *)1;
@@ -714,6 +714,8 @@ void GrimEngine::updateDisplayScene() {
 	} else if (_mode == ENGINE_MODE_NORMAL) {
 		if (!_currScene)
 			return;
+
+		cameraPostChangeHandle(_currScene->setup());
 
 		g_driver->clearScreen();
 
@@ -1112,10 +1114,12 @@ void GrimEngine::setScene(Scene *scene) {
 
 void GrimEngine::makeCurrentSetup(int num) {
 	int prevSetup = g_grim->currScene()->setup();
-	g_grim->currScene()->setSetup(num);
-
-	cameraChangeHandle(prevSetup, num);
-	cameraPostChangeHandle(num);
+	if (prevSetup != num) {
+		currScene()->setSetup(num);
+		currScene()->setSoundParameters(20, 127);
+		cameraChangeHandle(prevSetup, num);
+		// here should be set sound position
+	}
 }
 
 void GrimEngine::setTextSpeed(int speed) {

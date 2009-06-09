@@ -3004,8 +3004,7 @@ static void GetSpeechMode() {
 }
 
 static void StartFullscreenMovie() {
-	bool mode = getbool(2);
-	warning("StartFullscreenMovie() mode: %d", (int)mode);
+	bool looping = getbool(2);
 
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
@@ -3014,14 +3013,12 @@ static void StartFullscreenMovie() {
 	}
 	CleanBuffer();
 	g_grim->setMode(ENGINE_MODE_SMUSH);
-	pushbool(g_smush->play(lua_getstring(name), 0, 0));
+	pushbool(g_smush->play(lua_getstring(name), looping, 0, 0));
 }
 
 static void StartMovie() {
-	bool mode = getbool(2);
+	bool looping = getbool(2);
 	int x = 0, y = 0;
-
-	warning("StartMovie() mode: %d", (int)mode);
 
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
@@ -3035,7 +3032,7 @@ static void StartMovie() {
 		y = (int)lua_getnumber(lua_getparam(4));
 
 	g_grim->setMode(ENGINE_MODE_NORMAL);
-	pushbool(g_smush->play(lua_getstring(name), x, y));
+	pushbool(g_smush->play(lua_getstring(name), looping, x, y));
 }
 
 /* Fullscreen movie playing query and normal movie

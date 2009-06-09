@@ -95,7 +95,7 @@ public:
 	Smush();
 	~Smush();
 
-	bool play(const char *filename, int x, int y);
+	bool play(const char *filename, bool looping, int x, int y);
 	void stop();
 	void pause(bool pause) { _videoPause = pause; }
 	bool isPlaying() { return !_videoFinished; }
@@ -118,7 +118,7 @@ private:
 	void handleWave(const byte *src, uint32 size);
 	void init();
 	void deinit();
-	bool setupAnim(const char *file, int x, int y);
+	bool setupAnim(const char *file, bool looping, int x, int y);
 	void updateGLScreen();
 };
 
