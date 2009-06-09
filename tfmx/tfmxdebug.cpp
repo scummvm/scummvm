@@ -120,6 +120,15 @@ void displayTrackstep(const void *const vptr) {
 	}
 }
 
+void displayMacroStep(const void *const vptr, int chan, int index) {
+	const byte *const macroData = (const byte *const)vptr;
+
+	if (macroData[0] < ARRAYSIZE(macrocmds))
+		debug("%02X %02X %s %02X%02X%02X", chan, index, macrocmds[macroData[0]], macroData[1], macroData[2], macroData[3]);
+	else
+		debug("%02X %02X Unkown Macro #%02X %02X%02X%02X", chan, index, macroData[0], macroData[1], macroData[2], macroData[3]);
+}
+
 void displayMacroStep(const void *const vptr) {
 	const byte *const macroData = (const byte *const)vptr;
 

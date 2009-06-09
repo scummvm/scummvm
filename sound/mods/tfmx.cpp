@@ -79,15 +79,13 @@ void Tfmx::interrupt() {
 
 		// see if we have to run the macro-program
 		if (channel.macroRun) {
-			if (channel.macroWait == 0) {
+			if (!channel.macroWait) {
 				// run macro
 				while (macroStep(channel))
 					;
 			} else
 				--channel.macroWait;
 		}
-		// FIXME handle Volume
-		Paula::setChannelVolume(channel.paulaChannel, 0x40);
 	}
 
 	// Patterns are only processed each _playerCtx.timerCount + 1 tick
@@ -114,22 +112,72 @@ void Tfmx::effects(ChannelContext &channel) {
 	// vibrato
 	if (channel.vibLength) {
 		channel.vibValue += channel.vibDelta;
-		const uint16 setPeriod = (channel.period * ((1 << 11) + channel.vibValue)) >> 11;
-
-		if (!channel.portaRate)
-			Paula::setChannelPeriod(channel.paulaChannel, setPeriod);
-
 		if (--channel.vibCount == 0) {
 			channel.vibCount = channel.vibLength;
 			channel.vibDelta = -channel.vibDelta;
 		}
+		if (!channel.portaDelta) {
+			// 16x16 bit multiplication, casts needed for the right results
+			channel.period = (uint16)(((uint32)channel.refPeriod * (uint16)((1 << 11) + channel.vibValue)) >> 11);
+			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+		}
 	}
 
+	// portamento
+	if (channel.portaDelta && !(--channel.portaCount)) {
+		channel.portaCount = channel.portaSkip;
 
+		bool resetPorta = true;
+		uint16 period = channel.refPeriod;
+		const uint16 portaVal = channel.portaValue;
 
-	// porta
+		if (period > portaVal) {
+			period = ((uint32)period * (uint16)((1 << 8) - channel.portaDelta)) >> 8;
+			resetPorta = (period <= portaVal);
+
+		} else if (period < portaVal) {
+			period = ((uint32)period * (uint16)((1 << 8) + channel.portaDelta)) >> 8;
+			resetPorta = (period >= portaVal);
+		}
+
+		if (resetPorta) {
+			channel.portaDelta = 0;
+			channel.portaValue = channel.refPeriod & 0x7FF;
+		} else {
+			channel.period = period & 0x7FF;
+			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+		}
+	}
 
 	// envelope
+	if (channel.envSkip && !channel.envCount--) {
+		channel.envCount = channel.envSkip;
+
+		const uint8 endVol = channel.envEndVolume;
+		int8 volume = channel.volume;
+		bool resetEnv = true;
+
+		if (endVol > volume) {
+			volume += channel.envDelta;
+			resetEnv = endVol <= volume;
+		} else {
+			volume -= channel.envDelta;
+			resetEnv = volume < 0 || endVol >= volume;
+		}
+
+		if (resetEnv) {
+			channel.envSkip = 0;
+			volume = endVol;
+		}
+		channel.volume = volume;
+	}
+
+	// Fade
+
+	// Volume
+	// FIXME
+	uint8 finVol = _playerCtx.volume * channel.volume >> 6;
+	Paula::setChannelVolume(channel.paulaChannel, 0x40);
 }
 
 FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
@@ -137,7 +185,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 	++channel.macroStep;
 	//int channelNo = ((byte*)&channel-(byte*)_channelCtx)/sizeof(ChannelContext);
 
-	displayMacroStep(macroPtr);
+	displayMacroStep(macroPtr, channel.paulaChannel, channel.macroIndex);
 
 	int32 temp = 0;
 
@@ -151,7 +199,8 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		channel.deferWait = macroPtr[1] >= 1;
 		if	(channel.deferWait) {
 			// if set, then we expect a DMA On in the same tick.
-			Paula::setChannelPeriod(channel.paulaChannel, 4);
+			channel.period = 4;
+			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 			Paula::setChannelSampleLen(channel.paulaChannel, 1);
 			// in this state we then need to allow some commands that normally
 			// would halt the macroprogamm to continue instead.
@@ -204,6 +253,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		return true;
 
 	case 0x06:	// Jump. Parameters: MacroIndex, MacroStep(W)
+		channel.macroIndex = macroPtr[1] % kMaxMacroOffsets;
 		channel.macroOffset = _macroOffset[macroPtr[1] % kMaxMacroOffsets];
 		channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 		channel.macroLoopCount = 0xFF;
@@ -223,31 +273,35 @@ setNote:
 	case 0x09: {	// SetNote. Parameters: Note, Finetune(W)
 		const uint16 noteInt = noteIntervalls[(temp + macroPtr[1]) & 0x3F];
 		const uint16 finetune = READ_BE_UINT16(&macroPtr[2]) + channel.fineTune + (1 << 8);
-		channel.portaDestPeriod = (uint16)((noteInt * finetune) >> 8);
-		if (!channel.portaRate) {
-			channel.period = channel.portaDestPeriod;
-			Paula::setChannelPeriod(channel.paulaChannel, channel.portaDestPeriod);
+		channel.refPeriod = ((uint32)noteInt * finetune >> 8);
+		if (!channel.portaDelta) {
+			channel.period = channel.refPeriod;
+			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 		}
 		return channel.deferWait;
 	}
 
 	case 0x0A:	// Clear Effects
-		channel.envReset = 0;
+		channel.envSkip = 0;
 		channel.vibLength = 0;
-		channel.portaRate = 0;
+		channel.portaDelta = 0;
 		return true;
 
 	case 0x0B:	// Portamento. Parameters: count, speed
-		macroPtr[1];
-		macroPtr[3];
+		channel.portaSkip = macroPtr[1];
+		channel.portaCount = 1;
+		// if porta is already running, then keep using old value
+		if (!channel.portaDelta)
+			channel.portaValue = channel.refPeriod;
+		channel.portaDelta = READ_BE_UINT16(&macroPtr[2]);
 		return true;
 
 	case 0x0C:	// Vibrato. Parameters: Speed, intensity
 		channel.vibLength = macroPtr[1];
 		channel.vibCount = macroPtr[1] / 2;
 		channel.vibDelta = macroPtr[3];
-		if (!channel.portaRate) {
-			// TODO: unnecessary command?
+		if (!channel.portaDelta) {
+			channel.period = channel.refPeriod;
 			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 			channel.vibValue = 0;
 		}
@@ -306,10 +360,10 @@ setNote:
 		return true;
 
 	case 0x17:	// set Period. Parameters: Period(W)
-		channel.portaDestPeriod = READ_BE_UINT16(&macroPtr[2]);
-		if (!channel.portaRate) {
-			channel.period = channel.portaDestPeriod;
-			Paula::setChannelPeriod( channel.paulaChannel, channel.portaDestPeriod);
+		channel.refPeriod = READ_BE_UINT16(&macroPtr[2]);
+		if (!channel.portaDelta) {
+			channel.period = channel.refPeriod;
+			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 		}
 		return true;
 
@@ -484,6 +538,7 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 			return false;
 
 		case 5: 	// Kup^-Set key up
+			// TODO: add expose?
 		case 6: 	// Vibrato
 		case 7: 	// Envelope
 		case 12: 	// Lock
@@ -606,6 +661,7 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 	if (note < 0xC0) {	// Play Note
 		channel.prevNote = channel.note;
 		channel.note = note;
+		channel.macroIndex = param1 % kMaxMacroOffsets;
 		channel.macroOffset = _macroOffset[param1 % kMaxMacroOffsets];
 		channel.relVol = (param2 >> 4) & 0xF;
 		channel.fineTune = (int16)param3;
@@ -613,15 +669,15 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 		initMacroProgramm(channel);
 		channel.keyUp = true;
 		
-	} else if (note < 0xF0) {	// do that porta stuff
-		channel.portaReset = param1;
-		channel.portaTime = 1;
-		if (!channel.portaRate)
-			channel.portaPeriod = channel.portaDestPeriod;
-		channel.portaRate = param3;
+	} else if (note < 0xF0) {	// Portamento
+		channel.portaSkip = param1;
+		channel.portaCount = 1;
+		if (!channel.portaDelta)
+			channel.portaValue = channel.refPeriod;
+		channel.portaDelta = param3;
 
 		channel.note = note & 0x3F;
-		channel.portaDestPeriod = noteIntervalls[channel.note];
+		channel.refPeriod = noteIntervalls[channel.note];
 	} else switch (note & 0xF) {	// Command
 		case 5:	// Key Up Release
 			channel.keyUp = false;
@@ -632,8 +688,8 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 			channel.vibValue = 0;
 			break;
 		case 7:	// Envelope
-			channel.envRate = param1;
-			channel.envReset = channel.envTime = (param2 >> 4) + 1;
+			channel.envDelta = param1;
+			channel.envSkip = channel.envCount = (param2 >> 4) + 1;
 			channel.envEndVolume = param3;
 			break;
 	}

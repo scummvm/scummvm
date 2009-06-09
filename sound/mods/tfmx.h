@@ -118,6 +118,7 @@ public:
 	struct ChannelContext {
 		byte	paulaChannel;
 
+		byte	macroIndex;
 		uint16	macroWait;
 		uint32	macroOffset;
 		uint32	macroReturnOffset;
@@ -136,23 +137,23 @@ public:
 
 		uint32	sampleStart;
 		uint16	sampleLen;
+		uint16	refPeriod;
 		uint16	period;
 
-		int8	volume;
+		uint8	volume;
 		uint8	relVol;
 		uint8	note;
 		uint8	prevNote;
 		int16	fineTune;
 
-		uint16	portaDestPeriod;
-		uint16	portaPeriod;
-		uint8	portaReset;
-		uint8	portaTime;
-		int16	portaRate;
+		uint8	portaSkip;
+		uint8	portaCount;
+		uint16	portaDelta;
+		uint16	portaValue;
 
-		uint8	envReset;
-		uint8	envTime;
-		uint8	envRate;
+		uint8	envSkip;
+		uint8	envCount;
+		uint8	envDelta;
 		uint8	envEndVolume;
 
 		uint8	vibLength;
@@ -211,11 +212,11 @@ public:
 	}
 
 	void clearEffects(ChannelContext &channel) {
-		channel.envReset = 0;
+		channel.envSkip = 0;
 
 		channel.vibLength = 0;
 
-		channel.portaRate = 0;
+		channel.portaDelta = 0;
 	}
 
 	void stopChannel(ChannelContext &channel) {

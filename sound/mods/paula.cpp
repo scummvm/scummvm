@@ -147,6 +147,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 				_voice[voice].data = data = _voice[voice].dataRepeat;
 				_voice[voice].length = _voice[voice].lengthRepeat;
 				sLen = intToFrac(_voice[voice].length);
+				// TODO: the value in offset shouldnt be dropped but scaled to new rate
 
 				if (_voice[voice].period != _voice[voice].periodRepeat) {
 					_voice[voice].period = _voice[voice].periodRepeat;
@@ -162,6 +163,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 
 				// Repeat as long as necessary.
 				while (neededSamples > 0) {
+					// TODO offset -= sLen, but only if same rate otherwise need to scale first
 					offset &= FRAC_LO_MASK;
 					dmaCount++;
 
@@ -170,12 +172,6 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 					mixBuffer<stereo>(p, data, offset, rate, end, _voice[voice].volume, _voice[voice].panning);
 					neededSamples -= end;
 				}
-			}
-
-			// TODO correctly handle setting registers after last 2 bytes red from channel
-			if (offset > sLen) {
-				offset &= FRAC_LO_MASK;
-				dmaCount++;
 			}
 
 			// Write back the cached data
