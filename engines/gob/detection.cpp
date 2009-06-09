@@ -1644,7 +1644,35 @@ static const GOBGameDescription gameDescriptions[] = {
 			"lostintime",
 			"",
 			AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4207330),
-			UNK_LANG,
+			EN_GRB,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4207330),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "0ddf39cea1ec30ecc8bfe444ebd7b845", 4207330),
+			ES_ESP,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NOSPEECH
