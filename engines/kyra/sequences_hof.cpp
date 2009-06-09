@@ -102,7 +102,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 			_seqWsa->close();
 			_seqWsa->open(cseq.wsaFile, 0, _screen->getPalette(0));
 			_screen->setScreenPalette(_screen->getPalette(0));
-			_seqWsa->displayFrame(0, 2, cseq.xPos, cseq.yPos, 0);
+			_seqWsa->displayFrame(0, 2, cseq.xPos, cseq.yPos, 0, 0, 0);
 		}
 
 		if (cseq.flags & 4) {
@@ -174,7 +174,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 
 				if (_seqWsa) {
 					int f = _seqWsaCurrentFrame % _seqWsa->frames();
-					_seqWsa->displayFrame(f, 2, cseq.xPos, cseq.yPos, 0);
+					_seqWsa->displayFrame(f, 2, cseq.xPos, cseq.yPos, 0, 0, 0);
 				}
 
 				_screen->copyPage(2, 12);
@@ -2201,7 +2201,7 @@ void KyraEngine_HoF::seq_loadNestedSequence(int wsaNum, int seqNum) {
 	NestedSequence s = _sequences->seqn[seqNum];
 
 	if (!_activeWSA[wsaNum].movie) {
-		_activeWSA[wsaNum].movie = new WSAMovie_v2(this, _screen);
+		_activeWSA[wsaNum].movie = new WSAMovie_v2(this);
 		assert(_activeWSA[wsaNum].movie);
 	}
 
@@ -2246,7 +2246,7 @@ void KyraEngine_HoF::seq_nestedSequenceFrame(int command, int wsaNum) {
 	case 0:
 		xa = -_activeWSA[wsaNum].movie->xAdd();
 		ya = -_activeWSA[wsaNum].movie->yAdd();
-		_activeWSA[wsaNum].movie->displayFrame(0, 8, xa, ya, 0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 8, xa, ya, 0, 0, 0);
 		seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
 							_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 2);
 		break;
@@ -2254,7 +2254,7 @@ void KyraEngine_HoF::seq_nestedSequenceFrame(int command, int wsaNum) {
 	case 1:
 		xa = -_activeWSA[wsaNum].movie->xAdd();
 		ya = -_activeWSA[wsaNum].movie->yAdd();
-		_activeWSA[wsaNum].movie->displayFrame(0, 8, xa, ya, 0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 8, xa, ya, 0, 0, 0);
 		seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
 							_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 1);
 		break;
@@ -2263,21 +2263,21 @@ void KyraEngine_HoF::seq_nestedSequenceFrame(int command, int wsaNum) {
 		seq_waitForTextsTimeout();
 		xa = -_activeWSA[wsaNum].movie->xAdd();
 		ya = -_activeWSA[wsaNum].movie->yAdd();
-		_activeWSA[wsaNum].movie->displayFrame(0x15, 8, xa, ya, 0);
+		_activeWSA[wsaNum].movie->displayFrame(0x15, 8, xa, ya, 0, 0, 0);
 		seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
 							_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 0, 2);
 		break;
 
 	case 3:
 		_screen->copyPage(2, 10);
-		_activeWSA[wsaNum].movie->displayFrame(0, 2, 0, 0, 0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 2, 0, 0, 0, 0, 0);
 		_screen->copyPage(2, 12);
 		seq_cmpFadeFrame("scene2.cmp");
 		break;
 
 	case 4:
 		_screen->copyPage(2, 10);
-		_activeWSA[wsaNum].movie->displayFrame(0, 2, 0, 0, 0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 2, 0, 0, 0, 0, 0);
 		_screen->copyPage(2, 12);
 		seq_cmpFadeFrame("scene3.cmp");
 		break;
@@ -2364,10 +2364,10 @@ bool KyraEngine_HoF::seq_processNextSubFrame(int wsaNum) {
 
 	if (_activeWSA[wsaNum].movie) {
 		if (_activeWSA[wsaNum].flags & 0x20) {
-			_activeWSA[wsaNum].movie->displayFrame(_activeWSA[wsaNum].control[currentFrame].index, 2, _activeWSA[wsaNum].x, _activeWSA[wsaNum].y, 0x4000);
+			_activeWSA[wsaNum].movie->displayFrame(_activeWSA[wsaNum].control[currentFrame].index, 2, _activeWSA[wsaNum].x, _activeWSA[wsaNum].y, 0x4000, 0, 0);
 			_activeWSA[wsaNum].frameDelay = _activeWSA[wsaNum].control[currentFrame].delay;
 		} else {
-			_activeWSA[wsaNum].movie->displayFrame(currentFrame % _activeWSA[wsaNum].movie->frames(), 2, _activeWSA[wsaNum].x, _activeWSA[wsaNum].y, 0x4000);
+			_activeWSA[wsaNum].movie->displayFrame(currentFrame % _activeWSA[wsaNum].movie->frames(), 2, _activeWSA[wsaNum].x, _activeWSA[wsaNum].y, 0x4000, 0, 0);
 		}
 	}
 
@@ -2477,7 +2477,7 @@ void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, i
 
 		_seqWsaChatFrameTimeout = _seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
 		if (wsa)
-			wsa->displayFrame(curframe % wsa->frames(), 2, wsaXpos, wsaYpos, 0);
+			wsa->displayFrame(curframe % wsa->frames(), 2, wsaXpos, wsaYpos, 0, 0, 0);
 
 		_screen->copyPage(2, 12);
 
@@ -2721,7 +2721,7 @@ void KyraEngine_HoF::seq_scrollPage(int bottom, int top) {
 }
 
 void KyraEngine_HoF::seq_showStarcraftLogo() {
-	WSAMovie_v2 *ci = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *ci = new WSAMovie_v2(this);
 	assert(ci);
 	_screen->clearPage(2);
 	_res->loadPakFile("INTROGEN.PAK");
@@ -2732,21 +2732,21 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 		return;
 	}
 	_screen->hideMouse();
-	ci->displayFrame(0, 2, 0, 0, 0);
+	ci->displayFrame(0, 2, 0, 0, 0, 0, 0);
 	_screen->copyPage(2, 0);
 	_screen->fadeFromBlack();
 	for (int i = 1; i < endframe; i++) {
 		_seqEndTime = _system->getMillis() + 50;
 		if (skipFlag())
 			break;
-		ci->displayFrame(i, 2, 0, 0, 0);
+		ci->displayFrame(i, 2, 0, 0, 0, 0, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		delay(_seqEndTime - _system->getMillis());
 	}
 	if (!skipFlag()) {
 		_seqEndTime = _system->getMillis() + 50;
-		ci->displayFrame(0, 2, 0, 0, 0);
+		ci->displayFrame(0, 2, 0, 0, 0, 0, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		delay(_seqEndTime - _system->getMillis());
@@ -2760,7 +2760,7 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 
 void KyraEngine_HoF::seq_init() {
 	_seqProcessedString = new char[200];
-	_seqWsa = new WSAMovie_v2(this, _screen);
+	_seqWsa = new WSAMovie_v2(this);
 	_activeWSA = new ActiveWSA[8];
 	_activeText = new ActiveText[10];
 

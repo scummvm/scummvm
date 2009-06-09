@@ -966,7 +966,7 @@ int KyraEngine_LoK::seq_playEnd() {
 				else if (i == 20)
 					snd_playSoundEffect(0x0E);
 				nextTime = _system->getMillis() + 8 * _tickLength;
-				_finalA->displayFrame(i, 0, 8, 8);
+				_finalA->displayFrame(i, 0, 8, 8, 0, 0, 0);
 				_screen->updateScreen();
 			}
 			delete _finalA;
@@ -1198,7 +1198,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 
 	case 2:
 		if (_system->getMillis() >= timer2) {
-			_finalA->displayFrame(frame, 0, 8, 46);
+			_finalA->displayFrame(frame, 0, 8, 46, 0, 0, 0);
 			_screen->updateScreen();
 			timer2 = _system->getMillis() + 8 * _tickLength;
 			++frame;
@@ -1213,7 +1213,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 		if (_system->getMillis() < timer1) {
 			if (_system->getMillis() >= timer2) {
 				frame = _rnd.getRandomNumberRng(14, 17);
-				_finalA->displayFrame(frame, 0, 8, 46);
+				_finalA->displayFrame(frame, 0, 8, 46, 0, 0, 0);
 				_screen->updateScreen();
 				timer2 = _system->getMillis() + 8 * _tickLength;
 			}
@@ -1225,7 +1225,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 
 	case 4:
 		if (_system->getMillis() >= timer2) {
-			_finalA->displayFrame(frame, 0, 8, 46);
+			_finalA->displayFrame(frame, 0, 8, 46, 0, 0, 0);
 			_screen->updateScreen();
 			timer2 = _system->getMillis() + 8 * _tickLength;
 			++frame;
@@ -1239,7 +1239,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 
 	case 5:
 		if (_system->getMillis() >= timer2) {
-			_finalA->displayFrame(frame, 0, 8, 46);
+			_finalA->displayFrame(frame, 0, 8, 46, 0, 0, 0);
 			_screen->updateScreen();
 			timer2 = _system->getMillis() + 8 * _tickLength;
 			++frame;
@@ -1253,7 +1253,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 	case 6:
 		if (_unkEndSeqVar4) {
 			if (frame <= 33 && _system->getMillis() >= timer2) {
-				_finalA->displayFrame(frame, 0, 8, 46);
+				_finalA->displayFrame(frame, 0, 8, 46, 0, 0, 0);
 				_screen->updateScreen();
 				timer2 = _system->getMillis() + 8 * _tickLength;
 				++frame;
@@ -1278,7 +1278,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 
 	case 8:
 		if (_system->getMillis() >= timer2) {
-			_finalA->displayFrame(frame, 0, 8, 46);
+			_finalA->displayFrame(frame, 0, 8, 46, 0, 0, 0);
 			_screen->updateScreen();
 			timer2 = _system->getMillis() + 8 * _tickLength;
 			++frame;
@@ -1295,7 +1295,7 @@ int KyraEngine_LoK::handleMalcolmFlag() {
 		snd_playSoundEffect(12);
 		for (int i = 0; i < 18; ++i) {
 			timer2 = _system->getMillis() + 4 * _tickLength;
-			_finalC->displayFrame(i, 0, 16, 50);
+			_finalC->displayFrame(i, 0, 16, 50, 0, 0, 0);
 			_screen->updateScreen();
 			delayUntil(timer2);
 		}
@@ -1500,14 +1500,14 @@ int KyraEngine_LoK::handleBeadState() {
 					uint32 nextRun = 0;
 					for (int i = 0; i < 8; ++i) {
 						nextRun = _system->getMillis() + _tickLength;
-						_finalB->displayFrame(i, 0, 224, 8);
+						_finalB->displayFrame(i, 0, 224, 8, 0, 0, 0);
 						_screen->updateScreen();
 						delayUntil(nextRun);
 					}
 					snd_playSoundEffect(0x0D);
 					for (int i = 7; i >= 0; --i) {
 						nextRun = _system->getMillis() + _tickLength;
-						_finalB->displayFrame(i, 0, 224, 8);
+						_finalB->displayFrame(i, 0, 224, 8, 0, 0, 0);
 						_screen->updateScreen();
 						delayUntil(nextRun);
 					}

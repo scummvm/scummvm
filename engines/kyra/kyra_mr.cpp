@@ -274,14 +274,14 @@ Common::Error KyraEngine_MR::go() {
 
 		for (int i = 0; i < 64 && !shouldQuit(); ++i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_menuAnim->displayFrame(i, 0, 0, 0, 0);
+			_menuAnim->displayFrame(i, 0, 0, 0, 0, 0, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
 
 		for (int i = 64; i > 29 && !shouldQuit(); --i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_menuAnim->displayFrame(i, 0, 0, 0, 0);
+			_menuAnim->displayFrame(i, 0, 0, 0, 0, 0, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
@@ -327,7 +327,7 @@ Common::Error KyraEngine_MR::go() {
 }
 
 void KyraEngine_MR::initMainMenu() {
-	_menuAnim = new WSAMovie_v2(this, _screen);
+	_menuAnim = new WSAMovie_v2(this);
 	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0));
 	memset(_screen->getPalette(0), 0, 3);
 
@@ -541,11 +541,11 @@ void KyraEngine_MR::initMouseShapes() {
 }
 
 void KyraEngine_MR::startup() {
-	_album.wsa = new WSAMovie_v2(this, _screen);
+	_album.wsa = new WSAMovie_v2(this);
 	assert(_album.wsa);
-	_album.leftPage.wsa = new WSAMovie_v2(this, _screen);
+	_album.leftPage.wsa = new WSAMovie_v2(this);
 	assert(_album.leftPage.wsa);
-	_album.rightPage.wsa = new WSAMovie_v2(this, _screen);
+	_album.rightPage.wsa = new WSAMovie_v2(this);
 	assert(_album.rightPage.wsa);
 	musicUpdate(0);
 
@@ -598,7 +598,7 @@ void KyraEngine_MR::startup() {
 
 	for (int i = 0; i < 16; ++i) {
 		_sceneAnims[i].flags = 0;
-		_sceneAnimMovie[i] = new WSAMovie_v2(this, _screen);
+		_sceneAnimMovie[i] = new WSAMovie_v2(this);
 		assert(_sceneAnimMovie[i]);
 	}
 
@@ -655,7 +655,7 @@ void KyraEngine_MR::startup() {
 	musicUpdate(0);
 	runStartupScript(1, 0);
 	_res->exists("MOODOMTR.WSA", true);
-	_invWsa = new WSAMovie_v2(this, _screen);
+	_invWsa = new WSAMovie_v2(this);
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, 0);
 	_invWsaFrame = 6;

@@ -37,9 +37,6 @@ public:
 	~Screen_v2();
 
 	// screen page handling
-	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
-					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
-
 	void checkedPageUpdate(int srcPage, int dstPage);
 
 	// palette handling

@@ -2126,7 +2126,7 @@ int LoLEngine::olol_paletteFlash(EMCState *script) {
 int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreMagicShroud(%p)", (const void *)script);
 
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	mov->open("DARKLITE.WSA", 2, 0);
 	if (!mov->opened())
 		return 0;
@@ -2148,7 +2148,7 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 
 	for (int i = 0; i < 21; i++) {
 		uint32 etime = _system->getMillis() + 20 * _tickLength;
-		mov->displayFrame(i, 0, 0, 0, 0);
+		mov->displayFrame(i, 0, 0, 0, 0, 0, 0);
 		_screen->updateScreen();
 		_screen->setScreenPalette(tpal3);
 		tpal3 += 768;
@@ -2163,7 +2163,7 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 
 	for (int i = 22; i < 38; i++) {
 		uint32 etime = _system->getMillis() + 12 * _tickLength;
-		mov->displayFrame(i, 0, 0, 0, 0);
+		mov->displayFrame(i, 0, 0, 0, 0, 0, 0);
 		_screen->updateScreen();
 		if (i == 22 || i == 24 || i == 28 || i == 32) {
 			snd_playSoundEffect(131, -1);
@@ -2566,7 +2566,7 @@ int LoLEngine::tlol_displayAnimFrame(const TIM *tim, const uint16 *param) {
 	if (param[1] == 0xFFFF) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 	} else {
-		anim->wsa->displayFrame(param[1], 2, anim->x, anim->y, 0);
+		anim->wsa->displayFrame(param[1], 2, anim->x, anim->y, 0, 0, 0);
 		_screen->copyRegion(anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->width(), anim->wsa->height(), 2, 0);
 	}
 

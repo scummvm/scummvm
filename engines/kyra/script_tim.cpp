@@ -471,7 +471,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		if (isLoLDemo)
 			anim->wsa = new WSAMovie_v1(_vm);
 		else
-			anim->wsa = new WSAMovie_v2(_vm, _screen);
+			anim->wsa = new WSAMovie_v2(_vm);
 		assert(anim->wsa);
 
 		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? _screen->getPalette(0) : 0);
@@ -518,7 +518,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 				_screen->updateScreen();
 			}
 
-			anim->wsa->displayFrame(0, 0, x, y, 0);
+			anim->wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 		}
 
 		if (wsaFlags & 2)
@@ -941,7 +941,7 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 	snprintf(file, 32, "%s.WSA", filename);
 
 	if (_vm->resource()->exists(file)) {
-		anim->wsa = new WSAMovie_v2(_vm, TIMInterpreter::_screen);
+		anim->wsa = new WSAMovie_v2(_vm);
 		assert(anim->wsa);
 		anim->wsa->open(file, wsaOpenFlags, _screen->getPalette(3));
 	}
@@ -955,7 +955,7 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 	}
 
 	if (wsaFlags & 7)
-		anim->wsa->displayFrame(0, 0, x, y, 0);
+		anim->wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 
 	if (wsaFlags & 3) {
 		_screen->loadSpecialColors(_screen->getPalette(3));
@@ -1051,7 +1051,7 @@ void TIMInterpreter_LoL::startBackgroundAnimation(int animIndex, int part) {
 
 	// WORKAROUND for some bugged scripts that will try to display frames of non-existent animations
 	if (anim->wsa)
-		anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0);
+		anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0, 0, 0);
 }
 
 void TIMInterpreter_LoL::stopBackgroundAnimation(int animIndex) {
@@ -1110,7 +1110,7 @@ void TIMInterpreter_LoL::updateBackgroundAnimation(int animIndex) {
 
 	anim->nextFrame += (anim->frameDelay * _vm->_tickLength);
 
-	anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0);
+	anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0, 0, 0);
 	anim->nextFrame += _system->getMillis();
 }
 
@@ -1126,7 +1126,7 @@ void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int la
 			_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
 			_screen->updateScreen();
 		} else {
-			anim->wsa->displayFrame(i - 1, 0, anim->x, anim->y, 0);
+			anim->wsa->displayFrame(i - 1, 0, anim->x, anim->y, 0, 0, 0);
 			_screen->updateScreen();
 		}
 		_vm->delayUntil(next);

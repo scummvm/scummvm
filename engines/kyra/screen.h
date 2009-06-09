@@ -112,6 +112,9 @@ public:
 	int setCurPage(int pageNum);
 	void clearCurPage();
 
+	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
+					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
+
 	// page 0 functions
 	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
 	void shakeScreen(int times);

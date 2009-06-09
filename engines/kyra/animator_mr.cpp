@@ -119,7 +119,7 @@ void KyraEngine_MR::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) {
 				flags |= 0x8000;
 			x = obj->xPos2 - _sceneAnimMovie[obj->animNum]->xAdd();
 			y = obj->yPos2 - _sceneAnimMovie[obj->animNum]->yAdd();
-			_sceneAnimMovie[obj->animNum]->displayFrame(obj->shapeIndex3, 2, x, y, flags | layer);
+			_sceneAnimMovie[obj->animNum]->displayFrame(obj->shapeIndex3, 2, x, y, flags | layer, 0, 0);
 		}
 	}
 }

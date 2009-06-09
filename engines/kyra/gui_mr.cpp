@@ -352,10 +352,10 @@ void KyraEngine_MR::drawMalcolmsMoodPointer(int frame, int page) {
 		frame = 13;
 
 	if (page == 0) {
-		_invWsa->displayFrame(frame, 0, 0, 0, 0);
+		_invWsa->displayFrame(frame, 0, 0, 0, 0, 0, 0);
 		_screen->updateScreen();
 	} else if (page == 30) {
-		_invWsa->displayFrame(frame, 2, 0, -144, 0);
+		_invWsa->displayFrame(frame, 2, 0, -144, 0, 0, 0);
 	}
 
 	_invWsaFrame = frame;
@@ -685,10 +685,10 @@ void KyraEngine_MR::showAlbum() {
 	loadAlbumPageWSA();
 
 	if (_album.leftPage.wsa->opened())
-		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000);
+		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000, 0, 0);
 
 	if (_album.rightPage.wsa->opened())
-		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000);
+		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000, 0, 0);
 
 	printAlbumPageText();
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -843,10 +843,10 @@ void KyraEngine_MR::processAlbum() {
 			loadAlbumPageWSA();
 
 			if (_album.leftPage.wsa->opened())
-				_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000);
+				_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000, 0, 0);
 
 			if (_album.rightPage.wsa->opened())
-				_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000);
+				_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000, 0, 0);
 
 			printAlbumPageText();
 
@@ -899,7 +899,7 @@ void KyraEngine_MR::albumUpdateAnims() {
 
 	nextRun = _album.leftPage.timer + 5 * _tickLength;
 	if (nextRun < _system->getMillis() && _album.leftPage.wsa->opened()) {
-		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000);
+		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000, 0, 0);
 		_screen->copyRegion(40, 17, 40, 17, 87, 73, 2, 0, Screen::CR_NO_P_CHECK);
 
 		++_album.leftPage.curFrame;
@@ -918,7 +918,7 @@ void KyraEngine_MR::albumUpdateAnims() {
 
 	nextRun = _album.rightPage.timer + 5 * _tickLength;
 	if (nextRun < _system->getMillis() && _album.rightPage.wsa->opened()) {
-		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000);
+		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000, 0, 0);
 		_screen->copyRegion(194, 20, 194, 20, 85, 69, 2, 0, Screen::CR_NO_P_CHECK);
 
 		++_album.rightPage.curFrame;
@@ -936,13 +936,13 @@ void KyraEngine_MR::albumUpdateAnims() {
 void KyraEngine_MR::albumAnim1() {
 	for (int i = 6; i >= 3; --i) {
 		albumRestoreRect();
-		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000);
+		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000, 0, 0);
 		albumUpdateRect();
 		delayWithTicks(1);
 	}
 
 	albumRestoreRect();
-	_album.wsa->displayFrame(14, 2, -100, 90, 0x4000);
+	_album.wsa->displayFrame(14, 2, -100, 90, 0x4000, 0, 0);
 	albumUpdateRect();
 	delayWithTicks(1);
 }
@@ -950,7 +950,7 @@ void KyraEngine_MR::albumAnim1() {
 void KyraEngine_MR::albumAnim2() {
 	for (int i = 3; i <= 6; ++i) {
 		albumRestoreRect();
-		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000);
+		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000, 0, 0);
 		albumUpdateRect();
 		delayWithTicks(1);
 	}

@@ -1364,7 +1364,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		(_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
 		// merge ruby of truth
 
-		WSAMovie_v2 *wsa = new WSAMovie_v2(this, _screen);
+		WSAMovie_v2 *wsa = new WSAMovie_v2(this);
 		wsa->open("truth.wsa", 0, 0);
 
 		_screen->hideMouse();
@@ -1377,7 +1377,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		for (int i = 0; i < 25; i++) {
 			uint32 delayTimer = _system->getMillis() + 7 * _tickLength;
 			_screen->copyRegion(button->x, button->y - 3, 0, 0, 25, 27, 2, 2);
-			wsa->displayFrame(i, 2, 0, 0, 0x4000);
+			wsa->displayFrame(i, 2, 0, 0, 0x4000, 0, 0);
 			_screen->copyRegion(0, 0, button->x, button->y - 3, 25, 27, 2, 0);
 			_screen->updateScreen();
 			delayUntil(delayTimer);

@@ -1312,7 +1312,7 @@ void LoLEngine::processGasExplosion(int soundId) {
 	uint8 *p2 = _screen->getPalette(3);
 
 	if (dist) {
-		WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+		WSAMovie_v2 *mov = new WSAMovie_v2(this);
 		char file[13];
 		snprintf(file, 13, "gasexp%0d.wsa", dist);
 		mov->open(file, 1, 0);

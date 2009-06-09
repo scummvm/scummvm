@@ -1919,7 +1919,7 @@ int LoLEngine::castHealOnSingleCharacter(ActiveSpell *a) {
 }
 
 int LoLEngine::processMagicSpark(int charNum, int spellLevel) {
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	_screen->copyPage(0, 12);
 
 	mov->open("spark1.wsa", 0, 0);
@@ -2156,7 +2156,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 
 	int sX = 112;
 	int sY = 0;
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 
 	if (spellLevel == 0) {
 		sX = 0;
@@ -2417,7 +2417,7 @@ int LoLEngine::processMagicHandOfFate(int spellLevel) {
 	int cp = _screen->setCurPage(2);
 	_screen->copyPage(0, 12);
 
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	mov->open("hand.wsa", 1, 0);
 	if (!mov->opened())
 		error("Hand: Unable to load HAND.WSA");
@@ -2509,7 +2509,7 @@ int LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
 
 	char wsafile[13];
 	snprintf(wsafile, 13, "mists%0d.wsa", spellLevel + 1);
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	mov->open(wsafile, 1, 0);
 	if (!mov->opened())
 		error("Mist: Unable to load mists.wsa");
@@ -2541,7 +2541,7 @@ int LoLEngine::processMagicLightning(int charNum, int spellLevel) {
 
 	char wsafile[13];
 	snprintf(wsafile, 13, "litning%d.wsa", spellLevel + 1);
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	mov->open(wsafile, 1, 0);
 	if (!mov->opened())
 		error("Litning: Unable to load litning.wsa");
@@ -2570,7 +2570,7 @@ int LoLEngine::processMagicFog() {
 	int cp = _screen->setCurPage(2);
 	_screen->copyPage(0, 12);
 
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	int numFrames = mov->open("fog.wsa", 0, 0);
 	if (!mov->opened())
 		error("Fog: Unable to load fog.wsa");
@@ -2646,7 +2646,7 @@ int LoLEngine::processMagicSwarm(int charNum, int damage) {
 		_monsters[destIds[i]].fightCurTick = destTicks[i];
 	}
 
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 
 	mov->open("swarm.wsa", 0, 0);
 	if (!mov->opened())
@@ -2734,7 +2734,7 @@ int LoLEngine::processMagicGuardian(int charNum) {
 	_screen->copyPage(0, 2);
 	_screen->copyPage(2, 12);
 
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	mov->open("guardian.wsa", 0, 0);
 	if (!mov->opened())
 		error("Guardian: Unable to load guardian.wsa");
@@ -2871,7 +2871,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 	snd_playSoundEffect(_updateSpellBookAnimData[(spell << 2) + 3], -1);
 	snd_playSoundEffect(95, -1);
 
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 
 	mov->open("getspell.wsa", 0, 0);
 	if (!mov->opened())
@@ -3529,7 +3529,7 @@ void LoLEngine::launchMagicViper() {
 	_screen->copyPage(0, 12);
 	snd_playSoundEffect(148, -1);
 
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	int numFrames = mov->open("viper.wsa", 1, 0);
 	if (!mov->opened())
 		error("Viper: Unable to load viper.wsa");
@@ -3579,7 +3579,7 @@ void LoLEngine::breakIceWall(uint8 *pal1, uint8 *pal2) {
 	gui_drawScene(2);
 	_screen->copyPage(2, 10);
 
-	WSAMovie_v2 *mov = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	int numFrames = mov->open("shatter.wsa", 1, 0);
 	if (!mov->opened())
 		error("Shatter: Unable to load shatter.wsa");

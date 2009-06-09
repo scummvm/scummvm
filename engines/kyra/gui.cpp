@@ -404,7 +404,7 @@ void MainMenu::updateAnimation() {
 		if (now > _nextUpdate) {
 			_nextUpdate = now + _anim.delay * _vm->tickLength();
 
-			_anim.anim->displayFrame(_animIntern.curFrame, 0, 0, 0);
+			_anim.anim->displayFrame(_animIntern.curFrame, 0, 0, 0, 0, 0, 0);
 			_animIntern.curFrame += _animIntern.direction ;
 			if (_animIntern.curFrame < _anim.startFrame) {
 				_animIntern.curFrame = _anim.startFrame;

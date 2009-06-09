@@ -148,7 +148,7 @@ void SeqPlayer::s1_wsaPlayFrame() {
 	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData); _seqData += 2;
 	_seqMovies[wsaObj].pos.y = *_seqData++;
 	assert(_seqMovies[wsaObj].movie);
-	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y);
+	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, 0, 0, 0);
 	_seqMovies[wsaObj].frame = frame;
 }
 
@@ -160,7 +160,7 @@ void SeqPlayer::s1_wsaPlayNextFrame() {
 		frame = 0;
 		_seqMovies[wsaObj].frame = 0;
 	}
-	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y);
+	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, 0, 0, 0);
 }
 
 void SeqPlayer::s1_wsaPlayPrevFrame() {
@@ -171,7 +171,7 @@ void SeqPlayer::s1_wsaPlayPrevFrame() {
 		frame = _seqMovies[wsaObj].numFrames;
 		_seqMovies[wsaObj].frame = frame;
 	} else {
-		_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y);
+		_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, 0, 0, 0);
 	}
 }
 

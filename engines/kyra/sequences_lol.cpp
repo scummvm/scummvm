@@ -155,7 +155,7 @@ void LoLEngine::setupPrologueData(bool load) {
 	_screen->clearPage(3);
 
 	if (load) {
-		_chargenWSA = new WSAMovie_v2(this, _screen);
+		_chargenWSA = new WSAMovie_v2(this);
 		assert(_chargenWSA);
 
 		//_charSelection = -1;
@@ -641,7 +641,7 @@ int LoLEngine::selectionCharAccept() {
 }
 
 void LoLEngine::showStarcraftLogo() {
-	WSAMovie_v2 *ci = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *ci = new WSAMovie_v2(this);
 	assert(ci);
 
 	_screen->clearPage(0);
@@ -653,7 +653,7 @@ void LoLEngine::showStarcraftLogo() {
 		return;
 	}
 	_screen->hideMouse();
-	ci->displayFrame(0, 2, 32, 80, 0);
+	ci->displayFrame(0, 2, 32, 80, 0, 0, 0);
 	_screen->copyPage(2, 0);
 	_screen->fadeFromBlack();
 	int inputFlag = 0;
@@ -661,7 +661,7 @@ void LoLEngine::showStarcraftLogo() {
 		inputFlag = checkInput(0) & 0xff;
 		if (shouldQuit() || inputFlag)
 			break;
-		ci->displayFrame(i, 2, 32, 80, 0);
+		ci->displayFrame(i, 2, 32, 80, 0, 0, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		delay(4 * _tickLength);
