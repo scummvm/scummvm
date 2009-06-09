@@ -450,6 +450,78 @@ static const GOBGameDescription gameDescriptions[] = {
 				{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
 				{0, 0, 0, 0}
 			},
+			EN_GRB,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob1",
+			"",
+			{
+				{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
+				{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob1",
+			"",
+			{
+				{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
+				{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
+				{0, 0, 0, 0}
+			},
+			ES_ESP,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob1",
+			"",
+			{
+				{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
+				{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
+				{0, 0, 0, 0}
+			},
+			IT_ITA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"gob1",
+			"",
+			{
+				{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
+				{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
+				{0, 0, 0, 0}
+			},
 			DE_DEU,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
