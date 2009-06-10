@@ -132,15 +132,14 @@ public:
 		bool	keyUp;
 
 		bool	deferWait;
-		bool	countDmaInterrupts;
-		uint16	dmaCount;
+		uint16	dmaIntCount;
 
 		uint32	sampleStart;
 		uint16	sampleLen;
 		uint16	refPeriod;
 		uint16	period;
 
-		uint8	volume;
+		int8	volume;
 		uint8	relVol;
 		uint8	note;
 		uint8	prevNote;
@@ -154,7 +153,7 @@ public:
 		uint8	envSkip;
 		uint8	envCount;
 		uint8	envDelta;
-		uint8	envEndVolume;
+		int8	envEndVolume;
 
 		uint8	vibLength;
 		uint8	vibCount;
@@ -208,7 +207,7 @@ public:
 		channel.macroWait = 0;
 		channel.macroRun = true;
 		channel.macroLoopCount = 0xFF;
-		channel.countDmaInterrupts = false;
+		channel.dmaIntCount = 0;
 	}
 
 	void clearEffects(ChannelContext &channel) {
@@ -222,9 +221,19 @@ public:
 	void stopChannel(ChannelContext &channel) {
 		if (!channel.sfxLocked) {
 			channel.macroRun = false;
-			channel.countDmaInterrupts = false;
+			channel.dmaIntCount = 0;
 			Paula::disableChannel(channel.paulaChannel);
 		} 
+	}
+
+	void setNoteMacro(ChannelContext &channel, uint note, int fineTune) {
+		const uint16 noteInt = noteIntervalls[note & 0x3F];
+		const uint16 finetune = (uint16)(fineTune + channel.fineTune + (1 << 8));
+		channel.refPeriod = ((uint32)noteInt * finetune >> 8);
+		if (!channel.portaDelta) {
+			channel.period = channel.refPeriod;
+			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+		}
 	}
 
 	void effects(ChannelContext &channel);
@@ -233,7 +242,6 @@ public:
 	FORCEINLINE bool patternStep(PatternContext &pattern);
 	bool trackStep();
 	void noteCommand(uint8 note, uint8 param1, uint8 param2, uint8 param3);
-
 };
 
 }

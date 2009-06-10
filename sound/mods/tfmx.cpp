@@ -62,12 +62,12 @@ void Tfmx::interrupt() {
 	for (int i = 0; i < kNumVoices; ++i) {
 		ChannelContext &channel = _channelCtx[i];
 
-		if (channel.countDmaInterrupts) {
+		if (channel.dmaIntCount) {
 			// wait for DMA Interupts to happen
 			int doneDma = getChannelDmaCount(channel.paulaChannel);
-			if (doneDma > channel.dmaCount) {
+			if (doneDma >= channel.dmaIntCount) {
 				debug("channel %d, DMA done", i);
-				channel.countDmaInterrupts = false;
+				channel.dmaIntCount = 0;
 				channel.macroRun = true;
 			}
 		}
@@ -153,7 +153,7 @@ void Tfmx::effects(ChannelContext &channel) {
 	if (channel.envSkip && !channel.envCount--) {
 		channel.envCount = channel.envSkip;
 
-		const uint8 endVol = channel.envEndVolume;
+		const int8 endVol = channel.envEndVolume;
 		int8 volume = channel.volume;
 		bool resetEnv = true;
 
@@ -162,7 +162,7 @@ void Tfmx::effects(ChannelContext &channel) {
 			resetEnv = endVol <= volume;
 		} else {
 			volume -= channel.envDelta;
-			resetEnv = volume < 0 || endVol >= volume;
+			resetEnv = volume <= 0 || endVol >= volume;
 		}
 
 		if (resetEnv) {
@@ -171,13 +171,23 @@ void Tfmx::effects(ChannelContext &channel) {
 		}
 		channel.volume = volume;
 	}
-
 	// Fade
 
 	// Volume
 	// FIXME
 	uint8 finVol = _playerCtx.volume * channel.volume >> 6;
-	Paula::setChannelVolume(channel.paulaChannel, 0x40);
+	Paula::setChannelVolume(channel.paulaChannel, finVol);
+}
+
+static void warnMacroUnimplemented(const byte *macroPtr, int level) {
+	if (level > 0)
+		return;
+	if (level == 0)
+		debug("Warning - Macro not supported:");
+	else
+		debug("Warning - Macro not completely supported:");
+
+	displayMacroStep(macroPtr);
 }
 
 FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
@@ -185,7 +195,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 	++channel.macroStep;
 	//int channelNo = ((byte*)&channel-(byte*)_channelCtx)/sizeof(ChannelContext);
 
-	displayMacroStep(macroPtr, channel.paulaChannel, channel.macroIndex);
+	//displayMacroStep(macroPtr, channel.paulaChannel, channel.macroIndex);
 
 	int32 temp = 0;
 
@@ -213,7 +223,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		return true;
 
 	case 0x01:	// DMA On
-		channel.countDmaInterrupts = false;
+		channel.dmaIntCount = 0;
 		if (channel.deferWait) {
 			// TODO
 			// there is actually a small delay in the player, but I think that
@@ -263,28 +273,16 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		channel.macroRun = false;
 		return false;
 
-	case 0x1F:	// AddPrevNote. Parameters: Note, Finetune(W)
-		temp = channel.prevNote;
-		goto setNote;
 	case 0x08:	// AddNote. Parameters: Note, Finetune(W)
-		temp = channel.note;
-		// Fallthrough to SetNote
-setNote:
-	case 0x09: {	// SetNote. Parameters: Note, Finetune(W)
-		const uint16 noteInt = noteIntervalls[(temp + macroPtr[1]) & 0x3F];
-		const uint16 finetune = READ_BE_UINT16(&macroPtr[2]) + channel.fineTune + (1 << 8);
-		channel.refPeriod = ((uint32)noteInt * finetune >> 8);
-		if (!channel.portaDelta) {
-			channel.period = channel.refPeriod;
-			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
-		}
+		setNoteMacro(channel, channel.note + macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
 		return channel.deferWait;
-	}
+
+	case 0x09:	// SetNote. Parameters: Note, Finetune(W)
+		setNoteMacro(channel, macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
+		return channel.deferWait;
 
 	case 0x0A:	// Clear Effects
-		channel.envSkip = 0;
-		channel.vibLength = 0;
-		channel.portaDelta = 0;
+		clearEffects(channel);
 		return true;
 
 	case 0x0B:	// Portamento. Parameters: count, speed
@@ -307,20 +305,22 @@ setNote:
 		}
 		return true;
 
-	case 0x0D:	// Add Volume. Parameters: unknown, volume
-		macroPtr[2];
-		macroPtr[3];
+	case 0x0D:	// Add Volume. Parameters: note, addNoteFlag, volume
+		if (macroPtr[2] == 0xFE)
+			setNoteMacro(channel, channel.note + macroPtr[1], 0);
+		channel.volume = channel.relVol * 3 + macroPtr[3];
 		return true;
 
-	case 0x0E:	// Set Volume. Parameters: unknown, volume
-		macroPtr[2];
-		macroPtr[3];
+	case 0x0E:	// Set Volume. Parameters: note, addNoteFlag, volume
+		if (macroPtr[2] == 0xFE)
+			setNoteMacro(channel, channel.note + macroPtr[1], 0);
+		channel.volume = macroPtr[3];
 		return true;
 
 	case 0x0F:	// Envelope. Parameters: speed, count, endvol
-		macroPtr[1];
-		macroPtr[2];
-		macroPtr[3];
+		channel.envDelta = macroPtr[1];
+		channel.envCount = channel.envSkip = macroPtr[2];
+		channel.envEndVolume = macroPtr[3];
 		return true;
 
 	case 0x11:	// AddBegin. Parameters: times, Offset(W)
@@ -329,6 +329,7 @@ setNote:
 //		debug("prev: %06X, after: %06X", channel.sampleStart, channel.sampleStart + (int16)READ_BE_UINT16(&macroPtr[2]));
 		channel.sampleStart += (int16)READ_BE_UINT16(&macroPtr[2]);
 		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
+		warnMacroUnimplemented(macroPtr, 1);
 		return true;
 
 	case 0x12:	// AddLen. Parameters: added Length(W)
@@ -385,8 +386,7 @@ setNote:
 		return true;
 
 	case 0x1A:	// Wait on DMA. Parameters: Cycles-1(W) to wait
-		channel.dmaCount = READ_BE_UINT16(&macroPtr[2]);
-		channel.countDmaInterrupts = true;
+		channel.dmaIntCount = READ_BE_UINT16(&macroPtr[2]) + 1;
 		channel.macroRun = false;
 		Paula::setChannelDmaCount(channel.paulaChannel);
 		return channel.deferWait;
@@ -395,25 +395,33 @@ setNote:
 		macroPtr[1];
 		macroPtr[2];
 		macroPtr[3];
+		warnMacroUnimplemented(macroPtr, 0);
 		return true;
 
 	case 0x1C:	// Splitkey. Parameters: key/macrostep(W)
-		macroPtr[1];
-		READ_BE_UINT16(&macroPtr[2]);
+		if (channel.note > macroPtr[1])
+			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 		return true;
 
 	case 0x1D:	// Splitvolume. Parameters: volume/macrostep
-		macroPtr[1];
-		READ_BE_UINT16(&macroPtr[2]);
+		if (channel.volume > macroPtr[1])
+			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 		return true;
 
 	case 0x1E:	// Addvol+note. Parameters: note/CONST./volume
+		warnMacroUnimplemented(macroPtr, 0);
 		return true;
 
+	case 0x1F:	// AddPrevNote. Parameters: Note, Finetune(W)
+		setNoteMacro(channel, channel.prevNote + macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
+		return channel.deferWait;
+
 	case 0x20:	// Signal. Parameters: signalnumber/value
+		warnMacroUnimplemented(macroPtr, 0);
 		return true;
 
 	case 0x21:	// Play macro. Parameters: macro/chan/detune
+		warnMacroUnimplemented(macroPtr, 0);
 		return true;
 #if defined(TFMX_NOT_IMPLEMENTED)
 	// used by Gem`X according to the docs
@@ -436,6 +444,7 @@ setNote:
 	// 30-34 used by Carribean Disaster
 #endif
 	default:
+		warnMacroUnimplemented(macroPtr, 0);
 		return channel.deferWait;
 	}
 }
@@ -526,7 +535,6 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 
 		case 3: 	// Wait. Paramters: ticks to wait
 			pattern.wait = patternPtr[1];
-			// TODO check for 0?
 			return false;
 
 		case 14: 	// Stop custompattern
