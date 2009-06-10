@@ -666,7 +666,11 @@ public:
 
 
 
-	/** @name Mouse */
+	/** @name Mouse
+	 * This is the lower level implementation as provided by the
+	 * backends. The engines should use the Graphics::CursorManager
+	 * class instead of using it directly.
+	 */
 	//@{
 
 	/** Show or hide the mouse cursor. */
@@ -834,6 +838,9 @@ public:
 	 * @name Audio CD
 	 * The methods in this group deal with Audio CD playback.
 	 * The default implementation simply does nothing.
+	 * This is the lower level implementation as provided by the
+	 * backends. The engines should use the Audio::AudioCDManager
+	 * class instead of using it directly.
 	 */
 	//@{
 
