@@ -125,10 +125,10 @@ int DraciEngine::go() {
 	palette[7] = 0;
 	for (unsigned int i = 2; i < 256; ++i) {
 		// FIXME: Sprite is too dark, add a fixed value as a workaround		
-		palette[i*4] = readerZ.readByte() + 20;
-		palette[i*4+1] = readerZ.readByte() + 20;
-		palette[i*4+2] = readerZ.readByte() + 20;
-		palette[i*4+3] = 0;
+		palette[i * 4] = readerZ.readByte() + 20;
+		palette[i * 4 + 1] = readerZ.readByte() + 20;
+		palette[i * 4 + 2] = readerZ.readByte() + 20;
+		palette[i * 4 + 3] = 0;
 	}
 	_system->setPalette(palette, 0, 256);
 	
@@ -159,7 +159,7 @@ int DraciEngine::go() {
 		// Draw frame
 		for (uint16 i = 0; i < w; ++i) {
 			for (uint16 j = 0; j < h; ++j) {
-				scr[j*w+i] = reader.readByte();
+				scr[j * w + i] = reader.readByte();
 			}
 		}
 		_system->copyRectToScreen(scr, w, 0, 0, w, h);
@@ -169,7 +169,7 @@ int DraciEngine::go() {
 		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
 
 		// Free frame memory
-		delete [] scr;
+		delete[] scr;
 	}	
 	getchar();
 

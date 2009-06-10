@@ -175,7 +175,7 @@ void handleMathExpression(Common::MemoryReadStream &reader) {
 	mathExpressionObject obj;
 
 	// Read in initial math object
-	obj = (mathExpressionObject) reader.readUint16LE();
+	obj = (mathExpressionObject)reader.readUint16LE();
 
 	uint16 value;
 	while (1) {
