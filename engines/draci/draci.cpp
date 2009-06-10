@@ -113,26 +113,18 @@ int DraciEngine::go() {
 	ar.closeArchive();
 	ar.openArchive(path);
 	f = ar[0];
-	Common::MemoryReadStream readerZ(f->_data, f->_length);
+	Common::MemoryReadStream paletteReader(f->_data, f->_length);
 	
-	palette[0] = readerZ.readByte();
-	palette[1] = readerZ.readByte();
-	palette[2] = readerZ.readByte();
-	palette[3] = 0;
-	palette[4] = readerZ.readByte();
-	palette[5] = readerZ.readByte();
-	palette[6] = readerZ.readByte();
-	palette[7] = 0;
-	for (unsigned int i = 2; i < 256; ++i) {
-		palette[i * 4] = readerZ.readByte();
-		palette[i * 4 + 1] = readerZ.readByte();
-		palette[i * 4 + 2] = readerZ.readByte();
+	for (unsigned int i = 0; i < 256; ++i) {
+		palette[i * 4] = paletteReader.readByte();
+		palette[i * 4 + 1] = paletteReader.readByte();
+		palette[i * 4 + 2] = paletteReader.readByte();
 		palette[i * 4 + 3] = 0;
 	}
 
 	// Shift the palette one bit to the left to make it brighter
 	for (unsigned int i = 0; i < 4 * 256; ++i) {
-		palette[i] <<= 1;
+		palette[i] <<= 2;
 	} 
 
 	_system->setPalette(palette, 0, 256);
