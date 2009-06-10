@@ -99,39 +99,37 @@ void tfmxmain(const int argc, const char *const argv[]) {
 	}
 
 	int i = 1;
-	int playflag = 0;
+	int playflag = 1;
+	bool hasCmd = false;
 
 	
-	if (i < argc && argv[i][0] == '-' && strlen(argv[i]) == 2) {
+	while (i < argc && argv[i][0] == '-') {
 		int param;
-		switch (argv[i++][1]) {
-		case 'm':
-			if (i < argc) {
-				param = atoi(argv[i]);
+		if (!strcmp("-m", argv[i])) {
+			if (i + 1 < argc) {
+				param = atoi(argv[++i]);
 				debug( "play Macro %02X", param);
 				dumpMacro(*player, param);
-				playflag = 1;
 				player->doMacro(param,param);
-				++i;
+				hasCmd = true;
 			}
-			break;
-		case 's':
-			if (i < argc) {
-				param = atoi(argv[i]);
+		} else if (!strcmp("-s", argv[i])) {
+			if (i + 1 < argc) {
+				param = atoi(argv[++i]);
 				debug( "play Song %02X", param);
 				dumpTrackstepsBySong(*player, param);
-				playflag = 1;
 				player->doSong(param);
-				++i;
+				hasCmd = true;
 			}
+		} else  if (!strcmp("-flac", argv[i])) {
+			playflag = 2;
 		}
+		++i;
 	}
 
-	if (!playflag) {
-		playflag = 1;
-		player->doMacro(0x17,0x1B);
-		//player->doSong(4);
-		//dumpTrackstepsBySong(*player, 4);
+	if (!hasCmd) {
+		player->doSong(4);
+		dumpTrackstepsBySong(*player, 4);
 	}
 
 

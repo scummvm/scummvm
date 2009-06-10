@@ -86,6 +86,12 @@ void Tfmx::interrupt() {
 			} else
 				--channel.macroWait;
 		}
+
+		// TODO: handling pending DMAOff?
+
+		// set volume after macros were run.
+		uint8 finVol = _playerCtx.volume * channel.volume >> 6;
+		Paula::setChannelVolume(channel.paulaChannel, finVol);
 	}
 
 	// Patterns are only processed each _playerCtx.timerCount + 1 tick
@@ -174,9 +180,6 @@ void Tfmx::effects(ChannelContext &channel) {
 	// Fade
 
 	// Volume
-	// FIXME
-	uint8 finVol = _playerCtx.volume * channel.volume >> 6;
-	Paula::setChannelVolume(channel.paulaChannel, finVol);
 }
 
 static void warnMacroUnimplemented(const byte *macroPtr, int level) {
@@ -207,7 +210,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		// TODO: implement PArameters
 		Paula::disableChannel(channel.paulaChannel);
 		channel.deferWait = macroPtr[1] >= 1;
-		if	(channel.deferWait) {
+		if (channel.deferWait) {
 			// if set, then we expect a DMA On in the same tick.
 			channel.period = 4;
 			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
@@ -216,15 +219,17 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 			// would halt the macroprogamm to continue instead.
 			// those commands are: Wait, WaitDMA, AddPrevNote, AddNote, SetNote, <unknown Cmd>
 			// DMA On is affected aswell
-			// TODO remember time disabled?.
+			// TODO remember time disabled, remember pending dmaoff?.
 		} else {
 			//TODO ?
+			Paula::disableChannel(channel.paulaChannel);
 		}
-		channel.volume = 0;
-		Paula::setChannelVolume(channel.paulaChannel, channel.volume);
 
-		if (macroPtr[2] != 0 || macroPtr[3] != 0)
-			debug("DMA Off: Parameters not implemented %02X%02X%02X", macroPtr[1], macroPtr[2], macroPtr[3]);
+		if (macroPtr[2])
+			channel.volume = macroPtr[3];
+		else if (macroPtr[3])
+			channel.volume = channel.relVol * 3 + macroPtr[3];
+		debug("DMA Off: %02X %02X%02X%02X", macroPtr[0], macroPtr[1], macroPtr[2], macroPtr[3]);
 		return true;
 
 	case 0x01:	// DMA On
@@ -349,6 +354,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		} else if (channel.macroLoopCount == 0xFF)
 			channel.macroLoopCount = macroPtr[3];
 		--channel.macroLoopCount;
+		--channel.macroStep;
 		return false;
 
 	case 0x15:	// Subroutine. Parameters: MacroIndex, Macrostep(W)
@@ -840,6 +846,7 @@ void Tfmx::doMacro(int macro, int note) {
 		clearEffects(_channelCtx[i]);
 		_channelCtx[i].vibValue = 0;
 		stopChannel(_channelCtx[i]);
+		_channelCtx[i].volume = 0;
 	}
 
 	noteCommand((uint8)note, (uint8)macro, (uint8)channel, 0);
@@ -885,6 +892,7 @@ void Tfmx::doSong(int songPos) {
 		clearEffects(_channelCtx[i]);
 		_channelCtx[i].vibValue = 0;
 		stopChannel(_channelCtx[i]);
+		_channelCtx[i].volume = 0;
 	}
 
 	setTimerBaseValue(kPalCiaClock);
