@@ -2272,16 +2272,19 @@ static void GetShrinkPos() {
 	if (!lua_isnumber(xObj) || !lua_isnumber(yObj) || !lua_isnumber(zObj) || !lua_isnumber(rObj))
 		return;
 
-	float x = lua_getnumber(1);
-	float y = lua_getnumber(2);
-	float z = lua_getnumber(3);
-	float r = lua_getnumber(4);
+	float x = lua_getnumber(xObj);
+	float y = lua_getnumber(yObj);
+	float z = lua_getnumber(zObj);
+	float r = lua_getnumber(rObj);
 	Graphics::Vector3d pos;
 	pos.set(x, y, z);
 
 	// TODO
 	//UnShrinkBoxes();
 	// lua_pusnumber 1, 2, 3 or lua_pushnil
+	lua_pushnumber(x);
+	lua_pushnumber(y);
+	lua_pushnumber(z);
 
 	warning("Stub function GetShrinkPos(%g,%g,%g,%g) called", x, y, z, r);
 }
