@@ -774,8 +774,6 @@ int16 Op_UnfreezeParent(void) {
 	return 0;
 }
 
-int16 protectionCode = 0;
-
 int16 Op_ProtectionFlag(void) {
 	int16 temp = protectionCode;
 	int16 newVar;

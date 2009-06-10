@@ -183,6 +183,8 @@ extern int16 volumeNumberOfEntry;
 
 extern int16 displayOn;
 
+extern int16 protectionCode;
+
 #define NUM_FILE_ENTRIES 257
 
 extern int16 globalVars[2000];

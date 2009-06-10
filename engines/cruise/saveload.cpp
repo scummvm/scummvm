@@ -25,6 +25,7 @@
 
 #include "cruise/cruise_main.h"
 #include "cruise/cruise.h"
+#include "cruise/vars.h"
 
 #include "common/serializer.h"
 #include "common/savefile.h"
@@ -143,6 +144,7 @@ static void syncBasicInfo(Common::Serializer &s) {
 	s.syncAsSint16LE(flagCt);
 	s.syncAsSint16LE(var41);
 	s.syncAsSint16LE(playerMenuEnabled);
+	s.syncAsSint16LE(protectionCode);
 }
 
 static void syncBackgroundTable(Common::Serializer &s) {

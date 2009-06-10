@@ -79,6 +79,8 @@ int16 volumeNumberOfEntry;
 
 int16 displayOn = 1;
 
+int16 protectionCode = 0;
+
 int16 globalVars[2000];
 
 dataFileEntry filesDatabase[NUM_FILE_ENTRIES];
