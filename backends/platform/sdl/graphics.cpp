@@ -375,13 +375,11 @@ int OSystem_SDL::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 #ifdef ENABLE_16BIT
-Graphics::ColorFormat OSystem_SDL::findCompatibleFormat(Common::List<Graphics::ColorFormat> formatList)
-{
+Graphics::ColorFormat OSystem_SDL::findCompatibleFormat(Common::List<Graphics::ColorFormat> formatList) {
 	bool typeAccepted = false;
 	Graphics::ColorFormat format;
 	
-	while (!formatList.empty() && !typeAccepted)
-	{
+	while (!formatList.empty() && !typeAccepted) {
 		typeAccepted = false;
 		format = formatList.front();
 
@@ -391,28 +389,27 @@ Graphics::ColorFormat OSystem_SDL::findCompatibleFormat(Common::List<Graphics::C
 			return format;
 
 		formatList.pop_front();
-		switch (format & Graphics::kFormatTypeMask)
-		{
-			case Graphics::kFormat8Bit:
-				if (format == Graphics::kFormat8Bit)
-					return format;
-				break;
-			case Graphics::kFormatRGB555:
-			case Graphics::kFormatARGB1555:
-			case Graphics::kFormatRGB565:
-				typeAccepted = true;
-				break;
+		switch (format & Graphics::kFormatTypeMask) {
+		case Graphics::kFormat8Bit:
+			if (format == Graphics::kFormat8Bit)
+				return format;
+			break;
+		case Graphics::kFormatRGB555:
+		case Graphics::kFormatARGB1555:
+		case Graphics::kFormatRGB565:
+			typeAccepted = true;
+			break;
 		}
 
 		if (!typeAccepted)
 			continue;
 
 		switch (format & Graphics::kFormatOrderMask) {
-			case Graphics::kFormatRGB:
-			case Graphics::kFormatRGBA:
-				return format;
-			default:
-				break;
+		case Graphics::kFormatRGB:
+		case Graphics::kFormatRGBA:
+			return format;
+		default:
+			break;
 		}
 	}
 	return Graphics::kFormat8Bit;
@@ -434,38 +431,38 @@ void OSystem_SDL::initFormat(Graphics::ColorFormat format) {
 Graphics::PixelFormat OSystem_SDL::getPixelFormat(Graphics::ColorFormat format) {
 	Graphics::PixelFormat result;
 	switch (format & Graphics::kFormatTypeMask) {
-		case Graphics::kFormatARGB1555:
-			result.aLoss = 7;
-			result.bytesPerPixel = 2;
-			result.rLoss = result.gLoss = result.bLoss = 3;
-		case Graphics::kFormatRGB555:
-			result.aLoss = 8;
-			result.bytesPerPixel = 2;
-			result.rLoss = result.gLoss = result.bLoss = 3;
-			break;
-		case Graphics::kFormatRGB565:
-			result.bytesPerPixel = 2;
-			result.aLoss = 8;
-			result.gLoss = 2;
-			result.rLoss = result.bLoss = 3;
-			break;
-		case Graphics::kFormat8Bit:
-		default:
-			result.bytesPerPixel = 1;
-			result.rShift = result.gShift = result.bShift = result.aShift = 0;
-			result.rLoss = result.gLoss = result.bLoss = result.aLoss = 8;
-			return result;
+	case Graphics::kFormatARGB1555:
+		result.aLoss = 7;
+		result.bytesPerPixel = 2;
+		result.rLoss = result.gLoss = result.bLoss = 3;
+	case Graphics::kFormatRGB555:
+		result.aLoss = 8;
+		result.bytesPerPixel = 2;
+		result.rLoss = result.gLoss = result.bLoss = 3;
+		break;
+	case Graphics::kFormatRGB565:
+		result.bytesPerPixel = 2;
+		result.aLoss = 8;
+		result.gLoss = 2;
+		result.rLoss = result.bLoss = 3;
+		break;
+	case Graphics::kFormat8Bit:
+	default:
+		result.bytesPerPixel = 1;
+		result.rShift = result.gShift = result.bShift = result.aShift = 0;
+		result.rLoss = result.gLoss = result.bLoss = result.aLoss = 8;
+		return result;
 	}
-	switch (format & Graphics::kFormatOrderMask)
-	{
-		default:
-		case Graphics::kFormatRGBA:
-			result.aShift = 0;
-		case Graphics::kFormatRGB:
-			result.bShift = result.aBits();
-			result.gShift = result.bShift + result.bBits();
-			result.rShift = result.gShift + result.gBits();
-			break;
+	switch (format & Graphics::kFormatOrderMask) {
+	default:
+	case Graphics::kFormatRGBA:
+		result.aShift = 0;
+		// fall through
+	case Graphics::kFormatRGB:
+		result.bShift = result.aBits();
+		result.gShift = result.bShift + result.bBits();
+		result.rShift = result.gShift + result.gBits();
+		break;
 	}
 	return result;
 }
