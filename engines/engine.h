@@ -29,6 +29,9 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/str.h"
+#ifdef ENABLE_16BIT
+#include "graphics/pixelformat.h"
+#endif
 
 class OSystem;
 
@@ -59,6 +62,9 @@ void initCommonGFX(bool defaultTo1XScaler);
  * Errors out when backend is not able to switch to the specified
  * mode.
  */
+#ifdef ENABLE_16BIT
+void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Graphics::ColorFormat> formatList);
+#endif
 void initGraphics(int width, int height, bool defaultTo1xScaler);
 
 /**

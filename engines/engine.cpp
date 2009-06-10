@@ -124,11 +124,23 @@ void initCommonGFX(bool defaultTo1XScaler) {
 	if (gameDomain && gameDomain->contains("fullscreen"))
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
-
 void initGraphics(int width, int height, bool defaultTo1xScaler) {
+#ifdef ENABLE_16BIT
+	Common::List<Graphics::ColorFormat> formatList;
+	formatList.push_back(Graphics::kFormat8Bit);
+	initGraphics(width,height,defaultTo1xScaler, formatList);
+}
+void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Graphics::ColorFormat> formatList) {
+#endif
+
 	g_system->beginGFXTransaction();
 
 		initCommonGFX(defaultTo1xScaler);
+#ifdef ENABLE_16BIT
+		Graphics::ColorFormat format = g_system->findCompatibleFormat(formatList);
+		debug("%X",format); //TODO: set up the pixelFormat here
+		g_system->initFormat(format);
+#endif
 		g_system->initSize(width, height);
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
