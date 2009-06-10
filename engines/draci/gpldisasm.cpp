@@ -58,13 +58,70 @@
 #include "common/stream.h"
 
 #include "draci/gpldisasm.h"
-#include "draci/barchive.h"
 #include "draci/draci.h"
 
-#define skipParams(x) for(unsigned int i = 0; i < (x); ++i) reader.readUint16LELE()
-#define CMDPAIR(x, y) (((x) << 8) | y)
-
 namespace Draci {
+
+// FIXME: Change parameter types to names once I figure out what they are exactly
+GPL2Command gplCommands[] = {
+	{ 0,  0, "gplend",				0, { 0 } },	
+	{ 0,  1, "exit",				0, { 0 } },	
+	{ 1,  1, "goto", 				1, { 3 } },
+	{ 2,  1, "Let", 				2, { 3, 4 } },
+	{ 3,  1, "if", 					2, { 4, 3 } },
+	{ 4,  1, "Start", 				2, { 3, 2 } },
+	{ 5,  1, "Load", 				2, { 3, 2 } },
+	{ 5,  2, "StartPlay", 			2, { 3, 2 } },
+	{ 5,  3, "JustTalk", 			0, { 0 } },
+	{ 5,  4, "JustStay", 			0, { 0 } },
+	{ 6,  1, "Talk", 				2, { 3, 2 } },
+	{ 7,  1, "ObjStat", 			2, { 3, 3 } },
+	{ 7,  2, "ObjStat_On", 			2, { 3, 3 } },
+	{ 8,  1, "IcoStat", 			2, { 3, 3 } },
+	{ 9,  1, "Dialogue", 			1, { 2 } },
+	{ 9,  2, "ExitDialogue", 		0, { 0 } },
+	{ 9,  3, "ResetDialogue", 		0, { 0 } },
+	{ 9,  4, "ResetDialogueFrom", 	0, { 0 } },
+	{ 9,  5, "ResetBlock", 			1, { 3 } },
+	{ 10, 1, "WalkOn", 				3, { 1, 1, 3 } },
+	{ 10, 2, "StayOn", 				3, { 1, 1, 3 } },
+	{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 } },
+	{ 11, 1, "LoadPalette", 		1, { 2 } },
+	{ 12, 1, "SetPalette", 			0, { 0 } },
+	{ 12, 2, "BlackPalette", 		0, { 0 } },
+	{ 13, 1, "FadePalette", 		3, { 1, 1, 1 } },
+	{ 13, 2, "FadePalettePlay", 	3, { 1, 1, 1 } },
+	{ 14, 1, "NewRoom", 			2, { 3, 1 } },
+	{ 15, 1, "ExecInit", 			1, { 3 } },
+	{ 15, 2, "ExecLook", 			1, { 3 } },
+	{ 15, 3, "ExecUse", 			1, { 3 } },
+	{ 16, 1, "RepaintInventory", 	0, { 0 } },
+	{ 16, 2, "ExitInventory", 		0, { 0 } },
+	{ 17, 1, "ExitMap", 			0, { 0 } },
+	{ 18, 1, "LoadMusic", 			1, { 2 } },
+	{ 18, 2, "StartMusic", 			0, { 0 } },
+	{ 18, 3, "StopMusic", 			0, { 0 } },
+	{ 18, 4, "FadeOutMusic",		1, { 1 } },
+	{ 18, 5, "FadeInMusic", 		1, { 1 } },
+	{ 19, 1, "Mark", 				0, { 0 } },
+	{ 19, 2, "Release", 			0, { 0 } },
+	{ 20, 1, "Play", 				0, { 0 } },
+	{ 21, 1, "LoadMap", 			1, { 2 } },
+	{ 21, 2, "RoomMap", 			0, { 0 } },
+	{ 22, 1, "DisableQuickHero", 	0, { 0 } },
+	{ 22, 2, "EnableQuickHero", 	0, { 0 } },
+	{ 23, 1, "DisableSpeedText", 	0, { 0 } },
+	{ 23, 2, "EnableSpeedText", 	0, { 0 } },
+	{ 24, 1, "QuitGame", 			0, { 0 } },
+	{ 25, 1, "PushNewRoom", 		0, { 0 } },
+	{ 25, 2, "PopNewRoom", 			0, { 0 } },
+	{ 26, 1, "ShowCheat", 			0, { 0 } },
+	{ 26, 2, "HideCheat", 			0, { 0 } },
+	{ 26, 3, "ClearCheat", 			1, { 1 } },
+	{ 27, 1, "FeedPassword", 		3, { 1, 1, 1 } }
+};
+
+const unsigned int kNumCommands = sizeof gplCommands / sizeof gplCommands[0];
 
 // FIXME: Handle math expressions properly instead of just skipping them
 void handleMathExpression(Common::MemoryReadStream &reader) {
@@ -79,247 +136,61 @@ void handleMathExpression(Common::MemoryReadStream &reader) {
 	return;
 }
 
+GPL2Command *findCommand(byte num, byte subnum) {
+	unsigned int i = 0;
+	while (1) {
+		
+		// Command not found
+		if (i >= kNumCommands) {
+			break;
+		}
+
+		// Return found command
+		if (gplCommands[i]._number == num && gplCommands[i]._subNumber == subnum) {
+			return &gplCommands[i];
+		}
+	
+		++i;	
+	}
+	
+	return NULL;
+}
+
 int gpldisasm(byte *gplcode, uint16 len) {
 	Common::MemoryReadStream reader(gplcode, len);
 
 	while (!reader.eos()) {
 		// read in command pair
 		uint16 cmdpair = reader.readUint16BE();
+		
+		// extract high byte, i.e. the command number
+		byte num = (cmdpair >> 8) & 0xFF;
+		
+		// extract low byte, i.e. the command subnumber
+		byte subnum = cmdpair & 0xFF;
 
-		uint16 param1, param2, param3;
+		GPL2Command *cmd;
+		if ((cmd = findCommand(num, subnum))) {
+			
+			// Print command name	
+			debugC(2, kDraciBytecodeDebugLevel, "%s", cmd->_name.c_str());
 
-		switch (cmdpair) {
-		case CMDPAIR(5,1):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_Load %hu %hu", param1, param2);
-			break;
-		case CMDPAIR(4,1):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_Start %hu %hu", param1, param2);
-			break;
-		case CMDPAIR(5,2):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_StartPlay %hu %hu",
-				param1, param2);
-			break;
-		case CMDPAIR(5,3):
-			debugC(2, kDraciBytecodeDebugLevel, "C_JustTalk");
-			break;
-		case CMDPAIR(5,4):
-			debugC(2, kDraciBytecodeDebugLevel, "C_JustStay");
-			break;
-		case CMDPAIR(10,2):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			param3 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_StayOn %hu %hu %hu",
-				param1, param2, param3);
-			break;
-		case CMDPAIR(10,1):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			param3 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_WalkOn %hu %hu %hu",
-				param1, param2, param3);
-			break;
-		case CMDPAIR(10,3):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			param3 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_WalkOnPlay %hu %hu %hu",
-				param1, param2, param3);
-			break;
-		case CMDPAIR(7,1):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_ObjStat %hu %hu",
-				param1, param2);
-			break;
-		case CMDPAIR(7,2):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_ObjStat_On %hu %hu",
-				param1, param2);
-			break;
-		case CMDPAIR(8,1):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_IcoStat %hu %hu",
-				param1, param2);
-			break;
-		case CMDPAIR(14,1):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_NewRoom %hu %hu",
-				param1, param2);
-			break;
-		case CMDPAIR(6,1):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_Talk %hu %hu",
-				param1, param2);
-			break;
-		case CMDPAIR(2,1):
-			param1 = reader.readUint16LE();
-			handleMathExpression(reader);
-			debugC(2, kDraciBytecodeDebugLevel, "C_Let <MATHEXPR> %hu", param1);
-			break;
-		case CMDPAIR(15,1):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_ExecInit %hu", param1);
-			break;
-		case CMDPAIR(15,2):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_ExecLook %hu", param1);
-			break;
-		case CMDPAIR(15,3):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_ExecUse %hu", param1);
-			break;
-		case CMDPAIR(16,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_RepaintInventory");
-			break;
-		case CMDPAIR(16,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_ExitInventory");
-			break;
-		case CMDPAIR(1,1):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_goto %hu", param1);
-			break;
-		case CMDPAIR(3,1):
-			handleMathExpression(reader);
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_if <MATHEXPR> %hu", param1);
-			break;
-		case CMDPAIR(9,1):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_Dialogue %hu", param1);
-			break;
-		case CMDPAIR(9,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_ExitDialogue");
-			break;
-		case CMDPAIR(9,3):
-			debugC(2, kDraciBytecodeDebugLevel, "C_ResetDialogue");
-			break;
-		case CMDPAIR(9,4):
-			debugC(2, kDraciBytecodeDebugLevel, "C_ResetDialogueFrom");
-			break;
-		case CMDPAIR(9,5):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_ResetBlock %hu", param1);
-			break;
-		case CMDPAIR(11,1):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_LoadPalette %hu", param1);
-			break;
-		case CMDPAIR(12,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_SetPalette");
-			break;
-		case CMDPAIR(12,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_BlackPalette");
-			break;
-		case CMDPAIR(13,1):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			param3 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_FadePalette %hu %hu %hu",
-				param1, param2, param3);
-			break;
-		case CMDPAIR(13,2):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			param3 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_FadePalettePlay %hu %hu %hu",
-				param1, param2, param3);
-			break;
-		case CMDPAIR(17,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_ExitMap");
-			break;
-		case CMDPAIR(18,1):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_LoadMusic %hu", param1);
-			break;
-		case CMDPAIR(18,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_StartMusic");
-			break;
-		case CMDPAIR(18,3):
-			debugC(2, kDraciBytecodeDebugLevel, "C_StopMusic");
-			break;
-		case CMDPAIR(18,4):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_FadeOutMusic %hu", param1);
-			break;
-		case CMDPAIR(18,5):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_FadeInMusic %hu", param1);
-			break;
-		case CMDPAIR(19,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_Mark");
-			break;
-		case CMDPAIR(19,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_Release");
-			break;
-		case CMDPAIR(20,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_Play");
-			break;
-		case CMDPAIR(21,1):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_LoadMap %hu", param1);
-			break;
-		case CMDPAIR(21,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_RoomMap");
-			break;
-		case CMDPAIR(22,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_DisableQuickHero");
-			break;
-		case CMDPAIR(22,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_EnableQuickHero");
-			break;
-		case CMDPAIR(23,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_DisableSpeedText");
-			break;
-		case CMDPAIR(23,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_EnableSpeedText");
-			break;
-		case CMDPAIR(24,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_QuitGame");
-			break;
-		case CMDPAIR(25,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_PushNewRoom");
-			break;
-		case CMDPAIR(25,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_PopNewRoom");
-			break;
-		case CMDPAIR(26,1):
-			debugC(2, kDraciBytecodeDebugLevel, "C_ShowCheat");
-			break;
-		case CMDPAIR(26,2):
-			debugC(2, kDraciBytecodeDebugLevel, "C_HideCheat");
-			break;
-		case CMDPAIR(26,3):
-			param1 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_ClearCheat %hu", param1);
-			break;
-		case CMDPAIR(27,1):
-			param1 = reader.readUint16LE();
-			param2 = reader.readUint16LE();
-			param3 = reader.readUint16LE();
-			debugC(2, kDraciBytecodeDebugLevel, "C_FeedPassword %hu %hu %hu",
-				param1, param2, param3);
-			break;
-		case CMDPAIR(0, 0):
-			debugC(2, kDraciBytecodeDebugLevel, "gplend");
-			break;
-		case CMDPAIR(0, 1):
-			debugC(2, kDraciBytecodeDebugLevel, "exit");
-			break;
-		default:
-			debugC(2, kDraciBytecodeDebugLevel, "Unknown opcode %hu, %hu",
-			(cmdpair >> 8) & 0xFF, cmdpair & 0xFF);
+			for (uint16 i = 0; i < cmd->_numParams; ++i) {
+				if (cmd->_paramTypes[i] == 4) {
+					debugC(3, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
+					handleMathExpression(reader);
+				}				
+				else {
+					debugC(3, kDraciBytecodeDebugLevel, "\t%hu", reader.readUint16LE());
+				}
+			}
 		}
+		else {
+			debugC(2, kDraciBytecodeDebugLevel, "Unknown opcode %hu, %hu",
+				num, subnum);
+		}
+
+		
 	}
 
 	return 0;

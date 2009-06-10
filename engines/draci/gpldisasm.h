@@ -23,10 +23,23 @@
  *
  */
 
+#include "common/str.h"
+
 #ifndef GPLDISASM_H
 #define GPLDISASM_H
 
 namespace Draci {
+
+// FIXME: Add parameter types and function handlers
+struct GPL2Command { 
+	byte _number; 
+	byte _subNumber; 
+	Common::String _name; 
+	uint16 _numParams;
+	int _paramTypes[3];
+};
+
+const int kMaxParams = 3;
 
 int gpldisasm(byte *gplcode, uint16 len);
 
