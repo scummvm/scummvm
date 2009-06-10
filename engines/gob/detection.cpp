@@ -84,6 +84,7 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 namespace Gob {
 
 using Common::GUIO_NOSPEECH;
+using Common::GUIO_NOSUBTITLES;
 using Common::GUIO_NONE;
 
 static const GOBGameDescription gameDescriptions[] = {
@@ -95,7 +96,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesEGA,
@@ -109,7 +110,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			RU_RUS,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesEGA,
@@ -123,7 +124,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
@@ -137,7 +138,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -151,7 +152,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -165,7 +166,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -179,7 +180,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -193,7 +194,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -207,7 +208,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -221,7 +222,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -235,7 +236,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -249,7 +250,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -263,7 +264,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -277,7 +278,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -291,7 +292,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
@@ -305,7 +306,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
@@ -319,7 +320,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
@@ -333,7 +334,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
@@ -347,7 +348,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
@@ -361,7 +362,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -375,7 +376,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -389,7 +390,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -403,7 +404,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -417,7 +418,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -435,7 +436,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -453,7 +454,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -471,7 +472,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -489,7 +490,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -507,7 +508,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -525,7 +526,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesAdlib,
@@ -539,7 +540,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
@@ -553,7 +554,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
@@ -567,7 +568,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
@@ -581,7 +582,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
@@ -599,7 +600,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -617,7 +618,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -631,7 +632,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -645,7 +646,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -659,7 +660,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -673,7 +674,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -687,7 +688,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -701,7 +702,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -715,7 +716,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -729,7 +730,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			RU_RUS,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -743,7 +744,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -757,7 +758,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
@@ -771,7 +772,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
@@ -785,7 +786,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
@@ -799,7 +800,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
@@ -813,7 +814,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
@@ -827,7 +828,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
@@ -841,7 +842,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -855,7 +856,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -869,7 +870,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
@@ -883,7 +884,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
@@ -901,7 +902,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -919,7 +920,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -937,7 +938,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -955,7 +956,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -973,7 +974,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
@@ -987,7 +988,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
@@ -1001,7 +1002,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
@@ -1015,7 +1016,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
@@ -1033,7 +1034,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
@@ -1051,7 +1052,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
@@ -1065,7 +1066,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesNone,
@@ -1079,7 +1080,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
@@ -1093,7 +1094,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
@@ -1107,7 +1108,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
@@ -1121,7 +1122,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
@@ -1135,7 +1136,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
@@ -1149,7 +1150,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
@@ -1163,7 +1164,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
@@ -1177,7 +1178,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWeen,
 		kFeaturesAdlib,
@@ -1191,7 +1192,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
@@ -1205,7 +1206,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformAtariST,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
@@ -1219,7 +1220,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
@@ -1233,7 +1234,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
@@ -1247,7 +1248,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
@@ -1261,7 +1262,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
@@ -1275,7 +1276,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
@@ -1289,7 +1290,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib | kFeaturesEGA,
@@ -1303,7 +1304,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib | kFeaturesEGA,
@@ -1317,7 +1318,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib | kFeaturesEGA,
@@ -1331,7 +1332,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib | kFeaturesEGA,
@@ -1345,7 +1346,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib | kFeaturesEGA,
@@ -1363,7 +1364,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesNone,
@@ -1377,7 +1378,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -1391,7 +1392,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1405,7 +1406,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			HB_ISR,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1419,7 +1420,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1433,7 +1434,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1447,7 +1448,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1465,7 +1466,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1479,7 +1480,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1493,7 +1494,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1507,7 +1508,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1521,7 +1522,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1535,7 +1536,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1549,7 +1550,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1563,7 +1564,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1577,7 +1578,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1591,7 +1592,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1605,7 +1606,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1619,7 +1620,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1633,7 +1634,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -1647,7 +1648,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1661,7 +1662,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1675,7 +1676,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1689,7 +1690,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES
 		},
 		kGameTypeFascination,
 		kFeaturesCD,
@@ -1703,7 +1704,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesAdlib,
@@ -1717,7 +1718,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			HB_ISR,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesAdlib,
@@ -1732,7 +1733,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesAdlib,
@@ -1746,7 +1747,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesAdlib,
@@ -1760,7 +1761,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesNone,
@@ -1774,7 +1775,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesNone,
@@ -1788,7 +1789,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesNone,
@@ -1802,7 +1803,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesNone,
@@ -1816,7 +1817,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGeisha,
 		kFeaturesNone,
@@ -1830,7 +1831,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGeisha,
 		kFeaturesNone,
@@ -1844,7 +1845,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1858,7 +1859,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -1872,7 +1873,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -1886,7 +1887,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			HB_ISR,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -1900,7 +1901,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -1918,7 +1919,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -1936,7 +1937,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -1954,7 +1955,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -1972,7 +1973,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -1986,7 +1987,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2000,7 +2001,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2014,7 +2015,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2028,7 +2029,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2042,7 +2043,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			RU_RUS,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2056,7 +2057,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2070,7 +2071,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2084,7 +2085,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesNone,
@@ -2098,7 +2099,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesNone,
@@ -2112,7 +2113,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
@@ -2126,7 +2127,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
@@ -2140,7 +2141,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
@@ -2154,7 +2155,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
@@ -2168,7 +2169,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
@@ -2182,7 +2183,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
@@ -2196,7 +2197,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2210,7 +2211,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2224,7 +2225,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2238,7 +2239,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2256,7 +2257,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -2270,7 +2271,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
@@ -2284,7 +2285,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
@@ -2298,7 +2299,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
@@ -2312,7 +2313,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
@@ -2326,7 +2327,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesCD,
@@ -2340,7 +2341,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
@@ -2354,7 +2355,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
@@ -2368,7 +2369,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
@@ -2382,7 +2383,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
@@ -2396,7 +2397,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
@@ -2410,7 +2411,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
@@ -2424,7 +2425,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
@@ -2438,7 +2439,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib,
@@ -2465,7 +2466,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeInca2,
 		kFeaturesAdlib | kFeaturesBATDemo,
@@ -2479,7 +2480,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2493,7 +2494,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2507,7 +2508,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2521,7 +2522,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2535,7 +2536,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2549,7 +2550,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2563,7 +2564,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2577,7 +2578,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2591,7 +2592,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2605,7 +2606,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2619,7 +2620,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2633,7 +2634,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2647,7 +2648,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2661,7 +2662,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2675,7 +2676,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2689,7 +2690,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2703,7 +2704,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2717,7 +2718,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2731,7 +2732,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2745,7 +2746,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2759,7 +2760,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2773,7 +2774,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2787,7 +2788,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2801,7 +2802,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2815,7 +2816,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			PL_POL,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2833,7 +2834,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640 | kFeaturesSCNDemo,
@@ -2847,7 +2848,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeDynasty,
 		kFeatures640,
@@ -2861,7 +2862,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeDynasty,
 		kFeatures640,
@@ -2875,7 +2876,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeDynasty,
 		kFeatures640,
@@ -2889,7 +2890,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeDynasty,
 		kFeatures640,
@@ -2945,7 +2946,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_USA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
 		kFeatures640,
@@ -2959,7 +2960,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
 		kFeatures640,
@@ -2973,7 +2974,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
 		kFeatures640,
@@ -2987,7 +2988,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
 		kFeatures640,
@@ -3024,7 +3025,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3033,7 +3034,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"archi",
-			"Pack mes histoires animées",
+			"Pack mes histoires anim\xE9""es",
 			{
 				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
 				{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
@@ -3042,7 +3043,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3060,7 +3061,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3083,7 +3084,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640 | kFeaturesSCNDemo,
@@ -3101,7 +3102,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640 | kFeaturesSCNDemo,
@@ -3123,7 +3124,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640 | kFeaturesSCNDemo,
@@ -3144,7 +3145,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640 | kFeaturesSCNDemo,
@@ -3162,7 +3163,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3180,7 +3181,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3198,7 +3199,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3207,7 +3208,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"chato",
-			"Pack mes histoires animées",
+			"Pack mes histoires anim\xE9""es",
 			{
 				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
 				{"chato.stk", 0, "4fa4ed96a427c344e9f916f9f236598d", 6033793},
@@ -3216,7 +3217,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3234,7 +3235,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3252,7 +3253,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3270,11 +3271,11 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBambou,
 		kFeatures640,
-		0, 0, 0
+		"intro.stk", "intro.tot", 0
 	},
 	{
 		{
@@ -3287,7 +3288,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytnCk,
 		kFeatures640,
@@ -3301,7 +3302,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NONE
 		},
 		kGameTypeAdibou4,
 		kFeatures640,
@@ -3435,7 +3436,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibouunknown",
-			"ADIBÙ 2 Ambiente",
+			"ADIB\xD9 2 Ambiente",
 			AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 			IT_ITA,
 			kPlatformPC,
@@ -3449,7 +3450,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibouunknown",
-				"ADIBÙ prima elementare : Imparo a leggere e a contare",
+				"ADIB\xD9 prima elementare : Imparo a leggere e a contare",
 			{
 				{"intro.stk", 0, "092707829555f27706920e4cacf1fada", 8737958},
 				{"appbou2.itk", 0, "f7bf045f6bdce5a7607c720e36704f33", 200005632},
@@ -3467,7 +3468,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibouunknown",
-			"ADIBOU présente La Magie (STK2.1/OBC)",
+			"ADIBOU pr\xE9sente La Magie (STK2.1/OBC)",
 			{
 				{"adibou.stk", 0, "977d2449d398f3df23238d718fca35b5", 61097},
 				{"magic.stk", 0, "9776765dead3e338a32c43bf344b5819", 302664},
@@ -3548,7 +3549,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesNone,
@@ -3562,7 +3563,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob1,
 		kFeaturesCD,
@@ -3576,7 +3577,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -3590,7 +3591,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesAdlib,
@@ -3604,7 +3605,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
 		kFeaturesCD,
@@ -3618,7 +3619,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBargon,
 		kFeaturesNone,
@@ -3632,7 +3633,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
@@ -3646,7 +3647,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGob3,
 		kFeaturesCD,
@@ -3660,7 +3661,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -3674,7 +3675,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -3688,7 +3689,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesAdlib,
@@ -3702,7 +3703,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeLostInTime,
 		kFeaturesCD,
@@ -3716,7 +3717,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeUrban,
 		kFeaturesCD,
@@ -3730,7 +3731,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3744,7 +3745,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3758,7 +3759,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3772,7 +3773,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3786,7 +3787,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytoon,
 		kFeatures640,
@@ -3800,7 +3801,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypePlaytnCk,
 		kFeatures640,
@@ -3814,7 +3815,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeBambou,
 		kFeatures640,
@@ -3828,7 +3829,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeFascination,
 		kFeaturesNone,
@@ -3842,7 +3843,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeGeisha,
 		kFeaturesNone,
@@ -3856,7 +3857,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
 		},
 		kGameTypeAdibou4,
 		kFeatures640,
