@@ -129,6 +129,10 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
 }
 
+bool CursorManager::supportsCursorPalettes() {
+	return g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
+}
+
 void CursorManager::disableCursorPalette(bool disable) {
 	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
 		return;
