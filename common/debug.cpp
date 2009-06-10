@@ -227,6 +227,19 @@ void debugC(int level, uint32 debugChannels, const char *s, ...) {
 	va_end(va);
 }
 
+void debugCN(int level, uint32 debugChannels, const char *s, ...) {
+	va_list va;
+
+	// Debug level 11 turns on all special debug level messages
+	if (gDebugLevel != 11)
+		if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & debugChannels))
+			return;
+
+	va_start(va, s);
+	debugHelper(s, va, false);
+	va_end(va);
+}
+
 void debugC(uint32 debugChannels, const char *s, ...) {
 	va_list va;
 
@@ -237,6 +250,19 @@ void debugC(uint32 debugChannels, const char *s, ...) {
 
 	va_start(va, s);
 	debugHelper(s, va);
+	va_end(va);
+}
+
+void debugCN(uint32 debugChannels, const char *s, ...) {
+	va_list va;
+
+	// Debug level 11 turns on all special debug level messages
+	if (gDebugLevel != 11)
+		if (!(Common::gDebugLevelsEnabled & debugChannels))
+			return;
+
+	va_start(va, s);
+	debugHelper(s, va, false);
 	va_end(va);
 }
 
