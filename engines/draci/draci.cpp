@@ -124,12 +124,17 @@ int DraciEngine::go() {
 	palette[6] = readerZ.readByte();
 	palette[7] = 0;
 	for (unsigned int i = 2; i < 256; ++i) {
-		// FIXME: Sprite is too dark, add a fixed value as a workaround		
-		palette[i * 4] = readerZ.readByte() + 20;
-		palette[i * 4 + 1] = readerZ.readByte() + 20;
-		palette[i * 4 + 2] = readerZ.readByte() + 20;
+		palette[i * 4] = readerZ.readByte();
+		palette[i * 4 + 1] = readerZ.readByte();
+		palette[i * 4 + 2] = readerZ.readByte();
 		palette[i * 4 + 3] = 0;
 	}
+
+	// Shift the palette one bit to the left to make it brighter
+	for (unsigned int i = 0; i < 4 * 256; ++i) {
+		palette[i] <<= 1;
+	} 
+
 	_system->setPalette(palette, 0, 256);
 	
 	// Draw a test string
