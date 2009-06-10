@@ -139,7 +139,7 @@ void CursorManager::disableCursorPalette(bool disable) {
 	Palette *pal = _cursorPaletteStack.top();
 	pal->_disabled = disable;
 
-	g_system->disableCursorPalette(true);
+	g_system->disableCursorPalette(disable);
 }
 
 void CursorManager::pushCursorPalette(const byte *colors, uint start, uint num) {
