@@ -148,6 +148,10 @@ public:
 		 * It is currently used only by some Macintosh versions of Humongous
 		 * Entertainment games. If the backend doesn't implement this feature then
 		 * the engine switches to b/w versions of cursors.
+		 * The GUI also relies on this feature for mouse cursors.
+		 *
+		 * To enable the cursor palette call "disableCursorPalette" with false.
+		 * @see disableCursorPalette
 		 */
 		kFeatureCursorHasPalette,
 
