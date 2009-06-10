@@ -220,6 +220,11 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		} else {
 			//TODO ?
 		}
+		channel.volume = 0;
+		Paula::setChannelVolume(channel.paulaChannel, channel.volume);
+
+		if (macroPtr[2] != 0 || macroPtr[3] != 0)
+			debug("DMA Off: Parameters not implemented %02X%02X%02X", macroPtr[1], macroPtr[2], macroPtr[3]);
 		return true;
 
 	case 0x01:	// DMA On
@@ -337,7 +342,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
 		return true;
 
-	case 0x14:	// Wait key up. Parameters: wait cycles(W)
+	case 0x14:	// Wait key up. Parameters: wait cycles
 		if (!channel.keyUp || channel.macroLoopCount == 0) {
 			channel.macroLoopCount = 0xFF;
 			return true;
@@ -398,12 +403,12 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		warnMacroUnimplemented(macroPtr, 0);
 		return true;
 
-	case 0x1C:	// Splitkey. Parameters: key/macrostep(W)
+	case 0x1C:	// Branch on Note. Parameters: note/macrostep(W)
 		if (channel.note > macroPtr[1])
 			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 		return true;
 
-	case 0x1D:	// Splitvolume. Parameters: volume/macrostep
+	case 0x1D:	// Branch on Volume. Parameters: volume/macrostep(W)
 		if (channel.volume > macroPtr[1])
 			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 		return true;
@@ -480,7 +485,7 @@ doTrackstep:
 		if (_playerCtx.pendingTrackstep) {
 			// we load the next Trackstep Command and then process all Channels again
 			// TODO Optionally disable looping
-			if (_trackCtx.startInd == _trackCtx.stopInd)
+			if (_trackCtx.posInd == _trackCtx.stopInd)
 				_trackCtx.posInd = _trackCtx.startInd;
 			else
 				++_trackCtx.posInd;
@@ -672,7 +677,7 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 		channel.macroIndex = param1 % kMaxMacroOffsets;
 		channel.macroOffset = _macroOffset[param1 % kMaxMacroOffsets];
 		channel.relVol = (param2 >> 4) & 0xF;
-		channel.fineTune = (int16)param3;
+		channel.fineTune = (int8)param3;
 
 		initMacroProgramm(channel);
 		channel.keyUp = true;

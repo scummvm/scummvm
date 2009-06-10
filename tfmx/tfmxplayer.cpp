@@ -109,9 +109,9 @@ void tfmxmain(const int argc, const char *const argv[]) {
 			if (i < argc) {
 				param = atoi(argv[i]);
 				debug( "play Macro %02X", param);
-				dumpMacro(*player, 0x11);
+				dumpMacro(*player, param);
 				playflag = 1;
-				player->doMacro(param,0x1B);
+				player->doMacro(param,param);
 				++i;
 			}
 			break;
@@ -143,7 +143,7 @@ void tfmxmain(const int argc, const char *const argv[]) {
 	while( true)
 		player->readBuffer(buf, ARRAYSIZE(buf));
 #endif
-	int maxsecs = 60;
+	int maxsecs = 2 * 60;
 	if (playflag == 1) {
 		// get Mixer, assume this never fails 
 		Audio::Mixer *mixer = g_system->getMixer();
