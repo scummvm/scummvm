@@ -49,7 +49,8 @@ private:
 
 enum {
 	kDraciGeneralDebugLevel = 1 << 0,
-	kDraciBytecodeDebugLevel = 1 << 1
+	kDraciBytecodeDebugLevel = 1 << 1,
+	kDraciArchiverDebugLevel = 1 << 2
 };
 
 } // End of namespace Draci

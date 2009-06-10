@@ -65,14 +65,14 @@ void BArchive::openArchive(const Common::String &path) {
 	// Close previously opened archive (if any)
 	closeArchive();
 	
-	debugC(5, kDraciGeneralDebugLevel, "Loading BAR archive %s:", 
+	debugCN(2, kDraciArchiverDebugLevel, "Loading BAR archive %s: ", 
 		path.c_str());
 
 	f.open(path);
 	if (f.isOpen()) {
-		debugC(5, kDraciGeneralDebugLevel, "Success");
+		debugC(2, kDraciArchiverDebugLevel, "Success");
 	} else {
-		debugC(5, kDraciGeneralDebugLevel, "Error");
+		debugC(2, kDraciArchiverDebugLevel, "Error");
 		return;
 	}
 
@@ -80,13 +80,13 @@ void BArchive::openArchive(const Common::String &path) {
 	_path = path;
 
 	// Read archive header
-	debugC(5, kDraciGeneralDebugLevel, "Checking magic number:");
+	debugCN(2, kDraciArchiverDebugLevel, "Checking magic number: ");
 
 	f.read(buf, 4);
 	if (memcmp(buf, _magicNumber, 4) == 0) {
-		debugC(5, kDraciGeneralDebugLevel, "Success");
+		debugC(2, kDraciArchiverDebugLevel, "Success");
 	} else {
-		debugC(5, kDraciGeneralDebugLevel, "Error");
+		debugC(2, kDraciArchiverDebugLevel, "Error");
 		f.close();
 		return;
 	}
@@ -95,7 +95,7 @@ void BArchive::openArchive(const Common::String &path) {
 	footerOffset = f.readUint32LE();
 	footerSize = f.size() - footerOffset;
 	
-	debugC(5, kDraciGeneralDebugLevel, "Archive info: %d files, %d data bytes",
+	debugC(2, kDraciArchiverDebugLevel, "Archive info: %d files, %d data bytes",
 		_fileCount, footerOffset - _archiveHeaderSize);
 
 	// Read in footer	
@@ -161,20 +161,21 @@ BAFile *BArchive::operator[](unsigned int i) const {
 		return NULL;
 	}
 
-	debugC(5, kDraciGeneralDebugLevel, "Accessing file %d from archive %s", 
+	debugCN(2, kDraciArchiverDebugLevel, "Accessing file %d from archive %s... ", 
 		i, _path.c_str());
 
 	// Check if file has already been opened and return that
 	if (_files[i]._data) {
+		debugC(2, kDraciArchiverDebugLevel, "Success");		
 		return _files + i;
 	}
 	
 	// Else open archive and read in requested file
 	f.open(_path);
 	if (f.isOpen()) {
-		debugC(5, kDraciGeneralDebugLevel, "Success");
+		debugC(2, kDraciArchiverDebugLevel, "Success");
 	} else {
-		debugC(5, kDraciGeneralDebugLevel, "Error");
+		debugC(2, kDraciArchiverDebugLevel, "Error");
 		return NULL;
 	}
 
@@ -189,7 +190,8 @@ BAFile *BArchive::operator[](unsigned int i) const {
 		tmp ^= _files[i]._data[j];
 	}
 	
-	debugC(5, kDraciGeneralDebugLevel, "Read in file %d", i);
+	debugC(3, kDraciArchiverDebugLevel, "Cached file %d from archive %s", 
+		i, _path.c_str());
 	assert(tmp == _files[i]._crc && "CRC checksum mismatch");
 
 	return _files + i;

@@ -23,7 +23,6 @@
  *
  */
 
-#include <cstring> 
 #include "common/scummsys.h"
  
 #include "common/config-manager.h"
@@ -52,6 +51,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	// Here is the right place to set up the engine specific debug levels
 	Common::addDebugChannel(kDraciGeneralDebugLevel, "general", "Draci general debug level");
 	Common::addDebugChannel(kDraciBytecodeDebugLevel, "bytecode", "GPL bytecode instructions");
+	Common::addDebugChannel(kDraciArchiverDebugLevel, "archiver", "BAR archiver debug info");
  
 	// Don't forget to register your random source
 	syst->getEventManager()->registerRandomSource(_rnd, "draci");
@@ -73,10 +73,11 @@ int DraciEngine::init() {
 	initGraphics(320, 200, false);
 
 	// Basic archive test
+	debugC(2, kDraciGeneralDebugLevel, "Running archive tests...");	
 	Common::String path("INIT.DFW");	
 	BArchive ar(path);
 	BAFile *f;
-	debugC(3, kDraciGeneralDebugLevel, "Number of file streams in archive: %d\n", ar.size());	
+	debugC(3, kDraciGeneralDebugLevel, "Number of file streams in archive: %d", ar.size());	
 	f = ar[0];	
 	debugC(3, kDraciGeneralDebugLevel, "First 10 bytes of file %d: ", 0);
 	for (unsigned int i = 0; i < 10; ++i) {
@@ -102,6 +103,8 @@ int DraciEngine::go() {
  
 	// Read in a sample palette
 	byte *palette = new byte[4 * 256];
+
+	debugC(2, kDraciGeneralDebugLevel, "Running graphics/animation test...");
 
 	Common::String path("PALETY.DFW");	
 	BArchive ar(path);
@@ -140,7 +143,7 @@ int DraciEngine::go() {
 	ar.openArchive(path);
 
 	for (unsigned int t = 0; t < 25; ++t) {	
-		debugC(4, kDraciGeneralDebugLevel, "Drawing frame %d...", t); 	
+		debugC(5, kDraciGeneralDebugLevel, "Drawing frame %d...", t); 	
 
 		// Load frame to memory
 		f = ar[t];
@@ -163,7 +166,7 @@ int DraciEngine::go() {
 		_system->updateScreen();
 		_system->delayMillis(100);
 
-		debugC(4, kDraciGeneralDebugLevel, "Finished frame %d", t);	
+		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
 
 		// Free frame memory
 		delete [] scr;
