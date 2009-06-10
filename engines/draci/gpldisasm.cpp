@@ -56,6 +56,7 @@
 
 #include "common/debug.h"
 #include "common/stream.h"
+#include "common/stack.h"
 
 #include "draci/gpldisasm.h"
 #include "draci/draci.h"
@@ -64,8 +65,8 @@ namespace Draci {
 
 // FIXME: Change parameter types to names once I figure out what they are exactly
 GPL2Command gplCommands[] = {
-	{ 0,  0, "gplend",				0, { 0 } },	
-	{ 0,  1, "exit",				0, { 0 } },	
+	{ 0,  0, "gplend",				0, { 0 } },
+	{ 0,  1, "exit",				0, { 0 } },
 	{ 1,  1, "goto", 				1, { 3 } },
 	{ 2,  1, "Let", 				2, { 3, 4 } },
 	{ 3,  1, "if", 					2, { 4, 3 } },
@@ -121,38 +122,126 @@ GPL2Command gplCommands[] = {
 	{ 27, 1, "FeedPassword", 		3, { 1, 1, 1 } }
 };
 
+Common::String operators[] = {
+	"oper_and",
+	"oper_or",
+	"oper_xor",
+	"oper_equals",
+	"oper_not_equal",
+	"oper_less_than",
+	"oper_greater_than",
+	"oper_less_or_equal",
+	"oper_greater_or_equal",
+	"oper_multiply",
+	"oper_divide",
+	"oper_remainder",
+	"oper_plus",
+	"oper_minus"
+};
+
+Common::String functions[] = {
+	"F_Not",
+	"F_Random",
+	"F_IsIcoOn",
+	"F_IsIcoAct",
+	"F_IcoStat",
+	"F_ActIco",
+	"F_IsObjOn",
+	"F_IsObjOff",
+	"F_IsObjAway",
+	"F_ObjStat",
+	"F_LastBlock",
+	"F_AtBegin",
+	"F_BlockVar",
+	"F_HasBeen",
+	"F_MaxLine",
+	"F_ActPhase",
+	"F_Cheat"
+};
+
 const unsigned int kNumCommands = sizeof gplCommands / sizeof gplCommands[0];
 
-// FIXME: Handle math expressions properly instead of just skipping them
+enum mathExpressionObject {
+	kMathEnd,
+	kMathNumber,
+	kMathOperator,
+	kMathFunctionCall,
+	kMathVariable
+};
+
+// FIXME: The evaluator is now complete but I still need to implement callbacks
 void handleMathExpression(Common::MemoryReadStream &reader) {
-	uint16 temp;
+	Common::Stack<uint16> stk;
+	mathExpressionObject obj;
+
+	// Read in initial math object
+	obj = (mathExpressionObject) reader.readUint16LE();
+
+	uint16 value;
 	while (1) {
-		temp = reader.readUint16LE();
-		if (temp == 0) {
+		if (obj == kMathEnd) {
 			break;
 		}
-		temp = reader.readUint16LE();
+
+		switch (obj) {
+
+		// If the object type is not known, assume that it's a number
+		default:
+		case kMathNumber:
+			value = reader.readUint16LE();
+			stk.push(value);
+			debugC(3, kDraciBytecodeDebugLevel, "\t\t-number %hu", value);
+			break;
+
+		case kMathOperator:
+			value = reader.readUint16LE();
+			stk.pop();
+			stk.pop();
+			debugC(3, kDraciBytecodeDebugLevel, "\t\t-operator %s",
+				operators[value-1].c_str());
+			break;
+
+		case kMathVariable:
+			value = reader.readUint16LE();
+			stk.push(value);
+			debugC(3, kDraciBytecodeDebugLevel, "\t\t-variable %hu", value);
+			break;
+
+		case kMathFunctionCall:
+			value = reader.readUint16LE();
+
+			// FIXME: Pushing dummy value for now, but should push return value
+			stk.push(0);
+
+			debugC(3, kDraciBytecodeDebugLevel, "\t\t-functioncall %s",
+				functions[value-1].c_str());
+			break;
+		}
+
+		obj = (mathExpressionObject) reader.readUint16LE();
 	}
+
 	return;
 }
 
 GPL2Command *findCommand(byte num, byte subnum) {
 	unsigned int i = 0;
 	while (1) {
-		
+
 		// Command not found
 		if (i >= kNumCommands) {
 			break;
 		}
 
 		// Return found command
-		if (gplCommands[i]._number == num && gplCommands[i]._subNumber == subnum) {
+		if (gplCommands[i]._number == num &&
+			gplCommands[i]._subNumber == subnum) {
 			return &gplCommands[i];
 		}
-	
-		++i;	
+
+		++i;
 	}
-	
+
 	return NULL;
 }
 
@@ -162,24 +251,24 @@ int gpldisasm(byte *gplcode, uint16 len) {
 	while (!reader.eos()) {
 		// read in command pair
 		uint16 cmdpair = reader.readUint16BE();
-		
+
 		// extract high byte, i.e. the command number
 		byte num = (cmdpair >> 8) & 0xFF;
-		
+
 		// extract low byte, i.e. the command subnumber
 		byte subnum = cmdpair & 0xFF;
 
 		GPL2Command *cmd;
 		if ((cmd = findCommand(num, subnum))) {
-			
-			// Print command name	
+
+			// Print command name
 			debugC(2, kDraciBytecodeDebugLevel, "%s", cmd->_name.c_str());
 
 			for (uint16 i = 0; i < cmd->_numParams; ++i) {
 				if (cmd->_paramTypes[i] == 4) {
 					debugC(3, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
 					handleMathExpression(reader);
-				}				
+				}
 				else {
 					debugC(3, kDraciBytecodeDebugLevel, "\t%hu", reader.readUint16LE());
 				}
@@ -190,7 +279,7 @@ int gpldisasm(byte *gplcode, uint16 len) {
 				num, subnum);
 		}
 
-		
+
 	}
 
 	return 0;
