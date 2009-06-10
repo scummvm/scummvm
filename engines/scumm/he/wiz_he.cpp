@@ -858,7 +858,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 
 	dstInc = bitDepth;
 	if (flags & kWIFFlipX) {
 		dstPtr += (w - 1) * bitDepth;
-		dstInc = -1;
+		dstInc = -bitDepth;
 	}
 
 	while (h--) {
