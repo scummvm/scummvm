@@ -197,7 +197,8 @@ OSystem_SDL::OSystem_SDL()
 #endif
 	_hwscreen(0), _screen(0), _tmpscreen(0),
 #ifdef ENABLE_16BIT
-	_screen16(0), _cursorBitDepth(8),
+	_screenFormat(getPixelFormat(Graphics::kFormat8Bit)),
+	_cursorBitDepth(8),
 #endif
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),

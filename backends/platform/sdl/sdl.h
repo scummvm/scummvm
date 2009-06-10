@@ -81,6 +81,22 @@ public:
 	void beginGFXTransaction(void);
 	TransactionError endGFXTransaction(void);
 
+#ifdef ENABLE_16BIT
+	// Find a compatible format from the list of formats supported by the engine
+	// Fallback to CLUT8 if none found
+	virtual Graphics::ColorFormat findCompatibleFormat(Common::List<Graphics::ColorFormat> formatList);
+
+	// Set the depth and format of the video bitmap
+	// Typically, CLUT8
+	virtual void initFormat(Graphics::ColorFormat format);
+
+	// Game screen
+	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
+
+	//Create a Graphics::PixelFormat to describe the requested color mode
+	virtual Graphics::PixelFormat getPixelFormat(Graphics::ColorFormat format);
+#endif
+
 	// Set the size of the video bitmap.
 	// Typically, 320x200
 	virtual void initSize(uint w, uint h); // overloaded by CE backend
@@ -179,11 +195,6 @@ public:
 	// Overlay
 	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
 
-#ifdef ENABLE_16BIT
-	// Game screen
-	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
-#endif
-
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
@@ -239,11 +250,6 @@ protected:
 	SDL_Surface *_screen;
 #ifdef ENABLE_16BIT
 	Graphics::PixelFormat _screenFormat;
-
-	//HACK This is a temporary hack to get 16-bit graphics
-	//displaying quickly, which will be removed in favor of 
-	//configuring the format of _screen on a per-game basis
-	SDL_Surface *_screen16;	
 #endif
 
 	// temporary screen (for scalers)
@@ -278,6 +284,9 @@ protected:
 		bool needHotswap;
 		bool needUpdatescreen;
 		bool normal1xScaler;
+#ifdef ENABLE_16BIT
+		bool formatChanged;
+#endif
 	};
 	TransactionDetails _transactionDetails;
 
@@ -292,6 +301,9 @@ protected:
 
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
+#ifdef ENABLE_16BIT
+		Graphics::ColorFormat format;
+#endif
 	};
 	VideoState _videoMode, _oldVideoMode;
 

@@ -343,6 +343,53 @@ public:
 	 */
 	virtual int getGraphicsMode() const = 0;
 
+#ifdef ENABLE_16BIT
+	/**
+	 * Find a supported color format from a list of requested formats. Typical formats include:
+	 *  CLUT8 (e.g. 256 color, for most games), all backends must provide support for this format
+	 *  RGB555 (e.g. 16-bit color, for later SCUMM HE games)
+	 *  RGB565 (e.g. 16-bit color, for Urban Runner)
+	 *
+	 * These are the pixel formats for which the client code can generates data;
+	 * they are not necessarily equal to the hardware pixel format. For example,
+	 * a backend may perform color lookup of 8-bit graphics before pushing the 
+	 * screen buffer to hardware, or perform transformations of the ARGB color order.
+	 *
+	 * @param formatList	A list of requested pixel formats, ordered by priority
+	 *
+	 * @return a supported ColorFormat from the list, or kFormat8Bit if no supported format was found
+	 */
+	virtual Graphics::ColorFormat findCompatibleFormat(Common::List<Graphics::ColorFormat> formatList) = 0;
+
+	/**
+	 * Set the color format of the virtual screen. Typical formats include:
+	 *  CLUT8 (e.g. 256 color, for most games)
+	 *  RGB555 (e.g. 16-bit color, for later SCUMM HE games)
+	 *  RGB565 (e.g. 16-bit color, for Urban Runner)
+	 *
+	 * This is the pixel format for which the client code generates data;
+	 * this is not necessarily equal to the hardware pixel format. For example,
+	 * a backend may perform color lookup of 8-bit graphics before pushing
+	 * a screen to hardware, or correct the ARGB color order.
+	 *
+	 * @param format	A pixel format that the backend screen will use
+	 */
+	virtual void initFormat(Graphics::ColorFormat format) = 0;
+
+	/**
+	 * Returns the pixel format description of the screen.
+	 * @see Graphics::PixelFormat
+	 */
+	virtual Graphics::PixelFormat getScreenFormat() const = 0;
+
+	/**
+	 * Returns the pixel format description of the requested color mode
+	 * @see Graphics::PixelFormat
+	 */
+	virtual Graphics::PixelFormat getPixelFormat(Graphics::ColorFormat format) = 0;
+
+#endif
+
 	/**
 	 * Set the size of the virtual screen. Typical sizes include:
 	 *  - 320x200 (e.g. for most SCUMM games, and Simon)
@@ -607,14 +654,6 @@ public:
 	 * @see Graphics::PixelFormat
 	 */
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
-
-#ifdef ENABLE_16BIT
-	/**
-	 * Returns the pixel format description of the game screen.
-	 * @see Graphics::PixelFormat
-	 */
-	virtual Graphics::PixelFormat getScreenFormat() const = 0;
-#endif
 
 	/**
 	 * Reset the overlay.

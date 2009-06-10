@@ -97,6 +97,9 @@ void OSystem_SDL::beginGFXTransaction(void) {
 	_transactionDetails.needUpdatescreen = false;
 
 	_transactionDetails.normal1xScaler = false;
+#ifdef ENABLE_16BIT
+	_transactionDetails.formatChanged = false;
+#endif
 
 	_oldVideoMode = _videoMode;
 }
@@ -127,6 +130,12 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 			_videoMode.screenHeight = _oldVideoMode.screenHeight;
 			_videoMode.overlayWidth = _oldVideoMode.overlayWidth;
 			_videoMode.overlayHeight = _oldVideoMode.overlayHeight;
+#ifdef ENABLE_16BIT
+		} else if (_videoMode.format != _oldVideoMode.format) {
+			errors |= kTransactionPixelFormatNotSupported;
+
+			_videoMode.format = _oldVideoMode.format;
+#endif
 		}
 
 		if (_videoMode.fullscreen == _oldVideoMode.fullscreen &&
@@ -143,6 +152,32 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 		}
 	}
 
+#ifdef ENABLE_16BIT
+	if (_transactionDetails.formatChanged) {
+		_screenFormat = getPixelFormat(_videoMode.format);
+		if (!_transactionDetails.sizeChanged) {
+			unloadGFXMode();
+			if (!loadGFXMode()) {
+				if (_oldVideoMode.setup) {
+					_transactionMode = kTransactionRollback;
+					errors |= endGFXTransaction();
+				}
+			} else {
+				setGraphicsModeIntern();
+				clearOverlay();
+
+				_videoMode.setup = true;
+				_modeChanged = true;
+				// OSystem_SDL::pollEvent used to update the screen change count,
+				// but actually it gives problems when a video mode was changed
+				// but OSystem_SDL::pollEvent was not called. This for example
+				// caused a crash under certain circumstances when doing an RTL.
+				// To fix this issue we update the screen change count right here.
+				_screenChangeCount++;
+			}	
+		}
+	}
+#endif
 	if (_transactionDetails.sizeChanged) {
 		unloadGFXMode();
 		if (!loadGFXMode()) {
@@ -186,7 +221,7 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 	} else if (_transactionDetails.needUpdatescreen) {
 		setGraphicsModeIntern();
 		internUpdateScreen();
-	}
+	} 
 
 	_transactionMode = kTransactionNone;
 	return (TransactionError)errors;
@@ -339,6 +374,102 @@ int OSystem_SDL::getGraphicsMode() const {
 	assert (_transactionMode == kTransactionNone);
 	return _videoMode.mode;
 }
+#ifdef ENABLE_16BIT
+Graphics::ColorFormat OSystem_SDL::findCompatibleFormat(Common::List<Graphics::ColorFormat> formatList)
+{
+	bool typeAccepted = false;
+	Graphics::ColorFormat format;
+	
+	while (!formatList.empty() && !typeAccepted)
+	{
+		typeAccepted = false;
+		format = formatList.front();
+
+		//no need to keep searching if the screen
+		//is already in one of the desired formats
+		if (format == _videoMode.format)
+			return format;
+
+		formatList.pop_front();
+		switch (format & Graphics::kFormatTypeMask)
+		{
+			case Graphics::kFormat8Bit:
+				if (format == Graphics::kFormat8Bit)
+					return format;
+				break;
+			case Graphics::kFormatRGB555:
+			case Graphics::kFormatARGB1555:
+			case Graphics::kFormatRGB565:
+				typeAccepted = true;
+				break;
+		}
+
+		if (!typeAccepted)
+			continue;
+
+		switch (format & Graphics::kFormatOrderMask) {
+			case Graphics::kFormatRGB:
+			case Graphics::kFormatRGBA:
+				return format;
+			default:
+				break;
+		}
+	}
+	return Graphics::kFormat8Bit;
+}
+
+void OSystem_SDL::initFormat(Graphics::ColorFormat format) {
+	assert(_transactionMode == kTransactionActive);
+
+	//avoid redundant format changes
+	if (format == _videoMode.format)
+		return;
+
+	_videoMode.format = format;
+	_transactionDetails.formatChanged = true;
+
+}
+
+//This should only ever be called with a format that is known supported.
+Graphics::PixelFormat OSystem_SDL::getPixelFormat(Graphics::ColorFormat format) {
+	Graphics::PixelFormat result;
+	switch (format & Graphics::kFormatTypeMask) {
+		case Graphics::kFormatARGB1555:
+			result.aLoss = 7;
+			result.bytesPerPixel = 2;
+			result.rLoss = result.gLoss = result.bLoss = 3;
+		case Graphics::kFormatRGB555:
+			result.aLoss = 8;
+			result.bytesPerPixel = 2;
+			result.rLoss = result.gLoss = result.bLoss = 3;
+			break;
+		case Graphics::kFormatRGB565:
+			result.bytesPerPixel = 2;
+			result.aLoss = 8;
+			result.gLoss = 2;
+			result.rLoss = result.bLoss = 3;
+			break;
+		case Graphics::kFormat8Bit:
+		default:
+			result.bytesPerPixel = 1;
+			result.rShift = result.gShift = result.bShift = result.aShift = 0;
+			result.rLoss = result.gLoss = result.bLoss = result.aLoss = 8;
+			return result;
+	}
+	switch (format & Graphics::kFormatOrderMask)
+	{
+		default:
+		case Graphics::kFormatRGBA:
+			result.aShift = 0;
+		case Graphics::kFormatRGB:
+			result.bShift = result.aBits();
+			result.gShift = result.bShift + result.bBits();
+			result.rShift = result.gShift + result.gBits();
+			break;
+	}
+	return result;
+}
+#endif
 
 void OSystem_SDL::initSize(uint w, uint h) {
 	assert(_transactionMode == kTransactionActive);
@@ -384,9 +515,21 @@ bool OSystem_SDL::loadGFXMode() {
 	//
 	// Create the surface that contains the 8 bit game data
 	//
+#ifdef ENABLE_16BIT
+	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 
+						_screenFormat.bytesPerPixel << 3, 
+						((1 << _screenFormat.rBits()) - 1) << _screenFormat.rShift ,
+						((1 << _screenFormat.gBits()) - 1) << _screenFormat.gShift ,
+						((1 << _screenFormat.bBits()) - 1) << _screenFormat.bShift ,
+						((1 << _screenFormat.aBits()) - 1) << _screenFormat.aShift );
+	if (_screen == NULL)
+		error("allocating _screen failed");
+
+#else
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 8, 0, 0, 0, 0);
 	if (_screen == NULL)
 		error("allocating _screen failed");
+#endif
 
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
@@ -406,20 +549,6 @@ bool OSystem_SDL::loadGFXMode() {
 			return false;
 		}
 	}
-
-#ifdef ENABLE_16BIT
-	//
-	// Create the surface that contains the 16 bit game data
-	//
-	_screen16 = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight,
-						16,
-						0x7C00,
-						0x3E0,
-						0x1F,
-						0); //555, not 565
-	if (_screen16 == NULL)
-		error("allocating _screen16 failed");
-#endif
 
 	//
 	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
@@ -498,17 +627,10 @@ bool OSystem_SDL::loadGFXMode() {
 }
 
 void OSystem_SDL::unloadGFXMode() {
-#ifdef ENABLE_16BIT
-	if (_screen16) {
-		SDL_FreeSurface(_screen16);
-		_screen16 = NULL;
-	}
-#else
 	if (_screen) {
 		SDL_FreeSurface(_screen);
 		_screen = NULL;
 	}
-#endif
 
 	if (_hwscreen) {
 		SDL_FreeSurface(_hwscreen);
@@ -540,22 +662,13 @@ void OSystem_SDL::unloadGFXMode() {
 }
 
 bool OSystem_SDL::hotswapGFXMode() {
-#ifdef ENABLE_16BIT
-	if (!_screen16)
-#else
 	if (!_screen)
-#endif
 		return false;
 
 	// Keep around the old _screen & _overlayscreen so we can restore the screen data
 	// after the mode switch.
-#ifdef ENABLE_16BIT
-	SDL_Surface *old_screen = _screen16;
-	_screen16 = NULL;
-#else
 	SDL_Surface *old_screen = _screen;
 	_screen = NULL;
-#endif
 	SDL_Surface *old_overlayscreen = _overlayscreen;
 	_overlayscreen = NULL;
 
@@ -574,11 +687,7 @@ bool OSystem_SDL::hotswapGFXMode() {
 	if (!loadGFXMode()) {
 		unloadGFXMode();
 
-#ifdef ENABLE_16BIT
-		_screen16 = old_screen;
-#else
 		_screen = old_screen;
-#endif
 		_overlayscreen = old_overlayscreen;
 
 		return false;
@@ -588,11 +697,7 @@ bool OSystem_SDL::hotswapGFXMode() {
 	SDL_SetColors(_screen, _currentPalette, 0, 256);
 
 	// Restore old screen content
-#ifdef ENABLE_16BIT
-	SDL_BlitSurface(old_screen, NULL, _screen16, NULL);
-#else
 	SDL_BlitSurface(old_screen, NULL, _screen, NULL);
-#endif
 	SDL_BlitSurface(old_overlayscreen, NULL, _overlayscreen, NULL);
 
 	// Free the old surfaces
@@ -674,11 +779,7 @@ void OSystem_SDL::internUpdateScreen() {
 #endif
 
 	if (!_overlayVisible) {
-#ifdef ENABLE_16BIT
-		origSurf = _screen16;
-#else
 		origSurf = _screen;
-#endif
 		srcSurf = _tmpscreen;
 		width = _videoMode.screenWidth;
 		height = _videoMode.screenHeight;
@@ -823,12 +924,6 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	assert (_transactionMode == kTransactionNone);
 	assert(src);
 
-#ifdef ENABLE_16BIT
-	if (_screen16 == NULL) {
-		warning("OSystem_SDL::copyRectToScreen: _screen16 == NULL");
-		return;
-	}
-#endif
 	if (_screen == NULL) {
 		warning("OSystem_SDL::copyRectToScreen: _screen == NULL");
 		return;
@@ -877,27 +972,20 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	}
 
 	// Try to lock the screen surface
-#ifdef ENABLE_16BIT
-	if (SDL_LockSurface(_screen16) == -1)
-#else
 	if (SDL_LockSurface(_screen) == -1)
-#endif
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 #ifdef ENABLE_16BIT
-	byte *dst = (byte *)_screen16->pixels + y * _videoMode.screenWidth * 2 + x * 2;
-	if (_videoMode.screenWidth == w && pitch == w * 2) {
-		memcpy(dst, src, h*w*2);
+	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth * _screenFormat.bytesPerPixel + x * _screenFormat.bytesPerPixel;
+	if (_videoMode.screenWidth == w && pitch == w * _screenFormat.bytesPerPixel) {
+		memcpy(dst, src, h*w*_screenFormat.bytesPerPixel);
 	} else {
 		do {
-			memcpy(dst, src, w * 2);
+			memcpy(dst, src, w * _screenFormat.bytesPerPixel);
 			src += pitch;
-			dst += _videoMode.screenWidth * 2;
+			dst += _videoMode.screenWidth * _screenFormat.bytesPerPixel;
 		} while (--h);
 	}
-
-	// Unlock the screen surface
-	SDL_UnlockSurface(_screen16);
 #else
 	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
 	if (_videoMode.screenWidth == pitch && pitch == w) {
@@ -909,10 +997,10 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 			dst += _videoMode.screenWidth;
 		} while (--h);
 	}
+#endif
 
 	// Unlock the screen surface
 	SDL_UnlockSurface(_screen);
-#endif
 }
 
 Graphics::Surface *OSystem_SDL::lockScreen() {
@@ -926,24 +1014,16 @@ Graphics::Surface *OSystem_SDL::lockScreen() {
 	_screenIsLocked = true;
 
 	// Try to lock the screen surface
-#ifdef ENABLE_16BIT
-	if (SDL_LockSurface(_screen16) == -1)
-#else
 	if (SDL_LockSurface(_screen) == -1)
-#endif
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-#ifdef ENABLE_16BIT
-	_framebuffer.pixels = _screen16->pixels;
-	_framebuffer.w = _screen16->w;
-	_framebuffer.h = _screen16->h;
-	_framebuffer.pitch = _screen16->pitch;
-	_framebuffer.bytesPerPixel = 2;
-#else
 	_framebuffer.pixels = _screen->pixels;
 	_framebuffer.w = _screen->w;
 	_framebuffer.h = _screen->h;
 	_framebuffer.pitch = _screen->pitch;
+#ifdef ENABLE_16BIT
+	_framebuffer.bytesPerPixel = _screenFormat.bytesPerPixel;
+#else
 	_framebuffer.bytesPerPixel = 1;
 #endif
 
@@ -958,11 +1038,7 @@ void OSystem_SDL::unlockScreen() {
 	_screenIsLocked = false;
 
 	// Unlock the screen surface
-#ifdef ENABLE_16BIT
-	SDL_UnlockSurface(_screen16);
-#else
 	SDL_UnlockSurface(_screen);
-#endif
 
 	// Trigger a full screen update
 	_forceFull = true;
@@ -1133,17 +1209,17 @@ int16 OSystem_SDL::getWidth() {
 void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
 
+#ifdef ENABLE_16BIT
+	if (_screenFormat.bytesPerPixel > 1)
+		return; //not using a paletted pixel format
+#endif
+
 	// Setting the palette before _screen is created is allowed - for now -
 	// since we don't actually set the palette until the screen is updated.
 	// But it could indicate a programming error, so let's warn about it.
 
-#ifdef ENABLE_16BIT
-	if (!_screen16)
-		warning("OSystem_SDL::setPalette: _screen16 == NULL");
-#else
 	if (!_screen)
 		warning("OSystem_SDL::setPalette: _screen == NULL");
-#endif
 
 	const byte *b = colors;
 	uint i;
@@ -1267,11 +1343,7 @@ void OSystem_SDL::clearOverlay() {
 	dst.x = dst.y = 1;
 	src.w = dst.w = _videoMode.screenWidth;
 	src.h = dst.h = _videoMode.screenHeight;
-#ifdef ENABLE_16BIT
-	if (SDL_BlitSurface(_screen16, &src, _tmpscreen, &dst) != 0)
-#else
 	if (SDL_BlitSurface(_screen, &src, _tmpscreen, &dst) != 0)
-#endif
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
 
 	SDL_LockSurface(_tmpscreen);
