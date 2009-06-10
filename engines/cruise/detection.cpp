@@ -209,7 +209,8 @@ bool CruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportThumbnail) ||
+		(f == kSupportsLoadingDuringStartup);
 }
 
 SaveStateList CruiseMetaEngine::listSaves(const char *target) const {

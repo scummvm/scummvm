@@ -1739,6 +1739,9 @@ void CruiseEngine::mainLoop(void) {
 	int quitValue2 = 1;
 	int quitValue = 0;
 
+	if (ConfMan.hasKey("save_slot"))
+		loadGameState(ConfMan.getInt("save_slot"));
+
 	do {
 		// Handle frame delay
 		uint32 currentTick = g_system->getMillis();
