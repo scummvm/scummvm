@@ -1115,6 +1115,10 @@ case $_host_os in
 		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
 		;;
+	cygwin*)
+		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
+		exit 0
+		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
 		;;
