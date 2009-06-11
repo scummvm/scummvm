@@ -874,35 +874,25 @@ void FWRenderer::fadeToBlack() {
 
 /*! \brief Initialize Operation Stealth renderer
  */
-OSRenderer::OSRenderer() : FWRenderer(), _currentBg(0), _scrollBg(0),
+OSRenderer::OSRenderer() : FWRenderer(), _bgTable(), _currentBg(0), _scrollBg(0),
 	_bgShift(0) {
 
-	int i;
-	for (i = 0; i < 9; i++) {
-		_bgTable[i].bg = NULL;
-		_bgTable[i].pal.clear();
-		memset(_bgTable[i].name, 0, sizeof (_bgTable[i].name));
-	}
+	_bgTable.resize(9); // Resize the background table to its required size
 }
 
 /*! \brief Destroy Operation Stealth renderer
  */
 OSRenderer::~OSRenderer() {
-	for (int i = 0; i < 9; i++) {
-		delete[] _bgTable[i].bg;
-		_bgTable[i].pal.clear();
+	for (uint i = 0; i < _bgTable.size(); i++) {
+		_bgTable[i].clear();
 	}
 }
 
 /*! \brief Reset Operation Stealth renderer state
  */
 void OSRenderer::clear() {
-	for (int i = 0; i < 9; i++) {
-		delete[] _bgTable[i].bg;
-
-		_bgTable[i].bg = NULL;
-		_bgTable[i].pal.clear();
-		memset(_bgTable[i].name, 0, sizeof (_bgTable[i].name));
+	for (uint i = 0; i < _bgTable.size(); i++) {
+		_bgTable[i].clear();
 	}
 
 	_currentBg = 0;
@@ -1172,7 +1162,10 @@ void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
  * \param name Background filename
  */
 void OSRenderer::loadCt16(const byte *ct, const char *name) {
-	loadBg16(ct, name, 8);
+	// Make the 9th background point directly to the collision page
+	// and load the picture into it.
+	_bgTable[kCollisionPageBgIdxAlias].bg = collisionPage;
+	loadBg16(ct, name, kCollisionPageBgIdxAlias);
 }
 
 /*! \brief Load 256 color background into renderer
@@ -1199,7 +1192,10 @@ void OSRenderer::loadBg256(const byte *bg, const char *name, unsigned int idx) {
  * \param name Background filename
  */
 void OSRenderer::loadCt256(const byte *ct, const char *name) {
-	loadBg256(ct, name, 8);
+	// Make the 9th background point directly to the collision page
+	// and load the picture into it.
+	_bgTable[kCollisionPageBgIdxAlias].bg = collisionPage;
+	loadBg256(ct, name, kCollisionPageBgIdxAlias);
 }
 
 /*! \brief Select active background and load its palette
@@ -1255,10 +1251,7 @@ void OSRenderer::removeBg(unsigned int idx) {
 		_scrollBg = 0;
 	}
 
-	delete[] _bgTable[idx].bg;
-	_bgTable[idx].bg = NULL;
-	_bgTable[idx].pal.clear();
-	memset(_bgTable[idx].name, 0, sizeof (_bgTable[idx].name));
+	_bgTable[idx].clear();
 }
 
 void OSRenderer::saveBgNames(Common::OutSaveFile &fHandle) {

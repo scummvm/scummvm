@@ -31,12 +31,34 @@
 
 namespace Cine {
 
+extern byte *collisionPage;
+static const int kCollisionPageBgIdxAlias = 8;
+
 /*! \brief Background with palette
  */
 struct palBg {
 	byte *bg; ///< Background data
 	Cine::Palette pal; ///< Background color palette
 	char name[15]; ///< Background filename
+
+	/** @brief Default constructor. */
+	palBg() : bg(NULL), pal(), name() {
+		// Make sure the name is empty (Maybe this is not needed?)
+		memset(this->name, 0, sizeof(this->name));
+	}
+
+	/** @brief Clears the struct (Releases allocated memory etc). */
+	void clear() {
+		// In Operation Stealth the 9th background is sometimes aliased to
+		// the collision page so we should take care not to double delete it
+		// (The collision page is deleted elsewhere).
+		if (this->bg != collisionPage) {
+			delete[] this->bg;
+		}
+		this->bg = NULL;
+		this->pal.clear();
+		memset(this->name, 0, sizeof(this->name));
+	}
 };
 
 /*! \brief Future Wars renderer
@@ -129,8 +151,7 @@ public:
  */
 class OSRenderer : public FWRenderer {
 private:
-	// FIXME: Background table's size is probably 8 instead of 9. Check to make sure and correct if necessary.
-	palBg _bgTable[9]; ///< Table of backgrounds loaded into renderer
+	Common::Array<palBg> _bgTable; ///< Table of backgrounds loaded into renderer (Maximum is 9)
 	unsigned int _currentBg; ///< Current background
 	unsigned int _scrollBg; ///< Current scroll background
 	unsigned int _bgShift; ///< Background shift
@@ -175,7 +196,6 @@ public:
 
 void gfxDrawSprite(byte *src4, uint16 sw, uint16 sh, byte *dst4, int16 sx, int16 sy);
 
-extern byte *collisionPage;
 extern FWRenderer *renderer;
 
 void setMouseCursor(int cursor);
