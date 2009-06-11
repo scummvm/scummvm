@@ -17,16 +17,8 @@ void PaletteBundle::update() {
 
 }
 
-uint8* PaletteBundle::getPalette(uint8 brightness) {
-	// palettes always start from offset 32
+uint8* PaletteBundle::getPalette() {
 	memcpy(palette, data+32, sizeof(uint8)*256*3);
-
-	for (int i = 0; i < 256; i++) {
-		*p++ = *palette++ * brightness;
-		*p++ = *palette++ * brightness;
-		*p++ = *palette++ * brightness;
-		*p++ = 0;
-	}
 
 	return palette;
 }
