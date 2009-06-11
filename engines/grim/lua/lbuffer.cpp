@@ -17,10 +17,10 @@ namespace Grim {
 
 #define BUFF_STEP	32
 
-#define openspace(size)  if (L->Mbuffnext + (size) > L->Mbuffsize) Openspace(size)
+#define openspace(size)  if (lua_state->Mbuffnext + (size) > lua_state->Mbuffsize) Openspace(size)
 
 static void Openspace(int32 size) {
-	LState *l = L;  // to optimize
+	LState *l = lua_state;  // to optimize
 	int32 base = l->Mbuffbase-l->Mbuffer;
 	l->Mbuffsize *= 2;
 	if (l->Mbuffnext + size > l->Mbuffsize)  // still not big enough?
@@ -31,36 +31,36 @@ static void Openspace(int32 size) {
 
 char *luaL_openspace(int32 size) {
 	openspace(size);
-	return L->Mbuffer + L->Mbuffnext;
+	return lua_state->Mbuffer + lua_state->Mbuffnext;
 }
 
 void luaL_addchar(int32 c) {
 	openspace(BUFF_STEP);
-	L->Mbuffer[L->Mbuffnext++] = c;
+	lua_state->Mbuffer[lua_state->Mbuffnext++] = c;
 }
 
 void luaL_resetbuffer() {
-	L->Mbuffnext = L->Mbuffbase - L->Mbuffer;
+	lua_state->Mbuffnext = lua_state->Mbuffbase - lua_state->Mbuffer;
 }
 
 void luaL_addsize(int32 n) {
-	L->Mbuffnext += n;
+	lua_state->Mbuffnext += n;
 }
 
 int32 luaL_newbuffer(int32 size) {
-	int32 old = L->Mbuffbase - L->Mbuffer;
+	int32 old = lua_state->Mbuffbase - lua_state->Mbuffer;
 	openspace(size);
-	L->Mbuffbase = L->Mbuffer + L->Mbuffnext;
+	lua_state->Mbuffbase = lua_state->Mbuffer + lua_state->Mbuffnext;
 	return old;
 }
 
 void luaL_oldbuffer(int32 old) {
-	L->Mbuffnext = L->Mbuffbase - L->Mbuffer;
-	L->Mbuffbase = L->Mbuffer + old;
+	lua_state->Mbuffnext = lua_state->Mbuffbase - lua_state->Mbuffer;
+	lua_state->Mbuffbase = lua_state->Mbuffer + old;
 }
 
 char *luaL_buffer() {
-	return L->Mbuffbase;
+	return lua_state->Mbuffbase;
 }
 
 } // end of namespace Grim

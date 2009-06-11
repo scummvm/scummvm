@@ -18,14 +18,14 @@ namespace Grim {
 
 /*
 ** macro to increment stack top.
-** There must be always an empty slot at the L->stack.top
+** There must be always an empty slot at the lua_state->stack.top
 */
-#define incr_top { if (L->stack.top >= L->stack.last) luaD_checkstack(1); L->stack.top++; }
+#define incr_top { if (lua_state->stack.top >= lua_state->stack.last) luaD_checkstack(1); lua_state->stack.top++; }
 
 // macros to convert from lua_Object to (TObject *) and back
 
-#define Address(lo)     ((lo) + L->stack.stack - 1)
-#define Ref(st)         ((st) - L->stack.stack + 1)
+#define Address(lo)     ((lo) + lua_state->stack.stack - 1)
+#define Ref(st)         ((st) - lua_state->stack.stack + 1)
 
 void luaD_init();
 void luaD_initthr();

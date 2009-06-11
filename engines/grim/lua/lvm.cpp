@@ -65,7 +65,7 @@ int32 luaV_tostring (TObject *obj) { // LUA_NUMBER
 
 void luaV_closure(int32 nelems) {
 	if (nelems > 0) {
-		Stack *S = &L->stack;
+		Stack *S = &lua_state->stack;
 		Closure *c = luaF_newclosure(nelems);
 		c->consts[0] = *(S->top - 1);
 		memcpy(&c->consts[1], S->top - (nelems + 1), nelems * sizeof(TObject));
@@ -80,7 +80,7 @@ void luaV_closure(int32 nelems) {
 ** Receives the table at top-2 and the index at top-1.
 */
 void luaV_gettable() {
-	Stack *S = &L->stack;
+	Stack *S = &lua_state->stack;
 	TObject *im;
 	if (ttype(S->top - 2) != LUA_T_ARRAY)  // not a table, get "gettable" method
 		im = luaT_getimbyObj(S->top - 2, IM_GETTABLE);
@@ -113,10 +113,10 @@ void luaV_gettable() {
 ** Function to store indexed based on values at the stack.top
 ** mode = 0: raw store (without tag methods)
 ** mode = 1: normal store (with tag methods)
-** mode = 2: "deep L->stack.stack" store (with tag methods)
+** mode = 2: "deep lua_state->stack.stack" store (with tag methods)
 */
 void luaV_settable(TObject *t, int32 mode) {
-	struct Stack *S = &L->stack;
+	struct Stack *S = &lua_state->stack;
 	TObject *im = (mode == 0) ? NULL : luaT_getimbyObj(t, IM_SETTABLE);
 	if (ttype(t) == LUA_T_ARRAY && (!im || ttype(im) == LUA_T_NIL)) {
 		TObject *h = luaH_set(avalue(t), t + 1);
@@ -125,7 +125,7 @@ void luaV_settable(TObject *t, int32 mode) {
 	} else {  // object is not a table, and/or has a specific "settable" method
 		if (im && ttype(im) != LUA_T_NIL) {
 			if (mode == 2) {
-				*(S->top + 1) = *(L->stack.top - 1);
+				*(S->top + 1) = *(lua_state->stack.top - 1);
 				*(S->top) = *(t + 1);
 				*(S->top - 1) = *t;
 				S->top += 2;  // WARNING: caller must assure stack space
@@ -141,9 +141,9 @@ void luaV_getglobal(TaggedString *ts) {
 	TObject *value = &ts->globalval;
 	TObject *im = luaT_getimbyObj(value, IM_GETGLOBAL);
 	if (ttype(im) == LUA_T_NIL) {  // default behavior
-		*L->stack.top++ = *value;
+		*lua_state->stack.top++ = *value;
 	} else {
-		Stack *S = &L->stack;
+		Stack *S = &lua_state->stack;
 		ttype(S->top) = LUA_T_STRING;
 		tsvalue(S->top) = ts;
 		S->top++;
@@ -156,10 +156,10 @@ void luaV_setglobal(TaggedString *ts) {
 	TObject *oldvalue = &ts->globalval;
 	TObject *im = luaT_getimbyObj(oldvalue, IM_SETGLOBAL);
 	if (ttype(im) == LUA_T_NIL)  // default behavior */
-		luaS_rawsetglobal(ts, --L->stack.top);
+		luaS_rawsetglobal(ts, --lua_state->stack.top);
 	else {
 		// WARNING: caller must assure stack space
-		Stack *S = &L->stack;
+		Stack *S = &lua_state->stack;
 		TObject newvalue = *(S->top - 1);
 		ttype(S->top - 1) = LUA_T_STRING;
 		tsvalue(S->top - 1) = ts;
@@ -170,9 +170,9 @@ void luaV_setglobal(TaggedString *ts) {
 }
 
 static void call_binTM(IMS event, const char *msg) {
-	TObject *im = luaT_getimbyObj(L->stack.top - 2, event); // try first operand
+	TObject *im = luaT_getimbyObj(lua_state->stack.top - 2, event); // try first operand
 	if (ttype(im) == LUA_T_NIL) {
-		im = luaT_getimbyObj(L->stack.top - 1, event);  // try second operand
+		im = luaT_getimbyObj(lua_state->stack.top - 1, event);  // try second operand
 		if (ttype(im) == LUA_T_NIL) {
 			im = luaT_getim(0, event);  // try a 'global' i.m.
 			if (ttype(im) == LUA_T_NIL)
@@ -189,7 +189,7 @@ static void call_arith(IMS event) {
 }
 
 static void comparison(lua_Type ttype_less, lua_Type ttype_equal, lua_Type ttype_great, IMS op) {
-	Stack *S = &L->stack;
+	Stack *S = &lua_state->stack;
 	TObject *l = S->top-2;
 	TObject *r = S->top-1;
 	int32 result;
@@ -207,7 +207,7 @@ static void comparison(lua_Type ttype_less, lua_Type ttype_equal, lua_Type ttype
 }
 
 void luaV_pack(StkId firstel, int32 nvararg, TObject *tab) {
-	TObject *firstelem = L->stack.stack + firstel;
+	TObject *firstelem = lua_state->stack.stack + firstel;
 	int32 i;
 	if (nvararg < 0)
 		nvararg = 0;
@@ -237,20 +237,20 @@ void luaV_pack(StkId firstel, int32 nvararg, TObject *tab) {
 */
 StkId luaV_execute(struct CallInfo *ci) {
 	// Save index in case CallInfo array is realloc'd
-	int32 ci_index = ci - L->base_ci;
-	struct Stack *S = &L->stack;  // to optimize
+	int32 ci_index = ci - lua_state->base_ci;
+	struct Stack *S = &lua_state->stack;  // to optimize
 	Closure *cl;
 	TProtoFunc *tf;
 	StkId base;
 	byte *pc;
 	TObject *consts;
 newfunc:
-	cl = L->ci->c;
-	tf = L->ci->tf;
-	base = L->ci->base;
+	cl = lua_state->ci->c;
+	tf = lua_state->ci->tf;
+	base = lua_state->ci->base;
 	if (S->top-S->stack > base && ttype(S->stack+base) == LUA_T_LINE)
 		base++;
-	pc = L->ci->pc;
+	pc = lua_state->ci->pc;
 	consts = tf->consts;
 	while (1) {
 		int32 aux;
@@ -656,7 +656,7 @@ callfunc:
 			{
 				StkId newBase = (S->top-S->stack)-(*pc++);
 				TObject *func = S->stack+newBase-1;
-				L->ci->pc = pc;
+				lua_state->ci->pc = pc;
 				if (ttype(func) == LUA_T_PROTO || (ttype(func) == LUA_T_CLOSURE &&
 						ttype(&clvalue(func)->consts[0]) == LUA_T_PROTO)) {
 
@@ -667,7 +667,7 @@ callfunc:
 				}
 				luaD_call(newBase, aux);
 
-				if (L->Tstate != RUN) {
+				if (lua_state->Tstate != RUN) {
 					if (ci_index > 1)	// C functions detected by break_here
 						lua_error("Cannot yield through method call");
 					return -1;
@@ -683,7 +683,7 @@ callfunc:
 //				if (lua_callhook)
 //					(*lua_callhook)(LUA_NOOBJECT, "(END OF SCRIPT}", 0);
 				// If returning from the original stack frame, terminate
-				if (L->ci == L->base_ci + ci_index)
+				if (lua_state->ci == lua_state->base_ci + ci_index)
 					return firstResult;
 				luaD_postret(firstResult);
 				goto newfunc;

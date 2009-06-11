@@ -129,7 +129,7 @@ static void hashdelete(Hash *t) {
 void luaH_free(Hash *frees) {
 	while (frees) {
 		Hash *next = (Hash *)frees->head.next;
-		L->nblocks -= gcsize(frees->nhash);
+		lua_state->nblocks -= gcsize(frees->nhash);
 		hashdelete(frees);
 		frees = next;
 	}
@@ -142,8 +142,8 @@ Hash *luaH_new(int32 nhash) {
 	nhash(t) = nhash;
 	nuse(t) = 0;
 	t->htag = TagDefault;
-	luaO_insertlist(&(L->roottable), (GCnode *)t);
-	L->nblocks += gcsize(nhash);
+	luaO_insertlist(&(lua_state->roottable), (GCnode *)t);
+	lua_state->nblocks += gcsize(nhash);
 	return t;
 }
 
@@ -175,7 +175,7 @@ static void rehash(Hash *t) {
 		if (ttype(ref(n)) != LUA_T_NIL && ttype(val(n)) != LUA_T_NIL)
 			*node(t, present(t, ref(n))) = *n;  // copy old node to luaM_new hash
 	}
-	L->nblocks += gcsize(t->nhash) - gcsize(nold);
+	lua_state->nblocks += gcsize(t->nhash) - gcsize(nold);
 	luaM_free(vold);
 }
 

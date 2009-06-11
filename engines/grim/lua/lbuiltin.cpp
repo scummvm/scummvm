@@ -32,7 +32,7 @@ static void nextvar() {
 	TObject *o = luaA_Address(luaL_nonnullarg(1));
 	TaggedString *g;
 	if (ttype(o) == LUA_T_NIL)
-		g = (TaggedString *)L->rootglobal.next;
+		g = (TaggedString *)lua_state->rootglobal.next;
 	else {
 		luaL_arg_check(ttype(o) == LUA_T_STRING, 1, "variable name expected");
 		g = tsvalue(o);
@@ -53,21 +53,21 @@ static void nextvar() {
 static void foreachvar() {
 	TObject f = *luaA_Address(luaL_functionarg(1));
 	GCnode *g;
-	StkId name = L->Cstack.base++;  // place to keep var name (to avoid GC)
-	ttype(L->stack.stack + name) = LUA_T_NIL;
-	L->stack.top++;
-	for (g = L->rootglobal.next; g; g = g->next) {
+	StkId name = lua_state->Cstack.base++;  // place to keep var name (to avoid GC)
+	ttype(lua_state->stack.stack + name) = LUA_T_NIL;
+	lua_state->stack.top++;
+	for (g = lua_state->rootglobal.next; g; g = g->next) {
 		TaggedString *s = (TaggedString *)g;
 		if (s->globalval.ttype != LUA_T_NIL) {
-			ttype(L->stack.stack + name) = LUA_T_STRING;
-			tsvalue(L->stack.stack + name) = s;  // keep s on stack to avoid GC
+			ttype(lua_state->stack.stack + name) = LUA_T_STRING;
+			tsvalue(lua_state->stack.stack + name) = s;  // keep s on stack to avoid GC
 			luaA_pushobject(&f);
 			pushstring(s);
 			luaA_pushobject(&s->globalval);
-			luaD_call((L->stack.top - L->stack.stack) - 2, 1);
-			if (ttype(L->stack.top - 1) != LUA_T_NIL)
+			luaD_call((lua_state->stack.top - lua_state->stack.stack) - 2, 1);
+			if (ttype(lua_state->stack.top - 1) != LUA_T_NIL)
 				return;
-			L->stack.top--;
+			lua_state->stack.top--;
 		}
 	}
 }
@@ -92,10 +92,10 @@ static void foreach() {
 			luaA_pushobject(&f);
 			luaA_pushobject(ref(nd));
 			luaA_pushobject(val(nd));
-			luaD_call((L->stack.top - L->stack.stack) - 2, 1);
-			if (ttype(L->stack.top - 1) != LUA_T_NIL)
+			luaD_call((lua_state->stack.top - lua_state->stack.stack) - 2, 1);
+			if (ttype(lua_state->stack.top - 1) != LUA_T_NIL)
 				return;
-			L->stack.top--;
+			lua_state->stack.top--;
 		}
 	}
 }
@@ -346,8 +346,8 @@ static void mem_query() {
 
 static void countlist() {
 	char *s = luaL_check_string(1);
-	GCnode *l = (s[0] == 't') ? L->roottable.next : (s[0] == 'c') ? L->rootcl.next :
-			(s[0] == 'p') ? L->rootproto.next : L->rootglobal.next;
+	GCnode *l = (s[0] == 't') ? lua_state->roottable.next : (s[0] == 'c') ? lua_state->rootcl.next :
+			(s[0] == 'p') ? lua_state->rootproto.next : lua_state->rootglobal.next;
 	int32 i = 0;
 	while (l) {
 		i++;

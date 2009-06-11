@@ -50,7 +50,7 @@ static void firstline(LexState *LS) {
 }
 
 void luaX_setinput(ZIO *z) {
-	LexState *LS = L->lexstate;
+	LexState *LS = lua_state->lexstate;
 	LS->current = '\n';
 	LS->linelasttoken = 0;
 	LS->linenumber = 0;
@@ -223,9 +223,9 @@ static int read_long_string(LexState *LS, YYSTYPE *l) {
 	}
 endloop:
 	save_and_next(LS);  // pass the second ']'
-	L->Mbuffer[L->Mbuffnext - 2] = 0;  // erases ']]'
-	l->pTStr = luaS_new(L->Mbuffbase + 2);
-	L->Mbuffer[L->Mbuffnext - 2] = ']';  // restores ']]'
+	lua_state->Mbuffer[lua_state->Mbuffnext - 2] = 0;  // erases ']]'
+	l->pTStr = luaS_new(lua_state->Mbuffbase + 2);
+	lua_state->Mbuffer[lua_state->Mbuffnext - 2] = ']';  // restores ']]'
 	return STRING;
 }
 
@@ -235,7 +235,7 @@ endloop:
 */
 int32 luaY_lex(YYSTYPE *l);
 int32 luaY_lex(YYSTYPE *l) {
-	LexState *LS = L->lexstate;
+	LexState *LS = lua_state->lexstate;
 	double a;
 	luaL_resetbuffer();
 	if (lua_debug)
@@ -341,8 +341,8 @@ int32 luaY_lex(YYSTYPE *l) {
 				}
 				next(LS);  // skip delimiter
 				save(0);
-				l->pTStr = luaS_new(L->Mbuffbase + 1);
-				L->Mbuffer[L->Mbuffnext - 1] = del;  // restore delimiter
+				l->pTStr = luaS_new(lua_state->Mbuffbase + 1);
+				lua_state->Mbuffer[lua_state->Mbuffnext - 1] = del;  // restore delimiter
 				return STRING;
 			}
 		case '.':
@@ -430,7 +430,7 @@ fraction:
 					save_and_next(LS);
 				} while (isalnum(LS->current) || LS->current == '_');
 				save(0);
-				ts = luaS_new(L->Mbuffbase);
+				ts = luaS_new(lua_state->Mbuffbase);
 				if (ts->head.marked >= 255)
 					return ts->head.marked;  // reserved word
 				l->pTStr = ts;

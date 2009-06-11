@@ -2236,7 +2236,7 @@ static void MakeCurrentSetup() {
 	if (!lua_isnumber(setupObj))
 		return;
 
-	int num = (int)lua_getnumber(lua_getparam(1));
+	int num = (int)lua_getnumber(setupObj);
 	g_grim->makeCurrentSetup(num);
 }
 

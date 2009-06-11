@@ -143,7 +143,7 @@ void luaY_syntaxerror (const char *s, const char *token)
 	if (token[0] == 0)
 		token = "<eof>";
 	luaL_verror("%.100s;\n  last token read: \"%.50s\" at line %d in file %.50s",
-		s, token, L->lexstate->linenumber, L->mainState->f->fileName->str);
+		s, token, lua_state->lexstate->linenumber, lua_state->mainState->f->fileName->str);
 }
 
 
@@ -155,7 +155,7 @@ void luaY_error (const char *s)
 
 static void check_pc (int n)
 {
-	FuncState *fs = L->currState;
+	FuncState *fs = lua_state->currState;
 	if (fs->pc+n > fs->maxcode)
 		fs->maxcode = luaM_growvector(&fs->f->code, fs->maxcode,
 		byte, codeEM, MAX_INT);
@@ -165,13 +165,13 @@ static void check_pc (int n)
 static void code_byte (byte c)
 {
 	check_pc(1);
-	L->currState->f->code[L->currState->pc++] = c;
+	lua_state->currState->f->code[lua_state->currState->pc++] = c;
 }
 
 
 static void deltastack (int delta)
 {
-	FuncState *fs = L->currState;
+	FuncState *fs = lua_state->currState;
 	fs->stacksize += delta;
 	if (fs->stacksize > fs->maxstacksize) {
 		if (fs->stacksize > 255)
@@ -183,7 +183,7 @@ static void deltastack (int delta)
 
 static int code_oparg_at (int pc, OpCode op, int builtin, int arg, int delta)
 {
-	byte *code = L->currState->f->code;
+	byte *code = lua_state->currState->f->code;
 	deltastack(delta);
 	if (arg < builtin) {
 		code[pc] = op+1+arg;
@@ -207,7 +207,7 @@ static int code_oparg_at (int pc, OpCode op, int builtin, int arg, int delta)
 
 static int fix_opcode (int pc, OpCode op, int builtin, int arg)
 {
-	FuncState *fs = L->currState;
+	FuncState *fs = lua_state->currState;
 	if (arg < builtin) {  /* close space */
 		luaO_memdown(fs->f->code+pc+1, fs->f->code+pc+2, fs->pc-(pc+2));
 		fs->pc--;
@@ -224,7 +224,7 @@ static int fix_opcode (int pc, OpCode op, int builtin, int arg)
 static void code_oparg (OpCode op, int builtin, int arg, int delta)
 {
 	check_pc(3);  /* maximum code size */
-	L->currState->pc += code_oparg_at(L->currState->pc, op, builtin, arg, delta);
+	lua_state->currState->pc += code_oparg_at(lua_state->currState->pc, op, builtin, arg, delta);
 }
 
 
@@ -287,7 +287,7 @@ static int string_constant (TaggedString *s, FuncState *cs)
 
 static void code_string (TaggedString *s)
 {
-	code_constant(string_constant(s, L->currState));
+	code_constant(string_constant(s, lua_state->currState));
 }
 
 
@@ -295,16 +295,16 @@ static void code_string (TaggedString *s)
 static int real_constant(float r)
 {
 	/* check whether 'r' has appeared within the last LIM entries */
-	TObject *cnt = L->currState->f->consts;
-	int c = L->currState->f->nconsts;
+	TObject *cnt = lua_state->currState->f->consts;
+	int c = lua_state->currState->f->nconsts;
 	int lim = c < LIM ? 0 : c-LIM;
 	while (--c >= lim) {
 		if (ttype(&cnt[c]) == LUA_T_NUMBER && nvalue(&cnt[c]) == r)
 			return c;
 	}
 	/* not found; create a luaM_new entry */
-	c = next_constant(L->currState);
-	cnt = L->currState->f->consts;  /* 'next_constant' may reallocate this vector */
+	c = next_constant(lua_state->currState);
+	cnt = lua_state->currState->f->consts;  /* 'next_constant' may reallocate this vector */
 	ttype(&cnt[c]) = LUA_T_NUMBER;
 	nvalue(&cnt[c]) = r;
 	return c;
@@ -337,7 +337,7 @@ static void flush_list (int m, int n)
 
 static void luaI_registerlocalvar (TaggedString *varname, int line)
 {
-	FuncState *fs = L->currState;
+	FuncState *fs = lua_state->currState;
 	if (fs->maxvars != -1) {  /* debug information? */
 		if (fs->nvars >= fs->maxvars)
 			fs->maxvars = luaM_growvector(&fs->f->locvars, fs->maxvars,
@@ -357,17 +357,17 @@ static void luaI_unregisterlocalvar (int line)
 
 static void store_localvar (TaggedString *name, int n)
 {
-	if (L->currState->nlocalvar+n < MAXLOCALS)
-		L->currState->localvar[L->currState->nlocalvar+n] = name;
+	if (lua_state->currState->nlocalvar+n < MAXLOCALS)
+		lua_state->currState->localvar[lua_state->currState->nlocalvar+n] = name;
 	else
 		luaY_error("too many local variables " MES_LIM(SMAXLOCALS));
-	luaI_registerlocalvar(name, L->lexstate->linenumber);
+	luaI_registerlocalvar(name, lua_state->lexstate->linenumber);
 }
 
 static void add_localvar (TaggedString *name)
 {
 	store_localvar(name, 0);
-	L->currState->nlocalvar++;
+	lua_state->currState->nlocalvar++;
 }
 
 
@@ -388,7 +388,7 @@ static void add_varbuffer (vardesc var, int n)
 {
 	if (n >= MAXVAR)
 		luaY_error("variable buffer overflow " MES_LIM(SMAXVAR));
-	L->currState->varbuffer[n] = var2store(var);
+	lua_state->currState->varbuffer[n] = var2store(var);
 }
 
 
@@ -406,7 +406,7 @@ static vardesc singlevar (TaggedString *n, FuncState *st)
 	int i = aux_localname(n, st);
 	if (i == -1) {  /* check shadowing */
 		int l;
-		for (l=1; l<=(st-L->mainState); l++)
+		for (l=1; l<=(st-lua_state->mainState); l++)
 			if (aux_localname(n, st-l) >= 0)
 				luaY_syntaxerror("cannot access a variable in outer scope", n->str);
 		return string_constant(n, st)+MINGLOBAL;  /* global value */
@@ -417,16 +417,16 @@ static vardesc singlevar (TaggedString *n, FuncState *st)
 
 static int indexupvalue (TaggedString *n)
 {
-	vardesc v = singlevar(n, L->currState-1);
+	vardesc v = singlevar(n, lua_state->currState-1);
 	int i;
-	for (i=0; i<L->currState->nupvalues; i++) {
-		if (L->currState->upvalues[i] == v)
+	for (i=0; i<lua_state->currState->nupvalues; i++) {
+		if (lua_state->currState->upvalues[i] == v)
 			return i;
 	}
 	/* new one */
-	if (++(L->currState->nupvalues) > MAXUPVALUES)
+	if (++(lua_state->currState->nupvalues) > MAXUPVALUES)
 		luaY_error("too many upvalues in a single function " MES_LIM(SMAXUPVALUES));
-	L->currState->upvalues[i] = v;  /* i = L->currState->nupvalues - 1 */
+	lua_state->currState->upvalues[i] = v;  /* i = lua_state->currState->nupvalues - 1 */
 	return i;
 }
 
@@ -434,9 +434,9 @@ static int indexupvalue (TaggedString *n)
 static void pushupvalue (TaggedString *n)
 {
 	int i;
-	if (L->currState == L->mainState)
+	if (lua_state->currState == lua_state->mainState)
 		luaY_error("cannot access upvalue in main");
-	if (aux_localname(n, L->currState) >= 0)
+	if (aux_localname(n, lua_state->currState) >= 0)
 		luaY_syntaxerror("cannot access an upvalue in current scope", n->str);
 	i = indexupvalue(n);
 	code_oparg(PUSHUPVALUE, 2, i, 1);
@@ -445,9 +445,9 @@ static void pushupvalue (TaggedString *n)
 
 void luaY_codedebugline (int line)
 {
-	if (lua_debug && line != L->lexstate->lastline) {
+	if (lua_debug && line != lua_state->lexstate->lastline) {
 		code_oparg(SETLINE, 0, line, 0);
-		L->lexstate->lastline = line;
+		lua_state->lexstate->lastline = line;
 	}
 }
 
@@ -466,10 +466,10 @@ static long adjust_functioncall (long exp, int nresults)
 	if (exp <= 0)
 		return -exp; /* exp is -list length */
 	else {
-		int temp = L->currState->f->code[exp];
-		int nparams = L->currState->f->code[exp-1];
+		int temp = lua_state->currState->f->code[exp];
+		int nparams = lua_state->currState->f->code[exp-1];
 		exp += fix_opcode(exp-2, CALLFUNC, 2, nresults);
-		L->currState->f->code[exp] = nparams;
+		lua_state->currState->f->code[exp] = nparams;
 		if (nresults != MULT_RET)
 			deltastack(nresults);
 		deltastack(-(nparams+1));
@@ -481,7 +481,7 @@ static long adjust_functioncall (long exp, int nresults)
 static void adjust_mult_assign (int vars, long exps)
 {
 	if (exps > 0) { /* must correct function call */
-		int diff = L->currState->f->code[exps] - vars;
+		int diff = lua_state->currState->f->code[exps] - vars;
 		if (diff < 0)
 			adjust_functioncall(exps, -diff);
 		else {
@@ -495,14 +495,14 @@ static void adjust_mult_assign (int vars, long exps)
 
 static void code_args (int nparams, int dots)
 {
-	L->currState->nlocalvar += nparams;  /* "self" may already be there */
-	nparams = L->currState->nlocalvar;
+	lua_state->currState->nlocalvar += nparams;  /* "self" may already be there */
+	nparams = lua_state->currState->nlocalvar;
 	if (!dots) {
-		L->currState->f->code[1] = nparams;  /* fill-in arg information */
+		lua_state->currState->f->code[1] = nparams;  /* fill-in arg information */
 		deltastack(nparams);
 	}
 	else {
-		L->currState->f->code[1] = nparams+ZEROVARARG;
+		lua_state->currState->f->code[1] = nparams+ZEROVARARG;
 		deltastack(nparams+1);
 		add_localvar(luaS_new("arg"));
 	}
@@ -536,9 +536,9 @@ static void storevar (vardesc var)
 /* returns how many elements are left as 'garbage' on the stack */
 static int lua_codestore (int i, int left)
 {
-	if (L->currState->varbuffer[i] != 0 ||  /* global or local var or */
+	if (lua_state->currState->varbuffer[i] != 0 ||  /* global or local var or */
 		left+i == 0) {  /* indexed var without values in between */
-			storevar(L->currState->varbuffer[i]);
+			storevar(lua_state->currState->varbuffer[i]);
 			return left;
 	}
 	else {  /* indexed var with values in between*/
@@ -557,7 +557,7 @@ static int fix_jump (int pc, OpCode op, int n)
 
 static void fix_upjmp (OpCode op, int pos)
 {
-	int delta = L->currState->pc+JMPSIZE - pos;  /* jump is relative */
+	int delta = lua_state->currState->pc+JMPSIZE - pos;  /* jump is relative */
 	if (delta > 255) delta++;
 	code_oparg(op, 0, delta, 0);
 }
@@ -566,41 +566,41 @@ static void fix_upjmp (OpCode op, int pos)
 static void codeIf (int thenAdd, int elseAdd)
 {
 	int elseinit = elseAdd+JMPSIZE;
-	if (L->currState->pc == elseinit) {  /* no else part */
-		L->currState->pc -= JMPSIZE;
-		elseinit = L->currState->pc;
+	if (lua_state->currState->pc == elseinit) {  /* no else part */
+		lua_state->currState->pc -= JMPSIZE;
+		elseinit = lua_state->currState->pc;
 	}
 	else
-		elseinit += fix_jump(elseAdd, JMP, L->currState->pc);
+		elseinit += fix_jump(elseAdd, JMP, lua_state->currState->pc);
 	fix_jump(thenAdd, IFFJMP, elseinit);
 }
 
 
 static void code_shortcircuit (int pc, OpCode op)
 {
-	fix_jump(pc, op, L->currState->pc);
+	fix_jump(pc, op, lua_state->currState->pc);
 }
 
 
 static void codereturn (void)
 {
-	code_oparg(RETCODE, 0, L->currState->nlocalvar, 0);
-	L->currState->stacksize = L->currState->nlocalvar;
+	code_oparg(RETCODE, 0, lua_state->currState->nlocalvar, 0);
+	lua_state->currState->stacksize = lua_state->currState->nlocalvar;
 }
 
 
 static void func_onstack (TProtoFunc *f)
 {
 	int i;
-	int nupvalues = (L->currState+1)->nupvalues;
-	int c = next_constant(L->currState);
-	ttype(&L->currState->f->consts[c]) = LUA_T_PROTO;
-	L->currState->f->consts[c].value.tf = (L->currState+1)->f;
+	int nupvalues = (lua_state->currState+1)->nupvalues;
+	int c = next_constant(lua_state->currState);
+	ttype(&lua_state->currState->f->consts[c]) = LUA_T_PROTO;
+	lua_state->currState->f->consts[c].value.tf = (lua_state->currState+1)->f;
 	if (nupvalues == 0)
 		code_constant(c);
 	else {
 		for (i=0; i<nupvalues; i++)
-			lua_pushvar((L->currState+1)->upvalues[i]);
+			lua_pushvar((lua_state->currState+1)->upvalues[i]);
 		code_constant(c);
 		code_oparg(CLOSURE, 2, nupvalues, -nupvalues);
 	}
@@ -610,7 +610,7 @@ static void func_onstack (TProtoFunc *f)
 static void init_state (TaggedString *filename)
 {
 	TProtoFunc *f = luaF_newproto();
-	FuncState *fs = L->currState;
+	FuncState *fs = lua_state->currState;
 	fs->stacksize = 0;
 	fs->maxstacksize = 0;
 	fs->nlocalvar = 0;
@@ -629,29 +629,29 @@ static void init_state (TaggedString *filename)
 		fs->maxvars = -1;  /* flag no debug information */
 	code_byte(0);  /* to be filled with stacksize */
 	code_byte(0);  /* to be filled with arg information */
-	L->lexstate->lastline = 0;  /* invalidate it */
+	lua_state->lexstate->lastline = 0;  /* invalidate it */
 }
 
 static void init_func() {
-	if (L->currState-L->mainState >= MAXSTATES-1)
+	if (lua_state->currState-lua_state->mainState >= MAXSTATES-1)
 		luaY_error("too many nested functions " MES_LIM(SMAXSTATES));
-	L->currState++;
-	init_state(L->mainState->f->fileName);
-	luaY_codedebugline(L->lexstate->linenumber);
-	L->currState->f->lineDefined = L->lexstate->linenumber;
+	lua_state->currState++;
+	init_state(lua_state->mainState->f->fileName);
+	luaY_codedebugline(lua_state->lexstate->linenumber);
+	lua_state->currState->f->lineDefined = lua_state->lexstate->linenumber;
 }
 
 static TProtoFunc *close_func() {
-	TProtoFunc *f = L->currState->f;
+	TProtoFunc *f = lua_state->currState->f;
 	code_neutralop(ENDCODE);
-	f->code[0] = L->currState->maxstacksize;
-	f->code = luaM_reallocvector(f->code, L->currState->pc, byte);
+	f->code[0] = lua_state->currState->maxstacksize;
+	f->code = luaM_reallocvector(f->code, lua_state->currState->pc, byte);
 	f->consts = luaM_reallocvector(f->consts, f->nconsts, TObject);
-	if (L->currState->maxvars != -1) {  /* debug information? */
+	if (lua_state->currState->maxvars != -1) {  /* debug information? */
 		luaI_registerlocalvar(NULL, -1);  /* flag end of vector */
-		f->locvars = luaM_reallocvector(f->locvars, L->currState->nvars, LocVar);
+		f->locvars = luaM_reallocvector(f->locvars, lua_state->currState->nvars, LocVar);
 	}
-	L->currState--;
+	lua_state->currState--;
 	return f;
 }
 
@@ -662,8 +662,8 @@ static TProtoFunc *close_func() {
 TProtoFunc *luaY_parser (ZIO *z) {
 	struct LexState lexstate;
 	FuncState state[MAXSTATES];
-	L->currState = L->mainState = &state[0];
-	L->lexstate = &lexstate;
+	lua_state->currState = lua_state->mainState = &state[0];
+	lua_state->lexstate = &lexstate;
 	luaX_setinput(z);
 	init_state(luaS_new(zname(z)));
 	if (luaY_parse())
@@ -1077,7 +1077,7 @@ case 6:
 	break;}
 case 8:
 	{{
-		FuncState *fs = L->currState;
+		FuncState *fs = lua_state->currState;
 		int expsize = yyvsp[-3].vInt-yyvsp[-4].vInt;
 		int newpos = yyvsp[-4].vInt+JMPSIZE;
 		check_pc(expsize);
@@ -1108,7 +1108,7 @@ case 11:
 	break;}
 case 12:
 	{
-		L->currState->nlocalvar += yyvsp[-1].vInt;
+		lua_state->currState->nlocalvar += yyvsp[-1].vInt;
 		adjust_mult_assign(yyvsp[-1].vInt, yyvsp[0].vInt);
 		;
 		break;}
@@ -1116,13 +1116,13 @@ case 13:
 	{ storevar(yyvsp[-1].vLong); ;
 	break;}
 case 14:
-	{yyval.vInt = L->currState->nlocalvar;;
+	{yyval.vInt = lua_state->currState->nlocalvar;;
 	break;}
 case 15:
 	{
-		adjuststack(L->currState->nlocalvar - yyvsp[-1].vInt);
-		for (; L->currState->nlocalvar > yyvsp[-1].vInt; L->currState->nlocalvar--)
-			luaI_unregisterlocalvar(L->lexstate->linenumber);
+		adjuststack(lua_state->currState->nlocalvar - yyvsp[-1].vInt);
+		for (; lua_state->currState->nlocalvar > yyvsp[-1].vInt; lua_state->currState->nlocalvar--)
+			luaI_unregisterlocalvar(lua_state->lexstate->linenumber);
 		;
 		break;}
 case 16:
@@ -1160,12 +1160,12 @@ case 26:
 		;
 		break;}
 case 27:
-	{ yyval.vInt = L->currState->pc; ;
+	{ yyval.vInt = lua_state->currState->pc; ;
 	break;}
 case 28:
-	{ yyval.vInt = L->currState->pc;
+	{ yyval.vInt = lua_state->currState->pc;
 	check_pc(JMPSIZE);
-	L->currState->pc += JMPSIZE;  /* open space */
+	lua_state->currState->pc += JMPSIZE;  /* open space */
 	;
 	break;}
 case 29:
@@ -1271,10 +1271,10 @@ case 62:
 	{ yyval.vLong = 0; ;
 	break;}
 case 63:
-	{ yyval.vLong = (-string_constant(yyvsp[0].pTStr, L->currState))-1; ;
+	{ yyval.vLong = (-string_constant(yyvsp[0].pTStr, lua_state->currState))-1; ;
 	break;}
 case 64:
-	{ yyval.vLong = singlevar(yyvsp[0].pTStr, L->currState); ;
+	{ yyval.vLong = singlevar(yyvsp[0].pTStr, lua_state->currState); ;
 	break;}
 case 65:
 	{ fix_opcode(yyvsp[-2].vInt, CREATEARRAY, 2, yyvsp[-1].vInt); ;
@@ -1283,7 +1283,7 @@ case 66:
 	{
 		code_byte(0);  /* save space for opcode */
 		code_byte(yyvsp[-1].vInt+yyvsp[0].vInt);  /* number of parameters */
-		yyval.vLong = L->currState->pc;
+		yyval.vLong = lua_state->currState->pc;
 		code_byte(0);  /* must be adjusted by other rules */
 		;
 		break;}
@@ -1292,7 +1292,7 @@ case 67:
 	break;}
 case 68:
 	{
-		code_oparg(PUSHSELF, 8, string_constant(yyvsp[0].pTStr, L->currState), 1);
+		code_oparg(PUSHSELF, 8, string_constant(yyvsp[0].pTStr, lua_state->currState), 1);
 		yyval.vInt = 1;
 		;
 		break;}
@@ -1321,7 +1321,7 @@ case 76:
 	{
 		if (yyvsp[0].vLong == 0) yyval.vLong = -(yyvsp[-1].vLong + 1);  /* -length */
 		else {
-			L->currState->f->code[yyvsp[0].vLong] = yyvsp[-1].vLong;  /* store list length */
+			lua_state->currState->f->code[yyvsp[0].vLong] = yyvsp[-1].vLong;  /* store list length */
 			yyval.vLong = yyvsp[0].vLong;
 		}
 		;

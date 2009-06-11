@@ -20,11 +20,11 @@ TaggedString EMPTY = {{NULL, 2}, 0, 0L, {LUA_T_NIL, {NULL}}, {0}};
 
 void luaS_init() {
 	int32 i;
-	L->string_root = luaM_newvector(NUM_HASHS, stringtable);
+	lua_state->string_root = luaM_newvector(NUM_HASHS, stringtable);
 	for (i = 0; i < NUM_HASHS; i++) {
-		L->string_root[i].size = 0;
-		L->string_root[i].nuse = 0;
-		L->string_root[i].hash = NULL;
+		lua_state->string_root[i].size = 0;
+		lua_state->string_root[i].nuse = 0;
+		lua_state->string_root[i].hash = NULL;
 	}
 }
 
@@ -75,13 +75,13 @@ static TaggedString *newone(const char *buff, int32 tag, uint32 h) {
 		strcpy(ts->str, buff);
 		ts->globalval.ttype = LUA_T_NIL;  /* initialize global value */
 		ts->constindex = 0;
-		L->nblocks += gcsizestring(l);
+		lua_state->nblocks += gcsizestring(l);
 	} else {
 		ts = (TaggedString *)luaM_malloc(sizeof(TaggedString));
 		ts->globalval.value.ts = (TaggedString *)buff;
 		ts->globalval.ttype = (lua_Type)(tag == LUA_ANYTAG ? 0 : tag);
 		ts->constindex = -1;  /* tag -> this is a userdata */
-		L->nblocks++;
+		lua_state->nblocks++;
 	}
 	ts->head.marked = 0;
 	ts->head.next = (GCnode *)ts;  // signal it is in no list
@@ -120,17 +120,17 @@ static TaggedString *insert(const char *buff, int32 tag, stringtable *tb) {
 
 TaggedString *luaS_createudata(void *udata, int32 tag) {
 #ifdef TARGET_64BITS
-	return insert((char *)udata, tag, &L->string_root[(uint64)udata % NUM_HASHS]);
+	return insert((char *)udata, tag, &lua_state->string_root[(uint64)udata % NUM_HASHS]);
 #else
-	return insert((char *)udata, tag, &L->string_root[(uint32)udata % NUM_HASHS]);
+	return insert((char *)udata, tag, &lua_state->string_root[(uint32)udata % NUM_HASHS]);
 #endif
 }
 
 TaggedString *luaS_new(const char *str) {
 #ifdef TARGET_64BITS
-	return insert(str, LUA_T_STRING, &L->string_root[(uint64)str[0] % NUM_HASHS]);
+	return insert(str, LUA_T_STRING, &lua_state->string_root[(uint64)str[0] % NUM_HASHS]);
 #else
-	return insert(str, LUA_T_STRING, &L->string_root[(uint32)str[0] % NUM_HASHS]);
+	return insert(str, LUA_T_STRING, &lua_state->string_root[(uint32)str[0] % NUM_HASHS]);
 #endif
 }
 
@@ -144,7 +144,7 @@ TaggedString *luaS_newfixedstring(const char *str) {
 void luaS_free(TaggedString *l) {
 	while (l) {
 		TaggedString *next = (TaggedString *)l->head.next;
-		L->nblocks -= (l->constindex == -1) ? 1 : gcsizestring(strlen(l->str));
+		lua_state->nblocks -= (l->constindex == -1) ? 1 : gcsizestring(strlen(l->str));
 		luaM_free(l);
 		l = next;
 	}
@@ -166,9 +166,9 @@ static void remove_from_list(GCnode *l) {
 TaggedString *luaS_collector() {
 	TaggedString *frees = NULL;
 	int32 i;
-	remove_from_list(&(L->rootglobal));
+	remove_from_list(&(lua_state->rootglobal));
 	for (i = 0; i < NUM_HASHS; i++) {
-		stringtable *tb = &L->string_root[i];
+		stringtable *tb = &lua_state->string_root[i];
 		int32 j;
 		for (j = 0; j < tb->size; j++) {
 			TaggedString *t = tb->hash[j];
@@ -189,9 +189,9 @@ TaggedString *luaS_collector() {
 TaggedString *luaS_collectudata() {
 	TaggedString *frees = NULL;
 	int32 i;
-	L->rootglobal.next = NULL;  // empty list of globals
+	lua_state->rootglobal.next = NULL;  // empty list of globals
 	for (i = 0; i < NUM_HASHS; i++) {
-		stringtable *tb = &L->string_root[i];
+		stringtable *tb = &lua_state->string_root[i];
 		int32 j;
 		for (j = 0; j < tb->size; j++) {
 			TaggedString *t = tb->hash[j];
@@ -208,7 +208,7 @@ TaggedString *luaS_collectudata() {
 void luaS_freeall() {
 	int32 i;
 	for (i = 0; i < NUM_HASHS; i++) {
-		stringtable *tb = &L->string_root[i];
+		stringtable *tb = &lua_state->string_root[i];
 		int32 j;
 		for (j = 0; j < tb->size; j++) {
 			TaggedString *t = tb->hash[j];
@@ -218,20 +218,20 @@ void luaS_freeall() {
 		}
 		luaM_free(tb->hash);
 	}
-	luaM_free(L->string_root);
+	luaM_free(lua_state->string_root);
 }
 
 void luaS_rawsetglobal(TaggedString *ts, TObject *newval) {
 	ts->globalval = *newval;
 	if (ts->head.next == (GCnode *)ts) {  // is not in list?
-		ts->head.next = L->rootglobal.next;
-		L->rootglobal.next = (GCnode *)ts;
+		ts->head.next = lua_state->rootglobal.next;
+		lua_state->rootglobal.next = (GCnode *)ts;
 	}
 }
 
 char *luaS_travsymbol (int32 (*fn)(TObject *)) {
 	TaggedString *g;
-	for (g = (TaggedString *)L->rootglobal.next; g; g = (TaggedString *)g->head.next)
+	for (g = (TaggedString *)lua_state->rootglobal.next; g; g = (TaggedString *)g->head.next)
 		if (fn(&g->globalval))
 			return g->str;
 	return NULL;

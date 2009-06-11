@@ -112,8 +112,6 @@ struct LState {
 extern LState *lua_state;
 extern int32 globalTaskSerialId;
 
-#define L	lua_state
-
 void lua_resetglobals();
 
 // Switch to the given task */

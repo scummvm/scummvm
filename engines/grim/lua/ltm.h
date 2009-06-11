@@ -46,7 +46,7 @@ struct IM {
 };
 
 
-#define luaT_getim(tag, event)	(&L->IMtable[-(tag)].int_method[event])
+#define luaT_getim(tag, event)	(&lua_state->IMtable[-(tag)].int_method[event])
 #define luaT_getimbyObj(o, e)	(luaT_getim(luaT_efectivetag(o), (e)))
 
 extern const char *luaT_eventname[];
