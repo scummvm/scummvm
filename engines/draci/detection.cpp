@@ -35,6 +35,8 @@ static const PlainGameDescriptor draciGames[] = {
 
 namespace Draci {
 
+using Common::GUIO_NONE;
+
 const ADGameDescription gameDescriptions[] = {
 	
 	{
@@ -43,7 +45,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("INIT.DFW", "b890a5aeebaf16af39219cba2416b0a3", 906),
 		Common::EN_ANY,
 		Common::kPlatformPC,
-		ADGF_NO_FLAGS
+		ADGF_NO_FLAGS,
+		GUIO_NONE
 	},
 	
 	{
@@ -52,7 +55,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("INIT.DFW", "9921c8f0045679a8f37eca8d41c5ec02", 906),
 		Common::CZ_CZE,
 		Common::kPlatformPC,
-		ADGF_NO_FLAGS
+		ADGF_NO_FLAGS,
+		GUIO_NONE
 	},
 
 	{
@@ -61,7 +65,8 @@ const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("INIT.DFW", "76b9b78a8a8809a240acc395df4d0715", 906),
 		Common::PL_POL,
 		Common::kPlatformPC,
-		ADGF_NO_FLAGS
+		ADGF_NO_FLAGS,
+		GUIO_NONE
 	},
 
 	AD_TABLE_END_MARKER
@@ -85,7 +90,9 @@ const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	0,
+	// Global GUI options
+	Common::GUIO_NONE
 };
 
 class DraciMetaEngine : public AdvancedMetaEngine {
