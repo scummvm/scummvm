@@ -607,8 +607,7 @@ static void func_onstack (TProtoFunc *f)
 }
 
 
-static void init_state (TaggedString *filename)
-{
+static void init_state (TaggedString *filename) {
 	TProtoFunc *f = luaF_newproto();
 	FuncState *fs = lua_state->currState;
 	fs->stacksize = 0;

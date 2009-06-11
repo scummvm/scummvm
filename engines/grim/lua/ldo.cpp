@@ -183,7 +183,7 @@ static void adjust_varargs(StkId first_extra_arg) {
 */
 void luaD_precall(TObject *f, StkId base, int32 nResults) {
 	// Create a new CallInfo record
-	if (lua_state->ci+1 == lua_state->end_ci) {
+	if (lua_state->ci + 1 == lua_state->end_ci) {
 		int32 size_ci = lua_state->end_ci - lua_state->base_ci;
 		int32 index_ci = lua_state->ci - lua_state->base_ci;
 		int32 new_ci_size = size_ci * 2 * sizeof(CallInfo);
