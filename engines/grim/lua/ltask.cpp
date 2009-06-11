@@ -32,11 +32,6 @@ void start_script() {
 	f = lua_state->stack.stack + lua_state->Cstack.lua2C;
 	if (ttype(f) == LUA_T_CLOSURE)
 		f = &clvalue(f)->consts[0];
-	// Start nothing? start_script gets called in this fashion
-	// by the scene in the scrimshaw parlor, if we just return
-	// immediately the game proceeds ok.
-	if (ttype(f) == LUA_T_NIL)
-		return;
 	if (ttype(f) != LUA_T_PROTO)
 		lua_error("can only start_script with a Lua function");
 
