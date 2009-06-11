@@ -19,10 +19,10 @@ public:
 
 	~PaletteBundle() {}
 
-	uint8* getPalette(uint8 brightness);
+	uint8* getPalette();
 
 protected:
-	uint8 palette[256*3];
+	uint8 palette[768];
 	void update();
 };
 

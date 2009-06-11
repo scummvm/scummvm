@@ -114,14 +114,14 @@ void AsylumEngine::showMainMenu() {
 	GraphicResource *cur = _resMgr->getGraphic(1, 2)->getEntry(0);
 
 	_system->setMouseCursor(cur->data, cur->width, cur->height, 1, 1, 0);
-	_system->setCursorPalette(pal->palette, 0, 768);
+	_system->setCursorPalette(pal->getPalette(), 0, 1024);
 	_system->showMouse(true);
 
 	_screen->setFrontBuffer(
 			0, 0,
 			bg->width, bg->height,
 			bg->data);
-	_screen->setPalette(pal->palette);
+	_screen->setPalette(pal->getPalette());
 	_screen->updateScreen();
 }
 
