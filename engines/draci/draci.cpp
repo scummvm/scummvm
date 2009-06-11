@@ -34,6 +34,7 @@
 #include "draci/draci.h"
 #include "draci/barchive.h"
 #include "draci/gpldisasm.h"
+#include "draci/font.h"
 
 namespace Draci {
 
@@ -55,17 +56,6 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
  
 	// Don't forget to register your random source
 	syst->getEventManager()->registerRandomSource(_rnd, "draci");
-}
-
-void drawString(Graphics::Surface *surf, Common::String str, int x, int y, byte color) {
-	Graphics::ScummFont temp;
-	int curx = x;
-	const int space = 0;
-	uint len = str.size();
-	for (unsigned int i = 0; i < len; ++i) {
-		temp.drawChar(surf, str.c_str()[i], curx, y, color);
-		curx += temp.getCharWidth(str.c_str()[i]) + space;
-	}
 }
 
 int DraciEngine::init() {
@@ -129,18 +119,34 @@ int DraciEngine::go() {
 
 	_system->setPalette(palette, 0, 256);
 	
-	// Draw a test string
+	// Fill screen with white
+	_system->fillScreen(255);
+
+	// Draw big string
+	path = "Big.fon";	
+	DraciFont font(path);
+	Common::String testString = "Testing, testing, read all about it!";
 	Graphics::Surface *surf = _system->lockScreen();
-	drawString(surf, "Testing, testing, read all about it!", 5, 60, 3);
+	font.drawString(surf, testString, 
+		(320 - font.getStringWidth(testString, 1)) / 2, 130, 1);
+
+	// Draw small string
+	path = "Small.fon";
+	font.setFont(path);
+	testString = "I'm smaller than the font above me";
+	font.drawString(surf, testString, 
+		(320 - font.getStringWidth(testString, 1)) / 2, 150, 1);
 	_system->unlockScreen();
+
+	_system->updateScreen();
 
 	// Draw and animate the dragon
 	path = "OBR_AN.DFW";
 	ar.closeArchive();
 	ar.openArchive(path);
 
-	for (unsigned int t = 0; t < 25; ++t) {	
-		debugC(5, kDraciGeneralDebugLevel, "Drawing frame %d...", t); 	
+	for (unsigned int t = 0; t < 25; ++t) {
+		debugC(5, kDraciGeneralDebugLevel, "Drawing frame %d...", t);
 
 		// Load frame to memory
 		f = ar[t];
@@ -159,7 +165,7 @@ int DraciEngine::go() {
 				scr[j * w + i] = reader.readByte();
 			}
 		}
-		_system->copyRectToScreen(scr, w, 0, 0, w, h);
+		_system->copyRectToScreen(scr, w, (320 - w) / 2, 60, w, h);
 		_system->updateScreen();
 		_system->delayMillis(100);
 
@@ -168,6 +174,7 @@ int DraciEngine::go() {
 		// Free frame memory
 		delete[] scr;
 	}	
+
 	getchar();
 
 	return 0;

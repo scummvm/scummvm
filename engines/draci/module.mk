@@ -4,7 +4,8 @@ MODULE_OBJS := \
 	draci.o \
 	detection.o \
 	barchive.o \
-	gpldisasm.o
+	gpldisasm.o \
+	font.o
  
 MODULE_DIRS += \
 	engines/draci
