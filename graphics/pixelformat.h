@@ -43,50 +43,16 @@ namespace Graphics {
  * Use (format & kFormatTypeMask) to get the type, and (format & kFormatOrderMask)
  * to get the applicable color order.
   */
-enum ColorFormat {
-	kFormat8Bit = 0,
+enum ColorMode {
+	kFormatCLUT8 = 0,
 	kFormatRGB555 = 1,
-	kFormatARGB1555 = 2,	// Rare, but I know a guy who knows a guy who's heard of it being used
-	kFormatRGB556 = 3,		// 6 bits for blue, in case this ever happens
-	kFormatRGB565 = 4,
-	kFormatRGB655 = 5,		// 6 bits for red, in case this ever happens
-	kFormatARGB4444 = 6,
-	kFormatRGB888 = 7,
-	kFormatARGB6666 = 8,	// I've never heard of this, but it's theoretically possible
-	kFormatARGB8888 = 9,
-	kFormatTypeMask = 0xFF, // & by this to get the overall bit format
-	kFormatPalette = 0 << 8,
-	kFormatRGB = 1 << 8,
-	kFormatRBG = 2 << 8,
-	kFormatGRB = 3 << 8,
-	kFormatGBR = 4 << 8,
-	kFormatBRG = 5 << 8,
-	kFormatBGR = 6 << 8,
-	kFormatARGB = 7 << 8,
-	kFormatARBG = 8 << 8,
-	kFormatAGRB = 9 << 8,
-	kFormatAGBR = 10 << 8,
-	kFormatABRG = 11 << 8,
-	kFormatABGR = 12 << 8,
-	kFormatRAGB = 13 << 8,
-	kFormatRABG = 14 << 8,
-	kFormatGARB = 15 << 8,
-	kFormatGABR = 16 << 8,
-	kFormatBARG = 17 << 8,
-	kFormatBAGR = 18 << 8,
-	kFormatRGAB = 19 << 8,
-	kFormatRBAG = 20 << 8,
-	kFormatGRAB = 21 << 8,
-	kFormatGBAR = 22 << 8,
-	kFormatBRAG = 23 << 8,
-	kFormatBGAR = 24 << 8,
-	kFormatRGBA = 25 << 8,
-	kFormatRBGA = 26 << 8,
-	kFormatGRBA = 27 << 8,
-	kFormatGBRA = 28 << 8,
-	kFormatBRGA = 29 << 8,
-	kFormatBGRA = 30 << 8,
-	kFormatOrderMask = 0xFF << 8 // & by this to get the order
+	kFormatRGB556 = 2,		// 6 bits for blue, in case this ever happens
+	kFormatRGB565 = 3,
+	kFormatRGB655 = 4,		// 6 bits for red, in case this ever happens
+	kFormatRGBA4444 = 5,
+	kFormatRGB888 = 6,
+	kFormatRGBA6666 = 7,	// I've never heard of this, but it's theoretically possible
+	kFormatRGBA8888 = 8
 };
 #endif
 

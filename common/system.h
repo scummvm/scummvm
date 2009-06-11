@@ -357,9 +357,9 @@ public:
 	 *
 	 * @param formatList	A list of requested pixel formats, ordered by priority
 	 *
-	 * @return a supported ColorFormat from the list, or kFormat8Bit if no supported format was found
+	 * @return a supported ColorMode from the list, or kFormatCLUT8 if no supported format was found
 	 */
-	virtual Graphics::ColorFormat findCompatibleFormat(Common::List<Graphics::ColorFormat> formatList) = 0;
+	virtual Graphics::ColorMode findCompatibleFormat(Common::List<Graphics::ColorMode> formatList) = 0;
 
 	/**
 	 * Set the color format of the virtual screen. Typical formats include:
@@ -374,7 +374,7 @@ public:
 	 *
 	 * @param format	A pixel format that the backend screen will use
 	 */
-	virtual void initFormat(Graphics::ColorFormat format) = 0;
+	virtual void initFormat(Graphics::ColorMode format) = 0;
 
 	/**
 	 * Returns the pixel format description of the screen.
@@ -386,7 +386,7 @@ public:
 	 * Returns the pixel format description of the requested color mode
 	 * @see Graphics::PixelFormat
 	 */
-	virtual Graphics::PixelFormat getPixelFormat(Graphics::ColorFormat format) = 0;
+	virtual Graphics::PixelFormat getPixelFormat(Graphics::ColorMode format) = 0;
 
 #endif
 
@@ -738,7 +738,7 @@ public:
 	 * @param cursorTargetScale	scale factor which cursor is designed for
 	 */
 #ifdef ENABLE_16BIT
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1, uint8 bitDepth = 8) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1) = 0;
 #else
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1) = 0;
 #endif

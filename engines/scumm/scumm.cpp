@@ -1083,12 +1083,14 @@ Common::Error ScummEngine::init() {
 					// CJK FT and DIG use usual NUT fonts, not FM-TOWNS ROM, so
 					// there is no text surface for them. This takes that into account
 					(_screenWidth * _textSurfaceMultiplier > 320));
+#ifdef ENABLE_16BIT
 	} else if (_game.features & GF_16BIT_COLOR) {
-		int format = Graphics::kFormatRGB555 | Graphics::kFormatRGB;
-		Common::List<Graphics::ColorFormat> formatList;
-		formatList.push_back((Graphics::ColorFormat) format);
-		formatList.push_back(Graphics::kFormat8Bit);
+		int format = Graphics::kFormatRGB555;
+		Common::List<Graphics::ColorMode> formatList;
+		formatList.push_back((Graphics::ColorMode) format);
+		formatList.push_back(Graphics::kFormatCLUT8);
 		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320, formatList);
+#endif
 	} else {
 		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320);
 	}

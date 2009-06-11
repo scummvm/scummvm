@@ -112,21 +112,10 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 
 void ScummEngine::updateCursor() {
 	int transColor = (_game.heversion >= 80) ? 5 : 255;
-	if (_game.features & GF_16BIT_COLOR) {
-		//HACK Had to make a second method to avoid many, many linker errors from other engines
-		//this requires ENABLE_16BIT to be defined in the Scumm project, again, because I #ifdef'ed
-		//the method's definition and declaration in cursorman.h 
-		CursorMan.replaceCursorReal(_grabbedCursor, _cursor.width, _cursor.height,
-								_cursor.hotspotX, _cursor.hotspotY,
-								(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
-								(_game.heversion == 70 ? 2 : 1),
-								16);
-	} else {
-		CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
-								_cursor.hotspotX, _cursor.hotspotY,
-								(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
-								(_game.heversion == 70 ? 2 : 1));
-	}
+	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
+							_cursor.hotspotX, _cursor.hotspotY,
+							(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
+							(_game.heversion == 70 ? 2 : 1));
 }
 
 void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {

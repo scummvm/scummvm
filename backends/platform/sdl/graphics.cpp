@@ -123,6 +123,13 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 
 			_videoMode.mode = _oldVideoMode.mode;
 			_videoMode.scaleFactor = _oldVideoMode.scaleFactor;
+#ifdef ENABLE_16BIT
+		} else if (_videoMode.format != _oldVideoMode.format) {
+			errors |= kTransactionPixelFormatNotSupported;
+
+			_videoMode.format = _oldVideoMode.format;
+			_screenFormat = getPixelFormat(_videoMode.format);
+#endif
 		} else if (_videoMode.screenWidth != _oldVideoMode.screenWidth || _videoMode.screenHeight != _oldVideoMode.screenHeight) {
 			errors |= kTransactionSizeChangeFailed;
 
@@ -130,12 +137,6 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 			_videoMode.screenHeight = _oldVideoMode.screenHeight;
 			_videoMode.overlayWidth = _oldVideoMode.overlayWidth;
 			_videoMode.overlayHeight = _oldVideoMode.overlayHeight;
-#ifdef ENABLE_16BIT
-		} else if (_videoMode.format != _oldVideoMode.format) {
-			errors |= kTransactionPixelFormatNotSupported;
-
-			_videoMode.format = _oldVideoMode.format;
-#endif
 		}
 
 		if (_videoMode.fullscreen == _oldVideoMode.fullscreen &&
@@ -153,32 +154,8 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 	}
 
 #ifdef ENABLE_16BIT
-	if (_transactionDetails.formatChanged) {
-		_screenFormat = getPixelFormat(_videoMode.format);
-		if (!_transactionDetails.sizeChanged) {
-			unloadGFXMode();
-			if (!loadGFXMode()) {
-				if (_oldVideoMode.setup) {
-					_transactionMode = kTransactionRollback;
-					errors |= endGFXTransaction();
-				}
-			} else {
-				setGraphicsModeIntern();
-				clearOverlay();
-
-				_videoMode.setup = true;
-				_modeChanged = true;
-				// OSystem_SDL::pollEvent used to update the screen change count,
-				// but actually it gives problems when a video mode was changed
-				// but OSystem_SDL::pollEvent was not called. This for example
-				// caused a crash under certain circumstances when doing an RTL.
-				// To fix this issue we update the screen change count right here.
-				_screenChangeCount++;
-			}	
-		}
-	}
+	if (_transactionDetails.sizeChanged || _transactionDetails.formatChanged) {
 #endif
-	if (_transactionDetails.sizeChanged) {
 		unloadGFXMode();
 		if (!loadGFXMode()) {
 			if (_oldVideoMode.setup) {
@@ -375,11 +352,11 @@ int OSystem_SDL::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 #ifdef ENABLE_16BIT
-Graphics::ColorFormat OSystem_SDL::findCompatibleFormat(Common::List<Graphics::ColorFormat> formatList) {
+Graphics::ColorMode OSystem_SDL::findCompatibleFormat(Common::List<Graphics::ColorMode> formatList) {
 	bool typeAccepted = false;
-	Graphics::ColorFormat format;
+	Graphics::ColorMode format;
 	
-	while (!formatList.empty() && !typeAccepted) {
+	while (!formatList.empty()) {
 		typeAccepted = false;
 		format = formatList.front();
 
@@ -389,33 +366,21 @@ Graphics::ColorFormat OSystem_SDL::findCompatibleFormat(Common::List<Graphics::C
 			return format;
 
 		formatList.pop_front();
-		switch (format & Graphics::kFormatTypeMask) {
-		case Graphics::kFormat8Bit:
-			if (format == Graphics::kFormat8Bit)
+		switch (format) {
+		case Graphics::kFormatCLUT8:
+			if (format == Graphics::kFormatCLUT8)
 				return format;
 			break;
 		case Graphics::kFormatRGB555:
-		case Graphics::kFormatARGB1555:
 		case Graphics::kFormatRGB565:
-			typeAccepted = true;
-			break;
-		}
-
-		if (!typeAccepted)
-			continue;
-
-		switch (format & Graphics::kFormatOrderMask) {
-		case Graphics::kFormatRGB:
-		case Graphics::kFormatRGBA:
 			return format;
-		default:
 			break;
 		}
 	}
-	return Graphics::kFormat8Bit;
+	return Graphics::kFormatCLUT8;
 }
 
-void OSystem_SDL::initFormat(Graphics::ColorFormat format) {
+void OSystem_SDL::initFormat(Graphics::ColorMode format) {
 	assert(_transactionMode == kTransactionActive);
 
 	//avoid redundant format changes
@@ -424,17 +389,13 @@ void OSystem_SDL::initFormat(Graphics::ColorFormat format) {
 
 	_videoMode.format = format;
 	_transactionDetails.formatChanged = true;
-
+	_screenFormat = getPixelFormat(format);
 }
 
 //This should only ever be called with a format that is known supported.
-Graphics::PixelFormat OSystem_SDL::getPixelFormat(Graphics::ColorFormat format) {
+Graphics::PixelFormat OSystem_SDL::getPixelFormat(Graphics::ColorMode format) {
 	Graphics::PixelFormat result;
-	switch (format & Graphics::kFormatTypeMask) {
-	case Graphics::kFormatARGB1555:
-		result.aLoss = 7;
-		result.bytesPerPixel = 2;
-		result.rLoss = result.gLoss = result.bLoss = 3;
+	switch (format) {
 	case Graphics::kFormatRGB555:
 		result.aLoss = 8;
 		result.bytesPerPixel = 2;
@@ -446,24 +407,17 @@ Graphics::PixelFormat OSystem_SDL::getPixelFormat(Graphics::ColorFormat format) 
 		result.gLoss = 2;
 		result.rLoss = result.bLoss = 3;
 		break;
-	case Graphics::kFormat8Bit:
+	case Graphics::kFormatCLUT8:
 	default:
 		result.bytesPerPixel = 1;
 		result.rShift = result.gShift = result.bShift = result.aShift = 0;
 		result.rLoss = result.gLoss = result.bLoss = result.aLoss = 8;
 		return result;
 	}
-	switch (format & Graphics::kFormatOrderMask) {
-	default:
-	case Graphics::kFormatRGBA:
-		result.aShift = 0;
-		// fall through
-	case Graphics::kFormatRGB:
-		result.bShift = result.aBits();
-		result.gShift = result.bShift + result.bBits();
-		result.rShift = result.gShift + result.gBits();
-		break;
-	}
+	result.aShift = 0;
+	result.bShift = result.aBits();
+	result.gShift = result.bShift + result.bBits();
+	result.rShift = result.gShift + result.gBits();
 	return result;
 }
 #endif
@@ -1473,15 +1427,8 @@ void OSystem_SDL::warpMouse(int x, int y) {
 }
 
 #ifdef ENABLE_16BIT
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, uint8 bitDepth) {
-	uint32 colmask = 0xFF;
-	uint8 byteDepth = bitDepth >> 3;
-	for (int i = byteDepth; i > 1; i--) {
-		colmask <<= 8;
-		colmask |= 0xFF;
-	}
-	keycolor &= colmask;
-	_cursorBitDepth = bitDepth;
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale) {
+	keycolor &= (1 << (_screenFormat.bytesPerPixel << 3)) - 1;
 #else
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 #endif
@@ -1520,8 +1467,8 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 
 	free(_mouseData);
 #ifdef ENABLE_16BIT
-	_mouseData = (byte *)malloc(w * h * byteDepth);
-	memcpy(_mouseData, buf, w * h * byteDepth);
+	_mouseData = (byte *)malloc(w * h * _screenFormat.bytesPerPixel);
+	memcpy(_mouseData, buf, w * h * _screenFormat.bytesPerPixel);
 #else
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
@@ -1533,7 +1480,12 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 void OSystem_SDL::blitCursor() {
 	byte *dstPtr;
 	const byte *srcPtr = _mouseData;
+#ifdef ENABLE_16BIT
+	uint32 color;
+	uint32 colormask = (1 << (_screenFormat.bytesPerPixel << 3)) - 1;
+#else
 	byte color;
+#endif
 	int w, h, i, j;
 
 	if (!_mouseOrigSurface || !_mouseData)
@@ -1567,20 +1519,20 @@ void OSystem_SDL::blitCursor() {
 
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
-			color = *srcPtr;
 #ifdef ENABLE_16BIT
-			if (_cursorBitDepth == 16) {
+			if (_screenFormat.bytesPerPixel > 1) {
+				color = (*(uint32 *) srcPtr) & colormask;
 				if (color != _mouseKeyColor) {	// transparent, don't draw
-					int8 r = ((*(uint16 *)srcPtr >> 10) & 0x1F) << 3;
-					int8 g = ((*(uint16 *)srcPtr >> 5) & 0x1F) << 3;
-					int8 b = (*(uint16 *)srcPtr & 0x1F) << 3;
+					uint8 r,g,b;
+					_screenFormat.colorToRGB(color,r,g,b);
 					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
 						r, g, b);
 				}
 				dstPtr += 2;
-				srcPtr += 2;
+				srcPtr += _screenFormat.bytesPerPixel;
 			} else {
 #endif
+				color = *srcPtr;
 				if (color != _mouseKeyColor) {	// transparent, don't draw
 					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
 						palette[color].r, palette[color].g, palette[color].b);

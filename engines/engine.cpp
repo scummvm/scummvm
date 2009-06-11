@@ -126,18 +126,18 @@ void initCommonGFX(bool defaultTo1XScaler) {
 }
 void initGraphics(int width, int height, bool defaultTo1xScaler) {
 #ifdef ENABLE_16BIT
-	Common::List<Graphics::ColorFormat> formatList;
-	formatList.push_back(Graphics::kFormat8Bit);
+	Common::List<Graphics::ColorMode> formatList;
+	formatList.push_back(Graphics::kFormatCLUT8);
 	initGraphics(width,height,defaultTo1xScaler, formatList);
 }
-void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Graphics::ColorFormat> formatList) {
+void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Graphics::ColorMode> formatList) {
 #endif
 
 	g_system->beginGFXTransaction();
 
 		initCommonGFX(defaultTo1xScaler);
 #ifdef ENABLE_16BIT
-		Graphics::ColorFormat format = g_system->findCompatibleFormat(formatList);
+		Graphics::ColorMode format = g_system->findCompatibleFormat(formatList);
 		debug("%X",format); //TODO: set up the pixelFormat here
 		g_system->initFormat(format);
 #endif
@@ -160,6 +160,15 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Gr
 		GUIErrorMessage(message);
 		error("%s", message.c_str());
 	}
+
+#ifdef ENABLE_16BIT
+	if (gfxError & OSystem::kTransactionPixelFormatNotSupported) {
+		Common::String message = "Could not initialize color format.";
+
+		GUIErrorMessage(message);
+		error("%s", message.c_str());
+	}
+#endif
 
 	// Just show warnings then these occur:
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {

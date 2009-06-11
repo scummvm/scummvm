@@ -63,7 +63,7 @@ void initCommonGFX(bool defaultTo1XScaler);
  * mode.
  */
 #ifdef ENABLE_16BIT
-void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Graphics::ColorFormat> formatList);
+void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Graphics::ColorMode> formatList);
 #endif
 void initGraphics(int width, int height, bool defaultTo1xScaler);
 

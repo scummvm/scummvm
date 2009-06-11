@@ -84,17 +84,17 @@ public:
 #ifdef ENABLE_16BIT
 	// Find a compatible format from the list of formats supported by the engine
 	// Fallback to CLUT8 if none found
-	virtual Graphics::ColorFormat findCompatibleFormat(Common::List<Graphics::ColorFormat> formatList);
+	virtual Graphics::ColorMode findCompatibleFormat(Common::List<Graphics::ColorMode> formatList);
 
 	// Set the depth and format of the video bitmap
 	// Typically, CLUT8
-	virtual void initFormat(Graphics::ColorFormat format);
+	virtual void initFormat(Graphics::ColorMode format);
 
 	// Game screen
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 
 	//Create a Graphics::PixelFormat to describe the requested color mode
-	virtual Graphics::PixelFormat getPixelFormat(Graphics::ColorFormat format);
+	virtual Graphics::PixelFormat getPixelFormat(Graphics::ColorMode format);
 #endif
 
 	// Set the size of the video bitmap.
@@ -129,7 +129,7 @@ public:
 
 	// Set the bitmap that's used when drawing the cursor.
 #ifdef ENABLE_16BIT
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, uint8 bitDepth = 8); // overloaded by CE backend (FIXME)
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
 #else
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
 #endif
@@ -302,7 +302,7 @@ protected:
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
 #ifdef ENABLE_16BIT
-		Graphics::ColorFormat format;
+		Graphics::ColorMode format;
 #endif
 	};
 	VideoState _videoMode, _oldVideoMode;

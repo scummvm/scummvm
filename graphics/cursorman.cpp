@@ -57,33 +57,18 @@ bool CursorManager::showMouse(bool visible) {
 	return g_system->showMouse(visible);
 }
 
-void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
 #ifdef ENABLE_16BIT
-	pushCursorReal(buf,w,h,hotspotX,hotspotY,keycolor,targetScale,8);
-}
-void CursorManager::pushCursorReal(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, uint8 bitDepth) {
-	uint32 colmask = 0xFF;
-	uint8 byteDepth = bitDepth >> 3;
-	for (int i = byteDepth; i > 1; i--) {
-		colmask <<= 8;
-		colmask |= 0xFF;
-	}
-	keycolor &= colmask;
-
-	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale, bitDepth);
+void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale) {
 #else
-	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
+void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
 #endif
+	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
 
 	cur->_visible = isVisible();
 	_cursorStack.push(cur);
 
 	if (buf) {
-#ifdef ENABLE_16BIT
-		g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, bitDepth);
-#else
 		g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
-#endif
 	}
 }
 
@@ -96,11 +81,7 @@ void CursorManager::popCursor() {
 
 	if (!_cursorStack.empty()) {
 		cur = _cursorStack.top();
-#ifdef ENABLE_16BIT
-		g_system->setMouseCursor(cur->_data, cur->_width, cur->_height, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_targetScale, cur->_bitDepth);
-#else
 		g_system->setMouseCursor(cur->_data, cur->_width, cur->_height, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_targetScale);
-#endif
 	}
 
 	g_system->showMouse(isVisible());
@@ -123,34 +104,25 @@ void CursorManager::popAllCursors() {
 	g_system->showMouse(isVisible());
 }
 
-void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
 #ifdef ENABLE_16BIT
-	replaceCursorReal(buf,w,h,hotspotX,hotspotY,keycolor,targetScale);
-}
-
-void CursorManager::replaceCursorReal(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, uint8 bitDepth) {
-	uint32 colmask = 0xFF;
-	uint8 byteDepth = bitDepth >> 3;
-	for (int i = byteDepth; i > 1; i--) {
-		colmask <<= 8;
-		colmask |= 0xFF;
-	}
-	keycolor &= colmask;
-
-#endif
-	if (_cursorStack.empty()) {
-#ifdef ENABLE_16BIT
-		pushCursorReal(buf, w, h, hotspotX, hotspotY, keycolor, targetScale, bitDepth);
+void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale) {
 #else
-		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
+void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
 #endif
+
+	if (_cursorStack.empty()) {
+		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
 		return;
 	}
 
 	Cursor *cur = _cursorStack.top();
 
 #ifdef ENABLE_16BIT
-	uint size = w * h * (bitDepth >> 3);
+		uint size;
+		{	//limit the lifespan of the format variable to minimize memory impact
+		Graphics::PixelFormat f = g_system->getScreenFormat();
+		size = w * h * (f.bytesPerPixel);
+	}
 #else
 	uint size = w * h;
 #endif
@@ -171,11 +143,7 @@ void CursorManager::replaceCursorReal(const byte *buf, uint w, uint h, int hotsp
 	cur->_keycolor = keycolor;
 	cur->_targetScale = targetScale;
 
-#ifdef ENABLE_16BIT
-	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, bitDepth);
-#else
 	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
-#endif
 }
 
 void CursorManager::disableCursorPalette(bool disable) {
