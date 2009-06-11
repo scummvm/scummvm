@@ -81,7 +81,10 @@ Common::Error AsylumEngine::go() {
     // ScummVM window alive until ESC is pressed.
     // This will facilitate drawing tests ;)
     bool end = false;
-    int updateCounter = 0;
+
+    bool forceRefresh = false;
+    uint32 lastRefresh = 0;
+
 	Common::EventManager *em = _system->getEventManager();
 	while (!end) {
 		Common::Event ev;
@@ -92,15 +95,19 @@ Common::Error AsylumEngine::go() {
 				//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
 			}
 			if (ev.type == Common::EVENT_MOUSEMOVE) {
-				updateCounter++;
-				if(updateCounter>6){
-					_screen->updateScreen();
-					updateCounter = 0;
+				if (_system->getMillis() - lastRefresh > 50) {
+					forceRefresh = true;
 				}
 
 			}
+
 		}
-		_system->delayMillis(10);
+		if (forceRefresh){
+			_screen->updateScreen();
+			forceRefresh = false;
+			lastRefresh = _system->getMillis();
+		}
+		//_system->delayMillis(10);
 	}
 
     return Common::kNoError;
