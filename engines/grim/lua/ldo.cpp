@@ -40,7 +40,7 @@ void stderrorim() {
 	fprintf(stderr, "lua error: %s\n", lua_getstring(lua_getparam(1)));
 }
 
-#define STACK_UNIT	128
+#define STACK_UNIT	256
 
 // Initial size for CallInfo array
 #define BASIC_CI_SIZE	8
