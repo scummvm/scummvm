@@ -24,7 +24,7 @@
 
 #include "engines/engine.h"
 
-#include "asylum/resourcemanager.h"
+#include "asylum/resman.h"
 
 namespace Asylum {
 

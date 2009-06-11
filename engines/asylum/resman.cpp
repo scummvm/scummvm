@@ -19,23 +19,48 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "asylum/resources/resource.h"
+#include "asylum/resman.h"
 
 namespace Asylum {
 
-Resource::Resource() {
-	size        = 0;
-	offset      = 0;
-	initialized = false;
+GraphicBundle* ResourceManager::getGraphic(uint8 fileNum, uint32 offset) {
+	Bundle *bun = getBundle(fileNum);
+	Bundle *ent = bun->getEntry(offset);
+
+	if(!ent->initialized){
+		GraphicBundle *gra = new GraphicBundle(fileNum, ent->offset, ent->size);
+		bun->setEntry(offset, gra);
+	}
+
+	return (GraphicBundle*)bun->getEntry(offset);
 }
 
-int Resource::save(Common::String filename) {
-	FILE *fd;
-	fd = fopen(filename.c_str(), "wb+");
-	fwrite(data, size, 1, fd);
-	fclose(fd);
+PaletteBundle* ResourceManager::getPalette(uint8 fileNum, uint32 offset) {
+	Bundle *bun = getBundle(fileNum);
+	Bundle *ent = bun->getEntry(offset);
+	if(!ent->initialized){
+		PaletteBundle *pal = new PaletteBundle(fileNum, ent->offset, ent->size);
+		bun->setEntry(offset, pal);
+	}
 
-	return 0;
+	return (PaletteBundle*)bun->getEntry(offset);
+}
+
+Bundle* ResourceManager::getBundle(uint8 fileNum) {
+	// first check if the bundle exists in the cache
+	Bundle* bun = NULL;
+
+	for (uint32 i = 0; i < _bundleCache.size(); i++) {
+		if (_bundleCache[i].id == fileNum ){
+			*bun = _bundleCache[i];
+		}
+	}
+
+	if(!bun) {
+		bun = new Bundle(fileNum);
+	}
+
+	return bun;
 }
 
 } // end of namespace Asylum

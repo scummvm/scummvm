@@ -31,7 +31,7 @@ class OSystem;
 #define	SCREEN_DEPTH	480
 
 #define PAL_SIZE		256
-#define BRIGHTNESS		7
+#define BRIGHTNESS		6
 
 namespace Asylum {
 

@@ -37,6 +37,7 @@ public:
 	uint32         size;
 	uint32         offset;
 	uint8*         data;
+	bool		   initialized;
 
 }; // end of class Resource
 

@@ -19,52 +19,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef ASYLUM_BUNDLE_H_
-#define ASYLUM_BUNDLE_H_
-
-#include "common/endian.h"
-#include "common/file.h"
-#include "common/stream.h"
+#ifndef ASYLUM_RESOURCEMANAGER_H_
+#define ASYLUM_RESOURCEMANAGER_H_
 
 #include "common/str.h"
 #include "common/array.h"
 
-#include "asylum/resources/resource.h"
+#include "asylum/bundles/bundle.h"
+#include "asylum/bundles/graphicbundle.h"
+#include "asylum/bundles/palettebundle.h"
 
 namespace Asylum {
 
-#define RESMASK "res.0%02d"
-
-class Bundle {
-
+class ResourceManager {
 public:
-	Bundle();
-	Bundle(uint8 fileNum);
-	virtual ~Bundle() {}
+	ResourceManager() {};
+	~ResourceManager() {};
 
-	uint8*  getData() { return data; }
-	Bundle* getEntry(uint32 index) { return entries[index]; }
-	void    setEntry(uint32 index, Bundle* value);
-
-	uint8  id;
-	uint32 size;
-	uint32 offset;
-	uint32 numEntries;
-	bool   initialized;
-
-
-protected:
-	Common::Array<Bundle*> entries;
-	Common::String parseFilename(uint8 fileNum);
-	void loadRawRecord(Common::String filename, uint32 index, uint32 length);
-	uint32 getNextValidOffset(uint8 index);
-	virtual void update(){}
-
-	uint8 *data;
+	GraphicBundle* getGraphic(uint8 fileNum, uint32 offset);
+	PaletteBundle* getPalette(uint8 fileNum, uint32 offset);
 
 private:
+	Common::Array<Bundle> _bundleCache;
 
-}; // end of class Bundle
+	Bundle* getBundle(uint8 fileNum);
+
+}; // end of class ResourceManager
 
 
 } // end of namespace Asylum
