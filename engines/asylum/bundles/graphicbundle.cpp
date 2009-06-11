@@ -23,8 +23,8 @@
 
 namespace Asylum {
 
-GraphicBundle::GraphicBundle(Common::String filename, uint32 index) {
-	loadRaw(filename, index);
+GraphicBundle::GraphicBundle(uint8 fileNum, uint32 index, uint32 length) {
+	loadRawRecord(parseFilename(fileNum), index, length);
 }
 
 void GraphicBundle::update() {
@@ -65,12 +65,12 @@ void GraphicBundle::update() {
 		gra->data = (uint8*)malloc(gra->size - 16);
 		memcpy(gra->data, data + pos, gra->size - 16);
 
-		entries.push_back(*gra);
+		entries.push_back(gra);
 	}
 }
 
-GraphicResource GraphicBundle::getEntry(uint32 index) {
-	return (GraphicResource)entries[index];
+GraphicResource* GraphicBundle::getEntry(uint32 index) {
+	return (GraphicResource*)entries[index];
 }
 
 } // end of namespace Asylum

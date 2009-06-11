@@ -30,14 +30,14 @@ namespace Asylum {
 class GraphicBundle: public Bundle {
 public:
 	GraphicBundle() {}
-	GraphicBundle(Common::String filename, uint32 index);
+	GraphicBundle(uint8 fileNum, uint32 index, uint32 length);
 	~GraphicBundle() {}
 
-	Common::Array<GraphicResource> entries;
-	GraphicResource getEntry(uint32 index);
+	GraphicResource* getEntry(uint32 index);
 
 protected:
 	void update();
+	Common::Array<GraphicResource*> entries;
 
 private:
 	uint32 _tagValue;

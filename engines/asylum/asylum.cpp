@@ -81,6 +81,7 @@ Common::Error AsylumEngine::go() {
     // ScummVM window alive until ESC is pressed.
     // This will facilitate drawing tests ;)
     bool end = false;
+    int updateCounter = 0;
 	Common::EventManager *em = _system->getEventManager();
 	while (!end) {
 		Common::Event ev;
@@ -89,6 +90,14 @@ Common::Error AsylumEngine::go() {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
 					end = true;
 				//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
+			}
+			if (ev.type == Common::EVENT_MOUSEMOVE) {
+				updateCounter++;
+				if(updateCounter>6){
+					_screen->updateScreen();
+					updateCounter = 0;
+				}
+
 			}
 		}
 		_system->delayMillis(10);
@@ -100,11 +109,19 @@ Common::Error AsylumEngine::go() {
 void AsylumEngine::showMainMenu() {
 	// eyes animation index table
 	//const uint32 eyesTable[8] = {3, 5, 1, 7, 4, 8, 2, 6};
+	PaletteBundle   *pal = _resMgr->getPalette(1, 17);
+	GraphicResource *bg  = _resMgr->getGraphic(1, 0)->getEntry(0);
+	GraphicResource *cur = _resMgr->getGraphic(1, 2)->getEntry(0);
+
+	_system->setMouseCursor(cur->data, cur->width, cur->height, 1, 1, 0);
+	_system->setCursorPalette(pal->palette, 0, 768);
+	_system->showMouse(true);
+
 	_screen->setFrontBuffer(
 			0, 0,
-			SCREEN_WIDTH, SCREEN_DEPTH,
-			_resMgr->getGraphic("res.001",0).getEntry(0).data);
-	_screen->setPalette(_resMgr->getPalette("res.001", 17).data);
+			bg->width, bg->height,
+			bg->data);
+	_screen->setPalette(pal->palette);
 	_screen->updateScreen();
 }
 
