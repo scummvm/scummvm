@@ -27,7 +27,6 @@
 
 #include "asylum/bundles/bundle.h"
 #include "asylum/bundles/graphicbundle.h"
-#include "asylum/bundles/palettebundle.h"
 
 namespace Asylum {
 
@@ -37,7 +36,7 @@ public:
 	~ResourceManager() {};
 
 	GraphicBundle* getGraphic(uint8 fileNum, uint32 offset);
-	PaletteBundle* getPalette(uint8 fileNum, uint32 offset);
+	void getPalette(uint8 fileNum, uint32 offset, byte *palette);
 
 private:
 	Common::Array<Bundle> _bundleCache;

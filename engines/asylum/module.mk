@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	screen.o \
 	bundles/bundle.o \
 	bundles/graphicbundle.o \
-	bundles/palettebundle.o \
 	resources/resource.o \
 	resources/graphic.o \
 	resources/movie.o

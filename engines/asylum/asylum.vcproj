@@ -180,14 +180,6 @@
 				RelativePath="..\..\engines\asylum\bundles\graphicbundle.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\engines\asylum\bundles\palettebundle.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\asylum\bundles\palettebundle.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="resources"
