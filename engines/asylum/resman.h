@@ -32,7 +32,6 @@
 #include "asylum/bundle.h"
 #include "asylum/graphicbundle.h"
 #include "asylum/video.h"
-#include "asylum/screen.h"
 #include "asylum/asylum.h"
 
 namespace Asylum {

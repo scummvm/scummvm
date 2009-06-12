@@ -47,16 +47,11 @@ public:
     virtual Common::Error run();
     virtual bool hasFeature(EngineFeature f) const;
 
-    Screen* getScreen() {
-    		return _screen;
-    	}
-
 private:
     Common::Language     _language;
     Common::RandomSource _rnd;
 
     ResourceManager *_resMgr;
-    Screen          *_screen;
 
     void showMainMenu();
 

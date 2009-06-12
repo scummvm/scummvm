@@ -31,6 +31,8 @@
 
 namespace Asylum {
 
+#define BRIGHTNESS		6
+
 ResourceManager::ResourceManager(AsylumEngine *vm): _vm(vm) {
 	_video = new Video(_vm->_mixer);
 }
@@ -45,9 +47,8 @@ bool ResourceManager::loadVideo(uint8 fileNum) {
 
 bool ResourceManager::loadGraphic(uint8 fileNum, uint32 offset, uint32 index) {
 	GraphicResource *res = getGraphic(fileNum, offset, index);
-
-	_vm->getScreen()->setFrontBuffer(0, 0, res->width, res->height, res->data);
-
+	_vm->_system->copyRectToScreen(res->data, res->width, 0, 0, res->width, res->height);
+	
 	// TODO proper error check
 	return true;
 }
@@ -65,10 +66,17 @@ bool ResourceManager::loadPalette(uint8 fileNum, uint32 offset) {
 		bun->setEntry(offset, ent);
 	}
 
-	byte palette[256 * 3];
-	memcpy(palette, ent->getData() + 32, 256 * 3);
+	byte palette[256 * 4];
+	byte *p = ent->getData() + 32;
 
-	_vm->getScreen()->setPalette(palette);
+	for (int i = 0; i < 256; i++) {
+		palette[i * 4 + 0] = *p++ * BRIGHTNESS;
+		palette[i * 4 + 1] = *p++ * BRIGHTNESS;
+		palette[i * 4 + 2] = *p++ * BRIGHTNESS;
+		palette[i * 4 + 3] = 0;
+	}
+
+	_vm->_system->setPalette(palette, 0, 256);
 
 	// TODO proper error check
 	return true;
