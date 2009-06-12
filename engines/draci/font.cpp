@@ -156,7 +156,7 @@ void DraciFont::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) cons
  * @param spacing 	Space to leave between individual characters. Defaults to 0. 
  */
 
-void DraciFont::drawString(Graphics::Surface *dst, Common::String str, 
+void DraciFont::drawString(Graphics::Surface *dst, Common::String &str, 
 							int x, int y, int spacing) const {
 	assert(dst != NULL);
 	assert(x >= 0);
