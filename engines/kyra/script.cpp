@@ -98,6 +98,8 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 	default:
 		warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk._type), chunk._size, _filename);
 	}
+
+	return false;
 }
 
 bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Common::Array<const Opcode*> *opcodes) {
@@ -116,10 +118,10 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 	Common::Functor1Mem< Common::IFFChunk &, bool, EMCInterpreter > c(this, &EMCInterpreter::callback);
 	iff.parse(c);
 
-	if (!scriptData->ordr)
+	if (!_scriptData->ordr)
 		error("No ORDR chunk found in file: '%s'", filename);
 
-	if (!scriptData->data)
+	if (!_scriptData->data)
 		error("No DATA chunk found in file: '%s'", filename);
 
 	if (stream->err())
@@ -127,10 +129,10 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 	delete stream;
 
-	scriptData->sysFuncs = opcodes;
+	_scriptData->sysFuncs = opcodes;
 
-	strncpy(scriptData->filename, filename, 13);
-	scriptData->filename[12] = 0;
+	strncpy(_scriptData->filename, filename, 13);
+	_scriptData->filename[12] = 0;
 
 	return true;
 }

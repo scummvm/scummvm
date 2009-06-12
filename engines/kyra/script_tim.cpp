@@ -140,6 +140,7 @@ bool TIMInterpreter::callback(Common::IFFChunk &chunk) {
 		warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk._type), chunk._size, _filename);
 	}
 
+	return false;
 }
 
 TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode *> *opcodes) {
