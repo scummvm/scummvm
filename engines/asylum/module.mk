@@ -5,7 +5,7 @@ MODULE_OBJS := \
 	bundle.o \
 	detection.o \
 	graphicbundle.o \
-	movie.o \
+	video.o \
 	resman.o \
 	screen.o
 

@@ -17,6 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
  */
 
 #include "common/config-manager.h"
@@ -90,8 +94,6 @@ Common::Error AsylumEngine::go() {
     // ScummVM window alive until ESC is pressed.
     // This will facilitate drawing tests ;)
 
-    uint32 lastRefresh = 0;
-
 	Common::EventManager *em = _system->getEventManager();
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -157,7 +159,7 @@ void AsylumEngine::showMainMenu() {
 	GraphicResource *cur = _resMgr->getGraphic(1, 2)->getEntry(0);
 
 	_system->setMouseCursor(cur->data, cur->width, cur->height, 1, 1, 0);
-	// FIXME: is there any reason why the cursor palette is set here, 
+	// FIXME: is there any reason why the cursor palette is set here,
 	// when it's the same as the rest of the game's palette?
 	//_system->setCursorPalette(pal, 0, 1024);
 	_system->showMouse(true);
