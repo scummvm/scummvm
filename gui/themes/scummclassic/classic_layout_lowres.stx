@@ -38,9 +38,9 @@
 
 		<def var = 'ScummSaveLoad.ExtInfo.Visible' value = '0'/>
 
-		<def var = 'KeyRemapper.Spacing' value = '5'/>
-		<def var = 'KeyRemapper.LabelWidth' value = '80'/>
-		<def var = 'KeyRemapper.ButtonWidth' value = '60'/>
+		<def var = 'KeyMapper.Spacing' value = '5'/>
+		<def var = 'KeyMapper.LabelWidth' value = '80'/>
+		<def var = 'KeyMapper.ButtonWidth' value = '60'/>
 
 		<widget name = 'Button'
 				size = '72, 16'
@@ -791,7 +791,7 @@
 			</layout>
 		</layout>
 	</dialog>
-	<dialog name = 'KeyRemapper' overlays = 'screen_center' shading = 'dim'>
+	<dialog name = 'KeyMapper' overlays = 'screen_center' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '10' center = 'true'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'PopupDesc'

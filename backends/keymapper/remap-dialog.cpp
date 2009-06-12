@@ -39,17 +39,17 @@ enum {
 };
 
 RemapDialog::RemapDialog()
-	: Dialog("KeyRemapper"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0) {
+	: Dialog("KeyMapper"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0) {
 
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
 
-	_kmPopUpDesc = new GUI::StaticTextWidget(this, "KeyRemapper.PopupDesc", "Keymap:");
-	_kmPopUp = new GUI::PopUpWidget(this, "KeyRemapper.Popup");
+	_kmPopUpDesc = new GUI::StaticTextWidget(this, "KeyMapper.PopupDesc", "Keymap:");
+	_kmPopUp = new GUI::PopUpWidget(this, "KeyMapper.Popup");
 
 	_scrollBar = new GUI::ScrollBarWidget(this, 0, 0, 0, 0);
 
-	new GUI::ButtonWidget(this, "KeyRemapper.Close", "Close", kCloseCmd);
+	new GUI::ButtonWidget(this, "KeyMapper.Close", "Close", kCloseCmd);
 }
 
 RemapDialog::~RemapDialog() {
@@ -138,12 +138,12 @@ void RemapDialog::reflowLayout() {
 
 	int16 areaX, areaY;
 	uint16 areaW, areaH;
-	int spacing = g_gui.xmlEval()->getVar("Globals.KeyRemapper.Spacing");
-	int labelWidth =  g_gui.xmlEval()->getVar("Globals.KeyRemapper.LabelWidth");
-	int buttonWidth = g_gui.xmlEval()->getVar("Globals.KeyRemapper.ButtonWidth");
+	int spacing = g_gui.xmlEval()->getVar("Globals.KeyMapper.Spacing");
+	int labelWidth =  g_gui.xmlEval()->getVar("Globals.KeyMapper.LabelWidth");
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.KeyMapper.ButtonWidth");
 	int colWidth = labelWidth + buttonWidth + spacing;
 
-	g_gui.xmlEval()->getWidgetData((const String&)String("KeyRemapper.KeymapArea"), areaX, areaY, areaW, areaH);
+	g_gui.xmlEval()->getWidgetData((const String&)String("KeyMapper.KeymapArea"), areaX, areaY, areaW, areaH);
 
 	_colCount = (areaW - scrollbarWidth) / colWidth;
 	_rowCount = (areaH + spacing) / (buttonHeight + spacing);
