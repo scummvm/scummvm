@@ -19,28 +19,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef ASYLUM_RESOURCE_H_
-#define ASYLUM_RESOURCE_H_
-
-#include "common/str.h"
+#include "asylum/video.h"
 
 namespace Asylum {
 
-class Resource {
-public:
-	Resource();
-	virtual ~Resource(){}
+Video::Video(AsylumEngine *vm) : _vm(vm) {
+	Common::Event stopEvent;
+	_stopEvents.clear();
+	stopEvent.type = Common::EVENT_KEYDOWN;
+	stopEvent.kbd = Common::KEYCODE_ESCAPE;
+	_stopEvents.push_back(stopEvent);
 
-	int save(Common::String filename);
+	_smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
+	_player = new Graphics::VideoPlayer(_smkDecoder);
+}
 
-	Common::String type;
-	uint32         size;
-	uint32         offset;
-	uint8*         data;
-	bool		   initialized;
+Video::~Video() {
+	delete _player;
+	delete _smkDecoder;
+}
 
-}; // end of class Resource
+bool Video::playVideo(const char *filename) {
+	bool result = _smkDecoder->loadFile(filename);
+
+	// TODO: hide mouse
+	if (result)
+		_player->playVideo(_stopEvents);
+	_smkDecoder->closeFile();
+	// TODO: show mouse
+
+	return result;
+}
+
+bool Video::playVideo(int number) {
+	char filename[50];
+	sprintf(filename, "mov%03d.smk", number);
+	return playVideo(filename);
+}
 
 } // end of namespace Asylum
-
-#endif
