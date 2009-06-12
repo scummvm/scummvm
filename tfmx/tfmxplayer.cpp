@@ -141,7 +141,7 @@ void tfmxmain(const int argc, const char *const argv[]) {
 	while( true)
 		player->readBuffer(buf, ARRAYSIZE(buf));
 #endif
-	int maxsecs = 2 * 60;
+	int maxsecs = 10 * 60;
 	if (playflag == 1) {
 		// get Mixer, assume this never fails 
 		Audio::Mixer *mixer = g_system->getMixer();

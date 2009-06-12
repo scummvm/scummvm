@@ -687,6 +687,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\player_v4a.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\player_v4a.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\resource.cpp"
 			>
 		</File>

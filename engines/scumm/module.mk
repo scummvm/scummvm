@@ -40,6 +40,7 @@ MODULE_OBJS := \
 	player_v2a.o \
 	player_v2cms.o \
 	player_v3a.o \
+	player_v4a.o \
 	resource_v2.o \
 	resource_v3.o \
 	resource_v4.o \

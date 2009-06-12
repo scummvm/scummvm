@@ -441,7 +441,8 @@ void Sound::playSound(int soundID) {
 		if (_vm->_game.id == GID_MONKEY_VGA || _vm->_game.id == GID_MONKEY_EGA
 			|| (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformMacintosh)) {
 			// Sound is currently not supported at all in the amiga versions of these games
-			if (_vm->_game.platform == Common::kPlatformAmiga) {
+			if (_vm->_game.platform == Common::kPlatformAmiga && false) {
+
 				int track = -1;
 				if (soundID == 50)
 					track = 17;

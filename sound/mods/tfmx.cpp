@@ -31,8 +31,6 @@
 
 #include "sound/mods/tfmx.h"
 
-#include "tfmx/tfmxdebug.h"
-
 namespace Audio {
 
 const uint16 Tfmx::noteIntervalls[64] = {
@@ -58,7 +56,7 @@ Tfmx::~Tfmx() {
 }
 
 void Tfmx::interrupt() {
-	assert(!_end);
+	//assert(!_end);
 	for (int i = 0; i < kNumVoices; ++i) {
 		ChannelContext &channel = _channelCtx[i];
 
@@ -66,7 +64,6 @@ void Tfmx::interrupt() {
 			// wait for DMA Interupts to happen
 			int doneDma = getChannelDmaCount(channel.paulaChannel);
 			if (doneDma >= channel.dmaIntCount) {
-				debug("channel %d, DMA done", i);
 				channel.dmaIntCount = 0;
 				channel.macroRun = true;
 			}
@@ -190,7 +187,7 @@ static void warnMacroUnimplemented(const byte *macroPtr, int level) {
 	else
 		debug("Warning - Macro not completely supported:");
 
-	displayMacroStep(macroPtr);
+//	displayMacroStep(macroPtr);
 }
 
 FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
@@ -229,7 +226,6 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 			channel.volume = macroPtr[3];
 		else if (macroPtr[3])
 			channel.volume = channel.relVol * 3 + macroPtr[3];
-		debug("DMA Off: %02X %02X%02X%02X", macroPtr[0], macroPtr[1], macroPtr[2], macroPtr[3]);
 		return true;
 
 	case 0x01:	// DMA On
@@ -263,7 +259,6 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 			return true;
 		// FT
 	case 0x05:	// Loop. Parameters: Loopcount, MacroStep(W)
-		// debug("Step %d, Loopcount: %02X", channel.macroStep, channel.macroLoopCount);
 		if (channel.macroLoopCount != 0) {
 			if (channel.macroLoopCount == 0xFF)
 				channel.macroLoopCount = macroPtr[1];
@@ -337,7 +332,6 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 	case 0x11:	// AddBegin. Parameters: times, Offset(W)
 		// TODO: implement Parameter
 		macroPtr[1];
-//		debug("prev: %06X, after: %06X", channel.sampleStart, channel.sampleStart + (int16)READ_BE_UINT16(&macroPtr[2]));
 		channel.sampleStart += (int16)READ_BE_UINT16(&macroPtr[2]);
 		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
 		warnMacroUnimplemented(macroPtr, 1);
@@ -465,15 +459,15 @@ doTrackstep:
 			;
 		_playerCtx.pendingTrackstep = false;
 	}
+	int runningPatterns = 0;
 
 	for (int i = 0; i < kNumChannels; ++i) {
-		assert(!_playerCtx.pendingTrackstep);
-
 		const uint8 pattCmd = _patternCtx[i].command;
 		if (pattCmd < 0x90) {	// execute Patternstep
 			// FIXME: 0x90 is very likely a bug, 0x80 would make more sense
 			assert(pattCmd < 0x80);
 
+			++runningPatterns;
 			if (_patternCtx[i].wait == 0) {
 				// issue all Steps for this tick
 				while (patternStep(_patternCtx[i]))
@@ -496,14 +490,18 @@ doTrackstep:
 			goto doTrackstep;
 		}
 	}
+	if (!runningPatterns) {
+		_playerCtx.enabled = 0;
+		stopPaula();
+	}
 }
 
 FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 	const byte *const patternPtr = (byte *)(_resource.getPatternPtr(pattern.offset) + pattern.step);
 	++pattern.step;
 
-	debug("Pattern %04X +%d", pattern.offset, pattern.step-1);
-	displayPatternstep(patternPtr);
+	/*debug("Pattern %04X +%d", pattern.offset, pattern.step-1);
+	displayPatternstep(patternPtr);*/
 
 	const byte pattCmd = patternPtr[0];
 
@@ -603,8 +601,8 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 bool Tfmx::trackStep() {
 	const uint16 *const trackData = _resource.getTrackPtr(_trackCtx.posInd);
 
-	debug( "TStep %04X", _trackCtx.posInd);
-	displayTrackstep(trackData);
+//	debug( "TStep %04X", _trackCtx.posInd);
+//	displayTrackstep(trackData);
 
 	if (trackData[0] != FROM_BE_16(0xEFFE)) {
 		// 8 commands for Patterns

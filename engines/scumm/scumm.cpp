@@ -55,6 +55,7 @@
 #include "scumm/player_v2.h"
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
+#include "scumm/player_v4a.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
@@ -1669,7 +1670,7 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatformPCEngine && _game.version == 3) {
 		// TODO: Add support for music format
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
-		// TODO: Add support for music format
+		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, midiDriver != MD_PCSPK);
 	} else if (_game.version <= 2) {
