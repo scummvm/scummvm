@@ -111,7 +111,7 @@ protected:
 	const char *_filename;
 	EMCData *_scriptData;
 
-	bool EMCInterpreter::callback(Common::IFFChunk &chunk);
+	bool callback(Common::IFFChunk &chunk);
 
 	typedef void (EMCInterpreter::*OpcodeProc)(EMCState *);
 	struct OpcodeEntry {
