@@ -53,16 +53,17 @@ bool Player_V4A::init() {
 		else
 			delete play;
 	}
+	return true;
 }
 
 Player_V4A::~Player_V4A() {
 	delete _tfmxPlay;
 }
 
-void Player_V4A::setMusicVolume (int vol) {
+void Player_V4A::setMusicVolume(int vol) {
 }
 
-int Player_V4A::getSlot (int id) const {
+int Player_V4A::getSlot(int id) const {
 	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
 		if (_slots[i].id == id)
 			return i;
@@ -93,8 +94,8 @@ void Player_V4A::startSound(int nr) {
 
 	char buf[22];
 	sprintf(buf,"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X", ptr[0], ptr[1], ptr[2], ptr[3], 
-				ptr[4], ptr[5], ptr[6], ptr[7], ptr[8], ptr[9] );
-			debug("%s", buf);
+		ptr[4], ptr[5], ptr[6], ptr[7], ptr[8], ptr[9] );
+	debug("%s", buf);
 
 
 	static const uint8 monkeyCommands[52] = {

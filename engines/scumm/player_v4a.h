@@ -68,7 +68,7 @@ private:
 
 	int _musicId;
 
-	int getSlot (int id) const;
+	int getSlot(int id) const;
 	bool init();
 };
 
