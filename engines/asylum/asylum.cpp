@@ -30,7 +30,7 @@
 
 #include "asylum/asylum.h"
 #include "asylum/screen.h"
-#include "asylum/resources/video.h"
+#include "asylum/video.h"
 
 namespace Asylum {
 

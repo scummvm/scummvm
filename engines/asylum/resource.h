@@ -19,12 +19,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef ASYLUM_GRAPHICRESOURCE_H_
-#define ASYLUM_GRAPHICRESOURCE_H_
+#ifndef ASYLUM_RESOURCE_H_
+#define ASYLUM_RESOURCE_H_
 
-#include "resource.h"
+#include "common/str.h"
 
 namespace Asylum {
+
+class Resource {
+public:
+	Resource() : size(0), offset(0), initialized(false) {}
+	virtual ~Resource(){}
+
+	void save(Common::String filename) {
+		FILE *fd = fopen(filename.c_str(), "wb+");
+		fwrite(data, size, 1, fd);
+		fclose(fd);
+	}
+
+	Common::String type;
+	uint32         size;
+	uint32         offset;
+	uint8*         data;
+	bool		   initialized;
+
+}; // end of class Resource
 
 class GraphicResource: public Resource {
 public:
@@ -38,8 +57,9 @@ public:
 	uint16 width;
 	uint16 height;
 
-};
+};	// end of class GraphicResource
+
 
 } // end of namespace Asylum
 
-#endif /* GRAPHICRESOURCE_H_ */
+#endif

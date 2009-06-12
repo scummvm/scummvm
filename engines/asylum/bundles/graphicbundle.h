@@ -23,7 +23,6 @@
 #define ASYLUM_GRAPHICBUNDLE_H_
 
 #include "asylum/bundles/bundle.h"
-#include "asylum/resources/graphic.h"
 
 namespace Asylum {
 
