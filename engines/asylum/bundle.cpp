@@ -35,6 +35,10 @@ Bundle::Bundle() {
 	offset     = 0;
 }
 
+Bundle::Bundle(uint8 fileNum, uint32 index, uint32 length) {
+	loadRawRecord(parseFilename(fileNum), index, length);
+}
+
 Bundle::Bundle(uint8 fileNum) {
 	Common::File* file = new Common::File;
 	Common::String filename = parseFilename(fileNum);

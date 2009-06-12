@@ -27,6 +27,70 @@
 
 namespace Asylum {
 
+ResourceManager::ResourceManager(AsylumEngine *vm): _vm(vm) {
+	_video = new Video(_vm->_mixer);
+}
+
+ResourceManager::~ResourceManager() {
+	delete _video;
+}
+
+bool ResourceManager::loadVideo(uint8 fileNum) {
+	return _video->playVideo(fileNum);
+}
+
+bool ResourceManager::loadGraphic(uint8 fileNum, uint32 offset, uint32 index) {
+	GraphicResource *res = getGraphic(fileNum, offset, index);
+
+	_vm->getScreen()->setFrontBuffer(0, 0, res->width, res->height, res->data);
+
+	// TODO proper error check
+	return true;
+}
+
+bool ResourceManager::loadPalette(uint8 fileNum, uint32 offset) {
+	Bundle *bun = getBundle(fileNum);
+	Bundle *ent = bun->getEntry(offset);
+
+	if(!ent->initialized){
+		ent = new Bundle(fileNum, ent->offset, ent->size);
+		bun->setEntry(offset, ent);
+	}
+
+	uint8 palette[256 * 3];
+	memcpy(palette, ent->getData() + 32, 256 * 3);
+
+	_vm->getScreen()->setPalette(palette);
+
+	// TODO proper error check
+	return true;
+}
+
+bool ResourceManager::loadCursor(uint8 fileNum, uint32 offet, uint32 index) {
+	GraphicResource *cur = getGraphic(fileNum, offet, index);
+	_vm->_system->setMouseCursor(cur->data, cur->width, cur->height, 1, 1, 0);
+	_vm->_system->showMouse(true);
+
+	// TODO proper error check
+	return true;
+}
+
+GraphicResource* ResourceManager::getGraphic(uint8 fileNum, uint32 offset, uint32 index) {
+	Bundle *bun = getBundle(fileNum);
+	Bundle *ent = bun->getEntry(offset);
+	GraphicBundle *gra;
+
+	if(!ent->initialized){
+		gra = new GraphicBundle(fileNum, ent->offset, ent->size);
+		bun->setEntry(offset, gra);
+	}else{
+		gra = (GraphicBundle*)bun->getEntry(offset);
+	}
+
+	return gra->getEntry(index);
+}
+
+/*
 GraphicBundle* ResourceManager::getGraphic(uint8 fileNum, uint32 offset) {
 	Bundle *bun = getBundle(fileNum);
 	Bundle *ent = bun->getEntry(offset);
@@ -39,23 +103,7 @@ GraphicBundle* ResourceManager::getGraphic(uint8 fileNum, uint32 offset) {
 	return (GraphicBundle*)bun->getEntry(offset);
 }
 
-void ResourceManager::getPalette(uint8 fileNum, uint32 offset, byte *palette) {
-	// Sub-optimal, but a bit cleaner (till we get john_doe's code in)
-	Common::File palFile;
-	char filename[256];
-	sprintf(filename, "res.%03d", fileNum);
-	palFile.open(filename);
-
-	// Read entries
-	/*uint32 entryCount =*/ palFile.readUint32LE();
-	palFile.skip(4 * offset);
-	uint32 offs = palFile.readUint32LE();
-	palFile.seek(offs, SEEK_SET);
-	palFile.skip(32);	// TODO: what are these?
-	palFile.read(palette, 256 * 3);
-	palFile.close();
-}
-
+*/
 Bundle* ResourceManager::getBundle(uint8 fileNum) {
 	// first check if the bundle exists in the cache
 	Bundle* bun = NULL;
