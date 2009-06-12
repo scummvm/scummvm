@@ -35,15 +35,21 @@ GraphicBundle* ResourceManager::getGraphic(uint8 fileNum, uint32 offset) {
 	return (GraphicBundle*)bun->getEntry(offset);
 }
 
-PaletteBundle* ResourceManager::getPalette(uint8 fileNum, uint32 offset) {
-	Bundle *bun = getBundle(fileNum);
-	Bundle *ent = bun->getEntry(offset);
-	if(!ent->initialized){
-		PaletteBundle *pal = new PaletteBundle(fileNum, ent->offset, ent->size);
-		bun->setEntry(offset, pal);
-	}
-
-	return (PaletteBundle*)bun->getEntry(offset);
+void ResourceManager::getPalette(uint8 fileNum, uint32 offset, byte *palette) {
+	// Sub-optimal, but a bit cleaner (till we get john_doe's code in)
+	Common::File palFile;
+	char filename[256];
+	sprintf(filename, "res.%03d", fileNum);
+	palFile.open(filename);
+	
+	// Read entries
+	/*uint32 entryCount =*/ palFile.readUint32LE();
+	palFile.skip(4 * offset);
+	uint32 offs = palFile.readUint32LE();
+	palFile.seek(offs, SEEK_SET);
+	palFile.skip(32);	// TODO: what are these?
+	palFile.read(palette, 256 * 3);
+	palFile.close();
 }
 
 Bundle* ResourceManager::getBundle(uint8 fileNum) {
