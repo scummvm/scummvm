@@ -40,7 +40,7 @@ namespace Asylum {
 
 class Video {
 public:
-	Video(AsylumEngine *vm);
+	Video(Audio::Mixer *mixer);
 	virtual ~Video();
 
 	bool playVideo(const char *filename);
@@ -50,7 +50,6 @@ private:
 	Common::List<Common::Event> _stopEvents;
 	Graphics::SmackerDecoder *_smkDecoder;
 	Graphics::VideoPlayer *_player;
-	AsylumEngine *_vm;
 }; // end of class Video
 
 } // end of namespace Asylum

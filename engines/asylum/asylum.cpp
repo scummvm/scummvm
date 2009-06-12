@@ -69,7 +69,7 @@ Common::Error AsylumEngine::init() {
 
 	_screen = new Screen(_system);
 	_resMgr = new ResourceManager;
-	_video = new Video(this);
+	_video = new Video(_mixer);
 
 	// initializing game
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
