@@ -59,6 +59,9 @@ void GraphicBundle::update() {
 		gra->height = READ_UINT16(data + pos); pos += 2;
 		gra->width  = READ_UINT16(data + pos); pos += 2;
 
+		// FIXME: This loads the whole bundle in memory! Is there
+		// any reason to preload everything and eat up memory?
+
 		// allocate space for data and fill the array from
 		// the end of the header block (read in above) to
 		// the length specified by gra->size
