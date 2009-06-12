@@ -46,13 +46,14 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("SNTRM.DAT", "280b4a72f70f3073e9dbc9a9cfa25518", 8930),
 		Common::EN_ANY,
 		Common::kPlatformPC,
-		ADGF_NO_FLAGS
+		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
 	},
 	AD_TABLE_END_MARKER
 };
 
 static const ADFileBasedFallback fileBasedFallback[] = {
-	{ &gameDescriptions[0], { "DATA/SNTRM.DAT", 0 } }, // default to english version
+	{ &gameDescriptions[0], { "SNTRM.DAT", 0 } }, // default to english version
 	{ 0, { 0 } }
 };
 
@@ -66,7 +67,8 @@ static const ADParams detectionParams = {
 	0, // no obsolete targets data
 	"asylum",
 	Asylum::fileBasedFallback, // file-based detection data to enable not yet known versions to start
-	kADFlagPrintWarningOnFileBasedFallback
+	kADFlagPrintWarningOnFileBasedFallback,
+	Common::GUIO_NONE
 };
 
 class AsylumMetaEngine : public AdvancedMetaEngine {
