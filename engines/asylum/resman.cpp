@@ -53,6 +53,10 @@ bool ResourceManager::loadGraphic(uint8 fileNum, uint32 offset, uint32 index) {
 }
 
 bool ResourceManager::loadPalette(uint8 fileNum, uint32 offset) {
+	// FIXME: This doesn't make sense semantically. On one hand, we got a bundle, a file
+	// containing multiple files. Then, on the other hand, we got a file inside that bundle,
+	// which is a bundle again! The file in the bundle should be a resource, not another bundle, 
+	// i.e. getEntry() is wrong here
 	Bundle *bun = getBundle(fileNum);
 	Bundle *ent = bun->getEntry(offset);
 
@@ -119,6 +123,10 @@ bool ResourceManager::loadMusic() {
 }
 
 GraphicResource* ResourceManager::getGraphic(uint8 fileNum, uint32 offset, uint32 index) {
+	// FIXME: This doesn't make sense semantically. On one hand, we got a bundle, a file
+	// containing multiple files. Then, on the other hand, we got a file inside that bundle,
+	// which is a bundle again! The file in the bundle should be a resource, not another bundle, 
+	// i.e. getEntry() is wrong here
 	Bundle *bun = getBundle(fileNum);
 	Bundle *ent = bun->getEntry(offset);
 	GraphicBundle *gra;
