@@ -29,7 +29,7 @@
 #include "common/str.h"
 #include "common/array.h"
 
-#include "asylum/resources/resource.h"
+#include "asylum/resource.h"
 
 namespace Asylum {
 

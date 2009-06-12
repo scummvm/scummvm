@@ -2,14 +2,12 @@ MODULE := engines/asylum
 
 MODULE_OBJS := \
 	asylum.o \
+	bundle.o \
 	detection.o \
+	graphicbundle.o \
+	movie.o \
 	resman.o \
-	screen.o \
-	bundles/bundle.o \
-	bundles/graphicbundle.o \
-	resources/resource.o \
-	resources/graphic.o \
-	resources/movie.o
+	screen.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)
