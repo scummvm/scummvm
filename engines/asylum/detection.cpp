@@ -17,6 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
  */
 
 #include "common/config-manager.h"
@@ -36,14 +40,14 @@ static const PlainGameDescriptor asylumGames[] = {
 namespace Asylum {
 
 static const ADGameDescription gameDescriptions[] = {
-	{ 
+	{
 		"asylum",
 		0,
 		AD_ENTRY1s("SNTRM.DAT", "280b4a72f70f3073e9dbc9a9cfa25518", 8930),
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS
-	},		
+	},
 	AD_TABLE_END_MARKER
 };
 
@@ -106,9 +110,9 @@ bool AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 	return desc != 0;
 }
 
-SaveStateList AsylumMetaEngine::listSaves(const char *target) const {	
+SaveStateList AsylumMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
-	
+
 	return saveList;
 }
 

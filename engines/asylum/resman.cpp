@@ -17,6 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
  */
 
 #include "asylum/resman.h"
@@ -41,7 +45,7 @@ void ResourceManager::getPalette(uint8 fileNum, uint32 offset, byte *palette) {
 	char filename[256];
 	sprintf(filename, "res.%03d", fileNum);
 	palFile.open(filename);
-	
+
 	// Read entries
 	/*uint32 entryCount =*/ palFile.readUint32LE();
 	palFile.skip(4 * offset);
