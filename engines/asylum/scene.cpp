@@ -52,17 +52,43 @@ bool Scene::load(uint8 sceneIdx){
 
     fd->read(sceneTag,6);
 
-    // TODO: verify if file is really a scene
     if(Common::String(sceneTag,6) != "DFISCN"){
         printf("The file isn't recognized as scene %s", filename.c_str());
         return false;
     }
 
-    // TODO: load World Stats
+    loadWorldStats(fd);
+
     // TODO: load Game Polies
     // TODO: load Action List
 
     return true;
+}
+
+// FIXME: load necessary World Stats content
+void Scene::loadWorldStats(Common::SeekableReadStream *stream){
+    _worldStats = new WorldStats;
+    _worldStats->_size = stream->readUint32LE();
+    _worldStats->_numEntries = stream->readUint32LE();
+    _worldStats->_numChapter = stream->readUint32LE();
+    
+    stream->skip(24); //unUsed data
+    
+    for(int i=0; i < 25; i++){
+        _worldStats->_commonGrResIdArray[i] = stream->readUint32LE();
+    }
+
+    _worldStats->_width = stream->readUint32LE();
+    _worldStats->_height = stream->readUint32LE();
+    
+    stream->skip(8); //unUsed data
+
+    _worldStats->_numActions = stream->readUint32LE();
+    _worldStats->_numActors = stream->readUint32LE();
+
+    stream->skip(20); //unUsed data
+
+    // 3 unknown fields
 }
 
 Common::String Scene::parseFilename(uint8 sceneIdx) {
