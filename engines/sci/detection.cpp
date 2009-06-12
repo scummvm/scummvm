@@ -2504,6 +2504,32 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_0
 	},
 
+	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy
+	// Executable scanning reports "S.old.201"
+	{{"qfg1", "8 Colors", {
+		{"resource.map", 0, "5cbeb95dd2a4b7cb242b415cc6ec1c47", 6444},
+		{"resource.001", 0, "a21451ef6fa8179bd4b22c4950004c44", 859959},
+		{"resource.002", 0, "a21451ef6fa8179bd4b22c4950004c44", 1136968},
+		{"resource.003", 0, "a21451ef6fa8179bd4b22c4950004c44", 769897},
+		{NULL, 0, NULL, 0}}, Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_01
+	},
+
+	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy
+	// Executable scanning reports "S.old.201"
+	{{"qfg1", "16 Colors", {
+		{"resource.map", 0, "3ecaba33bf77cb434067a0b8aee15097", 6444},
+		{"resource.001", 0, "a21451ef6fa8179bd4b22c4950004c44", 864754},
+		{"resource.002", 0, "a21451ef6fa8179bd4b22c4950004c44", 1147121},
+		{"resource.003", 0, "a21451ef6fa8179bd4b22c4950004c44", 777575},
+		{NULL, 0, NULL, 0}}, Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_01
+	},
+
 	// Quest for Glory 1 - English Amiga
 	// Executable scanning reports "1.002.020"
 	// SCI interpreter version 0.000.685
