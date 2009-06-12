@@ -281,6 +281,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 
 	case 0x07:	// Stop Macro
 		channel.macroRun = false;
+		--channel.macroStep;
 		return false;
 
 	case 0x08:	// AddNote. Parameters: Note, Finetune(W)
@@ -403,9 +404,6 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		return channel.deferWait;
 
 	case 0x1B:	// Random play. Parameters: macro/speed/mode
-		macroPtr[1];
-		macroPtr[2];
-		macroPtr[3];
 		warnMacroUnimplemented(macroPtr, 0);
 		return true;
 
@@ -527,6 +525,7 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 		switch (pattCmd & 0xF) {
 		case 0: 	// End Pattern + Next Trackstep
 			pattern.command = 0xFF;
+			--pattern.step;
 			_playerCtx.pendingTrackstep = true;
 			return false;
 
@@ -553,14 +552,17 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 			// FT
 		case 4: 	// Stop this pattern
 			pattern.command = 0xFF;
+			--pattern.step;
 			// TODO: try figuring out if this was the last Channel?
 			return false;
 
 		case 5: 	// Kup^-Set key up
-			// TODO: add expose?
+			if (!_channelCtx[patternPtr[2] % kNumVoices].sfxLocked)
+				_channelCtx[patternPtr[2] % kNumVoices].keyUp = false;
+			return true;
+
 		case 6: 	// Vibrato
 		case 7: 	// Envelope
-		case 12: 	// Lock
 			noteCommand(pattCmd, patternPtr[1], patternPtr[2], patternPtr[3]);
 			return true;
 
@@ -582,6 +584,12 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 			target.loopCount = 0xFF;
 			}
 			return true;
+
+		case 12: 	// Lock
+			_channelCtx[patternPtr[2] % kNumVoices].sfxLocked = (patternPtr[1] != 0);
+			_channelCtx[patternPtr[2] % kNumVoices].sfxLockTime = patternPtr[3];
+			return true;
+
 		case 13: 	// Cue
 			return true;
 		case 15: 	// NOP

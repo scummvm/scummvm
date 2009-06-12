@@ -55,7 +55,6 @@
 				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="true"
 				SuppressStartupBanner="false"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"

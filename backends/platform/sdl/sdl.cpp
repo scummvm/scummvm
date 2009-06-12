@@ -90,7 +90,11 @@ void OSystem_SDL::initBackend() {
 
 	int joystick_num = ConfMan.getInt("joystick_num");
 	joystick_num = 0;
-	uint32 sdlFlags = /* SDL_INIT_VIDEO | */ SDL_INIT_AUDIO /*| SDL_INIT_TIMER*/;
+#if !defined(TFMX_CMDLINE_TOOL)
+	uint32 sdlFlags =  SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
+#else
+	uint32 sdlFlags =  /*SDL_INIT_VIDEO |*/ SDL_INIT_AUDIO | SDL_INIT_TIMER;
+#endif
 
 	if (ConfMan.hasKey("disable_sdl_parachute"))
 		sdlFlags |= SDL_INIT_NOPARACHUTE;
@@ -108,11 +112,12 @@ void OSystem_SDL::initBackend() {
 	if (SDL_Init(sdlFlags) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
-/*
+
+
 	_graphicsMutex = createMutex();
-
+#if !defined(TFMX_CMDLINE_TOOL)
 	SDL_ShowCursor(SDL_DISABLE);
-
+	
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
 
@@ -164,13 +169,13 @@ void OSystem_SDL::initBackend() {
 	_savefile = new DefaultSaveFileManager();
 #endif
 	}
-*/
+#endif
 	// Create and hook up the mixer, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_mixer == 0) {
 		setupMixer();
 	}
-/*
+
 	// Create and hook up the timer manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
 	if (_timer == 0) {
@@ -184,7 +189,7 @@ void OSystem_SDL::initBackend() {
 		_timer = new DefaultTimerManager();
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 	}
-*/
+
 	// Invoke parent implementation of this method
 	OSystem::initBackend();
 

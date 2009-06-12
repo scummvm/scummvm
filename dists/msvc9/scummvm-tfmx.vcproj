@@ -43,7 +43,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;ENABLE_SCUMM;USE_ZLIB;USE_MAD;USE_VORBIS"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib"
 				OutputFile="$(OutDir)\$(ProjectName)-tfmx.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib"
@@ -135,7 +135,7 @@
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ENABLE_SCUMM;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="true"
 				MinimalRebuild="false"
 				ExceptionHandling="1"
@@ -160,7 +160,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib"
 				OutputFile="$(OutDir)\$(ProjectName)-tfmx.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -169,6 +169,95 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				EntryPointSymbol="WinMainCRTStartup"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug_Command|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				InlineFunctionExpansion="0"
+				AdditionalIncludeDirectories="../../;../../engines"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TFMX_CMDLINE_TOOL;USE_ZLIB;USE_MAD;USE_VORBIS"
+				MinimalRebuild="true"
+				ExceptionHandling="1"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
+				BufferSecurityCheck="true"
+				EnableFunctionLevelLinking="true"
+				DisableLanguageExtensions="false"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="4"
+				SuppressStartupBanner="false"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4512"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib"
+				OutputFile="$(OutDir)\$(ProjectName)-tfmx.exe"
+				LinkIncremental="2"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="$(OutDir)/scummvm.pdb"
+				SubSystem="1"
 				EntryPointSymbol="WinMainCRTStartup"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -560,6 +649,15 @@
 						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Command|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\sound\iff.h"
@@ -709,6 +807,15 @@
 							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Command|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\sound\softsynth\emumidi.h"
@@ -739,6 +846,15 @@
 							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Command|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\sound\softsynth\pcspk.cpp"
@@ -762,6 +878,15 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Command|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -1009,6 +1134,15 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Command|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -1416,6 +1550,13 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Command|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\gui\widget.cpp"
@@ -1569,6 +1710,15 @@
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Command|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+							Outputs="$(OutDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\graphics\scaler\hq3x.cpp"
@@ -1596,6 +1746,15 @@
 						<Tool
 							Name="VCCustomBuildTool"
 							CommandLine="nasm.exe -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+							Outputs="$(OutDir)\$(InputName).obj"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Command|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="nasm.exe -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"
 						/>
 					</FileConfiguration>

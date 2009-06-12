@@ -295,7 +295,7 @@ static void setupKeymapper(OSystem &system) {
 
 }
 
-#if 1
+#if defined(TFMX_CMDLINE_TOOL)
 void tfmxmain(int argc, const char * const argv[]);
 
 extern "C" int scummvm_main(int argc, const char * const argv[]) {
