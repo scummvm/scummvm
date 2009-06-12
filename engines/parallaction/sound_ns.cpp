@@ -335,14 +335,6 @@ void DosSoundMan_ns::playLocationMusic(const char *location) {
 
 AmigaSoundMan_ns::AmigaSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm) {
 	_musicStream = 0;
-	_channels[0].data = 0;
-	_channels[0].dispose = false;
-	_channels[1].data = 0;
-	_channels[1].dispose = false;
-	_channels[2].data = 0;
-	_channels[2].dispose = false;
-	_channels[3].data = 0;
-	_channels[3].dispose = false;
 }
 
 AmigaSoundMan_ns::~AmigaSoundMan_ns() {
@@ -364,33 +356,24 @@ Audio::AudioStream *AmigaSoundMan_ns::loadChannelData(const char *filename, Chan
 	Audio::AudioStream *input = 0;
 
 	if (!scumm_stricmp("beep", filename)) {
-		ch->header.oneShotHiSamples = 0;
-		ch->header.repeatHiSamples = 0;
-		ch->header.samplesPerHiCycle = 0;
-		ch->header.samplesPerSec = 11934;
-		ch->header.volume = 160;
-		ch->data = (int8*)malloc(AMIGABEEP_SIZE * NUM_REPEATS);
-		int8* odata = ch->data;
+		// TODO: make a permanent stream out of this
+		uint32 dataSize = AMIGABEEP_SIZE * NUM_REPEATS;
+		int8 *data = (int8*)malloc(dataSize);
+		int8 *odata = data;
 		for (uint i = 0; i < NUM_REPEATS; i++) {
 			memcpy(odata, res_amigaBeep, AMIGABEEP_SIZE);
 			odata += AMIGABEEP_SIZE;
 		}
-		ch->dataSize = AMIGABEEP_SIZE * NUM_REPEATS;
-		ch->dispose = true;
-
-		uint32 loopStart = 0, loopEnd = 0, flags = 0;
-		if (looping) {
-			loopEnd = ch->header.oneShotHiSamples + ch->header.repeatHiSamples;
-			flags = Audio::Mixer::FLAG_LOOP;
-		}
-
-		input = Audio::makeLinearInputStream((byte *)ch->data, ch->dataSize, ch->header.samplesPerSec, flags, loopStart, loopEnd);
+		int rate = 11934;
+		ch->volume = 160;
+		input = Audio::makeLinearInputStream((byte *)data, dataSize, rate, Audio::Mixer::FLAG_AUTOFREE, 0, 0);
 	} else {
 		Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
 		input = Audio::make8SVXStream(*stream, looping);
-		ch->dispose = true;
 		delete stream;
 	}
+
+	ch->stream = input;
 
 	return input;
 }
@@ -409,7 +392,7 @@ void AmigaSoundMan_ns::playSfx(const char *filename, uint channel, bool looping,
 	Audio::AudioStream *input = loadChannelData(filename, ch, looping);
 
 	if (volume == -1) {
-		volume = ch->header.volume;
+		volume = ch->volume;
 	}
 
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
@@ -421,12 +404,9 @@ void AmigaSoundMan_ns::stopSfx(uint channel) {
 		return;
 	}
 
-	if (_channels[channel].dispose) {
-		debugC(1, kDebugAudio, "AmigaSoundMan_ns::stopSfx(%i)", channel);
-		_mixer->stopHandle(_channels[channel].handle);
-		free(_channels[channel].data);
-		_channels[channel].data = 0;
-	}
+	debugC(1, kDebugAudio, "AmigaSoundMan_ns::stopSfx(%i)", channel);
+	_mixer->stopHandle(_channels[channel].handle);
+	_channels[channel].stream = 0;
 }
 
 void AmigaSoundMan_ns::playMusic() {

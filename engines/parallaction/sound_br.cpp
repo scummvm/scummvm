@@ -404,25 +404,26 @@ DosSoundMan_br::~DosSoundMan_br() {
 Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channel *ch, bool looping) {
 	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
 
-	ch->dataSize = stream->size();
-	ch->data = (int8*)malloc(ch->dataSize);
-	if (stream->read(ch->data, ch->dataSize) != ch->dataSize)
+	uint32 dataSize = stream->size();
+	int8 *data = (int8*)malloc(dataSize);
+	if (stream->read(data, dataSize) != dataSize)
 		error("DosSoundMan_br::loadChannelData: Read failed");
 
-	ch->dispose = true;
 	delete stream;
 
 	// TODO: Confirm sound rate
-	ch->header.samplesPerSec = 11025;
+	int rate = 11025;
 
-	uint32 loopStart = 0, loopEnd = 0, flags = Audio::Mixer::FLAG_UNSIGNED;
+	uint32 loopStart = 0, loopEnd = 0;
+	uint32 flags = Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_AUTOFREE;
+
 	if (looping) {
-		loopEnd = ch->dataSize;
+		loopEnd = dataSize;
 		flags |= Audio::Mixer::FLAG_LOOP;
 	}
 
-	// Create the input stream
-	return Audio::makeLinearInputStream((byte *)ch->data, ch->dataSize, ch->header.samplesPerSec, flags, loopStart, loopEnd);
+	ch->stream = Audio::makeLinearInputStream((byte *)data, dataSize, rate, flags, loopStart, loopEnd);
+	return ch->stream;
 }
 
 void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
@@ -474,26 +475,21 @@ Audio::AudioStream *AmigaSoundMan_br::loadChannelData(const char *filename, Chan
 	Audio::AudioStream *input = 0;
 
 	if (_vm->getFeatures() & GF_DEMO) {
-		ch->dataSize = stream->size();
-		ch->data = (int8*)malloc(ch->dataSize);
-		if (stream->read(ch->data, ch->dataSize) != ch->dataSize)
+		uint32 dataSize = stream->size();
+		int8 *data = (int8*)malloc(dataSize);
+		if (stream->read(data, dataSize) != dataSize)
 			error("DosSoundMan_br::loadChannelData: Read failed");
 
 		// TODO: Confirm sound rate
-		ch->header.samplesPerSec = 11025;
-
-		uint32 loopStart = 0, loopEnd = 0, flags = 0;
-		if (looping) {
-			loopEnd = ch->header.oneShotHiSamples + ch->header.repeatHiSamples;
-			flags = Audio::Mixer::FLAG_LOOP;
-		}
-
-		input = Audio::makeLinearInputStream((byte *)ch->data, ch->dataSize, ch->header.samplesPerSec, flags, loopStart, loopEnd);
+		int rate = 11025;
+		input = Audio::makeLinearInputStream((byte *)data, dataSize, rate, Audio::Mixer::FLAG_AUTOFREE, 0, 0);
 	} else {
 		input = Audio::make8SVXStream(*stream, looping);
-		delete stream;
 	}
 
+	delete stream;
+
+	ch->stream = input;
 	return input;
 }
 
@@ -515,7 +511,7 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 	Audio::AudioStream *input = loadChannelData(filename, ch, looping);
 
 	if (volume == -1) {
-		volume = ch->header.volume;
+		volume = ch->volume;
 	}
 
 	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
@@ -560,15 +556,6 @@ void AmigaSoundMan_br::pause(bool p) {
 SoundMan_br::SoundMan_br(Parallaction_br *vm) : _vm(vm) {
 	_mixer = _vm->_mixer;
 
-	_channels[0].data = 0;
-	_channels[0].dispose = false;
-	_channels[1].data = 0;
-	_channels[1].dispose = false;
-	_channels[2].data = 0;
-	_channels[2].dispose = false;
-	_channels[3].data = 0;
-	_channels[3].dispose = false;
-
 	_musicEnabled = true;
 	_sfxEnabled = true;
 }
@@ -595,12 +582,9 @@ void SoundMan_br::stopSfx(uint channel) {
 		return;
 	}
 
-	if (_channels[channel].dispose) {
-		debugC(1, kDebugAudio, "SoundMan_br::stopSfx(%i)", channel);
-		_mixer->stopHandle(_channels[channel].handle);
-		free(_channels[channel].data);
-		_channels[channel].data = 0;
-	}
+	debugC(1, kDebugAudio, "SoundMan_br::stopSfx(%i)", channel);
+	_mixer->stopHandle(_channels[channel].handle);
+	_channels[channel].stream = 0;
 }
 
 void SoundMan_br::execute(int command, const char *parm) {

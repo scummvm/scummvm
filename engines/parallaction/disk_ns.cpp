@@ -29,12 +29,6 @@
 #include "parallaction/parallaction.h"
 
 
-namespace Audio {
-	class AudioStream;
-
-	AudioStream *make8SVXStream(Common::ReadStream &input);
-}
-
 namespace Parallaction {
 
 

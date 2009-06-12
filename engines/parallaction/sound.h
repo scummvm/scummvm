@@ -84,6 +84,14 @@ enum {
 	SC_PAUSE
 };
 
+struct Channel {
+	Audio::AudioStream *stream;
+	Audio::SoundHandle	handle;
+	uint32				volume;
+};
+
+
+
 class SoundMan_ns : public SoundManImpl {
 public:
 	enum {
@@ -148,13 +156,7 @@ class AmigaSoundMan_ns : public SoundMan_ns {
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle	_musicHandle;
 
-	struct Channel {
-		Audio::Voice8Header	header;
-		int8				*data;
-		uint32				dataSize;
-		bool				dispose;
-		Audio::SoundHandle	handle;
-	} _channels[NUM_SFX_CHANNELS];
+	Channel _channels[NUM_SFX_CHANNELS];
 
 	Audio::AudioStream *loadChannelData(const char *filename, Channel *ch, bool looping);
 
@@ -191,17 +193,11 @@ protected:
 	bool	_musicEnabled;
 	bool	_sfxEnabled;
 
+	Channel _channels[NUM_SFX_CHANNELS];
+
 	virtual void playMusic() = 0;
 	virtual void stopMusic() = 0;
 	virtual void pause(bool p) = 0;
-
-	struct Channel {
-		Audio::Voice8Header	header;
-		int8				*data;
-		uint32				dataSize;
-		bool				dispose;
-		Audio::SoundHandle	handle;
-	} _channels[NUM_SFX_CHANNELS];
 
 public:
 	SoundMan_br(Parallaction_br *vm);
