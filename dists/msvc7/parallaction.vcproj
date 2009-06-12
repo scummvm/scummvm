@@ -170,10 +170,10 @@
 			RelativePath="..\..\engines\parallaction\gui_ns.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\iff.cpp">
+			RelativePath="..\..\graphics\iff.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\iff.h">
+			RelativePath="..\..\graphics\iff.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\input.cpp">
