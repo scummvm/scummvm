@@ -25,8 +25,8 @@
 #include "common/str.h"
 #include "common/array.h"
 
-#include "asylum/bundles/bundle.h"
-#include "asylum/bundles/graphicbundle.h"
+#include "asylum/bundle.h"
+#include "asylum/graphicbundle.h"
 
 namespace Asylum {
 

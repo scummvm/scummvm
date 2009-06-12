@@ -185,27 +185,7 @@
 			Name="resources"
 			>
 			<File
-				RelativePath="..\..\engines\asylum\resources\graphic.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\asylum\resources\graphic.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\asylum\resources\resource.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\engines\asylum\resources\resource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\asylum\resources\video.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\asylum\resources\video.h"
 				>
 			</File>
 		</Filter>
@@ -235,6 +215,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\asylum\screen.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\video.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\video.h"
 			>
 		</File>
 	</Files>
