@@ -47,7 +47,7 @@ bool ResourceManager::loadVideo(uint8 fileNum) {
 
 bool ResourceManager::loadGraphic(uint8 fileNum, uint32 offset, uint32 index) {
 	GraphicResource *res = getGraphic(fileNum, offset, index);
-	_vm->_system->copyRectToScreen(res->data, res->width, 0, 0, res->width, res->height);
+	_vm->copyToBackBuffer(0, 0, res->width, res->height, res->data);
 	
 	// TODO proper error check
 	return true;
