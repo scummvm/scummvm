@@ -117,27 +117,27 @@ uint8 DraciFont::getCharWidth(uint8 chr) const {
 
 void DraciFont::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const {
 	assert(dst != NULL);
+	assert(tx >= 0);
+	assert(ty >= 0);
+
 	byte *ptr = (byte *)dst->getBasePtr(tx, ty);
 	uint8 charIndex = chr - kCharIndexOffset;
 	int charOffset = charIndex * _fontHeight * _maxCharWidth;
 	uint8 currentWidth = _charWidths[charIndex];
 
-	for (uint8 y = 0; y < _fontHeight; ++y) {
+	// Determine how many pixels to draw horizontally (to prevent overflow)
+	int xSpaceLeft = dst->w - tx - 1;	
+	int xPixelsToDraw = (currentWidth < xSpaceLeft) ? currentWidth : xSpaceLeft;
 
-		// Check for vertical overflow
-		if (ty + y < 0 || ty + y >= dst->h) {
-			continue;
-		}
+	// Determine how many pixels to draw vertically
+	int ySpaceLeft = dst->h - ty - 1;	
+	int yPixelsToDraw = (_fontHeight < ySpaceLeft) ? _fontHeight : ySpaceLeft;
 
-		for (uint8 x = 0; x <= currentWidth; ++x) {
-			
-			// Check for horizontal overflow
-			if (tx + x < 0 || tx + x >= dst->w) {
-				continue;
-			}
-			
+	for (int y = 0; y < yPixelsToDraw; ++y) {
+		for (int x = 0; x <= xPixelsToDraw; ++x) {
+
 			// Paint pixel
-			int curr = ((int)y) * _maxCharWidth + x;
+			int curr = y * _maxCharWidth + x;
 			ptr[x] = _charData[charOffset + curr];
 		}
 
@@ -158,9 +158,13 @@ void DraciFont::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) cons
 
 void DraciFont::drawString(Graphics::Surface *dst, Common::String str, 
 							int x, int y, int spacing) const {
-	assert(dst != NULL);	
+	assert(dst != NULL);
+	assert(x >= 0);
+	assert(y >= 0);
+
 	int curx = x;
 	uint len = str.size();
+
 	for (unsigned int i = 0; i < len; ++i) {
 		drawChar(dst, str[i], curx, y);
 		curx += getCharWidth(str[i]) + spacing;

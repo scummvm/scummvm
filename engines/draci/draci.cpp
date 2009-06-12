@@ -133,7 +133,7 @@ int DraciEngine::go() {
 	// Draw small string
 	path = "Small.fon";
 	font.setFont(path);
-	testString = "I'm smaller than the font above me";
+	testString = "I'm smaller than the font above me.";
 	font.drawString(surf, testString, 
 		(320 - font.getStringWidth(testString, 1)) / 2, 150, 1);
 	_system->unlockScreen();
