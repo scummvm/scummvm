@@ -44,15 +44,15 @@ namespace Graphics {
  * to get the applicable color order.
   */
 enum ColorMode {
-	kFormatCLUT8 = 0,
+	kFormatCLUT8 = 0,		//256 color palette.
 	kFormatRGB555 = 1,
-	kFormatRGB556 = 2,		// 6 bits for blue, in case this ever happens
+	kFormatXRGB1555 = 2,	// Special case, high bit has special purpose, which may be alpha. 
+							// Engines should probably handle this bit internally and pass RGB only, though
 	kFormatRGB565 = 3,
-	kFormatRGB655 = 4,		// 6 bits for red, in case this ever happens
-	kFormatRGBA4444 = 5,
-	kFormatRGB888 = 6,
-	kFormatRGBA6666 = 7,	// I've never heard of this, but it's theoretically possible
-	kFormatRGBA8888 = 8
+	kFormatRGBA4444 = 4,	// since this mode is commonly supported in game hardware, some unimplemented engines may use it?
+	kFormatRGB888 = 5,
+	kFormatRGBA6666 = 6,	// I've never heard of this, but it's vaguely plausible
+	kFormatRGBA8888 = 7
 };
 #endif
 

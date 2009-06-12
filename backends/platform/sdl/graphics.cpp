@@ -128,7 +128,7 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 			errors |= kTransactionPixelFormatNotSupported;
 
 			_videoMode.format = _oldVideoMode.format;
-			_screenFormat = getPixelFormat(_videoMode.format);
+			_screenFormat = _videoMode.format;
 #endif
 		} else if (_videoMode.screenWidth != _oldVideoMode.screenWidth || _videoMode.screenHeight != _oldVideoMode.screenHeight) {
 			errors |= kTransactionSizeChangeFailed;
@@ -362,7 +362,7 @@ Graphics::ColorMode OSystem_SDL::findCompatibleFormat(Common::List<Graphics::Col
 
 		//no need to keep searching if the screen
 		//is already in one of the desired formats
-		if (format == _videoMode.format)
+		if (getPixelFormat(format) == _videoMode.format)
 			return format;
 
 		formatList.pop_front();
@@ -380,7 +380,7 @@ Graphics::ColorMode OSystem_SDL::findCompatibleFormat(Common::List<Graphics::Col
 	return Graphics::kFormatCLUT8;
 }
 
-void OSystem_SDL::initFormat(Graphics::ColorMode format) {
+void OSystem_SDL::initFormat(Graphics::PixelFormat format) {
 	assert(_transactionMode == kTransactionActive);
 
 	//avoid redundant format changes
@@ -389,10 +389,11 @@ void OSystem_SDL::initFormat(Graphics::ColorMode format) {
 
 	_videoMode.format = format;
 	_transactionDetails.formatChanged = true;
-	_screenFormat = getPixelFormat(format);
+	_screenFormat = format;
 }
 
-//This should only ever be called with a format that is known supported.
+//TODO: Move this out of OSystem and into Graphics, where engine can access it.
+//TODO: ABGR support
 Graphics::PixelFormat OSystem_SDL::getPixelFormat(Graphics::ColorMode format) {
 	Graphics::PixelFormat result;
 	switch (format) {
@@ -407,6 +408,35 @@ Graphics::PixelFormat OSystem_SDL::getPixelFormat(Graphics::ColorMode format) {
 		result.gLoss = 2;
 		result.rLoss = result.bLoss = 3;
 		break;
+	case Graphics::kFormatXRGB1555:
+		//Special case, alpha bit is always high in this mode.
+		result.aLoss = 7;
+		result.bytesPerPixel = 2;
+		result.rLoss = result.gLoss = result.bLoss = 3;
+		result.bShift = 0;
+		result.gShift = result.bShift + result.bBits();
+		result.rShift = result.gShift + result.gBits();
+		result.aShift = result.rShift + result.rBits();
+		//HACK: there should be a clean way to handle setting 
+		//up the color order without prematurely returning
+		return result;
+	case Graphics::kFormatRGBA4444:
+		result.bytesPerPixel = 2;
+		result.aLoss = result.gLoss = result.rLoss = result.bLoss = 4;
+		break;
+	case Graphics::kFormatRGB888:
+		result.bytesPerPixel = 3;
+		result.aLoss = 8;
+		result.gLoss = result.rLoss = result.bLoss = 0;
+		break;
+	case Graphics::kFormatRGBA6666:
+		result.bytesPerPixel = 3;
+		result.aLoss = result.gLoss = result.rLoss = result.bLoss = 2;
+		break;
+	case Graphics::kFormatRGBA8888:
+		result.bytesPerPixel = 4;
+		result.aLoss = result.gLoss = result.rLoss = result.bLoss = 0;
+		break;
 	case Graphics::kFormatCLUT8:
 	default:
 		result.bytesPerPixel = 1;
@@ -414,6 +444,7 @@ Graphics::PixelFormat OSystem_SDL::getPixelFormat(Graphics::ColorMode format) {
 		result.rLoss = result.gLoss = result.bLoss = result.aLoss = 8;
 		return result;
 	}
+
 	result.aShift = 0;
 	result.bShift = result.aBits();
 	result.gShift = result.bShift + result.bBits();

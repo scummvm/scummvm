@@ -227,7 +227,7 @@ static void setupGraphics(OSystem &system) {
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
 #ifdef ENABLE_16BIT
-		system.initFormat(Graphics::kFormatCLUT8);
+		system.initFormat(system.getPixelFormat(Graphics::kFormatCLUT8));
 #endif
 		system.initSize(320, 200);
 

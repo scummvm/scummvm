@@ -139,7 +139,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Gr
 #ifdef ENABLE_16BIT
 		Graphics::ColorMode format = g_system->findCompatibleFormat(formatList);
 		debug("%X",format); //TODO: set up the pixelFormat here
-		g_system->initFormat(format);
+		g_system->initFormat(g_system->getPixelFormat(format));
 #endif
 		g_system->initSize(width, height);
 

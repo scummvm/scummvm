@@ -374,7 +374,7 @@ public:
 	 *
 	 * @param format	A pixel format that the backend screen will use
 	 */
-	virtual void initFormat(Graphics::ColorMode format) = 0;
+	virtual void initFormat(Graphics::PixelFormat format) = 0;
 
 	/**
 	 * Returns the pixel format description of the screen.

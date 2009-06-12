@@ -88,7 +88,7 @@ public:
 
 	// Set the depth and format of the video bitmap
 	// Typically, CLUT8
-	virtual void initFormat(Graphics::ColorMode format);
+	virtual void initFormat(Graphics::PixelFormat format);
 
 	// Game screen
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
@@ -302,7 +302,7 @@ protected:
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
 #ifdef ENABLE_16BIT
-		Graphics::ColorMode format;
+		Graphics::PixelFormat format;
 #endif
 	};
 	VideoState _videoMode, _oldVideoMode;
