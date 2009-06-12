@@ -27,14 +27,14 @@
 
 namespace Asylum {
 
-Video::Video(AsylumEngine *vm) : _vm(vm) {
+Video::Video(Audio::Mixer *mixer) {
 	Common::Event stopEvent;
 	_stopEvents.clear();
 	stopEvent.type = Common::EVENT_KEYDOWN;
 	stopEvent.kbd = Common::KEYCODE_ESCAPE;
 	_stopEvents.push_back(stopEvent);
 
-	_smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
+	_smkDecoder = new Graphics::SmackerDecoder(mixer);
 	_player = new Graphics::VideoPlayer(_smkDecoder);
 }
 
