@@ -89,34 +89,26 @@ Common::Error AsylumEngine::go() {
     // Control loop test. Basically just keep the
     // ScummVM window alive until ESC is pressed.
     // This will facilitate drawing tests ;)
-    bool end = false;
 
-    bool forceRefresh = false;
     uint32 lastRefresh = 0;
 
 	Common::EventManager *em = _system->getEventManager();
-	while (!end) {
+	while (!shouldQuit()) {
 		Common::Event ev;
 		if (em->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_KEYDOWN) {
-				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-					end = true;
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					// Push a quit event
+					Common::Event event;
+					event.type = Common::EVENT_QUIT;
+					g_system->getEventManager()->pushEvent(event);
+				}
 				//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
 			}
-			if (ev.type == Common::EVENT_MOUSEMOVE) {
-				if (_system->getMillis() - lastRefresh > 50) {
-					forceRefresh = true;
-				}
-
-			}
-
 		}
-		if (forceRefresh){
-			_screen->updateScreen();
-			forceRefresh = false;
-			lastRefresh = _system->getMillis();
-		}
-		//_system->delayMillis(10);
+
+		_screen->updateScreen();
+		_system->delayMillis(10);
 	}
 
     return Common::kNoError;
