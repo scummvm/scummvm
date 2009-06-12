@@ -30,6 +30,9 @@
 
 namespace Draci {
 
+/** The maximum number of parameters for a GPL command */
+const int kMaxParams = 3; 
+
 // FIXME: Add function handlers
 
 /**
@@ -43,10 +46,8 @@ struct GPL2Command {
 	byte _subNumber; 
 	Common::String _name; 
 	uint16 _numParams;
-	int _paramTypes[3];
+	int _paramTypes[kMaxParams];
 };
-
-const int kMaxParams = 3; //!< The maximum number of parameters for a GPL command
 
 int gpldisasm(byte *gplcode, uint16 len);
 
