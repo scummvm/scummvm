@@ -89,6 +89,8 @@ Common::Error AsylumEngine::go() {
 	Common::EventManager *em = _system->getEventManager();
 	while (!shouldQuit()) {
 		Common::Event ev;
+
+
 		if (em->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
@@ -100,9 +102,14 @@ Common::Error AsylumEngine::go() {
 				//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
 			} else if (ev.type == Common::EVENT_MOUSEMOVE) {
 				// TODO: Just some proof-of concept to change icons here for now
-				if (ev.mouse.x >= 150 && ev.mouse.x <= 200) {
-					GraphicResource *res = _resMgr->getGraphic(1, 5, 0);
-					_system->copyRectToScreen(res->data, res->width, 150, 0, res->width, res->height);
+				if (ev.mouse.y >= 20 && ev.mouse.y <= 20 + 48) {
+					for (int i = 0; i <= 5; i++) {
+						int curX = 40 + i * 100;
+						if (ev.mouse.x >= curX && ev.mouse.x <= curX + 55) {
+							GraphicResource *res = _resMgr->getGraphic(1, i + 4, 0);
+							_system->copyRectToScreen(res->data, res->width, curX, 20, res->width, res->height);
+						}
+					}
 				}
 			}
 		}
