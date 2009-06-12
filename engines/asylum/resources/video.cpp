@@ -51,4 +51,10 @@ bool Video::playVideo(const char *filename) {
 	return result;
 }
 
+bool Video::playVideo(int number) {
+	char filename[50];
+	sprintf(filename, "mov%03d.smk", number);
+	return playVideo(filename);
+}
+
 } // end of namespace Asylum
