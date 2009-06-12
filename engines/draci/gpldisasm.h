@@ -30,7 +30,14 @@
 
 namespace Draci {
 
-// FIXME: Add parameter types and function handlers
+// FIXME: Add function handlers
+
+/**
+ *  Represents a single command in the GPL scripting language bytecode.
+ *	Each command is represented in the bytecode by a command number and a 
+ *	subnumber.
+ */
+
 struct GPL2Command { 
 	byte _number; 
 	byte _subNumber; 
@@ -39,7 +46,7 @@ struct GPL2Command {
 	int _paramTypes[3];
 };
 
-const int kMaxParams = 3;
+const int kMaxParams = 3; //!< The maximum number of parameters for a GPL command
 
 int gpldisasm(byte *gplcode, uint16 len);
 

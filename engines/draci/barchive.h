@@ -31,7 +31,7 @@
 namespace Draci {
 
 /**
- *  Represents individual files inside the archive
+ *  Represents individual files inside the archive.
  */
 
 struct BAFile {
@@ -40,7 +40,8 @@ struct BAFile {
 	byte *_data;
 	byte _crc;
 
-	void closeFile(void) { //!< Releases the file data (for memory considerations)
+	/** Releases the file data (for memory considerations) */
+	void closeFile(void) {  
 		delete _data;
 		_data = NULL;
 	}

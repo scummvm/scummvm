@@ -27,6 +27,10 @@
 
 namespace Draci {
 
+/**
+ *  Represents the game's fonts. See docs for setFont() for font format details.
+ */
+
 class DraciFont {
 	
 public: 
@@ -44,15 +48,20 @@ public:
 private:
 	uint8 _fontHeight;
 	uint8 _maxCharWidth;
+	
+	/** Pointer to an array of individual char widths */	
 	uint8 *_charWidths;
+	
+	/** Pointer to a raw byte array representing font pixels stored row-wise */
 	byte *_charData;
 	
-	// Number of glyphs in the font
+	/** Number of glyphs in the font */
 	static const unsigned int kCharNum = 138;
 
-	// Chars are indexed from the ASCII space (decimal value 32)
+	/** Chars are indexed from the ASCII space (decimal value 32) */
 	static const unsigned int kCharIndexOffset = 32;
 
+	/** Internal function for freeing fonts when destructing/loading another */
 	void freeFont();
 };
 

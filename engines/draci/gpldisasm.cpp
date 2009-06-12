@@ -23,37 +23,6 @@
  *
  */
 
-/**
- * @brief GPL2 bytecode disassembler
- * @param gplcode A pointer to the bytecode
- *        len Length of the bytecode
- *
- * GPL2 is short for Game Programming Language 2 which is the script language
- * used by Draci Historie. This is a simple disassembler for the language.
- *
- * A compiled GPL2 program consists of a stream of bytes representing commands
- * and their parameters. The syntax is as follows:
- *
- * Syntax of a command:
- *	<name of the command> <number> <sub-number> <list of parameters...>
- *
- *	Syntax of a parameter:
- *	- 1: integer number literally passed to the program
- *	- 2-1: string stored in the reservouir of game strings (i.e. something to be
- *	  displayed) and stored as an index in this list
- *	- 2-2: string resolved by the compiler (i.e., a path to another file) and
- *	  replaced by an integer index of this entity in the appropriate namespace
- *	  (e.g., the index of the palette, location, ...)
- *	- 3-0: relative jump to a label defined in this code.  Each label must be
- *	  first declared in the beginning of the program.
- *	- 3-1 .. 3-9: index of an entity in several namespaces, defined in file ident
- *	- 4: mathematical expression compiled into a postfix format
- *
- * 	In the compiled program, parameters of type 1..3 are represented by a single
- *	16-bit integer.  The called command knows by its definition what namespace the
- *	value comes from.
- */
-
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/stack.h"
@@ -64,6 +33,8 @@
 namespace Draci {
 
 // FIXME: Change parameter types to names once I figure out what they are exactly
+
+/** A table of all the commands the game player uses */
 GPL2Command gplCommands[] = {
 	{ 0,  0, "gplend",				0, { 0 } },
 	{ 0,  1, "exit",				0, { 0 } },
@@ -122,6 +93,7 @@ GPL2Command gplCommands[] = {
 	{ 27, 1, "FeedPassword", 		3, { 1, 1, 1 } }
 };
 
+/** Operators used by the mathematical evaluator */
 Common::String operators[] = {
 	"oper_and",
 	"oper_or",
@@ -139,6 +111,7 @@ Common::String operators[] = {
 	"oper_minus"
 };
 
+/** Functions used by the mathematical evaluator */
 Common::String functions[] = {
 	"F_Not",
 	"F_Random",
@@ -161,6 +134,7 @@ Common::String functions[] = {
 
 const unsigned int kNumCommands = sizeof gplCommands / sizeof gplCommands[0];
 
+/** Type of mathematical object */
 enum mathExpressionObject {
 	kMathEnd,
 	kMathNumber,
@@ -170,6 +144,12 @@ enum mathExpressionObject {
 };
 
 // FIXME: The evaluator is now complete but I still need to implement callbacks
+
+/**
+ * @brief Evaluates mathematical expressions
+ * @param reader Stream reader set to the beginning of the expression
+ */
+
 void handleMathExpression(Common::MemoryReadStream &reader) {
 	Common::Stack<uint16> stk;
 	mathExpressionObject obj;
@@ -224,6 +204,15 @@ void handleMathExpression(Common::MemoryReadStream &reader) {
 	return;
 }
 
+/**
+ * @brief Find the current command in the internal table
+ *
+ * @param num 		Command number
+ * @param subnum 	Command subnumer
+ *
+ * @return NULL if command is not found. Otherwise, a pointer to a GPL2Command
+ *         struct representing the command.
+ */
 GPL2Command *findCommand(byte num, byte subnum) {
 	unsigned int i = 0;
 	while (1) {
@@ -244,6 +233,37 @@ GPL2Command *findCommand(byte num, byte subnum) {
 
 	return NULL;
 }
+
+/**
+ * @brief GPL2 bytecode disassembler
+ * @param gplcode A pointer to the bytecode
+ * @param len Length of the bytecode
+ *
+ * GPL2 is short for Game Programming Language 2 which is the script language
+ * used by Draci Historie. This is a simple disassembler for the language.
+ *
+ * A compiled GPL2 program consists of a stream of bytes representing commands
+ * and their parameters. The syntax is as follows:
+ *
+ * Syntax of a command:
+ *	<name of the command> <number> <sub-number> <list of parameters...>
+ *
+ *	Syntax of a parameter:
+ *	- 1: integer number literally passed to the program
+ *	- 2-1: string stored in the reservouir of game strings (i.e. something to be
+ *	  displayed) and stored as an index in this list
+ *	- 2-2: string resolved by the compiler (i.e., a path to another file) and
+ *	  replaced by an integer index of this entity in the appropriate namespace
+ *	  (e.g., the index of the palette, location, ...)
+ *	- 3-0: relative jump to a label defined in this code.  Each label must be
+ *	  first declared in the beginning of the program.
+ *	- 3-1 .. 3-9: index of an entity in several namespaces, defined in file ident
+ *	- 4: mathematical expression compiled into a postfix format
+ *
+ * 	In the compiled program, parameters of type 1..3 are represented by a single
+ *	16-bit integer.  The called command knows by its definition what namespace the
+ *	value comes from.
+ */
 
 int gpldisasm(byte *gplcode, uint16 len) {
 	Common::MemoryReadStream reader(gplcode, len);
