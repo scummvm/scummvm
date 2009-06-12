@@ -32,34 +32,17 @@
 namespace Parallaction {
 
 
-void IFFParser::setInputStream(Common::SeekableReadStream *stream) {
-	destroy();
-
+void IFFParser::setInputStream(Common::ReadStream *stream) {
 	assert(stream);
-	_stream = stream;
-	_startOffset = 0;
-	_endOffset = _stream->size();
+	_formChunk.setInputStream(stream);
+	_chunk.setInputStream(stream);
 
-	_formType = 0;
-	_formSize = (uint32)-1;
-
-	if (_stream->size() < 12) {
-		// this file is too small to be a valid IFF container
-		return;
+	_formChunk.readHeader();
+	if (_formChunk.id != ID_FORM) {
+		error("IFFParser input is not a FORM type IFF file");
 	}
-
-	if (_stream->readUint32BE() != ID_FORM) {
-		// no FORM header was found
-		return;
-	}
-
-	_formSize = _stream->readUint32BE();
-	_formType = _stream->readUint32BE();
-}
-
-void IFFParser::destroy() {
-	_stream = 0;
-	_startOffset = _endOffset = 0;
+	_formSize = _formChunk.size;
+	_formType = _formChunk.readUint32BE();
 }
 
 uint32 IFFParser::getFORMSize() const {
@@ -70,171 +53,99 @@ Common::IFF_ID IFFParser::getFORMType() const {
 	return _formType;
 }
 
-uint32 IFFParser::moveToIFFBlock(Common::IFF_ID chunkName) {
-	uint32 size = (uint32)-1;
+void IFFParser::parse(IFFCallback &callback) {
+	bool stop;
+	do {
+		_chunk.feed();
+		_formChunk.incBytesRead(_chunk.size);
 
-	_stream->seek(_startOffset + 0x0C);
-
-	while ((uint)_stream->pos() < _endOffset) {
-		uint32 chunk = _stream->readUint32BE();
-		uint32 size_temp = _stream->readUint32BE();
-
-		if (chunk != chunkName) {
-			_stream->seek((size_temp + 1) & (~1), SEEK_CUR);
-			assert((uint)_stream->pos() <= _endOffset);
-		} else {
-			size = size_temp;
+		if (_formChunk.hasReadAll()) {
 			break;
 		}
-	}
 
-	return size;
-}
+		_formChunk.incBytesRead(8);
+		_chunk.readHeader();
 
-uint32 IFFParser::getIFFBlockSize(Common::IFF_ID chunkName) {
-	uint32 size = moveToIFFBlock(chunkName);
-	return size;
-}
+		// invoke the callback
+		Common::SubReadStream stream(&_chunk, _chunk.size);
+		IFFChunk chunk(_chunk.id, _chunk.size, &stream);
+		stop = callback(chunk);
 
-bool IFFParser::loadIFFBlock(Common::IFF_ID chunkName, void *loadTo, uint32 ptrSize) {
-	uint32 chunkSize = moveToIFFBlock(chunkName);
+		// eats up all the remaining data in the chunk
+		while (!stream.eos()) {
+			printf("attemping to eat data in chunk\n");
+			stream.readByte();
+		}
 
-	if (chunkSize == (uint32)-1) {
-		return false;
-	}
 
-	uint32 loadSize = 0;
-	loadSize = MIN(ptrSize, chunkSize);
-	_stream->read(loadTo, loadSize);
-	return true;
-}
-
-Common::SeekableReadStream *IFFParser::getIFFBlockStream(Common::IFF_ID chunkName) {
-	uint32 chunkSize = moveToIFFBlock(chunkName);
-
-	if (chunkSize == (uint32)-1) {
-		return 0;
-	}
-
-	uint32 pos = _stream->pos();
-	return new Common::SeekableSubReadStream(_stream, pos, pos + chunkSize, false);
+	} while (!stop);
 }
 
 
-// ILBM decoder implementation
 
-ILBMDecoder::ILBMDecoder(Common::SeekableReadStream *in, bool disposeStream) : _in(in), _disposeStream(disposeStream), _hasHeader(false), _bodySize((uint32)-1), _paletteSize((uint32)-1) {
-	assert(in);
-	_parser.setInputStream(in);
-
-	if (_parser.getFORMType() != ID_ILBM) {
-		return;
-	}
-
-	_hasHeader = _parser.loadIFFBlock(ID_BMHD, &_header, sizeof(_header));
-	if (!_hasHeader) {
-		return;
-	}
-
-	_header.width = TO_BE_16(_header.width);
-	_header.height = TO_BE_16(_header.height);
-
-	_paletteSize = _parser.getIFFBlockSize(ID_CMAP);
-	_bodySize = _parser.getIFFBlockSize(ID_BODY);
+void ILBMDecoder::loadHeader(Common::ReadStream *stream) {
+	assert(stream);
+	stream->read(&_header, sizeof(_header));
+	_header.width = FROM_BE_16(_header.width);
+	_header.height = FROM_BE_16(_header.height);
+	_header.x = FROM_BE_16(_header.x);
+	_header.y = FROM_BE_16(_header.y);
+	_header.transparentColor = FROM_BE_16(_header.transparentColor);
+	_header.pageWidth = FROM_BE_16(_header.pageWidth);
+	_header.pageHeight = FROM_BE_16(_header.pageHeight);
 }
 
-
-ILBMDecoder::~ILBMDecoder() {
-	if (_disposeStream) {
-		delete _in;
-	}
-}
-
-uint32 ILBMDecoder::getWidth() {
-	assert(_hasHeader);
-	return _header.width;
-}
-
-uint32 ILBMDecoder::getHeight() {
-	assert(_hasHeader);
-	return _header.height;
-}
-
-uint32 ILBMDecoder::getNumColors() {
-	assert(_hasHeader);
-	return (1 << _header.depth);
-}
-
-byte *ILBMDecoder::getPalette() {
-	assert(_paletteSize != (uint32)-1);
-	byte *palette = new byte[_paletteSize];
-	assert(palette);
-	_parser.loadIFFBlock(ID_CMAP, palette, _paletteSize);
-	return palette;
-}
-
-byte *ILBMDecoder::getBitmap(uint32 numPlanes, bool packPlanes) {
-	assert(_bodySize != (uint32)-1);
+void ILBMDecoder::loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stream) {
+	assert(stream);
+	uint32 numPlanes = MIN(mode & ILBM_UNPACK_PLANES, (uint32)_header.depth);
 	assert(numPlanes == 1 || numPlanes == 2 || numPlanes == 3 || numPlanes == 4 || numPlanes == 5 || numPlanes == 8);
 
-	numPlanes = MIN(numPlanes, (uint32)_header.depth);
-	if (numPlanes > 4) {
-		packPlanes = false;
+	bool packPixels = (mode & ILBM_PACK_PLANES) != 0;
+	if (numPlanes != 1 && numPlanes != 2 && numPlanes != 4) {
+		packPixels = false;
 	}
 
-	uint32 bitmapSize = _header.width * _header.height;
-	uint32 bitmapWidth = _header.width;
-	if (packPlanes) {
-		bitmapSize /= (8 / numPlanes);
-		bitmapWidth /= (8 / numPlanes);
+	uint32 outPitch = _header.width;
+	if (packPixels) {
+		outPitch /= (8 / numPlanes);
 	}
-
-	Common::SeekableReadStream *bodyStream = _parser.getIFFBlockStream(ID_BODY);
-	assert(bodyStream);
-
-	byte *bitmap = (byte*)calloc(bitmapSize, 1);
-	assert(bitmap);
+	byte *out = buffer;
 
 	switch (_header.pack) {
 	case 1: {	// PackBits compressed bitmap
-		Graphics::PackBitsReadStream stream(*bodyStream);
-
-		byte *out = bitmap;
+		Graphics::PackBitsReadStream packStream(*stream);
 
 		// setup a buffer to hold enough data to build a line in the output
-		uint32 scanWidth = ((_header.width + 15)/16) << 1;
-		byte *scanBuffer = (byte*)malloc(scanWidth * _header.depth);
+		uint32 scanlineWidth = ((_header.width + 15)/16) << 1;
+		byte *scanline = new byte[scanlineWidth * _header.depth];
 
 		for (uint i = 0; i < _header.height; ++i) {
-			byte *s = scanBuffer;
+			byte *s = scanline;
 			for (uint32 j = 0; j < _header.depth; ++j) {
-				stream.read(s, scanWidth);
-				s += scanWidth;
+				packStream.read(s, scanlineWidth);
+				s += scanlineWidth;
 			}
 
-			planarToChunky(out, bitmapWidth, scanBuffer, scanWidth, numPlanes, packPlanes);
-			out += bitmapWidth;
+			planarToChunky(out, outPitch, scanline, scanlineWidth, numPlanes, packPixels);
+			out += outPitch;
 		}
 
-		free(scanBuffer);
+		delete []scanline;
 		break;
 	}
+
 	default:
+		// implement other compression types here!
 		error("only RLE compressed ILBM files are supported");
 		break;
 	}
-
-	delete bodyStream;
-
-	return bitmap;
 }
 
-
-void ILBMDecoder::planarToChunky(byte *out, uint32 width, byte *in, uint32 planeWidth, uint32 nPlanes, bool packPlanes) {
+void ILBMDecoder::planarToChunky(byte *out, uint32 outPitch, byte *in, uint32 inWidth, uint32 nPlanes, bool packPlanes) {
 	byte pix, ofs, bit;
 	byte *s;
 
-	uint32 pixels = width;
+	uint32 pixels = outPitch;
 	if (packPlanes) {
 		pixels *= (8 / nPlanes);
 	}
@@ -251,7 +162,7 @@ void ILBMDecoder::planarToChunky(byte *out, uint32 width, byte *in, uint32 plane
 			if (s[ofs] & bit) {
 				pix |= (1 << plane);
 			}
-			s += planeWidth;
+			s += inWidth;
 		}
 
 

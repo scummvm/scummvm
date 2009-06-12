@@ -33,6 +33,7 @@
 #include "common/file.h"
 
 #include "graphics/surface.h"
+#include "parallaction/iff.h"
 
 
 
@@ -77,8 +78,37 @@ public:
 	virtual Table* loadTable(const char* name) = 0;
 	virtual Common::SeekableReadStream* loadMusic(const char* name) = 0;
 	virtual Common::SeekableReadStream* loadSound(const char* name) = 0;
-	virtual void loadMask(const char *name, MaskBuffer &buffer) { }
-	virtual void loadPath(const char *name, PathBuffer &buffer) { }
+	virtual MaskBuffer *loadMask(const char *name, uint32 w, uint32 h) { return 0; }
+	virtual PathBuffer *loadPath(const char *name, uint32 w, uint32 h) { return 0; }
+};
+
+struct PaletteFxRange;
+
+struct ILBMLoader {
+	enum {
+		BODYMODE_SURFACE,
+		BODYMODE_MASKBUFFER,
+		BODYMODE_PATHBUFFER
+	};
+	uint32 _bodyMode;
+	Graphics::Surface *_surf;
+	MaskBuffer *_maskBuffer;
+	PathBuffer *_pathBuffer;
+	byte *_palette;
+	PaletteFxRange *_crng;
+	uint32 _mode;
+	byte* _intBuffer;
+	uint32 _numCRNG;
+	ILBMDecoder _decoder;
+
+	ILBMLoader(uint32 bodyMode, byte *palette = 0, PaletteFxRange *crng = 0);
+	ILBMLoader(Graphics::Surface *surf, byte *palette = 0, PaletteFxRange *crng = 0);
+	ILBMLoader(MaskBuffer *buffer);
+	ILBMLoader(PathBuffer *buffer);
+
+	bool callback(IFFChunk &chunk);
+	void setupBuffer(uint32 w, uint32 h);
+	void load(Common::ReadStream *in, bool disposeStream = false);
 };
 
 
@@ -235,8 +265,8 @@ public:
 	Table* loadTable(const char* name);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::SeekableReadStream* loadSound(const char* name);
-	void loadMask(const char *name, MaskBuffer &buffer);
-	void loadPath(const char *name, PathBuffer &buffer);
+	MaskBuffer *loadMask(const char *name, uint32 w, uint32 h);
+	PathBuffer *loadPath(const char *name, uint32 w, uint32 h);
 };
 
 class DosDemoDisk_br : public DosDisk_br {
@@ -272,7 +302,7 @@ public:
 	GfxObj* loadObjects(const char *name, uint8 part = 0);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::SeekableReadStream* loadSound(const char* name);
-	void loadMask(const char *name, MaskBuffer &buffer);
+	MaskBuffer *loadMask(const char *name, uint32 w, uint32 h);
 };
 
 } // namespace Parallaction

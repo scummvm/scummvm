@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	debug.o \
 	detection.o \
 	dialogue.o \
+	disk.o \
 	disk_br.o \
 	disk_ns.o \
 	exec.o \

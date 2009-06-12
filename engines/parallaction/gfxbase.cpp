@@ -162,9 +162,7 @@ void BackgroundInfo::loadGfxObjMask(const char *name, GfxObj *obj) {
 	Common::Rect rect;
 	obj->getRect(0, rect);
 
-	MaskBuffer *buf = new MaskBuffer;
-	buf->create(rect.width(), rect.height());
-	_vm->_disk->loadMask(name, *buf);
+	MaskBuffer *buf = _vm->_disk->loadMask(name, rect.width(), rect.height());
 
 	obj->_maskId = addMaskPatch(buf);
 	obj->_hasMask = true;
@@ -174,9 +172,7 @@ void BackgroundInfo::loadGfxObjPath(const char *name, GfxObj *obj) {
 	Common::Rect rect;
 	obj->getRect(0, rect);
 
-	PathBuffer *buf = new PathBuffer;
-	buf->create(rect.width(), rect.height());
-	_vm->_disk->loadPath(name, *buf);
+	PathBuffer *buf = _vm->_disk->loadPath(name, rect.width(), rect.height());
 
 	obj->_pathId = addPathPatch(buf);
 	obj->_hasPath = true;
