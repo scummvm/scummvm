@@ -160,6 +160,10 @@ void handleMathExpression(Common::MemoryReadStream &reader) {
 	uint16 value;
 	while (1) {
 		if (obj == kMathEnd) {
+			// Check whether the expression was evaluated correctly
+			// The stack should contain only one value after the evaluation
+			// i.e. the result of the expression
+			assert(stk.size() == 1 && "Mathematical expression error");	
 			break;
 		}
 
@@ -177,6 +181,10 @@ void handleMathExpression(Common::MemoryReadStream &reader) {
 			value = reader.readUint16LE();
 			stk.pop();
 			stk.pop();
+
+			// FIXME: Pushing dummy value for now, but should push return value
+			stk.push(0);
+
 			debugC(3, kDraciBytecodeDebugLevel, "\t\t-operator %s",
 				operators[value-1].c_str());
 			break;
@@ -189,6 +197,8 @@ void handleMathExpression(Common::MemoryReadStream &reader) {
 
 		case kMathFunctionCall:
 			value = reader.readUint16LE();
+						
+			stk.pop();
 
 			// FIXME: Pushing dummy value for now, but should push return value
 			stk.push(0);
