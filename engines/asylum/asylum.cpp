@@ -81,7 +81,7 @@ Common::Error AsylumEngine::go() {
 	// Play intro movie
 	int mouseX = 0, mouseY = 0;
 
-	_resMgr->loadVideo(0);
+	//_resMgr->loadVideo(0);
 
 	showMainMenu();
 
@@ -89,6 +89,9 @@ Common::Error AsylumEngine::go() {
     // Control loop test. Basically just keep the
     // ScummVM window alive until ESC is pressed.
     // This will facilitate drawing tests ;)
+
+	// DEBUG
+	uint32 lastUpdate = 0;
 
 	Common::EventManager *em = _system->getEventManager();
 	while (!shouldQuit()) {
@@ -143,7 +146,11 @@ Common::Error AsylumEngine::go() {
 			}
 		}
 
-		_system->updateScreen();
+		if (_system->getMillis() - lastUpdate > 50) {
+			_system->updateScreen();
+			lastUpdate = _system->getMillis();
+		}
+
 		_system->delayMillis(10);
 	}
 
