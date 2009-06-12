@@ -27,14 +27,13 @@
 #define ASYLUM_ENGINE_H
 
 #include "engines/engine.h"
-
 #include "asylum/resman.h"
 
 namespace Asylum {
 
+class ResourceManager;
 class Screen;
 class Menu;
-class Video;
 
 class AsylumEngine: public Engine {
 public:
@@ -48,13 +47,16 @@ public:
     virtual Common::Error run();
     virtual bool hasFeature(EngineFeature f) const;
 
+    Screen* getScreen() {
+    		return _screen;
+    	}
+
 private:
     Common::Language     _language;
     Common::RandomSource _rnd;
 
     ResourceManager *_resMgr;
     Screen          *_screen;
-	Video			*_video;
 
     void showMainMenu();
 

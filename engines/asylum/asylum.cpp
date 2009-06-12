@@ -31,10 +31,8 @@
 #include "common/stream.h"
 #include "sound/audiostream.h"
 #include "sound/wave.h"
-
-#include "asylum/asylum.h"
 #include "asylum/screen.h"
-#include "asylum/video.h"
+#include "asylum/asylum.h"
 
 namespace Asylum {
 
@@ -52,7 +50,6 @@ AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
     delete _screen;
 	delete _resMgr;
-	delete _video;
 }
 
 Common::Error AsylumEngine::run() {
@@ -68,8 +65,7 @@ Common::Error AsylumEngine::init() {
 	// initialize engine objects
 
 	_screen = new Screen(_system);
-	_resMgr = new ResourceManager;
-	_video = new Video(_mixer);
+	_resMgr = new ResourceManager(this);
 
 	// initializing game
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
@@ -85,7 +81,8 @@ Common::Error AsylumEngine::init() {
 
 Common::Error AsylumEngine::go() {
 	// Play intro movie
-	_video->playVideo(0);
+
+	_resMgr->loadVideo(0);
 
 	showMainMenu();
 
@@ -117,7 +114,12 @@ Common::Error AsylumEngine::go() {
 }
 
 void AsylumEngine::showMainMenu() {
+	// main menu background
+	_resMgr->loadGraphic(1, 0, 0);
+	_resMgr->loadPalette(1, 17);
+	_resMgr->loadCursor(1, 2, 0);
 
+	/*
 
 	// Music - start
 
@@ -149,27 +151,7 @@ void AsylumEngine::showMainMenu() {
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, mus);
 
 	// Music - end
-
-
-	// eyes animation index table
-	//const uint32 eyesTable[8] = {3, 5, 1, 7, 4, 8, 2, 6};
-	byte pal[256 * 3];
-	_resMgr->getPalette(1, 17, pal);
-	GraphicResource *bg  = _resMgr->getGraphic(1, 0)->getEntry(0);
-	GraphicResource *cur = _resMgr->getGraphic(1, 2)->getEntry(0);
-
-	_system->setMouseCursor(cur->data, cur->width, cur->height, 1, 1, 0);
-	// FIXME: is there any reason why the cursor palette is set here,
-	// when it's the same as the rest of the game's palette?
-	//_system->setCursorPalette(pal, 0, 1024);
-	_system->showMouse(true);
-
-	_screen->setFrontBuffer(
-			0, 0,
-			bg->width, bg->height,
-			bg->data);
-	_screen->setPalette(pal);
-	_screen->updateScreen();
+	 */
 }
 
 } // namespace Asylum

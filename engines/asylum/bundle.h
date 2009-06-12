@@ -44,6 +44,7 @@ class Bundle {
 public:
 	Bundle();
 	Bundle(uint8 fileNum);
+	Bundle(uint8 fileNum, uint32 index, uint32 length);
 	virtual ~Bundle() {}
 
 	uint8*  getData() { return data; }

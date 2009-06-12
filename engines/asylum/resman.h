@@ -31,21 +31,36 @@
 
 #include "asylum/bundle.h"
 #include "asylum/graphicbundle.h"
+#include "asylum/video.h"
+#include "asylum/screen.h"
+#include "asylum/asylum.h"
 
 namespace Asylum {
 
+// forward declarations
+class AsylumEngine;
+class Video;
+
 class ResourceManager {
 public:
-	ResourceManager() {};
-	~ResourceManager() {};
+	ResourceManager(AsylumEngine *vm);
+	virtual ~ResourceManager();
 
-	GraphicBundle* getGraphic(uint8 fileNum, uint32 offset);
-	void getPalette(uint8 fileNum, uint32 offset, byte *palette);
+	bool loadGraphic(uint8 fileNum, uint32 offset, uint32 index);
+	bool loadCursor(uint8 fileNum, uint32 offset, uint32 index);
+	bool loadPalette(uint8 fileNum, uint32 offset);
+	bool loadSound(uint8 fileNum, uint32 offset);
+	bool loadMusic(uint8 fileNum, uint32 offset);
+	bool loadVideo(uint8 fileNum);
 
 private:
 	Common::Array<Bundle> _bundleCache;
 
 	Bundle* getBundle(uint8 fileNum);
+	GraphicResource* getGraphic(uint8 fileNum, uint32 offset, uint32 index);
+
+	AsylumEngine *_vm;
+	Video		 *_video;
 
 }; // end of class ResourceManager
 
