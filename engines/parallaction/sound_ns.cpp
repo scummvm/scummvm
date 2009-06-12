@@ -360,8 +360,9 @@ static int8 res_amigaBeep[AMIGABEEP_SIZE] = {
 	0, 20, 40, 60, 80, 60, 40, 20, 0, -20, -40, -60, -80, -60, -40, -20
 };
 
+Audio::AudioStream *AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch, bool looping) {
+	Audio::AudioStream *input = 0;
 
-void AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch) {
 	if (!scumm_stricmp("beep", filename)) {
 		ch->header.oneShotHiSamples = 0;
 		ch->header.repeatHiSamples = 0;
@@ -376,14 +377,22 @@ void AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch) {
 		}
 		ch->dataSize = AMIGABEEP_SIZE * NUM_REPEATS;
 		ch->dispose = true;
-		return;
+
+		uint32 loopStart = 0, loopEnd = 0, flags = 0;
+		if (looping) {
+			loopEnd = ch->header.oneShotHiSamples + ch->header.repeatHiSamples;
+			flags = Audio::Mixer::FLAG_LOOP;
+		}
+
+		input = Audio::makeLinearInputStream((byte *)ch->data, ch->dataSize, ch->header.samplesPerSec, flags, loopStart, loopEnd);
+	} else {
+		Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
+		input = Audio::make8SVXStream(*stream, looping);
+		ch->dispose = true;
+		delete stream;
 	}
 
-	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
-	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
-	decoder.decode();
-	ch->dispose = true;
-	delete stream;
+	return input;
 }
 
 void AmigaSoundMan_ns::playSfx(const char *filename, uint channel, bool looping, int volume) {
@@ -397,27 +406,13 @@ void AmigaSoundMan_ns::playSfx(const char *filename, uint channel, bool looping,
 	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playSfx(%s, %i)", filename, channel);
 
 	Channel *ch = &_channels[channel];
-	loadChannelData(filename, ch);
-
-	uint32 loopStart, loopEnd, flags;
-	if (looping) {
-		// the standard way to loop 8SVX audio implies use of the oneShotHiSamples and
-		// repeatHiSamples fields, but Nippon Safes handles loops according to flags
-		// set in its location scripts and always operates on the whole data.
-		loopStart = 0;
-		loopEnd = ch->header.oneShotHiSamples + ch->header.repeatHiSamples;
-		flags = Audio::Mixer::FLAG_LOOP;
-	} else {
-		loopStart = loopEnd = 0;
-		flags = 0;
-	}
+	Audio::AudioStream *input = loadChannelData(filename, ch, looping);
 
 	if (volume == -1) {
 		volume = ch->header.volume;
 	}
 
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize,
-		ch->header.samplesPerSec, flags, -1, volume, 0, loopStart, loopEnd);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 }
 
 void AmigaSoundMan_ns::stopSfx(uint channel) {

@@ -401,7 +401,7 @@ DosSoundMan_br::~DosSoundMan_br() {
 	delete _midiPlayer;
 }
 
-void DosSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
+Audio::AudioStream *DosSoundMan_br::loadChannelData(const char *filename, Channel *ch, bool looping) {
 	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
 
 	ch->dataSize = stream->size();
@@ -414,6 +414,15 @@ void DosSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
 
 	// TODO: Confirm sound rate
 	ch->header.samplesPerSec = 11025;
+
+	uint32 loopStart = 0, loopEnd = 0, flags = Audio::Mixer::FLAG_UNSIGNED;
+	if (looping) {
+		loopEnd = ch->dataSize;
+		flags |= Audio::Mixer::FLAG_LOOP;
+	}
+
+	// Create the input stream
+	return Audio::makeLinearInputStream((byte *)ch->data, ch->dataSize, ch->header.samplesPerSec, flags, loopStart, loopEnd);
 }
 
 void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
@@ -426,16 +435,8 @@ void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, i
 	debugC(1, kDebugAudio, "DosSoundMan_br::playSfx(%s, %u, %i, %i)", filename, channel, looping, volume);
 
 	Channel *ch = &_channels[channel];
-	loadChannelData(filename, ch);
-
-	uint32 loopStart = 0, loopEnd = 0, flags = Audio::Mixer::FLAG_UNSIGNED;
-	if (looping) {
-		loopEnd = ch->dataSize;
-		flags |= Audio::Mixer::FLAG_LOOP;
-	}
-
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize,
-		ch->header.samplesPerSec, flags, -1, volume, 0, loopStart, loopEnd);
+	Audio::AudioStream *input = loadChannelData(filename, ch, looping);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 }
 
 void DosSoundMan_br::playMusic() {
@@ -468,8 +469,10 @@ AmigaSoundMan_br::~AmigaSoundMan_br() {
 	stopMusic();
 }
 
-void AmigaSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
+Audio::AudioStream *AmigaSoundMan_br::loadChannelData(const char *filename, Channel *ch, bool looping) {
 	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
+	Audio::AudioStream *input = 0;
+
 	if (_vm->getFeatures() & GF_DEMO) {
 		ch->dataSize = stream->size();
 		ch->data = (int8*)malloc(ch->dataSize);
@@ -478,12 +481,20 @@ void AmigaSoundMan_br::loadChannelData(const char *filename, Channel *ch) {
 
 		// TODO: Confirm sound rate
 		ch->header.samplesPerSec = 11025;
+
+		uint32 loopStart = 0, loopEnd = 0, flags = 0;
+		if (looping) {
+			loopEnd = ch->header.oneShotHiSamples + ch->header.repeatHiSamples;
+			flags = Audio::Mixer::FLAG_LOOP;
+		}
+
+		input = Audio::makeLinearInputStream((byte *)ch->data, ch->dataSize, ch->header.samplesPerSec, flags, loopStart, loopEnd);
 	} else {
-		Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
-		decoder.decode();
+		input = Audio::make8SVXStream(*stream, looping);
+		delete stream;
 	}
-	ch->dispose = true;
-	delete stream;
+
+	return input;
 }
 
 void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping, int volume) {
@@ -501,24 +512,13 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playSfx(%s, %i)", filename, channel);
 
 	Channel *ch = &_channels[channel];
-	loadChannelData(filename, ch);
-
-	uint32 loopStart = 0, loopEnd = 0, flags = 0;
-	if (looping) {
-		// the standard way to loop 8SVX audio implies use of the oneShotHiSamples and
-		// repeatHiSamples fields, but Nippon Safes handles loops according to flags
-		// set in its location scripts and always operates on the whole data.
-		loopStart = 0;
-		loopEnd = ch->header.oneShotHiSamples + ch->header.repeatHiSamples;
-		flags = Audio::Mixer::FLAG_LOOP;
-	}
+	Audio::AudioStream *input = loadChannelData(filename, ch, looping);
 
 	if (volume == -1) {
 		volume = ch->header.volume;
 	}
 
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize,
-		ch->header.samplesPerSec, flags, -1, volume, 0, loopStart, loopEnd);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 }
 
 void AmigaSoundMan_br::playMusic() {

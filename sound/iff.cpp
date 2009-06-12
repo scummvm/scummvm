@@ -26,58 +26,83 @@
 #include "sound/iff.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "common/func.h"
 
 namespace Audio {
 
-
-void A8SVXDecoder::readVHDR(Common::IFFChunk &chunk) {
-	_header.oneShotHiSamples = chunk.readUint32BE();
-	_header.repeatHiSamples = chunk.readUint32BE();
-	_header.samplesPerHiCycle = chunk.readUint32BE();
-	_header.samplesPerSec = chunk.readUint16BE();
-	_header.octaves = chunk.readByte();
-	_header.compression = chunk.readByte();
-	_header.volume = chunk.readUint32BE();
+void Voice8Header::load(Common::ReadStream &stream) {
+	stream.read(this, sizeof(Voice8Header));
+	oneShotHiSamples = FROM_BE_32(oneShotHiSamples);
+	repeatHiSamples = FROM_BE_32(repeatHiSamples);
+	samplesPerHiCycle = FROM_BE_32(samplesPerHiCycle);
+	samplesPerSec = FROM_BE_16(samplesPerSec);
+	volume = FROM_BE_32(volume);
 }
 
-void A8SVXDecoder::readBODY(Common::IFFChunk &chunk) {
 
-	switch (_header.compression) {
-	case 0:
-		_dataSize = chunk.size;
-		_data = (int8*)malloc(_dataSize);
-		chunk.read(_data, _dataSize);
-		break;
 
-	case 1:
-		warning("compressed IFF audio is not supported");
-		break;
+struct A8SVXLoader {
+	Voice8Header _header;
+	int8 *_data;
+	uint32 _dataSize;
+
+	void load(Common::ReadStream &input) {
+		Common::IFFParser parser(input);
+		Common::IFFChunk *chunk;
+		while (chunk = parser.nextChunk()) {
+			callback(*chunk);
+		}
 	}
 
-}
-
-
-A8SVXDecoder::A8SVXDecoder(Common::ReadStream &input, Voice8Header &header, int8 *&data, uint32 &dataSize) :
-	IFFParser(input), _header(header), _data(data), _dataSize(dataSize) {
-	if (_typeId != ID_8SVX)
-		error("unknown audio format");
-}
-
-void A8SVXDecoder::decode() {
-
-	Common::IFFChunk *chunk;
-
-	while ((chunk = nextChunk()) != 0) {
-		switch (chunk->id) {
+	bool callback(Common::IFFChunk &chunk) {
+		switch (chunk.id) {
 		case ID_VHDR:
-			readVHDR(*chunk);
+			_header.load(chunk);
 			break;
 
 		case ID_BODY:
-			readBODY(*chunk);
+			_dataSize = chunk.size;
+			_data = (int8*)malloc(_dataSize);
+			assert(_data);
+			loadData(&chunk);
+			return true;
+		}
+
+		return false;
+	}
+
+	void loadData(Common::ReadStream *stream) {
+		switch (_header.compression) {
+		case 0:
+			stream->read(_data, _dataSize);
+			break;
+
+		case 1:
+			// implement other formats here
+			error("compressed IFF audio is not supported");
 			break;
 		}
+
 	}
+};
+
+
+AudioStream *make8SVXStream(Common::ReadStream &input, bool loop) {
+	A8SVXLoader loader;
+	loader.load(input);
+
+	uint32 loopStart = 0, loopEnd = 0, flags = 0;
+	if (loop) {
+		// the standard way to loop 8SVX audio implies use of the oneShotHiSamples and
+		// repeatHiSamples fields
+		loopStart = 0;
+		loopEnd = loader._header.oneShotHiSamples + loader._header.repeatHiSamples;
+		flags |= Audio::Mixer::FLAG_LOOP;
+	}
+
+	flags |= Audio::Mixer::FLAG_AUTOFREE;
+
+	return Audio::makeLinearInputStream((byte *)loader._data, loader._dataSize, loader._header.samplesPerSec, flags, loopStart, loopEnd);
 }
 
 }

@@ -154,10 +154,9 @@ class AmigaSoundMan_ns : public SoundMan_ns {
 		uint32				dataSize;
 		bool				dispose;
 		Audio::SoundHandle	handle;
-		uint32				flags;
 	} _channels[NUM_SFX_CHANNELS];
 
-	void loadChannelData(const char *filename, Channel *ch);
+	Audio::AudioStream *loadChannelData(const char *filename, Channel *ch, bool looping);
 
 public:
 	AmigaSoundMan_ns(Parallaction_ns *vm);
@@ -202,10 +201,7 @@ protected:
 		uint32				dataSize;
 		bool				dispose;
 		Audio::SoundHandle	handle;
-		uint32				flags;
 	} _channels[NUM_SFX_CHANNELS];
-
-	virtual void loadChannelData(const char *filename, Channel *ch) = 0;
 
 public:
 	SoundMan_br(Parallaction_br *vm);
@@ -228,7 +224,7 @@ class DosSoundMan_br : public SoundMan_br {
 
 	MidiPlayer_MSC	*_midiPlayer;
 
-	void loadChannelData(const char *filename, Channel *ch);
+	Audio::AudioStream *loadChannelData(const char *filename, Channel *ch, bool looping);
 
 public:
 	DosSoundMan_br(Parallaction_br *vm, MidiDriver *midiDriver);
@@ -246,7 +242,7 @@ class AmigaSoundMan_br : public SoundMan_br {
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle	_musicHandle;
 
-	void loadChannelData(const char *filename, Channel *ch);
+	Audio::AudioStream *loadChannelData(const char *filename, Channel *ch, bool looping);
 
 public:
 	AmigaSoundMan_br(Parallaction_br *vm);
