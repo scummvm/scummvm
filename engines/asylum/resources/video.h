@@ -40,6 +40,7 @@ public:
 	virtual ~Video();
 
 	bool playVideo(const char *filename);
+	bool playVideo(int number);
 
 private:
 	Common::List<Common::Event> _stopEvents;

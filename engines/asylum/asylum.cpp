@@ -76,7 +76,7 @@ Common::Error AsylumEngine::init() {
 
 Common::Error AsylumEngine::go() {
 	// Play intro movie
-	_video->playVideo("mov000.smk");
+	_video->playVideo(0);
 
 	showMainMenu();
 
