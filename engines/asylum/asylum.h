@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "asylum/resman.h"
+#include "graphics/surface.h"
 
 namespace Asylum {
 
@@ -47,11 +48,14 @@ public:
     virtual Common::Error run();
     virtual bool hasFeature(EngineFeature f) const;
 
+	void copyToBackBuffer(int x, int y, int width, int height, byte *buffer);
+
 private:
     Common::Language     _language;
     Common::RandomSource _rnd;
 
     ResourceManager *_resMgr;
+	Graphics::Surface _backBuffer;
 
     void showMainMenu();
 

@@ -45,6 +45,7 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
 	delete _resMgr;
+	_backBuffer.free();
 }
 
 Common::Error AsylumEngine::run() {
@@ -60,6 +61,8 @@ Common::Error AsylumEngine::init() {
 	// initialize engine objects
 
 	initGraphics(640, 480, true);
+	_backBuffer.create(640, 480, 1);
+
 	_resMgr = new ResourceManager(this);
 
 	// initializing game
@@ -76,6 +79,7 @@ Common::Error AsylumEngine::init() {
 
 Common::Error AsylumEngine::go() {
 	// Play intro movie
+	int mouseX = 0, mouseY = 0;
 
 	_resMgr->loadVideo(0);
 
@@ -90,6 +94,8 @@ Common::Error AsylumEngine::go() {
 	while (!shouldQuit()) {
 		Common::Event ev;
 
+		// Copy background image
+		_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 
 		if (em->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_KEYDOWN) {
@@ -101,15 +107,18 @@ Common::Error AsylumEngine::go() {
 				}
 				//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
 			} else if (ev.type == Common::EVENT_MOUSEMOVE) {
-				// TODO: Just some proof-of concept to change icons here for now
-				if (ev.mouse.y >= 20 && ev.mouse.y <= 20 + 48) {
-					for (int i = 0; i <= 5; i++) {
-						int curX = 40 + i * 100;
-						if (ev.mouse.x >= curX && ev.mouse.x <= curX + 55) {
-							GraphicResource *res = _resMgr->getGraphic(1, i + 4, 0);
-							_system->copyRectToScreen(res->data, res->width, curX, 20, res->width, res->height);
-						}
-					}
+				mouseX = ev.mouse.x;
+				mouseY = ev.mouse.y;
+			}
+		}
+
+		// TODO: Just some proof-of concept to change icons here for now
+		if (mouseY >= 20 && mouseY <= 20 + 48) {
+			for (int i = 0; i <= 5; i++) {
+				int curX = 40 + i * 100;
+				if (mouseX >= curX && mouseX <= curX + 55) {
+					GraphicResource *res = _resMgr->getGraphic(1, i + 4, 0);
+					_system->copyRectToScreen(res->data, res->width, curX, 20, res->width, res->height);
 				}
 			}
 		}
@@ -129,4 +138,14 @@ void AsylumEngine::showMainMenu() {
 	_resMgr->loadMusic();
 }
 
+void AsylumEngine::copyToBackBuffer(int x, int y, int width, int height, byte *buffer) {
+	int h = height;
+	byte *dest = (byte *)_backBuffer.pixels;
+
+	while (h--) {
+		memcpy(dest, buffer, width);
+		dest += 640;
+		buffer += width;
+	}
+}
 } // namespace Asylum
