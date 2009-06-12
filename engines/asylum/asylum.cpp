@@ -45,7 +45,6 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
-    delete _screen;
 	delete _resMgr;
 }
 
@@ -61,7 +60,7 @@ Common::Error AsylumEngine::run() {
 Common::Error AsylumEngine::init() {
 	// initialize engine objects
 
-	_screen = new Screen(_system);
+	initGraphics(640, 480, true);
 	_resMgr = new ResourceManager(this);
 
 	// initializing game
@@ -100,10 +99,16 @@ Common::Error AsylumEngine::go() {
 					g_system->getEventManager()->pushEvent(event);
 				}
 				//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
+			} else if (ev.type == Common::EVENT_MOUSEMOVE) {
+				// TODO: Just some proof-of concept to change icons here for now
+				if (ev.mouse.x >= 150 && ev.mouse.x <= 200) {
+					GraphicResource *res = _resMgr->getGraphic(1, 5, 0);
+					_system->copyRectToScreen(res->data, res->width, 150, 0, res->width, res->height);
+				}
 			}
 		}
 
-		_screen->updateScreen();
+		_system->updateScreen();
 		_system->delayMillis(10);
 	}
 
