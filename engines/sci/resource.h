@@ -378,50 +378,6 @@ protected:
 	int guessSciVersion();
 };
 
-/**
- * Used for lip and animation syncing in CD talkie games
- */
-class ResourceSync : public Resource {
-public:
-	ResourceSync() {}
-	~ResourceSync() {}
-
-	void startSync(EngineState *s, reg_t obj);
-	void nextSync(EngineState *s, reg_t obj);
-	void stopSync();
-
-protected:
-	uint16 *_ptr;
-	int16 _syncTime, _syncCue;
-	//bool _syncStarted;	// not used
-};
-
-/**
- * Used for speech playback and digital music playback
- * in CD talkie games
- */
-class AudioResource {
-public:
-	AudioResource(ResourceManager *resMgr, int sciVersion);
-
-	void setAudioRate(uint16 audioRate) { _audioRate = audioRate; }
-
-	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
-	int getAudioPosition();
-
-	Audio::AudioStream* getAudioStream(uint32 audioNumber, uint32 volume, int *sampleLen);
-
-	void stop() { g_system->getMixer()->stopHandle(_audioHandle); }
-	void pause() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
-	void resume() { g_system->getMixer()->pauseHandle(_audioHandle, false); }
-
-private:
-	Audio::SoundHandle _audioHandle;
-	uint16 _audioRate;
-	ResourceManager *_resMgr;
-	int _sciVersion;
-};
-
 } // End of namespace Sci
 
 #endif // SCI_SCICORE_RESOURCE_H
