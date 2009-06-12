@@ -61,7 +61,7 @@ bool ResourceManager::loadPalette(uint8 fileNum, uint32 offset) {
 		bun->setEntry(offset, ent);
 	}
 
-	uint8 palette[256 * 3];
+	byte palette[256 * 3];
 	memcpy(palette, ent->getData() + 32, 256 * 3);
 
 	_vm->getScreen()->setPalette(palette);
@@ -98,7 +98,7 @@ bool ResourceManager::loadMusic() {
 		if (offset1 == 0)
 			offset1 = musFile.readUint32LE();
 		// HACK: This will ultimately read the last entry in the bundle lookup table
-		// This will only work for file bunfles with 1 music file included (like mus.005)
+		// This will only work for file bundles with 1 music file included (like mus.005)
 		offset2 = musFile.readUint32LE();
 	}
 
@@ -122,6 +122,7 @@ GraphicResource* ResourceManager::getGraphic(uint8 fileNum, uint32 offset, uint3
 	Bundle *bun = getBundle(fileNum);
 	Bundle *ent = bun->getEntry(offset);
 	GraphicBundle *gra;
+	GraphicResource *res;
 
 	if(!ent->initialized){
 		gra = new GraphicBundle(fileNum, ent->offset, ent->size);
@@ -130,7 +131,16 @@ GraphicResource* ResourceManager::getGraphic(uint8 fileNum, uint32 offset, uint3
 		gra = (GraphicBundle*)bun->getEntry(offset);
 	}
 
-	return gra->getEntry(index);
+	res = gra->getEntry(index);
+
+	// Load the graphic data if it's not already loaded
+	if (!res->data) {
+		// FIXME: this is currently leaking
+		res->data = (byte *)malloc(res->size - 16);
+		memcpy(res->data, gra->getData() + gra->getContentOffset() + 16, res->size - 16);
+	}
+
+	return res;
 }
 
 /*

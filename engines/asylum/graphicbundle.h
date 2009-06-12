@@ -37,6 +37,7 @@ public:
 	~GraphicBundle() {}
 
 	GraphicResource* getEntry(uint32 index);
+	uint32 getContentOffset() { return _contentOffset; }
 
 protected:
 	void update();
