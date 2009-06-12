@@ -113,12 +113,32 @@ Common::Error AsylumEngine::go() {
 		}
 
 		// TODO: Just some proof-of concept to change icons here for now
+		// Top row
 		if (mouseY >= 20 && mouseY <= 20 + 48) {
 			for (int i = 0; i <= 5; i++) {
 				int curX = 40 + i * 100;
 				if (mouseX >= curX && mouseX <= curX + 55) {
 					GraphicResource *res = _resMgr->getGraphic(1, i + 4, 0);
 					_system->copyRectToScreen(res->data, res->width, curX, 20, res->width, res->height);
+				}
+			}
+		}
+
+		// Bottom row
+		if (mouseY >= 400 && mouseY <= 400 + 48) {
+			for (int i = 0; i <= 5; i++) {
+				int curX = 40 + i * 100;
+				if (mouseX >= curX && mouseX <= curX + 55) {
+					int graph = i + 10;
+
+					// The last 2 icons are swapped
+					if (graph == 14)
+						graph = 15;
+					else if (graph == 15)
+						graph = 14;
+
+					GraphicResource *res = _resMgr->getGraphic(1, graph, 0);
+					_system->copyRectToScreen(res->data, res->width, curX, 400, res->width, res->height);
 				}
 			}
 		}
