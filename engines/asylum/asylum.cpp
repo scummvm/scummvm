@@ -28,7 +28,6 @@
 #include "common/system.h"
 #include "common/file.h"
 
-#include "asylum/screen.h"
 #include "asylum/asylum.h"
 
 namespace Asylum {

@@ -161,34 +161,6 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="bundles"
-			>
-			<File
-				RelativePath="..\..\engines\asylum\bundles\bundle.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\asylum\bundles\bundle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\asylum\bundles\graphicbundle.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\asylum\bundles\graphicbundle.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="resources"
-			>
-			<File
-				RelativePath="..\..\engines\asylum\resources\resource.h"
-				>
-			</File>
-		</Filter>
 		<File
 			RelativePath="..\..\engines\asylum\asylum.cpp"
 			>
@@ -198,7 +170,23 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\asylum\bundle.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\bundle.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\asylum\detection.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\graphicbundle.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\graphicbundle.h"
 			>
 		</File>
 		<File
@@ -210,11 +198,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\screen.cpp"
+			RelativePath="..\..\engines\asylum\resource.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\screen.h"
+			RelativePath="..\..\engines\asylum\resource.h"
 			>
 		</File>
 		<File
