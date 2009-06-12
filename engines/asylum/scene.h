@@ -50,6 +50,7 @@ private:
     GamePolies *_gamePolies;
     ActionList *_actionList;
 
+    void loadWorldStats(Common::SeekableReadStream *stream);
     Common::String parseFilename(uint8 sceneIdx);
 }; // end of class Scene
 
@@ -58,6 +59,9 @@ class WorldStats {
 public:
     WorldStats() {};
     virtual ~WorldStats() {};
+
+    uint32 _size;
+    uint32 _numEntries;
 
     uint32 _numChapter;
     uint32 _commonGrResIdArray[25];
