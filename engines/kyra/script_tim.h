@@ -121,6 +121,8 @@ public:
 	TIM *load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes);
 	void unload(TIM *&tim) const;
 
+	bool callback(Common::IFFChunk &chunk);
+
 	virtual Animation *initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags);
 	virtual int freeAnimStruct(int index);
 
@@ -168,6 +170,11 @@ protected:
 	int _currentFunc;
 
 	bool _finished;
+
+	// used when loading
+	int _avtlChunkSize;
+	const char *_filename;
+	TIM *_tim;
 
 	Common::String _vocFiles[120];
 

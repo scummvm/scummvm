@@ -116,6 +116,32 @@ TIMInterpreter::~TIMInterpreter() {
 	delete[] _animations;
 }
 
+bool TIMInterpreter::callback(Common::IFFChunk &chunk) {
+	switch (chunk._type) {
+	case MKID_BE('TEXT'):
+		_tim->text = new byte[chunk._size];
+		assert(_tim->text);
+		if (chunk._stream->read(_tim->text, chunk._size) != chunk._size)
+			error("Couldn't read TEXT chunk from file '%s'", _filename);
+		break;
+
+	case MKID_BE('AVTL'):
+		_avtlChunkSize = chunk._size >> 1;
+		_tim->avtl = new uint16[_avtlChunkSize];
+		assert(_tim->avtl);
+		if (chunk._stream->read(_tim->avtl, chunk._size) != chunk._size)
+			error("Couldn't read AVTL chunk from file '%s'", _filename);
+
+		for (int i = _avtlChunkSize - 1; i >= 0; --i)
+			_tim->avtl[i] = READ_LE_UINT16(&_tim->avtl[i]);
+		break;
+
+	default:
+		warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk._type), chunk._size, _filename);
+	}
+
+}
+
 TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode *> *opcodes) {
 	if (!_vm->resource()->exists(filename))
 		return 0;
@@ -124,44 +150,21 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	if (!stream)
 		error("Couldn't open TIM file '%s'", filename);
 
+	_avtlChunkSize = 0;
+	_filename = filename;
+
+	_tim = new TIM;
+	assert(_tim);
+	memset(_tim, 0, sizeof(TIM));
+
+	_tim->procFunc = -1;
+	_tim->opcodes = opcodes;
+
 	IFFParser iff(*stream);
-	Common::IFFChunk *chunk = 0;
+	Common::Functor1Mem< Common::IFFChunk &, bool, TIMInterpreter > c(this, &TIMInterpreter::callback);
+	iff.parse(c);
 
-	TIM *tim = new TIM;
-	assert(tim);
-	memset(tim, 0, sizeof(TIM));
-
-	tim->procFunc = -1;
-	tim->opcodes = opcodes;
-
-	int avtlChunkSize = 0;
-
-	while ((chunk = iff.nextChunk()) != 0) {
-		switch (chunk->id) {
-		case MKID_BE('TEXT'):
-			tim->text = new byte[chunk->size];
-			assert(tim->text);
-			if (chunk->read(tim->text, chunk->size) != chunk->size)
-				error("Couldn't read TEXT chunk from file '%s'", filename);
-			break;
-
-		case MKID_BE('AVTL'):
-			avtlChunkSize = chunk->size >> 1;
-			tim->avtl = new uint16[avtlChunkSize];
-			assert(tim->avtl);
-			if (chunk->read(tim->avtl, chunk->size) != chunk->size)
-				error("Couldn't read AVTL chunk from file '%s'", filename);
-
-			for (int i = avtlChunkSize - 1; i >= 0; --i)
-				tim->avtl[i] = READ_LE_UINT16(&tim->avtl[i]);
-			break;
-
-		default:
-			warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk->id), chunk->size, filename);
-		}
-	}
-
-	if (!tim->avtl)
+	if (!_tim->avtl)
 		error("No AVTL chunk found in file: '%s'", filename);
 
 	if (stream->err())
@@ -169,17 +172,17 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 
 	delete stream;
 
-	int num = (avtlChunkSize < TIM::kCountFuncs) ? avtlChunkSize : (int)TIM::kCountFuncs;
+	int num = (_avtlChunkSize < TIM::kCountFuncs) ? _avtlChunkSize : (int)TIM::kCountFuncs;
 	for (int i = 0; i < num; ++i)
-		tim->func[i].avtl = tim->avtl + tim->avtl[i];
+		_tim->func[i].avtl = _tim->avtl + _tim->avtl[i];
 
-	strncpy(tim->filename, filename, 13);
-	tim->filename[12] = 0;
+	strncpy(_tim->filename, filename, 13);
+	_tim->filename[12] = 0;
 
-	tim->isLoLOutro = (_vm->gameFlags().gameID == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
-	tim->lolCharacter = 0;
+	_tim->isLoLOutro = (_vm->gameFlags().gameID == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
+	_tim->lolCharacter = 0;
 
-	return tim;
+	return _tim;
 }
 
 void TIMInterpreter::unload(TIM *&tim) const {
