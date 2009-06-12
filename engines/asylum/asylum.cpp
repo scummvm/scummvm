@@ -125,7 +125,9 @@ void AsylumEngine::showMainMenu() {
 	GraphicResource *cur = _resMgr->getGraphic(1, 2)->getEntry(0);
 
 	_system->setMouseCursor(cur->data, cur->width, cur->height, 1, 1, 0);
-	_system->setCursorPalette(pal->getPalette(), 0, 1024);
+	// FIXME: is there any reason why the cursor palette is set here, 
+	// when it's the same as the rest of the game's palette?
+	//_system->setCursorPalette(pal->getPalette(), 0, 1024);
 	_system->showMouse(true);
 
 	_screen->setFrontBuffer(
