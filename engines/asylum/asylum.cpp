@@ -24,6 +24,10 @@
 #include "common/system.h"
 #include "common/file.h"
 
+#include "common/stream.h"
+#include "sound/audiostream.h"
+#include "sound/wave.h"
+
 #include "asylum/asylum.h"
 #include "asylum/screen.h"
 #include "asylum/resources/video.h"
@@ -35,6 +39,7 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
     Common::File::addDefaultDirectory(_gameDataDir.getChild("Data"));
     Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("Music"));
 
     _eventMan->registerRandomSource(_rnd, "asylum");
 }
@@ -118,6 +123,40 @@ Common::Error AsylumEngine::go() {
 }
 
 void AsylumEngine::showMainMenu() {
+
+
+	// Music - start
+
+	// Just play some music for now
+	// FIXME: this should be moved to the bundle manager, but currently the whole manager needs
+	// an overhaul...
+	Common::File musFile;
+	musFile.open("mus.005");
+	uint32 entryCount = musFile.readUint32LE();
+	uint32 offset1 = 0;
+	uint32 offset2 = 0;
+	for (uint32 i = 0; i < entryCount; i++) {
+		if (offset1 == 0)
+			offset1 = musFile.readUint32LE();
+		// HACK: This will ultimately read the last entry in the bundle lookup table
+		// This will only work for file bunfles with 1 music file included (like mus.005)
+		offset2 = musFile.readUint32LE();
+	}
+
+	byte *buffer = new byte[offset2 - offset1];
+	musFile.read(buffer, offset2 - offset1);
+	musFile.close();
+
+	Common::MemoryReadStream *mem = new Common::MemoryReadStream(buffer, offset2 - offset1);
+
+	// Now create the audio stream and play it (it's just a regular WAVE file)
+	Audio::AudioStream *mus = Audio::makeWAVStream(mem, true);
+	Audio::SoundHandle _musicHandle;
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, mus);
+
+	// Music - end
+
+
 	// eyes animation index table
 	//const uint32 eyesTable[8] = {3, 5, 1, 7, 4, 8, 2, 6};
 	PaletteBundle   *pal = _resMgr->getPalette(1, 17);
