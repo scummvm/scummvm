@@ -78,9 +78,13 @@ Common::Error AsylumEngine::init() {
 }
 
 Common::Error AsylumEngine::go() {
-	// Play intro movie
 	int mouseX = 0, mouseY = 0;
+	Audio::SoundHandle sfxHandle;
+	int activeIcon = -1;
+	int previousActiveIcon = -1;
 
+	// Play intro movie
+	// Disabled for quick testing
 	//_resMgr->loadVideo(0);
 
 	showMainMenu();
@@ -116,34 +120,55 @@ Common::Error AsylumEngine::go() {
 		}
 
 		// TODO: Just some proof-of concept to change icons here for now
-		// Top row
 		if (mouseY >= 20 && mouseY <= 20 + 48) {
+			// Top row
 			for (int i = 0; i <= 5; i++) {
 				int curX = 40 + i * 100;
 				if (mouseX >= curX && mouseX <= curX + 55) {
 					GraphicResource *res = _resMgr->getGraphic(1, i + 4, 0);
 					_system->copyRectToScreen(res->data, res->width, curX, 20, res->width, res->height);
+
+					activeIcon = i;
+
+					// Play creepy voice
+					if (!_mixer->isSoundHandleActive(sfxHandle) && activeIcon != previousActiveIcon) {
+						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &sfxHandle, _resMgr->loadSFX(1, i + 44));
+						previousActiveIcon = activeIcon;
+					}
+
+					break;
 				}
 			}
-		}
-
-		// Bottom row
-		if (mouseY >= 400 && mouseY <= 400 + 48) {
+		} else if (mouseY >= 400 && mouseY <= 400 + 48) {
+			// Bottom row
 			for (int i = 0; i <= 5; i++) {
 				int curX = 40 + i * 100;
 				if (mouseX >= curX && mouseX <= curX + 55) {
-					int graph = i + 10;
+					int iconNum = i + 10;
 
 					// The last 2 icons are swapped
-					if (graph == 14)
-						graph = 15;
-					else if (graph == 15)
-						graph = 14;
+					if (iconNum == 14)
+						iconNum = 15;
+					else if (iconNum == 15)
+						iconNum = 14;
 
-					GraphicResource *res = _resMgr->getGraphic(1, graph, 0);
+					GraphicResource *res = _resMgr->getGraphic(1, iconNum, 0);
 					_system->copyRectToScreen(res->data, res->width, curX, 400, res->width, res->height);
+
+					activeIcon = i + 6;
+
+					// Play creepy voice
+					if (!_mixer->isSoundHandleActive(sfxHandle) && activeIcon != previousActiveIcon) {
+						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &sfxHandle, _resMgr->loadSFX(1, iconNum + 40));
+						previousActiveIcon = activeIcon;
+					}
+
+					break;
 				}
 			}
+		} else {
+			// No selection
+			previousActiveIcon = activeIcon = -1;
 		}
 
 		if (_system->getMillis() - lastUpdate > 50) {

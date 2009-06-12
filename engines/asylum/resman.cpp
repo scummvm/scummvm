@@ -91,6 +91,23 @@ bool ResourceManager::loadCursor(uint8 fileNum, uint32 offet, uint32 index) {
 	return true;
 }
 
+Audio::AudioStream *ResourceManager::loadSFX(uint8 fileNum, uint32 offset) {
+	// FIXME: This doesn't make sense semantically. On one hand, we got a bundle, a file
+	// containing multiple files. Then, on the other hand, we got a file inside that bundle,
+	// which is a bundle again! The file in the bundle should be a resource, not another bundle, 
+	// i.e. getEntry() is wrong here
+	Bundle *bun = getBundle(fileNum);
+	Bundle *ent = bun->getEntry(offset);
+
+	if(!ent->initialized){
+		ent = new Bundle(fileNum, ent->offset, ent->size);
+		bun->setEntry(offset, ent);
+	}
+
+	Common::MemoryReadStream *mem = new Common::MemoryReadStream(ent->getData(), ent->size);
+	return Audio::makeWAVStream(mem, true);
+}
+
 bool ResourceManager::loadMusic() {
 	// TODO ACTUALLY implement music loading (not just this test)
 	// TODO Add control methods (stop/start/restart?)

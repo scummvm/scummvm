@@ -52,6 +52,7 @@ public:
 	bool loadSound(uint8 fileNum, uint32 offset);
 	bool loadMusic();
 	bool loadVideo(uint8 fileNum);
+	Audio::AudioStream *loadSFX(uint8 fileNum, uint32 offset);
 
 private:
 	Common::Array<Bundle> _bundleCache;
