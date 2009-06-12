@@ -240,7 +240,7 @@ protected:
 	}
 
 public:
-	IFFParser(Common::ReadStream *stream, bool disposeStream = false) : _stream(stream), _disposeStream(stream) {
+	IFFParser(Common::ReadStream *stream, bool disposeStream = false) : _stream(stream), _disposeStream(disposeStream) {
 		setInputStream(stream);
 	}
 	~IFFParser() {
