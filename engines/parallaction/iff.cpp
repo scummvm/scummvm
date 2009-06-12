@@ -73,7 +73,6 @@ void IFFParser::parse(IFFCallback &callback) {
 
 		// eats up all the remaining data in the chunk
 		while (!stream.eos()) {
-			printf("attemping to eat data in chunk\n");
 			stream.readByte();
 		}
 
