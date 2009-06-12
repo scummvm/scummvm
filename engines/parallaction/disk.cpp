@@ -1,6 +1,30 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include "parallaction/disk.h"
 #include "parallaction/graphics.h"
-#include "parallaction/iff.h"
 
 namespace Parallaction {
 
@@ -13,7 +37,7 @@ void ILBMLoader::setupBuffer(uint32 w, uint32 h) {
 			assert(_surf);
 		}
 		_surf->create(w, h, 1);
-		_mode  = ILBMDecoder::ILBM_UNPACK_PLANES;
+		_mode  = Graphics::ILBMDecoder::ILBM_UNPACK_PLANES;
 		_intBuffer = (byte*)_surf->pixels;
 		break;
 
@@ -23,7 +47,7 @@ void ILBMLoader::setupBuffer(uint32 w, uint32 h) {
 			assert(_maskBuffer);
 		}
 		_maskBuffer->create(w, h);
-		_mode  = ILBMDecoder::ILBM_2_PACK_PLANES;
+		_mode  = Graphics::ILBMDecoder::ILBM_2_PACK_PLANES;
 		_intBuffer = _maskBuffer->data;
 		break;
 
@@ -33,7 +57,7 @@ void ILBMLoader::setupBuffer(uint32 w, uint32 h) {
 			assert(_pathBuffer);
 		}
 		_pathBuffer->create(w, h);
-		_mode  = ILBMDecoder::ILBM_1_PACK_PLANES;
+		_mode  = Graphics::ILBMDecoder::ILBM_1_PACK_PLANES;
 		_intBuffer = _pathBuffer->data;
 		break;
 
@@ -43,7 +67,7 @@ void ILBMLoader::setupBuffer(uint32 w, uint32 h) {
 	}
 }
 
-bool ILBMLoader::callback(IFFChunk &chunk) {
+bool ILBMLoader::callback(Common::IFFChunk &chunk) {
 	switch (chunk._type) {
 	case ID_BMHD:
 		_decoder.loadHeader(chunk._stream);
@@ -77,8 +101,8 @@ bool ILBMLoader::callback(IFFChunk &chunk) {
 }
 
 void ILBMLoader::load(Common::ReadStream *in, bool disposeStream) {
-	IFFParser parser(in, disposeStream);
-	Common::Functor1Mem< IFFChunk&, bool, ILBMLoader > c(this, &ILBMLoader::callback);
+	Common::IFFParser parser(in, disposeStream);
+	Common::Functor1Mem< Common::IFFChunk&, bool, ILBMLoader > c(this, &ILBMLoader::callback);
 	parser.parse(c);
 }
 

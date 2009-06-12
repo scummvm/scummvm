@@ -47,24 +47,22 @@ struct A8SVXLoader {
 	uint32 _dataSize;
 
 	void load(Common::ReadStream &input) {
-		Common::IFFParser parser(input);
-		Common::IFFChunk *chunk;
-		while (chunk = parser.nextChunk()) {
-			callback(*chunk);
-		}
+		Common::IFFParser parser(&input);
+		Common::Functor1Mem< Common::IFFChunk&, bool, A8SVXLoader > c(this, &A8SVXLoader::callback);
+		parser.parse(c);
 	}
 
 	bool callback(Common::IFFChunk &chunk) {
-		switch (chunk.id) {
+		switch (chunk._type) {
 		case ID_VHDR:
-			_header.load(chunk);
+			_header.load(*chunk._stream);
 			break;
 
 		case ID_BODY:
-			_dataSize = chunk.size;
+			_dataSize = chunk._size;
 			_data = (int8*)malloc(_dataSize);
 			assert(_data);
-			loadData(&chunk);
+			loadData(chunk._stream);
 			return true;
 		}
 

@@ -27,6 +27,7 @@
 
 #include "common/scummsys.h"
 #include "common/endian.h"
+#include "common/func.h"
 #include "common/stream.h"
 #include "common/util.h"
 
@@ -145,89 +146,158 @@ page 376) */
 char * ID2string(Common::IFF_ID id);
 
 
-class IFFChunk : public Common::ReadStream {
+/**
+ *  Represents a IFF chunk available to client code.
+ *
+ *  Client code must *not* deallocate _stream when done.
+ */
+struct IFFChunk {
+	Common::IFF_ID			_type;
+	uint32					_size;
+	Common::ReadStream		*_stream;
 
-protected:
-	Common::ReadStream *_input;
-	uint32 bytesRead;
-
-public:
-	IFF_ID id;
-	uint32 size;
-
-	IFFChunk(Common::ReadStream *input): _input(input) {
-		size = bytesRead = 0;
+	IFFChunk(Common::IFF_ID type, uint32 size, Common::ReadStream *stream) : _type(type), _size(size), _stream(stream) {
+		assert(_stream);
 	}
-
-	void incBytesRead(uint32 inc) {
-		bytesRead += inc;
-		if (bytesRead > size) {
-			error("Chunk '%s' overread", ID2string(id));
-		}
-	}
-
-	void readHeader() {
-		id = _input->readUint32BE();
-		size = _input->readUint32BE();
-		bytesRead = 0;
-	}
-
-	bool hasReadAll() const {
-		return (size - bytesRead) == 0;
-	}
-
-	void feed() {
-		if (size % 2) {
-			size++;
-		}
-		while (!hasReadAll()) {
-			readByte();
-		}
-	}
-
-	// Common::ReadStream implementation
-	bool eos() const { return _input->eos(); }
-	bool err() const { return _input->err(); }
-	void clearErr() { _input->clearErr(); }
-
-	uint32 read(void *dataPtr, uint32 dataSize) {
-		incBytesRead(dataSize);
-		return _input->read(dataPtr, dataSize);
-	}
-
 };
 
+/**
+ *  Parser for IFF containers.
+ */
 class IFFParser {
-public:
-	IFFParser(Common::ReadStream &input) : _formChunk(&input), _chunk(&input) {
+
+	/**
+	 *  This private class implements IFF chunk navigation.
+	 */
+	class IFFChunkNav : public Common::ReadStream {
+	protected:
+		Common::ReadStream *_input;
+		uint32 _bytesRead;
+	public:
+		Common::IFF_ID id;
+		uint32 size;
+
+		IFFChunkNav() : _input(0) {
+		}
+		void setInputStream(Common::ReadStream *input) {
+			_input = input;
+			size = _bytesRead = 0;
+		}
+		void incBytesRead(uint32 inc) {
+			_bytesRead += inc;
+			if (_bytesRead > size) {
+				error("Chunk overread");
+			}
+		}
+		void readHeader() {
+			id = _input->readUint32BE();
+			size = _input->readUint32BE();
+			_bytesRead = 0;
+		}
+		bool hasReadAll() const {
+			return (size - _bytesRead) == 0;
+		}
+		void feed() {
+			if (size % 2) {
+				size++;
+			}
+			while (!hasReadAll()) {
+				readByte();
+			}
+		}
+		// Common::ReadStream implementation
+		bool eos() const { return _input->eos(); }
+		bool err() const { return _input->err(); }
+		void clearErr() { _input->clearErr(); }
+
+		uint32 read(void *dataPtr, uint32 dataSize) {
+			incBytesRead(dataSize);
+			return _input->read(dataPtr, dataSize);
+		}
+	};
+
+	IFFChunkNav _formChunk;	//!< The root chunk of the file.
+	IFFChunkNav _chunk; 	//!< The current chunk.
+
+	Common::ReadStream *_stream;
+	bool _disposeStream;
+
+	void setInputStream(Common::ReadStream *stream) {
+		assert(stream);
+		_formChunk.setInputStream(stream);
+		_chunk.setInputStream(stream);
+
 		_formChunk.readHeader();
 		if (_formChunk.id != ID_FORM) {
 			error("IFFParser input is not a FORM type IFF file");
 		}
-		_typeId = _formChunk.readUint32BE();
+		_formSize = _formChunk.size;
+		_formType = _formChunk.readUint32BE();
 	}
 
-	virtual ~IFFParser() {}
-
-	IFFChunk *nextChunk() {
-		_chunk.feed();
-		_formChunk.incBytesRead(_chunk.size);
-
-		if (_formChunk.hasReadAll())
-			return 0;
-
-		_formChunk.incBytesRead(8);
-		_chunk.readHeader();
-
-		return &_chunk;
+public:
+	IFFParser(Common::ReadStream *stream, bool disposeStream = false) : _stream(stream), _disposeStream(stream) {
+		setInputStream(stream);
+	}
+	~IFFParser() {
+		if (_disposeStream) {
+			delete _stream;
+		}
+		_stream = 0;
 	}
 
-	IFF_ID	_typeId;
+	/**
+	 * Returns the IFF FORM type.
+	 * @return the IFF FORM type of the stream, or 0 if FORM header is not found.
+	 */
+	Common::IFF_ID getFORMType() const;
 
-protected:
-	IFFChunk	_formChunk;
-	IFFChunk	_chunk;
+	/**
+	 * Returns the size of the data.
+	 * @return the size of the data in file, or -1 if FORM header is not found.
+	 */
+	uint32 getFORMSize() const;
+
+	/**
+	 * Callback type for the parser.
+	 */
+	typedef Common::Functor1< IFFChunk&, bool > IFFCallback;
+
+	/**
+	 * Parse the IFF container, invoking the callback on each chunk encountered.
+	 * The callback can interrupt the parsing by returning 'true'.
+	 */
+	void parse(IFFCallback &callback) {
+		bool stop;
+		do {
+			_chunk.feed();
+			_formChunk.incBytesRead(_chunk.size);
+
+			if (_formChunk.hasReadAll()) {
+				break;
+			}
+
+			_formChunk.incBytesRead(8);
+			_chunk.readHeader();
+
+			// invoke the callback
+			Common::SubReadStream stream(&_chunk, _chunk.size);
+			IFFChunk chunk(_chunk.id, _chunk.size, &stream);
+			stop = callback(chunk);
+
+			// eats up all the remaining data in the chunk
+			while (!stream.eos()) {
+				stream.readByte();
+			}
+
+		} while (!stop);
+	}
+
+private:
+	uint32 _formSize;
+	Common::IFF_ID _formType;
 };
+
 
 } // namespace Common
 

@@ -23,7 +23,6 @@
  *
  */
 
-#include "parallaction/iff.h"
 #include "common/config-manager.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"

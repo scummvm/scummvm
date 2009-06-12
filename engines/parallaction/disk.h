@@ -33,7 +33,7 @@
 #include "common/file.h"
 
 #include "graphics/surface.h"
-#include "parallaction/iff.h"
+#include "graphics/iff.h"
 
 
 
@@ -99,14 +99,14 @@ struct ILBMLoader {
 	uint32 _mode;
 	byte* _intBuffer;
 	uint32 _numCRNG;
-	ILBMDecoder _decoder;
+	Graphics::ILBMDecoder _decoder;
 
 	ILBMLoader(uint32 bodyMode, byte *palette = 0, PaletteFxRange *crng = 0);
 	ILBMLoader(Graphics::Surface *surf, byte *palette = 0, PaletteFxRange *crng = 0);
 	ILBMLoader(MaskBuffer *buffer);
 	ILBMLoader(PathBuffer *buffer);
 
-	bool callback(IFFChunk &chunk);
+	bool callback(Common::IFFChunk &chunk);
 	void setupBuffer(uint32 w, uint32 h);
 	void load(Common::ReadStream *in, bool disposeStream = false);
 };

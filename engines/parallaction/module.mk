@@ -19,7 +19,6 @@ MODULE_OBJS := \
 	gui.o \
 	gui_br.o \
 	gui_ns.o \
-	iff.o \
 	input.o \
 	inventory.o \
 	objects.o \
