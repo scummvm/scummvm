@@ -136,8 +136,12 @@ int DraciEngine::go() {
 	testString = "I'm smaller than the font above me.";
 	font.drawString(surf, testString, 
 		(320 - font.getStringWidth(testString, 1)) / 2, 150, 1);
-	_system->unlockScreen();
 
+	// Overflow handling test
+	testString = "Checking overflooooooooooooooooooooooooow...";
+	font.drawString(surf, testString, 50, 170, 1);
+
+	_system->unlockScreen();
 	_system->updateScreen();
 
 	// Draw and animate the dragon

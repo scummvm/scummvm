@@ -166,6 +166,12 @@ void DraciFont::drawString(Graphics::Surface *dst, Common::String &str,
 	uint len = str.size();
 
 	for (unsigned int i = 0; i < len; ++i) {
+		
+		// Return early if there's no more space on the screen	
+		if (curx >= dst->w) {
+			return;
+		}		
+			
 		drawChar(dst, str[i], curx, y);
 		curx += getCharWidth(str[i]) + spacing;
 	}
