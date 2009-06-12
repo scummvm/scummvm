@@ -44,7 +44,8 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
-	delete _resMgr;
+	delete _scene;
+    delete _resMgr;
 	_backBuffer.free();
 }
 
@@ -64,6 +65,7 @@ Common::Error AsylumEngine::init() {
 	_backBuffer.create(640, 480, 1);
 
 	_resMgr = new ResourceManager(this);
+    _scene = new Scene(this);
 
 	// initializing game
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
@@ -86,6 +88,9 @@ Common::Error AsylumEngine::go() {
 	// Play intro movie
 	// Disabled for quick testing
 	//_resMgr->loadVideo(0);
+
+    // TODO: just some scene proof-of-concept
+    _scene->load(5);
 
 	showMainMenu();
 

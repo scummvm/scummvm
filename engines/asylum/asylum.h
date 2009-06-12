@@ -28,10 +28,12 @@
 
 #include "engines/engine.h"
 #include "asylum/resman.h"
+#include "asylum/scene.h"
 #include "graphics/surface.h"
 
 namespace Asylum {
 
+class Scene;
 class ResourceManager;
 class Screen;
 class Menu;
@@ -56,6 +58,8 @@ private:
 
     ResourceManager *_resMgr;
 	Graphics::Surface _backBuffer;
+
+    Scene *_scene;
 
     void showMainMenu();
 
