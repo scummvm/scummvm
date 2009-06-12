@@ -26,6 +26,7 @@
 
 #include "asylum/asylum.h"
 #include "asylum/screen.h"
+#include "asylum/resources/video.h"
 
 namespace Asylum {
 
@@ -42,6 +43,7 @@ AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
     delete _screen;
 	delete _resMgr;
+	delete _video;
 }
 
 Common::Error AsylumEngine::run() {
@@ -58,6 +60,7 @@ Common::Error AsylumEngine::init() {
 
 	_screen = new Screen(_system);
 	_resMgr = new ResourceManager;
+	_video = new Video(this);
 
 	// initializing game
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
@@ -66,13 +69,14 @@ Common::Error AsylumEngine::init() {
 	// TODO: setup cinematics (address 0041A880) (probably we won't need it)
 	// TODO: init unknown game stuffs (address 0040F430)
 
-	// TODO: load smaker intro movie (0)->(mov000.smk)
 	// TODO: if savegame exists on folder, than start NewGame()
 
     return Common::kNoError;
 }
 
 Common::Error AsylumEngine::go() {
+	// Play intro movie
+	_video->playVideo("mov000.smk");
 
 	showMainMenu();
 

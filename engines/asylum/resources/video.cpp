@@ -19,43 +19,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef ASYLUM_ENGINE_H
-#define ASYLUM_ENGINE_H
-
-#include "engines/engine.h"
-
-#include "asylum/resman.h"
+#include "asylum/resources/video.h"
 
 namespace Asylum {
 
-class Screen;
-class Menu;
-class Video;
+Video::Video(AsylumEngine *vm) : _vm(vm) {
+	Common::Event stopEvent;
+	_stopEvents.clear();
+	stopEvent.type = Common::EVENT_KEYDOWN;
+	stopEvent.kbd = Common::KEYCODE_ESCAPE;
+	_stopEvents.push_back(stopEvent);
 
-class AsylumEngine: public Engine {
-public:
+	_smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
+	_player = new Graphics::VideoPlayer(_smkDecoder);
+}
 
-    AsylumEngine(OSystem *system, Common::Language language);
-    virtual ~AsylumEngine();
+Video::~Video() {
+	delete _player;
+	delete _smkDecoder;
+}
 
-    // Engine APIs
-    Common::Error init();
-    Common::Error go();
-    virtual Common::Error run();
-    virtual bool hasFeature(EngineFeature f) const;
+bool Video::playVideo(const char *filename) {
+	bool result = _smkDecoder->loadFile(filename);
 
-private:
-    Common::Language     _language;
-    Common::RandomSource _rnd;
+	// TODO: hide mouse
+	if (result)
+		_player->playVideo(_stopEvents);
+	_smkDecoder->closeFile();
+	// TODO: show mouse
 
-    ResourceManager *_resMgr;
-    Screen          *_screen;
-	Video			*_video;
+	return result;
+}
 
-    void showMainMenu();
-
-};
-
-} // namespace Asylum
-
-#endif
+} // end of namespace Asylum
