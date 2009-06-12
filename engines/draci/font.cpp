@@ -59,10 +59,8 @@ DraciFont::~DraciFont() {
 
 bool DraciFont::setFont(Common::String &filename) {
 	
-	// If there is a font already loaded, free it
-	if (_charData) {
-		freeFont();
-	}
+	// Free previously loaded font (if any)
+	freeFont();
 
 	Common::File f;
 
@@ -98,8 +96,11 @@ bool DraciFont::setFont(Common::String &filename) {
 }
 
 void DraciFont::freeFont() {
-	delete[] _charWidths;
-	delete[] _charData;
+	// If there is a font already loaded, free it
+	if (_charData) {	
+		delete[] _charWidths;
+		delete[] _charData;
+	}
 }
 
 uint8 DraciFont::getCharWidth(uint8 chr) const {
