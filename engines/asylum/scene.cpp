@@ -31,6 +31,8 @@ Scene::Scene(AsylumEngine *vm): _vm(vm) {
 }
 
 Scene::~Scene() {
+    if(_worldStats)
+        delete _worldStats;
 }
 
 bool Scene::load(uint8 sceneIdx){
@@ -68,12 +70,14 @@ bool Scene::load(uint8 sceneIdx){
 // FIXME: load necessary World Stats content
 void Scene::loadWorldStats(Common::SeekableReadStream *stream){
     _worldStats = new WorldStats;
+
     _worldStats->_size = stream->readUint32LE();
     _worldStats->_numEntries = stream->readUint32LE();
     _worldStats->_numChapter = stream->readUint32LE();
     
     stream->skip(24); //unUsed data
     
+    // read common graphic resources index (always 25)
     for(int i=0; i < 25; i++){
         _worldStats->_commonGrResIdArray[i] = stream->readUint32LE();
     }
