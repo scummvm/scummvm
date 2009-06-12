@@ -19,43 +19,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef ASYLUM_ENGINE_H
-#define ASYLUM_ENGINE_H
+#ifndef ASYLUM_VIDEO_H_
+#define ASYLUM_VIDEO_H_
 
-#include "engines/engine.h"
+#include "sound/mixer.h"
+#include "graphics/surface.h"
+#include "graphics/video/smk_decoder.h"
 
-#include "asylum/resman.h"
+#include "common/events.h"
+#include "common/system.h"
+#include "common/list.h"
+
+#include "asylum/asylum.h"
 
 namespace Asylum {
 
-class Screen;
-class Menu;
-class Video;
-
-class AsylumEngine: public Engine {
+class Video {
 public:
+	Video(AsylumEngine *vm);
+	virtual ~Video();
 
-    AsylumEngine(OSystem *system, Common::Language language);
-    virtual ~AsylumEngine();
-
-    // Engine APIs
-    Common::Error init();
-    Common::Error go();
-    virtual Common::Error run();
-    virtual bool hasFeature(EngineFeature f) const;
+	bool playVideo(const char *filename);
 
 private:
-    Common::Language     _language;
-    Common::RandomSource _rnd;
+	Common::List<Common::Event> _stopEvents;
+	Graphics::SmackerDecoder *_smkDecoder;
+	Graphics::VideoPlayer *_player;
+	AsylumEngine *_vm;
+}; // end of class Video
 
-    ResourceManager *_resMgr;
-    Screen          *_screen;
-	Video			*_video;
-
-    void showMainMenu();
-
-};
-
-} // namespace Asylum
+} // end of namespace Asylum
 
 #endif

@@ -9,7 +9,8 @@ MODULE_OBJS := \
 	bundles/graphicbundle.o \
 	bundles/palettebundle.o \
 	resources/resource.o \
-	resources/graphic.o
+	resources/graphic.o \
+	resources/movie.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)

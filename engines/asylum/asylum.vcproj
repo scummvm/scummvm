@@ -208,6 +208,14 @@
 				RelativePath="..\..\engines\asylum\resources\resource.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\engines\asylum\resources\video.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\asylum\resources\video.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\engines\asylum\asylum.cpp"
