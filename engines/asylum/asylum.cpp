@@ -131,8 +131,8 @@ void AsylumEngine::checkForEvent() {
 				g_system->getEventManager()->pushEvent(event);
 			}
 		}
-		_state->handleEvent(&ev);
 	}
+	_state->handleEvent(&ev);
 }
 
 void AsylumEngine::copyToBackBuffer(byte *buffer, int x, int y, int width, int height) {
