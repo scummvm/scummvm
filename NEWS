@@ -3,95 +3,95 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 0.14.0 (2009-??-??)
  New Games:
-   - Added support for Discworld
-   - Added support for Discworld 2 - Missing Presumed ...!?
-   - Added support for Return to Zork
-   - Added support for Leather Goddesses of Phobos 2
-   - Added support for The Manhole
-   - Added support for Rodney's Funscreen
+   - Added support for Discworld.
+   - Added support for Discworld 2 - Missing Presumed ...!?.
+   - Added support for Return to Zork.
+   - Added support for Leather Goddesses of Phobos 2.
+   - Added support for The Manhole.
+   - Added support for Rodney's Funscreen.
 
  General:
-   - Added experimental AdLib emulator from DOSBox
-   - Added quick search to Launcher
-   - Improved modern GUI theme look
-   - Added per-game GUI options
-   - Improved Mass Add dialog
+   - Added experimental AdLib emulator from DOSBox.
+   - Added quick search to Launcher.
+   - Improved modern GUI theme look.
+   - Added per-game GUI options.
+   - Improved Mass Add dialog.
 
  AGI:
-   - Increased compatibility for Sierra games
-   - Implemented all 'unknown' commands
+   - Increased compatibility for Sierra games.
+   - Implemented all 'unknown' commands.
 
  Beneath a Steel Sky:
    - Changed the game speed to match the original game (previously
-     it ran too fast)
+     it ran too fast).
 
  Broken Sword 1:
-   - Added support for the original cutscenes
-   - Dropped support for the now obsolete MPEG2 cutscenes
-   - Added support for the PlayStation version
+   - Added support for the original cutscenes.
+   - Dropped support for the now obsolete MPEG2 cutscenes.
+   - Added support for the PlayStation version.
 
  Broken Sword 2:
-   - Added support for the original cutscenes
-   - Dropped support for the now obsolete MPEG2 cutscenes
-   - Dropped support for playing cutscene sound without the video
-   - Added support for the PlayStation version
+   - Added support for the original cutscenes.
+   - Dropped support for the now obsolete MPEG2 cutscenes.
+   - Dropped support for playing cutscene sound without the video.
+   - Added support for the PlayStation version.
 
  KYRA:
-   - Added support for PC Speaker based music and sound effects
+   - Added support for PC Speaker based music and sound effects.
 
  New Ports:
-   - Added GP2X Wiz port
+   - Added GP2X Wiz port.
 
 0.13.1 (2009-04-27)
  AGOS:
-    - Fixed crash after OmniTV video is played in The Feeble Files
+    - Fixed crash after OmniTV video is played in The Feeble Files.
     - Fixed crashes when exploring Jack the Ripper scene in the PC version of
-      the Waxworks
-    - Fixed palette glitches in the AtariST version of Elvira 2
+      the Waxworks.
+    - Fixed palette glitches in the AtariST version of Elvira 2.
     - Fixed noise that can occur when sound effects are played, when exploring
-      Pyramid scene in the Waxworks
+      Pyramid scene in the Waxworks.
 
  Gob:
-    - Fixed a crash in the Italian version of Woodruff
+    - Fixed a crash in the Italian version of Woodruff.
 
  Groovie:
-    - Fixed some issues with music in The 7th Guest
+    - Fixed some issues with music in The 7th Guest.
 
  Parallaction:
-    - Fixed the sarcophagus puzzle in Nippon Safes
+    - Fixed the sarcophagus puzzle in Nippon Safes.
 
  SAGA:
-    - Fixed a crash in Inherit the Earth
+    - Fixed a crash in Inherit the Earth.
     - Fixed glitches in the save/load dialog.
 
  Sword2:
     - Fixed random sound corruption when using the original sound files.
 
  Game launcher:
-   - Fixed a case where memory could be corrupted
-   - Fixed the small cursor in the modern theme
-   - Fixed a bug in the theme engine, which could cause crashes
-   - Made the file browser bigger in 1x mode
+   - Fixed a case where memory could be corrupted.
+   - Fixed the small cursor in the modern theme.
+   - Fixed a bug in the theme engine, which could cause crashes.
+   - Made the file browser bigger in 1x mode.
 
  iPhone port:
-    - Fixed backspace handling on the iPhone soft keyboard
+    - Fixed backspace handling on the iPhone soft keyboard.
 
  DS port:
-     - Added support for the Global Main Menu feature
+     - Added support for the Global Main Menu feature.
 
  PS2 port:
-    - Switched to the new GUI and theme code
+    - Switched to the new GUI and theme code.
     - All possible devices are supported to store, play and save games
-      (CD, HD, USB, MC and remote)
-    - Optimized cache/read-ahead for every media
-    - Added support for the Return to Launcher feature
+      (CD, HD, USB, MC and remote).
+    - Optimized cache/read-ahead for every media.
+    - Added support for the Return to Launcher feature.
 
  Symbian port:
-    - Added Bluetooth mouse support
-    - Added support for the Return to Launcher feature
+    - Added Bluetooth mouse support.
+    - Added support for the Return to Launcher feature.
 
  WinCE port:
-    - Fixed an issue which could cause random crashes with VGA devices
+    - Fixed an issue which could cause random crashes with VGA devices.
 
 0.13.0 (2009-02-28)
  General:
@@ -109,17 +109,17 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for The 7th Guest.
 
  AGOS:
-    - Added support for the original cutscenes of The Feeble Files
-    - Added support for text compression in the AtariST version of Elvira 1
-    - Fixed combining items in Waxworks
-    - Fixed display of spell descriptions in Elvira 2
+    - Added support for the original cutscenes of The Feeble Files.
+    - Added support for text compression in the AtariST version of Elvira 1.
+    - Fixed combining items in Waxworks.
+    - Fixed display of spell descriptions in Elvira 2.
 
  KYRA:
    - Added support for Auto-save feature.
    - Added support for MIDI music.
 
  Parallaction:
-    - Credits of the Nippon Safes Amiga demo are now shown correctly
+    - Credits of the Nippon Safes Amiga demo are now shown correctly.
 
  SCUMM:
    - Implemented radio-chatter effect in The DIG.
@@ -139,7 +139,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added CAMD MIDI driver for AmigaOS4.
    - Revived the PS2 port (was already in 0.11.1 but was forgotten in the
      release notes).
-   - Plugged numerous memory leaks in all engines (part of GSoC'08 task),
+   - Plugged numerous memory leaks in all engines (part of GSoC'08 task).
    - Added audio double buffering to the SDL backend, which fixes the
      problems with the MT-32 emulator on Mac OS X (for now only enabled
      on Mac OS X).
@@ -441,7 +441,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed sound distortion in the Inherit the Earth demo.
 
  Simon
-   - Improved Hebrew support
+   - Improved Hebrew support.
    - Lots of long-overdue cleanups and re-structuring were made to accomodate
      for The Feeble Files.
    - Fixed a rare MIDI bug that would cause a channel to change volume without
