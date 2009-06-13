@@ -80,9 +80,10 @@ MenuState::MenuState(AsylumEngine *vm): State(vm) {
 
 	_vm->_system->setPalette(palette, 0, 256);
 
+	// Copy the background to the back buffer
+	GraphicResource *bg = _resMgr->getGraphic(1, 0, 0);
+	_vm->copyToBackBuffer(bg->data, 0, 0, bg->width, bg->height);
 
-	_resMgr->loadGraphic(1, 0, 0);
-	//_resMgr->loadPalette(1, 17);
 	_resMgr->loadCursor(1, 2, 0);
 
 	ResourceEntry *musicResource = _musPack->getResource(0);
@@ -123,7 +124,14 @@ void MenuState::update() {
 
 				// Play creepy voice
 				if (!_vm->_mixer->isSoundHandleActive(_sfxHandle) && _activeIcon != _previousActiveIcon) {
-					_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _resMgr->loadSFX(1, i + 44));
+					// TODO: This should be moved to a sound-related class
+					ResourceEntry *sfxResource = _resPack->getResource(i + 44);
+					Common::MemoryReadStream *mem = new Common::MemoryReadStream(sfxResource->data, sfxResource->size);
+
+					// Now create the audio stream and play it (it's just a regular WAVE file)
+					Audio::AudioStream *sfx = Audio::makeWAVStream(mem, true);
+					_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, sfx);
+
 					_previousActiveIcon = _activeIcon;
 				}
 
@@ -161,7 +169,14 @@ void MenuState::update() {
 
 				// Play creepy voice
 				if (!_vm->_mixer->isSoundHandleActive(_sfxHandle) && _activeIcon != _previousActiveIcon) {
-					_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _resMgr->loadSFX(1, iconNum + 40));
+					// TODO: This should be moved to a sound-related class
+					ResourceEntry *sfxResource = _resPack->getResource(iconNum + 40);
+					Common::MemoryReadStream *mem = new Common::MemoryReadStream(sfxResource->data, sfxResource->size);
+
+					// Now create the audio stream and play it (it's just a regular WAVE file)
+					Audio::AudioStream *sfx = Audio::makeWAVStream(mem, true);
+					_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, sfx);
+
 					_previousActiveIcon = _activeIcon;
 				}
 

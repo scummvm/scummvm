@@ -43,14 +43,6 @@ bool ResourceManager::loadVideo(uint8 fileNum) {
 	return _video->playVideo(fileNum);
 }
 
-bool ResourceManager::loadGraphic(uint8 fileNum, uint32 offset, uint32 index) {
-	GraphicResource *res = getGraphic(fileNum, offset, index);
-	_vm->copyToBackBuffer(res->data, 0, 0, res->width, res->height);
-	
-	// TODO proper error check
-	return true;
-}
-
 bool ResourceManager::loadCursor(uint8 fileNum, uint32 offet, uint32 index) {
 	GraphicResource *cur = getGraphic(fileNum, offet, index);
 	_vm->_system->setMouseCursor(cur->data, cur->width, cur->height, 1, 1, 0);
@@ -58,23 +50,6 @@ bool ResourceManager::loadCursor(uint8 fileNum, uint32 offet, uint32 index) {
 
 	// TODO proper error check
 	return true;
-}
-
-Audio::AudioStream *ResourceManager::loadSFX(uint8 fileNum, uint32 offset) {
-	// FIXME: This doesn't make sense semantically. On one hand, we got a bundle, a file
-	// containing multiple files. Then, on the other hand, we got a file inside that bundle,
-	// which is a bundle again! The file in the bundle should be a resource, not another bundle, 
-	// i.e. getEntry() is wrong here
-	Bundle *bun = getBundle(fileNum);
-	Bundle *ent = bun->getEntry(offset);
-
-	if(!ent->initialized){
-		ent = new Bundle(fileNum, ent->offset, ent->size);
-		bun->setEntry(offset, ent);
-	}
-
-	Common::MemoryReadStream *mem = new Common::MemoryReadStream(ent->getData(), ent->size);
-	return Audio::makeWAVStream(mem, true);
 }
 
 GraphicResource* ResourceManager::getGraphic(uint8 fileNum, uint32 offset, uint32 index) {
@@ -108,20 +83,6 @@ GraphicResource* ResourceManager::getGraphic(uint8 fileNum, uint32 offset, uint3
 	return res;
 }
 
-/*
-GraphicBundle* ResourceManager::getGraphic(uint8 fileNum, uint32 offset) {
-	Bundle *bun = getBundle(fileNum);
-	Bundle *ent = bun->getEntry(offset);
-
-	if(!ent->initialized){
-		GraphicBundle *gra = new GraphicBundle(fileNum, ent->offset, ent->size);
-		bun->setEntry(offset, gra);
-	}
-
-	return (GraphicBundle*)bun->getEntry(offset);
-}
-
-*/
 Bundle* ResourceManager::getBundle(uint8 fileNum) {
 	// first check if the bundle exists in the cache
 	Bundle* bun = NULL;

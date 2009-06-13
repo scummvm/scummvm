@@ -45,12 +45,9 @@ public:
 	ResourceManager(AsylumEngine *vm);
 	virtual ~ResourceManager();
 
-	bool loadGraphic(uint8 fileNum, uint32 offset, uint32 index);
 	GraphicResource* getGraphic(uint8 fileNum, uint32 offset, uint32 index);
 	bool loadCursor(uint8 fileNum, uint32 offset, uint32 index);
-	bool loadSound(uint8 fileNum, uint32 offset);
 	bool loadVideo(uint8 fileNum);
-	Audio::AudioStream *loadSFX(uint8 fileNum, uint32 offset);
 
 private:
 	Common::Array<Bundle> _bundleCache;
