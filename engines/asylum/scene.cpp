@@ -144,6 +144,8 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
         actorActionDef.palCorrection = stream->readUint32LE();
         stream->skip(0x14); 
         actorActionDef.soundVolume = stream->readUint32LE();
+
+        _worldStats->_actorsActionDef.push_back(actorActionDef);
     }
 }
 
