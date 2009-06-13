@@ -131,9 +131,6 @@
 			RelativePath="..\..\engines\parallaction\disk.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\disk.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\parallaction\disk_br.cpp">
 		</File>
 		<File

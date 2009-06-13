@@ -203,10 +203,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\disk.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\parallaction\disk_br.cpp"
 			>
 		</File>
