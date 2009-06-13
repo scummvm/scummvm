@@ -47,7 +47,6 @@ public:
 
 	GraphicResource* getGraphic(uint8 fileNum, uint32 offset, uint32 index);
 	bool loadCursor(uint8 fileNum, uint32 offset, uint32 index);
-	bool loadVideo(uint8 fileNum);
 
 private:
 	Common::Array<Bundle> _bundleCache;
@@ -55,7 +54,6 @@ private:
 	Bundle* getBundle(uint8 fileNum);
 
 	AsylumEngine *_vm;
-	Video		 *_video;
 
 }; // end of class ResourceManager
 

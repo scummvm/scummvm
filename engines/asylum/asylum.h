@@ -33,6 +33,7 @@
 #include "asylum/state.h"
 #include "asylum/screen.h"
 #include "asylum/sound.h"
+#include "asylum/video.h"
 
 namespace Asylum {
 
@@ -42,6 +43,7 @@ class Screen;
 class Menu;
 class State;
 class Sound;
+class Video;
 
 class AsylumEngine: public Engine {
 public:
@@ -73,6 +75,7 @@ private:
     State *_state;
 	Screen *_screen;
 	Sound *_sound;
+	Video *_video;
 
     void showMainMenu();
 	void updateMainMenu();

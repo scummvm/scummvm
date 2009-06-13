@@ -48,6 +48,7 @@ AsylumEngine::~AsylumEngine() {
 	delete _state;
 	delete _scene;
     delete _resMgr;
+	delete _video;
 	delete _sound;
 	delete _screen;
 }
@@ -68,11 +69,9 @@ Common::Error AsylumEngine::init() {
 
 	_screen = new Screen(_system);
 	_sound = new Sound(_mixer);
+	_video = new Video(_mixer);
 	_resMgr = new ResourceManager(this);
     _scene = new Scene(this);
-	// DEBUG
-	// Testing new game state abstraction class
-	_state = new MenuState(this);
 
 	// initializing game
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
@@ -89,7 +88,11 @@ Common::Error AsylumEngine::init() {
 Common::Error AsylumEngine::go() {
 	// Play intro movie
 	// Disabled for quick testing
-	//_resMgr->loadVideo(0);
+	//_video->playVideo(0);
+
+	// DEBUG
+	// Testing new game state abstraction class
+	_state = new MenuState(this);
 
     // TODO: just some scene proof-of-concept
     _scene->load(5);
