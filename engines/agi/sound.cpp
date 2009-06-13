@@ -411,6 +411,8 @@ void SoundMgr::startSound(int resnum, int flag) {
 void SoundMgr::stopSound() {
 	int i;
 
+	debugC(3, kDebugLevelSound, "stopSound() --> %d", _playingSound);
+
 	_endflag = -1;
 	if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
 		for (i = 0; i < NUM_CHANNELS; i++)
@@ -418,7 +420,8 @@ void SoundMgr::stopSound() {
 	}
 
 	if (_playingSound != -1) {
-		_vm->_game.sounds[_playingSound]->stop();
+		if (_vm->_game.sounds[_playingSound]) // sanity checking
+			_vm->_game.sounds[_playingSound]->stop();
 
 		if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
 			_gsSound.stopSounds();
