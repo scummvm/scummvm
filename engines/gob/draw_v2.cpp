@@ -207,7 +207,7 @@ void Draw_v2::printTotText(int16 id) {
 
 	if (!_vm->_game->_totTextData || !_vm->_game->_totTextData->dataPtr ||
 	    (id >= _vm->_game->_totTextData->itemsCount) ||
-		  (_vm->_game->_totTextData->items[id].offset == -1) ||
+		  (_vm->_game->_totTextData->items[id].offset == 0xFFFF) ||
 			(_vm->_game->_totTextData->items[id].size == 0))
 		return;
 

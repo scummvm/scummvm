@@ -51,7 +51,7 @@ public:
 
 #define szGame_TotTextItem (2 + 2)
 	struct TotTextItem {
-		int16 offset;
+		uint16 offset;
 		int16 size;
 	} PACKED_STRUCT;
 
