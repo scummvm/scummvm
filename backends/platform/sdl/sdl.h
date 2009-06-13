@@ -130,6 +130,7 @@ public:
 	// Set the bitmap that's used when drawing the cursor.
 #ifdef ENABLE_16BIT
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
+	virtual void setCursorFormat(Graphics::PixelFormat format);
 #else
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
 #endif
@@ -250,6 +251,7 @@ protected:
 	SDL_Surface *_screen;
 #ifdef ENABLE_16BIT
 	Graphics::PixelFormat _screenFormat;
+	Graphics::PixelFormat _cursorFormat;
 #endif
 
 	// temporary screen (for scalers)

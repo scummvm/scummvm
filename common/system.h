@@ -739,6 +739,7 @@ public:
 	 */
 #ifdef ENABLE_16BIT
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1) = 0;
+	virtual void setCursorFormat(Graphics::PixelFormat format) = 0;
 #else
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1) = 0;
 #endif

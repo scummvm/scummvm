@@ -434,6 +434,9 @@ void ThemeEngine::refresh() {
 		_system->showOverlay();
 
 		if (_useCursor) {
+#ifdef ENABLE_16BIT
+			CursorMan.replaceCursorFormat(_cursorFormat);
+#endif
 			CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
 			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 		}
@@ -445,6 +448,9 @@ void ThemeEngine::enable() {
 		return;
 
 	if (_useCursor) {
+#ifdef ENABLE_16BIT
+		CursorMan.pushCursorFormat(_system->getScreenFormat());
+#endif
 		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
 		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 		CursorMan.showMouse(true);
@@ -462,6 +468,9 @@ void ThemeEngine::disable() {
 	_system->hideOverlay();
 
 	if (_useCursor) {
+#ifdef ENABLE_16BIT
+		CursorMan.popCursorFormat();
+#endif
 		CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}
@@ -1164,6 +1173,12 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	const Graphics::Surface *cursor = _bitmaps[filename];
 	if (!cursor)
 		return false;
+
+#ifdef ENABLE_16BIT
+	_cursorFormat.bytesPerPixel = 1;
+	_cursorFormat.rLoss = _cursorFormat.gLoss = _cursorFormat.bLoss = _cursorFormat.aLoss = 8;
+	_cursorFormat.rShift = _cursorFormat.gShift = _cursorFormat.bShift = _cursorFormat.aShift = 0;
+#endif
 
 	// Set up the cursor parameters
 	_cursorHotspotX = hotspotX;

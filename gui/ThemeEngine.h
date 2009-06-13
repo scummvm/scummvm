@@ -579,6 +579,9 @@ protected:
 
 	ImagesMap _bitmaps;
 	Graphics::PixelFormat _overlayFormat;
+#ifdef ENABLE_16BIT
+	Graphics::PixelFormat _cursorFormat;
+#endif
 
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;

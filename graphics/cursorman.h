@@ -142,6 +142,31 @@ public:
 	 */
 	void replaceCursorPalette(const byte *colors, uint start, uint num);
 
+#ifdef ENABLE_16BIT
+	/**
+	 * Push a new cursor pixel format onto the stack, and set it in the backend.
+	 *
+	 * @param format	the new format data, in a Graphics::PixelFormat
+	 */
+	void pushCursorFormat(PixelFormat format);
+
+	/**
+	 * Pop a cursor pixel format from the stack, and restore the previous one to
+	 * the backend. If there is no previous format, the screen format is
+	 * used instead.
+	 */
+	void popCursorFormat();
+
+	/**
+	 * Replace the current cursor pixel format on the stack. If the stack is
+	 * empty, the format is pushed instead. It's a slightly more optimized
+	 * way of popping the old format before pushing the new one.
+	 *
+	 * @param format	the new format data, in a Graphics::PixelFormat
+	 */
+	void replaceCursorFormat(PixelFormat format);
+#endif
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	CursorManager();
@@ -216,9 +241,11 @@ private:
 			delete[] _data;
 		}
 	};
-
 	Common::Stack<Cursor *> _cursorStack;
 	Common::Stack<Palette *> _cursorPaletteStack;
+#ifdef ENABLE_16BIT
+	Common::Stack<Graphics::PixelFormat *> _cursorFormatStack;
+#endif
 };
 
 } // End of namespace Graphics

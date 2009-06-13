@@ -101,6 +101,13 @@ void CursorManager::popAllCursors() {
 		}
 	}
 
+#ifdef ENABLE_16BIT
+	while (!_cursorFormatStack.empty()) {
+		PixelFormat *form = _cursorFormatStack.pop();
+		delete form;
+	}
+#endif
+
 	g_system->showMouse(isVisible());
 }
 
@@ -118,8 +125,8 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	Cursor *cur = _cursorStack.top();
 
 #ifdef ENABLE_16BIT
-		uint size;
-		{	//limit the lifespan of the format variable to minimize memory impact
+	uint size;
+	{	//limit the lifespan of the format variable to minimize memory impact
 		Graphics::PixelFormat f = g_system->getScreenFormat();
 		size = w * h * (f.bytesPerPixel);
 	}
@@ -224,5 +231,49 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 		g_system->disableCursorPalette(true);
 	}
 }
+
+#ifdef ENABLE_16BIT
+void CursorManager::pushCursorFormat(PixelFormat format) {
+//	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+//		return;
+	PixelFormat *form = new PixelFormat(format);
+
+	_cursorFormatStack.push(form);
+	g_system->setCursorFormat(format);
+}
+
+void CursorManager::popCursorFormat() {
+
+	if (_cursorFormatStack.empty())
+		return;
+
+	PixelFormat *form = _cursorFormatStack.pop();
+	delete form;
+
+	if (_cursorFormatStack.empty()) {
+		g_system->setCursorFormat(g_system->getScreenFormat());
+		return;
+	}
+
+	form = _cursorFormatStack.top();
+	disableCursorPalette(form->bytesPerPixel != 1);
+
+	g_system->setCursorFormat(*form);
+}
+
+void CursorManager::replaceCursorFormat(PixelFormat format) {
+//	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
+//		return;
+
+	if (_cursorFormatStack.empty()) {
+		pushCursorFormat(format);
+		return;
+	}
+
+	PixelFormat *form = _cursorFormatStack.top();
+
+	g_system->setCursorFormat(*form);
+}
+#endif
 
 } // End of namespace Graphics

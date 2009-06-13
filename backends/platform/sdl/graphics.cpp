@@ -1249,9 +1249,17 @@ void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_cursorPaletteDisabled = false;
-
-	blitCursor();
+#ifdef ENABLE_16BIT
 }
+
+void OSystem_SDL::setCursorFormat(Graphics::PixelFormat format) {
+	assert(format.bytesPerPixel);
+	_cursorFormat = format;
+
+#endif
+//	blitCursor();
+}
+
 
 void OSystem_SDL::setShakePos(int shake_pos) {
 	assert (_transactionMode == kTransactionNone);
@@ -1459,7 +1467,7 @@ void OSystem_SDL::warpMouse(int x, int y) {
 
 #ifdef ENABLE_16BIT
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale) {
-	keycolor &= (1 << (_screenFormat.bytesPerPixel << 3)) - 1;
+	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
 #else
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
 #endif
@@ -1498,8 +1506,8 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 
 	free(_mouseData);
 #ifdef ENABLE_16BIT
-	_mouseData = (byte *)malloc(w * h * _screenFormat.bytesPerPixel);
-	memcpy(_mouseData, buf, w * h * _screenFormat.bytesPerPixel);
+	_mouseData = (byte *)malloc(w * h * _cursorFormat.bytesPerPixel);
+	memcpy(_mouseData, buf, w * h * _cursorFormat.bytesPerPixel);
 #else
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
@@ -1513,7 +1521,7 @@ void OSystem_SDL::blitCursor() {
 	const byte *srcPtr = _mouseData;
 #ifdef ENABLE_16BIT
 	uint32 color;
-	uint32 colormask = (1 << (_screenFormat.bytesPerPixel << 3)) - 1;
+	uint32 colormask = (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
 #else
 	byte color;
 #endif
@@ -1551,16 +1559,16 @@ void OSystem_SDL::blitCursor() {
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
 #ifdef ENABLE_16BIT
-			if (_screenFormat.bytesPerPixel > 1) {
+			if (_cursorFormat.bytesPerPixel > 1) {
 				color = (*(uint32 *) srcPtr) & colormask;
 				if (color != _mouseKeyColor) {	// transparent, don't draw
 					uint8 r,g,b;
-					_screenFormat.colorToRGB(color,r,g,b);
+					_cursorFormat.colorToRGB(color,r,g,b);
 					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
 						r, g, b);
 				}
 				dstPtr += 2;
-				srcPtr += _screenFormat.bytesPerPixel;
+				srcPtr += _cursorFormat.bytesPerPixel;
 			} else {
 #endif
 				color = *srcPtr;
