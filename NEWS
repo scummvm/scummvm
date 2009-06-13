@@ -446,7 +446,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      for The Feeble Files.
    - Fixed a rare MIDI bug that would cause a channel to change volume without
      adjusting it to the master volume.
-   - Fixed delay after introduction of Simon the Sorcerer 1 demo (With speech)
+   - Fixed delay after introduction of Simon the Sorcerer 1 demo (with speech).
    - Fixed music tempo in DOS versions of Simon the Sorcerer 1.
 
  Broken Sword 1:
