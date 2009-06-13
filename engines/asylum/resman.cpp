@@ -31,21 +31,16 @@
 namespace Asylum {
 
 ResourceManager::ResourceManager(AsylumEngine *vm): _vm(vm) {
-	_video = new Video(_vm->_mixer);
 }
 
 ResourceManager::~ResourceManager() {
-	delete _video;
-}
-
-bool ResourceManager::loadVideo(uint8 fileNum) {
-	return _video->playVideo(fileNum);
+	
 }
 
 bool ResourceManager::loadCursor(uint8 fileNum, uint32 offet, uint32 index) {
 	GraphicResource *cur = getGraphic(fileNum, offet, index);
-	_vm->_system->setMouseCursor(cur->data, cur->width, cur->height, 1, 1, 0);
-	_vm->_system->showMouse(true);
+	_vm->getScreen()->setCursor(cur->data, cur->width, cur->height);
+	_vm->getScreen()->showMouse();
 
 	// TODO proper error check
 	return true;
