@@ -32,19 +32,6 @@
 
 namespace Asylum {
 
-enum EyesAnimation {
-	kEyesFront = 0,
-	kEyesLeft = 1,
-	kEyesRight = 2,
-	kEyesTop = 3,
-	kEyesBottom = 4,
-	kEyesTopLeft = 5,
-	kEyesTopRight = 6,
-	kEyesBottomLeft = 7,
-	kEyesBottomRight = 8,
-	kEyesCrossed = 9
-};
-
 AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
     : Engine(system) {
 
