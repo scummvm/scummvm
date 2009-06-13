@@ -115,39 +115,47 @@ Common::Error AsylumEngine::go() {
 	// DEBUG
 	uint32 lastUpdate = 0;
 
-	Common::EventManager *em = _system->getEventManager();
 	while (!shouldQuit()) {
-		Common::Event ev;
+		checkForEvent();
 
 		// Copy background image
 		_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 
-		if (em->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_KEYDOWN) {
-				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					// Push a quit event
-					Common::Event event;
-					event.type = Common::EVENT_QUIT;
-					g_system->getEventManager()->pushEvent(event);
-				}
-				//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
-			} else if (ev.type == Common::EVENT_MOUSEMOVE) {
-				_mouseX = ev.mouse.x;
-				_mouseY = ev.mouse.y;
-			}
-		}
-
 		updateMainMenu();
 
-		if (_system->getMillis() - lastUpdate > 50) {
-			_system->updateScreen();
-			lastUpdate = _system->getMillis();
-		}
-
-		_system->delayMillis(10);
+		waitForTimer(50);
 	}
 
     return Common::kNoError;
+}
+
+void AsylumEngine::waitForTimer(int msec_delay) {
+	uint32 start_time = _system->getMillis();
+
+	while (_system->getMillis() < start_time + msec_delay) {
+		checkForEvent();
+		_system->updateScreen();
+		_system->delayMillis(10);
+	}
+}
+
+void AsylumEngine::checkForEvent() {
+	Common::Event ev;
+
+	if (_system->getEventManager()->pollEvent(ev)) {
+		if (ev.type == Common::EVENT_KEYDOWN) {
+			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				// Push a quit event
+				Common::Event event;
+				event.type = Common::EVENT_QUIT;
+				g_system->getEventManager()->pushEvent(event);
+			}
+			//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
+		} else if (ev.type == Common::EVENT_MOUSEMOVE) {
+			_mouseX = ev.mouse.x;
+			_mouseY = ev.mouse.y;
+		}
+	}
 }
 
 void AsylumEngine::showMainMenu() {
