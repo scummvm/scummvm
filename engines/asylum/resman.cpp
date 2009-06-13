@@ -47,7 +47,7 @@ bool ResourceManager::loadVideo(uint8 fileNum) {
 
 bool ResourceManager::loadGraphic(uint8 fileNum, uint32 offset, uint32 index) {
 	GraphicResource *res = getGraphic(fileNum, offset, index);
-	_vm->copyToBackBuffer(0, 0, res->width, res->height, res->data);
+	_vm->copyToBackBuffer(res->data, 0, 0, res->width, res->height);
 	
 	// TODO proper error check
 	return true;
@@ -167,11 +167,13 @@ GraphicResource* ResourceManager::getGraphic(uint8 fileNum, uint32 offset, uint3
 	res = gra->getEntry(index);
 
 	// Load the graphic data if it's not already loaded
+	/*
 	if (!res->data) {
-		// FIXME: this is currently leaking
+		// FIXME: this is currently leaking, and it's wrong, as we can't find individual frames in graphic resources
 		res->data = (byte *)malloc(res->size - 16);
 		memcpy(res->data, gra->getData() + gra->getContentOffset() + 16, res->size - 16);
 	}
+	*/
 
 	return res;
 }
