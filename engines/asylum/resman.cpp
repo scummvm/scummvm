@@ -31,8 +31,6 @@
 
 namespace Asylum {
 
-#define BRIGHTNESS		6
-
 ResourceManager::ResourceManager(AsylumEngine *vm): _vm(vm) {
 	_video = new Video(_vm->_mixer);
 }
@@ -70,9 +68,9 @@ bool ResourceManager::loadPalette(uint8 fileNum, uint32 offset) {
 	byte *p = ent->getData() + 32;
 
 	for (int i = 0; i < 256; i++) {
-		palette[i * 4 + 0] = *p++ * BRIGHTNESS;
-		palette[i * 4 + 1] = *p++ * BRIGHTNESS;
-		palette[i * 4 + 2] = *p++ * BRIGHTNESS;
+		palette[i * 4 + 0] = *p++ << 2;
+		palette[i * 4 + 1] = *p++ << 2;
+		palette[i * 4 + 2] = *p++ << 2;
 		palette[i * 4 + 3] = 0;
 	}
 
