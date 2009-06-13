@@ -48,7 +48,7 @@ public:
 	State(AsylumEngine *vm);
 	virtual ~State() {}
 
-	void handleEvent(Common::Event *event);
+	void handleEvent(Common::Event *event, bool doUpdate);
 
 protected:
 	Common::Event *_ev;

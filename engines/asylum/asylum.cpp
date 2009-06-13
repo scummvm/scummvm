@@ -100,10 +100,7 @@ Common::Error AsylumEngine::go() {
 
 	while (!shouldQuit()) {
 
-		checkForEvent();
-
-		// Copy background image
-		_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
+		checkForEvent(true);
 
 		waitForTimer(60);
 	}
@@ -115,13 +112,13 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 	uint32 start_time = _system->getMillis();
 
 	while (_system->getMillis() < start_time + msec_delay) {
-		checkForEvent();
+		checkForEvent(false);
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
 }
 
-void AsylumEngine::checkForEvent() {
+void AsylumEngine::checkForEvent(bool doUpdate) {
 	Common::Event ev;
 
 	if (_system->getEventManager()->pollEvent(ev)) {
@@ -134,7 +131,12 @@ void AsylumEngine::checkForEvent() {
 			}
 		}
 	}
-	_state->handleEvent(&ev);
+
+	if (doUpdate) {
+		// Copy background image
+		_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
+	}
+	_state->handleEvent(&ev, doUpdate);
 }
 
 void AsylumEngine::copyToBackBuffer(byte *buffer, int x, int y, int width, int height) {
