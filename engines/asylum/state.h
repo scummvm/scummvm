@@ -84,7 +84,6 @@ private:
 		kEyesCrossed     = 9
 	};
 
-	Audio::SoundHandle _sfxHandle;
 	int _activeIcon;
 	int _previousActiveIcon;
 	int _curIconFrame;

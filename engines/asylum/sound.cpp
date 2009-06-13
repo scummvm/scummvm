@@ -23,41 +23,31 @@
  *
  */
 
-#ifndef ASYLUM_RESOURCE_H_
-#define ASYLUM_RESOURCE_H_
-
-#include "common/str.h"
+#include "asylum/sound.h"
+#include "sound/wave.h"
 
 namespace Asylum {
 
-class Resource {
-public:
-	Resource() : size(0), offset(0), initialized(false) {}
-	virtual ~Resource(){}
+Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
+}
 
-	Common::String type;
-	uint32         size;
-	uint32         offset;
-	uint8*         data;
-	bool		   initialized;
+Sound::~Sound() {
+}
 
-}; // end of class Resource
+void Sound::playSfx(byte *data, uint32 size) {
+	Common::MemoryReadStream *mem = new Common::MemoryReadStream(data, size);
 
-class GraphicResource: public Resource {
-public:
-	GraphicResource() {}
-	~GraphicResource() {}
+	// Now create the audio stream and play it (it's just a regular WAVE file)
+	Audio::AudioStream *sfx = Audio::makeWAVStream(mem, true);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, sfx);
+}
 
-	uint32 size;
-	uint32 flag;
-	uint16 x;
-	uint16 y;
-	uint16 width;
-	uint16 height;
+void Sound::playMusic(byte *data, uint32 size) {
+	Common::MemoryReadStream *mem = new Common::MemoryReadStream(data, size);
 
-};	// end of class GraphicResource
-
+	// Now create the audio stream and play it (it's just a regular WAVE file)
+	Audio::AudioStream *mus = Audio::makeWAVStream(mem, true);
+	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, mus);
+}
 
 } // end of namespace Asylum
-
-#endif

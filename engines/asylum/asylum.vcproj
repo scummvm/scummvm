@@ -222,6 +222,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\asylum\screen.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\screen.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\sound.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\sound.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\asylum\state.cpp"
 			>
 		</File>

@@ -31,8 +31,8 @@
 #include "asylum/resman.h"
 #include "asylum/scene.h"
 #include "asylum/state.h"
-
-#include "graphics/surface.h"
+#include "asylum/screen.h"
+#include "asylum/sound.h"
 
 namespace Asylum {
 
@@ -41,6 +41,7 @@ class ResourceManager;
 class Screen;
 class Menu;
 class State;
+class Sound;
 
 class AsylumEngine: public Engine {
 public:
@@ -54,23 +55,24 @@ public:
     virtual Common::Error run();
     virtual bool hasFeature(EngineFeature f) const;
 
-	void copyToBackBuffer(byte *buffer, int x, int y, int width, int height);
-	void copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height);
 	void checkForEvent(bool doUpdate);
 	void waitForTimer(int msec_delay);
 	void updateMouseCursor();
 
+	Screen* getScreen() { return _screen; }
 	ResourceManager* getResourceManager() { return _resMgr; }
+	Sound* getSound() { return _sound; }
 
 private:
     Common::Language     _language;
     Common::RandomSource _rnd;
 
     ResourceManager   *_resMgr;
-	Graphics::Surface _backBuffer;
 
     Scene *_scene;
     State *_state;
+	Screen *_screen;
+	Sound *_sound;
 
     void showMainMenu();
 	void updateMainMenu();

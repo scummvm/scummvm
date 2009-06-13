@@ -25,7 +25,6 @@
 
 #include "common/stream.h"
 #include "sound/audiostream.h"
-#include "sound/wave.h"
 
 #include "asylum/resman.h"
 
