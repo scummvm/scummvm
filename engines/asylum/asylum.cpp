@@ -127,7 +127,7 @@ Common::Error AsylumEngine::go() {
 
 		updateMouseCursor();
 
-		waitForTimer(50);
+		waitForTimer(60);
 	}
 
     return Common::kNoError;
@@ -192,7 +192,6 @@ void AsylumEngine::updateMainMenu() {
 
 				// Cycle icon frame
 				// Icon animations have 15 frames, 0-14
-				// FIXME: icon animations are way too quick
 				_curIconFrame++;
 				if (_curIconFrame == 15)
 					_curIconFrame = 0;
@@ -226,7 +225,6 @@ void AsylumEngine::updateMainMenu() {
 
 				// Cycle icon frame
 				// Icon animations have 15 frames, 0-14
-				// FIXME: icon animations are way too quick
 				_curIconFrame++;
 				if (_curIconFrame == 15)
 					_curIconFrame = 0;
@@ -235,7 +233,7 @@ void AsylumEngine::updateMainMenu() {
 
 				// HACK: the credits icon has less frames (0 - 9). Currently, there's no way to find the number
 				// of frames with the current resource manager implementation, so we just hardcode it here
-				if (_activeIcon == 10 && _curIconFrame == 10)
+				if (_activeIcon == 10 && _curIconFrame >= 10)
 					_curIconFrame = 0;
 
 				// Play creepy voice
