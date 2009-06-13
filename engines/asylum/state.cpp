@@ -143,6 +143,13 @@ void MenuState::update() {
 				else if (iconNum == 15)
 					iconNum = 14;
 
+				_activeIcon = i + 6;
+
+				// HACK: the credits icon has less frames (0 - 9). Currently, there's no way to find the number
+				// of frames with the current resource manager implementation, so we just hardcode it here
+				if (_activeIcon == 10 && _curIconFrame >= 10)
+					_curIconFrame = 0;
+
 				GraphicResource *res = _resMgr->getGraphic(1, iconNum, _curIconFrame);
 				_vm->_system->copyRectToScreen(res->data, res->width, curX, 400, res->width, res->height);
 
@@ -150,13 +157,6 @@ void MenuState::update() {
 				// Icon animations have 15 frames, 0-14
 				_curIconFrame++;
 				if (_curIconFrame == 15)
-					_curIconFrame = 0;
-
-				_activeIcon = i + 6;
-
-				// HACK: the credits icon has less frames (0 - 9). Currently, there's no way to find the number
-				// of frames with the current resource manager implementation, so we just hardcode it here
-				if (_activeIcon == 10 && _curIconFrame >= 10)
 					_curIconFrame = 0;
 
 				// Play creepy voice
