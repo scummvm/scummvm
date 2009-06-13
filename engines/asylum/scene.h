@@ -55,6 +55,18 @@ private:
 }; // end of class Scene
 
 
+typedef struct ActorDefinitions{
+    uint32 id;
+    uint32 graphicResId;
+    uint32 x;
+    uint32 y;
+    // FIXME unknown fields here
+    uint8 name[52];
+    // FIXME unknown fields here
+    uint32 soundResId;
+    // FIXME unknown fields here
+}ActorDefinitions;
+
 class WorldStats {
 public:
     WorldStats() {};
@@ -69,6 +81,11 @@ public:
     uint32 _height;
     uint32 _numActions;
     uint32 _numActors;
+
+    uint32 _loadingScreenGrResId;
+    uint32 _loadingScreenPalResId;
+
+    ActorDefinitions _actorsDef[500]; // FIXME number max of actors in scene
 }; // end of class WorldStats
 
 
