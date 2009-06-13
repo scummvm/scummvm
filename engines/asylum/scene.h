@@ -27,8 +27,11 @@
 #define ASYLUM_SCENE_H_
 
 #include "common/file.h"
+#include "common/array.h"
+#include "common/rect.h"
 
 #define SCENEMASK   "scn.%03d"
+#define POLIES_MAXSIZE  100
 
 namespace Asylum {
 
@@ -43,29 +46,71 @@ public:
 	virtual ~Scene();
 
     bool load(uint8 sceneIdx);
-private:
-    AsylumEngine *_vm;
 
     WorldStats *_worldStats;
     GamePolies *_gamePolies;
     ActionList *_actionList;
+private:
+    AsylumEngine *_vm;
 
     void loadWorldStats(Common::SeekableReadStream *stream);
+    void loadGamePolies(Common::SeekableReadStream *stream);
+    void loadActionList(Common::SeekableReadStream *stream);
     Common::String parseFilename(uint8 sceneIdx);
 }; // end of class Scene
 
 
-typedef struct ActorDefinitions{
+
+// FIXME add unknown fields
+typedef struct ActorDefinitions {
     uint32 id;
     uint32 graphicResId;
     uint32 x;
     uint32 y;
-    // FIXME unknown fields here
     uint8 name[52];
-    // FIXME unknown fields here
     uint32 soundResId;
-    // FIXME unknown fields here
-}ActorDefinitions;
+} ActorDefinitions;
+
+// FIXME add unknown fields
+typedef struct ActorActionDefinitions {
+    char name[52];
+    uint32 id;
+    int32 actionListIdx1;
+    int32 actionListIdx2;
+    int32 actionType; // 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
+    int32 polyIdx;
+    uint32 soundResId;
+    uint32 palCorrection; 
+    int32 soundVolume;
+} ActorActionDefinitions;
+
+typedef struct CommonResources {
+    uint32 backgroundImage;
+    uint32 curScrollUp;
+    uint32 curScrollUpLeft;
+    uint32 curScrollLeft;
+    uint32 curScrollDownLeft;
+    uint32 curScrollDown;
+    uint32 curScrollDownRight;
+    uint32 curScrollRight;
+    uint32 curScrollUpRight;
+    uint32 curHand;
+    uint32 curMagnifyingGlass;
+    uint32 curTalkNCP;
+    uint32 curGrabPointer;
+    uint32 curTalkNCP2;
+    uint32 unknown1;
+    uint32 unknown2;
+    uint32 unknown3;
+    uint32 palette;
+    uint32 cellShadeMask1;
+    uint32 cellShadeMask2;
+    uint32 cellShadeMask3;
+    uint32 unUsed;
+    uint32 smallCurUp;
+    uint32 smallCurDown;
+    uint32 unknown4;
+} CommonResources;
 
 class WorldStats {
 public:
@@ -76,7 +121,7 @@ public:
     uint32 _numEntries;
 
     uint32 _numChapter;
-    uint32 _commonGrResIdArray[25];
+    CommonResources _commonRes;
     uint32 _width;
     uint32 _height;
     uint32 _numActions;
@@ -85,14 +130,27 @@ public:
     uint32 _loadingScreenGrResId;
     uint32 _loadingScreenPalResId;
 
-    ActorDefinitions _actorsDef[500]; // FIXME number max of actors in scene
+    Common::Array<ActorDefinitions> _actorsDef;
+    Common::Array<ActorActionDefinitions> _actorsActionDef;
 }; // end of class WorldStats
 
+
+
+typedef struct PolyDefinitions{
+    uint32 numPoints;
+    Common::Point points[POLIES_MAXSIZE];
+    Common::Rect boundingRect;
+} PolyDefinitions;
 
 class GamePolies {
 public:
     GamePolies() {};
     virtual ~GamePolies() {};
+
+    uint32 _size;
+    uint32 _numEntries;
+
+    Common::Array<PolyDefinitions> _polies;
 }; // end of class GamePolies
 
 
