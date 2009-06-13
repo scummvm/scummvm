@@ -315,7 +315,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 	// Might also be helpful to display the full path (for when this is used
 	// from the mass detector).
 	printf("The game in '%s' seems to be unknown.\n", path.getPath().c_str());
-	printf("Please, report the following data to the ScummVM team along with name\n");
+	printf("Please, report the following data to the Residual team along with name\n");
 	printf("of the game you tried to add and its version/language/etc.:\n");
 
 	for (SizeMD5Map::const_iterator file = filesSizeMD5.begin(); file != filesSizeMD5.end(); ++file)
@@ -535,7 +535,7 @@ static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParam
 			printf("Your game version has been detected using filename matching as a\n");
 			printf("variant of %s.\n", matchedDesc->gameid);
 			printf("If this is an original and unmodified version, please report any\n");
-			printf("information previously printed by ScummVM to the team.\n");
+			printf("information previously printed by Residual to the team.\n");
 		}
 	}
 
