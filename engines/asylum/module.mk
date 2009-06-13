@@ -7,7 +7,8 @@ MODULE_OBJS := \
 	graphicbundle.o \
 	video.o \
 	resman.o \
-	scene.o
+	scene.o \
+	state.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)

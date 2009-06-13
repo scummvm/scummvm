@@ -93,13 +93,6 @@ Common::Error AsylumEngine::init() {
 }
 
 Common::Error AsylumEngine::go() {
-	_mouseX = 0, _mouseY = 0;
-	_activeIcon = -1;
-	_previousActiveIcon = -1;
-	_curIconFrame = 0;
-	_curMouseCursor = 0;
-	_cursorStep = 1;
-
 	// Play intro movie
 	// Disabled for quick testing
 	//_resMgr->loadVideo(0);
@@ -107,40 +100,26 @@ Common::Error AsylumEngine::go() {
     // TODO: just some scene proof-of-concept
     _scene->load(5);
 
-	showMainMenu();
-
 	// DEBUG
     // Control loop test. Basically just keep the
     // ScummVM window alive until ESC is pressed.
     // This will facilitate drawing tests ;)
 
 	// DEBUG
-	uint32 lastUpdate = 0;
+	// Testing new game state abstraction class
+	_state = new MenuState(this);
 
 	while (!shouldQuit()) {
+
 		checkForEvent();
 
 		// Copy background image
 		_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 
-		updateMainMenu();
-
-		updateMouseCursor();
-
 		waitForTimer(60);
 	}
 
     return Common::kNoError;
-}
-
-void AsylumEngine::updateMouseCursor() {
-	_curMouseCursor += _cursorStep;
-	if (_curMouseCursor == 0)
-		_cursorStep = 1;
-	if (_curMouseCursor == 6)
-		_cursorStep = -1;
-
-	_resMgr->loadCursor(1, 2, _curMouseCursor);
 }
 
 void AsylumEngine::waitForTimer(int msec_delay) {
@@ -164,122 +143,9 @@ void AsylumEngine::checkForEvent() {
 				event.type = Common::EVENT_QUIT;
 				g_system->getEventManager()->pushEvent(event);
 			}
-			//if (ev.kbd.keycode == Common::KEYCODE_RETURN)
-		} else if (ev.type == Common::EVENT_MOUSEMOVE) {
-			_mouseX = ev.mouse.x;
-			_mouseY = ev.mouse.y;
 		}
+		_state->handleEvent(&ev);
 	}
-}
-
-void AsylumEngine::showMainMenu() {
-	// main menu background
-	_resMgr->loadGraphic(1, 0, 0);
-	_resMgr->loadPalette(1, 17);
-	_resMgr->loadCursor(1, 2, 0);
-	_resMgr->loadMusic();
-}
-
-void AsylumEngine::updateMainMenu() {
-	// TODO: Just some proof-of concept to change icons here for now
-	if (_mouseY >= 20 && _mouseY <= 20 + 48) {
-		// Top row
-		for (int i = 0; i <= 5; i++) {
-			int curX = 40 + i * 100;
-			if (_mouseX >= curX && _mouseX <= curX + 55) {
-				GraphicResource *res = _resMgr->getGraphic(1, i + 4, _curIconFrame);
-				_system->copyRectToScreen(res->data, res->width, curX, 20, res->width, res->height);
-
-				// Cycle icon frame
-				// Icon animations have 15 frames, 0-14
-				_curIconFrame++;
-				if (_curIconFrame == 15)
-					_curIconFrame = 0;
-
-				_activeIcon = i;
-
-				// Play creepy voice
-				if (!_mixer->isSoundHandleActive(_sfxHandle) && _activeIcon != _previousActiveIcon) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _resMgr->loadSFX(1, i + 44));
-					_previousActiveIcon = _activeIcon;
-				}
-
-				break;
-			}
-		}
-	} else if (_mouseY >= 400 && _mouseY <= 400 + 48) {
-		// Bottom row
-		for (int i = 0; i <= 5; i++) {
-			int curX = 40 + i * 100;
-			if (_mouseX >= curX && _mouseX <= curX + 55) {
-				int iconNum = i + 10;
-
-				// The last 2 icons are swapped
-				if (iconNum == 14)
-					iconNum = 15;
-				else if (iconNum == 15)
-					iconNum = 14;
-
-				GraphicResource *res = _resMgr->getGraphic(1, iconNum, _curIconFrame);
-				_system->copyRectToScreen(res->data, res->width, curX, 400, res->width, res->height);
-
-				// Cycle icon frame
-				// Icon animations have 15 frames, 0-14
-				_curIconFrame++;
-				if (_curIconFrame == 15)
-					_curIconFrame = 0;
-
-				_activeIcon = i + 6;
-
-				// HACK: the credits icon has less frames (0 - 9). Currently, there's no way to find the number
-				// of frames with the current resource manager implementation, so we just hardcode it here
-				if (_activeIcon == 10 && _curIconFrame >= 10)
-					_curIconFrame = 0;
-
-				// Play creepy voice
-				if (!_mixer->isSoundHandleActive(_sfxHandle) && _activeIcon != _previousActiveIcon) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _resMgr->loadSFX(1, iconNum + 40));
-					_previousActiveIcon = _activeIcon;
-				}
-
-				break;
-			}
-		}
-	} else {
-		// No selection
-		_previousActiveIcon = _activeIcon = -1;
-	}
-
-	// Eyes animation
-	// Get the appropriate eye resource depending on the mouse position
-	int eyeResource = kEyesFront;
-
-	if (_mouseX <= 200) {
-		if (_mouseY <= 160)
-			eyeResource = kEyesTopLeft;
-		else if (_mouseY > 160 && _mouseY <= 320)
-			eyeResource = kEyesLeft;
-		else
-			eyeResource = kEyesBottomLeft;
-	} else if (_mouseX > 200 && _mouseX <= 400) {
-		if (_mouseY <= 160)
-			eyeResource = kEyesTop;
-		else if (_mouseY > 160 && _mouseY <= 320)
-			eyeResource = kEyesFront;
-		else
-			eyeResource = kEyesBottom;
-	} else if (_mouseX > 400) {
-		if (_mouseY <= 160)
-			eyeResource = kEyesTopRight;
-		else if (_mouseY > 160 && _mouseY <= 320)
-			eyeResource = kEyesRight;
-		else
-			eyeResource = kEyesBottomRight;
-	}
-	// TODO: kEyesCrossed state
-
-	GraphicResource *res = _resMgr->getGraphic(1, 1, eyeResource);
-	copyRectToScreenWithTransparency(res->data, 265, 230, res->width, res->height);
 }
 
 void AsylumEngine::copyToBackBuffer(byte *buffer, int x, int y, int width, int height) {

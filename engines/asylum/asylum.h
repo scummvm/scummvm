@@ -27,8 +27,11 @@
 #define ASYLUM_ENGINE_H
 
 #include "engines/engine.h"
+
 #include "asylum/resman.h"
 #include "asylum/scene.h"
+#include "asylum/state.h"
+
 #include "graphics/surface.h"
 
 namespace Asylum {
@@ -37,6 +40,7 @@ class Scene;
 class ResourceManager;
 class Screen;
 class Menu;
+class State;
 
 class AsylumEngine: public Engine {
 public:
@@ -56,22 +60,17 @@ public:
 	void waitForTimer(int msec_delay);
 	void updateMouseCursor();
 
+	ResourceManager* getResourceManager() { return _resMgr; }
+
 private:
     Common::Language     _language;
     Common::RandomSource _rnd;
 
-    ResourceManager *_resMgr;
+    ResourceManager   *_resMgr;
 	Graphics::Surface _backBuffer;
 
     Scene *_scene;
-
-	int _mouseX, _mouseY;
-	Audio::SoundHandle _sfxHandle;
-	int _activeIcon;
-	int _previousActiveIcon;
-	int _curIconFrame;
-	int _curMouseCursor;
-	int _cursorStep;
+    State *_state;
 
     void showMainMenu();
 	void updateMainMenu();
