@@ -51,35 +51,6 @@ bool ResourceManager::loadGraphic(uint8 fileNum, uint32 offset, uint32 index) {
 	return true;
 }
 
-bool ResourceManager::loadPalette(uint8 fileNum, uint32 offset) {
-	// FIXME: This doesn't make sense semantically. On one hand, we got a bundle, a file
-	// containing multiple files. Then, on the other hand, we got a file inside that bundle,
-	// which is a bundle again! The file in the bundle should be a resource, not another bundle, 
-	// i.e. getEntry() is wrong here
-	Bundle *bun = getBundle(fileNum);
-	Bundle *ent = bun->getEntry(offset);
-
-	if(!ent->initialized){
-		ent = new Bundle(fileNum, ent->offset, ent->size);
-		bun->setEntry(offset, ent);
-	}
-
-	byte palette[256 * 4];
-	byte *p = ent->getData() + 32;
-
-	for (int i = 0; i < 256; i++) {
-		palette[i * 4 + 0] = *p++ << 2;
-		palette[i * 4 + 1] = *p++ << 2;
-		palette[i * 4 + 2] = *p++ << 2;
-		palette[i * 4 + 3] = 0;
-	}
-
-	_vm->_system->setPalette(palette, 0, 256);
-
-	// TODO proper error check
-	return true;
-}
-
 bool ResourceManager::loadCursor(uint8 fileNum, uint32 offet, uint32 index) {
 	GraphicResource *cur = getGraphic(fileNum, offet, index);
 	_vm->_system->setMouseCursor(cur->data, cur->width, cur->height, 1, 1, 0);

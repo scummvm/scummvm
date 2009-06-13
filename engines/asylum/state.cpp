@@ -66,8 +66,23 @@ MenuState::MenuState(AsylumEngine *vm): State(vm) {
 	_resPack = new ResourcePack("res.001");
 	_musPack = new ResourcePack("mus.005");
 
+	// Load the graphics palette
+	// TODO: This needs to be moved to a separate class (Graphics?)
+	byte palette[256 * 4];
+	byte *p = _resPack->getResource(17)->data + 32;
+
+	for (int i = 0; i < 256; i++) {
+		palette[i * 4 + 0] = *p++ << 2;
+		palette[i * 4 + 1] = *p++ << 2;
+		palette[i * 4 + 2] = *p++ << 2;
+		palette[i * 4 + 3] = 0;
+	}
+
+	_vm->_system->setPalette(palette, 0, 256);
+
+
 	_resMgr->loadGraphic(1, 0, 0);
-	_resMgr->loadPalette(1, 17);
+	//_resMgr->loadPalette(1, 17);
 	_resMgr->loadCursor(1, 2, 0);
 
 	ResourceEntry *musicResource = _musPack->getResource(0);
