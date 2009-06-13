@@ -62,7 +62,16 @@ void GraphicBundle::update() {
 		gra->y      = READ_UINT16(data + pos); pos += 2;
 		gra->height = READ_UINT16(data + pos); pos += 2;
 		gra->width  = READ_UINT16(data + pos); pos += 2;
-		gra->data = 0;
+
+		// FIXME: This loads the whole bundle in memory, as currently
+		// the offset of each individual entry is not retained. This
+		// needs to be addressed as we are forced to preload the whole
+		// file for graphics bundles, and that just hogs up memory. A
+		// better way would be to *store* the entry position so that we
+		// can directly jump to it and read it.
+		gra->data = (uint8*)malloc(gra->size - 16);
+		memcpy(gra->data, data + pos, gra->size - 16);
+		//gra->data = 0;
 
 		entries.push_back(gra);
 	}

@@ -32,6 +32,19 @@
 
 namespace Asylum {
 
+enum EyesAnimation {
+	kEyesFront = 0,
+	kEyesLeft = 1,
+	kEyesRight = 2,
+	kEyesTop = 3,
+	kEyesBottom = 4,
+	kEyesTopLeft = 5,
+	kEyesTopRight = 6,
+	kEyesBottomLeft = 7,
+	kEyesBottomRight = 8,
+	kEyesCrossed = 9
+};
+
 AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
     : Engine(system) {
 
@@ -84,6 +97,7 @@ Common::Error AsylumEngine::go() {
 	Audio::SoundHandle sfxHandle;
 	int activeIcon = -1;
 	int previousActiveIcon = -1;
+	int curIconFrame = 0;
 
 	// Play intro movie
 	// Disabled for quick testing
@@ -130,8 +144,15 @@ Common::Error AsylumEngine::go() {
 			for (int i = 0; i <= 5; i++) {
 				int curX = 40 + i * 100;
 				if (mouseX >= curX && mouseX <= curX + 55) {
-					GraphicResource *res = _resMgr->getGraphic(1, i + 4, 0);
+					GraphicResource *res = _resMgr->getGraphic(1, i + 4, curIconFrame);
 					_system->copyRectToScreen(res->data, res->width, curX, 20, res->width, res->height);
+
+					// Cycle icon frame
+					// Icon animations have 15 frames, 0-14
+					// FIXME: icon animations are way too quick
+					curIconFrame++;
+					if (curIconFrame == 15)
+						curIconFrame = 0;
 
 					activeIcon = i;
 
@@ -157,8 +178,15 @@ Common::Error AsylumEngine::go() {
 					else if (iconNum == 15)
 						iconNum = 14;
 
-					GraphicResource *res = _resMgr->getGraphic(1, iconNum, 0);
+					GraphicResource *res = _resMgr->getGraphic(1, iconNum, curIconFrame);
 					_system->copyRectToScreen(res->data, res->width, curX, 400, res->width, res->height);
+
+					// Cycle icon frame
+					// Icon animations have 15 frames, 0-14
+					// FIXME: icon animations are way too quick
+					curIconFrame++;
+					if (curIconFrame == 15)
+						curIconFrame = 0;
 
 					activeIcon = i + 6;
 
@@ -175,6 +203,37 @@ Common::Error AsylumEngine::go() {
 			// No selection
 			previousActiveIcon = activeIcon = -1;
 		}
+
+		// Eyes animation
+		// Get the appropriate eye resource depending on the mouse position
+		int eyeResource = kEyesFront;
+
+		if (mouseX <= 200) {
+			if (mouseY <= 160)
+				eyeResource = kEyesTopLeft;
+			else if (mouseY > 160 && mouseY <= 320)
+				eyeResource = kEyesLeft;
+			else
+				eyeResource = kEyesBottomLeft;
+		} else if (mouseX > 200 && mouseX <= 400) {
+			if (mouseY <= 160)
+				eyeResource = kEyesTop;
+			else if (mouseY > 160 && mouseY <= 320)
+				eyeResource = kEyesFront;
+			else
+				eyeResource = kEyesBottom;
+		} else if (mouseX > 400) {
+			if (mouseY <= 160)
+				eyeResource = kEyesTopRight;
+			else if (mouseY > 160 && mouseY <= 320)
+				eyeResource = kEyesRight;
+			else
+				eyeResource = kEyesBottomRight;
+		}
+		// TODO: kEyesCrossed state
+
+		GraphicResource *res = _resMgr->getGraphic(1, 1, eyeResource);
+		copyRectToScreenWithTransparency(res->data, 265, 230, res->width, res->height);
 
 		if (_system->getMillis() - lastUpdate > 50) {
 			_system->updateScreen();
@@ -195,7 +254,7 @@ void AsylumEngine::showMainMenu() {
 	_resMgr->loadMusic();
 }
 
-void AsylumEngine::copyToBackBuffer(int x, int y, int width, int height, byte *buffer) {
+void AsylumEngine::copyToBackBuffer(byte *buffer, int x, int y, int width, int height) {
 	int h = height;
 	byte *dest = (byte *)_backBuffer.pixels;
 
@@ -205,4 +264,19 @@ void AsylumEngine::copyToBackBuffer(int x, int y, int width, int height, byte *b
 		buffer += width;
 	}
 }
+
+void AsylumEngine::copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height) {
+	byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
+
+	for (int curY = 0; curY < height; curY++) {
+		for (int curX = 0; curX < width; curX++) {
+			if (buffer[curX + curY * width] != 0) {
+				screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * width];
+			}
+		}
+	}
+
+	_system->unlockScreen();
+}
+
 } // namespace Asylum
