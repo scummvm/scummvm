@@ -705,6 +705,11 @@ void Draw_v2::spriteOperation(int16 operation) {
 	sourceSurf = _spritesArray[_sourceSurface];
 	destSurf = _spritesArray[_destSurface];
 
+	if (!destSurf) {
+		warning("Can't do operation %d on surface %d: nonexistent", operation, _destSurface);
+		return;
+	}
+
 	switch (operation) {
 	case DRAW_BLITSURF:
 	case DRAW_DRAWLETTER:
