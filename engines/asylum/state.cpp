@@ -24,6 +24,7 @@
  */
 
 #include "asylum/state.h"
+#include "sound/wave.h"
 
 namespace Asylum {
 
@@ -61,14 +62,29 @@ MenuState::MenuState(AsylumEngine *vm): State(vm) {
 	_curMouseCursor     = 0;
 	_cursorStep         = 1;
 
-	init();
-}
+	_resPack = new ResourcePack("res.001");
+	_musPack = new ResourcePack("mus.005");
 
-void MenuState::init() {
 	_resMgr->loadGraphic(1, 0, 0);
 	_resMgr->loadPalette(1, 17);
 	_resMgr->loadCursor(1, 2, 0);
-	_resMgr->loadMusic();
+
+	ResourceEntry *musicResource = _musPack->getResource(0);
+
+	// Start playing some music
+	// TODO: This should all be moved to a separate music class
+	// TODO Add control methods (stop/start/restart)
+	Common::MemoryReadStream *mem = new Common::MemoryReadStream(musicResource->data, musicResource->size);
+
+	// Now create the audio stream and play it (it's just a regular WAVE file)
+	Audio::AudioStream *mus = Audio::makeWAVStream(mem, true);
+	Audio::SoundHandle _musicHandle;
+	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, mus);
+}
+
+MenuState::~MenuState() {
+	delete _musPack;
+	delete _resPack;
 }
 
 void MenuState::update() {

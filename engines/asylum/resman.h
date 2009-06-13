@@ -50,7 +50,6 @@ public:
 	bool loadCursor(uint8 fileNum, uint32 offset, uint32 index);
 	bool loadPalette(uint8 fileNum, uint32 offset);
 	bool loadSound(uint8 fileNum, uint32 offset);
-	bool loadMusic();
 	bool loadVideo(uint8 fileNum);
 	Audio::AudioStream *loadSFX(uint8 fileNum, uint32 offset);
 

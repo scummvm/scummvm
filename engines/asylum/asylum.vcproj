@@ -206,11 +206,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\asylum\resourcepack.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\resourcepack.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\asylum\scene.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\asylum\scene.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\state.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\state.h"
 			>
 		</File>
 		<File

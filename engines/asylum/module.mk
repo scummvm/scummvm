@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	graphicbundle.o \
 	video.o \
 	resman.o \
+	resourcepack.o \
 	scene.o \
 	state.o
 

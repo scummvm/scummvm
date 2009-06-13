@@ -30,6 +30,7 @@
 
 #include "asylum/asylum.h"
 #include "asylum/resman.h"
+#include "asylum/resourcepack.h"
 
 namespace Asylum {
 
@@ -66,7 +67,7 @@ private:
 class MenuState: public State {
 public:
 	MenuState(AsylumEngine *vm);
-	~MenuState() {}
+	~MenuState();
 
 private:
 
@@ -89,10 +90,12 @@ private:
 	int _curIconFrame;
 	int _curMouseCursor;
 	int _cursorStep;
+	ResourcePack *_resPack;
+	ResourcePack *_musPack;
 
 	void updateCursor();
 
-	void init();
+	void init() {}
 	void update();
 }; // end of class MenuState
 

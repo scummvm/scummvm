@@ -106,45 +106,6 @@ Audio::AudioStream *ResourceManager::loadSFX(uint8 fileNum, uint32 offset) {
 	return Audio::makeWAVStream(mem, true);
 }
 
-bool ResourceManager::loadMusic() {
-	// TODO ACTUALLY implement music loading (not just this test)
-	// TODO Add control methods (stop/start/restart?)
-	// TODO Cleanup
-
-	// Music - start
-
-	// Just play some music for now
-	// FIXME: this should be moved to the bundle manager, but currently the whole manager needs
-	// an overhaul...
-	Common::File musFile;
-	musFile.open("mus.005");
-	uint32 entryCount = musFile.readUint32LE();
-	uint32 offset1 = 0;
-	uint32 offset2 = 0;
-	for (uint32 i = 0; i < entryCount; i++) {
-		if (offset1 == 0)
-			offset1 = musFile.readUint32LE();
-		// HACK: This will ultimately read the last entry in the bundle lookup table
-		// This will only work for file bundles with 1 music file included (like mus.005)
-		offset2 = musFile.readUint32LE();
-	}
-
-	byte *buffer = new byte[offset2 - offset1];
-	musFile.read(buffer, offset2 - offset1);
-	musFile.close();
-
-	Common::MemoryReadStream *mem = new Common::MemoryReadStream(buffer, offset2 - offset1);
-
-	// Now create the audio stream and play it (it's just a regular WAVE file)
-	Audio::AudioStream *mus = Audio::makeWAVStream(mem, true);
-	Audio::SoundHandle _musicHandle;
-	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, mus);
-
-	// Music - end
-
-	return true;
-}
-
 GraphicResource* ResourceManager::getGraphic(uint8 fileNum, uint32 offset, uint32 index) {
 	// FIXME: This doesn't make sense semantically. On one hand, we got a bundle, a file
 	// containing multiple files. Then, on the other hand, we got a file inside that bundle,
