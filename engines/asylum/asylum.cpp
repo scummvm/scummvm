@@ -29,6 +29,7 @@
 #include "common/file.h"
 
 #include "asylum/asylum.h"
+#include "asylum/resourcepack.h"
 
 namespace Asylum {
 
@@ -46,6 +47,7 @@ AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
 	delete _scene;
     delete _resMgr;
+	delete _state;
 	_backBuffer.free();
 }
 
@@ -66,6 +68,9 @@ Common::Error AsylumEngine::init() {
 
 	_resMgr = new ResourceManager(this);
     _scene = new Scene(this);
+	// DEBUG
+	// Testing new game state abstraction class
+	_state = new MenuState(this);
 
 	// initializing game
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
@@ -87,14 +92,11 @@ Common::Error AsylumEngine::go() {
     // TODO: just some scene proof-of-concept
     _scene->load(5);
 
+
 	// DEBUG
     // Control loop test. Basically just keep the
     // ScummVM window alive until ESC is pressed.
     // This will facilitate drawing tests ;)
-
-	// DEBUG
-	// Testing new game state abstraction class
-	_state = new MenuState(this);
 
 	while (!shouldQuit()) {
 
