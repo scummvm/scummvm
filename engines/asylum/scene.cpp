@@ -60,9 +60,8 @@ bool Scene::load(uint8 sceneIdx){
     }
 
     loadWorldStats(fd);
-
-    // TODO: load Game Polies
-    // TODO: load Action List
+    loadGamePolies(fd);
+    loadActionList(fd);
 
     return true;
 }
@@ -77,10 +76,8 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
     
     stream->skip(24); //unUsed data
     
-    // read common graphic resources index (always 25)
-    for(int i=0; i < 25; i++){
-        _worldStats->_commonGrResIdArray[i] = stream->readUint32LE();
-    }
+    // read common graphic resources
+    stream->read(&_worldStats->_commonRes,sizeof(CommonResources));
 
     _worldStats->_width = stream->readUint32LE();
     _worldStats->_height = stream->readUint32LE();
@@ -105,19 +102,77 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
     // FIXME Jump resource list definitions
 
     stream->seek(0x6FA); // where actors definitions start
+
     // FIXME Figure out all the actor definitions
     for(uint32 a=0; a < _worldStats->_numActors; a++){
-        memset(&_worldStats->_actorsDef[a], 0, sizeof(ActorDefinitions)); // clean
-        _worldStats->_actorsDef[a].id = stream->readUint32LE();
-        _worldStats->_actorsDef[a].graphicResId = stream->readUint32LE();
-        _worldStats->_actorsDef[a].x = stream->readUint32LE();
-        _worldStats->_actorsDef[a].y = stream->readUint32LE();
-        stream->skip(0x30); // FIXME jump unknown fields
-        stream->read(_worldStats->_actorsDef[a].name,52);       
-        stream->skip(0x158); // FIXME jump unknown fields
-        _worldStats->_actorsDef[a].soundResId = stream->readUint32LE();
+        ActorDefinitions actorDef;
+        memset(&actorDef, 0, sizeof(ActorDefinitions));
+
+        actorDef.id = stream->readUint32LE();
+        actorDef.graphicResId = stream->readUint32LE();
+        actorDef.x = stream->readUint32LE();
+        actorDef.y = stream->readUint32LE();
+        stream->skip(0x30); 
+        stream->read(actorDef.name,52);       
+        stream->skip(0x158);
+        actorDef.soundResId = stream->readUint32LE();
         stream->skip(0x4D8);
+
+        _worldStats->_actorsDef.push_back(actorDef);
     }
+    
+    // TODO grab Max actor definitions
+
+    stream->seek(0xD6B5A); // where actors action definitions start
+
+    // FIXME Figure out all the actor action definitions
+    for(uint32 a=0; a < _worldStats->_numActions; a++){
+        ActorActionDefinitions actorActionDef;
+        memset(&actorActionDef, 0, sizeof(ActorActionDefinitions));
+
+        stream->read(actorActionDef.name,52);
+        actorActionDef.id = stream->readUint32LE();
+        stream->skip(0x14); 
+        actorActionDef.actionListIdx1 = stream->readUint32LE();
+        actorActionDef.actionListIdx2 = stream->readUint32LE();
+        actorActionDef.actionType = stream->readUint32LE();
+        stream->skip(0x2C); 
+        actorActionDef.polyIdx = stream->readUint32LE();
+        stream->skip(0x08); 
+        actorActionDef.soundResId = stream->readUint32LE();
+        stream->skip(0x04); 
+        actorActionDef.palCorrection = stream->readUint32LE();
+        stream->skip(0x14); 
+        actorActionDef.soundVolume = stream->readUint32LE();
+    }
+}
+
+// FIXME: load necessary Game Polies content
+void Scene::loadGamePolies(Common::SeekableReadStream *stream){
+    _gamePolies = new GamePolies;
+
+    stream->seek(0xE8686); // jump to game polies data
+
+    _gamePolies->_size = stream->readUint32LE();
+    _gamePolies->_numEntries = stream->readUint32LE();
+
+    for(uint32 g=0; g < _gamePolies->_numEntries; g++){
+        PolyDefinitions poly;
+        memset(&poly, 0, sizeof(PolyDefinitions));
+        poly.numPoints = stream->readUint32LE();
+        stream->read(poly.points, sizeof(Common::Point) * POLIES_MAXSIZE);
+        poly.boundingRect.top = stream->readUint32LE();
+        poly.boundingRect.left = stream->readUint32LE();
+        poly.boundingRect.bottom = stream->readUint32LE();
+        poly.boundingRect.right = stream->readUint32LE();
+
+        _gamePolies->_polies.push_back(poly);
+    }
+}
+
+// TODO: load necessary Action List content
+void Scene::loadActionList(Common::SeekableReadStream *stream){
+
 }
 
 Common::String Scene::parseFilename(uint8 sceneIdx) {
