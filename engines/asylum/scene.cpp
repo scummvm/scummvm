@@ -92,7 +92,32 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
 
     stream->skip(20); //unUsed data
 
-    // 3 unknown fields
+    // FIXME figure out what this 3 unknown fields are
+    stream->skip(12);
+
+    // FIXME Jump unknown resource list
+
+    stream->seek(0x2C6);
+    _worldStats->_loadingScreenGrResId = stream->readUint32LE();
+    _worldStats->_loadingScreenPalResId = stream->readUint32LE();
+
+    // FIXME Jump unknown sound resource list
+    // FIXME Jump resource list definitions
+
+    stream->seek(0x6FA); // where actors definitions start
+    // FIXME Figure out all the actor definitions
+    for(uint32 a=0; a < _worldStats->_numActors; a++){
+        memset(&_worldStats->_actorsDef[a], 0, sizeof(ActorDefinitions)); // clean
+        _worldStats->_actorsDef[a].id = stream->readUint32LE();
+        _worldStats->_actorsDef[a].graphicResId = stream->readUint32LE();
+        _worldStats->_actorsDef[a].x = stream->readUint32LE();
+        _worldStats->_actorsDef[a].y = stream->readUint32LE();
+        stream->skip(0x30); // FIXME jump unknown fields
+        stream->read(_worldStats->_actorsDef[a].name,52);       
+        stream->skip(0x158); // FIXME jump unknown fields
+        _worldStats->_actorsDef[a].soundResId = stream->readUint32LE();
+        stream->skip(0x4D8);
+    }
 }
 
 Common::String Scene::parseFilename(uint8 sceneIdx) {
