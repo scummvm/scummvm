@@ -9,6 +9,8 @@ MODULE_OBJS := \
 	resman.o \
 	resourcepack.o \
 	scene.o \
+	screen.o \
+	sound.o \
 	state.o
 
 # This module can be built as a plugin

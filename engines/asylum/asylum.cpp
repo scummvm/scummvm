@@ -45,10 +45,11 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
+	delete _state;
 	delete _scene;
     delete _resMgr;
-	delete _state;
-	_backBuffer.free();
+	delete _sound;
+	delete _screen;
 }
 
 Common::Error AsylumEngine::run() {
@@ -64,8 +65,9 @@ Common::Error AsylumEngine::init() {
 	// initialize engine objects
 
 	initGraphics(640, 480, true);
-	_backBuffer.create(640, 480, 1);
 
+	_screen = new Screen(_system);
+	_sound = new Sound(_mixer);
 	_resMgr = new ResourceManager(this);
     _scene = new Scene(this);
 	// DEBUG
@@ -134,34 +136,9 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 
 	if (doUpdate) {
 		// Copy background image
-		_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
+		_screen->copyBackBufferToScreen();
 	}
 	_state->handleEvent(&ev, doUpdate);
-}
-
-void AsylumEngine::copyToBackBuffer(byte *buffer, int x, int y, int width, int height) {
-	int h = height;
-	byte *dest = (byte *)_backBuffer.pixels;
-
-	while (h--) {
-		memcpy(dest, buffer, width);
-		dest += 640;
-		buffer += width;
-	}
-}
-
-void AsylumEngine::copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height) {
-	byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
-
-	for (int curY = 0; curY < height; curY++) {
-		for (int curX = 0; curX < width; curX++) {
-			if (buffer[curX + curY * width] != 0) {
-				screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * width];
-			}
-		}
-	}
-
-	_system->unlockScreen();
 }
 
 } // namespace Asylum

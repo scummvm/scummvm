@@ -24,7 +24,6 @@
  */
 
 #include "asylum/state.h"
-#include "sound/wave.h"
 
 namespace Asylum {
 
@@ -67,36 +66,17 @@ MenuState::MenuState(AsylumEngine *vm): State(vm) {
 	_musPack = new ResourcePack("mus.005");
 
 	// Load the graphics palette
-	// TODO: This needs to be moved to a separate class (Graphics?)
-	byte palette[256 * 4];
-	byte *p = _resPack->getResource(17)->data + 32;
-
-	for (int i = 0; i < 256; i++) {
-		palette[i * 4 + 0] = *p++ << 2;
-		palette[i * 4 + 1] = *p++ << 2;
-		palette[i * 4 + 2] = *p++ << 2;
-		palette[i * 4 + 3] = 0;
-	}
-
-	_vm->_system->setPalette(palette, 0, 256);
+	byte *pal = _resPack->getResource(17)->data + 32;
+	_vm->getScreen()->setPalette(pal);
 
 	// Copy the background to the back buffer
 	GraphicResource *bg = _resMgr->getGraphic(1, 0, 0);
-	_vm->copyToBackBuffer(bg->data, 0, 0, bg->width, bg->height);
+	_vm->getScreen()->copyToBackBuffer(bg->data, 0, 0, bg->width, bg->height);
 
 	_resMgr->loadCursor(1, 2, 0);
 
 	ResourceEntry *musicResource = _musPack->getResource(0);
-
-	// Start playing some music
-	// TODO: This should all be moved to a separate music class
-	// TODO Add control methods (stop/start/restart)
-	Common::MemoryReadStream *mem = new Common::MemoryReadStream(musicResource->data, musicResource->size);
-
-	// Now create the audio stream and play it (it's just a regular WAVE file)
-	Audio::AudioStream *mus = Audio::makeWAVStream(mem, true);
-	Audio::SoundHandle _musicHandle;
-	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, mus);
+	_vm->getSound()->playMusic(musicResource->data, musicResource->size);
 }
 
 MenuState::~MenuState() {
@@ -123,14 +103,10 @@ void MenuState::update() {
 				_activeIcon = i;
 
 				// Play creepy voice
-				if (!_vm->_mixer->isSoundHandleActive(_sfxHandle) && _activeIcon != _previousActiveIcon) {
+				if (!_vm->getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
 					// TODO: This should be moved to a sound-related class
 					ResourceEntry *sfxResource = _resPack->getResource(i + 44);
-					Common::MemoryReadStream *mem = new Common::MemoryReadStream(sfxResource->data, sfxResource->size);
-
-					// Now create the audio stream and play it (it's just a regular WAVE file)
-					Audio::AudioStream *sfx = Audio::makeWAVStream(mem, true);
-					_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, sfx);
+					_vm->getSound()->playMusic(sfxResource->data, sfxResource->size);
 
 					_previousActiveIcon = _activeIcon;
 				}
@@ -168,14 +144,10 @@ void MenuState::update() {
 					_curIconFrame = 0;
 
 				// Play creepy voice
-				if (!_vm->_mixer->isSoundHandleActive(_sfxHandle) && _activeIcon != _previousActiveIcon) {
+				if (!_vm->getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
 					// TODO: This should be moved to a sound-related class
 					ResourceEntry *sfxResource = _resPack->getResource(iconNum + 40);
-					Common::MemoryReadStream *mem = new Common::MemoryReadStream(sfxResource->data, sfxResource->size);
-
-					// Now create the audio stream and play it (it's just a regular WAVE file)
-					Audio::AudioStream *sfx = Audio::makeWAVStream(mem, true);
-					_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, sfx);
+					_vm->getSound()->playMusic(sfxResource->data, sfxResource->size);
 
 					_previousActiveIcon = _activeIcon;
 				}
@@ -217,7 +189,7 @@ void MenuState::update() {
 	// TODO: kEyesCrossed state
 
 	GraphicResource *res = _resMgr->getGraphic(1, 1, eyeResource);
-	_vm->copyRectToScreenWithTransparency(res->data, 265, 230, res->width, res->height);
+	_vm->getScreen()->copyRectToScreenWithTransparency(res->data, 265, 230, res->width, res->height);
 
 	updateCursor();
 }
