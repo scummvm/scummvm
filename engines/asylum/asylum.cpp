@@ -97,6 +97,8 @@ Common::Error AsylumEngine::go() {
 	_activeIcon = -1;
 	_previousActiveIcon = -1;
 	_curIconFrame = 0;
+	_curMouseCursor = 0;
+	_cursorStep = 1;
 
 	// Play intro movie
 	// Disabled for quick testing
@@ -123,10 +125,22 @@ Common::Error AsylumEngine::go() {
 
 		updateMainMenu();
 
+		updateMouseCursor();
+
 		waitForTimer(50);
 	}
 
     return Common::kNoError;
+}
+
+void AsylumEngine::updateMouseCursor() {
+	_curMouseCursor += _cursorStep;
+	if (_curMouseCursor == 0)
+		_cursorStep = 1;
+	if (_curMouseCursor == 6)
+		_cursorStep = -1;
+
+	_resMgr->loadCursor(1, 2, _curMouseCursor);
 }
 
 void AsylumEngine::waitForTimer(int msec_delay) {

@@ -54,6 +54,7 @@ public:
 	void copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height);
 	void checkForEvent();
 	void waitForTimer(int msec_delay);
+	void updateMouseCursor();
 
 private:
     Common::Language     _language;
@@ -69,6 +70,8 @@ private:
 	int _activeIcon;
 	int _previousActiveIcon;
 	int _curIconFrame;
+	int _curMouseCursor;
+	int _cursorStep;
 
     void showMainMenu();
 	void updateMainMenu();
