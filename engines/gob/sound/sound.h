@@ -79,6 +79,8 @@ public:
 	// AdLib
 	bool adlibLoad(const char *fileName);
 	bool adlibLoad(byte *data, uint32 size, int index = -1);
+	bool adlibLoadMdy(const char *fileName);
+	bool adlibLoadTbr(const char *fileName);
 	void adlibUnload();
 
 	void adlibPlayTrack(const char *trackname);

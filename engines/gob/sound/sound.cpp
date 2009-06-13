@@ -250,6 +250,24 @@ void Sound::adlibUnload() {
 	_adlib->unload();
 }
 
+bool Sound::adlibLoadMdy(const char *fileName) {
+	if (!_adlib)
+		return false;
+
+	debugC(1, kDebugSound, "Adlib: Loading data (\"%s\")", fileName);
+
+	return _adlib->loadMdy(fileName);
+}
+
+bool Sound::adlibLoadTbr(const char *fileName) {
+	if (!_adlib)
+		return false;
+
+	debugC(1, kDebugSound, "Adlib: Loading instruments (\"%s\")", fileName);
+
+	return _adlib->loadTbr(fileName);
+}
+
 void Sound::adlibPlayTrack(const char *trackname) {
 	if (!_adlib || _adlib->isPlaying())
 		return;

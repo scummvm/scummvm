@@ -51,7 +51,8 @@ AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer) {
 	_ended = false;
 	_playing = false;
 	_needFree = false;
-
+	_mdySong = false;
+	
 	_repCount = -1;
 	_samplesTillPoll = 0;
 
@@ -107,20 +108,29 @@ int AdLib::readBuffer(int16 *buffer, const int numSamples) {
 	if (_ended) {
 		_first = true;
 		_ended = false;
-		_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+		if (_mdySong)
+			_playPos = _data;
+		else
+			_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+
 		_samplesTillPoll = 0;
 		if (_repCount == -1) {
 			reset();
-			setVoices();
+			if (_mdySong)
+				setVoicesTbr();
+			else
+				setVoices();
 		} else if (_repCount > 0) {
 			_repCount--;
 			reset();
-			setVoices();
+			if (_mdySong)
+				setVoicesTbr();
+			else
+				setVoices();
 		}
 		else
 			_playing = false;
 	}
-
 	return numSamples;
 }
 
@@ -171,6 +181,19 @@ void AdLib::reset() {
 
 	// Authorize the control of the waveformes
 	writeOPL(0x01, 0x20);
+
+// _soundMode 1 : Percussive mode. 
+	if (_soundMode == 1) { 
+		writeOPL(0xA6, 0);
+		writeOPL(0xB6, 0);
+		writeOPL(0xA7, 0);
+		writeOPL(0xB7, 0);
+		writeOPL(0xA8, 0);
+		writeOPL(0xB8, 0);
+
+// TODO set the correct frequency for the last 4 percussive voices
+
+	}
 }
 
 void AdLib::setVoices() {
@@ -214,6 +237,69 @@ void AdLib::setVoice(byte voice, byte instr, bool set) {
 			writeOPL(0x40 | channel, 0);
 	}
 }
+
+void AdLib::setVoicesTbr() {
+	int i;
+	byte *timbrePtr;
+
+	timbrePtr = _timbres;
+	debugC(6, kDebugSound, "TBR version: %X.%X", timbrePtr[0], timbrePtr[1]);
+	timbrePtr += 2;
+
+	_tbrCount = READ_LE_UINT16(timbrePtr);
+	debugC(6, kDebugSound, "Timbres counter: %d", _tbrCount);
+	timbrePtr += 2;
+	_tbrStart = READ_LE_UINT16(timbrePtr);
+ 
+	timbrePtr += 2;
+	for (i = 0; i < _tbrCount ; i++)
+	{
+		setVoiceTbr (i, i, true);
+	}
+}
+
+void AdLib::setVoiceTbr (byte voice, byte instr, bool set) {
+	int i;
+	int j;
+	uint16 strct[27];
+	byte channel;
+	byte *timbrePtr;
+	char timbreName[10];
+
+	timbreName[9] = '\0';
+	for (j = 0; j < 9; j++)
+		timbreName[j] = _timbres[6 + j + (instr * 9)]; 
+	debugC(6, kDebugSound, "Loading timbre %s", timbreName);
+	
+	// i = 0 :  0  1  2  3  4  5  6  7  8  9 10 11 12 26
+	// i = 1 : 13 14 15 16 17 18 19 20 21 22 23 24 25 27
+	for (i = 0; i < 2; i++) {
+		timbrePtr = _timbres + _tbrStart + instr * 0x38 + i * 0x1A;
+		for (j = 0; j < 27; j++) {
+			strct[j] = READ_LE_UINT16(timbrePtr);
+			timbrePtr += 2;
+		}
+		channel = _operators[voice] + i * 3;
+		writeOPL(0xBD, 0x00);
+		writeOPL(0x08, 0x00);
+		writeOPL(0x40 | channel, ((strct[0] & 3) << 6) | (strct[8] & 0x3F));
+		if (!i)
+			writeOPL(0xC0 | voice,
+					((strct[2] & 7) << 1) | (1 - (strct[12] & 1)));
+		writeOPL(0x60 | channel, ((strct[3] & 0xF) << 4) | (strct[6] & 0xF));
+		writeOPL(0x80 | channel, ((strct[4] & 0xF) << 4) | (strct[7] & 0xF));
+		writeOPL(0x20 | channel, ((strct[9] & 1) << 7) |
+			((strct[10] & 1) << 6) | ((strct[5] & 1) << 5) |
+			((strct[11] & 1) << 4) |  (strct[1] & 0xF));
+		if (!i)
+			writeOPL(0xE0 | channel, (strct[26] & 3));
+		else {
+			writeOPL(0xE0 | channel, (strct[14] & 3));
+			writeOPL(0x40 | channel, 0);
+		}
+	}
+}
+
 
 void AdLib::setKey(byte voice, byte note, bool on, bool spec) {
 	short freq = 0;
@@ -293,94 +379,194 @@ void AdLib::pollMusic() {
 	byte volume;
 	uint16 tempo;
 
+	uint8 i, tempoMult, tempoFrac, ctrlByte1, ctrlByte2, timbre;
+
 	if ((_playPos > (_data + _dataSize)) && (_dataSize != 0xFFFFFFFF)) {
 		_ended = true;
 		return;
 	}
 
-	// First tempo, we'll ignore it...
-	if (_first) {
-		tempo = *(_playPos++);
-		// Tempo on 2 bytes
-		if (tempo & 0x80)
-			tempo = ((tempo & 3) << 8) | *(_playPos++);
-	}
-	_first = false;
+	if (_mdySong)
+	{
+		if (_first) {
+			for (i = 0; i < 11; i ++)
+				setVolume(i, 0);
 
-	// Instruction
-	instr = *(_playPos++);
-	channel = instr & 0x0F;
+//	TODO : Set pitch range
 
-	switch (instr & 0xF0) {
-		// Note on + Volume
-		case 0x00:
-			note = *(_playPos++);
-			_pollNotes[channel] = note;
-			setVolume(channel, *(_playPos++));
-			setKey(channel, note, true, false);
-			break;
-		// Note on
-		case 0x90:
-			note = *(_playPos++);
-			_pollNotes[channel] = note;
-			setKey(channel, note, true, false);
-			break;
-		// Last note off
-		case 0x80:
-			note = _pollNotes[channel];
-			setKey(channel, note, false, false);
-			break;
-		// Frequency on/off
-		case 0xA0:
-			note = *(_playPos++);
-			setKey(channel, note, _notOn[channel], true);
-			break;
-		// Volume
-		case 0xB0:
-			volume = *(_playPos++);
-			setVolume(channel, volume);
-			break;
-		// Program change
-		case 0xC0:
-			setVoice(channel, *(_playPos++), false);
-			break;
-		// Special
-		case 0xF0:
-			switch (instr & 0x0F) {
-			case 0xF: // End instruction
+			_tempo = _basicTempo;
+			_wait = *(_playPos++);
+			_first = false;
+		}
+		do {
+			instr = *_playPos;
+			switch(instr) {
+			case 0xF8:
+				_wait = 0xF8;
+				break;
+			case 0xFC:
 				_ended = true;
 				_samplesTillPoll = 0;
-				return;
+				break;
+			case 0xF0:
+				_playPos++;
+				ctrlByte1 = *(_playPos++);
+				ctrlByte2 = *(_playPos++);
+				if (ctrlByte1 != 0x7F || ctrlByte2 != 0) {
+					_playPos -= 2;
+					while (*(_playPos++) != 0xF7);
+				} else {
+					tempoMult = *(_playPos++);
+					tempoFrac = *(_playPos++);
+					_tempo = _basicTempo * tempoMult + (unsigned)(((long)_basicTempo * tempoFrac) >> 7);
+					_playPos++;      
+				}
+				_wait = *(_playPos++);
+				break;
 			default:
-				warning("Unknown special command in ADL, stopping playback: %X",
-						instr & 0x0F);
+				if (instr >= 0x80) {
+					_playPos++;
+				}
+				channel = (int)(instr & 0x0f);
+
+				switch(instr & 0xf0) {
+				case 0x90:
+					note = *(_playPos++);
+					volume = *(_playPos++);
+					_pollNotes[channel] = note;
+					setVolume(channel, volume);
+					setKey(channel, note, true, false);
+					break;
+				case 0x80:
+					_playPos += 2;
+					note = _pollNotes[channel];
+					setKey(channel, note, false, false);
+					break;
+				case 0xA0:
+					setVolume(channel, *(_playPos++));
+					break;
+				case 0xC0:
+					timbre = *(_playPos++);
+					setVoiceTbr(channel, timbre, false);
+					break;
+				case 0xE0:
+					printf("Pitch bend not yet implemented\n");
+    	
+					note = *(_playPos)++;
+					note += (unsigned)(*(_playPos++)) << 7;
+    	
+					break;
+				case 0xB0:
+					_playPos += 2;
+					break;
+				case 0xD0:
+					_playPos++;
+					break;
+				default:
+					warning("Bad MIDI instr byte: 0%X", instr);
+					while ((*_playPos) < 0x80)
+						_playPos++;
+					if (*_playPos != 0xF8)
+						_playPos--;
+					break;
+				} //switch instr & 0xF0
+				_wait = *(_playPos++);
+				break;
+			} //switch instr
+		} while (_wait == 0);
+
+		if (_wait == 0x78) {
+			_wait = 0xF0;
+			if (*_playPos != 0xF8)
+				_wait += *(_playPos++);
+		}
+		_playPos++;
+		_samplesTillPoll = _wait * (_rate / 1000);
+	} else {
+		// First tempo, we'll ignore it...
+		if (_first) {
+			tempo = *(_playPos++);
+			// Tempo on 2 bytes
+			if (tempo & 0x80)
+				tempo = ((tempo & 3) << 8) | *(_playPos++);
+		}
+		_first = false;
+  	
+		// Instruction
+		instr = *(_playPos++);
+		channel = instr & 0x0F;
+  	
+		switch (instr & 0xF0) {
+			// Note on + Volume
+			case 0x00:
+				note = *(_playPos++);
+				_pollNotes[channel] = note;
+				setVolume(channel, *(_playPos++));
+				setKey(channel, note, true, false);
+				break;
+			// Note on
+			case 0x90:
+				note = *(_playPos++);
+				_pollNotes[channel] = note;
+				setKey(channel, note, true, false);
+				break;
+			// Last note off
+			case 0x80:
+				note = _pollNotes[channel];
+				setKey(channel, note, false, false);
+				break;
+			// Frequency on/off
+			case 0xA0:
+				note = *(_playPos++);
+				setKey(channel, note, _notOn[channel], true);
+				break;
+			// Volume
+			case 0xB0:
+				volume = *(_playPos++);
+				setVolume(channel, volume);
+				break;
+			// Program change
+			case 0xC0:
+				setVoice(channel, *(_playPos++), false);
+				break;
+			// Special
+			case 0xF0:
+				switch (instr & 0x0F) {
+				case 0xF: // End instruction
+					_ended = true;
+					_samplesTillPoll = 0;
+					return;
+				default:
+					warning("Unknown special command in ADL, stopping playback: %X",
+							instr & 0x0F);
+					_repCount = 0;
+					_ended = true;
+					break;
+				}
+				break;
+			default:
+				warning("Unknown command in ADL, stopping playback: %X",
+						instr & 0xF0);
 				_repCount = 0;
 				_ended = true;
 				break;
-			}
-			break;
-		default:
-			warning("Unknown command in ADL, stopping playback: %X",
-					instr & 0xF0);
-			_repCount = 0;
+		}
+  	
+		// Temporization
+		tempo = *(_playPos++);
+		// End tempo
+		if (tempo == 0xFF) {
 			_ended = true;
-			break;
+			return;
+		}
+		// Tempo on 2 bytes
+		if (tempo & 0x80)
+			tempo = ((tempo & 3) << 8) | *(_playPos++);
+		if (!tempo)
+			tempo ++;
+  	
+		_samplesTillPoll = tempo * (_rate / 1000);
 	}
-
-	// Temporization
-	tempo = *(_playPos++);
-	// End tempo
-	if (tempo == 0xFF) {
-		_ended = true;
-		return;
-	}
-	// Tempo on 2 bytes
-	if (tempo & 0x80)
-		tempo = ((tempo & 3) << 8) | *(_playPos++);
-	if (!tempo)
-		tempo ++;
-
-	_samplesTillPoll = tempo * (_rate / 1000);
 }
 
 bool AdLib::load(const char *fileName) {
@@ -415,6 +601,64 @@ bool AdLib::load(byte *data, uint32 size, int index) {
 	reset();
 	setVoices();
 	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+
+	return true;
+}
+
+bool AdLib::loadMdy(const char *fileName) {
+	Common::File song;
+	byte mdyHeader[70];
+
+	unload();
+	song.open(fileName);
+	if (!song.isOpen())
+		return false;
+
+	_needFree = true;
+	_mdySong = true;
+
+	song.read(mdyHeader, 70);
+
+	_tickBeat = mdyHeader[36];
+	_beatMeasure = mdyHeader[37];
+	_totalTick = mdyHeader[38] + (mdyHeader[39] << 8) + (mdyHeader[40] << 16) + (mdyHeader[41] << 24);
+	_dataSize = mdyHeader[42] + (mdyHeader[43] << 8) + (mdyHeader[44] << 16) + (mdyHeader[45] << 24);
+	_nrCommand = mdyHeader[46] + (mdyHeader[47] << 8) + (mdyHeader[48] << 16) + (mdyHeader[49] << 24);
+// _soundMode is either 0 (melodic) or 1 (percussive)
+	_soundMode = mdyHeader[58];
+	_pitchBendRangeStep = 25*mdyHeader[59];
+	_basicTempo = mdyHeader[60] + (mdyHeader[61] << 8);
+
+	if (_pitchBendRangeStep < 25) 
+		_pitchBendRangeStep = 25;
+	else if (_pitchBendRangeStep > 300) 
+		_pitchBendRangeStep = 300;
+
+	_data = new byte[_dataSize];
+	song.read(_data, _dataSize);
+	song.close();
+
+	reset();
+	_playPos = _data;
+
+	return true;
+}
+
+bool AdLib::loadTbr(const char *fileName) {
+	Common::File timbres;
+
+	unload();
+	timbres.open(fileName);
+	if (!timbres.isOpen())
+		return false;
+
+	_timbresSize = timbres.size();
+	_timbres = new byte[_timbresSize];
+	timbres.read(_timbres, _timbresSize);
+	timbres.close();
+
+	reset();
+	setVoicesTbr();
 
 	return true;
 }

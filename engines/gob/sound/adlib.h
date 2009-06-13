@@ -51,6 +51,8 @@ public:
 
 	bool load(const char *fileName);
 	bool load(byte *data, uint32 size, int index = -1);
+	bool loadMdy(const char *fileName);
+	bool loadTbr(const char *fileName);
 	void unload();
 
 // AudioStream API
@@ -73,8 +75,10 @@ protected:
 	uint32 _rate;
 
 	byte *_data;
+	byte *_timbres;
 	byte *_playPos;
 	uint32 _dataSize;
+	uint32 _timbresSize;
 
 	short _freqs[25][12];
 	byte _notes[11];
@@ -90,14 +94,28 @@ protected:
 	bool _first;
 	bool _ended;
 	bool _needFree;
+	bool _mdySong;
 
 	int _index;
+	uint16 _tbrCount;
+	uint16 _tbrStart;
+
+	unsigned char _wait;
+	uint8 _tickBeat;
+	uint8 _beatMeasure;
+	uint32 _totalTick;
+	uint32 _nrCommand;
+	byte _soundMode;
+	uint16 _pitchBendRangeStep;
+	uint16 _basicTempo, _tempo;
 
 	void writeOPL(byte reg, byte val);
 	void setFreqs();
 	void reset();
 	void setVoices();
 	void setVoice(byte voice, byte instr, bool set);
+	void setVoicesTbr();
+	void setVoiceTbr(byte voice, byte instr, bool set);
 	void setKey(byte voice, byte note, bool on, bool spec);
 	void setVolume(byte voice, byte volume);
 	void pollMusic();

@@ -552,70 +552,58 @@ void Inter_Fascination::oFascin_geUnknown1(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_geUnknown2(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 2");
-	warning("funcLoadInstruments with parameter : 'extasy.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'extasy.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTbr("extasy.tbr");
+	_vm->_sound->adlibLoadMdy("extasy.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown3(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 3");
-	warning("Verify if 'Guess music' is loaded. If yes, call funcPlayMusic. (Guess)");
+	_vm->_sound->adlibPlay();
 }
 
 void Inter_Fascination::oFascin_geUnknown4(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 4");
-	warning("Verify if 'Guess music' is loaded. If yes, call funcStopMusic. (Guess)");
+	_vm->_sound->adlibStop();
 }
 
 void Inter_Fascination::oFascin_geUnknown5(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 5");
-	warning("Verify if 'instruments' are loaded, If so, call mem_free");
-	warning("Verify if 'Guess music' is loaded. If yes, call _cleanupMdy");
-	warning("Then set _ptrTbr and _ptrMdy to 0");
+	_vm->_sound->adlibUnload();
 }
 
 void Inter_Fascination::oFascin_geUnknown6(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 6");
-	warning("funcLoadInstruments with parameter : 'music1.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'music1.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTbr("music1.tbr");
+	_vm->_sound->adlibLoadMdy("music1.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown7(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 7");
-	warning("funcLoadInstruments with parameter : 'music2.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'music2.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTbr("music2.tbr");
+	_vm->_sound->adlibLoadMdy("music2.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown8(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 8");
-	warning("funcLoadInstruments with parameter : 'music3.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'music3.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTbr("music3.tbr");
+	_vm->_sound->adlibLoadMdy("music3.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown9(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 9");
-	warning("funcLoadInstruments with parameter : 'batt1.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'batt1.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTbr("batt1.tbr");
+	_vm->_sound->adlibLoadMdy("batt1.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown10(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 10");
-	warning("funcLoadInstruments with parameter : 'batt2.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'batt2.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTbr("batt2.tbr");
+	_vm->_sound->adlibLoadMdy("batt2.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown11(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 11");
-	warning("funcLoadInstruments with parameter : 'batt3.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'batt3.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTbr("batt3.tbr");
+	_vm->_sound->adlibLoadMdy("batt3.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown1000(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 1000 - Load music ?");
+	warning("Fascination Unknown GE Function 1000 - Load MOD music");
 }
 
 void Inter_Fascination::oFascin_geUnknown1001(OpGobParams &params) {
-	warning("Fascination oFascin_playProtracker - MOD not compatible, ToBeFixed");
+	warning("Fascination oFascin_playProtracker - MOD not compatible (sample > 32768), To Be Fixed");
 }
 
 void Inter_Fascination::oFascin_geUnknown1002(OpGobParams &params) {
