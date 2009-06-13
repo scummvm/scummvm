@@ -58,6 +58,7 @@ uint hashit_lower(const char *p) {
 #ifdef DEBUG_HASH_COLLISIONS
 static double
 	g_collisions = 0,
+	g_dummyHits = 0,
 	g_lookups = 0,
 	g_collPerLook = 0,
 	g_capacity = 0,
@@ -66,9 +67,10 @@ static int g_max_capacity = 0, g_max_size = 0;
 static int g_totalHashmaps = 0;
 static int g_stats[4] = {0,0,0,0};
 
-void updateHashCollisionStats(int collisions, int lookups, int arrsize, int nele) {
+void updateHashCollisionStats(int collisions, int dummyHits, int lookups, int arrsize, int nele) {
 	g_collisions += collisions;
 	g_lookups += lookups;
+	g_dummyHits += dummyHits;
 	if (lookups)
 		g_collPerLook += (double)collisions / (double)lookups;
 	g_capacity += arrsize;
@@ -87,9 +89,10 @@ void updateHashCollisionStats(int collisions, int lookups, int arrsize, int nele
 	g_max_capacity = MAX(g_max_capacity, arrsize);
 	g_max_size = MAX(g_max_size, nele);
 
-	fprintf(stdout, "%d hashmaps: colls %.1f; lookups %.1f; ratio %.3f%%; size %f (max: %d); capacity %f (max: %d)\n",
+	fprintf(stdout, "%d hashmaps: colls %.1f; dummies hit %.1f, lookups %.1f; ratio %.3f%%; size %f (max: %d); capacity %f (max: %d)\n",
 		g_totalHashmaps,
 		g_collisions / g_totalHashmaps,
+		g_dummyHits / g_totalHashmaps,
 		g_lookups / g_totalHashmaps,
 		100 * g_collPerLook / g_totalHashmaps,
 		g_size / g_totalHashmaps, g_max_size,
