@@ -20,6 +20,10 @@ class ResourceManager;
 
 class MenuState;
 
+/**
+ * The abstract State class is meant to handle common events
+ * to standard "screen-states"
+ */
 class State {
 public:
 	State(AsylumEngine *vm);
@@ -37,7 +41,6 @@ protected:
 private:
 	virtual void init()   = 0;
 	virtual void update() = 0;
-
 
 }; // end of class State
 
