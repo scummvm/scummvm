@@ -1152,7 +1152,10 @@ static int wizPackType2(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	if (dst) {
 		src += rCapt.top * srcPitch + rCapt.left * 2;
 		while (h--) {
-			memcpy(dst, src, w * 2);
+			for (int i = 0; i < w; i++) {
+				uint16 col = READ_UINT16(src + w * 2);
+				WRITE_LE_UINT16(dst + w * 2, col);
+			}
 			dst += w * 2;
 			src += srcPitch;
 		}
@@ -1734,7 +1737,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 
 	if (srcWizBuf) {
 		uint8 *dst;
-		int32 dstw, dsth, dstpitch, wizW, wizH;
+		int32 dstw, dsth, dstpitch, dstType, wizW, wizH;
 		VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 
@@ -1745,6 +1748,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			assert(dst);
 			getWizImageDim(dstResNum, 0, dstw, dsth);
 			dstpitch = dstw * _vm->_bitDepth;
+			dstType = kDstResource;
 		} else {
 			if (flags & kWIFMarkBufferDirty) {
 				dst = pvs->getPixels(0, 0);
@@ -1754,6 +1758,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			dstw = pvs->w;
 			dsth = pvs->h;
 			dstpitch = pvs->pitch;
+			dstType = kDstScreen;
 		}
 
 		getWizImageDim(resNum, state, wizW, wizH);
@@ -1857,7 +1862,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 				y_acc += pra->y_step;
 				if (_vm->_bitDepth == 2) {
 					if (transColor == -1 || transColor != READ_LE_UINT16(srcWizBuf + src_offs * 2))
-						WRITE_LE_UINT16(dstPtr, READ_LE_UINT16(srcWizBuf + src_offs * 2));
+						writeColor(dstPtr, dstType, READ_LE_UINT16(srcWizBuf + src_offs * 2));
 				} else {
 					if (transColor == -1 || transColor != srcWizBuf[src_offs])
 						*dstPtr = srcWizBuf[src_offs];
