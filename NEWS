@@ -9,7 +9,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Leather Goddesses of Phobos 2
    - Added support for The Manhole
    - Added support for Rodney's Funscreen
-   
+
  General:
    - Added experimental AdLib emulator from DOSBox
    - Added quick search to Launcher
@@ -31,7 +31,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for the PlayStation version
 
  Broken Sword 2:
-   - Added support for the original cutscenes 
+   - Added support for the original cutscenes
    - Dropped support for the now obsolete MPEG2 cutscenes
    - Dropped support for playing cutscene sound without the video
    - Added support for the PlayStation version
@@ -42,13 +42,13 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Ports:
    - Added GP2X Wiz port
 
-0.13.1 (2009-04-27)    
+0.13.1 (2009-04-27)
  AGOS:
     - Fixed crash after OmniTV video is played in The Feeble Files
     - Fixed crashes when exploring Jack the Ripper scene in the PC version of
       the Waxworks
     - Fixed palette glitches in the AtariST version of Elvira 2
-    - Fixed noise that can occur when sound effects are played, when exploring 
+    - Fixed noise that can occur when sound effects are played, when exploring
       Pyramid scene in the Waxworks
 
  Gob:
@@ -78,7 +78,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  DS port:
      - Added support for the Global Main Menu feature
-     
+
  PS2 port:
     - Switched to the new GUI and theme code
     - All possible devices are supported to store, play and save games
@@ -89,7 +89,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Symbian port:
     - Added Bluetooth mouse support
     - Added support for the Return to Launcher feature
- 
+
  WinCE port:
     - Fixed an issue which could cause random crashes with VGA devices
 
@@ -134,13 +134,13 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for the Macintosh version of I Have no Mouth, and I
      must Scream.
    - Added support for Drascula: The Vampire Strikes Back.
-   
+
  General:
    - Added CAMD MIDI driver for AmigaOS4.
    - Revived the PS2 port (was already in 0.11.1 but was forgotten in the
      release notes).
    - Plugged numerous memory leaks in all engines (part of GSoC'08 task),
-   - Added audio double buffering to the SDL backend, which fixes the 
+   - Added audio double buffering to the SDL backend, which fixes the
      problems with the MT-32 emulator on Mac OS X (for now only enabled
      on Mac OS X).
 
