@@ -62,7 +62,14 @@ private:
 
     Scene *_scene;
 
+	int _mouseX, _mouseY;
+	Audio::SoundHandle _sfxHandle;
+	int _activeIcon;
+	int _previousActiveIcon;
+	int _curIconFrame;
+
     void showMainMenu();
+	void updateMainMenu();
 
 };
 
