@@ -56,7 +56,7 @@ public:
 
 	void copyToBackBuffer(byte *buffer, int x, int y, int width, int height);
 	void copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height);
-	void checkForEvent();
+	void checkForEvent(bool doUpdate);
 	void waitForTimer(int msec_delay);
 	void updateMouseCursor();
 

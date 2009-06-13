@@ -36,7 +36,7 @@ State::State(AsylumEngine *vm) {
 	_mouseY  = 0;
 }
 
-void State::handleEvent(Common::Event *event) {
+void State::handleEvent(Common::Event *event, bool doUpdate) {
 	_ev = event;
 
 	// handle common event assignment tasks
@@ -47,7 +47,8 @@ void State::handleEvent(Common::Event *event) {
 		_mouseY = _ev->mouse.y;
 	}
 
-	update();
+	if (doUpdate)
+		update();
 }
 
 
