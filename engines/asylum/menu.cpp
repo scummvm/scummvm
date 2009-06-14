@@ -29,6 +29,9 @@
 
 namespace Asylum {
 
+/** This fixes the menu icons text x position on screen */
+const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 310, 508, 419 };
+
 MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound) {
 	_mouseX             = 0;
 	_mouseY             = 0;
@@ -170,7 +173,7 @@ void MainMenu::update() {
 				_curIconFrame = 0;
 
 			// Show text
-            _text->drawResTextCentered(iconFrame->x - 20, iconFrame->y + 50, _text->getResTextWidth(iconNum + 1309), iconNum + 1309);
+            _text->drawResTextCentered(MenuIconFixedXpos[iconNum], iconFrame->y + 50, _text->getResTextWidth(iconNum + 1309), iconNum + 1309);
 			
 			// Play creepy voice
 			if (!_sound->isSfxActive() && _activeIcon != _previousActiveIcon) {
@@ -194,6 +197,7 @@ void MainMenu::update() {
 		switch (_activeIcon) {
 			case kNewGame:
 				// TODO
+                _gameState = new GameState(_screen, _sound, 5);
 				break;
 			case kLoadGame:
 				// TODO

@@ -32,12 +32,14 @@
 #include "asylum/resourcepack.h"
 #include "asylum/graphics.h"
 #include "asylum/text.h"
+#include "asylum/gamestate.h"
 
 namespace Asylum {
 
 class Screen;
 class Sound;
 class Text;
+class GameState;
 
 class MainMenu {
 public:
@@ -97,6 +99,8 @@ private:
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;
     Text *_text;
+
+    GameState *_gameState;
 
 	void updateCursor();
 
