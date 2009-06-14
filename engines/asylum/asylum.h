@@ -28,7 +28,6 @@
 
 #include "engines/engine.h"
 
-#include "asylum/resman.h"
 #include "asylum/scene.h"
 #include "asylum/state.h"
 #include "asylum/screen.h"
@@ -38,7 +37,6 @@
 namespace Asylum {
 
 class Scene;
-class ResourceManager;
 class Screen;
 class Menu;
 class State;
@@ -62,14 +60,11 @@ public:
 	void updateMouseCursor();
 
 	Screen* getScreen() { return _screen; }
-	ResourceManager* getResourceManager() { return _resMgr; }
 	Sound* getSound() { return _sound; }
 
 private:
     Common::Language     _language;
     Common::RandomSource _rnd;
-
-    ResourceManager   *_resMgr;
 
     Scene *_scene;
     State *_state;

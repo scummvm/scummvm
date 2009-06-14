@@ -170,39 +170,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\bundle.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\asylum\bundle.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\asylum\detection.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\graphicbundle.cpp"
+			RelativePath="..\..\engines\asylum\graphics.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\graphicbundle.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\asylum\resman.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\asylum\resman.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\asylum\resource.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\asylum\resource.h"
+			RelativePath="..\..\engines\asylum\graphics.h"
 			>
 		</File>
 		<File

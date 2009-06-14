@@ -29,14 +29,13 @@
 #include "common/events.h"
 
 #include "asylum/asylum.h"
-#include "asylum/resman.h"
 #include "asylum/resourcepack.h"
+#include "asylum/graphics.h"
 #include "asylum/text.h"
 
 namespace Asylum {
 
 class AsylumEngine;
-class ResourceManager;
 class Text;
 
 class MenuState;
@@ -57,7 +56,6 @@ protected:
 	int _mouseX;
 	int _mouseY;
 	AsylumEngine    *_vm;
-	ResourceManager *_resMgr;
 
 private:
 	virtual void init()   = 0;
@@ -93,6 +91,9 @@ private:
 	int _cursorStep;
 	ResourcePack *_resPack;
 	ResourcePack *_musPack;
+	GraphicResource *_cursorResource;
+	GraphicResource *_eyeResource;
+	GraphicResource *_iconResource;
     Text *_text;
 
 	void updateCursor();

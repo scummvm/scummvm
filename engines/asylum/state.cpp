@@ -24,13 +24,13 @@
  */
 
 #include "asylum/state.h"
+#include "asylum/resourcepack.h"
+#include "asylum/graphics.h"
 
 namespace Asylum {
 
 State::State(AsylumEngine *vm) {
 	_vm     = vm;
-	_resMgr = _vm->getResourceManager();
-
 	_mouseX  = 0;
 	_mouseY  = 0;
 }
@@ -70,10 +70,22 @@ MenuState::MenuState(AsylumEngine *vm): State(vm) {
 	_vm->getScreen()->setPalette(pal);
 
 	// Copy the background to the back buffer
-	GraphicResource *bg = _resMgr->getGraphic(1, 0, 1);
-	_vm->getScreen()->copyToBackBuffer(bg->data, 0, 0, bg->width, bg->height);
 
-	_resMgr->loadCursor(1, 2, 0);
+	GraphicResource *bgResource = new GraphicResource(_resPack, 0);
+	GraphicFrame *bg = bgResource->getFrame(0);
+	_vm->getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
+	delete bgResource;
+
+	// Initialize eye animation
+	_eyeResource = new GraphicResource(_resPack, 1);
+
+	// Initialize mouse cursor
+	_cursorResource = new GraphicResource(_resPack, 2);
+	GraphicFrame *mouseCursor = _cursorResource->getFrame(0);
+	_vm->getScreen()->setCursor((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
+	_vm->getScreen()->showCursor();
+
+	_iconResource = 0;
 
 	ResourceEntry *musicResource = _musPack->getResource(0);
 	_vm->getSound()->playMusic(musicResource->data, musicResource->size);
@@ -84,122 +96,101 @@ MenuState::MenuState(AsylumEngine *vm): State(vm) {
 }
 
 MenuState::~MenuState() {
+	delete _iconResource;
+	delete _eyeResource;
+	delete _cursorResource;
 	delete _musPack;
 	delete _resPack;
     delete _text;
 }
 
 void MenuState::update() {
+	int rowId = 0;
+
     // TODO just some proof-of-concept of text drawing
     _text->drawChar('C');
 
-	// TODO: Just some proof-of concept to change icons here for now
-	if (_mouseY >= 20 && _mouseY <= 20 + 48) {
-		// Top row
-		for (int i = 0; i <= 5; i++) {
-			int curX = 40 + i * 100;
-			if (_mouseX >= curX && _mouseX <= curX + 55) {
-				GraphicResource *res = _resMgr->getGraphic(1, i + 4, _curIconFrame);
-				_vm->_system->copyRectToScreen(res->data, res->width, curX, 20, res->width, res->height);
-
-				// Cycle icon frame
-				// Icon animations have 15 frames, 0-14
-				_curIconFrame++;
-				if (_curIconFrame == 15)
-					_curIconFrame = 0;
-
-				_activeIcon = i;
-
-				// Play creepy voice
-				if (!_vm->getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
-					// TODO: This should be moved to a sound-related class
-					ResourceEntry *sfxResource = _resPack->getResource(i + 44);
-					_vm->getSound()->playMusic(sfxResource->data, sfxResource->size);
-
-					_previousActiveIcon = _activeIcon;
-				}
-
-				break;
-			}
-		}
-	} else if (_mouseY >= 400 && _mouseY <= 400 + 48) {
-		// Bottom row
-		for (int i = 0; i <= 5; i++) {
-			int curX = 40 + i * 100;
-			if (_mouseX >= curX && _mouseX <= curX + 55) {
-				int iconNum = i + 10;
-
-				// The last 2 icons are swapped
-				if (iconNum == 14)
-					iconNum = 15;
-				else if (iconNum == 15)
-					iconNum = 14;
-
-				_activeIcon = i + 6;
-
-				// HACK: the credits icon has less frames (0 - 9). Currently, there's no way to find the number
-				// of frames with the current resource manager implementation, so we just hardcode it here
-				if (_activeIcon == 10 && _curIconFrame >= 10)
-					_curIconFrame = 0;
-
-				GraphicResource *res = _resMgr->getGraphic(1, iconNum, _curIconFrame);
-				_vm->_system->copyRectToScreen(res->data, res->width, curX, 400, res->width, res->height);
-
-				// Cycle icon frame
-				// Icon animations have 15 frames, 0-14
-				_curIconFrame++;
-				if (_curIconFrame == 15)
-					_curIconFrame = 0;
-
-				// Play creepy voice
-				if (!_vm->getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
-					// TODO: This should be moved to a sound-related class
-					ResourceEntry *sfxResource = _resPack->getResource(iconNum + 40);
-					_vm->getSound()->playMusic(sfxResource->data, sfxResource->size);
-
-					_previousActiveIcon = _activeIcon;
-				}
-
-				break;
-			}
-		}
-	} else {
-		// No selection
-		_previousActiveIcon = _activeIcon = -1;
-	}
-
 	// Eyes animation
 	// Get the appropriate eye resource depending on the mouse position
-	int eyeResource = kEyesFront;
+	int eyeFrameNum = kEyesFront;
 
 	if (_mouseX <= 200) {
 		if (_mouseY <= 160)
-			eyeResource = kEyesTopLeft;
+			eyeFrameNum = kEyesTopLeft;
 		else if (_mouseY > 160 && _mouseY <= 320)
-			eyeResource = kEyesLeft;
+			eyeFrameNum = kEyesLeft;
 		else
-			eyeResource = kEyesBottomLeft;
+			eyeFrameNum = kEyesBottomLeft;
 	} else if (_mouseX > 200 && _mouseX <= 400) {
 		if (_mouseY <= 160)
-			eyeResource = kEyesTop;
+			eyeFrameNum = kEyesTop;
 		else if (_mouseY > 160 && _mouseY <= 320)
-			eyeResource = kEyesFront;
+			eyeFrameNum = kEyesFront;
 		else
-			eyeResource = kEyesBottom;
+			eyeFrameNum = kEyesBottom;
 	} else if (_mouseX > 400) {
 		if (_mouseY <= 160)
-			eyeResource = kEyesTopRight;
+			eyeFrameNum = kEyesTopRight;
 		else if (_mouseY > 160 && _mouseY <= 320)
-			eyeResource = kEyesRight;
+			eyeFrameNum = kEyesRight;
 		else
-			eyeResource = kEyesBottomRight;
+			eyeFrameNum = kEyesBottomRight;
 	}
 	// TODO: kEyesCrossed state
 
-	GraphicResource *res = _resMgr->getGraphic(1, 1, eyeResource);
-	_vm->getScreen()->copyRectToScreenWithTransparency(res->data, 265, 230, res->width, res->height);
+	GraphicFrame *eyeFrame = _eyeResource->getFrame(eyeFrameNum);
+	_vm->getScreen()->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, 265, 230, eyeFrame->surface.w, eyeFrame->surface.h);
 
 	updateCursor();
+
+	if (_mouseY >= 20 && _mouseY <= 20 + 48) {
+		rowId = 0; // Top row
+	} else if (_mouseY >= 400 && _mouseY <= 400 + 48) {
+		rowId = 1; // Bottom row
+	} else {
+		// No row selected
+		_previousActiveIcon = _activeIcon = -1;
+		return;
+	}
+
+	// Icon animation
+	for (int i = 0; i <= 5; i++) {
+		int curX = 40 + i * 100;
+		if (_mouseX >= curX && _mouseX <= curX + 55) {
+			int iconNum = i + 6 * rowId;
+			_activeIcon = iconNum;
+
+			// The last 2 icons are swapped
+			if (iconNum == 11)
+				iconNum = 10;
+			else if (iconNum == 10)
+				iconNum = 11;
+
+			// Get the current icon animation
+			if (!_iconResource || _activeIcon != _previousActiveIcon) {
+				delete _iconResource;
+				_iconResource = new GraphicResource(_resPack, iconNum + 4);
+			}
+
+			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->getFrameCount() - 1, _curIconFrame));
+			_vm->_system->copyRectToScreen((byte *)iconFrame->surface.pixels, iconFrame->surface.w, curX, 20 + 380 * rowId, iconFrame->surface.w, iconFrame->surface.h);
+
+			// Cycle icon frame
+			_curIconFrame++;
+			if (_curIconFrame >= _iconResource->getFrameCount())
+				_curIconFrame = 0;
+
+			// Play creepy voice
+			if (!_vm->getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
+				ResourceEntry *sfxResource = _resPack->getResource(iconNum + 44);
+				_vm->getSound()->playMusic(sfxResource->data, sfxResource->size);
+
+				_previousActiveIcon = _activeIcon;
+			}
+
+			break;
+		}
+	}
 }
 
 void MenuState::updateCursor() {
@@ -209,7 +200,8 @@ void MenuState::updateCursor() {
 	if (_curMouseCursor == 6)
 		_cursorStep = -1;
 
-	_resMgr->loadCursor(1, 2, _curMouseCursor);
+	GraphicFrame *mouseCursor = _cursorResource->getFrame(_curMouseCursor);
+	_vm->getScreen()->setCursor((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
 }
 
 } // end of namespace Asylum

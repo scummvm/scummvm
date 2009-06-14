@@ -26,7 +26,7 @@
 #ifndef ASYLUM_SOUND_H_
 #define ASYLUM_SOUND_H_
 
-#include "asylum/asylum.h"
+#include "sound/mixer.h"
 
 namespace Asylum {
 
