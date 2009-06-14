@@ -638,6 +638,7 @@ void VQAMovie::play() {
 	}
 
 	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sound, _stream);
+	Common::EventManager *eventMan = _vm->getEventManager();
 
 	for (uint i = 0; i < _header.numFrames; i++) {
 		displayFrame(i);
@@ -656,17 +657,17 @@ void VQAMovie::play() {
 				break;
 
 			Common::Event event;
-
-			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
 				switch (event.type) {
 				case Common::EVENT_KEYDOWN:
-					if (event.kbd.ascii == 27)
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 						return;
 					break;
+
 				case Common::EVENT_RTL:
 				case Common::EVENT_QUIT:
 					return;
+
 				default:
 					break;
 				}

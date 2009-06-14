@@ -47,7 +47,7 @@ Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) {
 	_spriteDefStart = 0;
 	memset(_drawLayerTable, 0, sizeof(_drawLayerTable));
 	_sceneAnimatorBeaconFlag = 0;
-	system->getEventManager()->registerRandomSource(_rnd, "kyraSprites");
+	_vm->getEventManager()->registerRandomSource(_rnd, "kyraSprites");
 }
 
 Sprites::~Sprites() {

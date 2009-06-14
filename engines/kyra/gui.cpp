@@ -421,8 +421,9 @@ void MainMenu::updateAnimation() {
 
 bool MainMenu::getInput() {
 	Common::Event event;
+	Common::EventManager *eventMan = _vm->getEventManager();
 
-	while (_system->getEventManager()->pollEvent(event)) {
+	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONUP:
 			return true;
