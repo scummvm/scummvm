@@ -23,14 +23,14 @@
  *
  */
 
-#include "asylum/GameState.h"
+#include "asylum/gamestate.h"
 
 namespace Asylum {
 
 GameState::GameState(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
     _sceneIdx = sceneIdx;
     _scene = new Scene;
-    if(_scene->load(_sceneIdx)){       
+    if(_scene->load(_sceneIdx)){
         _text = new Text(_screen);
         _resPack = new ResourcePack(sceneIdx);
         _musPack = new ResourcePack(sceneIdx);
