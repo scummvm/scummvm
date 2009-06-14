@@ -90,6 +90,8 @@ void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
 	case Common::EVENT_LBUTTONUP:
 		_leftClick = true;
 		break;
+	default:
+		break;
 	}
 
 	if (doUpdate || _leftClick)
