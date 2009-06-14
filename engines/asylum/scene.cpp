@@ -27,7 +27,7 @@
 
 namespace Asylum {
 
-Scene::Scene(AsylumEngine *vm): _vm(vm) {
+Scene::Scene() {
 }
 
 Scene::~Scene() {
