@@ -39,7 +39,6 @@ MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound)
 	_cursorStep         = 1;
 
 	_resPack = new ResourcePack("res.001");
-	_textPack = new ResourcePack("res.000");
 	_musPack = new ResourcePack("mus.005");
 
 	// Load the graphics palette
@@ -75,7 +74,6 @@ MainMenu::~MainMenu() {
 	delete _eyeResource;
 	delete _cursorResource;
 	delete _musPack;
-	delete _textPack;
 	delete _resPack;
 }
 
@@ -168,10 +166,10 @@ void MainMenu::update() {
 				_curIconFrame = 0;
 
 			// Show text
-		    // TODO: proper positioning
-			ResourceEntry *iconText = _textPack->getResource(iconNum + 1309);
-			uint32 textWidth = _text->getTextWidth((char *)iconText->data);
-			_text->drawText(iconFrame->x + iconFrame->surface.w + 20, iconFrame->y + iconFrame->surface.h, (char *)iconText->data);
+		    // TODO
+			//ResourceEntry *iconText = _textPack->getResource(iconNum + 1309);
+			//uint32 textWidth = _text->getTextWidth((char *)iconText->data);
+			//_text->drawText(iconFrame->x + iconFrame->surface.w + 20, iconFrame->y + iconFrame->surface.h, (char *)iconText->data);
 			
 			// Play creepy voice
 			if (!_sound->isSfxActive() && _activeIcon != _previousActiveIcon) {
