@@ -166,10 +166,7 @@ void MainMenu::update() {
 				_curIconFrame = 0;
 
 			// Show text
-		    // TODO
-			//ResourceEntry *iconText = _textPack->getResource(iconNum + 1309);
-			//uint32 textWidth = _text->getTextWidth((char *)iconText->data);
-			//_text->drawText(iconFrame->x + iconFrame->surface.w + 20, iconFrame->y + iconFrame->surface.h, (char *)iconText->data);
+            _text->drawResTextCentered(iconFrame->x - 20, iconFrame->y + 50, _text->getResTextWidth(iconNum + 1309), iconNum + 1309);
 			
 			// Play creepy voice
 			if (!_sound->isSfxActive() && _activeIcon != _previousActiveIcon) {
