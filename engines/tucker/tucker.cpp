@@ -304,7 +304,7 @@ void TuckerEngine::restart() {
 	_currentGfxBackgroundCounter = 0;
 	_currentGfxBackground = 0;
 	_fadePaletteCounter = 0;
-	memset(&_currentPalette, 0, sizeof(_currentPalette));
+	memset(_currentPalette, 0, sizeof(_currentPalette));
 	_fullRedrawCounter = 0;
 	_dirtyRectsPrevCount = _dirtyRectsCount = 0;
 
@@ -3395,7 +3395,6 @@ void TuckerEngine::setSelectedObjectKey() {
 				_selectedObject.locationObject_toY2 = _locationObjectsTable[_selectedCharacterNum].toY2;
 				_selectedObject.locationObject_toWalkX2 = _locationObjectsTable[_selectedCharacterNum].toWalkX2;
 				_selectedObject.locationObject_toWalkY2 = _locationObjectsTable[_selectedCharacterNum].toWalkY2;
-
 			}
 		}
 	} else {

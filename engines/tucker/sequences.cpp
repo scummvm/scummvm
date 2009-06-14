@@ -494,13 +494,9 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, int num)
 	: _system(system), _mixer(mixer), _event(event), _seqNum(num) {
 	memset(_animationPalette, 0, sizeof(_animationPalette));
-	_soundSeqDataOffset = 0;
 	_soundSeqDataCount = 0;
 	_soundSeqDataIndex = 0;
-	_soundsList1Offset = 0;
-	_soundsList1Count = 0;
-	_soundsList2Offset = 0;
-	_soundsList2Count = 0;
+	_soundSeqData = 0;
 	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
 	_updateScreenWidth = 0;
 	_updateScreenPicture = false;
@@ -589,20 +585,9 @@ void AnimationSequencePlayer::syncTime() {
 }
 
 Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(int index, AnimationSoundType type) {
-	const char *name = 0;
-	switch (type) {
-	case kAnimationSoundType8BitsRAW:
-	case kAnimationSoundType16BitsRAW:
-		name = _musicFileNamesTable[index];
-		break;
-	case kAnimationSoundTypeWAV:
-	case kAnimationSoundTypeLoopingWAV:
-		name = _audioFileNamesTable[index];
-		break;
-	}
 	Audio::AudioStream *stream = 0;
 	char fileName[64];
-	snprintf(fileName, sizeof(fileName), "audio/%s", name);
+	snprintf(fileName, sizeof(fileName), "audio/%s", _audioFileNamesTable[index]);
 	Common::File f;
 	if (f.open(fileName)) {
 		int size = 0, rate = 0;
@@ -637,88 +622,53 @@ Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(int index, An
 	return stream;
 }
 
-enum {
-	kSoundsList_Seq3_4,
-	kSoundsList_Seq9_10,
-	kSoundsList_Seq21_20,
-	kSoundsList_Seq13_14,
-	kSoundsList_Seq15_16,
-	kSoundsList_Seq27_28,
-	kSoundsList_Seq17_18,
-	kSoundsList_Seq19_20
-};
-
 void AnimationSequencePlayer::loadSounds(int num) {
-	static const int soundsList[][8] = {
-		{   1,   0,  14,   0,  10,  14,  58,   0 },
-		{   1,   0,  14,  24,   5,  38,  60,  58 },
-		{   1,   0,  14,  43,   9,  57,  48, 118 },
-		{   6,  80,  14,  79,   4,  93,  25, 185 },
-		{   7,  80,  13,  97,   9, 110,  43, 210 },
-		{  10,  80,  11, 119,   0,   0,  11, 253 },
-		{   8, 100,   0,   0,   0,   0,   0,   0 },
-		{   0, 100,   4, 146,   0,   0,   7, 300 }
-	};
-	int musicIndex = soundsList[num][0];
-	int musicVolume = soundsList[num][1];
-	_soundsList1Count = soundsList[num][2];
-	_soundsList1Offset = soundsList[num][3];
-	_soundsList2Count = soundsList[num][4];
-	_soundsList2Offset = soundsList[num][5];
-	_soundSeqDataCount = soundsList[num][6];
-	_soundSeqDataOffset = soundsList[num][7];
-	if (musicVolume != 0) {
+	if (_soundSeqDataList[num].musicVolume != 0) {
 		Audio::AudioStream *s;
-		if ((s = loadSoundFileAsStream(musicIndex, kAnimationSoundType8BitsRAW)) != 0) {
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(musicVolume));
+		if ((s = loadSoundFileAsStream(_soundSeqDataList[num].musicIndex, kAnimationSoundType8BitsRAW)) != 0) {
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_soundSeqDataList[num].musicVolume));
 		}
 	}
 	_soundSeqDataIndex = 0;
+	_soundSeqDataCount = _soundSeqDataList[num].soundSeqDataCount;
+	_soundSeqData = _soundSeqDataList[num].soundSeqData;
 }
 
 void AnimationSequencePlayer::updateSounds() {
 	Audio::AudioStream *s = 0;
-	const SoundSequenceData *p = &_soundSeqData[_soundSeqDataOffset + _soundSeqDataIndex];
+	const SoundSequenceData *p = &_soundSeqData[_soundSeqDataIndex];
 	while (_soundSeqDataIndex < _soundSeqDataCount && p->timestamp <= _frameCounter) {
 		switch (p->opcode) {
 		case 0:
-			if (p->index < _soundsList1Count) {
-				if ((s = loadSoundFileAsStream(_soundsList1Offset + p->index, kAnimationSoundTypeWAV)) != 0) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
-				}
+			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundTypeWAV)) != 0) {
+				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 1:
-			if (p->index < _soundsList1Count) {
-				if ((s = loadSoundFileAsStream(_soundsList1Offset + p->index, kAnimationSoundTypeLoopingWAV)) != 0) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
-				}
+			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundTypeLoopingWAV)) != 0) {
+				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 2:
-			if (p->index < _soundsList1Count) {
-				_mixer->stopHandle(_soundsHandle[p->index]);
-			}
+			_mixer->stopHandle(_soundsHandle[p->index]);
 			break;
 		case 3:
 			_mixer->stopHandle(_musicHandle);
 			break;
 		case 4:
 			_mixer->stopHandle(_musicHandle);
-			if ((s = loadSoundFileAsStream(p->index, kAnimationSoundType8BitsRAW)) != 0) {
+			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundType8BitsRAW)) != 0) {
 				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 5:
-			if (p->index < _soundsList2Count) {
-				if ((s = loadSoundFileAsStream(_soundsList2Offset + p->index, kAnimationSoundTypeWAV)) != 0) {
-					_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p->volume));
-				}
+			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundTypeWAV)) != 0) {
+				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 6:
 			_mixer->stopHandle(_musicHandle);
-			if ((s = loadSoundFileAsStream(p->index, kAnimationSoundType16BitsRAW)) != 0) {
+			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundType16BitsRAW)) != 0) {
 				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
@@ -796,8 +746,7 @@ uint8 *AnimationSequencePlayer::loadPicture(const char *fileName) {
 }
 
 void AnimationSequencePlayer::getRGBPalette(int index) {
-	byte rgbPalette[3 * 256];
-	memcpy(rgbPalette, _flicPlayer[index].getPalette(), 3 * 256);
+	const byte *rgbPalette = _flicPlayer[index].getPalette();
 	for (int i = 0; i < 256; i++) {
 		_animationPalette[i * 4 + 0] = rgbPalette[i * 3 + 0];
 		_animationPalette[i * 4 + 1] = rgbPalette[i * 3 + 1];

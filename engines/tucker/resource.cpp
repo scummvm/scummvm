@@ -218,6 +218,7 @@ void TuckerEngine::openCompressedSoundFile() {
 			int version = _fCompressedSound.readUint16LE();
 			if (version == kCurrentCompressedSoundDataVersion) {
 				_compressedSoundType = i;
+				debug(1, "Using compressed sound file '%s'", compressedSoundFilesTable[i].filename);
 				return;
 			}
 			warning("Unhandled version %d for compressed sound file '%s'", version, compressedSoundFilesTable[i].filename);

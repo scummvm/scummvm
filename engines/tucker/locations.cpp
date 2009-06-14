@@ -650,21 +650,17 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 		if (_execData3Counter > 30) {
 			_updateLocationYPosTable2[0] = 16;
 			_updateLocationXPosTable2[0] = 264;
-
 		}
 	}
 	if (_updateLocationYPosTable2[0] > 0) {
 		const int offset = _updateLocationYPosTable2[0] * 640 + _updateLocationXPosTable2[0];
-		_locationBackgroundGfxBuf[offset]               = 142;
-		_locationBackgroundGfxBuf[offset + 640     - 1] = 143;
-		_locationBackgroundGfxBuf[offset + 640]         = 143;
-		_locationBackgroundGfxBuf[offset + 640     + 1] = 144;
-		_locationBackgroundGfxBuf[offset + 640 * 2 - 1] = 144;
-		_locationBackgroundGfxBuf[offset + 640 * 2]     = 144;
-		_locationBackgroundGfxBuf[offset + 640 * 2 + 1] = 145;
-		_locationBackgroundGfxBuf[offset + 640 * 3 - 1] = 147;
-		_locationBackgroundGfxBuf[offset + 640 * 3]     = 143;
-		_locationBackgroundGfxBuf[offset + 640 * 3 + 1] = 147;
+		static const int colorsTable[] = { 143, 143, 144, 144, 144, 145, 147, 143, 147 };
+		_locationBackgroundGfxBuf[offset] = 142;
+		for (int j = 1; j <= 3; ++j) {
+			for (int i = -1; i <= 1; ++i) {
+				_locationBackgroundGfxBuf[offset + 640 * j + i] = colorsTable[(j - 1) * 3  + i + 1];
+			}
+		}
 		addDirtyRect(_updateLocationXPosTable2[0] - 1, _updateLocationYPosTable2[0], 3, 4);
 		_updateLocationYPosTable2[0] += 2;
 		if (_updateLocationYPosTable2[0] > 120) {
