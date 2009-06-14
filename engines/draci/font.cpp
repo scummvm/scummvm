@@ -47,9 +47,10 @@ DraciFont::~DraciFont() {
  *
  * Loads fonts from a file into a DraciFont instance. The original game uses two
  * fonts (located inside files "Small.fon" and "Big.fon"). The characters in the
- * font are indexed from the ASCII space (decimal value 32) so an appropriate
- * offset must be added to convert them to equivalent char values, 
- * i.e. kDraciIndexOffset.
+ * font are indexed from the space character so an appropriate offset must be 
+ * added to convert them to equivalent char values, i.e. kDraciIndexOffset.
+ * Characters in the higher range are non-ASCII and vary between different
+ * language versions of the game.
  *
  * font format: [1 byte] maximum character width
  *				[1 byte] font height
@@ -108,7 +109,7 @@ uint8 DraciFont::getCharWidth(uint8 chr) const {
  * @brief Draw a char to a Graphics::Surface
  *
  * @param dst 	Pointer to the destination surface
- * @param chr 	Character to draw (ASCII value)
+ * @param chr 	Character to draw
  * @param tx  	Horizontal offset on the surface
  * @param ty  	Vertical offset on the surface
  */

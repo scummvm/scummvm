@@ -58,7 +58,9 @@ private:
 	/** Number of glyphs in the font */
 	static const unsigned int kCharNum = 138;
 
-	/** Chars are indexed from the ASCII space (decimal value 32) */
+	/** Chars are indexed from the space character so this should be subtracted
+	 *  to get the index of a glyph
+	 */
 	static const unsigned int kCharIndexOffset = 32;
 
 	/** Internal function for freeing fonts when destructing/loading another */
