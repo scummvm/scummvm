@@ -72,7 +72,7 @@ MenuState::MenuState(AsylumEngine *vm): State(vm) {
 	// Copy the background to the back buffer
 
 	GraphicResource *bgResource = new GraphicResource(_resPack, 0);
-	GraphicFrame *bg = bgResource->getFrame(0);
+	GraphicFrame *bg = bgResource->getFrame(1);
 	_vm->getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
 	delete bgResource;
 
@@ -139,7 +139,7 @@ void MenuState::update() {
 	// TODO: kEyesCrossed state
 
 	GraphicFrame *eyeFrame = _eyeResource->getFrame(eyeFrameNum);
-	_vm->getScreen()->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, 265, 230, eyeFrame->surface.w, eyeFrame->surface.h);
+	_vm->getScreen()->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, eyeFrame->x, eyeFrame->y, eyeFrame->surface.w, eyeFrame->surface.h);
 
 	updateCursor();
 
@@ -173,7 +173,7 @@ void MenuState::update() {
 			}
 
 			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->getFrameCount() - 1, _curIconFrame));
-			_vm->_system->copyRectToScreen((byte *)iconFrame->surface.pixels, iconFrame->surface.w, curX, 20 + 380 * rowId, iconFrame->surface.w, iconFrame->surface.h);
+			_vm->_system->copyRectToScreen((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 			// Cycle icon frame
 			_curIconFrame++;
