@@ -3111,6 +3111,32 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_1
 	},
 
+	// Space Quest 4 - Japanese PC-98 5.25" Floppy
+	// SCI interpreter version 1.000.1068
+	{{"sq4", "", {
+		{"resource.map", 0, "ca7bba01019222b6f3e54e9051067a99", 5283},
+		{"resource.000", 0, "161d719f38ed98d33f058a8cf3dc09c3", 952909},
+		{"resource.001", 0, "454684e3a7a68cbca073945e50778447", 1187088},
+		{"resource.002", 0, "6dc668326cc22cb9e8bd8ca9e68d2a66", 1181249},
+		{NULL, 0, NULL, 0}}, Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
+		GF_FOR_SCI1_510_OR_LATER | GF_SCI1_EGA,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1
+	},
+
+	// Space Quest 4 - Japanese PC-98 5.25" Floppy
+	// SCI interpreter version 1.000.1068
+	{{"sq4", "", {
+		{"resource.map", 0, "ca7bba01019222b6f3e54e9051067a99", 5283},
+		{"resource.000", 0, "161d719f38ed98d33f058a8cf3dc09c3", 952909},
+		{"resource.001", 0, "454684e3a7a68cbca073945e50778447", 1187088},
+		{"resource.002", 0, "6dc668326cc22cb9e8bd8ca9e68d2a66", 1181249},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
+		GF_FOR_SCI1_510_OR_LATER | GF_SCI1_EGA,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1
+	},
+
 	// Space Quest 4 - English DOS CD (from the Space Quest Collection)
 	// Executable scanning reports "1.001.064", VERSION file reports "1.0"
 	{{"sq4", "CD", {
