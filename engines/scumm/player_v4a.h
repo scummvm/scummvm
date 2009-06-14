@@ -54,9 +54,12 @@ public:
 
 private:
 	ScummEngine *_vm;
+
 	Audio::Tfmx *_tfmxPlay;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _musicHandle;
+
+	int _musicLastTicks;
 
 	enum {V4A_MAXSFX = 8};
 

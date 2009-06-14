@@ -49,6 +49,7 @@ public:
 	void doSong(int songPos);
 	void doMacro(int macro, int note);
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
+	int getTicks() {return _playerCtx.tickCount;}
 
 // Note: everythings public so the debug-Routines work.
 // private:
@@ -200,6 +201,8 @@ public:
 		int8	fadeTime;
 		int8	fadeReset;
 		int8	fadeSlope; */
+
+		int		tickCount;
 	} _playerCtx;
 
 	void initMacroProgramm(ChannelContext &channel) {

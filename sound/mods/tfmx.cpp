@@ -31,6 +31,8 @@
 
 #include "sound/mods/tfmx.h"
 
+#include "tfmx/tfmxdebug.h"
+
 namespace Audio {
 
 const uint16 Tfmx::noteIntervalls[64] = {
@@ -57,6 +59,7 @@ Tfmx::~Tfmx() {
 
 void Tfmx::interrupt() {
 	//assert(!_end);
+	++_playerCtx.tickCount;
 	for (int i = 0; i < kNumVoices; ++i) {
 		ChannelContext &channel = _channelCtx[i];
 
@@ -187,7 +190,7 @@ static void warnMacroUnimplemented(const byte *macroPtr, int level) {
 	else
 		debug("Warning - Macro not completely supported:");
 
-//	displayMacroStep(macroPtr);
+	displayMacroStep(macroPtr);
 }
 
 FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
@@ -496,6 +499,18 @@ doTrackstep:
 	}
 }
 
+static void warnPatternUnimplemented(const byte *patternPtr, int level) {
+	if (level > 0)
+		return;
+	if (level == 0)
+		debug("Warning - Pattern not supported:");
+	else
+		debug("Warning - Pattern not completely supported:");
+
+	displayPatternstep(patternPtr);
+}
+
+
 FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 	const byte *const patternPtr = (byte *)(_resource.getPatternPtr(pattern.offset) + pattern.step);
 	++pattern.step;
@@ -547,6 +562,7 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 
 		case 14: 	// Stop custompattern
 			// TODO ?
+			warnPatternUnimplemented(patternPtr, 0);
 			// FT
 		case 4: 	// Stop this pattern
 			pattern.command = 0xFF;
@@ -565,10 +581,13 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 			return true;
 
 		case 8: 	// Subroutine
+			warnPatternUnimplemented(patternPtr, 0);
 			return true;
 		case 9: 	// Return from Subroutine
+			warnPatternUnimplemented(patternPtr, 0);
 			return true;
 		case 10:	// fade master volume
+			warnPatternUnimplemented(patternPtr, 0);
 			return true;
 
 		case 11: {	// play pattern. Parameters: patternCmd, channel, expose
@@ -589,7 +608,10 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 			return true;
 
 		case 13: 	// Cue
+			warnPatternUnimplemented(patternPtr, 1);
+			debug("Cue/Signal %02X %04X", patternPtr[1], READ_BE_UINT16(&patternPtr[2]));
 			return true;
+
 		case 15: 	// NOP
 			return true;
 		}

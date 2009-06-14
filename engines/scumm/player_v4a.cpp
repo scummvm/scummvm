@@ -48,12 +48,12 @@ bool Player_V4A::init() {
 
 	if (mdatExists && sampleExists) {
 		Audio::Tfmx *play =  new Audio::Tfmx(_mixer->getOutputRate(), true);
-		if (play->load(fileMdat, fileSample))
+		if (play->load(fileMdat, fileSample)) {
 			_tfmxPlay = play;
-		else
+		} else
 			delete play;
 	}
-	return true;
+	return _tfmxPlay != 0;
 }
 
 Player_V4A::~Player_V4A() {
@@ -98,26 +98,23 @@ void Player_V4A::startSound(int nr) {
 	debug("%s", buf);
 
 
-	static const uint8 monkeyCommands[52] = {
-		 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 18, 17,
-		16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-		32, 16, 34,  0,  1,  2,  3,  7,  8, 10, 11,  4,  5, 14, 15, 12,
-		 6, 13,  9, 19 };
-
-	static const uint8 monkeyTypes[52] = {
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0 };
+	static const int8 monkeyCommands[52] = {
+		 -1,  -2,  -3,  -4,  -5,  -6,  -7,  -8,
+		 -9, -10, -11, -12, -13, -14,  18,  17,
+		-17, -18, -19, -20, -21, -22, -23, -24,
+		-25, -26, -27, -28, -29, -30, -31, -32,
+		-33,  16, -35,   0,   1,   2,   3,   7,
+		  8,  10,  11,   4,   5,  14,  15,  12,
+		  6,  13,   9,  19
+	};
 
 	int val = ptr[9];
-	if (val < 0 || val >= ARRAYSIZE(monkeyTypes))
+	if (val < 0 || val >= ARRAYSIZE(monkeyCommands))
 		debug("Tfmx: illegal Songnumber %i", val);
-	bool soundFX = monkeyTypes[val] == 1;
 	int index = monkeyCommands[val];
-	if (soundFX) {
+	if (index < 0) {
 		// SoundFX
-		debug("Tfmx: Soundpattern %i", index);
+		debug("Tfmx: Soundpattern %i", -index - 1);
 
 	} else {
 		// Song
@@ -127,6 +124,7 @@ void Player_V4A::startSound(int nr) {
 
 		_tfmxPlay->doSong(index);
 		_musicId = nr;
+		_musicLastTicks = _tfmxPlay->getTicks();
 
 		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false, false);
 	}
@@ -134,9 +132,10 @@ void Player_V4A::startSound(int nr) {
 
 
 int Player_V4A::getMusicTimer() const {
-	static int t = 0;
-	t += 300;
-	return t;
+	if (_musicId) {
+		return (_tfmxPlay->getTicks() - _musicLastTicks) / 25;
+	} else
+		return 0;
 }
 
 int Player_V4A::getSoundStatus(int nr) const {
