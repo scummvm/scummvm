@@ -105,8 +105,11 @@ private:
 	void updateCursor();
 	void updateEyesAnimation();
 	void updateMainMenu();
+
 	void updateSubMenu();
 	void exitSubMenu();
+    void updateSubMenuNewGame();
+    void updateSubMenuQuitGame();
 
 	void update();
 }; // end of class MainMenu
