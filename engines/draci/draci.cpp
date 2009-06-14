@@ -170,7 +170,20 @@ int DraciEngine::go() {
 		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
 	}	
 
-	getchar();
+	Common::Event event;
+	bool quit = false;
+	while (!quit) {
+		while (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_QUIT:
+				quit = true;
+			default:
+				break;
+			}
+		}
+		_system->updateScreen();
+		_system->delayMillis(20);
+	}
 
 	return 0;
 }
