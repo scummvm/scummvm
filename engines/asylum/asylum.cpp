@@ -45,7 +45,7 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
-	delete _state;
+	delete _mainMenu;
 	delete _scene;
 	delete _video;
 	delete _sound;
@@ -90,7 +90,7 @@ Common::Error AsylumEngine::go() {
 
 	// DEBUG
 	// Testing new game state abstraction class
-	_state = new MainMenu(this);
+	_mainMenu = new MainMenu(this);
 
     // TODO: just some scene proof-of-concept
     _scene->load(5);
@@ -139,7 +139,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 		// Copy background image
 		_screen->copyBackBufferToScreen();
 	}
-	_state->handleEvent(&ev, doUpdate);
+	_mainMenu->handleEvent(&ev, doUpdate);
 }
 
 } // namespace Asylum
