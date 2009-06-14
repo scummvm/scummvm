@@ -40,9 +40,11 @@ struct ResourceEntry {
 class ResourcePack {
 public:
 	ResourcePack(const char *resourceFile);
+	ResourcePack(int resourceID);
 	~ResourcePack();
 
-	ResourceEntry *getResource(byte index);
+	ResourceEntry *getResource(uint16 index);
+	ResourceEntry *getResourceFromId(uint32 resourceId) { return getResource(resourceId & 0xFFFF); }
 	uint32 getResourceCount() { return _resources.size(); }
 	
 private:

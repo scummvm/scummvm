@@ -51,6 +51,12 @@ ResourcePack::ResourcePack(const char *resourceFile) {
 	}
 }
 
+ResourcePack::ResourcePack(int resourceID) {
+	char filename[20];
+	uint32 fileNum = (resourceID >> 16) & 0x7FFF;
+	sprintf(filename, "res.%03d", fileNum);
+}
+
 ResourcePack::~ResourcePack() {
 	for (uint32 i = 0; i < _resources.size(); i++) {
 		delete _resources[i].data;
@@ -61,7 +67,7 @@ ResourcePack::~ResourcePack() {
 	_packFile.close();
 }
 
-ResourceEntry *ResourcePack::getResource(byte index) { 
+ResourceEntry *ResourcePack::getResource(uint16 index) { 
 	if (!_resources[index].data) {
 		// Load the requested resource if it's not loaded already
 		_packFile.seek(_resources[index].offset, SEEK_SET);
@@ -71,4 +77,5 @@ ResourceEntry *ResourcePack::getResource(byte index) {
 
 	return &_resources[index];
 }
+
 } // end of namespace Asylum

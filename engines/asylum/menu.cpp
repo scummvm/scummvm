@@ -65,18 +65,17 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 
     // TODO just some proof-of-concept of text drawing
     _text = new Text(_vm);
-    _text->loadFont(0x80010010);
+    _text->loadFont(_resPack, 0x80010010);
 }
 
 MainMenu::~MainMenu() {
+    delete _text;
 	delete _iconResource;
 	delete _eyeResource;
 	delete _cursorResource;
 	delete _musPack;
 	delete _resPack;
-    delete _text;
 }
-
 
 void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
 	_ev = event;

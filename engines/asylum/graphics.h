@@ -36,9 +36,9 @@ struct GraphicFrame {
 	uint32 size;
 	uint32 offset;
 
-	Graphics::Surface surface;
 	uint16 x;
 	uint16 y;
+	Graphics::Surface surface;
 };
 
 // Graphic resources can be sprites or images, with multiple frames
@@ -54,6 +54,7 @@ public:
 
 	uint16 getFrameCount() { return _frames.size(); }
 	GraphicFrame *getFrame(int frame) { return &_frames[frame]; }
+	uint32 getFlags() { return _flags; }
 
 	/**
 	 * Copies an animation frame to the target buffer
@@ -67,6 +68,7 @@ public:
 
 private:
 	Common::Array <GraphicFrame> _frames;
+	uint32 _flags;
 
 	void init(byte *data, uint32 size);
 };
