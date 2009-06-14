@@ -27,21 +27,24 @@
 #define ASYLUM_TEXT_H_
 
 #include "asylum/asylum.h"
+#include "asylum/resourcepack.h"
 
 namespace Asylum {
 
+class ResourceManager;
+
 class Text {
 public:
-	Text();
+	Text(AsylumEngine *vm);
 	~Text();
 
     uint32 loadFont(uint32 resId);
     
-    uint32 setPosition(uint32 x, uint32 y);
+    void setPosition(uint32 x, uint32 y);
     uint32 getWidth(uint8 *text);
     uint32 getResWidth(uint32 resId);
 
-    void drawChar(uint8 c);
+    void drawChar(uint8 character);
     void drawText(uint8 *text);
     void drawResText(uint32 resId);
 
@@ -51,9 +54,14 @@ public:
     void drawTextAlignRight(uint32 x, uint32 y, uint8 *text);
     void drawResTextAlignRight(uint32 x, uint32 y, uint32 resId);
 private:
+    AsylumEngine *_vm;
+    ResourcePack *_resPack;
+    ResourceManager *_resMgr;
+
     uint32 _posX;
     uint32 _posY;
     uint32 _curFontResId;
+    uint8 _curFontFlags;
 };
 
 } // end of namespace Asylum
