@@ -27,6 +27,8 @@
 #define ASYLUM_SCREEN_H_
 
 #include "asylum/asylum.h"
+#include "asylum/graphics.h"
+#include "asylum/resourcepack.h"
 
 #include "common/system.h"  // for OSystem
 #include "graphics/surface.h"
@@ -42,9 +44,15 @@ public:
 	void copyBackBufferToScreen();
 	void copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height);
 	void setPalette(byte *rgbPalette);
+	void setPalette(ResourcePack *resPack, int entry) { setPalette(resPack->getResource(entry)->data + 32); }
+
 	void showCursor() { _sys->showMouse(true); }
 	void hideCursor() { _sys->showMouse(false); }
 	void setCursor(byte *data, byte width, byte height) { _sys->setMouseCursor(data, width, height, 1, 1, 0); }
+	void setCursor(GraphicResource *cursorRes, int frame) {
+		GraphicFrame *mouseCursor = cursorRes->getFrame(frame);
+		setCursor((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
+	}
 
 private:
 	Graphics::Surface _backBuffer;

@@ -90,7 +90,7 @@ Common::Error AsylumEngine::go() {
 
 	// DEBUG
 	// Testing new game state abstraction class
-	_state = new MenuState(this);
+	_state = new MainMenu(this);
 
     // TODO: just some scene proof-of-concept
     _scene->load(5);
