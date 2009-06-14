@@ -44,6 +44,8 @@ Text::~Text() {
 
 // loadFont at address 00435640
 void Text::loadFont(ResourcePack *resPack, uint32 resId) {
+	delete _fontResource;
+
 	ResourceEntry *fontRes = resPack->getResourceFromId(resId);
 	_fontResource = new GraphicResource(fontRes->data, fontRes->size);
 
@@ -79,7 +81,7 @@ uint32 Text::getResTextWidth(uint32 resId) {
     return getTextWidth((char*)textRes->data);
 }
 
-void Text::drawChar(char character){
+void Text::drawChar(char character) {
 	assert (_fontResource);
 
 	GraphicFrame *fontLetter = _fontResource->getFrame(character);
@@ -87,14 +89,14 @@ void Text::drawChar(char character){
     _posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
-void Text::drawText(char *text){
+void Text::drawText(char *text) {
     while (*text) {
         drawChar(*text);
         text++;
     }
 }
 
-void Text::drawResText(uint32 resId){
+void Text::drawResText(uint32 resId) {
     ResourceEntry *textRes = _textPack->getResourceFromId(resId);
     drawText((char*)textRes->data);
 }
@@ -105,9 +107,9 @@ void Text::drawTextCentered(uint32 x, uint32 y, uint32 width, char *text) {
     drawText(text);
 }  
 
-void Text::drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId){
+void Text::drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId) {
     ResourceEntry *textRes = _textPack->getResourceFromId(resId);
-    drawTextCentered(x, y, width, (char*)textRes->data);
+    drawTextCentered(x, y, width, (char *)textRes->data);
 }
 
 void Text::drawText(uint32 x, uint32 y, char *text) {
@@ -116,10 +118,15 @@ void Text::drawText(uint32 x, uint32 y, char *text) {
     drawText(text);
 }
 
-void Text::drawTextAlignRight(uint32 x, uint32 y, char *text){
+void Text::drawResText(uint32 x, uint32 y, uint32 resId) {
+	ResourceEntry *textRes = _textPack->getResourceFromId(resId);
+	drawText(x, y, (char *)textRes->data);
 }
 
-void Text::drawResTextAlignRight(uint32 x, uint32 y, uint32 resId){
+void Text::drawTextAlignRight(uint32 x, uint32 y, char *text) {
+}
+
+void Text::drawResTextAlignRight(uint32 x, uint32 y, uint32 resId) {
 }
 
 } // end of namespace Asylum

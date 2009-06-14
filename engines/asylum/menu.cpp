@@ -67,10 +67,13 @@ MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound)
 	_sound->playMusic(_resPack, 39);
 
     _text = new Text(_screen);
-    _text->loadFont(_resPack, 0x80010010);
+    _text->loadFont(_resPack, 16);	// 0x80010010, yellow font
+	_textBlue = new Text(_screen);
+	_textBlue->loadFont(_resPack, 22);	// 0x80010016, blue font
 }
 
 MainMenu::~MainMenu() {
+	delete _textBlue;
     delete _text;
 	delete _iconResource;
 	delete _eyeResource;
@@ -140,12 +143,8 @@ void MainMenu::update() {
 			case kViewCinematics:
 				// TODO
 				break;
-			case kQuitGame: {
-				// TODO: just push a quit event for now
-				Common::Event event;
-				event.type = Common::EVENT_QUIT;
-				g_system->getEventManager()->pushEvent(event);
-				}
+			case kQuitGame: 
+				// Nothing here
 				break;
 			case kTextOptions:
 				// TODO
@@ -276,21 +275,90 @@ void MainMenu::updateSubMenu() {
 	if (_curIconFrame >= _iconResource->getFrameCount())
 		_curIconFrame = 0;
 
-	// Left clicking takes us out of the sub menu
-	// TODO
-	if (_leftClick) {
-		_leftClick = false;
-		_activeMenuScreen = kMainMenu;
+	switch (_activeIcon) {
+		case kNewGame:
+			// TODO
+            _gameState = new GameState(_screen, _sound, 5);
+			break;
+		case kLoadGame:
+			// TODO
+			break;
+		case kSaveGame:
+			// TODO
+			break;
+		case kDeleteGame:
+			// TODO
+			break;
+		case kViewCinematics:
+			// TODO
+			break;
+		case kQuitGame:
+			// Quit confirmation
+			_text->drawResTextCentered(10, 100, 620, 1408);	// 0x80000580u
 
-		// Copy the bright background to the back buffer
-		GraphicFrame *bg = _bgResource->getFrame(1);
-		_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
+			// Yes
+			if (_mouseX >= 240 && _mouseX <= 280 && _mouseY >= 280 && _mouseY <= 300) {
+				_textBlue->setTextPos(247, 273);
+				_textBlue->drawResText(1409); // 0x80000581u
 
-		// Set the cursor
-		delete _cursorResource;
-		_cursorResource = new GraphicResource(_resPack, 2);
-		_screen->setCursor(_cursorResource, 0);
+				if (_leftClick) {
+					_leftClick = false;
+
+					// User clicked on quit, so push a quit event
+					Common::Event event;
+					event.type = Common::EVENT_QUIT;
+					g_system->getEventManager()->pushEvent(event);
+				}
+			} else {
+				_text->setTextPos(247, 273);
+				_text->drawResText(1409); // 0x80000581u
+			}
+
+			// No
+			if (_mouseX >= 360 && _mouseX <= 400 && _mouseY >= 280 && _mouseY <= 300) {
+				_textBlue->setTextPos(369, 273);
+				_textBlue->drawResText(1410); // 0x80000582u
+
+				if (_leftClick)
+					exitSubMenu();
+			} else {
+				_text->setTextPos(369, 273);
+				_text->drawResText(1410); // 0x80000582u
+			}
+			break;
+		case kTextOptions:
+			// TODO
+			break;
+		case kAudioOptions:
+			// TODO
+			break;
+		case kSettings:
+			// TODO
+			break;
+		case kKeyboardConfig:
+			// TODO
+			break;
+		case kShowCredits:
+			// TODO
+			break;
+		case kReturnToGame:
+			// TODO
+			break;
 	}
+}
+
+void MainMenu::exitSubMenu() {
+	_leftClick = false;
+	_activeMenuScreen = kMainMenu;
+
+	// Copy the bright background to the back buffer
+	GraphicFrame *bg = _bgResource->getFrame(1);
+	_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
+
+	// Set the cursor
+	delete _cursorResource;
+	_cursorResource = new GraphicResource(_resPack, 2);
+	_screen->setCursor(_cursorResource, 0);
 }
 
 } // end of namespace Asylum
