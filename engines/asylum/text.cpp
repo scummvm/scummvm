@@ -28,7 +28,7 @@
 
 namespace Asylum {
 
-Text::Text(AsylumEngine *vm) : _vm(vm) {
+Text::Text(Screen *screen) : _screen(screen) {
     _posX = 0;
     _posY = 0;
     _curFontFlags = 0;
@@ -87,7 +87,7 @@ void Text::drawChar(char character){
 	assert (_fontResource);
 
 	GraphicFrame *fontLetter = _fontResource->getFrame(character);
-	_vm->getScreen()->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
+	_screen->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
     _posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 

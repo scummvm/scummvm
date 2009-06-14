@@ -35,12 +35,13 @@
 
 namespace Asylum {
 
-class AsylumEngine;
+class Screen;
+class Sound;
 class Text;
 
 class MainMenu {
 public:
-	MainMenu(AsylumEngine *vm);
+	MainMenu(Screen *screen, Sound *sound);
 	~MainMenu();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -60,7 +61,8 @@ private:
 		kEyesCrossed     = 9
 	};
 
-	AsylumEngine    *_vm;
+	Screen *_screen;
+	Sound *_sound;
 	Common::Event *_ev;
 
 	int _mouseX;

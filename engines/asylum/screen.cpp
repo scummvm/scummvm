@@ -50,6 +50,10 @@ void Screen::copyToBackBuffer(byte *buffer, int x, int y, int width, int height)
 	}
 }
 
+void Screen::copyRectToScreen(byte *buffer, int x, int y, int width, int height) {
+	_sys->copyRectToScreen(buffer, width, x, y, width, height);
+}
+
 void Screen::copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height) {
 	byte *screenBuffer = (byte *)_sys->lockScreen()->pixels;
 

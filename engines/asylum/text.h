@@ -26,14 +26,16 @@
 #ifndef ASYLUM_TEXT_H_
 #define ASYLUM_TEXT_H_
 
-#include "asylum/asylum.h"
+#include "asylum/screen.h"
 #include "asylum/resourcepack.h"
 
 namespace Asylum {
 
+class Screen;
+
 class Text {
 public:
-	Text(AsylumEngine *vm);
+	Text(Screen *screen);
 	~Text();
 
     void loadFont(ResourcePack *resPack, uint32 resId);
@@ -53,7 +55,7 @@ public:
     void drawTextAlignRight(uint32 x, uint32 y, char *text);
     void drawResTextAlignRight(uint32 x, uint32 y, uint32 resId);
 private:
-    AsylumEngine *_vm;
+    Screen *_screen;
 	GraphicResource *_fontResource;
 
 	uint32 _posX;

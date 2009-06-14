@@ -42,6 +42,7 @@ public:
 
 	void copyToBackBuffer(byte *buffer, int x, int y, int width, int height);
 	void copyBackBufferToScreen();
+	void copyRectToScreen(byte *buffer, int x, int y, int width, int height);
 	void copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height);
 	void setPalette(byte *rgbPalette);
 	void setPalette(ResourcePack *resPack, int entry) { setPalette(resPack->getResource(entry)->data + 32); }

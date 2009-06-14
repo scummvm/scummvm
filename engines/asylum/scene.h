@@ -106,7 +106,7 @@ typedef struct CommonResources {
     uint32 cellShadeMask1;
     uint32 cellShadeMask2;
     uint32 cellShadeMask3;
-    uint32 unUsed;
+    uint32 unused;
     uint32 smallCurUp;
     uint32 smallCurDown;
     uint32 unknown4;
