@@ -30,13 +30,15 @@
 namespace Asylum {
 
 MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound) {
-	_mouseX  = 0;
-	_mouseY  = 0;
+	_mouseX             = 0;
+	_mouseY             = 0;
+	_leftClick           = false;
 	_activeIcon         = -1;
 	_previousActiveIcon = -1;
 	_curIconFrame       = 0;
 	_curMouseCursor     = 0;
 	_cursorStep         = 1;
+	_activeMenuScreen   = kMainMenu;
 
 	_resPack = new ResourcePack(1);
 	_musPack = new ResourcePack("mus.005");
@@ -44,12 +46,11 @@ MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound)
 	// Load the graphics palette
 	_screen->setPalette(_resPack, 17);
 
-	// Copy the background to the back buffer
-
-	GraphicResource *bgResource = new GraphicResource(_resPack, 0);
-	GraphicFrame *bg = bgResource->getFrame(1);
+	// Initialize background
+	_bgResource = new GraphicResource(_resPack, 0);
+	// Copy the bright background to the back buffer
+	GraphicFrame *bg = _bgResource->getFrame(1);
 	_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
-	delete bgResource;
 
 	// Initialize eye animation
 	_eyeResource = new GraphicResource(_resPack, 1);
@@ -73,6 +74,7 @@ MainMenu::~MainMenu() {
 	delete _iconResource;
 	delete _eyeResource;
 	delete _cursorResource;
+	delete _bgResource;
 	delete _musPack;
 	delete _resPack;
 }
@@ -80,15 +82,17 @@ MainMenu::~MainMenu() {
 void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
 	_ev = event;
 
-	// handle common event assignment tasks
-	// before bubbling to the subclass' virtual
-	// update method
-	if (_ev->type == Common::EVENT_MOUSEMOVE) {
+	switch (_ev->type) {
+	case Common::EVENT_MOUSEMOVE:
 		_mouseX = _ev->mouse.x;
 		_mouseY = _ev->mouse.y;
+		break;
+	case Common::EVENT_LBUTTONUP:
+		_leftClick = true;
+		break;
 	}
 
-	if (doUpdate)
+	if (doUpdate || _leftClick)
 		update();
 }
 
@@ -174,6 +178,20 @@ void MainMenu::update() {
 				_previousActiveIcon = _activeIcon;
 			}
 
+			break;
+		}
+	}
+
+	if (_leftClick) {
+		_leftClick = false;
+		
+		switch (_activeIcon) {
+			case kQuitGame: {
+			// TODO: just push a quit event for now
+			Common::Event event;
+			event.type = Common::EVENT_QUIT;
+			g_system->getEventManager()->pushEvent(event);
+			}
 			break;
 		}
 	}

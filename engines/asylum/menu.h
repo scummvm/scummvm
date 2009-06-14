@@ -61,6 +61,22 @@ private:
 		kEyesCrossed     = 9
 	};
 
+	enum MenuScreen {
+		kNewGame         = 0,
+		kLoadGame        = 1,
+		kSaveGame        = 2,
+		kDeleteGame      = 3,
+		kViewCinematics  = 4,
+		kQuitGame        = 5,
+		kTextOptions     = 6,
+		kAudioOptions    = 7,
+		kSettings        = 8,
+		kKeyboardConfig  = 9,
+		kShowCredits     = 10,
+		kReturnToGame    = 11,
+		kMainMenu        = 12
+	};
+
 	Screen *_screen;
 	Sound *_sound;
 	Common::Event *_ev;
@@ -72,8 +88,11 @@ private:
 	int _curIconFrame;
 	int _curMouseCursor;
 	int _cursorStep;
+	bool _leftClick;
+	MenuScreen _activeMenuScreen;
 	ResourcePack *_resPack;
 	ResourcePack *_musPack;
+	GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;
