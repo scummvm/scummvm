@@ -610,7 +610,7 @@ static void syncCT(Common::Serializer &s) {
 
 static void DoSync(Common::Serializer &s) {
 	syncBasicInfo(s);
-	_vm->music().doSync(s);
+	_vm->sound().doSync(s);
 
 	syncPalette(s, newPal);
 	syncPalette(s, workpal);

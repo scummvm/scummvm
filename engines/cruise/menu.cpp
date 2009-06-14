@@ -207,7 +207,7 @@ int playerMenu(int menuX, int menuY) {
 
 	if (playerMenuEnabled && displayOn) {
 		if (remdo) {
-			_vm->music().removeSong();
+			_vm->sound().stopMusic();
 			freeStuff2();
 		}
 		/*

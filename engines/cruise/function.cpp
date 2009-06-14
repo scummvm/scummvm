@@ -1354,22 +1354,22 @@ int16 Op_LoadSong(void) {
 
 	strcpy(buffer, ptr);
 	strToUpper(buffer);
-	_vm->music().loadSong(buffer);
+	_vm->sound().loadMusic(buffer);
 
 	changeCursor(CURSOR_NORMAL);
 	return 0;
 }
 
 int16 Op_PlaySong(void) {
-	if (_vm->music().songLoaded() && !_vm->music().songPlayed())
-		_vm->music().startSong();
+	if (_vm->sound().songLoaded() && !_vm->sound().songPlayed())
+		_vm->sound().playMusic();
 
 	return 0;
 }
 
 int16 Op_StopSong(void) {
-	if (_vm->music().isPlaying())
-		_vm->music().stop();
+	if (_vm->sound().isPlaying())
+		_vm->sound().stopMusic();
 
 	return 0;
 }
@@ -1383,12 +1383,12 @@ int16 Op_RestoreSong(void) {
 int16 Op_SongSize(void) {
 	int size, oldSize;
 
-	if (_vm->music().songLoaded()) {
-		byte *pSize = _vm->music().songData() + 470;
-		oldSize = *pSize;
+	if (_vm->sound().songLoaded()) {
+		oldSize = _vm->sound().numOrders();
+		
 		size = popVar();
 		if ((size >= 1) && (size < 128))
-			*pSize = size;
+			_vm->sound().setNumOrders(size);
 	} else
 		oldSize = 0;
 
@@ -1399,35 +1399,34 @@ int16 Op_SetPattern(void) {
 	int value = popVar();
 	int offset = popVar();
 
-	if (_vm->music().songLoaded()) {
-		byte *pData = _vm->music().songData();
-		*(pData + 472 + offset) = (byte)value;
+	if (_vm->sound().songLoaded()) {
+		_vm->sound().setPattern(offset, value);
 	}
 
 	return 0;
 }
 
 int16 Op_FadeSong(void) {
-	_vm->music().fadeSong();
+	_vm->sound().fadeSong();
 
 	return 0;
 }
 
 int16 Op_FreeSong(void) {
-	_vm->music().stop();
-	_vm->music().removeSong();
+	_vm->sound().stopMusic();
+	_vm->sound().removeMusic();
 	return 0;
 }
 
 int16 Op_SongLoop(void) {
-	bool oldLooping = _vm->music().looping();
-	_vm->music().setLoop(popVar() != 0);
+	bool oldLooping = _vm->sound().musicLooping();
+	_vm->sound().musicLoop(popVar() != 0);
 
 	return oldLooping;
 }
 
 int16 Op_SongPlayed(void) {
-	return _vm->music().songPlayed();
+	return _vm->sound().songPlayed();
 }
 
 void setVar49Value(int value) {
@@ -1632,7 +1631,7 @@ int16 Op_GetNodeY(void) {
 }
 
 int16 Op_SetVolume(void) {
-	int oldVolume = _vm->music().getVolume() >> 2;
+	int oldVolume = _vm->sound().getVolume() >> 2;
 	int newVolume = popVar();
 
 	// TODO: The game seems to expect the volume will only range from 0 - 63, so for now
@@ -1641,7 +1640,7 @@ int16 Op_SetVolume(void) {
 	if (newVolume > 63) newVolume = 63;
 	if (newVolume >= 0) {
 		int volume = 63 - newVolume;
-		_vm->music().setVolume(volume << 2);
+		_vm->sound().setVolume(volume << 2);
 	}
 
 	return oldVolume >> 2;

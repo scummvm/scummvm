@@ -52,26 +52,24 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_currentVolumeFile = new Common::File();
 #endif
 
-	Common::addDebugChannel(kCruiseDebugScript, "Script",
-	                             "Script debug level");
+	Common::addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
+	Common::addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-	                              ConfMan.getInt("sfx_volume"));
+			ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-	                              ConfMan.getInt("music_volume"));
+			ConfMan.getInt("music_volume"));
 
 	_vm = this;
 	_debugger = new Debugger();
-	_music = new MusicPlayer();
-	_sound = new SoundPlayer();
+	_sound = new PCSound(_mixer, this);
 
 	syst->getEventManager()->registerRandomSource(_rnd, "cruise");
 }
 
 CruiseEngine::~CruiseEngine() {
 	delete _debugger;
-	delete _music;
 	delete _sound;
 
 	freeSystem();
