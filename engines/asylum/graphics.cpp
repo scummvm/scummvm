@@ -47,7 +47,7 @@ void GraphicResource::init(byte *data, uint32 size) {
 	uint32 i = 0;
 
 	dataPtr += 4; // tag value
-	dataPtr += 4; // flag
+	_flags = READ_UINT32(dataPtr); dataPtr += 4;
 	contentOffset = READ_UINT32(dataPtr); dataPtr += 4;
 	dataPtr += 4; // unknown
 	dataPtr += 4; // unknown

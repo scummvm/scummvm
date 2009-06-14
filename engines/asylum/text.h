@@ -31,18 +31,16 @@
 
 namespace Asylum {
 
-class ResourceManager;
-
 class Text {
 public:
 	Text(AsylumEngine *vm);
 	~Text();
 
-    uint32 loadFont(uint32 resId);
+    void loadFont(ResourcePack *resPack, uint32 resId);
     
     void setPosition(uint32 x, uint32 y);
     uint32 getWidth(uint8 *text);
-    uint32 getResWidth(uint32 resId);
+    //uint32 getResWidth(uint32 resId);
 
     void drawChar(uint8 character);
     void drawText(uint8 *text);
@@ -55,12 +53,10 @@ public:
     void drawResTextAlignRight(uint32 x, uint32 y, uint32 resId);
 private:
     AsylumEngine *_vm;
-    ResourcePack *_resPack;
-    ResourceManager *_resMgr;
+	GraphicResource *_fontResource;
 
-    uint32 _posX;
+	uint32 _posX;
     uint32 _posY;
-    uint32 _curFontResId;
     uint8 _curFontFlags;
 };
 

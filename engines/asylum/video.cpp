@@ -56,7 +56,7 @@ bool Video::playVideo(const char *filename) {
 }
 
 bool Video::playVideo(int number) {
-	char filename[50];
+	char filename[20];
 	sprintf(filename, "mov%03d.smk", number);
 	return playVideo(filename);
 }

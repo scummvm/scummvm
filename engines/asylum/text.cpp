@@ -31,51 +31,39 @@ namespace Asylum {
 Text::Text(AsylumEngine *vm) : _vm(vm) {
     _posX = 0;
     _posY = 0;
-    _curFontResId = 0;
     _curFontFlags = 0;
+	_fontResource = 0;
 }
 
 Text::~Text() {
-    if(_resPack){
-        delete _resPack;
-    }
+	delete _fontResource;
 }
 
 // loadFont at address 00435640
-uint32 Text::loadFont(uint32 resId){
-    // FIXME this should be handle outside. We don't need to refer the file here.
-    uint32 offset = resId & 0xFFFF;
-    _resPack = new ResourcePack("res.001");
-    // end fixme
+void Text::loadFont(ResourcePack *resPack, uint32 resId) {
+	ResourceEntry *fontRes = resPack->getResourceFromId(resId);
+	_fontResource = new GraphicResource(fontRes->data, fontRes->size);
 
-    uint32 oldFontResId = _curFontResId;
-    _curFontResId = resId;
-    if(resId > 0){
+    if (resId > 0) {
         // load font flag data
-	    uint32 flag = READ_UINT32(_resPack->getResource(offset)->data + 4);
-        _curFontFlags = (flag >> 4) & 0x0F; 
+        _curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F; 
     }
-
-    return oldFontResId;
 }
     
-void Text::setPosition(uint32 x, uint32 y){
+void Text::setPosition(uint32 x, uint32 y) {
     _posX = x;
     _posY = y;
 }
 
 // getTextWidth at address 004357C0
-uint32 Text::getWidth(uint8 *text){
+uint32 Text::getWidth(uint8 *text) {
+	assert (_fontResource);
+
     int width = 0;
     uint8 character = *text;
-    while(character){
-        // FIXME this should be masked inside resources
-        uint32 fileNum = (_curFontResId >> 16) & 0x7FFF;
-        uint32 offset = _curFontResId & 0xFFFF;
-
-		// TODO
-        //GraphicResource *font = _resMgr->getGraphic(fileNum, offset, character);
-        //width += font->width + font->x - _curFontFlags;
+    while (character){
+		GraphicFrame *font = _fontResource->getFrame(character);
+        width += font->surface.w + font->x - _curFontFlags;
 
         text++;
         character = *text;
@@ -83,7 +71,9 @@ uint32 Text::getWidth(uint8 *text){
     return 0;
 }
 
-uint32 Text::getResWidth(uint32 resId){
+#if 0
+// TODO: Is this needed at all?
+uint32 Text::getResWidth(uint32 resId) {
     uint32 offset = resId & 0xFFFF;
     // FIXME this shouldn't be here. We need a static getResource by resId
     ResourcePack *res0 = new ResourcePack("res.000");
@@ -91,16 +81,14 @@ uint32 Text::getResWidth(uint32 resId){
     uint8* text = res0->getResource(offset)->data;
     return getWidth(text);
 }
+#endif
 
 void Text::drawChar(uint8 character){
-    // FIXME this should be masked inside resources
-    uint32 fileNum = (_curFontResId >> 16) & 0x7FFF;
-    uint32 offset = _curFontResId & 0xFFFF;
-    // FIXME this shouldn't be here. We need a static getResource by resId
-	// TODO
-    //GraphicResource *font = _resMgr->getGraphic(fileNum, offset, character);
-	//_vm->getScreen()->copyToBackBuffer(font->data, 0, 0, font->width, font->height);
-    //_posX += font->width + font->x - _curFontFlags;
+	assert (_fontResource);
+
+	GraphicFrame *font = _fontResource->getFrame(character);
+	_vm->getScreen()->copyToBackBuffer((byte *)font->surface.pixels, 0, 0, font->surface.w, font->surface.h);
+    _posX += font->surface.w + font->x - _curFontFlags;
 }
 
 void Text::drawText(uint8 *text){
