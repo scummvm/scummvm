@@ -89,6 +89,7 @@ int DraciEngine::init() {
 	return 0;
 }
 
+// HACK
 // Temporary hack
 
 void drawFrame(OSystem *syst, BAFile *frame) {
