@@ -60,7 +60,7 @@ bool Scene::load(uint8 sceneIdx){
     }
 
     loadWorldStats(fd);
-    loadGamePolies(fd);
+    loadGamePolygons(fd);
     loadActionList(fd);
 
     return true;
@@ -74,7 +74,7 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
     _worldStats->_numEntries = stream->readUint32LE();
     _worldStats->_numChapter = stream->readUint32LE();
     
-    stream->skip(24); //unUsed data
+    stream->skip(24); // unused data
     
     // read common graphic resources
     stream->read(&_worldStats->_commonRes,sizeof(CommonResources));
@@ -82,14 +82,14 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
     _worldStats->_width = stream->readUint32LE();
     _worldStats->_height = stream->readUint32LE();
     
-    stream->skip(8); //unUsed data
+    stream->skip(8); // unused data
 
     _worldStats->_numActions = stream->readUint32LE();
     _worldStats->_numActors = stream->readUint32LE();
 
-    stream->skip(20); //unUsed data
+    stream->skip(20); // unused data
 
-    // FIXME figure out what this 3 unknown fields are
+    // FIXME figure out what these 3 unknown fields are
     stream->skip(12);
 
     // FIXME Jump unknown resource list
@@ -113,7 +113,7 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
         actorDef.x = stream->readUint32LE();
         actorDef.y = stream->readUint32LE();
         stream->skip(0x30); 
-        stream->read(actorDef.name,52);       
+        stream->read(actorDef.name, 52);       
         stream->skip(0x158);
         actorDef.soundResId = stream->readUint32LE();
         stream->skip(0x4D8);
@@ -149,26 +149,26 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
     }
 }
 
-// FIXME: load necessary Game Polies content
-void Scene::loadGamePolies(Common::SeekableReadStream *stream){
-    _gamePolies = new GamePolies;
+// FIXME: load necessary Game Polygons content
+void Scene::loadGamePolygons(Common::SeekableReadStream *stream){
+    _gamePolygons = new GamePolygons;
 
-    stream->seek(0xE8686); // jump to game polies data
+    stream->seek(0xE8686); // jump to game Polygons data
 
-    _gamePolies->_size = stream->readUint32LE();
-    _gamePolies->_numEntries = stream->readUint32LE();
+    _gamePolygons->_size = stream->readUint32LE();
+    _gamePolygons->_numEntries = stream->readUint32LE();
 
-    for(uint32 g=0; g < _gamePolies->_numEntries; g++){
+    for(uint32 g=0; g < _gamePolygons->_numEntries; g++){
         PolyDefinitions poly;
         memset(&poly, 0, sizeof(PolyDefinitions));
         poly.numPoints = stream->readUint32LE();
-        stream->read(poly.points, sizeof(Common::Point) * POLIES_MAXSIZE);
+        stream->read(poly.points, sizeof(Common::Point) * Polygons_MAXSIZE);
         poly.boundingRect.top = stream->readUint32LE();
         poly.boundingRect.left = stream->readUint32LE();
         poly.boundingRect.bottom = stream->readUint32LE();
         poly.boundingRect.right = stream->readUint32LE();
 
-        _gamePolies->_polies.push_back(poly);
+        _gamePolygons->_Polygons.push_back(poly);
     }
 }
 

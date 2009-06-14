@@ -31,13 +31,13 @@
 #include "common/rect.h"
 
 #define SCENEMASK   "scn.%03d"
-#define POLIES_MAXSIZE  100
+#define Polygons_MAXSIZE  100
 
 namespace Asylum {
 
 class AsylumEngine;
 class WorldStats;
-class GamePolies;
+class GamePolygons;
 class ActionList;
 
 class Scene {
@@ -48,13 +48,13 @@ public:
     bool load(uint8 sceneIdx);
 
     WorldStats *_worldStats;
-    GamePolies *_gamePolies;
+    GamePolygons *_gamePolygons;
     ActionList *_actionList;
 private:
     AsylumEngine *_vm;
 
     void loadWorldStats(Common::SeekableReadStream *stream);
-    void loadGamePolies(Common::SeekableReadStream *stream);
+    void loadGamePolygons(Common::SeekableReadStream *stream);
     void loadActionList(Common::SeekableReadStream *stream);
     Common::String parseFilename(uint8 sceneIdx);
 }; // end of class Scene
@@ -138,20 +138,20 @@ public:
 
 typedef struct PolyDefinitions{
     uint32 numPoints;
-    Common::Point points[POLIES_MAXSIZE];
+    Common::Point points[Polygons_MAXSIZE];
     Common::Rect boundingRect;
 } PolyDefinitions;
 
-class GamePolies {
+class GamePolygons {
 public:
-    GamePolies() {};
-    virtual ~GamePolies() {};
+    GamePolygons() {};
+    virtual ~GamePolygons() {};
 
     uint32 _size;
     uint32 _numEntries;
 
-    Common::Array<PolyDefinitions> _polies;
-}; // end of class GamePolies
+    Common::Array<PolyDefinitions> _Polygons;
+}; // end of class GamePolygons
 
 
 class ActionList {
