@@ -23,19 +23,62 @@
  *
  */
 
-#include "asylum/state.h"
+#include "asylum/menu.h"
 #include "asylum/resourcepack.h"
 #include "asylum/graphics.h"
 
 namespace Asylum {
 
-State::State(AsylumEngine *vm) {
-	_vm     = vm;
+MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_mouseX  = 0;
 	_mouseY  = 0;
+	_activeIcon         = -1;
+	_previousActiveIcon = -1;
+	_curIconFrame       = 0;
+	_curMouseCursor     = 0;
+	_cursorStep         = 1;
+
+	_resPack = new ResourcePack("res.001");
+	_musPack = new ResourcePack("mus.005");
+
+	// Load the graphics palette
+	_vm->getScreen()->setPalette(_resPack, 17);
+
+	// Copy the background to the back buffer
+
+	GraphicResource *bgResource = new GraphicResource(_resPack, 0);
+	GraphicFrame *bg = bgResource->getFrame(1);
+	_vm->getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
+	delete bgResource;
+
+	// Initialize eye animation
+	_eyeResource = new GraphicResource(_resPack, 1);
+
+	// Initialize mouse cursor
+	_cursorResource = new GraphicResource(_resPack, 2);
+	_vm->getScreen()->setCursor(_cursorResource, 0);
+	_vm->getScreen()->showCursor();
+
+	_iconResource = 0;
+
+	_vm->getSound()->playMusic(_musPack, 0);
+
+    // TODO just some proof-of-concept of text drawing
+    _text = new Text(_vm);
+    _text->loadFont(0x80010010);
 }
 
-void State::handleEvent(Common::Event *event, bool doUpdate) {
+MainMenu::~MainMenu() {
+	delete _iconResource;
+	delete _eyeResource;
+	delete _cursorResource;
+	delete _musPack;
+	delete _resPack;
+    delete _text;
+}
+
+
+void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
 	_ev = event;
 
 	// handle common event assignment tasks
@@ -50,61 +93,7 @@ void State::handleEvent(Common::Event *event, bool doUpdate) {
 		update();
 }
 
-
-///////////////
-// MenuState //
-///////////////
-
-MenuState::MenuState(AsylumEngine *vm): State(vm) {
-	_activeIcon         = -1;
-	_previousActiveIcon = -1;
-	_curIconFrame       = 0;
-	_curMouseCursor     = 0;
-	_cursorStep         = 1;
-
-	_resPack = new ResourcePack("res.001");
-	_musPack = new ResourcePack("mus.005");
-
-	// Load the graphics palette
-	byte *pal = _resPack->getResource(17)->data + 32;
-	_vm->getScreen()->setPalette(pal);
-
-	// Copy the background to the back buffer
-
-	GraphicResource *bgResource = new GraphicResource(_resPack, 0);
-	GraphicFrame *bg = bgResource->getFrame(1);
-	_vm->getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
-	delete bgResource;
-
-	// Initialize eye animation
-	_eyeResource = new GraphicResource(_resPack, 1);
-
-	// Initialize mouse cursor
-	_cursorResource = new GraphicResource(_resPack, 2);
-	GraphicFrame *mouseCursor = _cursorResource->getFrame(0);
-	_vm->getScreen()->setCursor((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
-	_vm->getScreen()->showCursor();
-
-	_iconResource = 0;
-
-	ResourceEntry *musicResource = _musPack->getResource(0);
-	_vm->getSound()->playMusic(musicResource->data, musicResource->size);
-
-    // TODO just some proof-of-concept of text drawing
-    _text = new Text(_vm);
-    _text->loadFont(0x80010010);
-}
-
-MenuState::~MenuState() {
-	delete _iconResource;
-	delete _eyeResource;
-	delete _cursorResource;
-	delete _musPack;
-	delete _resPack;
-    delete _text;
-}
-
-void MenuState::update() {
+void MainMenu::update() {
 	int rowId = 0;
 
     // TODO just some proof-of-concept of text drawing
@@ -182,9 +171,7 @@ void MenuState::update() {
 
 			// Play creepy voice
 			if (!_vm->getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
-				ResourceEntry *sfxResource = _resPack->getResource(iconNum + 44);
-				_vm->getSound()->playMusic(sfxResource->data, sfxResource->size);
-
+				_vm->getSound()->playSfx(_resPack, iconNum + 44);
 				_previousActiveIcon = _activeIcon;
 			}
 
@@ -193,15 +180,14 @@ void MenuState::update() {
 	}
 }
 
-void MenuState::updateCursor() {
+void MainMenu::updateCursor() {
 	_curMouseCursor += _cursorStep;
 	if (_curMouseCursor == 0)
 		_cursorStep = 1;
-	if (_curMouseCursor == 6)
+	if (_curMouseCursor == _cursorResource->getFrameCount() - 1)
 		_cursorStep = -1;
 
-	GraphicFrame *mouseCursor = _cursorResource->getFrame(_curMouseCursor);
-	_vm->getScreen()->setCursor((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
+	_vm->getScreen()->setCursor(_cursorResource, _curMouseCursor);
 }
 
 } // end of namespace Asylum

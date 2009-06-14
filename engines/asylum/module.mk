@@ -4,12 +4,12 @@ MODULE_OBJS := \
 	asylum.o \
 	detection.o \
 	graphics.o \
+	menu.o \
 	resourcepack.o \
 	scene.o \
 	screen.o \
 	sound.o \
 	text.o \
-	state.o \
 	video.o
 
 # This module can be built as a plugin

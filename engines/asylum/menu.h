@@ -38,36 +38,12 @@ namespace Asylum {
 class AsylumEngine;
 class Text;
 
-class MenuState;
-
-/**
- * The abstract State class is meant to handle common events
- * to standard "screen-states"
- */
-class State {
+class MainMenu {
 public:
-	State(AsylumEngine *vm);
-	virtual ~State() {}
+	MainMenu(AsylumEngine *vm);
+	~MainMenu();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
-
-protected:
-	Common::Event *_ev;
-	int _mouseX;
-	int _mouseY;
-	AsylumEngine    *_vm;
-
-private:
-	virtual void init()   = 0;
-	virtual void update() = 0;
-
-}; // end of class State
-
-
-class MenuState: public State {
-public:
-	MenuState(AsylumEngine *vm);
-	~MenuState();
 
 private:
 
@@ -84,6 +60,11 @@ private:
 		kEyesCrossed     = 9
 	};
 
+	AsylumEngine    *_vm;
+	Common::Event *_ev;
+
+	int _mouseX;
+	int _mouseY;
 	int _activeIcon;
 	int _previousActiveIcon;
 	int _curIconFrame;
@@ -98,9 +79,8 @@ private:
 
 	void updateCursor();
 
-	void init() {}
 	void update();
-}; // end of class MenuState
+}; // end of class MainMenu
 
 } // end of namespace Asylum
 

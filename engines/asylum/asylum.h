@@ -29,17 +29,16 @@
 #include "engines/engine.h"
 
 #include "asylum/scene.h"
-#include "asylum/state.h"
+#include "asylum/menu.h"
 #include "asylum/screen.h"
 #include "asylum/sound.h"
 #include "asylum/video.h"
 
 namespace Asylum {
 
+class MainMenu;
 class Scene;
 class Screen;
-class Menu;
-class State;
 class Sound;
 class Video;
 
@@ -67,7 +66,7 @@ private:
     Common::RandomSource _rnd;
 
     Scene *_scene;
-    State *_state;
+    MainMenu *_state;
 	Screen *_screen;
 	Sound *_sound;
 	Video *_video;
