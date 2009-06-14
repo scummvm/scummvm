@@ -77,14 +77,22 @@ MenuState::MenuState(AsylumEngine *vm): State(vm) {
 
 	ResourceEntry *musicResource = _musPack->getResource(0);
 	_vm->getSound()->playMusic(musicResource->data, musicResource->size);
+
+    // TODO just some proof-of-concept of text drawing
+    _text = new Text(_vm);
+    _text->loadFont(0x80010010);
 }
 
 MenuState::~MenuState() {
 	delete _musPack;
 	delete _resPack;
+    delete _text;
 }
 
 void MenuState::update() {
+    // TODO just some proof-of-concept of text drawing
+    _text->drawChar('C');
+
 	// TODO: Just some proof-of concept to change icons here for now
 	if (_mouseY >= 20 && _mouseY <= 20 + 48) {
 		// Top row

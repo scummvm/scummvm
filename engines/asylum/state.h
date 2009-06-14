@@ -31,11 +31,13 @@
 #include "asylum/asylum.h"
 #include "asylum/resman.h"
 #include "asylum/resourcepack.h"
+#include "asylum/text.h"
 
 namespace Asylum {
 
 class AsylumEngine;
 class ResourceManager;
+class Text;
 
 class MenuState;
 
@@ -91,6 +93,7 @@ private:
 	int _cursorStep;
 	ResourcePack *_resPack;
 	ResourcePack *_musPack;
+    Text *_text;
 
 	void updateCursor();
 

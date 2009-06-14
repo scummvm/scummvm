@@ -27,29 +27,81 @@
 
 namespace Asylum {
 
-Text::Text() {
+Text::Text(AsylumEngine *vm) : _vm(vm) {
+    _posX = 0;
+    _posY = 0;
+    _curFontResId = 0;
+    _curFontFlags = 0;
+
+    // TODO take this out
+    _resMgr = new ResourceManager(_vm);
 }
 
 Text::~Text() {
+    delete _resMgr;
+    if(_resPack){
+        delete _resPack;
+    }
 }
 
+// loadFont at address 00435640
 uint32 Text::loadFont(uint32 resId){
-    return 0;
+    // FIXME this should be handle outside. We don't need to refer the file here.
+    uint32 offset = resId & 0xFFFF;
+    _resPack = new ResourcePack("res.001");
+    // end fixme
+
+    uint32 oldFontResId = _curFontResId;
+    _curFontResId = resId;
+    if(resId > 0){
+        // load font flag data
+	    uint32 flag = READ_UINT32(_resPack->getResource(offset)->data + 4);
+        _curFontFlags = (flag >> 4) & 0x0F; 
+    }
+
+    return oldFontResId;
 }
     
-uint32 Text::setPosition(uint32 x, uint32 y){
-    return 0;
+void Text::setPosition(uint32 x, uint32 y){
+    _posX = x;
+    _posY = y;
 }
 
+// getTextWidth at address 004357C0
 uint32 Text::getWidth(uint8 *text){
+    int width = 0;
+    uint8 character = *text;
+    while(character){
+        // FIXME this should be masked inside resources
+        uint32 fileNum = (_curFontResId >> 16) & 0x7FFF;
+        uint32 offset = _curFontResId & 0xFFFF;
+
+        GraphicResource *font = _resMgr->getGraphic(fileNum, offset, character);
+        width += font->width + font->x - _curFontFlags;
+
+        text++;
+        character = *text;
+    }
     return 0;
 }
 
 uint32 Text::getResWidth(uint32 resId){
-    return 0;
+    uint32 offset = resId & 0xFFFF;
+    // FIXME this shouldn't be here. We need a static getResource by resId
+    ResourcePack *res0 = new ResourcePack("res.000");
+
+    uint8* text = res0->getResource(offset)->data;
+    return getWidth(text);
 }
 
-void Text::drawChar(uint8 c){
+void Text::drawChar(uint8 character){
+    // FIXME this should be masked inside resources
+    uint32 fileNum = (_curFontResId >> 16) & 0x7FFF;
+    uint32 offset = _curFontResId & 0xFFFF;
+    // FIXME this shouldn't be here. We need a static getResource by resId
+    GraphicResource *font = _resMgr->getGraphic(fileNum, offset, character);
+	_vm->getScreen()->copyToBackBuffer(font->data, 0, 0, font->width, font->height);
+    _posX += font->width + font->x - _curFontFlags;
 }
 
 void Text::drawText(uint8 *text){
