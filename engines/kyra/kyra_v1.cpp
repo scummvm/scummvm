@@ -81,7 +81,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	Common::addDebugChannel(kDebugLevelMovie, "Movie", "Movie debug level");
 	Common::addDebugChannel(kDebugLevelTimer, "Timer", "Timer debug level");
 
-	system->getEventManager()->registerRandomSource(_rnd, "kyra");
+	_eventMan->registerRandomSource(_rnd, "kyra");
 }
 
 ::GUI::Debugger *KyraEngine_v1::getDebugger() {
