@@ -3,6 +3,7 @@ MODULE := engines/asylum
 MODULE_OBJS := \
 	asylum.o \
 	detection.o \
+	gamestate.o \
 	graphics.o \
 	menu.o \
 	resourcepack.o \

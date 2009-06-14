@@ -46,7 +46,6 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
 	delete _mainMenu;
-	delete _scene;
 	delete _video;
 	delete _sound;
 	delete _screen;
@@ -69,42 +68,25 @@ Common::Error AsylumEngine::init() {
 	_screen = new Screen(_system);
 	_sound = new Sound(_mixer);
 	_video = new Video(_mixer);
-    _scene = new Scene(this);
-
-	// initializing game
-	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
-	// TODO: get hand icon resource before starting main menu
-	// TODO: load startup configurations (address 0041A970)
-	// TODO: setup cinematics (address 0041A880) (probably we won't need it)
-	// TODO: init unknown game stuffs (address 0040F430)
-
-	// TODO: if savegame exists on folder, than start NewGame()
 
     return Common::kNoError;
 }
 
 Common::Error AsylumEngine::go() {
+    // initializing game
+	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
+	// TODO: load startup configurations (address 0041A970)
+	// TODO: init unknown game stuffs (address 0040F430)
+	// TODO: if savegame exists on folder, than start NewGame()
+
 	// Play intro movie
 	// Disabled for quick testing
 	//_video->playVideo(0);
 
-	// DEBUG
-	// Testing new game state abstraction class
 	_mainMenu = new MainMenu(_screen, _sound);
 
-    // TODO: just some scene proof-of-concept
-    _scene->load(5);
-
-
-	// DEBUG
-    // Control loop test. Basically just keep the
-    // ScummVM window alive until ESC is pressed.
-    // This will facilitate drawing tests ;)
-
 	while (!shouldQuit()) {
-
 		checkForEvent(true);
-
 		waitForTimer(60);
 	}
 

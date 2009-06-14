@@ -42,7 +42,7 @@ class ActionList;
 
 class Scene {
 public:
-	Scene(AsylumEngine *vm);
+	Scene();
 	virtual ~Scene();
 
     bool load(uint8 sceneIdx);
@@ -51,8 +51,6 @@ public:
     GamePolygons *_gamePolygons;
     ActionList *_actionList;
 private:
-    AsylumEngine *_vm;
-
     void loadWorldStats(Common::SeekableReadStream *stream);
     void loadGamePolygons(Common::SeekableReadStream *stream);
     void loadActionList(Common::SeekableReadStream *stream);
