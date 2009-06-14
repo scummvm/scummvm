@@ -74,17 +74,10 @@ uint32 Text::getTextWidth(char *text) {
     return width;
 }
 
-#if 0
-// TODO: Is this needed at all?
 uint32 Text::getResTextWidth(uint32 resId) {
-    uint32 offset = resId & 0xFFFF;
-    // FIXME this shouldn't be here. We need a static getResource by resId
-    ResourcePack *res0 = new ResourcePack("res.000");
-
-    uint8* text = res0->getResource(offset)->data;
-    return getTextWidth(text);
+    ResourceEntry *textRes = _textPack->getResourceFromId(resId);
+    return getTextWidth((char*)textRes->data);
 }
-#endif
 
 void Text::drawChar(char character){
 	assert (_fontResource);
@@ -102,6 +95,8 @@ void Text::drawText(char *text){
 }
 
 void Text::drawResText(uint32 resId){
+    ResourceEntry *textRes = _textPack->getResourceFromId(resId);
+    drawText((char*)textRes->data);
 }
 
 void Text::drawTextCentered(uint32 x, uint32 y, uint32 width, char *text) {
@@ -110,10 +105,12 @@ void Text::drawTextCentered(uint32 x, uint32 y, uint32 width, char *text) {
     drawText(text);
 }  
 
-void Text::drawResTextCentered(uint32 resId){
+void Text::drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId){
+    ResourceEntry *textRes = _textPack->getResourceFromId(resId);
+    drawTextCentered(x, y, width, (char*)textRes->data);
 }
 
-void Text::drawText(int x, int y, char *text) {
+void Text::drawText(uint32 x, uint32 y, char *text) {
     int textWidth = getTextWidth(text);
     setTextPos(x - textWidth, y);
     drawText(text);
