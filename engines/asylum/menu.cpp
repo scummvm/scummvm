@@ -39,6 +39,7 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_cursorStep         = 1;
 
 	_resPack = new ResourcePack("res.001");
+	_textPack = new ResourcePack("res.000");
 	_musPack = new ResourcePack("mus.005");
 
 	// Load the graphics palette
@@ -74,6 +75,7 @@ MainMenu::~MainMenu() {
 	delete _eyeResource;
 	delete _cursorResource;
 	delete _musPack;
+	delete _textPack;
 	delete _resPack;
 }
 
@@ -94,10 +96,6 @@ void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
 
 void MainMenu::update() {
 	int rowId = 0;
-
-    // TODO just some proof-of-concept of text drawing
-	_text->setPosition(100, 100);
-    _text->drawText("This is a test");
 
 	// Eyes animation
 	// Get the appropriate eye resource depending on the mouse position
@@ -169,6 +167,12 @@ void MainMenu::update() {
 			if (_curIconFrame >= _iconResource->getFrameCount())
 				_curIconFrame = 0;
 
+			// Show text
+		    // TODO: proper positioning
+			ResourceEntry *iconText = _textPack->getResource(iconNum + 1309);
+			uint32 textWidth = _text->getTextWidth((char *)iconText->data);
+			_text->drawText(iconFrame->x + iconFrame->surface.w + 20, iconFrame->y + iconFrame->surface.h, (char *)iconText->data);
+			
 			// Play creepy voice
 			if (!_vm->getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
 				_vm->getSound()->playSfx(_resPack, iconNum + 44);
