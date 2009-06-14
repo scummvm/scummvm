@@ -132,7 +132,7 @@ int DraciEngine::go() {
 	_system->fillScreen(255);
 
 	// Draw big string
-	DraciFont font(kFontBig);
+	Font font(kFontBig);
 	Common::String testString = "Testing, testing, read all about it!";
 	Graphics::Surface *surf = _system->lockScreen();
 	font.drawString(surf, testString, 

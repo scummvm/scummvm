@@ -30,13 +30,13 @@
 
 namespace Draci {
 
-DraciFont::DraciFont(const Common::String &filename) : 
+Font::Font(const Common::String &filename) : 
 	_fontHeight(0), _maxCharWidth(0), 
 	_charWidths(NULL), _charData(0) { 
 	setFont(filename);
 }
 
-DraciFont::~DraciFont() {
+Font::~Font() {
 	 freeFont(); 
 }
 
@@ -45,7 +45,7 @@ DraciFont::~DraciFont() {
  * @param path Path to font file
  * @return true if the font was loaded successfully, false otherwise
  *
- * Loads fonts from a file into a DraciFont instance. The original game uses two
+ * Loads fonts from a file into a Font instance. The original game uses two
  * fonts (located inside files "Small.fon" and "Big.fon"). The characters in the
  * font are indexed from the space character so an appropriate offset must be 
  * added to convert them to equivalent char values, i.e. kDraciIndexOffset.
@@ -58,7 +58,7 @@ DraciFont::~DraciFont() {
  *				[138 * fontHeight * maxWidth bytes] character data, stored row-wise 
  */
 
-bool DraciFont::setFont(const Common::String &filename) {
+bool Font::setFont(const Common::String &filename) {
 	
 	// Free previously loaded font (if any)
 	freeFont();
@@ -96,12 +96,12 @@ bool DraciFont::setFont(const Common::String &filename) {
 	return true;
 }
 
-void DraciFont::freeFont() {
+void Font::freeFont() {
 	delete[] _charWidths;
 	delete[] _charData;
 }
 
-uint8 DraciFont::getCharWidth(uint8 chr) const {
+uint8 Font::getCharWidth(uint8 chr) const {
 	return _charWidths[chr - kCharIndexOffset];
 }
 
@@ -114,7 +114,7 @@ uint8 DraciFont::getCharWidth(uint8 chr) const {
  * @param ty  	Vertical offset on the surface
  */
 
-void DraciFont::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const {
+void Font::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const {
 	assert(dst != NULL);
 	assert(tx >= 0);
 	assert(ty >= 0);
@@ -155,7 +155,7 @@ void DraciFont::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) cons
  * @param spacing 	Space to leave between individual characters. Defaults to 0. 
  */
 
-void DraciFont::drawString(Graphics::Surface *dst, Common::String &str, 
+void Font::drawString(Graphics::Surface *dst, Common::String &str, 
 							int x, int y, int spacing) const {
 	assert(dst != NULL);
 	assert(x >= 0);
@@ -185,7 +185,7 @@ void DraciFont::drawString(Graphics::Surface *dst, Common::String &str,
  * @return The calculated width of the string 
  */
 
-int DraciFont::getStringWidth(Common::String &str, int spacing) const {
+int Font::getStringWidth(Common::String &str, int spacing) const {
 	int width = 0;	
 	uint len = str.size();
 	for (unsigned int i = 0; i < len; ++i) {
