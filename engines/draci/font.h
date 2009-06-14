@@ -27,6 +27,9 @@
 
 namespace Draci {
 
+const Common::String kFontSmall("Small.fon");
+const Common::String kFontBig("Big.fon"); 
+
 /**
  *  Represents the game's fonts. See docs for setFont() for font format details.
  */
@@ -34,9 +37,9 @@ namespace Draci {
 class DraciFont {
 	
 public: 
-	DraciFont(Common::String &filename);
+	DraciFont(const Common::String &filename);
 	~DraciFont();
-	bool setFont(Common::String &filename);
+	bool setFont(const Common::String &filename);
 	uint8 getFontHeight() const { return _fontHeight; };
 	uint8 getMaxCharWidth() const { return _maxCharWidth; };
 	uint8 getCharWidth(byte chr) const;

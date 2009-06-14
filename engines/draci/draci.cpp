@@ -132,16 +132,14 @@ int DraciEngine::go() {
 	_system->fillScreen(255);
 
 	// Draw big string
-	path = "Big.fon";	
-	DraciFont font(path);
+	DraciFont font(kFontBig);
 	Common::String testString = "Testing, testing, read all about it!";
 	Graphics::Surface *surf = _system->lockScreen();
 	font.drawString(surf, testString, 
 		(320 - font.getStringWidth(testString, 1)) / 2, 130, 1);
 
 	// Draw small string
-	path = "Small.fon";
-	font.setFont(path);
+	font.setFont(kFontSmall);
 	testString = "I'm smaller than the font above me.";
 	font.drawString(surf, testString, 
 		(320 - font.getStringWidth(testString, 1)) / 2, 150, 1);

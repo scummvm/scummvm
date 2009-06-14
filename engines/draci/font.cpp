@@ -30,7 +30,7 @@
 
 namespace Draci {
 
-DraciFont::DraciFont(Common::String &filename) : 
+DraciFont::DraciFont(const Common::String &filename) : 
 	_fontHeight(0), _maxCharWidth(0), 
 	_charWidths(NULL), _charData(0) { 
 	setFont(filename);
@@ -58,7 +58,7 @@ DraciFont::~DraciFont() {
  *				[138 * fontHeight * maxWidth bytes] character data, stored row-wise 
  */
 
-bool DraciFont::setFont(Common::String &filename) {
+bool DraciFont::setFont(const Common::String &filename) {
 	
 	// Free previously loaded font (if any)
 	freeFont();
