@@ -240,7 +240,7 @@ byte *readBundleSoundFile(const char *name) {
 
 		loadPackedFileToMem(fileIdx, packedBuffer);
 
-		uint32 realUnpackedSize = READ_BE_UINT32(packedBuffer + volumePtrToFileDescriptor[fileIdx].size - 4);
+		//uint32 realUnpackedSize = READ_BE_UINT32(packedBuffer + volumePtrToFileDescriptor[fileIdx].size - 4);
 
 		delphineUnpack(data, packedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
