@@ -33,9 +33,12 @@ Text::Text(Screen *screen) : _screen(screen) {
     _posY = 0;
     _curFontFlags = 0;
 	_fontResource = 0;
+
+	_textPack = new ResourcePack("res.000");
 }
 
 Text::~Text() {
+	delete _textPack;
 	delete _fontResource;
 }
 

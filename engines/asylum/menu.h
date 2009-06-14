@@ -73,7 +73,6 @@ private:
 	int _curMouseCursor;
 	int _cursorStep;
 	ResourcePack *_resPack;
-	ResourcePack *_textPack;
 	ResourcePack *_musPack;
 	GraphicResource *_cursorResource;
 	GraphicResource *_eyeResource;

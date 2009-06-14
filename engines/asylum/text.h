@@ -57,6 +57,7 @@ public:
 private:
     Screen *_screen;
 	GraphicResource *_fontResource;
+	ResourcePack *_textPack;
 
 	uint32 _posX;
     uint32 _posY;
