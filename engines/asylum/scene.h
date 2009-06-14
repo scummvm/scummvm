@@ -47,10 +47,14 @@ public:
 
     bool load(uint8 sceneIdx);
 
+    WorldStats* getWorldStats() { return _worldStats; }
+    GamePolygons* getGamePolygons() { return _gamePolygons; }
+    ActionList* getActionList() { return _actionList; }
+private:
     WorldStats *_worldStats;
     GamePolygons *_gamePolygons;
     ActionList *_actionList;
-private:
+
     void loadWorldStats(Common::SeekableReadStream *stream);
     void loadGamePolygons(Common::SeekableReadStream *stream);
     void loadActionList(Common::SeekableReadStream *stream);

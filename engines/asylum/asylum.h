@@ -70,10 +70,6 @@ private:
 	Screen *_screen;
 	Sound *_sound;
 	Video *_video;
-
-    void showMainMenu();
-	void updateMainMenu();
-
 };
 
 } // namespace Asylum
