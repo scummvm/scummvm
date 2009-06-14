@@ -56,7 +56,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	Common::addDebugChannel(kDraciArchiverDebugLevel, "archiver", "BAR archiver debug info");
  
 	// Don't forget to register your random source
-	syst->getEventManager()->registerRandomSource(_rnd, "draci");
+	_eventMan->registerRandomSource(_rnd, "draci");
 }
 
 int DraciEngine::init() {
