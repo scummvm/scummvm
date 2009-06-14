@@ -38,7 +38,7 @@ MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound)
 	_curMouseCursor     = 0;
 	_cursorStep         = 1;
 
-	_resPack = new ResourcePack("res.001");
+	_resPack = new ResourcePack(1);
 	_musPack = new ResourcePack("mus.005");
 
 	// Load the graphics palette

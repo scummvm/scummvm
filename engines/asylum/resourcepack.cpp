@@ -28,6 +28,28 @@
 namespace Asylum {
 
 ResourcePack::ResourcePack(const char *resourceFile) {
+	init(resourceFile);
+}
+
+ResourcePack::ResourcePack(int resourceIndex) {
+	// We don't use the file number part of resource IDs
+	//uint32 fileNum = (resourceID >> 16) & 0x7FFF;
+	char filename[20];
+	sprintf(filename, "res.%03d", resourceIndex);
+	init(filename);
+}
+
+ResourcePack::~ResourcePack() {
+	for (uint32 i = 0; i < _resources.size(); i++) {
+		delete _resources[i].data;
+	}
+
+	_resources.clear();
+
+	_packFile.close();
+}
+
+void ResourcePack::init(const char *resourceFile) {
 	_packFile.open(resourceFile);
 
 	uint32 entryCount = _packFile.readUint32LE();
@@ -49,22 +71,6 @@ ResourcePack::ResourcePack(const char *resourceFile) {
 
 		prevOffset = nextOffset;
 	}
-}
-
-ResourcePack::ResourcePack(int resourceID) {
-	char filename[20];
-	uint32 fileNum = (resourceID >> 16) & 0x7FFF;
-	sprintf(filename, "res.%03d", fileNum);
-}
-
-ResourcePack::~ResourcePack() {
-	for (uint32 i = 0; i < _resources.size(); i++) {
-		delete _resources[i].data;
-	}
-
-	_resources.clear();
-
-	_packFile.close();
 }
 
 ResourceEntry *ResourcePack::getResource(uint16 index) { 

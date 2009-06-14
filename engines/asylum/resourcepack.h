@@ -40,7 +40,7 @@ struct ResourceEntry {
 class ResourcePack {
 public:
 	ResourcePack(const char *resourceFile);
-	ResourcePack(int resourceID);
+	ResourcePack(int resourceIndex);
 	~ResourcePack();
 
 	ResourceEntry *getResource(uint16 index);
@@ -50,6 +50,8 @@ public:
 private:
 	Common::Array <ResourceEntry> _resources;
 	Common::File _packFile;
+
+	void init(const char *resourceFile);
 };
 
 } // end of namespace Asylum
