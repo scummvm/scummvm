@@ -27,6 +27,8 @@
 #define ASYLUM_SCREEN_H_
 
 #include "asylum/asylum.h"
+
+#include "common/system.h"  // for OSystem
 #include "graphics/surface.h"
 
 namespace Asylum {
@@ -40,8 +42,8 @@ public:
 	void copyBackBufferToScreen();
 	void copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height);
 	void setPalette(byte *rgbPalette);
-	void showMouse() { _sys->showMouse(true); }
-	void hideMouse() { _sys->showMouse(false); }
+	void showCursor() { _sys->showMouse(true); }
+	void hideCursor() { _sys->showMouse(false); }
 	void setCursor(byte *data, byte width, byte height) { _sys->setMouseCursor(data, width, height, 1, 1, 0); }
 
 private:

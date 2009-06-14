@@ -47,7 +47,6 @@ AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
 	delete _state;
 	delete _scene;
-    delete _resMgr;
 	delete _video;
 	delete _sound;
 	delete _screen;
@@ -70,7 +69,6 @@ Common::Error AsylumEngine::init() {
 	_screen = new Screen(_system);
 	_sound = new Sound(_mixer);
 	_video = new Video(_mixer);
-	_resMgr = new ResourceManager(this);
     _scene = new Scene(this);
 
 	// initializing game

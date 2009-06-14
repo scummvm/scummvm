@@ -23,33 +23,54 @@
  *
  */
 
-#include "asylum/sound.h"
+#ifndef ASYLUM_GRAPHICS_H_
+#define ASYLUM_GRAPHICS_H_
 
-#include "common/stream.h"
-#include "sound/wave.h"
+#include "common/array.h"
+#include "graphics/surface.h"
+#include "asylum/resourcepack.h"
 
 namespace Asylum {
 
-Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
-}
+struct GraphicFrame {
+	uint32 size;
+	uint32 offset;
 
-Sound::~Sound() {
-}
+	Graphics::Surface surface;
+	uint16 x;
+	uint16 y;
+};
 
-void Sound::playSfx(byte *data, uint32 size) {
-	Common::MemoryReadStream *mem = new Common::MemoryReadStream(data, size);
+// Graphic resources can be sprites or images, with multiple frames
+class GraphicResource {
+public:
+	GraphicResource(byte *data, uint32 size);
+	GraphicResource(ResourcePack *resPack, int entry) {
+		ResourceEntry *resEntry = resPack->getResource(entry);
+		init(resEntry->data, resEntry->size); 
+	}
 
-	// Now create the audio stream and play it (it's just a regular WAVE file)
-	Audio::AudioStream *sfx = Audio::makeWAVStream(mem, true);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, sfx);
-}
+	~GraphicResource();
 
-void Sound::playMusic(byte *data, uint32 size) {
-	Common::MemoryReadStream *mem = new Common::MemoryReadStream(data, size);
+	uint16 getFrameCount() { return _frames.size(); }
+	GraphicFrame *getFrame(int frame) { return &_frames[frame]; }
 
-	// Now create the audio stream and play it (it's just a regular WAVE file)
-	Audio::AudioStream *mus = Audio::makeWAVStream(mem, true);
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, mus);
-}
+	/**
+	 * Copies an animation frame to the target buffer
+     */
+	void copyFrameToDest(byte *dest, int frame);
+
+	/**
+	 * Copies a sprite to the target buffer, with transparency
+	 */
+	void copySpriteToDest(byte *dest, int frame);
+
+private:
+	Common::Array <GraphicFrame> _frames;
+
+	void init(byte *data, uint32 size);
+};
 
 } // end of namespace Asylum
+
+#endif

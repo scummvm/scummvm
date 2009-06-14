@@ -24,6 +24,7 @@
  */
 
 #include "asylum/text.h"
+#include "common/endian.h"
 
 namespace Asylum {
 
@@ -32,13 +33,9 @@ Text::Text(AsylumEngine *vm) : _vm(vm) {
     _posY = 0;
     _curFontResId = 0;
     _curFontFlags = 0;
-
-    // TODO take this out
-    _resMgr = new ResourceManager(_vm);
 }
 
 Text::~Text() {
-    delete _resMgr;
     if(_resPack){
         delete _resPack;
     }
@@ -76,8 +73,9 @@ uint32 Text::getWidth(uint8 *text){
         uint32 fileNum = (_curFontResId >> 16) & 0x7FFF;
         uint32 offset = _curFontResId & 0xFFFF;
 
-        GraphicResource *font = _resMgr->getGraphic(fileNum, offset, character);
-        width += font->width + font->x - _curFontFlags;
+		// TODO
+        //GraphicResource *font = _resMgr->getGraphic(fileNum, offset, character);
+        //width += font->width + font->x - _curFontFlags;
 
         text++;
         character = *text;
@@ -99,9 +97,10 @@ void Text::drawChar(uint8 character){
     uint32 fileNum = (_curFontResId >> 16) & 0x7FFF;
     uint32 offset = _curFontResId & 0xFFFF;
     // FIXME this shouldn't be here. We need a static getResource by resId
-    GraphicResource *font = _resMgr->getGraphic(fileNum, offset, character);
-	_vm->getScreen()->copyToBackBuffer(font->data, 0, 0, font->width, font->height);
-    _posX += font->width + font->x - _curFontFlags;
+	// TODO
+    //GraphicResource *font = _resMgr->getGraphic(fileNum, offset, character);
+	//_vm->getScreen()->copyToBackBuffer(font->data, 0, 0, font->width, font->height);
+    //_posX += font->width + font->x - _curFontFlags;
 }
 
 void Text::drawText(uint8 *text){
