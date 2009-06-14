@@ -61,6 +61,7 @@ Player_V4A::~Player_V4A() {
 }
 
 void Player_V4A::setMusicVolume(int vol) {
+	debug("player_v4a: setMusicVolume %i", vol);
 }
 
 int Player_V4A::getSlot(int id) const {

@@ -30,9 +30,9 @@
 #include "common/debug.h"
 
 #include "sound/mods/tfmx.h"
-
+#ifdef _MSC_VER
 #include "tfmx/tfmxdebug.h"
-
+#endif
 namespace Audio {
 
 const uint16 Tfmx::noteIntervalls[64] = {
@@ -189,8 +189,9 @@ static void warnMacroUnimplemented(const byte *macroPtr, int level) {
 		debug("Warning - Macro not supported:");
 	else
 		debug("Warning - Macro not completely supported:");
-
+#ifdef _MSC_VER
 	displayMacroStep(macroPtr);
+#endif
 }
 
 FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
@@ -506,8 +507,9 @@ static void warnPatternUnimplemented(const byte *patternPtr, int level) {
 		debug("Warning - Pattern not supported:");
 	else
 		debug("Warning - Pattern not completely supported:");
-
+#ifdef _MSC_VER
 	displayPatternstep(patternPtr);
+#endif
 }
 
 
