@@ -38,18 +38,19 @@ public:
 
     void loadFont(ResourcePack *resPack, uint32 resId);
     
-    void setPosition(uint32 x, uint32 y);
-    uint32 getWidth(uint8 *text);
-    //uint32 getResWidth(uint32 resId);
+    void setTextPos(uint32 x, uint32 y);
+    uint32 getTextWidth(char *text);
+    //uint32 getResTextWidth(uint32 resId);
 
-    void drawChar(byte character);
+    void drawChar(char character);
     void drawText(char *text);
-    void drawResText(uint32 resId);
+	void drawText(int x, int y, char *text);
+	void drawResText(uint32 resId);
 
-    void drawTextCentered(uint32 x, uint32 y, uint32 width, uint8 *text);  
+    void drawTextCentered(uint32 x, uint32 y, uint32 width, char *text);  
     void drawResTextCentered(uint32 resId);
 
-    void drawTextAlignRight(uint32 x, uint32 y, uint8 *text);
+    void drawTextAlignRight(uint32 x, uint32 y, char *text);
     void drawResTextAlignRight(uint32 x, uint32 y, uint32 resId);
 private:
     AsylumEngine *_vm;
