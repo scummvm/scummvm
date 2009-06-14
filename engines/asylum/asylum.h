@@ -66,7 +66,7 @@ private:
     Common::RandomSource _rnd;
 
     Scene *_scene;
-    MainMenu *_state;
+    MainMenu *_mainMenu;
 	Screen *_screen;
 	Sound *_sound;
 	Video *_video;
