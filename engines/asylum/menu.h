@@ -93,7 +93,6 @@ private:
 	bool _leftClick;
 	MenuScreen _activeMenuScreen;
 	ResourcePack *_resPack;
-	ResourcePack *_musPack;
 	GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
 	GraphicResource *_eyeResource;
@@ -103,6 +102,9 @@ private:
     GameState *_gameState;
 
 	void updateCursor();
+	void updateEyesAnimation();
+	void updateMainMenu();
+	void updateSubMenu();
 
 	void update();
 }; // end of class MainMenu
