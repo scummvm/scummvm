@@ -41,10 +41,17 @@ void Screen::copyBackBufferToScreen() {
 
 void Screen::copyToBackBuffer(byte *buffer, int x, int y, int width, int height) {
 	int h = height;
+    int w = width;
 	byte *dest = (byte *)_backBuffer.pixels;
 
+    // FIXME do this properly perhaps
+    if(h > 480)
+        h = 480;
+    if(w > 640)
+        w = 640;
+
 	while (h--) {
-		memcpy(dest, buffer, width);
+		memcpy(dest, buffer, w);
 		dest += 640;
 		buffer += width;
 	}

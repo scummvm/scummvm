@@ -49,12 +49,14 @@ public:
     void handleEvent(Common::Event *event, bool doUpdate);
 private:
     Screen *_screen;
-    Scene *_scene;
+    Common::Event *_ev;
     Text *_text;
+    Sound *_sound;
+    Scene *_scene;
+
     ResourcePack *_resPack;
 	ResourcePack *_musPack;
-    Sound *_sound;
-	Common::Event *_ev;
+    GraphicResource *_bgResource;
 
     uint8 _sceneIdx;
     int _mouseX;
