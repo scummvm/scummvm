@@ -23,12 +23,15 @@
  *
  */
 
+#ifndef FONT_H
+#define FONT_H
+
 #include "graphics/font.h"
 
 namespace Draci {
 
-const Common::String kFontSmall("Small.fon");
-const Common::String kFontBig("Big.fon"); 
+extern const Common::String kFontSmall;
+extern const Common::String kFontBig;
 
 /**
  *  Represents the game's fonts. See docs for setFont() for font format details.
@@ -37,8 +40,11 @@ const Common::String kFontBig("Big.fon");
 class Font {
 	
 public: 
+	
+	Font();
 	Font(const Common::String &filename);
 	~Font();
+
 	bool setFont(const Common::String &filename);
 	uint8 getFontHeight() const { return _fontHeight; };
 	uint8 getMaxCharWidth() const { return _maxCharWidth; };
@@ -47,6 +53,7 @@ public:
 	void drawString(Graphics::Surface *dst, Common::String &str, 
 					int x, int y, int spacing = 0) const;
 	int getStringWidth(Common::String &str, int spacing = 0) const;
+	void setColour(uint8 colour);
 
 private:
 	uint8 _fontHeight;
@@ -66,8 +73,25 @@ private:
 	 */
 	static const unsigned int kCharIndexOffset = 32;
 
+	/** Default font colours. They all seem to remain constant except for the
+	 *  first one which varies depending on the character speaking.
+	 *  _overFontColour is set to transparent.
+	 * TODO: Find out what _fontColour1 should actually be when the game starts
+	 */
+
+	static const uint8 _fontColour1 = 2;	
+	static const uint8 _fontColour2 = 0;	
+	static const uint8 _fontColour3 = 3;	
+	static const uint8 _fontColour4 = 4;
+	static const uint8 _overFontColour = 255;	
+
+	/** The varying font colour; initially set to _fontColour1 */
+	uint8 _currentFontColour;
+
 	/** Internal function for freeing fonts when destructing/loading another */
 	void freeFont();
 };
 
 } // End of namespace Draci
+
+#endif // FONT_H

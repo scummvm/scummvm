@@ -30,14 +30,38 @@
 
 namespace Draci {
 
+const Common::String kFontSmall("Small.fon");
+const Common::String kFontBig("Big.fon"); 
+
+Font::Font() :
+	_fontHeight(0), _maxCharWidth(0), 
+	_charWidths(NULL), _charData(0) {
+	
+	setFont(kFontBig);
+
+	_currentFontColour = _fontColour1;
+}
+
 Font::Font(const Common::String &filename) : 
 	_fontHeight(0), _maxCharWidth(0), 
 	_charWidths(NULL), _charData(0) { 
+
 	setFont(filename);
+
+	_currentFontColour = _fontColour1;
 }
 
 Font::~Font() {
 	 freeFont(); 
+}
+
+/**
+ * @brief Sets the varying font colour
+ * @param colour The new font colour
+ */
+
+void Font::setColour(uint8 colour) {
+	_currentFontColour = colour;
 }
 
 /**
@@ -135,9 +159,31 @@ void Font::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const {
 	for (int y = 0; y < yPixelsToDraw; ++y) {
 		for (int x = 0; x <= xPixelsToDraw; ++x) {
 
-			// Paint pixel
 			int curr = y * _maxCharWidth + x;
-			ptr[x] = _charData[charOffset + curr];
+			int colour = _charData[charOffset + curr];
+
+			// Replace colour with font colours
+			switch (colour) {
+
+			case 254:
+				colour = _currentFontColour;
+				break;
+
+			case 253:
+				colour = _fontColour2;
+				break;
+
+			case 252:
+				colour = _fontColour3;
+				break;
+
+			case 251:
+				colour = _fontColour4;
+				break;
+			}
+			
+			// Paint pixel
+			ptr[x] = colour;
 		}
 
 		// Advance to next row

@@ -30,6 +30,8 @@
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 
+#include "draci/font.h"
+
 namespace Draci {
 
 class DraciEngine : public Engine {
@@ -42,6 +44,8 @@ public:
 	Common::Error run();
 
 	bool hasFeature(Engine::EngineFeature f) const;
+
+	Font _font;
 
 private:
 	Common::RandomSource _rnd;
