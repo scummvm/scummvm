@@ -32,6 +32,7 @@
 #include "asylum/resourcepack.h"
 #include "asylum/graphics.h"
 #include "asylum/text.h"
+#include "asylum/scene.h"
 
 namespace Asylum {
 

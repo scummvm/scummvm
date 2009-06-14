@@ -34,6 +34,8 @@ GameState::GameState(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(scre
         _text = new Text(_screen);
         _resPack = new ResourcePack(sceneIdx);
         _musPack = new ResourcePack(sceneIdx);
+
+        _screen->setPalette(_resPack, _scene->getWorldStats()->_commonRes.palette);
     }
 }
 
