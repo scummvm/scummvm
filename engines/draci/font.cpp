@@ -96,11 +96,8 @@ bool DraciFont::setFont(Common::String &filename) {
 }
 
 void DraciFont::freeFont() {
-	// If there is a font already loaded, free it
-	if (_charData) {	
-		delete[] _charWidths;
-		delete[] _charData;
-	}
+	delete[] _charWidths;
+	delete[] _charData;
 }
 
 uint8 DraciFont::getCharWidth(uint8 chr) const {
@@ -109,6 +106,7 @@ uint8 DraciFont::getCharWidth(uint8 chr) const {
 
 /**
  * @brief Draw a char to a Graphics::Surface
+ *
  * @param dst 	Pointer to the destination surface
  * @param chr 	Character to draw (ASCII value)
  * @param tx  	Horizontal offset on the surface
