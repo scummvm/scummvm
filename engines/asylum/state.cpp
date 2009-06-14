@@ -70,7 +70,7 @@ MenuState::MenuState(AsylumEngine *vm): State(vm) {
 	_vm->getScreen()->setPalette(pal);
 
 	// Copy the background to the back buffer
-	GraphicResource *bg = _resMgr->getGraphic(1, 0, 0);
+	GraphicResource *bg = _resMgr->getGraphic(1, 0, 1);
 	_vm->getScreen()->copyToBackBuffer(bg->data, 0, 0, bg->width, bg->height);
 
 	_resMgr->loadCursor(1, 2, 0);
