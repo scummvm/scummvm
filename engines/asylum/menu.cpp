@@ -185,14 +185,53 @@ void MainMenu::update() {
 	if (_leftClick) {
 		_leftClick = false;
 		
+		if (_activeIcon != -1) {
+			// Copy the dark background to the back buffer
+			GraphicFrame *bg = _bgResource->getFrame(0);
+			_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
+		}
+
 		switch (_activeIcon) {
+			case kNewGame:
+				// TODO
+				break;
+			case kLoadGame:
+				// TODO
+				break;
+			case kSaveGame:
+				// TODO
+				break;
+			case kDeleteGame:
+				// TODO
+				break;
+			case kViewCinematics:
+				// TODO
+				break;
 			case kQuitGame: {
-			// TODO: just push a quit event for now
-			Common::Event event;
-			event.type = Common::EVENT_QUIT;
-			g_system->getEventManager()->pushEvent(event);
-			}
-			break;
+				// TODO: just push a quit event for now
+				Common::Event event;
+				event.type = Common::EVENT_QUIT;
+				g_system->getEventManager()->pushEvent(event);
+				}
+				break;
+			case kTextOptions:
+				// TODO
+				break;
+			case kAudioOptions:
+				// TODO
+				break;
+			case kSettings:
+				// TODO
+				break;
+			case kKeyboardConfig:
+				// TODO
+				break;
+			case kShowCredits:
+				// TODO
+				break;
+			case kReturnToGame:
+				// TODO
+				break;
 		}
 	}
 }
