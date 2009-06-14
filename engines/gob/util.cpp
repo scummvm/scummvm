@@ -331,6 +331,12 @@ void Util::setFrameRate(int16 rate) {
 	_frameRate = rate;
 	_frameWaitTime = 1000 / rate;
 	_startFrameTime = getTimeKey();
+	_frameWaitLag = 0;
+}
+
+void Util::notifyNewAnim() {
+	_startFrameTime = getTimeKey();
+	_frameWaitLag = 0;
 }
 
 void Util::waitEndFrame() {

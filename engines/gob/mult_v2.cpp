@@ -395,6 +395,8 @@ void Mult_v2::multSub(uint16 multIndex) {
 	if (multIndex > 7)
 		error("Multindex out of range");
 
+	_vm->_util->notifyNewAnim();
+
 	debugC(4, kDebugGameFlow, "Sub mult %d", multIndex);
 	_multData = _multDatas[multIndex];
 
