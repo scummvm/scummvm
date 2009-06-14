@@ -38,7 +38,6 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x, uint16 y,
 		
 	if (!columnwise) {
 		memcpy(_data, raw_data, width * height);
-		return;			
 	} else {
 		for (uint16 i = 0; i < width; ++i) {
 			for (uint16 j = 0; j < height; ++j) {
