@@ -96,7 +96,8 @@ void MainMenu::update() {
 	int rowId = 0;
 
     // TODO just some proof-of-concept of text drawing
-    _text->drawChar('C');
+	_text->setPosition(100, 100);
+    _text->drawText("This is a test");
 
 	// Eyes animation
 	// Get the appropriate eye resource depending on the mouse position

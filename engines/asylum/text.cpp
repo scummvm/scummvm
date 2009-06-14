@@ -83,15 +83,19 @@ uint32 Text::getResWidth(uint32 resId) {
 }
 #endif
 
-void Text::drawChar(uint8 character){
+void Text::drawChar(byte character){
 	assert (_fontResource);
 
-	GraphicFrame *font = _fontResource->getFrame(character);
-	_vm->getScreen()->copyToBackBuffer((byte *)font->surface.pixels, 0, 0, font->surface.w, font->surface.h);
-    _posX += font->surface.w + font->x - _curFontFlags;
+	GraphicFrame *fontLetter = _fontResource->getFrame(character);
+	_vm->getScreen()->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, _posX, _posY, fontLetter->surface.w, fontLetter->surface.h);
+    _posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
-void Text::drawText(uint8 *text){
+void Text::drawText(char *text){
+    while (*text) {
+        drawChar(*text);
+        text++;
+    }
 }
 
 void Text::drawResText(uint32 resId){
