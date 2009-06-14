@@ -32,48 +32,46 @@ namespace Draci {
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
  */
 Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x, uint16 y, 
-	bool columnwise) : _width(width), _height(height), _x(x), _y(y), _data(NULL) {
+			   bool columnwise) : _width(width), _height(height), _x(x), _y(y), _data(NULL) {
 	
-		_data = new byte[width * height];
+	_data = new byte[width * height];
 		
-		if (!columnwise) {
-			memcpy(_data, raw_data, width * height);
-			return;			
-		}
-		else {
-			for (uint16 i = 0; i < width; ++i) {
-				for (uint16 j = 0; j < height; ++j) {
-					_data[j * width + i] = *raw_data++;
-				}
+	if (!columnwise) {
+		memcpy(_data, raw_data, width * height);
+		return;			
+	} else {
+		for (uint16 i = 0; i < width; ++i) {
+			for (uint16 j = 0; j < height; ++j) {
+				_data[j * width + i] = *raw_data++;
 			}
 		}
 	}
+}
 
 /**
  *  Constructor for loading sprites from a sprite-formatted buffer, one byte per 
  *	pixel.
  */
 Sprite::Sprite(byte *sprite_data, uint16 length, uint16 x, uint16 y, 
-	bool columnwise) : _x(x), _y(y), _data(NULL) {
+			   bool columnwise) : _x(x), _y(y), _data(NULL) {
 
-		Common::MemoryReadStream reader(sprite_data, length);
+	Common::MemoryReadStream reader(sprite_data, length);
 
-		_width = reader.readUint16LE();
-		_height = reader.readUint16LE();
+	_width = reader.readUint16LE();
+	_height = reader.readUint16LE();
 
-		_data = new byte[_width * _height];
+	_data = new byte[_width * _height];
 		
-		if (!columnwise) {
-			reader.read(_data, _width * _height);
-		}
-		else {
-			for (uint16 i = 0; i < _width; ++i) {
-				for (uint16 j = 0; j < _height; ++j) {
-					_data[j * _width + i] = reader.readByte();
-				}
+	if (!columnwise) {
+		reader.read(_data, _width * _height);
+	} else {
+		for (uint16 i = 0; i < _width; ++i) {
+			for (uint16 j = 0; j < _height; ++j) {
+				_data[j * _width + i] = reader.readByte();
 			}
-		}		
-	}
+		}
+	}		
+}
 
 Sprite::~Sprite() { 
 	delete[] _data;
