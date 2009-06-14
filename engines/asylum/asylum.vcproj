@@ -246,6 +246,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\asylum\text.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\text.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\asylum\video.cpp"
 			>
 		</File>

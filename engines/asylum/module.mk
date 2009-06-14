@@ -11,7 +11,8 @@ MODULE_OBJS := \
 	scene.o \
 	screen.o \
 	sound.o \
-	state.o
+	state.o \
+	text.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)
