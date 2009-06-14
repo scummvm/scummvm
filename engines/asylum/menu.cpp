@@ -29,7 +29,7 @@
 
 namespace Asylum {
 
-MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
+MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound) {
 	_mouseX  = 0;
 	_mouseY  = 0;
 	_activeIcon         = -1;
@@ -43,13 +43,13 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_musPack = new ResourcePack("mus.005");
 
 	// Load the graphics palette
-	_vm->getScreen()->setPalette(_resPack, 17);
+	_screen->setPalette(_resPack, 17);
 
 	// Copy the background to the back buffer
 
 	GraphicResource *bgResource = new GraphicResource(_resPack, 0);
 	GraphicFrame *bg = bgResource->getFrame(1);
-	_vm->getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
+	_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
 	delete bgResource;
 
 	// Initialize eye animation
@@ -57,15 +57,15 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 
 	// Initialize mouse cursor
 	_cursorResource = new GraphicResource(_resPack, 2);
-	_vm->getScreen()->setCursor(_cursorResource, 0);
-	_vm->getScreen()->showCursor();
+	_screen->setCursor(_cursorResource, 0);
+	_screen->showCursor();
 
 	_iconResource = 0;
 
-	_vm->getSound()->playMusic(_musPack, 0);
+	_sound->playMusic(_musPack, 0);
 
     // TODO just some proof-of-concept of text drawing
-    _text = new Text(_vm);
+    _text = new Text(_screen);
     _text->loadFont(_resPack, 0x80010010);
 }
 
@@ -126,7 +126,7 @@ void MainMenu::update() {
 	// TODO: kEyesCrossed state
 
 	GraphicFrame *eyeFrame = _eyeResource->getFrame(eyeFrameNum);
-	_vm->getScreen()->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, eyeFrame->x, eyeFrame->y, eyeFrame->surface.w, eyeFrame->surface.h);
+	_screen->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, eyeFrame->x, eyeFrame->y, eyeFrame->surface.w, eyeFrame->surface.h);
 
 	updateCursor();
 
@@ -160,7 +160,7 @@ void MainMenu::update() {
 			}
 
 			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->getFrameCount() - 1, _curIconFrame));
-			_vm->_system->copyRectToScreen((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
+			_screen->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 			// Cycle icon frame
 			_curIconFrame++;
@@ -174,8 +174,8 @@ void MainMenu::update() {
 			_text->drawText(iconFrame->x + iconFrame->surface.w + 20, iconFrame->y + iconFrame->surface.h, (char *)iconText->data);
 			
 			// Play creepy voice
-			if (!_vm->getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
-				_vm->getSound()->playSfx(_resPack, iconNum + 44);
+			if (!_sound->isSfxActive() && _activeIcon != _previousActiveIcon) {
+				_sound->playSfx(_resPack, iconNum + 44);
 				_previousActiveIcon = _activeIcon;
 			}
 
@@ -191,7 +191,7 @@ void MainMenu::updateCursor() {
 	if (_curMouseCursor == _cursorResource->getFrameCount() - 1)
 		_cursorStep = -1;
 
-	_vm->getScreen()->setCursor(_cursorResource, _curMouseCursor);
+	_screen->setCursor(_cursorResource, _curMouseCursor);
 }
 
 } // end of namespace Asylum
