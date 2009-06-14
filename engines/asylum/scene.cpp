@@ -35,26 +35,26 @@ Scene::~Scene() {
         delete _worldStats;
 }
 
-bool Scene::load(uint8 sceneIdx){
+bool Scene::load(uint8 sceneIdx) {
     char sceneTag[6];
     Common::File* fd = new Common::File;
 	Common::String filename = parseFilename(sceneIdx);
 
-    if(!fd->exists(filename)){
+    if(!fd->exists(filename)) {
         printf("Scene file doesn't exist %s", filename.c_str());
         return false;
     }
 
     fd->open(filename);
 
-    if(!fd->isOpen()){
+    if(!fd->isOpen()) {
         printf("Failed to load scene file %s", filename.c_str());
         return false;
     }
 
     fd->read(sceneTag,6);
 
-    if(Common::String(sceneTag,6) != "DFISCN"){
+    if(Common::String(sceneTag,6) != "DFISCN") {
         printf("The file isn't recognized as scene %s", filename.c_str());
         return false;
     }
@@ -67,7 +67,7 @@ bool Scene::load(uint8 sceneIdx){
 }
 
 // FIXME: load necessary World Stats content
-void Scene::loadWorldStats(Common::SeekableReadStream *stream){
+void Scene::loadWorldStats(Common::SeekableReadStream *stream) {
     _worldStats = new WorldStats;
 
     _worldStats->_size = stream->readUint32LE();
@@ -104,7 +104,7 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
     stream->seek(0x6FA); // where actors definitions start
 
     // FIXME Figure out all the actor definitions
-    for(uint32 a=0; a < _worldStats->_numActors; a++){
+    for(uint32 a=0; a < _worldStats->_numActors; a++) {
         ActorDefinitions actorDef;
         memset(&actorDef, 0, sizeof(ActorDefinitions));
 
@@ -126,7 +126,7 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
     stream->seek(0xD6B5A); // where actors action definitions start
 
     // FIXME Figure out all the actor action definitions
-    for(uint32 a=0; a < _worldStats->_numActions; a++){
+    for(uint32 a=0; a < _worldStats->_numActions; a++) {
         ActorActionDefinitions actorActionDef;
         memset(&actorActionDef, 0, sizeof(ActorActionDefinitions));
 
@@ -150,7 +150,7 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream){
 }
 
 // FIXME: load necessary Game Polygons content
-void Scene::loadGamePolygons(Common::SeekableReadStream *stream){
+void Scene::loadGamePolygons(Common::SeekableReadStream *stream) {
     _gamePolygons = new GamePolygons;
 
     stream->seek(0xE8686); // jump to game Polygons data
@@ -158,7 +158,7 @@ void Scene::loadGamePolygons(Common::SeekableReadStream *stream){
     _gamePolygons->_size = stream->readUint32LE();
     _gamePolygons->_numEntries = stream->readUint32LE();
 
-    for(uint32 g=0; g < _gamePolygons->_numEntries; g++){
+    for(uint32 g=0; g < _gamePolygons->_numEntries; g++) {
         PolyDefinitions poly;
         memset(&poly, 0, sizeof(PolyDefinitions));
         poly.numPoints = stream->readUint32LE();
@@ -173,7 +173,7 @@ void Scene::loadGamePolygons(Common::SeekableReadStream *stream){
 }
 
 // TODO: load necessary Action List content
-void Scene::loadActionList(Common::SeekableReadStream *stream){
+void Scene::loadActionList(Common::SeekableReadStream *stream) {
 
 }
 
