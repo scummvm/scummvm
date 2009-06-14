@@ -30,7 +30,7 @@ namespace Asylum {
 GameState::GameState(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
     _sceneIdx = sceneIdx;
     _scene = new Scene;
-    if(_scene->load(_sceneIdx)){
+    if (_scene->load(_sceneIdx)) {
         _text = new Text(_screen);
         _resPack = new ResourcePack(sceneIdx);
         _musPack = new ResourcePack(sceneIdx);
@@ -40,11 +40,11 @@ GameState::GameState(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(scre
 }
 
 GameState::~GameState() {
-    if(_musPack)
+    if (_musPack)
         delete _musPack;
-    if(_resPack)
+    if (_resPack)
         delete _resPack;
-    if(_text)
+    if (_text)
         delete _text;
     delete _scene;
 }

@@ -31,7 +31,7 @@ Scene::Scene() {
 }
 
 Scene::~Scene() {
-    if(_worldStats)
+    if (_worldStats)
         delete _worldStats;
 }
 
@@ -40,21 +40,21 @@ bool Scene::load(uint8 sceneIdx) {
     Common::File* fd = new Common::File;
 	Common::String filename = parseFilename(sceneIdx);
 
-    if(!fd->exists(filename)) {
+    if (!fd->exists(filename)) {
         printf("Scene file doesn't exist %s", filename.c_str());
         return false;
     }
 
     fd->open(filename);
 
-    if(!fd->isOpen()) {
+    if (!fd->isOpen()) {
         printf("Failed to load scene file %s", filename.c_str());
         return false;
     }
 
     fd->read(sceneTag,6);
 
-    if(Common::String(sceneTag,6) != "DFISCN") {
+    if (Common::String(sceneTag,6) != "DFISCN") {
         printf("The file isn't recognized as scene %s", filename.c_str());
         return false;
     }
