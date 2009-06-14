@@ -129,7 +129,6 @@ void MainMenu::update() {
 		switch (_activeIcon) {
 			case kNewGame:
 				// TODO
-                _gameState = new GameState(_screen, _sound, 5);
 				break;
 			case kLoadGame:
 				// TODO
@@ -277,8 +276,7 @@ void MainMenu::updateSubMenu() {
 
 	switch (_activeIcon) {
 		case kNewGame:
-			// TODO
-            _gameState = new GameState(_screen, _sound, 5);
+            updateSubMenuNewGame();
 			break;
 		case kLoadGame:
 			// TODO
@@ -293,38 +291,7 @@ void MainMenu::updateSubMenu() {
 			// TODO
 			break;
 		case kQuitGame:
-			// Quit confirmation
-			_text->drawResTextCentered(10, 100, 620, 1408);	// 0x80000580u
-
-			// Yes
-			if (_mouseX >= 240 && _mouseX <= 280 && _mouseY >= 280 && _mouseY <= 300) {
-				_textBlue->setTextPos(247, 273);
-				_textBlue->drawResText(1409); // 0x80000581u
-
-				if (_leftClick) {
-					_leftClick = false;
-
-					// User clicked on quit, so push a quit event
-					Common::Event event;
-					event.type = Common::EVENT_QUIT;
-					g_system->getEventManager()->pushEvent(event);
-				}
-			} else {
-				_text->setTextPos(247, 273);
-				_text->drawResText(1409); // 0x80000581u
-			}
-
-			// No
-			if (_mouseX >= 360 && _mouseX <= 400 && _mouseY >= 280 && _mouseY <= 300) {
-				_textBlue->setTextPos(369, 273);
-				_textBlue->drawResText(1410); // 0x80000582u
-
-				if (_leftClick)
-					exitSubMenu();
-			} else {
-				_text->setTextPos(369, 273);
-				_text->drawResText(1410); // 0x80000582u
-			}
+			updateSubMenuQuitGame();
 			break;
 		case kTextOptions:
 			// TODO
@@ -344,6 +311,76 @@ void MainMenu::updateSubMenu() {
 		case kReturnToGame:
 			// TODO
 			break;
+	}
+}
+
+void MainMenu::updateSubMenuNewGame() {
+    // begin new game
+	_text->drawResTextCentered(10, 100, 620, 1321);	// 0x80000529u
+
+	// Yes
+	if (_mouseX >= 240 && _mouseX <= 280 && _mouseY >= 280 && _mouseY <= 300) {
+		_textBlue->setTextPos(247, 273);
+		_textBlue->drawResText(1322); // 0x8000052Au
+
+		if (_leftClick) {
+			_leftClick = false;
+
+			// TODO handle new game event
+
+            // FIXME scene proof-of-concept
+            //_gameState = new GameState(_screen, _sound, 5);
+		}
+	} else {
+		_text->setTextPos(247, 273);
+		_text->drawResText(1322); // 0x8000052Au
+	}
+
+	// No
+	if (_mouseX >= 360 && _mouseX <= 400 && _mouseY >= 280 && _mouseY <= 300) {
+		_textBlue->setTextPos(369, 273);
+		_textBlue->drawResText(1323); // 0x8000052Bu
+
+		if (_leftClick)
+			exitSubMenu();
+	} else {
+		_text->setTextPos(369, 273);
+		_text->drawResText(1323); // 0x8000052Bu
+	}
+}
+
+void MainMenu::updateSubMenuQuitGame() {
+    // Quit confirmation
+	_text->drawResTextCentered(10, 100, 620, 1408);	// 0x80000580u
+
+	// Yes
+	if (_mouseX >= 240 && _mouseX <= 280 && _mouseY >= 280 && _mouseY <= 300) {
+		_textBlue->setTextPos(247, 273);
+		_textBlue->drawResText(1409); // 0x80000581u
+
+		if (_leftClick) {
+			_leftClick = false;
+
+			// User clicked on quit, so push a quit event
+			Common::Event event;
+			event.type = Common::EVENT_QUIT;
+			g_system->getEventManager()->pushEvent(event);
+		}
+	} else {
+		_text->setTextPos(247, 273);
+		_text->drawResText(1409); // 0x80000581u
+	}
+
+	// No
+	if (_mouseX >= 360 && _mouseX <= 400 && _mouseY >= 280 && _mouseY <= 300) {
+		_textBlue->setTextPos(369, 273);
+		_textBlue->drawResText(1410); // 0x80000582u
+
+		if (_leftClick)
+			exitSubMenu();
+	} else {
+		_text->setTextPos(369, 273);
+		_text->drawResText(1410); // 0x80000582u
 	}
 }
 
