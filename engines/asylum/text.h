@@ -42,8 +42,8 @@ public:
     uint32 getWidth(uint8 *text);
     //uint32 getResWidth(uint32 resId);
 
-    void drawChar(uint8 character);
-    void drawText(uint8 *text);
+    void drawChar(byte character);
+    void drawText(char *text);
     void drawResText(uint32 resId);
 
     void drawTextCentered(uint32 x, uint32 y, uint32 width, uint8 *text);  
