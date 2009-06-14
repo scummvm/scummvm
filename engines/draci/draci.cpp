@@ -35,6 +35,7 @@
 #include "draci/barchive.h"
 #include "draci/gpldisasm.h"
 #include "draci/font.h"
+#include "draci/sprite.h"
 
 namespace Draci {
 
@@ -86,6 +87,13 @@ int DraciEngine::init() {
 	gpldisasm(f->_data, f->_length);
 
 	return 0;
+}
+
+// Temporary hack
+
+void drawFrame(OSystem *syst, BAFile *frame) {
+	Sprite sp(frame->_data, frame->_length, ((320 - 50) / 2), 60, true);	
+	syst->copyRectToScreen(sp._data, sp._width, sp._x, sp._y, sp._width, sp._height); 
 }
 
 int DraciEngine::go() {
@@ -154,29 +162,11 @@ int DraciEngine::go() {
 
 		// Load frame to memory
 		f = ar[t];
-		Common::MemoryReadStream reader(f->_data, f->_length);
-	
-		// Read in frame width and height
-		uint16 w = reader.readUint16LE();
-		uint16 h = reader.readUint16LE();
-		
-		// Allocate frame memory
-		byte *scr = new byte[w * h];
-
-		// Draw frame
-		for (uint16 i = 0; i < w; ++i) {
-			for (uint16 j = 0; j < h; ++j) {
-				scr[j * w + i] = reader.readByte();
-			}
-		}
-		_system->copyRectToScreen(scr, w, (320 - w) / 2, 60, w, h);
+		drawFrame(_system, f);
 		_system->updateScreen();
 		_system->delayMillis(100);
 
 		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
-
-		// Free frame memory
-		delete[] scr;
 	}	
 
 	getchar();
