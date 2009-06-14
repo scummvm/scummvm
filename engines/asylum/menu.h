@@ -98,6 +98,7 @@ private:
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;
     Text *_text;
+	Text *_textBlue;
 
     GameState *_gameState;
 
@@ -105,6 +106,7 @@ private:
 	void updateEyesAnimation();
 	void updateMainMenu();
 	void updateSubMenu();
+	void exitSubMenu();
 
 	void update();
 }; // end of class MainMenu

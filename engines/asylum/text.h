@@ -48,6 +48,7 @@ public:
     void drawText(char *text);
 	void drawText(uint32 x, uint32 y, char *text);
 	void drawResText(uint32 resId);
+	void drawResText(uint32 x, uint32 y, uint32 resId);
 
     void drawTextCentered(uint32 x, uint32 y, uint32 width, char *text);  
     void drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId);
