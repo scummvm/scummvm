@@ -49,7 +49,7 @@ public:
 
 	void showCursor() { _sys->showMouse(true); }
 	void hideCursor() { _sys->showMouse(false); }
-	void setCursor(byte *data, byte width, byte height) { _sys->setMouseCursor(data, width, height, 1, 1, 0); }
+	void setCursor(byte *data, byte width, byte height) { _sys->setMouseCursor(data, width, height, 0, 0, 0); }
 	void setCursor(GraphicResource *cursorRes, int frame) {
 		GraphicFrame *mouseCursor = cursorRes->getFrame(frame);
 		setCursor((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
