@@ -217,7 +217,7 @@ void Font::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const {
  * @param spacing 	Space to leave between individual characters. Defaults to 0. 
  */
 
-void Font::drawString(Graphics::Surface *dst, Common::String &str, 
+void Font::drawString(Graphics::Surface *dst, const Common::String &str, 
 							int x, int y, int spacing) const {
 	assert(dst != NULL);
 	assert(x >= 0);
@@ -247,7 +247,7 @@ void Font::drawString(Graphics::Surface *dst, Common::String &str,
  * @return The calculated width of the string 
  */
 
-int Font::getStringWidth(Common::String &str, int spacing) const {
+int Font::getStringWidth(const Common::String &str, int spacing) const {
 	int width = 0;	
 	uint len = str.size();
 	for (unsigned int i = 0; i < len; ++i) {

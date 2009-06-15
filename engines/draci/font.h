@@ -50,9 +50,9 @@ public:
 	uint8 getMaxCharWidth() const { return _maxCharWidth; };
 	uint8 getCharWidth(byte chr) const;
 	void drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const;
-	void drawString(Graphics::Surface *dst, Common::String &str, 
+	void drawString(Graphics::Surface *dst, const Common::String &str, 
 					int x, int y, int spacing = 0) const;
-	int getStringWidth(Common::String &str, int spacing = 0) const;
+	int getStringWidth(const Common::String &str, int spacing = 0) const;
 	void setColour(uint8 colour);
 
 private:
