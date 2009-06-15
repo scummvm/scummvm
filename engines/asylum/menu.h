@@ -100,6 +100,7 @@ private:
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;
     GraphicResource *_creditsResource;
+    GraphicResource *_creditsFadeResource;
     Text *_text;
 	Text *_textBlue;
 
