@@ -96,8 +96,8 @@ void Parse::skipExpr(char stopToken) {
 			case OP_LOAD_VAR_INT16:
 			case OP_LOAD_VAR_INT8:
 			case OP_LOAD_IMM_INT16:
-			case OP_LOAD_VAR_UINT32:
-			case OP_LOAD_VAR_UINT32_AS_INT16:
+			case OP_LOAD_VAR_INT32:
+			case OP_LOAD_VAR_INT32_AS_INT16:
 				_vm->_global->_inter_execPtr += 2;
 				break;
 
@@ -125,9 +125,9 @@ void Parse::skipExpr(char stopToken) {
 			case 15:
 				_vm->_global->_inter_execPtr += 2;
 
-			case OP_ARRAY_UINT8:
-			case OP_ARRAY_UINT32:
-			case OP_ARRAY_UINT16:
+			case OP_ARRAY_INT8:
+			case OP_ARRAY_INT32:
+			case OP_ARRAY_INT16:
 			case OP_ARRAY_STR:
 				dimCount = _vm->_global->_inter_execPtr[2];
 				// skip header and dimensions
@@ -147,7 +147,7 @@ void Parse::skipExpr(char stopToken) {
 				skipExpr(OP_END_EXPR);
 			}
 			continue;
-		} // if ((operation >= OP_ARRAY_UINT8) && (operation <= OP_FUNC))
+		} // if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC))
 
 		if (operation == OP_BEGIN_EXPR) {
 			num++;
@@ -194,7 +194,7 @@ void Parse::printExpr_internal(char stopToken) {
 	while (true) {
 		operation = *_vm->_global->_inter_execPtr++;
 
-		if ((operation >= OP_ARRAY_UINT8) && (operation <= OP_FUNC)) {
+		if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC)) {
 			// operands
 
 			switch (operation) {
@@ -225,8 +225,8 @@ void Parse::printExpr_internal(char stopToken) {
 					strlen((char *) _vm->_global->_inter_execPtr) + 1;
 				break;
 
-			case OP_LOAD_VAR_UINT32:
-			case OP_LOAD_VAR_UINT32_AS_INT16:
+			case OP_LOAD_VAR_INT32:
+			case OP_LOAD_VAR_INT32_AS_INT16:
 				debugN(5, "var_%d", _vm->_inter->load16());
 				break;
 
@@ -239,9 +239,9 @@ void Parse::printExpr_internal(char stopToken) {
 				}
 				break;
 
-			case OP_ARRAY_UINT8: // uint8 array access
-			case OP_ARRAY_UINT32: // uint32 array access
-			case OP_ARRAY_UINT16: // uint16 array access
+			case OP_ARRAY_INT8: // uint8 array access
+			case OP_ARRAY_INT32: // uint32 array access
+			case OP_ARRAY_INT16: // uint16 array access
 			case OP_ARRAY_STR: // string array access
 				debugN(5, "\n");
 				if (operation == OP_ARRAY_STR)
@@ -284,7 +284,7 @@ void Parse::printExpr_internal(char stopToken) {
 				break;
 			}
 			continue;
-		}		// if ((operation >= OP_ARRAY_UINT8) && (operation <= OP_FUNC))
+		}		// if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC))
 
 		// operators
 		switch (operation) {
@@ -415,7 +415,7 @@ void Parse::printVarIndex() {
 
 	operation = *_vm->_global->_inter_execPtr++;
 	switch (operation) {
-	case OP_LOAD_VAR_UINT32:
+	case OP_LOAD_VAR_INT32:
 	case OP_LOAD_VAR_STR:
 		temp = _vm->_inter->load16() * 4;
 		debugN(5, "&var_%d", temp);
@@ -426,7 +426,7 @@ void Parse::printVarIndex() {
 		}
 		break;
 
-	case OP_ARRAY_UINT32:
+	case OP_ARRAY_INT32:
 	case OP_ARRAY_STR:
 		debugN(5, "&var_%d[", _vm->_inter->load16());
 		dimCount = *_vm->_global->_inter_execPtr++;
@@ -473,7 +473,9 @@ int Parse::cmpHelper(byte *operPtr, int32 *valPtr) {
 	return cmpTemp;
 }
 
-bool Parse::getVarBase(uint32 &varBase, bool mindStop, uint16 *size, uint16 *type) {
+bool Parse::getVarBase(uint32 &varBase, bool mindStop,
+		uint16 *size, uint16 *type) {
+
 	varBase = 0;
 
 	byte operation = *_vm->_global->_inter_execPtr;
@@ -564,9 +566,9 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 
 	debugC(5, kDebugParser, "var parse = %d", operation);
 	switch (operation) {
-	case OP_ARRAY_UINT8:
-	case OP_ARRAY_UINT32:
-	case OP_ARRAY_UINT16:
+	case OP_ARRAY_INT8:
+	case OP_ARRAY_INT32:
+	case OP_ARRAY_INT16:
 	case OP_ARRAY_STR:
 		temp = _vm->_inter->load16();
 		dimCount = *_vm->_global->_inter_execPtr++;
@@ -577,11 +579,11 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 			temp2 = parseValExpr(OP_END_MARKER);
 			offset = arrDesc[dim] * offset + temp2;
 		}
-		if (operation == OP_ARRAY_UINT8)
+		if (operation == OP_ARRAY_INT8)
 			return varBase + temp + offset;
-		if (operation == OP_ARRAY_UINT32)
+		if (operation == OP_ARRAY_INT32)
 			return varBase + (temp + offset) * 4;
-		if (operation == OP_ARRAY_UINT16)
+		if (operation == OP_ARRAY_INT16)
 			return varBase + (temp + offset) * 2;
 		temp *= 4;
 		offset *= 4;
@@ -597,8 +599,8 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 	case OP_LOAD_VAR_INT8:
 		return varBase + _vm->_inter->load16();
 
-	case OP_LOAD_VAR_UINT32:
-	case OP_LOAD_VAR_UINT32_AS_INT16:
+	case OP_LOAD_VAR_INT32:
+	case OP_LOAD_VAR_INT32_AS_INT16:
 	case OP_LOAD_VAR_STR:
 		temp = _vm->_inter->load16() * 4;
 		debugC(5, kDebugParser, "oper = %d",
@@ -656,11 +658,11 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 		valPtr++;
 
 		operation = *_vm->_global->_inter_execPtr++;
-		if ((operation >= OP_ARRAY_UINT8) && (operation <= OP_FUNC)) {
+		if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC)) {
 			switch (operation) {
-			case OP_ARRAY_UINT8:
-			case OP_ARRAY_UINT32:
-			case OP_ARRAY_UINT16:
+			case OP_ARRAY_INT8:
+			case OP_ARRAY_INT32:
+			case OP_ARRAY_INT16:
 			case OP_ARRAY_STR:
 				*operPtr = (operation == OP_ARRAY_STR) ? OP_LOAD_IMM_STR : OP_LOAD_IMM_INT16;
 				temp = _vm->_inter->load16();
@@ -672,11 +674,11 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 					temp2 = parseValExpr(OP_END_MARKER);
 					offset = offset * arrDescPtr[dim] + temp2;
 				}
-				if (operation == OP_ARRAY_UINT8)
+				if (operation == OP_ARRAY_INT8)
 					*valPtr = (int8) READ_VARO_UINT8(varBase + temp + offset);
-				else if (operation == OP_ARRAY_UINT32)
+				else if (operation == OP_ARRAY_INT32)
 					*valPtr = READ_VARO_UINT32(varBase + temp * 4 + offset * 4);
-				else if (operation == OP_ARRAY_UINT16)
+				else if (operation == OP_ARRAY_INT16)
 					*valPtr = (int16) READ_VARO_UINT16(varBase + temp * 2 + offset * 2);
 				else if (operation == OP_ARRAY_STR) {
 					*valPtr = encodePtr(_vm->_inter->_variables->getAddressOff8(
@@ -725,12 +727,12 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 					strlen((char *) _vm->_global->_inter_execPtr) + 1;
 				break;
 
-			case OP_LOAD_VAR_UINT32:
+			case OP_LOAD_VAR_INT32:
 				*operPtr = OP_LOAD_IMM_INT16;
 				*valPtr = READ_VARO_UINT32(varBase + _vm->_inter->load16() * 4);
 				break;
 
-			case OP_LOAD_VAR_UINT32_AS_INT16:
+			case OP_LOAD_VAR_INT32_AS_INT16:
 				*operPtr = OP_LOAD_IMM_INT16;
 				*valPtr = (int16) READ_VARO_UINT16(varBase + _vm->_inter->load16() * 4);
 				break;
@@ -845,7 +847,7 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 				break;
 			}
 			continue;
-		} // (op >= OP_ARRAY_UINT8) && (op <= OP_FUNC)
+		} // (op >= OP_ARRAY_INT8) && (op <= OP_FUNC)
 
 		if ((operation == stopToken) || (operation == OP_OR) ||
 				(operation == OP_AND) || (operation == OP_END_EXPR)) {
@@ -1123,8 +1125,8 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 					strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(values[0]));
 				break;
 
-			case OP_LOAD_VAR_UINT32:
-			case OP_LOAD_VAR_UINT32_AS_INT16:
+			case OP_LOAD_VAR_INT32:
+			case OP_LOAD_VAR_INT32_AS_INT16:
 				break;
 
 			default:
