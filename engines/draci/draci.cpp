@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/file.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/font.h"
  
 #include "draci/draci.h"
@@ -170,6 +171,15 @@ int DraciEngine::go() {
 		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
 	}	
 
+	path = "HRA.DFW";
+	ar.closeArchive();
+	ar.openArchive(path);
+	f = ar[0];
+	Sprite sp(f->_data, f->_length, 0, 0, true);
+	CursorMan.pushCursorPalette(palette, 0, 256);
+	CursorMan.pushCursor(sp._data, sp._width, sp._height, sp._width / 2, sp._height / 2);
+	CursorMan.showMouse(true);
+
 	Common::Event event;
 	bool quit = false;
 	while (!quit) {
@@ -177,6 +187,8 @@ int DraciEngine::go() {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				quit = true;
+			case Common::EVENT_MOUSEMOVE:
+				_system->warpMouse(event.mouse.x, event.mouse.y);
 			default:
 				break;
 			}

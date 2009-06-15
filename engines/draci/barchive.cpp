@@ -34,24 +34,111 @@
 namespace Draci {
 
 const char BArchive::_magicNumber[] = "BAR!";
+const char BArchive::_dfwMagicNumber[] = "BS";
+
+/**
+ * @brief Loads a DFW archive
+ * @param path Path to input file
+ *
+ * Tries to load the file as a DFW archive if opening as BAR fails. Should only be called
+ * from openArchive(). Only one of the game files appears to use this format (HRA.DFW)
+ * and this file is compressed using a simple run-length scheme.
+ *
+ * archive format: header
+ *				   index table
+ *				   file0, file1, ...
+ *
+ * header format: [uint16LE] file count
+ *				  [uint16LE] index table size
+ *				  [2 bytes]  magic number "BS" 
+ *
+ * index table format: entry0, entry1, ...
+ *
+ * entry<N> format: [uint16LE] compressed size (not including the 2 bytes for the 
+ *							   "uncompressed size" field)
+ *				 	[uint32LE] fileN offset from start of file
+ *
+ * file<N> format: [uint16LE] uncompressed size
+ *				   [uint16LE] compressed size (the same as in the index table entry)
+ *				   [byte] stopper mark (for run-length compression)
+ *				   [multiple bytes] compressed data
+ */
+
+void BArchive::openDFW(const Common::String &path) {
+	byte *table;
+	uint16 tableSize;
+	byte buf[2];
+
+	Common::File f;
+
+	f.open(path);
+	if (!f.isOpen()) {
+		debugC(2, kDraciArchiverDebugLevel, "Error opening file");
+		return;
+	}
+	
+	_fileCount = f.readUint16LE();
+	tableSize = f.readUint16LE();
+
+	f.read(buf, 2);
+	if (memcmp(buf, _dfwMagicNumber, 2) == 0) {
+		debugC(2, kDraciArchiverDebugLevel, "Success");
+		_isDFW = true;
+	} else {
+		debugC(2, kDraciArchiverDebugLevel, "Not a DFW archive");
+		f.close();
+		return;
+	}
+
+	debugC(2, kDraciArchiverDebugLevel, "Archive info (DFW): %d files", _fileCount);
+
+	// Read in index table
+	table = new byte[tableSize];
+	f.read(table, tableSize);	
+	
+	// Read in file headers, but do not read the actual data yet
+	// The data will be read on demand to save memory
+	_files = new BAFile[_fileCount];
+	Common::MemoryReadStream tableReader(table, tableSize);
+	for (unsigned int i = 0; i < _fileCount; ++i) {
+		_files[i]._compLength = tableReader.readUint16LE();
+		_files[i]._offset = tableReader.readUint32LE();
+	
+		// Seek to the current file
+		f.seek(_files[i]._offset);
+		
+		_files[i]._length = f.readUint16LE(); // Read in uncompressed length
+		f.readUint16LE(); // Compressed length again (already read from the index table)
+		_files[i]._stopper = f.readByte();
+
+		_files[i]._data = NULL; // File data will be read in on demand
+		_files[i]._crc = 0; // Dummy value; not used in DFW archives
+	}
+
+	delete[] table;
+}		
 
 /**
  * @brief BArchive open method
  * @param path Path to input file
  *
  * Opens a BAR (Bob's Archiver) archive, which is the game's archiving format.
- * BAR archives have a .DFW file extension, due to an unused historical interface.
+ * BAR archives have a .DFW file extension, due to a historical interface.
  * 
  * archive format: header, 
  *                 file0, file1, ...
  *                 footer
+ *
  * header format: [4 bytes] magic number "BAR!"
  *                [uint16LE] file count (number of archived streams),
  *                [uint32LE] footer offset from start of file
+ *
  * file<N> format: [2 bytes] compressed length
  *                 [2 bytes] original length
  *                 [1 byte] compression type
  *                 [1 byte] CRC
+ *				   [multiple bytes] actual data
+ *
  * footer format: [array of uint32LE] offsets of individual files from start of archive 
  *                (last entry is footer offset again)
  */
@@ -65,8 +152,7 @@ void BArchive::openArchive(const Common::String &path) {
 	// Close previously opened archive (if any)
 	closeArchive();
 	
-	debugCN(2, kDraciArchiverDebugLevel, "Loading BAR archive %s: ", 
-		path.c_str());
+	debugCN(2, kDraciArchiverDebugLevel, "Loading archive %s: ", path.c_str());
 
 	f.open(path);
 	if (f.isOpen()) {
@@ -80,14 +166,17 @@ void BArchive::openArchive(const Common::String &path) {
 	_path = path;
 
 	// Read archive header
-	debugCN(2, kDraciArchiverDebugLevel, "Checking magic number: ");
+	debugCN(2, kDraciArchiverDebugLevel, "Checking for BAR magic number: ");
 
 	f.read(buf, 4);
 	if (memcmp(buf, _magicNumber, 4) == 0) {
 		debugC(2, kDraciArchiverDebugLevel, "Success");
+		_isDFW = false;
 	} else {
-		debugC(2, kDraciArchiverDebugLevel, "Error");
+		debugC(2, kDraciArchiverDebugLevel, "Not a BAR archive");
+		debugCN(2, kDraciArchiverDebugLevel, "Retrying as DFW: ");
 		f.close();
+		openDFW(_path);
 		return;
 	}
 
@@ -113,7 +202,8 @@ void BArchive::openArchive(const Common::String &path) {
 		
 		fileOffset = reader.readUint32LE();
 		f.seek(fileOffset); // Seek to next file in archive
-		f.readUint16LE(); // Compressed size, not used
+		_files[i]._compLength = f.readUint16LE(); 	// Compressed size 
+													// should be the same as uncompressed
 		_files[i]._length = f.readUint16LE(); // Original size
 		_files[i]._offset = fileOffset;
 
@@ -122,6 +212,7 @@ void BArchive::openArchive(const Common::String &path) {
 
 		_files[i]._crc = f.readByte(); // CRC checksum of the file
 		_files[i]._data = NULL; // File data will be read in on demand
+		_files[i]._stopper = 0; // Dummy value; not used in BAR files, needed in DFW
 	}	
 	
 	// Last footer item should be equal to footerOffset
@@ -153,23 +244,18 @@ void BArchive::closeArchive(void) {
 	_fileCount = 0;
 }
 
-BAFile *BArchive::operator[](unsigned int i) const {
+/**
+ * @brief On-demand BAR file loader
+ * @param i Index of file inside an archive
+ * @return Pointer to a BAFile coresponding to the opened file or NULL (on failure)
+ *
+ * Loads individual BAR files from an archive to memory on demand. 
+ * Should not be called directly. Instead, one should access files 
+ * through the operator[] interface.
+ */
+BAFile *BArchive::loadFileBAR(unsigned int i) const {
 	Common::File f;
 
-	// Check whether requested file exists
-	if (i >= _fileCount) {
-		return NULL;
-	}
-
-	debugCN(2, kDraciArchiverDebugLevel, "Accessing file %d from archive %s... ", 
-		i, _path.c_str());
-
-	// Check if file has already been opened and return that
-	if (_files[i]._data) {
-		debugC(2, kDraciArchiverDebugLevel, "Success");		
-		return _files + i;
-	}
-	
 	// Else open archive and read in requested file
 	f.open(_path);
 	if (f.isOpen()) {
@@ -195,6 +281,110 @@ BAFile *BArchive::operator[](unsigned int i) const {
 	assert(tmp == _files[i]._crc && "CRC checksum mismatch");
 
 	return _files + i;
+}
+
+/**
+ * @brief On-demand DFW file loader
+ * @param i Index of file inside an archive
+ * @return Pointer to a BAFile coresponding to the opened file or NULL (on failure)
+ *
+ * Loads individual DFW files from an archive to memory on demand. 
+ * Should not be called directly. Instead, one should access files 
+ * through the operator[] interface.
+ */
+BAFile *BArchive::loadFileDFW(unsigned int i) const {
+	Common::File f;
+	byte *buf;
+
+	// Else open archive and read in requested file
+	f.open(_path);
+	if (f.isOpen()) {
+		debugC(2, kDraciArchiverDebugLevel, "Success");
+	} else {
+		debugC(2, kDraciArchiverDebugLevel, "Error");
+		return NULL;
+	}
+
+	// Seek to raw data of the file
+	// Five bytes are for the header (uncompressed and compressed length, stopper mark)
+	f.seek(_files[i]._offset + 5);
+	
+	// Since we are seeking directly to raw data, we subtract 3 bytes from the length
+	// (to take account the compressed length and stopper mark)
+	uint16 compressedLength = _files[i]._compLength - 3;
+	uint16 uncompressedLength = _files[i]._length;
+
+	debugC(2, kDraciArchiverDebugLevel, 
+		"File info (DFW): uncompressed %d bytes, compressed %d bytes", 
+		uncompressedLength, compressedLength);
+
+	// Allocate a buffer for the file data
+	buf = new byte[compressedLength];
+
+	// Read in file data into the buffer
+	f.read(buf, compressedLength);
+
+	// Allocate the space for the uncompressed file
+	byte *dst;	
+	dst = _files[i]._data = new byte[uncompressedLength];
+
+	Common::MemoryReadStream data(buf, compressedLength);
+
+	// Uncompress file
+	byte current, what;
+	byte stopper = _files[i]._stopper;
+	unsigned int repeat;
+	unsigned int len = 0; // Sanity check (counts uncompressed bytes)	
+	
+	current = data.readByte(); // Read initial byte
+	while (!data.eos()) {
+		
+		if (current != stopper) {
+			*dst++ = current;
+			++len;
+		} else {
+			// Inflate block			
+			repeat = data.readByte();
+			what = data.readByte();
+			len += repeat;
+			for (unsigned int j = 0; j < repeat; ++j) {
+				*dst++ = what;
+			}
+		}
+
+		current = data.readByte();
+	}
+
+	assert(len == _files[i]._length && "Uncompressed file not of the expected length");
+
+	return _files + i;
+}
+	
+
+BAFile *BArchive::operator[](unsigned int i) const {
+
+	// Check whether requested file exists
+	if (i >= _fileCount) {
+		return NULL;
+	}
+
+	debugCN(2, kDraciArchiverDebugLevel, "Accessing file %d from archive %s... ", 
+		i, _path.c_str());
+
+	// Check if file has already been opened and return that
+	if (_files[i]._data) {
+		debugC(2, kDraciArchiverDebugLevel, "Success");		
+		return _files + i;
+	}
+	
+	BAFile *file;
+	if (_isDFW) {
+		file = loadFileDFW(i);
+	} else {
+		file = loadFileBAR(i);
+	}
+
+	return file;
 }
 
 } // End of namespace Draci

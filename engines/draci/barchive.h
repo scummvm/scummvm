@@ -35,10 +35,12 @@ namespace Draci {
  */
 
 struct BAFile {
-	uint16 _length;
-	uint32 _offset; //!< Offset of file inside archive	
+	uint16 _compLength;	//!< Compressed length (the same as _length if the file is uncompressed) 	
+	uint16 _length; 	//!< Uncompressed length
+	uint32 _offset; 	//!< Offset of file inside archive	
 	byte *_data;
 	byte _crc;
+	byte _stopper;		//!< Not used in BAR files, needed for DFW
 
 	/** Releases the file data (for memory considerations) */
 	void closeFile(void) {  
@@ -62,6 +64,7 @@ public:
 private:
 	// Archive header data
 	static const char _magicNumber[];
+	static const char _dfwMagicNumber[];
 	static const unsigned int _archiveHeaderSize = 10;
 	
 	// File stream header data
@@ -70,6 +73,11 @@ private:
 	Common::String _path;    //!< Path to file
 	BAFile *_files;          //!< Internal array of files
 	uint16 _fileCount;       //!< Number of files in archive
+	bool _isDFW;			 //!< True if the archive is in DFW format, false otherwise
+
+	void openDFW(const Common::String &path);
+	BAFile *loadFileDFW(unsigned int i) const;
+	BAFile *loadFileBAR(unsigned int i) const;
 };
 
 } // End of namespace Draci
