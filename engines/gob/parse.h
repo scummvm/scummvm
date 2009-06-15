@@ -119,8 +119,9 @@ private:
 
 	void printExpr_internal(char stopToken);
 
-	int16 getOffset(int16 arg_0, byte arg_2, uint32 arg_3, uint16 arg_7, uint16 arg_9);
 	int cmpHelper(byte *operPtr, int32 *valPtr);
+
+	bool getVarBase(uint32 &varBase, bool mindStop = false, uint16 *arg_0 = 0, uint16 *oper = 0);
 };
 
 } // End of namespace Gob
