@@ -1548,7 +1548,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				view->index_height = CLIP<int>(view->index_height, 0, portBounds.height());
 
 				// Set up mode structure for resizing the view
-				Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1byte/p, which handles masks and the rest for us
+				Graphics::PixelFormat format(1, 0, 0, 0, 0, 0, 0, 0, 0); // 1byte/p, which handles masks and the rest for us
 				gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320,
 				           pic->visual_map->index_height / 200, format, view->palette, 0);
 
@@ -1654,7 +1654,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		view->palette = pic->visual_map->palette->getref();
 
 		// Set up mode structure for resizing the view
-		Graphics::PixelFormat format = { 1, 0, 0, 0, 0, 0, 0, 0, 0 }; // 1 byte/p, which handles masks and the rest for us
+		Graphics::PixelFormat format(1, 0, 0, 0, 0, 0, 0, 0, 0); // 1 byte/p, which handles masks and the rest for us
 		gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320, pic->visual_map->index_height / 200, format, view->palette, 0);
 
 		gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);

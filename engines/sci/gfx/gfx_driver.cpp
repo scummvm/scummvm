@@ -36,7 +36,7 @@ namespace Sci {
 GfxDriver::GfxDriver(int xfact, int yfact, int bytespp) {
 	int i;
 
-	Graphics::PixelFormat format = { bytespp, 0, 0, 0, 0, 0, 0, 0, 0 };
+	Graphics::PixelFormat format(bytespp, 0, 0, 0, 0, 0, 0, 0, 0);
 	_mode = gfx_new_mode(xfact, yfact, format, new Palette(256), 0);
 	_mode->xsize = xfact * 320;
 	_mode->ysize = yfact * 200;
