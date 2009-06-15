@@ -3241,6 +3241,25 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
+
+	{
+		{
+			"manda",
+			"",
+			{
+				{"playtoon.stk", 0, "b7f5afa2dc1b0f75970b7c07d175db1b", 24340406},
+				{"manda.stk", 0, "92529e0b927191d9898a34c2892e9a3a", 6485072},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
 	{
 		{
 			"wakan",
