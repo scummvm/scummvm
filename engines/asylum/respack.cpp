@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/resourcepack.h"
+#include "asylum/respack.h"
 
 namespace Asylum {
 

@@ -28,7 +28,7 @@
 
 #include "common/array.h"
 #include "graphics/surface.h"
-#include "asylum/resourcepack.h"
+#include "asylum/respack.h"
 
 namespace Asylum {
 
@@ -47,7 +47,7 @@ public:
 	GraphicResource(byte *data, uint32 size);
 	GraphicResource(ResourcePack *resPack, int entry) {
 		ResourceEntry *resEntry = resPack->getResource(entry);
-		init(resEntry->data, resEntry->size); 
+		init(resEntry->data, resEntry->size);
 	}
 
 	~GraphicResource();

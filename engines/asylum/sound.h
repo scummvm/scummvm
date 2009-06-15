@@ -27,7 +27,7 @@
 #define ASYLUM_SOUND_H_
 
 #include "sound/mixer.h"
-#include "asylum/resourcepack.h"
+#include "asylum/respack.h"
 
 namespace Asylum {
 
@@ -41,12 +41,12 @@ public:
 
 	void playSfx(ResourcePack *resPack, int entry) {
 		ResourceEntry *resEntry = resPack->getResource(entry);
-		playSfx(resEntry->data, resEntry->size); 
+		playSfx(resEntry->data, resEntry->size);
 	}
 
 	void playMusic(ResourcePack *resPack, int entry) {
 		ResourceEntry *resEntry = resPack->getResource(entry);
-		playMusic(resEntry->data, resEntry->size); 
+		playMusic(resEntry->data, resEntry->size);
 	}
 
 	bool isSfxActive() { return _mixer->isSoundHandleActive(_sfxHandle); }

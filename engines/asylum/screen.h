@@ -28,7 +28,7 @@
 
 #include "asylum/asylum.h"
 #include "asylum/graphics.h"
-#include "asylum/resourcepack.h"
+#include "asylum/respack.h"
 
 #include "common/system.h"  // for OSystem
 #include "graphics/surface.h"

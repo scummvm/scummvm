@@ -5,9 +5,9 @@ MODULE_OBJS := \
 	detection.o \
 	graphics.o \
 	menu.o \
-	resourcepack.o \
+	respack.o \
 	scene.o \
-	scene_resource.o \
+	sceneres.o \
 	screen.o \
 	sound.o \
 	text.o \

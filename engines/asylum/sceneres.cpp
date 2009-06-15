@@ -23,7 +23,7 @@
  *
  */
 
-#include "asylum/scene_resource.h"
+#include "asylum/sceneres.h"
 
 namespace Asylum {
 
@@ -73,15 +73,15 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     _worldStats->_size = stream->readUint32LE();
     _worldStats->_numEntries = stream->readUint32LE();
     _worldStats->_numChapter = stream->readUint32LE();
-    
+
     stream->skip(24); // unused data
-    
+
     // read common graphic resources
     stream->read(&_worldStats->_commonRes,sizeof(CommonResources));
 
     _worldStats->_width = stream->readUint32LE();
     _worldStats->_height = stream->readUint32LE();
-    
+
     stream->skip(8); // unused data
 
     _worldStats->_numActions = stream->readUint32LE();
@@ -112,15 +112,15 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
         actorDef.graphicResId = stream->readUint32LE();
         actorDef.x = stream->readUint32LE();
         actorDef.y = stream->readUint32LE();
-        stream->skip(0x30); 
-        stream->read(actorDef.name, 52);       
+        stream->skip(0x30);
+        stream->read(actorDef.name, 52);
         stream->skip(0x158);
         actorDef.soundResId = stream->readUint32LE();
         stream->skip(0x4D8);
 
         _worldStats->_actorsDef.push_back(actorDef);
     }
-    
+
     // TODO grab Max actor definitions
 
     stream->seek(0xD6B5A); // where actors action definitions start
@@ -132,17 +132,17 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
         stream->read(actorActionDef.name,52);
         actorActionDef.id = stream->readUint32LE();
-        stream->skip(0x14); 
+        stream->skip(0x14);
         actorActionDef.actionListIdx1 = stream->readUint32LE();
         actorActionDef.actionListIdx2 = stream->readUint32LE();
         actorActionDef.actionType = stream->readUint32LE();
-        stream->skip(0x2C); 
+        stream->skip(0x2C);
         actorActionDef.polyIdx = stream->readUint32LE();
-        stream->skip(0x08); 
+        stream->skip(0x08);
         actorActionDef.soundResId = stream->readUint32LE();
-        stream->skip(0x04); 
+        stream->skip(0x04);
         actorActionDef.palCorrection = stream->readUint32LE();
-        stream->skip(0x14); 
+        stream->skip(0x14);
         actorActionDef.soundVolume = stream->readUint32LE();
 
         _worldStats->_actorsActionDef.push_back(actorActionDef);
