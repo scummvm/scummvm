@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_GameState_H_
-#define ASYLUM_GameState_H_
+#ifndef ASYLUM_SCENE_H_
+#define ASYLUM_SCENE_H_
 
 #include "common/events.h"
 
@@ -41,10 +41,10 @@ class Sound;
 class SceneResource;
 class Text;
 
-class GameState {
+class Scene {
 public:
-    GameState(Screen *screen, Sound *sound, uint8 sceneIdx);
-	~GameState();
+    Scene(Screen *screen, Sound *sound, uint8 sceneIdx);
+	~Scene();
 
     void handleEvent(Common::Event *event, bool doUpdate);
 
@@ -56,7 +56,7 @@ private:
 	Common::Event *_ev;
 
     Text *_text;
-    SceneResource *_scene;
+    SceneResource *_sceneResource;
     ResourcePack *_resPack;
 	ResourcePack *_musPack;
     GraphicResource *_bgResource;
@@ -78,7 +78,7 @@ private:
 		// TODO: add the rest
 	};
 
-}; // end of class GameState
+}; // end of class Scene
 
 } // end of namespace Asylum
 

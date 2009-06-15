@@ -174,14 +174,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\gamestate.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\asylum\gamestate.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\asylum\graphics.cpp"
 			>
 		</File>
@@ -203,6 +195,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\asylum\resourcepack.h"
+			>
+		</File>
+		<File
+			RelativePath=".\scene.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\scene.h"
 			>
 		</File>
 		<File

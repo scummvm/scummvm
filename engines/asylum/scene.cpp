@@ -23,14 +23,14 @@
  *
  */
 
-#include "asylum/gamestate.h"
+#include "asylum/scene.h"
 
 namespace Asylum {
 
-GameState::GameState(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
+Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
     _sceneIdx = sceneIdx;
-    _scene = new SceneResource;
-    if (_scene->load(_sceneIdx)) {
+    _sceneResource = new SceneResource;
+    if (_sceneResource->load(_sceneIdx)) {
         _text = new Text(_screen);
         _resPack = new ResourcePack(sceneIdx);
         
@@ -42,19 +42,19 @@ GameState::GameState(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(scre
 	_cursorResource = new GraphicResource(_resPack, kCursorUpLeftArrow);
 }
 
-GameState::~GameState() {
+Scene::~Scene() {
 	delete _cursorResource;
 	delete _bgResource;
     delete _musPack;
     delete _resPack;
     delete _text;
-    delete _scene;
+    delete _sceneResource;
 }
 
-void GameState::enterScene() {
-	_screen->setPalette(_resPack, _scene->getWorldStats()->_commonRes.palette);
+void Scene::enterScene() {
+	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->_commonRes.palette);
 
-	_bgResource = new GraphicResource(_resPack, _scene->getWorldStats()->_commonRes.backgroundImage);
+	_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.backgroundImage);
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
 
@@ -64,7 +64,7 @@ void GameState::enterScene() {
 	_screen->showCursor();
 }
 
-void GameState::handleEvent(Common::Event *event, bool doUpdate) {
+void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	_ev = event;
 
 	switch (_ev->type) {
@@ -81,7 +81,7 @@ void GameState::handleEvent(Common::Event *event, bool doUpdate) {
 		update();
 }
 
-void GameState::updateCursor() {
+void Scene::updateCursor() {
 	_curMouseCursor += _cursorStep;
 	if (_curMouseCursor == 0)
 		_cursorStep = 1;
@@ -91,7 +91,7 @@ void GameState::updateCursor() {
 	_screen->setCursor(_cursorResource, _curMouseCursor);
 }
 
-void GameState::update() {
+void Scene::update() {
 	// TODO
 	//updateCursor();
 }
