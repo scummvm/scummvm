@@ -51,6 +51,8 @@ public:
 	void enterScene();
 
 private:
+	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
+
     Screen *_screen;
     Sound *_sound;
 	Common::Event *_ev;
@@ -61,6 +63,8 @@ private:
 	ResourcePack *_musPack;
     GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
+	GraphicResource *_actorResource;	// TODO: this should be an array
+	GraphicFrame *_background;
 
     uint8 _sceneIdx;
     int _mouseX;
@@ -69,6 +73,7 @@ private:
 	int _startY;
     bool _leftClick;
 	int _curMouseCursor;
+	int _actorAnimCurFrame;		// TODO: this should be an array
 	int _cursorStep;
 
 	void update();
