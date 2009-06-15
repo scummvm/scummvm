@@ -90,6 +90,8 @@ private:
 	int _curIconFrame;
 	int _curMouseCursor;
 	int _cursorStep;
+    int _creditsBgFrame;
+    int _creditsTextScroll;
 	bool _leftClick;
 	MenuScreen _activeMenuScreen;
 	ResourcePack *_resPack;
@@ -97,6 +99,7 @@ private:
 	GraphicResource *_cursorResource;
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;
+    GraphicResource *_creditsResource;
     Text *_text;
 	Text *_textBlue;
 
@@ -110,6 +113,7 @@ private:
 	void exitSubMenu();
     void updateSubMenuNewGame();
     void updateSubMenuQuitGame();
+    void updateSubMenuShowCredits();
 
 	void update();
 }; // end of class MainMenu

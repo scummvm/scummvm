@@ -41,6 +41,8 @@ MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound)
 	_curIconFrame       = 0;
 	_curMouseCursor     = 0;
 	_cursorStep         = 1;
+    _creditsBgFrame     = 0;
+    _creditsTextScroll  = 0x1E0 - 30;
 	_activeMenuScreen   = kMainMenu;
 
 	_resPack = new ResourcePack(1);
@@ -158,7 +160,9 @@ void MainMenu::update() {
 				// TODO
 				break;
 			case kShowCredits:
-				// TODO
+				// TODO if game finished than show resource image 33
+                _creditsResource = new GraphicResource(_resPack, 24);
+                _creditsTextScroll = 0x1E0 - 30;
 				break;
 			case kReturnToGame:
 				// TODO
@@ -306,7 +310,7 @@ void MainMenu::updateSubMenu() {
 			// TODO
 			break;
 		case kShowCredits:
-			// TODO
+			updateSubMenuShowCredits();
 			break;
 		case kReturnToGame:
 			// TODO
@@ -382,6 +386,55 @@ void MainMenu::updateSubMenuQuitGame() {
 		_text->setTextPos(369, 273);
 		_text->drawResText(1410); // 0x80000582u
 	}
+}
+
+void MainMenu::updateSubMenuShowCredits() {
+    // TODO add background fade image
+
+    // FIXME Fix image palette
+    GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<int>(_creditsResource->getFrameCount() - 1, _creditsBgFrame));
+	_screen->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
+
+	_creditsBgFrame++;
+    if (_creditsBgFrame >= _creditsResource->getFrameCount())
+		_creditsBgFrame = 0;
+
+    int posY = _creditsTextScroll;
+    int resId = 0;
+    int step = 0;
+    int minBound = 0;
+    int maxBound = 0;
+    do
+    {
+        if (posY + step >= 0)
+        {
+            if (posY + step > 450)
+                break;
+
+            minBound = posY + step + 24;
+            if (minBound >= 0)
+                if (minBound < 32)
+                    posY = _creditsTextScroll;
+
+            maxBound = posY + step;
+            if (posY + step < 480)
+                if (maxBound > 448)
+                    posY = _creditsTextScroll;
+
+            _text->setTextPos(320, step + posY);
+            _text->drawResText(resId - 2147482201);
+            posY = _creditsTextScroll;
+        }
+        step += 24;
+        ++resId;
+    } while(step < 0x21F0);
+
+    _creditsTextScroll -= 2;
+
+    // TODO: fade side text -> address 0041A400
+
+    if (_leftClick)
+        exitSubMenu();
 }
 
 void MainMenu::exitSubMenu() {
