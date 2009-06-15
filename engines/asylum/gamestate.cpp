@@ -47,12 +47,9 @@ GameState::GameState(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(scre
 }
 
 GameState::~GameState() {
-    if (_musPack)
-        delete _musPack;
-    if (_resPack)
-        delete _resPack;
-    if (_text)
-        delete _text;
+    delete _musPack;
+    delete _resPack;
+    delete _text;
     delete _scene;
 }
 
