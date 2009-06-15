@@ -118,7 +118,7 @@ public:
 	Parse(GobEngine *vm);
 	virtual ~Parse() {}
 
-	char _inter_resStr[200];
+	char _resultStr[200];
 	int32 _resultInt;
 
 private:
