@@ -33,22 +33,38 @@ namespace Draci {
 const Common::String kFontSmall("Small.fon");
 const Common::String kFontBig("Big.fon"); 
 
-Font::Font() :
-	_fontHeight(0), _maxCharWidth(0), 
-	_charWidths(NULL), _charData(0) {
+/** 
+ *	Default font colours. They all seem to remain constant except for the
+ *  first one which varies depending on the character speaking.
+ *  kOverFontColour is set to transparent.
+ * TODO: Find out what kFontColour1 should actually be when the game starts
+ */
+const uint8 kFontColour1 = 2, kFontColour2 = 0,
+			kFontColour3 = 3, kFontColour4 = 4,
+			kOverFontColour = 255;
+
+Font::Font() {
+
+	_fontHeight = 0;
+	_maxCharWidth = 0;
+	_charWidths = NULL;
+	_charData = NULL;
 	
 	setFont(kFontBig);
 
-	_currentFontColour = _fontColour1;
+	_currentFontColour = kFontColour1;
 }
 
-Font::Font(const Common::String &filename) : 
-	_fontHeight(0), _maxCharWidth(0), 
-	_charWidths(NULL), _charData(0) { 
+Font::Font(const Common::String &filename) { 
+
+	_fontHeight = 0;
+	_maxCharWidth = 0;
+	_charWidths = NULL;
+	_charData = NULL;
 
 	setFont(filename);
 
-	_currentFontColour = _fontColour1;
+	_currentFontColour = kFontColour1;
 }
 
 Font::~Font() {
@@ -170,15 +186,15 @@ void Font::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const {
 				break;
 
 			case 253:
-				colour = _fontColour2;
+				colour = kFontColour2;
 				break;
 
 			case 252:
-				colour = _fontColour3;
+				colour = kFontColour3;
 				break;
 
 			case 251:
-				colour = _fontColour4;
+				colour = kFontColour4;
 				break;
 			}
 			

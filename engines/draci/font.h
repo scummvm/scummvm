@@ -68,24 +68,13 @@ private:
 	/** Number of glyphs in the font */
 	static const unsigned int kCharNum = 138;
 
-	/** Chars are indexed from the space character so this should be subtracted
+	/** 
+	 *	Chars are indexed from the space character so this should be subtracted
 	 *  to get the index of a glyph
 	 */
 	static const unsigned int kCharIndexOffset = 32;
 
-	/** Default font colours. They all seem to remain constant except for the
-	 *  first one which varies depending on the character speaking.
-	 *  _overFontColour is set to transparent.
-	 * TODO: Find out what _fontColour1 should actually be when the game starts
-	 */
-
-	static const uint8 _fontColour1 = 2;	
-	static const uint8 _fontColour2 = 0;	
-	static const uint8 _fontColour3 = 3;	
-	static const uint8 _fontColour4 = 4;
-	static const uint8 _overFontColour = 255;	
-
-	/** The varying font colour; initially set to _fontColour1 */
+	/** The varying font colour; initially set to kFontColour1 */
 	uint8 _currentFontColour;
 
 	/** Internal function for freeing fonts when destructing/loading another */
