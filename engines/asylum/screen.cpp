@@ -39,35 +39,29 @@ void Screen::copyBackBufferToScreen() {
 	_sys->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 }
 
-void Screen::copyToBackBuffer(byte *buffer, int x, int y, int width, int height) {
+void Screen::copyToBackBuffer(byte *buffer, int pitch, int x, int y, int width, int height) {
 	int h = height;
     int w = width;
 	byte *dest = (byte *)_backBuffer.pixels;
 
-    // FIXME do this properly perhaps
-    if(h > 480)
-        h = 480;
-    if(w > 640)
-        w = 640;
-
 	while (h--) {
 		memcpy(dest, buffer, w);
 		dest += 640;
-		buffer += width;
+		buffer += pitch;
 	}
 }
 
-void Screen::copyRectToScreen(byte *buffer, int x, int y, int width, int height) {
-	_sys->copyRectToScreen(buffer, width, x, y, width, height);
+void Screen::copyRectToScreen(byte *buffer, int pitch, int x, int y, int width, int height) {
+	_sys->copyRectToScreen(buffer, pitch, x, y, width, height);
 }
 
-void Screen::copyRectToScreenWithTransparency(byte *buffer, int x, int y, int width, int height) {
+void Screen::copyRectToScreenWithTransparency(byte *buffer, int pitch, int x, int y, int width, int height) {
 	byte *screenBuffer = (byte *)_sys->lockScreen()->pixels;
 
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
 			if (buffer[curX + curY * width] != 0) {
-				screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * width];
+				screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
 			}
 		}
 	}
