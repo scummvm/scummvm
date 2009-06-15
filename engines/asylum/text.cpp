@@ -46,7 +46,7 @@ Text::~Text() {
 void Text::loadFont(ResourcePack *resPack, uint32 resId) {
 	delete _fontResource;
 
-	ResourceEntry *fontRes = resPack->getResourceFromId(resId);
+	ResourceEntry *fontRes = resPack->getResource(resId);
 	_fontResource = new GraphicResource(fontRes->data, fontRes->size);
 
     if (resId > 0) {
@@ -77,7 +77,7 @@ uint32 Text::getTextWidth(char *text) {
 }
 
 uint32 Text::getResTextWidth(uint32 resId) {
-    ResourceEntry *textRes = _textPack->getResourceFromId(resId);
+    ResourceEntry *textRes = _textPack->getResource(resId);
     return getTextWidth((char*)textRes->data);
 }
 
@@ -97,7 +97,7 @@ void Text::drawText(char *text) {
 }
 
 void Text::drawResText(uint32 resId) {
-    ResourceEntry *textRes = _textPack->getResourceFromId(resId);
+    ResourceEntry *textRes = _textPack->getResource(resId);
     drawText((char*)textRes->data);
 }
 
@@ -108,7 +108,7 @@ void Text::drawTextCentered(uint32 x, uint32 y, uint32 width, char *text) {
 }  
 
 void Text::drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId) {
-    ResourceEntry *textRes = _textPack->getResourceFromId(resId);
+    ResourceEntry *textRes = _textPack->getResource(resId);
     drawTextCentered(x, y, width, (char *)textRes->data);
 }
 
@@ -119,7 +119,7 @@ void Text::drawText(uint32 x, uint32 y, char *text) {
 }
 
 void Text::drawResText(uint32 x, uint32 y, uint32 resId) {
-	ResourceEntry *textRes = _textPack->getResourceFromId(resId);
+	ResourceEntry *textRes = _textPack->getResource(resId);
 	drawText(x, y, (char *)textRes->data);
 }
 

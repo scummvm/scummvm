@@ -65,6 +65,8 @@ MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound)
 	_screen->showCursor();
 
 	_iconResource = 0;
+	_creditsResource = 0;
+	_creditsFadeResource = 0;
 
 	_sound->playMusic(_resPack, 39);
 
@@ -75,10 +77,8 @@ MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound)
 }
 
 MainMenu::~MainMenu() {
-    if(_creditsResource)
-        delete _creditsResource;
-    if(_creditsFadeResource)
-        delete _creditsFadeResource;
+	delete _creditsResource;
+	delete _creditsFadeResource;
 	delete _textBlue;
     delete _text;
 	delete _iconResource;
@@ -164,10 +164,14 @@ void MainMenu::update() {
 				// TODO
 				break;
 			case kShowCredits:
-				// TODO if game finished than show resource image 33
-                _creditsResource = new GraphicResource(_resPack, 24);
-                _creditsFadeResource = new GraphicResource(_resPack, 23);
+				// TODO if game finished then show resource image 33
+				if (!_creditsResource)
+					_creditsResource = new GraphicResource(_resPack, 24);
+				if (!_creditsFadeResource)
+					_creditsFadeResource = new GraphicResource(_resPack, 23);
                 _creditsTextScroll = 0x1E0 - 30;
+				// Set credits palette
+				_screen->setPalette(_resPack, 26);
 				break;
 			case kReturnToGame:
 				// TODO
@@ -394,8 +398,6 @@ void MainMenu::updateSubMenuQuitGame() {
 }
 
 void MainMenu::updateSubMenuShowCredits() {
-    // FIXME Fix palette in all credits dialog
-
     GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
 	_screen->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
 
@@ -411,10 +413,8 @@ void MainMenu::updateSubMenuShowCredits() {
     int step = 0;
     int minBound = 0;
     int maxBound = 0;
-    do
-    {
-        if (posY + step >= 0)
-        {
+    do {
+        if (posY + step >= 0) {
             if (posY + step > 450)
                 break;
 
@@ -434,14 +434,17 @@ void MainMenu::updateSubMenuShowCredits() {
         }
         step += 24;
         ++resId;
-    } while(step < 0x21F0);
+    } while (step < 0x21F0);
 
     _creditsTextScroll -= 2;
 
     // TODO: fade side text -> address 0041A400
 
-    if (_leftClick)
+	if (_leftClick) {
+		// Restore palette
+		_screen->setPalette(_resPack, 17);
         exitSubMenu();
+	}
 }
 
 void MainMenu::exitSubMenu() {

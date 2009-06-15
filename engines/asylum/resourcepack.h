@@ -43,8 +43,7 @@ public:
 	ResourcePack(int resourceIndex);
 	~ResourcePack();
 
-	ResourceEntry *getResource(uint16 index);
-	ResourceEntry *getResourceFromId(uint32 resourceId) { return getResource(resourceId & 0xFFFF); }
+	ResourceEntry *getResource(uint32 resourceId);
 	uint32 getResourceCount() { return _resources.size(); }
 	
 private:
