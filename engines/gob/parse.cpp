@@ -239,10 +239,10 @@ void Parse::printExpr_internal(char stopToken) {
 				}
 				break;
 
-			case OP_ARRAY_INT8: // uint8 array access
-			case OP_ARRAY_INT32: // uint32 array access
-			case OP_ARRAY_INT16: // uint16 array access
-			case OP_ARRAY_STR: // string array access
+			case OP_ARRAY_INT8:  // int8 array access
+			case OP_ARRAY_INT32: // int32 array access
+			case OP_ARRAY_INT16: // int16 array access
+			case OP_ARRAY_STR:   // string array access
 				debugN(5, "\n");
 				if (operation == OP_ARRAY_STR)
 					debugN(5, "(&");
