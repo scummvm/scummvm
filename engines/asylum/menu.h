@@ -30,20 +30,20 @@
 
 #include "asylum/asylum.h"
 #include "asylum/resourcepack.h"
-#include "asylum/gamestate.h"
+#include "asylum/scene.h"
 #include "asylum/graphics.h"
 #include "asylum/text.h"
 
 namespace Asylum {
 
-class GameState;
+class Scene;
 class Screen;
 class Sound;
 class Text;
 
 class MainMenu {
 public:
-	MainMenu(Screen *screen, Sound *sound, GameState *state);
+	MainMenu(Screen *screen, Sound *sound, Scene *state);
 	~MainMenu();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -84,7 +84,7 @@ private:
 
 	Screen *_screen;
 	Sound *_sound;
-	GameState *_gameState;
+	Scene *_Scene;
 	Common::Event *_ev;
 
 	int _mouseX;

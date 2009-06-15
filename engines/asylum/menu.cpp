@@ -32,8 +32,8 @@ namespace Asylum {
 /** This fixes the menu icons text x position on screen */
 const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 310, 508, 419 };
 
-MainMenu::MainMenu(Screen *screen, Sound *sound, GameState *gameState) : 
-	_screen(screen), _sound(sound), _gameState(gameState) {
+MainMenu::MainMenu(Screen *screen, Sound *sound, Scene *Scene) : 
+	_screen(screen), _sound(sound), _Scene(Scene) {
 	_mouseX             = 0;
 	_mouseY             = 0;
 	_leftClick          = false;
@@ -182,7 +182,7 @@ void MainMenu::update() {
 				break;
 			case kReturnToGame:
 				closeMenu();
-				_gameState->enterScene();
+				_Scene->enterScene();
 				break;
 		}
 	}
