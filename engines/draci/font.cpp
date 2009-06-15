@@ -39,9 +39,11 @@ const Common::String kFontBig("Big.fon");
  *  kOverFontColour is set to transparent.
  * TODO: Find out what kFontColour1 should actually be when the game starts
  */
-const uint8 kFontColour1 = 2, kFontColour2 = 0,
-			kFontColour3 = 3, kFontColour4 = 4,
-			kOverFontColour = 255;
+enum { 
+	kFontColour1 = 2, kFontColour2 = 0,
+	kFontColour3 = 3, kFontColour4 = 4, 
+	kOverFontColour = 255 
+};
 
 Font::Font() {
 
