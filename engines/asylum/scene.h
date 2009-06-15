@@ -29,10 +29,10 @@
 #include "common/events.h"
 
 #include "asylum/asylum.h"
-#include "asylum/resourcepack.h"
+#include "asylum/respack.h"
 #include "asylum/graphics.h"
 #include "asylum/text.h"
-#include "asylum/scene_resource.h"
+#include "asylum/sceneres.h"
 
 namespace Asylum {
 

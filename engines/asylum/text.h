@@ -27,7 +27,7 @@
 #define ASYLUM_TEXT_H_
 
 #include "asylum/screen.h"
-#include "asylum/resourcepack.h"
+#include "asylum/respack.h"
 
 namespace Asylum {
 
@@ -39,7 +39,7 @@ public:
 	~Text();
 
     void loadFont(ResourcePack *resPack, uint32 resId);
-    
+
     void setTextPos(uint32 x, uint32 y);
     uint32 getTextWidth(char *text);
     uint32 getResTextWidth(uint32 resId);
@@ -50,7 +50,7 @@ public:
 	void drawResText(uint32 resId);
 	void drawResText(uint32 x, uint32 y, uint32 resId);
 
-    void drawTextCentered(uint32 x, uint32 y, uint32 width, char *text);  
+    void drawTextCentered(uint32 x, uint32 y, uint32 width, char *text);
     void drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId);
 
     void drawTextAlignRight(uint32 x, uint32 y, char *text);

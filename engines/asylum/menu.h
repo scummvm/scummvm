@@ -29,7 +29,7 @@
 #include "common/events.h"
 
 #include "asylum/asylum.h"
-#include "asylum/resourcepack.h"
+#include "asylum/respack.h"
 #include "asylum/scene.h"
 #include "asylum/graphics.h"
 #include "asylum/text.h"
