@@ -708,13 +708,13 @@ void Inter_v2::checkSwitchTable(byte **ppExec) {
 	value = _vm->_parse->parseVarIndex();
 
 	switch (cmd) {
-	case 16:
-	case 18:
+	case TYPE_VAR_INT8:
+	case TYPE_ARRAY_INT8:
 		value = (int8) READ_VARO_UINT8(value);
 		break;
 
-	case 23:
-	case 26:
+	case TYPE_VAR_INT32:
+	case TYPE_ARRAY_INT32:
 		value = READ_VARO_UINT32(value);
 		break;
 
@@ -732,7 +732,7 @@ void Inter_v2::checkSwitchTable(byte **ppExec) {
 			cmd = *_vm->_global->_inter_execPtr;
 
 			switch (cmd) {
-			case 19:
+			case TYPE_IMM_INT32:
 				_vm->_global->_inter_execPtr++;
 				if (!found &&
 						(value ==
@@ -741,7 +741,7 @@ void Inter_v2::checkSwitchTable(byte **ppExec) {
 				_vm->_global->_inter_execPtr += 5;
 				break;
 
-			case 20:
+			case TYPE_IMM_INT16:
 				_vm->_global->_inter_execPtr++;
 				if (!found &&
 						(value ==
@@ -750,7 +750,7 @@ void Inter_v2::checkSwitchTable(byte **ppExec) {
 				_vm->_global->_inter_execPtr += 3;
 				break;
 
-			case 21:
+			case TYPE_IMM_INT8:
 				_vm->_global->_inter_execPtr++;
 				if (!found && (value == (int8) *_vm->_global->_inter_execPtr))
 					found = true;
@@ -1604,28 +1604,28 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 		int16 type = evalExpr(&result);
 
 		switch (savedPos[0]) {
-		case 16:
-		case 18:
+		case TYPE_VAR_INT8:
+		case TYPE_ARRAY_INT8:
 			WRITE_VARO_UINT8(dest + i, _vm->_global->_inter_resVal);
 			break;
 
-		case 17:
-		case 27:
+		case TYPE_VAR_INT16:
+		case TYPE_ARRAY_INT16:
 			WRITE_VARO_UINT16(dest + i * 2, _vm->_global->_inter_resVal);
 			break;
 
-		case 23:
-		case 26:
+		case TYPE_VAR_INT32:
+		case TYPE_ARRAY_INT32:
 			WRITE_VAR_OFFSET(dest + i * 4, _vm->_global->_inter_resVal);
 			break;
 
-		case 24:
+		case TYPE_VAR_INT32_AS_INT16:
 			WRITE_VARO_UINT16(dest + i * 4, _vm->_global->_inter_resVal);
 			break;
 
-		case 25:
-		case 28:
-			if (type == 20)
+		case TYPE_VAR_STR:
+		case TYPE_ARRAY_STR:
+			if (type == TYPE_IMM_INT16)
 				WRITE_VARO_UINT8(dest, result);
 			else
 				WRITE_VARO_STR(dest, _vm->_global->_inter_resStr);
@@ -1665,27 +1665,27 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 		if (*_vm->_global->_inter_execPtr != 200) {
 			_vm->_global->_inter_execPtr++;
 			switch (*_vm->_global->_inter_execPtr) {
-			case 16:
-			case 18:
+			case TYPE_VAR_INT8:
+			case TYPE_ARRAY_INT8:
 				sprintf(buf + i, "%d",
 						(int8) READ_VARO_UINT8(_vm->_parse->parseVarIndex()));
 				break;
 
-			case 17:
-			case 24:
-			case 27:
+			case TYPE_VAR_INT16:
+			case TYPE_VAR_INT32_AS_INT16:
+			case TYPE_ARRAY_INT16:
 				sprintf(buf + i, "%d",
 						(int16) READ_VARO_UINT16(_vm->_parse->parseVarIndex()));
 				break;
 
-			case 23:
-			case 26:
+			case TYPE_VAR_INT32:
+			case TYPE_ARRAY_INT32:
 				sprintf(buf + i, "%d",
 						VAR_OFFSET(_vm->_parse->parseVarIndex()));
 				break;
 
-			case 25:
-			case 28:
+			case TYPE_VAR_STR:
+			case TYPE_ARRAY_STR:
 				sprintf(buf + i, "%s",
 						GET_VARO_STR(_vm->_parse->parseVarIndex()));
 				break;

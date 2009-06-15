@@ -99,16 +99,16 @@ char Inter::evalExpr(int16 *pRes) {
 		return type;
 
 	switch (type) {
-	case 20:
+	case TYPE_IMM_INT16:
 		*pRes = _vm->_global->_inter_resVal;
 		break;
 
-	case 22:
-	case 23:
+	case TYPE_IMM_STR:
+	case GOB_FALSE:
 		*pRes = 0;
 		break;
 
-	case 24:
+	case GOB_TRUE:
 		*pRes = 1;
 		break;
 	}
@@ -122,7 +122,8 @@ bool Inter::evalBoolResult() {
 	_vm->_parse->printExpr(99);
 
 	_vm->_parse->parseExpr(99, &type);
-	if ((type == 24) || ((type == 20) && _vm->_global->_inter_resVal))
+	if ( (type == GOB_TRUE) ||
+	    ((type == TYPE_IMM_INT16) && _vm->_global->_inter_resVal))
 		return true;
 	else
 		return false;
@@ -185,14 +186,14 @@ void Inter::storeKey(int16 key) {
 
 void Inter::writeVar(uint32 offset, uint16 type, uint32 value) {
 	switch (type) {
-	case 16:
-	case 18:
+	case TYPE_VAR_INT8:
+	case TYPE_ARRAY_INT8:
 		WRITE_VARO_UINT8(offset, value);
 		break;
 
-	case 17:
-	case 24:
-	case 27:
+	case TYPE_VAR_INT16:
+	case TYPE_VAR_INT32_AS_INT16:
+	case TYPE_ARRAY_INT16:
 		WRITE_VARO_UINT16(offset, value);
 		break;
 

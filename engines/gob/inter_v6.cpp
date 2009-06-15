@@ -888,28 +888,28 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 		int16 srcType = evalExpr(&result);
 
 		switch (destType) {
-		case 16:
-		case 18:
+		case TYPE_VAR_INT8:
+		case TYPE_ARRAY_INT8:
 			WRITE_VARO_UINT8(dest + i, _vm->_global->_inter_resVal);
 			break;
 
-		case 17:
-		case 27:
+		case TYPE_VAR_INT16:
+		case TYPE_ARRAY_INT16:
 			WRITE_VARO_UINT16(dest + i * 2, _vm->_global->_inter_resVal);
 			break;
 
-		case 23:
-		case 26:
+		case TYPE_VAR_INT32:
+		case TYPE_ARRAY_INT32:
 			WRITE_VAR_OFFSET(dest + i * 4, _vm->_global->_inter_resVal);
 			break;
 
-		case 24:
+		case TYPE_VAR_INT32_AS_INT16:
 			WRITE_VARO_UINT16(dest + i * 4, _vm->_global->_inter_resVal);
 			break;
 
-		case 25:
-		case 28:
-			if (srcType == 20)
+		case TYPE_VAR_STR:
+		case TYPE_ARRAY_STR:
+			if (srcType == TYPE_IMM_INT16)
 				WRITE_VARO_UINT8(dest, result);
 			else
 				WRITE_VARO_STR(dest, _vm->_global->_inter_resStr);
