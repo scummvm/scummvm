@@ -89,6 +89,11 @@ void MainMenu::openMenu() {
 
 	// Start playing music
 	_sound->playMusic(_resPack, 39);
+
+	_previousActiveIcon = _activeIcon = -1;
+	_leftClick = false;
+	_activeMenuScreen = kMainMenu;
+	_mouseX = _mouseY = 0;
 }
 
 void MainMenu::closeMenu() {
