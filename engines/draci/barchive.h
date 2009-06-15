@@ -51,13 +51,24 @@ struct BAFile {
 
 class BArchive {
 public:
-	BArchive() : _files(NULL), _fileCount(0) {}
-	BArchive(Common::String &path) : _files(NULL), _fileCount(0) { openArchive(path); }
+	BArchive() : _files(NULL), _fileCount(0), _opened(false) {}
+
+	BArchive(Common::String &path) :
+	_files(NULL), _fileCount(0), _opened(false) { 
+		openArchive(path); 
+	}
+
 	~BArchive() { closeArchive(); }
 
 	void openArchive(const Common::String &path);
 	void closeArchive(void);
 	uint16 size() const { return _fileCount; }
+
+	/** 
+	 * Checks whether there is an archive opened. Should be called before reading
+	 * from the archive to check whether openArchive() succeeded.
+	 */	
+	bool isOpen() const { return _opened; }
 
 	BAFile *operator[](unsigned int i) const;
 
@@ -74,6 +85,7 @@ private:
 	BAFile *_files;          //!< Internal array of files
 	uint16 _fileCount;       //!< Number of files in archive
 	bool _isDFW;			 //!< True if the archive is in DFW format, false otherwise
+	bool _opened;			 //!< True if the archive is opened, false otherwise
 
 	void openDFW(const Common::String &path);
 	BAFile *loadFileDFW(unsigned int i) const;

@@ -115,8 +115,11 @@ void BArchive::openDFW(const Common::String &path) {
 		_files[i]._crc = 0; // Dummy value; not used in DFW archives
 	}
 
+	// Indicate that the archive was successfully opened
+	_opened = true;
+		
+	// Cleanup
 	delete[] table;
-	
 	f.close();
 }		
 
@@ -173,12 +176,17 @@ void BArchive::openArchive(const Common::String &path) {
 	f.read(buf, 4);
 	if (memcmp(buf, _magicNumber, 4) == 0) {
 		debugC(2, kDraciArchiverDebugLevel, "Success");
+			
+		// Indicate this archive is a BAR	
 		_isDFW = false;
 	} else {
 		debugC(2, kDraciArchiverDebugLevel, "Not a BAR archive");
 		debugCN(2, kDraciArchiverDebugLevel, "Retrying as DFW: ");
 		f.close();
+
+		// Try to open as DFW
 		openDFW(_path);
+
 		return;
 	}
 
@@ -203,25 +211,30 @@ void BArchive::openArchive(const Common::String &path) {
 		uint32 fileOffset;			
 		
 		fileOffset = reader.readUint32LE();
-		f.seek(fileOffset); // Seek to next file in archive
+		f.seek(fileOffset); 						// Seek to next file in archive
+
 		_files[i]._compLength = f.readUint16LE(); 	// Compressed size 
 													// should be the same as uncompressed
-		_files[i]._length = f.readUint16LE(); // Original size
-		_files[i]._offset = fileOffset;
+
+		_files[i]._length = f.readUint16LE(); 		// Original size
+	
+		_files[i]._offset = fileOffset;				// Offset of file from start
 
 		assert(f.readByte() == 0 && 
 			"Compression type flag is non-zero (file is compressed)");
 
-		_files[i]._crc = f.readByte(); // CRC checksum of the file
-		_files[i]._data = NULL; // File data will be read in on demand
-		_files[i]._stopper = 0; // Dummy value; not used in BAR files, needed in DFW
+		_files[i]._crc = f.readByte(); 	// CRC checksum of the file
+		_files[i]._data = NULL; 		// File data will be read in on demand
+		_files[i]._stopper = 0; 		// Dummy value; not used in BAR files, needed in DFW
 	}	
 	
 	// Last footer item should be equal to footerOffset
 	assert(reader.readUint32LE() == footerOffset && "Footer offset mismatch");
+
+	// Indicate that the archive has been successfully opened
+	_opened = true; 
 	
 	delete[] footer;
-
 	f.close();
 }
 
@@ -232,7 +245,7 @@ void BArchive::openArchive(const Common::String &path) {
  * free up memory.
  */
 void BArchive::closeArchive(void) {
-	if (!_files) {
+	if (!_opened) {
 		return;
 	}
 
@@ -244,6 +257,7 @@ void BArchive::closeArchive(void) {
 
 	delete[] _files;
 
+	_opened = false;
 	_files = NULL;
 	_fileCount = 0;
 }
@@ -382,6 +396,8 @@ BAFile *BArchive::operator[](unsigned int i) const {
 	}
 	
 	BAFile *file;
+	
+	// file will be NULL if something goes wrong
 	if (_isDFW) {
 		file = loadFileDFW(i);
 	} else {
