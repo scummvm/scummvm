@@ -162,6 +162,7 @@ void MainMenu::update() {
 			case kShowCredits:
 				// TODO if game finished than show resource image 33
                 _creditsResource = new GraphicResource(_resPack, 24);
+                _creditsFadeResource = new GraphicResource(_resPack, 23);
                 _creditsTextScroll = 0x1E0 - 30;
 				break;
 			case kReturnToGame:
@@ -389,9 +390,11 @@ void MainMenu::updateSubMenuQuitGame() {
 }
 
 void MainMenu::updateSubMenuShowCredits() {
-    // TODO add background fade image
+    // FIXME Fix palette in all credits dialog
 
-    // FIXME Fix image palette
+    GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
+	_screen->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
+
     GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<int>(_creditsResource->getFrameCount() - 1, _creditsBgFrame));
 	_screen->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
 
