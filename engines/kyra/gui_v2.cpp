@@ -158,8 +158,9 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 		}
 	}
 
-	int mouseX = _vm->_mouseX;
-	int mouseY = _vm->_mouseY;
+	Common::Point p = _vm->getMousePos();
+	int mouseX = _vm->_mouseX = p.x;
+	int mouseY = _vm->_mouseY = p.y;
 
 	uint16 flags = 0;
 
