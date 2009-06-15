@@ -43,7 +43,7 @@ class Text;
 
 class MainMenu {
 public:
-	MainMenu(Screen *screen, Sound *sound, Scene *state);
+	MainMenu(Screen *screen, Sound *sound, Scene *scene);
 	~MainMenu();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -84,7 +84,7 @@ private:
 
 	Screen *_screen;
 	Sound *_sound;
-	Scene *_Scene;
+	Scene *_scene;
 	Common::Event *_ev;
 
 	int _mouseX;

@@ -69,7 +69,7 @@ Common::Error AsylumEngine::init() {
 	_sound = new Sound(_mixer);
 	_video = new Video(_mixer);
 	_mainMenu = 0;
-	_Scene = 0;
+	_scene = 0;
 
     return Common::kNoError;
 }
@@ -85,14 +85,14 @@ Common::Error AsylumEngine::go() {
 	// Disabled for quick testing
 	//_video->playVideo(0);
 
-	// Set up the game's state
-    _Scene = new Scene(_screen, _sound, 5);
+	// Set up the game's main scene
+    _scene = new Scene(_screen, _sound, 5);
 
 	// Set up main menu
-	_mainMenu = new MainMenu(_screen, _sound, _Scene);
+	_mainMenu = new MainMenu(_screen, _sound, _scene);
 
 	// Enter first scene
-	_Scene->enterScene();
+	_scene->enterScene();
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
@@ -127,7 +127,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 				// Toggle menu
 				if (_mainMenu->isActive()) {
 					_mainMenu->closeMenu();
-					_Scene->enterScene();
+					_scene->enterScene();
 				} else {
 					_mainMenu->openMenu();
 				}
@@ -147,7 +147,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 		_mainMenu->handleEvent(&ev, doUpdate);
 	} else {
 		// Pass events to the game
-		_Scene->handleEvent(&ev, doUpdate);
+		_scene->handleEvent(&ev, doUpdate);
 	}
 }
 

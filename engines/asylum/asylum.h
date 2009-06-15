@@ -29,7 +29,6 @@
 #include "engines/engine.h"
 
 #include "asylum/scene.h"
-#include "asylum/scene_resource.h"
 #include "asylum/menu.h"
 #include "asylum/screen.h"
 #include "asylum/sound.h"
@@ -67,8 +66,7 @@ private:
     Common::Language     _language;
     Common::RandomSource _rnd;
 
-    SceneResource *_scene;
-	Scene *_Scene;
+	Scene *_scene;
     MainMenu *_mainMenu;
 	Screen *_screen;
 	Sound *_sound;
