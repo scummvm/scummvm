@@ -30,32 +30,17 @@
 
 int gBitFormat = 565;
 
-#ifdef ENABLE_16BIT
 static const Graphics::PixelFormat gPixelFormat555(
-#else
-static const Graphics::PixelFormat gPixelFormat555 = {
-#endif
 	2,
 	3, 3, 3, 8,
 	10, 5, 0, 0
-#ifdef ENABLE_16BIT
 	);
 
 static const Graphics::PixelFormat gPixelFormat565(
-#else
-	};
-
-static const Graphics::PixelFormat gPixelFormat565 = {
-#endif
 	2,
 	3, 2, 3, 8,
 	11, 5, 0, 0
-#ifdef ENABLE_16BIT
 	);
-#else
-	};
-#endif
-
 
 
 #ifndef DISABLE_HQ_SCALERS

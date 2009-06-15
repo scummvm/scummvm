@@ -76,7 +76,6 @@ struct PixelFormat {
 	byte rLoss, gLoss, bLoss, aLoss; /**< Precision loss of each color component. */
 	byte rShift, gShift, bShift, aShift; /**< Binary left shift of each color component in the pixel value. */
 
-#ifdef ENABLE_16BIT
 	inline PixelFormat() {
 		bytesPerPixel = 
 		rLoss = gLoss = bLoss = aLoss = 
@@ -91,6 +90,7 @@ struct PixelFormat {
 		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
 	}
 
+#ifdef ENABLE_16BIT
 	//Convenience constructor from enum type
 	//TODO: BGR support
 	//TODO: Specify alpha position
