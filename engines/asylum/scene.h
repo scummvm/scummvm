@@ -65,6 +65,8 @@ private:
     uint8 _sceneIdx;
     int _mouseX;
 	int _mouseY;
+	int _startX;
+	int _startY;
     bool _leftClick;
 	int _curMouseCursor;
 	int _cursorStep;

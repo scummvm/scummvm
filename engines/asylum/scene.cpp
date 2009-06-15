@@ -27,6 +27,8 @@
 
 namespace Asylum {
 
+#define SCREEN_EDGES 40
+
 Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
     _sceneIdx = sceneIdx;
     _sceneResource = new SceneResource;
@@ -37,9 +39,12 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
         char musPackFileName[10];
 	    sprintf(musPackFileName, "mus.%03d", sceneIdx);
         _musPack = new ResourcePack(musPackFileName);
+
+		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.backgroundImage);
     }
 
 	_cursorResource = new GraphicResource(_resPack, kCursorUpLeftArrow);
+	_startX = _startY = 0;
 }
 
 Scene::~Scene() {
@@ -54,9 +59,8 @@ Scene::~Scene() {
 void Scene::enterScene() {
 	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->_commonRes.palette);
 
-	_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.backgroundImage);
 	GraphicFrame *bg = _bgResource->getFrame(0);
-	_screen->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, 640, 480);
+	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
 
 	_cursorStep = 1;
 	_curMouseCursor = 0;
@@ -92,8 +96,36 @@ void Scene::updateCursor() {
 }
 
 void Scene::update() {
+	bool scrollScreen = false;
+	GraphicFrame *bg = _bgResource->getFrame(0);
+
+	//updateCursor();	// TODO
+
+	// Proof of concept for screen scrolling
+	// TODO: make this smoother, perhaps?
+
+	// Horizontal scrolling
+	if (_mouseX < SCREEN_EDGES && _startX > 0) {
+		_startX--;
+		scrollScreen = true;
+	} else if (_mouseX > 640 - SCREEN_EDGES && _startX < bg->surface.w - 640) {
+		_startX++;
+		scrollScreen = true;
+	}
+
+	// Vertical scrolling
+	if (_mouseY < SCREEN_EDGES && _startY > 0) {
+		_startY--;
+		scrollScreen = true;
+	} else if (_mouseY > 480 - SCREEN_EDGES && _startY < bg->surface.h - 480) {
+		_startY++;
+		scrollScreen = true;
+	}
+
+	if (scrollScreen)
+		_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
+
 	// TODO
-	//updateCursor();
 }
 
 } // end of namespace Asylum
