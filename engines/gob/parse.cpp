@@ -1036,26 +1036,12 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 					valPtr -= 2;
 					break;
 
-				case OP_NEQ: {
-					int cmpTemp = 0;
-
-					if (operPtr[-3] == OP_LOAD_IMM_INT16) {
-						cmpTemp = valPtr[-3] - valPtr[-1];
-					} else if (operPtr[-3] == OP_LOAD_IMM_STR) {
-						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
-						}
-						// FIXME: Why scumm_stricmp here and strcmp everywhere else?
-						cmpTemp = scumm_stricmp(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1]));
-					}
-					operPtr[-3] = (cmpTemp != 0) ? GOB_TRUE : GOB_FALSE;
-					//operPtr[-3] = (cmpHelper(operPtr, valPtr) != 0) ? GOB_TRUE : GOB_FALSE;
+				case OP_NEQ:
+					operPtr[-3] = (cmpHelper(operPtr, valPtr) != 0) ? GOB_TRUE : GOB_FALSE;
 					stkPos -= 2;
 					operPtr -= 2;
 					valPtr -= 2;
 					break;
-					}
 
 				default:
 					escape = true;
