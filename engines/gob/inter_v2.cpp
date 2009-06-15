@@ -1589,15 +1589,10 @@ void Inter_v2::o2_resetImdFrontSurf() {
 }
 
 bool Inter_v2::o2_assign(OpFuncParams &params) {
-	byte *savedPos;
-	int16 varOff;
-	int16 token;
-	int16 result;
+	byte *savedPos = _vm->_global->_inter_execPtr;
+	int16 dest = _vm->_parse->parseVarIndex();
+
 	byte loopCount;
-
-	savedPos = _vm->_global->_inter_execPtr;
-	varOff = _vm->_parse->parseVarIndex();
-
 	if (*_vm->_global->_inter_execPtr == 99) {
 		_vm->_global->_inter_execPtr++;
 		loopCount = *_vm->_global->_inter_execPtr++;
@@ -1605,33 +1600,35 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 		loopCount = 1;
 
 	for (int i = 0; i < loopCount; i++) {
-		token = evalExpr(&result);
+		int16 result;
+		int16 type = evalExpr(&result);
+
 		switch (savedPos[0]) {
 		case 16:
 		case 18:
-			WRITE_VARO_UINT8(varOff + i, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT8(dest + i, _vm->_global->_inter_resVal);
 			break;
 
 		case 17:
 		case 27:
-			WRITE_VARO_UINT16(varOff + i * 2, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_global->_inter_resVal);
 			break;
 
 		case 23:
 		case 26:
-			WRITE_VAR_OFFSET(varOff + i * 4, _vm->_global->_inter_resVal);
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_global->_inter_resVal);
 			break;
 
 		case 24:
-			WRITE_VARO_UINT16(varOff + i * 4, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 4, _vm->_global->_inter_resVal);
 			break;
 
 		case 25:
 		case 28:
-			if (token == 20)
-				WRITE_VARO_UINT8(varOff, result);
+			if (type == 20)
+				WRITE_VARO_UINT8(dest, result);
 			else
-				WRITE_VARO_STR(varOff, _vm->_global->_inter_resStr);
+				WRITE_VARO_STR(dest, _vm->_global->_inter_resStr);
 			break;
 		}
 	}

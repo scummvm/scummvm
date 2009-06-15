@@ -90,15 +90,15 @@ int16 Inter::load16() {
 }
 
 char Inter::evalExpr(int16 *pRes) {
-	byte token;
+	byte type;
 
 	_vm->_parse->printExpr(99);
 
-	_vm->_parse->parseExpr(99, &token);
+	_vm->_parse->parseExpr(99, &type);
 	if (!pRes)
-		return token;
+		return type;
 
-	switch (token) {
+	switch (type) {
 	case 20:
 		*pRes = _vm->_global->_inter_resVal;
 		break;
@@ -113,16 +113,16 @@ char Inter::evalExpr(int16 *pRes) {
 		break;
 	}
 
-	return token;
+	return type;
 }
 
 bool Inter::evalBoolResult() {
-	byte token;
+	byte type;
 
 	_vm->_parse->printExpr(99);
 
-	_vm->_parse->parseExpr(99, &token);
-	if ((token == 24) || ((token == 20) && _vm->_global->_inter_resVal))
+	_vm->_parse->parseExpr(99, &type);
+	if ((type == 24) || ((type == 20) && _vm->_global->_inter_resVal))
 		return true;
 	else
 		return false;

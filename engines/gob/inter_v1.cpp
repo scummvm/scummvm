@@ -1323,26 +1323,24 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_assign(OpFuncParams &params) {
-	byte *savedPos;
-	int16 token;
-	int16 result;
-	int16 varOff;
+	byte *savedPos = _vm->_global->_inter_execPtr;
+	int16 dest = _vm->_parse->parseVarIndex();
 
-	savedPos = _vm->_global->_inter_execPtr;
-	varOff = _vm->_parse->parseVarIndex();
-	token = evalExpr(&result);
+	int16 result;
+	int16 type = evalExpr(&result);
+
 	switch (savedPos[0]) {
 	case 23:
 	case 26:
-		WRITE_VAR_OFFSET(varOff, _vm->_global->_inter_resVal);
+		WRITE_VAR_OFFSET(dest, _vm->_global->_inter_resVal);
 		break;
 
 	case 25:
 	case 28:
-		if (token == 20)
-			WRITE_VARO_UINT8(varOff, result);
+		if (type == 20)
+			WRITE_VARO_UINT8(dest, result);
 		else
-			WRITE_VARO_STR(varOff, _vm->_global->_inter_resStr);
+			WRITE_VARO_STR(dest, _vm->_global->_inter_resStr);
 		break;
 
 	}

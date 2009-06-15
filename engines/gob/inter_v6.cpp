@@ -841,31 +841,27 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 }
 
 bool Inter_v6::o6_assign(OpFuncParams &params) {
-	byte *savedPos;
-	int16 varOff;
-	int16 token;
-	int16 result;
-	byte loopCount;
-	uint16 var_6, var_A;
+	uint16 size, destType;
+	int16 dest = _vm->_parse->parseVarIndex(&size, &destType);
 
-	varOff = _vm->_parse->parseVarIndex(&var_6, &var_A);
+	if (size != 0) {
+		int16 src;
 
-	if (var_6 != 0) {
-		int16 var_4;
+		byte *savedPos = _vm->_global->_inter_execPtr;
 
-		savedPos = _vm->_global->_inter_execPtr;
+		src = _vm->_parse->parseVarIndex(&size, 0);
 
-		var_4 = _vm->_parse->parseVarIndex(&var_6, 0);
-
-		memcpy(_vm->_inter->_variables->getAddressOff8(varOff),
-				_vm->_inter->_variables->getAddressOff8(var_4), var_6 * 4);
+		memcpy(_vm->_inter->_variables->getAddressOff8(dest),
+				_vm->_inter->_variables->getAddressOff8(src), size * 4);
 
 		_vm->_global->_inter_execPtr = savedPos;
-		evalExpr(&var_4);
+
+		evalExpr(&src);
 
 		return false;
 	}
 
+	byte loopCount;
 	if (*_vm->_global->_inter_execPtr == 98) {
 		_vm->_global->_inter_execPtr++;
 		loopCount = *_vm->_global->_inter_execPtr++;
@@ -874,9 +870,9 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 			uint8 c = *_vm->_global->_inter_execPtr++;
 			uint16 n = load16();
 
-			memset(_vm->_inter->_variables->getAddressOff8(varOff), c, n);
+			memset(_vm->_inter->_variables->getAddressOff8(dest), c, n);
 
-			varOff += n;
+			dest += n;
 		}
 
 		return false;
@@ -888,33 +884,35 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 		loopCount = 1;
 
 	for (int i = 0; i < loopCount; i++) {
-		token = evalExpr(&result);
-		switch (var_A) {
+		int16 result;
+		int16 srcType = evalExpr(&result);
+
+		switch (destType) {
 		case 16:
 		case 18:
-			WRITE_VARO_UINT8(varOff + i, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT8(dest + i, _vm->_global->_inter_resVal);
 			break;
 
 		case 17:
 		case 27:
-			WRITE_VARO_UINT16(varOff + i * 2, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_global->_inter_resVal);
 			break;
 
 		case 23:
 		case 26:
-			WRITE_VAR_OFFSET(varOff + i * 4, _vm->_global->_inter_resVal);
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_global->_inter_resVal);
 			break;
 
 		case 24:
-			WRITE_VARO_UINT16(varOff + i * 4, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 4, _vm->_global->_inter_resVal);
 			break;
 
 		case 25:
 		case 28:
-			if (token == 20)
-				WRITE_VARO_UINT8(varOff, result);
+			if (srcType == 20)
+				WRITE_VARO_UINT8(dest, result);
 			else
-				WRITE_VARO_STR(varOff, _vm->_global->_inter_resStr);
+				WRITE_VARO_STR(dest, _vm->_global->_inter_resStr);
 			break;
 		}
 	}
