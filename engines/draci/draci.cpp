@@ -73,7 +73,14 @@ int DraciEngine::init() {
 	BArchive ar(path);
 	BAFile *f;
 	debugC(3, kDraciGeneralDebugLevel, "Number of file streams in archive: %d", ar.size());	
-	f = ar[0];	
+	
+	if(ar.isOpen()) {
+		f = ar[0];	
+	} else {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
+		return 0;
+	}	
+		
 	debugC(3, kDraciGeneralDebugLevel, "First 10 bytes of file %d: ", 0);
 	for (unsigned int i = 0; i < 10; ++i) {
 		debugC(3, kDraciGeneralDebugLevel, "0x%02x%c", f->_data[i], (i < 9) ? ' ' : '\n');
@@ -82,10 +89,16 @@ int DraciEngine::init() {
 	// Read in GPL script for the first game location	
 	debugC(2, kDraciBytecodeDebugLevel, "Disassembling GPL script " 
 		"for the first game location...");		
-	Common::String path2("MIST.DFW");	
-	ar.closeArchive();
-	ar.openArchive(path2);
-	f = ar[3];
+
+	path = "MIST.DFW";
+	ar.openArchive(path);
+	
+	if(ar.isOpen()) {
+		f = ar[3];	
+	} else {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
+		return 0;
+	}	
 
 	// Disassemble GPL script for the first location
 	gpldisasm(f->_data, f->_length);
@@ -113,9 +126,15 @@ int DraciEngine::go() {
 	BArchive ar(path);
 	BAFile *f;
 
-	ar.closeArchive();
 	ar.openArchive(path);
-	f = ar[0];
+	
+	if(ar.isOpen()) {
+		f = ar[0];	
+	} else {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
+		return 0;
+	}	
+
 	Common::MemoryReadStream paletteReader(f->_data, f->_length);
 	
 	for (unsigned int i = 0; i < 256; ++i) {
@@ -156,8 +175,12 @@ int DraciEngine::go() {
 
 	// Draw and animate the dragon
 	path = "OBR_AN.DFW";
-	ar.closeArchive();
 	ar.openArchive(path);
+	
+	if(!ar.isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
+		return 0;
+	}	
 
 	for (unsigned int t = 0; t < 25; ++t) {
 		debugC(5, kDraciGeneralDebugLevel, "Drawing frame %d...", t);
@@ -170,11 +193,17 @@ int DraciEngine::go() {
 
 		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
 	}	
-
+	
 	path = "HRA.DFW";
-	ar.closeArchive();
 	ar.openArchive(path);
-	f = ar[0];
+	
+	if(ar.isOpen()) {
+		f = ar[0];	
+	} else {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
+		return 0;
+	}	
+
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.pushCursorPalette(palette, 0, 256);
 	CursorMan.pushCursor(sp._data, sp._width, sp._height, sp._width / 2, sp._height / 2);
