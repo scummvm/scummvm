@@ -91,43 +91,10 @@ struct PixelFormat {
 		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
 	}
 
-	//Copy constructor
-	//Is this necessary?
-	inline PixelFormat(const PixelFormat &format) {
-		bytesPerPixel = format.bytesPerPixel;
-
-		rLoss = format.rLoss;
-		gLoss = format.gLoss;
-		bLoss = format.bLoss;
-		aLoss = format.aLoss;
-
-		rShift = format.rShift;
-		gShift = format.gShift;
-		bShift = format.bShift;
-		aShift = format.aShift;
-	}
-
-	//Convenience constructor from bitformat number
-	//TODO: BGR support
-	//TODO: Specify alpha position
-/*	PixelFormat(int bitFormat) {
-		bytesPerPixel = ColorMasks<bitFormat>::kBytesPerPixel;
-
-		rLoss = 8 - ColorMasks<bitFormat>::kRedBits;
-		gLoss = 8 - ColorMasks<bitFormat>::kGreenBits;
-		bLoss = 8 - ColorMasks<bitFormat>::kBlueBits;
-		aLoss = 8 - ColorMasks<bitFormat>::kAlphaBits;
-
-		rShift = ColorMasks<bitFormat>::kRedShift;
-		gShift = ColorMasks<bitFormat>::kGreenShift;
-		bShift = ColorMasks<bitFormat>::kBlueShift;
-		aShift = ColorMasks<bitFormat>::kAlphaShift;
-	};*/
-
 	//Convenience constructor from enum type
 	//TODO: BGR support
 	//TODO: Specify alpha position
-	inline PixelFormat(ColorMode mode) {
+	explicit inline PixelFormat(ColorMode mode) {
 		switch (mode) {
 		case kFormatRGB555:
 			aLoss = 8;

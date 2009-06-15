@@ -126,7 +126,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 }
 void initGraphics(int width, int height, bool defaultTo1xScaler) {
 #ifdef ENABLE_16BIT
-	Graphics::PixelFormat format = Graphics::kFormatCLUT8;
+	Graphics::PixelFormat format(Graphics::kFormatCLUT8);
 	initGraphics(width,height,defaultTo1xScaler, format);
 }
 void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::PixelFormat format) {
