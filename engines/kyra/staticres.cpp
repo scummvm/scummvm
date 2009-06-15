@@ -2046,6 +2046,13 @@ void GUI_LoL::initStaticData() {
 	Button::Callback deathMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedDeathMenu);
 	for (int i = 0; i < 2; ++i)
 		_deathMenu.item[i].callback = deathMenuFunctor;
+
+	GUI_LOL_MENU(_choiceMenu, 11, 0, 0, 2, -1, -1, -1, -1);
+	GUI_LOL_MENU_ITEM(_choiceMenu.item[0], 0x4007, 8, 30, 72, 15, 0, 0);
+	GUI_LOL_MENU_ITEM(_choiceMenu.item[1], 0x4008, 208, 30, 72, 15, 0, 0);
+	Button::Callback choiceMenuFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::clickedChoiceMenu);
+	for (int i = 0; i < 2; ++i)
+		_choiceMenu.item[i].callback = choiceMenuFunctor;
 }
 
 #endif // ENABLE_LOL

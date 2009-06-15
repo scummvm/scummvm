@@ -2405,7 +2405,8 @@ int GUI_LoL::clickedMainMenu(Button *button) {
 		//_newMenu = &_audioOptions;
 		break;
 	case 0x4006:
-		//_newMenu = &_choiceMenu;
+		_choiceMenu.menuNameId = 0x400a;
+		_newMenu = &_choiceMenu;
 		break;
 	case 0x4005:
 		_displayMenu = false;
@@ -2438,6 +2439,17 @@ int GUI_LoL::clickedDeathMenu(Button *button) {
 		_vm->quitGame();
 	} else if (button->arg == _deathMenu.item[1].itemId) {
 		_newMenu = &_loadMenu;
+	}
+	return 1;
+}
+
+int GUI_LoL::clickedChoiceMenu(Button *button) {
+	updateMenuButton(button);
+	if (button->arg == _choiceMenu.item[0].itemId) {
+		if (_lastMenu == &_mainMenu)
+			_vm->quitGame();
+	} else if (button->arg == _choiceMenu.item[1].itemId) {
+		_newMenu = _lastMenu;
 	}
 	return 1;
 }

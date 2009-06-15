@@ -110,6 +110,7 @@ private:
 	int clickedMainMenu(Button *button);
 	int clickedLoadMenu(Button *button);
 	int clickedDeathMenu(Button *button);
+	int clickedChoiceMenu(Button *button);
 
 	int scrollUp(Button *button);
 	int scrollDown(Button *button);
