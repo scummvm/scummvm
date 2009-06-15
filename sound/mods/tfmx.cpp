@@ -469,9 +469,6 @@ doTrackstep:
 	for (int i = 0; i < kNumChannels; ++i) {
 		const uint8 pattCmd = _patternCtx[i].command;
 		if (pattCmd < 0x90) {	// execute Patternstep
-			// FIXME: 0x90 is very likely a bug, 0x80 would make more sense
-			assert(pattCmd < 0x80);
-
 			++runningPatterns;
 			if (_patternCtx[i].wait == 0) {
 				// issue all Steps for this tick
