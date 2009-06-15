@@ -71,11 +71,13 @@ int LoLEngine::processPrologue() {
 
 		_eventList.clear();
 		int selection = mainMenu();
-		_screen->hideMouse();
-
-		// Unlike the original, we add a nice fade to black
-		memset(_screen->getPalette(0), 0, 768);
-		_screen->fadePalette(_screen->getPalette(0), 0x54);
+		
+		if (selection != 3) {
+			_screen->hideMouse();
+			// Unlike the original, we add a nice fade to black
+			memset(_screen->getPalette(0), 0, 768);
+			_screen->fadePalette(_screen->getPalette(0), 0x54);
+		}
 
 		switch (selection) {
 		case 0:		// New game
@@ -90,7 +92,8 @@ int LoLEngine::processPrologue() {
 			break;
 
 		case 3:		// Load game
-			//processSelection = 3;
+			if (_gui->runMenu(_gui->_loadMenu))
+				processSelection = 3;
 			break;
 
 		case 4:		// Quit game
@@ -100,7 +103,7 @@ int LoLEngine::processPrologue() {
 		}
 	}
 
-	if (processSelection == 0 || processSelection == 3) {
+	if (processSelection == 0) {
 		_sound->loadSoundFile(0);
 		_sound->playTrack(6);
 		chooseCharacter();

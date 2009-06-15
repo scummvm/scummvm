@@ -601,7 +601,7 @@ int GUI_v2::saveMenu(Button *caller) {
 	updateAllMenuButtons();
 
 	while (_isSaveMenu) {
-		processHighlights(_saveMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_saveMenu);
 		getInput();
 	}
 
@@ -697,7 +697,7 @@ int GUI_v2::deleteMenu(Button *caller) {
 		updateAllMenuButtons();
 
 		while (_isDeleteMenu) {
-			processHighlights(_saveMenu, _vm->_mouseX, _vm->_mouseY);
+			processHighlights(_saveMenu);
 			getInput();
 		}
 
@@ -749,7 +749,7 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 	_cancelNameInput = _finishNameInput = false;
 	while (running && !_vm->shouldQuit()) {
 		checkTextfieldInput();
-		processHighlights(_savenameMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_savenameMenu);
 		if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER || _finishNameInput) {
 			if (checkSavegameDescription(buffer, curPos)) {
 				buffer[curPos] = 0;
@@ -840,7 +840,7 @@ bool GUI_v2::choiceDialog(int name, bool type) {
 	_choice = false;
 
 	while (_isChoiceMenu) {
-		processHighlights(_choiceMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_choiceMenu);
 		getInput();
 	}
 

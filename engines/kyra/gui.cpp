@@ -83,17 +83,21 @@ void GUI::initMenu(Menu &menu) {
 	int menu_y2 = menu.height + menu.y - 1;
 
 	_screen->fillRect(menu.x + 2, menu.y + 2, menu_x2 - 2, menu_y2 - 2, menu.bkgdColor);
-	_screen->drawShadedBox(menu.x, menu.y, menu_x2, menu_y2, menu.color1, menu.color2);
+	_screen->drawShadedBox(menu.x, menu.y, menu_x2, menu_y2, menu.color1, menu.color2, _vm->gameFlags().gameID == GI_LOL ? Screen::kShadeTypeLol : Screen::kShadeTypeKyra);
 
 	if (menu.titleX != -1)
 		textX = menu.titleX;
 	else
-		textX = _text->getCenterStringX(getMenuTitle(menu), menu.x, menu_x2);
+		textX = getMenuCenterStringX(getMenuTitle(menu), menu.x, menu_x2);
 
 	textY = menu.y + menu.titleY;
 
-	_text->printText(getMenuTitle(menu), textX - 1, textY + 1, defaultColor1(), defaultColor2(), 0);
-	_text->printText(getMenuTitle(menu), textX, textY, menu.textColor, 0, 0);
+	if (_vm->gameFlags().gameID == GI_LOL) {
+		printMenuText(getMenuTitle(menu), textX, textY, menu.textColor, 0, 9);
+	} else {
+		printMenuText(getMenuTitle(menu), textX - 1, textY + 1, defaultColor1(), defaultColor2(), 0);
+		printMenuText(getMenuTitle(menu), textX, textY, menu.textColor, 0, 0);
+	}
 
 	int x1, y1, x2, y2;
 	for (int i = 0; i < menu.numberOfItems; ++i) {
@@ -114,35 +118,47 @@ void GUI::initMenu(Menu &menu) {
 			menuButtonData->width  = menu.item[i].width - 1;
 			menuButtonData->height = menu.item[i].height - 1;
 			menuButtonData->buttonCallback = menu.item[i].callback;
-			menuButtonData->keyCode = menu.item[i].unk1F;
+			menuButtonData->keyCode = menu.item[i].keyCode;
 			menuButtonData->keyCode2 = 0;
+			menuButtonData->arg = menu.item[i].itemId;
 
 			_menuButtonList = addButtonToList(_menuButtonList, menuButtonData);
 		}
 
 		_screen->fillRect(x1, y1, x2, y2, menu.item[i].bkgdColor);
-		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2);
+		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2, _vm->gameFlags().gameID == GI_LOL ? Screen::kShadeTypeLol : Screen::kShadeTypeKyra);
 
 		if (getMenuItemTitle(menu.item[i])) {
 			if (menu.item[i].titleX != -1)
 				textX = x1 + menu.item[i].titleX + 3;
 			else
-				textX = _text->getCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
+				textX = getMenuCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
 
 			textY = y1 + 2;
-			_text->printText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
-
-			if (i == menu.highlightedItem)
-				_text->printText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
-			else
-				_text->printText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
+			if (_vm->gameFlags().gameID == GI_LOL) {
+				textY++;
+				if (i == menu.highlightedItem)
+					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 8);
+				else
+					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
+			} else {
+				printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);				
+				if (i == menu.highlightedItem)
+					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
+				else
+					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
+			}			
 		}
 	}
 
 	for (int i = 0; i < menu.numberOfItems; ++i) {
 		if (getMenuItemLabel(menu.item[i])) {
-			_text->printText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX - 1, menu.y + menu.item[i].labelY + 1, defaultColor1(), 0, 0);
-			_text->printText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 0);
+			if (_vm->gameFlags().gameID == GI_LOL) {
+				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 8);
+			} else {
+				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX - 1, menu.y + menu.item[i].labelY + 1, defaultColor1(), 0, 0);
+				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 0);
+			}
 		}
 	}
 
@@ -172,8 +188,11 @@ void GUI::initMenu(Menu &menu) {
 	_screen->updateScreen();
 }
 
-void GUI::processHighlights(Menu &menu, int mouseX, int mouseY) {
+void GUI::processHighlights(Menu &menu) {
 	int x1, y1, x2, y2;
+	Common::Point p = _vm->getMousePos();
+	int mouseX = p.x;
+	int mouseY = p.y;
 
 	for (int i = 0; i < menu.numberOfItems; ++i) {
 		if (!menu.item[i].enabled)
@@ -189,8 +208,12 @@ void GUI::processHighlights(Menu &menu, int mouseX, int mouseY) {
 			mouseY > y1 && mouseY < y2) {
 
 			if (menu.highlightedItem != i) {
-				if (menu.item[menu.highlightedItem].enabled)
-					redrawText(menu);
+				// LoL doesnt't have default highlighted items. 
+				// We use a highlightedItem value of 255 for this.
+				if (menu.highlightedItem != 255) {
+					if (menu.item[menu.highlightedItem].enabled)
+						redrawText(menu);
+				}
 
 				menu.highlightedItem = i;
 				redrawHighlight(menu);
@@ -212,11 +235,16 @@ void GUI::redrawText(const Menu &menu) {
 	if (menu.item[i].titleX >= 0)
 		textX = x1 + menu.item[i].titleX + 3;
 	else
-		textX = _text->getCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
+		textX = getMenuCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
 
 	int textY = y1 + 2;
-	_text->printText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
-	_text->printText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
+	if (_vm->gameFlags().gameID == GI_LOL) {
+		textY++;
+		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
+	} else {
+		printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
+		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
+	}
 }
 
 void GUI::redrawHighlight(const Menu &menu) {
@@ -231,11 +259,17 @@ void GUI::redrawHighlight(const Menu &menu) {
 	if (menu.item[i].titleX != -1)
 		textX = x1 + menu.item[i].titleX + 3;
 	else
-		textX = _text->getCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
+		textX = getMenuCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
 
 	int textY = y1 + 2;
-	_text->printText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
-	_text->printText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
+
+	if (_vm->gameFlags().gameID == GI_LOL) {
+		textY++;
+		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 8);
+	} else {
+		printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
+		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
+	}
 }
 
 void GUI::updateAllMenuButtons() {
@@ -296,7 +330,7 @@ int GUI::redrawShadedButtonCallback(Button *button) {
 	return 0;
 }
 
-void GUI::updateSaveList() {
+void GUI::updateSaveList(bool excludeQuickSaves) {
 	Common::String pattern = _vm->_targetName + ".???";
 	Common::StringList saveFileList = _vm->_saveFileMan->listSavefiles(pattern);
 	_saveSlots.clear();
@@ -311,6 +345,8 @@ void GUI::updateSaveList() {
 		s1 -= '0';
 		s2 -= '0';
 		s3 -= '0';
+		if (excludeQuickSaves && s1 == 9 && s2 == 9)
+			continue;
 		_saveSlots.push_back(s1*100+s2*10+s3);
 	}
 
@@ -381,6 +417,14 @@ void GUI::checkTextfieldInput() {
 
 	processButtonList(_menuButtonList, keys | 0x8000, 0);
 	_vm->_system->delayMillis(3);
+}
+
+void GUI::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
+	_text->printText(str, x, y, c0, c1, c2, font);
+}
+
+int GUI::getMenuCenterStringX(const char *str, int x1, int x2) {
+	return _text->getCenterStringX(str, x1, x2);
 }
 
 #pragma mark -

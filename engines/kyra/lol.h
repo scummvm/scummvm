@@ -587,7 +587,7 @@ private:
 	int clickedAutomap(Button *button);
 	int clickedLamp(Button *button);
 	int clickedStatusIcon(Button *button);
-
+	
 	const ButtonDef *_buttonData;
 	int _buttonDataSize;
 	const int16 *_buttonList1;

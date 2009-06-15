@@ -105,7 +105,7 @@ void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint
 	va_end(vaList);
 
 	if (flags & 1)
-		x -= getTextWidth(string) >> 1;
+		x -= (getTextWidth(string) >> 1);
 
 	if (flags & 2)
 		x -= getTextWidth(string);
@@ -956,7 +956,7 @@ uint8 *Screen_LoL::generateFadeTable(uint8 *dst, uint8 *src1, uint8 *src2, int n
 		t += d;
 
 		for (int ii = 0; ii < 768; ii++) {
-			int val = (((int8)*p3++ * t) >> 8) + (int8)*p2++;
+			int16 val = (((int8)*p3++ * t) >> 8) + (int8)*p2++;
 			*dst++ = (uint8)val;
 		}
 	}

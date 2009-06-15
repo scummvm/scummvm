@@ -436,6 +436,7 @@ Common::Error LoLEngine::init() {
 
 	_gui = new GUI_LoL(this);
 	assert(_gui);
+	_gui->initStaticData();
 
 	_txt = new TextDisplayer_LoL(this, _screen);
 
@@ -561,7 +562,7 @@ Common::Error LoLEngine::go() {
 
 	// Usually fonts etc. would be setup by the prologue code, if we skip
 	// the prologue code we need to setup them manually here.
-	if (_gameToLoad != -1) {
+	if (_gameToLoad != -1 && action != 3) {
 		preInit();
 		_screen->setFont(Screen::FID_9_FNT);
 	}
@@ -591,8 +592,6 @@ Common::Error LoLEngine::go() {
 		if (loadGameState(_gameToLoad) != Common::kNoError)
 			error("Couldn't load game slot %d on startup", _gameToLoad);
 		_gameToLoad = -1;
-	} else if (action == 3) {
-		// XXX
 	}
 
 	_screen->_fadeFlag = 3;
@@ -639,6 +638,15 @@ void LoLEngine::loadItemIconShapes() {
 		_itemIconShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0]);
+
+	if (!_gameShapes) {
+		_screen->loadBitmap("GAMESHP.SHP", 3, 3, 0);
+		shp = _screen->getCPagePtr(3);
+		_numGameShapes = READ_LE_UINT16(shp);
+		_gameShapes = new uint8*[_numGameShapes];
+		for (int i = 0; i < _numGameShapes; i++)
+			_gameShapes[i] = _screen->makeShapeCopy(shp, i);
+	}
 }
 
 void LoLEngine::setMouseCursorToIcon(int icon) {
@@ -754,13 +762,6 @@ void LoLEngine::startup() {
 	for (int i = 0; i < _numItemShapes; i++)
 		_itemShapes[i] = _screen->makeShapeCopy(shp, i);
 
-	_screen->loadBitmap("GAMESHP.SHP", 3, 3, 0);
-	shp = _screen->getCPagePtr(3);
-	_numGameShapes = READ_LE_UINT16(shp);
-	_gameShapes = new uint8*[_numGameShapes];
-	for (int i = 0; i < _numGameShapes; i++)
-		_gameShapes[i] = _screen->makeShapeCopy(shp, i);
-
 	_screen->loadBitmap("THROWN.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numThrownShapes = READ_LE_UINT16(shp);
@@ -858,6 +859,12 @@ void LoLEngine::runLoop() {
 	_flagsTable[73] |= 0x08;
 
 	while (!shouldQuit() && _runFlag) {
+		if (_gameToLoad != -1) {
+			if (loadGameState(_gameToLoad) != Common::kNoError)
+				error("Couldn't load game slot %d", _gameToLoad);
+			_gameToLoad = -1;
+		}
+
 		if (_nextScriptFunc) {
 			runLevelScript(_nextScriptFunc, 2);
 			_nextScriptFunc = 0;
@@ -3282,6 +3289,52 @@ int LoLEngine::calcInflictableDamagePerItem(int16 attacker, int16 target, uint16
 }
 
 void LoLEngine::checkForPartyDeath() {
+	Button b;
+	b.data0Val2 = b.data1Val2 = b.data2Val2 = 0xfe;
+	b.data0Val3 = b.data1Val3 = b.data2Val3 = 0x01;
+
+	for (int i = 0; i < 4; i++) {
+		if (!(_characters[i].flags & 1) || _characters[i].hitPointsCur <= 0)
+			continue;
+		return;
+	}
+	
+	if (_weaponsDisabled)
+		clickedExitCharInventory(&b);
+
+	gui_drawAllCharPortraitsWithStats();
+
+	if (_partyDamageFlags & 0x40) {
+		_screen->fadeToBlack(40);
+		for (int i = 0; i < 4; i++) {
+			if (_characters[i].flags & 1)
+				increaseCharacterHitpoints(i, 1, true);
+		}
+		gui_drawAllCharPortraitsWithStats();
+		_screen->fadeToPalette1(40);
+
+	} else {
+		_screen->fadeClearSceneWindow(10);
+		restoreAfterSpecialScene(0, 1, 1, 0);
+
+		snd_playTrack(325);
+		updatePortraits();
+		initTextFading(0, 1);
+		setMouseCursorToIcon(0);
+		_updateFlags |= 4;
+		setLampMode(true);
+		disableSysTimer(2);
+	
+		_gui->runMenu(_gui->_deathMenu);
+
+		setMouseCursorToItemInHand();
+		_updateFlags &= 0xfffb;
+		resetLampStatus();
+
+		gui_enableDefaultPlayfieldButtons();
+		enableSysTimer(2);
+		updateDrawPage2();
+	}
 }
 
 void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, int16 damage) {

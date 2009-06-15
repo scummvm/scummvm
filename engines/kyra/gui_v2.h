@@ -96,7 +96,7 @@ namespace Kyra {
 		item.labelId = n; \
 		item.labelX = o; \
 		item.labelY = p; \
-		item.unk1F = q; \
+		item.keyCode = q; \
 	} while (0)
 
 class KyraEngine_v2;

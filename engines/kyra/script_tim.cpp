@@ -1133,7 +1133,9 @@ void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int la
 			anim->wsa->displayFrame(i - 1, 0, anim->x, anim->y, 0, 0, 0);
 			_screen->updateScreen();
 		}
-		_vm->delayUntil(next);
+		int32 del  = (int32)(next - _system->getMillis());
+		if (del > 0)
+			_vm->delay(del, true);
 	}
 }
 
@@ -1166,7 +1168,8 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	int x = _dialogueButtonPosX;
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
-		if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
+		Common::Point p = _vm->getMousePos();
+		if (_vm->posWithinRect(p.x, p.y, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
 			_dialogueHighlightedButton = i;
 			break;
 		}
@@ -1226,7 +1229,8 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 			x = _dialogueButtonPosX;
 
 			for (int i = 0; i < _dialogueNumButtons; i++) {
-				if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
+				Common::Point p = _vm->getMousePos();
+				if (_vm->posWithinRect(p.x, p.y, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
 					_dialogueHighlightedButton = i;
 					res = _dialogueHighlightedButton + 1;
 					break;

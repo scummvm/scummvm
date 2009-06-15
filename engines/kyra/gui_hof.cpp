@@ -763,7 +763,7 @@ int GUI_HoF::optionsButton(Button *button) {
 	}
 
 	while (_displayMenu) {
-		processHighlights(*_currentMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(*_currentMenu);
 		getInput();
 	}
 
@@ -908,7 +908,7 @@ int GUI_HoF::audioOptions(Button *caller) {
 	updateAllMenuButtons();
 	bool speechEnabled = _vm->speechEnabled();
 	while (_isOptionsMenu) {
-		processHighlights(_audioOptions, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_audioOptions);
 		getInput();
 	}
 
@@ -956,7 +956,7 @@ int GUI_HoF::gameOptions(Button *caller) {
 	}
 
 	while (_isOptionsMenu) {
-		processHighlights(_gameOptions, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_gameOptions);
 		getInput();
 	}
 
@@ -983,7 +983,7 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 	_isOptionsMenu = true;
 
 	while (_isOptionsMenu) {
-		processHighlights(_gameOptions, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_gameOptions);
 		getInput();
 	}
 
@@ -1175,7 +1175,7 @@ int GUI_HoF::loadMenu(Button *caller) {
 
 	_screen->updateScreen();
 	while (_isLoadMenu) {
-		processHighlights(_loadMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_loadMenu);
 		getInput();
 	}
 

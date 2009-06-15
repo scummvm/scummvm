@@ -479,7 +479,7 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 	}
 
 	while (_displayMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[_toplevelMenu], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[_toplevelMenu]);
 		getInput();
 	}
 
@@ -570,7 +570,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 	_cancelSubMenu = false;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[2], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[2]);
 		getInput();
 	}
 
@@ -616,7 +616,7 @@ int GUI_LoK::loadGameMenu(Button *button) {
 	_vm->_gameToLoad = -1;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[2], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[2]);
 		getInput();
 	}
 
@@ -703,7 +703,7 @@ int GUI_LoK::saveGame(Button *button) {
 	while (_displaySubMenu && !_vm->shouldQuit()) {
 		checkTextfieldInput();
 		updateSavegameString();
-		processHighlights(_menu[3], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[3]);
 	}
 
 	if (_cancelSubMenu) {
@@ -773,7 +773,7 @@ bool GUI_LoK::quitConfirm(const char *str) {
 	_cancelSubMenu = true;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[1], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[1]);
 		getInput();
 	}
 
@@ -833,7 +833,7 @@ int GUI_LoK::gameControlsMenu(Button *button) {
 	_cancelSubMenu = false;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[5], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[5]);
 		getInput();
 	}
 
