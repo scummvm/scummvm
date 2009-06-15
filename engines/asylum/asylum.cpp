@@ -68,6 +68,8 @@ Common::Error AsylumEngine::init() {
 	_screen = new Screen(_system);
 	_sound = new Sound(_mixer);
 	_video = new Video(_mixer);
+	_mainMenu = 0;
+	_gameState = 0;
 
     return Common::kNoError;
 }
@@ -83,7 +85,14 @@ Common::Error AsylumEngine::go() {
 	// Disabled for quick testing
 	//_video->playVideo(0);
 
-	_mainMenu = new MainMenu(_screen, _sound);
+	// Set up the game's state
+    _gameState = new GameState(_screen, _sound, 5);
+
+	// Set up main menu
+	_mainMenu = new MainMenu(_screen, _sound, _gameState);
+
+	// Enter first scene
+	_gameState->enterScene();
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
@@ -109,10 +118,21 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 	if (_system->getEventManager()->pollEvent(ev)) {
 		if (ev.type == Common::EVENT_KEYDOWN) {
 			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				/*
 				// Push a quit event
 				Common::Event event;
 				event.type = Common::EVENT_QUIT;
 				g_system->getEventManager()->pushEvent(event);
+				*/
+				// Toggle menu
+				if (_mainMenu->isActive()) {
+					_mainMenu->closeMenu();
+					_gameState->enterScene();
+				} else {
+					_mainMenu->openMenu();
+				}
+
+				return;
 			}
 		}
 	}
@@ -121,7 +141,14 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 		// Copy background image
 		_screen->copyBackBufferToScreen();
 	}
-	_mainMenu->handleEvent(&ev, doUpdate);
+
+	if (_mainMenu->isActive()) {
+		// Main menu active, pass events to it
+		_mainMenu->handleEvent(&ev, doUpdate);
+	} else {
+		// Pass events to the game
+		_gameState->handleEvent(&ev, doUpdate);
+	}
 }
 
 } // namespace Asylum

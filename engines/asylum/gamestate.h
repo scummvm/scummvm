@@ -47,6 +47,9 @@ public:
 	~GameState();
 
     void handleEvent(Common::Event *event, bool doUpdate);
+
+	void enterScene();
+
 private:
     Screen *_screen;
     Sound *_sound;

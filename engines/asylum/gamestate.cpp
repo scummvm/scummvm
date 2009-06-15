@@ -37,12 +37,6 @@ GameState::GameState(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(scre
         char musPackFileName[10];
 	    sprintf(musPackFileName, "mus.%03d", sceneIdx);
         _musPack = new ResourcePack(musPackFileName);
-
-        _screen->setPalette(_resPack, _scene->getWorldStats()->_commonRes.palette);
-
-        _bgResource = new GraphicResource(_resPack, _scene->getWorldStats()->_commonRes.backgroundImage);
-	    GraphicFrame *bg = _bgResource->getFrame(0);
-	    _screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
     }
 }
 
@@ -51,6 +45,14 @@ GameState::~GameState() {
     delete _resPack;
     delete _text;
     delete _scene;
+}
+
+void GameState::enterScene() {
+	_screen->setPalette(_resPack, _scene->getWorldStats()->_commonRes.palette);
+
+	_bgResource = new GraphicResource(_resPack, _scene->getWorldStats()->_commonRes.backgroundImage);
+	GraphicFrame *bg = _bgResource->getFrame(0);
+	_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
 }
 
 void GameState::handleEvent(Common::Event *event, bool doUpdate) {

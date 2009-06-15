@@ -32,10 +32,11 @@ namespace Asylum {
 /** This fixes the menu icons text x position on screen */
 const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 310, 508, 419 };
 
-MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound) {
+MainMenu::MainMenu(Screen *screen, Sound *sound, GameState *gameState) : 
+	_screen(screen), _sound(sound), _gameState(gameState) {
 	_mouseX             = 0;
 	_mouseY             = 0;
-	_leftClick           = false;
+	_leftClick          = false;
 	_activeIcon         = -1;
 	_previousActiveIcon = -1;
 	_curIconFrame       = 0;
@@ -44,31 +45,16 @@ MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound)
     _creditsBgFrame     = 0;
     _creditsTextScroll  = 0x1E0 - 30;
 	_activeMenuScreen   = kMainMenu;
+	_active				= false;
 
 	_resPack = new ResourcePack(1);
-
-	// Load the graphics palette
-	_screen->setPalette(_resPack, 17);
-
-	// Initialize background
 	_bgResource = new GraphicResource(_resPack, 0);
-	// Copy the bright background to the back buffer
-	GraphicFrame *bg = _bgResource->getFrame(1);
-	_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
-
-	// Initialize eye animation
 	_eyeResource = new GraphicResource(_resPack, 1);
-
-	// Initialize mouse cursor
 	_cursorResource = new GraphicResource(_resPack, 2);
-	_screen->setCursor(_cursorResource, 0);
-	_screen->showCursor();
 
 	_iconResource = 0;
 	_creditsResource = 0;
 	_creditsFadeResource = 0;
-
-	_sound->playMusic(_resPack, 39);
 
     _text = new Text(_screen);
     _text->loadFont(_resPack, 16);	// 0x80010010, yellow font
@@ -86,6 +72,27 @@ MainMenu::~MainMenu() {
 	delete _cursorResource;
 	delete _bgResource;
 	delete _resPack;
+}
+
+void MainMenu::openMenu() {
+	_active = true;
+
+	// Load the graphics palette
+	_screen->setPalette(_resPack, 17);
+	// Copy the bright background to the back buffer
+	GraphicFrame *bg = _bgResource->getFrame(1);
+	_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
+
+	// Set mouse cursor
+	_screen->setCursor(_cursorResource, 0);
+	_screen->showCursor();
+
+	// Start playing music
+	_sound->playMusic(_resPack, 39);
+}
+
+void MainMenu::closeMenu() {
+	_active = false;
 }
 
 void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
@@ -174,7 +181,8 @@ void MainMenu::update() {
 				_screen->setPalette(_resPack, 26);
 				break;
 			case kReturnToGame:
-				// TODO
+				closeMenu();
+				_gameState->enterScene();
 				break;
 		}
 	}
@@ -340,9 +348,6 @@ void MainMenu::updateSubMenuNewGame() {
 			_leftClick = false;
 
 			// TODO handle new game event
-
-            // FIXME scene proof-of-concept
-            //_gameState = new GameState(_screen, _sound, 5);
 		}
 	} else {
 		_text->setTextPos(247, 273);

@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 
+#include "asylum/gamestate.h"
 #include "asylum/scene.h"
 #include "asylum/menu.h"
 #include "asylum/screen.h"
@@ -36,6 +37,7 @@
 
 namespace Asylum {
 
+class GameState;
 class MainMenu;
 class Scene;
 class Screen;
@@ -66,6 +68,7 @@ private:
     Common::RandomSource _rnd;
 
     Scene *_scene;
+	GameState *_gameState;
     MainMenu *_mainMenu;
 	Screen *_screen;
 	Sound *_sound;
