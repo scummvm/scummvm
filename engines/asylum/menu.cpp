@@ -134,7 +134,7 @@ void MainMenu::update() {
 
 		switch (_activeIcon) {
 			case kNewGame:
-				// TODO
+				// Nothing here
 				break;
 			case kLoadGame:
 				// TODO
