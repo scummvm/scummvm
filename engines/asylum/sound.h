@@ -37,21 +37,24 @@ public:
 	~Sound();
 
 	void playSfx(byte *data, uint32 size);
-	void playMusic(byte *data, uint32 size);
-
-	void playSfx(ResourcePack *resPack, int entry) {
-		ResourceEntry *resEntry = resPack->getResource(entry);
+	void playSfx(ResourcePack *resPack, uint32 resourceId) {
+		ResourceEntry *resEntry = resPack->getResource(resourceId);
 		playSfx(resEntry->data, resEntry->size);
 	}
+	bool isSfxActive() { return _mixer->isSoundHandleActive(_sfxHandle); }
+	void pauseSfx() { _mixer->pauseHandle(_sfxHandle, true); }
+	void resumeSfx() { _mixer->pauseHandle(_sfxHandle, false); }
+	void stopSfx() { _mixer->stopHandle(_sfxHandle); }
 
-	void playMusic(ResourcePack *resPack, int entry) {
-		ResourceEntry *resEntry = resPack->getResource(entry);
+	void playMusic(byte *data, uint32 size);
+	void playMusic(ResourcePack *resPack, uint32 resourceId) {
+		ResourceEntry *resEntry = resPack->getResource(resourceId);
 		playMusic(resEntry->data, resEntry->size);
 	}
-
-	bool isSfxActive() { return _mixer->isSoundHandleActive(_sfxHandle); }
 	bool isMusicActive() { return _mixer->isSoundHandleActive(_musicHandle); }
-	// TODO: stop, pause, etc
+	void pauseMusic() { _mixer->pauseHandle(_musicHandle, true); }
+	void resumeMusic() { _mixer->pauseHandle(_musicHandle, false); }
+	void stopMusic() { _mixer->stopHandle(_musicHandle); }
 
 private:
 	Audio::SoundHandle _sfxHandle;
