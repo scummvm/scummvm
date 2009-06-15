@@ -61,13 +61,13 @@ static const PlainGameDescriptor gobGames[] = {
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 	{"dynasty", "The Last Dynasty"},
 	{"urban", "Urban Runner"},
-	{"archi", "Playtoon 1 - Uncle Archibald"},
-	{"spirou", "Playtoon 2 - The Case of the Counterfeit Collaborator"},
-	{"chato", "Playtoon 3 - The Secret of the Castle"},
-	{"manda", "Playtoon 4 - The Mandarine Prince"},
-	{"wakan", "Playtoon 5 - The Stone of Wakan"},
-	{"playtnck2", "Playtoon Construction Kit 2 - Les chevaliers"},
-	{"bambou", "Playtoon Limited Edition - Bambou le sauveur de la jungle"},
+	{"playtoons1", "Playtoons 1 - Uncle Archibald"},
+	{"playtoons2", "Playtoons 2 - The Case of the Counterfeit Collaborator"},
+	{"playtoons3", "Playtoons 3 - The Secret of the Castle"},
+	{"playtoons4", "Playtoons 4 - The Mandarine Prince"},
+	{"playtoons5", "Playtoons 5 - The Stone of Wakan"},
+	{"playtnck2", "Playtoons Construction Kit 2 - Les chevaliers"},
+	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
 	{"adibou4", "Adibou v4"},
@@ -3015,7 +3015,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"archi",
+			"playtoons1",
 			"",
 			{
 				{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
@@ -3033,7 +3033,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"archi",
+			"playtoons1",
 			"Pack mes histoires anim\xE9""es",
 			{
 				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
@@ -3051,7 +3051,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"archi",
+			"playtoons1",
 			"",
 			{
 				{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
@@ -3069,7 +3069,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"archi",
+			"playtoons1",
 			"Non-Interactive Demo",
 			{
 				{"play123.scn", 0, "4689a31f543915e488c3bc46ea358add", 258},
@@ -3092,7 +3092,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"archi",
+			"playtoons1",
 			"Non-Interactive Demo",
 			{
 				{"e.scn", 0, "8a0db733c3f77be86e74e8242e5caa61", 124},
@@ -3110,7 +3110,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"archi",
+			"playtoons1",
 			"Non-Interactive Demo",
 			{
 				{"i.scn", 0, "8b3294474d39970463663edd22341730", 285},
@@ -3132,7 +3132,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"archi",
+			"playtoons1",
 			"Non-Interactive Demo",
 			{
 				{"s.scn", 0, "1f527010626b5490761f16ba7a6f639a", 251},
@@ -3153,7 +3153,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"spirou",
+			"playtoons2",
 			"",
 			{
 				{"playtoon.stk", 0, "55a85036dd93cce93532d8f743d90074", 17467154},
@@ -3171,7 +3171,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"spirou",
+			"playtoons2",
 			"",
 			{
 				{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
@@ -3189,7 +3189,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"chato",
+			"playtoons3",
 			"",
 			{
 				{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
@@ -3207,7 +3207,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"chato",
+			"playtoons3",
 			"Pack mes histoires anim\xE9""es",
 			{
 				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
@@ -3225,7 +3225,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"chato",
+			"playtoons3",
 			"",
 			{
 				{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
@@ -3244,7 +3244,7 @@ static const GOBGameDescription gameDescriptions[] = {
 
 	{
 		{
-			"manda",
+			"playtoons4",
 			"",
 			{
 				{"playtoon.stk", 0, "b7f5afa2dc1b0f75970b7c07d175db1b", 24340406},
@@ -3262,7 +3262,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"wakan",
+			"playtoons5",
 			"",
 			{
 				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
@@ -3744,7 +3744,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
-			"archi",
+			"playtoons1",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -3758,7 +3758,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
-			"spirou",
+			"playtoons2",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -3772,7 +3772,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
-			"chato",
+			"playtoons3",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -3786,7 +3786,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
-			"manda",
+			"playtoons4",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -3800,7 +3800,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
-			"wakan",
+			"playtoons5",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
