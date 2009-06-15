@@ -30,23 +30,26 @@
 
 #include "asylum/asylum.h"
 #include "asylum/resourcepack.h"
+#include "asylum/gamestate.h"
 #include "asylum/graphics.h"
 #include "asylum/text.h"
-#include "asylum/gamestate.h"
 
 namespace Asylum {
 
+class GameState;
 class Screen;
 class Sound;
 class Text;
-class GameState;
 
 class MainMenu {
 public:
-	MainMenu(Screen *screen, Sound *sound);
+	MainMenu(Screen *screen, Sound *sound, GameState *state);
 	~MainMenu();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
+	bool isActive() { return _active; }
+	void openMenu();
+	void closeMenu();
 
 private:
 
@@ -81,6 +84,7 @@ private:
 
 	Screen *_screen;
 	Sound *_sound;
+	GameState *_gameState;
 	Common::Event *_ev;
 
 	int _mouseX;
@@ -93,6 +97,7 @@ private:
     int _creditsBgFrame;
     int _creditsTextScroll;
 	bool _leftClick;
+	bool _active;
 	MenuScreen _activeMenuScreen;
 	ResourcePack *_resPack;
 	GraphicResource *_bgResource;
@@ -103,8 +108,6 @@ private:
     GraphicResource *_creditsFadeResource;
     Text *_text;
 	Text *_textBlue;
-
-    GameState *_gameState;
 
 	void updateCursor();
 	void updateEyesAnimation();
