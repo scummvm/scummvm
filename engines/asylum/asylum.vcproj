@@ -206,11 +206,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\scene.cpp"
+			RelativePath="..\..\engines\asylum\scene_resource.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\scene.h"
+			RelativePath="..\..\engines\asylum\scene_resource.h"
 			>
 		</File>
 		<File

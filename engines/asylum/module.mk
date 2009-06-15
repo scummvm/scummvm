@@ -7,7 +7,7 @@ MODULE_OBJS := \
 	graphics.o \
 	menu.o \
 	resourcepack.o \
-	scene.o \
+	scene_resource.o \
 	screen.o \
 	sound.o \
 	text.o \

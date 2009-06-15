@@ -32,13 +32,13 @@
 #include "asylum/resourcepack.h"
 #include "asylum/graphics.h"
 #include "asylum/text.h"
-#include "asylum/scene.h"
+#include "asylum/scene_resource.h"
 
 namespace Asylum {
 
 class Screen;
 class Sound;
-class Scene;
+class SceneResource;
 class Text;
 
 class GameState {
@@ -56,7 +56,7 @@ private:
 	Common::Event *_ev;
 
     Text *_text;
-    Scene *_scene;
+    SceneResource *_scene;
     ResourcePack *_resPack;
 	ResourcePack *_musPack;
     GraphicResource *_bgResource;
