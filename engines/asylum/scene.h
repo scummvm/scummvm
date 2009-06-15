@@ -74,12 +74,6 @@ private:
 	void update();
 	void updateCursor();
 
-	enum GameCursors {
-		kCursorUpArrow = 1,
-		kCursorUpLeftArrow = 2
-		// TODO: add the rest
-	};
-
 }; // end of class Scene
 
 } // end of namespace Asylum

@@ -28,6 +28,7 @@
 namespace Asylum {
 
 #define SCREEN_EDGES 40
+#define SCROLL_STEP 10
 
 Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
     _sceneIdx = sceneIdx;
@@ -43,8 +44,9 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.backgroundImage);
     }
 
-	_cursorResource = new GraphicResource(_resPack, kCursorUpLeftArrow);
+	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.curMagnifyingGlass);
 	_startX = _startY = 0;
+	_leftClick = false;
 }
 
 Scene::~Scene() {
@@ -77,7 +79,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		_mouseY = _ev->mouse.y;
 		break;
 	case Common::EVENT_LBUTTONUP:
-		_leftClick = true;
+		//_leftClick = true;	// TODO
 		break;
 	}
 
@@ -98,27 +100,26 @@ void Scene::updateCursor() {
 void Scene::update() {
 	bool scrollScreen = false;
 	GraphicFrame *bg = _bgResource->getFrame(0);
-
-	//updateCursor();	// TODO
+	
+	updateCursor();
 
 	// Proof of concept for screen scrolling
-	// TODO: make this smoother, perhaps?
 
 	// Horizontal scrolling
-	if (_mouseX < SCREEN_EDGES && _startX > 0) {
-		_startX--;
+	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
+		_startX -= SCROLL_STEP;
 		scrollScreen = true;
-	} else if (_mouseX > 640 - SCREEN_EDGES && _startX < bg->surface.w - 640) {
-		_startX++;
+	} else if (_mouseX > 640 - SCREEN_EDGES && _startX <= bg->surface.w - 640 - SCROLL_STEP) {
+		_startX += SCROLL_STEP;
 		scrollScreen = true;
 	}
 
 	// Vertical scrolling
-	if (_mouseY < SCREEN_EDGES && _startY > 0) {
-		_startY--;
+	if (_mouseY < SCREEN_EDGES && _startY >= SCROLL_STEP) {
+		_startY -= SCROLL_STEP;
 		scrollScreen = true;
-	} else if (_mouseY > 480 - SCREEN_EDGES && _startY < bg->surface.h - 480) {
-		_startY++;
+	} else if (_mouseY > 480 - SCREEN_EDGES && _startY <= bg->surface.h - 480 - SCROLL_STEP) {
+		_startY += SCROLL_STEP;
 		scrollScreen = true;
 	}
 
