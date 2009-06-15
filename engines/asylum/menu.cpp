@@ -98,6 +98,10 @@ void MainMenu::openMenu() {
 
 void MainMenu::closeMenu() {
 	_active = false;
+
+	// Stop menu sounds and menu music
+	_sound->stopSfx();
+	_sound->stopMusic();
 }
 
 void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
