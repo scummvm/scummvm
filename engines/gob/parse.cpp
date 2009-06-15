@@ -96,8 +96,8 @@ void Parse::skipExpr(char stopToken) {
 			case OP_LOAD_VAR_INT16:
 			case OP_LOAD_VAR_INT8:
 			case OP_LOAD_IMM_INT16:
-			case 23:
-			case 24:
+			case OP_LOAD_VAR_UINT32:
+			case OP_LOAD_VAR_UINT32_AS_INT16:
 				_vm->_global->_inter_execPtr += 2;
 				break;
 
@@ -225,8 +225,8 @@ void Parse::printExpr_internal(char stopToken) {
 					strlen((char *) _vm->_global->_inter_execPtr) + 1;
 				break;
 
-			case 23: // uint32 variable load
-			case 24: // uint32 variable load as uint16
+			case OP_LOAD_VAR_UINT32:
+			case OP_LOAD_VAR_UINT32_AS_INT16:
 				debugN(5, "var_%d", _vm->_inter->load16());
 				break;
 
@@ -415,7 +415,7 @@ void Parse::printVarIndex() {
 
 	operation = *_vm->_global->_inter_execPtr++;
 	switch (operation) {
-	case 23:
+	case OP_LOAD_VAR_UINT32:
 	case OP_LOAD_VAR_STR:
 		temp = _vm->_inter->load16() * 4;
 		debugN(5, "&var_%d", temp);
@@ -457,11 +457,12 @@ void Parse::printVarIndex() {
 }
 
 int Parse::cmpHelper(byte *operPtr, int32 *valPtr) {
-	byte var_C = operPtr[-3];
+	byte type = operPtr[-3];
 	int cmpTemp = 0;
-	if (var_C == OP_LOAD_IMM_INT16) {
+
+	if (type == OP_LOAD_IMM_INT16) {
 		cmpTemp = (int)valPtr[-3] - (int)valPtr[-1];
-	} else if (var_C == OP_LOAD_IMM_STR) {
+	} else if (type == OP_LOAD_IMM_STR) {
 		if ((char *)decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
 			strcpy(_vm->_global->_inter_resStr, (char *)decodePtr(valPtr[-3]));
 			valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
@@ -472,7 +473,7 @@ int Parse::cmpHelper(byte *operPtr, int32 *valPtr) {
 	return cmpTemp;
 }
 
-bool Parse::getVarBase(uint32 &varBase, bool mindStop, uint16 *arg_0, uint16 *oper) {
+bool Parse::getVarBase(uint32 &varBase, bool mindStop, uint16 *size, uint16 *type) {
 	varBase = 0;
 
 	byte operation = *_vm->_global->_inter_execPtr;
@@ -484,10 +485,10 @@ bool Parse::getVarBase(uint32 &varBase, bool mindStop, uint16 *arg_0, uint16 *op
 
 			varBase += _vm->_inter->load16() * 4;
 
-			if (arg_0)
-				*arg_0 = READ_LE_UINT16(_vm->_global->_inter_execPtr);
-			if (oper)
-				*oper = 14;
+			if (size)
+				*size = READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			if (type)
+				*type = 14;
 
 			_vm->_global->_inter_execPtr += 2;
 
@@ -506,10 +507,10 @@ bool Parse::getVarBase(uint32 &varBase, bool mindStop, uint16 *arg_0, uint16 *op
 
 			uint16 offset1 = _vm->_inter->load16();
 
-			if (arg_0)
-				*arg_0 = offset1;
-			if (oper)
-				*oper = 15;
+			if (size)
+				*size = offset1;
+			if (type)
+				*type = 15;
 
 			uint8 dimCount = *_vm->_global->_inter_execPtr++;
 			byte *dimArray = _vm->_global->_inter_execPtr;
@@ -540,7 +541,7 @@ bool Parse::getVarBase(uint32 &varBase, bool mindStop, uint16 *arg_0, uint16 *op
 	return false;
 }
 
-int16 Parse::parseVarIndex(uint16 *arg_0, uint16 *arg_4) {
+int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 	int16 temp2;
 	byte *arrDesc;
 	int16 dim;
@@ -551,15 +552,15 @@ int16 Parse::parseVarIndex(uint16 *arg_0, uint16 *arg_4) {
 	int16 val;
 	uint32 varBase;
 
-	if (getVarBase(varBase, true, arg_0, arg_4))
+	if (getVarBase(varBase, true, size, type))
 		return varBase;
 
 	operation = *_vm->_global->_inter_execPtr++;
 
-	if (arg_0)
-		*arg_0 = 0;
-	if (arg_4)
-		*arg_4 = operation;
+	if (size)
+		*size = 0;
+	if (type)
+		*type = operation;
 
 	debugC(5, kDebugParser, "var parse = %d", operation);
 	switch (operation) {
@@ -596,8 +597,8 @@ int16 Parse::parseVarIndex(uint16 *arg_0, uint16 *arg_4) {
 	case OP_LOAD_VAR_INT8:
 		return varBase + _vm->_inter->load16();
 
-	case 23:
-	case 24:
+	case OP_LOAD_VAR_UINT32:
+	case OP_LOAD_VAR_UINT32_AS_INT16:
 	case OP_LOAD_VAR_STR:
 		temp = _vm->_inter->load16() * 4;
 		debugC(5, kDebugParser, "oper = %d",
@@ -621,7 +622,7 @@ int16 Parse::parseValExpr(byte stopToken) {
 	return _vm->_global->_inter_resVal;
 }
 
-int16 Parse::parseExpr(byte stopToken, byte *arg_2) {
+int16 Parse::parseExpr(byte stopToken, byte *type) {
 	int32 values[20];
 	byte operStack[20];
 	int32 prevPrevVal;
@@ -636,7 +637,7 @@ int16 Parse::parseExpr(byte stopToken, byte *arg_2) {
 	int16 temp2;
 	int16 offset;
 	int16 dim;
-	bool var_1A;
+	bool escape;
 	int16 stkPos;
 	int16 brackStart;
 	uint32 varBase;
@@ -724,12 +725,12 @@ int16 Parse::parseExpr(byte stopToken, byte *arg_2) {
 					strlen((char *) _vm->_global->_inter_execPtr) + 1;
 				break;
 
-			case 23:
+			case OP_LOAD_VAR_UINT32:
 				*operPtr = OP_LOAD_IMM_INT16;
 				*valPtr = READ_VARO_UINT32(varBase + _vm->_inter->load16() * 4);
 				break;
 
-			case 24:
+			case OP_LOAD_VAR_UINT32_AS_INT16:
 				*operPtr = OP_LOAD_IMM_INT16;
 				*valPtr = (int16) READ_VARO_UINT16(varBase + _vm->_inter->load16() * 4);
 				break;
@@ -849,7 +850,7 @@ int16 Parse::parseExpr(byte stopToken, byte *arg_2) {
 		if ((operation == stopToken) || (operation == OP_OR) ||
 				(operation == OP_AND) || (operation == OP_END_EXPR)) {
 			while (stkPos >= 2) {
-				var_1A = false;
+				escape = false;
 				if ((operPtr[-2] == OP_BEGIN_EXPR) &&
 						((operation == OP_END_EXPR) || (operation == stopToken))) {
 					operPtr[-2] = operPtr[-1];
@@ -1055,11 +1056,11 @@ int16 Parse::parseExpr(byte stopToken, byte *arg_2) {
 					}
 
 				default:
-					var_1A = true;
+					escape = true;
 					break;
 				}	// switch
 
-				if (var_1A)
+				if (escape)
 					break;
 			}	// while (stkPos >= 2)
 
@@ -1104,13 +1105,13 @@ int16 Parse::parseExpr(byte stopToken, byte *arg_2) {
 			if (operation != stopToken)
 				continue;
 
-			if (arg_2 != 0)
-				*arg_2 = operStack[0];
+			if (type != 0)
+				*type = operStack[0];
 
 			switch (operStack[0]) {
 			case OP_NOT:
-				if (arg_2 != 0)
-					*arg_2 ^= 1;
+				if (type != 0)
+					*type ^= 1;
 				break;
 
 			case OP_LOAD_IMM_INT16:
@@ -1122,14 +1123,14 @@ int16 Parse::parseExpr(byte stopToken, byte *arg_2) {
 					strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(values[0]));
 				break;
 
-			case 23:
-			case 24:
+			case OP_LOAD_VAR_UINT32:
+			case OP_LOAD_VAR_UINT32_AS_INT16:
 				break;
 
 			default:
 				_vm->_global->_inter_resVal = 0;
-				if (arg_2 != 0)
-					*arg_2 = OP_LOAD_IMM_INT16;
+				if (type != 0)
+					*type = OP_LOAD_IMM_INT16;
 				break;
 			}
 			return 0;

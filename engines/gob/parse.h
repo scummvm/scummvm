@@ -53,8 +53,8 @@ enum {
 	OP_LOAD_IMM_INT8 = 21,
 	OP_LOAD_IMM_STR = 22,
 
-	OP_LOAD_VAR_UINT32 = 23,		// ???
-	OP_LOAD_VAR_UINT32_AS_UINT16 = 24,		// ???
+	OP_LOAD_VAR_UINT32 = 23,
+	OP_LOAD_VAR_UINT32_AS_INT16 = 24,
 	OP_LOAD_VAR_STR = 25,
 
 	OP_ARRAY_UINT32 = 26,
@@ -98,9 +98,9 @@ public:
 	void printExpr(char stopToken);
 	void printVarIndex(void);
 
-	int16 parseVarIndex(uint16 *arg_0 = 0, uint16 *arg_4 = 0);
+	int16 parseVarIndex(uint16 *size = 0, uint16 *type = 0);
 	int16 parseValExpr(byte stopToken = 99);
-	int16 parseExpr(byte stopToken, byte *resultPtr);
+	int16 parseExpr(byte stopToken, byte *type);
 
 	Parse(GobEngine *vm);
 	virtual ~Parse() {}
@@ -121,7 +121,7 @@ private:
 
 	int cmpHelper(byte *operPtr, int32 *valPtr);
 
-	bool getVarBase(uint32 &varBase, bool mindStop = false, uint16 *arg_0 = 0, uint16 *oper = 0);
+	bool getVarBase(uint32 &varBase, bool mindStop = false, uint16 *size = 0, uint16 *type = 0);
 };
 
 } // End of namespace Gob
