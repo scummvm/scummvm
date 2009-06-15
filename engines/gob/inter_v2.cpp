@@ -760,7 +760,7 @@ void Inter_v2::checkSwitchTable(byte **ppExec) {
 			default:
 				if (!found) {
 					evalExpr(0);
-					if (value == _vm->_global->_inter_resVal)
+					if (value == _vm->_parse->_inter_resVal)
 						found = true;
 				} else
 					_vm->_parse->skipExpr(99);
@@ -1058,7 +1058,7 @@ void Inter_v2::o2_playCDTrack() {
 		_vm->_draw->blitInvalidated();
 
 	evalExpr(0);
-	_vm->_sound->cdPlay(_vm->_global->_inter_resStr);
+	_vm->_sound->cdPlay(_vm->_parse->_inter_resStr);
 }
 
 void Inter_v2::o2_waitCDTrackEnd() {
@@ -1076,7 +1076,7 @@ void Inter_v2::o2_readLIC() {
 	char path[40];
 
 	evalExpr(0);
-	strncpy0(path, _vm->_global->_inter_resStr, 35);
+	strncpy0(path, _vm->_parse->_inter_resStr, 35);
 	strcat(path, ".LIC");
 
 	_vm->_sound->cdLoadLIC(path);
@@ -1124,7 +1124,7 @@ void Inter_v2::o2_totSub() {
 
 	if (length & 0x80) {
 		evalExpr(0);
-		strcpy(totFile, _vm->_global->_inter_resStr);
+		strcpy(totFile, _vm->_parse->_inter_resStr);
 	} else {
 		for (i = 0; i < length; i++)
 			totFile[i] = (char) *_vm->_global->_inter_execPtr++;
@@ -1168,9 +1168,9 @@ void Inter_v2::o2_pushVars() {
 
 		} else {
 			if (evalExpr(&varOff) != 20)
-				_vm->_global->_inter_resVal = 0;
+				_vm->_parse->_inter_resVal = 0;
 
-			memcpy(_varStack + _varStackPos, &_vm->_global->_inter_resVal, 4);
+			memcpy(_varStack + _varStackPos, &_vm->_parse->_inter_resVal, 4);
 			_varStackPos += 4;
 			_varStack[_varStackPos] = 4;
 		}
@@ -1507,8 +1507,8 @@ void Inter_v2::o2_playImd() {
 	bool close;
 
 	evalExpr(0);
-	_vm->_global->_inter_resStr[8] = 0;
-	strncpy0(imd, _vm->_global->_inter_resStr, 127);
+	_vm->_parse->_inter_resStr[8] = 0;
+	strncpy0(imd, _vm->_parse->_inter_resStr, 127);
 
 	x = _vm->_parse->parseValExpr();
 	y = _vm->_parse->parseValExpr();
@@ -1521,7 +1521,7 @@ void Inter_v2::o2_playImd() {
 	palCmd = 1 << (flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", _vm->_global->_inter_resStr, x, y,
+			"paletteCmd %d (%d - %d), flags %X", _vm->_parse->_inter_resStr, x, y,
 			startFrame, lastFrame, palCmd, palStart, palEnd, flags);
 
 	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
@@ -1560,10 +1560,10 @@ void Inter_v2::o2_getImdInfo() {
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
 	if ((_vm->getGameType() == kGameTypeWoodruff) &&
-			(!scumm_stricmp(_vm->_global->_inter_resStr, "noixroule")))
-		strcpy(_vm->_global->_inter_resStr, "noixroul");
+			(!scumm_stricmp(_vm->_parse->_inter_resStr, "noixroule")))
+		strcpy(_vm->_parse->_inter_resStr, "noixroul");
 
-	_vm->_vidPlayer->writeVideoInfo(_vm->_global->_inter_resStr, varX, varY,
+	_vm->_vidPlayer->writeVideoInfo(_vm->_parse->_inter_resStr, varX, varY,
 			varFrames, varWidth, varHeight);
 }
 
@@ -1571,7 +1571,7 @@ void Inter_v2::o2_openItk() {
 	char fileName[32];
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_global->_inter_resStr, 27);
+	strncpy0(fileName, _vm->_parse->_inter_resStr, 27);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 
@@ -1606,21 +1606,21 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 		switch (destType) {
 		case TYPE_VAR_INT8:
 		case TYPE_ARRAY_INT8:
-			WRITE_VARO_UINT8(dest + i, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT8(dest + i, _vm->_parse->_inter_resVal);
 			break;
 
 		case TYPE_VAR_INT16:
 		case TYPE_ARRAY_INT16:
-			WRITE_VARO_UINT16(dest + i * 2, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_parse->_inter_resVal);
 			break;
 
 		case TYPE_VAR_INT32:
 		case TYPE_ARRAY_INT32:
-			WRITE_VAR_OFFSET(dest + i * 4, _vm->_global->_inter_resVal);
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_parse->_inter_resVal);
 			break;
 
 		case TYPE_VAR_INT32_AS_INT16:
-			WRITE_VARO_UINT16(dest + i * 4, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 4, _vm->_parse->_inter_resVal);
 			break;
 
 		case TYPE_VAR_STR:
@@ -1628,7 +1628,7 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 			if (srcType == TYPE_IMM_INT16)
 				WRITE_VARO_UINT8(dest, result);
 			else
-				WRITE_VARO_STR(dest, _vm->_global->_inter_resStr);
+				WRITE_VARO_STR(dest, _vm->_parse->_inter_resStr);
 			break;
 		}
 	}
@@ -1858,17 +1858,17 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	size = -1;
 	handle = 1;
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->_inter_resStr);
 	if (mode == SaveLoad::kSaveModeNone) {
-		handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
+		handle = _vm->_dataIO->openData(_vm->_parse->_inter_resStr);
 
 		if (handle >= 0) {
 			_vm->_dataIO->closeData(handle);
-			size = _vm->_dataIO->getDataSize(_vm->_global->_inter_resStr);
+			size = _vm->_dataIO->getDataSize(_vm->_parse->_inter_resStr);
 		} else
-			warning("File \"%s\" not found", _vm->_global->_inter_resStr);
+			warning("File \"%s\" not found", _vm->_parse->_inter_resStr);
 	} else if (mode == SaveLoad::kSaveModeSave)
-		size = _vm->_saveLoad->getSize(_vm->_global->_inter_resStr);
+		size = _vm->_saveLoad->getSize(_vm->_parse->_inter_resStr);
 	else if (mode == SaveLoad::kSaveModeExists)
 		size = 23;
 
@@ -1876,7 +1876,7 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 		handle = -1;
 
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
-			_vm->_global->_inter_resStr, size);
+			_vm->_parse->_inter_resStr, size);
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	WRITE_VAR(16, (uint32) size);
@@ -1897,16 +1897,16 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	dataVar = _vm->_parse->parseVarIndex();
 	size = _vm->_parse->parseValExpr();
 	evalExpr(0);
-	offset = _vm->_global->_inter_resVal;
+	offset = _vm->_parse->_inter_resVal;
 	retSize = 0;
 
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
-			_vm->_global->_inter_resStr, dataVar, size, offset);
+			_vm->_parse->_inter_resStr, dataVar, size, offset);
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->_inter_resStr);
 	if (mode == SaveLoad::kSaveModeSave) {
 		WRITE_VAR(1, 1);
-		if (_vm->_saveLoad->load(_vm->_global->_inter_resStr, dataVar, size, offset))
+		if (_vm->_saveLoad->load(_vm->_parse->_inter_resStr, dataVar, size, offset))
 			WRITE_VAR(1, 0);
 		return false;
 	} else if (mode == SaveLoad::kSaveModeIgnore)
@@ -1914,7 +1914,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	if (size < 0) {
 		warning("Attempted to read a raw sprite from file \"%s\"",
-				_vm->_global->_inter_resStr);
+				_vm->_parse->_inter_resStr);
 		return false ;
 	} else if (size == 0) {
 		dataVar = 0;
@@ -1923,13 +1923,13 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	buf = _variables->getAddressOff8(dataVar);
 
-	if (_vm->_global->_inter_resStr[0] == 0) {
+	if (_vm->_parse->_inter_resStr[0] == 0) {
 		WRITE_VAR(1, size);
 		return false;
 	}
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
+	handle = _vm->_dataIO->openData(_vm->_parse->_inter_resStr);
 
 	if (handle < 0)
 		return false;
@@ -1968,19 +1968,19 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	dataVar = _vm->_parse->parseVarIndex();
 	size = _vm->_parse->parseValExpr();
 	evalExpr(0);
-	offset = _vm->_global->_inter_resVal;
+	offset = _vm->_parse->_inter_resVal;
 
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
-			_vm->_global->_inter_resStr, dataVar, size, offset);
+			_vm->_parse->_inter_resStr, dataVar, size, offset);
 
 	WRITE_VAR(1, 1);
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->_inter_resStr);
 	if (mode == SaveLoad::kSaveModeSave) {
-		if (_vm->_saveLoad->save(_vm->_global->_inter_resStr, dataVar, size, offset))
+		if (_vm->_saveLoad->save(_vm->_parse->_inter_resStr, dataVar, size, offset))
 			WRITE_VAR(1, 0);
 	} else if (mode == SaveLoad::kSaveModeNone)
-		warning("Attempted to write to file \"%s\"", _vm->_global->_inter_resStr);
+		warning("Attempted to write to file \"%s\"", _vm->_parse->_inter_resStr);
 
 	return false;
 }

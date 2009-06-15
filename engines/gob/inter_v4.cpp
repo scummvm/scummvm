@@ -810,7 +810,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	bool close;
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_global->_inter_resStr, 127);
+	strncpy0(fileName, _vm->_parse->_inter_resStr, 127);
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".

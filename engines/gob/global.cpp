@@ -115,9 +115,6 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_debugFlag = 0;
 	_inVM = 0;
 
-	_inter_resStr[0] = 0;
-	_inter_resVal = 0;
-
 	_inter_execPtr = 0;
 	_inter_animDataSize = 10;
 

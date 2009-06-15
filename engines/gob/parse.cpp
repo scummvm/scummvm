@@ -34,6 +34,8 @@
 namespace Gob {
 
 Parse::Parse(GobEngine *vm) : _vm(vm) {
+	_inter_resStr[0] = 0;
+	_inter_resVal = 0;
 }
 
 int32 Parse::encodePtr(byte *ptr, int type) {
@@ -47,7 +49,7 @@ int32 Parse::encodePtr(byte *ptr, int type) {
 		offset = ptr - ((byte *) _vm->_inter->_variables->getAddressOff8(0));
 		break;
 	case kResStr:
-		offset = ptr - ((byte *) _vm->_global->_inter_resStr);
+		offset = ptr - ((byte *) _vm->_parse->_inter_resStr);
 		break;
 	default:
 		error("Parse::encodePtr(): Unknown pointer type");
@@ -67,7 +69,7 @@ byte *Parse::decodePtr(int32 n) {
 		ptr = (byte *) _vm->_inter->_variables->getAddressOff8(0);
 		break;
 	case kResStr:
-		ptr = (byte *) _vm->_global->_inter_resStr;
+		ptr = (byte *) _vm->_parse->_inter_resStr;
 		break;
 	default:
 		error("Parse::decodePtr(): Unknown pointer type");
@@ -463,11 +465,11 @@ int Parse::cmpHelper(byte *operPtr, int32 *valPtr) {
 	if (type == OP_LOAD_IMM_INT16) {
 		cmpTemp = (int)valPtr[-3] - (int)valPtr[-1];
 	} else if (type == OP_LOAD_IMM_STR) {
-		if ((char *)decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-			strcpy(_vm->_global->_inter_resStr, (char *)decodePtr(valPtr[-3]));
-			valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
+		if ((char *)decodePtr(valPtr[-3]) != _vm->_parse->_inter_resStr) {
+			strcpy(_vm->_parse->_inter_resStr, (char *)decodePtr(valPtr[-3]));
+			valPtr[-3] = encodePtr((byte *) _vm->_parse->_inter_resStr, kResStr);
 		}
-		cmpTemp = strcmp(_vm->_global->_inter_resStr, (char *)decodePtr(valPtr[-1]));
+		cmpTemp = strcmp(_vm->_parse->_inter_resStr, (char *)decodePtr(valPtr[-1]));
 	}
 
 	return cmpTemp;
@@ -621,7 +623,7 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 int16 Parse::parseValExpr(byte stopToken) {
 	parseExpr(stopToken, 0);
 
-	return _vm->_global->_inter_resVal;
+	return _vm->_parse->_inter_resVal;
 }
 
 // Load a value according to the operation
@@ -740,29 +742,29 @@ void Parse::loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valP
 			do {
 				prevPrevVal = prevVal;
 				prevVal = curVal;
-				curVal = (curVal + _vm->_global->_inter_resVal / curVal) / 2;
+				curVal = (curVal + _vm->_parse->_inter_resVal / curVal) / 2;
 			} while ((curVal != prevVal) && (curVal != prevPrevVal));
-			_vm->_global->_inter_resVal = curVal;
+			_vm->_parse->_inter_resVal = curVal;
 			break;
 
 		case FUNC_SQR:
-			_vm->_global->_inter_resVal =
-				_vm->_global->_inter_resVal * _vm->_global->_inter_resVal;
+			_vm->_parse->_inter_resVal =
+				_vm->_parse->_inter_resVal * _vm->_parse->_inter_resVal;
 			break;
 
 		case FUNC_ABS:
-			if (_vm->_global->_inter_resVal < 0)
-				_vm->_global->_inter_resVal = -_vm->_global->_inter_resVal;
+			if (_vm->_parse->_inter_resVal < 0)
+				_vm->_parse->_inter_resVal = -_vm->_parse->_inter_resVal;
 			break;
 
 		case FUNC_RAND:
-			_vm->_global->_inter_resVal =
-				_vm->_util->getRandom(_vm->_global->_inter_resVal);
+			_vm->_parse->_inter_resVal =
+				_vm->_util->getRandom(_vm->_parse->_inter_resVal);
 			break;
 		}
 
 		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = _vm->_global->_inter_resVal;
+		*valPtr = _vm->_parse->_inter_resVal;
 		break;
 	}
 }
@@ -771,11 +773,11 @@ void Parse::simpleArithmetic1(byte *&operPtr, int32 *&valPtr, int16 &stkPos) {
 	switch (operPtr[-1]) {
 	case OP_ADD:
 		if (operPtr[-2] == OP_LOAD_IMM_STR) {
-			if ((char *) decodePtr(valPtr[-2]) != _vm->_global->_inter_resStr) {
-				strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-2]));
-				valPtr[-2] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
+			if ((char *) decodePtr(valPtr[-2]) != _vm->_parse->_inter_resStr) {
+				strcpy(_vm->_parse->_inter_resStr, (char *) decodePtr(valPtr[-2]));
+				valPtr[-2] = encodePtr((byte *) _vm->_parse->_inter_resStr, kResStr);
 			}
-			strcat(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[0]));
+			strcat(_vm->_parse->_inter_resStr, (char *) decodePtr(valPtr[0]));
 			stkPos -= 2;
 			operPtr -= 2;
 			valPtr -= 2;
@@ -871,12 +873,12 @@ bool Parse::complexArithmetic(byte *&operPtr, int32 *&valPtr, int16 &stkPos,
 		if (operStack[brackStart] == OP_LOAD_IMM_INT16) {
 			values[brackStart] += valPtr[-1];
 		} else if (operStack[brackStart] == OP_LOAD_IMM_STR) {
-			if ((char *) decodePtr(values[brackStart]) != _vm->_global->_inter_resStr) {
-				strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(values[brackStart]));
+			if ((char *) decodePtr(values[brackStart]) != _vm->_parse->_inter_resStr) {
+				strcpy(_vm->_parse->_inter_resStr, (char *) decodePtr(values[brackStart]));
 				values[brackStart] =
-					encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
+					encodePtr((byte *) _vm->_parse->_inter_resStr, kResStr);
 			}
-			strcat(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1]));
+			strcat(_vm->_parse->_inter_resStr, (char *) decodePtr(valPtr[-1]));
 		}
 		stkPos -= 2;
 		operPtr -= 2;
@@ -1006,12 +1008,12 @@ void Parse::getResult(byte operation, int32 value, byte *type) {
 		break;
 
 	case OP_LOAD_IMM_INT16:
-		_vm->_global->_inter_resVal = value;
+		_vm->_parse->_inter_resVal = value;
 		break;
 
 	case OP_LOAD_IMM_STR:
-		if ((char *) decodePtr(value) != _vm->_global->_inter_resStr)
-			strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(value));
+		if ((char *) decodePtr(value) != _vm->_parse->_inter_resStr)
+			strcpy(_vm->_parse->_inter_resStr, (char *) decodePtr(value));
 		break;
 
 	case OP_LOAD_VAR_INT32:
@@ -1019,7 +1021,7 @@ void Parse::getResult(byte operation, int32 value, byte *type) {
 		break;
 
 	default:
-		_vm->_global->_inter_resVal = 0;
+		_vm->_parse->_inter_resVal = 0;
 		if (type != 0)
 			*type = OP_LOAD_IMM_INT16;
 		break;
@@ -1163,11 +1165,11 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 					if (operPtr[-3] == OP_LOAD_IMM_INT16) {
 						valPtr[-3] += valPtr[-1];
 					} else if (operPtr[-3] == OP_LOAD_IMM_STR) {
-						if ((char *) decodePtr(valPtr[-3]) != _vm->_global->_inter_resStr) {
-							strcpy(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr((byte *) _vm->_global->_inter_resStr, kResStr);
+						if ((char *) decodePtr(valPtr[-3]) != _vm->_parse->_inter_resStr) {
+							strcpy(_vm->_parse->_inter_resStr, (char *) decodePtr(valPtr[-3]));
+							valPtr[-3] = encodePtr((byte *) _vm->_parse->_inter_resStr, kResStr);
 						}
-						strcat(_vm->_global->_inter_resStr, (char *) decodePtr(valPtr[-1]));
+						strcat(_vm->_parse->_inter_resStr, (char *) decodePtr(valPtr[-1]));
 					}
 					stkPos -= 2;
 					operPtr -= 2;

@@ -118,6 +118,9 @@ public:
 	Parse(GobEngine *vm);
 	virtual ~Parse() {}
 
+	char _inter_resStr[200];
+	int32 _inter_resVal;
+
 private:
 	enum PointerType {
 		kExecPtr  = 0,

@@ -675,7 +675,7 @@ const char *Inter_v5::getOpcodeGoblinDesc(int i) {
 void Inter_v5::o5_deleteFile() {
 	evalExpr(0);
 
-	warning("Dynasty Stub: deleteFile \"%s\"", _vm->_global->_inter_resStr);
+	warning("Dynasty Stub: deleteFile \"%s\"", _vm->_parse->_inter_resStr);
 }
 
 void Inter_v5::o5_initScreen() {

@@ -117,9 +117,6 @@ public:
 	int16 _debugFlag;
 	int16 _inVM;
 
-	char _inter_resStr[200];
-	int32 _inter_resVal;
-
 	byte *_inter_execPtr;
 	int16 _inter_animDataSize;
 

@@ -666,7 +666,7 @@ void Inter_v6::o6_totSub() {
 
 	if (length & 0x80) {
 		evalExpr(0);
-		strcpy(totFile, _vm->_global->_inter_resStr);
+		strcpy(totFile, _vm->_parse->_inter_resStr);
 	} else {
 		for (i = 0; i < length; i++)
 			totFile[i] = (char) *_vm->_global->_inter_execPtr++;
@@ -694,7 +694,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	bool close;
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_global->_inter_resStr, 127);
+	strncpy0(fileName, _vm->_parse->_inter_resStr, 127);
 
 	x = _vm->_parse->parseValExpr();
 	y = _vm->_parse->parseValExpr();
@@ -760,7 +760,7 @@ void Inter_v6::o6_openItk() {
 	char fileName[32];
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_global->_inter_resStr, 27);
+	strncpy0(fileName, _vm->_parse->_inter_resStr, 27);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 
@@ -890,21 +890,21 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 		switch (destType) {
 		case TYPE_VAR_INT8:
 		case TYPE_ARRAY_INT8:
-			WRITE_VARO_UINT8(dest + i, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT8(dest + i, _vm->_parse->_inter_resVal);
 			break;
 
 		case TYPE_VAR_INT16:
 		case TYPE_ARRAY_INT16:
-			WRITE_VARO_UINT16(dest + i * 2, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_parse->_inter_resVal);
 			break;
 
 		case TYPE_VAR_INT32:
 		case TYPE_ARRAY_INT32:
-			WRITE_VAR_OFFSET(dest + i * 4, _vm->_global->_inter_resVal);
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_parse->_inter_resVal);
 			break;
 
 		case TYPE_VAR_INT32_AS_INT16:
-			WRITE_VARO_UINT16(dest + i * 4, _vm->_global->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 4, _vm->_parse->_inter_resVal);
 			break;
 
 		case TYPE_VAR_STR:
@@ -912,7 +912,7 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 			if (srcType == TYPE_IMM_INT16)
 				WRITE_VARO_UINT8(dest, result);
 			else
-				WRITE_VARO_STR(dest, _vm->_global->_inter_resStr);
+				WRITE_VARO_STR(dest, _vm->_parse->_inter_resStr);
 			break;
 		}
 	}
@@ -979,8 +979,8 @@ bool Inter_v6::o6_fillRect(OpFuncParams &params) {
 
 	evalExpr(0);
 
-	_vm->_draw->_backColor = _vm->_global->_inter_resVal & 0xFFFF;
-	uint16 extraVar = _vm->_global->_inter_resVal >> 16;
+	_vm->_draw->_backColor = _vm->_parse->_inter_resVal & 0xFFFF;
+	uint16 extraVar = _vm->_parse->_inter_resVal >> 16;
 
 	if (extraVar != 0)
 		warning("Urban Stub: o6_fillRect(), extraVar = %d", extraVar);
