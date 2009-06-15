@@ -178,7 +178,7 @@ void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
 }
 
 Common::String SceneResource::parseFilename(uint8 sceneIdx) {
-	char filename[8];
+	char filename[10];
 	sprintf(filename, SCENEMASK, sceneIdx);
 
 	return Common::String(filename);
