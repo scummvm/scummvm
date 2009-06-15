@@ -132,10 +132,16 @@ private:
 
 	void printExpr_internal(char stopToken);
 
-	int cmpHelper(byte *operPtr, int32 *valPtr);
-
 	bool getVarBase(uint32 &varBase, bool mindStop = false,
 			uint16 *size = 0, uint16 *type = 0);
+	int cmpHelper(byte *operPtr, int32 *valPtr);
+
+	void loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valPtr);
+	void simpleArithmetic1(byte *&operPtr, int32 *&valPtr, int16 &stkPos);
+	void simpleArithmetic2(byte *&operPtr, int32 *&valPtr, int16 &stkPos);
+	bool complexArithmetic(byte *&operPtr, int32 *&valPtr, int16 &stkPos,
+			byte *operStack, int32 *values, int16 brackStart);
+	void getResult(byte operation, int32 value, byte *type);
 };
 
 } // End of namespace Gob
