@@ -1085,11 +1085,10 @@ Common::Error ScummEngine::init() {
 					(_screenWidth * _textSurfaceMultiplier > 320));
 #ifdef ENABLE_16BIT
 	} else if (_game.features & GF_16BIT_COLOR) {
-		int format = Graphics::kFormatRGB555;
-		Common::List<Graphics::ColorMode> formatList;
-		formatList.push_back((Graphics::ColorMode) format);
-		formatList.push_back(Graphics::kFormatCLUT8);
-		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320, formatList);
+		Graphics::PixelFormat format = Graphics::kFormatRGB555;
+		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320, format);
+		if (format != _system->getScreenFormat())
+			return Common::kUnsupportedColorMode;
 #endif
 	} else {
 		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320);

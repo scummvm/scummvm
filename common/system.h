@@ -345,23 +345,6 @@ public:
 
 #ifdef ENABLE_16BIT
 	/**
-	 * Find a supported color format from a list of requested formats. Typical formats include:
-	 *  CLUT8 (e.g. 256 color, for most games), all backends must provide support for this format
-	 *  RGB555 (e.g. 16-bit color, for later SCUMM HE games)
-	 *  RGB565 (e.g. 16-bit color, for Urban Runner)
-	 *
-	 * These are the pixel formats for which the client code can generates data;
-	 * they are not necessarily equal to the hardware pixel format. For example,
-	 * a backend may perform color lookup of 8-bit graphics before pushing the 
-	 * screen buffer to hardware, or perform transformations of the ARGB color order.
-	 *
-	 * @param formatList	A list of requested pixel formats, ordered by priority
-	 *
-	 * @return a supported ColorMode from the list, or kFormatCLUT8 if no supported format was found
-	 */
-	virtual Graphics::ColorMode findCompatibleFormat(Common::List<Graphics::ColorMode> formatList) = 0;
-
-	/**
 	 * Set the color format of the virtual screen. Typical formats include:
 	 *  CLUT8 (e.g. 256 color, for most games)
 	 *  RGB555 (e.g. 16-bit color, for later SCUMM HE games)
@@ -381,13 +364,6 @@ public:
 	 * @see Graphics::PixelFormat
 	 */
 	virtual Graphics::PixelFormat getScreenFormat() const = 0;
-
-	/**
-	 * Returns the pixel format description of the requested color mode
-	 * @see Graphics::PixelFormat
-	 */
-	virtual Graphics::PixelFormat getPixelFormat(Graphics::ColorMode format) = 0;
-
 #endif
 
 	/**

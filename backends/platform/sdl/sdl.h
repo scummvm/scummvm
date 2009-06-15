@@ -82,19 +82,12 @@ public:
 	TransactionError endGFXTransaction(void);
 
 #ifdef ENABLE_16BIT
-	// Find a compatible format from the list of formats supported by the engine
-	// Fallback to CLUT8 if none found
-	virtual Graphics::ColorMode findCompatibleFormat(Common::List<Graphics::ColorMode> formatList);
-
 	// Set the depth and format of the video bitmap
 	// Typically, CLUT8
 	virtual void initFormat(Graphics::PixelFormat format);
 
 	// Game screen
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
-
-	//Create a Graphics::PixelFormat to describe the requested color mode
-	virtual Graphics::PixelFormat getPixelFormat(Graphics::ColorMode format);
 #endif
 
 	// Set the size of the video bitmap.
@@ -379,9 +372,6 @@ protected:
 	MousePos _mouseCurState;
 	byte _mouseKeyColor;
 	int _cursorTargetScale;
-#ifdef ENABLE_16BIT
-	uint8 _cursorBitDepth;
-#endif
 	bool _cursorPaletteDisabled;
 	SDL_Surface *_mouseOrigSurface;
 	SDL_Surface *_mouseSurface;

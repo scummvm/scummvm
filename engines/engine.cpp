@@ -126,20 +126,17 @@ void initCommonGFX(bool defaultTo1XScaler) {
 }
 void initGraphics(int width, int height, bool defaultTo1xScaler) {
 #ifdef ENABLE_16BIT
-	Common::List<Graphics::ColorMode> formatList;
-	formatList.push_back(Graphics::kFormatCLUT8);
-	initGraphics(width,height,defaultTo1xScaler, formatList);
+	Graphics::PixelFormat format = Graphics::kFormatCLUT8;
+	initGraphics(width,height,defaultTo1xScaler, format);
 }
-void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Graphics::ColorMode> formatList) {
+void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::PixelFormat format) {
 #endif
 
 	g_system->beginGFXTransaction();
 
 		initCommonGFX(defaultTo1xScaler);
 #ifdef ENABLE_16BIT
-		Graphics::ColorMode format = g_system->findCompatibleFormat(formatList);
-		debug("%X",format); //TODO: set up the pixelFormat here
-		g_system->initFormat(g_system->getPixelFormat(format));
+		g_system->initFormat(format);
 #endif
 		g_system->initSize(width, height);
 
@@ -161,16 +158,16 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, Common::List<Gr
 		error("%s", message.c_str());
 	}
 
+	// Just show warnings then these occur:
 #ifdef ENABLE_16BIT
 	if (gfxError & OSystem::kTransactionPixelFormatNotSupported) {
 		Common::String message = "Could not initialize color format.";
 
-		GUIErrorMessage(message);
-		error("%s", message.c_str());
+		GUI::MessageDialog dialog(message);
+		dialog.runModal();
 	}
 #endif
 
-	// Just show warnings then these occur:
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 		Common::String message = "Could not switch to video mode: '";
 		message += ConfMan.get("gfx_mode");

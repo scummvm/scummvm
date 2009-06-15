@@ -76,6 +76,116 @@ struct PixelFormat {
 	byte rLoss, gLoss, bLoss, aLoss; /**< Precision loss of each color component. */
 	byte rShift, gShift, bShift, aShift; /**< Binary left shift of each color component in the pixel value. */
 
+#ifdef ENABLE_16BIT
+	inline PixelFormat() {
+		bytesPerPixel = 
+		rLoss = gLoss = bLoss = aLoss = 
+		rShift = gShift = bShift = aShift = 0;
+	}
+
+	inline PixelFormat(int BytesPerPixel, 
+						int RLoss, int GLoss, int BLoss, int ALoss, 
+						int RShift, int GShift, int BShift, int AShift) {
+		bytesPerPixel = BytesPerPixel;
+		rLoss = RLoss, gLoss = GLoss, bLoss = BLoss, aLoss = ALoss;
+		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
+	}
+
+	//Copy constructor
+	//Is this necessary?
+	inline PixelFormat(const PixelFormat &format) {
+		bytesPerPixel = format.bytesPerPixel;
+
+		rLoss = format.rLoss;
+		gLoss = format.gLoss;
+		bLoss = format.bLoss;
+		aLoss = format.aLoss;
+
+		rShift = format.rShift;
+		gShift = format.gShift;
+		bShift = format.bShift;
+		aShift = format.aShift;
+	}
+
+	//Convenience constructor from bitformat number
+	//TODO: BGR support
+	//TODO: Specify alpha position
+/*	PixelFormat(int bitFormat) {
+		bytesPerPixel = ColorMasks<bitFormat>::kBytesPerPixel;
+
+		rLoss = 8 - ColorMasks<bitFormat>::kRedBits;
+		gLoss = 8 - ColorMasks<bitFormat>::kGreenBits;
+		bLoss = 8 - ColorMasks<bitFormat>::kBlueBits;
+		aLoss = 8 - ColorMasks<bitFormat>::kAlphaBits;
+
+		rShift = ColorMasks<bitFormat>::kRedShift;
+		gShift = ColorMasks<bitFormat>::kGreenShift;
+		bShift = ColorMasks<bitFormat>::kBlueShift;
+		aShift = ColorMasks<bitFormat>::kAlphaShift;
+	};*/
+
+	//Convenience constructor from enum type
+	//TODO: BGR support
+	//TODO: Specify alpha position
+	inline PixelFormat(ColorMode mode) {
+		switch (mode) {
+		case kFormatRGB555:
+			aLoss = 8;
+			bytesPerPixel = 2;
+			rLoss = gLoss = bLoss = 3;
+			break;
+		case kFormatXRGB1555:
+			//Special case, alpha bit is always high in this mode.
+			aLoss = 7;
+			bytesPerPixel = 2;
+			rLoss = gLoss = bLoss = 3;
+			bShift = 0;
+			gShift = bShift + bBits();
+			rShift = gShift + gBits();
+			aShift = rShift + rBits();
+			//FIXME: there should be a clean way to handle setting 
+			//up the color order without prematurely returning.
+			//This will probably be handled when alpha position specification is possible
+			return;
+		case kFormatRGB565:
+			bytesPerPixel = 2;
+			aLoss = 8;
+			gLoss = 2;
+			rLoss = bLoss = 3;
+			break;
+		case kFormatRGBA4444:
+			bytesPerPixel = 2;
+			aLoss = gLoss = rLoss = bLoss = 4;
+			break;
+		case kFormatRGB888:
+			bytesPerPixel = 3;
+			aLoss = 8;
+			gLoss = rLoss = bLoss = 0;
+			break;
+		case kFormatRGBA6666:
+			bytesPerPixel = 3;
+			aLoss = gLoss = rLoss = bLoss = 2;
+			break;
+		case kFormatRGBA8888:
+			bytesPerPixel = 4;
+			aLoss = gLoss = rLoss = bLoss = 0;
+			break;
+		case kFormatCLUT8:
+		default:
+			bytesPerPixel = 1;
+			rShift = gShift = bShift = aShift = 0;
+			rLoss = gLoss = bLoss = aLoss = 8;
+			return;
+		}
+
+		aShift = 0;
+		bShift = aBits();
+		gShift = bShift + bBits();
+		rShift = gShift + gBits();
+		return;
+	}
+#endif
+
 	inline bool operator==(const PixelFormat &fmt) const {
 		// TODO: If aLoss==8, then the value of aShift is irrelevant, and should be ignored.
 		return 0 == memcmp(this, &fmt, sizeof(PixelFormat));

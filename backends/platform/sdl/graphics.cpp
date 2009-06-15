@@ -352,34 +352,6 @@ int OSystem_SDL::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 #ifdef ENABLE_16BIT
-Graphics::ColorMode OSystem_SDL::findCompatibleFormat(Common::List<Graphics::ColorMode> formatList) {
-	bool typeAccepted = false;
-	Graphics::ColorMode format;
-	
-	while (!formatList.empty()) {
-		typeAccepted = false;
-		format = formatList.front();
-
-		//no need to keep searching if the screen
-		//is already in one of the desired formats
-		if (getPixelFormat(format) == _videoMode.format)
-			return format;
-
-		formatList.pop_front();
-		switch (format) {
-		case Graphics::kFormatCLUT8:
-			if (format == Graphics::kFormatCLUT8)
-				return format;
-			break;
-		case Graphics::kFormatRGB555:
-		case Graphics::kFormatRGB565:
-			return format;
-			break;
-		}
-	}
-	return Graphics::kFormatCLUT8;
-}
-
 void OSystem_SDL::initFormat(Graphics::PixelFormat format) {
 	assert(_transactionMode == kTransactionActive);
 
@@ -390,66 +362,6 @@ void OSystem_SDL::initFormat(Graphics::PixelFormat format) {
 	_videoMode.format = format;
 	_transactionDetails.formatChanged = true;
 	_screenFormat = format;
-}
-
-//TODO: Move this out of OSystem and into Graphics, where engine can access it.
-//TODO: ABGR support
-Graphics::PixelFormat OSystem_SDL::getPixelFormat(Graphics::ColorMode format) {
-	Graphics::PixelFormat result;
-	switch (format) {
-	case Graphics::kFormatRGB555:
-		result.aLoss = 8;
-		result.bytesPerPixel = 2;
-		result.rLoss = result.gLoss = result.bLoss = 3;
-		break;
-	case Graphics::kFormatRGB565:
-		result.bytesPerPixel = 2;
-		result.aLoss = 8;
-		result.gLoss = 2;
-		result.rLoss = result.bLoss = 3;
-		break;
-	case Graphics::kFormatXRGB1555:
-		//Special case, alpha bit is always high in this mode.
-		result.aLoss = 7;
-		result.bytesPerPixel = 2;
-		result.rLoss = result.gLoss = result.bLoss = 3;
-		result.bShift = 0;
-		result.gShift = result.bShift + result.bBits();
-		result.rShift = result.gShift + result.gBits();
-		result.aShift = result.rShift + result.rBits();
-		//HACK: there should be a clean way to handle setting 
-		//up the color order without prematurely returning
-		return result;
-	case Graphics::kFormatRGBA4444:
-		result.bytesPerPixel = 2;
-		result.aLoss = result.gLoss = result.rLoss = result.bLoss = 4;
-		break;
-	case Graphics::kFormatRGB888:
-		result.bytesPerPixel = 3;
-		result.aLoss = 8;
-		result.gLoss = result.rLoss = result.bLoss = 0;
-		break;
-	case Graphics::kFormatRGBA6666:
-		result.bytesPerPixel = 3;
-		result.aLoss = result.gLoss = result.rLoss = result.bLoss = 2;
-		break;
-	case Graphics::kFormatRGBA8888:
-		result.bytesPerPixel = 4;
-		result.aLoss = result.gLoss = result.rLoss = result.bLoss = 0;
-		break;
-	case Graphics::kFormatCLUT8:
-	default:
-		result.bytesPerPixel = 1;
-		result.rShift = result.gShift = result.bShift = result.aShift = 0;
-		result.rLoss = result.gLoss = result.bLoss = result.aLoss = 8;
-		return result;
-	}
-
-	result.aShift = 0;
-	result.bShift = result.aBits();
-	result.gShift = result.bShift + result.bBits();
-	result.rShift = result.gShift + result.gBits();
-	return result;
 }
 #endif
 
