@@ -116,6 +116,8 @@ void BArchive::openDFW(const Common::String &path) {
 	}
 
 	delete[] table;
+	
+	f.close();
 }		
 
 /**
