@@ -81,6 +81,22 @@ enum {
 };
 
 enum {
+	TYPE_IMM_INT8           = OP_LOAD_IMM_INT8,          // 21
+	TYPE_IMM_INT32          = OP_LOAD_IMM_INT32,         // 19
+	TYPE_IMM_INT16          = OP_LOAD_IMM_INT16,         // 20
+	TYPE_IMM_STR            = OP_LOAD_IMM_STR,           // 22
+	TYPE_VAR_INT8           = OP_LOAD_VAR_INT8,          // 18
+	TYPE_VAR_INT16          = OP_LOAD_VAR_INT16,         // 17
+	TYPE_VAR_INT32          = OP_LOAD_VAR_INT32,         // 23
+	TYPE_VAR_STR            = OP_LOAD_VAR_STR,           // 25
+	TYPE_ARRAY_INT8         = OP_ARRAY_INT8,             // 16
+	TYPE_ARRAY_INT16        = OP_ARRAY_INT16,            // 27
+	TYPE_ARRAY_INT32        = OP_ARRAY_INT32,            // 26
+	TYPE_ARRAY_STR          = OP_ARRAY_STR,              // 28
+	TYPE_VAR_INT32_AS_INT16 = OP_LOAD_VAR_INT32_AS_INT16 // 24
+};
+
+enum {
 	// FIXME: The following two 'truth values' are stored inside the list
 	// of "operators". So they somehow coincide with OP_LOAD_VAR_INT32
 	// and OP_LOAD_VAR_INT32_AS_INT16. I haven't yet quite understood
