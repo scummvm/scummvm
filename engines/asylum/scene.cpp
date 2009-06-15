@@ -42,14 +42,21 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
         _musPack = new ResourcePack(musPackFileName);
 
 		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.backgroundImage);
+		_background = _bgResource->getFrame(0);
+
+		// Statue animation, used for testing
+		_actorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_actorsDef[0].graphicResId);
     }
 
 	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.curMagnifyingGlass);
+
+	_actorAnimCurFrame = 0;
 	_startX = _startY = 0;
 	_leftClick = false;
 }
 
 Scene::~Scene() {
+	delete _actorResource;
 	delete _cursorResource;
 	delete _bgResource;
     delete _musPack;
@@ -61,8 +68,7 @@ Scene::~Scene() {
 void Scene::enterScene() {
 	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->_commonRes.palette);
 
-	GraphicFrame *bg = _bgResource->getFrame(0);
-	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
+	_screen->copyToBackBuffer(((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w, 0, 0, 640, 480);
 
 	_cursorStep = 1;
 	_curMouseCursor = 0;
@@ -103,6 +109,16 @@ void Scene::update() {
 	
 	updateCursor();
 
+
+	// Proof of concept for animation showing
+	GraphicFrame *actor = _actorResource->getFrame(_actorAnimCurFrame);
+	_actorAnimCurFrame++;
+	if (_actorAnimCurFrame >= _actorResource->getFrameCount())
+		_actorAnimCurFrame = 0;
+
+	// Hardcoded coords
+	copyToSceneBackground(actor, 655, 0);
+
 	// Proof of concept for screen scrolling
 
 	// Horizontal scrolling
@@ -123,10 +139,24 @@ void Scene::update() {
 		scrollScreen = true;
 	}
 
-	if (scrollScreen)
+	//if (scrollScreen)
 		_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
 
 	// TODO
 }
+
+void Scene::copyToSceneBackground(GraphicFrame *frame, int x, int y) {
+	int h = frame->surface.h;
+    int w = frame->surface.w;
+	byte *buffer = (byte *)frame->surface.pixels;
+	byte *dest = ((byte *)_background->surface.pixels) + y * _background->surface.w + x;
+
+	while (h--) {
+		memcpy(dest, buffer, w);
+		dest += _background->surface.w;
+		buffer += frame->surface.w;
+	}
+}
+
 
 } // end of namespace Asylum
