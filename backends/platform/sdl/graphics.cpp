@@ -155,6 +155,8 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 
 #ifdef ENABLE_16BIT
 	if (_transactionDetails.sizeChanged || _transactionDetails.formatChanged) {
+#else
+	if (_transactionDetails.sizeChanged) {
 #endif
 		unloadGFXMode();
 		if (!loadGFXMode()) {

@@ -60,11 +60,11 @@ public:
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
-//#ifdef ENABLE_16BIT
+#ifdef ENABLE_16BIT
 	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1);
-//#else
-//	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
-//#endif
+#else
+	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
+#endif
 
 	/**
 	 * Pop a cursor from the stack, and restore the previous one to the
@@ -85,11 +85,11 @@ public:
 	 * @param keycolor	the index for the transparent color
 	 * @param targetScale	the scale for which the cursor is designed
 	 */
-//#ifdef ENABLE_16BIT
+#ifdef ENABLE_16BIT
 	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1);
-//#else
-//	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
-//#endif
+#else
+	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
+#endif
 
 	/**
 	 * Pop all of the cursors and cursor palettes from their respective stacks.
