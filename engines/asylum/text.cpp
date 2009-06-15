@@ -85,7 +85,7 @@ void Text::drawChar(char character) {
 	assert (_fontResource);
 
 	GraphicFrame *fontLetter = _fontResource->getFrame(character);
-	_screen->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
+	_screen->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, fontLetter->surface.w, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
     _posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 

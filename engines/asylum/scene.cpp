@@ -56,7 +56,7 @@ void Scene::enterScene() {
 
 	_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.backgroundImage);
 	GraphicFrame *bg = _bgResource->getFrame(0);
-	_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
+	_screen->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, 640, 480);
 
 	_cursorStep = 1;
 	_curMouseCursor = 0;
