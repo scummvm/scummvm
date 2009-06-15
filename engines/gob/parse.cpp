@@ -35,7 +35,7 @@ namespace Gob {
 
 Parse::Parse(GobEngine *vm) : _vm(vm) {
 	_inter_resStr[0] = 0;
-	_inter_resVal = 0;
+	_resultInt = 0;
 }
 
 int32 Parse::encodePtr(byte *ptr, int type) {
@@ -623,7 +623,7 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 int16 Parse::parseValExpr(byte stopToken) {
 	parseExpr(stopToken, 0);
 
-	return _vm->_parse->_inter_resVal;
+	return _vm->_parse->_resultInt;
 }
 
 // Load a value according to the operation
@@ -742,29 +742,29 @@ void Parse::loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valP
 			do {
 				prevPrevVal = prevVal;
 				prevVal = curVal;
-				curVal = (curVal + _vm->_parse->_inter_resVal / curVal) / 2;
+				curVal = (curVal + _vm->_parse->_resultInt / curVal) / 2;
 			} while ((curVal != prevVal) && (curVal != prevPrevVal));
-			_vm->_parse->_inter_resVal = curVal;
+			_vm->_parse->_resultInt = curVal;
 			break;
 
 		case FUNC_SQR:
-			_vm->_parse->_inter_resVal =
-				_vm->_parse->_inter_resVal * _vm->_parse->_inter_resVal;
+			_vm->_parse->_resultInt =
+				_vm->_parse->_resultInt * _vm->_parse->_resultInt;
 			break;
 
 		case FUNC_ABS:
-			if (_vm->_parse->_inter_resVal < 0)
-				_vm->_parse->_inter_resVal = -_vm->_parse->_inter_resVal;
+			if (_vm->_parse->_resultInt < 0)
+				_vm->_parse->_resultInt = -_vm->_parse->_resultInt;
 			break;
 
 		case FUNC_RAND:
-			_vm->_parse->_inter_resVal =
-				_vm->_util->getRandom(_vm->_parse->_inter_resVal);
+			_vm->_parse->_resultInt =
+				_vm->_util->getRandom(_vm->_parse->_resultInt);
 			break;
 		}
 
 		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = _vm->_parse->_inter_resVal;
+		*valPtr = _vm->_parse->_resultInt;
 		break;
 	}
 }
@@ -1008,7 +1008,7 @@ void Parse::getResult(byte operation, int32 value, byte *type) {
 		break;
 
 	case OP_LOAD_IMM_INT16:
-		_vm->_parse->_inter_resVal = value;
+		_vm->_parse->_resultInt = value;
 		break;
 
 	case OP_LOAD_IMM_STR:
@@ -1021,7 +1021,7 @@ void Parse::getResult(byte operation, int32 value, byte *type) {
 		break;
 
 	default:
-		_vm->_parse->_inter_resVal = 0;
+		_vm->_parse->_resultInt = 0;
 		if (type != 0)
 			*type = OP_LOAD_IMM_INT16;
 		break;

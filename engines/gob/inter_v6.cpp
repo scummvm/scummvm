@@ -890,21 +890,21 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 		switch (destType) {
 		case TYPE_VAR_INT8:
 		case TYPE_ARRAY_INT8:
-			WRITE_VARO_UINT8(dest + i, _vm->_parse->_inter_resVal);
+			WRITE_VARO_UINT8(dest + i, _vm->_parse->_resultInt);
 			break;
 
 		case TYPE_VAR_INT16:
 		case TYPE_ARRAY_INT16:
-			WRITE_VARO_UINT16(dest + i * 2, _vm->_parse->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_parse->_resultInt);
 			break;
 
 		case TYPE_VAR_INT32:
 		case TYPE_ARRAY_INT32:
-			WRITE_VAR_OFFSET(dest + i * 4, _vm->_parse->_inter_resVal);
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_parse->_resultInt);
 			break;
 
 		case TYPE_VAR_INT32_AS_INT16:
-			WRITE_VARO_UINT16(dest + i * 4, _vm->_parse->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 4, _vm->_parse->_resultInt);
 			break;
 
 		case TYPE_VAR_STR:
@@ -979,8 +979,8 @@ bool Inter_v6::o6_fillRect(OpFuncParams &params) {
 
 	evalExpr(0);
 
-	_vm->_draw->_backColor = _vm->_parse->_inter_resVal & 0xFFFF;
-	uint16 extraVar = _vm->_parse->_inter_resVal >> 16;
+	_vm->_draw->_backColor = _vm->_parse->_resultInt & 0xFFFF;
+	uint16 extraVar = _vm->_parse->_resultInt >> 16;
 
 	if (extraVar != 0)
 		warning("Urban Stub: o6_fillRect(), extraVar = %d", extraVar);

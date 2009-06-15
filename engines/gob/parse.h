@@ -119,7 +119,7 @@ public:
 	virtual ~Parse() {}
 
 	char _inter_resStr[200];
-	int32 _inter_resVal;
+	int32 _resultInt;
 
 private:
 	enum PointerType {

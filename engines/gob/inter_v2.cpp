@@ -760,7 +760,7 @@ void Inter_v2::checkSwitchTable(byte **ppExec) {
 			default:
 				if (!found) {
 					evalExpr(0);
-					if (value == _vm->_parse->_inter_resVal)
+					if (value == _vm->_parse->_resultInt)
 						found = true;
 				} else
 					_vm->_parse->skipExpr(99);
@@ -1168,9 +1168,9 @@ void Inter_v2::o2_pushVars() {
 
 		} else {
 			if (evalExpr(&varOff) != 20)
-				_vm->_parse->_inter_resVal = 0;
+				_vm->_parse->_resultInt = 0;
 
-			memcpy(_varStack + _varStackPos, &_vm->_parse->_inter_resVal, 4);
+			memcpy(_varStack + _varStackPos, &_vm->_parse->_resultInt, 4);
 			_varStackPos += 4;
 			_varStack[_varStackPos] = 4;
 		}
@@ -1606,21 +1606,21 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 		switch (destType) {
 		case TYPE_VAR_INT8:
 		case TYPE_ARRAY_INT8:
-			WRITE_VARO_UINT8(dest + i, _vm->_parse->_inter_resVal);
+			WRITE_VARO_UINT8(dest + i, _vm->_parse->_resultInt);
 			break;
 
 		case TYPE_VAR_INT16:
 		case TYPE_ARRAY_INT16:
-			WRITE_VARO_UINT16(dest + i * 2, _vm->_parse->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_parse->_resultInt);
 			break;
 
 		case TYPE_VAR_INT32:
 		case TYPE_ARRAY_INT32:
-			WRITE_VAR_OFFSET(dest + i * 4, _vm->_parse->_inter_resVal);
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_parse->_resultInt);
 			break;
 
 		case TYPE_VAR_INT32_AS_INT16:
-			WRITE_VARO_UINT16(dest + i * 4, _vm->_parse->_inter_resVal);
+			WRITE_VARO_UINT16(dest + i * 4, _vm->_parse->_resultInt);
 			break;
 
 		case TYPE_VAR_STR:
@@ -1897,7 +1897,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	dataVar = _vm->_parse->parseVarIndex();
 	size = _vm->_parse->parseValExpr();
 	evalExpr(0);
-	offset = _vm->_parse->_inter_resVal;
+	offset = _vm->_parse->_resultInt;
 	retSize = 0;
 
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
@@ -1968,7 +1968,7 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	dataVar = _vm->_parse->parseVarIndex();
 	size = _vm->_parse->parseValExpr();
 	evalExpr(0);
-	offset = _vm->_parse->_inter_resVal;
+	offset = _vm->_parse->_resultInt;
 
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
 			_vm->_parse->_inter_resStr, dataVar, size, offset);
