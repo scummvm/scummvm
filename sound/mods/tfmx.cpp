@@ -49,6 +49,7 @@ Tfmx::Tfmx(int rate, bool stereo)
 : Paula(stereo, rate), _resource()  {
 	_playerCtx.enabled = false;
 	_playerCtx.song = -1;
+	_playerCtx.stopWithLastPattern = true;
 
 	for (int i = 0; i < kNumVoices; ++i) 
 		_channelCtx[i].paulaChannel = (byte)i;
@@ -494,7 +495,7 @@ doTrackstep:
 			goto doTrackstep;
 		}
 	}
-	if (!runningPatterns) {
+	if (_playerCtx.stopWithLastPattern && !runningPatterns) {
 		_playerCtx.enabled = 0;
 		stopPaula();
 	}
@@ -638,14 +639,13 @@ bool Tfmx::trackStep() {
 			
 			// if highest bit is set then keep previous pattern
 			if (patNum < 0x80) {
-				_patternCtx[i].command = (uint8)patNum;
 				_patternCtx[i].step = 0;
 				_patternCtx[i].wait = 0;
 				_patternCtx[i].loopCount = 0xFF;
 				_patternCtx[i].offset = _patternOffset[patNum];
 			}
 
-			// second byte expose is always set
+			_patternCtx[i].command = (uint8)patNum;
 			_patternCtx[i].expose = patCmd & 0xFF;
 		}
 		return false;

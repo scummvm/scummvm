@@ -23,7 +23,7 @@ const char *pattcmds[]={
 	"Fade[speed /endvolume.b]",
 	"PPat[patt./track+transp]",
 	"Lock---------ch./time.b]",
-	"----------No entry------",
+	"Cue [number.b/  value.w]",
 	"Stop-Stop custompattern-",
 	"NOP!-no operation-------"
 };

@@ -203,6 +203,8 @@ public:
 		int8	fadeSlope; */
 
 		int		tickCount;
+
+		bool	stopWithLastPattern; //!< hack to automatically stop the whole player if no Pattern is running
 	} _playerCtx;
 
 	void initMacroProgramm(ChannelContext &channel) {
