@@ -1589,7 +1589,7 @@ void Inter_v2::o2_resetImdFrontSurf() {
 }
 
 bool Inter_v2::o2_assign(OpFuncParams &params) {
-	byte *savedPos = _vm->_global->_inter_execPtr;
+	byte destType = *_vm->_global->_inter_execPtr;
 	int16 dest = _vm->_parse->parseVarIndex();
 
 	byte loopCount;
@@ -1601,9 +1601,9 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 
 	for (int i = 0; i < loopCount; i++) {
 		int16 result;
-		int16 type = evalExpr(&result);
+		int16 srcType = evalExpr(&result);
 
-		switch (savedPos[0]) {
+		switch (destType) {
 		case TYPE_VAR_INT8:
 		case TYPE_ARRAY_INT8:
 			WRITE_VARO_UINT8(dest + i, _vm->_global->_inter_resVal);
@@ -1625,7 +1625,7 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 
 		case TYPE_VAR_STR:
 		case TYPE_ARRAY_STR:
-			if (type == TYPE_IMM_INT16)
+			if (srcType == TYPE_IMM_INT16)
 				WRITE_VARO_UINT8(dest, result);
 			else
 				WRITE_VARO_STR(dest, _vm->_global->_inter_resStr);
