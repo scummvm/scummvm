@@ -24,7 +24,7 @@
  */
 
 #include "asylum/menu.h"
-#include "asylum/resourcepack.h"
+#include "asylum/respack.h"
 #include "asylum/graphics.h"
 
 namespace Asylum {
@@ -32,7 +32,7 @@ namespace Asylum {
 /** This fixes the menu icons text x position on screen */
 const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 310, 508, 419 };
 
-MainMenu::MainMenu(Screen *screen, Sound *sound, Scene *scene) : 
+MainMenu::MainMenu(Screen *screen, Sound *sound, Scene *scene) :
 	_screen(screen), _sound(sound), _scene(scene) {
 	_mouseX             = 0;
 	_mouseY             = 0;
@@ -131,7 +131,7 @@ void MainMenu::update() {
 
 	if (_leftClick) {
 		_leftClick = false;
-		
+
 		if (_activeIcon != -1) {
 			// Copy the dark background to the back buffer
 			GraphicFrame *bg = _bgResource->getFrame(0);
@@ -160,7 +160,7 @@ void MainMenu::update() {
 			case kViewCinematics:
 				// TODO
 				break;
-			case kQuitGame: 
+			case kQuitGame:
 				// Nothing here
 				break;
 			case kTextOptions:
@@ -279,7 +279,7 @@ void MainMenu::updateMainMenu() {
 
 			// Show text
             _text->drawResTextCentered(MenuIconFixedXpos[iconNum], iconFrame->y + 50, _text->getResTextWidth(iconNum + 1309), iconNum + 1309);
-			
+
 			// Play creepy voice
 			if (!_sound->isSfxActive() && _activeIcon != _previousActiveIcon) {
 				_sound->playSfx(_resPack, iconNum + 44);
