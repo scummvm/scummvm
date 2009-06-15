@@ -190,27 +190,27 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\resourcepack.cpp"
+			RelativePath="..\..\engines\asylum\respack.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\resourcepack.h"
+			RelativePath="..\..\engines\asylum\respack.h"
 			>
 		</File>
 		<File
-			RelativePath=".\scene.cpp"
+			RelativePath="..\..\engines\asylum\scene.cpp"
 			>
 		</File>
 		<File
-			RelativePath=".\scene.h"
+			RelativePath="..\..\engines\asylum\scene.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\scene_resource.cpp"
+			RelativePath="..\..\engines\asylum\sceneres.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\asylum\scene_resource.h"
+			RelativePath="..\..\engines\asylum\sceneres.h"
 			>
 		</File>
 		<File

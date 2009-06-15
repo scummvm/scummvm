@@ -29,7 +29,7 @@
 #include "common/file.h"
 
 #include "asylum/asylum.h"
-#include "asylum/resourcepack.h"
+#include "asylum/respack.h"
 
 namespace Asylum {
 
