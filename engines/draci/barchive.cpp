@@ -220,6 +220,8 @@ void BArchive::openArchive(const Common::String &path) {
 	// Last footer item should be equal to footerOffset
 	assert(reader.readUint32LE() == footerOffset && "Footer offset mismatch");
 	
+	delete[] footer;
+
 	f.close();
 }
 
