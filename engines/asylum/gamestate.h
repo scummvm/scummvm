@@ -60,13 +60,24 @@ private:
     ResourcePack *_resPack;
 	ResourcePack *_musPack;
     GraphicResource *_bgResource;
+	GraphicResource *_cursorResource;
 
     uint8 _sceneIdx;
     int _mouseX;
 	int _mouseY;
     bool _leftClick;
+	int _curMouseCursor;
+	int _cursorStep;
 
 	void update();
+	void updateCursor();
+
+	enum GameCursors {
+		kCursorUpArrow = 1,
+		kCursorUpLeftArrow = 2
+		// TODO: add the rest
+	};
+
 }; // end of class GameState
 
 } // end of namespace Asylum

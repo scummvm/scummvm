@@ -38,9 +38,13 @@ GameState::GameState(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(scre
 	    sprintf(musPackFileName, "mus.%03d", sceneIdx);
         _musPack = new ResourcePack(musPackFileName);
     }
+
+	_cursorResource = new GraphicResource(_resPack, kCursorUpLeftArrow);
 }
 
 GameState::~GameState() {
+	delete _cursorResource;
+	delete _bgResource;
     delete _musPack;
     delete _resPack;
     delete _text;
@@ -53,6 +57,11 @@ void GameState::enterScene() {
 	_bgResource = new GraphicResource(_resPack, _scene->getWorldStats()->_commonRes.backgroundImage);
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	_screen->copyToBackBuffer((byte *)bg->surface.pixels, 0, 0, bg->surface.w, bg->surface.h);
+
+	_cursorStep = 1;
+	_curMouseCursor = 0;
+	_screen->setCursor(_cursorResource, 0);
+	_screen->showCursor();
 }
 
 void GameState::handleEvent(Common::Event *event, bool doUpdate) {
@@ -72,7 +81,19 @@ void GameState::handleEvent(Common::Event *event, bool doUpdate) {
 		update();
 }
 
+void GameState::updateCursor() {
+	_curMouseCursor += _cursorStep;
+	if (_curMouseCursor == 0)
+		_cursorStep = 1;
+	if (_curMouseCursor == _cursorResource->getFrameCount() - 1)
+		_cursorStep = -1;
+
+	_screen->setCursor(_cursorResource, _curMouseCursor);
+}
+
 void GameState::update() {
+	// TODO
+	//updateCursor();
 }
 
 } // end of namespace Asylum
