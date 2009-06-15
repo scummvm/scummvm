@@ -1520,7 +1520,8 @@ cmd(print_at_v) {
 }
 
 cmd(push_script) {
-	if (g_agi->getFeatures() & GF_AGIMOUSE) {
+	// We run AGIMOUSE always as a side effect
+	if (g_agi->getFeatures() & GF_AGIMOUSE || 1) {
 		game.vars[27] = g_mouse.button;
 		game.vars[28] = g_mouse.x / 2;
 		game.vars[29] = g_mouse.y;
