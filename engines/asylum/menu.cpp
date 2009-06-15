@@ -75,6 +75,10 @@ MainMenu::MainMenu(Screen *screen, Sound *sound): _screen(screen), _sound(sound)
 }
 
 MainMenu::~MainMenu() {
+    if(_creditsResource)
+        delete _creditsResource;
+    if(_creditsFadeResource)
+        delete _creditsFadeResource;
 	delete _textBlue;
     delete _text;
 	delete _iconResource;
