@@ -23,19 +23,19 @@
  *
  */
 
-#include "asylum/scene.h"
+#include "asylum/scene_resource.h"
 
 namespace Asylum {
 
-Scene::Scene() {
+SceneResource::SceneResource() {
 }
 
-Scene::~Scene() {
+SceneResource::~SceneResource() {
     if (_worldStats)
         delete _worldStats;
 }
 
-bool Scene::load(uint8 sceneIdx) {
+bool SceneResource::load(uint8 sceneIdx) {
     char sceneTag[6];
     Common::File* fd = new Common::File;
 	Common::String filename = parseFilename(sceneIdx);
@@ -67,7 +67,7 @@ bool Scene::load(uint8 sceneIdx) {
 }
 
 // FIXME: load necessary World Stats content
-void Scene::loadWorldStats(Common::SeekableReadStream *stream) {
+void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     _worldStats = new WorldStats;
 
     _worldStats->_size = stream->readUint32LE();
@@ -150,7 +150,7 @@ void Scene::loadWorldStats(Common::SeekableReadStream *stream) {
 }
 
 // FIXME: load necessary Game Polygons content
-void Scene::loadGamePolygons(Common::SeekableReadStream *stream) {
+void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
     _gamePolygons = new GamePolygons;
 
     stream->seek(0xE8686); // jump to game Polygons data
@@ -173,11 +173,11 @@ void Scene::loadGamePolygons(Common::SeekableReadStream *stream) {
 }
 
 // TODO: load necessary Action List content
-void Scene::loadActionList(Common::SeekableReadStream *stream) {
+void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
 
 }
 
-Common::String Scene::parseFilename(uint8 sceneIdx) {
+Common::String SceneResource::parseFilename(uint8 sceneIdx) {
 	char filename[8];
 	sprintf(filename, SCENEMASK, sceneIdx);
 

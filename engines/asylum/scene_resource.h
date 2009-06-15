@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef ASYLUM_SCENE_H_
-#define ASYLUM_SCENE_H_
+#ifndef ASYLUM_SCENERESOURCE_H_
+#define ASYLUM_SCENERESOURCE_H_
 
 #include "common/file.h"
 #include "common/array.h"
@@ -40,10 +40,10 @@ class WorldStats;
 class GamePolygons;
 class ActionList;
 
-class Scene {
+class SceneResource {
 public:
-	Scene();
-	virtual ~Scene();
+	SceneResource();
+	virtual ~SceneResource();
 
     bool load(uint8 sceneIdx);
 
