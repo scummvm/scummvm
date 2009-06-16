@@ -3208,6 +3208,24 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"playtoons3",
+			"",
+			{
+				{"playtoon.stk", 0, "9e513e993a5b0e2496add3f50c08764b", 30448506},
+				{"chato.stk", 0, "8fc8d0da5b3e758908d1d7298d497d0b", 6041026},
+				{0, 0, 0, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"playtoons3",
 			"Pack mes histoires anim\xE9""es",
 			{
 				{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
