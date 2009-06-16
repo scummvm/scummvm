@@ -45,18 +45,67 @@ enum ActorResources {
 	kWalkNW = 7,
 	kWalkW  = 8,
 	kWalkSW = 9,
-	kWalkS  = 10
+	kWalkS  = 10,
+
+	kFaceN  = 11,
+	kFaceNW = 12,
+	kFaceW  = 13,
+	kFaceSW = 14,
+	kFaceS  = 15,
+
+	kFaceAndShakeN  = 16,
+	kFaceAndShakeNW = 17,
+	kFaceAndShakeW  = 18,
+	kFaceAndShakeSW = 19,
+	kFaceAndShakeS  = 20,
+
+	kStretchN  = 21,
+	kStretchNW = 22,
+	kStretchW  = 23,
+	kStretchSW = 24,
+	kStretchS  = 25,
+
+	kFidgetN  = 26,
+	kFidgetNW = 27,
+	kFidgetW  = 28,
+	kFidgetSW = 29,
+	kFidgetS  = 30,
+
+	kUnknown1 = 31,
+	kUnknown2 = 32,
+	kUnknown3 = 33,
+	kUnknown4 = 34,
+	kUnknown5 = 35,
+
+	kPickupN  = 36,
+	kPickupNW = 37,
+	kPickupW  = 38,
+	kPickupSW = 39,
+	kPickupS  = 40,
+
+	kOperateN  = 41,
+	kOperateNW = 42,
+	kOperateW  = 43,
+	kOperateSW = 44,
+	kOperateS  = 45,
+
+	kOperate2N  = 46,
+	kOperate2NW = 47,
+	kOperate2W  = 48,
+	kOperate2SW = 49,
+	kOperate2S  = 50,
+
+	kUnknown6  = 51,
+	kUnknown7  = 52,
+	kUnknown8  = 53,
+	kUnknown9  = 54,
+	kUnknown10 = 55,
+	kUnknown11 = 56,
+	kUnknown12 = 57,
+	kUnknown13 = 58,
+	kUnknown14 = 59
+
 };
-
-/*
-uint32 faceN;
-	uint32 faceNW;
-	uint32 faceW;
-	uint32 faceSW;
-	uint32 faceS;
-
-	uint32 faceN2;
-*/
 
 class MainActor {
 public:
