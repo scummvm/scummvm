@@ -116,7 +116,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		}
 	} else {
 
-		if (type == kChannelTypeSpeech) {
+		if (type == -2) {
 			// Stop speech and play new sound
 			stopSpeech();
 		}
@@ -124,7 +124,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		// Play new sound in empty channel
 		int freeChannel = -1;
 		for (int i = 0; i < 4; i++) {
-			if (channels[i].type == kChannelTypeEmpty) {
+			if (channels[i].type == kChannelTypeEmpty || !_vm->_mixer->isSoundHandleActive(channels[i].handle)) {
 				freeChannel = i;
 				break;
 			}
