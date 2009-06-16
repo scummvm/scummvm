@@ -129,8 +129,8 @@ void ScriptInterpreter::setupScriptFunctions() {
 	RegisterScriptFunction(sfStopShakeScreen);
 	RegisterScriptFunction(sfStartSequence);
 	RegisterScriptFunction(sfEndSequence);
-	RegisterScriptFunction(sfSequenceVolumeStuff);
-	RegisterScriptFunction(sfPlaySound1);
+	RegisterScriptFunction(sfSetSequenceVolume);
+	RegisterScriptFunction(sfPlayPositionalSound);
 	RegisterScriptFunction(sfPlaySound2);
 	RegisterScriptFunction(sfClearScreen);
 	RegisterScriptFunction(sfNop);
@@ -144,9 +144,6 @@ void ScriptInterpreter::setupScriptFunctions() {
 	RegisterScriptFunction(sfSaveStackPtr);
 	RegisterScriptFunction(sfPlayMovie);
 	RegisterScriptFunction(sfNop);
-
-
-
 
 }
 
@@ -1047,18 +1044,20 @@ void ScriptInterpreter::sfStopShakeScreen() {
 
 void ScriptInterpreter::sfStartSequence() {
 	// TODO
+	//_vm->_arc->dump(arg16(3));
 }
 
 void ScriptInterpreter::sfEndSequence() {
 	// TODO
 }
 
-void ScriptInterpreter::sfSequenceVolumeStuff() {
+void ScriptInterpreter::sfSetSequenceVolume() {
 	// TODO
 }
 
-void ScriptInterpreter::sfPlaySound1() {
+void ScriptInterpreter::sfPlayPositionalSound() {
 	// TODO
+	debug("ScriptInterpreter::sfPlayPositionalSound()");
 }
 
 void ScriptInterpreter::sfPlaySound2() {
@@ -1080,15 +1079,42 @@ void ScriptInterpreter::sfRunOptionsScreen() {
 }
 
 void ScriptInterpreter::sfPrecacheSprites() {
+#if 0
+	// DEBUG
+	int16 *resArray = (int16*)localPtr(arg16(3));
+	while (*resArray != -1) {
+		debug("ScriptInterpreter::sfPrecacheSprites() index = %d", *resArray);
+		_vm->_arc->dump(*resArray, "pc1");
+		resArray++;
+	}
+#endif
 }
 
 void ScriptInterpreter::sfPrecacheSounds1() {
+#if 0
+	// DEBUG
+	int16 *resArray = (int16*)localPtr(arg16(3));
+	while (*resArray != -1) {
+		debug("ScriptInterpreter::sfPrecacheSounds1() index = %d", *resArray);
+		_vm->_arc->dump(*resArray, "pc2");
+		resArray++;
+	}
+#endif
 }
 
 void ScriptInterpreter::sfDeleteAllPbfFilesByExternalArray() {
 }
 
 void ScriptInterpreter::sfPrecacheSounds2() {
+#if 0
+	// DEBUG
+	int16 *resArray = (int16*)localPtr(arg16(3));
+	while (*resArray != -1) {
+		debug("ScriptInterpreter::sfPrecacheSounds2() index = %d", *resArray);
+		_vm->_arc->dump(*resArray, "pc3");
+		resArray++;
+	}
+#endif
 }
 
 void ScriptInterpreter::sfRestoreStackPtr() {

@@ -178,8 +178,8 @@ protected:
 	void sfStopShakeScreen();
 	void sfStartSequence();
 	void sfEndSequence();
-	void sfSequenceVolumeStuff();
-	void sfPlaySound1();
+	void sfSetSequenceVolume();
+	void sfPlayPositionalSound();
 	void sfPlaySound2();
 	void sfClearScreen();
 	void sfHandleInput();
