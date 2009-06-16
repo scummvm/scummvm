@@ -53,6 +53,7 @@ AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer) {
 	_needFree = false;
 	_mdySong = false;
 	
+	_soundMode = 0;
 	_repCount = -1;
 	_samplesTillPoll = 0;
 
@@ -580,6 +581,8 @@ bool AdLib::load(const char *fileName) {
 	if (!song.isOpen())
 		return false;
 
+	_soundMode = 0;
+
 	_needFree = true;
 	_dataSize = song.size();
 	_data = new byte[_dataSize];
@@ -596,6 +599,8 @@ bool AdLib::load(const char *fileName) {
 bool AdLib::load(byte *data, uint32 size, int index) {
 	unload();
 	_repCount = 0;
+
+	_soundMode = 0;
 
 	_dataSize = size;
 	_data = data;
