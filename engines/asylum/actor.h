@@ -35,6 +35,9 @@ class Screen;
 
 // TODO properly use this enum as opposed to just
 // using it for visual reference :P
+// TODO investigate other actor resources (from other
+// scenes) to see if the unused blocks in the actor
+// definition are in fact used elsewhere
 enum ActorResources {
 	kSound1 = 0,
 	kSound2 = 1,
