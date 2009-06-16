@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://asylumengine.googlecode.com/svn/trunk/asylum.cpp $
- * $Id: asylum.cpp 138 2009-06-15 14:37:23Z bluegr@gmail.com $
+ * $URL$
+ * $Id$
  *
  */
 
