@@ -76,7 +76,7 @@ void Scene::enterScene() {
 	_screen->showCursor();
 
 	// TEST
-	// Draw the actor facing north
+	// Draw the actor walking towards the north
 	_sceneResource->getMainActor()->setAction(_resPack, 6);
 	copyActorToScreen();
 }
