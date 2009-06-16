@@ -32,6 +32,8 @@ MainActor::MainActor(uint8 *data) {
 		_resources[i] = data[i * 4];
 	}
 
+	_graphic = 0;
+
 	// TODO implement this properly
 	x = 150;
 	y = 150;
@@ -42,11 +44,14 @@ MainActor::~MainActor() {
 }
 
 void MainActor::setAction(ResourcePack *res, int action) {
+	delete _graphic;
 	_graphic = new GraphicResource(res, _resources[action]);
 	_currentFrame = 0;
 }
 
 GraphicFrame *MainActor::getFrame() {
+	assert(_graphic);
+
 	GraphicFrame *frame = _graphic->getFrame(_currentFrame);
 
 	if (_currentFrame < _graphic->getFrameCount() - 1) {
