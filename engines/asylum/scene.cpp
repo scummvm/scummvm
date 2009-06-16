@@ -42,7 +42,6 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
         _musPack = new ResourcePack(musPackFileName);
 
 		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.backgroundImage);
-		_background = _bgResource->getFrame(0);
 
 		// Statue animation, used for testing
 		_animResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_actorsDef[0].graphicResId);
@@ -50,6 +49,7 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 
 	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.curMagnifyingGlass);
 
+	_background = 0;
 	_animCurFrame = 0;
 	_startX = _startY = 0;
 	_leftClick = false;
@@ -68,12 +68,16 @@ Scene::~Scene() {
 void Scene::enterScene() {
 	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->_commonRes.palette);
 
+	_background = _bgResource->getFrame(0);
 	_screen->copyToBackBuffer(((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w, 0, 0, 640, 480);
 
 	_cursorStep = 1;
 	_curMouseCursor = 0;
 	_screen->setCursor(_cursorResource, 0);
 	_screen->showCursor();
+
+	// Music testing: play the first music track
+	_sound->playMusic(_musPack, 0);
 
 	// TEST
 	// Draw the actor walking towards the north
