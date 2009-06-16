@@ -36,7 +36,7 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
     if (_sceneResource->load(_sceneIdx)) {
         _text = new Text(_screen);
         _resPack = new ResourcePack(sceneIdx);
-        
+
         char musPackFileName[10];
 	    sprintf(musPackFileName, "mus.%03d", sceneIdx);
         _musPack = new ResourcePack(musPackFileName);
@@ -63,7 +63,7 @@ Scene::~Scene() {
     delete _resPack;
     delete _text;
     delete _sceneResource;
-}
+ }
 
 void Scene::enterScene() {
 	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->_commonRes.palette);
@@ -74,6 +74,11 @@ void Scene::enterScene() {
 	_curMouseCursor = 0;
 	_screen->setCursor(_cursorResource, 0);
 	_screen->showCursor();
+
+	// TEST
+	// Draw the actor facing north
+	_sceneResource->getMainActor()->setAction(_resPack, 6);
+	copyActorToScreen();
 }
 
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
@@ -106,9 +111,8 @@ void Scene::updateCursor() {
 void Scene::update() {
 	bool scrollScreen = false;
 	GraphicFrame *bg = _bgResource->getFrame(0);
-	
-	updateCursor();
 
+	updateCursor();
 
 	// Proof of concept for animation showing
 	GraphicFrame *actor = _actorResource->getFrame(_actorAnimCurFrame);
@@ -120,6 +124,10 @@ void Scene::update() {
 	copyToSceneBackground(actor, 655, 0);
 
 	// Proof of concept for screen scrolling
+
+	// TESTING
+	// Main Actor
+	copyActorToScreen();
 
 	// Horizontal scrolling
 	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
@@ -158,5 +166,15 @@ void Scene::copyToSceneBackground(GraphicFrame *frame, int x, int y) {
 	}
 }
 
+void Scene::copyActorToScreen() {
+	GraphicFrame *frame = _sceneResource->getMainActor()->getFrame();
 
+	_screen->copyRectToScreenWithTransparency(
+			((byte *)frame->surface.pixels),
+			frame->surface.w,
+			_sceneResource->getMainActor()->x,
+			_sceneResource->getMainActor()->y,
+			frame->surface.w,
+			frame->surface.h );
+}
 } // end of namespace Asylum

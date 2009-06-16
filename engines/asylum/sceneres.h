@@ -30,6 +30,8 @@
 #include "common/array.h"
 #include "common/rect.h"
 
+#include "asylum/actor.h"
+
 #define SCENEMASK   "scn.%03d"
 #define Polygons_MAXSIZE  100
 
@@ -50,11 +52,12 @@ public:
     WorldStats* getWorldStats() { return _worldStats; }
     GamePolygons* getGamePolygons() { return _gamePolygons; }
     ActionList* getActionList() { return _actionList; }
+    MainActor* getMainActor() { return _mainActor; }
 private:
-    WorldStats *_worldStats;
+    WorldStats   *_worldStats;
     GamePolygons *_gamePolygons;
-    ActionList *_actionList;
-
+    ActionList   *_actionList;
+    MainActor    *_mainActor;
     void loadWorldStats(Common::SeekableReadStream *stream);
     void loadGamePolygons(Common::SeekableReadStream *stream);
     void loadActionList(Common::SeekableReadStream *stream);
@@ -82,7 +85,7 @@ typedef struct ActorActionDefinitions {
     int32 actionType; // 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
     int32 polyIdx;
     uint32 soundResId;
-    uint32 palCorrection; 
+    uint32 palCorrection;
     int32 soundVolume;
 } ActorActionDefinitions;
 
