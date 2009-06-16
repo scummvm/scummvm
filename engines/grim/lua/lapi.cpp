@@ -46,7 +46,7 @@ static int32 normalized_type(TObject *o) {
 	}
 }
 
-static void set_normalized(TObject *d, TObject *s) {
+void set_normalized(TObject *d, TObject *s) {
 	d->value = s->value;
 	d->ttype = (lua_Type)normalized_type(s);
 }
@@ -120,9 +120,9 @@ lua_Object lua_settagmethod(int32 tag, const char *event) {
 }
 
 lua_Object lua_seterrormethod() {
-	TObject temp = lua_state->errorim;
+	TObject temp = errorim;
 	checkCparams(1);
-	lua_state->errorim = *(--lua_state->stack.top);
+	errorim = *(--lua_state->stack.top);
 	return put_luaObject(&temp);
 }
 
@@ -484,7 +484,9 @@ static void do_unprotectedrun(lua_CFunction f, int32 nParams, int32 nResults) {
 	luaD_openstack(nParams);
 	lua_state->stack.stack[base].ttype = LUA_T_CPROTO;
 	lua_state->stack.stack[base].value.f = f;
+	lua_state->state_counter1++;
 	luaD_call(base + 1, nResults);
+	lua_state->state_counter1--;
 }
 
 lua_Object lua_setfallback(const char *name, lua_CFunction fallback) {
@@ -494,6 +496,7 @@ lua_Object lua_setfallback(const char *name, lua_CFunction fallback) {
 	return put_luaObjectonTop();
 }
 
+#endif
+
 } // end of namespace Grim
 
-#endif

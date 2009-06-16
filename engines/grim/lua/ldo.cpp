@@ -46,20 +46,8 @@ void stderrorim() {
 #define BASIC_CI_SIZE	8
 
 void luaD_init() {
-	ttype(&lua_state->errorim) = LUA_T_CPROTO;
-	fvalue(&lua_state->errorim) = stderrorim;
-}
-
-void luaD_initthr() {
-	lua_state->stack.stack = luaM_newvector(STACK_UNIT, TObject);
-	lua_state->stack.top = lua_state->stack.stack;
-	lua_state->stack.last = lua_state->stack.stack + (STACK_UNIT - 1);
-	lua_state->base_ci = luaM_newvector(BASIC_CI_SIZE, struct CallInfo);
-	memset(lua_state->base_ci, 0, sizeof(CallInfo) * BASIC_CI_SIZE);
-	lua_state->base_ci_size = sizeof(CallInfo) * BASIC_CI_SIZE; 
-	lua_state->ci = lua_state->base_ci;
-	lua_state->ci->tf = NULL;
-	lua_state->end_ci = lua_state->base_ci + BASIC_CI_SIZE;
+	ttype(&errorim) = LUA_T_CPROTO;
+	fvalue(&errorim) = stderrorim;
 }
 
 void luaD_checkstack(int32 n) {
@@ -144,7 +132,9 @@ static StkId callC(lua_CFunction f, StkId base) {
 		TObject *f = lua_state->stack.stack + base - 1;
 		(*lua_callhook)(Ref(f), "(C)", -1);
 	}
+	lua_state->state_counter2++;
 	(*f)();  // do the actual call
+	lua_state->state_counter2--;
 //	if (lua_callhook)  // func may have changed lua_callhook
 //		(*lua_callhook)(LUA_NOOBJECT, "(return)", 0);
 	firstResult = CS->base;
@@ -168,7 +158,11 @@ static StkId callCclosure(struct Closure *cl, lua_CFunction f, StkId base) {
 void luaD_callTM(TObject *f, int32 nParams, int32 nResults) {
 	luaD_openstack(nParams);
 	*(lua_state->stack.top - nParams - 1) = *f;
+	lua_state->state_counter1++;
+	lua_state->state_counter2++;
 	luaD_call((lua_state->stack.top - lua_state->stack.stack) - nParams, nResults);
+	lua_state->state_counter2--;
+	lua_state->state_counter1--;
 }
 
 static void adjust_varargs(StkId first_extra_arg) {
@@ -178,116 +172,114 @@ static void adjust_varargs(StkId first_extra_arg) {
 	*lua_state->stack.top++ = arg;
 }
 
-/*
-** Prepare the stack for calling a Lua function.
-*/
-void luaD_precall(TObject *f, StkId base, int32 nResults) {
-	// Create a new CallInfo record
-	if (lua_state->ci + 1 == lua_state->end_ci) {
-		int32 size_ci = lua_state->end_ci - lua_state->base_ci;
-		int32 index_ci = lua_state->ci - lua_state->base_ci;
-		int32 new_ci_size = size_ci * 2 * sizeof(CallInfo);
-		CallInfo *new_ci = (CallInfo *)luaM_malloc(new_ci_size);
-		memcpy(new_ci, lua_state->base_ci, lua_state->base_ci_size);
-		memset(new_ci + (lua_state->base_ci_size / sizeof(CallInfo)), 0, (new_ci_size) - lua_state->base_ci_size);
-		luaM_free(lua_state->base_ci);
-		lua_state->base_ci = new_ci;
-		lua_state->base_ci_size = new_ci_size;
-		lua_state->ci = lua_state->base_ci + index_ci;
-		lua_state->end_ci = lua_state->base_ci + size_ci * 2;
-	}
-	lua_state->ci++;
-	if (ttype(f) == LUA_T_CLOSURE) {
-		lua_state->ci->c = clvalue(f);
-		f = &lua_state->ci->c->consts[0];  // Get the actual function
+int32 luaD_call(StkId base, int nResults) {
+	lua_Task *tmpTask = lua_state->task;
+	if (!lua_state->task || lua_state->state_counter2) {
+		lua_Task *t = luaM_new(lua_Task);
+		lua_taskinit(t, lua_state->task, base, nResults);
+		lua_state->task = t;
 	} else {
-		lua_state->ci->c = NULL;
+		tmpTask = lua_state->some_task;
 	}
-	lua_state->ci->base = base;
-	lua_state->ci->nResults = nResults;
-	if (ttype(f)==LUA_T_CPROTO) {
-		lua_state->ci->tf = NULL;
-		lua_state->ci->pc = NULL;
-	} else {
-		byte *pc = tfvalue(f)->code;
-		if (lua_callhook) {
-			TObject *f = lua_state->stack.stack + base - 1;
-			(*lua_callhook)(Ref(f), tfvalue(f)->fileName->str, tfvalue(f)->lineDefined);
-		}
-		luaD_checkstack((*pc++) + EXTRA_STACK);
-		if (*pc < ZEROVARARG) {
-			luaD_adjusttop(base + *(pc++));
-		} else {  // varargs
-			luaC_checkGC();
-			adjust_varargs(base + (*pc++) - ZEROVARARG);
-		}
-		lua_state->ci->tf = tfvalue(f);
-		lua_state->ci->pc = pc;
-	}
-}
 
-/*
-** Adjust the stack to the desired number of results
-*/
-void luaD_postret(StkId firstResult) {
-	int32 i;
-	StkId base = lua_state->ci->base;
-	int32 nResults = lua_state->ci->nResults;
-	if (lua_state->ci == lua_state->base_ci)
-		lua_error("call stack underflow");
-	// adjust the number of results
-	if (nResults != MULT_RET)
-		luaD_adjusttop(firstResult + nResults);
-	// move results to base - 1 (to erase parameters and function)
-	base--;
-	nResults = lua_state->stack.top - (lua_state->stack.stack + firstResult);  // actual number of results
-	for (i = 0; i < nResults; i++)
-		*(lua_state->stack.stack + base + i) = *(lua_state->stack.stack + firstResult + i);
-	lua_state->stack.top -= firstResult - base;
-	// pop off the current CallInfo
-	lua_state->ci--;
-}
-
-/*
-** Call a function (C or Lua). The parameters must be on the lua_state->stack.stack,
-** between [lua_state->stack.stack+base,lua_state->stack.top). The function to be called is at lua_state->stack.stack+base-1.
-** When returns, the results are on the lua_state->stack.stack, between [lua_state->stack.stack+base-1,lua_state->stack.top).
-** The number of results is nResults, unless nResults=MULT_RET.
-*/
-void luaD_call(StkId base, int32 nResults) {
-	StkId firstResult;
-	TObject *func = lua_state->stack.stack + base - 1;
-	switch (ttype(func)) {
-	case LUA_T_CPROTO:
-		luaD_precall(func, base, nResults);
-		ttype(func) = LUA_T_CMARK;
-		firstResult = callC(fvalue(func), base);
-		break;
-	case LUA_T_PROTO:
-		luaD_precall(func, base, nResults);
-		ttype(func) = LUA_T_PMARK;
-		firstResult = luaV_execute(lua_state->ci);
-		break;
-	case LUA_T_CLOSURE:
-		{
-			Closure *c = clvalue(func);
+	while (1) {
+		lua_CFunction function = NULL;
+		StkId firstResult;
+		TObject *funcObj = lua_state->stack.stack + base - 1;
+		if (ttype(funcObj) == LUA_T_CLOSURE) {
+			Closure *c = clvalue(funcObj);
 			TObject *proto = &(c->consts[0]);
-			luaD_precall(func, base, nResults);
-			ttype(func) = LUA_T_CLMARK;
-			firstResult = (ttype(proto) == LUA_T_CPROTO) ? callCclosure(c, fvalue(proto), base) : luaV_execute(lua_state->ci);
-			break;
-		}
-	default:
-		{ // func is not a function
-			// Check the tag method for invalid functions
-			TObject *im = luaT_getimbyObj(func, IM_FUNCTION);
+			ttype(funcObj) = LUA_T_CLMARK;
+			if (ttype(proto) == LUA_T_CPROTO) {
+				function = fvalue(funcObj);
+				firstResult = callCclosure(c, fvalue(proto), base);
+			} else {
+				lua_taskresume(lua_state->task, c, tfvalue(proto), base);
+				firstResult = luaV_execute(lua_state->task);
+			}
+		} else if (ttype(funcObj) == LUA_T_PMARK) {
+			if (!lua_state->task->some_flag) {
+				TObject *im = luaT_getimbyObj(funcObj, IM_FUNCTION);
+				if (ttype(im) == LUA_T_NIL)
+					lua_error("call expression not a function");
+				luaD_callTM(im, (lua_state->stack.top - lua_state->stack.stack) - (base - 1), nResults);
+				continue;
+			}
+			firstResult = luaV_execute(lua_state->task);
+		} else if (ttype(funcObj) == LUA_T_CMARK) {
+			if (!lua_state->task->some_flag) {
+				TObject *im = luaT_getimbyObj(funcObj, IM_FUNCTION);
+				if (ttype(im) == LUA_T_NIL)
+					lua_error("call expression not a function");
+				luaD_callTM(im, (lua_state->stack.top - lua_state->stack.stack) - (base - 1), nResults);
+				continue;
+			}
+		} else if (ttype(funcObj) == LUA_T_CLMARK) {
+			Closure *c = clvalue(funcObj);
+			TObject *proto = &(c->consts[0]);
+			if (!lua_state->task->some_flag) {
+				TObject *im = luaT_getimbyObj(funcObj, IM_FUNCTION);
+				if (ttype(im) == LUA_T_NIL)
+					lua_error("call expression not a function");
+				luaD_callTM(im, (lua_state->stack.top - lua_state->stack.stack) - (base - 1), nResults);
+				continue;
+			}
+			if (ttype(proto) != LUA_T_CPROTO)
+				firstResult = luaV_execute(lua_state->task);
+		} else if (ttype(funcObj) == LUA_T_PROTO) {
+			ttype(funcObj) = LUA_T_PMARK;
+			lua_taskresume(lua_state->task, NULL, tfvalue(funcObj), base);
+			firstResult = luaV_execute(lua_state->task);
+		} else if (ttype(funcObj) == LUA_T_CPROTO) {
+			ttype(funcObj) = LUA_T_CMARK;
+			function = fvalue(funcObj);
+			firstResult = callC(fvalue(funcObj), base);
+		} else {
+			TObject *im = luaT_getimbyObj(funcObj, IM_FUNCTION);
 			if (ttype(im) == LUA_T_NIL)
 				lua_error("call expression not a function");
 			luaD_callTM(im, (lua_state->stack.top - lua_state->stack.stack) - (base - 1), nResults);
-			return;
+			continue;
 		}
+
+		if (firstResult <= 0) {
+			nResults = lua_state->task->aux;
+			base = -firstResult;
+			lua_Task *t = luaM_new(lua_Task);
+			lua_taskinit(t, lua_state->task, base, nResults);
+			lua_state->task = t;
+		} else {
+			nResults = lua_state->task->some_results;
+			base = lua_state->task->some_base;
+			if (nResults != 255)
+				luaD_adjusttop(firstResult + nResults);
+			base--;
+			nResults = lua_state->stack.top - (lua_state->stack.stack + firstResult);
+			for (int32 i = 0; i < nResults; i++)
+				*(lua_state->stack.stack + base + i) = *(lua_state->stack.stack + firstResult + i);
+			lua_state->stack.top -= firstResult - base;
+
+			lua_Task *tmp = lua_state->task;
+			lua_state->task = lua_state->task->next;
+			luaM_free(tmp);
+			if (lua_state->task) {
+				nResults = lua_state->task->some_results;
+				base = lua_state->task->some_base;
+			}
+
+			if (function == break_here) {
+				if (!lua_state->state_counter1)  {
+					lua_state->some_task = tmpTask;
+					return 1;
+				}
+			}
+		}
+
+		if (lua_state->task == tmpTask)
+			break;
 	}
-	luaD_postret(firstResult);
+
+	return 0;
 }
 
 static void travstack(struct Stack *S, int32 (*fn)(TObject *)) {
@@ -300,15 +292,14 @@ static void travstack(struct Stack *S, int32 (*fn)(TObject *)) {
 ** Traverse all objects on lua_state->stack.stack, and all other active stacks
 */
 void luaD_travstack(int32(*fn)(TObject *)) {
-	struct lua_Task *t;
-	travstack(&lua_state->stack, fn);
-	for (t = lua_state->root_task; t != NULL; t = t->next)
-		if (t != lua_state->curr_task && t->Tstate != DONE)
-			travstack(&t->stack, fn);
+	LState *t;
+	for (t = lua_rootState; t != NULL; t = t->next) {
+		travstack(&t->stack, fn);
+	}
 }
 
 static void message(const char *s) {
-	TObject im = lua_state->errorim;
+	TObject im = errorim;
 	if (ttype(&im) != LUA_T_NIL) {
 		lua_pushstring(s);
 		luaD_callTM(&im, 1, 0);
@@ -350,17 +341,23 @@ int32 luaD_protectedrun(int32 nResults) {
 	int32 status;
 	struct C_Lua_Stack oldCLS = lua_state->Cstack;
 	jmp_buf *oldErr = lua_state->errorJmp;
-	int32 ci_len = lua_state->ci - lua_state->base_ci;
 	lua_state->errorJmp = &myErrorJmp;
+	lua_state->state_counter1++;
+	lua_Task *tmpTask = lua_state->task;
 	if (setjmp(myErrorJmp) == 0) {
 		do_callinc(nResults);
 		status = 0;
 	} else { // an error occurred: restore lua_state->Cstack and lua_state->stack.top
 		lua_state->Cstack = oldCLS;
 		lua_state->stack.top = lua_state->stack.stack + lua_state->Cstack.base;
-		lua_state->ci = lua_state->base_ci + ci_len;
+		while (tmpTask != lua_state->task) {
+			lua_Task *t = lua_state->task;
+			lua_state->task = lua_state->task->next;
+			luaM_free(t);
+		}
 		status = 1;
 	}
+	lua_state->state_counter1--;
 	lua_state->errorJmp = oldErr;
 	return status;
 }
@@ -396,17 +393,17 @@ static int32 protectedparser(ZIO *z, int32 bin) {
 static int32 do_main(ZIO *z, int32 bin) {
 	int32 status;
 	do {
-		int32 old_blocks = (luaC_checkGC(), lua_state->nblocks);
+		int32 old_blocks = (luaC_checkGC(), nblocks);
 		status = protectedparser(z, bin);
 		if (status == 1)
 			return 1;  // error
 		else if (status == 2)
 			return 0;  // 'natural' end 
 		else {
-			int32 newelems2 = 2 * (lua_state->nblocks - old_blocks);
-			lua_state->GCthreshold += newelems2;
+			int32 newelems2 = 2 * (nblocks - old_blocks);
+			GCthreshold += newelems2;
 			status = luaD_protectedrun(MULT_RET);
-			lua_state->GCthreshold -= newelems2;
+			GCthreshold -= newelems2;
 		}
 	} while (bin && status == 0);
 	return status;

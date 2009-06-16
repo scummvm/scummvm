@@ -233,6 +233,7 @@ static void recreateObj(TObject *obj) {
 }
 
 void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, RestoreUint32 restoreUint32) {
+/*
 	printf("lua_Restore() started.\n");
 
 	lua_close();
@@ -576,6 +577,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 	arrayStrings = NULL;
 
 	printf("lua_Restore() finished.\n");
+*/
 }
 
 } // end of namespace Grim

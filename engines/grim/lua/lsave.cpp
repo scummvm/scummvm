@@ -152,6 +152,7 @@ static int32 opcodeSizeTable[] = {
 };
 
 void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint32) {
+/*	
 	printf("lua_Save() started.\n");
 
 	lua_collectgarbage(0);
@@ -421,6 +422,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 	}
 
 	printf("lua_Save() finished.\n");
+*/
 }
 
 } // end of namespace Grim

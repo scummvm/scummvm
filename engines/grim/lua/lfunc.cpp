@@ -19,8 +19,8 @@ namespace Grim {
 
 Closure *luaF_newclosure(int32 nelems) {
 	Closure *c = (Closure *)luaM_malloc(sizeof(Closure) + nelems * sizeof(TObject));
-	luaO_insertlist(&(lua_state->rootcl), (GCnode *)c);
-	lua_state->nblocks += gcsizeclosure(c);
+	luaO_insertlist(&rootcl, (GCnode *)c);
+	nblocks += gcsizeclosure(c);
 	c->nelems = nelems;
 	return c;
 }
@@ -33,8 +33,8 @@ TProtoFunc *luaF_newproto() {
 	f->consts = NULL;
 	f->nconsts = 0;
 	f->locvars = NULL;
-	luaO_insertlist(&(lua_state->rootproto), (GCnode *)f);
-	lua_state->nblocks += gcsizeproto(f);
+	luaO_insertlist(&rootproto, (GCnode *)f);
+	nblocks += gcsizeproto(f);
 	return f;
 }
 
@@ -48,7 +48,7 @@ static void freefunc(TProtoFunc *f) {
 void luaF_freeproto(TProtoFunc *l) {
 	while (l) {
 		TProtoFunc *next = (TProtoFunc *)l->head.next;
-		lua_state->nblocks -= gcsizeproto(l);
+		nblocks -= gcsizeproto(l);
 		freefunc(l);
 		l = next;
 	}
@@ -58,7 +58,7 @@ void luaF_freeproto(TProtoFunc *l) {
 void luaF_freeclosure(Closure *l) {
 	while (l) {
 		Closure *next = (Closure *)l->head.next;
-		lua_state->nblocks -= gcsizeclosure(l);
+		nblocks -= gcsizeclosure(l);
 		luaM_free(l);
 		l = next;
 	}

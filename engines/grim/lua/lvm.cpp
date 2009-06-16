@@ -14,6 +14,7 @@
 #include "engines/grim/lua/lstate.h"
 #include "engines/grim/lua/lstring.h"
 #include "engines/grim/lua/ltable.h"
+#include "engines/grim/lua/ltask.h"
 #include "engines/grim/lua/ltm.h"
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lvm.h"
@@ -23,6 +24,8 @@ namespace Grim {
 #define skip_word(pc)	(pc += 2)
 #define get_word(pc)	((*((pc) + 1) << 8)|(*(pc)))
 #define next_word(pc)   (pc += 2, get_word(pc - 2))
+
+#define	EXTRA_STACK	5
 
 static TaggedString *strconc(char *l, char *r) {
 	size_t nl = strlen(l);
@@ -230,57 +233,54 @@ void luaV_pack(StkId firstel, int32 nvararg, TObject *tab) {
 	}
 }
 
-/*
-** Execute the given opcode, until a RET. Parameters are between
-** [stack+base,top). Returns n such that the the results are between
-** [stack+n,top).
-*/
-StkId luaV_execute(struct CallInfo *ci) {
-	// Save index in case CallInfo array is realloc'd
-	int32 ci_index = ci - lua_state->base_ci;
-	struct Stack *S = &lua_state->stack;  // to optimize
-	Closure *cl;
-	TProtoFunc *tf;
-	StkId base;
-	byte *pc;
-	TObject *consts;
-newfunc:
-	cl = lua_state->ci->c;
-	tf = lua_state->ci->tf;
-	base = lua_state->ci->base;
-	if (S->top-S->stack > base && ttype(S->stack+base) == LUA_T_LINE)
-		base++;
-	pc = lua_state->ci->pc;
-	consts = tf->consts;
+static void adjust_varargs(StkId first_extra_arg) {
+	TObject arg;
+	luaV_pack(first_extra_arg, (lua_state->stack.top - lua_state->stack.stack) - first_extra_arg, &arg);
+	luaD_adjusttop(first_extra_arg);
+	*lua_state->stack.top++ = arg;
+}
+
+StkId luaV_execute(lua_Task *task) {
+	if (!task->some_flag) {
+		luaD_checkstack((*task->pc++) + EXTRA_STACK);
+		if (*task->pc < ZEROVARARG) {
+			luaD_adjusttop(task->base + *(task->pc++));
+		} else {
+			luaC_checkGC();
+			adjust_varargs(task->base + (*task->pc++) - ZEROVARARG);
+		}
+		task->some_flag = 1;
+	}
+	lua_state->state_counter2++;
+
 	while (1) {
-		int32 aux;
-		switch ((OpCode)(aux = *pc++)) {
+		switch ((OpCode)(task->aux = *task->pc++)) {
 		case PUSHNIL0:
-			ttype(S->top++) = LUA_T_NIL;
+			ttype(task->S->top++) = LUA_T_NIL;
 			break;
 		case PUSHNIL:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			do {
-				ttype(S->top++) = LUA_T_NIL;
-			} while (aux--);
+				ttype(task->S->top++) = LUA_T_NIL;
+			} while (task->aux--);
 			break;
 		case PUSHNUMBER:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto pushnumber;
 		case PUSHNUMBERW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto pushnumber;
 		case PUSHNUMBER0:
 		case PUSHNUMBER1:
 		case PUSHNUMBER2:
-			aux -= PUSHNUMBER0;
+			task->aux -= PUSHNUMBER0;
 pushnumber:
-			ttype(S->top) = LUA_T_NUMBER;
-			nvalue(S->top) = (float)aux;
-			S->top++;
+			ttype(task->S->top) = LUA_T_NUMBER;
+			nvalue(task->S->top) = (float)task->aux;
+			task->S->top++;
 			break;
 		case PUSHLOCAL:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto pushlocal;
 		case PUSHLOCAL0:
 		case PUSHLOCAL1:
@@ -290,15 +290,15 @@ pushnumber:
 		case PUSHLOCAL5:
 		case PUSHLOCAL6:
 		case PUSHLOCAL7:
-			aux -= PUSHLOCAL0;
+			task->aux -= PUSHLOCAL0;
 pushlocal:
-			*S->top++ = *((S->stack + base) + aux);
+			*task->S->top++ = *((task->S->stack + task->base) + task->aux);
 			break;
 		case GETGLOBALW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto getglobal;
 		case GETGLOBAL:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto getglobal;
 		case GETGLOBAL0:
 		case GETGLOBAL1:
@@ -308,17 +308,17 @@ pushlocal:
 		case GETGLOBAL5:
 		case GETGLOBAL6:
 		case GETGLOBAL7:
-			aux -= GETGLOBAL0;
+			task->aux -= GETGLOBAL0;
 getglobal:
-			luaV_getglobal(tsvalue(&consts[aux]));
+			luaV_getglobal(tsvalue(&task->consts[task->aux]));
 			break;
 		case GETTABLE:
 			luaV_gettable();
 			break;
 		case GETDOTTEDW:
-			aux = next_word(pc); goto getdotted;
+			task->aux = next_word(task->pc); goto getdotted;
 		case GETDOTTED:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto getdotted;
 		case GETDOTTED0:
 		case GETDOTTED1:
@@ -328,16 +328,16 @@ getglobal:
 		case GETDOTTED5:
 		case GETDOTTED6:
 		case GETDOTTED7:
-			aux -= GETDOTTED0;
+			task->aux -= GETDOTTED0;
 getdotted:
-			*S->top++ = consts[aux];
+			*task->S->top++ = task->consts[task->aux];
 			luaV_gettable();
 			break;
 		case PUSHSELFW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto pushself;
 		case PUSHSELF:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto pushself;
 		case PUSHSELF0:
 		case PUSHSELF1:
@@ -347,20 +347,20 @@ getdotted:
 		case PUSHSELF5:
 		case PUSHSELF6:
 		case PUSHSELF7:
-			aux -= PUSHSELF0;
+			task->aux -= PUSHSELF0;
 pushself:
 			{
-				TObject receiver = *(S->top - 1);
-				*S->top++ = consts[aux];
+				TObject receiver = *(task->S->top - 1);
+				*task->S->top++ = task->consts[task->aux];
 				luaV_gettable();
-				*S->top++ = receiver;
+				*task->S->top++ = receiver;
 				break;
 			}
 		case PUSHCONSTANTW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto pushconstant;
 		case PUSHCONSTANT:
-			aux = *pc++; goto pushconstant;
+			task->aux = *task->pc++; goto pushconstant;
 		case PUSHCONSTANT0:
 		case PUSHCONSTANT1:
 		case PUSHCONSTANT2:
@@ -369,21 +369,21 @@ pushself:
 		case PUSHCONSTANT5:
 		case PUSHCONSTANT6:
 		case PUSHCONSTANT7:
-			aux -= PUSHCONSTANT0;
+			task->aux -= PUSHCONSTANT0;
 pushconstant:
-			*S->top++ = consts[aux];
+			*task->S->top++ = task->consts[task->aux];
 			break;
 		case PUSHUPVALUE:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto pushupvalue;
 		case PUSHUPVALUE0:
 		case PUSHUPVALUE1:
-			aux -= PUSHUPVALUE0;
+			task->aux -= PUSHUPVALUE0;
 pushupvalue:
-			*S->top++ = cl->consts[aux + 1];
+			*task->S->top++ = task->cl->consts[task->aux + 1];
 			break;
 		case SETLOCAL:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto setlocal;
 		case SETLOCAL0:
 		case SETLOCAL1:
@@ -393,15 +393,15 @@ pushupvalue:
 		case SETLOCAL5:
 		case SETLOCAL6:
 		case SETLOCAL7:
-			aux -= SETLOCAL0;
+			task->aux -= SETLOCAL0;
 setlocal:
-			*((S->stack + base) + aux) = *(--S->top);
+			*((task->S->stack + task->base) + task->aux) = *(--task->S->top);
 			break;
 		case SETGLOBALW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto setglobal;
 		case SETGLOBAL:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto setglobal;
 		case SETGLOBAL0:
 		case SETGLOBAL1:
@@ -411,84 +411,84 @@ setlocal:
 		case SETGLOBAL5:
 		case SETGLOBAL6:
 		case SETGLOBAL7:
-			aux -= SETGLOBAL0;
+			task->aux -= SETGLOBAL0;
 setglobal:
-			luaV_setglobal(tsvalue(&consts[aux]));
+			luaV_setglobal(tsvalue(&task->consts[task->aux]));
 			break;
 		case SETTABLE0:
-			luaV_settable(S->top - 3, 1);
+			luaV_settable(task->S->top - 3, 1);
 			break;
 		case SETTABLE:
-			luaV_settable(S->top - 3 - (*pc++), 2);
+			luaV_settable(task->S->top - 3 - (*task->pc++), 2);
 			break;
 		case SETLISTW:
-			aux = next_word(pc);
-			aux *= LFIELDS_PER_FLUSH;
+			task->aux = next_word(task->pc);
+			task->aux *= LFIELDS_PER_FLUSH;
 			goto setlist;
 		case SETLIST:
-			aux = *(pc++) * LFIELDS_PER_FLUSH;
+			task->aux = *(task->pc++) * LFIELDS_PER_FLUSH;
 			goto setlist;
 		case SETLIST0:
-			aux = 0;
+			task->aux = 0;
 setlist:
 			{
-				int32 n = *(pc++);
-				TObject *arr = S->top-n-1;
+				int32 n = *(task->pc++);
+				TObject *arr = task->S->top - n - 1;
 				for (; n; n--) {
-					ttype(S->top) = LUA_T_NUMBER;
-					nvalue(S->top) = (float)(n + aux);
-					*(luaH_set(avalue(arr), S->top)) = *(S->top - 1);
-					S->top--;
+					ttype(task->S->top) = LUA_T_NUMBER;
+					nvalue(task->S->top) = (float)(n + task->aux);
+					*(luaH_set(avalue(arr), task->S->top)) = *(task->S->top - 1);
+					task->S->top--;
 			}
 			break;
 		}
 		case SETMAP0:
-			aux = 0;
+			task->aux = 0;
 			goto setmap;
 		case SETMAP:
-			aux = *pc++;
+			task->aux = *task->pc++;
 setmap:
 			{
-				TObject *arr = S->top-(2*aux)-3;
+				TObject *arr = task->S->top - (2 * task->aux) - 3;
 				do {
-					*(luaH_set(avalue(arr), S->top - 2)) = *(S->top - 1);
-					S->top -= 2;
-				} while (aux--);
+					*(luaH_set(avalue(arr), task->S->top - 2)) = *(task->S->top - 1);
+					task->S->top -= 2;
+				} while (task->aux--);
 				break;
 			}
 		case POP:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto pop;
 		case POP0:
 		case POP1:
-			aux -= POP0;
+			task->aux -= POP0;
 pop:
-			S->top -= (aux + 1);
+			task->S->top -= (task->aux + 1);
 			break;
 		case CREATEARRAYW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto createarray;
 		case CREATEARRAY0:
 		case CREATEARRAY1:
-			aux -= CREATEARRAY0;
+			task->aux -= CREATEARRAY0;
 			goto createarray;
 		case CREATEARRAY:
-			aux = *pc++;
+			task->aux = *task->pc++;
 createarray:
 			luaC_checkGC();
-			avalue(S->top) = luaH_new(aux);
-			ttype(S->top) = LUA_T_ARRAY;
-			S->top++;
+			avalue(task->S->top) = luaH_new(task->aux);
+			ttype(task->S->top) = LUA_T_ARRAY;
+			task->S->top++;
 			break;
 		case EQOP:
 		case NEQOP:
 			{
-				int32 res = luaO_equalObj(S->top - 2, S->top - 1);
-				S->top--;
-				if (aux == NEQOP)
+				int32 res = luaO_equalObj(task->S->top - 2, task->S->top - 1);
+				task->S->top--;
+				if (task->aux == NEQOP)
 					res = !res;
-				ttype(S->top - 1) = res ? LUA_T_NUMBER : LUA_T_NIL;
-				nvalue(S->top - 1) = 1;
+				ttype(task->S->top - 1) = res ? LUA_T_NUMBER : LUA_T_NIL;
+				nvalue(task->S->top - 1) = 1;
 				break;
 			}
 		case LTOP:
@@ -505,49 +505,49 @@ createarray:
 			break;
 		case ADDOP:
 			{
-				TObject *l = S->top - 2;
-				TObject *r = S->top - 1;
+				TObject *l = task->S->top - 2;
+				TObject *r = task->S->top - 1;
 				if (tonumber(r) || tonumber(l))
 					call_arith(IM_ADD);
 				else {
 					nvalue(l) += nvalue(r);
-					--S->top;
+					--task->S->top;
 				}
 			break;
 			}
 		case SUBOP:
 			{
-				TObject *l = S->top - 2;
-				TObject *r = S->top - 1;
+				TObject *l = task->S->top - 2;
+				TObject *r = task->S->top - 1;
 				if (tonumber(r) || tonumber(l))
 					call_arith(IM_SUB);
 				else {
 					nvalue(l) -= nvalue(r);
-					--S->top;
+					--task->S->top;
 				}
 				break;
 			}
 		case MULTOP:
 			{
-				TObject *l = S->top - 2;
-				TObject *r = S->top - 1;
+				TObject *l = task->S->top - 2;
+				TObject *r = task->S->top - 1;
 				if (tonumber(r) || tonumber(l))
 					call_arith(IM_MUL);
 				else {
 					nvalue(l) *= nvalue(r);
-					--S->top;
+					--task->S->top;
 				}
 				break;
 			}
 		case DIVOP:
 			{
-				TObject *l = S->top-2;
-				TObject *r = S->top-1;
+				TObject *l = task->S->top - 2;
+				TObject *r = task->S->top - 1;
 				if (tonumber(r) || tonumber(l))
 					call_arith(IM_DIV);
 				else {
 					nvalue(l) /= nvalue(r);
-					--S->top;
+					--task->S->top;
 				}
 				break;
 			}
@@ -556,153 +556,126 @@ createarray:
 			break;
 		case CONCOP:
 			{
-				TObject *l = S->top - 2;
-				TObject *r = S->top - 1;
+				TObject *l = task->S->top - 2;
+				TObject *r = task->S->top - 1;
 				if (tostring(l) || tostring(r))
 					call_binTM(IM_CONCAT, "unexpected type for concatenation");
 				else {
 					tsvalue(l) = strconc(svalue(l), svalue(r));
-					--S->top;
+					--task->S->top;
 				}
 				luaC_checkGC();
 				break;
 			}
 		case MINUSOP:
-			if (tonumber(S->top-1)) {
-				ttype(S->top) = LUA_T_NIL;
-				S->top++;
+			if (tonumber(task->S->top - 1)) {
+				ttype(task->S->top) = LUA_T_NIL;
+				task->S->top++;
 				call_arith(IM_UNM);
 			} else
-				nvalue(S->top - 1) = - nvalue(S->top - 1);
+				nvalue(task->S->top - 1) = -nvalue(task->S->top - 1);
 			break;
 		case NOTOP:
-			ttype(S->top - 1) = (ttype(S->top - 1) == LUA_T_NIL) ? LUA_T_NUMBER : LUA_T_NIL;
-			nvalue(S->top - 1) = 1;
+			ttype(task->S->top - 1) = (ttype(task->S->top - 1) == LUA_T_NIL) ? LUA_T_NUMBER : LUA_T_NIL;
+			nvalue(task->S->top - 1) = 1;
 			break;
 		case ONTJMPW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto ontjmp;
 		case ONTJMP:
-			aux = *pc++;
+			task->aux = *task->pc++;
 ontjmp:
-			if (ttype(S->top-1) != LUA_T_NIL)
-				pc += aux;
+			if (ttype(task->S->top - 1) != LUA_T_NIL)
+				task->pc += task->aux;
 			else
-				S->top--;
+				task->S->top--;
 			break;
 		case ONFJMPW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto onfjmp;
 		case ONFJMP:
-			aux = *pc++;
+			task->aux = *task->pc++;
 onfjmp:
-			if (ttype(S->top - 1) == LUA_T_NIL)
-				pc += aux;
+			if (ttype(task->S->top - 1) == LUA_T_NIL)
+				task->pc += task->aux;
 			else
-				S->top--;
+				task->S->top--;
 			break;
 		case JMPW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto jmp;
 		case JMP:
-			aux = *pc++;
+			task->aux = *task->pc++;
 jmp:
-			pc += aux;
+			task->pc += task->aux;
 			break;
 		case IFFJMPW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto iffjmp;
 		case IFFJMP:
-			aux = *pc++;
+			task->aux = *task->pc++;
 iffjmp:
-			if (ttype(--S->top) == LUA_T_NIL)
-				pc += aux;
+			if (ttype(--task->S->top) == LUA_T_NIL)
+				task->pc += task->aux;
 			break;
 		case IFTUPJMPW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto iftupjmp;
 		case IFTUPJMP:
-			aux = *pc++;
+			task->aux = *task->pc++;
 iftupjmp:
-			if (ttype(--S->top) != LUA_T_NIL)
-				pc -= aux;
+			if (ttype(--task->S->top) != LUA_T_NIL)
+				task->pc -= task->aux;
 			break;
 		case IFFUPJMPW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto iffupjmp;
 		case IFFUPJMP:
-			aux = *pc++;
+			task->aux = *task->pc++;
 iffupjmp:
-			if (ttype(--S->top) == LUA_T_NIL)
-				pc -= aux;
+			if (ttype(--task->S->top) == LUA_T_NIL)
+				task->pc -= task->aux;
 			break;
 		case CLOSURE:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto closure;
 		case CLOSURE0:
 		case CLOSURE1:
-			aux -= CLOSURE0;
+			task->aux -= CLOSURE0;
 closure:
-			luaV_closure(aux);
+			luaV_closure(task->aux);
 			luaC_checkGC();
 			break;
 	  case CALLFUNC:
-			aux = *pc++;
+			task->aux = *task->pc++;
 			goto callfunc;
 	  case CALLFUNC0:
 	  case CALLFUNC1:
-			aux -= CALLFUNC0;
+			task->aux -= CALLFUNC0;
 callfunc:
-			{
-				StkId newBase = (S->top-S->stack)-(*pc++);
-				TObject *func = S->stack+newBase-1;
-				lua_state->ci->pc = pc;
-				if (ttype(func) == LUA_T_PROTO || (ttype(func) == LUA_T_CLOSURE &&
-						ttype(&clvalue(func)->consts[0]) == LUA_T_PROTO)) {
-
-					// Calling another Lua function
-					luaD_precall(func, newBase, aux);
-					ttype(func) = (ttype(func) == LUA_T_PROTO) ? LUA_T_PMARK : LUA_T_CLMARK;
-					goto newfunc;
-				}
-				luaD_call(newBase, aux);
-
-				if (lua_state->Tstate != RUN) {
-					if (ci_index > 1)	// C functions detected by break_here
-						lua_error("Cannot yield through method call");
-					return -1;
-				}
-				break;
-			}
+			lua_state->state_counter2--;
+			return -((task->S->top - task->S->stack) - (*task->pc++));
 		case ENDCODE:
-			S->top = S->stack + base;
+			task->S->top = task->S->stack + task->base;
 			// goes through
 		case RETCODE:
-			{
-				StkId firstResult = (base + ((aux == RETCODE) ? *pc : 0));
-//				if (lua_callhook)
-//					(*lua_callhook)(LUA_NOOBJECT, "(END OF SCRIPT}", 0);
-				// If returning from the original stack frame, terminate
-				if (lua_state->ci == lua_state->base_ci + ci_index)
-					return firstResult;
-				luaD_postret(firstResult);
-				goto newfunc;
-			}
+			lua_state->state_counter2--;
+			return (task->base + ((task->aux == 123) ? *task->pc : 0));
 		case SETLINEW:
-			aux = next_word(pc);
+			task->aux = next_word(task->pc);
 			goto setline;
 		case SETLINE:
-			aux = *pc++;
+			task->aux = *task->pc++;
 setline:
-			if ((S->stack + base - 1)->ttype != LUA_T_LINE) {
+			if ((task->S->stack + task->base - 1)->ttype != LUA_T_LINE) {
 				// open space for LINE value */
-				luaD_openstack((S->top - S->stack)-base);
-				base++;
-				(S->stack + base - 1)->ttype = LUA_T_LINE;
+				luaD_openstack((task->S->top - task->S->stack) - task->base);
+				task->base++;
+				(task->S->stack + task->base - 1)->ttype = LUA_T_LINE;
 			}
-			(S->stack + base - 1)->value.i = aux;
+			(task->S->stack + task->base - 1)->value.i = task->aux;
 			if (lua_linehook)
-				luaD_lineHook(aux);
+				luaD_lineHook(task->aux);
 			break;
 #ifdef LUA_DEBUG
 		default:

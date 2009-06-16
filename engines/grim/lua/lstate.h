@@ -53,72 +53,50 @@ struct CallInfo {
 	int32 nResults;
 };
 
-enum TaskState { RUN, YIELD, PAUSE, DONE };
+struct lua_Task;
 
-struct lua_Task {
-	Stack stack;
-	C_Lua_Stack Cstack;
-	jmp_buf *errorJmp;
-	CallInfo *ci;
-	CallInfo *base_ci;
-	int32 base_ci_size;
-	CallInfo *end_ci;
-	char *Mbuffer;
-	char *Mbuffbase;
-	int32 Mbuffsize;
-	int32 Mbuffnext;
-	C_Lua_Stack Cblocks[MAX_C_BLOCKS];
-	int32 numCblocks;
-	enum TaskState Tstate;
-	struct lua_Task *next;
-	int32 id;
-};
+extern GCnode rootproto;
+extern GCnode rootcl;
+extern GCnode rootglobal;
+extern GCnode roottable;
+extern struct ref *refArray;
+extern int32 refSize;
+extern int32 GCthreshold;
+extern int32 nblocks;
+extern int32 Mbuffsize;
+extern int32 Mbuffnext;
+extern char *Mbuffbase;
+extern char *Mbuffer;
+extern TObject errorim;
+extern stringtable *string_root;
+extern int32 last_tag;
+extern struct IM *IMtable;
+extern int32 IMtable_size;
 
 struct LState {
+	LState *prev; // handle to previous state in list
+	LState *next; // handle to next state in list
+	bool paused; // flag mean if task is paused
+	int32 state_counter1;
+	int32 state_counter2;
+	int32 flag2;
 	Stack stack;  // Lua stack
 	C_Lua_Stack Cstack;  // C2lua struct
-	CallInfo *ci;  // call info for current function
-	CallInfo *base_ci;  // array of CallInfo's
-	int32 base_ci_size;
-	CallInfo *end_ci;  // points after end of ci array
-	enum TaskState Tstate;  // state of current thread
-	jmp_buf *errorJmp;  // current error recover point
-	lua_Task *root_task;  // first task created
-	lua_Task *curr_task;
-	lua_Task *last_task;
-	TObject errorim;  // error tag method
-	GCnode rootproto;  // list of all prototypes
-	GCnode rootcl;  // list of all closures
-	GCnode roottable;  // list of all tables
-	GCnode rootglobal;  // list of strings with global values
-	stringtable *string_root;  // array of hash tables for strings and udata
-	struct IM *IMtable;  // table for tag methods
-	int32 IMtable_size;  // size of IMtable
-	int32 last_tag;  // last used tag in IMtable
 	struct FuncState *mainState, *currState;  // point to local structs in yacc
 	struct LexState *lexstate;  // point to local struct in yacc
-	ref *refArray;  // locked objects
-	int32 refSize;  // size of refArray
-	int32 GCthreshold;
-	int32 nblocks;  // number of 'blocks' currently allocated
-	char *Mbuffer;  /* global buffer */
-	char *Mbuffbase;  /* current first position of Mbuffer */
-	int Mbuffsize;  /* size of Mbuffer */
-	int Mbuffnext;  /* next position to fill in Mbuffer */
+	jmp_buf *errorJmp;  // current error recover point
+	lua_Task *task; // handle to task
+	lua_Task *some_task;
+	uint32 id; // current id of task
+	TObject	taskFunc;
 	struct C_Lua_Stack Cblocks[MAX_C_BLOCKS];
-	int numCblocks;  /* number of nested Cblocks */
+	int numCblocks; // number of nested Cblocks
 };
 
-extern LState *lua_state;
-extern int32 globalTaskSerialId;
+extern LState *lua_state, *lua_rootState;
 
-void lua_resetglobals();
-
-// Switch to the given task */
-void luaI_switchtask(lua_Task *t);
-
-// Create a new task and switch to it
-lua_Task *luaI_newtask();
+void lua_stateinit(LState *state);
+void lua_statedeinit(LState *state);
 
 } // end of namespace Grim
 

@@ -10,6 +10,14 @@
 namespace Grim {
 
 void luaB_predefine();
+void stop_script();
+void start_script();
+void find_script();
+void identify_script();
+void next_script();
+void break_here();
+void pause_scripts();
+void unpause_scripts();
 
 } // end of namespace Grim
 

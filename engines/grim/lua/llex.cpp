@@ -223,9 +223,9 @@ static int read_long_string(LexState *LS, YYSTYPE *l) {
 	}
 endloop:
 	save_and_next(LS);  // pass the second ']'
-	lua_state->Mbuffer[lua_state->Mbuffnext - 2] = 0;  // erases ']]'
-	l->pTStr = luaS_new(lua_state->Mbuffbase + 2);
-	lua_state->Mbuffer[lua_state->Mbuffnext - 2] = ']';  // restores ']]'
+	Mbuffer[Mbuffnext - 2] = 0;  // erases ']]'
+	l->pTStr = luaS_new(Mbuffbase + 2);
+	Mbuffer[Mbuffnext - 2] = ']';  // restores ']]'
 	return STRING;
 }
 
@@ -341,8 +341,8 @@ int32 luaY_lex(YYSTYPE *l) {
 				}
 				next(LS);  // skip delimiter
 				save(0);
-				l->pTStr = luaS_new(lua_state->Mbuffbase + 1);
-				lua_state->Mbuffer[lua_state->Mbuffnext - 1] = del;  // restore delimiter
+				l->pTStr = luaS_new(Mbuffbase + 1);
+				Mbuffer[Mbuffnext - 1] = del;  // restore delimiter
 				return STRING;
 			}
 		case '.':
@@ -430,7 +430,7 @@ fraction:
 					save_and_next(LS);
 				} while (isalnum(LS->current) || LS->current == '_');
 				save(0);
-				ts = luaS_new(lua_state->Mbuffbase);
+				ts = luaS_new(Mbuffbase);
 				if (ts->head.marked >= 255)
 					return ts->head.marked;  // reserved word
 				l->pTStr = ts;

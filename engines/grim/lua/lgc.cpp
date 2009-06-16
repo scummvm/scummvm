@@ -31,43 +31,43 @@ int32 luaC_ref(TObject *o, int32 lock) {
 	if (ttype(o) == LUA_T_NIL)
 		ref = -1;   // special ref for nil
 	else {
-		for (ref = 0; ref < lua_state->refSize; ref++)
-			if (lua_state->refArray[ref].status == FREE)
+		for (ref = 0; ref < refSize; ref++)
+			if (refArray[ref].status == FREE)
 				goto found;
-		// no more empty spaces */
+		// no more empty spaces
 		{
-			int32 oldSize = lua_state->refSize;
-			lua_state->refSize = luaM_growvector(&lua_state->refArray, lua_state->refSize, struct ref, refEM, MAX_WORD);
-			for (ref = oldSize; ref < lua_state->refSize; ref++)
-				lua_state->refArray[ref].status = FREE;
+			int32 oldSize = refSize;
+			refSize = luaM_growvector(&refArray, refSize, struct ref, refEM, MAX_WORD);
+			for (ref = oldSize; ref < refSize; ref++)
+				refArray[ref].status = FREE;
 			ref = oldSize;
 		}
 found:
-		lua_state->refArray[ref].o = *o;
-		lua_state->refArray[ref].status = lock ? LOCK : HOLD;
+		refArray[ref].o = *o;
+		refArray[ref].status = lock ? LOCK : HOLD;
 	}
 	return ref;
 }
 
 void lua_unref(int32 ref) {
-	if (ref >= 0 && ref < lua_state->refSize)
-		lua_state->refArray[ref].status = FREE;
+	if (ref >= 0 && ref < refSize)
+		refArray[ref].status = FREE;
 }
 
 TObject* luaC_getref(int32 ref) {
 	if (ref == -1)
 		return &luaO_nilobject;
-	if (ref >= 0 && ref < lua_state->refSize && (lua_state->refArray[ref].status == LOCK || lua_state->refArray[ref].status == HOLD))
-		return &lua_state->refArray[ref].o;
+	if (ref >= 0 && ref < refSize && (refArray[ref].status == LOCK || refArray[ref].status == HOLD))
+		return &refArray[ref].o;
 	else
 		return NULL;
 }
 
 static void travlock() {
 	int32 i;
-	for (i = 0; i < lua_state->refSize; i++) {
-		if (lua_state->refArray[i].status == LOCK) {
-			markobject(&lua_state->refArray[i].o);
+	for (i = 0; i < refSize; i++) {
+		if (refArray[i].status == LOCK) {
+			markobject(&refArray[i].o);
 		}
 	}
 }
@@ -98,9 +98,9 @@ static int32 ismarked(TObject *o) {
 
 static void invalidaterefs() {
 	int32 i;
-	for (i = 0; i < lua_state->refSize; i++)
-		if (lua_state->refArray[i].status == HOLD && !ismarked(&lua_state->refArray[i].o))
-			lua_state->refArray[i].status = COLLECTED;
+	for (i = 0; i < refSize; i++)
+		if (refArray[i].status == HOLD && !ismarked(&refArray[i].o))
+			refArray[i].status = COLLECTED;
 }
 
 void luaC_hashcallIM(Hash *l) {
@@ -187,7 +187,7 @@ static void hashmark(Hash *h) {
 
 static void globalmark() {
 	TaggedString *g;
-	for (g = (TaggedString *)lua_state->rootglobal.next; g; g = (TaggedString *)g->head.next){
+	for (g = (TaggedString *)rootglobal.next; g; g = (TaggedString *)g->head.next){
 		if (g->globalval.ttype != LUA_T_NIL) {
 			markobject(&g->globalval);
 			strmark(g);  // cannot collect non nil global variables
@@ -226,7 +226,7 @@ static void markall() {
 }
 
 int32 lua_collectgarbage(int32 limit) {
-	int32 recovered = lua_state->nblocks;  // to subtract nblocks after gc
+	int32 recovered = nblocks;  // to subtract nblocks after gc
 	Hash *freetable;
 	TaggedString *freestr;
 	TProtoFunc *freefunc;
@@ -234,10 +234,10 @@ int32 lua_collectgarbage(int32 limit) {
 	markall();
 	invalidaterefs();
 	freestr = luaS_collector();
-	freetable = (Hash *)listcollect(&(lua_state->roottable));
-	freefunc = (TProtoFunc *)listcollect(&(lua_state->rootproto));
-	freeclos = (Closure *)listcollect(&(lua_state->rootcl));
-	lua_state->GCthreshold *= 4;  // to avoid GC during GC
+	freetable = (Hash *)listcollect(&roottable);
+	freefunc = (TProtoFunc *)listcollect(&rootproto);
+	freeclos = (Closure *)listcollect(&rootcl);
+	GCthreshold *= 4;  // to avoid GC during GC
 	luaC_hashcallIM(freetable);  // GC tag methods for tables
 	luaC_strcallIM(freestr);  // GC tag methods for userdata
 	luaD_gcIM(&luaO_nilobject);  // GC tag method for nil (signal end of GC)
@@ -245,13 +245,13 @@ int32 lua_collectgarbage(int32 limit) {
 	luaS_free(freestr);
 	luaF_freeproto(freefunc);
 	luaF_freeclosure(freeclos);
-	recovered = recovered-lua_state->nblocks;
-	lua_state->GCthreshold = (limit == 0) ? 2 * lua_state->nblocks : lua_state->nblocks + limit;
+	recovered = recovered - nblocks;
+	GCthreshold = (limit == 0) ? 2 * nblocks : nblocks + limit;
 	return recovered;
 }
 
 void luaC_checkGC() {
-	if (lua_state->nblocks >= lua_state->GCthreshold)
+	if (nblocks >= GCthreshold)
 		lua_collectgarbage(0);
 }
 

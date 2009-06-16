@@ -25,9 +25,28 @@
 
 namespace Grim {
 
-LState *lua_state = NULL;
+GCnode rootproto;
+GCnode rootcl;
+GCnode rootglobal;
+GCnode roottable;
+struct ref *refArray;
+int32 refSize;
+int32 GCthreshold;
+int32 nblocks;
+int32 Mbuffsize;
+int32 Mbuffnext;
+char *Mbuffbase;
+char *Mbuffer;
+TObject errorim;
+stringtable *string_root;
+int32 last_tag;
+struct IM *IMtable;
+int32 IMtable_size;
 
-int32 globalTaskSerialId;
+LState *lua_state = NULL;
+LState *lua_rootState = NULL;
+
+int globalTaskSerialId = 0;
 
 void stderrorim();
 
@@ -36,39 +55,73 @@ static luaL_reg stdErrorRimFunc[] = {
 };
 
 static void lua_openthr() {
-	lua_state->numCblocks = 0;
-	lua_state->Cstack.base = 0;
-	lua_state->Cstack.lua2C = 0;
-	lua_state->Cstack.num = 0;
-	lua_state->errorJmp = NULL;
-	lua_state->Mbuffsize = 0;
-	lua_state->Mbuffnext = 0;
-	lua_state->Mbuffbase = NULL;
-	lua_state->Mbuffer = NULL;
-	lua_state->Tstate = RUN;
+	Mbuffsize = 0;
+	Mbuffnext = 0;
+	Mbuffbase = NULL;
+	Mbuffer = NULL;
+}
+
+#define STACK_UNIT	256
+
+void lua_stateinit(LState *state) {
+	state->prev = NULL;
+	state->next = NULL;
+	state->paused = false;
+	state->state_counter1 = 0;
+	state->state_counter2 = 0;
+	state->flag2 = 0;
+
+	state->numCblocks = 0;
+	state->Cstack.base = 0;
+	state->Cstack.lua2C = 0;
+	state->Cstack.num = 0;
+	state->errorJmp = NULL;
+	state->id = globalTaskSerialId++;
+	state->task = NULL;
+	state->some_task = NULL;
+
+	state->stack.stack = luaM_newvector(STACK_UNIT, TObject);
+	state->stack.top = state->stack.stack;
+	state->stack.last = state->stack.stack + (STACK_UNIT - 1);
+}
+
+void lua_statedeinit(LState *state) {
+	if (state->prev)
+		state->prev->next = state->next;
+	if (state->next)
+		state->next->prev = state->prev;
+	state->next = NULL;
+	state->prev = NULL;
+
+	if (state->task) {
+		lua_Task *t, *m;
+		for (t = state->task; t != NULL;) {
+			m = t->next;
+			luaM_free(t);
+			t = m;
+		}
+	}
+
+	free(state->stack.stack);
 }
 
 void lua_resetglobals() {
-	globalTaskSerialId = 1;
 	lua_openthr();
-	lua_state->rootproto.next = NULL;
-	lua_state->rootproto.marked = 0;
-	lua_state->rootcl.next = NULL;
-	lua_state->rootcl.marked = 0;
-	lua_state->rootglobal.next = NULL;
-	lua_state->rootglobal.marked = 0;
-	lua_state->roottable.next = NULL;
-	lua_state->roottable.marked = 0;
-	lua_state->refArray = NULL;
-	lua_state->refSize = 0;
-	lua_state->GCthreshold = GARBAGE_BLOCK;
-	lua_state->nblocks = 0;
-	lua_state->root_task = luaM_new(lua_Task);
-	lua_state->root_task->next = NULL;
-	lua_state->last_task = lua_state->root_task;
-	lua_state->curr_task = lua_state->root_task;
+
+	rootproto.next = NULL;
+	rootproto.marked = 0;
+	rootcl.next = NULL;
+	rootcl.marked = 0;
+	rootglobal.next = NULL;
+	rootglobal.marked = 0;
+	roottable.next = NULL;
+	roottable.marked = 0;
+	refArray = NULL;
+	refSize = 0;
+	GCthreshold = GARBAGE_BLOCK;
+	nblocks = 0;
+
 	luaD_init();
-	luaD_initthr();
 	luaS_init();
 	luaX_init();
 }
@@ -135,7 +188,8 @@ void callHook(lua_Function func, const char *filename, int32 line) {
 void lua_open() {
 	if (lua_state)
 		return;
-	lua_state = luaM_new(LState);
+	lua_rootState = lua_state = luaM_new(LState);
+	lua_stateinit(lua_state);
 	lua_resetglobals();
 	luaT_init();
 	luaB_predefine();
@@ -146,78 +200,36 @@ void lua_open() {
 
 void lua_close() {
 	TaggedString *alludata = luaS_collectudata();
-	lua_state->GCthreshold = MAX_INT;  // to avoid GC during GC
-	luaC_hashcallIM((Hash *)lua_state->roottable.next);  // GC t.methods for tables
+	GCthreshold = MAX_INT;  // to avoid GC during GC
+	luaC_hashcallIM((Hash *)roottable.next);  // GC t.methods for tables
 	luaC_strcallIM(alludata);  // GC tag methods for userdata
 	luaD_gcIM(&luaO_nilobject);  // GC tag method for nil (signal end of GC)
-	luaH_free((Hash *)lua_state->roottable.next);
-	luaF_freeproto((TProtoFunc *)lua_state->rootproto.next);
-	luaF_freeclosure((Closure *)lua_state->rootcl.next);
+	luaH_free((Hash *)roottable.next);
+	luaF_freeproto((TProtoFunc *)rootproto.next);
+	luaF_freeclosure((Closure *)rootcl.next);
 	luaS_free(alludata);
 	luaS_freeall();
-	luaM_free(lua_state->stack.stack);
-	luaM_free(lua_state->IMtable);
-	luaM_free(lua_state->refArray);
-	luaM_free(lua_state->Mbuffer);
-	luaM_free(lua_state);
-	lua_state = NULL;
-#ifdef LUA_DEBUG
+	luaM_free(IMtable);
+	luaM_free(refArray);
+	luaM_free(Mbuffer);
+
+	LState *tmpState, *state = lua_rootState;
+	for (state = lua_rootState; state != NULL;) {
+		tmpState = state->next;
+		lua_statedeinit(state);
+		luaM_free(state);
+		state = tmpState;
+	}
+
+	Mbuffer = NULL;
+	IMtable = NULL;
+	refArray = NULL;
+	lua_rootState = lua_state = NULL;
+
+#ifdef DEBUG
 	printf("total de blocos: %ld\n", numblocks);
 	printf("total de memoria: %ld\n", totalmem);
 #endif
-}
-
-static void savetask(lua_Task *t) {
-	t->stack = lua_state->stack;
-	t->Cstack = lua_state->Cstack;
-	t->errorJmp = lua_state->errorJmp;
-	t->ci = lua_state->ci;
-	t->base_ci = lua_state->base_ci;
-	t->base_ci_size = lua_state->base_ci_size;
-	t->end_ci = lua_state->end_ci;
-	t->Mbuffer = lua_state->Mbuffer;
-	t->Mbuffbase = lua_state->Mbuffbase;
-	t->Mbuffsize = lua_state->Mbuffsize;
-	t->Mbuffnext = lua_state->Mbuffnext;
-	memcpy(t->Cblocks, lua_state->Cblocks, sizeof(lua_state->Cblocks));
-	t->numCblocks = lua_state->numCblocks;
-	t->Tstate = lua_state->Tstate;
-}
-
-static void loadtask(struct lua_Task *t) {
-	lua_state->stack = t->stack;
-	lua_state->Cstack = t->Cstack;
-	lua_state->errorJmp = t->errorJmp;
-	lua_state->ci = t->ci;
-	lua_state->base_ci = t->base_ci;
-	lua_state->base_ci_size = t->base_ci_size;
-	lua_state->end_ci = t->end_ci;
-	lua_state->Mbuffer = t->Mbuffer;
-	lua_state->Mbuffbase = t->Mbuffbase;
-	lua_state->Mbuffsize = t->Mbuffsize;
-	lua_state->Mbuffnext = t->Mbuffnext;
-	memcpy(lua_state->Cblocks, t->Cblocks, sizeof(lua_state->Cblocks));
-	lua_state->numCblocks = t->numCblocks;
-	lua_state->Tstate = t->Tstate;
-}
-
-void luaI_switchtask(lua_Task *t) {
-	savetask(lua_state->curr_task);
-	lua_state->curr_task = t;
-	loadtask(t);
-}
-
-struct lua_Task *luaI_newtask() {
-	struct lua_Task *result;
-
-	savetask(lua_state->curr_task);
-	result = luaM_new(lua_Task);
-	lua_state->curr_task = result;
-	result->next = NULL;
-	lua_openthr();
-	luaD_initthr();
-	result->id = globalTaskSerialId++;
-	return result;
 }
 
 } // end of namespace Grim

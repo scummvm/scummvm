@@ -24,7 +24,6 @@ void luaV_gettable();
 void luaV_settable(TObject *t, int32 mode);
 void luaV_getglobal(TaggedString *ts);
 void luaV_setglobal(TaggedString *ts);
-StkId luaV_execute(CallInfo *ci);
 void luaV_closure(int32 nelems);
 
 } // end of namespace Grim

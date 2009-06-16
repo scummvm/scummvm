@@ -6,7 +6,23 @@
 
 namespace Grim {
 
-extern int32 task_tag;
+struct lua_Task {
+	lua_Task *next;
+	struct Stack *S;
+	Closure *cl;
+	TProtoFunc *tf;
+	StkId base;
+	byte *pc;
+	TObject *consts;
+	int32 aux;
+	bool some_flag;
+	StkId some_base;
+	int32 some_results;
+};
+
+void lua_taskinit(lua_Task *task, lua_Task *next, StkId tbase, int results);
+void lua_taskresume(lua_Task *task, Closure *closure, TProtoFunc *protofunc, StkId tbase);
+StkId luaV_execute(lua_Task *task);
 
 void start_script();
 void stop_script();

@@ -17,6 +17,7 @@ TObject *luaA_Address(lua_Object o);
 void luaA_pushobject(TObject *o);
 void luaA_packresults();
 int32 luaA_passresults();
+void set_normalized(TObject *d, TObject *s);
 
 } // end of namespace Grim
 

@@ -32,7 +32,7 @@ static void nextvar() {
 	TObject *o = luaA_Address(luaL_nonnullarg(1));
 	TaggedString *g;
 	if (ttype(o) == LUA_T_NIL)
-		g = (TaggedString *)lua_state->rootglobal.next;
+		g = (TaggedString *)rootglobal.next;
 	else {
 		luaL_arg_check(ttype(o) == LUA_T_STRING, 1, "variable name expected");
 		g = tsvalue(o);
@@ -56,7 +56,7 @@ static void foreachvar() {
 	StkId name = lua_state->Cstack.base++;  // place to keep var name (to avoid GC)
 	ttype(lua_state->stack.stack + name) = LUA_T_NIL;
 	lua_state->stack.top++;
-	for (g = lua_state->rootglobal.next; g; g = g->next) {
+	for (g = rootglobal.next; g; g = g->next) {
 		TaggedString *s = (TaggedString *)g;
 		if (s->globalval.ttype != LUA_T_NIL) {
 			ttype(lua_state->stack.stack + name) = LUA_T_STRING;
@@ -64,7 +64,9 @@ static void foreachvar() {
 			luaA_pushobject(&f);
 			pushstring(s);
 			luaA_pushobject(&s->globalval);
+			lua_state->state_counter1++;
 			luaD_call((lua_state->stack.top - lua_state->stack.stack) - 2, 1);
+			lua_state->state_counter1--;
 			if (ttype(lua_state->stack.top - 1) != LUA_T_NIL)
 				return;
 			lua_state->stack.top--;
@@ -92,7 +94,9 @@ static void foreach() {
 			luaA_pushobject(&f);
 			luaA_pushobject(ref(nd));
 			luaA_pushobject(val(nd));
+			lua_state->state_counter1++;
 			luaD_call((lua_state->stack.top - lua_state->stack.stack) - 2, 1);
+			lua_state->state_counter1--;
 			if (ttype(lua_state->stack.top - 1) != LUA_T_NIL)
 				return;
 			lua_state->stack.top--;

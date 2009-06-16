@@ -53,28 +53,28 @@ static void init_entry(int32 tag) {
 
 void luaT_init() {
 	int32 t;
-	lua_state->IMtable_size = NUM_TAGS * 2;
-	lua_state->last_tag = -(NUM_TAGS - 1);
-	lua_state->IMtable = luaM_newvector(lua_state->IMtable_size, struct IM);
-	for (t = -(lua_state->IMtable_size - 1); t <= 0; t++)
+	IMtable_size = NUM_TAGS * 2;
+	last_tag = -(NUM_TAGS - 1);
+	IMtable = luaM_newvector(IMtable_size, struct IM);
+	for (t = -(IMtable_size - 1); t <= 0; t++)
 		init_entry(t);
 }
 
 int32 lua_newtag() {
-	--lua_state->last_tag;
-	if (-lua_state->last_tag >= lua_state->IMtable_size)
-		lua_state->IMtable_size = luaM_growvector(&lua_state->IMtable, lua_state->IMtable_size, struct IM, memEM, MAX_INT);
-	init_entry(lua_state->last_tag);
-	return lua_state->last_tag;
+	--last_tag;
+	if (-last_tag >= IMtable_size)
+		IMtable_size = luaM_growvector(&IMtable, IMtable_size, struct IM, memEM, MAX_INT);
+	init_entry(last_tag);
+	return last_tag;
 }
 
 static void checktag(int32 tag) {
-	if (!(lua_state->last_tag <= tag && tag <= 0))
+	if (!(last_tag <= tag && tag <= 0))
 		luaL_verror("%d is not a valid tag", tag);
 }
 
 void luaT_realtag(int32 tag) {
-	if (!(lua_state->last_tag <= tag && tag < LUA_T_NIL))
+	if (!(last_tag <= tag && tag < LUA_T_NIL))
 		luaL_verror("tag %d is not result of `newtag'", tag);
 }
 
@@ -135,11 +135,11 @@ void luaT_settagmethod(int32 t, const char *event, TObject *func) {
 
 const char *luaT_travtagmethods(int32 (*fn)(TObject *)) {
 	int32 e;
-	if (fn(&lua_state->errorim))
+	if (fn(&errorim))
 		return "error";
 	for (e = IM_GETTABLE; e <= IM_FUNCTION; e++) {  // ORDER IM
 		int32 t;
-		for (t = 0; t >= lua_state->last_tag; t--)
+		for (t = 0; t >= last_tag; t--)
 			if (fn(luaT_getim(t, e)))
 				return luaT_eventname[e];
 	}
@@ -193,8 +193,8 @@ void luaT_setfallback() {
 	luaL_arg_check(lua_isfunction(func), 2, "function expected");
 	switch (luaO_findstring(name, oldnames)) {
 	case 0:  // old error fallback
-		oldfunc = lua_state->errorim;
-		lua_state->errorim = *luaA_Address(func);
+		oldfunc = errorim;
+		errorim = *luaA_Address(func);
 		replace = errorFB;
 		break;
 	case 1:  // old getglobal fallback
