@@ -45,7 +45,7 @@ void Screen::copyToBackBuffer(byte *buffer, int pitch, int x, int y, int width, 
 	byte *dest = (byte *)_backBuffer.pixels;
 
 	while (h--) {
-		memcpy(dest, buffer, w);
+		memcpy(dest + y * _backBuffer.pitch + x, buffer, w);
 		dest += 640;
 		buffer += pitch;
 	}
