@@ -31,8 +31,8 @@ SceneResource::SceneResource() {
 }
 
 SceneResource::~SceneResource() {
-    if (_worldStats)
-        delete _worldStats;
+	delete _worldStats;
+	delete _mainActor;
 }
 
 bool SceneResource::load(uint8 sceneIdx) {
@@ -122,6 +122,15 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     }
 
     // TODO grab Max actor definitions
+    // TODO hardcoded for RES.005 ... need to verify if this
+    // offset persists across the other files, and also how
+    // scenes with multiple actors work
+    stream->seek(0xA73B6);
+
+    uint8 mainActorData[500];
+    stream->read(mainActorData, 500);
+
+    _mainActor = new MainActor(mainActorData);
 
     stream->seek(0xD6B5A); // where actors action definitions start
 
