@@ -868,7 +868,7 @@ void LoLEngine::showCredits() {
 	_screen->_charOffset = 0;
 
 	char *credits = (char *)_res->fileData("CREDITS.TXT", 0);
-	processCredits(credits, 19, 4, 5);
+	processCredits(credits, 21, 4, 5);
 	delete[] credits;
 
 	uint32 endTime = _system->getMillis() + 120 * _tickLength;
@@ -898,8 +898,8 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 	uint8 *doorShape = _screen->makeShapeCopy(_screen->getCPagePtr(5), 0);
 	assert(doorShape);
 
-	_screen->drawShape(0, doorShape, 0, 0, 20, 0x10);
-	_screen->drawShape(0, doorShape, 0, 0, 21, 0x11);
+	_screen->drawShape(0, doorShape, 0, 0, 22, 0x10);
+	_screen->drawShape(0, doorShape, 0, 0, 23, 0x11);
 
 	int curShapeFile = 0;
 	uint8 *shapes[12];
@@ -1045,8 +1045,8 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 		} else {
 			if (!monsterAnimFrame && doorRedraw) {
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, page, Screen::CR_NO_P_CHECK);
-				_screen->drawShape(page, doorShape, 0, 0, 20, 0x10);
-				_screen->drawShape(page, doorShape, 0, 0, 21, 0x11);
+				_screen->drawShape(page, doorShape, 0, 0, 22, 0x10);
+				_screen->drawShape(page, doorShape, 0, 0, 23, 0x11);
 
 				--frameCounter;
 				doorRedraw = false;
@@ -1065,32 +1065,32 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 				bool isRightMonster = ((curShapeFile - 1) & 1) != 0;
 
 				if (isRightMonster) {
-					doorSD = 21;
+					doorSD = 23;
 					doorX = _outroRightDoorPos[monsterAnimFrame * 2 + 0];
 					doorY = _outroRightDoorPos[monsterAnimFrame * 2 + 1];
 
 					monsterX = _outroRightMonsterPos[monsterAnimFrame * 2 + 0];
 					monsterY = _outroRightMonsterPos[monsterAnimFrame * 2 + 1];
 
-					_screen->drawShape(page, doorShape, 0, 0, 20, 0x10);
+					_screen->drawShape(page, doorShape, 0, 0, 22, 0x10);
 				} else {
-					doorSD = 20;
+					doorSD = 22;
 					doorX = _outroLeftDoorPos[monsterAnimFrame * 2 + 0];
 					doorY = _outroLeftDoorPos[monsterAnimFrame * 2 + 1];
 
 					monsterX = _outroLeftMonsterPos[monsterAnimFrame * 2 + 0];
 					monsterY = _outroLeftMonsterPos[monsterAnimFrame * 2 + 1];
 
-					_screen->drawShape(page, doorShape, 0, 0, 21, 0x11);
+					_screen->drawShape(page, doorShape, 0, 0, 23, 0x11);
 				}
 
 				if (monsterAnimFrame >= 8)
-					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 20) ? 0 : 1);
+					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 22) ? 0 : 1);
 
 				_screen->drawShape(page, monsterShape, monsterX, monsterY, 0, 0x104 | ((!isRightMonster | (monsterAnimFrame < 20)) ? 0 : 1), _outroShapeTable, 1, _outroMonsterScaleTableX[monsterAnimFrame], _outroMonsterScaleTableY[monsterAnimFrame]);
 
 				if (monsterAnimFrame < 8)
-					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 20) ? 0 : 1);
+					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 22) ? 0 : 1);
 
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 6, Screen::CR_NO_P_CHECK);
 				doorRedraw = true;

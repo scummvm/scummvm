@@ -154,7 +154,9 @@ void GUI::initMenu(Menu &menu) {
 	for (int i = 0; i < menu.numberOfItems; ++i) {
 		if (getMenuItemLabel(menu.item[i])) {
 			if (_vm->gameFlags().gameID == GI_LOL) {
-				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 8);
+				menu.item[i].labelX = menu.item[i].x - 1;
+				menu.item[i].labelY = menu.item[i].y + 3;
+				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 10);
 			} else {
 				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX - 1, menu.y + menu.item[i].labelY + 1, defaultColor1(), 0, 0);
 				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 0);

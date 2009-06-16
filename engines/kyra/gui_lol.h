@@ -57,6 +57,7 @@ namespace Kyra {
 	do { \
 		item.enabled = 1; \
 		item.itemId = a; \
+		item.itemString = 0; \
 		item.x = b; \
 		item.y = c; \
 		item.width = d; \
@@ -69,6 +70,7 @@ namespace Kyra {
 		item.color2 = 227; \
 		item.saveSlot = 0; \
 		item.labelId = f; \
+		item.labelString = 0; \
 		item.labelX = 0; \
 		item.labelY = 0; \
 		item.keyCode = g; \
@@ -109,6 +111,7 @@ private:
 
 	int clickedMainMenu(Button *button);
 	int clickedLoadMenu(Button *button);
+	int clickedOptionsMenu(Button *button);
 	int clickedDeathMenu(Button *button);
 	int clickedChoiceMenu(Button *button);
 

@@ -1570,15 +1570,7 @@ int LoLEngine::clickedOptions(Button *button) {
 	enableSysTimer(2);
 	updateDrawPage2();
 
-	char filename[13];
-	snprintf(filename, sizeof(filename), "LEVEL%02d.%s", _currentLevel, _languageExt[_lang]);
-	if (_levelLangFile)
-		delete[] _levelLangFile;
-	_levelLangFile = _res->fileData(filename, 0);
-	snprintf(filename, sizeof(filename), "LANDS.%s", _languageExt[_lang]);
-	if (_landsFile)
-		delete[] _landsFile;
-	_landsFile = _res->fileData(filename, 0);
+	gui_drawPlayField();
 
 //	if (!_speechFlag)
 //		enableText()	
@@ -1988,9 +1980,8 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 		}
 	}
 
-	Common::Point p = _vm->getMousePos();
-	int mouseX = p.x;
-	int mouseY = p.y;
+	int mouseX = _vm->_mouseX;
+	int mouseY = _vm->_mouseY;
 
 	uint16 flags = 0;
 
@@ -2251,6 +2242,34 @@ int GUI_LoL::runMenu(Menu &menu) {
 			setupSavegameNames(*_currentMenu, 4);
 		}
 
+		if (_currentMenu == &_gameOptions) {
+			char *s = (char *)_vm->_tempBuffer5120;
+			strncpy(s, _vm->getLangString(0x406f + _vm->_monsterDifficulty), 30);
+			s[29] = 0;
+			_currentMenu->item[0].itemString = s;
+			s += (strlen(s) + 1);
+			
+			strncpy(s, _vm->getLangString(_vm->_smoothScrollingEnabled ? 0x4068 : 0x4069), 30);
+			s[29] = 0;
+			_currentMenu->item[1].itemString = s;
+			s += (strlen(s) + 1);
+
+			strncpy(s, _vm->getLangString(_vm->_floatingCursorsEnabled ? 0x4068 : 0x4069), 30);
+			s[29] = 0;
+			_currentMenu->item[2].itemString = s;
+			s += (strlen(s) + 1);
+
+			strncpy(s, _vm->getLangString(0x42d6 + _vm->_lang), 30);
+			s[29] = 0;
+			_currentMenu->item[3].itemString = s;
+			s += (strlen(s) + 1);
+
+			strncpy(s, _vm->getLangString(_vm->textEnabled() ? 0x4068 : 0x4069), 30);
+			s[29] = 0;
+			_currentMenu->item[4].itemString = s;
+			s += (strlen(s) + 1);
+		}
+
 		hasScrollButtons = _currentMenu->highlightedItem;
 		_currentMenu->highlightedItem = 255;
 
@@ -2281,7 +2300,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 		if (_currentMenu == &_mainMenu) {
 			Screen::FontId f = _screen->setFont(Screen::FID_6_FNT);
-			_screen->fprintString("SVN %s", menu.x + 8, menu.y + menu.height - 12, 204, 0, 8, gScummVMVersion);
+			_screen->fprintString("%s", menu.x + 8, menu.y + menu.height - 12, 204, 0, 8, gScummVMVersion);
 			_screen->setFont(f);
 			_screen->updateScreen();
 		}
@@ -2376,6 +2395,9 @@ int GUI_LoL::getInput() {
 	if (!_displayMenu)
 		return 0;
 
+	Common::Point p = _vm->getMousePos();
+	_vm->_mouseX = p.x;
+	_vm->_mouseY = p.y;
 	int inputFlag = _vm->checkInput(_menuButtonList);
 	_vm->removeInputTop();
 
@@ -2399,7 +2421,7 @@ int GUI_LoL::clickedMainMenu(Button *button) {
 		//_newMenu = &_deleteMenu;
 		break;
 	case 0x4004:
-		//_newMenu = &_gameOptions;
+		_newMenu = &_gameOptions;
 		break;
 	case 0x42D9:
 		//_newMenu = &_audioOptions;
@@ -2429,6 +2451,42 @@ int GUI_LoL::clickedLoadMenu(Button *button) {
 	int16 s = (int16)button->arg;
 	_vm->_gameToLoad = _loadMenu.item[-s - 2].saveSlot;
 	_displayMenu = false;
+
+	return 1;
+}
+
+int GUI_LoL::clickedOptionsMenu(Button *button) {
+	updateMenuButton(button);
+	
+	switch (button->arg) {
+	case 0xfff7:
+		_vm->_monsterDifficulty = ++_vm->_monsterDifficulty % 3;
+		break;
+	case 0xfff6:
+		_vm->_smoothScrollingEnabled ^= true;		
+		break;		
+	case 0xfff5:
+		_vm->_floatingCursorsEnabled ^= true;		
+		break;
+	case 0xfff4:
+		_vm->_lang = ++_vm->_lang % 3;
+		break;
+	case 0xfff3:
+		_vm->_configVoice ^= 1;		
+		break;
+	case 0x4072:
+		char filename[13];
+		snprintf(filename, sizeof(filename), "LEVEL%02d.%s", _vm->_currentLevel, _vm->_languageExt[_vm->_lang]);
+		if (_vm->_levelLangFile)
+			delete[] _vm->_levelLangFile;
+		_vm->_levelLangFile = _vm->resource()->fileData(filename, 0);
+		snprintf(filename, sizeof(filename), "LANDS.%s", _vm->_languageExt[_vm->_lang]);
+		if (_vm->_landsFile)
+			delete[] _vm->_landsFile;
+		_vm->_landsFile = _vm->resource()->fileData(filename, 0);
+		_newMenu = _lastMenu;
+		break;
+	}
 
 	return 1;
 }
@@ -2481,13 +2539,15 @@ const char *GUI_LoL::getMenuTitle(const Menu &menu) {
 const char *GUI_LoL::getMenuItemTitle(const MenuItem &menuItem) {
 	if (menuItem.itemId & 0x8000 && menuItem.itemString)
 		return menuItem.itemString;
-	else if (menuItem.itemId & 0x8000)
+	else if (menuItem.itemId & 0x8000 || !menuItem.itemId)
 		return 0;
 	return _vm->getLangString(menuItem.itemId);
 }
 
 const char *GUI_LoL::getMenuItemLabel(const MenuItem &menuItem) {
-	if (!menuItem.labelId)
+	if (menuItem.labelId & 0x8000 && menuItem.labelString)
+		return menuItem.labelString;
+	else if (menuItem.labelId & 0x8000 || !menuItem.labelId)
 		return 0;
 	return _vm->getLangString(menuItem.labelId);
 }

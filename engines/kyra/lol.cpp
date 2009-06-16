@@ -722,7 +722,7 @@ int LoLEngine::mainMenu() {
 	assert(menu);
 	menu->init(data[dataIndex], MainMenu::Animation());
 
-	int selection = menu->handle(_flags.isTalkie ? (hasSave ? 17 : 6) : (hasSave ? 6 : 18));
+	int selection = menu->handle(_flags.isTalkie ? (hasSave ? 19 : 6) : (hasSave ? 6 : 20));
 	delete menu;
 	_screen->setScreenDim(0);
 
