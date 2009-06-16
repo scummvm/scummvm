@@ -122,13 +122,19 @@ public:
 	MainActor(uint8 *data);
 	virtual ~MainActor();
 
-	void setAction(ResourcePack *res, int action);
+	void setResourcePack(ResourcePack *resPack) { _resPack = resPack; }
+	void setAction(int action);
 	void drawActorAt(Screen *screen, uint16 x, uint16 y);
+	void walkTo(Screen *screen, uint16 x, uint16 y);
+
+	uint16 _actorX, _actorY;
 
 private:
 	GraphicResource *_graphic;
+	ResourcePack *_resPack;
 	uint32 _resources[61];
 	uint8  _currentFrame;
+	int _currentAction;
 
 	GraphicFrame *getFrame();
 
