@@ -26,7 +26,11 @@
 #ifndef GOB_PARSE_H
 #define GOB_PARSE_H
 
+#include "common/scummsys.h"
+
 namespace Gob {
+
+class GobEngine;
 
 enum {
 	OP_NEG        =  1,
