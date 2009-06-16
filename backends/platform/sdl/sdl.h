@@ -88,6 +88,18 @@ public:
 
 	// Game screen
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
+
+	// Highest supported
+	virtual Graphics::PixelFormat getBestFormat() const {
+	//TODO scale down 16/32 bit based on hardware support
+#ifdef ENABLE_32BIT		
+		return Graphics::PixelFormat(Graphics::kFormatRGBA8888);
+#elif defined ENABLE_16BIT
+		return Graphics::PixelFormat(Graphics::kFormatRGB565);
+#else
+		return Graphics::PixelFormat(Graphics::kFormatCLUT8);
+#endif
+	}
 #endif
 
 	// Set the size of the video bitmap.

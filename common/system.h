@@ -360,10 +360,16 @@ public:
 	virtual void initFormat(Graphics::PixelFormat format) = 0;
 
 	/**
-	 * Returns the pixel format description of the screen.
+	 * Returns the pixel format of the screen.
 	 * @see Graphics::PixelFormat
 	 */
 	virtual Graphics::PixelFormat getScreenFormat() const = 0;
+
+	/**
+	 * Returns the highest color pixel format supported by the backend
+	 * @see Graphics::PixelFormat
+	 */
+	virtual Graphics::PixelFormat getBestFormat() const = 0;
 #endif
 
 	/**
