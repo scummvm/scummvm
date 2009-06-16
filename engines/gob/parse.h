@@ -139,6 +139,8 @@ private:
 			uint16 *size = 0, uint16 *type = 0);
 	int cmpHelper(byte *operPtr, int32 *valPtr);
 
+	void stackPop(byte *&operPtr, int32 *&valPtr, int16 &stkPos, int count = 1);
+
 	void loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valPtr);
 	void simpleArithmetic1(byte *&operPtr, int32 *&valPtr, int16 &stkPos);
 	void simpleArithmetic2(byte *&operPtr, int32 *&valPtr, int16 &stkPos);

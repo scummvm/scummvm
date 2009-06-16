@@ -769,6 +769,12 @@ void Parse::loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valP
 	}
 }
 
+void Parse::stackPop(byte *&operPtr, int32 *&valPtr, int16 &stkPos, int count) {
+	operPtr -= count;
+	valPtr  -= count;
+	stkPos  -= count;
+}
+
 void Parse::simpleArithmetic1(byte *&operPtr, int32 *&valPtr, int16 &stkPos) {
 	switch (operPtr[-1]) {
 	case OP_ADD:
@@ -778,38 +784,28 @@ void Parse::simpleArithmetic1(byte *&operPtr, int32 *&valPtr, int16 &stkPos) {
 				valPtr[-2] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
 			}
 			strcat(_vm->_parse->_resultStr, (char *) decodePtr(valPtr[0]));
-			stkPos -= 2;
-			operPtr -= 2;
-			valPtr -= 2;
+			stackPop(operPtr, valPtr, stkPos, 2);
 		}
 		break;
 
 	case OP_MUL:
 		valPtr[-2] *= valPtr[0];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_DIV:
 		valPtr[-2] /= valPtr[0];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_MOD:
 		valPtr[-2] %= valPtr[0];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_BITAND:
 		valPtr[-2] &= valPtr[0];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 	}
 }
@@ -819,14 +815,10 @@ void Parse::simpleArithmetic2(byte *&operPtr, int32 *&valPtr, int16 &stkPos) {
 		if (operPtr[-2] == OP_NEG) {
 			operPtr[-2] = OP_LOAD_IMM_INT16;
 			valPtr[-2] = -valPtr[-1];
-			stkPos--;
-			operPtr--;
-			valPtr--;
+			stackPop(operPtr, valPtr, stkPos);
 		} else if (operPtr[-2] == OP_NOT) {
 			operPtr[-2] = (operPtr[-1] == GOB_FALSE) ? GOB_TRUE : GOB_FALSE;
-			stkPos--;
-			operPtr--;
-			valPtr--;
+			stackPop(operPtr, valPtr, stkPos);
 		}
 	}
 
@@ -834,30 +826,22 @@ void Parse::simpleArithmetic2(byte *&operPtr, int32 *&valPtr, int16 &stkPos) {
 		switch (operPtr[-2]) {
 		case OP_MUL:
 			valPtr[-3] *= valPtr[-1];
-			stkPos -= 2;
-			operPtr -= 2;
-			valPtr -= 2;
+			stackPop(operPtr, valPtr, stkPos, 2);
 			break;
 
 		case OP_DIV:
 			valPtr[-3] /= valPtr[-1];
-			stkPos -= 2;
-			operPtr -= 2;
-			valPtr -= 2;
+			stackPop(operPtr, valPtr, stkPos, 2);
 			break;
 
 		case OP_MOD:
 			valPtr[-3] %= valPtr[-1];
-			stkPos -= 2;
-			operPtr -= 2;
-			valPtr -= 2;
+			stackPop(operPtr, valPtr, stkPos, 2);
 			break;
 
 		case OP_BITAND:
 			valPtr[-3] &= valPtr[-1];
-			stkPos -= 2;
-			operPtr -= 2;
-			valPtr -= 2;
+			stackPop(operPtr, valPtr, stkPos, 2);
 			break;
 		}
 	}
@@ -880,51 +864,37 @@ bool Parse::complexArithmetic(byte *&operPtr, int32 *&valPtr, int16 &stkPos,
 			}
 			strcat(_vm->_parse->_resultStr, (char *) decodePtr(valPtr[-1]));
 		}
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_SUB:
 		values[brackStart] -= valPtr[-1];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_BITOR:
 		values[brackStart] |= valPtr[-1];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_MUL:
 		valPtr[-3] *= valPtr[-1];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_DIV:
 		valPtr[-3] /= valPtr[-1];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_MOD:
 		valPtr[-3] %= valPtr[-1];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_BITAND:
 		valPtr[-3] &= valPtr[-1];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_OR:
@@ -932,9 +902,7 @@ bool Parse::complexArithmetic(byte *&operPtr, int32 *&valPtr, int16 &stkPos,
 		// (x OR true) == true
 		if (operPtr[-3] == GOB_FALSE)
 			operPtr[-3] = operPtr[-1];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_AND:
@@ -942,51 +910,37 @@ bool Parse::complexArithmetic(byte *&operPtr, int32 *&valPtr, int16 &stkPos,
 		// (x AND true) == x
 		if (operPtr[-3] == GOB_TRUE)
 			operPtr[-3] = operPtr[-1];
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_LESS:
 		operPtr[-3] = (cmpHelper(operPtr, valPtr) < 0) ? GOB_TRUE : GOB_FALSE;
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_LEQ:
 		operPtr[-3] = (cmpHelper(operPtr, valPtr) <= 0) ? GOB_TRUE : GOB_FALSE;
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_GREATER:
 		operPtr[-3] = (cmpHelper(operPtr, valPtr) > 0) ? GOB_TRUE : GOB_FALSE;
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_GEQ:
 		operPtr[-3] = (cmpHelper(operPtr, valPtr) >= 0) ? GOB_TRUE : GOB_FALSE;
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_EQ:
 		operPtr[-3] = (cmpHelper(operPtr, valPtr) == 0) ? GOB_TRUE : GOB_FALSE;
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	case OP_NEQ:
 		operPtr[-3] = (cmpHelper(operPtr, valPtr) != 0) ? GOB_TRUE : GOB_FALSE;
-		stkPos -= 2;
-		operPtr -= 2;
-		valPtr -= 2;
+		stackPop(operPtr, valPtr, stkPos, 2);
 		break;
 
 	default:
@@ -1058,9 +1012,7 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 			loadValue(operation, varBase, operPtr, valPtr);
 
 			if ((stkPos > 0) && ((operPtr[-1] == OP_NEG) || (operPtr[-1] == OP_NOT))) {
-				stkPos--;
-				operPtr--;
-				valPtr--;
+				stackPop(operPtr, valPtr, stkPos);
 
 				if (*operPtr == OP_NEG) {
 					*operPtr = OP_LOAD_IMM_INT16;
@@ -1087,9 +1039,7 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 					if ((operPtr[-2] == OP_LOAD_IMM_INT16) || (operPtr[-2] == OP_LOAD_IMM_STR))
 						valPtr[-2] = valPtr[-1];
 
-					stkPos--;
-					operPtr--;
-					valPtr--;
+					stackPop(operPtr, valPtr, stkPos);
 
 					simpleArithmetic2(operPtr, valPtr, stkPos);
 
@@ -1123,9 +1073,7 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 					if ((stkPos > 1) && (operPtr[-2] == OP_BEGIN_EXPR)) {
 						skipExpr(OP_END_EXPR);
 						operPtr[-2] = operPtr[-1];
-						stkPos -= 2;
-						operPtr -= 2;
-						valPtr -= 2;
+						stackPop(operPtr, valPtr, stkPos, 2);
 					} else {
 						skipExpr(stopToken);
 					}
@@ -1136,17 +1084,12 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 						else
 							operPtr[-1] = GOB_FALSE;
 
-						stkPos--;
-						operPtr--;
-						valPtr--;
+						stackPop(operPtr, valPtr, stkPos);
 					}
 				} else
 					operPtr[0] = operation;
-			} else {
-				stkPos--;
-				operPtr--;
-				valPtr--;
-			}
+			} else
+				stackPop(operPtr, valPtr, stkPos);
 
 			if (operation != stopToken)
 				continue;
@@ -1171,20 +1114,14 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 						}
 						strcat(_vm->_parse->_resultStr, (char *) decodePtr(valPtr[-1]));
 					}
-					stkPos -= 2;
-					operPtr -= 2;
-					valPtr -= 2;
+					stackPop(operPtr, valPtr, stkPos, 2);
 
 				} else if (operPtr[-2] == OP_SUB) {
 					valPtr[-3] -= valPtr[-1];
-					stkPos -= 2;
-					operPtr -= 2;
-					valPtr -= 2;
+					stackPop(operPtr, valPtr, stkPos, 2);
 				} else if (operPtr[-2] == OP_BITOR) {
 					valPtr[-3] |= valPtr[-1];
-					stkPos -= 2;
-					operPtr -= 2;
-					valPtr -= 2;
+					stackPop(operPtr, valPtr, stkPos, 2);
 				}
 			}
 		}
