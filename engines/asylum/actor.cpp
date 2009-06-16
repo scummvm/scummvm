@@ -26,23 +26,38 @@
 #include "asylum/actor.h"
 #include "asylum/screen.h"
 
+#include "common/endian.h"
+
 namespace Asylum {
 
 MainActor::MainActor(uint8 *data) {
+	byte *dataPtr = data;
+
 	for (uint32 i = 0; i < 60; i++){
-		_resources[i] = data[i * 4];
+		_resources[i] = READ_UINT32(dataPtr);
+		dataPtr += 4;
 	}
 
+	_resPack = 0;
 	_graphic = 0;
+	_actorX = _actorY = 0;
+	_currentAction = 0;
 }
 
 MainActor::~MainActor() {
 	delete _graphic;
 }
 
-void MainActor::setAction(ResourcePack *res, int action) {
+void MainActor::setAction(int action) {
+	assert(_resPack);
+
+	if (action == _currentAction)
+		return;
+
+	_currentAction = action;
+
 	delete _graphic;
-	_graphic = new GraphicResource(res, _resources[action]);
+	_graphic = new GraphicResource(_resPack, _resources[action]);
 	_currentFrame = 0;
 }
 
@@ -57,6 +72,11 @@ GraphicFrame *MainActor::getFrame() {
 		_currentFrame = 0;
 	}
 
+	// HACK: frame 1 of the "walk west" animation is misplaced
+	if (_currentAction == kWalkW && _currentFrame == 1)
+		_currentFrame++;
+
+	printf("%d\n", _currentFrame);
 	return frame;
 }
 
@@ -70,6 +90,45 @@ void MainActor::drawActorAt(Screen *screen, uint16 x, uint16 y) {
 			y,
 			frame->surface.w,
 			frame->surface.h );
+
+	_actorX = x;
+	_actorY = y;
+}
+
+void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
+	// TODO: pathfinding! The character can walk literally anywhere
+
+	// Walking left...
+	if (x < _actorX) {
+		setAction(kWalkW);
+		_actorX--;
+		drawActorAt(screen, _actorX, _actorY);
+		return;
+	}
+
+	// Walking right...
+	if (x > _actorX) {
+		setAction(kWalkW);	// TODO
+		_actorX++;
+		drawActorAt(screen, _actorX, _actorY);
+		return;
+	}
+
+	// Walking up...
+	if (y < _actorY) {
+		setAction(kWalkN);
+		_actorY--;
+		drawActorAt(screen, _actorX, _actorY);
+		return;
+	}
+
+	// Walking down...
+	if (y > _actorY) {
+		setAction(kWalkN);	// TODO
+		_actorY++;
+		drawActorAt(screen, _actorX, _actorY);
+		return;
+	}
 }
 
 } // end of namespace Asylum

@@ -37,6 +37,8 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
         _text = new Text(_screen);
         _resPack = new ResourcePack(sceneIdx);
 
+		_sceneResource->getMainActor()->setResourcePack(_resPack);
+
         char musPackFileName[10];
 	    sprintf(musPackFileName, "mus.%03d", sceneIdx);
         _musPack = new ResourcePack(musPackFileName);
@@ -81,8 +83,8 @@ void Scene::enterScene() {
 
 	// TEST
 	// Draw the actor walking towards the north
-	_sceneResource->getMainActor()->setAction(_resPack, 6);
-	_sceneResource->getMainActor()->drawActorAt(_screen, 150, 150);
+	_sceneResource->getMainActor()->setAction(6);
+	_sceneResource->getMainActor()->drawActorAt(_screen, 200, 200);
 }
 
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
@@ -122,7 +124,12 @@ void Scene::update() {
 
 	// TESTING
 	// Main Actor
-	_sceneResource->getMainActor()->drawActorAt(_screen, 150, 150);
+	if (_sceneResource->getMainActor()->_actorX != 150 || _sceneResource->getMainActor()->_actorY != 150) {
+		_sceneResource->getMainActor()->walkTo(_screen, 150, 150);
+	} else {
+		_sceneResource->getMainActor()->setAction(15);	// face south
+		_sceneResource->getMainActor()->drawActorAt(_screen, 150, 150);
+	}
 
 	// Horizontal scrolling
 	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
