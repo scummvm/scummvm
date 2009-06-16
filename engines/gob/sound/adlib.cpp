@@ -400,14 +400,15 @@ void AdLib::pollMusic() {
 		}
 		do {
 			instr = *_playPos;
+//			printf("instr 0x%X\n", instr);
 			switch(instr) {
 			case 0xF8:
-				_wait = 0xF8;
+				_wait = *(_playPos++);
 				break;
 			case 0xFC:
 				_ended = true;
 				_samplesTillPoll = 0;
-				break;
+				return;
 			case 0xF0:
 				_playPos++;
 				ctrlByte1 = *(_playPos++);
@@ -450,11 +451,13 @@ void AdLib::pollMusic() {
 					setVoiceTbr(channel, timbre, false);
 					break;
 				case 0xE0:
-					printf("Pitch bend not yet implemented\n");
+					warning("Pitch bend not yet implemented\n");
     	
 					note = *(_playPos)++;
 					note += (unsigned)(*(_playPos++)) << 7;
-    	
+
+					setKey(channel, note, _notOn[channel], true);
+
 					break;
 				case 0xB0:
 					_playPos += 2;
@@ -475,12 +478,12 @@ void AdLib::pollMusic() {
 			} //switch instr
 		} while (_wait == 0);
 
-		if (_wait == 0x78) {
+		if (_wait == 0xF8) {
 			_wait = 0xF0;
 			if (*_playPos != 0xF8)
 				_wait += *(_playPos++);
 		}
-		_playPos++;
+//		_playPos++;
 		_samplesTillPoll = _wait * (_rate / 1000);
 	} else {
 		// First tempo, we'll ignore it...
