@@ -57,11 +57,7 @@ bool CursorManager::showMouse(bool visible) {
 	return g_system->showMouse(visible);
 }
 
-#ifdef ENABLE_16BIT
 void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale) {
-#else
-void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
-#endif
 	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
 
 	cur->_visible = isVisible();
@@ -111,11 +107,7 @@ void CursorManager::popAllCursors() {
 	g_system->showMouse(isVisible());
 }
 
-#ifdef ENABLE_16BIT
 void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale) {
-#else
-void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
-#endif
 
 	if (_cursorStack.empty()) {
 		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
@@ -125,11 +117,7 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	Cursor *cur = _cursorStack.top();
 
 #ifdef ENABLE_16BIT
-	uint size;
-	{	//limit the lifespan of the format variable to minimize memory impact
-		Graphics::PixelFormat f = g_system->getScreenFormat();
-		size = w * h * (f.bytesPerPixel);
-	}
+	uint size = w * h * g_system->getScreenFormat().bytesPerPixel;
 #else
 	uint size = w * h;
 #endif

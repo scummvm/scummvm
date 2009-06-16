@@ -1379,11 +1379,11 @@ void OSystem_SDL::warpMouse(int x, int y) {
 	}
 }
 
-#ifdef ENABLE_16BIT
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale) {
+#ifdef ENABLE_16BIT
 	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
 #else
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+	keycolor &= 0xFF;
 #endif
 
 	if (w == 0 || h == 0)
