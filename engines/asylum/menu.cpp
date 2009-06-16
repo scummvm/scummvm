@@ -87,6 +87,10 @@ void MainMenu::openMenu() {
 	_screen->setCursor(_cursorResource, 0);
 	_screen->showCursor();
 
+	// Stop all sounds
+	_sound->stopMusic();
+	_sound->stopSfx();
+
 	// Start playing music
 	_sound->playMusic(_resPack, 39);
 
