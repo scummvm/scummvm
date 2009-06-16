@@ -850,7 +850,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("dw2"));
 
 	// Add subfolders needed for psx versions of Discworld 1	
-	if(TinselV1PSX)
+	if (TinselV1PSX)
 		SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 3, true);
 
 	const GameSettings *g;
