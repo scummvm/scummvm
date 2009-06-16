@@ -44,7 +44,6 @@ namespace Graphics {
  * to get the applicable color order.
   */
 enum ColorMode {
-	kFormatCLUT8 = 0,		//256 color palette.
 #ifdef ENABLE_16BIT
 	kFormatRGB555 = 1,
 	kFormatXRGB1555 = 2,	// Special case, high bit has special purpose, which may be alpha. 
@@ -54,8 +53,9 @@ enum ColorMode {
 #endif
 #ifdef ENABLE_32BIT
 	kFormatRGB888 = 5,
-	kFormatRGBA8888 = 6
+	kFormatRGBA8888 = 6,
 #endif
+	kFormatCLUT8 = 0		//256 color palette.
 };
 #endif
 
