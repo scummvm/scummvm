@@ -54,28 +54,28 @@ private:
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
 	void copyActorToScreen();
 
-	Screen *_screen;
-    Sound *_sound;
+	Screen        *_screen;
+    Sound         *_sound;
 	Common::Event *_ev;
 
-    Text *_text;
-    SceneResource *_sceneResource;
-    ResourcePack *_resPack;
-	ResourcePack *_musPack;
+    Text            *_text;
+    SceneResource   *_sceneResource;
+    ResourcePack    *_resPack;
+	ResourcePack    *_musPack;
     GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
-	GraphicResource *_actorResource;	// TODO: this should be an array
-	GraphicFrame *_background;
+	GraphicResource *_actorResource; // TODO: this should be an array
+	GraphicFrame    *_background;
 
     uint8 _sceneIdx;
-    int _mouseX;
-	int _mouseY;
-	int _startX;
-	int _startY;
-    bool _leftClick;
-	int _curMouseCursor;
-	int _actorAnimCurFrame;		// TODO: this should be an array
-	int _cursorStep;
+    int   _mouseX;
+	int   _mouseY;
+	int   _startX;
+	int   _startY;
+    bool  _leftClick;
+	int   _curMouseCursor;
+	int   _actorAnimCurFrame; // TODO: this should be an array
+	int   _cursorStep;
 
 	void update();
 	void updateCursor();

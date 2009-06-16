@@ -59,7 +59,7 @@ public:
 private:
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _musicHandle;
-	Audio::Mixer *_mixer;
+	Audio::Mixer       *_mixer;
 };
 
 } // end of namespace Asylum

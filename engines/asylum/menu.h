@@ -82,30 +82,33 @@ private:
 		kMainMenu        = 12
 	};
 
-	Screen *_screen;
-	Sound *_sound;
-	Scene *_scene;
 	Common::Event *_ev;
 
-	int _mouseX;
-	int _mouseY;
-	int _activeIcon;
-	int _previousActiveIcon;
-	int _curIconFrame;
-	int _curMouseCursor;
-	int _cursorStep;
-    int _creditsBgFrame;
-    int _creditsTextScroll;
+	Screen *_screen;
+	Sound  *_sound;
+	Scene  *_scene;
+
+	int  _mouseX;
+	int  _mouseY;
+	int  _activeIcon;
+	int  _previousActiveIcon;
+	int  _curIconFrame;
+	int  _curMouseCursor;
+	int  _cursorStep;
+    int  _creditsBgFrame;
+    int  _creditsTextScroll;
 	bool _leftClick;
 	bool _active;
-	MenuScreen _activeMenuScreen;
-	ResourcePack *_resPack;
+
+	MenuScreen      _activeMenuScreen;
+	ResourcePack    *_resPack;
 	GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;
     GraphicResource *_creditsResource;
     GraphicResource *_creditsFadeResource;
+
     Text *_text;
 	Text *_textBlue;
 
@@ -120,6 +123,7 @@ private:
     void updateSubMenuShowCredits();
 
 	void update();
+
 }; // end of class MainMenu
 
 } // end of namespace Asylum

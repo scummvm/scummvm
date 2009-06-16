@@ -31,11 +31,11 @@ Video::Video(Audio::Mixer *mixer) {
 	Common::Event stopEvent;
 	_stopEvents.clear();
 	stopEvent.type = Common::EVENT_KEYDOWN;
-	stopEvent.kbd = Common::KEYCODE_ESCAPE;
+	stopEvent.kbd  = Common::KEYCODE_ESCAPE;
 	_stopEvents.push_back(stopEvent);
 
 	_smkDecoder = new Graphics::SmackerDecoder(mixer);
-	_player = new Graphics::VideoPlayer(_smkDecoder);
+	_player     = new Graphics::VideoPlayer(_smkDecoder);
 }
 
 Video::~Video() {

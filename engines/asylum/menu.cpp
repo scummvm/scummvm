@@ -47,13 +47,13 @@ MainMenu::MainMenu(Screen *screen, Sound *sound, Scene *scene) :
 	_activeMenuScreen   = kMainMenu;
 	_active				= false;
 
-	_resPack = new ResourcePack(1);
-	_bgResource = new GraphicResource(_resPack, 0);
-	_eyeResource = new GraphicResource(_resPack, 1);
+	_resPack        = new ResourcePack(1);
+	_bgResource     = new GraphicResource(_resPack, 0);
+	_eyeResource    = new GraphicResource(_resPack, 1);
 	_cursorResource = new GraphicResource(_resPack, 2);
 
-	_iconResource = 0;
-	_creditsResource = 0;
+	_iconResource        = 0;
+	_creditsResource     = 0;
 	_creditsFadeResource = 0;
 
     _text = new Text(_screen);
@@ -422,9 +422,9 @@ void MainMenu::updateSubMenuShowCredits() {
     if (_creditsBgFrame >= _creditsResource->getFrameCount())
 		_creditsBgFrame = 0;
 
-    int posY = _creditsTextScroll;
-    int resId = 0;
-    int step = 0;
+    int posY     = _creditsTextScroll;
+    int resId    = 0;
+    int step     = 0;
     int minBound = 0;
     int maxBound = 0;
     do {

@@ -53,17 +53,19 @@ public:
     GamePolygons* getGamePolygons() { return _gamePolygons; }
     ActionList* getActionList() { return _actionList; }
     MainActor* getMainActor() { return _mainActor; }
+
 private:
     WorldStats   *_worldStats;
     GamePolygons *_gamePolygons;
     ActionList   *_actionList;
     MainActor    *_mainActor;
+
     void loadWorldStats(Common::SeekableReadStream *stream);
     void loadGamePolygons(Common::SeekableReadStream *stream);
     void loadActionList(Common::SeekableReadStream *stream);
     Common::String parseFilename(uint8 sceneIdx);
-}; // end of class Scene
 
+}; // end of class Scene
 
 
 // FIXME add unknown fields
@@ -72,21 +74,22 @@ typedef struct ActorDefinitions {
     uint32 graphicResId;
     uint32 x;
     uint32 y;
-    uint8 name[52];
+    uint8  name[52];
     uint32 soundResId;
 } ActorDefinitions;
 
+
 // FIXME add unknown fields
 typedef struct ActorActionDefinitions {
-    char name[52];
+    char   name[52];
     uint32 id;
-    int32 actionListIdx1;
-    int32 actionListIdx2;
-    int32 actionType; // 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
-    int32 polyIdx;
+    int32  actionListIdx1;
+    int32  actionListIdx2;
+    int32  actionType; // 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
+    int32  polyIdx;
     uint32 soundResId;
     uint32 palCorrection;
-    int32 soundVolume;
+    int32  soundVolume;
 } ActorActionDefinitions;
 
 typedef struct CommonResources {
@@ -117,6 +120,7 @@ typedef struct CommonResources {
     uint32 unknown4;
 } CommonResources;
 
+
 class WorldStats {
 public:
     WorldStats() {};
@@ -124,27 +128,25 @@ public:
 
     uint32 _size;
     uint32 _numEntries;
-
     uint32 _numChapter;
-    CommonResources _commonRes;
     uint32 _width;
     uint32 _height;
     uint32 _numActions;
     uint32 _numActors;
-
     uint32 _loadingScreenGrResId;
     uint32 _loadingScreenPalResId;
+
+    CommonResources _commonRes;
 
     Common::Array<ActorDefinitions> _actorsDef;
     Common::Array<ActorActionDefinitions> _actorsActionDef;
 }; // end of class WorldStats
 
 
-
 typedef struct PolyDefinitions{
-    uint32 numPoints;
+    uint32        numPoints;
     Common::Point points[Polygons_MAXSIZE];
-    Common::Rect boundingRect;
+    Common::Rect  boundingRect;
 } PolyDefinitions;
 
 class GamePolygons {
