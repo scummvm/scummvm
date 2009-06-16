@@ -93,11 +93,7 @@ void Player_V4A::startSound(int nr) {
 	byte *ptr = _vm->getResourceAddress(rtSound, nr);
 	assert(ptr);
 
-	char buf[22];
-	sprintf(buf,"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X", ptr[0], ptr[1], ptr[2], ptr[3], 
-		ptr[4], ptr[5], ptr[6], ptr[7], ptr[8], ptr[9] );
-	debug("%s", buf);
-
+	Common::hexdump(ptr, 16);
 
 	static const int8 monkeyCommands[52] = {
 		 -1,  -2,  -3,  -4,  -5,  -6,  -7,  -8,
@@ -125,16 +121,20 @@ void Player_V4A::startSound(int nr) {
 
 		_tfmxPlay->doSong(index);
 		_musicId = nr;
-		_musicLastTicks = _tfmxPlay->getTicks();
-
+		
 		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false, false);
+		_musicLastTicks = g_system->getMillis();
 	}
 }
 
 
 int Player_V4A::getMusicTimer() const {
 	if (_musicId) {
-		return (_tfmxPlay->getTicks() - _musicLastTicks) / 25;
+		// TODO: The titlesong is running with ~70 ticks per second and the scale seems to be based on that. 
+		// Other songs dont and I have no clue if this scalevalue is anything close to correct for them.
+		// The Amiga-Game doesnt counts the ticks of the song, but has an own timer and I hope thespeed is constant through the game
+		const int magicScale = 359; // ~ 1000 * 25 * (10173 / 709379.0)
+		return (_mixer->getSoundElapsedTime(_musicHandle)) / magicScale;
 	} else
 		return 0;
 }
