@@ -65,11 +65,11 @@ Common::Error AsylumEngine::init() {
 
 	initGraphics(640, 480, true);
 
-	_screen = new Screen(_system);
-	_sound = new Sound(_mixer);
-	_video = new Video(_mixer);
+	_screen   = new Screen(_system);
+	_sound    = new Sound(_mixer);
+	_video    = new Video(_mixer);
 	_mainMenu = 0;
-	_scene = 0;
+	_scene    = 0;
 
     return Common::kNoError;
 }

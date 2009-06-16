@@ -41,18 +41,24 @@ GraphicResource::~GraphicResource() {
 }
 
 void GraphicResource::init(byte *data, uint32 size) {
-	byte *dataPtr = data;
+	byte   *dataPtr      = data;
 	uint32 contentOffset = 0;
-	uint32 frameCount = 0;
+	uint32 frameCount    = 0;
+
 	uint32 i = 0;
 
 	dataPtr += 4; // tag value
+
 	_flags = READ_UINT32(dataPtr); dataPtr += 4;
+
 	contentOffset = READ_UINT32(dataPtr); dataPtr += 4;
+
 	dataPtr += 4; // unknown
 	dataPtr += 4; // unknown
 	dataPtr += 4; // unknown
+
 	frameCount = READ_UINT16(dataPtr); dataPtr += 2;
+
 	dataPtr += 2; // max width
 
 	_frames.resize(frameCount);
@@ -81,14 +87,18 @@ void GraphicResource::init(byte *data, uint32 size) {
 	// Read frame data
 	for (i = 0; i < frameCount; i++) {
 		dataPtr = data + _frames[i].offset;
+
 		dataPtr += 4; // size
 		dataPtr += 4; // flag
-		_frames[i].x = READ_UINT16(dataPtr); dataPtr += 2;
-		_frames[i].y = READ_UINT16(dataPtr); dataPtr += 2;
+
+		_frames[i].x  = READ_UINT16(dataPtr); dataPtr += 2;
+		_frames[i].y  = READ_UINT16(dataPtr); dataPtr += 2;
+
 		uint16 height = READ_UINT16(dataPtr); dataPtr += 2;
-		uint16 width = READ_UINT16(dataPtr); dataPtr += 2;
+		uint16 width  = READ_UINT16(dataPtr); dataPtr += 2;
 
 		_frames[i].surface.create(width, height, 1);
+
 		memcpy(_frames[i].surface.pixels, dataPtr, width * height);
 	}
 }
