@@ -45,14 +45,17 @@ namespace Graphics {
   */
 enum ColorMode {
 	kFormatCLUT8 = 0,		//256 color palette.
+#ifdef ENABLE_16BIT
 	kFormatRGB555 = 1,
 	kFormatXRGB1555 = 2,	// Special case, high bit has special purpose, which may be alpha. 
 							// Engines should probably handle this bit internally and pass RGB only, though
 	kFormatRGB565 = 3,
 	kFormatRGBA4444 = 4,	// since this mode is commonly supported in game hardware, some unimplemented engines may use it?
+#endif
+#ifdef ENABLE_32BIT
 	kFormatRGB888 = 5,
-	kFormatRGBA6666 = 6,	// I've never heard of this, but it's vaguely plausible
-	kFormatRGBA8888 = 7
+	kFormatRGBA8888 = 6
+#endif
 };
 #endif
 
@@ -96,6 +99,7 @@ struct PixelFormat {
 	//TODO: Specify alpha position
 	explicit inline PixelFormat(ColorMode mode) {
 		switch (mode) {
+#ifdef ENABLE_16BIT
 		case kFormatRGB555:
 			aLoss = 8;
 			bytesPerPixel = 2;
@@ -124,19 +128,18 @@ struct PixelFormat {
 			bytesPerPixel = 2;
 			aLoss = gLoss = rLoss = bLoss = 4;
 			break;
+#endif
+#ifdef ENABLE_32BIT
 		case kFormatRGB888:
 			bytesPerPixel = 3;
 			aLoss = 8;
 			gLoss = rLoss = bLoss = 0;
 			break;
-		case kFormatRGBA6666:
-			bytesPerPixel = 3;
-			aLoss = gLoss = rLoss = bLoss = 2;
-			break;
 		case kFormatRGBA8888:
 			bytesPerPixel = 4;
 			aLoss = gLoss = rLoss = bLoss = 0;
 			break;
+#endif
 		case kFormatCLUT8:
 		default:
 			bytesPerPixel = 1;
