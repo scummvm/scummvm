@@ -70,7 +70,7 @@ bool SceneResource::load(uint8 sceneIdx) {
 void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     _worldStats = new WorldStats;
 
-    _worldStats->_size = stream->readUint32LE();
+    _worldStats->_size       = stream->readUint32LE();
     _worldStats->_numEntries = stream->readUint32LE();
     _worldStats->_numChapter = stream->readUint32LE();
 
@@ -79,13 +79,13 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     // read common graphic resources
     stream->read(&_worldStats->_commonRes,sizeof(CommonResources));
 
-    _worldStats->_width = stream->readUint32LE();
+    _worldStats->_width  = stream->readUint32LE();
     _worldStats->_height = stream->readUint32LE();
 
     stream->skip(8); // unused data
 
     _worldStats->_numActions = stream->readUint32LE();
-    _worldStats->_numActors = stream->readUint32LE();
+    _worldStats->_numActors  = stream->readUint32LE();
 
     stream->skip(20); // unused data
 
@@ -95,7 +95,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     // FIXME Jump unknown resource list
 
     stream->seek(0x2C6);
-    _worldStats->_loadingScreenGrResId = stream->readUint32LE();
+    _worldStats->_loadingScreenGrResId  = stream->readUint32LE();
     _worldStats->_loadingScreenPalResId = stream->readUint32LE();
 
     // FIXME Jump unknown sound resource list
@@ -104,18 +104,18 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     stream->seek(0x6FA); // where actors definitions start
 
     // FIXME Figure out all the actor definitions
-    for(uint32 a=0; a < _worldStats->_numActors; a++) {
+    for (uint32 a=0; a < _worldStats->_numActors; a++) {
         ActorDefinitions actorDef;
         memset(&actorDef, 0, sizeof(ActorDefinitions));
 
-        actorDef.id = stream->readUint32LE();
+        actorDef.id           = stream->readUint32LE();
         actorDef.graphicResId = stream->readUint32LE();
-        actorDef.x = stream->readUint32LE();
-        actorDef.y = stream->readUint32LE();
+        actorDef.x            = stream->readUint32LE();
+        actorDef.y            = stream->readUint32LE();
         stream->skip(0x30);
         stream->read(actorDef.name, 52);
         stream->skip(0x158);
-        actorDef.soundResId = stream->readUint32LE();
+        actorDef.soundResId   = stream->readUint32LE();
         stream->skip(0x4D8);
 
         _worldStats->_actorsDef.push_back(actorDef);
@@ -135,24 +135,24 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     stream->seek(0xD6B5A); // where actors action definitions start
 
     // FIXME Figure out all the actor action definitions
-    for(uint32 a=0; a < _worldStats->_numActions; a++) {
+    for (uint32 a=0; a < _worldStats->_numActions; a++) {
         ActorActionDefinitions actorActionDef;
         memset(&actorActionDef, 0, sizeof(ActorActionDefinitions));
 
         stream->read(actorActionDef.name,52);
-        actorActionDef.id = stream->readUint32LE();
+        actorActionDef.id             = stream->readUint32LE();
         stream->skip(0x14);
         actorActionDef.actionListIdx1 = stream->readUint32LE();
         actorActionDef.actionListIdx2 = stream->readUint32LE();
-        actorActionDef.actionType = stream->readUint32LE();
+        actorActionDef.actionType     = stream->readUint32LE();
         stream->skip(0x2C);
-        actorActionDef.polyIdx = stream->readUint32LE();
+        actorActionDef.polyIdx        = stream->readUint32LE();
         stream->skip(0x08);
-        actorActionDef.soundResId = stream->readUint32LE();
+        actorActionDef.soundResId     = stream->readUint32LE();
         stream->skip(0x04);
-        actorActionDef.palCorrection = stream->readUint32LE();
+        actorActionDef.palCorrection  = stream->readUint32LE();
         stream->skip(0x14);
-        actorActionDef.soundVolume = stream->readUint32LE();
+        actorActionDef.soundVolume    = stream->readUint32LE();
 
         _worldStats->_actorsActionDef.push_back(actorActionDef);
     }
@@ -164,18 +164,18 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
 
     stream->seek(0xE8686); // jump to game Polygons data
 
-    _gamePolygons->_size = stream->readUint32LE();
+    _gamePolygons->_size       = stream->readUint32LE();
     _gamePolygons->_numEntries = stream->readUint32LE();
 
-    for(uint32 g=0; g < _gamePolygons->_numEntries; g++) {
+    for (uint32 g=0; g < _gamePolygons->_numEntries; g++) {
         PolyDefinitions poly;
         memset(&poly, 0, sizeof(PolyDefinitions));
         poly.numPoints = stream->readUint32LE();
         stream->read(poly.points, sizeof(Common::Point) * Polygons_MAXSIZE);
-        poly.boundingRect.top = stream->readUint32LE();
-        poly.boundingRect.left = stream->readUint32LE();
+        poly.boundingRect.top    = stream->readUint32LE();
+        poly.boundingRect.left   = stream->readUint32LE();
         poly.boundingRect.bottom = stream->readUint32LE();
-        poly.boundingRect.right = stream->readUint32LE();
+        poly.boundingRect.right  = stream->readUint32LE();
 
         _gamePolygons->_Polygons.push_back(poly);
     }

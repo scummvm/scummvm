@@ -48,8 +48,9 @@ public:
 
 private:
 	Common::List<Common::Event> _stopEvents;
-	Graphics::SmackerDecoder *_smkDecoder;
-	Graphics::VideoPlayer *_player;
+	Graphics::SmackerDecoder    *_smkDecoder;
+	Graphics::VideoPlayer       *_player;
+
 }; // end of class Video
 
 } // end of namespace Asylum

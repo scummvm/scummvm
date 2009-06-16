@@ -55,15 +55,17 @@ public:
 
     void drawTextAlignRight(uint32 x, uint32 y, char *text);
     void drawResTextAlignRight(uint32 x, uint32 y, uint32 resId);
+
 private:
-    Screen *_screen;
+    Screen          *_screen;
 	GraphicResource *_fontResource;
-	ResourcePack *_textPack;
+	ResourcePack    *_textPack;
 
 	uint32 _posX;
     uint32 _posY;
-    uint8 _curFontFlags;
-};
+    uint8  _curFontFlags;
+
+}; // end of class Text
 
 } // end of namespace Asylum
 

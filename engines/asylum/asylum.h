@@ -66,11 +66,11 @@ private:
     Common::Language     _language;
     Common::RandomSource _rnd;
 
-	Scene *_scene;
+	Scene    *_scene;
     MainMenu *_mainMenu;
-	Screen *_screen;
-	Sound *_sound;
-	Video *_video;
+	Screen   *_screen;
+	Sound    *_sound;
+	Video    *_video;
 };
 
 } // namespace Asylum
