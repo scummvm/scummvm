@@ -45,18 +45,18 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 		_background = _bgResource->getFrame(0);
 
 		// Statue animation, used for testing
-		_actorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_actorsDef[0].graphicResId);
+		_animResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_actorsDef[0].graphicResId);
     }
 
 	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.curMagnifyingGlass);
 
-	_actorAnimCurFrame = 0;
+	_animCurFrame = 0;
 	_startX = _startY = 0;
 	_leftClick = false;
 }
 
 Scene::~Scene() {
-	delete _actorResource;
+	delete _animResource;
 	delete _cursorResource;
 	delete _bgResource;
     delete _musPack;
@@ -115,13 +115,13 @@ void Scene::update() {
 	updateCursor();
 
 	// Proof of concept for animation showing
-	GraphicFrame *actor = _actorResource->getFrame(_actorAnimCurFrame);
-	_actorAnimCurFrame++;
-	if (_actorAnimCurFrame >= _actorResource->getFrameCount())
-		_actorAnimCurFrame = 0;
+	GraphicFrame *animFrame = _animResource->getFrame(_animCurFrame);
+	_animCurFrame++;
+	if (_animCurFrame >= _animResource->getFrameCount())
+		_animCurFrame = 0;
 
 	// Hardcoded coords
-	copyToSceneBackground(actor, 655, 0);
+	copyToSceneBackground(animFrame, 655, 0);
 
 	// Proof of concept for screen scrolling
 
