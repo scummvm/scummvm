@@ -1128,7 +1128,8 @@ static void LoadCostume() {
 	lua_Object nameObj = lua_getparam(1);
 	if (lua_isstring(nameObj)) {
 		const char *name = lua_getstring(nameObj);
-		g_resourceloader->loadCostume(name, NULL);
+		// FIXME disable loading costume due creating issue with colormap, this opcode is unknown purpose
+		//g_resourceloader->loadCostume(name, NULL);
 	} else
 		lua_pushnil();
 }
