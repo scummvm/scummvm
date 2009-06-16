@@ -122,6 +122,26 @@ public:
 	int32 _resultInt;
 
 private:
+	class Stack {
+	public:
+		byte *opers;
+		int32 *values;
+
+		Stack(size_t size = 20);
+		~Stack();
+	};
+	class StackFrame {
+	public:
+		byte *opers;
+		int32 *values;
+		int16 pos;
+
+		StackFrame(const Stack &stack);
+
+		void push(int count = 1);
+		void pop(int count = 1);
+	};
+
 	enum PointerType {
 		kExecPtr  = 0,
 		kInterVar = 1,
@@ -137,15 +157,12 @@ private:
 
 	bool getVarBase(uint32 &varBase, bool mindStop = false,
 			uint16 *size = 0, uint16 *type = 0);
-	int cmpHelper(byte *operPtr, int32 *valPtr);
+	int cmpHelper(const StackFrame &stackFrame);
+	void loadValue(byte operation, uint32 varBase, const StackFrame &stackFrame);
 
-	void stackPop(byte *&operPtr, int32 *&valPtr, int16 &stkPos, int count = 1);
-
-	void loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valPtr);
-	void simpleArithmetic1(byte *&operPtr, int32 *&valPtr, int16 &stkPos);
-	void simpleArithmetic2(byte *&operPtr, int32 *&valPtr, int16 &stkPos);
-	bool complexArithmetic(byte *&operPtr, int32 *&valPtr, int16 &stkPos,
-			byte *operStack, int32 *values, int16 brackStart);
+	void simpleArithmetic1(StackFrame &stackFrame);
+	void simpleArithmetic2(StackFrame &stackFrame);
+	bool complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 brackStart);
 	void getResult(byte operation, int32 value, byte *type);
 };
 

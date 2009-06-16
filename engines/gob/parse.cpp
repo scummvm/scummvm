@@ -33,6 +33,36 @@
 
 namespace Gob {
 
+Parse::Stack::Stack(size_t size) {
+	opers  = new byte[size];
+	values = new int32[size];
+	memset(opers , 0, size * sizeof(byte ));
+	memset(values, 0, size * sizeof(int32));
+}
+
+Parse::Stack::~Stack() {
+	delete[] opers;
+	delete[] values;
+}
+
+Parse::StackFrame::StackFrame(const Stack &stack) {
+	opers = stack.opers - 1;
+	values = stack.values - 1;
+	pos = -1;
+}
+
+void Parse::StackFrame::push(int count) {
+	opers  += count;
+	values += count;
+	pos    += count;
+}
+
+void Parse::StackFrame::pop(int count) {
+	opers  -= count;
+	values -= count;
+	pos    -= count;
+}
+
 Parse::Parse(GobEngine *vm) : _vm(vm) {
 	_resultStr[0] = 0;
 	_resultInt = 0;
@@ -458,18 +488,18 @@ void Parse::printVarIndex() {
 	return;
 }
 
-int Parse::cmpHelper(byte *operPtr, int32 *valPtr) {
-	byte type = operPtr[-3];
+int Parse::cmpHelper(const StackFrame &stackFrame) {
+	byte type = stackFrame.opers[-3];
 	int cmpTemp = 0;
 
 	if (type == OP_LOAD_IMM_INT16) {
-		cmpTemp = (int)valPtr[-3] - (int)valPtr[-1];
+		cmpTemp = (int)stackFrame.values[-3] - (int)stackFrame.values[-1];
 	} else if (type == OP_LOAD_IMM_STR) {
-		if ((char *)decodePtr(valPtr[-3]) != _vm->_parse->_resultStr) {
-			strcpy(_vm->_parse->_resultStr, (char *)decodePtr(valPtr[-3]));
-			valPtr[-3] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
+		if ((char *)decodePtr(stackFrame.values[-3]) != _vm->_parse->_resultStr) {
+			strcpy(_vm->_parse->_resultStr, (char *)decodePtr(stackFrame.values[-3]));
+			stackFrame.values[-3] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
 		}
-		cmpTemp = strcmp(_vm->_parse->_resultStr, (char *)decodePtr(valPtr[-1]));
+		cmpTemp = strcmp(_vm->_parse->_resultStr, (char *)decodePtr(stackFrame.values[-1]));
 	}
 
 	return cmpTemp;
@@ -627,7 +657,7 @@ int16 Parse::parseValExpr(byte stopToken) {
 }
 
 // Load a value according to the operation
-void Parse::loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valPtr) {
+void Parse::loadValue(byte operation, uint32 varBase, const StackFrame &stackFrame) {
 	int16 dimCount;
 	int16 temp;
 	int16 temp2;
@@ -643,7 +673,7 @@ void Parse::loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valP
 	case OP_ARRAY_INT32:
 	case OP_ARRAY_INT16:
 	case OP_ARRAY_STR:
-		*operPtr = (operation == OP_ARRAY_STR) ? OP_LOAD_IMM_STR : OP_LOAD_IMM_INT16;
+		*stackFrame.opers = (operation == OP_ARRAY_STR) ? OP_LOAD_IMM_STR : OP_LOAD_IMM_INT16;
 		temp = _vm->_inter->load16();
 		dimCount = *_vm->_global->_inter_execPtr++;
 		arrDescPtr = _vm->_global->_inter_execPtr;
@@ -654,77 +684,77 @@ void Parse::loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valP
 			offset = offset * arrDescPtr[dim] + temp2;
 		}
 		if (operation == OP_ARRAY_INT8)
-			*valPtr = (int8) READ_VARO_UINT8(varBase + temp + offset);
+			*stackFrame.values = (int8) READ_VARO_UINT8(varBase + temp + offset);
 		else if (operation == OP_ARRAY_INT32)
-			*valPtr = READ_VARO_UINT32(varBase + temp * 4 + offset * 4);
+			*stackFrame.values = READ_VARO_UINT32(varBase + temp * 4 + offset * 4);
 		else if (operation == OP_ARRAY_INT16)
-			*valPtr = (int16) READ_VARO_UINT16(varBase + temp * 2 + offset * 2);
+			*stackFrame.values = (int16) READ_VARO_UINT16(varBase + temp * 2 + offset * 2);
 		else if (operation == OP_ARRAY_STR) {
-			*valPtr = encodePtr(_vm->_inter->_variables->getAddressOff8(
+			*stackFrame.values = encodePtr(_vm->_inter->_variables->getAddressOff8(
 						varBase + temp * 4 + offset * _vm->_global->_inter_animDataSize * 4),
 					kInterVar);
 			if (*_vm->_global->_inter_execPtr == 13) {
 				_vm->_global->_inter_execPtr++;
 				temp2 = parseValExpr(OP_END_MARKER);
-				*operPtr = OP_LOAD_IMM_INT16;
-				*valPtr = READ_VARO_UINT8(varBase + temp * 4 +
+				*stackFrame.opers = OP_LOAD_IMM_INT16;
+				*stackFrame.values = READ_VARO_UINT8(varBase + temp * 4 +
 						offset * 4 * _vm->_global->_inter_animDataSize + temp2);
 			}
 		}
 		break;
 
 	case OP_LOAD_VAR_INT16:
-		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = (int16) READ_VARO_UINT16(varBase + _vm->_inter->load16() * 2);
+		*stackFrame.opers = OP_LOAD_IMM_INT16;
+		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_inter->load16() * 2);
 		break;
 
 	case OP_LOAD_VAR_INT8:
-		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = (int8) READ_VARO_UINT8(varBase + _vm->_inter->load16());
+		*stackFrame.opers = OP_LOAD_IMM_INT16;
+		*stackFrame.values = (int8) READ_VARO_UINT8(varBase + _vm->_inter->load16());
 		break;
 
 	case OP_LOAD_IMM_INT32:
-		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = READ_LE_UINT32(varBase + _vm->_global->_inter_execPtr);
+		*stackFrame.opers = OP_LOAD_IMM_INT16;
+		*stackFrame.values = READ_LE_UINT32(varBase + _vm->_global->_inter_execPtr);
 		_vm->_global->_inter_execPtr += 4;
 		break;
 
 	case OP_LOAD_IMM_INT16:
-		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = _vm->_inter->load16();
+		*stackFrame.opers = OP_LOAD_IMM_INT16;
+		*stackFrame.values = _vm->_inter->load16();
 		break;
 
 	case OP_LOAD_IMM_INT8:
-		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = (int8) *_vm->_global->_inter_execPtr++;
+		*stackFrame.opers = OP_LOAD_IMM_INT16;
+		*stackFrame.values = (int8) *_vm->_global->_inter_execPtr++;
 		break;
 
 	case OP_LOAD_IMM_STR:
-		*operPtr = OP_LOAD_IMM_STR;
-		*valPtr = encodePtr(_vm->_global->_inter_execPtr, kExecPtr);
+		*stackFrame.opers = OP_LOAD_IMM_STR;
+		*stackFrame.values = encodePtr(_vm->_global->_inter_execPtr, kExecPtr);
 		_vm->_global->_inter_execPtr +=
 			strlen((char *) _vm->_global->_inter_execPtr) + 1;
 		break;
 
 	case OP_LOAD_VAR_INT32:
-		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = READ_VARO_UINT32(varBase + _vm->_inter->load16() * 4);
+		*stackFrame.opers = OP_LOAD_IMM_INT16;
+		*stackFrame.values = READ_VARO_UINT32(varBase + _vm->_inter->load16() * 4);
 		break;
 
 	case OP_LOAD_VAR_INT32_AS_INT16:
-		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = (int16) READ_VARO_UINT16(varBase + _vm->_inter->load16() * 4);
+		*stackFrame.opers = OP_LOAD_IMM_INT16;
+		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_inter->load16() * 4);
 		break;
 
 	case OP_LOAD_VAR_STR:
-		*operPtr = OP_LOAD_IMM_STR;
+		*stackFrame.opers = OP_LOAD_IMM_STR;
 		temp = _vm->_inter->load16() * 4;
-		*valPtr = encodePtr(_vm->_inter->_variables->getAddressOff8(varBase + temp), kInterVar);
+		*stackFrame.values = encodePtr(_vm->_inter->_variables->getAddressOff8(varBase + temp), kInterVar);
 		if (*_vm->_global->_inter_execPtr == 13) {
 			_vm->_global->_inter_execPtr++;
 			temp += parseValExpr(OP_END_MARKER);
-			*operPtr = OP_LOAD_IMM_INT16;
-			*valPtr = READ_VARO_UINT8(varBase + temp);
+			*stackFrame.opers = OP_LOAD_IMM_INT16;
+			*stackFrame.values = READ_VARO_UINT8(varBase + temp);
 		}
 		break;
 
@@ -763,85 +793,79 @@ void Parse::loadValue(byte operation, uint32 varBase, byte *operPtr, int32 *valP
 			break;
 		}
 
-		*operPtr = OP_LOAD_IMM_INT16;
-		*valPtr = _vm->_parse->_resultInt;
+		*stackFrame.opers = OP_LOAD_IMM_INT16;
+		*stackFrame.values = _vm->_parse->_resultInt;
 		break;
 	}
 }
 
-void Parse::stackPop(byte *&operPtr, int32 *&valPtr, int16 &stkPos, int count) {
-	operPtr -= count;
-	valPtr  -= count;
-	stkPos  -= count;
-}
-
-void Parse::simpleArithmetic1(byte *&operPtr, int32 *&valPtr, int16 &stkPos) {
-	switch (operPtr[-1]) {
+void Parse::simpleArithmetic1(StackFrame &stackFrame) {
+	switch (stackFrame.opers[-1]) {
 	case OP_ADD:
-		if (operPtr[-2] == OP_LOAD_IMM_STR) {
-			if ((char *) decodePtr(valPtr[-2]) != _vm->_parse->_resultStr) {
-				strcpy(_vm->_parse->_resultStr, (char *) decodePtr(valPtr[-2]));
-				valPtr[-2] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
+		if (stackFrame.opers[-2] == OP_LOAD_IMM_STR) {
+			if ((char *) decodePtr(stackFrame.values[-2]) != _vm->_parse->_resultStr) {
+				strcpy(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[-2]));
+				stackFrame.values[-2] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
 			}
-			strcat(_vm->_parse->_resultStr, (char *) decodePtr(valPtr[0]));
-			stackPop(operPtr, valPtr, stkPos, 2);
+			strcat(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[0]));
+			stackFrame.pop(2);
 		}
 		break;
 
 	case OP_MUL:
-		valPtr[-2] *= valPtr[0];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.values[-2] *= stackFrame.values[0];
+		stackFrame.pop(2);
 		break;
 
 	case OP_DIV:
-		valPtr[-2] /= valPtr[0];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.values[-2] /= stackFrame.values[0];
+		stackFrame.pop(2);
 		break;
 
 	case OP_MOD:
-		valPtr[-2] %= valPtr[0];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.values[-2] %= stackFrame.values[0];
+		stackFrame.pop(2);
 		break;
 
 	case OP_BITAND:
-		valPtr[-2] &= valPtr[0];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.values[-2] &= stackFrame.values[0];
+		stackFrame.pop(2);
 		break;
 	}
 }
 
-void Parse::simpleArithmetic2(byte *&operPtr, int32 *&valPtr, int16 &stkPos) {
-	if (stkPos > 1) {
-		if (operPtr[-2] == OP_NEG) {
-			operPtr[-2] = OP_LOAD_IMM_INT16;
-			valPtr[-2] = -valPtr[-1];
-			stackPop(operPtr, valPtr, stkPos);
-		} else if (operPtr[-2] == OP_NOT) {
-			operPtr[-2] = (operPtr[-1] == GOB_FALSE) ? GOB_TRUE : GOB_FALSE;
-			stackPop(operPtr, valPtr, stkPos);
+void Parse::simpleArithmetic2(StackFrame &stackFrame) {
+	if (stackFrame.pos > 1) {
+		if (stackFrame.opers[-2] == OP_NEG) {
+			stackFrame.opers[-2] = OP_LOAD_IMM_INT16;
+			stackFrame.values[-2] = -stackFrame.values[-1];
+			stackFrame.pop();
+		} else if (stackFrame.opers[-2] == OP_NOT) {
+			stackFrame.opers[-2] = (stackFrame.opers[-1] == GOB_FALSE) ? GOB_TRUE : GOB_FALSE;
+			stackFrame.pop();
 		}
 	}
 
-	if (stkPos > 2) {
-		switch (operPtr[-2]) {
+	if (stackFrame.pos > 2) {
+		switch (stackFrame.opers[-2]) {
 		case OP_MUL:
-			valPtr[-3] *= valPtr[-1];
-			stackPop(operPtr, valPtr, stkPos, 2);
+			stackFrame.values[-3] *= stackFrame.values[-1];
+			stackFrame.pop(2);
 			break;
 
 		case OP_DIV:
-			valPtr[-3] /= valPtr[-1];
-			stackPop(operPtr, valPtr, stkPos, 2);
+			stackFrame.values[-3] /= stackFrame.values[-1];
+			stackFrame.pop(2);
 			break;
 
 		case OP_MOD:
-			valPtr[-3] %= valPtr[-1];
-			stackPop(operPtr, valPtr, stkPos, 2);
+			stackFrame.values[-3] %= stackFrame.values[-1];
+			stackFrame.pop(2);
 			break;
 
 		case OP_BITAND:
-			valPtr[-3] &= valPtr[-1];
-			stackPop(operPtr, valPtr, stkPos, 2);
+			stackFrame.values[-3] &= stackFrame.values[-1];
+			stackFrame.pop(2);
 			break;
 		}
 	}
@@ -849,98 +873,96 @@ void Parse::simpleArithmetic2(byte *&operPtr, int32 *&valPtr, int16 &stkPos) {
 }
 
 // Complex arithmetics with brackets
-bool Parse::complexArithmetic(byte *&operPtr, int32 *&valPtr, int16 &stkPos,
-		byte *operStack, int32 *values, int16 brackStart) {
-
-	switch (operPtr[-2]) {
+bool Parse::complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 brackStart) {
+	switch (stackFrame.opers[-2]) {
 	case OP_ADD:
-		if (operStack[brackStart] == OP_LOAD_IMM_INT16) {
-			values[brackStart] += valPtr[-1];
-		} else if (operStack[brackStart] == OP_LOAD_IMM_STR) {
-			if ((char *) decodePtr(values[brackStart]) != _vm->_parse->_resultStr) {
-				strcpy(_vm->_parse->_resultStr, (char *) decodePtr(values[brackStart]));
-				values[brackStart] =
+		if (stack.opers[brackStart] == OP_LOAD_IMM_INT16) {
+			stack.values[brackStart] += stackFrame.values[-1];
+		} else if (stack.opers[brackStart] == OP_LOAD_IMM_STR) {
+			if ((char *) decodePtr(stack.values[brackStart]) != _vm->_parse->_resultStr) {
+				strcpy(_vm->_parse->_resultStr, (char *) decodePtr(stack.values[brackStart]));
+				stack.values[brackStart] =
 					encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
 			}
-			strcat(_vm->_parse->_resultStr, (char *) decodePtr(valPtr[-1]));
+			strcat(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[-1]));
 		}
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.pop(2);
 		break;
 
 	case OP_SUB:
-		values[brackStart] -= valPtr[-1];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stack.values[brackStart] -= stackFrame.values[-1];
+		stackFrame.pop(2);
 		break;
 
 	case OP_BITOR:
-		values[brackStart] |= valPtr[-1];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stack.values[brackStart] |= stackFrame.values[-1];
+		stackFrame.pop(2);
 		break;
 
 	case OP_MUL:
-		valPtr[-3] *= valPtr[-1];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.values[-3] *= stackFrame.values[-1];
+		stackFrame.pop(2);
 		break;
 
 	case OP_DIV:
-		valPtr[-3] /= valPtr[-1];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.values[-3] /= stackFrame.values[-1];
+		stackFrame.pop(2);
 		break;
 
 	case OP_MOD:
-		valPtr[-3] %= valPtr[-1];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.values[-3] %= stackFrame.values[-1];
+		stackFrame.pop(2);
 		break;
 
 	case OP_BITAND:
-		valPtr[-3] &= valPtr[-1];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.values[-3] &= stackFrame.values[-1];
+		stackFrame.pop(2);
 		break;
 
 	case OP_OR:
 		// (x OR false) == x
 		// (x OR true) == true
-		if (operPtr[-3] == GOB_FALSE)
-			operPtr[-3] = operPtr[-1];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		if (stackFrame.opers[-3] == GOB_FALSE)
+			stackFrame.opers[-3] = stackFrame.opers[-1];
+		stackFrame.pop(2);
 		break;
 
 	case OP_AND:
 		// (x AND false) == false
 		// (x AND true) == x
-		if (operPtr[-3] == GOB_TRUE)
-			operPtr[-3] = operPtr[-1];
-		stackPop(operPtr, valPtr, stkPos, 2);
+		if (stackFrame.opers[-3] == GOB_TRUE)
+			stackFrame.opers[-3] = stackFrame.opers[-1];
+		stackFrame.pop(2);
 		break;
 
 	case OP_LESS:
-		operPtr[-3] = (cmpHelper(operPtr, valPtr) < 0) ? GOB_TRUE : GOB_FALSE;
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.opers[-3] = (cmpHelper(stackFrame) < 0) ? GOB_TRUE : GOB_FALSE;
+		stackFrame.pop(2);
 		break;
 
 	case OP_LEQ:
-		operPtr[-3] = (cmpHelper(operPtr, valPtr) <= 0) ? GOB_TRUE : GOB_FALSE;
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.opers[-3] = (cmpHelper(stackFrame) <= 0) ? GOB_TRUE : GOB_FALSE;
+		stackFrame.pop(2);
 		break;
 
 	case OP_GREATER:
-		operPtr[-3] = (cmpHelper(operPtr, valPtr) > 0) ? GOB_TRUE : GOB_FALSE;
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.opers[-3] = (cmpHelper(stackFrame) > 0) ? GOB_TRUE : GOB_FALSE;
+		stackFrame.pop(2);
 		break;
 
 	case OP_GEQ:
-		operPtr[-3] = (cmpHelper(operPtr, valPtr) >= 0) ? GOB_TRUE : GOB_FALSE;
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.opers[-3] = (cmpHelper(stackFrame) >= 0) ? GOB_TRUE : GOB_FALSE;
+		stackFrame.pop(2);
 		break;
 
 	case OP_EQ:
-		operPtr[-3] = (cmpHelper(operPtr, valPtr) == 0) ? GOB_TRUE : GOB_FALSE;
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.opers[-3] = (cmpHelper(stackFrame) == 0) ? GOB_TRUE : GOB_FALSE;
+		stackFrame.pop(2);
 		break;
 
 	case OP_NEQ:
-		operPtr[-3] = (cmpHelper(operPtr, valPtr) != 0) ? GOB_TRUE : GOB_FALSE;
-		stackPop(operPtr, valPtr, stkPos, 2);
+		stackFrame.opers[-3] = (cmpHelper(stackFrame) != 0) ? GOB_TRUE : GOB_FALSE;
+		stackFrame.pop(2);
 		break;
 
 	default:
@@ -983,118 +1005,107 @@ void Parse::getResult(byte operation, int32 value, byte *type) {
 }
 
 int16 Parse::parseExpr(byte stopToken, byte *type) {
-	int32 values[20];
-	byte operStack[20];
-	int32 *valPtr;
-	byte *operPtr;
+	Stack stack;
+	StackFrame stackFrame(stack);
 	byte operation;
 	bool escape;
-	int16 stkPos;
 	int16 brackStart;
 	uint32 varBase;
-
-	memset(operStack, 0, 20);
-
-	stkPos = -1;
-	operPtr = operStack - 1;
-	valPtr = values - 1;
 
 	while (true) {
 		getVarBase(varBase);
 
-		stkPos++;
-		operPtr++;
-		valPtr++;
+		stackFrame.push();
 
 		operation = *_vm->_global->_inter_execPtr++;
 		if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC)) {
 
-			loadValue(operation, varBase, operPtr, valPtr);
+			loadValue(operation, varBase, stackFrame);
 
-			if ((stkPos > 0) && ((operPtr[-1] == OP_NEG) || (operPtr[-1] == OP_NOT))) {
-				stackPop(operPtr, valPtr, stkPos);
+			if ((stackFrame.pos > 0) && ((stackFrame.opers[-1] == OP_NEG) || (stackFrame.opers[-1] == OP_NOT))) {
+				stackFrame.pop();
 
-				if (*operPtr == OP_NEG) {
-					*operPtr = OP_LOAD_IMM_INT16;
-					valPtr[0] = -valPtr[1];
+				if (*stackFrame.opers == OP_NEG) {
+					*stackFrame.opers = OP_LOAD_IMM_INT16;
+					stackFrame.values[0] = -stackFrame.values[1];
 				} else
-					*operPtr = (operPtr[1] == GOB_FALSE) ? GOB_TRUE : GOB_FALSE;
+					*stackFrame.opers = (stackFrame.opers[1] == GOB_FALSE) ? GOB_TRUE : GOB_FALSE;
 			}
 
-			if (stkPos <= 0)
+			if (stackFrame.pos <= 0)
 				continue;
 
-			simpleArithmetic1(operPtr, valPtr, stkPos);
+			simpleArithmetic1(stackFrame);
 
 			continue;
 		} // (op >= OP_ARRAY_INT8) && (op <= OP_FUNC)
 
 		if ((operation == stopToken) || (operation == OP_OR) ||
 				(operation == OP_AND) || (operation == OP_END_EXPR)) {
-			while (stkPos >= 2) {
+			while (stackFrame.pos >= 2) {
 				escape = false;
-				if ((operPtr[-2] == OP_BEGIN_EXPR) &&
+				if ((stackFrame.opers[-2] == OP_BEGIN_EXPR) &&
 						((operation == OP_END_EXPR) || (operation == stopToken))) {
-					operPtr[-2] = operPtr[-1];
-					if ((operPtr[-2] == OP_LOAD_IMM_INT16) || (operPtr[-2] == OP_LOAD_IMM_STR))
-						valPtr[-2] = valPtr[-1];
+					stackFrame.opers[-2] = stackFrame.opers[-1];
+					if ((stackFrame.opers[-2] == OP_LOAD_IMM_INT16) || (stackFrame.opers[-2] == OP_LOAD_IMM_STR))
+						stackFrame.values[-2] = stackFrame.values[-1];
 
-					stackPop(operPtr, valPtr, stkPos);
+					stackFrame.pop();
 
-					simpleArithmetic2(operPtr, valPtr, stkPos);
+					simpleArithmetic2(stackFrame);
 
 					if (operation != stopToken)
 						break;
-				}	// if ((operPtr[-2] == OP_BEGIN_EXPR) && ...)
+				}	// if ((stackFrame.opers[-2] == OP_BEGIN_EXPR) && ...)
 
-				for (brackStart = (stkPos - 2); (brackStart > 0) &&
-				    (operStack[brackStart] < OP_OR) && (operStack[brackStart] != OP_BEGIN_EXPR);
+				for (brackStart = (stackFrame.pos - 2); (brackStart > 0) &&
+				    (stack.opers[brackStart] < OP_OR) && (stack.opers[brackStart] != OP_BEGIN_EXPR);
 						brackStart--)
 					;
 
-				if ((operStack[brackStart] >= OP_OR) || (operStack[brackStart] == OP_BEGIN_EXPR))
+				if ((stack.opers[brackStart] >= OP_OR) || (stack.opers[brackStart] == OP_BEGIN_EXPR))
 					brackStart++;
 
-				if (complexArithmetic(operPtr, valPtr, stkPos, operStack, values, brackStart))
+				if (complexArithmetic(stack, stackFrame, brackStart))
 					break;
 
-			}	// while (stkPos >= 2)
+			}	// while (stackFrame.pos >= 2)
 
 			if ((operation == OP_OR) || (operation == OP_AND)) {
-				if (operPtr[-1] == OP_LOAD_IMM_INT16) {
-					if (valPtr[-1] != 0)
-						operPtr[-1] = GOB_TRUE;
+				if (stackFrame.opers[-1] == OP_LOAD_IMM_INT16) {
+					if (stackFrame.values[-1] != 0)
+						stackFrame.opers[-1] = GOB_TRUE;
 					else
-						operPtr[-1] = GOB_FALSE;
+						stackFrame.opers[-1] = GOB_FALSE;
 				}
 
-				if (((operation == OP_OR) && (operPtr[-1] == GOB_TRUE)) ||
-				    ((operation == OP_AND) && (operPtr[-1] == GOB_FALSE))) {
-					if ((stkPos > 1) && (operPtr[-2] == OP_BEGIN_EXPR)) {
+				if (((operation == OP_OR) && (stackFrame.opers[-1] == GOB_TRUE)) ||
+				    ((operation == OP_AND) && (stackFrame.opers[-1] == GOB_FALSE))) {
+					if ((stackFrame.pos > 1) && (stackFrame.opers[-2] == OP_BEGIN_EXPR)) {
 						skipExpr(OP_END_EXPR);
-						operPtr[-2] = operPtr[-1];
-						stackPop(operPtr, valPtr, stkPos, 2);
+						stackFrame.opers[-2] = stackFrame.opers[-1];
+						stackFrame.pop(2);
 					} else {
 						skipExpr(stopToken);
 					}
 					operation = _vm->_global->_inter_execPtr[-1];
-					if ((stkPos > 0) && (operPtr[-1] == OP_NOT)) {
-						if (operPtr[0] == GOB_FALSE)
-							operPtr[-1] = GOB_TRUE;
+					if ((stackFrame.pos > 0) && (stackFrame.opers[-1] == OP_NOT)) {
+						if (stackFrame.opers[0] == GOB_FALSE)
+							stackFrame.opers[-1] = GOB_TRUE;
 						else
-							operPtr[-1] = GOB_FALSE;
+							stackFrame.opers[-1] = GOB_FALSE;
 
-						stackPop(operPtr, valPtr, stkPos);
+						stackFrame.pop();
 					}
 				} else
-					operPtr[0] = operation;
+					stackFrame.opers[0] = operation;
 			} else
-				stackPop(operPtr, valPtr, stkPos);
+				stackFrame.pop();
 
 			if (operation != stopToken)
 				continue;
 
-			getResult(operStack[0], values[0], type);
+			getResult(stack.opers[0], stack.values[0], type);
 
 			return 0;
 		}		// (operation == stopToken) || (operation == OP_OR) || (operation == OP_AND) || (operation == OP_END_EXPR)
@@ -1103,29 +1114,29 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 			if ((operation < OP_LESS) || (operation > OP_NEQ))
 				continue;
 
-			if (stkPos > 2) {
-				if (operPtr[-2] == OP_ADD) {
-					if (operPtr[-3] == OP_LOAD_IMM_INT16) {
-						valPtr[-3] += valPtr[-1];
-					} else if (operPtr[-3] == OP_LOAD_IMM_STR) {
-						if ((char *) decodePtr(valPtr[-3]) != _vm->_parse->_resultStr) {
-							strcpy(_vm->_parse->_resultStr, (char *) decodePtr(valPtr[-3]));
-							valPtr[-3] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
+			if (stackFrame.pos > 2) {
+				if (stackFrame.opers[-2] == OP_ADD) {
+					if (stackFrame.opers[-3] == OP_LOAD_IMM_INT16) {
+						stackFrame.values[-3] += stackFrame.values[-1];
+					} else if (stackFrame.opers[-3] == OP_LOAD_IMM_STR) {
+						if ((char *) decodePtr(stackFrame.values[-3]) != _vm->_parse->_resultStr) {
+							strcpy(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[-3]));
+							stackFrame.values[-3] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
 						}
-						strcat(_vm->_parse->_resultStr, (char *) decodePtr(valPtr[-1]));
+						strcat(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[-1]));
 					}
-					stackPop(operPtr, valPtr, stkPos, 2);
+					stackFrame.pop(2);
 
-				} else if (operPtr[-2] == OP_SUB) {
-					valPtr[-3] -= valPtr[-1];
-					stackPop(operPtr, valPtr, stkPos, 2);
-				} else if (operPtr[-2] == OP_BITOR) {
-					valPtr[-3] |= valPtr[-1];
-					stackPop(operPtr, valPtr, stkPos, 2);
+				} else if (stackFrame.opers[-2] == OP_SUB) {
+					stackFrame.values[-3] -= stackFrame.values[-1];
+					stackFrame.pop(2);
+				} else if (stackFrame.opers[-2] == OP_BITOR) {
+					stackFrame.values[-3] |= stackFrame.values[-1];
+					stackFrame.pop(2);
 				}
 			}
 		}
-		*operPtr = operation;
+		*stackFrame.opers = operation;
 	}
 }
 
