@@ -162,6 +162,14 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\engines\asylum\actor.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\actor.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\asylum\asylum.cpp"
 			>
 		</File>
