@@ -118,15 +118,6 @@ void Scene::update() {
 
 	updateCursor();
 
-	// Proof of concept for animation showing
-	GraphicFrame *animFrame = _animResource->getFrame(_animCurFrame);
-	_animCurFrame++;
-	if (_animCurFrame >= _animResource->getFrameCount())
-		_animCurFrame = 0;
-
-	// Hardcoded coords
-	copyToSceneBackground(animFrame, 655, 0);
-
 	// Proof of concept for screen scrolling
 
 	// TESTING
@@ -151,8 +142,16 @@ void Scene::update() {
 		scrollScreen = true;
 	}
 
-	//if (scrollScreen)
+	if (scrollScreen)
 		_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
+
+	// Proof of concept for animation showing
+	GraphicFrame *animFrame = _animResource->getFrame(_animCurFrame);
+	_animCurFrame++;
+	if (_animCurFrame >= _animResource->getFrameCount())
+		_animCurFrame = 0;
+
+	copyToBackBufferClipped(animFrame, 655, 0);		// hardcoded location
 
 	// TODO
 }
@@ -167,6 +166,25 @@ void Scene::copyToSceneBackground(GraphicFrame *frame, int x, int y) {
 		memcpy(dest, buffer, w);
 		dest += _background->surface.w;
 		buffer += frame->surface.w;
+	}
+}
+
+void Scene::copyToBackBufferClipped(GraphicFrame *frame, int x, int y) {
+	Common::Rect screenRect(_startX, _startY, _startX + 640, _startY + 480);
+	Common::Rect animRect(x, y, x + frame->surface.w, y + frame->surface.h);
+	animRect.clip(screenRect);
+
+	if (!animRect.isEmpty()) {
+		// Translate anim rectangle
+		animRect.translate(-_startX, -_startY);
+
+		_screen->copyToBackBuffer(((byte*)frame->surface.pixels) + 
+								  (frame->surface.h - animRect.height()) * frame->surface.pitch,
+								  frame->surface.pitch,
+								  animRect.left,
+								  animRect.top,
+								  animRect.width(),
+								  animRect.height());
 	}
 }
 
