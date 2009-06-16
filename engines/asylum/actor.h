@@ -31,6 +31,8 @@
 
 namespace Asylum {
 
+class Screen;
+
 // TODO properly use this enum as opposed to just
 // using it for visual reference :P
 enum ActorResources {
@@ -38,7 +40,7 @@ enum ActorResources {
 	kSound2 = 1,
 	kSound3 = 2,
 	kSound4 = 3,
-	kUnused = 4,
+	//kUnused = 4,	// 0
 	kFlags  = 5,
 
 	kWalkN  = 6,
@@ -71,11 +73,14 @@ enum ActorResources {
 	kFidgetSW = 29,
 	kFidgetS  = 30,
 
+	// These are 0
+	/*
 	kUnknown1 = 31,
 	kUnknown2 = 32,
 	kUnknown3 = 33,
 	kUnknown4 = 34,
 	kUnknown5 = 35,
+	*/
 
 	kPickupN  = 36,
 	kPickupNW = 37,
@@ -93,8 +98,10 @@ enum ActorResources {
 	kOperate2NW = 47,
 	kOperate2W  = 48,
 	kOperate2SW = 49,
-	kOperate2S  = 50,
+	kOperate2S  = 50
 
+	// These are 0
+	/*
 	kUnknown6  = 51,
 	kUnknown7  = 52,
 	kUnknown8  = 53,
@@ -104,7 +111,7 @@ enum ActorResources {
 	kUnknown12 = 57,
 	kUnknown13 = 58,
 	kUnknown14 = 59
-
+	*/
 };
 
 class MainActor {
@@ -112,19 +119,15 @@ public:
 	MainActor(uint8 *data);
 	virtual ~MainActor();
 
-	// TODO I know md5 won't like this, but it's
-	// still WIP code :P
 	void setAction(ResourcePack *res, int action);
-
-	GraphicFrame *getFrame();
-
-	uint32 x;
-	uint32 y;
+	void drawActorAt(Screen *screen, uint16 x, uint16 y);
 
 private:
 	GraphicResource *_graphic;
 	uint32 _resources[61];
 	uint8  _currentFrame;
+
+	GraphicFrame *getFrame();
 
 }; // end of class MainActor
 

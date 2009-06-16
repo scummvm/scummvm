@@ -52,7 +52,6 @@ public:
 
 private:
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
-	void copyActorToScreen();
 
 	Screen        *_screen;
     Sound         *_sound;

@@ -24,6 +24,7 @@
  */
 
 #include "asylum/actor.h"
+#include "asylum/screen.h"
 
 namespace Asylum {
 
@@ -33,10 +34,6 @@ MainActor::MainActor(uint8 *data) {
 	}
 
 	_graphic = 0;
-
-	// TODO implement this properly
-	x = 150;
-	y = 150;
 }
 
 MainActor::~MainActor() {
@@ -61,6 +58,18 @@ GraphicFrame *MainActor::getFrame() {
 	}
 
 	return frame;
+}
+
+void MainActor::drawActorAt(Screen *screen, uint16 x, uint16 y) {
+	GraphicFrame *frame = getFrame();
+
+	screen->copyRectToScreenWithTransparency(
+			((byte *)frame->surface.pixels),
+			frame->surface.w,
+			x,
+			y,
+			frame->surface.w,
+			frame->surface.h );
 }
 
 } // end of namespace Asylum

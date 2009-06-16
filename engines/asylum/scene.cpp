@@ -82,7 +82,7 @@ void Scene::enterScene() {
 	// TEST
 	// Draw the actor walking towards the north
 	_sceneResource->getMainActor()->setAction(_resPack, 6);
-	copyActorToScreen();
+	_sceneResource->getMainActor()->drawActorAt(_screen, 150, 150);
 }
 
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
@@ -131,7 +131,7 @@ void Scene::update() {
 
 	// TESTING
 	// Main Actor
-	copyActorToScreen();
+	_sceneResource->getMainActor()->drawActorAt(_screen, 150, 150);
 
 	// Horizontal scrolling
 	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
@@ -170,15 +170,4 @@ void Scene::copyToSceneBackground(GraphicFrame *frame, int x, int y) {
 	}
 }
 
-void Scene::copyActorToScreen() {
-	GraphicFrame *frame = _sceneResource->getMainActor()->getFrame();
-
-	_screen->copyRectToScreenWithTransparency(
-			((byte *)frame->surface.pixels),
-			frame->surface.w,
-			_sceneResource->getMainActor()->x,
-			_sceneResource->getMainActor()->y,
-			frame->surface.w,
-			frame->surface.h );
-}
 } // end of namespace Asylum
