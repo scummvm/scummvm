@@ -52,6 +52,7 @@ public:
 
 private:
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
+	void copyToBackBufferClipped(GraphicFrame *frame, int x, int y);
 
 	Screen        *_screen;
     Sound         *_sound;
