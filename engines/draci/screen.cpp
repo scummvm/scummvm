@@ -35,7 +35,7 @@ Screen::Screen(DraciEngine *vm) : _vm(vm) {
 	_surface->create(_vm->_screenWidth, _vm->_screenHeight, 1);
 	this->clearScreen();
 	_palette = new byte[4 * 256];
-	setPaletteEmpty(256);
+	setPaletteEmpty();
 }
 
 Screen::~Screen() {

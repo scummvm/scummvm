@@ -35,12 +35,12 @@ namespace Draci {
 class DraciEngine;
 
 class Screen {
-	
+
 public:
 	Screen(DraciEngine *vm);
 	~Screen();
 
-	void setPaletteEmpty(unsigned int numEntries);
+	void setPaletteEmpty(unsigned int numEntries = 256);
 	void setPalette(byte *data, uint16 start, uint16 num);
 	byte *getPalette() const;
 	void copyToScreen() const;
