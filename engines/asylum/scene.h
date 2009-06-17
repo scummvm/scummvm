@@ -68,14 +68,14 @@ private:
 	GraphicFrame    *_background;
 
     uint8 _sceneIdx;
-    int   _mouseX;
-	int   _mouseY;
-	int   _startX;
-	int   _startY;
+    uint32   _mouseX;
+	uint32   _mouseY;
+	int32   _startX;
+	int32   _startY;
     bool  _leftClick;
-	int   _curMouseCursor;
-	int   _animCurFrame; // TODO: this should be an array
-	int   _cursorStep;
+	uint32   _curMouseCursor;
+	uint32   _animCurFrame; // TODO: this should be an array
+	int32   _cursorStep;
 
 	void update();
 	void updateCursor();
