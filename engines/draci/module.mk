@@ -6,7 +6,8 @@ MODULE_OBJS := \
 	barchive.o \
 	gpldisasm.o \
 	font.o \
-	sprite.o
+	sprite.o \
+	screen.o
  
 MODULE_DIRS += \
 	engines/draci

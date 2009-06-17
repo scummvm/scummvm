@@ -23,46 +23,38 @@
  *
  */
 
-#ifndef DRACI_H
-#define DRACI_H
- 
-#include "common/system.h"
-#include "engines/engine.h"
-#include "engines/advancedDetector.h"
+#ifndef SCREEN_H
+#define SCREEN_H
 
-#include "draci/screen.h"
-#include "draci/font.h"
+#include "graphics/surface.h"
+
+#include "draci/sprite.h"
 
 namespace Draci {
 
-class DraciEngine : public Engine {
+class DraciEngine;
+
+class Screen {
+	
 public:
-	DraciEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~DraciEngine();
+	Screen(DraciEngine *vm);
+	~Screen();
 
-	int init();
-	int go();
-	Common::Error run();
-
-	bool hasFeature(Engine::EngineFeature f) const;
-
-	Font _font;
-	Screen *_screen;
-
-	int _screenWidth;
-	int _screenHeight;
-
+	void setPaletteEmpty(unsigned int numEntries);
+	void setPalette(byte *data, uint16 start, uint16 num);
+	byte *getPalette() const;
+	void copyToScreen() const;
+	void clearScreen() const;
+	void drawSprite(const Sprite &s) const;
+	void fillScreen(uint16 colour) const;
+	Graphics::Surface *getSurface();	
+	
 private:
-	Common::RandomSource _rnd;
-};
-
-enum {
-	kDraciGeneralDebugLevel = 1 << 0,
-	kDraciBytecodeDebugLevel = 1 << 1,
-	kDraciArchiverDebugLevel = 1 << 2
+	Graphics::Surface *_surface;
+	byte *_palette;
+	DraciEngine *_vm;
 };
 
 } // End of namespace Draci
 
-#endif // DRACI_H
-
+#endif // SCREEN_H

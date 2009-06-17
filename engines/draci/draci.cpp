@@ -37,6 +37,7 @@
 #include "draci/gpldisasm.h"
 #include "draci/font.h"
 #include "draci/sprite.h"
+#include "draci/screen.h"
 
 namespace Draci {
 
@@ -50,6 +51,9 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
  
 	// However this is the place to specify all default directories
 	//Common::File::addDefaultDirectory(_gameDataPath + "sound/");
+
+	_screenHeight = 200;
+	_screenWidth = 320;
  	
 	// Here is the right place to set up the engine specific debug levels
 	Common::addDebugChannel(kDraciGeneralDebugLevel, "general", "Draci general debug level");
@@ -62,7 +66,9 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 int DraciEngine::init() {
 	// Initialize graphics using following:
-	initGraphics(320, 200, false);
+	initGraphics(_screenWidth, _screenHeight, false);
+
+	_screen = new Screen(this);	
 
 	// Load default font
 	_font.setFont(kFontBig);
@@ -106,20 +112,9 @@ int DraciEngine::init() {
 	return 0;
 }
 
-// HACK
-// Temporary hack
-
-void drawFrame(OSystem *syst, BAFile *frame) {
-	Sprite sp(frame->_data, frame->_length, ((320 - 50) / 2), 60, true);	
-	syst->copyRectToScreen(sp._data, sp._width, sp._x, sp._y, sp._width, sp._height); 
-}
-
 int DraciEngine::go() {
 	debugC(1, kDraciGeneralDebugLevel, "DraciEngine::go()");
  
-	// Read in a sample palette
-	byte *palette = new byte[4 * 256];
-
 	debugC(2, kDraciGeneralDebugLevel, "Running graphics/animation test...");
 
 	Common::String path("PALETY.DFW");	
@@ -135,28 +130,14 @@ int DraciEngine::go() {
 		return 0;
 	}	
 
-	Common::MemoryReadStream paletteReader(f->_data, f->_length);
-	
-	for (unsigned int i = 0; i < 256; ++i) {
-		palette[i * 4] = paletteReader.readByte();
-		palette[i * 4 + 1] = paletteReader.readByte();
-		palette[i * 4 + 2] = paletteReader.readByte();
-		palette[i * 4 + 3] = 0;
-	}
-
-	// Shift the palette one bit to the left to make it brighter
-	for (unsigned int i = 0; i < 4 * 256; ++i) {
-		palette[i] <<= 2;
-	} 
-
-	_system->setPalette(palette, 0, 256);
+	_screen->setPalette(f->_data, 0, 256);
 	
 	// Fill screen with white
-	_system->fillScreen(255);
+	_screen->fillScreen(255);
 
 	// Draw big string
 	Common::String testString = "Testing, testing, read all about it!";
-	Graphics::Surface *surf = _system->lockScreen();
+	Graphics::Surface *surf = _screen->getSurface();
 	_font.drawString(surf, testString, 
 		(320 - _font.getStringWidth(testString, 1)) / 2, 130, 1);
 
@@ -170,8 +151,7 @@ int DraciEngine::go() {
 	testString = "Checking overflooooooooooooooooooooooooow...";
 	_font.drawString(surf, testString, 50, 170, 1);
 
-	_system->unlockScreen();
-	_system->updateScreen();
+	_screen->copyToScreen();
 
 	// Draw and animate the dragon
 	path = "OBR_AN.DFW";
@@ -187,8 +167,9 @@ int DraciEngine::go() {
 
 		// Load frame to memory
 		f = ar[t];
-		drawFrame(_system, f);
-		_system->updateScreen();
+		Sprite sp(f->_data, f->_length, ((320 - 50) / 2), 60, true);
+		_screen->drawSprite(sp);
+		_screen->copyToScreen();
 		_system->delayMillis(100);
 
 		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
@@ -205,7 +186,7 @@ int DraciEngine::go() {
 	}	
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
-	CursorMan.pushCursorPalette(palette, 0, 256);
+	CursorMan.pushCursorPalette(_screen->getPalette(), 0, 256);
 	CursorMan.pushCursor(sp._data, sp._width, sp._height, sp._width / 2, sp._height / 2);
 	CursorMan.showMouse(true);
 
@@ -222,7 +203,7 @@ int DraciEngine::go() {
 				break;
 			}
 		}
-		_system->updateScreen();
+		_screen->copyToScreen();
 		_system->delayMillis(20);
 	}
 
@@ -232,6 +213,8 @@ int DraciEngine::go() {
 DraciEngine::~DraciEngine() {
 	// Dispose your resources here
  
+	delete _screen;
+
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
 }
