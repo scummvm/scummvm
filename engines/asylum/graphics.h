@@ -52,7 +52,7 @@ public:
 
 	~GraphicResource();
 
-	uint16 getFrameCount() { return _frames.size(); }
+	uint32 getFrameCount() { return _frames.size(); }
 	GraphicFrame *getFrame(int frame) { return &_frames[frame]; }
 	uint32 getFlags() { return _flags; }
 

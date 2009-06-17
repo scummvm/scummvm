@@ -124,9 +124,14 @@ void Text::drawResText(uint32 x, uint32 y, uint32 resId) {
 }
 
 void Text::drawTextAlignRight(uint32 x, uint32 y, char *text) {
+    int textWidth = getTextWidth(text);
+    setTextPos(x - textWidth, y);
+    drawText(text);
 }
 
 void Text::drawResTextAlignRight(uint32 x, uint32 y, uint32 resId) {
+    ResourceEntry *textRes = _textPack->getResource(resId);
+	drawTextAlignRight(x, y, (char *)textRes->data);
 }
 
 } // end of namespace Asylum

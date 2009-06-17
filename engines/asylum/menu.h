@@ -88,17 +88,20 @@ private:
 	Sound  *_sound;
 	Scene  *_scene;
 
-	int  _mouseX;
-	int  _mouseY;
-	int  _activeIcon;
-	int  _previousActiveIcon;
-	int  _curIconFrame;
-	int  _curMouseCursor;
-	int  _cursorStep;
-    int  _creditsBgFrame;
-    int  _creditsTextScroll;
+	uint32  _mouseX;
+	uint32  _mouseY;
+	int32   _activeIcon;
+	int32   _previousActiveIcon;
+	uint32  _curIconFrame;
+	uint32  _curMouseCursor;
+	int32   _cursorStep;
+    uint32  _creditsBgFrame;
+    uint32  _creditsTextScroll;
 	bool _leftClick;
 	bool _active;
+
+    // FIXME this shouldnt be here. Need a proper config place
+    uint32 _gammaLevel;
 
 	MenuScreen      _activeMenuScreen;
 	ResourcePack    *_resPack;
@@ -108,9 +111,7 @@ private:
 	GraphicResource *_iconResource;
     GraphicResource *_creditsResource;
     GraphicResource *_creditsFadeResource;
-
     Text *_text;
-	Text *_textBlue;
 
 	void updateCursor();
 	void updateEyesAnimation();
@@ -119,6 +120,7 @@ private:
 	void updateSubMenu();
 	void exitSubMenu();
     void updateSubMenuNewGame();
+    void updateSubMenuSettings();
     void updateSubMenuQuitGame();
     void updateSubMenuShowCredits();
 

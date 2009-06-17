@@ -46,6 +46,7 @@ MainMenu::MainMenu(Screen *screen, Sound *sound, Scene *scene) :
     _creditsTextScroll  = 0x1E0 - 30;
 	_activeMenuScreen   = kMainMenu;
 	_active				= false;
+    _gammaLevel         = 2;
 
 	_resPack        = new ResourcePack(1);
 	_bgResource     = new GraphicResource(_resPack, 0);
@@ -58,14 +59,11 @@ MainMenu::MainMenu(Screen *screen, Sound *sound, Scene *scene) :
 
     _text = new Text(_screen);
     _text->loadFont(_resPack, 16);	// 0x80010010, yellow font
-	_textBlue = new Text(_screen);
-	_textBlue->loadFont(_resPack, 22);	// 0x80010016, blue font
 }
 
 MainMenu::~MainMenu() {
 	delete _creditsResource;
 	delete _creditsFadeResource;
-	delete _textBlue;
     delete _text;
 	delete _iconResource;
 	delete _eyeResource;
@@ -76,6 +74,9 @@ MainMenu::~MainMenu() {
 
 void MainMenu::openMenu() {
 	_active = true;
+
+    // yellow font
+    _text->loadFont(_resPack, 0x80010010);
 
 	// Load the graphics palette
 	_screen->setPalette(_resPack, 17);
@@ -251,7 +252,7 @@ void MainMenu::updateEyesAnimation() {
 void MainMenu::updateMainMenu() {
 	int rowId = 0;
 
-	if (_mouseY >= 20 && _mouseY <= 20 + 48) {
+    if (_mouseY >= 20 && _mouseY <= 20 + 48) {
 		rowId = 0; // Top row
 	} else if (_mouseY >= 400 && _mouseY <= 400 + 48) {
 		rowId = 1; // Bottom row
@@ -262,9 +263,12 @@ void MainMenu::updateMainMenu() {
 		return;
 	}
 
+    // yellow font
+    _text->loadFont(_resPack, 0x80010010);
+
 	// Icon animation
-	for (int i = 0; i <= 5; i++) {
-		int curX = 40 + i * 100;
+	for (uint32 i = 0; i <= 5; i++) {
+		uint32 curX = 40 + i * 100;
 		if (_mouseX >= curX && _mouseX <= curX + 55) {
 			int iconNum = i + 6 * rowId;
 			_activeIcon = iconNum;
@@ -338,7 +342,7 @@ void MainMenu::updateSubMenu() {
 			// TODO
 			break;
 		case kSettings:
-			// TODO
+			updateSubMenuSettings();
 			break;
 		case kKeyboardConfig:
 			// TODO
@@ -353,70 +357,118 @@ void MainMenu::updateSubMenu() {
 }
 
 void MainMenu::updateSubMenuNewGame() {
+    // yellow font
+    _text->loadFont(_resPack, 0x80010010);
+
     // begin new game
-	_text->drawResTextCentered(10, 100, 620, 1321);	// 0x80000529u
+	_text->drawResTextCentered(10, 100, 620, 0x80000529);
 
 	// Yes
-	if (_mouseX >= 240 && _mouseX <= 280 && _mouseY >= 280 && _mouseY <= 300) {
-		_textBlue->setTextPos(247, 273);
-		_textBlue->drawResText(1322); // 0x8000052Au
+    if (_mouseX < 247 || _mouseX > 247 + _text->getResTextWidth(0x8000052A) || _mouseY < 273 || _mouseY > 273 + 24 )
+        _text->loadFont(_resPack, 0x80010010); // yellow font
+    else
+        _text->loadFont(_resPack, 0x80010016); // blue font
+    _text->setTextPos(247, 273);
+	_text->drawResText(0x8000052A);
 
-		if (_leftClick) {
-			_leftClick = false;
+    // No
+    if (_mouseX < 369 || _mouseX > 369 + _text->getResTextWidth(0x8000052B) || _mouseY < 273 || _mouseY > 273 + 24 )
+        _text->loadFont(_resPack, 0x80010010); // yellow font
+    else
+        _text->loadFont(_resPack, 0x80010016); // blue font
+    _text->setTextPos(369, 273);
+	_text->drawResText(0x8000052B);
 
-			// TODO handle new game event
-		}
-	} else {
-		_text->setTextPos(247, 273);
-		_text->drawResText(1322); // 0x8000052Au
-	}
+    // action
+    if (_leftClick) {
+        // Yes
+        if (_mouseX >= 247 && _mouseX <= 247 + 24 && _mouseY >= 273 && _mouseY <= 273 + _text->getResTextWidth(0x8000052A)) {
+            _leftClick = false;
+	        // TODO handle new game event
+        }
+		// No 
+        if (_mouseX >= 369 && _mouseX <= 369 + 24 && _mouseY >= 273 && _mouseY <= 273 + _text->getResTextWidth(0x8000052B))
+            exitSubMenu();
+    }
+}
 
-	// No
-	if (_mouseX >= 360 && _mouseX <= 400 && _mouseY >= 280 && _mouseY <= 300) {
-		_textBlue->setTextPos(369, 273);
-		_textBlue->drawResText(1323); // 0x8000052Bu
+void MainMenu::updateSubMenuSettings() {
+    uint32 sizeMinus = _text->getTextWidth("-");
+    uint32 sizePlus = _text->getTextWidth("+");
 
-		if (_leftClick)
-			exitSubMenu();
-	} else {
-		_text->setTextPos(369, 273);
-		_text->drawResText(1323); // 0x8000052Bu
-	}
+    // yellow font
+    _text->loadFont(_resPack, 0x80010010);
+
+    // Settings
+	_text->drawResTextCentered(10, 100, 620, 0x80000598);
+
+    // gamma correction
+    _text->drawResTextAlignRight(320, 150, 0x80000599);
+    if (_mouseX < 350 || _mouseX > sizeMinus + 350 || _mouseY < 150 || _mouseY > 174)
+        _text->loadFont(_resPack, 0x80010010); // yellow font
+    else        
+        _text->loadFont(_resPack, 0x80010016); // blue font
+    _text->setTextPos(350, 150);
+    _text->drawText("-");
+
+    if (_mouseX < sizeMinus + 360 || _mouseX > sizeMinus + sizePlus || _mouseY < 150 || _mouseY > 174)
+        _text->loadFont(_resPack, 0x80010010); // yellow font
+    else        
+        _text->loadFont(_resPack, 0x80010016); // blue font
+    _text->setTextPos(sizeMinus + 360, 150);
+    _text->drawText("+");
+
+    _text->setTextPos(sizeMinus + sizePlus + 365, 150);
+    _text->loadFont(_resPack, 0x80010010);
+    if(_gammaLevel) {
+        for (uint32 i = 0; i < _gammaLevel; i++ ) {
+          _text->drawText("]");
+        }
+        if ( _gammaLevel == 8 )
+            _text->drawText("*");
+    } else
+        _text->drawResText(0x8000059B);
+
 }
 
 void MainMenu::updateSubMenuQuitGame() {
-    // Quit confirmation
-	_text->drawResTextCentered(10, 100, 620, 1408);	// 0x80000580u
+    // yellow font
+    _text->loadFont(_resPack, 0x80010010);
+
+    // begin new game
+	_text->drawResTextCentered(10, 100, 620, 0x80000580);
 
 	// Yes
-	if (_mouseX >= 240 && _mouseX <= 280 && _mouseY >= 280 && _mouseY <= 300) {
-		_textBlue->setTextPos(247, 273);
-		_textBlue->drawResText(1409); // 0x80000581u
+    if (_mouseX < 247 || _mouseX > 247 + _text->getResTextWidth(0x80000581) || _mouseY < 273 || _mouseY > 273 + 24 )
+        _text->loadFont(_resPack, 0x80010010); // yellow font
+    else
+        _text->loadFont(_resPack, 0x80010016); // blue font
+    _text->setTextPos(247, 273);
+	_text->drawResText(0x80000581);
 
-		if (_leftClick) {
-			_leftClick = false;
+    // No
+    if (_mouseX < 369 || _mouseX > 369 + _text->getResTextWidth(0x80000582) || _mouseY < 273 || _mouseY > 273 + 24 )
+        _text->loadFont(_resPack, 0x80010010); // yellow font
+    else
+        _text->loadFont(_resPack, 0x80010016); // blue font
+    _text->setTextPos(369, 273);
+	_text->drawResText(0x80000582);
+
+    // action
+    if (_leftClick) {
+        // Yes
+        if (_mouseX >= 247 && _mouseX <= 247 + 24 && _mouseY >= 273 && _mouseY <= 273 + _text->getResTextWidth(0x80000581)) {
+		    _leftClick = false;
 
 			// User clicked on quit, so push a quit event
 			Common::Event event;
 			event.type = Common::EVENT_QUIT;
 			g_system->getEventManager()->pushEvent(event);
-		}
-	} else {
-		_text->setTextPos(247, 273);
-		_text->drawResText(1409); // 0x80000581u
-	}
-
-	// No
-	if (_mouseX >= 360 && _mouseX <= 400 && _mouseY >= 280 && _mouseY <= 300) {
-		_textBlue->setTextPos(369, 273);
-		_textBlue->drawResText(1410); // 0x80000582u
-
-		if (_leftClick)
-			exitSubMenu();
-	} else {
-		_text->setTextPos(369, 273);
-		_text->drawResText(1410); // 0x80000582u
-	}
+        }
+        // No
+        if (_mouseX >= 369 && _mouseX <= 369 + 24 && _mouseY >= 273 && _mouseY <= 273 + _text->getResTextWidth(0x80000582))
+            exitSubMenu();
+    }
 }
 
 void MainMenu::updateSubMenuShowCredits() {
