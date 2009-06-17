@@ -32,6 +32,8 @@
 
 namespace Draci {
 
+extern const uint16 kNumColours;
+
 class DraciEngine;
 
 class Screen {
@@ -40,7 +42,7 @@ public:
 	Screen(DraciEngine *vm);
 	~Screen();
 
-	void setPaletteEmpty(unsigned int numEntries = 256);
+	void setPaletteEmpty(unsigned int numEntries = kNumColours);
 	void setPalette(byte *data, uint16 start, uint16 num);
 	byte *getPalette() const;
 	void copyToScreen() const;

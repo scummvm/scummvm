@@ -131,7 +131,7 @@ int DraciEngine::go() {
 		return 0;
 	}	
 
-	_screen->setPalette(f->_data, 0, 256);
+	_screen->setPalette(f->_data, 0, kNumColours);
 	
 	// Fill screen with white
 	_screen->fillScreen(255);
@@ -187,7 +187,7 @@ int DraciEngine::go() {
 	}	
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
-	CursorMan.pushCursorPalette(_screen->getPalette(), 0, 256);
+	CursorMan.pushCursorPalette(_screen->getPalette(), 0, kNumColours);
 	CursorMan.pushCursor(sp._data, sp._width, sp._height, sp._width / 2, sp._height / 2);
 	CursorMan.showMouse(true);
 

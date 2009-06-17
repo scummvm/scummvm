@@ -30,11 +30,13 @@
 
 namespace Draci {
 
+const uint16 kNumColours = 256;
+
 Screen::Screen(DraciEngine *vm) : _vm(vm) {
 	_surface = new Graphics::Surface();
 	_surface->create(_vm->_screenWidth, _vm->_screenHeight, 1);
 	this->clearScreen();
-	_palette = new byte[4 * 256];
+	_palette = new byte[4 * kNumColours];
 	setPaletteEmpty();
 }
 
@@ -45,7 +47,7 @@ Screen::~Screen() {
 }
 
 void Screen::setPaletteEmpty(unsigned int numEntries) {
-	for (unsigned int i = 0; i < numEntries * 4; ++i) {
+	for (unsigned int i = 0; i < 4 * numEntries; ++i) {
 		_palette[i] = 0;
 	}
 
@@ -55,7 +57,7 @@ void Screen::setPaletteEmpty(unsigned int numEntries) {
 
 void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 
-	Common::MemoryReadStream pal(data, 256 * 3);
+	Common::MemoryReadStream pal(data, 3 * kNumColours);
 	pal.seek(start * 4);
 
 	// Copy the palette	
@@ -68,7 +70,7 @@ void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 
 	// TODO: Investigate why this is needed
 	// Shift the palette one bit to the left to make it brighter
-	for (unsigned int i = 0; i < 4 * 256; ++i) {
+	for (unsigned int i = 0; i < 4 * kNumColours; ++i) {
 		_palette[i] <<= 2;
 	}
 
