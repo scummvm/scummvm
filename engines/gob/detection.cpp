@@ -66,7 +66,8 @@ static const PlainGameDescriptor gobGames[] = {
 	{"playtoons3", "Playtoons 3 - The Secret of the Castle"},
 	{"playtoons4", "Playtoons 4 - The Mandarine Prince"},
 	{"playtoons5", "Playtoons 5 - The Stone of Wakan"},
-	{"playtnck2", "Playtoons Construction Kit 2 - Les chevaliers"},
+	{"playtnck1", "Playtoons Construction Kit 1 - Monsters"},
+	{"playtnck2", "Playtoons Construction Kit 2 - Knights"},
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
@@ -3316,10 +3317,29 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"playtnck1",
+			"",
+			{
+				{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
+				{"dan.itk", 0, "906d67b3e438d5e95ec7ea9e781a94f3", 3000320},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypePlaytnCk,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
 			"playtnck2",
 			"",
 			{
 				{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
+				{"dan.itk", 0, "74eeb075bd2cb47b243349730264af01", 3213312},
 				{0, 0, 0, 0}
 			},
 			FR_FRA,
