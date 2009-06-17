@@ -69,17 +69,49 @@ Inter::~Inter() {
 
 void Inter::NsetupOpcodes() {
 	setupOpcodesDraw();
+	setupOpcodesFunc();
 }
 
 void Inter::executeOpcodeDraw(byte i) {
+	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%X] (%s)", i, i, getDescOpcodeDraw(i));
+
 	if (_opcodesDraw[i].proc && _opcodesDraw[i].proc->isValid())
 		(*_opcodesDraw[i].proc)();
 	else
-		warning("unimplemented opcodeDraw: %d", i);
+		warning("unimplemented opcodeDraw: %d [0x%X]", i, i);
+}
+
+bool Inter::executeOpcodeFunc(byte i, byte j, OpFuncParams &params) {
+	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s)",
+			i, j, i, j, getDescOpcodeFunc(i, j));
+
+	if ((i > 4) || (j > 15)) {
+		warning("unimplemented opcodeFunc: %d.%d [0x%X.0x%X]", i, j, i, j);
+		return false;
+	}
+
+	i = i * 16 + j;
+	if (_opcodesFunc[i].proc && _opcodesFunc[i].proc->isValid())
+		return (*_opcodesFunc[i].proc)(params);
+	else
+		warning("unimplemented opcodeFunc: %d.%d [0x%X.0x%X]", i, j, i, j);
+
+	return false;
 }
 
 const char *Inter::getDescOpcodeDraw(byte i) {
-	return _opcodesDraw[i].desc;
+	const char *desc =  _opcodesDraw[i].desc;
+
+	return ((desc) ? desc : "");
+}
+
+const char *Inter::getDescOpcodeFunc(byte i, byte j) {
+	if ((i > 4) || (j > 15))
+		return "";
+
+	const char *desc = _opcodesDraw[i * 16 + j].desc;
+
+	return ((desc) ? desc : "");
 }
 
 void Inter::initControlVars(char full) {
@@ -292,7 +324,7 @@ void Inter::funcBlock(int16 retFlag) {
 		if (cmd2 == 0)
 			cmd >>= 4;
 
-		if (executeFuncOpcode(cmd2, cmd, params))
+		if (executeOpcodeFunc(cmd2, cmd, params))
 			return;
 
 		if (_vm->shouldQuit())

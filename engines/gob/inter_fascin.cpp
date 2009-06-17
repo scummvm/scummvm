@@ -41,7 +41,9 @@
 namespace Gob {
 
 #define OPCODE(x) _OPCODE(Inter_Fascination, x)
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(Inter_Fascination, x)
+#define OPCODEVER Inter_Fascination
+#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
 
 const int Inter_Fascination::_goblinFuncLookUp[][2] = {
 	{1, 0},
@@ -100,110 +102,11 @@ void Inter_Fascination::setupOpcodesDraw() {
 	CLEAROPCODEDRAW(0x88);
 }
 
-void Inter_Fascination::setupOpcodes() {
-	static const OpcodeFuncEntryFascination opcodesFunc[80] = {
-		/* 00 */
-		OPCODE(o1_callSub),
-		OPCODE(o1_callSub),
-		OPCODE(o1_printTotText),
-		OPCODE(o1_loadCursor),
-		/* 04 */
-		{0, ""},
-		OPCODE(o1_switch),
-		OPCODE(o1_repeatUntil),
-		OPCODE(o1_whileDo),
-		/* 08 */
-		OPCODE(o1_if),
-		OPCODE(o1_assign),
-		OPCODE(o1_loadSpriteToPos),
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		{0, ""},
-		OPCODE(o2_printText),
-		OPCODE(o1_loadTot),
-		OPCODE(o1_palLoad),
-		/* 14 */
-		OPCODE(o1_keyFunc),
-		OPCODE(o1_capturePush),
-		OPCODE(o1_capturePop),
-		OPCODE(o1_animPalInit),
-		/* 18 */
-		OPCODE(o2_addCollision),
-		OPCODE(o2_freeCollision),
-		{0, ""},
-		{0, ""},
-		/* 1C */
-		{0, ""},
-		{0, ""},
-		OPCODE(o1_drawOperations),
-		OPCODE(o1_setcmdCount),
-		/* 20 */
-		OPCODE(o1_return),
-		OPCODE(o1_renewTimeInVars),
-		OPCODE(o1_speakerOn),
-		OPCODE(o1_speakerOff),
-		/* 24 */
-		OPCODE(o1_putPixel),
-		OPCODE(o2_goblinFunc),
-		OPCODE(o1_createSprite),
-		OPCODE(o1_freeSprite),
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		OPCODE(o1_returnTo),
-		OPCODE(o1_loadSpriteContent),
-		OPCODE(o1_copySprite),
-		OPCODE(o1_fillRect),
-		/* 34 */
-		OPCODE(o1_drawLine),
-		OPCODE(o1_strToLong),
-		OPCODE(o1_invalidate),
-		OPCODE(o1_setBackDelta),
-		/* 38 */
-		OPCODE(o1_playSound),
-		OPCODE(o2_stopSound),
-		OPCODE(o2_loadSound),
-		OPCODE(o1_freeSoundSlot),
-		/* 3C */
-		OPCODE(o1_waitEndPlay),
-		OPCODE(o1_playComposition),
-		OPCODE(o2_getFreeMem),
-		OPCODE(o2_checkData),
-		/* 40 */
-		{0, ""},
-		OPCODE(o1_prepareStr),
-		OPCODE(o1_insertStr),
-		OPCODE(o1_cutStr),
-		/* 44 */
-		OPCODE(o1_strstr),
-		OPCODE(o1_istrlen),
-		OPCODE(o1_setMousePos),
-		OPCODE(o1_setFrameRate),
-		/* 48 */
-		OPCODE(o1_animatePalette),
-		OPCODE(o1_animateCursor),
-		OPCODE(o1_blitCursor),
-		OPCODE(o1_loadFont),
-		/* 4C */
-		OPCODE(o1_freeFont),
-		OPCODE(o2_readData),
-		OPCODE(o2_writeData),
-		OPCODE(o1_manageDataFile),
-	};
+void Inter_Fascination::setupOpcodesFunc() {
+	Inter_v2::setupOpcodesFunc();
+}
 
+void Inter_Fascination::setupOpcodes() {
 	static const OpcodeGoblinEntryFascination opcodesGoblin[15] = {
 		/* 00 */
 		OPCODE(oFascin_geUnknown0),
@@ -226,7 +129,6 @@ void Inter_Fascination::setupOpcodes() {
 		OPCODE(oFascin_geUnknown1002), //to be replaced by o2_stopProtracker when protrackerPlay is fixed
 	};
 
-	_opcodesFuncFascination = opcodesFunc;
 	_opcodesGoblinFascination = opcodesGoblin;
 }
 
@@ -375,25 +277,6 @@ void Inter_Fascination::oFascin_cdUnknown11() {
 	evalExpr(0);
 }
 
-bool Inter_Fascination::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
-	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s)",
-			i, j, i, j, getOpcodeFuncDesc(i, j));
-
-	if ((i > 4) || (j > 16)) {
-		warning("Invalid opcodeFunc: %d.%d", i, j);
-		return false;
-	}
-
-	OpcodeFuncProcFascination op = _opcodesFuncFascination[i*16 + j].proc;
-
-	if (op == 0)
-		warning("unimplemented opcodeFunc: %d.%d", i, j);
-	else
-		return (this->*op) (params);
-
-	return false;
-}
-
 void Inter_Fascination::executeGoblinOpcode(int i, OpGobParams &params) {
 	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
 			i, i, getOpcodeGoblinDesc(i));
@@ -415,13 +298,6 @@ void Inter_Fascination::executeGoblinOpcode(int i, OpGobParams &params) {
 		warning("unimplemented opcodeGob: %d", i);
 	} else
 		(this->*op) (params);
-}
-
-const char *Inter_Fascination::getOpcodeFuncDesc(byte i, byte j) {
-	if ((i > 4) || (j > 15))
-		return "";
-
-	return _opcodesFuncFascination[i*16 + j].desc;
 }
 
 const char *Inter_Fascination::getOpcodeGoblinDesc(int i) {

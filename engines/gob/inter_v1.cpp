@@ -47,7 +47,9 @@
 namespace Gob {
 
 #define OPCODE(x) _OPCODE(Inter_v1, x)
-#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(Inter_v1, x)
+#define OPCODEVER Inter_v1
+#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
 
 const int Inter_v1::_goblinFuncLookUp[][2] = {
 	{1, 0},
@@ -164,110 +166,82 @@ void Inter_v1::setupOpcodesDraw() {
 	OPCODEDRAW(0x31, o1_freeFontToSprite);
 }
 
-void Inter_v1::setupOpcodes() {
-	static const OpcodeFuncEntryV1 opcodesFunc[80] = {
-		/* 00 */
-		OPCODE(o1_callSub),
-		OPCODE(o1_callSub),
-		OPCODE(o1_printTotText),
-		OPCODE(o1_loadCursor),
-		/* 04 */
-		{0, ""},
-		OPCODE(o1_switch),
-		OPCODE(o1_repeatUntil),
-		OPCODE(o1_whileDo),
-		/* 08 */
-		OPCODE(o1_if),
-		OPCODE(o1_assign),
-		OPCODE(o1_loadSpriteToPos),
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		{0, ""},
-		OPCODE(o1_printText),
-		OPCODE(o1_loadTot),
-		OPCODE(o1_palLoad),
-		/* 14 */
-		OPCODE(o1_keyFunc),
-		OPCODE(o1_capturePush),
-		OPCODE(o1_capturePop),
-		OPCODE(o1_animPalInit),
-		/* 18 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 1C */
-		{0, ""},
-		{0, ""},
-		OPCODE(o1_drawOperations),
-		OPCODE(o1_setcmdCount),
-		/* 20 */
-		OPCODE(o1_return),
-		OPCODE(o1_renewTimeInVars),
-		OPCODE(o1_speakerOn),
-		OPCODE(o1_speakerOff),
-		/* 24 */
-		OPCODE(o1_putPixel),
-		OPCODE(o1_goblinFunc),
-		OPCODE(o1_createSprite),
-		OPCODE(o1_freeSprite),
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		OPCODE(o1_returnTo),
-		OPCODE(o1_loadSpriteContent),
-		OPCODE(o1_copySprite),
-		OPCODE(o1_fillRect),
-		/* 34 */
-		OPCODE(o1_drawLine),
-		OPCODE(o1_strToLong),
-		OPCODE(o1_invalidate),
-		OPCODE(o1_setBackDelta),
-		/* 38 */
-		OPCODE(o1_playSound),
-		OPCODE(o1_stopSound),
-		OPCODE(o1_loadSound),
-		OPCODE(o1_freeSoundSlot),
-		/* 3C */
-		OPCODE(o1_waitEndPlay),
-		OPCODE(o1_playComposition),
-		OPCODE(o1_getFreeMem),
-		OPCODE(o1_checkData),
-		/* 40 */
-		{0, ""},
-		OPCODE(o1_prepareStr),
-		OPCODE(o1_insertStr),
-		OPCODE(o1_cutStr),
-		/* 44 */
-		OPCODE(o1_strstr),
-		OPCODE(o1_istrlen),
-		OPCODE(o1_setMousePos),
-		OPCODE(o1_setFrameRate),
-		/* 48 */
-		OPCODE(o1_animatePalette),
-		OPCODE(o1_animateCursor),
-		OPCODE(o1_blitCursor),
-		OPCODE(o1_loadFont),
-		/* 4C */
-		OPCODE(o1_freeFont),
-		OPCODE(o1_readData),
-		OPCODE(o1_writeData),
-		OPCODE(o1_manageDataFile),
-	};
+void Inter_v1::setupOpcodesFunc() {
+	OPCODEFUNC(0x00, o1_callSub);
+	OPCODEFUNC(0x01, o1_callSub);
+	OPCODEFUNC(0x02, o1_printTotText);
+	OPCODEFUNC(0x03, o1_loadCursor);
 
+	OPCODEFUNC(0x05, o1_switch);
+	OPCODEFUNC(0x06, o1_repeatUntil);
+	OPCODEFUNC(0x07, o1_whileDo);
+
+	OPCODEFUNC(0x08, o1_if);
+	OPCODEFUNC(0x09, o1_assign);
+	OPCODEFUNC(0x0A, o1_loadSpriteToPos);
+	OPCODEFUNC(0x11, o1_printText);
+	OPCODEFUNC(0x12, o1_loadTot);
+	OPCODEFUNC(0x13, o1_palLoad);
+
+	OPCODEFUNC(0x14, o1_keyFunc);
+	OPCODEFUNC(0x15, o1_capturePush);
+	OPCODEFUNC(0x16, o1_capturePop);
+	OPCODEFUNC(0x17, o1_animPalInit);
+
+	OPCODEFUNC(0x1E, o1_drawOperations);
+	OPCODEFUNC(0x1F, o1_setcmdCount);
+
+	OPCODEFUNC(0x20, o1_return);
+	OPCODEFUNC(0x21, o1_renewTimeInVars);
+	OPCODEFUNC(0x22, o1_speakerOn);
+	OPCODEFUNC(0x23, o1_speakerOff);
+
+	OPCODEFUNC(0x24, o1_putPixel);
+	OPCODEFUNC(0x25, o1_goblinFunc);
+	OPCODEFUNC(0x26, o1_createSprite);
+	OPCODEFUNC(0x27, o1_freeSprite);
+
+	OPCODEFUNC(0x30, o1_returnTo);
+	OPCODEFUNC(0x31, o1_loadSpriteContent);
+	OPCODEFUNC(0x32, o1_copySprite);
+	OPCODEFUNC(0x33, o1_fillRect);
+
+	OPCODEFUNC(0x34, o1_drawLine);
+	OPCODEFUNC(0x35, o1_strToLong);
+	OPCODEFUNC(0x36, o1_invalidate);
+	OPCODEFUNC(0x37, o1_setBackDelta);
+
+	OPCODEFUNC(0x38, o1_playSound);
+	OPCODEFUNC(0x39, o1_stopSound);
+	OPCODEFUNC(0x3A, o1_loadSound);
+	OPCODEFUNC(0x3B, o1_freeSoundSlot);
+
+	OPCODEFUNC(0x3C, o1_waitEndPlay);
+	OPCODEFUNC(0x3D, o1_playComposition);
+	OPCODEFUNC(0x3E, o1_getFreeMem);
+	OPCODEFUNC(0x3F, o1_checkData);
+
+	OPCODEFUNC(0x41, o1_prepareStr);
+	OPCODEFUNC(0x42, o1_insertStr);
+	OPCODEFUNC(0x43, o1_cutStr);
+
+	OPCODEFUNC(0x44, o1_strstr);
+	OPCODEFUNC(0x45, o1_istrlen);
+	OPCODEFUNC(0x46, o1_setMousePos);
+	OPCODEFUNC(0x47, o1_setFrameRate);
+
+	OPCODEFUNC(0x48, o1_animatePalette);
+	OPCODEFUNC(0x49, o1_animateCursor);
+	OPCODEFUNC(0x4A, o1_blitCursor);
+	OPCODEFUNC(0x4B, o1_loadFont);
+
+	OPCODEFUNC(0x4C, o1_freeFont);
+	OPCODEFUNC(0x4D, o1_readData);
+	OPCODEFUNC(0x4E, o1_writeData);
+	OPCODEFUNC(0x4F, o1_manageDataFile);
+}
+
+void Inter_v1::setupOpcodes() {
 	static const OpcodeGoblinEntryV1 opcodesGoblin[71] = {
 		/* 00 */
 		OPCODE(o1_setState),
@@ -360,26 +334,7 @@ void Inter_v1::setupOpcodes() {
 		OPCODE(o1_initGoblin)
 	};
 
-	_opcodesFuncV1 = opcodesFunc;
 	_opcodesGoblinV1 = opcodesGoblin;
-}
-
-bool Inter_v1::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
-	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s)",
-			i, j, i, j, getOpcodeFuncDesc(i, j));
-
-	if ((i > 4) || (j > 15)) {
-		warning("unimplemented opcodeFunc: %d.%d", i, j);
-		return false;
-	}
-
-	OpcodeFuncProcV1 op = _opcodesFuncV1[i*16 + j].proc;
-
-	if (op == 0)
-		warning("unimplemented opcodeFunc: %d.%d", i, j);
-	else
-		return (this->*op) (params);
-	return false;
 }
 
 void Inter_v1::executeGoblinOpcode(int i, OpGobParams &params) {
@@ -401,13 +356,6 @@ void Inter_v1::executeGoblinOpcode(int i, OpGobParams &params) {
 		_vm->_global->_inter_execPtr += cmd * 2;
 	} else
 		(this->*op) (params);
-}
-
-const char *Inter_v1::getOpcodeFuncDesc(byte i, byte j) {
-	if ((i > 4) || (j > 15))
-		return "";
-
-	return _opcodesFuncV1[i*16 + j].desc;
 }
 
 const char *Inter_v1::getOpcodeGoblinDesc(int i) {
