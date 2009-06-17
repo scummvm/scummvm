@@ -85,6 +85,9 @@ protected:
 public:
 	void waitForInput();
 
+#ifdef ENABLE_16BIT
+	Graphics::PixelFormat _pixelFormat;
+#endif
 	Script _script;
 	ResMan *_resMan;
 	GrvCursorMan *_grvCursorMan;

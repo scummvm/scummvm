@@ -29,6 +29,10 @@
 #include "groovie/groovie.h"
 #include "groovie/roq.h"
 
+#ifdef ENABLE_16BIT
+// Required for the YUV to RGB conversion
+#include "graphics/dither.h"
+#endif
 #include "sound/mixer.h"
 
 namespace Groovie {
@@ -43,6 +47,7 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	_currBuf = new Graphics::Surface();
 	_prevBuf = new Graphics::Surface();
 
+#ifndef ENABLE_16BIT
 	byte pal[256 * 4];
 #ifdef DITHER
 	byte pal3[256 * 3];
@@ -77,16 +82,17 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 		pal[(i * 4) + 1] = pal3[(i * 3) + 1];
 		pal[(i * 4) + 2] = pal3[(i * 3) + 2];
 	}
-#else
+#else // !DITHER
 	// Set a grayscale palette
 	for (int i = 0; i < 256; i++) {
 		pal[(i * 4) + 0] = i;
 		pal[(i * 4) + 1] = i;
 		pal[(i * 4) + 2] = i;
 	}
-#endif
+#endif // DITHER
 
 	_syst->setPalette(pal, 0, 256);
+#endif // !ENABLE_16BIT
 }
 
 ROQPlayer::~ROQPlayer() {
@@ -154,13 +160,26 @@ void ROQPlayer::buildShowBuf() {
 		byte *out = (byte *)_showBuf.getBasePtr(0, line);
 		byte *in = (byte *)_prevBuf->getBasePtr(0, line / _scaleY);
 		for (int x = 0; x < _showBuf.w; x++) {
+#ifdef ENABLE_16BIT
+			// Do the format conversion (YUV -> RGB -> Screen format)
+			byte r, g, b;
+			Graphics::PaletteLUT::YUV2RGB(*in, *(in + 1), *(in + 2), r, g, b);
+			// FIXME: this is fixed to 16bit
+			*(uint16 *)out = (uint16)_vm->_pixelFormat.RGBToColor(r, g, b);
+			
+			// Skip to the next pixel
+			out += _vm->_pixelFormat.bytesPerPixel;
+#else // !ENABLE_16BIT
 #ifdef DITHER
 			*out = _dither->dither(*in, *(in + 1), *(in + 2), x);
 #else
 			// Just use the luminancy component
 			*out = *in;
-#endif
+#endif // DITHER
+			// Skip to the next pixel
 			out++;
+#endif // ENABLE_16BIT
+
 			if (!(x % _scaleX))
 				in += _prevBuf->bytesPerPixel;
 		}
@@ -189,7 +208,7 @@ bool ROQPlayer::playFrameInternal() {
 
 	if (_dirty) {
 		// Update the screen
-		_syst->copyRectToScreen((byte *)_showBuf.getBasePtr(0, 0), _showBuf.w, 0, (_syst->getHeight() - _showBuf.h) / 2, _showBuf.pitch, _showBuf.h);
+		_syst->copyRectToScreen((byte *)_showBuf.getBasePtr(0, 0), _showBuf.pitch, 0, (_syst->getHeight() - _showBuf.h) / 2, _showBuf.w, _showBuf.h);
 		_syst->updateScreen();
 
 		// Clear the dirty flag
@@ -316,7 +335,23 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		// Allocate new buffers
 		_currBuf->create(width, height, 3);
 		_prevBuf->create(width, height, 3);
+#ifdef ENABLE_16BIT
+		_showBuf.create(width * _scaleX, height * _scaleY, _vm->_pixelFormat.bytesPerPixel);
+#else
 		_showBuf.create(width * _scaleX, height * _scaleY, 1);
+#endif
+
+		// Clear the buffers with black YUV values
+		byte *ptr1 = (byte *)_currBuf->getBasePtr(0, 0);
+		byte *ptr2 = (byte *)_prevBuf->getBasePtr(0, 0);
+		for (int i = 0; i < width * height; i++) {
+			*ptr1++ = 0;
+			*ptr1++ = 128;
+			*ptr1++ = 128;
+			*ptr2++ = 0;
+			*ptr2++ = 128;
+			*ptr2++ = 128;
+		}
 
 #ifdef DITHER
 		// Reset the dithering algorithm with the new width
@@ -456,7 +491,15 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing still (JPEG) block");
 
 	warning("Groovie::ROQ: JPEG frame (unimplemented)");
-	memset(_prevBuf->getBasePtr(0, 0), 0, _prevBuf->w * _prevBuf->h * _prevBuf->bytesPerPixel);
+
+	// HACK: Initialize to a black frame
+	//memset(_prevBuf->getBasePtr(0, 0), 0, _prevBuf->w * _prevBuf->h * _prevBuf->bytesPerPixel);
+	byte *ptr = (byte *)_prevBuf->getBasePtr(0, 0);
+	for (int i = 0; i < _prevBuf->w * _prevBuf->h; i++) {
+		*ptr++ = 0;
+		*ptr++ = 128;
+		*ptr++ = 128;
+	}
 
 	_file->skip(blockHeader.size);
 	return true;

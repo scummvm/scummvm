@@ -70,7 +70,17 @@ GroovieEngine::~GroovieEngine() {
 
 Common::Error GroovieEngine::run() {
 	// Initialize the graphics
-	initGraphics(640, 480, true);
+	switch (_gameDescription->version) {
+	case kGroovieV2:
+#ifdef ENABLE_16BIT
+		_pixelFormat = _system->getBestFormat();
+		initGraphics(640, 480, true, _pixelFormat);
+		break;
+#endif
+	case kGroovieT7G:
+		initGraphics(640, 480, true);
+		break;
+	}
 
 	// Create debugger. It requires GFX to be initialized
 	_debugger = new Debugger(this);
