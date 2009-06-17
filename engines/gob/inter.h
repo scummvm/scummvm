@@ -27,6 +27,7 @@
 #define GOB_INTER_H
 
 #include "common/func.h"
+#include "common/hashmap.h"
 
 #include "gob/goblin.h"
 #include "gob/variables.h"
@@ -38,16 +39,20 @@ namespace Gob {
 #ifndef REDUCE_MEMORY_USAGE
 	#define _OPCODEDRAW(ver, x)  setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), #x)
 	#define _OPCODEFUNC(ver, x)  setProc(new Common::Functor1Mem<OpFuncParams &, bool, ver>(this, &ver::x), #x)
+	#define _OPCODEGOB(ver, x)   setProc(new Common::Functor1Mem<OpGobParams &, void, ver>(this, &ver::x), #x)
 #else
 	#define _OPCODEDRAW(ver, x)  setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), "")
 	#define _OPCODEFUNC(ver, x)  setProc(new Common::Functor1Mem<OpFuncParams &, bool, ver>(this, &ver::x), "")
+	#define _OPCODEGOB(ver, x)   setProc(new Common::Functor1Mem<OpGobParams &, void, ver>(this, &ver::x), "")
 #endif
 
-#define CLEAROPCODEDRAW(i) _opcodesDraw[i].setProc(0, 0);
-#define CLEAROPCODEFUNC(i) _opcodesFunc[i].setProc(0, 0);
+#define CLEAROPCODEDRAW(i) _opcodesDraw[i].setProc(0, 0)
+#define CLEAROPCODEFUNC(i) _opcodesFunc[i].setProc(0, 0)
+#define CLEAROPCODEGOB(i)  _opcodesGob.erase(i)
 
 typedef Common::Functor0<void> OpcodeDraw;
 typedef Common::Functor1<struct OpFuncParams &, bool> OpcodeFunc;
+typedef Common::Functor1<struct OpGobParams &, void> OpcodeGob;
 
 struct OpFuncParams {
 	byte cmdCount;
@@ -79,14 +84,6 @@ struct OpcodeEntry : Common::NonCopyable {
 	}
 };
 
-// This is to help devices with small memory (PDA, smartphones, ...)
-// to save abit of memory used by opcode names in the Scumm engine.
-#ifndef REDUCE_MEMORY_USAGE
-# define _OPCODE(ver, x)  { &ver::x, #x }
-#else
-# define _OPCODE(ver, x)  { &ver::x, "" }
-#endif
-
 class Inter {
 public:
 	uint8 _terminate;
@@ -98,6 +95,8 @@ public:
 	int16 _soundStopVal;
 
 	Variables *_variables;
+
+	void setupOpcodes();
 
 	void initControlVars(char full);
 	int16 load16();
@@ -124,6 +123,7 @@ public:
 protected:
 	OpcodeEntry<OpcodeDraw> _opcodesDraw[256];
 	OpcodeEntry<OpcodeFunc> _opcodesFunc[256];
+	Common::HashMap<int, OpcodeEntry<OpcodeGob> > _opcodesGob;
 
 	bool _break;
 
@@ -139,19 +139,17 @@ protected:
 
 	GobEngine *_vm;
 
-	void NsetupOpcodes();
 	void executeOpcodeDraw(byte i);
 	bool executeOpcodeFunc(byte i, byte j, OpFuncParams &params);
+	void executeOpcodeGob(int i, OpGobParams &params);
 
 	const char *getDescOpcodeDraw(byte i);
 	const char *getDescOpcodeFunc(byte i, byte j);
+	const char *getDescOpcodeGob(int i);
 
 	virtual void setupOpcodesDraw() = 0;
 	virtual void setupOpcodesFunc() = 0;
-
-	virtual void setupOpcodes() = 0;
-	virtual void executeGoblinOpcode(int i, OpGobParams &params) = 0;
-	virtual const char *getOpcodeGoblinDesc(int i) = 0;
+	virtual void setupOpcodesGob()  = 0;
 
 	virtual void checkSwitchTable(byte **ppExec) = 0;
 
@@ -169,20 +167,9 @@ public:
 	virtual void animPalette();
 
 protected:
-	typedef void (Inter_v1::*OpcodeGoblinProcV1)(OpGobParams &);
-	struct OpcodeGoblinEntryV1 {
-		OpcodeGoblinProcV1 proc;
-		const char *desc;
-	};
-	const OpcodeGoblinEntryV1 *_opcodesGoblinV1;
-	static const int _goblinFuncLookUp[][2];
-
 	virtual void setupOpcodesDraw();
 	virtual void setupOpcodesFunc();
-
-	virtual void setupOpcodes();
-	virtual void executeGoblinOpcode(int i, OpGobParams &params);
-	virtual const char *getOpcodeGoblinDesc(int i);
+	virtual void setupOpcodesGob();
 
 	virtual void checkSwitchTable(byte **ppExec);
 
@@ -351,20 +338,9 @@ public:
 	virtual void animPalette();
 
 protected:
-	typedef void (Inter_v2::*OpcodeGoblinProcV2)(OpGobParams &);
-	struct OpcodeGoblinEntryV2 {
-		OpcodeGoblinProcV2 proc;
-		const char *desc;
-	};
-	const OpcodeGoblinEntryV2 *_opcodesGoblinV2;
-	static const int _goblinFuncLookUp[][2];
-
 	virtual void setupOpcodesDraw();
 	virtual void setupOpcodesFunc();
-
-	virtual void setupOpcodes();
-	virtual void executeGoblinOpcode(int i, OpGobParams &params);
-	virtual const char *getOpcodeGoblinDesc(int i);
+	virtual void setupOpcodesGob();
 
 	virtual void checkSwitchTable(byte **ppExec);
 
@@ -430,20 +406,9 @@ public:
 	virtual ~Inter_Bargon() {}
 
 protected:
-	typedef void (Inter_Bargon::*OpcodeGoblinProcBargon)(OpGobParams &);
-	struct OpcodeGoblinEntryBargon {
-		OpcodeGoblinProcBargon proc;
-		const char *desc;
-	};
-	const OpcodeGoblinEntryBargon *_opcodesGoblinBargon;
-	static const int _goblinFuncLookUp[][2];
-
 	virtual void setupOpcodesDraw();
 	virtual void setupOpcodesFunc();
-
-	virtual void setupOpcodes();
-	virtual void executeGoblinOpcode(int i, OpGobParams &params);
-	virtual const char *getOpcodeGoblinDesc(int i);
+	virtual void setupOpcodesGob();
 
 	void oBargon_intro0(OpGobParams &params);
 	void oBargon_intro1(OpGobParams &params);
@@ -463,20 +428,9 @@ public:
 	virtual ~Inter_Fascination() {}
 
 protected:
-	typedef void (Inter_Fascination::*OpcodeGoblinProcFascination)(OpGobParams &);
-	struct OpcodeGoblinEntryFascination {
-		OpcodeGoblinProcFascination proc;
-		const char *desc;
-	};
-	const OpcodeGoblinEntryFascination *_opcodesGoblinFascination;
-	static const int _goblinFuncLookUp[][2];
-
 	virtual void setupOpcodesDraw();
 	virtual void setupOpcodesFunc();
-
-	virtual void setupOpcodes();
-	virtual void executeGoblinOpcode(int i, OpGobParams &params);
-	virtual const char *getOpcodeGoblinDesc(int i);
+	virtual void setupOpcodesGob();
 
 	void oFascin_playProtracker(OpGobParams &params);
 
@@ -511,20 +465,9 @@ public:
 	virtual ~Inter_v3() {}
 
 protected:
-	typedef void (Inter_v3::*OpcodeGoblinProcV3)(OpGobParams &);
-	struct OpcodeGoblinEntryV3 {
-		OpcodeGoblinProcV3 proc;
-		const char *desc;
-	};
-	const OpcodeGoblinEntryV3 *_opcodesGoblinV3;
-	static const int _goblinFuncLookUp[][2];
-
 	virtual void setupOpcodesDraw();
 	virtual void setupOpcodesFunc();
-
-	virtual void setupOpcodes();
-	virtual void executeGoblinOpcode(int i, OpGobParams &params);
-	virtual const char *getOpcodeGoblinDesc(int i);
+	virtual void setupOpcodesGob();
 
 	bool o3_getTotTextItemPart(OpFuncParams &params);
 	bool o3_copySprite(OpFuncParams &params);
@@ -538,20 +481,9 @@ public:
 	virtual ~Inter_v4() {}
 
 protected:
-	typedef void (Inter_v4::*OpcodeGoblinProcV4)(OpGobParams &);
-	struct OpcodeGoblinEntryV4 {
-		OpcodeGoblinProcV4 proc;
-		const char *desc;
-	};
-	const OpcodeGoblinEntryV4 *_opcodesGoblinV4;
-	static const int _goblinFuncLookUp[][2];
-
 	virtual void setupOpcodesDraw();
 	virtual void setupOpcodesFunc();
-
-	virtual void setupOpcodes();
-	virtual void executeGoblinOpcode(int i, OpGobParams &params);
-	virtual const char *getOpcodeGoblinDesc(int i);
+	virtual void setupOpcodesGob();
 
 	void o4_initScreen();
 	void o4_playVmdOrMusic();
@@ -563,22 +495,11 @@ public:
 	virtual ~Inter_v5() {}
 
 protected:
-	typedef void (Inter_v5::*OpcodeGoblinProcV5)(OpGobParams &);
-	struct OpcodeGoblinEntryV5 {
-		OpcodeGoblinProcV5 proc;
-		const char *desc;
-	};
-	const OpcodeGoblinEntryV5 *_opcodesGoblinV5;
-	static const int _goblinFuncLookUp[][2];
+	byte _gob_97_98_val;
 
 	virtual void setupOpcodesDraw();
 	virtual void setupOpcodesFunc();
-
-	virtual void setupOpcodes();
-	virtual void executeGoblinOpcode(int i, OpGobParams &params);
-	virtual const char *getOpcodeGoblinDesc(int i);
-
-	byte _gob_97_98_val;
+	virtual void setupOpcodesGob();
 
 	void o5_deleteFile();
 	void o5_initScreen();
@@ -609,22 +530,11 @@ public:
 	virtual ~Inter_v6() {}
 
 protected:
-	typedef void (Inter_v6::*OpcodeGoblinProcV6)(OpGobParams &);
-	struct OpcodeGoblinEntryV6 {
-		OpcodeGoblinProcV6 proc;
-		const char *desc;
-	};
-	const OpcodeGoblinEntryV6 *_opcodesGoblinV6;
-	static const int _goblinFuncLookUp[][2];
+	bool _gotFirstPalette;
 
 	virtual void setupOpcodesDraw();
 	virtual void setupOpcodesFunc();
-	
-	bool _gotFirstPalette;
-
-	virtual void setupOpcodes();
-	virtual void executeGoblinOpcode(int i, OpGobParams &params);
-	virtual const char *getOpcodeGoblinDesc(int i);
+	virtual void setupOpcodesGob();
 
 	void o6_totSub();
 	void o6_playVmdOrMusic();

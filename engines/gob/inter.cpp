@@ -67,9 +67,10 @@ Inter::~Inter() {
 	delocateVars();
 }
 
-void Inter::NsetupOpcodes() {
+void Inter::setupOpcodes() {
 	setupOpcodesDraw();
 	setupOpcodesFunc();
+	setupOpcodesGob();
 }
 
 void Inter::executeOpcodeDraw(byte i) {
@@ -99,8 +100,30 @@ bool Inter::executeOpcodeFunc(byte i, byte j, OpFuncParams &params) {
 	return false;
 }
 
+void Inter::executeOpcodeGob(int i, OpGobParams &params) {
+	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
+			i, i, getDescOpcodeGob(i));
+
+	OpcodeEntry<OpcodeGob> *op = 0;
+
+	if (_opcodesGob.contains(i))
+		op = &_opcodesGob.getVal(i);
+
+	if (op && op->proc && op->proc->isValid()) {
+		(*op->proc)(params);
+		return;
+	}
+
+	int16 val;
+
+	_vm->_global->_inter_execPtr -= 2;
+	val = load16();
+	_vm->_global->_inter_execPtr += val << 1;
+	warning("unimplemented opcodeGob: %d [0x%X]", i, i);
+}
+
 const char *Inter::getDescOpcodeDraw(byte i) {
-	const char *desc =  _opcodesDraw[i].desc;
+	const char *desc = _opcodesDraw[i].desc;
 
 	return ((desc) ? desc : "");
 }
@@ -112,6 +135,13 @@ const char *Inter::getDescOpcodeFunc(byte i, byte j) {
 	const char *desc = _opcodesDraw[i * 16 + j].desc;
 
 	return ((desc) ? desc : "");
+}
+
+const char *Inter::getDescOpcodeGob(int i) {
+	if (_opcodesGob.contains(i))
+		return _opcodesGob.getVal(i).desc;
+
+	return "";
 }
 
 void Inter::initControlVars(char full) {

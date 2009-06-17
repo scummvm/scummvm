@@ -40,32 +40,12 @@
 
 namespace Gob {
 
-#define OPCODE(x) _OPCODE(Inter_Fascination, x)
 #define OPCODEVER Inter_Fascination
 #define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-
-const int Inter_Fascination::_goblinFuncLookUp[][2] = {
-	{1, 0},
-	{2, 1},
-	{3, 2},
-	{4, 3},
-	{5, 4},
-	{6, 5},
-	{7, 6},
-	{8, 7},
-	{9, 8},
-	{10, 9},
-	{11, 10},
-	{12, 11},
-	{1000, 12},
-	{1001, 13},
-	{1002, 14}
-};
+#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_Fascination::Inter_Fascination(GobEngine *vm) : Inter_v2(vm) {
-	setupOpcodes();
-	NsetupOpcodes();
 }
 
 void Inter_Fascination::setupOpcodesDraw() {
@@ -106,30 +86,25 @@ void Inter_Fascination::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
 }
 
-void Inter_Fascination::setupOpcodes() {
-	static const OpcodeGoblinEntryFascination opcodesGoblin[15] = {
-		/* 00 */
-		OPCODE(oFascin_geUnknown0),
-		OPCODE(oFascin_geUnknown1),
-		OPCODE(oFascin_geUnknown2),
-		OPCODE(oFascin_geUnknown3),
-		/* 04 */
-		OPCODE(oFascin_geUnknown4),
-		OPCODE(oFascin_geUnknown5),
-		OPCODE(oFascin_geUnknown6),
-		OPCODE(oFascin_geUnknown7),
-		/* 08 */
-		OPCODE(oFascin_geUnknown8),
-		OPCODE(oFascin_geUnknown9),
-		OPCODE(oFascin_geUnknown10),
-		OPCODE(oFascin_geUnknown11),
-		/* 0C */
-		OPCODE(oFascin_geUnknown1000),
-		OPCODE(oFascin_geUnknown1001), //protrackerPlay doesn't play correctly "mod.extasy"
-		OPCODE(oFascin_geUnknown1002), //to be replaced by o2_stopProtracker when protrackerPlay is fixed
-	};
+void Inter_Fascination::setupOpcodesGob() {
+	OPCODEGOB(   1, oFascin_geUnknown0);
+	OPCODEGOB(   2, oFascin_geUnknown1);
+	OPCODEGOB(   3, oFascin_geUnknown2);
+	OPCODEGOB(   4, oFascin_geUnknown3);
 
-	_opcodesGoblinFascination = opcodesGoblin;
+	OPCODEGOB(   5, oFascin_geUnknown4);
+	OPCODEGOB(   6, oFascin_geUnknown5);
+	OPCODEGOB(   7, oFascin_geUnknown6);
+	OPCODEGOB(   8, oFascin_geUnknown7);
+
+	OPCODEGOB(   9, oFascin_geUnknown8);
+	OPCODEGOB(  10, oFascin_geUnknown9);
+	OPCODEGOB(  11, oFascin_geUnknown10);
+	OPCODEGOB(  12, oFascin_geUnknown11);
+
+	OPCODEGOB(1000, oFascin_geUnknown1000);
+	OPCODEGOB(1001, oFascin_geUnknown1001); //protrackerPlay doesn't play correctly "mod.extasy"
+	OPCODEGOB(1002, oFascin_geUnknown1002); //to be replaced by o2_stopProtracker when protrackerPlay is fixed
 }
 
 void Inter_Fascination::oFascin_geUnknown0(OpGobParams &params) {
@@ -275,37 +250,6 @@ void Inter_Fascination::oFascin_setRenderFlags() {
 void Inter_Fascination::oFascin_cdUnknown11() {
 //	warning("Fascination oFascin_cdUnknown11 (set variable)");
 	evalExpr(0);
-}
-
-void Inter_Fascination::executeGoblinOpcode(int i, OpGobParams &params) {
-	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
-			i, i, getOpcodeGoblinDesc(i));
-
-	OpcodeGoblinProcFascination op = 0;
-
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i) {
-			op = _opcodesGoblinFascination[_goblinFuncLookUp[j][1]].proc;
-			break;
-		}
-
-	if (op == 0) {
-		int16 val;
-
-		_vm->_global->_inter_execPtr -= 2;
-		val = load16();
-		_vm->_global->_inter_execPtr += val << 1;
-		warning("unimplemented opcodeGob: %d", i);
-	} else
-		(this->*op) (params);
-}
-
-const char *Inter_Fascination::getOpcodeGoblinDesc(int i) {
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i)
-			return _opcodesGoblinFascination[_goblinFuncLookUp[j][1]].desc;
-	warning("Error in getOpcodeGoblinDesc %d",i);
-	return "";
 }
 
 void Inter_Fascination::oFascin_playProtracker(OpGobParams &params) {

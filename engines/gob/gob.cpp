@@ -465,6 +465,8 @@ bool GobEngine::initGameParts() {
 		break;
 	}
 
+	_inter->setupOpcodes();
+
 	if (is640()) {
 		_video->_surfWidth = _width = 640;
 		_video->_surfHeight = _video->_splitHeight1 = _height = 480;

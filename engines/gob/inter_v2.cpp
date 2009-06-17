@@ -48,59 +48,12 @@
 
 namespace Gob {
 
-#define OPCODE(x) _OPCODE(Inter_v2, x)
 #define OPCODEVER Inter_v2
 #define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-
-const int Inter_v2::_goblinFuncLookUp[][2] = {
-	{0, 0},
-	{1, 1},
-	{2, 2},
-	{4, 3},
-	{5, 4},
-	{6, 5},
-	{7, 6},
-	{8, 7},
-	{9, 8},
-	{10, 9},
-	{12, 10},
-	{13, 11},
-	{14, 12},
-	{15, 13},
-	{16, 14},
-	{21, 15},
-	{22, 16},
-	{23, 17},
-	{24, 18},
-	{25, 19},
-	{26, 20},
-	{27, 21},
-	{28, 22},
-	{29, 23},
-	{30, 24},
-	{32, 25},
-	{33, 26},
-	{34, 27},
-	{35, 28},
-	{36, 29},
-	{37, 30},
-	{40, 31},
-	{41, 32},
-	{42, 33},
-	{43, 34},
-	{44, 35},
-	{50, 36},
-	{52, 37},
-	{53, 38},
-	{100, 39},
-	{500, 40},
-	{501, 41}
-};
+#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_v2::Inter_v2(GobEngine *vm) : Inter_v1(vm) {
-	setupOpcodes();
-	NsetupOpcodes();
 }
 
 void Inter_v2::setupOpcodesDraw() {
@@ -181,129 +134,17 @@ void Inter_v2::setupOpcodesFunc() {
 	OPCODEFUNC(0x4E, o2_writeData);
 }
 
-void Inter_v2::setupOpcodes() {
-	static const OpcodeGoblinEntryV2 opcodesGoblin[71] = {
-		/* 00 */
-		OPCODE(o2_loadInfogramesIns),
-		OPCODE(o2_startInfogrames),
-		OPCODE(o2_stopInfogrames),
-		{0, ""},
-		/* 04 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 08 */
-		{0, ""},
-		OPCODE(o2_playInfogrames),
-		{0, ""},
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 14 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 18 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 1C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 24 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		OPCODE(o2_handleGoblins),
-		/* 28 */
-		OPCODE(o2_playProtracker),
-		OPCODE(o2_stopProtracker),
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-	};
+void Inter_v2::setupOpcodesGob() {
+	OPCODEGOB(  0, o2_loadInfogramesIns);
+	OPCODEGOB(  1, o2_startInfogrames);
+	OPCODEGOB(  2, o2_stopInfogrames);
 
-	_opcodesGoblinV2 = opcodesGoblin;
-}
+	OPCODEGOB( 10, o2_playInfogrames);
 
-void Inter_v2::executeGoblinOpcode(int i, OpGobParams &params) {
-	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
-		i, i, getOpcodeGoblinDesc(i));
+	OPCODEGOB(100, o2_handleGoblins);
 
-	OpcodeGoblinProcV2 op = 0;
-
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i) {
-			op = _opcodesGoblinV2[_goblinFuncLookUp[j][1]].proc;
-			break;
-		}
-
-	if (op == 0) {
-		int16 val;
-
-		_vm->_global->_inter_execPtr -= 2;
-		val = load16();
-		_vm->_global->_inter_execPtr += val << 1;
-	} else
-		(this->*op) (params);
-}
-
-const char *Inter_v2::getOpcodeGoblinDesc(int i) {
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i)
-			return _opcodesGoblinV2[_goblinFuncLookUp[j][1]].desc;
-	return "";
+	OPCODEGOB(500, o2_playProtracker);
+	OPCODEGOB(501, o2_stopProtracker);
 }
 
 void Inter_v2::checkSwitchTable(byte **ppExec) {
@@ -1421,7 +1262,7 @@ bool Inter_v2::o2_goblinFunc(OpFuncParams &params) {
 	_vm->_global->_inter_execPtr += 2;
 
 	if (cmd != 101)
-		executeGoblinOpcode(cmd, gobParams);
+		executeOpcodeGob(cmd, gobParams);
 	return false;
 }
 

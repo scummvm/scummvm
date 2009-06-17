@@ -35,44 +35,12 @@
 
 namespace Gob {
 
-#define OPCODE(x) _OPCODE(Inter_v5, x)
 #define OPCODEVER Inter_v5
 #define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-
-const int Inter_v5::_goblinFuncLookUp[][2] = {
-	{0, 0},
-	{1, 0},
-	{3, 0},
-	{2, 0},
-	{33, 0},
-	{80, 1},
-	{81, 2},
-	{82, 3},
-	{83, 4},
-	{84, 5},
-	{85, 6},
-	{86, 7},
-	{87, 0},
-	{88, 0},
-	{89, 0},
-	{90, 0},
-	{91, 0},
-	{92, 8},
-	{93, 0},
-	{94, 0},
-	{95, 9},
-	{96, 10},
-	{97, 11},
-	{98, 12},
-	{99, 0},
-	{100, 13},
-	{200, 14}
-};
+#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_v5::Inter_v5(GobEngine *vm) : Inter_v4(vm) {
-	setupOpcodes();
-	NsetupOpcodes();
 }
 
 void Inter_v5::setupOpcodesDraw() {
@@ -88,133 +56,41 @@ void Inter_v5::setupOpcodesFunc() {
 	OPCODEFUNC(0x45, o5_istrlen);
 }
 
-void Inter_v5::setupOpcodes() {
-	static const OpcodeGoblinEntryV5 opcodesGoblin[71] = {
-		/* 00 */
-		OPCODE(o5_spaceShooter),
-		OPCODE(o5_getSystemCDSpeed),
-		OPCODE(o5_getSystemRAM),
-		OPCODE(o5_getSystemCPUSpeed),
-		/* 04 */
-		OPCODE(o5_getSystemDrawSpeed),
-		OPCODE(o5_totalSystemSpecs),
-		OPCODE(o5_saveSystemSpecs),
-		OPCODE(o5_loadSystemSpecs),
-		/* 08 */
-		OPCODE(o5_gob92),
-		OPCODE(o5_gob95),
-		OPCODE(o5_gob96),
-		OPCODE(o5_gob97),
-		/* 0C */
-		OPCODE(o5_gob98),
-		OPCODE(o5_gob100),
-		OPCODE(o5_gob200),
-		{0, ""},
-		/* 10 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 14 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 18 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 1C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 24 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-	};
+void Inter_v5::setupOpcodesGob() {
+	OPCODEGOB(  0, o5_spaceShooter);
+	OPCODEGOB(  1, o5_spaceShooter);
+	OPCODEGOB(  2, o5_spaceShooter);
+	OPCODEGOB(  3, o5_spaceShooter);
 
-	_opcodesGoblinV5 = opcodesGoblin;
-}
+	OPCODEGOB( 33, o5_spaceShooter);
 
-void Inter_v5::executeGoblinOpcode(int i, OpGobParams &params) {
-	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
-			i, i, getOpcodeGoblinDesc(i));
+	OPCODEGOB( 80, o5_getSystemCDSpeed);
+	OPCODEGOB( 81, o5_getSystemRAM);
+	OPCODEGOB( 82, o5_getSystemCPUSpeed);
+	OPCODEGOB( 83, o5_getSystemDrawSpeed);
+	OPCODEGOB( 84, o5_totalSystemSpecs);
 
-	OpcodeGoblinProcV5 op = 0;
+	OPCODEGOB( 85, o5_saveSystemSpecs);
+	OPCODEGOB( 86, o5_loadSystemSpecs);
 
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i) {
-			op = _opcodesGoblinV5[_goblinFuncLookUp[j][1]].proc;
-			break;
-		}
+	OPCODEGOB( 87, o5_spaceShooter);
+	OPCODEGOB( 88, o5_spaceShooter);
+	OPCODEGOB( 89, o5_spaceShooter);
+	OPCODEGOB( 90, o5_spaceShooter);
 
-	_vm->_global->_inter_execPtr -= 2;
+	OPCODEGOB( 91, o5_spaceShooter);
+	OPCODEGOB( 92, o5_gob92);
+	OPCODEGOB( 93, o5_spaceShooter);
+	OPCODEGOB( 94, o5_spaceShooter);
 
-	if (op == 0) {
-		warning("unimplemented opcodeGoblin: %d", i);
+	OPCODEGOB( 95, o5_gob95);
+	OPCODEGOB( 96, o5_gob96);
+	OPCODEGOB( 97, o5_gob97);
+	OPCODEGOB( 98, o5_gob98);
 
-		int16 paramCount = load16();
-		_vm->_global->_inter_execPtr += paramCount * 2;
-	} else {
-		params.extraData = i;
-
-		(this->*op) (params);
-	}
-}
-
-const char *Inter_v5::getOpcodeGoblinDesc(int i) {
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i)
-			return _opcodesGoblinV5[_goblinFuncLookUp[j][1]].desc;
-	return "";
+	OPCODEGOB( 99, o5_spaceShooter);
+	OPCODEGOB(100, o5_gob100);
+	OPCODEGOB(200, o5_gob200);
 }
 
 void Inter_v5::o5_deleteFile() {

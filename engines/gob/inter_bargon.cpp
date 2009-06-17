@@ -39,88 +39,12 @@
 
 namespace Gob {
 
-#define OPCODE(x) _OPCODE(Inter_Bargon, x)
 #define OPCODEVER Inter_Bargon
 #define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-
-const int Inter_Bargon::_goblinFuncLookUp[][2] = {
-	{1, 0},
-	{2, 1},
-	{3, 2},
-	{4, 3},
-	{5, 4},
-	{6, 5},
-	{7, 6},
-	{8, 7},
-	{9, 8},
-	{10, 9},
-	{11, 10},
-	{13, 11},
-	{14, 12},
-	{15, 13},
-	{16, 14},
-	{21, 15},
-	{22, 16},
-	{23, 17},
-	{24, 18},
-	{25, 19},
-	{26, 20},
-	{27, 21},
-	{28, 22},
-	{29, 23},
-	{30, 24},
-	{32, 25},
-	{33, 26},
-	{34, 27},
-	{35, 28},
-	{36, 29},
-	{37, 30},
-	{40, 31},
-	{41, 32},
-	{42, 33},
-	{43, 34},
-	{44, 35},
-	{50, 36},
-	{52, 37},
-	{53, 38},
-	{100, 39},
-	{152, 40},
-	{200, 41},
-	{201, 42},
-	{202, 43},
-	{203, 44},
-	{204, 45},
-	{250, 46},
-	{251, 47},
-	{252, 48},
-	{500, 49},
-	{502, 50},
-	{503, 51},
-	{600, 52},
-	{601, 53},
-	{602, 54},
-	{603, 55},
-	{604, 56},
-	{605, 57},
-	{1000, 58},
-	{1001, 59},
-	{1002, 60},
-	{1003, 61},
-	{1004, 62},
-	{1005, 63},
-	{1006, 64},
-	{1008, 65},
-	{1009, 66},
-	{1010, 67},
-	{1011, 68},
-	{1015, 69},
-	{2005, 70}
-};
+#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_Bargon::Inter_Bargon(GobEngine *vm) : Inter_v2(vm) {
-	setupOpcodes();
-	NsetupOpcodes();
 }
 
 void Inter_Bargon::setupOpcodesDraw() {
@@ -131,130 +55,20 @@ void Inter_Bargon::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
 }
 
-void Inter_Bargon::setupOpcodes() {
-	static const OpcodeGoblinEntryBargon opcodesGoblin[71] = {
-		/* 00 */
-		OPCODE(oBargon_intro0),
-		OPCODE(oBargon_intro1),
-		OPCODE(oBargon_intro2),
-		OPCODE(oBargon_intro3),
-		/* 04 */
-		OPCODE(oBargon_intro4),
-		OPCODE(oBargon_intro5),
-		OPCODE(oBargon_intro6),
-		OPCODE(oBargon_intro7),
-		/* 08 */
-		OPCODE(oBargon_intro8),
-		OPCODE(oBargon_intro9),
-		OPCODE(o_gobNOP),
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 14 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 18 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 1C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 24 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-	};
+void Inter_Bargon::setupOpcodesGob() {
+	OPCODEGOB( 1, oBargon_intro0);
+	OPCODEGOB( 2, oBargon_intro1);
+	OPCODEGOB( 3, oBargon_intro2);
+	OPCODEGOB( 4, oBargon_intro3);
 
-	_opcodesGoblinBargon = opcodesGoblin;
-}
+	OPCODEGOB( 5, oBargon_intro4);
+	OPCODEGOB( 6, oBargon_intro5);
+	OPCODEGOB( 7, oBargon_intro6);
+	OPCODEGOB( 8, oBargon_intro7);
 
-void Inter_Bargon::executeGoblinOpcode(int i, OpGobParams &params) {
-	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
-			i, i, getOpcodeGoblinDesc(i));
-
-	OpcodeGoblinProcBargon op = 0;
-
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i) {
-			op = _opcodesGoblinBargon[_goblinFuncLookUp[j][1]].proc;
-			break;
-		}
-
-	if (op == 0) {
-		int16 val;
-
-		_vm->_global->_inter_execPtr -= 2;
-		val = load16();
-		_vm->_global->_inter_execPtr += val << 1;
-		warning("unimplemented opcodeGob: %d", i);
-	} else
-		(this->*op) (params);
-}
-
-const char *Inter_Bargon::getOpcodeGoblinDesc(int i) {
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i)
-			return _opcodesGoblinBargon[_goblinFuncLookUp[j][1]].desc;
-	return "";
+	OPCODEGOB( 9, oBargon_intro8);
+	OPCODEGOB(10, oBargon_intro9);
+	OPCODEGOB(11, o_gobNOP);
 }
 
 void Inter_Bargon::oBargon_intro0(OpGobParams &params) {

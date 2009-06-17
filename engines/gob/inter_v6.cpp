@@ -39,20 +39,13 @@
 
 namespace Gob {
 
-#define OPCODE(x) _OPCODE(Inter_v6, x)
 #define OPCODEVER Inter_v6
 #define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
 #define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
-
-const int Inter_v6::_goblinFuncLookUp[][2] = {
-	{0, 0},
-};
+#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_v6::Inter_v6(GobEngine *vm) : Inter_v5(vm) {
 	_gotFirstPalette = false;
-
-	setupOpcodes();
-	NsetupOpcodes();
 }
 
 void Inter_v6::setupOpcodesDraw() {
@@ -73,133 +66,7 @@ void Inter_v6::setupOpcodesFunc() {
 	OPCODEFUNC(0x33, o6_fillRect);
 }
 
-void Inter_v6::setupOpcodes() {
-	static const OpcodeGoblinEntryV6 opcodesGoblin[71] = {
-		/* 00 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 04 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 08 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 14 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 18 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 1C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 24 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-	};
-
-	_opcodesGoblinV6 = opcodesGoblin;
-}
-
-void Inter_v6::executeGoblinOpcode(int i, OpGobParams &params) {
-	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
-			i, i, getOpcodeGoblinDesc(i));
-
-	OpcodeGoblinProcV6 op = 0;
-
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i) {
-			op = _opcodesGoblinV6[_goblinFuncLookUp[j][1]].proc;
-			break;
-		}
-
-	_vm->_global->_inter_execPtr -= 2;
-
-	if (op == 0) {
-		warning("unimplemented opcodeGoblin: %d", i);
-
-		int16 paramCount = load16();
-		_vm->_global->_inter_execPtr += paramCount * 2;
-	} else {
-		params.extraData = i;
-
-		(this->*op) (params);
-	}
-}
-
-const char *Inter_v6::getOpcodeGoblinDesc(int i) {
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i)
-			return _opcodesGoblinV6[_goblinFuncLookUp[j][1]].desc;
-	return "";
+void Inter_v6::setupOpcodesGob() {
 }
 
 void Inter_v6::o6_totSub() {
