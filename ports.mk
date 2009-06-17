@@ -188,4 +188,32 @@ aos4dist: $(EXECUTABLE)
 	cp $(srcdir)/NEWS $(AOS4PATH)/NEWS.txt
 	cp $(srcdir)/README $(AOS4PATH)/README.txt
 
-.PHONY: deb bundle osxsnap win32dist install uninstall
+#
+# Wii/Gamecube specific
+#
+
+# Special target to create an Wii snapshot
+wiidist: $(EXECUTABLE)
+	$(MKDIR) wiidist/scummvm
+ifeq ($(GAMECUBE),1)
+	$(DEVKITPPC)/bin/elf2dol $(EXECUTABLE) wiidist/scummvm/scummvm.dol
+else
+	$(STRIP) $(EXECUTABLE) -o wiidist/scummvm/boot.elf
+	$(CP) $(srcdir)/dists/wii/icon.png wiidist/scummvm/
+	sed "s/@REVISION@/$(VER_SVNREV)/;s/@TIMESTAMP@/`date +%Y%m%d%H%M%S`/" < $(srcdir)/dists/wii/meta.xml > wiidist/scummvm/meta.xml
+endif
+	$(CP) $(srcdir)/dists/wii/READMII wiidist/scummvm/
+	$(CP) $(srcdir)/AUTHORS wiidist/scummvm/AUTHORS.txt
+	$(CP) $(srcdir)/COPYING wiidist/scummvm/COPYING.txt
+	$(CP) $(srcdir)/COPYING.LGPL wiidist/scummvm/COPYING.LGPL.txt
+	$(CP) $(srcdir)/COPYRIGHT wiidist/scummvm/COPYRIGHT.txt
+	$(CP) $(srcdir)/NEWS wiidist/scummvm/NEWS.txt
+	$(CP) $(srcdir)/README wiidist/scummvm/README.txt
+	$(CP) $(srcdir)/dists/pred.dic wiidist/scummvm/
+	$(CP) $(DIST_FILES_THEMES) wiidist/scummvm/
+ifneq ($(DIST_FILES_ENGINEDATA),)
+	$(CP) $(DIST_FILES_ENGINEDATA) wiidist/scummvm/
+endif
+	sed -i 's/$$/\r/' wiidist/scummvm/*.txt
+
+.PHONY: deb bundle osxsnap win32dist wiidist install uninstall

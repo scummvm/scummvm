@@ -1311,8 +1311,10 @@ if test -n "$_host"; then
 			type_4_byte='int'
 			_ar="$_host_alias-ar cru"
 			_ranlib=$_host_alias-ranlib
+			_strip=$_host_alias-strip
 			_backend="wii"
 			_build_hq_scalers="no"
+			add_line_to_config_mk 'GAMECUBE = 0'
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
 			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
@@ -1329,10 +1331,13 @@ if test -n "$_host"; then
 			type_4_byte='int'
 			_ar="$_host_alias-ar cru"
 			_ranlib=$_host_alias-ranlib
+			_strip=$_host_alias-strip
 			_backend="wii"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			add_line_to_config_mk 'GAMECUBE = 1'
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
+			add_line_to_config_h '#define GAMECUBE'
 			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
@@ -1929,7 +1934,6 @@ case $_backend in
 		DEFINES="$DEFINES -D__WII__ -DGEKKO"
 		case $_host_os in
 		gamecube)
-			DEFINES="$DEFINES -DGAMECUBE"
 			LIBS="$LIBS -lfat -logc -ldb"
 			;;
 		*)
