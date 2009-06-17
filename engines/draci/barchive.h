@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef BARCHIVE_H
-#define BARCHIVE_H
+#ifndef DRACI_BARCHIVE_H
+#define DRACI_BARCHIVE_H
 
 #include "common/str.h"
 
@@ -94,4 +94,4 @@ private:
 
 } // End of namespace Draci
 
-#endif // BARCHIVE_H
+#endif // DRACI_BARCHIVE_H

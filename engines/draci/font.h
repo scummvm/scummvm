@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef FONT_H
-#define FONT_H
+#ifndef DRACI_FONT_H
+#define DRACI_FONT_H
 
 #include "graphics/font.h"
 
@@ -83,4 +83,4 @@ private:
 
 } // End of namespace Draci
 
-#endif // FONT_H
+#endif // DRACI_FONT_H

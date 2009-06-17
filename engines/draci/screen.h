@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCREEN_H
-#define SCREEN_H
+#ifndef DRACI_SCREEN_H
+#define DRACI_SCREEN_H
 
 #include "graphics/surface.h"
 
@@ -57,4 +57,4 @@ private:
 
 } // End of namespace Draci
 
-#endif // SCREEN_H
+#endif // DRACI_SCREEN_H

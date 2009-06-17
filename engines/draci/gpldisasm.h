@@ -25,8 +25,8 @@
 
 #include "common/str.h"
 
-#ifndef GPLDISASM_H
-#define GPLDISASM_H
+#ifndef DRACI_GPLDISASM_H
+#define DRACI_GPLDISASM_H
 
 namespace Draci {
 
@@ -53,4 +53,4 @@ int gpldisasm(byte *gplcode, uint16 len);
 
 }
 
-#endif // GPLDIASM_H
+#endif // DRACI_GPLDIASM_H
