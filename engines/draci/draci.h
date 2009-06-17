@@ -46,7 +46,7 @@ public:
 
 	bool hasFeature(Engine::EngineFeature f) const;
 
-	Font _font;
+	Font *_font;
 	Screen *_screen;
 
 	int _screenWidth;

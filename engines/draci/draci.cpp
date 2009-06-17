@@ -68,10 +68,11 @@ int DraciEngine::init() {
 	// Initialize graphics using following:
 	initGraphics(_screenWidth, _screenHeight, false);
 
-	_screen = new Screen(this);	
+	_screen = new Screen(this);
+	_font = new Font();
 
 	// Load default font
-	_font.setFont(kFontBig);
+	_font->setFont(kFontBig);
 
 	// Basic archive test
 	debugC(2, kDraciGeneralDebugLevel, "Running archive tests...");	
@@ -138,18 +139,18 @@ int DraciEngine::go() {
 	// Draw big string
 	Common::String testString = "Testing, testing, read all about it!";
 	Graphics::Surface *surf = _screen->getSurface();
-	_font.drawString(surf, testString, 
-		(320 - _font.getStringWidth(testString, 1)) / 2, 130, 1);
+	_font->drawString(surf, testString, 
+		(320 - _font->getStringWidth(testString, 1)) / 2, 130, 1);
 
 	// Draw small string
-	_font.setFont(kFontSmall);
+	_font->setFont(kFontSmall);
 	testString = "I'm smaller than the font above me.";
-	_font.drawString(surf, testString, 
-		(320 - _font.getStringWidth(testString, 1)) / 2, 150, 1);
+	_font->drawString(surf, testString, 
+		(320 - _font->getStringWidth(testString, 1)) / 2, 150, 1);
 
 	// Overflow handling test
 	testString = "Checking overflooooooooooooooooooooooooow...";
-	_font.drawString(surf, testString, 50, 170, 1);
+	_font->drawString(surf, testString, 50, 170, 1);
 
 	_screen->copyToScreen();
 
