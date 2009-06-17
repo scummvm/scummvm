@@ -92,13 +92,26 @@ public:
 	// Highest supported
 	virtual Graphics::PixelFormat getBestFormat() const {
 	//TODO scale down 16/32 bit based on hardware support
-#ifdef ENABLE_32BIT		
-		return Graphics::PixelFormat(Graphics::kFormatRGBA8888);
-#elif defined ENABLE_16BIT
-		return Graphics::PixelFormat(Graphics::kFormatRGB565);
-#else
+#if (defined ENABLE_32BIT) || (defined ENABLE_16BIT)
+		{
+			SDL_PixelFormat *HWFormat = SDL_GetVideoInfo()->vfmt;
+#ifdef ENABLE_32BIT
+			if (HWFormat->BitsPerPixel > 32)
+				return Graphics::PixelFormat(Graphics::kFormatRGBA8888);
+			return Graphics::PixelFormat(HWFormat->BytesPerPixel,
+				HWFormat->Rloss, HWFormat->Gloss, HWFormat->Bloss, HWFormat->Aloss, 
+				HWFormat->Rshift, HWFormat->Gshift, HWFormat->Bshift, HWFormat->Ashift);
+#else //16 
+			if (HWFormat->BitsPerPixel > 16)
+				return Graphics::PixelFormat(Graphics::kFormatRGB565);
+			return Graphics::PixelFormat(HWFormat->BytesPerPixel,
+				HWFormat->Rloss, HWFormat->Gloss, HWFormat->Bloss, HWFormat->Aloss, 
+				HWFormat->Rshift, HWFormat->Gshift, HWFormat->Bshift, HWFormat->Ashift);
+		}
+#endif //ENABLE_32BIT
+#else //8BIT only
 		return Graphics::PixelFormat(Graphics::kFormatCLUT8);
-#endif
+#endif //ENABLE_32BIT or ENABLE_16BIT
 	}
 #endif
 
