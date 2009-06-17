@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SPRITE_H
+#define SPRITE_H
+
 namespace Draci {
 
 /**
@@ -58,3 +61,4 @@ public:
 
 } // End of namespace Draci
 
+#endif // SPRITE_H
