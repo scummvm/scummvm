@@ -730,7 +730,7 @@ void AgiEngine::initialize() {
 	if (getPlatform() == Common::kPlatformApple2GS) {
 		_soundemu = SOUND_EMU_APPLE2GS;
 	} else if (getPlatform() == Common::kPlatformCoCo3) {
-		_soundemu = 0; // FIXME: Implement CoCo3 sound support
+		_soundemu = SOUND_EMU_COCO3;
 	} else {
 		switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
 		case MD_PCSPK:
