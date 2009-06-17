@@ -12,7 +12,8 @@ MODULE_OBJS := \
 	sound.o \
 	text.o \
 	video.o \
-	actor.o
+	actor.o \
+	encounters.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)
