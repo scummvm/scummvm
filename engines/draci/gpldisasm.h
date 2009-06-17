@@ -53,4 +53,4 @@ int gpldisasm(byte *gplcode, uint16 len);
 
 }
 
-#endif // DRACI_GPLDIASM_H
+#endif // DRACI_GPLDISASM_H
