@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="gob"
 	ProjectGUID="{976D947A-A45F-4437-991E-412F695C64C7}"
 	RootNamespace="gob"
@@ -43,7 +43,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;ENABLE_16BIT"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -499,51 +499,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\save\savefile.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\savefile.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\savehandler.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\savehandler.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\saveload.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\saveload_v2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\saveload_v3.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\saveload_v4.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\saveload_v6.cpp"
+			RelativePath="..\..\engines\gob\save\saveconverter.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\save\saveconverter.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\save\saveconverter.cpp"
 			>
 		</File>
 		<File
@@ -560,6 +520,46 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\save\saveconverter_v6.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\savefile.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\savefile.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\savehandler.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\savehandler.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload_v3.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload_v4.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload_v6.cpp"
 			>
 		</File>
 		<File
