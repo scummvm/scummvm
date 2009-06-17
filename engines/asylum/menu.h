@@ -101,7 +101,8 @@ private:
 	bool _active;
 
     // FIXME this shouldnt be here. Need a proper config place
-    uint32 _gammaLevel;
+    uint32 _confGammaLevel;
+    uint32 _confGameQuality;
 
 	MenuScreen      _activeMenuScreen;
 	ResourcePack    *_resPack;

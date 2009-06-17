@@ -46,7 +46,8 @@ MainMenu::MainMenu(Screen *screen, Sound *sound, Scene *scene) :
     _creditsTextScroll  = 0x1E0 - 30;
 	_activeMenuScreen   = kMainMenu;
 	_active				= false;
-    _gammaLevel         = 2;
+    _confGammaLevel     = 2;
+    _confGameQuality    = 5;
 
 	_resPack        = new ResourcePack(1);
 	_bgResource     = new GraphicResource(_resPack, 0);
@@ -393,12 +394,12 @@ void MainMenu::updateSubMenuNewGame() {
 }
 
 void MainMenu::updateSubMenuSettings() {
-    uint32 sizeMinus = _text->getTextWidth("-");
-    uint32 sizePlus = _text->getTextWidth("+");
+    uint32 sizeMinus    = _text->getTextWidth("-");
+    uint32 sizePlus     = _text->getTextWidth("+");
+    uint32 sizeMainMenu = _text->getResTextWidth(0x8000059D);
 
     // yellow font
     _text->loadFont(_resPack, 0x80010010);
-
     // Settings
 	_text->drawResTextCentered(10, 100, 620, 0x80000598);
 
@@ -420,15 +421,59 @@ void MainMenu::updateSubMenuSettings() {
 
     _text->setTextPos(sizeMinus + sizePlus + 365, 150);
     _text->loadFont(_resPack, 0x80010010);
-    if(_gammaLevel) {
-        for (uint32 i = 0; i < _gammaLevel; i++ ) {
+    if(_confGammaLevel) {
+        for (uint32 i = 0; i < _confGammaLevel; i++ ) {
           _text->drawText("]");
         }
-        if ( _gammaLevel == 8 )
+        if (_confGammaLevel == 8)
             _text->drawText("*");
     } else
         _text->drawResText(0x8000059B);
 
+    // performance
+    _text->loadFont(_resPack, 0x80010010);
+    _text->drawResTextAlignRight(320, 179, 0x8000059A);
+    if (_mouseX < 350 || _mouseX > sizeMinus + 350 || _mouseY < 179 || _mouseY > 203)
+        _text->loadFont(_resPack, 0x80010010); // yellow font
+    else        
+        _text->loadFont(_resPack, 0x80010016); // blue font
+    _text->setTextPos(350, 179);
+    _text->drawText("-");
+
+    if (_mouseX < sizeMinus + 360 || _mouseX > sizeMinus + sizePlus || _mouseY < 179 || _mouseY > 203)
+        _text->loadFont(_resPack, 0x80010010); // yellow font
+    else        
+        _text->loadFont(_resPack, 0x80010016); // blue font
+    _text->setTextPos(sizeMinus + 360, 179);
+    _text->drawText("+");
+
+    _text->setTextPos(sizeMinus + sizePlus + 365, 179);
+    _text->loadFont(_resPack, 0x80010010);
+    if(_confGameQuality == 5) {
+        for (uint32 i = 5; i > _confGameQuality; --i ) {
+          _text->drawText("]");
+        }
+        if (!_confGameQuality)
+            _text->drawText("*");
+    } else
+        _text->drawResText(0x8000059B);
+
+    // back to main menu
+    if (_mouseX < 300 || _mouseX > 300 + sizeMainMenu || _mouseY < 340 || _mouseY > 340 + 24)
+        _text->loadFont(_resPack, 0x80010010); // yellow font
+    else        
+        _text->loadFont(_resPack, 0x80010016); // blue font
+    _text->setTextPos(300, 340);
+    _text->drawResText(0x8000059D);
+
+    // action
+    if (_leftClick) {
+        // back to main menu
+        if (_mouseX >= 300 && _mouseX <= 300 + sizeMainMenu && _mouseY >= 340 && _mouseY <= 340 + 24) {
+            // TODO: save new configurations
+            exitSubMenu();
+        }
+    }
 }
 
 void MainMenu::updateSubMenuQuitGame() {
