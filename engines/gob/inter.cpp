@@ -67,6 +67,21 @@ Inter::~Inter() {
 	delocateVars();
 }
 
+void Inter::NsetupOpcodes() {
+	setupOpcodesDraw();
+}
+
+void Inter::executeOpcodeDraw(byte i) {
+	if (_opcodesDraw[i].proc && _opcodesDraw[i].proc->isValid())
+		(*_opcodesDraw[i].proc)();
+	else
+		warning("unimplemented opcodeDraw: %d", i);
+}
+
+const char *Inter::getDescOpcodeDraw(byte i) {
+	return _opcodesDraw[i].desc;
+}
+
 void Inter::initControlVars(char full) {
 	*_nestLevel = 0;
 	*_breakFromLevel = -1;

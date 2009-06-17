@@ -39,6 +39,7 @@
 namespace Gob {
 
 #define OPCODE(x) _OPCODE(Inter_v4, x)
+#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(Inter_v4, x)
 
 const int Inter_v4::_goblinFuncLookUp[][2] = {
 	{0, 0},
@@ -116,332 +117,17 @@ const int Inter_v4::_goblinFuncLookUp[][2] = {
 
 Inter_v4::Inter_v4(GobEngine *vm) : Inter_v3(vm) {
 	setupOpcodes();
+	NsetupOpcodes();
+}
+
+void Inter_v4::setupOpcodesDraw() {
+	Inter_v3::setupOpcodesDraw();
+
+	OPCODEDRAW(0x80, o4_initScreen);
+	OPCODEDRAW(0x83, o4_playVmdOrMusic);
 }
 
 void Inter_v4::setupOpcodes() {
-	static const OpcodeDrawEntryV4 opcodesDraw[256] = {
-		/* 00 */
-		OPCODE(o1_loadMult),
-		OPCODE(o2_playMult),
-		OPCODE(o2_freeMultKeys),
-		{0, ""},
-		/* 04 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		OPCODE(o1_initCursor),
-		/* 08 */
-		OPCODE(o1_initCursorAnim),
-		OPCODE(o1_clearCursorAnim),
-		OPCODE(o2_setRenderFlags),
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		OPCODE(o1_loadAnim),
-		OPCODE(o1_freeAnim),
-		OPCODE(o1_updateAnim),
-		OPCODE(o2_multSub),
-		/* 14 */
-		OPCODE(o2_initMult),
-		OPCODE(o1_freeMult),
-		OPCODE(o1_animate),
-		OPCODE(o2_loadMultObject),
-		/* 18 */
-		OPCODE(o1_getAnimLayerInfo),
-		OPCODE(o1_getObjAnimSize),
-		OPCODE(o1_loadStatic),
-		OPCODE(o1_freeStatic),
-		/* 1C */
-		OPCODE(o2_renderStatic),
-		OPCODE(o2_loadCurLayer),
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		OPCODE(o2_playCDTrack),
-		OPCODE(o2_waitCDTrackEnd),
-		OPCODE(o2_stopCD),
-		OPCODE(o2_readLIC),
-		/* 24 */
-		OPCODE(o2_freeLIC),
-		OPCODE(o2_getCDTrackPos),
-		{0, ""},
-		{0, ""},
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		OPCODE(o2_loadFontToSprite),
-		OPCODE(o1_freeFontToSprite),
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		OPCODE(o2_totSub),
-		OPCODE(o2_switchTotSub),
-		OPCODE(o2_pushVars),
-		OPCODE(o2_popVars),
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 48 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 4C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 50 */
-		OPCODE(o2_loadMapObjects),
-		OPCODE(o2_freeGoblins),
-		OPCODE(o2_moveGoblin),
-		OPCODE(o2_writeGoblinPos),
-		/* 54 */
-		OPCODE(o2_stopGoblin),
-		OPCODE(o2_setGoblinState),
-		OPCODE(o2_placeGoblin),
-		{0, ""},
-		/* 58 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 5C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 60 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 64 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 68 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 6C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 70 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 74 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 78 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 7C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 80 */
-		OPCODE(o4_initScreen),
-		OPCODE(o2_scroll),
-		OPCODE(o2_setScrollOffset),
-		OPCODE(o4_playVmdOrMusic),
-		/* 84 */
-		OPCODE(o2_getImdInfo),
-		OPCODE(o2_openItk),
-		OPCODE(o2_closeItk),
-		OPCODE(o2_setImdFrontSurf),
-		/* 88 */
-		OPCODE(o2_resetImdFrontSurf),
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 8C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 90 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 94 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 98 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 9C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* AC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* BC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* CC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* DC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* EC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* FC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""}
-	};
-
 	static const OpcodeFuncEntryV4 opcodesFunc[80] = {
 		/* 00 */
 		OPCODE(o1_callSub),
@@ -637,21 +323,8 @@ void Inter_v4::setupOpcodes() {
 		{0, ""},
 	};
 
-	_opcodesDrawV4 = opcodesDraw;
 	_opcodesFuncV4 = opcodesFunc;
 	_opcodesGoblinV4 = opcodesGoblin;
-}
-
-void Inter_v4::executeDrawOpcode(byte i) {
-	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%X] (%s)",
-			i, i, getOpcodeDrawDesc(i));
-
-	OpcodeDrawProcV4 op = _opcodesDrawV4[i].proc;
-
-	if (op == 0)
-		warning("unimplemented opcodeDraw: %d", i);
-	else
-		(this->*op) ();
 }
 
 bool Inter_v4::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
@@ -697,10 +370,6 @@ void Inter_v4::executeGoblinOpcode(int i, OpGobParams &params) {
 		_vm->_global->_inter_execPtr += val << 1;
 	} else
 		(this->*op) (params);
-}
-
-const char *Inter_v4::getOpcodeDrawDesc(byte i) {
-	return _opcodesDrawV4[i].desc;
 }
 
 const char *Inter_v4::getOpcodeFuncDesc(byte i, byte j) {

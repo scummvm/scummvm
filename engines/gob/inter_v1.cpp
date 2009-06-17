@@ -47,6 +47,7 @@
 namespace Gob {
 
 #define OPCODE(x) _OPCODE(Inter_v1, x)
+#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(Inter_v1, x)
 
 const int Inter_v1::_goblinFuncLookUp[][2] = {
 	{1, 0},
@@ -124,332 +125,46 @@ const int Inter_v1::_goblinFuncLookUp[][2] = {
 
 Inter_v1::Inter_v1(GobEngine *vm) : Inter(vm) {
 	setupOpcodes();
+	NsetupOpcodes();
+}
+
+void Inter_v1::setupOpcodesDraw() {
+	OPCODEDRAW(0x00, o1_loadMult);
+	OPCODEDRAW(0x01, o1_playMult);
+	OPCODEDRAW(0x02, o1_freeMultKeys);
+
+	OPCODEDRAW(0x07, o1_initCursor);
+
+	OPCODEDRAW(0x08, o1_initCursorAnim);
+	OPCODEDRAW(0x09, o1_clearCursorAnim);
+	OPCODEDRAW(0x0A, o1_setRenderFlags);
+
+	OPCODEDRAW(0x10, o1_loadAnim);
+	OPCODEDRAW(0x11, o1_freeAnim);
+	OPCODEDRAW(0x12, o1_updateAnim);
+
+	OPCODEDRAW(0x14, o1_initMult);
+	OPCODEDRAW(0x15, o1_freeMult);
+	OPCODEDRAW(0x16, o1_animate);
+	OPCODEDRAW(0x17, o1_loadMultObject);
+
+	OPCODEDRAW(0x18, o1_getAnimLayerInfo);
+	OPCODEDRAW(0x19, o1_getObjAnimSize);
+	OPCODEDRAW(0x1A, o1_loadStatic);
+	OPCODEDRAW(0x1B, o1_freeStatic);
+
+	OPCODEDRAW(0x1C, o1_renderStatic);
+	OPCODEDRAW(0x1D, o1_loadCurLayer);
+
+	OPCODEDRAW(0x20, o1_playCDTrack);
+	OPCODEDRAW(0x21, o1_getCDTrackPos);
+	OPCODEDRAW(0x22, o1_stopCD);
+
+	OPCODEDRAW(0x30, o1_loadFontToSprite);
+	OPCODEDRAW(0x31, o1_freeFontToSprite);
 }
 
 void Inter_v1::setupOpcodes() {
-	static const OpcodeDrawEntryV1 opcodesDraw[256] = {
-		/* 00 */
-		OPCODE(o1_loadMult),
-		OPCODE(o1_playMult),
-		OPCODE(o1_freeMultKeys),
-		{0, ""},
-		/* 04 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		OPCODE(o1_initCursor),
-		/* 08 */
-		OPCODE(o1_initCursorAnim),
-		OPCODE(o1_clearCursorAnim),
-		OPCODE(o1_setRenderFlags),
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		OPCODE(o1_loadAnim),
-		OPCODE(o1_freeAnim),
-		OPCODE(o1_updateAnim),
-		{0, ""},
-		/* 14 */
-		OPCODE(o1_initMult),
-		OPCODE(o1_freeMult),
-		OPCODE(o1_animate),
-		OPCODE(o1_loadMultObject),
-		/* 18 */
-		OPCODE(o1_getAnimLayerInfo),
-		OPCODE(o1_getObjAnimSize),
-		OPCODE(o1_loadStatic),
-		OPCODE(o1_freeStatic),
-		/* 1C */
-		OPCODE(o1_renderStatic),
-		OPCODE(o1_loadCurLayer),
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		OPCODE(o1_playCDTrack),
-		OPCODE(o1_getCDTrackPos),
-		OPCODE(o1_stopCD),
-		{0, ""},
-		/* 24 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		OPCODE(o1_loadFontToSprite),
-		OPCODE(o1_freeFontToSprite),
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 48 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 4C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 50 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 54 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 58 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 5C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 60 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 64 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 68 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 6C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 70 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 74 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 78 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 7C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 80 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 84 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 88 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 8C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 90 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 94 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 98 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 9C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* AC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* BC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* CC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* DC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* EC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* FC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""}
-	};
-
 	static const OpcodeFuncEntryV1 opcodesFunc[80] = {
 		/* 00 */
 		OPCODE(o1_callSub),
@@ -645,21 +360,8 @@ void Inter_v1::setupOpcodes() {
 		OPCODE(o1_initGoblin)
 	};
 
-	_opcodesDrawV1 = opcodesDraw;
 	_opcodesFuncV1 = opcodesFunc;
 	_opcodesGoblinV1 = opcodesGoblin;
-}
-
-void Inter_v1::executeDrawOpcode(byte i) {
-	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%X] (%s)",
-			i, i, getOpcodeDrawDesc(i));
-
-	OpcodeDrawProcV1 op = _opcodesDrawV1[i].proc;
-
-	if (op == 0)
-		warning("unimplemented opcodeDraw: %d", i);
-	else
-		(this->*op) ();
 }
 
 bool Inter_v1::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
@@ -699,10 +401,6 @@ void Inter_v1::executeGoblinOpcode(int i, OpGobParams &params) {
 		_vm->_global->_inter_execPtr += cmd * 2;
 	} else
 		(this->*op) (params);
-}
-
-const char *Inter_v1::getOpcodeDrawDesc(byte i) {
-	return _opcodesDrawV1[i].desc;
 }
 
 const char *Inter_v1::getOpcodeFuncDesc(byte i, byte j) {
@@ -1720,7 +1418,7 @@ bool Inter_v1::o1_drawOperations(OpFuncParams &params) {
 
 	cmd = *_vm->_global->_inter_execPtr++;
 
-	executeDrawOpcode(cmd);
+	executeOpcodeDraw(cmd);
 
 	return false;
 }

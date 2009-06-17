@@ -41,6 +41,7 @@
 namespace Gob {
 
 #define OPCODE(x) _OPCODE(Inter_Fascination, x)
+#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(Inter_Fascination, x)
 
 const int Inter_Fascination::_goblinFuncLookUp[][2] = {
 	{1, 0},
@@ -62,332 +63,44 @@ const int Inter_Fascination::_goblinFuncLookUp[][2] = {
 
 Inter_Fascination::Inter_Fascination(GobEngine *vm) : Inter_v2(vm) {
 	setupOpcodes();
+	NsetupOpcodes();
+}
+
+void Inter_Fascination::setupOpcodesDraw() {
+	Inter_v2::setupOpcodesDraw();
+
+	OPCODEDRAW(0x03, oFascin_cdUnknown3);
+
+	OPCODEDRAW(0x04, oFascin_cdUnknown4);
+	OPCODEDRAW(0x05, oFascin_cdUnknown5);
+	OPCODEDRAW(0x06, oFascin_cdUnknown6);
+
+	OPCODEDRAW(0x0A, oFascin_setRenderFlags);
+	OPCODEDRAW(0x0B, oFascin_cdUnknown11);
+
+	CLEAROPCODEDRAW(0x50);
+	CLEAROPCODEDRAW(0x51);
+	CLEAROPCODEDRAW(0x52);
+	CLEAROPCODEDRAW(0x53);
+
+	CLEAROPCODEDRAW(0x54);
+	CLEAROPCODEDRAW(0x55);
+	CLEAROPCODEDRAW(0x56);
+
+	CLEAROPCODEDRAW(0x80);
+	CLEAROPCODEDRAW(0x81);
+	CLEAROPCODEDRAW(0x82);
+	CLEAROPCODEDRAW(0x83);
+
+	CLEAROPCODEDRAW(0x84);
+	CLEAROPCODEDRAW(0x85);
+	CLEAROPCODEDRAW(0x86);
+	CLEAROPCODEDRAW(0x87);
+
+	CLEAROPCODEDRAW(0x88);
 }
 
 void Inter_Fascination::setupOpcodes() {
-	static const OpcodeDrawEntryFascination opcodesDraw[256] = {
-		/* 00 */
-		OPCODE(o1_loadMult),
-		OPCODE(o2_playMult),
-		OPCODE(o1_freeMultKeys),
-		OPCODE(oFascin_cdUnknown3),
-		/* 04 */
-		OPCODE(oFascin_cdUnknown4),
-		OPCODE(oFascin_cdUnknown5),
-		OPCODE(oFascin_cdUnknown6),
-		OPCODE(o1_initCursor),
-		/* 08 */
-		OPCODE(o1_initCursorAnim),
-		OPCODE(o1_clearCursorAnim),
-		OPCODE(oFascin_setRenderFlags),
-		OPCODE(oFascin_cdUnknown11),
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		OPCODE(o1_loadAnim),
-		OPCODE(o1_freeAnim),
-		OPCODE(o1_updateAnim),
-		OPCODE(o2_multSub),
-		/* 14 */
-		OPCODE(o2_initMult),
-		OPCODE(o1_freeMult),
-		OPCODE(o1_animate),
-		OPCODE(o2_loadMultObject),
-		/* 18 */
-		OPCODE(o1_getAnimLayerInfo),
-		OPCODE(o1_getObjAnimSize),
-		OPCODE(o1_loadStatic),
-		OPCODE(o1_freeStatic),
-		/* 1C */
-		OPCODE(o2_renderStatic),
-		OPCODE(o2_loadCurLayer),
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		OPCODE(o2_playCDTrack),
-		OPCODE(o2_waitCDTrackEnd),
-		OPCODE(o2_stopCD),
-		OPCODE(o2_readLIC),
-		/* 24 */
-		OPCODE(o2_freeLIC),
-		OPCODE(o2_getCDTrackPos),
-		{0, ""},
-		{0, ""},
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		OPCODE(o2_loadFontToSprite),
-		OPCODE(o1_freeFontToSprite),
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		OPCODE(o2_totSub),
-		OPCODE(o2_switchTotSub),
-		OPCODE(o2_pushVars),
-		OPCODE(o2_popVars),
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 48 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 4C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 50 */
-		{0, ""},//OPCODE(o2_loadMapObjects),
-		{0, ""},//OPCODE(o2_freeGoblins),
-		{0, ""},//OPCODE(o2_moveGoblin),
-		{0, ""},//OPCODE(o2_writeGoblinPos),
-		/* 54 */
-		{0, ""},//OPCODE(o2_stopGoblin),
-		{0, ""},//OPCODE(o2_setGoblinState),
-		{0, ""},//OPCODE(o2_placeGoblin),
-		{0, ""},
-		/* 58 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 5C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 60 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 64 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 68 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 6C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 70 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 74 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 78 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 7C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 80 */
-		{0, ""},//OPCODE(o2_initScreen),
-		{0, ""},//OPCODE(o2_scroll),
-		{0, ""},//OPCODE(o2_setScrollOffset),
-		{0, ""},//OPCODE(o2_playImd),
-		/* 84 */
-		{0, ""},//OPCODE(o2_getImdInfo),
-		{0, ""},//OPCODE(o2_openItk),
-		{0, ""},//OPCODE(o2_closeItk),
-		{0, ""},//OPCODE(o2_setImdFrontSurf),
-		/* 88 */
-		{0, ""},//OPCODE(o2_resetImdFrontSurf),
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 8C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 90 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 94 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 98 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 9C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* AC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* BC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* CC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* DC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* EC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* FC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""}
-	};
-
 	static const OpcodeFuncEntryFascination opcodesFunc[80] = {
 		/* 00 */
 		OPCODE(o1_callSub),
@@ -513,21 +226,8 @@ void Inter_Fascination::setupOpcodes() {
 		OPCODE(oFascin_geUnknown1002), //to be replaced by o2_stopProtracker when protrackerPlay is fixed
 	};
 
-	_opcodesDrawFascination = opcodesDraw;
 	_opcodesFuncFascination = opcodesFunc;
 	_opcodesGoblinFascination = opcodesGoblin;
-}
-
-void Inter_Fascination::executeDrawOpcode(byte i) {
-	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%X] (%s)",
-			i, i, getOpcodeDrawDesc(i));
-
-	OpcodeDrawProcFascination op = _opcodesDrawFascination[i].proc;
-
-	if (op == 0)
-		warning("Not yet implemented Fascination opcodeDraw: %d", i);
-	else
-		(this->*op) ();
 }
 
 void Inter_Fascination::oFascin_geUnknown0(OpGobParams &params) {
@@ -715,10 +415,6 @@ void Inter_Fascination::executeGoblinOpcode(int i, OpGobParams &params) {
 		warning("unimplemented opcodeGob: %d", i);
 	} else
 		(this->*op) (params);
-}
-
-const char *Inter_Fascination::getOpcodeDrawDesc(byte i) {
-	return _opcodesDrawFascination[i].desc;
 }
 
 const char *Inter_Fascination::getOpcodeFuncDesc(byte i, byte j) {
