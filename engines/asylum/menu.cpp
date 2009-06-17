@@ -184,7 +184,7 @@ void MainMenu::update() {
 				// TODO
 				break;
 			case kShowCredits:
-				// TODO if game finished then show resource image 33
+				// TODO if game finished (gameFlag=901) then show resource image 33 and music 56 and than music 40
 				if (!_creditsResource)
 					_creditsResource = new GraphicResource(_resPack, 24);
 				if (!_creditsFadeResource)
@@ -192,6 +192,10 @@ void MainMenu::update() {
                 _creditsTextScroll = 0x1E0 - 30;
 				// Set credits palette
 				_screen->setPalette(_resPack, 26);
+                // Stop all sounds
+	            _sound->stopMusic();
+	            // Start playing music
+	            _sound->playMusic(_resPack, 38);
 				break;
 			case kReturnToGame:
 				closeMenu();
@@ -416,6 +420,12 @@ void MainMenu::updateSubMenuQuitGame() {
 }
 
 void MainMenu::updateSubMenuShowCredits() {
+    int posY     = _creditsTextScroll;
+    int resId    = 0;
+    int step     = 0;
+    int minBound = 0;
+    int maxBound = 0;
+
     GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
 	_screen->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
 
@@ -426,11 +436,6 @@ void MainMenu::updateSubMenuShowCredits() {
     if (_creditsBgFrame >= _creditsResource->getFrameCount())
 		_creditsBgFrame = 0;
 
-    int posY     = _creditsTextScroll;
-    int resId    = 0;
-    int step     = 0;
-    int minBound = 0;
-    int maxBound = 0;
     do {
         if (posY + step >= 0) {
             if (posY + step > 450)
@@ -438,13 +443,17 @@ void MainMenu::updateSubMenuShowCredits() {
 
             minBound = posY + step + 24;
             if (minBound >= 0)
-                if (minBound < 32)
+                if (minBound < 32) {
+                    // TODO fade side text
                     posY = _creditsTextScroll;
+                }
 
             maxBound = posY + step;
             if (posY + step < 480)
-                if (maxBound > 448)
+                if (maxBound > 448) {
+                    // TODO fade side text
                     posY = _creditsTextScroll;
+                }
 
             _text->setTextPos(320, step + posY);
             _text->drawResText(resId - 2147482201);
@@ -456,11 +465,17 @@ void MainMenu::updateSubMenuShowCredits() {
 
     _creditsTextScroll -= 2;
 
-    // TODO: fade side text -> address 0041A400
+    // TODO: some palette stuffs
+    
+    // TODO: if gameFlag=901 (finished game) and already play music 56, start music 40
 
 	if (_leftClick) {
 		// Restore palette
 		_screen->setPalette(_resPack, 17);
+        // Stop all sounds
+	    _sound->stopMusic();
+	    // Start playing music
+	    _sound->playMusic(_resPack, 39);
         exitSubMenu();
 	}
 }
