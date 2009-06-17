@@ -474,6 +474,36 @@ void MainMenu::updateSubMenuSettings() {
             // TODO: save new configurations
             exitSubMenu();
         }
+
+        // gamma level minus
+        if (_mouseX >= 350 && _mouseX <= sizeMinus + 350 && _mouseY >= 150 && _mouseY <= 174) {
+            if(_confGammaLevel) {
+                _confGammaLevel -= 1;
+                // TODO: setResGammaLevel(0x80010011, 0);
+            }
+        }
+        // gamma level plus
+        if (_mouseX >= sizeMinus + 360 && _mouseX <= sizeMinus + sizePlus + 360 && _mouseY >= 150 && _mouseY <= 174) {
+            if(_confGammaLevel < 8) {
+                _confGammaLevel += 1;
+                // TODO: setResGammaLevel(0x80010011, 0);
+            }
+        }
+
+        // performance minus
+        if (_mouseX >= 350 && _mouseX <= sizeMinus + 350 && _mouseY >= 179 && _mouseY <= 203) {
+            if(_confGameQuality) {
+                _confGameQuality -= 1;
+                // TODO: change quality settings
+            }
+        }
+        // performance plus
+        if (_mouseX >= sizeMinus + 360 && _mouseX <= sizeMinus + sizePlus + 360 && _mouseY >= 179 && _mouseY <= 203) {
+            if(_confGameQuality < 5) {
+                _confGameQuality += 1;
+                // TODO: change quality settings
+            }
+        }
     }
 }
 
