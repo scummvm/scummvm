@@ -449,7 +449,7 @@ void ThemeEngine::enable() {
 
 	if (_useCursor) {
 #ifdef ENABLE_16BIT
-		CursorMan.pushCursorFormat(_system->getScreenFormat());
+		CursorMan.pushCursorFormat(_cursorFormat);
 #endif
 		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
 		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
