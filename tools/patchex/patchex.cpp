@@ -38,7 +38,7 @@
 #include <stdarg.h>
 #include <sys/types.h>
 
-#include "tools/patch_ex/mspack.h"
+#include "tools/patchex/mspack.h"
 
 // Command line actions
 enum act { UNKNOWN_ACTION, CABINET_ACTION, ALL_LANGUAGES_ACTION, LOCALISED_ACTION};

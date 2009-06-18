@@ -32,7 +32,7 @@
  * For further details, see the file COPYING.LIB distributed with libmspack
  */
 
-#include "tools/patch_ex/mszip.h"
+#include "tools/patchex/mszip.h"
 
 static const unsigned short lit_lengths[29] = {
   3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27,

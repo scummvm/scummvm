@@ -29,7 +29,7 @@
  * For further details, see the file COPYING.LIB distributed with libmspack
  */
 
-#include "tools/patch_ex/cab.h"
+#include "tools/patchex/cab.h"
 
 static struct mscabd_cabinet * cabd_open(
   struct mscab_decompressor *base, char *filename);
