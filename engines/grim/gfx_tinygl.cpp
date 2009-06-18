@@ -350,7 +350,7 @@ void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
-	if (_currentShadowArray) {
+	if (_currentShadowArray && _currentShadowArray->active) {
 		assert(_currentShadowArray->shadowMask);
 		//tglSetShadowColor(255, 255, 255);
 		tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
