@@ -13,6 +13,7 @@
 #include "engines/grim/lua/lvm.h"
 #include "engines/grim/lua/lopcodes.h"
 #include "engines/grim/lua/lstring.h"
+#include "engines/grim/lua/lstate.h"
 #include "engines/grim/lua/lua.h"
 
 namespace Grim {
@@ -233,11 +234,9 @@ static void recreateObj(TObject *obj) {
 }
 
 void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, RestoreUint32 restoreUint32) {
-/*
-	printf("lua_Restore() started.\n");
-
 	lua_close();
-	lua_state = luaM_new(LState);
+	lua_rootState = lua_state = luaM_new(LState);
+	lua_stateinit(lua_state);
 	lua_resetglobals();
 
 	arrayStringsCount = restoreSint32();
@@ -300,7 +299,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		arraysObj->idObj.hi = restoreSint32();
 		int32 countElements = restoreSint32();
 		tempClosure = (Closure *)luaM_malloc((countElements * sizeof(TObject)) + sizeof(Closure));
-		luaO_insertlist(&lua_state->rootcl, (GCnode *)tempClosure);
+		luaO_insertlist(&rootcl, (GCnode *)tempClosure);
 
 		tempClosure->nelems = countElements;
 		for (l = 0; l <= tempClosure->nelems; l++) {
@@ -321,7 +320,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		tempHash->nuse = restoreSint32();
 		tempHash->htag = restoreSint32();
 		tempHash->node = hashnodecreate(tempHash->nhash);
-		luaO_insertlist(&lua_state->roottable, (GCnode *)tempHash);
+		luaO_insertlist(&roottable, (GCnode *)tempHash);
 
 		for (l = 0; l < tempHash->nuse; l++) {
 			restoreObjectValue(&tempHash->node[l].ref, restoreSint32, restoreUint32);
@@ -338,7 +337,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		arraysObj->idObj.low = restoreSint32();
 		arraysObj->idObj.hi = restoreSint32();
 		tempProtoFunc = luaM_new(TProtoFunc);
-		luaO_insertlist(&lua_state->rootproto, (GCnode *)tempProtoFunc);
+		luaO_insertlist(&rootproto, (GCnode *)tempProtoFunc);
 		PointerId ptr;
 		ptr.low = restoreSint32();
 		ptr.hi = restoreSint32();
@@ -374,7 +373,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 	}
 
 	for (i = 0; i < NUM_HASHS; i++) {
-		stringtable *tempStringTable = &lua_state->string_root[i];
+		stringtable *tempStringTable = &string_root[i];
 		for (l = 0; l < tempStringTable->size; l++) {
 			TaggedString *tempString = tempStringTable->hash[l];
 			if (tempString && tempString->constindex != -1 && tempString != &EMPTY) {
@@ -383,7 +382,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		}
 	}
 
-	tempProtoFunc = (TProtoFunc *)lua_state->rootproto.next;
+	tempProtoFunc = (TProtoFunc *)rootproto.next;
 	while (tempProtoFunc) {
 		TObject tempObj;
 		tempObj.value.ts = (TaggedString *)tempProtoFunc->fileName;
@@ -408,7 +407,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		tempProtoFunc = (TProtoFunc *)tempProtoFunc->head.next;
 	}
 
-	tempHash = (Hash *)lua_state->roottable.next;
+	tempHash = (Hash *)roottable.next;
 	while (tempHash) {
 		for (i = 0; i < tempHash->nuse; i++) {
 			recreateObj(&tempHash->node[i].ref);
@@ -426,7 +425,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		tempHash = (Hash *)tempHash->head.next;
 	}
 
-	tempClosure = (Closure *)lua_state->rootcl.next;
+	tempClosure = (Closure *)rootcl.next;
 	while (tempClosure) {
 		for (i = 0; i <= tempClosure->nelems; i++) {
 			recreateObj(&tempClosure->consts[i]);
@@ -434,7 +433,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		tempClosure = (Closure *)tempClosure->head.next;
 	}
 
-	TaggedString *tempListString = (TaggedString *)&(lua_state->rootglobal);
+	TaggedString *tempListString = (TaggedString *)&(rootglobal);
 	for (i = 0; i < rootGlobalCount; i++) {
 		TObject tempObj;
 		TaggedString *tempString = NULL;
@@ -451,116 +450,136 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 	}
 	tempListString->head.next = NULL;
 
-	restoreObjectValue(&lua_state->errorim, restoreSint32, restoreUint32);
-	recreateObj(&lua_state->errorim);
+	restoreObjectValue(&errorim, restoreSint32, restoreUint32);
+	recreateObj(&errorim);
 
-	lua_state->IMtable_size = restoreSint32();
-	lua_state->IMtable = (IM *)luaM_malloc(lua_state->IMtable_size * sizeof(IM));
-	for (i = 0; i < lua_state->IMtable_size; i++) {
-		IM *im = &lua_state->IMtable[i];
+	IMtable_size = restoreSint32();
+	IMtable = (IM *)luaM_malloc(IMtable_size * sizeof(IM));
+	for (i = 0; i < IMtable_size; i++) {
+		IM *im = &IMtable[i];
 		for (l = 0; l < IM_N; l++) {
 			restoreObjectValue(&im->int_method[l], restoreSint32, restoreUint32);
 			recreateObj(&im->int_method[l]);
 		}
 	}
 
-	lua_state->last_tag = restoreSint32();
-	lua_state->refSize = restoreSint32();
-	lua_state->refArray = (ref *)luaM_malloc(lua_state->refSize * sizeof(ref));
-	for (i = 0; i < lua_state->refSize; i++) {
-		restoreObjectValue(&lua_state->refArray[i].o, restoreSint32, restoreUint32);
-		recreateObj(&lua_state->refArray[i].o);
-		lua_state->refArray[i].status = (Status)restoreSint32();
+	last_tag = restoreSint32();
+	refSize = restoreSint32();
+	refArray = (ref *)luaM_malloc(refSize * sizeof(ref));
+	for (i = 0; i < refSize; i++) {
+		restoreObjectValue(&refArray[i].o, restoreSint32, restoreUint32);
+		recreateObj(&refArray[i].o);
+		refArray[i].status = (Status)restoreSint32();
 	}
 
-	lua_state->GCthreshold = restoreSint32();
-	lua_state->nblocks = restoreSint32();
+	GCthreshold = restoreSint32();
+	nblocks = restoreSint32();
 
-	lua_state->Mbuffsize = restoreSint32();
-	lua_state->Mbuffer = (char *)luaM_malloc(lua_state->Mbuffsize);
-	restoreStream(lua_state->Mbuffer, lua_state->Mbuffsize);
+	Mbuffsize = restoreSint32();
+	Mbuffer = (char *)luaM_malloc(Mbuffsize);
+	restoreStream(Mbuffer, Mbuffsize);
 	int32 MbaseOffset;
 	MbaseOffset = restoreSint32();
-	lua_state->Mbuffbase = MbaseOffset + lua_state->Mbuffer;
-	lua_state->Mbuffnext = restoreSint32();
+	Mbuffbase = MbaseOffset + Mbuffer;
+	Mbuffnext = restoreSint32();
 
 	globalTaskSerialId = restoreSint32();
 
-	lua_Task *tempTask = NULL;
-	lua_Task *prevTask = lua_state->root_task;
-	int32 countTasks = restoreSint32();
-	for (l = 0; l < countTasks; l++) {
-		tempTask = luaM_new(lua_Task);
-		memset(tempTask, 0, sizeof(lua_Task));
-		prevTask->next = tempTask;
-		prevTask = tempTask;
+	int32 countStates = restoreSint32();
+	int32 currentState = restoreSint32();
+
+	LState *state = lua_rootState;
+	for (l = 0; l < countStates; l++) {
+		if (l == 0)
+			state = lua_rootState;
+		else {
+			LState *s = luaM_new(LState);
+			lua_stateinit(s);
+			state->next = s;
+			s->prev = state;
+			state = s;
+		}
+		int32 countTasks = restoreSint32();
+		Stack *st = &state->stack;
+		if (countTasks) {
+			for (i = 0; i < countTasks; i++) {
+				lua_Task *task = state->task;
+				task = luaM_new(lua_Task);
+				lua_taskinit(task, NULL, 0, 0);
+				task->S = &state->stack;
+
+				TObject tempObj;
+				tempObj.ttype = LUA_T_CLOSURE;
+				PointerId ptr;
+				ptr.low = restoreUint32();
+				ptr.hi = restoreUint32();
+				tempObj.value.cl = (Closure *)makePointerFromId(ptr);
+				recreateObj(&tempObj);
+				task->cl = (Closure *)tempObj.value.cl;
+				tempObj.ttype = LUA_T_PROTO;
+				ptr.low = restoreUint32();
+				ptr.hi = restoreUint32();
+				tempObj.value.tf = (TProtoFunc *)makePointerFromId(ptr);
+				recreateObj(&tempObj);
+				task->tf = (TProtoFunc *)tempObj.value.tf;
+
+				task->base = restoreSint32();
+				task->some_base = restoreSint32();
+				task->some_results = restoreSint32();
+				task->some_flag = restoreSint32();
+				int32 pcOffset = restoreSint32();
+				task->pc = state->task->tf->code + pcOffset;
+				task->aux = restoreSint32();
+				task->consts = task->tf->consts;
+			}
+		} else {
+			state->task = NULL;
+		}
+		int32 n = restoreSint32();
+		if (n < 0) {
+			state->some_task = NULL;
+		} else {
+			state->some_task = state->task;
+			for (; n; n--)
+				state->some_task = state->some_task->next;
+		}
+
+		state->flag2 = restoreSint32();
+		state->paused = restoreSint32();
+		state->state_counter1 = restoreSint32();
+		state->state_counter2 = restoreSint32();
 
 		int32 stackLastSize = restoreSint32();
-		tempTask->stack.stack = (TObject *)luaM_malloc(stackLastSize * sizeof(TObject));
-		tempTask->stack.last = tempTask->stack.stack + stackLastSize - 1;
+		if (state->stack.stack)
+			luaM_free(state->stack.stack);
+
+		state->stack.stack = (TObject *)luaM_malloc(stackLastSize * sizeof(TObject));
+		state->stack.last = state->stack.stack + stackLastSize - 1;
 
 		int32 stackTopSize = restoreSint32();
-		tempTask->stack.top = tempTask->stack.stack + stackTopSize;
+		state->stack.top = state->stack.stack + stackTopSize;
 		for (i = 0; i < stackTopSize; i++) {
-			restoreObjectValue(&tempTask->stack.stack[i], restoreSint32, restoreUint32);
-			recreateObj(&tempTask->stack.stack[i]);
+			restoreObjectValue(&state->stack.stack[i], restoreSint32, restoreUint32);
+			recreateObj(&state->stack.stack[i]);
 		}
 
-		tempTask->Cstack.base = restoreSint32();
-		tempTask->Cstack.lua2C = restoreSint32();
-		tempTask->Cstack.num = restoreSint32();
+		state->Cstack.base = restoreSint32();
+		state->Cstack.lua2C = restoreSint32();
+		state->Cstack.num = restoreSint32();
 
-		tempTask->numCblocks = restoreSint32();
-		for (i = 0; i < tempTask->numCblocks; i++) {
-			tempTask->Cblocks[i].base = restoreSint32();
-			tempTask->Cblocks[i].lua2C = restoreSint32();
-			tempTask->Cblocks[i].num = restoreSint32();
+		state->numCblocks = restoreSint32();
+		for (i = 0; i < state->numCblocks; i++) {
+			state->Cblocks[i].base = restoreSint32();
+			state->Cblocks[i].lua2C = restoreSint32();
+			state->Cblocks[i].num = restoreSint32();
 		}
 
-		int32 pcOffset, taskCi;
-		tempTask->base_ci_size = restoreSint32();
-		tempTask->base_ci = (CallInfo *)luaM_malloc(tempTask->base_ci_size * sizeof(CallInfo));
-		memset(tempTask->base_ci, 0, sizeof(CallInfo) * tempTask->base_ci_size);
-		CallInfo *tempCi = tempTask->base_ci;
-		int32 countCi = tempTask->base_ci_size / sizeof(CallInfo);
-		for (i = 0; i < countCi; i++) {
-			TObject tempObj;
-			tempObj.ttype = LUA_T_CLOSURE;
-			PointerId ptr;
-			ptr.low = restoreUint32();
-			ptr.hi = restoreUint32();
-			tempObj.value.cl = (Closure *)makePointerFromId(ptr);
-			recreateObj(&tempObj);
-			tempCi->c = (Closure *)tempObj.value.cl;
-			tempObj.ttype = LUA_T_PROTO;
-			ptr.low = restoreUint32();
-			ptr.hi = restoreUint32();
-			tempObj.value.tf = (TProtoFunc *)makePointerFromId(ptr);
-			recreateObj(&tempObj);
-			tempCi->tf = (TProtoFunc *)tempObj.value.tf;
-
-			pcOffset = restoreSint32();
-			if (pcOffset)
-				tempCi->pc = tempCi->tf->code + pcOffset;
-			else
-				tempCi->pc = NULL;
-
-			tempCi->base = restoreSint32();
-			tempCi->nResults = restoreSint32();
-			tempCi++;
-		}
-		taskCi = restoreSint32();
-		tempTask->ci = tempTask->base_ci + taskCi;
-		tempTask->end_ci = tempTask->base_ci + countCi;
-
-		int32 Mbasepos = restoreSint32();
-		tempTask->Mbuffbase = Mbasepos + tempTask->Mbuffer;
-		tempTask->Mbuffnext = restoreSint32();
-
-		tempTask->Tstate = (TaskState)restoreSint32();
-		tempTask->id = restoreSint32();
+		state->id = restoreSint32();
+		restoreObjectValue(&state->taskFunc, restoreSint32, restoreUint32);
 	}
-	lua_state->last_task = tempTask;
+
+	for (; currentState; currentState--)
+		lua_state = lua_state->next;
 
 	arraysAllreadySort = false;
 	arrayStringsCount = 0;
@@ -575,9 +594,6 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 	arrayClosures = NULL;
 	arrayProtoFuncs = NULL;
 	arrayStrings = NULL;
-
-	printf("lua_Restore() finished.\n");
-*/
 }
 
 } // end of namespace Grim

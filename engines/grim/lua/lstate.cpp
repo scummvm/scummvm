@@ -67,7 +67,7 @@ static void lua_openthr() {
 void lua_stateinit(LState *state) {
 	state->prev = NULL;
 	state->next = NULL;
-	state->paused = false;
+	state->paused = 0;
 	state->state_counter1 = 0;
 	state->state_counter2 = 0;
 	state->flag2 = 0;

@@ -76,7 +76,7 @@ extern int32 IMtable_size;
 struct LState {
 	LState *prev; // handle to previous state in list
 	LState *next; // handle to next state in list
-	bool paused; // flag mean if task is paused
+	int32 paused; // flag mean if task is paused
 	int32 state_counter1;
 	int32 state_counter2;
 	int32 flag2;
@@ -95,8 +95,11 @@ struct LState {
 
 extern LState *lua_state, *lua_rootState;
 
+extern int globalTaskSerialId;
+
 void lua_stateinit(LState *state);
 void lua_statedeinit(LState *state);
+void lua_resetglobals();
 
 } // end of namespace Grim
 

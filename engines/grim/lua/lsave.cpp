@@ -152,9 +152,6 @@ static int32 opcodeSizeTable[] = {
 };
 
 void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint32) {
-/*	
-	printf("lua_Save() started.\n");
-
 	lua_collectgarbage(0);
 	int32 i, l;
 	int32 countElements = 0;
@@ -163,7 +160,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 
 	// Check for max length for strings and count them
 	for (i = 0; i < NUM_HASHS; i++) {
-		stringtable *tempStringTable = &lua_state->string_root[i];
+		stringtable *tempStringTable = &string_root[i];
 		for (l = 0; l < tempStringTable->size; l++) {
 			if (tempStringTable->hash[l] && tempStringTable->hash[l] != &EMPTY) {
 				countElements++;
@@ -183,7 +180,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 	// save number of closures
 	countElements = 0;
 	GCnode *tempNode;
-	tempNode = lua_state->rootcl.next;
+	tempNode = rootcl.next;
 	while (tempNode) {
 		countElements++;
 		tempNode = tempNode->next;
@@ -192,7 +189,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 
 	// save number of tables
 	countElements = 0;
-	tempNode = lua_state->roottable.next;
+	tempNode = roottable.next;
 	while (tempNode) {
 		countElements++;
 		tempNode = tempNode->next;
@@ -201,7 +198,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 
 	// save number of prototypes
 	countElements = 0;
-	tempNode = lua_state->rootproto.next;
+	tempNode = rootproto.next;
 	while (tempNode) {
 		countElements++;
 		tempNode = tempNode->next;
@@ -210,7 +207,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 
 	// save number of global strings
 	countElements = 0;
-	tempNode = lua_state->rootglobal.next;
+	tempNode = rootglobal.next;
 	while (tempNode) {
 		countElements++;
 		tempNode = tempNode->next;
@@ -225,7 +222,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 	// save hash tables for strings and user data
 	TaggedString *tempString;
 	for (i = 0; i < NUM_HASHS; i++) {
-		stringtable *tempStringTable = &lua_state->string_root[i];
+		stringtable *tempStringTable = &string_root[i];
 		for (l = 0; l < tempStringTable->size; l++) {
 			if (tempStringTable->hash[l] && tempStringTable->hash[l] != &EMPTY) {
 				tempString = tempStringTable->hash[l];
@@ -251,7 +248,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 
 	//printf("2: %d\n", g_grim->_savedState->getBufferPos());
 
-	Closure *tempClosure = (Closure *)lua_state->rootcl.next;
+	Closure *tempClosure = (Closure *)rootcl.next;
 	while (tempClosure) {
 		saveUint32(makeIdFromPointer(tempClosure).low);
 		saveUint32(makeIdFromPointer(tempClosure).hi);
@@ -262,7 +259,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 		tempClosure = (Closure *)tempClosure->head.next;
 	}
 
-	Hash *tempHash = (Hash *)lua_state->roottable.next;
+	Hash *tempHash = (Hash *)roottable.next;
 	while (tempHash) {
 		saveUint32(makeIdFromPointer(tempHash).low);
 		saveUint32(makeIdFromPointer(tempHash).hi);
@@ -286,7 +283,7 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 		tempHash = (Hash *)tempHash->head.next;
 	}
 
-	TProtoFunc *tempProtoFunc = (TProtoFunc *)lua_state->rootproto.next;
+	TProtoFunc *tempProtoFunc = (TProtoFunc *)rootproto.next;
 	while (tempProtoFunc) {
 		saveUint32(makeIdFromPointer(tempProtoFunc).low);
 		saveUint32(makeIdFromPointer(tempProtoFunc).hi);
@@ -322,107 +319,111 @@ void lua_Save(SaveStream saveStream, SaveSint32 saveSint32, SaveUint32 saveUint3
 		tempProtoFunc = (TProtoFunc *)tempProtoFunc->head.next;
 	}
 
-	tempString = (TaggedString *)lua_state->rootglobal.next;
+	tempString = (TaggedString *)rootglobal.next;
 	while (tempString) {
 		saveUint32(makeIdFromPointer(tempString).low);
 		saveUint32(makeIdFromPointer(tempString).hi);
 		tempString = (TaggedString *)tempString->head.next;
 	}
 
-	saveObjectValue(&lua_state->errorim, saveSint32, saveUint32);
+	saveObjectValue(&errorim, saveSint32, saveUint32);
 
-	IM *tempIm = lua_state->IMtable;
-	saveSint32(lua_state->IMtable_size);
-	for (i = 0; i < lua_state->IMtable_size; i++) {
+	IM *tempIm = IMtable;
+	saveSint32(IMtable_size);
+	for (i = 0; i < IMtable_size; i++) {
 		for (l = 0; l < IM_N; l++) {
 			saveObjectValue(&tempIm->int_method[l], saveSint32, saveUint32);
 		}
 		tempIm++;
 	}
 
-	saveSint32(lua_state->last_tag);
-	saveSint32(lua_state->refSize);
-	for (i = 0 ; i < lua_state->refSize; i++) {
-		saveObjectValue(&lua_state->refArray[i].o, saveSint32, saveUint32);
-		saveSint32(lua_state->refArray[i].status);
+	saveSint32(last_tag);
+	saveSint32(refSize);
+	for (i = 0 ; i < refSize; i++) {
+		saveObjectValue(&refArray[i].o, saveSint32, saveUint32);
+		saveSint32(refArray[i].status);
 	}
 
-	saveSint32(lua_state->GCthreshold);
-	saveSint32(lua_state->nblocks);
+	saveSint32(GCthreshold);
+	saveSint32(nblocks);
 
-	saveSint32(lua_state->Mbuffsize);
-	saveStream(lua_state->Mbuffer, lua_state->Mbuffsize);
-	int32 MbaseOffset = lua_state->Mbuffbase - lua_state->Mbuffer;
+	saveSint32(Mbuffsize);
+	saveStream(Mbuffer, Mbuffsize);
+	int32 MbaseOffset = Mbuffbase - Mbuffer;
 	saveSint32(MbaseOffset);
-	saveSint32(lua_state->Mbuffnext);
+	saveSint32(Mbuffnext);
 
 	saveSint32(globalTaskSerialId);
 
-	int32 countTasks = 0;
-	lua_Task *tempTask = lua_state->root_task->next;
-	while (tempTask) {
-		countTasks++;
-		tempTask = tempTask->next;
+	int32 countStates = 0, currentState = 0;
+	LState *state = lua_rootState;
+	while (state) {
+		if (lua_rootState == state)
+			currentState = countStates;
+		countStates++;
+		state = state->next;
 	}
-	saveSint32(countTasks);
+	saveSint32(countStates);
+	saveSint32(currentState);
 
-	tempTask = lua_state->root_task->next;
-	while (tempTask) {
-		int32 stackLastSize = (tempTask->stack.last - tempTask->stack.stack) + 1;
+	state = lua_rootState;
+	while (state) {
+		lua_Task *task = state->task;
+		int32 countTasks = 0, n = -1;
+		while (task) {
+			if (state->some_task && state->some_task == task)
+				n = countTasks;
+			countTasks++;
+			task = task->next;
+		}
+		saveSint32(countTasks);
+		task = state->task;
+		while (task) {
+			saveUint32(makeIdFromPointer(task->cl).low);
+			saveUint32(makeIdFromPointer(task->cl).hi);
+			saveUint32(makeIdFromPointer(task->tf).low);
+			saveUint32(makeIdFromPointer(task->tf).hi);
+			saveSint32(task->base);
+			saveSint32(task->some_base);
+			saveSint32(task->some_results);
+			saveSint32(task->some_flag);
+			int32 pcOffset = task->pc - task->tf->code;
+			saveSint32(pcOffset);
+			saveSint32(task->aux);
+			task = task->next;
+		}
+
+		saveSint32(n);
+
+		saveSint32(state->flag2);
+		saveSint32(state->paused);
+		saveSint32(state->state_counter1);
+		saveSint32(state->state_counter2);
+
+		int32 stackLastSize = (state->stack.last - state->stack.stack) + 1;
 		saveSint32(stackLastSize);
-		int32 stackTopSize = tempTask->stack.top - tempTask->stack.stack;
+		int32 stackTopSize = state->stack.top - state->stack.stack;
 		saveSint32(stackTopSize);
 		for (i = 0; i < stackTopSize; i++) {
-			saveObjectValue(&tempTask->stack.stack[i], saveSint32, saveUint32);
+			saveObjectValue(&state->stack.stack[i], saveSint32, saveUint32);
 		}
 
-		saveSint32(tempTask->Cstack.base);
-		saveSint32(tempTask->Cstack.lua2C);
-		saveSint32(tempTask->Cstack.num);
+		saveSint32(state->Cstack.base);
+		saveSint32(state->Cstack.lua2C);
+		saveSint32(state->Cstack.num);
 
-		saveSint32(tempTask->numCblocks);
-		for (i = 0; i < tempTask->numCblocks; i++) {
-			saveSint32(tempTask->Cblocks[i].base);
-			saveSint32(tempTask->Cblocks[i].lua2C);
-			saveSint32(tempTask->Cblocks[i].num);
+		saveSint32(state->numCblocks);
+		for (i = 0; i < state->numCblocks; i++) {
+			saveSint32(state->Cblocks[i].base);
+			saveSint32(state->Cblocks[i].lua2C);
+			saveSint32(state->Cblocks[i].num);
 		}
 
-		int32 pcOffset, taskCi = -1;
-		saveSint32(tempTask->base_ci_size);
-		assert(tempTask->base_ci);
-		CallInfo *tempCi = tempTask->base_ci;
-		int32 countCi = tempTask->base_ci_size / sizeof(CallInfo);
-		for (i = 0; i < countCi; i++) {
-			saveUint32(makeIdFromPointer(tempCi->c).low);
-			saveUint32(makeIdFromPointer(tempCi->c).hi);
-			saveUint32(makeIdFromPointer(tempCi->tf).low);
-			saveUint32(makeIdFromPointer(tempCi->tf).hi);
-			if (tempCi->pc && tempTask->ci->tf)
-				pcOffset = tempCi->pc - tempCi->tf->code;
-			else
-				pcOffset = 0;
-			saveSint32(pcOffset);
-			saveSint32(tempCi->base);
-			saveSint32(tempCi->nResults);
-			if (tempCi == tempTask->ci)
-				taskCi = i;
-			tempCi++;
-		}
-		assert(taskCi != -1);
-		saveSint32(taskCi);
+		saveSint32(state->id);
+		saveObjectValue(&state->taskFunc, saveSint32, saveUint32);
 
-		MbaseOffset = tempTask->Mbuffbase - tempTask->Mbuffer;
-		saveSint32(MbaseOffset);
-		saveSint32(tempTask->Mbuffnext);
-
-		saveSint32(tempTask->Tstate);
-		saveSint32(tempTask->id);
-
-		tempTask = tempTask->next;
+		state = state->next;
 	}
-
-	printf("lua_Save() finished.\n");
-*/
 }
 
 } // end of namespace Grim
