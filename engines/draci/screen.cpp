@@ -30,11 +30,13 @@
 
 namespace Draci {
 
+const int kScreenWidth = 320;
+const int kScreenHeight = 200;
 const uint16 kNumColours = 256;
 
 Screen::Screen(DraciEngine *vm) : _vm(vm) {
 	_surface = new Graphics::Surface();
-	_surface->create(_vm->_screenWidth, _vm->_screenHeight, 1);
+	_surface->create(kScreenWidth, kScreenHeight, 1);
 	this->clearScreen();
 	_palette = new byte[4 * kNumColours];
 	setPaletteEmpty();
@@ -81,8 +83,8 @@ void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 void Screen::copyToScreen() const {
 	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
-	_vm->_system->copyRectToScreen(ptr, _vm->_screenWidth, 0, 0, 
-		_vm->_screenWidth, _vm->_screenHeight);
+	_vm->_system->copyRectToScreen(ptr, kScreenWidth, 0, 0, 
+		kScreenWidth, kScreenHeight);
 
 	_vm->_system->updateScreen();
 }
@@ -91,7 +93,7 @@ void Screen::copyToScreen() const {
 void Screen::clearScreen() const {
 	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
-	memset(ptr, 0, _vm->_screenWidth * _vm->_screenHeight);
+	memset(ptr, 0, kScreenWidth * kScreenHeight);
 }
 
 void Screen::drawSprite(const Sprite &s) const { 
@@ -110,7 +112,7 @@ void Screen::drawSprite(const Sprite &s) const {
 void Screen::fillScreen(uint16 colour) const {
 	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 	
-	memset(ptr, colour, _vm->_screenWidth * _vm->_screenHeight);
+	memset(ptr, colour, kScreenWidth * kScreenHeight);
 }
 
 byte *Screen::getPalette() const {

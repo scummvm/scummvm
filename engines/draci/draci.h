@@ -49,9 +49,6 @@ public:
 	Font *_font;
 	Screen *_screen;
 
-	int _screenWidth;
-	int _screenHeight;
-
 private:
 	Common::RandomSource _rnd;
 };

@@ -32,6 +32,8 @@
 
 namespace Draci {
 
+extern const int kScreenHeight;
+extern const int kScreenWidth;
 extern const uint16 kNumColours;
 
 class DraciEngine;

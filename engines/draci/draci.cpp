@@ -52,9 +52,6 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	// However this is the place to specify all default directories
 	//Common::File::addDefaultDirectory(_gameDataPath + "sound/");
 
-	_screenHeight = 200;
-	_screenWidth = 320;
- 	
 	// Here is the right place to set up the engine specific debug levels
 	Common::addDebugChannel(kDraciGeneralDebugLevel, "general", "Draci general debug level");
 	Common::addDebugChannel(kDraciBytecodeDebugLevel, "bytecode", "GPL bytecode instructions");
@@ -66,7 +63,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 int DraciEngine::init() {
 	// Initialize graphics using following:
-	initGraphics(_screenWidth, _screenHeight, false);
+	initGraphics(kScreenWidth, kScreenHeight, false);
 
 	_screen = new Screen(this);
 	_font = new Font();
@@ -140,13 +137,13 @@ int DraciEngine::go() {
 	Common::String testString = "Testing, testing, read all about it!";
 	Graphics::Surface *surf = _screen->getSurface();
 	_font->drawString(surf, testString, 
-		(320 - _font->getStringWidth(testString, 1)) / 2, 130, 1);
+		(kScreenWidth - _font->getStringWidth(testString, 1)) / 2, 130, 1);
 
 	// Draw small string
 	_font->setFont(kFontSmall);
 	testString = "I'm smaller than the font above me.";
 	_font->drawString(surf, testString, 
-		(320 - _font->getStringWidth(testString, 1)) / 2, 150, 1);
+		(kScreenWidth - _font->getStringWidth(testString, 1)) / 2, 150, 1);
 
 	// Overflow handling test
 	testString = "Checking overflooooooooooooooooooooooooow...";
@@ -168,7 +165,7 @@ int DraciEngine::go() {
 
 		// Load frame to memory
 		f = ar[t];
-		Sprite sp(f->_data, f->_length, ((320 - 50) / 2), 60, true);
+		Sprite sp(f->_data, f->_length, ((kScreenWidth - 50) / 2), 60, true);
 		_screen->drawSprite(sp);
 		_screen->copyToScreen();
 		_system->delayMillis(100);
