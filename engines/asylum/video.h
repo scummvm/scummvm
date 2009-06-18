@@ -29,7 +29,9 @@
 #include "sound/mixer.h"
 #include "graphics/surface.h"
 #include "graphics/video/smk_decoder.h"
+#include "graphics/video/video_player.h"
 
+#include "common/array.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/list.h"
@@ -38,20 +40,74 @@
 
 namespace Asylum {
 
+struct VideoSubtitle {
+	int frameStart;
+	int frameEnd;
+	int textRes;
+};
+
+class VideoText;
+
+class VideoPlayer : public Graphics::VideoPlayer {
+public:
+	VideoPlayer(Graphics::VideoDecoder* decoder);
+	virtual ~VideoPlayer();
+
+	bool playVideoWithSubtitles(Common::List<Common::Event> &stopEvents, int videoNumber);
+
+private:
+	void performPostProcessing(byte *screen);
+
+	VideoText		            *_text;
+	Common::Array<VideoSubtitle> _subtitles;
+};
+
 class Video {
 public:
 	Video(Audio::Mixer *mixer);
 	virtual ~Video();
 
-	bool playVideo(const char *filename);
 	bool playVideo(int number);
 
 private:
 	Common::List<Common::Event> _stopEvents;
 	Graphics::SmackerDecoder    *_smkDecoder;
-	Graphics::VideoPlayer       *_player;
+	VideoPlayer					*_player;
+	int							 _videoNumber;
 
 }; // end of class Video
+
+// The VideoText class has some methods from the Text class, 
+// but it differs from the text class: this class draws text
+// to a predefined screen buffer, whereas the Text class draws
+// text directly to the screen
+class VideoText {
+public:
+	VideoText();
+	~VideoText();
+
+    void loadFont(ResourcePack *resPack, uint32 resId);
+	void drawResTextCentered(byte *screenBuffer, uint32 resId);
+
+private:
+	void setTextPos(uint32 x, uint32 y);
+	void drawTextCentered(byte *screenBuffer, uint32 x, uint32 y, uint32 width, char *text);
+    uint32 getTextWidth(char *text);
+    uint32 getResTextWidth(uint32 resId);
+
+    void drawChar(byte *screenBuffer, char character);
+    void drawText(byte *screenBuffer, char *text);
+	void copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y);
+
+	GraphicResource *_fontResource;
+	ResourcePack    *_textPack;
+
+	uint32 _posX;
+    uint32 _posY;
+    uint8  _curFontFlags;
+
+}; // end of class VideoText
+
 
 } // end of namespace Asylum
 

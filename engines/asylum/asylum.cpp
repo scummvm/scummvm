@@ -85,6 +85,9 @@ Common::Error AsylumEngine::go() {
 	// Disabled for quick testing
 	//_video->playVideo(0);
 
+	// Play first chapter movie (for testing)
+	//_video->playVideo(1);
+
 	// Set up the game's main scene
     _scene = new Scene(_screen, _sound, 5);
 

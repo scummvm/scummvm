@@ -105,7 +105,7 @@ void Text::drawTextCentered(uint32 x, uint32 y, uint32 width, char *text) {
     int textWidth = getTextWidth(text);
     setTextPos(x + (width - textWidth) / 2, y);
     drawText(text);
-}  
+}
 
 void Text::drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId) {
     ResourceEntry *textRes = _textPack->getResource(resId);
