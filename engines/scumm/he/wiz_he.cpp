@@ -1152,10 +1152,8 @@ static int wizPackType2(uint8 *dst, const uint8 *src, int srcPitch, const Common
 	if (dst) {
 		src += rCapt.top * srcPitch + rCapt.left * 2;
 		while (h--) {
-			for (int i = 0; i < w; i++) {
-				uint16 col = READ_UINT16(src + w * 2);
-				WRITE_LE_UINT16(dst + w * 2, col);
-			}
+			for (int i = 0; i < w; i++)
+				WRITE_LE_UINT16(dst + i * 2, READ_UINT16(src + i * 2));
 			dst += w * 2;
 			src += srcPitch;
 		}
