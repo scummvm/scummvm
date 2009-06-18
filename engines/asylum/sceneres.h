@@ -55,8 +55,6 @@ public:
     GamePolygons* getGamePolygons() { return _gamePolygons; }
     ActionList* getActionList() { return _actionList; }
     MainActor* getMainActor() { return _mainActor; }
-
-    void updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex);
 private:
     WorldStats   *_worldStats;
     GamePolygons *_gamePolygons;
