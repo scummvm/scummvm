@@ -135,14 +135,13 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		// If all channels are in use no new sound will be played
 		if (freeChannel >= 0) {
 
-			byte *soundData = _vm->_res->load(resIndex);
-			uint32 soundSize = _vm->_res->getCurItemSize();
+			Resource *soundResource = _vm->_res->load(resIndex);
 
 			byte flags = Audio::Mixer::FLAG_UNSIGNED;
 			// Background sounds
 			if (type == kChannelTypeBackground)
 				flags |= Audio::Mixer::FLAG_LOOP;
-			Audio::AudioStream *stream = Audio::makeLinearInputStream(soundData, soundSize, 22050, flags, 0, 0);
+			Audio::AudioStream *stream = Audio::makeLinearInputStream(soundResource->data, soundResource->size, 22050, flags, 0, 0);
 
 			channels[freeChannel].type = type;
 			channels[freeChannel].resIndex = resIndex;

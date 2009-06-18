@@ -56,9 +56,9 @@ void Widget::redraw() {
 
 Widget *Widget::getHoveredWidget(int mouseX, int mouseY) {
 	if (_rect.contains(mouseX, mouseY))
-	    return this;
+		return this;
 	else
-	    return NULL;
+		return NULL;
 }
 
 void Widget::calcDimensions() {
@@ -88,13 +88,13 @@ LabelWidget::~LabelWidget() {
 }
 
 void LabelWidget::redraw() {
-    _vm->_screen->drawString(_rect.left, _rect.top, _fontColor, 14, (byte*)_caption.c_str(), -1, NULL, true);
+	_vm->_screen->drawString(_rect.left, _rect.top, _fontColor, 14, (byte*)_caption.c_str(), -1, NULL, true);
 }
 
 void LabelWidget::calcDimensions() {
-    Font font(_vm->_res->load(14));
-    _rect.setWidth(font.getTextWidth((byte*)_caption.c_str()));
-    _rect.setHeight(font.getHeight());
+	Font font(_vm->_res->load(14)->data);
+	_rect.setWidth(font.getTextWidth((byte*)_caption.c_str()));
+	_rect.setHeight(font.getHeight());
 }
 
 void LabelWidget::setCaption(Common::String caption) {
@@ -111,15 +111,15 @@ void LabelWidget::onMouseEnter() {
 }
 
 void LabelWidget::onMouseLeave() {
-    setFontColor(kFontColorMenuDefault);
+	setFontColor(kFontColorMenuDefault);
 }
 
 
 VolumeControlWidget::VolumeControlWidget(PictureEngine *vm, int x, int y, Common::String caption, uint flags) :
 	Widget(_vm, x, y), _activeWidget(NULL) {
 	
-    _label = new LabelWidget(vm, x, y, caption, flags);
-    _up = new LabelWidget(vm, x + 350, y + 4, "[", flags);
+	_label = new LabelWidget(vm, x, y, caption, flags);
+	_up = new LabelWidget(vm, x + 350, y + 4, "[", flags);
 	_down = new LabelWidget(vm, x + 350 + 24, y + 4, "]", flags);
 	_indicator = new LabelWidget(vm, x + 350 + 24 + 24 + 8, y, "||||||||||", flags);
 	
@@ -150,16 +150,16 @@ void VolumeControlWidget::calcDimensions() {
 }
 
 void VolumeControlWidget::onMouseEnter() {
-    _label->setFontColor(kFontColorMenuActive);
-    _indicator->setFontColor(kFontColorMenuActive);
+	_label->setFontColor(kFontColorMenuActive);
+	_indicator->setFontColor(kFontColorMenuActive);
 	_activeWidget = NULL;
 }
 
 void VolumeControlWidget::onMouseLeave() {
-    _label->setFontColor(kFontColorMenuDefault);
-    _up->setFontColor(kFontColorMenuDefault);
+	_label->setFontColor(kFontColorMenuDefault);
+	_up->setFontColor(kFontColorMenuDefault);
 	_down->setFontColor(kFontColorMenuDefault);
-    _indicator->setFontColor(kFontColorMenuDefault);
+	_indicator->setFontColor(kFontColorMenuDefault);
 }
 
 void VolumeControlWidget::onMouseMove(int mouseX, int mouseY) {
@@ -168,19 +168,19 @@ void VolumeControlWidget::onMouseMove(int mouseX, int mouseY) {
 
 	hoveredWidget = _up->getHoveredWidget(mouseX, mouseY);
 	if (!hoveredWidget)
-	    hoveredWidget = _down->getHoveredWidget(mouseX, mouseY);
+		hoveredWidget = _down->getHoveredWidget(mouseX, mouseY);
 
 	if (_activeWidget != hoveredWidget) {
-	    _activeWidget = hoveredWidget;
-	    if (!_activeWidget) {
-		    _up->setFontColor(kFontColorMenuDefault);
-		    _down->setFontColor(kFontColorMenuDefault);
+		_activeWidget = hoveredWidget;
+		if (!_activeWidget) {
+			_up->setFontColor(kFontColorMenuDefault);
+			_down->setFontColor(kFontColorMenuDefault);
 		} else if (_activeWidget == _up) {
-		    _up->setFontColor(kFontColorMenuActive);
-		    _down->setFontColor(kFontColorMenuDefault);
+			_up->setFontColor(kFontColorMenuActive);
+			_down->setFontColor(kFontColorMenuDefault);
 		} else if (_activeWidget == _down) {
-		    _up->setFontColor(kFontColorMenuDefault);
-		    _down->setFontColor(kFontColorMenuActive);
+			_up->setFontColor(kFontColorMenuDefault);
+			_down->setFontColor(kFontColorMenuActive);
 		}
 	}
 
@@ -199,24 +199,24 @@ void MenuPage::addWidget(Widget *widget) {
 
 void MenuPage::redraw() {
 	for (WidgetArray::iterator iter = _widgets.begin(); iter != _widgets.end(); iter++) {
-	    (*iter)->redraw();
+		(*iter)->redraw();
 	}
 }
 
 Widget *MenuPage::getHoveredWidget(int mouseX, int mouseY) {
-    Widget *hoveredWidget = NULL;
+	Widget *hoveredWidget = NULL;
 	for (WidgetArray::iterator iter = _widgets.begin(); iter != _widgets.end() && !hoveredWidget; iter++) {
-	    hoveredWidget = (*iter)->getHoveredWidget(mouseX, mouseY);
+		hoveredWidget = (*iter)->getHoveredWidget(mouseX, mouseY);
 	}
 	return hoveredWidget;
 }
 
 MenuSystem::MenuSystem(PictureEngine *vm) : _vm(vm), _activeWidget(NULL), _oldMouseX(-1), _oldMouseY(-1) {
-    _page = new MenuPage("Welcome");
-    _page->addWidget(new LabelWidget(_vm, 10, 10, "Load game", 0));
-    _page->addWidget(new LabelWidget(_vm, 10, 35, "Save game", 0));
-    _page->addWidget(new VolumeControlWidget(_vm, 10, 60, "Master volume", 0));
-    _page->addWidget(new VolumeControlWidget(_vm, 10, 90, "Some other volume", 0));
+	_page = new MenuPage("Welcome");
+	_page->addWidget(new LabelWidget(_vm, 10, 10, "Load game", 0));
+	_page->addWidget(new LabelWidget(_vm, 10, 35, "Save game", 0));
+	_page->addWidget(new VolumeControlWidget(_vm, 10, 60, "Master volume", 0));
+	_page->addWidget(new VolumeControlWidget(_vm, 10, 90, "Some other volume", 0));
 }
 
 MenuSystem::~MenuSystem() {
@@ -229,20 +229,20 @@ void MenuSystem::update() {
 
 	if (_vm->_mouseX != _oldMouseX || _vm->_mouseY != _oldMouseY) {
 
-	    _oldMouseX = _vm->_mouseX;
-	    _oldMouseY = _vm->_mouseY;
+		_oldMouseX = _vm->_mouseX;
+		_oldMouseY = _vm->_mouseY;
 
 		Widget *hoveredWidget = _page->getHoveredWidget(_vm->_mouseX, _vm->_mouseY);
 		if (_activeWidget != hoveredWidget) {
-		    if (_activeWidget)
-		        _activeWidget->onMouseLeave();
+			if (_activeWidget)
+				_activeWidget->onMouseLeave();
 			if (hoveredWidget)
-		    	hoveredWidget->onMouseEnter();
-	        _activeWidget = hoveredWidget;
+				hoveredWidget->onMouseEnter();
+			_activeWidget = hoveredWidget;
 		}
 
 		if (_activeWidget) {
-		    _activeWidget->onMouseMove(_vm->_mouseX, _vm->_mouseY);
+			_activeWidget->onMouseMove(_vm->_mouseX, _vm->_mouseY);
 		}
 		
 	}

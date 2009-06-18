@@ -218,7 +218,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	sprite.resIndex = drawRequest.resIndex;
 	sprite.frameNum = frameNum;
 	
-	spriteData = _vm->_res->load(drawRequest.resIndex);
+	spriteData = _vm->_res->load(drawRequest.resIndex)->data;
 	
 	if (drawRequest.flags & 0x1000) {
 		sprite.flags |= 4;
@@ -407,7 +407,7 @@ void Screen::drawSprite(const SpriteDrawItem &sprite) {
 	debug(0, "Screen::drawSprite() width = %d; height = %d; origWidth = %d; origHeight = %d",
 		sprite.width, sprite.height, sprite.origWidth, sprite.origHeight);
 
-	byte *source = _vm->_res->load(sprite.resIndex) + sprite.offset;
+	byte *source = _vm->_res->load(sprite.resIndex)->data + sprite.offset;
 	byte *dest = _frontScreen + sprite.x + sprite.y * 640;
 
 	SpriteReader spriteReader(source, sprite);

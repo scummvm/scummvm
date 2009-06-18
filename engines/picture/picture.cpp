@@ -188,7 +188,8 @@ Common::Error PictureEngine::run() {
 void PictureEngine::loadScene(uint resIndex) {
 	// TODO
 
-	byte *scene = _res->load(resIndex);
+	Resource *sceneResource = _res->load(resIndex);
+	byte *scene = sceneResource->data;
 
 	uint32 imageSize = READ_LE_UINT32(scene);
 	_sceneResIndex = resIndex;

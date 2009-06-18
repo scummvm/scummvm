@@ -46,11 +46,16 @@ ArchiveReader::ArchiveReader() {
 }
 
 ArchiveReader::~ArchiveReader() {
+	delete[] _offsets;
 }
 
 void ArchiveReader::openArchive(const char *filename) {
 	open(filename);
-	for (uint i = 0; i < 10000; i++)
+	uint32 firstOffs = readUint32LE();
+	uint count = firstOffs / 4;
+	_offsets = new uint32[count];
+	_offsets[0] = firstOffs;
+	for (uint i = 1; i < count; i++)
 		_offsets[i] = readUint32LE();
 }
 
@@ -93,70 +98,30 @@ void ArchiveReader::dump(uint resIndex, const char *prefix) {
 /* ResourceCache */
 
 ResourceCache::ResourceCache(PictureEngine *vm) : _vm(vm) {
-
-	_base = new byte[kMaxCacheSize];
-	_bytesUsed = 0;
-
-	memset(_cache, 0, sizeof(_cache));
-	_cacheCount = 0;
-
-	_curItemOffset = 0;
-	_curItemSize = 0;
-
 }
 
 ResourceCache::~ResourceCache() {
-	delete[] _base;
+	// TODO: Delete resources
 }
 
-byte *ResourceCache::load(uint resIndex) {
-	byte *data = NULL;
-	if (existsItem(resIndex)) {
+Resource *ResourceCache::load(uint resIndex) {
+	ResourceMap::iterator item = _cache.find(resIndex);
+	if (item != _cache.end()) {
 		debug(1, "ResourceCache::load(%d) From cache", resIndex);
-		data = _base + _curItemOffset;
+		return (*item)._value;
 	} else {
 		debug(1, "ResourceCache::load(%d) From disk", resIndex);
-		uint32 size = _vm->_arc->openResource(resIndex);
-		data = addItem(resIndex, size);
-		_vm->_arc->read(data, size);
+
+		Resource *resItem = new Resource();
+		resItem->size = _vm->_arc->openResource(resIndex);
+		resItem->data = new byte[resItem->size];
+		_vm->_arc->read(resItem->data, resItem->size);
 		_vm->_arc->closeResource();
-	}
-	return data;
-}
-
-bool ResourceCache::existsItem(uint resIndex) {
-	for (uint i = 0; i < _cacheCount; i++) {
-		if (_cache[i].resIndex == resIndex) {
-			_curItemOffset = _cache[i].offset;
-			_curItemSize = _cache[i].size;
-			return true;
-		}
-	}
-	return false;
-}
-
-byte *ResourceCache::addItem(uint resIndex, uint32 size) {
-
-	checkCapacity(size);
-
-	_curItemOffset = _bytesUsed;
-	_curItemSize = size;
-
-	_cache[_cacheCount].resIndex = resIndex;
-	_cache[_cacheCount].offset = _curItemOffset;
-	_cache[_cacheCount].size = _curItemSize;
-	_cacheCount++;
-
-	_bytesUsed += size;
-
-	return _base + _curItemOffset;
-
-}
-
-void ResourceCache::checkCapacity(uint32 size) {
-	if (_cacheCount > kMaxCacheItems || _bytesUsed + size > kMaxCacheSize) {
-		_cacheCount = 0;
-		_bytesUsed = 0;
+		
+		_cache[resIndex] = resItem;
+		
+		return resItem;
+		
 	}
 }
 

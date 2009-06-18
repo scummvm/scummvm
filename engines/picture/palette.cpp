@@ -104,8 +104,8 @@ void Palette::setDeltaPalette(byte *palette, byte mask, char deltaValue, int16 c
 }
 
 void Palette::loadAddPalette(uint resIndex, byte startIndex) {
-	byte *data = _vm->_res->load(resIndex);
-	memcpy(&_mainPalette[startIndex * 3], data, _vm->_res->getCurItemSize());
+	Resource *paletteResource = _vm->_res->load(resIndex);
+	memcpy(&_mainPalette[startIndex * 3], paletteResource->data, paletteResource->size);
 }
 
 void Palette::loadAddPaletteFrom(byte *source, byte startIndex, byte count) {
@@ -115,10 +115,10 @@ void Palette::loadAddPaletteFrom(byte *source, byte startIndex, byte count) {
 void Palette::addFragment(uint resIndex, int16 id) {
 	debug(0, "Palette::addFragment(%d, %d)", resIndex, id);
 
-	byte *fragmentData = _vm->_res->load(resIndex);
-	byte count = _vm->_res->getCurItemSize() / 3;
+	Resource *fragmentResource = _vm->_res->load(resIndex);
+	byte count = fragmentResource->size / 3;
 	
-	memcpy(&_mainPalette[_fragmentIndex * 3], fragmentData, count * 3);
+	memcpy(&_mainPalette[_fragmentIndex * 3], fragmentResource->data, count * 3);
 	
 	PaletteFragment fragment;
 	fragment.id = id;

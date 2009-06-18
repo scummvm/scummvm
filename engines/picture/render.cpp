@@ -82,7 +82,7 @@ void RenderQueue::addSprite(SpriteDrawItem &sprite) {
 
 void RenderQueue::addText(int16 x, int16 y, byte color, uint fontResIndex, byte *text, int len) {
 
-	Font font(_vm->_res->load(fontResIndex));
+	Font font(_vm->_res->load(fontResIndex)->data);
 
 	RenderQueueItem item;
 	item.type = kText;

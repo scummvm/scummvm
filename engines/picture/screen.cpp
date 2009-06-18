@@ -111,7 +111,7 @@ void Screen::unpackRle(byte *source, byte *dest, uint16 width, uint16 height) {
 
 void Screen::loadMouseCursor(uint resIndex) {
 	byte mouseCursor[16 * 16], *mouseCursorP = mouseCursor;
-	byte *cursorData = _vm->_res->load(resIndex);
+	byte *cursorData = _vm->_res->load(resIndex)->data;
 	for (int i = 0; i < 32; i++) {
 		byte pixel;
 		byte mask1 = *cursorData++;
@@ -133,7 +133,7 @@ void Screen::loadMouseCursor(uint resIndex) {
 
 void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 
-	byte *imageData = _vm->_res->load(resIndex);
+	byte *imageData = _vm->_res->load(resIndex)->data;
 	int16 headerSize = READ_LE_UINT16(imageData);
 	int16 width = imageData[2];
 	int16 height = imageData[3];
@@ -278,7 +278,7 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	debug(0, "Screen::updateVerbLine() _verbLineNum = %d; _verbLineX = %d; _verbLineY = %d; _verbLineWidth = %d; _verbLineCount = %d",
 		_verbLineNum, _verbLineX, _verbLineY, _verbLineWidth, _verbLineCount);
 
-	Font font(_vm->_res->load(_fontResIndexArray[0]));
+	Font font(_vm->_res->load(_fontResIndexArray[0])->data);
 
 	_verbLineItems[_verbLineNum].slotIndex = slotIndex;
 	_verbLineItems[_verbLineNum].slotOffset = slotOffset;
@@ -394,7 +394,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	item->duration = 0;
 	item->lineCount = 0;
 
-	Font font(_vm->_res->load(_fontResIndexArray[item->fontNum]));
+	Font font(_vm->_res->load(_fontResIndexArray[item->fontNum])->data);
 	int16 wordLength, wordWidth;
 
 	while (*textData < 0xF0) {
@@ -560,7 +560,7 @@ void Screen::drawGuiTextMulti(byte *textData) {
 
 int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState) {
 
-	Font font(_vm->_res->load(fontResIndex));
+	Font font(_vm->_res->load(fontResIndex)->data);
 	int16 len = 0;
 	
 	while (*wrapState.sourceString >= 0x20 && *wrapState.sourceString < 0xF0) {
@@ -596,7 +596,7 @@ int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, byte *
 
 	debug(0, "Screen::drawString(%d, %d, %d, %d)", x, y, color, fontResIndex);
 
-	Font font(_vm->_res->load(fontResIndex));
+	Font font(_vm->_res->load(fontResIndex)->data);
 
 	if (len == -1)
 		len = strlen((char*)text);

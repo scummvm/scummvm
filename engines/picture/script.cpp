@@ -152,10 +152,10 @@ void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
 	delete[] _slots[slotIndex].data;
 
  	_slots[slotIndex].resIndex = resIndex;
-	byte *scriptData = _vm->_res->load(resIndex);
-	_slots[slotIndex].size = _vm->_res->getCurItemSize();
+	Resource *scriptResource = _vm->_res->load(resIndex);
+	_slots[slotIndex].size = scriptResource->size;
  	_slots[slotIndex].data = new byte[_slots[slotIndex].size];
- 	memcpy(_slots[slotIndex].data, scriptData, _slots[slotIndex].size);
+ 	memcpy(_slots[slotIndex].data, scriptResource->data, _slots[slotIndex].size);
 
 }
 

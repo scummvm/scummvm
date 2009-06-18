@@ -53,35 +53,35 @@ const byte kFontColorMenuActive  = 255;
 
 class Widget {
 public:
-    Widget(PictureEngine *vm, int x, int y);
-    virtual ~Widget();
-    virtual void redraw();
-    virtual Widget *getHoveredWidget(int mouseX, int mouseY);
-    virtual void calcDimensions();
-    void setRect(Common::Rect rect);
-    //virtual void setHilighted(bool active);
-    virtual void onMouseEnter();
-    virtual void onMouseLeave();
-    virtual void onMouseMove(int mouseX, int mouseY);
+	Widget(PictureEngine *vm, int x, int y);
+	virtual ~Widget();
+	virtual void redraw();
+	virtual Widget *getHoveredWidget(int mouseX, int mouseY);
+	virtual void calcDimensions();
+	void setRect(Common::Rect rect);
+	//virtual void setHilighted(bool active);
+	virtual void onMouseEnter();
+	virtual void onMouseLeave();
+	virtual void onMouseMove(int mouseX, int mouseY);
 protected:
 	PictureEngine *_vm;
 	Common::Rect _rect;
 	//bool _hilighted;
 };
 
-const int kLabelCentered    = 1 << 1;
+const int kLabelCentered	= 1 << 1;
 const int kLabelHideOnMovie = 1 << 2;
 
 class LabelWidget : public Widget {
 public:
-    LabelWidget(PictureEngine *vm, int x, int y, Common::String caption, uint flags);
-    ~LabelWidget();
-    void redraw();
+	LabelWidget(PictureEngine *vm, int x, int y, Common::String caption, uint flags);
+	~LabelWidget();
+	void redraw();
 	void calcDimensions();
-    void setCaption(Common::String caption);
-    void setFontColor(byte fontColor);
-    void onMouseEnter();
-    void onMouseLeave();
+	void setCaption(Common::String caption);
+	void setFontColor(byte fontColor);
+	void onMouseEnter();
+	void onMouseLeave();
 protected:
 	Common::String _caption;
 	uint _flags;
@@ -90,15 +90,15 @@ protected:
 
 class VolumeControlWidget : public Widget {
 public:
-    VolumeControlWidget(PictureEngine *vm, int x, int y, Common::String caption, uint flags);
-    ~VolumeControlWidget();
-    void redraw();
-    Widget *getHoveredWidget(int mouseX, int mouseY);
+	VolumeControlWidget(PictureEngine *vm, int x, int y, Common::String caption, uint flags);
+	~VolumeControlWidget();
+	void redraw();
+	Widget *getHoveredWidget(int mouseX, int mouseY);
 	void calcDimensions();
 	//void setHilighted(bool active);
-    void onMouseEnter();
-    void onMouseLeave();
-    void onMouseMove(int mouseX, int mouseY);
+	void onMouseEnter();
+	void onMouseLeave();
+	void onMouseMove(int mouseX, int mouseY);
 protected:
 	uint _flags;
 	LabelWidget *_label, *_up, *_down, *_indicator;
@@ -107,33 +107,33 @@ protected:
 
 class MenuPage {
 public:
-    MenuPage(Common::String caption);
-    ~MenuPage();
-    void addWidget(Widget *widget);
-    void redraw();
-    Widget *getHoveredWidget(int mouseX, int mouseY);
+	MenuPage(Common::String caption);
+	~MenuPage();
+	void addWidget(Widget *widget);
+	void redraw();
+	Widget *getHoveredWidget(int mouseX, int mouseY);
 protected:
 	typedef Common::Array<Widget*> WidgetArray;
-    Common::String _caption;
-    WidgetArray _widgets;
+	Common::String _caption;
+	WidgetArray _widgets;
 };
 
 class MenuSystem {
 
 public:
-    MenuSystem(PictureEngine *vm);
-    ~MenuSystem();
-    
+	MenuSystem(PictureEngine *vm);
+	~MenuSystem();
+
 	void update();
 	
 protected:
-    PictureEngine *_vm;
-    
-    //LabelWidget *label1, *label2;
-    MenuPage *_page;
-    
-    Widget *_activeWidget;
-    int16 _oldMouseX, _oldMouseY;
+	PictureEngine *_vm;
+
+	//LabelWidget *label1, *label2;
+	MenuPage *_page;
+
+	Widget *_activeWidget;
+	int16 _oldMouseX, _oldMouseY;
 
 };
 
