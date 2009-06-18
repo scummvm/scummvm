@@ -63,7 +63,6 @@ private:
 	ResourcePack    *_musPack;
     GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
-	GraphicResource *_animResource; // TODO: this should be an array
 	GraphicFrame    *_background;
 
     uint8 _sceneIdx;
@@ -73,7 +72,6 @@ private:
 	int32   _startY;
     bool  _leftClick;
 	uint32   _curMouseCursor;
-	uint32   _animCurFrame; // TODO: this should be an array
 	int32   _cursorStep;
 
 	void update();

@@ -101,7 +101,7 @@ enum ActorResources {
 	kOperate2NW = 47,
 	kOperate2W  = 48,
 	kOperate2SW = 49,
-	kOperate2S  = 50
+	kOperate2S  = 50,
 
 	// These are 0
 	/*
@@ -115,6 +115,16 @@ enum ActorResources {
 	kUnknown13 = 58,
 	kUnknown14 = 59
 	*/
+
+	// Horizontally flipped animations (100 + regular anim Id)
+	kWalkNE = 107,
+	kWalkE  = 108,
+	kWalkSE = 109,
+
+	kFaceNE = 112,
+	kFaceE  = 113,
+	kFaceSE = 114
+	// TODO: finish these
 };
 
 class MainActor {

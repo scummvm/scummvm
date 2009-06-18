@@ -57,7 +57,25 @@ void MainActor::setAction(int action) {
 	_currentAction = action;
 
 	delete _graphic;
-	_graphic = new GraphicResource(_resPack, _resources[action]);
+	int act = (action < 100) ? action : action - 100;
+	_graphic = new GraphicResource(_resPack, _resources[act]);
+
+	// Flip horizontally if necessary
+	if (_currentAction > 100) {
+		for (int i = 0; i < _graphic->getFrameCount(); i++) {
+			GraphicFrame *frame = _graphic->getFrame(i);
+			byte *buffer = (byte *)frame->surface.pixels;
+
+			for (int y = 0; y < frame->surface.h; y++) {
+				int w = frame->surface.w / 2;
+				for (int x = 0; x < w; x++) {
+					SWAP(buffer[y * frame->surface.pitch + x], 
+						 buffer[y * frame->surface.pitch + frame->surface.w - 1 - x]);
+				}
+			}
+		}
+	}
+
 	_currentFrame = 0;
 }
 
@@ -73,10 +91,9 @@ GraphicFrame *MainActor::getFrame() {
 	}
 
 	// HACK: frame 1 of the "walk west" animation is misplaced
-	if (_currentAction == kWalkW && _currentFrame == 1)
+	if ((_currentAction == kWalkW || _currentAction == kWalkE) && _currentFrame == 1)
 		_currentFrame++;
 
-	printf("%d\n", _currentFrame);
 	return frame;
 }
 
@@ -108,7 +125,7 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 
 	// Walking right...
 	if (x > _actorX) {
-		setAction(kWalkW);	// TODO
+		setAction(kWalkE);
 		_actorX++;
 		drawActorAt(screen, _actorX, _actorY);
 		return;
@@ -124,7 +141,7 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 
 	// Walking down...
 	if (y > _actorY) {
-		setAction(kWalkN);	// TODO
+		setAction(kWalkS);
 		_actorY++;
 		drawActorAt(screen, _actorX, _actorY);
 		return;
