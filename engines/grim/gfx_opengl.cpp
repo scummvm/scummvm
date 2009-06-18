@@ -240,16 +240,17 @@ void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 	glPushMatrix();
 	if (_currentShadowArray) {
 		// TODO find out why shadowMask at device in woods is null
-		if (_currentShadowArray->shadowMask) {
-			SectorListType::iterator i = _currentShadowArray->planeList.begin();
-			Sector *shadowSector = *i;
-			glEnable(GL_POLYGON_OFFSET_FILL);
-			glDisable(GL_LIGHTING);
-			glDisable(GL_TEXTURE_2D);
-			//glColor3f(0.0f, 1.0f, 0.0f);
-			glColor3f(_shadowColorR / 255.0, _shadowColorG / 255.0, _shadowColorB / 255.0);
-			glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
+		if (!_currentShadowArray->shadowMask) {
+			_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
 		}
+		SectorListType::iterator i = _currentShadowArray->planeList.begin();
+		Sector *shadowSector = *i;
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
+		//glColor3f(0.0f, 1.0f, 0.0f);
+		glColor3f(_shadowColorR / 255.0, _shadowColorG / 255.0, _shadowColorB / 255.0);
+		glShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 	glTranslatef(pos.x(), pos.y(), pos.z());
 	glRotatef(yaw, 0, 0, 1);

@@ -353,16 +353,15 @@ void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 	if (_currentShadowArray) {
 		// TODO find out why shadowMask at device in woods is null
 		if (!_currentShadowArray->shadowMask) {
-			tglSetShadowMaskBuf(NULL);
-		} else {
-			assert(_currentShadowArray->shadowMask);
-			//tglSetShadowColor(255, 255, 255);
-			tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
-			tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
-			SectorListType::iterator i = _currentShadowArray->planeList.begin();
-			Sector *shadowSector = *i;
-			tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
+			_currentShadowArray->shadowMask = new byte[_screenWidth * _screenHeight];
 		}
+		assert(_currentShadowArray->shadowMask);
+		//tglSetShadowColor(255, 255, 255);
+		tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
+		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
+		SectorListType::iterator i = _currentShadowArray->planeList.begin();
+		Sector *shadowSector = *i;
+		tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
