@@ -44,21 +44,16 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
         _musPack = new ResourcePack(musPackFileName);
 
 		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.backgroundImage);
-
-		// Statue animation, used for testing
-		_animResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_actorsDef[0].graphicResId);
     }
 
 	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.curMagnifyingGlass);
 
 	_background = 0;
-	_animCurFrame = 0;
 	_startX = _startY = 0;
 	_leftClick = false;
 }
 
 Scene::~Scene() {
-	delete _animResource;
 	delete _cursorResource;
 	delete _bgResource;
     delete _musPack;
@@ -120,8 +115,6 @@ void Scene::update() {
 
 	updateCursor();
 
-	updateActor(_screen, _resPack, 7);
-
 	// Proof of concept for screen scrolling
 
 	// TESTING
@@ -154,13 +147,7 @@ void Scene::update() {
 	if (scrollScreen)
 		_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
 
-	// Proof of concept for animation showing
-	GraphicFrame *animFrame = _animResource->getFrame(_animCurFrame);
-	_animCurFrame++;
-	if (_animCurFrame >= _animResource->getFrameCount())
-		_animCurFrame = 0;
-
-	copyToBackBufferClipped(animFrame, 655, 0);		// hardcoded location
+	updateActor(_screen, _resPack, 7);	// the "crazy prisoner banging head" anim
 
 	// TODO
 }
@@ -187,8 +174,9 @@ void Scene::copyToBackBufferClipped(GraphicFrame *frame, int x, int y) {
 		// Translate anim rectangle
 		animRect.translate(-_startX, -_startY);
 
+		int startX = animRect.right == 640 ? 0 : frame->surface.w - animRect.width();
 		_screen->copyToBackBuffer(((byte*)frame->surface.pixels) +
-								  (frame->surface.h - animRect.height()) * frame->surface.pitch,
+								  (frame->surface.h - animRect.height()) * frame->surface.pitch + startX,
 								  frame->surface.pitch,
 								  animRect.left,
 								  animRect.top,
@@ -202,7 +190,7 @@ void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
 	GraphicResource *gra = new GraphicResource(res, actor.graphicResId);
 	GraphicFrame *fra = gra->getFrame(actor.tickCount);
 
-	copyToSceneBackground(fra, actor.x, actor.y);
+	copyToBackBufferClipped(fra, actor.x, actor.y);
 
 	if (actor.tickCount < gra->getFrameCount() - 1) {
 		actor.tickCount++;
