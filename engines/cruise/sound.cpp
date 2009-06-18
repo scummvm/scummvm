@@ -157,17 +157,6 @@ const int AdlibSoundDriver::_voiceOperatorsTable[] = {
 
 const int AdlibSoundDriver::_voiceOperatorsTableCount = ARRAYSIZE(_voiceOperatorsTable);
 
-// Future Wars Adlib driver
-class AdlibSoundDriverINS : public AdlibSoundDriver {
-public:
-	AdlibSoundDriverINS(Audio::Mixer *mixer) : AdlibSoundDriver(mixer) {}
-	virtual const char *getInstrumentExtension() const { return ".INS"; }
-	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi);
-	virtual void setChannelFrequency(int channel, int frequency);
-	virtual void playSample(const byte *data, int size, int channel, int volume);
-};
-
-// Operation Stealth Adlib driver
 class AdlibSoundDriverADL : public AdlibSoundDriver {
 public:
 	AdlibSoundDriverADL(Audio::Mixer *mixer) : AdlibSoundDriver(mixer) {}
@@ -457,67 +446,6 @@ void AdlibSoundDriver::loadRegisterInstrument(const byte *data, AdlibRegisterSou
 	reg->keyScaling = READ_LE_UINT16(data);
 	reg->outputLevel = READ_LE_UINT16(data + 16);
 	reg->freqMod = READ_LE_UINT16(data + 24);
-}
-
-void AdlibSoundDriverINS::loadInstrument(const byte *data, AdlibSoundInstrument *asi) {
-	asi->mode = *data++;
-	asi->channel = *data++;
-	loadRegisterInstrument(data, &asi->regMod); data += 26;
-	loadRegisterInstrument(data, &asi->regCar); data += 26;
-	asi->waveSelectMod = data[0] & 3; data += 2;
-	asi->waveSelectCar = data[0] & 3; data += 2;
-	asi->amDepth = data[0]; data += 2;
-}
-
-void AdlibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
-	assert(channel < 4);
-	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
-	if (ins->mode != 0 && ins->channel == 6) {
-		channel = 6;
-	}
-	if (ins->mode == 0 || ins->channel == 6) {
-		int freq, note, oct;
-		findNote(frequency, &note, &oct);
-		if (channel == 6) {
-			note %= 12;
-		}
-		freq = _freqTable[note % 12];
-		OPLWriteReg(_opl, 0xA0 | channel, freq);
-		freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
-		if (ins->mode == 0) {
-			freq |= 0x20;
-		}
-		OPLWriteReg(_opl, 0xB0 | channel, freq);
-	}
-	if (ins->mode != 0) {
-		_vibrato |= 1 << (10 - ins->channel);
-		OPLWriteReg(_opl, 0xBD, _vibrato);
-	}
-}
-
-void AdlibSoundDriverINS::playSample(const byte *data, int size, int channel, int volume) {
-	assert(channel < 4);
-	_channelsVolumeTable[channel] = 127;
-	resetChannel(channel);
-	setupInstrument(data + 257, channel);
-	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
-	if (ins->mode != 0 && ins->channel == 6) {
-		channel = 6;
-	}
-	if (ins->mode == 0 || channel == 6) {
-		uint16 note = 12;
-		int freq = _freqTable[note % 12];
-		OPLWriteReg(_opl, 0xA0 | channel, freq);
-		freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
-		if (ins->mode == 0) {
-			freq |= 0x20;
-		}
-		OPLWriteReg(_opl, 0xB0 | channel, freq);
-	}
-	if (ins->mode != 0) {
-		_vibrato |= 1 << (10 - ins->channel);
-		OPLWriteReg(_opl, 0xBD, _vibrato);
-	}
 }
 
 void AdlibSoundDriverADL::loadInstrument(const byte *data, AdlibSoundInstrument *asi) {
