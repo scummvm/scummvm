@@ -79,7 +79,7 @@ int32 Parse::encodePtr(byte *ptr, int type) {
 		offset = ptr - ((byte *) _vm->_inter->_variables->getAddressOff8(0));
 		break;
 	case kResStr:
-		offset = ptr - ((byte *) _vm->_parse->_resultStr);
+		offset = ptr - ((byte *) _resultStr);
 		break;
 	default:
 		error("Parse::encodePtr(): Unknown pointer type");
@@ -99,7 +99,7 @@ byte *Parse::decodePtr(int32 n) {
 		ptr = (byte *) _vm->_inter->_variables->getAddressOff8(0);
 		break;
 	case kResStr:
-		ptr = (byte *) _vm->_parse->_resultStr;
+		ptr = (byte *) _resultStr;
 		break;
 	default:
 		error("Parse::decodePtr(): Unknown pointer type");
@@ -495,11 +495,11 @@ int Parse::cmpHelper(const StackFrame &stackFrame) {
 	if (type == OP_LOAD_IMM_INT16) {
 		cmpTemp = (int)stackFrame.values[-3] - (int)stackFrame.values[-1];
 	} else if (type == OP_LOAD_IMM_STR) {
-		if ((char *)decodePtr(stackFrame.values[-3]) != _vm->_parse->_resultStr) {
-			strcpy(_vm->_parse->_resultStr, (char *)decodePtr(stackFrame.values[-3]));
-			stackFrame.values[-3] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
+		if ((char *)decodePtr(stackFrame.values[-3]) != _resultStr) {
+			strcpy(_resultStr, (char *)decodePtr(stackFrame.values[-3]));
+			stackFrame.values[-3] = encodePtr((byte *) _resultStr, kResStr);
 		}
-		cmpTemp = strcmp(_vm->_parse->_resultStr, (char *)decodePtr(stackFrame.values[-1]));
+		cmpTemp = strcmp(_resultStr, (char *)decodePtr(stackFrame.values[-1]));
 	}
 
 	return cmpTemp;
@@ -653,7 +653,7 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 int16 Parse::parseValExpr(byte stopToken) {
 	parseExpr(stopToken, 0);
 
-	return _vm->_parse->_resultInt;
+	return _resultInt;
 }
 
 // Load a value according to the operation
@@ -772,29 +772,29 @@ void Parse::loadValue(byte operation, uint32 varBase, const StackFrame &stackFra
 			do {
 				prevPrevVal = prevVal;
 				prevVal = curVal;
-				curVal = (curVal + _vm->_parse->_resultInt / curVal) / 2;
+				curVal = (curVal + _resultInt / curVal) / 2;
 			} while ((curVal != prevVal) && (curVal != prevPrevVal));
-			_vm->_parse->_resultInt = curVal;
+			_resultInt = curVal;
 			break;
 
 		case FUNC_SQR:
-			_vm->_parse->_resultInt =
-				_vm->_parse->_resultInt * _vm->_parse->_resultInt;
+			_resultInt =
+				_resultInt * _resultInt;
 			break;
 
 		case FUNC_ABS:
-			if (_vm->_parse->_resultInt < 0)
-				_vm->_parse->_resultInt = -_vm->_parse->_resultInt;
+			if (_resultInt < 0)
+				_resultInt = -_resultInt;
 			break;
 
 		case FUNC_RAND:
-			_vm->_parse->_resultInt =
-				_vm->_util->getRandom(_vm->_parse->_resultInt);
+			_resultInt =
+				_vm->_util->getRandom(_resultInt);
 			break;
 		}
 
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = _vm->_parse->_resultInt;
+		*stackFrame.values = _resultInt;
 		break;
 	}
 }
@@ -803,11 +803,11 @@ void Parse::simpleArithmetic1(StackFrame &stackFrame) {
 	switch (stackFrame.opers[-1]) {
 	case OP_ADD:
 		if (stackFrame.opers[-2] == OP_LOAD_IMM_STR) {
-			if ((char *) decodePtr(stackFrame.values[-2]) != _vm->_parse->_resultStr) {
-				strcpy(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[-2]));
-				stackFrame.values[-2] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
+			if ((char *) decodePtr(stackFrame.values[-2]) != _resultStr) {
+				strcpy(_resultStr, (char *) decodePtr(stackFrame.values[-2]));
+				stackFrame.values[-2] = encodePtr((byte *) _resultStr, kResStr);
 			}
-			strcat(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[0]));
+			strcat(_resultStr, (char *) decodePtr(stackFrame.values[0]));
 			stackFrame.pop(2);
 		}
 		break;
@@ -879,12 +879,12 @@ bool Parse::complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 brackS
 		if (stack.opers[brackStart] == OP_LOAD_IMM_INT16) {
 			stack.values[brackStart] += stackFrame.values[-1];
 		} else if (stack.opers[brackStart] == OP_LOAD_IMM_STR) {
-			if ((char *) decodePtr(stack.values[brackStart]) != _vm->_parse->_resultStr) {
-				strcpy(_vm->_parse->_resultStr, (char *) decodePtr(stack.values[brackStart]));
+			if ((char *) decodePtr(stack.values[brackStart]) != _resultStr) {
+				strcpy(_resultStr, (char *) decodePtr(stack.values[brackStart]));
 				stack.values[brackStart] =
-					encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
+					encodePtr((byte *) _resultStr, kResStr);
 			}
-			strcat(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[-1]));
+			strcat(_resultStr, (char *) decodePtr(stackFrame.values[-1]));
 		}
 		stackFrame.pop(2);
 		break;
@@ -984,12 +984,12 @@ void Parse::getResult(byte operation, int32 value, byte *type) {
 		break;
 
 	case OP_LOAD_IMM_INT16:
-		_vm->_parse->_resultInt = value;
+		_resultInt = value;
 		break;
 
 	case OP_LOAD_IMM_STR:
-		if ((char *) decodePtr(value) != _vm->_parse->_resultStr)
-			strcpy(_vm->_parse->_resultStr, (char *) decodePtr(value));
+		if ((char *) decodePtr(value) != _resultStr)
+			strcpy(_resultStr, (char *) decodePtr(value));
 		break;
 
 	case OP_LOAD_VAR_INT32:
@@ -997,7 +997,7 @@ void Parse::getResult(byte operation, int32 value, byte *type) {
 		break;
 
 	default:
-		_vm->_parse->_resultInt = 0;
+		_resultInt = 0;
 		if (type != 0)
 			*type = OP_LOAD_IMM_INT16;
 		break;
@@ -1119,11 +1119,11 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 					if (stackFrame.opers[-3] == OP_LOAD_IMM_INT16) {
 						stackFrame.values[-3] += stackFrame.values[-1];
 					} else if (stackFrame.opers[-3] == OP_LOAD_IMM_STR) {
-						if ((char *) decodePtr(stackFrame.values[-3]) != _vm->_parse->_resultStr) {
-							strcpy(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[-3]));
-							stackFrame.values[-3] = encodePtr((byte *) _vm->_parse->_resultStr, kResStr);
+						if ((char *) decodePtr(stackFrame.values[-3]) != _resultStr) {
+							strcpy(_resultStr, (char *) decodePtr(stackFrame.values[-3]));
+							stackFrame.values[-3] = encodePtr((byte *) _resultStr, kResStr);
 						}
-						strcat(_vm->_parse->_resultStr, (char *) decodePtr(stackFrame.values[-1]));
+						strcat(_resultStr, (char *) decodePtr(stackFrame.values[-1]));
 					}
 					stackFrame.pop(2);
 
