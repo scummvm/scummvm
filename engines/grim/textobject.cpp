@@ -132,8 +132,8 @@ void TextObject::createBitmap() {
 				|| (_justify == LJUSTIFY && (_x + lineWidth > 640))
 				|| (_justify == RJUSTIFY && (_x - lineWidth < 0))) {
 			lineWidth = 0;
-			for (; msg[i] != ' '; i--)
-				message.deleteLastChar();
+//			for (; msg[i] != ' ' || i > 0; i--)
+//				message.deleteLastChar();
 			message += '\n';
 			_numberLines++;
 			continue; // don't add the space back
