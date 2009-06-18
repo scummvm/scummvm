@@ -1797,32 +1797,6 @@ void LoLEngine::delay(uint32 millis, bool doUpdate, bool) {
 	}
 }
 
-uint8 LoLEngine::getRandomNumberSpecial() {
-	uint8 a = _rndSpecial & 0xff;
-	uint8 b = (_rndSpecial >> 8) & 0xff;
-	uint8 c = (_rndSpecial >> 16) & 0xff;
-
-	a >>= 1;
-
-	uint as = a & 1;
-	uint bs = (b >> 7) ? 0 : 1;
-	uint cs = c >> 7;
-
-	a >>= 1;
-	c = (c << 1) | as;
-	b = (b << 1) | cs;
-
-	a -= ((_rndSpecial & 0xff) - bs);
-	as = a & 1;
-	a >>= 1;
-
-	a = ((_rndSpecial & 0xff) >> 1) | (as << 7);
-
-	_rndSpecial = (_rndSpecial & 0xff000000) | (c << 16) | (b << 8) | a;
-
-	return a ^ b;
-}
-
 void LoLEngine::updateEnvironmentalSfx(int soundId) {
 	snd_processEnvironmentalSoundEffect(soundId, _currentBlock);
 }

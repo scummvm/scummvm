@@ -1092,7 +1092,7 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 		setMonsterMode(monster, 7);
 
 	if ((monster->mode != 11) && (monster->mode != 14)) {
-		if (!(getRandomNumberSpecial() & 3)) {
+		if (!(_rnd.getRandomNumber(255) & 3)) {
 			monster->shiftStep = (++monster->shiftStep) & 0x0f;
 			checkSceneUpdateNeed(monster->block);
 		}

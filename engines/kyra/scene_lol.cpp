@@ -604,7 +604,7 @@ void LoLEngine::updateCompass() {
 	if (_compassStep)
 		_compassStep -= (((ABS(_compassStep) >> 4) + 2) * dir);
 
-	int16 d = _compassBroken ? ((int8)getRandomNumberSpecial() - _compassDirection) : (_currentDirection << 6) - _compassDirection;
+	int16 d = _compassBroken ? (int8(_rnd.getRandomNumber(255)) - _compassDirection) : (_currentDirection << 6) - _compassDirection;
 	if (d <= -128)
 		d += 256;
 	if (d >= 128)
@@ -1261,8 +1261,8 @@ void LoLEngine::shakeScene(int duration, int width, int height, int restore) {
 	while (endTime > _system->getMillis()) {
 		uint32 delayTimer = _system->getMillis() + 2 * _tickLength;
 
-		int s1 = width ? (getRandomNumberSpecial() % (width << 1)) - width : 0;
-		int s2 = height ? (getRandomNumberSpecial() % (height << 1)) - height : 0;
+		int s1 = width ? (_rnd.getRandomNumber(255) % (width << 1)) - width : 0;
+		int s2 = height ? (_rnd.getRandomNumber(255) % (height << 1)) - height : 0;
 
 		int x1, y1, x2, y2, w, h;
 		if (s1 >= 0) {

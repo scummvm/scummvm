@@ -1303,7 +1303,6 @@ private:
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
-	uint8 getRandomNumberSpecial();
 
 	uint8 _compassBroken;
 	uint8 _drainMagic;
