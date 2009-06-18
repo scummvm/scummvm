@@ -287,8 +287,8 @@ struct Breakpoint {
 };
 
 /**
- * Set this to 1 to abort script execution immediately. Aborting will leave the
- * debug exec stack intact.
+ * Set this to 1 to abort script execution immediately. Aborting will 
+ * leave the debug exec stack intact.
  * Set it to 2 to force a replay afterwards.
  */
 extern int script_abort_flag;
@@ -307,31 +307,36 @@ extern int script_step_counter;
 
 /**
  * Executes function pubfunct of the specified script.
- * Parameters: (EngineState *) s: The state which is to be executed with
- *             (uint16) script: The script which is called
- *             (uint16) pubfunct: The exported script function which is to be called
- *             (StackPtr) sp: Stack pointer position
- *             (reg_t) calling_obj: The heap address of the object which executed the call
- *             (uint16) argc: Number of arguments supplied
- *             (StackPtr) argp: Pointer to the first supplied argument
- * Returns   : (ExecStack *): A pointer to the new exec stack TOS entry
+ * @param[in] s				The state which is to be executed with
+ * @param[in] script		The script which is called
+ * @param[in] pubfunct		The exported script function which is to
+ * 							be called
+ * @param[in] sp			Stack pointer position
+ * @param[in] calling_obj	The heap address of the object that
+ * 							executed the call
+ * @param[in] argc			Number of arguments supplied
+ * @param[in] argp			Pointer to the first supplied argument
+ * @return					A pointer to the new exec stack TOS entry
  */
-ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj,
-	uint16 argc, StackPtr argp);
+ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, 
+		StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp);
 
 
 /**
  * Executes a "send" or related operation to a selector.
- * Parameters: (EngineState *) s: The EngineState to operate on
- *             (reg_t) send_obj: Heap address of the object to send to
- *             (reg_t) work_obj: Heap address of the object initiating the send
- *             (StackPtr) sp: Stack pointer position
- *             (int) framesize: Size of the send as determined by the "send" operation
- *             (StackPtr) argp: Pointer to the beginning of the heap block containing the
- *                              data to be sent. This area is a succession of one or more
- *                              sequences of [selector_number][argument_counter] and then
- *                              "argument_counter" word entries with the parameter values.
- * Returns   : (ExecStack *): A pointer to the new execution stack TOS entry
+ * @param[in] s			The EngineState to operate on
+ * @param[in] send_obj	Heap address of the object to send to
+ * @param[in] work_obj	Heap address of the object initiating the send
+ * @param[in] sp		Stack pointer position
+ * @param[in] framesize	Size of the send as determined by the "send" 
+ * 						operation
+ * @param[in] argp		Pointer to the beginning of the heap block 
+ * 						containing the data to be sent. This area is a 
+ * 						succession of one or more sequences of 
+ * 						[selector_number][argument_counter] and then
+ * 						"argument_counter" word entries with the 
+ * 						parameter values.
+ * @return				A pointer to the new execution stack TOS entry
  */
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
 	StackPtr sp, int framesize, StackPtr argp);
@@ -342,267 +347,300 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
 /**
  * Adds an entry to the top of the execution stack.
  *
- * @param s				The state with which to execute
- * @param pc			The initial program counter
- * @param sp			The initial stack pointer
- * @param objp			Pointer to the beginning of the current object
- * @param argc			Number of parameters to call with
- * @param argp			Heap pointer to the first parameter
- * @param selector		The selector by which it was called or
- *						NULL_SELECTOR if n.a. For debugging.
- * @param sendp			Pointer to the object which the message was sent to.
- *						Equal to objp for anything but super.
- * @param origin		Number of the execution stack element this entry was created by
- *						(usually the current TOS number, except for multiple sends).
- * @param local_segment	The segment to use for local variables,
- *						or SCI_XS_CALLEE_LOCALS to use obj's segment.
- * @return a pointer to the new exec stack TOS entry
+ * @param[in] s				The state with which to execute
+ * @param[in] pc			The initial program counter
+ * @param[in] sp			The initial stack pointer
+ * @param[in] objp			Pointer to the beginning of the current object
+ * @param[in] argc			Number of parameters to call with
+ * @param[in] argp			Heap pointer to the first parameter
+ * @param[in] selector		The selector by which it was called or
+ *							NULL_SELECTOR if n.a. For debugging.
+ * @param[in] sendp			Pointer to the object which the message was 
+ * 							sent to. Equal to objp for anything but super.
+ * @param[in] origin		Number of the execution stack element this
+ * 							entry was created by (usually the current TOS 
+ * 							number, except for multiple sends).
+ * @param[in] local_segment	The segment to use for local variables,
+ *							or SCI_XS_CALLEE_LOCALS to use obj's segment.
+ * @return 					A pointer to the new exec stack TOS entry
  */
-ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t objp, int argc,
-	StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId local_segment);
+ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, 
+		reg_t objp, int argc, StackPtr argp, Selector selector, 
+		reg_t sendp, int origin, SegmentId local_segment);
 
 
 /**
  * Adds one varselector access to the execution stack.
- * Parameters: (EngineState *) s: The EngineState to use
- *             (reg_t) objp: Pointer to the object owning the selector
- *             (int) argc: 1 for writing, 0 for reading
- *             (StackPtr) argp: Pointer to the address of the data to write -2
- *             (int) selector: Selector name
- *             (ObjVarRef& ) address: Heap address of the selector
- *             (int) origin: Stack frame which the access originated from
- * Returns   : (ExecStack *): Pointer to the new exec-TOS element
  * This function is called from send_selector only.
+ * @param[in] s			The EngineState to use
+ * @param[in] objp		Pointer to the object owning the selector
+ * @param[in] argc		1 for writing, 0 for reading
+ * @param[in] argp		Pointer to the address of the data to write -2
+ * @param[in] selector	Selector name
+ * @param[in] address	Heap address of the selector
+ * @param[in] origin	Stack frame which the access originated from
+ * @return 				Pointer to the new exec-TOS element
  */
-ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp,
-	Selector selector, const ObjVarRef& address, int origin);
+ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc,
+		StackPtr argp, Selector selector, const ObjVarRef& address, 
+		int origin);
 
-
+/**
+ * This function executes SCI bytecode
+ * It executes the code on s->heap[pc] until it hits a 'ret' operation 
+ * while (stack_base == stack_pos). Requires s to be set up correctly.
+ * @param[in] s			The state to use
+ * @param[in] restoring	1 if s has just been restored, 0 otherwise
+ */
 void run_vm(EngineState *s, int restoring);
-/* Executes the code on s->heap[pc] until it hits a 'ret' operation while (stack_base == stack_pos)
-** Parameters: (EngineState *) s: The state to use
-**             (int) restoring: 1 if s has just been restored, 0 otherwise
-** Returns   : (void)
-** This function will execute SCI bytecode. It requires s to be set up
-** correctly.
-*/
 
+/**
+ * Handles a fatal error condition
+ * @param[in] s		The state to recover from
+ * @param[in] line	Source code line number the error occured in
+ * @param[in] file	File the error occured in
+ */
 void vm_handle_fatal_error(EngineState *s, int line, const char *file);
-/* Handles a fatal error condition
-** Parameters: (EngineState *) s: The state to recover from
-**             (int) line: Source code line number the error occured in
-**             (const char *) file: File the error occured in
-*/
 
 
-void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *objp,
-	int *restadjust, SegmentId *segids, reg_t **variables, reg_t **variables_base,
-	int *variables_nr, int bp);
-/* Debugger functionality
-** Parameters: (EngineState *) s: The state at which debugging should take place
-**             (reg_t *) pc: Pointer to the program counter
-**             (StackPtr *) sp: Pointer to the stack pointer
-**             (StackPtr *) pp: Pointer to the frame pointer
-**             (reg_t *) objp: Pointer to the object base pointer
-**             (int *) restadjust: Pointer to the &rest adjustment value
-**	       (SegmentId *) segids: four-element array containing segment IDs for locals etc.
-**	       (reg_t **) variables: four-element array referencing registers for globals etc.
-**	       (reg_t **) variables_base: four-element array referencing
-**                                        register bases for temps etc.
-**	       (int *) variables_nr: four-element array giving sizes for params etc. (may be NULL)
-**             (int) bp: Flag, set to 1 when a breakpoint is triggered
-** Returns   : (void)
-*/
+/**
+ * Debugger functionality
+ * @param[in] s					The state at which debugging should take
+ * 								place
+ * @param[in] pc				Pointer to the program counter
+ * @param[in] sp				Pointer to the stack pointer
+ * @param[in] pp				Pointer to the frame pointer
+ * @param[in] objp				Pointer to the object base pointer
+ * @param[in] restadjust		Pointer to the &rest adjustment value
+ * @param[in] segids			four-element array containing segment IDs
+ * 								for locals etc.
+ * @param[in] variables			four-element array referencing registers
+ * 								for globals etc.
+ * @param[in] variables_base	four-element array referencing register 
+ * 								bases for temps etc.
+ * @param[in] variables_nr		four-element array giving sizes for params
+ * 								etc. (may be NULL)
+ * @param[in] bp				Flag, set to 1 when a breakpoint is
+ * 								triggered
+ */
+void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, 
+		reg_t *objp, int *restadjust, SegmentId *segids, reg_t **variables,
+		reg_t **variables_base, int *variables_nr, int bp);
 
+/**
+ * Initializes a EngineState block
+ * @param[in] s	The state to initialize
+ * @return		0 on success, 1 if vocab.996 (the class table) is missing
+ * 				or corrupted
+ */
 int script_init_engine(EngineState *s);
-/* Initializes a EngineState block
-** Parameters: (EngineState *) s: The state to initialize
-** Returns   : 0 on success, 1 if vocab.996 (the class table) is missing or corrupted
-*/
 
+/**
+ * Sets the gamestate's save_dir to the parameter path
+ * @param[in] s		The state to set
+ * @param[in] path	Path where save_dir will point to
+ */
 void script_set_gamestate_save_dir(EngineState *s, const char *path);
-/* Sets the gamestate's save_dir to the parameter path
-** Parameters: (EngineState *) s: The state to set
-**             (const char *) path: Path where save_dir will point to
-** Returns   : (void)
-*/
 
+/**
+ * Frees all additional memory associated with a EngineState block
+ * @param[in] s	The EngineState whose elements should be cleared
+ */
 void script_free_engine(EngineState *s);
-/* Frees all additional memory associated with a EngineState block
-** Parameters: (EngineState *) s: The EngineState whose elements should be cleared
-** Returns   : (void)
-*/
 
+/**
+ * Frees all script memory (heap, hunk, and class tables).
+ * This operation is implicit in script_free_engine(), but is required for
+ * restoring the game state.
+ * @param[in] s	The EngineState to free
+ */
 void script_free_vm_memory(EngineState *s);
-/* Frees all script memory (heap, hunk, and class tables).
-** Parameters: (EngineState *) s: The EngineState to free
-** Returns   : (void)
-** This operation is implicit in script_free_engine(), but is required for restoring
-** the game state.
-*/
 
+/**
+ * Looks up a selector and returns its type and value
+ * varindex is written to iff it is non-NULL and the selector indicates a property of the object.
+ * @param[in] s				The EngineState to use
+ * @param[in] obj			Address of the object to look the selector up in
+ * @param[in] selectorid	The selector to look up
+ * @param[out] varp			A reference to the selector, if it is a
+ * 							variable.
+ * @param[out] fptr			A reference to the function described by that
+ * 							selector, if it is a valid function selector.
+ * 							fptr is written to iff it is non-NULL and the
+ * 							selector indicates a member function of that
+ * 							object.
+ * @return					kSelectorNone if the selector was not found in 
+ * 							the object or its superclasses.
+ * 							kSelectorVariable if the selector represents an
+ * 							object-relative variable.
+ * 							kSelectorMethod if the selector represents a
+ * 							method
+ */
+SelectorType lookup_selector(EngineState *s, reg_t obj, Selector selectorid,
+		ObjVarRef *varp, reg_t *fptr);
 
-SelectorType lookup_selector(EngineState *s, reg_t obj, Selector selectorid, ObjVarRef *varp, reg_t *fptr);
-/* Looks up a selector and returns its type and value
-** Parameters: (EngineState *) s: The EngineState to use
-**             (reg_t) obj: Address of the object to look the selector up in
-**             (Selector) selectorid: The selector to look up
-** Returns   : (SelectorType) kSelectorNone if the selector was not found in the object or its superclasses.
-**                            kSelectorVariable if the selector represents an object-relative variable
-**                            kSelectorMethod if the selector represents a method
-**             (ObjVarRef *) *varp: A reference to the selector, if
-**                              it is a variable
-**             (reg_t) *fptr: A reference to the function described by that selector, if it is
-**                            a valid function selector.
-** *varindex is written to iff it is non-NULL and the selector indicates a property of the object.
-** *fptr is written to iff it is non-NULL and the selector indicates a member function of that object.
-*/
-
-enum {
+/**
+ * Parameters for script_get_segment()
+ */
+typedef enum {
 	SCRIPT_GET_DONT_LOAD = 0, /**< Fail if not loaded */
 	SCRIPT_GET_LOAD = 1, /**< Load, if neccessary */
 	SCRIPT_GET_LOCK = 3 /**< Load, if neccessary, and lock */
-};
+} SCRIPT_GET;
 
-SegmentId script_get_segment(EngineState *s, int script_id, int load);
-/* Determines the segment occupied by a certain script
-** Parameters: (EngineState *) s: The state to operate on
-**             (int) script_id: The script in question
-**             (int) load: One of SCRIPT_GET_*
-** Returns   : The script's segment, or 0 on failure
-*/
+/**
+ * Determines the segment occupied by a certain script
+ * @param[in] s			The state to operate on
+ * @param[in] script_id	The script in question
+ * @param[in] load		One of SCRIPT_GET_*
+ * @return				The script's segment, or 0 on failure
+ */
+SegmentId script_get_segment(EngineState *s, int script_id, SCRIPT_GET load);
 
+/**
+ * Looks up an entry of the exports table of a script
+ * @param[in]  s			The state to operate on
+ * @param[in]  script_nr	The script to look up in
+ * @param[out] export_index	The index of the export entry to look up
+ * @return					The handle
+ */
 reg_t script_lookup_export(EngineState *s, int script_nr, int export_index);
-/* Looks up an entry of the exports table of a script
-** Parameters: (EngineState *) s: The state to operate on
-**             (int) script_nr: The script to look up in
-** Returns   : (int) export_index: index of the export entry to look up
-*/
 
+/**
+ * Makes sure that a script and its superclasses get loaded to the heap.
+ * If the script already has been loaded, only the number of lockers is 
+ * increased. All scripts containing superclasses of this script are loaded
+ * recursively as well, unless 'recursive' is set to zero. The 
+ * complementary function is "script_uninstantiate()" below.
+ * @param[in] s			The state to operate on
+ * @param[in] script_nr	The script number to load
+ * @return				The script's segment ID or 0 if out of heap
+ */
 int script_instantiate(EngineState *s, int script_nr);
-/* Makes sure that a script and its superclasses get loaded to the heap
-** Parameters: (EngineState *) s: The state to operate on
-**             (int) script_nr: The script number to load
-** Returns   : (int) The script's segment ID or 0 if out of heap
-** If the script already has been loaded, only the number of lockers is increased.
-** All scripts containing superclasses of this script aret loaded recursively as well,
-** unless 'recursive' is set to zero.
-** The complementary function is "script_uninstantiate()" below.
-*/
 
-
+/**
+ * Decreases the numer of lockers of a script and unloads it if that number
+ * reaches zero. 
+ * This function will recursively unload scripts containing its 
+ * superclasses, if those aren't locked by other scripts as well.
+ * @param[in] s			The state to operate on
+ * @param[in] script_nr	The script number that is requestet to be unloaded
+ */
 void script_uninstantiate(EngineState *s, int script_nr);
-/* Decreases the numer of lockers of a script and unloads it if that number reaches zero
-** Parameters: (EngineState *) s: The state to operate on
-**             (int) script_nr: The script number that is requestet to be unloaded
-** Returns   : (void)
-** This function will recursively unload scripts containing its superclasses, if those
-** aren't locked by other scripts as well.
-*/
 
-
+/**
+ * Initializes an SCI game
+ * This function must be run before script_run() is executed. Graphics data
+ * is initialized iff s->gfx_state != NULL.
+ * @param[in] s	The state to operate on
+ * @return		0 on success, 1 if an error occured.
+ */
 int game_init(EngineState *s);
-/* Initializes an SCI game
-** Parameters: (EngineState *) s: The state to operate on
-** Returns   : (int): 0 on success, 1 if an error occured.
-** This function must be run before script_run() is executed.
-** Graphics data is initialized iff s->gfx_state != NULL.
-*/
 
+/**
+ * Initializes the graphics part of an SCI game
+ * This function may only be called if game_init() did not initialize
+ * the graphics data.
+ * @param[in] s	The state to initialize the graphics in
+ * @return		0 on success, 1 if an error occured
+ */
 int game_init_graphics(EngineState *s);
-/* Initializes the graphics part of an SCI game
-** Parameters: (EngineState *) s: The state to initialize the graphics in
-** Returns   : (int) 0 on success, 1 if an error occured
-** This function may only be called if game_init() did not initialize
-** the graphics data.
-*/
 
+/**
+ * Initializes the sound part of an SCI game
+ * This function may only be called if game_init() did not initialize
+ * the sound data.
+ * @param[in] s				The state to initialize the sound in
+ * @param[in] sound_flags	Flags to pass to the sound subsystem
+ * @return					0 on success, 1 if an error occured
+ */
 int game_init_sound(EngineState *s, int sound_flags);
-/* Initializes the sound part of an SCI game
-** Parameters: (EngineState *) s: The state to initialize the sound in
-**             (int) sound_flags:  Flags to pass to the sound subsystem
-** Returns   : (int) 0 on success, 1 if an error occured
-** This function may only be called if game_init() did not initialize
-** the graphics data.
-*/
 
-
+/**
+ * Runs an SCI game
+ * This is the main function for SCI games. It takes a valid state, loads
+ * script 0 to it, finds the game object, allocates a stack, and runs the
+ * init method of the game object. In layman's terms, this runs an SCI game.
+ * Note that, EngineState *s may be changed during the game, e.g. if a game
+ * state is restored.
+ * @param[in] s	Pointer to the pointer of the state to operate on
+ * @return		0 on success, 1 if an error occured.
+ */
 int game_run(EngineState **s);
-/* Runs an SCI game
-** Parameters: (EngineState **) s: Pointer to the pointer of the state to operate on
-** Returns   : (int): 0 on success, 1 if an error occured.
-** This is the main function for SCI games. It takes a valid state, loads script 0 to it,
-** finds the game object, allocates a stack, and runs the init method of the game object.
-** In layman's terms, this runs an SCI game.
-** By the way, *s may be changed during the game, e.g. if a game state is restored.
-*/
 
+/**
+ * Restores an SCI game state and runs the game
+ * This restores a savegame; otherwise, it behaves just like game_run().
+ * @param[in] s				Pointer to the pointer of the state to
+ * 							operate on
+ * @param[in] savegame_name	Name of the savegame to restore
+ * @return					0 on success, 1 if an error occured.
+ */
 int game_restore(EngineState **s, char *savegame_name);
-/* Restores an SCI game state and runs the game
-** Parameters: (EngineState **) s: Pointer to the pointer of the state to operate on
-**             (char *) savegame_name: Name of the savegame to restore
-** Returns   : (int): 0 on success, 1 if an error occured.
-** This restores a savegame; otherwise, it behaves just like game_run().
-*/
 
+/**
+ * Uninitializes an initialized SCI game
+ * This function should be run after each script_run() call.
+ * @param[in] s	The state to operate on
+ * @return		0 on success, 1 if an error occured.
+ */
 int game_exit(EngineState *s);
-/* Uninitializes an initialized SCI game
-** Parameters: (EngineState *) s: The state to operate on
-** Returns   : (int): 0 on success, 1 if an error occured.
-** This function should be run after each script_run() call.
-*/
 
+/**
+ * Instructs the virtual machine to abort
+ */
 void quit_vm();
-/* Instructs the virtual machine to abort
-** Paramteres: (void)
-** Returns   : (void)
-*/
 
+/**
+ * Allocates "kernel" memory and returns a handle suitable to be passed on
+ * to SCI scripts
+ * @param[in] s		Pointer to the EngineState to operate on
+ * @param[in] type	A free-form type description string (static)
+ * @param[in] space	The space to allocate
+ * @return			The handle
+ */
 reg_t kalloc(EngineState *s, const char *type, int space);
-/* Allocates "kernel" memory and returns a handle suitable to be passed on to SCI scripts
-** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
-**             (const char *) type: A free-form type description string (static)
-**             (int) space: The space to allocate
-** Returns   : (reg_t) The handle
-*/
 
+/**
+ * Returns a pointer to "kernel" memory based on the handle
+ * @param[in] s			Pointer to the EngineState to operate on
+ * @param[in] handle	The handle to use
+ * @return				A pointer to the allocated memory
+ */
 byte *kmem(EngineState *s, reg_t handle);
-/* Returns a pointer to "kernel" memory based on the handle
-** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
-**             (reg_t) handle: The handle to use
-** Returns   : (byte *) A pointer to the allocated memory
-*/
 
-
+/**
+ * Frees all "kernel" memory associated with a handle
+ * @param[in] s			Pointer to the EngineState to operate on
+ * @param[in] handle	The handle to free
+ * @return				0 on success, 1 otherwise
+ */
 int kfree(EngineState *s, reg_t handle);
-/* Frees all "kernel" memory associated with a handle
-** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
-**             (reg_t) handle: The handle to free
-** Returns   : (int) 0 on success, 1 otherwise
-*/
 
+/**
+ * Determines the name of an object
+ * @param[in] s		Pointer to the EngineState to operate on
+ * @param[in] pos	Location of the object whose name we want to inspect
+ * @return			A name for that object, or a string describing an error
+ * 					that occured while looking it up. The string is stored
+ * 					in a static buffer and need not be freed (neither may
+ * 					it be modified).
+ */
 const char *obj_get_name(EngineState *s, reg_t pos);
-/* Determines the name of an object
-** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
-**             (reg_t) pos: Location of the object whose name we want to
-**                          inspect
-** Returns   : (const char *) A name for that object, or a string describing
-**                            an error that occured while looking it up
-** The string is stored in a static buffer and need not be freed (neither
-** may it be modified).
-*/
 
+/**
+ * Retrieves an object from the specified location
+ * @param[in] s			Pointer to the EngineState to operate on
+ * @param[in] offset	The object's offset
+ * @return				The object in question, or NULL if there is none
+ */
 Object *obj_get(EngineState *s, reg_t offset);
-/* Retrieves an object from the specified location
-** Parameters: (EngineState *) s: Pointer to the EngineState to operate on
-**             (reg_t) offset: The object's offset
-** Returns   : (Object *) The object in question, or NULL if there is none
-*/
 
+/**
+ * Shrink execution stack to size.
+ * Contains an assert it is not already smaller.
+ */
 void shrink_execution_stack(EngineState *s, uint size);
-/* Shrink execution stack to size.
-** Contains an assert it is not already smaller.
-*/
 
 } // End of namespace Sci
 

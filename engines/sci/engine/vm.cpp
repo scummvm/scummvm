@@ -193,7 +193,7 @@ int script_error(EngineState *s, const char *file, int line, const char *reason)
 }
 #define CORE_ERROR(area, msg) script_error(s, "[" area "] " __FILE__, __LINE__, msg)
 
-reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
+reg_t get_class_address(EngineState *s, int classnr, SCRIPT_GET lock, reg_t caller) {
 
 	if (NULL == s) {
 		warning("vm.c: get_class_address(): NULL passed for \"s\"");
@@ -1550,7 +1550,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 	return _lookup_selector_function(s, obj_location.segment, obj, selector_id, fptr);
 }
 
-SegmentId script_get_segment(EngineState *s, int script_nr, int load) {
+SegmentId script_get_segment(EngineState *s, int script_nr, SCRIPT_GET load) {
 	SegmentId segment;
 
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
