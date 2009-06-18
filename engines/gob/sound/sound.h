@@ -27,15 +27,17 @@
 #define GOB_SOUND_SOUND_H
 
 #include "gob/sound/sounddesc.h"
-#include "gob/sound/pcspeaker.h"
-#include "gob/sound/soundblaster.h"
-#include "gob/sound/adlib.h"
-#include "gob/sound/infogrames.h"
-#include "gob/sound/protracker.h"
-#include "gob/sound/cdrom.h"
 #include "gob/sound/bgatmosphere.h"
 
 namespace Gob {
+
+class GobEngine;
+class PCSpeaker;
+class SoundBlaster;
+class AdLib;
+class Infogrames;
+class Protracker;
+class CDROM;
 
 class Sound {
 public:

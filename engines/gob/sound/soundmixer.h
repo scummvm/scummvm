@@ -31,9 +31,9 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
-#include "gob/sound/sounddesc.h"
-
 namespace Gob {
+
+class SoundDesc;
 
 class SoundMixer : public Audio::AudioStream {
 public:

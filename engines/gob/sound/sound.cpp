@@ -31,6 +31,13 @@
 #include "gob/game.h"
 #include "gob/inter.h"
 
+#include "gob/sound/pcspeaker.h"
+#include "gob/sound/soundblaster.h"
+#include "gob/sound/adlib.h"
+#include "gob/sound/infogrames.h"
+#include "gob/sound/protracker.h"
+#include "gob/sound/cdrom.h"
+
 namespace Gob {
 
 Sound::Sound(GobEngine *vm) : _vm(vm) {
