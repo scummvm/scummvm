@@ -45,6 +45,7 @@
 #pragma warning( disable : 4244 ) // turn off "conversion type" warning
 #pragma warning( disable : 4250 ) // turn off "inherits via dominance" warning
 #pragma warning( disable : 4800 ) // turn off "forcing value to bool 'true' or 'false' (performance warning)"
+#pragma warning( disable : 4996 ) // turn off "This function or variable may be unsafe"
 
 // vsnprintf is already defined in Visual Studio 2008
 #if (_MSC_VER < 1500)
