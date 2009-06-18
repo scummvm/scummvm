@@ -147,7 +147,7 @@ void lua_mathlibopen() {
 	lua_pushcfunction(math_pow);
 	lua_pushnumber(0);  // to get its tag
 	lua_settagmethod(lua_tag(lua_pop()), "pow");
-	lua_pushnumber(LOCAL_PI);
+	lua_pushnumber((float)LOCAL_PI);
 	lua_setglobal("PI");
 }
 

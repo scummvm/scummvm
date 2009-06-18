@@ -230,6 +230,7 @@ void luaT_setfallback() {
 			} else {
 				luaL_verror("`%.50s' is not a valid fallback name", name);
 				replace = NULL;  // to avoid warnings
+				oldfunc.ttype = LUA_T_NIL; // to avoid warnings
 			}
 		}
 	}

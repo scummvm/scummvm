@@ -1692,7 +1692,7 @@ static void SetActorConstrain() {
 
 static void GetVisibleThings() {
 	lua_Object actorObj = lua_getparam(1);
-	Actor *actor;
+	Actor *actor = NULL;
 	if (lua_isnil(actorObj)) {
 		if (g_grim->selectedActor())
 			actor = g_grim->selectedActor();
@@ -1701,6 +1701,7 @@ static void GetVisibleThings() {
 	} else if (lua_isuserdata(actorObj) && lua_tag(actorObj) == MKID_BE('ACTR')) {
 		actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 	}
+	assert(actor);
 
 	lua_Object result = lua_createtable();
 

@@ -244,7 +244,8 @@ init:
 			cap->capture[cap->level].init = s;
 			cap->capture[cap->level].len = -1;
 			cap->level++;
-			if (!(res = match(s, p + 1, cap)))  // match failed?
+			res = match(s, p + 1, cap);
+			if (!res)  // match failed?
 				cap->level--;  // undo capture
 			return res;
 		}
@@ -253,7 +254,8 @@ init:
 			int32 l = capture_to_close(cap);
 			const char *res;
 			cap->capture[l].len = s - cap->capture[l].init;  // close capture
-			if (!(res = match(s, p + 1, cap)))  // match failed?
+			res = match(s, p + 1, cap);
+			if (!res)  // match failed?
 				cap->capture[l].len = -1;  // undo capture
 			return res;
 		}
@@ -269,16 +271,16 @@ init:
 			switch (*ep) {
 			case '*':
 				{  // repetition
-					const char *res;
-					if (s1 && (res = match(s1, p, cap)))
+					const char *res = match(s1, p, cap);
+					if (s1 && res)
 						return res;
 					p = ep + 1;
 					goto init;
 				}
 			case '?':
 				{  // optional
-					const char *res;
-					if (s1 && (res = match(s1, ep + 1, cap)))
+					const char *res = match(s1, ep + 1, cap);
+					if (s1 && res)
 						return res;
 					p = ep + 1;
 					goto init;
@@ -324,7 +326,8 @@ static void str_find() {
 			struct Capture cap;
 			const char *res;
 			cap.level = 0;
-			if ((res = match(s1, p, &cap))) {
+			res = match(s1, p, &cap);
+			if (res) {
 				lua_pushnumber(s1 - s + 1);  // start
 				lua_pushnumber(res - s);   // end
 				push_captures(&cap);

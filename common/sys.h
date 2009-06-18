@@ -42,10 +42,16 @@
 #ifdef _MSC_VER
 #pragma once
 #pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
+#pragma warning( disable : 4100 ) // turn off "unreferenced formal parameter" warning
+#pragma warning( disable : 4127 ) // turn off "conditional expression is constant" warning
+#pragma warning( disable : 4189 ) // turn off "local variable is initialized but not referenced" warning
 #pragma warning( disable : 4244 ) // turn off "conversion type" warning
 #pragma warning( disable : 4250 ) // turn off "inherits via dominance" warning
+#pragma warning( disable : 4505 ) // turn off "unreferenced local function has been removed" warning
+#pragma warning( disable : 4512 ) // turn off "assignment operator could not be generated" warning
+#pragma warning( disable : 4611 ) // turn off "interaction between '_setjmp' and C++ object destruction is non-portable" warning
 #pragma warning( disable : 4800 ) // turn off "forcing value to bool 'true' or 'false' (performance warning)"
-#pragma warning( disable : 4996 ) // turn off "This function or variable may be unsafe"
+#pragma warning( disable : 4996 ) // turn off "This function or variable may be unsafe" warning
 
 // vsnprintf is already defined in Visual Studio 2008
 #if (_MSC_VER < 1500)

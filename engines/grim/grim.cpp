@@ -411,6 +411,7 @@ void GrimEngine::handlePause() {
 		func = handler;
 	} else if (!lua_isnil(handler)) {
 		error("handlePause: invalid handler");
+		return;
 	} else {
 		lua_endblock();
 		return;
@@ -440,6 +441,7 @@ void GrimEngine::handleExit() {
 		func = handler;
 	} else if (!lua_isnil(handler)) {
 		error("handleExit: invalid handler");
+		return;
 	} else {
 		lua_endblock();
 		return;
@@ -469,6 +471,7 @@ void GrimEngine::handleUserPaint() {
 		func = handler;
 	} else if (!lua_isnil(handler)) {
 		error("handleUserPaint: invalid handler");
+		return;
 	} else {
 		lua_endblock();
 		return;
@@ -502,6 +505,7 @@ void GrimEngine::handleChars(int operation, int key, int /*keyModifier*/, uint16
 		func = handler;
 	} else if (!lua_isnil(handler)) {
 		error("handleChars: invalid handler");
+		return;
 	} else {
 		lua_endblock();
 		return;
@@ -532,14 +536,18 @@ void GrimEngine::handleControls(int operation, int key, int /*keyModifier*/, uin
 		lua_pushobject(buttonHandler);
 		lua_pushstring("buttonHandler");
 		buttonFunc = lua_gettable();
-		if (!lua_isfunction(buttonFunc))
+		if (!lua_isfunction(buttonFunc)) {
 			error("handleControls: button handler not a function");
+			return;
+		}
 		buttonFuncIsTable = true;
 	} else if (lua_isfunction(buttonHandler)) {
 		buttonFunc = buttonHandler;
 		buttonFuncIsTable = false;
-	} else
+	} else {
 		error("handleControls: invalid keys handler");
+		return;
+	}
 
 	lua_pushobject(lua_getref(refSystemTable));
 	lua_pushstring("axisHandler");
@@ -548,15 +556,18 @@ void GrimEngine::handleControls(int operation, int key, int /*keyModifier*/, uin
 		lua_pushobject(joyHandler);
 		lua_pushstring("axisHandler");
 		joyFunc = lua_gettable();
-		if (!lua_isfunction(joyFunc))
+		if (!lua_isfunction(joyFunc)) {
 			error("handleControls: joystick handler not a function");
+			return;
+		}
 		joyFuncIsTable = true;
 	} else if (lua_isfunction(joyHandler)) {
 		joyFunc = joyHandler;
 		joyFuncIsTable = false;
-	} else
+	} else {
 		error("handleControls: invalid joystick handler");
-
+		return;
+	}
 	if (buttonFuncIsTable)
 		lua_pushobject(buttonHandler);
 	lua_pushnumber(key);

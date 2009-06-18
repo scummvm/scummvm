@@ -184,7 +184,7 @@ int32 luaD_call(StkId base, int nResults) {
 
 	while (1) {
 		lua_CFunction function = NULL;
-		StkId firstResult;
+		StkId firstResult = 0;
 		TObject *funcObj = lua_state->stack.stack + base - 1;
 		if (ttype(funcObj) == LUA_T_CLOSURE) {
 			Closure *c = clvalue(funcObj);

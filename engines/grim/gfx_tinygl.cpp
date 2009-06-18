@@ -165,7 +165,7 @@ byte *GfxTinyGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 	_currentShadowArray = NULL;
 
-	TGLfloat ambientSource[] = { 0.6, 0.6, 0.6, 1.0 };
+	TGLfloat ambientSource[] = { 0.6f, 0.6f, 0.6f, 1.0f };
 	tglLightModelfv(TGL_LIGHT_MODEL_AMBIENT, ambientSource);
 
 	return buffer;

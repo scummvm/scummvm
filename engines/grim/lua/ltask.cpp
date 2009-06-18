@@ -70,7 +70,7 @@ void next_script() {
 		lua_error("Bad argument to next_script");
 
 	if (type == LUA_T_TASK) {
-		int task = (int)nvalue(Address(paramObj));
+		uint32 task = (uint32)nvalue(Address(paramObj));
 		LState *state;
 		for (state = lua_rootState->next; state != NULL; state = state->next) {
 			if (state->id == task) {
@@ -102,7 +102,7 @@ void stop_script() {
 		lua_error("Bad argument to stop_script");
 
 	if (type == LUA_T_TASK) {
-		int task = (int)nvalue(Address(paramObj));
+		uint32 task = (uint32)nvalue(Address(paramObj));
 		for (state = lua_rootState->next; state != NULL; state = state->next) {
 			if (state->id == task)
 				break;
@@ -142,7 +142,7 @@ void identify_script() {
 	if (paramObj == LUA_NOOBJECT || type != LUA_T_TASK)
 		lua_error("Bad argument to identify_script");
 
-	int task = (int)nvalue(Address(paramObj));
+	uint32 task = (uint32)nvalue(Address(paramObj));
 	LState *state;
 	for (state = lua_rootState->next; state != NULL; state = state->next) {
 		if (state->id == task) {
@@ -162,7 +162,7 @@ void find_script() {
 		lua_error("Bad argument to find_script");
 
 	if (type == LUA_T_TASK) {
-		int task = (int)nvalue(Address(paramObj));
+		uint32 task = (uint32)nvalue(Address(paramObj));
 		LState *state;
 		for (state = lua_rootState->next; state != NULL; state = state->next) {
 			if (state->id == task) {
@@ -172,7 +172,7 @@ void find_script() {
 			}
 		}
 	} else if (type == LUA_T_PROTO || type == LUA_T_CPROTO) {
-		int task, countTasks = 0;
+		int task = -1, countTasks = 0;
 		bool match;
 		LState *state;
 		for (state = lua_rootState->next; state != NULL; state = state->next) {
@@ -189,6 +189,7 @@ void find_script() {
 			}
 		}
 		if (countTasks) {
+			assert(task != -1);
 			ttype(lua_state->stack.top) = LUA_T_TASK;
 			nvalue(lua_state->stack.top) = (float)task;
 			incr_top;
