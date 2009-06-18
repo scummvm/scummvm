@@ -120,7 +120,7 @@ void Scene::update() {
 
 	updateCursor();
 
-	_sceneResource->updateActor(_screen, _resPack, 7);
+	updateActor(_screen, _resPack, 7);
 
 	// Proof of concept for screen scrolling
 
@@ -195,6 +195,24 @@ void Scene::copyToBackBufferClipped(GraphicFrame *frame, int x, int y) {
 								  animRect.width(),
 								  animRect.height());
 	}
+}
+
+void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
+	ActorDefinitions actor = _sceneResource->getWorldStats()->_actorsDef[actorIndex];
+	GraphicResource *gra = new GraphicResource(res, actor.graphicResId);
+	GraphicFrame *fra = gra->getFrame(actor.tickCount);
+
+	copyToSceneBackground(fra, actor.x, actor.y);
+
+	if (actor.tickCount < gra->getFrameCount() - 1) {
+		actor.tickCount++;
+	}else{
+		actor.tickCount = 0;
+	}
+
+	_sceneResource->getWorldStats()->_actorsDef[actorIndex] = actor;
+
+    delete gra;
 }
 
 } // end of namespace Asylum

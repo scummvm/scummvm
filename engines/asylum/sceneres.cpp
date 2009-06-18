@@ -63,6 +63,9 @@ bool SceneResource::load(uint8 sceneIdx) {
     loadGamePolygons(fd);
     loadActionList(fd);
 
+    fd->close();
+    delete fd;
+
     return true;
 }
 
@@ -185,27 +188,6 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
 // TODO: load necessary Action List content
 void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
 
-}
-
-void SceneResource::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
-	ActorDefinitions actor = _worldStats->_actorsDef[actorIndex];
-	GraphicResource *gra = new GraphicResource(res, actor.graphicResId);
-	GraphicFrame *fra = gra->getFrame(actor.tickCount);
-
-	screen->copyRectToScreen((byte*)fra->surface.pixels,
-						fra->surface.w,
-						actor.x,
-						actor.y,
-						fra->surface.w,
-						fra->surface.h );
-
-	if (actor.tickCount < gra->getFrameCount() - 1) {
-		actor.tickCount++;
-	}else{
-		actor.tickCount = 0;
-	}
-
-	_worldStats->_actorsDef[actorIndex] = actor;
 }
 
 Common::String SceneResource::parseFilename(uint8 sceneIdx) {

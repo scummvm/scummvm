@@ -49,7 +49,6 @@ public:
     void handleEvent(Common::Event *event, bool doUpdate);
 
 	void enterScene();
-
 private:
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
 	void copyToBackBufferClipped(GraphicFrame *frame, int x, int y);
@@ -79,6 +78,7 @@ private:
 
 	void update();
 	void updateCursor();
+    void updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex);
 
 }; // end of class Scene
 
