@@ -271,24 +271,28 @@ init:
 			switch (*ep) {
 			case '*':
 				{  // repetition
-					const char *res = match(s1, p, cap);
-					if (s1 && res)
+					const char *res;
+					if (s1) {
+						res = match(s1, p, cap);
 						return res;
+					}
 					p = ep + 1;
 					goto init;
 				}
 			case '?':
 				{  // optional
-					const char *res = match(s1, ep + 1, cap);
-					if (s1 && res)
+					const char *res;
+					if (s1) {
+						res = match(s1, ep + 1, cap);
 						return res;
+					}
 					p = ep + 1;
 					goto init;
 				}
 			case '-':
 				{  // repetition
-					const char *res;
-					if ((res = match(s, ep + 1, cap)) != 0)
+					const char *res = match(s, ep + 1, cap);
+					if (res)
 						return res;
 					else if (s1) {
 						s = s1;
