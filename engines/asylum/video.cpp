@@ -31,8 +31,7 @@ VideoPlayer::VideoPlayer(Graphics::VideoDecoder *decoder) :
 							Graphics::VideoPlayer(decoder) {
 	_text = new VideoText();
 	ResourcePack *resPack = new ResourcePack(1);
-	_text->loadFont(resPack, 16);	// 0x80010010, yellow font
-	// TODO: font color
+	_text->loadFont(resPack, 57);	// video font
 	delete resPack;
 }
 
@@ -41,23 +40,48 @@ VideoPlayer::~VideoPlayer() {
 }
 
 bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents, int videoNumber) {
-	// FIXME: this is a hack, only for video 1, with information taken from
-	// the vids.cap file. The format of the vids.cap file is as follows:
-	// [MOVxxx]
-	// CAPTION = frameStart frameEnd subtitleIndex
-	// TODO: We need to figure out where the index of the first subtitle is
-	// loaded, as the subtitle indices are relative to the video being played,
-	// and not to the actual subtitle indices inside res.000.
-	// For now, we just hardcode the values from vids.cap and res.000
+	// Read vids.cap
+	char movieToken[10];
+	sprintf(movieToken, "[MOV%03d]", videoNumber);
 
-	if (videoNumber == 1) {
-		VideoSubtitle newSubtitle;
-		newSubtitle.frameStart = 287;	// hardcoded from vids.cap
-		newSubtitle.frameEnd = 453;		// hardcoded from vids.cap
-		newSubtitle.textRes = 1088;		// hardcoded from vids.cap
+	Common::File subsFile;
+	subsFile.open("vids.cap");
+	char *buffer = new char[subsFile.size()];
+	subsFile.read(buffer, subsFile.size());
+	subsFile.close();
 
-		_subtitles.push_back(newSubtitle);
+	char *start = strstr(buffer, movieToken);
+	char *line = 0;
+	int textResourceStart = 1088;	// HACK: this only works for video 1
+	assert(videoNumber == 1);		// Remove this once the hack above is removed
+
+	if (start) {
+		start += 20;	// skip token, newline and "CAPTION = "
+
+		int count = strcspn(start, "\r\n");
+		line = new char[count + 1];
+
+		strncpy(line, start, count);
+		line[count] = 0;
+
+		char *tok = strtok(line, " ");
+
+		while (tok) {
+			VideoSubtitle newSubtitle;
+			newSubtitle.frameStart = atoi(tok);
+			tok = strtok(NULL, " ");
+			newSubtitle.frameEnd = atoi(tok);
+			tok = strtok(NULL, " ");
+			newSubtitle.textRes = atoi(tok) + textResourceStart;
+			tok = strtok(NULL, " ");
+
+			_subtitles.push_back(newSubtitle);
+		}
+
+		delete line;
 	}
+
+	delete buffer;
 
 	return playVideo(stopEvents);
 }
@@ -66,7 +90,7 @@ void VideoPlayer::performPostProcessing(byte *screen) {
 	int curFrame = _decoder->getCurFrame();
 
 	// Reset subtitle area, by filling it with zeroes
-	memset(screen + 640 * 400, 0, 640 * 80);
+	memset(screen + 640 * 420, 0, 640 * 60);
 
 	for (uint32 i = 0; i < _subtitles.size(); i++) {
 		VideoSubtitle curSubtitle = _subtitles[i];
@@ -138,7 +162,7 @@ void VideoText::loadFont(ResourcePack *resPack, uint32 resId) {
 
 void VideoText::drawResTextCentered(byte *screenBuffer, uint32 resId) {
     ResourceEntry *textRes = _textPack->getResource(resId);
-    drawTextCentered(screenBuffer, 0, 400, 640, (char *)textRes->data);
+    drawTextCentered(screenBuffer, 0, 420, 640, (char *)textRes->data);
 }
 
 void VideoText::setTextPos(uint32 x, uint32 y) {
@@ -147,14 +171,35 @@ void VideoText::setTextPos(uint32 x, uint32 y) {
 }
 
 void VideoText::drawTextCentered(byte *screenBuffer, uint32 x, uint32 y, uint32 width, char *text) {
-	// HACK: make sure that the text fits on screen
-	char textHack[80];
-	strncpy(textHack, text, 80);
-	textHack[79] = 0;
+	const int maxLength = 108;	// max chars per line
+	int curY = y;
+	char *text1 = text;
+	char *text2 = 0;
+	int len = strlen(text);
+	int textWidth = 0;
 
-    int textWidth = getTextWidth(textHack);
+	if (len > maxLength) {
+		text1 = new char[maxLength];
+		strncpy(text1, text, maxLength);
+		text1[maxLength - 1] = 0;	// terminate
+
+		text2 = new char[maxLength];
+		strcpy(text2, text + maxLength);
+	}
+
+    textWidth = getTextWidth(text1);
     setTextPos(x + (width - textWidth) / 2, y);
-    drawText(screenBuffer, textHack);
+    drawText(screenBuffer, text1);
+
+	if (len > maxLength) {
+		textWidth = getTextWidth(text2);
+		setTextPos(x + (width - textWidth) / 2, y + 30);
+		drawText(screenBuffer, text2);
+
+		// Clean up
+		delete[] text1;
+		delete[] text2;
+	}
 }
 
 uint32 VideoText::getTextWidth(char *text) {
