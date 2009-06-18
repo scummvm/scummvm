@@ -48,7 +48,6 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/dists/pred.dic $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
@@ -61,7 +60,6 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 iphonebundle: iphone $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
-	cp $(srcdir)/dists/pred.dic $(bundle_name)/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
@@ -154,7 +152,6 @@ scummvmico.o: $(srcdir)/icons/scummvm.ico
 win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
-	cp $(srcdir)/dists/pred.dic $(WIN32PATH)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
@@ -178,7 +175,6 @@ aos4dist: $(EXECUTABLE)
 	cp icons/scummvm.info $(AOS4PATH)/$(EXECUTABLE)_SVN.info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
-	cp $(srcdir)/dists/pred.dic $(AOS4PATH)/extras/
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(AOS4PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING.LGPL.txt
@@ -202,7 +198,6 @@ else
 endif
 	sed 's/$$/\r/' < $(srcdir)/dists/wii/READMII > wiidist/scummvm/READMII.txt
 	for i in $(DIST_FILES_DOCS); do sed 's/$$/\r/' < $$i > wiidist/scummvm/`basename $$i`.txt; done
-	$(CP) $(srcdir)/dists/pred.dic wiidist/scummvm/
 	$(CP) $(DIST_FILES_THEMES) wiidist/scummvm/
 ifneq ($(DIST_FILES_ENGINEDATA),)
 	$(CP) $(DIST_FILES_ENGINEDATA) wiidist/scummvm/
