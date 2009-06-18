@@ -30,6 +30,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/events.h"
 #include "common/keyboard.h"
@@ -65,8 +66,13 @@ public:
 	void dump(uint resIndex, const char *prefix = NULL);
 
 protected:
-	uint32 _offsets[10000];
+	uint32 *_offsets;
 
+};
+
+struct Resource {
+	uint32 size;
+	byte *data;
 };
 
 class ResourceCache {
@@ -74,30 +80,14 @@ public:
 	ResourceCache(ToltecsEngine *vm);
 	~ResourceCache();
 
-	byte *load(uint resIndex);
-	uint32 getCurItemSize() const { return _curItemSize; }
+	Resource *load(uint resIndex);
 
 protected:
-
-	struct CacheItem {
-		uint resIndex;
-		//int value;	// what is this?
-		int32 offset;	// offset into _base
-		uint32 size;	// size of the item
-	};
+	typedef Common::HashMap<uint, Resource*> ResourceMap;
 
 	ToltecsEngine *_vm;
 
-	byte *_base;
-	uint32 _bytesUsed;
-	uint32 _curItemOffset, _curItemSize;
-	
-	CacheItem _cache[kMaxCacheItems];
-	uint _cacheCount;
-	
-	bool existsItem(uint resIndex);
-	byte *addItem(uint resIndex, uint32 size);
-	void checkCapacity(uint32 size);
+	ResourceMap _cache;
 
 };
 
