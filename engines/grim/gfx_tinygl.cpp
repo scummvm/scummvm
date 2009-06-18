@@ -350,15 +350,19 @@ void GfxTinyGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 	tglEnable(TGL_TEXTURE_2D);
 	tglMatrixMode(TGL_MODELVIEW);
 	tglPushMatrix();
-	if (_currentShadowArray && _currentShadowArray->active && _currentShadowArray->shadowMask) {
+	if (_currentShadowArray) {
 		// TODO find out why shadowMask at device in woods is null
-		assert(_currentShadowArray->shadowMask);
-		//tglSetShadowColor(255, 255, 255);
-		tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
-		tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
-		SectorListType::iterator i = _currentShadowArray->planeList.begin();
-		Sector *shadowSector = *i;
-		tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
+		if (!_currentShadowArray->shadowMask) {
+			tglSetShadowMaskBuf(NULL);
+		} else {
+			assert(_currentShadowArray->shadowMask);
+			//tglSetShadowColor(255, 255, 255);
+			tglSetShadowColor(_shadowColorR, _shadowColorG, _shadowColorB);
+			tglSetShadowMaskBuf(_currentShadowArray->shadowMask);
+			SectorListType::iterator i = _currentShadowArray->planeList.begin();
+			Sector *shadowSector = *i;
+			tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
+		}
 	}
 
 	tglTranslatef(pos.x(), pos.y(), pos.z());
