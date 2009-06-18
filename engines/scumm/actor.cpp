@@ -1348,6 +1348,22 @@ void ScummEngine::processActors() {
 				}
 			}
 		}
+	} else if (_game.heversion >= 90) {
+		for (int j = 0; j < numactors; ++j) {
+			for (int i = 0; i < numactors; ++i) {
+				int sc_actor1 = _sortedActors[j]->_layer;
+				int sc_actor2 = _sortedActors[i]->_layer;
+				if (sc_actor1 < sc_actor2) {
+					SWAP(_sortedActors[i], _sortedActors[j]);
+				} else if (sc_actor1 == sc_actor2) {
+					sc_actor1 = _sortedActors[j]->getPos().y;
+					sc_actor2 = _sortedActors[i]->getPos().y;
+					if (sc_actor1 < sc_actor2) {
+						SWAP(_sortedActors[i], _sortedActors[j]);
+					}
+				}
+			}
+		}
 	} else {
 		for (int j = 0; j < numactors; ++j) {
 			for (int i = 0; i < numactors; ++i) {
