@@ -16,7 +16,7 @@ install: all
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
 	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
-	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING" "$(srcdir)/COPYING.LGPL" "$(srcdir)/COPYRIGHT" "$(srcdir)/NEWS" "$(srcdir)/README" "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	$(INSTALL) -d "$(DESTDIR)$(DATADIR)/scummvm/"
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(DATADIR)/scummvm/"
 ifdef DYNAMIC_MODULES
@@ -49,6 +49,7 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
 	cp $(srcdir)/dists/pred.dic $(bundle_name)/Contents/Resources/
+	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
@@ -61,12 +62,9 @@ iphonebundle: iphone $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	cp $(srcdir)/dists/pred.dic $(bundle_name)/
+	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
-	cp $(srcdir)/AUTHORS $(bundle_name)/
-	cp $(srcdir)/COPYING $(bundle_name)/
-	cp $(srcdir)/COPYING.LGPL $(bundle_name)/
-	cp $(srcdir)/COPYRIGHT $(bundle_name)/
 	cp scummvm $(bundle_name)/ScummVM
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
@@ -192,7 +190,7 @@ aos4dist: $(EXECUTABLE)
 # Wii/Gamecube specific
 #
 
-# Special target to create an Wii snapshot
+# Special target to create a Wii snapshot
 wiidist: $(EXECUTABLE)
 	$(MKDIR) wiidist/scummvm
 ifeq ($(GAMECUBE),1)
@@ -202,18 +200,12 @@ else
 	$(CP) $(srcdir)/dists/wii/icon.png wiidist/scummvm/
 	sed "s/@REVISION@/$(VER_SVNREV)/;s/@TIMESTAMP@/`date +%Y%m%d%H%M%S`/" < $(srcdir)/dists/wii/meta.xml > wiidist/scummvm/meta.xml
 endif
-	$(CP) $(srcdir)/dists/wii/READMII wiidist/scummvm/
-	$(CP) $(srcdir)/AUTHORS wiidist/scummvm/AUTHORS.txt
-	$(CP) $(srcdir)/COPYING wiidist/scummvm/COPYING.txt
-	$(CP) $(srcdir)/COPYING.LGPL wiidist/scummvm/COPYING.LGPL.txt
-	$(CP) $(srcdir)/COPYRIGHT wiidist/scummvm/COPYRIGHT.txt
-	$(CP) $(srcdir)/NEWS wiidist/scummvm/NEWS.txt
-	$(CP) $(srcdir)/README wiidist/scummvm/README.txt
+	sed 's/$$/\r/' < $(srcdir)/dists/wii/READMII > wiidist/scummvm/READMII.txt
+	for i in $(DIST_FILES_DOCS); do sed 's/$$/\r/' < $$i > wiidist/scummvm/`basename $$i`.txt; done
 	$(CP) $(srcdir)/dists/pred.dic wiidist/scummvm/
 	$(CP) $(DIST_FILES_THEMES) wiidist/scummvm/
 ifneq ($(DIST_FILES_ENGINEDATA),)
 	$(CP) $(DIST_FILES_ENGINEDATA) wiidist/scummvm/
 endif
-	sed -i 's/$$/\r/' wiidist/scummvm/*.txt
 
 .PHONY: deb bundle osxsnap win32dist wiidist install uninstall
