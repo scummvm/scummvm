@@ -84,6 +84,8 @@ void Inter_Fascination::setupOpcodesDraw() {
 
 void Inter_Fascination::setupOpcodesFunc() {
 	Inter_v2::setupOpcodesFunc();
+
+	OPCODEFUNC(0x09, o1_assign);
 }
 
 void Inter_Fascination::setupOpcodesGob() {
