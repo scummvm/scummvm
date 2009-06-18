@@ -813,22 +813,22 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 		return false;
 	}
 
+	static const int kNeededLength = 100;
+	static const int kMaxDeviation = 20;
+
 	int vecX = (x - _gestureStartX);
 	int vecY = (y - _gestureStartY);
-	int lengthSq =  vecX * vecX + vecY * vecY;
-	//printf("Lengthsq: %u\n", lengthSq);
+	
+	int absX = abs(vecX);
+	int absY = abs(vecY);
 
-	if (lengthSq > 15000) { // Long enough gesture to react upon.
+	//printf("(%d, %d)\n", vecX, vecY);
+
+	if (absX >= kNeededLength || absY >= kNeededLength) { // Long enough gesture to react upon.
 		_gestureStartX = -1;
 		_gestureStartY = -1;
 
-		float vecLength = sqrt(lengthSq);
-		float vecXNorm = vecX / vecLength;
-		float vecYNorm = vecY / vecLength;
-
-		//printf("Swipe vector: (%.2f, %.2f)\n", vecXNorm, vecYNorm);
-
-		if (vecXNorm > -0.50 && vecXNorm < 0.50 && vecYNorm > 0.75) {
+		if (absX < kMaxDeviation && vecY >= kNeededLength) {
 			// Swipe down
 			event.type = Common::EVENT_KEYDOWN;
 			_queuedInputEvent.type = Common::EVENT_KEYUP;
@@ -837,7 +837,10 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_F5;
 			_needEventRestPeriod = true;
-		} else if (vecXNorm > -0.50 && vecXNorm < 0.50 && vecYNorm < -0.75) {
+			return true;
+		}
+		
+		if (absX < kMaxDeviation && -vecY >= kNeededLength) {
 			// Swipe up
 			_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
 			const char *dialogMsg;
@@ -849,8 +852,9 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 			dialog.runModal();
 			return false;
-
-		} else if (vecXNorm > 0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
+		}
+		
+		if (absY < kMaxDeviation && vecX >= kNeededLength) {
 			// Swipe right
 			_touchpadModeEnabled = !_touchpadModeEnabled;
 			const char *dialogMsg;
@@ -862,7 +866,9 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			dialog.runModal();
 			return false;
 
-		} else if (vecXNorm < -0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
+		}
+		
+		if (absY < kMaxDeviation && -vecX >= kNeededLength) {
 			// Swipe left
 			return false;
 		}
@@ -1106,16 +1112,18 @@ void OSystem_IPHONE::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBuf
 		outQB->mAudioDataByteSize = 4 * s_AudioQueue.frameCount;
 		s_soundCallback(s_soundParam, (byte *)outQB->mAudioData, outQB->mAudioDataByteSize);
 		AudioQueueEnqueueBuffer(inQ, outQB, 0, NULL);
-	} else
+	} else {
 		AudioQueueStop(s_AudioQueue.queue, false);
+	}
 }
 
 void OSystem_IPHONE::mixCallback(void *sys, byte *samples, int len) {
 	OSystem_IPHONE *this_ = (OSystem_IPHONE *)sys;
 	assert(this_);
 
-	if (this_->_mixer)
+	if (this_->_mixer) {
 		this_->_mixer->mixCallback(samples, len);
+	}
 }
 
 void OSystem_IPHONE::setupMixer() {
