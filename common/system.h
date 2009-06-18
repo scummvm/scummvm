@@ -100,10 +100,7 @@ public:
 		kFeatureFullscreenMode,
 		kFeatureFullscreenModeSwitch,
 		kFeatureIconifyWindow,
-		kFeatureOpenGL,
-		kVGADisplaySizeCapable,
-		kQVGADisplaySizeCapable,
-		kQVGADisplayPreffered
+		kFeatureOpenGL
 	};
 
 	/**
