@@ -31,6 +31,8 @@
 #include "common/rect.h"
 
 #include "asylum/actor.h"
+#include "asylum/screen.h"
+#include "asylum/respack.h"
 
 #define SCENEMASK   "scn.%03d"
 #define Polygons_MAXSIZE  100
@@ -54,6 +56,7 @@ public:
     ActionList* getActionList() { return _actionList; }
     MainActor* getMainActor() { return _mainActor; }
 
+    void updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex);
 private:
     WorldStats   *_worldStats;
     GamePolygons *_gamePolygons;
@@ -76,6 +79,7 @@ typedef struct ActorDefinitions {
     uint32 y;
     uint8  name[52];
     uint32 soundResId;
+    uint16 tickCount; // TODO this is for testing, not from direct decompilation
 } ActorDefinitions;
 
 

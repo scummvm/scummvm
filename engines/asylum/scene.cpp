@@ -120,6 +120,8 @@ void Scene::update() {
 
 	updateCursor();
 
+	_sceneResource->updateActor(_screen, _resPack, 7);
+
 	// Proof of concept for screen scrolling
 
 	// TESTING
@@ -185,7 +187,7 @@ void Scene::copyToBackBufferClipped(GraphicFrame *frame, int x, int y) {
 		// Translate anim rectangle
 		animRect.translate(-_startX, -_startY);
 
-		_screen->copyToBackBuffer(((byte*)frame->surface.pixels) + 
+		_screen->copyToBackBuffer(((byte*)frame->surface.pixels) +
 								  (frame->surface.h - animRect.height()) * frame->surface.pitch,
 								  frame->surface.pitch,
 								  animRect.left,
