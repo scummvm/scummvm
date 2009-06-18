@@ -34,7 +34,8 @@ namespace Gob {
 class GobEngine;
 class PCSpeaker;
 class SoundBlaster;
-class AdLib;
+class ADLPlayer;
+class MDYPlayer;
 class Infogrames;
 class Protracker;
 class CDROM;
@@ -79,10 +80,10 @@ public:
 
 
 	// AdLib
-	bool adlibLoad(const char *fileName);
-	bool adlibLoad(byte *data, uint32 size, int index = -1);
-	bool adlibLoadMdy(const char *fileName);
-	bool adlibLoadTbr(const char *fileName);
+	bool adlibLoadADL(const char *fileName);
+	bool adlibLoadADL(byte *data, uint32 size, int index = -1);
+	bool adlibLoadMDY(const char *fileName);
+	bool adlibLoadTBR(const char *fileName);
 	void adlibUnload();
 
 	void adlibPlayTrack(const char *trackname);
@@ -143,11 +144,14 @@ public:
 private:
 	GobEngine *_vm;
 
+	bool _hasAdLib;
+
 	SoundDesc _sounds[kSoundsCount];
 
 	PCSpeaker *_pcspeaker;
 	SoundBlaster *_blaster;
-	AdLib *_adlib;
+	ADLPlayer *_adlPlayer;
+	MDYPlayer *_mdyPlayer;
 	Infogrames *_infogrames;
 	Protracker *_protracker;
 	CDROM *_cdrom;

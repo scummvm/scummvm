@@ -44,14 +44,15 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 	_pcspeaker = new PCSpeaker(*_vm->_mixer);
 	_blaster = new SoundBlaster(*_vm->_mixer);
 
-	_adlib = 0;
+	_adlPlayer = 0;
+	_mdyPlayer = 0;
 	_infogrames = 0;
 	_protracker = 0;
 	_cdrom = 0;
 	_bgatmos = 0;
 
-	if (!_vm->_noMusic && _vm->hasAdlib())
-		_adlib = new AdLib(*_vm->_mixer);
+	_hasAdLib = (!_vm->_noMusic && _vm->hasAdlib());
+
 	if (!_vm->_noMusic && (_vm->getPlatform() == Common::kPlatformAmiga)) {
 		_infogrames = new Infogrames(*_vm->_mixer);
 		_protracker = new Protracker(*_vm->_mixer);
@@ -69,7 +70,8 @@ Sound::Sound(GobEngine *vm) : _vm(vm) {
 Sound::~Sound() {
 	delete _pcspeaker;
 	delete _blaster;
-	delete _adlib;
+	delete _adlPlayer;
+	delete _mdyPlayer;
 	delete _infogrames;
 	delete _protracker;
 	delete _cdrom;
@@ -137,9 +139,14 @@ void Sound::sampleFree(SoundDesc *sndDesc, bool noteAdlib, int index) {
 
 	if (sndDesc->getType() == SOUND_ADL) {
 
-		if (_adlib && noteAdlib)
-			if ((index == -1) || (_adlib->getIndex() == index))
-				_adlib->stopPlay();
+		if (noteAdlib) {
+			if (_adlPlayer)
+				if ((index == -1) || (_adlPlayer->getIndex() == index))
+					_adlPlayer->stopPlay();
+			if (_mdyPlayer)
+				if ((index == -1) || (_mdyPlayer->getIndex() == index))
+					_mdyPlayer->stopPlay();
+		}
 
 	} else {
 
@@ -230,67 +237,89 @@ void Sound::infogramesStop() {
 	_infogrames->stop();
 }
 
-bool Sound::adlibLoad(const char *fileName) {
-	if (!_adlib)
+bool Sound::adlibLoadADL(const char *fileName) {
+	if (!_hasAdLib)
 		return false;
 
-	debugC(1, kDebugSound, "Adlib: Loading data (\"%s\")", fileName);
+	if (!_adlPlayer)
+		_adlPlayer = new ADLPlayer(*_vm->_mixer);
 
-	return _adlib->load(fileName);
+	debugC(1, kDebugSound, "Adlib: Loading ADL data (\"%s\")", fileName);
+
+	return _adlPlayer->load(fileName);
 }
 
-bool Sound::adlibLoad(byte *data, uint32 size, int index) {
-	if (!_adlib)
+bool Sound::adlibLoadADL(byte *data, uint32 size, int index) {
+	if (!_hasAdLib)
 		return false;
 
-	debugC(1, kDebugSound, "Adlib: Loading data (%d)", index);
+	if (!_adlPlayer)
+		_adlPlayer = new ADLPlayer(*_vm->_mixer);
 
-	return _adlib->load(data, size, index);
+	debugC(1, kDebugSound, "Adlib: Loading ADL data (%d)", index);
+
+	return _adlPlayer->load(data, size, index);
 }
 
 void Sound::adlibUnload() {
-	if (!_adlib)
+	if (!_hasAdLib)
 		return;
 
 	debugC(1, kDebugSound, "Adlib: Unloading data");
 
-	_adlib->unload();
+	if (_adlPlayer)
+		_adlPlayer->unload();
+	if (_mdyPlayer)
+		_mdyPlayer->unload();
 }
 
-bool Sound::adlibLoadMdy(const char *fileName) {
-	if (!_adlib)
+bool Sound::adlibLoadMDY(const char *fileName) {
+	if (!_hasAdLib)
 		return false;
 
-	debugC(1, kDebugSound, "Adlib: Loading data (\"%s\")", fileName);
+	if (!_mdyPlayer)
+		_mdyPlayer = new MDYPlayer(*_vm->_mixer);
 
-	return _adlib->loadMdy(fileName);
+	debugC(1, kDebugSound, "Adlib: Loading MDY data (\"%s\")", fileName);
+
+	return _mdyPlayer->loadMDY(fileName);
 }
 
-bool Sound::adlibLoadTbr(const char *fileName) {
-	if (!_adlib)
+bool Sound::adlibLoadTBR(const char *fileName) {
+	if (!_hasAdLib)
 		return false;
 
-	debugC(1, kDebugSound, "Adlib: Loading instruments (\"%s\")", fileName);
+	if (!_mdyPlayer)
+		_mdyPlayer = new MDYPlayer(*_vm->_mixer);
 
-	return _adlib->loadTbr(fileName);
+	debugC(1, kDebugSound, "Adlib: Loading MDY instruments (\"%s\")", fileName);
+
+	return _mdyPlayer->loadTBR(fileName);
 }
 
 void Sound::adlibPlayTrack(const char *trackname) {
-	if (!_adlib || _adlib->isPlaying())
+	if (!_hasAdLib)
 		return;
 
-	debugC(1, kDebugSound, "Adlib: Playing track \"%s\"", trackname);
+	if (!_adlPlayer)
+		_adlPlayer = new ADLPlayer(*_vm->_mixer);
 
-	_adlib->unload();
-	_adlib->load(trackname);
-	_adlib->startPlay();
+	if (_adlPlayer->isPlaying())
+		return;
+
+	debugC(1, kDebugSound, "Adlib: Playing ADL track \"%s\"", trackname);
+
+	_adlPlayer->unload();
+	_adlPlayer->load(trackname);
+	_adlPlayer->startPlay();
 }
 
 void Sound::adlibPlayBgMusic() {
-	int track;
-
-	if (!_adlib)
+	if (!_hasAdLib)
 		return;
+
+	if (!_adlPlayer)
+		_adlPlayer = new ADLPlayer(*_vm->_mixer);
 
 	static const char *tracksMac[] = {
 //		"musmac1.adl", // TODO: This track isn't played correctly at all yet
@@ -310,58 +339,82 @@ void Sound::adlibPlayBgMusic() {
 	};
 
 	if (_vm->getPlatform() == Common::kPlatformWindows) {
-		track = _vm->_util->getRandom(ARRAYSIZE(tracksWin));
+		int track = _vm->_util->getRandom(ARRAYSIZE(tracksWin));
 		adlibPlayTrack(tracksWin[track]);
 	} else {
-		track = _vm->_util->getRandom(ARRAYSIZE(tracksMac));
+		int track = _vm->_util->getRandom(ARRAYSIZE(tracksMac));
 		adlibPlayTrack(tracksMac[track]);
 	}
 }
 
 void Sound::adlibPlay() {
-	if (!_adlib)
+	if (!_hasAdLib)
 		return;
 
 	debugC(1, kDebugSound, "Adlib: Starting playback");
 
-	_adlib->startPlay();
+	if (_adlPlayer)
+		_adlPlayer->startPlay();
+	if (_mdyPlayer)
+		_mdyPlayer->startPlay();
 }
 
 void Sound::adlibStop() {
-	if (!_adlib)
+	if (!_hasAdLib)
 		return;
 
 	debugC(1, kDebugSound, "Adlib: Stopping playback");
 
-	_adlib->stopPlay();
+	if (_adlPlayer)
+		_adlPlayer->stopPlay();
+	if (_mdyPlayer)
+		_mdyPlayer->stopPlay();
 }
 
 bool Sound::adlibIsPlaying() const {
-	if (!_adlib)
+	if (!_hasAdLib)
 		return false;
 
-	return _adlib->isPlaying();
+	if (_adlPlayer && _adlPlayer->isPlaying())
+		return true;
+	if (_mdyPlayer && _mdyPlayer->isPlaying())
+		return true;
+
+	return false;
 }
 
 int Sound::adlibGetIndex() const {
-	if (!_adlib)
+	if (!_hasAdLib)
 		return -1;
 
-	return _adlib->getIndex();
+	if (_adlPlayer)
+		return _adlPlayer->getIndex();
+	if (_mdyPlayer)
+		return _mdyPlayer->getIndex();
+
+	return -1;
 }
 
 bool Sound::adlibGetRepeating() const {
-	if (!_adlib)
+	if (!_hasAdLib)
 		return false;
 
-	return _adlib->getRepeating();
+	if (_adlPlayer)
+		return _adlPlayer->getRepeating();
+	if (_mdyPlayer)
+		return _mdyPlayer->getRepeating();
+
+	return false;
 }
 
 void Sound::adlibSetRepeating(int32 repCount) {
-	if (!_adlib)
+	if (!_hasAdLib)
 		return;
 
-	_adlib->setRepeating(repCount);
+	if (_adlPlayer)
+		_adlPlayer->setRepeating(repCount);
+	if (_mdyPlayer)
+		_mdyPlayer->setRepeating(repCount);
 }
 
 void Sound::blasterPlay(SoundDesc *sndDesc, int16 repCount,

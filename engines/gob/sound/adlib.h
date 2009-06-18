@@ -38,7 +38,7 @@ class GobEngine;
 class AdLib : public Audio::AudioStream {
 public:
 	AdLib(Audio::Mixer &mixer);
-	~AdLib();
+	virtual ~AdLib();
 
 	bool isPlaying() const;
 	int getIndex() const;
@@ -49,11 +49,7 @@ public:
 	void startPlay();
 	void stopPlay();
 
-	bool load(const char *fileName);
-	bool load(byte *data, uint32 size, int index = -1);
-	bool loadMdy(const char *fileName);
-	bool loadTbr(const char *fileName);
-	void unload();
+	virtual void unload();
 
 // AudioStream API
 	int  readBuffer(int16 *buffer, const int numSamples);
@@ -75,10 +71,8 @@ protected:
 	uint32 _rate;
 
 	byte *_data;
-	byte *_timbres;
 	byte *_playPos;
 	uint32 _dataSize;
-	uint32 _timbresSize;
 
 	short _freqs[25][12];
 	byte _notes[11];
@@ -93,32 +87,83 @@ protected:
 	bool _playing;
 	bool _first;
 	bool _ended;
-	bool _needFree;
-	bool _mdySong;
+
+	bool _freeData;
 
 	int _index;
-	uint16 _tbrCount;
-	uint16 _tbrStart;
 
 	unsigned char _wait;
 	uint8 _tickBeat;
 	uint8 _beatMeasure;
 	uint32 _totalTick;
 	uint32 _nrCommand;
-	byte _soundMode;
 	uint16 _pitchBendRangeStep;
 	uint16 _basicTempo, _tempo;
 
 	void writeOPL(byte reg, byte val);
 	void setFreqs();
-	void reset();
-	void setVoices();
-	void setVoice(byte voice, byte instr, bool set);
-	void setVoicesTbr();
-	void setVoiceTbr(byte voice, byte instr, bool set);
 	void setKey(byte voice, byte note, bool on, bool spec);
 	void setVolume(byte voice, byte volume);
 	void pollMusic();
+
+	virtual void interpret() = 0;
+
+	virtual void reset();
+	virtual void rewind() = 0;
+	virtual void setVoices() = 0;
+
+private:
+	void init();
+};
+
+class ADLPlayer : public AdLib {
+public:
+	ADLPlayer(Audio::Mixer &mixer);
+	~ADLPlayer();
+
+	bool load(const char *fileName);
+	bool load(byte *data, uint32 size, int index = -1);
+
+	void unload();
+
+protected:
+	void interpret();
+
+	void reset();
+	void rewind();
+
+	void setVoices();
+	void setVoice(byte voice, byte instr, bool set);
+};
+
+class MDYPlayer : public AdLib {
+public:
+	MDYPlayer(Audio::Mixer &mixer);
+	~MDYPlayer();
+
+	bool loadMDY(const char *fileName);
+	bool loadTBR(const char *fileName);
+
+	void unload();
+
+protected:
+	byte _soundMode;
+
+	byte *_timbres;
+	uint16 _tbrCount;
+	uint16 _tbrStart;
+	uint32 _timbresSize;
+
+	void interpret();
+
+	void reset();
+	void rewind();
+
+	void setVoices();
+	void setVoice(byte voice, byte instr, bool set);
+
+private:
+	void init();
 };
 
 } // End of namespace Gob

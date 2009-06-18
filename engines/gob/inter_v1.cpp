@@ -1520,7 +1520,7 @@ bool Inter_v1::o1_playSound(OpFuncParams &params) {
 	}
 
 	if (sample->getType() == SOUND_ADL) {
-		_vm->_sound->adlibLoad(sample->getData(), sample->size(), index);
+		_vm->_sound->adlibLoadADL(sample->getData(), sample->size(), index);
 		_vm->_sound->adlibSetRepeating(repCount - 1);
 		_vm->_sound->adlibPlay();
 	} else {

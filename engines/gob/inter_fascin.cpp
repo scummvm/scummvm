@@ -129,8 +129,8 @@ void Inter_Fascination::oFascin_geUnknown1(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_geUnknown2(OpGobParams &params) {
-	_vm->_sound->adlibLoadTbr("extasy.tbr");
-	_vm->_sound->adlibLoadMdy("extasy.mdy");
+	_vm->_sound->adlibLoadTBR("extasy.tbr");
+	_vm->_sound->adlibLoadMDY("extasy.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown3(OpGobParams &params) {
@@ -146,33 +146,33 @@ void Inter_Fascination::oFascin_geUnknown5(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_geUnknown6(OpGobParams &params) {
-	_vm->_sound->adlibLoadTbr("music1.tbr");
-	_vm->_sound->adlibLoadMdy("music1.mdy");
+	_vm->_sound->adlibLoadTBR("music1.tbr");
+	_vm->_sound->adlibLoadMDY("music1.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown7(OpGobParams &params) {
-	_vm->_sound->adlibLoadTbr("music2.tbr");
-	_vm->_sound->adlibLoadMdy("music2.mdy");
+	_vm->_sound->adlibLoadTBR("music2.tbr");
+	_vm->_sound->adlibLoadMDY("music2.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown8(OpGobParams &params) {
-	_vm->_sound->adlibLoadTbr("music3.tbr");
-	_vm->_sound->adlibLoadMdy("music3.mdy");
+	_vm->_sound->adlibLoadTBR("music3.tbr");
+	_vm->_sound->adlibLoadMDY("music3.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown9(OpGobParams &params) {
-	_vm->_sound->adlibLoadTbr("batt1.tbr");
-	_vm->_sound->adlibLoadMdy("batt1.mdy");
+	_vm->_sound->adlibLoadTBR("batt1.tbr");
+	_vm->_sound->adlibLoadMDY("batt1.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown10(OpGobParams &params) {
-	_vm->_sound->adlibLoadTbr("batt2.tbr");
-	_vm->_sound->adlibLoadMdy("batt2.mdy");
+	_vm->_sound->adlibLoadTBR("batt2.tbr");
+	_vm->_sound->adlibLoadMDY("batt2.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown11(OpGobParams &params) {
-	_vm->_sound->adlibLoadTbr("batt3.tbr");
-	_vm->_sound->adlibLoadMdy("batt3.mdy");
+	_vm->_sound->adlibLoadTBR("batt3.tbr");
+	_vm->_sound->adlibLoadMDY("batt3.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown1000(OpGobParams &params) {
