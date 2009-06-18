@@ -238,7 +238,8 @@ void GfxOpenGL::startActorDraw(Graphics::Vector3d pos, float yaw, float pitch, f
 	glEnable(GL_TEXTURE_2D);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	if (_currentShadowArray && _currentShadowArray->active) {
+	if (_currentShadowArray && _currentShadowArray->active && _currentShadowArray->shadowMask) {
+		// TODO find out why shadowMask at device in woods is null
 		SectorListType::iterator i = _currentShadowArray->planeList.begin();
 		Sector *shadowSector = *i;
 		glEnable(GL_POLYGON_OFFSET_FILL);
