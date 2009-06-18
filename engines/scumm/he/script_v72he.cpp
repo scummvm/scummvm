@@ -770,8 +770,7 @@ void ScummEngine_v72he::o72_actorOps() {
 		a->setTalkCondition(k);
 		break;
 	case 43: // HE 90+
-		// HE games use reverse order of layering, so we adjust
-		a->_layer = -pop();
+		a->_layer = pop();
 		a->_needRedraw = true;
 		break;
 	case 64:
