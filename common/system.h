@@ -30,6 +30,8 @@
 #include "common/noncopyable.h"
 #include "common/rect.h"
 
+#include "graphics/pixelformat.h"
+
 namespace Audio {
 	class Mixer;
 }
@@ -162,6 +164,9 @@ public:
 	/** @name Mouse */
 	//@{
 
+	/** Show or hide the mouse cursor. */
+	virtual bool showMouse(bool visible) = 0;
+
 	/**
 	 * Move ("warp") the mouse cursor to the specified position in virtual
 	 * screen coordinates.
@@ -269,6 +274,51 @@ public:
 	 * Audio::Mixer documentation.
 	 */
 	virtual Audio::Mixer *getMixer() = 0;
+
+	//@}
+
+
+
+	/**
+	 * @name Audio CD
+	 * The methods in this group deal with Audio CD playback.
+	 * The default implementation simply does nothing.
+	 * This is the lower level implementation as provided by the
+	 * backends. The engines should use the Audio::AudioCDManager
+	 * class instead of using it directly.
+	 */
+	//@{
+
+	/**
+	 * Initialise the specified CD drive for audio playback.
+	 * @return true if the CD drive was inited succesfully
+	 */
+	virtual bool openCD(int drive);
+
+	/**
+	 * Poll CD status.
+	 * @return true if CD audio is playing
+	 */
+	virtual bool pollCD();
+
+	/**
+	 * Start audio CD playback.
+	 * @param track			the track to play.
+	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
+	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
+	 * @param duration		the number of frames to play.
+	 */
+	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
+
+	/**
+	 * Stop audio CD playback.
+	 */
+	virtual void stopCD() {}
+
+	/**
+	 * Update cdrom audio status.
+	 */
+	virtual void updateCD() {}
 
 	//@}
 

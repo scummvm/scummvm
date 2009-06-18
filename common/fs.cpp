@@ -164,22 +164,22 @@ Common::WriteStream *FSNode::createWriteStream() const {
 	return _realNode->createWriteStream();
 }
 
-FSDirectory::FSDirectory(const FSNode &node, int depth)
-  : _node(node), _cached(false), _depth(depth) {
+FSDirectory::FSDirectory(const FSNode &node, int depth, bool flat)
+  : _node(node), _cached(false), _depth(depth), _flat(flat) {
 }
 
-FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth)
-  : _node(node), _cached(false), _depth(depth) {
+FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth, bool flat)
+  : _node(node), _cached(false), _depth(depth), _flat(flat) {
 
 	setPrefix(prefix);
 }
 
-FSDirectory::FSDirectory(const String &name, int depth)
-  : _node(name), _cached(false), _depth(depth) {
+FSDirectory::FSDirectory(const String &name, int depth, bool flat)
+  : _node(name), _cached(false), _depth(depth), _flat(flat) {
 }
 
-FSDirectory::FSDirectory(const String &prefix, const String &name, int depth)
-  : _node(name), _cached(false), _depth(depth) {
+FSDirectory::FSDirectory(const String &prefix, const String &name, int depth, bool flat)
+  : _node(name), _cached(false), _depth(depth), _flat(flat) {
 
 	setPrefix(prefix);
 }
@@ -249,11 +249,11 @@ SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) c
 	return stream;
 }
 
-FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth) {
-	return getSubDirectory(String::emptyString, name, depth);
+FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth, bool flat) {
+	return getSubDirectory(String::emptyString, name, depth, flat);
 }
 
-FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth) {
+FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth, bool flat) {
 	if (name.empty() || !_node.isDirectory())
 		return 0;
 
@@ -261,7 +261,7 @@ FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &na
 	if (!node)
 		return 0;
 
-	return new FSDirectory(prefix, *node, depth);
+	return new FSDirectory(prefix, *node, depth, flat);
 }
 
 void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& prefix) const {
@@ -281,10 +281,13 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 
 		// since the hashmap is case insensitive, we need to check for clashes when caching
 		if (it->isDirectory()) {
-			if (_subDirCache.contains(lowercaseName)) {
+			if (!_flat && _subDirCache.contains(lowercaseName)) {
 				warning("FSDirectory::cacheDirectory: name clash when building cache, ignoring sub-directory '%s'", name.c_str());
 			} else {
-				cacheDirectoryRecursive(*it, depth - 1, lowercaseName + "/");
+				if (_subDirCache.contains(lowercaseName)) {
+					warning("FSDirectory::cacheDirectory: name clash when building subDirCache with subdirectory '%s'", name.c_str());
+				}
+				cacheDirectoryRecursive(*it, depth - 1, _flat ? prefix : lowercaseName + "/");
 				_subDirCache[lowercaseName] = *it;
 			}
 		} else {

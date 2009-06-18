@@ -188,6 +188,9 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 }
 
 
+#pragma mark -
+
+
 const LanguageDescription g_languages[] = {
 	{"zh", "Chinese (Taiwan)", ZH_TWN},
 	{"cz", "Czech", CZ_CZE},
@@ -243,6 +246,9 @@ const char *getLanguageDescription(Language id) {
 }
 
 
+#pragma mark -
+
+
 const PlatformDescription g_platforms[] = {
 	{"2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
 	{"3do", "3do", "3do", "3DO", kPlatform3DO},
@@ -253,6 +259,7 @@ const PlatformDescription g_platforms[] = {
 	{"pc", "dos", "ibm", "DOS", kPlatformPC},
 	{"pc98", "pc98", "pc98", "PC-98", kPlatformPC98},
 	{"wii", "wii", "wii", "Nintendo Wii", kPlatformWii},
+	{"coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3},
 
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
@@ -265,7 +272,7 @@ const PlatformDescription g_platforms[] = {
 	{"nes", "nes", "nes", "NES", kPlatformNES},
 	{"segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD},
 	{"windows", "win", "win", "Windows", kPlatformWindows},
-	{"playstation", "psx", "PSX", "Playstation", kPlatformPSX},
+	{"playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX},
 
 
 	{0, 0, 0, "Default", kPlatformUnknown}
@@ -321,6 +328,96 @@ const char *getPlatformDescription(Platform id) {
 	return l->description;
 }
 
+
+#pragma mark -
+
+
+const RenderModeDescription g_renderModes[] = {
+	{"hercGreen", "Hercules Green", kRenderHercG},
+	{"hercAmber", "Hercules Amber", kRenderHercA},
+	{"cga", "CGA", kRenderCGA},
+	{"ega", "EGA", kRenderEGA},
+	{"amiga", "Amiga", kRenderAmiga},
+	{0, 0, kRenderDefault}
+};
+
+RenderMode parseRenderMode(const String &str) {
+	if (str.empty())
+		return kRenderDefault;
+
+	const RenderModeDescription *l = g_renderModes;
+	for (; l->code; ++l) {
+		if (str.equalsIgnoreCase(l->code))
+			return l->id;
+	}
+
+	return kRenderDefault;
+}
+
+const char *getRenderModeCode(RenderMode id) {
+	const RenderModeDescription *l = g_renderModes;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->code;
+	}
+	return 0;
+}
+
+const char *getRenderModeDescription(RenderMode id) {
+	const RenderModeDescription *l = g_renderModes;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->description;
+	}
+	return 0;
+}
+
+const struct GameOpt {
+	uint32 option;
+	const char *desc;
+} g_gameOptions[] = {
+	{ GUIO_NOSUBTITLES, "sndNoSubs" },
+	{ GUIO_NOMUSIC, "sndNoMusic" },
+	{ GUIO_NOSPEECH, "sndNoSpeech" },
+	{ GUIO_NOSFX, "sndNoSFX" },
+	{ GUIO_NOMIDI, "sndNoMIDI" },
+	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
+	{ GUIO_NONE, 0 }
+};
+
+bool checkGameGUIOption(GameGUIOption option, const String &str) {
+	for (int i = 0; g_gameOptions[i].desc; i++) {
+		if (g_gameOptions[i].option & option) {
+			if (str.contains(g_gameOptions[i].desc))
+				return true;
+			else
+				return false;
+		}
+	}
+	return false;
+}
+
+uint32 parseGameGUIOptions(const String &str) {
+	uint32 res = 0;
+
+	for (int i = 0; g_gameOptions[i].desc; i++)
+		if (str.contains(g_gameOptions[i].desc))
+			res |= g_gameOptions[i].option;
+
+	return res;
+}
+
+String getGameGUIOptionsDescription(uint32 options) {
+	String res = "";
+
+	for (int i = 0; g_gameOptions[i].desc; i++)
+		if (options & g_gameOptions[i].option)
+			res += String(g_gameOptions[i].desc) + " ";
+
+	res.trim();
+
+	return res;
+}
 
 }	// End of namespace Common
 

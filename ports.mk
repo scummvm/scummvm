@@ -193,4 +193,26 @@ aos4dist: $(EXECUTABLE)
 	cp $(srcdir)/README $(AOS4PATH)/README.txt
 	cp $(srcdir)/TODO $(AOS4PATH)/TODO.txt
 
+#
+# Wii/Gamecube specific
+#
+
+# Special target to create an Wii snapshot
+wiidist: $(EXECUTABLE)
+	$(MKDIR) wiidist/residual
+ifeq ($(GAMECUBE),1)
+	$(DEVKITPPC)/bin/elf2dol $(EXECUTABLE) wiidist/residual/residual.dol
+else
+	$(STRIP) $(EXECUTABLE) -o wiidist/residual/boot.elf
+	$(CP) $(srcdir)/dists/wii/icon.png wiidist/residual/
+	sed "s/@REVISION@/$(VER_SVNREV)/;s/@TIMESTAMP@/`date +%Y%m%d%H%M%S`/" < $(srcdir)/dists/wii/meta.xml > wiidist/residual/meta.xml
+endif
+	$(CP) $(srcdir)/dists/wii/READMII wiidist/residual/
+	$(CP) $(srcdir)/AUTHORS wiidist/residual/AUTHORS.txt
+	$(CP) $(srcdir)/COPYING.GPL wiidist/residual/COPYING.GPL.txt
+	$(CP) $(srcdir)/COPYING.LGPL wiidist/residual/COPYING.LGPL.txt
+	$(CP) $(srcdir)/NEWS wiidist/residual/NEWS.txt
+	$(CP) $(srcdir)/README wiidist/residual/README.txt
+	sed -i 's/$$/\r/' wiidist/residual/*.txt
+
 .PHONY: deb bundle osxsnap win32dist install uninstall

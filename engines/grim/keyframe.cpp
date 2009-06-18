@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 
+#include "engines/grim/grim.h"
 #include "engines/grim/keyframe.h"
 #include "engines/grim/textsplit.h"
 

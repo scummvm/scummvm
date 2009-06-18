@@ -45,10 +45,18 @@ namespace Common {
 const String ConfigManager::kApplicationDomain("residual");
 const String ConfigManager::kTransientDomain("__TRANSIENT");
 
+#ifdef ENABLE_KEYMAPPER
+const String ConfigManager::kKeymapperDomain("keymapper");
+#endif
+
 #else
 
 const char *ConfigManager::kApplicationDomain = "residual";
 const char *ConfigManager::kTransientDomain = "__TRANSIENT";
+
+#ifdef ENABLE_KEYMAPPER
+const char *ConfigManager::kKeymapperDomain = "keymapper";
+#endif
 
 #endif
 
@@ -99,6 +107,10 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 	_transientDomain.clear();
 	_domainSaveOrder.clear();
 
+#ifdef ENABLE_KEYMAPPER
+	_keymapperDomain.clear();
+#endif
+
 	// TODO: Detect if a domain occurs multiple times (or likewise, if
 	// a key occurs multiple times inside one domain).
 
@@ -139,6 +151,10 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			// Store domain comment
 			if (domain == kApplicationDomain) {
 				_appDomain.setDomainComment(comment);
+#ifdef ENABLE_KEYMAPPER
+			} else if (domain == kKeymapperDomain) {
+				_keymapperDomain.setDomainComment(comment);
+#endif
 			} else {
 				_gameDomains[domain].setDomainComment(comment);
 			}
@@ -181,6 +197,10 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			// Store comment
 			if (domain == kApplicationDomain) {
 				_appDomain.setKVComment(key, comment);
+#ifdef ENABLE_KEYMAPPER
+			} else if (domain == kKeymapperDomain) {
+				_keymapperDomain.setKVComment(key, comment);
+#endif
 			} else {
 				_gameDomains[domain].setKVComment(key, comment);
 			}
@@ -219,6 +239,10 @@ void ConfigManager::flushToDisk() {
 	for (i = _domainSaveOrder.begin(); i != _domainSaveOrder.end(); ++i) {
 		if (kApplicationDomain == *i) {
 			writeDomain(*stream, *i, _appDomain);
+#ifdef ENABLE_KEYMAPPER
+		} else if (kKeymapperDomain == *i) {
+			writeDomain(*stream, *i, _keymapperDomain);
+#endif
 		} else if (_gameDomains.contains(*i)) {
 			writeDomain(*stream, *i, _gameDomains[*i]);
 		}
@@ -230,6 +254,10 @@ void ConfigManager::flushToDisk() {
 	// Now write the domains which haven't been written yet
 	if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), kApplicationDomain) == _domainSaveOrder.end())
 		writeDomain(*stream, kApplicationDomain, _appDomain);
+#ifdef ENABLE_KEYMAPPER
+	if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), kKeymapperDomain) == _domainSaveOrder.end())
+		writeDomain(*stream, kKeymapperDomain, _keymapperDomain);
+#endif
 	for (d = _gameDomains.begin(); d != _gameDomains.end(); ++d) {
 		if (find(_domainSaveOrder.begin(), _domainSaveOrder.end(), d->_key) == _domainSaveOrder.end())
 			writeDomain(*stream, d->_key, d->_value);
@@ -309,6 +337,10 @@ const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) con
 		return &_transientDomain;
 	if (domName == kApplicationDomain)
 		return &_appDomain;
+#ifdef ENABLE_KEYMAPPER
+	if (domName == kKeymapperDomain)
+		return &_keymapperDomain;
+#endif
 	if (_gameDomains.contains(domName))
 		return &_gameDomains[domName];
 
@@ -323,6 +355,10 @@ ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 		return &_transientDomain;
 	if (domName == kApplicationDomain)
 		return &_appDomain;
+#ifdef ENABLE_KEYMAPPER
+	if (domName == kKeymapperDomain)
+		return &_keymapperDomain;
+#endif
 	if (_gameDomains.contains(domName))
 		return &_gameDomains[domName];
 

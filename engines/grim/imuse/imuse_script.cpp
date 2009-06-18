@@ -24,6 +24,7 @@
  */
 
 #include "engines/grim/imuse/imuse.h"
+#include "engines/grim/grim.h"
 
 namespace Grim {
 

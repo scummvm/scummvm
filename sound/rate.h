@@ -27,6 +27,7 @@
 #define SOUND_RATE_H
 
 #include "common/sys.h"
+#include "engines/engine.h"
 
 class AudioStream;
 

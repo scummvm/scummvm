@@ -57,6 +57,9 @@ public:
 	// Update the dirty areas of the screen
 	void updateScreen();
 
+	// Either show or hide the mouse cursor
+	bool showMouse(bool visible);
+
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
@@ -80,6 +83,19 @@ public:
 
 	virtual Audio::Mixer *getMixer();
 
+	// Poll CD status
+	// Returns true if cd audio is playing
+	bool pollCD();
+
+	// Play CD audio track
+	void playCD(int track, int num_loops, int start_frame, int duration);
+
+	// Stop CD audio track
+	void stopCD();
+
+	// Update CD audio status
+	void updateCD();
+
 	// Quit
 	virtual void quit();
 
@@ -93,6 +109,7 @@ public:
 	void deleteMutex(MutexRef mutex);
 
 	virtual void setWindowCaption(const char *caption);
+	virtual bool openCD(int drive);
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -113,6 +130,11 @@ private:
 	SDL_Surface *_screen;
 
 	int _samplesPerSec;
+
+	// CD Audio
+	SDL_CD *_cdrom;
+	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
+	uint32 _cdEndTime, _cdStopTime;
 
 #ifdef MIXER_DOUBLE_BUFFERING
 	SDL_mutex *_soundMutex;

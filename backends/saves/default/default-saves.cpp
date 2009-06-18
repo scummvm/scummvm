@@ -53,7 +53,7 @@ void DefaultSaveFileManager::checkPath(const Common::FSNode &dir) {
 	}
 }
 
-Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
+Common::StringList DefaultSaveFileManager::listSavefiles(const Common::String &pattern) {
 	Common::FSNode savePath(getSavePath());
 	checkPath(savePath);
 	if (getError() != Common::kNoError)
@@ -73,7 +73,7 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 	return results;
 }
 
-Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
+Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String &filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
 	Common::FSNode savePath(getSavePath());
 	checkPath(savePath);
@@ -90,7 +90,7 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 	return Common::wrapCompressedReadStream(sf);
 }
 
-Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
+Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String &filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
 	Common::FSNode savePath(getSavePath());
 	checkPath(savePath);
@@ -105,7 +105,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 	return Common::wrapCompressedWriteStream(sf);
 }
 
-bool DefaultSaveFileManager::removeSavefile(const char *filename) {
+bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 	clearError();
 
 	Common::FSNode savePath(getSavePath());
@@ -138,6 +138,14 @@ Common::String DefaultSaveFileManager::getSavePath() const {
 
 	// Try to use game specific savepath from config
 	dir = ConfMan.get("savepath");
+
+	// Work around a bug (#999122) in the original 0.6.1 release of
+	// ScummVM, which would insert a bad savepath value into config files.
+	if (dir == "None") {
+		ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
+		ConfMan.flushToDisk();
+		dir = ConfMan.get("savepath");
+	}
 
 #ifdef _WIN32_WCE
 	if (dir.empty())

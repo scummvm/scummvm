@@ -216,6 +216,7 @@ enum Platform {
 	kPlatformWindows,
 	kPlatformNES,
 	kPlatformC64,
+	kPlatformCoCo3,
 	kPlatformLinux,
 	kPlatformAcorn,
 	kPlatformSegaCD,
@@ -246,6 +247,52 @@ extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformAbbrev(Platform id);
 extern const char *getPlatformDescription(Platform id);
 
+/**
+ * List of render modes. It specifies which original graphics mode
+ * to use. Some targets used postprocessing dithering routines for
+ * reducing color depth of final image which let it to be rendered on
+ * such low-level adapters as CGA or Hercules.
+ */
+enum RenderMode {
+	kRenderDefault = 0,
+	kRenderEGA = 1,
+	kRenderCGA = 2,
+	kRenderHercG = 3,
+	kRenderHercA = 4,
+	kRenderAmiga = 5
+};
+
+enum HerculesDimensions {
+	kHercW = 720,
+	kHercH = 350
+};
+
+struct RenderModeDescription {
+	const char *code;
+	const char *description;
+	Common::RenderMode id;
+};
+
+extern const RenderModeDescription g_renderModes[];
+
+/** Convert a string containing a render mode name into a RenderingMode enum value. */
+extern RenderMode parseRenderMode(const String &str);
+extern const char *getRenderModeCode(RenderMode id);
+extern const char *getRenderModeDescription(RenderMode id);
+
+enum GameGUIOption {
+	GUIO_NONE		= 0,
+	GUIO_NOSUBTITLES	= (1 << 0),
+	GUIO_NOMUSIC		= (1 << 1),
+	GUIO_NOSPEECH		= (1 << 2),
+	GUIO_NOSFX		= (1 << 3),
+	GUIO_NOMIDI		= (1 << 4),
+	GUIO_NOLAUNCHLOAD	= (1 << 5)
+};
+
+bool checkGameGUIOption(GameGUIOption option, const String &str);
+uint32 parseGameGUIOptions(const String &str);
+String getGameGUIOptionsDescription(uint32 options);
 
 }	// End of namespace Common
 

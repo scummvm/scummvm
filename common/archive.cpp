@@ -110,16 +110,16 @@ void SearchSet::add(const String &name, Archive *archive, int priority, bool aut
 
 }
 
-void SearchSet::addDirectory(const String &name, const String &directory, int priority, int depth) {
+void SearchSet::addDirectory(const String &name, const String &directory, int priority, int depth, bool flat) {
 	FSNode dir(directory);
-	addDirectory(name, dir, priority, depth);
+	addDirectory(name, dir, priority, depth, flat);
 }
 
-void SearchSet::addDirectory(const String &name, const FSNode &dir, int priority, int depth) {
+void SearchSet::addDirectory(const String &name, const FSNode &dir, int priority, int depth, bool flat) {
 	if (!dir.exists() || !dir.isDirectory())
 		return;
 
-	add(name, new FSDirectory(dir, depth), priority);
+	add(name, new FSDirectory(dir, depth, flat), priority);
 }
 
 

@@ -144,9 +144,13 @@ public:
 	int compareTo(const char *x) const;	// strcmp clone
 	int compareToIgnoreCase(const char *x) const;	// stricmp clone
 
+	bool hasSuffix(const String &x) const;
 	bool hasSuffix(const char *x) const;
+
+	bool hasPrefix(const String &x) const;
 	bool hasPrefix(const char *x) const;
 
+	bool contains(const String &x) const;
 	bool contains(const char *x) const;
 	bool contains(char x) const;
 

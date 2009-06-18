@@ -31,6 +31,16 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 
+namespace Common {
+#ifdef ENABLE_KEYMAPPER
+	class Keymapper;
+#endif
+#ifdef ENABLE_VKEYBD
+	class VirtualKeyboard;
+#endif
+}
+
+
 class EventProvider {
 public:
 	virtual ~EventProvider() {}

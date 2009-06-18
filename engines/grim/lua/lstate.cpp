@@ -7,6 +7,7 @@
 #include "common/endian.h"
 
 #include "engines/grim/actor.h"
+#include "engines/grim/grim.h"
 
 #include "engines/grim/lua/lbuiltin.h"
 #include "engines/grim/lua/ldo.h"

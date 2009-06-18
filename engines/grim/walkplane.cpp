@@ -25,6 +25,7 @@
 
 #include "common/util.h"
 
+#include "engines/grim/grim.h"
 #include "engines/grim/walkplane.h"
 #include "engines/grim/textsplit.h"
 

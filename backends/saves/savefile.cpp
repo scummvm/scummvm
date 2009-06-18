@@ -30,7 +30,7 @@
 
 namespace Common {
 
-bool SaveFileManager::renameSavefile(const char *oldFilename, const char *newFilename) {
+bool SaveFileManager::renameSavefile(const String &oldFilename, const String &newFilename) {
 
 	InSaveFile *inFile = 0;
 	OutSaveFile *outFile = 0;

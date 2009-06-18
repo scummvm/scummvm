@@ -52,8 +52,15 @@ static const EnginePlugin *detectPlugin() {
 	// Make sure the gameid is set in the config manager, and that it is lowercase.
 	Common::String gameid(ConfMan.getActiveDomainName());
 	assert(!gameid.empty());
-	if (ConfMan.hasKey("gameid"))
+	if (ConfMan.hasKey("gameid")) {
 		gameid = ConfMan.get("gameid");
+		
+		// Set last selected game, that the game will be highlighted
+		// on RTL
+		ConfMan.set("lastselectedgame", ConfMan.getActiveDomainName(), Common::ConfigManager::kApplicationDomain);
+		ConfMan.flushToDisk();
+	}
+
 	gameid.toLowercase();
 	ConfMan.set("gameid", gameid);
 

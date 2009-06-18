@@ -137,8 +137,8 @@ DefaultEventManager::DefaultEventManager(EventProvider *boss) :
 	if (_recordMode == kRecorderRecord) {
 		_recordCount = 0;
 		_recordTimeCount = 0;
-		_recordFile = g_system->getSavefileManager()->openForSaving(_recordTempFileName.c_str());
-		_recordTimeFile = g_system->getSavefileManager()->openForSaving(_recordTimeFileName.c_str());
+		_recordFile = g_system->getSavefileManager()->openForSaving(_recordTempFileName);
+		_recordTimeFile = g_system->getSavefileManager()->openForSaving(_recordTimeFileName);
 		_recordSubtitles = ConfMan.getBool("subtitles");
 	}
 
@@ -148,8 +148,8 @@ DefaultEventManager::DefaultEventManager(EventProvider *boss) :
 	if (_recordMode == kRecorderPlayback) {
 		_playbackCount = 0;
 		_playbackTimeCount = 0;
-		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordFileName.c_str());
-		_playbackTimeFile = g_system->getSavefileManager()->openForLoading(_recordTimeFileName.c_str());
+		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordFileName);
+		_playbackTimeFile = g_system->getSavefileManager()->openForLoading(_recordTimeFileName);
 
 		if (!_playbackFile) {
 			warning("Cannot open playback file %s. Playback was switched off", _recordFileName.c_str());
@@ -200,6 +200,12 @@ DefaultEventManager::DefaultEventManager(EventProvider *boss) :
 }
 
 DefaultEventManager::~DefaultEventManager() {
+#ifdef ENABLE_KEYMAPPER
+	delete _keymapper;
+#endif
+#ifdef ENABLE_VKEYBD
+	delete _vk;
+#endif
 	g_system->lockMutex(_timeMutex);
 	g_system->lockMutex(_recorderMutex);
 	_recordMode = kPassthrough;
@@ -222,11 +228,11 @@ DefaultEventManager::~DefaultEventManager() {
 		_recordTimeFile->finalize();
 		delete _recordTimeFile;
 
-		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordTempFileName.c_str());
+		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordTempFileName);
 
 		assert(_playbackFile);
 
-		_recordFile = g_system->getSavefileManager()->openForSaving(_recordFileName.c_str());
+		_recordFile = g_system->getSavefileManager()->openForSaving(_recordFileName);
 		_recordFile->writeUint32LE(RECORD_SIGNATURE);
 		_recordFile->writeUint32LE(RECORD_VERSION);
 
@@ -261,6 +267,13 @@ DefaultEventManager::~DefaultEventManager() {
 }
 
 void DefaultEventManager::init() {
+#ifdef ENABLE_VKEYBD
+	if (ConfMan.hasKey("vkeybd_pack_name")) {
+		_vk->loadKeyboardPack(ConfMan.get("vkeybd_pack_name"));
+	} else {
+		_vk->loadKeyboardPack("vkeybd_default");
+	}
+#endif
 }
 
 bool DefaultEventManager::playback(Common::Event &event) {

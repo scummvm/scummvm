@@ -161,12 +161,12 @@ public:
 	/**
 	 * Create and add a FSDirectory by name
 	 */
-	void addDirectory(const String &name, const String &directory, int priority = 0, int depth = 1);
+	void addDirectory(const String &name, const String &directory, int priority = 0, int depth = 1, bool flat = false);
 
 	/**
 	 * Create and add a FSDirectory by FSNode
 	 */
-	void addDirectory(const String &name, const FSNode &directory, int priority = 0, int depth = 1);
+	void addDirectory(const String &name, const FSNode &directory, int priority = 0, int depth = 1, bool flat = false);
 
 	/**
 	 * Remove an archive from the searchable set.

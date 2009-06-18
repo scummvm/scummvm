@@ -32,7 +32,12 @@ const char *gResidualVersionDate = RESIDUAL_VERSION " (" __DATE__ " " __TIME__ "
 const char *gResidualFullVersion = "Residual " RESIDUAL_VERSION " (" __DATE__ " " __TIME__ ")";
 const char *gResidualFeatures = ""
 #ifdef USE_TREMOR
+#ifdef USE_TREMOLO
+	// libTremolo is used on WinCE for better ogg performance
+	"Tremolo "
+#else
 	"Tremor "
+#endif
 #else
 #ifdef USE_VORBIS
 	"Vorbis "

@@ -197,6 +197,8 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 
 	if (params.flags & kADFlagUseExtraAsHint)
 		desc["extra"] = realDesc->extra;
+
+	desc.setGUIOptions(realDesc->guioptions | params.guioptions);
 }
 
 GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {

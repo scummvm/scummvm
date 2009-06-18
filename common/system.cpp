@@ -25,10 +25,18 @@
 
 #include "common/system.h"
 
-OSystem *g_system = NULL;
+OSystem *g_system = 0;
 
 OSystem::OSystem() {
 }
 
 OSystem::~OSystem() {
+}
+
+bool OSystem::openCD(int drive) {
+	return false;
+}
+
+bool OSystem::pollCD() {
+	return false;
 }

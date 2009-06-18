@@ -23,6 +23,7 @@
  *
  */
 
+#include "engines/grim/grim.h"
 #include "engines/grim/textobject.h"
 
 namespace Grim {

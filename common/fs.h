@@ -233,8 +233,8 @@ public:
  *
  * FSDirectory can represent a single directory, or a tree with specified depth,
  * depending on the value passed to the 'depth' parameter in the constructors.
- * Filenames are cached with their relative path, with elements separated by
- * slashes, e.g.:
+ * In the default mode, filenames are cached with their relative path,
+ * with elements separated by slashes, e.g.:
  *
  * c:\my\data\file.ext
  *
@@ -248,11 +248,16 @@ public:
  * hasFile(), listMatchingMembers() and listMembers(). Please see the function
  * specific comments for more information.
  *
+ * If the 'flat' argument to the constructor is true, files in subdirectories
+ * are cached without the relative path, so in the example above
+ * c:\my\data\file.ext would be cached as file.ext.
+ *
  * Client code can customize cache by using the constructors with the 'prefix'
  * parameter. In this case, the prefix is prepended to each entry in the cache,
  * and effectively treated as a 'virtual' parent subdirectory. FSDirectory adds
  * a trailing slash to prefix if needed. Following on with the previous example
  * and using 'your' as prefix, the cache entry would have been 'your/data/file.ext'.
+ * This is done both in non-flat and flat mode.
  *
  */
 class FSDirectory : public Archive {
@@ -267,6 +272,7 @@ class FSDirectory : public Archive {
 	mutable NodeCache	_fileCache, _subDirCache;
 	mutable bool _cached;
 	mutable int	_depth;
+	mutable bool _flat;
 
 	// look for a match
 	FSNode *lookupCache(NodeCache &cache, const String &name) const;
@@ -283,15 +289,17 @@ public:
 	 * unbound FSDirectory if name is not found on the filesystem or if the node is not a
 	 * valid directory.
 	 */
-	FSDirectory(const String &name, int depth = 1);
-	FSDirectory(const FSNode &node, int depth = 1);
+	FSDirectory(const String &name, int depth = 1, bool flat = false);
+	FSDirectory(const FSNode &node, int depth = 1, bool flat = false);
 
 	/**
 	 * Create a FSDirectory representing a tree with the specified depth. The parameter
 	 * prefix is prepended to the keys in the cache. See class comment.
 	 */
-	FSDirectory(const String &prefix, const String &name, int depth = 1);
-	FSDirectory(const String &prefix, const FSNode &node, int depth = 1);
+	FSDirectory(const String &prefix, const String &name, int depth = 1,
+	            bool flat = false);
+	FSDirectory(const String &prefix, const FSNode &node, int depth = 1,
+	            bool flat = false);
 
 	virtual ~FSDirectory();
 
@@ -305,8 +313,8 @@ public:
 	 * for an explanation of the prefix parameter.
 	 * @return a new FSDirectory instance
 	 */
-	FSDirectory *getSubDirectory(const String &name, int depth = 1);
-	FSDirectory *getSubDirectory(const String &prefix, const String &name, int depth = 1);
+	FSDirectory *getSubDirectory(const String &name, int depth = 1, bool flat = false);
+	FSDirectory *getSubDirectory(const String &prefix, const String &name, int depth = 1, bool flat = false);
 
 	/**
 	 * Checks for existence in the cache. A full match of relative path and filename is needed

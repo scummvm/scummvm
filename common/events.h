@@ -60,6 +60,8 @@ enum EventType {
 	EVENT_MBUTTONUP = 14,
 
 	EVENT_MAINMENU = 15,
+	EVENT_RTL = 16,
+	EVENT_MUTE = 17,
 
 	EVENT_QUIT = 10,
 	EVENT_SCREEN_CHANGED = 11,
@@ -147,7 +149,6 @@ public:
 	 * @note	called after graphics system has been set up
 	 */
 	virtual void init() {}
-
 	/**
 	 * Get the next event in the event queue.
 	 * @param event	point to an Event struct, which will be filled with the event data.
@@ -184,6 +185,17 @@ public:
 	 */
 	virtual int shouldQuit() const = 0;
 
+	/**
+	 * Should we return to the launcher?
+	 */
+	virtual int shouldRTL() const = 0;
+
+	/**
+	 * Reset the "return to launcher" flag (as returned shouldRTL()) to false.
+	 * Used when we have returned to the launcher.
+	 */
+	virtual void resetRTL() = 0;
+
 	// Optional: check whether a given key is currently pressed ????
 	//virtual bool isKeyPressed(int keycode) = 0;
 
@@ -191,6 +203,9 @@ public:
 
 	// TODO: Consider removing OSystem::getScreenChangeID and
 	// replacing it by a generic getScreenChangeID method here
+#ifdef ENABLE_KEYMAPPER
+	virtual Common::Keymapper *getKeymapper() = 0;
+#endif
 
 protected:
 

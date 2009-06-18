@@ -31,14 +31,11 @@
  * improvments over the original code were made.
  */
 
-#include "common/sys.h"
-#include "common/util.h"
-#include "common/debug.h"
-#include "common/frac.h"
-
 #include "sound/audiostream.h"
 #include "sound/rate.h"
 #include "sound/mixer.h"
+#include "common/frac.h"
+#include "common/util.h"
 
 namespace Audio {
 

@@ -74,11 +74,23 @@ public:
 
 	/** The transient (pseudo) domain. */
 	static const String kTransientDomain;
+
+#ifdef ENABLE_KEYMAPPER
+	/** The name of keymapper domain used to store the key maps */
+	static const String kKeymapperDomain;
+#endif
+
 #else
 	static const char *kApplicationDomain;
 	static const char *kTransientDomain;
 
 	const String _emptyString;
+
+#ifdef ENABLE_KEYMAPPER
+	/** The name of keymapper domain used to store the key maps */
+	static const char *kKeymapperDomain;
+#endif
+
 #endif
 
 	void				loadDefaultConfigFile();
@@ -143,6 +155,7 @@ public:
 	void				renameGameDomain(const String &oldName, const String &newName);
 	bool				hasGameDomain(const String &domName) const;
 	const DomainMap &	getGameDomains() const { return _gameDomains; }
+	DomainMap &			getGameDomains() { return _gameDomains; }
 
 private:
 	friend class Singleton<SingletonBaseType>;
@@ -155,6 +168,10 @@ private:
 	DomainMap		_gameDomains;
 	Domain			_appDomain;
 	Domain			_defaultsDomain;
+
+#ifdef ENABLE_KEYMAPPER
+	Domain			_keymapperDomain;
+#endif
 
 	StringList		_domainSaveOrder;
 
