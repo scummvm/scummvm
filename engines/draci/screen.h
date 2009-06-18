@@ -32,9 +32,12 @@
 
 namespace Draci {
 
-extern const int kScreenHeight;
-extern const int kScreenWidth;
-extern const uint16 kNumColours;
+enum ScreenParameters {
+	kScreenWidth = 320,
+	kScreenHeight = 200,
+
+	kNumColours = 256
+};
 
 class DraciEngine;
 

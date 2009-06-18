@@ -30,10 +30,6 @@
 
 namespace Draci {
 
-const int kScreenWidth = 320;
-const int kScreenHeight = 200;
-const uint16 kNumColours = 256;
-
 Screen::Screen(DraciEngine *vm) : _vm(vm) {
 	_surface = new Graphics::Surface();
 	_surface->create(kScreenWidth, kScreenHeight, 1);
