@@ -2900,6 +2900,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"dynasty",
+			"",
+			AD_ENTRY1s("intro.stk", "bdbdac8919200a5e71ffb9fb0709f704", 2446652),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeDynasty,
+		kFeatures640,
+		0, 0, 0
+	},
+	{
+		{
+			"dynasty",
 			"Demo",
 			AD_ENTRY1s("intro.stk", "464538a17ed39755d7f1ba9c751af1bd", 1847864),
 			EN_USA,
