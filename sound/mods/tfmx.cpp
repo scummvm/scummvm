@@ -43,16 +43,23 @@ const uint16 Tfmx::noteIntervalls[64] = {
 	 214,  202,  191,  180,  170,  160,  151,  143,  135,  127,  120,  113,
 	 214,  202,  191,  180 };
 
-
-
 Tfmx::Tfmx(int rate, bool stereo)
 : Paula(stereo, rate), _resource()  {
 	_playerCtx.enabled = false;
-	_playerCtx.song = -1;
 	_playerCtx.stopWithLastPattern = false;
 
 	for (int i = 0; i < kNumVoices; ++i) 
 		_channelCtx[i].paulaChannel = (byte)i;
+
+	_playerCtx.song = -1;
+	_playerCtx.volume = 0x40;
+	_playerCtx.patternCount = 0;
+	_playerCtx.patternSkip = 6;
+	stopPatternChannels();
+	stopMacroChannels();
+
+	setTimerBaseValue(kPalCiaClock);
+	setInterruptFreqUnscaled(kPalDefaultCiaVal);
 }
 
 Tfmx::~Tfmx() {
@@ -63,7 +70,6 @@ void Tfmx::interrupt() {
 	++_playerCtx.tickCount;
 	for (int i = 0; i < kNumVoices; ++i) {
 		ChannelContext &channel = _channelCtx[i];
-
 		if (channel.dmaIntCount) {
 			// wait for DMA Interupts to happen
 			int doneDma = getChannelDmaCount(channel.paulaChannel);
@@ -80,9 +86,10 @@ void Tfmx::interrupt() {
 			channel.customMacroPrio = 0;
 		}
 
+		// externally queued macros
 		if (channel.customMacro) {
 			const byte *const noteCmd = (const byte *)&channel.customMacro;
-			const int channelNo = (&channel - _channelCtx);
+			const uint8 channelNo = (uint8)(&channel - _channelCtx);
 
 			channel.sfxLocked = false;
 			noteCommand(noteCmd[0], noteCmd[1], (noteCmd[2] & 0xF0) | channelNo, noteCmd[3]);
@@ -119,12 +126,6 @@ void Tfmx::interrupt() {
 
 void Tfmx::effects(ChannelContext &channel) {
 	// addBegin
-
-	// TODO: macroNote pending?
-	if (0) {
-		channel.sfxLocked = false;
-		// TODO: macronote
-	}
 
 	// vibrato
 	if (channel.vibLength) {
@@ -498,7 +499,11 @@ startPatterns:
 
 		} else if (pattCmd == 0xFE) {	// Stop voice in pattern.expose
 			_patternCtx[i].command = 0xFF;
-			stopChannel(_channelCtx[_patternCtx[i].expose % kNumVoices]);
+			ChannelContext channel = _channelCtx[_patternCtx[i].expose % kNumVoices];
+			if (!channel.sfxLocked) {
+				clearMacroProgramm(channel);
+				Paula::disableChannel(channel.paulaChannel);
+			}
 		} // else this pattern-Channel is stopped
 	}
 	if (_playerCtx.stopWithLastPattern && !runningPatterns) {
@@ -872,40 +877,26 @@ bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStrea
 }
 
 
-void Tfmx::doMacro(int macro, int note) {
+void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo) {
 	assert(0 <= macro && macro < kMaxMacroOffsets);
 	assert(0 <= note && note < 0xC0);
 	Common::StackLock lock(_mutex);
 
-	_playerCtx.song = -1;
-	_playerCtx.volume = 0x40;
+	channelNo %= kNumVoices;
+	ChannelContext &channel = _channelCtx[channelNo];
+	unlockMacroChannel(channel);
 
-	const int channel = 0;
-	_channelCtx[channel].sfxLocked = false;
-	_channelCtx[channel].note = 0;
-
-	for (int i = 0; i < kNumVoices; ++i) {
-		_channelCtx[i].sfxLocked = false;
-		_channelCtx[i].sfxLockTime = -1;
-		clearEffects(_channelCtx[i]);
-		_channelCtx[i].vibValue = 0;
-		stopChannel(_channelCtx[i]);
-		_channelCtx[i].volume = 0;
-	}
-
-	noteCommand((uint8)note, (uint8)macro, (uint8)channel, 0);
-
-	setTimerBaseValue(kPalCiaClock);
-	setInterruptFreqUnscaled(kPalDefaultCiaVal);
+	noteCommand((uint8)note, (uint8)macro, (uint8)(relVol << 4) | channelNo, finetune);
 	startPaula();
 }
 
 void Tfmx::doSong(int songPos) {
 	assert(0 <= songPos && songPos < kNumSubsongs);
 	Common::StackLock lock(_mutex);
+	// bool stopCurSong = false;
+	int prevSong = _playerCtx.song;
 
 	_playerCtx.song = (int8)songPos;
-	_playerCtx.volume = 0x40;
 
 	_trackCtx.loopCount = -1;
 	_trackCtx.startInd = _trackCtx.posInd = _subsong[songPos].songstart;
@@ -913,7 +904,6 @@ void Tfmx::doSong(int songPos) {
 
 	const uint16 tempo = _subsong[songPos].tempo;
 	uint16 ciaIntervall;
-	
 	if (tempo >= 0x10) {
 		ciaIntervall = (uint16)(kCiaBaseInterval / tempo);
 		_playerCtx.patternSkip = 0;
@@ -921,27 +911,12 @@ void Tfmx::doSong(int songPos) {
 		ciaIntervall = kPalDefaultCiaVal;
 		_playerCtx.patternSkip = tempo;
 	}
-
-	_playerCtx.patternCount = 0;
-
-	for (int i = 0; i < kNumChannels; ++i) {
-		_patternCtx[i].command = 0xFF;
-		_patternCtx[i].expose = 0;
-	}
-
-	for (int i = 0; i < kNumVoices; ++i) {
-		_channelCtx[i].sfxLocked = false;
-		_channelCtx[i].sfxLockTime = -1;
-		clearEffects(_channelCtx[i]);
-		_channelCtx[i].vibValue = 0;
-		stopChannel(_channelCtx[i]);
-		_channelCtx[i].volume = 0;
-		_channelCtx[i].customMacro = 0;
-	}
-
 	setTimerBaseValue(kPalCiaClock);
 	setInterruptFreqUnscaled(ciaIntervall);
 
+	stopPatternChannels();
+	stopMacroChannels();
+	_playerCtx.patternCount = 0;
 	while (trackStep())
 		;
 	startPaula();

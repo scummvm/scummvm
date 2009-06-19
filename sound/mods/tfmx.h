@@ -48,7 +48,7 @@ public:
 	void interrupt();
 	void doSong(int songPos);
 	void doSfx(int sfxIndex);
-	void doMacro(int macro, int note);
+	void doMacro(int note, int macro, int relVol = 0, int finetune = 0, int channelNo = 0);
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
 	int getTicks() {return _playerCtx.tickCount;}
 	int getSongIndex() {return _playerCtx.song;}
@@ -232,18 +232,36 @@ public:
 
 	void clearEffects(ChannelContext &channel) {
 		channel.envSkip = 0;
-
 		channel.vibLength = 0;
-
 		channel.portaDelta = 0;
 	}
 
-	void stopChannel(ChannelContext &channel) {
-		if (!channel.sfxLocked) {
-			channel.macroRun = false;
-			channel.dmaIntCount = 0;
-			Paula::disableChannel(channel.paulaChannel);
-		} 
+	void clearMacroProgramm(ChannelContext &channel) {
+		channel.macroRun = false;
+		channel.dmaIntCount = 0;
+	}
+
+	void unlockMacroChannel(ChannelContext &channel) {
+		channel.customMacro = 0;
+		channel.customMacroPrio = false;
+		channel.sfxLocked = false;
+		channel.sfxLockTime = -1;
+	}
+
+	void stopPatternChannels() {
+		for (int i = 0; i < kNumChannels; ++i) {
+			_patternCtx[i].command = 0xFF;
+			_patternCtx[i].expose = 0;
+		}
+	}
+
+	void stopMacroChannels() {
+		for (int i = 0; i < kNumVoices; ++i) {
+			clearEffects(_channelCtx[i]);
+			unlockMacroChannel(_channelCtx[i]);
+			clearMacroProgramm(_channelCtx[i]);
+			_channelCtx[i].note = 0;
+		}
 	}
 
 	void setNoteMacro(ChannelContext &channel, uint note, int fineTune) {
