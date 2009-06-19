@@ -33,18 +33,6 @@ namespace Draci {
 const Common::String kFontSmall("Small.fon");
 const Common::String kFontBig("Big.fon"); 
 
-/** 
- *	Default font colours. They all seem to remain constant except for the
- *  first one which varies depending on the character speaking.
- *  kOverFontColour is set to transparent.
- * TODO: Find out what kFontColour1 should actually be when the game starts
- */
-enum { 
-	kFontColour1 = 2, kFontColour2 = 0,
-	kFontColour3 = 3, kFontColour4 = 4, 
-	kOverFontColour = 255 
-};
-
 Font::Font() {
 
 	_fontHeight = 0;
@@ -156,7 +144,7 @@ uint8 Font::getCharWidth(uint8 chr) const {
  * @param ty  	Vertical offset on the surface
  */
 
-void Font::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const {
+void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty) const {
 	assert(dst != NULL);
 	assert(tx >= 0);
 	assert(ty >= 0);
@@ -200,13 +188,17 @@ void Font::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const {
 				break;
 			}
 			
-			// Paint pixel
-			ptr[x] = colour;
+			// Paint pixel (if not transparent)
+			if (colour != dst->getTransparentColour())			
+				ptr[x] = colour;
 		}
 
 		// Advance to next row
 		ptr += dst->pitch;	
 	}
+
+	Common::Rect r(tx, ty, tx + xPixelsToDraw, ty + yPixelsToDraw);
+	dst->markDirtyRect(r);
 }
 
 /**
@@ -219,7 +211,7 @@ void Font::drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const {
  * @param spacing 	Space to leave between individual characters. Defaults to 0. 
  */
 
-void Font::drawString(Graphics::Surface *dst, const Common::String &str, 
+void Font::drawString(Surface *dst, const Common::String &str, 
 							int x, int y, int spacing) const {
 	assert(dst != NULL);
 	assert(x >= 0);

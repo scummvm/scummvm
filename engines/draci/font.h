@@ -33,6 +33,18 @@ namespace Draci {
 extern const Common::String kFontSmall;
 extern const Common::String kFontBig;
 
+/** 
+ *	Default font colours. They all seem to remain constant except for the
+ *  first one which varies depending on the character speaking.
+ *  kOverFontColour is set to transparent.
+ * TODO: Find out what kFontColour1 should actually be when the game starts
+ */
+enum { 
+	kFontColour1 = 2, kFontColour2 = 0,
+	kFontColour3 = 3, kFontColour4 = 4, 
+	kOverFontColour = 255 
+};
+
 /**
  *  Represents the game's fonts. See docs for setFont() for font format details.
  */
@@ -49,8 +61,8 @@ public:
 	uint8 getFontHeight() const { return _fontHeight; };
 	uint8 getMaxCharWidth() const { return _maxCharWidth; };
 	uint8 getCharWidth(byte chr) const;
-	void drawChar(Graphics::Surface *dst, uint8 chr, int tx, int ty) const;
-	void drawString(Graphics::Surface *dst, const Common::String &str, 
+	void drawChar(Surface *dst, uint8 chr, int tx, int ty) const;
+	void drawString(Surface *dst, const Common::String &str, 
 					int x, int y, int spacing = 0) const;
 	int getStringWidth(const Common::String &str, int spacing = 0) const;
 	void setColour(uint8 colour);
