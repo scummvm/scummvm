@@ -41,6 +41,7 @@ public:
 	~Screen();
 
 	void copyToBackBuffer(byte *buffer, int pitch, int x, int y, int width, int height);
+	void copyToBackBufferWithTransparency(byte *buffer, int pitch, int x, int y, int width, int height);
 	void copyBackBufferToScreen();
 	void copyRectToScreen(byte *buffer, int pitch, int x, int y, int width, int height);
 	void copyRectToScreenWithTransparency(byte *buffer, int pitch, int x, int y, int width, int height);
