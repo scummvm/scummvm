@@ -211,10 +211,10 @@ public:
 
 		int8	volume;	//!< Master Volume
 
-/*		int8	fadeDest;
-		int8	fadeTime;
-		int8	fadeReset;
-		int8	fadeSlope; */
+		uint8	fadeSkip;
+		uint8	fadeCount;
+		int8	fadeEndVolume;
+		int8	fadeDelta;
 
 		int		tickCount;
 

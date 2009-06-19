@@ -53,6 +53,7 @@ Tfmx::Tfmx(int rate, bool stereo)
 
 	_playerCtx.song = -1;
 	_playerCtx.volume = 0x40;
+	_playerCtx.fadeDelta = 0;
 	_playerCtx.patternCount = 0;
 	_playerCtx.patternSkip = 6;
 	stopPatternChannels();
@@ -111,10 +112,6 @@ void Tfmx::interrupt() {
 		}
 
 		// TODO: handling pending DMAOff?
-
-		// set volume after macros were run.
-		uint8 finVol = _playerCtx.volume * channel.volume >> 6;
-		Paula::setChannelVolume(channel.paulaChannel, finVol);
 	}
 
 	// Patterns are only processed each _playerCtx.timerCount + 1 tick
@@ -189,9 +186,19 @@ void Tfmx::effects(ChannelContext &channel) {
 		}
 		channel.volume = volume;
 	}
+
 	// Fade
+	if (_playerCtx.fadeDelta && !(--_playerCtx.fadeCount)) {
+		_playerCtx.fadeCount = _playerCtx.fadeSkip;
+
+		_playerCtx.volume += _playerCtx.fadeDelta;
+		if (_playerCtx.volume == _playerCtx.fadeEndVolume)
+			_playerCtx.fadeDelta = 0;
+	}
 
 	// Volume
+	const uint8 finVol = _playerCtx.volume * channel.volume >> 6;
+	Paula::setChannelVolume(channel.paulaChannel, finVol);
 }
 
 static void warnMacroUnimplemented(const byte *macroPtr, int level) {
@@ -235,13 +242,15 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 			// TODO remember time disabled, remember pending dmaoff?.
 		} else {
 			//TODO ?
-			Paula::disableChannel(channel.paulaChannel);
 		}
 
 		if (macroPtr[2])
 			channel.volume = macroPtr[3];
 		else if (macroPtr[3])
 			channel.volume = channel.relVol * 3 + macroPtr[3];
+		else
+			return true;
+		Paula::setChannelVolume(channel.paulaChannel, channel.volume);
 		return true;
 
 	case 0x01:	// DMA On
@@ -576,7 +585,7 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackst
 
 		case 14: 	// Stop custompattern
 			// TODO ?
-			warnPatternUnimplemented(patternPtr, 0);
+			warnPatternUnimplemented(patternPtr, 1);
 			// FT
 		case 4: 	// Stop this pattern
 			pattern.command = 0xFF;
@@ -600,8 +609,18 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackst
 		case 9: 	// Return from Subroutine
 			warnPatternUnimplemented(patternPtr, 0);
 			return true;
+
 		case 10:	// fade master volume
-			warnPatternUnimplemented(patternPtr, 0);
+			_playerCtx.fadeCount = _playerCtx.fadeSkip = patternPtr[1];
+			_playerCtx.fadeEndVolume = (int8)patternPtr[3];
+			if (_playerCtx.fadeSkip) {
+				const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
+				_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
+			} else {
+				_playerCtx.volume = _playerCtx.fadeEndVolume;
+				_playerCtx.fadeDelta = 0;
+			}
+			++_trackCtx.posInd;
 			return true;
 
 		case 11: {	// play pattern. Parameters: patternCmd, channel, expose
@@ -671,22 +690,14 @@ bool Tfmx::trackStep() {
 			return false;
 
 		case 1:	// Branch/Loop section of tracksteps. Parameters: branch target, loopcount
-			// this depends on the current loopCounter
-			temp = _trackCtx.loopCount;
-			if (temp > 0) {
-				// if trackloop is positive, we decrease one loop and continue at start of loop
-				--_trackCtx.loopCount;
-				_trackCtx.posInd = READ_BE_UINT16(&trackData[2]);
-			} else if (temp == 0) {
-				// if trackloop is 0, we reached last iteration and continue with next trackstep
-				_trackCtx.loopCount = (uint16)-1;
-			} else /*if (_context.TrackLoop < 0)*/ {
-				// if TrackLoop is negative then we reached the loop instruction the first time
-				// and we setup the Loop
+			++_trackCtx.posInd;
+			if (_trackCtx.loopCount != 0) {
+				if (_trackCtx.loopCount < 0)
+					_trackCtx.loopCount = READ_BE_UINT16(&trackData[3]);
 				_trackCtx.posInd    = READ_BE_UINT16(&trackData[2]);
-				_trackCtx.loopCount = READ_BE_UINT16(&trackData[3]);
 			}
-			break;
+			--_trackCtx.loopCount;
+			return true;
 
 		case 2:	// Set Tempo. Parameters: tempo, divisor
 			_playerCtx.patternCount = _playerCtx.patternSkip = READ_BE_UINT16(&trackData[2]); // tempo
@@ -694,16 +705,30 @@ bool Tfmx::trackStep() {
 
 			if (!(temp & 0x8000) && (temp & 0x1FF))
 				setInterruptFreqUnscaled(temp & 0x1FF);
-			break;
+			++_trackCtx.posInd;
+			return true;
+
+		case 4:	// Fade
+			_playerCtx.fadeCount = _playerCtx.fadeSkip = (uint8)READ_BE_UINT16(&trackData[2]);
+			_playerCtx.fadeEndVolume = (int8)READ_BE_UINT16(&trackData[3]);
+
+			if (_playerCtx.fadeSkip) {
+				const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
+				_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
+			} else {
+				_playerCtx.volume = _playerCtx.fadeEndVolume;
+				_playerCtx.fadeDelta = 0;
+			}
+			++_trackCtx.posInd;
+			return true;
 
 		case 3:	// Unknown, stops player aswell
-		case 4:	// Fade
 		default:
 			debug("Unknown Command: %02X", READ_BE_UINT16(&trackData[1]));
 			// MI-Player handles this by stopping the player, we just continue
+			++_trackCtx.posInd;
+			return true;
 		}
-		++_trackCtx.posInd;
-		return true;
 	}
 }
 
