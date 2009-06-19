@@ -130,12 +130,12 @@ int DraciEngine::go() {
 
 	_screen->setPalette(f->_data, 0, kNumColours);
 	
-	// Fill screen with white
-	_screen->fillScreen(255);
+	// Fill screen with light grey
+	_screen->fillScreen(225);
 
 	// Draw big string
 	Common::String testString = "Testing, testing, read all about it!";
-	Graphics::Surface *surf = _screen->getSurface();
+	Surface *surf = _screen->getSurface();
 	_font->drawString(surf, testString, 
 		(kScreenWidth - _font->getStringWidth(testString, 1)) / 2, 130, 1);
 
@@ -160,13 +160,26 @@ int DraciEngine::go() {
 		return 0;
 	}	
 
+	testString = "I'm transparent";
 	for (unsigned int t = 0; t < 25; ++t) {
 		debugC(5, kDraciGeneralDebugLevel, "Drawing frame %d...", t);
 
 		// Load frame to memory
 		f = ar[t];
 		Sprite sp(f->_data, f->_length, ((kScreenWidth - 50) / 2), 60, true);
-		_screen->drawSprite(sp);
+
+		// Delete previous frame
+		Common::Rect r(sp._x, sp._y, sp._x + sp._width, sp._y + sp._height);
+		_screen->drawRect(r, 225);	
+
+		// Draw dragon
+		sp.draw(surf);
+
+		// Draw transparent text over dragon
+		_font->setColour(kDefaultTransparent);	
+		_font->drawString(surf, testString, 
+		(kScreenWidth - _font->getStringWidth(testString, 1)) / 2, 80, 1);
+
 		_screen->copyToScreen();
 		_system->delayMillis(100);
 
