@@ -205,8 +205,6 @@ public:
 //		bool	end;
 		int8	song;	//!< >= 0 if Song is running (means process Patterns)
 
-		bool	pendingTrackstep;
-
 		uint16	patternCount;
 		uint16	patternSkip;	//!< skip that amount of CIA-Interrupts
 
@@ -261,7 +259,7 @@ public:
 	void effects(ChannelContext &channel);
 	FORCEINLINE bool macroStep(ChannelContext &channel);
 	void advancePatterns();
-	FORCEINLINE bool patternStep(PatternContext &pattern);
+	FORCEINLINE bool patternStep(PatternContext &pattern, bool &pendingTrackstep);
 	bool trackStep();
 	void noteCommand(uint8 note, uint8 param1, uint8 param2, uint8 param3);
 };

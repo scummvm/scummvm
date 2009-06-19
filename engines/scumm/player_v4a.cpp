@@ -75,7 +75,6 @@ void Player_V4A::setMusicVolume(int vol) {
 	debug("player_v4a: setMusicVolume %i", vol);
 }
 
-
 void Player_V4A::stopAllSounds() {
 	if (_musicId)
 		stopSound(_musicId);
@@ -133,12 +132,10 @@ void Player_V4A::startSound(int nr) {
 		_tfmxPlay->doSong(index);
 		_musicId = nr;
 
-
 		if (!_mixer->isSoundHandleActive(_musicHandle))
 			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false, false);
 	}
 }
-
 
 int Player_V4A::getMusicTimer() const {
 	if (_musicId) {

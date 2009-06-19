@@ -90,10 +90,6 @@ void Tfmx::interrupt() {
 			channel.sfxLocked = (channel.customMacroPrio != 0);
 		}
 
-
-
-		// TODO: Sometimes a macro will be executed here
-
 		// apply timebased effects on Parameters 
 		effects(channel);
 
@@ -473,12 +469,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 }
 
 void Tfmx::advancePatterns() {
-doTrackstep:
-	if (_playerCtx.pendingTrackstep) {
-		while (trackStep())
-			;
-		_playerCtx.pendingTrackstep = false;
-	}
+startPatterns:
 	int runningPatterns = 0;
 
 	for (int i = 0; i < kNumChannels; ++i) {
@@ -486,9 +477,22 @@ doTrackstep:
 		if (pattCmd < 0x90) {	// execute Patternstep
 			++runningPatterns;
 			if (_patternCtx[i].wait == 0) {
+				bool pendingTrackstep = false;
 				// issue all Steps for this tick
-				while (patternStep(_patternCtx[i]))
+				while (patternStep(_patternCtx[i], pendingTrackstep))
 					;
+				if (pendingTrackstep) {
+					// we load the next Trackstep Command and then process all Channels again
+					// TODO Optionally disable looping
+					if (_trackCtx.posInd == _trackCtx.stopInd)
+						_trackCtx.posInd = _trackCtx.startInd;
+					else
+						++_trackCtx.posInd;
+					while (trackStep())
+						;
+					goto startPatterns;
+				}
+
 			} else 
 				--_patternCtx[i].wait;
 
@@ -496,16 +500,6 @@ doTrackstep:
 			_patternCtx[i].command = 0xFF;
 			stopChannel(_channelCtx[_patternCtx[i].expose % kNumVoices]);
 		} // else this pattern-Channel is stopped
-
-		if (_playerCtx.pendingTrackstep) {
-			// we load the next Trackstep Command and then process all Channels again
-			// TODO Optionally disable looping
-			if (_trackCtx.posInd == _trackCtx.stopInd)
-				_trackCtx.posInd = _trackCtx.startInd;
-			else
-				++_trackCtx.posInd;
-			goto doTrackstep;
-		}
 	}
 	if (_playerCtx.stopWithLastPattern && !runningPatterns) {
 		_playerCtx.enabled = 0;
@@ -526,7 +520,7 @@ static void warnPatternUnimplemented(const byte *patternPtr, int level) {
 }
 
 
-FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
+FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackstep) {
 	const byte *const patternPtr = (byte *)(_resource.getPatternPtr(pattern.offset) + pattern.step);
 	++pattern.step;
 
@@ -554,7 +548,7 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 		case 0: 	// End Pattern + Next Trackstep
 			pattern.command = 0xFF;
 			--pattern.step;
-			_playerCtx.pendingTrackstep = true;
+			pendingTrackstep = true;
 			return false;
 
 		case 1: 	// Loop Pattern. Parameters: Loopcount, PatternStep(W)
@@ -950,7 +944,6 @@ void Tfmx::doSong(int songPos) {
 
 	while (trackStep())
 		;
-	_playerCtx.pendingTrackstep = false;
 	startPaula();
 }
 
@@ -959,23 +952,20 @@ void Tfmx::doSfx(int sfxIndex) {
 	Common::StackLock lock(_mutex);
 
 	const byte *sfxEntry = _resource.getSfxPtr(sfxIndex);
-
 	if (sfxEntry[0] == 0xFB) {
 		// custompattern
 		const uint8 patCmd = sfxEntry[2];
 		const int8 patExp = (int8)sfxEntry[3];
 	} else {
 		// custommacro
-		// byte index = (_playerCtx.song >= 0) ? sfxEntry[2] : sfxEntry[4];
 		const byte channelNo = sfxEntry[2] % kNumVoices;
+		const byte index = (_playerCtx.song >= 0) ? sfxEntry[2] : sfxEntry[4];
 		const byte priority = sfxEntry[5] & 0x7F;
 
 		ChannelContext &channel = _channelCtx[channelNo];
-
 		const int16 sfxLocktime = channel.sfxLockTime;
-
 		if (priority >= channel.customMacroPrio || sfxLocktime < 0) {
-			if (sfxIndex != channel.customMacroIndex || sfxLocktime < 0 || (sfxEntry[5] < 0x80) ) {
+			if (sfxIndex != channel.customMacroIndex || sfxLocktime < 0 || (sfxEntry[5] < 0x80)) {
 				channel.customMacro = READ_UINT32(sfxEntry); // intentionally not "endian-correct"
 				channel.customMacroPrio = priority;
 				channel.customMacroIndex = (uint8)sfxIndex;
