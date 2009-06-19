@@ -56,12 +56,12 @@ private:
 	ScummEngine *_vm;
 
 	Audio::Tfmx *_tfmxPlay;
+	Audio::Tfmx *_tfmxSfx;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _musicHandle;
+	Audio::SoundHandle _sfxHandle;
 
-	int _musicLastTicks;
-
-	enum {V4A_MAXSFX = 8};
+	enum {V4A_MAXSFX = 1};
 
 	struct SoundSlot {
 		int id;

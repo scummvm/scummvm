@@ -121,6 +121,14 @@ void tfmxmain(const int argc, const char *const argv[]) {
 				player->doSong(param);
 				hasCmd = true;
 			}
+		} else if (!strcmp("-c", argv[i])) {
+			if (i + 1 < argc) {
+				param = atoi(argv[++i]);
+				debug( "play custom %02X", param);
+				player->doSong(0x18);
+				player->doSfx(param);
+				hasCmd = true;
+			}
 		} else  if (!strcmp("-flac", argv[i])) {
 			playflag = 2;
 		}

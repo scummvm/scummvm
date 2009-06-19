@@ -33,7 +33,7 @@
 namespace Scumm {
 
 Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer)
-	: _vm(scumm), _mixer(mixer), _slots(), _musicId(), _tfmxPlay(0) {
+	: _vm(scumm), _mixer(mixer), _slots(), _musicId(), _tfmxPlay(0), _tfmxSfx(0), _musicHandle(), _sfxHandle() {
 	init();
 }
 
@@ -50,6 +50,14 @@ bool Player_V4A::init() {
 		Audio::Tfmx *play =  new Audio::Tfmx(_mixer->getOutputRate(), true);
 		if (play->load(fileMdat, fileSample)) {
 			_tfmxPlay = play;
+		} else
+			delete play;
+
+		play = new Audio::Tfmx(_mixer->getOutputRate(), true);
+		fileMdat.seek(0);
+		fileSample.seek(0);
+		if (play->load(fileMdat, fileSample)) {
+			_tfmxSfx = play;
 		} else
 			delete play;
 	}
@@ -111,19 +119,28 @@ void Player_V4A::startSound(int nr) {
 	int index = monkeyCommands[val];
 	if (index < 0) {
 		// SoundFX
-		debug("Tfmx: Soundpattern %i", -index - 1);
+		index = -index - 1;
+		debug("Tfmx: Soundpattern %i", index);
+
+		_tfmxSfx->doSong(0x18);
+		_tfmxSfx->doSfx(index);
+
+		if (!_mixer->isSoundHandleActive(_sfxHandle))
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, false, false);
 
 	} else {
 		// Song
 		debug("Tfmx: Song %i", index);
 		assert(_tfmxPlay);
-		_mixer->stopHandle(_musicHandle);
 
 		_tfmxPlay->doSong(index);
 		_musicId = nr;
-		
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false, false);
-		_musicLastTicks = g_system->getMillis();
+
+
+		if (!_mixer->isSoundHandleActive(_musicHandle))
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false, false);
+		else
+			debug("Player_V4A:: Song started while another was still running"); // Tfmx class doesnt support this properly yet
 	}
 }
 

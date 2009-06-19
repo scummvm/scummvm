@@ -47,6 +47,7 @@ public:
 
 	void interrupt();
 	void doSong(int songPos);
+	void doSfx(int sfxIndex);
 	void doMacro(int macro, int note);
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
 	int getTicks() {return _playerCtx.tickCount;}
@@ -60,6 +61,7 @@ public:
 
 	struct Resource {
 		uint32 _trackstepOffset;	//!< Offset in mdat
+		uint32 _sfxTableOffset;
 
 		byte *_mdatData;  	//!< Currently the whole mdat-File
 		byte *_sampleData;	//!< Currently the whole sample-File
@@ -71,6 +73,13 @@ public:
 		uint16 headerFlags;
 		uint32 headerUnknown;
 		char textField[6 * 40];
+
+		const byte *getSfxPtr(uint8 index = 0) {
+			byte *sfxPtr = (byte *)(_mdatData + _sfxTableOffset + index * 8);
+
+			boundaryCheck(_mdatData, _mdatLen, sfxPtr, 8);
+			return sfxPtr;
+		}
 
 		const uint16 *getTrackPtr(uint16 trackstep = 0) {
 			uint16 *trackData = (uint16 *)(_mdatData + _trackstepOffset + 16 * trackstep);
@@ -127,6 +136,10 @@ public:
 		uint16	macroReturnStep;
 		uint8	macroLoopCount;
 		bool	macroRun;
+
+		uint32	customMacro;
+		uint8	customMacroIndex;
+		uint8	customMacroPrio;
 
 		bool	sfxLocked;
 		int16	sfxLockTime;

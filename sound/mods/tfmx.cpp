@@ -49,7 +49,7 @@ Tfmx::Tfmx(int rate, bool stereo)
 : Paula(stereo, rate), _resource()  {
 	_playerCtx.enabled = false;
 	_playerCtx.song = -1;
-	_playerCtx.stopWithLastPattern = true;
+	_playerCtx.stopWithLastPattern = false;
 
 	for (int i = 0; i < kNumVoices; ++i) 
 		_channelCtx[i].paulaChannel = (byte)i;
@@ -72,6 +72,25 @@ void Tfmx::interrupt() {
 				channel.macroRun = true;
 			}
 		}
+
+		if (channel.sfxLockTime >= 0)
+			--channel.sfxLockTime;
+		else {
+			channel.sfxLocked = false;
+			channel.customMacroPrio = 0;
+		}
+
+		if (channel.customMacro) {
+			const byte *const noteCmd = (const byte *)&channel.customMacro;
+			const int channelNo = (&channel - _channelCtx);
+
+			channel.sfxLocked = false;
+			noteCommand(noteCmd[0], noteCmd[1], (noteCmd[2] & 0xF0) | channelNo, noteCmd[3]);
+			channel.customMacro = 0;
+			channel.sfxLocked = (channel.customMacroPrio != 0);
+		}
+
+
 
 		// TODO: Sometimes a macro will be executed here
 
@@ -103,11 +122,6 @@ void Tfmx::interrupt() {
 }
 
 void Tfmx::effects(ChannelContext &channel) {
-	if (channel.sfxLockTime >= 0)
-		--channel.sfxLockTime;
-	else
-		channel.sfxLocked = false;
-
 	// addBegin
 
 	// TODO: macroNote pending?
@@ -782,12 +796,16 @@ bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStrea
 	uint32 offTrackstep = musicData.readUint32BE();
 	uint32 offPatternP = musicData.readUint32BE();
 	uint32 offMacroP = musicData.readUint32BE();
+	_resource._sfxTableOffset = 0x200;
+	bool getSfxIndex = false;
 
 	// This is how MI`s TFMX-Player tests for unpacked Modules.
 	if (offTrackstep == 0) {
 		offTrackstep	= 0x600 + 0x200;
 		offPatternP		= 0x200 + 0x200;
 		offMacroP		= 0x400 + 0x200;
+		getSfxIndex = true;
+		_resource._sfxTableOffset = 0x5FC;
 	}
 
 	_resource._trackstepOffset = offTrackstep;
@@ -799,6 +817,9 @@ bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStrea
 
 	res = musicData.err();
 	assert(!res);
+
+	if (getSfxIndex)
+		_resource._sfxTableOffset = _patternOffset[127];
 
 	// Read in macro starting offsets
 	musicData.seek(offMacroP);
@@ -859,6 +880,7 @@ bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStrea
 void Tfmx::doMacro(int macro, int note) {
 	assert(0 <= macro && macro < kMaxMacroOffsets);
 	assert(0 <= note && note < 0xC0);
+	Common::StackLock lock(_mutex);
 
 	_playerCtx.song = -1;
 	_playerCtx.volume = 0x40;
@@ -885,6 +907,7 @@ void Tfmx::doMacro(int macro, int note) {
 
 void Tfmx::doSong(int songPos) {
 	assert(0 <= songPos && songPos < kNumSubsongs);
+	Common::StackLock lock(_mutex);
 
 	_playerCtx.song = (int8)songPos;
 	_playerCtx.volume = 0x40;
@@ -906,8 +929,6 @@ void Tfmx::doSong(int songPos) {
 
 	_playerCtx.patternCount = 0;
 
-	_playerCtx.pendingTrackstep = true;
-
 	for (int i = 0; i < kNumChannels; ++i) {
 		_patternCtx[i].command = 0xFF;
 		_patternCtx[i].expose = 0;
@@ -920,11 +941,46 @@ void Tfmx::doSong(int songPos) {
 		_channelCtx[i].vibValue = 0;
 		stopChannel(_channelCtx[i]);
 		_channelCtx[i].volume = 0;
+		_channelCtx[i].customMacro = 0;
 	}
 
 	setTimerBaseValue(kPalCiaClock);
 	setInterruptFreqUnscaled(ciaIntervall);
+
+	while (trackStep())
+		;
+	_playerCtx.pendingTrackstep = false;
 	startPaula();
+}
+
+void Tfmx::doSfx(int sfxIndex) {
+	assert(0 <= sfxIndex && sfxIndex < 128);
+	Common::StackLock lock(_mutex);
+
+	const byte *sfxEntry = _resource.getSfxPtr(sfxIndex);
+
+	if (sfxEntry[0] == 0xFB) {
+		// custompattern
+		const uint8 patCmd = sfxEntry[2];
+		const int8 patExp = (int8)sfxEntry[3];
+	} else {
+		// custommacro
+		// byte index = (_playerCtx.song >= 0) ? sfxEntry[2] : sfxEntry[4];
+		const byte channelNo = sfxEntry[2] % kNumVoices;
+		const byte priority = sfxEntry[5] & 0x7F;
+
+		ChannelContext &channel = _channelCtx[channelNo];
+
+		const int16 sfxLocktime = channel.sfxLockTime;
+
+		if (priority >= channel.customMacroPrio || sfxLocktime < 0) {
+			if (sfxIndex != channel.customMacroIndex || sfxLocktime < 0 || (sfxEntry[5] < 0x80) ) {
+				channel.customMacro = READ_UINT32(sfxEntry); // intentionally not "endian-correct"
+				channel.customMacroPrio = priority;
+				channel.customMacroIndex = (uint8)sfxIndex;
+			}
+		}
+	}
 }
 
 }
