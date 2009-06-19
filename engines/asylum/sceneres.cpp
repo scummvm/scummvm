@@ -80,7 +80,31 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     stream->skip(24); // unused data
 
     // read common graphic resources
-    stream->read(&_worldStats->_commonRes,sizeof(CommonResources));
+	_worldStats->_commonRes.backgroundImage = stream->readUint32LE();
+	_worldStats->_commonRes.curScrollUp = stream->readUint32LE();
+    _worldStats->_commonRes.curScrollUpLeft = stream->readUint32LE();
+    _worldStats->_commonRes.curScrollLeft = stream->readUint32LE();
+    _worldStats->_commonRes.curScrollDownLeft = stream->readUint32LE();
+    _worldStats->_commonRes.curScrollDown = stream->readUint32LE();
+    _worldStats->_commonRes.curScrollDownRight = stream->readUint32LE();
+    _worldStats->_commonRes.curScrollRight = stream->readUint32LE();
+    _worldStats->_commonRes.curScrollUpRight = stream->readUint32LE();
+    _worldStats->_commonRes.curHand = stream->readUint32LE();
+    _worldStats->_commonRes.curMagnifyingGlass = stream->readUint32LE();
+    _worldStats->_commonRes.curTalkNCP = stream->readUint32LE();
+    _worldStats->_commonRes.curGrabPointer = stream->readUint32LE();
+    _worldStats->_commonRes.curTalkNCP2 = stream->readUint32LE();
+    _worldStats->_commonRes.unknown1 = stream->readUint32LE();
+    _worldStats->_commonRes.unknown2 = stream->readUint32LE();
+    _worldStats->_commonRes.unknown3 = stream->readUint32LE();
+    _worldStats->_commonRes.palette = stream->readUint32LE();
+    _worldStats->_commonRes.cellShadeMask1 = stream->readUint32LE();
+    _worldStats->_commonRes.cellShadeMask2 = stream->readUint32LE();
+    _worldStats->_commonRes.cellShadeMask3 = stream->readUint32LE();
+    _worldStats->_commonRes.unused = stream->readUint32LE();
+    _worldStats->_commonRes.smallCurUp = stream->readUint32LE();
+    _worldStats->_commonRes.smallCurDown = stream->readUint32LE();
+    _worldStats->_commonRes.unknown4 = stream->readUint32LE();
 
     _worldStats->_width  = stream->readUint32LE();
     _worldStats->_height = stream->readUint32LE();
