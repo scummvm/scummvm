@@ -7,7 +7,8 @@ MODULE_OBJS := \
 	gpldisasm.o \
 	font.o \
 	sprite.o \
-	screen.o
+	screen.o \
+	surface.o
  
 MODULE_DIRS += \
 	engines/draci
