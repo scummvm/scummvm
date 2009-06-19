@@ -2236,11 +2236,9 @@ int GUI_LoL::runMenu(Menu &menu) {
 	while (_displayMenu) {
 		_vm->_mouseX = _vm->_mouseY = 0;
 
-		if (_currentMenu == &_loadMenu || _currentMenu == &_saveMenu) {
+		if (_currentMenu == &_loadMenu || _currentMenu == &_saveMenu || _currentMenu == &_deleteMenu) {
 			updateSaveList(true);
 			Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
-
-
 			setupSavegameNames(*_currentMenu, 4);
 		}
 
@@ -2313,7 +2311,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 				if (!_newMenu)
 					_newMenu = _currentMenu;
 				else
-					_lastMenu = _currentMenu;
+					_lastMenu = _menuResult == -1 ? _lastMenu : _currentMenu;
 			}
 
 			if (!_menuResult)
@@ -2364,8 +2362,8 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 
 			for (uint32 ii = 0; ii < strlen(s); ii++) {
 				for (int iii = 0; iii < _vm->_fontConversionTableGermanSize; iii += 2) {
-					if (s[ii] == _vm->_fontConversionTableGerman[iii]) {
-						s[ii] = _vm->_fontConversionTableGerman[iii + 1];
+					if ((uint8)s[ii] == _vm->_fontConversionTableGerman[iii]) {
+						s[ii] = (uint8)_vm->_fontConversionTableGerman[iii + 1];
 						break;
 					}
 				}
@@ -2424,13 +2422,16 @@ int GUI_LoL::clickedMainMenu(Button *button) {
 	updateMenuButton(button);
 	switch (button->arg) {
 	case 0x4001:
+		_savegameOffset = 0;
 		_newMenu = &_loadMenu;
 		break;
 	case 0x4002:
+		_savegameOffset = 0;
 		//_newMenu = &_saveMenu;
 		break;		
 	case 0x4003:
-		//_newMenu = &_deleteMenu;
+		_savegameOffset = 0;
+		_newMenu = &_deleteMenu;
 		break;
 	case 0x4004:
 		_newMenu = &_gameOptions;
@@ -2463,6 +2464,23 @@ int GUI_LoL::clickedLoadMenu(Button *button) {
 	int16 s = (int16)button->arg;
 	_vm->_gameToLoad = _loadMenu.item[-s - 2].saveSlot;
 	_displayMenu = false;
+
+	return 1;
+}
+
+int GUI_LoL::clickedSaveMenu(Button *button) {
+	updateMenuButton(button);
+	
+	return 1;
+}
+
+int GUI_LoL::clickedDeleteMenu(Button *button) {
+	updateMenuButton(button);
+	
+	_choiceMenu.menuNameId = 0x400b;
+	_newMenu = (button->arg == 0x4011) ? _lastMenu : &_choiceMenu;	
+	int16 s = (int16)button->arg;
+	_menuResult = _deleteMenu.item[-s - 2].saveSlot;
 
 	return 1;
 }
@@ -2516,10 +2534,14 @@ int GUI_LoL::clickedDeathMenu(Button *button) {
 int GUI_LoL::clickedChoiceMenu(Button *button) {
 	updateMenuButton(button);
 	if (button->arg == _choiceMenu.item[0].itemId) {
-		if (_lastMenu == &_mainMenu)
+		if (_lastMenu == &_mainMenu) {
 			_vm->quitGame();
+		} else if (_lastMenu == &_deleteMenu) {
+			_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_menuResult));
+			_newMenu = &_mainMenu;
+		}
 	} else if (button->arg == _choiceMenu.item[1].itemId) {
-		_newMenu = _lastMenu;
+		_newMenu = &_mainMenu;
 	}
 	return 1;
 }
@@ -2529,6 +2551,7 @@ int GUI_LoL::scrollUp(Button *button) {
 	if (_savegameOffset > 0) {
 		_savegameOffset--;
 		_newMenu = _currentMenu;
+		_menuResult = -1;
 	}
 	return 1;
 }
@@ -2538,6 +2561,7 @@ int GUI_LoL::scrollDown(Button *button) {
 	if ((uint)_savegameOffset < _saveSlots.size() - 4) {
 		_savegameOffset++;
 		_newMenu = _currentMenu;
+		_menuResult = -1;
 	}
 	return 1;
 }

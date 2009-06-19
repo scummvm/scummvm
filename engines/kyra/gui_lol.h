@@ -111,6 +111,8 @@ private:
 
 	int clickedMainMenu(Button *button);
 	int clickedLoadMenu(Button *button);
+	int clickedSaveMenu(Button *button);
+	int clickedDeleteMenu(Button *button);
 	int clickedOptionsMenu(Button *button);
 	int clickedDeathMenu(Button *button);
 	int clickedChoiceMenu(Button *button);
@@ -136,7 +138,7 @@ private:
 	Button _menuButtons[7];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
-	Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
+	Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _deleteMenu, _savenameMenu, _deathMenu;
 	Menu *_currentMenu, *_lastMenu, *_newMenu;
 	int _menuResult;
 
