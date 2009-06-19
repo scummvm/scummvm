@@ -22,8 +22,10 @@
  * $Id$
  *
  */
+
 #include "common/stream.h"
 
+#include "draci/draci.h"
 #include "draci/sprite.h"
 
 namespace Draci {
@@ -74,6 +76,23 @@ Sprite::Sprite(byte *sprite_data, uint16 length, uint16 x, uint16 y,
 
 Sprite::~Sprite() { 
 	delete[] _data;
+}
+
+void Sprite::draw(Surface *surface) const { 
+	byte *dst = (byte *)surface->getBasePtr(_x, _y);
+	byte *src = _data;	
+	
+	for (unsigned int i = 0; i < _height; ++i) {
+		for(unsigned int j = 0; j < _width; ++j, ++src) {
+			if (*src != surface->getTransparentColour())			
+				dst[j] = *src;
+		}
+		
+		dst += surface->pitch;
+	}
+
+	Common::Rect r(_x, _y, _x + _width, _y + _height);
+	surface->markDirtyRect(r);
 }
 		
 			

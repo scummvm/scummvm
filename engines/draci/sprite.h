@@ -26,6 +26,8 @@
 #ifndef DRACI_SPRITE_H
 #define DRACI_SPRITE_H
 
+#include "draci/surface.h"
+
 namespace Draci {
 
 /**
@@ -51,6 +53,8 @@ public:
 		bool columnwise = false); 
 
 	~Sprite();
+
+	void draw(Surface *surface) const; 
 
 	byte *_data;
 	uint16 _width;
