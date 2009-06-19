@@ -33,7 +33,7 @@
 namespace Scumm {
 
 Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer)
-	: _vm(scumm), _mixer(mixer), _slots(), _musicId(), _tfmxPlay(0), _tfmxSfx(0), _musicHandle(), _sfxHandle() {
+	: _vm(scumm), _mixer(mixer), _musicId(), _tfmxPlay(0), _tfmxSfx(0), _musicHandle(), _sfxHandle() {
 	init();
 }
 
@@ -65,22 +65,14 @@ bool Player_V4A::init() {
 }
 
 Player_V4A::~Player_V4A() {
+	_mixer->stopHandle(_musicHandle);
+	_mixer->stopHandle(_sfxHandle);
 	delete _tfmxPlay;
+	delete _tfmxSfx;
 }
 
 void Player_V4A::setMusicVolume(int vol) {
 	debug("player_v4a: setMusicVolume %i", vol);
-}
-
-int Player_V4A::getSlot(int id) const {
-	for (int i = 0; i < ARRAYSIZE(_slots); i++) {
-		if (_slots[i].id == id)
-			return i;
-	}
-
-	if (id == 0)
-		warning("player_v4a - out of music channels");
-	return -1;
 }
 
 
@@ -93,15 +85,14 @@ void Player_V4A::stopSound(int nr) {
 	if (nr == _musicId) {
 		_mixer->stopHandle(_musicHandle);
 		_musicId = 0;
-	}
+	} else
+		warning("player_v4a: stop Sound %d", nr);
 }
 
 void Player_V4A::startSound(int nr) {
 	assert(_vm);
-	byte *ptr = _vm->getResourceAddress(rtSound, nr);
+	const byte *ptr = _vm->getResourceAddress(rtSound, nr);
 	assert(ptr);
-
-	Common::hexdump(ptr, 16);
 
 	static const int8 monkeyCommands[52] = {
 		 -1,  -2,  -3,  -4,  -5,  -6,  -7,  -8,
@@ -113,24 +104,30 @@ void Player_V4A::startSound(int nr) {
 		  6,  13,   9,  19
 	};
 
-	int val = ptr[9];
-	if (val < 0 || val >= ARRAYSIZE(monkeyCommands))
-		debug("Tfmx: illegal Songnumber %i", val);
+	const int val = ptr[9];
+	if (val < 0 || val >= ARRAYSIZE(monkeyCommands)) {
+		debug(3, "Tfmx: illegal Songnumber %i", val);
+		return;
+	}
+
+	if (!_tfmxSfx || !_tfmxPlay)
+		return;
+
 	int index = monkeyCommands[val];
 	if (index < 0) {
 		// SoundFX
 		index = -index - 1;
-		debug("Tfmx: Soundpattern %i", index);
+		debug(5, "player_v4a: play custom %i", index);
 
-		_tfmxSfx->doSong(0x18);
+		if (_tfmxSfx->getSongIndex() < 0)
+			_tfmxSfx->doSong(0x18);
 		_tfmxSfx->doSfx(index);
 
 		if (!_mixer->isSoundHandleActive(_sfxHandle))
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, false, false);
-
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, true, false);
 	} else {
 		// Song
-		debug("Tfmx: Song %i", index);
+		debug(5, "player_v4a: play song %i", index);
 		assert(_tfmxPlay);
 
 		_tfmxPlay->doSong(index);
@@ -139,8 +136,6 @@ void Player_V4A::startSound(int nr) {
 
 		if (!_mixer->isSoundHandleActive(_musicHandle))
 			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false, false);
-		else
-			debug("Player_V4A:: Song started while another was still running"); // Tfmx class doesnt support this properly yet
 	}
 }
 
@@ -157,10 +152,8 @@ int Player_V4A::getMusicTimer() const {
 }
 
 int Player_V4A::getSoundStatus(int nr) const {
-	if (nr == _musicId)
-		return _mixer->isSoundHandleActive(_musicHandle);
-	/*if (getSfxChan(nr) != -1)
-		return 1;*/
+	if (nr == _musicId && _mixer->isSoundHandleActive(_musicHandle))
+		return _tfmxPlay->getSignal(0);
 	return 0;
 }
 

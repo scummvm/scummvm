@@ -61,17 +61,8 @@ private:
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandle;
 
-	enum {V4A_MAXSFX = 1};
-
-	struct SoundSlot {
-		int id;
-		byte patternNum;
-		byte channel;
-	} _slots[V4A_MAXSFX];
-
 	int _musicId;
 
-	int getSlot(int id) const;
 	bool init();
 };
 

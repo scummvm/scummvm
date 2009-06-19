@@ -51,6 +51,8 @@ public:
 	void doMacro(int macro, int note);
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
 	int getTicks() {return _playerCtx.tickCount;}
+	int getSongIndex() {return _playerCtx.song;}
+	uint16 getSignal(int index) {return _playerCtx.signal[index];}
 
 // Note: everythings public so the debug-Routines work.
 // private:
@@ -216,6 +218,8 @@ public:
 		int8	fadeSlope; */
 
 		int		tickCount;
+
+		uint16	signal[4];
 
 		bool	stopWithLastPattern; //!< hack to automatically stop the whole player if no Pattern is running
 	} _playerCtx;

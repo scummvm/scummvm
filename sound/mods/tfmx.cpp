@@ -439,7 +439,8 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		return channel.deferWait;
 
 	case 0x20:	// Signal. Parameters: signalnumber/value
-		warnMacroUnimplemented(macroPtr, 0);
+		if (macroPtr[1] < ARRAYSIZE(_playerCtx.signal))
+			_playerCtx.signal[macroPtr[1]] = READ_BE_UINT16(&macroPtr[2]);
 		return true;
 
 	case 0x21:	// Play macro. Parameters: macro/chan/detune
@@ -622,8 +623,8 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern) {
 			return true;
 
 		case 13: 	// Cue
-			warnPatternUnimplemented(patternPtr, 1);
-			debug("Cue/Signal %02X %04X", patternPtr[1], READ_BE_UINT16(&patternPtr[2]));
+			if (patternPtr[1] < ARRAYSIZE(_playerCtx.signal))
+				_playerCtx.signal[patternPtr[1]] = READ_BE_UINT16(&patternPtr[2]);
 			return true;
 
 		case 15: 	// NOP
