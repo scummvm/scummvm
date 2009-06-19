@@ -26,8 +26,7 @@
 #ifndef DRACI_SCREEN_H
 #define DRACI_SCREEN_H
 
-#include "graphics/surface.h"
-
+#include "draci/surface.h"
 #include "draci/sprite.h"
 
 namespace Draci {
@@ -35,8 +34,8 @@ namespace Draci {
 enum ScreenParameters {
 	kScreenWidth = 320,
 	kScreenHeight = 200,
-
-	kNumColours = 256
+	kNumColours = 256,
+	kDefaultTransparent = 255
 };
 
 class DraciEngine;
@@ -54,10 +53,11 @@ public:
 	void clearScreen() const;
 	void drawSprite(const Sprite &s) const;
 	void fillScreen(uint16 colour) const;
-	Graphics::Surface *getSurface();	
-	
+	Surface *getSurface();	
+	void drawRect(Common::Rect &r, uint8 colour);
+
 private:
-	Graphics::Surface *_surface;
+	Surface *_surface;
 	byte *_palette;
 	DraciEngine *_vm;
 };

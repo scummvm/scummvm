@@ -31,16 +31,14 @@
 namespace Draci {
 
 Screen::Screen(DraciEngine *vm) : _vm(vm) {
-	_surface = new Graphics::Surface();
-	_surface->create(kScreenWidth, kScreenHeight, 1);
-	this->clearScreen();
+	_surface = new Surface(kScreenWidth, kScreenHeight);
 	_palette = new byte[4 * kNumColours];
 	setPaletteEmpty();
+	this->clearScreen();
 }
 
 Screen::~Screen() {
-	_surface->free();
-	delete[] _surface;
+	delete _surface;
 	delete[] _palette;
 }
 
@@ -50,7 +48,7 @@ void Screen::setPaletteEmpty(unsigned int numEntries) {
 	}
 
 	_vm->_system->setPalette(_palette, 0, numEntries);
-	_vm->_system->updateScreen();
+	copyToScreen();
 }	
 
 void Screen::setPalette(byte *data, uint16 start, uint16 num) {
@@ -73,49 +71,71 @@ void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 	}
 
 	_vm->_system->setPalette(_palette, start, num);
-	_vm->_system->updateScreen(); 
+	copyToScreen();
 }
 
 void Screen::copyToScreen() const {
-	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
+	Common::List<Common::Rect> *dirtyRects = _surface->getDirtyRects();
+	Common::List<Common::Rect>::iterator it;
+	
+	if (_surface->needsFullUpdate()) {
+		byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
-	_vm->_system->copyRectToScreen(ptr, kScreenWidth, 0, 0, 
-		kScreenWidth, kScreenHeight);
+		_vm->_system->copyRectToScreen(ptr, kScreenWidth, 
+			0, 0, kScreenWidth, kScreenHeight);
+	} else {
+		for (it = dirtyRects->begin(); it != dirtyRects->end(); ++it) {
+			byte *ptr = (byte *)_surface->getBasePtr(it->left, it->top);
 
+			_vm->_system->copyRectToScreen(ptr, kScreenWidth, 
+				it->left, it->top, it->width(), it->height());
+		}
+	}
+	
 	_vm->_system->updateScreen();
+	_surface->markClean();
 }
 
 
 void Screen::clearScreen() const {
 	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
+	_surface->markDirty();
+
 	memset(ptr, 0, kScreenWidth * kScreenHeight);
-}
-
-void Screen::drawSprite(const Sprite &s) const { 
-	byte *dst = (byte *)_surface->getBasePtr(s._x, s._y);
-	byte *src = s._data;	
-
-	for (unsigned int i = 0; i < s._height; ++i) {
-		for(unsigned int j = 0; j < s._width; ++j) {
-			dst[j] = *src++;
-		}
-		
-		dst += _surface->pitch;
-	}
 }
 
 void Screen::fillScreen(uint16 colour) const {
 	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
-	
+
+	_surface->markDirty();
+
 	memset(ptr, colour, kScreenWidth * kScreenHeight);
+}
+
+void Screen::drawRect(Common::Rect &r, uint8 colour) {
+
+	r.clip(_surface->w, _surface->h);
+
+	if (r.isEmpty())
+		return;
+
+	byte *ptr = (byte *)_surface->getBasePtr(r.left, r.top);
+
+	for (uint16 i = 0; i < r.width(); ++i) {
+		for (uint16 j = 0; j < r.height(); ++j) {
+			ptr[j * kScreenWidth + i] = colour;
+		}
+	}
+
+	_surface->markDirtyRect(r);
 }
 
 byte *Screen::getPalette() const {
 	return _palette;
 }
 
-Graphics::Surface *Screen::getSurface() {
+Draci::Surface *Screen::getSurface() {
 	return _surface;
 }
 
