@@ -83,10 +83,10 @@ Common::Error AsylumEngine::go() {
 
 	// Play intro movie
 	// Disabled for quick testing
-	//_video->playVideo(0);
+	//_video->playVideo(0, kSubtitlesOff);	// Note: this video has no subtitles
 
 	// Play first chapter movie (for testing)
-	//_video->playVideo(1);
+	//_video->playVideo(1, kSubtitlesOn);
 
 	// Set up the game's main scene
     _scene = new Scene(_screen, _sound, 5);
