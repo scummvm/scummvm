@@ -777,6 +777,7 @@ private:
 	int olol_assignSpecialGuiShape(EMCState *script);
 	int olol_findInventoryItem(EMCState *script);
 	int olol_restoreFadePalette(EMCState *script);
+	int olol_drinkBezelCup(EMCState *script);
 	int olol_changeItemTypeOrFlag(EMCState *script);
 	int olol_placeInventoryItemInHand(EMCState *script);
 	int olol_castSpell(EMCState *script);
@@ -851,6 +852,8 @@ private:
 	void decodeSjis(const char *src, char *dst);
 
 	static const char * const _languageExt[];
+	static const char _fontConversionTableGerman[];
+	static const int _fontConversionTableGermanSize;
 
 	// graphics
 	void setupScreenDims();
@@ -905,7 +908,7 @@ private:
 
 	void setCharacterMagicOrHitPoints(int charNum, int type, int points, int mode);
 	void increaseExperience(int charNum, int skill, uint32 points);
-	void increaseCharacterHitpoints(int charNum, int points, bool unk);
+	void increaseCharacterHitpoints(int charNum, int points, bool ignoreDeath);
 
 	LoLCharacter *_characters;
 	uint16 _activeCharsXpos[3];
@@ -1347,6 +1350,8 @@ private:
 
 	void callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y);
 	void callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y);
+
+	void drinkBezelCup(int a, int charNum);
 
 	void addSpellToScroll(int spell, int charNum);
 	void transferSpellToScollAnimation(int charNum, int spell, int slot);

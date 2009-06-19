@@ -3296,6 +3296,13 @@ const int LoLEngine::_outroMonsterScaleTableY[] = {
 	0x100, 0x100, 0x100, 0x100, 0x100, 0x100, 0x100, 0x100
 };
 
+const char LoLEngine::_fontConversionTableGerman[] = {
+	'Ä', 0x8e, 'ä', 0x84, 'Ö', 0x99, 'ö',
+	0x94, 'Ü', 0x9a, 'ü', 0x81, 'ß', 0xe1
+};
+
+const int LoLEngine::_fontConversionTableGermanSize = ARRAYSIZE(LoLEngine::_fontConversionTableGerman);
+
 #endif // ENABLE_LOL
 
 } // End of namespace Kyra

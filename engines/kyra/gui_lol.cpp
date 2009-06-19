@@ -2239,6 +2239,8 @@ int GUI_LoL::runMenu(Menu &menu) {
 		if (_currentMenu == &_loadMenu || _currentMenu == &_saveMenu) {
 			updateSaveList(true);
 			Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
+
+
 			setupSavegameNames(*_currentMenu, 4);
 		}
 
@@ -2359,6 +2361,16 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
 			strncpy(s, header.description.c_str(), 80);
 			s[79] = 0;
+
+			for (uint32 ii = 0; ii < strlen(s); ii++) {
+				for (int iii = 0; iii < _vm->_fontConversionTableGermanSize; iii += 2) {
+					if (s[ii] == _vm->_fontConversionTableGerman[iii]) {
+						s[ii] = _vm->_fontConversionTableGerman[iii + 1];
+						break;
+					}
+				}
+			}
+
 			menu.item[i].itemString = s;
 			s += (strlen(s) + 1);
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];

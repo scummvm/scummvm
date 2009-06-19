@@ -1994,6 +1994,12 @@ int LoLEngine::olol_findInventoryItem(EMCState *script) {
 	return -1;
 }
 
+int LoLEngine::olol_drinkBezelCup(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drinkBezelCup(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	drinkBezelCup(3 - stackPos(0), stackPos(1));
+	return 1;
+}
+
 int LoLEngine::olol_restoreFadePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreFadePalette(%p)", (const void *)script);
 	memcpy(_screen->_currentPalette, _screen->getPalette(1), 384);
@@ -2852,7 +2858,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0xA8
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_drinkBezelCup);
 	Opcode(olol_changeItemTypeOrFlag);
 
 	// 0xAC

@@ -2783,6 +2783,55 @@ void LoLEngine::callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y) {
 	delete[] tpal;
 }
 
+void LoLEngine::drinkBezelCup(int numUses, int charNum) {
+	int cp = _screen->setCurPage(2);
+	snd_playSoundEffect(73, -1);
+	
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
+	mov->open("bezel.wsa", 0, 0);
+	if (!mov->opened())
+		error("Bezel: Unable to load bezel.wsa");
+
+	int x = _activeCharsXpos[charNum] - 11;
+	int y = 124;
+	int w = mov->width();
+	int h = mov->height();
+
+	_screen->copyRegion(x, y, 0, 0, w, h, 0, 2, Screen::CR_NO_P_CHECK);
+
+	static const uint8 bezelAnimData[] = { 0, 26, 20, 27, 61, 55, 62, 92, 86, 93, 131, 125 };
+	int frm = bezelAnimData[numUses * 3];
+	int hpDiff = _characters[charNum].hitPointsMax - _characters[charNum].hitPointsCur;
+	uint16 step = 0;
+
+	do {
+		step = (step & 0xff) + (hpDiff * 256) / (bezelAnimData[numUses * 3 + 2]);
+		increaseCharacterHitpoints(charNum, step / 256, true);
+		gui_drawCharPortraitWithStats(charNum);
+
+		uint32 etime = _system->getMillis() + 4 * _tickLength;
+
+		_screen->copyRegion(0, 0, x, y, w, h, 2, 2, Screen::CR_NO_P_CHECK);
+		mov->displayFrame(frm, 2, x, y, 0x5000, _trueLightTable1, _trueLightTable2);
+		_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+
+		delayUntil(etime);		
+	} while (++frm < bezelAnimData[numUses * 3 + 1]);
+
+	_characters[charNum].hitPointsCur = _characters[charNum].hitPointsMax;
+	_screen->copyRegion(0, 0, x, y, w, h, 2, 2, Screen::CR_NO_P_CHECK);
+	removeCharacterEffects(&_characters[charNum], 4, 4);
+	gui_drawCharPortraitWithStats(charNum);
+	_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+	
+	mov->close();
+	delete mov;
+
+	_screen->setCurPage(cp);
+}
+
 void LoLEngine::addSpellToScroll(int spell, int charNum) {
 	bool assigned = false;
 	int slot = 0;
