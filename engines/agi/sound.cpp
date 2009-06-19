@@ -833,7 +833,7 @@ static int cocoFrequencies[] = {
 };
 
 void SoundMgr::playCoCoSound() {
-	int i;
+	int i = 0;
 	CoCoNote note;
 
 	do {
