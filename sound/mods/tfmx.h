@@ -46,7 +46,8 @@ public:
 	virtual ~Tfmx();
 
 	void interrupt();
-	void doSong(int songPos);
+	void stopSong(bool stopAudio = true);
+	void doSong(int songPos, bool stopAudio = false);
 	void doSfx(int sfxIndex);
 	void doMacro(int note, int macro, int relVol = 0, int finetune = 0, int channelNo = 0);
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
@@ -261,6 +262,7 @@ public:
 			unlockMacroChannel(_channelCtx[i]);
 			clearMacroProgramm(_channelCtx[i]);
 			_channelCtx[i].note = 0;
+			_channelCtx[i].volume = 0;
 		}
 	}
 

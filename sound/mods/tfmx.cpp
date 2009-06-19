@@ -890,11 +890,20 @@ void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo)
 	startPaula();
 }
 
-void Tfmx::doSong(int songPos) {
+void Tfmx::stopSong(bool stopAudio) {
+	Common::StackLock lock(_mutex);
+	_playerCtx.song = -1;
+	if (stopAudio)
+		stopMacroChannels();
+}
+
+void Tfmx::doSong(int songPos, bool stopAudio) {
 	assert(0 <= songPos && songPos < kNumSubsongs);
 	Common::StackLock lock(_mutex);
-	// bool stopCurSong = false;
-	int prevSong = _playerCtx.song;
+
+	stopPatternChannels();
+	if (stopAudio)
+		stopMacroChannels();
 
 	_playerCtx.song = (int8)songPos;
 
@@ -902,20 +911,18 @@ void Tfmx::doSong(int songPos) {
 	_trackCtx.startInd = _trackCtx.posInd = _subsong[songPos].songstart;
 	_trackCtx.stopInd = _subsong[songPos].songend;
 
+	const bool palFlag = (_resource.headerFlags & 2);
 	const uint16 tempo = _subsong[songPos].tempo;
 	uint16 ciaIntervall;
 	if (tempo >= 0x10) {
 		ciaIntervall = (uint16)(kCiaBaseInterval / tempo);
 		_playerCtx.patternSkip = 0;
 	} else {
-		ciaIntervall = kPalDefaultCiaVal;
+		ciaIntervall = palFlag ? kPalDefaultCiaVal : kNtscDefaultCiaVal;
 		_playerCtx.patternSkip = tempo;
 	}
-	setTimerBaseValue(kPalCiaClock);
 	setInterruptFreqUnscaled(ciaIntervall);
 
-	stopPatternChannels();
-	stopMacroChannels();
 	_playerCtx.patternCount = 0;
 	while (trackStep())
 		;

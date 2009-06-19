@@ -82,7 +82,8 @@ void Player_V4A::stopAllSounds() {
 
 void Player_V4A::stopSound(int nr) {
 	if (nr == _musicId) {
-		_mixer->stopHandle(_musicHandle);
+		_tfmxPlay->stopSong();
+		//_mixer->stopHandle(_musicHandle);
 		_musicId = 0;
 	} else
 		warning("player_v4a: stop Sound %d", nr);
@@ -133,7 +134,7 @@ void Player_V4A::startSound(int nr) {
 		_musicId = nr;
 
 		if (!_mixer->isSoundHandleActive(_musicHandle))
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false, false);
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, true, false);
 	}
 }
 
