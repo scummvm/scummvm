@@ -167,7 +167,7 @@ void ScummEngine::setNESPalette() {
 	setPalColor(0x3E,0x00,0x00,0x00);
 	setPalColor(0x3F,0x00,0x00,0x00);
 }
-
+/*
 void ScummEngine::setAmigaPalette() {
 	setPalColor( 0,   0,   0,   0);
 	setPalColor( 1,   0,   0, 187);
@@ -184,6 +184,25 @@ void ScummEngine::setAmigaPalette() {
 	setPalColor(12, 255, 136, 136);
 	setPalColor(13, 255,   0, 255);
 	setPalColor(14, 255, 255,   0);
+	setPalColor(15, 255, 255, 255);
+} */
+
+void ScummEngine::setAmigaPalette() {
+	setPalColor( 0,   0,   0,   0);
+	setPalColor( 1,   0,   0, 170);
+	setPalColor( 2,   0, 136,  34);
+	setPalColor( 3,   0, 102, 119);
+	setPalColor( 4, 187, 102, 102);
+	setPalColor( 5, 170,  34, 170);
+	setPalColor( 6, 136,  85,  34);
+	setPalColor( 7, 119, 119, 119);
+	setPalColor( 8,  51,  51,  51);
+	setPalColor( 9,  34,  85, 221);
+	setPalColor(10,  34, 221,  68);
+	setPalColor(11,   0, 204, 255);
+	setPalColor(12, 255, 153, 153);
+	setPalColor(13, 255,  85, 255);
+	setPalColor(14, 255, 255, 119);
 	setPalColor(15, 255, 255, 255);
 }
 
@@ -301,6 +320,8 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	if (_game.heversion >= 90 || _game.version == 8) {
 		memcpy(_darkenPalette, _currentPalette, 768);
 	}
+
+	setAmigaPalette();
 
 	setDirtyColors(0, numcolor - 1);
 }

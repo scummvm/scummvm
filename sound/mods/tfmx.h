@@ -144,7 +144,7 @@ public:
 		uint8	relVol;
 		uint8	note;
 		uint8	prevNote;
-		int16	fineTune;
+		int16	fineTune; // always a signextended byte
 
 		uint8	portaSkip;
 		uint8	portaCount;

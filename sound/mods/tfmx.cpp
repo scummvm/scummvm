@@ -211,7 +211,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 	case 0x13:	// DMA Off. Parameters:  deferWait, addset, vol
 		// TODO: implement PArameters
 		Paula::disableChannel(channel.paulaChannel);
-		channel.deferWait = macroPtr[1] >= 1;
+		channel.deferWait = (macroPtr[1] != 0);
 		if (channel.deferWait) {
 			// if set, then we expect a DMA On in the same tick.
 			channel.period = 4;
