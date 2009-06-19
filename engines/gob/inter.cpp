@@ -132,7 +132,7 @@ const char *Inter::getDescOpcodeFunc(byte i, byte j) {
 	if ((i > 4) || (j > 15))
 		return "";
 
-	const char *desc = _opcodesDraw[i * 16 + j].desc;
+	const char *desc = _opcodesFunc[i * 16 + j].desc;
 
 	return ((desc) ? desc : "");
 }
