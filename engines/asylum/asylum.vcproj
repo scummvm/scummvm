@@ -182,6 +182,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\asylum\encounters.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\encounters.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\asylum\graphics.cpp"
 			>
 		</File>
