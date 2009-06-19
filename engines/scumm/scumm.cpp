@@ -1085,7 +1085,7 @@ Common::Error ScummEngine::init() {
 					(_screenWidth * _textSurfaceMultiplier > 320));
 	} else if (_game.features & GF_16BIT_COLOR) {
 #ifdef ENABLE_16BIT
-		Graphics::PixelFormat format(Graphics::kFormatRGB555);
+		Graphics::PixelFormat format = Graphics::PixelFormat::createFormatRGB555();
 		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320, format);
 		if (format != _system->getScreenFormat())
 			return Common::kUnsupportedColorMode;

@@ -96,22 +96,17 @@ public:
 		{
 			SDL_PixelFormat *HWFormat = SDL_GetVideoInfo()->vfmt;
 #ifdef ENABLE_32BIT
-			if (HWFormat->BitsPerPixel > 32)
-				return Graphics::PixelFormat(Graphics::kFormatRGBA8888);
-			return Graphics::PixelFormat(HWFormat->BytesPerPixel,
-				HWFormat->Rloss, HWFormat->Gloss, HWFormat->Bloss, HWFormat->Aloss, 
-				HWFormat->Rshift, HWFormat->Gshift, HWFormat->Bshift, HWFormat->Ashift);
-#else //16 
-			if (HWFormat->BitsPerPixel > 16)
-				return Graphics::PixelFormat(Graphics::kFormatRGB565);
-			return Graphics::PixelFormat(HWFormat->BytesPerPixel,
-				HWFormat->Rloss, HWFormat->Gloss, HWFormat->Bloss, HWFormat->Aloss, 
-				HWFormat->Rshift, HWFormat->Gshift, HWFormat->Bshift, HWFormat->Ashift);
+			if (HWFormat->BitsPerPixel >= 32)
+				return Graphics::PixelFormat::createFormatRGBA8888();
+			if (HWFormat->BitsPerPixel >= 24)
+				return Graphics::
+				FormatRGB888();
+#endif  //ENABLE_32BIT
+			if (HWFormat->BitsPerPixel >= 16)
+				return Graphics::PixelFormat::createFormatRGB565();
 		}
-#endif //ENABLE_32BIT
-#else //8BIT only
-		return Graphics::PixelFormat(Graphics::kFormatCLUT8);
 #endif //ENABLE_32BIT or ENABLE_16BIT
+		return Graphics::PixelFormat::createFormatCLUT8();
 	}
 #endif
 

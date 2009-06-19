@@ -30,35 +30,6 @@
 
 namespace Graphics {
 
-#ifdef ENABLE_16BIT
-/**
- * A condensed bit format description.
- *
- * It includes the necessary information to create a PixelFormat and/or 
- * ColorMask which fully describe the given color format.
- *
- * It contains two components, the format (8Bit paletted, RGB555, etc)
- * and the order (palette, ARGB, ABGR, etc)
- *
- * Use (format & kFormatTypeMask) to get the type, and (format & kFormatOrderMask)
- * to get the applicable color order.
-  */
-enum ColorMode {
-#ifdef ENABLE_16BIT
-	kFormatRGB555 = 1,
-	kFormatXRGB1555 = 2,	// Special case, high bit has special purpose, which may be alpha. 
-							// Engines should probably handle this bit internally and pass RGB only, though
-	kFormatRGB565 = 3,
-	kFormatRGBA4444 = 4,	// since this mode is commonly supported in game hardware, some unimplemented engines may use it?
-#endif
-#ifdef ENABLE_32BIT
-	kFormatRGB888 = 5,
-	kFormatRGBA8888 = 6,
-#endif
-	kFormatCLUT8 = 0		//256 color palette.
-};
-#endif
-
 /**
  * A pixel format description.
  *
@@ -93,68 +64,37 @@ struct PixelFormat {
 		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
 	}
 
-#ifdef ENABLE_16BIT
-	//Convenience constructor from enum type
+	//"Factory" methods for convenience
 	//TODO: BGR support
 	//TODO: Specify alpha position
-	explicit inline PixelFormat(ColorMode mode) {
-		switch (mode) {
-#ifdef ENABLE_16BIT
-		case kFormatRGB555:
-			aLoss = 8;
-			bytesPerPixel = 2;
-			rLoss = gLoss = bLoss = 3;
-			break;
-		case kFormatXRGB1555:
-			//Special case, alpha bit is always high in this mode.
-			aLoss = 7;
-			bytesPerPixel = 2;
-			rLoss = gLoss = bLoss = 3;
-			bShift = 0;
-			gShift = bShift + bBits();
-			rShift = gShift + gBits();
-			aShift = rShift + rBits();
-			//FIXME: there should be a clean way to handle setting 
-			//up the color order without prematurely returning.
-			//This will probably be handled when alpha position specification is possible
-			return;
-		case kFormatRGB565:
-			bytesPerPixel = 2;
-			aLoss = 8;
-			gLoss = 2;
-			rLoss = bLoss = 3;
-			break;
-		case kFormatRGBA4444:
-			bytesPerPixel = 2;
-			aLoss = gLoss = rLoss = bLoss = 4;
-			break;
-#endif
-#ifdef ENABLE_32BIT
-		case kFormatRGB888:
-			bytesPerPixel = 3;
-			aLoss = 8;
-			gLoss = rLoss = bLoss = 0;
-			break;
-		case kFormatRGBA8888:
-			bytesPerPixel = 4;
-			aLoss = gLoss = rLoss = bLoss = 0;
-			break;
-#endif
-		case kFormatCLUT8:
-		default:
-			bytesPerPixel = 1;
-			rShift = gShift = bShift = aShift = 0;
-			rLoss = gLoss = bLoss = aLoss = 8;
-			return;
-		}
-
-		aShift = 0;
-		bShift = aBits();
-		gShift = bShift + bBits();
-		rShift = gShift + gBits();
-		return;
+	static inline PixelFormat PixelFormat::createFormatCLUT8() { 
+		return PixelFormat(1,8,8,8,8,0,0,0,0);
 	}
-#endif
+#if (defined ENABLE_16BIT) || (defined ENABLE_32BIT) //TODO: more generic define instead of ENABLE_16BIT
+	//2 Bytes-per-pixel modes
+	static inline PixelFormat PixelFormat::createFormatRGB555() {
+		return PixelFormat(2,3,3,3,8,10,5,0,0);
+	}
+	static inline PixelFormat PixelFormat::createFormatXRGB1555() {
+		//Special case, alpha bit is always high in this mode.
+		return PixelFormat(2,3,3,3,7,10,5,0,15);
+	}
+	static inline PixelFormat PixelFormat::createFormatRGB565() {
+		return PixelFormat(2,3,2,3,8,11,5,0,0);
+	}
+	static inline PixelFormat PixelFormat::createFormatRGBA4444() {
+		return PixelFormat(2,4,4,4,4,12,8,4,0);
+	}
+#ifdef ENABLE_32BIT
+	//3 to 4 byte per pixel modes
+	static inline PixelFormat PixelFormat::createFormatRGB888() {
+		return PixelFormat(3,0,0,0,8,16,8,0,0);
+	}
+	static inline PixelFormat PixelFormat::createFormatRGBA8888() {
+		return PixelFormat(4,0,0,0,0,24,16,8,0);
+	}
+#endif  //ENABLE_32BIT
+#endif  //ENABLE_16BIT or ENABLE_32BIT
 
 	inline bool operator==(const PixelFormat &fmt) const {
 		// TODO: If aLoss==8, then the value of aShift is irrelevant, and should be ignored.
