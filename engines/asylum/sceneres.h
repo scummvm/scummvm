@@ -44,6 +44,18 @@ class WorldStats;
 class GamePolygons;
 class ActionList;
 
+// ScummVM common Point uses int16 and we need int32
+typedef struct Point { 
+    int32 x; 
+    int32 y; 
+} Point;
+
+// ScummVM common Rect uses int16 and we need int32
+typedef struct Rect { 
+    int32 top, left;
+    int32 bottom, right; 
+} Rect;
+
 class SceneResource {
 public:
 	SceneResource();
@@ -69,15 +81,60 @@ private:
 }; // end of class Scene
 
 
-// FIXME add unknown fields
+typedef struct SoundItem {
+    uint32 resId;
+    uint32 field_4;
+    uint32 field_8;
+    uint32 field_C;
+} SoundItem;
+
+typedef struct FrameSoundItem {
+    uint32 resId;
+    uint32 frameIdx;
+    uint32 index;
+    uint32 field_C;
+    uint32 field_10;
+    uint32 field_14;
+} FrameSoundItem;
+
+// FIXME figure out unknown fields
 typedef struct ActorDefinitions {
     uint32 id;
-    uint32 graphicResId;
+    uint32 resId;
     uint32 x;
     uint32 y;
-    uint8  name[52];
+    Rect boundingBox;
+    uint32 field_20;
+    uint32 frameIdx;
+    uint32 frameCount;   
+    uint32 field_2C;
+    uint32 field_30;
+    uint32 field_34;
+    uint32 flags;
+    uint32 field_3C;
+    uint8  name[52]; // field_40 till field_70;
+    uint32 field_74;
+    uint32 field_78;
+    uint32 field_7C;
+    uint32 field_80;
+    uint32 polyIdx;
+    uint32 flags2;
+    uint32 gameFlags[10];
+    uint32 field_B4;
+    uint32 tickCount;
+    uint32 tickCount2;
+    uint32 field_C0;
+    uint32 field_C4;
+    uint32 actionListIdx;
+    SoundItem soundItems[16];
+    FrameSoundItem frameSoundItems[50];
+    uint32 field_67C;
+    uint32 soundX;
+    uint32 soundY;
+    uint32 field_688;
+    uint32 field_68C[5];
     uint32 soundResId;
-    uint16 tickCount; // TODO this is for testing, not from direct decompilation
+    uint32 field_6A4;
 } ActorDefinitions;
 
 
@@ -146,9 +203,9 @@ public:
 
 
 typedef struct PolyDefinitions{
-    uint32        numPoints;
-    Common::Point points[Polygons_MAXSIZE];
-    Common::Rect  boundingRect;
+    uint32  numPoints;
+    Point   points[Polygons_MAXSIZE];
+    Rect    boundingRect;
 } PolyDefinitions;
 
 class GamePolygons {

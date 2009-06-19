@@ -187,15 +187,15 @@ void Scene::copyToBackBufferClipped(GraphicFrame *frame, int x, int y) {
 
 void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
 	ActorDefinitions actor = _sceneResource->getWorldStats()->_actorsDef[actorIndex];
-	GraphicResource *gra = new GraphicResource(res, actor.graphicResId);
+	GraphicResource *gra = new GraphicResource(res, actor.resId);
 	GraphicFrame *fra = gra->getFrame(actor.tickCount);
 
 	copyToBackBufferClipped(fra, actor.x, actor.y);
 
-	if (actor.tickCount < gra->getFrameCount() - 1) {
+	if (actor.tickCount < actor.frameCount - 1) {
 		actor.tickCount++;
 	}else{
-		actor.tickCount = 0;
+		actor.tickCount = actor.frameIdx;
 	}
 
 	_sceneResource->getWorldStats()->_actorsDef[actorIndex] = actor;
