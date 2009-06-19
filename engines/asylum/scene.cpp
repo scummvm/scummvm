@@ -144,14 +144,23 @@ void Scene::update() {
 		scrollScreen = true;
 	}
 
-	if (scrollScreen)
-		_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
+	// Copy the background to the back buffer before updating the scene animations
+	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
 
-	updateActor(_screen, _resPack, 7);	// the "crazy prisoner banging head" anim
-
+	updateActor(_screen, _resPack, 0);	// the "statue with fireworks" animation
+	//updateActor(_screen, _resPack, 1);	// inside the middle room
+	//updateActor(_screen, _resPack, 2);	// the lit candles at the base of the statue
+	updateActor(_screen, _resPack, 3);	// the rat animation (in front of the statue)
+	updateActor(_screen, _resPack, 4);	// inside the bottom room
+	updateActor(_screen, _resPack, 6);	// inside the top room (should be shown before the rat animation)
+	updateActor(_screen, _resPack, 5);	// the rat animation (outside the second room)
+	updateActor(_screen, _resPack, 7);	// the "crazy prisoner banging head" animation
+	//updateActor(_screen, _resPack, 8);	// going up the ladder
+	//updateActor(_screen, _resPack, 9);	// going down the ladder
 	// TODO
 }
 
+#if 0
 void Scene::copyToSceneBackground(GraphicFrame *frame, int x, int y) {
 	int h = frame->surface.h;
     int w = frame->surface.w;
@@ -164,6 +173,7 @@ void Scene::copyToSceneBackground(GraphicFrame *frame, int x, int y) {
 		buffer += frame->surface.w;
 	}
 }
+#endif
 
 void Scene::copyToBackBufferClipped(GraphicFrame *frame, int x, int y) {
 	Common::Rect screenRect(_startX, _startY, _startX + 640, _startY + 480);
@@ -175,13 +185,14 @@ void Scene::copyToBackBufferClipped(GraphicFrame *frame, int x, int y) {
 		animRect.translate(-_startX, -_startY);
 
 		int startX = animRect.right == 640 ? 0 : frame->surface.w - animRect.width();
-		_screen->copyToBackBuffer(((byte*)frame->surface.pixels) +
-								  (frame->surface.h - animRect.height()) * frame->surface.pitch + startX,
-								  frame->surface.pitch,
-								  animRect.left,
-								  animRect.top,
-								  animRect.width(),
-								  animRect.height());
+		_screen->copyToBackBufferWithTransparency(((byte*)frame->surface.pixels) +
+												  (frame->surface.h - animRect.height()) * 
+												  frame->surface.pitch + startX,
+												  frame->surface.pitch,
+												  animRect.left,
+												  animRect.top,
+												  animRect.width(),
+												  animRect.height());
 	}
 }
 
