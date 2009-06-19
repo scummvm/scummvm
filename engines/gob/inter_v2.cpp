@@ -1259,7 +1259,9 @@ bool Inter_v2::o2_goblinFunc(OpFuncParams &params) {
 	int16 cmd;
 
 	cmd = load16();
-	_vm->_global->_inter_execPtr += 2;
+
+	gobParams.paramCount = load16();
+	gobParams.extraData = cmd;
 
 	if (cmd != 101)
 		executeOpcodeGob(cmd, gobParams);

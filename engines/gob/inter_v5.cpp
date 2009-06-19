@@ -235,14 +235,12 @@ bool Inter_v5::o5_istrlen(OpFuncParams &params) {
 }
 
 void Inter_v5::o5_spaceShooter(OpGobParams &params) {
-	int16 paramCount = load16();
-
 	warning("Dynasty Stub: Space shooter: %d, %d, %s",
-			params.extraData, paramCount, _vm->_game->_curTotFile);
+			params.extraData, params.paramCount, _vm->_game->_curTotFile);
 
-	if (paramCount < 4) {
+	if (params.paramCount < 4) {
 		warning("Space shooter variable counter < 4");
-		_vm->_global->_inter_execPtr += paramCount * 2;
+		_vm->_global->_inter_execPtr += params.paramCount * 2;
 		return;
 	}
 
@@ -256,18 +254,16 @@ void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 		WRITE_VARO_UINT32(var1, 2);
 		WRITE_VARO_UINT32(var2, 0);
 	} else {
-		if (paramCount < 5) {
+		if (params.paramCount < 5) {
 			warning("Space shooter variable counter < 5");
 			return;
 		}
 
-		_vm->_global->_inter_execPtr += (paramCount - 4) * 2;
+		_vm->_global->_inter_execPtr += (params.paramCount - 4) * 2;
 	}
 }
 
 void Inter_v5::o5_getSystemCDSpeed(OpGobParams &params) {
-	_vm->_global->_inter_execPtr += 2;
-
 	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
@@ -280,8 +276,6 @@ void Inter_v5::o5_getSystemCDSpeed(OpGobParams &params) {
 }
 
 void Inter_v5::o5_getSystemRAM(OpGobParams &params) {
-	_vm->_global->_inter_execPtr += 2;
-
 	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
@@ -294,8 +288,6 @@ void Inter_v5::o5_getSystemRAM(OpGobParams &params) {
 }
 
 void Inter_v5::o5_getSystemCPUSpeed(OpGobParams &params) {
-	_vm->_global->_inter_execPtr += 2;
-
 	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
@@ -308,8 +300,6 @@ void Inter_v5::o5_getSystemCPUSpeed(OpGobParams &params) {
 }
 
 void Inter_v5::o5_getSystemDrawSpeed(OpGobParams &params) {
-	_vm->_global->_inter_execPtr += 2;
-
 	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
@@ -322,8 +312,6 @@ void Inter_v5::o5_getSystemDrawSpeed(OpGobParams &params) {
 }
 
 void Inter_v5::o5_totalSystemSpecs(OpGobParams &params) {
-	_vm->_global->_inter_execPtr += 2;
-
 	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
@@ -338,8 +326,6 @@ void Inter_v5::o5_totalSystemSpecs(OpGobParams &params) {
 void Inter_v5::o5_saveSystemSpecs(OpGobParams &params) {
 	warning("Dynasty Stub: Saving system specifications");
 
-	_vm->_global->_inter_execPtr += 2;
-
 /*
 	FILE *f = fopen("SAVE\\SPEED.INF", w);
 	fwrite(&_cdSpeed,   sizeof(_cdSpeed),   1, f);
@@ -353,8 +339,6 @@ void Inter_v5::o5_saveSystemSpecs(OpGobParams &params) {
 
 void Inter_v5::o5_loadSystemSpecs(OpGobParams &params) {
 	warning("Dynasty Stub: Loading system specifications");
-
-	_vm->_global->_inter_execPtr += 2;
 
 /*
 	FILE *f = fopen("SAVE\\SPEED.INF", r);
@@ -392,15 +376,11 @@ void Inter_v5::o5_loadSystemSpecs(OpGobParams &params) {
 void Inter_v5::o5_gob92(OpGobParams &params) {
 	warning("Dynasty Stub: GobFunc 92");
 
-	_vm->_global->_inter_execPtr += 2;
-
 	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8) _gob92_1)) */);
 }
 
 void Inter_v5::o5_gob95(OpGobParams &params) {
 	warning("Dynasty Stub: GobFunc 95");
-
-	_vm->_global->_inter_execPtr += 2;
 
 	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int16) speedThrottle4)) */);
 	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8)  speedThrottle3)) */);
@@ -411,8 +391,6 @@ void Inter_v5::o5_gob95(OpGobParams &params) {
 void Inter_v5::o5_gob96(OpGobParams &params) {
 	int16 speedThrottle4, speedThrottle1;
 	byte speedThrottle3, speedThrottle2;
-
-	_vm->_global->_inter_execPtr += 2;
 
 	speedThrottle4 = READ_VAR_UINT16(load16());
 	speedThrottle3 = READ_VAR_UINT8(load16());
@@ -427,19 +405,13 @@ void Inter_v5::o5_gob96(OpGobParams &params) {
 
 void Inter_v5::o5_gob97(OpGobParams &params) {
 	_gob_97_98_val = 1;
-
-	_vm->_global->_inter_execPtr += 2;
 }
 
 void Inter_v5::o5_gob98(OpGobParams &params) {
 	_gob_97_98_val = 0;
-
-	_vm->_global->_inter_execPtr += 2;
 }
 
 void Inter_v5::o5_gob100(OpGobParams &params) {
-	_vm->_global->_inter_execPtr += 2;
-
 	uint16 var1 = READ_VAR_UINT16(load16());
 	uint16 var2 = READ_VAR_UINT16(load16());
 	uint16 var3 = READ_VAR_UINT16(load16());
@@ -452,8 +424,6 @@ void Inter_v5::o5_gob100(OpGobParams &params) {
 }
 
 void Inter_v5::o5_gob200(OpGobParams &params) {
-	_vm->_global->_inter_execPtr += 2;
-
 	uint16 var1 = load16(); // index into the spritesArray
 	uint16 var2 = load16();
 	uint16 var3 = load16();

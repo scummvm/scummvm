@@ -61,6 +61,7 @@ struct OpFuncParams {
 };
 struct OpGobParams {
 	int16 extraData;
+	int16 paramCount;
 	VariableReference retVarPtr;
 	Goblin::Gob_Object *objDesc;
 };

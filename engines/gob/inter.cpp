@@ -114,11 +114,7 @@ void Inter::executeOpcodeGob(int i, OpGobParams &params) {
 		return;
 	}
 
-	int16 val;
-
-	_vm->_global->_inter_execPtr -= 2;
-	val = load16();
-	_vm->_global->_inter_execPtr += val << 1;
+	_vm->_global->_inter_execPtr += params.paramCount << 1;
 	warning("unimplemented opcodeGob: %d [0x%X]", i, i);
 }
 
