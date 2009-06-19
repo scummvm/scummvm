@@ -190,6 +190,13 @@ void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
 	GraphicResource *gra = new GraphicResource(res, actor.resId);
 	GraphicFrame *fra = gra->getFrame(actor.tickCount);
 
+    // DEBUG bounding box 
+    // FIXME this should be a generic method which draws for an entire graphicResource and not for single graphicFrames
+    fra->surface.drawLine(actor.boundingBox.top, actor.boundingBox.left, actor.boundingBox.top, actor.boundingBox.right, 0xFFFFFF);
+    fra->surface.drawLine(actor.boundingBox.top, actor.boundingBox.right-1, actor.boundingBox.bottom, actor.boundingBox.right-1, 0xFFFFFF);
+    fra->surface.drawLine(actor.boundingBox.bottom-1, actor.boundingBox.left, actor.boundingBox.bottom-1, actor.boundingBox.right, 0xFFFFFF);
+    fra->surface.drawLine(actor.boundingBox.top, actor.boundingBox.left, actor.boundingBox.bottom, actor.boundingBox.left, 0xFFFFFF);
+
 	copyToBackBufferClipped(fra, actor.x, actor.y);
 
 	if (actor.tickCount < actor.frameCount - 1) {
@@ -197,7 +204,7 @@ void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
 	}else{
 		actor.tickCount = actor.frameIdx;
 	}
-
+    
 	_sceneResource->getWorldStats()->_actorsDef[actorIndex] = actor;
 
     delete gra;
