@@ -852,7 +852,10 @@ private:
 	void decodeSjis(const char *src, char *dst);
 
 	static const char * const _languageExt[];
-	static const char _fontConversionTableGerman[];
+
+	// TODO: Rethink of a proper way for conversion, currently our GUI charset isn't defined
+	// properly, thus this might not work on every system.
+	static const uint8 _fontConversionTableGerman[];
 	static const int _fontConversionTableGermanSize;
 
 	// graphics
