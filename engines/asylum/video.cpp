@@ -119,15 +119,19 @@ Video::~Video() {
 	delete _smkDecoder;
 }
 
-bool Video::playVideo(int number) {
+bool Video::playVideo(int number, VideoSubtitles subtitles) {
 	char filename[20];
 	sprintf(filename, "mov%03d.smk", number);
 
 	bool result = _smkDecoder->loadFile(filename);
 
 	g_system->showMouse(false);
-	if (result)
-		_player->playVideoWithSubtitles(_stopEvents, number);
+	if (result) {
+		if (subtitles == kSubtitlesOff)
+			_player->playVideo(_stopEvents);
+		else
+			_player->playVideoWithSubtitles(_stopEvents, number);
+	}
 	_smkDecoder->closeFile();
 	g_system->showMouse(true);
 

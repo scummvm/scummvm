@@ -46,6 +46,11 @@ struct VideoSubtitle {
 	int textRes;
 };
 
+enum VideoSubtitles {
+	kSubtitlesOff = 0,
+	kSubtitlesOn = 1
+};
+
 class VideoText;
 
 class VideoPlayer : public Graphics::VideoPlayer {
@@ -67,7 +72,7 @@ public:
 	Video(Audio::Mixer *mixer);
 	virtual ~Video();
 
-	bool playVideo(int number);
+	bool playVideo(int number, VideoSubtitles subtitles);
 
 private:
 	Common::List<Common::Event> _stopEvents;
