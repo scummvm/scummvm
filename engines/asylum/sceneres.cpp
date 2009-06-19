@@ -106,10 +106,66 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
     stream->seek(0x6FA); // where actors definitions start
 
-    for (uint32 a=0; a < _worldStats->_numActors; a++) {
+    for (uint32 a = 0; a < _worldStats->_numActors; a++) {
         ActorDefinitions actorDef;
-        memset(&actorDef, 0, sizeof(ActorDefinitions));
-        stream->read(&actorDef, sizeof(ActorDefinitions));
+		int i;
+
+		actorDef.id = stream->readUint32LE();
+		actorDef.resId = stream->readUint32LE();
+		actorDef.x = stream->readUint32LE();
+		actorDef.y = stream->readUint32LE();
+		actorDef.boundingBox.left = stream->readUint32LE() & 0xFFFF;
+		actorDef.boundingBox.top = stream->readUint32LE() & 0xFFFF;
+		actorDef.boundingBox.right = stream->readUint32LE() & 0xFFFF;
+		actorDef.boundingBox.bottom = stream->readUint32LE() & 0xFFFF;
+		actorDef.field_20 = stream->readUint32LE();
+		actorDef.frameIdx = stream->readUint32LE();
+		actorDef.frameCount = stream->readUint32LE();
+		actorDef.field_2C = stream->readUint32LE();
+		actorDef.field_30 = stream->readUint32LE();
+		actorDef.field_34 = stream->readUint32LE();
+		actorDef.flags = stream->readUint32LE();
+		actorDef.field_3C = stream->readUint32LE();
+		stream->read(actorDef.name, sizeof(actorDef.name));
+		actorDef.field_74 = stream->readUint32LE();
+		actorDef.field_78 = stream->readUint32LE();
+		actorDef.field_7C = stream->readUint32LE();
+		actorDef.field_80 = stream->readUint32LE();
+		actorDef.polyIdx = stream->readUint32LE();
+		actorDef.flags2 = stream->readUint32LE();
+		for (i = 0; i < 10; i++)
+			actorDef.gameFlags[i] = stream->readUint32LE();
+		actorDef.field_B4 = stream->readUint32LE();
+		actorDef.tickCount = stream->readUint32LE();
+		actorDef.tickCount2 = stream->readUint32LE();
+		actorDef.field_C0 = stream->readUint32LE();
+		actorDef.field_C4 = stream->readUint32LE();
+		actorDef.actionListIdx = stream->readUint32LE();
+		for (i = 0; i < 16; i++) {
+			actorDef.soundItems[i].resId = stream->readUint32LE();
+			actorDef.soundItems[i].field_4 = stream->readUint32LE();
+			actorDef.soundItems[i].field_8 = stream->readUint32LE();
+			actorDef.soundItems[i].field_C = stream->readUint32LE();
+
+		}
+		for (i = 0; i < 50; i++) {
+			actorDef.frameSoundItems[i].resId = stream->readUint32LE();
+			actorDef.frameSoundItems[i].frameIdx = stream->readUint32LE();
+			actorDef.frameSoundItems[i].index = stream->readUint32LE();
+			actorDef.frameSoundItems[i].field_C = stream->readUint32LE();
+			actorDef.frameSoundItems[i].field_10 = stream->readUint32LE();
+			actorDef.frameSoundItems[i].field_14 = stream->readUint32LE();
+		}
+		actorDef.field_67C = stream->readUint32LE();
+		actorDef.soundX = stream->readUint32LE();
+		actorDef.soundY = stream->readUint32LE();
+		actorDef.field_688 = stream->readUint32LE();
+		for (i = 0; i < 5; i++) {
+			actorDef.field_68C[i] = stream->readUint32LE();
+		}
+		actorDef.soundResId = stream->readUint32LE();
+		actorDef.field_6A4 = stream->readUint32LE();
+
         _worldStats->_actorsDef.push_back(actorDef);
     }
 
@@ -159,15 +215,18 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
     _gamePolygons->_size       = stream->readUint32LE();
     _gamePolygons->_numEntries = stream->readUint32LE();
 
-    for (uint32 g=0; g < _gamePolygons->_numEntries; g++) {
+    for (uint32 g = 0; g < _gamePolygons->_numEntries; g++) {
         PolyDefinitions poly;
         memset(&poly, 0, sizeof(PolyDefinitions));
         poly.numPoints = stream->readUint32LE();
-        stream->read(poly.points, sizeof(Common::Point) * Polygons_MAXSIZE);
-        poly.boundingRect.top    = stream->readUint32LE();
-        poly.boundingRect.left   = stream->readUint32LE();
-        poly.boundingRect.bottom = stream->readUint32LE();
-        poly.boundingRect.right  = stream->readUint32LE();
+		for (int i = 0; i < Polygons_MAXSIZE; i++) {
+			poly.points[i].x = stream->readUint32LE() & 0xFFFF;
+			poly.points[i].y = stream->readUint32LE() & 0xFFFF;
+		}
+        poly.boundingRect.top    = stream->readUint32LE() & 0xFFFF;
+        poly.boundingRect.left   = stream->readUint32LE() & 0xFFFF;
+        poly.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
+        poly.boundingRect.right  = stream->readUint32LE() & 0xFFFF;
 
         _gamePolygons->_Polygons.push_back(poly);
     }

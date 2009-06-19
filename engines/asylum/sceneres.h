@@ -44,6 +44,8 @@ class WorldStats;
 class GamePolygons;
 class ActionList;
 
+#if 0
+// TODO/FIXME: Are there REALLY any points which go beyond 32768???
 // ScummVM common Point uses int16 and we need int32
 typedef struct Point { 
     int32 x; 
@@ -55,6 +57,7 @@ typedef struct Rect {
     int32 top, left;
     int32 bottom, right; 
 } Rect;
+#endif
 
 class SceneResource {
 public:
@@ -103,7 +106,7 @@ typedef struct ActorDefinitions {
     uint32 resId;
     uint32 x;
     uint32 y;
-    Rect boundingBox;
+	Common::Rect boundingBox;
     uint32 field_20;
     uint32 frameIdx;
     uint32 frameCount;   
@@ -204,8 +207,8 @@ public:
 
 typedef struct PolyDefinitions{
     uint32  numPoints;
-    Point   points[Polygons_MAXSIZE];
-    Rect    boundingRect;
+    Common::Point   points[Polygons_MAXSIZE];
+	Common::Rect    boundingRect;
 } PolyDefinitions;
 
 class GamePolygons {
