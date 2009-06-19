@@ -106,22 +106,10 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
     stream->seek(0x6FA); // where actors definitions start
 
-    // FIXME Figure out all the actor definitions
     for (uint32 a=0; a < _worldStats->_numActors; a++) {
         ActorDefinitions actorDef;
         memset(&actorDef, 0, sizeof(ActorDefinitions));
-
-        actorDef.tickCount    = 0;
-        actorDef.id           = stream->readUint32LE();
-        actorDef.graphicResId = stream->readUint32LE();
-        actorDef.x            = stream->readUint32LE();
-        actorDef.y            = stream->readUint32LE();
-        stream->skip(0x30);
-        stream->read(actorDef.name, 52);
-        stream->skip(0x158);
-        actorDef.soundResId   = stream->readUint32LE();
-        stream->skip(0x4D8);
-
+        stream->read(&actorDef, sizeof(ActorDefinitions));
         _worldStats->_actorsDef.push_back(actorDef);
     }
 
