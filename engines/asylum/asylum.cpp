@@ -45,6 +45,7 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
+	delete _scene;
 	delete _mainMenu;
 	delete _video;
 	delete _sound;
