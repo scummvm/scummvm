@@ -261,6 +261,7 @@ int playerMenu(int menuX, int menuY) {
 			loadSavegameData(0);
 			break;
 		case 6: // restart
+			_vm->sound().fadeOutMusic();
 			Op_FadeOut();
 			memset(globalScreen, 0, 320 * 200);
 			initVars();
