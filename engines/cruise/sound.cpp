@@ -255,7 +255,9 @@ void PCSoundDriver::findNote(int freq, int *note, int *oct) const {
 			break;
 		}
 	}
+
 	*oct = *note / 12;
+	*note %= 12;
 }
 
 void PCSoundDriver::resetChannel(int channel) {
