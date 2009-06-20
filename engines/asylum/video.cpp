@@ -52,13 +52,18 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 
 	char *start = strstr(buffer, movieToken);
 	char *line = 0;
-	int textResourceStart = 0;
 
-	// HACK: we hardcode all the text resources here
-	// -1 means that the video has no subtitles
-	int textRes[7] = { -1, 1088, 1279, 1122, 1286, 1132, 1133 };
-	assert(videoNumber <= 6);	// only done videos 0-6 for now
-	textResourceStart = textRes[videoNumber];
+	// We hardcode all the text resources here. It makes the resulting code easier,
+	// otherwise we'll have to read the text resources in the same obscure way they're stored
+	// in vids.cap
+	// -1 means that the video has no subtitles, -2 that it doesn't exist
+	// The negative values aren't used in the code, they just make the table easier to
+	// understand.
+	int textRes[49] = {   -1, 1088, 1279, 1122, 1286, 1132, 1133, 1134, 1135, 1136,	//  0 - 9
+						  -1,   -2, 1140, 1141,   -2,   -1, 1142,   -1,   -2, 1155,	// 10 - 19
+						1157, 1159, 1162, 1164,   -2, 1171, 1177, 1184, 1190, 1201,	// 20 - 29
+						  -2,   -2,   -2, 1207, 1213, 1217, 1223, 1227,   -2, 1228,	// 30 - 39
+						  -2, 1244, 1247, 1250, 1256, 1120, 1127,   -1,   -1};    	// 40 - 48
 
 	if (start) {
 		start += 20;	// skip token, newline and "CAPTION = "
@@ -77,7 +82,7 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 			tok = strtok(NULL, " ");
 			newSubtitle.frameEnd = atoi(tok);
 			tok = strtok(NULL, " ");
-			newSubtitle.textRes = atoi(tok) + textResourceStart;
+			newSubtitle.textRes = atoi(tok) + textRes[videoNumber];
 			tok = strtok(NULL, " ");
 
 			_subtitles.push_back(newSubtitle);
