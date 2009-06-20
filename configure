@@ -1562,7 +1562,7 @@ add_to_config_mk_if_yes "$_mt32emu" 'USE_MT32EMU = 1'
 #
 # Check whether 16bit color support is requested
 #
-add_to_config_mk_if_yes "$_16bit" 'ENABLE_16BIT = 1'
+add_to_config_mk_if_yes "$_16bit" 'ENABLE_RGB_COLOR = 1'
 
 #
 # Check whether to enable the (hq) scalers
