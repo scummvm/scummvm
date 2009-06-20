@@ -1647,9 +1647,16 @@ int16 Op_SetVolume(void) {
 }
 
 int16 Op_SongExist(void) {
-	char* songName = (char*)popPtr();
+	const char *songName = (char*)popPtr();
 
-	warning("Unimplemented \"Op_SongExist\": %s", songName);
+	if (songName) {
+		char name[33];
+		strcpy(name, songName);
+		strToUpper(name);
+
+		if (!strcmp(_vm->sound().musicName(), name))
+			return 1;
+	}
 
 	return 0;
 }
