@@ -48,7 +48,7 @@ enum Error {
 	kInvalidPathError,			//!< Engine initialization: Invalid game path was passed
 	kNoGameDataFoundError,		//!< Engine initialization: No game data was found in the specified location
 	kUnsupportedGameidError,	//!< Engine initialization: Gameid not supported by this (Meta)Engine
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	kUnsupportedColorMode,		//!< Engine initialization: Engine does not support backend's color mode
 #endif
 

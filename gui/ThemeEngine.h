@@ -579,7 +579,7 @@ protected:
 
 	ImagesMap _bitmaps;
 	Graphics::PixelFormat _overlayFormat;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	Graphics::PixelFormat _cursorFormat;
 #endif
 

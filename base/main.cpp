@@ -226,7 +226,7 @@ static void setupGraphics(OSystem &system) {
 		// Set the user specified graphics mode (if any).
 		system.setGraphicsMode(ConfMan.get("gfx_mode").c_str());
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 			system.initFormat(Graphics::PixelFormat::createFormatCLUT8());
 #endif
 		system.initSize(320, 200);

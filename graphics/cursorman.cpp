@@ -97,7 +97,7 @@ void CursorManager::popAllCursors() {
 		}
 	}
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	while (!_cursorFormatStack.empty()) {
 		PixelFormat *form = _cursorFormatStack.pop();
 		delete form;
@@ -116,7 +116,7 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 
 	Cursor *cur = _cursorStack.top();
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	uint size = w * h * g_system->getScreenFormat().bytesPerPixel;
 #else
 	uint size = w * h;
@@ -220,7 +220,7 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 	}
 }
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 void CursorManager::pushCursorFormat(PixelFormat format) {
 //	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
 //		return;

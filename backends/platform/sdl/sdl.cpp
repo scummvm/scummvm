@@ -196,7 +196,7 @@ OSystem_SDL::OSystem_SDL()
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
 	_hwscreen(0), _screen(0), _tmpscreen(0),
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
 	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
 #endif

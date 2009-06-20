@@ -43,7 +43,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;ENABLE_16BIT"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;ENABLE_RGB_COLOR"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"

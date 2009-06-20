@@ -125,7 +125,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 void initGraphics(int width, int height, bool defaultTo1xScaler) {
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	initGraphics(width,height,defaultTo1xScaler, Graphics::PixelFormat::createFormatCLUT8());
 }
 void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::PixelFormat format) {
@@ -134,7 +134,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::Pixel
 	g_system->beginGFXTransaction();
 
 		initCommonGFX(defaultTo1xScaler);
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 		g_system->initFormat(format);
 #endif
 		g_system->initSize(width, height);
@@ -158,7 +158,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::Pixel
 	}
 
 	// Just show warnings then these occur:
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	if (gfxError & OSystem::kTransactionPixelFormatNotSupported) {
 		Common::String message = "Could not initialize color format.";
 

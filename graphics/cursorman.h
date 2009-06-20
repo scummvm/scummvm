@@ -28,7 +28,7 @@
 #include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/singleton.h"
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 #include "graphics/pixelformat.h"
 #include "common/system.h"
 #endif
@@ -134,7 +134,7 @@ public:
 	 */
 	void replaceCursorPalette(const byte *colors, uint start, uint num);
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	/**
 	 * Push a new cursor pixel format onto the stack, and set it in the backend.
 	 *
@@ -177,7 +177,7 @@ private:
 
 		uint _size;
 		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, uint8 bitDepth = 8) {
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 			{	//limit the lifespan of the format value to minimize impact on memory usage
 				Graphics::PixelFormat f = g_system->getScreenFormat();
 				_size = w * h * f.bytesPerPixel;
@@ -231,7 +231,7 @@ private:
 	};
 	Common::Stack<Cursor *> _cursorStack;
 	Common::Stack<Palette *> _cursorPaletteStack;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	Common::Stack<Graphics::PixelFormat *> _cursorFormatStack;
 #endif
 };

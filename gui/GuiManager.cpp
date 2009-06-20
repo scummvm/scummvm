@@ -135,7 +135,7 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx) 
 	delete _theme;
 
 	if (_useStdCursor) {
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 		CursorMan.popCursorFormat();
 #endif
 		CursorMan.popCursorPalette();
@@ -385,7 +385,7 @@ void GuiManager::saveState() {
 
 void GuiManager::restoreState() {
 	if (_useStdCursor) {
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 		CursorMan.popCursorFormat();
 #endif
 		CursorMan.popCursor();
@@ -430,7 +430,7 @@ void GuiManager::setupCursor() {
 		 87,  87,  87, 0
 	};
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	Graphics::PixelFormat format;
 	format.bytesPerPixel = 1;
 	format.rLoss = format.gLoss = format.bLoss = format.aLoss = 8;

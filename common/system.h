@@ -343,7 +343,7 @@ public:
 	 */
 	virtual int getGraphicsMode() const = 0;
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	/**
 	 * Set the color format of the virtual screen. Typical formats include:
 	 *  CLUT8 (e.g. 256 color, for most games)
@@ -436,7 +436,7 @@ public:
 		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switchting aspect ratio correction mode */
 		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switchting fullscreen mode */
 		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switchting the GFX graphics mode (setGraphicsMode) */
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 		kTransactionPixelFormatNotSupported = (1 << 4), /**< Failed setting the color format (function not yet implemented) */
 #endif
 		kTransactionSizeChangeFailed = (1 << 3)		/**< Failed switchting the screen dimensions (initSize) */
@@ -720,7 +720,7 @@ public:
 	 * @param cursorTargetScale	scale factor which cursor is designed for
 	 */
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1) = 0;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	virtual void setCursorFormat(Graphics::PixelFormat format) = 0;
 #endif
 

@@ -29,7 +29,7 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/str.h"
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 #include "graphics/pixelformat.h"
 #endif
 
@@ -62,7 +62,7 @@ void initCommonGFX(bool defaultTo1XScaler);
  * Errors out when backend is not able to switch to the specified
  * mode.
  */
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::PixelFormat format);
 #endif
 void initGraphics(int width, int height, bool defaultTo1xScaler);

@@ -97,7 +97,7 @@ void OSystem_SDL::beginGFXTransaction(void) {
 	_transactionDetails.needUpdatescreen = false;
 
 	_transactionDetails.normal1xScaler = false;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	_transactionDetails.formatChanged = false;
 #endif
 
@@ -123,7 +123,7 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 
 			_videoMode.mode = _oldVideoMode.mode;
 			_videoMode.scaleFactor = _oldVideoMode.scaleFactor;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 		} else if (_videoMode.format != _oldVideoMode.format) {
 			errors |= kTransactionPixelFormatNotSupported;
 
@@ -153,7 +153,7 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 		}
 	}
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	if (_transactionDetails.sizeChanged || _transactionDetails.formatChanged) {
 #else
 	if (_transactionDetails.sizeChanged) {
@@ -353,7 +353,7 @@ int OSystem_SDL::getGraphicsMode() const {
 	assert (_transactionMode == kTransactionNone);
 	return _videoMode.mode;
 }
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 void OSystem_SDL::initFormat(Graphics::PixelFormat format) {
 	assert(_transactionMode == kTransactionActive);
 
@@ -411,7 +411,7 @@ bool OSystem_SDL::loadGFXMode() {
 	//
 	// Create the surface that contains the 8 bit game data
 	//
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 
 						_screenFormat.bytesPerPixel << 3, 
 						((1 << _screenFormat.rBits()) - 1) << _screenFormat.rShift ,
@@ -871,7 +871,7 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth * _screenFormat.bytesPerPixel + x * _screenFormat.bytesPerPixel;
 	if (_videoMode.screenWidth == w && pitch == w * _screenFormat.bytesPerPixel) {
 		memcpy(dst, src, h*w*_screenFormat.bytesPerPixel);
@@ -917,7 +917,7 @@ Graphics::Surface *OSystem_SDL::lockScreen() {
 	_framebuffer.w = _screen->w;
 	_framebuffer.h = _screen->h;
 	_framebuffer.pitch = _screen->pitch;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	_framebuffer.bytesPerPixel = _screenFormat.bytesPerPixel;
 #else
 	_framebuffer.bytesPerPixel = 1;
@@ -1105,7 +1105,7 @@ int16 OSystem_SDL::getWidth() {
 void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	if (_screenFormat.bytesPerPixel > 1)
 		return; //not using a paletted pixel format
 #endif
@@ -1163,7 +1163,7 @@ void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_cursorPaletteDisabled = false;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 }
 
 void OSystem_SDL::setCursorFormat(Graphics::PixelFormat format) {
@@ -1380,7 +1380,7 @@ void OSystem_SDL::warpMouse(int x, int y) {
 }
 
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale) {
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
 #else
 	keycolor &= 0xFF;
@@ -1419,7 +1419,7 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	}
 
 	free(_mouseData);
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	_mouseData = (byte *)malloc(w * h * _cursorFormat.bytesPerPixel);
 	memcpy(_mouseData, buf, w * h * _cursorFormat.bytesPerPixel);
 #else
@@ -1433,7 +1433,7 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 void OSystem_SDL::blitCursor() {
 	byte *dstPtr;
 	const byte *srcPtr = _mouseData;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	uint32 color;
 	uint32 colormask = (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
 #else
@@ -1472,7 +1472,7 @@ void OSystem_SDL::blitCursor() {
 
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 			if (_cursorFormat.bytesPerPixel > 1) {
 				color = (*(uint32 *) srcPtr) & colormask;
 				if (color != _mouseKeyColor) {	// transparent, don't draw
@@ -1492,7 +1492,7 @@ void OSystem_SDL::blitCursor() {
 				}
 				dstPtr += 2;
 				srcPtr++;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 			}
 #endif
 		}

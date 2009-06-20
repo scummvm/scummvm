@@ -81,7 +81,7 @@ public:
 	void beginGFXTransaction(void);
 	TransactionError endGFXTransaction(void);
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	// Set the depth and format of the video bitmap
 	// Typically, CLUT8
 	virtual void initFormat(Graphics::PixelFormat format);
@@ -92,7 +92,6 @@ public:
 	// Highest supported
 	virtual Graphics::PixelFormat getBestFormat() const {
 	//TODO scale down 16/32 bit based on hardware support
-#if (defined ENABLE_32BIT) || (defined ENABLE_16BIT)
 		{
 			SDL_PixelFormat *HWFormat = SDL_GetVideoInfo()->vfmt;
 #ifdef ENABLE_32BIT
@@ -105,7 +104,6 @@ public:
 			if (HWFormat->BitsPerPixel >= 16)
 				return Graphics::PixelFormat::createFormatRGB565();
 		}
-#endif //ENABLE_32BIT or ENABLE_16BIT
 		return Graphics::PixelFormat::createFormatCLUT8();
 	}
 #endif
@@ -142,7 +140,7 @@ public:
 
 	// Set the bitmap that's used when drawing the cursor.
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	virtual void setCursorFormat(Graphics::PixelFormat format);
 #endif
 
@@ -260,7 +258,7 @@ protected:
 
 	// unseen game screen
 	SDL_Surface *_screen;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 	Graphics::PixelFormat _cursorFormat;
 #endif
@@ -297,7 +295,7 @@ protected:
 		bool needHotswap;
 		bool needUpdatescreen;
 		bool normal1xScaler;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 		bool formatChanged;
 #endif
 	};
@@ -314,7 +312,7 @@ protected:
 
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 		Graphics::PixelFormat format;
 #endif
 	};

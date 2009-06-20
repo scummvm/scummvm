@@ -112,7 +112,7 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 
 void ScummEngine::updateCursor() {
 	int transColor = (_game.heversion >= 80) ? 5 : 255;
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	CursorMan.replaceCursorFormat(_system->getScreenFormat());
 #endif
 	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
