@@ -3317,8 +3317,9 @@ const int LoLEngine::_outroMonsterScaleTableY[] = {
 };
 
 const uint8 LoLEngine::_fontConversionTableGerman[] = {
-	'Ä', 0x8e, 'ä', 0x84, 'Ö', 0x99, 'ö',
-	0x94, 'Ü', 0x9a, 'ü', 0x81, 'ß', 0xe1
+	(const uint8)'Ä', 0x8e, (const uint8)'ä', 0x84, (const uint8)'Ö', 0x99,
+	(const uint8)'ö', 0x94, (const uint8)'Ü', 0x9a, (const uint8)'ü', 0x81,
+	(const uint8)'ß', 0xe1
 };
 
 const int LoLEngine::_fontConversionTableGermanSize = ARRAYSIZE(LoLEngine::_fontConversionTableGerman);
