@@ -202,8 +202,6 @@ public:
 	} _trackCtx;
 
 	struct PlayerContext {
-		bool	enabled;
-//		bool	end;
 		int8	song;	//!< >= 0 if Song is running (means process Patterns)
 
 		uint16	patternCount;
@@ -223,7 +221,7 @@ public:
 		bool	stopWithLastPattern; //!< hack to automatically stop the whole player if no Pattern is running
 	} _playerCtx;
 
-	void initMacroProgramm(ChannelContext &channel) {
+	static void initMacroProgramm(ChannelContext &channel) {
 		channel.macroStep = 0;
 		channel.macroWait = 0;
 		channel.macroRun = true;
@@ -231,18 +229,18 @@ public:
 		channel.dmaIntCount = 0;
 	}
 
-	void clearEffects(ChannelContext &channel) {
+	static void clearEffects(ChannelContext &channel) {
 		channel.envSkip = 0;
 		channel.vibLength = 0;
 		channel.portaDelta = 0;
 	}
 
-	void clearMacroProgramm(ChannelContext &channel) {
+	static void clearMacroProgramm(ChannelContext &channel) {
 		channel.macroRun = false;
 		channel.dmaIntCount = 0;
 	}
 
-	void unlockMacroChannel(ChannelContext &channel) {
+	static void unlockMacroChannel(ChannelContext &channel) {
 		channel.customMacro = 0;
 		channel.customMacroPrio = false;
 		channel.sfxLocked = false;

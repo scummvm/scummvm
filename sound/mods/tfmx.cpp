@@ -44,8 +44,7 @@ const uint16 Tfmx::noteIntervalls[64] = {
 	 214,  202,  191,  180 };
 
 Tfmx::Tfmx(int rate, bool stereo)
-: Paula(stereo, rate), _resource()  {
-	_playerCtx.enabled = false;
+: Paula(stereo, rate), _resource() {
 	_playerCtx.stopWithLastPattern = false;
 
 	for (int i = 0; i < kNumVoices; ++i) 
@@ -67,7 +66,7 @@ Tfmx::~Tfmx() {
 }
 
 void Tfmx::interrupt() {
-	//assert(!_end);
+	assert(!_end);
 	++_playerCtx.tickCount;
 	for (int i = 0; i < kNumVoices; ++i) {
 		ChannelContext &channel = _channelCtx[i];
@@ -104,12 +103,13 @@ void Tfmx::interrupt() {
 		// see if we have to run the macro-program
 		if (channel.macroRun) {
 			if (!channel.macroWait) {
-				// run macro
 				while (macroStep(channel))
 					;
 			} else
 				--channel.macroWait;
 		}
+
+		Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 
 		// TODO: handling pending DMAOff?
 	}
@@ -134,7 +134,7 @@ void Tfmx::effects(ChannelContext &channel) {
 		if (!channel.portaDelta) {
 			// 16x16 bit multiplication, casts needed for the right results
 			channel.period = (uint16)(((uint32)channel.refPeriod * (uint16)((1 << 11) + channel.vibValue)) >> 11);
-			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 		}
 	}
 
@@ -160,7 +160,7 @@ void Tfmx::effects(ChannelContext &channel) {
 			channel.portaValue = channel.refPeriod & 0x7FF;
 		} else {
 			channel.period = period & 0x7FF;
-			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 		}
 	}
 
@@ -216,11 +216,6 @@ static void warnMacroUnimplemented(const byte *macroPtr, int level) {
 FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 	const byte *const macroPtr = (byte *)(_resource.getMacroPtr(channel.macroOffset) + channel.macroStep);
 	++channel.macroStep;
-	//int channelNo = ((byte*)&channel-(byte*)_channelCtx)/sizeof(ChannelContext);
-
-	//displayMacroStep(macroPtr, channel.paulaChannel, channel.macroIndex);
-
-	int32 temp = 0;
 
 	switch (macroPtr[0]) {
 	case 0x00:	// Reset + DMA Off. Parameters: deferWait, addset, vol
@@ -233,7 +228,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		if (channel.deferWait) {
 			// if set, then we expect a DMA On in the same tick.
 			channel.period = 4;
-			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 			Paula::setChannelSampleLen(channel.paulaChannel, 1);
 			// in this state we then need to allow some commands that normally
 			// would halt the macroprogamm to continue instead.
@@ -331,7 +326,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		channel.vibDelta = macroPtr[3];
 		if (!channel.portaDelta) {
 			channel.period = channel.refPeriod;
-			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 			channel.vibValue = 0;
 		}
 		return true;
@@ -395,20 +390,19 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		channel.refPeriod = READ_BE_UINT16(&macroPtr[2]);
 		if (!channel.portaDelta) {
 			channel.period = channel.refPeriod;
-			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 		}
 		return true;
 
-	case 0x18:	// Sampleloop. Parameters: Offset from Samplestart(W)
+	case 0x18: {	// Sampleloop. Parameters: Offset from Samplestart(W)
 		// TODO: MI loads 24 bit, but thats useless?
-		temp = READ_BE_UINT16(&macroPtr[2]);
-		assert(!(temp & 1));
+		uint16 temp = READ_BE_UINT16(&macroPtr[2]);
 		channel.sampleStart += temp & 0xFFFE;
 		channel.sampleLen -= (uint16)(temp / 2);
 		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
 		Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
 		return true;
-
+	}
 	case 0x19:	// set one-shot Sample
 		channel.sampleStart = 0;
 		channel.sampleLen = 1;
@@ -508,7 +502,7 @@ startPatterns:
 
 		} else if (pattCmd == 0xFE) {	// Stop voice in pattern.expose
 			_patternCtx[i].command = 0xFF;
-			ChannelContext channel = _channelCtx[_patternCtx[i].expose % kNumVoices];
+			ChannelContext &channel = _channelCtx[_patternCtx[i].expose % kNumVoices];
 			if (!channel.sfxLocked) {
 				clearMacroProgramm(channel);
 				Paula::disableChannel(channel.paulaChannel);
@@ -516,7 +510,6 @@ startPatterns:
 		} // else this pattern-Channel is stopped
 	}
 	if (_playerCtx.stopWithLastPattern && !runningPatterns) {
-		_playerCtx.enabled = 0;
 		stopPaula();
 	}
 }
@@ -656,17 +649,12 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackst
 bool Tfmx::trackStep() {
 	const uint16 *const trackData = _resource.getTrackPtr(_trackCtx.posInd);
 
-//	debug( "TStep %04X", _trackCtx.posInd);
-//	displayTrackstep(trackData);
-
 	if (trackData[0] != FROM_BE_16(0xEFFE)) {
 		// 8 commands for Patterns
 		for (int i = 0; i < 8; ++i) {
 			const uint patCmd = READ_BE_UINT16(&trackData[i]);
-
 			// First byte is pattern number
 			const uint patNum = (patCmd >> 8);
-			
 			// if highest bit is set then keep previous pattern
 			if (patNum < 0x80) {
 				_patternCtx[i].step = 0;
@@ -674,7 +662,6 @@ bool Tfmx::trackStep() {
 				_patternCtx[i].loopCount = 0xFF;
 				_patternCtx[i].offset = _patternOffset[patNum];
 			}
-
 			_patternCtx[i].command = (uint8)patNum;
 			_patternCtx[i].expose = patCmd & 0xFF;
 		}
@@ -682,10 +669,8 @@ bool Tfmx::trackStep() {
 
 	} else {
 		// 16 byte Trackstep Command
-		int temp;
 		switch (READ_BE_UINT16(&trackData[1])) {
 		case 0:	// Stop Player. No Parameters
-			_playerCtx.enabled = 0;
 			stopPaula();
 			return false;
 
@@ -699,15 +684,15 @@ bool Tfmx::trackStep() {
 			--_trackCtx.loopCount;
 			return true;
 
-		case 2:	// Set Tempo. Parameters: tempo, divisor
+		case 2:	{ // Set Tempo. Parameters: tempo, divisor
 			_playerCtx.patternCount = _playerCtx.patternSkip = READ_BE_UINT16(&trackData[2]); // tempo
-			temp = READ_BE_UINT16(&trackData[3]); // divisor
+			const uint16 temp = READ_BE_UINT16(&trackData[3]); // divisor
 
 			if (!(temp & 0x8000) && (temp & 0x1FF))
 				setInterruptFreqUnscaled(temp & 0x1FF);
 			++_trackCtx.posInd;
 			return true;
-
+		}
 		case 4:	// Fade
 			_playerCtx.fadeCount = _playerCtx.fadeSkip = (uint8)READ_BE_UINT16(&trackData[2]);
 			_playerCtx.fadeEndVolume = (int8)READ_BE_UINT16(&trackData[3]);

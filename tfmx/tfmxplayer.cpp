@@ -125,13 +125,15 @@ void tfmxmain(const int argc, const char *const argv[]) {
 			if (i + 1 < argc) {
 				param = atoi(argv[++i]);
 				debug( "play custom %02X", param);
-				player->doSong(0x18);
+				if (player->getSongIndex() < 0)
+					player->doSong(0x18);
 				player->doSfx(param);
 				hasCmd = true;
 			}
 		} else  if (!strcmp("-flac", argv[i])) {
 			playflag = 2;
-		}
+		} else  if (!strcmp("-hack-patternstop", argv[i]))
+			player->_playerCtx.stopWithLastPattern = true;
 		++i;
 	}
 
