@@ -59,6 +59,7 @@ public:
 	virtual void stopSound(int channel);
 	
 	void doSync(Common::Serializer &s);
+	const char *musicName();
 	void stopChannel(int channel);
 	bool isPlaying() const;
 	bool songLoaded() const;

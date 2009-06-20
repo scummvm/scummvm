@@ -211,6 +211,9 @@ public:
 	uint8 numOrders() const { assert(_sfxData); return _sfxData[470]; }
 	void setNumOrders(uint8 v) { assert(_sfxData); _sfxData[470] = v; }
 	void setPattern(int offset, uint8 value) { assert(_sfxData); _sfxData[472 + offset] = value; }
+	const char *musicName() { return _musicName; }
+
+	// Note: Original game never actually uses looping variable. Songs are hardcoded to loop
 	bool looping() const { return _looping; }
 	void setLooping(bool v) { _looping = v; }
 };
@@ -701,8 +704,20 @@ void PCSoundFxPlayer::doSync(Common::Serializer &s) {
 	s.syncBytes((byte *)_musicName, 33);
 	uint16 v = (uint16)songLoaded();
 	s.syncAsSint16LE(v);
+
+	if (s.isLoading() && v) {
+		load(_musicName);
+
+		for (int i = 0; i < NUM_CHANNELS; ++i) {
+			_instrumentsChannelTable[i] = -1;
+		}
+	}
+
 	s.syncAsSint16LE(_songPlayed);
 	s.syncAsSint16LE(_looping);
+	s.syncAsSint16LE(_currentPos);
+	s.syncAsSint16LE(_currentOrder);
+	s.syncAsSint16LE(_playing);
 }
 
 PCSound::PCSound(Audio::Mixer *mixer, CruiseEngine *vm) {
@@ -791,7 +806,6 @@ bool PCSound::musicLooping() const {
 
 void PCSound::musicLoop(bool v) {
 	_player->setLooping(v);
-	warning("TODO: set music looping");
 }
 
 void PCSound::startNote(int channel, int volume, int speed) {
@@ -815,9 +829,11 @@ void PCSound::startSound(int channelNum, const byte *ptr, int size, int speed, i
 }
 
 void PCSound::doSync(Common::Serializer &s) {
-	warning("TODO: doSync fx properties");
 	_player->doSync(s);
-//	_soundDriver->doSync(s);
+}
+
+const char *PCSound::musicName() {
+	return _player->musicName();
 }
 
 } // End of namespace Cruise

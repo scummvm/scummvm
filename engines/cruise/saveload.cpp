@@ -820,6 +820,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 	printInfoBlackBox("Loading in progress...");
 
 	initVars();
+	_vm->sound().stopMusic();
 
 	// Skip over the savegame header
 	CruiseSavegameHeader header;
@@ -927,8 +928,6 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 		currentcellHead = currentcellHead->next;
 	}
-
-	//TODO: here, restart music
 
 	if (strlen(currentCtpName)) {
 		loadCtFromSave = 1;
