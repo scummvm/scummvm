@@ -96,12 +96,12 @@ public:
 
 private:
 	void setTextPos(uint32 x, uint32 y);
-	void drawTextCentered(byte *screenBuffer, uint32 x, uint32 y, uint32 width, char *text);
-    uint32 getTextWidth(char *text);
+	void drawTextCentered(byte *screenBuffer, uint32 x, uint32 y, uint32 width, const char *text);
+    uint32 getTextWidth(const char *text);
     uint32 getResTextWidth(uint32 resId);
 
     void drawChar(byte *screenBuffer, char character);
-    void drawText(byte *screenBuffer, char *text);
+    void drawText(byte *screenBuffer, const char *text);
 	void copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y);
 
 	GraphicResource *_fontResource;

@@ -52,8 +52,13 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 
 	char *start = strstr(buffer, movieToken);
 	char *line = 0;
-	int textResourceStart = 1088;	// HACK: this only works for video 1
-	assert(videoNumber == 1);		// Remove this once the hack above is removed
+	int textResourceStart = 0;
+
+	// HACK: we hardcode all the text resources here
+	// -1 means that the video has no subtitles
+	int textRes[7] = { -1, 1088, 1279, 1122, 1286, 1132, 1133 };
+	assert(videoNumber <= 6);	// only done videos 0-6 for now
+	textResourceStart = textRes[videoNumber];
 
 	if (start) {
 		start += 20;	// skip token, newline and "CAPTION = "
@@ -166,7 +171,7 @@ void VideoText::loadFont(ResourcePack *resPack, uint32 resId) {
 
 void VideoText::drawResTextCentered(byte *screenBuffer, uint32 resId) {
     ResourceEntry *textRes = _textPack->getResource(resId);
-    drawTextCentered(screenBuffer, 0, 420, 640, (char *)textRes->data);
+    drawTextCentered(screenBuffer, 0, 420, 640, (const char *)textRes->data);
 }
 
 void VideoText::setTextPos(uint32 x, uint32 y) {
@@ -174,56 +179,55 @@ void VideoText::setTextPos(uint32 x, uint32 y) {
     _posY = y;
 }
 
-void VideoText::drawTextCentered(byte *screenBuffer, uint32 x, uint32 y, uint32 width, char *text) {
-	const int maxLength = 108;	// max chars per line
-	int curY = y;
-	char *text1 = text;
-	char *text2 = 0;
-	int len = strlen(text);
-	int textWidth = 0;
+void VideoText::drawTextCentered(byte *screenBuffer, uint32 x, uint32 y, uint32 width, const char *text) {
+	Common::String textLine[4];
+	Common::String tmpLine;
+	int curLine = 0;
+	char *buf = strdup(text);	// for strtok
+	char *tok = strtok(buf, " ");
 
-	if (len > maxLength) {
-		text1 = new char[maxLength];
-		strncpy(text1, text, maxLength);
-		text1[maxLength - 1] = 0;	// terminate
-
-		text2 = new char[maxLength];
-		strcpy(text2, text + maxLength);
+	// Videos can have up to 4 lines of text
+	// TODO: proper y locations. This has only been tested with up to 2 lines (videos 0-6)
+	while (tok) {
+		tmpLine += tok;
+		tmpLine += " ";
+		if (getTextWidth(tmpLine.c_str()) > 640) {
+			tmpLine = tok;
+			curLine++;
+		}
+		textLine[curLine] += tok;
+		textLine[curLine] += " ";
+		tok = strtok(NULL, " ");
 	}
 
-    textWidth = getTextWidth(text1);
-    setTextPos(x + (width - textWidth) / 2, y);
-    drawText(screenBuffer, text1);
-
-	if (len > maxLength) {
-		textWidth = getTextWidth(text2);
-		setTextPos(x + (width - textWidth) / 2, y + 30);
-		drawText(screenBuffer, text2);
-
-		// Clean up
-		delete[] text1;
-		delete[] text2;
+	for (int i = 0; i < curLine + 1; i++) {
+		int textWidth = getTextWidth(textLine[i].c_str());
+		setTextPos(x + (width - textWidth) / 2, y + i * 30);
+		drawText(screenBuffer, textLine[i].c_str());
 	}
+
+	free(buf);
 }
 
-uint32 VideoText::getTextWidth(char *text) {
+uint32 VideoText::getTextWidth(const char *text) {
 	assert (_fontResource);
 
     int width = 0;
     uint8 character = *text;
+	const char *curChar = text;
     while (character) {
 		GraphicFrame *font = _fontResource->getFrame(character);
         width += font->surface.w + font->x - _curFontFlags;
 
-        text++;
-        character = *text;
+        curChar++;
+        character = *curChar;
     }
     return width;
 }
 
 uint32 VideoText::getResTextWidth(uint32 resId) {
     ResourceEntry *textRes = _textPack->getResource(resId);
-    return getTextWidth((char*)textRes->data);
+    return getTextWidth((const char *)textRes->data);
 }
 
 void VideoText::drawChar(byte *screenBuffer, char character) {
@@ -234,10 +238,11 @@ void VideoText::drawChar(byte *screenBuffer, char character) {
     _posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
-void VideoText::drawText(byte *screenBuffer, char *text) {
-    while (*text) {
-        drawChar(screenBuffer, *text);
-        text++;
+void VideoText::drawText(byte *screenBuffer, const char *text) {
+	const char *curChar = text;
+    while (*curChar) {
+        drawChar(screenBuffer, *curChar);
+        curChar++;
     }
 }
 
