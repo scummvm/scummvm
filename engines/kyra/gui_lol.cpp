@@ -2322,7 +2322,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 			int pg = _screen->setCurPage(0);
 			_vm->_txt->clearDim(8);
 			textCursorTimer = 0;
-			textCursorStatus = 1;
+			textCursorStatus = 0;
 
 			fC = _screen->getTextWidth(_saveDescription);
 			while (fC >= fW) {
@@ -2348,7 +2348,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 				}				
 			}
 
-			if (getInput()) {				
+			if (getInput()) {
 				if (!_newMenu)
 					_newMenu = _currentMenu;
 				else
