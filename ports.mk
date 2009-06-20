@@ -201,6 +201,7 @@ endif
 	$(CP) $(DIST_FILES_THEMES) wiidist/scummvm/
 ifneq ($(DIST_FILES_ENGINEDATA),)
 	$(CP) $(DIST_FILES_ENGINEDATA) wiidist/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip wiidist/scummvm/
 endif
 
 .PHONY: deb bundle osxsnap win32dist wiidist install uninstall
