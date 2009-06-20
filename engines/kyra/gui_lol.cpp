@@ -31,6 +31,7 @@
 #include "kyra/resource.h"
 
 #include "common/savefile.h"
+#include "graphics/scaler.h"
 
 #include "base/version.h"
 
@@ -2227,6 +2228,13 @@ int GUI_LoL::runMenu(Menu &menu) {
 	_savegameOffset = 0;
 	backupPage0();
 
+	const ScreenDim *d = _screen->getScreenDim(8);
+	uint32 textCursorTimer = 0;
+	uint8 textCursorStatus = 1;
+	int wW = _screen->getCharWidth('W');
+	int fW = (d->w << 3) - wW;	
+	int fC = 0;
+
 	// LoL doesnt't have default higlighted items. No item should be
 	// highlighted when entering a new menu.
 	// Instead, the respevtive struct entry is used to determine whether
@@ -2305,9 +2313,47 @@ int GUI_LoL::runMenu(Menu &menu) {
 			_screen->updateScreen();
 		}
 
+		if (_currentMenu == &_savenameMenu) {
+			int mx = (d->sx << 3) - 1;
+			int my = d->sy - 1;
+			int mw = (d->w << 3) + 1;
+			int mh = d->h + 1;
+			_screen->drawShadedBox(mx, my, mx + mw, my + mh, 227, 223, Screen::kShadeTypeLol);
+			int pg = _screen->setCurPage(0);
+			_vm->_txt->clearDim(8);
+			textCursorTimer = 0;
+			textCursorStatus = 1;
+
+			fC = _screen->getTextWidth(_saveDescription);
+			while (fC >= fW) {
+				_saveDescription[strlen(_saveDescription) - 1] = 0;
+				fC = _screen->getTextWidth(_saveDescription);
+			}
+
+			_screen->fprintString(_saveDescription, (d->sx << 3), d->sy + 2, d->unk8, d->unkA, 0);	
+			_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - 1, d->unk8, 0);
+			_screen->setCurPage(pg);
+			_screen->updateScreen();
+		}
+
 		while (!_newMenu && _displayMenu) {
-			processHighlights(*_currentMenu);			
-			if (getInput()) {
+			processHighlights(*_currentMenu);
+
+			if (_currentMenu == &_savenameMenu) {
+				fC = _screen->getTextWidth(_saveDescription);
+				int pg = _screen->setCurPage(0);
+
+				if (textCursorTimer <= _vm->_system->getMillis()) {
+					textCursorStatus ^= 1;
+					textCursorTimer = _vm->_system->getMillis() + 20 * _vm->_tickLength;
+					_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - 1, textCursorStatus ? d->unk8 : d->unkA, 0);
+				}
+				
+				_screen->updateScreen();
+				_screen->setCurPage(pg);
+			}
+
+			if (getInput()) {			
 				if (!_newMenu)
 					_newMenu = _currentMenu;
 				else
@@ -2330,6 +2376,13 @@ int GUI_LoL::runMenu(Menu &menu) {
 	}
 
 	return _menuResult;
+}
+
+void GUI_LoL::createScreenThumbnail(Graphics::Surface &dst) {
+	uint8 *screenPal = new uint8[768];
+	_screen->getRealPalette(1, screenPal);
+	::createThumbnail(&dst, _screen->getCPagePtr(7), Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
+	delete[] screenPal;
 }
 
 void GUI_LoL::backupPage0() {
@@ -2356,14 +2409,14 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 	KyraEngine_v1::SaveHeader header;
 	Common::InSaveFile *in;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
-		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
+		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset - startSlot]), header)) != 0) {
 			strncpy(s, header.description.c_str(), 80);
 			s[79] = 0;
 
 			for (uint32 ii = 0; ii < strlen(s); ii++) {
-				for (int iii = 0; iii < _vm->_fontConversionTableGermanSize; iii += 2) {
-					if ((uint8)s[ii] == _vm->_fontConversionTableGerman[iii]) {
-						s[ii] = (uint8)_vm->_fontConversionTableGerman[iii + 1];
+				for (int iii = 0; iii < _vm->_fontConversionTableSize; iii += 2) {
+					if ((uint8)s[ii] == _vm->_fontConversionTable[iii]) {
+						s[ii] = (uint8)_vm->_fontConversionTable[iii + 1];
 						break;
 					}
 				}
@@ -2378,13 +2431,12 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 	}
 
 	if (_savegameOffset == 0) {
-		/*if (&menu == &_saveMenu) {
-			char *dst = _vm->getLangString(menu.item[0].itemId);
-			const char *src = _vm->getLangString(_vm->gameFlags().isTalkie ? 10 : 18);
-			strcpy(dst, src);
-			menu.item[0].saveSlot = -2;
+		if (&menu == &_saveMenu) {
+			strcpy(s, _vm->getLangString(0x4010));
+			menu.item[0].itemString = s;
+			menu.item[0].saveSlot = -3;
 			menu.item[0].enabled = true;
-		}*/
+		}
 	}
 }
 
@@ -2408,13 +2460,45 @@ int GUI_LoL::getInput() {
 	Common::Point p = _vm->getMousePos();
 	_vm->_mouseX = p.x;
 	_vm->_mouseY = p.y;
+
+	if (_currentMenu == &_savenameMenu) {
+		_vm->updateInput();
+
+		for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); evt++) {
+			if (evt->event.type == Common::EVENT_KEYDOWN)
+				_keyPressed = evt->event.kbd;
+		}
+	}
+
 	int inputFlag = _vm->checkInput(_menuButtonList);
+
+	if (_currentMenu == &_savenameMenu && _keyPressed.ascii){
+		for (int i = 0; i < _vm->_fontConversionTableSize; i += 2) {
+			if (_keyPressed.ascii == _vm->_fontConversionTable[i]) {
+				_keyPressed.ascii = _vm->_fontConversionTable[i + 1];
+				break;
+			}
+		}
+
+		if (_keyPressed.ascii > 31 && _keyPressed.ascii < 226) {
+			_saveDescription[strlen(_saveDescription) + 1] = 0;
+			_saveDescription[strlen(_saveDescription)] = _keyPressed.ascii;
+			inputFlag |= 0x8000;
+		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE && strlen(_saveDescription)) {
+			_saveDescription[strlen(_saveDescription) - 1] = 0;
+			inputFlag |= 0x8000;			
+		} else {
+
+		}
+	}
+
 	_vm->removeInputTop();
+	_keyPressed.reset();
 
 	if (_vm->shouldQuit())
 		_displayMenu = false;
 
-	_vm->delay(10);
+	_vm->delay(8);
 	return inputFlag & 0x8000 ? 1 : 0;
 }
 
@@ -2427,7 +2511,7 @@ int GUI_LoL::clickedMainMenu(Button *button) {
 		break;
 	case 0x4002:
 		_savegameOffset = 0;
-		//_newMenu = &_saveMenu;
+		_newMenu = &_saveMenu;
 		break;		
 	case 0x4003:
 		_savegameOffset = 0;
@@ -2471,16 +2555,34 @@ int GUI_LoL::clickedLoadMenu(Button *button) {
 int GUI_LoL::clickedSaveMenu(Button *button) {
 	updateMenuButton(button);
 	
+	if (button->arg == 0x4011) {
+		_newMenu = &_mainMenu;
+		return 1;
+	}
+
+	_newMenu = &_savenameMenu;
+	int16 s = (int16)button->arg;
+	_menuResult = _saveMenu.item[-s - 2].saveSlot + 1;
+	_saveDescription = (char*)_vm->_tempBuffer5120 + 1000;
+	_saveDescription[0] = 0;
+	if (_saveMenu.item[-s - 2].saveSlot != -3)
+		strcpy(_saveDescription, _saveMenu.item[-s - 2].itemString);
+	
 	return 1;
 }
 
 int GUI_LoL::clickedDeleteMenu(Button *button) {
 	updateMenuButton(button);
 	
+	if (button->arg == 0x4011) {
+		_newMenu = &_mainMenu;
+		return 1;
+	}
+
 	_choiceMenu.menuNameId = 0x400b;
-	_newMenu = (button->arg == 0x4011) ? _lastMenu : &_choiceMenu;	
+	_newMenu = &_choiceMenu;
 	int16 s = (int16)button->arg;
-	_menuResult = _deleteMenu.item[-s - 2].saveSlot;
+	_menuResult = _deleteMenu.item[-s - 2].saveSlot + 1;
 
 	return 1;
 }
@@ -2531,13 +2633,53 @@ int GUI_LoL::clickedDeathMenu(Button *button) {
 	return 1;
 }
 
+int GUI_LoL::clickedSavenameMenu(Button *button) {
+	updateMenuButton(button);
+	if (button->arg == _savenameMenu.item[0].itemId) {
+		for (uint32 i = 0; i < strlen(_saveDescription); i++) {
+			for (int ii = 0; ii < _vm->_fontConversionTableSize; ii += 2) {
+				if ((uint8)_saveDescription[i] == _vm->_fontConversionTable[ii + 1]) {
+					_saveDescription[i] = (char)_vm->_fontConversionTable[ii];
+					break;
+				}
+			}
+		}
+		
+		int slot = _menuResult == -2 ? getNextSavegameSlot() : _menuResult;
+		Graphics::Surface thumb;
+		createScreenThumbnail(thumb);
+		_vm->saveGameState(slot, _saveDescription, &thumb);
+		thumb.free();
+
+		_displayMenu = false;
+
+	} else if (button->arg == _savenameMenu.item[1].itemId) {
+		_newMenu = &_saveMenu;
+	}
+
+	return 1;
+}
+
 int GUI_LoL::clickedChoiceMenu(Button *button) {
 	updateMenuButton(button);
 	if (button->arg == _choiceMenu.item[0].itemId) {
 		if (_lastMenu == &_mainMenu) {
 			_vm->quitGame();
 		} else if (_lastMenu == &_deleteMenu) {
-			_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_menuResult));
+			_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_menuResult - 1));
+			Common::Array<int>::iterator i = Common::find(_saveSlots.begin(), _saveSlots.end(), _menuResult);
+			while (i != _saveSlots.end()) {
+				++i;
+				if (i == _saveSlots.end())
+					break;
+				// We are only renaming all savefiles until we get some slots missing
+				// Also not rename quicksave slot filenames
+				if (*(i-1) != *i || *i >= 990)
+					break;
+				Common::String oldName = _vm->getSavegameFilename(*i);
+				Common::String newName = _vm->getSavegameFilename(*i-1);
+				_vm->_saveFileMan->renameSavefile(oldName, newName);
+			}
 			_newMenu = &_mainMenu;
 		}
 	} else if (button->arg == _choiceMenu.item[1].itemId) {

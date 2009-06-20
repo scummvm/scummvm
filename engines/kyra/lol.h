@@ -855,8 +855,8 @@ private:
 
 	// TODO: Rethink of a proper way for conversion, currently our GUI charset isn't defined
 	// properly, thus this might not work on every system.
-	static const uint8 _fontConversionTableGerman[];
-	static const int _fontConversionTableGermanSize;
+	static const uint8 _fontConversionTable[];
+	static const int _fontConversionTableSize;
 
 	// graphics
 	void setupScreenDims();

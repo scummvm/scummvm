@@ -96,7 +96,7 @@ public:
 	int runMenu(Menu &menu);
 
 	// utilities for thumbnail creation
-	void createScreenThumbnail(Graphics::Surface &dst) {}
+	void createScreenThumbnail(Graphics::Surface &dst);
 
 private:
 	void backupPage0();
@@ -115,6 +115,7 @@ private:
 	int clickedDeleteMenu(Button *button);
 	int clickedOptionsMenu(Button *button);
 	int clickedDeathMenu(Button *button);
+	int clickedSavenameMenu(Button *button);
 	int clickedChoiceMenu(Button *button);
 
 	int scrollUp(Button *button);
@@ -141,6 +142,7 @@ private:
 	Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _deleteMenu, _savenameMenu, _deathMenu;
 	Menu *_currentMenu, *_lastMenu, *_newMenu;
 	int _menuResult;
+	char *_saveDescription;
 
 	LoLEngine *_vm;
 	Screen_LoL *_screen;

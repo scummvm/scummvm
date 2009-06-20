@@ -278,10 +278,10 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 			} else {
 				switch(event.kbd.keycode) {
 				case Common::KEYCODE_SPACE:
-					keys = 43;
+					keys = 61;
 					break;
 				case Common::KEYCODE_RETURN:
-					keys = 61;
+					keys = 43;
 					break;
 				case Common::KEYCODE_UP:
 				case Common::KEYCODE_KP8:
