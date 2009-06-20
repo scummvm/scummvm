@@ -1273,7 +1273,7 @@ int main(int argc, char *argv[]) {
 	int filename_pos = 1;
 
 	if (argc > 1 && strcmp(argv[1], "-t") == 0) {
-		Grim::translateStrings = true;
+		Grim::translateStrings = true; 
 		filename_pos = 2;
 	}
 	if (argc != filename_pos + 1) {
@@ -1281,21 +1281,22 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	char *filename = argv[filename_pos];
-	Common::File f;
-	f.open(filename);
-	if (!f.isOpen()) {
+	FILE *f = fopen(filename, "rb");
+	if (!f) {
 		exit(1);
 	}
+	fseek(f, 0, SEEK_END);
+	int size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	char *buff = new char[size];
+	fread(buff, size, 1, f);
+	fclose(f);
 
 	Grim::lua_open();
 	Grim::ZIO z;
-	int size = f.size();
-	char *buff = new char[size];
-	f.read(buff, size);
 
 	Grim::luaZ_mopen(&z, buff, size, "(buffer)");
 	Grim::TProtoFunc *tf = Grim::luaU_undump1(&z);
-	f.close();
 
 	Grim::decompile(std::cout, tf, "", NULL, 0);
 
