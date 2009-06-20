@@ -48,12 +48,19 @@ public:
 	void interrupt();
 	void stopSong(bool stopAudio = true);
 	void doSong(int songPos, bool stopAudio = false);
-	void doSfx(int sfxIndex);
+	int doSfx(int sfxIndex, bool unlockChannel = false);
 	void doMacro(int note, int macro, int relVol = 0, int finetune = 0, int channelNo = 0);
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
 	int getTicks() {return _playerCtx.tickCount;}
 	int getSongIndex() {return _playerCtx.song;}
-	uint16 getSignal(int index) {return _playerCtx.signal[index];}
+	uint16 getSignal(int index) {return (index < ARRAYSIZE(_playerCtx.signal)) ? _playerCtx.signal[index] : 0xFFFF;}
+	void stopMacroEffect(int channel) {
+		assert(0 <= channel && channel < kNumVoices);
+		Common::StackLock lock(_mutex);
+		unlockMacroChannel(_channelCtx[channel]);
+		clearMacroProgramm(_channelCtx[channel]);
+		Paula::disableChannel(_channelCtx[channel].paulaChannel);
+	}
 
 // Note: everythings public so the debug-Routines work.
 // private:
@@ -270,7 +277,7 @@ public:
 		channel.refPeriod = ((uint32)noteInt * finetune >> 8);
 		if (!channel.portaDelta) {
 			channel.period = channel.refPeriod;
-			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 		}
 	}
 

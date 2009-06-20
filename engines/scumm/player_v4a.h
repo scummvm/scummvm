@@ -62,6 +62,30 @@ private:
 	Audio::SoundHandle _sfxHandle;
 
 	int _musicId;
+	
+	struct SfxChan {
+		int id;
+		byte type;
+	} _sfxSlots[4];
+
+	int getSfxChan(int id) const {
+		for (int i = 0; i < ARRAYSIZE(_sfxSlots); ++i)
+			if (_sfxSlots[i].id == id)
+				return i;
+		return -1;
+	}
+
+	void setSfxSlot(int channel, int id, byte type = 0) {
+		_sfxSlots[channel].id = id;
+		_sfxSlots[channel].type = type;
+	}
+
+	void clearSfxSlots() {
+		for (int i = 0; i < ARRAYSIZE(_sfxSlots); ++i){
+			_sfxSlots[i].id = 0;
+			_sfxSlots[i].type = 0;
+		}
+	}
 
 	bool init();
 };

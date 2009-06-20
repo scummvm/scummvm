@@ -33,7 +33,7 @@
 namespace Scumm {
 
 Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer)
-	: _vm(scumm), _mixer(mixer), _musicId(), _tfmxPlay(0), _tfmxSfx(0), _musicHandle(), _sfxHandle() {
+	: _vm(scumm), _mixer(mixer), _musicId(), _sfxSlots(), _tfmxPlay(0), _tfmxSfx(0), _musicHandle(), _sfxHandle() {
 	init();
 }
 
@@ -72,21 +72,31 @@ Player_V4A::~Player_V4A() {
 }
 
 void Player_V4A::setMusicVolume(int vol) {
-	debug("player_v4a: setMusicVolume %i", vol);
+	debug(5, "player_v4a: setMusicVolume %i", vol);
 }
 
 void Player_V4A::stopAllSounds() {
-	if (_musicId)
-		stopSound(_musicId);
+	debug(5, "player_v4a: stopAllSounds");
+	if (_tfmxPlay)
+		_tfmxPlay->stopSong();
+	_musicId = 0;
+	if (_tfmxSfx)
+		_tfmxSfx->stopSong();
+	clearSfxSlots();
 }
 
 void Player_V4A::stopSound(int nr) {
+	debug(5, "player_v4a: stopSound %d", nr);
 	if (nr == _musicId) {
 		_tfmxPlay->stopSong();
-		//_mixer->stopHandle(_musicHandle);
 		_musicId = 0;
-	} else
-		warning("player_v4a: stop Sound %d", nr);
+	} else {
+		const int chan = getSfxChan(nr);
+		if (chan != -1) {
+			setSfxSlot(chan, 0);
+			_tfmxSfx->stopMacroEffect(chan);
+		}
+	}
 }
 
 void Player_V4A::startSound(int nr) {
@@ -106,7 +116,7 @@ void Player_V4A::startSound(int nr) {
 
 	const int val = ptr[9];
 	if (val < 0 || val >= ARRAYSIZE(monkeyCommands)) {
-		debug(3, "Tfmx: illegal Songnumber %i", val);
+		warning("player_v4a: illegal Songnumber %i", val);
 		return;
 	}
 
@@ -114,21 +124,27 @@ void Player_V4A::startSound(int nr) {
 		return;
 
 	int index = monkeyCommands[val];
+	const byte type = ptr[6];
 	if (index < 0) {
 		// SoundFX
 		index = -index - 1;
-		debug(5, "player_v4a: play custom %i", index);
+		debug(3, "player_v4a: play %d: custom %i - %02X", nr, index, type);
 
 		if (_tfmxSfx->getSongIndex() < 0)
 			_tfmxSfx->doSong(0x18);
-		_tfmxSfx->doSfx(index);
+		const int chan = _tfmxSfx->doSfx(index);
+		if (chan >= 0 && chan < ARRAYSIZE(_sfxSlots))
+			setSfxSlot(chan, nr, type);
+		else
+			warning("player_v4a: custom %i is not of required type", index);
 
 		if (!_mixer->isSoundHandleActive(_sfxHandle))
 			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 	} else {
 		// Song
-		debug(5, "player_v4a: play song %i", index);
-		assert(_tfmxPlay);
+		debug(3, "player_v4a: play %d: song %i - %02X", nr, index, type);
+		if (ptr[6] != 0x7F)
+			warning("player_v4a: Song has wrong type");
 
 		_tfmxPlay->doSong(index);
 		_musicId = nr;

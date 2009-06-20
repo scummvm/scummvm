@@ -139,19 +139,19 @@ void Tfmx::effects(ChannelContext &channel) {
 	}
 
 	// portamento
-	if (channel.portaDelta && !(--channel.portaCount)) {
+	if (channel.portaDelta && --channel.portaCount == 0) {
 		channel.portaCount = channel.portaSkip;
 
 		bool resetPorta = true;
-		uint16 period = channel.refPeriod;
-		const uint16 portaVal = channel.portaValue;
+		uint16 period = channel.refPeriod; // d1
+		uint16 portaVal = channel.portaValue; // d0
 
 		if (period > portaVal) {
-			period = ((uint32)period * (uint16)((1 << 8) - channel.portaDelta)) >> 8;
+			portaVal = ((uint32)portaVal * (uint16)((1 << 8) + channel.portaDelta)) >> 8;
 			resetPorta = (period <= portaVal);
 
 		} else if (period < portaVal) {
-			period = ((uint32)period * (uint16)((1 << 8) + channel.portaDelta)) >> 8;
+			portaVal = ((uint32)portaVal * (uint16)((1 << 8) - channel.portaDelta)) >> 8;
 			resetPorta = (period >= portaVal);
 		}
 
@@ -159,7 +159,7 @@ void Tfmx::effects(ChannelContext &channel) {
 			channel.portaDelta = 0;
 			channel.portaValue = channel.refPeriod & 0x7FF;
 		} else {
-			channel.period = period & 0x7FF;
+			channel.period = channel.portaValue = portaVal & 0x7FF;
 			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 		}
 	}
@@ -903,8 +903,10 @@ void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo)
 void Tfmx::stopSong(bool stopAudio) {
 	Common::StackLock lock(_mutex);
 	_playerCtx.song = -1;
-	if (stopAudio)
+	if (stopAudio) {
 		stopMacroChannels();
+		stopPaula();
+	}
 }
 
 void Tfmx::doSong(int songPos, bool stopAudio) {
@@ -912,8 +914,10 @@ void Tfmx::doSong(int songPos, bool stopAudio) {
 	Common::StackLock lock(_mutex);
 
 	stopPatternChannels();
-	if (stopAudio)
+	if (stopAudio) {
 		stopMacroChannels();
+		stopPaula();
+	}
 
 	_playerCtx.song = (int8)songPos;
 
@@ -939,7 +943,7 @@ void Tfmx::doSong(int songPos, bool stopAudio) {
 	startPaula();
 }
 
-void Tfmx::doSfx(int sfxIndex) {
+int Tfmx::doSfx(int sfxIndex, bool unlockChannel) {
 	assert(0 <= sfxIndex && sfxIndex < 128);
 	Common::StackLock lock(_mutex);
 
@@ -955,15 +959,21 @@ void Tfmx::doSfx(int sfxIndex) {
 		const byte priority = sfxEntry[5] & 0x7F;
 
 		ChannelContext &channel = _channelCtx[channelNo];
+		if (unlockChannel)
+			unlockMacroChannel(channel);
+
 		const int16 sfxLocktime = channel.sfxLockTime;
 		if (priority >= channel.customMacroPrio || sfxLocktime < 0) {
 			if (sfxIndex != channel.customMacroIndex || sfxLocktime < 0 || (sfxEntry[5] < 0x80)) {
 				channel.customMacro = READ_UINT32(sfxEntry); // intentionally not "endian-correct"
 				channel.customMacroPrio = priority;
 				channel.customMacroIndex = (uint8)sfxIndex;
+				debug(3, "Tfmx: running Macro %08X on channel %i - priority: %02X", TO_BE_32(channel.customMacro), channelNo, priority);
+				return channelNo;
 			}
 		}
 	}
+	return -1;
 }
 
 }
