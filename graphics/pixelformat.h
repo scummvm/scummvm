@@ -67,30 +67,30 @@ struct PixelFormat {
 	//"Factory" methods for convenience
 	//TODO: BGR support
 	//TODO: Specify alpha position
-	static inline PixelFormat PixelFormat::createFormatCLUT8() { 
+	static inline PixelFormat createFormatCLUT8() { 
 		return PixelFormat(1,8,8,8,8,0,0,0,0);
 	}
 #if (defined ENABLE_16BIT) || (defined ENABLE_32BIT) //TODO: more generic define instead of ENABLE_16BIT
 	//2 Bytes-per-pixel modes
-	static inline PixelFormat PixelFormat::createFormatRGB555() {
+	static inline PixelFormat createFormatRGB555() {
 		return PixelFormat(2,3,3,3,8,10,5,0,0);
 	}
-	static inline PixelFormat PixelFormat::createFormatXRGB1555() {
+	static inline PixelFormat createFormatXRGB1555() {
 		//Special case, alpha bit is always high in this mode.
 		return PixelFormat(2,3,3,3,7,10,5,0,15);
 	}
-	static inline PixelFormat PixelFormat::createFormatRGB565() {
+	static inline PixelFormat createFormatRGB565() {
 		return PixelFormat(2,3,2,3,8,11,5,0,0);
 	}
-	static inline PixelFormat PixelFormat::createFormatRGBA4444() {
+	static inline PixelFormat createFormatRGBA4444() {
 		return PixelFormat(2,4,4,4,4,12,8,4,0);
 	}
 #ifdef ENABLE_32BIT
 	//3 to 4 byte per pixel modes
-	static inline PixelFormat PixelFormat::createFormatRGB888() {
+	static inline PixelFormat createFormatRGB888() {
 		return PixelFormat(3,0,0,0,8,16,8,0,0);
 	}
-	static inline PixelFormat PixelFormat::createFormatRGBA8888() {
+	static inline PixelFormat createFormatRGBA8888() {
 		return PixelFormat(4,0,0,0,0,24,16,8,0);
 	}
 #endif  //ENABLE_32BIT
