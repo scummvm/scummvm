@@ -255,6 +255,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 			// there is actually a small delay in the player, but I think that
 			// only allows to clear DMA-State on real Hardware
 		}
+		Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 		Paula::enableChannel(channel.paulaChannel);
 		channel.deferWait = false;
 		return true;
