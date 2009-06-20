@@ -124,7 +124,7 @@ void Player_V4A::startSound(int nr) {
 		_tfmxSfx->doSfx(index);
 
 		if (!_mixer->isSoundHandleActive(_sfxHandle))
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, true, false);
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 	} else {
 		// Song
 		debug(5, "player_v4a: play song %i", index);
@@ -134,7 +134,7 @@ void Player_V4A::startSound(int nr) {
 		_musicId = nr;
 
 		if (!_mixer->isSoundHandleActive(_musicHandle))
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, true, false);
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 	}
 }
 
