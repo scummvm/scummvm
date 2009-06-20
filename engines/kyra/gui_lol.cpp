@@ -2333,27 +2333,22 @@ int GUI_LoL::runMenu(Menu &menu) {
 			_screen->fprintString(_saveDescription, (d->sx << 3), d->sy + 2, d->unk8, d->unkA, 0);	
 			_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - 1, d->unk8, 0);
 			_screen->setCurPage(pg);
-			_screen->updateScreen();
 		}
 
 		while (!_newMenu && _displayMenu) {
 			processHighlights(*_currentMenu);
 
 			if (_currentMenu == &_savenameMenu) {
-				fC = _screen->getTextWidth(_saveDescription);
-				int pg = _screen->setCurPage(0);
-
 				if (textCursorTimer <= _vm->_system->getMillis()) {
+					fC = _screen->getTextWidth(_saveDescription);
 					textCursorStatus ^= 1;
 					textCursorTimer = _vm->_system->getMillis() + 20 * _vm->_tickLength;
 					_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - 1, textCursorStatus ? d->unk8 : d->unkA, 0);
-				}
-				
-				_screen->updateScreen();
-				_screen->setCurPage(pg);
+					_screen->updateScreen();
+				}				
 			}
 
-			if (getInput()) {			
+			if (getInput()) {				
 				if (!_newMenu)
 					_newMenu = _currentMenu;
 				else
