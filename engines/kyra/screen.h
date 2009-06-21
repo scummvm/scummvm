@@ -53,10 +53,12 @@ struct ScreenDim {
 struct Font {
 	uint8 *fontData;
 	uint8 *charWidthTable;
-	uint16 charSizeOffset;
+	uint16 fontDescOffset;
 	uint16 charBitmapOffset;
 	uint16 charWidthTableOffset;
 	uint16 charHeightTableOffset;
+
+	uint8 glyphCount;
 };
 
 class Screen {

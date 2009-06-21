@@ -1003,10 +1003,12 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 		error("Invalid font data (file '%s', fontSig: %.04X)", filename, fontSig);
 
 	fnt->charWidthTable = fontData + READ_LE_UINT16(fontData + 8);
-	fnt->charSizeOffset = READ_LE_UINT16(fontData + 4);
+	fnt->fontDescOffset = READ_LE_UINT16(fontData + 4);
 	fnt->charBitmapOffset = READ_LE_UINT16(fontData + 6);
 	fnt->charWidthTableOffset = READ_LE_UINT16(fontData + 8);
 	fnt->charHeightTableOffset = READ_LE_UINT16(fontData + 0xC);
+
+	fnt->glyphCount = *(fnt->fontData + fnt->fontDescOffset + 3);
 
 	return true;
 }
@@ -1021,14 +1023,14 @@ int Screen::getFontHeight() const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
-	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].charSizeOffset + 4);
+	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].fontDescOffset + 4);
 }
 
 int Screen::getFontWidth() const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
-	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].charSizeOffset + 5);
+	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].fontDescOffset + 5);
 }
 
 int Screen::getCharWidth(uint16 c) const {
@@ -1081,7 +1083,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	setTextColor(cmap, 0, 1);
 
 	Font *fnt = &_fonts[_currentFont];
-	const uint8 charHeightFnt = *(fnt->fontData + fnt->charSizeOffset + 4);
+	const uint8 charHeightFnt = *(fnt->fontData + fnt->fontDescOffset + 4);
 	uint8 charHeight = 0;
 
 	if (x < 0)
@@ -1131,6 +1133,10 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 
 void Screen::drawCharANSI(uint8 c, int x, int y) {
 	Font *fnt = &_fonts[_currentFont];
+
+	if (c >= fnt->glyphCount)
+		return;
+
 	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x;
 
 	uint16 bitmapOffset = READ_LE_UINT16(fnt->fontData + fnt->charBitmapOffset + c * 2);
@@ -1138,15 +1144,16 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 		return;
 
 	uint8 charWidth = *(fnt->fontData + fnt->charWidthTableOffset + c);
-	if (charWidth + x > SCREEN_W)
+	if (!charWidth || charWidth + x > SCREEN_W)
 		return;
 
-	uint8 charH0 = *(fnt->fontData + fnt->charSizeOffset + 4);
-	if (charH0 + y > SCREEN_H)
+	uint8 charH0 = *(fnt->fontData + fnt->fontDescOffset + 4);
+	if (!charH0 || charH0 + y > SCREEN_H)
 		return;
 
 	uint8 charH1 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2);
 	uint8 charH2 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2 + 1);
+	
 	charH0 -= charH1 + charH2;
 
 	const uint8 *src = fnt->fontData + bitmapOffset;
@@ -1191,7 +1198,7 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 	}
 
 	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x, y, charWidth, *(fnt->fontData + fnt->charSizeOffset + 4));
+		addDirtyRect(x, y, charWidth, *(fnt->fontData + fnt->fontDescOffset + 4));
 }
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
