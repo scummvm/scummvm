@@ -51,6 +51,7 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 	_background = 0;
 	_startX = _startY = 0;
 	_leftClick = false;
+	_isActive = false;
 }
 
 Scene::~Scene() {
@@ -80,6 +81,7 @@ void Scene::enterScene() {
 	// Draw the actor walking towards the north
 	_sceneResource->getMainActor()->setAction(6);
 	_sceneResource->getMainActor()->drawActorAt(_screen, 200, 200);
+	_isActive = true;
 }
 
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
