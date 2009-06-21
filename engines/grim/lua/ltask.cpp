@@ -28,7 +28,7 @@ void start_script() {
 	lua_Object paramObj = lua_getparam(1);
 	lua_Type type = ttype(Address(paramObj));
 
-	if (paramObj == LUA_NOOBJECT || type != LUA_T_CPROTO && type != LUA_T_PROTO)
+	if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO))
 		lua_error("Bad argument to start_script");
 
 	LState *state = luaM_new(LState);
@@ -66,7 +66,7 @@ void next_script() {
 	lua_Object paramObj = lua_getparam(1);
 	lua_Type type = ttype(Address(paramObj));
 
-	if (paramObj == LUA_NOOBJECT || type != LUA_T_TASK && type != LUA_T_NIL)
+	if (paramObj == LUA_NOOBJECT || (type != LUA_T_TASK && type != LUA_T_NIL))
 		lua_error("Bad argument to next_script");
 
 	if (type == LUA_T_TASK) {
@@ -98,7 +98,7 @@ void stop_script() {
 	lua_Type type = ttype(Address(paramObj));
 	LState *state;
 
-	if (paramObj == LUA_NOOBJECT || type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK)
+	if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK))
 		lua_error("Bad argument to stop_script");
 
 	if (type == LUA_T_TASK) {
@@ -158,7 +158,7 @@ void find_script() {
 	lua_Object paramObj = lua_getparam(1);
 	lua_Type type = ttype(Address(paramObj));
 
-	if (paramObj == LUA_NOOBJECT || type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK)
+	if (paramObj == LUA_NOOBJECT || (type != LUA_T_CPROTO && type != LUA_T_PROTO && type != LUA_T_TASK))
 		lua_error("Bad argument to find_script");
 
 	if (type == LUA_T_TASK) {

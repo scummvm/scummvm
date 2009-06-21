@@ -165,13 +165,6 @@ void luaD_callTM(TObject *f, int32 nParams, int32 nResults) {
 	lua_state->state_counter1--;
 }
 
-static void adjust_varargs(StkId first_extra_arg) {
-	TObject arg;
-	luaV_pack(first_extra_arg, (lua_state->stack.top - lua_state->stack.stack) - first_extra_arg, &arg);
-	luaD_adjusttop(first_extra_arg);
-	*lua_state->stack.top++ = arg;
-}
-
 int32 luaD_call(StkId base, int nResults) {
 	lua_Task *tmpTask = lua_state->task;
 	if (!lua_state->task || lua_state->state_counter2) {

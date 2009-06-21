@@ -39,6 +39,8 @@ static const PlainGameDescriptor grimGames[] = {
 	{0, 0}
 };
 
+using Common::GUIO_NONE;
+
 static const GrimGameDescription gameDescriptions[] = {
 	{
 		// Grim Fandago English version
@@ -48,7 +50,8 @@ static const GrimGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("grim.tab", "cfb333d6aec260c905151b6b98ef71e8", 362212),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 	},
 	{
@@ -59,7 +62,8 @@ static const GrimGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 398592),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 	},
 	{
@@ -70,7 +74,8 @@ static const GrimGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("grim.tab", "b1460cd029f13718f7f62c2403e047ec", 372709),
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 	},
 	{
@@ -81,7 +86,8 @@ static const GrimGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("grim.tab", "2d99c796b7a4e5c421cae49dc29dab6c", 369071),
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 	},
 	{
@@ -92,7 +98,8 @@ static const GrimGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("gfdemo01.lab", "755cdac083f7f751bec7506402278f1a", 29489930),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO
+			ADGF_DEMO,
+			GUIO_NONE
 		},
 	},
 
@@ -101,7 +108,7 @@ static const GrimGameDescription gameDescriptions[] = {
 };
 
 static const GrimGameDescription fallbackGameDescriptions[] = {
-	{{"grim", 0, {{0, 0, 0, 0}}, Common::UNK_LANG, Common::kPlatformPC, ADGF_NO_FLAGS}}
+	{{"grim", 0, {{0, 0, 0, 0}}, Common::UNK_LANG, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE}}
 };
 
 static const ADFileBasedFallback grimFallback[] = {
@@ -125,7 +132,9 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	grimFallback,
 	// Flags
-	0
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NOMIDI
 };
 
 class GrimMetaEngine : public AdvancedMetaEngine {

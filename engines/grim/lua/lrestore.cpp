@@ -500,7 +500,6 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 			state = s;
 		}
 		int32 countTasks = restoreSint32();
-		Stack *st = &state->stack;
 		if (countTasks) {
 			for (i = 0; i < countTasks; i++) {
 				lua_Task *task = state->task;

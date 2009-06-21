@@ -1127,8 +1127,8 @@ static void PrintActorCostumes() {
 static void LoadCostume() {
 	lua_Object nameObj = lua_getparam(1);
 	if (lua_isstring(nameObj)) {
-		const char *name = lua_getstring(nameObj);
 		// FIXME disable loading costume due creating issue with colormap, this opcode is unknown purpose
+		//const char *name = lua_getstring(nameObj);
 		//g_resourceloader->loadCostume(name, NULL);
 	} else
 		lua_pushnil();
