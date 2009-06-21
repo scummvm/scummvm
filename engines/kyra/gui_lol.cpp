@@ -2690,7 +2690,7 @@ int GUI_LoL::clickedAudioMenu(Button *button) {
 
 	_screen->drawShape(0, _vm->_gameShapes[87], tX + oldVolume, button->y, 0, 0x10);
 	// Temporary HACK
-	const int volumeDrawX = _vm->convertValueFromMixer(_vm->convertValueToMixer(newVolume));
+	const int volumeDrawX = _vm->convertVolumeFromMixer(_vm->convertVolumeToMixer(newVolume));
 	_screen->drawShape(0, _vm->_gameShapes[86], tX + volumeDrawX, button->y, 0, 0x10);
 	_screen->updateScreen();
 

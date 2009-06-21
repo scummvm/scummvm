@@ -44,7 +44,7 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 
 	uint32 timeToEnd = strlen(chatStr) * 8 * _tickLength + _system->getMillis();
 
-	if (_configVoice == 0 && chatDuration != -1) {
+	if (textEnabled() && !speechEnabled() && chatDuration != -1) {
 		switch (_configTextspeed) {
 		case 0:
 			chatDuration *= 2;

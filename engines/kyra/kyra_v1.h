@@ -289,8 +289,8 @@ protected:
 	const int8 *_trackMap;
 	int _trackMapSize;
 
-	virtual int convertValueToMixer(int value);
-	virtual int convertValueFromMixer(int value);
+	virtual int convertVolumeToMixer(int value);
+	virtual int convertVolumeFromMixer(int value);
 
 	// pathfinder
 	virtual int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);

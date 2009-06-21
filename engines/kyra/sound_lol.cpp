@@ -304,12 +304,12 @@ int LoLEngine::snd_stopMusic() {
 	return snd_playTrack(-1);
 }
 
-int LoLEngine::convertValueToMixer(int value) {
+int LoLEngine::convertVolumeToMixer(int value) {
 	value -= 2;
 	return (value * Audio::Mixer::kMaxMixerVolume) / 100;
 }
 
-int LoLEngine::convertValueFromMixer(int value) {
+int LoLEngine::convertVolumeFromMixer(int value) {
 	return (value * 100) / Audio::Mixer::kMaxMixerVolume + 2;
 }
 

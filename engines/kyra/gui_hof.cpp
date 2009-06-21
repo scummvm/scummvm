@@ -855,8 +855,7 @@ void GUI_HoF::drawSliderBar(int slider, const uint8 *shape) {
 			position = _vm->_configTextspeed;
 	}
 
-	position = MAX(2, position);
-	position = MIN(97, position);
+	position = CLIP(position, 2, 97);
 	_screen->drawShape(0, shape, x+position, y, 0, 0);
 }
 

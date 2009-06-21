@@ -594,27 +594,27 @@ bool KyraEngine_v1::textEnabled() {
 	return !_flags.isTalkie || (_configVoice == 0 || _configVoice == 2);
 }
 
-int KyraEngine_v1::convertValueToMixer(int value) {
+int KyraEngine_v1::convertVolumeToMixer(int value) {
 	value -= 2;
 	return (value * Audio::Mixer::kMaxMixerVolume) / 95;
 }
 
-int KyraEngine_v1::convertValueFromMixer(int value) {
+int KyraEngine_v1::convertVolumeFromMixer(int value) {
 	return (value * 95) / Audio::Mixer::kMaxMixerVolume + 2;
 }
 
 void KyraEngine_v1::setVolume(kVolumeEntry vol, uint8 value) {
 	switch (vol) {
 	case kVolumeMusic:
-		ConfMan.setInt("music_volume", convertValueToMixer(value));
+		ConfMan.setInt("music_volume", convertVolumeToMixer(value));
 		break;
 
 	case kVolumeSfx:
-		ConfMan.setInt("sfx_volume", convertValueToMixer(value));
+		ConfMan.setInt("sfx_volume", convertVolumeToMixer(value));
 		break;
 
 	case kVolumeSpeech:
-		ConfMan.setInt("speech_volume", convertValueToMixer(value));
+		ConfMan.setInt("speech_volume", convertVolumeToMixer(value));
 		break;
 	}
 
@@ -629,16 +629,16 @@ void KyraEngine_v1::setVolume(kVolumeEntry vol, uint8 value) {
 uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 	switch (vol) {
 	case kVolumeMusic:
-		return convertValueFromMixer(ConfMan.getInt("music_volume"));
+		return convertVolumeFromMixer(ConfMan.getInt("music_volume"));
 		break;
 
 	case kVolumeSfx:
-		return convertValueFromMixer(ConfMan.getInt("sfx_volume"));
+		return convertVolumeFromMixer(ConfMan.getInt("sfx_volume"));
 		break;
 
 	case kVolumeSpeech:
 		if (speechEnabled())
-			return convertValueFromMixer(ConfMan.getInt("speech_volume"));
+			return convertVolumeFromMixer(ConfMan.getInt("speech_volume"));
 		else
 			return 2;
 		break;

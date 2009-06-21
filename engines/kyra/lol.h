@@ -446,8 +446,8 @@ private:
 	int _timer3Para;
 
 	// sound
-	int convertValueToMixer(int value);
-	int convertValueFromMixer(int value);
+	int convertVolumeToMixer(int value);
+	int convertVolumeFromMixer(int value);
 
 	void loadTalkFile(int index);
 	void snd_playVoiceFile(int track) {}
