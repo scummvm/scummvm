@@ -884,15 +884,15 @@ void LoLEngine::registerDefaultSettings() {
 
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the LoL engine.
-	ConfMan.registerDefault("floating cursors", false);
-	ConfMan.registerDefault("smooth scrolling", true);
-	ConfMan.registerDefault("monster difficulty", 1);
+	ConfMan.registerDefault("floating_cursors", false);
+	ConfMan.registerDefault("smooth_scrolling", true);
+	ConfMan.registerDefault("monster_difficulty", 1);
 }
 
 void LoLEngine::writeSettings() {
-	ConfMan.setInt("monster difficulty", _monsterDifficulty);
-	ConfMan.setBool("floating cursors", _floatingCursorsEnabled);
-	ConfMan.setBool("smooth scrolling", _smoothScrollingEnabled);
+	ConfMan.setInt("monster_difficulty", _monsterDifficulty);
+	ConfMan.setBool("floating_cursors", _floatingCursorsEnabled);
+	ConfMan.setBool("smooth_scrolling", _smoothScrollingEnabled);
 
 	switch (_lang) {
 	case 1:
@@ -921,9 +921,9 @@ void LoLEngine::writeSettings() {
 }
 
 void LoLEngine::readSettings() {
-	_monsterDifficulty = ConfMan.getInt("monster difficulty");
-	_smoothScrollingEnabled = ConfMan.getBool("smooth scrolling");
-	_floatingCursorsEnabled = ConfMan.getBool("floating cursors");
+	_monsterDifficulty = ConfMan.getInt("monster_difficulty");
+	_smoothScrollingEnabled = ConfMan.getBool("smooth_scrolling");
+	_floatingCursorsEnabled = ConfMan.getBool("floating_cursors");
 
 	KyraEngine_v1::readSettings();
 }
