@@ -808,10 +808,10 @@ void PCSound::musicLoop(bool v) {
 	_player->setLooping(v);
 }
 
-void PCSound::startNote(int channel, int volume, int speed) {
+void PCSound::startNote(int channel, int volume, int freq) {
 	warning("TODO: startNote");
 //	_soundDriver->setVolume(channel, volume);
-	_soundDriver->setChannelFrequency(channel, speed);
+	_soundDriver->setChannelFrequency(channel, freq);
 }
 
 void PCSound::setVolume(int volume) {

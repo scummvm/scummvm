@@ -32,6 +32,10 @@
 
 namespace Cruise {
 
+uint32 Period(uint32 hz) {
+	return ((uint32)(100000000L / ((uint32)hz * 28L)));
+}
+
 //#define FUNCTION_DEBUG
 
 int16 Op_LoadOverlay(void) {
@@ -246,15 +250,14 @@ int16 Op_StopFX(void) {
 
 int16 Op_FreqFX(void) {
 	int volume = popVar();
-	int speed = popVar();
+	int freq2 = popVar();
 	int channelNum = popVar();
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
-		if (speed == -1)
-			speed = filesDatabase[sampleNum].subData.transparency;
-
-		_vm->sound().startNote(channelNum, volume, speed);
+		int freq = Period(freq2 * 1000);
+		
+		_vm->sound().startNote(channelNum, volume, freq);
 	}
 
 	return (0);

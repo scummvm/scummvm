@@ -70,7 +70,7 @@ public:
 	void setPattern(int offset, uint8 value);
 	bool musicLooping() const;
 	void musicLoop(bool v);
-	void startNote(int channel, int volume, int speed);
+	void startNote(int channel, int volume, int freq);
 	void setVolume(int volume);
 	uint8 getVolume();
 };
