@@ -122,7 +122,6 @@ Video::Video(Audio::Mixer *mixer) {
 
 	_smkDecoder  = new Graphics::SmackerDecoder(mixer);
 	_player      = new VideoPlayer(_smkDecoder);
-	_videoNumber = -1;
 }
 
 Video::~Video() {

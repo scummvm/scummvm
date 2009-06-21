@@ -78,8 +78,6 @@ private:
 	Common::List<Common::Event> _stopEvents;
 	Graphics::SmackerDecoder    *_smkDecoder;
 	VideoPlayer					*_player;
-	int							 _videoNumber;
-
 }; // end of class Video
 
 // The VideoText class has some methods from the Text class, 
