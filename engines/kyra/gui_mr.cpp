@@ -1554,7 +1554,7 @@ int GUI_MR::sliderHandler(Button *caller) {
 
 	assert(button >= 0 && button <= 3);
 
-	int oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
+	const int oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
 	int newVolume = oldVolume;
 
 	if (caller->index >= 24 && caller->index <= 27)
@@ -1564,8 +1564,7 @@ int GUI_MR::sliderHandler(Button *caller) {
 	else
 		newVolume = _vm->_mouseX - caller->x - 7;
 
-	newVolume = MAX(2, newVolume);
-	newVolume = MIN(97, newVolume);
+	newVolume = CLIP(newVolume, 2, 97);
 
 	if (newVolume == oldVolume)
 		return 0;

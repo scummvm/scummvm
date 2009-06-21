@@ -2670,7 +2670,7 @@ int GUI_LoL::clickedAudioMenu(Button *button) {
 	}
 
 	int tX = button->x;
-	int oldVolume = _vm->getVolume((KyraEngine_v1::kVolumeEntry)(button->arg - 3));
+	const int oldVolume = _vm->getVolume((KyraEngine_v1::kVolumeEntry)(button->arg - 3));
 	int newVolume = oldVolume;
 
 	if (button->index == 0) {
@@ -2689,7 +2689,9 @@ int GUI_LoL::clickedAudioMenu(Button *button) {
 		return 0;
 
 	_screen->drawShape(0, _vm->_gameShapes[87], tX + oldVolume, button->y, 0, 0x10);
-	_screen->drawShape(0, _vm->_gameShapes[86], tX + newVolume, button->y, 0, 0x10);
+	// Temporary HACK
+	const int volumeDrawX = _vm->convertValueFromMixer(_vm->convertValueToMixer(newVolume));
+	_screen->drawShape(0, _vm->_gameShapes[86], tX + volumeDrawX, button->y, 0, 0x10);
 	_screen->updateScreen();
 
 	_vm->snd_stopSpeech(0);

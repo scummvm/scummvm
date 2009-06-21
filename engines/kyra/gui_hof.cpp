@@ -1098,8 +1098,7 @@ int GUI_HoF::sliderHandler(Button *caller) {
 	else
 		newVolume = _vm->_mouseX - caller->x - 7;
 
-	newVolume = MAX(2, newVolume);
-	newVolume = MIN(97, newVolume);
+	newVolume = CLIP(newVolume, 2, 97);
 
 	if (newVolume == oldVolume)
 		return 0;
