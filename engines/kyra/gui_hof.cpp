@@ -95,7 +95,11 @@ const char *GUI_HoF::getMenuItemTitle(const MenuItem &menuItem) {
 	if (!menuItem.itemId)
 		return 0;
 
-	return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, 1);
+	// Strings 41-45 are menu labels, those must be handled uncompressed!
+	if (menuItem.itemId >= 41 && menuItem.itemId <= 45)
+		return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, 0);
+	else
+		return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, 1);
 }
 
 const char *GUI_HoF::getMenuItemLabel(const MenuItem &menuItem) {

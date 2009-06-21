@@ -31,6 +31,7 @@
 #include "kyra/sound.h"
 #include "kyra/gui_lok.h"
 #include "kyra/timer.h"
+#include "kyra/util.h"
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -538,6 +539,9 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header))) {
 			strncpy(savenames[i], header.description.c_str(), ARRAYSIZE(savenames[0]));
 			savenames[i][34] = 0;
+
+			Util::convertISOToDOS(savenames[i]);
+
 			menu.item[i].itemString = savenames[i];
 			menu.item[i].enabled = 1;
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
@@ -654,9 +658,12 @@ void GUI_LoK::updateSavegameString() {
 	if (_keyPressed.keycode) {
 		length = strlen(_savegameName);
 
-		if (_keyPressed.ascii > 31 && _keyPressed.ascii < 127) {
+		char inputKey = _keyPressed.ascii;
+		Util::convertISOToDOS(inputKey);
+
+		if ((uint8)inputKey > 31 && (uint8)inputKey < 226) {
 			if (length < ARRAYSIZE(_savegameName)-1) {
-				_savegameName[length] = _keyPressed.ascii;
+				_savegameName[length] = inputKey;
 				_savegameName[length+1] = 0;
 				redrawTextfield();
 			}
@@ -715,6 +722,8 @@ int GUI_LoK::saveGame(Button *button) {
 		if (_savegameOffset == 0 && _vm->_gameToLoad == 0)
 			_vm->_gameToLoad = getNextSavegameSlot();
 		if (_vm->_gameToLoad > 0) {
+			Util::convertDOSToISO(_savegameName);
+
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
 			_vm->saveGameState(_vm->_gameToLoad, _savegameName, &thumb);
