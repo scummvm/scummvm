@@ -293,15 +293,15 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	if (!strcmp(buffer, ".SPL")) {
 		removeExtention(name, buffer);
 
-		// if (useH32)
-		{
-			strcat(buffer, ".H32");
-		}
-		/* else
+		/* if (useH32)
+		 *{
+		 *	strcat(buffer, ".H32");
+		 *}
+		 * else
 		 * if (useAdlib)
-		 * {
-		 * strcatuint8(buffer,".ADL");
-		 * }
+		 * { */
+		 strcat(buffer,".ADL");
+		/* }
 		 * else
 		 * {
 		 * strcatuint8(buffer,".HP");
