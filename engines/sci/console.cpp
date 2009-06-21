@@ -55,15 +55,6 @@ int g_debug_seeking = 0; // Stepping forward until some special condition is met
 int g_debug_seek_special = 0;  // Used for special seeks
 int g_debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
 
-enum DebugSeeking {
-	kDebugSeekNothing = 0,
-	kDebugSeekCallk = 1,        // Step forward until callk is found
-	kDebugSeekLevelRet = 2,     // Step forward until returned from this level
-	kDebugSeekSpecialCallk = 3, // Step forward until a /special/ callk is found
-	kDebugSeekSO = 4,           // Step forward until specified PC (after the send command) and stack depth
-	kDebugSeekGlobal = 5        // Step forward until one specified global variable is modified
-};
-
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 

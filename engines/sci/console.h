@@ -35,6 +35,15 @@ namespace Sci {
 class SciEngine;
 struct List;
 
+enum DebugSeeking {
+	kDebugSeekNothing = 0,
+	kDebugSeekCallk = 1,        // Step forward until callk is found
+	kDebugSeekLevelRet = 2,     // Step forward until returned from this level
+	kDebugSeekSpecialCallk = 3, // Step forward until a /special/ callk is found
+	kDebugSeekSO = 4,           // Step forward until specified PC (after the send command) and stack depth
+	kDebugSeekGlobal = 5        // Step forward until one specified global variable is modified
+};
+
 // Refer to the "addresses" command on how to pass address parameters
 int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
 int printObject(EngineState *s, reg_t pos);
