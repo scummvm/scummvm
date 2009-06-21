@@ -853,11 +853,6 @@ private:
 
 	static const char * const _languageExt[];
 
-	// TODO: Rethink of a proper way for conversion, currently our GUI charset isn't defined
-	// properly, thus this might not work on every system.
-	static const uint8 _fontConversionTable[];
-	static const int _fontConversionTableSize;
-
 	// graphics
 	void setupScreenDims();
 	void initSceneWindowDialogue(int controlMode);

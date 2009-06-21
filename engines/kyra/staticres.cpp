@@ -3323,21 +3323,6 @@ const int LoLEngine::_outroMonsterScaleTableY[] = {
 	0x100, 0x100, 0x100, 0x100, 0x100, 0x100, 0x100, 0x100
 };
 
-const uint8 LoLEngine::_fontConversionTable[] = {
-	(const uint8)'Ä', 0x8e, (const uint8)'ä', 0x84, (const uint8)'Ö', 0x99,
-	(const uint8)'ö', 0x94, (const uint8)'Ü', 0x9a, (const uint8)'ü', 0x81,
-	(const uint8)'ß', 0xe1, (const uint8)'É', 0x90, (const uint8)'é', 0x82,
-	(const uint8)'è', 0x8a, (const uint8)'ê', 0x88, (const uint8)'à', 0x85,
-	(const uint8)'â', 0x83, (const uint8)'ô', 0x93,	(const uint8)'Ç', 0x80,
-	(const uint8)'ç', 0x87, (const uint8)'ë', 0x89, (const uint8)'å', 0x86,
-	(const uint8)'ï', 0x8b, (const uint8)'î', 0x8c, (const uint8)'ì', 0x8d,
-	(const uint8)'Å', 0x8f, (const uint8)'æ', 0x91, (const uint8)'Æ', 0x92,
-	(const uint8)'ò', 0x95, (const uint8)'û', 0x96, (const uint8)'ù', 0x97,
-	(const uint8)'á', 0xa0
-};
-
-const int LoLEngine::_fontConversionTableSize = ARRAYSIZE(LoLEngine::_fontConversionTable);
-
 #endif // ENABLE_LOL
 
 } // End of namespace Kyra

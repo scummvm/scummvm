@@ -29,6 +29,7 @@
 #include "kyra/screen_lol.h"
 #include "kyra/gui_lol.h"
 #include "kyra/resource.h"
+#include "kyra/util.h"
 
 #include "common/savefile.h"
 #include "graphics/scaler.h"
@@ -2408,14 +2409,7 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 			strncpy(s, header.description.c_str(), 80);
 			s[79] = 0;
 
-			for (uint32 ii = 0; ii < strlen(s); ii++) {
-				for (int iii = 0; iii < _vm->_fontConversionTableSize; iii += 2) {
-					if ((uint8)s[ii] == _vm->_fontConversionTable[iii]) {
-						s[ii] = (uint8)_vm->_fontConversionTable[iii + 1];
-						break;
-					}
-				}
-			}
+			Util::convertISOToDOS(s);
 
 			menu.item[i].itemString = s;
 			s += (strlen(s) + 1);
@@ -2468,16 +2462,12 @@ int GUI_LoL::getInput() {
 	int inputFlag = _vm->checkInput(_menuButtonList);
 
 	if (_currentMenu == &_savenameMenu && _keyPressed.ascii){
-		for (int i = 0; i < _vm->_fontConversionTableSize; i += 2) {
-			if (_keyPressed.ascii == _vm->_fontConversionTable[i]) {
-				_keyPressed.ascii = _vm->_fontConversionTable[i + 1];
-				break;
-			}
-		}
+		char inputKey = _keyPressed.ascii;
+		Util::convertISOToDOS(inputKey);
 
-		if (_keyPressed.ascii > 31 && _keyPressed.ascii < 226) {
+		if ((uint8)inputKey > 31 && (uint8)inputKey < 226) {
 			_saveDescription[strlen(_saveDescription) + 1] = 0;
-			_saveDescription[strlen(_saveDescription)] = _keyPressed.ascii;
+			_saveDescription[strlen(_saveDescription)] = inputKey;
 			inputFlag |= 0x8000;
 		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE && strlen(_saveDescription)) {
 			_saveDescription[strlen(_saveDescription) - 1] = 0;
@@ -2631,15 +2621,8 @@ int GUI_LoL::clickedDeathMenu(Button *button) {
 int GUI_LoL::clickedSavenameMenu(Button *button) {
 	updateMenuButton(button);
 	if (button->arg == _savenameMenu.item[0].itemId) {
-		for (uint32 i = 0; i < strlen(_saveDescription); i++) {
-			for (int ii = 0; ii < _vm->_fontConversionTableSize; ii += 2) {
-				if ((uint8)_saveDescription[i] == _vm->_fontConversionTable[ii + 1]) {
-					_saveDescription[i] = (char)_vm->_fontConversionTable[ii];
-					break;
-				}
-			}
-		}
-		
+		Util::convertDOSToISO(_saveDescription);
+
 		int slot = _menuResult == -2 ? getNextSavegameSlot() : _menuResult;
 		Graphics::Surface thumb;
 		createScreenThumbnail(thumb);
