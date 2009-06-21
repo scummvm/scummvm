@@ -1305,7 +1305,11 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 	} else {
 		src = pvs->getPixels(0, 0);
 	}
-	Common::Rect rCapt(pvs->w, pvs->h);
+	captureImage(src, pvs->pitch, pvs->w, pvs->h, resNum, r, compType);
+}
+
+void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect& r, int compType) {
+	Common::Rect rCapt(srcw, srch);
 	if (rCapt.intersects(r)) {
 		rCapt.clip(r);
 		const uint8 *palPtr;
@@ -1327,13 +1331,13 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 		int headerSize = palPtr ? 1080 : 36;
 		switch (compType) {
 		case 0:
-			dataSize = wizPackType0(0, src, pvs->pitch, rCapt);
+			dataSize = wizPackType0(0, src, srcPitch, rCapt);
 			break;
 		case 1:
-			dataSize = wizPackType1(0, src, pvs->pitch, rCapt, transColor);
+			dataSize = wizPackType1(0, src, srcPitch, rCapt, transColor);
 			break;
 		case 2:
-			dataSize = wizPackType2(0, src, pvs->pitch, rCapt);
+			dataSize = wizPackType2(0, src, srcPitch, rCapt);
 			break;
 		default:
 			error("unhandled compression type %d", compType);
@@ -1373,13 +1377,13 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 		// write compressed data
 		switch (compType) {
 		case 0:
-			wizPackType0(wizImg + headerSize, src, pvs->pitch, rCapt);
+			wizPackType0(wizImg + headerSize, src, srcPitch, rCapt);
 			break;
 		case 1:
-			wizPackType1(wizImg + headerSize, src, pvs->pitch, rCapt, transColor);
+			wizPackType1(wizImg + headerSize, src, srcPitch, rCapt, transColor);
 			break;
 		case 2:
-			wizPackType2(wizImg + headerSize, src, pvs->pitch, rCapt);
+			wizPackType2(wizImg + headerSize, src, srcPitch, rCapt);
 			break;
 		default:
 			break;
@@ -1671,6 +1675,80 @@ struct PolygonDrawData {
 	}
 };
 
+void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2) {
+	debug(0, "captureWizPolygon: resNum %d, maskNum %d maskState %d, id1 %d id2 %d\n", resNum, maskNum, maskState, id1, id2);
+
+	int i, j;
+	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
+	WizPolygon *wp1, *wp2;
+	const uint16 transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+
+	wp1 = NULL;
+	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
+		if (_polygons[i].id == id1) {
+			wp1 = &_polygons[i];
+			break;
+		}
+	}
+	if (!wp1) {
+		error("Polygon %d is not defined", id1);
+	}
+	if (wp1->numVerts != 5) {
+		error("Invalid point count %d for Polygon %d", wp1->numVerts, id1);
+	}
+
+	wp2 = NULL;
+	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
+		if (_polygons[i].id == id2) {
+			wp2 = &_polygons[i];
+			break;
+		}
+	}
+	if (!wp2) {
+		error("Polygon %d is not defined", id2);
+	}
+	if (wp2->numVerts != 5) {
+		error("Invalid point count %d for Polygon %d", wp2->numVerts, id2);
+	}
+
+	int32 dstw, dsth, dstpitch;
+	int32 srcw, srch;
+	uint8 *imageBuffer;
+	const uint8 *src = pvs->getPixels(0, 0);
+
+	if (maskNum) {
+		const Common::Rect *r = NULL;
+		src = drawWizImage(maskNum, maskState, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
+		getWizImageDim(maskNum, maskState, srcw, srch);
+	} else {
+		srcw = pvs->w;
+		srch = pvs->h;
+	}
+
+	dstw = wp2->bound.width();
+	dsth = wp2->bound.height();
+	dstpitch = wp2->bound.width() * _vm->_bitDepth;
+	imageBuffer = (uint8 *)malloc(wp2->bound.width() * wp2->bound.height() * _vm->_bitDepth);
+	assert(imageBuffer);
+
+	if (_vm->_bitDepth == 2) {
+		uint8 *tmpPtr = imageBuffer;
+		for (i = 0; i < dsth; i++) {
+			for (j = 0; j < dstw; j++)
+				WRITE_LE_UINT16(tmpPtr + j * 2, transColor);
+			tmpPtr += dstpitch;
+		}
+	} else {
+		memset(imageBuffer, transColor, dstw * dsth);
+	}
+
+	Common::Rect bound;
+	drawWizPolygonImage(imageBuffer, src, NULL, dstpitch, kDstMemory, dstw, dsth, srcw, srch, bound, wp2->vert, _vm->_bitDepth);
+
+	captureImage(imageBuffer, dstpitch, dstw, dsth, resNum, wp2->bound, (_vm->_bitDepth == 2) ? 2 : 0);
+	free(imageBuffer);
+}
+
 void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int scale, const Common::Rect *r, int flags, int dstResNum, int palette) {
 	Common::Point pts[4];
 
@@ -1702,7 +1780,6 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 	const Common::Rect *r = NULL;
 	uint8 *srcWizBuf = NULL;
 	bool freeBuffer = true;
-	int i;
 
 	if (_vm->_game.heversion >= 99) {
 		if (getWizImageData(resNum, state, 0) != 0 || (flags & (kWIFRemapPalette | kWIFFlipX | kWIFFlipY)) || palette != 0) {
@@ -1733,152 +1810,163 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		}
 	}
 
-	if (srcWizBuf) {
-		uint8 *dst;
-		int32 dstw, dsth, dstpitch, dstType, wizW, wizH;
-		VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
-		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+	assert(srcWizBuf);
 
-		if (dstResNum) {
-			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
-			assert(dstPtr);
-			dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
-			assert(dst);
-			getWizImageDim(dstResNum, 0, dstw, dsth);
-			dstpitch = dstw * _vm->_bitDepth;
-			dstType = kDstResource;
-		} else {
-			if (flags & kWIFMarkBufferDirty) {
-				dst = pvs->getPixels(0, 0);
-			} else {
-				dst = pvs->getBackPixels(0, 0);
-			}
-			dstw = pvs->w;
-			dsth = pvs->h;
-			dstpitch = pvs->pitch;
-			dstType = kDstScreen;
-		}
+	uint8 *dst;
+	int32 dstw, dsth, dstpitch, dstType, wizW, wizH;
+	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 
-		getWizImageDim(resNum, state, wizW, wizH);
-
-		Common::Point bbox[4];
-		bbox[0].x = 0;
-		bbox[0].y = 0;
-		bbox[1].x = wizW - 1;
-		bbox[1].y = 0;
-		bbox[2].x = wizW - 1;
-		bbox[2].y = wizH - 1;
-		bbox[3].x = 0;
-		bbox[3].y = wizH - 1;
-
-		int16 xmin_p, xmax_p, ymin_p, ymax_p;
-		xmin_p = ymin_p = (int16)0x7FFF;
-		xmax_p = ymax_p = (int16)0x8000;
-
-		for (i = 0; i < 4; ++i) {
-			xmin_p = MIN(wp[i].x, xmin_p);
-			xmax_p = MAX(wp[i].x, xmax_p);
-			ymin_p = MIN(wp[i].y, ymin_p);
-			ymax_p = MAX(wp[i].y, ymax_p);
-		}
-
-		int16 xmin_b, xmax_b, ymin_b, ymax_b;
-		xmin_b = ymin_b = (int16)0x7FFF;
-		xmax_b = ymax_b = (int16)0x8000;
-
-		for (i = 0; i < 4; ++i) {
-			xmin_b = MIN(bbox[i].x, xmin_b);
-			xmax_b = MAX(bbox[i].x, xmax_b);
-			ymin_b = MIN(bbox[i].y, ymin_b);
-			ymax_b = MAX(bbox[i].y, ymax_b);
-		}
-
-		PolygonDrawData pdd(ymax_p - ymin_p + 1);
-		pdd.mat[0].x = xmin_p;
-		pdd.mat[0].y = ymin_p;
-		pdd.mat[1].x = xmax_p;
-		pdd.mat[1].y = ymax_p;
-		pdd.mat[2].x = xmin_b;
-		pdd.mat[2].y = ymin_b;
-		pdd.mat[3].x = xmax_b;
-		pdd.mat[3].y = ymax_b;
-
-		// precompute the transformation which remaps 'bbox' pixels to 'wp'
-		for (i = 0; i < 3; ++i) {
-			pdd.transform(&wp[i], &wp[i + 1], &bbox[i], &bbox[i + 1]);
-		}
-		pdd.transform(&wp[3], &wp[0], &bbox[3], &bbox[0]);
-
-		pdd.rAreasNum = 0;
-		PolygonDrawData::ResultArea *pra = &pdd.ra[0];
-		int32 yoff = pdd.mat[0].y * dstpitch;
-		int16 y_start = pdd.mat[0].y;
-		for (i = 0; i < pdd.pAreasNum; ++i) {
-			PolygonDrawData::PolygonArea *ppa = &pdd.pa[i];
-			if (y_start >= 0 && y_start < dsth) {
-				int16 x1 = ppa->xmin;
-				if (x1 < 0) {
-					x1 = 0;
-				}
-				int16 x2 = ppa->xmax;
-				if (x2 >= dstw) {
-					x2 = dstw - 1;
-				}
-				int16 w = x2 - x1 + 1;
-				if (w > 0) {
-					int16 width = ppa->xmax - ppa->xmin + 1;
-					pra->x_step = ((ppa->x2 - ppa->x1) << 16) / width;
-					pra->y_step = ((ppa->y2 - ppa->y1) << 16) / width;
-					pra->dst_offs = yoff + x1 * _vm->_bitDepth;
-					pra->w = w;
-					pra->x_s = ppa->x1 << 16;
-					pra->y_s = ppa->y1 << 16;
-					int16 tmp = x1 - ppa->xmin;
-					if (tmp != 0) {
-						pra->x_s += pra->x_step * tmp;
-						pra->y_s += pra->y_step * tmp;
-					}
-					++pra;
-					++pdd.rAreasNum;
-				}
-			}
-			++ppa;
-			yoff += dstpitch;
-			++y_start;
-		}
-
-		pra = &pdd.ra[0];
-		for (i = 0; i < pdd.rAreasNum; ++i, ++pra) {
-			uint8 *dstPtr = dst + pra->dst_offs;
-			int32 w = pra->w;
-			int32 x_acc = pra->x_s;
-			int32 y_acc = pra->y_s;
-			while (--w) {
-				int32 src_offs = (y_acc >> 16) * wizW + (x_acc >> 16);
-				assert(src_offs < wizW * wizH);
-				x_acc += pra->x_step;
-				y_acc += pra->y_step;
-				if (_vm->_bitDepth == 2) {
-					if (transColor == -1 || transColor != READ_LE_UINT16(srcWizBuf + src_offs * 2))
-						writeColor(dstPtr, dstType, READ_LE_UINT16(srcWizBuf + src_offs * 2));
-				} else {
-					if (transColor == -1 || transColor != srcWizBuf[src_offs])
-						*dstPtr = srcWizBuf[src_offs];
-				}
-				dstPtr += _vm->_bitDepth;
-			}
-		}
-
-		Common::Rect bound(xmin_p, ymin_p, xmax_p + 1, ymax_p + 1);
+	if (dstResNum) {
+		uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
+		assert(dstPtr);
+		dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
+		assert(dst);
+		getWizImageDim(dstResNum, 0, dstw, dsth);
+		dstpitch = dstw * _vm->_bitDepth;
+		dstType = kDstResource;
+	} else {
 		if (flags & kWIFMarkBufferDirty) {
-			_vm->markRectAsDirty(kMainVirtScreen, bound);
+			dst = pvs->getPixels(0, 0);
 		} else {
-			_vm->restoreBackgroundHE(bound);
+			dst = pvs->getBackPixels(0, 0);
 		}
-
-		if (freeBuffer)
-			free(srcWizBuf);
+		dstw = pvs->w;
+		dsth = pvs->h;
+		dstpitch = pvs->pitch;
+		dstType = kDstScreen;
 	}
+
+	Common::Rect bound;
+	getWizImageDim(resNum, state, wizW, wizH);
+	drawWizPolygonImage(dst, srcWizBuf, 0, dstpitch, dstType, dstw, dsth, wizW, wizH, bound, wp, _vm->_bitDepth);
+
+	if (flags & kWIFMarkBufferDirty) {
+		_vm->markRectAsDirty(kMainVirtScreen, bound);
+	} else {
+		_vm->restoreBackgroundHE(bound);
+	}
+
+	if (freeBuffer)
+		free(srcWizBuf);
+}
+
+void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstpitch, int dstType, int dstw, int dsth, int wizW, int wizH, Common::Rect &bound, Common::Point *wp, uint8 bitDepth) {
+	int i, transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+
+	Common::Point bbox[4];
+	bbox[0].x = 0;
+	bbox[0].y = 0;
+	bbox[1].x = wizW - 1;
+	bbox[1].y = 0;
+	bbox[2].x = wizW - 1;
+	bbox[2].y = wizH - 1;
+	bbox[3].x = 0;
+	bbox[3].y = wizH - 1;
+
+	int16 xmin_p, xmax_p, ymin_p, ymax_p;
+	xmin_p = ymin_p = (int16)0x7FFF;
+	xmax_p = ymax_p = (int16)0x8000;
+
+	for (i = 0; i < 4; ++i) {
+		xmin_p = MIN(wp[i].x, xmin_p);
+		xmax_p = MAX(wp[i].x, xmax_p);
+		ymin_p = MIN(wp[i].y, ymin_p);
+		ymax_p = MAX(wp[i].y, ymax_p);
+	}
+
+	int16 xmin_b, xmax_b, ymin_b, ymax_b;
+	xmin_b = ymin_b = (int16)0x7FFF;
+	xmax_b = ymax_b = (int16)0x8000;
+
+	for (i = 0; i < 4; ++i) {
+		xmin_b = MIN(bbox[i].x, xmin_b);
+		xmax_b = MAX(bbox[i].x, xmax_b);
+		ymin_b = MIN(bbox[i].y, ymin_b);
+		ymax_b = MAX(bbox[i].y, ymax_b);
+	}
+
+	PolygonDrawData pdd(ymax_p - ymin_p + 1);
+	pdd.mat[0].x = xmin_p;
+	pdd.mat[0].y = ymin_p;
+	pdd.mat[1].x = xmax_p;
+	pdd.mat[1].y = ymax_p;
+	pdd.mat[2].x = xmin_b;
+	pdd.mat[2].y = ymin_b;
+	pdd.mat[3].x = xmax_b;
+	pdd.mat[3].y = ymax_b;
+
+	// precompute the transformation which remaps 'bbox' pixels to 'wp'
+	for (i = 0; i < 3; ++i) {
+		pdd.transform(&wp[i], &wp[i + 1], &bbox[i], &bbox[i + 1]);
+	}
+	pdd.transform(&wp[3], &wp[0], &bbox[3], &bbox[0]);
+
+	pdd.rAreasNum = 0;
+	PolygonDrawData::ResultArea *pra = &pdd.ra[0];
+	int32 yoff = pdd.mat[0].y * dstpitch;
+	int16 y_start = pdd.mat[0].y;
+	for (i = 0; i < pdd.pAreasNum; ++i) {
+		PolygonDrawData::PolygonArea *ppa = &pdd.pa[i];
+		if (y_start >= 0 && y_start < dsth) {
+			int16 x1 = ppa->xmin;
+			if (x1 < 0) {
+				x1 = 0;
+			}
+			int16 x2 = ppa->xmax;
+			if (x2 >= dstw) {
+				x2 = dstw - 1;
+			}
+			int16 w = x2 - x1 + 1;
+			if (w > 0) {
+				int16 width = ppa->xmax - ppa->xmin + 1;
+				pra->x_step = ((ppa->x2 - ppa->x1) << 16) / width;
+				pra->y_step = ((ppa->y2 - ppa->y1) << 16) / width;
+				pra->dst_offs = yoff + x1 * _vm->_bitDepth;
+				pra->w = w;
+				pra->x_s = ppa->x1 << 16;
+				pra->y_s = ppa->y1 << 16;
+				int16 tmp = x1 - ppa->xmin;
+				if (tmp != 0) {
+					pra->x_s += pra->x_step * tmp;
+					pra->y_s += pra->y_step * tmp;
+				}
+				++pra;
+				++pdd.rAreasNum;
+			}
+		}
+		++ppa;
+		yoff += dstpitch;
+		++y_start;
+	}
+
+	pra = &pdd.ra[0];
+	for (i = 0; i < pdd.rAreasNum; ++i, ++pra) {
+		uint8 *dstPtr = dst + pra->dst_offs;
+		int32 w = pra->w;
+		int32 x_acc = pra->x_s;
+		int32 y_acc = pra->y_s;
+		while (--w) {
+			int32 src_offs = (y_acc >> 16) * wizW + (x_acc >> 16);
+			assert(src_offs < wizW * wizH);
+			x_acc += pra->x_step;
+			y_acc += pra->y_step;
+			if (bitDepth == 2) {
+				if (transColor == -1 || transColor != READ_LE_UINT16(src + src_offs * 2)) {
+					//if (transColor == -1 || READ_LE_UINT16(dstPtr) != transColor)
+						writeColor(dstPtr, dstType, READ_LE_UINT16(src + src_offs * 2));
+				}
+			} else {
+				if (transColor == -1 || transColor != src[src_offs])
+					*dstPtr = src[src_offs];
+			}
+			dstPtr += bitDepth;
+		}
+	}
+
+	bound.left = xmin_p;
+	bound.top = ymin_p;
+	bound.right = xmax_p + 1;
+	bound.bottom = ymax_p + 1;
 }
 
 void Wiz::flushWizBuffer() {
@@ -2329,9 +2417,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	// HE 99+
 	case 7:
-		// Used in PuttsFunShop/SamsFunShop/soccer2004
-		// TODO: Capture polygon
-		_vm->_res->setModified(rtImage, params->img.resNum);
+		captureWizPolygon(params->img.resNum, params->sourceImage, params->img.state, params->polygonId1, params->polygonId2);
 		break;
 	case 8: {
 			int img_w = 640;

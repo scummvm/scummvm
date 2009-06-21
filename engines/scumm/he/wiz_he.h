@@ -197,6 +197,8 @@ public:
 	void loadWizCursor(int resId, int palette);
 
 	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
+	void captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect& r, int compType);
+	void captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2);
 	void displayWizComplexImage(const WizParameters *params);
 	void displayWizImage(WizImage *pwi);
 	void processWizImage(const WizParameters *params);
@@ -205,6 +207,7 @@ public:
 	void drawWizPolygon(int resNum, int state, int id, int flags, int shadow, int dstResNum, int palette);
 	void drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int zoom, const Common::Rect *r, int flags, int dstResNum, int palette);
 	void drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette);
+	void drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstpitch, int dstType, int dstw, int dsth, int wizW, int wizH, Common::Rect &bound, Common::Point *wp, uint8 bitDepth);
 
 	static void copyMaskWizImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr);
 
