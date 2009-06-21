@@ -1023,6 +1023,7 @@ int Screen::getFontHeight() const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
+
 	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].fontDescOffset + 4);
 }
 
@@ -1030,6 +1031,7 @@ int Screen::getFontWidth() const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
+
 	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].fontDescOffset + 5);
 }
 
@@ -1037,9 +1039,14 @@ int Screen::getCharWidth(uint16 c) const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
+
 	if (c & 0xFF00)
 		return SJIS_CHARSIZE >> 1;
-	return (int)_fonts[_currentFont].charWidthTable[c] + _charWidth;
+
+	if (_fonts[_currentFont].lastGlyph < c)
+		return 0;
+	else
+		return (int)_fonts[_currentFont].charWidthTable[c] + _charWidth;
 }
 
 int Screen::getTextWidth(const char *str) const {
@@ -1082,8 +1089,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	cmap[1] = color1;
 	setTextColor(cmap, 0, 1);
 
-	Font *fnt = &_fonts[_currentFont];
-	const uint8 charHeightFnt = *(fnt->fontData + fnt->fontDescOffset + 4);
+	const uint8 charHeightFnt = getFontHeight();
 	uint8 charHeight = 0;
 
 	if (x < 0)
@@ -1147,7 +1153,7 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 	if (!charWidth || charWidth + x > SCREEN_W)
 		return;
 
-	uint8 charH0 = *(fnt->fontData + fnt->fontDescOffset + 4);
+	uint8 charH0 = getFontHeight();
 	if (!charH0 || charH0 + y > SCREEN_H)
 		return;
 
@@ -1198,7 +1204,7 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 	}
 
 	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x, y, charWidth, *(fnt->fontData + fnt->fontDescOffset + 4));
+		addDirtyRect(x, y, charWidth, getFontHeight());
 }
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
