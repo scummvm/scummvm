@@ -82,7 +82,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_curTlkFile = -1;
 	_lastSpeaker = _lastSpeechId = _nextSpeechId = _nextSpeaker = -1;
 
-	memset(_moneyColumnHeight, 0, 5);
+	memset(_moneyColumnHeight, 0, sizeof(_moneyColumnHeight));
 	_credits = 0;
 
 	_itemsInPlay = 0;
@@ -670,8 +670,6 @@ void LoLEngine::checkFloatingPointerRegions() {
 	int t = -1;
 
 	Common::Point p = getMousePos();
-	int mouseX = p.x;
-	int mouseY = p.y;
 
 	if (!(_updateFlags & 4) & !_floatingCursorControl) {
 		if (posWithinRect(p.x, p.y, 96, 0, 303, 136)) {
