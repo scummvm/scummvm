@@ -357,10 +357,10 @@ int16 Op_FindSet(void) {
 }
 
 int16 Op_RemoveFrame(void) {
-	int var1 = popVar();
-	int var2 = popVar();
+	int count = popVar();
+	int start = popVar();
 
-	resetFileEntryRange(var2, var1);
+	resetFileEntryRange(start, count);
 
 	return (0);
 }
@@ -563,26 +563,22 @@ int16 Op_LoadFrame(void) {
 }
 
 int16 Op_LoadAbs(void) {
-	int param1;
-//  int param2;
-//  int param3;
+	int slot;
 	char name[36] = "";
 	char *ptr;
 	int result = 0;
 
 	ptr = (char *) popPtr();
+	slot = popVar();
 
-	strcpy(name, ptr);
-
-	param1 = popVar();
-
-	if (param1 >= 0 || param1 < NUM_FILE_ENTRIES) {
+	if ((slot >= 0) && (slot < NUM_FILE_ENTRIES)) {
+		strcpy(name, ptr);
 		strToUpper(name);
 
 		gfxModuleData_gfxWaitVSync();
 		gfxModuleData_gfxWaitVSync();
 
-		result = loadFullBundle(name, param1);
+		result = loadFullBundle(name, slot);
 	}
 
 	changeCursor(CURSOR_NORMAL);

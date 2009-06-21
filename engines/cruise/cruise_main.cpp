@@ -81,12 +81,11 @@ int getNumObjectsByClass(int scriptIdx, int param) {
 	return (counter);
 }
 
-void resetFileEntryRange(int param1, int param2) {
+void resetFileEntryRange(int start, int count) {
 	int i;
 
-	for (i = param1; i < param2; i++) {
-		resetFileEntry(i);
-	}
+	for (i = 0; i < count; ++i)
+		resetFileEntry(start + i);
 }
 
 int getProcParam(int overlayIdx, int param2, const char *name) {
