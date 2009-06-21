@@ -75,6 +75,7 @@ MainMenu::~MainMenu() {
 
 void MainMenu::openMenu() {
 	_active = true;
+	_scene->deactivate();
 
     // yellow font
     _text->loadFont(_resPack, 0x80010010);
@@ -104,6 +105,7 @@ void MainMenu::openMenu() {
 
 void MainMenu::closeMenu() {
 	_active = false;
+	_scene->activate();
 
 	// Stop menu sounds and menu music
 	_sound->stopSfx();
