@@ -1008,7 +1008,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	fnt->charWidthTableOffset = READ_LE_UINT16(fontData + 8);
 	fnt->charHeightTableOffset = READ_LE_UINT16(fontData + 0xC);
 
-	fnt->glyphCount = *(fnt->fontData + fnt->fontDescOffset + 3);
+	fnt->lastGlyph = *(fnt->fontData + fnt->fontDescOffset + 3);
 
 	return true;
 }
@@ -1134,7 +1134,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 void Screen::drawCharANSI(uint8 c, int x, int y) {
 	Font *fnt = &_fonts[_currentFont];
 
-	if (c >= fnt->glyphCount)
+	if (c > fnt->lastGlyph)
 		return;
 
 	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x;

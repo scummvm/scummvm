@@ -58,7 +58,7 @@ struct Font {
 	uint16 charWidthTableOffset;
 	uint16 charHeightTableOffset;
 
-	uint8 glyphCount;
+	uint8 lastGlyph;
 };
 
 class Screen {
