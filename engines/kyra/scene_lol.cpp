@@ -1517,6 +1517,7 @@ void LoLEngine::setSequenceButtons(int x, int y, int w, int h, int enableFlags) 
 	_seqWindowY2 = y + h;
 	int offs = _itemInHand ? 10 : 0;
 	_screen->setMouseCursor(offs, offs, getItemIconShapePtr(_itemInHand));
+	_currentFloatingCursor = -1;
 	if (w == 320) {
 		setLampMode(0);
 		_lampStatusSuspended = true;
