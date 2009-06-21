@@ -49,6 +49,10 @@ public:
     void handleEvent(Common::Event *event, bool doUpdate);
 
 	void enterScene();
+	void activate() { _isActive = true; }
+	void deactivate() { _isActive = false; }
+	bool isActive() { return _isActive; }
+
 private:
 #if 0
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
@@ -67,14 +71,15 @@ private:
 	GraphicResource *_cursorResource;
 	GraphicFrame    *_background;
 
-    uint8 _sceneIdx;
-    uint32   _mouseX;
-	uint32   _mouseY;
+    uint8   _sceneIdx;
+    uint32  _mouseX;
+	uint32  _mouseY;
 	int32   _startX;
 	int32   _startY;
-    bool  _leftClick;
-	uint32   _curMouseCursor;
+    bool    _leftClick;
+	uint32  _curMouseCursor;
 	int32   _cursorStep;
+	bool    _isActive;
 
 	void update();
 	void updateCursor();
