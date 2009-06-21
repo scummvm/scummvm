@@ -446,6 +446,9 @@ private:
 	int _timer3Para;
 
 	// sound
+	int convertValueToMixer(int value);
+	int convertValueFromMixer(int value);
+
 	void loadTalkFile(int index);
 	void snd_playVoiceFile(int track) {}
 	bool snd_playCharacterSpeech(int id, int8 speaker, int);
@@ -478,10 +481,6 @@ private:
 	Common::List<Audio::AudioStream*> _speechList;
 
 	int _curTlkFile;
-
-	int _musicVolume;
-	int _sfxVolume;
-	int _speechVolume;
 
 	char **_ingameSoundList;
 	int _ingameSoundListSize;

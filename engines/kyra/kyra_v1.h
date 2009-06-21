@@ -153,7 +153,7 @@ public:
 		kVolumeSpeech = 2
 	};
 
-	// volume reaches from 2 to 97
+	// volume reaches per default from 2 to 97
 	void setVolume(kVolumeEntry vol, uint8 value);
 	uint8 getVolume(kVolumeEntry vol);
 
@@ -288,6 +288,9 @@ protected:
 
 	const int8 *_trackMap;
 	int _trackMapSize;
+
+	virtual int convertValueToMixer(int value);
+	virtual int convertValueFromMixer(int value);
 
 	// pathfinder
 	virtual int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);

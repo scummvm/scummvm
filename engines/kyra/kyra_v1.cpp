@@ -594,12 +594,12 @@ bool KyraEngine_v1::textEnabled() {
 	return !_flags.isTalkie || (_configVoice == 0 || _configVoice == 2);
 }
 
-inline int convertValueToMixer(int value) {
+int KyraEngine_v1::convertValueToMixer(int value) {
 	value -= 2;
 	return (value * Audio::Mixer::kMaxMixerVolume) / 95;
 }
 
-inline int convertValueFromMixer(int value) {
+int KyraEngine_v1::convertValueFromMixer(int value) {
 	return (value * 95) / Audio::Mixer::kMaxMixerVolume + 2;
 }
 

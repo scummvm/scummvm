@@ -371,7 +371,7 @@ void LoLEngine::kingSelectionIntro() {
 	_sound->voicePlay("KING01", &_speechHandle);
 
 	int index = 4;
-	while ((!_speechVolume || (_speechVolume && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
+	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
 		index = MAX(index, 4);
 
 		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 113, 0, 0, 0, 0);
@@ -387,7 +387,7 @@ void LoLEngine::kingSelectionIntro() {
 			_system->delayMillis(10);
 		}
 
-		if (_speechVolume)
+		if (speechEnabled())
 			index = (index + 1) % 22;
 		else if (++index >= 27)
 			break;
@@ -410,7 +410,7 @@ void LoLEngine::kingSelectionReminder() {
 	_sound->voicePlay("KING02", &_speechHandle);
 
 	int index = 0;
-	while ((!_speechVolume || (_speechVolume && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && index < 15) {
+	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && index < 15) {
 		_chargenWSA->displayFrame(_chargenFrameTable[index+9], 0, 113, 0, 0, 0, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar1IdxTable[index]*2+0], _selectionPosTable[_reminderChar1IdxTable[index]*2+1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar2IdxTable[index]*2+0], _selectionPosTable[_reminderChar2IdxTable[index]*2+1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
@@ -424,7 +424,7 @@ void LoLEngine::kingSelectionReminder() {
 			_system->delayMillis(10);
 		}
 
-		if (_speechVolume)
+		if (speechEnabled())
 			index = (index + 1) % 22;
 		else if (++index >= 27)
 			break;
@@ -437,7 +437,7 @@ void LoLEngine::kingSelectionOutro() {
 	_sound->voicePlay("KING03", &_speechHandle);
 
 	int index = 0;
-	while ((!_speechVolume || (_speechVolume && _sound->voiceIsPlaying(&_speechHandle))) && !shouldQuit() && !skipFlag()) {
+	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && !shouldQuit() && !skipFlag()) {
 		index = MAX(index, 4);
 
 		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 113, 0, 0, 0, 0);
@@ -449,7 +449,7 @@ void LoLEngine::kingSelectionOutro() {
 			_system->delayMillis(10);
 		}
 
-		if (_speechVolume)
+		if (speechEnabled())
 			index = (index + 1) % 22;
 		else if (++index >= 27)
 			break;
@@ -584,13 +584,13 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 	bool processAnim = true;
 
 	while (_charSelectionInfoResult == -1 && !shouldQuit()) {
-		if (_speechVolume && !_sound->isVoicePresent(file))
+		if (speechEnabled() && !_sound->isVoicePresent(file))
 			break;
 
 		_sound->voicePlay(file, &_speechHandle);
 
 		int i = 0;
-		while ((!_speechVolume || (_speechVolume && _sound->voiceIsPlaying(&_speechHandle))) && _charSelectionInfoResult == -1 && !shouldQuit()) {
+		while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelectionInfoResult == -1 && !shouldQuit()) {
 			_screen->drawShape(0, _screen->getPtrToShape(_screen->getCPagePtr(9), _charInfoFrameTable[i]), 11, 130, 0, 0);
 			_screen->updateScreen();
 
@@ -600,7 +600,7 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 				_system->delayMillis(10);
 			}
 
-			if (_speechVolume || processAnim)
+			if (speechEnabled() || processAnim)
 				i = (i + 1) % 32;
 			if (i == 0)
 				processAnim = false;

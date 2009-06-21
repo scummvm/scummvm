@@ -608,7 +608,7 @@ void TextDisplayer_LoL::textPageBreak() {
 	}
 
 	uint32 speechPartTime = 0;
-	if (_vm->_speechVolume && _vm->_activeVoiceFileTotalTime && _numCharsTotal)
+	if (_vm->speechEnabled() && _vm->_activeVoiceFileTotalTime && _numCharsTotal)
 		speechPartTime = _vm->_system->getMillis() + ((_numCharsPrinted * _vm->_activeVoiceFileTotalTime) / _numCharsTotal);
 
 	const ScreenDim *dim = _screen->getScreenDim(_screen->curDimIndex());
@@ -643,7 +643,7 @@ void TextDisplayer_LoL::textPageBreak() {
 		while (!inputFlag) {
 			_vm->update();
 
-			if (_vm->_speechVolume) {
+			if (_vm->speechEnabled()) {
 				if (((_vm->_system->getMillis() > speechPartTime) || (_vm->snd_updateCharacterSpeech() != 2)) && speechPartTime) {
 					loop = false;
 					inputFlag = 43;

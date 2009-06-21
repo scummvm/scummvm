@@ -34,7 +34,7 @@
 namespace Kyra {
 
 bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
-	if (!_speechVolume)
+	if (!speechEnabled())
 		return false;
 
 	if (speaker < 65) {
@@ -302,6 +302,15 @@ int LoLEngine::snd_stopMusic() {
 		_sound->haltTrack();
 	}
 	return snd_playTrack(-1);
+}
+
+int LoLEngine::convertValueToMixer(int value) {
+	value -= 2;
+	return (value * Audio::Mixer::kMaxMixerVolume) / 100;
+}
+
+int LoLEngine::convertValueFromMixer(int value) {
+	return (value * 100) / Audio::Mixer::kMaxMixerVolume + 2;
 }
 
 } // end of namespace Kyra

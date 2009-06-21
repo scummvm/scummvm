@@ -1564,6 +1564,7 @@ int LoLEngine::clickedOptions(Button *button) {
 
 	gui_toggleButtonDisplayMode(76, 0);
 
+	bool speechWasEnabled = speechEnabled();
 	_gui->runMenu(_gui->_mainMenu);
 
 	_updateFlags &= 0xfffb;
@@ -1575,8 +1576,8 @@ int LoLEngine::clickedOptions(Button *button) {
 
 	gui_drawPlayField();
 
-	if (!_speechVolume)
-		_configVoice |= 1;
+	if (speechWasEnabled && !textEnabled() && (!speechEnabled() || getVolume(kVolumeSpeech) == 2))
+		_configVoice = 0;
 
 	writeSettings();
 
@@ -2352,10 +2353,10 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 				printMenuText(getMenuItemLabel(_currentMenu->item[i]), _currentMenu->x + _currentMenu->item[i].labelX, _currentMenu->y + _currentMenu->item[i].labelY, _currentMenu->item[i].textColor, 0, 10);
 
-				int status = (i == 1) ? _vm->_musicVolume : ((i == 2) ? _vm->_sfxVolume : _vm->_speechVolume);
+				int volume = _vm->getVolume((KyraEngine_v1::kVolumeEntry)(i - 1));
 				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[85], tX , tY, 0, 0x10);
 				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[87], tX + 2 + oX[1], tY, 0, 0x10);
-				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[86], tX + 2 + oX[1] + status, tY, 0, 0x10);
+				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[86], tX + oX[1] + volume, tY, 0, 0x10);
 			}
 
 			_screen->updateScreen();
@@ -2669,30 +2670,33 @@ int GUI_LoL::clickedAudioMenu(Button *button) {
 	}
 
 	int tX = button->x;
-	int *status = (button->arg == 3) ? &_vm->_musicVolume : ((button->arg == 4) ? &_vm->_sfxVolume : &_vm->_speechVolume);
-	int statusOld = *status;
+	int oldVolume = _vm->getVolume((KyraEngine_v1::kVolumeEntry)(button->arg - 3));
+	int newVolume = oldVolume;
 
 	if (button->index == 0) {
-		*status -= 10;
+		newVolume -= 10;
 		tX += 10;
 	} else if (button->index == 1) {
-		*status = _vm->_mouseX - (tX + 7);
+		newVolume = _vm->_mouseX - (tX + 7);
 	} else if (button->index == 2) {
-		*status += 10;
+		newVolume += 10;
 		tX -= 114;
 	}
 
-	*status = CLIP(*status, 0, 100);
+	newVolume = CLIP(newVolume, 2, 102);
 
-	_screen->drawShape(0, _vm->_gameShapes[87], tX + 2 + statusOld, button->y, 0, 0x10);
-	_screen->drawShape(0, _vm->_gameShapes[86], tX + 2 + *status, button->y, 0, 0x10);
+	if (newVolume == oldVolume)
+		return 0;
+
+	_screen->drawShape(0, _vm->_gameShapes[87], tX + oldVolume, button->y, 0, 0x10);
+	_screen->drawShape(0, _vm->_gameShapes[86], tX + newVolume, button->y, 0, 0x10);
 	_screen->updateScreen();
 
 	_vm->snd_stopSpeech(0);
 
-	_vm->setVolume((KyraEngine_v1::kVolumeEntry)(button->arg - 3), *status);
+	_vm->setVolume((KyraEngine_v1::kVolumeEntry)(button->arg - 3), newVolume);
 
-	if (*status) {
+	if (newVolume) {
 		if (button->arg == 4) {
 			_vm->snd_playSoundEffect(_sliderSfx, -1);
 			int16 vocIndex = (int16)READ_LE_UINT16(&_vm->_ingameSoundIndex[_sliderSfx * 2]);
@@ -2709,7 +2713,6 @@ int GUI_LoL::clickedAudioMenu(Button *button) {
 					continue;
 				break;
 			} while (1);
-
 		} else if (button->arg == 5) {
 			_vm->_lastSpeechId = -1;
 			_vm->snd_playCharacterSpeech(0x42e0, 0, 0);

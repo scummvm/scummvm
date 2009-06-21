@@ -918,10 +918,6 @@ void LoLEngine::writeSettings() {
 	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 
 	KyraEngine_v1::writeSettings();
-
-	setVolume(kVolumeMusic, _musicVolume);
-	setVolume(kVolumeSfx, _sfxVolume);
-	setVolume(kVolumeSpeech, _speechVolume);
 }
 
 void LoLEngine::readSettings() {
@@ -930,12 +926,6 @@ void LoLEngine::readSettings() {
 	_floatingCursorsEnabled = ConfMan.getBool("floating cursors");
 
 	KyraEngine_v1::readSettings();
-
-	_musicVolume = getVolume(kVolumeMusic);
-	_sfxVolume = getVolume(kVolumeSfx);
-	_speechVolume = getVolume(kVolumeSpeech);
-	if (_speechVolume == 2)
-		_speechVolume = 0;
 }
 
 void LoLEngine::update() {
@@ -1149,7 +1139,7 @@ void LoLEngine::updatePortraitSpeechAnim() {
 		f -= 5;
 	f += 7;
 
-	if (_speechVolume) {
+	if (speechEnabled()) {
 		if (snd_updateCharacterSpeech() == 2)
 			_updatePortraitSpeechAnimDuration = 2;
 		else
