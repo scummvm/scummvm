@@ -100,13 +100,14 @@ void VideoPlayer::performPostProcessing(byte *screen) {
 	int curFrame = _decoder->getCurFrame();
 
 	// Reset subtitle area, by filling it with zeroes
-	memset(screen + 640 * 420, 0, 640 * 60);
+	memset(screen + 640 * 400, 0, 640 * 80);
 
 	for (uint32 i = 0; i < _subtitles.size(); i++) {
 		VideoSubtitle curSubtitle = _subtitles[i];
 		if (curFrame >= curSubtitle.frameStart && 
 			curFrame <= curSubtitle.frameEnd) {
-			_text->drawResTextCentered(screen, curSubtitle.textRes);
+			_text->drawMovieSubtitle(screen, curSubtitle.textRes);
+			break;
 		}
 	}
 	
@@ -149,8 +150,6 @@ bool Video::playVideo(int number, VideoSubtitles subtitles) {
 }
 
 VideoText::VideoText() {
-    _posX = 0;
-    _posY = 0;
     _curFontFlags = 0;
 	_fontResource = 0;
 
@@ -174,31 +173,30 @@ void VideoText::loadFont(ResourcePack *resPack, uint32 resId) {
     }
 }
 
-void VideoText::drawResTextCentered(byte *screenBuffer, uint32 resId) {
-    ResourceEntry *textRes = _textPack->getResource(resId);
-    drawTextCentered(screenBuffer, 0, 420, 640, (const char *)textRes->data);
-}
-
-void VideoText::setTextPos(uint32 x, uint32 y) {
-    _posX = x;
-    _posY = y;
-}
-
-void VideoText::drawTextCentered(byte *screenBuffer, uint32 x, uint32 y, uint32 width, const char *text) {
+void VideoText::drawMovieSubtitle(byte *screenBuffer, uint32 resId) {
 	Common::String textLine[4];
 	Common::String tmpLine;
 	int curLine = 0;
-	char *buf = strdup(text);	// for strtok
-	char *tok = strtok(buf, " ");
+	ResourceEntry *textRes = _textPack->getResource(resId);
+	char *text = strdup((const char *)textRes->data);	// for strtok
+	char *tok = strtok(text, " ");
+	int startY = 420;	// starting y for up to 2 subtitles
+	int spacing = 30;	// spacing for up to 2 subtitles
 
 	// Videos can have up to 4 lines of text
-	// TODO: proper y locations. This has only been tested with up to 2 lines (videos 0-6)
 	while (tok) {
 		tmpLine += tok;
 		tmpLine += " ";
 		if (getTextWidth(tmpLine.c_str()) > 640) {
 			tmpLine = tok;
 			curLine++;
+			if (curLine >= 2) {
+				startY = 410;	// starting Y for 3 subtitles
+				spacing = 20;	// spacing for 3-4 subtitles
+			}
+			if (curLine >= 3) {
+				startY = 402;	// starting Y for 4 subtitles
+			}
 		}
 		textLine[curLine] += tok;
 		textLine[curLine] += " ";
@@ -207,11 +205,10 @@ void VideoText::drawTextCentered(byte *screenBuffer, uint32 x, uint32 y, uint32 
 
 	for (int i = 0; i < curLine + 1; i++) {
 		int textWidth = getTextWidth(textLine[i].c_str());
-		setTextPos(x + (width - textWidth) / 2, y + i * 30);
-		drawText(screenBuffer, textLine[i].c_str());
+		drawText(screenBuffer, 0 + (640 - textWidth) / 2, startY + i * spacing, textLine[i].c_str());
 	}
 
-	free(buf);
+	free(text);
 }
 
 uint32 VideoText::getTextWidth(const char *text) {
@@ -230,23 +227,15 @@ uint32 VideoText::getTextWidth(const char *text) {
     return width;
 }
 
-uint32 VideoText::getResTextWidth(uint32 resId) {
-    ResourceEntry *textRes = _textPack->getResource(resId);
-    return getTextWidth((const char *)textRes->data);
-}
-
-void VideoText::drawChar(byte *screenBuffer, char character) {
+void VideoText::drawText(byte *screenBuffer, int x, int y, const char *text) {
 	assert (_fontResource);
-
-	GraphicFrame *fontLetter = _fontResource->getFrame(character);
-	copyToVideoFrame(screenBuffer, fontLetter, _posX, _posY + fontLetter->y);
-    _posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
-}
-
-void VideoText::drawText(byte *screenBuffer, const char *text) {
 	const char *curChar = text;
+	int curX = x;
+
     while (*curChar) {
-        drawChar(screenBuffer, *curChar);
+		GraphicFrame *fontLetter = _fontResource->getFrame(*curChar);
+		copyToVideoFrame(screenBuffer, fontLetter, curX, y + fontLetter->y);
+		curX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
         curChar++;
     }
 }

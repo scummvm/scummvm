@@ -92,23 +92,16 @@ public:
 	~VideoText();
 
     void loadFont(ResourcePack *resPack, uint32 resId);
-	void drawResTextCentered(byte *screenBuffer, uint32 resId);
+	void drawMovieSubtitle(byte *screenBuffer, uint32 resId);
 
 private:
-	void setTextPos(uint32 x, uint32 y);
-	void drawTextCentered(byte *screenBuffer, uint32 x, uint32 y, uint32 width, const char *text);
     uint32 getTextWidth(const char *text);
-    uint32 getResTextWidth(uint32 resId);
 
-    void drawChar(byte *screenBuffer, char character);
-    void drawText(byte *screenBuffer, const char *text);
+    void drawText(byte *screenBuffer, int x, int y, const char *text);
 	void copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y);
 
 	GraphicResource *_fontResource;
 	ResourcePack    *_textPack;
-
-	uint32 _posX;
-    uint32 _posY;
     uint8  _curFontFlags;
 
 }; // end of class VideoText
