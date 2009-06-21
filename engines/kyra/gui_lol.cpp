@@ -585,7 +585,7 @@ void LoLEngine::gui_drawCompass() {
 }
 
 int LoLEngine::gui_enableControls() {
-	_floatingMouseArrowControl = 0;
+	_floatingCursorControl = 0;
 
 	if (!_currentControlMode) {
 		for (int i = 76; i < 85; i++)
@@ -600,7 +600,7 @@ int LoLEngine::gui_disableControls(int controlMode) {
 	if (_currentControlMode)
 		return 0;
 
-	_floatingMouseArrowControl = (controlMode & 2) ? 2 : 1;
+	_floatingCursorControl = (controlMode & 2) ? 2 : 1;
 
 	gui_toggleFightButtons(true);
 
@@ -2406,7 +2406,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 			if (getInput()) {
 				if (!_newMenu)
-					_newMenu = _currentMenu;
+					_newMenu = (_currentMenu != &_audioOptions) ? _currentMenu : 0;
 				else
 					_lastMenu = _menuResult == -1 ? _lastMenu : _currentMenu;
 			}
@@ -2685,8 +2685,10 @@ int GUI_LoL::clickedAudioMenu(Button *button) {
 
 	newVolume = CLIP(newVolume, 2, 102);
 
-	if (newVolume == oldVolume)
+	if (newVolume == oldVolume) {
+		_screen->updateScreen();
 		return 0;
+	}
 
 	_screen->drawShape(0, _vm->_gameShapes[87], tX + oldVolume, button->y, 0, 0x10);
 	// Temporary HACK

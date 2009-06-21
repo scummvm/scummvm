@@ -200,7 +200,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_partyPosX = _partyPosY = 0;
 	_shpDmX = _shpDmY = _dmScaleW = _dmScaleH = 0;
 
-	_floatingMouseArrowControl = 0;
+	_floatingCursorControl = _currentFloatingCursor = 0;
 
 	memset(_activeTim, 0, sizeof(_activeTim));
 	memset(_openDoorState, 0, sizeof(_openDoorState));
@@ -663,6 +663,55 @@ bool LoLEngine::posWithinRect(int mouseX, int mouseY, int x1, int y1, int x2, in
 	return true;
 }
 
+void LoLEngine::checkFloatingPointerRegions() {
+	if (!_floatingCursorsEnabled)
+		return;
+
+	int t = -1;
+
+	Common::Point p = getMousePos();
+	int mouseX = p.x;
+	int mouseY = p.y;
+
+	if (!(_updateFlags & 4) & !_floatingCursorControl) {
+		if (posWithinRect(p.x, p.y, 96, 0, 303, 136)) {
+			if (!posWithinRect(p.x, p.y, 128, 16, 271, 119)) {
+				if (posWithinRect(p.x, p.y, 112, 0, 287, 15))
+					t = 0;
+				if (posWithinRect(p.x, p.y, 272, 88, 303, 319))
+					t = 1;
+				if (posWithinRect(p.x, p.y, 112, 110, 287, 135))
+					t = 2;
+				if (posWithinRect(p.x, p.y, 96, 88, 127, 119))
+					t = 3;
+				if (posWithinRect(p.x, p.y, 96, 16, 127, 87))
+					t = 4;
+				if (posWithinRect(p.x, p.y, 272, 16, 303, 87))
+					t = 5;
+
+				if (t < 4) {
+					int d = (_currentDirection + t) & 3;
+					if (!checkBlockPassability(calcNewBlockPosition(_currentBlock, d), d))
+						t = 6;
+				}
+			}
+		}
+	}
+
+	if (t == _currentFloatingCursor)
+		return;
+
+	if (t == -1) {
+		setMouseCursorToItemInHand();
+	} else {
+		static const uint8 floatingPtrX[] = { 7, 13, 7, 0, 0, 15, 7 };
+		static const uint8 floatingPtrY[] = { 0, 7, 12, 7, 6, 6, 7 };
+		_screen->setMouseCursor(floatingPtrX[t], floatingPtrY[t], _gameShapes[10 + t]);
+	}
+
+	_currentFloatingCursor = t;
+}
+
 uint8 *LoLEngine::getItemIconShapePtr(int index) {
 	int ix = _itemProperties[_itemsInPlay[index].itemPropertyIndex].shpIndex;
 	if (_itemProperties[_itemsInPlay[index].itemPropertyIndex].flags & 0x200)
@@ -860,7 +909,7 @@ void LoLEngine::runLoop() {
 
 		_timer->update();
 
-		//checkFloatingPointerRegions();
+		checkFloatingPointerRegions();
 		gui_updateInput();
 
 		update();
@@ -1465,7 +1514,7 @@ void LoLEngine::gui_specialSceneSuspendControls(int controlMode) {
 	_specialSceneFlag = 1;
 	_currentControlMode = controlMode;
 	calcCharPortraitXpos();
-	//checkMouseRegions();
+	checkFloatingPointerRegions();
 }
 
 void LoLEngine::gui_specialSceneRestoreControls(int restoreLamp) {
@@ -1475,7 +1524,7 @@ void LoLEngine::gui_specialSceneRestoreControls(int restoreLamp) {
 	}
 	_updateFlags &= 0xfffe;
 	_specialSceneFlag = 0;
-	//checkMouseRegions();
+	checkFloatingPointerRegions();
 }
 
 void LoLEngine::restoreAfterSceneWindowDialogue(int redraw) {

@@ -347,7 +347,9 @@ private:
 	uint8 *getItemIconShapePtr(int index);
 	bool posWithinRect(int mouseX, int mouseY, int x1, int y1, int x2, int y2);
 
-	int _floatingMouseArrowControl;
+	void checkFloatingPointerRegions();
+	int _floatingCursorControl;
+	int _currentFloatingCursor;
 
 	// intro + character selection
 	int processPrologue();
