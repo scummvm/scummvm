@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 
+#include "asylum/console.h"
 #include "asylum/scene.h"
 #include "asylum/menu.h"
 #include "asylum/screen.h"
@@ -36,6 +37,7 @@
 
 namespace Asylum {
 
+class Console;
 class Scene;
 class MainMenu;
 class Scene;
@@ -55,22 +57,24 @@ public:
     virtual Common::Error run();
     virtual bool hasFeature(EngineFeature f) const;
 
+private:
 	void checkForEvent(bool doUpdate);
 	void waitForTimer(int msec_delay);
 	void updateMouseCursor();
+	void checkForDelayedVideo();
 
-	Screen* getScreen() { return _screen; }
-	Sound* getSound() { return _sound; }
-
-private:
     Common::Language     _language;
     Common::RandomSource _rnd;
 
+	Console  *_console;
 	Scene    *_scene;
     MainMenu *_mainMenu;
 	Screen   *_screen;
 	Sound    *_sound;
 	Video    *_video;
+	int       _delayedVideoNumber;
+
+	friend class Console;
 };
 
 } // namespace Asylum

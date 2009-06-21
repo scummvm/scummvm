@@ -2,6 +2,7 @@ MODULE := engines/asylum
 
 MODULE_OBJS := \
 	asylum.o \
+	console.o \
 	detection.o \
 	graphics.o \
 	menu.o \

@@ -45,6 +45,7 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 
 AsylumEngine::~AsylumEngine() {
     //Common::clearAllDebugChannels();
+	delete _console;
 	delete _scene;
 	delete _mainMenu;
 	delete _video;
@@ -69,8 +70,10 @@ Common::Error AsylumEngine::init() {
 	_screen   = new Screen(_system);
 	_sound    = new Sound(_mixer);
 	_video    = new Video(_mixer);
+	_console  = new Console(this);
 	_mainMenu = 0;
 	_scene    = 0;
+	_delayedVideoNumber = -1;
 
     return Common::kNoError;
 }
@@ -111,6 +114,7 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 
 	while (_system->getMillis() < start_time + msec_delay) {
 		checkForEvent(false);
+		checkForDelayedVideo();
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
@@ -122,36 +126,56 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 	if (_system->getEventManager()->pollEvent(ev)) {
 		if (ev.type == Common::EVENT_KEYDOWN) {
 			if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				/*
-				// Push a quit event
-				Common::Event event;
-				event.type = Common::EVENT_QUIT;
-				g_system->getEventManager()->pushEvent(event);
-				*/
 				// Toggle menu
 				if (_mainMenu->isActive()) {
 					_mainMenu->closeMenu();
 					_scene->enterScene();
-				} else {
+				} else if (_scene->isActive()) {
 					_mainMenu->openMenu();
 				}
 
 				return;
 			}
+
+			if (ev.kbd.flags == Common::KBD_CTRL) {
+				if (ev.kbd.keycode == Common::KEYCODE_d)
+					_console->attach();
+			}
+
 		}
 	}
 
 	if (doUpdate) {
-		// Copy background image
-		_screen->copyBackBufferToScreen();
+		if (_mainMenu->isActive() || _scene->isActive()) {
+			// Copy background image
+			_screen->copyBackBufferToScreen();
+		}
+
+		if (_console->isAttached())
+			_console->onFrame();
 	}
 
 	if (_mainMenu->isActive()) {
 		// Main menu active, pass events to it
 		_mainMenu->handleEvent(&ev, doUpdate);
-	} else {
+	} else if (_scene->isActive()) {
 		// Pass events to the game
 		_scene->handleEvent(&ev, doUpdate);
+	}
+}
+
+void AsylumEngine::checkForDelayedVideo() {
+	if (_delayedVideoNumber >= 0) {
+		_sound->stopMusic();
+		_sound->stopSfx();
+		_video->playVideo(_delayedVideoNumber, kSubtitlesOn);
+		_delayedVideoNumber = -1;
+
+		if (_mainMenu->isActive()) {
+			_mainMenu->openMenu();
+		} else if (_scene->isActive()) {
+			_scene->enterScene();
+		}
 	}
 }
 
