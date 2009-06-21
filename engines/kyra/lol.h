@@ -307,6 +307,7 @@ public:
 
 	Screen *screen();
 	GUI *gui() const;
+
 private:
 	Screen_LoL *_screen;
 	GUI_LoL *_gui;
@@ -325,6 +326,10 @@ private:
 
 	void startup();
 	void startupNew();
+
+	void registerDefaultSettings();
+	void writeSettings();
+	void readSettings();
 
 	// options
 	int _monsterDifficulty;
@@ -473,7 +478,10 @@ private:
 	Common::List<Audio::AudioStream*> _speechList;
 
 	int _curTlkFile;
-	int _speechFlag;
+
+	int _musicVolume;
+	int _sfxVolume;
+	int _speechVolume;
 
 	char **_ingameSoundList;
 	int _ingameSoundListSize;
@@ -587,7 +595,7 @@ private:
 	int clickedAutomap(Button *button);
 	int clickedLamp(Button *button);
 	int clickedStatusIcon(Button *button);
-	
+
 	const ButtonDef *_buttonData;
 	int _buttonDataSize;
 	const int16 *_buttonList1;
@@ -772,7 +780,7 @@ private:
 	int olol_getNextActiveCharacter(EMCState *script);
 	int olol_paralyzePoisonCharacter(EMCState *script);
 	int olol_drawCharPortrait(EMCState *script);
-	int olol_removeInventoryItem(EMCState *script);	
+	int olol_removeInventoryItem(EMCState *script);
 	int olol_getAnimationLastPart(EMCState *script);
 	int olol_assignSpecialGuiShape(EMCState *script);
 	int olol_findInventoryItem(EMCState *script);

@@ -34,7 +34,7 @@
 namespace Kyra {
 
 bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
-	if (!_speechFlag)
+	if (!_speechVolume)
 		return false;
 
 	if (speaker < 65) {

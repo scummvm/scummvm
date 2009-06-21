@@ -222,10 +222,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_preserveEvents = false;
 	_buttonList1 = _buttonList2 = _buttonList3 = _buttonList4 = _buttonList5 = _buttonList6 = _buttonList7 = _buttonList8 = 0;
 
-	_monsterDifficulty = 1;
-	_smoothScrollingEnabled = true;
-	_floatingCursorsEnabled = false;
-
 	memset(_lvlTempData, 0, sizeof(_lvlTempData));
 
 	_mapOverlay = 0;
@@ -456,8 +452,6 @@ Common::Error LoLEngine::init() {
 
 	if (!_sound->init())
 		error("Couldn't init sound");
-
-	_speechFlag = speechEnabled() ? 0x48 : 0;
 
 	_wllVmpMap = new uint8[80];
 	memset(_wllVmpMap, 0, 80);
@@ -823,12 +817,6 @@ void LoLEngine::startupNew() {
 	_compassDirection = _compassDirectionIndex = -1;
 
 	_lastMouseRegion = -1;
-
-	/*
-	_unk5 = 1;
-	_unk6 = 1;
-	_unk7 = 1
-	_unk8 = 1*/
 	_currentLevel = 1;
 
 	giveCredits(41, 0);
@@ -889,6 +877,65 @@ void LoLEngine::runLoop() {
 
 		delay(_tickLength);
 	}
+}
+
+void LoLEngine::registerDefaultSettings() {
+	KyraEngine_v1::registerDefaultSettings();
+
+	// Most settings already have sensible defaults. This one, however, is
+	// specific to the LoL engine.
+	ConfMan.registerDefault("floating cursors", false);
+	ConfMan.registerDefault("smooth scrolling", true);
+	ConfMan.registerDefault("monster difficulty", 1);
+}
+
+void LoLEngine::writeSettings() {
+	ConfMan.setInt("monster difficulty", _monsterDifficulty);
+	ConfMan.setBool("floating cursors", _floatingCursorsEnabled);
+	ConfMan.setBool("smooth scrolling", _smoothScrollingEnabled);
+
+	switch (_lang) {
+	case 1:
+		_flags.lang = Common::FR_FRA;
+		break;
+
+	case 2:
+		_flags.lang = Common::DE_DEU;
+		break;
+
+	case 3:
+		_flags.lang = Common::JA_JPN;
+		break;
+
+	case 0:
+	default:
+		_flags.lang = Common::EN_ANY;
+	}
+
+	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
+		_flags.lang = _flags.fanLang;
+
+	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
+
+	KyraEngine_v1::writeSettings();
+
+	setVolume(kVolumeMusic, _musicVolume);
+	setVolume(kVolumeSfx, _sfxVolume);
+	setVolume(kVolumeSpeech, _speechVolume);
+}
+
+void LoLEngine::readSettings() {
+	_monsterDifficulty = ConfMan.getInt("monster difficulty");
+	_smoothScrollingEnabled = ConfMan.getBool("smooth scrolling");
+	_floatingCursorsEnabled = ConfMan.getBool("floating cursors");
+
+	KyraEngine_v1::readSettings();
+
+	_musicVolume = getVolume(kVolumeMusic);
+	_sfxVolume = getVolume(kVolumeSfx);
+	_speechVolume = getVolume(kVolumeSpeech);
+	if (_speechVolume == 2)
+		_speechVolume = 0;
 }
 
 void LoLEngine::update() {
@@ -1102,7 +1149,7 @@ void LoLEngine::updatePortraitSpeechAnim() {
 		f -= 5;
 	f += 7;
 
-	if (_speechFlag) {
+	if (_speechVolume) {
 		if (snd_updateCharacterSpeech() == 2)
 			_updatePortraitSpeechAnimDuration = 2;
 		else
@@ -1240,7 +1287,7 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 
 	if (charNum > 3)
 		return;
-	
+
 	LoLCharacter *c = &_characters[charNum];
 	if (!(c->flags & 1))
 		return;
@@ -2476,8 +2523,8 @@ int LoLEngine::processMagicHandOfFate(int spellLevel) {
 
 int LoLEngine::processMagicMistOfDoom(int charNum, int spellLevel) {
 	static const uint8 mistDamage[] = { 30, 70, 110, 200 };
-	
-	_envSfxUseQueue = true;	
+
+	_envSfxUseQueue = true;
 	inflictMagicalDamageForBlock(calcNewBlockPosition(_currentBlock, _currentDirection), charNum, mistDamage[spellLevel], 0x80);
 	_envSfxUseQueue = false;
 
@@ -2723,7 +2770,7 @@ int LoLEngine::processMagicGuardian(int charNum) {
 	playSpellAnimation(mov, 0, 37, 2, 112, 0, 0, 0, 0, 0, false);
 
 	_screen->copyPage(2, 12);
-	
+
 	uint16 bl = calcNewBlockPosition(_currentBlock, _currentDirection);
 	int res = (_levelBlockProperties[bl].assignedObjects & 0x8000) ? 1 : 0;
 	inflictMagicalDamageForBlock(bl, charNum, 200, 0x80);
@@ -2735,7 +2782,7 @@ int LoLEngine::processMagicGuardian(int charNum) {
 	_screen->copyPage(2, 12);
 	snd_playSoundEffect(176, -1);
 	playSpellAnimation(mov, 38, 48, 8, 112, 0, 0, 0, 0, 0, false);
-	
+
 	mov->close();
 	delete mov;
 
@@ -2786,7 +2833,7 @@ void LoLEngine::callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y) {
 void LoLEngine::drinkBezelCup(int numUses, int charNum) {
 	int cp = _screen->setCurPage(2);
 	snd_playSoundEffect(73, -1);
-	
+
 	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	mov->open("bezel.wsa", 0, 0);
 	if (!mov->opened())
@@ -2816,7 +2863,7 @@ void LoLEngine::drinkBezelCup(int numUses, int charNum) {
 		_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 
-		delayUntil(etime);		
+		delayUntil(etime);
 	} while (++frm < bezelAnimData[numUses * 3 + 1]);
 
 	_characters[charNum].hitPointsCur = _characters[charNum].hitPointsMax;
@@ -2825,7 +2872,7 @@ void LoLEngine::drinkBezelCup(int numUses, int charNum) {
 	gui_drawCharPortraitWithStats(charNum);
 	_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
-	
+
 	mov->close();
 	delete mov;
 
@@ -3321,7 +3368,7 @@ void LoLEngine::checkForPartyDeath() {
 			continue;
 		return;
 	}
-	
+
 	if (_weaponsDisabled)
 		clickedExitCharInventory(&b);
 
@@ -3347,7 +3394,7 @@ void LoLEngine::checkForPartyDeath() {
 		_updateFlags |= 4;
 		setLampMode(true);
 		disableSysTimer(2);
-	
+
 		_gui->runMenu(_gui->_deathMenu);
 
 		setMouseCursorToItemInHand();

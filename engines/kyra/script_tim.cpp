@@ -1004,7 +1004,7 @@ void TIMInterpreter_LoL::advanceToOpcode(int opcode) {
 void TIMInterpreter_LoL::drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {
 	_screen->setScreenDim(5);
 
-	if (numStr == 1 && _vm->_speechFlag) {
+	if (numStr == 1 && _vm->_speechVolume) {
 		_dialogueNumButtons = 0;
 		_dialogueButtonString[0] = _dialogueButtonString[1] = _dialogueButtonString[2] = 0;
 	} else {

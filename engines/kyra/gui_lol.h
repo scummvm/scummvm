@@ -114,6 +114,7 @@ private:
 	int clickedSaveMenu(Button *button);
 	int clickedDeleteMenu(Button *button);
 	int clickedOptionsMenu(Button *button);
+	int clickedAudioMenu(Button *button);
 	int clickedDeathMenu(Button *button);
 	int clickedSavenameMenu(Button *button);
 	int clickedChoiceMenu(Button *button);
@@ -125,7 +126,7 @@ private:
 	Button *getScrollUpButton() { return &_scrollUpButton; }
 	Button *getScrollDownButton() { return &_scrollDownButton; }
 
-	
+
 	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
 	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
 
@@ -136,7 +137,7 @@ private:
 	const char *getMenuItemTitle(const MenuItem &menuItem);
 	const char *getMenuItemLabel(const MenuItem &menuItem);
 
-	Button _menuButtons[7];
+	Button _menuButtons[10];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
 	Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _deleteMenu, _savenameMenu, _deathMenu;
@@ -156,6 +157,7 @@ private:
 	uint8 _mouseClick;
 
 	int _savegameOffset;
+	int _sliderSfx;
 
 	Button::Callback _scrollUpFunctor;
 	Button::Callback _scrollDownFunctor;

@@ -142,12 +142,12 @@ void GUI::initMenu(Menu &menu) {
 				else
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
 			} else {
-				printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);				
+				printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 				if (i == menu.highlightedItem)
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
 				else
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
-			}			
+			}
 		}
 	}
 
@@ -196,6 +196,17 @@ void GUI::processHighlights(Menu &menu) {
 	int mouseX = p.x;
 	int mouseY = p.y;
 
+	if (_vm->_flags.gameID == GI_LOL && menu.highlightedItem != 255) {
+		// LoL doesnt't have default highlighted items.
+		// We use a highlightedItem value of 255 for this.
+
+		// With LoL no highlighting should take place unless the
+		// mouse cursor moves over a button. The highlighting should end
+		// when the mouse cursor leaves the button.
+		if (menu.item[menu.highlightedItem].enabled)
+			redrawText(menu);
+	}
+
 	for (int i = 0; i < menu.numberOfItems; ++i) {
 		if (!menu.item[i].enabled)
 			continue;
@@ -209,10 +220,8 @@ void GUI::processHighlights(Menu &menu) {
 		if (mouseX > x1 && mouseX < x2 &&
 			mouseY > y1 && mouseY < y2) {
 
-			if (menu.highlightedItem != i) {
-				// LoL doesnt't have default highlighted items. 
-				// We use a highlightedItem value of 255 for this.
-				if (menu.highlightedItem != 255) {
+			if (menu.highlightedItem != i || _vm->_flags.gameID == GI_LOL) {
+				if (_vm->_flags.gameID != GI_LOL) {
 					if (menu.item[menu.highlightedItem].enabled)
 						redrawText(menu);
 				}

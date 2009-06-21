@@ -949,7 +949,7 @@ uint8 *Screen_LoL::generateFadeTable(uint8 *dst, uint8 *src1, uint8 *src2, int n
 
 	int16 t = 0;
 	int16 d = 256 / numTabs;
-		
+
 	for (int i = 1; i < numTabs - 1; i++) {
 		p2 = src1;
 		p3 = p1;
