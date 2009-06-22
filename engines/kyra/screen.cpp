@@ -53,6 +53,7 @@ Screen::~Screen() {
 	delete[] _sjisFontData;
 	delete[] _sjisTempPage;
 	delete _screenPalette;
+	delete _internFadePalette;
 	delete[] _decodeShapeBuffer;
 	delete[] _animBlockPtr;
 
