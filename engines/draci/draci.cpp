@@ -82,7 +82,7 @@ int DraciEngine::init() {
 		f = ar[0];	
 	} else {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
-		return 0;
+		return Common::kUnknownError;
 	}	
 		
 	debugC(3, kDraciGeneralDebugLevel, "First 10 bytes of file %d: ", 0);
@@ -101,13 +101,13 @@ int DraciEngine::init() {
 		f = ar[3];	
 	} else {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
-		return 0;
+		return Common::kUnknownError;
 	}	
 
 	// Disassemble GPL script for the first location
 	gpldisasm(f->_data, f->_length);
 
-	return 0;
+	return Common::kNoError;
 }
 
 int DraciEngine::go() {
@@ -125,7 +125,7 @@ int DraciEngine::go() {
 		f = ar[0];	
 	} else {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
-		return 0;
+		return Common::kUnknownError;
 	}	
 
 	_screen->setPalette(f->_data, 0, kNumColours);
@@ -157,7 +157,7 @@ int DraciEngine::go() {
 	
 	if(!ar.isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
-		return 0;
+		return Common::kUnknownError;
 	}	
 
 	testString = "I'm transparent";
@@ -193,7 +193,7 @@ int DraciEngine::go() {
 		f = ar[0];	
 	} else {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
-		return 0;
+		return Common::kUnknownError;
 	}	
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
@@ -218,7 +218,7 @@ int DraciEngine::go() {
 		_system->delayMillis(20);
 	}
 
-	return 0;
+	return Common::kNoError;
 }
 
 DraciEngine::~DraciEngine() {
