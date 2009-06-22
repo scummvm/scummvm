@@ -28,6 +28,7 @@
 
 #include "engines/grim/color.h"
 #include "engines/grim/resource.h"
+#include "engines/grim/savegame.h"
 #include "graphics/vector3d.h"
 
 namespace Grim {
@@ -52,6 +53,8 @@ class Actor {
 public:
 	Actor(const char *name);
 	~Actor();
+
+	void saveState(SaveGame *savedState);
 
 	const char *name() const { return _name.c_str(); }
 

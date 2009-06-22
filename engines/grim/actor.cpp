@@ -74,6 +74,16 @@ Actor::~Actor() {
 	delete[] _shadowArray;
 }
 
+void Actor::saveState(SaveGame *savedState) {
+	int32 size;
+
+	// store actor name
+	size = strlen(name());
+	savedState->writeLESint32(size);
+	savedState->write(name(), size);
+
+}
+
 void Actor::setYaw(float yaw) {
 	// While the program correctly handle yaw angles outside
 	// of the range [0, 360), proper convention is to roll

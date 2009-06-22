@@ -1046,7 +1046,7 @@ void GrimEngine::saveActors(SaveGame *savedState) {
 
 	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 		Actor *a = *i;
-//		a->saveState(savedState);
+		a->saveState(savedState);
 	}
 
 	savedState->endSection();
