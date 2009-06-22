@@ -58,6 +58,7 @@ private:
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
 #endif
 	void copyToBackBufferClipped(GraphicFrame *frame, int x, int y);
+    void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 	Screen        *_screen;
     Sound         *_sound;
@@ -85,6 +86,7 @@ private:
 	void updateCursor();
     void updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex);
 
+    void ShowPolygons();
 }; // end of class Scene
 
 } // end of namespace Asylum

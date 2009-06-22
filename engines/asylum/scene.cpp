@@ -160,6 +160,10 @@ void Scene::update() {
 	//updateActor(_screen, _resPack, 8);	// going up the ladder
 	//updateActor(_screen, _resPack, 9);	// going down the ladder
 	// TODO
+
+#if 0
+    ShowPolygons();
+#endif
 }
 
 #if 0
@@ -198,6 +202,27 @@ void Scene::copyToBackBufferClipped(GraphicFrame *frame, int x, int y) {
 	}
 }
 
+void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
+	Common::Rect screenRect(_startX, _startY, _startX + 640, _startY + 480);
+	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
+	animRect.clip(screenRect);
+
+	if (!animRect.isEmpty()) {
+		// Translate anim rectangle
+		animRect.translate(-_startX, -_startY);
+
+		int startX = animRect.right == 640 ? 0 : surface->w - animRect.width();
+		_screen->copyToBackBufferWithTransparency(((byte*)surface->pixels) +
+												  (surface->h - animRect.height()) * 
+												  surface->pitch + startX,
+												  surface->pitch,
+												  animRect.left,
+												  animRect.top,
+												  animRect.width(),
+												  animRect.height());
+	}
+}
+
 void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
 	ActorDefinitions actor = _sceneResource->getWorldStats()->_actorsDef[actorIndex];
 	GraphicResource *gra = new GraphicResource(res, actor.resId);
@@ -223,6 +248,24 @@ void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
 	_sceneResource->getWorldStats()->_actorsDef[actorIndex] = actor;
 
     delete gra;
+}
+
+// POLYGONS DEBUG
+void Scene::ShowPolygons() {
+    for(uint32 p=0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
+        Graphics::Surface sur;
+        PolyDefinitions poly = _sceneResource->getGamePolygons()->_Polygons[p];
+
+        sur.create(poly.boundingBox.right-poly.boundingBox.left, poly.boundingBox.bottom-poly.boundingBox.top, 1);
+        
+        for(uint32 i=0; i < poly.numPoints; i++) {
+            sur.drawLine(poly.points[i].x-poly.boundingBox.left, poly.points[i].y-poly.boundingBox.top, poly.points[i].x-poly.boundingBox.left+1, poly.points[i].y-poly.boundingBox.top+1, 0xFF);
+        }
+        sur.frameRect(Common::Rect(0, 0, sur.w, sur.h), 0xFF);   
+
+        copyToBackBufferClipped(&sur, poly.boundingBox.left, poly.boundingBox.top);
+        sur.free();
+    }
 }
 
 } // end of namespace Asylum
