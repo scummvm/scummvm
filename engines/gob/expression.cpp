@@ -26,7 +26,7 @@
 #include "common/endian.h"
 
 #include "gob/gob.h"
-#include "gob/parse.h"
+#include "gob/expression.h"
 #include "gob/global.h"
 #include "gob/game.h"
 #include "gob/script.h"

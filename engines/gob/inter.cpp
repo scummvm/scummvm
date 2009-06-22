@@ -33,10 +33,10 @@
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/expression.h"
 #include "gob/script.h"
 #include "gob/scenery.h"
 #include "gob/sound/sound.h"
-#include "gob/parse.h"
 
 namespace Gob {
 

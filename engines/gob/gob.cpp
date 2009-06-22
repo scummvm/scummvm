@@ -47,7 +47,6 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/palanim.h"
-#include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/videoplayer.h"
 #include "gob/save/saveload.h"

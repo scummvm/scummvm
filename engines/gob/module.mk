@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	draw_bargon.o \
 	draw_fascin.o \
 	driver_vga.o \
+	expression.o \
 	game.o \
 	game_v1.o \
 	game_v2.o \
@@ -43,7 +44,6 @@ MODULE_OBJS := \
 	mult_v1.o \
 	mult_v2.o \
 	palanim.o \
-	parse.o \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \

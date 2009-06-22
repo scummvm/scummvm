@@ -29,7 +29,7 @@
 #include "gob/gob.h"
 #include "gob/script.h"
 #include "gob/dataio.h"
-#include "gob/parse.h"
+#include "gob/expression.h"
 #include "gob/videoplayer.h"
 
 namespace Gob {
