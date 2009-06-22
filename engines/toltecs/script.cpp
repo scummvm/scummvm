@@ -1054,8 +1054,7 @@ void ScriptInterpreter::sfSetSequenceVolume() {
 }
 
 void ScriptInterpreter::sfPlayPositionalSound() {
-	// TODO
-	debug("ScriptInterpreter::sfPlayPositionalSound()");
+	_vm->_sound->playSoundAtPos(arg16(3), arg16(9), arg16(7));
 }
 
 void ScriptInterpreter::sfPlaySound2() {
