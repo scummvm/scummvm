@@ -96,16 +96,6 @@ public:
 	void pop(bool ret = true);
 	void call(uint32 offset);
 
-/*	byte *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize = 0);
-	byte *loadTotResource(int16 id, int16 *dataSize = 0, int16 *width = 0, int16 *height = 0);
-
-	byte *loadLocTexts(int32 *dataSize = 0);
-	int32 loadTotFile(const char *path);
-	void loadExtTable(void);
-	void loadImFile(void);
-
-	int16 openLocTextFile(char *locTextFile, int language);*/
-
 private:
 	struct CallEntry {
 		byte *totPtr;
