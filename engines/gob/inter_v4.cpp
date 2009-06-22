@@ -152,7 +152,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	uint16 palCmd;
 	bool close;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	strncpy0(fileName, _vm->_game->_script->getResultStr(), 127);
 
 	// WORKAROUND: The nut rolling animation in the administration center

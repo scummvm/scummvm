@@ -100,8 +100,6 @@ public:
 	void setupOpcodes();
 
 	void initControlVars(char full);
-	char evalExpr(int16 *pRes);
-	bool evalBoolResult();
 	void renewTimeInVars();
 	void storeMouse();
 	void storeKey(int16 key);

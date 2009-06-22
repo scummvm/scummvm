@@ -211,7 +211,7 @@ void Inter_v2::checkSwitchTable(uint32 &offset) {
 
 			default:
 				if (!found) {
-					evalExpr(0);
+					_vm->_game->_script->evalExpr(0);
 					if (value == _vm->_game->_script->getResultInt())
 						found = true;
 				} else
@@ -507,7 +507,7 @@ void Inter_v2::o2_playCDTrack() {
 	if (!(_vm->_draw->_renderFlags & RENDERFLAG_NOBLITINVALIDATED))
 		_vm->_draw->blitInvalidated();
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	_vm->_sound->cdPlay(_vm->_game->_script->getResultStr());
 }
 
@@ -525,7 +525,7 @@ void Inter_v2::o2_stopCD() {
 void Inter_v2::o2_readLIC() {
 	char path[40];
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	strncpy0(path, _vm->_game->_script->getResultStr(), 35);
 	strcat(path, ".LIC");
 
@@ -573,7 +573,7 @@ void Inter_v2::o2_totSub() {
 		error("Length in o2_totSub is greater than 13 (%d)", length);
 
 	if (length & 0x80) {
-		evalExpr(0);
+		_vm->_game->_script->evalExpr(0);
 		strcpy(totFile, _vm->_game->_script->getResultStr());
 	} else {
 		for (i = 0; i < length; i++)
@@ -619,7 +619,7 @@ void Inter_v2::o2_pushVars() {
 		} else {
 			int32 n = _vm->_game->_script->getResultInt();
 
-			if (evalExpr(&varOff) != 20)
+			if (_vm->_game->_script->evalExpr(&varOff) != 20)
 				n = 0;
 
 			memcpy(_varStack + _varStackPos, &n, 4);
@@ -958,7 +958,7 @@ void Inter_v2::o2_playImd() {
 	uint16 palCmd;
 	bool close;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	_vm->_game->_script->getResultStr()[8] = 0;
 	strncpy0(imd, _vm->_game->_script->getResultStr(), 127);
 
@@ -1002,7 +1002,7 @@ void Inter_v2::o2_getImdInfo() {
 	int16 varFrames;
 	int16 varWidth, varHeight;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	varX = _vm->_game->_script->readVarIndex();
 	varY = _vm->_game->_script->readVarIndex();
 	varFrames = _vm->_game->_script->readVarIndex();
@@ -1022,7 +1022,7 @@ void Inter_v2::o2_getImdInfo() {
 void Inter_v2::o2_openItk() {
 	char fileName[32];
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	strncpy0(fileName, _vm->_game->_script->getResultStr(), 27);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
@@ -1053,7 +1053,7 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 
 	for (int i = 0; i < loopCount; i++) {
 		int16 result;
-		int16 srcType = evalExpr(&result);
+		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {
 		case TYPE_VAR_INT8:
@@ -1305,7 +1305,7 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	int32 size;
 	SaveLoad::SaveMode mode;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	varOff = _vm->_game->_script->readVarIndex();
 
 	size = -1;
@@ -1345,10 +1345,10 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	byte *buf;
 	SaveLoad::SaveMode mode;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	dataVar = _vm->_game->_script->readVarIndex();
 	size = _vm->_game->_script->readValExpr();
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	offset = _vm->_game->_script->getResultInt();
 	retSize = 0;
 
@@ -1416,10 +1416,10 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	int16 dataVar;
 	SaveLoad::SaveMode mode;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	dataVar = _vm->_game->_script->readVarIndex();
 	size = _vm->_game->_script->readValExpr();
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	offset = _vm->_game->_script->getResultInt();
 
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",

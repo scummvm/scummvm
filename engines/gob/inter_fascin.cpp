@@ -221,37 +221,37 @@ void Inter_Fascination::oFascin_cdUnknown3() {
 void Inter_Fascination::oFascin_cdUnknown4() {
 	int16 expr;
 	warning("Fascination oFascin_cdUnknown4");
-	evalExpr(&expr);
-	warning ("evalExpr: %d, the rest is not yet implemented",expr);
+	_vm->_game->_script->evalExpr(&expr);
+	warning ("_vm->_game->_script->evalExpr: %d, the rest is not yet implemented",expr);
 }
 
 void Inter_Fascination::oFascin_cdUnknown5() {
 	int16 retVal1,expr;
 	warning("Fascination oFascin_cdUnknown5");
-	evalExpr(&expr);
+	_vm->_game->_script->evalExpr(&expr);
 	retVal1 = _vm->_game->_script->readVarIndex();
-	warning ("evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
+	warning ("_vm->_game->_script->evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
 }
 
 void Inter_Fascination::oFascin_cdUnknown6() {
 	int16 retVal1,expr;
 	warning("Fascination oFascin_cdUnknown6");
-	evalExpr(&expr);
+	_vm->_game->_script->evalExpr(&expr);
 	retVal1 = _vm->_game->_script->readVarIndex();
-	warning ("evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
+	warning ("_vm->_game->_script->evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
 }
 
 void Inter_Fascination::oFascin_setRenderFlags() {
 	int16 expr;
 //	warning("Fascination oFascin_cdUnknown10 (set render flags)");
-	evalExpr(&expr);
+	_vm->_game->_script->evalExpr(&expr);
 	warning("_draw_renderFlags <- %d",expr);
 	_vm->_draw->_renderFlags = expr;
 }
 
 void Inter_Fascination::oFascin_cdUnknown11() {
 //	warning("Fascination oFascin_cdUnknown11 (set variable)");
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 }
 
 void Inter_Fascination::oFascin_playProtracker(OpGobParams &params) {

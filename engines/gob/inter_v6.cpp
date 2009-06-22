@@ -81,7 +81,7 @@ void Inter_v6::o6_totSub() {
 		error("Length in o2_totSub is greater than 13 (%d)", length);
 
 	if (length & 0x80) {
-		evalExpr(0);
+		_vm->_game->_script->evalExpr(0);
 		strcpy(totFile, _vm->_game->_script->getResultStr());
 	} else {
 		for (i = 0; i < length; i++)
@@ -109,7 +109,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	uint16 palCmd;
 	bool close;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	strncpy0(fileName, _vm->_game->_script->getResultStr(), 127);
 
 	x = _vm->_game->_script->readValExpr();
@@ -175,7 +175,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 void Inter_v6::o6_openItk() {
 	char fileName[32];
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	strncpy0(fileName, _vm->_game->_script->getResultStr(), 27);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
@@ -272,7 +272,7 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 
 		_vm->_game->_script->pop();
 
-		evalExpr(&src);
+		_vm->_game->_script->evalExpr(&src);
 
 		return false;
 	}
@@ -301,7 +301,7 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 
 	for (int i = 0; i < loopCount; i++) {
 		int16 result;
-		int16 srcType = evalExpr(&result);
+		int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 		switch (destType) {
 		case TYPE_VAR_INT8:
@@ -393,7 +393,7 @@ bool Inter_v6::o6_fillRect(OpFuncParams &params) {
 	_vm->_draw->_spriteRight = _vm->_game->_script->readValExpr();
 	_vm->_draw->_spriteBottom = _vm->_game->_script->readValExpr();
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 
 	_vm->_draw->_backColor = _vm->_game->_script->getResultInt() & 0xFFFF;
 	uint16 extraVar = _vm->_game->_script->getResultInt() >> 16;

@@ -106,7 +106,7 @@ int16 Scenery::loadStatic(char search) {
 	int16 sprResId;
 	int16 sprIndex;
 
-	_vm->_inter->evalExpr(&sceneryIndex);
+	_vm->_game->_script->evalExpr(&sceneryIndex);
 
 	size = _vm->_game->_script->readInt16();
 	backsPtr = (int16 *) (_vm->_game->_script->getData() + _vm->_game->_script->pos());
@@ -212,7 +212,7 @@ void Scenery::freeStatic(int16 index) {
 	int16 spr;
 
 	if (index == -1)
-		_vm->_inter->evalExpr(&index);
+		_vm->_game->_script->evalExpr(&index);
 
 	if (_staticPictCount[index] == -1)
 		return;
@@ -433,7 +433,7 @@ int16 Scenery::loadAnim(char search) {
 	uint32 layerPos;
 
 	extData = 0;
-	_vm->_inter->evalExpr(&sceneryIndex);
+	_vm->_game->_script->evalExpr(&sceneryIndex);
 	picsCount = _vm->_game->_script->readInt16();
 	resId = _vm->_game->_script->readInt16();
 
@@ -546,7 +546,7 @@ void Scenery::freeAnim(int16 index) {
 	int16 spr;
 
 	if (index == -1)
-		_vm->_inter->evalExpr(&index);
+		_vm->_game->_script->evalExpr(&index);
 
 	if (_animPictCount[index] == 0)
 		return;

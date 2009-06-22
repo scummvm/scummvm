@@ -247,6 +247,46 @@ void Script::skipExpr(char stopToken) {
 	_parser->skipExpr(stopToken);
 }
 
+char Script::evalExpr(int16 *pRes) {
+	byte type;
+
+	_parser->printExpr(99);
+
+	_parser->parseExpr(99, &type);
+	if (!pRes)
+		return type;
+
+	switch (type) {
+	case TYPE_IMM_INT16:
+		*pRes = _parser->getResultInt();
+		break;
+
+	case TYPE_IMM_STR:
+	case GOB_FALSE:
+		*pRes = 0;
+		break;
+
+	case GOB_TRUE:
+		*pRes = 1;
+		break;
+	}
+
+	return type;
+}
+
+bool Script::evalBoolResult() {
+	byte type;
+
+	_parser->printExpr(99);
+
+	_parser->parseExpr(99, &type);
+	if ( (type == GOB_TRUE) ||
+	    ((type == TYPE_IMM_INT16) && _parser->getResultInt()))
+		return true;
+	else
+		return false;
+}
+
 int32 Script::getResultInt() {
 	return _parser->getResultInt();
 }

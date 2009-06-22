@@ -68,6 +68,9 @@ public:
 	int16 readExpr(byte stopToken, byte *type);
 	void skipExpr(char stopToken);
 
+	char evalExpr(int16 *pRes);
+	bool evalBoolResult();
+
 	int32 getResultInt();
 	char *getResultStr();
 

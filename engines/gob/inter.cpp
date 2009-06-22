@@ -157,46 +157,6 @@ void Inter::initControlVars(char full) {
 	}
 }
 
-char Inter::evalExpr(int16 *pRes) {
-	byte type;
-
-	_vm->_parse->printExpr(99);
-
-	_vm->_game->_script->readExpr(99, &type);
-	if (!pRes)
-		return type;
-
-	switch (type) {
-	case TYPE_IMM_INT16:
-		*pRes = _vm->_game->_script->getResultInt();
-		break;
-
-	case TYPE_IMM_STR:
-	case GOB_FALSE:
-		*pRes = 0;
-		break;
-
-	case GOB_TRUE:
-		*pRes = 1;
-		break;
-	}
-
-	return type;
-}
-
-bool Inter::evalBoolResult() {
-	byte type;
-
-	_vm->_parse->printExpr(99);
-
-	_vm->_game->_script->readExpr(99, &type);
-	if ( (type == GOB_TRUE) ||
-	    ((type == TYPE_IMM_INT16) && _vm->_game->_script->getResultInt()))
-		return true;
-	else
-		return false;
-}
-
 void Inter::renewTimeInVars() {
 	struct tm t;
 	_vm->_system->getTimeAndDate(t);

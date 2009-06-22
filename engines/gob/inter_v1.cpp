@@ -254,7 +254,7 @@ void Inter_v1::checkSwitchTable(uint32 &offset) {
 	len = _vm->_game->_script->readInt8();
 	while (len != -5) {
 		for (int i = 0; i < len; i++) {
-			evalExpr(0);
+			_vm->_game->_script->evalExpr(0);
 
 			if (_terminate)
 				return;
@@ -401,11 +401,11 @@ void Inter_v1::o1_updateAnim() {
 	int16 layer;
 	int16 animation;
 
-	evalExpr(&deltaX);
-	evalExpr(&deltaY);
-	evalExpr(&animation);
-	evalExpr(&layer);
-	evalExpr(&frame);
+	_vm->_game->_script->evalExpr(&deltaX);
+	_vm->_game->_script->evalExpr(&deltaY);
+	_vm->_game->_script->evalExpr(&animation);
+	_vm->_game->_script->evalExpr(&layer);
+	_vm->_game->_script->evalExpr(&frame);
 	flags = _vm->_game->_script->readInt16();
 	_vm->_scenery->updateAnim(layer, frame, animation, flags,
 			deltaX, deltaY, 1);
@@ -517,10 +517,10 @@ void Inter_v1::o1_loadMultObject() {
 	int16 objIndex;
 	byte *multData;
 
-	evalExpr(&objIndex);
-	evalExpr(&val);
+	_vm->_game->_script->evalExpr(&objIndex);
+	_vm->_game->_script->evalExpr(&val);
 	*_vm->_mult->_objects[objIndex].pPosX = val;
-	evalExpr(&val);
+	_vm->_game->_script->evalExpr(&val);
 	*_vm->_mult->_objects[objIndex].pPosY = val;
 
 	debugC(4, kDebugGameFlow, "Loading mult object %d", objIndex);
@@ -528,7 +528,7 @@ void Inter_v1::o1_loadMultObject() {
 	multData = (byte *) _vm->_mult->_objects[objIndex].pAnimData;
 	for (int i = 0; i < 11; i++) {
 		if (_vm->_game->_script->peekUint16() != 99) {
-			evalExpr(&val);
+			_vm->_game->_script->evalExpr(&val);
 			multData[i] = val;
 		} else
 			_vm->_game->_script->skip(1);
@@ -542,8 +542,8 @@ void Inter_v1::o1_getAnimLayerInfo() {
 	int16 varUnk0;
 	int16 varFrames;
 
-	evalExpr(&anim);
-	evalExpr(&layer);
+	_vm->_game->_script->evalExpr(&anim);
+	_vm->_game->_script->evalExpr(&layer);
 
 	varDX = _vm->_game->_script->readVarIndex();
 	varDY = _vm->_game->_script->readVarIndex();
@@ -557,7 +557,7 @@ void Inter_v1::o1_getAnimLayerInfo() {
 void Inter_v1::o1_getObjAnimSize() {
 	int16 objIndex;
 
-	evalExpr(&objIndex);
+	_vm->_game->_script->evalExpr(&objIndex);
 
 	Mult::Mult_AnimData &animData = *(_vm->_mult->_objects[objIndex].pAnimData);
 	if (animData.isStatic == 0)
@@ -585,18 +585,18 @@ void Inter_v1::o1_renderStatic() {
 	int16 layer;
 	int16 index;
 
-	evalExpr(&index);
-	evalExpr(&layer);
+	_vm->_game->_script->evalExpr(&index);
+	_vm->_game->_script->evalExpr(&layer);
 	_vm->_scenery->renderStatic(index, layer);
 }
 
 void Inter_v1::o1_loadCurLayer() {
-	evalExpr(&_vm->_scenery->_curStatic);
-	evalExpr(&_vm->_scenery->_curStaticLayer);
+	_vm->_game->_script->evalExpr(&_vm->_scenery->_curStatic);
+	_vm->_game->_script->evalExpr(&_vm->_scenery->_curStaticLayer);
 }
 
 void Inter_v1::o1_playCDTrack() {
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	_vm->_sound->adlibPlayBgMusic(); // Mac version
 	_vm->_sound->cdPlay(_vm->_game->_script->getResultStr()); // PC CD version
 }
@@ -745,7 +745,7 @@ bool Inter_v1::o1_repeatUntil(OpFuncParams &params) {
 
 		_vm->_game->_script->seek(blockPos + size + 1);
 
-		flag = evalBoolResult();
+		flag = _vm->_game->_script->evalBoolResult();
 	} while (!flag && !_break && !_terminate && !_vm->shouldQuit());
 
 	_nestLevel[0]--;
@@ -765,7 +765,7 @@ bool Inter_v1::o1_whileDo(OpFuncParams &params) {
 	do {
 		uint32 startPos = _vm->_game->_script->pos();
 
-		flag = evalBoolResult();
+		flag = _vm->_game->_script->evalBoolResult();
 
 		if (_terminate)
 			return false;
@@ -799,7 +799,7 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 	byte cmd;
 	bool boolRes;
 
-	boolRes = evalBoolResult();
+	boolRes = _vm->_game->_script->evalBoolResult();
 	if (boolRes) {
 		if ((params.counter == params.cmdCount) && (params.retFlag == 2))
 			return true;
@@ -843,7 +843,7 @@ bool Inter_v1::o1_assign(OpFuncParams &params) {
 	int16 dest = _vm->_game->_script->readVarIndex();
 
 	int16 result;
-	int16 srcType = evalExpr(&result);
+	int16 srcType = _vm->_game->_script->evalExpr(&result);
 
 	switch (destType) {
 	case TYPE_VAR_INT32:
@@ -940,7 +940,7 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 
 	if ((_vm->_game->_script->peekByte() & 0x80) != 0) {
 		_vm->_game->_script->skip(1);
-		evalExpr(0);
+		_vm->_game->_script->evalExpr(0);
 		strncpy0(buf, _vm->_game->_script->getResultStr(), 15);
 	} else {
 		size = _vm->_game->_script->readInt8();
@@ -1581,7 +1581,7 @@ bool Inter_v1::o1_checkData(OpFuncParams &params) {
 	int16 handle;
 	int16 varOff;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	varOff = _vm->_game->_script->readVarIndex();
 	handle = _vm->_dataIO->openData(_vm->_game->_script->getResultStr());
 
@@ -1606,7 +1606,7 @@ bool Inter_v1::o1_insertStr(OpFuncParams &params) {
 	int16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	pos = _vm->_game->_script->readValExpr();
 
 	char *str = GET_VARO_FSTR(strVar);
@@ -1632,7 +1632,7 @@ bool Inter_v1::o1_strstr(OpFuncParams &params) {
 	int16 pos;
 
 	strVar = _vm->_game->_script->readVarIndex();
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	resVar = _vm->_game->_script->readVarIndex();
 
 	char *res = strstr(GET_VARO_STR(strVar), _vm->_game->_script->getResultStr());
@@ -1691,7 +1691,7 @@ bool Inter_v1::o1_blitCursor(OpFuncParams &params) {
 bool Inter_v1::o1_loadFont(OpFuncParams &params) {
 	int16 index;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	index = _vm->_game->_script->readInt16();
 
 	delete _vm->_draw->_fonts[index];
@@ -1724,7 +1724,7 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	int16 offset;
 	int16 handle;
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	dataVar = _vm->_game->_script->readVarIndex();
 	size = _vm->_game->_script->readValExpr();
 	offset = _vm->_game->_script->readValExpr();
@@ -1769,7 +1769,7 @@ bool Inter_v1::o1_writeData(OpFuncParams &params) {
 	// (Gobliiins 1 doesn't use save file), so we just warn should it be
 	// called regardless.
 
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 	dataVar = _vm->_game->_script->readVarIndex();
 	size = _vm->_game->_script->readValExpr();
 	offset = _vm->_game->_script->readValExpr();
@@ -1781,7 +1781,7 @@ bool Inter_v1::o1_writeData(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_manageDataFile(OpFuncParams &params) {
-	evalExpr(0);
+	_vm->_game->_script->evalExpr(0);
 
 	if (_vm->_game->_script->getResultStr()[0] != 0)
 		_vm->_dataIO->openDataFile(_vm->_game->_script->getResultStr());
