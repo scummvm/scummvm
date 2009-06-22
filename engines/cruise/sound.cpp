@@ -814,15 +814,6 @@ void PCSound::startNote(int channel, int volume, int freq) {
 	_soundDriver->setChannelFrequency(channel, freq);
 }
 
-void PCSound::setVolume(int volume) {
-	warning("TODO: setVolume");
-}
-
-uint8 PCSound::getVolume() {
-	warning("TODO: getVolume");
-	return 63;
-}
-
 void PCSound::startSound(int channelNum, const byte *ptr, int size, int speed, int volume, bool loop) {
 	warning("TODO: validate startSound");
 	playSound(channelNum, speed, ptr, size, 0, 0, volume, loop);

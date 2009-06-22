@@ -41,6 +41,7 @@ class PCSound {
 private:
 	Audio::Mixer *_mixer;
 	CruiseEngine *_vm;
+	int _genVolume;
 protected:
 	PCSoundDriver *_soundDriver;
 	PCSoundFxPlayer *_player;
@@ -71,8 +72,10 @@ public:
 	bool musicLooping() const;
 	void musicLoop(bool v);
 	void startNote(int channel, int volume, int freq);
-	void setVolume(int volume);
-	uint8 getVolume();
+
+	// Note: Volume variable accessed by these methods is never actually used in original game
+	void setVolume(int volume) { _genVolume = volume; }
+	uint8 getVolume() const { return _genVolume; }
 };
 
 } // End of namespace Cruise

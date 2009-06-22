@@ -1630,16 +1630,13 @@ int16 Op_GetNodeY(void) {
 }
 
 int16 Op_SetVolume(void) {
-	int oldVolume = _vm->sound().getVolume() >> 2;
+	int oldVolume = _vm->sound().getVolume();
 	int newVolume = popVar();
 
-	// TODO: The game seems to expect the volume will only range from 0 - 63, so for now
-	// I'm doing a translation of the full range 0 - 255 to the 0 - 63 for this script.
-	// Need to verify at some point that there's no problem with this
 	if (newVolume > 63) newVolume = 63;
 	if (newVolume >= 0) {
 		int volume = 63 - newVolume;
-		_vm->sound().setVolume(volume << 2);
+		_vm->sound().setVolume(volume);
 	}
 
 	return oldVolume >> 2;
