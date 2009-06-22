@@ -102,12 +102,12 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
-	_sound     = 0; _mult     = 0; _game   = 0;
-	_global    = 0; _dataIO   = 0; _goblin = 0;
-	_vidPlayer = 0; _init     = 0; _inter  = 0;
-	_map       = 0; _palAnim  = 0; _parse  = 0;
-	_scenery   = 0; _draw     = 0; _util   = 0;
-	_video     = 0; _saveLoad = 0;
+	_sound     = 0; _mult     = 0; _game    = 0;
+	_global    = 0; _dataIO   = 0; _goblin  = 0;
+	_vidPlayer = 0; _init     = 0; _inter   = 0;
+	_map       = 0; _palAnim  = 0; _scenery = 0;
+	_draw      = 0; _util     = 0; _video   = 0;
+	_saveLoad  = 0;
 
 	_pauseStart = 0;
 
@@ -332,7 +332,6 @@ bool GobEngine::initGameParts() {
 	_palAnim = new PalAnim(this);
 	_vidPlayer = new VideoPlayer(this);
 	_sound = new Sound(this);
-	_parse = new Parse(this);
 
 	switch (_gameType) {
 	case kGameTypeGeisha:
@@ -497,7 +496,6 @@ void GobEngine::deinitGameParts() {
 	delete _inter;     _inter = 0;
 	delete _map;       _map = 0;
 	delete _palAnim;   _palAnim = 0;
-	delete _parse;     _parse = 0;
 	delete _scenery;   _scenery = 0;
 	delete _draw;      _draw = 0;
 	delete _util;      _util = 0;

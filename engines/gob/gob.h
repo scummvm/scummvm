@@ -52,7 +52,6 @@ class Inter;
 class Map;
 class Mult;
 class PalAnim;
-class Parse;
 class Scenery;
 class Util;
 class SaveLoad;
@@ -197,7 +196,6 @@ public:
 	Map *_map;
 	Mult *_mult;
 	PalAnim *_palAnim;
-	Parse *_parse;
 	Scenery *_scenery;
 	Inter *_inter;
 	SaveLoad *_saveLoad;

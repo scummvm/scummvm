@@ -32,6 +32,7 @@
 namespace Gob {
 
 class GobEngine;
+class Parse;
 
 class Script {
 public:
