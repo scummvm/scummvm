@@ -64,6 +64,7 @@ private:
 	uint16 *_charIndex;
 	CharHeader *_charHeaders;
 	byte *_fontData;
+	Common::String _filename;
 };
 
 } // end of namespace Grim
