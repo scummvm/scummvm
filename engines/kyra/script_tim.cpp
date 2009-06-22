@@ -439,9 +439,9 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 	}
 
 	if (!fadePalette && !_palDiff) {
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 	} else {
-		_screen->getFadeParams(_screen->getPalette(0).getData(), fadePalette, _palDelayInc, _palDiff);
+		_screen->getFadeParams(_screen->getPalette(0), fadePalette, _palDelayInc, _palDiff);
 		_palDelayAcc = 0;
 	}
 }
@@ -504,7 +504,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		}
 
 		if (wsaFlags & 2) {
-			_screen->fadePalette(_screen->getPalette(1).getData(), 15, 0);
+			_screen->fadePalette(_screen->getPalette(1), 15, 0);
 			_screen->clearPage(_drawPage2);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -526,10 +526,10 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		}
 
 		if (wsaFlags & 2)
-			_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
+			_screen->fadePalette(_screen->getPalette(0), 30, 0);
 	} else {
 		if (wsaFlags & 2) {
-			_screen->fadePalette(_screen->getPalette(1).getData(), 15, 0);
+			_screen->fadePalette(_screen->getPalette(1), 15, 0);
 			_screen->clearPage(_drawPage2);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -547,7 +547,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		}
 
 		if (wsaFlags & 2)
-			_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
+			_screen->fadePalette(_screen->getPalette(0), 30, 0);
 	}
 
 	return anim;
@@ -963,7 +963,7 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 
 	if (wsaFlags & 3) {
 		_screen->loadSpecialColors(_screen->getPalette(3).getData());
-		_screen->fadePalette(_screen->getPalette(3).getData(), 10);
+		_screen->fadePalette(_screen->getPalette(3), 10);
 		_screen->_fadeFlag = 0;
 	}
 

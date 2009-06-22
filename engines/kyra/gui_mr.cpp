@@ -693,7 +693,7 @@ void KyraEngine_MR::showAlbum() {
 	printAlbumPageText();
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
-	_screen->fadePalette(_screen->getPalette(0).getData(), 9);
+	_screen->fadePalette(_screen->getPalette(0), 9);
 
 	processAlbum();
 
@@ -708,7 +708,7 @@ void KyraEngine_MR::showAlbum() {
 	_screen->copyBlockToPage(4, 0, 0, 320, 200, _album.backUpPage);
 
 	_screen->copyPalette(0, 1);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 9);
+	_screen->fadePalette(_screen->getPalette(0), 9);
 
 	delete[] _album.backUpRect;
 	_album.backUpRect = 0;

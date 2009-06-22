@@ -247,7 +247,7 @@ void SeqPlayer::s1_loadPalette() {
 		else if (colNum == 4)
 			_screen->copyPalette(0, 3);
 
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 	} else {
 		uint32 fileSize;
 		uint8 *srcData;

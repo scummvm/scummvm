@@ -44,7 +44,7 @@ public:
 	void applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay);
 	int findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors, bool skipSpecialColors = false);
 
-	virtual void getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff);
+	virtual void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff);
 
 	// shape handling
 	uint8 *getPtrToShape(uint8 *shpFile, int shape);

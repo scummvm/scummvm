@@ -223,13 +223,12 @@ public:
 	void fadeFromBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 
-	void fadePalette(const uint8 *palData, int delay, const UpdateFunctor *upFunc = 0);
-	virtual void getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff);
-	int fadePalStep(const uint8 *palette, int diff);
+	void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0);
+	virtual void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff);
+	int fadePalStep(const Palette &pal, int diff);
 
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
-	void setScreenPalette(const uint8 *palData);
-	const uint8 *getScreenPalette() const { return _screenPalette->getData(); }
+	void setScreenPalette(const Palette &pal);
 
 	void getRealPalette(int num, uint8 *dst);
 	Palette &getPalette(int num);
@@ -362,6 +361,7 @@ protected:
 
 	Palette *_screenPalette;
 	Palette *_palettes[7];
+	Palette *_tempPalette;
 
 	Font _fonts[FID_NUM];
 	uint8 _textColorsMap[16];

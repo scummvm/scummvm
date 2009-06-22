@@ -670,13 +670,13 @@ void KyraEngine_HoF::initSceneScreen(int unk1) {
 
 	if (_noScriptEnter) {
 		memset(_screen->getPalette(0).getData(), 0, 384);
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 144, 2, 0, Screen::CR_NO_P_CHECK);
 
 	if (_noScriptEnter) {
-		_screen->setScreenPalette(_screen->getPalette(1).getData());
+		_screen->setScreenPalette(_screen->getPalette(1));
 		_screen->getPalette(0).copy(_screen->getPalette(1), 0, 128);
 	}
 
@@ -696,7 +696,7 @@ void KyraEngine_HoF::freeSceneShapePtrs() {
 
 void KyraEngine_HoF::fadeScenePal(int srcIndex, int delayTime) {
 	_screen->getPalette(0).copy(_scenePal, srcIndex << 4, 16, 112);
-	_screen->fadePalette(_screen->getPalette(0).getData(), delayTime, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0), delayTime, &_updateFunctor);
 }
 
 #pragma mark -

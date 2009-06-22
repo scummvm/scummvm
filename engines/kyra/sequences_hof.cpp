@@ -88,7 +88,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 
 		if (cseq.flags & 2) {
 			_screen->loadBitmap(cseq.cpsFile, 2, 2, _screen->getPalette(0).getData());
-			_screen->setScreenPalette(_screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0));
 		} else {
 			_screen->setCurPage(2);
 			_screen->clearPage(2);
@@ -101,7 +101,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		if (cseq.flags & 1) {
 			_seqWsa->close();
 			_seqWsa->open(cseq.wsaFile, 0, _screen->getPalette(0).getData());
-			_screen->setScreenPalette(_screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0));
 			_seqWsa->displayFrame(0, 2, cseq.xPos, cseq.yPos, 0, 0, 0);
 		}
 
@@ -411,16 +411,16 @@ int KyraEngine_HoF::seq_introOverview(WSAMovie_v2 *wsaObj, int x, int y, int frm
 
 	case 200:
 		seq_waitForTextsTimeout();
-		_screen->fadePalette(_screen->getPalette(2).getData(), 64);
+		_screen->fadePalette(_screen->getPalette(2), 64);
 		break;
 
 	case 201:
-		_screen->setScreenPalette(_screen->getPalette(2).getData());
+		_screen->setScreenPalette(_screen->getPalette(2));
 		_screen->updateScreen();
 		_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3).getData());
 		_screen->copyPage(2, 12);
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 		_screen->updateScreen();
 		seq_resetActiveWSA(0);
 		seq_resetActiveWSA(1);
@@ -1781,25 +1781,27 @@ int KyraEngine_HoF::seq_demoDig(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 
 #ifdef ENABLE_LOL
 int KyraEngine_HoF::seq_lolDemoScene1(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	uint8 *tmpPal = _screen->getPalette(2).getData();
+	Palette &tmpPal = _screen->getPalette(2);
 
 	if (!(_seqFrameCounter % 100)) {
 		if (_seqFrameCounter == 0) {
 			_sound->haltTrack();
 			_sound->playTrack(6);
 		}
-		memcpy(tmpPal, _screen->getPalette(0).getData(), 0x300);
+		tmpPal.copy(_screen->getPalette(0));
+
 		for (int i = 3; i < 0x300; i++) {
 			tmpPal[i] = ((int)tmpPal[i] * 120) / 64;
 			if (tmpPal[i] > 0x3f)
 				tmpPal[i] = 0x3f;
 		}
+
 		seq_playTalkText(_rnd.getRandomBit());
 		_screen->setScreenPalette(tmpPal);
 		_screen->updateScreen();
 		delay(8);
 	} else {
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 		_screen->updateScreen();
 		if (_seqFrameCounter == 40)
 			seq_playTalkText(3);
@@ -1924,15 +1926,17 @@ int KyraEngine_HoF::seq_lolDemoScene6(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		}
 
 		if (_seqFrameCounter % 175) {
-			_screen->setScreenPalette(_screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0));
 		} else {
-			uint8 *tmpPal = _screen->getPalette(2).getData();
-			memcpy(tmpPal, _screen->getPalette(0).getData(), 0x300);
+			Palette &tmpPal = _screen->getPalette(2);
+			tmpPal.copy(_screen->getPalette(0));
+
 			for (int i = 3; i < 0x300; i++) {
 				tmpPal[i] = ((int)tmpPal[i] * 120) / 64;
 				if (tmpPal[i] > 0x3f)
 					tmpPal[i] = 0x3f;
 			}
+
 			seq_playTalkText(_rnd.getRandomBit());
 			_screen->setScreenPalette(tmpPal);
 			_screen->updateScreen();
@@ -2045,36 +2049,34 @@ char *KyraEngine_HoF::seq_preprocessString(const char *srcStr, int width) {
 }
 
 void KyraEngine_HoF::seq_sequenceCommand(int command) {
-	uint8 pal[768];
-
 	for (int i = 0; i < 8; i++)
 		seq_resetActiveWSA(i);
 
 	switch (command) {
 	case 0:
-		memset(pal, 0, 0x300);
-		_screen->fadePalette(pal, 36);
+		_screen->fadeToBlack(36);
 		_screen->getPalette(0).clear();
 		_screen->getPalette(1).clear();
 		break;
 
 	case 1:
-		memset(pal, 0x3F, 0x300);
 		seq_playTalkText(_rnd.getRandomBit());
-		_screen->fadePalette(pal, 16);
-		_screen->getPalette(0).copy(pal, 0, 256);
-		_screen->getPalette(1).copy(pal, 0, 256);
+
+		memset(_screen->getPalette(0).getData(), 0x3F, 0x300);
+		_screen->fadePalette(_screen->getPalette(0), 16);
+
+		_screen->copyPalette(1, 0);
 		break;
 
 	case 3:
 		_screen->copyPage(2, 0);
-		_screen->fadePalette(_screen->getPalette(0).getData(), 16);
+		_screen->fadePalette(_screen->getPalette(0), 16);
 		_screen->copyPalette(1, 0);
 		break;
 
 	case 4:
 		_screen->copyPage(2, 0);
-		_screen->fadePalette(_screen->getPalette(0).getData(), 36);
+		_screen->fadePalette(_screen->getPalette(0), 36);
 		_screen->copyPalette(1, 0);
 		break;
 
@@ -2093,17 +2095,17 @@ void KyraEngine_HoF::seq_sequenceCommand(int command) {
 		break;
 
 	case 8:
-		memset(pal, 0, 0x300);
-		_screen->fadePalette(pal, 16);
-		_screen->getPalette(0).copy(pal, 0, 256);
-		_screen->getPalette(1).copy(pal, 0, 256);
+		_screen->fadeToBlack(16);
+		_screen->getPalette(0).clear();
+		_screen->getPalette(1).clear();
 
 		delay(120 * _tickLength);
 		break;
 
-	case 9:
-		for (int i = 0; i < 0x100; i++) {
-			int pv = (_screen->getPalette(0)[3 * i] + _screen->getPalette(0)[3 * i + 1] + _screen->getPalette(0)[3 * i + 2]) / 3;
+	case 9: {
+		Palette &pal = _screen->getPalette(0);
+		for (int i = 0; i < 256; i++) {
+			int pv = (pal[3 * i] + pal[3 * i + 1] + pal[3 * i + 2]) / 3;
 			pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = pv & 0xff;
 		}
 
@@ -2112,9 +2114,8 @@ void KyraEngine_HoF::seq_sequenceCommand(int command) {
 		//pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = 0x3f;
 
 		_screen->fadePalette(pal, 64);
-		_screen->getPalette(0).copy(pal, 0, 256);
-		_screen->getPalette(1).copy(pal, 0, 256);
-		break;
+		_screen->copyPalette(1, 0);
+		} break;
 
 	default:
 		break;
@@ -2435,7 +2436,7 @@ void KyraEngine_HoF::seq_printCreditsString(uint16 strIndex, int x, int y, const
 	_screen->getPalette(0)[0x2f7] = _screen->getPalette(0)[textcolor * 3];
 	_screen->getPalette(0)[0x2f8] = _screen->getPalette(0)[textcolor * 3 + 1];
 	_screen->getPalette(0)[0x2f9] = _screen->getPalette(0)[textcolor * 3 + 2];
-	_screen->fadePalette(_screen->getPalette(0).getData(), 0x18);
+	_screen->fadePalette(_screen->getPalette(0), 0x18);
 
 	_seqTextColor[0] = textcolor;
 	_screen->setTextColorMap(colorMap);
@@ -2445,7 +2446,7 @@ void KyraEngine_HoF::seq_printCreditsString(uint16 strIndex, int x, int y, const
 	_screen->copyPage(2, 0);
 	_screen->updateScreen();
 	_screen->getPalette(0)[0x2f7] = _screen->getPalette(0)[0x2f8] = _screen->getPalette(0)[0x2f9] = 0;
-	_screen->fadePalette(_screen->getPalette(0).getData(), 1);
+	_screen->fadePalette(_screen->getPalette(0), 1);
 	_screen->copyPage(2, 12);
 	seq_resetAllTextEntries();
 
@@ -2665,7 +2666,7 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 			for (int col = 133; col > 112; col--)
 				_screen->getPalette(0).copy(_screen->getPalette(0), col - 1, 1, col);
 			_screen->getPalette(0).copy(_screen->getPalette(0), 133, 1, 112);
-			_screen->setScreenPalette(_screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0));
 		}
 
 		delayUntil(_seqSubFrameEndTimeInternal);

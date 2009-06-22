@@ -520,9 +520,8 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 	// The frame has been decoded
 
-	if (_frameInfo[frameNum] & 0x80000000) {
-		_vm->screen()->setScreenPalette(_vm->screen()->getPalette(0).getData());
-	}
+	if (_frameInfo[frameNum] & 0x80000000)
+		_vm->screen()->setScreenPalette(_vm->screen()->getPalette(0));
 
 	int blockPitch = _header.width / _header.blockW;
 

@@ -124,8 +124,10 @@ bool Screen::init() {
 
 	memset(_palettes, 0, sizeof(_palettes));
 
-	_screenPalette = new Palette(768);
+	_screenPalette = new Palette(256);
 	assert(_screenPalette);
+	_tempPalette = new Palette(_screenPalette->getNumColors());
+	assert(_tempPalette);
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		for (int i = 0; i < 7; ++i) {
@@ -134,12 +136,12 @@ bool Screen::init() {
 		}
 	} else {
 		for (int i = 0; i < 4; ++i) {
-			_palettes[i] = new Palette(768);
+			_palettes[i] = new Palette(256);
 			assert(_palettes[i]);
 		}
 	}
 
-	setScreenPalette(getPalette(0).getData());
+	setScreenPalette(getPalette(0));
 
 	_curDim = 0;
 	_charWidth = 0;
@@ -490,26 +492,25 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 }
 
 void Screen::fadeFromBlack(int delay, const UpdateFunctor *upFunc) {
-	fadePalette(getPalette(0).getData(), delay, upFunc);
+	fadePalette(getPalette(0), delay, upFunc);
 }
 
 void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
-	uint8 blackPal[768];
-	memset(blackPal, 0, 768);
-	fadePalette(blackPal, delay, upFunc);
+	_tempPalette->clear();
+	fadePalette(*_tempPalette, delay, upFunc);
 }
 
-void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *upFunc) {
+void Screen::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc) {
 	updateScreen();
 
 	int diff = 0, delayInc = 0;
-	getFadeParams(palData, delay, delayInc, diff);
+	getFadeParams(pal, delay, delayInc, diff);
 
 	int delayAcc = 0;
 	while (!_vm->shouldQuit()) {
 		delayAcc += delayInc;
 
-		int refreshed = fadePalStep(palData, diff);
+		int refreshed = fadePalStep(pal, diff);
 
 		if (upFunc && upFunc->isValid())
 			(*upFunc)();
@@ -524,7 +525,7 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 	}
 
 	if (_vm->shouldQuit()) {
-		setScreenPalette(palData);
+		setScreenPalette(pal);
 		if (upFunc && upFunc->isValid())
 			(*upFunc)();
 		else
@@ -532,12 +533,11 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 	}
 }
 
-void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff) {
+void Screen::getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) {
 	uint8 maxDiff = 0;
 
-	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256) * 3;
-	for (int i = 0; i < colors; ++i) {
-		diff = ABS(palette[i] - (*_screenPalette)[i]);
+	for (int i = 0; i < pal.getNumColors() * 3; ++i) {
+		diff = ABS(pal[i] - (*_screenPalette)[i]);
 		maxDiff = MAX<uint8>(maxDiff, diff);
 	}
 
@@ -553,17 +553,14 @@ void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &
 	}
 }
 
-int Screen::fadePalStep(const uint8 *palette, int diff) {
-	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : (_use16ColorMode ? 16 : 256)) * 3;
-
-	uint8 fadePal[768];
-	memcpy(fadePal, _screenPalette->getData(), colors);
+int Screen::fadePalStep(const Palette &pal, int diff) {
+	_tempPalette->copy(*_screenPalette);
 
 	bool needRefresh = false;
 
-	for (int i = 0; i < colors; ++i) {
-		int c1 = palette[i];
-		int c2 = fadePal[i];
+	for (int i = 0; i < pal.getNumColors() * 3; ++i) {
+		int c1 = pal[i];
+		int c2 = (*_tempPalette)[i];
 		if (c1 != c2) {
 			needRefresh = true;
 			if (c1 > c2) {
@@ -578,12 +575,12 @@ int Screen::fadePalStep(const uint8 *palette, int diff) {
 					c2 = c1;
 			}
 
-			fadePal[i] = (uint8)c2;
+			(*_tempPalette)[i] = (uint8)c2;
 		}
 	}
 
 	if (needRefresh)
-		setScreenPalette(fadePal);
+		setScreenPalette(*_tempPalette);
 
 	return needRefresh ? 1 : 0;
 }
@@ -592,7 +589,7 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 	getPalette(0)[index * 3 + 0] = red;
 	getPalette(0)[index * 3 + 1] = green;
 	getPalette(0)[index * 3 + 2] = blue;
-	setScreenPalette(getPalette(0).getData());
+	setScreenPalette(getPalette(0));
 }
 
 void Screen::getRealPalette(int num, uint8 *dst) {
@@ -613,35 +610,18 @@ void Screen::getRealPalette(int num, uint8 *dst) {
 	}
 }
 
-void Screen::setScreenPalette(const uint8 *palData) {
-	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
-
+void Screen::setScreenPalette(const Palette &pal) {
 	uint8 screenPal[256 * 4];
-	_screenPalette->copy(palData, 0, colors);
+	_screenPalette->copy(pal);
 
-	if (_use16ColorMode && _vm->gameFlags().platform == Common::kPlatformPC98) {
-		for (int l = 0; l < 1024; l += 64) {
-			const uint8 *tp = palData;
-			for (int i = 0; i < 16; ++i) {
-				screenPal[l + 4 * i + 0] = palData[1];
-				screenPal[l + 4 * i + 1] = palData[0];
-				screenPal[l + 4 * i + 2] = palData[2];
-				screenPal[l + 4 * i + 3] = 0;
-				palData += 3;
-			}
-			palData = tp;
-		}
-	} else {
-		for (int i = 0; i < colors; ++i) {
-			screenPal[4 * i + 0] = (palData[0] << 2) | (palData[0] & 3);
-			screenPal[4 * i + 1] = (palData[1] << 2) | (palData[1] & 3);
-			screenPal[4 * i + 2] = (palData[2] << 2) | (palData[2] & 3);
-			screenPal[4 * i + 3] = 0;
-			palData += 3;
-		}
+	for (int i = 0; i < pal.getNumColors(); ++i) {
+		screenPal[4 * i + 0] = (pal[i * 3 + 0] << 2) | (pal[i * 3 + 0] & 3);
+		screenPal[4 * i + 1] = (pal[i * 3 + 1] << 2) | (pal[i * 3 + 1] & 3);
+		screenPal[4 * i + 2] = (pal[i * 3 + 2] << 2) | (pal[i * 3 + 2] & 3);
+		screenPal[4 * i + 3] = 0;
 	}
 
-	_system->setPalette(screenPal, 0, colors);
+	_system->setPalette(screenPal, 0, pal.getNumColors());
 }
 
 void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {

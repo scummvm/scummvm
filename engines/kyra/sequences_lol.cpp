@@ -42,12 +42,12 @@ int LoLEngine::processPrologue() {
 		showIntro();
 
 	if (_flags.isDemo) {
-		_screen->fadePalette(_screen->getPalette(1).getData(), 30, 0);
+		_screen->fadePalette(_screen->getPalette(1), 30, 0);
 		_screen->loadBitmap("FINAL.CPS", 2, 2, _screen->getPalette(0).getData());
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
+		_screen->fadePalette(_screen->getPalette(0), 30, 0);
 		delayWithTicks(300);
-		_screen->fadePalette(_screen->getPalette(1).getData(), 60, 0);
+		_screen->fadePalette(_screen->getPalette(1), 60, 0);
 
 		setupPrologueData(false);
 		return -1;
@@ -66,7 +66,7 @@ int LoLEngine::processPrologue() {
 		_screen->fprintString("SVM %s", 300 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
 		_screen->setFont(Screen::FID_9_FNT);
 
-		_screen->fadePalette(_screen->getPalette(0).getData(), 0x1E);
+		_screen->fadePalette(_screen->getPalette(0), 0x1E);
 		_screen->updateScreen();
 
 		_eventList.clear();
@@ -186,7 +186,7 @@ void LoLEngine::setupPrologueData(bool load) {
 		delete _chargenWSA; _chargenWSA = 0;
 
 		_screen->getPalette(0).clear();
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 
 		if (shouldQuit())
 			return;
@@ -204,7 +204,7 @@ void LoLEngine::showIntro() {
 		showStarcraftLogo();
 
 	_screen->getPalette(0).clear();
-	_screen->setScreenPalette(_screen->getPalette(0).getData());
+	_screen->setScreenPalette(_screen->getPalette(0));
 
 	_screen->clearPage(0);
 	_screen->clearPage(4);
@@ -234,8 +234,8 @@ void LoLEngine::showIntro() {
 				palNextFadeStep = _system->getMillis() + ((_tim->_palDelayAcc >> 8) * _tickLength);
 				_tim->_palDelayAcc &= 0xFF;
 
-				if (!_screen->fadePalStep(_screen->getPalette(0).getData(), _tim->_palDiff)) {
-					_screen->setScreenPalette(_screen->getPalette(0).getData());
+				if (!_screen->fadePalStep(_screen->getPalette(0), _tim->_palDiff)) {
+					_screen->setScreenPalette(_screen->getPalette(0));
 					_tim->_palDiff = 0;
 				}
 			}
@@ -259,7 +259,7 @@ void LoLEngine::showIntro() {
 	delete _tim;
 	_tim = 0;
 
-	_screen->fadePalette(_screen->getPalette(1).getData(), 30, 0);
+	_screen->fadePalette(_screen->getPalette(1), 30, 0);
 }
 
 int LoLEngine::chooseCharacter() {
@@ -306,7 +306,7 @@ int LoLEngine::chooseCharacter() {
 	if (_flags.use16ColorMode)
 		_screen->loadPalette("LOL.NOL", _screen->getPalette(0).getData());
 
-	_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
+	_screen->fadePalette(_screen->getPalette(0), 30, 0);
 
 	bool kingIntro = true;
 	while (!shouldQuit()) {
@@ -728,7 +728,7 @@ void LoLEngine::setupEpilogueData(bool load) {
 			_sound->loadSoundFile("SOUND.DAT");
 	} else {
 		_screen->getPalette(0).clear();
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 
 		if (shouldQuit())
 			return;
@@ -744,7 +744,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	_tim = new TIMInterpreter(this, _screen, _system);
 
 	_screen->getPalette(0).clear();
-	_screen->setScreenPalette(_screen->getPalette(0).getData());
+	_screen->setScreenPalette(_screen->getPalette(0));
 
 	_screen->clearPage(0);
 	_screen->clearPage(4);
@@ -773,8 +773,8 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 				palNextFadeStep = _system->getMillis() + ((_tim->_palDelayAcc >> 8) * _tickLength);
 				_tim->_palDelayAcc &= 0xFF;
 
-				if (!_screen->fadePalStep(_screen->getPalette(0).getData(), _tim->_palDiff)) {
-					_screen->setScreenPalette(_screen->getPalette(0).getData());
+				if (!_screen->fadePalStep(_screen->getPalette(0), _tim->_palDiff)) {
+					_screen->setScreenPalette(_screen->getPalette(0));
 					_tim->_palDiff = 0;
 				}
 			}
@@ -828,7 +828,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	if (maxDifficulty)
 		_tim->displayText(0x8000, 0, 0xDC);
 	_screen->updateScreen();
-	_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
+	_screen->fadePalette(_screen->getPalette(0), 30, 0);
 
 	while (!checkInput(0) && !shouldQuit())
 		delay(_tickLength);
@@ -907,7 +907,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 	assert(monsterPal);
 
 	_screen->getPalette(0).copy(monsterPal, 0, 40, 88);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 30);
+	_screen->fadePalette(_screen->getPalette(0), 30);
 
 	uint32 waitTimer = _system->getMillis();
 
@@ -1049,7 +1049,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 				doorRedraw = false;
 			} else {
 				if (!monsterAnimFrame)
-					_screen->setScreenPalette(_screen->getPalette(0).getData());
+					_screen->setScreenPalette(_screen->getPalette(0));
 
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, page, Screen::CR_NO_P_CHECK);
 
@@ -1130,7 +1130,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 
 			loadOutroShapes(curShapeFile, shapes);
 			_screen->getPalette(0).copy(monsterPal, curShapeFile * 40, 40, 88);
-			_screen->setScreenPalette(_screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0));
 
 			needNewShape = false;
 		}

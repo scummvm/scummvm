@@ -1677,7 +1677,7 @@ void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, in
 
 void LoLEngine::setPaletteBrightness(uint8 *palette, int brightness, int modifier) {
 	generateBrightnessPalette(palette, _screen->getPalette(1).getData(), brightness, modifier);
-	_screen->fadePalette(_screen->getPalette(1).getData(), 5, 0);
+	_screen->fadePalette(_screen->getPalette(1), 5, 0);
 	_screen->_fadeFlag = 0;
 }
 
@@ -2617,7 +2617,7 @@ int LoLEngine::processMagicLightning(int charNum, int spellLevel) {
 	mov->close();
 	delete mov;
 
-	_screen->setScreenPalette(_screen->getPalette(1).getData());
+	_screen->setScreenPalette(_screen->getPalette(1));
 	_screen->copyPage(12, 2);
 	_screen->copyPage(12, 0);
 	updateDrawPage2();
@@ -2836,20 +2836,22 @@ void LoLEngine::callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y) {
 }
 
 void LoLEngine::callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y) {
-	uint8 *tpal = new uint8[768];
 	if (_lightningDiv == 2)
 		shakeScene(1, 2, 3, 0);
 
-	uint8 *p1 = _screen->getPalette(1).getData();
+	const Palette &p1 = _screen->getPalette(1);
 
 	if (_lightningSfxFrame % _lightningDiv) {
 		_screen->setScreenPalette(p1);
 	} else {
-		memcpy(tpal, p1, 768);
+		Palette tpal(p1.getNumColors());
+		tpal.copy(p1);
+
 		for (int i = 6; i < 384; i++) {
 			uint16 v = (tpal[i] * 120) / 64;
 			tpal[i] = (v < 64) ? v : 63;
 		}
+
 		_screen->setScreenPalette(tpal);
 	}
 
@@ -2864,7 +2866,6 @@ void LoLEngine::callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y) {
 	}
 
 	_lightningSfxFrame++;
-	delete[] tpal;
 }
 
 void LoLEngine::drinkBezelCup(int numUses, int charNum) {
@@ -3871,7 +3872,7 @@ void LoLEngine::displayAutomap() {
 
 	_screen->copyPage(2, 0);
 	_screen->updateScreen();
-	_screen->fadePalette(_screen->getPalette(3).getData(), 10);
+	_screen->fadePalette(_screen->getPalette(3), 10);
 	uint32 delayTimer = _system->getMillis() + 8 * _tickLength;
 
 	while (!exitAutomap && !shouldQuit()) {

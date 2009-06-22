@@ -69,7 +69,7 @@ bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
 }
 
 bool Debugger::cmd_loadPalette(int argc, const char **argv) {
-	uint8 palette[768];
+	Palette palette(_vm->screen()->getPalette(0).getNumColors());
 
 	if (argc <= 1) {
 		DebugPrintf("Use load_palette <file> [start_col] [end_col]\n");
@@ -80,24 +80,24 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 		uint8 buffer[320*200];
 		_vm->screen()->copyRegionToBuffer(5, 0, 0, 320, 200, buffer);
 		_vm->screen()->loadBitmap(argv[1], 5, 5, 0);
-		memcpy(palette, _vm->screen()->getCPagePtr(5), 768);
+		palette.copy(_vm->screen()->getCPagePtr(5), 0, 256);
 		_vm->screen()->copyBlockToPage(5, 0, 0, 320, 200, buffer);
-	} else if (!_vm->screen()->loadPalette(argv[1], palette)) {
+	} else if (!_vm->screen()->loadPalette(argv[1], palette.getData())) {
 		DebugPrintf("ERROR: Palette '%s' not found!\n", argv[1]);
 		return true;
 	}
 
 	int startCol = 0;
-	int endCol = 255;
+	int endCol = palette.getNumColors();
 	if (argc > 2)
-		startCol = MIN(255, MAX(0, atoi(argv[2])));
+		startCol = MIN(palette.getNumColors(), MAX(0, atoi(argv[2])));
 	if (argc > 3)
-		endCol = MIN(255, MAX(0, atoi(argv[3])));
+		endCol = MIN(palette.getNumColors(), MAX(0, atoi(argv[3])));
 
 	if (startCol > 0)
-		memcpy(palette, _vm->screen()->getScreenPalette(), startCol*3);
-	if (endCol < 255)
-		memcpy(palette + endCol * 3, _vm->screen()->getScreenPalette() + endCol * 3, (255-endCol)*3);
+		palette.copy(_vm->screen()->getPalette(0), 0, startCol);
+	if (endCol < palette.getNumColors())
+		palette.copy(_vm->screen()->getPalette(0), endCol);
 
 	_vm->screen()->setScreenPalette(palette);
 	_vm->screen()->updateScreen();

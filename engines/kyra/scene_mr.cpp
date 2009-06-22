@@ -609,14 +609,14 @@ void KyraEngine_MR::initSceneScreen(int unk1) {
 	if (_noScriptEnter) {
 		memset(_screen->getPalette(0).getData(), 0, 432);
 		if (!_wasPlayingVQA)
-			_screen->setScreenPalette(_screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0));
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 
 	if (_noScriptEnter) {
 		if (!_wasPlayingVQA)
-			_screen->setScreenPalette(_screen->getPalette(2).getData());
+			_screen->setScreenPalette(_screen->getPalette(2));
 		_screen->getPalette(0).copy(_screen->getPalette(2), 0, 144);
 		if (_wasPlayingVQA) {
 			_screen->fadeFromBlack(0x3C);

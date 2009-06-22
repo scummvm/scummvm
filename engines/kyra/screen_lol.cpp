@@ -282,14 +282,13 @@ void Screen_LoL::fadeClearSceneWindow(int delay) {
 	if (_fadeFlag == 1)
 		return;
 
-	uint8 *tpal = new uint8[768];
+	Palette tpal(getPalette(0).getNumColors());
+	tpal.copy(getPalette(0));
 
-	memcpy(tpal, getPalette(0).getData(), 768);
-	memset(tpal, 0, 384);
-	loadSpecialColors(tpal);
+	loadSpecialColors(tpal.getData());
 	fadePalette(tpal, delay);
+
 	fillRect(112, 0, 288, 120, 0);
-	delete[] tpal;
 
 	_fadeFlag = 1;
 }
@@ -839,7 +838,7 @@ void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 
 void Screen_LoL::fadeToPalette1(int delay) {
 	loadSpecialColors(getPalette(1).getData());
-	fadePalette(getPalette(1).getData(), delay);
+	fadePalette(getPalette(1), delay);
 	_fadeFlag = 0;
 }
 
@@ -897,22 +896,22 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 		p++;
 	}
 
-	uint8 tpal[768];
-	memcpy(tpal, _screenPalette->getData(), 768);
-	memcpy(tpal + dstColorIndex * 3, tmpPalEntry, 3);
-	setScreenPalette(tpal);
+	_tempPalette->copy(*_screenPalette);
+	_tempPalette->copy(*_screenPalette);
+	_tempPalette->copy(tmpPalEntry, 0, 1, dstColorIndex);
+	setScreenPalette(*_tempPalette);
 	updateScreen();
 
 	return res;
 }
 
 bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime) {
-	uint8 tpal[768];
-	uint8 *p1 = getPalette(1).getData();
+	Palette &p1 = getPalette(1);
 
 	bool res = false;
 	for (int i = 0; i < 768; i++) {
 		uint8 out = 0;
+
 		if (elapsedTime < targetTime) {
 			int32 d = ((pal2[i] & 0x3f) - (pal1[i] & 0x3f));
 			if (d)
@@ -925,10 +924,10 @@ bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, u
 			res = false;
 		}
 
-		tpal[i] = out;
+		(*_tempPalette)[i] = out;
 	}
 
-	setScreenPalette(tpal);
+	setScreenPalette(*_tempPalette);
 	updateScreen();
 
 	return res;

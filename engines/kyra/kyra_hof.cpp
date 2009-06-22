@@ -921,7 +921,7 @@ void KyraEngine_HoF::showMessage(const char *string, int16 palIndex) {
 			palIndex *= 3;
 			memcpy(_messagePal, _screen->getPalette(0).getData() + palIndex, 3);
 			_screen->getPalette(0).copy(_screen->getPalette(0), palIndex / 3, 1, 255);
-			_screen->setScreenPalette(_screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0));
 		}
 
 		int x = _text->getCenterStringX(string, 0, 320);
@@ -979,7 +979,7 @@ void KyraEngine_HoF::fadeMessagePalette() {
 
 	if (updatePalette) {
 		_screen->getPalette(0).copy(_messagePal, 0, 1, 255);
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 	} else {
 		_fadeMessagePalette = false;
 	}
@@ -1145,12 +1145,12 @@ void KyraEngine_HoF::updateCharPal(int unk1) {
 			++ptr;
 			++src;
 		}
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 		unkVar1 = true;
 		_charPalEntry = palEntry;
 	} else if (unkVar1 || !unk1) {
 		_screen->getPalette(0).copy(_scenePal, palEntry << 4, 16, 112);
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 		unkVar1 = false;
 	}
 }
@@ -1667,9 +1667,9 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 
 	if (paletteFade) {
 		snd_playSoundEffect((state == 0) ? 0x6B : 0x66);
-		_screen->fadePalette(_screen->getPalette(2).getData(), 0x4B, &_updateFunctor);
+		_screen->fadePalette(_screen->getPalette(2), 0x4B, &_updateFunctor);
 	} else {
-		_screen->setScreenPalette(_screen->getPalette(2).getData());
+		_screen->setScreenPalette(_screen->getPalette(2));
 		_screen->updateScreen();
 	}
 
@@ -1835,11 +1835,11 @@ void KyraEngine_HoF::cauldronRndPaletteFade() {
 	file->seek(index*18, SEEK_SET);
 	file->read(_screen->getPalette(0).getData()+723, 18);
 	snd_playSoundEffect(0x6A);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 0x1E, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
 	file->seek(0, SEEK_SET);
 	file->read(_screen->getPalette(0).getData()+723, 18);
 	delete file;
-	_screen->fadePalette(_screen->getPalette(0).getData(), 0x1E, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
 }
 
 void KyraEngine_HoF::resetCauldronStateTable(int idx) {

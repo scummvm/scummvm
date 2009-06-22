@@ -375,7 +375,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 
 	int oldItemInHand = _itemInHand;
 	removeHandItem();
-	_screen->fadePalette(_screen->getPalette(0).getData(), 7);
+	_screen->fadePalette(_screen->getPalette(0), 7);
 	_screen->showMouse();
 
 	bookLoop();
@@ -394,7 +394,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 
 	setHandItem(_itemInHand);
 	_screen->copyPalette(0, 2);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 7, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0), 7, &_updateFunctor);
 	_screen->showMouse();
 
 	if (!queryGameFlag(4) && !queryGameFlag(0xB8)) {
@@ -812,14 +812,14 @@ void GUI_HoF::setupPalette() {
 		_screen->getPalette(0).copy(_screen->getPalette(1), guiPal[i], 1);
 
 	if (_isDeathMenu)
-		_screen->fadePalette(_screen->getPalette(0).getData(), 0x64);
+		_screen->fadePalette(_screen->getPalette(0), 0x64);
 	else
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 }
 
 void GUI_HoF::restorePalette() {
 	_screen->copyPalette(0, 1);
-	_screen->setScreenPalette(_screen->getPalette(0).getData());
+	_screen->setScreenPalette(_screen->getPalette(0));
 }
 
 void GUI_HoF::resetState(int item) {

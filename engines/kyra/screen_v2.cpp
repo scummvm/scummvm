@@ -114,12 +114,11 @@ int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *p
 	return r;
 }
 
-void Screen_v2::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff) {
+void Screen_v2::getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) {
 	int maxDiff = 0;
 	diff = 0;
-	int len = _use16ColorMode ? 48 : 768;
-	for (int i = 0; i < len; ++i) {
-		diff = ABS(palette[i] - (*_screenPalette)[i]);
+	for (int i = 0; i < pal.getNumColors() * 3; ++i) {
+		diff = ABS(pal[i] - (*_screenPalette)[i]);
 		maxDiff = MAX(maxDiff, diff);
 	}
 

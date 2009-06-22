@@ -1034,7 +1034,7 @@ void GUI_LoK::fadePalette() {
 		++index;
 	}
 
-	_screen->fadePalette(_screen->getPalette(0).getData(), 2);
+	_screen->fadePalette(_screen->getPalette(0), 2);
 }
 
 void GUI_LoK::restorePalette() {
@@ -1042,7 +1042,7 @@ void GUI_LoK::restorePalette() {
 		return;
 
 	_screen->copyPalette(0, 2);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 2);
+	_screen->fadePalette(_screen->getPalette(0), 2);
 }
 
 #pragma mark -

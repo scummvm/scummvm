@@ -231,7 +231,7 @@ Common::Error KyraEngine_MR::init() {
 	_screen->setScreenDim(0);
 
 	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0).getData(), 768);
-	_screen->setScreenPalette(_screen->getPalette(0).getData());
+	_screen->setScreenPalette(_screen->getPalette(0));
 
 	return Common::kNoError;
 }
@@ -267,7 +267,7 @@ Common::Error KyraEngine_MR::go() {
 		_screen->_curPage = 0;
 		_screen->clearPage(0);
 
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 
 		// XXX
 		playMenuAudioFile();
@@ -390,10 +390,9 @@ void KyraEngine_MR::playVQA(const char *name) {
 		_soundDigital->stopAllSounds();
 		_screen->showMouse();
 
-		uint8 pal[768];
 		// Taken from original, it used '1' here too
-		memset(pal, 1, sizeof(pal));
-		_screen->setScreenPalette(pal);
+		memset(_screen->getPalette(0).getData(), 1, 768);
+		_screen->setScreenPalette(_screen->getPalette(0));
 		_screen->clearPage(0);
 		_screen->copyPalette(0, 1);
 		_wasPlayingVQA = true;
@@ -919,7 +918,7 @@ void KyraEngine_MR::updateCharPal(int unk1) {
 			}
 		}
 		_charPalUpdate = true;
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 		_lastCharPalLayer = layer;
 	} else if (_charPalUpdate || !unk1) {
 		memcpy(dst, src, 72);
@@ -936,7 +935,7 @@ void KyraEngine_MR::updateCharPal(int unk1) {
 			}
 		}
 
-		_screen->setScreenPalette(_screen->getPalette(0).getData());
+		_screen->setScreenPalette(_screen->getPalette(0));
 		_charPalUpdate = false;
 	}
 }

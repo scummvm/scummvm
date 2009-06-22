@@ -233,7 +233,7 @@ int KyraEngine_LoK::o1_fadeSpecialPalette(EMCState *script) {
 			if (stackPos(0) == 13) {
 				// TODO: Check this!
 				_screen->copyPalette(0, 12);
-				_screen->setScreenPalette(_screen->getPalette(0).getData());
+				_screen->setScreenPalette(_screen->getPalette(0));
 			}
 		} else {
 			warning("KyraEngine_LoK::o1_fadeSpecialPalette not implemented");
@@ -1503,37 +1503,38 @@ int KyraEngine_LoK::o1_setNoDrawShapesFlag(EMCState *script) {
 int KyraEngine_LoK::o1_fadeEntirePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fadeEntirePalette(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int cmd = stackPos(0);
-	uint8 *fadePal = 0;
+
+	int fadePal = 0;
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (cmd == 0) {
 			_screen->getPalette(2).clear();
-			fadePal = _screen->getPalette(2).getData();
+			fadePal = 2;
 			_screen->copyPalette(4, 0);
 		} else if (cmd == 1) {
-			fadePal = _screen->getPalette(0).getData();
+			fadePal = 0;
 			_screen->copyPalette(0, 4);
 		} else if (cmd == 2) {
-			fadePal = _screen->getPalette(0).getData();
+			fadePal = 0;
 			_screen->getPalette(2).clear();
 		}
 	} else {
 		if (cmd == 0) {
+			fadePal = 2;
 			_screen->getPalette(2).clear();
-			fadePal = _screen->getPalette(2).getData();
 			_screen->copyPalette(3, 0);
 		} else if (cmd == 1) {
-			//fadePal = _screen->getPalette(3);
+			//fadePal = 3;
 			warning("unimplemented o1_fadeEntirePalette function");
 			return 0;
 		} else if (cmd == 2) {
 			_screen->getPalette(2).clear();
 			_screen->copyPalette(0, 1);
-			fadePal = _screen->getPalette(0).getData();
+			fadePal = 0;
 		}
 	}
 
-	_screen->fadePalette(fadePal, stackPos(1));
+	_screen->fadePalette(_screen->getPalette(fadePal), stackPos(1));
 	return 0;
 }
 

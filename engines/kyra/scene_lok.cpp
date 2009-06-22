@@ -772,7 +772,7 @@ void KyraEngine_LoK::initSceneScreen(int brandonAlive) {
 		if (_unkScreenVar1 && !queryGameFlag(0xF0)) {
 			_screen->getPalette(2).clear();
 			if (_currentCharacter->sceneId != 117 || !queryGameFlag(0xB3))
-				_screen->setScreenPalette(_screen->getPalette(2).getData());
+				_screen->setScreenPalette(_screen->getPalette(2));
 		}
 
 		if (_unkScreenVar2 == 1)
@@ -787,7 +787,7 @@ void KyraEngine_LoK::initSceneScreen(int brandonAlive) {
 			if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245 && (_brandonStatusBit & 1))
 				_screen->copyPalette(0, 10);
 
-			_screen->setScreenPalette(_screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0));
 		}
 	} else {
 		if (_unkScreenVar1 && !queryGameFlag(0xA0)) {
@@ -797,7 +797,7 @@ void KyraEngine_LoK::initSceneScreen(int brandonAlive) {
 				col >>= 2;
 				_screen->getPalette(0)[684+i] = col;
 			}
-			_screen->setScreenPalette(_screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0));
 		}
 
 		if (_unkScreenVar2 == 1)
@@ -808,7 +808,7 @@ void KyraEngine_LoK::initSceneScreen(int brandonAlive) {
 		if (_unkScreenVar1 && _paletteChanged) {
 			if (!queryGameFlag(0xA0)) {
 				_screen->getPalette(0).copy(_screen->getPalette(1), 228, 20);
-				_screen->setScreenPalette(_screen->getPalette(0).getData());
+				_screen->setScreenPalette(_screen->getPalette(0));
 			} else {
 				_screen->getPalette(0).clear();
 			}

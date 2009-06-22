@@ -149,7 +149,7 @@ int KyraEngine_HoF::o2_meanWhileScene(EMCState *script) {
 	_screen->copyPalette(2, 0);
 	_screen->loadPalette(palfile, _screen->getPalette(2).getData());
 	_screen->fillRect(0, 0, 319, 199, 207);
-	_screen->setScreenPalette(_screen->getPalette(2).getData());
+	_screen->setScreenPalette(_screen->getPalette(2));
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 	if (!scumm_stricmp(cpsfile, "_MEANWIL.CPS") && _flags.lang == Common::JA_JPN) {
 		Screen::FontId o = _screen->setFont(Screen::FID_6_FNT);
@@ -567,7 +567,7 @@ int KyraEngine_HoF::o2_loadPalette384(EMCState *script) {
 int KyraEngine_HoF::o2_setPalette384(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setPalette384(%p) ()", (const void *)script);
 	_screen->getPalette(0).copy(_screen->getPalette(1), 0, 128);
-	_screen->setScreenPalette(_screen->getPalette(0).getData());
+	_screen->setScreenPalette(_screen->getPalette(0));
 	return 0;
 }
 
@@ -798,7 +798,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 0x14);
+	_screen->fadePalette(_screen->getPalette(0), 0x14);
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
 	setMousePos(280, 160);
 
@@ -820,7 +820,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	_screen->fadeToBlack(0x14);
 	restorePage0();
 	_screen->copyPalette(0, 2);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 0x14);
+	_screen->fadePalette(_screen->getPalette(0), 0x14);
 	setHandItem(_itemInHand);
 	_screen->showMouse();
 
@@ -1130,7 +1130,7 @@ int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 	for (int i = 1; i < 768; i += 3)
 		_screen->getPalette(0)[i] = 0;
 	snd_playSoundEffect(106);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 90, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0), 90, &_updateFunctor);
 	_screen->copyPalette(0, 2);
 
 	for (int i = 0; i < 768; i += 3) {
@@ -1140,10 +1140,10 @@ int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 			_screen->getPalette(0)[i + 2] = 63;
 	}
 	snd_playSoundEffect(106);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 90, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0), 90, &_updateFunctor);
 
 	_screen->copyPalette(0, 2);
-	_screen->fadePalette(_screen->getPalette(0).getData(), 30, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0), 30, &_updateFunctor);
 
 	return 0;
 }
@@ -1262,7 +1262,7 @@ int KyraEngine_HoF::o2_stopSceneAnimation(EMCState *script) {
 
 int KyraEngine_HoF::o2_processPaletteIndex(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_processPaletteIndex(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	uint8 *palette = _screen->getPalette(0).getData();
+	Palette &palette = _screen->getPalette(0);
 
 	const int index = stackPos(0);
 	const bool updatePalette = (stackPos(4) != 0);
@@ -1410,7 +1410,7 @@ int KyraEngine_HoF::o2_demoFinale(EMCState *script) {
 	for (int i = 0; i < 6; i++)
 		_text->printText(strings[i], _text->getCenterStringX(strings[i], 1, 319), y + i * 10, 255, 207, 0);
 
-	_screen->setScreenPalette(_screen->getPalette(0).getData());
+	_screen->setScreenPalette(_screen->getPalette(0));
 	_screen->updateScreen();
 
 	_eventList.clear();
