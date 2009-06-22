@@ -57,7 +57,6 @@ private:
 #if 0
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
 #endif
-	void copyToBackBufferClipped(GraphicFrame *frame, int x, int y);
     void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 	Screen        *_screen;
