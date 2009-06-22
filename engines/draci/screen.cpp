@@ -135,7 +135,7 @@ void Screen::clearScreen() const {
  *
  * Fills the screen with the specified colour and marks the whole screen dirty.
  */
-void Screen::fillScreen(uint16 colour) const {
+void Screen::fillScreen(uint8 colour) const {
 	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
 	_surface->markDirty();
