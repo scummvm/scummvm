@@ -147,7 +147,7 @@ int KyraEngine_HoF::o2_meanWhileScene(EMCState *script) {
 
 	_screen->loadBitmap(cpsfile, 3, 3, 0);
 	_screen->copyPalette(2, 0);
-	_screen->loadPalette(palfile, _screen->getPalette(2).getData());
+	_screen->loadPalette(palfile, _screen->getPalette(2));
 	_screen->fillRect(0, 0, 319, 199, 207);
 	_screen->setScreenPalette(_screen->getPalette(2));
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
@@ -1400,7 +1400,7 @@ int KyraEngine_HoF::o2_demoFinale(EMCState *script) {
 	assert(strings);
 
 	_screen->clearPage(0);
-	_screen->loadPalette("THANKS.COL", _screen->getPalette(0).getData());
+	_screen->loadPalette("THANKS.COL", _screen->getPalette(0));
 	_screen->loadBitmap("THANKS.CPS", 3, 3, 0);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 

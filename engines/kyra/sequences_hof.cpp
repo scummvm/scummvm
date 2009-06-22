@@ -92,7 +92,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		} else {
 			_screen->setCurPage(2);
 			_screen->clearPage(2);
-			_screen->loadPalette("goldfont.col", _screen->getPalette(0).getData());
+			_screen->loadPalette("goldfont.col", _screen->getPalette(0));
 		}
 
 		if (cb && !(_flags.isDemo && !_flags.isTalkie))

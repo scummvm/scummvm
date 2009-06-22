@@ -82,7 +82,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 		_vm->screen()->loadBitmap(argv[1], 5, 5, 0);
 		palette.copy(_vm->screen()->getCPagePtr(5), 0, 256);
 		_vm->screen()->copyBlockToPage(5, 0, 0, 320, 200, buffer);
-	} else if (!_vm->screen()->loadPalette(argv[1], palette.getData())) {
+	} else if (!_vm->screen()->loadPalette(argv[1], palette)) {
 		DebugPrintf("ERROR: Palette '%s' not found!\n", argv[1]);
 		return true;
 	}

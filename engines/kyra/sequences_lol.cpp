@@ -304,7 +304,7 @@ int LoLEngine::chooseCharacter() {
 	_screen->_curPage = 0;
 
 	if (_flags.use16ColorMode)
-		_screen->loadPalette("LOL.NOL", _screen->getPalette(0).getData());
+		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
 
 	_screen->fadePalette(_screen->getPalette(0), 30, 0);
 
@@ -820,8 +820,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 
 	default:
 		_screen->clearPage(3);
-		memset(_screen->getPalette(0).getData(), 0, 768);
-		break;
+		_screen->getPalette(0).clear();
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);

@@ -286,8 +286,8 @@ public:
 	// misc
 	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
 
-	bool loadPalette(const char *filename, uint8 *palData);
-	void loadPalette(const byte *data, uint8 *palData, int bytes);
+	bool loadPalette(const char *filename, Palette &pal);
+	void loadPalette(const byte *data, Palette &pal, int bytes);
 
 	void setAnimBlockPtr(int size);
 

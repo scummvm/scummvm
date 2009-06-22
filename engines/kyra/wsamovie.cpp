@@ -392,7 +392,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 		offsPal = 0x300;
 		_flags |= WF_HAS_PALETTE;
 		if (palBuf)
-			_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf->getData(), 0x300);
+			_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), *palBuf, 0x300);
 	}
 
 	if (flags & 2) {
@@ -400,7 +400,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 			offsPal = 0x30;
 			_flags |= WF_HAS_PALETTE;
 			if (palBuf)
-				_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf->getData(), 0x30);
+				_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), *palBuf, 0x30);
 		}
 
 		_flags |= WF_XOR;

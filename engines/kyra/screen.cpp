@@ -2785,7 +2785,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
 
 	if (pal && palSize)
-		loadPalette(srcData + 10, pal->getData(), palSize);
+		loadPalette(srcData + 10, *pal, palSize);
 
 	uint8 *srcPtr = srcData + 10 + palSize;
 	uint8 *dstData = getPagePtr(dstPage);
@@ -2819,38 +2819,30 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 	delete[] srcData;
 }
 
-bool Screen::loadPalette(const char *filename, uint8 *palData) {
-	uint32 fileSize = 0;
-	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
-	if (!srcData)
+bool Screen::loadPalette(const char *filename, Palette &pal) {
+	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
+
+	if (!stream)
 		return false;
 
-	if (palData && fileSize) {
-		loadPalette(srcData, palData, fileSize);
-	}
-	delete[] srcData;
+	debugC(3, kDebugLevelScreen, "Screen::loadPalette('%s', %p)", filename, (const void *)&pal);
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		pal.loadAmigaPalette(*stream, stream->size() / 2);
+	else
+		pal.loadVGAPalette(*stream, stream->size() / 3);
+
+	delete stream;
 	return true;
 }
 
-void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		assert(bytes % 2 == 0);
-		assert(bytes / 2 <= 256);
-		bytes >>= 1;
-		const uint16 *src = (const uint16 *)data;
-		for (int i = 0; i < bytes; ++i) {
-			uint16 col = READ_BE_UINT16(src); ++src;
-			palData[2] = (col & 0xF) << 2; col >>= 4;
-			palData[1] = (col & 0xF) << 2; col >>= 4;
-			palData[0] = (col & 0xF) << 2; col >>= 4;
-			palData += 3;
-		}
-	} else if (_use16ColorMode) {
-		for (int i = 0; i < bytes; ++i)
-			palData[i] = ((data[i] & 0xF) << 4) | (data[i] & 0xF0);
-	} else {
-		memcpy(palData, data, bytes);
-	}
+void Screen::loadPalette(const byte *data, Palette &pal, int bytes) {
+	Common::MemoryReadStream stream(data, bytes, false);
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		pal.loadAmigaPalette(stream, stream.size() / 2);
+	else
+		pal.loadVGAPalette(stream, stream.size() / 3);
 }
 
 // dirty rect handling

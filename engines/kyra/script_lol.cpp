@@ -2148,12 +2148,12 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 	uint8 *tpal2 = tpal1 + 768;
 	uint8 *tpal3 = tpal2 + 768;
 	uint8 *tpal4 = 0;
-	_screen->loadPalette("LITEPAL1.COL", tpal1);
+	_res->loadFileToBuf("LITEPAL1.COL", tpal1, 768);
 	tpal2 = _screen->generateFadeTable(tpal3, 0, tpal1, 21);
-	_screen->loadPalette("LITEPAL2.COL", tpal2);
+	_res->loadFileToBuf("LITEPAL2.COL", tpal2, 768);
 	tpal4 = tpal2;
 	tpal2 += 768;
-	_screen->loadPalette("LITEPAL3.COL", tpal1);
+	_res->loadFileToBuf("LITEPAL3.COL", tpal1, 768);
 	_screen->generateFadeTable(tpal2, tpal4, tpal1, 4);
 
 	Palette pal(768);
@@ -2309,7 +2309,7 @@ int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_loadPalette(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadPalette(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	const char *palFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
-	_screen->loadPalette(palFile, _screen->getPalette(0).getData());
+	_screen->loadPalette(palFile, _screen->getPalette(0));
 	return 1;
 }
 

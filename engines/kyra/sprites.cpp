@@ -429,7 +429,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 		else
 			_screen->copyPalette(1, 0);
 
-		_screen->loadPalette(_dat + 0x17, _screen->getPalette(1).getData() + 684, 60);
+		_screen->getPalette(1).copy(_dat + 0x17, 0, 20, 228);
 	}
 	uint8 *data = _dat + 0x6B;
 
