@@ -838,18 +838,18 @@ void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 }
 
 void Screen_LoL::fadeToPalette1(int delay) {
-	loadSpecialColors(_palettes[0]);
-	fadePalette(_palettes[0], delay);
+	loadSpecialColors(getPalette(1));
+	fadePalette(getPalette(1), delay);
 	_fadeFlag = 0;
 }
 
 void Screen_LoL::loadSpecialColors(uint8 *destPalette) {
-	memcpy(destPalette + 0x240, _screenPalette + 0x240, 12);
+	memcpy(destPalette + 0x240, _screenPalette->getData() + 0x240, 12);
 }
 
 void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {
-	uint8 *s = _screenPalette + srcColorIndex * 3;
-	uint8 *d = _screenPalette + dstColorIndex * 3;
+	uint8 *s = _screenPalette->getData() + srcColorIndex * 3;
+	uint8 *d = _screenPalette->getData() + dstColorIndex * 3;
 	memcpy(d, s, 3);
 
 	uint8 ci[4];
@@ -862,8 +862,8 @@ void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {
 }
 
 bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTime, uint32 targetTime) {
-	uint8 *dst = _screenPalette + 3 * dstColorIndex;
-	uint8 *src = _screenPalette + 3 * srcColorIndex;
+	uint8 *dst = _screenPalette->getData() + 3 * dstColorIndex;
+	uint8 *src = _screenPalette->getData() + 3 * srcColorIndex;
 	uint8 *p = getPalette(1) + 3 * dstColorIndex;
 
 	bool res = false;
@@ -898,7 +898,7 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 	}
 
 	uint8 tpal[768];
-	memcpy(tpal, _screenPalette, 768);
+	memcpy(tpal, _screenPalette->getData(), 768);
 	memcpy(tpal + dstColorIndex * 3, tmpPalEntry, 3);
 	setScreenPalette(tpal);
 	updateScreen();
@@ -908,7 +908,7 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 
 bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime) {
 	uint8 tpal[768];
-	uint8 *p1 = _palettes[0];
+	uint8 *p1 = getPalette(1);
 
 	bool res = false;
 	for (int i = 0; i < 768; i++) {
@@ -936,7 +936,7 @@ bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, u
 
 uint8 *Screen_LoL::generateFadeTable(uint8 *dst, uint8 *src1, uint8 *src2, int numTabs) {
 	if (!src1)
-		src1 = _screenPalette;
+		src1 = _screenPalette->getData();
 
 	uint8 *p1 = dst;
 	uint8 *p2 = src1;

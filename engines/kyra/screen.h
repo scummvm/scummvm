@@ -30,6 +30,7 @@
 #include "common/func.h"
 #include "common/list.h"
 #include "common/rect.h"
+#include "common/stream.h"
 
 class OSystem;
 
@@ -59,6 +60,85 @@ struct Font {
 	uint16 charHeightTableOffset;
 
 	uint8 lastGlyph;
+};
+
+/**
+ * A class that manages KYRA palettes.
+ *
+ * This class stores the palette data as VGA RGB internally.
+ */
+class Palette {
+public:
+	Palette(const int numColors);
+	~Palette();
+
+	/**
+	 * Load a VGA palette from the given stream.
+	 */
+	void loadVGAPalette(Common::ReadStream &stream, const int colors = -1);
+
+	/**
+	 * Load a AMIGA palette from the given stream.
+	 */
+	void loadAmigaPalette(Common::ReadStream &stream, const int colors = -1);
+
+	/**
+	 * Return the number of colors this palette manages.
+	 */
+	int getNumColors() const { return _numColors; }
+
+	/**
+	 * Set all palette colors to black.
+	 */
+	void clear();
+
+	/**
+	 * Copy data from another palette.
+	 *
+	 * @param source	palette to copy data from.
+	 * @param firstCol	the first color of the source which should be copied.
+	 * @param numCols	number of colors, which should be copied. -1 all remaining colors.
+	 * @param dstStart	the first color, which should be ovewritten. If -1 firstCol will be used as start.
+	 */
+	void copy(const Palette &source, int firstCol = 0, int numCols = -1, int dstStart = -1);
+
+	/**
+	 * Copy data from a raw VGA palette.
+	 *
+	 * @param source	source buffer
+	 * @param firstCol	the first color of the source which should be copied.
+	 * @param numCols	number of colors, which should be copied.
+	 * @param dstStart	the first color, which should be ovewritten. If -1 firstCol will be used as start.
+	 */
+	void copy(const uint8 *source, int firstCol, int numCols, int dstStart = -1);
+
+	/**
+	 * Fetch a RGB palette.
+	 *
+	 * @return a pointer to the RGB palette data, the client must delete[] it.
+	 */
+	uint8 *fetchRealPalette() const;
+
+	//XXX
+	uint8 &operator[](const int index) {
+		assert(index >= 0 && index <= _numColors * 3);
+		return _palData[index];
+	}
+
+	const uint8 &operator[](const int index) const {
+		assert(index >= 0 && index <= _numColors * 3);
+		return _palData[index];
+	}
+
+	/**
+	 * Gets raw access to the palette.
+	 *
+	 * TODO: Get rid of this.
+	 */
+	uint8 *getData() { return _palData; }
+private:
+	uint8 *_palData;
+	const int _numColors;
 };
 
 class Screen {
@@ -149,7 +229,7 @@ public:
 
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	void setScreenPalette(const uint8 *palData);
-	const uint8 *getScreenPalette() const { return _screenPalette; }
+	const uint8 *getScreenPalette() const { return _screenPalette->getData(); }
 
 	void getRealPalette(int num, uint8 *dst);
 	uint8 *getPalette(int num);
@@ -280,8 +360,8 @@ protected:
 	uint8 *_sjisSourceChar;
 	uint8 _sjisInvisibleColor;
 
-	uint8 *_screenPalette;
-	uint8 *_palettes[6];
+	Palette *_screenPalette;
+	Palette *_palettes[7];
 
 	Font _fonts[FID_NUM];
 	uint8 _textColorsMap[16];

@@ -52,14 +52,13 @@ Screen::~Screen() {
 
 	delete[] _sjisFontData;
 	delete[] _sjisTempPage;
-	delete[] _currentPalette;
-	delete[] _screenPalette;
+	delete _screenPalette;
 	delete[] _decodeShapeBuffer;
 	delete[] _animBlockPtr;
 
 	if (_vm->gameFlags().platform != Common::kPlatformAmiga) {
 		for (int i = 0; i < ARRAYSIZE(_palettes); ++i)
-			delete[] _palettes[i];
+			delete _palettes[i];
 	}
 
 	CursorMan.popAllCursors();
@@ -124,29 +123,25 @@ bool Screen::init() {
 	memset(_shapePages, 0, sizeof(_shapePages));
 
 	memset(_palettes, 0, sizeof(_palettes));
-	_screenPalette = new uint8[768];
+
+	_screenPalette = new Palette(768);
 	assert(_screenPalette);
-	memset(_screenPalette, 0, 768);
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		_currentPalette = new uint8[1248];
-		assert(_currentPalette);
-		memset(_currentPalette, 0, 1248);
-
-		for (int i = 0; i < 6; ++i)
-			_palettes[i] = _currentPalette + (i+1)*96;
-	} else {
-		_currentPalette = new uint8[768];
-		assert(_currentPalette);
-		memset(_currentPalette, 0, 768);
-		for (int i = 0; i < 3; ++i) {
-			_palettes[i] = new uint8[768];
+		for (int i = 0; i < 7; ++i) {
+			_palettes[i] = new Palette(32);
 			assert(_palettes[i]);
-			memset(_palettes[i], 0, 768);
+		}
+	} else {
+		for (int i = 0; i < 4; ++i) {
+			_palettes[i] = new Palette(768);
+			assert(_palettes[i]);
 		}
 	}
 
+	_currentPalette = _palettes[0]->getData();
 	setScreenPalette(_currentPalette);
+
 	_curDim = 0;
 	_charWidth = 0;
 	_charOffset = 0;
@@ -543,7 +538,7 @@ void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &
 
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256) * 3;
 	for (int i = 0; i < colors; ++i) {
-		diff = ABS(palette[i] - _screenPalette[i]);
+		diff = ABS(palette[i] - (*_screenPalette)[i]);
 		maxDiff = MAX<uint8>(maxDiff, diff);
 	}
 
@@ -563,7 +558,7 @@ int Screen::fadePalStep(const uint8 *palette, int diff) {
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : (_use16ColorMode ? 16 : 256)) * 3;
 
 	uint8 fadePal[768];
-	memcpy(fadePal, _screenPalette, colors);
+	memcpy(fadePal, _screenPalette->getData(), colors);
 
 	bool needRefresh = false;
 
@@ -623,8 +618,7 @@ void Screen::setScreenPalette(const uint8 *palData) {
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
 
 	uint8 screenPal[256 * 4];
-	if (palData != _screenPalette)
-		memcpy(_screenPalette, palData, colors*3);
+	_screenPalette->copy(palData, 0, colors);
 
 	if (_use16ColorMode && _vm->gameFlags().platform == Common::kPlatformPC98) {
 		for (int l = 0; l < 1024; l += 64) {
@@ -639,8 +633,6 @@ void Screen::setScreenPalette(const uint8 *palData) {
 			palData = tp;
 		}
 	} else {
-		if (palData != _screenPalette)
-			memcpy(_screenPalette, palData, colors*3);
 		for (int i = 0; i < colors; ++i) {
 			screenPal[4 * i + 0] = (palData[0] << 2) | (palData[0] & 3);
 			screenPal[4 * i + 1] = (palData[1] << 2) | (palData[1] & 3);
@@ -2671,11 +2663,8 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 }
 
 uint8 *Screen::getPalette(int num) {
-	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 6 : 4));
-	if (num == 0)
-		return _currentPalette;
-
-	return _palettes[num-1];
+	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 7 : 4));
+	return _palettes[num]->getData();
 }
 
 byte Screen::getShapeFlag1(int x, int y) {
@@ -3248,6 +3237,97 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 }
 
 #pragma mark -
+
+Palette::Palette(const int numColors) : _palData(0), _numColors(numColors) {
+	_palData = new uint8[numColors * 3];
+	assert(_palData);
+
+	memset(_palData, 0, numColors * 3);
+}
+
+Palette::~Palette() {
+	delete[] _palData;
+	_palData = 0;
+}
+
+void Palette::loadVGAPalette(Common::ReadStream &stream, int colors) {
+	if (colors == -1)
+		colors = _numColors;
+
+	assert(colors <= _numColors);
+
+	stream.read(_palData, colors * 3);
+	memset(_palData + colors * 3, 0, (_numColors - colors) * 3);
+}
+
+void Palette::loadAmigaPalette(Common::ReadStream &stream, int colors) {
+	if (colors == -1)
+		colors = _numColors;
+
+	assert(colors <= _numColors);
+
+	assert(colors % 2 == 0);
+	assert(colors / 2 <= 256);
+
+	for (int i = 0; i < (colors >> 1); ++i) {
+		uint16 col = stream.readUint16BE();
+		_palData[i * 3 + 2] = (col & 0xF) << 2; col >>= 4;
+		_palData[i * 3 + 1] = (col & 0xF) << 2; col >>= 4;
+		_palData[i * 3 + 0] = (col & 0xF) << 2; col >>= 4;
+	}
+
+	memset(_palData + colors * 3, 0, (_numColors - colors) * 3);
+}
+
+void Palette::clear() {
+	memset(_palData, 0, _numColors * 3);
+}
+
+void Palette::copy(const Palette &source, int firstCol, int numCols, int dstStart) {
+	if (numCols == -1)
+		numCols = MIN(source.getNumColors(), _numColors) - firstCol;
+	if (dstStart == -1)
+		dstStart = firstCol;
+
+	assert(numCols >= 0 && numCols < _numColors);
+	assert(firstCol >= 0 && firstCol < source.getNumColors());
+	assert(dstStart >= 0 && dstStart + numCols < _numColors);
+
+	memcpy(_palData + dstStart * 3, source._palData + firstCol * 3, numCols * 3);
+}
+
+void Palette::copy(const uint8 *source, int firstCol, int numCols, int dstStart) {
+	if (source == _palData)
+		return;
+
+	if (dstStart == -1)
+		dstStart = firstCol;
+
+	assert(numCols >= 0 && numCols < _numColors);
+	assert(firstCol >= 0);
+	assert(dstStart >= 0 && dstStart + numCols < _numColors);
+
+	memcpy(_palData + dstStart * 3, source + firstCol * 3, numCols * 3);
+}
+
+uint8 *Palette::fetchRealPalette() const {
+	uint8 *buffer = new uint8[_numColors * 3];
+	assert(buffer);
+
+	uint8 *dst = buffer;
+	const uint8 *palData = _palData;
+
+	for (int i = 0; i < _numColors; ++i) {
+		dst[0] = (palData[0] << 2) | (palData[0] & 3);
+		dst[1] = (palData[1] << 2) | (palData[1] & 3);
+		dst[2] = (palData[2] << 2) | (palData[2] & 3);
+
+		dst += 3;
+		palData += 3;
+	}
+
+	return buffer;
+}
 
 } // End of namespace Kyra
 
