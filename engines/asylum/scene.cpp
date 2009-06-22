@@ -128,8 +128,6 @@ void Scene::update() {
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	MainActor *mainActor = _sceneResource->getMainActor();
 
-	updateCursor();
-
 	// TESTING
 	// Main actor walking
 	if (!_rightButton) {
@@ -138,7 +136,7 @@ void Scene::update() {
 	} else {
 		mainActor->walkTo(_screen, _mouseX, _mouseY);
 
-		int newCursor = -1;
+		uint32 newCursor = -1;
 
 		// Change cursor
 		switch (mainActor->getCurrentAction()) {
@@ -169,10 +167,12 @@ void Scene::update() {
 		}
 
 		if (_cursorResource->getEntryNum() != newCursor) {
-				delete _cursorResource;
-				_cursorResource = new GraphicResource(_resPack, newCursor);
+			delete _cursorResource;
+			_cursorResource = new GraphicResource(_resPack, newCursor);
 		}
 	}
+
+	updateCursor();
 
 	// Horizontal scrolling
 	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
@@ -280,10 +280,11 @@ void Scene::ShowPolygons() {
         Graphics::Surface sur;
         PolyDefinitions poly = _sceneResource->getGamePolygons()->_Polygons[p];
 
-        sur.create(poly.boundingBox.right-poly.boundingBox.left, poly.boundingBox.bottom-poly.boundingBox.top, 1);
+        sur.create(poly.boundingBox.right - poly.boundingBox.left, poly.boundingBox.bottom - poly.boundingBox.top, 1);
         
-        for(uint32 i=0; i < poly.numPoints; i++) {
-            sur.drawLine(poly.points[i].x-poly.boundingBox.left, poly.points[i].y-poly.boundingBox.top, poly.points[i].x-poly.boundingBox.left+1, poly.points[i].y-poly.boundingBox.top+1, 0xFF);
+        for (uint32 i=0; i < poly.numPoints; i++) {
+            sur.drawLine(poly.points[i].x - poly.boundingBox.left,     poly.points[i].y - poly.boundingBox.top, 
+						 poly.points[i].x - poly.boundingBox.left + 1, poly.points[i].y - poly.boundingBox.top + 1, 0xFF);
         }
         sur.frameRect(Common::Rect(0, 0, sur.w, sur.h), 0xFF);   
 
