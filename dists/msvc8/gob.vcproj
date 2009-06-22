@@ -491,11 +491,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\parse.cpp"
+			RelativePath="..\..\engines\gob\expression.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\parse.h"
+			RelativePath="..\..\engines\gob\expression.h"
 			>
 		</File>
 		<File
