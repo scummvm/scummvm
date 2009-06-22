@@ -148,8 +148,7 @@ int16 Game_v6::addNewCollision(int16 id, uint16 left, uint16 top,
 		ptr->funcEnter = funcEnter;
 		ptr->funcLeave = funcLeave;
 		ptr->funcSub = funcSub;
-		ptr->totFileData = _script->getData();
-		ptr->totSize = _script->getSize();
+		ptr->script = _script;
 
 		return i;
 	}
@@ -925,20 +924,13 @@ void Game_v6::setCollisions(byte arg_0) {
 			if (collArea->flags & 0x80)
 				continue;
 
-		byte *totFileData = collArea->totFileData;
-		uint32 totSize = collArea->totSize;
+		Script *curScript = _script;
 
-		if (!totFileData || (totSize == 0)) {
-			totFileData = _script->getData();
-			totSize = _script->getSize();
-		}
+		_script = collArea->script;
+		if (!_script)
+			_script = curScript;
 
-		uint32 savedPos = _script->pos();
-		byte *savedData = _script->getData();
-		uint32 savedSize = _script->getSize();
-
-		_script->cuckoo(totFileData, totSize);
-		_script->seek(collArea->funcSub);
+		_script->call(collArea->funcSub);
 
 		int16 left   = _script->readValExpr();
 		int16 top    = _script->readValExpr();
@@ -982,8 +974,9 @@ void Game_v6::setCollisions(byte arg_0) {
 		if ((collArea->id & 0xF000) == 0xA000)
 			collArea->flags = flags;
 
-		_script->cuckoo(savedData, savedSize);
-		_script->seek(savedPos);
+		_script->pop();
+
+		_script = curScript;
 	}
 }
 

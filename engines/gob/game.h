@@ -48,8 +48,7 @@ public:
 		uint16 funcEnter;
 		uint16 funcLeave;
 		uint16 funcSub;
-		byte *totFileData;
-		uint32 totSize;
+		Script *script;
 	} PACKED_STRUCT;
 
 #define szGame_TotTextItem (2 + 2)

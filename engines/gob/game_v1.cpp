@@ -280,8 +280,7 @@ int16 Game_v1::addNewCollision(int16 id, uint16 left, uint16 top,
 		ptr->funcEnter = funcEnter;
 		ptr->funcLeave = funcLeave;
 		ptr->funcSub = funcSub;
-		ptr->totFileData = 0;
-		ptr->totSize = 0;
+		ptr->script = 0;
 
 		return i;
 	}
