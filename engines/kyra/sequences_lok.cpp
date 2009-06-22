@@ -141,7 +141,7 @@ void KyraEngine_LoK::seq_introLogos() {
 	_screen->clearPage(0);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		_screen->loadPalette("INTRO.PAL", _screen->getPalette(0));
+		_screen->loadPaletteTable("INTRO.PAL", 0);
 		_screen->loadBitmap("BOTTOM.CPS", 3, 5, 0);
 		_screen->loadBitmap("TOP.CPS", 3, 3, 0);
 		_screen->copyRegion(0, 0, 0, 111, 320, 64, 2, 0);

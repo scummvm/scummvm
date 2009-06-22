@@ -126,11 +126,9 @@ bool Screen::init() {
 
 	_screenPalette = new Palette(256);
 	assert(_screenPalette);
-	_tempPalette = new Palette(_screenPalette->getNumColors());
-	assert(_tempPalette);
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		for (int i = 0; i < 7; ++i) {
+		for (int i = 0; i < 12; ++i) {
 			_palettes[i] = new Palette(32);
 			assert(_palettes[i]);
 		}
@@ -140,6 +138,9 @@ bool Screen::init() {
 			assert(_palettes[i]);
 		}
 	}
+
+	_internFadePalette = new Palette(_palettes[0]->getNumColors());
+	assert(_internFadePalette);
 
 	setScreenPalette(getPalette(0));
 
@@ -496,8 +497,8 @@ void Screen::fadeFromBlack(int delay, const UpdateFunctor *upFunc) {
 }
 
 void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
-	_tempPalette->clear();
-	fadePalette(*_tempPalette, delay, upFunc);
+	Palette pal(getPalette(0).getNumColors());
+	fadePalette(pal, delay, upFunc);
 }
 
 void Screen::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc) {
@@ -554,13 +555,13 @@ void Screen::getFadeParams(const Palette &pal, int delay, int &delayInc, int &di
 }
 
 int Screen::fadePalStep(const Palette &pal, int diff) {
-	_tempPalette->copy(*_screenPalette);
+	_internFadePalette->copy(*_screenPalette);
 
 	bool needRefresh = false;
 
 	for (int i = 0; i < pal.getNumColors() * 3; ++i) {
 		int c1 = pal[i];
-		int c2 = (*_tempPalette)[i];
+		int c2 = (*_internFadePalette)[i];
 		if (c1 != c2) {
 			needRefresh = true;
 			if (c1 > c2) {
@@ -575,12 +576,12 @@ int Screen::fadePalStep(const Palette &pal, int diff) {
 					c2 = c1;
 			}
 
-			(*_tempPalette)[i] = (uint8)c2;
+			(*_internFadePalette)[i] = (uint8)c2;
 		}
 	}
 
 	if (needRefresh)
-		setScreenPalette(*_tempPalette);
+		setScreenPalette(*_internFadePalette);
 
 	return needRefresh ? 1 : 0;
 }
@@ -2642,7 +2643,7 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 }
 
 Palette &Screen::getPalette(int num) {
-	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 7 : 4));
+	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 12 : 4));
 	return *_palettes[num];
 }
 
@@ -2828,9 +2829,37 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 	debugC(3, kDebugLevelScreen, "Screen::loadPalette('%s', %p)", filename, (const void *)&pal);
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		pal.loadAmigaPalette(*stream, stream->size() / 2);
+		pal.loadAmigaPalette(*stream, stream->size() / Palette::kAmigaBytesPerColor);
 	else
-		pal.loadVGAPalette(*stream, stream->size() / 3);
+		pal.loadVGAPalette(*stream, stream->size() / Palette::kVGABytesPerColor);
+
+	delete stream;
+	return true;
+}
+
+bool Screen::loadPaletteTable(const char *filename, int firstPalette) {
+	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
+
+	if (!stream)
+		return false;
+
+	debugC(3, kDebugLevelScreen, "Screen::loadPaletteTable('%s', %d)", filename, firstPalette);
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		const int numColors = getPalette(firstPalette).getNumColors();
+		const int palSize = getPalette(firstPalette).getNumColors() * Palette::kAmigaBytesPerColor;
+		const int numPals = stream->size() / palSize;
+
+		for (int i = 0; i < numPals; ++i)
+			getPalette(i + firstPalette).loadAmigaPalette(*stream, numColors);
+	} else {
+		const int numColors = getPalette(firstPalette).getNumColors();
+		const int palSize = getPalette(firstPalette).getNumColors() * Palette::kVGABytesPerColor;
+		const int numPals = stream->size() / palSize;
+
+		for (int i = 0; i < numPals; ++i)
+			getPalette(i + firstPalette).loadVGAPalette(*stream, numColors);
+	}
 
 	delete stream;
 	return true;
@@ -3240,10 +3269,7 @@ void Palette::loadAmigaPalette(Common::ReadStream &stream, int colors) {
 
 	assert(colors <= _numColors);
 
-	assert(colors % 2 == 0);
-	assert(colors / 2 <= 256);
-
-	for (int i = 0; i < (colors >> 1); ++i) {
+	for (int i = 0; i < colors; ++i) {
 		uint16 col = stream.readUint16BE();
 		_palData[i * 3 + 2] = (col & 0xF) << 2; col >>= 4;
 		_palData[i * 3 + 1] = (col & 0xF) << 2; col >>= 4;

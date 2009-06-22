@@ -861,8 +861,8 @@ void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {
 }
 
 bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTime, uint32 targetTime) {
-	uint8 *dst = _screenPalette->getData() + 3 * dstColorIndex;
-	uint8 *src = _screenPalette->getData() + 3 * srcColorIndex;
+	const uint8 *dst = _screenPalette->getData() + 3 * dstColorIndex;
+	const uint8 *src = _screenPalette->getData() + 3 * srcColorIndex;
 	uint8 *p = getPalette(1).getData() + 3 * dstColorIndex;
 
 	bool res = false;
@@ -896,10 +896,9 @@ bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedT
 		p++;
 	}
 
-	_tempPalette->copy(*_screenPalette);
-	_tempPalette->copy(*_screenPalette);
-	_tempPalette->copy(tmpPalEntry, 0, 1, dstColorIndex);
-	setScreenPalette(*_tempPalette);
+	_internFadePalette->copy(*_screenPalette);
+	_internFadePalette->copy(tmpPalEntry, 0, 1, dstColorIndex);
+	setScreenPalette(*_internFadePalette);
 	updateScreen();
 
 	return res;
@@ -924,10 +923,10 @@ bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, u
 			res = false;
 		}
 
-		(*_tempPalette)[i] = out;
+		(*_internFadePalette)[i] = out;
 	}
 
-	setScreenPalette(*_tempPalette);
+	setScreenPalette(*_internFadePalette);
 	updateScreen();
 
 	return res;

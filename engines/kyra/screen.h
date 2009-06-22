@@ -72,6 +72,11 @@ public:
 	Palette(const int numColors);
 	~Palette();
 
+	enum {
+		kVGABytesPerColor = 3,
+		kAmigaBytesPerColor = 2
+	};
+
 	/**
 	 * Load a VGA palette from the given stream.
 	 */
@@ -287,6 +292,7 @@ public:
 	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
 
 	bool loadPalette(const char *filename, Palette &pal);
+	bool loadPaletteTable(const char *filename, int firstPalette);
 	void loadPalette(const byte *data, Palette &pal, int bytes);
 
 	void setAnimBlockPtr(int size);
@@ -360,8 +366,8 @@ protected:
 	uint8 _sjisInvisibleColor;
 
 	Palette *_screenPalette;
-	Palette *_palettes[7];
-	Palette *_tempPalette;
+	Palette *_palettes[12];
+	Palette *_internFadePalette;
 
 	Font _fonts[FID_NUM];
 	uint8 _textColorsMap[16];
