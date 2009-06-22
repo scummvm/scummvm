@@ -37,7 +37,7 @@ extern const Common::String kFontBig;
  *	Default font colours. They all seem to remain constant except for the
  *  first one which varies depending on the character speaking.
  *  kOverFontColour is set to transparent.
- * TODO: Find out what kFontColour1 should actually be when the game starts
+ *  TODO: Find out what kFontColour1 should actually be when the game starts
  */
 enum { 
 	kFontColour1 = 2, kFontColour2 = 0,

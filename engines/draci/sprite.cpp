@@ -37,7 +37,10 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x, uint16 y,
 			   bool columnwise) : _width(width), _height(height), _x(x), _y(y), _data(NULL) {
 	
 	_data = new byte[width * height];
-		
+	
+	// If the sprite is stored row-wise, just copy it to the internal buffer.
+	// Otherwise, transform it and then copy.
+	
 	if (!columnwise) {
 		memcpy(_data, raw_data, width * height);
 	} else {
@@ -62,7 +65,10 @@ Sprite::Sprite(byte *sprite_data, uint16 length, uint16 x, uint16 y,
 	_height = reader.readUint16LE();
 
 	_data = new byte[_width * _height];
-		
+
+	// If the sprite is stored row-wise, just copy it to the internal buffer.
+	// Otherwise, transform it and then copy.
+	
 	if (!columnwise) {
 		reader.read(_data, _width * _height);
 	} else {
@@ -78,12 +84,21 @@ Sprite::~Sprite() {
 	delete[] _data;
 }
 
+/**
+ *  @brief Draws the sprite to a Draci::Surface
+ *	@param surface Pointer to a Draci::Surface
+ *
+ *  Draws the sprite to a Draci::Surface and marks its rectangle on the surface as dirty.
+ */
 void Sprite::draw(Surface *surface) const { 
 	byte *dst = (byte *)surface->getBasePtr(_x, _y);
 	byte *src = _data;	
 	
+	// Blit the sprite to the surface
 	for (unsigned int i = 0; i < _height; ++i) {
 		for(unsigned int j = 0; j < _width; ++j, ++src) {
+
+			// Don't blit if the pixel is transparent on the target surface
 			if (*src != surface->getTransparentColour())			
 				dst[j] = *src;
 		}
@@ -91,6 +106,7 @@ void Sprite::draw(Surface *surface) const {
 		dst += surface->pitch;
 	}
 
+	// Mark the sprite's rectangle dirty
 	Common::Rect r(_x, _y, _x + _width, _y + _height);
 	surface->markDirtyRect(r);
 }

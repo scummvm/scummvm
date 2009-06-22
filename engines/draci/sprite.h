@@ -56,10 +56,10 @@ public:
 
 	void draw(Surface *surface) const; 
 
-	byte *_data;
-	uint16 _width;
-	uint16 _height;	
-	uint16 _x, _y;
+	byte *_data;	//!< Pointer to a buffer containing raw sprite data (row-wise)
+	uint16 _width;	//!< Width of the sprite
+	uint16 _height;	//!< Height of the sprite
+	uint16 _x, _y;	//!< Sprite coordinates
 };
 
 

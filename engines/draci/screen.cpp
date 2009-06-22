@@ -42,6 +42,10 @@ Screen::~Screen() {
 	delete[] _palette;
 }
 
+/**
+ * @brief Sets the first numEntries of palette to zero
+ * @param numEntries The number of entries to set to zero (from start)
+ */
 void Screen::setPaletteEmpty(unsigned int numEntries) {
 	for (unsigned int i = 0; i < 4 * numEntries; ++i) {
 		_palette[i] = 0;
@@ -51,6 +55,12 @@ void Screen::setPaletteEmpty(unsigned int numEntries) {
 	copyToScreen();
 }	
 
+/**
+ * @brief Sets a part of the palette
+ * @param data Pointer to a buffer containing new palette data
+ *		  start Index of the colour where replacement should start
+ *		  num Number of colours to replace 
+ */
 void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 
 	Common::MemoryReadStream pal(data, 3 * kNumColours);
@@ -65,7 +75,7 @@ void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 	}
 
 	// TODO: Investigate why this is needed
-	// Shift the palette one bit to the left to make it brighter
+	// Shift the palette two bits to the left to make it brighter
 	for (unsigned int i = 0; i < 4 * kNumColours; ++i) {
 		_palette[i] <<= 2;
 	}
@@ -74,17 +84,26 @@ void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 	copyToScreen();
 }
 
+/**
+ * @brief Copies the current memory screen buffer to the real screen
+ */
 void Screen::copyToScreen() const {
 	Common::List<Common::Rect> *dirtyRects = _surface->getDirtyRects();
 	Common::List<Common::Rect>::iterator it;
 	
+	// If a full update is needed, update the whole screen	
 	if (_surface->needsFullUpdate()) {
 		byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
 		_vm->_system->copyRectToScreen(ptr, kScreenWidth, 
 			0, 0, kScreenWidth, kScreenHeight);
 	} else {
+	
+		// Otherwise, update only the dirty rectangles
+	
 		for (it = dirtyRects->begin(); it != dirtyRects->end(); ++it) {
+			
+			// Pointer to the upper left corner of the rectangle
 			byte *ptr = (byte *)_surface->getBasePtr(it->left, it->top);
 
 			_vm->_system->copyRectToScreen(ptr, kScreenWidth, 
@@ -92,11 +111,16 @@ void Screen::copyToScreen() const {
 		}
 	}
 	
+	// Call the "real" updateScreen and mark the surface clean
 	_vm->_system->updateScreen();
 	_surface->markClean();
 }
 
-
+/**
+ * @brief Clears the screen
+ *
+ * Clears the screen and marks the whole screen dirty.
+ */
 void Screen::clearScreen() const {
 	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
@@ -105,6 +129,12 @@ void Screen::clearScreen() const {
 	memset(ptr, 0, kScreenWidth * kScreenHeight);
 }
 
+/**
+ * @brief Fills the screen with the specified colour
+ * @param colour The colour the screen should be filled with
+ *
+ * Fills the screen with the specified colour and marks the whole screen dirty.
+ */
 void Screen::fillScreen(uint16 colour) const {
 	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
@@ -113,10 +143,17 @@ void Screen::fillScreen(uint16 colour) const {
 	memset(ptr, colour, kScreenWidth * kScreenHeight);
 }
 
+/**
+ * @brief Draws a rectangle on the screen
+ * @param r Which rectangle to draw
+ *		  colour The colour of the rectangle
+ */
 void Screen::drawRect(Common::Rect &r, uint8 colour) {
 
+	// Clip the rectangle to screen size
 	r.clip(_surface->w, _surface->h);
 
+	// If the whole rectangle is outside the screen, return
 	if (r.isEmpty())
 		return;
 
@@ -131,10 +168,18 @@ void Screen::drawRect(Common::Rect &r, uint8 colour) {
 	_surface->markDirtyRect(r);
 }
 
+/**
+ * @brief Fetches the current palette
+ * @return A byte pointer to the current palette
+ */
 byte *Screen::getPalette() const {
 	return _palette;
 }
 
+/**
+ * @brief Fetches the current surface
+ * @return A pointer to the current surface
+ */
 Draci::Surface *Screen::getSurface() {
 	return _surface;
 }

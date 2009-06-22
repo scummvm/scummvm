@@ -46,9 +46,18 @@ public:
 	void setTransparentColour(uint8 colour);
 
 private:
-	bool _fullUpdate;
+	/** The current transparent colour of the surface. See getTransparentColour() and
+	 *	setTransparentColour().
+	 */
 	uint8 _transparentColour;
-	Common::List<Common::Rect> _dirtyRects;
+	
+	/** Set when the surface is scheduled for a full update. 
+	 *	See markDirty(), markClean(). Accessed via needsFullUpdate().
+	 */	
+	bool _fullUpdate; 
+
+	Common::List<Common::Rect> _dirtyRects; //!< List of currently dirty rectangles
+	
 };
 
 } // End of namespace Draci
