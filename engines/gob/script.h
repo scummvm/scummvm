@@ -88,8 +88,6 @@ public:
 	void setFinished(bool finished);
 	bool isFinished() const;
 
-	void cuckoo(byte *totData, uint32 totSize);
-
 	void push();
 	void pop(bool ret = true);
 	void call(uint32 offset);
@@ -106,9 +104,7 @@ public:
 
 private:
 	struct CallEntry {
-		byte *totData;
 		byte *totPtr;
-		uint32 totSize;
 		bool finished;
 	};
 

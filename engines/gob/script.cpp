@@ -366,19 +366,10 @@ bool Script::isFinished() const {
 	return _finished;
 }
 
-void Script::cuckoo(byte *totData, uint32 totSize) {
-	_finished = false;
-	_totData = totData;
-	_totPtr = _totData;
-	_totSize = totSize;
-}
-
 void Script::push() {
 	CallEntry currentCall;
 
-	currentCall.totData = _totData;
 	currentCall.totPtr = _totPtr;
-	currentCall.totSize = _totSize;
 	currentCall.finished = _finished;
 
 	_callStack.push(currentCall);
@@ -390,9 +381,7 @@ void Script::pop(bool ret) {
 	CallEntry lastCall = _callStack.pop();
 
 	if (ret) {
-		_totData = lastCall.totData;
 		_totPtr = lastCall.totPtr;
-		_totSize = lastCall.totSize;
 		_finished = lastCall.finished;
 	}
 }
