@@ -258,7 +258,7 @@ void Inter_v1::checkSwitchTable(byte **ppExec) {
 			if (_terminate)
 				return;
 
-			if (_vm->_parse->_resultInt == value) {
+			if (_vm->_parse->getResultInt() == value) {
 				found = true;
 				notFound = false;
 			}
@@ -852,7 +852,7 @@ bool Inter_v1::o1_assign(OpFuncParams &params) {
 	switch (destType) {
 	case TYPE_VAR_INT32:
 	case TYPE_ARRAY_INT32:
-		WRITE_VAR_OFFSET(dest, _vm->_parse->_resultInt);
+		WRITE_VAR_OFFSET(dest, _vm->_parse->getResultInt());
 		break;
 
 	case TYPE_VAR_STR:

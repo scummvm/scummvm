@@ -173,7 +173,7 @@ char Inter::evalExpr(int16 *pRes) {
 
 	switch (type) {
 	case TYPE_IMM_INT16:
-		*pRes = _vm->_parse->_resultInt;
+		*pRes = _vm->_parse->getResultInt();
 		break;
 
 	case TYPE_IMM_STR:
@@ -196,7 +196,7 @@ bool Inter::evalBoolResult() {
 
 	_vm->_parse->parseExpr(99, &type);
 	if ( (type == GOB_TRUE) ||
-	    ((type == TYPE_IMM_INT16) && _vm->_parse->_resultInt))
+	    ((type == TYPE_IMM_INT16) && _vm->_parse->getResultInt()))
 		return true;
 	else
 		return false;

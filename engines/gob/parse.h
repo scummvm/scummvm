@@ -111,6 +111,9 @@ enum {
 
 class Parse {
 public:
+	Parse(GobEngine *vm);
+	virtual ~Parse() {}
+
 	void skipExpr(char stopToken);
 	void printExpr(char stopToken);
 	void printVarIndex(void);
@@ -119,11 +122,9 @@ public:
 	int16 parseValExpr(byte stopToken = 99);
 	int16 parseExpr(byte stopToken, byte *type);
 
-	Parse(GobEngine *vm);
-	virtual ~Parse() {}
+	int32 getResultInt();
 
 	char _resultStr[200];
-	int32 _resultInt;
 
 private:
 	class Stack {
@@ -153,6 +154,8 @@ private:
 	};
 
 	GobEngine *_vm;
+
+	int32 _resultInt;
 
 	int32 encodePtr(byte *ptr, int type);
 	byte *decodePtr(int32 n);

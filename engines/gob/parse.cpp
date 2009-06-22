@@ -1140,4 +1140,8 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 	}
 }
 
+int32 Parse::getResultInt() {
+	return _resultInt;
+}
+
 } // End of namespace Gob
