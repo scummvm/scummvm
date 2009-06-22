@@ -35,7 +35,7 @@
 namespace Gob {
 
 Script::Script(GobEngine *vm) : _vm(vm) {
-	_parser = new Parse(vm);
+	_expression = new Expression(vm);
 
 	_finished = true;
 
@@ -49,7 +49,7 @@ Script::Script(GobEngine *vm) : _vm(vm) {
 Script::~Script() {
 	unload();
 
-	delete _parser;
+	delete _expression;
 }
 
 uint32 Script::read(byte *data, int32 size) {
@@ -236,33 +236,33 @@ char *Script::peekString(int32 offset) {
 }
 
 int16 Script::readVarIndex(uint16 *size, uint16 *type) {
-	return _parser->parseVarIndex(size, type);
+	return _expression->parseVarIndex(size, type);
 }
 
 int16 Script::readValExpr(byte stopToken) {
-	return _parser->parseValExpr(stopToken);
+	return _expression->parseValExpr(stopToken);
 }
 
 int16 Script::readExpr(byte stopToken, byte *type) {
-	return _parser->parseExpr(stopToken, type);
+	return _expression->parseExpr(stopToken, type);
 }
 
 void Script::skipExpr(char stopToken) {
-	_parser->skipExpr(stopToken);
+	_expression->skipExpr(stopToken);
 }
 
 char Script::evalExpr(int16 *pRes) {
 	byte type;
 
-	_parser->printExpr(99);
+	_expression->printExpr(99);
 
-	_parser->parseExpr(99, &type);
+	_expression->parseExpr(99, &type);
 	if (!pRes)
 		return type;
 
 	switch (type) {
 	case TYPE_IMM_INT16:
-		*pRes = _parser->getResultInt();
+		*pRes = _expression->getResultInt();
 		break;
 
 	case TYPE_IMM_STR:
@@ -281,22 +281,22 @@ char Script::evalExpr(int16 *pRes) {
 bool Script::evalBoolResult() {
 	byte type;
 
-	_parser->printExpr(99);
+	_expression->printExpr(99);
 
-	_parser->parseExpr(99, &type);
+	_expression->parseExpr(99, &type);
 	if ( (type == GOB_TRUE) ||
-	    ((type == TYPE_IMM_INT16) && _parser->getResultInt()))
+	    ((type == TYPE_IMM_INT16) && _expression->getResultInt()))
 		return true;
 	else
 		return false;
 }
 
 int32 Script::getResultInt() {
-	return _parser->getResultInt();
+	return _expression->getResultInt();
 }
 
 char *Script::getResultStr() {
-	return _parser->getResultStr();
+	return _expression->getResultStr();
 }
 
 bool Script::load(const char *fileName) {

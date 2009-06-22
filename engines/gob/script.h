@@ -32,7 +32,7 @@
 namespace Gob {
 
 class GobEngine;
-class Parse;
+class Expression;
 
 class Script {
 public:
@@ -120,7 +120,7 @@ private:
 	};
 
 	GobEngine *_vm;
-	Parse *_parser;
+	Expression *_expression;
 
 	bool _finished;
 

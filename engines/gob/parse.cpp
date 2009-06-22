@@ -34,42 +34,42 @@
 
 namespace Gob {
 
-Parse::Stack::Stack(size_t size) {
+Expression::Stack::Stack(size_t size) {
 	opers  = new byte[size];
 	values = new int32[size];
 	memset(opers , 0, size * sizeof(byte ));
 	memset(values, 0, size * sizeof(int32));
 }
 
-Parse::Stack::~Stack() {
+Expression::Stack::~Stack() {
 	delete[] opers;
 	delete[] values;
 }
 
-Parse::StackFrame::StackFrame(const Stack &stack) {
+Expression::StackFrame::StackFrame(const Stack &stack) {
 	opers = stack.opers - 1;
 	values = stack.values - 1;
 	pos = -1;
 }
 
-void Parse::StackFrame::push(int count) {
+void Expression::StackFrame::push(int count) {
 	opers  += count;
 	values += count;
 	pos    += count;
 }
 
-void Parse::StackFrame::pop(int count) {
+void Expression::StackFrame::pop(int count) {
 	opers  -= count;
 	values -= count;
 	pos    -= count;
 }
 
-Parse::Parse(GobEngine *vm) : _vm(vm) {
+Expression::Expression(GobEngine *vm) : _vm(vm) {
 	_resultStr[0] = 0;
 	_resultInt = 0;
 }
 
-int32 Parse::encodePtr(byte *ptr, int type) {
+int32 Expression::encodePtr(byte *ptr, int type) {
 	int32 offset = 0;
 
 	switch (type) {
@@ -83,13 +83,13 @@ int32 Parse::encodePtr(byte *ptr, int type) {
 		offset = ptr - ((byte *) _resultStr);
 		break;
 	default:
-		error("Parse::encodePtr(): Unknown pointer type");
+		error("Expression::encodePtr(): Unknown pointer type");
 	}
 	assert((offset & 0xF0000000) == 0);
 	return (type << 28) | offset;
 }
 
-byte *Parse::decodePtr(int32 n) {
+byte *Expression::decodePtr(int32 n) {
 	byte *ptr;
 
 	switch (n >> 28) {
@@ -103,12 +103,12 @@ byte *Parse::decodePtr(int32 n) {
 		ptr = (byte *) _resultStr;
 		break;
 	default:
-		error("Parse::decodePtr(): Unknown pointer type");
+		error("Expression::decodePtr(): Unknown pointer type");
 	}
 	return ptr + (n & 0x0FFFFFFF);
 }
 
-void Parse::skipExpr(char stopToken) {
+void Expression::skipExpr(char stopToken) {
 	int16 dimCount;
 	byte operation;
 	int16 num;
@@ -203,7 +203,7 @@ void Parse::skipExpr(char stopToken) {
 	}
 }
 
-void Parse::printExpr(char stopToken) {
+void Expression::printExpr(char stopToken) {
 	// Expression printing disabled by default
 	return;
 
@@ -214,7 +214,7 @@ void Parse::printExpr(char stopToken) {
 	_vm->_game->_script->seek(savedPos);
 }
 
-void Parse::printExpr_internal(char stopToken) {
+void Expression::printExpr_internal(char stopToken) {
 	int16 dimCount;
 	byte operation;
 	int16 num;
@@ -406,7 +406,7 @@ void Parse::printExpr_internal(char stopToken) {
 
 		default:
 			debugN(5, "<%d>", (int16) operation);
-			error("Parse::printExpr(): invalid operator in expression");
+			error("Expression::printExpr(): invalid operator in expression");
 			break;
 		}
 
@@ -433,7 +433,7 @@ void Parse::printExpr_internal(char stopToken) {
 }
 
 
-void Parse::printVarIndex() {
+void Expression::printVarIndex() {
 	byte *arrDesc;
 	int16 dim;
 	int16 dimCount;
@@ -486,7 +486,7 @@ void Parse::printVarIndex() {
 	return;
 }
 
-int Parse::cmpHelper(const StackFrame &stackFrame) {
+int Expression::cmpHelper(const StackFrame &stackFrame) {
 	byte type = stackFrame.opers[-3];
 	int cmpTemp = 0;
 
@@ -503,7 +503,7 @@ int Parse::cmpHelper(const StackFrame &stackFrame) {
 	return cmpTemp;
 }
 
-bool Parse::getVarBase(uint32 &varBase, bool mindStop,
+bool Expression::getVarBase(uint32 &varBase, bool mindStop,
 		uint16 *size, uint16 *type) {
 
 	varBase = 0;
@@ -573,7 +573,7 @@ bool Parse::getVarBase(uint32 &varBase, bool mindStop,
 	return false;
 }
 
-int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
+int16 Expression::parseVarIndex(uint16 *size, uint16 *type) {
 	int16 temp2;
 	byte *arrDesc;
 	int16 dim;
@@ -647,14 +647,14 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 	}
 }
 
-int16 Parse::parseValExpr(byte stopToken) {
+int16 Expression::parseValExpr(byte stopToken) {
 	parseExpr(stopToken, 0);
 
 	return _resultInt;
 }
 
 // Load a value according to the operation
-void Parse::loadValue(byte operation, uint32 varBase, const StackFrame &stackFrame) {
+void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &stackFrame) {
 	int16 dimCount;
 	int16 temp;
 	int16 temp2;
@@ -793,7 +793,7 @@ void Parse::loadValue(byte operation, uint32 varBase, const StackFrame &stackFra
 	}
 }
 
-void Parse::simpleArithmetic1(StackFrame &stackFrame) {
+void Expression::simpleArithmetic1(StackFrame &stackFrame) {
 	switch (stackFrame.opers[-1]) {
 	case OP_ADD:
 		if (stackFrame.opers[-2] == OP_LOAD_IMM_STR) {
@@ -828,7 +828,7 @@ void Parse::simpleArithmetic1(StackFrame &stackFrame) {
 	}
 }
 
-void Parse::simpleArithmetic2(StackFrame &stackFrame) {
+void Expression::simpleArithmetic2(StackFrame &stackFrame) {
 	if (stackFrame.pos > 1) {
 		if (stackFrame.opers[-2] == OP_NEG) {
 			stackFrame.opers[-2] = OP_LOAD_IMM_INT16;
@@ -867,7 +867,7 @@ void Parse::simpleArithmetic2(StackFrame &stackFrame) {
 }
 
 // Complex arithmetics with brackets
-bool Parse::complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 brackStart) {
+bool Expression::complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 brackStart) {
 	switch (stackFrame.opers[-2]) {
 	case OP_ADD:
 		if (stack.opers[brackStart] == OP_LOAD_IMM_INT16) {
@@ -967,7 +967,7 @@ bool Parse::complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 brackS
 }
 
 // Assign the result to the appropriate _result variable
-void Parse::getResult(byte operation, int32 value, byte *type) {
+void Expression::getResult(byte operation, int32 value, byte *type) {
 	if (type != 0)
 		*type = operation;
 
@@ -998,7 +998,7 @@ void Parse::getResult(byte operation, int32 value, byte *type) {
 	}
 }
 
-int16 Parse::parseExpr(byte stopToken, byte *type) {
+int16 Expression::parseExpr(byte stopToken, byte *type) {
 	Stack stack;
 	StackFrame stackFrame(stack);
 	byte operation;
@@ -1134,11 +1134,11 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 	}
 }
 
-int32 Parse::getResultInt() {
+int32 Expression::getResultInt() {
 	return _resultInt;
 }
 
-char *Parse::getResultStr() {
+char *Expression::getResultStr() {
 	return _resultStr;
 }
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef GOB_PARSE_H
-#define GOB_PARSE_H
+#ifndef GOB_EXPRESSION_H
+#define GOB_EXPRESSION_H
 
 #include "common/scummsys.h"
 
@@ -109,10 +109,10 @@ enum {
 	GOB_FALSE = 23
 };
 
-class Parse {
+class Expression {
 public:
-	Parse(GobEngine *vm);
-	virtual ~Parse() {}
+	Expression(GobEngine *vm);
+	virtual ~Expression() {}
 
 	void skipExpr(char stopToken);
 	void printExpr(char stopToken);
@@ -175,4 +175,4 @@ private:
 
 } // End of namespace Gob
 
-#endif // GOB_PARSE_H
+#endif // GOB_EXPRESSION_H
