@@ -481,8 +481,6 @@ void Game::start(void) {
 
 // flagbits: 0 = freeInterVariables, 1 = skipPlay
 void Game::totSub(int8 flags, const char *newTotFile) {
-	warning("totSub");
-
 	int8 curBackupPos;
 
 	if (_backupedCount >= 5)
@@ -553,8 +551,6 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 }
 
 void Game::switchTotSub(int16 index, int16 skipPlay) {
-	warning("switchTotSub");
-
 	int16 backupedCount;
 	int16 curBackupPos;
 
