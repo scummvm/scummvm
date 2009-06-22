@@ -152,7 +152,7 @@ void gfxr_init_static_palette() {
 }
 
 
-gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
+gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, bool sci1) {
 	gfxr_pic_t *pic = (gfxr_pic_t*)malloc(sizeof(gfxr_pic_t));
 
 	pic->mode = mode;
