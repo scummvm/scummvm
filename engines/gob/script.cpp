@@ -52,8 +52,11 @@ Script::~Script() {
 	delete _parser;
 }
 
-uint32 Script::read(byte *data, uint32 size) {
-	uint32 toRead = MIN<uint32>(size, _totSize - (_totPtr - _totData));
+uint32 Script::read(byte *data, int32 size) {
+	int32 toRead = MIN<int32>(size, _totSize - (_totPtr - _totData));
+
+	if (toRead < 1)
+		return 0;
 
 	memcpy(data, _totPtr, toRead);
 	_totPtr += toRead;
@@ -61,15 +64,17 @@ uint32 Script::read(byte *data, uint32 size) {
 	return toRead;
 }
 
-uint32 Script::peek(byte *data, uint32 size, int32 offset) const {
+uint32 Script::peek(byte *data, int32 size, int32 offset) const {
 	int32 totOffset = ((_totPtr + offset) - _totData);
 
-	if (totOffset < 0)
+	if (totOffset < 1)
 		return 0;
 	if (((uint32) totOffset) >= _totSize)
 		return 0;
 
-	uint32 toPeek = MIN<uint32>(size, _totSize - totOffset);
+	int32 toPeek = MIN<int32>(size, _totSize - totOffset);
+	if (toPeek < 1)
+		return 0;
 
 	memcpy(data, _totPtr + offset, toPeek);
 
@@ -110,13 +115,13 @@ bool Script::seek(int32 offset, int whence) {
 	return true;
 }
 
-bool Script::skip(uint32 offset) {
+bool Script::skip(int32 offset) {
 	return seek(offset, SEEK_CUR);
 }
 
-uint32 Script::getOffset(byte *ptr) {
+int32 Script::getOffset(byte *ptr) {
 	if (!_totData)
-		return 0;
+		return -1;
 
 	return ptr - _totData;
 }

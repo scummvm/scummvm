@@ -40,9 +40,9 @@ public:
 	~Script();
 
 	/** Read data and move the pointer accordingly. */
-	uint32 read(byte *data, uint32 size);
+	uint32 read(byte *data, int32 size);
 	/** Read data (from an optional offset) without moving the pointer. */
-	uint32 peek(byte *data, uint32 size, int32 offset = 0) const;
+	uint32 peek(byte *data, int32 size, int32 offset = 0) const;
 
 	// Stream properties
 	int32 pos() const;
@@ -50,7 +50,7 @@ public:
 
 	// Stream seeking
 	bool seek(int32 offset, int whence = SEEK_SET);
-	bool skip(uint32 offset);
+	bool skip(int32 offset);
 
 	// Reading data
 	byte   readByte  ();
@@ -89,7 +89,7 @@ public:
 	char *getResultStr();
 
 	/** Returns the offset the specified pointer is within the script data. */
-	uint32 getOffset(byte *ptr);
+	int32 getOffset(byte *ptr);
 	/** Returns the raw data pointer. */
 	byte *getData();
 
