@@ -343,6 +343,9 @@ void Script::unloadTOT() {
 	if (_lomHandle >= 0)
 		_vm->_dataIO->closeData(_lomHandle);
 
+	while (!_callStack.empty())
+		pop();
+
 	delete[] _totData;
 
 	_totData = 0;

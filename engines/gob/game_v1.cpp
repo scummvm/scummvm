@@ -242,7 +242,8 @@ void Game_v1::playTot(int16 skipPlay) {
 	_vm->_inter->_breakFromLevel = oldBreakFrom;
 	_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 
-	_script->pop();
+	if (_script->isLoaded())
+		_script->pop();
 }
 
 void Game_v1::clearCollisions() {
