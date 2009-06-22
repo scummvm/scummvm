@@ -478,7 +478,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 			anim->wsa = new WSAMovie_v2(_vm);
 		assert(anim->wsa);
 
-		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? _screen->getPalette(0).getData() : 0);
+		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? &_screen->getPalette(0) : 0);
 	}
 
 	if (anim->wsa && anim->wsa->opened()) {
@@ -515,7 +515,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 			snprintf(file, 32, "%s.CPS", filename);
 
 			if (_vm->resource()->exists(file)) {
-				_screen->loadBitmap(file, 3, 3, _screen->getPalette(0).getData());
+				_screen->loadBitmap(file, 3, 3, &_screen->getPalette(0));
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 				if (_drawPage2)
 					_screen->checkedPageUpdate(8, 4);
@@ -539,7 +539,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		snprintf(file, 32, "%s.CPS", filename);
 
 		if (_vm->resource()->exists(file)) {
-			_screen->loadBitmap(file, 3, 3, _screen->getPalette(0).getData());
+			_screen->loadBitmap(file, 3, 3, &_screen->getPalette(0));
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -947,7 +947,7 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 	if (_vm->resource()->exists(file)) {
 		anim->wsa = new WSAMovie_v2(_vm);
 		assert(anim->wsa);
-		anim->wsa->open(file, wsaOpenFlags, _screen->getPalette(3).getData());
+		anim->wsa->open(file, wsaOpenFlags, &_screen->getPalette(3));
 	}
 
 	if (wsaFlags & 1) {

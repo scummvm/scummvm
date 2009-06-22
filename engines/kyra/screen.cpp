@@ -2767,7 +2767,7 @@ void Screen::shakeScreen(int times) {
 	}
 }
 
-void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData, bool skip) {
+void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip) {
 	uint32 fileSize;
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 
@@ -2784,9 +2784,8 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	uint32 imgSize = scumm_stricmp(ext, "CMP") ? READ_LE_UINT32(srcData + 4) : READ_LE_UINT16(srcData);
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
 
-	if (palData && palSize) {
-		loadPalette(srcData + 10, palData, palSize);
-	}
+	if (pal && palSize)
+		loadPalette(srcData + 10, pal->getData(), palSize);
 
 	uint8 *srcPtr = srcData + 10 + palSize;
 	uint8 *dstData = getPagePtr(dstPage);

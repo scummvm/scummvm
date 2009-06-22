@@ -43,7 +43,7 @@ int LoLEngine::processPrologue() {
 
 	if (_flags.isDemo) {
 		_screen->fadePalette(_screen->getPalette(1), 30, 0);
-		_screen->loadBitmap("FINAL.CPS", 2, 2, _screen->getPalette(0).getData());
+		_screen->loadBitmap("FINAL.CPS", 2, 2, &_screen->getPalette(0));
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->fadePalette(_screen->getPalette(0), 30, 0);
 		delayWithTicks(300);
@@ -57,7 +57,7 @@ int LoLEngine::processPrologue() {
 
 	int processSelection = -1;
 	while (!shouldQuit() && processSelection == -1) {
-		_screen->loadBitmap("TITLE.CPS", 2, 2, _screen->getPalette(0).getData());
+		_screen->loadBitmap("TITLE.CPS", 2, 2, &_screen->getPalette(0));
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 
 		_screen->setFont(Screen::FID_6_FNT);
@@ -276,8 +276,8 @@ int LoLEngine::chooseCharacter() {
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
 
-	_screen->loadBitmap("CHAR.CPS", 2, 2, _screen->getPalette(0).getData());
-	_screen->loadBitmap("BACKGRND.CPS", 4, 4, _screen->getPalette(0).getData());
+	_screen->loadBitmap("CHAR.CPS", 2, 2, &_screen->getPalette(0));
+	_screen->loadBitmap("BACKGRND.CPS", 4, 4, &_screen->getPalette(0));
 
 	if (!_chargenWSA->open("CHARGEN.WSA", 1, 0))
 		error("Couldn't load CHARGEN.WSA");
@@ -649,7 +649,7 @@ void LoLEngine::showStarcraftLogo() {
 	_screen->clearPage(0);
 	_screen->clearPage(2);
 
-	int endframe = ci->open("ci01.wsa", 0, _screen->getPalette(0).getData());
+	int endframe = ci->open("ci01.wsa", 0, &_screen->getPalette(0));
 	if (!ci->opened()) {
 		delete ci;
 		return;
@@ -803,19 +803,19 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 
 	switch (character) {
 	case 0:
-		_screen->loadBitmap("KIERAN.CPS", 3, 3, _screen->getPalette(0).getData());
+		_screen->loadBitmap("KIERAN.CPS", 3, 3, &_screen->getPalette(0));
 		break;
 
 	case 1:
-		_screen->loadBitmap("AK'SHEL.CPS", 3, 3, _screen->getPalette(0).getData());
+		_screen->loadBitmap("AK'SHEL.CPS", 3, 3, &_screen->getPalette(0));
 		break;
 
 	case 2:
-		_screen->loadBitmap("MICHAEL.CPS", 3, 3, _screen->getPalette(0).getData());
+		_screen->loadBitmap("MICHAEL.CPS", 3, 3, &_screen->getPalette(0));
 		break;
 
 	case 3:
-		_screen->loadBitmap("CONRAD.CPS", 3, 3, _screen->getPalette(0).getData());
+		_screen->loadBitmap("CONRAD.CPS", 3, 3, &_screen->getPalette(0));
 		break;
 
 	default:
@@ -856,7 +856,7 @@ void LoLEngine::showCredits() {
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = 0;
 
-	_screen->loadBitmap("ROOM.CPS", 2, 2, _screen->getPalette(0).getData());
+	_screen->loadBitmap("ROOM.CPS", 2, 2, &_screen->getPalette(0));
 	memset(_screen->getPalette(0).getData() + 764, 0, 3);
 	_screen->fadeToBlack(30);
 

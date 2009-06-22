@@ -87,7 +87,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		SeqProc cb = _callbackS[seqNum];
 
 		if (cseq.flags & 2) {
-			_screen->loadBitmap(cseq.cpsFile, 2, 2, _screen->getPalette(0).getData());
+			_screen->loadBitmap(cseq.cpsFile, 2, 2, &_screen->getPalette(0));
 			_screen->setScreenPalette(_screen->getPalette(0));
 		} else {
 			_screen->setCurPage(2);
@@ -100,7 +100,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 
 		if (cseq.flags & 1) {
 			_seqWsa->close();
-			_seqWsa->open(cseq.wsaFile, 0, _screen->getPalette(0).getData());
+			_seqWsa->open(cseq.wsaFile, 0, &_screen->getPalette(0));
 			_screen->setScreenPalette(_screen->getPalette(0));
 			_seqWsa->displayFrame(0, 2, cseq.xPos, cseq.yPos, 0, 0, 0);
 		}
@@ -1501,7 +1501,7 @@ void KyraEngine_HoF::seq_finaleActorScreen() {
 	static const uint8 colormap[] = {0, 0, 102, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	static const ScreenDim d = { 0x00, 0x0C, 0x28, 0xB4, 0xFF, 0x00, 0x00, 0x00 };
 
-	_screen->loadBitmap("finale.cps", 3, 3, _screen->getPalette(0).getData());
+	_screen->loadBitmap("finale.cps", 3, 3, &_screen->getPalette(0));
 	_screen->setFont(Screen::FID_GOLDFONT_FNT);
 
 	int talkieCreditsSize, talkieCreditsSpecialSize;
@@ -2726,7 +2726,7 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 	assert(ci);
 	_screen->clearPage(2);
 	_res->loadPakFile("INTROGEN.PAK");
-	int endframe = ci->open("ci.wsa", 0, _screen->getPalette(0).getData());
+	int endframe = ci->open("ci.wsa", 0, &_screen->getPalette(0));
 	_res->unloadPakFile("INTROGEN.PAK");
 	if (!ci->opened()) {
 		delete ci;

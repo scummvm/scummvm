@@ -328,7 +328,7 @@ Common::Error KyraEngine_MR::go() {
 
 void KyraEngine_MR::initMainMenu() {
 	_menuAnim = new WSAMovie_v2(this);
-	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0).getData());
+	_menuAnim->open("REVENGE.WSA", 1, &_screen->getPalette(0));
 	memset(_screen->getPalette(0).getData(), 0, 3);
 
 	_menu = new MainMenu(this);

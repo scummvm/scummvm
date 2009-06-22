@@ -92,7 +92,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 }
 
 void SeqPlayer::makeHandShapes() {
-	_screen->loadBitmap("WRITING.CPS", 3, 3, _screen->getPalette(0).getData());
+	_screen->loadBitmap("WRITING.CPS", 3, 3, &_screen->getPalette(0));
 	if (_vm->gameFlags().platform == Common::kPlatformMacintosh || _vm->gameFlags().platform == Common::kPlatformAmiga) {
 		freeHandShapes();
 
@@ -259,7 +259,7 @@ void SeqPlayer::s1_loadPalette() {
 
 void SeqPlayer::s1_loadBitmap() {
 	uint8 cpsNum = *_seqData++;
-	_screen->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, _screen->getPalette(0).getData());
+	_screen->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, &_screen->getPalette(0));
 }
 
 void SeqPlayer::s1_fadeToBlack() {

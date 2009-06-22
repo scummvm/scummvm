@@ -406,7 +406,7 @@ void KyraEngine_LoK::startSceneScript(int brandonAlive) {
 	_screen->clearPage(3);
 	_res->exists(fileNameBuffer, true);
 	// FIXME: check this hack for amiga version
-	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? _screen->getPalette(0).getData() : 0));
+	_screen->loadBitmap(fileNameBuffer, 3, 3, (_flags.platform == Common::kPlatformAmiga ? &_screen->getPalette(0) : 0));
 	_sprites->loadSceneShapes();
 	_exitListPtr = 0;
 

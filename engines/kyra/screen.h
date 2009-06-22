@@ -284,7 +284,7 @@ public:
 	void rectClip(int &x, int &y, int w, int h);
 
 	// misc
-	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData, bool skip=false);
+	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
 
 	bool loadPalette(const char *filename, uint8 *palData);
 	void loadPalette(const byte *data, uint8 *palData, int bytes);

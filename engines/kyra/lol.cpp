@@ -778,7 +778,7 @@ int LoLEngine::mainMenu() {
 
 void LoLEngine::startup() {
 	_screen->clearPage(0);
-	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, _screen->getPalette(0).getData());
+	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, &_screen->getPalette(0));
 
 	uint8 *tmpPal = new uint8[0x300];
 	memcpy(tmpPal, _screen->getPalette(0).getData(), 0x300);
@@ -3842,7 +3842,7 @@ void LoLEngine::displayAutomap() {
 	uint8 *tmpWll = new uint8[80];
 	memcpy(tmpWll, _wllBuffer4, 80);
 
-	_screen->loadBitmap("parch.cps", 2, 2, _screen->getPalette(3).getData());
+	_screen->loadBitmap("parch.cps", 2, 2, &_screen->getPalette(3));
 	_screen->loadBitmap("autobut.shp", 3, 5, 0);
 	const uint8 *shp = _screen->getCPagePtr(5);
 
@@ -4010,7 +4010,7 @@ void LoLEngine::loadMapLegendData(int level) {
 
 void LoLEngine::drawMapPage(int pageNum) {
 	for (int i = 0; i < 2; i++) {
-		_screen->loadBitmap("parch.cps", pageNum, pageNum, _screen->getPalette(3).getData());
+		_screen->loadBitmap("parch.cps", pageNum, pageNum, &_screen->getPalette(3));
 
 		int cp = _screen->setCurPage(pageNum);
 		Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);

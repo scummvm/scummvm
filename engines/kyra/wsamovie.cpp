@@ -38,7 +38,7 @@ namespace Kyra {
 WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm) : Movie(vm) {}
 WSAMovie_v1::~WSAMovie_v1() { close(); }
 
-int WSAMovie_v1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
+int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf) {
 	close();
 
 	uint32 flags = 0;
@@ -64,7 +64,7 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, uint8 *palBuf) 
 		offsPal = 0x300;
 		_flags |= WF_HAS_PALETTE;
 		if (palBuf)
-			memcpy(palBuf, wsaData + 8 + (_numFrames << 2), 0x300);
+			memcpy(palBuf->getData(), wsaData + 8 + (_numFrames << 2), 0x300);
 	}
 
 	if (offscreenDecode) {
@@ -228,7 +228,7 @@ void WSAMovie_v1::processFrame(int frameNum, uint8 *dst) {
 
 WSAMovieAmiga::WSAMovieAmiga(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _buffer(0) {}
 
-int WSAMovieAmiga::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
+int WSAMovieAmiga::open(const char *filename, int offscreenDecode, Palette *palBuf) {
 	int res = WSAMovie_v1::open(filename, offscreenDecode, palBuf);
 
 	if (!res)
@@ -365,7 +365,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 
 WSAMovie_v2::WSAMovie_v2(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _xAdd(0), _yAdd(0) {}
 
-int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
+int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 	close();
 
 	uint32 flags = 0;
@@ -392,7 +392,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 		offsPal = 0x300;
 		_flags |= WF_HAS_PALETTE;
 		if (palBuf)
-			_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf, 0x300);
+			_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf->getData(), 0x300);
 	}
 
 	if (flags & 2) {
@@ -400,7 +400,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 			offsPal = 0x30;
 			_flags |= WF_HAS_PALETTE;
 			if (palBuf)
-				_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf, 0x30);
+				_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf->getData(), 0x30);
 		}
 
 		_flags |= WF_XOR;

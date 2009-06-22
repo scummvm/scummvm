@@ -609,7 +609,7 @@ int LoLEngine::olol_fadePalette(EMCState *script) {
 
 int LoLEngine::olol_loadBitmap(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_clearDialogueField(%p) (%s, %d)", (const void *)script, stackPosString(0), stackPos(1));
-	_screen->loadBitmap(stackPosString(0), 3, 3, _screen->getPalette(3).getData());
+	_screen->loadBitmap(stackPosString(0), 3, 3, &_screen->getPalette(3));
 	if (stackPos(1) != 2)
 		_screen->copyPage(3, stackPos(1));
 	return 1;
@@ -2525,7 +2525,7 @@ int LoLEngine::tlol_fadeInScene(const TIM *tim, const uint16 *param) {
 	strcpy(filename, sceneFile);
 	strcat(filename, ".CPS");
 
-	_screen->loadBitmap(filename, 7, 5, _screen->getPalette(0).getData());
+	_screen->loadBitmap(filename, 7, 5, &_screen->getPalette(0));
 
 	filename[0] = 0;
 
@@ -2563,7 +2563,7 @@ int LoLEngine::tlol_fadeInPalette(const TIM *tim, const uint16 *param) {
 	const char *bitmap = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
 
 	Palette pal(_screen->getPalette(0).getNumColors());
-	_screen->loadBitmap(bitmap, 3, 3, pal.getData());
+	_screen->loadBitmap(bitmap, 3, 3, &pal);
 	_screen->fadePalette(pal, param[1]);
 
 	return 1;

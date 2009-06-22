@@ -26,6 +26,7 @@
 #ifndef KYRA_WSAMOVIE_H
 #define KYRA_WSAMOVIE_H
 
+
 namespace Audio {
 class AppendableAudioStream;
 class SoundHandle;
@@ -34,6 +35,7 @@ class SoundHandle;
 namespace Kyra {
 class KyraEngine_v1;
 class Screen_v2;
+class Palette;
 
 class Movie {
 public:
@@ -48,7 +50,7 @@ public:
 	virtual int width() const = 0;
 	virtual int height() const = 0;
 
-	virtual int open(const char *filename, int offscreen, uint8 *palette) = 0;
+	virtual int open(const char *filename, int offscreen, Palette *palette) = 0;
 	virtual void close() = 0;
 
 	virtual int frames() = 0;
@@ -72,7 +74,7 @@ public:
 	int width() const { return _width; }
 	int height() const { return _height; }
 
-	virtual int open(const char *filename, int offscreen, uint8 *palette);
+	virtual int open(const char *filename, int offscreen, Palette *palette);
 	virtual void close();
 
 	virtual int frames() { return _opened ? _numFrames : -1; }
@@ -105,7 +107,7 @@ protected:
 class WSAMovieAmiga : public WSAMovie_v1 {
 public:
 	WSAMovieAmiga(KyraEngine_v1 *vm);
-	int open(const char *filename, int offscreen, uint8 *palette);
+	int open(const char *filename, int offscreen, Palette *palette);
 	void close();
 
 	void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2);
@@ -119,7 +121,7 @@ class WSAMovie_v2 : public WSAMovie_v1 {
 public:
 	WSAMovie_v2(KyraEngine_v1 *vm);
 
-	int open(const char *filename, int unk1, uint8 *palette);
+	int open(const char *filename, int unk1, Palette *palette);
 	virtual void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) {
 		WSAMovie_v1::displayFrame(frameNum, pageNum, x + _xAdd, y + _yAdd, flags, table1, table2);
 	}
