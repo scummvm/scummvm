@@ -120,7 +120,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addDebugChannel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
 	Common::addDebugChannel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
 	Common::addDebugChannel(kDebugSound, "Sound", "Sound output debug level");
-	Common::addDebugChannel(kDebugParser, "Parser", "Parser debug level");
+	Common::addDebugChannel(kDebugExpression, "Expression", "Expression parser debug level");
 	Common::addDebugChannel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
 	Common::addDebugChannel(kDebugFileIO, "FileIO", "File Input/Output debug level");
 	Common::addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");

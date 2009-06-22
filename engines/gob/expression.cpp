@@ -524,7 +524,7 @@ bool Expression::getVarBase(uint32 &varBase, bool mindStop,
 
 			_vm->_game->_script->skip(2);
 
-			debugC(2, kDebugParser, "varBase: %d, by %d", varBase, operation);
+			debugC(2, kDebugExpression, "varBase: %d, by %d", varBase, operation);
 
 			if (_vm->_game->_script->peekByte() != 97) {
 				if (mindStop)
@@ -558,7 +558,7 @@ bool Expression::getVarBase(uint32 &varBase, bool mindStop,
 
 			varBase += offset2 * offset1 * 4;
 
-			debugC(2, kDebugParser, "varBase: %d, by %d", varBase, operation);
+			debugC(2, kDebugExpression, "varBase: %d, by %d", varBase, operation);
 
 			if (_vm->_game->_script->peekByte() != 97) {
 				if (mindStop)
@@ -594,7 +594,7 @@ int16 Expression::parseVarIndex(uint16 *size, uint16 *type) {
 	if (type)
 		*type = operation;
 
-	debugC(5, kDebugParser, "var parse = %d", operation);
+	debugC(5, kDebugExpression, "var parse = %d", operation);
 	switch (operation) {
 	case OP_ARRAY_INT8:
 	case OP_ARRAY_INT32:
@@ -633,12 +633,12 @@ int16 Expression::parseVarIndex(uint16 *size, uint16 *type) {
 	case OP_LOAD_VAR_INT32_AS_INT16:
 	case OP_LOAD_VAR_STR:
 		temp = _vm->_game->_script->readInt16() * 4;
-		debugC(5, kDebugParser, "oper = %d", _vm->_game->_script->peekInt16());
+		debugC(5, kDebugExpression, "oper = %d", _vm->_game->_script->peekInt16());
 		if ((operation == OP_LOAD_VAR_STR) && (_vm->_game->_script->peekByte() == 13)) {
 			_vm->_game->_script->skip(1);
 			val = parseValExpr(OP_END_MARKER);
 			temp += val;
-			debugC(5, kDebugParser, "parse subscript = %d", val);
+			debugC(5, kDebugExpression, "parse subscript = %d", val);
 		}
 		return varBase + temp;
 
