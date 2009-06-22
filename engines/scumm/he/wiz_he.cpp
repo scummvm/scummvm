@@ -2323,7 +2323,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 }
 
 void Wiz::processWizImage(const WizParameters *params) {
-	byte filename[260];
+	byte buffer[260];
 
 	debug(3, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
@@ -2338,18 +2338,28 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	case 3:
 		if (params->processFlags & kWPFUseFile) {
-			Common::File f;
+			Common::SeekableReadStream *f = NULL;
+			memcpy(buffer, params->filename, 260);
+			const char *filename = (char *)buffer + _vm->convertFilePath(buffer);
 
-			memcpy(filename, params->filename, 260);
-			_vm->convertFilePath(filename);
+			if (!_vm->_saveFileMan->listSavefiles(filename).empty()) {
+				f = _vm->_saveFileMan->openForLoading(filename);
+			} else {
+				Common::File *nf = new Common::File();
+				nf->open(filename);
+				if (!nf->isOpen())
+					delete nf;
+				else
+					f = nf;
+			}
 
-			if (f.open((const char *)filename)) {
-				uint32 id = f.readUint32BE();
+			if (f) {
+				uint32 id = f->readUint32BE();
 				if (id == MKID_BE('AWIZ') || id == MKID_BE('MULT')) {
-					uint32 size = f.readUint32BE();
-					f.seek(0, SEEK_SET);
+					uint32 size = f->readUint32BE();
+					f->seek(0, SEEK_SET);
 					byte *p = _vm->_res->createResource(rtImage, params->img.resNum, size);
-					if (f.read(p, size) != size) {
+					if (f->read(p, size) != size) {
 						_vm->_res->nukeResource(rtImage, params->img.resNum);
 						error("i/o error when reading '%s'", filename);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
@@ -2363,7 +2373,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 					_vm->VAR(_vm->VAR_GAME_LOADED) = -1;
 					_vm->VAR(119) = -1;
 				}
-				f.close();
+				delete f;
 			} else {
 				_vm->VAR(_vm->VAR_GAME_LOADED) = -3;
 				_vm->VAR(119) = -3;
@@ -2373,7 +2383,9 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	case 4:
 		if (params->processFlags & kWPFUseFile) {
-			Common::DumpFile f;
+			Common::OutSaveFile *f;
+			memcpy(buffer, params->filename, 260);
+			const char *filename = (char *)buffer + _vm->convertFilePath(buffer);
 
 			switch (params->fileWriteMode) {
 			case 2:
@@ -2383,22 +2395,20 @@ void Wiz::processWizImage(const WizParameters *params) {
 				// TODO Write image to file
 				break;
 			case 0:
-				memcpy(filename, params->filename, 260);
-				_vm->convertFilePath(filename);
-
-				if (!f.open((const char *)filename)) {
+				if (!(f = _vm->_saveFileMan->openForSaving(filename))) {
 					debug(0, "Unable to open for write '%s'", filename);
 					_vm->VAR(119) = -3;
 				} else {
 					byte *p = _vm->getResourceAddress(rtImage, params->img.resNum);
 					uint32 size = READ_BE_UINT32(p + 4);
-					if (f.write(p, size) != size) {
-						error("i/o error when writing '%s'", params->filename);
+					if (f->write(p, size) != size) {
+						error("i/o error when writing '%s'", filename);
 						_vm->VAR(119) = -2;
 					} else {
 						_vm->VAR(119) = 0;
 					}
-					f.close();
+					f->finalize();
+					delete f;
 				}
 				break;
 			default:
@@ -2411,7 +2421,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	// HE 99+
 	case 7:
-		captureWizPolygon(params->img.resNum, params->sourceImage, params->img.state, params->polygonId1, params->polygonId2, params->compType);
+		captureWizPolygon(params->img.resNum, params->sourceImage, (params->processFlags & kWPFNewState) ? params->img.state : 0, params->polygonId1, params->polygonId2, params->compType);
 		break;
 	case 8: {
 			int img_w = 640;

@@ -1482,6 +1482,7 @@ void ScummEngine_v72he::o72_readFile() {
 		fetchScriptByte();
 		size = pop();
 		slot = pop();
+		assert(_hInFileTable[slot]);
 		val = readFileToArray(slot, size);
 		push(val);
 		break;
@@ -1809,9 +1810,7 @@ void ScummEngine_v72he::o72_readINI() {
 	switch (subOp) {
 	case 43: // HE 100
 	case 6: // number
-		if (!strcmp((char *)option, "NoFontsInstalled")) {
-			push(1);
-		} else if (!strcmp((char *)option, "NoPrinting")) {
+		if (!strcmp((char *)option, "NoPrinting")) {
 			push(1);
 		} else if (!strcmp((char *)option, "TextOn")) {
 			push(ConfMan.getBool("subtitles"));
