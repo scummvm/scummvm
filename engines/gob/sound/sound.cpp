@@ -114,13 +114,10 @@ bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName,
 
 	debugC(2, kDebugSound, "Loading sample \"%s\"", fileName);
 
-	int16 handle = _vm->_dataIO->openData(fileName);
-	if (handle < 0) {
+	if (!_vm->_dataIO->existData(fileName)) {
 		warning("Can't open sample file \"%s\"", fileName);
 		return false;
 	}
-
-	_vm->_dataIO->closeData(handle);
 
 	byte *data;
 	uint32 size;
@@ -503,17 +500,12 @@ void Sound::cdLoadLIC(const char *fname) {
 
 	debugC(1, kDebugSound, "CDROM: Loading LIC \"%s\"", fname);
 
-	int handle = _vm->_dataIO->openData(fname);
-
-	if (handle == -1)
+	if (!_vm->_dataIO->existData(fname))
 		return;
-
-	_vm->_dataIO->closeData(handle);
 
 	_vm->_dataIO->getUnpackedData(fname);
 
-	handle = _vm->_dataIO->openData(fname);
-	DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
+	DataStream *stream = _vm->_dataIO->getDataStream(fname);
 
 	_cdrom->readLIC(*stream);
 

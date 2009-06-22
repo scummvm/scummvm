@@ -229,7 +229,7 @@ protected:
 	void loadImFile(void);
 
 	void collAreaSub(int16 index, int8 enter);
-	int16 openLocTextFile(char *locTextFile, int language);
+	bool getLocTextFile(char *locTextFile, int language);
 
 	virtual void setCollisions(byte arg_0 = 1);
 	virtual void collSub(uint16 offset);

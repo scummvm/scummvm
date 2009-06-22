@@ -201,15 +201,11 @@ bool VideoPlayer::findFile(char *fileName, Type &which) {
 		int i;
 		for (i = 0; i < ARRAYSIZE(_extensions); i++) {
 			if ((which == kVideoTypeTry) || (which == ((Type) i))) {
-				int16 handle;
-
 				fileName[len] = '.';
 				fileName[len + 1] = 0;
 				strcat(fileName, _extensions[i]);
 
-				handle = _vm->_dataIO->openData(fileName);
-				if (handle >= 0) {
-					_vm->_dataIO->closeData(handle);
+				if (_vm->_dataIO->existData(fileName)) {
 					which = (Type) i;
 					break;
 				}

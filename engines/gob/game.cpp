@@ -417,21 +417,18 @@ int16 Game::adjustKey(int16 key) {
 }
 
 int32 Game::loadTotFile(const char *path) {
-	int16 handle;
 	int32 size;
 
 	_lomHandle = -1;
 
 	size = -1;
-	handle = _vm->_dataIO->openData(path);
-	if (handle >= 0) {
-
+	if (_vm->_dataIO->existData(path)) {
 		if (!scumm_stricmp(path + strlen(path) - 3, "LOM")) {
 			warning("Urban Stub: loadTotFile %s", path);
 
-			_lomHandle = handle;
+			_lomHandle = _vm->_dataIO->openData(path);
 
-			DataStream *stream = _vm->_dataIO->openAsStream(handle);
+			DataStream *stream = _vm->_dataIO->openAsStream(_lomHandle);
 
 			stream->seek(48);
 			size = stream->readUint32LE();
@@ -442,7 +439,6 @@ int32 Game::loadTotFile(const char *path) {
 
 			delete stream;
 		} else {
-			_vm->_dataIO->closeData(handle);
 			size = _vm->_dataIO->getDataSize(path);
 			_totFileData = _vm->_dataIO->getData(path);
 		}
@@ -497,7 +493,6 @@ void Game::loadExtTable(void) {
 
 void Game::loadImFile(void) {
 	char path[20];
-	int16 handle;
 
 	if ((_totFileData[0x3D] != 0) && (_totFileData[0x3B] == 0))
 		return;
@@ -506,11 +501,9 @@ void Game::loadImFile(void) {
 	if (_totFileData[0x3B] != 0)
 		path[strlen(path) - 1] = '0' + _totFileData[0x3B];
 
-	handle = _vm->_dataIO->openData(path);
-	if (handle < 0)
+	if (!_vm->_dataIO->existData(path))
 		return;
 
-	_vm->_dataIO->closeData(handle);
 	_imFileData = _vm->_dataIO->getData(path);
 }
 
@@ -675,12 +668,10 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	strcat(_curExtFile, ".EXT");
 }
 
-int16 Game::openLocTextFile(char *locTextFile, int language) {
-	int n;
-
-	n = strlen(locTextFile);
+bool Game::getLocTextFile(char *locTextFile, int language) {
+	int n = strlen(locTextFile);
 	if (n < 4)
-		return -1;
+		return false;
 
 	locTextFile[n - 4] = 0;
 	switch (language) {
@@ -712,43 +703,42 @@ int16 Game::openLocTextFile(char *locTextFile, int language) {
 		strcat(locTextFile, ".ang");
 		break;
 	}
-	return _vm->_dataIO->openData(locTextFile);
+
+	return _vm->_dataIO->existData(locTextFile);
 }
 
 byte *Game::loadLocTexts(int32 *dataSize) {
 	char locTextFile[20];
-	int16 handle;
-	int i;
 
 	strcpy(locTextFile, _curTotFile);
 
-	handle = openLocTextFile(locTextFile, _vm->_global->_languageWanted);
-	if (handle >= 0) {
+	bool found = getLocTextFile(locTextFile, _vm->_global->_languageWanted);
+	if (found) {
 
 		_foundTotLoc = true;
 		_vm->_global->_language = _vm->_global->_languageWanted;
 
 	} else if (!_foundTotLoc) {
-		bool found = false;
-
+		// Trying US for GB and vice versa
 		if (_vm->_global->_languageWanted == 2) {
-			handle = openLocTextFile(locTextFile, 5);
-			if (handle >= 0) {
+			found = getLocTextFile(locTextFile, 5);
+			if (found) {
 				_vm->_global->_language = 5;
 				found = true;
 			}
 		} else if (_vm->_global->_languageWanted == 5) {
-			handle = openLocTextFile(locTextFile, 2);
-			if (handle >= 0) {
+			found = getLocTextFile(locTextFile, 2);
+			if (found) {
 				_vm->_global->_language = 2;
 				found = true;
 			}
 		}
 
 		if (!found) {
-			for (i = 0; i < 10; i++) {
-				handle = openLocTextFile(locTextFile, i);
-				if (handle >= 0) {
+			// Looking for the first existing language
+			for (int i = 0; i < 10; i++) {
+				found = getLocTextFile(locTextFile, i);
+				if (found) {
 					_vm->_global->_language = i;
 					break;
 				}
@@ -760,14 +750,13 @@ byte *Game::loadLocTexts(int32 *dataSize) {
 	debugC(1, kDebugFileIO, "Using language %d for %s",
 			_vm->_global->_language, _curTotFile);
 
-	if (handle >= 0) {
-		_vm->_dataIO->closeData(handle);
-
+	if (found) {
 		if (dataSize)
 			*dataSize = _vm->_dataIO->getDataSize(locTextFile);
 
 		return _vm->_dataIO->getData(locTextFile);
 	}
+
 	return 0;
 }
 

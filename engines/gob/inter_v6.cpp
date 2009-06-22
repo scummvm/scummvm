@@ -432,11 +432,8 @@ void Inter_v6::probe16bitMusic(char *fileName) {
 
 	fileName[len - 1] = 'V';
 
-	int16 handle;
-	if ((handle = _vm->_dataIO->openData(fileName)) >= 0) {
-		_vm->_dataIO->closeData(handle);
+	if (_vm->_dataIO->existData(fileName))
 		return;
-	}
 
 	fileName[len - 1] = '8';
 }

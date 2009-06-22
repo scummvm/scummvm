@@ -1317,13 +1317,12 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 
 	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->getResultStr());
 	if (mode == SaveLoad::kSaveModeNone) {
-		handle = _vm->_dataIO->openData(_vm->_parse->getResultStr());
 
-		if (handle >= 0) {
-			_vm->_dataIO->closeData(handle);
+		if (_vm->_dataIO->existData(_vm->_parse->getResultStr()))
 			size = _vm->_dataIO->getDataSize(_vm->_parse->getResultStr());
-		} else
+		else
 			warning("File \"%s\" not found", _vm->_parse->getResultStr());
+
 	} else if (mode == SaveLoad::kSaveModeSave)
 		size = _vm->_saveLoad->getSize(_vm->_parse->getResultStr());
 	else if (mode == SaveLoad::kSaveModeExists)

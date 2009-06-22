@@ -80,6 +80,7 @@ public:
 	byte *getUnpackedData(const char *name);
 	void closeData(int16 handle);
 	int16 openData(const char *path);
+	bool existData(const char *path);
 	DataStream *openAsStream(int16 handle, bool dispose = false);
 
 	int32 getDataSize(const char *name);

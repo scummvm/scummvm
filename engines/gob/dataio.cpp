@@ -488,6 +488,16 @@ int16 DataIO::openData(const char *path) {
 	return file_open(path);
 }
 
+bool DataIO::existData(const char *path) {
+	int16 handle = openData(path);
+
+	if (handle < 0)
+		return false;
+
+	closeData(handle);
+	return true;
+}
+
 DataStream *DataIO::openAsStream(int16 handle, bool dispose) {
 	uint32 curPos = getPos(handle);
 	seekData(handle, 0, SEEK_END);
