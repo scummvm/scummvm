@@ -30,6 +30,7 @@
 #include "gob/script.h"
 #include "gob/dataio.h"
 #include "gob/parse.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -276,27 +277,39 @@ bool Script::load(const char *fileName) {
 
 	delete fileBase;
 
-	if (_vm->_dataIO->existData(_totFile.c_str())) {
-		if (lom) {
-			if (!loadLOM(_totFile)) {
-				unload();
-				return false;
-			}
-		} else {
-			if (!loadTOT(_totFile)) {
-				unload();
-				return false;
-			}
+	if (lom) {
+		if (!loadLOM(_totFile)) {
+			unload();
+			return false;
 		}
-	} else
-		return false;
+	} else {
+		if (!loadTOT(_totFile)) {
+			unload();
+			return false;
+		}
+	}
 
 	return true;
 }
 
 bool Script::loadTOT(const Common::String &fileName) {
-	_totSize = _vm->_dataIO->getDataSize(_totFile.c_str());
-	_totData = _vm->_dataIO->getData(_totFile.c_str());
+	if (_vm->_dataIO->existData(fileName.c_str())) {
+		_totSize = _vm->_dataIO->getDataSize(_totFile.c_str());
+		_totData = _vm->_dataIO->getData(_totFile.c_str());
+	} else  {
+		Common::MemoryReadStream *videoExtraData = _vm->_vidPlayer->getExtraData(fileName.c_str());
+
+		if (videoExtraData) {
+			warning("Loading TOT \"%s\" from video file", fileName.c_str());
+
+			_totSize = videoExtraData->size();
+			_totData = new byte[_totSize];
+
+			videoExtraData->read(_totData, _totSize);
+
+			delete videoExtraData;
+		}
+	}
 
 	return (_totData != 0);
 }
@@ -305,6 +318,8 @@ bool Script::loadLOM(const Common::String &fileName) {
 	warning("Urban Stub: loadLOM %s", _totFile.c_str());
 
 	_lomHandle = _vm->_dataIO->openData(_totFile.c_str());
+	if (_lomHandle < 0)
+		return false;
 
 	DataStream *stream = _vm->_dataIO->openAsStream(_lomHandle);
 
