@@ -498,18 +498,13 @@ void MDYPlayer::init() {
 	_timbresSize = 0;
 }
 
-bool MDYPlayer::loadMDY(const char *fileName) {
-	Common::File song;
-	byte mdyHeader[70];
-
-	unload();
-	song.open(fileName);
-	if (!song.isOpen())
-		return false;
+bool MDYPlayer::loadMDY(Common::SeekableReadStream &stream) {
+	unloadMDY();
 
 	_freeData = true;
 
-	song.read(mdyHeader, 70);
+	byte mdyHeader[70];
+	stream.read(mdyHeader, 70);
 
 	_tickBeat = mdyHeader[36];
 	_beatMeasure = mdyHeader[37];
@@ -527,8 +522,7 @@ bool MDYPlayer::loadMDY(const char *fileName) {
 		_pitchBendRangeStep = 300;
 
 	_data = new byte[_dataSize];
-	song.read(_data, _dataSize);
-	song.close();
+	stream.read(_data, _dataSize);
 
 	reset();
 	_playPos = _data;
@@ -536,18 +530,32 @@ bool MDYPlayer::loadMDY(const char *fileName) {
 	return true;
 }
 
-bool MDYPlayer::loadTBR(const char *fileName) {
-	Common::File timbres;
+bool MDYPlayer::loadMDY(const char *fileName) {
+	Common::File song;
 
-	unload();
-	timbres.open(fileName);
-	if (!timbres.isOpen())
+	song.open(fileName);
+	if (!song.isOpen())
 		return false;
 
-	_timbresSize = timbres.size();
-	_timbres = new byte[_timbresSize];
-	timbres.read(_timbres, _timbresSize);
-	timbres.close();
+	bool loaded = loadMDY(song);
+
+	song.close();
+
+	return loaded;
+}
+
+bool MDYPlayer::loadTBR(Common::SeekableReadStream &stream) { 
+	unloadTBR();
+
+	_timbresSize = stream.size();
+
+	// FIXME: _timbresSize is smaller than setVoice() expects!
+	uint32 rSize = MAX<uint32>(_timbresSize, 810);
+
+	_timbres = new byte[rSize];
+	memset(_timbres, 0, rSize);
+
+	stream.read(_timbres, _timbresSize);
 
 	reset();
 	setVoices();
@@ -555,9 +563,30 @@ bool MDYPlayer::loadTBR(const char *fileName) {
 	return true;
 }
 
-void MDYPlayer::unload() {
-	AdLib::unload();
+bool MDYPlayer::loadTBR(const char *fileName) {
+	Common::File timbres;
 
+	timbres.open(fileName);
+	if (!timbres.isOpen())
+		return false;
+
+	bool loaded = loadTBR(timbres);
+
+	timbres.close();
+
+	return loaded;
+}
+
+void MDYPlayer::unload() {
+	unloadTBR();
+	unloadMDY();
+}
+
+void MDYPlayer::unloadMDY() {
+	AdLib::unload();
+}
+
+void MDYPlayer::unloadTBR() {
 	delete[] _timbres;
 
 	_timbres = 0;
@@ -636,7 +665,7 @@ void MDYPlayer::interpret() {
 				setVoice(channel, timbre, false);
 				break;
 			case 0xE0:
-				warning("Pitch bend not yet implemented\n");
+				warning("Pitch bend not yet implemented");
 		
 				note = *(_playPos)++;
 				note += (unsigned)(*(_playPos++)) << 7;

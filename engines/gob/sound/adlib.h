@@ -142,7 +142,9 @@ public:
 	~MDYPlayer();
 
 	bool loadMDY(const char *fileName);
+	bool loadMDY(Common::SeekableReadStream &stream);
 	bool loadTBR(const char *fileName);
+	bool loadTBR(Common::SeekableReadStream &stream);
 
 	void unload();
 
@@ -161,6 +163,9 @@ protected:
 
 	void setVoices();
 	void setVoice(byte voice, byte instr, bool set);
+
+	void unloadTBR();
+	void unloadMDY();
 
 private:
 	void init();

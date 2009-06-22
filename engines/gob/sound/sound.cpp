@@ -279,7 +279,18 @@ bool Sound::adlibLoadMDY(const char *fileName) {
 
 	debugC(1, kDebugSound, "Adlib: Loading MDY data (\"%s\")", fileName);
 
-	return _mdyPlayer->loadMDY(fileName);
+	if (!_vm->_dataIO->existData(fileName)) {
+		warning("Can't open MDY file \"%s\"", fileName);
+		return false;
+	}
+
+	DataStream *stream = _vm->_dataIO->getDataStream(fileName);
+
+	bool loaded = _mdyPlayer->loadMDY(*stream);
+
+	delete stream;
+
+	return loaded;
 }
 
 bool Sound::adlibLoadTBR(const char *fileName) {
@@ -289,9 +300,20 @@ bool Sound::adlibLoadTBR(const char *fileName) {
 	if (!_mdyPlayer)
 		_mdyPlayer = new MDYPlayer(*_vm->_mixer);
 
+	if (!_vm->_dataIO->existData(fileName)) {
+		warning("Can't open TBR file \"%s\"", fileName);
+		return false;
+	}
+
 	debugC(1, kDebugSound, "Adlib: Loading MDY instruments (\"%s\")", fileName);
 
-	return _mdyPlayer->loadTBR(fileName);
+	DataStream *stream = _vm->_dataIO->getDataStream(fileName);
+
+	bool loaded = _mdyPlayer->loadTBR(*stream);
+
+	delete stream;
+
+	return loaded;
 }
 
 void Sound::adlibPlayTrack(const char *trackname) {
