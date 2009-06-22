@@ -1048,7 +1048,7 @@ void GrimEngine::saveActors(SaveGame *savedState) {
 	savedState->writeLESint32(_actors.size());
 	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 		Actor *a = *i;
-		PointerId ptr = makeIdFromPointer(this);
+		PointerId ptr = makeIdFromPointer(a);
 		savedState->writeLEUint32(ptr.low);
 		savedState->writeLEUint32(ptr.hi);
 		a->saveState(savedState);
@@ -1063,7 +1063,7 @@ void GrimEngine::saveFonts(SaveGame *savedState) {
 	savedState->writeLESint32(_fonts.size());
 	for (Common::List<Font *>::iterator i = _fonts.begin(); i != _fonts.end(); i++) {
 		Font *f = *i;
-		PointerId ptr = makeIdFromPointer(this);
+		PointerId ptr = makeIdFromPointer(f);
 		savedState->writeLEUint32(ptr.low);
 		savedState->writeLEUint32(ptr.hi);
 		Common::String filename = f->getFilename();
