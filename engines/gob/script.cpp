@@ -304,7 +304,7 @@ bool Script::load(const char *fileName) {
 
 	Common::String *fileBase;
 
-	char *dot;
+	const char *dot;
 	if ((dot = strrchr(fileName, '.'))) {
 		fileBase = new Common::String(fileName, dot);
 
