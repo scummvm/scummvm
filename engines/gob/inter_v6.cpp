@@ -81,7 +81,7 @@ void Inter_v6::o6_totSub() {
 
 	if (length & 0x80) {
 		evalExpr(0);
-		strcpy(totFile, _vm->_parse->_resultStr);
+		strcpy(totFile, _vm->_parse->getResultStr());
 	} else {
 		for (i = 0; i < length; i++)
 			totFile[i] = (char) *_vm->_global->_inter_execPtr++;
@@ -109,7 +109,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 	bool close;
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_parse->_resultStr, 127);
+	strncpy0(fileName, _vm->_parse->getResultStr(), 127);
 
 	x = _vm->_parse->parseValExpr();
 	y = _vm->_parse->parseValExpr();
@@ -175,7 +175,7 @@ void Inter_v6::o6_openItk() {
 	char fileName[32];
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_parse->_resultStr, 27);
+	strncpy0(fileName, _vm->_parse->getResultStr(), 27);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 
@@ -327,7 +327,7 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 			if (srcType == TYPE_IMM_INT16)
 				WRITE_VARO_UINT8(dest, result);
 			else
-				WRITE_VARO_STR(dest, _vm->_parse->_resultStr);
+				WRITE_VARO_STR(dest, _vm->_parse->getResultStr());
 			break;
 		}
 	}

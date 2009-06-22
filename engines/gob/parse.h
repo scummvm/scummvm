@@ -123,8 +123,7 @@ public:
 	int16 parseExpr(byte stopToken, byte *type);
 
 	int32 getResultInt();
-
-	char _resultStr[200];
+	char *getResultStr();
 
 private:
 	class Stack {
@@ -156,6 +155,7 @@ private:
 	GobEngine *_vm;
 
 	int32 _resultInt;
+	char _resultStr[200];
 
 	int32 encodePtr(byte *ptr, int type);
 	byte *decodePtr(int32 n);

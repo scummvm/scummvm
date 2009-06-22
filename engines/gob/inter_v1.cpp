@@ -599,7 +599,7 @@ void Inter_v1::o1_loadCurLayer() {
 void Inter_v1::o1_playCDTrack() {
 	evalExpr(0);
 	_vm->_sound->adlibPlayBgMusic(); // Mac version
-	_vm->_sound->cdPlay(_vm->_parse->_resultStr); // PC CD version
+	_vm->_sound->cdPlay(_vm->_parse->getResultStr()); // PC CD version
 }
 
 void Inter_v1::o1_getCDTrackPos() {
@@ -860,7 +860,7 @@ bool Inter_v1::o1_assign(OpFuncParams &params) {
 		if (srcType == TYPE_IMM_INT16)
 			WRITE_VARO_UINT8(dest, result);
 		else
-			WRITE_VARO_STR(dest, _vm->_parse->_resultStr);
+			WRITE_VARO_STR(dest, _vm->_parse->getResultStr());
 		break;
 
 	}
@@ -945,7 +945,7 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 	if ((*_vm->_global->_inter_execPtr & 0x80) != 0) {
 		_vm->_global->_inter_execPtr++;
 		evalExpr(0);
-		strncpy0(buf, _vm->_parse->_resultStr, 15);
+		strncpy0(buf, _vm->_parse->getResultStr(), 15);
 	} else {
 		size = (int8) *_vm->_global->_inter_execPtr++;
 		for (int i = 0; i < size; i++)
@@ -1587,13 +1587,13 @@ bool Inter_v1::o1_checkData(OpFuncParams &params) {
 
 	evalExpr(0);
 	varOff = _vm->_parse->parseVarIndex();
-	handle = _vm->_dataIO->openData(_vm->_parse->_resultStr);
+	handle = _vm->_dataIO->openData(_vm->_parse->getResultStr());
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	if (handle >= 0)
 		_vm->_dataIO->closeData(handle);
 	else
-		warning("File \"%s\" not found", _vm->_parse->_resultStr);
+		warning("File \"%s\" not found", _vm->_parse->getResultStr());
 	return false;
 }
 
@@ -1614,7 +1614,7 @@ bool Inter_v1::o1_insertStr(OpFuncParams &params) {
 	pos = _vm->_parse->parseValExpr();
 
 	char *str = GET_VARO_FSTR(strVar);
-	_vm->_util->insertStr(_vm->_parse->_resultStr, str, pos);
+	_vm->_util->insertStr(_vm->_parse->getResultStr(), str, pos);
 	return false;
 }
 
@@ -1639,7 +1639,7 @@ bool Inter_v1::o1_strstr(OpFuncParams &params) {
 	evalExpr(0);
 	resVar = _vm->_parse->parseVarIndex();
 
-	char *res = strstr(GET_VARO_STR(strVar), _vm->_parse->_resultStr);
+	char *res = strstr(GET_VARO_STR(strVar), _vm->_parse->getResultStr());
 	pos = res ? (res - (GET_VARO_STR(strVar))) : -1;
 	WRITE_VAR_OFFSET(resVar, pos);
 	return false;
@@ -1705,7 +1705,7 @@ bool Inter_v1::o1_loadFont(OpFuncParams &params) {
 		_vm->_dataIO->closeData(_vm->_game->_extHandle);
 
 	_vm->_draw->_fonts[index] =
-		_vm->_util->loadFont(_vm->_parse->_resultStr);
+		_vm->_util->loadFont(_vm->_parse->getResultStr());
 
 	if (_vm->_game->_extHandle >= 0)
 		_vm->_game->_extHandle = _vm->_dataIO->openData(_vm->_game->_curExtFile);
@@ -1738,7 +1738,7 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 		_vm->_dataIO->closeData(_vm->_game->_extHandle);
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataIO->openData(_vm->_parse->_resultStr);
+	handle = _vm->_dataIO->openData(_vm->_parse->getResultStr());
 	if (handle >= 0) {
 		DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
 
@@ -1778,7 +1778,7 @@ bool Inter_v1::o1_writeData(OpFuncParams &params) {
 	size = _vm->_parse->parseValExpr();
 	offset = _vm->_parse->parseValExpr();
 
-	warning("Attempted to write to file \"%s\"", _vm->_parse->_resultStr);
+	warning("Attempted to write to file \"%s\"", _vm->_parse->getResultStr());
 	WRITE_VAR(1, 0);
 
 	return false;
@@ -1787,8 +1787,8 @@ bool Inter_v1::o1_writeData(OpFuncParams &params) {
 bool Inter_v1::o1_manageDataFile(OpFuncParams &params) {
 	evalExpr(0);
 
-	if (_vm->_parse->_resultStr[0] != 0)
-		_vm->_dataIO->openDataFile(_vm->_parse->_resultStr);
+	if (_vm->_parse->getResultStr()[0] != 0)
+		_vm->_dataIO->openDataFile(_vm->_parse->getResultStr());
 	else
 		_vm->_dataIO->closeDataFile();
 	return false;

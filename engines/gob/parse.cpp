@@ -1144,4 +1144,8 @@ int32 Parse::getResultInt() {
 	return _resultInt;
 }
 
+char *Parse::getResultStr() {
+	return _resultStr;
+}
+
 } // End of namespace Gob

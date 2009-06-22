@@ -511,7 +511,7 @@ void Inter_v2::o2_playCDTrack() {
 		_vm->_draw->blitInvalidated();
 
 	evalExpr(0);
-	_vm->_sound->cdPlay(_vm->_parse->_resultStr);
+	_vm->_sound->cdPlay(_vm->_parse->getResultStr());
 }
 
 void Inter_v2::o2_waitCDTrackEnd() {
@@ -529,7 +529,7 @@ void Inter_v2::o2_readLIC() {
 	char path[40];
 
 	evalExpr(0);
-	strncpy0(path, _vm->_parse->_resultStr, 35);
+	strncpy0(path, _vm->_parse->getResultStr(), 35);
 	strcat(path, ".LIC");
 
 	_vm->_sound->cdLoadLIC(path);
@@ -577,7 +577,7 @@ void Inter_v2::o2_totSub() {
 
 	if (length & 0x80) {
 		evalExpr(0);
-		strcpy(totFile, _vm->_parse->_resultStr);
+		strcpy(totFile, _vm->_parse->getResultStr());
 	} else {
 		for (i = 0; i < length; i++)
 			totFile[i] = (char) *_vm->_global->_inter_execPtr++;
@@ -962,8 +962,8 @@ void Inter_v2::o2_playImd() {
 	bool close;
 
 	evalExpr(0);
-	_vm->_parse->_resultStr[8] = 0;
-	strncpy0(imd, _vm->_parse->_resultStr, 127);
+	_vm->_parse->getResultStr()[8] = 0;
+	strncpy0(imd, _vm->_parse->getResultStr(), 127);
 
 	x = _vm->_parse->parseValExpr();
 	y = _vm->_parse->parseValExpr();
@@ -976,7 +976,7 @@ void Inter_v2::o2_playImd() {
 	palCmd = 1 << (flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", _vm->_parse->_resultStr, x, y,
+			"paletteCmd %d (%d - %d), flags %X", _vm->_parse->getResultStr(), x, y,
 			startFrame, lastFrame, palCmd, palStart, palEnd, flags);
 
 	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
@@ -1015,10 +1015,10 @@ void Inter_v2::o2_getImdInfo() {
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
 	if ((_vm->getGameType() == kGameTypeWoodruff) &&
-			(!scumm_stricmp(_vm->_parse->_resultStr, "noixroule")))
-		strcpy(_vm->_parse->_resultStr, "noixroul");
+			(!scumm_stricmp(_vm->_parse->getResultStr(), "noixroule")))
+		strcpy(_vm->_parse->getResultStr(), "noixroul");
 
-	_vm->_vidPlayer->writeVideoInfo(_vm->_parse->_resultStr, varX, varY,
+	_vm->_vidPlayer->writeVideoInfo(_vm->_parse->getResultStr(), varX, varY,
 			varFrames, varWidth, varHeight);
 }
 
@@ -1026,7 +1026,7 @@ void Inter_v2::o2_openItk() {
 	char fileName[32];
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_parse->_resultStr, 27);
+	strncpy0(fileName, _vm->_parse->getResultStr(), 27);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 
@@ -1083,7 +1083,7 @@ bool Inter_v2::o2_assign(OpFuncParams &params) {
 			if (srcType == TYPE_IMM_INT16)
 				WRITE_VARO_UINT8(dest, result);
 			else
-				WRITE_VARO_STR(dest, _vm->_parse->_resultStr);
+				WRITE_VARO_STR(dest, _vm->_parse->getResultStr());
 			break;
 		}
 	}
@@ -1315,17 +1315,17 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	size = -1;
 	handle = 1;
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->_resultStr);
+	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->getResultStr());
 	if (mode == SaveLoad::kSaveModeNone) {
-		handle = _vm->_dataIO->openData(_vm->_parse->_resultStr);
+		handle = _vm->_dataIO->openData(_vm->_parse->getResultStr());
 
 		if (handle >= 0) {
 			_vm->_dataIO->closeData(handle);
-			size = _vm->_dataIO->getDataSize(_vm->_parse->_resultStr);
+			size = _vm->_dataIO->getDataSize(_vm->_parse->getResultStr());
 		} else
-			warning("File \"%s\" not found", _vm->_parse->_resultStr);
+			warning("File \"%s\" not found", _vm->_parse->getResultStr());
 	} else if (mode == SaveLoad::kSaveModeSave)
-		size = _vm->_saveLoad->getSize(_vm->_parse->_resultStr);
+		size = _vm->_saveLoad->getSize(_vm->_parse->getResultStr());
 	else if (mode == SaveLoad::kSaveModeExists)
 		size = 23;
 
@@ -1333,7 +1333,7 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 		handle = -1;
 
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
-			_vm->_parse->_resultStr, size);
+			_vm->_parse->getResultStr(), size);
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	WRITE_VAR(16, (uint32) size);
@@ -1358,12 +1358,12 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	retSize = 0;
 
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
-			_vm->_parse->_resultStr, dataVar, size, offset);
+			_vm->_parse->getResultStr(), dataVar, size, offset);
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->_resultStr);
+	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->getResultStr());
 	if (mode == SaveLoad::kSaveModeSave) {
 		WRITE_VAR(1, 1);
-		if (_vm->_saveLoad->load(_vm->_parse->_resultStr, dataVar, size, offset))
+		if (_vm->_saveLoad->load(_vm->_parse->getResultStr(), dataVar, size, offset))
 			WRITE_VAR(1, 0);
 		return false;
 	} else if (mode == SaveLoad::kSaveModeIgnore)
@@ -1371,7 +1371,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	if (size < 0) {
 		warning("Attempted to read a raw sprite from file \"%s\"",
-				_vm->_parse->_resultStr);
+				_vm->_parse->getResultStr());
 		return false ;
 	} else if (size == 0) {
 		dataVar = 0;
@@ -1380,13 +1380,13 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	buf = _variables->getAddressOff8(dataVar);
 
-	if (_vm->_parse->_resultStr[0] == 0) {
+	if (_vm->_parse->getResultStr()[0] == 0) {
 		WRITE_VAR(1, size);
 		return false;
 	}
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataIO->openData(_vm->_parse->_resultStr);
+	handle = _vm->_dataIO->openData(_vm->_parse->getResultStr());
 
 	if (handle < 0)
 		return false;
@@ -1428,16 +1428,16 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	offset = _vm->_parse->getResultInt();
 
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
-			_vm->_parse->_resultStr, dataVar, size, offset);
+			_vm->_parse->getResultStr(), dataVar, size, offset);
 
 	WRITE_VAR(1, 1);
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->_resultStr);
+	mode = _vm->_saveLoad->getSaveMode(_vm->_parse->getResultStr());
 	if (mode == SaveLoad::kSaveModeSave) {
-		if (_vm->_saveLoad->save(_vm->_parse->_resultStr, dataVar, size, offset))
+		if (_vm->_saveLoad->save(_vm->_parse->getResultStr(), dataVar, size, offset))
 			WRITE_VAR(1, 0);
 	} else if (mode == SaveLoad::kSaveModeNone)
-		warning("Attempted to write to file \"%s\"", _vm->_parse->_resultStr);
+		warning("Attempted to write to file \"%s\"", _vm->_parse->getResultStr());
 
 	return false;
 }
