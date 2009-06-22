@@ -1019,6 +1019,7 @@ void GrimEngine::savegameSave() {
 
 	savegameCallback();
 
+	saveFonts(_savedState);
 	saveActors(_savedState);
 
 	//Chore_Save(_savedState);
@@ -1044,9 +1045,24 @@ void GrimEngine::savegameSave() {
 void GrimEngine::saveActors(SaveGame *savedState) {
 	savedState->beginSection('ACTR');
 
+	savedState->writeLESint32(_actors.size());
 	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 		Actor *a = *i;
 		a->saveState(savedState);
+	}
+
+	savedState->endSection();
+}
+
+void GrimEngine::saveFonts(SaveGame *savedState) {
+	savedState->beginSection('FONT');
+
+	savedState->writeLESint32(_fonts.size());
+	for (Common::List<Font *>::iterator i = _fonts.begin(); i != _fonts.end(); i++) {
+		Font *f = *i;
+		Common::String filename = f->getFilename();
+		savedState->writeLESint32(filename.size());
+		savedState->write(filename.c_str(), filename.size());
 	}
 
 	savedState->endSection();

@@ -35,6 +35,7 @@ public:
 	Font(const char *filename, const char *data, int len);
 	~Font();
 
+	Common::String getFilename() { return _filename; }
 	int32 getHeight() { return _height; }
 	int32 getBaseOffsetY() { return _baseOffsetY; }
 	int32 getCharDataWidth(unsigned char c) { return _charHeaders[getCharIndex(c)].dataWidth; }
