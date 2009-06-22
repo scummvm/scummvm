@@ -201,6 +201,11 @@ public:
 		}
 	}
 
+	void registerFont(Font *a) { _fonts.push_back(a); }
+	void unregisterFont(Font *a) {
+		_fonts.remove(a);
+	}
+
 	void savegameSave();
 	void savegameRestore();
 	void saveActors(SaveGame *savedState);
@@ -254,6 +259,7 @@ private:
 	Actor *_selectedActor;
 	TextListType _textObjects;
 	PrimitiveListType _primitiveObjects;
+	Common::List<Font *> _fonts;
 };
 
 extern GrimEngine *g_grim;

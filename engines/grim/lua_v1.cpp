@@ -3589,6 +3589,7 @@ static void LockFont() {
 		if (result) {
 			result->luaRef();
 			lua_pushusertag(result, MKID_BE('FONT'));
+			g_grim->registerFont(result);
 			return;
 		}
 	}
