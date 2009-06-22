@@ -136,7 +136,7 @@ uint8 Font::getCharWidth(uint8 chr) const {
 }
 
 /**
- * @brief Draw a char to a Graphics::Surface
+ * @brief Draw a char to a Draci::Surface
  *
  * @param dst 	Pointer to the destination surface
  * @param chr 	Character to draw
@@ -202,7 +202,7 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty) const {
 }
 
 /**
- * @brief Draw a string to a Graphics::Surface
+ * @brief Draw a string to a Draci::Surface
  *
  * @param dst 		Pointer to the destination surface
  * @param str 		String to draw
