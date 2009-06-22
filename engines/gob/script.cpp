@@ -40,10 +40,8 @@ Script::Script(GobEngine *vm) : _vm(vm) {
 	_finished = true;
 
 	_totData = 0;
-
-	_totSize = 0;
-
 	_totPtr = 0;
+	_totSize = 0;
 
 	_lomHandle = -1;
 }
@@ -63,7 +61,7 @@ uint32 Script::read(byte *data, uint32 size) {
 	return toRead;
 }
 
-uint32 Script::peek(byte *data, uint32 size, int32 offset) {
+uint32 Script::peek(byte *data, uint32 size, int32 offset) const {
 	int32 totOffset = ((_totPtr + offset) - _totData);
 
 	if (totOffset < 0)
@@ -104,6 +102,7 @@ bool Script::seek(int32 offset, int whence) {
 	if ((offset < 0) || (((uint32) offset) >= _totSize))
 		return false;
 
+	// A successful seek means the script file continues to be executed
 	_finished = false;
 
 	_totPtr = _totData + offset;
@@ -306,13 +305,17 @@ bool Script::load(const char *fileName) {
 
 	const char *dot;
 	if ((dot = strrchr(fileName, '.'))) {
+		// fileName includes an extension
+
 		fileBase = new Common::String(fileName, dot);
 
+		// Is it a LOM file?
 		if (!scumm_stricmp(dot + 1, "LOM"))
 			lom = true;
 	} else
 		fileBase = new Common::String(fileName);
 
+	// If it's a LOM file, it includes the TOT file
 	_totFile = *fileBase + (lom ? ".lom" : ".tot");
 
 	delete fileBase;
@@ -334,9 +337,14 @@ bool Script::load(const char *fileName) {
 
 bool Script::loadTOT(const Common::String &fileName) {
 	if (_vm->_dataIO->existData(fileName.c_str())) {
+		// Direct data file
+
 		_totSize = _vm->_dataIO->getDataSize(_totFile.c_str());
 		_totData = _vm->_dataIO->getData(_totFile.c_str());
+
 	} else  {
+		// Trying to read the TOT file out of the currently loaded video file
+
 		Common::MemoryReadStream *videoExtraData = _vm->_vidPlayer->getExtraData(fileName.c_str());
 
 		if (videoExtraData) {
@@ -383,6 +391,7 @@ void Script::unloadTOT() {
 	if (_lomHandle >= 0)
 		_vm->_dataIO->closeData(_lomHandle);
 
+	// Unwind the call stack
 	while (!_callStack.empty())
 		pop();
 

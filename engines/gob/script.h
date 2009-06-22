@@ -39,61 +39,78 @@ public:
 	Script(GobEngine *vm);
 	~Script();
 
+	/** Read data and move the pointer accordingly. */
 	uint32 read(byte *data, uint32 size);
-	uint32 peek(byte *data, uint32 size, int32 offset = 0);
+	/** Read data (from an optional offset) without moving the pointer. */
+	uint32 peek(byte *data, uint32 size, int32 offset = 0) const;
 
-	byte   readByte();
-	char   readChar();
-	uint8  readUint8();
-	uint16 readUint16();
-	uint32 readUint32();
-	int8   readInt8();
-	int16  readInt16();
-	int32  readInt32();
-
-	char *readString(int32 length = -1);
-
-	byte   peekByte(int32 offset = 0);
-	char   peekChar(int32 offset = 0);
-	uint8  peekUint8(int32 offset = 0);
-	uint16 peekUint16(int32 offset = 0);
-	uint32 peekUint32(int32 offset = 0);
-	int8   peekInt8(int32 offset = 0);
-	int16  peekInt16(int32 offset = 0);
-	int32  peekInt32(int32 offset = 0);
-
-	char *peekString(int32 offset = 0);
-
-	int16 readVarIndex(uint16 *size = 0, uint16 *type = 0);
-	int16 readValExpr(byte stopToken = 99);
-	int16 readExpr(byte stopToken, byte *type);
-	void skipExpr(char stopToken);
-
-	char evalExpr(int16 *pRes);
-	bool evalBoolResult();
-
-	int32 getResultInt();
-	char *getResultStr();
-
+	// Stream properties
 	int32 pos() const;
 	int32 getSize() const;
+
+	// Stream seeking
 	bool seek(int32 offset, int whence = SEEK_SET);
 	bool skip(uint32 offset);
 
+	// Reading data
+	byte   readByte  ();
+	char   readChar  ();
+	uint8  readUint8 ();
+	uint16 readUint16();
+	uint32 readUint32();
+	int8   readInt8  ();
+	int16  readInt16 ();
+	int32  readInt32 ();
+	char  *readString(int32 length = -1);
+
+	// Peeking data
+	byte   peekByte  (int32 offset = 0);
+	char   peekChar  (int32 offset = 0);
+	uint8  peekUint8 (int32 offset = 0);
+	uint16 peekUint16(int32 offset = 0);
+	uint32 peekUint32(int32 offset = 0);
+	int8   peekInt8  (int32 offset = 0);
+	int16  peekInt16 (int32 offset = 0);
+	int32  peekInt32 (int32 offset = 0);
+	char  *peekString(int32 offset = 0);
+
+	// Expression parsing functions
+	int16 readVarIndex(uint16 *size = 0, uint16 *type = 0);
+	int16 readValExpr(byte stopToken = 99);
+	int16 readExpr(byte stopToken, byte *type);
+	void  skipExpr(char stopToken);
+
+	// Higher-level expression parsing functions
+	char evalExpr(int16 *pRes);
+	bool evalBoolResult();
+
+	// Accessing the result of expressions
+	int32 getResultInt();
+	char *getResultStr();
+
+	/** Returns the offset the specified pointer is within the script data. */
 	uint32 getOffset(byte *ptr);
+	/** Returns the raw data pointer. */
 	byte *getData();
 
+	/** Load a script file. */
 	bool load(const char *fileName);
-
+	/** Unload the script. */
 	void unload();
-
+	/** Was a script loaded? */
 	bool isLoaded() const;
 
+	/** Setting the 'finished' property. */
 	void setFinished(bool finished);
+	/** Querying the 'finished' property. */
 	bool isFinished() const;
 
+	// Call stack operations
+	/** Push the current script position onto the call stack. */
 	void push();
+	/** Pop a script position from the call stack (and return there). */
 	void pop(bool ret = true);
+	/** Push the current script position and branch to the specified offset. */
 	void call(uint32 offset);
 
 private:
@@ -108,20 +125,20 @@ private:
 	bool _finished;
 
 	Common::String _totFile;
-
 	byte *_totData;
-
-	uint32 _totSize;
-
 	byte *_totPtr;
+	uint32 _totSize;
 
 	int16 _lomHandle;
 
 	Common::Stack<CallEntry> _callStack;
 
+	/** Loading a TOT file. */
 	bool loadTOT(const Common::String &fileName);
+	/** Loading a LOM file. */
 	bool loadLOM(const Common::String &fileName);
 
+	/** Unloading a TOT file. */
 	void unloadTOT();
 };
 
