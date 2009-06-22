@@ -114,38 +114,54 @@ void MainActor::drawActorAt(Screen *screen, uint16 x, uint16 y) {
 
 void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 	// TODO: pathfinding! The character can walk literally anywhere
+	int newAction = _currentAction;
 
 	// Walking left...
 	if (x < _actorX) {
-		setAction(kWalkW);
+		newAction = kWalkW;
 		_actorX--;
-		drawActorAt(screen, _actorX, _actorY);
-		return;
+		if (ABS(y - _actorY) <= 30) {
+			setAction(newAction);
+			drawActorAt(screen, _actorX, _actorY);
+			return;
+		}
 	}
 
 	// Walking right...
 	if (x > _actorX) {
-		setAction(kWalkE);
+		newAction = kWalkE;
 		_actorX++;
-		drawActorAt(screen, _actorX, _actorY);
-		return;
+		if (ABS(y - _actorY) <= 30) {
+			setAction(newAction);
+			drawActorAt(screen, _actorX, _actorY);
+			return;
+		}
 	}
 
 	// Walking up...
 	if (y < _actorY) {
-		setAction(kWalkN);
+		if (newAction != _currentAction && newAction == kWalkW && _actorX - x > 30)
+			newAction = kWalkNW;	// up left
+		else if (newAction != _currentAction && newAction == kWalkE && x - _actorX > 30)
+			newAction = kWalkNE;	// up right
+		else
+			newAction = kWalkN;
 		_actorY--;
-		drawActorAt(screen, _actorX, _actorY);
-		return;
 	}
 
 	// Walking down...
 	if (y > _actorY) {
-		setAction(kWalkS);
+		if (newAction != _currentAction && newAction == kWalkW && _actorX - x > 30)
+			newAction = kWalkSW;	// down left
+		else if (newAction != _currentAction && newAction == kWalkE && x - _actorX > 30)
+			newAction = kWalkSE;	// down right
+		else
+			newAction = kWalkS;
 		_actorY++;
-		drawActorAt(screen, _actorX, _actorY);
-		return;
 	}
+
+	setAction(newAction);
+	drawActorAt(screen, _actorX, _actorY);
 }
 
 } // end of namespace Asylum
