@@ -55,8 +55,7 @@ public:
 	virtual void removeMusic();
 	virtual void fadeOutMusic();
 
-	virtual void playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat);
-	virtual void startSound(int channelNum, const byte *ptr, int size, int speed, int volume, bool loop);
+	virtual void playSound(int channel, const uint8 *data, int size, int volume);
 	virtual void stopSound(int channel);
 	
 	void doSync(Common::Serializer &s);

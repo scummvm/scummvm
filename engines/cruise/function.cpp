@@ -209,8 +209,8 @@ int16 Op_PlayFX(void) {
 		if (speed == -1)
 			speed = filesDatabase[sampleNum].subData.transparency;
 
-		_vm->sound().startSound(channelNum, filesDatabase[sampleNum].subData.ptr,
-			filesDatabase[sampleNum].width, speed, volume, false);
+		_vm->sound().playSound(channelNum, filesDatabase[sampleNum].subData.ptr,
+			filesDatabase[sampleNum].width, volume);
 	}
 
 	return (0);
@@ -226,8 +226,8 @@ int16 Op_LoopFX(void) {
 		if (speed == -1)
 			speed = filesDatabase[sampleNum].subData.transparency;
 
-		_vm->sound().startSound(channelNum, filesDatabase[sampleNum].subData.ptr,
-			filesDatabase[sampleNum].width, speed, volume, true);
+		_vm->sound().playSound(channelNum, filesDatabase[sampleNum].subData.ptr,
+			filesDatabase[sampleNum].width, volume);
 	}
 
 	return (0);

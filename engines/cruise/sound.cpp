@@ -757,7 +757,7 @@ void PCSound::fadeOutMusic() {
 	_player->fadeOut();
 }
 
-void PCSound::playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
+void PCSound::playSound(int channel, const uint8 *data, int size, int volume) {
 	debugC(5, kCruiseDebugSound, "PCSound::playSound() channel %d size %d", channel, size);
 	_soundDriver->playSample(data, size, channel, volume);
 }
@@ -812,11 +812,6 @@ void PCSound::startNote(int channel, int volume, int freq) {
 	warning("TODO: startNote");
 //	_soundDriver->setVolume(channel, volume);
 	_soundDriver->setChannelFrequency(channel, freq);
-}
-
-void PCSound::startSound(int channelNum, const byte *ptr, int size, int speed, int volume, bool loop) {
-	warning("TODO: validate startSound");
-	playSound(channelNum, speed, ptr, size, 0, 0, volume, loop);
 }
 
 void PCSound::doSync(Common::Serializer &s) {
