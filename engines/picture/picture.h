@@ -93,7 +93,6 @@ public:
 	void updateCamera();
 	
 	void talk(int16 slotIndex, int16 slotOffset);
-	void playText(int16 slotIndex, int16 slotOffset);
 
 	void walk(byte *walkData);
 	

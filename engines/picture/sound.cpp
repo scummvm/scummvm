@@ -58,47 +58,59 @@ Sound::~Sound() {
 }
 
 void Sound::playSpeech(int16 resIndex) {
-
-	// TODO
-
 	debug(0, "playSpeech(%d)", resIndex);
-
-	internalPlaySound(resIndex, kChannelTypeSpeech, 50 /*TODO*/, 64);
-
+	internalPlaySound(resIndex, kChannelTypeSpeech, 50 /*TODO*/, 0);
 }
 
 void Sound::playSound(int16 resIndex, int16 type, int16 volume) {
 
 	// TODO: Use the right volumes
 
-	debug(0, "playSound(%d, %d, %d)", resIndex, type, volume);
+	debug("playSound(%d, %d, %d)", resIndex, type, volume);
 	
 	if (volume == -1 || type == kChannelTypeSfx) {
 		if (type == kChannelTypeBackground) {
-			internalPlaySound(resIndex, type, 50 /*TODO*/, 64);
+			internalPlaySound(resIndex, type, 50 /*TODO*/, 0);
 		} else {
-			internalPlaySound(resIndex, type, 100 /*TODO*/, 64);
+			internalPlaySound(resIndex, type, 100 /*TODO*/, 0);
 		}
 	} else {
-		internalPlaySound(resIndex, type, 100 /*TODO*/, 64);
+		internalPlaySound(resIndex, type, 100 /*TODO*/, 0);
 	}
 
 }
 
 void Sound::playSoundAtPos(int16 resIndex, int16 x, int16 y) {
 
-	// TODO: Everything
-
 	debug(0, "playSoundAtPos(%d, %d, %d)", resIndex, x, y);
 
-	internalPlaySound(resIndex, 1, 50, 64);
+	int16 volume, panning = 0, deltaX = 0;
+	int8 scaling = _vm->_segmap->getScalingAtPoint(x, y);
+
+	if (scaling >= 0)
+		volume = 50 + ABS(scaling) / 2;
+	else
+		volume = 50 - ABS(scaling) / 2;
+
+	if (_vm->_cameraX > x)
+		deltaX = _vm->_cameraX - x;
+	else if (_vm->_cameraX + 640 < x)
+		deltaX = x - (_vm->_cameraX + 640);
+	if (deltaX > 600)
+		deltaX = 600;
+
+	volume = ((100 - deltaX / 6) * volume) / 100;
+	
+	if (_vm->_cameraX + 320 != x) {
+		panning = CLIP(x - (_vm->_cameraX + 320), -381, 381) / 3;
+	}
+
+	internalPlaySound(resIndex, 1, volume, panning);
 
 }
 
 void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 panning) {
 
-	// TODO
-	
 	if (resIndex == -1) {
 		// Stop all sounds
 		_vm->_mixer->stopAll();

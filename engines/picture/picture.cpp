@@ -417,7 +417,6 @@ void PictureEngine::talk(int16 slotIndex, int16 slotOffset) {
 	byte *scanData = _script->getSlotData(slotIndex) + slotOffset;
 	
 	while (*scanData < 0xF0) {
-	
 		if (*scanData == 0x19) {
 			scanData++;
 		} else if (*scanData == 0x14) {
@@ -427,7 +426,6 @@ void PictureEngine::talk(int16 slotIndex, int16 slotOffset) {
 		} else if (*scanData < 0x0A) {
 			scanData++;
 		}
-	
 		scanData++;
 	}
 	
@@ -440,28 +438,11 @@ void PictureEngine::talk(int16 slotIndex, int16 slotOffset) {
 		if (_doText) {
 			_screen->updateTalkText(slotIndex, slotOffset);
 		} else {
-			// TODO: font_sub_4B3E2
+			_screen->keepTalkTextItemsAlive();
 		}
 	} else {
 		_screen->updateTalkText(slotIndex, slotOffset);
 	}
-
-}
-
-void PictureEngine::playText(int16 slotIndex, int16 slotOffset) {
-
-	byte *textData = _script->getSlotData(slotIndex) + slotOffset;
-	
-	debug(0, "PictureEngine::playText() [textData = %s]", (char*)textData);
-
-	Common::String str;
-	while (*textData < 0xF0) {
-		if (*textData >= 32)
-			str += (char)*textData;
-		textData++;
-	}
-	
-	debug(0, "PictureEngine::playText() [%s]", str.c_str());
 
 }
 
