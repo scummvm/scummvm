@@ -163,8 +163,7 @@ VideoText::~VideoText() {
 void VideoText::loadFont(ResourcePack *resPack, uint32 resId) {
 	delete _fontResource;
 
-	ResourceEntry *fontRes = resPack->getResource(resId);
-	_fontResource = new GraphicResource(fontRes->data, fontRes->size);
+	_fontResource = new GraphicResource(resPack, resId);
 
     if (resId > 0) {
         // load font flag data

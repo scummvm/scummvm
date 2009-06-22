@@ -28,8 +28,10 @@
 
 namespace Asylum {
 
-GraphicResource::GraphicResource(byte *data, uint32 size) {
-	init(data, size);
+GraphicResource::GraphicResource(ResourcePack *resPack, int entry) {
+	ResourceEntry *resEntry = resPack->getResource(entry);
+	_entryNum = entry;
+	init(resEntry->data, resEntry->size);
 }
 
 GraphicResource::~GraphicResource() {
