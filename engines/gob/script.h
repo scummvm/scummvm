@@ -27,6 +27,7 @@
 #define GOB_SCRIPT_H
 
 #include "common/str.h"
+#include "common/stack.h"
 
 namespace Gob {
 
@@ -89,6 +90,10 @@ public:
 
 	void cuckoo(byte *totData, uint32 totSize);
 
+	void push();
+	void pop(bool ret = true);
+	void call(uint32 offset);
+
 /*	byte *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize = 0);
 	byte *loadTotResource(int16 id, int16 *dataSize = 0, int16 *width = 0, int16 *height = 0);
 
@@ -100,6 +105,13 @@ public:
 	int16 openLocTextFile(char *locTextFile, int language);*/
 
 private:
+	struct CallEntry {
+		byte *totData;
+		byte *totPtr;
+		uint32 totSize;
+		bool finished;
+	};
+
 	GobEngine *_vm;
 	Parse *_parser;
 
@@ -114,6 +126,8 @@ private:
 	byte *_totPtr;
 
 	int16 _lomHandle;
+
+	Common::Stack<CallEntry> _callStack;
 
 	bool loadTOT(const Common::String &fileName);
 	bool loadLOM(const Common::String &fileName);

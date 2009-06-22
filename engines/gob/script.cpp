@@ -358,4 +358,33 @@ void Script::cuckoo(byte *totData, uint32 totSize) {
 	_totSize = totSize;
 }
 
+void Script::push() {
+	CallEntry currentCall;
+
+	currentCall.totData = _totData;
+	currentCall.totPtr = _totPtr;
+	currentCall.totSize = _totSize;
+	currentCall.finished = _finished;
+
+	_callStack.push(currentCall);
+}
+
+void Script::pop(bool ret) {
+	assert(!_callStack.empty());
+
+	CallEntry lastCall = _callStack.pop();
+
+	if (ret) {
+		_totData = lastCall.totData;
+		_totPtr = lastCall.totPtr;
+		_totSize = lastCall.totSize;
+		_finished = lastCall.finished;
+	}
+}
+
+void Script::call(uint32 offset) {
+	push();
+	seek(offset);
+}
+
 } // End of namespace Gob

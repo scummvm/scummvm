@@ -638,11 +638,7 @@ void Inter_v1::o1_freeFontToSprite() {
 }
 
 bool Inter_v1::o1_callSub(OpFuncParams &params) {
-	uint16 offset;
-
-	offset = _vm->_game->_script->readUint16();
-
-	uint32 startPos = _vm->_game->_script->pos();
+	uint16 offset = _vm->_game->_script->readUint16();
 
 	debugC(5, kDebugGameFlow, "tot = \"%s\", offset = %d",
 			_vm->_game->_curTotFile, offset);
@@ -666,14 +662,16 @@ bool Inter_v1::o1_callSub(OpFuncParams &params) {
 		return false;
 	}
 
-	_vm->_game->_script->seek(offset);
+	_vm->_game->_script->call(offset);
 
-	if ((params.counter == params.cmdCount) && (params.retFlag == 2))
+	if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
+		_vm->_game->_script->pop(false);
 		return true;
+	}
 
 	callSub(2);
 
-	_vm->_game->_script->seek(startPos);
+	_vm->_game->_script->pop();
 
 	return false;
 }
@@ -714,17 +712,19 @@ bool Inter_v1::o1_switch(OpFuncParams &params) {
 
 	checkSwitchTable(offset);
 
-	uint32 startPos = _vm->_game->_script->pos();
+	_vm->_game->_script->call(offset);
 
-	_vm->_game->_script->seek(offset);
 	if (offset == 0)
 		_vm->_game->_script->setFinished(true);
 
-	if ((params.counter == params.cmdCount) && (params.retFlag == 2))
+	if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
+		_vm->_game->_script->pop(false);
 		return true;
+	}
 
 	funcBlock(0);
-	_vm->_game->_script->seek(startPos);
+
+	_vm->_game->_script->pop();
 
 	return false;
 }
@@ -804,10 +804,9 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 		if ((params.counter == params.cmdCount) && (params.retFlag == 2))
 			return true;
 
-		uint32 startPos = _vm->_game->_script->pos();
+		_vm->_game->_script->push();
 		funcBlock(0);
-
-		_vm->_game->_script->seek(startPos);
+		_vm->_game->_script->pop();
 
 		_vm->_game->_script->skip(_vm->_game->_script->peekUint16(2) + 2);
 
@@ -830,11 +829,9 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 		if ((params.counter == params.cmdCount) && (params.retFlag == 2))
 			return true;
 
-		uint32 startPos = _vm->_game->_script->pos();
-
+		_vm->_game->_script->push();
 		funcBlock(0);
-
-		_vm->_game->_script->seek(startPos);
+		_vm->_game->_script->pop();
 
 		_vm->_game->_script->skip(_vm->_game->_script->peekUint16(2) + 2);
 	}

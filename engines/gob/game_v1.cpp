@@ -55,7 +55,7 @@ void Game_v1::playTot(int16 skipPlay) {
 	int16 *oldBreakFrom = _vm->_inter->_breakFromLevel;
 	int16 *oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
 
-	uint32 startPos = _script->pos();
+	_script->push();
 
 	_vm->_inter->_nestLevel = &nestLevel;
 	_vm->_inter->_breakFromLevel = &breakFrom;
@@ -242,7 +242,7 @@ void Game_v1::playTot(int16 skipPlay) {
 	_vm->_inter->_breakFromLevel = oldBreakFrom;
 	_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 
-	_script->seek(startPos);
+	_script->pop();
 }
 
 void Game_v1::clearCollisions() {
@@ -358,13 +358,9 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 		_lastCollKey = checkMousePoint(1, &_lastCollId, &_lastCollAreaIndex);
 
 		if ((_lastCollKey != 0) && ((_lastCollId & 0x8000) != 0)) {
-			uint32 startPos = _script->pos();
-
-			_script->seek(_collisionAreas[_lastCollAreaIndex].funcEnter);
-
+			_script->call(_collisionAreas[_lastCollAreaIndex].funcEnter);
 			_vm->_inter->funcBlock(0);
-
-			_script->seek(startPos);
+			_script->pop();
 		}
 	}
 
@@ -426,13 +422,9 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 			if ((_lastCollKey != 0) &&
 			    (_collisionAreas[_lastCollAreaIndex].funcLeave != 0)) {
 
-				uint32 startPos = _script->pos();
-
-				_script->seek(_collisionAreas[_lastCollAreaIndex].funcLeave);
-
+				_script->call(_collisionAreas[_lastCollAreaIndex].funcLeave);
 				_vm->_inter->funcBlock(0);
-
-				_script->seek(startPos);
+				_script->pop();
 			}
 
 			_lastCollKey = 0;
@@ -467,13 +459,11 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 
 					if ((_lastCollKey != 0) &&
 						(_collisionAreas[_lastCollAreaIndex].funcLeave != 0)) {
-						uint32 startPos = _script->pos();
 
-						_script->seek(_collisionAreas[_lastCollAreaIndex].funcLeave);
-
+						_script->call(_collisionAreas[_lastCollAreaIndex].funcLeave);
 						_vm->_inter->funcBlock(0);
+						_script->pop();
 
-						_script->seek(startPos);
 					}
 					_lastCollKey = 0;
 					return key;
@@ -481,26 +471,22 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 
 				if ((_lastCollKey != 0) &&
 				    (_collisionAreas[_lastCollAreaIndex].funcLeave != 0)) {
-					uint32 startPos = _script->pos();
 
-					_script->seek(_collisionAreas[_lastCollAreaIndex].funcLeave);
-
+					_script->call(_collisionAreas[_lastCollAreaIndex].funcLeave);
 					_vm->_inter->funcBlock(0);
+					_script->pop();
 
-					_script->seek(startPos);
 				}
 
 				_lastCollKey =
 					checkMousePoint(1, &_lastCollId, &_lastCollAreaIndex);
 
 				if ((_lastCollKey != 0) && ((_lastCollId & 0x8000) != 0)) {
-					uint32 startPos = _script->pos();
 
-					_script->seek(_collisionAreas[_lastCollAreaIndex].funcEnter);
-
+					_script->call(_collisionAreas[_lastCollAreaIndex].funcEnter);
 					_vm->_inter->funcBlock(0);
+					_script->pop();
 
-					_script->seek(startPos);
 				}
 			} else {
 
@@ -514,24 +500,20 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 
 					if (key != _lastCollKey) {
 						if ((_lastCollKey != 0) && ((oldId & 0x8000) != 0)) {
-							uint32 startPos = _script->pos();
 
-							_script->seek(_collisionAreas[oldIndex].funcLeave);
-
+							_script->call(_collisionAreas[oldIndex].funcLeave);
 							_vm->_inter->funcBlock(0);
+							_script->pop();
 
-							_script->seek(startPos);
 						}
 
 						_lastCollKey = key;
 						if ((_lastCollKey != 0) && ((_lastCollId & 0x8000) != 0)) {
-							uint32 startPos = _script->pos();
 
-							_script->seek(_collisionAreas[_lastCollAreaIndex].funcEnter);
-
+							_script->call(_collisionAreas[_lastCollAreaIndex].funcEnter);
 							_vm->_inter->funcBlock(0);
+							_script->pop();
 
-							_script->seek(startPos);
 						}
 
 					}

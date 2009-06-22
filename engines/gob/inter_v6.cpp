@@ -263,14 +263,14 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 	if (size != 0) {
 		int16 src;
 
-		uint32 startPos = _vm->_game->_script->pos();
+		_vm->_game->_script->push();
 
 		src = _vm->_game->_script->readVarIndex(&size, 0);
 
 		memcpy(_vm->_inter->_variables->getAddressOff8(dest),
 				_vm->_inter->_variables->getAddressOff8(src), size * 4);
 
-		_vm->_game->_script->seek(startPos);
+		_vm->_game->_script->pop();
 
 		evalExpr(&src);
 

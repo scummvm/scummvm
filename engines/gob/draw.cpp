@@ -391,9 +391,8 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	adjustCoords(1, &right, &bottom);
 
 	if (READ_LE_UINT16(_vm->_game->_script->getData() + 0x7E) != 0) {
-		uint32 startPos = _vm->_game->_script->pos();
+		_vm->_game->_script->call(READ_LE_UINT16(_vm->_game->_script->getData() + 0x7E));
 
-		_vm->_game->_script->seek(READ_LE_UINT16(_vm->_game->_script->getData() + 0x7E));
 		WRITE_VAR(17, (uint32) id);
 		WRITE_VAR(18, (uint32) left);
 		WRITE_VAR(19, (uint32) top);
@@ -401,7 +400,7 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 		WRITE_VAR(21, (uint32) (bottom - top + 1));
 		_vm->_inter->funcBlock(0);
 
-		_vm->_game->_script->seek(startPos);
+		_vm->_game->_script->pop();
 	}
 
 	if (str[0] == '\0')

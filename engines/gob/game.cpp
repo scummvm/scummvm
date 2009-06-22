@@ -732,9 +732,7 @@ void Game::setCollisions(byte arg_0) {
 		if (((collArea->id & 0xC000) != 0x8000) || (collArea->funcSub == 0))
 			continue;
 
-		uint32 startPos = _script->pos();
-
-		_script->seek(collArea->funcSub);
+		_script->call(collArea->funcSub);
 
 		left = _script->readValExpr();
 		top = _script->readValExpr();
@@ -759,16 +757,14 @@ void Game::setCollisions(byte arg_0) {
 		collArea->right = left + width - 1;
 		collArea->bottom = top + height - 1;
 
-		_script->seek(startPos);
+		_script->pop();
 	}
 }
 
 void Game::collSub(uint16 offset) {
 	int16 collStackSize;
 
-	uint32 startPos = _script->pos();
-
-	_script->seek(offset);
+	_script->call(offset);
 
 	_shouldPushColls = 1;
 	collStackSize = _collStackSize;
@@ -780,7 +776,8 @@ void Game::collSub(uint16 offset) {
 
 	_shouldPushColls = 0;
 
-	_script->seek(startPos);
+	_script->pop();
+
 	setCollisions();
 }
 

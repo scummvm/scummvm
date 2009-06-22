@@ -62,7 +62,7 @@ void Game_v2::playTot(int16 skipPlay) {
 	oldBreakFrom = _vm->_inter->_breakFromLevel;
 	oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
 
-	uint32 startPos = _script->pos();
+	_script->push();
 
 	_vm->_inter->_nestLevel = &nestLevel;
 	_vm->_inter->_breakFromLevel = &breakFrom;
@@ -293,7 +293,7 @@ void Game_v2::playTot(int16 skipPlay) {
 	_vm->_inter->_breakFromLevel = oldBreakFrom;
 	_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 
-	_script->seek(startPos);
+	_script->pop();
 }
 
 void Game_v2::clearCollisions() {
