@@ -821,6 +821,7 @@ void PCSound::startSound(int channelNum, const byte *ptr, int size, int speed, i
 
 void PCSound::doSync(Common::Serializer &s) {
 	_player->doSync(s);
+	s.syncAsSint16LE(_genVolume);
 }
 
 const char *PCSound::musicName() {
