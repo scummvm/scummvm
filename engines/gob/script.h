@@ -90,6 +90,9 @@ public:
 
 	/** Returns the offset the specified pointer is within the script data. */
 	int32 getOffset(byte *ptr);
+	/** Returns the data pointer to the offset. */
+	byte *getData(int32 offset);
+
 	/** Returns the raw data pointer. */
 	byte *getData();
 

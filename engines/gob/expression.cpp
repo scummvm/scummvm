@@ -94,8 +94,7 @@ byte *Expression::decodePtr(int32 n) {
 
 	switch (n >> 28) {
 	case kExecPtr:
-		ptr = _vm->_game->_script->getData();
-		break;
+		return _vm->_game->_script->getData((n & 0x0FFFFFFF));
 	case kInterVar:
 		ptr = (byte *) _vm->_inter->_variables->getAddressOff8(0);
 		break;

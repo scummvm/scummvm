@@ -123,7 +123,19 @@ int32 Script::getOffset(byte *ptr) {
 	if (!_totData)
 		return -1;
 
+	if ((ptr < _totData) || (ptr >= (_totData + _totSize)))
+		return -1;
+
 	return ptr - _totData;
+}
+
+byte *Script::getData(int32 offset) {
+	if (!_totData)
+		return 0;
+	if ((offset < 0) || (((uint32) offset) >= _totSize))
+		return 0;
+
+	return _totData + offset;
 }
 
 byte *Script::getData() {
