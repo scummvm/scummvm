@@ -124,7 +124,7 @@ void Scene::updateCursor() {
 }
 
 void Scene::update() {
-	bool scrollScreen = false;
+	//bool scrollScreen = false;
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	MainActor *mainActor = _sceneResource->getMainActor();
 
@@ -136,7 +136,7 @@ void Scene::update() {
 	} else {
 		mainActor->walkTo(_screen, _mouseX, _mouseY);
 
-		uint32 newCursor = -1;
+		uint32 newCursor = 0;
 
 		// Change cursor
 		switch (mainActor->getCurrentAction()) {
@@ -177,19 +177,19 @@ void Scene::update() {
 	// Horizontal scrolling
 	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
 		_startX -= SCROLL_STEP;
-		scrollScreen = true;
+		//scrollScreen = true;
 	} else if (_mouseX > 640 - SCREEN_EDGES && _startX <= bg->surface.w - 640 - SCROLL_STEP) {
 		_startX += SCROLL_STEP;
-		scrollScreen = true;
+		//scrollScreen = true;
 	}
 
 	// Vertical scrolling
 	if (_mouseY < SCREEN_EDGES && _startY >= SCROLL_STEP) {
 		_startY -= SCROLL_STEP;
-		scrollScreen = true;
+		//scrollScreen = true;
 	} else if (_mouseY > 480 - SCREEN_EDGES && _startY <= bg->surface.h - 480 - SCROLL_STEP) {
 		_startY += SCROLL_STEP;
-		scrollScreen = true;
+		//scrollScreen = true;
 	}
 
 	// Copy the background to the back buffer before updating the scene animations
