@@ -259,6 +259,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\script.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\script.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\dataio.cpp"
 			>
 		</File>
