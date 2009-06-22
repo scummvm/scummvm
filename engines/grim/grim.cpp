@@ -1019,6 +1019,8 @@ void GrimEngine::savegameSave() {
 
 	savegameCallback();
 
+	saveActors(_savedState);
+
 	//Chore_Save(_savedState);
 	//Resource_Save(_savedState);
 	//Text_Save(_savedState);
@@ -1037,6 +1039,17 @@ void GrimEngine::savegameSave() {
 	g_imuse->pause(false);
 	g_smush->pause(false);
 	printf("GrimEngine::savegameSave() finished.\n");
+}
+
+void GrimEngine::saveActors(SaveGame *savedState) {
+	savedState->beginSection('ACTR');
+
+	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
+		Actor *a = *i;
+//		a->saveState(savedState);
+	}
+
+	savedState->endSection();
 }
 
 void GrimEngine::savegameCallback() {

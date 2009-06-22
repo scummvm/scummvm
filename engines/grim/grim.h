@@ -203,6 +203,7 @@ public:
 
 	void savegameSave();
 	void savegameRestore();
+	void saveActors(SaveGame *savedState);
 	void savegameCallback();
 	static void savegameReadStream(void *data, int32 size);
 	static void savegameWriteStream(void *data, int32 size);
