@@ -222,7 +222,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     stream->seek(0xD6B5A); // where actors action definitions start
 
     // FIXME Figure out all the actor action definitions
-    for (uint32 a=0; a < _worldStats->_numActions; a++) {
+    for (uint32 a = 0; a < _worldStats->_numActions; a++) {
         ActorActionDefinitions actorActionDef;
         memset(&actorActionDef, 0, sizeof(ActorActionDefinitions));
 
@@ -259,7 +259,7 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
         memset(&poly, 0, sizeof(PolyDefinitions));
 
         poly.numPoints = stream->readUint32LE();
-        if(poly.numPoints > 0)
+        if (poly.numPoints > 0)
             poly.points = new Common::Point[poly.numPoints];
         for (uint32 i = 0; i < poly.numPoints; i++) {
 			poly.points[i].y = stream->readUint32LE() & 0xFFFF;

@@ -97,7 +97,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		_mouseY = _ev->mouse.y;
 		break;
 	case Common::EVENT_LBUTTONUP:
-		//_leftClick = true;	// TODO
+		_leftClick = true;
 		break;
 	case Common::EVENT_RBUTTONUP:
 		delete _cursorResource;
@@ -127,6 +127,8 @@ void Scene::update() {
 	//bool scrollScreen = false;
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	MainActor *mainActor = _sceneResource->getMainActor();
+	WorldStats *worldStats = _sceneResource->getWorldStats();
+	int32 curHotspot = -1;
 
 	// TESTING
 	// Main actor walking
@@ -141,28 +143,28 @@ void Scene::update() {
 		// Change cursor
 		switch (mainActor->getCurrentAction()) {
 			case kWalkN:
-				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollUp;
+				newCursor = worldStats->_commonRes.curScrollUp;
 				break;
 			case kWalkNE:
-				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollUpRight;
+				newCursor = worldStats->_commonRes.curScrollUpRight;
 				break;
 			case kWalkNW:
-				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollUpLeft;
+				newCursor = worldStats->_commonRes.curScrollUpLeft;
 				break;
 			case kWalkS:
-				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollDown;
+				newCursor = worldStats->_commonRes.curScrollDown;
 				break;
 			case kWalkSE:
-				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollDownRight;
+				newCursor = worldStats->_commonRes.curScrollDownRight;
 				break;
 			case kWalkSW:
-				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollDownLeft;
+				newCursor = worldStats->_commonRes.curScrollDownLeft;
 				break;
 			case kWalkW:
-				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollLeft;
+				newCursor = worldStats->_commonRes.curScrollLeft;
 				break;
 			case kWalkE:
-				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollRight;
+				newCursor = worldStats->_commonRes.curScrollRight;
 				break;
 		}
 
@@ -171,8 +173,6 @@ void Scene::update() {
 			_cursorResource = new GraphicResource(_resPack, newCursor);
 		}
 	}
-
-	updateCursor();
 
 	// Horizontal scrolling
 	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
@@ -209,6 +209,38 @@ void Scene::update() {
 
 	if (g_debugPolygons)
 		ShowPolygons();
+
+	// Update cursor if it's in a hotspot
+	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
+		PolyDefinitions poly = _sceneResource->getGamePolygons()->_Polygons[p];
+		if (poly.boundingBox.contains(_mouseX, _mouseY)) {
+			curHotspot = (int32)p;
+			updateCursor();
+			break;
+		}
+	}
+
+	if (_leftClick) {
+		_leftClick = false;
+
+		if (curHotspot >= 0) {
+			for (uint32 a = 0; a < worldStats->_numActions; a++) {
+				if (worldStats->_actorsActionDef[a].polyIdx == curHotspot) {
+					printf("Hotspot: \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n", 
+							worldStats->_actorsActionDef[a].name,
+							worldStats->_actorsActionDef[a].polyIdx,
+							worldStats->_actorsActionDef[a].actionListIdx1,
+							worldStats->_actorsActionDef[a].actionListIdx2,
+							worldStats->_actorsActionDef[a].actionType,
+							worldStats->_actorsActionDef[a].soundResId);
+					// Play the SFX associated with the hotspot
+					// TODO: The hotspot sound res id is 0, seems like we need to get it from the associated action list
+					//_sound->playSfx(_resPack, worldStats->_actorsActionDef[a].soundResId);
+				}
+			}
+		}
+	}
+
 }
 
 #if 0
@@ -276,7 +308,7 @@ void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
 
 // POLYGONS DEBUG
 void Scene::ShowPolygons() {
-    for(uint32 p=0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
+    for (uint32 p = 0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
         Graphics::Surface sur;
         PolyDefinitions poly = _sceneResource->getGamePolygons()->_Polygons[p];
 
