@@ -27,13 +27,17 @@
 
 #include "asylum/asylum.h"
 #include "asylum/console.h"
+#include "asylum/scene.h"
 
 namespace Asylum {
+
+extern int g_debugPolygons;
 
 Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
 	DCmd_Register("video",			WRAP_METHOD(Console, cmdPlayVideo));
+	DVar_Register("debugpolygons",  &g_debugPolygons, DVAR_INT, 0);
 
 }
 

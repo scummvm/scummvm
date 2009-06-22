@@ -30,6 +30,8 @@ namespace Asylum {
 #define SCREEN_EDGES 40
 #define SCROLL_STEP 10
 
+int g_debugPolygons;
+
 Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
     _sceneIdx = sceneIdx;
     _sceneResource = new SceneResource;
@@ -52,6 +54,7 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 	_startX = _startY = 0;
 	_leftClick = false;
 	_isActive = false;
+	g_debugPolygons = 0;
 }
 
 Scene::~Scene() {
@@ -161,9 +164,8 @@ void Scene::update() {
 	//updateActor(_screen, _resPack, 9);	// going down the ladder
 	// TODO
 
-#if 0
-    ShowPolygons();
-#endif
+	if (g_debugPolygons)
+		ShowPolygons();
 }
 
 #if 0
@@ -180,27 +182,6 @@ void Scene::copyToSceneBackground(GraphicFrame *frame, int x, int y) {
 	}
 }
 #endif
-
-void Scene::copyToBackBufferClipped(GraphicFrame *frame, int x, int y) {
-	Common::Rect screenRect(_startX, _startY, _startX + 640, _startY + 480);
-	Common::Rect animRect(x, y, x + frame->surface.w, y + frame->surface.h);
-	animRect.clip(screenRect);
-
-	if (!animRect.isEmpty()) {
-		// Translate anim rectangle
-		animRect.translate(-_startX, -_startY);
-
-		int startX = animRect.right == 640 ? 0 : frame->surface.w - animRect.width();
-		_screen->copyToBackBufferWithTransparency(((byte*)frame->surface.pixels) +
-												  (frame->surface.h - animRect.height()) * 
-												  frame->surface.pitch + startX,
-												  frame->surface.pitch,
-												  animRect.left,
-												  animRect.top,
-												  animRect.width(),
-												  animRect.height());
-	}
-}
 
 void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 	Common::Rect screenRect(_startX, _startY, _startX + 640, _startY + 480);
@@ -237,7 +218,7 @@ void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
     fra->surface.drawLine(actor.boundingBox.top, actor.boundingBox.left, actor.boundingBox.bottom, actor.boundingBox.left, 0xFFFFFF);
 #endif
 
-	copyToBackBufferClipped(fra, actor.x, actor.y);
+	copyToBackBufferClipped(&fra->surface, actor.x, actor.y);
 
 	if (actor.tickCount < actor.frameCount - 1) {
 		actor.tickCount++;
