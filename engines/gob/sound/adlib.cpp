@@ -516,9 +516,9 @@ bool MDYPlayer::loadMDY(Common::SeekableReadStream &stream) {
 	_pitchBendRangeStep = 25*mdyHeader[59];
 	_basicTempo = mdyHeader[60] + (mdyHeader[61] << 8);
 
-	if (_pitchBendRangeStep < 25) 
+	if (_pitchBendRangeStep < 25)
 		_pitchBendRangeStep = 25;
-	else if (_pitchBendRangeStep > 300) 
+	else if (_pitchBendRangeStep > 300)
 		_pitchBendRangeStep = 300;
 
 	_data = new byte[_dataSize];
@@ -634,7 +634,7 @@ void MDYPlayer::interpret() {
 				tempoMult = *(_playPos++);
 				tempoFrac = *(_playPos++);
 				_tempo = _basicTempo * tempoMult + (unsigned)(((long)_basicTempo * tempoFrac) >> 7);
-				_playPos++;      
+				_playPos++;
 			}
 			_wait = *(_playPos++);
 			break;
@@ -704,8 +704,8 @@ void MDYPlayer::interpret() {
 void MDYPlayer::reset() {
 	AdLib::reset();
 
-// _soundMode 1 : Percussive mode. 
-	if (_soundMode == 1) { 
+// _soundMode 1 : Percussive mode.
+	if (_soundMode == 1) {
 		writeOPL(0xA6, 0);
 		writeOPL(0xB6, 0);
 		writeOPL(0xA7, 0);
@@ -732,7 +732,7 @@ void MDYPlayer::setVoices() {
 	debugC(6, kDebugSound, "Timbres counter: %d", _tbrCount);
 	timbrePtr += 2;
 	_tbrStart = READ_LE_UINT16(timbrePtr);
- 
+
 	timbrePtr += 2;
 	for (int i = 0; i < _tbrCount ; i++)
 		setVoice(i, i, true);
@@ -746,7 +746,7 @@ void MDYPlayer::setVoice(byte voice, byte instr, bool set) {
 
 	timbreName[9] = '\0';
 	for (int j = 0; j < 9; j++)
-		timbreName[j] = _timbres[6 + j + (instr * 9)]; 
+		timbreName[j] = _timbres[6 + j + (instr * 9)];
 	debugC(6, kDebugSound, "Loading timbre %s", timbreName);
 	
 	// i = 0 :  0  1  2  3  4  5  6  7  8  9 10 11 12 26
