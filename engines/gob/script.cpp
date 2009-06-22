@@ -419,6 +419,10 @@ bool Script::isFinished() const {
 }
 
 void Script::push() {
+	if (!isLoaded())
+		// Nothing to do
+		return;
+
 	CallEntry currentCall;
 
 	currentCall.totPtr = _totPtr;
@@ -428,6 +432,11 @@ void Script::push() {
 }
 
 void Script::pop(bool ret) {
+	if (!isLoaded())
+		// Nothing to do
+		return;
+
+	// Unmatched pop?
 	assert(!_callStack.empty());
 
 	CallEntry lastCall = _callStack.pop();
@@ -439,6 +448,10 @@ void Script::pop(bool ret) {
 }
 
 void Script::call(uint32 offset) {
+	if (!isLoaded())
+		// Nothing to do
+		return;
+
 	push();
 	seek(offset);
 }
