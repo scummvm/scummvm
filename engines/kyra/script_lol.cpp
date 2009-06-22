@@ -2303,7 +2303,7 @@ int LoLEngine::tlol_loadPalette(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setupPaletteFadeEx(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
-	_screen->getPalette(0).copy(_screen->getPalette(1));
+	_screen->copyPalette(0, 1);
 
 	_screen->getFadeParams(_screen->getPalette(0).getData(), param[0], _tim->_palDelayInc, _tim->_palDiff);
 	_tim->_palDelayAcc = 0;

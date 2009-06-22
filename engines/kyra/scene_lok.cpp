@@ -785,7 +785,7 @@ void KyraEngine_LoK::initSceneScreen(int brandonAlive) {
 				_screen->getPalette(0).copy(_screen->getPalette(4), 12, 1);
 
 			if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245 && (_brandonStatusBit & 1))
-				_screen->getPalette(0).copy(_screen->getPalette(10));
+				_screen->copyPalette(0, 10);
 
 			_screen->setScreenPalette(_screen->getPalette(0).getData());
 		}

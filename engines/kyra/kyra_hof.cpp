@@ -1656,7 +1656,7 @@ void KyraEngine_HoF::displayInvWsaLastFrame() {
 #pragma mark -
 
 void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
-	_screen->getPalette(2).copy(_screen->getPalette(0));
+	_screen->copyPalette(2, 0);
 	Common::SeekableReadStream *file = _res->createReadStream("_POTIONS.PAL");
 	if (!file)
 		error("Couldn't load cauldron palette");

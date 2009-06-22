@@ -1599,7 +1599,7 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 		warning("no main graphics file found");
 
 	if (_flags.platform == Common::kPlatformAmiga)
-		_screen->getPalette(1).copy(_screen->getPalette(0));
+		_screen->copyPalette(1, 0);
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0);
 }

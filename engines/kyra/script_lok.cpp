@@ -232,7 +232,7 @@ int KyraEngine_LoK::o1_fadeSpecialPalette(EMCState *script) {
 		if (_currentCharacter->sceneId != 45) {
 			if (stackPos(0) == 13) {
 				// TODO: Check this!
-				_screen->getPalette(0).copy(_screen->getPalette(12));
+				_screen->copyPalette(0, 12);
 				_screen->setScreenPalette(_screen->getPalette(0).getData());
 			}
 		} else {
@@ -1509,10 +1509,10 @@ int KyraEngine_LoK::o1_fadeEntirePalette(EMCState *script) {
 		if (cmd == 0) {
 			_screen->getPalette(2).clear();
 			fadePal = _screen->getPalette(2).getData();
-			_screen->getPalette(4).copy(_screen->getPalette(0));
+			_screen->copyPalette(4, 0);
 		} else if (cmd == 1) {
 			fadePal = _screen->getPalette(0).getData();
-			_screen->getPalette(0).copy(_screen->getPalette(4));
+			_screen->copyPalette(0, 4);
 		} else if (cmd == 2) {
 			fadePal = _screen->getPalette(0).getData();
 			_screen->getPalette(2).clear();
@@ -1521,14 +1521,14 @@ int KyraEngine_LoK::o1_fadeEntirePalette(EMCState *script) {
 		if (cmd == 0) {
 			_screen->getPalette(2).clear();
 			fadePal = _screen->getPalette(2).getData();
-			_screen->getPalette(3).copy(_screen->getPalette(0));
+			_screen->copyPalette(3, 0);
 		} else if (cmd == 1) {
 			//fadePal = _screen->getPalette(3);
 			warning("unimplemented o1_fadeEntirePalette function");
 			return 0;
 		} else if (cmd == 2) {
 			_screen->getPalette(2).clear();
-			_screen->getPalette(0).copy(_screen->getPalette(1));
+			_screen->copyPalette(0, 1);
 			fadePal = _screen->getPalette(0).getData();
 		}
 	}

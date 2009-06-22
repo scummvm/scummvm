@@ -241,11 +241,11 @@ void SeqPlayer::s1_loadPalette() {
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		if (!colNum)
-			_screen->getPalette(0).copy(_screen->getPalette(6));
+			_screen->copyPalette(0, 6);
 		else if (colNum == 3)
-			_screen->getPalette(0).copy(_screen->getPalette(7));
+			_screen->copyPalette(0, 7);
 		else if (colNum == 4)
-			_screen->getPalette(0).copy(_screen->getPalette(3));
+			_screen->copyPalette(0, 3);
 
 		_screen->setScreenPalette(_screen->getPalette(0).getData());
 	} else {

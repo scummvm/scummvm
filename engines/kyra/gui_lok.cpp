@@ -1024,7 +1024,7 @@ void GUI_LoK::fadePalette() {
 	static const int16 menuPalIndexes[] = {248, 249, 250, 251, 252, 253, 254, -1};
 	int index = 0;
 
-	_screen->getPalette(2).copy(_screen->getPalette(0));
+	_screen->copyPalette(2, 0);
 
 	for (int i = 0; i < 768; i++)
 		_screen->getPalette(0)[i] >>= 1;
@@ -1041,7 +1041,7 @@ void GUI_LoK::restorePalette() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
 
-	_screen->getPalette(0).copy(_screen->getPalette(2));
+	_screen->copyPalette(0, 2);
 	_screen->fadePalette(_screen->getPalette(0).getData(), 2);
 }
 

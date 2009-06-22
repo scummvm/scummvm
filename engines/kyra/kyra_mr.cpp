@@ -378,7 +378,7 @@ void KyraEngine_MR::playVQA(const char *name) {
 		}
 
 		_screen->hideMouse();
-		_screen->getPalette(1).copy(_screen->getPalette(0));
+		_screen->copyPalette(1, 0);
 		fadeOutMusic(60);
 		_screen->fadeToBlack(60);
 		_screen->clearPage(0);
@@ -395,7 +395,7 @@ void KyraEngine_MR::playVQA(const char *name) {
 		memset(pal, 1, sizeof(pal));
 		_screen->setScreenPalette(pal);
 		_screen->clearPage(0);
-		_screen->getPalette(0).copy(_screen->getPalette(1));
+		_screen->copyPalette(0, 1);
 		_wasPlayingVQA = true;
 	}
 }

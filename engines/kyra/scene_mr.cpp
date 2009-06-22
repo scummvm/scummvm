@@ -328,7 +328,7 @@ void KyraEngine_MR::freeSceneShapes() {
 
 void KyraEngine_MR::loadScenePal() {
 	char filename[16];
-	_screen->getPalette(2).copy(_screen->getPalette(0));
+	_screen->copyPalette(2, 0);
 	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
 	strcat(filename, ".COL");
 

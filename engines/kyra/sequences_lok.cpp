@@ -166,7 +166,7 @@ void KyraEngine_LoK::seq_introLogos() {
 	delay(60 * _tickLength);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		_screen->getPalette(0).copy(_screen->getPalette(1));
+		_screen->copyPalette(0, 1);
 		_screen->setScreenPalette(_screen->getPalette(0).getData());
 	}
 
@@ -181,7 +181,7 @@ void KyraEngine_LoK::seq_introLogos() {
 		return;
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		_screen->getPalette(0).copy(_screen->getPalette(2));
+		_screen->copyPalette(0, 2);
 		_screen->fadeToBlack();
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 4, 0);
 		_screen->fadeFromBlack();

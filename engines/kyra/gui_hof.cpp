@@ -365,7 +365,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 		_screen->showMouse();
 	}
 
-	_screen->getPalette(2).copy(_screen->getPalette(0));
+	_screen->copyPalette(2, 0);
 	_screen->fadeToBlack(7, &_updateFunctor);
 	_res->loadFileToBuf("_BOOK.COL", _screen->getPalette(0).getData(), 768);
 	loadBookBkgd();
@@ -393,7 +393,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 	}
 
 	setHandItem(_itemInHand);
-	_screen->getPalette(0).copy(_screen->getPalette(2));
+	_screen->copyPalette(0, 2);
 	_screen->fadePalette(_screen->getPalette(0).getData(), 7, &_updateFunctor);
 	_screen->showMouse();
 
@@ -800,7 +800,7 @@ void GUI_HoF::createScreenThumbnail(Graphics::Surface &dst) {
 }
 
 void GUI_HoF::setupPalette() {
-	_screen->getPalette(1).copy(_screen->getPalette(0));
+	_screen->copyPalette(1, 0);
 
 	uint8 *palette = _screen->getPalette(0).getData();
 	for (int i = 0; i < 768; ++i)
@@ -818,7 +818,7 @@ void GUI_HoF::setupPalette() {
 }
 
 void GUI_HoF::restorePalette() {
-	_screen->getPalette(0).copy(_screen->getPalette(1));
+	_screen->copyPalette(0, 1);
 	_screen->setScreenPalette(_screen->getPalette(0).getData());
 }
 

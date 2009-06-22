@@ -674,7 +674,7 @@ void KyraEngine_MR::showAlbum() {
 	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, _screenBuffer);
 	_screen->copyRegionToBuffer(4, 0, 0, 320, 200, _album.backUpPage);
 
-	_screen->getPalette(1).copy(_screen->getPalette(0));
+	_screen->copyPalette(1, 0);
 	_screen->fadeToBlack(9);
 
 	int itemInHand = _itemInHand;
@@ -707,7 +707,7 @@ void KyraEngine_MR::showAlbum() {
 	_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
 	_screen->copyBlockToPage(4, 0, 0, 320, 200, _album.backUpPage);
 
-	_screen->getPalette(0).copy(_screen->getPalette(1));
+	_screen->copyPalette(0, 1);
 	_screen->fadePalette(_screen->getPalette(0).getData(), 9);
 
 	delete[] _album.backUpRect;

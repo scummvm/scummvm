@@ -2666,6 +2666,10 @@ Palette &Screen::getPalette(int num) {
 	return *_palettes[num];
 }
 
+void Screen::copyPalette(const int dst, const int src) {
+	getPalette(dst).copy(getPalette(src));
+}
+
 byte Screen::getShapeFlag1(int x, int y) {
 	uint8 color = _shapePages[0][y * SCREEN_W + x];
 	color &= 0x80;

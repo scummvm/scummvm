@@ -77,7 +77,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 	for (int seqNum = startSeq; seqNum <= endSeq && !((skipFlag() && allowSkip) || shouldQuit() || (_abortIntroFlag && allowSkip) || _menuChoice); seqNum++) {
 		_screen->clearPage(0);
 		_screen->clearPage(8);
-		_screen->getPalette(1).copy(_screen->getPalette(0));
+		_screen->copyPalette(1, 0);
 		_seqFrameCounter = 0;
 		_seqStartTime = _system->getMillis();
 
@@ -2069,13 +2069,13 @@ void KyraEngine_HoF::seq_sequenceCommand(int command) {
 	case 3:
 		_screen->copyPage(2, 0);
 		_screen->fadePalette(_screen->getPalette(0).getData(), 16);
-		_screen->getPalette(1).copy(_screen->getPalette(0));
+		_screen->copyPalette(1, 0);
 		break;
 
 	case 4:
 		_screen->copyPage(2, 0);
 		_screen->fadePalette(_screen->getPalette(0).getData(), 36);
-		_screen->getPalette(1).copy(_screen->getPalette(0));
+		_screen->copyPalette(1, 0);
 		break;
 
 	case 5:

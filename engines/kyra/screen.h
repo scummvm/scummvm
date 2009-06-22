@@ -233,6 +233,7 @@ public:
 
 	void getRealPalette(int num, uint8 *dst);
 	Palette &getPalette(int num);
+	void copyPalette(const int dst, const int src);
 
 	// gui specific (processing on _curPage)
 	enum ShadeType {

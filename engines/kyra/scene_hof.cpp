@@ -396,7 +396,7 @@ void KyraEngine_HoF::unloadScene() {
 
 void KyraEngine_HoF::loadScenePal() {
 	uint16 sceneId = _mainCharacter.sceneId;
-	_screen->getPalette(1).copy(_screen->getPalette(0));
+	_screen->copyPalette(1, 0);
 
 	char filename[14];
 	strcpy(filename, _sceneList[sceneId].filename1);
