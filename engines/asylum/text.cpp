@@ -44,6 +44,9 @@ Text::~Text() {
 
 // loadFont at address 00435640
 void Text::loadFont(ResourcePack *resPack, uint32 resId) {
+	if (_fontResource && resId == _fontResource->getEntryNum())
+		return;
+
 	delete _fontResource;
 
 	_fontResource = new GraphicResource(resPack, resId);
