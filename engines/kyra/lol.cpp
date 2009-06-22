@@ -778,16 +778,16 @@ int LoLEngine::mainMenu() {
 
 void LoLEngine::startup() {
 	_screen->clearPage(0);
-	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, _screen->_currentPalette);
+	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, _screen->getPalette(0));
 
 	uint8 *tmpPal = new uint8[0x300];
-	memcpy(tmpPal, _screen->_currentPalette, 0x300);
-	memset(_screen->_currentPalette, 0x3f, 0x180);
-	memcpy(_screen->_currentPalette + 3, tmpPal + 3, 3);
-	memset(_screen->_currentPalette + 0x240, 0x3f, 12);
-	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay1, 1, 96);
-	_screen->generateOverlay(_screen->_currentPalette, _screen->_paletteOverlay2, 144, 65);
-	memcpy(_screen->_currentPalette, tmpPal, 0x300);
+	memcpy(tmpPal, _screen->getPalette(0), 0x300);
+	memset(_screen->getPalette(0), 0x3f, 0x180);
+	memcpy(_screen->getPalette(0) + 3, tmpPal + 3, 3);
+	memset(_screen->getPalette(0) + 0x240, 0x3f, 12);
+	_screen->generateOverlay(_screen->getPalette(0), _screen->_paletteOverlay1, 1, 96);
+	_screen->generateOverlay(_screen->getPalette(0), _screen->_paletteOverlay2, 144, 65);
+	memcpy(_screen->getPalette(0), tmpPal, 0x300);
 	delete[] tmpPal;
 
 	memset(_screen->getPalette(1), 0, 0x300);
@@ -1541,7 +1541,7 @@ void LoLEngine::restoreAfterSceneWindowDialogue(int redraw) {
 		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
 		gui_drawPlayField();
-		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 		_screen->_fadeFlag = 0;
 	}
 
@@ -2189,7 +2189,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	uint8 *swampCol = new uint8[768];
 
 	if (_currentLevel == 11 && !(_flagsTable[52] & 0x04)) {
-		uint8 *sc = _screen->_currentPalette;
+		uint8 *sc = _screen->getPalette(0);
 		uint8 *dc = _screen->getPalette(2);
 		for (int i = 1; i < 768; i++)
 			SWAP(sc[i], dc[i]);
@@ -2217,7 +2217,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	generateBrightnessPalette(swampCol, swampCol, _brightness, _lampEffect);
 	swampCol[0] = swampCol[1] = swampCol[2] = tpal[0] = tpal[1] = tpal[2] = 0;
 
-	generateBrightnessPalette(_screen->_currentPalette, s, _brightness, _lampEffect);
+	generateBrightnessPalette(_screen->getPalette(0), s, _brightness, _lampEffect);
 
 	int sX = 112;
 	int sY = 0;
@@ -2306,7 +2306,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	enableSysTimer(2);
 
 	if (_currentLevel != 11)
-		generateBrightnessPalette(_screen->_currentPalette, swampCol, _brightness, _lampEffect);
+		generateBrightnessPalette(_screen->getPalette(0), swampCol, _brightness, _lampEffect);
 
 	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, tpal, swampCol, 40, 0);
 
@@ -3660,7 +3660,7 @@ void LoLEngine::restoreSwampPalette() {
 		return;
 
 	uint8 *s = _screen->getPalette(2);
-	uint8 *d = _screen->_currentPalette;
+	uint8 *d = _screen->getPalette(0);
 	uint8 *d2 = _screen->getPalette(1);
 
 	for (int i = 1; i < 768; i++)

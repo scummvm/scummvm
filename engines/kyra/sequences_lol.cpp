@@ -650,7 +650,7 @@ void LoLEngine::showStarcraftLogo() {
 	_screen->clearPage(0);
 	_screen->clearPage(2);
 
-	int endframe = ci->open("ci01.wsa", 0, _screen->_currentPalette);
+	int endframe = ci->open("ci01.wsa", 0, _screen->getPalette(0));
 	if (!ci->opened()) {
 		delete ci;
 		return;

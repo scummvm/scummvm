@@ -86,7 +86,7 @@ void LoLEngine::loadLevel(int index) {
 	addLevelItems();
 	deleteMonstersFromBlock(_currentBlock);
 
-	_screen->generateGrayOverlay(_screen->_currentPalette, _screen->_grayOverlay, 32, 16, 0, 0, 128, true);
+	_screen->generateGrayOverlay(_screen->getPalette(0), _screen->_grayOverlay, 32, 16, 0, 0, 128, true);
 
 	_sceneDefaultUpdate = 0;
 	if (_screen->_fadeFlag == 3)
@@ -94,7 +94,7 @@ void LoLEngine::loadLevel(int index) {
 
 	gui_drawPlayField();
 
-	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+	setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 	setMouseCursorToItemInHand();
 
 	snd_playTrack(_curMusicTheme);
@@ -380,26 +380,26 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 
 	if (_lastOverridePalFilePtr) {
 		uint8 *tpal = _res->fileData(_lastOverridePalFilePtr, 0);
-		memcpy(_screen->_currentPalette, tpal, 384);
+		memcpy(_screen->getPalette(0), tpal, 384);
 		delete[] tpal;
 	} else {
-		memcpy(_screen->_currentPalette, v, 384);
+		memcpy(_screen->getPalette(0), v, 384);
 	}
 
 	v += 384;
 	/*uint8 tmpPal = new uint8[384];
-	memcpy(tmpPal, _screen->_currentPalette + 384, 384);
-	memset(_screen->_currentPalette + 384, 0xff, 384);
-	memcpy(_screen->_currentPalette + 384, tmpPal, 384);*/
+	memcpy(tmpPal, _screen->getPalette(0) + 384, 384);
+	memset(_screen->getPalette(0) + 384, 0xff, 384);
+	memcpy(_screen->getPalette(0) + 384, tmpPal, 384);*/
 
 	if (_currentLevel == 11) {
 		uint8 *swampPal = _res->fileData("SWAMPICE.COL", 0);
 		memcpy(_screen->getPalette(2), swampPal, 384);
-		memcpy(_screen->getPalette(2) + 384, _screen->_currentPalette + 384, 384);
+		memcpy(_screen->getPalette(2) + 384, _screen->getPalette(0) + 384, 384);
 		delete[] swampPal;
 
 		if (_flagsTable[52] & 0x04) {
-			uint8 *pal0 = _screen->_currentPalette;
+			uint8 *pal0 = _screen->getPalette(0);
 			uint8 *pal2 = _screen->getPalette(2);
 			for (int i = 1; i < 768; i++)
 				SWAP(pal0[i], pal2[i]);
@@ -427,7 +427,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	for (int i = 0; i < 7; i++) {
 		weight = 100 - (i * _lastSpecialColorWeight);
 		weight = (weight > 0) ? (weight * 255) / 100 : 0;
-		_screen->generateLevelOverlay(_screen->_currentPalette, _screen->getLevelOverlay(i), _lastSpecialColor, weight);
+		_screen->generateLevelOverlay(_screen->getPalette(0), _screen->getLevelOverlay(i), _lastSpecialColor, weight);
 
 		for (int ii = 0; ii < 128; ii++) {
 			if (_screen->getLevelOverlay(i)[ii] == 255)
@@ -442,7 +442,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		_screen->getLevelOverlay(7)[i] = i & 0xff;
 
 	_loadSuppFilesFlag = 0;
-	generateBrightnessPalette(_screen->_currentPalette, _screen->getPalette(1), _brightness, _lampEffect);
+	generateBrightnessPalette(_screen->getPalette(0), _screen->getPalette(1), _brightness, _lampEffect);
 
 	char tname[13];
 	snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);
@@ -548,14 +548,14 @@ void LoLEngine::updateLampStatus() {
 	if (!_brightness || !_lampOilStatus) {
 		newLampEffect = 8;
 		if (newLampEffect != _lampEffect && _screen->_fadeFlag == 0)
-			setPaletteBrightness(_screen->_currentPalette, _brightness, newLampEffect);
+			setPaletteBrightness(_screen->getPalette(0), _brightness, newLampEffect);
 	} else {
 		tmpOilStatus = (_lampOilStatus < 100) ? _lampOilStatus : 100;
 		newLampEffect = (3 - ((tmpOilStatus - 1) / 25)) << 1;
 
 		if (_lampEffect == -1) {
 			if (_screen->_fadeFlag == 0)
-				setPaletteBrightness(_screen->_currentPalette, _brightness, newLampEffect);
+				setPaletteBrightness(_screen->getPalette(0), _brightness, newLampEffect);
 			_lampStatusTimer = _system->getMillis() + (10 + _rnd.getRandomNumberRng(1, 30)) * _tickLength;
 		} else {
 			if ((_lampEffect & 0xfe) == (newLampEffect & 0xfe)) {
@@ -567,7 +567,7 @@ void LoLEngine::updateLampStatus() {
 				}
 			} else {
 				if (_screen->_fadeFlag == 0)
-					setPaletteBrightness(_screen->_currentPalette, _lampEffect, newLampEffect);
+					setPaletteBrightness(_screen->getPalette(0), _lampEffect, newLampEffect);
 			}
 		}
 	}
@@ -1331,11 +1331,11 @@ void LoLEngine::processGasExplosion(int soundId) {
 			p2[i * 3] = 0x3f;
 
 		uint32 ctime = _system->getMillis();
-		while (_screen->fadePaletteStep(_screen->_currentPalette, p2, _system->getMillis() - ctime, 10))
+		while (_screen->fadePaletteStep(_screen->getPalette(0), p2, _system->getMillis() - ctime, 10))
 			updateInput();
 
 		ctime = _system->getMillis();
-		while (_screen->fadePaletteStep(p2, _screen->_currentPalette, _system->getMillis() - ctime, 50))
+		while (_screen->fadePaletteStep(p2, _screen->getPalette(0), _system->getMillis() - ctime, 50))
 			updateInput();
 	}
 
@@ -1437,7 +1437,7 @@ void LoLEngine::prepareSpecialScene(int fieldType, int hasDialogue, int suspendG
 		gui_disableControls(controlMode);
 
 		if (fadeFlag) {
-			memcpy(_screen->getPalette(3) + 384, _screen->_currentPalette + 384, 384);
+			memcpy(_screen->getPalette(3) + 384, _screen->getPalette(0) + 384, 384);
 			_screen->loadSpecialColors(_screen->getPalette(3));
 			_screen->fadePalette(_screen->getPalette(3), 10);
 			_screen->_fadeFlag = 0;
@@ -1495,7 +1495,7 @@ int LoLEngine::restoreAfterSpecialScene(int fadeFlag, int redrawPlayField, int r
 		if (redrawPlayField)
 			gui_drawPlayField();
 
-		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 
 	} else {
 		_currentControlMode = 0;

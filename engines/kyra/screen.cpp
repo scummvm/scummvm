@@ -139,8 +139,7 @@ bool Screen::init() {
 		}
 	}
 
-	_currentPalette = _palettes[0]->getData();
-	setScreenPalette(_currentPalette);
+	setScreenPalette(getPalette(0));
 
 	_curDim = 0;
 	_charWidth = 0;
@@ -491,7 +490,7 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 }
 
 void Screen::fadeFromBlack(int delay, const UpdateFunctor *upFunc) {
-	fadePalette(_currentPalette, delay, upFunc);
+	fadePalette(getPalette(0), delay, upFunc);
 }
 
 void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
@@ -590,10 +589,10 @@ int Screen::fadePalStep(const uint8 *palette, int diff) {
 }
 
 void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
-	_currentPalette[index * 3 + 0] = red;
-	_currentPalette[index * 3 + 1] = green;
-	_currentPalette[index * 3 + 2] = blue;
-	setScreenPalette(_currentPalette);
+	getPalette(0)[index * 3 + 0] = red;
+	getPalette(0)[index * 3 + 1] = green;
+	getPalette(0)[index * 3 + 2] = blue;
+	setScreenPalette(getPalette(0));
 }
 
 void Screen::getRealPalette(int num, uint8 *dst) {

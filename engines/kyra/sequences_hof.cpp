@@ -1501,7 +1501,7 @@ void KyraEngine_HoF::seq_finaleActorScreen() {
 	static const uint8 colormap[] = {0, 0, 102, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	static const ScreenDim d = { 0x00, 0x0C, 0x28, 0xB4, 0xFF, 0x00, 0x00, 0x00 };
 
-	_screen->loadBitmap("finale.cps", 3, 3, _screen->_currentPalette);
+	_screen->loadBitmap("finale.cps", 3, 3, _screen->getPalette(0));
 	_screen->setFont(Screen::FID_GOLDFONT_FNT);
 
 	int talkieCreditsSize, talkieCreditsSpecialSize;
@@ -2663,9 +2663,9 @@ void KyraEngine_HoF::seq_displayScrollText(uint8 *data, const ScreenDim *d, int 
 
 		if (palCycle) {
 			for (int col = 133; col > 112; col--)
-				memcpy(_screen->_currentPalette + (col * 3), _screen->_currentPalette + ((col - 1) * 3), 3);
-			memcpy(_screen->_currentPalette + 336, _screen->_currentPalette + 399, 3);
-			_screen->setScreenPalette(_screen->_currentPalette);
+				memcpy(_screen->getPalette(0) + (col * 3), _screen->getPalette(0) + ((col - 1) * 3), 3);
+			memcpy(_screen->getPalette(0) + 336, _screen->getPalette(0) + 399, 3);
+			_screen->setScreenPalette(_screen->getPalette(0));
 		}
 
 		delayUntil(_seqSubFrameEndTimeInternal);
@@ -2725,7 +2725,7 @@ void KyraEngine_HoF::seq_showStarcraftLogo() {
 	assert(ci);
 	_screen->clearPage(2);
 	_res->loadPakFile("INTROGEN.PAK");
-	int endframe = ci->open("ci.wsa", 0, _screen->_currentPalette);
+	int endframe = ci->open("ci.wsa", 0, _screen->getPalette(0));
 	_res->unloadPakFile("INTROGEN.PAK");
 	if (!ci->opened()) {
 		delete ci;

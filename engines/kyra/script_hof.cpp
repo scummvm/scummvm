@@ -146,7 +146,7 @@ int KyraEngine_HoF::o2_meanWhileScene(EMCState *script) {
 	const char *palfile = stackPosString(1);
 
 	_screen->loadBitmap(cpsfile, 3, 3, 0);
-	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
+	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
 	_screen->loadPalette(palfile, _screen->getPalette(2));
 	_screen->fillRect(0, 0, 319, 199, 207);
 	_screen->setScreenPalette(_screen->getPalette(2));
@@ -1125,25 +1125,25 @@ int KyraEngine_HoF::o2_resetInputColorCode(EMCState *script) {
 
 int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_mushroomEffect(%p)", (const void *)script);
-	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
+	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
 
 	for (int i = 1; i < 768; i += 3)
-		_screen->_currentPalette[i] = 0;
+		_screen->getPalette(0)[i] = 0;
 	snd_playSoundEffect(106);
-	_screen->fadePalette(_screen->_currentPalette, 90, &_updateFunctor);
-	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
+	_screen->fadePalette(_screen->getPalette(0), 90, &_updateFunctor);
+	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
 
 	for (int i = 0; i < 768; i += 3) {
-		_screen->_currentPalette[i] = _screen->_currentPalette[i + 1] = 0;
-		_screen->_currentPalette[i + 2] += (((int8)_screen->_currentPalette[i + 2]) >> 1);
-		if (_screen->_currentPalette[i + 2] > 63)
-			_screen->_currentPalette[i + 2] = 63;
+		_screen->getPalette(0)[i] = _screen->getPalette(0)[i + 1] = 0;
+		_screen->getPalette(0)[i + 2] += (((int8)_screen->getPalette(0)[i + 2]) >> 1);
+		if (_screen->getPalette(0)[i + 2] > 63)
+			_screen->getPalette(0)[i + 2] = 63;
 	}
 	snd_playSoundEffect(106);
-	_screen->fadePalette(_screen->_currentPalette, 90, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0), 90, &_updateFunctor);
 
-	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
-	_screen->fadePalette(_screen->_currentPalette, 30, &_updateFunctor);
+	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
+	_screen->fadePalette(_screen->getPalette(0), 30, &_updateFunctor);
 
 	return 0;
 }
@@ -1396,7 +1396,7 @@ int KyraEngine_HoF::o2_demoFinale(EMCState *script) {
 	assert(strings);
 
 	_screen->clearPage(0);
-	_screen->loadPalette("THANKS.COL", _screen->_currentPalette);
+	_screen->loadPalette("THANKS.COL", _screen->getPalette(0));
 	_screen->loadBitmap("THANKS.CPS", 3, 3, 0);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 
@@ -1406,7 +1406,7 @@ int KyraEngine_HoF::o2_demoFinale(EMCState *script) {
 	for (int i = 0; i < 6; i++)
 		_text->printText(strings[i], _text->getCenterStringX(strings[i], 1, 319), y + i * 10, 255, 207, 0);
 
-	_screen->setScreenPalette(_screen->_currentPalette);
+	_screen->setScreenPalette(_screen->getPalette(0));
 	_screen->updateScreen();
 
 	_eventList.clear();

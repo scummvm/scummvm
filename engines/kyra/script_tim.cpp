@@ -953,7 +953,7 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 	if (wsaFlags & 1) {
 		if (_screen->_fadeFlag != 1)
 			_screen->fadeClearSceneWindow(10);
-		memcpy(_screen->getPalette(3) + 384, _screen->_currentPalette + 384, 384);
+		memcpy(_screen->getPalette(3) + 384, _screen->getPalette(0) + 384, 384);
 	} else if (wsaFlags & 2) {
 		_screen->fadeToBlack(10);
 	}

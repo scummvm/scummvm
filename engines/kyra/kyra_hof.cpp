@@ -415,7 +415,7 @@ void KyraEngine_HoF::startup() {
 	setupLangButtonShapes();
 	loadInventoryShapes();
 
-	_res->loadFileToBuf("PALETTE.COL", _screen->_currentPalette, 0x300);
+	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 0x300);
 	_screen->loadBitmap("_PLAYFLD.CPS", 3, 3, 0);
 	_screen->copyPage(3, 0);
 	_screen->showMouse();
@@ -919,9 +919,9 @@ void KyraEngine_HoF::showMessage(const char *string, int16 palIndex) {
 	if (string) {
 		if (palIndex != -1 || _fadeMessagePalette) {
 			palIndex *= 3;
-			memcpy(_messagePal, _screen->_currentPalette + palIndex, 3);
-			memmove(_screen->_currentPalette + 765, _screen->_currentPalette + palIndex, 3);
-			_screen->setScreenPalette(_screen->_currentPalette);
+			memcpy(_messagePal, _screen->getPalette(0) + palIndex, 3);
+			memmove(_screen->getPalette(0) + 765, _screen->getPalette(0) + palIndex, 3);
+			_screen->setScreenPalette(_screen->getPalette(0));
 		}
 
 		int x = _text->getCenterStringX(string, 0, 320);

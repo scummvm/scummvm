@@ -284,7 +284,7 @@ void Screen_LoL::fadeClearSceneWindow(int delay) {
 
 	uint8 *tpal = new uint8[768];
 
-	memcpy(tpal, _currentPalette, 768);
+	memcpy(tpal, getPalette(0), 768);
 	memset(tpal, 0, 384);
 	loadSpecialColors(tpal);
 	fadePalette(tpal, delay);

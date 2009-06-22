@@ -358,7 +358,7 @@ void KyraEngine_LoK::startup() {
 	loadButtonShapes();
 	initMainButtonList();
 	loadMainScreen();
-	_screen->loadPalette("PALETTE.COL", _screen->_currentPalette);
+	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 
 	// XXX
 	_animator->initAnimStateList();

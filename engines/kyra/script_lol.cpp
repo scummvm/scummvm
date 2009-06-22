@@ -864,7 +864,7 @@ int LoLEngine::olol_fadeClearSceneWindow(EMCState *script) {
 
 int LoLEngine::olol_fadeSequencePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeSequencePalette(%p)", (const void *)script);
-	memcpy(_screen->getPalette(3) + 0x180, _screen->_currentPalette + 0x180, 0x180);
+	memcpy(_screen->getPalette(3) + 0x180, _screen->getPalette(0) + 0x180, 0x180);
 	_screen->loadSpecialColors(_screen->getPalette(3));
 	_screen->fadePalette(_screen->getPalette(3), 10);
 	_screen->_fadeFlag = 0;
@@ -876,7 +876,7 @@ int LoLEngine::olol_redrawPlayfield(EMCState *script) {
 	if (_screen->_fadeFlag != 2)
 		_screen->fadeClearSceneWindow(10);
 	gui_drawPlayField();
-	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+	setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -1428,7 +1428,7 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	uint16 old = _brightness;
 	_brightness = stackPos(0);
 	if (stackPos(1) == 1)
-		setPaletteBrightness(_screen->_currentPalette, stackPos(0), _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), stackPos(0), _lampEffect);
 	return old;
 }
 
@@ -2002,8 +2002,8 @@ int LoLEngine::olol_drinkBezelCup(EMCState *script) {
 
 int LoLEngine::olol_restoreFadePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreFadePalette(%p)", (const void *)script);
-	memcpy(_screen->_currentPalette, _screen->getPalette(1), 384);
-	_screen->fadePalette(_screen->_currentPalette, 10);
+	memcpy(_screen->getPalette(0), _screen->getPalette(1), 384);
+	_screen->fadePalette(_screen->getPalette(0), 10);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -2390,7 +2390,7 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 
 	case 1:
 		tmp = _screen->getPalette(3);
-		memcpy(tmp + 0x180, _screen->_currentPalette + 0x180, 0x180);
+		memcpy(tmp + 0x180, _screen->getPalette(0) + 0x180, 0x180);
 		_screen->loadSpecialColors(tmp);
 		_screen->fadePalette(tmp, 10);
 		_screen->_fadeFlag = 0;
@@ -2411,7 +2411,7 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
 		gui_drawPlayField();
-		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 		_screen->_fadeFlag = 0;
 		break;
 

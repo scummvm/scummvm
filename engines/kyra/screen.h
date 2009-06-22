@@ -305,7 +305,6 @@ public:
 	int _charWidth;
 	int _charOffset;
 	int _curPage;
-	uint8 *_currentPalette;
 	uint8 *_shapePages[2];
 	int _maskMinY, _maskMaxY;
 	FontId _currentFont;

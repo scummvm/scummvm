@@ -1814,7 +1814,7 @@ int LoLEngine::clickedAutomap(Button *button) {
 	displayAutomap();
 
 	gui_drawPlayField();
-	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+	setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 	return 1;
 }
 
@@ -1842,7 +1842,7 @@ int LoLEngine::clickedLamp(Button *button) {
 	}
 
 	if (_brightness)
-		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 
 	return 1;
 }

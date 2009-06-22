@@ -1024,25 +1024,25 @@ void GUI_LoK::fadePalette() {
 	static const int16 menuPalIndexes[] = {248, 249, 250, 251, 252, 253, 254, -1};
 	int index = 0;
 
-	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
+	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
 
 	for (int i = 0; i < 768; i++)
-		_screen->_currentPalette[i] >>= 1;
+		_screen->getPalette(0)[i] >>= 1;
 
 	while (menuPalIndexes[index] != -1) {
-		memcpy(&_screen->_currentPalette[menuPalIndexes[index]*3], &_screen->getPalette(2)[menuPalIndexes[index]*3], 3);
+		memcpy(&_screen->getPalette(0)[menuPalIndexes[index]*3], &_screen->getPalette(2)[menuPalIndexes[index]*3], 3);
 		index++;
 	}
 
-	_screen->fadePalette(_screen->_currentPalette, 2);
+	_screen->fadePalette(_screen->getPalette(0), 2);
 }
 
 void GUI_LoK::restorePalette() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
 
-	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
-	_screen->fadePalette(_screen->_currentPalette, 2);
+	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
+	_screen->fadePalette(_screen->getPalette(0), 2);
 }
 
 #pragma mark -

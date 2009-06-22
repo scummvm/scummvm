@@ -92,7 +92,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 }
 
 void SeqPlayer::makeHandShapes() {
-	_screen->loadBitmap("WRITING.CPS", 3, 3, _screen->_currentPalette);
+	_screen->loadBitmap("WRITING.CPS", 3, 3, _screen->getPalette(0));
 	if (_vm->gameFlags().platform == Common::kPlatformMacintosh || _vm->gameFlags().platform == Common::kPlatformAmiga) {
 		freeHandShapes();
 
@@ -241,25 +241,25 @@ void SeqPlayer::s1_loadPalette() {
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		if (!colNum)
-			memcpy(_screen->_currentPalette, _screen->_currentPalette + 576, 3*32);
+			memcpy(_screen->getPalette(0), _screen->getPalette(0) + 576, 3*32);
 		else if (colNum == 3)
-			memcpy(_screen->_currentPalette, _screen->_currentPalette + 672, 3*32);
+			memcpy(_screen->getPalette(0), _screen->getPalette(0) + 672, 3*32);
 		else if (colNum == 4)
-			memcpy(_screen->_currentPalette, _screen->_currentPalette + 288, 3*32);
+			memcpy(_screen->getPalette(0), _screen->getPalette(0) + 288, 3*32);
 
-		_screen->setScreenPalette(_screen->_currentPalette);
+		_screen->setScreenPalette(_screen->getPalette(0));
 	} else {
 		uint32 fileSize;
 		uint8 *srcData;
 		srcData = _res->fileData(_vm->seqCOLTable()[colNum], &fileSize);
-		memcpy(_screen->_currentPalette, srcData, fileSize);
+		memcpy(_screen->getPalette(0), srcData, fileSize);
 		delete[] srcData;
 	}
 }
 
 void SeqPlayer::s1_loadBitmap() {
 	uint8 cpsNum = *_seqData++;
-	_screen->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, _screen->_currentPalette);
+	_screen->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, _screen->getPalette(0));
 }
 
 void SeqPlayer::s1_fadeToBlack() {
