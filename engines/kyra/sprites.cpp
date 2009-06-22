@@ -420,16 +420,16 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		if (_vm->queryGameFlag(0xA0))
-			memcpy(_screen->getPalette(3), _screen->getPalette(4), 32*3);
+			_screen->getPalette(3).copy(_screen->getPalette(4));
 		else
-			memcpy(_screen->getPalette(3), _screen->getPalette(0), 32*3);
+			_screen->getPalette(3).copy(_screen->getPalette(0));
 	} else {
 		if (_vm->queryGameFlag(0xA0))
-			memcpy(_screen->getPalette(1), _screen->getPalette(3), 768);
+			_screen->getPalette(1).copy(_screen->getPalette(3));
 		else
-			memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+			_screen->getPalette(1).copy(_screen->getPalette(0));
 
-		_screen->loadPalette(_dat + 0x17, _screen->getPalette(1) + 684, 60);
+		_screen->loadPalette(_dat + 0x17, _screen->getPalette(1).getData() + 684, 60);
 	}
 	uint8 *data = _dat + 0x6B;
 

@@ -139,7 +139,7 @@ bool Screen::init() {
 		}
 	}
 
-	setScreenPalette(getPalette(0));
+	setScreenPalette(getPalette(0).getData());
 
 	_curDim = 0;
 	_charWidth = 0;
@@ -490,7 +490,7 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 }
 
 void Screen::fadeFromBlack(int delay, const UpdateFunctor *upFunc) {
-	fadePalette(getPalette(0), delay, upFunc);
+	fadePalette(getPalette(0).getData(), delay, upFunc);
 }
 
 void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
@@ -592,12 +592,12 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 	getPalette(0)[index * 3 + 0] = red;
 	getPalette(0)[index * 3 + 1] = green;
 	getPalette(0)[index * 3 + 2] = blue;
-	setScreenPalette(getPalette(0));
+	setScreenPalette(getPalette(0).getData());
 }
 
 void Screen::getRealPalette(int num, uint8 *dst) {
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
-	const uint8 *palData = getPalette(num);
+	const uint8 *palData = getPalette(num).getData();
 
 	if (!palData) {
 		memset(dst, 0, colors * 3);
@@ -2661,9 +2661,9 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	_system->updateScreen();
 }
 
-uint8 *Screen::getPalette(int num) {
+Palette &Screen::getPalette(int num) {
 	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 7 : 4));
-	return _palettes[num]->getData();
+	return *_palettes[num];
 }
 
 byte Screen::getShapeFlag1(int x, int y) {
@@ -3288,9 +3288,9 @@ void Palette::copy(const Palette &source, int firstCol, int numCols, int dstStar
 	if (dstStart == -1)
 		dstStart = firstCol;
 
-	assert(numCols >= 0 && numCols < _numColors);
-	assert(firstCol >= 0 && firstCol < source.getNumColors());
-	assert(dstStart >= 0 && dstStart + numCols < _numColors);
+	assert(numCols >= 0 && numCols <= _numColors);
+	assert(firstCol >= 0 && firstCol <= source.getNumColors());
+	assert(dstStart >= 0 && dstStart + numCols <= _numColors);
 
 	memcpy(_palData + dstStart * 3, source._palData + firstCol * 3, numCols * 3);
 }
@@ -3302,9 +3302,9 @@ void Palette::copy(const uint8 *source, int firstCol, int numCols, int dstStart)
 	if (dstStart == -1)
 		dstStart = firstCol;
 
-	assert(numCols >= 0 && numCols < _numColors);
+	assert(numCols >= 0 && numCols <= _numColors);
 	assert(firstCol >= 0);
-	assert(dstStart >= 0 && dstStart + numCols < _numColors);
+	assert(dstStart >= 0 && dstStart + numCols <= _numColors);
 
 	memcpy(_palData + dstStart * 3, source + firstCol * 3, numCols * 3);
 }

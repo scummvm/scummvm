@@ -328,25 +328,23 @@ void KyraEngine_MR::freeSceneShapes() {
 
 void KyraEngine_MR::loadScenePal() {
 	char filename[16];
-	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
+	_screen->getPalette(2).copy(_screen->getPalette(0));
 	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
 	strcat(filename, ".COL");
 
 	_screen->loadBitmap(filename, 3, 3, 0);
-	memcpy(_screen->getPalette(2), _screen->getCPagePtr(3), 432);
-	memset(_screen->getPalette(2), 0, 3);
+	_screen->getPalette(2).copy(_screen->getCPagePtr(3), 0, 144);
+	memset(_screen->getPalette(2).getData(), 0, 3);
 
 	for (int i = 144; i <= 167; ++i) {
-		uint8 *palette = _screen->getPalette(2) + i * 3;
+		uint8 *palette = _screen->getPalette(2).getData() + i * 3;
 		palette[0] = palette[2] = 63;
 		palette[1] = 0;
 	}
 
-	_screen->generateOverlay(_screen->getPalette(2), _paletteOverlay, 0xF0, 0x19);
+	_screen->generateOverlay(_screen->getPalette(2).getData(), _paletteOverlay, 0xF0, 0x19);
 
-	uint8 *palette = _screen->getPalette(2) + 432;
-	const uint8 *costPal = _costPalBuffer + _characterShapeFile * 72;
-	memcpy(palette, costPal, 24*3);
+	_screen->getPalette(2).copy(_costPalBuffer, _characterShapeFile * 24, 24, 144);
 }
 
 void KyraEngine_MR::loadSceneMsc() {
@@ -609,17 +607,17 @@ void KyraEngine_MR::initSceneScreen(int unk1) {
 	}
 
 	if (_noScriptEnter) {
-		memset(_screen->getPalette(0), 0, 432);
+		memset(_screen->getPalette(0).getData(), 0, 432);
 		if (!_wasPlayingVQA)
-			_screen->setScreenPalette(_screen->getPalette(0));
+			_screen->setScreenPalette(_screen->getPalette(0).getData());
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 
 	if (_noScriptEnter) {
 		if (!_wasPlayingVQA)
-			_screen->setScreenPalette(_screen->getPalette(2));
-		memcpy(_screen->getPalette(0), _screen->getPalette(2), 432);
+			_screen->setScreenPalette(_screen->getPalette(2).getData());
+		_screen->getPalette(0).copy(_screen->getPalette(2), 0, 144);
 		if (_wasPlayingVQA) {
 			_screen->fadeFromBlack(0x3C);
 			_wasPlayingVQA = false;

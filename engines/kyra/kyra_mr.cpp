@@ -230,8 +230,8 @@ Common::Error KyraEngine_MR::init() {
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
 
-	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 768);
-	_screen->setScreenPalette(_screen->getPalette(0));
+	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0).getData(), 768);
+	_screen->setScreenPalette(_screen->getPalette(0).getData());
 
 	return Common::kNoError;
 }
@@ -267,7 +267,7 @@ Common::Error KyraEngine_MR::go() {
 		_screen->_curPage = 0;
 		_screen->clearPage(0);
 
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 
 		// XXX
 		playMenuAudioFile();
@@ -328,8 +328,8 @@ Common::Error KyraEngine_MR::go() {
 
 void KyraEngine_MR::initMainMenu() {
 	_menuAnim = new WSAMovie_v2(this);
-	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0));
-	memset(_screen->getPalette(0), 0, 3);
+	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0).getData());
+	memset(_screen->getPalette(0).getData(), 0, 3);
 
 	_menu = new MainMenu(this);
 	MainMenu::StaticData data = {
@@ -378,7 +378,7 @@ void KyraEngine_MR::playVQA(const char *name) {
 		}
 
 		_screen->hideMouse();
-		memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+		_screen->getPalette(1).copy(_screen->getPalette(0));
 		fadeOutMusic(60);
 		_screen->fadeToBlack(60);
 		_screen->clearPage(0);
@@ -395,7 +395,7 @@ void KyraEngine_MR::playVQA(const char *name) {
 		memset(pal, 1, sizeof(pal));
 		_screen->setScreenPalette(pal);
 		_screen->clearPage(0);
-		memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+		_screen->getPalette(0).copy(_screen->getPalette(1));
 		_wasPlayingVQA = true;
 	}
 }
@@ -627,9 +627,9 @@ void KyraEngine_MR::startup() {
 	loadInterfaceShapes();
 
 	musicUpdate(0);
-	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 768);
+	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0).getData(), 768);
 	_paletteOverlay = new uint8[256];
-	_screen->generateOverlay(_screen->getPalette(0), _paletteOverlay, 0xF0, 0x19);
+	_screen->generateOverlay(_screen->getPalette(0).getData(), _paletteOverlay, 0xF0, 0x19);
 
 	loadInterface();
 	musicUpdate(0);
@@ -899,7 +899,7 @@ void KyraEngine_MR::updateCharAnimFrame(int character, int *table) {
 void KyraEngine_MR::updateCharPal(int unk1) {
 	int layer = _screen->getLayer(_mainCharacter.x1, _mainCharacter.y1) - 1;
 	const uint8 *src = _costPalBuffer + _characterShapeFile * 72;
-	uint8 *dst = _screen->getPalette(0) + 432;
+	uint8 *dst = _screen->getPalette(0).getData() + 432;
 	const int8 *sceneDatPal = &_sceneDatPalette[layer * 3];
 
 	if (layer != _lastCharPalLayer && unk1) {
@@ -919,7 +919,7 @@ void KyraEngine_MR::updateCharPal(int unk1) {
 			}
 		}
 		_charPalUpdate = true;
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 		_lastCharPalLayer = layer;
 	} else if (_charPalUpdate || !unk1) {
 		memcpy(dst, src, 72);
@@ -936,7 +936,7 @@ void KyraEngine_MR::updateCharPal(int unk1) {
 			}
 		}
 
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 		_charPalUpdate = false;
 	}
 }

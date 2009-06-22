@@ -146,10 +146,10 @@ int KyraEngine_HoF::o2_meanWhileScene(EMCState *script) {
 	const char *palfile = stackPosString(1);
 
 	_screen->loadBitmap(cpsfile, 3, 3, 0);
-	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
-	_screen->loadPalette(palfile, _screen->getPalette(2));
+	_screen->getPalette(2).copy(_screen->getPalette(0));
+	_screen->loadPalette(palfile, _screen->getPalette(2).getData());
 	_screen->fillRect(0, 0, 319, 199, 207);
-	_screen->setScreenPalette(_screen->getPalette(2));
+	_screen->setScreenPalette(_screen->getPalette(2).getData());
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 	if (!scumm_stricmp(cpsfile, "_MEANWIL.CPS") && _flags.lang == Common::JA_JPN) {
 		Screen::FontId o = _screen->setFont(Screen::FID_6_FNT);
@@ -559,15 +559,15 @@ int KyraEngine_HoF::o2_enableAnimObject(EMCState *script) {
 
 int KyraEngine_HoF::o2_loadPalette384(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_loadPalette384(%p) ('%s')", (const void *)script, stackPosString(0));
-	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
-	_res->loadFileToBuf(stackPosString(0), _screen->getPalette(1), 384);
+	_screen->getPalette(1).copy(_screen->getPalette(0));
+	_res->loadFileToBuf(stackPosString(0), _screen->getPalette(1).getData(), 384);
 	return 0;
 }
 
 int KyraEngine_HoF::o2_setPalette384(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setPalette384(%p) ()", (const void *)script);
-	memcpy(_screen->getPalette(0), _screen->getPalette(1), 384);
-	_screen->setScreenPalette(_screen->getPalette(0));
+	_screen->getPalette(0).copy(_screen->getPalette(1), 0, 128);
+	_screen->setScreenPalette(_screen->getPalette(0).getData());
 	return 0;
 }
 
@@ -774,13 +774,13 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	displayInvWsaLastFrame();
 	backUpPage0();
 
-	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
+	_screen->getPalette(2).copy(_screen->getPalette(0));
 
 	_screen->clearPage(3);
 	_screen->loadBitmap("_NOTE.CPS", 3, 3, 0);
 
 	sprintf(filename, "_NTEPAL%.1d.COL", letter+1);
-	_res->loadFileToBuf(filename, _screen->getPalette(0), 768);
+	_res->loadFileToBuf(filename, _screen->getPalette(0).getData(), 768);
 
 	_screen->fadeToBlack(0x14);
 
@@ -798,7 +798,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->fadePalette(_screen->getPalette(0), 0x14);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 0x14);
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
 	setMousePos(280, 160);
 
@@ -819,8 +819,8 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	_screen->hideMouse();
 	_screen->fadeToBlack(0x14);
 	restorePage0();
-	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
-	_screen->fadePalette(_screen->getPalette(0), 0x14);
+	_screen->getPalette(0).copy(_screen->getPalette(2));
+	_screen->fadePalette(_screen->getPalette(0).getData(), 0x14);
 	setHandItem(_itemInHand);
 	_screen->showMouse();
 
@@ -1125,13 +1125,13 @@ int KyraEngine_HoF::o2_resetInputColorCode(EMCState *script) {
 
 int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_mushroomEffect(%p)", (const void *)script);
-	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
+	_screen->getPalette(2).copy(_screen->getPalette(0));
 
 	for (int i = 1; i < 768; i += 3)
 		_screen->getPalette(0)[i] = 0;
 	snd_playSoundEffect(106);
-	_screen->fadePalette(_screen->getPalette(0), 90, &_updateFunctor);
-	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 90, &_updateFunctor);
+	_screen->getPalette(0).copy(_screen->getPalette(2));
 
 	for (int i = 0; i < 768; i += 3) {
 		_screen->getPalette(0)[i] = _screen->getPalette(0)[i + 1] = 0;
@@ -1140,10 +1140,10 @@ int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 			_screen->getPalette(0)[i + 2] = 63;
 	}
 	snd_playSoundEffect(106);
-	_screen->fadePalette(_screen->getPalette(0), 90, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 90, &_updateFunctor);
 
-	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
-	_screen->fadePalette(_screen->getPalette(0), 30, &_updateFunctor);
+	_screen->getPalette(0).copy(_screen->getPalette(2));
+	_screen->fadePalette(_screen->getPalette(0).getData(), 30, &_updateFunctor);
 
 	return 0;
 }
@@ -1262,19 +1262,23 @@ int KyraEngine_HoF::o2_stopSceneAnimation(EMCState *script) {
 
 int KyraEngine_HoF::o2_processPaletteIndex(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_processPaletteIndex(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	uint8 *palette = _screen->getPalette(0);
+	uint8 *palette = _screen->getPalette(0).getData();
+
 	const int index = stackPos(0);
 	const bool updatePalette = (stackPos(4) != 0);
 	const int delayTime = stackPos(5);
+
 	palette[index*3+0] = (stackPos(1) * 0x3F) / 100;
 	palette[index*3+1] = (stackPos(2) * 0x3F) / 100;
 	palette[index*3+2] = (stackPos(3) * 0x3F) / 100;
+
 	if (updatePalette) {
 		if (delayTime > 0)
 			_screen->fadePalette(palette, delayTime, &_updateFunctor);
 		else
 			_screen->setScreenPalette(palette);
 	}
+
 	return 0;
 }
 
@@ -1396,7 +1400,7 @@ int KyraEngine_HoF::o2_demoFinale(EMCState *script) {
 	assert(strings);
 
 	_screen->clearPage(0);
-	_screen->loadPalette("THANKS.COL", _screen->getPalette(0));
+	_screen->loadPalette("THANKS.COL", _screen->getPalette(0).getData());
 	_screen->loadBitmap("THANKS.CPS", 3, 3, 0);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 
@@ -1406,7 +1410,7 @@ int KyraEngine_HoF::o2_demoFinale(EMCState *script) {
 	for (int i = 0; i < 6; i++)
 		_text->printText(strings[i], _text->getCenterStringX(strings[i], 1, 319), y + i * 10, 255, 207, 0);
 
-	_screen->setScreenPalette(_screen->getPalette(0));
+	_screen->setScreenPalette(_screen->getPalette(0).getData());
 	_screen->updateScreen();
 
 	_eventList.clear();

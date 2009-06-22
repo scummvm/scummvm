@@ -427,7 +427,7 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 	};
 
 	for (int i = 0; i < 15; ++i) {
-		uint8 *palette = _screen->getPalette(0) + (240 + i) * 3;
+		uint8 *palette = _screen->getPalette(0).getData() + (240 + i) * 3;
 
 		uint8 c1 = (((15 - i) << 2) * palTable[index*3+0]) / 100;
 		uint8 c2 = (((15 - i) << 2) * palTable[index*3+1]) / 100;
@@ -439,9 +439,9 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 	}
 
 	if (!fadePalette && !_palDiff) {
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 	} else {
-		_screen->getFadeParams(_screen->getPalette(0), fadePalette, _palDelayInc, _palDiff);
+		_screen->getFadeParams(_screen->getPalette(0).getData(), fadePalette, _palDelayInc, _palDiff);
 		_palDelayAcc = 0;
 	}
 }
@@ -478,7 +478,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 			anim->wsa = new WSAMovie_v2(_vm);
 		assert(anim->wsa);
 
-		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? _screen->getPalette(0) : 0);
+		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? _screen->getPalette(0).getData() : 0);
 	}
 
 	if (anim->wsa && anim->wsa->opened()) {
@@ -504,7 +504,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		}
 
 		if (wsaFlags & 2) {
-			_screen->fadePalette(_screen->getPalette(1), 15, 0);
+			_screen->fadePalette(_screen->getPalette(1).getData(), 15, 0);
 			_screen->clearPage(_drawPage2);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -515,7 +515,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 			snprintf(file, 32, "%s.CPS", filename);
 
 			if (_vm->resource()->exists(file)) {
-				_screen->loadBitmap(file, 3, 3, _screen->getPalette(0));
+				_screen->loadBitmap(file, 3, 3, _screen->getPalette(0).getData());
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 				if (_drawPage2)
 					_screen->checkedPageUpdate(8, 4);
@@ -526,10 +526,10 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		}
 
 		if (wsaFlags & 2)
-			_screen->fadePalette(_screen->getPalette(0), 30, 0);
+			_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
 	} else {
 		if (wsaFlags & 2) {
-			_screen->fadePalette(_screen->getPalette(1), 15, 0);
+			_screen->fadePalette(_screen->getPalette(1).getData(), 15, 0);
 			_screen->clearPage(_drawPage2);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -539,7 +539,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		snprintf(file, 32, "%s.CPS", filename);
 
 		if (_vm->resource()->exists(file)) {
-			_screen->loadBitmap(file, 3, 3, _screen->getPalette(0));
+			_screen->loadBitmap(file, 3, 3, _screen->getPalette(0).getData());
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -547,7 +547,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		}
 
 		if (wsaFlags & 2)
-			_screen->fadePalette(_screen->getPalette(0), 30, 0);
+			_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
 	}
 
 	return anim;
@@ -947,13 +947,13 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 	if (_vm->resource()->exists(file)) {
 		anim->wsa = new WSAMovie_v2(_vm);
 		assert(anim->wsa);
-		anim->wsa->open(file, wsaOpenFlags, _screen->getPalette(3));
+		anim->wsa->open(file, wsaOpenFlags, _screen->getPalette(3).getData());
 	}
 
 	if (wsaFlags & 1) {
 		if (_screen->_fadeFlag != 1)
 			_screen->fadeClearSceneWindow(10);
-		memcpy(_screen->getPalette(3) + 384, _screen->getPalette(0) + 384, 384);
+		_screen->getPalette(3).copy(_screen->getPalette(0), 128, 128);
 	} else if (wsaFlags & 2) {
 		_screen->fadeToBlack(10);
 	}
@@ -962,8 +962,8 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 		anim->wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 
 	if (wsaFlags & 3) {
-		_screen->loadSpecialColors(_screen->getPalette(3));
-		_screen->fadePalette(_screen->getPalette(3), 10);
+		_screen->loadSpecialColors(_screen->getPalette(3).getData());
+		_screen->fadePalette(_screen->getPalette(3).getData(), 10);
 		_screen->_fadeFlag = 0;
 	}
 

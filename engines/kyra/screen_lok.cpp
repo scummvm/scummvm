@@ -80,13 +80,15 @@ const ScreenDim *Screen_LoK::getScreenDim(int dim) {
 
 void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
 	assert(_vm->palTable1()[palIndex]);
-	assert(getPalette(0));
+
 	uint8 tempPal[768];
-	memcpy(tempPal, getPalette(0), 768);
+	memcpy(tempPal, getPalette(0).getData(), 768);
 	memcpy(&tempPal[startIndex*3], _vm->palTable1()[palIndex], size*3);
+
 	fadePalette(tempPal, fadeTime*18);
-	memcpy(&getPalette(0)[startIndex*3], &tempPal[startIndex*3], size*3);
-	setScreenPalette(getPalette(0));
+
+	getPalette(0).copy(tempPal, startIndex, size);
+	setScreenPalette(getPalette(0).getData());
 	_system->updateScreen();
 }
 

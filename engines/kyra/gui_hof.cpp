@@ -281,7 +281,7 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 	int frames = movie.opened() ? movie.frames() : 6;
 	memcpy(_screenBuffer, _screen->getCPagePtr(2), 64000);
 	uint8 overlay[0x100];
-	_screen->generateOverlay(_screen->getPalette(0), overlay, 0, 50);
+	_screen->generateOverlay(_screen->getPalette(0).getData(), overlay, 0, 50);
 	_screen->hideMouse();
 	_screen->copyRegion(0x46, 0x90, 0x46, 0x79, 0x71, 0x17, 0, 2, Screen::CR_NO_P_CHECK);
 	_screen->showMouse();
@@ -365,9 +365,9 @@ int KyraEngine_HoF::bookButton(Button *button) {
 		_screen->showMouse();
 	}
 
-	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
+	_screen->getPalette(2).copy(_screen->getPalette(0));
 	_screen->fadeToBlack(7, &_updateFunctor);
-	_res->loadFileToBuf("_BOOK.COL", _screen->getPalette(0), 768);
+	_res->loadFileToBuf("_BOOK.COL", _screen->getPalette(0).getData(), 768);
 	loadBookBkgd();
 	showBookPage();
 	_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0, Screen::CR_NO_P_CHECK);
@@ -375,7 +375,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 
 	int oldItemInHand = _itemInHand;
 	removeHandItem();
-	_screen->fadePalette(_screen->getPalette(0), 7);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 7);
 	_screen->showMouse();
 
 	bookLoop();
@@ -393,8 +393,8 @@ int KyraEngine_HoF::bookButton(Button *button) {
 	}
 
 	setHandItem(_itemInHand);
-	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
-	_screen->fadePalette(_screen->getPalette(0), 7, &_updateFunctor);
+	_screen->getPalette(0).copy(_screen->getPalette(2));
+	_screen->fadePalette(_screen->getPalette(0).getData(), 7, &_updateFunctor);
 	_screen->showMouse();
 
 	if (!queryGameFlag(4) && !queryGameFlag(0xB8)) {
@@ -800,26 +800,26 @@ void GUI_HoF::createScreenThumbnail(Graphics::Surface &dst) {
 }
 
 void GUI_HoF::setupPalette() {
-	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+	_screen->getPalette(1).copy(_screen->getPalette(0));
 
-	uint8 *palette = _screen->getPalette(0);
+	uint8 *palette = _screen->getPalette(0).getData();
 	for (int i = 0; i < 768; ++i)
 		palette[i] >>= 1;
 
 	static const uint8 guiPal[] = { 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFc, 0xFD, 0xFE };
 
 	for (uint i = 0; i < ARRAYSIZE(guiPal); ++i)
-		memcpy(_screen->getPalette(0)+guiPal[i]*3, _screen->getPalette(1)+guiPal[i]*3, 3);
+		_screen->getPalette(0).copy(_screen->getPalette(1), guiPal[i], 1);
 
 	if (_isDeathMenu)
-		_screen->fadePalette(_screen->getPalette(0), 0x64);
+		_screen->fadePalette(_screen->getPalette(0).getData(), 0x64);
 	else
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 }
 
 void GUI_HoF::restorePalette() {
-	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
-	_screen->setScreenPalette(_screen->getPalette(0));
+	_screen->getPalette(0).copy(_screen->getPalette(1));
+	_screen->setScreenPalette(_screen->getPalette(0).getData());
 }
 
 void GUI_HoF::resetState(int item) {

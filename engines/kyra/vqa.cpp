@@ -474,13 +474,13 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 				case MKID_BE('CPL0'):	// Palette
 					assert(size <= 3 * 256);
-					_file->read(_vm->screen()->getPalette(0), size);
+					_file->read(_vm->screen()->getPalette(0).getData(), size);
 					break;
 
 				case MKID_BE('CPLZ'):	// Palette
 					inbuf = (byte *)allocBuffer(0, size);
 					_file->read(inbuf, size);
-					Screen::decodeFrame4(inbuf, _vm->screen()->getPalette(0), 768);
+					Screen::decodeFrame4(inbuf, _vm->screen()->getPalette(0).getData(), 768);
 					break;
 
 				case MKID_BE('VPT0'):	// Frame data
@@ -521,7 +521,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 	// The frame has been decoded
 
 	if (_frameInfo[frameNum] & 0x80000000) {
-		_vm->screen()->setScreenPalette(_vm->screen()->getPalette(0));
+		_vm->screen()->setScreenPalette(_vm->screen()->getPalette(0).getData());
 	}
 
 	int blockPitch = _header.width / _header.blockW;

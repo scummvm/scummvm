@@ -778,20 +778,20 @@ int LoLEngine::mainMenu() {
 
 void LoLEngine::startup() {
 	_screen->clearPage(0);
-	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, _screen->getPalette(0));
+	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, _screen->getPalette(0).getData());
 
 	uint8 *tmpPal = new uint8[0x300];
-	memcpy(tmpPal, _screen->getPalette(0), 0x300);
-	memset(_screen->getPalette(0), 0x3f, 0x180);
-	memcpy(_screen->getPalette(0) + 3, tmpPal + 3, 3);
-	memset(_screen->getPalette(0) + 0x240, 0x3f, 12);
-	_screen->generateOverlay(_screen->getPalette(0), _screen->_paletteOverlay1, 1, 96);
-	_screen->generateOverlay(_screen->getPalette(0), _screen->_paletteOverlay2, 144, 65);
-	memcpy(_screen->getPalette(0), tmpPal, 0x300);
+	memcpy(tmpPal, _screen->getPalette(0).getData(), 0x300);
+	memset(_screen->getPalette(0).getData(), 0x3f, 0x180);
+	_screen->getPalette(0).copy(tmpPal, 1, 1);
+	memset(_screen->getPalette(0).getData() + 0x240, 0x3f, 12);
+	_screen->generateOverlay(_screen->getPalette(0).getData(), _screen->_paletteOverlay1, 1, 96);
+	_screen->generateOverlay(_screen->getPalette(0).getData(), _screen->_paletteOverlay2, 144, 65);
+	_screen->getPalette(0).copy(tmpPal, 0, 256);
 	delete[] tmpPal;
 
-	memset(_screen->getPalette(1), 0, 0x300);
-	memset(_screen->getPalette(2), 0, 0x300);
+	_screen->getPalette(1).clear();
+	_screen->getPalette(2).clear();
 
 	loadItemIconShapes();
 	_screen->setMouseCursor(0, 0, _itemIconShapes[0x85]);
@@ -1541,7 +1541,7 @@ void LoLEngine::restoreAfterSceneWindowDialogue(int redraw) {
 		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
 		gui_drawPlayField();
-		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, _lampEffect);
 		_screen->_fadeFlag = 0;
 	}
 
@@ -1676,8 +1676,8 @@ void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, in
 }
 
 void LoLEngine::setPaletteBrightness(uint8 *palette, int brightness, int modifier) {
-	generateBrightnessPalette(palette, _screen->getPalette(1), brightness, modifier);
-	_screen->fadePalette(_screen->getPalette(1), 5, 0);
+	generateBrightnessPalette(palette, _screen->getPalette(1).getData(), brightness, modifier);
+	_screen->fadePalette(_screen->getPalette(1).getData(), 5, 0);
 	_screen->_fadeFlag = 0;
 }
 
@@ -2067,7 +2067,7 @@ int LoLEngine::processMagicHealSelectTarget() {
 int LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 	if (!_healOverlay) {
 		_healOverlay = new uint8[256];
-		_screen->generateGrayOverlay(_screen->getPalette(1), _healOverlay, 52, 22, 20, 0, 256, true);
+		_screen->generateGrayOverlay(_screen->getPalette(1).getData(), _healOverlay, 52, 22, 20, 0, 256, true);
 	}
 
 	const uint8 *healShpFrames = 0;
@@ -2189,8 +2189,8 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	uint8 *swampCol = new uint8[768];
 
 	if (_currentLevel == 11 && !(_flagsTable[52] & 0x04)) {
-		uint8 *sc = _screen->getPalette(0);
-		uint8 *dc = _screen->getPalette(2);
+		uint8 *sc = _screen->getPalette(0).getData();
+		uint8 *dc = _screen->getPalette(2).getData();
 		for (int i = 1; i < 768; i++)
 			SWAP(sc[i], dc[i]);
 		_flagsTable[52] |= 0x04;
@@ -2200,7 +2200,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 
 	uint8 *sc = _res->fileData("swampice.col", 0);
 	memcpy(swampCol, sc, 384);
-	uint8 *s = _screen->getPalette(1);
+	uint8 *s = _screen->getPalette(1).getData();
 	for (int i = 384; i < 768; i++)
 		swampCol[i] = tpal[i] = s[i] & 0x3f;
 
@@ -2217,7 +2217,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	generateBrightnessPalette(swampCol, swampCol, _brightness, _lampEffect);
 	swampCol[0] = swampCol[1] = swampCol[2] = tpal[0] = tpal[1] = tpal[2] = 0;
 
-	generateBrightnessPalette(_screen->getPalette(0), s, _brightness, _lampEffect);
+	generateBrightnessPalette(_screen->getPalette(0).getData(), s, _brightness, _lampEffect);
 
 	int sX = 112;
 	int sY = 0;
@@ -2306,7 +2306,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	enableSysTimer(2);
 
 	if (_currentLevel != 11)
-		generateBrightnessPalette(_screen->getPalette(0), swampCol, _brightness, _lampEffect);
+		generateBrightnessPalette(_screen->getPalette(0).getData(), swampCol, _brightness, _lampEffect);
 
 	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, tpal, swampCol, 40, 0);
 
@@ -2617,7 +2617,7 @@ int LoLEngine::processMagicLightning(int charNum, int spellLevel) {
 	mov->close();
 	delete mov;
 
-	_screen->setScreenPalette(_screen->getPalette(1));
+	_screen->setScreenPalette(_screen->getPalette(1).getData());
 	_screen->copyPage(12, 2);
 	_screen->copyPage(12, 0);
 	updateDrawPage2();
@@ -2736,7 +2736,7 @@ int LoLEngine::processMagicSwarm(int charNum, int damage) {
 int LoLEngine::processMagicVaelansCube() {
 	uint8 *tmpPal1 = new uint8[768];
 	uint8 *tmpPal2 = new uint8[768];
-	uint8 *sp1 = _screen->getPalette(1);
+	uint8 *sp1 = _screen->getPalette(1).getData();
 
 	memcpy(tmpPal1, sp1, 768);
 	memcpy(tmpPal2, sp1, 768);
@@ -2840,7 +2840,7 @@ void LoLEngine::callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y) {
 	if (_lightningDiv == 2)
 		shakeScene(1, 2, 3, 0);
 
-	uint8 *p1 = _screen->getPalette(1);
+	uint8 *p1 = _screen->getPalette(1).getData();
 
 	if (_lightningSfxFrame % _lightningDiv) {
 		_screen->setScreenPalette(p1);
@@ -3659,9 +3659,9 @@ void LoLEngine::restoreSwampPalette() {
 	if (_currentLevel != 11)
 		return;
 
-	uint8 *s = _screen->getPalette(2);
-	uint8 *d = _screen->getPalette(0);
-	uint8 *d2 = _screen->getPalette(1);
+	uint8 *s = _screen->getPalette(2).getData();
+	uint8 *d = _screen->getPalette(0).getData();
+	uint8 *d2 = _screen->getPalette(1).getData();
 
 	for (int i = 1; i < 768; i++)
 		SWAP(s[i], d[i]);
@@ -3841,14 +3841,14 @@ void LoLEngine::displayAutomap() {
 	uint8 *tmpWll = new uint8[80];
 	memcpy(tmpWll, _wllBuffer4, 80);
 
-	_screen->loadBitmap("parch.cps", 2, 2, _screen->getPalette(3));
+	_screen->loadBitmap("parch.cps", 2, 2, _screen->getPalette(3).getData());
 	_screen->loadBitmap("autobut.shp", 3, 5, 0);
 	const uint8 *shp = _screen->getCPagePtr(5);
 
 	for (int i = 0; i < 109; i++)
 		_automapShapes[i] = _screen->getPtrToShape(shp, i + 11);
 
-	_screen->generateGrayOverlay(_screen->getPalette(3), _mapOverlay, 52, 0, 0, 0, 256, false);
+	_screen->generateGrayOverlay(_screen->getPalette(3).getData(), _mapOverlay, 52, 0, 0, 0, 256, false);
 
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9PN.FNT");
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6PN.FNT");
@@ -3871,7 +3871,7 @@ void LoLEngine::displayAutomap() {
 
 	_screen->copyPage(2, 0);
 	_screen->updateScreen();
-	_screen->fadePalette(_screen->getPalette(3), 10);
+	_screen->fadePalette(_screen->getPalette(3).getData(), 10);
 	uint32 delayTimer = _system->getMillis() + 8 * _tickLength;
 
 	while (!exitAutomap && !shouldQuit()) {
@@ -4009,7 +4009,7 @@ void LoLEngine::loadMapLegendData(int level) {
 
 void LoLEngine::drawMapPage(int pageNum) {
 	for (int i = 0; i < 2; i++) {
-		_screen->loadBitmap("parch.cps", pageNum, pageNum, _screen->getPalette(3));
+		_screen->loadBitmap("parch.cps", pageNum, pageNum, _screen->getPalette(3).getData());
 
 		int cp = _screen->setCurPage(pageNum);
 		Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);

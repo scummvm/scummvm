@@ -415,7 +415,7 @@ void KyraEngine_HoF::startup() {
 	setupLangButtonShapes();
 	loadInventoryShapes();
 
-	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 0x300);
+	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0).getData(), 0x300);
 	_screen->loadBitmap("_PLAYFLD.CPS", 3, 3, 0);
 	_screen->copyPage(3, 0);
 	_screen->showMouse();
@@ -919,9 +919,9 @@ void KyraEngine_HoF::showMessage(const char *string, int16 palIndex) {
 	if (string) {
 		if (palIndex != -1 || _fadeMessagePalette) {
 			palIndex *= 3;
-			memcpy(_messagePal, _screen->getPalette(0) + palIndex, 3);
-			memmove(_screen->getPalette(0) + 765, _screen->getPalette(0) + palIndex, 3);
-			_screen->setScreenPalette(_screen->getPalette(0));
+			memcpy(_messagePal, _screen->getPalette(0).getData() + palIndex, 3);
+			_screen->getPalette(0).copy(_screen->getPalette(0), palIndex / 3, 1, 255);
+			_screen->setScreenPalette(_screen->getPalette(0).getData());
 		}
 
 		int x = _text->getCenterStringX(string, 0, 320);
@@ -978,8 +978,8 @@ void KyraEngine_HoF::fadeMessagePalette() {
 	}
 
 	if (updatePalette) {
-		memcpy(_screen->getPalette(0) + 765, _messagePal, 3);
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->getPalette(0).copy(_messagePal, 0, 1, 255);
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 	} else {
 		_fadeMessagePalette = false;
 	}
@@ -1139,18 +1139,18 @@ void KyraEngine_HoF::updateCharPal(int unk1) {
 
 	if (palEntry != _charPalEntry && unk1) {
 		const uint8 *src = &_scenePal[(palEntry << 4) * 3];
-		uint8 *ptr = _screen->getPalette(0) + 336;
+		uint8 *ptr = _screen->getPalette(0).getData() + 336;
 		for (int i = 0; i < 48; ++i) {
 			*ptr -= (*ptr - *src) >> 1;
 			++ptr;
 			++src;
 		}
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 		unkVar1 = true;
 		_charPalEntry = palEntry;
 	} else if (unkVar1 || !unk1) {
-		memcpy(_screen->getPalette(0) + 336, &_scenePal[(palEntry << 4) * 3], 48);
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->getPalette(0).copy(_scenePal, palEntry << 4, 16, 112);
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 		unkVar1 = false;
 	}
 }
@@ -1656,24 +1656,24 @@ void KyraEngine_HoF::displayInvWsaLastFrame() {
 #pragma mark -
 
 void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
-	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
+	_screen->getPalette(2).copy(_screen->getPalette(0));
 	Common::SeekableReadStream *file = _res->createReadStream("_POTIONS.PAL");
 	if (!file)
 		error("Couldn't load cauldron palette");
 	file->seek(state*18, SEEK_SET);
-	file->read(_screen->getPalette(2)+723, 18);
+	file->read(_screen->getPalette(2).getData() + 723, 18);
 	delete file;
 	file = 0;
 
 	if (paletteFade) {
 		snd_playSoundEffect((state == 0) ? 0x6B : 0x66);
-		_screen->fadePalette(_screen->getPalette(2), 0x4B, &_updateFunctor);
+		_screen->fadePalette(_screen->getPalette(2).getData(), 0x4B, &_updateFunctor);
 	} else {
-		_screen->setScreenPalette(_screen->getPalette(2));
+		_screen->setScreenPalette(_screen->getPalette(2).getData());
 		_screen->updateScreen();
 	}
 
-	memcpy(_screen->getPalette(0)+723, _screen->getPalette(2)+723, 18);
+	_screen->getPalette(0).copy(_screen->getPalette(2), 241, 6);
 	_cauldronState = state;
 	_cauldronUseCount = 0;
 	//if (state == 5)
@@ -1833,13 +1833,13 @@ void KyraEngine_HoF::cauldronRndPaletteFade() {
 	if (!file)
 		error("Couldn't load cauldron palette");
 	file->seek(index*18, SEEK_SET);
-	file->read(_screen->getPalette(0)+723, 18);
+	file->read(_screen->getPalette(0).getData()+723, 18);
 	snd_playSoundEffect(0x6A);
-	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 0x1E, &_updateFunctor);
 	file->seek(0, SEEK_SET);
-	file->read(_screen->getPalette(0)+723, 18);
+	file->read(_screen->getPalette(0).getData()+723, 18);
 	delete file;
-	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 0x1E, &_updateFunctor);
 }
 
 void KyraEngine_HoF::resetCauldronStateTable(int idx) {

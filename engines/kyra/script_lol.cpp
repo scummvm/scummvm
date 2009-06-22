@@ -602,14 +602,14 @@ int LoLEngine::olol_fadeToBlack(EMCState *script) {
 
 int LoLEngine::olol_fadePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadePalette(%p)", (const void *)script);
-	_screen->fadePalette(_screen->getPalette(3), 10);
+	_screen->fadePalette(_screen->getPalette(3).getData(), 10);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
 
 int LoLEngine::olol_loadBitmap(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_clearDialogueField(%p) (%s, %d)", (const void *)script, stackPosString(0), stackPos(1));
-	_screen->loadBitmap(stackPosString(0), 3, 3, _screen->getPalette(3));
+	_screen->loadBitmap(stackPosString(0), 3, 3, _screen->getPalette(3).getData());
 	if (stackPos(1) != 2)
 		_screen->copyPage(3, stackPos(1));
 	return 1;
@@ -864,9 +864,9 @@ int LoLEngine::olol_fadeClearSceneWindow(EMCState *script) {
 
 int LoLEngine::olol_fadeSequencePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeSequencePalette(%p)", (const void *)script);
-	memcpy(_screen->getPalette(3) + 0x180, _screen->getPalette(0) + 0x180, 0x180);
-	_screen->loadSpecialColors(_screen->getPalette(3));
-	_screen->fadePalette(_screen->getPalette(3), 10);
+	_screen->getPalette(3).copy(_screen->getPalette(0), 128);
+	_screen->loadSpecialColors(_screen->getPalette(3).getData());
+	_screen->fadePalette(_screen->getPalette(3).getData(), 10);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -876,7 +876,7 @@ int LoLEngine::olol_redrawPlayfield(EMCState *script) {
 	if (_screen->_fadeFlag != 2)
 		_screen->fadeClearSceneWindow(10);
 	gui_drawPlayField();
-	setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
+	setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, _lampEffect);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -1408,7 +1408,7 @@ int LoLEngine::olol_playEndSequence(EMCState *script){
 	
 	_eventList.clear();
 	_screen->hideMouse();
-	memset(_screen->getPalette(1), 0, 768);
+	_screen->getPalette(1).clear();
 	
 	showOutro(c, (_monsterDifficulty == 2));
 	quitGame();
@@ -1428,7 +1428,7 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	uint16 old = _brightness;
 	_brightness = stackPos(0);
 	if (stackPos(1) == 1)
-		setPaletteBrightness(_screen->getPalette(0), stackPos(0), _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0).getData(), stackPos(0), _lampEffect);
 	return old;
 }
 
@@ -2002,8 +2002,8 @@ int LoLEngine::olol_drinkBezelCup(EMCState *script) {
 
 int LoLEngine::olol_restoreFadePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreFadePalette(%p)", (const void *)script);
-	memcpy(_screen->getPalette(0), _screen->getPalette(1), 384);
-	_screen->fadePalette(_screen->getPalette(0), 10);
+	_screen->getPalette(0).copy(_screen->getPalette(1), 0, 128);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 10);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -2101,8 +2101,8 @@ int LoLEngine::olol_increaseSkill(EMCState *script) {
 
 int LoLEngine::olol_paletteFlash(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_paletteFlash(%p) (%d)", (const void *)script, stackPos(0));
-	uint8 *s = _screen->getPalette(1);
-	uint8 *d = _screen->getPalette(3);
+	uint8 *s = _screen->getPalette(1).getData();
+	uint8 *d = _screen->getPalette(3).getData();
 	uint8 ovl[256];
 	generateFlashPalette(s, d, stackPos(0));
 	_screen->loadSpecialColors(s);
@@ -2289,7 +2289,7 @@ int LoLEngine::olol_getLanguage(EMCState *script) {
 
 int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::t2_playSoundEffect(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
-	_screen->getFadeParams(_screen->getPalette(0), param[0], _tim->_palDelayInc, _tim->_palDiff);
+	_screen->getFadeParams(_screen->getPalette(0).getData(), param[0], _tim->_palDelayInc, _tim->_palDiff);
 	_tim->_palDelayAcc = 0;
 	return 1;
 }
@@ -2297,15 +2297,15 @@ int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_loadPalette(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadPalette(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	const char *palFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
-	_screen->loadPalette(palFile, _screen->getPalette(0));
+	_screen->loadPalette(palFile, _screen->getPalette(0).getData());
 	return 1;
 }
 
 int LoLEngine::tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setupPaletteFadeEx(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
-	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+	_screen->getPalette(0).copy(_screen->getPalette(1));
 
-	_screen->getFadeParams(_screen->getPalette(0), param[0], _tim->_palDelayInc, _tim->_palDiff);
+	_screen->getFadeParams(_screen->getPalette(0).getData(), param[0], _tim->_palDelayInc, _tim->_palDiff);
 	_tim->_palDelayAcc = 0;
 	return 1;
 }
@@ -2381,7 +2381,6 @@ int LoLEngine::tlol_setPartyPosition(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeClearWindow(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
-	uint8 *tmp = 0;
 
 	switch (param[0]) {
 	case 0:
@@ -2389,10 +2388,9 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 		break;
 
 	case 1:
-		tmp = _screen->getPalette(3);
-		memcpy(tmp + 0x180, _screen->getPalette(0) + 0x180, 0x180);
-		_screen->loadSpecialColors(tmp);
-		_screen->fadePalette(tmp, 10);
+		_screen->getPalette(3).copy(_screen->getPalette(0), 128);
+		_screen->loadSpecialColors(_screen->getPalette(3).getData());
+		_screen->fadePalette(_screen->getPalette(3).getData(), 10);
 		_screen->_fadeFlag = 0;
 		break;
 
@@ -2401,9 +2399,8 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 		break;
 
 	case 3:
-		tmp = _screen->getPalette(3);
-		_screen->loadSpecialColors(tmp);
-		_screen->fadePalette(tmp, 10);
+		_screen->loadSpecialColors(_screen->getPalette(3).getData());
+		_screen->fadePalette(_screen->getPalette(3).getData(), 10);
 		_screen->_fadeFlag = 0;
 		break;
 
@@ -2411,14 +2408,13 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
 		gui_drawPlayField();
-		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, _lampEffect);
 		_screen->_fadeFlag = 0;
 		break;
 
 	case 5:
-		tmp = _screen->getPalette(3);
-		_screen->loadSpecialColors(tmp);
-		_screen->fadePalette(_screen->getPalette(1), 10);
+		_screen->loadSpecialColors(_screen->getPalette(3).getData());
+		_screen->fadePalette(_screen->getPalette(1).getData(), 10);
 		_screen->_fadeFlag = 0;
 		break;
 
@@ -2517,7 +2513,7 @@ int LoLEngine::tlol_fadeInScene(const TIM *tim, const uint16 *param) {
 	strcpy(filename, sceneFile);
 	strcat(filename, ".CPS");
 
-	_screen->loadBitmap(filename, 7, 5, _screen->getPalette(0));
+	_screen->loadBitmap(filename, 7, 5, _screen->getPalette(0).getData());
 
 	filename[0] = 0;
 

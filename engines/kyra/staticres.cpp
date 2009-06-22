@@ -1584,7 +1584,7 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
 	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
-		_screen->loadBitmap("MAIN15.CPS", page, page, _screen->getPalette(0));
+		_screen->loadBitmap("MAIN15.CPS", page, page, _screen->getPalette(0).getData());
 	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN || (_flags.isTalkie && _flags.lang == Common::IT_ITA))
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if (_flags.lang == Common::FR_FRA)
@@ -1599,7 +1599,7 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 		warning("no main graphics file found");
 
 	if (_flags.platform == Common::kPlatformAmiga)
-		memcpy(_screen->getPalette(1), _screen->getPalette(0), 32*3);
+		_screen->getPalette(1).copy(_screen->getPalette(0));
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0);
 }

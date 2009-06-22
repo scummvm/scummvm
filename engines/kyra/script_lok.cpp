@@ -231,8 +231,9 @@ int KyraEngine_LoK::o1_fadeSpecialPalette(EMCState *script) {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fadeSpecialPalette(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 		if (_currentCharacter->sceneId != 45) {
 			if (stackPos(0) == 13) {
-				memcpy(_screen->getPalette(0), _screen->getPalette(0) + 384*3, 32*3);
-				_screen->setScreenPalette(_screen->getPalette(0));
+				// TODO: Check this!
+				_screen->getPalette(0).copy(_screen->getPalette(12));
+				_screen->setScreenPalette(_screen->getPalette(0).getData());
 			}
 		} else {
 			warning("KyraEngine_LoK::o1_fadeSpecialPalette not implemented");
@@ -578,7 +579,7 @@ int KyraEngine_LoK::o1_restoreAllObjectBackgrounds(EMCState *script) {
 
 int KyraEngine_LoK::o1_setCustomPaletteRange(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCustomPaletteRange(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	memcpy(_screen->getPalette(1) + stackPos(1)*3, _specialPalettes[stackPos(0)], stackPos(2)*3);
+	_screen->getPalette(1).copy(_specialPalettes[stackPos(0)], 0, stackPos(2), stackPos(1));
 	return 0;
 }
 
@@ -1243,8 +1244,9 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 			palIndex = 14;
 		}
 	}
-	const uint8 *palette = _specialPalettes[palIndex];
-	memcpy(_screen->getPalette(1) + 684, palette, 44);
+
+	// TODO: Original used "44" here, which would be 14.666... colors. That looks strange, we should verify this one again.
+	_screen->getPalette(1).copy(_specialPalettes[palIndex], 0, 15, 228);
 	return 0;
 }
 
@@ -1505,32 +1507,29 @@ int KyraEngine_LoK::o1_fadeEntirePalette(EMCState *script) {
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (cmd == 0) {
-			fadePal = _screen->getPalette(2);
-			memset(fadePal, 0, 32*3);
-			memcpy(_screen->getPalette(4), _screen->getPalette(0), 32*3);
+			_screen->getPalette(2).clear();
+			fadePal = _screen->getPalette(2).getData();
+			_screen->getPalette(4).copy(_screen->getPalette(0));
 		} else if (cmd == 1) {
-			fadePal = _screen->getPalette(0);
-			memcpy(_screen->getPalette(0), _screen->getPalette(4), 32*3);
+			fadePal = _screen->getPalette(0).getData();
+			_screen->getPalette(0).copy(_screen->getPalette(4));
 		} else if (cmd == 2) {
-			fadePal = _screen->getPalette(0);
-			memset(_screen->getPalette(2), 0, 32*3);
+			fadePal = _screen->getPalette(0).getData();
+			_screen->getPalette(2).clear();
 		}
 	} else {
 		if (cmd == 0) {
-			fadePal = _screen->getPalette(2);
-			uint8 *screenPal = _screen->getPalette(0);
-			uint8 *backUpPal = _screen->getPalette(3);
-
-			memcpy(backUpPal, screenPal, sizeof(uint8)*768);
-			memset(fadePal, 0, sizeof(uint8)*768);
+			_screen->getPalette(2).clear();
+			fadePal = _screen->getPalette(2).getData();
+			_screen->getPalette(3).copy(_screen->getPalette(0));
 		} else if (cmd == 1) {
 			//fadePal = _screen->getPalette(3);
 			warning("unimplemented o1_fadeEntirePalette function");
 			return 0;
 		} else if (cmd == 2) {
-			memset(_screen->getPalette(2), 0, 768);
-			memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
-			fadePal = _screen->getPalette(0);
+			_screen->getPalette(2).clear();
+			_screen->getPalette(0).copy(_screen->getPalette(1));
+			fadePal = _screen->getPalette(0).getData();
 		}
 	}
 

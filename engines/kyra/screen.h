@@ -232,7 +232,7 @@ public:
 	const uint8 *getScreenPalette() const { return _screenPalette->getData(); }
 
 	void getRealPalette(int num, uint8 *dst);
-	uint8 *getPalette(int num);
+	Palette &getPalette(int num);
 
 	// gui specific (processing on _curPage)
 	enum ShadeType {

@@ -333,7 +333,7 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 		_currSentenceColor[1] = _screen->getPalette(0)[766] = _screen->getPalette(0)[color*3+1];
 		_currSentenceColor[2] = _screen->getPalette(0)[767] = _screen->getPalette(0)[color*3+2];
 
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 		_startSentencePalIndex = 0;
 	}
 
@@ -371,7 +371,7 @@ void KyraEngine_LoK::updateTextFade() {
 	_screen->getPalette(0)[765] = _currSentenceColor[0];
 	_screen->getPalette(0)[766] = _currSentenceColor[1];
 	_screen->getPalette(0)[767] = _currSentenceColor[2];
-	_screen->setScreenPalette(_screen->getPalette(0));
+	_screen->setScreenPalette(_screen->getPalette(0).getData());
 
 	if (finished) {
 		_fadeText = false;

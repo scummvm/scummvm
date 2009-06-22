@@ -42,12 +42,12 @@ int LoLEngine::processPrologue() {
 		showIntro();
 
 	if (_flags.isDemo) {
-		_screen->fadePalette(_screen->getPalette(1), 30, 0);
-		_screen->loadBitmap("FINAL.CPS", 2, 2, _screen->getPalette(0));
+		_screen->fadePalette(_screen->getPalette(1).getData(), 30, 0);
+		_screen->loadBitmap("FINAL.CPS", 2, 2, _screen->getPalette(0).getData());
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->fadePalette(_screen->getPalette(0), 30, 0);
+		_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
 		delayWithTicks(300);
-		_screen->fadePalette(_screen->getPalette(1), 60, 0);
+		_screen->fadePalette(_screen->getPalette(1).getData(), 60, 0);
 
 		setupPrologueData(false);
 		return -1;
@@ -57,7 +57,7 @@ int LoLEngine::processPrologue() {
 
 	int processSelection = -1;
 	while (!shouldQuit() && processSelection == -1) {
-		_screen->loadBitmap("TITLE.CPS", 2, 2, _screen->getPalette(0));
+		_screen->loadBitmap("TITLE.CPS", 2, 2, _screen->getPalette(0).getData());
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 
 		_screen->setFont(Screen::FID_6_FNT);
@@ -66,7 +66,7 @@ int LoLEngine::processPrologue() {
 		_screen->fprintString("SVM %s", 300 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
 		_screen->setFont(Screen::FID_9_FNT);
 
-		_screen->fadePalette(_screen->getPalette(0), 0x1E);
+		_screen->fadePalette(_screen->getPalette(0).getData(), 0x1E);
 		_screen->updateScreen();
 
 		_eventList.clear();
@@ -74,9 +74,10 @@ int LoLEngine::processPrologue() {
 
 		if (selection != 3) {
 			_screen->hideMouse();
+
 			// Unlike the original, we add a nice fade to black
-			memset(_screen->getPalette(0), 0, 768);
-			_screen->fadePalette(_screen->getPalette(0), 0x54);
+			_screen->getPalette(0).clear();
+			_screen->fadeToBlack(0x54);
 		}
 
 		switch (selection) {
@@ -168,7 +169,7 @@ void LoLEngine::setupPrologueData(bool load) {
 		_selectionAnimFrames[1] = _selectionAnimFrames[3] = 1;
 
 		memset(_selectionAnimTimers, 0, sizeof(_selectionAnimTimers));
-		memset(_screen->getPalette(1), 0, 768);
+		_screen->getPalette(1).clear();
 
 		_sound->setSoundList(&_soundData[kMusicIntro]);
 
@@ -184,9 +185,8 @@ void LoLEngine::setupPrologueData(bool load) {
 	} else {
 		delete _chargenWSA; _chargenWSA = 0;
 
-		uint8 *pal = _screen->getPalette(0);
-		memset(pal, 0, 768);
-		_screen->setScreenPalette(pal);
+		_screen->getPalette(0).clear();
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 
 		if (shouldQuit())
 			return;
@@ -203,9 +203,8 @@ void LoLEngine::showIntro() {
 	if (_flags.platform == Common::kPlatformPC98)
 		showStarcraftLogo();
 
-	uint8 *pal = _screen->getPalette(0);
-	memset(pal, 0, 768);
-	_screen->setScreenPalette(pal);
+	_screen->getPalette(0).clear();
+	_screen->setScreenPalette(_screen->getPalette(0).getData());
 
 	_screen->clearPage(0);
 	_screen->clearPage(4);
@@ -235,8 +234,8 @@ void LoLEngine::showIntro() {
 				palNextFadeStep = _system->getMillis() + ((_tim->_palDelayAcc >> 8) * _tickLength);
 				_tim->_palDelayAcc &= 0xFF;
 
-				if (!_screen->fadePalStep(_screen->getPalette(0), _tim->_palDiff)) {
-					_screen->setScreenPalette(_screen->getPalette(0));
+				if (!_screen->fadePalStep(_screen->getPalette(0).getData(), _tim->_palDiff)) {
+					_screen->setScreenPalette(_screen->getPalette(0).getData());
 					_tim->_palDiff = 0;
 				}
 			}
@@ -260,7 +259,7 @@ void LoLEngine::showIntro() {
 	delete _tim;
 	_tim = 0;
 
-	_screen->fadePalette(_screen->getPalette(1), 30, 0);
+	_screen->fadePalette(_screen->getPalette(1).getData(), 30, 0);
 }
 
 int LoLEngine::chooseCharacter() {
@@ -277,8 +276,8 @@ int LoLEngine::chooseCharacter() {
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
 
-	_screen->loadBitmap("CHAR.CPS", 2, 2, _screen->getPalette(0));
-	_screen->loadBitmap("BACKGRND.CPS", 4, 4, _screen->getPalette(0));
+	_screen->loadBitmap("CHAR.CPS", 2, 2, _screen->getPalette(0).getData());
+	_screen->loadBitmap("BACKGRND.CPS", 4, 4, _screen->getPalette(0).getData());
 
 	if (!_chargenWSA->open("CHARGEN.WSA", 1, 0))
 		error("Couldn't load CHARGEN.WSA");
@@ -305,9 +304,9 @@ int LoLEngine::chooseCharacter() {
 	_screen->_curPage = 0;
 
 	if (_flags.use16ColorMode)
-		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
+		_screen->loadPalette("LOL.NOL", _screen->getPalette(0).getData());
 
-	_screen->fadePalette(_screen->getPalette(0), 30, 0);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
 
 	bool kingIntro = true;
 	while (!shouldQuit()) {
@@ -650,7 +649,7 @@ void LoLEngine::showStarcraftLogo() {
 	_screen->clearPage(0);
 	_screen->clearPage(2);
 
-	int endframe = ci->open("ci01.wsa", 0, _screen->getPalette(0));
+	int endframe = ci->open("ci01.wsa", 0, _screen->getPalette(0).getData());
 	if (!ci->opened()) {
 		delete ci;
 		return;
@@ -728,9 +727,8 @@ void LoLEngine::setupEpilogueData(bool load) {
 		if (_flags.platform == Common::kPlatformPC98)
 			_sound->loadSoundFile("SOUND.DAT");
 	} else {
-		uint8 *pal = _screen->getPalette(0);
-		memset(pal, 0, 768);
-		_screen->setScreenPalette(pal);
+		_screen->getPalette(0).clear();
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 
 		if (shouldQuit())
 			return;
@@ -745,9 +743,8 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	TIMInterpreter *timBackUp = _tim;
 	_tim = new TIMInterpreter(this, _screen, _system);
 
-	uint8 *pal = _screen->getPalette(0);
-	memset(pal, 0, 768);
-	_screen->setScreenPalette(pal);
+	_screen->getPalette(0).clear();
+	_screen->setScreenPalette(_screen->getPalette(0).getData());
 
 	_screen->clearPage(0);
 	_screen->clearPage(4);
@@ -776,8 +773,8 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 				palNextFadeStep = _system->getMillis() + ((_tim->_palDelayAcc >> 8) * _tickLength);
 				_tim->_palDelayAcc &= 0xFF;
 
-				if (!_screen->fadePalStep(_screen->getPalette(0), _tim->_palDiff)) {
-					_screen->setScreenPalette(_screen->getPalette(0));
+				if (!_screen->fadePalStep(_screen->getPalette(0).getData(), _tim->_palDiff)) {
+					_screen->setScreenPalette(_screen->getPalette(0).getData());
 					_tim->_palDiff = 0;
 				}
 			}
@@ -806,24 +803,24 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 
 	switch (character) {
 	case 0:
-		_screen->loadBitmap("KIERAN.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("KIERAN.CPS", 3, 3, _screen->getPalette(0).getData());
 		break;
 
 	case 1:
-		_screen->loadBitmap("AK'SHEL.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("AK'SHEL.CPS", 3, 3, _screen->getPalette(0).getData());
 		break;
 
 	case 2:
-		_screen->loadBitmap("MICHAEL.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("MICHAEL.CPS", 3, 3, _screen->getPalette(0).getData());
 		break;
 
 	case 3:
-		_screen->loadBitmap("CONRAD.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("CONRAD.CPS", 3, 3, _screen->getPalette(0).getData());
 		break;
 
 	default:
 		_screen->clearPage(3);
-		memset(_screen->getPalette(0), 0, 768);
+		memset(_screen->getPalette(0).getData(), 0, 768);
 		break;
 	}
 
@@ -831,7 +828,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	if (maxDifficulty)
 		_tim->displayText(0x8000, 0, 0xDC);
 	_screen->updateScreen();
-	_screen->fadePalette(_screen->getPalette(0), 30, 0);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 30, 0);
 
 	while (!checkInput(0) && !shouldQuit())
 		delay(_tickLength);
@@ -859,8 +856,8 @@ void LoLEngine::showCredits() {
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = 0;
 
-	_screen->loadBitmap("ROOM.CPS", 2, 2, _screen->getPalette(0));
-	memset(_screen->getPalette(0) + 764, 0, 3);
+	_screen->loadBitmap("ROOM.CPS", 2, 2, _screen->getPalette(0).getData());
+	memset(_screen->getPalette(0).getData() + 764, 0, 3);
 	_screen->fadeToBlack(30);
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -909,8 +906,8 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 	uint8 *monsterPal = _res->fileData("MONSTERS.PAL", 0);
 	assert(monsterPal);
 
-	memcpy(_screen->getPalette(0) + 88 * 3, monsterPal + 0 * 3, 40 * 3);
-	_screen->fadePalette(_screen->getPalette(0), 30);
+	_screen->getPalette(0).copy(monsterPal, 0, 40, 88);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 30);
 
 	uint32 waitTimer = _system->getMillis();
 
@@ -1052,7 +1049,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 				doorRedraw = false;
 			} else {
 				if (!monsterAnimFrame)
-					_screen->setScreenPalette(_screen->getPalette(0));
+					_screen->setScreenPalette(_screen->getPalette(0).getData());
 
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, page, Screen::CR_NO_P_CHECK);
 
@@ -1132,8 +1129,8 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 			curShapeFile = curShapeFile % 28;
 
 			loadOutroShapes(curShapeFile, shapes);
-			memcpy(_screen->getPalette(0) + 88 * 3, monsterPal + curShapeFile * 40 * 3, 40 * 3);
-			_screen->setScreenPalette(_screen->getPalette(0));
+			_screen->getPalette(0).copy(monsterPal, curShapeFile * 40, 40, 88);
+			_screen->setScreenPalette(_screen->getPalette(0).getData());
 
 			needNewShape = false;
 		}

@@ -674,13 +674,13 @@ void KyraEngine_MR::showAlbum() {
 	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, _screenBuffer);
 	_screen->copyRegionToBuffer(4, 0, 0, 320, 200, _album.backUpPage);
 
-	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+	_screen->getPalette(1).copy(_screen->getPalette(0));
 	_screen->fadeToBlack(9);
 
 	int itemInHand = _itemInHand;
 	removeHandItem();
 
-	_res->loadFileToBuf("ALBUM.COL", _screen->getPalette(0), 768);
+	_res->loadFileToBuf("ALBUM.COL", _screen->getPalette(0).getData(), 768);
 	loadAlbumPage();
 	loadAlbumPageWSA();
 
@@ -693,7 +693,7 @@ void KyraEngine_MR::showAlbum() {
 	printAlbumPageText();
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
-	_screen->fadePalette(_screen->getPalette(0), 9);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 9);
 
 	processAlbum();
 
@@ -707,8 +707,8 @@ void KyraEngine_MR::showAlbum() {
 	_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
 	_screen->copyBlockToPage(4, 0, 0, 320, 200, _album.backUpPage);
 
-	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
-	_screen->fadePalette(_screen->getPalette(0), 9);
+	_screen->getPalette(0).copy(_screen->getPalette(1));
+	_screen->fadePalette(_screen->getPalette(0).getData(), 9);
 
 	delete[] _album.backUpRect;
 	_album.backUpRect = 0;

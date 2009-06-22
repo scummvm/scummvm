@@ -42,7 +42,7 @@ namespace Kyra {
 void KyraEngine_LoK::seq_demo() {
 	snd_playTheme(0, 2);
 
-	_screen->loadBitmap("START.CPS", 7, 7, _screen->getPalette(0));
+	_screen->loadBitmap("START.CPS", 7, 7, _screen->getPalette(0).getData());
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 	_screen->fadeFromBlack();
@@ -51,7 +51,7 @@ void KyraEngine_LoK::seq_demo() {
 
 	_screen->clearPage(0);
 	_screen->loadBitmap("TOP.CPS", 7, 7, NULL);
-	_screen->loadBitmap("BOTTOM.CPS", 5, 5, _screen->getPalette(0));
+	_screen->loadBitmap("BOTTOM.CPS", 5, 5, _screen->getPalette(0).getData());
 	_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 	_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
 	_screen->updateScreen();
@@ -77,7 +77,7 @@ void KyraEngine_LoK::seq_demo() {
 	_seq->playSequence(_seq_Demo4, true);
 
 	_screen->clearPage(0);
-	_screen->loadBitmap("FINAL.CPS", 7, 7, _screen->getPalette(0));
+	_screen->loadBitmap("FINAL.CPS", 7, 7, _screen->getPalette(0).getData());
 	_screen->_curPage = 0;
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 6, 0);
 	_screen->updateScreen();
@@ -128,7 +128,7 @@ void KyraEngine_LoK::seq_intro() {
 
 void KyraEngine_LoK::seq_introLogos() {
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
-		_screen->loadBitmap("LOGO.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("LOGO.CPS", 3, 3, _screen->getPalette(0).getData());
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 		_screen->updateScreen();
 		_screen->fadeFromBlack();
@@ -141,7 +141,7 @@ void KyraEngine_LoK::seq_introLogos() {
 	_screen->clearPage(0);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		_screen->loadPalette("INTRO.PAL", _screen->getPalette(0));
+		_screen->loadPalette("INTRO.PAL", _screen->getPalette(0).getData());
 		_screen->loadBitmap("BOTTOM.CPS", 3, 5, 0);
 		_screen->loadBitmap("TOP.CPS", 3, 3, 0);
 		_screen->copyRegion(0, 0, 0, 111, 320, 64, 2, 0);
@@ -149,7 +149,7 @@ void KyraEngine_LoK::seq_introLogos() {
 		_screen->copyRegion(0, 0, 0, 0, 320, 190, 0, 2);
 	} else {
 		_screen->loadBitmap("TOP.CPS", 7, 7, 0);
-		_screen->loadBitmap("BOTTOM.CPS", 5, 5, _screen->getPalette(0));
+		_screen->loadBitmap("BOTTOM.CPS", 5, 5, _screen->getPalette(0).getData());
 		_screen->copyRegion(0, 91, 0, 8, 320, 103, 6, 0);
 		_screen->copyRegion(0, 0, 0, 111, 320, 64, 6, 0);
 	}
@@ -166,8 +166,8 @@ void KyraEngine_LoK::seq_introLogos() {
 	delay(60 * _tickLength);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		memcpy(_screen->getPalette(0), _screen->getPalette(0) + 3*32, 3*32);
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->getPalette(0).copy(_screen->getPalette(1));
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 	}
 
 	if ((_seq->playSequence(_seq_KyrandiaLogo, skipFlag()) && !seq_skipSequence()) || shouldQuit()) {
@@ -181,7 +181,7 @@ void KyraEngine_LoK::seq_introLogos() {
 		return;
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		memcpy(_screen->getPalette(0), _screen->getPalette(0) + 3*64, 3*32);
+		_screen->getPalette(0).copy(_screen->getPalette(2));
 		_screen->fadeToBlack();
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 4, 0);
 		_screen->fadeFromBlack();
@@ -236,22 +236,22 @@ void KyraEngine_LoK::seq_introStory() {
 		return;
 
 	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
-		_screen->loadBitmap("TEXT.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("TEXT.CPS", 3, 3, _screen->getPalette(0).getData());
 	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN)
-		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, _screen->getPalette(0).getData());
 	else if (_flags.lang == Common::DE_DEU)
-		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("TEXT_GER.CPS", 3, 3, _screen->getPalette(0).getData());
 	else if (_flags.lang == Common::FR_FRA)
-		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, _screen->getPalette(0).getData());
 	else if (_flags.lang == Common::ES_ESP)
-		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, _screen->getPalette(0).getData());
 	else if (_flags.lang == Common::IT_ITA && !_flags.isTalkie)
-		_screen->loadBitmap("TEXT_ITA.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("TEXT_ITA.CPS", 3, 3, _screen->getPalette(0).getData());
 	else if (_flags.lang == Common::IT_ITA && _flags.isTalkie)
-		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, _screen->getPalette(0).getData());
 	else
 		warning("no story graphics file found");
-	_screen->setScreenPalette(_screen->getPalette(0));
+	_screen->setScreenPalette(_screen->getPalette(0).getData());
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
 
 	if (_flags.lang == Common::JA_JPN) {
@@ -570,11 +570,11 @@ void KyraEngine_LoK::seq_winterScroll1() {
 			_animator->sprites()[i].active = 0;
 		}
 		uint8 tmpPal[768];
-		memcpy(tmpPal, _screen->getPalette(0), 768);
+		memcpy(tmpPal, _screen->getPalette(0).getData(), 768);
 		memcpy(&tmpPal[684], palTable2()[0], 60);
 		_screen->fadePalette(tmpPal, 72);
-		memcpy(&_screen->getPalette(0)[684], palTable2()[0], 60);
-		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->getPalette(0).copy(palTable2()[0], 0, 20, 228);
+		_screen->setScreenPalette(_screen->getPalette(0).getData());
 		setGameFlag(0xB3);
 	} else {
 		delayWithTicks(120);
@@ -950,8 +950,8 @@ int KyraEngine_LoK::seq_playEnd() {
 			_screen->hideMouse();
 			_screen->fadeSpecialPalette(32, 228, 20, 60);
 			delay(60 * _tickLength);
-			_screen->loadBitmap("GEMHEAL.CPS", 3, 3, _screen->getPalette(0));
-			_screen->setScreenPalette(_screen->getPalette(0));
+			_screen->loadBitmap("GEMHEAL.CPS", 3, 3, _screen->getPalette(0).getData());
+			_screen->setScreenPalette(_screen->getPalette(0).getData());
 			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, 1, 0);
 			uint32 nextTime = _system->getMillis() + 120 * _tickLength;
 			_finalA = new WSAMovie_v1(this);
@@ -1004,15 +1004,15 @@ void KyraEngine_LoK::seq_playEnding() {
 	_screen->hideMouse();
 	_screen->_curPage = 0;
 	_screen->fadeToBlack();
-	_screen->loadBitmap("REUNION.CPS", 3, 3, _screen->getPalette(0));
+	_screen->loadBitmap("REUNION.CPS", 3, 3, _screen->getPalette(0).getData());
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->_curPage = 0;
 	// XXX
 	assert(_homeString);
 	drawSentenceCommand(_homeString[0], 179);
 
-	memset(_screen->getPalette(2), 0, sizeof(uint8)*768);
-	_screen->setScreenPalette(_screen->getPalette(2));
+	_screen->getPalette(2).clear();
+	_screen->setScreenPalette(_screen->getPalette(2).getData());
 
 	_seqPlayerFlag = true;
 	_seq->playSequence(_seq_Reunion, false);
@@ -1045,7 +1045,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	} else
 		_screen->setFont(Screen::FID_8_FNT);
 
-	_screen->loadBitmap("CHALET.CPS", 4, 4, _screen->getPalette(0));
+	_screen->loadBitmap("CHALET.CPS", 4, 4, _screen->getPalette(0).getData());
 
 	_screen->setCurPage(0);
 	_screen->clearCurPage();
@@ -1123,10 +1123,10 @@ void KyraEngine_LoK::seq_playCredits() {
 
 	_screen->setCurPage(2);
 
-	memset(_screen->getPalette(2), 0, sizeof(uint8)*768);
-	_screen->setScreenPalette(_screen->getPalette(2));
+	_screen->getPalette(2).clear();
+	_screen->setScreenPalette(_screen->getPalette(2).getData());
 	_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 0, Screen::CR_NO_P_CHECK);
-	_screen->fadePalette(_screen->getPalette(0), 0x5A);
+	_screen->fadePalette(_screen->getPalette(0).getData(), 0x5A);
 
 	Common::Event event;
 	bool finished = false;
@@ -1683,7 +1683,7 @@ void KyraEngine_LoK::updateKyragemFading() {
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.gOffset];
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.bOffset];
 	}
-	_screen->setScreenPalette(_screen->getPalette(0));
+	_screen->setScreenPalette(_screen->getPalette(0).getData());
 	_animator->_updateScreen = true;
 	switch (_kyragemFadingState.nextOperation) {
 	case 0:
