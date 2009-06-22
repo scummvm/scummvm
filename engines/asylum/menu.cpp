@@ -333,7 +333,7 @@ void MainMenu::updateSubMenu() {
 			// TODO
 			break;
 		case kViewCinematics:
-			// TODO
+			updateSubMenuCinematics();
 			break;
 		case kQuitGame:
 			updateSubMenuQuitGame();
@@ -393,6 +393,29 @@ void MainMenu::updateSubMenuNewGame() {
         if (_mouseX >= 369 && _mouseX <= 369 + 24 && _mouseY >= 273 && _mouseY <= 273 + _text->getResTextWidth(0x8000052B))
             exitSubMenu();
     }
+}
+
+void MainMenu::updateSubMenuCinematics() {
+	int currentCD = 1;	// FIXME: dummy value
+	_text->drawResTextWithValueCentered(10, 100, 620, 0x80000548, currentCD);
+	_text->setTextPos(30, 340);
+	_text->drawResText(0x80000549);	// Prev Page
+
+	if (_mouseX >= 280 && _mouseX <= 400 && _mouseY >= 340 && _mouseY <= 360) {
+		_text->loadFont(_resPack, 0x80010016); // blue font
+		if (_leftClick)
+			exitSubMenu();
+	} else {
+		_text->loadFont(_resPack, 0x80010010); // yellow font
+	}
+
+	_text->setTextPos(280, 340);
+	_text->drawResText(0x8000054B);	// Main Menu
+
+	_text->loadFont(_resPack, 0x80010010); // yellow font
+
+	_text->setTextPos(500, 340);
+	_text->drawResText(0x8000054A);	// Next Page
 }
 
 void MainMenu::updateSubMenuSettings() {

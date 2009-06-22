@@ -52,6 +52,7 @@ public:
 
     void drawTextCentered(uint32 x, uint32 y, uint32 width, char *text);
     void drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId);
+	void drawResTextWithValueCentered(uint32 x, uint32 y, uint32 width, uint32 resId, uint32 value);
 
     void drawTextAlignRight(uint32 x, uint32 y, char *text);
     void drawResTextAlignRight(uint32 x, uint32 y, uint32 resId);

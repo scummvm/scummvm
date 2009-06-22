@@ -121,6 +121,7 @@ private:
 	void updateSubMenu();
 	void exitSubMenu();
     void updateSubMenuNewGame();
+	void updateSubMenuCinematics();
     void updateSubMenuSettings();
     void updateSubMenuQuitGame();
     void updateSubMenuShowCredits();
