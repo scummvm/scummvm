@@ -32,6 +32,7 @@
 #include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/parse.h"
 #include "gob/draw.h"
 #include "gob/sound/sound.h"
@@ -75,20 +76,20 @@ void Inter_v6::o6_totSub() {
 	int flags;
 	int i;
 
-	length = *_vm->_global->_inter_execPtr++;
+	length = _vm->_game->_script->readByte();
 	if ((length & 0x7F) > 13)
 		error("Length in o2_totSub is greater than 13 (%d)", length);
 
 	if (length & 0x80) {
 		evalExpr(0);
-		strcpy(totFile, _vm->_parse->getResultStr());
+		strcpy(totFile, _vm->_game->_script->getResultStr());
 	} else {
 		for (i = 0; i < length; i++)
-			totFile[i] = (char) *_vm->_global->_inter_execPtr++;
+			totFile[i] = _vm->_game->_script->readChar();
 		totFile[i] = 0;
 	}
 
-	flags = *_vm->_global->_inter_execPtr++;
+	flags = _vm->_game->_script->readByte();
 
 	if (flags & 0x40)
 		warning("Urban Stub: o6_totSub(), flags & 0x40");
@@ -109,16 +110,16 @@ void Inter_v6::o6_playVmdOrMusic() {
 	bool close;
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_parse->getResultStr(), 127);
+	strncpy0(fileName, _vm->_game->_script->getResultStr(), 127);
 
-	x = _vm->_parse->parseValExpr();
-	y = _vm->_parse->parseValExpr();
-	startFrame = _vm->_parse->parseValExpr();
-	lastFrame = _vm->_parse->parseValExpr();
-	breakKey = _vm->_parse->parseValExpr();
-	flags = _vm->_parse->parseValExpr();
-	palStart = _vm->_parse->parseValExpr();
-	palEnd = _vm->_parse->parseValExpr();
+	x = _vm->_game->_script->readValExpr();
+	y = _vm->_game->_script->readValExpr();
+	startFrame = _vm->_game->_script->readValExpr();
+	lastFrame = _vm->_game->_script->readValExpr();
+	breakKey = _vm->_game->_script->readValExpr();
+	flags = _vm->_game->_script->readValExpr();
+	palStart = _vm->_game->_script->readValExpr();
+	palEnd = _vm->_game->_script->readValExpr();
 	palCmd = 1 << (flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
@@ -175,7 +176,7 @@ void Inter_v6::o6_openItk() {
 	char fileName[32];
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_parse->getResultStr(), 27);
+	strncpy0(fileName, _vm->_game->_script->getResultStr(), 27);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 
@@ -193,21 +194,21 @@ void Inter_v6::o6_openItk() {
 }
 
 bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
-	int16 id = load16();
+	int16 id = _vm->_game->_script->readInt16();
 
 	if ((id == -1) || (id == -2)) {
 		char file[10];
 
 		if (id == -1) {
 			for (int i = 0; i < 9; i++)
-				file[i] = *_vm->_global->_inter_execPtr++;
+				file[i] = _vm->_game->_script->readChar();
 		} else
-			strncpy(file, GET_VAR_STR(load16()), 10);
+			strncpy(file, GET_VAR_STR(_vm->_game->_script->readInt16()), 10);
 
 		file[9] = '\0';
 
-		uint16 start = load16();
-		int8 index = (int8) *_vm->_global->_inter_execPtr++;
+		uint16 start = _vm->_game->_script->readUint16();
+		int8 index = _vm->_game->_script->readInt8();
 
 		int vmdSlot = _vm->_vidPlayer->slotOpen(file);
 
@@ -235,7 +236,7 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 		return false;
 	}
 
-	int8 index = (int8) *_vm->_global->_inter_execPtr++;
+	int8 index = _vm->_game->_script->readInt8();
 
 	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
 		return false;
@@ -257,19 +258,19 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 
 bool Inter_v6::o6_assign(OpFuncParams &params) {
 	uint16 size, destType;
-	int16 dest = _vm->_parse->parseVarIndex(&size, &destType);
+	int16 dest = _vm->_game->_script->readVarIndex(&size, &destType);
 
 	if (size != 0) {
 		int16 src;
 
-		byte *savedPos = _vm->_global->_inter_execPtr;
+		uint32 startPos = _vm->_game->_script->pos();
 
-		src = _vm->_parse->parseVarIndex(&size, 0);
+		src = _vm->_game->_script->readVarIndex(&size, 0);
 
 		memcpy(_vm->_inter->_variables->getAddressOff8(dest),
 				_vm->_inter->_variables->getAddressOff8(src), size * 4);
 
-		_vm->_global->_inter_execPtr = savedPos;
+		_vm->_game->_script->seek(startPos);
 
 		evalExpr(&src);
 
@@ -277,13 +278,13 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 	}
 
 	byte loopCount;
-	if (*_vm->_global->_inter_execPtr == 98) {
-		_vm->_global->_inter_execPtr++;
-		loopCount = *_vm->_global->_inter_execPtr++;
+	if (_vm->_game->_script->peekByte() == 98) {
+		_vm->_game->_script->skip(1);
+		loopCount = _vm->_game->_script->readByte();
 
 		for (int i = 0; i < loopCount; i++) {
-			uint8 c = *_vm->_global->_inter_execPtr++;
-			uint16 n = load16();
+			uint8 c = _vm->_game->_script->readByte();
+			uint16 n = _vm->_game->_script->readUint16();
 
 			memset(_vm->_inter->_variables->getAddressOff8(dest), c, n);
 
@@ -292,9 +293,9 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 
 		return false;
 
-	} else if (*_vm->_global->_inter_execPtr == 99) {
-		_vm->_global->_inter_execPtr++;
-		loopCount = *_vm->_global->_inter_execPtr++;
+	} else if (_vm->_game->_script->peekByte() == 99) {
+		_vm->_game->_script->skip(1);
+		loopCount = _vm->_game->_script->readByte();
 	} else
 		loopCount = 1;
 
@@ -305,21 +306,21 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 		switch (destType) {
 		case TYPE_VAR_INT8:
 		case TYPE_ARRAY_INT8:
-			WRITE_VARO_UINT8(dest + i, _vm->_parse->getResultInt());
+			WRITE_VARO_UINT8(dest + i, _vm->_game->_script->getResultInt());
 			break;
 
 		case TYPE_VAR_INT16:
 		case TYPE_ARRAY_INT16:
-			WRITE_VARO_UINT16(dest + i * 2, _vm->_parse->getResultInt());
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_game->_script->getResultInt());
 			break;
 
 		case TYPE_VAR_INT32:
 		case TYPE_ARRAY_INT32:
-			WRITE_VAR_OFFSET(dest + i * 4, _vm->_parse->getResultInt());
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_game->_script->getResultInt());
 			break;
 
 		case TYPE_VAR_INT32_AS_INT16:
-			WRITE_VARO_UINT16(dest + i * 4, _vm->_parse->getResultInt());
+			WRITE_VARO_UINT16(dest + i * 4, _vm->_game->_script->getResultInt());
 			break;
 
 		case TYPE_VAR_STR:
@@ -327,7 +328,7 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 			if (srcType == TYPE_IMM_INT16)
 				WRITE_VARO_UINT8(dest, result);
 			else
-				WRITE_VARO_STR(dest, _vm->_parse->getResultStr());
+				WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
 			break;
 		}
 	}
@@ -349,7 +350,7 @@ bool Inter_v6::o6_palLoad(OpFuncParams &params) {
 bool Inter_v6::o6_freeCollision(OpFuncParams &params) {
 	int16 id;
 
-	id = _vm->_parse->parseValExpr();
+	id = _vm->_game->_script->readValExpr();
 
 	switch (id + 5) {
 	case 0:
@@ -385,17 +386,17 @@ bool Inter_v6::o6_freeCollision(OpFuncParams &params) {
 bool Inter_v6::o6_fillRect(OpFuncParams &params) {
 	int16 destSurf;
 
-	_vm->_draw->_destSurface = destSurf = load16();
+	_vm->_draw->_destSurface = destSurf = _vm->_game->_script->readInt16();
 
-	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
-	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
-	_vm->_draw->_spriteRight = _vm->_parse->parseValExpr();
-	_vm->_draw->_spriteBottom = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteRight = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteBottom = _vm->_game->_script->readValExpr();
 
 	evalExpr(0);
 
-	_vm->_draw->_backColor = _vm->_parse->getResultInt() & 0xFFFF;
-	uint16 extraVar = _vm->_parse->getResultInt() >> 16;
+	_vm->_draw->_backColor = _vm->_game->_script->getResultInt() & 0xFFFF;
+	uint16 extraVar = _vm->_game->_script->getResultInt() >> 16;
 
 	if (extraVar != 0)
 		warning("Urban Stub: o6_fillRect(), extraVar = %d", extraVar);

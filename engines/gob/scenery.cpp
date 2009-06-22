@@ -31,6 +31,7 @@
 #include "gob/global.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/inter.h"
 #include "gob/map.h"
 #include "gob/videoplayer.h"
@@ -107,18 +108,18 @@ int16 Scenery::loadStatic(char search) {
 
 	_vm->_inter->evalExpr(&sceneryIndex);
 
-	size = _vm->_inter->load16();
-	backsPtr = (int16 *) _vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr += size * 2;
-	picsCount = _vm->_inter->load16();
-	resId = _vm->_inter->load16();
+	size = _vm->_game->_script->readInt16();
+	backsPtr = (int16 *) (_vm->_game->_script->getData() + _vm->_game->_script->pos());
+	_vm->_game->_script->skip(size * 2);
+	picsCount = _vm->_game->_script->readInt16();
+	resId = _vm->_game->_script->readInt16();
 
 	if (search) {
 		int i;
 
 		for (i = 0; i < 10; i++) {
 			if ((_staticPictCount[i] != -1) && (_staticResId[i] == resId)) {
-				_vm->_global->_inter_execPtr += 8 * _staticPictCount[i];
+				_vm->_game->_script->skip(8 * _staticPictCount[i]);
 				return i;
 			}
 
@@ -167,13 +168,13 @@ int16 Scenery::loadStatic(char search) {
 	ptr->piecesCount = new uint32[picsCount];
 
 	for (int i = 0; i < picsCount; i++) {
-		int16 pictDescId = _vm->_inter->load16();
+		int16 pictDescId = _vm->_game->_script->readInt16();
 
 		loadPieces(pictDescId, ptr->pieces[i], ptr->piecesCount[i]);
 
-		width = _vm->_inter->load16();
-		height = _vm->_inter->load16();
-		sprResId = _vm->_inter->load16();
+		width = _vm->_game->_script->readInt16();
+		height = _vm->_game->_script->readInt16();
+		sprResId = _vm->_game->_script->readInt16();
 		for (sprIndex = 0; sprIndex < 20; sprIndex++) {
 			if (_spriteResId[sprIndex] == sprResId)
 				break;
@@ -433,13 +434,13 @@ int16 Scenery::loadAnim(char search) {
 
 	extData = 0;
 	_vm->_inter->evalExpr(&sceneryIndex);
-	picsCount = _vm->_inter->load16();
-	resId = _vm->_inter->load16();
+	picsCount = _vm->_game->_script->readInt16();
+	resId = _vm->_game->_script->readInt16();
 
 	if (search) {
 		for (i = 0; i < 10; i++) {
 			if ((_animPictCount[i] != 0) && (_animResId[i] == resId)) {
-				_vm->_global->_inter_execPtr += 8 * _animPictCount[i];
+				_vm->_game->_script->skip(8 * _animPictCount[i]);
 				return i;
 			}
 
@@ -502,13 +503,13 @@ int16 Scenery::loadAnim(char search) {
 	ptr->piecesCount = new uint32[picsCount];
 
 	for (i = 0; i < picsCount; i++) {
-		int16 pictDescId = _vm->_inter->load16();
+		int16 pictDescId = _vm->_game->_script->readInt16();
 
 		loadPieces(pictDescId, ptr->pieces[i], ptr->piecesCount[i]);
 
-		width = _vm->_inter->load16();
-		height = _vm->_inter->load16();
-		sprResId = _vm->_inter->load16();
+		width = _vm->_game->_script->readInt16();
+		height = _vm->_game->_script->readInt16();
+		sprResId = _vm->_game->_script->readInt16();
 		for (sprIndex = 0; sprIndex < 20; sprIndex++)
 			if (_spriteResId[sprIndex] == sprResId)
 				break;

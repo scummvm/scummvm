@@ -31,9 +31,9 @@
 #include "gob/game.h"
 #include "gob/helper.h"
 #include "gob/global.h"
+#include "gob/script.h"
 #include "gob/inter.h"
 #include "gob/draw.h"
-#include "gob/parse.h"
 
 namespace Gob {
 
@@ -54,7 +54,7 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 	_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
 	_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
 	_totTextDataArray[_backupedCount] = _totTextData;
-	_totFileDataArray[_backupedCount] = _totFileData;
+	_scriptArray[_backupedCount] = _script;
 	_totResourceTableArray[_backupedCount] = _totResourceTable;
 	_extTableArray[_backupedCount] = _extTable;
 	_extHandleArray[_backupedCount] = _extHandle;
@@ -66,8 +66,8 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 	_backupedCount++;
 	_curBackupPos = _backupedCount;
 
+	_script = new Script(_vm);
 	_totTextData = 0;
-	_totFileData = 0;
 	_totResourceTable = 0;
 
 	if (flags & 0x80)
@@ -105,7 +105,7 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_backupedCount];
 	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_backupedCount];
 	_totTextData = _totTextDataArray[_backupedCount];
-	_totFileData = _totFileDataArray[_backupedCount];
+	_script = _scriptArray[_backupedCount];
 	_totResourceTable = _totResourceTableArray[_backupedCount];
 	_extTable = _extTableArray[_backupedCount];
 	_extHandle = _extHandleArray[_backupedCount];
@@ -148,7 +148,8 @@ int16 Game_v6::addNewCollision(int16 id, uint16 left, uint16 top,
 		ptr->funcEnter = funcEnter;
 		ptr->funcLeave = funcLeave;
 		ptr->funcSub = funcSub;
-		ptr->totFileData = _totFileData;
+		ptr->totFileData = _script->getData();
+		ptr->totSize = _script->getSize();
 
 		return i;
 	}
@@ -383,7 +384,6 @@ void Game_v6::collisionsBlock(void) {
 	int16 array[300];
 	byte count;
 	int16 collResId;
-	byte *startIP;
 	int16 curCmd;
 	int16 cmd;
 	int16 cmdHigh;
@@ -397,7 +397,6 @@ void Game_v6::collisionsBlock(void) {
 	int16 stackPos2;
 	int16 descIndex;
 	int16 timeVal;
-	int16 offsetIP;
 	char *str;
 	int16 i;
 	int16 counter;
@@ -406,10 +405,11 @@ void Game_v6::collisionsBlock(void) {
 	int16 collStackPos;
 	Collision *collPtr;
 	Collision *collArea;
-	byte *savedIP;
 	byte collAreaStart;
 	int16 activeCollResId = 0;
 	int16 activeCollIndex = 0;
+	uint32 startPos;
+	uint32 offsetPos;
 
 	if (_shouldPushColls)
 		pushCollisions(0);
@@ -422,25 +422,25 @@ void Game_v6::collisionsBlock(void) {
 	_shouldPushColls = 0;
 	collResId = -1;
 
-	_vm->_global->_inter_execPtr++;
-	count = *_vm->_global->_inter_execPtr++;
+	_script->skip(1);
+	count = _script->readByte();
 
-	_handleMouse = _vm->_global->_inter_execPtr[0];
-	deltaTime = 1000 * _vm->_global->_inter_execPtr[1];
-	stackPos2 = _vm->_global->_inter_execPtr[3];
-	descIndex = _vm->_global->_inter_execPtr[4];
-	byte var_42 = _vm->_global->_inter_execPtr[5];
+	_handleMouse = _script->peekByte(0);
+	deltaTime = 1000 * _script->peekByte(1);
+	stackPos2 = _script->peekByte(3);
+	descIndex = _script->peekByte(4);
+	byte var_42 = _script->peekByte(5);
 
 	if ((stackPos2 != 0) || (descIndex != 0)) {
 		deltaTime /= 100;
-		if (_vm->_global->_inter_execPtr[1] == 100)
+		if (_script->peekByte(1) == 100)
 			deltaTime = 2;
 	}
 
 	timeVal = deltaTime;
-	_vm->_global->_inter_execPtr += 6;
+	_script->skip(6);
 
-	startIP = _vm->_global->_inter_execPtr;
+	startPos = _script->pos();
 	WRITE_VAR(16, 0);
 
 	byte var_41 = 0;
@@ -452,28 +452,27 @@ void Game_v6::collisionsBlock(void) {
 
 	for (curCmd = 0; curCmd < count; curCmd++) {
 		array[curCmd] = 0;
-		cmd = *_vm->_global->_inter_execPtr++;
+		cmd = _script->readByte();
 
 		if ((cmd & 0x40) != 0) {
 			cmd -= 0x40;
-			cmdHigh = *_vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr++;
+			cmdHigh = _script->readByte();
 			cmdHigh <<= 8;
 		} else
 			cmdHigh = 0;
 
 		if ((cmd & 0x80) != 0) {
-			offsetIP = _vm->_global->_inter_execPtr - _totFileData;
-			left = _vm->_parse->parseValExpr();
-			top = _vm->_parse->parseValExpr();
-			width = _vm->_parse->parseValExpr();
-			height = _vm->_parse->parseValExpr();
+			offsetPos = _script->pos();
+			left = _script->readValExpr();
+			top = _script->readValExpr();
+			width = _script->readValExpr();
+			height = _script->readValExpr();
 		} else {
-			offsetIP = 0;
-			left = _vm->_inter->load16();
-			top = _vm->_inter->load16();
-			width = _vm->_inter->load16();
-			height = _vm->_inter->load16();
+			offsetPos = 0;
+			left = _script->readUint16();
+			top = _script->readUint16();
+			width = _script->readUint16();
+			height = _script->readUint16();
 		}
 
 		if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) && (left != 0xFFFF)) {
@@ -496,45 +495,37 @@ void Game_v6::collisionsBlock(void) {
 
 		switch (cmd) {
 		case 0:
-			_vm->_global->_inter_execPtr += 6;
-			startIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr += 2;
-			_vm->_global->_inter_execPtr +=
-				READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_script->skip(6);
+			startPos = _script->pos();
+			_script->skip(_script->peekUint16(2) + 2);
 			key = curCmd + 0xA000;
 
 			addNewCollision(curCmd + 0x8000, left, top,
 					left + width - 1, top + height - 1,
-					cmd + cmdHigh, key, startIP - _totFileData,
-					_vm->_global->_inter_execPtr - _totFileData, offsetIP);
+					cmd + cmdHigh, key, startPos,
+					_script->pos(), offsetPos);
 
-			_vm->_global->_inter_execPtr += 2;
-			_vm->_global->_inter_execPtr +=
-				READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_script->skip(_script->peekUint16(2) + 2);
 
 			break;
 
 		case 1:
-			key = _vm->_inter->load16();
-			array[curCmd] = _vm->_inter->load16();
-			flags = _vm->_inter->load16();
+			key = _script->readInt16();
+			array[curCmd] = _script->readInt16();
+			flags = _script->readInt16();
 
-			startIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr += 2;
-			_vm->_global->_inter_execPtr +=
-				READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			startPos = _script->pos();
+			_script->skip(_script->peekUint16(2) + 2);
 
 			if (key == 0)
 				key = curCmd + 0xA000;
 
 			addNewCollision(curCmd + 0x8000, left, top,
 					left + width - 1, top + height - 1,
-					(flags << 4) + cmd + cmdHigh, key, startIP - _totFileData,
-					_vm->_global->_inter_execPtr - _totFileData, offsetIP);
+					(flags << 4) + cmd + cmdHigh, key, startPos,
+					_script->pos(), offsetPos);
 
-			_vm->_global->_inter_execPtr += 2;
-			_vm->_global->_inter_execPtr +=
-				READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_script->skip(_script->peekUint16(2) + 2);
 
 			break;
 
@@ -548,23 +539,20 @@ void Game_v6::collisionsBlock(void) {
 		case 10:
 			_vm->_util->clearKeyBuf();
 			var_1C = 1;
-			key = _vm->_parse->parseVarIndex();
-			descArray[index].fontIndex = _vm->_inter->load16();
-			descArray[index].backColor = *_vm->_global->_inter_execPtr++;
-			descArray[index].frontColor = *_vm->_global->_inter_execPtr++;
+			key = _script->readVarIndex();
+			descArray[index].fontIndex = _script->readInt16();
+			descArray[index].backColor = _script->readByte();
+			descArray[index].frontColor = _script->readByte();
 
 			if ((cmd >= 5) && (cmd <= 8)) {
-				descArray[index].ptr = _vm->_global->_inter_execPtr + 2;
-				_vm->_global->_inter_execPtr +=
-					READ_LE_UINT16(_vm->_global->_inter_execPtr) + 2;
+				descArray[index].ptr = _script->getData() + _script->pos() + 2;
+				_script->skip(_script->peekUint16() + 2);
 			} else
 				descArray[index].ptr = 0;
 
 			if (left == 0xFFFF) {
 				if ((cmd & 1) == 0) {
-					_vm->_global->_inter_execPtr += 2;
-					_vm->_global->_inter_execPtr +=
-						READ_LE_UINT16(_vm->_global->_inter_execPtr);
+					_script->skip(_script->peekUint16(2) + 2);
 				}
 				break;
 			}
@@ -575,50 +563,44 @@ void Game_v6::collisionsBlock(void) {
 
 			funcLeave = 0;
 			if (!(cmd & 1))
-				funcLeave = _vm->_global->_inter_execPtr - _totFileData;
+				funcLeave = _script->pos();
 
 			addNewCollision(curCmd + 0x8000, left, top, right,
 					top + height - 1, cmd, key, 0, funcLeave, 0);
 
 			if (!(cmd & 1)) {
-				_vm->_global->_inter_execPtr += 2;
-				_vm->_global->_inter_execPtr +=
-					READ_LE_UINT16(_vm->_global->_inter_execPtr);
+				_script->skip(_script->peekUint16(2) + 2);
 			}
 
 			index++;
 			break;
 
 		case 11:
-			_vm->_global->_inter_execPtr += 6;
+			_script->skip(6);
 			for (i = 0; i < 150; i++) {
 				if ((_collisionAreas[i].id & 0xF000) == 0xE000) {
 					_collisionAreas[i].id &= 0xBFFF;
 					_collisionAreas[i].funcEnter =
-						_vm->_global->_inter_execPtr - _totFileData;
+						_script->pos();
 					_collisionAreas[i].funcLeave =
-						_vm->_global->_inter_execPtr - _totFileData;
+						_script->pos();
 				}
 			}
-			_vm->_global->_inter_execPtr += 2;
-			_vm->_global->_inter_execPtr +=
-				READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_script->skip(_script->peekUint16(2) + 2);
 			break;
 
 		case 12:
-			_vm->_global->_inter_execPtr += 6;
+			_script->skip(6);
 			for (i = 0; i < 150; i++) {
 				if ((_collisionAreas[i].id & 0xF000) == 0xD000) {
 					_collisionAreas[i].id &= 0xBFFF;
 					_collisionAreas[i].funcEnter =
-						_vm->_global->_inter_execPtr - _totFileData;
+						_script->pos();
 					_collisionAreas[i].funcLeave =
-						_vm->_global->_inter_execPtr - _totFileData;
+						_script->pos();
 				}
 			}
-			_vm->_global->_inter_execPtr += 2;
-			_vm->_global->_inter_execPtr +=
-				READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_script->skip(_script->peekUint16(2) + 2);
 			break;
 
 		case 20:
@@ -626,34 +608,30 @@ void Game_v6::collisionsBlock(void) {
 			// Fall through to case 2
 
 		case 2:
-			key = _vm->_inter->load16();
-			array[curCmd] = _vm->_inter->load16();
-			flags = _vm->_inter->load16();
+			key = _script->readInt16();
+			array[curCmd] = _script->readInt16();
+			flags = _script->readInt16();
 
 			addNewCollision(curCmd + 0x8000, left, top,
 					left + width - 1, top + height - 1,
 					(flags << 4) + cmdHigh + 2, key, 0,
-					_vm->_global->_inter_execPtr - _totFileData, offsetIP);
+					_script->pos(), offsetPos);
 
-			_vm->_global->_inter_execPtr += 2;
-			_vm->_global->_inter_execPtr +=
-				READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_script->skip(_script->peekUint16(2) + 2);
 
 			break;
 
 		case 21:
-			key = _vm->_inter->load16();
-			array[curCmd] = _vm->_inter->load16();
-			flags = _vm->_inter->load16() & 3;
+			key = _script->readInt16();
+			array[curCmd] = _script->readInt16();
+			flags = _script->readInt16() & 3;
 
 			addNewCollision(curCmd + 0x8000, left, top,
 					left + width - 1, top + height - 1,
 					(flags << 4) + cmdHigh + 2, key,
-					_vm->_global->_inter_execPtr - _totFileData, 0, offsetIP);
+					_script->pos(), 0, offsetPos);
 
-			_vm->_global->_inter_execPtr += 2;
-			_vm->_global->_inter_execPtr +=
-				READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_script->skip(_script->peekUint16(2) + 2);
 
 			break;
 		}
@@ -915,10 +893,8 @@ void Game_v6::collisionsBlock(void) {
 	if (_handleMouse == 1)
 		_vm->_draw->blitCursor();
 
-	savedIP = 0;
 	if (!_vm->_inter->_terminate && (var_41 == 0)) {
-		savedIP = _totFileData +
-			_collisionAreas[activeCollIndex].funcLeave;
+		_script->seek(_collisionAreas[activeCollIndex].funcLeave);
 
 		_vm->_inter->storeMouse();
 		if (VAR(16) == 0) {
@@ -927,7 +903,8 @@ void Game_v6::collisionsBlock(void) {
 			else
 				WRITE_VAR(16, activeCollResId & 0xFFF);
 		}
-	}
+	} else
+		_script->setFinished(true);
 
 	for (curCmd = 0; curCmd < count; curCmd++)
 		freeCollision(curCmd + 0x8000);
@@ -937,8 +914,6 @@ void Game_v6::collisionsBlock(void) {
 				((_collisionAreas[i].id & 0xF000) == 0x9000))
 			_collisionAreas[i].id |= 0x4000;
 	}
-
-	_vm->_global->_inter_execPtr = savedIP;
 }
 
 void Game_v6::setCollisions(byte arg_0) {
@@ -951,22 +926,28 @@ void Game_v6::setCollisions(byte arg_0) {
 				continue;
 
 		byte *totFileData = collArea->totFileData;
+		uint32 totSize = collArea->totSize;
 
-		if (!totFileData)
-			totFileData = _totFileData;
+		if (!totFileData || (totSize == 0)) {
+			totFileData = _script->getData();
+			totSize = _script->getSize();
+		}
 
-		byte *savedIP = _vm->_global->_inter_execPtr;
+		uint32 savedPos = _script->pos();
+		byte *savedData = _script->getData();
+		uint32 savedSize = _script->getSize();
 
-		_vm->_global->_inter_execPtr = totFileData + collArea->funcSub;
+		_script->cuckoo(totFileData, totSize);
+		_script->seek(collArea->funcSub);
 
-		int16 left   = _vm->_parse->parseValExpr();
-		int16 top    = _vm->_parse->parseValExpr();
-		int16 width  = _vm->_parse->parseValExpr();
-		int16 height = _vm->_parse->parseValExpr();
+		int16 left   = _script->readValExpr();
+		int16 top    = _script->readValExpr();
+		int16 width  = _script->readValExpr();
+		int16 height = _script->readValExpr();
 		uint16 flags = 0;
 
 		if ((collArea->id & 0xF000) == 0xA000)
-			flags = _vm->_parse->parseValExpr();
+			flags = _script->readValExpr();
 
 		if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) &&
 				(left != -1)) {
@@ -1001,16 +982,17 @@ void Game_v6::setCollisions(byte arg_0) {
 		if ((collArea->id & 0xF000) == 0xA000)
 			collArea->flags = flags;
 
-		_vm->_global->_inter_execPtr = savedIP;
+		_script->cuckoo(savedData, savedSize);
+		_script->seek(savedPos);
 	}
 }
 
 void Game_v6::collSub(uint16 offset) {
-	byte *savedIP;
 	int16 collStackSize;
 
-	savedIP = _vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr = _totFileData + offset;
+	uint32 savedPos = _script->pos();
+
+	_script->seek(offset);
 
 	_shouldPushColls = 1;
 	collStackSize = _collStackSize;
@@ -1021,7 +1003,8 @@ void Game_v6::collSub(uint16 offset) {
 		popCollisions();
 
 	_shouldPushColls = 0;
-	_vm->_global->_inter_execPtr = savedIP;
+
+	_script->seek(savedPos);
 
 	if ((_vm->_util->getTimeKey() - _someTimeDly) > 500)
 		setCollisions(0);

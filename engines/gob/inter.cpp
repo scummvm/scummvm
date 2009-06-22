@@ -33,9 +33,10 @@
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/parse.h"
+#include "gob/script.h"
 #include "gob/scenery.h"
 #include "gob/sound/sound.h"
+#include "gob/parse.h"
 
 namespace Gob {
 
@@ -114,7 +115,7 @@ void Inter::executeOpcodeGob(int i, OpGobParams &params) {
 		return;
 	}
 
-	_vm->_global->_inter_execPtr += params.paramCount << 1;
+	_vm->_game->_script->skip(params.paramCount << 1);
 	warning("unimplemented opcodeGob: %d [0x%X]", i, i);
 }
 
@@ -156,24 +157,18 @@ void Inter::initControlVars(char full) {
 	}
 }
 
-int16 Inter::load16() {
-	int16 tmp = (int16) READ_LE_UINT16(_vm->_global->_inter_execPtr);
-	_vm->_global->_inter_execPtr += 2;
-	return tmp;
-}
-
 char Inter::evalExpr(int16 *pRes) {
 	byte type;
 
 	_vm->_parse->printExpr(99);
 
-	_vm->_parse->parseExpr(99, &type);
+	_vm->_game->_script->readExpr(99, &type);
 	if (!pRes)
 		return type;
 
 	switch (type) {
 	case TYPE_IMM_INT16:
-		*pRes = _vm->_parse->getResultInt();
+		*pRes = _vm->_game->_script->getResultInt();
 		break;
 
 	case TYPE_IMM_STR:
@@ -194,9 +189,9 @@ bool Inter::evalBoolResult() {
 
 	_vm->_parse->printExpr(99);
 
-	_vm->_parse->parseExpr(99, &type);
+	_vm->_game->_script->readExpr(99, &type);
 	if ( (type == GOB_TRUE) ||
-	    ((type == TYPE_IMM_INT16) && _vm->_parse->getResultInt()))
+	    ((type == TYPE_IMM_INT16) && _vm->_game->_script->getResultInt()))
 		return true;
 	else
 		return false;
@@ -283,20 +278,20 @@ void Inter::funcBlock(int16 retFlag) {
 
 	params.retFlag = retFlag;
 
-	if (!_vm->_global->_inter_execPtr)
+	if (_vm->_game->_script->isFinished())
 		return;
 
 	_break = false;
-	_vm->_global->_inter_execPtr++;
-	params.cmdCount = *_vm->_global->_inter_execPtr++;
-	_vm->_global->_inter_execPtr += 2;
+	_vm->_game->_script->skip(1);
+	params.cmdCount = _vm->_game->_script->readByte();
+	_vm->_game->_script->skip(2);
 
 	if (params.cmdCount == 0) {
-		_vm->_global->_inter_execPtr = 0;
+		_vm->_game->_script->setFinished(true);
 		return;
 	}
 
-	int startaddr = _vm->_global->_inter_execPtr - _vm->_game->_totFileData;
+	int startaddr = _vm->_game->_script->pos();
 
 	params.counter = 0;
 	do {
@@ -311,7 +306,7 @@ void Inter::funcBlock(int16 retFlag) {
 		     (_vm->getPlatform() == Common::kPlatformMacintosh) ||
 		     (_vm->getPlatform() == Common::kPlatformWindows))) {
 
-			int addr = _vm->_global->_inter_execPtr-_vm->_game->_totFileData;
+			int addr = _vm->_game->_script->pos();
 
 			if ((startaddr == 0x18B4 && addr == 0x1A7F && // Zombie, EGA
 				 !strncmp(_vm->_game->_curTotFile, "avt005.tot", 10)) ||
@@ -337,14 +332,13 @@ void Inter::funcBlock(int16 retFlag) {
 
 		} // End of workaround
 
-		cmd = *_vm->_global->_inter_execPtr;
+		cmd = _vm->_game->_script->readByte();
 		if ((cmd >> 4) >= 12) {
 			cmd2 = 16 - (cmd >> 4);
 			cmd &= 0xF;
 		} else
 			cmd2 = 0;
 
-		_vm->_global->_inter_execPtr++;
 		params.counter++;
 
 		if (cmd2 == 0)
@@ -366,17 +360,17 @@ void Inter::funcBlock(int16 retFlag) {
 		}
 	} while (params.counter != params.cmdCount);
 
-	_vm->_global->_inter_execPtr = 0;
+	_vm->_game->_script->setFinished(true);
 	return;
 }
 
 void Inter::callSub(int16 retFlag) {
 	byte block;
 
-	while (!_vm->shouldQuit() && _vm->_global->_inter_execPtr &&
-			(_vm->_global->_inter_execPtr != _vm->_game->_totFileData)) {
+	while (!_vm->shouldQuit() && !_vm->_game->_script->isFinished() &&
+			(_vm->_game->_script->pos() != 0)) {
 
-		block = *_vm->_global->_inter_execPtr;
+		block = _vm->_game->_script->peekByte();
 		if (block == 1)
 			funcBlock(retFlag);
 		else if (block == 2)
@@ -385,7 +379,7 @@ void Inter::callSub(int16 retFlag) {
 			error("Unknown block type %d in Inter::callSub()", block);
 	}
 
-	if (_vm->_global->_inter_execPtr == _vm->_game->_totFileData)
+	if (!_vm->_game->_script->isFinished() && (_vm->_game->_script->pos() == 0))
 		_terminate = 1;
 }
 

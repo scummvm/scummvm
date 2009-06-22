@@ -32,7 +32,7 @@
 #include "gob/global.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/parse.h"
+#include "gob/script.h"
 #include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
 
@@ -65,13 +65,13 @@ void Inter_v4::o4_initScreen() {
 	int16 videoMode;
 	int16 width, height;
 
-	offY = load16();
+	offY = _vm->_game->_script->readInt16();
 
 	videoMode = offY & 0xFF;
 	offY = (offY >> 8) & 0xFF;
 
-	width = _vm->_parse->parseValExpr();
-	height = _vm->_parse->parseValExpr();
+	width = _vm->_game->_script->readValExpr();
+	height = _vm->_game->_script->readValExpr();
 
 	_vm->_video->clearScreen();
 
@@ -153,7 +153,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	bool close;
 
 	evalExpr(0);
-	strncpy0(fileName, _vm->_parse->getResultStr(), 127);
+	strncpy0(fileName, _vm->_game->_script->getResultStr(), 127);
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
@@ -161,14 +161,14 @@ void Inter_v4::o4_playVmdOrMusic() {
 			(!scumm_stricmp(fileName, "noixroule")))
 		strcpy(fileName, "noixroul");
 
-	x = _vm->_parse->parseValExpr();
-	y = _vm->_parse->parseValExpr();
-	startFrame = _vm->_parse->parseValExpr();
-	lastFrame = _vm->_parse->parseValExpr();
-	breakKey = _vm->_parse->parseValExpr();
-	flags = _vm->_parse->parseValExpr();
-	palStart = _vm->_parse->parseValExpr();
-	palEnd = _vm->_parse->parseValExpr();
+	x = _vm->_game->_script->readValExpr();
+	y = _vm->_game->_script->readValExpr();
+	startFrame = _vm->_game->_script->readValExpr();
+	lastFrame = _vm->_game->_script->readValExpr();
+	breakKey = _vm->_game->_script->readValExpr();
+	flags = _vm->_game->_script->readValExpr();
+	palStart = _vm->_game->_script->readValExpr();
+	palEnd = _vm->_game->_script->readValExpr();
 	palCmd = 1 << (flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "

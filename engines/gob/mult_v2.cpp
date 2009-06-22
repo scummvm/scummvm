@@ -32,9 +32,9 @@
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/goblin.h"
 #include "gob/inter.h"
-#include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
@@ -64,7 +64,7 @@ void Mult_v2::loadMult(int16 resId) {
 	byte *extData;
 	bool hasImds;
 
-	index = (resId & 0x8000) ? *_vm->_global->_inter_execPtr++ : 0;
+	index = (resId & 0x8000) ? _vm->_game->_script->readByte() : 0;
 	resId &= 0x7FFF;
 
 	debugC(4, kDebugGameFlow, "Loading mult %d", index);
@@ -206,14 +206,13 @@ void Mult_v2::loadMult(int16 resId) {
 		switch (_multData->sndKeys[i].cmd) {
 		case 1:
 		case 4:
-			_multData->sndKeys[i].resId =
-				READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_multData->sndKeys[i].resId = _vm->_game->_script->peekUint16();
 			for (j = 0; j < i; j++) {
 				if (_multData->sndKeys[j].resId ==
 						_multData->sndKeys[i].resId) {
 					_multData->sndKeys[i].soundIndex =
 						_multData->sndKeys[j].soundIndex;
-					_vm->_global->_inter_execPtr += 2;
+					_vm->_game->_script->skip(2);
 					break;
 				}
 			}
@@ -226,7 +225,7 @@ void Mult_v2::loadMult(int16 resId) {
 			}
 			break;
 		case 3:
-			_vm->_global->_inter_execPtr += 4;
+			_vm->_game->_script->skip(4);
 			break;
 
 		case -1:
@@ -250,11 +249,11 @@ void Mult_v2::loadMult(int16 resId) {
 void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 	int16 size;
 
-	size = _vm->_inter->load16();
-	_multData->execPtr = _vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr += size * 2;
+	size = _vm->_game->_script->readInt16();
+	_multData->execPtr = _vm->_game->_script->getData() + _vm->_game->_script->pos();
+	_vm->_game->_script->skip(size * 2);
 
-	if (_vm->_game->_totFileData[0x29] < 51)
+	if (_vm->_game->_script->getData()[0x29] < 51)
 		return;
 
 	size = data.readSint16LE();
@@ -263,12 +262,13 @@ void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 		data.read(_multData->somepointer10, size * 20);
 	}
 
-	size = _vm->_inter->load16();
+	size = _vm->_game->_script->readInt16();
 	if (size <= 0)
 		return;
 
 	_multData->imdFiles = new char[size * 14];
-	memcpy(_multData->imdFiles, _vm->_global->_inter_execPtr, size * 14);
+	memcpy(_multData->imdFiles,
+			_vm->_game->_script->getData() + _vm->_game->_script->pos(), size * 14);
 
 	// WORKAROUND: The Windows version of Lost in Time has VMD not IMD files,
 	//             but they are still referenced as IMD.
@@ -282,7 +282,7 @@ void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 		}
 	}
 
-	_vm->_global->_inter_execPtr += size * 14;
+	_vm->_game->_script->skip(size * 14);
 	data.seek(2, SEEK_CUR);
 	for (int i = 0; i < 4; i++) {
 		_multData->imdKeysCount[i] = data.readSint16LE();
@@ -401,10 +401,10 @@ void Mult_v2::multSub(uint16 multIndex) {
 	_multData = _multDatas[multIndex];
 
 	if (!_multData) {
-		_vm->_parse->parseValExpr();
-		_vm->_parse->parseValExpr();
-		_vm->_parse->parseValExpr();
-		_vm->_parse->parseValExpr();
+		_vm->_game->_script->readValExpr();
+		_vm->_game->_script->readValExpr();
+		_vm->_game->_script->readValExpr();
+		_vm->_game->_script->readValExpr();
 		return;
 	}
 
@@ -427,9 +427,9 @@ void Mult_v2::multSub(uint16 multIndex) {
 
 	_multData->animObjs[index][0] = flags;
 	for (int i = 1; i < 4; i++)
-		_multData->animObjs[index][i] = _vm->_parse->parseValExpr();
+		_multData->animObjs[index][i] = _vm->_game->_script->readValExpr();
 
-	expr = _vm->_parse->parseValExpr();
+	expr = _vm->_game->_script->readValExpr();
 	_multData->animKeysFrames[index] = expr;
 	_multData->animKeysStartFrames[index] = expr;
 
@@ -871,7 +871,7 @@ void Mult_v2::animate() {
 				animObj.newBottom =
 					MAX(animObj.lastBottom, _vm->_scenery->_toRedrawBottom);
 
-				if ((_vm->_game->_totFileData[0x29] > 50) &&
+				if ((_vm->_game->_script->getData()[0x29] > 50) &&
 						(animObj.newLeft == animObj.lastLeft) &&
 						(animObj.newTop == animObj.lastTop) &&
 						(animObj.newRight == animObj.lastRight) &&

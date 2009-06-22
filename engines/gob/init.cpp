@@ -99,7 +99,6 @@ void Init::initGame() {
 	_vm->_global->_mouseYShift = 1;
 
 	_vm->_game->_totTextData = 0;
-	_vm->_game->_totFileData = 0;
 	_palDesc = new Video::PalDesc;
 
 	_vm->validateVideoMode(_vm->_global->_videoMode);

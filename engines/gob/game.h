@@ -30,6 +30,8 @@
 
 namespace Gob {
 
+class Script;
+
 class Game {
 public:
 
@@ -47,6 +49,7 @@ public:
 		uint16 funcLeave;
 		uint16 funcSub;
 		byte *totFileData;
+		uint32 totSize;
 	} PACKED_STRUCT;
 
 #define szGame_TotTextItem (2 + 2)
@@ -77,11 +80,12 @@ public:
 	bool _foundTotLoc;
 	TotTextTable *_totTextData;
 
+	Script *_script;
+
 	char _curTotFile[14];
 	char _curExtFile[14];
 
 	byte *_imFileData;
-	byte *_totFileData;
 
 	int16 _extHandle;
 	int16 _lomHandle;
@@ -211,20 +215,19 @@ protected:
 	int16 _cursorHotspotXArray[5];
 	int16 _cursorHotspotYArray[5];
 	TotTextTable *_totTextDataArray[5];
-	byte *_totFileDataArray[5];
 	TotResTable *_totResourceTableArray[5];
 	ExtTable *_extTableArray[5];
 	int16 _extHandleArray[5];
 	byte *_imFileDataArray[5];
 	Variables *_variablesArray[5];
 	char _curTotFileArray[5][14];
+	Script *_scriptArray[5];
 
 	GobEngine *_vm;
 
 	virtual int16 adjustKey(int16 key);
 
 	byte *loadLocTexts(int32 *dataSize = 0);
-	int32 loadTotFile(const char *path);
 	void loadExtTable(void);
 	void loadImFile(void);
 

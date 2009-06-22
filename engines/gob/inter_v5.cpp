@@ -30,7 +30,7 @@
 #include "gob/inter.h"
 #include "gob/global.h"
 #include "gob/game.h"
-#include "gob/parse.h"
+#include "gob/script.h"
 #include "gob/draw.h"
 
 namespace Gob {
@@ -96,7 +96,7 @@ void Inter_v5::setupOpcodesGob() {
 void Inter_v5::o5_deleteFile() {
 	evalExpr(0);
 
-	warning("Dynasty Stub: deleteFile \"%s\"", _vm->_parse->getResultStr());
+	warning("Dynasty Stub: deleteFile \"%s\"", _vm->_game->_script->getResultStr());
 }
 
 void Inter_v5::o5_initScreen() {
@@ -104,13 +104,13 @@ void Inter_v5::o5_initScreen() {
 	int16 videoMode;
 	int16 width, height;
 
-	offY = load16();
+	offY = _vm->_game->_script->readInt16();
 
 	videoMode = offY & 0xFF;
 	offY = (offY >> 8) & 0xFF;
 
-	width = _vm->_parse->parseValExpr();
-	height = _vm->_parse->parseValExpr();
+	width = _vm->_game->_script->readValExpr();
+	height = _vm->_game->_script->readValExpr();
 
 	warning("initScreen: %d, %d, %d, %d", width, height, offY, videoMode);
 
@@ -205,18 +205,18 @@ bool Inter_v5::o5_istrlen(OpFuncParams &params) {
 	int16 len;
 	uint16 type;
 
-	if (*_vm->_global->_inter_execPtr == 0x80) {
-		_vm->_global->_inter_execPtr++;
+	if (_vm->_game->_script->peekByte() == 0x80) {
+		_vm->_game->_script->skip(1);
 
-		strVar1 = _vm->_parse->parseVarIndex();
-		strVar2 = _vm->_parse->parseVarIndex(0, &type);
+		strVar1 = _vm->_game->_script->readVarIndex();
+		strVar2 = _vm->_game->_script->readVarIndex(0, &type);
 
 		len = _vm->_draw->stringLength(GET_VARO_STR(strVar1), READ_VARO_UINT16(strVar2));
 
 	} else {
 
-		strVar1 = _vm->_parse->parseVarIndex();
-		strVar2 = _vm->_parse->parseVarIndex(0, &type);
+		strVar1 = _vm->_game->_script->readVarIndex();
+		strVar2 = _vm->_game->_script->readVarIndex(0, &type);
 
 		if (_vm->_global->_language == 10) {
 			// Extra handling for Japanese strings
@@ -240,15 +240,15 @@ void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 
 	if (params.paramCount < 4) {
 		warning("Space shooter variable counter < 4");
-		_vm->_global->_inter_execPtr += params.paramCount * 2;
+		_vm->_game->_script->skip(params.paramCount * 2);
 		return;
 	}
 
-	uint32 var1 = load16() * 4;
-	uint32 var2 = load16() * 4;
+	uint32 var1 = _vm->_game->_script->readInt16() * 4;
+	uint32 var2 = _vm->_game->_script->readInt16() * 4;
 
-	load16();
-	load16();
+	_vm->_game->_script->readInt16();
+	_vm->_game->_script->readInt16();
 
 	if (params.extraData != 0) {
 		WRITE_VARO_UINT32(var1, 2);
@@ -259,12 +259,12 @@ void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 			return;
 		}
 
-		_vm->_global->_inter_execPtr += (params.paramCount - 4) * 2;
+		_vm->_game->_script->skip((params.paramCount - 4) * 2);
 	}
 }
 
 void Inter_v5::o5_getSystemCDSpeed(OpGobParams &params) {
-	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
@@ -276,7 +276,7 @@ void Inter_v5::o5_getSystemCDSpeed(OpGobParams &params) {
 }
 
 void Inter_v5::o5_getSystemRAM(OpGobParams &params) {
-	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
@@ -288,7 +288,7 @@ void Inter_v5::o5_getSystemRAM(OpGobParams &params) {
 }
 
 void Inter_v5::o5_getSystemCPUSpeed(OpGobParams &params) {
-	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
@@ -300,7 +300,7 @@ void Inter_v5::o5_getSystemCPUSpeed(OpGobParams &params) {
 }
 
 void Inter_v5::o5_getSystemDrawSpeed(OpGobParams &params) {
-	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
@@ -312,7 +312,7 @@ void Inter_v5::o5_getSystemDrawSpeed(OpGobParams &params) {
 }
 
 void Inter_v5::o5_totalSystemSpecs(OpGobParams &params) {
-	WRITE_VAR_UINT32(load16(), 100); // Fudging 100%
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
 	Video::FontDesc *font;
 	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
@@ -376,26 +376,26 @@ void Inter_v5::o5_loadSystemSpecs(OpGobParams &params) {
 void Inter_v5::o5_gob92(OpGobParams &params) {
 	warning("Dynasty Stub: GobFunc 92");
 
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8) _gob92_1)) */);
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 0 /* (uint32) ((int32) ((int8) _gob92_1)) */);
 }
 
 void Inter_v5::o5_gob95(OpGobParams &params) {
 	warning("Dynasty Stub: GobFunc 95");
 
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int16) speedThrottle4)) */);
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8)  speedThrottle3)) */);
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int8)  speedThrottle2)) */);
-	WRITE_VAR_UINT32(load16(), 0 /* (uint32) ((int32) ((int16) speedThrottle1)) */);
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 0 /* (uint32) ((int32) ((int16) speedThrottle4)) */);
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 0 /* (uint32) ((int32) ((int8)  speedThrottle3)) */);
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 0 /* (uint32) ((int32) ((int8)  speedThrottle2)) */);
+	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 0 /* (uint32) ((int32) ((int16) speedThrottle1)) */);
 }
 
 void Inter_v5::o5_gob96(OpGobParams &params) {
 	int16 speedThrottle4, speedThrottle1;
 	byte speedThrottle3, speedThrottle2;
 
-	speedThrottle4 = READ_VAR_UINT16(load16());
-	speedThrottle3 = READ_VAR_UINT8(load16());
-	speedThrottle2 = READ_VAR_UINT8(load16());
-	speedThrottle1 = READ_VAR_UINT16(load16());
+	speedThrottle4 = READ_VAR_UINT16(_vm->_game->_script->readInt16());
+	speedThrottle3 = READ_VAR_UINT8(_vm->_game->_script->readInt16());
+	speedThrottle2 = READ_VAR_UINT8(_vm->_game->_script->readInt16());
+	speedThrottle1 = READ_VAR_UINT16(_vm->_game->_script->readInt16());
 
 	warning("Dynasty Stub: GobFunc 96: %d, %d, %d, %d",
 			speedThrottle4, speedThrottle3, speedThrottle2, speedThrottle1);
@@ -412,10 +412,10 @@ void Inter_v5::o5_gob98(OpGobParams &params) {
 }
 
 void Inter_v5::o5_gob100(OpGobParams &params) {
-	uint16 var1 = READ_VAR_UINT16(load16());
-	uint16 var2 = READ_VAR_UINT16(load16());
-	uint16 var3 = READ_VAR_UINT16(load16());
-	uint16 var4 = READ_VAR_UINT16(load16());
+	uint16 var1 = READ_VAR_UINT16(_vm->_game->_script->readInt16());
+	uint16 var2 = READ_VAR_UINT16(_vm->_game->_script->readInt16());
+	uint16 var3 = READ_VAR_UINT16(_vm->_game->_script->readInt16());
+	uint16 var4 = READ_VAR_UINT16(_vm->_game->_script->readInt16());
 
 	warning("Dynasty Stub: GobFunc 100: %d, %d, %d, %d", var1, var2, var3, var4);
 
@@ -424,9 +424,9 @@ void Inter_v5::o5_gob100(OpGobParams &params) {
 }
 
 void Inter_v5::o5_gob200(OpGobParams &params) {
-	uint16 var1 = load16(); // index into the spritesArray
-	uint16 var2 = load16();
-	uint16 var3 = load16();
+	uint16 var1 = _vm->_game->_script->readUint16(); // index into the spritesArray
+	uint16 var2 = _vm->_game->_script->readUint16();
+	uint16 var3 = _vm->_game->_script->readUint16();
 
 	warning("Dynasty Stub: GobFunc 200: %d, %d, %d", var1, var2, var3);
 }

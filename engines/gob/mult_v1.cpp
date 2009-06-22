@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+/*  ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -32,6 +32,7 @@
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/inter.h"
 #include "gob/scenery.h"
 
@@ -157,15 +158,14 @@ void Mult_v1::loadMult(int16 resId) {
 		switch (_multData->sndKeys[i].cmd) {
 		case 1:
 		case 4:
-			_multData->sndKeys[i].resId =
-			  READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_multData->sndKeys[i].resId = _vm->_game->_script->peekUint16();
 
 			for (j = 0; j < i; j++) {
 				if (_multData->sndKeys[i].resId ==
 				    _multData->sndKeys[j].resId) {
 					_multData->sndKeys[i].soundIndex =
 					    _multData->sndKeys[j].soundIndex;
-					_vm->_global->_inter_execPtr += 2;
+					_vm->_game->_script->skip(2);
 					break;
 				}
 			}
@@ -178,11 +178,11 @@ void Mult_v1::loadMult(int16 resId) {
 			break;
 
 		case 3:
-			_vm->_global->_inter_execPtr += 6;
+			_vm->_game->_script->skip(6);
 			break;
 
 		case 5:
-			_vm->_global->_inter_execPtr += _multData->sndKeys[i].freq * 2;
+			_vm->_game->_script->skip(_multData->sndKeys[i].freq * 2);
 			break;
 		}
 	}

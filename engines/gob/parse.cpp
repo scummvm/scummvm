@@ -29,6 +29,7 @@
 #include "gob/parse.h"
 #include "gob/global.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/inter.h"
 
 namespace Gob {
@@ -73,7 +74,7 @@ int32 Parse::encodePtr(byte *ptr, int type) {
 
 	switch (type) {
 	case kExecPtr:
-		offset = ptr - _vm->_game->_totFileData;
+		offset = _vm->_game->_script->getOffset(ptr);
 		break;
 	case kInterVar:
 		offset = ptr - ((byte *) _vm->_inter->_variables->getAddressOff8(0));
@@ -93,7 +94,7 @@ byte *Parse::decodePtr(int32 n) {
 
 	switch (n >> 28) {
 	case kExecPtr:
-		ptr = _vm->_game->_totFileData;
+		ptr = _vm->_game->_script->getData();
 		break;
 	case kInterVar:
 		ptr = (byte *) _vm->_inter->_variables->getAddressOff8(0);
@@ -115,14 +116,14 @@ void Parse::skipExpr(char stopToken) {
 
 	num = 0;
 	while (true) {
-		operation = *_vm->_global->_inter_execPtr++;
+		operation = _vm->_game->_script->readByte();
 
 		if ((operation >= 14) && (operation <= OP_FUNC)) {
 			switch (operation) {
 			case 14:
-				_vm->_global->_inter_execPtr += 4;
-				if (*_vm->_global->_inter_execPtr == 97)
-					_vm->_global->_inter_execPtr++;
+				_vm->_game->_script->skip(4);
+				if (_vm->_game->_script->peekByte() == 97)
+					_vm->_game->_script->skip(1);
 				break;
 
 			case OP_LOAD_VAR_INT16:
@@ -130,52 +131,51 @@ void Parse::skipExpr(char stopToken) {
 			case OP_LOAD_IMM_INT16:
 			case OP_LOAD_VAR_INT32:
 			case OP_LOAD_VAR_INT32_AS_INT16:
-				_vm->_global->_inter_execPtr += 2;
+				_vm->_game->_script->skip(2);
 				break;
 
 			case OP_LOAD_IMM_INT32:
-				_vm->_global->_inter_execPtr += 4;
+				_vm->_game->_script->skip(4);
 				break;
 
 			case OP_LOAD_IMM_INT8:
-				_vm->_global->_inter_execPtr += 1;
+				_vm->_game->_script->skip(1);
 				break;
 
 			case OP_LOAD_IMM_STR:
-				_vm->_global->_inter_execPtr +=
-					strlen((char *) _vm->_global->_inter_execPtr) + 1;
+				_vm->_game->_script->skip(strlen(_vm->_game->_script->peekString()) + 1);
 				break;
 
 			case OP_LOAD_VAR_STR:
-				_vm->_global->_inter_execPtr += 2;
-				if (*_vm->_global->_inter_execPtr == 13) {
-					_vm->_global->_inter_execPtr++;
+				_vm->_game->_script->skip(2);
+				if (_vm->_game->_script->peekByte() == 13) {
+					_vm->_game->_script->skip(1);
 					skipExpr(OP_END_MARKER);
 				}
 				break;
 
 			case 15:
-				_vm->_global->_inter_execPtr += 2;
+				_vm->_game->_script->skip(2);
 
 			case OP_ARRAY_INT8:
 			case OP_ARRAY_INT32:
 			case OP_ARRAY_INT16:
 			case OP_ARRAY_STR:
-				dimCount = _vm->_global->_inter_execPtr[2];
+				dimCount = _vm->_game->_script->peekByte(2);
 				// skip header and dimensions
-				_vm->_global->_inter_execPtr += 3 + dimCount;
+				_vm->_game->_script->skip(3 + dimCount);
 				// skip indices
 				for (dim = 0; dim < dimCount; dim++)
 					skipExpr(OP_END_MARKER);
 
-				if ((operation == OP_ARRAY_STR) && (*_vm->_global->_inter_execPtr == 13)) {
-					_vm->_global->_inter_execPtr++;
+				if ((operation == OP_ARRAY_STR) && (_vm->_game->_script->peekByte() == 13)) {
+					_vm->_game->_script->skip(1);
 					skipExpr(OP_END_MARKER);
 				}
 				break;
 
 			case OP_FUNC:
-				_vm->_global->_inter_execPtr++;
+				_vm->_game->_script->skip(1);
 				skipExpr(OP_END_EXPR);
 			}
 			continue;
@@ -207,11 +207,11 @@ void Parse::printExpr(char stopToken) {
 	// Expression printing disabled by default
 	return;
 
-	byte *savedPos = _vm->_global->_inter_execPtr;
+	int32 savedPos = _vm->_game->_script->pos();
 	printExpr_internal(stopToken);
 
 	// restore IP to start of expression
-	_vm->_global->_inter_execPtr = savedPos;
+	_vm->_game->_script->seek(savedPos);
 }
 
 void Parse::printExpr_internal(char stopToken) {
@@ -224,48 +224,45 @@ void Parse::printExpr_internal(char stopToken) {
 
 	num = 0;
 	while (true) {
-		operation = *_vm->_global->_inter_execPtr++;
+		operation = _vm->_game->_script->readByte();
 
 		if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC)) {
 			// operands
 
 			switch (operation) {
 			case OP_LOAD_VAR_INT16: // int16 variable load
-				debugN(5, "var16_%d", _vm->_inter->load16());
+				debugN(5, "var16_%d", _vm->_game->_script->readUint16());
 				break;
 
 			case OP_LOAD_VAR_INT8: // int8 variable load:
-				debugN(5, "var8_%d", _vm->_inter->load16());
+				debugN(5, "var8_%d", _vm->_game->_script->readUint16());
 				break;
 
 			case OP_LOAD_IMM_INT32: // int32/uint32 immediate
-				debugN(5, "%d", READ_LE_UINT32(_vm->_global->_inter_execPtr));
-				_vm->_global->_inter_execPtr += 4;
+				debugN(5, "%d", _vm->_game->_script->readInt32());
 				break;
 
 			case OP_LOAD_IMM_INT16: // int16 immediate
-				debugN(5, "%d", _vm->_inter->load16());
+				debugN(5, "%d", _vm->_game->_script->readInt16());
 				break;
 
 			case OP_LOAD_IMM_INT8: // int8 immediate
-				debugN(5, "%d", (int8) *_vm->_global->_inter_execPtr++);
+				debugN(5, "%d",  _vm->_game->_script->readInt8());
 				break;
 
 			case OP_LOAD_IMM_STR: // string immediate
-				debugN(5, "\42%s\42", _vm->_global->_inter_execPtr);
-				_vm->_global->_inter_execPtr +=
-					strlen((char *) _vm->_global->_inter_execPtr) + 1;
+				debugN(5, "\42%s\42", _vm->_game->_script->readString());
 				break;
 
 			case OP_LOAD_VAR_INT32:
 			case OP_LOAD_VAR_INT32_AS_INT16:
-				debugN(5, "var_%d", _vm->_inter->load16());
+				debugN(5, "var_%d", _vm->_game->_script->readUint16());
 				break;
 
 			case OP_LOAD_VAR_STR: // string variable load
-				debugN(5, "(&var_%d)", _vm->_inter->load16());
-				if (*_vm->_global->_inter_execPtr == 13) {
-					_vm->_global->_inter_execPtr++;
+				debugN(5, "(&var_%d)", _vm->_game->_script->readUint16());
+				if (_vm->_game->_script->peekByte() == 13) {
+					_vm->_game->_script->skip(1);
 					debugN(5, "{");
 					printExpr_internal(OP_END_MARKER); // this also prints the closing }
 				}
@@ -279,10 +276,10 @@ void Parse::printExpr_internal(char stopToken) {
 				if (operation == OP_ARRAY_STR)
 					debugN(5, "(&");
 
-				debugN(5, "var_%d[", _vm->_inter->load16());
-				dimCount = *_vm->_global->_inter_execPtr++;
-				arrDesc = _vm->_global->_inter_execPtr;
-				_vm->_global->_inter_execPtr += dimCount;
+				debugN(5, "var_%d[", _vm->_game->_script->readInt16());
+				dimCount = _vm->_game->_script->readByte();
+				arrDesc = _vm->_game->_script->getData() + _vm->_game->_script->pos();
+				_vm->_game->_script->skip(dimCount);
 				for (dim = 0; dim < dimCount; dim++) {
 					printExpr_internal(OP_END_MARKER);
 					debugN(5, " of %d", (int16) arrDesc[dim]);
@@ -293,15 +290,15 @@ void Parse::printExpr_internal(char stopToken) {
 				if (operation == OP_ARRAY_STR)
 					debugN(5, ")");
 
-				if ((operation == OP_ARRAY_STR) && (*_vm->_global->_inter_execPtr == 13)) {
-					_vm->_global->_inter_execPtr++;
+				if ((operation == OP_ARRAY_STR) && (_vm->_game->_script->peekByte() == 13)) {
+					_vm->_game->_script->skip(1);
 					debugN(5, "{");
 					printExpr_internal(OP_END_MARKER); // this also prints the closing }
 				}
 				break;
 
 			case OP_FUNC: // function
-				func = *_vm->_global->_inter_execPtr++;
+				func = _vm->_game->_script->readByte();
 				if (func == FUNC_SQR)
 					debugN(5, "sqr(");
 				else if (func == FUNC_RAND)
@@ -443,16 +440,16 @@ void Parse::printVarIndex() {
 	int16 operation;
 	int16 temp;
 
-	byte *pos = _vm->_global->_inter_execPtr;
+	int32 pos = _vm->_game->_script->pos();
 
-	operation = *_vm->_global->_inter_execPtr++;
+	operation = _vm->_game->_script->readByte();
 	switch (operation) {
 	case OP_LOAD_VAR_INT32:
 	case OP_LOAD_VAR_STR:
-		temp = _vm->_inter->load16() * 4;
+		temp = _vm->_game->_script->readUint16() * 4;
 		debugN(5, "&var_%d", temp);
-		if ((operation == OP_LOAD_VAR_STR) && (*_vm->_global->_inter_execPtr == 13)) {
-			_vm->_global->_inter_execPtr++;
+		if ((operation == OP_LOAD_VAR_STR) && (_vm->_game->_script->peekByte() == 13)) {
+			_vm->_game->_script->skip(1);
 			debugN(5, "+");
 			printExpr(OP_END_MARKER);
 		}
@@ -460,10 +457,10 @@ void Parse::printVarIndex() {
 
 	case OP_ARRAY_INT32:
 	case OP_ARRAY_STR:
-		debugN(5, "&var_%d[", _vm->_inter->load16());
-		dimCount = *_vm->_global->_inter_execPtr++;
-		arrDesc = _vm->_global->_inter_execPtr;
-		_vm->_global->_inter_execPtr += dimCount;
+		debugN(5, "&var_%d[", _vm->_game->_script->readUint16());
+		dimCount = _vm->_game->_script->readByte();
+		arrDesc = _vm->_game->_script->getData() + _vm->_game->_script->pos();
+		_vm->_game->_script->skip(dimCount);
 		for (dim = 0; dim < dimCount; dim++) {
 			printExpr(OP_END_MARKER);
 			debugN(5, " of %d", (int16) arrDesc[dim]);
@@ -472,8 +469,8 @@ void Parse::printVarIndex() {
 		}
 		debugN(5, "]");
 
-		if ((operation == OP_ARRAY_STR) && (*_vm->_global->_inter_execPtr == 13)) {
-			_vm->_global->_inter_execPtr++;
+		if ((operation == OP_ARRAY_STR) && (_vm->_game->_script->peekByte() == 13)) {
+			_vm->_game->_script->skip(1);
 			debugN(5, "+");
 			printExpr(OP_END_MARKER);
 		}
@@ -484,7 +481,8 @@ void Parse::printVarIndex() {
 		break;
 	}
 	debugN(5, "\n");
-	_vm->_global->_inter_execPtr = pos;
+
+	_vm->_game->_script->seek(pos);
 	return;
 }
 
@@ -510,46 +508,46 @@ bool Parse::getVarBase(uint32 &varBase, bool mindStop,
 
 	varBase = 0;
 
-	byte operation = *_vm->_global->_inter_execPtr;
+	byte operation = _vm->_game->_script->peekByte();
 	while ((operation == 14) || (operation == 15)) {
-		_vm->_global->_inter_execPtr++;
+		_vm->_game->_script->skip(1);
 
 		if (operation == 14) {
 			// Add a direct offset
 
-			varBase += _vm->_inter->load16() * 4;
+			varBase += _vm->_game->_script->readInt16() * 4;
 
 			if (size)
-				*size = READ_LE_UINT16(_vm->_global->_inter_execPtr);
+				*size = _vm->_game->_script->peekUint16();
 			if (type)
 				*type = 14;
 
-			_vm->_global->_inter_execPtr += 2;
+			_vm->_game->_script->skip(2);
 
 			debugC(2, kDebugParser, "varBase: %d, by %d", varBase, operation);
 
-			if (*_vm->_global->_inter_execPtr != 97) {
+			if (_vm->_game->_script->peekByte() != 97) {
 				if (mindStop)
 					return true;
 			} else
-				_vm->_global->_inter_execPtr++;
+				_vm->_game->_script->skip(1);
 
 		} else if (operation == 15) {
 			// Add an offset from an array
 
-			varBase += _vm->_inter->load16() * 4;
+			varBase += _vm->_game->_script->readInt16() * 4;
 
-			uint16 offset1 = _vm->_inter->load16();
+			uint16 offset1 = _vm->_game->_script->readUint16();
 
 			if (size)
 				*size = offset1;
 			if (type)
 				*type = 15;
 
-			uint8 dimCount = *_vm->_global->_inter_execPtr++;
-			byte *dimArray = _vm->_global->_inter_execPtr;
+			uint8 dimCount = _vm->_game->_script->readByte();
+			byte *dimArray = _vm->_game->_script->getData() + _vm->_game->_script->pos();
 
-			_vm->_global->_inter_execPtr += dimCount;
+			_vm->_game->_script->skip(dimCount);
 
 			uint16 offset2 = 0;
 			for (int i = 0; i < dimCount; i++) {
@@ -562,14 +560,14 @@ bool Parse::getVarBase(uint32 &varBase, bool mindStop,
 
 			debugC(2, kDebugParser, "varBase: %d, by %d", varBase, operation);
 
-			if (*_vm->_global->_inter_execPtr != 97) {
+			if (_vm->_game->_script->peekByte() != 97) {
 				if (mindStop)
 					return true;
 			} else
-				_vm->_global->_inter_execPtr++;
+				_vm->_game->_script->skip(1);
 		}
 
-		operation = *_vm->_global->_inter_execPtr;
+		operation = _vm->_game->_script->peekByte();
 	}
 
 	return false;
@@ -589,7 +587,7 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 	if (getVarBase(varBase, true, size, type))
 		return varBase;
 
-	operation = *_vm->_global->_inter_execPtr++;
+	operation = _vm->_game->_script->readByte();
 
 	if (size)
 		*size = 0;
@@ -602,10 +600,10 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 	case OP_ARRAY_INT32:
 	case OP_ARRAY_INT16:
 	case OP_ARRAY_STR:
-		temp = _vm->_inter->load16();
-		dimCount = *_vm->_global->_inter_execPtr++;
-		arrDesc = _vm->_global->_inter_execPtr;
-		_vm->_global->_inter_execPtr += dimCount;
+		temp = _vm->_game->_script->readInt16();
+		dimCount = _vm->_game->_script->readByte();
+		arrDesc = _vm->_game->_script->getData() + _vm->_game->_script->pos();
+		_vm->_game->_script->skip(dimCount);
 		offset = 0;
 		for (dim = 0; dim < dimCount; dim++) {
 			temp2 = parseValExpr(OP_END_MARKER);
@@ -619,26 +617,25 @@ int16 Parse::parseVarIndex(uint16 *size, uint16 *type) {
 			return varBase + (temp + offset) * 2;
 		temp *= 4;
 		offset *= 4;
-		if (*_vm->_global->_inter_execPtr == 13) {
-			_vm->_global->_inter_execPtr++;
+		if (_vm->_game->_script->peekByte() == 13) {
+			_vm->_game->_script->skip(1);
 			temp += parseValExpr(OP_END_MARKER);
 		}
 		return varBase + offset * _vm->_global->_inter_animDataSize + temp;
 
 	case OP_LOAD_VAR_INT16:
-		return varBase + _vm->_inter->load16() * 2;
+		return varBase + _vm->_game->_script->readInt16() * 2;
 
 	case OP_LOAD_VAR_INT8:
-		return varBase + _vm->_inter->load16();
+		return varBase + _vm->_game->_script->readInt16();
 
 	case OP_LOAD_VAR_INT32:
 	case OP_LOAD_VAR_INT32_AS_INT16:
 	case OP_LOAD_VAR_STR:
-		temp = _vm->_inter->load16() * 4;
-		debugC(5, kDebugParser, "oper = %d",
-				(int16) *_vm->_global->_inter_execPtr);
-		if ((operation == OP_LOAD_VAR_STR) && (*_vm->_global->_inter_execPtr == 13)) {
-			_vm->_global->_inter_execPtr++;
+		temp = _vm->_game->_script->readInt16() * 4;
+		debugC(5, kDebugParser, "oper = %d", _vm->_game->_script->peekInt16());
+		if ((operation == OP_LOAD_VAR_STR) && (_vm->_game->_script->peekByte() == 13)) {
+			_vm->_game->_script->skip(1);
 			val = parseValExpr(OP_END_MARKER);
 			temp += val;
 			debugC(5, kDebugParser, "parse subscript = %d", val);
@@ -674,10 +671,10 @@ void Parse::loadValue(byte operation, uint32 varBase, const StackFrame &stackFra
 	case OP_ARRAY_INT16:
 	case OP_ARRAY_STR:
 		*stackFrame.opers = (operation == OP_ARRAY_STR) ? OP_LOAD_IMM_STR : OP_LOAD_IMM_INT16;
-		temp = _vm->_inter->load16();
-		dimCount = *_vm->_global->_inter_execPtr++;
-		arrDescPtr = _vm->_global->_inter_execPtr;
-		_vm->_global->_inter_execPtr += dimCount;
+		temp = _vm->_game->_script->readInt16();
+		dimCount = _vm->_game->_script->readByte();
+		arrDescPtr = _vm->_game->_script->getData() + _vm->_game->_script->pos();
+		_vm->_game->_script->skip(dimCount);
 		offset = 0;
 		for (dim = 0; dim < dimCount; dim++) {
 			temp2 = parseValExpr(OP_END_MARKER);
@@ -693,8 +690,8 @@ void Parse::loadValue(byte operation, uint32 varBase, const StackFrame &stackFra
 			*stackFrame.values = encodePtr(_vm->_inter->_variables->getAddressOff8(
 						varBase + temp * 4 + offset * _vm->_global->_inter_animDataSize * 4),
 					kInterVar);
-			if (*_vm->_global->_inter_execPtr == 13) {
-				_vm->_global->_inter_execPtr++;
+			if (_vm->_game->_script->peekByte() == 13) {
+				_vm->_game->_script->skip(1);
 				temp2 = parseValExpr(OP_END_MARKER);
 				*stackFrame.opers = OP_LOAD_IMM_INT16;
 				*stackFrame.values = READ_VARO_UINT8(varBase + temp * 4 +
@@ -705,53 +702,50 @@ void Parse::loadValue(byte operation, uint32 varBase, const StackFrame &stackFra
 
 	case OP_LOAD_VAR_INT16:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_inter->load16() * 2);
+		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_game->_script->readInt16() * 2);
 		break;
 
 	case OP_LOAD_VAR_INT8:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int8) READ_VARO_UINT8(varBase + _vm->_inter->load16());
+		*stackFrame.values = (int8) READ_VARO_UINT8(varBase + _vm->_game->_script->readInt16());
 		break;
 
 	case OP_LOAD_IMM_INT32:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = READ_LE_UINT32(varBase + _vm->_global->_inter_execPtr);
-		_vm->_global->_inter_execPtr += 4;
+		*stackFrame.values = _vm->_game->_script->readInt32();
 		break;
 
 	case OP_LOAD_IMM_INT16:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = _vm->_inter->load16();
+		*stackFrame.values = _vm->_game->_script->readInt16();
 		break;
 
 	case OP_LOAD_IMM_INT8:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int8) *_vm->_global->_inter_execPtr++;
+		*stackFrame.values = _vm->_game->_script->readInt8();
 		break;
 
 	case OP_LOAD_IMM_STR:
 		*stackFrame.opers = OP_LOAD_IMM_STR;
-		*stackFrame.values = encodePtr(_vm->_global->_inter_execPtr, kExecPtr);
-		_vm->_global->_inter_execPtr +=
-			strlen((char *) _vm->_global->_inter_execPtr) + 1;
+		*stackFrame.values = encodePtr((byte *) _vm->_game->_script->readString(), kExecPtr);
 		break;
 
 	case OP_LOAD_VAR_INT32:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = READ_VARO_UINT32(varBase + _vm->_inter->load16() * 4);
+		*stackFrame.values = READ_VARO_UINT32(varBase + _vm->_game->_script->readInt16() * 4);
 		break;
 
 	case OP_LOAD_VAR_INT32_AS_INT16:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_inter->load16() * 4);
+		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_game->_script->readInt16() * 4);
 		break;
 
 	case OP_LOAD_VAR_STR:
 		*stackFrame.opers = OP_LOAD_IMM_STR;
-		temp = _vm->_inter->load16() * 4;
+		temp = _vm->_game->_script->readInt16() * 4;
 		*stackFrame.values = encodePtr(_vm->_inter->_variables->getAddressOff8(varBase + temp), kInterVar);
-		if (*_vm->_global->_inter_execPtr == 13) {
-			_vm->_global->_inter_execPtr++;
+		if (_vm->_game->_script->peekByte() == 13) {
+			_vm->_game->_script->skip(1);
 			temp += parseValExpr(OP_END_MARKER);
 			*stackFrame.opers = OP_LOAD_IMM_INT16;
 			*stackFrame.values = READ_VARO_UINT8(varBase + temp);
@@ -759,7 +753,7 @@ void Parse::loadValue(byte operation, uint32 varBase, const StackFrame &stackFra
 		break;
 
 	case OP_FUNC:
-		operation = *_vm->_global->_inter_execPtr++;
+		operation = _vm->_game->_script->readByte();
 		parseExpr(OP_END_EXPR, 0);
 
 		switch (operation) {
@@ -1017,7 +1011,7 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 
 		stackFrame.push();
 
-		operation = *_vm->_global->_inter_execPtr++;
+		operation = _vm->_game->_script->readByte();
 		if ((operation >= OP_ARRAY_INT8) && (operation <= OP_FUNC)) {
 
 			loadValue(operation, varBase, stackFrame);
@@ -1088,7 +1082,7 @@ int16 Parse::parseExpr(byte stopToken, byte *type) {
 					} else {
 						skipExpr(stopToken);
 					}
-					operation = _vm->_global->_inter_execPtr[-1];
+					operation = _vm->_game->_script->peekByte(-1);
 					if ((stackFrame.pos > 0) && (stackFrame.opers[-1] == OP_NOT)) {
 						if (stackFrame.opers[0] == GOB_FALSE)
 							stackFrame.opers[-1] = GOB_TRUE;

@@ -100,7 +100,6 @@ public:
 	void setupOpcodes();
 
 	void initControlVars(char full);
-	int16 load16();
 	char evalExpr(int16 *pRes);
 	bool evalBoolResult();
 	void renewTimeInVars();
@@ -152,7 +151,7 @@ protected:
 	virtual void setupOpcodesFunc() = 0;
 	virtual void setupOpcodesGob()  = 0;
 
-	virtual void checkSwitchTable(byte **ppExec) = 0;
+	virtual void checkSwitchTable(uint32 &offset) = 0;
 
 	void o_drawNOP() {}
 	bool o_funcNOP(OpFuncParams &params) { return false; }
@@ -172,7 +171,7 @@ protected:
 	virtual void setupOpcodesFunc();
 	virtual void setupOpcodesGob();
 
-	virtual void checkSwitchTable(byte **ppExec);
+	virtual void checkSwitchTable(uint32 &offset);
 
 	void o1_loadMult();
 	void o1_playMult();
@@ -343,7 +342,7 @@ protected:
 	virtual void setupOpcodesFunc();
 	virtual void setupOpcodesGob();
 
-	virtual void checkSwitchTable(byte **ppExec);
+	virtual void checkSwitchTable(uint32 &offset);
 
 	void o2_playMult();
 	void o2_freeMultKeys();

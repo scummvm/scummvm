@@ -31,8 +31,8 @@
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
-#include "gob/parse.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/palanim.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
@@ -205,15 +205,15 @@ void Inter_Fascination::oFascin_cdUnknown3() {
 
 	warning("Fascination oFascin_cdUnknown3 - Variables initialisations");
 
-	resVar = (uint16) load16();
-	resVar2 = (uint16) load16();
-	retVal1 = _vm->_parse->parseVarIndex();
-	retVal2 = _vm->_parse->parseVarIndex();
-	retVal3 = _vm->_parse->parseVarIndex();
-	retVal4 = _vm->_parse->parseVarIndex();
-	retVal5 = _vm->_parse->parseVarIndex();
-	retVal6 = _vm->_parse->parseVarIndex();
-	retVal7 = _vm->_parse->parseVarIndex();
+	resVar = _vm->_game->_script->readUint16();
+	resVar2 = _vm->_game->_script->readUint16();
+	retVal1 = _vm->_game->_script->readVarIndex();
+	retVal2 = _vm->_game->_script->readVarIndex();
+	retVal3 = _vm->_game->_script->readVarIndex();
+	retVal4 = _vm->_game->_script->readVarIndex();
+	retVal5 = _vm->_game->_script->readVarIndex();
+	retVal6 = _vm->_game->_script->readVarIndex();
+	retVal7 = _vm->_game->_script->readVarIndex();
 	warning ("Width? :%d Height? :%d",resVar, resVar2);
 	warning ("Fetched variables 1:%d 2:%d 3:%d 4:%d 5:%d 6:%d 7:%d", retVal1, retVal2, retVal3, retVal4, retVal5, retVal6, retVal7);
 }
@@ -229,7 +229,7 @@ void Inter_Fascination::oFascin_cdUnknown5() {
 	int16 retVal1,expr;
 	warning("Fascination oFascin_cdUnknown5");
 	evalExpr(&expr);
-	retVal1 = _vm->_parse->parseVarIndex();
+	retVal1 = _vm->_game->_script->readVarIndex();
 	warning ("evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
 }
 
@@ -237,7 +237,7 @@ void Inter_Fascination::oFascin_cdUnknown6() {
 	int16 retVal1,expr;
 	warning("Fascination oFascin_cdUnknown6");
 	evalExpr(&expr);
-	retVal1 = _vm->_parse->parseVarIndex();
+	retVal1 = _vm->_game->_script->readVarIndex();
 	warning ("evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
 }
 

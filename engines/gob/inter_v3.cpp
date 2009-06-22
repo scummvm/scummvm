@@ -32,7 +32,7 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/parse.h"
+#include "gob/script.h"
 
 namespace Gob {
 
@@ -74,9 +74,9 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 	uint32 stringStartVar, stringVar;
 	bool end;
 
-	totTextItem = load16();
-	stringStartVar = _vm->_parse->parseVarIndex();
-	part = _vm->_parse->parseValExpr();
+	totTextItem = _vm->_game->_script->readInt16();
+	stringStartVar = _vm->_game->_script->readVarIndex();
+	part = _vm->_game->_script->readValExpr();
 
 	stringVar = stringStartVar;
 	WRITE_VARO_UINT8(stringVar, 0);

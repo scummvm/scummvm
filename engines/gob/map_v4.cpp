@@ -31,7 +31,7 @@
 #include "gob/goblin.h"
 #include "gob/inter.h"
 #include "gob/game.h"
-#include "gob/parse.h"
+#include "gob/script.h"
 #include "gob/mult.h"
 
 namespace Gob {
@@ -53,10 +53,10 @@ void Map_v4::loadMapObjects(const char *avjFile) {
 	uint32 tmpPos;
 	uint32 passPos;
 
-	var = _vm->_parse->parseVarIndex();
+	var = _vm->_game->_script->readVarIndex();
 	variables = _vm->_inter->_variables->getAddressOff8(var);
 
-	id = _vm->_inter->load16();
+	id = _vm->_game->_script->readInt16();
 
 	if (((uint16) id) >= 65520) {
 		warning("Woodruff Stub: loadMapObjects ID >= 65520");
@@ -146,7 +146,7 @@ void Map_v4::loadMapObjects(const char *avjFile) {
 	for (int i = 0; i < _vm->_goblin->_gobsCount; i++)
 		loadGoblinStates(mapData, i);
 
-	_vm->_goblin->_soundSlotsCount = _vm->_inter->load16();
+	_vm->_goblin->_soundSlotsCount = _vm->_game->_script->readInt16();
 	for (int i = 0; i < _vm->_goblin->_soundSlotsCount; i++)
 		_vm->_goblin->_soundSlots[i] = _vm->_inter->loadSound(1);
 

@@ -32,6 +32,7 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/scenery.h"
 #include "gob/inter.h"
 #include "gob/video.h"
@@ -328,7 +329,7 @@ void Draw_v2::printTotText(int16 id) {
 	ptrEnd = ptr;
 	while (((ptrEnd - dataPtr) < size) && (*ptrEnd != 1)) {
 		// Converting to unknown commands/characters to spaces
-		if ((_vm->_game->_totFileData[0x29] < 0x32) && (*ptrEnd > 3) && (*ptrEnd < 32))
+		if ((_vm->_game->_script->getData()[0x29] < 0x32) && (*ptrEnd > 3) && (*ptrEnd < 32))
 			*ptrEnd = 32;
 
 		switch (*ptrEnd) {

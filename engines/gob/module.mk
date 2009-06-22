@@ -1,6 +1,7 @@
 MODULE := engines/gob
 
 MODULE_OBJS := \
+	script.o \
 	dataio.o \
 	detection.o \
 	draw.o \
