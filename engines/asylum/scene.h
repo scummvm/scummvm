@@ -77,6 +77,7 @@ private:
 	int32   _startX;
 	int32   _startY;
     bool    _leftClick;
+	bool    _rightButton;
 	uint32  _curMouseCursor;
 	int32   _cursorStep;
 	bool    _isActive;

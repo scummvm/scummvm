@@ -136,6 +136,7 @@ public:
 	void setAction(int action);
 	void drawActorAt(Screen *screen, uint16 x, uint16 y);
 	void walkTo(Screen *screen, uint16 x, uint16 y);
+	int getCurrentAction() { return _currentAction; }
 
 	uint16 _actorX, _actorY;
 

@@ -53,6 +53,7 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 	_background = 0;
 	_startX = _startY = 0;
 	_leftClick = false;
+	_rightButton = false;
 	_isActive = false;
 	g_debugPolygons = 0;
 }
@@ -81,8 +82,8 @@ void Scene::enterScene() {
 	_sound->playMusic(_musPack, 0);
 
 	// TEST
-	// Draw the actor walking towards the north
-	_sceneResource->getMainActor()->setAction(6);
+	// Draw the actor facing south
+	_sceneResource->getMainActor()->setAction(15);
 	_sceneResource->getMainActor()->drawActorAt(_screen, 200, 200);
 	_isActive = true;
 }
@@ -97,6 +98,14 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		break;
 	case Common::EVENT_LBUTTONUP:
 		//_leftClick = true;	// TODO
+		break;
+	case Common::EVENT_RBUTTONUP:
+		delete _cursorResource;
+		_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.curMagnifyingGlass);
+		_rightButton = false;
+		break;
+	case Common::EVENT_RBUTTONDOWN:
+		_rightButton = true;
 		break;
 	}
 
@@ -117,18 +126,52 @@ void Scene::updateCursor() {
 void Scene::update() {
 	bool scrollScreen = false;
 	GraphicFrame *bg = _bgResource->getFrame(0);
+	MainActor *mainActor = _sceneResource->getMainActor();
 
 	updateCursor();
 
-	// Proof of concept for screen scrolling
-
 	// TESTING
-	// Main Actor
-	if (_sceneResource->getMainActor()->_actorX != 150 || _sceneResource->getMainActor()->_actorY != 150) {
-		_sceneResource->getMainActor()->walkTo(_screen, 150, 150);
+	// Main actor walking
+	if (!_rightButton) {
+		mainActor->setAction(15);	// face south
+		mainActor->drawActorAt(_screen, mainActor->_actorX, mainActor->_actorY);
 	} else {
-		_sceneResource->getMainActor()->setAction(15);	// face south
-		_sceneResource->getMainActor()->drawActorAt(_screen, 150, 150);
+		mainActor->walkTo(_screen, _mouseX, _mouseY);
+
+		int newCursor = -1;
+
+		// Change cursor
+		switch (mainActor->getCurrentAction()) {
+			case kWalkN:
+				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollUp;
+				break;
+			case kWalkNE:
+				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollUpRight;
+				break;
+			case kWalkNW:
+				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollUpLeft;
+				break;
+			case kWalkS:
+				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollDown;
+				break;
+			case kWalkSE:
+				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollDownRight;
+				break;
+			case kWalkSW:
+				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollDownLeft;
+				break;
+			case kWalkW:
+				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollLeft;
+				break;
+			case kWalkE:
+				newCursor = _sceneResource->getWorldStats()->_commonRes.curScrollRight;
+				break;
+		}
+
+		if (_cursorResource->getEntryNum() != newCursor) {
+				delete _cursorResource;
+				_cursorResource = new GraphicResource(_resPack, newCursor);
+		}
 	}
 
 	// Horizontal scrolling
