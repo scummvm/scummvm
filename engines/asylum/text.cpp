@@ -106,6 +106,14 @@ void Text::drawTextCentered(uint32 x, uint32 y, uint32 width, char *text) {
     drawText(text);
 }
 
+void Text::drawResTextWithValueCentered(uint32 x, uint32 y, uint32 width, uint32 resId, uint32 value) {
+    ResourceEntry *textRes = _textPack->getResource(resId);
+	char *text = (char *)textRes->data;
+	char txt[100];
+	sprintf(txt, text, value);
+	drawTextCentered(x, y, width, txt);
+}
+
 void Text::drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId) {
     ResourceEntry *textRes = _textPack->getResource(resId);
     drawTextCentered(x, y, width, (char *)textRes->data);
