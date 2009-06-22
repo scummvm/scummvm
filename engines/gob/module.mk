@@ -1,7 +1,6 @@
 MODULE := engines/gob
 
 MODULE_OBJS := \
-	script.o \
 	dataio.o \
 	detection.o \
 	draw.o \
@@ -48,6 +47,7 @@ MODULE_OBJS := \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \
+	script.o \
 	util.o \
 	variables.o \
 	video.o \
