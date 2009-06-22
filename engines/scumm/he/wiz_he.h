@@ -198,7 +198,7 @@ public:
 
 	void captureWizImage(int resNum, const Common::Rect& r, bool frontBuffer, int compType);
 	void captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect& r, int compType);
-	void captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2);
+	void captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2, int compType);
 	void displayWizComplexImage(const WizParameters *params);
 	void displayWizImage(WizImage *pwi);
 	void processWizImage(const WizParameters *params);

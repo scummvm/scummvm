@@ -1297,7 +1297,6 @@ static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common
 }
 
 void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, int compType) {
-	debug(0, "captureWizImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
 	uint8 *src = NULL;
 	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 	if (backBuffer) {
@@ -1309,6 +1308,7 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 }
 
 void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect& r, int compType) {
+	debug(0, "captureImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
 	Common::Rect rCapt(srcw, srch);
 	if (rCapt.intersects(r)) {
 		rCapt.clip(r);
@@ -1675,62 +1675,56 @@ struct PolygonDrawData {
 	}
 };
 
-void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2) {
-	debug(0, "captureWizPolygon: resNum %d, maskNum %d maskState %d, id1 %d id2 %d\n", resNum, maskNum, maskState, id1, id2);
+void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2, int compType) {
+	debug(0, "captureWizPolygon: resNum %d, maskNum %d maskState %d, id1 %d id2 %d compType %d", resNum, maskNum, maskState, id1, id2, compType);
 
 	int i, j;
-	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
-	WizPolygon *wp1, *wp2;
-	const uint16 transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+	WizPolygon *wp;
 
-	wp1 = NULL;
+	wp = NULL;
 	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
 		if (_polygons[i].id == id1) {
-			wp1 = &_polygons[i];
+			wp = &_polygons[i];
 			break;
 		}
 	}
-	if (!wp1) {
-		error("Polygon %d is not defined", id1);
+	if (!wp) {
+		error("Polygon1 %d is not defined", id1);
 	}
-	if (wp1->numVerts != 5) {
-		error("Invalid point count %d for Polygon %d", wp1->numVerts, id1);
+	if (wp->numVerts != 5) {
+		error("Invalid point count %d for Polygon1 %d", wp->numVerts, id1);
 	}
 
-	wp2 = NULL;
+	wp = NULL;
 	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
 		if (_polygons[i].id == id2) {
-			wp2 = &_polygons[i];
+			wp = &_polygons[i];
 			break;
 		}
 	}
-	if (!wp2) {
-		error("Polygon %d is not defined", id2);
+	if (!wp) {
+		error("Polygon2 %d is not defined", id2);
 	}
-	if (wp2->numVerts != 5) {
-		error("Invalid point count %d for Polygon %d", wp2->numVerts, id2);
+	if (wp->numVerts != 5) {
+		error("Invalid point count %d for Polygon2 %d", wp->numVerts, id2);
 	}
 
 	int32 dstw, dsth, dstpitch;
 	int32 srcw, srch;
 	uint8 *imageBuffer;
-	const uint8 *src = pvs->getPixels(0, 0);
 
-	if (maskNum) {
-		const Common::Rect *r = NULL;
-		src = drawWizImage(maskNum, maskState, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
-		getWizImageDim(maskNum, maskState, srcw, srch);
-	} else {
-		srcw = pvs->w;
-		srch = pvs->h;
-	}
+	assert(maskNum);
+	const Common::Rect *r = NULL;
+	const uint8 *src = drawWizImage(maskNum, maskState, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
+	getWizImageDim(maskNum, maskState, srcw, srch);
 
-	dstw = wp2->bound.width();
-	dsth = wp2->bound.height();
-	dstpitch = wp2->bound.width() * _vm->_bitDepth;
-	imageBuffer = (uint8 *)malloc(wp2->bound.width() * wp2->bound.height() * _vm->_bitDepth);
+	dstw = wp->bound.width();
+	dsth = wp->bound.height();
+	dstpitch = dstw * _vm->_bitDepth;
+	imageBuffer = (uint8 *)malloc(dstw * dsth * _vm->_bitDepth);
 	assert(imageBuffer);
 
+	const uint16 transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 	if (_vm->_bitDepth == 2) {
 		uint8 *tmpPtr = imageBuffer;
 		for (i = 0; i < dsth; i++) {
@@ -1743,9 +1737,9 @@ void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int
 	}
 
 	Common::Rect bound;
-	drawWizPolygonImage(imageBuffer, src, NULL, dstpitch, kDstMemory, dstw, dsth, srcw, srch, bound, wp2->vert, _vm->_bitDepth);
+	drawWizPolygonImage(imageBuffer, src, NULL, dstpitch, kDstMemory, dstw, dsth, srcw, srch, bound, wp->vert, _vm->_bitDepth);
 
-	captureImage(imageBuffer, dstpitch, dstw, dsth, resNum, wp2->bound, (_vm->_bitDepth == 2) ? 2 : 0);
+	captureImage(imageBuffer, dstpitch, dstw, dsth, resNum, wp->bound, compType);
 	free(imageBuffer);
 }
 
@@ -2417,7 +2411,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	// HE 99+
 	case 7:
-		captureWizPolygon(params->img.resNum, params->sourceImage, params->img.state, params->polygonId1, params->polygonId2);
+		captureWizPolygon(params->img.resNum, params->sourceImage, params->img.state, params->polygonId1, params->polygonId2, params->compType);
 		break;
 	case 8: {
 			int img_w = 640;
