@@ -35,7 +35,7 @@
 #include "asylum/respack.h"
 
 #define SCENEMASK   "scn.%03d"
-#define Polygons_MAXSIZE  100
+#define Polygons_MAXSIZE  200
 
 namespace Asylum {
 
@@ -207,8 +207,8 @@ public:
 
 typedef struct PolyDefinitions{
     uint32  numPoints;
-    Common::Point   points[Polygons_MAXSIZE];
-	Common::Rect    boundingRect;
+    Common::Point   *points;//[Polygons_MAXSIZE];
+	Common::Rect    boundingBox;
 } PolyDefinitions;
 
 class GamePolygons {

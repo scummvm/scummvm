@@ -33,6 +33,10 @@ SceneResource::SceneResource() {
 SceneResource::~SceneResource() {
 	delete _worldStats;
 	delete _mainActor;
+    for(uint i=0; i< _gamePolygons->_numEntries; i++) {
+        delete[] _gamePolygons->_Polygons[i].points;
+    }
+    delete _gamePolygons;
 }
 
 bool SceneResource::load(uint8 sceneIdx) {
@@ -242,15 +246,20 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
     for (uint32 g = 0; g < _gamePolygons->_numEntries; g++) {
         PolyDefinitions poly;
         memset(&poly, 0, sizeof(PolyDefinitions));
+        
         poly.numPoints = stream->readUint32LE();
-		for (int i = 0; i < Polygons_MAXSIZE; i++) {
-			poly.points[i].x = stream->readUint32LE() & 0xFFFF;
+        if(poly.numPoints > 0)
+            poly.points = new Common::Point[poly.numPoints];	
+        for (uint32 i = 0; i < poly.numPoints; i++) {
 			poly.points[i].y = stream->readUint32LE() & 0xFFFF;
+			poly.points[i].x = stream->readUint32LE() & 0xFFFF;
 		}
-        poly.boundingRect.top    = stream->readUint32LE() & 0xFFFF;
-        poly.boundingRect.left   = stream->readUint32LE() & 0xFFFF;
-        poly.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
-        poly.boundingRect.right  = stream->readUint32LE() & 0xFFFF;
+        stream->skip((Polygons_MAXSIZE - poly.numPoints) * 8);
+
+        poly.boundingBox.left    = stream->readUint32LE() & 0xFFFF;
+        poly.boundingBox.top   = stream->readUint32LE() & 0xFFFF;
+        poly.boundingBox.right = stream->readUint32LE() & 0xFFFF;
+        poly.boundingBox.bottom  = stream->readUint32LE() & 0xFFFF;
 
         _gamePolygons->_Polygons.push_back(poly);
     }
