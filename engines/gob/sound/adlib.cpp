@@ -66,7 +66,7 @@ void AdLib::init() {
 	_playing = false;
 
 	_freeData = false;
-	
+
 	_repCount = -1;
 	_samplesTillPoll = 0;
 
@@ -356,11 +356,11 @@ void ADLPlayer::interpret() {
 			tempo = ((tempo & 3) << 8) | *(_playPos++);
 	}
 	_first = false;
-	
+
 	// Instruction
 	instr = *(_playPos++);
 	channel = instr & 0x0F;
-	
+
 	switch (instr & 0xF0) {
 		// Note on + Volume
 		case 0x00:
@@ -416,7 +416,7 @@ void ADLPlayer::interpret() {
 			_ended = true;
 			break;
 	}
-	
+
 	// Temporization
 	tempo = *(_playPos++);
 	// End tempo
@@ -429,7 +429,7 @@ void ADLPlayer::interpret() {
 		tempo = ((tempo & 3) << 8) | *(_playPos++);
 	if (!tempo)
 		tempo ++;
-	
+
 	_samplesTillPoll = tempo * (_rate / 1000);
 }
 
@@ -544,7 +544,7 @@ bool MDYPlayer::loadMDY(const char *fileName) {
 	return loaded;
 }
 
-bool MDYPlayer::loadTBR(Common::SeekableReadStream &stream) { 
+bool MDYPlayer::loadTBR(Common::SeekableReadStream &stream) {
 	unloadTBR();
 
 	_timbresSize = stream.size();
@@ -600,7 +600,7 @@ void MDYPlayer::interpret() {
 	byte volume;
 	uint8 tempoMult, tempoFrac;
 	uint8 ctrlByte1, ctrlByte2;
-	uint8 timbre;	
+	uint8 timbre;
 
 	if (_first) {
 		for (int i = 0; i < 11; i ++)
@@ -666,7 +666,7 @@ void MDYPlayer::interpret() {
 				break;
 			case 0xE0:
 				warning("Pitch bend not yet implemented");
-		
+
 				note = *(_playPos)++;
 				note += (unsigned)(*(_playPos++)) << 7;
 
@@ -748,7 +748,7 @@ void MDYPlayer::setVoice(byte voice, byte instr, bool set) {
 	for (int j = 0; j < 9; j++)
 		timbreName[j] = _timbres[6 + j + (instr * 9)];
 	debugC(6, kDebugSound, "Loading timbre %s", timbreName);
-	
+
 	// i = 0 :  0  1  2  3  4  5  6  7  8  9 10 11 12 26
 	// i = 1 : 13 14 15 16 17 18 19 20 21 22 23 24 25 27
 	for (int i = 0; i < 2; i++) {

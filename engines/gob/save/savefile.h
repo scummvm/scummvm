@@ -163,7 +163,7 @@ public:
 	bool readPalette(const byte *palette);
 	/** Read a sprite into the part. */
 	bool readSprite(const SurfaceDesc &sprite);
-	
+
 	/** Read size bytes of raw data into the sprite. */
 	bool readSpriteRaw(const byte *data, uint32 size);
 

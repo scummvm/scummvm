@@ -317,7 +317,7 @@ bool SaveLoad_v4::GameHandler::createReader(int slot) {
 
 	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
-		
+
 		if (slotFile.empty())
 			return false;
 
@@ -334,7 +334,7 @@ bool SaveLoad_v4::GameHandler::createReader(int slot) {
 
 		} else
 			_reader = new SaveReader(3, slot, slotFile);
-		
+
 		if (!_reader->load()) {
 			delete _reader;
 			_reader = 0;
@@ -352,7 +352,7 @@ bool SaveLoad_v4::GameHandler::createWriter(int slot) {
 
 	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
-		
+
 		if (slotFile.empty())
 			return false;
 
