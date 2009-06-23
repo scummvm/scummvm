@@ -44,6 +44,8 @@ Script::Script(GobEngine *vm) : _vm(vm) {
 	_totSize = 0;
 
 	_lomHandle = -1;
+
+	memset(&_totProperties, 0, sizeof(TOTFile::Properties));
 }
 
 Script::~Script() {
@@ -359,33 +361,27 @@ bool Script::load(const char *fileName) {
 }
 
 bool Script::loadTOT(const Common::String &fileName) {
-	if (_vm->_dataIO->existData(fileName.c_str())) {
-		// Direct data file
+	TOTFile totFile(_vm);
 
-		_totSize = _vm->_dataIO->getDataSize(_totFile.c_str());
-		_totData = _vm->_dataIO->getData(_totFile.c_str());
-
-	} else  {
-		// Trying to read the TOT file out of the currently loaded video file
-
-		Common::MemoryReadStream *videoExtraData = _vm->_vidPlayer->getExtraData(fileName.c_str());
-
-		if (videoExtraData) {
-			warning("Loading TOT \"%s\" from video file", fileName.c_str());
-
-			_totSize = videoExtraData->size();
-			_totData = new byte[_totSize];
-
-			videoExtraData->read(_totData, _totSize);
-
-			delete videoExtraData;
-		}
-	}
-
-	if (_totData == 0)
+	if (!totFile.load(fileName))
 		return false;
 
-	return getTOTProperties();
+	Common::SeekableReadStream *stream = totFile.getStream();
+	if (!stream)
+		return false;
+
+	_totSize = stream->size();
+	if (_totSize <= 0)
+		return false;
+
+	_totData = new byte[_totSize];
+	if (stream->read(_totData, _totSize) != _totSize)
+		return false;
+
+	if (!totFile.getProperties(_totProperties))
+		return false;
+
+	return true;
 }
 
 bool Script::loadLOM(const Common::String &fileName) {
@@ -406,29 +402,7 @@ bool Script::loadLOM(const Common::String &fileName) {
 
 	delete stream;
 
-	return getTOTProperties();
-}
-
-bool Script::getTOTProperties() {
-	// Offset 39-41: Version in "Major.Minor" string form
-	if (_totData[40] != '.')
-		return false;
-
-	_versionMajor = _totData[39] - '0';
-	_versionMinor = _totData[41] - '0';
-
-	_variablesCount = READ_LE_UINT32(_totData + 44);
-
-	_textsOffset     = READ_LE_UINT32(_totData + 48);
-	_resourcesOffset = READ_LE_UINT32(_totData + 52);
-
-	_animDataSize = READ_LE_UINT16(_totData + 56);
-
-	_imFileNumber   = _totData[59];
-	_exFileNumber   = _totData[60];
-	_communHandling = _totData[61];
-
-	return true;
+	return false;
 }
 
 void Script::unload() {
@@ -505,39 +479,39 @@ void Script::call(uint32 offset) {
 }
 
 uint8 Script::getVersionMajor() const {
-	return _versionMajor;
+	return _totProperties.versionMajor;
 }
 
 uint8 Script::getVersionMinor() const {
-	return _versionMinor;
+	return _totProperties.versionMinor;
 }
 
 uint32 Script::getVariablesCount() const {
-	return _variablesCount;
+	return _totProperties.variablesCount;
 }
 
 uint32 Script::getTextsOffset() const {
-	return _textsOffset;
+	return _totProperties.textsOffset;
 }
 
 uint32 Script::getResourcesOffset() const {
-	return _resourcesOffset;
+	return _totProperties.resourcesOffset;
 }
 
 uint16 Script::getAnimDataSize() const {
-	return _animDataSize;
+	return _totProperties.animDataSize;
 }
 
 uint8 Script::getImFileNumber() const {
-	return _imFileNumber;
+	return _totProperties.imFileNumber;
 }
 
 uint8 Script::getExFileNumber() const {
-	return _exFileNumber;
+	return _totProperties.exFileNumber;
 }
 
 uint8 Script::getCommunHandling() const {
-	return _communHandling;
+	return _totProperties.communHandling;
 }
 
 uint16 Script::getFunctionOffset(uint8 function) const {
@@ -547,7 +521,7 @@ uint16 Script::getFunctionOffset(uint8 function) const {
 	// Offsets 100-128, 2 bytes per function
 	assert(function <= 13);
 
-	return READ_LE_UINT16(_totData + 100 + function * 2);
+	return _totProperties.functions[function];
 }
 
 uint32 Script::getVariablesCount(const char *fileName, GobEngine *vm) {
