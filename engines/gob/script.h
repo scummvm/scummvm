@@ -36,6 +36,11 @@ class Expression;
 
 class Script {
 public:
+	enum Function {
+		kFunctionStart  =  0,
+		kFunctionCenter = 13
+	};
+
 	Script(GobEngine *vm);
 	~Script();
 
@@ -126,8 +131,8 @@ public:
 	uint8  getImFileNumber   () const;
 	uint8  getExFileNumber   () const;
 	uint8  getCommunHandling () const;
-	uint32 getStartOffset    () const;
-	uint32 getCenterOffset   () const;
+
+	uint16 getFunctionOffset (uint8 function) const;
 
 	static uint32 getVariablesCount(const char *fileName, GobEngine *vm);
 
@@ -158,8 +163,6 @@ private:
 	uint8  _imFileNumber;
 	uint8  _exFileNumber;
 	uint8  _communHandling;
-	uint32 _startOffset;
-	uint16 _centerOffset;
 
 	Common::Stack<CallEntry> _callStack;
 

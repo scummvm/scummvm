@@ -390,8 +390,9 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right, &bottom);
 
-	if (_vm->_game->_script->getCenterOffset() != 0) {
-		_vm->_game->_script->call(_vm->_game->_script->getCenterOffset());
+	uint16 centerOffset = _vm->_game->_script->getFunctionOffset(Script::kFunctionCenter);
+	if (centerOffset != 0) {
+		_vm->_game->_script->call(centerOffset);
 
 		WRITE_VAR(17, (uint32) id);
 		WRITE_VAR(18, (uint32) left);

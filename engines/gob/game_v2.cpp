@@ -199,7 +199,7 @@ void Game_v2::playTot(int16 skipPlay) {
 			if (!_vm->_inter->_variables)
 				_vm->_inter->allocateVars(_script->getVariablesCount() & 0xFFFF);
 
-			_script->seek(_script->getStartOffset());
+			_script->seek(_script->getFunctionOffset(Script::kFunctionStart));
 
 			_vm->_inter->renewTimeInVars();
 
@@ -269,7 +269,7 @@ void Game_v2::playTot(int16 skipPlay) {
 	} else {
 		_vm->_inter->initControlVars(0);
 		_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
-		_script->seek(READ_LE_UINT16(_script->getData() + (skipPlay << 1) + 0x66));
+		_script->seek(_script->getFunctionOffset(skipPlay + 1));
 
 		_menuLevel++;
 		_vm->_inter->callSub(2);

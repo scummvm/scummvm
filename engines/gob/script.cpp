@@ -422,10 +422,6 @@ bool Script::getTOTProperties() {
 	_exFileNumber   = _totData[60];
 	_communHandling = _totData[61];
 
-	_startOffset = READ_LE_UINT32(_totData + 100);
-
-	_centerOffset = READ_LE_UINT16(_totData + 126);
-
 	return true;
 }
 
@@ -538,12 +534,14 @@ uint8 Script::getCommunHandling() const {
 	return _communHandling;
 }
 
-uint32 Script::getStartOffset() const {
-	return _startOffset;
-}
+uint16 Script::getFunctionOffset(uint8 function) const {
+	if (!_totData)
+		return 0;
 
-uint32 Script::getCenterOffset() const {
-	return _centerOffset;
+	// Offsets 100-128, 2 bytes per function
+	assert(function <= 13);
+
+	return READ_LE_UINT16(_totData + 100 + function * 2);
 }
 
 uint32 Script::getVariablesCount(const char *fileName, GobEngine *vm) {

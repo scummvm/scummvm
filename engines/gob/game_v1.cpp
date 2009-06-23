@@ -164,7 +164,7 @@ void Game_v1::playTot(int16 skipPlay) {
 			if (!_vm->_inter->_variables)
 				_vm->_inter->allocateVars(_script->getVariablesCount() & 0xFFFF);
 
-			_script->seek(_script->getStartOffset());
+			_script->seek(_script->getFunctionOffset(Script::kFunctionStart));
 
 			_vm->_inter->renewTimeInVars();
 
