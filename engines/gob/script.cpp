@@ -107,6 +107,12 @@ bool Script::seek(int32 offset, int whence) {
 	if ((offset < 0) || (((uint32) offset) >= _totSize))
 		return false;
 
+	// Cannot seek into the header
+	if (offset < 128) {
+		_finished = true;
+		return false;
+	}
+
 	// A successful seek means the script file continues to be executed
 	_finished = false;
 
