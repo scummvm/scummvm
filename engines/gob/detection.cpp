@@ -285,6 +285,90 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesCD,
 		0, 0, 0
 	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
+			EN_USA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
+			EN_GRB,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob1cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
+			IT_ITA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesCD,
+		0, 0, 0
+	},
 	{
 		{
 			"gob1",
@@ -827,6 +911,90 @@ static const GOBGameDescription gameDescriptions[] = {
 			"v1.02",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob2cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "5ba85a4769a1ab03a283dd694588d526", 5006236),
+			EN_USA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob2cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "5ba85a4769a1ab03a283dd694588d526", 5006236),
+			EN_GRB,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob2cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "5ba85a4769a1ab03a283dd694588d526", 5006236),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob2cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "5ba85a4769a1ab03a283dd694588d526", 5006236),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob2cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "5ba85a4769a1ab03a283dd694588d526", 5006236),
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob2cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "5ba85a4769a1ab03a283dd694588d526", 5006236),
+			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES || GUIO_NOSPEECH
@@ -2194,6 +2362,62 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob3cd",
 			"v1.02",
 			AD_ENTRY1("intro.stk", "c3e9132ea9dc0fb866b6d60dcda10261"),
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob3cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "bfd7d4c6fedeb2cfcc8baa4d5ddb1f74", 616220),
+			EN_GRB,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob3cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "bfd7d4c6fedeb2cfcc8baa4d5ddb1f74", 616220),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob3cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "bfd7d4c6fedeb2cfcc8baa4d5ddb1f74", 616220),
+			DE_DEU,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		0, 0, 0
+	},
+	{ // Supplied by goodoldgeorg in bug report #2810082
+		{
+			"gob3cd",
+			"v1.02",
+			AD_ENTRY1s("intro.stk", "bfd7d4c6fedeb2cfcc8baa4d5ddb1f74", 616220),
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
