@@ -195,16 +195,16 @@ void Scene::update() {
 	// Copy the background to the back buffer before updating the scene animations
 	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
 
-	updateActor(_screen, _resPack, 0);	// the "statue with fireworks" animation
-	//updateActor(_screen, _resPack, 1);	// inside the middle room
-	//updateActor(_screen, _resPack, 2);	// the lit candles at the base of the statue
-	updateActor(_screen, _resPack, 3);	// the rat animation (in front of the statue)
-	updateActor(_screen, _resPack, 4);	// inside the bottom room
-	updateActor(_screen, _resPack, 6);	// inside the top room (should be shown before the rat animation)
-	updateActor(_screen, _resPack, 5);	// the rat animation (outside the second room)
-	updateActor(_screen, _resPack, 7);	// the "crazy prisoner banging head" animation
-	//updateActor(_screen, _resPack, 8);	// going up the ladder
-	//updateActor(_screen, _resPack, 9);	// going down the ladder
+	updateBarrier(_screen, _resPack, 0);	// the "statue with fireworks" animation
+	//updateBarrier(_screen, _resPack, 1);	// inside the middle room
+	//updateBarrier(_screen, _resPack, 2);	// the lit candles at the base of the statue
+	updateBarrier(_screen, _resPack, 3);	// the rat animation (in front of the statue)
+	updateBarrier(_screen, _resPack, 4);	// inside the bottom room
+	updateBarrier(_screen, _resPack, 6);	// inside the top room (should be shown before the rat animation)
+	updateBarrier(_screen, _resPack, 5);	// the rat animation (outside the second room)
+	updateBarrier(_screen, _resPack, 7);	// the "crazy prisoner banging head" animation
+	//updateBarrier(_screen, _resPack, 8);	// going up the ladder
+	//updateBarrier(_screen, _resPack, 9);	// going down the ladder
 	// TODO
 
 	if (g_debugPolygons)
@@ -213,7 +213,7 @@ void Scene::update() {
 	// Update cursor if it's in a hotspot
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
 		PolyDefinitions poly = _sceneResource->getGamePolygons()->_Polygons[p];
-		if (poly.boundingBox.contains(_mouseX, _mouseY)) {
+		if (poly.boundingRect.contains(_mouseX, _mouseY)) {
 			curHotspot = (int32)p;
 			updateCursor();
 			break;
@@ -224,18 +224,18 @@ void Scene::update() {
 		_leftClick = false;
 
 		if (curHotspot >= 0) {
-			for (uint32 a = 0; a < worldStats->_numActions; a++) {
-				if (worldStats->_actorsActionDef[a].polyIdx == curHotspot) {
+			for (uint32 a = 0; a < worldStats->_numBarrierActions; a++) {
+				if (worldStats->_actors[a].polyIdx == curHotspot) {
 					printf("Hotspot: \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n", 
-							worldStats->_actorsActionDef[a].name,
-							worldStats->_actorsActionDef[a].polyIdx,
-							worldStats->_actorsActionDef[a].actionListIdx1,
-							worldStats->_actorsActionDef[a].actionListIdx2,
-							worldStats->_actorsActionDef[a].actionType,
-							worldStats->_actorsActionDef[a].soundResId);
+							worldStats->_actors[a].name,
+							worldStats->_actors[a].polyIdx,
+							worldStats->_actors[a].actionListIdx1,
+							worldStats->_actors[a].actionListIdx2,
+							worldStats->_actors[a].actionType,
+							worldStats->_actors[a].soundResId);
 					// Play the SFX associated with the hotspot
 					// TODO: The hotspot sound res id is 0, seems like we need to get it from the associated action list
-					//_sound->playSfx(_resPack, worldStats->_actorsActionDef[a].soundResId);
+					//_sound->playSfx(_resPack, worldStats->_actors[a].soundResId);
 				}
 			}
 		}
@@ -279,29 +279,29 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 	}
 }
 
-void Scene::updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex) {
-	ActorDefinitions actor = _sceneResource->getWorldStats()->_actorsDef[actorIndex];
-	GraphicResource *gra = new GraphicResource(res, actor.resId);
-	GraphicFrame *fra = gra->getFrame(actor.tickCount);
+void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex) {
+	BarrierItem barrier = _sceneResource->getWorldStats()->_barriers[barrierIndex];
+	GraphicResource *gra = new GraphicResource(res, barrier.resId);
+	GraphicFrame *fra = gra->getFrame(barrier.tickCount);
 
 #if 0
     // DEBUG bounding box 
     // FIXME this should be a generic method which draws for an entire graphicResource and not for single graphicFrames
-    fra->surface.drawLine(actor.boundingBox.top, actor.boundingBox.left, actor.boundingBox.top, actor.boundingBox.right, 0xFFFFFF);
-    fra->surface.drawLine(actor.boundingBox.top, actor.boundingBox.right-1, actor.boundingBox.bottom, actor.boundingBox.right-1, 0xFFFFFF);
-    fra->surface.drawLine(actor.boundingBox.bottom-1, actor.boundingBox.left, actor.boundingBox.bottom-1, actor.boundingBox.right, 0xFFFFFF);
-    fra->surface.drawLine(actor.boundingBox.top, actor.boundingBox.left, actor.boundingBox.bottom, actor.boundingBox.left, 0xFFFFFF);
+    fra->surface.drawLine(barrier.boundingRect.top, barrier.boundingRect.left, barrier.boundingRect.top, barrier.boundingRect.right, 0xFFFFFF);
+    fra->surface.drawLine(barrier.boundingRect.top, barrier.boundingRect.right-1, barrier.boundingRect.bottom, barrier.boundingRect.right-1, 0xFFFFFF);
+    fra->surface.drawLine(barrier.boundingRect.bottom-1, barrier.boundingRect.left, barrier.boundingRect.bottom-1, barrier.boundingRect.right, 0xFFFFFF);
+    fra->surface.drawLine(barrier.boundingRect.top, barrier.boundingRect.left, barrier.boundingRect.bottom, barrier.boundingRect.left, 0xFFFFFF);
 #endif
 
-	copyToBackBufferClipped(&fra->surface, actor.x, actor.y);
+	copyToBackBufferClipped(&fra->surface, barrier.x, barrier.y);
 
-	if (actor.tickCount < actor.frameCount - 1) {
-		actor.tickCount++;
+	if (barrier.tickCount < barrier.frameCount - 1) {
+		barrier.tickCount++;
 	}else{
-		actor.tickCount = actor.frameIdx;
+		barrier.tickCount = barrier.frameIdx;
 	}
     
-	_sceneResource->getWorldStats()->_actorsDef[actorIndex] = actor;
+	_sceneResource->getWorldStats()->_barriers[barrierIndex] = barrier;
 
     delete gra;
 }
@@ -312,15 +312,15 @@ void Scene::ShowPolygons() {
         Graphics::Surface sur;
         PolyDefinitions poly = _sceneResource->getGamePolygons()->_Polygons[p];
 
-        sur.create(poly.boundingBox.right - poly.boundingBox.left, poly.boundingBox.bottom - poly.boundingBox.top, 1);
+        sur.create(poly.boundingRect.right - poly.boundingRect.left, poly.boundingRect.bottom - poly.boundingRect.top, 1);
         
         for (uint32 i=0; i < poly.numPoints; i++) {
-            sur.drawLine(poly.points[i].x - poly.boundingBox.left,     poly.points[i].y - poly.boundingBox.top, 
-						 poly.points[i].x - poly.boundingBox.left + 1, poly.points[i].y - poly.boundingBox.top + 1, 0xFF);
+            sur.drawLine(poly.points[i].x - poly.boundingRect.left,     poly.points[i].y - poly.boundingRect.top, 
+						 poly.points[i].x - poly.boundingRect.left + 1, poly.points[i].y - poly.boundingRect.top + 1, 0xFF);
         }
         sur.frameRect(Common::Rect(0, 0, sur.w, sur.h), 0xFF);   
 
-        copyToBackBufferClipped(&sur, poly.boundingBox.left, poly.boundingBox.top);
+        copyToBackBufferClipped(&sur, poly.boundingRect.left, poly.boundingRect.top);
         sur.free();
     }
 }
