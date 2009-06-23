@@ -422,6 +422,8 @@ bool Script::getTOTProperties() {
 	_exFileNumber   = _totData[60];
 	_communHandling = _totData[61];
 
+	_startOffset = READ_LE_UINT32(_totData + 100);
+
 	return true;
 }
 
@@ -532,6 +534,10 @@ uint8 Script::getExFileNumber() const {
 
 uint8 Script::getCommunHandling() const {
 	return _communHandling;
+}
+
+uint32 Script::getStartOffset() const {
+	return _startOffset;
 }
 
 uint32 Script::getVariablesCount(const char *fileName, GobEngine *vm) {
