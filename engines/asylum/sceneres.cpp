@@ -80,9 +80,14 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
     _worldStats->_size       = stream->readUint32LE();
     _worldStats->_numEntries = stream->readUint32LE();
-    _worldStats->_numChapter = stream->readUint32LE();
 
-    stream->skip(24); // unused data
+    _worldStats->_numChapter          = stream->readUint32LE();
+    _worldStats->_xLeft               = stream->readUint32LE();
+    _worldStats->_yTop                = stream->readUint32LE();
+    _worldStats->_boundingRect.left   = stream->readUint32LE() & 0xFFFF;
+	_worldStats->_boundingRect.top    = stream->readUint32LE() & 0xFFFF;
+	_worldStats->_boundingRect.right  = stream->readUint32LE() & 0xFFFF;
+	_worldStats->_boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
 
     // read common graphic resources
 	_worldStats->_commonRes.backgroundImage    = stream->readUint32LE();
@@ -111,22 +116,40 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     _worldStats->_commonRes.smallCurDown       = stream->readUint32LE();
     _worldStats->_commonRes.field_7C           = stream->readUint32LE();
 
-    _worldStats->_width  = stream->readUint32LE();
-    _worldStats->_height = stream->readUint32LE();
+    _worldStats->_width              = stream->readUint32LE();
+    _worldStats->_height             = stream->readUint32LE();
+    _worldStats->_field_88           = stream->readUint32LE();
+    _worldStats->_field_8C           = stream->readUint32LE();
+    _worldStats->_numActions         = stream->readUint32LE();
+    _worldStats->_numBarriers        = stream->readUint32LE();
+    _worldStats->_field_98           = stream->readUint32LE();
+    _worldStats->_field_9C           = stream->readUint32LE();
+    _worldStats->_field_A0           = stream->readUint32LE();
+    _worldStats->_field_A4           = stream->readUint32LE();
+    _worldStats->_field_A8           = stream->readUint32LE();
+    _worldStats->_field_AC           = stream->readUint32LE();
+    _worldStats->_field_B0           = stream->readUint32LE();
+    _worldStats->_numActors          = stream->readUint32LE();   
+    _worldStats->_stereoReversedFlag = stream->readUint32LE();
 
-    stream->skip(8); // unused data
+    for(int r=0; r < 6; r++) {
+        _worldStats->_sceneRects[r].left   = stream->readUint32LE() & 0xFFFF;
+	    _worldStats->_sceneRects[r].top    = stream->readUint32LE() & 0xFFFF;
+	    _worldStats->_sceneRects[r].right  = stream->readUint32LE() & 0xFFFF;
+	    _worldStats->_sceneRects[r].bottom = stream->readUint32LE() & 0xFFFF;
+    }
+    _worldStats->_sceneRectIdx  = stream->readByte();
+    _worldStats->_field_11D[0]  = stream->readByte();
+    _worldStats->_field_11D[1]  = stream->readByte();
+    _worldStats->_field_11D[2]  = stream->readByte();
 
-    _worldStats->_numBarrierActions = stream->readUint32LE();
-    _worldStats->_numBarriers  = stream->readUint32LE();
+    _worldStats->_field_120     = stream->readUint32LE();
+    _worldStats->_actionListIdx = stream->readUint32LE();
 
-    stream->skip(20); // unused data
+    for(int gr=0; gr < 100; gr++) {
+        _worldStats->_grResId[gr] = stream->readUint32LE();
+    }
 
-    // FIXME figure out what these 3 unknown fields are
-    stream->skip(12);
-
-    // FIXME Jump unknown resource list
-
-    stream->seek(0x2C6);
     _worldStats->_sceneTitleGrResId  = stream->readUint32LE();
     _worldStats->_sceneTitlePalResId = stream->readUint32LE();
 
@@ -222,27 +245,27 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
     stream->seek(0xD6B5A); // where actors action definitions start
 
-    // FIXME Figure out all the actor action definitions
-    for (uint32 a = 0; a < _worldStats->_numBarrierActions; a++) {
-        ActorItem actor;
-        memset(&actor, 0, sizeof(ActorItem));
+    // FIXME Figure out all the actions definitions
+    for (uint32 a = 0; a < _worldStats->_numActions; a++) {
+        ActionItem action;
+        memset(&action, 0, sizeof(ActionItem));
 
-        stream->read(actor.name,52);
-        actor.id             = stream->readUint32LE();
+        stream->read(action.name,52);
+        action.id             = stream->readUint32LE();
         stream->skip(0x14);
-        actor.actionListIdx1 = stream->readUint32LE();
-        actor.actionListIdx2 = stream->readUint32LE();
-        actor.actionType     = stream->readUint32LE();
+        action.actionListIdx1 = stream->readUint32LE();
+        action.actionListIdx2 = stream->readUint32LE();
+        action.actionType     = stream->readUint32LE();
         stream->skip(0x2C);
-        actor.polyIdx        = stream->readUint32LE();
+        action.polyIdx        = stream->readUint32LE();
         stream->skip(0x08);
-        actor.soundResId     = stream->readUint32LE();
+        action.soundResId     = stream->readUint32LE();
         stream->skip(0x04);
-        actor.palCorrection  = stream->readUint32LE();
+        action.palCorrection  = stream->readUint32LE();
         stream->skip(0x14);
-        actor.soundVolume    = stream->readUint32LE();
+        action.soundVolume    = stream->readUint32LE();
 
-        _worldStats->_actors.push_back(actor);
+        _worldStats->_actions.push_back(action);
     }
 }
 

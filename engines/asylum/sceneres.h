@@ -154,7 +154,7 @@ typedef struct BarrierItem {
 } BarrierItem;
 
 // FIXME add unknown fields
-typedef struct ActorItem {
+typedef struct ActionItem {
     char   name[52];
     uint32 id;
     int32  actionListIdx1;
@@ -164,7 +164,7 @@ typedef struct ActorItem {
     uint32 soundResId;
     uint32 palCorrection;
     int32  soundVolume;
-} ActorItem;
+} ActionItem;
 
 typedef struct CommonResources {
     uint32 backgroundImage;
@@ -204,16 +204,16 @@ public:
     uint32 _numEntries;
 
     uint32          _numChapter;
-    uint32          _xLeft;
-    uint32          _yTop;
+    uint32          _xLeft;             // scene start x position
+    uint32          _yTop;              // scene start y position
     Common::Rect    _boundingRect;
     CommonResources _commonRes;         // field_1C till field_7C
 
-    uint32 _width;                      // field_80
+    uint32 _width;               // field_80
     uint32 _height;             
     uint32 _field_88;
     uint32 _field_8C;
-    uint32 _numBarrierActions;          // field_90
+    uint32 _numActions;          // field_90
     uint32 _numBarriers;
     uint32 _field_98;
     uint32 _field_9C;
@@ -227,8 +227,8 @@ public:
 
     Common::Rect    _sceneRects[6];     // including scene size rect
     uint8           _sceneRectIdx;
+    uint8           _field_11D[3];
 
-    uint8  _field_11D[3];
     uint32 _field_120;
     uint32 _actionListIdx;              // actionList start index
     uint32 _grResId[100];
@@ -247,7 +247,8 @@ public:
     // FIXME: Investigate if we need to actually reserve maxsize for this arrays. 
     // It always have that size under scene file and they are always save in savegames.
     Common::Array<BarrierItem> _barriers; // maxsize 400
-    Common::Array<ActorItem>   _actors;   // maxsize 50
+
+    Common::Array<ActionItem>  _actions;   // maxsize 400
 }; // end of class WorldStats
 
 
