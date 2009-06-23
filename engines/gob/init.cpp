@@ -32,6 +32,7 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/palanim.h"
 #include "gob/inter.h"
 #include "gob/video.h"
@@ -152,12 +153,7 @@ void Init::initGame() {
 	}
 
 	if (_vm->_dataIO->existData(_vm->_startTot.c_str())) {
-		DataStream *stream = _vm->_dataIO->getDataStream(_vm->_startTot.c_str());
-
-		stream->seek(0x2C);
-		_vm->_inter->allocateVars(stream->readUint16LE());
-
-		delete stream;
+		_vm->_inter->allocateVars(Script::getVariablesCount(_vm->_startTot.c_str(), _vm));
 
 		strcpy(_vm->_game->_curTotFile, _vm->_startTot.c_str());
 
@@ -181,7 +177,7 @@ void Init::initGame() {
 			_vm->_draw->initScreen();
 			_vm->_util->clearPalette();
 
-			stream = _vm->_dataIO->getDataStream("coktel.clt");
+			DataStream *stream = _vm->_dataIO->getDataStream("coktel.clt");
 			stream->read((byte *) _vm->_draw->_vgaPalette, 768);
 			delete stream;
 

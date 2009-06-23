@@ -119,9 +119,12 @@ public:
 	// Fixed properties
 	uint8 getVersionMajor() const;
 	uint8 getVersionMinor() const;
+	uint32 getVariablesCount() const;
 	uint8 getImFileNumber() const;
 	uint8 getExFileNumber() const;
 	uint8 getCommunHandling() const;
+
+	static uint32 getVariablesCount(const char *fileName, GobEngine *vm);
 
 private:
 	struct CallEntry {
@@ -143,6 +146,7 @@ private:
 
 	uint8 _versionMajor;
 	uint8 _versionMinor;
+	uint32 _variablesCount;
 	uint8 _imFileNumber;
 	uint8 _exFileNumber;
 	uint8 _communHandling;

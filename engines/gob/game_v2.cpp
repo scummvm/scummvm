@@ -205,7 +205,7 @@ void Game_v2::playTot(int16 skipPlay) {
 			_vm->_global->_inter_animDataSize =
 				READ_LE_UINT16(_script->getData() + 0x38);
 			if (!_vm->_inter->_variables)
-				_vm->_inter->allocateVars(READ_LE_UINT16(_script->getData() + 0x2C));
+				_vm->_inter->allocateVars(_script->getVariablesCount() & 0xFFFF);
 
 			_script->seek(READ_LE_UINT16(_script->getData() + 0x64));
 

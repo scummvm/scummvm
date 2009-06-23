@@ -49,7 +49,6 @@ void Game_v1::playTot(int16 skipPlay) {
 	int16 _captureCounter;
 	int16 breakFrom;
 	int16 nestLevel;
-	int32 variablesCount;
 
 	int16 *oldNestLevel = _vm->_inter->_nestLevel;
 	int16 *oldBreakFrom = _vm->_inter->_breakFromLevel;
@@ -169,7 +168,7 @@ void Game_v1::playTot(int16 skipPlay) {
 			_vm->_global->_inter_animDataSize =
 				READ_LE_UINT16(_script->getData() + 0x38);
 			if (!_vm->_inter->_variables)
-				_vm->_inter->allocateVars(READ_LE_UINT16(_script->getData() + 0x2C));
+				_vm->_inter->allocateVars(_script->getVariablesCount() & 0xFFFF);
 
 			_script->seek(READ_LE_UINT32(_script->getData() + 0x64));
 
@@ -186,7 +185,6 @@ void Game_v1::playTot(int16 skipPlay) {
 			if (_totToLoad[0] != 0)
 				_vm->_inter->_terminate = 0;
 
-			variablesCount = READ_LE_UINT32(_script->getData() + 0x2C);
 			_vm->_draw->blitInvalidated();
 
 			_script->unload();

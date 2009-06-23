@@ -411,6 +411,8 @@ bool Script::getTOTProperties() {
 	_versionMajor = _totData[39] - '0';
 	_versionMinor = _totData[41] - '0';
 
+	_variablesCount = READ_LE_UINT32(_totData + 44);
+
 	_imFileNumber = _totData[59];
 	_exFileNumber = _totData[60];
 	_communHandling = _totData[61];
@@ -499,6 +501,10 @@ uint8 Script::getVersionMinor() const {
 	return _versionMinor;
 }
 
+uint32 Script::getVariablesCount() const {
+	return _variablesCount;
+}
+
 uint8 Script::getImFileNumber() const {
 	return _imFileNumber;
 }
@@ -509,6 +515,19 @@ uint8 Script::getExFileNumber() const {
 
 uint8 Script::getCommunHandling() const {
 	return _communHandling;
+}
+
+uint32 Script::getVariablesCount(const char *fileName, GobEngine *vm) {
+	if (!vm->_dataIO->existData(fileName))
+		return 0;
+
+	DataStream *stream = vm->_dataIO->getDataStream(fileName);
+
+	stream->seek(0x2C);
+	uint32 variablesCount = stream->readUint32LE();
+	delete stream;
+
+	return variablesCount;
 }
 
 } // End of namespace Gob

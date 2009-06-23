@@ -1295,7 +1295,7 @@ bool Inter_v2::o2_getFreeMem(OpFuncParams &params) {
 	// HACK
 	WRITE_VAR_OFFSET(freeVar, 1000000);
 	WRITE_VAR_OFFSET(maxFreeVar, 1000000);
-	WRITE_VAR(16, READ_LE_UINT32(_vm->_game->_script->getData() + 0x2C) * 4);
+	WRITE_VAR(16, _vm->_game->_script->getVariablesCount() * 4);
 	return false;
 }
 
@@ -1370,7 +1370,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 		return false ;
 	} else if (size == 0) {
 		dataVar = 0;
-		size = READ_LE_UINT32(_vm->_game->_script->getData() + 0x2C) * 4;
+		size = _vm->_game->_script->getVariablesCount() * 4;
 	}
 
 	buf = _variables->getAddressOff8(dataVar);
