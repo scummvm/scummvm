@@ -85,7 +85,7 @@ protected:
 public:
 	void waitForInput();
 
-#ifdef ENABLE_16BIT
+#ifdef ENABLE_RGB_COLOR
 	Graphics::PixelFormat _pixelFormat;
 #endif
 	Script _script;
