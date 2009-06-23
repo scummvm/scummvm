@@ -413,6 +413,8 @@ bool Script::getTOTProperties() {
 
 	_variablesCount = READ_LE_UINT32(_totData + 44);
 
+	_textsOffset = READ_LE_UINT32(_totData + 48);
+
 	_imFileNumber = _totData[59];
 	_exFileNumber = _totData[60];
 	_communHandling = _totData[61];
@@ -503,6 +505,10 @@ uint8 Script::getVersionMinor() const {
 
 uint32 Script::getVariablesCount() const {
 	return _variablesCount;
+}
+
+uint32 Script::getTextsOffset() const {
+	return _textsOffset;
 }
 
 uint8 Script::getImFileNumber() const {

@@ -128,29 +128,25 @@ void Game_v2::playTot(int16 skipPlay) {
 			debugC(4, kDebugFileIO, "IMA: %s", _curImaFile);
 			debugC(4, kDebugFileIO, "EXT: %s", _curExtFile);
 
-			filePtr = _script->getData() + 0x30;
-
 			_totTextData = 0;
 			totTextLoc = false;
-			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
+			if (_script->getTextsOffset() != ((uint32) -1)) {
 				_totTextData = new TotTextTable;
 
 				int32 size;
 
-				if (READ_LE_UINT32(filePtr) == 0) {
+				if (_script->getTextsOffset() == 0) {
 					_totTextData->dataPtr = loadLocTexts(&size);
 					totTextLoc = true;
 				} else {
-					_totTextData->dataPtr =
-						(_script->getData() + READ_LE_UINT32(_script->getData() + 0x30));
-					size = _script->getSize();
+					_totTextData->dataPtr = _script->getData() + _script->getTextsOffset();
+					size = _script->getSize() - _script->getTextsOffset();
 					_vm->_global->_language = _vm->_global->_languageWanted;
 				}
 
 				_totTextData->items = 0;
 				if (_totTextData->dataPtr != 0) {
-					Common::MemoryReadStream totTextData(_totTextData->dataPtr,
-							4294967295U);
+					Common::MemoryReadStream totTextData(_totTextData->dataPtr, size);
 					_totTextData->itemsCount = totTextData.readSint16LE() & 0x3FFF;
 
 					_totTextData->items = new TotTextItem[_totTextData->itemsCount];

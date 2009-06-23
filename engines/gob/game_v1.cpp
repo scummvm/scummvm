@@ -121,15 +121,12 @@ void Game_v1::playTot(int16 skipPlay) {
 			debugC(4, kDebugFileIO, "IMA: %s", _curImaFile);
 			debugC(4, kDebugFileIO, "EXT: %s", _curExtFile);
 
-			byte *filePtr = _script->getData() + 0x30;
-
 			_totTextData = 0;
-			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
+			if (_script->getTextsOffset() != ((uint32) -1)) {
 				_totTextData = new TotTextTable;
-				_totTextData->dataPtr =
-					(_script->getData() + READ_LE_UINT32(_script->getData() + 0x30));
+				_totTextData->dataPtr = _script->getData() + _script->getTextsOffset();
 				Common::MemoryReadStream totTextData(_totTextData->dataPtr,
-						4294967295U);
+						_script->getSize() - _script->getTextsOffset());
 
 				_totTextData->itemsCount = totTextData.readSint16LE();
 
@@ -140,7 +137,7 @@ void Game_v1::playTot(int16 skipPlay) {
 				}
 			}
 
-			filePtr = _script->getData() + 0x34;
+			byte *filePtr = _script->getData() + 0x34;
 			_totResourceTable = 0;
 			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
 				_totResourceTable = new TotResTable;
