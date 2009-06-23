@@ -135,9 +135,10 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::Pixel
 
 		initCommonGFX(defaultTo1xScaler);
 #ifdef ENABLE_RGB_COLOR
-		g_system->initFormat(format);
-#endif
+		g_system->initSize(width, height, format);
+#else
 		g_system->initSize(width, height);
+#endif
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 

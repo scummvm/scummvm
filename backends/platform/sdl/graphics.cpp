@@ -353,22 +353,21 @@ int OSystem_SDL::getGraphicsMode() const {
 	assert (_transactionMode == kTransactionNone);
 	return _videoMode.mode;
 }
+
+void OSystem_SDL::initSize(uint w, uint h, Graphics::PixelFormat format) {
+	assert(_transactionMode == kTransactionActive);
+
 #ifdef ENABLE_RGB_COLOR
-void OSystem_SDL::initFormat(Graphics::PixelFormat format) {
-	assert(_transactionMode == kTransactionActive);
-
 	//avoid redundant format changes
-	if (format == _videoMode.format)
-		return;
+	assert(format.bytesPerPixel > 0);
 
-	_videoMode.format = format;
-	_transactionDetails.formatChanged = true;
-	_screenFormat = format;
-}
+	if (format != _videoMode.format)
+	{
+		_videoMode.format = format;
+		_transactionDetails.formatChanged = true;
+		_screenFormat = format;
+	}
 #endif
-
-void OSystem_SDL::initSize(uint w, uint h) {
-	assert(_transactionMode == kTransactionActive);
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)

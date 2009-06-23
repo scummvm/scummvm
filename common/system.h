@@ -345,21 +345,6 @@ public:
 
 #ifdef ENABLE_RGB_COLOR
 	/**
-	 * Set the color format of the virtual screen. Typical formats include:
-	 *  CLUT8 (e.g. 256 color, for most games)
-	 *  RGB555 (e.g. 16-bit color, for later SCUMM HE games)
-	 *  RGB565 (e.g. 16-bit color, for Urban Runner)
-	 *
-	 * This is the pixel format for which the client code generates data;
-	 * this is not necessarily equal to the hardware pixel format. For example,
-	 * a backend may perform color lookup of 8-bit graphics before pushing
-	 * a screen to hardware, or correct the ARGB color order.
-	 *
-	 * @param format	A pixel format that the backend screen will use
-	 */
-	virtual void initFormat(Graphics::PixelFormat format) = 0;
-
-	/**
 	 * Returns the pixel format of the screen.
 	 * @see Graphics::PixelFormat
 	 */
@@ -373,7 +358,7 @@ public:
 #endif
 
 	/**
-	 * Set the size of the virtual screen. Typical sizes include:
+	 * Set the size and color format of the virtual screen. Typical sizes include:
 	 *  - 320x200 (e.g. for most SCUMM games, and Simon)
 	 *  - 320x240 (e.g. for FM-TOWN SCUMM games)
 	 *  - 640x480 (e.g. for Curse of Monkey Island)
@@ -384,10 +369,21 @@ public:
 	 * GraphicsMode); stretch the data to perform aspect ratio correction;
 	 * or shrink it to fit on small screens (in cell phones).
 	 *
+	 * Typical formats include:
+	 *  CLUT8 (e.g. 256 color, for most games)
+	 *  RGB555 (e.g. 16-bit color, for later SCUMM HE games)
+	 *  RGB565 (e.g. 16-bit color, for Urban Runner)
+	 *
+	 * This is the pixel format for which the client code generates data;
+	 * this is not necessarily equal to the hardware pixel format. For example,
+	 * a backend may perform color lookup of 8-bit graphics before pushing
+	 * a screen to hardware, or correct the ARGB color order.
+	 *
 	 * @param width		the new virtual screen width
 	 * @param height	the new virtual screen height
+	 * @param format	the new virtual screen pixel format
 	 */
-	virtual void initSize(uint width, uint height) = 0;
+	virtual void initSize(uint width, uint height, Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8()) = 0;
 
 	/**
 	 * Return an int value which is changed whenever any screen

@@ -82,10 +82,6 @@ public:
 	TransactionError endGFXTransaction(void);
 
 #ifdef ENABLE_RGB_COLOR
-	// Set the depth and format of the video bitmap
-	// Typically, CLUT8
-	virtual void initFormat(Graphics::PixelFormat format);
-
 	// Game screen
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 
@@ -108,9 +104,9 @@ public:
 	}
 #endif
 
-	// Set the size of the video bitmap.
-	// Typically, 320x200
-	virtual void initSize(uint w, uint h); // overloaded by CE backend
+	// Set the size and format of the video bitmap.
+	// Typically, 320x200 CLUT8
+	virtual void initSize(uint w, uint h, Graphics::PixelFormat format); // overloaded by CE backend
 
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
