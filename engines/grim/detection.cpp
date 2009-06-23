@@ -36,6 +36,7 @@ struct GrimGameDescription {
 
 static const PlainGameDescriptor grimGames[] = {
 	{"grim", "Grim Fandango"},
+	{"grimdemo", "Grim Fandango Demo"},
 	{"monkey", "Escape From Monkey Island"},
 	{0, 0}
 };
@@ -98,7 +99,7 @@ static const GrimGameDescription gameDescriptions[] = {
 	{
 		// Grim Fandago English demo version
 		{
-			"grim",
+			"grimdemo",
 			0,
 			AD_ENTRY1s("gfdemo01.lab", "755cdac083f7f751bec7506402278f1a", 29489930),
 			Common::EN_ANY,
