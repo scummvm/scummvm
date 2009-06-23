@@ -195,8 +195,7 @@ void Game_v2::playTot(int16 skipPlay) {
 			loadImFile();
 			loadExtTable();
 
-			_vm->_global->_inter_animDataSize =
-				READ_LE_UINT16(_script->getData() + 0x38);
+			_vm->_global->_inter_animDataSize = _script->getAnimDataSize();
 			if (!_vm->_inter->_variables)
 				_vm->_inter->allocateVars(_script->getVariablesCount() & 0xFFFF);
 
