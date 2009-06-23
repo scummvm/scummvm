@@ -85,13 +85,13 @@ public:
 	bool evalBoolResult();
 
 	// Accessing the result of expressions
-	int32 getResultInt();
-	char *getResultStr();
+	int32 getResultInt() const;
+	char *getResultStr() const;
 
 	/** Returns the offset the specified pointer is within the script data. */
-	int32 getOffset(byte *ptr);
+	int32 getOffset(byte *ptr) const;
 	/** Returns the data pointer to the offset. */
-	byte *getData(int32 offset);
+	byte *getData(int32 offset) const;
 
 	/** Returns the raw data pointer. */
 	byte *getData();

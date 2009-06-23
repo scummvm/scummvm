@@ -119,7 +119,7 @@ bool Script::skip(int32 offset) {
 	return seek(offset, SEEK_CUR);
 }
 
-int32 Script::getOffset(byte *ptr) {
+int32 Script::getOffset(byte *ptr) const {
 	if (!_totData)
 		return -1;
 
@@ -129,7 +129,7 @@ int32 Script::getOffset(byte *ptr) {
 	return ptr - _totData;
 }
 
-byte *Script::getData(int32 offset) {
+byte *Script::getData(int32 offset) const {
 	if (!_totData)
 		return 0;
 	if ((offset < 0) || (((uint32) offset) >= _totSize))
@@ -303,11 +303,11 @@ bool Script::evalBoolResult() {
 		return false;
 }
 
-int32 Script::getResultInt() {
+int32 Script::getResultInt() const {
 	return _expression->getResultInt();
 }
 
-char *Script::getResultStr() {
+char *Script::getResultStr() const {
 	return _expression->getResultStr();
 }
 
