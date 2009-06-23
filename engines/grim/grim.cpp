@@ -1074,6 +1074,36 @@ void GrimEngine::saveFonts(SaveGame *savedState) {
 	savedState->endSection();
 }
 
+void GrimEngine::saveTextObjects(SaveGame *savedState) {
+	PointerId ptr;
+
+	savedState->beginSection('TEXT');
+
+	savedState->writeLESint32(sayLineDefaults.disabled);
+	savedState->writeByte(sayLineDefaults.fgColor.red());
+	savedState->writeByte(sayLineDefaults.fgColor.green());
+	savedState->writeByte(sayLineDefaults.fgColor.blue());
+	ptr = makeIdFromPointer(sayLineDefaults.font);
+	savedState->writeLEUint32(ptr.low);
+	savedState->writeLEUint32(ptr.hi);
+	savedState->writeLESint32(sayLineDefaults.height);
+	savedState->writeLESint32(sayLineDefaults.justify);
+	savedState->writeLESint32(sayLineDefaults.width);
+	savedState->writeLESint32(sayLineDefaults.x);
+	savedState->writeLESint32(sayLineDefaults.y);
+
+	savedState->writeLESint32(_textObjects.size());
+	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
+		TextObject *t = *i;
+		ptr = makeIdFromPointer(t);
+		savedState->writeLEUint32(ptr.low);
+		savedState->writeLEUint32(ptr.hi);
+		t->saveState(savedState);
+	}
+
+	savedState->endSection();
+}
+
 void GrimEngine::savegameCallback() {
 	lua_Object funcParam1;
 

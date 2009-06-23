@@ -31,6 +31,8 @@
 
 namespace Grim {
 
+class SaveGame;
+
 struct TextObjectDefaults {
 	Color fgColor;
 	int x, y;
@@ -77,6 +79,7 @@ public:
 	int getBitmapWidth();
 	int getBitmapHeight();
 	int getTextCharPosition(int pos);
+	void saveState(SaveGame *savedState);
 
 	const char *name() const { return _textID; }
 	void draw();

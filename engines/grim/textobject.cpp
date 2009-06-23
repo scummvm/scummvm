@@ -25,6 +25,8 @@
 
 #include "engines/grim/grim.h"
 #include "engines/grim/textobject.h"
+#include "engines/grim/savegame.h"
+#include "engines/grim/lua.h"
 
 namespace Grim {
 
@@ -59,6 +61,28 @@ void TextObject::setText(char *text) {
 
 TextObject::~TextObject() {
 	destroyBitmap();
+}
+
+void TextObject::saveState(SaveGame *savedState) {
+	int32 size;
+	PointerId ptr;
+
+	size = strlen(_textID);
+	savedState->writeLESint32(size);
+	savedState->write(_textID, size);
+	ptr = makeIdFromPointer(_font);
+	savedState->writeLEUint32(ptr.low);
+	savedState->writeLEUint32(ptr.hi);
+	savedState->writeLEUint32(_blastDraw);
+	savedState->writeLEUint32(_disabled);
+	savedState->writeLEUint32(_justify);
+	savedState->writeLEUint32(_width);
+	savedState->writeLEUint32(_height);
+	savedState->writeLEUint32(_x);
+	savedState->writeLEUint32(_y);
+	savedState->writeLEUint32(_fgColor.red());
+	savedState->writeLEUint32(_fgColor.green());
+	savedState->writeLEUint32(_fgColor.blue());
 }
 
 void TextObject::setDefaults(TextObjectDefaults *defaults) {

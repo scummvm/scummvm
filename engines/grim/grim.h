@@ -210,6 +210,7 @@ public:
 	void savegameRestore();
 	void saveActors(SaveGame *savedState);
 	void saveFonts(SaveGame *savedState);
+	void saveTextObjects(SaveGame *savedState);
 
 	void savegameCallback();
 	static void savegameReadStream(void *data, int32 size);
