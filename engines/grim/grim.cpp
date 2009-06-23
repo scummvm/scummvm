@@ -1020,6 +1020,7 @@ void GrimEngine::savegameSave() {
 	savegameCallback();
 
 	saveFonts(_savedState);
+	saveTextObjects(_savedState);
 	saveActors(_savedState);
 
 	//Chore_Save(_savedState);
