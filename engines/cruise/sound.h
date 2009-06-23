@@ -29,6 +29,8 @@
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/mixer.h"
+
+#include "common/config-manager.h"
 #include "common/serializer.h"
 
 namespace Cruise {
@@ -42,6 +44,8 @@ private:
 	Audio::Mixer *_mixer;
 	CruiseEngine *_vm;
 	int _genVolume;
+	uint8 _musicVolume;
+	uint8 _sfxVolume;
 protected:
 	PCSoundDriver *_soundDriver;
 	PCSoundFxPlayer *_player;
@@ -55,7 +59,7 @@ public:
 	virtual void removeMusic();
 	virtual void fadeOutMusic();
 
-	virtual void playSound(int channel, const uint8 *data, int size, int volume);
+	virtual void playSound(const uint8 *data, int size, int volume);
 	virtual void stopSound(int channel);
 	
 	void doSync(Common::Serializer &s);

@@ -127,8 +127,8 @@ protected:
 	Audio::SoundHandle _soundHandle;
 
 	byte _vibrato;
-	int _channelsVolumeTable[4];
-	AdlibSoundInstrument _instrumentsTable[4];
+	int _channelsVolumeTable[5];
+	AdlibSoundInstrument _instrumentsTable[5];
 
 	static const int _freqTable[];
 	static const int _freqTableCount;
@@ -284,7 +284,7 @@ AdlibSoundDriver::~AdlibSoundDriver() {
 }
 
 void AdlibSoundDriver::setupChannel(int channel, const byte *data, int instrument, int volume) {
-	assert(channel < 4);
+	assert(channel < 5);
 	if (data) {
 		if (volume > 80) {
 			volume = 80;
@@ -301,7 +301,7 @@ void AdlibSoundDriver::setupChannel(int channel, const byte *data, int instrumen
 }
 
 void AdlibSoundDriver::stopChannel(int channel) {
-	assert(channel < 4);
+	assert(channel < 5);
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
 	if (ins->mode != 0 && ins->channel == 6) {
 		channel = 6;
@@ -376,7 +376,7 @@ void AdlibSoundDriver::update(int16 *buf, int len) {
 }
 
 void AdlibSoundDriver::setupInstrument(const byte *data, int channel) {
-	assert(channel < 4);
+	assert(channel < 5);
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
 	loadInstrument(data, ins);
 
@@ -465,7 +465,7 @@ void AdlibSoundDriverADL::loadInstrument(const byte *data, AdlibSoundInstrument 
 }
 
 void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
-	assert(channel < 4);
+	assert(channel < 5);
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
 	if (ins->mode != 0) {
 		channel = ins->channel;
@@ -500,7 +500,7 @@ void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 }
 
 void AdlibSoundDriverADL::playSample(const byte *data, int size, int channel, int volume) {
-	assert(channel < 4);
+	assert(channel < 5);
 	_channelsVolumeTable[channel] = 127;
 	setupInstrument(data, channel);
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
@@ -725,6 +725,8 @@ PCSound::PCSound(Audio::Mixer *mixer, CruiseEngine *vm) {
 	_mixer = mixer;
 	_soundDriver = new AdlibSoundDriverADL(_mixer);
 	_player = new PCSoundFxPlayer(_soundDriver);
+	_musicVolume = ConfMan.getBool("music_mute") ? 0 : MIN(255, ConfMan.getInt("music_volume"));
+	_sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
 }
 
 PCSound::~PCSound() {
@@ -757,9 +759,9 @@ void PCSound::fadeOutMusic() {
 	_player->fadeOut();
 }
 
-void PCSound::playSound(int channel, const uint8 *data, int size, int volume) {
-	debugC(5, kCruiseDebugSound, "PCSound::playSound() channel %d size %d", channel, size);
-	_soundDriver->playSample(data, size, channel, volume);
+void PCSound::playSound(const uint8 *data, int size, int volume) {
+	debugC(5, kCruiseDebugSound, "PCSound::playSound() channel %d size %d", 4, size);
+	_soundDriver->playSample(data, size, 4, volume);
 }
 
 void PCSound::stopSound(int channel) {
