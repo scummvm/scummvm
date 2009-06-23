@@ -37,6 +37,7 @@ SceneResource::~SceneResource() {
         delete[] _gamePolygons->_Polygons[i].points;
     }
     delete _gamePolygons;
+    delete _actionList;
 }
 
 bool SceneResource::load(uint8 sceneIdx) {
@@ -245,7 +246,6 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     }
 }
 
-// FIXME: load necessary Game Polygons content
 void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
     _gamePolygons = new GamePolygons;
 
@@ -276,9 +276,44 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
     }
 }
 
-// TODO: load necessary Action List content
+// FIXME: load necessary Action List content
 void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
+    _actionList = new ActionList;
 
+    stream->seek(0xE868E + _gamePolygons->_size * _gamePolygons->_numEntries); // jump to action list data
+
+    _actionList->_size       = stream->readUint32LE();
+    _actionList->_numEntries = stream->readUint32LE();
+
+    for (uint32 a = 0; a < _actionList->_numEntries; a++) {
+        ActionDefinitions action;
+        memset(&action, 0, sizeof(ActionDefinitions));
+
+        for (uint32 c = 0; c < Commands_MAXSIZE; c++) {
+            ActionCommand command;
+            memset(&command, 0, sizeof(ActionCommand));
+
+            command.unknown = stream->readUint32LE();
+            command.opcode  = stream->readUint32LE(); // command type
+            command.param1  = stream->readUint32LE(); // command parameters
+            command.param2  = stream->readUint32LE();
+            command.param3  = stream->readUint32LE();
+            command.param4  = stream->readUint32LE();
+            command.param5  = stream->readUint32LE();
+            command.param6  = stream->readUint32LE();
+            command.param7  = stream->readUint32LE();
+            command.param8  = stream->readUint32LE();
+            command.param9  = stream->readUint32LE();
+
+            action.commands[c] = command;
+        }
+
+        action.field_1BAC = stream->readUint32LE();
+        action.field_1BB0 = stream->readUint32LE();
+        action.counter    = stream->readUint32LE();
+
+        _actionList->_Actions.push_back(action);
+    }
 }
 
 Common::String SceneResource::parseFilename(uint8 sceneIdx) {
