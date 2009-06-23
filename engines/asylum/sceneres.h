@@ -101,13 +101,25 @@ typedef struct FrameSoundItem {
     uint32 field_14;
 } FrameSoundItem;
 
+typedef struct AmbientSoundItem {
+    uint32 field_0;
+    uint32 flags;
+    uint32 resId;
+    uint32 field_C;
+    uint32 field_10;
+    uint32 field_14;
+    uint32 flagNum[6];
+    uint32 x;
+    uint32 y;
+} AmbientSoundItem;
+
 // FIXME figure out unknown fields
-typedef struct ActorDefinitions {
+typedef struct BarrierItem {
     uint32 id;
     uint32 resId;
     uint32 x;
     uint32 y;
-	Common::Rect boundingBox;
+	Common::Rect boundingRect;
     uint32 field_20;
     uint32 frameIdx;
     uint32 frameCount;   
@@ -139,11 +151,10 @@ typedef struct ActorDefinitions {
     uint32 field_68C[5];
     uint32 soundResId;
     uint32 field_6A4;
-} ActorDefinitions;
-
+} BarrierItem;
 
 // FIXME add unknown fields
-typedef struct ActorActionDefinitions {
+typedef struct ActorItem {
     char   name[52];
     uint32 id;
     int32  actionListIdx1;
@@ -153,7 +164,7 @@ typedef struct ActorActionDefinitions {
     uint32 soundResId;
     uint32 palCorrection;
     int32  soundVolume;
-} ActorActionDefinitions;
+} ActorItem;
 
 typedef struct CommonResources {
     uint32 backgroundImage;
@@ -170,9 +181,9 @@ typedef struct CommonResources {
     uint32 curTalkNCP;
     uint32 curGrabPointer;
     uint32 curTalkNCP2;
-    uint32 unknown1;
-    uint32 unknown2;
-    uint32 unknown3;
+    uint32 field_54;
+    uint32 field_58;
+    uint32 field_5C;
     uint32 palette;
     uint32 cellShadeMask1;
     uint32 cellShadeMask2;
@@ -180,7 +191,7 @@ typedef struct CommonResources {
     uint32 unused;
     uint32 smallCurUp;
     uint32 smallCurDown;
-    uint32 unknown4;
+    uint32 field_7C;
 } CommonResources;
 
 
@@ -191,25 +202,59 @@ public:
 
     uint32 _size;
     uint32 _numEntries;
-    uint32 _numChapter;
-    uint32 _width;
-    uint32 _height;
-    uint32 _numActions;
-    uint32 _numActors;
-    uint32 _loadingScreenGrResId;
-    uint32 _loadingScreenPalResId;
 
-    CommonResources _commonRes;
+    uint32          _numChapter;
+    uint32          _xLeft;
+    uint32          _yTop;
+    Common::Rect    _boundingRect;
+    CommonResources _commonRes;         // field_1C till field_7C
 
-    Common::Array<ActorDefinitions> _actorsDef;
-    Common::Array<ActorActionDefinitions> _actorsActionDef;
+    uint32 _width;                      // field_80
+    uint32 _height;             
+    uint32 _field_88;
+    uint32 _field_8C;
+    uint32 _numBarrierActions;          // field_90
+    uint32 _numBarriers;
+    uint32 _field_98;
+    uint32 _field_9C;
+    uint32 _field_A0;
+    uint32 _field_A4;
+    uint32 _field_A8;
+    uint32 _field_AC;
+    uint32 _field_B0;
+    uint32 _numActors;                  // Max and all other characters that have own interactions
+    uint32 _stereoReversedFlag;
+
+    Common::Rect    _sceneRects[6];     // including scene size rect
+    uint8           _sceneRectIdx;
+
+    uint8  _field_11D[3];
+    uint32 _field_120;
+    uint32 _actionListIdx;              // actionList start index
+    uint32 _grResId[100];
+    uint32 _sceneTitleGrResId;
+    uint32 _sceneTitlePalResId;
+    uint32 _actorType;
+
+    uint32           _soundResId[50];
+    AmbientSoundItem _ambientSounds[15];
+    uint32           _musicStatus;
+    uint32           _musicCurrentResId;
+    uint32           _musicFlag;
+    uint32           _musicResId;
+    uint32           _musicStatusExt;
+    
+    // FIXME: Investigate if we need to actually reserve maxsize for this arrays. 
+    // It always have that size under scene file and they are always save in savegames.
+    Common::Array<BarrierItem> _barriers; // maxsize 400
+    Common::Array<ActorItem>   _actors;   // maxsize 50
 }; // end of class WorldStats
 
 
 typedef struct PolyDefinitions{
     uint32  numPoints;
     Common::Point   *points;//[Polygons_MAXSIZE];
-	Common::Rect    boundingBox;
+	Common::Rect    boundingRect;
 } PolyDefinitions;
 
 class GamePolygons {

@@ -84,7 +84,7 @@ private:
 
 	void update();
 	void updateCursor();
-    void updateActor(Screen *screen, ResourcePack *res, uint8 actorIndex);
+    void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
 
     void ShowPolygons();
 }; // end of class Scene
