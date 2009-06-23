@@ -224,15 +224,15 @@ void Scene::update() {
 		_leftClick = false;
 
 		if (curHotspot >= 0) {
-			for (uint32 a = 0; a < worldStats->_numBarrierActions; a++) {
-				if (worldStats->_actors[a].polyIdx == curHotspot) {
+			for (uint32 a = 0; a < worldStats->_numActions; a++) {
+				if (worldStats->_actions[a].polyIdx == curHotspot) {
 					printf("Hotspot: \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n", 
-							worldStats->_actors[a].name,
-							worldStats->_actors[a].polyIdx,
-							worldStats->_actors[a].actionListIdx1,
-							worldStats->_actors[a].actionListIdx2,
-							worldStats->_actors[a].actionType,
-							worldStats->_actors[a].soundResId);
+							worldStats->_actions[a].name,
+							worldStats->_actions[a].polyIdx,
+							worldStats->_actions[a].actionListIdx1,
+							worldStats->_actions[a].actionListIdx2,
+							worldStats->_actions[a].actionType,
+							worldStats->_actions[a].soundResId);
 					// Play the SFX associated with the hotspot
 					// TODO: The hotspot sound res id is 0, seems like we need to get it from the associated action list
 					//_sound->playSfx(_resPack, worldStats->_actors[a].soundResId);
