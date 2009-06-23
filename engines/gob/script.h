@@ -99,7 +99,7 @@ public:
 	byte *getData();
 
 	/** Load a script file. */
-	bool load(const char *fileName);
+	bool load(const Common::String &fileName);
 	/** Unload the script. */
 	void unload();
 	/** Was a script loaded? */

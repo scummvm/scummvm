@@ -26,8 +26,9 @@
 #ifndef GOB_TOTFILE_H
 #define GOB_TOTFILE_H
 
+#include "common/str.h"
+
 namespace Common {
-	class String;
 	class SeekableReadStream;
 }
 
@@ -61,6 +62,8 @@ public:
 
 	Common::SeekableReadStream *getStream() const;
 	bool getProperties(Properties &props) const;
+
+	static Common::String createFileName(const Common::String &base, bool &isLOM);
 
 private:
 	GobEngine *_vm;

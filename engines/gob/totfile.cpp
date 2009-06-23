@@ -98,4 +98,20 @@ bool TOTFile::getProperties(Properties &props) const {
 	return true;
 }
 
+Common::String TOTFile::createFileName(const Common::String &base, bool &isLOM) {
+	isLOM = false;
+
+	const char *dot;
+	if ((dot = strrchr(base.c_str(), '.'))) {
+		// fileName includes an extension
+
+		if (!scumm_stricmp(dot + 1, "LOM"))
+			isLOM = true;
+
+		return base;
+	}
+
+	return base + ".tot";
+}
+
 } // End of namespace Gob

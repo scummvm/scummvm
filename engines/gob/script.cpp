@@ -319,33 +319,16 @@ char *Script::getResultStr() const {
 	return _expression->getResultStr();
 }
 
-bool Script::load(const char *fileName) {
+bool Script::load(const Common::String &fileName) {
 	unload();
 
 	_finished = false;
 
-	bool lom = false;
+	bool isLOM;
 
-	Common::String *fileBase;
+	_totFile = TOTFile::createFileName(fileName, isLOM);
 
-	const char *dot;
-	if ((dot = strrchr(fileName, '.'))) {
-		// fileName includes an extension
-
-		fileBase = new Common::String(fileName, dot);
-
-		// Is it a LOM file?
-		if (!scumm_stricmp(dot + 1, "LOM"))
-			lom = true;
-	} else
-		fileBase = new Common::String(fileName);
-
-	// If it's a LOM file, it includes the TOT file
-	_totFile = *fileBase + (lom ? ".lom" : ".tot");
-
-	delete fileBase;
-
-	if (lom) {
+	if (isLOM) {
 		if (!loadLOM(_totFile)) {
 			unload();
 			return false;
