@@ -411,6 +411,10 @@ bool Script::getTOTProperties() {
 	_versionMajor = _totData[39] - '0';
 	_versionMinor = _totData[41] - '0';
 
+	_imFileNumber = _totData[59];
+	_exFileNumber = _totData[60];
+	_communHandling = _totData[61];
+
 	return true;
 }
 
@@ -493,6 +497,18 @@ uint8 Script::getVersionMajor() const {
 
 uint8 Script::getVersionMinor() const {
 	return _versionMinor;
+}
+
+uint8 Script::getImFileNumber() const {
+	return _imFileNumber;
+}
+
+uint8 Script::getExFileNumber() const {
+	return _exFileNumber;
+}
+
+uint8 Script::getCommunHandling() const {
+	return _communHandling;
 }
 
 } // End of namespace Gob

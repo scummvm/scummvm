@@ -176,7 +176,7 @@ byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 		tableSize = 0;
 		_vm->_dataIO->closeData(_extHandle);
 		strcpy(path, "commun.ex1");
-		path[strlen(path) - 1] = *(_script->getData() + 0x3C) + '0';
+		path[strlen(path) - 1] = _script->getExFileNumber() + '0';
 		commonHandle = _vm->_dataIO->openData(path);
 		handle = commonHandle;
 	} else
@@ -451,12 +451,12 @@ void Game::loadExtTable(void) {
 void Game::loadImFile(void) {
 	char path[20];
 
-	if ((_script->getData()[0x3D] != 0) && (_script->getData()[0x3B] == 0))
+	if ((_script->getCommunHandling() != 0) && (_script->getImFileNumber() == 0))
 		return;
 
 	strcpy(path, "commun.im1");
-	if (_script->getData()[0x3B] != 0)
-		path[strlen(path) - 1] = '0' + _script->getData()[0x3B];
+	if (_script->getImFileNumber() != 0)
+		path[strlen(path) - 1] = '0' + _script->getImFileNumber();
 
 	if (!_vm->_dataIO->existData(path))
 		return;
