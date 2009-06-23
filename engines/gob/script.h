@@ -127,6 +127,7 @@ public:
 	uint8  getExFileNumber   () const;
 	uint8  getCommunHandling () const;
 	uint32 getStartOffset    () const;
+	uint32 getCenterOffset   () const;
 
 	static uint32 getVariablesCount(const char *fileName, GobEngine *vm);
 
@@ -148,16 +149,17 @@ private:
 
 	int16 _lomHandle;
 
-	uint8   _versionMajor;
-	uint8   _versionMinor;
-	uint32  _variablesCount;
-	uint32  _textsOffset;
-	uint32  _resourcesOffset;
-	uint16  _animDataSize;
-	uint8   _imFileNumber;
-	uint8   _exFileNumber;
-	uint8   _communHandling;
-	uint32  _startOffset;
+	uint8  _versionMajor;
+	uint8  _versionMinor;
+	uint32 _variablesCount;
+	uint32 _textsOffset;
+	uint32 _resourcesOffset;
+	uint16 _animDataSize;
+	uint8  _imFileNumber;
+	uint8  _exFileNumber;
+	uint8  _communHandling;
+	uint32 _startOffset;
+	uint16 _centerOffset;
 
 	Common::Stack<CallEntry> _callStack;
 

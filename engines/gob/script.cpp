@@ -424,6 +424,8 @@ bool Script::getTOTProperties() {
 
 	_startOffset = READ_LE_UINT32(_totData + 100);
 
+	_centerOffset = READ_LE_UINT16(_totData + 126);
+
 	return true;
 }
 
@@ -538,6 +540,10 @@ uint8 Script::getCommunHandling() const {
 
 uint32 Script::getStartOffset() const {
 	return _startOffset;
+}
+
+uint32 Script::getCenterOffset() const {
+	return _centerOffset;
 }
 
 uint32 Script::getVariablesCount(const char *fileName, GobEngine *vm) {
