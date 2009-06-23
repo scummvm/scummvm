@@ -549,12 +549,7 @@ bool MDYPlayer::loadTBR(Common::SeekableReadStream &stream) {
 
 	_timbresSize = stream.size();
 
-	// FIXME: _timbresSize is smaller than setVoice() expects!
-	uint32 rSize = MAX<uint32>(_timbresSize, 810);
-
-	_timbres = new byte[rSize];
-	memset(_timbres, 0, rSize);
-
+	_timbres = new byte[_timbresSize];
 	stream.read(_timbres, _timbresSize);
 
 	reset();
@@ -754,7 +749,12 @@ void MDYPlayer::setVoice(byte voice, byte instr, bool set) {
 	for (int i = 0; i < 2; i++) {
 		timbrePtr = _timbres + _tbrStart + instr * 0x38 + i * 0x1A;
 		for (int j = 0; j < 27; j++) {
-			strct[j] = READ_LE_UINT16(timbrePtr);
+			if (timbrePtr >= (_timbres + _timbresSize)) {
+				warning("Instrument %d out of range (%d, %d)", instr,
+						(uint32) (timbrePtr - _timbres), _timbresSize);
+				strct[j] = 0;
+			} else
+				strct[j] = READ_LE_UINT16(timbrePtr);
 			timbrePtr += 2;
 		}
 		channel = _operators[voice] + i * 3;
