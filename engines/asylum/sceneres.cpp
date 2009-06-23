@@ -152,15 +152,37 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
     _worldStats->_sceneTitleGrResId  = stream->readUint32LE();
     _worldStats->_sceneTitlePalResId = stream->readUint32LE();
+    _worldStats->_actorType          = stream->readUint32LE();
 
-    // FIXME Jump unknown sound resource list
-    // FIXME Jump resource list definitions
+    for(int s=0; s < 50; s++) {
+        _worldStats->_soundResId[s] = stream->readUint32LE();
+    }
 
-    stream->seek(0x6FA); // where actors definitions start
+    for(int s=0; s < 15; s++) {
+        _worldStats->_ambientSounds[s].field_0  = stream->readUint32LE();
+        _worldStats->_ambientSounds[s].flags    = stream->readUint32LE();
+        _worldStats->_ambientSounds[s].resId    = stream->readUint32LE();
+        _worldStats->_ambientSounds[s].field_C = stream->readUint32LE();
+        _worldStats->_ambientSounds[s].field_10 = stream->readUint32LE();
+        _worldStats->_ambientSounds[s].field_14 = stream->readUint32LE();
+
+        for(int i=0; i < 6; i++)
+            _worldStats->_ambientSounds[s].flagNum[i] = stream->readUint32LE();
+
+        _worldStats->_ambientSounds[s].x = stream->readUint32LE();
+        _worldStats->_ambientSounds[s].y = stream->readUint32LE();
+    }
+    _worldStats->_numAmbientSound   = stream->readUint32LE();
+
+    _worldStats->_musicStatus       = stream->readUint32LE();
+    _worldStats->_musicCurrentResId = stream->readUint32LE();
+    _worldStats->_musicFlag         = stream->readUint32LE();
+    _worldStats->_musicResId        = stream->readUint32LE();
+    _worldStats->_musicStatusExt    = stream->readUint32LE();
 
     for (uint32 a = 0; a < _worldStats->_numBarriers; a++) {
+        int i;
         BarrierItem barrier;
-		int i;
 
 		barrier.id    = stream->readUint32LE();
 		barrier.resId = stream->readUint32LE();

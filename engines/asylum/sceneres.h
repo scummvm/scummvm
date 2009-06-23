@@ -238,6 +238,7 @@ public:
 
     uint32           _soundResId[50];
     AmbientSoundItem _ambientSounds[15];
+    uint32           _numAmbientSound;
     uint32           _musicStatus;
     uint32           _musicCurrentResId;
     uint32           _musicFlag;
