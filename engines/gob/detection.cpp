@@ -1725,13 +1725,26 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro.stk", 0, 0
 	},
-	//Provided by Sanguine
-	{
+	{ // Supplied by sanguine
 		{
 			"fascination",
 			"VGA 3 disks edition",
 			AD_ENTRY1s("disk0.stk", "c14330d052fe4da5a441ac9d81bc5891", 1061955),
 			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES || GUIO_NOSPEECH
+		},
+		kGameTypeFascination,
+		kFeaturesAdlib,
+		"disk0.stk", 0, 0
+	},
+	{ // Supplied by windlepoons in bug report #2809247
+		{
+			"fascination",
+			"VGA 3 disks edition",
+			AD_ENTRY1s("disk0.stk", "3a24e60a035250189643c86a9ceafb97", 1062480),
+			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES || GUIO_NOSPEECH
