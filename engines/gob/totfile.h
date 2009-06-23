@@ -64,6 +64,7 @@ public:
 	bool getProperties(Properties &props) const;
 
 	static Common::String createFileName(const Common::String &base, bool &isLOM);
+	static Common::String getFileBase(const Common::String &fileName);
 
 private:
 	GobEngine *_vm;

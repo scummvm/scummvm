@@ -114,4 +114,14 @@ Common::String TOTFile::createFileName(const Common::String &base, bool &isLOM) 
 	return base + ".tot";
 }
 
+Common::String TOTFile::getFileBase(const Common::String &fileName) {
+	const char *dot;
+	if ((dot = strrchr(fileName.c_str(), '.'))) {
+		// fileName includes an extension
+		return Common::String(fileName.c_str(), dot);
+	}
+
+	return fileName;
+}
+
 } // End of namespace Gob
