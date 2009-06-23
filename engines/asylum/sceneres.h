@@ -36,6 +36,7 @@
 
 #define SCENEMASK   "scn.%03d"
 #define Polygons_MAXSIZE  200
+#define Commands_MAXSIZE  161
 
 namespace Asylum {
 
@@ -223,10 +224,36 @@ public:
 }; // end of class GamePolygons
 
 
+typedef struct ActionCommand {
+    uint32 unknown;
+    uint32 opcode;
+    uint32 param1;
+    uint32 param2;
+    uint32 param3;
+    uint32 param4;
+    uint32 param5;
+    uint32 param6;
+    uint32 param7;
+    uint32 param8;
+    uint32 param9;
+} ActionCommand;
+
+typedef struct ActionDefinitions {
+    ActionCommand commands[161];
+    uint32 field_1BAC;
+    uint32 field_1BB0;
+    uint32 counter;
+} ActionDefinitions;
+
 class ActionList {
 public:
     ActionList() {};
     virtual ~ActionList() {};
+
+    uint32 _size;
+    uint32 _numEntries;
+
+    Common::Array<ActionDefinitions> _Actions;
 }; // end of class ActionList
 
 } // end of namespace Asylum
