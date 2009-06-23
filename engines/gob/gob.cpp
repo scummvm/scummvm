@@ -254,6 +254,7 @@ Common::Error GobEngine::run() {
 		break;
 	case Common::EN_ANY:
 	case Common::EN_GRB:
+	case Common::HU_HUN:
 		_global->_language = 2;
 		break;
 	case Common::ES_ESP:
