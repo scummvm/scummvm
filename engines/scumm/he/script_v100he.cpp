@@ -1574,7 +1574,10 @@ void ScummEngine_v100he::o100_roomOps() {
 	case 130:
 		a = pop();
 		b = pop();
-		copyPalColor(a, b);
+		if (_game.features & GF_16BIT_COLOR)
+			copyHEPaletteColor(1, a, b);
+		else
+			copyPalColor(a, b);
 		break;
 
 	case 131:		// SO_ROOM_FADE
