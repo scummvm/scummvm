@@ -31,6 +31,7 @@ namespace Grim {
 
 struct GrimGameDescription {
 	ADGameDescription desc;
+	int flags;
 };
 
 static const PlainGameDescriptor grimGames[] = {
@@ -53,6 +54,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
+		0,
 	},
 	{
 		// Grim Fandago German version
@@ -65,6 +67,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
+		0,
 	},
 	{
 		// Grim Fandago Spanish version
@@ -77,6 +80,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
+		0,
 	},
 	{
 		// Grim Fandago Italian version
@@ -89,6 +93,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
+		0,
 	},
 	{
 		// Grim Fandago English demo version
@@ -98,13 +103,14 @@ static const GrimGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("gfdemo01.lab", "755cdac083f7f751bec7506402278f1a", 29489930),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO,
+			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
+		GF_DEMO,
 	},
 
 
-	{ AD_TABLE_END_MARKER }
+	{ AD_TABLE_END_MARKER, 0 }
 };
 
 static const GrimGameDescription fallbackGameDescriptions[] = {
@@ -155,7 +161,7 @@ public:
 bool GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const GrimGameDescription *gd = (const GrimGameDescription *)desc;
 	if (gd) {
-		*engine = new GrimEngine(syst, gd);
+		*engine = new GrimEngine(syst, gd->flags);
 	}
 	return gd != 0;
 }

@@ -59,8 +59,6 @@ struct GrimGameDescription;
 
 typedef Common::HashMap<Common::String, const char *> StringPtrHashMap;
 
-extern int g_flags;
-
 #define GF_DEMO		1
 
 struct ControlDescriptor {
@@ -76,15 +74,15 @@ protected:
 
 public:
 
-	GrimEngine(OSystem *syst, const GrimGameDescription *gameDesc);
+	GrimEngine(OSystem *syst, int gameFlags);
 	virtual ~GrimEngine();
+
+	int getGameFlags() { return _gameFlags; }
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
 	int modifyGameSpeed(int speedChange);
 	int getTimerDelay() const;
-
-	const GrimGameDescription *_gameDescription;
 
 	void setMode(int mode) { _mode = mode; }
 	int getMode() { return _mode; }
@@ -211,6 +209,7 @@ public:
 	void saveActors(SaveGame *savedState);
 	void saveFonts(SaveGame *savedState);
 	void saveTextObjects(SaveGame *savedState);
+	void savePrimitives(SaveGame *savedState);
 
 	void savegameCallback();
 	static void savegameReadStream(void *data, int32 size);
@@ -263,6 +262,8 @@ private:
 	TextListType _textObjects;
 	PrimitiveListType _primitiveObjects;
 	Common::List<Font *> _fonts;
+
+	int _gameFlags;
 };
 
 extern GrimEngine *g_grim;

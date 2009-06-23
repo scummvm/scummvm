@@ -46,7 +46,7 @@ Scene::Scene(const char *name, const char *buf, int len) :
 		_cmaps[i] = g_resourceloader->loadColormap(cmap_name);
 	}
 
-	if (g_flags & GF_DEMO) {
+	if (g_grim->getGameFlags() & GF_DEMO) {
 		ts.expectString("section: objectstates");
 		ts.scanString(" tot_objects %d", 1, &_numObjectStates);
 		char object_name[256];

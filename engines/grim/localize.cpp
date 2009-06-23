@@ -42,7 +42,7 @@ Localizer::Localizer() {
 	Common::File f;
 	const char *namesToTry[] = { "GRIM.TAB", "Grim.tab", "grim.tab" };
 
-	if (g_flags & GF_DEMO)
+	if (g_grim->getGameFlags() & GF_DEMO)
 		return;
 
 	for (unsigned i = 0; i < sizeof(namesToTry) / sizeof(namesToTry[0]); i++) {

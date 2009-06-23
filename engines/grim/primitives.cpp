@@ -25,6 +25,8 @@
 
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/primitives.h"
+#include "engines/grim/savegame.h"
+#include "engines/grim/lua.h"
 
 namespace Grim {
 
@@ -38,6 +40,27 @@ PrimitiveObject::PrimitiveObject() {
 PrimitiveObject::~PrimitiveObject() {
 	if (_type == 2)
 		g_driver->destroyBitmap(_bitmap);
+}
+
+void PrimitiveObject::saveState(SaveGame *savedState) {
+	PointerId ptr;
+
+	savedState->writeLESint32(_type);
+	savedState->writeLEUint32(_color.red());
+	savedState->writeLEUint32(_color.green());
+	savedState->writeLEUint32(_color.blue());
+	savedState->writeLEUint32(_filled);
+	ptr = makeIdFromPointer(_bitmap);
+	savedState->writeLEUint32(ptr.low);
+	savedState->writeLEUint32(ptr.hi);
+	savedState->writeLEUint32(_p1.x);
+	savedState->writeLEUint32(_p1.y);
+	savedState->writeLEUint32(_p2.x);
+	savedState->writeLEUint32(_p2.y);
+	savedState->writeLEUint32(_p3.x);
+	savedState->writeLEUint32(_p3.y);
+	savedState->writeLEUint32(_p4.x);
+	savedState->writeLEUint32(_p4.y);
 }
 
 void PrimitiveObject::createRectangle(Common::Point p1, Common::Point p2, Color color, bool filled) {

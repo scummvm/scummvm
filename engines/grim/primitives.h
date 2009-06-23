@@ -32,6 +32,8 @@
 
 namespace Grim {
 
+class SaveGame;
+
 class PrimitiveObject {
 public:
 	PrimitiveObject();
@@ -59,6 +61,7 @@ public:
 	void draw();
 	bool isBitmap() { return _type == BITMAP; }
 	Bitmap *getBitmapHandle() { assert(_bitmap); return _bitmap; }
+	void saveState(SaveGame *savedState);
 
 private:
 	Common::Point _p1, _p2, _p3, _p4;

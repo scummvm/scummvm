@@ -51,13 +51,10 @@ ResourceLoader::ResourceLoader() {
 		const Common::String filename = (*x)->getName();
 		l = new Lab(filename.c_str());
 		if (l->isOpen()) {
-			if (filename == "005.lab")
+			if (filename.equalsIgnoreCase("data005.lab"))
 				_labs.push_front(l);
-			else {
-				if (filename == "gfdemo01.lab")
-					g_flags |= GF_DEMO;
+			else
 				_labs.push_back(l);
-			}
 			lab_counter++;
 		} else {
 			delete l;
@@ -66,16 +63,18 @@ ResourceLoader::ResourceLoader() {
 
 	files.clear();
 
-	SearchMan.listMatchingMembers(files, "*.mus");
+	if (g_grim->getGameFlags() & GF_DEMO) {
+		SearchMan.listMatchingMembers(files, "*.mus");
 
-	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-		const Common::String filename = (*x)->getName();
-		l = new Lab(filename.c_str());
-		if (l->isOpen()) {
-			_labs.push_back(l);
-			lab_counter++;
-		} else {
-			delete l;
+		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+			const Common::String filename = (*x)->getName();
+			l = new Lab(filename.c_str());
+			if (l->isOpen()) {
+				_labs.push_back(l);
+				lab_counter++;
+			} else {
+				delete l;
+			}
 		}
 	}
 }

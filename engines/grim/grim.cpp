@@ -221,17 +221,17 @@ const ControlDescriptor controls[] = {
 GrimEngine *g_grim = NULL;
 GfxBase *g_driver = NULL;
 int g_imuseState = -1;
-int g_flags = 0;
 
 extern Common::StringList::const_iterator g_filesiter;
 
 // hack for access current upated actor to allow access position of actor to sound costume component
 Actor *g_currentUpdatedActor = NULL;
 
-
-GrimEngine::GrimEngine(OSystem *syst, const GrimGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _currScene(NULL), _selectedActor(NULL) {
+GrimEngine::GrimEngine(OSystem *syst, int gameFlags) :
+		Engine(syst), _currScene(NULL), _selectedActor(NULL) {
 	g_grim = this;
+
+	_gameFlags = gameFlags;
 
 	g_registry = new Registry();
 	g_resourceloader = NULL;
@@ -355,14 +355,14 @@ Common::Error GrimEngine::run() {
 	g_driver->setupScreen(640, 480, fullscreen);
 
 	Bitmap *splash_bm = NULL;
-	if (!(g_flags & GF_DEMO))
+	if (!(_gameFlags & GF_DEMO))
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
 	if (splash_bm)
 		splash_bm->ref();
 
 	g_driver->clearScreen();
 
-	if (!(g_flags & GF_DEMO))
+	if (!(_gameFlags & GF_DEMO))
 		splash_bm->draw();
 
 	g_driver->flipBuffer();
@@ -1021,6 +1021,7 @@ void GrimEngine::savegameSave() {
 
 	saveFonts(_savedState);
 	saveTextObjects(_savedState);
+	savePrimitives(_savedState);
 	saveActors(_savedState);
 
 	//Chore_Save(_savedState);
@@ -1100,6 +1101,23 @@ void GrimEngine::saveTextObjects(SaveGame *savedState) {
 		savedState->writeLEUint32(ptr.low);
 		savedState->writeLEUint32(ptr.hi);
 		t->saveState(savedState);
+	}
+
+	savedState->endSection();
+}
+
+void GrimEngine::savePrimitives(SaveGame *savedState) {
+	PointerId ptr;
+
+	savedState->beginSection('PRIM');
+
+	savedState->writeLESint32(_primitiveObjects.size());
+	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
+		PrimitiveObject *p = *i;
+		ptr = makeIdFromPointer(p);
+		savedState->writeLEUint32(ptr.low);
+		savedState->writeLEUint32(ptr.hi);
+		p->saveState(savedState);
 	}
 
 	savedState->endSection();
