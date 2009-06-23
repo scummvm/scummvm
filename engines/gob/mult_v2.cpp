@@ -253,7 +253,7 @@ void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 	_multData->execPtr = _vm->_game->_script->getData() + _vm->_game->_script->pos();
 	_vm->_game->_script->skip(size * 2);
 
-	if (_vm->_game->_script->getData()[0x29] < 51)
+	if (_vm->_game->_script->getVersionMinor() < 3)
 		return;
 
 	size = data.readSint16LE();
@@ -871,7 +871,7 @@ void Mult_v2::animate() {
 				animObj.newBottom =
 					MAX(animObj.lastBottom, _vm->_scenery->_toRedrawBottom);
 
-				if ((_vm->_game->_script->getData()[0x29] > 50) &&
+				if ((_vm->_game->_script->getVersionMinor() > 2) &&
 						(animObj.newLeft == animObj.lastLeft) &&
 						(animObj.newTop == animObj.lastTop) &&
 						(animObj.newRight == animObj.lastRight) &&

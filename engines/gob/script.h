@@ -116,6 +116,10 @@ public:
 	/** Push the current script position and branch to the specified offset. */
 	void call(uint32 offset);
 
+	// Fixed properties
+	uint8 getVersionMajor() const;
+	uint8 getVersionMinor() const;
+
 private:
 	struct CallEntry {
 		byte *totPtr;
@@ -134,12 +138,17 @@ private:
 
 	int16 _lomHandle;
 
+	uint8 _versionMajor;
+	uint8 _versionMinor;
+
 	Common::Stack<CallEntry> _callStack;
 
 	/** Loading a TOT file. */
 	bool loadTOT(const Common::String &fileName);
 	/** Loading a LOM file. */
 	bool loadLOM(const Common::String &fileName);
+
+	bool getTOTProperties();
 
 	/** Unloading a TOT file. */
 	void unloadTOT();

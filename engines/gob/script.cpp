@@ -376,7 +376,10 @@ bool Script::loadTOT(const Common::String &fileName) {
 		}
 	}
 
-	return (_totData != 0);
+	if (_totData == 0)
+		return false;
+
+	return getTOTProperties();
 }
 
 bool Script::loadLOM(const Common::String &fileName) {
@@ -396,6 +399,17 @@ bool Script::loadLOM(const Common::String &fileName) {
 	stream->read(_totData, _totSize);
 
 	delete stream;
+
+	return true;
+}
+
+bool Script::getTOTProperties() {
+	// Offset 39-41: Version in "Major.Minor" string form
+	if (_totData[40] != '.')
+		return false;
+
+	_versionMajor = _totData[39] - '0';
+	_versionMinor = _totData[41] - '0';
 
 	return true;
 }
@@ -471,6 +485,14 @@ void Script::call(uint32 offset) {
 
 	push();
 	seek(offset);
+}
+
+uint8 Script::getVersionMajor() const {
+	return _versionMajor;
+}
+
+uint8 Script::getVersionMinor() const {
+	return _versionMinor;
 }
 
 } // End of namespace Gob
