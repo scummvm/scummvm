@@ -121,6 +121,7 @@ public:
 	uint8 getVersionMinor() const;
 	uint32 getVariablesCount() const;
 	uint32 getTextsOffset() const;
+	uint32 getResourcesOffset() const;
 	uint8 getImFileNumber() const;
 	uint8 getExFileNumber() const;
 	uint8 getCommunHandling() const;
@@ -149,6 +150,7 @@ private:
 	uint8 _versionMinor;
 	uint32 _variablesCount;
 	uint32 _textsOffset;
+	uint32 _resourcesOffset;
 	uint8 _imFileNumber;
 	uint8 _exFileNumber;
 	uint8 _communHandling;

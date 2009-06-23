@@ -137,14 +137,12 @@ void Game_v1::playTot(int16 skipPlay) {
 				}
 			}
 
-			byte *filePtr = _script->getData() + 0x34;
 			_totResourceTable = 0;
-			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
+			if (_script->getResourcesOffset() != ((uint32) -1)) {
 				_totResourceTable = new TotResTable;
-				_totResourceTable->dataPtr =
-					_script->getData() + READ_LE_UINT32(_script->getData() + 0x34);
+				_totResourceTable->dataPtr = _script->getData() + _script->getResourcesOffset();
 				Common::MemoryReadStream totResTable(_totResourceTable->dataPtr,
-						4294967295U);
+					_script->getSize() - _script->getResourcesOffset());
 
 				_totResourceTable->itemsCount = totResTable.readSint16LE();
 				_totResourceTable->unknown = totResTable.readByte();

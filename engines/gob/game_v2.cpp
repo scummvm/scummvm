@@ -55,7 +55,6 @@ void Game_v2::playTot(int16 skipPlay) {
 	int16 _captureCounter;
 	int16 breakFrom;
 	int16 nestLevel;
-	byte *filePtr;
 	bool totTextLoc;
 
 	oldNestLevel = _vm->_inter->_nestLevel;
@@ -157,15 +156,13 @@ void Game_v2::playTot(int16 skipPlay) {
 				}
 			}
 
-			filePtr = _script->getData() + 0x34;
 			_totResourceTable = 0;
 			int32 resSize;
-			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
+			if (_script->getResourcesOffset() != ((uint32) -1)) {
 				_totResourceTable = new TotResTable;
-				_totResourceTable->dataPtr =
-					_script->getData() + READ_LE_UINT32(_script->getData() + 0x34);
+				_totResourceTable->dataPtr = _script->getData() + _script->getResourcesOffset();
 				Common::MemoryReadStream totResTable(_totResourceTable->dataPtr,
-						4294967295U);
+						_script->getSize() - _script->getResourcesOffset());
 
 				_totResourceTable->itemsCount = totResTable.readSint16LE();
 				resSize = _totResourceTable->itemsCount * szGame_TotResItem + szGame_TotResTable;
