@@ -211,6 +211,7 @@ const LanguageDescription g_languages[] = {
 	{"ru", "Russian", RU_RUS},
 	{"es", "Spanish", ES_ESP},
 	{"se", "Swedish", SE_SWE},
+	{"hu", "Hungarian", HU_HUN},
 	{0, 0, UNK_LANG}
 };
 

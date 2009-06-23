@@ -172,6 +172,7 @@ enum Language {
 	RU_RUS,
 	ES_ESP,
 	SE_SWE,
+	HU_HUN,
 
 	UNK_LANG = -1	// Use default language (i.e. none specified)
 };
