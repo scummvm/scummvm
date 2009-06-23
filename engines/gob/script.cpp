@@ -406,7 +406,7 @@ bool Script::loadLOM(const Common::String &fileName) {
 
 	delete stream;
 
-	return true;
+	return getTOTProperties();
 }
 
 bool Script::getTOTProperties() {
