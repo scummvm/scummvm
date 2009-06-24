@@ -212,7 +212,7 @@ void Scene::update() {
 
 	// Update cursor if it's in a hotspot
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
-		PolyDefinitions poly = _sceneResource->getGamePolygons()->_Polygons[p];
+		PolyDefinitions poly = _sceneResource->getGamePolygons()->_polygons[p];
 		if (poly.boundingRect.contains(_mouseX, _mouseY)) {
 			curHotspot = (int32)p;
 			updateCursor();
@@ -310,7 +310,7 @@ void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex)
 void Scene::ShowPolygons() {
     for (uint32 p = 0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
         Graphics::Surface sur;
-        PolyDefinitions poly = _sceneResource->getGamePolygons()->_Polygons[p];
+        PolyDefinitions poly = _sceneResource->getGamePolygons()->_polygons[p];
 
         sur.create(poly.boundingRect.right - poly.boundingRect.left, poly.boundingRect.bottom - poly.boundingRect.top, 1);
         

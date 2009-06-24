@@ -194,11 +194,65 @@ typedef struct CommonResources {
     uint32 field_7C;
 } CommonResources;
 
+typedef struct ActorItem {
+    uint32 x0;
+    uint32 y0;
+    uint32 grResId;
+    uint32 field_C;
+    uint32 frameNum;
+    uint32 frameCount;
+    uint32 x1;
+    uint32 y1;
+    uint32 x2;
+    uint32 y2;
+    Common::Rect boundingRect;
+    uint32 direction;
+    uint32 field_3C;
+    uint32 field_40;
+    uint32 field_44;
+    uint32 field_48;
+    uint32 flags;
+    uint32 field_50;
+    uint32 field_54;
+    uint32 field_58;
+    uint32 field_5C;
+    uint32 field_60;
+    uint32 actionIdx3;
+    // TODO field_68 till field_617
+    uint32 reaction[8];
+    uint32 field_638;
+    uint32 field_63C;
+    uint32 field_640;
+    uint32 field_644;
+    uint32 field_648;
+    uint32 field_64C;
+    uint32 field_650;
+    uint32 grResTable[55];
+    char name[256];
+    uint32 field_830[20];
+    uint32 field_880[20];
+    uint32 field_8D0[20];
+    uint32 actionIdx2;
+    uint32 field_924;
+    uint32 tickValue1;
+    uint32 field_92C;
+    uint32 flags2;
+    uint32 field_934;
+    uint32 field_938;
+    uint32 soundResId;
+    // TODO field_940 till field_978
+    uint32 actionIdx1;
+    // TODO field_980 till field_9A0
+} ActorItem;
 
 class WorldStats {
 public:
     WorldStats() {};
-    virtual ~WorldStats() {};
+    virtual ~WorldStats() {
+        _barriers.clear();
+        _actors.clear();
+        _actions.clear();
+    };
 
     uint32 _size;
     uint32 _numEntries;
@@ -248,7 +302,9 @@ public:
     // FIXME: Investigate if we need to actually reserve maxsize for this arrays. 
     // It always have that size under scene file and they are always save in savegames.
     Common::Array<BarrierItem> _barriers; // maxsize 400
+    Common::Array<ActorItem> _actors;     // maxsize 50
 
+    // TODO add rest fields
     Common::Array<ActionItem>  _actions;   // maxsize 400
 }; // end of class WorldStats
 
@@ -262,12 +318,14 @@ typedef struct PolyDefinitions{
 class GamePolygons {
 public:
     GamePolygons() {};
-    virtual ~GamePolygons() {};
+    virtual ~GamePolygons() {
+        _polygons.clear();
+    };
 
     uint32 _size;
     uint32 _numEntries;
 
-    Common::Array<PolyDefinitions> _Polygons;
+    Common::Array<PolyDefinitions> _polygons;
 }; // end of class GamePolygons
 
 
@@ -295,12 +353,14 @@ typedef struct ActionDefinitions {
 class ActionList {
 public:
     ActionList() {};
-    virtual ~ActionList() {};
+    virtual ~ActionList() {
+        _actions.clear();
+    };
 
     uint32 _size;
     uint32 _numEntries;
 
-    Common::Array<ActionDefinitions> _Actions;
+    Common::Array<ActionDefinitions> _actions;
 }; // end of class ActionList
 
 } // end of namespace Asylum
