@@ -181,6 +181,10 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	kLanguage lang = (kLanguage)GET_SEL32V(s->game_obj, printLang);
 	kLanguage subLang = (kLanguage)GET_SEL32V(s->game_obj, subtitleLang);
 
+	// Use English when no language settings are present in the game
+	if (lang == K_LANG_NONE)
+		lang = K_LANG_ENGLISH;
+
 	Common::String retval = getLanguageString(str, lang);
 
 	if ((subLang != K_LANG_NONE) && (sep != NULL)) {
