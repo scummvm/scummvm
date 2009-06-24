@@ -76,7 +76,7 @@ private:
 	bool _visibility;
 	int _setupID;
 	Position _pos;
-	Bitmap *_bitmap, *_zbitmap;
+	ResPtr<Bitmap> _bitmap, _zbitmap;
 };
 
 } // end of namespace Grim
