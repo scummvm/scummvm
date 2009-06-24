@@ -621,9 +621,13 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int width, height;
 	char *text = argv[1].segment ? (char *) kernel_dereference_bulk_pointer(s, argv[1], 0) : NULL;
+	const char *sep = NULL; 
 	reg_t *dest = kernel_dereference_reg_pointer(s, argv[0], 4);
 	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
+
+	if ((argc > 4) && (argv[4].segment))
+		sep = (const char *)kernel_dereference_bulk_pointer(s, argv[4], 0);	
 
 	if (maxwidth < 0)
 		maxwidth = 0;
@@ -636,7 +640,7 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text, maxwidth ? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
+	GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, s->strSplit(text, sep).c_str(), maxwidth ? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
 	                                 &width, &height, 0, NULL, NULL, NULL));
 	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text, width, height);
 
@@ -1570,7 +1574,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	int font_nr = GET_SEL32V(obj, font);
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = text_pos.isNull() ? NULL : (char *)s->seg_manager->dereference(text_pos, NULL);
+	const char *text = text_pos.isNull() ? NULL : (char *)s->seg_manager->dereference(text_pos, NULL);
 	int view = GET_SEL32V(obj, view);
 	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
 	int loop = sign_extend_byte(GET_SEL32V(obj, loop));
@@ -1584,7 +1588,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	switch (type) {
 	case K_CONTROL_BUTTON:
 		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, text, font_nr,
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, s->strSplit(text, NULL).c_str(), font_nr,
 		                          (int8)(state & kControlStateFramed), (int8)inverse, (int8)(state & kControlStateDisabled)));
 		break;
 
@@ -1593,7 +1597,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
 
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, text, font_nr, mode,
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, s->strSplit(text).c_str(), font_nr, mode,
 									(int8)(!!(state & kControlStateDitherFramed)), (int8)inverse));
 		break;
 
@@ -1620,8 +1624,8 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	case K_CONTROL_CONTROL:
 	case K_CONTROL_CONTROL_ALIAS: {
-		char **entries_list = NULL;
-		char *seeker;
+		const char **entries_list = NULL;
+		const char *seeker;
 		int entries_nr;
 		int lsTop = GET_SEL32V(obj, lsTop) - text_pos.offset;
 		int list_top = 0;
@@ -1641,7 +1645,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 		if (entries_nr) { // determine list_top, selection, and the entries_list
 			seeker = text;
-			entries_list = (char**)malloc(sizeof(char *) * entries_nr);
+			entries_list = (const char**)malloc(sizeof(char *) * entries_nr);
 			for (i = 0; i < entries_nr; i++) {
 				entries_list[i] = seeker;
 				seeker += entry_size	;
@@ -2524,10 +2528,10 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	lWhite.alpha = 0;
 	lWhite.priority = -1;
 	lWhite.control = -1;
+	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->_font, fgcolor, bgcolor,
-							s->titlebar_port->_font, lWhite, black, argv[4 + argextra].segment ?
-							kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL, flags);
+							s->titlebar_port->_font, lWhite, black, title ? s->strSplit(title, NULL).c_str() : NULL, flags);
 
 	// PQ3 and SCI1.1 games have the interpreter store underBits implicitly
 	if (argextra)
@@ -3287,7 +3291,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	assert_primary_widget_lists(s);
 
-	text_handle = gfxw_new_text(s->gfx_state, area, font_nr, text, halign, ALIGN_TOP, color0, *color1, bg_color, 0);
+	text_handle = gfxw_new_text(s->gfx_state, area, font_nr, s->strSplit(text).c_str(), halign, ALIGN_TOP, color0, *color1, bg_color, 0);
 
 	if (!text_handle) {
 		error("Display: Failed to create text widget");

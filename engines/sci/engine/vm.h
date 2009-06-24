@@ -198,7 +198,11 @@ struct selector_map_t {
 	Selector points; /**< Used by AvoidPath() */
 
 	Selector syncCue; /**< Used by DoSync() */
-	Selector syncTime; /**< Used by DoSync() */
+	Selector syncTime;
+
+	Selector printLang; /**< Used for i18n */
+	Selector subtitleLang;
+	Selector parseLang;
 };
 
 // A reference to an object's variable.

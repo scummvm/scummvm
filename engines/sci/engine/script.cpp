@@ -200,6 +200,9 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(points);
 	FIND_SELECTOR(syncCue);
 	FIND_SELECTOR(syncTime);
+	FIND_SELECTOR(printLang);
+	FIND_SELECTOR(subtitleLang);
+	FIND_SELECTOR(parseLang);
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {

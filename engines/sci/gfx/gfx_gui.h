@@ -113,7 +113,7 @@ GfxPort *sciw_new_window(EngineState *s, rect_t area, int font,
  * @return				The button
  */
 GfxList *sciw_new_button_control(GfxPort *port, reg_t ID, rect_t zone,
-		char *text, int font, char selected, char inverse, char gray);
+		const char *text, int font, char selected, char inverse, char gray);
 
 /**
  * Creates a new text control list.
@@ -129,7 +129,7 @@ GfxList *sciw_new_button_control(GfxPort *port, reg_t ID, rect_t zone,
  * @return				The text control widget list
  */
 GfxList *sciw_new_text_control(GfxPort *port, reg_t ID, rect_t zone,
-		char *text, int font, gfx_alignment_t align, char frame,
+		const char *text, int font, gfx_alignment_t align, char frame,
 		char inverse);
 
 /**
@@ -145,7 +145,7 @@ GfxList *sciw_new_text_control(GfxPort *port, reg_t ID, rect_t zone,
  * @return				An appropriate widget list
  */
 GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone,
-		char *text, int font, unsigned int cursor, char inverse);
+		const char *text, int font, unsigned int cursor, char inverse);
 
 /**
  * Creates a new icon control list.
@@ -178,8 +178,8 @@ GfxList *sciw_new_icon_control(GfxPort *port, reg_t ID, rect_t zone,
  * @return					An appropriate widget list
  */
 GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone,
-		int font_nr, char **entries_list, int entries_nr, int list_top,
-		int selection, char inverse);
+		int font_nr, const char **entries_list, int entries_nr,
+		int list_top, int selection, char inverse);
 /** @} */
 
 /** @name Menubar widgets */
