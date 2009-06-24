@@ -36,6 +36,7 @@
 #include "gob/game.h"
 #include "gob/expression.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/goblin.h"
 #include "gob/inter.h"
 #include "gob/map.h"
@@ -682,28 +683,27 @@ bool Inter_v1::o1_printTotText(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
-	int16 width, height;
-	byte *dataBuf;
-	int16 id;
-	int8 index;
-
-	id = _vm->_game->_script->readInt16();
-	index = _vm->_game->_script->readInt8();
+	int16 id    = _vm->_game->_script->readInt16();
+	int8  index = _vm->_game->_script->readInt8();
 
 	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
 		return false;
 
-	dataBuf = _vm->_game->loadTotResource(id, 0, &width, &height);
+	Resource *resource = _vm->_game->_resources->getResource(id);
+	if (!resource)
+		return false;
 
 	_vm->_video->fillRect(*_vm->_draw->_cursorSprites,
 			index * _vm->_draw->_cursorWidth, 0,
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
 
-	_vm->_video->drawPackedSprite(dataBuf, width, height,
+	_vm->_video->drawPackedSprite(resource->getData(),
+			resource->getWidth(), resource->getHeight(),
 			index * _vm->_draw->_cursorWidth, 0, 0, *_vm->_draw->_cursorSprites);
 	_vm->_draw->_cursorAnimLow[index] = 0;
 
+	delete resource;
 	return false;
 }
 
@@ -962,8 +962,8 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 
 bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 	int index1, index2;
-	byte *palPtr;
 	byte cmd;
+	Resource *resource;
 
 	cmd = _vm->_game->_script->readByte();
 	switch (cmd & 0x7F) {
@@ -1091,8 +1091,12 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		break;
 
 	case 53:
-		palPtr = _vm->_game->loadTotResource(_vm->_game->_script->readInt16());
-		memcpy((char *) _vm->_draw->_vgaPalette, palPtr, 768);
+		resource = _vm->_game->_resources->getResource(_vm->_game->_script->readInt16());
+		if (!resource)
+			break;
+
+		memcpy((char *) _vm->_draw->_vgaPalette, resource->getData(), MIN(768, resource->getSize()));
+		delete resource;
 		break;
 
 	case 54:
@@ -1102,9 +1106,13 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 	case 61:
 		index1 =  _vm->_game->_script->readByte();
 		index2 = (_vm->_game->_script->readByte() - index1 + 1) * 3;
-		palPtr = _vm->_game->loadTotResource(_vm->_game->_script->readInt16());
+		resource = _vm->_game->_resources->getResource(_vm->_game->_script->readInt16());
+		if (!resource)
+			break;
+
 		memcpy((char *) _vm->_draw->_vgaPalette + index1 * 3,
-				palPtr + index1 * 3, index2);
+		       resource->getData() + index1 * 3, index2);
+		delete resource;
 
 		if (_vm->_draw->_applyPal) {
 			_vm->_draw->_applyPal = false;
@@ -1697,14 +1705,10 @@ bool Inter_v1::o1_loadFont(OpFuncParams &params) {
 	delete _vm->_draw->_fonts[index];
 
 	_vm->_draw->animateCursor(4);
-	if (_vm->_game->_extHandle >= 0)
-		_vm->_dataIO->closeData(_vm->_game->_extHandle);
 
 	_vm->_draw->_fonts[index] =
 		_vm->_util->loadFont(_vm->_game->_script->getResultStr());
 
-	if (_vm->_game->_extHandle >= 0)
-		_vm->_game->_extHandle = _vm->_dataIO->openData(_vm->_game->_curExtFile);
 	return false;
 }
 
@@ -1730,9 +1734,6 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	offset = _vm->_game->_script->readValExpr();
 	retSize = 0;
 
-	if (_vm->_game->_extHandle >= 0)
-		_vm->_dataIO->closeData(_vm->_game->_extHandle);
-
 	WRITE_VAR(1, 1);
 	handle = _vm->_dataIO->openData(_vm->_game->_script->getResultStr());
 	if (handle >= 0) {
@@ -1755,8 +1756,6 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 		delete stream;
 	}
 
-	if (_vm->_game->_extHandle >= 0)
-		_vm->_game->_extHandle = _vm->_dataIO->openData(_vm->_game->_curExtFile);
 	return false;
 }
 
@@ -2296,11 +2295,8 @@ void Inter_v1::o1_setItemPos(OpGobParams &params) {
 
 void Inter_v1::o1_loadObjects(OpGobParams &params) {
 	params.extraData = _vm->_game->_script->readInt16();
-	if (_vm->_game->_extHandle >= 0)
-		_vm->_dataIO->closeData(_vm->_game->_extHandle);
 
 	_vm->_goblin->loadObjects((char *) VAR_ADDRESS(params.extraData));
-	_vm->_game->_extHandle = _vm->_dataIO->openData(_vm->_game->_curExtFile);
 }
 
 void Inter_v1::o1_freeObjects(OpGobParams &params) {
@@ -2475,38 +2471,24 @@ void Inter_v1::o1_initGoblin(OpGobParams &params) {
 }
 
 int16 Inter_v1::loadSound(int16 slot) {
-	byte *dataPtr;
-	int16 id;
-	uint32 dataSize;
-	SoundSource source;
-
 	if (slot == -1)
 		slot = _vm->_game->_script->readValExpr();
 
-	id = _vm->_game->_script->readInt16();
-	if (id == -1) {
+	uint16 id = _vm->_game->_script->readUint16();
+	if (id == 0xFFFF) {
 		_vm->_game->_script->skip(9);
 		return 0;
 	}
 
-	if (id >= 30000) {
-		source = SOUND_EXT;
+	Resource *resource = _vm->_game->_resources->getResource(id);
+	if (!resource)
+		return 0;
 
-		dataPtr = (byte *) _vm->_game->loadExtData(id, 0, 0, &dataSize);
-	} else {
-		int16 totSize;
+	SoundDesc *sample = _vm->_sound->sampleGetBySlot(slot);
+	if (!sample)
+		return 0;
 
-		source = SOUND_TOT;
-
-		dataPtr = (byte *) _vm->_game->loadTotResource(id, &totSize);
-		dataSize = (uint32) ((int32) totSize);
-	}
-
-	if (dataPtr) {
-		SoundDesc *sample = _vm->_sound->sampleGetBySlot(slot);
-		if (sample)
-			sample->load(SOUND_SND, source, dataPtr, dataSize);
-	}
+	sample->load(SOUND_SND, resource);
 	return 0;
 }
 

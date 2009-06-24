@@ -247,43 +247,42 @@ Common::Error GobEngine::run() {
 	switch (_language) {
 	case Common::FR_FRA:
 	case Common::RU_RUS:
-		_global->_language = 0;
+		_global->_language = kLanguageFrench;
 		break;
 	case Common::DE_DEU:
-		_global->_language = 1;
+		_global->_language = kLanguageGerman;
 		break;
 	case Common::EN_ANY:
 	case Common::EN_GRB:
 	case Common::HU_HUN:
-		_global->_language = 2;
+		_global->_language = kLanguageBritish;
 		break;
 	case Common::ES_ESP:
-		_global->_language = 3;
+		_global->_language = kLanguageSpanish;
 		break;
 	case Common::IT_ITA:
-		_global->_language = 4;
+		_global->_language = kLanguageItalian;
 		break;
 	case Common::EN_USA:
-		_global->_language = 5;
+		_global->_language = kLanguageAmerican;
 		break;
 	case Common::NL_NLD:
-		_global->_language = 6;
+		_global->_language = kLanguageDutch;
 		break;
 	case Common::KO_KOR:
-		_global->_language = 7;
+		_global->_language = kLanguageKorean;
 		break;
 	case Common::HB_ISR:
-		_global->_language = 8;
+		_global->_language = kLanguageHebrew;
 		break;
 	case Common::PT_BRA:
-		_global->_language = 9;
+		_global->_language = kLanguagePortuguese;
 		break;
 	case Common::JA_JPN:
-		_global->_language = 10;
+		_global->_language = kLanguageJapanese;
 		break;
 	default:
-		// Default to English
-		_global->_language = 2;
+		_global->_language = kLanguageBritish;
 		break;
 	}
 	_global->_languageWanted = _global->_language;

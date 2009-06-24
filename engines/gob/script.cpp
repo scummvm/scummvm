@@ -353,15 +353,15 @@ bool Script::loadTOT(const Common::String &fileName) {
 	if (!stream)
 		return false;
 
-	_totSize = stream->size();
+	if (!totFile.getProperties(_totProperties))
+		return false;
+
+	_totSize = _totProperties.scriptEnd;
 	if (_totSize <= 0)
 		return false;
 
 	_totData = new byte[_totSize];
 	if (stream->read(_totData, _totSize) != _totSize)
-		return false;
-
-	if (!totFile.getProperties(_totProperties))
 		return false;
 
 	return true;

@@ -127,7 +127,7 @@ bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName,
 		return false;
 
 	size = _vm->_dataIO->getDataSize(fileName);
-	return sndDesc->load(type, SOUND_FILE, data, size);
+	return sndDesc->load(type, data, size);
 }
 
 void Sound::sampleFree(SoundDesc *sndDesc, bool noteAdlib, int index) {

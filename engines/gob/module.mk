@@ -44,6 +44,7 @@ MODULE_OBJS := \
 	mult_v1.o \
 	mult_v2.o \
 	palanim.o \
+	resources.o \
 	scenery.o \
 	scenery_v1.o \
 	scenery_v2.o \

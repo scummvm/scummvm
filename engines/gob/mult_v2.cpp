@@ -33,6 +33,7 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/goblin.h"
 #include "gob/inter.h"
 #include "gob/scenery.h"
@@ -60,8 +61,6 @@ void Mult_v2::loadMult(int16 resId) {
 	int8 index;
 	uint8 staticCount;
 	uint8 animCount;
-	uint32 dataSize;
-	byte *extData;
 	bool hasImds;
 
 	index = (resId & 0x8000) ? _vm->_game->_script->readByte() : 0;
@@ -80,8 +79,11 @@ void Mult_v2::loadMult(int16 resId) {
 	_multData->sndSlotsCount = 0;
 	_multData->frameStart = 0;
 
-	extData = (byte *) _vm->_game->loadExtData(resId, 0, 0, &dataSize);
-	Common::MemoryReadStream data(extData, dataSize);
+	Resource *resource = _vm->_game->_resources->getResource(resId);
+	if (!resource)
+		return;
+
+	Common::SeekableReadStream &data = *resource->stream();
 
 	_multData->staticCount = staticCount = data.readSByte();
 	_multData->animCount = animCount = data.readSByte();
@@ -243,7 +245,7 @@ void Mult_v2::loadMult(int16 resId) {
 	if (hasImds)
 		loadImds(data);
 
-	delete[] extData;
+	delete resource;
 }
 
 void Mult_v2::loadImds(Common::SeekableReadStream &data) {

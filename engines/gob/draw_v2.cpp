@@ -33,6 +33,7 @@
 #include "gob/util.h"
 #include "gob/game.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/scenery.h"
 #include "gob/inter.h"
 #include "gob/video.h"
@@ -206,12 +207,6 @@ void Draw_v2::printTotText(int16 id) {
 
 	id &= 0xFFF;
 
-	if (!_vm->_game->_totTextData || !_vm->_game->_totTextData->dataPtr ||
-	    (id >= _vm->_game->_totTextData->itemsCount) ||
-		  (_vm->_game->_totTextData->items[id].offset == 0xFFFF) ||
-			(_vm->_game->_totTextData->items[id].size == 0))
-		return;
-
 	_vm->validateLanguage();
 
 	// WORKAROUND: In the scripts of some Gobliins 2 versions, the dialog text IDs
@@ -235,13 +230,18 @@ void Draw_v2::printTotText(int16 id) {
 
 	}
 
-	size = _vm->_game->_totTextData->items[id].size;
-	dataPtr = _vm->_game->_totTextData->dataPtr +
-		_vm->_game->_totTextData->items[id].offset;
-	ptr = dataPtr;
-
-	if ((_renderFlags & RENDERFLAG_SKIPOPTIONALTEXT) && (ptr[1] & 0x80))
+	TextItem *textItem = _vm->_game->_resources->getTextItem(id);
+	if (!textItem)
 		return;
+
+	size    = textItem->getSize();
+	dataPtr = textItem->getData();
+	ptr     = dataPtr;
+
+	if ((_renderFlags & RENDERFLAG_SKIPOPTIONALTEXT) && (ptr[1] & 0x80)) {
+		delete textItem;
+		return;
+	}
 
 	if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
 		destX = (READ_LE_UINT16(ptr) & 0x7FFF) * 2;
@@ -525,7 +525,7 @@ void Draw_v2::printTotText(int16 id) {
 		case 10:
 			str[0] = (char) 255;
 			WRITE_LE_UINT16((uint16 *) (str + 1),
-					ptr - _vm->_game->_totTextData->dataPtr);
+					ptr - _vm->_game->_resources->getTexts());
 			str[3] = 0;
 			ptr++;
 			for (int i = *ptr++; i > 0; i--) {
@@ -598,7 +598,9 @@ void Draw_v2::printTotText(int16 id) {
 		}
 	}
 
+	delete textItem;
 	_renderFlags = savedFlags;
+
 	if (!(_renderFlags & RENDERFLAG_COLLISIONS))
 		return;
 
@@ -611,14 +613,13 @@ void Draw_v2::printTotText(int16 id) {
 }
 
 void Draw_v2::spriteOperation(int16 operation) {
-	uint16 id;
-	byte *dataBuf;
 	int16 len;
 	int16 x, y;
 	SurfaceDescPtr sourceSurf, destSurf;
 	bool deltaVeto;
 	int16 left;
 	int16 ratio;
+	Resource *resource;
 	// Always assigned to -1 in Game::loadTotFile()
 	int16 someHandle = -1;
 
@@ -761,41 +762,20 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_LOADSPRITE:
-		id = _spriteLeft;
+		resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
+			                                             &_spriteRight, &_spriteBottom);
 
-		if ((id >= 30000) || (_vm->_game->_lomHandle >= 0)) {
-			dataBuf = 0;
-
-			if (_vm->_game->_lomHandle >= 0)
-				warning("Urban Stub: LOADSPRITE %d, LOM", id);
-			else
-				dataBuf = _vm->_game->loadExtData(id, &_spriteRight, &_spriteBottom);
-
-			if (!dataBuf)
-				break;
-
-			_vm->_video->drawPackedSprite(dataBuf,
-					_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
-					_transparency, *_spritesArray[_destSurface]);
-
-			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-					_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
-
-			delete[] dataBuf;
-			break;
-		}
-
-		// Load from .TOT resources
-		if (!(dataBuf = _vm->_game->loadTotResource(id, 0, &_spriteRight, &_spriteBottom)))
+		if (!resource)
 			break;
 
-		_vm->_video->drawPackedSprite(dataBuf,
-		    _spriteRight, _spriteBottom,
-		    _destSpriteX, _destSpriteY,
-		    _transparency, *_spritesArray[_destSurface]);
+		_vm->_video->drawPackedSprite(resource->getData(),
+				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
+				_transparency, *_spritesArray[_destSurface]);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+
+		delete resource;
 		break;
 
 	case DRAW_PRINTTEXT:
@@ -808,7 +788,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 				if (((int8) _textToPrint[0]) == -1) {
 					_vm->validateLanguage();
 
-					dataBuf = _vm->_game->_totTextData->dataPtr + _textToPrint[1] + 1;
+					byte *dataBuf = _vm->_game->_resources->getTexts() + _textToPrint[1] + 1;
 					len = *dataBuf++;
 					for (int i = 0; i < len; i++, dataBuf += 2) {
 						_vm->_video->drawLetter(READ_LE_UINT16(dataBuf), _destSpriteX,

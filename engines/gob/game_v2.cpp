@@ -33,6 +33,7 @@
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/draw.h"
 #include "gob/goblin.h"
 #include "gob/inter.h"
@@ -55,7 +56,6 @@ void Game_v2::playTot(int16 skipPlay) {
 	int16 _captureCounter;
 	int16 breakFrom;
 	int16 nestLevel;
-	bool totTextLoc;
 
 	oldNestLevel = _vm->_inter->_nestLevel;
 	oldBreakFrom = _vm->_inter->_breakFromLevel;
@@ -92,12 +92,6 @@ void Game_v2::playTot(int16 skipPlay) {
 			} else
 				_vm->_inter->initControlVars(0);
 
-			_totTextData = 0;
-			_totResourceTable = 0;
-			_imFileData = 0;
-			_extTable = 0;
-			_extHandle = -1;
-
 			_vm->_draw->_cursorHotspotXVar = -1;
 			_totToLoad[0] = 0;
 
@@ -115,85 +109,7 @@ void Game_v2::playTot(int16 skipPlay) {
 				break;
 			}
 
-			strcpy(_curImaFile, _curTotFile);
-			strcpy(_curExtFile, _curTotFile);
-
-			_curImaFile[strlen(_curImaFile) - 4] = 0;
-			strcat(_curImaFile, ".ima");
-
-			_curExtFile[strlen(_curExtFile) - 4] = 0;
-			strcat(_curExtFile, ".ext");
-
-			debugC(4, kDebugFileIO, "IMA: %s", _curImaFile);
-			debugC(4, kDebugFileIO, "EXT: %s", _curExtFile);
-
-			_totTextData = 0;
-			totTextLoc = false;
-			if (_script->getTextsOffset() != ((uint32) -1)) {
-				_totTextData = new TotTextTable;
-
-				int32 size;
-
-				if (_script->getTextsOffset() == 0) {
-					_totTextData->dataPtr = loadLocTexts(&size);
-					totTextLoc = true;
-				} else {
-					_totTextData->dataPtr = _script->getData() + _script->getTextsOffset();
-					size = _script->getSize() - _script->getTextsOffset();
-					_vm->_global->_language = _vm->_global->_languageWanted;
-				}
-
-				_totTextData->items = 0;
-				if (_totTextData->dataPtr != 0) {
-					Common::MemoryReadStream totTextData(_totTextData->dataPtr, size);
-					_totTextData->itemsCount = totTextData.readSint16LE() & 0x3FFF;
-
-					_totTextData->items = new TotTextItem[_totTextData->itemsCount];
-					for (int i = 0; i < _totTextData->itemsCount; ++i) {
-						_totTextData->items[i].offset = totTextData.readSint16LE();
-						_totTextData->items[i].size = totTextData.readSint16LE();
-					}
-				}
-			}
-
-			_totResourceTable = 0;
-			int32 resSize;
-			if (_script->getResourcesOffset() != ((uint32) -1)) {
-				_totResourceTable = new TotResTable;
-				_totResourceTable->dataPtr = _script->getData() + _script->getResourcesOffset();
-				Common::MemoryReadStream totResTable(_totResourceTable->dataPtr,
-						_script->getSize() - _script->getResourcesOffset());
-
-				_totResourceTable->itemsCount = totResTable.readSint16LE();
-				resSize = _totResourceTable->itemsCount * szGame_TotResItem + szGame_TotResTable;
-				if (_script->getSize() > (resSize + 0x34)) {
-					_totResourceTable->unknown = totResTable.readByte();
-
-					_totResourceTable->items =
-						new TotResItem[_totResourceTable->itemsCount];
-					for (int i = 0; i < _totResourceTable->itemsCount; ++i) {
-						_totResourceTable->items[i].offset = totResTable.readSint32LE();
-						_totResourceTable->items[i].size = totResTable.readSint16LE();
-						_totResourceTable->items[i].width = totResTable.readSint16LE();
-						_totResourceTable->items[i].height = totResTable.readSint16LE();
-					}
-				}
-				else {
-					// WORKAROUND: In the original asm, _totResourceTable is
-					// only assigned in playTot and evaluated later, right
-					// before using it. In the Gobliins 2 demo, there is a
-					// dummy tot that loads another tot, overwriting the dummy
-					// pointer with the real one.
-					debugC(1, kDebugFileIO,
-							"Attempted to load invalid resource table (size = %d, totSize = %d)",
-							resSize, _script->getSize());
-					delete _totResourceTable;
-					_totResourceTable = 0;
-				}
-			}
-
-			loadImFile();
-			loadExtTable();
+			_resources->load(_curTotFile);
 
 			_vm->_global->_inter_animDataSize = _script->getAnimDataSize();
 			if (!_vm->_inter->_variables)
@@ -217,32 +133,7 @@ void Game_v2::playTot(int16 skipPlay) {
 
 			_script->unload();
 
-			if (_totTextData) {
-				delete[] _totTextData->items;
-				if (totTextLoc)
-					delete[] _totTextData->dataPtr;
-				delete _totTextData;
-			}
-			_totTextData = 0;
-
-			if (_totResourceTable) {
-				delete[] _totResourceTable->items;
-				delete _totResourceTable;
-			}
-			_totResourceTable = 0;
-
-			delete[] _imFileData;
-			_imFileData = 0;
-
-			if (_extTable)
-				delete[] _extTable->items;
-			delete _extTable;
-			_extTable = 0;
-
-			if (_extHandle >= 0)
-				_vm->_dataIO->closeData(_extHandle);
-
-			_extHandle = -1;
+			_resources->unload();
 
 			for (int i = 0; i < *_vm->_scenery->_pCaptureCounter; i++)
 				capturePop(0);

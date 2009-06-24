@@ -31,6 +31,7 @@
 namespace Gob {
 
 class Script;
+class Resources;
 
 class Game {
 public:
@@ -51,19 +52,6 @@ public:
 		Script *script;
 	} PACKED_STRUCT;
 
-#define szGame_TotTextItem (2 + 2)
-	struct TotTextItem {
-		uint16 offset;
-		int16 size;
-	} PACKED_STRUCT;
-
-#define szGame_TotTextTable (2)
-	struct TotTextTable {
-		int16 itemsCount;
-		TotTextItem *items;
-		byte *dataPtr;
-	} PACKED_STRUCT;
-
 	struct InputDesc {
 		int16 fontIndex;
 		int16 backColor;
@@ -76,19 +64,10 @@ public:
 	Collision *_collisionAreas;
 	Collision *_collStack[5];
 
-	bool _foundTotLoc;
-	TotTextTable *_totTextData;
-
 	Script *_script;
+	Resources *_resources;
 
 	char _curTotFile[14];
-	char _curExtFile[14];
-
-	byte *_imFileData;
-
-	int16 _extHandle;
-	int16 _lomHandle;
-
 	char _totToLoad[20];
 
 	int32 _startTimeKey;
@@ -102,9 +81,6 @@ public:
 
 	Game(GobEngine *vm);
 	virtual ~Game();
-
-	byte *loadExtData(int16 dataId, int16 *pResWidth, int16 *pResHeight, uint32 *dataSize = 0);
-	byte *loadTotResource(int16 id, int16 *dataSize = 0, int16 *width = 0, int16 *height = 0);
 
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 	void capturePop(char doDraw);
@@ -145,42 +121,6 @@ public:
 	virtual void popCollisions(void) = 0;
 
 protected:
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-#define szGame_TotResItem (4 + 2 + 2 + 2)
-	struct TotResItem {
-		int32 offset;	// if > 0, then offset from end of resource table.
-						// If < 0, then -offset-1 is index in .IM file table
-		int16 size;
-		int16 width;
-		int16 height;
-	} PACKED_STRUCT;
-
-#define szGame_TotResTable (2 + 1)
-	struct TotResTable {
-		int16 itemsCount;
-		byte unknown;
-		TotResItem *items;
-		byte *dataPtr;
-	} PACKED_STRUCT;
-
-#define szGame_ExtItem (4 + 2 + 2 + 2)
-	struct ExtItem {
-		int32 offset;		// offset from the table end
-		uint16 size;
-		int16 width;		// width & 0x7FFF: width, width & 0x8000: pack flag
-		int16 height;		// not zero
-	} PACKED_STRUCT;
-
-#define szGame_ExtTable (2 + 1)
-	struct ExtTable {
-		int16 itemsCount;
-		byte unknown;
-		ExtItem *items;
-	} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
 	int16 _lastCollKey;
 	int16 _lastCollAreaIndex;
 	int16 _lastCollId;
@@ -192,10 +132,6 @@ protected:
 	uint32 _menuLevel;
 
 	char _tempStr[256];
-
-	TotResTable *_totResourceTable;
-	ExtTable *_extTable;
-	char _curImaFile[18];
 
 	int16 _collStackSize;
 	int16 _collStackElemSizes[5];
@@ -213,25 +149,16 @@ protected:
 	int8 _curBackupPos;
 	int16 _cursorHotspotXArray[5];
 	int16 _cursorHotspotYArray[5];
-	TotTextTable *_totTextDataArray[5];
-	TotResTable *_totResourceTableArray[5];
-	ExtTable *_extTableArray[5];
-	int16 _extHandleArray[5];
-	byte *_imFileDataArray[5];
 	Variables *_variablesArray[5];
 	char _curTotFileArray[5][14];
 	Script *_scriptArray[5];
+	Resources *_resourcesArray[5];
 
 	GobEngine *_vm;
 
 	virtual int16 adjustKey(int16 key);
 
-	byte *loadLocTexts(int32 *dataSize = 0);
-	void loadExtTable(void);
-	void loadImFile(void);
-
 	void collAreaSub(int16 index, int8 enter);
-	bool getLocTextFile(char *locTextFile, int language);
 
 	virtual void setCollisions(byte arg_0 = 1);
 	virtual void collSub(uint16 offset);

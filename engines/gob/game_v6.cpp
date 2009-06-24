@@ -32,6 +32,7 @@
 #include "gob/helper.h"
 #include "gob/global.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/inter.h"
 #include "gob/draw.h"
 
@@ -53,12 +54,8 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 
 	_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
 	_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
-	_totTextDataArray[_backupedCount] = _totTextData;
 	_scriptArray[_backupedCount] = _script;
-	_totResourceTableArray[_backupedCount] = _totResourceTable;
-	_extTableArray[_backupedCount] = _extTable;
-	_extHandleArray[_backupedCount] = _extHandle;
-	_imFileDataArray[_backupedCount] = _imFileData;
+	_resourcesArray[_backupedCount] = _resources;
 	_variablesArray[_backupedCount] = _vm->_inter->_variables;
 	strcpy(_curTotFileArray[_backupedCount], _curTotFile);
 
@@ -67,8 +64,7 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 	_curBackupPos = _backupedCount;
 
 	_script = new Script(_vm);
-	_totTextData = 0;
-	_totResourceTable = 0;
+	_resources = new Resources(_vm);
 
 	if (flags & 0x80)
 		warning("Urban Stub: Game_v6::totSub(), flags & 0x80");
@@ -104,17 +100,10 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 
 	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_backupedCount];
 	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_backupedCount];
-	_totTextData = _totTextDataArray[_backupedCount];
 	_script = _scriptArray[_backupedCount];
-	_totResourceTable = _totResourceTableArray[_backupedCount];
-	_extTable = _extTableArray[_backupedCount];
-	_extHandle = _extHandleArray[_backupedCount];
-	_imFileData = _imFileDataArray[_backupedCount];
+	_resources = _resourcesArray[_backupedCount];
 	_vm->_inter->_variables = _variablesArray[_backupedCount];
 	strcpy(_curTotFile, _curTotFileArray[_backupedCount]);
-	strcpy(_curExtFile, _curTotFile);
-	_curExtFile[strlen(_curExtFile) - 4] = '\0';
-	strcat(_curExtFile, ".EXT");
 }
 
 int16 Game_v6::addNewCollision(int16 id, uint16 left, uint16 top,

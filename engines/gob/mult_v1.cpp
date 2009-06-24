@@ -33,6 +33,7 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/inter.h"
 #include "gob/scenery.h"
 
@@ -42,9 +43,6 @@ Mult_v1::Mult_v1(GobEngine *vm) : Mult(vm) {
 }
 
 void Mult_v1::loadMult(int16 resId) {
-	uint32 dataSize;
-	byte *extData;
-
 	debugC(4, kDebugGameFlow, "Loading mult");
 
 	_multData = new Mult_Data;
@@ -53,8 +51,11 @@ void Mult_v1::loadMult(int16 resId) {
 	_multData->sndSlotsCount = 0;
 	_multData->frameStart = 0;
 
-	extData = (byte *) _vm->_game->loadExtData(resId, 0, 0, &dataSize);
-	Common::MemoryReadStream data(extData, dataSize);
+	Resource *resource = _vm->_game->_resources->getResource(resId);
+	if (!resource)
+		return;
+
+	Common::SeekableReadStream &data = *resource->stream();
 
 	_multData->staticCount = data.readSByte() + 1;
 	_multData->animCount = data.readSByte() + 1;
@@ -187,7 +188,7 @@ void Mult_v1::loadMult(int16 resId) {
 		}
 	}
 
-	delete[] extData;
+	delete resource;
 }
 
 void Mult_v1::freeMultKeys() {

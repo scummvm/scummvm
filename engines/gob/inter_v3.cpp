@@ -33,6 +33,7 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 
 namespace Gob {
 
@@ -81,11 +82,11 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 	stringVar = stringStartVar;
 	WRITE_VARO_UINT8(stringVar, 0);
 
-	if (!_vm->_game->_totTextData)
+	TextItem *textItem = _vm->_game->_resources->getTextItem(totTextItem);
+	if (!textItem)
 		return false;
 
-	totData = _vm->_game->_totTextData->dataPtr +
-		_vm->_game->_totTextData->items[totTextItem].offset;
+	totData = textItem->getData();
 
 	// Skip background rectangles
 	while (((int16) READ_LE_UINT16(totData)) != -1)
@@ -136,6 +137,7 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 					if ((n != 0) || (*totData == 1) ||
 							(*totData == 6) || (*totData == 7)) {
 						WRITE_VARO_UINT8(stringVar, 0);
+						delete textItem;
 						return false;
 					}
 
@@ -167,8 +169,9 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 				WRITE_VARO_UINT16(stringVar, offX);
 				WRITE_VARO_UINT16(stringVar + 2, offY);
 				WRITE_VARO_UINT16(stringVar + 4,
-						totData - _vm->_game->_totTextData->dataPtr);
+						totData - _vm->_game->_resources->getTexts());
 				WRITE_VARO_UINT8(stringVar + 6, 0);
+				delete textItem;
 				return false;
 			}
 
@@ -235,6 +238,7 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 		}
 	}
 
+	delete textItem;
 	return false;
 }
 

@@ -37,35 +37,36 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_presentVGA = UNDEF;
 	_presentHER = UNDEF;
 
-	_videoMode = 0;
+	_videoMode     = 0;
 	_fakeVideoMode = 0;
-	_oldMode = 3;
+	_oldMode       = 3;
 
 	_soundFlags = 0;
 
-	_language = 0x8000;
+	_language       = 0x8000;
 	_languageWanted = 0x8000;
+	_foundLanguage  = false;
 
-	_useMouse = UNDEF;
+	_useMouse     = UNDEF;
 	_mousePresent = UNDEF;
-	_mouseXShift = 3;
-	_mouseYShift = 3;
+	_mouseXShift  = 3;
+	_mouseYShift  = 3;
 
-	_mouseMinX = 0;
-	_mouseMinY = 0;
+	_mouseMinX =   0;
+	_mouseMinY =   0;
 	_mouseMaxX = 320;
 	_mouseMaxY = 200;
 
 	_useJoystick = 1;
 
-	_primaryWidth = 0;
+	_primaryWidth  = 0;
 	_primaryHeight = 0;
 
 	_colorCount = 16;
 	for (int i = 0; i < 256; i++) {
-		_redPalette[i] = 0;
+		_redPalette  [i] = 0;
 		_greenPalette[i] = 0;
-		_bluePalette[i] = 0;
+		_bluePalette [i] = 0;
 	}
 
 	_unusedPalette1[ 0] = (int16) 0x0000;
@@ -109,7 +110,7 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	_pPaletteDesc = 0;
 
-	_setAllPalette = false;
+	_setAllPalette  = false;
 	_dontSetPalette = false;
 
 	_debugFlag = 0;

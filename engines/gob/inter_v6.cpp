@@ -34,6 +34,7 @@
 #include "gob/game.h"
 #include "gob/expression.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/draw.h"
 #include "gob/sound/sound.h"
 #include "gob/videoplayer.h"
@@ -241,18 +242,21 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
 		return false;
 
-	int16 width, height;
-	byte *dataBuf = _vm->_game->loadTotResource(id, 0, &width, &height);
+	Resource *resource = _vm->_game->_resources->getResource((uint16) id);
+	if (!resource)
+		return false;
 
 	_vm->_video->fillRect(*_vm->_draw->_cursorSprites,
 			index * _vm->_draw->_cursorWidth, 0,
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
 
-	_vm->_video->drawPackedSprite(dataBuf, width, height,
+	_vm->_video->drawPackedSprite(resource->getData(),
+			resource->getWidth(), resource->getHeight(),
 			index * _vm->_draw->_cursorWidth, 0, 0, *_vm->_draw->_cursorSprites);
 	_vm->_draw->_cursorAnimLow[index] = 0;
 
+	delete resource;
 	return false;
 }
 

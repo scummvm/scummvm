@@ -29,15 +29,17 @@
 #include "sound/wave.h"
 
 #include "gob/sound/sounddesc.h"
+#include "gob/resources.h"
 
 namespace Gob {
 
 SoundDesc::SoundDesc() {
+	_resource = 0;
+
 	_data = _dataPtr = 0;
 	_size = 0;
 
 	_type = SOUND_SND;
-	_source = SOUND_FILE;
 
 	_repCount = 0;
 	_frequency = 0;
@@ -50,23 +52,31 @@ SoundDesc::~SoundDesc() {
 	free();
 }
 
-void SoundDesc::set(SoundType type, SoundSource src,
-		byte *data, uint32 dSize) {
-
+void SoundDesc::set(SoundType type, byte *data, uint32 dSize) {
 	free();
 
 	_type = type;
-	_source = src;
 	_data = _dataPtr = data;
 	_size = dSize;
 }
 
-bool SoundDesc::load(SoundType type, SoundSource src,
-		byte *data, uint32 dSize) {
+void SoundDesc::set(SoundType type, Resource *resource) {
+	byte *data = 0;
+	uint32 dSize = 0;
 
+	if (resource && (resource->getSize() > 0)) {
+		data = resource->getData();
+		dSize = resource->getSize();
+	}
+
+	set(type, data, dSize);
+
+	_resource = resource;
+}
+
+bool SoundDesc::load(SoundType type, byte *data, uint32 dSize) {
 	free();
 
-	_source = src;
 	switch (type) {
 	case SOUND_ADL:
 		return loadADL(data, dSize);
@@ -79,9 +89,21 @@ bool SoundDesc::load(SoundType type, SoundSource src,
 	return false;
 }
 
+bool SoundDesc::load(SoundType type, Resource *resource) {
+	if (!resource || (resource->getSize() <= 0))
+		return false;
+
+	if (!load(type, resource->getData(), resource->getSize()))
+		return false;
+
+	_resource = resource;
+	return true;
+}
+
 void SoundDesc::free() {
-	if (_source != SOUND_TOT)
-		delete[] _data;
+	delete _resource;
+
+	_resource = 0;
 	_data = _dataPtr = 0;
 	_id = 0;
 }

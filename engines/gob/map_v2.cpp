@@ -32,6 +32,7 @@
 #include "gob/inter.h"
 #include "gob/game.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/mult.h"
 
 namespace Gob {
@@ -51,7 +52,6 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	int16 mapWidth, mapHeight;
 	int16 tmp;
 	byte *variables;
-	byte *extData;
 	uint32 tmpPos;
 	uint32 passPos;
 
@@ -65,8 +65,11 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		return;
 	}
 
-	extData = _vm->_game->loadExtData(id, 0, 0);
-	Common::MemoryReadStream mapData(extData, 4294967295U);
+	Resource *resource = _vm->_game->_resources->getResource(id);
+	if (!resource)
+		return;
+
+	Common::SeekableReadStream &mapData = *resource->stream();
 
 	if (mapData.readByte() == 3) {
 		_screenWidth = 640;
@@ -88,7 +91,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	passPos = mapData.pos();
 	mapData.skip(_mapWidth * _mapHeight);
 
-	if (*extData == 1)
+	if (resource->getData()[0] == 1)
 		wayPointsCount = _wayPointsCount = 40;
 	else
 		wayPointsCount = _wayPointsCount == 0 ? 1 : _wayPointsCount;
@@ -134,7 +137,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	for (int i = 0; i < _vm->_goblin->_soundSlotsCount; i++)
 		_vm->_goblin->_soundSlots[i] = _vm->_inter->loadSound(1);
 
-	delete[] extData;
+	delete resource;
 }
 
 void Map_v2::loadGoblinStates(Common::SeekableReadStream &data, int index) {

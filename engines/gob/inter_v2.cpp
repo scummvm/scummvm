@@ -38,6 +38,7 @@
 #include "gob/game.h"
 #include "gob/expression.h"
 #include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/goblin.h"
 #include "gob/map.h"
 #include "gob/mult.h"
@@ -1499,7 +1500,6 @@ int16 Inter_v2::loadSound(int16 search) {
 	uint16 slotIdMask;
 	uint32 dataSize;
 	SoundType type;
-	SoundSource source;
 
 	type = SOUND_SND;
 	slotIdMask = 0;
@@ -1542,8 +1542,6 @@ int16 Inter_v2::loadSound(int16 search) {
 	if (id == -1) {
 		char sndfile[14];
 
-		source = SOUND_FILE;
-
 		strncpy0(sndfile, _vm->_game->_script->readString(9), 9);
 
 		if (type == SOUND_ADL)
@@ -1551,27 +1549,30 @@ int16 Inter_v2::loadSound(int16 search) {
 		else
 			strcat(sndfile, ".SND");
 
-		dataPtr = (byte *) _vm->_dataIO->getData(sndfile);
-		if (dataPtr)
-			dataSize = _vm->_dataIO->getDataSize(sndfile);
-	} else if (id >= 30000) {
-		source = SOUND_EXT;
+		dataPtr  = _vm->_dataIO->getData(sndfile);
+		dataSize = _vm->_dataIO->getDataSize(sndfile);
+		if (!dataPtr)
+			return 0;
 
-		dataPtr = (byte *) _vm->_game->loadExtData(id, 0, 0, &dataSize);
-	} else {
-		int16 totSize;
+		if (!sample->load(type, dataPtr, dataSize)) {
+			delete[] dataPtr;
+			return 0;
+		}
 
-		source = SOUND_TOT;
-
-		dataPtr = (byte *) _vm->_game->loadTotResource(id, &totSize);
-		dataSize = (uint32) ((int32) totSize);
-	}
-
-	if (dataPtr) {
-		sample->load(type, source, dataPtr, dataSize);
 		sample->_id = id;
+		return slot | slotIdMask;
 	}
 
+	Resource *resource = _vm->_game->_resources->getResource(id);
+	if (!resource)
+		return 0;
+
+	if (!sample->load(type, resource)) {
+		delete resource;
+		return 0;
+	}
+
+	sample->_id = id;
 	return slot | slotIdMask;
 }
 
