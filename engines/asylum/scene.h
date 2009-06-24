@@ -66,6 +66,7 @@ private:
     Text            *_text;
     SceneResource   *_sceneResource;
     ResourcePack    *_resPack;
+	ResourcePack    *_speechPack;
 	ResourcePack    *_musPack;
     GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;

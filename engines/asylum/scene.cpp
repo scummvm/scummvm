@@ -38,6 +38,7 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
     if (_sceneResource->load(_sceneIdx)) {
         _text = new Text(_screen);
         _resPack = new ResourcePack(sceneIdx);
+		_speechPack = new ResourcePack(3);
 
 		_sceneResource->getMainActor()->setResourcePack(_resPack);
 
@@ -62,6 +63,7 @@ Scene::~Scene() {
 	delete _cursorResource;
 	delete _bgResource;
     delete _musPack;
+	delete _speechPack;
     delete _resPack;
     delete _text;
     delete _sceneResource;
@@ -236,6 +238,16 @@ void Scene::update() {
 					// Play the SFX associated with the hotspot
 					// TODO: The hotspot sound res id is 0, seems like we need to get it from the associated action list
 					//_sound->playSfx(_resPack, worldStats->_actors[a].soundResId);
+
+					// TODO: This should all be moved to a script related class
+					ActionDefinitions actionDefs = _sceneResource->getActionList()->_actions[worldStats->_actions[a].actionListIdx1];
+					for (int command = 0; command < 161; command++) {
+						if (actionDefs.commands[command].opcode == 65) {	// play voice
+							_sound->playSfx(_speechPack, actionDefs.commands[command].param1);
+							// TODO: param2 (usually 1) -> number of loops?
+						}
+					}
+					break;
 				}
 			}
 		}
