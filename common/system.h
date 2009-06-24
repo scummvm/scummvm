@@ -714,8 +714,9 @@ public:
 	 * @param hotspotY			vertical offset from the top side to the hotspot
 	 * @param keycolor			transparency color index
 	 * @param cursorTargetScale	scale factor which cursor is designed for
+	 * @param format			pixel format which cursor graphic uses
 	 */
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1, Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8()) = 0;
 #ifdef ENABLE_RGB_COLOR
 	virtual void setCursorFormat(Graphics::PixelFormat format) = 0;
 #endif

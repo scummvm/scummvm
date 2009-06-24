@@ -434,9 +434,6 @@ void ThemeEngine::refresh() {
 		_system->showOverlay();
 
 		if (_useCursor) {
-#ifdef ENABLE_RGB_COLOR
-			CursorMan.replaceCursorFormat(_cursorFormat);
-#endif
 			CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
 			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 		}
@@ -448,9 +445,6 @@ void ThemeEngine::enable() {
 		return;
 
 	if (_useCursor) {
-#ifdef ENABLE_RGB_COLOR
-		CursorMan.pushCursorFormat(_cursorFormat);
-#endif
 		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
 		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, 255, _cursorTargetScale);
 		CursorMan.showMouse(true);
@@ -468,9 +462,6 @@ void ThemeEngine::disable() {
 	_system->hideOverlay();
 
 	if (_useCursor) {
-#ifdef ENABLE_RGB_COLOR
-		CursorMan.popCursorFormat();
-#endif
 		CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}

@@ -57,14 +57,14 @@ bool CursorManager::showMouse(bool visible) {
 	return g_system->showMouse(visible);
 }
 
-void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale) {
-	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
+void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, Graphics::PixelFormat format) {
+	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 
 	cur->_visible = isVisible();
 	_cursorStack.push(cur);
 
 	if (buf) {
-		g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
+		g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 	}
 }
 
@@ -77,7 +77,7 @@ void CursorManager::popCursor() {
 
 	if (!_cursorStack.empty()) {
 		cur = _cursorStack.top();
-		g_system->setMouseCursor(cur->_data, cur->_width, cur->_height, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_targetScale);
+		g_system->setMouseCursor(cur->_data, cur->_width, cur->_height, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_targetScale, cur->_format);
 	}
 
 	g_system->showMouse(isVisible());
@@ -97,27 +97,20 @@ void CursorManager::popAllCursors() {
 		}
 	}
 
-#ifdef ENABLE_RGB_COLOR
-	while (!_cursorFormatStack.empty()) {
-		PixelFormat *form = _cursorFormatStack.pop();
-		delete form;
-	}
-#endif
-
 	g_system->showMouse(isVisible());
 }
 
-void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale) {
+void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, Graphics::PixelFormat format) {
 
 	if (_cursorStack.empty()) {
-		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
+		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 		return;
 	}
 
 	Cursor *cur = _cursorStack.top();
 
 #ifdef ENABLE_RGB_COLOR
-	uint size = w * h * g_system->getScreenFormat().bytesPerPixel;
+	uint size = w * h * format.bytesPerPixel;
 #else
 	uint size = w * h;
 #endif
@@ -137,8 +130,11 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	cur->_hotspotY = hotspotY;
 	cur->_keycolor = keycolor;
 	cur->_targetScale = targetScale;
+#ifdef ENABLE_RGB_COLOR
+	cur->_format = format;
+#endif
 
-	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
+	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 }
 
 void CursorManager::disableCursorPalette(bool disable) {
@@ -219,49 +215,5 @@ void CursorManager::replaceCursorPalette(const byte *colors, uint start, uint nu
 		g_system->disableCursorPalette(true);
 	}
 }
-
-#ifdef ENABLE_RGB_COLOR
-void CursorManager::pushCursorFormat(PixelFormat format) {
-//	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
-//		return;
-	PixelFormat *form = new PixelFormat(format);
-
-	_cursorFormatStack.push(form);
-	g_system->setCursorFormat(format);
-}
-
-void CursorManager::popCursorFormat() {
-
-	if (_cursorFormatStack.empty())
-		return;
-
-	PixelFormat *form = _cursorFormatStack.pop();
-	delete form;
-
-	if (_cursorFormatStack.empty()) {
-		g_system->setCursorFormat(g_system->getScreenFormat());
-		return;
-	}
-
-	form = _cursorFormatStack.top();
-	disableCursorPalette(form->bytesPerPixel != 1);
-
-	g_system->setCursorFormat(*form);
-}
-
-void CursorManager::replaceCursorFormat(PixelFormat format) {
-//	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
-//		return;
-
-	if (_cursorFormatStack.empty()) {
-		pushCursorFormat(format);
-		return;
-	}
-
-	PixelFormat *form = _cursorFormatStack.top();
-
-	g_system->setCursorFormat(*form);
-}
-#endif
 
 } // End of namespace Graphics

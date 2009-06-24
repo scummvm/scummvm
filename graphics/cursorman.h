@@ -28,8 +28,8 @@
 #include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/singleton.h"
-#ifdef ENABLE_RGB_COLOR
 #include "graphics/pixelformat.h"
+#ifdef ENABLE_RGB_COLOR
 #include "common/system.h"
 #endif
 
@@ -55,12 +55,13 @@ public:
 	 * @param hotspotY	the hotspot Y coordinate
 	 * @param keycolor	the index for the transparent color
 	 * @param targetScale	the scale for which the cursor is designed
+	 * @param format	the pixel format which the cursor graphic uses
 	 *
 	 * @note It is ok for the buffer to be a NULL pointer. It is sometimes
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
-	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1);
+	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8());
 
 	/**
 	 * Pop a cursor from the stack, and restore the previous one to the
@@ -80,8 +81,9 @@ public:
 	 * @param hotspotY	the hotspot Y coordinate
 	 * @param keycolor	the index for the transparent color
 	 * @param targetScale	the scale for which the cursor is designed
+	 * @param format	the pixel format which the cursor graphic uses
 	 */
-	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1);
+	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8());
 
 	/**
 	 * Pop all of the cursors and cursor palettes from their respective stacks.
@@ -134,31 +136,6 @@ public:
 	 */
 	void replaceCursorPalette(const byte *colors, uint start, uint num);
 
-#ifdef ENABLE_RGB_COLOR
-	/**
-	 * Push a new cursor pixel format onto the stack, and set it in the backend.
-	 *
-	 * @param format	the new format data, in a Graphics::PixelFormat
-	 */
-	void pushCursorFormat(PixelFormat format);
-
-	/**
-	 * Pop a cursor pixel format from the stack, and restore the previous one to
-	 * the backend. If there is no previous format, the screen format is
-	 * used instead.
-	 */
-	void popCursorFormat();
-
-	/**
-	 * Replace the current cursor pixel format on the stack. If the stack is
-	 * empty, the format is pushed instead. It's a slightly more optimized
-	 * way of popping the old format before pushing the new one.
-	 *
-	 * @param format	the new format data, in a Graphics::PixelFormat
-	 */
-	void replaceCursorFormat(PixelFormat format);
-#endif
-
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	CursorManager();
@@ -171,18 +148,17 @@ private:
 		int _hotspotX;
 		int _hotspotY;
 		uint32 _keycolor;
-
+#ifdef ENABLE_RGB_COLOR
+		Graphics::PixelFormat _format;
+#endif
 		byte _targetScale;
 
-
 		uint _size;
-		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, uint8 bitDepth = 8) {
+		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8()) {
 #ifdef ENABLE_RGB_COLOR
-			{	//limit the lifespan of the format value to minimize impact on memory usage
-				Graphics::PixelFormat f = g_system->getScreenFormat();
-				_size = w * h * f.bytesPerPixel;
-				_keycolor = keycolor & ((1 << (f.bytesPerPixel << 3)) - 1);
-			}
+			_size = w * h * format.bytesPerPixel;
+			_keycolor = keycolor & ((1 << (format.bytesPerPixel << 3)) - 1);
+			_format = format;
 #else
 			_size = w * h;
 			_keycolor = keycolor & 0xFF;
@@ -231,9 +207,6 @@ private:
 	};
 	Common::Stack<Cursor *> _cursorStack;
 	Common::Stack<Palette *> _cursorPaletteStack;
-#ifdef ENABLE_RGB_COLOR
-	Common::Stack<Graphics::PixelFormat *> _cursorFormatStack;
-#endif
 };
 
 } // End of namespace Graphics

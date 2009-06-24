@@ -135,7 +135,7 @@ public:
 	virtual void warpMouse(int x, int y); // overloaded by CE backend (FIXME)
 
 	// Set the bitmap that's used when drawing the cursor.
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, Graphics::PixelFormat format); // overloaded by CE backend (FIXME)
 #ifdef ENABLE_RGB_COLOR
 	virtual void setCursorFormat(Graphics::PixelFormat format);
 #endif
