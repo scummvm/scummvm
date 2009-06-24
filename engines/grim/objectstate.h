@@ -30,6 +30,8 @@
 
 namespace Grim {
 
+class SaveGame;
+
 class ObjectState {
 public:
 	enum Position {
@@ -41,6 +43,8 @@ public:
 
 	ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible);
 	~ObjectState();
+
+	void saveState(SaveGame *savedState);
 
 	int setupID() const { return _setupID; }
 	Position pos() const { return _pos; }
@@ -72,7 +76,7 @@ private:
 	bool _visibility;
 	int _setupID;
 	Position _pos;
-	ResPtr<Bitmap> _bitmap, _zbitmap;
+	Bitmap *_bitmap, *_zbitmap;
 };
 
 } // end of namespace Grim

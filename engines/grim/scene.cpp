@@ -27,6 +27,7 @@
 #include "engines/grim/textsplit.h"
 #include "engines/grim/colormap.h"
 #include "engines/grim/grim.h"
+#include "engines/grim/savegame.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -111,6 +112,21 @@ Scene::~Scene() {
 		delete[] _sectors;
 	for (StateList::iterator i = _states.begin(); i != _states.end(); i++)
 		delete (*i);
+}
+
+void Scene::saveState(SaveGame *savedState) {
+	savedState->writeLESint32(_name.size());
+	savedState->write(_name.c_str(), _name.size());
+	savedState->writeLEUint32(_currSetup - _setups); // current setup id
+	savedState->writeLEUint32(_locked);
+	savedState->writeLEUint32(_enableLights);
+	savedState->writeLEUint32(_minVolume);
+	savedState->writeLEUint32(_maxVolume);
+
+	savedState->writeLEUint32(_numObjectStates);
+	for (StateList::iterator i = _states.begin(); i != _states.end(); i++) {
+		ObjectState *s = *i;
+	}
 }
 
 void Scene::Setup::load(TextSplitter &ts) {

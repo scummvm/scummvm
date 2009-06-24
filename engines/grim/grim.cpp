@@ -1106,6 +1106,18 @@ void GrimEngine::saveTextObjects(SaveGame *savedState) {
 	savedState->endSection();
 }
 
+void GrimEngine::saveScenes(SaveGame *savedState) {
+	savedState->beginSection('SET ');
+
+	savedState->writeLESint32(_scenes.size());
+	for (SceneListType::iterator i = _scenes.begin(); i != _scenes.end(); i++) {
+		Scene *s = *i;
+		s->saveState(savedState);
+	}
+
+	savedState->endSection();
+}
+
 void GrimEngine::savePrimitives(SaveGame *savedState) {
 	PointerId ptr;
 

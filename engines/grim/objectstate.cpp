@@ -24,6 +24,8 @@
  */
 
 #include "engines/grim/objectstate.h"
+#include "engines/grim/savegame.h"
+#include "engines/grim/lua.h"
 
 namespace Grim {
 
@@ -38,6 +40,21 @@ ObjectState::~ObjectState() {
 	g_resourceloader->uncache(_bitmap->getFilename());
 	if (_zbitmap)
 		g_resourceloader->uncache(_zbitmap->getFilename());
+}
+
+void ObjectState::saveState(SaveGame *savedState) {
+	PointerId ptr;
+
+	savedState->writeLESint32(_visibility);
+	savedState->writeLEUint32(_setupID);
+	savedState->writeLEUint32(_pos);
+
+	ptr = makeIdFromPointer(_bitmap);
+	savedState->writeLEUint32(ptr.low);
+	savedState->writeLEUint32(ptr.hi);
+	ptr = makeIdFromPointer(_zbitmap);
+	savedState->writeLEUint32(ptr.low);
+	savedState->writeLEUint32(ptr.hi);
 }
 
 } // end of namespace Grim

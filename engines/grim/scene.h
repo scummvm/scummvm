@@ -32,12 +32,14 @@
 
 namespace Grim {
 
-// The Lua code calls this a "set".
+class SaveGame;
 
 class Scene {
 public:
 	Scene(const char *name, const char *buf, int len);
 	~Scene();
+
+	void saveState(SaveGame *savedState);
 
 	int _minVolume;
 	int _maxVolume;
