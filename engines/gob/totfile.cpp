@@ -44,9 +44,11 @@ TOTFile::~TOTFile() {
 }
 
 bool TOTFile::load(const Common::String &fileName) {
-	if (_vm->_dataIO->existData(fileName.c_str()))
-		_stream = _vm->_dataIO->getDataStream(fileName.c_str());
-	else
+	// Trying to open normally
+	_stream = _vm->_dataIO->getDataStream(fileName.c_str());
+
+	if (!_stream)
+		// Trying to open from video video
 		_stream = _vm->_vidPlayer->getExtraData(fileName.c_str());
 
 	if (!_stream)

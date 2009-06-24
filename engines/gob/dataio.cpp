@@ -585,6 +585,9 @@ byte *DataIO::getData(const char *path) {
 }
 
 DataStream *DataIO::getDataStream(const char *path) {
+	if (!path || (path[0] == '\0') || !existData(path))
+		return 0;
+
 	uint32 size = getDataSize(path);
 	byte *data = getData(path);
 

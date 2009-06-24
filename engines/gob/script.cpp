@@ -508,10 +508,9 @@ uint16 Script::getFunctionOffset(uint8 function) const {
 }
 
 uint32 Script::getVariablesCount(const char *fileName, GobEngine *vm) {
-	if (!vm->_dataIO->existData(fileName))
-		return 0;
-
 	DataStream *stream = vm->_dataIO->getDataStream(fileName);
+	if (!stream)
+		return 0;
 
 	stream->seek(0x2C);
 	uint32 variablesCount = stream->readUint32LE();
