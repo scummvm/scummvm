@@ -202,7 +202,7 @@ int16 Op_Random(void) {
 int16 Op_PlayFX(void) {
 	int volume = popVar();
 	int speed = popVar();
-	int channelNum = popVar();
+	/*int channelNum = */popVar();
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
@@ -219,7 +219,7 @@ int16 Op_PlayFX(void) {
 int16 Op_LoopFX(void) {
 	int volume = popVar();
 	int speed = popVar();
-	int channelNum = popVar();
+	/*int channelNum = */popVar();
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
