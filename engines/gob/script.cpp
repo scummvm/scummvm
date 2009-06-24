@@ -368,7 +368,7 @@ bool Script::loadTOT(const Common::String &fileName) {
 }
 
 bool Script::loadLOM(const Common::String &fileName) {
-	warning("Urban Stub: loadLOM %s", _totFile.c_str());
+	warning("Stub: Script::loadLOM(%s)", _totFile.c_str());
 
 	_lomHandle = _vm->_dataIO->openData(_totFile.c_str());
 	if (_lomHandle < 0)

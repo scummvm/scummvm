@@ -243,7 +243,7 @@ void AdLib::setKey(byte voice, byte note, bool on, bool spec) {
 	writeOPL(0xB0 + voice, (freq >> 8) | (octa << 2) | 0x20 * on);
 
 	if (!freq)
-		warning("Voice %d, note %02X unknown", voice, note);
+		warning("AdLib: Voice %d, note %02X unknown", voice, note);
 }
 
 void AdLib::setVolume(byte voice, byte volume) {
@@ -402,7 +402,7 @@ void ADLPlayer::interpret() {
 				_samplesTillPoll = 0;
 				return;
 			default:
-				warning("Unknown special command in ADL, stopping playback: %X",
+				warning("ADLPlayer: Unknown special command %X, stopping playback",
 						instr & 0x0F);
 				_repCount = 0;
 				_ended = true;
@@ -410,7 +410,7 @@ void ADLPlayer::interpret() {
 			}
 			break;
 		default:
-			warning("Unknown command in ADL, stopping playback: %X",
+			warning("ADLPlayer: Unknown command %X, stopping playback",
 					instr & 0xF0);
 			_repCount = 0;
 			_ended = true;
@@ -660,7 +660,7 @@ void MDYPlayer::interpret() {
 				setVoice(channel, timbre, false);
 				break;
 			case 0xE0:
-				warning("Pitch bend not yet implemented");
+				warning("MDYPlayer: Pitch bend not yet implemented");
 
 				note = *(_playPos)++;
 				note += (unsigned)(*(_playPos++)) << 7;
@@ -675,7 +675,7 @@ void MDYPlayer::interpret() {
 				_playPos++;
 				break;
 			default:
-				warning("Bad MIDI instr byte: 0%X", instr);
+				warning("MDYPlayer: Bad MIDI instr byte: 0%X", instr);
 				while ((*_playPos) < 0x80)
 					_playPos++;
 				if (*_playPos != 0xF8)
@@ -750,7 +750,7 @@ void MDYPlayer::setVoice(byte voice, byte instr, bool set) {
 		timbrePtr = _timbres + _tbrStart + instr * 0x38 + i * 0x1A;
 		for (int j = 0; j < 27; j++) {
 			if (timbrePtr >= (_timbres + _timbresSize)) {
-				warning("Instrument %d out of range (%d, %d)", instr,
+				warning("MDYPlayer: Instrument %d out of range (%d, %d)", instr,
 						(uint32) (timbrePtr - _timbres), _timbresSize);
 				strct[j] = 0;
 			} else
