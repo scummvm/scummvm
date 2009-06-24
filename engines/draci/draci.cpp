@@ -38,6 +38,7 @@
 #include "draci/font.h"
 #include "draci/sprite.h"
 #include "draci/screen.h"
+#include "draci/mouse.h"
 
 namespace Draci {
 
@@ -65,6 +66,7 @@ int DraciEngine::init() {
 	// Initialize graphics using following:
 	initGraphics(kScreenWidth, kScreenHeight, false);
 
+	_mouse = new Mouse(this);
 	_screen = new Screen(this);
 	_font = new Font();
 
@@ -208,10 +210,8 @@ int DraciEngine::go() {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				quit = true;
-			case Common::EVENT_MOUSEMOVE:
-				_system->warpMouse(event.mouse.x, event.mouse.y);
 			default:
-				break;
+				_mouse->handleEvent(event);
 			}
 		}
 		_screen->copyToScreen();

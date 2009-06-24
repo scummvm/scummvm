@@ -23,45 +23,46 @@
  *
  */
 
-#ifndef DRACI_H
-#define DRACI_H
- 
-#include "common/system.h"
-#include "engines/engine.h"
-#include "engines/advancedDetector.h"
+#ifndef DRACI_MOUSE_H
+#define DRACI_MOUSE_H
 
-#include "draci/mouse.h"
-#include "draci/screen.h"
-#include "draci/font.h"
+#include "common/events.h"
+#include "graphics/cursorman.h"
 
 namespace Draci {
 
-class DraciEngine : public Engine {
+enum CursorType { 
+	kNormalCursor, kArrowCursor1, 
+	kArrowCursor2, kArrowCursor3, 
+	kArrowCursor4, kDialogCursor,
+	kHighlightedCursor, kMainMenuCursor
+};
+
+class DraciEngine;
+
+class Mouse {
 public:
-	DraciEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~DraciEngine();
+	Mouse(DraciEngine *vm);
+	~Mouse() {};
 
-	int init();
-	int go();
-	Common::Error run();
-
-	bool hasFeature(Engine::EngineFeature f) const;
-
-	Font *_font;
-	Screen *_screen;
-	Mouse *_mouse;
+	void handleEvent(Common::Event event);
+	void cursorOn();
+	void cursorOff();
+	void setPosition(uint16 x, uint16 y);
+	void setCursorNum(CursorType cursorNum);
+	CursorType getCursorNum() { return _cursorNum; }
+	bool lButtonPressed() { return _lButton; }
+	bool rButtonPressed() { return _rButton; }
+	uint16 getPosX() { return _x; }
+	uint16 getPosY() { return _y; }
 
 private:
-	Common::RandomSource _rnd;
+	uint16 _x, _y;
+	bool _lButton, _rButton;
+	CursorType _cursorNum;
+	DraciEngine *_vm;
 };
 
-enum {
-	kDraciGeneralDebugLevel = 1 << 0,
-	kDraciBytecodeDebugLevel = 1 << 1,
-	kDraciArchiverDebugLevel = 1 << 2
-};
+}
 
-} // End of namespace Draci
-
-#endif // DRACI_H
-
+#endif // DRACI_MOUSE_H

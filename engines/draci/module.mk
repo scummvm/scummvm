@@ -8,7 +8,8 @@ MODULE_OBJS := \
 	font.o \
 	sprite.o \
 	screen.o \
-	surface.o
+	surface.o \
+	mouse.o
  
 MODULE_DIRS += \
 	engines/draci
