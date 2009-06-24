@@ -52,6 +52,7 @@ public:
 		uint8  exFileNumber;
 		uint8  communHandling;
 		uint16 functions[14];
+		uint32 scriptEnd;
 	};
 
 	TOTFile(GobEngine *vm);

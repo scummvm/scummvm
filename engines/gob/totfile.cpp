@@ -48,7 +48,7 @@ bool TOTFile::load(const Common::String &fileName) {
 	_stream = _vm->_dataIO->getDataStream(fileName.c_str());
 
 	if (!_stream)
-		// Trying to open from video video
+		// Trying to open from video
 		_stream = _vm->_vidPlayer->getExtraData(fileName.c_str());
 
 	if (!_stream)
@@ -96,6 +96,12 @@ bool TOTFile::getProperties(Properties &props) const {
 
 	for (int i = 0; i < 14; i++)
 		props.functions[i] = READ_LE_UINT16(_header + 100 + i * 2);
+
+	props.scriptEnd = _stream->size();
+	if (props.textsOffset > 0)
+		props.scriptEnd = MIN(props.scriptEnd, props.textsOffset);
+	if (props.resourcesOffset > 0)
+		props.scriptEnd = MIN(props.scriptEnd, props.resourcesOffset);
 
 	return true;
 }
