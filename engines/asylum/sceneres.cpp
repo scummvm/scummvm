@@ -34,7 +34,7 @@ SceneResource::~SceneResource() {
 	delete _worldStats;
 	delete _mainActor;
     for(uint i=0; i< _gamePolygons->_numEntries; i++) {
-        delete[] _gamePolygons->_Polygons[i].points;
+        delete[] _gamePolygons->_polygons[i].points;
     }
     delete _gamePolygons;
     delete _actionList;
@@ -254,20 +254,103 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
         _worldStats->_barriers.push_back(barrier);
     }
 
-    // TODO grab Max actor definitions
-    // TODO hardcoded for RES.005 ... need to verify if this
-    // offset persists across the other files, and also how
-    // scenes with multiple actors work
-    stream->seek(0xA73B6);
+    // need to jump all unused barriers data to where actors data start
+    stream->seek(0xA6D7A);
 
+    for (uint32 a = 0; a < _worldStats->_numActors; a++) {
+        int i;
+        ActorItem actor;
+        memset(&actor, 0, sizeof(ActorItem));
+
+        actor.x0         = stream->readUint32LE();
+        actor.y0         = stream->readUint32LE();
+        actor.grResId    = stream->readUint32LE();
+        actor.field_C    = stream->readUint32LE();
+        actor.frameNum   = stream->readUint32LE();
+        actor.frameCount = stream->readUint32LE();
+        actor.x1         = stream->readUint32LE();
+        actor.y1         = stream->readUint32LE();
+        actor.x2         = stream->readUint32LE();
+        actor.y2         = stream->readUint32LE();
+
+        actor.boundingRect.left   = stream->readUint32LE() & 0xFFFF;
+		actor.boundingRect.top    = stream->readUint32LE() & 0xFFFF;
+		actor.boundingRect.right  = stream->readUint32LE() & 0xFFFF;
+		actor.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
+
+        actor.direction  = stream->readUint32LE();
+        actor.field_3C   = stream->readUint32LE();
+        actor.field_40   = stream->readUint32LE();
+        actor.field_44   = stream->readUint32LE();
+        actor.field_48   = stream->readUint32LE();
+        actor.flags      = stream->readUint32LE();
+        actor.field_50   = stream->readUint32LE();
+        actor.field_54   = stream->readUint32LE();
+        actor.field_58   = stream->readUint32LE();
+        actor.field_5C   = stream->readUint32LE();
+        actor.field_60   = stream->readUint32LE();
+        actor.actionIdx3 = stream->readUint32LE();
+
+        // TODO skip field_68 till field_617
+        stream->skip(0x5B0);
+
+        for(i=0; i < 8; i++) {
+            actor.reaction[i] = stream->readUint32LE();
+        }
+
+        actor.field_638 = stream->readUint32LE();
+        actor.field_63C = stream->readUint32LE();
+        actor.field_640 = stream->readUint32LE();
+        actor.field_644 = stream->readUint32LE();
+        actor.field_648 = stream->readUint32LE();
+        actor.field_64C = stream->readUint32LE();
+        actor.field_650 = stream->readUint32LE();
+
+        for(i=0; i < 55; i++) {
+            actor.grResTable[i] = stream->readUint32LE();
+        }
+
+        stream->read(actor.name, sizeof(actor.name));
+
+        for(i=0; i < 20; i++) {
+            actor.field_830[i] = stream->readUint32LE();
+        }
+        for(i=0; i < 20; i++) {
+            actor.field_880[i] = stream->readUint32LE();
+        }
+        for(i=0; i < 20; i++) {
+            actor.field_8D0[i] = stream->readUint32LE();
+        }
+        
+        actor.actionIdx2 = stream->readUint32LE();
+        actor.field_924 = stream->readUint32LE();
+        actor.tickValue1 = stream->readUint32LE();
+        actor.field_92C = stream->readUint32LE();
+        actor.flags2 = stream->readUint32LE();
+        actor.field_934 = stream->readUint32LE();
+        actor.field_938 = stream->readUint32LE();
+        actor.soundResId = stream->readUint32LE();
+
+        // TODO skip field_940 till field_978
+        stream->skip(0x3C);
+
+        actor.actionIdx1 = stream->readUint32LE();
+        
+        // TODO skip field_980 till field_9A0
+        stream->skip(0x24);
+
+        _worldStats->_actors.push_back(actor);
+    }
+
+    // TODO Take this out, it shouldn't be here (TEST ONLY)
+    stream->seek(0xA73B6);
     uint8 mainActorData[500];
     stream->read(mainActorData, 500);
-
     _mainActor = new MainActor(mainActorData);
 
-    stream->seek(0xD6B5A); // where actors action definitions start
+    stream->seek(0xD6B5A); // where action items start
 
-    // FIXME Figure out all the actions definitions
+    // FIXME Figure out all the actions items
     for (uint32 a = 0; a < _worldStats->_numActions; a++) {
         ActionItem action;
         memset(&action, 0, sizeof(ActionItem));
@@ -317,11 +400,10 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
         poly.boundingRect.right  = stream->readUint32LE() & 0xFFFF;
         poly.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
 
-        _gamePolygons->_Polygons.push_back(poly);
+        _gamePolygons->_polygons.push_back(poly);
     }
 }
 
-// FIXME: load necessary Action List content
 void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
     _actionList = new ActionList;
 
@@ -357,7 +439,7 @@ void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
         action.field_1BB0 = stream->readUint32LE();
         action.counter    = stream->readUint32LE();
 
-        _actionList->_Actions.push_back(action);
+        _actionList->_actions.push_back(action);
     }
 }
 
