@@ -125,22 +125,18 @@ bool Screen::init() {
 
 	memset(_palettes, 0, sizeof(_palettes));
 
-	_screenPalette = new Palette(256);
+	const int paletteCount = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 12 : 4;
+	const int numColors = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 32 : 256;
+
+	_screenPalette = new Palette(numColors);
 	assert(_screenPalette);
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		for (int i = 0; i < 12; ++i) {
-			_palettes[i] = new Palette(32);
-			assert(_palettes[i]);
-		}
-	} else {
-		for (int i = 0; i < 4; ++i) {
-			_palettes[i] = new Palette(256);
-			assert(_palettes[i]);
-		}
+	for (int i = 0; i < paletteCount; ++i) {
+		_palettes[i] = new Palette(numColors);
+		assert(_palettes[i]);
 	}
 
-	_internFadePalette = new Palette(_palettes[0]->getNumColors());
+	_internFadePalette = new Palette(numColors);
 	assert(_internFadePalette);
 
 	setScreenPalette(getPalette(0));
