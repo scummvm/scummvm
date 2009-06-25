@@ -214,7 +214,9 @@ DraciEngine::~DraciEngine() {
 	// Dispose your resources here
  
 	delete _screen;
-
+	delete _font;
+	delete _mouse;
+	
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
 }
