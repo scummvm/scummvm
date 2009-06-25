@@ -310,7 +310,8 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	if (text[0] == '$')
 		text = strchr(text + 1, '$') + 1;
 
-	setupTextPalette((flags < 0) ? 1 : flags, 0);
+	if (_vm->gameFlags().platform != Common::kPlatformPC98)
+		setupTextPalette((flags < 0) ? 1 : flags, 0);
 
 	if (flags < 0) {
 		static const uint8 colorMap[] = { 0x00, 0xF0, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
