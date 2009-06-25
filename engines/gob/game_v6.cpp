@@ -49,10 +49,10 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 	if ((flags == 16) || (flags == 17))
 		warning("Urban Stub: Game_v6::totSub(), flags == %d", flags);
 
-	if (_numEnvironments >= kMaxEnvironments)
+	if (_numEnvironments >= Environments::kEnvironmentCount)
 		return;
 
-	_environments[_numEnvironments]->set();
+	_environments->set(_numEnvironments);
 
 	curBackupPos = _curEnvironment;
 	_numEnvironments++;
@@ -70,8 +70,10 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 	strncpy0(_curTotFile, newTotFile, 9);
 	strcat(_curTotFile, ".TOT");
 
-	if (_vm->_inter->_terminate != 0)
+	if (_vm->_inter->_terminate != 0) {
+		clearUnusedEnvironment();
 		return;
+	}
 
 	pushCollisions(0);
 
@@ -90,10 +92,11 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 		_vm->_inter->delocateVars();
 	}
 
+	clearUnusedEnvironment();
+
 	_numEnvironments--;
 	_curEnvironment = curBackupPos;
-
-	_environments[_numEnvironments]->get();
+	_environments->get(_numEnvironments);
 }
 
 int16 Game_v6::addNewCollision(int16 id, uint16 left, uint16 top,

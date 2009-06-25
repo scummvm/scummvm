@@ -32,6 +32,39 @@ class Script;
 class Resources;
 class Variables;
 
+class Environments {
+public:
+	static const uint8 kEnvironmentCount = 5;
+
+	Environments(GobEngine *vm);
+	~Environments();
+
+	void set(uint8 env);
+	void get(uint8 env) const;
+
+	const char *getTotFile(uint8 env) const;
+
+	bool has(Variables *variables, uint8 startEnv = 0, int16 except = -1) const;
+	bool has(Script *script      , uint8 startEnv = 0, int16 except = -1) const;
+	bool has(Resources *resources, uint8 startEnv = 0, int16 except = -1) const;
+
+	void clear();
+
+private:
+	struct Environment {
+		int16      cursorHotspotX;
+		int16      cursorHotspotY;
+		char       curTotFile[14];
+		Variables *variables;
+		Script    *script;
+		Resources *resources;
+	};
+
+	GobEngine *_vm;
+
+	Environment *_environments;
+};
+
 class Game {
 public:
 
@@ -120,29 +153,6 @@ public:
 	virtual void popCollisions(void) = 0;
 
 protected:
-	static const int kMaxEnvironments = 5;
-
-	class Environment {
-	public:
-		Environment(GobEngine *vm);
-		~Environment();
-
-		void set();
-		void get();
-
-		const char *getTotFile() const;
-
-	private:
-		GobEngine *_vm;
-
-		int16      _cursorHotspotX;
-		int16      _cursorHotspotY;
-		char       _curTotFile[14];
-		Variables *_variables;
-		Script    *_script;
-		Resources *_resources;
-	};
-
 	int16 _lastCollKey;
 	int16 _lastCollAreaIndex;
 	int16 _lastCollId;
@@ -169,7 +179,7 @@ protected:
 	// For totSub()
 	int8 _curEnvironment;
 	int8 _numEnvironments;
-	Environment *_environments[kMaxEnvironments];
+	Environments *_environments;
 
 	GobEngine *_vm;
 
@@ -181,6 +191,8 @@ protected:
 	virtual void collSub(uint16 offset);
 
 	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex) = 0;
+
+	void clearUnusedEnvironment();
 };
 
 class Game_v1 : public Game {
