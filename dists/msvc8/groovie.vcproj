@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="groovie"
 	ProjectGUID="{2C1EA540-0B09-11DD-BD00-000000000000}"
 	RootNamespace="groovie"
@@ -42,7 +42,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
 				Optimization="0"
 				AdditionalIncludeDirectories="../..;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS; ENABLE_RGB_COLOR; GROOVIE_EXPERIMENTAL"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -259,7 +259,7 @@
 		<File
 			RelativePath="..\..\engines\groovie\saveload.h"
 			>
-		</File>		
+		</File>
 		<File
 			RelativePath="..\..\engines\groovie\script.cpp"
 			>
