@@ -63,7 +63,7 @@ void Screen_HoF::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, 
 	}
 
 	for (int i = 0; i < lastColor; i++)
-		grayOverlay[i] = findLeastDifferentColor(tmpPal.getData() + 3 * i, srcPal.getData(), lastColor);
+		grayOverlay[i] = findLeastDifferentColor(tmpPal.getData() + 3 * i, srcPal, 0, lastColor);
 }
 
 void Screen_HoF::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage, int dstW,

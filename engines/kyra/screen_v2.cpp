@@ -69,7 +69,7 @@ uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int startCo
 		col -= ((((col - col3) * factor) << 1) >> 8) & 0xFF;
 		processedPalette[2] = col;
 
-		*dst++ = findLeastDifferentColor(processedPalette, pal.getData() + 3, 255) + 1;
+		*dst++ = findLeastDifferentColor(processedPalette, pal, 1, 255) + 1;
 	}
 
 	return buffer;
@@ -89,7 +89,7 @@ void Screen_v2::applyOverlay(int x, int y, int w, int h, int pageNum, const uint
 	}
 }
 
-int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors, bool skipSpecialColors) {
+int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const Palette &pal, uint8 firstColor, uint16 numColors, bool skipSpecialColors) {
 	int m = 0x7fff;
 	int r = 0x101;
 
@@ -97,11 +97,11 @@ int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *p
 		if (skipSpecialColors && i >= 0xc0 && i <= 0xc3)
 			continue;
 
-		int v = paletteEntry[0] - *palette++;
+		int v = paletteEntry[0] - pal[(i + firstColor) * 3 + 0];
 		int c = v * v;
-		v = paletteEntry[1] - *palette++;
+		v = paletteEntry[1] - pal[(i + firstColor) * 3 + 1];
 		c += (v * v);
-		v = paletteEntry[2] - *palette++;
+		v = paletteEntry[2] - pal[(i + firstColor) * 3 + 2];
 		c += (v * v);
 
 		if (c <= m) {
