@@ -145,7 +145,7 @@ void Screen_LoL::fprintStringIntro(const char *format, int x, int y, uint8 c1, u
 }
 
 void Screen_LoL::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColors) {
-	uint8 tmpPal[768];
+	Palette tmpPal(lastColor);
 
 	for (int i = 0; i != lastColor; i++) {
 		int v = (((srcPal[3 * i] & 0x3f) * factor) / 0x40) + addR;
@@ -157,7 +157,7 @@ void Screen_LoL::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, in
 	}
 
 	for (int i = 0; i < lastColor; i++)
-		grayOverlay[i] = findLeastDifferentColor(tmpPal + 3 * i, srcPal, lastColor, skipSpecialColors);
+		grayOverlay[i] = findLeastDifferentColor(tmpPal.getData() + 3 * i, srcPal, lastColor, skipSpecialColors);
 }
 
 uint8 *Screen_LoL::generateLevelOverlay(const uint8 *srcPal, uint8 *ovl, int opColor, int weight) {
