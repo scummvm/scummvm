@@ -304,7 +304,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 			memcpy(filename, text+1, end-1-text);
 	}
 
-	if (filename[0])
+	if (filename[0] && _vm->speechEnabled())
 		_vm->sound()->voicePlay(filename);
 
 	if (text[0] == '$')
@@ -328,7 +328,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	char *str = text;
 	int heightAdd = 0;
 
-	while (str[0]) {
+	while (str[0] && _vm->textEnabled()) {
 		char *nextLine = strchr(str, '\r');
 
 		backupChar = 0;
