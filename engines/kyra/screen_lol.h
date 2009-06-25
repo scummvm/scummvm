@@ -92,6 +92,9 @@ public:
 	uint8 *_grayOverlay;
 	int _fadeFlag;
 
+	// PC98 specific
+	static void convertPC98Gfx(uint8 *data, int w, int h, int pitch);
+
 private:
 	LoLEngine *_vm;
 
@@ -105,6 +108,9 @@ private:
 	int _curDimIndex;
 
 	uint8 *_levelOverlays[8];
+
+	static const uint8 _paletteConvTable[256];
+	void mergeOverlay(int x, int y, int w, int h);
 
 	// magic atlas
 	void calcBoundariesIntern(int dstX, int dstY, int c, int d);

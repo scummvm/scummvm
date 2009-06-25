@@ -971,6 +971,30 @@ uint8 Screen_LoL::getShapePaletteSize(const uint8 *shp) {
 	return shp[10];
 }
 
+void Screen_LoL::mergeOverlay(int x, int y, int w, int h) {
+	// For now we convert to 16 colors on overlay merging. If that gives
+	// any problems, like Screen functionallity not prepared for the
+	// format PC98 16 color uses, we'll need to think of a better way.
+	//
+	// We must do this before merging the overlay, else the font colors
+	// will be wrong.
+	if (_use16ColorMode)
+		convertPC98Gfx(_sjisOverlayPtrs[0] + y * 640 + x, w, h, 640);
+
+	Screen_v2::mergeOverlay(x, y, w, h);
+}
+
+void Screen_LoL::convertPC98Gfx(uint8 *data, int w, int h, int pitch) {
+	while (h--) {
+		for (int i = 0; i < w; ++i) {
+			*data = _paletteConvTable[*data];
+			++data;
+		}
+
+		data += pitch - w;
+	}
+}
+
 } // end of namespace Kyra
 
 #endif // ENABLE_LOL
