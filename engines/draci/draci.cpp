@@ -66,9 +66,9 @@ int DraciEngine::init() {
 	// Initialize graphics using following:
 	initGraphics(kScreenWidth, kScreenHeight, false);
 
-	_mouse = new Mouse(this);
 	_screen = new Screen(this);
 	_font = new Font();
+	_mouse = new Mouse(this);
 
 	// Load default font
 	_font->setFont(kFontBig);
@@ -131,7 +131,7 @@ int DraciEngine::go() {
 	}	
 
 	_screen->setPalette(f->_data, 0, kNumColours);
-	
+
 	// Fill screen with light grey
 	_screen->fillScreen(225);
 
@@ -186,22 +186,10 @@ int DraciEngine::go() {
 		_system->delayMillis(100);
 
 		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
-	}	
-	
-	path = "HRA.DFW";
-	ar.openArchive(path);
-	
-	if(ar.isOpen()) {
-		f = ar[0];	
-	} else {
-		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
-		return Common::kUnknownError;
-	}	
+	}
 
-	Sprite sp(f->_data, f->_length, 0, 0, true);
-	CursorMan.pushCursorPalette(_screen->getPalette(), 0, kNumColours);
-	CursorMan.pushCursor(sp._data, sp._width, sp._height, sp._width / 2, sp._height / 2);
-	CursorMan.showMouse(true);
+	_mouse->setCursorNum(kNormalCursor);
+	_mouse->cursorOn();
 
 	Common::Event event;
 	bool quit = false;
@@ -210,9 +198,10 @@ int DraciEngine::go() {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				quit = true;
+				break;
 			default:
 				_mouse->handleEvent(event);
-			}
+			}		
 		}
 		_screen->copyToScreen();
 		_system->delayMillis(20);

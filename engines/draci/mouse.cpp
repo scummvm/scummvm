@@ -25,6 +25,7 @@
 
 #include "draci/draci.h"
 #include "draci/mouse.h"
+#include "draci/barchive.h"
 
 namespace Draci {
 
@@ -78,8 +79,26 @@ void Mouse::setPosition(uint16 x, uint16 y) {
 	_vm->_system->warpMouse(x, y);
 }
 
-// FIXME: stub
+// FIXME: Handle hotspots properly
+// TODO: Implement a resource manager
 void Mouse::setCursorNum(CursorType cursorNum) {
+	_cursorNum = cursorNum;
+	
+	Common::String path("HRA.DFW");
+	BAFile *f;
+	BArchive ar;
+	ar.openArchive(path);
+	
+	if(ar.isOpen()) {
+		f = ar[cursorNum];	
+	} else {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened - %s", path.c_str());
+		return;
+	}	
+
+	Sprite sp(f->_data, f->_length, 0, 0, true);
+	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
+	CursorMan.replaceCursor(sp._data, sp._width, sp._height, sp._width / 2, sp._height / 2);
 }
 
 }
