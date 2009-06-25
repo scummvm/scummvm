@@ -259,6 +259,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\resources.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\resources.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\totfile.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\totfile.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\script.cpp"
 			>
 		</File>
