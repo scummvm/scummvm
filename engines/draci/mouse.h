@@ -49,8 +49,8 @@ public:
 	void cursorOn();
 	void cursorOff();
 	void setPosition(uint16 x, uint16 y);
-	void setCursorNum(CursorType cursorNum);
-	CursorType getCursorNum() { return _cursorNum; }
+	void setCursorType(CursorType cur);
+	CursorType getCursorType() { return _cursorType; }
 	bool lButtonPressed() { return _lButton; }
 	bool rButtonPressed() { return _rButton; }
 	uint16 getPosX() { return _x; }
@@ -59,7 +59,7 @@ public:
 private:
 	uint16 _x, _y;
 	bool _lButton, _rButton;
-	CursorType _cursorNum;
+	CursorType _cursorType;
 	DraciEngine *_vm;
 };
 

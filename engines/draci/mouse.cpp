@@ -34,7 +34,7 @@ Mouse::Mouse(DraciEngine *vm) {
 	_y = 0;
 	_lButton = false;
 	_rButton = false;
-	_cursorNum = kNormalCursor;
+	_cursorType = kNormalCursor;
 	_vm = vm;
 }
 
@@ -81,8 +81,8 @@ void Mouse::setPosition(uint16 x, uint16 y) {
 
 // FIXME: Handle hotspots properly
 // TODO: Implement a resource manager
-void Mouse::setCursorNum(CursorType cursorNum) {
-	_cursorNum = cursorNum;
+void Mouse::setCursorType(CursorType cur) {
+	_cursorType = cur;
 	
 	Common::String path("HRA.DFW");
 	BAFile *f;
@@ -90,7 +90,7 @@ void Mouse::setCursorNum(CursorType cursorNum) {
 	ar.openArchive(path);
 	
 	if(ar.isOpen()) {
-		f = ar[cursorNum];	
+		f = ar[_cursorType];	
 	} else {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened - %s", path.c_str());
 		return;

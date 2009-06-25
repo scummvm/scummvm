@@ -188,7 +188,7 @@ int DraciEngine::go() {
 		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
 	}
 
-	_mouse->setCursorNum(kNormalCursor);
+	_mouse->setCursorType(kNormalCursor);
 	_mouse->cursorOn();
 
 	Common::Event event;
