@@ -26,6 +26,8 @@
 #include "kyra/kyra_lok.h"
 #include "kyra/screen_lok.h"
 
+#include "graphics/cursorman.h"
+
 namespace Kyra {
 
 Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
@@ -260,6 +262,62 @@ void Screen_LoK_16::setScreenPalette(const Palette &pal) {
 	_system->setPalette(palette, 0, 16);
 }
 
+// TODO: This is currently nearly the same as Screen::setMouseCursor, only that
+// we added conversion to 16 colors, when usehiResOverlay is enabled and that the
+// key color is 255 instead of 0. We might consider merging this again with
+// Screen::setMouseCursor.
+void Screen_LoK_16::setMouseCursor(int x, int y, const byte *shape) {
+	if (!shape)
+		return;
+	// if mouseDisabled
+	//	return _mouseShape
+
+	if (_vm->gameFlags().useAltShapeHeader)
+		shape += 2;
+
+	int mouseHeight = *(shape + 2);
+	int mouseWidth = (READ_LE_UINT16(shape + 3)) + 2;
+
+	if (_vm->gameFlags().useAltShapeHeader)
+		shape -= 2;
+
+	if (_vm->gameFlags().useHiResOverlay) {
+		x <<= 1;
+		y <<= 1;
+		mouseWidth <<= 1;
+		mouseHeight <<= 1;
+		fillRect(mouseWidth, 0, mouseWidth, mouseHeight, 0, 8);
+	}
+
+
+	uint8 *cursor = new uint8[mouseHeight * mouseWidth];
+	// Since color id '0' is used for black in some tiems, we must switch to 255 as color key.
+	fillRect(0, 0, mouseWidth, mouseHeight, 255, 8);
+	drawShape(8, shape, 0, 0, 0, 0);
+
+	int xOffset = 0;
+
+	if (_vm->gameFlags().useHiResOverlay) {
+		xOffset = mouseWidth;
+		scale2x(getPagePtr(8) + mouseWidth, SCREEN_W, getPagePtr(8), SCREEN_W, mouseWidth, mouseHeight);
+		// We need to pass the color key number to our conversion function, else it'll convert the color too.
+		convertTo16Colors(getPagePtr(8) + mouseWidth, mouseWidth * 2, mouseHeight * 2, 320, 255);
+	}
+
+	CursorMan.showMouse(false);
+	copyRegionToBuffer(8, xOffset, 0, mouseWidth, mouseHeight, cursor);
+	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 255);
+	if (isMouseVisible())
+		CursorMan.showMouse(true);
+	delete[] cursor;
+
+	// makes sure that the cursor is drawn
+	// we do not use Screen::updateScreen here
+	// so we can be sure that changes to page 0
+	// are NOT updated on the real screen here
+	_system->updateScreen();
+}
+
 void Screen_LoK_16::paletteMap(uint8 idx, int r, int g, int b) {
 	const int red = r;
 	const int green = g;
@@ -314,19 +372,24 @@ void Screen_LoK_16::paletteMap(uint8 idx, int r, int g, int b) {
 	_paletteMap[idx * 4 + 2] = index1;
 }
 
-void Screen_LoK_16::convertTo16Colors(uint8 *page, int w, int h) {
-	const int rowAdd = 1280 - w;
+void Screen_LoK_16::convertTo16Colors(uint8 *page, int w, int h, int pitch, int keyColor) {
+	const int rowAdd = pitch * 2 - w;
 
 	uint8 *row1 = page;
-	uint8 *row2 = page + 640;
+	uint8 *row2 = page + pitch;
 
 	for (int i = 0; i < h; i += 2) {
 		for (int k = 0; k < w; k += 2) {
-			*row1 = _paletteMap[*row1 * 4 + 0]; ++row1;
-			*row1 = _paletteMap[*row1 * 4 + 1]; ++row1;
+			if (keyColor == -1 || keyColor != *row1) {
+				*row1 = _paletteMap[*row1 * 4 + 0]; ++row1;
+				*row1 = _paletteMap[*row1 * 4 + 1]; ++row1;
 
-			*row2 = _paletteMap[*row2 * 4 + 2]; ++row2;
-			*row2 = _paletteMap[*row2 * 4 + 3]; ++row2;
+				*row2 = _paletteMap[*row2 * 4 + 2]; ++row2;
+				*row2 = _paletteMap[*row2 * 4 + 3]; ++row2;
+			} else {
+				row1 += 2;
+				row2 += 2;
+			}
 		}
 
 		row1 += rowAdd;
@@ -337,7 +400,7 @@ void Screen_LoK_16::convertTo16Colors(uint8 *page, int w, int h) {
 void Screen_LoK_16::mergeOverlay(int x, int y, int w, int h) {
 	Screen_LoK::mergeOverlay(x, y, w, h);
 
-	convertTo16Colors(_sjisOverlayPtrs[0] + y * 640 + x, w, h);
+	convertTo16Colors(_sjisOverlayPtrs[0] + y * 640 + x, w, h, 640);
 }
 
 } // end of namespace Kyra

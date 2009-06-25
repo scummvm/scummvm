@@ -281,7 +281,7 @@ public:
 	void hideMouse();
 	void showMouse();
 	bool isMouseVisible() const;
-	void setMouseCursor(int x, int y, const byte *shape);
+	virtual void setMouseCursor(int x, int y, const byte *shape);
 
 	// rect handling
 	virtual int getRectSize(int w, int h) = 0;

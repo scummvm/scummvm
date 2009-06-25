@@ -82,10 +82,12 @@ public:
 	Screen_LoK_16(KyraEngine_LoK *vm, OSystem *system);
 
 	void setScreenPalette(const Palette &pal);
+
+	void setMouseCursor(int x, int y, const byte *shape);
 private:
 	void updateDirtyRectsOvl();
 
-	void convertTo16Colors(uint8 *page, int w, int h);
+	void convertTo16Colors(uint8 *page, int w, int h, int pitch, int keyColor = -1);
 	void mergeOverlay(int x, int y, int w, int h);
 
 	void paletteMap(uint8 idx, int r, int g, int b);
