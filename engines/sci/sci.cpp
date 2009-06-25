@@ -158,7 +158,8 @@ Common::Error SciEngine::run() {
 
 		if (flags & GF_SCI0_OLD ||
 			flags & GF_SCI0_OLDGFXFUNCS ||
-			flags & GF_SCI0_OLDGETTIME) {
+			flags & GF_SCI0_OLDGETTIME ||
+			flags & GF_SCI0_SCI1VOCAB) {
 			error("This game entry is erroneous. It's marked as SCI1, but it has SCI0 flags set");
 		}
 	} else if (version == SCI_VERSION_1_1 || version == SCI_VERSION_32) {
@@ -170,7 +171,8 @@ Common::Error SciEngine::run() {
 
 		if (flags & GF_SCI0_OLD ||
 			flags & GF_SCI0_OLDGFXFUNCS ||
-			flags & GF_SCI0_OLDGETTIME) {
+			flags & GF_SCI0_OLDGETTIME ||
+			flags & GF_SCI0_SCI1VOCAB) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI0 flags set");
 		}
 

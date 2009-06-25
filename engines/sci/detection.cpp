@@ -953,9 +953,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "59b13619078bd47011421468959ee5d4", 954},
 		{"resource.001", 0, "4cfb9040db152868f7cb6a1e8151c910", 296555},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
-		0,
+		GF_SCI0_SCI1VOCAB,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_01
+		SCI_VERSION_0
 	},
 
 	// King's Quest 1 SCI Remake - English DOS (from the King's Quest Collection)
@@ -969,7 +969,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_01
+		SCI_VERSION_0
 	},
 
 	// King's Quest 4 - English Amiga (from www.back2roots.org)
