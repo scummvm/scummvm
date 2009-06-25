@@ -49,19 +49,14 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 	if ((flags == 16) || (flags == 17))
 		warning("Urban Stub: Game_v6::totSub(), flags == %d", flags);
 
-	if (_backupedCount >= 5)
+	if (_numEnvironments >= kMaxEnvironments)
 		return;
 
-	_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
-	_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
-	_scriptArray[_backupedCount] = _script;
-	_resourcesArray[_backupedCount] = _resources;
-	_variablesArray[_backupedCount] = _vm->_inter->_variables;
-	strcpy(_curTotFileArray[_backupedCount], _curTotFile);
+	_environments[_numEnvironments]->set();
 
-	curBackupPos = _curBackupPos;
-	_backupedCount++;
-	_curBackupPos = _backupedCount;
+	curBackupPos = _curEnvironment;
+	_numEnvironments++;
+	_curEnvironment = _numEnvironments;
 
 	_script = new Script(_vm);
 	_resources = new Resources(_vm);
@@ -95,15 +90,10 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 		_vm->_inter->delocateVars();
 	}
 
-	_backupedCount--;
-	_curBackupPos = curBackupPos;
+	_numEnvironments--;
+	_curEnvironment = curBackupPos;
 
-	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_backupedCount];
-	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_backupedCount];
-	_script = _scriptArray[_backupedCount];
-	_resources = _resourcesArray[_backupedCount];
-	_vm->_inter->_variables = _variablesArray[_backupedCount];
-	strcpy(_curTotFile, _curTotFileArray[_backupedCount]);
+	_environments[_numEnvironments]->get();
 }
 
 int16 Game_v6::addNewCollision(int16 id, uint16 left, uint16 top,

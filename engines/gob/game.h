@@ -26,12 +26,11 @@
 #ifndef GOB_GAME_H
 #define GOB_GAME_H
 
-#include "gob/variables.h"
-
 namespace Gob {
 
 class Script;
 class Resources;
+class Variables;
 
 class Game {
 public:
@@ -121,6 +120,29 @@ public:
 	virtual void popCollisions(void) = 0;
 
 protected:
+	static const int kMaxEnvironments = 5;
+
+	class Environment {
+	public:
+		Environment(GobEngine *vm);
+		~Environment();
+
+		void set();
+		void get();
+
+		const char *getTotFile() const;
+
+	private:
+		GobEngine *_vm;
+
+		int16      _cursorHotspotX;
+		int16      _cursorHotspotY;
+		char       _curTotFile[14];
+		Variables *_variables;
+		Script    *_script;
+		Resources *_resources;
+	};
+
 	int16 _lastCollKey;
 	int16 _lastCollAreaIndex;
 	int16 _lastCollId;
@@ -145,14 +167,9 @@ protected:
 	char _collStr[256];
 
 	// For totSub()
-	int8 _backupedCount;
-	int8 _curBackupPos;
-	int16 _cursorHotspotXArray[5];
-	int16 _cursorHotspotYArray[5];
-	Variables *_variablesArray[5];
-	char _curTotFileArray[5][14];
-	Script *_scriptArray[5];
-	Resources *_resourcesArray[5];
+	int8 _curEnvironment;
+	int8 _numEnvironments;
+	Environment *_environments[kMaxEnvironments];
 
 	GobEngine *_vm;
 

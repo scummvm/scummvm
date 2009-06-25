@@ -31,6 +31,7 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
+#include "gob/variables.h"
 #include "gob/script.h"
 #include "gob/resources.h"
 #include "gob/inter.h"
@@ -40,6 +41,47 @@
 #include "gob/sound/sound.h"
 
 namespace Gob {
+
+Game::Environment::Environment(GobEngine *vm) : _vm(vm) {
+	_cursorHotspotX = 0;
+	_cursorHotspotY = 0;
+	_variables      = 0;
+	_script         = 0;
+	_resources      = 0;
+	_curTotFile[0]  = '\0';
+}
+
+Game::Environment::~Environment() {
+	if (_script    != _vm->_game->_script)
+		delete _script;
+	if (_resources != _vm->_game->_resources)
+		delete _resources;
+	if (_variables != _vm->_inter->_variables)
+		delete _variables;
+}
+
+void Game::Environment::set() {
+	_cursorHotspotX = _vm->_draw->_cursorHotspotXVar;
+	_cursorHotspotY = _vm->_draw->_cursorHotspotYVar;
+	_script         = _vm->_game->_script;
+	_resources      = _vm->_game->_resources;
+	_variables      = _vm->_inter->_variables;
+	strncpy(_curTotFile, _vm->_game->_curTotFile, 14);
+}
+
+void Game::Environment::get() {
+	_vm->_draw->_cursorHotspotXVar = _cursorHotspotX;
+	_vm->_draw->_cursorHotspotYVar = _cursorHotspotY;
+	_vm->_game->_script            = _script;
+	_vm->_game->_resources         = _resources;
+	_vm->_inter->_variables        = _variables;
+	strncpy(_vm->_game->_curTotFile, _curTotFile, 14);
+}
+
+const char *Game::Environment::getTotFile() const {
+	return _curTotFile;
+}
+
 
 Game::Game(GobEngine *vm) : _vm(vm) {
 	_collisionAreas = 0;
@@ -78,34 +120,19 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_tempStr[0] = 0;
 	_collStr[0] = 0;
 
-	_backupedCount = 0;
-	_curBackupPos = 0;
+	_numEnvironments = 0;
+	_curEnvironment = 0;
 
-	for (int i = 0; i < 5; i++) {
-		_cursorHotspotXArray[i] = 0;
-		_cursorHotspotYArray[i] = 0;
-		_variablesArray[i] = 0;
-		_curTotFileArray[i][0] = 0;
-		_scriptArray[i] = 0;
-		_resourcesArray[i] = 0;
-	}
+	for (int i = 0; i < kMaxEnvironments; i++)
+		_environments[i] = new Environment(_vm);
 
 	_script = new Script(_vm);
 	_resources = new Resources(_vm);
 }
 
 Game::~Game() {
-	for (int i = 0; i < 5; i++) {
-		warning("%d", i);
-		if (_scriptArray[i] != _script) {
-			warning("DELETE (%d)", _scriptArray[i] != 0);
-			delete _scriptArray[i];
-		}
-		if (_resourcesArray[i] != _resources) {
-			warning("DELETE (%d)", _resourcesArray[i] != 0);
-			delete _resourcesArray[i];
-		}
-	}
+	for (int i = 0; i < kMaxEnvironments; i++)
+		delete _environments[i];
 
 	delete _script;
 	delete _resources;
@@ -297,19 +324,14 @@ void Game::start(void) {
 void Game::totSub(int8 flags, const char *newTotFile) {
 	int8 curBackupPos;
 
-	if (_backupedCount >= 5)
+	if (_numEnvironments >= kMaxEnvironments)
 		return;
 
-	_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
-	_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
-	_scriptArray[_backupedCount] = _script;
-	_resourcesArray[_backupedCount] = _resources;
-	_variablesArray[_backupedCount] = _vm->_inter->_variables;
-	strcpy(_curTotFileArray[_backupedCount], _curTotFile);
+	_environments[_numEnvironments]->set();
 
-	curBackupPos = _curBackupPos;
-	_backupedCount++;
-	_curBackupPos = _backupedCount;
+	curBackupPos = _curEnvironment;
+	_numEnvironments++;
+	_curEnvironment = _numEnvironments;
 
 	_script = new Script(_vm);
 	_resources = new Resources(_vm);
@@ -341,52 +363,40 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 		_vm->_inter->delocateVars();
 	}
 
-	_backupedCount--;
-	_curBackupPos = curBackupPos;
+	_numEnvironments--;
+	_curEnvironment = curBackupPos;
 
-	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_backupedCount];
-	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_backupedCount];
-	_script = _scriptArray[_backupedCount];
-	_resources = _resourcesArray[_backupedCount];
-	_vm->_inter->_variables = _variablesArray[_backupedCount];
-	strcpy(_curTotFile, _curTotFileArray[_backupedCount]);
+	_environments[_numEnvironments]->get();
 }
 
 void Game::switchTotSub(int16 index, int16 skipPlay) {
 	int16 backupedCount;
 	int16 curBackupPos;
 
-	if ((_backupedCount - index) < 1)
+	if ((_numEnvironments - index) < 1)
 		return;
 
-	int16 newPos = _curBackupPos - index - ((index >= 0) ? 1 : 0);
+	int16 newPos = _curEnvironment - index - ((index >= 0) ? 1 : 0);
+	if (newPos >= kMaxEnvironments)
+		return;
+
 	// WORKAROUND: Some versions don't make the MOVEMENT menu item unselectable
 	// in the dreamland screen, resulting in a crash when it's clicked.
 	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (skipPlay == 7) &&
-	    !scumm_stricmp(_curTotFileArray[newPos], "gob06.tot"))
+	    !scumm_stricmp(_environments[newPos]->getTotFile(), "gob06.tot"))
 		return;
 
-	curBackupPos = _curBackupPos;
-	backupedCount = _backupedCount;
-	if (_curBackupPos == _backupedCount) {
-		_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
-		_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
-		_scriptArray[_backupedCount] = _script;
-		_resourcesArray[_backupedCount] = _resources;
-		_variablesArray[_backupedCount] = _vm->_inter->_variables;
-		strcpy(_curTotFileArray[_backupedCount], _curTotFile);
-		_backupedCount++;
+	curBackupPos = _curEnvironment;
+	backupedCount = _numEnvironments;
+	if (_curEnvironment == _numEnvironments) {
+		_environments[_numEnvironments]->set();
+		_numEnvironments++;
 	}
-	_curBackupPos -= index;
+	_curEnvironment -= index;
 	if (index >= 0)
-		_curBackupPos--;
+		_curEnvironment--;
 
-	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_curBackupPos];
-	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_curBackupPos];
-	_script = _scriptArray[_curBackupPos];
-	_resources = _resourcesArray[_curBackupPos];
-	_vm->_inter->_variables = _variablesArray[_curBackupPos];
-	strcpy(_curTotFile, _curTotFileArray[_curBackupPos]);
+	_environments[_curEnvironment]->get();
 
 	if (_vm->_inter->_terminate != 0)
 		return;
@@ -399,14 +409,9 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 
 	popCollisions();
 
-	_curBackupPos = curBackupPos;
-	_backupedCount = backupedCount;
-	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_curBackupPos];
-	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_curBackupPos];
-	_script = _scriptArray[_curBackupPos];
-	_resources = _resourcesArray[_curBackupPos];
-	_vm->_inter->_variables = _variablesArray[_curBackupPos];
-	strcpy(_curTotFile, _curTotFileArray[_curBackupPos]);
+	_curEnvironment = curBackupPos;
+	_numEnvironments = backupedCount;
+	_environments[_curEnvironment]->get();
 }
 
 void Game::setCollisions(byte arg_0) {
