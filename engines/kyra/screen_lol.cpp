@@ -283,8 +283,7 @@ void Screen_LoL::fadeClearSceneWindow(int delay) {
 		return;
 
 	Palette tpal(getPalette(0).getNumColors());
-	tpal.copy(getPalette(0));
-	memset(tpal.getData(), 0, 384);
+	tpal.copy(getPalette(0), 128);
 
 	loadSpecialColors(tpal.getData());
 	fadePalette(tpal, delay);
