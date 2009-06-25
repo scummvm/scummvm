@@ -384,7 +384,7 @@ int KyraEngine_HoF::seq_introOverview(WSAMovie_v2 *wsaObj, int x, int y, int frm
 		break;
 
 	case 1:
-		_screen->generateGrayOverlay(_screen->getPalette(0).getData(), _screen->getPalette(3).getData(), 0x40, 0, 0, 0, 0x100, true);
+		_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x40, 0, 0, 0, 0x100, true);
 		for (int i = 0; i < 256; i++)
 			tmpPal[_screen->getPalette(3)[i]] = 1;
 
@@ -465,7 +465,7 @@ int KyraEngine_HoF::seq_introLibrary(WSAMovie_v2 *wsaObj, int x, int y, int frm)
 		_seqSubframePlaying = true;
 		_sound->playTrack(5);
 
-		_screen->generateGrayOverlay(_screen->getPalette(0).getData(), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
+		_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
 		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0).getData() + 3, 255) & 0xff;
 		memset(_seqTextColorMap, _seqTextColor[1], 16);
 		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0).getData() + 3, 255) & 0xff;
@@ -539,7 +539,7 @@ int KyraEngine_HoF::seq_introHand(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_seqSubframePlaying = true;
 		_sound->playTrack(6);
 
-		_screen->generateGrayOverlay(_screen->getPalette(0).getData(), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
+		_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
 		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0).getData() + 3, 255) & 0xff;
 		memset(_seqTextColorMap, _seqTextColor[1], 16);
 		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0).getData() + 3, 255) & 0xff;
@@ -633,7 +633,7 @@ int KyraEngine_HoF::seq_introPoint(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		memset(_seqTextColorMap, _seqTextColor[1], 16);
 		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0).getData() + 3, 255) & 0xff;
 		_screen->setTextColorMap(_seqTextColorMap);
-		_screen->generateGrayOverlay(_screen->getPalette(0).getData(), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
+		_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3).getData(), 0x24, 0, 0, 0, 0x100, false);
 		break;
 
 	case 1:

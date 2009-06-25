@@ -44,7 +44,7 @@ const ScreenDim *Screen_HoF::getScreenDim(int dim) {
 	return &_screenDimTable[dim];
 }
 
-void Screen_HoF::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag) {
+void Screen_HoF::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag) {
 	Palette tmpPal(lastColor);
 
 	for (int i = 0; i != lastColor; i++) {
@@ -63,7 +63,7 @@ void Screen_HoF::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, in
 	}
 
 	for (int i = 0; i < lastColor; i++)
-		grayOverlay[i] = findLeastDifferentColor(tmpPal.getData() + 3 * i, srcPal, lastColor);
+		grayOverlay[i] = findLeastDifferentColor(tmpPal.getData() + 3 * i, srcPal.getData(), lastColor);
 }
 
 void Screen_HoF::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage, int dstW,
