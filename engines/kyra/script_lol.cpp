@@ -1276,7 +1276,7 @@ int LoLEngine::olol_getMonsterStat(EMCState *script) {
 int LoLEngine::olol_releaseMonsterShapes(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_releaseMonsterShapes(%p)", (const void *)script);
 	for (int i = 0; i < 3; i++)
-		releaseMonsterShapes(i);	
+		releaseMonsterShapes(i);
 	return 0;
 }
 
@@ -1399,17 +1399,17 @@ int LoLEngine::olol_playEndSequence(EMCState *script){
 	if (_characters[0].id == -9)
 		c = 1;
 	else if (_characters[0].id == -5)
-		c = 3;	
+		c = 3;
 	else if (_characters[0].id == -1)
 		c = 2;
 
 	while (snd_updateCharacterSpeech())
 		delay(_tickLength);
-	
+
 	_eventList.clear();
 	_screen->hideMouse();
 	_screen->getPalette(1).clear();
-	
+
 	showOutro(c, (_monsterDifficulty == 2));
 	quitGame();
 
@@ -2192,7 +2192,7 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 	}
 
 	mov->close();
-	delete mov;	
+	delete mov;
 	delete[] fadeTab;
 
 	_screen->showMouse();

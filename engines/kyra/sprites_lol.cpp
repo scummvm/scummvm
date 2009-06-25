@@ -784,7 +784,7 @@ int LoLEngine::getMonsterCurFrame(MonsterInPlay *m, uint16 dirFlags) {
 		default:
 			return m->damageReceived ? 5 : m->currentSubFrame;
 		}
-		
+
 		break;
 	default:
 		break;

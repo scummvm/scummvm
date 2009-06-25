@@ -879,7 +879,7 @@ void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color
 		drawClippedLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1, color2);
 		drawClippedLine(x1, y2 - 1, x2 - 1, y2 - 1, color2);
 	}
-	drawClippedLine(x1, y2, x2, y2, color2);	
+	drawClippedLine(x1, y2, x2, y2, color2);
 
 	showMouse();
 }
@@ -1132,7 +1132,7 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 
 	uint8 charH1 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2);
 	uint8 charH2 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2 + 1);
-	
+
 	charH0 -= charH1 + charH2;
 
 	const uint8 *src = fnt->fontData + bitmapOffset;
