@@ -57,10 +57,8 @@ Screen::~Screen() {
 	delete[] _decodeShapeBuffer;
 	delete[] _animBlockPtr;
 
-	if (_vm->gameFlags().platform != Common::kPlatformAmiga) {
-		for (int i = 0; i < ARRAYSIZE(_palettes); ++i)
-			delete _palettes[i];
-	}
+	for (uint i = 0; i < _palettes.size(); ++i)
+		delete _palettes[i];
 
 	CursorMan.popAllCursors();
 }
@@ -123,14 +121,13 @@ bool Screen::init() {
 
 	memset(_shapePages, 0, sizeof(_shapePages));
 
-	memset(_palettes, 0, sizeof(_palettes));
-
 	const int paletteCount = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 12 : 4;
 	const int numColors = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 32 : 256;
 
 	_screenPalette = new Palette(numColors);
 	assert(_screenPalette);
 
+	_palettes.resize(paletteCount);
 	for (int i = 0; i < paletteCount; ++i) {
 		_palettes[i] = new Palette(numColors);
 		assert(_palettes[i]);
@@ -2640,7 +2637,7 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 }
 
 Palette &Screen::getPalette(int num) {
-	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 12 : 4));
+	assert(num >= 0 && (uint)num < _palettes.size());
 	return *_palettes[num];
 }
 

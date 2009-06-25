@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "common/func.h"
 #include "common/list.h"
+#include "common/array.h"
 #include "common/rect.h"
 #include "common/stream.h"
 
@@ -374,7 +375,7 @@ protected:
 	uint8 _sjisInvisibleColor;
 
 	Palette *_screenPalette;
-	Palette *_palettes[12];
+	Common::Array<Palette *> _palettes;
 	Palette *_internFadePalette;
 
 	Font _fonts[FID_NUM];
