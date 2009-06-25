@@ -239,7 +239,7 @@ int16 DataIO::getChunk(const char *chunkName) {
 		}
 
 		dataDesc = _dataFiles[file];
-		for (int16 chunk = 0; chunk < _numDataChunks[file]; chunk++, dataDesc++) {
+		for (uint16 chunk = 0; chunk < _numDataChunks[file]; chunk++, dataDesc++) {
 			if (scumm_stricmp(chunkName, dataDesc->chunkName) != 0)
 				continue;
 
@@ -334,7 +334,6 @@ uint32 DataIO::getChunkPos(int16 handle) const {
 
 int32 DataIO::getChunkSize(const char *chunkName) {
 	int16 file;
-	int16 chunk;
 	struct ChunkDesc *dataDesc;
 	int16 slot;
 	int32 realSize;
@@ -344,7 +343,7 @@ int32 DataIO::getChunkSize(const char *chunkName) {
 			return -1;
 
 		dataDesc = _dataFiles[file];
-		for (chunk = 0; chunk < _numDataChunks[file]; chunk++, dataDesc++) {
+		for (uint16 chunk = 0; chunk < _numDataChunks[file]; chunk++, dataDesc++) {
 			if (scumm_stricmp(chunkName, dataDesc->chunkName) != 0)
 				continue;
 

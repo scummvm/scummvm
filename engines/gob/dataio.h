@@ -93,7 +93,7 @@ public:
 protected:
 	Common::File _filesHandles[MAX_FILES];
 	struct ChunkDesc *_dataFiles[MAX_DATA_FILES];
-	int16 _numDataChunks[MAX_DATA_FILES];
+	uint16 _numDataChunks[MAX_DATA_FILES];
 	int16 _dataFileHandles[MAX_DATA_FILES];
 	bool _dataFileItk[MAX_DATA_FILES];
 	int32 _chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];
