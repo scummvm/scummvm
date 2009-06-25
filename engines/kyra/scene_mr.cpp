@@ -342,7 +342,7 @@ void KyraEngine_MR::loadScenePal() {
 		palette[1] = 0;
 	}
 
-	_screen->generateOverlay(_screen->getPalette(2).getData(), _paletteOverlay, 0xF0, 0x19);
+	_screen->generateOverlay(_screen->getPalette(2), _paletteOverlay, 0xF0, 0x19);
 
 	_screen->getPalette(2).copy(_costPalBuffer, _characterShapeFile * 24, 24, 144);
 }

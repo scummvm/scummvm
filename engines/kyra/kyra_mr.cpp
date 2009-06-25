@@ -628,7 +628,7 @@ void KyraEngine_MR::startup() {
 	musicUpdate(0);
 	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	_paletteOverlay = new uint8[256];
-	_screen->generateOverlay(_screen->getPalette(0).getData(), _paletteOverlay, 0xF0, 0x19);
+	_screen->generateOverlay(_screen->getPalette(0), _paletteOverlay, 0xF0, 0x19);
 
 	loadInterface();
 	musicUpdate(0);

@@ -38,39 +38,38 @@ Screen_v2::~Screen_v2() {
 	delete[] _wsaFrameAnimBuffer;
 }
 
-uint8 *Screen_v2::generateOverlay(const uint8 *palette, uint8 *buffer, int startColor, uint16 factor) {
-	if (!palette || !buffer)
+uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int startColor, uint16 factor) {
+	if (!buffer)
 		return buffer;
 
 	factor = MIN<uint16>(255, factor);
 	factor >>= 1;
 	factor &= 0xFF;
 
-	const byte col1 = palette[startColor * 3 + 0];
-	const byte col2 = palette[startColor * 3 + 1];
-	const byte col3 = palette[startColor * 3 + 2];
+	const byte col1 = pal[startColor * 3 + 0];
+	const byte col2 = pal[startColor * 3 + 1];
+	const byte col3 = pal[startColor * 3 + 2];
 
 	uint8 *dst = buffer;
 	*dst++ = 0;
 
 	for (int i = 1; i != 255; ++i) {
 		uint8 processedPalette[3];
-		const uint8 *src = palette + i*3;
 		byte col;
 
-		col = *src++;
+		col = pal[i * 3 + 0];
 		col -= ((((col - col1) * factor) << 1) >> 8) & 0xFF;
 		processedPalette[0] = col;
 
-		col = *src++;
+		col = pal[i * 3 + 1];
 		col -= ((((col - col2) * factor) << 1) >> 8) & 0xFF;
 		processedPalette[1] = col;
 
-		col = *src++;
+		col = pal[i * 3 + 2];
 		col -= ((((col - col3) * factor) << 1) >> 8) & 0xFF;
 		processedPalette[2] = col;
 
-		*dst++ = findLeastDifferentColor(processedPalette, palette+3, 255)+1;
+		*dst++ = findLeastDifferentColor(processedPalette, pal.getData() + 3, 255) + 1;
 	}
 
 	return buffer;

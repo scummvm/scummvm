@@ -785,8 +785,8 @@ void LoLEngine::startup() {
 	memset(_screen->getPalette(0).getData(), 0x3f, 0x180);
 	_screen->getPalette(0).copy(tmpPal, 1, 1);
 	memset(_screen->getPalette(0).getData() + 0x240, 0x3f, 12);
-	_screen->generateOverlay(_screen->getPalette(0).getData(), _screen->_paletteOverlay1, 1, 96);
-	_screen->generateOverlay(_screen->getPalette(0).getData(), _screen->_paletteOverlay2, 144, 65);
+	_screen->generateOverlay(_screen->getPalette(0), _screen->_paletteOverlay1, 1, 96);
+	_screen->generateOverlay(_screen->getPalette(0), _screen->_paletteOverlay2, 144, 65);
 	_screen->getPalette(0).copy(tmpPal, 0, 256);
 	delete[] tmpPal;
 
