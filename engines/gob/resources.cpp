@@ -678,6 +678,7 @@ byte *Resources::getEXTData(EXTResourceItem &extItem, uint32 size) const {
 		return 0;
 	}
 
+	delete stream;
 	return data;
 }
 
@@ -698,6 +699,7 @@ byte *Resources::getEXData(EXTResourceItem &extItem, uint32 size) const {
 		return 0;
 	}
 
+	delete stream;
 	return data;
 }
 

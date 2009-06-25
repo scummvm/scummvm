@@ -217,8 +217,10 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 				if (((*totData != 2) && (*totData != 5)) ||
 						(ABS(offY - READ_LE_UINT16(totData + 3)) > 1)) {
 
-					if (curPart == part)
+					if (curPart == part) {
+						delete textItem;
 						return false;
+					}
 
 					stringVar = stringStartVar;
 					WRITE_VARO_UINT8(stringVar, 0);

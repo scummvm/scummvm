@@ -101,10 +101,16 @@ bool SoundDesc::load(SoundType type, Resource *resource) {
 }
 
 void SoundDesc::free() {
-	delete _resource;
+	if (_resource) {
+		delete _resource;
+		_data = 0;
+	}
+
+	delete[] _data;
 
 	_resource = 0;
-	_data = _dataPtr = 0;
+	_data = 0;
+	_dataPtr = 0;
 	_id = 0;
 }
 

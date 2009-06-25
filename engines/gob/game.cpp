@@ -95,6 +95,18 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 }
 
 Game::~Game() {
+	for (int i = 0; i < 5; i++) {
+		warning("%d", i);
+		if (_scriptArray[i] != _script) {
+			warning("DELETE (%d)", _scriptArray[i] != 0);
+			delete _scriptArray[i];
+		}
+		if (_resourcesArray[i] != _resources) {
+			warning("DELETE (%d)", _resourcesArray[i] != 0);
+			delete _resourcesArray[i];
+		}
+	}
+
 	delete _script;
 	delete _resources;
 }

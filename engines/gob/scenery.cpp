@@ -963,6 +963,8 @@ void Scenery::loadPieces(int16 pictDescId, PieceDesc *&pieceDesc, uint32 &pieces
 		pieceDesc[i].top    = resource->stream()->readSint16LE();
 		pieceDesc[i].bottom = resource->stream()->readSint16LE();
 	}
+
+	delete resource;
 }
 
 } // End of namespace Gob
