@@ -3276,9 +3276,9 @@ void Palette::loadAmigaPalette(Common::ReadStream &stream, int colors) {
 
 	for (int i = 0; i < colors; ++i) {
 		uint16 col = stream.readUint16BE();
-		_palData[i * 3 + 2] = (col & 0xF) << 2; col >>= 4;
-		_palData[i * 3 + 1] = (col & 0xF) << 2; col >>= 4;
-		_palData[i * 3 + 0] = (col & 0xF) << 2; col >>= 4;
+		_palData[i * 3 + 2] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
+		_palData[i * 3 + 1] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
+		_palData[i * 3 + 0] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
 	}
 
 	memset(_palData + colors * 3, 0, (_numColors - colors) * 3);
