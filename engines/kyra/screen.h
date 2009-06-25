@@ -228,9 +228,9 @@ public:
 	void fadeFromBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 
-	void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0);
+	virtual void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0);
 	virtual void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff);
-	int fadePalStep(const Palette &pal, int diff);
+	virtual int fadePalStep(const Palette &pal, int diff);
 
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	virtual void setScreenPalette(const Palette &pal);

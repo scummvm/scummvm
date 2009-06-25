@@ -251,15 +251,76 @@ void Screen_LoK_16::setScreenPalette(const Palette &pal) {
 	for (int i = 0; i < 256; ++i)
 		paletteMap(i, pal[i * 3 + 0] << 2, pal[i * 3 + 1] << 2, pal[i * 3 + 2] << 2);
 
-	uint8 palette[16 * 4];
-	for (int i = 0; i < 16; ++i) {
-		palette[i * 4 + 0] = (_palette16[i * 3 + 0] * 0xFF) / 0x0F;
-		palette[i * 4 + 1] = (_palette16[i * 3 + 1] * 0xFF) / 0x0F;
-		palette[i * 4 + 2] = (_palette16[i * 3 + 2] * 0xFF) / 0x0F;
-		palette[i * 4 + 3] = 0;
+	set16ColorPalette(_palette16);
+}
+
+void Screen_LoK_16::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc) {
+	uint8 notBlackFlag = 0;
+	for (int i = 0; i < 768; ++i) {
+		if ((*_screenPalette)[i])
+			notBlackFlag |= 1;
+		if (pal[i])
+			notBlackFlag |= 2;
 	}
 
-	_system->setPalette(palette, 0, 16);
+	if (notBlackFlag == 1 || notBlackFlag == 2) {
+		bool upFade = false;
+
+		for (int i = 0; i < 768; ++i) {
+			if ((*_screenPalette)[i] < pal[i]) {
+				upFade = true;
+				break;
+			}
+		}
+
+		if (upFade) {
+			for (int i = 0; i < 256; ++i)
+				paletteMap(i, pal[i * 3 + 0] << 2, pal[i * 3 + 1] << 2, pal[i * 3 + 2] << 2);
+			_forceFullUpdate = true;
+		}
+
+		uint8 color16Palette[16 * 3];
+
+		if (upFade)
+			memset(color16Palette, 0, sizeof(color16Palette));
+		else
+			memcpy(color16Palette, _palette16, sizeof(color16Palette));
+
+		set16ColorPalette(color16Palette);
+		updateScreen();
+
+		for (int i = 0; i < 16; ++i) {
+			set16ColorPalette(color16Palette);
+
+			for (int k = 0; k < 48; ++k) {
+				if (upFade) {
+					if (color16Palette[k] < _palette16[k])
+						++color16Palette[k];
+				} else {
+					if (color16Palette[k] > 0)
+						--color16Palette[k];
+				}
+			}
+
+			if (upFunc && upFunc->isValid())
+				(*upFunc)();
+			else
+				_system->updateScreen();
+
+			_vm->delay((delay >> 5) * _vm->tickLength());
+		}
+	}
+
+	setScreenPalette(pal);
+}
+
+void Screen_LoK_16::getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) {
+	error("Screen_LoK_16::getFadeParams called");
+}
+
+int Screen_LoK_16::fadePalStep(const Palette &pal, int diff) {
+	error("Screen_LoK_16::fadePalStep called");
+	return 0;
 }
 
 // TODO: This is currently nearly the same as Screen::setMouseCursor, only that
@@ -401,6 +462,18 @@ void Screen_LoK_16::mergeOverlay(int x, int y, int w, int h) {
 	Screen_LoK::mergeOverlay(x, y, w, h);
 
 	convertTo16Colors(_sjisOverlayPtrs[0] + y * 640 + x, w, h, 640);
+}
+
+void Screen_LoK_16::set16ColorPalette(const uint8 *pal) {
+	uint8 palette[16 * 4];
+	for (int i = 0; i < 16; ++i) {
+		palette[i * 4 + 0] = (pal[i * 3 + 0] * 0xFF) / 0x0F;
+		palette[i * 4 + 1] = (pal[i * 3 + 1] * 0xFF) / 0x0F;
+		palette[i * 4 + 2] = (pal[i * 3 + 2] * 0xFF) / 0x0F;
+		palette[i * 4 + 3] = 0;
+	}
+
+	_system->setPalette(palette, 0, 16);
 }
 
 } // end of namespace Kyra
