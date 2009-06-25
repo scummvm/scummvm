@@ -604,9 +604,9 @@ void Screen::getRealPalette(int num, uint8 *dst) {
 	}
 
 	for (int i = 0; i < colors; ++i) {
-		dst[0] = (palData[0] << 2) | (palData[0] & 3);
-		dst[1] = (palData[1] << 2) | (palData[1] & 3);
-		dst[2] = (palData[2] << 2) | (palData[2] & 3);
+		dst[0] = (palData[0] * 0xFF) / 0x3F;
+		dst[1] = (palData[1] * 0xFF) / 0x3F;
+		dst[2] = (palData[2] * 0xFF) / 0x3F;
 		dst += 3;
 		palData += 3;
 	}
@@ -617,9 +617,9 @@ void Screen::setScreenPalette(const Palette &pal) {
 	_screenPalette->copy(pal);
 
 	for (int i = 0; i < pal.getNumColors(); ++i) {
-		screenPal[4 * i + 0] = (pal[i * 3 + 0] << 2) | (pal[i * 3 + 0] & 3);
-		screenPal[4 * i + 1] = (pal[i * 3 + 1] << 2) | (pal[i * 3 + 1] & 3);
-		screenPal[4 * i + 2] = (pal[i * 3 + 2] << 2) | (pal[i * 3 + 2] & 3);
+		screenPal[4 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
+		screenPal[4 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
+		screenPal[4 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
 		screenPal[4 * i + 3] = 0;
 	}
 
