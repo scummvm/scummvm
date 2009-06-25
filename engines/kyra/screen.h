@@ -74,18 +74,24 @@ public:
 
 	enum {
 		kVGABytesPerColor = 3,
+		kPC98BytesPerColor = 3,
 		kAmigaBytesPerColor = 2
 	};
 
 	/**
 	 * Load a VGA palette from the given stream.
 	 */
-	void loadVGAPalette(Common::ReadStream &stream, const int colors = -1);
+	void loadVGAPalette(Common::ReadStream &stream, int colors = -1);
 
 	/**
 	 * Load a AMIGA palette from the given stream.
 	 */
-	void loadAmigaPalette(Common::ReadStream &stream, const int colors = -1);
+	void loadAmigaPalette(Common::ReadStream &stream, int colors = -1);
+
+	/**
+	 * Load a PC98 16 color palette from the given stream.
+	 */
+	void loadPC98Palette(Common::ReadStream &stream, int colors = -1);
 
 	/**
 	 * Return the number of colors this palette manages.

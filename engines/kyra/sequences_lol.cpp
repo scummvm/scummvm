@@ -135,7 +135,6 @@ void LoLEngine::setupPrologueData(bool load) {
 	const char * const *fileList = _flags.isTalkie ? fileListCD :
 		(_flags.useInstallerPackage ? fileListFloppy : fileListFloppyExtracted);
 
-
 	char filename[32];
 	for (uint i = 0; fileList[i]; ++i) {
 		filename[0] = '\0';

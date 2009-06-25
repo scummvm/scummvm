@@ -2831,6 +2831,8 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		pal.loadAmigaPalette(*stream, stream->size() / Palette::kAmigaBytesPerColor);
+	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
+		pal.loadPC98Palette(*stream, stream->size() / Palette::kPC98BytesPerColor);
 	else
 		pal.loadVGAPalette(*stream, stream->size() / Palette::kVGABytesPerColor);
 
@@ -2870,9 +2872,11 @@ void Screen::loadPalette(const byte *data, Palette &pal, int bytes) {
 	Common::MemoryReadStream stream(data, bytes, false);
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		pal.loadAmigaPalette(stream, stream.size() / 2);
+		pal.loadAmigaPalette(stream, stream.size() / Palette::kAmigaBytesPerColor);
+	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
+		pal.loadPC98Palette(stream, stream.size() / Palette::kPC98BytesPerColor);
 	else
-		pal.loadVGAPalette(stream, stream.size() / 3);
+		pal.loadVGAPalette(stream, stream.size() / Palette::kVGABytesPerColor);
 }
 
 // dirty rect handling
@@ -3275,6 +3279,23 @@ void Palette::loadAmigaPalette(Common::ReadStream &stream, int colors) {
 		_palData[i * 3 + 2] = (col & 0xF) << 2; col >>= 4;
 		_palData[i * 3 + 1] = (col & 0xF) << 2; col >>= 4;
 		_palData[i * 3 + 0] = (col & 0xF) << 2; col >>= 4;
+	}
+
+	memset(_palData + colors * 3, 0, (_numColors - colors) * 3);
+}
+
+void Palette::loadPC98Palette(Common::ReadStream &stream, int colors) {
+	if (colors == -1)
+		colors = _numColors;
+
+	assert(colors <= _numColors);
+
+	for (int i = 0; i < colors; ++i) {
+		const byte g = stream.readByte(), r = stream.readByte(), b = stream.readByte();
+
+		_palData[i * 3 + 0] = ((r & 0x0F) * 0x3F) / 0x0F;
+		_palData[i * 3 + 1] = ((g & 0x0F) * 0x3F) / 0x0F;
+		_palData[i * 3 + 2] = ((b & 0x0F) * 0x3F) / 0x0F;
 	}
 
 	memset(_palData + colors * 3, 0, (_numColors - colors) * 3);
