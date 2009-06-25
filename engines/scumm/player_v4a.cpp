@@ -144,8 +144,8 @@ void Player_V4A::startSound(int nr) {
 		else
 			warning("player_v4a: custom %i is not of required type", index);
 
-		if (!_mixer->isSoundHandleActive(_musicHandle))
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_musicHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
+		if (!_mixer->isSoundHandleActive(_sfxHandle))
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 	} else {
 		// Song
 		debug(3, "player_v4a: play %d: song %i - %02X", nr, index, type);
