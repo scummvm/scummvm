@@ -249,11 +249,7 @@ void SeqPlayer::s1_loadPalette() {
 
 		_screen->setScreenPalette(_screen->getPalette(0));
 	} else {
-		uint32 fileSize;
-		uint8 *srcData;
-		srcData = _res->fileData(_vm->seqCOLTable()[colNum], &fileSize);
-		memcpy(_screen->getPalette(0).getData(), srcData, fileSize);
-		delete[] srcData;
+		_screen->loadPalette(_vm->seqCOLTable()[colNum], _screen->getPalette(0));
 	}
 }
 
