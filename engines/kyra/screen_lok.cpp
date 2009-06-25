@@ -28,7 +28,6 @@
 
 namespace Kyra {
 
-
 Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
 	: Screen(vm, system) {
 	_vm = vm;
@@ -237,6 +236,108 @@ int Screen_LoK::getRectSize(int x, int y) {
 		y = 200;
 
 	return ((x*y) << 3);
+}
+
+#pragma mark -
+
+Screen_LoK_16::Screen_LoK_16(KyraEngine_LoK *vm, OSystem *system) : Screen_LoK(vm, system) {
+}
+
+void Screen_LoK_16::setScreenPalette(const Palette &pal) {
+	_screenPalette->copy(pal);
+
+	for (int i = 0; i < 256; ++i)
+		paletteMap(i, pal[i * 3 + 0] << 2, pal[i * 3 + 1] << 2, pal[i * 3 + 2] << 2);
+
+	uint8 palette[16 * 4];
+	for (int i = 0; i < 16; ++i) {
+		palette[i * 4 + 0] = (_palette16[i * 3 + 0] * 0xFF) / 0x0F;
+		palette[i * 4 + 1] = (_palette16[i * 3 + 1] * 0xFF) / 0x0F;
+		palette[i * 4 + 2] = (_palette16[i * 3 + 2] * 0xFF) / 0x0F;
+		palette[i * 4 + 3] = 0;
+	}
+
+	_system->setPalette(palette, 0, 16);
+}
+
+void Screen_LoK_16::paletteMap(uint8 idx, int r, int g, int b) {
+	const int red = r;
+	const int green = g;
+	const int blue = b;
+
+	uint16 rgbDiff = 1000;
+	int rDiff = 0, gDiff = 0, bDiff = 0;
+
+	int index1 = -1;
+
+	for (int i = 0; i < 16; ++i) {
+		const int realR = _palette16[i * 3 + 0] << 4;
+		const int realG = _palette16[i * 3 + 1] << 4;
+		const int realB = _palette16[i * 3 + 2] << 4;
+
+		uint16 diff = ABS(r - realR) + ABS(g - realG) + ABS(b - realB);
+
+		if (diff < rgbDiff) {
+			rgbDiff = diff;
+			index1 = i;
+
+			rDiff = r - realR;
+			gDiff = g - realG;
+			bDiff = b - realB;
+		}
+	}
+
+	r = rDiff / 4 + red;
+	g = gDiff / 4 + green;
+	b = bDiff / 4 + blue;
+
+	rgbDiff = 1000;
+	int index2 = -1;
+
+	for (int i = 0; i < 16; ++i) {
+		const int realR = _palette16[i * 3 + 0] << 4;
+		const int realG = _palette16[i * 3 + 1] << 4;
+		const int realB = _palette16[i * 3 + 2] << 4;
+
+		uint16 diff = ABS(r - realR) + ABS(g - realG) + ABS(b - realB);
+
+		if (diff < rgbDiff) {
+			rgbDiff = diff;
+			index2 = i;
+		}
+	}
+
+	_paletteMap[idx * 4 + 0] = index2;
+	_paletteMap[idx * 4 + 3] = index2;
+
+	_paletteMap[idx * 4 + 1] = index1;
+	_paletteMap[idx * 4 + 2] = index1;
+}
+
+void Screen_LoK_16::convertTo16Colors(uint8 *page, int w, int h) {
+	const int rowAdd = 1280 - w;
+
+	uint8 *row1 = page;
+	uint8 *row2 = page + 640;
+
+	for (int i = 0; i < h; i += 2) {
+		for (int k = 0; k < w; k += 2) {
+			*row1 = _paletteMap[*row1 * 4 + 0]; ++row1;
+			*row1 = _paletteMap[*row1 * 4 + 1]; ++row1;
+
+			*row2 = _paletteMap[*row2 * 4 + 2]; ++row2;
+			*row2 = _paletteMap[*row2 * 4 + 3]; ++row2;
+		}
+
+		row1 += rowAdd;
+		row2 += rowAdd;
+	}
+}
+
+void Screen_LoK_16::mergeOverlay(int x, int y, int w, int h) {
+	Screen_LoK::mergeOverlay(x, y, w, h);
+
+	convertTo16Colors(_sjisOverlayPtrs[0] + y * 640 + x, w, h);
 }
 
 } // end of namespace Kyra

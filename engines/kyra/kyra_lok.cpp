@@ -157,7 +157,10 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 }
 
 Common::Error KyraEngine_LoK::init() {
-	_screen = new Screen_LoK(this, _system);
+	if (_flags.platform == Common::kPlatformPC98 && _flags.useHiResOverlay)
+		_screen = new Screen_LoK_16(this, _system);
+	else
+		_screen = new Screen_LoK(this, _system);
 	assert(_screen);
 	_screen->setResolution();
 

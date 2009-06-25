@@ -233,7 +233,7 @@ public:
 	int fadePalStep(const Palette &pal, int diff);
 
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
-	void setScreenPalette(const Palette &pal);
+	virtual void setScreenPalette(const Palette &pal);
 
 	void getRealPalette(int num, uint8 *dst);
 	Palette &getPalette(int num);
@@ -330,7 +330,7 @@ protected:
 	void updateDirtyRectsOvl();
 
 	void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
-	void mergeOverlay(int x, int y, int w, int h);
+	virtual void mergeOverlay(int x, int y, int w, int h);
 
 	// overlay specific
 	byte *getOverlayPtr(int pageNum);

@@ -77,6 +77,23 @@ protected:
 	uint8 *_saveLoadPageOvl[8];
 };
 
+class Screen_LoK_16 : public Screen_LoK {
+public:
+	Screen_LoK_16(KyraEngine_LoK *vm, OSystem *system);
+
+	void setScreenPalette(const Palette &pal);
+private:
+	void updateDirtyRectsOvl();
+
+	void convertTo16Colors(uint8 *page, int w, int h);
+	void mergeOverlay(int x, int y, int w, int h);
+
+	void paletteMap(uint8 idx, int r, int g, int b);
+	uint8 _paletteMap[1024];
+
+	static const uint8 _palette16[48];
+};
+
 } // end of namespace Kyra
 
 #endif
