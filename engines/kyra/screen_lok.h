@@ -97,7 +97,13 @@ private:
 	void set16ColorPalette(const uint8 *pal);
 
 	void paletteMap(uint8 idx, int r, int g, int b);
-	uint8 _paletteMap[1024];
+
+	struct PaletteDither {
+		uint8 bestMatch;
+		uint8 invertMatch;
+	};
+
+	PaletteDither _paletteDither[256];
 
 	static const uint8 _palette16[48];
 };

@@ -243,6 +243,7 @@ int Screen_LoK::getRectSize(int x, int y) {
 #pragma mark -
 
 Screen_LoK_16::Screen_LoK_16(KyraEngine_LoK *vm, OSystem *system) : Screen_LoK(vm, system) {
+	memset(_paletteDither, 0, sizeof(_paletteDither));
 }
 
 void Screen_LoK_16::setScreenPalette(const Palette &pal) {
@@ -426,11 +427,8 @@ void Screen_LoK_16::paletteMap(uint8 idx, int r, int g, int b) {
 		}
 	}
 
-	_paletteMap[idx * 4 + 0] = index2;
-	_paletteMap[idx * 4 + 3] = index2;
-
-	_paletteMap[idx * 4 + 1] = index1;
-	_paletteMap[idx * 4 + 2] = index1;
+	_paletteDither[idx].bestMatch = index1;
+	_paletteDither[idx].invertMatch = index2;
 }
 
 void Screen_LoK_16::convertTo16Colors(uint8 *page, int w, int h, int pitch, int keyColor) {
@@ -442,11 +440,12 @@ void Screen_LoK_16::convertTo16Colors(uint8 *page, int w, int h, int pitch, int 
 	for (int i = 0; i < h; i += 2) {
 		for (int k = 0; k < w; k += 2) {
 			if (keyColor == -1 || keyColor != *row1) {
-				*row1 = _paletteMap[*row1 * 4 + 0]; ++row1;
-				*row1 = _paletteMap[*row1 * 4 + 1]; ++row1;
+				const PaletteDither &dither = _paletteDither[*row1];
 
-				*row2 = _paletteMap[*row2 * 4 + 2]; ++row2;
-				*row2 = _paletteMap[*row2 * 4 + 3]; ++row2;
+				*row1++ = dither.bestMatch;
+				*row1++ = dither.invertMatch;
+				*row2++ = dither.invertMatch;
+				*row2++ = dither.bestMatch;
 			} else {
 				row1 += 2;
 				row2 += 2;
@@ -474,7 +473,7 @@ void Screen_LoK_16::mergeOverlay(int x, int y, int w, int h) {
 		for (x = 0; x < w; ++x, ++dst) {
 			byte col = *src++;
 			if (col != _sjisInvisibleColor)
-				*dst = _paletteMap[col * 4 + 2];
+				*dst = _paletteDither[col].bestMatch;
 		}
 		dst += add;
 		src += add;
