@@ -367,7 +367,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 
 	_screen->copyPalette(2, 0);
 	_screen->fadeToBlack(7, &_updateFunctor);
-	_res->loadFileToBuf("_BOOK.COL", _screen->getPalette(0).getData(), 768);
+	_screen->loadPalette("_BOOK.COL", _screen->getPalette(0));
 	loadBookBkgd();
 	showBookPage();
 	_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0, Screen::CR_NO_P_CHECK);

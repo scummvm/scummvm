@@ -415,7 +415,7 @@ void KyraEngine_HoF::startup() {
 	setupLangButtonShapes();
 	loadInventoryShapes();
 
-	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0).getData(), 0x300);
+	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	_screen->loadBitmap("_PLAYFLD.CPS", 3, 3, 0);
 	_screen->copyPage(3, 0);
 	_screen->showMouse();

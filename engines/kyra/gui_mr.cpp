@@ -680,7 +680,7 @@ void KyraEngine_MR::showAlbum() {
 	int itemInHand = _itemInHand;
 	removeHandItem();
 
-	_res->loadFileToBuf("ALBUM.COL", _screen->getPalette(0).getData(), 768);
+	_screen->loadPalette("ALBUM.COL", _screen->getPalette(0));
 	loadAlbumPage();
 	loadAlbumPageWSA();
 

@@ -230,7 +230,7 @@ Common::Error KyraEngine_MR::init() {
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
 
-	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0).getData(), 768);
+	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	_screen->setScreenPalette(_screen->getPalette(0));
 
 	return Common::kNoError;
@@ -626,7 +626,7 @@ void KyraEngine_MR::startup() {
 	loadInterfaceShapes();
 
 	musicUpdate(0);
-	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0).getData(), 768);
+	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	_paletteOverlay = new uint8[256];
 	_screen->generateOverlay(_screen->getPalette(0).getData(), _paletteOverlay, 0xF0, 0x19);
 

@@ -391,7 +391,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	memcpy(_screen->getPalette(0) + 384, tmpPal, 384);*/
 
 	if (_currentLevel == 11) {
-		_res->loadFileToBuf("SWAMPICE.COL", _screen->getPalette(2).getData(), 384);
+		_screen->loadPalette("SWAMPICE.COL", _screen->getPalette(2));
 		_screen->getPalette(2).copy(_screen->getPalette(0), 128);
 
 		if (_flagsTable[52] & 0x04) {
