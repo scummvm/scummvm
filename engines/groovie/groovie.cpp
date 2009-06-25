@@ -73,7 +73,7 @@ Common::Error GroovieEngine::run() {
 	switch (_gameDescription->version) {
 	case kGroovieV2:
 #ifdef ENABLE_RGB_COLOR
-		_pixelFormat = _system->getBestFormat();
+		_pixelFormat = _system->getSupportedFormats().front();
 		initGraphics(640, 480, true, _pixelFormat);
 		break;
 #endif

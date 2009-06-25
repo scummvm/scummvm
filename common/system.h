@@ -345,16 +345,34 @@ public:
 
 #ifdef ENABLE_RGB_COLOR
 	/**
-	 * Returns the pixel format of the screen.
+	 * Determine the pixel format currently in use for screen rendering.
+	 * @return the active screen pixel format.
 	 * @see Graphics::PixelFormat
 	 */
 	virtual Graphics::PixelFormat getScreenFormat() const = 0;
 
 	/**
-	 * Returns the highest color pixel format supported by the backend
+	 * Returns a list of all pixel formats supported by the backend. 
+	 * The first item in the list must be directly supported by hardware, 
+	 * and provide the largest color space of those formats with direct 
+	 * hardware support. It is also strongly recommended that remaining 
+	 * formats should be placed in order of descending preference for the 
+	 * backend to use.
+	 *
+	 * EG: a backend that supports 32-bit ABGR and 16-bit 555 BGR in hardware
+	 * and provides conversion from equivalent RGB(A) modes should order its list
+	 *    1) Graphics::PixelFormat::createFormatABGR8888()
+	 *    2) Graphics::PixelFormat::createFormatBGR555()
+	 *    3) Graphics::PixelFormat::createFormatRGBA8888()
+	 *    4) Graphics::PixelFormat::createFormatRGB555()
+	 *    5) Graphics::PixelFormat::createFormatCLUT8()
+	 *
 	 * @see Graphics::PixelFormat
+	 *
+	 * @note All backends supporting RGB color must be able to accept game data 
+	 *       in RGB color order, even if hardware uses BGR or some other color order.
 	 */
-	virtual Graphics::PixelFormat getBestFormat() const = 0;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
 #endif
 
 	/**

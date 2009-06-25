@@ -86,21 +86,38 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 
 	// Highest supported
-	virtual Graphics::PixelFormat getBestFormat() const {
-	//TODO scale down 16/32 bit based on hardware support
-		{
-			SDL_PixelFormat *HWFormat = SDL_GetVideoInfo()->vfmt;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const {
+	//TODO determine hardware color component order
+		Common::List<Graphics::PixelFormat> list;
+		SDL_PixelFormat *HWFormat = SDL_GetVideoInfo()->vfmt;
 #ifdef ENABLE_32BIT
-			if (HWFormat->BitsPerPixel >= 32)
-				return Graphics::PixelFormat::createFormatRGBA8888();
-			if (HWFormat->BitsPerPixel >= 24)
-				return Graphics::
-				FormatRGB888();
-#endif  //ENABLE_32BIT
-			if (HWFormat->BitsPerPixel >= 16)
-				return Graphics::PixelFormat::createFormatRGB565();
+		if (HWFormat->BitsPerPixel >= 32)
+		{
+			list.push_back(Graphics::PixelFormat::createFormatRGBA8888());
+			list.push_back(Graphics::PixelFormat::createFormatARGB8888());
+			list.push_back(Graphics::PixelFormat::createFormatABGR8888());
+			list.push_back(Graphics::PixelFormat::createFormatBGRA8888());			}
+		if (HWFormat->BitsPerPixel >= 24)
+		{
+			list.push_back(Graphics::PixelFormat::createFormatRGB888());
+			list.push_back(Graphics::PixelFormat::createFormatBGR888());
 		}
-		return Graphics::PixelFormat::createFormatCLUT8();
+#endif  //ENABLE_32BIT
+		if (HWFormat->BitsPerPixel >= 16)
+		{
+			list.push_back(Graphics::PixelFormat::createFormatRGB565());
+			list.push_back(Graphics::PixelFormat::createFormatXRGB1555());
+			list.push_back(Graphics::PixelFormat::createFormatRGB555());
+			list.push_back(Graphics::PixelFormat::createFormatRGBA4444());
+			list.push_back(Graphics::PixelFormat::createFormatARGB4444());
+			list.push_back(Graphics::PixelFormat::createFormatBGR565());
+			list.push_back(Graphics::PixelFormat::createFormatXBGR1555());
+			list.push_back(Graphics::PixelFormat::createFormatBGR555());
+			list.push_back(Graphics::PixelFormat::createFormatABGR4444());
+			list.push_back(Graphics::PixelFormat::createFormatBGRA4444());
+		}
+		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+		return list;
 	}
 #endif
 
