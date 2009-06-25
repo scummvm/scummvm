@@ -181,13 +181,16 @@ protected:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go() = 0;
+
 	virtual Common::Error run() {
 		Common::Error err;
+		registerDefaultSettings();
 		err = init();
 		if (err != Common::kNoError)
 			return err;
 		return go();
 	}
+
 	virtual ::GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
