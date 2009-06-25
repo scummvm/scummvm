@@ -459,9 +459,26 @@ void Screen_LoK_16::convertTo16Colors(uint8 *page, int w, int h, int pitch, int 
 }
 
 void Screen_LoK_16::mergeOverlay(int x, int y, int w, int h) {
-	Screen_LoK::mergeOverlay(x, y, w, h);
+	byte *dst = _sjisOverlayPtrs[0] + y * 640 + x;
 
-	convertTo16Colors(_sjisOverlayPtrs[0] + y * 640 + x, w, h, 640);
+	// We do a game screen rect to 16 color dithering here. It is
+	// important that we do not dither the overlay, since else the
+	// japanese fonts will look wrong.
+	convertTo16Colors(dst, w, h, 640);
+
+	const byte *src = _sjisOverlayPtrs[1] + y * 640 + x;
+
+	int add = 640 - w;
+
+	while (h--) {
+		for (x = 0; x < w; ++x, ++dst) {
+			byte col = *src++;
+			if (col != _sjisInvisibleColor)
+				*dst = _paletteMap[col * 4 + 2];
+		}
+		dst += add;
+		src += add;
+	}
 }
 
 void Screen_LoK_16::set16ColorPalette(const uint8 *pal) {
