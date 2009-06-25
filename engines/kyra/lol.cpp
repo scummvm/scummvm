@@ -2067,7 +2067,7 @@ int LoLEngine::processMagicHealSelectTarget() {
 int LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 	if (!_healOverlay) {
 		_healOverlay = new uint8[256];
-		_screen->generateGrayOverlay(_screen->getPalette(1).getData(), _healOverlay, 52, 22, 20, 0, 256, true);
+		_screen->generateGrayOverlay(_screen->getPalette(1), _healOverlay, 52, 22, 20, 0, 256, true);
 	}
 
 	const uint8 *healShpFrames = 0;
@@ -3849,7 +3849,7 @@ void LoLEngine::displayAutomap() {
 	for (int i = 0; i < 109; i++)
 		_automapShapes[i] = _screen->getPtrToShape(shp, i + 11);
 
-	_screen->generateGrayOverlay(_screen->getPalette(3).getData(), _mapOverlay, 52, 0, 0, 0, 256, false);
+	_screen->generateGrayOverlay(_screen->getPalette(3), _mapOverlay, 52, 0, 0, 0, 256, false);
 
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9PN.FNT");
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6PN.FNT");

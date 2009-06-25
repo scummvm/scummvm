@@ -86,7 +86,7 @@ void LoLEngine::loadLevel(int index) {
 	addLevelItems();
 	deleteMonstersFromBlock(_currentBlock);
 
-	_screen->generateGrayOverlay(_screen->getPalette(0).getData(), _screen->_grayOverlay, 32, 16, 0, 0, 128, true);
+	_screen->generateGrayOverlay(_screen->getPalette(0), _screen->_grayOverlay, 32, 16, 0, 0, 128, true);
 
 	_sceneDefaultUpdate = 0;
 	if (_screen->_fadeFlag == 3)
@@ -423,7 +423,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	for (int i = 0; i < 7; i++) {
 		weight = 100 - (i * _lastSpecialColorWeight);
 		weight = (weight > 0) ? (weight * 255) / 100 : 0;
-		_screen->generateLevelOverlay(_screen->getPalette(0).getData(), _screen->getLevelOverlay(i), _lastSpecialColor, weight);
+		_screen->generateLevelOverlay(_screen->getPalette(0), _screen->getLevelOverlay(i), _lastSpecialColor, weight);
 
 		for (int ii = 0; ii < 128; ii++) {
 			if (_screen->getLevelOverlay(i)[ii] == 255)
