@@ -122,7 +122,7 @@ bool Screen::init() {
 	memset(_shapePages, 0, sizeof(_shapePages));
 
 	const int paletteCount = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 12 : 4;
-	const int numColors = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 32 : 256;
+	const int numColors = _use16ColorMode ? 16 : ((_vm->gameFlags().platform == Common::kPlatformAmiga) ? 32 : 256);
 
 	_screenPalette = new Palette(numColors);
 	assert(_screenPalette);
