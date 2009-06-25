@@ -147,6 +147,7 @@ public:
 	 * TODO: Get rid of this.
 	 */
 	uint8 *getData() { return _palData; }
+	const uint8 *getData() const { return _palData; }
 private:
 	uint8 *_palData;
 	const int _numColors;
