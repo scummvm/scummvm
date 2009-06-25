@@ -304,7 +304,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 			memcpy(filename, text+1, end-1-text);
 	}
 
-	if (filename[0] && _vm->speechEnabled())
+	if (filename[0] && (_vm->speechEnabled() || _vm->gameFlags().platform == Common::kPlatformPC98))
 		_vm->sound()->voicePlay(filename);
 
 	if (text[0] == '$')
