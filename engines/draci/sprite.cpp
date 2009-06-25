@@ -31,6 +31,26 @@
 namespace Draci {
 
 /**
+ *  @brief Transforms an image from column-wise to row-wise
+ *	@param img pointer to the buffer containing the image data
+ *		   width width of the image in the buffer
+ *		   height height of the image in the buffer
+ */
+static void transformToRows(byte *img, uint16 width, uint16 height) {
+	byte *buf = new byte[width * height];
+	byte *tmp = buf;
+	memcpy(buf, img, width * height);
+	
+	for (uint16 i = 0; i < width; ++i) {
+		for (uint16 j = 0; j < height; ++j) {
+			img[j * width + i] = *tmp++;
+		}
+	}
+	
+	delete[] buf;
+}
+
+/**
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
  */
 Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x, uint16 y, 
@@ -38,18 +58,12 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x, uint16 y,
 	
 	_data = new byte[width * height];
 	
-	// If the sprite is stored row-wise, just copy it to the internal buffer.
-	// Otherwise, transform it and then copy.
-	
-	if (!columnwise) {
-		memcpy(_data, raw_data, width * height);
-	} else {
-		for (uint16 i = 0; i < width; ++i) {
-			for (uint16 j = 0; j < height; ++j) {
-				_data[j * width + i] = *raw_data++;
-			}
-		}
-	}
+	memcpy(_data, raw_data, width * height);
+
+	// If the sprite is stored column-wise, transform it to row-wise
+	if (columnwise) {
+		transformToRows(_data, width, height);
+	}	
 }
 
 /**
@@ -66,17 +80,11 @@ Sprite::Sprite(byte *sprite_data, uint16 length, uint16 x, uint16 y,
 
 	_data = new byte[_width * _height];
 
-	// If the sprite is stored row-wise, just copy it to the internal buffer.
-	// Otherwise, transform it and then copy.
-	
-	if (!columnwise) {
-		reader.read(_data, _width * _height);
-	} else {
-		for (uint16 i = 0; i < _width; ++i) {
-			for (uint16 j = 0; j < _height; ++j) {
-				_data[j * _width + i] = reader.readByte();
-			}
-		}
+	reader.read(_data, _width * _height);
+
+	// If the sprite is stored column-wise, transform it to row-wise
+	if (columnwise) {
+		transformToRows(_data, _width, _height);
 	}		
 }
 
