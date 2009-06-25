@@ -48,7 +48,7 @@ void Mouse::handleEvent(Common::Event event) {
 		_lButton = true;
 		break;
 	case Common::EVENT_LBUTTONUP:
-		debugC(6, kDraciGeneralDebugLevel, "Left up down (x: %u y: %u)", _x, _y);
+		debugC(6, kDraciGeneralDebugLevel, "Left button down (x: %u y: %u)", _x, _y);
 		_lButton = false;
 		break;
 	case Common::EVENT_RBUTTONDOWN:
