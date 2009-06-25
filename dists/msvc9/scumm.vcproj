@@ -120,7 +120,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;ENABLE_SCUMM_7_8;ENABLE_HE;USE_ZLIB;USE_MAD;USE_VORBIS"
+				PreprocessorDefinitions="WIN32;NDEBUG;ENABLE_SCUMM_7_8;ENABLE_HE;USE_ZLIB"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"

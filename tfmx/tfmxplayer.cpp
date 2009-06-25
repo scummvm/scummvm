@@ -110,7 +110,7 @@ void tfmxmain(const int argc, const char *const argv[]) {
 				param = atoi(argv[++i]);
 				debug( "play Macro %02X", param);
 				dumpMacro(*player, param);
-				player->doMacro(param,param);
+				player->doMacro(0x1B, param);
 				hasCmd = true;
 			}
 		} else if (!strcmp("-s", argv[i])) {

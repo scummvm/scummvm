@@ -44,7 +44,7 @@ const uint16 Tfmx::noteIntervalls[64] = {
 	 214,  202,  191,  180 };
 
 Tfmx::Tfmx(int rate, bool stereo)
-: Paula(stereo, rate), _resource() {
+: Paula(stereo, rate), _resource(), _playerCtx() {
 	_playerCtx.stopWithLastPattern = false;
 
 	for (int i = 0; i < kNumVoices; ++i) 
@@ -52,8 +52,6 @@ Tfmx::Tfmx(int rate, bool stereo)
 
 	_playerCtx.song = -1;
 	_playerCtx.volume = 0x40;
-	_playerCtx.fadeDelta = 0;
-	_playerCtx.patternCount = 0;
 	_playerCtx.patternSkip = 6;
 	stopPatternChannels();
 	stopMacroChannels();
@@ -89,10 +87,8 @@ void Tfmx::interrupt() {
 		// externally queued macros
 		if (channel.customMacro) {
 			const byte *const noteCmd = (const byte *)&channel.customMacro;
-			const uint8 channelNo = (uint8)(&channel - _channelCtx);
-
 			channel.sfxLocked = false;
-			noteCommand(noteCmd[0], noteCmd[1], (noteCmd[2] & 0xF0) | channelNo, noteCmd[3]);
+			noteCommand(noteCmd[0], noteCmd[1], (noteCmd[2] & 0xF0) | (uint8)i, noteCmd[3]);
 			channel.customMacro = 0;
 			channel.sfxLocked = (channel.customMacroPrio != 0);
 		}
@@ -143,8 +139,8 @@ void Tfmx::effects(ChannelContext &channel) {
 		channel.portaCount = channel.portaSkip;
 
 		bool resetPorta = true;
-		uint16 period = channel.refPeriod; // d1
-		uint16 portaVal = channel.portaValue; // d0
+		uint16 period = channel.refPeriod;
+		uint16 portaVal = channel.portaValue;
 
 		if (period > portaVal) {
 			portaVal = ((uint32)portaVal * (uint16)((1 << 8) + channel.portaDelta)) >> 8;
@@ -213,7 +209,7 @@ static void warnMacroUnimplemented(const byte *macroPtr, int level) {
 #endif
 }
 
-FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
+inline bool Tfmx::macroStep(ChannelContext &channel) {
 	const byte *const macroPtr = (byte *)(_resource.getMacroPtr(channel.macroOffset) + channel.macroStep);
 	++channel.macroStep;
 
@@ -289,8 +285,8 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		return true;
 
 	case 0x06:	// Jump. Parameters: MacroIndex, MacroStep(W)
-		channel.macroIndex = macroPtr[1] % kMaxMacroOffsets;
-		channel.macroOffset = _macroOffset[macroPtr[1] % kMaxMacroOffsets];
+		channel.macroIndex = macroPtr[1] & (kMaxMacroOffsets - 1);
+		channel.macroOffset = _macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
 		channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 		channel.macroLoopCount = 0xFF;
 		return true;
@@ -359,7 +355,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		return true;
 
 	case 0x12:	// AddLen. Parameters: added Length(W)
-		channel.sampleLen += READ_BE_UINT16(&macroPtr[2]);
+		channel.sampleLen += (int16)READ_BE_UINT16(&macroPtr[2]);
 		Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
 		return true;
 
@@ -377,7 +373,7 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		channel.macroReturnOffset = channel.macroOffset;
 		channel.macroReturnStep = channel.macroStep;
 
-		channel.macroOffset = _macroOffset[macroPtr[1] % kMaxMacroOffsets];
+		channel.macroOffset = _macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
 		channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 		// TODO: MI does some weird stuff there. Figure out which varioables need to be set
 		return true;
@@ -440,12 +436,12 @@ FORCEINLINE bool Tfmx::macroStep(ChannelContext &channel) {
 		return channel.deferWait;
 
 	case 0x20:	// Signal. Parameters: signalnumber/value
-		if (macroPtr[1] < ARRAYSIZE(_playerCtx.signal))
+		if (_playerCtx.signal)
 			_playerCtx.signal[macroPtr[1]] = READ_BE_UINT16(&macroPtr[2]);
 		return true;
 
 	case 0x21:	// Play macro. Parameters: macro/chan/detune
-		warnMacroUnimplemented(macroPtr, 0);
+		noteCommand(channel.note, (channel.relVol << 4) | macroPtr[1], macroPtr[2], macroPtr[3]);
 		return true;
 #if defined(TFMX_NOT_IMPLEMENTED)
 	// used by Gem`X according to the docs
@@ -503,7 +499,7 @@ startPatterns:
 
 		} else if (pattCmd == 0xFE) {	// Stop voice in pattern.expose
 			_patternCtx[i].command = 0xFF;
-			ChannelContext &channel = _channelCtx[_patternCtx[i].expose % kNumVoices];
+			ChannelContext &channel = _channelCtx[_patternCtx[i].expose & (kNumVoices - 1)];
 			if (!channel.sfxLocked) {
 				clearMacroProgramm(channel);
 				Paula::disableChannel(channel.paulaChannel);
@@ -528,7 +524,7 @@ static void warnPatternUnimplemented(const byte *patternPtr, int level) {
 }
 
 
-FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackstep) {
+inline bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackstep) {
 	const byte *const patternPtr = (byte *)(_resource.getPatternPtr(pattern.offset) + pattern.step);
 	++pattern.step;
 
@@ -538,18 +534,19 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackst
 	const byte pattCmd = patternPtr[0];
 
 	if (pattCmd < 0xF0) { // Playnote
-		const byte flags = pattCmd >> 6; // 0-1 means note, 2 means wait, 3 means portamento
+		bool nextStep = true;
 		byte noteCmd = pattCmd + pattern.expose;
 		byte param3  = patternPtr[3];
-		if (flags == 2) {
-			// Store wait-value in context and delete it the (note)command
-			pattern.wait = param3;
-			param3 = 0;
-		}
-		if (flags != 3)
+		if (pattCmd < 0xC0) {	// Note
+			if (pattCmd >= 0x80) {	// Wait
+				pattern.wait = param3;
+				param3 = 0;
+				nextStep = false;
+			}
 			noteCmd &= 0x3F;
+		}	// else Portamento 
 		noteCommand(noteCmd, patternPtr[1], patternPtr[2], param3);
-		return (flags != 2);
+		return nextStep;
 
 	} else {	// Patterncommand
 		switch (pattCmd & 0xF) {
@@ -588,8 +585,8 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackst
 			return false;
 
 		case 5: 	// Kup^-Set key up
-			if (!_channelCtx[patternPtr[2] % kNumVoices].sfxLocked)
-				_channelCtx[patternPtr[2] % kNumVoices].keyUp = false;
+			if (!_channelCtx[patternPtr[2] & (kNumVoices - 1)].sfxLocked)
+				_channelCtx[patternPtr[2] & (kNumVoices - 1)].keyUp = false;
 			return true;
 
 		case 6: 	// Vibrato
@@ -618,10 +615,10 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackst
 			return true;
 
 		case 11: {	// play pattern. Parameters: patternCmd, channel, expose
-			PatternContext &target = _patternCtx[patternPtr[2] % kNumChannels];
+			PatternContext &target = _patternCtx[patternPtr[2] & (kNumChannels - 1)];
 
 			target.command = patternPtr[1];
-			target.offset = _patternOffset[patternPtr[1] % kMaxPatternOffsets];
+			target.offset = _patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
 			target.expose = patternPtr[3];
 			target.step = 0;
 			target.wait = 0;
@@ -630,12 +627,12 @@ FORCEINLINE bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackst
 			return true;
 
 		case 12: 	// Lock
-			_channelCtx[patternPtr[2] % kNumVoices].sfxLocked = (patternPtr[1] != 0);
-			_channelCtx[patternPtr[2] % kNumVoices].sfxLockTime = patternPtr[3];
+			_channelCtx[patternPtr[2] & (kNumVoices - 1)].sfxLocked = (patternPtr[1] != 0);
+			_channelCtx[patternPtr[2] & (kNumVoices - 1)].sfxLockTime = patternPtr[3];
 			return true;
 
 		case 13: 	// Cue
-			if (patternPtr[1] < ARRAYSIZE(_playerCtx.signal))
+			if (_playerCtx.signal)
 				_playerCtx.signal[patternPtr[1]] = READ_BE_UINT16(&patternPtr[2]);
 			return true;
 
@@ -719,7 +716,7 @@ bool Tfmx::trackStep() {
 }
 
 void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2, const uint8 param3) {
-	ChannelContext &channel = _channelCtx[param2 % kNumVoices];
+	ChannelContext &channel = _channelCtx[param2 & (kNumVoices - 1)];
 
 	if (note == 0xFC) { // Lock
 		channel.sfxLocked = (param1 != 0);
@@ -732,8 +729,8 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 	if (note < 0xC0) {	// Play Note
 		channel.prevNote = channel.note;
 		channel.note = note;
-		channel.macroIndex = param1 % kMaxMacroOffsets;
-		channel.macroOffset = _macroOffset[param1 % kMaxMacroOffsets];
+		channel.macroIndex = param1 & (kMaxMacroOffsets - 1);
+		channel.macroOffset = _macroOffset[param1 & (kMaxMacroOffsets - 1)];
 		channel.relVol = (param2 >> 4) & 0xF;
 		channel.fineTune = (int8)param3;
 
@@ -893,11 +890,11 @@ void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo)
 	assert(0 <= note && note < 0xC0);
 	Common::StackLock lock(_mutex);
 
-	channelNo %= kNumVoices;
+	channelNo &= (kNumVoices - 1);
 	ChannelContext &channel = _channelCtx[channelNo];
 	unlockMacroChannel(channel);
 
-	noteCommand((uint8)note, (uint8)macro, (uint8)(relVol << 4) | channelNo, finetune);
+	noteCommand((uint8)note, (uint8)macro, (uint8)(relVol << 4) | channelNo, (uint8)finetune);
 	startPaula();
 }
 
@@ -926,14 +923,14 @@ void Tfmx::doSong(int songPos, bool stopAudio) {
 	_trackCtx.startInd = _trackCtx.posInd = _subsong[songPos].songstart;
 	_trackCtx.stopInd = _subsong[songPos].songend;
 
-	const bool palFlag = (_resource.headerFlags & 2);
+	const bool palFlag = (_resource.headerFlags & 2) != 0;
 	const uint16 tempo = _subsong[songPos].tempo;
 	uint16 ciaIntervall;
 	if (tempo >= 0x10) {
 		ciaIntervall = (uint16)(kCiaBaseInterval / tempo);
 		_playerCtx.patternSkip = 0;
 	} else {
-		ciaIntervall = palFlag ? kPalDefaultCiaVal : kNtscDefaultCiaVal;
+		ciaIntervall = palFlag ? (uint16)kPalDefaultCiaVal : (uint16)kNtscDefaultCiaVal;
 		_playerCtx.patternSkip = tempo;
 	}
 	setInterruptFreqUnscaled(ciaIntervall);
@@ -944,7 +941,7 @@ void Tfmx::doSong(int songPos, bool stopAudio) {
 	startPaula();
 }
 
-int Tfmx::doSfx(int sfxIndex, bool unlockChannel) {
+int Tfmx::doSfx(uint16 sfxIndex, bool unlockChannel) {
 	assert(0 <= sfxIndex && sfxIndex < 128);
 	Common::StackLock lock(_mutex);
 
@@ -955,8 +952,7 @@ int Tfmx::doSfx(int sfxIndex, bool unlockChannel) {
 		const int8 patExp = (int8)sfxEntry[3];
 	} else {
 		// custommacro
-		const byte channelNo = sfxEntry[2] % kNumVoices;
-		const byte index = (_playerCtx.song >= 0) ? sfxEntry[2] : sfxEntry[4];
+		const byte channelNo = ((_playerCtx.song >= 0) ? sfxEntry[2] : sfxEntry[4]) & (kNumVoices - 1);
 		const byte priority = sfxEntry[5] & 0x7F;
 
 		ChannelContext &channel = _channelCtx[channelNo];

@@ -48,12 +48,12 @@ public:
 	void interrupt();
 	void stopSong(bool stopAudio = true);
 	void doSong(int songPos, bool stopAudio = false);
-	int doSfx(int sfxIndex, bool unlockChannel = false);
+	int doSfx(uint16 sfxIndex, bool unlockChannel = false);
 	void doMacro(int note, int macro, int relVol = 0, int finetune = 0, int channelNo = 0);
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
-	int getTicks() {return _playerCtx.tickCount;}
-	int getSongIndex() {return _playerCtx.song;}
-	uint16 getSignal(int index) {return (index < ARRAYSIZE(_playerCtx.signal)) ? _playerCtx.signal[index] : 0xFFFF;}
+	int getTicks() const {return _playerCtx.tickCount;}
+	int getSongIndex() const {return _playerCtx.song;}
+	void setSignalPtr(uint16 *ptr) {_playerCtx.signal = ptr;}
 	void stopMacroEffect(int channel) {
 		assert(0 <= channel && channel < kNumVoices);
 		Common::StackLock lock(_mutex);
@@ -84,7 +84,7 @@ public:
 		uint32 headerUnknown;
 		char textField[6 * 40];
 
-		const byte *getSfxPtr(uint8 index = 0) {
+		const byte *getSfxPtr(uint16 index = 0) {
 			byte *sfxPtr = (byte *)(_mdatData + _sfxTableOffset + index * 8);
 
 			boundaryCheck(_mdatData, _mdatLen, sfxPtr, 8);
@@ -223,11 +223,11 @@ public:
 
 		int		tickCount;
 
-		uint16	signal[4];
+		uint16	*signal;
 
 		bool	stopWithLastPattern; //!< hack to automatically stop the whole player if no Pattern is running
 	} _playerCtx;
-
+private:
 	static void initMacroProgramm(ChannelContext &channel) {
 		channel.macroStep = 0;
 		channel.macroWait = 0;
@@ -271,20 +271,18 @@ public:
 		}
 	}
 
-	void setNoteMacro(ChannelContext &channel, uint note, int fineTune) {
+	static void setNoteMacro(ChannelContext &channel, uint note, int fineTune) {
 		const uint16 noteInt = noteIntervalls[note & 0x3F];
 		const uint16 finetune = (uint16)(fineTune + channel.fineTune + (1 << 8));
 		channel.refPeriod = ((uint32)noteInt * finetune >> 8);
-		if (!channel.portaDelta) {
+		if (!channel.portaDelta)
 			channel.period = channel.refPeriod;
-			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
-		}
 	}
 
 	void effects(ChannelContext &channel);
-	FORCEINLINE bool macroStep(ChannelContext &channel);
+	inline bool macroStep(ChannelContext &channel);
 	void advancePatterns();
-	FORCEINLINE bool patternStep(PatternContext &pattern, bool &pendingTrackstep);
+	inline bool patternStep(PatternContext &pattern, bool &pendingTrackstep);
 	bool trackStep();
 	void noteCommand(uint8 note, uint8 param1, uint8 param2, uint8 param3);
 };

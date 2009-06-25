@@ -79,7 +79,6 @@ const char *const trackstepFmt[] = {
 	"Tempo tempo/ciaDiv",
 	"Timeshare ?/?     ",
 	"Fade start/end    "
-	"Unknown (cc)      "
 };
 
 void displayPatternstep(const void *const vptr) {

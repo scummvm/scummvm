@@ -62,6 +62,7 @@ private:
 	Audio::SoundHandle _sfxHandle;
 
 	int _musicId;
+	uint16 _signal[4];
 	
 	struct SfxChan {
 		int id;

@@ -49,6 +49,7 @@ bool Player_V4A::init() {
 	if (mdatExists && sampleExists) {
 		Audio::Tfmx *play =  new Audio::Tfmx(_mixer->getOutputRate(), true);
 		if (play->load(fileMdat, fileSample)) {
+			play->setSignalPtr(_signal);
 			_tfmxPlay = play;
 		} else
 			delete play;
@@ -77,8 +78,10 @@ void Player_V4A::setMusicVolume(int vol) {
 
 void Player_V4A::stopAllSounds() {
 	debug(5, "player_v4a: stopAllSounds");
-	if (_tfmxPlay)
+	if (_tfmxPlay) {
 		_tfmxPlay->stopSong();
+		_signal[0] = 0;		
+	}
 	_musicId = 0;
 	if (_tfmxSfx)
 		_tfmxSfx->stopSong();
@@ -87,9 +90,12 @@ void Player_V4A::stopAllSounds() {
 
 void Player_V4A::stopSound(int nr) {
 	debug(5, "player_v4a: stopSound %d", nr);
+	if (nr == 0)
+		return;
 	if (nr == _musicId) {
-		_tfmxPlay->stopSong();
 		_musicId = 0;
+		_tfmxPlay->stopSong();
+		_signal[0] = 0;
 	} else {
 		const int chan = getSfxChan(nr);
 		if (chan != -1) {
@@ -132,14 +138,14 @@ void Player_V4A::startSound(int nr) {
 
 		if (_tfmxSfx->getSongIndex() < 0)
 			_tfmxSfx->doSong(0x18);
-		const int chan = _tfmxSfx->doSfx(index);
+		const int chan = _tfmxSfx->doSfx((uint16)index);
 		if (chan >= 0 && chan < ARRAYSIZE(_sfxSlots))
 			setSfxSlot(chan, nr, type);
 		else
 			warning("player_v4a: custom %i is not of required type", index);
 
-		if (!_mixer->isSoundHandleActive(_sfxHandle))
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+		if (!_mixer->isSoundHandleActive(_musicHandle))
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_musicHandle, _tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 	} else {
 		// Song
 		debug(3, "player_v4a: play %d: song %i - %02X", nr, index, type);
@@ -147,10 +153,11 @@ void Player_V4A::startSound(int nr) {
 			warning("player_v4a: Song has wrong type");
 
 		_tfmxPlay->doSong(index);
+		_signal[0] = 2;
 		_musicId = nr;
 
 		if (!_mixer->isSoundHandleActive(_musicHandle))
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _tfmxPlay, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 	}
 }
 
@@ -159,15 +166,20 @@ int Player_V4A::getMusicTimer() const {
 		// TODO: The titlesong is running with ~70 ticks per second and the scale seems to be based on that. 
 		// Other songs dont and I have no clue if this scalevalue is anything close to correct for them.
 		// The Amiga-Game doesnt counts the ticks of the song, but has an own timer and I hope thespeed is constant through the game
-		const int magicScale = 359; // ~ 1000 * 25 * (10173 / 709379.0)
+		const int magicScale = 357; // ~ 1000 * 25 * (10173 / 709379.0)
 		return (_mixer->getSoundElapsedTime(_musicHandle)) / magicScale;
-	} else
-		return 0;
+	}
+	return 0;
 }
 
 int Player_V4A::getSoundStatus(int nr) const {
-	if (nr == _musicId && _mixer->isSoundHandleActive(_musicHandle))
-		return _tfmxPlay->getSignal(0);
+	bool a = nr == _musicId;
+	bool b = _tfmxPlay->getSongIndex() >= 0;
+	int c = _signal[0];
+
+	debug(5, "player_v4a: getSoundStatus music=%d, active=%d, signal=%d", a, b, c);
+	if (nr == _musicId)
+		return _signal[0];
 	return 0;
 }
 

@@ -31,10 +31,10 @@ Paula::Paula(bool stereo, int rate, uint interruptFreq) :
 		_stereo(stereo), _rate(rate), _periodScale((kPalSystemClock / 2.0) / rate), _intFreq(interruptFreq) {
 
 	clearVoices();
-	_voice[0].panning = 63;
-	_voice[1].panning = 191;
-	_voice[2].panning = 191;
-	_voice[3].panning = 63;
+	_voice[0].panning = 191;
+	_voice[1].panning = 63;
+	_voice[2].panning = 63;
+	_voice[3].panning = 191;
 
 	if (_intFreq == 0)
 		_intFreq = _rate;
