@@ -349,7 +349,7 @@ bool Resources::loadTOTTextTable(const Common::String &fileBase) {
 		fromTOT                 = true;
 		_totTextTable->data     = _totData + totProps.textsOffset - _totResStart;
 		_totTextTable->needFree = false;
-		_totTextTable->size     = _totSize - (totProps.textsOffset - _totResStart);
+		_totTextTable->size     = _totSize - totProps.textsOffset;
 	}
 
 	if (_totTextTable->data) {
@@ -364,7 +364,7 @@ bool Resources::loadTOTTextTable(const Common::String &fileBase) {
 			item.size   = totTextTable.readSint16LE();
 
 			if (fromTOT)
-				item.offset -= _totResStart;
+				item.offset -= (totProps.textsOffset - _totResStart);
 		}
 	}
 
