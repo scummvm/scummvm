@@ -9,7 +9,8 @@ MODULE_OBJS := \
 	sprite.o \
 	screen.o \
 	surface.o \
-	mouse.o
+	mouse.o \
+	game.o
  
 MODULE_DIRS += \
 	engines/draci
