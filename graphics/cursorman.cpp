@@ -57,14 +57,14 @@ bool CursorManager::showMouse(bool visible) {
 	return g_system->showMouse(visible);
 }
 
-void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, Graphics::PixelFormat format) {
+void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, Graphics::PixelFormat *format) {
 	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 
 	cur->_visible = isVisible();
 	_cursorStack.push(cur);
 
 	if (buf) {
-		g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
+		g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, *format);
 	}
 }
 
@@ -100,7 +100,7 @@ void CursorManager::popAllCursors() {
 	g_system->showMouse(isVisible());
 }
 
-void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, Graphics::PixelFormat format) {
+void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, Graphics::PixelFormat *format) {
 
 	if (_cursorStack.empty()) {
 		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
@@ -110,7 +110,10 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	Cursor *cur = _cursorStack.top();
 
 #ifdef ENABLE_RGB_COLOR
-	uint size = w * h * format.bytesPerPixel;
+	if (!format)
+		format = new Graphics::PixelFormat(1,8,8,8,8,0,0,0,0);
+
+	uint size = w * h * format->bytesPerPixel;
 #else
 	uint size = w * h;
 #endif
@@ -131,10 +134,10 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	cur->_keycolor = keycolor;
 	cur->_targetScale = targetScale;
 #ifdef ENABLE_RGB_COLOR
-	cur->_format = format;
+	cur->_format = *format;
 #endif
 
-	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
+	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, *format);
 }
 
 void CursorManager::disableCursorPalette(bool disable) {

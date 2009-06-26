@@ -61,7 +61,7 @@ public:
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
-	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8());
+	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, Graphics::PixelFormat *format = NULL);
 
 	/**
 	 * Pop a cursor from the stack, and restore the previous one to the
@@ -83,7 +83,7 @@ public:
 	 * @param targetScale	the scale for which the cursor is designed
 	 * @param format	the pixel format which the cursor graphic uses
 	 */
-	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8());
+	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, Graphics::PixelFormat *format = NULL);
 
 	/**
 	 * Pop all of the cursors and cursor palettes from their respective stacks.
@@ -154,11 +154,13 @@ private:
 		byte _targetScale;
 
 		uint _size;
-		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8()) {
+		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, Graphics::PixelFormat *format = NULL) {
 #ifdef ENABLE_RGB_COLOR
-			_size = w * h * format.bytesPerPixel;
-			_keycolor = keycolor & ((1 << (format.bytesPerPixel << 3)) - 1);
-			_format = format;
+			if (!format)
+				format = new Graphics::PixelFormat(1,8,8,8,8,0,0,0,0);
+			_size = w * h * format->bytesPerPixel;
+			_keycolor &= ((1 << (format->bytesPerPixel << 3)) - 1);
+			_format = *format;
 #else
 			_size = w * h;
 			_keycolor = keycolor & 0xFF;

@@ -113,11 +113,12 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 void ScummEngine::updateCursor() {
 	int transColor = (_game.heversion >= 80) ? 5 : 255;
 #ifdef ENABLE_RGB_COLOR
+	Graphics::PixelFormat format = _system->getScreenFormat();
 	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
 							(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
 							(_game.heversion == 70 ? 2 : 1),
-							_system->getScreenFormat());
+							&format);
 #else
 	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
