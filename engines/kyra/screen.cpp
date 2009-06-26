@@ -3082,8 +3082,17 @@ int SJIStoFMTChunk(int f, int s) { // copied from scumm\charset.cpp
 } // end of anonymous namespace
 
 void Screen::drawCharSJIS(uint16 c, int x, int y) {
-	int color1 = _textColorsMap[1];
-	int color2 = _textColorsMap[0];
+	int color1, color2;
+
+	if (_use16ColorMode) {
+		// PC98 16 color games specify a color value which is for the
+		// PC98 text mode palette, thus we need to remap it.
+		color1 = ((_textColorsMap[1] >> 5) & 0x7) + 16; 
+		color2 = ((_textColorsMap[0] >> 5) & 0x7) + 16;
+	} else {
+		color1 = _textColorsMap[1];
+		color2 = _textColorsMap[0];
+	}
 
 	memset(_sjisTempPage2, _sjisInvisibleColor, 324);
 	memset(_sjisSourceChar, 0, 36);
