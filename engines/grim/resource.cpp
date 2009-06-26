@@ -167,14 +167,12 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
 	Bitmap *ptr = (Bitmap *)getFileFromCache(fname.c_str());
-	if (ptr) {
+	if (ptr)
 		return ptr;
-	}
 
 	Block *b = getFileBlock(filename);
 	if (!b) {	// Grim sometimes asks for non-existant bitmaps (eg, ha_overhead)
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Could not find bitmap %s", filename);
+		warning("Could not find bitmap %s", filename);
 		return NULL;
 	}
 
@@ -190,10 +188,8 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
 	CMap *ptr = (CMap *)getFileFromCache(fname.c_str());
-
-	if (ptr) {
+	if (ptr)
 		return ptr;
-	}
 
 	Block *b = getFileBlock(filename);
 	if (!b)
@@ -222,10 +218,8 @@ Font *ResourceLoader::loadFont(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
 	Font *ptr = (Font *)getFileFromCache(fname.c_str());
-
-	if (ptr) {
+	if (ptr)
 		return ptr;
-	}
 
 	Block *b = getFileBlock(filename);
 	if (!b)
@@ -242,10 +236,8 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
 	KeyframeAnim *ptr = (KeyframeAnim *)getFileFromCache(fname.c_str());
-
-	if (ptr) {
+	if (ptr)
 		return ptr;
-	}
 
 	Block *b = getFileBlock(filename);
 	if (!b)
@@ -262,24 +254,19 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
 	LipSync *result;
-
 	LipSync *ptr = (LipSync *)getFileFromCache(fname.c_str());
-
-	if (ptr) {
+	if (ptr)
 		return ptr;
-	}
 
 	Block *b = getFileBlock(filename);
 	if (!b) {
-		if (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
-			warning("Could not find lipsync file %s", filename);
 		result = NULL;
 	} else {
 		result = new LipSync(filename, b->data(), b->len());
+		delete b;
 
 		// Some lipsync files have no data
 		if (result->isValid()) {
-			delete b;
 			putIntoCache(fname, result);
 		} else {
 			delete result;
@@ -294,10 +281,8 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap *c) {
 	Common::String fname = Common::String(filename) + "@" + c->filename();
 	fname.toLowercase();
 	Material *ptr = (Material *)getFileFromCache(fname.c_str());
-
-	if (ptr) {
+	if (ptr)
 		return ptr;
-	}
 
 	Block *b = getFileBlock(filename);
 	if (!b)
@@ -314,10 +299,8 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap *c) {
 	Common::String fname = filename;
 	fname.toLowercase();
 	Model *ptr = (Model *)getFileFromCache(fname.c_str());
-
-	if (ptr) {
+	if (ptr)
 		return ptr;
-	}
 
 	Block *b = getFileBlock(filename);
 	if (!b)
