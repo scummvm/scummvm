@@ -1162,15 +1162,7 @@ void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_cursorPaletteDisabled = false;
-#ifdef ENABLE_RGB_COLOR
-}
-
-void OSystem_SDL::setCursorFormat(Graphics::PixelFormat format) {
-	assert(format.bytesPerPixel);
-	_cursorFormat = format;
-
-#endif
-//	blitCursor();
+	blitCursor();
 }
 
 
@@ -1378,10 +1370,12 @@ void OSystem_SDL::warpMouse(int x, int y) {
 	}
 }
 
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, Graphics::PixelFormat format) {
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, Graphics::PixelFormat *format) {
 #ifdef ENABLE_RGB_COLOR
-	if (format.bytesPerPixel <= _screenFormat.bytesPerPixel)
-		_cursorFormat = format;
+	if (!format)
+		format = new Graphics::PixelFormat(1,8,8,8,8,0,0,0,0);
+	if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
+		_cursorFormat = *format;
 	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
 #else
 	keycolor &= 0xFF;
