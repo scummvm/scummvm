@@ -30,10 +30,11 @@
 
 namespace Grim {
 
-class Material : public Resource {
+class Material {
 public:
+	Material() {}
 	// Load a texture from the given data.
-	Material(const char *filename, const char *data, int len, const CMap &cmap);
+	Material(const char *filename, const char *data, int len, const CMap *cmap);
 
 	// Load this texture into the GL context
 	void select() const;
@@ -46,8 +47,9 @@ public:
 
 	~Material();
 
-//private:
-	CMap *_cmap;
+	Common::String _fname;
+
+	const CMap *_cmap;
 	int _numImages, _currImage;
 	int _width, _height;
 	void *_textures;

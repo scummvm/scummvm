@@ -106,7 +106,7 @@ public:
 		void load(TextSplitter &ts);
 		void setupCamera() const;
 		Common::String _name;
-		ResPtr<Bitmap> _bkgndBm, _bkgndZBm;
+		Bitmap *_bkgndBm, *_bkgndZBm;
 		Graphics::Vector3d _pos, _interest;
 		float _roll, _fov, _nclip, _fclip;
 	};
@@ -126,7 +126,7 @@ private:
 
 	Common::String _name;
 	int _numCmaps;
-	ResPtr<CMap> *_cmaps;
+	CMap **_cmaps;
 	int _numSetups, _numLights, _numSectors, _numObjectStates;
 	bool _enableLights;
 	Sector *_sectors;

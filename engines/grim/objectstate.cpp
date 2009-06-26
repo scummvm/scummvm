@@ -34,12 +34,14 @@ ObjectState::ObjectState(int setupID, ObjectState::Position pos, const char *bit
 	_bitmap = g_resourceloader->loadBitmap(bitmap);
 	if (zbitmap)
 		_zbitmap = g_resourceloader->loadBitmap(zbitmap);
+	else
+		_zbitmap = NULL;
 }
 
 ObjectState::~ObjectState() {
-	g_resourceloader->uncache(_bitmap->getFilename());
-	if (_zbitmap)
-		g_resourceloader->uncache(_zbitmap->getFilename());
+//	g_resourceloader->uncache(_bitmap->getFilename());
+//	if (_zbitmap)
+//		g_resourceloader->uncache(_zbitmap->getFilename());
 }
 
 void ObjectState::saveState(SaveGame *savedState) {

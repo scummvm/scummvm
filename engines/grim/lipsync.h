@@ -30,7 +30,7 @@
 
 namespace Grim {
 
-class LipSync : public Resource {
+class LipSync {
 public:
 	LipSync(const char *filename, const char *data, int len);
 	~LipSync();
@@ -54,6 +54,7 @@ private:
 
 	static const PhonemeAnim _animTable[];
 	static const int _animTableSize;
+	Common::String _fname;
 };
 
 } // end of namespace Grim

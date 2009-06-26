@@ -30,7 +30,7 @@
 
 namespace Grim {
 
-class KeyframeAnim : public Resource {
+class KeyframeAnim {
 public:
 	KeyframeAnim(const char *filename, const char *data, int len);
 	~KeyframeAnim();
@@ -40,8 +40,10 @@ public:
 	void animate(Model::HierNode *nodes, float time, int priority1 = 1, int priority2 = 5) const;
 
 	float length() const { return _numFrames / _fps; }
+	const char *filename() const { return _fname.c_str(); }
 
 private:
+	Common::String _fname;
 	unsigned int _flags, _type;
 	int _numFrames, _numJoints;
 	float _fps;

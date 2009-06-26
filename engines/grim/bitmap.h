@@ -30,11 +30,13 @@
 
 namespace Grim {
 
-class Bitmap : public Resource {
+class Bitmap {
 public:
 	// Construct a bitmap from the given data.
 	Bitmap(const char *filename, const char *data, int len);
 	Bitmap(const char *data, int width, int height, const char *filename);
+
+	const char *filename() const { return _fname.c_str(); }
 
 	void draw() const;
 
@@ -58,6 +60,7 @@ public:
 	~Bitmap();
 
 //private:
+	Common::String _fname;
 	char **_data;
 	int _numImages, _currImage;
 	int _width, _height, _x, _y;

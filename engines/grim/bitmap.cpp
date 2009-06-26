@@ -33,8 +33,8 @@ namespace Grim {
 
 static void decompress_codec3(const char *compressed, char *result);
 
-Bitmap::Bitmap(const char *filename, const char *data, int len) :
-		Resource(filename) {
+Bitmap::Bitmap(const char *filename, const char *data, int len) {
+	_fname = filename;
 
 	if (len < 8 || memcmp(data, "BM  F\0\0\0", 8) != 0) {
 		if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL)
@@ -85,8 +85,8 @@ Bitmap::Bitmap(const char *filename, const char *data, int len) :
 	g_driver->createBitmap(this);
 }
 
-Bitmap::Bitmap(const char *data, int width, int height, const char *filename) :
-		Resource(filename) {
+Bitmap::Bitmap(const char *data, int width, int height, const char *filename) {
+	_fname = filename;
 	if (gDebugLevel == DEBUG_BITMAPS || gDebugLevel == DEBUG_NORMAL || gDebugLevel == DEBUG_ALL)
 		printf("New bitmap loaded: %s\n", filename);
 	strcpy(_filename, filename);

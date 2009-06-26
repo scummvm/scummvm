@@ -33,22 +33,24 @@ namespace Grim {
 
 class TextSplitter;
 
-class Model : public Resource {
+class Model {
 public:
 	// Construct a 3D model from the given data.
-	Model(const char *filename, const char *data, int len, const CMap &cmap);
-	void loadBinary(const char *data, const CMap &cmap);
-	void loadText(TextSplitter &ts, const CMap &cmap);
-	void reload(const CMap &cmap);
+	Model(const char *filename, const char *data, int len, const CMap *cmap);
+	void loadBinary(const char *&data, const CMap *cmap);
+	void loadText(TextSplitter *ts, const CMap *cmap);
+	void reload(const CMap *cmap);
 	void draw() const;
 
 	~Model();
+
+	Common::String _fname;
 
 	struct Geoset;
 	struct Mesh;
 	struct HierNode {
 		HierNode() : _initialized(false) { }
-		void loadBinary(const char *&data, HierNode *hierNodes, const Geoset &g);
+		void loadBinary(const char *&data, HierNode *hierNodes, const Geoset *g);
 		void draw() const;
 		void addChild(HierNode *child);
 		void removeChild(HierNode *child);
@@ -77,9 +79,9 @@ public:
 
 //private:
 	struct Face {
-		int loadBinary(const char *&data, ResPtr<Material> *materials);
+		int loadBinary(const char *&data, Material *materials);
 		void draw(float *vertices, float *vertNormals, float *textureVerts) const;
-		void changeMaterial(ResPtr<Material> materials);
+		void changeMaterial(Material *material);
 		~Face();
 
 		Material *_material;
@@ -91,9 +93,9 @@ public:
 	};
 
 	struct Mesh {
-		void loadBinary(const char *&data, ResPtr<Material> *materials);
-		void loadText(TextSplitter &ts, ResPtr<Material> *materials);
-		void changeMaterials(ResPtr<Material> *materials);
+		void loadBinary(const char *&data, Material *materials);
+		void loadText(TextSplitter *ts, Material *materials);
+		void changeMaterials(Material *materials);
 		void draw() const;
 		void update();
 		Mesh() : _numFaces(0) { }
@@ -118,9 +120,9 @@ public:
 	};
 
 	struct Geoset {
-		void loadBinary(const char *&data, ResPtr<Material> *materials);
-		void loadText(TextSplitter &ts, ResPtr<Material> *materials);
-		void changeMaterials(ResPtr<Material> *materials);
+		void loadBinary(const char *&data, Material *materials);
+		void loadText(TextSplitter *ts, Material *materials);
+		void changeMaterials(Material *materials);
 		Geoset() : _numMeshes(0) { }
 		~Geoset();
 
@@ -130,7 +132,7 @@ public:
 
 	int _numMaterials;
 	char (*_materialNames)[32];
-	ResPtr<Material> *_materials;
+	Material *_materials;
 	Graphics::Vector3d _insertOffset;
 	int _numGeosets;
 	Geoset *_geosets;

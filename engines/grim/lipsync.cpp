@@ -32,8 +32,8 @@ namespace Grim {
 // A new define that'll be around when theres a configure script :)
 #undef DEBUG_VERBOSE
 
-LipSync::LipSync(const char *filename, const char *data, int len) :
-	Resource(filename) {
+LipSync::LipSync(const char *filename, const char *data, int len) {
+	_fname = filename;
 	uint16 readPhoneme;
 	int j;
 

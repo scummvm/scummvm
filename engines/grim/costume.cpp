@@ -128,7 +128,7 @@ public:
 
 protected:
 	Common::String _filename;
-	ResPtr<Model> _obj;
+	Model *_obj;
 	Model::HierNode *_hier;
 	Graphics::Matrix4 _matrix;
 };
@@ -243,7 +243,7 @@ void ModelComponent::init() {
 
 			cmap = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
 		}
-		_obj = g_resourceloader->loadModel(_filename.c_str(), *cmap);
+		_obj = g_resourceloader->loadModel(_filename.c_str(), cmap);
 		_hier = _obj->copyHierarchy();
 		// Use parent availablity to decide whether to default the
 		// component to being visible
@@ -293,7 +293,7 @@ void ModelComponent::resetColormap() {
 
 	cmap = this->cmap();
 	if (_obj && cmap)
-		_obj->reload(*cmap);
+		_obj->reload(cmap);
 }
 
 ModelComponent::~ModelComponent() {
@@ -376,7 +376,7 @@ public:
 	~MaterialComponent() { }
 
 private:
-	ResPtr<Material> _mat;
+	Material *_mat;
 	Common::String _filename;
 	int _num;
 };
@@ -404,16 +404,18 @@ public:
 	~KeyframeComponent() {}
 
 private:
-	ResPtr<KeyframeAnim> _keyf;
+	KeyframeAnim *_keyf;
 	int _priority1, _priority2;
 	Model::HierNode *_hier;
 	bool _active;
 	int _repeatMode;
 	int _currTime;
+	Common::String _fname;
 };
 
 KeyframeComponent::KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
 		Costume::Component(parent, parentID, tag), _priority1(1), _priority2(5), _hier(NULL), _active(false) {
+	_fname = filename;
 	const char *comma = strchr(filename, ',');
 	if (comma) {
 		Common::String realName(filename, comma);
@@ -541,7 +543,7 @@ void MaterialComponent::init() {
 
 		cmap = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
 	}
-	_mat = g_resourceloader->loadMaterial(_filename.c_str(), *cmap);
+	_mat = g_resourceloader->loadMaterial(_filename.c_str(), cmap);
 }
 
 void MaterialComponent::setKey(int val) {

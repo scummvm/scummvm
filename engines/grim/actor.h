@@ -175,7 +175,7 @@ private:
 	bool _visible;
 	bool _lookingMode;
 	Common::String _talkSoundName;
-	ResPtr<LipSync> _lipSync;
+	LipSync *_lipSync;
 	Common::List<Costume *> _costumeStack;
 
 	// Variables for gradual turning

@@ -146,6 +146,18 @@ public:
 		return _refreshShadowMask;
 	}
 
+	Bitmap *registerBitmap(const char *filename, const char *data, int len) {
+		Bitmap *b = new Bitmap(filename, data, len);
+		_bitmaps.push_back(b);
+		return b;
+	}
+	Bitmap *registerBitmap(const char *data, int width, int height, const char *filename) {
+		Bitmap *b = new Bitmap(data, width, height, filename);
+		_bitmaps.push_back(b);
+		return b;
+	}
+	void killBitmap(Bitmap *b) { _bitmaps.remove(b); }
+
 	// Actor registration
 	typedef Common::List<Actor *> ActorListType;
 	ActorListType::const_iterator actorsBegin() const {
@@ -263,6 +275,7 @@ private:
 	TextListType _textObjects;
 	PrimitiveListType _primitiveObjects;
 	Common::List<Font *> _fonts;
+	Common::List<Bitmap *> _bitmaps;
 
 	int _gameFlags;
 };

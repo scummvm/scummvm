@@ -175,7 +175,7 @@ static void io_readfrom() {
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 		inFile = saveFileMan->openForLoading(s);
 		if (!inFile)
-			current = g_resourceloader->openNewStreamLua(s);
+			current = g_resourceloader->openNewStreamLuaFile(s);
 		else {
 			current = new LuaFile();
 			current->_in = inFile;

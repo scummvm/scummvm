@@ -31,6 +31,7 @@
 #include "engines/grim/font.h"
 #include "engines/grim/material.h"
 #include "engines/grim/gfx_opengl.h"
+#include "engines/grim/grim.h"
 
 #ifdef USE_OPENGL
 
@@ -324,7 +325,7 @@ void GfxOpenGL::setShadowColor(byte r, byte g, byte b) {
 void GfxOpenGL::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_ALWAYS);
 }
 
 void GfxOpenGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
@@ -653,7 +654,7 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_ALWAYS);
 }
 
 void GfxOpenGL::prepareSmushFrame(int width, int height, byte *bitmap) {
@@ -937,7 +938,7 @@ Bitmap *GfxOpenGL::getScreenshot(int w, int h) {
 		}
 	}
 
-	Bitmap *screenshot = new Bitmap((char *) buffer, w, h, "screenshot");
+	Bitmap *screenshot = g_grim->registerBitmap((char *)buffer, w, h, "screenshot");
 	delete[] buffer;
 	return screenshot;
 }

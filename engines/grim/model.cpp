@@ -34,33 +34,34 @@
 
 namespace Grim {
 
-Model::Model(const char *filename, const char *data, int len, const CMap &cmap) :
-		Resource(filename), _numMaterials(0), _numGeosets(0) {
+Model::Model(const char *filename, const char *data, int len, const CMap *cmap) :
+		_numMaterials(0), _numGeosets(0) {
+	_fname = filename;
 
 	if (len >= 4 && READ_BE_UINT32(data) == MKID_BE('LDOM'))
 		loadBinary(data, cmap);
 	else {
 		TextSplitter ts(data, len);
-		loadText(ts, cmap);
+		loadText(&ts, cmap);
 	}
 }
 
-void Model::reload(const CMap &cmap) {
+void Model::reload(const CMap *cmap) {
 	// Load the new colormap
 	for (int i = 0; i < _numMaterials; i++)
-		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
+		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap)[0];
 	for (int i = 0; i < _numGeosets; i++)
 		_geosets[i].changeMaterials(_materials);
 }
 
-void Model::loadBinary(const char *data, const CMap &cmap) {
+void Model::loadBinary(const char *&data, const CMap *cmap) {
 	_numMaterials = READ_LE_UINT32(data + 4);
 	data += 8;
-	_materials = new ResPtr<Material>[_numMaterials];
+	_materials = new Material[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
 	for (int i = 0; i < _numMaterials; i++) {
 		strcpy(_materialNames[i], data);
-		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
+		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap)[0];
 		data += 32;
 	}
 	data += 32; // skip name
@@ -73,7 +74,7 @@ void Model::loadBinary(const char *data, const CMap &cmap) {
 	data += 8;
 	_rootHierNode = new HierNode[_numHierNodes];
 	for (int i = 0; i < _numHierNodes; i++)
-		_rootHierNode[i].loadBinary(data, _rootHierNode, _geosets[0]);
+		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
 	_radius = get_float(data);
 	_insertOffset = Graphics::get_vector3d(data + 40);
 }
@@ -85,7 +86,7 @@ Model::~Model() {
 	delete[] _rootHierNode;
 }
 
-void Model::Geoset::loadBinary(const char *&data, ResPtr<Material> *materials) {
+void Model::Geoset::loadBinary(const char *&data, Material *materials) {
 	_numMeshes = READ_LE_UINT32(data);
 	data += 4;
 	_meshes = new Mesh[_numMeshes];
@@ -97,7 +98,7 @@ Model::Geoset::~Geoset() {
 	delete[] _meshes;
 }
 
-void Model::Mesh::loadBinary(const char *&data, ResPtr<Material> *materials) {
+void Model::Mesh::loadBinary(const char *&data, Material *materials) {
 	memcpy(_name, data, 32);
 	_geometryMode = READ_LE_UINT32(data + 36);
 	_lightingMode = READ_LE_UINT32(data + 40);
@@ -148,11 +149,11 @@ Model::Mesh::~Mesh() {
 void Model::Mesh::update() {
 }
 
-void Model::Face::changeMaterial(ResPtr<Material> material) {
+void Model::Face::changeMaterial(Material *material) {
 	_material = material;
 }
 
-int Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
+int Model::Face::loadBinary(const char *&data, Material *materials) {
 	_type = READ_LE_UINT32(data + 4);
 	_geo = READ_LE_UINT32(data + 8);
 	_light = READ_LE_UINT32(data + 12);
@@ -181,7 +182,7 @@ int Model::Face::loadBinary(const char *&data, ResPtr<Material> *materials) {
 	if (materialPtr == 0)
 		_material = 0;
 	else {
-		_material = materials[READ_LE_UINT32(data)];
+		_material = &materials[READ_LE_UINT32(data)];
 		materialPtr = READ_LE_UINT32(data);
 		data += 4;
 	}
@@ -193,7 +194,7 @@ Model::Face::~Face() {
 	delete[] _texVertices;
 }
 
-void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, const Geoset &g) {
+void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, const Geoset *g) {
 	memcpy(_name, data, 64);
 	_flags = READ_LE_UINT32(data + 64);
 	_type = READ_LE_UINT32(data + 72);
@@ -201,7 +202,7 @@ void Model::HierNode::loadBinary(const char *&data, Model::HierNode *hierNodes, 
 	if (meshNum < 0)
 		_mesh = NULL;
 	else
-		_mesh = g._meshes + meshNum;
+		_mesh = g->_meshes + meshNum;
 	_depth = READ_LE_UINT32(data + 80);
 	int parentPtr = READ_LE_UINT32(data + 84);
 	_numChildren = READ_LE_UINT32(data + 88);
@@ -252,52 +253,52 @@ Model::HierNode *Model::copyHierarchy() {
 	// Now adjust pointers
 	for (int i = 0; i < _numHierNodes; i++) {
 		if (result[i]._parent)
-			result[i]._parent = result + (_rootHierNode[i]._parent - _rootHierNode);
+			result[i]._parent = &result[(_rootHierNode[i]._parent - _rootHierNode)];
 		if (result[i]._child)
-			result[i]._child = result + (_rootHierNode[i]._child - _rootHierNode);
+			result[i]._child = &result[(_rootHierNode[i]._child - _rootHierNode)];
 		if (result[i]._sibling)
-			result[i]._sibling = result + (_rootHierNode[i]._sibling - _rootHierNode);
+			result[i]._sibling = &result[(_rootHierNode[i]._sibling - _rootHierNode)];
 	}
 	return result;
 }
 
-void Model::loadText(TextSplitter &ts, const CMap &cmap) {
-	ts.expectString("section: header");
+void Model::loadText(TextSplitter *ts, const CMap *cmap) {
+	ts->expectString("section: header");
 	int major, minor;
-	ts.scanString("3do %d.%d", 2, &major, &minor);
-	ts.expectString("section: modelresource");
-	ts.scanString("materials %d", 1, &_numMaterials);
-	_materials = new ResPtr<Material>[_numMaterials];
+	ts->scanString("3do %d.%d", 2, &major, &minor);
+	ts->expectString("section: modelresource");
+	ts->scanString("materials %d", 1, &_numMaterials);
+	_materials = new Material[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
 	for (int i = 0; i < _numMaterials; i++) {
 		char materialName[32];
 		int num;
 
-		ts.scanString("%d: %32s", 2, &num, materialName);
-		_materials[num] = g_resourceloader->loadMaterial(materialName, cmap);
+		ts->scanString("%d: %32s", 2, &num, materialName);
+		_materials[num] = g_resourceloader->loadMaterial(materialName, cmap)[0];
 		strcpy(_materialNames[num], materialName);
 	}
 
-	ts.expectString("section: geometrydef");
-	ts.scanString("radius %f", 1, &_radius);
-	ts.scanString("insert offset %f %f %f", 3, &_insertOffset.x(), &_insertOffset.y(), &_insertOffset.z());
-	ts.scanString("geosets %d", 1, &_numGeosets);
+	ts->expectString("section: geometrydef");
+	ts->scanString("radius %f", 1, &_radius);
+	ts->scanString("insert offset %f %f %f", 3, &_insertOffset.x(), &_insertOffset.y(), &_insertOffset.z());
+	ts->scanString("geosets %d", 1, &_numGeosets);
 	_geosets = new Geoset[_numGeosets];
 	for (int i = 0; i < _numGeosets; i++) {
 		int num;
-		ts.scanString("geoset %d", 1, &num);
+		ts->scanString("geoset %d", 1, &num);
 		_geosets[num].loadText(ts, _materials);
 	}
 
-	ts.expectString("section: hierarchydef");
-	ts.scanString("hierarchy nodes %d", 1, &_numHierNodes);
+	ts->expectString("section: hierarchydef");
+	ts->scanString("hierarchy nodes %d", 1, &_numHierNodes);
 	_rootHierNode = new HierNode[_numHierNodes];
 	for (int i = 0; i < _numHierNodes; i++) {
 		int num, mesh, parent, child, sibling, numChildren;
 		unsigned int flags, type;
 		float x, y, z, pitch, yaw, roll, pivotx, pivoty, pivotz;
 		char name[64];
-		ts.scanString(" %d: %x %x %d %d %d %d %d %f %f %f %f %f %f %f %f %f %64s",
+		ts->scanString(" %d: %x %x %d %d %d %d %d %f %f %f %f %f %f %f %f %f %64s",
 			18, &num, &flags, &type, &mesh, &parent, &child, &sibling,
 			&numChildren, &x, &y, &z, &pitch, &yaw, &roll, &pivotx, &pivoty, &pivotz, name);
 		_rootHierNode[num]._flags = (int)flags;
@@ -305,20 +306,20 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 		if (mesh < 0)
 			_rootHierNode[num]._mesh = NULL;
 		else
-			_rootHierNode[num]._mesh = _geosets[0]._meshes + mesh;
+			_rootHierNode[num]._mesh = &_geosets[0]._meshes[mesh];
 		if (parent >= 0) {
-			_rootHierNode[num]._parent = _rootHierNode + parent;
+			_rootHierNode[num]._parent = &_rootHierNode[parent];
 			_rootHierNode[num]._depth = _rootHierNode[parent]._depth + 1;
 		} else {
 			_rootHierNode[num]._parent = NULL;
 			_rootHierNode[num]._depth = 0;
 		}
 		if (child >= 0)
-			_rootHierNode[num]._child = _rootHierNode + child;
+			_rootHierNode[num]._child = &_rootHierNode[child];
 		else
 			_rootHierNode[num]._child = NULL;
 		if (sibling >= 0)
-			_rootHierNode[num]._sibling = _rootHierNode + sibling;
+			_rootHierNode[num]._sibling = &_rootHierNode[sibling];
 		else
 			_rootHierNode[num]._sibling = NULL;
 
@@ -333,43 +334,43 @@ void Model::loadText(TextSplitter &ts, const CMap &cmap) {
 		_rootHierNode[num]._totalWeight = 1;
 	}
 
-	if (!ts.eof() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
+	if (!ts->eof() && (gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL))
 		warning("Unexpected junk at end of model text");
 }
 
-void Model::Geoset::changeMaterials(ResPtr<Material> *materials) {
+void Model::Geoset::changeMaterials(Material *materials) {
 	for (int i = 0; i < _numMeshes; i++)
 		_meshes[i].changeMaterials(materials);
 }
 
-void Model::Geoset::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
-	ts.scanString("meshes %d", 1, &_numMeshes);
+void Model::Geoset::loadText(TextSplitter *ts, Material *materials) {
+	ts->scanString("meshes %d", 1, &_numMeshes);
 	_meshes = new Mesh[_numMeshes];
 	for (int i = 0; i < _numMeshes; i++) {
 		int num;
-		ts.scanString("mesh %d", 1, &num);
+		ts->scanString("mesh %d", 1, &num);
 		_meshes[num].loadText(ts, materials);
 	}
 }
 
-void Model::Mesh::changeMaterials(ResPtr<Material> *materials) {
+void Model::Mesh::changeMaterials(Material *materials) {
 	for (int i = 0; i < _numFaces; i++)
-		_faces[i].changeMaterial(materials[_materialid[i]]);
+		_faces[i].changeMaterial(&materials[_materialid[i]]);
 }
 
-void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
-	ts.scanString("name %32s", 1, _name);
-	ts.scanString("radius %f", 1, &_radius);
+void Model::Mesh::loadText(TextSplitter *ts, Material *materials) {
+	ts->scanString("name %32s", 1, _name);
+	ts->scanString("radius %f", 1, &_radius);
 
 	// In data001/rope_scale.3do, the shadow line is missing
-	if (sscanf(ts.currentLine(), "shadow %d", &_shadow) < 1) {
+	if (sscanf(ts->currentLine(), "shadow %d", &_shadow) < 1) {
 		_shadow = 0;
 	} else
-		ts.nextLine();
-	ts.scanString("geometrymode %d", 1, &_geometryMode);
-	ts.scanString("lightingmode %d", 1, &_lightingMode);
-	ts.scanString("texturemode %d", 1, &_textureMode);
-	ts.scanString("vertices %d", 1, &_numVertices);
+		ts->nextLine();
+	ts->scanString("geometrymode %d", 1, &_geometryMode);
+	ts->scanString("lightingmode %d", 1, &_lightingMode);
+	ts->scanString("texturemode %d", 1, &_textureMode);
+	ts->scanString("vertices %d", 1, &_numVertices);
 	_vertices = new float[3 * _numVertices];
 	_verticesI = new float[_numVertices];
 	_vertNormals = new float[3 * _numVertices];
@@ -377,35 +378,35 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 	for (int i = 0; i < _numVertices; i++) {
 		int num;
 		float x, y, z, ival;
-		ts.scanString(" %d: %f %f %f %f", 5, &num, &x, &y, &z, &ival);
+		ts->scanString(" %d: %f %f %f %f", 5, &num, &x, &y, &z, &ival);
 		_vertices[3 * num] = x;
 		_vertices[3 * num + 1] = y;
 		_vertices[3 * num + 2] = z;
 		_verticesI[num] = ival;
 	}
 
-	ts.scanString("texture vertices %d", 1, &_numTextureVerts);
+	ts->scanString("texture vertices %d", 1, &_numTextureVerts);
 	_textureVerts = new float[2 * _numTextureVerts];
 
 	for (int i = 0; i < _numTextureVerts; i++) {
 		int num;
 		float x, y;
-		ts.scanString(" %d: %f %f", 3, &num, &x, &y);
+		ts->scanString(" %d: %f %f", 3, &num, &x, &y);
 		_textureVerts[2 * num] = x;
 		_textureVerts[2 * num + 1] = y;
 	}
 
-	ts.expectString("vertex normals");
+	ts->expectString("vertex normals");
 	for (int i = 0; i < _numVertices; i++) {
 		int num;
 		float x, y, z;
-		ts.scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
+		ts->scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
 		_vertNormals[3 * num] = x;
 		_vertNormals[3 * num + 1] = y;
 		_vertNormals[3 * num + 2] = z;
 	}
 
-	ts.scanString("faces %d", 1, &_numFaces);
+	ts->scanString("faces %d", 1, &_numFaces);
 	_faces = new Face[_numFaces];
 	_materialid = new int[_numFaces];
 	for (int i = 0; i < _numFaces; i++) {
@@ -414,15 +415,15 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		float extralight;
 		int readlen;
 
-		if (ts.eof())
+		if (ts->eof())
 			error("Expected face data, got EOF");
 
-		if (sscanf(ts.currentLine(), " %d: %d %x %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
-			error("Expected face data, got '%s'", ts.currentLine());
+		if (sscanf(ts->currentLine(), " %d: %d %x %d %d %d %f %d%n", &num, &materialid, &type, &geo, &light, &tex, &extralight, &verts, &readlen) < 8)
+			error("Expected face data, got '%s'", ts->currentLine());
 
 		assert(materialid != -1);
 		_materialid[num] = materialid;
-		_faces[num]._material = materials[materialid];
+		_faces[num]._material = &materials[materialid];
 		_faces[num]._type = (int)type;
 		_faces[num]._geo = geo;
 		_faces[num]._light = light;
@@ -434,20 +435,20 @@ void Model::Mesh::loadText(TextSplitter &ts, ResPtr<Material> *materials) {
 		for (int j = 0; j < verts; j++) {
 			int readlen2;
 
-			if (sscanf(ts.currentLine() + readlen, " %d, %d%n", _faces[num]._vertices + j, _faces[num]._texVertices + j, &readlen2) < 2)
+			if (sscanf(ts->currentLine() + readlen, " %d, %d%n", _faces[num]._vertices[j], _faces[num]._texVertices[j], &readlen2) < 2)
 				error("Could not read vertex indices in line '%s'",
 
-			ts.currentLine());
+			ts->currentLine());
 			readlen += readlen2;
 		}
-		ts.nextLine();
+		ts->nextLine();
 	}
 
-	ts.expectString("face normals");
+	ts->expectString("face normals");
 	for (int i = 0; i < _numFaces; i++) {
 		int num;
 		float x, y, z;
-		ts.scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
+		ts->scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
 		_faces[num]._normal = Graphics::Vector3d(x, y, z);
 	}
 }

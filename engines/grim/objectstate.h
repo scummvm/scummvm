@@ -56,6 +56,7 @@ public:
 
 	void setNumber(int val) {
 		if (val) {
+			assert(_bitmap);
 			_bitmap->setNumber(val);
 			if (_zbitmap)
 				_zbitmap->setNumber(val);
@@ -66,6 +67,7 @@ public:
 	void draw() {
 		if (!_visibility)
 			return;
+		assert(_bitmap);
 		_bitmap->draw();
 		if (_zbitmap)
 			_zbitmap->draw();
@@ -76,7 +78,7 @@ private:
 	bool _visibility;
 	int _setupID;
 	Position _pos;
-	ResPtr<Bitmap> _bitmap, _zbitmap;
+	Bitmap *_bitmap, *_zbitmap;
 };
 
 } // end of namespace Grim

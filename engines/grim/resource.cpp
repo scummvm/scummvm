@@ -81,7 +81,7 @@ ResourceLoader::ResourceLoader() {
 
 ResourceLoader::~ResourceLoader() {
 	for (LabList::const_iterator i = _labs.begin(); i != _labs.end(); i++)
-		delete (*i);
+		delete *i;
 }
 
 const Lab *ResourceLoader::getLab(const char *filename) const {
@@ -96,7 +96,7 @@ static int sortCallback(const void *entry1, const void *entry2) {
 	return strcasecmp(((ResourceLoader::ResourceCache *)entry1)->fname, ((ResourceLoader::ResourceCache *)entry2)->fname);
 }
 
-Resource *ResourceLoader::getFileFromCache(const char *filename) {
+void *ResourceLoader::getFileFromCache(const char *filename) {
 	ResourceLoader::ResourceCache *entry = getEntryFromCache(filename);
 	if (entry)
 		return entry->resPtr;
@@ -128,7 +128,7 @@ Block *ResourceLoader::getFileBlock(const char *filename) const {
 		return l->getFileBlock(filename);
 }
 
-LuaFile *ResourceLoader::openNewStreamLua(const char *filename) const {
+LuaFile *ResourceLoader::openNewStreamLuaFile(const char *filename) const {
 	const Lab *l = getLab(filename);
 
 	if (!l)
@@ -154,7 +154,7 @@ int ResourceLoader::fileLength(const char *filename) const {
 		return 0;
 }
 
-void ResourceLoader::putIntoCache(Common::String fname, Resource *res) {
+void ResourceLoader::putIntoCache(Common::String fname, void *res) {
 	ResourceCache entry;
 	entry.resPtr = res;
 	entry.fname = new char[fname.size() + 1];
@@ -166,9 +166,9 @@ void ResourceLoader::putIntoCache(Common::String fname, Resource *res) {
 Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	Resource *ptr = getFileFromCache(fname.c_str());
+	Bitmap *ptr = (Bitmap *)getFileFromCache(fname.c_str());
 	if (ptr) {
-		return dynamic_cast<Bitmap *>(ptr);
+		return ptr;
 	}
 
 	Block *b = getFileBlock(filename);
@@ -178,7 +178,7 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 		return NULL;
 	}
 
-	Bitmap *result = new Bitmap(filename, b->data(), b->len());
+	Bitmap *result = g_grim->registerBitmap(filename, b->data(), b->len());
 	delete b;
 
 	putIntoCache(fname, result);
@@ -189,10 +189,10 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 CMap *ResourceLoader::loadColormap(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	Resource *ptr = getFileFromCache(fname.c_str());
+	CMap *ptr = (CMap *)getFileFromCache(fname.c_str());
 
 	if (ptr) {
-		return dynamic_cast<CMap *>(ptr);
+		return ptr;
 	}
 
 	Block *b = getFileBlock(filename);
@@ -221,10 +221,10 @@ Costume *ResourceLoader::loadCostume(const char *filename, Costume *prevCost) {
 Font *ResourceLoader::loadFont(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	Resource *ptr = getFileFromCache(fname.c_str());
+	Font *ptr = (Font *)getFileFromCache(fname.c_str());
 
 	if (ptr) {
-		return dynamic_cast<Font *>(ptr);
+		return ptr;
 	}
 
 	Block *b = getFileBlock(filename);
@@ -241,10 +241,10 @@ Font *ResourceLoader::loadFont(const char *filename) {
 KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	Resource *ptr = getFileFromCache(fname.c_str());
+	KeyframeAnim *ptr = (KeyframeAnim *)getFileFromCache(fname.c_str());
 
 	if (ptr) {
-		return dynamic_cast<KeyframeAnim *>(ptr);
+		return ptr;
 	}
 
 	Block *b = getFileBlock(filename);
@@ -263,10 +263,10 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 	fname.toLowercase();
 	LipSync *result;
 
-	Resource *ptr = getFileFromCache(fname.c_str());
+	LipSync *ptr = (LipSync *)getFileFromCache(fname.c_str());
 
 	if (ptr) {
-		return dynamic_cast<LipSync *>(ptr);
+		return ptr;
 	}
 
 	Block *b = getFileBlock(filename);
@@ -290,13 +290,13 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 	return result;
 }
 
-Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
-	Common::String fname = Common::String(filename) + "@" + c.filename();
+Material *ResourceLoader::loadMaterial(const char *filename, const CMap *c) {
+	Common::String fname = Common::String(filename) + "@" + c->filename();
 	fname.toLowercase();
-	Resource *ptr = getFileFromCache(fname.c_str());
+	Material *ptr = (Material *)getFileFromCache(fname.c_str());
 
 	if (ptr) {
-		return dynamic_cast<Material *>(ptr);
+		return ptr;
 	}
 
 	Block *b = getFileBlock(filename);
@@ -310,13 +310,13 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap &c) {
 	return result;
 }
 
-Model *ResourceLoader::loadModel(const char *filename, const CMap &c) {
+Model *ResourceLoader::loadModel(const char *filename, const CMap *c) {
 	Common::String fname = filename;
 	fname.toLowercase();
-	Resource *ptr = getFileFromCache(fname.c_str());
+	Model *ptr = (Model *)getFileFromCache(fname.c_str());
 
 	if (ptr) {
-		return dynamic_cast<Model *>(ptr);
+		return ptr;
 	}
 
 	Block *b = getFileBlock(filename);

@@ -357,8 +357,6 @@ Common::Error GrimEngine::run() {
 	Bitmap *splash_bm = NULL;
 	if (!(_gameFlags & GF_DEMO))
 		splash_bm = g_resourceloader->loadBitmap("splash.bm");
-	if (splash_bm)
-		splash_bm->ref();
 
 	g_driver->clearScreen();
 
@@ -366,9 +364,6 @@ Common::Error GrimEngine::run() {
 		splash_bm->draw();
 
 	g_driver->flipBuffer();
-
-	if (splash_bm)
-		splash_bm->deref();
 
 	lua_iolibopen();
 	lua_strlibopen();
@@ -619,7 +614,7 @@ void GrimEngine::handleDebugLoadResource() {
 	} else if (strstr(buf, ".mat")) {
 		CMap *cmap = g_resourceloader->loadColormap("item.cmp");
 		warning("Default colormap applied to resources loaded in this fashion");
-		resource = (void *)g_resourceloader->loadMaterial(buf, *cmap);
+		resource = (void *)g_resourceloader->loadMaterial(buf, cmap);
 	} else {
 		warning("Resource type not understood");
 	}
@@ -995,7 +990,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *savedState) {
 		error("Unable to store screenshot");
 	}
 	savedState->endSection();
-	delete screenshot;
+	g_grim->killBitmap(screenshot);
 	printf("GrimEngine::StoreSaveGameImage() finished.\n");
 }
 

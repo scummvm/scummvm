@@ -2701,7 +2701,6 @@ static void GetImage() {
 	}
 	const char *bitmapName = lua_getstring(nameObj);
 	Bitmap *image = g_resourceloader->loadBitmap(bitmapName);
-	image->luaRef();
 	lua_pushusertag(image, MKID_BE('VBUF'));
 }
 
@@ -2864,9 +2863,7 @@ static void KillTextObject() {
 
 	if (lua_isuserdata(textObj) && lua_tag(textObj) == MKID_BE('TEXT')) {
 		TextObject *textObject = static_cast<TextObject *>(lua_getuserdata(textObj));
-		// TODO rewrote removing, but change only status, I guess disable or flag to removal
-		// as it's done in original engine
-		g_grim->killTextObject(textObject);
+		textObject->setDisabled(true);
 	}
 }
 
@@ -2954,7 +2951,9 @@ static void GetTextObjectDimensions() {
 
 static void ExpireText() {
 	// Expire all the text objects
-	g_grim->killTextObjects();
+	for (GrimEngine::TextListType::const_iterator i = g_grim->textsBegin(); i != g_grim->textsEnd(); i++)
+		(*i)->setDisabled(true);
+
 	// Cleanup actor references to deleted text objects
 	for (GrimEngine::ActorListType::const_iterator i = g_grim->actorsBegin(); i != g_grim->actorsEnd(); i++)
 		(*i)->lineCleanup();
@@ -3440,7 +3439,6 @@ static void ScreenShot() {
 	Bitmap *screenshot = g_driver->getScreenshot(width, height);
 	g_grim->setMode(mode);
 	if (screenshot) {
-		screenshot->luaRef();
 		lua_pushusertag(screenshot, MKID_BE('VBUF'));
 	} else {
 		lua_pushnil();
@@ -3467,9 +3465,8 @@ static void GetSaveGameImage() {
 	dataSize = savedState->beginSection('SIMG');
 	data = new char[dataSize];
 	savedState->read(data, dataSize);
-	screenshot = new Bitmap(data, width, height, "screenshot");
+	screenshot = g_grim->registerBitmap(data, width, height, "screenshot");
 	if (screenshot) {
-		screenshot->luaRef();
 		lua_pushusertag(screenshot, MKID_BE('VBUF'));
 	} else {
 		lua_pushnil();
@@ -3587,7 +3584,6 @@ static void LockFont() {
 		const char *fontName = lua_getstring(param1);
 		Font *result = g_resourceloader->loadFont(fontName);
 		if (result) {
-			result->luaRef();
 			lua_pushusertag(result, MKID_BE('FONT'));
 			g_grim->registerFont(result);
 			return;

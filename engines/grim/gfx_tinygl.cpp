@@ -31,6 +31,7 @@
 #include "engines/grim/material.h"
 #include "engines/grim/font.h"
 #include "engines/grim/gfx_tinygl.h"
+#include "engines/grim/grim.h"
 
 namespace Grim {
 
@@ -779,7 +780,7 @@ Bitmap *GfxTinyGL::getScreenshot(int w, int h) {
 		}
 	}
 
-	Bitmap *screenshot = new Bitmap((char *)buffer, w, h, "screenshot");
+	Bitmap *screenshot = g_grim->registerBitmap((char *)buffer, w, h, "screenshot");
 	delete[] buffer;
 	return screenshot;
 }

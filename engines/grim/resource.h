@@ -41,63 +41,12 @@ class Material;
 class Model;
 class LipSync;
 
-class Resource {
-public:
-	Resource(const char *filename) :
-		_fname(filename), _ref(0), _luaRef(false) { }
-	Resource(const Resource &r) : _fname(r._fname), _ref(0), _luaRef(false) {}
-	virtual ~Resource() { }
-	void ref() { _ref++; }
-	void deref();
-	const char *filename() const { return _fname.c_str(); }
-
-	void luaRef() { if (!_luaRef) { ref(); _luaRef = true; } }
-	void luaGc() { if (_luaRef) { _luaRef = false; deref(); } }
-
-private:
-	Common::String _fname;
-	int _ref;
-	bool _luaRef;
-};
-
-template <class T>
-class ResPtr {
-public:
-	ResPtr() { _ptr = NULL; }
-	ResPtr(const ResPtr &p) { _ptr = p._ptr; if (_ptr) _ptr->ref(); }
-	ResPtr(T* ptr) { _ptr = ptr; if (_ptr) _ptr->ref(); }
-	operator T*() { return _ptr; }
-	operator const T*() const { return _ptr; }
-	T& operator *() { return *_ptr; }
-	const T& operator *() const { return *_ptr; }
-	T* operator ->() { return _ptr; }
-	const T* operator ->() const { return _ptr; }
-	ResPtr& operator =(T* ptr) {
-		if (_ptr == ptr) return *this;
-		if (_ptr) _ptr->deref();
-		_ptr = ptr;
-		if (_ptr) _ptr->ref();
-		return *this;
-	}
-	ResPtr& operator =(const ResPtr& p) {
-	if (this == &p || _ptr == p._ptr) return *this;
-		if (_ptr) _ptr->deref();
-		_ptr = p._ptr;
-		if (_ptr) _ptr->ref();
-		return *this;
-	}
-	~ResPtr() { if (_ptr) _ptr->deref(); }
-
-private:
-	T* _ptr;
-};
-
 class ResourceLoader {
 public:
 	bool fileExists(const char *filename) const;
 	Block *getFileBlock(const char *filename) const;
 	Common::File *openNewStreamFile(const char *filename) const;
-	LuaFile *openNewStreamLua(const char *filename) const;
+	LuaFile *openNewStreamLuaFile(const char *filename) const;
 	int fileLength(const char *filename) const;
 
 	Bitmap *loadBitmap(const char *fname);
@@ -105,23 +54,23 @@ public:
 	Costume *loadCostume(const char *fname, Costume *prevCost);
 	Font *loadFont(const char *fname);
 	KeyframeAnim *loadKeyframe(const char *fname);
-	Material *loadMaterial(const char *fname, const CMap &c);
-	Model *loadModel(const char *fname, const CMap &c);
+	Material *loadMaterial(const char *fname, const CMap *c);
+	Model *loadModel(const char *fname, const CMap *c);
 	LipSync *loadLipSync(const char *fname);
 	void uncache(const char *fname);
 
 	struct ResourceCache {
 		char *fname;
-		Resource *resPtr;
+		void *resPtr;
 	};
 
 	ResourceLoader();
 	ResourceLoader(const ResourceLoader &);
 	~ResourceLoader();
 	const Lab *getLab(const char *filename) const;
-	Resource *getFileFromCache(const char *filename);
+	void *getFileFromCache(const char *filename);
 	ResourceLoader::ResourceCache *getEntryFromCache(const char *filename);
-	void putIntoCache(Common::String fname, Resource *res);
+	void putIntoCache(Common::String fname, void *res);
 
 private:
 
@@ -137,13 +86,6 @@ private:
 };
 
 extern ResourceLoader *g_resourceloader;
-
-inline void Resource::deref() {
-	if (--_ref == 0) {
-		g_resourceloader->uncache(_fname.c_str());
-		delete this;
-	}
-}
 
 } // end of namespace Grim
 

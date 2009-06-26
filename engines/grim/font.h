@@ -30,7 +30,7 @@
 
 namespace Grim {
 
-class Font : public Resource {
+class Font {
 public:
 	Font(const char *filename, const char *data, int len);
 	~Font();
@@ -66,6 +66,7 @@ private:
 	CharHeader *_charHeaders;
 	byte *_fontData;
 	Common::String _filename;
+	Common::String _fname;
 };
 
 } // end of namespace Grim

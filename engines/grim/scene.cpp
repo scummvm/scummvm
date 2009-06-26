@@ -40,7 +40,7 @@ Scene::Scene(const char *name, const char *buf, int len) :
 
 	ts.expectString("section: colormaps");
 	ts.scanString(" numcolormaps %d", 1, &_numCmaps);
-	_cmaps = new ResPtr<CMap>[_numCmaps];
+	_cmaps = new CMap*[_numCmaps];
 	char cmap_name[256];
 	for (int i = 0; i < _numCmaps; i++) {
 		ts.scanString(" colormap %256s", 1, cmap_name);

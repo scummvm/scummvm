@@ -80,7 +80,7 @@ public:
 		virtual ~Component() { }
 
 	protected:
-		ResPtr<CMap> _cmap, _previousCmap;
+		CMap *_cmap, *_previousCmap;
 		tag32 _tag;
 		int _parentID;
 		bool _visible;
@@ -147,7 +147,7 @@ private:
 		friend class Costume;
 	};
 
-	ResPtr<CMap> _cmap;
+	CMap *_cmap;
 	int _numChores;
 	Chore *_chores;
 	Graphics::Matrix4 _matrix;

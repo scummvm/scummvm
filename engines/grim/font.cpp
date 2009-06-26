@@ -30,8 +30,8 @@
 
 namespace Grim {
 
-Font::Font(const char *filename, const char *data, int /*len*/) :
-	Resource(filename) {
+Font::Font(const char *filename, const char *data, int /*len*/) {
+	_fname = filename;
 
 	_filename = filename;
 	_numChars = READ_LE_UINT32(data);
