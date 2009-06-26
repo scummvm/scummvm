@@ -30,6 +30,7 @@
 #include "common/rect.h"
 #include "sci/tools.h"
 #include "sci/gfx/palette.h"
+#include "graphics/pixelformat.h"
 
 namespace Sci {
 
@@ -70,8 +71,10 @@ struct gfx_mode_t {
 	                  // Palette mode is only supported for bytespp = 1
 
 	/* Color masks */
+	// TODO: remove those
 	uint32 red_mask, green_mask, blue_mask, alpha_mask;
 	short red_shift, green_shift, blue_shift, alpha_shift;
+	Graphics::PixelFormat format;
 
 	/* Each of the mask/shift pairs describe where the corresponding color
 	** values are stored for the described mode. Internally, color

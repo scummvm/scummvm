@@ -26,18 +26,19 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/primitives.h"
+#include "graphics/surface.h"
 
 #include "sci/sci.h"
 #include "sci/gfx/gfx_driver.h"
 #include "sci/gfx/gfx_tools.h"
 
+
 namespace Sci {
 
-GfxDriver::GfxDriver(int xfact, int yfact, int bytespp) {
+GfxDriver::GfxDriver(int xfact, int yfact, Graphics::PixelFormat format) {
 	int i;
 
-	Graphics::PixelFormat format(bytespp, 0, 0, 0, 0, 0, 0, 0, 0);
-	_mode = gfx_new_mode(xfact, yfact, format, new Palette(256), 0);
+	_mode = gfx_new_mode(xfact, yfact, format, format.bytesPerPixel == 1 ? new Palette(256) : 0, 0);
 	_mode->xsize = xfact * 320;
 	_mode->ysize = yfact * 200;
 
@@ -50,14 +51,15 @@ GfxDriver::GfxDriver(int xfact, int yfact, int bytespp) {
 	// create the visual buffers
 	for (i = 0; i < 2; i++) {
 		_visual[i] = NULL;
-		_visual[i] = new byte[_mode->xsize * _mode->ysize];
+		_visual[i] = new byte[_mode->xsize * _mode->ysize * _mode->bytespp];
 		if (!_visual[i]) {
 			error("Out of memory: Could not allocate visual buffers! (%dx%d)\n", _mode->xsize, _mode->ysize);
 		}
-		memset(_visual[i], 0, _mode->xsize * _mode->ysize);
+		memset(_visual[i], 0, _mode->xsize * _mode->ysize * _mode->bytespp);
 	}
 
-	_mode->palette->name = "global";
+	if (_mode->palette)
+		_mode->palette->name = "global";
 }
 
 GfxDriver::~GfxDriver() {
@@ -76,10 +78,12 @@ GfxDriver::~GfxDriver() {
 
 // Drawing operations
 
+template<int COPY_BYTES, typename SIZETYPE, int EXTRA_BYTE_OFFSET>
 static void drawProc(int x, int y, int c, void *data) {
 	GfxDriver *drv = (GfxDriver *)data;
 	byte *p = drv->getVisual0();
-	p[y * 320* drv->getMode()->xfact + x] = c;
+	SIZETYPE col = c << (EXTRA_BYTE_OFFSET * 8);
+	memcpy(p + (y * 320* drv->getMode()->xfact + x) * COPY_BYTES, &col, COPY_BYTES);
 }
 
 int GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t color, 
@@ -89,6 +93,28 @@ int GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t colo
 	int yfact = (line_mode == GFX_LINE_MODE_FINE)? 1: _mode->yfact;
 	int xsize = _mode->xsize;
 	int ysize = _mode->ysize;
+
+	void (*modeDrawProc)(int,int,int,void*);
+	switch (_mode->bytespp) {
+	case 1:
+		modeDrawProc = drawProc<1, uint8, 0>;
+		break;
+	case 2:
+		modeDrawProc = drawProc<2, uint16, 0>;
+		break;
+	case 3:
+#ifdef SCUMM_BIG_ENDIAN
+		modeDrawProc = drawProc<3, uint32, 1>;
+#else
+		modeDrawProc = drawProc<3, uint32, 0>;
+#endif
+		break;
+	case 4:
+		modeDrawProc = drawProc<4, uint32, 0>;
+		break;
+	default:
+		GFXERROR("Invalid mode->bytespp=%d\n", _mode->bytespp);
+	}
 
 	if (color.mask & GFX_MASK_VISUAL) {
 		Common::Point nstart, nend;
@@ -101,7 +127,7 @@ int GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t colo
 				nend.x = CLIP<int16>(end.x + xc, 0, xsize - 1);
 				nend.y = CLIP<int16>(end.y + yc, 0, ysize - 1);
 
-				Graphics::drawLine(nstart.x, nstart.y, nend.x, nend.y, scolor, drawProc, this);
+				Graphics::drawLine(nstart.x, nstart.y, nend.x, nend.y, scolor, modeDrawProc, this);
 
 				if (color.mask & GFX_MASK_PRIORITY) {
 					gfx_draw_line_pixmap_i(_priority[0], nstart, nend, color.priority);
@@ -117,7 +143,8 @@ int GfxDriver::drawFilledRect(rect_t rect, gfx_color_t color1, gfx_color_t color
 	gfx_rectangle_fill_t shade_mode) {
 	if (color1.mask & GFX_MASK_VISUAL) {
 		for (int i = rect.y; i < rect.y + rect.height; i++) {
-			memset(_visual[0] + i * _mode->xsize + rect.x, color1.visual.parent_index, rect.width);
+			memset(_visual[0] + (i * _mode->xsize + rect.x) * _mode->bytespp,
+			       color1.visual.parent_index, rect.width * _mode->bytespp);
 		}
 	}
 
@@ -137,8 +164,10 @@ int GfxDriver::drawPixmap(gfx_pixmap_t *pxm, int priority, rect_t src, rect_t de
 		return GFX_ERROR;
 	}
 
-	gfx_crossblit_pixmap(_mode, pxm, priority, src, dest, _visual[bufnr], _mode->xsize,
-	                     _priority[bufnr]->index_data, _priority[bufnr]->index_width, 1, 0);
+	gfx_crossblit_pixmap(_mode, pxm, priority, src, dest, _visual[bufnr],
+	                     _mode->xsize * _mode->bytespp,
+	                     _priority[bufnr]->index_data,
+	                     _priority[bufnr]->index_width, 1, 0);
 
 	return GFX_OK;
 }
@@ -160,7 +189,9 @@ int GfxDriver::grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map) {
 		pxm->width = src.width;
 		pxm->height = src.height;
 		for (int i = 0; i < src.height; i++) {
-			memcpy(pxm->data + i * src.width, _visual[0] + (i + src.y) * _mode->xsize + src.x, src.width);
+			memcpy(pxm->data + i * src.width * _mode->bytespp,
+			       _visual[0] + _mode->bytespp * ((i + src.y) * _mode->xsize + src.x),
+			       src.width * _mode->bytespp);
 		}
 		break;
 
@@ -192,17 +223,18 @@ int GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 	switch (buffer) {
 	case GFX_BUFFER_BACK:
 		for (int i = 0; i < src.height; i++) {
-			memcpy(_visual[0] + (dest.y + i) * _mode->xsize + dest.x,
-			       _visual[1] + (src.y + i) * _mode->xsize + src.x, src.width);
+			memcpy(_visual[0] + _mode->bytespp * ( (dest.y + i) * _mode->xsize + dest.x),
+			       _visual[1] + _mode->bytespp * ( (src.y + i) * _mode->xsize + src.x), src.width * _mode->bytespp );
 		}
 
 		if ((src.x == dest.x) && (src.y == dest.y))
 			gfx_copy_pixmap_box_i(_priority[0], _priority[1], src);
 		break;
-	case GFX_BUFFER_FRONT:
-		g_system->copyRectToScreen(_visual[0] + src.x + src.y * _mode->xsize, _mode->xsize, dest.x, dest.y, src.width, src.height);
+	case GFX_BUFFER_FRONT: {
+		g_system->copyRectToScreen(_visual[0] + _mode->bytespp * (src.x + src.y * _mode->xsize), _mode->xsize * _mode->bytespp, dest.x, dest.y, src.width, src.height);
 		g_system->updateScreen();
 		break;
+	}
 	default:
 		GFXERROR("Invalid buffer %d in update!\n", buffer);
 		return GFX_ERROR;
@@ -212,7 +244,7 @@ int GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 }
 
 int GfxDriver::setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
-	memcpy(_visual[1], pic->data, _mode->xsize * _mode->ysize);
+	memcpy(_visual[1], pic->data, _mode->xsize * _mode->ysize * _mode->bytespp);
 	gfx_copy_pixmap_box_i(_priority[1], priority, gfx_rect(0, 0, _mode->xsize, _mode->ysize));
 
 	return GFX_OK;

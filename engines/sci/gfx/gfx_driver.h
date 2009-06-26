@@ -29,6 +29,8 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/uinput.h"
 
+#include "graphics/pixelformat.h"
+
 namespace Sci {
 
 enum gfx_buffer_t {
@@ -66,12 +68,11 @@ class GfxDriver {
 public:
 	/*** Initialization ***/
 
-	GfxDriver(int xfact, int yfact, int bytespp);
+	GfxDriver(int xfact, int yfact, Graphics::PixelFormat mode);
 	/* Attempts to initialize a specific graphics mode
 	** Parameters: (int x int) xres, yres: Horizontal and vertical scaling
 	**                         factors
-	**             (int) bytespp: Any of GFX_COLOR_MODE_*. GFX_COLOR_MODE_INDEX
-	**                   implies color index mode.
+	**             (PixelFormat) mode: The mode to use
 	** Returns   : (int) GFX_OK on success, GFX_ERROR if the mode could not be
 	**                   set, or GFX_FATAL if the graphics target is unuseable.
 	** The scaling factors apply to the standard SCI resolution of 320x200 pixels

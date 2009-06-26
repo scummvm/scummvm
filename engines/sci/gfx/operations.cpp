@@ -411,9 +411,9 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 	(*pixmap)->palette = new Palette(default_colors, DEFAULT_COLORS_NR);
 }
 
-int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options, ResourceManager *resManager,
-			   int xfact, int yfact, gfx_color_mode_t bpp) {
-	int color_depth = bpp ? bpp : 1;
+int gfxop_init(int version, bool isVGA, GfxState *state,
+				gfx_options_t *options, ResourceManager *resManager,
+				Graphics::PixelFormat mode, int xfact, int yfact) {
 	int initialized = 0;
 
 	BASIC_CHECKS(GFX_FATAL);
@@ -430,7 +430,7 @@ int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options,
 	state->pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	state->_dirtyRects.clear();
 
-	state->driver = new GfxDriver(xfact, yfact, bpp);
+	state->driver = new GfxDriver(xfact, yfact, mode);
 
 	state->gfxResMan = new GfxResManager(version, isVGA, state->options, state->driver, resManager);
 
@@ -1165,8 +1165,10 @@ static int _gfxop_set_pointer(GfxState *state, gfx_pixmap_t *pxm, Common::Point 
 	// may change when a new PIC is loaded. The cursor has to be regenerated
 	// from this pxm at that point. (An alternative might be to ensure the
 	// cursor only uses colours in the static part of the palette?)
-	if (pxm && pxm->palette)
+	if (pxm && state->driver->getMode()->palette) {
+		assert(pxm->palette);
 		pxm->palette->mergeInto(state->driver->getMode()->palette);
+	}
 	state->driver->setPointer(pxm, hotspot);
 
 	return GFX_OK;
@@ -1761,7 +1763,8 @@ static int _gfxop_set_pic(GfxState *state) {
 	// FIXME: The _gfxop_install_pixmap call below updates the OSystem palette.
 	// This is too soon, since it causes brief palette corruption until the
 	// screen is updated too. (Possibly related: EngineState::pic_not_valid .)
-	state->pic->visual_map->palette->forceInto(state->driver->getMode()->palette);
+	if (state->driver->getMode()->palette)
+		state->pic->visual_map->palette->forceInto(state->driver->getMode()->palette);
 	_gfxop_install_pixmap(state->driver, state->pic->visual_map);
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS

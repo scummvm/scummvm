@@ -102,7 +102,15 @@ SciEngine::~SciEngine() {
 }
 
 Common::Error SciEngine::run() {
+	Graphics::PixelFormat gfxmode;
+#ifdef ENABLE_RGB_COLOR
+	gfxmode = _system->getSupportedFormats().front();
+	initGraphics(320, 200, false, gfxmode);
+	// TODO: check if this succeeded? (How?)
+#else
+	gfxmode = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(320, 200, false);
+#endif
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
@@ -222,7 +230,7 @@ Common::Error SciEngine::run() {
 #endif
 
 	bool isVGA = _resmgr->_sciVersion >= SCI_VERSION_01_VGA && !(getFlags() & GF_SCI1_EGA);
-	if (gfxop_init(_resmgr->_sciVersion, isVGA, &gfx_state, &gfx_options, _resmgr)) {
+	if (gfxop_init(_resmgr->_sciVersion, isVGA, &gfx_state, &gfx_options, _resmgr, gfxmode, 1, 1)) {
 		warning("Graphics initialization failed. Aborting...");
 		return Common::kUnknownError;
 	}

@@ -268,7 +268,8 @@ void GfxResManager::setStaticPalette(Palette *newPalette)
 	_staticPalette = newPalette;
 	_staticPalette->name = "static palette";
 
-	_staticPalette->mergeInto(_driver->getMode()->palette);
+	if (_driver->getMode()->palette)
+		_staticPalette->mergeInto(_driver->getMode()->palette);
 }
 
 #if 0

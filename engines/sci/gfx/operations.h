@@ -136,14 +136,14 @@ struct GfxState {
 /* Fundamental operations */
 /**************************/
 
-int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options, ResourceManager *resManager,
-			   int xfact = 1, int yfact = 1, gfx_color_mode_t bpp = GFX_COLOR_MODE_INDEX);
+int gfxop_init(int version, bool isVGA, GfxState *state,
+			gfx_options_t *options, ResourceManager *resManager,
+			Graphics::PixelFormat mode, int xfact = 1, int yfact = 1);
 /* Initializes a graphics mode
 ** Parameters: (int) version: The interpreter version
 **             (GfxState *) state: The state to initialize
 **             (int x int) xfact, yfact: Horizontal and vertical scale factors
-**             (gfx_color_mode_t) bpp: Bytes per pixel to initialize with, or
-**                                     0 (GFX_COLOR_MODE_AUTO) to auto-detect
+**             (PixelFormat) mode: Graphics mode to use
 **             (gfx_options_t *) options: Rendering options
 **             (void *) misc_info: Additional information for the interpreter
 **                      part of the resource loader
