@@ -43,11 +43,8 @@ class LipSync;
 
 class ResourceLoader {
 public:
-	bool fileExists(const char *filename) const;
-	Block *getFileBlock(const char *filename) const;
-	Common::File *openNewStreamFile(const char *filename) const;
-	LuaFile *openNewStreamLuaFile(const char *filename) const;
-	int fileLength(const char *filename) const;
+	ResourceLoader();
+	~ResourceLoader();
 
 	Bitmap *loadBitmap(const char *fname);
 	CMap *loadColormap(const char *fname);
@@ -57,21 +54,24 @@ public:
 	Material *loadMaterial(const char *fname, const CMap *c);
 	Model *loadModel(const char *fname, const CMap *c);
 	LipSync *loadLipSync(const char *fname);
+	Block *getFileBlock(const char *filename) const;
+	Common::File *openNewStreamFile(const char *filename) const;
+	LuaFile *openNewStreamLuaFile(const char *filename) const;
 	void uncache(const char *fname);
+	bool fileExists(const char *filename) const;
+	int fileLength(const char *filename) const;
 
 	struct ResourceCache {
 		char *fname;
 		void *resPtr;
 	};
 
-	ResourceLoader();
-	~ResourceLoader();
+private:
+
 	const Lab *getLab(const char *filename) const;
 	void *getFileFromCache(const char *filename);
 	ResourceLoader::ResourceCache *getEntryFromCache(const char *filename);
 	void putIntoCache(Common::String fname, void *res);
-
-private:
 
 	typedef Common::List<Lab *> LabList;
 	LabList _labs;
