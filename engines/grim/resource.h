@@ -65,7 +65,6 @@ public:
 	};
 
 	ResourceLoader();
-	ResourceLoader(const ResourceLoader &);
 	~ResourceLoader();
 	const Lab *getLab(const char *filename) const;
 	void *getFileFromCache(const char *filename);
@@ -80,9 +79,6 @@ private:
 
 	Common::Array<ResourceCache> _cache;
 	bool _cacheDirty;
-
-	// Shut up pointless g++ warning
-	friend class dummy;
 };
 
 extern ResourceLoader *g_resourceloader;
