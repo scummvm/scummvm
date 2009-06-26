@@ -1789,7 +1789,7 @@ int gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette) {
 	if (state->driver->getMode()->xfact == 1 && state->driver->getMode()->yfact == 1) {
 		state->pic_unscaled = state->pic;
 	} else {
-		state->pic = state->gfxResMan->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, false);
+		state->pic_unscaled = state->gfxResMan->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, false);
 	}
 
 	if (!state->pic || !state->pic_unscaled) {
