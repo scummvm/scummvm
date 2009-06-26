@@ -304,13 +304,14 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 			memcpy(filename, text+1, end-1-text);
 	}
 
-	if (filename[0] && (_vm->speechEnabled() || _vm->gameFlags().platform == Common::kPlatformPC98))
+	const bool isPC98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
+	if (filename[0] && (_vm->speechEnabled() || isPC98))
 		_vm->sound()->voicePlay(filename);
 
 	if (text[0] == '$')
 		text = strchr(text + 1, '$') + 1;
 
-	if (_vm->gameFlags().platform != Common::kPlatformPC98)
+	if (!isPC98)
 		setupTextPalette((flags < 0) ? 1 : flags, 0);
 
 	if (flags < 0) {
@@ -340,10 +341,16 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 
 		int width = _screen->getTextWidth(str);
 
-		if (flags >= 0)
-			_screen->printText(str, (320 - width) >> 1, 160 + heightAdd, 0xF0, 0x00);
-		else
+		if (flags >= 0) {
+			if (isPC98) {
+				static const uint8 colorMap[] = { 0xE1, 0xE1, 0xC1, 0xA1, 0x81, 0x61 };
+				_screen->printText(str, (320 - width) >> 1, 160 + heightAdd, colorMap[flags], 0x00);
+			} else {
+				_screen->printText(str, (320 - width) >> 1, 160 + heightAdd, 0xF0, 0x00);
+			}
+		} else {
 			_screen->printText(str, (320 - width) >> 1, 188, 0xF0, 0x00);
+		}
 
 		heightAdd += _screen->getFontHeight();
 		str += strlen(str);
