@@ -138,6 +138,21 @@ bool Screen::init() {
 
 	setScreenPalette(getPalette(0));
 
+	// We setup the PC98 text mode palette at [16, 24], since that will be used
+	// for KANJI characters in Lands of Lore.
+	if (_use16ColorMode && _vm->gameFlags().platform == Common::kPlatformPC98) {
+		uint8 palette[8 * 4];
+
+		for (int i = 0; i < 8; ++i) {
+			palette[i * 4 + 0] = ((i >> 1) & 1) * 0xFF;
+			palette[i * 4 + 1] = ((i >> 2) & 1)	* 0xFF;
+			palette[i * 4 + 2] = ((i >> 0) & 1) * 0xFF;
+			palette[i * 4 + 3] = 0;
+
+			_system->setPalette(palette, 16, 8);
+		}
+	}
+
 	_curDim = 0;
 	_charWidth = 0;
 	_charOffset = 0;
