@@ -3073,6 +3073,9 @@ static void DrawPolygon() {
 	lua_Object pointObj;
 	Common::Point p1, p2, p3, p4;
 	Color color;
+	color._vals[0] = 0;
+	color._vals[1] = 0;
+	color._vals[2] = 0;
 
 	lua_Object tableObj1 = lua_getparam(1);
 	if (!lua_istable(tableObj1)) {
@@ -3288,6 +3291,9 @@ static void ChangePrimitive() {
 static void DrawRectangle() {
 	Common::Point p1, p2;
 	Color color;
+	color._vals[0] = 0;
+	color._vals[1] = 0;
+	color._vals[2] = 0;
 	lua_Object objX1 = lua_getparam(1);
 	lua_Object objY1 = lua_getparam(2);
 	lua_Object objX2 = lua_getparam(3);
@@ -3328,6 +3334,9 @@ static void DrawRectangle() {
 static void BlastRect() {
 	Common::Point p1, p2;
 	Color color;
+	color._vals[0] = 0;
+	color._vals[1] = 0;
+	color._vals[2] = 0;
 	lua_Object objX1 = lua_getparam(1);
 	lua_Object objY1 = lua_getparam(2);
 	lua_Object objX2 = lua_getparam(3);
