@@ -4006,12 +4006,17 @@ void LoLEngine::loadMapLegendData(int level) {
 }
 
 void LoLEngine::drawMapPage(int pageNum) {
+	// WORKAROUND for French version. The Text does not always properly fit the screen there.
+	int8 textOffset = (_lang == 1) ? -2 : 0;
+
 	for (int i = 0; i < 2; i++) {
 		_screen->loadBitmap("parch.cps", pageNum, pageNum, &_screen->getPalette(3));
+		if (_lang == 1)
+			_screen->copyRegion(236, 16, 236 + textOffset, 16, -textOffset, 1, pageNum, pageNum, Screen::CR_NO_P_CHECK);
 
 		int cp = _screen->setCurPage(pageNum);
 		Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
-		_screen->printText(getLangString(_autoMapStrings[_currentMapLevel]), 236, 8, 1, 0);
+		_screen->printText(getLangString(_autoMapStrings[_currentMapLevel]), 236 + textOffset, 8, 1, 0);
 		uint16 blX = mapGetStartPosX();
 		uint16 bl = (mapGetStartPosY() << 5) + blX;
 
@@ -4090,7 +4095,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 			if (l[2] == 0xffff)
 				continue;
 
-			printMapText(l[2], 244, (tY << 3) + 22);
+			printMapText(l[2], 244 + textOffset, (tY << 3) + 22);
 
 			if (l[5] == 0xffff) {
 				tY++;
@@ -4100,7 +4105,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 			uint16 cbl2 = l[3] + (l[4] << 5);
 			_levelBlockProperties[cbl2].flags |= 7;
 			_screen->drawShape(2, _automapShapes[l[5] << 2], (l[3] - sx) * 7 + _automapTopLeftX - 3, (l[4] - sy) * 6 + _automapTopLeftY - 3, 0, 0);
-			_screen->drawShape(2, _automapShapes[l[5] << 2], 231, (tY << 3) + 19, 0, 0);
+			_screen->drawShape(2, _automapShapes[l[5] << 2], 231 + textOffset, (tY << 3) + 19, 0, 0);
 			tY++;
 		}
 
@@ -4109,9 +4114,9 @@ void LoLEngine::drawMapPage(int pageNum) {
 		for (int ii = 0; ii < 11; ii++) {
 			if (!_defaultLegendData[ii].enable)
 				continue;
-			_screen->copyBlockAndApplyOverlay(_screen->_curPage, 235, (tY << 3) + 21, _screen->_curPage, 235, (tY << 3) + 21, 7, 6, 0, _mapOverlay);
-			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232, (tY << 3) + 18 + _defaultLegendData[ii].x, 0, 0);
-			printMapText(_defaultLegendData[ii].stringId, 244, (tY << 3) + 22);
+			_screen->copyBlockAndApplyOverlay(_screen->_curPage, 235, (tY << 3) + 21, _screen->_curPage, 235 + textOffset, (tY << 3) + 21, 7, 6, 0, _mapOverlay);
+			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232 + textOffset, (tY << 3) + 18 + _defaultLegendData[ii].x, 0, 0);
+			printMapText(_defaultLegendData[ii].stringId, 244 + textOffset, (tY << 3) + 22);
 			tY++;
 		}
 
