@@ -435,7 +435,7 @@ void Model::Mesh::loadText(TextSplitter *ts, Material *materials) {
 		for (int j = 0; j < verts; j++) {
 			int readlen2;
 
-			if (sscanf(ts->currentLine() + readlen, " %d, %d%n", _faces[num]._vertices[j], _faces[num]._texVertices[j], &readlen2) < 2)
+			if (sscanf(ts->currentLine() + readlen, " %d, %d%n", &_faces[num]._vertices[j], &_faces[num]._texVertices[j], &readlen2) < 2)
 				error("Could not read vertex indices in line '%s'",
 
 			ts->currentLine());
