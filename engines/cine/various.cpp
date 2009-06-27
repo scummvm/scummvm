@@ -1095,8 +1095,8 @@ uint16 executePlayerInput(void) {
 	// This fixes swimming at the bottom of the ocean after
 	// having been thrown into it with the girl.
 	if (g_cine->getGameType() == Cine::GType_OS) {
-		globalVars[251] = globalVars[VAR_MOUSE_X_POS];
-		globalVars[252] = globalVars[VAR_MOUSE_Y_POS];
+		globalVars[VAR_MOUSE_X_POS_2ND] = globalVars[VAR_MOUSE_X_POS];
+		globalVars[VAR_MOUSE_Y_POS_2ND] = globalVars[VAR_MOUSE_Y_POS];
 	}
 
 	return var_5E;
@@ -1501,10 +1501,7 @@ void processSeqListElement(SeqListElement &element) {
 				if (xMoveKeyb != kKeybMoveRight) {
 					adder = -adder;
 				}
-				// FIXME: In Operation Stealth's disassembly global variable 251 is used here
-				//        but it's named as VAR_MOUSE_Y_MODE in ScummVM. Is it correct or a
-				//        left over from Future Wars's reverse engineering?
-				globalVars[VAR_MOUSE_X_POS] = globalVars[251] = ptr1[4] + x + adder;
+				globalVars[VAR_MOUSE_X_POS] = globalVars[VAR_MOUSE_X_POS_2ND] = ptr1[4] + x + adder;
 			}
 
 			if (yMoveKeyb && allowPlayerInput) {
@@ -1512,8 +1509,7 @@ void processSeqListElement(SeqListElement &element) {
 				if (yMoveKeyb != kKeybMoveDown) {
 					adder = -adder;
 				}
-				// TODO: Name currently unnamed global variable 252
-				globalVars[VAR_MOUSE_Y_POS] = globalVars[252] = ptr1[5] + y + adder;
+				globalVars[VAR_MOUSE_Y_POS] = globalVars[VAR_MOUSE_Y_POS_2ND] = ptr1[5] + y + adder;
 			}
 
 			if (globalVars[VAR_MOUSE_X_POS] || globalVars[VAR_MOUSE_Y_POS]) {
