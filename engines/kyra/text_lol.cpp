@@ -33,8 +33,8 @@
 namespace Kyra {
 
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm), _screen(screen),
-	_scriptParameter(0), _animWidth(0), _animColor1(0), _animColor2(0), _animFlag(true), _lineCount(0),
-	_printFlag(false), _lineWidth(0), _numCharsTotal(0), _numCharsLeft(0), _numCharsPrinted(0) {
+	_scriptParameter(0), _lineCount(0),	_printFlag(false), _lineWidth(0), _numCharsTotal(0),
+	_numCharsLeft(0), _numCharsPrinted(0) {
 
 	memset(_stringParameters, 0, 15 * sizeof(char *));
 	_buffer = new char[600];
@@ -138,7 +138,7 @@ void TextDisplayer_LoL::resetDimTextPositions(int dim) {
 	_textDimData[dim].line = 0;
 }
 
-void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, uint8 col2) {
+/*void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, uint8 col2) {
 	static const char defaultStr[] = "<MORE>";
 
 	if (str) {
@@ -152,7 +152,7 @@ void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, ui
 		_animColor1 = 0;
 		_animColor2 = 0;
 	}
-}
+}*/
 
 void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int oldDim = 0;
@@ -496,7 +496,7 @@ void TextDisplayer_LoL::printLine(char *str) {
 	int lines = (sd->h - _screen->_charOffset) / fh;
 
 	while (_textDimData[sdx].line >= lines) {
-		if (lines <= _lineCount && _animFlag) {
+		if (lines <= _lineCount) {
 			_lineCount = 0;
 			textPageBreak();
 			_numCharsPrinted = 0;
@@ -521,8 +521,8 @@ void TextDisplayer_LoL::printLine(char *str) {
 	char c = 0;
 
 	if ((lw + _textDimData[sdx].column) > w) {
-		if ((lines - 1) <= _lineCount && _animFlag)
-			w -= (_animWidth * (_screen->getFontWidth() + _screen->_charWidth));
+		if ((lines - 1) <= _lineCount)
+			w -= (10 * (_screen->getFontWidth() + _screen->_charWidth));
 
 		w -= _textDimData[sdx].column;
 

@@ -850,9 +850,6 @@ void LoLEngine::startup() {
 
 	_loadSuppFilesFlag = 1;
 
-	_txt->setAnimParameters("<MORE>", 10, 31, 0);
-	_txt->setAnimFlag(true);
-
 	_sound->loadSfxFile("LORESFX");
 
 	setMouseCursorToItemInHand();
