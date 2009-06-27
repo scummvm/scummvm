@@ -2931,12 +2931,15 @@ static void MakeTextObject() {
 		setTextObjectParams(textObject, tableObj);
 
 	textObject->setText((char *)text.c_str());
-	textObject->createBitmap();
+	if (!(g_grim->getGameFlags() & GF_DEMO))
+		textObject->createBitmap();
 	g_grim->registerTextObject(textObject);
 
 	lua_pushusertag(textObject, MKID_BE('TEXT'));
-	lua_pushnumber(textObject->getBitmapWidth());
-	lua_pushnumber(textObject->getBitmapHeight());
+	if (!(g_grim->getGameFlags() & GF_DEMO)) {
+		lua_pushnumber(textObject->getBitmapWidth());
+		lua_pushnumber(textObject->getBitmapHeight());
+	}
 }
 
 static void GetTextObjectDimensions() {
