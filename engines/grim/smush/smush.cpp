@@ -287,7 +287,12 @@ void Smush::handleFrameDemo() {
 	} while (pos < size);
 	delete[] frame;
 
-	memcpy(_externalBuffer, _internalBuffer, _width * _height);
+	uint16 *d = (uint16 *)_externalBuffer;
+	for (int l = 0; l < _width * _height; l++) {
+		int index = _internalBuffer[l];
+		uint16 c = ((_pal[index + 0] & 0xF8) << 8) | ((_pal[index + 1] & 0xFC) << 3) | (_pal[index + 2] >> 3);
+		d[l] = c;
+	}
 	_updateNeeded = true;
 
 	_frame++;
@@ -376,7 +381,6 @@ bool Smush::setupAnim(const char *file, bool looping, int x, int y) {
 	tag = _file.readUint32BE();
 	assert(tag == MKID_BE('SANM'));
 	size = _file.readUint32BE();
-	_nbframes = _file.readUint32BE();
 
 	tag = _file.readUint32BE();
 	assert(tag == MKID_BE('SHDR'));
