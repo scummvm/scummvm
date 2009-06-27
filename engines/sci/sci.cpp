@@ -105,7 +105,7 @@ Common::Error SciEngine::run() {
 	Graphics::PixelFormat gfxmode;
 #ifdef ENABLE_RGB_COLOR
 	gfxmode = _system->getSupportedFormats().front();
-	initGraphics(320, 200, false, gfxmode);
+	initGraphics(320, 200, false, &gfxmode);
 	// TODO: check if this succeeded? (How?)
 #else
 	gfxmode = Graphics::PixelFormat::createFormatCLUT8();
