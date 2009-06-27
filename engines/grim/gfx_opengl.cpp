@@ -325,7 +325,7 @@ void GfxOpenGL::setShadowColor(byte r, byte g, byte b) {
 void GfxOpenGL::set3DMode() {
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_ALWAYS);
+	glDepthFunc(GL_LESS);
 }
 
 void GfxOpenGL::drawModelFace(const Model::Face *face, float *vertices, float *vertNormals, float *textureVerts) {
