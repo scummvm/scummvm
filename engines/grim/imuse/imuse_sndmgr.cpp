@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 
+#include "engines/grim/grim.h"
 #include "engines/grim/resource.h"
 
 #include "engines/grim/imuse/imuse_sndmgr.h"
@@ -161,6 +162,9 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 	const char *extension = soundName + strlen(soundName) - 3;
 	byte *ptr = NULL;
 	int headerSize = 0;
+
+	if (g_grim->getGameFlags() & GF_DEMO)
+		return FALSE;
 
 	SoundDesc *sound = allocSlot();
 	if (!sound) {

@@ -423,6 +423,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\grim\smush\blocky8.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\grim\smush\blocky8.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\grim\smush\smush.cpp"
 				>
 			</File>

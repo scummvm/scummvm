@@ -3013,9 +3013,6 @@ static void GetSpeechMode() {
 static void StartFullscreenMovie() {
 	bool looping = getbool(2);
 
-	// don't start smush for GF demo for now
-	if (g_grim->getGameFlags() & GF_DEMO)
-		return;
 	lua_Object name = lua_getparam(1);
 	if (!lua_isstring(name)) {
 		lua_pushnil();

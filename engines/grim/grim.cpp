@@ -352,6 +352,9 @@ Common::Error GrimEngine::run() {
 		error("gfx backend doesn't support hardware rendering");
 #endif
 
+	if (g_grim->getGameFlags() & GF_DEMO)
+		Common::File::addDefaultDirectory(_gameDataDir.getChild("Movies"));
+
 	g_driver->setupScreen(640, 480, fullscreen);
 
 	Bitmap *splash_bm = NULL;

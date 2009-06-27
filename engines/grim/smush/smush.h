@@ -32,6 +32,9 @@
 #include <zlib.h>
 #endif
 
+#include "common/file.h"
+
+#include "engines/grim/smush/blocky8.h"
 #include "engines/grim/smush/blocky16.h"
 
 #include "sound/mixer.h"
@@ -72,8 +75,10 @@ public:
 class Smush {
 private:
 	int32 _nbframes;
+	Blocky8 _blocky8;
 	Blocky16 _blocky16;
 	zlibFile _file;
+	Common::File _f;
 	Audio::SoundHandle _soundHandle;
 	Audio::AppendableAudioStream *_stream;
 
@@ -90,6 +95,8 @@ private:
 	int _x, _y;
 	int _width, _height;
 	byte *_internalBuffer, *_externalBuffer;
+	byte _pal[0x300];
+	int16 _deltaPal[0x300];
 
 public:
 	Smush();
@@ -112,13 +119,16 @@ public:
 private:
 	static void timerCallback(void *ptr);
 	void parseNextFrame();
+	void handleDeltaPalette(byte *src, int32 size);
 	void handleFramesHeader();
+	void handleFrameDemo();
 	void handleFrame();
 	void handleBlocky16(byte *src);
 	void handleWave(const byte *src, uint32 size);
 	void init();
 	void deinit();
 	bool setupAnim(const char *file, bool looping, int x, int y);
+	bool setupAnimDemo(const char *file);
 	void updateGLScreen();
 };
 

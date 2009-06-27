@@ -41,7 +41,10 @@ Smush *g_smush;
 static uint16 smushDestTable[5786];
 
 void Smush::timerCallback(void *) {
-	g_smush->handleFrame();
+	if (g_grim->getGameFlags() & GF_DEMO)
+		g_smush->handleFrameDemo();
+	else
+		g_smush->handleFrame();
 }
 
 Smush::Smush() {
@@ -79,10 +82,15 @@ void Smush::init() {
 	assert(!_internalBuffer);
 	assert(!_externalBuffer);
 
-	_internalBuffer = new byte[_width * _height * 2];
-	_externalBuffer = new byte[_width * _height * 2];
+	if (g_grim->getGameFlags() & GF_DEMO) {
+		_internalBuffer = new byte[_width * _height];
+		_externalBuffer = new byte[_width * _height * 2];
+	} else {
+		_internalBuffer = new byte[_width * _height * 2];
+		_externalBuffer = new byte[_width * _height * 2];
+		vimaInit(smushDestTable);
+	}
 
-	vimaInit(smushDestTable);
 	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
@@ -110,7 +118,10 @@ void Smush::deinit() {
 	_videoLooping = false;
 	_videoFinished = true;
 	_videoPause = true;
-	_file.close();
+	if (g_grim->getGameFlags() & GF_DEMO)
+		_f.close();
+	else
+		_file.close();
 }
 
 void Smush::handleWave(const byte *src, uint32 size) {
@@ -224,6 +235,70 @@ void Smush::handleFrame() {
 	}
 }
 
+static byte delta_color(byte org_color, int16 delta_color) {
+	int t = (org_color * 129 + delta_color) / 128;
+	return CLIP(t, 0, 255);
+}
+
+void Smush::handleDeltaPalette(byte *src, int32 size) {
+	if (size == 0x300 * 3 + 4) {
+		for (int i = 0; i < 0x300; i++)
+			_deltaPal[i] = READ_LE_UINT16(src + (i * 2) + 4);
+		memcpy(_pal, src + 0x600 + 4, 0x300);
+	} else if (size == 6) {
+		for (int i = 0; i < 0x300; i++)
+			_pal[i] = delta_color(_pal[i], _deltaPal[i]);
+	} else {
+		error("Smush::handleDeltaPalette() Wrong size for DeltaPalette");
+	}
+}
+
+void Smush::handleFrameDemo() {
+	uint32 tag;
+	int32 size;
+	int pos = 0;
+
+	if (_videoPause)
+		return;
+
+	if (_videoFinished) {
+		_videoPause = true;
+		return;
+	}
+
+	tag = _f.readUint32BE();
+	assert(tag == MKID_BE('FRME'));
+	size = _f.readUint32BE();
+	byte *frame = new byte[size];
+	_f.read(frame, size);
+
+	do {
+		if (READ_BE_UINT32(frame + pos) == MKID_BE('FOBJ')) {
+			_blocky8.decode(_internalBuffer, frame + pos + 8 + 14);
+			pos += READ_BE_UINT32(frame + pos + 4) + 8;
+		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('IACT')) {
+			pos += READ_BE_UINT32(frame + pos + 4) + 8;
+		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('XPAL')) {
+			handleDeltaPalette(frame + pos + 8, READ_BE_UINT32(frame + pos + 4));
+			pos += READ_BE_UINT32(frame + pos + 4) + 8;
+		} else {
+			error("Smush::handleFrame() unknown tag");
+		}
+	} while (pos < size);
+	delete[] frame;
+
+	memcpy(_externalBuffer, _internalBuffer, _width * _height);
+	_updateNeeded = true;
+
+	_frame++;
+	_movieTime += _speed / 1000;
+	if (_frame == _nbframes) {
+		_videoFinished = true;
+		g_grim->setMode(ENGINE_MODE_NORMAL);
+		return;
+	}
+}
+
 void Smush::handleFramesHeader() {
 	uint32 tag;
 	int32 size;
@@ -249,6 +324,47 @@ void Smush::handleFramesHeader() {
 	delete[] f_header;
 }
 
+bool Smush::setupAnimDemo(const char *file) {
+	uint32 tag;
+	int32 size;
+
+	if (!_f.open(file))
+		return false;
+
+	tag = _f.readUint32BE();
+	assert(tag == MKID_BE('ANIM'));
+	size = _f.readUint32BE();
+
+	tag = _f.readUint32BE();
+	assert(tag == MKID_BE('AHDR'));
+	size = _f.readUint32BE();
+
+	_f.readUint16BE(); // version
+	_nbframes = _f.readUint16LE();
+	_f.readUint16BE(); // unknown
+
+	for (int l = 0; l < 0x300; l++) {
+		_pal[l] = _f.readByte();
+	}
+	_f.readUint32BE();
+	_f.readUint32BE();
+	_f.readUint32BE();
+	_f.readUint32BE();
+	_f.readUint32BE();
+
+	_blocky8.init(640, 480);
+
+	_x = 0;
+	_y = 0;
+	_width = 640;
+	_height = 480;
+	_videoLooping = false;
+	_startPos = NULL;
+	_speed = 66667;
+
+	return true;
+}
+
 bool Smush::setupAnim(const char *file, bool looping, int x, int y) {
 	uint32 tag;
 	int32 size;
@@ -259,11 +375,11 @@ bool Smush::setupAnim(const char *file, bool looping, int x, int y) {
 
 	tag = _file.readUint32BE();
 	assert(tag == MKID_BE('SANM'));
-
 	size = _file.readUint32BE();
+	_nbframes = _file.readUint32BE();
+
 	tag = _file.readUint32BE();
 	assert(tag == MKID_BE('SHDR'));
-
 	size = _file.readUint32BE();
 	byte *s_header = new byte[size];
 	_file.read(s_header, size);
@@ -316,10 +432,16 @@ bool Smush::play(const char *filename, bool looping, int x, int y) {
 		printf("Playing video '%s'.\n", filename);
 
 	// Load the video
-	if (!setupAnim(filename, looping, x, y))
-		return false;
+	if (g_grim->getGameFlags() & GF_DEMO) {
+		if (!setupAnimDemo(filename))
+			return false;
+	} else {
+		if (!setupAnim(filename, looping, x, y))
+			return false;
 
-	handleFramesHeader();
+		handleFramesHeader();
+	}
+
 	if (_videoLooping)
 		_startPos = _file.getPos();
 	init();
