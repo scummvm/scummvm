@@ -34,6 +34,7 @@
 #include "draci/mouse.h"
 #include "draci/screen.h"
 #include "draci/font.h"
+#include "draci/script.h"
 
 namespace Draci {
 
@@ -52,6 +53,7 @@ public:
 	Screen *_screen;
 	Mouse *_mouse;
 	Game *_game;
+	Script *_script;
 
 private:
 	Common::RandomSource _rnd;

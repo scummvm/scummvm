@@ -70,6 +70,7 @@ int DraciEngine::init() {
 	_font = new Font();
 	_mouse = new Mouse(this);
 	_game = new Game();
+	_script = new Script();
 
 	// Load default font
 	_font->setFont(kFontBig);
@@ -108,7 +109,7 @@ int DraciEngine::init() {
 	}	
 
 	// Disassemble GPL script for the first location
-	//gpldisasm(f->_data, f->_length);
+	_script->run(f->_data, f->_length);
 
 	return Common::kNoError;
 }
@@ -214,9 +215,12 @@ int DraciEngine::go() {
 DraciEngine::~DraciEngine() {
 	// Dispose your resources here
  
+ 	// TODO: Investigate possibility of using sharedPtr or similar
 	delete _screen;
 	delete _font;
 	delete _mouse;
+	delete _game;
+	delete _script;
 	
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
