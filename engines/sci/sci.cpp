@@ -106,11 +106,10 @@ Common::Error SciEngine::run() {
 #ifdef ENABLE_RGB_COLOR
 	gfxmode = _system->getSupportedFormats().front();
 	initGraphics(320, 200, false, &gfxmode);
-	// TODO: check if this succeeded? (How?)
 #else
-	gfxmode = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(320, 200, false);
 #endif
+	gfxmode = _system->getScreenFormat();
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
