@@ -144,7 +144,9 @@ void dumpTracksteps(Audio::Tfmx &player, uint16 first, uint16 last) {
 }
 
 void dumpTrackstepsBySong(Audio::Tfmx &player, int song) {
+	debug("Song %02X: Pos %02X - %02X. Tempo: %02X", song, player._subsong[song].songstart, player._subsong[song].songend, player._subsong[song].tempo);
 	dumpTracksteps(player, player._subsong[song].songstart, player._subsong[song].songend);
+	debug("");
 }
 
 void dumpMacro(Audio::Tfmx &player, uint16 macroIndex, uint16 len, uint16 start) {

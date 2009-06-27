@@ -99,9 +99,10 @@ void Tfmx::interrupt() {
 		// see if we have to run the macro-program
 		if (channel.macroRun) {
 			if (!channel.macroWait) {
-				while (macroStep(channel))
-					;
-			} else
+				macroRun(channel);
+				assert( !channel.deferWait ); // we can remove this variable as it should be never true after macroRun?
+			}
+			else
 				--channel.macroWait;
 		}
 
@@ -119,6 +120,14 @@ void Tfmx::interrupt() {
 
 void Tfmx::effects(ChannelContext &channel) {
 	// addBegin
+	if (channel.addBeginLength) {
+		channel.sampleStart += channel.addBeginDelta;
+		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
+		if (!(--channel.addBeginCount)) {
+			channel.addBeginCount = channel.addBeginLength;
+			channel.addBeginDelta = -channel.addBeginDelta;
+		}
+	}
 
 	// vibrato
 	if (channel.vibLength) {
@@ -130,7 +139,6 @@ void Tfmx::effects(ChannelContext &channel) {
 		if (!channel.portaDelta) {
 			// 16x16 bit multiplication, casts needed for the right results
 			channel.period = (uint16)(((uint32)channel.refPeriod * (uint16)((1 << 11) + channel.vibValue)) >> 11);
-			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
 		}
 	}
 
@@ -139,7 +147,7 @@ void Tfmx::effects(ChannelContext &channel) {
 		channel.portaCount = channel.portaSkip;
 
 		bool resetPorta = true;
-		uint16 period = channel.refPeriod;
+		const uint16 period = channel.refPeriod;
 		uint16 portaVal = channel.portaValue;
 
 		if (period > portaVal) {
@@ -153,11 +161,9 @@ void Tfmx::effects(ChannelContext &channel) {
 
 		if (resetPorta) {
 			channel.portaDelta = 0;
-			channel.portaValue = channel.refPeriod & 0x7FF;
-		} else {
+			channel.portaValue = period & 0x7FF;
+		} else
 			channel.period = channel.portaValue = portaVal & 0x7FF;
-			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
-		}
 	}
 
 	// envelope
@@ -209,263 +215,271 @@ static void warnMacroUnimplemented(const byte *macroPtr, int level) {
 #endif
 }
 
-inline bool Tfmx::macroStep(ChannelContext &channel) {
-	const byte *const macroPtr = (byte *)(_resource.getMacroPtr(channel.macroOffset) + channel.macroStep);
-	++channel.macroStep;
+void Tfmx::macroRun(ChannelContext &channel) {
+	bool deferWait = false;
+	for (;;) {
+		const byte *const macroPtr = (byte *)(_resource.getMacroPtr(channel.macroOffset) + channel.macroStep);
+		++channel.macroStep;
 
-	switch (macroPtr[0]) {
-	case 0x00:	// Reset + DMA Off. Parameters: deferWait, addset, vol
-		clearEffects(channel);
-		// FT
-	case 0x13:	// DMA Off. Parameters:  deferWait, addset, vol
-		// TODO: implement PArameters
-		Paula::disableChannel(channel.paulaChannel);
-		channel.deferWait = (macroPtr[1] != 0);
-		if (channel.deferWait) {
-			// if set, then we expect a DMA On in the same tick.
-			channel.period = 4;
-			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
-			Paula::setChannelSampleLen(channel.paulaChannel, 1);
-			// in this state we then need to allow some commands that normally
-			// would halt the macroprogamm to continue instead.
-			// those commands are: Wait, WaitDMA, AddPrevNote, AddNote, SetNote, <unknown Cmd>
-			// DMA On is affected aswell
-			// TODO remember time disabled, remember pending dmaoff?.
-		} else {
-			//TODO ?
-		}
+		switch (macroPtr[0]) {
+		case 0x00:	// Reset + DMA Off. Parameters: deferWait, addset, vol
+			clearEffects(channel);
+			// FT
+		case 0x13:	// DMA Off. Parameters:  deferWait, addset, vol
+			// TODO: implement PArameters
+			Paula::disableChannel(channel.paulaChannel);
+			channel.deferWait = deferWait = (macroPtr[1] != 0);
+			if (deferWait) {
+				// if set, then we expect a DMA On in the same tick.
+				channel.period = 4;
+				//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+				Paula::setChannelSampleLen(channel.paulaChannel, 1);
+				// in this state we then need to allow some commands that normally
+				// would halt the macroprogamm to continue instead.
+				// those commands are: Wait, WaitDMA, AddPrevNote, AddNote, SetNote, <unknown Cmd>
+				// DMA On is affected aswell
+				// TODO remember time disabled, remember pending dmaoff?.
+			} else {
+				//TODO ?
+			}
 
-		if (macroPtr[2])
-			channel.volume = macroPtr[3];
-		else if (macroPtr[3])
-			channel.volume = channel.relVol * 3 + macroPtr[3];
-		else
-			return true;
-		Paula::setChannelVolume(channel.paulaChannel, channel.volume);
-		return true;
+			if (macroPtr[2])
+				channel.volume = macroPtr[3];
+			else if (macroPtr[3])
+				channel.volume = channel.relVol * 3 + macroPtr[3];
+			else
+				continue;
+			Paula::setChannelVolume(channel.paulaChannel, channel.volume);
+			continue;
 
-	case 0x01:	// DMA On
-		channel.dmaIntCount = 0;
-		if (channel.deferWait) {
-			// TODO
-			// there is actually a small delay in the player, but I think that
-			// only allows to clear DMA-State on real Hardware
-		}
-		Paula::setChannelPeriod(channel.paulaChannel, channel.period);
-		Paula::enableChannel(channel.paulaChannel);
-		channel.deferWait = false;
-		return true;
+		case 0x01:	// DMA On
+			channel.dmaIntCount = 0;
+			if (deferWait) {
+				// TODO
+				// there is actually a small delay in the player, but I think that
+				// only allows to clear DMA-State on real Hardware
+			}
+			Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+			Paula::enableChannel(channel.paulaChannel);
+			channel.deferWait = deferWait = false;
+			continue;
 
-	case 0x02:	// SetBeginn. Parameters: SampleOffset(L)
-		channel.sampleStart = READ_BE_UINT32(macroPtr) & 0xFFFFFF;
-		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
-		return true;
+		case 0x02:	// SetBeginn. Parameters: SampleOffset(L)
+			channel.addBeginLength = 0;
+			channel.sampleStart = READ_BE_UINT32(macroPtr) & 0xFFFFFF;
+			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
+			continue;
 
-	case 0x03:	// SetLength. Parameters: SampleLength(W)
-		channel.sampleLen = READ_BE_UINT16(&macroPtr[2]);
-		Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
-		return true;
+		case 0x03:	// SetLength. Parameters: SampleLength(W)
+			channel.sampleLen = READ_BE_UINT16(&macroPtr[2]);
+			Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
+			continue;
 
-	case 0x04:	// Wait. Parameters: Ticks to wait(W).
-		// TODO: some unkown Parameter? (macroPtr[1] & 1)
-		channel.macroWait = READ_BE_UINT16(&macroPtr[2]);
-		return false;
+		case 0x04:	// Wait. Parameters: Ticks to wait(W).
+			// TODO: some unkown Parameter? (macroPtr[1] & 1)
+			channel.macroWait = READ_BE_UINT16(&macroPtr[2]);
+			return;
 
-	case 0x10:	// Loop Key Up. Parameters: Loopcount, MacroStep(W)
-		if (!channel.keyUp)
-			return true;
-		// FT
-	case 0x05:	// Loop. Parameters: Loopcount, MacroStep(W)
-		if (channel.macroLoopCount != 0) {
-			if (channel.macroLoopCount == 0xFF)
-				channel.macroLoopCount = macroPtr[1];
+		case 0x10:	// Loop Key Up. Parameters: Loopcount, MacroStep(W)
+			if (channel.keyUp)
+				continue;
+			// FT
+		case 0x05:	// Loop. Parameters: Loopcount, MacroStep(W)
+			if (channel.macroLoopCount != 0) {
+				if (channel.macroLoopCount == 0xFF)
+					channel.macroLoopCount = macroPtr[1];
+				channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
+			}
+			--channel.macroLoopCount;
+			continue;
+
+		case 0x06:	// Jump. Parameters: MacroIndex, MacroStep(W)
+			channel.macroIndex = macroPtr[1] & (kMaxMacroOffsets - 1);
+			channel.macroOffset = _macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
 			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
-		}
-		--channel.macroLoopCount;
-		return true;
-
-	case 0x06:	// Jump. Parameters: MacroIndex, MacroStep(W)
-		channel.macroIndex = macroPtr[1] & (kMaxMacroOffsets - 1);
-		channel.macroOffset = _macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
-		channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
-		channel.macroLoopCount = 0xFF;
-		return true;
-
-	case 0x07:	// Stop Macro
-		channel.macroRun = false;
-		--channel.macroStep;
-		return false;
-
-	case 0x08:	// AddNote. Parameters: Note, Finetune(W)
-		setNoteMacro(channel, channel.note + macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
-		return channel.deferWait;
-
-	case 0x09:	// SetNote. Parameters: Note, Finetune(W)
-		setNoteMacro(channel, macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
-		return channel.deferWait;
-
-	case 0x0A:	// Clear Effects
-		clearEffects(channel);
-		return true;
-
-	case 0x0B:	// Portamento. Parameters: count, speed
-		channel.portaSkip = macroPtr[1];
-		channel.portaCount = 1;
-		// if porta is already running, then keep using old value
-		if (!channel.portaDelta)
-			channel.portaValue = channel.refPeriod;
-		channel.portaDelta = READ_BE_UINT16(&macroPtr[2]);
-		return true;
-
-	case 0x0C:	// Vibrato. Parameters: Speed, intensity
-		channel.vibLength = macroPtr[1];
-		channel.vibCount = macroPtr[1] / 2;
-		channel.vibDelta = macroPtr[3];
-		if (!channel.portaDelta) {
-			channel.period = channel.refPeriod;
-			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
-			channel.vibValue = 0;
-		}
-		return true;
-
-	case 0x0D:	// Add Volume. Parameters: note, addNoteFlag, volume
-		if (macroPtr[2] == 0xFE)
-			setNoteMacro(channel, channel.note + macroPtr[1], 0);
-		channel.volume = channel.relVol * 3 + macroPtr[3];
-		return true;
-
-	case 0x0E:	// Set Volume. Parameters: note, addNoteFlag, volume
-		if (macroPtr[2] == 0xFE)
-			setNoteMacro(channel, channel.note + macroPtr[1], 0);
-		channel.volume = macroPtr[3];
-		return true;
-
-	case 0x0F:	// Envelope. Parameters: speed, count, endvol
-		channel.envDelta = macroPtr[1];
-		channel.envCount = channel.envSkip = macroPtr[2];
-		channel.envEndVolume = macroPtr[3];
-		return true;
-
-	case 0x11:	// AddBegin. Parameters: times, Offset(W)
-		// TODO: implement Parameter
-		macroPtr[1];
-		channel.sampleStart += (int16)READ_BE_UINT16(&macroPtr[2]);
-		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
-		warnMacroUnimplemented(macroPtr, 1);
-		return true;
-
-	case 0x12:	// AddLen. Parameters: added Length(W)
-		channel.sampleLen += (int16)READ_BE_UINT16(&macroPtr[2]);
-		Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
-		return true;
-
-	case 0x14:	// Wait key up. Parameters: wait cycles
-		if (!channel.keyUp || channel.macroLoopCount == 0) {
 			channel.macroLoopCount = 0xFF;
-			return true;
-		} else if (channel.macroLoopCount == 0xFF)
-			channel.macroLoopCount = macroPtr[3];
-		--channel.macroLoopCount;
-		--channel.macroStep;
-		return false;
+			continue;
 
-	case 0x15:	// Subroutine. Parameters: MacroIndex, Macrostep(W)
-		channel.macroReturnOffset = channel.macroOffset;
-		channel.macroReturnStep = channel.macroStep;
+		case 0x07:	// Stop Macro
+			channel.macroRun = false;
+			--channel.macroStep;
+			return;
 
-		channel.macroOffset = _macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
-		channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
-		// TODO: MI does some weird stuff there. Figure out which varioables need to be set
-		return true;
+		case 0x08:	// AddNote. Parameters: Note, Finetune(W)
+			setNoteMacro(channel, channel.note + macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
+			break;
 
-	case 0x16:	// Return from Sub.
-		channel.macroOffset = channel.macroReturnOffset;
-		channel.macroStep = channel.macroReturnStep;
-		return true;
+		case 0x09:	// SetNote. Parameters: Note, Finetune(W)
+			setNoteMacro(channel, macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
+			break;
 
-	case 0x17:	// set Period. Parameters: Period(W)
-		channel.refPeriod = READ_BE_UINT16(&macroPtr[2]);
-		if (!channel.portaDelta) {
-			channel.period = channel.refPeriod;
-			//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+		case 0x0A:	// Clear Effects
+			clearEffects(channel);
+			continue;
+
+		case 0x0B:	// Portamento. Parameters: count, speed
+			channel.portaSkip = macroPtr[1];
+			channel.portaCount = 1;
+			// if porta is already running, then keep using old value
+			if (!channel.portaDelta)
+				channel.portaValue = channel.refPeriod;
+			channel.portaDelta = READ_BE_UINT16(&macroPtr[2]);
+			continue;
+
+		case 0x0C:	// Vibrato. Parameters: Speed, intensity
+			channel.vibLength = macroPtr[1];
+			channel.vibCount = macroPtr[1] / 2;
+			channel.vibDelta = macroPtr[3];
+			if (!channel.portaDelta) {
+				channel.period = channel.refPeriod;
+				//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+				channel.vibValue = 0;
+			}
+			continue;
+
+		case 0x0D:	// Add Volume. Parameters: note, addNoteFlag, volume
+			if (macroPtr[2] == 0xFE)
+				setNoteMacro(channel, channel.note + macroPtr[1], 0);
+			channel.volume = channel.relVol * 3 + macroPtr[3];
+			continue;
+
+		case 0x0E:	// Set Volume. Parameters: note, addNoteFlag, volume
+			if (macroPtr[2] == 0xFE)
+				setNoteMacro(channel, channel.note + macroPtr[1], 0);
+			channel.volume = macroPtr[3];
+			continue;
+
+		case 0x0F:	// Envelope. Parameters: speed, count, endvol
+			channel.envDelta = macroPtr[1];
+			channel.envCount = channel.envSkip = macroPtr[2];
+			channel.envEndVolume = macroPtr[3];
+			continue;
+
+		case 0x11:	// AddBegin. Parameters: times, Offset(W)
+			channel.addBeginLength = channel.addBeginCount = macroPtr[1];
+			channel.addBeginDelta = (int16)READ_BE_UINT16(&macroPtr[2]);
+			channel.sampleStart += channel.addBeginDelta;
+			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
+			warnMacroUnimplemented(macroPtr, 1);
+			continue;
+
+		case 0x12:	// AddLen. Parameters: added Length(W)
+			channel.sampleLen += (int16)READ_BE_UINT16(&macroPtr[2]);
+			Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
+			continue;
+
+		case 0x14:	// Wait key up. Parameters: wait cycles
+			if (channel.keyUp || channel.macroLoopCount == 0) {
+				channel.macroLoopCount = 0xFF;
+				continue;
+			} else if (channel.macroLoopCount == 0xFF)
+				channel.macroLoopCount = macroPtr[3];
+			--channel.macroLoopCount;
+			--channel.macroStep;
+			return;
+
+		case 0x15:	// Subroutine. Parameters: MacroIndex, Macrostep(W)
+			channel.macroReturnOffset = channel.macroOffset;
+			channel.macroReturnStep = channel.macroStep;
+
+			channel.macroOffset = _macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
+			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
+			// TODO: MI does some weird stuff there. Figure out which varioables need to be set
+			continue;
+
+		case 0x16:	// Return from Sub.
+			channel.macroOffset = channel.macroReturnOffset;
+			channel.macroStep = channel.macroReturnStep;
+			continue;
+
+		case 0x17:	// set Period. Parameters: Period(W)
+			channel.refPeriod = READ_BE_UINT16(&macroPtr[2]);
+			if (!channel.portaDelta) {
+				channel.period = channel.refPeriod;
+				//Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+			}
+			continue;
+
+		case 0x18: {	// Sampleloop. Parameters: Offset from Samplestart(W)
+			// TODO: MI loads 24 bit, but thats useless?
+			const uint16 temp = /* ((int8)macroPtr[1] << 16) | */ READ_BE_UINT16(&macroPtr[2]);
+			if (macroPtr[1] || (temp & 1))
+				warning("Tfmx: Problematic value for sampleloop: %i", (macroPtr[1] << 16) | temp);
+			channel.sampleStart += temp & 0xFFFE;
+			channel.sampleLen -= (temp / 2) /* & 0x7FFF */;
+			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
+			Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
+			continue;
 		}
-		return true;
+		case 0x19:	// set one-shot Sample
+			channel.addBeginLength = 0;
+			channel.sampleStart = 0;
+			channel.sampleLen = 1;
+			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(0));
+			Paula::setChannelSampleLen(channel.paulaChannel, 1);
+			continue;
 
-	case 0x18: {	// Sampleloop. Parameters: Offset from Samplestart(W)
-		// TODO: MI loads 24 bit, but thats useless?
-		uint16 temp = READ_BE_UINT16(&macroPtr[2]);
-		channel.sampleStart += temp & 0xFFFE;
-		channel.sampleLen -= (uint16)(temp / 2);
-		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
-		Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
-		return true;
-	}
-	case 0x19:	// set one-shot Sample
-		channel.sampleStart = 0;
-		channel.sampleLen = 1;
-		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(0));
-		Paula::setChannelSampleLen(channel.paulaChannel, 1);
-		return true;
+		case 0x1A:	// Wait on DMA. Parameters: Cycles-1(W) to wait
+			channel.dmaIntCount = READ_BE_UINT16(&macroPtr[2]) + 1;
+			channel.macroRun = false;
+			Paula::setChannelDmaCount(channel.paulaChannel);
+			break;
 
-	case 0x1A:	// Wait on DMA. Parameters: Cycles-1(W) to wait
-		channel.dmaIntCount = READ_BE_UINT16(&macroPtr[2]) + 1;
-		channel.macroRun = false;
-		Paula::setChannelDmaCount(channel.paulaChannel);
-		return channel.deferWait;
+		case 0x1B:	// Random play. Parameters: macro/speed/mode
+			warnMacroUnimplemented(macroPtr, 0);
+			continue;
 
-	case 0x1B:	// Random play. Parameters: macro/speed/mode
-		warnMacroUnimplemented(macroPtr, 0);
-		return true;
+		case 0x1C:	// Branch on Note. Parameters: note/macrostep(W)
+			if (channel.note > macroPtr[1])
+				channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
+			continue;
 
-	case 0x1C:	// Branch on Note. Parameters: note/macrostep(W)
-		if (channel.note > macroPtr[1])
-			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
-		return true;
+		case 0x1D:	// Branch on Volume. Parameters: volume/macrostep(W)
+			if (channel.volume > macroPtr[1])
+				channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
+			continue;
 
-	case 0x1D:	// Branch on Volume. Parameters: volume/macrostep(W)
-		if (channel.volume > macroPtr[1])
-			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
-		return true;
+		case 0x1E:	// Addvol+note. Parameters: note/CONST./volume
+			warnMacroUnimplemented(macroPtr, 0);
+			continue;
 
-	case 0x1E:	// Addvol+note. Parameters: note/CONST./volume
-		warnMacroUnimplemented(macroPtr, 0);
-		return true;
+		case 0x1F:	// AddPrevNote. Parameters: Note, Finetune(W)
+			setNoteMacro(channel, channel.prevNote + macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
+			break;
 
-	case 0x1F:	// AddPrevNote. Parameters: Note, Finetune(W)
-		setNoteMacro(channel, channel.prevNote + macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
-		return channel.deferWait;
+		case 0x20:	// Signal. Parameters: signalnumber/value
+			if (_playerCtx.signal)
+				_playerCtx.signal[macroPtr[1]] = READ_BE_UINT16(&macroPtr[2]);
+			continue;
 
-	case 0x20:	// Signal. Parameters: signalnumber/value
-		if (_playerCtx.signal)
-			_playerCtx.signal[macroPtr[1]] = READ_BE_UINT16(&macroPtr[2]);
-		return true;
-
-	case 0x21:	// Play macro. Parameters: macro/chan/detune
-		noteCommand(channel.note, (channel.relVol << 4) | macroPtr[1], macroPtr[2], macroPtr[3]);
-		return true;
-#if defined(TFMX_NOT_IMPLEMENTED)
-	// used by Gem`X according to the docs
-	case 0x22:	// SID setbeg. Parameters: sample-startadress
-		return true;
-	case 0x23:	// SID setlen. Parameters: buflen/sourcelen 
-		return true;
-	case 0x24:	// SID op3 ofs. Parameters: offset
-		return true;
-	case 0x25:	// SID op3 frq. Parameters: speed/amplitude
-		return true;
-	case 0x26:	// SID op2 ofs. Parameters: offset
-		return true;
-	case 0x27:	// SID op2 frq. Parameters: speed/amplitude
-		return true;
-	case 0x28:	// ID op1. Parameters: speed/amplitude/TC
-		return true;
-	case 0x29:	// SID stop. Parameters: flag (1=clear all)
-		return true;
-	// 30-34 used by Carribean Disaster
-#endif
-	default:
-		warnMacroUnimplemented(macroPtr, 0);
-		return channel.deferWait;
+		case 0x21:	// Play macro. Parameters: macro/chan/detune
+			noteCommand(channel.note, (channel.relVol << 4) | macroPtr[1], macroPtr[2], macroPtr[3]);
+			continue;
+	#if defined(TFMX_NOT_IMPLEMENTED)
+		// used by Gem`X according to the docs
+		case 0x22:	// SID setbeg. Parameters: sample-startadress
+			return true;
+		case 0x23:	// SID setlen. Parameters: buflen/sourcelen 
+			return true;
+		case 0x24:	// SID op3 ofs. Parameters: offset
+			return true;
+		case 0x25:	// SID op3 frq. Parameters: speed/amplitude
+			return true;
+		case 0x26:	// SID op2 ofs. Parameters: offset
+			return true;
+		case 0x27:	// SID op2 frq. Parameters: speed/amplitude
+			return true;
+		case 0x28:	// ID op1. Parameters: speed/amplitude/TC
+			return true;
+		case 0x29:	// SID stop. Parameters: flag (1=clear all)
+			return true;
+		// 30-34 used by Carribean Disaster
+	#endif
+		default:
+			warnMacroUnimplemented(macroPtr, 0);
+		}
+		if (!deferWait)
+			return;
 	}
 }
 
@@ -478,19 +492,12 @@ startPatterns:
 		if (pattCmd < 0x90) {	// execute Patternstep
 			++runningPatterns;
 			if (_patternCtx[i].wait == 0) {
-				bool pendingTrackstep = false;
 				// issue all Steps for this tick
-				while (patternStep(_patternCtx[i], pendingTrackstep))
-					;
+				const bool pendingTrackstep = patternRun(_patternCtx[i]);
+
 				if (pendingTrackstep) {
 					// we load the next Trackstep Command and then process all Channels again
-					// TODO Optionally disable looping
-					if (_trackCtx.posInd == _trackCtx.stopInd)
-						_trackCtx.posInd = _trackCtx.startInd;
-					else
-						++_trackCtx.posInd;
-					while (trackStep())
-						;
+					trackRun(true);
 					goto startPatterns;
 				}
 
@@ -523,195 +530,203 @@ static void warnPatternUnimplemented(const byte *patternPtr, int level) {
 #endif
 }
 
+bool Tfmx::patternRun(PatternContext &pattern) {
+	for (;;) {
+		const byte *const patternPtr = (byte *)(_resource.getPatternPtr(pattern.offset) + pattern.step);
+		++pattern.step;
+		const byte pattCmd = patternPtr[0];
 
-inline bool Tfmx::patternStep(PatternContext &pattern, bool &pendingTrackstep) {
-	const byte *const patternPtr = (byte *)(_resource.getPatternPtr(pattern.offset) + pattern.step);
-	++pattern.step;
+		if (pattCmd < 0xF0) { // Playnote
+			bool doWait = false;
+			byte noteCmd = pattCmd + pattern.expose;
+			byte param3  = patternPtr[3];
+			if (pattCmd < 0xC0) {	// Note
+				if (pattCmd >= 0x80) {	// Wait
+					pattern.wait = param3;
+					param3 = 0;
+					doWait = true;
+				}
+				noteCmd &= 0x3F;
+			}	// else Portamento 
+			noteCommand(noteCmd, patternPtr[1], patternPtr[2], param3);
+			if (doWait)
+				return false;
 
-	/*debug("Pattern %04X +%d", pattern.offset, pattern.step-1);
-	displayPatternstep(patternPtr);*/
+		} else {	// Patterncommand
+			switch (pattCmd & 0xF) {
+			case 0: 	// End Pattern + Next Trackstep
+				pattern.command = 0xFF;
+				--pattern.step;
+				return true;
 
-	const byte pattCmd = patternPtr[0];
+			case 1: 	// Loop Pattern. Parameters: Loopcount, PatternStep(W)
+				if (pattern.loopCount != 0) {
+					if (pattern.loopCount == 0xFF)
+						pattern.loopCount = patternPtr[1];
+					pattern.step = READ_BE_UINT16(&patternPtr[2]);
+				}
+				--pattern.loopCount;
+				continue;
 
-	if (pattCmd < 0xF0) { // Playnote
-		bool nextStep = true;
-		byte noteCmd = pattCmd + pattern.expose;
-		byte param3  = patternPtr[3];
-		if (pattCmd < 0xC0) {	// Note
-			if (pattCmd >= 0x80) {	// Wait
-				pattern.wait = param3;
-				param3 = 0;
-				nextStep = false;
-			}
-			noteCmd &= 0x3F;
-		}	// else Portamento 
-		noteCommand(noteCmd, patternPtr[1], patternPtr[2], param3);
-		return nextStep;
-
-	} else {	// Patterncommand
-		switch (pattCmd & 0xF) {
-		case 0: 	// End Pattern + Next Trackstep
-			pattern.command = 0xFF;
-			--pattern.step;
-			pendingTrackstep = true;
-			return false;
-
-		case 1: 	// Loop Pattern. Parameters: Loopcount, PatternStep(W)
-			if (pattern.loopCount != 0) {
-				if (pattern.loopCount == 0xFF)
-					pattern.loopCount = patternPtr[1];
+			case 2: 	// Jump. Parameters: PatternIndex, PatternStep(W)
+				pattern.offset = _patternOffset[patternPtr[1]];
 				pattern.step = READ_BE_UINT16(&patternPtr[2]);
+				continue;
+
+			case 3: 	// Wait. Paramters: ticks to wait
+				pattern.wait = patternPtr[1];
+				return false;
+
+			case 14: 	// Stop custompattern
+				// TODO ?
+				warnPatternUnimplemented(patternPtr, 1);
+				// FT
+			case 4: 	// Stop this pattern
+				pattern.command = 0xFF;
+				--pattern.step;
+				// TODO: try figuring out if this was the last Channel?
+				return false;
+
+			case 5: 	// Key Up Signal
+				if (!_channelCtx[patternPtr[2] & (kNumVoices - 1)].sfxLocked)
+					_channelCtx[patternPtr[2] & (kNumVoices - 1)].keyUp = true;
+				continue;
+
+			case 6: 	// Vibrato
+			case 7: 	// Envelope
+				noteCommand(pattCmd, patternPtr[1], patternPtr[2], patternPtr[3]);
+				continue;
+
+			case 8: 	// Subroutine
+				warnPatternUnimplemented(patternPtr, 0);
+				continue;
+
+			case 9: 	// Return from Subroutine
+				warnPatternUnimplemented(patternPtr, 0);
+				continue;
+
+			case 10:	// fade master volume
+				_playerCtx.fadeCount = _playerCtx.fadeSkip = patternPtr[1];
+				_playerCtx.fadeEndVolume = (int8)patternPtr[3];
+				if (_playerCtx.fadeSkip) {
+					const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
+					_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
+				} else {
+					_playerCtx.volume = _playerCtx.fadeEndVolume;
+					_playerCtx.fadeDelta = 0;
+				}
+				++_trackCtx.posInd;
+				continue;
+
+			case 11: {	// play pattern. Parameters: patternCmd, channel, expose
+				PatternContext &target = _patternCtx[patternPtr[2] & (kNumChannels - 1)];
+
+				target.command = patternPtr[1];
+				target.offset = _patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
+				target.expose = patternPtr[3];
+				target.step = 0;
+				target.wait = 0;
+				target.loopCount = 0xFF;
+				}
+				continue;
+
+			case 12: 	// Lock
+				_channelCtx[patternPtr[2] & (kNumVoices - 1)].sfxLocked = (patternPtr[1] != 0);
+				_channelCtx[patternPtr[2] & (kNumVoices - 1)].sfxLockTime = patternPtr[3];
+				continue;
+
+			case 13: 	// Cue
+				if (_playerCtx.signal)
+					_playerCtx.signal[patternPtr[1]] = READ_BE_UINT16(&patternPtr[2]);
+				continue;
+
+			case 15: 	// NOP
+				continue;
 			}
-			--pattern.loopCount;
-			return true;
-
-		case 2: 	// Jump. Parameters: PatternIndex, PatternStep(W)
-			pattern.offset = _patternOffset[patternPtr[1]];
-			pattern.step = READ_BE_UINT16(&patternPtr[2]);
-			return true;
-
-		case 3: 	// Wait. Paramters: ticks to wait
-			pattern.wait = patternPtr[1];
-			return false;
-
-		case 14: 	// Stop custompattern
-			// TODO ?
-			warnPatternUnimplemented(patternPtr, 1);
-			// FT
-		case 4: 	// Stop this pattern
-			pattern.command = 0xFF;
-			--pattern.step;
-			// TODO: try figuring out if this was the last Channel?
-			return false;
-
-		case 5: 	// Kup^-Set key up
-			if (!_channelCtx[patternPtr[2] & (kNumVoices - 1)].sfxLocked)
-				_channelCtx[patternPtr[2] & (kNumVoices - 1)].keyUp = false;
-			return true;
-
-		case 6: 	// Vibrato
-		case 7: 	// Envelope
-			noteCommand(pattCmd, patternPtr[1], patternPtr[2], patternPtr[3]);
-			return true;
-
-		case 8: 	// Subroutine
-			warnPatternUnimplemented(patternPtr, 0);
-			return true;
-		case 9: 	// Return from Subroutine
-			warnPatternUnimplemented(patternPtr, 0);
-			return true;
-
-		case 10:	// fade master volume
-			_playerCtx.fadeCount = _playerCtx.fadeSkip = patternPtr[1];
-			_playerCtx.fadeEndVolume = (int8)patternPtr[3];
-			if (_playerCtx.fadeSkip) {
-				const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
-				_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
-			} else {
-				_playerCtx.volume = _playerCtx.fadeEndVolume;
-				_playerCtx.fadeDelta = 0;
-			}
-			++_trackCtx.posInd;
-			return true;
-
-		case 11: {	// play pattern. Parameters: patternCmd, channel, expose
-			PatternContext &target = _patternCtx[patternPtr[2] & (kNumChannels - 1)];
-
-			target.command = patternPtr[1];
-			target.offset = _patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
-			target.expose = patternPtr[3];
-			target.step = 0;
-			target.wait = 0;
-			target.loopCount = 0xFF;
-			}
-			return true;
-
-		case 12: 	// Lock
-			_channelCtx[patternPtr[2] & (kNumVoices - 1)].sfxLocked = (patternPtr[1] != 0);
-			_channelCtx[patternPtr[2] & (kNumVoices - 1)].sfxLockTime = patternPtr[3];
-			return true;
-
-		case 13: 	// Cue
-			if (_playerCtx.signal)
-				_playerCtx.signal[patternPtr[1]] = READ_BE_UINT16(&patternPtr[2]);
-			return true;
-
-		case 15: 	// NOP
-			return true;
 		}
 	}
-
-	return true;
 }
 
-bool Tfmx::trackStep() {
-	const uint16 *const trackData = _resource.getTrackPtr(_trackCtx.posInd);
+bool Tfmx::trackRun(const bool incStep) {
+	assert(_playerCtx.song >= 0);
+	if (incStep) {
+		// TODO Optionally disable looping
+		if (_trackCtx.posInd == _trackCtx.stopInd)
+			_trackCtx.posInd = _trackCtx.startInd;
+		else
+			++_trackCtx.posInd;
+	}
+	for (;;) {
+		const uint16 *const trackData = _resource.getTrackPtr(_trackCtx.posInd);
 
-	if (trackData[0] != FROM_BE_16(0xEFFE)) {
-		// 8 commands for Patterns
-		for (int i = 0; i < 8; ++i) {
-			const uint patCmd = READ_BE_UINT16(&trackData[i]);
-			// First byte is pattern number
-			const uint patNum = (patCmd >> 8);
-			// if highest bit is set then keep previous pattern
-			if (patNum < 0x80) {
-				_patternCtx[i].step = 0;
-				_patternCtx[i].wait = 0;
-				_patternCtx[i].loopCount = 0xFF;
-				_patternCtx[i].offset = _patternOffset[patNum];
+		if (trackData[0] != FROM_BE_16(0xEFFE)) {
+			// 8 commands for Patterns
+			for (int i = 0; i < 8; ++i) {
+				const uint patCmd = READ_BE_UINT16(&trackData[i]);
+				// First byte is pattern number
+				const uint patNum = (patCmd >> 8);
+				// if highest bit is set then keep previous pattern
+				if (patNum < 0x80) {
+					_patternCtx[i].step = 0;
+					_patternCtx[i].wait = 0;
+					_patternCtx[i].loopCount = 0xFF;
+					_patternCtx[i].offset = _patternOffset[patNum];
+				}
+				_patternCtx[i].command = (uint8)patNum;
+				_patternCtx[i].expose = patCmd & 0xFF;
 			}
-			_patternCtx[i].command = (uint8)patNum;
-			_patternCtx[i].expose = patCmd & 0xFF;
-		}
-		return false;
+			return true;
 
-	} else {
-		// 16 byte Trackstep Command
-		switch (READ_BE_UINT16(&trackData[1])) {
-		case 0:	// Stop Player. No Parameters
-			stopPaula();
+		} else {
+			// 16 byte Trackstep Command
+			switch (READ_BE_UINT16(&trackData[1])) {
+			case 0:	// Stop Player. No Parameters
+				stopPaula();
+				return false;
+
+			case 1:	// Branch/Loop section of tracksteps. Parameters: branch target, loopcount
+				if (_trackCtx.loopCount != 0) {
+					if (_trackCtx.loopCount < 0)
+						_trackCtx.loopCount = READ_BE_UINT16(&trackData[3]);
+					_trackCtx.posInd    = READ_BE_UINT16(&trackData[2]);
+					continue;
+				}
+				--_trackCtx.loopCount;
+				break;
+
+			case 2:	{ // Set Tempo. Parameters: tempo, divisor
+				_playerCtx.patternCount = _playerCtx.patternSkip = READ_BE_UINT16(&trackData[2]); // tempo
+				const uint16 temp = READ_BE_UINT16(&trackData[3]); // divisor
+
+				if (!(temp & 0x8000) && (temp & 0x1FF))
+					setInterruptFreqUnscaled(temp & 0x1FF);
+				break;
+			}
+			case 4:	// Fade
+				_playerCtx.fadeCount = _playerCtx.fadeSkip = (uint8)READ_BE_UINT16(&trackData[2]);
+				_playerCtx.fadeEndVolume = (int8)READ_BE_UINT16(&trackData[3]);
+
+				if (_playerCtx.fadeSkip) {
+					const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
+					_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
+				} else {
+					_playerCtx.volume = _playerCtx.fadeEndVolume;
+					_playerCtx.fadeDelta = 0;
+				}
+				break;
+
+			case 3:	// Unknown, stops player aswell
+			default:
+				debug("Unknown Command: %02X", READ_BE_UINT16(&trackData[1]));
+				// MI-Player handles this by stopping the player, we just continue
+			}
+		}
+
+		if (_trackCtx.posInd == _trackCtx.stopInd) {
+			warning("Tfmx: Reached invalid Song-Position");
 			return false;
-
-		case 1:	// Branch/Loop section of tracksteps. Parameters: branch target, loopcount
-			++_trackCtx.posInd;
-			if (_trackCtx.loopCount != 0) {
-				if (_trackCtx.loopCount < 0)
-					_trackCtx.loopCount = READ_BE_UINT16(&trackData[3]);
-				_trackCtx.posInd    = READ_BE_UINT16(&trackData[2]);
-			}
-			--_trackCtx.loopCount;
-			return true;
-
-		case 2:	{ // Set Tempo. Parameters: tempo, divisor
-			_playerCtx.patternCount = _playerCtx.patternSkip = READ_BE_UINT16(&trackData[2]); // tempo
-			const uint16 temp = READ_BE_UINT16(&trackData[3]); // divisor
-
-			if (!(temp & 0x8000) && (temp & 0x1FF))
-				setInterruptFreqUnscaled(temp & 0x1FF);
-			++_trackCtx.posInd;
-			return true;
 		}
-		case 4:	// Fade
-			_playerCtx.fadeCount = _playerCtx.fadeSkip = (uint8)READ_BE_UINT16(&trackData[2]);
-			_playerCtx.fadeEndVolume = (int8)READ_BE_UINT16(&trackData[3]);
-
-			if (_playerCtx.fadeSkip) {
-				const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
-				_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
-			} else {
-				_playerCtx.volume = _playerCtx.fadeEndVolume;
-				_playerCtx.fadeDelta = 0;
-			}
-			++_trackCtx.posInd;
-			return true;
-
-		case 3:	// Unknown, stops player aswell
-		default:
-			debug("Unknown Command: %02X", READ_BE_UINT16(&trackData[1]));
-			// MI-Player handles this by stopping the player, we just continue
-			++_trackCtx.posInd;
-			return true;
-		}
+		++_trackCtx.posInd;
 	}
 }
 
@@ -735,7 +750,7 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 		channel.fineTune = (int8)param3;
 
 		initMacroProgramm(channel);
-		channel.keyUp = true;
+		channel.keyUp = false; // key down = playing a Note
 		
 	} else if (note < 0xF0) {	// Portamento
 		channel.portaSkip = param1;
@@ -747,8 +762,8 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 		channel.note = note & 0x3F;
 		channel.refPeriod = noteIntervalls[channel.note];
 	} else switch (note & 0xF) {	// Command
-		case 5:	// Key Up Release
-			channel.keyUp = false;
+		case 5:	// Key Up Signal
+			channel.keyUp = true;
 			break;
 		case 6:	// Vibratio
 			channel.vibLength = param1 & 0xFE;
@@ -936,9 +951,8 @@ void Tfmx::doSong(int songPos, bool stopAudio) {
 	setInterruptFreqUnscaled(ciaIntervall);
 
 	_playerCtx.patternCount = 0;
-	while (trackStep())
-		;
-	startPaula();
+	if (trackRun())
+		startPaula();
 }
 
 int Tfmx::doSfx(uint16 sfxIndex, bool unlockChannel) {

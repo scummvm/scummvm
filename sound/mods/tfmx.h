@@ -184,9 +184,9 @@ public:
 		int16	vibValue;
 		int8	vibDelta;
 
-		uint8	addBeginTime;
-		uint8	addBeginReset;
-		int16	addBeginDelta;
+		uint8	addBeginLength;
+		uint8	addBeginCount;
+		int32	addBeginDelta;
 	} _channelCtx[kNumVoices];
 
 	struct PatternContext {
@@ -237,6 +237,7 @@ private:
 	}
 
 	static void clearEffects(ChannelContext &channel) {
+		channel.addBeginLength = 0;
 		channel.envSkip = 0;
 		channel.vibLength = 0;
 		channel.portaDelta = 0;
@@ -280,10 +281,10 @@ private:
 	}
 
 	void effects(ChannelContext &channel);
-	inline bool macroStep(ChannelContext &channel);
+	void macroRun(ChannelContext &channel);
 	void advancePatterns();
-	inline bool patternStep(PatternContext &pattern, bool &pendingTrackstep);
-	bool trackStep();
+	bool patternRun(PatternContext &pattern);
+	bool trackRun(bool incStep = false);
 	void noteCommand(uint8 note, uint8 param1, uint8 param2, uint8 param3);
 };
 
