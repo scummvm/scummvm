@@ -295,8 +295,8 @@ void Smush::handleFrameDemo() {
 
 	g_driver->prepareSmushFrame(640, 480, _externalBuffer);
 	g_driver->drawSmushFrame(0, 0);
-	g_driver->releaseSmushFrame();
 	g_driver->flipBuffer();
+	g_driver->releaseSmushFrame();
 
 	_frame++;
 	_movieTime += _speed / 1000;
