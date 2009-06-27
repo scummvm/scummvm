@@ -34,9 +34,6 @@ void start_script() {
 	LState *state = luaM_new(LState);
 	lua_stateinit(state);
 
-	if (type == LUA_T_CPROTO)
-		assert(0); // TODO verify if used
-
 	state->next = lua_state->next;
 	state->prev = lua_state;
 	if (state->next)
@@ -119,8 +116,6 @@ void stop_script() {
 			if (type == LUA_T_PROTO) {
 				match = (state->taskFunc.ttype == type && tfvalue(&state->taskFunc) == tfvalue(Address(paramObj)));
 			} else {
-				// TODO - verify if used
-				assert(0);
 				match = (state->taskFunc.ttype == type && fvalue(&state->taskFunc) == fvalue(Address(paramObj)));
 			}
 			if (match && state != lua_state) {
@@ -179,8 +174,6 @@ void find_script() {
 			if (type == LUA_T_PROTO) {
 				match = (state->taskFunc.ttype == type && tfvalue(&state->taskFunc) == tfvalue(Address(paramObj)));
 			} else {
-				// TODO - verify if used
-				assert(0);
 				match = (state->taskFunc.ttype == type && fvalue(&state->taskFunc) == fvalue(Address(paramObj)));
 			}
 			if (match) {
