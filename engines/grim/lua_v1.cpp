@@ -3143,6 +3143,9 @@ static void DrawPolygon() {
 static void DrawLine() {
 	Common::Point p1, p2;
 	Color color;
+	color._vals[0] = 0;
+	color._vals[1] = 0;
+	color._vals[2] = 0;
 	lua_Object x1Obj = lua_getparam(1);
 	lua_Object y1Obj = lua_getparam(2);
 	lua_Object x2Obj = lua_getparam(3);
