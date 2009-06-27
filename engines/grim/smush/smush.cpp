@@ -290,10 +290,13 @@ void Smush::handleFrameDemo() {
 	uint16 *d = (uint16 *)_externalBuffer;
 	for (int l = 0; l < _width * _height; l++) {
 		int index = _internalBuffer[l];
-		uint16 c = ((_pal[index + 0] & 0xF8) << 8) | ((_pal[index + 1] & 0xFC) << 3) | (_pal[index + 2] >> 3);
-		d[l] = c;
+		d[l] = ((_pal[(index * 3) + 0] & 0xF8) << 8) | ((_pal[(index * 3) + 1] & 0xFC) << 3) | (_pal[(index * 3) + 2] >> 3);
 	}
-	_updateNeeded = true;
+
+	g_driver->prepareSmushFrame(640, 480, _externalBuffer);
+	g_driver->drawSmushFrame(0, 0);
+	g_driver->releaseSmushFrame();
+	g_driver->flipBuffer();
 
 	_frame++;
 	_movieTime += _speed / 1000;
@@ -322,7 +325,7 @@ void Smush::handleFramesHeader() {
 			_freq = READ_LE_UINT32(f_header + pos + 8);
 			_channels = READ_LE_UINT32(f_header + pos + 12);
 			pos += 20;
-		} else if (gDebugLevel == DEBUG_SMUSH || gDebugLevel == DEBUG_ERROR || gDebugLevel == DEBUG_ALL){
+		} else {
 			error("Smush::handleFramesHeader() unknown tag");
 		}
 	} while (pos < size);
