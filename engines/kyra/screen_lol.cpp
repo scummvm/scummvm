@@ -157,7 +157,7 @@ void Screen_LoL::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, 
 	}
 
 	for (int i = 0; i < lastColor; i++)
-		grayOverlay[i] = findLeastDifferentColor(tmpPal.getData() + 3 * i, srcPal, lastColor, skipSpecialColors);
+		grayOverlay[i] = findLeastDifferentColor(tmpPal.getData() + 3 * i, srcPal, 0, lastColor, skipSpecialColors);
 }
 
 uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int opColor, int weight) {
