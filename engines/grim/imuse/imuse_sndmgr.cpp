@@ -164,7 +164,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 	int headerSize = 0;
 
 	if (g_grim->getGameFlags() & GF_DEMO)
-		return FALSE;
+		return NULL;
 
 	SoundDesc *sound = allocSlot();
 	if (!sound) {
