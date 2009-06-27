@@ -648,9 +648,10 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 		glRasterPos2i(x, y + h);
 
 	glDisable(GL_TEXTURE_2D);
-//	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDepthMask(GL_TRUE);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
 
 	glDrawPixels(w, h, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, data);
