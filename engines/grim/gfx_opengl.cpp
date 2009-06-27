@@ -641,11 +641,14 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 	//		warning("Animation not handled yet in GL texture path");
 	//	}
 
-	if (y + h == 480)
+	if (y + h == 480) {
 		glRasterPos2i(x, _screenHeight - 1);
-	else
+		glBitmap(0, 0, 0, 0, 0, -1, NULL);
+	} else
 		glRasterPos2i(x, y + h);
 
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_ALWAYS);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
