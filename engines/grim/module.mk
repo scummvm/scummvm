@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	lua/lundump.o \
 	lua/lvm.o \
 	lua/lzio.o \
+	smush/blocky8.o \
 	smush/blocky16.o \
 	smush/smush.o \
 	smush/vima.o \
