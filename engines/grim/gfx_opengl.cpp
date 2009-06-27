@@ -654,7 +654,7 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthFunc(GL_ALWAYS);
+	glDepthFunc(GL_LESS);
 }
 
 void GfxOpenGL::prepareSmushFrame(int width, int height, byte *bitmap) {
