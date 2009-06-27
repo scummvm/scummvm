@@ -4,7 +4,7 @@ MODULE_OBJS := \
 	draci.o \
 	detection.o \
 	barchive.o \
-	gpldisasm.o \
+	script.o \
 	font.o \
 	sprite.o \
 	screen.o \
