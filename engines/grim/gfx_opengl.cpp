@@ -643,7 +643,7 @@ void GfxOpenGL::drawDepthBitmap(int x, int y, int w, int h, char *data) {
 
 	if (y + h == 480) {
 		glRasterPos2i(x, _screenHeight - 1);
-//		glBitmap(0, 0, 0, 0, 0, -1, NULL);
+		glBitmap(0, 0, 0, 0, 0, -1, NULL);
 	} else
 		glRasterPos2i(x, y + h);
 
