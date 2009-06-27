@@ -45,8 +45,7 @@ LipSync::LipSync(const char *filename, const char *data, int len) {
 		// There are cases where the lipsync file has no entries
 		if (_numEntries == 0) {
 			_entries = NULL;
-		}
-		else {
+		} else {
 			data += 8;
 #ifdef DEBUG_VERBOSE
 			printf("Reading LipSync %s, %d entries\n", filename, _numEntries);
@@ -58,16 +57,18 @@ LipSync::LipSync(const char *filename, const char *data, int len) {
 
 				// Look for the animation corresponding to the phoneme
 				for (j = 0; j < _animTableSize && readPhoneme != _animTable[j].phoneme; j++);
+
 				if (readPhoneme != _animTable[j].phoneme) {
 					warning("Unknown phoneme: 0x%X in file %s", readPhoneme, filename);
 					_entries[i].anim = 1;
 				} else
 					_entries[i].anim = _animTable[j].anim;
+
 				data += 4;
 			}
 #ifdef DEBUG_VERBOSE
-				for (int j = 0; j < _numEntries; j++)
-					printf("LIP %d) frame %d, anim %d\n", j, _entries[j].frame, _entries[j].anim);
+			for (int j = 0; j < _numEntries; j++)
+				printf("LIP %d) frame %d, anim %d\n", j, _entries[j].frame, _entries[j].anim);
 #endif
 		}
 	}
