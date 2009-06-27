@@ -74,7 +74,7 @@ Common::Error GroovieEngine::run() {
 	case kGroovieV2:
 #ifdef ENABLE_RGB_COLOR
 		_pixelFormat = _system->getSupportedFormats().front();
-		initGraphics(640, 480, true, _pixelFormat);
+		initGraphics(640, 480, true, &_pixelFormat);
 		break;
 #endif
 	case kGroovieT7G:

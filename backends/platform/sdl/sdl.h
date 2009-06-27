@@ -123,7 +123,7 @@ public:
 
 	// Set the size and format of the video bitmap.
 	// Typically, 320x200 CLUT8
-	virtual void initSize(uint w, uint h, Graphics::PixelFormat format); // overloaded by CE backend
+	virtual void initSize(uint w, uint h, Graphics::PixelFormat *format); // overloaded by CE backend
 
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 

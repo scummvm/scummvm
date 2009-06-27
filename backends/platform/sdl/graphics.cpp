@@ -354,18 +354,21 @@ int OSystem_SDL::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 
-void OSystem_SDL::initSize(uint w, uint h, Graphics::PixelFormat format) {
+void OSystem_SDL::initSize(uint w, uint h, Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
 #ifdef ENABLE_RGB_COLOR
 	//avoid redundant format changes
-	assert(format.bytesPerPixel > 0);
+	if (!format)
+		format = new Graphics::PixelFormat(1,8,8,8,8,0,0,0,0);
 
-	if (format != _videoMode.format)
+	assert(format->bytesPerPixel > 0);
+
+	if (*format != _videoMode.format)
 	{
-		_videoMode.format = format;
+		_videoMode.format = *format;
 		_transactionDetails.formatChanged = true;
-		_screenFormat = format;
+		_screenFormat = *format;
 	}
 #endif
 

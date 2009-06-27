@@ -124,12 +124,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 	if (gameDomain && gameDomain->contains("fullscreen"))
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
-void initGraphics(int width, int height, bool defaultTo1xScaler) {
-#ifdef ENABLE_RGB_COLOR
-	initGraphics(width,height,defaultTo1xScaler, Graphics::PixelFormat::createFormatCLUT8());
-}
-void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::PixelFormat format) {
-#endif
+void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::PixelFormat *format) {
 
 	g_system->beginGFXTransaction();
 

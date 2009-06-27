@@ -401,7 +401,7 @@ public:
 	 * @param height	the new virtual screen height
 	 * @param format	the new virtual screen pixel format
 	 */
-	virtual void initSize(uint width, uint height, Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8()) = 0;
+	virtual void initSize(uint width, uint height, Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
 	 * Return an int value which is changed whenever any screen
