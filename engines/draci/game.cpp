@@ -32,22 +32,104 @@
 namespace Draci {
 
 Game::Game() {
+	unsigned int i;
 	Common::String path("INIT.DFW");
 	
 	BArchive initArchive(path);
 	BAFile *file;
 	
+	// Read in persons
+	
 	file = initArchive[5];
-	Common::MemoryReadStream reader(file->_data, file->_length);
+	Common::MemoryReadStream personData(file->_data, file->_length);
 	
 	unsigned int numPersons = file->_length / personSize;
 	_persons = new Person[numPersons];
 	
-	for (unsigned int i = 0; i < numPersons; ++i) {
-		_persons[i]._x = reader.readByte();
-		_persons[i]._y = reader.readByte();
-		_persons[i]._fontColour = reader.readUint16LE();
+	for (i = 0; i < numPersons; ++i) {
+		_persons[i]._x = personData.readByte();
+		_persons[i]._y = personData.readByte();
+		_persons[i]._fontColour = personData.readUint16LE();
 	}
+	
+	// Read in dialog offsets
+	
+	file = initArchive[4];
+	Common::MemoryReadStream dialogData(file->_data, file->_length);
+	
+	unsigned int numDialogs = file->_length / sizeof(uint16);
+	_dialogOffsets = new uint16[numDialogs];	
+	
+	unsigned int curOffset;
+	for (i = 0, curOffset = 0; i < numDialogs; ++i) {
+		_dialogOffsets[i] = curOffset;
+		curOffset += dialogData.readUint16LE();
+	}
+	
+	// Read in game info
+	
+	file = initArchive[3];
+	Common::MemoryReadStream gameData(file->_data, file->_length);
+	_info = new GameInfo();
+	
+	_info->_currentRoom = gameData.readByte();
+	_info->_mapRoom = gameData.readByte();
+	_info->_numObjects = gameData.readUint16LE();
+	_info->_numIcons = gameData.readUint16LE();
+	_info->_numVariables = gameData.readByte();
+	_info->_numPersons = gameData.readByte();
+	_info->_numDialogs = gameData.readByte();
+	_info->_maxIconWidth = gameData.readUint16LE();
+	_info->_maxIconHeight = gameData.readUint16LE();
+	_info->_musicLength = gameData.readUint32LE();
+
+// FIXME: Something is wrong here. The total file length is only 23 bytes
+// but the whole struct should be 35 bytes.
+	_info->_crc[0] = gameData.readUint32LE();
+	_info->_crc[1] = gameData.readUint32LE();
+	_info->_crc[2] = gameData.readUint32LE();
+	_info->_crc[3] = gameData.readUint32LE();
+	_info->_numDialogBlocks = gameData.readUint16LE();
+
+	// Read in variables
+	
+	file = initArchive[2];
+	unsigned int numVariables = file->_length / sizeof (int16);
+	
+	_variables = new int16[numVariables];
+	memcpy(_variables, file->_data, file->_length);
+	
+	// Read in item status
+	
+	file = initArchive[1];
+	_itemStatus = new byte[file->_length];
+	memcpy(_itemStatus, file->_data, file->_length);
+	
+	// Read in object status
+	
+	file = initArchive[0];
+	unsigned int numObjects = file->_length;
+	
+	_objectStatus = new byte[numObjects];
+	memcpy(_objectStatus, file->_data, file->_length);
+	
+	assert(numDialogs == _info->_numDialogs);
+	assert(numPersons == _info->_numPersons);
+	assert(numVariables == _info->_numVariables);
+	assert(numObjects == _info->_numObjects);	
+
+// TODO: Why is this failing?
+//	assert(curOffset == _info->_numDialogBlocks);
+
 }
+
+Game::~Game() {
+	delete[] _persons;
+	delete[] _variables;
+	delete[] _dialogOffsets;
+	delete[] _itemStatus;
+	delete[] _objectStatus;
+	delete _info;
+}	
 
 } 

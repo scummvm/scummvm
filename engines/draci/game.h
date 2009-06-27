@@ -31,7 +31,21 @@
 namespace Draci {
 
 enum StructSizes {
-	personSize = 3
+	personSize = sizeof(uint16) * 2 + sizeof(byte)
+};
+
+struct GameInfo {
+	byte _currentRoom;
+	byte _mapRoom;
+	uint16 _numObjects;
+	uint16 _numIcons;
+	byte _numVariables;
+	byte _numPersons;
+	byte _numDialogs;
+	uint16 _maxIconWidth, _maxIconHeight;
+	uint32 _musicLength;
+	uint32 _crc[4];
+	uint16 _numDialogBlocks;
 };
 
 struct Person {
@@ -46,7 +60,12 @@ public:
 	~Game();
 
 private:
+	GameInfo *_info;
 	Person *_persons;
+	uint16 *_dialogOffsets;
+	int16 *_variables;
+	byte *_itemStatus;
+	byte *_objectStatus;
 };
 
 } // End of namespace Draci
