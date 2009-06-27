@@ -275,7 +275,7 @@ GPL2Command *Script::findCommand(byte num, byte subnum) {
  *	value comes from.
  */
 
-int Script::gpldisasm(byte *gplcode, uint16 len) {
+int Script::run(byte *gplcode, uint16 len) {
 	Common::MemoryReadStream reader(gplcode, len);
 
 	while (!reader.eos()) {

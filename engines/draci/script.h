@@ -53,7 +53,7 @@ struct GPL2Command {
 class Script {
 
 public:
-	int gpldisasm(byte *gplcode, uint16 len);
+	int run(byte *gplcode, uint16 len);
 	
 private:
 	GPL2Command *findCommand(byte num, byte subnum);
