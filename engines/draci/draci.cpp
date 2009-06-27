@@ -69,6 +69,7 @@ int DraciEngine::init() {
 	_screen = new Screen(this);
 	_font = new Font();
 	_mouse = new Mouse(this);
+	_game = new Game();
 
 	// Load default font
 	_font->setFont(kFontBig);

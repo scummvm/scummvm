@@ -26,9 +26,27 @@
 #ifndef DRACI_GAME_H
 #define DRACI_GAME_H
 
+#include "common/str.h"
+
 namespace Draci {
 
+enum StructSizes {
+	personSize = 3
+};
+
+struct Person {
+	uint16 _x, _y;
+	byte _fontColour;
+};
+
 class Game {
+
+public:
+	Game();
+	~Game();
+
+private:
+	Person *_persons;
 };
 
 } // End of namespace Draci

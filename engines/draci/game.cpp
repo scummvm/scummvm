@@ -23,4 +23,31 @@
  *
  */
 
+#include "common/stream.h"
+
+#include "draci/draci.h"
 #include "draci/game.h"
+#include "draci/barchive.h"
+
+namespace Draci {
+
+Game::Game() {
+	Common::String path("INIT.DFW");
+	
+	BArchive initArchive(path);
+	BAFile *file;
+	
+	file = initArchive[5];
+	Common::MemoryReadStream reader(file->_data, file->_length);
+	
+	unsigned int numPersons = file->_length / personSize;
+	_persons = new Person[numPersons];
+	
+	for (unsigned int i = 0; i < numPersons; ++i) {
+		_persons[i]._x = reader.readByte();
+		_persons[i]._y = reader.readByte();
+		_persons[i]._fontColour = reader.readUint16LE();
+	}
+}
+
+} 

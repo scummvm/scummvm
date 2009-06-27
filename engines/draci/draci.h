@@ -30,6 +30,7 @@
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 
+#include "draci/game.h"
 #include "draci/mouse.h"
 #include "draci/screen.h"
 #include "draci/font.h"
@@ -50,6 +51,7 @@ public:
 	Font *_font;
 	Screen *_screen;
 	Mouse *_mouse;
+	Game *_game;
 
 private:
 	Common::RandomSource _rnd;
