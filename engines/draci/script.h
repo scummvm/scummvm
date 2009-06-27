@@ -23,10 +23,11 @@
  *
  */
 
-#include "common/str.h"
+#ifndef DRACI_SCRIPT_H
+#define DRACI_SCRIPT_H
 
-#ifndef DRACI_GPLDISASM_H
-#define DRACI_GPLDISASM_H
+#include "common/str.h"
+#include "common/stream.h"
 
 namespace Draci {
 
@@ -49,8 +50,17 @@ struct GPL2Command {
 	int _paramTypes[kMaxParams];
 };
 
-int gpldisasm(byte *gplcode, uint16 len);
+class Script {
+
+public:
+	int gpldisasm(byte *gplcode, uint16 len);
+	
+private:
+	GPL2Command *findCommand(byte num, byte subnum);
+	void handleMathExpression(Common::MemoryReadStream &reader);
+
+};
 
 }
 
-#endif // DRACI_GPLDISASM_H
+#endif // DRACI_SCRIPT_H

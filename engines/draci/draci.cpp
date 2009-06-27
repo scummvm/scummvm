@@ -34,7 +34,7 @@
  
 #include "draci/draci.h"
 #include "draci/barchive.h"
-#include "draci/gpldisasm.h"
+#include "draci/script.h"
 #include "draci/font.h"
 #include "draci/sprite.h"
 #include "draci/screen.h"
@@ -108,7 +108,7 @@ int DraciEngine::init() {
 	}	
 
 	// Disassemble GPL script for the first location
-	gpldisasm(f->_data, f->_length);
+	//gpldisasm(f->_data, f->_length);
 
 	return Common::kNoError;
 }

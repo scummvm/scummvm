@@ -27,7 +27,7 @@
 #include "common/stream.h"
 #include "common/stack.h"
 
-#include "draci/gpldisasm.h"
+#include "draci/script.h"
 #include "draci/draci.h"
 
 namespace Draci {
@@ -150,7 +150,7 @@ enum mathExpressionObject {
  * @param reader Stream reader set to the beginning of the expression
  */
 
-void handleMathExpression(Common::MemoryReadStream &reader) {
+void Script::handleMathExpression(Common::MemoryReadStream &reader) {
 	Common::Stack<uint16> stk;
 	mathExpressionObject obj;
 
@@ -223,7 +223,7 @@ void handleMathExpression(Common::MemoryReadStream &reader) {
  * @return NULL if command is not found. Otherwise, a pointer to a GPL2Command
  *         struct representing the command.
  */
-GPL2Command *findCommand(byte num, byte subnum) {
+GPL2Command *Script::findCommand(byte num, byte subnum) {
 	unsigned int i = 0;
 	while (1) {
 
@@ -275,7 +275,7 @@ GPL2Command *findCommand(byte num, byte subnum) {
  *	value comes from.
  */
 
-int gpldisasm(byte *gplcode, uint16 len) {
+int Script::gpldisasm(byte *gplcode, uint16 len) {
 	Common::MemoryReadStream reader(gplcode, len);
 
 	while (!reader.eos()) {
