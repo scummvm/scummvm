@@ -125,7 +125,7 @@ void Scene::saveState(SaveGame *savedState) {
 
 	savedState->writeLEUint32(_numObjectStates);
 	for (StateList::iterator i = _states.begin(); i != _states.end(); i++) {
-		ObjectState *s = *i;
+//		ObjectState *s = *i;
 	}
 }
 
