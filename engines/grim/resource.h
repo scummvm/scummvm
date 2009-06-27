@@ -63,6 +63,7 @@ public:
 
 	struct ResourceCache {
 		char *fname;
+		int32 fileSize;
 		void *resPtr;
 	};
 
@@ -71,7 +72,7 @@ private:
 	const Lab *getLab(const char *filename) const;
 	void *getFileFromCache(const char *filename);
 	ResourceLoader::ResourceCache *getEntryFromCache(const char *filename);
-	void putIntoCache(Common::String fname, void *res);
+	void putIntoCache(Common::String fname, int32 fileSize, void *res);
 
 	typedef Common::List<Lab *> LabList;
 	LabList _labs;
@@ -79,6 +80,7 @@ private:
 
 	Common::Array<ResourceCache> _cache;
 	bool _cacheDirty;
+	int32 _cacheMemorySize;
 };
 
 extern ResourceLoader *g_resourceloader;

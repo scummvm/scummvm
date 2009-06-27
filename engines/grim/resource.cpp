@@ -38,6 +38,7 @@ ResourceLoader *g_resourceloader = NULL;
 ResourceLoader::ResourceLoader() {
 	int lab_counter = 0;
 	_cacheDirty = false;
+	_cacheMemorySize = 0;
 
 	Lab *l;
 	Common::ArchiveMemberList files;
@@ -154,11 +155,13 @@ int ResourceLoader::fileLength(const char *filename) const {
 		return 0;
 }
 
-void ResourceLoader::putIntoCache(Common::String fname, void *res) {
+void ResourceLoader::putIntoCache(Common::String fname, int32 fileSize, void *res) {
 	ResourceCache entry;
 	entry.resPtr = res;
 	entry.fname = new char[fname.size() + 1];
+	entry.fileSize = fileSize;
 	strcpy(entry.fname, fname.c_str());
+	_cacheMemorySize += fileSize;
 	_cache.push_back(entry);
 	_cacheDirty = true;
 }
@@ -177,9 +180,10 @@ Bitmap *ResourceLoader::loadBitmap(const char *filename) {
 	}
 
 	Bitmap *result = g_grim->registerBitmap(filename, b->data(), b->len());
-	delete b;
 
-	putIntoCache(fname, result);
+	putIntoCache(fname, b->len(), result);
+
+	delete b;
 
 	return result;
 }
@@ -195,9 +199,10 @@ CMap *ResourceLoader::loadColormap(const char *filename) {
 	if (!b)
 		error("Could not find colormap %s", filename);
 	CMap *result = new CMap(filename, b->data(), b->len());
-	delete b;
 
-	putIntoCache(fname, result);
+	putIntoCache(fname, b->len(), result);
+
+	delete b;
 
 	return result;
 }
@@ -225,9 +230,10 @@ Font *ResourceLoader::loadFont(const char *filename) {
 	if (!b)
 		error("Could not find font file %s", filename);
 	Font *result = new Font(filename, b->data(), b->len());
-	delete b;
 
-	putIntoCache(fname, result);
+	putIntoCache(fname, b->len(), result);
+
+	delete b;
 
 	return result;
 }
@@ -243,9 +249,10 @@ KeyframeAnim *ResourceLoader::loadKeyframe(const char *filename) {
 	if (!b)
 		error("Could not find keyframe file %s", filename);
 	KeyframeAnim *result = new KeyframeAnim(filename, b->data(), b->len());
-	delete b;
 
-	putIntoCache(fname, result);
+	putIntoCache(fname, b->len(), result);
+
+	delete b;
 
 	return result;
 }
@@ -263,15 +270,15 @@ LipSync *ResourceLoader::loadLipSync(const char *filename) {
 		result = NULL;
 	} else {
 		result = new LipSync(filename, b->data(), b->len());
-		delete b;
 
 		// Some lipsync files have no data
 		if (result->isValid()) {
-			putIntoCache(fname, result);
+			putIntoCache(fname, b->len(), result);
 		} else {
 			delete result;
 			result = NULL;
 		}
+		delete b;
 	}
 
 	return result;
@@ -288,9 +295,10 @@ Material *ResourceLoader::loadMaterial(const char *filename, const CMap *c) {
 	if (!b)
 		error("Could not find material %s", filename);
 	Material *result = new Material(fname.c_str(), b->data(), b->len(), c);
-	delete b;
 
-	putIntoCache(fname, result);
+	putIntoCache(fname, b->len(), result);
+
+	delete b;
 
 	return result;
 }
@@ -306,9 +314,10 @@ Model *ResourceLoader::loadModel(const char *filename, const CMap *c) {
 	if (!b)
 		error("Could not find model %s", filename);
 	Model *result = new Model(filename, b->data(), b->len(), c);
-	delete b;
 
-	putIntoCache(fname, result);
+	putIntoCache(fname, b->len(), result);
+
+	delete b;
 
 	return result;
 }
@@ -325,6 +334,7 @@ void ResourceLoader::uncache(const char *filename) {
 	for (unsigned int i = 0; i < _cache.size(); i++) {
 		if (fname.compareTo(_cache[i].fname) == 0) {
 			delete[] _cache[i].fname;
+			_cacheMemorySize -= _cache[i].fileSize;
 			_cache.remove_at(i);
 			_cacheDirty = true;
 		}
