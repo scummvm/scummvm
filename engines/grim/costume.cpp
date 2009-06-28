@@ -913,7 +913,7 @@ Costume::Component *Costume::loadComponent (tag32 tag, Costume::Component *paren
 
 	char t[4];
 	memcpy(t, &tag, sizeof(tag32));
-	error("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);
+	warning("loadComponent: Unknown tag '%c%c%c%c', name '%s'", t[0], t[1], t[2], t[3], name);
 	return NULL;
 }
 

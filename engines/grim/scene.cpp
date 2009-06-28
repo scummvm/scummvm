@@ -47,11 +47,13 @@ Scene::Scene(const char *name, const char *buf, int len) :
 		_cmaps[i] = g_resourceloader->loadColormap(cmap_name);
 	}
 
-	if (g_grim->getGameFlags() & GF_DEMO) {
+	if (ts.checkString("section: objectstates")) {
 		ts.expectString("section: objectstates");
 		ts.scanString(" tot_objects %d", 1, &_numObjectStates);
 		char object_name[256];
-		ts.scanString(" object %256s", 1, object_name);
+		for (int l = 0; l < _numObjectStates; l++) {
+			ts.scanString(" object %256s", 1, object_name);
+		}
 	} else {
 		_numObjectStates = 0;
 	}
@@ -164,10 +166,14 @@ void Scene::Setup::load(TextSplitter &ts) {
 	ts.scanString(" fov %f", 1, &_fov);
 	ts.scanString(" nclip %f", 1, &_nclip);
 	ts.scanString(" fclip %f", 1, &_fclip);
-	if (ts.checkString("object_art"))
-		ts.scanString(" object_art %256s", 1, buf);
-	if (ts.checkString("object_z"))
-		ts.scanString(" object_z %256s", 1, buf);
+	for (;;) {
+		if (ts.checkString("object_art"))
+			ts.scanString(" object_art %256s", 1, buf);
+		else
+			break;
+		if (ts.checkString("object_z"))
+			ts.scanString(" object_z %256s", 1, buf);
+	}
 }
 
 void Scene::Light::load(TextSplitter &ts) {
