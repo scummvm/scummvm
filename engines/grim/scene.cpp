@@ -166,6 +166,8 @@ void Scene::Setup::load(TextSplitter &ts) {
 	ts.scanString(" fclip %f", 1, &_fclip);
 	if (ts.checkString("object_art"))
 		ts.scanString(" object_art %256s", 1, buf);
+	if (ts.checkString("object_z"))
+		ts.scanString(" object_z %256s", 1, buf);
 }
 
 void Scene::Light::load(TextSplitter &ts) {
