@@ -207,6 +207,7 @@ void Scene::update() {
 	updateBarrier(_screen, _resPack, 7);	// the "crazy prisoner banging head" animation
 	//updateBarrier(_screen, _resPack, 8);	// going up the ladder
 	//updateBarrier(_screen, _resPack, 9);	// going down the ladder
+	//updateBarrier(_screen, _resPack, 59);	// Wobbly Guy
 	// TODO
 
 	if (g_debugPolygons)
@@ -215,7 +216,7 @@ void Scene::update() {
 	// Update cursor if it's in a hotspot
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
 		PolyDefinitions poly = _sceneResource->getGamePolygons()->_polygons[p];
-		if (poly.boundingRect.contains(_mouseX, _mouseY)) {
+		if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
 			curHotspot = (int32)p;
 			updateCursor();
 			break;
@@ -280,9 +281,11 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 		animRect.translate(-_startX, -_startY);
 
 		int startX = animRect.right == 640 ? 0 : surface->w - animRect.width();
+		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
+		
 		_screen->copyToBackBufferWithTransparency(((byte*)surface->pixels) +
-												  (surface->h - animRect.height()) * 
-												  surface->pitch + startX,
+												  startY * surface->pitch + 
+												  startX * surface->bytesPerPixel,
 												  surface->pitch,
 												  animRect.left,
 												  animRect.top,
@@ -299,10 +302,7 @@ void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex)
 #if 0
     // DEBUG bounding box 
     // FIXME this should be a generic method which draws for an entire graphicResource and not for single graphicFrames
-    fra->surface.drawLine(barrier.boundingRect.top, barrier.boundingRect.left, barrier.boundingRect.top, barrier.boundingRect.right, 0xFFFFFF);
-    fra->surface.drawLine(barrier.boundingRect.top, barrier.boundingRect.right-1, barrier.boundingRect.bottom, barrier.boundingRect.right-1, 0xFFFFFF);
-    fra->surface.drawLine(barrier.boundingRect.bottom-1, barrier.boundingRect.left, barrier.boundingRect.bottom-1, barrier.boundingRect.right, 0xFFFFFF);
-    fra->surface.drawLine(barrier.boundingRect.top, barrier.boundingRect.left, barrier.boundingRect.bottom, barrier.boundingRect.left, 0xFFFFFF);
+    fra->surface.frameRect(barrier.boundingRect, 0xFF);
 #endif
 
 	copyToBackBufferClipped(&fra->surface, barrier.x, barrier.y);
@@ -321,19 +321,25 @@ void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex)
 // POLYGONS DEBUG
 void Scene::ShowPolygons() {
     for (uint32 p = 0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
-        Graphics::Surface sur;
+        Graphics::Surface surface;
         PolyDefinitions poly = _sceneResource->getGamePolygons()->_polygons[p];
-
-        sur.create(poly.boundingRect.right - poly.boundingRect.left, poly.boundingRect.bottom - poly.boundingRect.top, 1);
+        surface.create(poly.boundingRect.right - poly.boundingRect.left + 1, poly.boundingRect.bottom - poly.boundingRect.top + 1, 1);
         
+        // Draw all lines in Polygon
         for (uint32 i=0; i < poly.numPoints; i++) {
-            sur.drawLine(poly.points[i].x - poly.boundingRect.left,     poly.points[i].y - poly.boundingRect.top, 
-						 poly.points[i].x - poly.boundingRect.left + 1, poly.points[i].y - poly.boundingRect.top + 1, 0xFF);
+            surface.drawLine(
+                poly.points[i].x - poly.boundingRect.left, 
+                poly.points[i].y - poly.boundingRect.top, 
+				poly.points[(i+1) % poly.numPoints].x - poly.boundingRect.left, 
+				poly.points[(i+1) % poly.numPoints].y - poly.boundingRect.top, 0xFF);
         }
-        sur.frameRect(Common::Rect(0, 0, sur.w, sur.h), 0xFF);   
+        
+        // Draw Bounding Box
+        //surface.frameRect(Common::Rect(0, 0, surface.w, surface.h), 0xFF);   
 
-        copyToBackBufferClipped(&sur, poly.boundingRect.left, poly.boundingRect.top);
-        sur.free();
+        copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);
+
+        surface.free();
     }
 }
 
