@@ -472,6 +472,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 void OSystem_SDL_Symbian::setWindowCaption(const char *caption) {
 	OSystem_SDL::setWindowCaption(caption);
 	check_mappings();
+FIXME: move check_mappings() call to engineInit() & engineDone()
 }
 
 void OSystem_SDL_Symbian::check_mappings() {

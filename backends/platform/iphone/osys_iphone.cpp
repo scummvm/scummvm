@@ -1210,9 +1210,6 @@ void OSystem_IPHONE::getTimeAndDate(struct tm &t) const {
 	t = *localtime(&curTime);
 }
 
-void OSystem_IPHONE::setWindowCaption(const char *caption) {
-}
-
 Common::SaveFileManager *OSystem_IPHONE::getSavefileManager() {
 	assert(_savefile);
 	return _savefile;

@@ -916,6 +916,8 @@ void OSystem_WINCE3::setWindowCaption(const char *caption) {
 	compute_sample_rate();
 	setupMixer();
 
+FIXME: move check_mappings() etc. calls to engineInit() & engineDone()
+
 	// handle the actual event
 	OSystem_SDL::setWindowCaption(caption);
 }

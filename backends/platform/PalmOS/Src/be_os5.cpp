@@ -115,6 +115,10 @@ void OSystem_PalmOS5::setFeatureState(Feature f, bool enable) {
 }
 
 void OSystem_PalmOS5::setWindowCaption(const char *caption) {
+FIXME/TODO: Convert caption from ISO Latin 1 to "right" encoding ?
+If the output encoding is unclear or conversion impossible,
+then one could just skip over any chars > 0x7F and display the rest
+
 	Err e;
 	Char buf[64];
 	Coord w, y, h = FntLineHeight() + 2;

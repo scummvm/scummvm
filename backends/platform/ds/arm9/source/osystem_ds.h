@@ -134,10 +134,6 @@ public:
 
 	virtual void quit();
 
-	virtual void setWindowCaption(const char *caption);
-
-	virtual void displayMessageOnOSD(const char *msg);
-
 	virtual Common::SaveFileManager *getSavefileManager();
 
 	void addEvent(Common::Event& e);

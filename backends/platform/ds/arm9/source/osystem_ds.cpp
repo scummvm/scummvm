@@ -642,12 +642,6 @@ void OSystem_DS::quit() {
 	swiSoftReset();*/
 }
 
-void OSystem_DS::setWindowCaption(const char *caption) {
-}
-
-void OSystem_DS::displayMessageOnOSD(const char *msg) {
-}
-
 Common::SaveFileManager* OSystem_DS::getSavefileManager() {
 	bool forceSram;
 
