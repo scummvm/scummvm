@@ -159,12 +159,12 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::allocSlot() {
 }
 
 ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGroupId) {
+	Common::String s = soundName;
+	s.toLowercase();
+	soundName = s.c_str();
 	const char *extension = soundName + strlen(soundName) - 3;
 	byte *ptr = NULL;
 	int headerSize = 0;
-
-	if (g_grim->getGameFlags() & GF_DEMO)
-		return NULL;
 
 	SoundDesc *sound = allocSlot();
 	if (!sound) {
@@ -174,7 +174,7 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 	strcpy(sound->name, soundName);
 	sound->volGroupId = volGroupId;
 
-	if (strcasecmp(extension, "imu") == 0) {
+	if (!(g_grim->getGameFlags() & GF_DEMO) && strcasecmp(extension, "imu") == 0) {
 		sound->blockRes = g_resourceloader->getFileBlock(soundName);
 		if (sound->blockRes) {
 			ptr = (byte *)sound->blockRes->data();
@@ -185,7 +185,8 @@ ImuseSndMgr::SoundDesc *ImuseSndMgr::openSound(const char *soundName, int volGro
 			closeSound(sound);
 			return NULL;
 		}
-	} else if (strcasecmp(extension, "wav") == 0 || strcasecmp(extension, "imc") == 0) {
+	} else if (strcasecmp(extension, "wav") == 0 || strcasecmp(extension, "imc") == 0 ||
+			(g_grim->getGameFlags() & GF_DEMO && strcasecmp(extension, "imu") == 0)) {
 		sound->mcmpMgr = new McmpMgr();
 		if (!sound->mcmpMgr->openSound(soundName, &ptr, headerSize)) {
 			closeSound(sound);

@@ -58,8 +58,13 @@ Imuse::Imuse(int fps) {
 		_track[l]->trackId = l;
 	}
 	vimaInit(imuseDestTable);
-	_stateMusicTable = grimStateMusicTable;
-	_seqMusicTable = grimSeqMusicTable;
+	if (g_grim->getGameFlags() & GF_DEMO) {
+		_stateMusicTable = grimDemoStateMusicTable;
+		_seqMusicTable = grimDemoSeqMusicTable;
+	} else {
+		_stateMusicTable = grimStateMusicTable;
+		_seqMusicTable = grimSeqMusicTable;
+	}
 	g_system->getTimerManager()->installTimerProc(timerHandler, 1000000 / _callbackFps, this);
 }
 
