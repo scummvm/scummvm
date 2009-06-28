@@ -26,6 +26,7 @@
 #include "common/endian.h"
 #include "common/timer.h"
 #include "common/file.h"
+#include "common/events.h"
 
 #include "engines/grim/smush/smush.h"
 #include "engines/grim/grim.h"
@@ -41,10 +42,7 @@ Smush *g_smush;
 static uint16 smushDestTable[5786];
 
 void Smush::timerCallback(void *) {
-	if (g_grim->getGameFlags() & GF_DEMO)
-		g_smush->handleFrameDemo();
-	else
-		g_smush->handleFrame();
+	g_smush->handleFrame();
 }
 
 Smush::Smush() {
@@ -89,13 +87,13 @@ void Smush::init() {
 		_internalBuffer = new byte[_width * _height * 2];
 		_externalBuffer = new byte[_width * _height * 2];
 		vimaInit(smushDestTable);
+		g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 	}
-
-	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
 }
 
 void Smush::deinit() {
-	g_system->getTimerManager()->removeTimerProc(&timerCallback);
+	if (!(g_grim->getGameFlags() & GF_DEMO))
+		g_system->getTimerManager()->removeTimerProc(&timerCallback);
 
 	if (_internalBuffer) {
 		delete[] _internalBuffer;
@@ -258,14 +256,6 @@ void Smush::handleFrameDemo() {
 	int32 size;
 	int pos = 0;
 
-	if (_videoPause)
-		return;
-
-	if (_videoFinished) {
-		_videoPause = true;
-		return;
-	}
-
 	tag = _f.readUint32BE();
 	assert(tag == MKID_BE('FRME'));
 	size = _f.readUint32BE();
@@ -293,10 +283,7 @@ void Smush::handleFrameDemo() {
 		d[l] = ((_pal[(index * 3) + 0] & 0xF8) << 8) | ((_pal[(index * 3) + 1] & 0xFC) << 3) | (_pal[(index * 3) + 2] >> 3);
 	}
 
-	g_driver->prepareSmushFrame(640, 480, _externalBuffer);
-	g_driver->drawSmushFrame(0, 0);
-	g_driver->flipBuffer();
-	g_driver->releaseSmushFrame();
+	_updateNeeded = true;
 
 	_frame++;
 	_movieTime += _speed / 1000;
@@ -451,7 +438,54 @@ bool Smush::play(const char *filename, bool looping, int x, int y) {
 
 	if (_videoLooping)
 		_startPos = _file.getPos();
+
 	init();
+
+	if (g_grim->getGameFlags() & GF_DEMO) {
+		_startTime = g_system->getMillis();
+		int skipped = 0;
+		for (;;) {
+			bool skipFrame = false;
+			int32 elapsed = g_system->getMillis() - _startTime;
+			if (elapsed >= _frame * (_speed / 1000)) {
+				if (elapsed >= (_frame + 1) * (_speed / 1000))
+					skipFrame = true;
+				else
+					skipFrame = false;
+				handleFrameDemo();
+			}
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)
+						|| event.type == Common::EVENT_QUIT) {
+					_videoFinished = true;
+					break;
+				}
+			}
+
+			if (skipFrame) {
+				if (++skipped > 10) {
+					skipFrame = false;
+					skipped = 0;
+				}
+			} else
+				skipped = 0;
+			if (_updateNeeded) {
+				if (!skipFrame) {
+					g_driver->prepareSmushFrame(640, 480, _externalBuffer);
+					g_driver->drawSmushFrame(0, 0);
+					g_driver->flipBuffer();
+					g_driver->releaseSmushFrame();
+					_updateNeeded = false;
+				}
+			}
+			if (_videoFinished) {
+				g_system->getMixer()->stopHandle(_soundHandle);
+				break;
+			}
+			g_system->delayMillis(10);
+		}
+	}
 
 	return true;
 }

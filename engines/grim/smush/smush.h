@@ -86,6 +86,7 @@ private:
 	bool _updateNeeded;
 	int32 _speed;
 	int32 _movieTime;
+	uint32 _startTime;
 	int _channels;
 	int _freq;
 	bool _videoFinished;
