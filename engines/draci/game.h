@@ -34,6 +34,26 @@ enum StructSizes {
 	personSize = sizeof(uint16) * 2 + sizeof(byte)
 };
 
+struct GameObject {
+	
+	GameObject() : _seqTab(NULL), _title(NULL), _program(NULL) {}
+	~GameObject();
+		
+	uint16 _init, _look, _use, _canUse;
+	bool _imInit, _imLook, _imUse;
+	byte _walkDir;
+	byte _priority;
+	uint16 _idxSeq, _numSeq;
+	uint16 _lookX, _lookY, _useX, _useY;
+	byte _lookDir, _useDir;
+	uint16 _absNum;
+	byte _animObj;
+	uint16 *_seqTab;
+	byte *_program;
+	byte *_title;
+	uint32 _progLen;
+};
+
 struct GameInfo {
 	byte _currentRoom;
 	byte _mapRoom;
@@ -66,6 +86,9 @@ private:
 	int16 *_variables;
 	byte *_itemStatus;
 	byte *_objectStatus;
+	GameObject _heroObj;
+	
+	void loadObject(uint16 numObj, GameObject *obj);
 };
 
 } // End of namespace Draci

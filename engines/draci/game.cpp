@@ -121,8 +121,51 @@ Game::Game() {
 // TODO: Why is this failing?
 //	assert(curOffset == _info->_numDialogBlocks);
 
+	loadObject(0, &_heroObj);
 }
 
+void Game::loadObject(uint16 objNum, GameObject *obj) {
+	Common::String path("OBJEKTY.DFW");
+	
+	BArchive objArchive(path);
+	BAFile *file;
+	
+	file = objArchive[objNum * 3];
+	Common::MemoryReadStream objReader(file->_data, file->_length);
+	
+	obj->_init = objReader.readUint16LE();
+	obj->_look = objReader.readUint16LE();
+	obj->_use = objReader.readUint16LE();
+	obj->_canUse = objReader.readUint16LE();
+	obj->_imInit = objReader.readByte();
+	obj->_imLook = objReader.readByte();
+	obj->_imUse = objReader.readByte();
+	obj->_walkDir = objReader.readByte();
+	obj->_priority = objReader.readByte();
+	obj->_idxSeq = objReader.readUint16LE();
+	obj->_numSeq = objReader.readUint16LE();
+	obj->_lookX = objReader.readUint16LE();
+	obj->_lookY = objReader.readUint16LE();
+	obj->_useX = objReader.readUint16LE();
+	obj->_useY = objReader.readUint16LE();
+	obj->_lookDir = objReader.readByte();
+	obj->_useDir = objReader.readByte();
+	
+	obj->_absNum = objNum;
+	obj->_animObj = 0;
+	
+	obj->_seqTab = new uint16[obj->_numSeq];
+
+	file = objArchive[objNum * 3 + 1];
+	obj->_title = new byte[file->_length];
+	memcpy(obj->_title, file->_data, file->_length);
+	
+	file = objArchive[objNum * 3 + 2];
+	obj->_program = new byte[file->_length];
+	memcpy(obj->_program, file->_data, file->_length);
+	obj->_progLen = file->_length;
+}
+	
 Game::~Game() {
 	delete[] _persons;
 	delete[] _variables;
@@ -130,6 +173,15 @@ Game::~Game() {
 	delete[] _itemStatus;
 	delete[] _objectStatus;
 	delete _info;
-}	
+}
+
+GameObject::~GameObject() { 
+	if (_seqTab) 
+		delete[] _seqTab; 
+	if (_title)
+		delete[] _title;
+	if (_program)
+		delete[] _program;
+}
 
 } 
