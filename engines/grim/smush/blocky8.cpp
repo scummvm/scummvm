@@ -554,9 +554,13 @@ Blocky8::Blocky8() {
 	memset(_tableBig, 0, 99328);
 	memset(_tableSmall, 0, 32768);
 	_deltaBuf = NULL;
+	_width = -1;
+	_height = -1;
 }
 
 void Blocky8::init(int width, int height) {
+	if (_width == width && _height == height)
+		return;
 	deinit();
 	_width = width;
 	_height = height;

@@ -83,11 +83,9 @@ void Smush::init() {
 	assert(!_internalBuffer);
 	assert(!_externalBuffer);
 
-	_externalBuffer = new byte[_width * _height * 2];
-	if (g_grim->getGameFlags() & GF_DEMO) {
-		_internalBuffer = new byte[_width * _height];
-	} else {
+	if (!(g_grim->getGameFlags() & GF_DEMO)) {
 		_internalBuffer = new byte[_width * _height * 2];
+		_externalBuffer = new byte[_width * _height * 2];
 		vimaInit(smushDestTable);
 	}
 	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
@@ -273,6 +271,19 @@ void Smush::handleFrameDemo() {
 
 	do {
 		if (READ_BE_UINT32(frame + pos) == MKID_BE('FOBJ')) {
+			_x = READ_LE_UINT16(frame + pos + 10);
+			_y = READ_LE_UINT16(frame + pos + 12);
+			int width = READ_LE_UINT16(frame + pos + 14);
+			int height = READ_LE_UINT16(frame + pos + 16);
+			if (width != _width || height != _height) {
+				delete[] _internalBuffer;
+				delete[] _externalBuffer;
+				_width = width;
+				_height = height;
+				_internalBuffer = new byte[_width * _height];
+				_externalBuffer = new byte[_width * _height * 2];
+				_blocky8.init(_width, _height);
+			}
 			_blocky8.decode(_internalBuffer, frame + pos + 8 + 14);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('IACT')) {
@@ -356,12 +367,10 @@ bool Smush::setupAnimDemo(const char *file) {
 	_f.readUint32BE();
 	_f.readUint32BE();
 
-	_blocky8.init(640, 480);
-
-	_x = 0;
-	_y = 0;
-	_width = 640;
-	_height = 480;
+	_x = -1;
+	_y = -1;
+	_width = -1;
+	_height = -1;
 	_videoLooping = false;
 	_startPos = NULL;
 	_speed = 66667;
