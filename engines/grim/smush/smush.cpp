@@ -83,12 +83,11 @@ void Smush::init() {
 	assert(!_internalBuffer);
 	assert(!_externalBuffer);
 
+	_externalBuffer = new byte[_width * _height * 2];
 	if (g_grim->getGameFlags() & GF_DEMO) {
 		_internalBuffer = new byte[_width * _height];
-		_externalBuffer = new byte[_width * _height * 2];
 	} else {
 		_internalBuffer = new byte[_width * _height * 2];
-		_externalBuffer = new byte[_width * _height * 2];
 		vimaInit(smushDestTable);
 	}
 	g_system->getTimerManager()->installTimerProc(&timerCallback, _speed, NULL);
