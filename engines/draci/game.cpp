@@ -28,10 +28,11 @@
 #include "draci/draci.h"
 #include "draci/game.h"
 #include "draci/barchive.h"
+#include "draci/script.h"
 
 namespace Draci {
 
-Game::Game() {
+Game::Game(DraciEngine *vm) : _vm(vm) {
 	unsigned int i;
 	Common::String path("INIT.DFW");
 	
@@ -161,9 +162,9 @@ void Game::loadObject(uint16 objNum, GameObject *obj) {
 	memcpy(obj->_title, file->_data, file->_length);
 	
 	file = objArchive[objNum * 3 + 2];
-	obj->_program = new byte[file->_length];
-	memcpy(obj->_program, file->_data, file->_length);
-	obj->_progLen = file->_length;
+	obj->_program._bytecode = new byte[file->_length];
+	obj->_program._length = file->_length;
+	memcpy(obj->_program._bytecode, file->_data, file->_length);
 }
 	
 Game::~Game() {
@@ -176,12 +177,9 @@ Game::~Game() {
 }
 
 GameObject::~GameObject() { 
-	if (_seqTab) 
-		delete[] _seqTab; 
-	if (_title)
-		delete[] _title;
-	if (_program)
-		delete[] _program;
+	delete[] _seqTab; 
+	delete[] _title;
+	delete[] _program._bytecode;
 }
 
 } 

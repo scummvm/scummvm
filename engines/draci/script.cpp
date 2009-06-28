@@ -246,8 +246,7 @@ GPL2Command *Script::findCommand(byte num, byte subnum) {
 
 /**
  * @brief GPL2 bytecode disassembler
- * @param gplcode A pointer to the bytecode
- * @param len Length of the bytecode
+ * @param program GPL program in the form of a GPL2Program struct
  *
  * GPL2 is short for Game Programming Language 2 which is the script language
  * used by Draci Historie. This is a simple disassembler for the language.
@@ -275,10 +274,11 @@ GPL2Command *Script::findCommand(byte num, byte subnum) {
  *	value comes from.
  */
 
-int Script::run(byte *gplcode, uint16 len) {
-	Common::MemoryReadStream reader(gplcode, len);
+int Script::run(GPL2Program program) {
+	Common::MemoryReadStream reader(program._bytecode, program._length);
 
-	while (!reader.eos()) {
+	GPL2Command *cmd;
+	do {
 		// read in command pair
 		uint16 cmdpair = reader.readUint16BE();
 
@@ -288,7 +288,6 @@ int Script::run(byte *gplcode, uint16 len) {
 		// extract low byte, i.e. the command subnumber
 		byte subnum = cmdpair & 0xFF;
 
-		GPL2Command *cmd;
 		if ((cmd = findCommand(num, subnum))) {
 
 			// Print command name
@@ -308,9 +307,7 @@ int Script::run(byte *gplcode, uint16 len) {
 			debugC(2, kDraciBytecodeDebugLevel, "Unknown opcode %hu, %hu",
 				num, subnum);
 		}
-
-
-	}
+	} while (cmd->_name != "gplend");
 
 	return 0;
 }

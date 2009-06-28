@@ -50,10 +50,22 @@ struct GPL2Command {
 	int _paramTypes[kMaxParams];
 };
 
+/** 
+ *  A convenience data type that holds both the actual bytecode and the
+ *  length of the bytecode. Passed to Script::run().
+ */
+
+struct GPL2Program {
+	GPL2Program() : _bytecode(NULL), _length(0) {}
+	
+	byte *_bytecode;
+	uint16 _length;
+};
+
 class Script {
 
 public:
-	int run(byte *gplcode, uint16 len);
+	int run(GPL2Program program);
 	
 private:
 	GPL2Command *findCommand(byte num, byte subnum);

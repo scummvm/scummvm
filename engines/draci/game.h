@@ -27,8 +27,11 @@
 #define DRACI_GAME_H
 
 #include "common/str.h"
+#include "draci/script.h"
 
 namespace Draci {
+
+class DraciEngine;
 
 enum StructSizes {
 	personSize = sizeof(uint16) * 2 + sizeof(byte)
@@ -36,7 +39,7 @@ enum StructSizes {
 
 struct GameObject {
 	
-	GameObject() : _seqTab(NULL), _title(NULL), _program(NULL) {}
+	GameObject() : _seqTab(NULL), _title(NULL) {}
 	~GameObject();
 		
 	uint16 _init, _look, _use, _canUse;
@@ -49,9 +52,8 @@ struct GameObject {
 	uint16 _absNum;
 	byte _animObj;
 	uint16 *_seqTab;
-	byte *_program;
+	GPL2Program _program;
 	byte *_title;
-	uint32 _progLen;
 };
 
 struct GameInfo {
@@ -76,10 +78,12 @@ struct Person {
 class Game {
 
 public:
-	Game();
+	Game(DraciEngine *vm);
 	~Game();
 
 private:
+	DraciEngine *_vm;
+	
 	GameInfo *_info;
 	Person *_persons;
 	uint16 *_dialogOffsets;

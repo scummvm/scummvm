@@ -69,7 +69,7 @@ int DraciEngine::init() {
 	_screen = new Screen(this);
 	_font = new Font();
 	_mouse = new Mouse(this);
-	_game = new Game();
+	_game = new Game(this);
 	_script = new Script();
 
 	// Load default font
