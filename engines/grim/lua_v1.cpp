@@ -2034,6 +2034,29 @@ loop:
 	}
 }
 
+static void PrintLine() {
+	int vol = 127, buffer = 64, paramId = 1, x = -1, y = -1;
+	bool background = true;
+	char msgId[50];
+	Common::String msg;
+	lua_Object param1Obj = lua_getparam(0);
+	lua_Object param2Obj = lua_getparam(1);
+
+	if ((lua_isstring(param1Obj) || lua_isnil(param1Obj)) && (lua_istable(param2Obj) || lua_isnil(param2Obj))) {
+		if (lua_istable(param2Obj)) {
+			setDefaultObjectParams(&printLineDefaults, param2Obj);
+			parseSayLineTable(param2Obj, &background, &vol, &buffer, &x, &y);
+		}
+		if (lua_isstring(param1Obj)) {
+			const char *tmpstr = lua_getstring(param1Obj);
+			msg = parseMsgText(tmpstr, msgId);
+		}
+		if (!msg.empty()) {
+//			actor->sayLine(msg.c_str(), msgId); //background, vol, pan, x, y
+		}
+	}
+}
+
 static void InputDialog() {
 	lua_Object str1Obj = lua_getparam(1);
 	lua_Object str2Obj = lua_getparam(2);
@@ -3809,7 +3832,6 @@ STUB_FUNC(SetActorTimeScale)
 STUB_FUNC(SetActorScale)
 STUB_FUNC(GetTranslationMode)
 STUB_FUNC(SetTranslationMode)
-STUB_FUNC(PrintLine)
 STUB_FUNC(KillPrimitive)
 STUB_FUNC(WalkActorToAvoiding)
 STUB_FUNC(GetActorChores)
