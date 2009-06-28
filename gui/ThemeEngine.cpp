@@ -1447,7 +1447,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	output.clear();
 }
 
-void ThemeEngine::listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list, int depth) {
+void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth) {
 	if (!node.exists() || !node.isReadable() || !node.isDirectory())
 		return;
 
