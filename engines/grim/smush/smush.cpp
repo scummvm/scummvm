@@ -287,7 +287,10 @@ void Smush::handleFrameDemo() {
 			_blocky8.decode(_internalBuffer, frame + pos + 8 + 14);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('IACT')) {
-			pos += READ_BE_UINT32(frame + pos + 4) + 8;
+			int offset = READ_BE_UINT32(frame + pos + 4) + 8;
+			if (offset & 1)
+				offset += 1;
+			pos += offset;
 		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('XPAL')) {
 			handleDeltaPalette(frame + pos + 8, READ_BE_UINT32(frame + pos + 4));
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
