@@ -103,7 +103,7 @@ Common::Error AsylumEngine::go() {
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
-		waitForTimer(60);
+		waitForTimer(55);
 	}
 
     return Common::kNoError;
@@ -116,7 +116,6 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 		checkForEvent(false);
 		checkForDelayedVideo();
 		_system->updateScreen();
-		_system->delayMillis(10);
 	}
 }
 
