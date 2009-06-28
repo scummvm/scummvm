@@ -400,7 +400,7 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 		if (c < 0x80)
 			cap += c;
 		else {
-			cap += 0xc0 | (c >> 6);
+			cap += 0xC0 | (c >> 6);
 			cap += 0x80 | (c & 0x3F);
 		}
 	}
