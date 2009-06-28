@@ -94,23 +94,6 @@ int DraciEngine::init() {
 		debugC(3, kDraciGeneralDebugLevel, "0x%02x%c", f->_data[i], (i < 9) ? ' ' : '\n');
 	}
 
-	// Read in GPL script for the first game location	
-	debugC(2, kDraciBytecodeDebugLevel, "Disassembling GPL script " 
-		"for the first game location...");		
-
-	path = "MIST.DFW";
-	ar.openArchive(path);
-	
-	if(ar.isOpen()) {
-		f = ar[3];	
-	} else {
-		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
-		return Common::kUnknownError;
-	}	
-
-	// Disassemble GPL script for the first location
-	_script->run(f->_data, f->_length);
-
 	return Common::kNoError;
 }
 
