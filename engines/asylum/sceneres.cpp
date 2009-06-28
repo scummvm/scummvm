@@ -390,8 +390,8 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
         if (poly.numPoints > 0)
             poly.points = new Common::Point[poly.numPoints];
         for (uint32 i = 0; i < poly.numPoints; i++) {
-			poly.points[i].y = stream->readUint32LE() & 0xFFFF;
 			poly.points[i].x = stream->readUint32LE() & 0xFFFF;
+			poly.points[i].y = stream->readUint32LE() & 0xFFFF;
 		}
         stream->skip((Polygons_MAXSIZE - poly.numPoints) * 8);
 
