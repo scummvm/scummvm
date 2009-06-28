@@ -140,8 +140,6 @@ public:
 
 	virtual void quit();
 
-	virtual void displayMessageOnOSD(const char *msg);
-
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 };
