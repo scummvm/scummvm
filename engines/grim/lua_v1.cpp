@@ -3051,7 +3051,10 @@ static void IsFullscreenMoviePlaying() {
 }
 
 static void IsMoviePlaying() {
-	pushbool(g_smush->isPlaying() && g_grim->getMode() == ENGINE_MODE_NORMAL);
+	if (g_grim->getGameFlags() & GF_DEMO)
+		pushbool(g_smush->isPlaying());
+	else
+		pushbool(g_smush->isPlaying() && g_grim->getMode() == ENGINE_MODE_NORMAL);
 }
 
 static void StopMovie() {
