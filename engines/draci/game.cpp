@@ -123,6 +123,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 //	assert(curOffset == _info->_numDialogBlocks);
 
 	loadObject(0, &_heroObj);
+	_vm->_script->run(_heroObj._program, _heroObj._init);
 }
 
 void Game::loadObject(uint16 objNum, GameObject *obj) {

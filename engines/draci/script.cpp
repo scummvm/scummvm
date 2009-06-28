@@ -247,6 +247,7 @@ GPL2Command *Script::findCommand(byte num, byte subnum) {
 /**
  * @brief GPL2 bytecode disassembler
  * @param program GPL program in the form of a GPL2Program struct
+ *        offset Offset into the program where execution should begin
  *
  * GPL2 is short for Game Programming Language 2 which is the script language
  * used by Draci Historie. This is a simple disassembler for the language.
@@ -274,9 +275,17 @@ GPL2Command *Script::findCommand(byte num, byte subnum) {
  *	value comes from.
  */
 
-int Script::run(GPL2Program program) {
+int Script::run(GPL2Program program, uint16 offset) {
 	Common::MemoryReadStream reader(program._bytecode, program._length);
 
+	// Offset is given as number of 16-bit integers so we need to convert
+	// it to a number of bytes  
+	offset -= 1;
+	offset *= 2;
+
+	// Seek to the requested part of the program
+	reader.seek(offset);
+	
 	GPL2Command *cmd;
 	do {
 		// read in command pair

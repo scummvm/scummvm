@@ -65,7 +65,7 @@ struct GPL2Program {
 class Script {
 
 public:
-	int run(GPL2Program program);
+	int run(GPL2Program program, uint16 offset);
 	
 private:
 	GPL2Command *findCommand(byte num, byte subnum);
