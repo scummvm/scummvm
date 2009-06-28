@@ -97,6 +97,8 @@ private:
 	byte *_internalBuffer, *_externalBuffer;
 	byte _pal[0x300];
 	int16 _deltaPal[0x300];
+	byte _IACToutput[4096];
+	int32 _IACTpos;
 
 public:
 	Smush();
@@ -125,11 +127,11 @@ private:
 	void handleFrame();
 	void handleBlocky16(byte *src);
 	void handleWave(const byte *src, uint32 size);
+	void handleIACT(const byte *src, int32 size);
 	void init();
 	void deinit();
 	bool setupAnim(const char *file, bool looping, int x, int y);
 	bool setupAnimDemo(const char *file);
-	void updateGLScreen();
 };
 
 extern Smush *g_smush;

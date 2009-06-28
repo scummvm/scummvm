@@ -66,6 +66,7 @@ Smush::Smush() {
 	_stream = NULL;
 	_movieTime = 0;
 	_frame = 0;
+	_IACTpos = 0;
 }
 
 Smush::~Smush() {
@@ -73,6 +74,7 @@ Smush::~Smush() {
 }
 
 void Smush::init() {
+	_IACTpos = 0;
 	_stream = NULL;
 	_frame = 0;
 	_movieTime = 0;
@@ -250,6 +252,73 @@ void Smush::handleDeltaPalette(byte *src, int32 size) {
 	}
 }
 
+void Smush::handleIACT(const byte *src, int32 size) {
+	int32 bsize = size - 18;
+	byte *d_src = (byte *)src + 18;
+
+	while (bsize > 0) {
+		if (_IACTpos >= 2) {
+			int32 len = READ_BE_UINT16(_IACToutput) + 2;
+			len -= _IACTpos;
+			if (len > bsize) {
+				memcpy(_IACToutput + _IACTpos, d_src, bsize);
+				_IACTpos += bsize;
+				bsize = 0;
+			} else {
+				byte *output_data = new byte[4096];
+				memcpy(_IACToutput + _IACTpos, d_src, len);
+				byte *dst = output_data;
+				byte *d_src2 = _IACToutput;
+				d_src2 += 2;
+				int32 count = 1024;
+				byte variable1 = *d_src2++;
+				byte variable2 = variable1 / 16;
+				variable1 &= 0x0f;
+				do {
+					byte value;
+					value = *(d_src2++);
+					if (value == 0x80) {
+						*dst++ = *d_src2++;
+						*dst++ = *d_src2++;
+					} else {
+						int16 val = (int8)value << variable2;
+						*dst++ = val >> 8;
+						*dst++ = (byte)(val);
+					}
+					value = *(d_src2++);
+					if (value == 0x80) {
+						*dst++ = *d_src2++;
+						*dst++ = *d_src2++;
+					} else {
+						int16 val = (int8)value << variable1;
+						*dst++ = val >> 8;
+						*dst++ = (byte)(val);
+					}
+				} while (--count);
+
+				if (!_stream) {
+					_stream = Audio::makeAppendableAudioStream(22050, Audio::Mixer::FLAG_STEREO | Audio::Mixer::FLAG_16BITS);
+					g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _stream);
+				}
+				_stream->queueBuffer(output_data, 0x1000);
+
+				bsize -= len;
+				d_src += len;
+				_IACTpos = 0;
+			}
+		} else {
+			if (bsize > 1 && _IACTpos == 0) {
+				*(_IACToutput + 0) = *d_src++;
+				_IACTpos = 1;
+				bsize--;
+			}
+			*(_IACToutput + _IACTpos) = *d_src++;
+			_IACTpos++;
+			bsize--;
+		}
+	}
+}
+
 void Smush::handleFrameDemo() {
 	uint32 tag;
 	int32 size;
@@ -287,6 +356,7 @@ void Smush::handleFrameDemo() {
 			_blocky8.decode(_internalBuffer, frame + pos + 8 + 14);
 			pos += READ_BE_UINT32(frame + pos + 4) + 8;
 		} else if (READ_BE_UINT32(frame + pos) == MKID_BE('IACT')) {
+			handleIACT(frame + pos + 8, READ_BE_UINT32(frame + pos + 4));
 			int offset = READ_BE_UINT32(frame + pos + 4) + 8;
 			if (offset & 1)
 				offset += 1;
