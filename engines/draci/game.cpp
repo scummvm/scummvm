@@ -96,10 +96,14 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	
 	file = initArchive[2];
 	unsigned int numVariables = file->_length / sizeof (int16);
-	
+
 	_variables = new int16[numVariables];
-	memcpy(_variables, file->_data, file->_length);
+	Common::MemoryReadStream variableData(file->_data, file->_length);
 	
+	for (i = 0; i < numVariables; ++i) {
+		_variables[i] = variableData.readUint16LE();
+	}
+
 	// Read in item status
 	
 	file = initArchive[1];
