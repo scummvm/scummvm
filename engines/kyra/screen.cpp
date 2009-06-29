@@ -2588,8 +2588,13 @@ void Screen::hideMouse() {
 }
 
 void Screen::showMouse() {
-	if (_mouseLockCount == 1)
+	if (_mouseLockCount == 1) {
 		CursorMan.showMouse(true);
+
+		// We need to call OSystem::updateScreen here, else the mouse cursor
+		// will only be visible on mouse movment.
+		_system->updateScreen();
+	}
 
 	if (_mouseLockCount > 0)
 		_mouseLockCount--;
