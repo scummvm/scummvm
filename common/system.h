@@ -673,7 +673,18 @@ public:
 	 */
 	//@{
 
-	/** Show or hide the mouse cursor. */
+	/**
+	 * Show or hide the mouse cursor.
+	 *
+	 * Currently the backend is not required to immediately draw the
+	 * mouse cursor on showMouse(true).
+	 *
+	 * TODO: We might want to reconsider this fact,
+	 * check Graphics::CursorManager::showMouse for some details about
+	 * this.
+	 *
+	 * @see Graphics::CursorManager::showMouse
+	 */
 	virtual bool showMouse(bool visible) = 0;
 
 	/**
