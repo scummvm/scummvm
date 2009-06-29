@@ -1434,7 +1434,7 @@ void LoLEngine::prepareSpecialScene(int fieldType, int hasDialogue, int suspendG
 
 		if (fadeFlag) {
 			_screen->getPalette(3).copy(_screen->getPalette(0), 128);
-			_screen->loadSpecialColors(_screen->getPalette(3).getData());
+			_screen->loadSpecialColors(_screen->getPalette(3));
 			_screen->fadePalette(_screen->getPalette(3), 10);
 			_screen->_fadeFlag = 0;
 		}

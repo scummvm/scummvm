@@ -970,7 +970,7 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 		anim->wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 
 	if (wsaFlags & 3) {
-		_screen->loadSpecialColors(_screen->getPalette(3).getData());
+		_screen->loadSpecialColors(_screen->getPalette(3));
 		_screen->fadePalette(_screen->getPalette(3), 10);
 		_screen->_fadeFlag = 0;
 	}

@@ -285,7 +285,7 @@ void Screen_LoL::fadeClearSceneWindow(int delay) {
 	Palette tpal(getPalette(0).getNumColors());
 	tpal.copy(getPalette(0), 128);
 
-	loadSpecialColors(tpal.getData());
+	loadSpecialColors(tpal);
 	fadePalette(tpal, delay);
 
 	fillRect(112, 0, 288, 120, 0);
@@ -837,13 +837,13 @@ void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
 }
 
 void Screen_LoL::fadeToPalette1(int delay) {
-	loadSpecialColors(getPalette(1).getData());
+	loadSpecialColors(getPalette(1));
 	fadePalette(getPalette(1), delay);
 	_fadeFlag = 0;
 }
 
-void Screen_LoL::loadSpecialColors(uint8 *destPalette) {
-	memcpy(destPalette + 0x240, _screenPalette->getData() + 0x240, 12);
+void Screen_LoL::loadSpecialColors(Palette &dst) {
+	dst.copy(*_screenPalette, 192, 4);
 }
 
 void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {

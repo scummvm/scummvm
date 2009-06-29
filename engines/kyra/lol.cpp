@@ -1680,7 +1680,7 @@ void LoLEngine::setPaletteBrightness(const Palette &srcPal, int brightness, int 
 
 void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier) {
 	dst.copy(src);
-	_screen->loadSpecialColors(dst.getData());
+	_screen->loadSpecialColors(dst);
 
 	brightness = (8 - brightness) << 5;
 	if (modifier >= 0 && modifier < 8 && (_flagsTable[31] & 0x08)) {
@@ -3663,8 +3663,8 @@ void LoLEngine::restoreSwampPalette() {
 		SWAP(s[i], d[i]);
 
 	generateBrightnessPalette(_screen->getPalette(0), _screen->getPalette(1), _brightness, _lampEffect);
-	_screen->loadSpecialColors(s);
-	_screen->loadSpecialColors(d2);
+	_screen->loadSpecialColors(_screen->getPalette(2));
+	_screen->loadSpecialColors(_screen->getPalette(1));
 
 	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, s, d2, 40, 0);
 }
