@@ -802,14 +802,9 @@ void GUI_HoF::createScreenThumbnail(Graphics::Surface &dst) {
 void GUI_HoF::setupPalette() {
 	_screen->copyPalette(1, 0);
 
-	uint8 *palette = _screen->getPalette(0).getData();
-	for (int i = 0; i < 768; ++i)
-		palette[i] >>= 1;
-
-	static const uint8 guiPal[] = { 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFc, 0xFD, 0xFE };
-
-	for (uint i = 0; i < ARRAYSIZE(guiPal); ++i)
-		_screen->getPalette(0).copy(_screen->getPalette(1), guiPal[i], 1);
+	Palette &pal = _screen->getPalette(0);
+	for (int i = 0; i < 741; ++i)
+		pal[i] >>= 1;
 
 	if (_isDeathMenu)
 		_screen->fadePalette(_screen->getPalette(0), 0x64);
