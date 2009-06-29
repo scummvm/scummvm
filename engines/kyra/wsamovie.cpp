@@ -64,7 +64,7 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf
 		offsPal = 0x300;
 		_flags |= WF_HAS_PALETTE;
 		if (palBuf)
-			memcpy(palBuf->getData(), wsaData + 8 + (_numFrames << 2), 0x300);
+			_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), *palBuf, 0x300);
 	}
 
 	if (offscreenDecode) {
