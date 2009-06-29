@@ -1407,8 +1407,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int t = (flags & 2) ? y2 - y - shapeHeight : y - y1;
 
-	const uint8 *s = src;
-
 	if (t < 0) {
 		shapeHeight += t;
 		if (shapeHeight <= 0) {
@@ -1417,23 +1415,29 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		}
 
 		t *= -1;
-		uint8 *tmp = dst;
+		const uint8 *srcBackUp = 0;
 
 		do {
 			_dsOffscreenScaleVal1 = 0;
+			srcBackUp = src;
 			_dsTmpWidth = shapeWidth;
-			int cnt = shapeWidth;
-			(this->*_dsScaleSkip)(tmp, s, cnt);
-			scaleCounterV += _dsScaleH;
-			if (!(scaleCounterV & 0xff00))
-				continue;
-			uint8 r = scaleCounterV >> 8;
-			scaleCounterV &= 0xff;
-			t -= r;
-		} while (t > 0);
 
-		if (t < 0)
+			int cnt = shapeWidth;
+			(this->*_dsScaleSkip)(dst, src, cnt);
+
+			scaleCounterV += _dsScaleH;
+
+			if (scaleCounterV & 0xFF00) {
+				uint8 r = scaleCounterV >> 8;
+				scaleCounterV &= 0xFF;
+				t -= r;
+			}
+		} while (!(scaleCounterV & 0xFF00) && (t > 0));
+
+		if (t < 0) {
+			src = srcBackUp;
 			scaleCounterV += (-t << 8);
+		}
 
 		if (!(flags & 2))
 			y = y1;
@@ -1514,28 +1518,28 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			if (!(scaleCounterV & 0xFF00)) {
 				_dsTmpWidth = shapeWidth;
 				int cnt = shapeWidth;
-				(this->*_dsScaleSkip)(d, s, cnt);
+				(this->*_dsScaleSkip)(d, src, cnt);
 			}
 		}
 
-		const uint8 *b_src = s;
+		const uint8 *b_src = src;
 
 		do {
-			s = b_src;
+			src = b_src;
 			_dsTmpWidth = shapeWidth;
 			int cnt = _dsOffscreenLeft;
-			int scaleState = (this->*_dsProcessMargin)(d, s, cnt);
+			int scaleState = (this->*_dsProcessMargin)(d, src, cnt);
 			if (_dsTmpWidth) {
 				cnt += shpWidthScaled1;
 				if (cnt > 0) {
 					if (flags & 0x800)
 						normalPlot = (curY > _maskMinY && curY < _maskMaxY);
 					_dsPlot = normalPlot ? dsPlot2 : dsPlot3;
-					(this->*_dsProcessLine)(d, s, cnt, scaleState);
+					(this->*_dsProcessLine)(d, src, cnt, scaleState);
 				}
 				cnt += _dsOffscreenRight;
 				if (cnt)
-					(this->*_dsScaleSkip)(d, s, cnt);
+					(this->*_dsScaleSkip)(d, src, cnt);
 			}
 			dst += dsPitch;
 			d = dst;
