@@ -2838,11 +2838,11 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 	debugC(3, kDebugLevelScreen, "Screen::loadPalette('%s', %p)", filename, (const void *)&pal);
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		pal.loadAmigaPalette(*stream, stream->size() / Palette::kAmigaBytesPerColor);
+		pal.loadAmigaPalette(*stream, 0, stream->size() / Palette::kAmigaBytesPerColor);
 	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
-		pal.loadPC98Palette(*stream, stream->size() / Palette::kPC98BytesPerColor);
+		pal.loadPC98Palette(*stream, 0, stream->size() / Palette::kPC98BytesPerColor);
 	else
-		pal.loadVGAPalette(*stream, stream->size() / Palette::kVGABytesPerColor);
+		pal.loadVGAPalette(*stream, 0, stream->size() / Palette::kVGABytesPerColor);
 
 	delete stream;
 	return true;
@@ -2862,14 +2862,14 @@ bool Screen::loadPaletteTable(const char *filename, int firstPalette) {
 		const int numPals = stream->size() / palSize;
 
 		for (int i = 0; i < numPals; ++i)
-			getPalette(i + firstPalette).loadAmigaPalette(*stream, numColors);
+			getPalette(i + firstPalette).loadAmigaPalette(*stream, 0, numColors);
 	} else {
 		const int numColors = getPalette(firstPalette).getNumColors();
 		const int palSize = getPalette(firstPalette).getNumColors() * Palette::kVGABytesPerColor;
 		const int numPals = stream->size() / palSize;
 
 		for (int i = 0; i < numPals; ++i)
-			getPalette(i + firstPalette).loadVGAPalette(*stream, numColors);
+			getPalette(i + firstPalette).loadVGAPalette(*stream, 0, numColors);
 	}
 
 	delete stream;
@@ -2880,11 +2880,11 @@ void Screen::loadPalette(const byte *data, Palette &pal, int bytes) {
 	Common::MemoryReadStream stream(data, bytes, false);
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		pal.loadAmigaPalette(stream, stream.size() / Palette::kAmigaBytesPerColor);
+		pal.loadAmigaPalette(stream, 0, stream.size() / Palette::kAmigaBytesPerColor);
 	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
-		pal.loadPC98Palette(stream, stream.size() / Palette::kPC98BytesPerColor);
+		pal.loadPC98Palette(stream, 0, stream.size() / Palette::kPC98BytesPerColor);
 	else
-		pal.loadVGAPalette(stream, stream.size() / Palette::kVGABytesPerColor);
+		pal.loadVGAPalette(stream, 0, stream.size() / Palette::kVGABytesPerColor);
 }
 
 // dirty rect handling
@@ -3275,47 +3275,33 @@ Palette::~Palette() {
 	_palData = 0;
 }
 
-void Palette::loadVGAPalette(Common::ReadStream &stream, int colors) {
-	if (colors == -1)
-		colors = _numColors;
+void Palette::loadVGAPalette(Common::ReadStream &stream, int startIndex, int colors) {
+	assert(startIndex + colors <= _numColors);
 
-	assert(colors <= _numColors);
-
-	stream.read(_palData, colors * 3);
-	memset(_palData + colors * 3, 0, (_numColors - colors) * 3);
+	stream.read(_palData + startIndex * 3, colors * 3);
 }
 
-void Palette::loadAmigaPalette(Common::ReadStream &stream, int colors) {
-	if (colors == -1)
-		colors = _numColors;
-
-	assert(colors <= _numColors);
+void Palette::loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors) {
+	assert(startIndex + colors <= _numColors);
 
 	for (int i = 0; i < colors; ++i) {
 		uint16 col = stream.readUint16BE();
-		_palData[i * 3 + 2] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
-		_palData[i * 3 + 1] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
-		_palData[i * 3 + 0] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
+		_palData[(i + startIndex) * 3 + 2] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
+		_palData[(i + startIndex) * 3 + 1] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
+		_palData[(i + startIndex) * 3 + 0] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
 	}
-
-	memset(_palData + colors * 3, 0, (_numColors - colors) * 3);
 }
 
-void Palette::loadPC98Palette(Common::ReadStream &stream, int colors) {
-	if (colors == -1)
-		colors = _numColors;
-
-	assert(colors <= _numColors);
+void Palette::loadPC98Palette(Common::ReadStream &stream, int startIndex, int colors) {
+	assert(startIndex + colors <= _numColors);
 
 	for (int i = 0; i < colors; ++i) {
 		const byte g = stream.readByte(), r = stream.readByte(), b = stream.readByte();
 
-		_palData[i * 3 + 0] = ((r & 0x0F) * 0x3F) / 0x0F;
-		_palData[i * 3 + 1] = ((g & 0x0F) * 0x3F) / 0x0F;
-		_palData[i * 3 + 2] = ((b & 0x0F) * 0x3F) / 0x0F;
+		_palData[(i + startIndex) * 3 + 0] = ((r & 0x0F) * 0x3F) / 0x0F;
+		_palData[(i + startIndex) * 3 + 1] = ((g & 0x0F) * 0x3F) / 0x0F;
+		_palData[(i + startIndex) * 3 + 2] = ((b & 0x0F) * 0x3F) / 0x0F;
 	}
-
-	memset(_palData + colors * 3, 0, (_numColors - colors) * 3);
 }
 
 void Palette::clear() {

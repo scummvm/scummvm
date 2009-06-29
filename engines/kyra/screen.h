@@ -82,17 +82,17 @@ public:
 	/**
 	 * Load a VGA palette from the given stream.
 	 */
-	void loadVGAPalette(Common::ReadStream &stream, int colors = -1);
+	void loadVGAPalette(Common::ReadStream &stream, int startIndex, int colors);
 
 	/**
 	 * Load a AMIGA palette from the given stream.
 	 */
-	void loadAmigaPalette(Common::ReadStream &stream, int colors = -1);
+	void loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors);
 
 	/**
 	 * Load a PC98 16 color palette from the given stream.
 	 */
-	void loadPC98Palette(Common::ReadStream &stream, int colors = -1);
+	void loadPC98Palette(Common::ReadStream &stream, int startIndex, int colors);
 
 	/**
 	 * Return the number of colors this palette manages.
