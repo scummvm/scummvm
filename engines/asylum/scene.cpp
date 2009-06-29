@@ -282,6 +282,11 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 
 		int startX = animRect.right == 640 ? 0 : surface->w - animRect.width();
 		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
+
+        if(surface->w > 640)
+            startX = _startX;
+        if(surface->h > 480)
+            startY = _startY;
 		
 		_screen->copyToBackBufferWithTransparency(((byte*)surface->pixels) +
 												  startY * surface->pitch + 
