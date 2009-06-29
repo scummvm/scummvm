@@ -1661,7 +1661,7 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 	if (!file)
 		error("Couldn't load cauldron palette");
 	file->seek(state*18, SEEK_SET);
-	file->read(_screen->getPalette(2).getData() + 723, 18);
+	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
 	delete file;
 	file = 0;
 
@@ -1833,11 +1833,11 @@ void KyraEngine_HoF::cauldronRndPaletteFade() {
 	if (!file)
 		error("Couldn't load cauldron palette");
 	file->seek(index*18, SEEK_SET);
-	file->read(_screen->getPalette(0).getData()+723, 18);
+	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
 	snd_playSoundEffect(0x6A);
 	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
 	file->seek(0, SEEK_SET);
-	file->read(_screen->getPalette(0).getData()+723, 18);
+	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
 	delete file;
 	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
 }

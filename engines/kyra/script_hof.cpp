@@ -780,7 +780,7 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	_screen->loadBitmap("_NOTE.CPS", 3, 3, 0);
 
 	sprintf(filename, "_NTEPAL%.1d.COL", letter+1);
-	_res->loadFileToBuf(filename, _screen->getPalette(0).getData(), 768);
+	_screen->loadPalette(filename, _screen->getPalette(0));
 
 	_screen->fadeToBlack(0x14);
 
