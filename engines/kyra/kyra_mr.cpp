@@ -899,9 +899,9 @@ void KyraEngine_MR::updateCharPal(int unk1) {
 		for (int i = 144; i < 168; ++i) {
 			for (int j = 0; j <  3; ++j) {
 				uint8 col = dst[i * 3 + j];
-				uint8 subCol = src[(i - 144) * 3 + j] + sceneDatPal[j];
-				subCol = CLIP<uint8>(subCol, 0, 63);
-				subCol = (col - subCol) >> 1;
+				int subCol = src[(i - 144) * 3 + j] + sceneDatPal[j];
+				subCol = CLIP(subCol, 0, 63);
+				subCol = (col - subCol) / 2;
 				dst[i * 3 + j] -= subCol;
 			}
 		}
@@ -914,8 +914,8 @@ void KyraEngine_MR::updateCharPal(int unk1) {
 
 		for (int i = 144; i < 168; ++i) {
 			for (int j = 0; j < 3; ++j) {
-				uint8 col = dst[i * 3 + j] + sceneDatPal[j];
-				dst[i * 3 + j] = CLIP<uint8>(col, 0, 63);
+				int col = dst[i * 3 + j] + sceneDatPal[j];
+				dst[i * 3 + j] = CLIP(col, 0, 63);
 			}
 		}
 
