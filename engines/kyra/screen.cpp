@@ -34,7 +34,8 @@
 namespace Kyra {
 
 Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
-	: _system(system), _vm(vm), _sjisInvisibleColor(0) {
+	: _system(system), _vm(vm), _sjisInvisibleColor(0),
+	_cursorColorKey((vm->gameFlags().gameID == GI_KYRA1) ? 0xFF : 0x00) {
 	_debugEnabled = false;
 	_maskMinY = _maskMaxY = -1;
 }
@@ -2622,12 +2623,11 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 		y <<= 1;
 		mouseWidth <<= 1;
 		mouseHeight <<= 1;
-		fillRect(mouseWidth, 0, mouseWidth, mouseHeight, 255, 8);
 	}
 
 
 	uint8 *cursor = new uint8[mouseHeight * mouseWidth];
-	fillRect(0, 0, mouseWidth, mouseHeight, 255, 8);
+	fillRect(0, 0, mouseWidth, mouseHeight, _cursorColorKey, 8);
 	drawShape(8, shape, 0, 0, 0, 0);
 
 	int xOffset = 0;
@@ -2642,7 +2642,7 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 
 	CursorMan.showMouse(false);
 	copyRegionToBuffer(8, xOffset, 0, mouseWidth, mouseHeight, cursor);
-	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 255);
+	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, _cursorColorKey);
 	if (isMouseVisible())
 		CursorMan.showMouse(true);
 	delete[] cursor;

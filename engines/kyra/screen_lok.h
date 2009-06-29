@@ -91,7 +91,7 @@ private:
 
 	void convertTo16Colors(uint8 *page, int w, int h, int pitch, int keyColor = -1);
 	void postProcessCursor(uint8 *data, int width, int height, int pitch) {
-		convertTo16Colors(data, width, height, pitch, 255);
+		convertTo16Colors(data, width, height, pitch, _cursorColorKey);
 	}
 	void mergeOverlay(int x, int y, int w, int h);
 

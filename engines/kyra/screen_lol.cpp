@@ -997,7 +997,7 @@ void Screen_LoL::convertPC98Gfx(uint8 *data, int w, int h, int pitch) {
 void Screen_LoL::postProcessCursor(uint8 *data, int w, int h, int pitch) {
 	while (h--) {
 		for (int i = 0; i < w; ++i) {
-			if (*data != 255)
+			if (*data != _cursorColorKey)
 				*data = _paletteConvTable[*data];
 			++data;
 		}
