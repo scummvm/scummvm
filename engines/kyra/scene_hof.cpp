@@ -403,7 +403,7 @@ void KyraEngine_HoF::loadScenePal() {
 	strcat(filename, ".COL");
 	_screen->loadBitmap(filename, 3, 3, 0);
 	_screen->getPalette(1).copy(_screen->getCPagePtr(3), 0, 128);
-	memset(_screen->getPalette(1).getData(), 0, 3);
+	_screen->getPalette(1).fill(0, 1, 0);
 	memcpy(_scenePal, _screen->getCPagePtr(3)+336, 432);
 }
 
@@ -669,7 +669,7 @@ void KyraEngine_HoF::initSceneScreen(int unk1) {
 	}
 
 	if (_noScriptEnter) {
-		memset(_screen->getPalette(0).getData(), 0, 384);
+		_screen->getPalette(0).fill(0, 128, 0);
 		_screen->setScreenPalette(_screen->getPalette(0));
 	}
 

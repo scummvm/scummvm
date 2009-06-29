@@ -855,7 +855,7 @@ void LoLEngine::showCredits() {
 	_screen->_charWidth = 0;
 
 	_screen->loadBitmap("ROOM.CPS", 2, 2, &_screen->getPalette(0));
-	memset(_screen->getPalette(0).getData() + 764, 0, 3);
+	_screen->getPalette(0).fill(255, 1, 0);
 	_screen->fadeToBlack(30);
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);

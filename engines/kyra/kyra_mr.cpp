@@ -329,7 +329,7 @@ Common::Error KyraEngine_MR::go() {
 void KyraEngine_MR::initMainMenu() {
 	_menuAnim = new WSAMovie_v2(this);
 	_menuAnim->open("REVENGE.WSA", 1, &_screen->getPalette(0));
-	memset(_screen->getPalette(0).getData(), 0, 3);
+	_screen->getPalette(0).fill(0, 1, 0);
 
 	_menu = new MainMenu(this);
 	MainMenu::StaticData data = {
@@ -391,7 +391,7 @@ void KyraEngine_MR::playVQA(const char *name) {
 		_screen->showMouse();
 
 		// Taken from original, it used '1' here too
-		memset(_screen->getPalette(0).getData(), 1, 768);
+		_screen->getPalette(0).fill(0, 256, 1);
 		_screen->setScreenPalette(_screen->getPalette(0));
 		_screen->clearPage(0);
 		_screen->copyPalette(0, 1);

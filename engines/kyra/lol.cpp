@@ -778,17 +778,17 @@ int LoLEngine::mainMenu() {
 
 void LoLEngine::startup() {
 	_screen->clearPage(0);
-	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, &_screen->getPalette(0));
 
-	uint8 *tmpPal = new uint8[0x300];
-	memcpy(tmpPal, _screen->getPalette(0).getData(), 0x300);
-	memset(_screen->getPalette(0).getData(), 0x3f, 0x180);
-	_screen->getPalette(0).copy(tmpPal, 1, 1);
-	memset(_screen->getPalette(0).getData() + 0x240, 0x3f, 12);
-	_screen->generateOverlay(_screen->getPalette(0), _screen->_paletteOverlay1, 1, 96);
-	_screen->generateOverlay(_screen->getPalette(0), _screen->_paletteOverlay2, 144, 65);
-	_screen->getPalette(0).copy(tmpPal, 0, 256);
-	delete[] tmpPal;
+	Palette &pal = _screen->getPalette(0);
+	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, &pal);
+
+	_screen->copyPalette(1, 0);
+	pal.fill(0, 1, 0x3F);
+	pal.fill(2, 126, 0x3F);
+	pal.fill(192, 4, 0x3F);
+	_screen->generateOverlay(pal, _screen->_paletteOverlay1, 1, 96);
+	_screen->generateOverlay(pal, _screen->_paletteOverlay2, 144, 65);
+	_screen->copyPalette(0, 1);
 
 	_screen->getPalette(1).clear();
 	_screen->getPalette(2).clear();

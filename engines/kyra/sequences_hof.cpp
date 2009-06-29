@@ -2062,7 +2062,7 @@ void KyraEngine_HoF::seq_sequenceCommand(int command) {
 	case 1:
 		seq_playTalkText(_rnd.getRandomBit());
 
-		memset(_screen->getPalette(0).getData(), 0x3F, 0x300);
+		_screen->getPalette(0).fill(0, 256, 0x3F);
 		_screen->fadePalette(_screen->getPalette(0), 16);
 
 		_screen->copyPalette(1, 0);

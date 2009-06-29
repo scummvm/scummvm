@@ -334,7 +334,7 @@ void KyraEngine_MR::loadScenePal() {
 
 	_screen->loadBitmap(filename, 3, 3, 0);
 	_screen->getPalette(2).copy(_screen->getCPagePtr(3), 0, 144);
-	memset(_screen->getPalette(2).getData(), 0, 3);
+	_screen->getPalette(2).fill(0, 1, 0);
 
 	for (int i = 144; i <= 167; ++i) {
 		uint8 *palette = _screen->getPalette(2).getData() + i * 3;
@@ -607,7 +607,7 @@ void KyraEngine_MR::initSceneScreen(int unk1) {
 	}
 
 	if (_noScriptEnter) {
-		memset(_screen->getPalette(0).getData(), 0, 432);
+		_screen->getPalette(0).fill(0, 144, 0);
 		if (!_wasPlayingVQA)
 			_screen->setScreenPalette(_screen->getPalette(0));
 	}
