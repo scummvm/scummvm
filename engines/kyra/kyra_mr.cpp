@@ -898,40 +898,30 @@ void KyraEngine_MR::updateCharAnimFrame(int character, int *table) {
 void KyraEngine_MR::updateCharPal(int unk1) {
 	int layer = _screen->getLayer(_mainCharacter.x1, _mainCharacter.y1) - 1;
 	const uint8 *src = _costPalBuffer + _characterShapeFile * 72;
-	uint8 *dst = _screen->getPalette(0).getData() + 432;
+	Palette &dst = _screen->getPalette(0);
 	const int8 *sceneDatPal = &_sceneDatPalette[layer * 3];
 
 	if (layer != _lastCharPalLayer && unk1) {
-		for (int i = 0, j = 0; i < 72; ++i) {
-			uint8 col = *dst;
-			int8 addCol = *src + *sceneDatPal;
-			addCol = MAX<int8>(0, MIN<int8>(addCol, 63));
-			addCol = (col - addCol) >> 1;
-			*dst -= addCol;
-			++dst;
-			++src;
-			++sceneDatPal;
-			++j;
-			if (j > 3) {
-				sceneDatPal = &_sceneDatPalette[layer * 3];
-				j = 0;
+		for (int i = 144; i < 168; ++i) {
+			for (int j = 0; j <  3; ++j) {
+				uint8 col = dst[i * 3 + j];
+				uint8 subCol = src[(i - 144) * 3 + j] + sceneDatPal[j];
+				subCol = CLIP<uint8>(subCol, 0, 63);
+				subCol = (col - subCol) >> 1;
+				dst[i * 3 + j] -= subCol;
 			}
 		}
+
 		_charPalUpdate = true;
 		_screen->setScreenPalette(_screen->getPalette(0));
 		_lastCharPalLayer = layer;
 	} else if (_charPalUpdate || !unk1) {
-		memcpy(dst, src, 72);
+		dst.copy(_costPalBuffer, _characterShapeFile * 24, 24, 144);
 
-		for (int i = 0, j = 0; i < 72; ++i) {
-			uint8 col = *dst + *sceneDatPal;
-			*dst = MAX<int8>(0, MIN<int8>(col, 63));
-			++dst;
-			++sceneDatPal;
-			++j;
-			if (j >= 3) {
-				sceneDatPal = &_sceneDatPalette[layer * 3];
-				j = 0;
+		for (int i = 144; i < 168; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				uint8 col = dst[i * 3 + j] + sceneDatPal[j];
+				dst[i * 3 + j] = CLIP<uint8>(col, 0, 63);
 			}
 		}
 
