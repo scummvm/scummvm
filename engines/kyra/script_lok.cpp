@@ -913,8 +913,6 @@ int KyraEngine_LoK::o1_placeCharacterInOtherScene(EMCState *script) {
 int KyraEngine_LoK::o1_getKey(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getKey(%p) ()", (const void *)script);
 
-	// TODO: Check this implementation
-
 	while (true) {
 		delay(10);
 
@@ -1245,7 +1243,6 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 		}
 	}
 
-	// TODO: Original used "44" here, which would be 14.666... colors. That looks strange, we should verify this one again.
 	_screen->getPalette(1).copy(_specialPalettes[palIndex], 0, 15, 228);
 	return 0;
 }
