@@ -872,7 +872,7 @@ private:
 	void toggleSelectedCharacterFrame(bool mode);
 	void fadeText();
 	void transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
-	void setPaletteBrightness(uint8 *palette, int brightness, int modifier);
+	void setPaletteBrightness(Palette &pal, int brightness, int modifier);
 	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
 	void generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags);
 	void updateSequenceBackgroundAnimations();

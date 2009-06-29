@@ -876,7 +876,7 @@ int LoLEngine::olol_redrawPlayfield(EMCState *script) {
 	if (_screen->_fadeFlag != 2)
 		_screen->fadeClearSceneWindow(10);
 	gui_drawPlayField();
-	setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, _lampEffect);
+	setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -1428,7 +1428,7 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	uint16 old = _brightness;
 	_brightness = stackPos(0);
 	if (stackPos(1) == 1)
-		setPaletteBrightness(_screen->getPalette(0).getData(), stackPos(0), _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), stackPos(0), _lampEffect);
 	return old;
 }
 
@@ -2420,7 +2420,7 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
 		gui_drawPlayField();
-		setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 		_screen->_fadeFlag = 0;
 		break;
 

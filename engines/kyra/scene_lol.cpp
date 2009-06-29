@@ -94,7 +94,7 @@ void LoLEngine::loadLevel(int index) {
 
 	gui_drawPlayField();
 
-	setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, _lampEffect);
+	setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 	setMouseCursorToItemInHand();
 
 	snd_playTrack(_curMusicTheme);
@@ -544,14 +544,14 @@ void LoLEngine::updateLampStatus() {
 	if (!_brightness || !_lampOilStatus) {
 		newLampEffect = 8;
 		if (newLampEffect != _lampEffect && _screen->_fadeFlag == 0)
-			setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, newLampEffect);
+			setPaletteBrightness(_screen->getPalette(0), _brightness, newLampEffect);
 	} else {
 		tmpOilStatus = (_lampOilStatus < 100) ? _lampOilStatus : 100;
 		newLampEffect = (3 - ((tmpOilStatus - 1) / 25)) << 1;
 
 		if (_lampEffect == -1) {
 			if (_screen->_fadeFlag == 0)
-				setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, newLampEffect);
+				setPaletteBrightness(_screen->getPalette(0), _brightness, newLampEffect);
 			_lampStatusTimer = _system->getMillis() + (10 + _rnd.getRandomNumberRng(1, 30)) * _tickLength;
 		} else {
 			if ((_lampEffect & 0xfe) == (newLampEffect & 0xfe)) {
@@ -563,7 +563,7 @@ void LoLEngine::updateLampStatus() {
 				}
 			} else {
 				if (_screen->_fadeFlag == 0)
-					setPaletteBrightness(_screen->getPalette(0).getData(), _lampEffect, newLampEffect);
+					setPaletteBrightness(_screen->getPalette(0), _lampEffect, newLampEffect);
 			}
 		}
 	}
@@ -1491,7 +1491,7 @@ int LoLEngine::restoreAfterSpecialScene(int fadeFlag, int redrawPlayField, int r
 		if (redrawPlayField)
 			gui_drawPlayField();
 
-		setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 
 	} else {
 		_currentControlMode = 0;

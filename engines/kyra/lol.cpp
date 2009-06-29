@@ -1538,7 +1538,7 @@ void LoLEngine::restoreAfterSceneWindowDialogue(int redraw) {
 		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
 		gui_drawPlayField();
-		setPaletteBrightness(_screen->getPalette(0).getData(), _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 		_screen->_fadeFlag = 0;
 	}
 
@@ -1672,8 +1672,8 @@ void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, in
 	}
 }
 
-void LoLEngine::setPaletteBrightness(uint8 *palette, int brightness, int modifier) {
-	generateBrightnessPalette(palette, _screen->getPalette(1).getData(), brightness, modifier);
+void LoLEngine::setPaletteBrightness(Palette &pal, int brightness, int modifier) {
+	generateBrightnessPalette(pal.getData(), _screen->getPalette(1).getData(), brightness, modifier);
 	_screen->fadePalette(_screen->getPalette(1), 5, 0);
 	_screen->_fadeFlag = 0;
 }
