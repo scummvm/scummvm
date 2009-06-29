@@ -105,6 +105,15 @@ public:
 	void clear();
 
 	/**
+	 * Fill the given indexes with the given component value.
+	 *
+	 * @param firstCol	the first color, which should be overwritten.
+	 * @param numCols	number of colors, which schould be overwritten.
+	 * @param value		color component value, which should be stored.
+	 */
+	void fill(int firstCol, int numCols, uint8 value);
+
+	/**
 	 * Copy data from another palette.
 	 *
 	 * @param source	palette to copy data from.

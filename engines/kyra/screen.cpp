@@ -3308,6 +3308,12 @@ void Palette::clear() {
 	memset(_palData, 0, _numColors * 3);
 }
 
+void Palette::fill(int firstCol, int numCols, uint8 value) {
+	assert(firstCol >= 0 && firstCol + numCols <= _numColors);
+
+	memset(_palData + firstCol * 3, CLIP<int>(value, 0, 63), numCols * 3);
+}
+
 void Palette::copy(const Palette &source, int firstCol, int numCols, int dstStart) {
 	if (numCols == -1)
 		numCols = MIN(source.getNumColors(), _numColors) - firstCol;
