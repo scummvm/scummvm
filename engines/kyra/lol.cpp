@@ -1672,8 +1672,8 @@ void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, in
 	}
 }
 
-void LoLEngine::setPaletteBrightness(Palette &pal, int brightness, int modifier) {
-	generateBrightnessPalette(pal, _screen->getPalette(1), brightness, modifier);
+void LoLEngine::setPaletteBrightness(const Palette &srcPal, int brightness, int modifier) {
+	generateBrightnessPalette(srcPal, _screen->getPalette(1), brightness, modifier);
 	_screen->fadePalette(_screen->getPalette(1), 5, 0);
 	_screen->_fadeFlag = 0;
 }
