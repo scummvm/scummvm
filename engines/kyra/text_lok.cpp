@@ -39,9 +39,6 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 	uint8 currPage;
 	Common::Event event;
 
-	//while (towns_isEscKeyPressed() )
-		//towns_getKey();
-
 	uint32 timeToEnd = strlen(chatStr) * 8 * _tickLength + _system->getMillis();
 
 	if (textEnabled() && !speechEnabled() && chatDuration != -1) {
@@ -136,7 +133,6 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 	_timer->enable(15);
 	_timer->enable(18);
 	_timer->enable(19);
-	//clearKyrandiaButtonIO();
 }
 
 void KyraEngine_LoK::endCharacterChat(int8 charNum, int16 convoInitialized) {

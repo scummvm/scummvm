@@ -643,8 +643,6 @@ bool KyraEngine_HoF::handleInputUnkSub(int x, int y) {
 		while (_emc->isValid(&_sceneScriptState))
 			_emc->run(&_sceneScriptState);
 
-		//XXXsys_unkKeyboad (flush? wait? whatever...)
-
 		if (queryGameFlag(0x1ED)) {
 			_sound->beginFadeOut();
 			_screen->fadeToBlack();

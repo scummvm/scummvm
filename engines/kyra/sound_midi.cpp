@@ -311,10 +311,8 @@ void MidiOutput::sendSysEx(const byte p1, const byte p2, const byte p3, const by
 }
 
 void MidiOutput::metaEvent(byte type, byte *data, uint16 length) {
-	if (type == 0x2F) { // End of Track
+	if (type == 0x2F) // End of Track
 		deinitSource(_curSource);
-		//XXX
-	}
 
 	_output->metaEvent(type, data, length);
 }

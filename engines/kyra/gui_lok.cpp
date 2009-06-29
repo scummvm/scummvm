@@ -87,7 +87,6 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 		}
 	}
 	_screen->updateScreen();
-	// XXX clearKyrandiaButtonIO
 	return 0;
 }
 
@@ -183,7 +182,6 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 		break;
 	}
 	_unkAmuletVar = 0;
-	// XXX clearKyrandiaButtonIO (!used before every return in this function!)
 	return 1;
 }
 
