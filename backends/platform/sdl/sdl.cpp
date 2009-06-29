@@ -490,7 +490,7 @@ void OSystem_SDL::quit() {
 void OSystem_SDL::setupIcon() {
 	int x, y, w, h, ncols, nbytes, i;
 	unsigned int rgba[256];
-        unsigned int *icon;
+	unsigned int *icon;
 
 	sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
 	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
