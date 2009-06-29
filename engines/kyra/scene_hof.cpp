@@ -330,9 +330,6 @@ int KyraEngine_HoF::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	updateCharacterAnim(0);
 	refreshAnimObjectsIfNeed();
 
-	if (!changedScene && !_unk4) {
-		//XXX
-	}
 	return changedScene;
 }
 

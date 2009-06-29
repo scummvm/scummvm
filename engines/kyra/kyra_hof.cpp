@@ -451,7 +451,6 @@ void KyraEngine_HoF::startup() {
 		(*_inventoryButtons[0].buttonCallback)(&_inventoryButtons[0]);
 
 	setNextIdleAnimTimer();
-	//XXX
 	setWalkspeed(_configWalkspeed);
 }
 

@@ -704,7 +704,6 @@ int GUI_HoF::optionsButton(Button *button) {
 	int oldHandItem = _vm->_itemInHand;
 	_screen->setMouseCursor(0, 0, _vm->getShapePtr(0));
 	_vm->displayInvWsaLastFrame();
-	//XXX
 	_displayMenu = true;
 
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
