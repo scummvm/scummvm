@@ -1681,6 +1681,7 @@ void LoLEngine::setPaletteBrightness(uint8 *palette, int brightness, int modifie
 void LoLEngine::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier) {
 	memcpy(dst, src, 0x300);
 	_screen->loadSpecialColors(dst);
+
 	brightness = (8 - brightness) << 5;
 	if (modifier >= 0 && modifier < 8 && (_flagsTable[31] & 0x08)) {
 		brightness = 256 - ((((modifier & 0xfffe) << 5) * (256 - brightness)) >> 8);
@@ -2182,25 +2183,24 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	gui_drawScene(0);
 	_screen->copyPage(0, 12);
 
-	uint8 *tpal = new uint8[768];
-	uint8 *swampCol = new uint8[768];
+	Palette tpal(768), swampCol(768);
 
 	if (_currentLevel == 11 && !(_flagsTable[52] & 0x04)) {
 		uint8 *sc = _screen->getPalette(0).getData();
 		uint8 *dc = _screen->getPalette(2).getData();
 		for (int i = 1; i < 768; i++)
 			SWAP(sc[i], dc[i]);
+
 		_flagsTable[52] |= 0x04;
 		static const uint8 freezeTimes[] =  { 20, 28, 40, 60 };
 		setCharacterUpdateEvent(charNum, 8, freezeTimes[spellLevel], 1);
 	}
 
-	uint8 *sc = _res->fileData("swampice.col", 0);
-	memcpy(swampCol, sc, 384);
-	uint8 *s = _screen->getPalette(1).getData();
-	for (int i = 384; i < 768; i++)
-		swampCol[i] = tpal[i] = s[i] & 0x3f;
+	_screen->loadPalette("SWAMPICE.COL", swampCol);
+	tpal.copy(_screen->getPalette(1), 128);
+	swampCol.copy(_screen->getPalette(1), 128);
 
+	Palette &s = _screen->getPalette(1);
 	for (int i = 1; i < 128; i++) {
 		tpal[i * 3] = 0;
 		uint16 v = (s[i * 3] + s[i * 3 + 1] + s[i * 3 + 2]) / 3;
@@ -2210,11 +2210,12 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 		if (tpal[i * 3 + 2] > 0x3f)
 			tpal[i * 3 + 2] = 0x3f;
 	}
-	generateBrightnessPalette(tpal, tpal, _brightness, _lampEffect);
-	generateBrightnessPalette(swampCol, swampCol, _brightness, _lampEffect);
+
+	generateBrightnessPalette(tpal.getData(), tpal.getData(), _brightness, _lampEffect);
+	generateBrightnessPalette(swampCol.getData(), swampCol.getData(), _brightness, _lampEffect);
 	swampCol[0] = swampCol[1] = swampCol[2] = tpal[0] = tpal[1] = tpal[2] = 0;
 
-	generateBrightnessPalette(_screen->getPalette(0).getData(), s, _brightness, _lampEffect);
+	generateBrightnessPalette(_screen->getPalette(0).getData(), s.getData(), _brightness, _lampEffect);
 
 	int sX = 112;
 	int sY = 0;
@@ -2223,11 +2224,11 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	if (spellLevel == 0) {
 		sX = 0;
 	} if (spellLevel == 1 || spellLevel == 2) {
-		mov->open("snow.wsa", 1, 0);
+		mov->open("SNOW.WSA", 1, 0);
 		if (!mov->opened())
 			error("Ice: Unable to load snow.wsa");
 	} if (spellLevel == 3) {
-		mov->open("ice.wsa", 1, 0);
+		mov->open("ICE.WSA", 1, 0);
 		if (!mov->opened())
 			error("Ice: Unable to load ice.wsa");
 		sX = 136;
@@ -2236,9 +2237,9 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 
 	snd_playSoundEffect(71, -1);
 
-	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, s, tpal, 40, false);
+	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, s.getData(), tpal.getData(), 40, false);
 
-	_screen->fadePaletteStep(s, tpal, _system->getMillis(), _tickLength);
+	_screen->fadePaletteStep(s.getData(), tpal.getData(), _system->getMillis(), _tickLength);
 	if (mov->opened()) {
 		int r = true;
 		if (spellLevel > 2) {
@@ -2303,22 +2304,19 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	enableSysTimer(2);
 
 	if (_currentLevel != 11)
-		generateBrightnessPalette(_screen->getPalette(0).getData(), swampCol, _brightness, _lampEffect);
+		generateBrightnessPalette(_screen->getPalette(0).getData(), swampCol.getData(), _brightness, _lampEffect);
 
-	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, tpal, swampCol, 40, 0);
+	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, tpal.getData(), swampCol.getData(), 40, 0);
 
-	_screen->fadePaletteStep(tpal, swampCol, _system->getMillis(), _tickLength);
+	_screen->fadePaletteStep(tpal.getData(), swampCol.getData(), _system->getMillis(), _tickLength);
 
 	if (breakWall)
-		breakIceWall(tpal, swampCol);
+		breakIceWall(tpal.getData(), swampCol.getData());
 
 	static const uint8 freezeTime[] = { 20, 28, 40, 60 };
 	if (_currentLevel == 11)
 		setCharacterUpdateEvent(charNum, 8, freezeTime[spellLevel], 1);
 
-	delete[] sc;
-	delete[] swampCol;
-	delete[] tpal;
 	_screen->setCurPage(cp);
 	return 1;
 }
