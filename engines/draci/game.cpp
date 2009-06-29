@@ -82,15 +82,13 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	_info->_numDialogs = gameData.readByte();
 	_info->_maxIconWidth = gameData.readUint16LE();
 	_info->_maxIconHeight = gameData.readUint16LE();
-	_info->_musicLength = gameData.readUint32LE();
+	_info->_musicLength = gameData.readUint16LE();
+	_info->_crc[0] = gameData.readUint16LE();
+	_info->_crc[1] = gameData.readUint16LE();
+	_info->_crc[2] = gameData.readUint16LE();
+	_info->_crc[3] = gameData.readUint16LE();
 
-// FIXME: Something is wrong here. The total file length is only 23 bytes
-// but the whole struct should be 35 bytes.
-	_info->_crc[0] = gameData.readUint32LE();
-	_info->_crc[1] = gameData.readUint32LE();
-	_info->_crc[2] = gameData.readUint32LE();
-	_info->_crc[3] = gameData.readUint32LE();
-	_info->_numDialogBlocks = gameData.readUint16LE();
+	_info->_numDialogBlocks = curOffset;
 
 	// Read in variables
 	
@@ -122,9 +120,6 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	assert(numPersons == _info->_numPersons);
 	assert(numVariables == _info->_numVariables);
 	assert(numObjects == _info->_numObjects);	
-
-// TODO: Why is this failing?
-//	assert(curOffset == _info->_numDialogBlocks);
 
 	loadObject(0, &_heroObj);
 	_vm->_script->run(_heroObj._program, _heroObj._init);

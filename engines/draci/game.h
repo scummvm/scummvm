@@ -65,8 +65,8 @@ struct GameInfo {
 	byte _numPersons;
 	byte _numDialogs;
 	uint16 _maxIconWidth, _maxIconHeight;
-	uint32 _musicLength;
-	uint32 _crc[4];
+	uint16 _musicLength;
+	uint16 _crc[4];
 	uint16 _numDialogBlocks;
 };
 
