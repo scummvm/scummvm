@@ -873,7 +873,7 @@ private:
 	void fadeText();
 	void transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 	void setPaletteBrightness(Palette &pal, int brightness, int modifier);
-	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
+	void generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier);
 	void generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags);
 	void updateSequenceBackgroundAnimations();
 

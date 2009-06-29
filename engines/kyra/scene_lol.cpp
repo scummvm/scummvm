@@ -438,7 +438,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		_screen->getLevelOverlay(7)[i] = i & 0xff;
 
 	_loadSuppFilesFlag = 0;
-	generateBrightnessPalette(_screen->getPalette(0).getData(), _screen->getPalette(1).getData(), _brightness, _lampEffect);
+	generateBrightnessPalette(_screen->getPalette(0), _screen->getPalette(1), _brightness, _lampEffect);
 
 	char tname[13];
 	snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);

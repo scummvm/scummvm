@@ -1673,14 +1673,14 @@ void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, in
 }
 
 void LoLEngine::setPaletteBrightness(Palette &pal, int brightness, int modifier) {
-	generateBrightnessPalette(pal.getData(), _screen->getPalette(1).getData(), brightness, modifier);
+	generateBrightnessPalette(pal, _screen->getPalette(1), brightness, modifier);
 	_screen->fadePalette(_screen->getPalette(1), 5, 0);
 	_screen->_fadeFlag = 0;
 }
 
-void LoLEngine::generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier) {
-	memcpy(dst, src, 0x300);
-	_screen->loadSpecialColors(dst);
+void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier) {
+	dst.copy(src);
+	_screen->loadSpecialColors(dst.getData());
 
 	brightness = (8 - brightness) << 5;
 	if (modifier >= 0 && modifier < 8 && (_flagsTable[31] & 0x08)) {
@@ -2211,11 +2211,11 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 			tpal[i * 3 + 2] = 0x3f;
 	}
 
-	generateBrightnessPalette(tpal.getData(), tpal.getData(), _brightness, _lampEffect);
-	generateBrightnessPalette(swampCol.getData(), swampCol.getData(), _brightness, _lampEffect);
+	generateBrightnessPalette(tpal, tpal, _brightness, _lampEffect);
+	generateBrightnessPalette(swampCol, swampCol, _brightness, _lampEffect);
 	swampCol[0] = swampCol[1] = swampCol[2] = tpal[0] = tpal[1] = tpal[2] = 0;
 
-	generateBrightnessPalette(_screen->getPalette(0).getData(), s.getData(), _brightness, _lampEffect);
+	generateBrightnessPalette(_screen->getPalette(0), s, _brightness, _lampEffect);
 
 	int sX = 112;
 	int sY = 0;
@@ -2304,7 +2304,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	enableSysTimer(2);
 
 	if (_currentLevel != 11)
-		generateBrightnessPalette(_screen->getPalette(0).getData(), swampCol.getData(), _brightness, _lampEffect);
+		generateBrightnessPalette(_screen->getPalette(0), swampCol, _brightness, _lampEffect);
 
 	playSpellAnimation(0, 0, 0, 2, 0, 0, 0, tpal.getData(), swampCol.getData(), 40, 0);
 
@@ -3662,7 +3662,7 @@ void LoLEngine::restoreSwampPalette() {
 	for (int i = 1; i < 768; i++)
 		SWAP(s[i], d[i]);
 
-	generateBrightnessPalette(d, d2, _brightness, _lampEffect);
+	generateBrightnessPalette(_screen->getPalette(0), _screen->getPalette(1), _brightness, _lampEffect);
 	_screen->loadSpecialColors(s);
 	_screen->loadSpecialColors(d2);
 
