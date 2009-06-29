@@ -874,7 +874,7 @@ private:
 	void transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 	void setPaletteBrightness(const Palette &srcPal, int brightness, int modifier);
 	void generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier);
-	void generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags);
+	void generateFlashPalette(const Palette &src, Palette &dst, int colorFlags);
 	void updateSequenceBackgroundAnimations();
 
 	bool _dialogueField;

@@ -2105,7 +2105,7 @@ int LoLEngine::olol_paletteFlash(EMCState *script) {
 	Palette &p2 = _screen->getPalette(3);
 
 	uint8 ovl[256];
-	generateFlashPalette(p1.getData(), p2.getData(), stackPos(0));
+	generateFlashPalette(p1, p2, stackPos(0));
 	_screen->loadSpecialColors(p1);
 	_screen->loadSpecialColors(p2);
 

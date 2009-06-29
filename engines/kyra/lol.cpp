@@ -1695,26 +1695,21 @@ void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int 
 	}
 }
 
-void LoLEngine::generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags) {
-	if (!src || !dst)
-		return;
-
-	memcpy(dst, src, 6);
-
-	uint8 *s = src + 6;
-	uint8 *d = dst + 6;
+void LoLEngine::generateFlashPalette(const Palette &src, Palette &dst, int colorFlags) {
+	dst.copy(src, 0, 2);
 
 	for (int i = 2; i < 128; i++) {
 		for (int ii = 0; ii < 3; ii++) {
-			uint8 t = *s++ & 0x3f;
+			uint8 t = src[i * 3 + ii] & 0x3f;
 			if (colorFlags & (1 << ii))
 				t += ((0x3f - t) >> 1);
 			else
 				t -= (t >> 1);
-			*d++ = t;
+			dst[i * 3 + ii] = t;
 		}
 	}
-	memcpy(d, s, 384);
+
+	dst.copy(src, 128);
 }
 
 void LoLEngine::updateSequenceBackgroundAnimations() {
