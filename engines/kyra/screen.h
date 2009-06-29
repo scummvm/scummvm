@@ -298,7 +298,7 @@ public:
 	void hideMouse();
 	void showMouse();
 	bool isMouseVisible() const;
-	virtual void setMouseCursor(int x, int y, const byte *shape);
+	void setMouseCursor(int x, int y, const byte *shape);
 
 	// rect handling
 	virtual int getRectSize(int w, int h) = 0;
@@ -396,7 +396,10 @@ protected:
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
 
+	// mouse handling
 	int _mouseLockCount;
+
+	virtual void postProcessCursor(uint8 *data, int w, int h, int pitch) {};
 
 	enum {
 		kMaxDirtyRects = 50

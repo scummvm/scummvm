@@ -2622,12 +2622,12 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 		y <<= 1;
 		mouseWidth <<= 1;
 		mouseHeight <<= 1;
-		fillRect(mouseWidth, 0, mouseWidth, mouseHeight, 0, 8);
+		fillRect(mouseWidth, 0, mouseWidth, mouseHeight, 255, 8);
 	}
 
 
 	uint8 *cursor = new uint8[mouseHeight * mouseWidth];
-	fillRect(0, 0, mouseWidth, mouseHeight, 0, 8);
+	fillRect(0, 0, mouseWidth, mouseHeight, 255, 8);
 	drawShape(8, shape, 0, 0, 0, 0);
 
 	int xOffset = 0;
@@ -2635,11 +2635,14 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	if (_vm->gameFlags().useHiResOverlay) {
 		xOffset = mouseWidth;
 		scale2x(getPagePtr(8) + mouseWidth, SCREEN_W, getPagePtr(8), SCREEN_W, mouseWidth, mouseHeight);
+		postProcessCursor(getPagePtr(8) + mouseWidth, mouseWidth, mouseHeight, SCREEN_W);
+	} else {
+		postProcessCursor(getPagePtr(8), mouseWidth, mouseHeight, SCREEN_W);
 	}
 
 	CursorMan.showMouse(false);
 	copyRegionToBuffer(8, xOffset, 0, mouseWidth, mouseHeight, cursor);
-	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
+	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 255);
 	if (isMouseVisible())
 		CursorMan.showMouse(true);
 	delete[] cursor;

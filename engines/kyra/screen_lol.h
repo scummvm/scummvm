@@ -111,6 +111,7 @@ private:
 
 	static const uint8 _paletteConvTable[256];
 	void mergeOverlay(int x, int y, int w, int h);
+	void postProcessCursor(uint8 *data, int width, int height, int pitch);
 
 	// magic atlas
 	void calcBoundariesIntern(int dstX, int dstY, int c, int d);

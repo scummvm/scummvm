@@ -86,12 +86,13 @@ public:
 	void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0);
 	void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff);
 	int fadePalStep(const Palette &pal, int diff);
-
-	void setMouseCursor(int x, int y, const byte *shape);
 private:
 	void updateDirtyRectsOvl();
 
 	void convertTo16Colors(uint8 *page, int w, int h, int pitch, int keyColor = -1);
+	void postProcessCursor(uint8 *data, int width, int height, int pitch) {
+		convertTo16Colors(data, width, height, pitch, 255);
+	}
 	void mergeOverlay(int x, int y, int w, int h);
 
 	void set16ColorPalette(const uint8 *pal);
