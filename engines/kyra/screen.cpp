@@ -38,6 +38,11 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	_cursorColorKey((vm->gameFlags().gameID == GI_KYRA1) ? 0xFF : 0x00) {
 	_debugEnabled = false;
 	_maskMinY = _maskMaxY = -1;
+
+	_drawShapeVar1 = 0;
+	_drawShapeVar3 = 1;
+	_drawShapeVar4 = 0;
+	_drawShapeVar5 = 0;
 }
 
 Screen::~Screen() {
@@ -1193,8 +1198,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	if (!shapeData)
 		return;
 
-	int f = _vm->gameFlags().useAltShapeHeader ? 2 : 0;
-	if (shapeData[f] & 1)
+	if (_vm->gameFlags().useAltShapeHeader)
+		shapeData += 2;
+
+	if (*shapeData & 1)
 		flags |= 0x400;
 
 	va_list args;
@@ -1203,11 +1210,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	static const int drawShapeVar2[] = {
 		1, 3, 2, 5, 4, 3, 2, 1
 	};
-
-	_drawShapeVar1 = 0;
-	_drawShapeVar3 = 1;
-	_drawShapeVar4 = 0;
-	_drawShapeVar5 = 0;
 
 	_dsTable = 0;
 	_dsTableLoopCount = 0;
@@ -1234,8 +1236,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	if (flags & 0x200) {
-		_drawShapeVar1 += 1;
-		_drawShapeVar1 &= 7;
+		++_drawShapeVar1;
+		_drawShapeVar1 &= (_vm->gameFlags().gameID == GI_KYRA1) ? 0x7 : 0xF;
 		_drawShapeVar3 = drawShapeVar2[_drawShapeVar1];
 		_drawShapeVar4 = 0;
 		_drawShapeVar5 = 256;
@@ -1326,12 +1328,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int scaleCounterV = 0;
 
-	f = flags & 0x0f;
-	_dsProcessMargin = dsMarginFunc[f];
-	_dsScaleSkip = dsSkipFunc[f];
-	_dsProcessLine = dsLineFunc[f];
+	const int drawFunc = flags & 0x0f;
+	_dsProcessMargin = dsMarginFunc[drawFunc];
+	_dsScaleSkip = dsSkipFunc[drawFunc];
+	_dsProcessLine = dsLineFunc[drawFunc];
 
-	int ppc = (flags >> 8) & 0x3F;
+	const int ppc = (flags >> 8) & 0x3F;
 	_dsPlot = dsPlotFunc[ppc];
 	DsPlotFunc dsPlot2 = dsPlotFunc[ppc], dsPlot3 = dsPlotFunc[ppc];
 	if (flags & 0x800)
@@ -1363,8 +1365,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int y2 = y1 + dsDim->h;
 
-	if (_vm->gameFlags().useAltShapeHeader)
-		src += 2;
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
 
 	int shapeHeight = *src++;
