@@ -269,7 +269,6 @@ Common::Error KyraEngine_MR::go() {
 
 		_screen->setScreenPalette(_screen->getPalette(0));
 
-		// XXX
 		playMenuAudioFile();
 
 		for (int i = 0; i < 64 && !shouldQuit(); ++i) {
@@ -558,9 +557,7 @@ void KyraEngine_MR::startup() {
 	_screen->setFont(Screen::FID_6_FNT);
 
 	_stringBuffer = new char[500];
-	//XXX
 	musicUpdate(0);
-	//XXX
 	allocAnimObjects(1, 16, 50);
 
 	musicUpdate(0);
@@ -585,13 +582,10 @@ void KyraEngine_MR::startup() {
 		error("couldn't load _ACTOR");
 
 	musicUpdate(0);
-	//XXX
-	musicUpdate(0);
 	openTalkFile(0);
 	musicUpdate(0);
 	_currentTalkFile = 0;
 	openTalkFile(1);
-	//XXX
 	loadCostPal();
 	musicUpdate(0);
 

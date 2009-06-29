@@ -48,10 +48,8 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	}
 	musicUpdate(0);
 
-	if (!unk3) {
-		//XXX
+	if (!unk3)
 		musicUpdate(0);
-	}
 
 	if (unk1) {
 		int x = _mainCharacter.x1;
@@ -88,7 +86,7 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 		newSoundFile = true;
 	}
 
-	//XXX
+	_chatAltFlag = false;
 
 	if (!unk3) {
 		_emc->init(&_sceneScriptState, &_sceneScriptData);
