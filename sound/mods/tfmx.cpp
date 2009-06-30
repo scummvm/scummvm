@@ -93,8 +93,9 @@ void Tfmx::interrupt() {
 			channel.sfxLocked = (channel.customMacroPrio != 0);
 		}
 
-		// apply timebased effects on Parameters 
-		effects(channel);
+		// apply timebased effects on Parameters
+		if (channel.macroSfxRun > 0)
+			effects(channel);
 
 		// see if we have to run the macro-program
 		if (channel.macroRun) {
@@ -107,6 +108,8 @@ void Tfmx::interrupt() {
 		}
 
 		Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+		if (channel.macroSfxRun >= 0)
+			channel.macroSfxRun = 1;
 
 		// TODO: handling pending DMAOff?
 	}
@@ -253,6 +256,9 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			continue;
 
 		case 0x01:	// DMA On
+			// TODO: Parameter macroPtr[1] - en-/disable effects
+			if (macroPtr[1])
+				debug("Tfmx: DMA On %i", (int8)macroPtr[1]);
 			channel.dmaIntCount = 0;
 			if (deferWait) {
 				// TODO

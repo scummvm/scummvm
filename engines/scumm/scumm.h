@@ -1017,9 +1017,11 @@ protected:
 
 	const byte *getPalettePtr(int palindex, int room);
 
+	void setHardcodedPaletteRGB(const byte *ptr, int numcolor, int firstIndex = 0);
 	void setC64Palette();
 	void setNESPalette();
 	void setAmigaPalette();
+	void setAmigaMIPalette();
 	void setHercPalette();
 	void setCGAPalette();
 	void setEGAPalette();

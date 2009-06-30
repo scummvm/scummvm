@@ -16,48 +16,9 @@
 
 using namespace Common;
 
-void simplePlaybacktest(int argc, const char *const argv[]) {
-	const char *modFilename = "mod.protracker";
-	if (argc == 2)
-		modFilename = argv[1];
-
-
-	// get Mixer, assume this never fails 
-	Audio::Mixer *mixer = g_system->getMixer();
-
-	FSNode fileDir(FILEDIR);
-	debug( "searching for Files in Directory: %s", fileDir.getPath().c_str());
-
-	FSNode musicFile = fileDir.getChild(modFilename);
-
-	SeekableReadStream *fileIn = musicFile.createReadStream();
-	if (0 == fileIn) {
-		debug( "cant open File %s", musicFile.getName().c_str());
-		return;
-	}
-
-	Audio::AudioStream *stream = Audio::makeProtrackerStream(fileIn);
-	delete fileIn;
-	if (0 == stream) {
-		debug( "cant open File %s as Protacker-Stream", musicFile.getName().c_str());
-		return;
-	}
-
-	Audio::SoundHandle soundH;
-
-	mixer->playInputStream(Audio::Mixer::kMusicSoundType, &soundH, stream);
-	while (mixer->isSoundHandleActive(soundH))
-		g_system->delayMillis(1000);
-	
-
-	//mixer->stopAll();
-}
-
 #define MUSICFILE "mdat.monkey"
 #define SAMPLEFILE "smpl.monkey"
 
-//#define MUSICFILE "mdat.tworld_1"
-//#define SAMPLEFILE "smpl.tworld_1"
 Audio::Tfmx *loadTfmxfile(const char *mdatName, const char *sampleName) {
 	FSNode fileDir(FILEDIR);
 	FSNode musicNode = fileDir.getChild(mdatName);

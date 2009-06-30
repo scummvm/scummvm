@@ -146,6 +146,7 @@ public:
 		uint16	macroReturnStep;
 		uint8	macroLoopCount;
 		bool	macroRun;
+		int8	macroSfxRun; 
 
 		uint32	customMacro;
 		uint8	customMacroIndex;
@@ -232,6 +233,7 @@ private:
 		channel.macroStep = 0;
 		channel.macroWait = 0;
 		channel.macroRun = true;
+		channel.macroSfxRun = 0;
 		channel.macroLoopCount = 0xFF;
 		channel.dmaIntCount = 0;
 	}
@@ -245,6 +247,7 @@ private:
 
 	static void clearMacroProgramm(ChannelContext &channel) {
 		channel.macroRun = false;
+		channel.macroSfxRun = 0;
 		channel.dmaIntCount = 0;
 	}
 
