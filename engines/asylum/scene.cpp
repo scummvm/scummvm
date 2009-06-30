@@ -46,10 +46,10 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 	    sprintf(musPackFileName, "mus.%03d", sceneIdx);
         _musPack = new ResourcePack(musPackFileName);
 
-		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.backgroundImage);
+		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.backgroundImage);
     }
 
-	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.curMagnifyingGlass);
+	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
 
 	_background = 0;
 	_startX = _startY = 0;
@@ -70,7 +70,7 @@ Scene::~Scene() {
  }
 
 void Scene::enterScene() {
-	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->_commonRes.palette);
+	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->commonRes.palette);
 
 	_background = _bgResource->getFrame(0);
 	_screen->copyToBackBuffer(((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w, 0, 0, 640, 480);
@@ -103,7 +103,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		break;
 	case Common::EVENT_RBUTTONUP:
 		delete _cursorResource;
-		_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->_commonRes.curMagnifyingGlass);
+		_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
 		_rightButton = false;
 		break;
 	case Common::EVENT_RBUTTONDOWN:
@@ -145,28 +145,28 @@ void Scene::update() {
 		// Change cursor
 		switch (mainActor->getCurrentAction()) {
 			case kWalkN:
-				newCursor = worldStats->_commonRes.curScrollUp;
+				newCursor = worldStats->commonRes.curScrollUp;
 				break;
 			case kWalkNE:
-				newCursor = worldStats->_commonRes.curScrollUpRight;
+				newCursor = worldStats->commonRes.curScrollUpRight;
 				break;
 			case kWalkNW:
-				newCursor = worldStats->_commonRes.curScrollUpLeft;
+				newCursor = worldStats->commonRes.curScrollUpLeft;
 				break;
 			case kWalkS:
-				newCursor = worldStats->_commonRes.curScrollDown;
+				newCursor = worldStats->commonRes.curScrollDown;
 				break;
 			case kWalkSE:
-				newCursor = worldStats->_commonRes.curScrollDownRight;
+				newCursor = worldStats->commonRes.curScrollDownRight;
 				break;
 			case kWalkSW:
-				newCursor = worldStats->_commonRes.curScrollDownLeft;
+				newCursor = worldStats->commonRes.curScrollDownLeft;
 				break;
 			case kWalkW:
-				newCursor = worldStats->_commonRes.curScrollLeft;
+				newCursor = worldStats->commonRes.curScrollLeft;
 				break;
 			case kWalkE:
-				newCursor = worldStats->_commonRes.curScrollRight;
+				newCursor = worldStats->commonRes.curScrollRight;
 				break;
 		}
 
@@ -214,8 +214,8 @@ void Scene::update() {
 		ShowPolygons();
 
 	// Update cursor if it's in a hotspot
-	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
-		PolyDefinitions poly = _sceneResource->getGamePolygons()->_polygons[p];
+	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
+		PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
 		if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
 			curHotspot = (int32)p;
 			updateCursor();
@@ -227,21 +227,21 @@ void Scene::update() {
 		_leftClick = false;
 
 		if (curHotspot >= 0) {
-			for (uint32 a = 0; a < worldStats->_numActions; a++) {
-				if (worldStats->_actions[a].polyIdx == curHotspot) {
+			for (uint32 a = 0; a < worldStats->numActions; a++) {
+				if (worldStats->actions[a].polyIdx == curHotspot) {
 					printf("Hotspot: \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n", 
-							worldStats->_actions[a].name,
-							worldStats->_actions[a].polyIdx,
-							worldStats->_actions[a].actionListIdx1,
-							worldStats->_actions[a].actionListIdx2,
-							worldStats->_actions[a].actionType,
-							worldStats->_actions[a].soundResId);
+							worldStats->actions[a].name,
+							worldStats->actions[a].polyIdx,
+							worldStats->actions[a].actionListIdx1,
+							worldStats->actions[a].actionListIdx2,
+							worldStats->actions[a].actionType,
+							worldStats->actions[a].soundResId);
 					// Play the SFX associated with the hotspot
 					// TODO: The hotspot sound res id is 0, seems like we need to get it from the associated action list
 					//_sound->playSfx(_resPack, worldStats->_actors[a].soundResId);
 
 					// TODO: This should all be moved to a script related class
-					ActionDefinitions actionDefs = _sceneResource->getActionList()->_actions[worldStats->_actions[a].actionListIdx1];
+					ActionDefinitions actionDefs = _sceneResource->getActionList()->actions[worldStats->actions[a].actionListIdx1];
 					for (int command = 0; command < 161; command++) {
 						if (actionDefs.commands[command].opcode == 65) {	// play voice
 							_sound->playSfx(_speechPack, actionDefs.commands[command].param1);
@@ -300,7 +300,7 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 }
 
 void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex) {
-	BarrierItem barrier = _sceneResource->getWorldStats()->_barriers[barrierIndex];
+	BarrierItem barrier = _sceneResource->getWorldStats()->barriers[barrierIndex];
 	GraphicResource *gra = new GraphicResource(res, barrier.resId);
 	GraphicFrame *fra = gra->getFrame(barrier.tickCount);
 
@@ -318,16 +318,16 @@ void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex)
 		barrier.tickCount = barrier.frameIdx;
 	}
     
-	_sceneResource->getWorldStats()->_barriers[barrierIndex] = barrier;
+	_sceneResource->getWorldStats()->barriers[barrierIndex] = barrier;
 
     delete gra;
 }
 
 // POLYGONS DEBUG
 void Scene::ShowPolygons() {
-    for (uint32 p = 0; p < _sceneResource->getGamePolygons()->_numEntries; p++) {
+    for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
         Graphics::Surface surface;
-        PolyDefinitions poly = _sceneResource->getGamePolygons()->_polygons[p];
+        PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
         surface.create(poly.boundingRect.right - poly.boundingRect.left + 1, poly.boundingRect.bottom - poly.boundingRect.top + 1, 1);
         
         // Draw all lines in Polygon
