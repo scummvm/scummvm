@@ -59,7 +59,6 @@ private:
 	MidiDriver *_driver;
 	PCSound *_sound;
 	bool _mt32, _adlib;
-	int _musicVolume;
 	Common::StringList _langStrings;
 	CursorType _savedCursor;
 	uint32 lastTick, lastTickDebug;
@@ -101,6 +100,7 @@ public:
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const char *desc);
 	virtual bool canSaveGameStateCurrently();
+	virtual void syncSoundSettings();
 
 	const CRUISEGameDescription *_gameDescription;
 	void initAllData(void);

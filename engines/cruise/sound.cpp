@@ -48,14 +48,18 @@ public:
 	virtual void playSample(const byte *data, int size, int channel, int volume) = 0;
 	virtual void stopAll() = 0;
 	virtual const char *getInstrumentExtension() const { return ""; }
+	virtual void syncSounds();
 
 	void setUpdateCallback(UpdateCallback upCb, void *ref);
 	void resetChannel(int channel);
 	void findNote(int freq, int *note, int *oct) const;
+	
 
 protected:
 	UpdateCallback _upCb;
 	void *_upRef;
+	uint8 _musicVolume;
+	uint8 _sfxVolume;
 
 	static const int _noteTable[];
 	static const int _noteTableCount;
@@ -98,6 +102,11 @@ struct AdlibSoundInstrument {
 	byte amDepth;
 };
 
+struct VolumeEntry {
+	int original;
+	int adjusted;
+};
+
 class AdlibSoundDriver : public PCSoundDriver, Audio::AudioStream {
 public:
 	AdlibSoundDriver(Audio::Mixer *mixer);
@@ -117,8 +126,12 @@ public:
 	void initCard();
 	void update(int16 *buf, int len);
 	void setupInstrument(const byte *data, int channel);
+	void setupInstrument(const AdlibSoundInstrument *ins, int channel);
 	void loadRegisterInstrument(const byte *data, AdlibRegisterSoundInstrument *reg);
 	virtual void loadInstrument(const byte *data, AdlibSoundInstrument *asi) = 0;
+	virtual void syncSounds();
+
+	void adjustVolume(int channel, int volume);
 
 protected:
 	FM_OPL *_opl;
@@ -127,7 +140,7 @@ protected:
 	Audio::SoundHandle _soundHandle;
 
 	byte _vibrato;
-	int _channelsVolumeTable[5];
+	VolumeEntry _channelsVolumeTable[5];
 	AdlibSoundInstrument _instrumentsTable[5];
 
 	static const int _freqTable[];
@@ -268,14 +281,27 @@ void PCSoundDriver::resetChannel(int channel) {
 	stopAll();
 }
 
+void PCSoundDriver::syncSounds() {
+	// Get the new music and sfx volumes
+	_musicVolume = ConfMan.getBool("music_mute") ? 0 : MIN(255, ConfMan.getInt("music_volume"));
+	_sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
+}
+
 AdlibSoundDriver::AdlibSoundDriver(Audio::Mixer *mixer)
 	: _mixer(mixer) {
 	_sampleRate = _mixer->getOutputRate();
 	_opl = makeAdlibOPL(_sampleRate);
-	memset(_channelsVolumeTable, 0, sizeof(_channelsVolumeTable));
+
+	for (int i = 0; i < 5; ++i) {
+		_channelsVolumeTable[i].original = 0;
+		_channelsVolumeTable[i].adjusted = 0;
+	}
 	memset(_instrumentsTable, 0, sizeof(_instrumentsTable));
 	initCard();
 	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+
+	_musicVolume = ConfMan.getBool("music_mute") ? 0 : MIN(255, ConfMan.getInt("music_volume"));
+	_sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
 }
 
 AdlibSoundDriver::~AdlibSoundDriver() {
@@ -283,19 +309,43 @@ AdlibSoundDriver::~AdlibSoundDriver() {
 	OPLDestroy(_opl);
 }
 
+void AdlibSoundDriver::syncSounds() {
+	PCSoundDriver::syncSounds();
+
+	// Force all instruments to reload on the next playing point
+	for (int i = 0; i < 5; ++i) {
+		adjustVolume(i, _channelsVolumeTable[i].original);
+		AdlibSoundInstrument *ins = &_instrumentsTable[i];
+		setupInstrument(ins, i);
+	}
+}
+
+void AdlibSoundDriver::adjustVolume(int channel, int volume) {
+	_channelsVolumeTable[channel].original = volume;
+
+	if (volume > 80) {
+		volume = 80;
+	} else if (volume < 0) {
+		volume = 0;
+	}
+	volume += volume / 4;
+	if (volume > 127) {
+		volume = 127;
+	}
+
+	int volAdjust = (channel == 4) ? _sfxVolume : _musicVolume;
+	volume = (volume * volAdjust) / 128;
+
+	if (volume > 127)
+		volume = 127;
+
+	_channelsVolumeTable[channel].adjusted = volume;
+}
+
 void AdlibSoundDriver::setupChannel(int channel, const byte *data, int instrument, int volume) {
 	assert(channel < 5);
 	if (data) {
-		if (volume > 80) {
-			volume = 80;
-		} else if (volume < 0) {
-			volume = 0;
-		}
-		volume += volume / 4;
-		if (volume > 127) {
-			volume = 127;
-		}
-		_channelsVolumeTable[channel] = volume;
+		adjustVolume(channel, volume);
 		setupInstrument(data, channel);
 	}
 }
@@ -380,6 +430,10 @@ void AdlibSoundDriver::setupInstrument(const byte *data, int channel) {
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
 	loadInstrument(data, ins);
 
+	setupInstrument(ins, channel);
+}
+
+void AdlibSoundDriver::setupInstrument(const AdlibSoundInstrument *ins, int channel) {
 	int mod, car, tmp;
 	const AdlibRegisterSoundInstrument *reg;
 
@@ -397,7 +451,7 @@ void AdlibSoundDriver::setupInstrument(const byte *data, int channel) {
 		if (reg->freqMod) {
 			tmp = reg->outputLevel & 0x3F;
 		} else {
-			tmp = (63 - (reg->outputLevel & 0x3F)) * _channelsVolumeTable[channel];
+			tmp = (63 - (reg->outputLevel & 0x3F)) * _channelsVolumeTable[channel].adjusted;
 			tmp = 63 - (2 * tmp + 127) / (2 * 127);
 		}
 		OPLWriteReg(_opl, 0x40 | mod, tmp | (reg->keyScaling << 6));
@@ -413,7 +467,7 @@ void AdlibSoundDriver::setupInstrument(const byte *data, int channel) {
 
 	reg = &ins->regCar;
 	OPLWriteReg(_opl, 0x20 | car, reg->vibrato);
-	tmp = (63 - (reg->outputLevel & 0x3F)) * _channelsVolumeTable[channel];
+	tmp = (63 - (reg->outputLevel & 0x3F)) * _channelsVolumeTable[channel].adjusted;
 	tmp = 63 - (2 * tmp + 127) / (2 * 127);
 	OPLWriteReg(_opl, 0x40 | car, tmp | (reg->keyScaling << 6));
 	OPLWriteReg(_opl, 0x60 | car, reg->attackDecay);
@@ -501,7 +555,8 @@ void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 
 void AdlibSoundDriverADL::playSample(const byte *data, int size, int channel, int volume) {
 	assert(channel < 5);
-	_channelsVolumeTable[channel] = 127;
+	adjustVolume(channel, 127);
+
 	setupInstrument(data, channel);
 	AdlibSoundInstrument *ins = &_instrumentsTable[channel];
 	if (ins->mode != 0 && ins->channel == 6) {
@@ -725,8 +780,6 @@ PCSound::PCSound(Audio::Mixer *mixer, CruiseEngine *vm) {
 	_mixer = mixer;
 	_soundDriver = new AdlibSoundDriverADL(_mixer);
 	_player = new PCSoundFxPlayer(_soundDriver);
-	_musicVolume = ConfMan.getBool("music_mute") ? 0 : MIN(255, ConfMan.getInt("music_volume"));
-	_sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
 }
 
 PCSound::~PCSound() {
@@ -823,6 +876,10 @@ void PCSound::doSync(Common::Serializer &s) {
 
 const char *PCSound::musicName() {
 	return _player->musicName();
+}
+
+void PCSound::syncSounds() {
+	_soundDriver->syncSounds();
 }
 
 } // End of namespace Cruise

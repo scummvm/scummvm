@@ -124,9 +124,8 @@ void CruiseEngine::initialize() {
 	readVolCnf();
 
 	// Setup mixer
-	_musicVolume = ConfMan.getInt("music_volume");
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+//	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+//	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
@@ -226,6 +225,10 @@ const char *CruiseEngine::getSavegameFile(int saveGameIdx) {
 	static char buffer[20];
 	sprintf(buffer, "cruise.s%02d", saveGameIdx);
 	return buffer;
+}
+
+void CruiseEngine::syncSoundSettings() {
+	_sound->syncSounds();
 }
 
 } // End of namespace Cruise

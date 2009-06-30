@@ -44,8 +44,6 @@ private:
 	Audio::Mixer *_mixer;
 	CruiseEngine *_vm;
 	int _genVolume;
-	uint8 _musicVolume;
-	uint8 _sfxVolume;
 protected:
 	PCSoundDriver *_soundDriver;
 	PCSoundFxPlayer *_player;
@@ -75,6 +73,7 @@ public:
 	bool musicLooping() const;
 	void musicLoop(bool v);
 	void startNote(int channel, int volume, int freq);
+	void syncSounds();
 
 	// Note: Volume variable accessed by these methods is never actually used in original game
 	void setVolume(int volume) { _genVolume = volume; }
