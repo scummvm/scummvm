@@ -72,11 +72,14 @@ Common::Error GroovieEngine::run() {
 	// Initialize the graphics
 	switch (_gameDescription->version) {
 	case kGroovieV2:
-#ifdef ENABLE_RGB_COLOR
+		// Request the mode with the highest precision available
 		_pixelFormat = _system->getSupportedFormats().front();
 		initGraphics(640, 480, true, &_pixelFormat);
+
+		// Save the enabled mode as it can be both an RGB mode or CLUT8
+		_pixelFormat = _system->getScreenFormat();
+		_mode8bit = (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8());
 		break;
-#endif
 	case kGroovieT7G:
 		initGraphics(640, 480, true);
 		break;

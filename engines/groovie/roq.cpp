@@ -47,52 +47,52 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	_currBuf = new Graphics::Surface();
 	_prevBuf = new Graphics::Surface();
 
-#ifndef ENABLE_RGB_COLOR
-	byte pal[256 * 4];
+	if (_vm->_mode8bit) {
+		byte pal[256 * 4];
 #ifdef DITHER
-	byte pal3[256 * 3];
-	// Initialize to a black palette
-	for (int i = 0; i < 256 * 3; i++) {
-		pal3[i] = 0;
-	}
+		byte pal3[256 * 3];
+		// Initialize to a black palette
+		for (int i = 0; i < 256 * 3; i++) {
+			pal3[i] = 0;
+		}
 
-	// Build a basic color palette
-	for (int r = 0; r < 4; r++) {
-		for (int g = 0; g < 4; g++) {
-			for (int b = 0; b < 4; b++) {
-				byte col = (r << 4) | (g << 2) | (b << 0);
-				pal3[3 * col + 0] = r << 6;
-				pal3[3 * col + 1] = g << 6;
-				pal3[3 * col + 2] = b << 6;
+		// Build a basic color palette
+		for (int r = 0; r < 4; r++) {
+			for (int g = 0; g < 4; g++) {
+				for (int b = 0; b < 4; b++) {
+					byte col = (r << 4) | (g << 2) | (b << 0);
+					pal3[3 * col + 0] = r << 6;
+					pal3[3 * col + 1] = g << 6;
+					pal3[3 * col + 2] = b << 6;
+				}
 			}
 		}
-	}
 
-	// Initialize the dithering algorithm
-	_paletteLookup = new Graphics::PaletteLUT(8, Graphics::PaletteLUT::kPaletteYUV);
-	_paletteLookup->setPalette(pal3, Graphics::PaletteLUT::kPaletteRGB, 8);
-	for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
-		debug("Groovie::ROQ: Building palette table: %02d/63", i);
-		_paletteLookup->buildNext();
-	}
+		// Initialize the dithering algorithm
+		_paletteLookup = new Graphics::PaletteLUT(8, Graphics::PaletteLUT::kPaletteYUV);
+		_paletteLookup->setPalette(pal3, Graphics::PaletteLUT::kPaletteRGB, 8);
+		for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
+			debug("Groovie::ROQ: Building palette table: %02d/63", i);
+			_paletteLookup->buildNext();
+		}
 
-	// Prepare the palette to show
-	for (int i = 0; i < 256; i++) {
-		pal[(i * 4) + 0] = pal3[(i * 3) + 0];
-		pal[(i * 4) + 1] = pal3[(i * 3) + 1];
-		pal[(i * 4) + 2] = pal3[(i * 3) + 2];
-	}
+		// Prepare the palette to show
+		for (int i = 0; i < 256; i++) {
+			pal[(i * 4) + 0] = pal3[(i * 3) + 0];
+			pal[(i * 4) + 1] = pal3[(i * 3) + 1];
+			pal[(i * 4) + 2] = pal3[(i * 3) + 2];
+		}
 #else // !DITHER
-	// Set a grayscale palette
-	for (int i = 0; i < 256; i++) {
-		pal[(i * 4) + 0] = i;
-		pal[(i * 4) + 1] = i;
-		pal[(i * 4) + 2] = i;
-	}
+		// Set a grayscale palette
+		for (int i = 0; i < 256; i++) {
+			pal[(i * 4) + 0] = i;
+			pal[(i * 4) + 1] = i;
+			pal[(i * 4) + 2] = i;
+		}
 #endif // DITHER
 
-	_syst->setPalette(pal, 0, 256);
-#endif // !ENABLE_RGB_COLOR
+		_syst->setPalette(pal, 0, 256);
+	}
 }
 
 ROQPlayer::~ROQPlayer() {
@@ -160,26 +160,25 @@ void ROQPlayer::buildShowBuf() {
 		byte *out = (byte *)_showBuf.getBasePtr(0, line);
 		byte *in = (byte *)_prevBuf->getBasePtr(0, line / _scaleY);
 		for (int x = 0; x < _showBuf.w; x++) {
+			if (_vm->_mode8bit) {
+#ifdef DITHER
+				*out = _dither->dither(*in, *(in + 1), *(in + 2), x);
+#else
+				// Just use the luminancy component
+				*out = *in;
+#endif // DITHER
 #ifdef ENABLE_RGB_COLOR
-			// Do the format conversion (YUV -> RGB -> Screen format)
-			byte r, g, b;
-			Graphics::PaletteLUT::YUV2RGB(*in, *(in + 1), *(in + 2), r, g, b);
-			// FIXME: this is fixed to 16bit
-			*(uint16 *)out = (uint16)_vm->_pixelFormat.RGBToColor(r, g, b);
-			
+			} else {
+				// Do the format conversion (YUV -> RGB -> Screen format)
+				byte r, g, b;
+				Graphics::PaletteLUT::YUV2RGB(*in, *(in + 1), *(in + 2), r, g, b);
+				// FIXME: this is fixed to 16bit
+				*(uint16 *)out = (uint16)_vm->_pixelFormat.RGBToColor(r, g, b);
+#endif // ENABLE_RGB_COLOR
+			}
+
 			// Skip to the next pixel
 			out += _vm->_pixelFormat.bytesPerPixel;
-#else // !ENABLE_RGB_COLOR
-#ifdef DITHER
-			*out = _dither->dither(*in, *(in + 1), *(in + 2), x);
-#else
-			// Just use the luminancy component
-			*out = *in;
-#endif // DITHER
-			// Skip to the next pixel
-			out++;
-#endif // ENABLE_RGB_COLOR
-
 			if (!(x % _scaleX))
 				in += _prevBuf->bytesPerPixel;
 		}
@@ -335,11 +334,7 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		// Allocate new buffers
 		_currBuf->create(width, height, 3);
 		_prevBuf->create(width, height, 3);
-#ifdef ENABLE_RGB_COLOR
 		_showBuf.create(width * _scaleX, height * _scaleY, _vm->_pixelFormat.bytesPerPixel);
-#else
-		_showBuf.create(width * _scaleX, height * _scaleY, 1);
-#endif
 
 		// Clear the buffers with black YUV values
 		byte *ptr1 = (byte *)_currBuf->getBasePtr(0, 0);

@@ -85,9 +85,8 @@ protected:
 public:
 	void waitForInput();
 
-#ifdef ENABLE_RGB_COLOR
 	Graphics::PixelFormat _pixelFormat;
-#endif
+	bool _mode8bit;
 	Script _script;
 	ResMan *_resMan;
 	GrvCursorMan *_grvCursorMan;
