@@ -373,6 +373,16 @@ public:
 	 *       in RGB color order, even if hardware uses BGR or some other color order.
 	 */
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
+#else
+	inline Graphics::PixelFormat getScreenFormat() const {
+		return Graphics::PixelFormat::createFormatCLUT8();
+	};
+
+	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const {
+		Common::List<Graphics::PixelFormat> list;
+		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+		return list;
+	};
 #endif
 
 	/**
@@ -401,7 +411,7 @@ public:
 	 * @param height	the new virtual screen height
 	 * @param format	the new virtual screen pixel format
 	 */
-	virtual void initSize(uint width, uint height, Graphics::PixelFormat *format = NULL) = 0;
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
 	 * Return an int value which is changed whenever any screen
@@ -451,7 +461,7 @@ public:
 		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switchting fullscreen mode */
 		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switchting the GFX graphics mode (setGraphicsMode) */
 #ifdef ENABLE_RGB_COLOR
-		kTransactionPixelFormatNotSupported = (1 << 4), /**< Failed setting the color format (function not yet implemented) */
+		kTransactionFormatNotSupported = (1 << 4), /**< Failed setting the color format (function not yet implemented) */
 #endif
 		kTransactionSizeChangeFailed = (1 << 3)		/**< Failed switchting the screen dimensions (initSize) */
 	};
@@ -734,7 +744,7 @@ public:
 	 * @param cursorTargetScale	scale factor which cursor is designed for
 	 * @param format			pointer to the pixel format which cursor graphic uses
 	 */
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1, Graphics::PixelFormat *format = NULL) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
 	 * Replace the specified range of cursor the palette with new colors.

@@ -60,7 +60,7 @@ void initCommonGFX(bool defaultTo1XScaler);
  * Errors out when backend is not able to switch to the specified
  * mode.
  */
-void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::PixelFormat *format = NULL);
+void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format = NULL);
 
 /**
  * Initializes graphics and shows error message.

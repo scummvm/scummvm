@@ -124,7 +124,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 	if (gameDomain && gameDomain->contains("fullscreen"))
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
-void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::PixelFormat *format) {
+void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format) {
 
 	g_system->beginGFXTransaction();
 
@@ -155,7 +155,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, Graphics::Pixel
 
 	// Just show warnings then these occur:
 #ifdef ENABLE_RGB_COLOR
-	if (gfxError & OSystem::kTransactionPixelFormatNotSupported) {
+	if (gfxError & OSystem::kTransactionFormatNotSupported) {
 		Common::String message = "Could not initialize color format.";
 
 		GUI::MessageDialog dialog(message);

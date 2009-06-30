@@ -125,7 +125,7 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 			_videoMode.scaleFactor = _oldVideoMode.scaleFactor;
 #ifdef ENABLE_RGB_COLOR
 		} else if (_videoMode.format != _oldVideoMode.format) {
-			errors |= kTransactionPixelFormatNotSupported;
+			errors |= kTransactionFormatNotSupported;
 
 			_videoMode.format = _oldVideoMode.format;
 			_screenFormat = _videoMode.format;
@@ -354,21 +354,24 @@ int OSystem_SDL::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 
-void OSystem_SDL::initSize(uint w, uint h, Graphics::PixelFormat *format) {
+void OSystem_SDL::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
 #ifdef ENABLE_RGB_COLOR
 	//avoid redundant format changes
+	Graphics::PixelFormat newFormat;
 	if (!format)
-		format = new Graphics::PixelFormat(1,8,8,8,8,0,0,0,0);
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		newFormat = *format;
 
-	assert(format->bytesPerPixel > 0);
+	assert(newFormat.bytesPerPixel > 0);
 
-	if (*format != _videoMode.format)
+	if (newFormat != _videoMode.format)
 	{
-		_videoMode.format = *format;
+		_videoMode.format = newFormat;
 		_transactionDetails.formatChanged = true;
-		_screenFormat = *format;
+		_screenFormat = newFormat;
 	}
 #endif
 
@@ -1373,11 +1376,11 @@ void OSystem_SDL::warpMouse(int x, int y) {
 	}
 }
 
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, Graphics::PixelFormat *format) {
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 #ifdef ENABLE_RGB_COLOR
 	if (!format)
-		format = new Graphics::PixelFormat(1,8,8,8,8,0,0,0,0);
-	if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
+		_cursorFormat = Graphics::PixelFormat(1,8,8,8,8,0,0,0,0);
+	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
 		_cursorFormat = *format;
 	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
 #else

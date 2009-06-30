@@ -123,7 +123,7 @@ public:
 
 	// Set the size and format of the video bitmap.
 	// Typically, 320x200 CLUT8
-	virtual void initSize(uint w, uint h, Graphics::PixelFormat *format); // overloaded by CE backend
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format); // overloaded by CE backend
 
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
@@ -152,7 +152,7 @@ public:
 	virtual void warpMouse(int x, int y); // overloaded by CE backend (FIXME)
 
 	// Set the bitmap that's used when drawing the cursor.
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, Graphics::PixelFormat *format); // overloaded by CE backend (FIXME)
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format); // overloaded by CE backend (FIXME)
 
 	// Set colors of cursor palette
 	void setCursorPalette(const byte *colors, uint start, uint num);
