@@ -420,7 +420,7 @@ void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
             ActionCommand command;
             memset(&command, 0, sizeof(ActionCommand));
 
-            command.unknown = stream->readUint32LE();
+            command.numLines = stream->readUint32LE();
             command.opcode  = stream->readUint32LE(); // command type
             command.param1  = stream->readUint32LE(); // command parameters
             command.param2  = stream->readUint32LE();
