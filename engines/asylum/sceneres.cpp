@@ -33,8 +33,8 @@ SceneResource::SceneResource() {
 SceneResource::~SceneResource() {
 	delete _worldStats;
 	delete _mainActor;
-    for(uint i=0; i< _gamePolygons->_numEntries; i++) {
-        delete[] _gamePolygons->_polygons[i].points;
+    for(uint i=0; i< _gamePolygons->numEntries; i++) {
+        delete[] _gamePolygons->polygons[i].points;
     }
     delete _gamePolygons;
     delete _actionList;
@@ -78,109 +78,109 @@ bool SceneResource::load(uint8 sceneIdx) {
 void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     _worldStats = new WorldStats;
 
-    _worldStats->_size       = stream->readUint32LE();
-    _worldStats->_numEntries = stream->readUint32LE();
+    _worldStats->size       = stream->readUint32LE();
+    _worldStats->numEntries = stream->readUint32LE();
 
-    _worldStats->_numChapter          = stream->readUint32LE();
-    _worldStats->_xLeft               = stream->readUint32LE();
-    _worldStats->_yTop                = stream->readUint32LE();
-    _worldStats->_boundingRect.left   = stream->readUint32LE() & 0xFFFF;
-	_worldStats->_boundingRect.top    = stream->readUint32LE() & 0xFFFF;
-	_worldStats->_boundingRect.right  = stream->readUint32LE() & 0xFFFF;
-	_worldStats->_boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
+    _worldStats->numChapter          = stream->readUint32LE();
+    _worldStats->xLeft               = stream->readUint32LE();
+    _worldStats->yTop                = stream->readUint32LE();
+    _worldStats->boundingRect.left   = stream->readUint32LE() & 0xFFFF;
+	_worldStats->boundingRect.top    = stream->readUint32LE() & 0xFFFF;
+	_worldStats->boundingRect.right  = stream->readUint32LE() & 0xFFFF;
+	_worldStats->boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
 
     // read common graphic resources
-	_worldStats->_commonRes.backgroundImage    = stream->readUint32LE();
-	_worldStats->_commonRes.curScrollUp        = stream->readUint32LE();
-    _worldStats->_commonRes.curScrollUpLeft    = stream->readUint32LE();
-    _worldStats->_commonRes.curScrollLeft      = stream->readUint32LE();
-    _worldStats->_commonRes.curScrollDownLeft  = stream->readUint32LE();
-    _worldStats->_commonRes.curScrollDown      = stream->readUint32LE();
-    _worldStats->_commonRes.curScrollDownRight = stream->readUint32LE();
-    _worldStats->_commonRes.curScrollRight     = stream->readUint32LE();
-    _worldStats->_commonRes.curScrollUpRight   = stream->readUint32LE();
-    _worldStats->_commonRes.curHand            = stream->readUint32LE();
-    _worldStats->_commonRes.curMagnifyingGlass = stream->readUint32LE();
-    _worldStats->_commonRes.curTalkNCP         = stream->readUint32LE();
-    _worldStats->_commonRes.curGrabPointer     = stream->readUint32LE();
-    _worldStats->_commonRes.curTalkNCP2        = stream->readUint32LE();
-    _worldStats->_commonRes.field_54           = stream->readUint32LE();
-    _worldStats->_commonRes.field_58           = stream->readUint32LE();
-    _worldStats->_commonRes.field_5C           = stream->readUint32LE();
-    _worldStats->_commonRes.palette            = stream->readUint32LE();
-    _worldStats->_commonRes.cellShadeMask1     = stream->readUint32LE();
-    _worldStats->_commonRes.cellShadeMask2     = stream->readUint32LE();
-    _worldStats->_commonRes.cellShadeMask3     = stream->readUint32LE();
-    _worldStats->_commonRes.unused             = stream->readUint32LE();
-    _worldStats->_commonRes.smallCurUp         = stream->readUint32LE();
-    _worldStats->_commonRes.smallCurDown       = stream->readUint32LE();
-    _worldStats->_commonRes.field_7C           = stream->readUint32LE();
+	_worldStats->commonRes.backgroundImage    = stream->readUint32LE();
+	_worldStats->commonRes.curScrollUp        = stream->readUint32LE();
+    _worldStats->commonRes.curScrollUpLeft    = stream->readUint32LE();
+    _worldStats->commonRes.curScrollLeft      = stream->readUint32LE();
+    _worldStats->commonRes.curScrollDownLeft  = stream->readUint32LE();
+    _worldStats->commonRes.curScrollDown      = stream->readUint32LE();
+    _worldStats->commonRes.curScrollDownRight = stream->readUint32LE();
+    _worldStats->commonRes.curScrollRight     = stream->readUint32LE();
+    _worldStats->commonRes.curScrollUpRight   = stream->readUint32LE();
+    _worldStats->commonRes.curHand            = stream->readUint32LE();
+    _worldStats->commonRes.curMagnifyingGlass = stream->readUint32LE();
+    _worldStats->commonRes.curTalkNCP         = stream->readUint32LE();
+    _worldStats->commonRes.curGrabPointer     = stream->readUint32LE();
+    _worldStats->commonRes.curTalkNCP2        = stream->readUint32LE();
+    _worldStats->commonRes.field_54           = stream->readUint32LE();
+    _worldStats->commonRes.field_58           = stream->readUint32LE();
+    _worldStats->commonRes.field_5C           = stream->readUint32LE();
+    _worldStats->commonRes.palette            = stream->readUint32LE();
+    _worldStats->commonRes.cellShadeMask1     = stream->readUint32LE();
+    _worldStats->commonRes.cellShadeMask2     = stream->readUint32LE();
+    _worldStats->commonRes.cellShadeMask3     = stream->readUint32LE();
+    _worldStats->commonRes.unused             = stream->readUint32LE();
+    _worldStats->commonRes.smallCurUp         = stream->readUint32LE();
+    _worldStats->commonRes.smallCurDown       = stream->readUint32LE();
+    _worldStats->commonRes.field_7C           = stream->readUint32LE();
 
-    _worldStats->_width              = stream->readUint32LE();
-    _worldStats->_height             = stream->readUint32LE();
-    _worldStats->_field_88           = stream->readUint32LE();
-    _worldStats->_field_8C           = stream->readUint32LE();
-    _worldStats->_numActions         = stream->readUint32LE();
-    _worldStats->_numBarriers        = stream->readUint32LE();
-    _worldStats->_field_98           = stream->readUint32LE();
-    _worldStats->_field_9C           = stream->readUint32LE();
-    _worldStats->_field_A0           = stream->readUint32LE();
-    _worldStats->_field_A4           = stream->readUint32LE();
-    _worldStats->_field_A8           = stream->readUint32LE();
-    _worldStats->_field_AC           = stream->readUint32LE();
-    _worldStats->_field_B0           = stream->readUint32LE();
-    _worldStats->_numActors          = stream->readUint32LE();   
-    _worldStats->_stereoReversedFlag = stream->readUint32LE();
+    _worldStats->width              = stream->readUint32LE();
+    _worldStats->height             = stream->readUint32LE();
+    _worldStats->field_88           = stream->readUint32LE();
+    _worldStats->field_8C           = stream->readUint32LE();
+    _worldStats->numActions         = stream->readUint32LE();
+    _worldStats->numBarriers        = stream->readUint32LE();
+    _worldStats->field_98           = stream->readUint32LE();
+    _worldStats->field_9C           = stream->readUint32LE();
+    _worldStats->field_A0           = stream->readUint32LE();
+    _worldStats->field_A4           = stream->readUint32LE();
+    _worldStats->field_A8           = stream->readUint32LE();
+    _worldStats->field_AC           = stream->readUint32LE();
+    _worldStats->field_B0           = stream->readUint32LE();
+    _worldStats->numActors          = stream->readUint32LE();
+    _worldStats->stereoReversedFlag = stream->readUint32LE();
 
     for(int r=0; r < 6; r++) {
-        _worldStats->_sceneRects[r].left   = stream->readUint32LE() & 0xFFFF;
-	    _worldStats->_sceneRects[r].top    = stream->readUint32LE() & 0xFFFF;
-	    _worldStats->_sceneRects[r].right  = stream->readUint32LE() & 0xFFFF;
-	    _worldStats->_sceneRects[r].bottom = stream->readUint32LE() & 0xFFFF;
+        _worldStats->sceneRects[r].left   = stream->readUint32LE() & 0xFFFF;
+	    _worldStats->sceneRects[r].top    = stream->readUint32LE() & 0xFFFF;
+	    _worldStats->sceneRects[r].right  = stream->readUint32LE() & 0xFFFF;
+	    _worldStats->sceneRects[r].bottom = stream->readUint32LE() & 0xFFFF;
     }
-    _worldStats->_sceneRectIdx  = stream->readByte();
-    _worldStats->_field_11D[0]  = stream->readByte();
-    _worldStats->_field_11D[1]  = stream->readByte();
-    _worldStats->_field_11D[2]  = stream->readByte();
+    _worldStats->sceneRectIdx  = stream->readByte();
+    _worldStats->field_11D[0]  = stream->readByte();
+    _worldStats->field_11D[1]  = stream->readByte();
+    _worldStats->field_11D[2]  = stream->readByte();
 
-    _worldStats->_field_120     = stream->readUint32LE();
-    _worldStats->_actionListIdx = stream->readUint32LE();
+    _worldStats->field_120     = stream->readUint32LE();
+    _worldStats->actionListIdx = stream->readUint32LE();
 
     for(int gr=0; gr < 100; gr++) {
-        _worldStats->_grResId[gr] = stream->readUint32LE();
+        _worldStats->grResId[gr] = stream->readUint32LE();
     }
 
-    _worldStats->_sceneTitleGrResId  = stream->readUint32LE();
-    _worldStats->_sceneTitlePalResId = stream->readUint32LE();
-    _worldStats->_actorType          = stream->readUint32LE();
+    _worldStats->sceneTitleGrResId  = stream->readUint32LE();
+    _worldStats->sceneTitlePalResId = stream->readUint32LE();
+    _worldStats->actorType          = stream->readUint32LE();
 
     for(int s=0; s < 50; s++) {
-        _worldStats->_soundResId[s] = stream->readUint32LE();
+        _worldStats->soundResId[s] = stream->readUint32LE();
     }
 
     for(int s=0; s < 15; s++) {
-        _worldStats->_ambientSounds[s].field_0  = stream->readUint32LE();
-        _worldStats->_ambientSounds[s].flags    = stream->readUint32LE();
-        _worldStats->_ambientSounds[s].resId    = stream->readUint32LE();
-        _worldStats->_ambientSounds[s].field_C = stream->readUint32LE();
-        _worldStats->_ambientSounds[s].field_10 = stream->readUint32LE();
-        _worldStats->_ambientSounds[s].field_14 = stream->readUint32LE();
+        _worldStats->ambientSounds[s].field_0  = stream->readUint32LE();
+        _worldStats->ambientSounds[s].flags    = stream->readUint32LE();
+        _worldStats->ambientSounds[s].resId    = stream->readUint32LE();
+        _worldStats->ambientSounds[s].field_C = stream->readUint32LE();
+        _worldStats->ambientSounds[s].field_10 = stream->readUint32LE();
+        _worldStats->ambientSounds[s].field_14 = stream->readUint32LE();
 
         for(int i=0; i < 6; i++)
-            _worldStats->_ambientSounds[s].flagNum[i] = stream->readUint32LE();
+            _worldStats->ambientSounds[s].flagNum[i] = stream->readUint32LE();
 
-        _worldStats->_ambientSounds[s].x = stream->readUint32LE();
-        _worldStats->_ambientSounds[s].y = stream->readUint32LE();
+        _worldStats->ambientSounds[s].x = stream->readUint32LE();
+        _worldStats->ambientSounds[s].y = stream->readUint32LE();
     }
-    _worldStats->_numAmbientSound   = stream->readUint32LE();
+    _worldStats->numAmbientSound   = stream->readUint32LE();
 
-    _worldStats->_musicStatus       = stream->readUint32LE();
-    _worldStats->_musicCurrentResId = stream->readUint32LE();
-    _worldStats->_musicFlag         = stream->readUint32LE();
-    _worldStats->_musicResId        = stream->readUint32LE();
-    _worldStats->_musicStatusExt    = stream->readUint32LE();
+    _worldStats->musicStatus       = stream->readUint32LE();
+    _worldStats->musicCurrentResId = stream->readUint32LE();
+    _worldStats->musicFlag         = stream->readUint32LE();
+    _worldStats->musicResId        = stream->readUint32LE();
+    _worldStats->musicStatusExt    = stream->readUint32LE();
 
-    for (uint32 a = 0; a < _worldStats->_numBarriers; a++) {
+    for (uint32 a = 0; a < _worldStats->numBarriers; a++) {
         int i;
         BarrierItem barrier;
 
@@ -251,13 +251,13 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 		barrier.soundResId = stream->readUint32LE();
 		barrier.field_6A4  = stream->readUint32LE();
 
-        _worldStats->_barriers.push_back(barrier);
+        _worldStats->barriers.push_back(barrier);
     }
 
     // need to jump all unused barriers data to where actors data start
     stream->seek(0xA6D7A);
 
-    for (uint32 a = 0; a < _worldStats->_numActors; a++) {
+    for (uint32 a = 0; a < _worldStats->numActors; a++) {
         int i;
         ActorItem actor;
         memset(&actor, 0, sizeof(ActorItem));
@@ -339,7 +339,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
         // TODO skip field_980 till field_9A0
         stream->skip(0x24);
 
-        _worldStats->_actors.push_back(actor);
+        _worldStats->actors.push_back(actor);
     }
 
     // TODO Take this out, it shouldn't be here (TEST ONLY)
@@ -351,7 +351,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     stream->seek(0xD6B5A); // where action items start
 
     // FIXME Figure out all the actions items
-    for (uint32 a = 0; a < _worldStats->_numActions; a++) {
+    for (uint32 a = 0; a < _worldStats->numActions; a++) {
         ActionItem action;
         memset(&action, 0, sizeof(ActionItem));
 
@@ -370,7 +370,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
         stream->skip(0x14);
         action.soundVolume    = stream->readUint32LE();
 
-        _worldStats->_actions.push_back(action);
+        _worldStats->actions.push_back(action);
     }
 }
 
@@ -379,10 +379,10 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
 
     stream->seek(0xE8686); // jump to game Polygons data
 
-    _gamePolygons->_size       = stream->readUint32LE();
-    _gamePolygons->_numEntries = stream->readUint32LE();
+    _gamePolygons->size       = stream->readUint32LE();
+    _gamePolygons->numEntries = stream->readUint32LE();
 
-    for (uint32 g = 0; g < _gamePolygons->_numEntries; g++) {
+    for (uint32 g = 0; g < _gamePolygons->numEntries; g++) {
         PolyDefinitions poly;
         memset(&poly, 0, sizeof(PolyDefinitions));
 
@@ -400,19 +400,19 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
         poly.boundingRect.right  = stream->readUint32LE() & 0xFFFF;
         poly.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
 
-        _gamePolygons->_polygons.push_back(poly);
+        _gamePolygons->polygons.push_back(poly);
     }
 }
 
 void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
     _actionList = new ActionList;
 
-    stream->seek(0xE868E + _gamePolygons->_size * _gamePolygons->_numEntries); // jump to action list data
+    stream->seek(0xE868E + _gamePolygons->size * _gamePolygons->numEntries); // jump to action list data
 
-    _actionList->_size       = stream->readUint32LE();
-    _actionList->_numEntries = stream->readUint32LE();
+    _actionList->size       = stream->readUint32LE();
+    _actionList->numEntries = stream->readUint32LE();
 
-    for (uint32 a = 0; a < _actionList->_numEntries; a++) {
+    for (uint32 a = 0; a < _actionList->numEntries; a++) {
         ActionDefinitions action;
         memset(&action, 0, sizeof(ActionDefinitions));
 
@@ -421,16 +421,16 @@ void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
             memset(&command, 0, sizeof(ActionCommand));
 
             command.numLines = stream->readUint32LE();
-            command.opcode  = stream->readUint32LE(); // command type
-            command.param1  = stream->readUint32LE(); // command parameters
-            command.param2  = stream->readUint32LE();
-            command.param3  = stream->readUint32LE();
-            command.param4  = stream->readUint32LE();
-            command.param5  = stream->readUint32LE();
-            command.param6  = stream->readUint32LE();
-            command.param7  = stream->readUint32LE();
-            command.param8  = stream->readUint32LE();
-            command.param9  = stream->readUint32LE();
+            command.opcode   = stream->readUint32LE(); // command type
+            command.param1   = stream->readUint32LE(); // command parameters
+            command.param2   = stream->readUint32LE();
+            command.param3   = stream->readUint32LE();
+            command.param4   = stream->readUint32LE();
+            command.param5   = stream->readUint32LE();
+            command.param6   = stream->readUint32LE();
+            command.param7   = stream->readUint32LE();
+            command.param8   = stream->readUint32LE();
+            command.param9   = stream->readUint32LE();
 
             action.commands[c] = command;
         }
@@ -439,7 +439,7 @@ void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
         action.field_1BB0 = stream->readUint32LE();
         action.counter    = stream->readUint32LE();
 
-        _actionList->_actions.push_back(action);
+        _actionList->actions.push_back(action);
     }
 }
 

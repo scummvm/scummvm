@@ -52,8 +52,8 @@ void Screen::copyToBackBuffer(byte *buffer, int pitch, int x, int y, int width, 
 }
 
 void Screen::copyToBackBufferWithTransparency(byte *buffer, int pitch, int x, int y, int width, int height) {
-	int h = height;
-    int w = width;
+	// int h = height;
+    // int w = width;
 	byte *dest = (byte *)_backBuffer.pixels;
 
 	for (int curY = 0; curY < height; curY++) {

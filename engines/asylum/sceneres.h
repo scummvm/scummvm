@@ -34,7 +34,7 @@
 #include "asylum/screen.h"
 #include "asylum/respack.h"
 
-#define SCENEMASK   "scn.%03d"
+#define SCENEMASK         "scn.%03d"
 #define Polygons_MAXSIZE  200
 #define Commands_MAXSIZE  161
 
@@ -49,14 +49,12 @@ class ActionList;
 // TODO/FIXME: Are there REALLY any points which go beyond 32768???
 // ScummVM common Point uses int16 and we need int32
 typedef struct Point { 
-    int32 x; 
-    int32 y; 
+    int32 x, y;
 } Point;
 
 // ScummVM common Rect uses int16 and we need int32
 typedef struct Rect { 
-    int32 top, left;
-    int32 bottom, right; 
+    int32 top, left, bottom, right;
 } Rect;
 #endif
 
@@ -67,10 +65,11 @@ public:
 
     bool load(uint8 sceneIdx);
 
-    WorldStats* getWorldStats() { return _worldStats; }
+    WorldStats*   getWorldStats()   { return _worldStats; }
     GamePolygons* getGamePolygons() { return _gamePolygons; }
-    ActionList* getActionList() { return _actionList; }
-    MainActor* getMainActor() { return _mainActor; }
+    ActionList*   getActionList()   { return _actionList; }
+    MainActor*    getMainActor()    { return _mainActor; }
+
 private:
     WorldStats   *_worldStats;
     GamePolygons *_gamePolygons;
@@ -84,12 +83,12 @@ private:
 
 }; // end of class Scene
 
-
 typedef struct SoundItem {
     uint32 resId;
     uint32 field_4;
     uint32 field_8;
     uint32 field_C;
+
 } SoundItem;
 
 typedef struct FrameSoundItem {
@@ -99,6 +98,7 @@ typedef struct FrameSoundItem {
     uint32 field_C;
     uint32 field_10;
     uint32 field_14;
+
 } FrameSoundItem;
 
 typedef struct AmbientSoundItem {
@@ -111,46 +111,48 @@ typedef struct AmbientSoundItem {
     uint32 flagNum[6];
     uint32 x;
     uint32 y;
+
 } AmbientSoundItem;
 
 // FIXME figure out unknown fields
 typedef struct BarrierItem {
-    uint32 id;
-    uint32 resId;
-    uint32 x;
-    uint32 y;
-	Common::Rect boundingRect;
-    uint32 field_20;
-    uint32 frameIdx;
-    uint32 frameCount;   
-    uint32 field_2C;
-    uint32 field_30;
-    uint32 field_34;
-    uint32 flags;
-    uint32 field_3C;
-    uint8  name[52]; // field_40 till field_70;
-    uint32 field_74;
-    uint32 field_78;
-    uint32 field_7C;
-    uint32 field_80;
-    uint32 polyIdx;
-    uint32 flags2;
-    uint32 gameFlags[10];
-    uint32 field_B4;
-    uint32 tickCount;
-    uint32 tickCount2;
-    uint32 field_C0;
-    uint32 field_C4;
-    uint32 actionListIdx;
-    SoundItem soundItems[16];
+    uint32         id;
+    uint32         resId;
+    uint32         x;
+    uint32         y;
+	Common::Rect   boundingRect;
+    uint32         field_20;
+    uint32         frameIdx;
+    uint32         frameCount;
+    uint32         field_2C;
+    uint32         field_30;
+    uint32         field_34;
+    uint32         flags;
+    uint32         field_3C;
+    uint8          name[52]; // field_40 till field_70;
+    uint32         field_74;
+    uint32         field_78;
+    uint32         field_7C;
+    uint32         field_80;
+    uint32         polyIdx;
+    uint32         flags2;
+    uint32         gameFlags[10];
+    uint32         field_B4;
+    uint32         tickCount;
+    uint32         tickCount2;
+    uint32         field_C0;
+    uint32         field_C4;
+    uint32         actionListIdx;
+    SoundItem      soundItems[16];
     FrameSoundItem frameSoundItems[50];
-    uint32 field_67C;
-    uint32 soundX;
-    uint32 soundY;
-    uint32 field_688;
-    uint32 field_68C[5];
-    uint32 soundResId;
-    uint32 field_6A4;
+    uint32         field_67C;
+    uint32         soundX;
+    uint32         soundY;
+    uint32         field_688;
+    uint32         field_68C[5];
+    uint32         soundResId;
+    uint32         field_6A4;
+
 } BarrierItem;
 
 // FIXME add unknown fields
@@ -164,6 +166,7 @@ typedef struct ActionItem {
     uint32 soundResId;
     uint32 palCorrection;
     int32  soundVolume;
+
 } ActionItem;
 
 typedef struct CommonResources {
@@ -192,142 +195,141 @@ typedef struct CommonResources {
     uint32 smallCurUp;
     uint32 smallCurDown;
     uint32 field_7C;
+
 } CommonResources;
 
+
 typedef struct ActorItem {
-    uint32 x0;
-    uint32 y0;
-    uint32 grResId;
-    uint32 field_C;
-    uint32 frameNum;
-    uint32 frameCount;
-    uint32 x1;
-    uint32 y1;
-    uint32 x2;
-    uint32 y2;
+    uint32       x0;
+    uint32       y0;
+    uint32       grResId;
+    uint32       field_C;
+    uint32       frameNum;
+    uint32       frameCount;
+    uint32       x1;
+    uint32       y1;
+    uint32       x2;
+    uint32       y2;
     Common::Rect boundingRect;
-    uint32 direction;
-    uint32 field_3C;
-    uint32 field_40;
-    uint32 field_44;
-    uint32 field_48;
-    uint32 flags;
-    uint32 field_50;
-    uint32 field_54;
-    uint32 field_58;
-    uint32 field_5C;
-    uint32 field_60;
-    uint32 actionIdx3;
+    uint32       direction;
+    uint32       field_3C;
+    uint32       field_40;
+    uint32       field_44;
+    uint32       field_48;
+    uint32       flags;
+    uint32       field_50;
+    uint32       field_54;
+    uint32       field_58;
+    uint32       field_5C;
+    uint32       field_60;
+    uint32       actionIdx3;
     // TODO field_68 till field_617
-    uint32 reaction[8];
-    uint32 field_638;
-    uint32 field_63C;
-    uint32 field_640;
-    uint32 field_644;
-    uint32 field_648;
-    uint32 field_64C;
-    uint32 field_650;
-    uint32 grResTable[55];
-    char name[256];
-    uint32 field_830[20];
-    uint32 field_880[20];
-    uint32 field_8D0[20];
-    uint32 actionIdx2;
-    uint32 field_924;
-    uint32 tickValue1;
-    uint32 field_92C;
-    uint32 flags2;
-    uint32 field_934;
-    uint32 field_938;
-    uint32 soundResId;
+    uint32       reaction[8];
+    uint32       field_638;
+    uint32       field_63C;
+    uint32       field_640;
+    uint32       field_644;
+    uint32       field_648;
+    uint32       field_64C;
+    uint32       field_650;
+    uint32       grResTable[55];
+    char         name[256];
+    uint32       field_830[20];
+    uint32       field_880[20];
+    uint32       field_8D0[20];
+    uint32       actionIdx2;
+    uint32       field_924;
+    uint32       tickValue1;
+    uint32       field_92C;
+    uint32       flags2;
+    uint32       field_934;
+    uint32       field_938;
+    uint32       soundResId;
     // TODO field_940 till field_978
-    uint32 actionIdx1;
+    uint32       actionIdx1;
     // TODO field_980 till field_9A0
+
 } ActorItem;
 
 class WorldStats {
 public:
     WorldStats() {};
     virtual ~WorldStats() {
-        _barriers.clear();
-        _actors.clear();
-        _actions.clear();
+        barriers.clear();
+        actors.clear();
+        actions.clear();
     };
 
-    uint32 _size;
-    uint32 _numEntries;
-
-    uint32          _numChapter;
-    uint32          _xLeft;             // scene start x position
-    uint32          _yTop;              // scene start y position
-    Common::Rect    _boundingRect;
-    CommonResources _commonRes;         // field_1C till field_7C
-
-    uint32 _width;               // field_80
-    uint32 _height;             
-    uint32 _field_88;
-    uint32 _field_8C;
-    uint32 _numActions;          // field_90
-    uint32 _numBarriers;
-    uint32 _field_98;
-    uint32 _field_9C;
-    uint32 _field_A0;
-    uint32 _field_A4;
-    uint32 _field_A8;
-    uint32 _field_AC;
-    uint32 _field_B0;
-    uint32 _numActors;                  // Max and all other characters that have own interactions
-    uint32 _stereoReversedFlag;
-
-    Common::Rect    _sceneRects[6];     // including scene size rect
-    uint8           _sceneRectIdx;
-    uint8           _field_11D[3];
-
-    uint32 _field_120;
-    uint32 _actionListIdx;              // actionList start index
-    uint32 _grResId[100];
-    uint32 _sceneTitleGrResId;
-    uint32 _sceneTitlePalResId;
-    uint32 _actorType;
-
-    uint32           _soundResId[50];
-    AmbientSoundItem _ambientSounds[15];
-    uint32           _numAmbientSound;
-    uint32           _musicStatus;
-    uint32           _musicCurrentResId;
-    uint32           _musicFlag;
-    uint32           _musicResId;
-    uint32           _musicStatusExt;
+    uint32           size;
+    uint32           numEntries;
+    uint32           numChapter;
+    uint32           xLeft;          // scene start x position
+    uint32           yTop;           // scene start y position
+    Common::Rect     boundingRect;
+    CommonResources  commonRes;      // field_1C till field_7C
+    uint32           width;          // field_80
+    uint32           height;
+    uint32           field_88;
+    uint32           field_8C;
+    uint32           numActions;     // field_90
+    uint32           numBarriers;
+    uint32           field_98;
+    uint32           field_9C;
+    uint32           field_A0;
+    uint32           field_A4;
+    uint32           field_A8;
+    uint32           field_AC;
+    uint32           field_B0;
+    uint32           numActors;      // Max and all other characters that have
+                                     // own interactions
+    uint32           stereoReversedFlag;
+    Common::Rect     sceneRects[6];  // including scene size rect
+    uint8            sceneRectIdx;
+    uint8            field_11D[3];
+    uint32           field_120;
+    uint32           actionListIdx;  // actionList start index
+    uint32           grResId[100];
+    uint32           sceneTitleGrResId;
+    uint32           sceneTitlePalResId;
+    uint32           actorType;
+    uint32           soundResId[50];
+    AmbientSoundItem ambientSounds[15];
+    uint32           numAmbientSound;
+    uint32           musicStatus;
+    uint32           musicCurrentResId;
+    uint32           musicFlag;
+    uint32           musicResId;
+    uint32           musicStatusExt;
     
     // FIXME: Investigate if we need to actually reserve maxsize for this arrays. 
     // It always have that size under scene file and they are always save in savegames.
-    Common::Array<BarrierItem> _barriers; // maxsize 400
-    Common::Array<ActorItem> _actors;     // maxsize 50
-
+    Common::Array<BarrierItem> barriers; // maxsize 400
+    Common::Array<ActorItem>   actors;   // maxsize 50
     // TODO add rest fields
-    Common::Array<ActionItem>  _actions;   // maxsize 400
+    Common::Array<ActionItem>  actions;  // maxsize 400
+
 }; // end of class WorldStats
 
-
 typedef struct PolyDefinitions{
-    uint32  numPoints;
-    Common::Point   *points;//[Polygons_MAXSIZE];
-	Common::Rect    boundingRect;
+    uint32        numPoints;
+    Common::Point *points; //[Polygons_MAXSIZE];
+	Common::Rect  boundingRect;
+
 } PolyDefinitions;
 
 class GamePolygons {
 public:
     GamePolygons() {};
     virtual ~GamePolygons() {
-        _polygons.clear();
+        polygons.clear();
     };
 
-    uint32 _size;
-    uint32 _numEntries;
+    uint32 size;
+    uint32 numEntries;
 
-    Common::Array<PolyDefinitions> _polygons;
+    Common::Array<PolyDefinitions> polygons;
+
 }; // end of class GamePolygons
-
 
 typedef struct ActionCommand {
     uint32 numLines;    //  Only set on the first line of each script
@@ -341,6 +343,7 @@ typedef struct ActionCommand {
     uint32 param7;
     uint32 param8;
     uint32 param9;
+
 } ActionCommand;
 
 typedef struct ActionDefinitions {
@@ -348,19 +351,21 @@ typedef struct ActionDefinitions {
     uint32 field_1BAC;
     uint32 field_1BB0;
     uint32 counter;
+
 } ActionDefinitions;
 
 class ActionList {
 public:
     ActionList() {};
     virtual ~ActionList() {
-        _actions.clear();
+        actions.clear();
     };
 
-    uint32 _size;
-    uint32 _numEntries;
+    uint32 size;
+    uint32 numEntries;
 
-    Common::Array<ActionDefinitions> _actions;
+    Common::Array<ActionDefinitions> actions;
+
 }; // end of class ActionList
 
 } // end of namespace Asylum
