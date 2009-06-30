@@ -184,9 +184,9 @@ typedef struct CommonResources {
     uint32 curTalkNCP;
     uint32 curGrabPointer;
     uint32 curTalkNCP2;
-    uint32 field_54;
-    uint32 field_58;
-    uint32 field_5C;
+    uint32 currFont1;
+    uint32 currFont2;
+    uint32 currFont3;
     uint32 palette;
     uint32 cellShadeMask1;
     uint32 cellShadeMask2;
