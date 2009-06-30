@@ -104,9 +104,9 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
     _worldStats->commonRes.curTalkNCP         = stream->readUint32LE();
     _worldStats->commonRes.curGrabPointer     = stream->readUint32LE();
     _worldStats->commonRes.curTalkNCP2        = stream->readUint32LE();
-    _worldStats->commonRes.field_54           = stream->readUint32LE();
-    _worldStats->commonRes.field_58           = stream->readUint32LE();
-    _worldStats->commonRes.field_5C           = stream->readUint32LE();
+    _worldStats->commonRes.currFont1          = stream->readUint32LE();
+    _worldStats->commonRes.currFont2          = stream->readUint32LE();
+    _worldStats->commonRes.currFont3          = stream->readUint32LE();
     _worldStats->commonRes.palette            = stream->readUint32LE();
     _worldStats->commonRes.cellShadeMask1     = stream->readUint32LE();
     _worldStats->commonRes.cellShadeMask2     = stream->readUint32LE();
