@@ -330,7 +330,7 @@ public:
 
 
 typedef struct ActionCommand {
-    uint32 unknown;
+    uint32 numLines;    //  Only set on the first line of each script
     uint32 opcode;
     uint32 param1;
     uint32 param2;
