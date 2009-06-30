@@ -30,6 +30,17 @@
 
 namespace Draci {
 
+class Drawable {
+
+public:
+	virtual void draw(Surface *surface) const = 0;
+	virtual ~Drawable() {};
+
+	uint16 _width;	//!< Width of the sprite
+	uint16 _height;	//!< Height of the sprite
+	uint16 _x, _y;	//!< Sprite coordinates
+};
+
 /**
  *  Represents a Draci Historie sprite. Supplies two constructors; one for
  *  loading a sprite from a raw data buffer and one for loading a sprite in
@@ -43,7 +54,7 @@ namespace Draci {
  *	[height * width bytes] image pixels stored column-wise, one byte per pixel
  */
 
-class Sprite {
+class Sprite : public Drawable {
 
 public:
 	Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x = 0, uint16 y = 0, 
@@ -57,9 +68,6 @@ public:
 	void draw(Surface *surface) const; 
 
 	byte *_data;	//!< Pointer to a buffer containing raw sprite data (row-wise)
-	uint16 _width;	//!< Width of the sprite
-	uint16 _height;	//!< Height of the sprite
-	uint16 _x, _y;	//!< Sprite coordinates
 };
 
 

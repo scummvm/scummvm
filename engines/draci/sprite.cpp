@@ -54,7 +54,11 @@ static void transformToRows(byte *img, uint16 width, uint16 height) {
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
  */
 Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x, uint16 y, 
-			   bool columnwise) : _width(width), _height(height), _x(x), _y(y), _data(NULL) {
+			   bool columnwise) : _data(NULL) {
+	 _width = width;
+	 _height = height;
+	 _x = x;
+	 _y = y;
 	
 	_data = new byte[width * height];
 	
@@ -71,8 +75,10 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x, uint16 y,
  *	pixel.
  */
 Sprite::Sprite(byte *sprite_data, uint16 length, uint16 x, uint16 y, 
-			   bool columnwise) : _x(x), _y(y), _data(NULL) {
-
+			   bool columnwise) : _data(NULL) {
+	 _x = x;
+	 _y = y;
+	
 	Common::MemoryReadStream reader(sprite_data, length);
 
 	_width = reader.readUint16LE();
