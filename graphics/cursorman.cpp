@@ -113,7 +113,8 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	uint size;
 	if (!format)
 		size = w * h;
-	else size = w * h * format->bytesPerPixel;
+	else
+		size = w * h * format->bytesPerPixel;
 #else
 	uint size = w * h;
 #endif

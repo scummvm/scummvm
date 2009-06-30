@@ -154,13 +154,10 @@ private:
 		uint _size;
 		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL) {
 #ifdef ENABLE_RGB_COLOR
-			if (!format)
-			{
+			if (!format) {
 				_size = w * h;
 				_keycolor &= 0xFF;
-			}
-			else
-			{
+			} else {
 				_size = w * h * format->bytesPerPixel;
 				_keycolor &= ((1 << (format->bytesPerPixel << 3)) - 1);
 			}
