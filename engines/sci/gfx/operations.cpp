@@ -662,7 +662,7 @@ static int line_clip(rect_t *line, rect_t clip, int xfact, int yfact) {
 			return line_check_bar(&(line->x), &(line->width), clip.x, clip.width);
 
 		} else { // "normal" line
-			float start = 0.0, end = 1.0;
+			float start = 0.0f, end = 1.0f;
 			float xv = (float)line->width;
 			float yv = (float)line->height;
 
@@ -682,7 +682,7 @@ static int line_clip(rect_t *line, rect_t clip, int xfact, int yfact) {
 			line->width = (int)(xv * (end - start));
 			line->height = (int)(yv * (end - start));
 
-			return (start > 1.0 || end < 0.0);
+			return (start > 1.0f || end < 0.0f);
 		}
 	}
 
@@ -902,7 +902,7 @@ int gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color, gfx_li
 int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type) {
 	GfxDriver *drv = state->driver;
 	int reverse = 0; // switch color1 and color2
-	float mod_offset = 0.0, mod_breadth = 1.0; // 0.0 to 1.0: Color adjustment
+	float mod_offset = 0.0f, mod_breadth = 1.0f; // 0.0 to 1.0: Color adjustment
 	gfx_rectangle_fill_t driver_shade_type;
 	rect_t new_box;
 

@@ -1977,7 +1977,7 @@ protected:
 	virtual void printScreenText(uint vgaSpriteId, uint color, const char *stringPtr, int16 x, int16 y, int16 width);
 
 	void printInteractText(uint16 num, const char *string);
-	void sendInteractText(uint16 num, const char *fmt, ...);
+	void sendInteractText(uint16 num, const char *fmt, ...) GCC_PRINTF(3, 4);
 
 	void checkLinkBox();
 	void hyperLinkOn(uint16 x);

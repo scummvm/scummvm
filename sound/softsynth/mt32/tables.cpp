@@ -35,9 +35,9 @@
 // powf, resulting in a linker error because of multiple definitions.
 // Hence we re-define them here. The only potential drawback is that it
 // might be a little bit slower this way.
-#define powf pow
-#define floorf floor
-#define fabsf fabs
+#define powf(x,y)	((float)pow(x,y))
+#define floorf(x)	((float)floorf(x))
+#define fabsf(x)	((float)fabs(x))
 #endif
 
 #define FIXEDPOINT_MAKE(x, point) ((Bit32u)((1 << point) * x))
@@ -730,7 +730,7 @@ Tables::Tables() {
 
 bool Tables::init(Synth *synth, PCMWaveEntry *pcmWaves, float sampleRate, float masterTune) {
 	if (sampleRate <= 0.0f) {
-		synth->printDebug("Bad sampleRate (%d <= 0.0f)", sampleRate);
+		synth->printDebug("Bad sampleRate (%f <= 0.0f)", sampleRate);
 		return false;
 	}
 	if (initialisedSampleRate == 0.0f) {

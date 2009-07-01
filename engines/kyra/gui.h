@@ -260,7 +260,7 @@ private:
 	void drawBox(int x, int y, int w, int h, int fill);
 	bool getInput();
 
-	void printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
+	void printString(const char *string, int x, int y, int col1, int col2, int flags, ...) GCC_PRINTF(2, 8);
 };
 
 } // end of namesapce Kyra

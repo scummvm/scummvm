@@ -93,10 +93,6 @@ extern void InventoryProcess(CORO_PARAM, const void *);
 extern void PrimeBackground();
 extern SCNHANDLE GetSceneHandle(void);
 
-// In TIMER.CPP
-extern void FettleTimers(void);
-extern void RebootTimers(void);
-
 //----------------- FORWARD DECLARATIONS  ---------------------
 void SetNewScene(SCNHANDLE scene, int entrance, int transition);
 
