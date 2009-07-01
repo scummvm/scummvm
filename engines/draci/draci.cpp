@@ -129,26 +129,30 @@ int DraciEngine::go() {
 	Common::String testString = "Testing, testing, read all about it!";
 	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
 	ypos = 130;
-	Text txt1(testString, _font, kFontColour1, xpos, ypos, 1);
+	Text txt(testString, _font, kFontColour1, xpos, ypos, 1);
 	
-	txt1.draw(surf);
+	txt.draw(surf);
 
 	// Draw small string
 	_font->setFont(kFontSmall);
 	testString = "I'm smaller than the font above me.";
 	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
 	ypos += 20;
-	Text txt2(testString, _font, kFontColour1, xpos, ypos, 1);
+	txt.setText(testString);
+	txt._x = xpos;
+	txt._y = ypos;
 
-	txt2.draw(surf);
+	txt.draw(surf);
 
 	// Overflow handling test	
 	testString = "Checking overflooooooooooooooooooooooooow...";
 	xpos = 50;
 	ypos += 20;
-	Text txt3(testString, _font, kFontColour1, xpos, ypos, 1);
+	txt.setText(testString);
+	txt._x = xpos;
+	txt._y = ypos;
 
-	txt3.draw(surf);
+	txt.draw(surf);
 
 	_screen->copyToScreen();
 
@@ -162,6 +166,12 @@ int DraciEngine::go() {
 	}	
 
 	testString = "I'm transparent";
+	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
+	ypos = 80;
+	txt.setText(testString);
+	txt.setColour(kDefaultTransparent);
+	txt._x = xpos;
+	txt._y = ypos;
 	for (unsigned int t = 0; t < 25; ++t) {
 		debugC(5, kDraciGeneralDebugLevel, "Drawing frame %d...", t);
 
@@ -177,9 +187,7 @@ int DraciEngine::go() {
 		sp.draw(surf);
 
 		// Draw transparent text over dragon
-		_font->setColour(kDefaultTransparent);	
-		_font->drawString(surf, testString, 
-		(kScreenWidth - _font->getStringWidth(testString, 1)) / 2, 80, 1);
+		txt.draw(surf);
 
 		_screen->copyToScreen();
 		_system->delayMillis(100);

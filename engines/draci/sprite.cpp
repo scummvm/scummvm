@@ -129,13 +129,13 @@ void Sprite::draw(Surface *surface) const {
 Text::Text(const Common::String &str, Font *font, byte fontColour, 
 				uint16 x, uint16 y, uint spacing) {
 	uint len = str.size();
+	_length = len;
 	
 	_x = x;
 	_y = y;
 	
 	_text = new byte[len];
 	memcpy(_text, str.c_str(), len);
-	_length = len;
 	
 	_spacing = spacing;
 	_colour = fontColour;
@@ -144,7 +144,21 @@ Text::Text(const Common::String &str, Font *font, byte fontColour,
 } 
 
 Text::~Text() {
-	delete _text;
+	delete[] _text;
+}
+
+void Text::setText(const Common::String &str) {
+	delete[] _text;
+	
+	uint len = str.size();
+	_length = len;
+
+	 _text = new byte[len];
+	memcpy(_text, str.c_str(), len);
+}
+
+void Text::setColour(byte fontColour) {
+	_colour = fontColour;
 }
 
 void Text::draw(Surface *surface) const {

@@ -78,6 +78,9 @@ public:
 		uint16 x = 0, uint16 y = 0, uint spacing = 0);
 	~Text();
 	
+	void setText(const Common::String &str);
+	void setColour(byte fontColour);
+	
 	void draw(Surface *surface) const;
 	
 	byte *_text;
