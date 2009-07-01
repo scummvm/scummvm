@@ -100,6 +100,7 @@ public:
 	
 	void setText(const Common::String &str);
 	void setColour(byte fontColour);
+	void setSpacing(uint spacing);
 	
 	void draw(Surface *surface) const;
 

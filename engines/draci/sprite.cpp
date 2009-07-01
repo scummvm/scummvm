@@ -171,6 +171,10 @@ void Text::setColour(byte fontColour) {
 	_colour = fontColour;
 }
 
+void Text::setSpacing(uint spacing) {
+	_spacing = spacing;
+}
+
 void Text::draw(Surface *surface) const {
 	_font->setColour(_colour);
 	_font->drawString(surface, _text, _length, _x, _y, _spacing);
