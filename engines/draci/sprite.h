@@ -74,7 +74,8 @@ public:
 class Text : public Drawable {
 
 public:
-	Text(const Common::String &str, Font *font, byte fontColour, uint spacing = 0);
+	Text(const Common::String &str, Font *font, byte fontColour, 
+		uint16 x = 0, uint16 y = 0, uint spacing = 0);
 	~Text();
 	
 	void draw(Surface *surface) const;

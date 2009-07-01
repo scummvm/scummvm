@@ -126,8 +126,12 @@ void Sprite::draw(Surface *surface) const {
 	surface->markDirtyRect(r);
 }
 
-Text::Text(const Common::String &str, Font *font, byte fontColour, uint spacing) {
+Text::Text(const Common::String &str, Font *font, byte fontColour, 
+				uint16 x, uint16 y, uint spacing) {
 	uint len = str.size();
+	
+	_x = x;
+	_y = y;
 	
 	_text = new byte[len];
 	memcpy(_text, str.c_str(), len);
