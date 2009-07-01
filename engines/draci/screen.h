@@ -51,7 +51,6 @@ public:
 	byte *getPalette() const;
 	void copyToScreen() const;
 	void clearScreen() const;
-	void drawSprite(const Sprite &s) const;
 	void fillScreen(uint8 colour) const;
 	Surface *getSurface();	
 	void drawRect(Common::Rect &r, uint8 colour);
