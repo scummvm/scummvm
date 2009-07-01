@@ -73,7 +73,7 @@ bool load(Common::SeekableReadStream &musicData) {
 
 	uint16 numSamples;
 	// uint16 number of Samples
-	numSamples = numSamples.readUint16BE();
+	numSamples = musicData.readUint16BE();
 	for (int i = 0; i < numSamples; ++i) {
 		// load disksample structure
 		uint16 number = musicData.readUint16BE();
