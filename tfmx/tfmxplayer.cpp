@@ -7,8 +7,9 @@
 #include "common/debug.h"
 
 #include "sound/mixer.h"
-#include "sound/mods/protracker.h"
 #include "sound/mods/tfmx.h"
+
+#if defined(TFMX_CMDLINE_TOOL)
 
 #include "tfmx/tfmxdebug.h"
 
@@ -46,7 +47,7 @@ Audio::Tfmx *loadTfmxfile(const char *mdatName, const char *sampleName) {
 
 void runFlac(int chan, int bits, int sr, const char *fileName);
 
-void tfmxmain(const int argc, const char *const argv[]) {
+void modcmdmain(const int argc, const char *const argv[]) {
 	debug("Started Scumm&VM");
 	debug("Sound celebrating utility for monkey melodies & Various Malfunctions");
 	debug("");
@@ -167,4 +168,4 @@ void runFlac( int chan, int bits, int sr, const char *fileName) {
 	system(cmd);
 }
 
-
+#endif // #if defined(TFMX_CMDLINE_TOOL)

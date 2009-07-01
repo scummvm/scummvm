@@ -90,7 +90,7 @@ void OSystem_SDL::initBackend() {
 
 	int joystick_num = ConfMan.getInt("joystick_num");
 	joystick_num = 0;
-#if !defined(TFMX_CMDLINE_TOOL)
+#if !defined(TFMX_CMDLINE_TOOL) && !defined(MXTX_CMDLINE_TOOL)
 	uint32 sdlFlags =  SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 #else
 	uint32 sdlFlags =  /*SDL_INIT_VIDEO |*/ SDL_INIT_AUDIO | SDL_INIT_TIMER;
@@ -115,7 +115,7 @@ void OSystem_SDL::initBackend() {
 
 
 	_graphicsMutex = createMutex();
-#if !defined(TFMX_CMDLINE_TOOL)
+#if !defined(TFMX_CMDLINE_TOOL) && !defined(MXTX_CMDLINE_TOOL)
 	SDL_ShowCursor(SDL_DISABLE);
 	
 	// Enable unicode support if possible

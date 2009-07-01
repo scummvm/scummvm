@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	vorbis.o \
 	wave.o \
 	mods/infogrames.o \
+	mods/maxtrax.o \
 	mods/module.o \
 	mods/protracker.o \
 	mods/paula.o \

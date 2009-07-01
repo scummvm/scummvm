@@ -1,6 +1,7 @@
 MODULE := tfmx
 
 MODULE_OBJS := \
+	mxtxplayer.o \
 	tfmxplayer.o \
 	tfmxdebug.o
 

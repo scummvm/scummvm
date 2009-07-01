@@ -295,8 +295,8 @@ static void setupKeymapper(OSystem &system) {
 
 }
 
-#if defined(TFMX_CMDLINE_TOOL)
-void tfmxmain(int argc, const char * const argv[]);
+#if defined(TFMX_CMDLINE_TOOL) || defined(MXTX_CMDLINE_TOOL)
+void modcmdmain(int argc, const char * const argv[]);
 
 extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	Common::String specialDebug;
@@ -317,7 +317,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	system.initBackend();
 
 	// pass control to my own main-function, including arguments
-	tfmxmain(argc,argv);
+	modcmdmain(argc,argv);
 
 	PluginManager::instance().unloadPlugins();
 	PluginManager::destroy();

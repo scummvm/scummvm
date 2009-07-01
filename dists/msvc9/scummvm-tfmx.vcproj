@@ -223,7 +223,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TFMX_CMDLINE_TOOL"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;NOT_TFMX_CMDLINE_TOOL;MXTX_CMDLINE_TOOL"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -1142,6 +1142,14 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\mods\infogrames.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\maxtrax.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\maxtrax.h"
 					>
 				</File>
 				<File
@@ -2084,6 +2092,10 @@
 		<Filter
 			Name="TFMX"
 			>
+			<File
+				RelativePath="..\..\tfmx\mxtxplayer.cpp"
+				>
+			</File>
 			<File
 				RelativePath="..\..\TFMX\README.txt"
 				>
