@@ -212,7 +212,7 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty) const {
  * @param spacing 	Space to leave between individual characters. Defaults to 0. 
  */
 
-void Font::drawString(Surface *dst, const byte *str, uint len 
+void Font::drawString(Surface *dst, const byte *str, uint len, 
 							int x, int y, int spacing) const {
 	assert(dst != NULL);
 	assert(x >= 0);
@@ -245,7 +245,7 @@ void Font::drawString(Surface *dst, const byte *str, uint len
 void Font::drawString(Surface *dst, const Common::String &str, 
 							int x, int y, int spacing) const {
 
-	drawString(dst, str, str.size(), x, y, spacing);
+	drawString(dst, (byte *) str.c_str(), str.size(), x, y, spacing);
 }
 
 /**

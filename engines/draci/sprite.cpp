@@ -27,6 +27,7 @@
 
 #include "draci/draci.h"
 #include "draci/sprite.h"
+#include "draci/font.h"
 
 namespace Draci {
 
@@ -124,7 +125,28 @@ void Sprite::draw(Surface *surface) const {
 	Common::Rect r(_x, _y, _x + _width, _y + _height);
 	surface->markDirtyRect(r);
 }
-		
+
+Text::Text(const Common::String &str, Font *font, byte fontColour, uint spacing) {
+	uint len = str.size();
+	
+	_text = new byte[len];
+	memcpy(_text, str.c_str(), len);
+	_length = len;
+	
+	_spacing = spacing;
+	_colour = fontColour;
+	
+	_font = font;
+} 
+
+Text::~Text() {
+	delete _text;
+}
+
+void Text::draw(Surface *surface) const {
+	_font->setColour(_colour);
+	_font->drawString(surface, _text, _length, _x, _y, _spacing);
+}	
 			
 } // End of namespace Draci	
 		

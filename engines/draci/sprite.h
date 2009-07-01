@@ -27,6 +27,7 @@
 #define DRACI_SPRITE_H
 
 #include "draci/surface.h"
+#include "draci/font.h"
 
 namespace Draci {
 
@@ -70,7 +71,21 @@ public:
 	byte *_data;	//!< Pointer to a buffer containing raw sprite data (row-wise)
 };
 
+class Text : public Drawable {
 
+public:
+	Text(const Common::String &str, Font *font, byte fontColour, uint spacing = 0);
+	~Text();
+	
+	void draw(Surface *surface) const;
+	
+	byte *_text;
+	uint _length;
+	uint8 _colour;
+	uint _spacing;
+	Font *_font;
+};
+	
 } // End of namespace Draci
 
 #endif // DRACI_SPRITE_H
