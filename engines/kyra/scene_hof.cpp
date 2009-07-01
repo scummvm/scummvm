@@ -330,9 +330,6 @@ int KyraEngine_HoF::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	updateCharacterAnim(0);
 	refreshAnimObjectsIfNeed();
 
-	if (!changedScene && !_unk4) {
-		//XXX
-	}
 	return changedScene;
 }
 
@@ -396,14 +393,14 @@ void KyraEngine_HoF::unloadScene() {
 
 void KyraEngine_HoF::loadScenePal() {
 	uint16 sceneId = _mainCharacter.sceneId;
-	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+	_screen->copyPalette(1, 0);
 
 	char filename[14];
 	strcpy(filename, _sceneList[sceneId].filename1);
 	strcat(filename, ".COL");
 	_screen->loadBitmap(filename, 3, 3, 0);
-	memcpy(_screen->getPalette(1), _screen->getCPagePtr(3), 384);
-	memset(_screen->getPalette(1), 0, 3);
+	_screen->getPalette(1).copy(_screen->getCPagePtr(3), 0, 128);
+	_screen->getPalette(1).fill(0, 1, 0);
 	memcpy(_scenePal, _screen->getCPagePtr(3)+336, 432);
 }
 
@@ -669,7 +666,7 @@ void KyraEngine_HoF::initSceneScreen(int unk1) {
 	}
 
 	if (_noScriptEnter) {
-		memset(_screen->getPalette(0), 0, 384);
+		_screen->getPalette(0).fill(0, 128, 0);
 		_screen->setScreenPalette(_screen->getPalette(0));
 	}
 
@@ -677,7 +674,7 @@ void KyraEngine_HoF::initSceneScreen(int unk1) {
 
 	if (_noScriptEnter) {
 		_screen->setScreenPalette(_screen->getPalette(1));
-		memcpy(_screen->getPalette(0), _screen->getPalette(1), 384);
+		_screen->getPalette(0).copy(_screen->getPalette(1), 0, 128);
 	}
 
 	updateCharPal(0);
@@ -695,10 +692,7 @@ void KyraEngine_HoF::freeSceneShapePtrs() {
 }
 
 void KyraEngine_HoF::fadeScenePal(int srcIndex, int delayTime) {
-	uint8 *dst = _screen->getPalette(0) + 336;
-	const uint8 *src = _scenePal + (srcIndex << 4)*3;
-	memcpy(dst, src, 48);
-
+	_screen->getPalette(0).copy(_scenePal, srcIndex << 4, 16, 112);
 	_screen->fadePalette(_screen->getPalette(0), delayTime, &_updateFunctor);
 }
 

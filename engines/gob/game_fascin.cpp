@@ -35,7 +35,6 @@
 #include "gob/goblin.h"
 #include "gob/inter.h"
 #include "gob/mult.h"
-#include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"

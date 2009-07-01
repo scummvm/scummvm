@@ -1082,6 +1082,9 @@
 				RelativePath="..\..\graphics\imagedec.h">
 			</File>
 			<File
+				RelativePath="..\..\graphics\pixelformat.h">
+			</File>
+			<File
 				RelativePath="..\..\graphics\primitives.cpp">
 			</File>
 			<File

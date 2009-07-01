@@ -264,6 +264,11 @@ void GroovieEngine::errorString(const char *buf_input, char *buf_output, int buf
 
 void GroovieEngine::syncSoundSettings() {
 	_musicPlayer->setUserVolume(ConfMan.getInt("music_volume"));
+	// VDX videos just contain one digital audio track, which can be used for
+	// both SFX or Speech, but the engine doesn't know what they contain, so
+	// we have to use just one volume setting for videos.
+	// We use "speech" because most users will want to change the videos
+	// volume when they can't hear the speech because of the music.
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, ConfMan.getInt("speech_volume"));
 }
 

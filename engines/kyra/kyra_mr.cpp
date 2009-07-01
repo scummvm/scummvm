@@ -230,7 +230,7 @@ Common::Error KyraEngine_MR::init() {
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
 
-	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 768);
+	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	_screen->setScreenPalette(_screen->getPalette(0));
 
 	return Common::kNoError;
@@ -269,19 +269,18 @@ Common::Error KyraEngine_MR::go() {
 
 		_screen->setScreenPalette(_screen->getPalette(0));
 
-		// XXX
 		playMenuAudioFile();
 
 		for (int i = 0; i < 64 && !shouldQuit(); ++i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_menuAnim->displayFrame(i, 0, 0, 0, 0);
+			_menuAnim->displayFrame(i, 0, 0, 0, 0, 0, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
 
 		for (int i = 64; i > 29 && !shouldQuit(); --i) {
 			uint32 nextRun = _system->getMillis() + 3 * _tickLength;
-			_menuAnim->displayFrame(i, 0, 0, 0, 0);
+			_menuAnim->displayFrame(i, 0, 0, 0, 0, 0, 0);
 			_screen->updateScreen();
 			delayUntil(nextRun);
 		}
@@ -327,9 +326,9 @@ Common::Error KyraEngine_MR::go() {
 }
 
 void KyraEngine_MR::initMainMenu() {
-	_menuAnim = new WSAMovie_v2(this, _screen);
-	_menuAnim->open("REVENGE.WSA", 1, _screen->getPalette(0));
-	memset(_screen->getPalette(0), 0, 3);
+	_menuAnim = new WSAMovie_v2(this);
+	_menuAnim->open("REVENGE.WSA", 1, &_screen->getPalette(0));
+	_screen->getPalette(0).fill(0, 1, 0);
 
 	_menu = new MainMenu(this);
 	MainMenu::StaticData data = {
@@ -378,7 +377,7 @@ void KyraEngine_MR::playVQA(const char *name) {
 		}
 
 		_screen->hideMouse();
-		memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+		_screen->copyPalette(1, 0);
 		fadeOutMusic(60);
 		_screen->fadeToBlack(60);
 		_screen->clearPage(0);
@@ -390,12 +389,11 @@ void KyraEngine_MR::playVQA(const char *name) {
 		_soundDigital->stopAllSounds();
 		_screen->showMouse();
 
-		uint8 pal[768];
 		// Taken from original, it used '1' here too
-		memset(pal, 1, sizeof(pal));
-		_screen->setScreenPalette(pal);
+		_screen->getPalette(0).fill(0, 256, 1);
+		_screen->setScreenPalette(_screen->getPalette(0));
 		_screen->clearPage(0);
-		memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+		_screen->copyPalette(0, 1);
 		_wasPlayingVQA = true;
 	}
 }
@@ -541,11 +539,11 @@ void KyraEngine_MR::initMouseShapes() {
 }
 
 void KyraEngine_MR::startup() {
-	_album.wsa = new WSAMovie_v2(this, _screen);
+	_album.wsa = new WSAMovie_v2(this);
 	assert(_album.wsa);
-	_album.leftPage.wsa = new WSAMovie_v2(this, _screen);
+	_album.leftPage.wsa = new WSAMovie_v2(this);
 	assert(_album.leftPage.wsa);
-	_album.rightPage.wsa = new WSAMovie_v2(this, _screen);
+	_album.rightPage.wsa = new WSAMovie_v2(this);
 	assert(_album.rightPage.wsa);
 	musicUpdate(0);
 
@@ -559,9 +557,7 @@ void KyraEngine_MR::startup() {
 	_screen->setFont(Screen::FID_6_FNT);
 
 	_stringBuffer = new char[500];
-	//XXX
 	musicUpdate(0);
-	//XXX
 	allocAnimObjects(1, 16, 50);
 
 	musicUpdate(0);
@@ -586,19 +582,16 @@ void KyraEngine_MR::startup() {
 		error("couldn't load _ACTOR");
 
 	musicUpdate(0);
-	//XXX
-	musicUpdate(0);
 	openTalkFile(0);
 	musicUpdate(0);
 	_currentTalkFile = 0;
 	openTalkFile(1);
-	//XXX
 	loadCostPal();
 	musicUpdate(0);
 
 	for (int i = 0; i < 16; ++i) {
 		_sceneAnims[i].flags = 0;
-		_sceneAnimMovie[i] = new WSAMovie_v2(this, _screen);
+		_sceneAnimMovie[i] = new WSAMovie_v2(this);
 		assert(_sceneAnimMovie[i]);
 	}
 
@@ -627,7 +620,7 @@ void KyraEngine_MR::startup() {
 	loadInterfaceShapes();
 
 	musicUpdate(0);
-	_res->loadFileToBuf("PALETTE.COL", _screen->getPalette(0), 768);
+	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	_paletteOverlay = new uint8[256];
 	_screen->generateOverlay(_screen->getPalette(0), _paletteOverlay, 0xF0, 0x19);
 
@@ -655,7 +648,7 @@ void KyraEngine_MR::startup() {
 	musicUpdate(0);
 	runStartupScript(1, 0);
 	_res->exists("MOODOMTR.WSA", true);
-	_invWsa = new WSAMovie_v2(this, _screen);
+	_invWsa = new WSAMovie_v2(this);
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, 0);
 	_invWsaFrame = 6;
@@ -899,40 +892,30 @@ void KyraEngine_MR::updateCharAnimFrame(int character, int *table) {
 void KyraEngine_MR::updateCharPal(int unk1) {
 	int layer = _screen->getLayer(_mainCharacter.x1, _mainCharacter.y1) - 1;
 	const uint8 *src = _costPalBuffer + _characterShapeFile * 72;
-	uint8 *dst = _screen->getPalette(0) + 432;
+	Palette &dst = _screen->getPalette(0);
 	const int8 *sceneDatPal = &_sceneDatPalette[layer * 3];
 
 	if (layer != _lastCharPalLayer && unk1) {
-		for (int i = 0, j = 0; i < 72; ++i) {
-			uint8 col = *dst;
-			int8 addCol = *src + *sceneDatPal;
-			addCol = MAX<int8>(0, MIN<int8>(addCol, 63));
-			addCol = (col - addCol) >> 1;
-			*dst -= addCol;
-			++dst;
-			++src;
-			++sceneDatPal;
-			++j;
-			if (j > 3) {
-				sceneDatPal = &_sceneDatPalette[layer * 3];
-				j = 0;
+		for (int i = 144; i < 168; ++i) {
+			for (int j = 0; j <  3; ++j) {
+				uint8 col = dst[i * 3 + j];
+				int subCol = src[(i - 144) * 3 + j] + sceneDatPal[j];
+				subCol = CLIP(subCol, 0, 63);
+				subCol = (col - subCol) / 2;
+				dst[i * 3 + j] -= subCol;
 			}
 		}
+
 		_charPalUpdate = true;
 		_screen->setScreenPalette(_screen->getPalette(0));
 		_lastCharPalLayer = layer;
 	} else if (_charPalUpdate || !unk1) {
-		memcpy(dst, src, 72);
+		dst.copy(_costPalBuffer, _characterShapeFile * 24, 24, 144);
 
-		for (int i = 0, j = 0; i < 72; ++i) {
-			uint8 col = *dst + *sceneDatPal;
-			*dst = MAX<int8>(0, MIN<int8>(col, 63));
-			++dst;
-			++sceneDatPal;
-			++j;
-			if (j >= 3) {
-				sceneDatPal = &_sceneDatPalette[layer * 3];
-				j = 0;
+		for (int i = 144; i < 168; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				int col = dst[i * 3 + j] + sceneDatPal[j];
+				dst[i * 3 + j] = CLIP(col, 0, 63);
 			}
 		}
 

@@ -38,7 +38,7 @@ namespace Kyra {
 WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm) : Movie(vm) {}
 WSAMovie_v1::~WSAMovie_v1() { close(); }
 
-int WSAMovie_v1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
+int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf) {
 	close();
 
 	uint32 flags = 0;
@@ -64,7 +64,7 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, uint8 *palBuf) 
 		offsPal = 0x300;
 		_flags |= WF_HAS_PALETTE;
 		if (palBuf)
-			memcpy(palBuf, wsaData + 8 + (_numFrames << 2), 0x300);
+			_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), *palBuf, 0x300);
 	}
 
 	if (offscreenDecode) {
@@ -137,19 +137,19 @@ void WSAMovie_v1::close() {
 	}
 }
 
-void WSAMovie_v1::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
-	if (frameNum >= _numFrames || !_opened)
+void WSAMovie_v1::displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) {
+	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
 		return;
 
 	_x = x;
 	_y = y;
 	_drawPage = pageNum;
 
-	uint8 *dst;
+	uint8 *dst = 0;
 	if (_flags & WF_OFFSCREEN_DECODE)
 		dst = _offscreenBuffer;
 	else
-		dst = _vm->screen()->getPageRect(_drawPage, _x, _y, _width, _height);
+		dst = _screen->getPageRect(_drawPage, _x, _y, _width, _height);
 
 	if (_currentFrame == _numFrames) {
 		if (!(_flags & WF_NO_FIRST_FRAME)) {
@@ -200,8 +200,16 @@ void WSAMovie_v1::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
 
 	// display
 	_currentFrame = frameNum;
-	if (_flags & WF_OFFSCREEN_DECODE)
-		_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _offscreenBuffer);
+	if (_flags & WF_OFFSCREEN_DECODE) {
+		int pageBackUp = _screen->setCurPage(_drawPage);
+
+		int plotFunc = (flags & 0xFF00) >> 12;
+		int unk1 = flags & 0xFF;
+
+		_screen->copyWsaRect(_x, _y, _width, _height, 0, plotFunc, _offscreenBuffer, unk1, table1, table2);
+
+		_screen->_curPage = pageBackUp;
+	}
 }
 
 void WSAMovie_v1::processFrame(int frameNum, uint8 *dst) {
@@ -220,7 +228,7 @@ void WSAMovie_v1::processFrame(int frameNum, uint8 *dst) {
 
 WSAMovieAmiga::WSAMovieAmiga(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _buffer(0) {}
 
-int WSAMovieAmiga::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
+int WSAMovieAmiga::open(const char *filename, int offscreenDecode, Palette *palBuf) {
 	int res = WSAMovie_v1::open(filename, offscreenDecode, palBuf);
 
 	if (!res)
@@ -239,7 +247,7 @@ void WSAMovieAmiga::close() {
 	WSAMovie_v1::close();
 }
 
-void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
+void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) {
 	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
 		return;
 
@@ -266,7 +274,7 @@ void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
 
 				dst = _buffer;
 			} else {
-				_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _buffer);
+				_screen->copyBlockToPage(_drawPage, _x, _y, _width, _height, _buffer);
 			}
 		}
 		_currentFrame = 0;
@@ -311,8 +319,16 @@ void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
 
 	// display
 	_currentFrame = frameNum;
-	if (_flags & WF_OFFSCREEN_DECODE)
-		_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _offscreenBuffer);
+	if (_flags & WF_OFFSCREEN_DECODE) {
+		int pageBackUp = _screen->setCurPage(_drawPage);
+
+		int plotFunc = (flags & 0xFF00) >> 12;
+		int unk1 = flags & 0xFF;
+
+		_screen->copyWsaRect(_x, _y, _width, _height, 0, plotFunc, _offscreenBuffer, unk1, table1, table2);
+
+		_screen->_curPage = pageBackUp;
+	}
 }
 
 void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
@@ -334,7 +350,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 		dst = _offscreenBuffer;
 		dstPitch = _width;
 	} else {
-		dst = _vm->screen()->getPageRect(_drawPage, _x, _y, _width, _height);
+		dst = _screen->getPageRect(_drawPage, _x, _y, _width, _height);
 		dstPitch = Screen::SCREEN_W;
 	}
 
@@ -347,9 +363,9 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovie_v2::WSAMovie_v2(KyraEngine_v1 *vm, Screen_v2 *screen) : WSAMovie_v1(vm), _screen(screen), _xAdd(0), _yAdd(0) {}
+WSAMovie_v2::WSAMovie_v2(KyraEngine_v1 *vm) : WSAMovie_v1(vm), _xAdd(0), _yAdd(0) {}
 
-int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
+int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 	close();
 
 	uint32 flags = 0;
@@ -376,7 +392,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 		offsPal = 0x300;
 		_flags |= WF_HAS_PALETTE;
 		if (palBuf)
-			_vm->screen()->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf, 0x300);
+			_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), *palBuf, 0x300);
 	}
 
 	if (flags & 2) {
@@ -384,7 +400,7 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 			offsPal = 0x30;
 			_flags |= WF_HAS_PALETTE;
 			if (palBuf)
-				_vm->screen()->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), palBuf, 0x30);
+				_screen->loadPalette(wsaData + 8 + ((_numFrames << 2) & 0xFFFF), *palBuf, 0x30);
 		}
 
 		_flags |= WF_XOR;
@@ -446,90 +462,6 @@ int WSAMovie_v2::open(const char *filename, int unk1, uint8 *palBuf) {
 	_opened = true;
 
 	return _numFrames;
-}
-
-void WSAMovie_v2::displayFrame(int frameNum, int pageNum, int x, int y, ...) {
-	if (frameNum >= _numFrames || frameNum < 0 || !_opened)
-		return;
-
-	_x = x + _xAdd;
-	_y = y + _yAdd;
-	_drawPage = pageNum;
-
-	uint8 *dst = 0;
-	if (_flags & WF_OFFSCREEN_DECODE)
-		dst = _offscreenBuffer;
-	else
-		dst = _screen->getPageRect(_drawPage, _x, _y, _width, _height);
-
-	if (_currentFrame == _numFrames) {
-		if (!(_flags & WF_NO_FIRST_FRAME)) {
-			if (_flags & WF_OFFSCREEN_DECODE)
-				Screen::decodeFrameDelta(dst, _deltaBuffer);
-			else
-				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, (_flags & WF_XOR) == 0);
-		}
-		_currentFrame = 0;
-	}
-
-	// try to reduce the number of needed frame operations
-	int diffCount = ABS(_currentFrame - frameNum);
-	int frameStep = 1;
-	int frameCount;
-	if (_currentFrame < frameNum) {
-		frameCount = _numFrames - frameNum + _currentFrame;
-		if (diffCount > frameCount && !(_flags & WF_NO_LAST_FRAME))
-			frameStep = -1;
-		else
-			frameCount = diffCount;
-	} else {
-		frameCount = _numFrames - _currentFrame + frameNum;
-		if (frameCount >= diffCount || (_flags & WF_NO_LAST_FRAME)) {
-			frameStep = -1;
-			frameCount = diffCount;
-		}
-	}
-
-	// process
-	if (frameStep > 0) {
-		uint16 cf = _currentFrame;
-		while (frameCount--) {
-			cf += frameStep;
-			processFrame(cf, dst);
-			if (cf == _numFrames)
-				cf = 0;
-		}
-	} else {
-		uint16 cf = _currentFrame;
-		while (frameCount--) {
-			if (cf == 0)
-				cf = _numFrames;
-			processFrame(cf, dst);
-			cf += frameStep;
-		}
-	}
-
-	// display
-	_currentFrame = frameNum;
-	if (_flags & WF_OFFSCREEN_DECODE) {
-		int pageBackUp = _screen->_curPage;
-		_screen->_curPage = _drawPage;
-
-		va_list args;
-		va_start(args, y);
-
-		int copyParam = va_arg(args, int);
-		int plotFunc = (copyParam & 0xFF00) >> 12;
-		int unk1 = copyParam & 0xFF;
-
-		const uint8 *unkPtr1 = va_arg(args, const uint8*);
-		const uint8 *unkPtr2 = va_arg(args, const uint8*);
-		va_end(args);
-
-		_screen->copyWsaRect(_x, _y, _width, _height, 0, plotFunc, _offscreenBuffer, unk1, unkPtr1, unkPtr2);
-
-		_screen->_curPage = pageBackUp;
-	}
 }
 
 } // end of namespace Kyra

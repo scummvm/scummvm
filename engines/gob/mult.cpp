@@ -31,6 +31,7 @@
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/palanim.h"
 #include "gob/scenery.h"
 #include "gob/video.h"
@@ -251,8 +252,6 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 }
 
 void Mult::drawText(bool &stop, bool &stopNoClear) {
-	byte *savedIP;
-
 	int16 cmd;
 	for (_index = 0; _index < _multData->textKeysCount; _index++) {
 		if (_multData->textKeys[_index].frame != _frame)
@@ -265,9 +264,10 @@ void Mult::drawText(bool &stop, bool &stopNoClear) {
 			stopNoClear = true;
 			_multData->frameStart = 0;
 		} else if (cmd == 3) {
+			warning("Mult::drawText, cmd == 3");
 			stop = false;
-			savedIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr = _multData->textKeys[_index].script;
+//			uint32 startPos = _vm->_game->_script->pos();
+//			_vm->_global->_inter_execPtr = _multData->textKeys[_index].script;
 		}
 	}
 }

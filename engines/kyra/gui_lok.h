@@ -89,7 +89,7 @@ namespace Kyra {
 		item.labelString = r; \
 		item.labelX = s; \
 		item.labelY = t; \
-		item.unk1F = v; \
+		item.keyCode = v; \
 	} while (0)
 
 class KyraEngine_LoK;

@@ -76,6 +76,7 @@ public:
 	void clearPalette(void);
 	int16 getFrameRate();
 	void setFrameRate(int16 rate);
+	void notifyNewAnim();
 	void waitEndFrame();
 	void setScrollOffset(int16 x = -1, int16 y = -1);
 

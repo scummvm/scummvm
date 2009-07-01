@@ -367,12 +367,7 @@ bool MoviePlayerDXA::processFrame() {
 	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
 	_vm->_system->unlockScreen();
 
-	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < getCurFrame() + 1) ||
-		_frameSkipped > getFrameRate()) {
-		if (_frameSkipped > getFrameRate()) {
-			warning("force frame %i redraw", getCurFrame());
-			_frameSkipped = 0;
-		}
+	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < getCurFrame() + 1)) {
 
 		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
 			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < (uint32)getCurFrame()) {
@@ -392,7 +387,6 @@ bool MoviePlayerDXA::processFrame() {
 	}
 
 	warning("dropped frame %i", getCurFrame());
-	_frameSkipped++;
 	return false;
 }
 

@@ -45,19 +45,23 @@ struct reg_t_Hash {
 	}
 };
 
-// The reg_t_hash_map is actually really a hashset
+/*
+ * The reg_t_hash_map is actually really a hashset
+ */
 typedef Common::HashMap<reg_t, bool, reg_t_Hash, reg_t_EqualTo> reg_t_hash_map;
 
+/**
+ * Finds all used references and normalises them to their memory addresses
+ * @param s The state to gather all information from
+ * @return A hash map containing entries for all used references
+ */
 reg_t_hash_map *find_all_used_references(EngineState *s);
-/* Finds all used references and normalises them to their memory addresses
-** Parameters: (EngineState *) s: The state to gather all information from
-** Returns   : (reg_t_hash_map *) A hash map containing entries for all used references
-*/
 
+/**
+ * Runs garbage collection on the current system state
+ * @param s The state in which we should gc
+ */
 void run_gc(EngineState *s);
-/* Runs garbage collection on the current system state
-** Parameters: (EngineState *) s: The state in which we should gc
-*/
 
 } // End of namespace Sci
 

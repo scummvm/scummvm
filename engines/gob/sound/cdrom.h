@@ -26,9 +26,9 @@
 #ifndef GOB_SOUND_CDROM_H
 #define GOB_SOUND_CDROM_H
 
-#include "gob/dataio.h"
-
 namespace Gob {
+
+class DataStream;
 
 class CDROM {
 public:

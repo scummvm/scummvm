@@ -43,7 +43,7 @@ int LoLEngine::processPrologue() {
 
 	if (_flags.isDemo) {
 		_screen->fadePalette(_screen->getPalette(1), 30, 0);
-		_screen->loadBitmap("FINAL.CPS", 2, 2, _screen->getPalette(0));
+		_screen->loadBitmap("FINAL.CPS", 2, 2, &_screen->getPalette(0));
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->fadePalette(_screen->getPalette(0), 30, 0);
 		delayWithTicks(300);
@@ -57,7 +57,7 @@ int LoLEngine::processPrologue() {
 
 	int processSelection = -1;
 	while (!shouldQuit() && processSelection == -1) {
-		_screen->loadBitmap("TITLE.CPS", 2, 2, _screen->getPalette(0));
+		_screen->loadBitmap("TITLE.CPS", 2, 2, &_screen->getPalette(0));
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 
 		_screen->setFont(Screen::FID_6_FNT);
@@ -71,11 +71,14 @@ int LoLEngine::processPrologue() {
 
 		_eventList.clear();
 		int selection = mainMenu();
-		_screen->hideMouse();
 
-		// Unlike the original, we add a nice fade to black
-		memset(_screen->getPalette(0), 0, 768);
-		_screen->fadePalette(_screen->getPalette(0), 0x54);
+		if (selection != 3) {
+			_screen->hideMouse();
+
+			// Unlike the original, we add a nice fade to black
+			_screen->getPalette(0).clear();
+			_screen->fadeToBlack(0x54);
+		}
 
 		switch (selection) {
 		case 0:		// New game
@@ -90,7 +93,8 @@ int LoLEngine::processPrologue() {
 			break;
 
 		case 3:		// Load game
-			//processSelection = 3;
+			if (_gui->runMenu(_gui->_loadMenu))
+				processSelection = 3;
 			break;
 
 		case 4:		// Quit game
@@ -100,7 +104,7 @@ int LoLEngine::processPrologue() {
 		}
 	}
 
-	if (processSelection == 0 || processSelection == 3) {
+	if (processSelection == 0) {
 		_sound->loadSoundFile(0);
 		_sound->playTrack(6);
 		chooseCharacter();
@@ -131,7 +135,6 @@ void LoLEngine::setupPrologueData(bool load) {
 	const char * const *fileList = _flags.isTalkie ? fileListCD :
 		(_flags.useInstallerPackage ? fileListFloppy : fileListFloppyExtracted);
 
-
 	char filename[32];
 	for (uint i = 0; fileList[i]; ++i) {
 		filename[0] = '\0';
@@ -155,7 +158,7 @@ void LoLEngine::setupPrologueData(bool load) {
 	_screen->clearPage(3);
 
 	if (load) {
-		_chargenWSA = new WSAMovie_v2(this, _screen);
+		_chargenWSA = new WSAMovie_v2(this);
 		assert(_chargenWSA);
 
 		//_charSelection = -1;
@@ -165,7 +168,7 @@ void LoLEngine::setupPrologueData(bool load) {
 		_selectionAnimFrames[1] = _selectionAnimFrames[3] = 1;
 
 		memset(_selectionAnimTimers, 0, sizeof(_selectionAnimTimers));
-		memset(_screen->getPalette(1), 0, 768);
+		_screen->getPalette(1).clear();
 
 		_sound->setSoundList(&_soundData[kMusicIntro]);
 
@@ -181,9 +184,8 @@ void LoLEngine::setupPrologueData(bool load) {
 	} else {
 		delete _chargenWSA; _chargenWSA = 0;
 
-		uint8 *pal = _screen->getPalette(0);
-		memset(pal, 0, 768);
-		_screen->setScreenPalette(pal);
+		_screen->getPalette(0).clear();
+		_screen->setScreenPalette(_screen->getPalette(0));
 
 		if (shouldQuit())
 			return;
@@ -200,9 +202,8 @@ void LoLEngine::showIntro() {
 	if (_flags.platform == Common::kPlatformPC98)
 		showStarcraftLogo();
 
-	uint8 *pal = _screen->getPalette(0);
-	memset(pal, 0, 768);
-	_screen->setScreenPalette(pal);
+	_screen->getPalette(0).clear();
+	_screen->setScreenPalette(_screen->getPalette(0));
 
 	_screen->clearPage(0);
 	_screen->clearPage(4);
@@ -274,8 +275,8 @@ int LoLEngine::chooseCharacter() {
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
 
-	_screen->loadBitmap("CHAR.CPS", 2, 2, _screen->getPalette(0));
-	_screen->loadBitmap("BACKGRND.CPS", 4, 4, _screen->getPalette(0));
+	_screen->loadBitmap("CHAR.CPS", 2, 2, &_screen->getPalette(0));
+	_screen->loadBitmap("BACKGRND.CPS", 4, 4, &_screen->getPalette(0));
 
 	if (!_chargenWSA->open("CHARGEN.WSA", 1, 0))
 		error("Couldn't load CHARGEN.WSA");
@@ -368,7 +369,7 @@ void LoLEngine::kingSelectionIntro() {
 	_sound->voicePlay("KING01", &_speechHandle);
 
 	int index = 4;
-	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
+	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && !skipFlag()) {
 		index = MAX(index, 4);
 
 		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 113, 0, 0, 0, 0);
@@ -384,7 +385,7 @@ void LoLEngine::kingSelectionIntro() {
 			_system->delayMillis(10);
 		}
 
-		if (_speechFlag)
+		if (speechEnabled())
 			index = (index + 1) % 22;
 		else if (++index >= 27)
 			break;
@@ -407,7 +408,7 @@ void LoLEngine::kingSelectionReminder() {
 	_sound->voicePlay("KING02", &_speechHandle);
 
 	int index = 0;
-	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && index < 15) {
+	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && index < 15) {
 		_chargenWSA->displayFrame(_chargenFrameTable[index+9], 0, 113, 0, 0, 0, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar1IdxTable[index]*2+0], _selectionPosTable[_reminderChar1IdxTable[index]*2+1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
 		_screen->copyRegion(_selectionPosTable[_reminderChar2IdxTable[index]*2+0], _selectionPosTable[_reminderChar2IdxTable[index]*2+1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
@@ -421,7 +422,7 @@ void LoLEngine::kingSelectionReminder() {
 			_system->delayMillis(10);
 		}
 
-		if (_speechFlag)
+		if (speechEnabled())
 			index = (index + 1) % 22;
 		else if (++index >= 27)
 			break;
@@ -434,7 +435,7 @@ void LoLEngine::kingSelectionOutro() {
 	_sound->voicePlay("KING03", &_speechHandle);
 
 	int index = 0;
-	while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && !shouldQuit() && !skipFlag()) {
+	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && !shouldQuit() && !skipFlag()) {
 		index = MAX(index, 4);
 
 		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 113, 0, 0, 0, 0);
@@ -446,7 +447,7 @@ void LoLEngine::kingSelectionOutro() {
 			_system->delayMillis(10);
 		}
 
-		if (_speechFlag)
+		if (speechEnabled())
 			index = (index + 1) % 22;
 		else if (++index >= 27)
 			break;
@@ -581,13 +582,13 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 	bool processAnim = true;
 
 	while (_charSelectionInfoResult == -1 && !shouldQuit()) {
-		if (_speechFlag && !_sound->isVoicePresent(file))
+		if (speechEnabled() && !_sound->isVoicePresent(file))
 			break;
 
 		_sound->voicePlay(file, &_speechHandle);
 
 		int i = 0;
-		while ((!_speechFlag || (_speechFlag && _sound->voiceIsPlaying(&_speechHandle))) && _charSelectionInfoResult == -1 && !shouldQuit()) {
+		while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelectionInfoResult == -1 && !shouldQuit()) {
 			_screen->drawShape(0, _screen->getPtrToShape(_screen->getCPagePtr(9), _charInfoFrameTable[i]), 11, 130, 0, 0);
 			_screen->updateScreen();
 
@@ -597,7 +598,7 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 				_system->delayMillis(10);
 			}
 
-			if (_speechFlag || processAnim)
+			if (speechEnabled() || processAnim)
 				i = (i + 1) % 32;
 			if (i == 0)
 				processAnim = false;
@@ -641,19 +642,19 @@ int LoLEngine::selectionCharAccept() {
 }
 
 void LoLEngine::showStarcraftLogo() {
-	WSAMovie_v2 *ci = new WSAMovie_v2(this, _screen);
+	WSAMovie_v2 *ci = new WSAMovie_v2(this);
 	assert(ci);
 
 	_screen->clearPage(0);
 	_screen->clearPage(2);
 
-	int endframe = ci->open("ci01.wsa", 0, _screen->_currentPalette);
+	int endframe = ci->open("ci01.wsa", 0, &_screen->getPalette(0));
 	if (!ci->opened()) {
 		delete ci;
 		return;
 	}
 	_screen->hideMouse();
-	ci->displayFrame(0, 2, 32, 80, 0);
+	ci->displayFrame(0, 2, 32, 80, 0, 0, 0);
 	_screen->copyPage(2, 0);
 	_screen->fadeFromBlack();
 	int inputFlag = 0;
@@ -661,7 +662,7 @@ void LoLEngine::showStarcraftLogo() {
 		inputFlag = checkInput(0) & 0xff;
 		if (shouldQuit() || inputFlag)
 			break;
-		ci->displayFrame(i, 2, 32, 80, 0);
+		ci->displayFrame(i, 2, 32, 80, 0, 0, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		delay(4 * _tickLength);
@@ -725,9 +726,8 @@ void LoLEngine::setupEpilogueData(bool load) {
 		if (_flags.platform == Common::kPlatformPC98)
 			_sound->loadSoundFile("SOUND.DAT");
 	} else {
-		uint8 *pal = _screen->getPalette(0);
-		memset(pal, 0, 768);
-		_screen->setScreenPalette(pal);
+		_screen->getPalette(0).clear();
+		_screen->setScreenPalette(_screen->getPalette(0));
 
 		if (shouldQuit())
 			return;
@@ -742,9 +742,8 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	TIMInterpreter *timBackUp = _tim;
 	_tim = new TIMInterpreter(this, _screen, _system);
 
-	uint8 *pal = _screen->getPalette(0);
-	memset(pal, 0, 768);
-	_screen->setScreenPalette(pal);
+	_screen->getPalette(0).clear();
+	_screen->setScreenPalette(_screen->getPalette(0));
 
 	_screen->clearPage(0);
 	_screen->clearPage(4);
@@ -803,25 +802,24 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 
 	switch (character) {
 	case 0:
-		_screen->loadBitmap("KIERAN.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("KIERAN.CPS", 3, 3, &_screen->getPalette(0));
 		break;
 
 	case 1:
-		_screen->loadBitmap("AK'SHEL.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("AK'SHEL.CPS", 3, 3, &_screen->getPalette(0));
 		break;
 
 	case 2:
-		_screen->loadBitmap("MICHAEL.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("MICHAEL.CPS", 3, 3, &_screen->getPalette(0));
 		break;
 
 	case 3:
-		_screen->loadBitmap("CONRAD.CPS", 3, 3, _screen->getPalette(0));
+		_screen->loadBitmap("CONRAD.CPS", 3, 3, &_screen->getPalette(0));
 		break;
 
 	default:
 		_screen->clearPage(3);
-		memset(_screen->getPalette(0), 0, 768);
-		break;
+		_screen->getPalette(0).clear();
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -856,8 +854,8 @@ void LoLEngine::showCredits() {
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = 0;
 
-	_screen->loadBitmap("ROOM.CPS", 2, 2, _screen->getPalette(0));
-	memset(_screen->getPalette(0) + 764, 0, 3);
+	_screen->loadBitmap("ROOM.CPS", 2, 2, &_screen->getPalette(0));
+	_screen->getPalette(0).fill(255, 1, 0);
 	_screen->fadeToBlack(30);
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -865,7 +863,7 @@ void LoLEngine::showCredits() {
 	_screen->_charOffset = 0;
 
 	char *credits = (char *)_res->fileData("CREDITS.TXT", 0);
-	processCredits(credits, 19, 4, 5);
+	processCredits(credits, 21, 4, 5);
 	delete[] credits;
 
 	uint32 endTime = _system->getMillis() + 120 * _tickLength;
@@ -895,8 +893,8 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 	uint8 *doorShape = _screen->makeShapeCopy(_screen->getCPagePtr(5), 0);
 	assert(doorShape);
 
-	_screen->drawShape(0, doorShape, 0, 0, 20, 0x10);
-	_screen->drawShape(0, doorShape, 0, 0, 21, 0x11);
+	_screen->drawShape(0, doorShape, 0, 0, 22, 0x10);
+	_screen->drawShape(0, doorShape, 0, 0, 23, 0x11);
 
 	int curShapeFile = 0;
 	uint8 *shapes[12];
@@ -906,7 +904,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 	uint8 *monsterPal = _res->fileData("MONSTERS.PAL", 0);
 	assert(monsterPal);
 
-	memcpy(_screen->getPalette(0) + 88 * 3, monsterPal + 0 * 3, 40 * 3);
+	_screen->getPalette(0).copy(monsterPal, 0, 40, 88);
 	_screen->fadePalette(_screen->getPalette(0), 30);
 
 	uint32 waitTimer = _system->getMillis();
@@ -1042,8 +1040,8 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 		} else {
 			if (!monsterAnimFrame && doorRedraw) {
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, page, Screen::CR_NO_P_CHECK);
-				_screen->drawShape(page, doorShape, 0, 0, 20, 0x10);
-				_screen->drawShape(page, doorShape, 0, 0, 21, 0x11);
+				_screen->drawShape(page, doorShape, 0, 0, 22, 0x10);
+				_screen->drawShape(page, doorShape, 0, 0, 23, 0x11);
 
 				--frameCounter;
 				doorRedraw = false;
@@ -1062,32 +1060,32 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 				bool isRightMonster = ((curShapeFile - 1) & 1) != 0;
 
 				if (isRightMonster) {
-					doorSD = 21;
+					doorSD = 23;
 					doorX = _outroRightDoorPos[monsterAnimFrame * 2 + 0];
 					doorY = _outroRightDoorPos[monsterAnimFrame * 2 + 1];
 
 					monsterX = _outroRightMonsterPos[monsterAnimFrame * 2 + 0];
 					monsterY = _outroRightMonsterPos[monsterAnimFrame * 2 + 1];
 
-					_screen->drawShape(page, doorShape, 0, 0, 20, 0x10);
+					_screen->drawShape(page, doorShape, 0, 0, 22, 0x10);
 				} else {
-					doorSD = 20;
+					doorSD = 22;
 					doorX = _outroLeftDoorPos[monsterAnimFrame * 2 + 0];
 					doorY = _outroLeftDoorPos[monsterAnimFrame * 2 + 1];
 
 					monsterX = _outroLeftMonsterPos[monsterAnimFrame * 2 + 0];
 					monsterY = _outroLeftMonsterPos[monsterAnimFrame * 2 + 1];
 
-					_screen->drawShape(page, doorShape, 0, 0, 21, 0x11);
+					_screen->drawShape(page, doorShape, 0, 0, 23, 0x11);
 				}
 
 				if (monsterAnimFrame >= 8)
-					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 20) ? 0 : 1);
+					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 22) ? 0 : 1);
 
 				_screen->drawShape(page, monsterShape, monsterX, monsterY, 0, 0x104 | ((!isRightMonster | (monsterAnimFrame < 20)) ? 0 : 1), _outroShapeTable, 1, _outroMonsterScaleTableX[monsterAnimFrame], _outroMonsterScaleTableY[monsterAnimFrame]);
 
 				if (monsterAnimFrame < 8)
-					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 20) ? 0 : 1);
+					_screen->drawShape(page, doorShape, doorX, doorY, doorSD, (doorSD == 22) ? 0 : 1);
 
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 6, Screen::CR_NO_P_CHECK);
 				doorRedraw = true;
@@ -1129,7 +1127,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 			curShapeFile = curShapeFile % 28;
 
 			loadOutroShapes(curShapeFile, shapes);
-			memcpy(_screen->getPalette(0) + 88 * 3, monsterPal + curShapeFile * 40 * 3, 40 * 3);
+			_screen->getPalette(0).copy(monsterPal, curShapeFile * 40, 40, 88);
 			_screen->setScreenPalette(_screen->getPalette(0));
 
 			needNewShape = false;

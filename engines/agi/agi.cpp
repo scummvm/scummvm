@@ -729,6 +729,8 @@ void AgiEngine::initialize() {
 	// because Apple IIGS AGI games use only Apple IIGS specific sound resources.
 	if (getPlatform() == Common::kPlatformApple2GS) {
 		_soundemu = SOUND_EMU_APPLE2GS;
+	} else if (getPlatform() == Common::kPlatformCoCo3) {
+		_soundemu = SOUND_EMU_COCO3;
 	} else {
 		switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
 		case MD_PCSPK:

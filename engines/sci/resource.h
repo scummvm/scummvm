@@ -72,19 +72,14 @@ enum {
 
 enum ResSourceType {
 	kSourceDirectory = 0,
-	kSourcePatch = 1,
-	kSourceVolume = 2,
-	kSourceExtMap = 3,
-	kSourceIntMap = 4,
-	kSourceAudioVolume = 5,
-	kSourceMask = 127
+	kSourcePatch,
+	kSourceVolume,
+	kSourceExtMap,
+	kSourceIntMap,
+	kSourceAudioVolume,
+	kSourceExtAudioMap
 };
 
-#define RESSOURCE_ADDRESSING_BASIC 0
-#define RESSOURCE_ADDRESSING_EXTENDED 128
-#define RESSOURCE_ADDRESSING_MASK 128
-
-#define RESOURCE_HASH(type, number) (uint32)((type<<16) | number)
 #define SCI0_RESMAP_ENTRIES_SIZE 6
 #define SCI1_RESMAP_ENTRIES_SIZE 6
 #define SCI11_RESMAP_ENTRIES_SIZE 5
@@ -136,7 +131,6 @@ struct ResourceSource {
 	Common::String location_name;	// FIXME: Replace by FSNode ?
 	int volume_number;
 	ResourceSource *associated_map;
-	ResourceSource *next;
 };
 
 class ResourceManager;
@@ -270,6 +264,8 @@ public:
 	 */
 	Common::List<ResourceId> *listResources(ResourceType type, int mapNumber = -1);
 
+	void setAudioLanguage(int language);
+
 protected:
 	int _maxMemory; //!< Config option: Maximum total byte number allocated
 	Common::List<ResourceSource *> _sources;
@@ -278,6 +274,7 @@ protected:
 	Common::List<Resource *> _LRU; //!< Last Resource Used list
 	ResourceMap _resMap;
 	Common::List<Common::File *> _volumeFiles; //!< list of opened volume files
+	ResourceSource *_audioMapSCI1; //!< Currently loaded audio map for SCI1
 
 	/**
 	 * Add a path to the resource manager's list of sources.
@@ -325,11 +322,13 @@ protected:
 	void loadResource(Resource *res);
 	bool loadPatch(Resource *res, Common::File &file);
 	bool loadFromPatchFile(Resource *res);
-	bool loadFromAudioVolume(Resource *res, Common::File &file);
-	void freeOldResources(int last_invulnerable);
+	bool loadFromAudioVolumeSCI1(Resource *res, Common::File &file);
+	bool loadFromAudioVolumeSCI11(Resource *res, Common::File &file);
+	void freeOldResources();
 	int decompress(Resource *res, Common::File *file);
 	int readResourceInfo(Resource *res, Common::File *file, uint32&szPacked, ResourceCompression &compression);
 	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0);
+	void removeAudioResource(ResourceId resId);
 
 	/**--- Resource map decoding functions ---*/
 	int detectMapVersion();
@@ -337,21 +336,32 @@ protected:
 
 	/**
 	 * Reads the SCI0 resource.map file from a local directory.
+	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
 	int readResourceMapSCI0(ResourceSource *map);
 
 	/**
 	 * Reads the SCI1 resource.map file from a local directory.
+	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
 	int readResourceMapSCI1(ResourceSource *map);
 
 	/**
-	 * Reads SCI1.1 MAP resources
+	 * Reads SCI1.1 audio map resources
+	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
-	int readMap(ResourceSource *map);
+	int readAudioMapSCI11(ResourceSource *map);
+
+	/**
+	 * Reads SCI1 audio map files
+	 * @param map The map
+	 * @param unload Unload the map instead of loading it
+	 * @return 0 on success, an SCI_ERROR_* code otherwise
+	 */
+	int readAudioMapSCI1(ResourceSource *map, bool unload = false);
 
 	/**--- Patch management functions ---*/
 
@@ -366,60 +376,6 @@ protected:
 	void removeFromLRU(Resource *res);
 
 	int guessSciVersion();
-};
-
-/**
- * Used for lip and animation syncing in CD talkie games
- */
-class ResourceSync : public Resource {
-public:
-	ResourceSync() {}
-	~ResourceSync() {}
-
-	void startSync(EngineState *s, reg_t obj);
-	void nextSync(EngineState *s, reg_t obj);
-	void stopSync();
-
-protected:
-	uint16 *_ptr;
-	int16 _syncTime, _syncCue;
-	//bool _syncStarted;	// not used
-};
-
-/**
- * Used for speech playback and digital music playback
- * in CD talkie games
- */
-class AudioResource {
-public:
-	AudioResource(ResourceManager *resMgr, int sciVersion);
-	~AudioResource();
-
-	void setAudioRate(uint16 audioRate) { _audioRate = audioRate; }
-	void setAudioLang(int16 lang);
-
-	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
-	int getAudioPosition();
-
-	Audio::AudioStream* getAudioStream(uint32 audioNumber, uint32 volume, int *sampleLen);
-
-	void stop() { g_system->getMixer()->stopHandle(_audioHandle); }
-	void pause() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
-	void resume() { g_system->getMixer()->pauseHandle(_audioHandle, false); }
-
-private:
-	Audio::SoundHandle _audioHandle;
-	uint16 _audioRate;
-	int16 _lang;
-	byte *_audioMapSCI1;
-	Resource *_audioMapSCI11;
-	ResourceManager *_resMgr;
-	int _sciVersion;
-
-	bool findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &offset, uint32 &size);
-	bool findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset, bool getSync = false, uint32 *size = NULL);
-	bool findAudEntrySCI11Late(uint32 audioNumber, uint32 &offset, bool getSync, uint32 *size);
-	bool findAudEntrySCI11Early(uint32 audioNumber, uint32 &offset, bool getSync, uint32 *size);
 };
 
 } // End of namespace Sci

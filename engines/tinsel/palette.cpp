@@ -99,6 +99,7 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 	bool colorFound = false;
 	uint16 clutEntry = 0;
 
+	// Empty the table with color correspondences
 	memset(mapperTable, 0, 16);
 
 	for (int j = 1; j < 16; j++) {
@@ -115,7 +116,7 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 				uint16 psxEquivalent = TINSEL_PSX_RGB(TINSEL_GetRValue(pal->palRGB[i]) >> 3, TINSEL_GetGValue(pal->palRGB[i]) >> 3, TINSEL_GetBValue(pal->palRGB[i]) >> 3); 
 
 				if (psxEquivalent == clutEntry) {
-					mapperTable[j] = i + 1;
+					mapperTable[j] = i + 1; // Add entry in the table for the found color
 					colorFound = true;
 				}
 			}

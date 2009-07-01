@@ -48,190 +48,175 @@ char *ID2string(Common::IFF_ID id) {
 
 namespace Graphics {
 
-
-void fillBMHD(BMHD &bitmapHeader, Common::ReadStream &stream) {
-
-	bitmapHeader.width = stream.readUint16BE();
-	bitmapHeader.height = stream.readUint16BE();
-	bitmapHeader.x = stream.readUint16BE();
-	bitmapHeader.y = stream.readUint16BE();
-	bitmapHeader.depth = stream.readByte();
-	bitmapHeader.masking = stream.readByte();
-	bitmapHeader.pack = stream.readByte();
-	bitmapHeader.flags = stream.readByte();
-	bitmapHeader.transparentColor = stream.readUint16BE();
-	bitmapHeader.xAspect = stream.readByte();
-	bitmapHeader.yAspect = stream.readByte();
-	bitmapHeader.pageWidth = stream.readUint16BE();
-	bitmapHeader.pageHeight = stream.readUint16BE();
-
+void BMHD::load(Common::ReadStream *stream) {
+	assert(stream);
+	stream->read(this, sizeof(BMHD));
+	width = FROM_BE_16(width);
+	height = FROM_BE_16(height);
+	x = FROM_BE_16(x);
+	y = FROM_BE_16(y);
+	transparentColor = FROM_BE_16(transparentColor);
+	pageWidth = FROM_BE_16(pageWidth);
+	pageHeight = FROM_BE_16(pageHeight);
 }
 
 
-ILBMDecoder::ILBMDecoder(Common::ReadStream &input, Surface &surface, byte *&colors) : IFFParser(input), _surface(&surface), _colors(&colors) {
-	if (_typeId != ID_ILBM)
-		error("unsupported IFF subtype '%s'", Common::ID2string(_typeId));
+void ILBMDecoder::loadHeader(Common::ReadStream *stream) {
+	_header.load(stream);
 }
 
-void ILBMDecoder::decode() {
+void ILBMDecoder::loadBitmap(uint32 mode, byte *buffer, Common::ReadStream *stream) {
+	assert(stream);
+	uint32 numPlanes = MIN(mode & ILBM_UNPACK_PLANES, (uint32)_header.depth);
+	assert(numPlanes == 1 || numPlanes == 2 || numPlanes == 3 || numPlanes == 4 || numPlanes == 5 || numPlanes == 8);
 
-	Common::IFFChunk *chunk;
-	while ((chunk = nextChunk()) != 0) {
-		switch (chunk->id) {
-		case ID_BMHD:
-			readBMHD(*chunk);
-			break;
-
-		case ID_CMAP:
-			readCMAP(*chunk);
-			break;
-
-		case ID_BODY:
-			readBODY(*chunk);
-			break;
-		}
+	bool packPixels = (mode & ILBM_PACK_PLANES) != 0;
+	if (numPlanes != 1 && numPlanes != 2 && numPlanes != 4) {
+		packPixels = false;
 	}
 
-	return;
-}
-
-void ILBMDecoder::readBMHD(Common::IFFChunk &chunk) {
-
-	fillBMHD(_bitmapHeader, chunk);
-
-	_colorCount = 1 << _bitmapHeader.depth;
-	*_colors = (byte*)malloc(sizeof(**_colors) * _colorCount * 3);
-	_surface->create(_bitmapHeader.width, _bitmapHeader.height, 1);
-
-}
-
-void ILBMDecoder::readCMAP(Common::IFFChunk &chunk) {
-	if (*_colors == NULL) {
-		error("wrong input chunk sequence");
+	uint32 outPitch = _header.width;
+	if (packPixels) {
+		outPitch /= (8 / numPlanes);
 	}
-	for (uint32 i = 0; i < _colorCount; i++) {
-		(*_colors)[i * 3 + 0] = chunk.readByte();
-		(*_colors)[i * 3 + 1] = chunk.readByte();
-		(*_colors)[i * 3 + 2] = chunk.readByte();
-	}
-}
+	byte *out = buffer;
 
-void ILBMDecoder::readBODY(Common::IFFChunk& chunk) {
+	switch (_header.pack) {
+	case 1: {	// PackBits compressed bitmap
+		Graphics::PackBitsReadStream packStream(*stream);
 
-	switch (_bitmapHeader.pack) {
-	case 0:
-		error("unpacked ILBM files are not supported");
-		break;
+		// setup a buffer to hold enough data to build a line in the output
+		uint32 scanlineWidth = ((_header.width + 15)/16) << 1;
+		byte *scanline = new byte[scanlineWidth * _header.depth];
 
-	case 1: {
-		uint32 scanWidth = (_bitmapHeader.width + 7) >> 3;
-		byte *scan = (byte*)malloc(scanWidth);
-		byte *out = (byte*)_surface->pixels;
-
-		PackBitsReadStream stream(chunk);
-
-		for (uint32 i = 0; i < _bitmapHeader.height; i++) {
-			for (uint32 j = 0; j < _bitmapHeader.depth; j++) {
-				stream.read(scan, scanWidth);
-				fillPlane(out, scan, scanWidth, j);
+		for (uint i = 0; i < _header.height; ++i) {
+			byte *s = scanline;
+			for (uint32 j = 0; j < _header.depth; ++j) {
+				packStream.read(s, scanlineWidth);
+				s += scanlineWidth;
 			}
 
-			out += _bitmapHeader.width;
+			planarToChunky(out, outPitch, scanline, scanlineWidth, numPlanes, packPixels);
+			out += outPitch;
 		}
-		free(scan);
+
+		delete []scanline;
 		break;
 	}
 
+	default:
+		// implement other compression types here!
+		error("only RLE compressed ILBM files are supported");
+		break;
 	}
 }
 
-void ILBMDecoder::fillPlane(byte *out, byte* buf, uint32 width, uint32 plane) {
+void ILBMDecoder::planarToChunky(byte *out, uint32 outPitch, byte *in, uint32 inWidth, uint32 nPlanes, bool packPlanes) {
+	byte pix, ofs, bit;
+	byte *s;
 
-	byte src, idx, set;
-	byte mask = 1 << plane;
-
-	for (uint32 j = 0; j < _bitmapHeader.width; j++) {
-		src = buf[j >> 3];
-		idx = 7 - (j & 7);
-		set = src & (1 << idx);
-
-		if (set)
-			out[j] |= mask;
+	uint32 pixels = outPitch;
+	if (packPlanes) {
+		pixels *= (8 / nPlanes);
 	}
 
-}
+	for (uint32 x = 0; x < pixels; ++x) {
+
+		pix = 0;
+		ofs = x >> 3;
+		bit = 0x80 >> (x & 7);
+
+		// first build a pixel by scanning all the usable planes in the input
+		s = in;
+		for (uint32 plane = 0; plane < nPlanes; ++plane) {
+			if (s[ofs] & bit) {
+				pix |= (1 << plane);
+			}
+			s += inWidth;
+		}
 
 
-
-
-PBMDecoder::PBMDecoder(Common::ReadStream &input, Surface &surface, byte *&colors) : IFFParser(input), _surface(&surface), _colors(&colors) {
-	if (_typeId != ID_PBM)
-		error("unsupported IFF subtype '%s'", Common::ID2string(_typeId));
-}
-
-void PBMDecoder::decode() {
-
-	Common::IFFChunk *chunk;
-	while ((chunk = nextChunk()) != 0) {
-		switch (chunk->id) {
-		case ID_BMHD:
-			readBMHD(*chunk);
-			break;
-
-		case ID_CMAP:
-			readCMAP(*chunk);
-			break;
-
-		case ID_BODY:
-			readBODY(*chunk);
-			break;
+		// then output the pixel according to the requested packing
+		if (!packPlanes) {
+			out[x] = pix;
+		} else
+		if (nPlanes == 1) {
+			out[x/8] |= (pix << (x & 7));
+		} else
+		if (nPlanes == 2) {
+			out[x/4] |= (pix << ((x & 3) << 1));
+		} else
+		if (nPlanes == 4) {
+			out[x/2] |= (pix << ((x & 1) << 2));
 		}
 	}
 
-	return;
 }
 
-void PBMDecoder::readBMHD(Common::IFFChunk &chunk) {
 
-	fillBMHD(_bitmapHeader, chunk);
-
-	_colorCount = 1 << _bitmapHeader.depth;
-	*_colors = (byte*)malloc(sizeof(**_colors) * _colorCount * 3);
-	_surface->create(_bitmapHeader.width, _bitmapHeader.height, 1);
-
+void PBMDecoder::loadHeader(Common::ReadStream *stream) {
+	_header.load(stream);
 }
 
-void PBMDecoder::readCMAP(Common::IFFChunk &chunk) {
-	if (*_colors == NULL) {
-		error("wrong input chunk sequence");
-	}
-	for (uint32 i = 0; i < _colorCount; i++) {
-		(*_colors)[i * 3 + 0] = chunk.readByte();
-		(*_colors)[i * 3 + 1] = chunk.readByte();
-		(*_colors)[i * 3 + 2] = chunk.readByte();
-	}
-}
 
-void PBMDecoder::readBODY(Common::IFFChunk& chunk) {
+void PBMDecoder::loadBitmap(byte *buffer, Common::ReadStream *stream) {
+	uint32 outSize = _header.width * _header.height;
 
-	uint si = 0;
-
-	switch (_bitmapHeader.pack) {
+	switch (_header.pack) {
 	case 0:
-		while (!chunk.hasReadAll()) {
-			((byte*)_surface->pixels)[si++] = chunk.readByte();
-		}
+		stream->read(buffer, outSize);
 		break;
 
 	case 1: {
-		PackBitsReadStream stream(chunk);
-		stream.read((byte*)_surface->pixels, _surface->w * _surface->h);
+		PackBitsReadStream packStream(*stream);
+		packStream.read(buffer, outSize);
 		break;
-	}
-
+		}
 	}
 }
 
+
+struct PBMLoader {
+	PBMDecoder _decoder;
+	Surface *_surface;
+	byte *_colors;
+
+	void load(Common::ReadStream &input, Surface &surface, byte *&colors) {
+		_surface = &surface;
+		_colors = colors;
+		Common::IFFParser parser(&input);
+		Common::Functor1Mem< Common::IFFChunk&, bool, PBMLoader > c(this, &PBMLoader::callback);
+		parser.parse(c);
+	}
+
+	bool callback(Common::IFFChunk &chunk) {
+		switch (chunk._type) {
+		case ID_BMHD:
+			_decoder.loadHeader(chunk._stream);
+			break;
+
+		case ID_CMAP:
+			if (_colors) {
+				chunk._stream->read(_colors, chunk._size);
+			}
+			break;
+
+		case ID_BODY:
+			if (_surface) {
+				_surface->create(_decoder._header.width, _decoder._header.height, 1);
+				_decoder.loadBitmap((byte*)_surface->pixels, chunk._stream);
+			}
+			return true;	// stop the parser
+		}
+
+		return false;
+	}
+};
+
+void decodePBM(Common::ReadStream &input, Surface &surface, byte *colors) {
+	PBMLoader loader;
+	loader.load(input, surface, colors);
+}
 
 
 
@@ -281,10 +266,5 @@ uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
 	return dataSize - left;
 }
 
-
-void decodePBM(Common::ReadStream &input, Surface &surface, byte *&colors) {
-	PBMDecoder decoder(input, surface, colors);
-	decoder.decode();
-}
 
 }

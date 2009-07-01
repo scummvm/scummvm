@@ -42,15 +42,18 @@ struct PaletteEntry {
 		: r(R), g(G), b(B), parent_index(-1), refcount(PALENTRY_FREE)
 	{ }
 
-	// Color data
+	/** @name Color data */
+	/** @{ */
 	byte r, g, b;
+	/** @} */
 
-	// Index in parent palette, or -1
+	/** Index in parent palette, or -1 */
 	int parent_index;
 
-	// Number of references from child palettes. (This includes palettes
-	// of pixmaps.)
-	// Special values: PALENTRY_LOCKED, PALENTRY_FREE
+	/**
+	 * Number of references from child palettes. (This includes palettes
+	 * of pixmaps.)
+	 * Special values: PALENTRY_LOCKED, PALENTRY_FREE */
 	int refcount;
 };
 
@@ -98,10 +101,9 @@ private:
 
 	Palette *_parent;
 
-	bool _dirty; // Palette has changed
-	int _refcount; // Number of pixmaps (or other objects) using this palette
-	int _revision; // When this is incremented, all child references are
-	               // invalidated
+	bool _dirty; /**< Palette has changed */
+	int _refcount; /**< Number of pixmaps (or other objects) using this palette */
+	int _revision; /**< When this is incremented, all child references are invalidated */
 };
 
 

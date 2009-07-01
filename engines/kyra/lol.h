@@ -307,6 +307,7 @@ public:
 
 	Screen *screen();
 	GUI *gui() const;
+
 private:
 	Screen_LoL *_screen;
 	GUI_LoL *_gui;
@@ -326,6 +327,10 @@ private:
 	void startup();
 	void startupNew();
 
+	void registerDefaultSettings();
+	void writeSettings();
+	void readSettings();
+
 	// options
 	int _monsterDifficulty;
 	bool _smoothScrollingEnabled;
@@ -342,7 +347,9 @@ private:
 	uint8 *getItemIconShapePtr(int index);
 	bool posWithinRect(int mouseX, int mouseY, int x1, int y1, int x2, int y2);
 
-	int _floatingMouseArrowControl;
+	void checkFloatingPointerRegions();
+	int _floatingCursorControl;
+	int _currentFloatingCursor;
 
 	// intro + character selection
 	int processPrologue();
@@ -441,6 +448,9 @@ private:
 	int _timer3Para;
 
 	// sound
+	int convertVolumeToMixer(int value);
+	int convertVolumeFromMixer(int value);
+
 	void loadTalkFile(int index);
 	void snd_playVoiceFile(int track) {}
 	bool snd_playCharacterSpeech(int id, int8 speaker, int);
@@ -473,7 +483,6 @@ private:
 	Common::List<Audio::AudioStream*> _speechList;
 
 	int _curTlkFile;
-	int _speechFlag;
 
 	char **_ingameSoundList;
 	int _ingameSoundListSize;
@@ -772,11 +781,12 @@ private:
 	int olol_getNextActiveCharacter(EMCState *script);
 	int olol_paralyzePoisonCharacter(EMCState *script);
 	int olol_drawCharPortrait(EMCState *script);
-	int olol_removeInventoryItem(EMCState *script);	
+	int olol_removeInventoryItem(EMCState *script);
 	int olol_getAnimationLastPart(EMCState *script);
 	int olol_assignSpecialGuiShape(EMCState *script);
 	int olol_findInventoryItem(EMCState *script);
 	int olol_restoreFadePalette(EMCState *script);
+	int olol_drinkBezelCup(EMCState *script);
 	int olol_changeItemTypeOrFlag(EMCState *script);
 	int olol_placeInventoryItemInHand(EMCState *script);
 	int olol_castSpell(EMCState *script);
@@ -862,9 +872,9 @@ private:
 	void toggleSelectedCharacterFrame(bool mode);
 	void fadeText();
 	void transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
-	void setPaletteBrightness(uint8 *palette, int brightness, int modifier);
-	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
-	void generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags);
+	void setPaletteBrightness(const Palette &srcPal, int brightness, int modifier);
+	void generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier);
+	void generateFlashPalette(const Palette &src, Palette &dst, int colorFlags);
 	void updateSequenceBackgroundAnimations();
 
 	bool _dialogueField;
@@ -905,7 +915,7 @@ private:
 
 	void setCharacterMagicOrHitPoints(int charNum, int type, int points, int mode);
 	void increaseExperience(int charNum, int skill, uint32 points);
-	void increaseCharacterHitpoints(int charNum, int points, bool unk);
+	void increaseCharacterHitpoints(int charNum, int points, bool ignoreDeath);
 
 	LoLCharacter *_characters;
 	uint16 _activeCharsXpos[3];
@@ -1303,7 +1313,6 @@ private:
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
-	uint8 getRandomNumberSpecial();
 
 	uint8 _compassBroken;
 	uint8 _drainMagic;
@@ -1348,6 +1357,8 @@ private:
 
 	void callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y);
 	void callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y);
+
+	void drinkBezelCup(int a, int charNum);
 
 	void addSpellToScroll(int spell, int charNum);
 	void transferSpellToScollAnimation(int charNum, int spell, int slot);

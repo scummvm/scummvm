@@ -34,9 +34,15 @@
 namespace Kyra {
 
 Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
-	: _system(system), _vm(vm), _sjisInvisibleColor(0) {
+	: _system(system), _vm(vm), _sjisInvisibleColor(0),
+	_cursorColorKey((vm->gameFlags().gameID == GI_KYRA1) ? 0xFF : 0x00) {
 	_debugEnabled = false;
 	_maskMinY = _maskMaxY = -1;
+
+	_drawShapeVar1 = 0;
+	_drawShapeVar3 = 1;
+	_drawShapeVar4 = 0;
+	_drawShapeVar5 = 0;
 }
 
 Screen::~Screen() {
@@ -52,15 +58,13 @@ Screen::~Screen() {
 
 	delete[] _sjisFontData;
 	delete[] _sjisTempPage;
-	delete[] _currentPalette;
-	delete[] _screenPalette;
+	delete _screenPalette;
+	delete _internFadePalette;
 	delete[] _decodeShapeBuffer;
 	delete[] _animBlockPtr;
 
-	if (_vm->gameFlags().platform != Common::kPlatformAmiga) {
-		for (int i = 0; i < ARRAYSIZE(_palettes); ++i)
-			delete[] _palettes[i];
-	}
+	for (uint i = 0; i < _palettes.size(); ++i)
+		delete _palettes[i];
 
 	CursorMan.popAllCursors();
 }
@@ -123,30 +127,38 @@ bool Screen::init() {
 
 	memset(_shapePages, 0, sizeof(_shapePages));
 
-	memset(_palettes, 0, sizeof(_palettes));
-	_screenPalette = new uint8[768];
+	const int paletteCount = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 12 : 4;
+	const int numColors = _use16ColorMode ? 16 : ((_vm->gameFlags().platform == Common::kPlatformAmiga) ? 32 : 256);
+
+	_screenPalette = new Palette(numColors);
 	assert(_screenPalette);
-	memset(_screenPalette, 0, 768);
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		_currentPalette = new uint8[1248];
-		assert(_currentPalette);
-		memset(_currentPalette, 0, 1248);
+	_palettes.resize(paletteCount);
+	for (int i = 0; i < paletteCount; ++i) {
+		_palettes[i] = new Palette(numColors);
+		assert(_palettes[i]);
+	}
 
-		for (int i = 0; i < 6; ++i)
-			_palettes[i] = _currentPalette + (i+1)*96;
-	} else {
-		_currentPalette = new uint8[768];
-		assert(_currentPalette);
-		memset(_currentPalette, 0, 768);
-		for (int i = 0; i < 3; ++i) {
-			_palettes[i] = new uint8[768];
-			assert(_palettes[i]);
-			memset(_palettes[i], 0, 768);
+	_internFadePalette = new Palette(numColors);
+	assert(_internFadePalette);
+
+	setScreenPalette(getPalette(0));
+
+	// We setup the PC98 text mode palette at [16, 24], since that will be used
+	// for KANJI characters in Lands of Lore.
+	if (_use16ColorMode && _vm->gameFlags().platform == Common::kPlatformPC98) {
+		uint8 palette[8 * 4];
+
+		for (int i = 0; i < 8; ++i) {
+			palette[i * 4 + 0] = ((i >> 1) & 1) * 0xFF;
+			palette[i * 4 + 1] = ((i >> 2) & 1)	* 0xFF;
+			palette[i * 4 + 2] = ((i >> 0) & 1) * 0xFF;
+			palette[i * 4 + 3] = 0;
+
+			_system->setPalette(palette, 16, 8);
 		}
 	}
 
-	setScreenPalette(_currentPalette);
 	_curDim = 0;
 	_charWidth = 0;
 	_charOffset = 0;
@@ -339,6 +351,148 @@ void Screen::clearCurPage() {
 	clearOverlayPage(_curPage);
 }
 
+void Screen::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
+						int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2) {
+	uint8 *dstPtr = getPagePtr(_curPage);
+	uint8 *origDst = dstPtr;
+
+	const ScreenDim *dim = getScreenDim(dimState);
+	int dimX1 = dim->sx << 3;
+	int dimX2 = dim->w << 3;
+	dimX2 += dimX1;
+
+	int dimY1 = dim->sy;
+	int dimY2 = dim->h;
+	dimY2 += dimY1;
+
+	int temp = y - dimY1;
+	if (temp < 0) {
+		if ((temp += h) <= 0)
+			return;
+		else {
+			SWAP(temp, h);
+			y += temp - h;
+			src += (temp - h) * w;
+		}
+	}
+
+	temp = dimY2 - y;
+	if (temp <= 0)
+		return;
+
+	if (temp < h)
+		h = temp;
+
+	int srcOffset = 0;
+	temp = x - dimX1;
+	if (temp < 0) {
+		temp = -temp;
+		srcOffset = temp;
+		x += temp;
+		w -= temp;
+	}
+
+	int srcAdd = 0;
+
+	temp = dimX2 - x;
+	if (temp <= 0)
+		return;
+
+	if (temp < w) {
+		SWAP(w, temp);
+		temp -= w;
+		srcAdd = temp;
+	}
+
+	dstPtr += y * SCREEN_W + x;
+	uint8 *dst = dstPtr;
+
+	if (_curPage == 0 || _curPage == 1)
+		addDirtyRect(x, y, w, h);
+
+	clearOverlayRect(_curPage, x, y, w, h);
+
+	temp = h;
+	int curY = y;
+	while (h--) {
+		src += srcOffset;
+		++curY;
+		int cW = w;
+
+		switch (plotFunc) {
+		case 0:
+			memcpy(dst, src, cW);
+			dst += cW; src += cW;
+			break;
+
+		case 1:
+			while (cW--) {
+				uint8 d = *src++;
+				uint8 t = unkPtr1[d];
+				if (t != 0xFF)
+					d = unkPtr2[*dst + (t << 8)];
+				*dst++ = d;
+			}
+			break;
+
+		case 4:
+			while (cW--) {
+				uint8 d = *src++;
+				if (d)
+					*dst = d;
+				++dst;
+			}
+			break;
+
+		case 5:
+			while (cW--) {
+				uint8 d = *src++;
+				if (d) {
+					uint8 t = unkPtr1[d];
+					if (t != 0xFF)
+						d = unkPtr2[*dst + (t << 8)];
+					*dst = d;
+				}
+				++dst;
+			}
+			break;
+
+		case 8:
+		case 9:
+			while (cW--) {
+				uint8 d = *src++;
+				uint8 t = _shapePages[0][dst - origDst] & 7;
+				if (unk1 < t && (curY > _maskMinY && curY < _maskMaxY))
+					d = _shapePages[1][dst - origDst];
+				*dst++ = d;
+			}
+			break;
+
+		case 12:
+		case 13:
+			while (cW--) {
+				uint8 d = *src++;
+				if (d) {
+					uint8 t = _shapePages[0][dst - origDst] & 7;
+					if (unk1 < t && (curY > _maskMinY && curY < _maskMaxY))
+						d = _shapePages[1][dst - origDst];
+					*dst++ = d;
+				} else {
+					d = _shapePages[1][dst - origDst];
+					*dst++ = d;
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		dst = (dstPtr += SCREEN_W);
+		src += srcAdd;
+	}
+}
+
 uint8 Screen::getPagePixel(int pageNum, int x, int y) {
 	assert(pageNum < SCREEN_PAGE_NUM);
 	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
@@ -354,26 +508,25 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 }
 
 void Screen::fadeFromBlack(int delay, const UpdateFunctor *upFunc) {
-	fadePalette(_currentPalette, delay, upFunc);
+	fadePalette(getPalette(0), delay, upFunc);
 }
 
 void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
-	uint8 blackPal[768];
-	memset(blackPal, 0, 768);
-	fadePalette(blackPal, delay, upFunc);
+	Palette pal(getPalette(0).getNumColors());
+	fadePalette(pal, delay, upFunc);
 }
 
-void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *upFunc) {
+void Screen::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc) {
 	updateScreen();
 
 	int diff = 0, delayInc = 0;
-	getFadeParams(palData, delay, delayInc, diff);
+	getFadeParams(pal, delay, delayInc, diff);
 
 	int delayAcc = 0;
 	while (!_vm->shouldQuit()) {
 		delayAcc += delayInc;
 
-		int refreshed = fadePalStep(palData, diff);
+		int refreshed = fadePalStep(pal, diff);
 
 		if (upFunc && upFunc->isValid())
 			(*upFunc)();
@@ -388,7 +541,7 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 	}
 
 	if (_vm->shouldQuit()) {
-		setScreenPalette(palData);
+		setScreenPalette(pal);
 		if (upFunc && upFunc->isValid())
 			(*upFunc)();
 		else
@@ -396,12 +549,11 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 	}
 }
 
-void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff) {
+void Screen::getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) {
 	uint8 maxDiff = 0;
 
-	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256) * 3;
-	for (int i = 0; i < colors; ++i) {
-		diff = ABS(palette[i] - _screenPalette[i]);
+	for (int i = 0; i < pal.getNumColors() * 3; ++i) {
+		diff = ABS(pal[i] - (*_screenPalette)[i]);
 		maxDiff = MAX<uint8>(maxDiff, diff);
 	}
 
@@ -417,17 +569,14 @@ void Screen::getFadeParams(const uint8 *palette, int delay, int &delayInc, int &
 	}
 }
 
-int Screen::fadePalStep(const uint8 *palette, int diff) {
-	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : (_use16ColorMode ? 16 : 256)) * 3;
-
-	uint8 fadePal[768];
-	memcpy(fadePal, _screenPalette, colors);
+int Screen::fadePalStep(const Palette &pal, int diff) {
+	_internFadePalette->copy(*_screenPalette);
 
 	bool needRefresh = false;
 
-	for (int i = 0; i < colors; ++i) {
-		int c1 = palette[i];
-		int c2 = fadePal[i];
+	for (int i = 0; i < pal.getNumColors() * 3; ++i) {
+		int c1 = pal[i];
+		int c2 = (*_internFadePalette)[i];
 		if (c1 != c2) {
 			needRefresh = true;
 			if (c1 > c2) {
@@ -442,26 +591,26 @@ int Screen::fadePalStep(const uint8 *palette, int diff) {
 					c2 = c1;
 			}
 
-			fadePal[i] = (uint8)c2;
+			(*_internFadePalette)[i] = (uint8)c2;
 		}
 	}
 
 	if (needRefresh)
-		setScreenPalette(fadePal);
+		setScreenPalette(*_internFadePalette);
 
 	return needRefresh ? 1 : 0;
 }
 
 void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
-	_currentPalette[index * 3 + 0] = red;
-	_currentPalette[index * 3 + 1] = green;
-	_currentPalette[index * 3 + 2] = blue;
-	setScreenPalette(_currentPalette);
+	getPalette(0)[index * 3 + 0] = red;
+	getPalette(0)[index * 3 + 1] = green;
+	getPalette(0)[index * 3 + 2] = blue;
+	setScreenPalette(getPalette(0));
 }
 
 void Screen::getRealPalette(int num, uint8 *dst) {
 	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
-	const uint8 *palData = getPalette(num);
+	const uint8 *palData = getPalette(num).getData();
 
 	if (!palData) {
 		memset(dst, 0, colors * 3);
@@ -469,46 +618,26 @@ void Screen::getRealPalette(int num, uint8 *dst) {
 	}
 
 	for (int i = 0; i < colors; ++i) {
-		dst[0] = (palData[0] << 2) | (palData[0] & 3);
-		dst[1] = (palData[1] << 2) | (palData[1] & 3);
-		dst[2] = (palData[2] << 2) | (palData[2] & 3);
+		dst[0] = (palData[0] * 0xFF) / 0x3F;
+		dst[1] = (palData[1] * 0xFF) / 0x3F;
+		dst[2] = (palData[2] * 0xFF) / 0x3F;
 		dst += 3;
 		palData += 3;
 	}
 }
 
-void Screen::setScreenPalette(const uint8 *palData) {
-	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
-
+void Screen::setScreenPalette(const Palette &pal) {
 	uint8 screenPal[256 * 4];
-	if (palData != _screenPalette)
-		memcpy(_screenPalette, palData, colors*3);
+	_screenPalette->copy(pal);
 
-	if (_use16ColorMode && _vm->gameFlags().platform == Common::kPlatformPC98) {
-		for (int l = 0; l < 1024; l += 64) {
-			const uint8 *tp = palData;
-			for (int i = 0; i < 16; ++i) {
-				screenPal[l + 4 * i + 0] = palData[1];
-				screenPal[l + 4 * i + 1] = palData[0];
-				screenPal[l + 4 * i + 2] = palData[2];
-				screenPal[l + 4 * i + 3] = 0;
-				palData += 3;
-			}
-			palData = tp;
-		}
-	} else {
-		if (palData != _screenPalette)
-			memcpy(_screenPalette, palData, colors*3);
-		for (int i = 0; i < colors; ++i) {
-			screenPal[4 * i + 0] = (palData[0] << 2) | (palData[0] & 3);
-			screenPal[4 * i + 1] = (palData[1] << 2) | (palData[1] & 3);
-			screenPal[4 * i + 2] = (palData[2] << 2) | (palData[2] & 3);
-			screenPal[4 * i + 3] = 0;
-			palData += 3;
-		}
+	for (int i = 0; i < pal.getNumColors(); ++i) {
+		screenPal[4 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
+		screenPal[4 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
+		screenPal[4 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
+		screenPal[4 * i + 3] = 0;
 	}
 
-	_system->setPalette(screenPal, 0, colors);
+	_system->setPalette(screenPal, 0, pal.getNumColors());
 }
 
 void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
@@ -656,63 +785,6 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 	}
 }
 
-void Screen::copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src) {
-	if (x < 0)
-		x = 0;
-	else if (x >= 40)
-		return;
-
-	if (x + w > 40)
-		w = 40 - x;
-
-	if (y < 0)
-		y = 0;
-	else if (y >= 200)
-		return;
-
-	if (y + h > 200)
-		h = 200 - y;
-
-	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
-
-	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x*8, y, w*8, h);
-
-	clearOverlayRect(_curPage, x*8, y, w*8, h);
-
-	while (h--) {
-		memcpy(dst, src, w*8);
-		dst += SCREEN_W;
-		src += w*8;
-	}
-}
-
-void Screen::copyCurPageBlock(int x, int y, int w, int h, uint8 *dst) {
-	assert(dst);
-	if (x < 0)
-		x = 0;
-	else if (x >= 40)
-		return;
-
-	if (x + w > 40)
-		w = 40 - x;
-
-	if (y < 0)
-		y = 0;
-	else if (y >= 200)
-		return;
-
-	if (y + h > 200)
-		h = 200 - y;
-
-	const uint8 *src = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
-	while (h--) {
-		memcpy(dst, src, w*8);
-		dst += w*8;
-		src += SCREEN_W;
-	}
-}
-
 void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent) {
 	assert(sx >= 0 && w <= SCREEN_W);
 	int x;
@@ -802,17 +874,26 @@ void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
 	drawClippedLine(x1, y2, x2, y2, color);
 }
 
-void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2) {
+void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2, ShadeType shadeType) {
 	assert(x1 >= 0 && y1 >= 0);
 	hideMouse();
 
 	fillRect(x1, y1, x2, y1 + 1, color1);
-	fillRect(x2 - 1, y1, x2, y2, color1);
+	if (shadeType == kShadeTypeLol)
+		fillRect(x1, y1, x1 + 1, y2, color1);
+	else
+		fillRect(x2 - 1, y1, x2, y2, color1);
 
-	drawClippedLine(x1, y1, x1, y2, color2);
-	drawClippedLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1, color2);
+	if (shadeType == kShadeTypeLol) {
+		drawClippedLine(x2, y1, x2, y2, color2);
+		drawClippedLine(x2 - 1, y1 + 1, x2 - 1, y2 - 1, color2);
+		drawClippedLine(x1 + 1, y2 - 1, x2, y2 - 1, color2);
+	} else {
+		drawClippedLine(x1, y1, x1, y2, color2);
+		drawClippedLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1, color2);
+		drawClippedLine(x1, y2 - 1, x2 - 1, y2 - 1, color2);
+	}
 	drawClippedLine(x1, y2, x2, y2, color2);
-	drawClippedLine(x1, y2 - 1, x2 - 1, y2 - 1, color2);
 
 	showMouse();
 }
@@ -909,10 +990,12 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 		error("Invalid font data (file '%s', fontSig: %.04X)", filename, fontSig);
 
 	fnt->charWidthTable = fontData + READ_LE_UINT16(fontData + 8);
-	fnt->charSizeOffset = READ_LE_UINT16(fontData + 4);
+	fnt->fontDescOffset = READ_LE_UINT16(fontData + 4);
 	fnt->charBitmapOffset = READ_LE_UINT16(fontData + 6);
 	fnt->charWidthTableOffset = READ_LE_UINT16(fontData + 8);
 	fnt->charHeightTableOffset = READ_LE_UINT16(fontData + 0xC);
+
+	fnt->lastGlyph = *(fnt->fontData + fnt->fontDescOffset + 3);
 
 	return true;
 }
@@ -927,23 +1010,30 @@ int Screen::getFontHeight() const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
-	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].charSizeOffset + 4);
+
+	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].fontDescOffset + 4);
 }
 
 int Screen::getFontWidth() const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
-	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].charSizeOffset + 5);
+
+	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].fontDescOffset + 5);
 }
 
 int Screen::getCharWidth(uint16 c) const {
 	// FIXME: add font support for amiga version
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return 0;
+
 	if (c & 0xFF00)
 		return SJIS_CHARSIZE >> 1;
-	return (int)_fonts[_currentFont].charWidthTable[c] + _charWidth;
+
+	if (_fonts[_currentFont].lastGlyph < c)
+		return 0;
+	else
+		return (int)_fonts[_currentFont].charWidthTable[c] + _charWidth;
 }
 
 int Screen::getTextWidth(const char *str) const {
@@ -986,8 +1076,7 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	cmap[1] = color1;
 	setTextColor(cmap, 0, 1);
 
-	Font *fnt = &_fonts[_currentFont];
-	const uint8 charHeightFnt = *(fnt->fontData + fnt->charSizeOffset + 4);
+	const uint8 charHeightFnt = getFontHeight();
 	uint8 charHeight = 0;
 
 	if (x < 0)
@@ -1037,6 +1126,10 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 
 void Screen::drawCharANSI(uint8 c, int x, int y) {
 	Font *fnt = &_fonts[_currentFont];
+
+	if (c > fnt->lastGlyph)
+		return;
+
 	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x;
 
 	uint16 bitmapOffset = READ_LE_UINT16(fnt->fontData + fnt->charBitmapOffset + c * 2);
@@ -1044,15 +1137,16 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 		return;
 
 	uint8 charWidth = *(fnt->fontData + fnt->charWidthTableOffset + c);
-	if (charWidth + x > SCREEN_W)
+	if (!charWidth || charWidth + x > SCREEN_W)
 		return;
 
-	uint8 charH0 = *(fnt->fontData + fnt->charSizeOffset + 4);
-	if (charH0 + y > SCREEN_H)
+	uint8 charH0 = getFontHeight();
+	if (!charH0 || charH0 + y > SCREEN_H)
 		return;
 
 	uint8 charH1 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2);
 	uint8 charH2 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2 + 1);
+
 	charH0 -= charH1 + charH2;
 
 	const uint8 *src = fnt->fontData + bitmapOffset;
@@ -1097,15 +1191,17 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 	}
 
 	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x, y, charWidth, *(fnt->fontData + fnt->charSizeOffset + 4));
+		addDirtyRect(x, y, charWidth, getFontHeight());
 }
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
 	if (!shapeData)
 		return;
 
-	int f = _vm->gameFlags().useAltShapeHeader ? 2 : 0;
-	if (shapeData[f] & 1)
+	if (_vm->gameFlags().useAltShapeHeader)
+		shapeData += 2;
+
+	if (*shapeData & 1)
 		flags |= 0x400;
 
 	va_list args;
@@ -1114,11 +1210,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	static const int drawShapeVar2[] = {
 		1, 3, 2, 5, 4, 3, 2, 1
 	};
-
-	_drawShapeVar1 = 0;
-	_drawShapeVar3 = 1;
-	_drawShapeVar4 = 0;
-	_drawShapeVar5 = 0;
 
 	_dsTable = 0;
 	_dsTableLoopCount = 0;
@@ -1145,8 +1236,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	if (flags & 0x200) {
-		_drawShapeVar1 += 1;
-		_drawShapeVar1 &= 7;
+		++_drawShapeVar1;
+		_drawShapeVar1 &= (_vm->gameFlags().gameID == GI_KYRA1) ? 0x7 : 0xF;
 		_drawShapeVar3 = drawShapeVar2[_drawShapeVar1];
 		_drawShapeVar4 = 0;
 		_drawShapeVar5 = 256;
@@ -1237,12 +1328,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int scaleCounterV = 0;
 
-	f = flags & 0x0f;
-	_dsProcessMargin = dsMarginFunc[f];
-	_dsScaleSkip = dsSkipFunc[f];
-	_dsProcessLine = dsLineFunc[f];
+	const int drawFunc = flags & 0x0f;
+	_dsProcessMargin = dsMarginFunc[drawFunc];
+	_dsScaleSkip = dsSkipFunc[drawFunc];
+	_dsProcessLine = dsLineFunc[drawFunc];
 
-	int ppc = (flags >> 8) & 0x3F;
+	const int ppc = (flags >> 8) & 0x3F;
 	_dsPlot = dsPlotFunc[ppc];
 	DsPlotFunc dsPlot2 = dsPlotFunc[ppc], dsPlot3 = dsPlotFunc[ppc];
 	if (flags & 0x800)
@@ -1274,8 +1365,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int y2 = y1 + dsDim->h;
 
-	if (_vm->gameFlags().useAltShapeHeader)
-		src += 2;
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
 
 	int shapeHeight = *src++;
@@ -1318,8 +1407,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int t = (flags & 2) ? y2 - y - shapeHeight : y - y1;
 
-	const uint8 *s = src;
-
 	if (t < 0) {
 		shapeHeight += t;
 		if (shapeHeight <= 0) {
@@ -1328,23 +1415,29 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		}
 
 		t *= -1;
-		uint8 *tmp = dst;
+		const uint8 *srcBackUp = 0;
 
 		do {
 			_dsOffscreenScaleVal1 = 0;
+			srcBackUp = src;
 			_dsTmpWidth = shapeWidth;
-			int cnt = shapeWidth;
-			(this->*_dsScaleSkip)(tmp, s, cnt);
-			scaleCounterV += _dsScaleH;
-			if (!(scaleCounterV & 0xff00))
-				continue;
-			uint8 r = scaleCounterV >> 8;
-			scaleCounterV &= 0xff;
-			t -= r;
-		} while (t > 0);
 
-		if (t < 0)
+			int cnt = shapeWidth;
+			(this->*_dsScaleSkip)(dst, src, cnt);
+
+			scaleCounterV += _dsScaleH;
+
+			if (scaleCounterV & 0xFF00) {
+				uint8 r = scaleCounterV >> 8;
+				scaleCounterV &= 0xFF;
+				t -= r;
+			}
+		} while (!(scaleCounterV & 0xFF00) && (t > 0));
+
+		if (t < 0) {
+			src = srcBackUp;
 			scaleCounterV += (-t << 8);
+		}
 
 		if (!(flags & 2))
 			y = y1;
@@ -1409,6 +1502,9 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsOffscreenLeft /= _dsScaleW;
 	}
 
+	if (shapeHeight <= 0 || shpWidthScaled1 <= 0)
+		return;
+
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, shpWidthScaled1, shapeHeight);
 	clearOverlayRect(pageNum, x, y, shpWidthScaled1, shapeHeight);
@@ -1422,28 +1518,28 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			if (!(scaleCounterV & 0xFF00)) {
 				_dsTmpWidth = shapeWidth;
 				int cnt = shapeWidth;
-				(this->*_dsScaleSkip)(d, s, cnt);
+				(this->*_dsScaleSkip)(d, src, cnt);
 			}
 		}
 
-		const uint8 *b_src = s;
+		const uint8 *b_src = src;
 
 		do {
-			s = b_src;
+			src = b_src;
 			_dsTmpWidth = shapeWidth;
 			int cnt = _dsOffscreenLeft;
-			int scaleState = (this->*_dsProcessMargin)(d, s, cnt);
+			int scaleState = (this->*_dsProcessMargin)(d, src, cnt);
 			if (_dsTmpWidth) {
 				cnt += shpWidthScaled1;
 				if (cnt > 0) {
 					if (flags & 0x800)
 						normalPlot = (curY > _maskMinY && curY < _maskMaxY);
 					_dsPlot = normalPlot ? dsPlot2 : dsPlot3;
-					(this->*_dsProcessLine)(d, s, cnt, scaleState);
+					(this->*_dsProcessLine)(d, src, cnt, scaleState);
 				}
 				cnt += _dsOffscreenRight;
 				if (cnt)
-					(this->*_dsScaleSkip)(d, s, cnt);
+					(this->*_dsScaleSkip)(d, src, cnt);
 			}
 			dst += dsPitch;
 			d = dst;
@@ -2492,8 +2588,13 @@ void Screen::hideMouse() {
 }
 
 void Screen::showMouse() {
-	if (_mouseLockCount == 1)
+	if (_mouseLockCount == 1) {
 		CursorMan.showMouse(true);
+
+		// We need to call OSystem::updateScreen here, else the mouse cursor
+		// will only be visible on mouse movment.
+		_system->updateScreen();
+	}
 
 	if (_mouseLockCount > 0)
 		_mouseLockCount--;
@@ -2531,12 +2632,11 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 		y <<= 1;
 		mouseWidth <<= 1;
 		mouseHeight <<= 1;
-		fillRect(mouseWidth, 0, mouseWidth, mouseHeight, 0, 8);
 	}
 
 
 	uint8 *cursor = new uint8[mouseHeight * mouseWidth];
-	fillRect(0, 0, mouseWidth, mouseHeight, 0, 8);
+	fillRect(0, 0, mouseWidth, mouseHeight, _cursorColorKey, 8);
 	drawShape(8, shape, 0, 0, 0, 0);
 
 	int xOffset = 0;
@@ -2544,11 +2644,14 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	if (_vm->gameFlags().useHiResOverlay) {
 		xOffset = mouseWidth;
 		scale2x(getPagePtr(8) + mouseWidth, SCREEN_W, getPagePtr(8), SCREEN_W, mouseWidth, mouseHeight);
+		postProcessCursor(getPagePtr(8) + mouseWidth, mouseWidth, mouseHeight, SCREEN_W);
+	} else {
+		postProcessCursor(getPagePtr(8), mouseWidth, mouseHeight, SCREEN_W);
 	}
 
 	CursorMan.showMouse(false);
 	copyRegionToBuffer(8, xOffset, 0, mouseWidth, mouseHeight, cursor);
-	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, 0);
+	CursorMan.replaceCursor(cursor, mouseWidth, mouseHeight, x, y, _cursorColorKey);
 	if (isMouseVisible())
 		CursorMan.showMouse(true);
 	delete[] cursor;
@@ -2560,12 +2663,13 @@ void Screen::setMouseCursor(int x, int y, const byte *shape) {
 	_system->updateScreen();
 }
 
-uint8 *Screen::getPalette(int num) {
-	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 6 : 4));
-	if (num == 0)
-		return _currentPalette;
+Palette &Screen::getPalette(int num) {
+	assert(num >= 0 && (uint)num < _palettes.size());
+	return *_palettes[num];
+}
 
-	return _palettes[num-1];
+void Screen::copyPalette(const int dst, const int src) {
+	getPalette(dst).copy(getPalette(src));
 }
 
 byte Screen::getShapeFlag1(int x, int y) {
@@ -2685,7 +2789,7 @@ void Screen::shakeScreen(int times) {
 	}
 }
 
-void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData, bool skip) {
+void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip) {
 	uint32 fileSize;
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 
@@ -2702,9 +2806,8 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	uint32 imgSize = scumm_stricmp(ext, "CMP") ? READ_LE_UINT32(srcData + 4) : READ_LE_UINT16(srcData);
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
 
-	if (palData && palSize) {
-		loadPalette(srcData + 10, palData, palSize);
-	}
+	if (pal && palSize)
+		loadPalette(srcData + 10, *pal, palSize);
 
 	uint8 *srcPtr = srcData + 10 + palSize;
 	uint8 *dstData = getPagePtr(dstPage);
@@ -2738,38 +2841,62 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	delete[] srcData;
 }
 
-bool Screen::loadPalette(const char *filename, uint8 *palData) {
-	uint32 fileSize = 0;
-	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
-	if (!srcData)
+bool Screen::loadPalette(const char *filename, Palette &pal) {
+	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
+
+	if (!stream)
 		return false;
 
-	if (palData && fileSize) {
-		loadPalette(srcData, palData, fileSize);
-	}
-	delete[] srcData;
+	debugC(3, kDebugLevelScreen, "Screen::loadPalette('%s', %p)", filename, (const void *)&pal);
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		pal.loadAmigaPalette(*stream, 0, stream->size() / Palette::kAmigaBytesPerColor);
+	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
+		pal.loadPC98Palette(*stream, 0, stream->size() / Palette::kPC98BytesPerColor);
+	else
+		pal.loadVGAPalette(*stream, 0, stream->size() / Palette::kVGABytesPerColor);
+
+	delete stream;
 	return true;
 }
 
-void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {
+bool Screen::loadPaletteTable(const char *filename, int firstPalette) {
+	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
+
+	if (!stream)
+		return false;
+
+	debugC(3, kDebugLevelScreen, "Screen::loadPaletteTable('%s', %d)", filename, firstPalette);
+
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		assert(bytes % 2 == 0);
-		assert(bytes / 2 <= 256);
-		bytes >>= 1;
-		const uint16 *src = (const uint16 *)data;
-		for (int i = 0; i < bytes; ++i) {
-			uint16 col = READ_BE_UINT16(src); ++src;
-			palData[2] = (col & 0xF) << 2; col >>= 4;
-			palData[1] = (col & 0xF) << 2; col >>= 4;
-			palData[0] = (col & 0xF) << 2; col >>= 4;
-			palData += 3;
-		}
-	} else if (_use16ColorMode) {
-		for (int i = 0; i < bytes; ++i)
-			palData[i] = ((data[i] & 0xF) << 4) | (data[i] & 0xF0);
+		const int numColors = getPalette(firstPalette).getNumColors();
+		const int palSize = getPalette(firstPalette).getNumColors() * Palette::kAmigaBytesPerColor;
+		const int numPals = stream->size() / palSize;
+
+		for (int i = 0; i < numPals; ++i)
+			getPalette(i + firstPalette).loadAmigaPalette(*stream, 0, numColors);
 	} else {
-		memcpy(palData, data, bytes);
+		const int numColors = getPalette(firstPalette).getNumColors();
+		const int palSize = getPalette(firstPalette).getNumColors() * Palette::kVGABytesPerColor;
+		const int numPals = stream->size() / palSize;
+
+		for (int i = 0; i < numPals; ++i)
+			getPalette(i + firstPalette).loadVGAPalette(*stream, 0, numColors);
 	}
+
+	delete stream;
+	return true;
+}
+
+void Screen::loadPalette(const byte *data, Palette &pal, int bytes) {
+	Common::MemoryReadStream stream(data, bytes, false);
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		pal.loadAmigaPalette(stream, 0, stream.size() / Palette::kAmigaBytesPerColor);
+	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
+		pal.loadPC98Palette(stream, 0, stream.size() / Palette::kPC98BytesPerColor);
+	else
+		pal.loadVGAPalette(stream, 0, stream.size() / Palette::kVGABytesPerColor);
 }
 
 // dirty rect handling
@@ -2967,8 +3094,17 @@ int SJIStoFMTChunk(int f, int s) { // copied from scumm\charset.cpp
 } // end of anonymous namespace
 
 void Screen::drawCharSJIS(uint16 c, int x, int y) {
-	int color1 = _textColorsMap[1];
-	int color2 = _textColorsMap[0];
+	int color1, color2;
+
+	if (_use16ColorMode) {
+		// PC98 16 color games specify a color value which is for the
+		// PC98 text mode palette, thus we need to remap it.
+		color1 = ((_textColorsMap[1] >> 5) & 0x7) + 16; 
+		color2 = ((_textColorsMap[0] >> 5) & 0x7) + 16;
+	} else {
+		color1 = _textColorsMap[1];
+		color2 = _textColorsMap[0];
+	}
 
 	memset(_sjisTempPage2, _sjisInvisibleColor, 324);
 	memset(_sjisSourceChar, 0, 36);
@@ -3138,6 +3274,103 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 }
 
 #pragma mark -
+
+Palette::Palette(const int numColors) : _palData(0), _numColors(numColors) {
+	_palData = new uint8[numColors * 3];
+	assert(_palData);
+
+	memset(_palData, 0, numColors * 3);
+}
+
+Palette::~Palette() {
+	delete[] _palData;
+	_palData = 0;
+}
+
+void Palette::loadVGAPalette(Common::ReadStream &stream, int startIndex, int colors) {
+	assert(startIndex + colors <= _numColors);
+
+	stream.read(_palData + startIndex * 3, colors * 3);
+}
+
+void Palette::loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors) {
+	assert(startIndex + colors <= _numColors);
+
+	for (int i = 0; i < colors; ++i) {
+		uint16 col = stream.readUint16BE();
+		_palData[(i + startIndex) * 3 + 2] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
+		_palData[(i + startIndex) * 3 + 1] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
+		_palData[(i + startIndex) * 3 + 0] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
+	}
+}
+
+void Palette::loadPC98Palette(Common::ReadStream &stream, int startIndex, int colors) {
+	assert(startIndex + colors <= _numColors);
+
+	for (int i = 0; i < colors; ++i) {
+		const byte g = stream.readByte(), r = stream.readByte(), b = stream.readByte();
+
+		_palData[(i + startIndex) * 3 + 0] = ((r & 0x0F) * 0x3F) / 0x0F;
+		_palData[(i + startIndex) * 3 + 1] = ((g & 0x0F) * 0x3F) / 0x0F;
+		_palData[(i + startIndex) * 3 + 2] = ((b & 0x0F) * 0x3F) / 0x0F;
+	}
+}
+
+void Palette::clear() {
+	memset(_palData, 0, _numColors * 3);
+}
+
+void Palette::fill(int firstCol, int numCols, uint8 value) {
+	assert(firstCol >= 0 && firstCol + numCols <= _numColors);
+
+	memset(_palData + firstCol * 3, CLIP<int>(value, 0, 63), numCols * 3);
+}
+
+void Palette::copy(const Palette &source, int firstCol, int numCols, int dstStart) {
+	if (numCols == -1)
+		numCols = MIN(source.getNumColors(), _numColors) - firstCol;
+	if (dstStart == -1)
+		dstStart = firstCol;
+
+	assert(numCols >= 0 && numCols <= _numColors);
+	assert(firstCol >= 0 && firstCol <= source.getNumColors());
+	assert(dstStart >= 0 && dstStart + numCols <= _numColors);
+
+	memcpy(_palData + dstStart * 3, source._palData + firstCol * 3, numCols * 3);
+}
+
+void Palette::copy(const uint8 *source, int firstCol, int numCols, int dstStart) {
+	if (source == _palData)
+		return;
+
+	if (dstStart == -1)
+		dstStart = firstCol;
+
+	assert(numCols >= 0 && numCols <= _numColors);
+	assert(firstCol >= 0);
+	assert(dstStart >= 0 && dstStart + numCols <= _numColors);
+
+	memcpy(_palData + dstStart * 3, source + firstCol * 3, numCols * 3);
+}
+
+uint8 *Palette::fetchRealPalette() const {
+	uint8 *buffer = new uint8[_numColors * 3];
+	assert(buffer);
+
+	uint8 *dst = buffer;
+	const uint8 *palData = _palData;
+
+	for (int i = 0; i < _numColors; ++i) {
+		dst[0] = (palData[0] << 2) | (palData[0] & 3);
+		dst[1] = (palData[1] << 2) | (palData[1] & 3);
+		dst[2] = (palData[2] << 2) | (palData[2] & 3);
+
+		dst += 3;
+		palData += 3;
+	}
+
+	return buffer;
+}
 
 } // End of namespace Kyra
 

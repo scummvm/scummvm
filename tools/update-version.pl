@@ -35,6 +35,7 @@ my @subs_files = qw(
 	dists/redhat/scummvm.spec
 	dists/scummvm.rc
 	dists/slackware/scummvm.SlackBuild
+	dists/wii/meta.xml
 	backends/platform/psp/README.PSP
 	);
 

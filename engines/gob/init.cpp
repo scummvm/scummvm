@@ -32,6 +32,7 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/palanim.h"
 #include "gob/inter.h"
 #include "gob/video.h"
@@ -80,9 +81,6 @@ void Init::doDemo() {
 }
 
 void Init::initGame() {
-	int16 handle2;
-	int16 handle;
-	int16 imdHandle;
 	byte *infBuf;
 	char *infPtr;
 	char *infEnd;
@@ -91,11 +89,8 @@ void Init::initGame() {
 	initVideo();
 
 	if (!_vm->isDemo()) {
-		handle2 = _vm->_dataIO->openData(_vm->_startStk.c_str());
-		if (handle2 >= 0) {
-			_vm->_dataIO->closeData(handle2);
+		if (_vm->_dataIO->existData(_vm->_startStk.c_str()))
 			_vm->_dataIO->openDataFile(_vm->_startStk.c_str());
-		}
 	}
 
 	_vm->_util->initInput();
@@ -104,8 +99,6 @@ void Init::initGame() {
 	_vm->_global->_mouseXShift = 1;
 	_vm->_global->_mouseYShift = 1;
 
-	_vm->_game->_totTextData = 0;
-	_vm->_game->_totFileData = 0;
 	_palDesc = new Video::PalDesc;
 
 	_vm->validateVideoMode(_vm->_global->_videoMode);
@@ -127,19 +120,13 @@ void Init::initGame() {
 		return;
 	}
 
-	handle = _vm->_dataIO->openData("intro.inf");
+	if (!_vm->_dataIO->existData("intro.inf")) {
 
-	if (handle < 0) {
-		for (int i = 0; i < 4; i++) {
-			handle2 = _vm->_dataIO->openData(_fontNames[i]);
-			if (handle2 >= 0) {
-				_vm->_dataIO->closeData(handle2);
+		for (int i = 0; i < 4; i++)
+			if (_vm->_dataIO->existData(_fontNames[i]))
 				_vm->_draw->_fonts[i] = _vm->_util->loadFont(_fontNames[i]);
-			}
-		}
-	} else {
-		_vm->_dataIO->closeData(handle);
 
+	} else {
 		infBuf = _vm->_dataIO->getData("intro.inf");
 		infPtr = (char *) infBuf;
 
@@ -153,11 +140,8 @@ void Init::initGame() {
 			buffer[j] = 0;
 
 			strcat(buffer, ".let");
-			handle2 = _vm->_dataIO->openData(buffer);
-			if (handle2 >= 0) {
-				_vm->_dataIO->closeData(handle2);
+			if (_vm->_dataIO->existData(buffer))
 				_vm->_draw->_fonts[i] = _vm->_util->loadFont(buffer);
-			}
 
 			if ((infPtr + 1) >= infEnd)
 				break;
@@ -167,26 +151,16 @@ void Init::initGame() {
 		delete[] infBuf;
 	}
 
-	strcpy(buffer, _vm->_startTot.c_str());
-	handle = _vm->_dataIO->openData(buffer);
+	if (_vm->_dataIO->existData(_vm->_startTot.c_str())) {
+		_vm->_inter->allocateVars(Script::getVariablesCount(_vm->_startTot.c_str(), _vm));
 
-	if (handle >= 0) {
-		DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
-
-		stream->seek(0x2C);
-		_vm->_inter->allocateVars(stream->readUint16LE());
-
-		delete stream;
-
-		strcpy(_vm->_game->_curTotFile, buffer);
+		strcpy(_vm->_game->_curTotFile, _vm->_startTot.c_str());
 
 		_vm->_sound->cdTest(1, "GOB");
 		_vm->_sound->cdLoadLIC("gob.lic");
 
 		// Search for a Coktel logo animation or image to display
-		imdHandle = _vm->_dataIO->openData("coktel.imd");
-		if (imdHandle >= 0) {
-			_vm->_dataIO->closeData(imdHandle);
+		if (_vm->_dataIO->existData("coktel.imd")) {
 			_vm->_draw->initScreen();
 			_vm->_draw->_cursorIndex = -1;
 
@@ -198,19 +172,17 @@ void Init::initGame() {
 			}
 
 			_vm->_draw->closeScreen();
-		} else if ((imdHandle = _vm->_dataIO->openData("coktel.clt")) >= 0) {
+		} else if (_vm->_dataIO->existData("coktel.clt")) {
 			_vm->_draw->initScreen();
-
-			stream = _vm->_dataIO->openAsStream(imdHandle, true);
 			_vm->_util->clearPalette();
+
+			DataStream *stream = _vm->_dataIO->getDataStream("coktel.clt");
 			stream->read((byte *) _vm->_draw->_vgaPalette, 768);
 			delete stream;
 
-			imdHandle = _vm->_dataIO->openData("coktel.ims");
-			if (imdHandle >= 0) {
+			if (_vm->_dataIO->existData("coktel.ims")) {
 				byte *sprBuf;
 
-				_vm->_dataIO->closeData(imdHandle);
 				sprBuf = _vm->_dataIO->getData("coktel.ims");
 				_vm->_video->drawPackedSprite(sprBuf, 320, 200, 0, 0, 0,
 						*_vm->_draw->_frontSurface);

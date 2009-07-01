@@ -1504,7 +1504,7 @@ public:
 private:
 	void updatesRegs();
 
-	uint8 _updateRequestBuf[32];
+	uint8 _updateRequestBuf[64];
 	int _updateRequest;
 	int _rand;
 
@@ -2657,7 +2657,7 @@ void TownsPC98_OpnSquareSineSource::writeReg(uint8 address, uint8 value, bool fo
 	}
 
 	if (!force) {
-		if (_updateRequest == 31) {
+		if (_updateRequest >= 63) {
 			warning("TownsPC98_OpnSquareSineSource: event buffer overflow");
 			_updateRequest = -1;
 		}
@@ -3420,6 +3420,8 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) : To
 }
 
 TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
+	reset();
+
 	if (_channels) {
 		for (int i = 0; i < _numChan; i++)
 			delete _channels[i];
@@ -4120,7 +4122,7 @@ void SoundPC98::playSoundEffect(uint8 track) {
 	//	This has been disabled for now since I don't know
 	//	how to make up the correct track number. It probably
 	//	needs a map.
-	//_driver->loadSoundEffectData(_sfxTrackData, track);
+	_driver->loadSoundEffectData(_sfxTrackData, track);
 }
 
 

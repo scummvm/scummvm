@@ -36,10 +36,12 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/expression.h"
+#include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/goblin.h"
 #include "gob/map.h"
 #include "gob/mult.h"
-#include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/video.h"
 #include "gob/save/saveload.h"
@@ -48,673 +50,126 @@
 
 namespace Gob {
 
-#define OPCODE(x) _OPCODE(Inter_v2, x)
-
-const int Inter_v2::_goblinFuncLookUp[][2] = {
-	{0, 0},
-	{1, 1},
-	{2, 2},
-	{4, 3},
-	{5, 4},
-	{6, 5},
-	{7, 6},
-	{8, 7},
-	{9, 8},
-	{10, 9},
-	{12, 10},
-	{13, 11},
-	{14, 12},
-	{15, 13},
-	{16, 14},
-	{21, 15},
-	{22, 16},
-	{23, 17},
-	{24, 18},
-	{25, 19},
-	{26, 20},
-	{27, 21},
-	{28, 22},
-	{29, 23},
-	{30, 24},
-	{32, 25},
-	{33, 26},
-	{34, 27},
-	{35, 28},
-	{36, 29},
-	{37, 30},
-	{40, 31},
-	{41, 32},
-	{42, 33},
-	{43, 34},
-	{44, 35},
-	{50, 36},
-	{52, 37},
-	{53, 38},
-	{100, 39},
-	{500, 40},
-	{501, 41}
-};
+#define OPCODEVER Inter_v2
+#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_v2::Inter_v2(GobEngine *vm) : Inter_v1(vm) {
-	setupOpcodes();
 }
 
-void Inter_v2::setupOpcodes() {
-	static const OpcodeDrawEntryV2 opcodesDraw[256] = {
-		/* 00 */
-		OPCODE(o1_loadMult),
-		OPCODE(o2_playMult),
-		OPCODE(o2_freeMultKeys),
-		{0, ""},
-		/* 04 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		OPCODE(o1_initCursor),
-		/* 08 */
-		OPCODE(o1_initCursorAnim),
-		OPCODE(o1_clearCursorAnim),
-		OPCODE(o2_setRenderFlags),
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		OPCODE(o1_loadAnim),
-		OPCODE(o1_freeAnim),
-		OPCODE(o1_updateAnim),
-		OPCODE(o2_multSub),
-		/* 14 */
-		OPCODE(o2_initMult),
-		OPCODE(o1_freeMult),
-		OPCODE(o1_animate),
-		OPCODE(o2_loadMultObject),
-		/* 18 */
-		OPCODE(o1_getAnimLayerInfo),
-		OPCODE(o1_getObjAnimSize),
-		OPCODE(o1_loadStatic),
-		OPCODE(o1_freeStatic),
-		/* 1C */
-		OPCODE(o2_renderStatic),
-		OPCODE(o2_loadCurLayer),
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		OPCODE(o2_playCDTrack),
-		OPCODE(o2_waitCDTrackEnd),
-		OPCODE(o2_stopCD),
-		OPCODE(o2_readLIC),
-		/* 24 */
-		OPCODE(o2_freeLIC),
-		OPCODE(o2_getCDTrackPos),
-		{0, ""},
-		{0, ""},
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		OPCODE(o2_loadFontToSprite),
-		OPCODE(o1_freeFontToSprite),
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		OPCODE(o2_totSub),
-		OPCODE(o2_switchTotSub),
-		OPCODE(o2_pushVars),
-		OPCODE(o2_popVars),
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 48 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 4C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 50 */
-		OPCODE(o2_loadMapObjects),
-		OPCODE(o2_freeGoblins),
-		OPCODE(o2_moveGoblin),
-		OPCODE(o2_writeGoblinPos),
-		/* 54 */
-		OPCODE(o2_stopGoblin),
-		OPCODE(o2_setGoblinState),
-		OPCODE(o2_placeGoblin),
-		{0, ""},
-		/* 58 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 5C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 60 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 64 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 68 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 6C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 70 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 74 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 78 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 7C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 80 */
-		OPCODE(o2_initScreen),
-		OPCODE(o2_scroll),
-		OPCODE(o2_setScrollOffset),
-		OPCODE(o2_playImd),
-		/* 84 */
-		OPCODE(o2_getImdInfo),
-		OPCODE(o2_openItk),
-		OPCODE(o2_closeItk),
-		OPCODE(o2_setImdFrontSurf),
-		/* 88 */
-		OPCODE(o2_resetImdFrontSurf),
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 8C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 90 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 94 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 98 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 9C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* AC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* BC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* CC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* DC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* EC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* FC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""}
-	};
+void Inter_v2::setupOpcodesDraw() {
+	Inter_v1::setupOpcodesDraw();
 
-	static const OpcodeFuncEntryV2 opcodesFunc[80] = {
-		/* 00 */
-		OPCODE(o1_callSub),
-		OPCODE(o1_callSub),
-		OPCODE(o1_printTotText),
-		OPCODE(o1_loadCursor),
-		/* 04 */
-		{0, ""},
-		OPCODE(o1_switch),
-		OPCODE(o1_repeatUntil),
-		OPCODE(o1_whileDo),
-		/* 08 */
-		OPCODE(o1_if),
-		OPCODE(o2_assign),
-		OPCODE(o1_loadSpriteToPos),
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		{0, ""},
-		OPCODE(o2_printText),
-		OPCODE(o1_loadTot),
-		OPCODE(o1_palLoad),
-		/* 14 */
-		OPCODE(o1_keyFunc),
-		OPCODE(o1_capturePush),
-		OPCODE(o1_capturePop),
-		OPCODE(o2_animPalInit),
-		/* 18 */
-		OPCODE(o2_addCollision),
-		OPCODE(o2_freeCollision),
-		{0, ""},
-		{0, ""},
-		/* 1C */
-		{0, ""},
-		{0, ""},
-		OPCODE(o1_drawOperations),
-		OPCODE(o1_setcmdCount),
-		/* 20 */
-		OPCODE(o1_return),
-		OPCODE(o1_renewTimeInVars),
-		OPCODE(o1_speakerOn),
-		OPCODE(o1_speakerOff),
-		/* 24 */
-		OPCODE(o1_putPixel),
-		OPCODE(o2_goblinFunc),
-		OPCODE(o1_createSprite),
-		OPCODE(o1_freeSprite),
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		OPCODE(o1_returnTo),
-		OPCODE(o1_loadSpriteContent),
-		OPCODE(o1_copySprite),
-		OPCODE(o1_fillRect),
-		/* 34 */
-		OPCODE(o1_drawLine),
-		OPCODE(o1_strToLong),
-		OPCODE(o1_invalidate),
-		OPCODE(o1_setBackDelta),
-		/* 38 */
-		OPCODE(o1_playSound),
-		OPCODE(o2_stopSound),
-		OPCODE(o2_loadSound),
-		OPCODE(o1_freeSoundSlot),
-		/* 3C */
-		OPCODE(o1_waitEndPlay),
-		OPCODE(o1_playComposition),
-		OPCODE(o2_getFreeMem),
-		OPCODE(o2_checkData),
-		/* 40 */
-		{0, ""},
-		OPCODE(o1_prepareStr),
-		OPCODE(o1_insertStr),
-		OPCODE(o1_cutStr),
-		/* 44 */
-		OPCODE(o1_strstr),
-		OPCODE(o1_istrlen),
-		OPCODE(o1_setMousePos),
-		OPCODE(o1_setFrameRate),
-		/* 48 */
-		OPCODE(o1_animatePalette),
-		OPCODE(o1_animateCursor),
-		OPCODE(o1_blitCursor),
-		OPCODE(o1_loadFont),
-		/* 4C */
-		OPCODE(o1_freeFont),
-		OPCODE(o2_readData),
-		OPCODE(o2_writeData),
-		OPCODE(o1_manageDataFile),
-	};
+	OPCODEDRAW(0x01, o2_playMult);
+	OPCODEDRAW(0x02, o2_freeMultKeys);
 
-	static const OpcodeGoblinEntryV2 opcodesGoblin[71] = {
-		/* 00 */
-		OPCODE(o2_loadInfogramesIns),
-		OPCODE(o2_startInfogrames),
-		OPCODE(o2_stopInfogrames),
-		{0, ""},
-		/* 04 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 08 */
-		{0, ""},
-		OPCODE(o2_playInfogrames),
-		{0, ""},
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 14 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 18 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 1C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 24 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		OPCODE(o2_handleGoblins),
-		/* 28 */
-		OPCODE(o2_playProtracker),
-		OPCODE(o2_stopProtracker),
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-	};
+	OPCODEDRAW(0x0A, o2_setRenderFlags);
 
-	_opcodesDrawV2 = opcodesDraw;
-	_opcodesFuncV2 = opcodesFunc;
-	_opcodesGoblinV2 = opcodesGoblin;
+	OPCODEDRAW(0x13, o2_multSub);
+
+	OPCODEDRAW(0x14, o2_initMult);
+
+	OPCODEDRAW(0x17, o2_loadMultObject);
+
+	OPCODEDRAW(0x1C, o2_renderStatic);
+	OPCODEDRAW(0x1D, o2_loadCurLayer);
+
+	OPCODEDRAW(0x20, o2_playCDTrack);
+	OPCODEDRAW(0x21, o2_waitCDTrackEnd);
+	OPCODEDRAW(0x22, o2_stopCD);
+	OPCODEDRAW(0x23, o2_readLIC);
+
+	OPCODEDRAW(0x24, o2_freeLIC);
+	OPCODEDRAW(0x25, o2_getCDTrackPos);
+
+	OPCODEDRAW(0x30, o2_loadFontToSprite);
+
+	OPCODEDRAW(0x40, o2_totSub);
+	OPCODEDRAW(0x41, o2_switchTotSub);
+	OPCODEDRAW(0x42, o2_pushVars);
+	OPCODEDRAW(0x43, o2_popVars);
+
+	OPCODEDRAW(0x50, o2_loadMapObjects);
+	OPCODEDRAW(0x51, o2_freeGoblins);
+	OPCODEDRAW(0x52, o2_moveGoblin);
+	OPCODEDRAW(0x53, o2_writeGoblinPos);
+
+	OPCODEDRAW(0x54, o2_stopGoblin);
+	OPCODEDRAW(0x55, o2_setGoblinState);
+	OPCODEDRAW(0x56, o2_placeGoblin);
+
+	OPCODEDRAW(0x80, o2_initScreen);
+	OPCODEDRAW(0x81, o2_scroll);
+	OPCODEDRAW(0x82, o2_setScrollOffset);
+	OPCODEDRAW(0x83, o2_playImd);
+
+	OPCODEDRAW(0x84, o2_getImdInfo);
+	OPCODEDRAW(0x85, o2_openItk);
+	OPCODEDRAW(0x86, o2_closeItk);
+	OPCODEDRAW(0x87, o2_setImdFrontSurf);
+
+	OPCODEDRAW(0x88, o2_resetImdFrontSurf);
 }
 
-void Inter_v2::executeDrawOpcode(byte i) {
-	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%X] (%s)",
-		i, i, getOpcodeDrawDesc(i));
+void Inter_v2::setupOpcodesFunc() {
+	Inter_v1::setupOpcodesFunc();
 
-	OpcodeDrawProcV2 op = _opcodesDrawV2[i].proc;
+	OPCODEFUNC(0x09, o2_assign);
 
-	if (op == 0)
-		warning("unimplemented opcodeDraw: %d", i);
-	else
-		(this->*op) ();
+	OPCODEFUNC(0x11, o2_printText);
+
+	OPCODEFUNC(0x17, o2_animPalInit);
+
+	OPCODEFUNC(0x18, o2_addCollision);
+	OPCODEFUNC(0x19, o2_freeCollision);
+
+	OPCODEFUNC(0x25, o2_goblinFunc);
+
+	OPCODEFUNC(0x39, o2_stopSound);
+	OPCODEFUNC(0x3A, o2_loadSound);
+
+	OPCODEFUNC(0x3E, o2_getFreeMem);
+	OPCODEFUNC(0x3F, o2_checkData);
+
+	OPCODEFUNC(0x4D, o2_readData);
+	OPCODEFUNC(0x4E, o2_writeData);
 }
 
-bool Inter_v2::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
-	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s)",
-		i, j, i, j, getOpcodeFuncDesc(i, j));
+void Inter_v2::setupOpcodesGob() {
+	OPCODEGOB(  0, o2_loadInfogramesIns);
+	OPCODEGOB(  1, o2_startInfogrames);
+	OPCODEGOB(  2, o2_stopInfogrames);
 
-	if ((i > 4) || (j > 15)) {
-		warning("unimplemented opcodeFunc: %d.%d", i, j);
-		return false;
-	}
+	OPCODEGOB( 10, o2_playInfogrames);
 
-	OpcodeFuncProcV2 op = _opcodesFuncV2[i*16 + j].proc;
+	OPCODEGOB(100, o2_handleGoblins);
 
-	if (op == 0)
-		warning("unimplemented opcodeFunc: %d.%d", i, j);
-	else
-		return (this->*op) (params);
-
-	return false;
+	OPCODEGOB(500, o2_playProtracker);
+	OPCODEGOB(501, o2_stopProtracker);
 }
 
-void Inter_v2::executeGoblinOpcode(int i, OpGobParams &params) {
-	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
-		i, i, getOpcodeGoblinDesc(i));
-
-	OpcodeGoblinProcV2 op = 0;
-
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i) {
-			op = _opcodesGoblinV2[_goblinFuncLookUp[j][1]].proc;
-			break;
-		}
-
-	if (op == 0) {
-		int16 val;
-
-		_vm->_global->_inter_execPtr -= 2;
-		val = load16();
-		_vm->_global->_inter_execPtr += val << 1;
-	} else
-		(this->*op) (params);
-}
-
-const char *Inter_v2::getOpcodeDrawDesc(byte i) {
-	return _opcodesDrawV2[i].desc;
-}
-
-const char *Inter_v2::getOpcodeFuncDesc(byte i, byte j) {
-	if ((i > 4) || (j > 15))
-		return "";
-
-	return _opcodesFuncV2[i*16 + j].desc;
-}
-
-const char *Inter_v2::getOpcodeGoblinDesc(int i) {
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i)
-			return _opcodesGoblinV2[_goblinFuncLookUp[j][1]].desc;
-	return "";
-}
-
-void Inter_v2::checkSwitchTable(byte **ppExec) {
-	byte cmd;
+void Inter_v2::checkSwitchTable(uint32 &offset) {
+	byte type;
 	int16 len;
 	int32 value;
 	bool found;
 
 	found = false;
-	*ppExec = 0;
+	offset = 0;
 
-	cmd = *_vm->_global->_inter_execPtr;
+	type = _vm->_game->_script->peekByte();
 
-	value = _vm->_parse->parseVarIndex();
+	value = _vm->_game->_script->readVarIndex();
 
-	switch (cmd) {
-	case 16:
-	case 18:
+	switch (type) {
+	case TYPE_VAR_INT8:
+	case TYPE_ARRAY_INT8:
 		value = (int8) READ_VARO_UINT8(value);
 		break;
 
-	case 23:
-	case 26:
+	case TYPE_VAR_INT32:
+	case TYPE_ARRAY_INT32:
 		value = READ_VARO_UINT32(value);
 		break;
 
@@ -726,78 +181,74 @@ void Inter_v2::checkSwitchTable(byte **ppExec) {
 	if (_terminate)
 		return;
 
-	len = (int8) *_vm->_global->_inter_execPtr++;
+	len = _vm->_game->_script->readInt8();
 	while (len != -5) {
 		for (int i = 0; i < len; i++) {
-			cmd = *_vm->_global->_inter_execPtr;
+			type = _vm->_game->_script->peekByte();
 
-			switch (cmd) {
-			case 19:
-				_vm->_global->_inter_execPtr++;
+			switch (type) {
+			case TYPE_IMM_INT32:
+				_vm->_game->_script->skip(1);
 				if (!found &&
-						(value ==
-						(int32) (READ_LE_UINT32(_vm->_global->_inter_execPtr))))
+						(value == _vm->_game->_script->peekInt32()))
 					found = true;
-				_vm->_global->_inter_execPtr += 5;
+				_vm->_game->_script->skip(5);
 				break;
 
-			case 20:
-				_vm->_global->_inter_execPtr++;
+			case TYPE_IMM_INT16:
+				_vm->_game->_script->skip(1);
 				if (!found &&
-						(value ==
-						(int16) (READ_LE_UINT16(_vm->_global->_inter_execPtr))))
+						(value == _vm->_game->_script->peekInt16()))
 					found = true;
-				_vm->_global->_inter_execPtr += 3;
+				_vm->_game->_script->skip(3);
 				break;
 
-			case 21:
-				_vm->_global->_inter_execPtr++;
-				if (!found && (value == (int8) *_vm->_global->_inter_execPtr))
+			case TYPE_IMM_INT8:
+				_vm->_game->_script->skip(1);
+				if (!found && (value == _vm->_game->_script->peekInt8()))
 					found = true;
-				_vm->_global->_inter_execPtr += 2;
+				_vm->_game->_script->skip(2);
 				break;
 
 			default:
 				if (!found) {
-					evalExpr(0);
-					if (value == _vm->_global->_inter_resVal)
+					_vm->_game->_script->evalExpr(0);
+					if (value == _vm->_game->_script->getResultInt())
 						found = true;
 				} else
-					_vm->_parse->skipExpr(99);
+					_vm->_game->_script->skipExpr(99);
 				break;
 			}
 		}
 
-		if (found && !*ppExec)
-			*ppExec = _vm->_global->_inter_execPtr;
+		if (found && (offset == 0))
+			offset = _vm->_game->_script->pos();
 
-		_vm->_global->_inter_execPtr +=
-		  READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
-		len = (int8) *_vm->_global->_inter_execPtr++;
+		_vm->_game->_script->skip(_vm->_game->_script->peekUint16(2) + 2);
+		len = _vm->_game->_script->readInt8();
 	}
 
-	if ((*_vm->_global->_inter_execPtr >> 4) != 4)
+	if ((_vm->_game->_script->peekByte() >> 4) != 4)
 		return;
 
-	_vm->_global->_inter_execPtr++;
-	if (!*ppExec)
-		*ppExec = _vm->_global->_inter_execPtr;
+	_vm->_game->_script->skip(1);
+	if (offset == 0)
+		offset = _vm->_game->_script->pos();
 
-	_vm->_global->_inter_execPtr +=
-	  READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
+	_vm->_game->_script->skip(_vm->_game->_script->peekUint16(2) + 2);
 }
 
 void Inter_v2::o2_playMult() {
 	int16 checkEscape;
 
-	checkEscape = load16();
+	checkEscape = _vm->_game->_script->readInt16();
 
 	_vm->_mult->setMultData(checkEscape >> 1);
 	_vm->_mult->playMult(VAR(57), -1, checkEscape & 0x1, 0);
 }
 
 void Inter_v2::o2_freeMultKeys() {
-	uint16 index = load16();
+	uint16 index = _vm->_game->_script->readUint16();
 
 	if (!_vm->_mult->hasMultData(index))
 		return;
@@ -810,7 +261,7 @@ void Inter_v2::o2_freeMultKeys() {
 void Inter_v2::o2_setRenderFlags() {
 	int16 expr;
 
-	expr = _vm->_parse->parseValExpr();
+	expr = _vm->_game->_script->readValExpr();
 
 	if (expr & 0x8000) {
 		_vm->_draw->_renderFlags |= expr & 0x3FFF;
@@ -823,7 +274,7 @@ void Inter_v2::o2_setRenderFlags() {
 }
 
 void Inter_v2::o2_multSub() {
-	_vm->_mult->multSub(_vm->_parse->parseValExpr());
+	_vm->_mult->multSub(_vm->_game->_script->readValExpr());
 }
 
 void Inter_v2::o2_initMult() {
@@ -838,14 +289,14 @@ void Inter_v2::o2_initMult() {
 	oldAnimHeight = _vm->_mult->_animHeight;
 	oldObjCount = _vm->_mult->_objCount;
 
-	_vm->_mult->_animLeft = load16();
-	_vm->_mult->_animTop = load16();
-	_vm->_mult->_animWidth = load16();
-	_vm->_mult->_animHeight = load16();
-	_vm->_mult->_objCount = load16();
-	posXVar = _vm->_parse->parseVarIndex();
-	posYVar = _vm->_parse->parseVarIndex();
-	animDataVar = _vm->_parse->parseVarIndex();
+	_vm->_mult->_animLeft = _vm->_game->_script->readInt16();
+	_vm->_mult->_animTop = _vm->_game->_script->readInt16();
+	_vm->_mult->_animWidth = _vm->_game->_script->readInt16();
+	_vm->_mult->_animHeight = _vm->_game->_script->readInt16();
+	_vm->_mult->_objCount = _vm->_game->_script->readInt16();
+	posXVar = _vm->_game->_script->readVarIndex();
+	posYVar = _vm->_game->_script->readVarIndex();
+	animDataVar = _vm->_game->_script->readVarIndex();
 
 	if (_vm->_mult->_objects && (oldObjCount != _vm->_mult->_objCount)) {
 		warning("Initializing new objects without having "
@@ -947,20 +398,20 @@ void Inter_v2::o2_loadMultObject() {
 	int16 layer;
 	byte *multData;
 
-	objIndex = _vm->_parse->parseValExpr();
-	val = _vm->_parse->parseValExpr();
+	objIndex = _vm->_game->_script->readValExpr();
+	val = _vm->_game->_script->readValExpr();
 	*_vm->_mult->_objects[objIndex].pPosX = val;
-	val = _vm->_parse->parseValExpr();
+	val = _vm->_game->_script->readValExpr();
 	*_vm->_mult->_objects[objIndex].pPosY = val;
 
 	debugC(4, kDebugGameFlow, "Loading mult object %d", objIndex);
 
 	multData = (byte *) _vm->_mult->_objects[objIndex].pAnimData;
 	for (int i = 0; i < 11; i++) {
-		if (*_vm->_global->_inter_execPtr != 99)
-			multData[i] = _vm->_parse->parseValExpr();
+		if (_vm->_game->_script->peekByte() != 99)
+			multData[i] = _vm->_game->_script->readValExpr();
 		else
-			_vm->_global->_inter_execPtr++;
+			_vm->_game->_script->skip(1);
 	}
 
 	Mult::Mult_Object &obj = _vm->_mult->_objects[objIndex];
@@ -1043,22 +494,22 @@ void Inter_v2::o2_renderStatic() {
 	int16 layer;
 	int16 index;
 
-	index = _vm->_parse->parseValExpr();
-	layer = _vm->_parse->parseValExpr();
+	index = _vm->_game->_script->readValExpr();
+	layer = _vm->_game->_script->readValExpr();
 	_vm->_scenery->renderStatic(index, layer);
 }
 
 void Inter_v2::o2_loadCurLayer() {
-	_vm->_scenery->_curStatic = _vm->_parse->parseValExpr();
-	_vm->_scenery->_curStaticLayer = _vm->_parse->parseValExpr();
+	_vm->_scenery->_curStatic = _vm->_game->_script->readValExpr();
+	_vm->_scenery->_curStaticLayer = _vm->_game->_script->readValExpr();
 }
 
 void Inter_v2::o2_playCDTrack() {
 	if (!(_vm->_draw->_renderFlags & RENDERFLAG_NOBLITINVALIDATED))
 		_vm->_draw->blitInvalidated();
 
-	evalExpr(0);
-	_vm->_sound->cdPlay(_vm->_global->_inter_resStr);
+	_vm->_game->_script->evalExpr(0);
+	_vm->_sound->cdPlay(_vm->_game->_script->getResultStr());
 }
 
 void Inter_v2::o2_waitCDTrackEnd() {
@@ -1075,8 +526,8 @@ void Inter_v2::o2_stopCD() {
 void Inter_v2::o2_readLIC() {
 	char path[40];
 
-	evalExpr(0);
-	strncpy0(path, _vm->_global->_inter_resStr, 35);
+	_vm->_game->_script->evalExpr(0);
+	strncpy0(path, _vm->_game->_script->getResultStr(), 35);
 	strcat(path, ".LIC");
 
 	_vm->_sound->cdLoadLIC(path);
@@ -1092,24 +543,24 @@ void Inter_v2::o2_getCDTrackPos() {
 
 	_vm->_util->longDelay(1);
 
-	varPos = _vm->_parse->parseVarIndex();
-	varName = _vm->_parse->parseVarIndex();
+	varPos = _vm->_game->_script->readVarIndex();
+	varName = _vm->_game->_script->readVarIndex();
 
 	WRITE_VAR_OFFSET(varPos, _vm->_sound->cdGetTrackPos(GET_VARO_STR(varName)));
 	WRITE_VARO_STR(varName, _vm->_sound->cdGetCurrentTrack());
 }
 
 void Inter_v2::o2_loadFontToSprite() {
-	int16 i = load16();
+	int16 i = _vm->_game->_script->readInt16();
 
-	_vm->_draw->_fontToSprite[i].sprite = *_vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr += 2;
-	_vm->_draw->_fontToSprite[i].base = *_vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr += 2;
-	_vm->_draw->_fontToSprite[i].width = *_vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr += 2;
-	_vm->_draw->_fontToSprite[i].height = *_vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr += 2;
+	_vm->_draw->_fontToSprite[i].sprite = _vm->_game->_script->readByte();
+	_vm->_game->_script->skip(1);
+	_vm->_draw->_fontToSprite[i].base = _vm->_game->_script->readByte();
+	_vm->_game->_script->skip(1);
+	_vm->_draw->_fontToSprite[i].width = _vm->_game->_script->readByte();
+	_vm->_game->_script->skip(1);
+	_vm->_draw->_fontToSprite[i].height = _vm->_game->_script->readByte();
+	_vm->_game->_script->skip(1);
 }
 
 void Inter_v2::o2_totSub() {
@@ -1118,16 +569,16 @@ void Inter_v2::o2_totSub() {
 	int flags;
 	int i;
 
-	length = *_vm->_global->_inter_execPtr++;
+	length = _vm->_game->_script->readByte();
 	if ((length & 0x7F) > 13)
 		error("Length in o2_totSub is greater than 13 (%d)", length);
 
 	if (length & 0x80) {
-		evalExpr(0);
-		strcpy(totFile, _vm->_global->_inter_resStr);
+		_vm->_game->_script->evalExpr(0);
+		strcpy(totFile, _vm->_game->_script->getResultStr());
 	} else {
 		for (i = 0; i < length; i++)
-			totFile[i] = (char) *_vm->_global->_inter_execPtr++;
+			totFile[i] = _vm->_game->_script->readChar();
 		totFile[i] = 0;
 	}
 
@@ -1135,7 +586,7 @@ void Inter_v2::o2_totSub() {
 	if (!scumm_stricmp(totFile, "edit"))
 		_vm->_util->forceMouseUp();
 
-	flags = *_vm->_global->_inter_execPtr++;
+	flags = _vm->_game->_script->readByte();
 	_vm->_game->totSub(flags, totFile);
 }
 
@@ -1143,8 +594,8 @@ void Inter_v2::o2_switchTotSub() {
 	int16 index;
 	int16 skipPlay;
 
-	index = load16();
-	skipPlay = load16();
+	index = _vm->_game->_script->readInt16();
+	skipPlay = _vm->_game->_script->readInt16();
 
 	_vm->_game->switchTotSub(index, skipPlay);
 }
@@ -1153,13 +604,13 @@ void Inter_v2::o2_pushVars() {
 	byte count;
 	int16 varOff;
 
-	count = *_vm->_global->_inter_execPtr++;
+	count = _vm->_game->_script->readByte();
 	for (int i = 0; i < count; i++, _varStackPos++) {
-		if ((*_vm->_global->_inter_execPtr == 25) ||
-				(*_vm->_global->_inter_execPtr == 28)) {
+		if ((_vm->_game->_script->peekByte() == 25) ||
+				(_vm->_game->_script->peekByte() == 28)) {
 
-			varOff = _vm->_parse->parseVarIndex();
-			_vm->_global->_inter_execPtr++;
+			varOff = _vm->_game->_script->readVarIndex();
+			_vm->_game->_script->skip(1);
 
 			_variables->copyTo(varOff, _varStack + _varStackPos, _vm->_global->_inter_animDataSize * 4);
 
@@ -1167,10 +618,12 @@ void Inter_v2::o2_pushVars() {
 			_varStack[_varStackPos] = _vm->_global->_inter_animDataSize * 4;
 
 		} else {
-			if (evalExpr(&varOff) != 20)
-				_vm->_global->_inter_resVal = 0;
+			int32 n = _vm->_game->_script->getResultInt();
 
-			memcpy(_varStack + _varStackPos, &_vm->_global->_inter_resVal, 4);
+			if (_vm->_game->_script->evalExpr(&varOff) != 20)
+				n = 0;
+
+			memcpy(_varStack + _varStackPos, &n, 4);
 			_varStackPos += 4;
 			_varStack[_varStackPos] = 4;
 		}
@@ -1182,9 +635,9 @@ void Inter_v2::o2_popVars() {
 	int16 varOff;
 	int16 size;
 
-	count = *_vm->_global->_inter_execPtr++;
+	count = _vm->_game->_script->readByte();
 	for (int i = 0; i < count; i++) {
-		varOff = _vm->_parse->parseVarIndex();
+		varOff = _vm->_game->_script->readVarIndex();
 		size = _varStack[--_varStackPos];
 
 		_varStackPos -= size;
@@ -1204,9 +657,9 @@ void Inter_v2::o2_moveGoblin() {
 	int16 destX, destY;
 	int16 index;
 
-	destX = _vm->_parse->parseValExpr();
-	destY = _vm->_parse->parseValExpr();
-	index = _vm->_parse->parseValExpr();
+	destX = _vm->_game->_script->readValExpr();
+	destY = _vm->_game->_script->readValExpr();
+	index = _vm->_game->_script->readValExpr();
 	_vm->_goblin->move(destX, destY, index);
 }
 
@@ -1214,15 +667,15 @@ void Inter_v2::o2_writeGoblinPos() {
 	int16 varX, varY;
 	int16 index;
 
-	varX = _vm->_parse->parseVarIndex();
-	varY = _vm->_parse->parseVarIndex();
-	index = _vm->_parse->parseValExpr();
+	varX = _vm->_game->_script->readVarIndex();
+	varY = _vm->_game->_script->readVarIndex();
+	index = _vm->_game->_script->readValExpr();
 	WRITE_VAR_OFFSET(varX, _vm->_mult->_objects[index].goblinX);
 	WRITE_VAR_OFFSET(varY, _vm->_mult->_objects[index].goblinY);
 }
 
 void Inter_v2::o2_stopGoblin() {
-	int16 index = _vm->_parse->parseValExpr();
+	int16 index = _vm->_game->_script->readValExpr();
 
 	_vm->_mult->_objects[index].pAnimData->pathExistence = 4;
 }
@@ -1236,9 +689,9 @@ void Inter_v2::o2_setGoblinState() {
 	int16 deltaX, deltaY;
 	int16 deltaWidth, deltaHeight;
 
-	index = _vm->_parse->parseValExpr();
-	state = _vm->_parse->parseValExpr();
-	type = _vm->_parse->parseValExpr();
+	index = _vm->_game->_script->readValExpr();
+	state = _vm->_game->_script->readValExpr();
+	type = _vm->_game->_script->readValExpr();
 
 	Mult::Mult_Object &obj = _vm->_mult->_objects[index];
 	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
@@ -1334,10 +787,10 @@ void Inter_v2::o2_placeGoblin() {
 	int16 x, y;
 	int16 state;
 
-	index = _vm->_parse->parseValExpr();
-	x = _vm->_parse->parseValExpr();
-	y = _vm->_parse->parseValExpr();
-	state = _vm->_parse->parseValExpr();
+	index = _vm->_game->_script->readValExpr();
+	x = _vm->_game->_script->readValExpr();
+	y = _vm->_game->_script->readValExpr();
+	state = _vm->_game->_script->readValExpr();
 
 	_vm->_goblin->placeObject(0, 0, index, x, y, state);
 }
@@ -1347,13 +800,13 @@ void Inter_v2::o2_initScreen() {
 	int16 videoMode;
 	int16 width, height;
 
-	offY = load16();
+	offY = _vm->_game->_script->readInt16();
 
 	videoMode = offY & 0xFF;
 	offY = (offY >> 8) & 0xFF;
 
-	width = _vm->_parse->parseValExpr();
-	height = _vm->_parse->parseValExpr();
+	width = _vm->_game->_script->readValExpr();
+	height = _vm->_game->_script->readValExpr();
 
 	_vm->_video->clearScreen();
 
@@ -1441,16 +894,16 @@ void Inter_v2::o2_scroll() {
 	int16 curX;
 	int16 curY;
 
-	startX = CLIP((int) _vm->_parse->parseValExpr(), 0,
+	startX = CLIP((int) _vm->_game->_script->readValExpr(), 0,
 			_vm->_video->_surfWidth - _vm->_width);
-	startY = CLIP((int) _vm->_parse->parseValExpr(), 0,
+	startY = CLIP((int) _vm->_game->_script->readValExpr(), 0,
 			_vm->_video->_surfHeight - _vm->_height);
-	endX = CLIP((int) _vm->_parse->parseValExpr(), 0,
+	endX = CLIP((int) _vm->_game->_script->readValExpr(), 0,
 			_vm->_video->_surfWidth - _vm->_width);
-	endY = CLIP((int) _vm->_parse->parseValExpr(), 0,
+	endY = CLIP((int) _vm->_game->_script->readValExpr(), 0,
 			_vm->_video->_surfHeight - _vm->_height);
-	stepX = _vm->_parse->parseValExpr();
-	stepY = _vm->_parse->parseValExpr();
+	stepX = _vm->_game->_script->readValExpr();
+	stepY = _vm->_game->_script->readValExpr();
 
 	curX = startX;
 	curY = startY;
@@ -1470,8 +923,8 @@ void Inter_v2::o2_scroll() {
 void Inter_v2::o2_setScrollOffset() {
 	int16 offsetX, offsetY;
 
-	offsetX = _vm->_parse->parseValExpr();
-	offsetY = _vm->_parse->parseValExpr();
+	offsetX = _vm->_game->_script->readValExpr();
+	offsetY = _vm->_game->_script->readValExpr();
 
 	if (offsetX == -1) {
 		WRITE_VAR(2, _vm->_draw->_scrollOffsetX);
@@ -1506,22 +959,22 @@ void Inter_v2::o2_playImd() {
 	uint16 palCmd;
 	bool close;
 
-	evalExpr(0);
-	_vm->_global->_inter_resStr[8] = 0;
-	strncpy0(imd, _vm->_global->_inter_resStr, 127);
+	_vm->_game->_script->evalExpr(0);
+	_vm->_game->_script->getResultStr()[8] = 0;
+	strncpy0(imd, _vm->_game->_script->getResultStr(), 127);
 
-	x = _vm->_parse->parseValExpr();
-	y = _vm->_parse->parseValExpr();
-	startFrame = _vm->_parse->parseValExpr();
-	lastFrame = _vm->_parse->parseValExpr();
-	breakKey = _vm->_parse->parseValExpr();
-	flags = _vm->_parse->parseValExpr();
-	palStart = _vm->_parse->parseValExpr();
-	palEnd = _vm->_parse->parseValExpr();
+	x = _vm->_game->_script->readValExpr();
+	y = _vm->_game->_script->readValExpr();
+	startFrame = _vm->_game->_script->readValExpr();
+	lastFrame = _vm->_game->_script->readValExpr();
+	breakKey = _vm->_game->_script->readValExpr();
+	flags = _vm->_game->_script->readValExpr();
+	palStart = _vm->_game->_script->readValExpr();
+	palEnd = _vm->_game->_script->readValExpr();
 	palCmd = 1 << (flags & 0x3F);
 
 	debugC(1, kDebugVideo, "Playing video \"%s\" @ %d+%d, frames %d - %d, "
-			"paletteCmd %d (%d - %d), flags %X", _vm->_global->_inter_resStr, x, y,
+			"paletteCmd %d (%d - %d), flags %X", _vm->_game->_script->getResultStr(), x, y,
 			startFrame, lastFrame, palCmd, palStart, palEnd, flags);
 
 	if ((imd[0] != 0) && !_vm->_vidPlayer->primaryOpen(imd, x, y, flags)) {
@@ -1550,28 +1003,28 @@ void Inter_v2::o2_getImdInfo() {
 	int16 varFrames;
 	int16 varWidth, varHeight;
 
-	evalExpr(0);
-	varX = _vm->_parse->parseVarIndex();
-	varY = _vm->_parse->parseVarIndex();
-	varFrames = _vm->_parse->parseVarIndex();
-	varWidth = _vm->_parse->parseVarIndex();
-	varHeight = _vm->_parse->parseVarIndex();
+	_vm->_game->_script->evalExpr(0);
+	varX = _vm->_game->_script->readVarIndex();
+	varY = _vm->_game->_script->readVarIndex();
+	varFrames = _vm->_game->_script->readVarIndex();
+	varWidth = _vm->_game->_script->readVarIndex();
+	varHeight = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
 	if ((_vm->getGameType() == kGameTypeWoodruff) &&
-			(!scumm_stricmp(_vm->_global->_inter_resStr, "noixroule")))
-		strcpy(_vm->_global->_inter_resStr, "noixroul");
+			(!scumm_stricmp(_vm->_game->_script->getResultStr(), "noixroule")))
+		strcpy(_vm->_game->_script->getResultStr(), "noixroul");
 
-	_vm->_vidPlayer->writeVideoInfo(_vm->_global->_inter_resStr, varX, varY,
+	_vm->_vidPlayer->writeVideoInfo(_vm->_game->_script->getResultStr(), varX, varY,
 			varFrames, varWidth, varHeight);
 }
 
 void Inter_v2::o2_openItk() {
 	char fileName[32];
 
-	evalExpr(0);
-	strncpy0(fileName, _vm->_global->_inter_resStr, 27);
+	_vm->_game->_script->evalExpr(0);
+	strncpy0(fileName, _vm->_game->_script->getResultStr(), 27);
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
 
@@ -1589,49 +1042,46 @@ void Inter_v2::o2_resetImdFrontSurf() {
 }
 
 bool Inter_v2::o2_assign(OpFuncParams &params) {
-	byte *savedPos;
-	int16 varOff;
-	int16 token;
-	int16 result;
+	byte destType = _vm->_game->_script->peekByte();
+	int16 dest = _vm->_game->_script->readVarIndex();
+
 	byte loopCount;
-
-	savedPos = _vm->_global->_inter_execPtr;
-	varOff = _vm->_parse->parseVarIndex();
-
-	if (*_vm->_global->_inter_execPtr == 99) {
-		_vm->_global->_inter_execPtr++;
-		loopCount = *_vm->_global->_inter_execPtr++;
+	if (_vm->_game->_script->peekByte() == 99) {
+		_vm->_game->_script->skip(1);
+		loopCount = _vm->_game->_script->readByte();
 	} else
 		loopCount = 1;
 
 	for (int i = 0; i < loopCount; i++) {
-		token = evalExpr(&result);
-		switch (savedPos[0]) {
-		case 16:
-		case 18:
-			WRITE_VARO_UINT8(varOff + i, _vm->_global->_inter_resVal);
+		int16 result;
+		int16 srcType = _vm->_game->_script->evalExpr(&result);
+
+		switch (destType) {
+		case TYPE_VAR_INT8:
+		case TYPE_ARRAY_INT8:
+			WRITE_VARO_UINT8(dest + i, _vm->_game->_script->getResultInt());
 			break;
 
-		case 17:
-		case 27:
-			WRITE_VARO_UINT16(varOff + i * 2, _vm->_global->_inter_resVal);
+		case TYPE_VAR_INT16:
+		case TYPE_ARRAY_INT16:
+			WRITE_VARO_UINT16(dest + i * 2, _vm->_game->_script->getResultInt());
 			break;
 
-		case 23:
-		case 26:
-			WRITE_VAR_OFFSET(varOff + i * 4, _vm->_global->_inter_resVal);
+		case TYPE_VAR_INT32:
+		case TYPE_ARRAY_INT32:
+			WRITE_VAR_OFFSET(dest + i * 4, _vm->_game->_script->getResultInt());
 			break;
 
-		case 24:
-			WRITE_VARO_UINT16(varOff + i * 4, _vm->_global->_inter_resVal);
+		case TYPE_VAR_INT32_AS_INT16:
+			WRITE_VARO_UINT16(dest + i * 4, _vm->_game->_script->getResultInt());
 			break;
 
-		case 25:
-		case 28:
-			if (token == 20)
-				WRITE_VARO_UINT8(varOff, result);
+		case TYPE_VAR_STR:
+		case TYPE_ARRAY_STR:
+			if (srcType == TYPE_IMM_INT16)
+				WRITE_VARO_UINT8(dest, result);
 			else
-				WRITE_VARO_STR(varOff, _vm->_global->_inter_resStr);
+				WRITE_VARO_STR(dest, _vm->_game->_script->getResultStr());
 			break;
 		}
 	}
@@ -1643,12 +1093,12 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 	char buf[60];
 	int i;
 
-	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
-	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
+	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
 
-	_vm->_draw->_backColor = _vm->_parse->parseValExpr();
-	_vm->_draw->_frontColor = _vm->_parse->parseValExpr();
-	_vm->_draw->_fontIndex = _vm->_parse->parseValExpr();
+	_vm->_draw->_backColor = _vm->_game->_script->readValExpr();
+	_vm->_draw->_frontColor = _vm->_game->_script->readValExpr();
+	_vm->_draw->_fontIndex = _vm->_game->_script->readValExpr();
 	_vm->_draw->_destSurface = 21;
 	_vm->_draw->_textToPrint = buf;
 	_vm->_draw->_transparency = 0;
@@ -1659,48 +1109,47 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 	}
 
 	do {
-		for (i = 0; (((char) *_vm->_global->_inter_execPtr) != '.') &&
-				(*_vm->_global->_inter_execPtr != 200);
-				i++, _vm->_global->_inter_execPtr++) {
-			buf[i] = (char) *_vm->_global->_inter_execPtr;
+		for (i = 0; (_vm->_game->_script->peekChar() != '.') &&
+				(_vm->_game->_script->peekByte() != 200); i++) {
+			buf[i] = _vm->_game->_script->readChar();
 		}
 
-		if (*_vm->_global->_inter_execPtr != 200) {
-			_vm->_global->_inter_execPtr++;
-			switch (*_vm->_global->_inter_execPtr) {
-			case 16:
-			case 18:
+		if (_vm->_game->_script->peekByte() != 200) {
+			_vm->_game->_script->skip(1);
+			switch (_vm->_game->_script->peekByte()) {
+			case TYPE_VAR_INT8:
+			case TYPE_ARRAY_INT8:
 				sprintf(buf + i, "%d",
-						(int8) READ_VARO_UINT8(_vm->_parse->parseVarIndex()));
+						(int8) READ_VARO_UINT8(_vm->_game->_script->readVarIndex()));
 				break;
 
-			case 17:
-			case 24:
-			case 27:
+			case TYPE_VAR_INT16:
+			case TYPE_VAR_INT32_AS_INT16:
+			case TYPE_ARRAY_INT16:
 				sprintf(buf + i, "%d",
-						(int16) READ_VARO_UINT16(_vm->_parse->parseVarIndex()));
+						(int16) READ_VARO_UINT16(_vm->_game->_script->readVarIndex()));
 				break;
 
-			case 23:
-			case 26:
+			case TYPE_VAR_INT32:
+			case TYPE_ARRAY_INT32:
 				sprintf(buf + i, "%d",
-						VAR_OFFSET(_vm->_parse->parseVarIndex()));
+						VAR_OFFSET(_vm->_game->_script->readVarIndex()));
 				break;
 
-			case 25:
-			case 28:
+			case TYPE_VAR_STR:
+			case TYPE_ARRAY_STR:
 				sprintf(buf + i, "%s",
-						GET_VARO_STR(_vm->_parse->parseVarIndex()));
+						GET_VARO_STR(_vm->_game->_script->readVarIndex()));
 				break;
 			}
-			_vm->_global->_inter_execPtr++;
+			_vm->_game->_script->skip(1);
 		} else
 			buf[i] = 0;
 
 		_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
-	} while (*_vm->_global->_inter_execPtr != 200);
+	} while (_vm->_game->_script->peekByte() != 200);
 
-	_vm->_global->_inter_execPtr++;
+	_vm->_game->_script->skip(1);
 
 	return false;
 }
@@ -1708,20 +1157,20 @@ bool Inter_v2::o2_printText(OpFuncParams &params) {
 bool Inter_v2::o2_animPalInit(OpFuncParams &params) {
 	int16 index;
 
-	index = load16();
+	index = _vm->_game->_script->readInt16();
 	if (index > 0) {
 		index--;
-		_animPalLowIndex[index] = _vm->_parse->parseValExpr();
-		_animPalHighIndex[index] = _vm->_parse->parseValExpr();
+		_animPalLowIndex[index] = _vm->_game->_script->readValExpr();
+		_animPalHighIndex[index] = _vm->_game->_script->readValExpr();
 		_animPalDir[index] = 1;
 	} else if (index == 0) {
 		memset(_animPalDir, 0, 8 * sizeof(int16));
-		_vm->_parse->parseValExpr();
-		_vm->_parse->parseValExpr();
+		_vm->_game->_script->readValExpr();
+		_vm->_game->_script->readValExpr();
 	} else {
 		index = -index - 1;
-		_animPalLowIndex[index] = _vm->_parse->parseValExpr();
-		_animPalHighIndex[index] = _vm->_parse->parseValExpr();
+		_animPalLowIndex[index] = _vm->_game->_script->readValExpr();
+		_animPalHighIndex[index] = _vm->_game->_script->readValExpr();
 		_animPalDir[index] = -1;
 	}
 	return false;
@@ -1734,14 +1183,14 @@ bool Inter_v2::o2_addCollision(OpFuncParams &params) {
 	int16 key;
 	int16 funcSub;
 
-	id = _vm->_parse->parseValExpr();
-	funcSub = _vm->_global->_inter_execPtr - _vm->_game->_totFileData;
-	left = _vm->_parse->parseValExpr();
-	top = _vm->_parse->parseValExpr();
-	width = _vm->_parse->parseValExpr();
-	height = _vm->_parse->parseValExpr();
-	flags = _vm->_parse->parseValExpr();
-	key = load16();
+	id = _vm->_game->_script->readValExpr();
+	funcSub = _vm->_game->_script->pos();
+	left = _vm->_game->_script->readValExpr();
+	top = _vm->_game->_script->readValExpr();
+	width = _vm->_game->_script->readValExpr();
+	height = _vm->_game->_script->readValExpr();
+	flags = _vm->_game->_script->readValExpr();
+	key = _vm->_game->_script->readInt16();
 
 	if (key == 0)
 		key = ABS(id) + 41960;
@@ -1775,7 +1224,7 @@ bool Inter_v2::o2_addCollision(OpFuncParams &params) {
 bool Inter_v2::o2_freeCollision(OpFuncParams &params) {
 	int16 id;
 
-	id = _vm->_parse->parseValExpr();
+	id = _vm->_game->_script->readValExpr();
 	if (id == -2) {
 		for (int i = 0; i < 150; i++) {
 			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xD000)
@@ -1797,9 +1246,9 @@ bool Inter_v2::o2_goblinFunc(OpFuncParams &params) {
 	// It's not yet implemented, so we fudge our way through
 	// and pretend we've won.
 	if (_vm->getGameType() == kGameTypeInca2) {
-		_vm->_global->_inter_execPtr += 4;
-		uint16 resVar = (uint16) load16();
-		_vm->_global->_inter_execPtr += 4;
+		_vm->_game->_script->skip(4);
+		uint16 resVar = _vm->_game->_script->readUint16();
+		_vm->_game->_script->skip(4);
 
 		WRITE_VAR(resVar, 1);
 		return false;
@@ -1808,18 +1257,20 @@ bool Inter_v2::o2_goblinFunc(OpFuncParams &params) {
 	OpGobParams gobParams;
 	int16 cmd;
 
-	cmd = load16();
-	_vm->_global->_inter_execPtr += 2;
+	cmd = _vm->_game->_script->readInt16();
+
+	gobParams.paramCount = _vm->_game->_script->readInt16();
+	gobParams.extraData = cmd;
 
 	if (cmd != 101)
-		executeGoblinOpcode(cmd, gobParams);
+		executeOpcodeGob(cmd, gobParams);
 	return false;
 }
 
 bool Inter_v2::o2_stopSound(OpFuncParams &params) {
 	int16 expr;
 
-	expr = _vm->_parse->parseValExpr();
+	expr = _vm->_game->_script->readValExpr();
 
 	if (expr < 0) {
 		_vm->_sound->adlibStop();
@@ -1839,13 +1290,13 @@ bool Inter_v2::o2_getFreeMem(OpFuncParams &params) {
 	int16 freeVar;
 	int16 maxFreeVar;
 
-	freeVar = _vm->_parse->parseVarIndex();
-	maxFreeVar = _vm->_parse->parseVarIndex();
+	freeVar = _vm->_game->_script->readVarIndex();
+	maxFreeVar = _vm->_game->_script->readVarIndex();
 
 	// HACK
 	WRITE_VAR_OFFSET(freeVar, 1000000);
 	WRITE_VAR_OFFSET(maxFreeVar, 1000000);
-	WRITE_VAR(16, READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4);
+	WRITE_VAR(16, _vm->_game->_script->getVariablesCount() * 4);
 	return false;
 }
 
@@ -1855,23 +1306,22 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	int32 size;
 	SaveLoad::SaveMode mode;
 
-	evalExpr(0);
-	varOff = _vm->_parse->parseVarIndex();
+	_vm->_game->_script->evalExpr(0);
+	varOff = _vm->_game->_script->readVarIndex();
 
 	size = -1;
 	handle = 1;
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	mode = _vm->_saveLoad->getSaveMode(_vm->_game->_script->getResultStr());
 	if (mode == SaveLoad::kSaveModeNone) {
-		handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
 
-		if (handle >= 0) {
-			_vm->_dataIO->closeData(handle);
-			size = _vm->_dataIO->getDataSize(_vm->_global->_inter_resStr);
-		} else
-			warning("File \"%s\" not found", _vm->_global->_inter_resStr);
+		if (_vm->_dataIO->existData(_vm->_game->_script->getResultStr()))
+			size = _vm->_dataIO->getDataSize(_vm->_game->_script->getResultStr());
+		else
+			warning("File \"%s\" not found", _vm->_game->_script->getResultStr());
+
 	} else if (mode == SaveLoad::kSaveModeSave)
-		size = _vm->_saveLoad->getSize(_vm->_global->_inter_resStr);
+		size = _vm->_saveLoad->getSize(_vm->_game->_script->getResultStr());
 	else if (mode == SaveLoad::kSaveModeExists)
 		size = 23;
 
@@ -1879,7 +1329,7 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 		handle = -1;
 
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
-			_vm->_global->_inter_resStr, size);
+			_vm->_game->_script->getResultStr(), size);
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	WRITE_VAR(16, (uint32) size);
@@ -1896,20 +1346,20 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	byte *buf;
 	SaveLoad::SaveMode mode;
 
-	evalExpr(0);
-	dataVar = _vm->_parse->parseVarIndex();
-	size = _vm->_parse->parseValExpr();
-	evalExpr(0);
-	offset = _vm->_global->_inter_resVal;
+	_vm->_game->_script->evalExpr(0);
+	dataVar = _vm->_game->_script->readVarIndex();
+	size = _vm->_game->_script->readValExpr();
+	_vm->_game->_script->evalExpr(0);
+	offset = _vm->_game->_script->getResultInt();
 	retSize = 0;
 
 	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
-			_vm->_global->_inter_resStr, dataVar, size, offset);
+			_vm->_game->_script->getResultStr(), dataVar, size, offset);
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	mode = _vm->_saveLoad->getSaveMode(_vm->_game->_script->getResultStr());
 	if (mode == SaveLoad::kSaveModeSave) {
 		WRITE_VAR(1, 1);
-		if (_vm->_saveLoad->load(_vm->_global->_inter_resStr, dataVar, size, offset))
+		if (_vm->_saveLoad->load(_vm->_game->_script->getResultStr(), dataVar, size, offset))
 			WRITE_VAR(1, 0);
 		return false;
 	} else if (mode == SaveLoad::kSaveModeIgnore)
@@ -1917,22 +1367,22 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	if (size < 0) {
 		warning("Attempted to read a raw sprite from file \"%s\"",
-				_vm->_global->_inter_resStr);
+				_vm->_game->_script->getResultStr());
 		return false ;
 	} else if (size == 0) {
 		dataVar = 0;
-		size = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
+		size = _vm->_game->_script->getVariablesCount() * 4;
 	}
 
 	buf = _variables->getAddressOff8(dataVar);
 
-	if (_vm->_global->_inter_resStr[0] == 0) {
+	if (_vm->_game->_script->getResultStr()[0] == 0) {
 		WRITE_VAR(1, size);
 		return false;
 	}
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
+	handle = _vm->_dataIO->openData(_vm->_game->_script->getResultStr());
 
 	if (handle < 0)
 		return false;
@@ -1967,23 +1417,23 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	int16 dataVar;
 	SaveLoad::SaveMode mode;
 
-	evalExpr(0);
-	dataVar = _vm->_parse->parseVarIndex();
-	size = _vm->_parse->parseValExpr();
-	evalExpr(0);
-	offset = _vm->_global->_inter_resVal;
+	_vm->_game->_script->evalExpr(0);
+	dataVar = _vm->_game->_script->readVarIndex();
+	size = _vm->_game->_script->readValExpr();
+	_vm->_game->_script->evalExpr(0);
+	offset = _vm->_game->_script->getResultInt();
 
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
-			_vm->_global->_inter_resStr, dataVar, size, offset);
+			_vm->_game->_script->getResultStr(), dataVar, size, offset);
 
 	WRITE_VAR(1, 1);
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_global->_inter_resStr);
+	mode = _vm->_saveLoad->getSaveMode(_vm->_game->_script->getResultStr());
 	if (mode == SaveLoad::kSaveModeSave) {
-		if (_vm->_saveLoad->save(_vm->_global->_inter_resStr, dataVar, size, offset))
+		if (_vm->_saveLoad->save(_vm->_game->_script->getResultStr(), dataVar, size, offset))
 			WRITE_VAR(1, 0);
 	} else if (mode == SaveLoad::kSaveModeNone)
-		warning("Attempted to write to file \"%s\"", _vm->_global->_inter_resStr);
+		warning("Attempted to write to file \"%s\"", _vm->_game->_script->getResultStr());
 
 	return false;
 }
@@ -1992,7 +1442,7 @@ void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {
 	int16 varName;
 	char fileName[20];
 
-	varName = load16();
+	varName = _vm->_game->_script->readInt16();
 
 	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".INS");
@@ -2004,7 +1454,7 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 	int16 varName;
 	char fileName[20];
 
-	varName = load16();
+	varName = _vm->_game->_script->readInt16();
 
 	strncpy0(fileName, GET_VAR_STR(varName), 15);
 	strcat(fileName, ".DUM");
@@ -2014,13 +1464,13 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 }
 
 void Inter_v2::o2_startInfogrames(OpGobParams &params) {
-	load16();
+	_vm->_game->_script->readInt16();
 
 	_vm->_sound->infogramesPlay();
 }
 
 void Inter_v2::o2_stopInfogrames(OpGobParams &params) {
-	load16();
+	_vm->_game->_script->readInt16();
 
 	_vm->_sound->infogramesStop();
 }
@@ -2034,12 +1484,12 @@ void Inter_v2::o2_stopProtracker(OpGobParams &params) {
 }
 
 void Inter_v2::o2_handleGoblins(OpGobParams &params) {
-	_vm->_goblin->_gob1NoTurn = VAR(load16()) != 0;
-	_vm->_goblin->_gob2NoTurn = VAR(load16()) != 0;
-	_vm->_goblin->_gob1RelaxTimeVar = load16();
-	_vm->_goblin->_gob2RelaxTimeVar = load16();
-	_vm->_goblin->_gob1Busy = VAR(load16()) != 0;
-	_vm->_goblin->_gob2Busy = VAR(load16()) != 0;
+	_vm->_goblin->_gob1NoTurn = VAR(_vm->_game->_script->readInt16()) != 0;
+	_vm->_goblin->_gob2NoTurn = VAR(_vm->_game->_script->readInt16()) != 0;
+	_vm->_goblin->_gob1RelaxTimeVar = _vm->_game->_script->readInt16();
+	_vm->_goblin->_gob2RelaxTimeVar = _vm->_game->_script->readInt16();
+	_vm->_goblin->_gob1Busy = VAR(_vm->_game->_script->readInt16()) != 0;
+	_vm->_goblin->_gob2Busy = VAR(_vm->_game->_script->readInt16()) != 0;
 	_vm->_goblin->handleGoblins();
 }
 
@@ -2050,21 +1500,20 @@ int16 Inter_v2::loadSound(int16 search) {
 	uint16 slotIdMask;
 	uint32 dataSize;
 	SoundType type;
-	SoundSource source;
 
 	type = SOUND_SND;
 	slotIdMask = 0;
 	dataSize = 0;
 
 	if (!search) {
-		slot = _vm->_parse->parseValExpr();
+		slot = _vm->_game->_script->readValExpr();
 		if (slot < 0) {
 			type = SOUND_ADL;
 			slot = -slot;
 		}
-		id = load16();
+		id = _vm->_game->_script->readInt16();
 	} else {
-		id = load16();
+		id = _vm->_game->_script->readInt16();
 
 		for (slot = 0; slot < Sound::kSoundsCount; slot++)
 			if (_vm->_sound->sampleGetBySlot(slot)->isId(id)) {
@@ -2093,37 +1542,37 @@ int16 Inter_v2::loadSound(int16 search) {
 	if (id == -1) {
 		char sndfile[14];
 
-		source = SOUND_FILE;
-
-		strncpy0(sndfile, (const char *) _vm->_global->_inter_execPtr, 9);
-		_vm->_global->_inter_execPtr += 9;
+		strncpy0(sndfile, _vm->_game->_script->readString(9), 9);
 
 		if (type == SOUND_ADL)
 			strcat(sndfile, ".ADL");
 		else
 			strcat(sndfile, ".SND");
 
-		dataPtr = (byte *) _vm->_dataIO->getData(sndfile);
-		if (dataPtr)
-			dataSize = _vm->_dataIO->getDataSize(sndfile);
-	} else if (id >= 30000) {
-		source = SOUND_EXT;
+		dataPtr  = _vm->_dataIO->getData(sndfile);
+		dataSize = _vm->_dataIO->getDataSize(sndfile);
+		if (!dataPtr)
+			return 0;
 
-		dataPtr = (byte *) _vm->_game->loadExtData(id, 0, 0, &dataSize);
-	} else {
-		int16 totSize;
+		if (!sample->load(type, dataPtr, dataSize)) {
+			delete[] dataPtr;
+			return 0;
+		}
 
-		source = SOUND_TOT;
-
-		dataPtr = (byte *) _vm->_game->loadTotResource(id, &totSize);
-		dataSize = (uint32) ((int32) totSize);
-	}
-
-	if (dataPtr) {
-		sample->load(type, source, dataPtr, dataSize);
 		sample->_id = id;
+		return slot | slotIdMask;
 	}
 
+	Resource *resource = _vm->_game->_resources->getResource(id);
+	if (!resource)
+		return 0;
+
+	if (!sample->load(type, resource)) {
+		delete resource;
+		return 0;
+	}
+
+	sample->_id = id;
 	return slot | slotIdMask;
 }
 

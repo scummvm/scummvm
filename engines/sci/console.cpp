@@ -55,15 +55,6 @@ int g_debug_seeking = 0; // Stepping forward until some special condition is met
 int g_debug_seek_special = 0;  // Used for special seeks
 int g_debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
 
-enum DebugSeeking {
-	kDebugSeekNothing = 0,
-	kDebugSeekCallk = 1,        // Step forward until callk is found
-	kDebugSeekLevelRet = 2,     // Step forward until returned from this level
-	kDebugSeekSpecialCallk = 3, // Step forward until a /special/ callk is found
-	kDebugSeekSO = 4,           // Step forward until specified PC (after the send command) and stack depth
-	kDebugSeekGlobal = 5        // Step forward until one specified global variable is modified
-};
-
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
@@ -152,11 +143,17 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
 	DCmd_Register("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
+	DCmd_Register("bt",					WRAP_METHOD(Console, cmdBacktrace));	// alias
 	DCmd_Register("step",				WRAP_METHOD(Console, cmdStep));
+	DCmd_Register("s",					WRAP_METHOD(Console, cmdStep));			// alias
 	DCmd_Register("step_event",			WRAP_METHOD(Console, cmdStepEvent));
+	DCmd_Register("se",					WRAP_METHOD(Console, cmdStepEvent));	// alias
 	DCmd_Register("step_ret",			WRAP_METHOD(Console, cmdStepRet));
+	DCmd_Register("sret",				WRAP_METHOD(Console, cmdStepRet));		// alias
 	DCmd_Register("step_global",		WRAP_METHOD(Console, cmdStepGlobal));
+	DCmd_Register("sg",					WRAP_METHOD(Console, cmdStepGlobal));	// alias
 	DCmd_Register("step_callk",			WRAP_METHOD(Console, cmdStepCallk));
+	DCmd_Register("snk",				WRAP_METHOD(Console, cmdStepCallk));	// alias
 	DCmd_Register("disasm",				WRAP_METHOD(Console, cmdDissassemble));
 	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDissassembleAddress));
 	DCmd_Register("send",				WRAP_METHOD(Console, cmdSend));
@@ -165,7 +162,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	DCmd_Register("bp_exec_method",		WRAP_METHOD(Console, cmdBreakpointExecMethod));
+	DCmd_Register("bpx",				WRAP_METHOD(Console, cmdBreakpointExecMethod));		// alias
 	DCmd_Register("bp_exec_function",	WRAP_METHOD(Console, cmdBreakpointExecFunction));
+	DCmd_Register("bpe",				WRAP_METHOD(Console, cmdBreakpointExecFunction));	// alias
 	// VM
 	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
@@ -174,7 +173,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
 	DCmd_Register("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
 	DCmd_Register("view_reference",		WRAP_METHOD(Console, cmdViewReference));
+	DCmd_Register("vr",					WRAP_METHOD(Console, cmdViewReference));	// alias
 	DCmd_Register("view_object",		WRAP_METHOD(Console, cmdViewObject));
+	DCmd_Register("vo",					WRAP_METHOD(Console, cmdViewObject));		// alias
 	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
 	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
 
@@ -224,6 +225,12 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("track_mouse_clicks: Toggles mouse click tracking to the console\n");
 	DebugPrintf("weak_validations: Turns some validation errors into warnings\n");
 	DebugPrintf("script_abort_flag: Set to 1 to abort script execution. Set to 2 to force a replay afterwards\n");
+	DebugPrintf("\n");
+	DebugPrintf("Debug flags\n");
+	DebugPrintf("-----------\n");
+	DebugPrintf("debugflag_list - Lists the available debug flags and their status\n");
+	DebugPrintf("debugflag_enable - Enables a debug flag\n");
+	DebugPrintf("debugflag_disable - Disables a debug flag\n");
 	DebugPrintf("\n");
 	DebugPrintf("Commands\n");
 	DebugPrintf("--------\n");
@@ -310,12 +317,12 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" registers - Shows the current register values\n");
 	DebugPrintf(" dissect_script - Examines a script\n");
 	DebugPrintf(" set_acc - Sets the accumulator\n");
-	DebugPrintf(" backtrace - Dumps the send/self/super/call/calle/callb stack\n");
-	DebugPrintf(" step - Executes one operation (no parameters) or several operations (specified as a parameter) \n");
-	DebugPrintf(" step_event - Steps forward until a SCI event is received.\n");
-	DebugPrintf(" step_ret - Steps forward until ret is called on the current execution stack level.\n");
-	DebugPrintf(" step_global - Steps until the global variable with the specified index is modified.\n");
-	DebugPrintf(" step_callk - Steps forward until it hits the next callk operation, or a specific callk (specified as a parameter)\n");
+	DebugPrintf(" backtrace / bt - Dumps the send/self/super/call/calle/callb stack\n");
+	DebugPrintf(" step / s - Executes one operation (no parameters) or several operations (specified as a parameter) \n");
+	DebugPrintf(" step_event / se - Steps forward until a SCI event is received.\n");
+	DebugPrintf(" step_ret / sret - Steps forward until ret is called on the current execution stack level.\n");
+	DebugPrintf(" step_global / sg - Steps until the global variable with the specified index is modified.\n");
+	DebugPrintf(" step_callk / snk - Steps forward until it hits the next callk operation, or a specific callk (specified as a parameter)\n");
 	DebugPrintf(" disasm - Disassembles a method by name\n");
 	DebugPrintf(" disasm_addr - Disassembles one or more commands\n");
 	DebugPrintf(" send - Sends a message to an object\n");
@@ -324,8 +331,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list - Lists the current breakpoints\n");
 	DebugPrintf(" bp_del - Deletes a breakpoint with the specified index\n");
-	DebugPrintf(" bp_exec_method - Sets a breakpoint on the execution of the specified method\n");
-	DebugPrintf(" bp_exec_function - Sets a breakpoint on the execution of the specified exported function\n");
+	DebugPrintf(" bp_exec_method / bpx - Sets a breakpoint on the execution of the specified method\n");
+	DebugPrintf(" bp_exec_function / bpe - Sets a breakpoint on the execution of the specified exported function\n");
 	DebugPrintf("\n");
 	DebugPrintf("VM:\n");
 	DebugPrintf(" script_steps - Shows the number of executed SCI operations\n");
@@ -334,8 +341,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" stack - Lists the specified number of stack elements\n");
 	DebugPrintf(" value_type - Determines the type of a value\n");
 	DebugPrintf(" view_listnode - Examines the list node at the given address\n");
-	DebugPrintf(" view_reference - Examines an arbitrary reference\n");
-	DebugPrintf(" view_object - Examines the object at the given address\n");
+	DebugPrintf(" view_reference / vr - Examines an arbitrary reference\n");
+	DebugPrintf(" view_object / vo - Examines the object at the given address\n");
 	DebugPrintf(" active_object - Shows information on the currently active object or class\n");
 	DebugPrintf(" acc_object - Shows information on the object or class at the address indexed by the accumulator\n");
 	DebugPrintf("\n");

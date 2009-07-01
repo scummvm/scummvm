@@ -61,7 +61,7 @@ int32 SaveLoad::getSize(const char *fileName) {
 	int32 size = handler->getSize();
 
 	debugC(4, kDebugSaveLoad, "Size is %d", size);
-	
+
 	return size;
 }
 

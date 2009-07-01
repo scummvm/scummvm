@@ -477,7 +477,7 @@ void LoLEngine::objectFlightProcessHits(FlyingObject *t, int x, int y, int objec
 			r = getNearestPartyMemberFromPos(x, y);
 			runItemScript(t->attackerId, t->item, 0x8000, r, 0);
 		}
-	}	
+	}
 }
 
 void LoLEngine::updateFlyingObject(FlyingObject *t) {

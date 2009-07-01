@@ -153,7 +153,7 @@ public:
 		kVolumeSpeech = 2
 	};
 
-	// volume reaches from 2 to 97
+	// volume reaches per default from 2 to 97
 	void setVolume(kVolumeEntry vol, uint8 value);
 	uint8 getVolume(kVolumeEntry vol);
 
@@ -181,13 +181,16 @@ protected:
 	// Engine APIs
 	virtual Common::Error init();
 	virtual Common::Error go() = 0;
+
 	virtual Common::Error run() {
 		Common::Error err;
+		registerDefaultSettings();
 		err = init();
 		if (err != Common::kNoError)
 			return err;
 		return go();
 	}
+
 	virtual ::GUI::Debugger *getDebugger();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
@@ -288,6 +291,9 @@ protected:
 
 	const int8 *_trackMap;
 	int _trackMapSize;
+
+	virtual int convertVolumeToMixer(int value);
+	virtual int convertVolumeFromMixer(int value);
 
 	// pathfinder
 	virtual int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);

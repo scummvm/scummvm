@@ -30,16 +30,12 @@
 
 namespace Gob {
 
+class Resource;
+
 enum SoundType {
 	SOUND_SND,
 	SOUND_WAV,
 	SOUND_ADL
-};
-
-enum SoundSource {
-	SOUND_FILE,
-	SOUND_TOT,
-	SOUND_EXT
 };
 
 class SoundDesc {
@@ -58,8 +54,11 @@ public:
 
 	bool isId(int16 id) const { return _dataPtr && (_id == id); }
 
-	void set(SoundType type, SoundSource src, byte *data, uint32 dSize);
-	bool load(SoundType type, SoundSource src, byte *data, uint32 dSize);
+	void set(SoundType type, byte *data, uint32 dSize);
+	void set(SoundType type, Resource *resource);
+	bool load(SoundType type, byte *data, uint32 dSize);
+	bool load(SoundType type, Resource *resource);
+
 	void free();
 	void convToSigned();
 
@@ -71,12 +70,12 @@ public:
 	~SoundDesc();
 
 private:
+	Resource *_resource;
 	byte *_data;
 	byte *_dataPtr;
 	uint32 _size;
 
 	SoundType _type;
-	SoundSource _source;
 
 	bool loadSND(byte *data, uint32 dSize);
 	bool loadWAV(byte *data, uint32 dSize);

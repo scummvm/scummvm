@@ -39,18 +39,33 @@ const unsigned char AdLib::_volRegNums[] = {
 };
 
 AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer) {
+	init();
+}
+
+AdLib::~AdLib() {
+	Common::StackLock slock(_mutex);
+
+	_mixer->stopHandle(_handle);
+	OPLDestroy(_opl);
+	if (_data && _freeData)
+		delete[] _data;
+}
+
+void AdLib::init() {
 	_index = -1;
 	_data = 0;
 	_playPos = 0;
 	_dataSize = 0;
 
 	_rate = _mixer->getOutputRate();
+
 	_opl = makeAdlibOPL(_rate);
 
 	_first = true;
 	_ended = false;
 	_playing = false;
-	_needFree = false;
+
+	_freeData = false;
 
 	_repCount = -1;
 	_samplesTillPoll = 0;
@@ -61,15 +76,6 @@ AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer) {
 
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle,
 			this, -1, 255, 0, false, true);
-}
-
-AdLib::~AdLib() {
-	Common::StackLock slock(_mutex);
-
-	_mixer->stopHandle(_handle);
-	OPLDestroy(_opl);
-	if (_data && _needFree)
-		delete[] _data;
 }
 
 int AdLib::readBuffer(int16 *buffer, const int numSamples) {
@@ -107,7 +113,9 @@ int AdLib::readBuffer(int16 *buffer, const int numSamples) {
 	if (_ended) {
 		_first = true;
 		_ended = false;
-		_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+
+		rewind();
+
 		_samplesTillPoll = 0;
 		if (_repCount == -1) {
 			reset();
@@ -120,7 +128,6 @@ int AdLib::readBuffer(int16 *buffer, const int numSamples) {
 		else
 			_playing = false;
 	}
-
 	return numSamples;
 }
 
@@ -171,48 +178,6 @@ void AdLib::reset() {
 
 	// Authorize the control of the waveformes
 	writeOPL(0x01, 0x20);
-}
-
-void AdLib::setVoices() {
-	// Definitions of the 9 instruments
-	for (int i = 0; i < 9; i++)
-		setVoice(i, i, true);
-}
-
-void AdLib::setVoice(byte voice, byte instr, bool set) {
-	int i;
-	int j;
-	uint16 strct[27];
-	byte channel;
-	byte *dataPtr;
-
-	// i = 0 :  0  1  2  3  4  5  6  7  8  9 10 11 12 26
-	// i = 1 : 13 14 15 16 17 18 19 20 21 22 23 24 25 27
-	for (i = 0; i < 2; i++) {
-		dataPtr = _data + 3 + instr * 0x38 + i * 0x1A;
-		for (j = 0; j < 27; j++) {
-			strct[j] = READ_LE_UINT16(dataPtr);
-			dataPtr += 2;
-		}
-		channel = _operators[voice] + i * 3;
-		writeOPL(0xBD, 0x00);
-		writeOPL(0x08, 0x00);
-		writeOPL(0x40 | channel, ((strct[0] & 3) << 6) | (strct[8] & 0x3F));
-		if (!i)
-			writeOPL(0xC0 | voice,
-					((strct[2] & 7) << 1) | (1 - (strct[12] & 1)));
-		writeOPL(0x60 | channel, ((strct[3] & 0xF) << 4) | (strct[6] & 0xF));
-		writeOPL(0x80 | channel, ((strct[4] & 0xF) << 4) | (strct[7] & 0xF));
-		writeOPL(0x20 | channel, ((strct[9] & 1) << 7) |
-			((strct[10] & 1) << 6) | ((strct[5] & 1) << 5) |
-			((strct[11] & 1) << 4) |  (strct[1] & 0xF));
-		if (!i)
-			writeOPL(0xE0 | channel, (strct[26] & 3));
-		else
-			writeOPL(0xE0 | channel, (strct[14] & 3));
-		if (i && set)
-			writeOPL(0x40 | channel, 0);
-	}
 }
 
 void AdLib::setKey(byte voice, byte note, bool on, bool spec) {
@@ -278,7 +243,7 @@ void AdLib::setKey(byte voice, byte note, bool on, bool spec) {
 	writeOPL(0xB0 + voice, (freq >> 8) | (octa << 2) | 0x20 * on);
 
 	if (!freq)
-		warning("Voice %d, note %02X unknown", voice, note);
+		warning("AdLib: Voice %d, note %02X unknown", voice, note);
 }
 
 void AdLib::setVolume(byte voice, byte volume) {
@@ -287,16 +252,101 @@ void AdLib::setVolume(byte voice, byte volume) {
 }
 
 void AdLib::pollMusic() {
+	if ((_playPos > (_data + _dataSize)) && (_dataSize != 0xFFFFFFFF)) {
+		_ended = true;
+		return;
+	}
+
+	interpret();
+}
+
+void AdLib::unload() {
+	_playing = false;
+	_index = -1;
+
+	if (_data && _freeData)
+		delete[] _data;
+
+	_freeData = false;
+}
+
+bool AdLib::isPlaying() const {
+	return _playing;
+}
+
+bool AdLib::getRepeating() const {
+	return _repCount != 0;
+}
+
+void AdLib::setRepeating(int32 repCount) {
+	_repCount = repCount;
+}
+
+int AdLib::getIndex() const {
+	return _index;
+}
+
+void AdLib::startPlay() {
+	if (_data) _playing = true;
+}
+
+void AdLib::stopPlay() {
+	Common::StackLock slock(_mutex);
+	_playing = false;
+}
+
+ADLPlayer::ADLPlayer(Audio::Mixer &mixer) : AdLib(mixer) {
+}
+
+ADLPlayer::~ADLPlayer() {
+}
+
+bool ADLPlayer::load(const char *fileName) {
+	Common::File song;
+
+	unload();
+	song.open(fileName);
+	if (!song.isOpen())
+		return false;
+
+	_freeData = true;
+	_dataSize = song.size();
+	_data = new byte[_dataSize];
+	song.read(_data, _dataSize);
+	song.close();
+
+	reset();
+	setVoices();
+	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+
+	return true;
+}
+
+bool ADLPlayer::load(byte *data, uint32 size, int index) {
+	unload();
+	_repCount = 0;
+
+	_dataSize = size;
+	_data = data;
+	_index = index;
+
+	reset();
+	setVoices();
+	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+
+	return true;
+}
+
+void ADLPlayer::unload() {
+	AdLib::unload();
+}
+
+void ADLPlayer::interpret() {
 	unsigned char instr;
 	byte channel;
 	byte note;
 	byte volume;
 	uint16 tempo;
-
-	if ((_playPos > (_data + _dataSize)) && (_dataSize != 0xFFFFFFFF)) {
-		_ended = true;
-		return;
-	}
 
 	// First tempo, we'll ignore it...
 	if (_first) {
@@ -352,7 +402,7 @@ void AdLib::pollMusic() {
 				_samplesTillPoll = 0;
 				return;
 			default:
-				warning("Unknown special command in ADL, stopping playback: %X",
+				warning("ADLPlayer: Unknown special command %X, stopping playback",
 						instr & 0x0F);
 				_repCount = 0;
 				_ended = true;
@@ -360,7 +410,7 @@ void AdLib::pollMusic() {
 			}
 			break;
 		default:
-			warning("Unknown command in ADL, stopping playback: %X",
+			warning("ADLPlayer: Unknown command %X, stopping playback",
 					instr & 0xF0);
 			_repCount = 0;
 			_ended = true;
@@ -383,75 +433,349 @@ void AdLib::pollMusic() {
 	_samplesTillPoll = tempo * (_rate / 1000);
 }
 
-bool AdLib::load(const char *fileName) {
+void ADLPlayer::reset() {
+	AdLib::reset();
+}
+
+void ADLPlayer::rewind() {
+	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+}
+
+void ADLPlayer::setVoices() {
+	// Definitions of the 9 instruments
+	for (int i = 0; i < 9; i++)
+		setVoice(i, i, true);
+}
+
+void ADLPlayer::setVoice(byte voice, byte instr, bool set) {
+	uint16 strct[27];
+	byte channel;
+	byte *dataPtr;
+
+	// i = 0 :  0  1  2  3  4  5  6  7  8  9 10 11 12 26
+	// i = 1 : 13 14 15 16 17 18 19 20 21 22 23 24 25 27
+	for (int i = 0; i < 2; i++) {
+		dataPtr = _data + 3 + instr * 0x38 + i * 0x1A;
+		for (int j = 0; j < 27; j++) {
+			strct[j] = READ_LE_UINT16(dataPtr);
+			dataPtr += 2;
+		}
+		channel = _operators[voice] + i * 3;
+		writeOPL(0xBD, 0x00);
+		writeOPL(0x08, 0x00);
+		writeOPL(0x40 | channel, ((strct[0] & 3) << 6) | (strct[8] & 0x3F));
+		if (!i)
+			writeOPL(0xC0 | voice,
+					((strct[2] & 7) << 1) | (1 - (strct[12] & 1)));
+		writeOPL(0x60 | channel, ((strct[3] & 0xF) << 4) | (strct[6] & 0xF));
+		writeOPL(0x80 | channel, ((strct[4] & 0xF) << 4) | (strct[7] & 0xF));
+		writeOPL(0x20 | channel, ((strct[9] & 1) << 7) |
+			((strct[10] & 1) << 6) | ((strct[5] & 1) << 5) |
+			((strct[11] & 1) << 4) |  (strct[1] & 0xF));
+		if (!i)
+			writeOPL(0xE0 | channel, (strct[26] & 3));
+		else
+			writeOPL(0xE0 | channel, (strct[14] & 3));
+		if (i && set)
+			writeOPL(0x40 | channel, 0);
+	}
+}
+
+
+MDYPlayer::MDYPlayer(Audio::Mixer &mixer) : AdLib(mixer) {
+	init();
+}
+
+MDYPlayer::~MDYPlayer() {
+}
+
+void MDYPlayer::init() {
+	_soundMode = 0;
+
+	_timbres = 0;
+	_tbrCount = 0;
+	_tbrStart = 0;
+	_timbresSize = 0;
+}
+
+bool MDYPlayer::loadMDY(Common::SeekableReadStream &stream) {
+	unloadMDY();
+
+	_freeData = true;
+
+	byte mdyHeader[70];
+	stream.read(mdyHeader, 70);
+
+	_tickBeat = mdyHeader[36];
+	_beatMeasure = mdyHeader[37];
+	_totalTick = mdyHeader[38] + (mdyHeader[39] << 8) + (mdyHeader[40] << 16) + (mdyHeader[41] << 24);
+	_dataSize = mdyHeader[42] + (mdyHeader[43] << 8) + (mdyHeader[44] << 16) + (mdyHeader[45] << 24);
+	_nrCommand = mdyHeader[46] + (mdyHeader[47] << 8) + (mdyHeader[48] << 16) + (mdyHeader[49] << 24);
+// _soundMode is either 0 (melodic) or 1 (percussive)
+	_soundMode = mdyHeader[58];
+	_pitchBendRangeStep = 25*mdyHeader[59];
+	_basicTempo = mdyHeader[60] + (mdyHeader[61] << 8);
+
+	if (_pitchBendRangeStep < 25)
+		_pitchBendRangeStep = 25;
+	else if (_pitchBendRangeStep > 300)
+		_pitchBendRangeStep = 300;
+
+	_data = new byte[_dataSize];
+	stream.read(_data, _dataSize);
+
+	reset();
+	_playPos = _data;
+
+	return true;
+}
+
+bool MDYPlayer::loadMDY(const char *fileName) {
 	Common::File song;
 
-	unload();
 	song.open(fileName);
 	if (!song.isOpen())
 		return false;
 
-	_needFree = true;
-	_dataSize = song.size();
-	_data = new byte[_dataSize];
-	song.read(_data, _dataSize);
+	bool loaded = loadMDY(song);
+
 	song.close();
 
+	return loaded;
+}
+
+bool MDYPlayer::loadTBR(Common::SeekableReadStream &stream) {
+	unloadTBR();
+
+	_timbresSize = stream.size();
+
+	_timbres = new byte[_timbresSize];
+	stream.read(_timbres, _timbresSize);
+
 	reset();
 	setVoices();
-	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
 
 	return true;
 }
 
-bool AdLib::load(byte *data, uint32 size, int index) {
-	unload();
-	_repCount = 0;
+bool MDYPlayer::loadTBR(const char *fileName) {
+	Common::File timbres;
 
-	_dataSize = size;
-	_data = data;
-	_index = index;
+	timbres.open(fileName);
+	if (!timbres.isOpen())
+		return false;
 
-	reset();
-	setVoices();
-	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
+	bool loaded = loadTBR(timbres);
 
-	return true;
+	timbres.close();
+
+	return loaded;
 }
 
-void AdLib::unload() {
-	_playing = false;
-	_index = -1;
-
-	if (_data && _needFree)
-		delete[] _data;
-
-	_needFree = false;
+void MDYPlayer::unload() {
+	unloadTBR();
+	unloadMDY();
 }
 
-bool AdLib::isPlaying() const {
-	return _playing;
+void MDYPlayer::unloadMDY() {
+	AdLib::unload();
 }
 
-bool AdLib::getRepeating() const {
-	return _repCount != 0;
+void MDYPlayer::unloadTBR() {
+	delete[] _timbres;
+
+	_timbres = 0;
+	_timbresSize = 0;
 }
 
-void AdLib::setRepeating(int32 repCount) {
-	_repCount = repCount;
+void MDYPlayer::interpret() {
+	unsigned char instr;
+	byte channel;
+	byte note;
+	byte volume;
+	uint8 tempoMult, tempoFrac;
+	uint8 ctrlByte1, ctrlByte2;
+	uint8 timbre;
+
+	if (_first) {
+		for (int i = 0; i < 11; i ++)
+			setVolume(i, 0);
+
+//	TODO : Set pitch range
+
+		_tempo = _basicTempo;
+		_wait = *(_playPos++);
+		_first = false;
+	}
+	do {
+		instr = *_playPos;
+//			printf("instr 0x%X\n", instr);
+		switch(instr) {
+		case 0xF8:
+			_wait = *(_playPos++);
+			break;
+		case 0xFC:
+			_ended = true;
+			_samplesTillPoll = 0;
+			return;
+		case 0xF0:
+			_playPos++;
+			ctrlByte1 = *(_playPos++);
+			ctrlByte2 = *(_playPos++);
+			if (ctrlByte1 != 0x7F || ctrlByte2 != 0) {
+				_playPos -= 2;
+				while (*(_playPos++) != 0xF7);
+			} else {
+				tempoMult = *(_playPos++);
+				tempoFrac = *(_playPos++);
+				_tempo = _basicTempo * tempoMult + (unsigned)(((long)_basicTempo * tempoFrac) >> 7);
+				_playPos++;
+			}
+			_wait = *(_playPos++);
+			break;
+		default:
+			if (instr >= 0x80) {
+				_playPos++;
+			}
+			channel = (int)(instr & 0x0f);
+
+			switch(instr & 0xf0) {
+			case 0x90:
+				note = *(_playPos++);
+				volume = *(_playPos++);
+				_pollNotes[channel] = note;
+				setVolume(channel, volume);
+				setKey(channel, note, true, false);
+				break;
+			case 0x80:
+				_playPos += 2;
+				note = _pollNotes[channel];
+				setKey(channel, note, false, false);
+				break;
+			case 0xA0:
+				setVolume(channel, *(_playPos++));
+				break;
+			case 0xC0:
+				timbre = *(_playPos++);
+				setVoice(channel, timbre, false);
+				break;
+			case 0xE0:
+				warning("MDYPlayer: Pitch bend not yet implemented");
+
+				note = *(_playPos)++;
+				note += (unsigned)(*(_playPos++)) << 7;
+
+				setKey(channel, note, _notOn[channel], true);
+
+				break;
+			case 0xB0:
+				_playPos += 2;
+				break;
+			case 0xD0:
+				_playPos++;
+				break;
+			default:
+				warning("MDYPlayer: Bad MIDI instr byte: 0%X", instr);
+				while ((*_playPos) < 0x80)
+					_playPos++;
+				if (*_playPos != 0xF8)
+					_playPos--;
+				break;
+			} //switch instr & 0xF0
+			_wait = *(_playPos++);
+			break;
+		} //switch instr
+	} while (_wait == 0);
+
+	if (_wait == 0xF8) {
+		_wait = 0xF0;
+		if (*_playPos != 0xF8)
+			_wait += *(_playPos++);
+	}
+//		_playPos++;
+	_samplesTillPoll = _wait * (_rate / 1000);
 }
 
-int AdLib::getIndex() const {
-	return _index;
+void MDYPlayer::reset() {
+	AdLib::reset();
+
+// _soundMode 1 : Percussive mode.
+	if (_soundMode == 1) {
+		writeOPL(0xA6, 0);
+		writeOPL(0xB6, 0);
+		writeOPL(0xA7, 0);
+		writeOPL(0xB7, 0);
+		writeOPL(0xA8, 0);
+		writeOPL(0xB8, 0);
+
+// TODO set the correct frequency for the last 4 percussive voices
+	}
 }
 
-void AdLib::startPlay() {
-	if (_data) _playing = true;
+void MDYPlayer::rewind() {
+	_playPos = _data;
 }
 
-void AdLib::stopPlay() {
-	Common::StackLock slock(_mutex);
-	_playing = false;
+void MDYPlayer::setVoices() {
+	byte *timbrePtr;
+
+	timbrePtr = _timbres;
+	debugC(6, kDebugSound, "TBR version: %X.%X", timbrePtr[0], timbrePtr[1]);
+	timbrePtr += 2;
+
+	_tbrCount = READ_LE_UINT16(timbrePtr);
+	debugC(6, kDebugSound, "Timbres counter: %d", _tbrCount);
+	timbrePtr += 2;
+	_tbrStart = READ_LE_UINT16(timbrePtr);
+
+	timbrePtr += 2;
+	for (int i = 0; i < _tbrCount ; i++)
+		setVoice(i, i, true);
+}
+
+void MDYPlayer::setVoice(byte voice, byte instr, bool set) {
+	uint16 strct[27];
+	byte channel;
+	byte *timbrePtr;
+	char timbreName[10];
+
+	timbreName[9] = '\0';
+	for (int j = 0; j < 9; j++)
+		timbreName[j] = _timbres[6 + j + (instr * 9)];
+	debugC(6, kDebugSound, "Loading timbre %s", timbreName);
+
+	// i = 0 :  0  1  2  3  4  5  6  7  8  9 10 11 12 26
+	// i = 1 : 13 14 15 16 17 18 19 20 21 22 23 24 25 27
+	for (int i = 0; i < 2; i++) {
+		timbrePtr = _timbres + _tbrStart + instr * 0x38 + i * 0x1A;
+		for (int j = 0; j < 27; j++) {
+			if (timbrePtr >= (_timbres + _timbresSize)) {
+				warning("MDYPlayer: Instrument %d out of range (%d, %d)", instr,
+						(uint32) (timbrePtr - _timbres), _timbresSize);
+				strct[j] = 0;
+			} else
+				strct[j] = READ_LE_UINT16(timbrePtr);
+			timbrePtr += 2;
+		}
+		channel = _operators[voice] + i * 3;
+		writeOPL(0xBD, 0x00);
+		writeOPL(0x08, 0x00);
+		writeOPL(0x40 | channel, ((strct[0] & 3) << 6) | (strct[8] & 0x3F));
+		if (!i)
+			writeOPL(0xC0 | voice,
+					((strct[2] & 7) << 1) | (1 - (strct[12] & 1)));
+		writeOPL(0x60 | channel, ((strct[3] & 0xF) << 4) | (strct[6] & 0xF));
+		writeOPL(0x80 | channel, ((strct[4] & 0xF) << 4) | (strct[7] & 0xF));
+		writeOPL(0x20 | channel, ((strct[9] & 1) << 7) |
+			((strct[10] & 1) << 6) | ((strct[5] & 1) << 5) |
+			((strct[11] & 1) << 4) |  (strct[1] & 0xF));
+		if (!i)
+			writeOPL(0xE0 | channel, (strct[26] & 3));
+		else {
+			writeOPL(0xE0 | channel, (strct[14] & 3));
+			writeOPL(0x40 | channel, 0);
+		}
+	}
 }
 
 } // End of namespace Gob

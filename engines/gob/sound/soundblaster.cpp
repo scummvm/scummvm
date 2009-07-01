@@ -24,6 +24,7 @@
  */
 
 #include "gob/sound/soundblaster.h"
+#include "gob/sound/sounddesc.h"
 
 namespace Gob {
 

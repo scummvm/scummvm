@@ -61,6 +61,7 @@ static const char *credits[] = {
 "C1""Cinematique evo 2",
 "C0""Vincent Hamm",
 "C2""original CruisE engine author",
+"C0""Paul Gilbert",
 "",
 "C1""FOTAQ",
 "C0""Gregory Montoir",

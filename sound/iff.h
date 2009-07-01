@@ -32,6 +32,7 @@
 #define SOUND_IFF_H
 
 #include "common/iff_container.h"
+#include "sound/audiostream.h"
 
 namespace Audio {
 
@@ -47,34 +48,12 @@ struct Voice8Header {
 	Voice8Header() {
 		memset(this, 0, sizeof(Voice8Header));
 	}
+
+	void load(Common::ReadStream &stream);
 };
 
+AudioStream *make8SVXStream(Common::ReadStream &stream, bool loop);
 
-/*
-	A8SVX decoder reads 8SVX subtype of IFF files.
-
-	TODO: make a factory function for this kind of stream?
- */
-class A8SVXDecoder : public Common::IFFParser {
-
-protected:
-	Voice8Header	&_header;
-	int8*			&_data;
-	uint32			&_dataSize;
-
-protected:
-	void readVHDR(Common::IFFChunk &chunk);
-	void readBODY(Common::IFFChunk &chunk);
-
-public:
-	A8SVXDecoder(Common::ReadStream &input, Voice8Header &header, int8 *&data, uint32 &dataSize);
-	void decode();
-};
-
-
-/*
-	TODO: Implement a parser for AIFF subtype.
- */
 
 }
 

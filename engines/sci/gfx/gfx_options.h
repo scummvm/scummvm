@@ -42,20 +42,20 @@
 
 namespace Sci {
 
-/* Dirty rectangle heuristics: */
+/** Dirty rectangle heuristics. */
+enum {
+	GFXOP_DIRTY_FRAMES_ONE = 1, /**< One: Redraw one rectangle surrounding the dirty area (insert is O(1)) */
+	GFXOP_DIRTY_FRAMES_CLUSTERS = 2 /**< Clusters: Accumulate dirty rects, merging those that overlap (insert is O(n))  */
+};
 
-/* One: Redraw one rectangle surrounding the dirty area (insert is O(1)) */
-#define GFXOP_DIRTY_FRAMES_ONE 1
-
-/* Clusters: Accumulate dirty rects, merging those that overlap (insert is O(n))  */
-#define GFXOP_DIRTY_FRAMES_CLUSTERS 2
-
+/**
+ * All user options to the rendering pipeline
+ *
+ * See note in sci_conf.h for config_entry_t before changing types of
+ * variables
+ */
 struct gfx_options_t {
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	/* gfx_options_t: Contains all user options to the rendering pipeline */
-	/* See note in sci_conf.h for config_entry_t before changing types of
-	** variables */
-
 	int buffer_pics_nr; /* Number of unused pics to buffer */
 
 	/* SCI0 pic resource options */

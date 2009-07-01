@@ -33,37 +33,51 @@
 
 namespace Gob {
 
-#define VIDMODE_CGA	0x05
-#define VIDMODE_EGA	0x0D
-#define VIDMODE_VGA	0x13
-#define VIDMODE_HER	7
+#define VIDMODE_CGA 0x05
+#define VIDMODE_EGA 0x0D
+#define VIDMODE_VGA 0x13
+#define VIDMODE_HER 0x07
 
-#define PROAUDIO_FLAG	0x10
-#define ADLIB_FLAG		0x08
-#define BLASTER_FLAG	0x04
-#define INTERSOUND_FLAG	0x02
-#define SPEAKER_FLAG	0x01
-#define MIDI_FLAG		0x4000
+#define MIDI_FLAG       0x4000
+#define PROAUDIO_FLAG   0x0010
+#define ADLIB_FLAG      0x0008
+#define BLASTER_FLAG    0x0004
+#define INTERSOUND_FLAG 0x0002
+#define SPEAKER_FLAG    0x0001
 
-#define NO	0
-#define YES	1
-#define UNDEF	2
+#define NO    0
+#define YES   1
+#define UNDEF 2
 
-#define F1_KEY	0x3B00
-#define F2_KEY	0x3C00
-#define F3_KEY	0x3D00
-#define F4_KEY	0x3E00
-#define F5_KEY	0x3F00
-#define F6_KEY	0x4000
-#define ESCAPE	0x001B
-#define ENTER	0x000D
+#define F1_KEY 0x3B00
+#define F2_KEY 0x3C00
+#define F3_KEY 0x3D00
+#define F4_KEY 0x3E00
+#define F5_KEY 0x3F00
+#define F6_KEY 0x4000
+#define ESCAPE 0x001B
+#define ENTER  0x000D
 
 /* Video drivers */
-#define UNK_DRIVER	0
-#define VGA_DRIVER	1
-#define EGA_DRIVER	2
-#define CGA_DRIVER	3
-#define HER_DRIVER	4
+#define UNK_DRIVER 0
+#define VGA_DRIVER 1
+#define EGA_DRIVER 2
+#define CGA_DRIVER 3
+#define HER_DRIVER 4
+
+enum Language {
+	kLanguageFrench     =  0,
+	kLanguageGerman     =  1,
+	kLanguageBritish    =  2,
+	kLanguageSpanish    =  3,
+	kLanguageItalian    =  4,
+	kLanguageAmerican   =  5,
+	kLanguageDutch      =  6,
+	kLanguageKorean     =  7,
+	kLanguageHebrew     =  8,
+	kLanguagePortuguese =  9,
+	kLanguageJapanese   = 10
+};
 
 class Global {
 public:
@@ -82,6 +96,7 @@ public:
 
 	uint16 _language;
 	uint16 _languageWanted;
+	bool   _foundLanguage;
 
 	char _useMouse;
 	int16 _mousePresent;
@@ -116,9 +131,6 @@ public:
 
 	int16 _debugFlag;
 	int16 _inVM;
-
-	char _inter_resStr[200];
-	int32 _inter_resVal;
 
 	byte *_inter_execPtr;
 	int16 _inter_animDataSize;

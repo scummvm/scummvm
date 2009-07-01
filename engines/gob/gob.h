@@ -52,7 +52,6 @@ class Inter;
 class Map;
 class Mult;
 class PalAnim;
-class Parse;
 class Scenery;
 class Util;
 class SaveLoad;
@@ -128,7 +127,7 @@ enum {
 	kDebugDrawOp     = 1 <<  1,
 	kDebugGobOp      = 1 <<  2,
 	kDebugSound      = 1 <<  3,
-	kDebugParser     = 1 <<  4,
+	kDebugExpression = 1 <<  4,
 	kDebugGameFlow   = 1 <<  5,
 	kDebugFileIO     = 1 <<  6,
 	kDebugSaveLoad   = 1 <<  7,
@@ -197,7 +196,6 @@ public:
 	Map *_map;
 	Mult *_mult;
 	PalAnim *_palAnim;
-	Parse *_parse;
 	Scenery *_scenery;
 	Inter *_inter;
 	SaveLoad *_saveLoad;

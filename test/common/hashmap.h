@@ -108,5 +108,48 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(container2[323], 32);
 	}
 
+    void test_collision() {
+		// NB: The usefulness of this example depends strongly on the
+		// specific hashmap implementation.
+		// It is constructed to insert multiple colliding elements.
+		Common::HashMap<int, int> h;
+		h[5] = 1;
+		h[32+5] = 1;
+		h[64+5] = 1;
+		h[128+5] = 1;
+		TS_ASSERT(h.contains(5));
+		TS_ASSERT(h.contains(32+5));
+		TS_ASSERT(h.contains(64+5));
+		TS_ASSERT(h.contains(128+5));
+		h.erase(32+5);
+		TS_ASSERT(h.contains(5));
+		TS_ASSERT(h.contains(64+5));
+		TS_ASSERT(h.contains(128+5));
+		h.erase(5);
+		TS_ASSERT(h.contains(64+5));
+		TS_ASSERT(h.contains(128+5));
+		h[32+5] = 1;
+		TS_ASSERT(h.contains(32+5));
+		TS_ASSERT(h.contains(64+5));
+		TS_ASSERT(h.contains(128+5));
+		h[5] = 1;
+		TS_ASSERT(h.contains(5));
+		TS_ASSERT(h.contains(32+5));
+		TS_ASSERT(h.contains(64+5));
+		TS_ASSERT(h.contains(128+5));
+		h.erase(5);
+		TS_ASSERT(h.contains(32+5));
+		TS_ASSERT(h.contains(64+5));
+		TS_ASSERT(h.contains(128+5));
+		h.erase(64+5);
+		TS_ASSERT(h.contains(32+5));
+		TS_ASSERT(h.contains(128+5));
+		h.erase(128+5);
+		TS_ASSERT(h.contains(32+5));
+		h.erase(32+5);
+		TS_ASSERT(h.empty());
+    }
+
+
 	// TODO: Add test cases for iterators, find, ...
 };

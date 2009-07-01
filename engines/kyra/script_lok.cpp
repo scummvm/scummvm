@@ -231,7 +231,8 @@ int KyraEngine_LoK::o1_fadeSpecialPalette(EMCState *script) {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fadeSpecialPalette(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 		if (_currentCharacter->sceneId != 45) {
 			if (stackPos(0) == 13) {
-				memcpy(_screen->getPalette(0), _screen->getPalette(0) + 384*3, 32*3);
+				// TODO: Check this!
+				_screen->copyPalette(0, 12);
 				_screen->setScreenPalette(_screen->getPalette(0));
 			}
 		} else {
@@ -427,7 +428,7 @@ int KyraEngine_LoK::o1_runWSAFromBeginningToEnd(EMCState *script) {
 	int wsaFrame = 0;
 
 	while (running) {
-		_movieObjects[wsaIndex]->displayFrame(wsaFrame++, 0, xpos, ypos);
+		_movieObjects[wsaIndex]->displayFrame(wsaFrame++, 0, xpos, ypos, 0, 0, 0);
 		_animator->_updateScreen = true;
 		if (wsaFrame >= _movieObjects[wsaIndex]->frames())
 			running = false;
@@ -458,7 +459,7 @@ int KyraEngine_LoK::o1_displayWSAFrame(EMCState *script) {
 	int waitTime = stackPos(3);
 	int wsaIndex = stackPos(4);
 	_screen->hideMouse();
-	_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos);
+	_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos, 0, 0, 0);
 	_animator->_updateScreen = true;
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	while (_system->getMillis() < continueTime) {
@@ -500,7 +501,7 @@ int KyraEngine_LoK::o1_runWSAFrames(EMCState *script) {
 	_screen->hideMouse();
 	for (; startFrame <= endFrame; ++startFrame) {
 		uint32 nextRun = _system->getMillis() + delayTime * _tickLength;
-		_movieObjects[wsaIndex]->displayFrame(startFrame, 0, xpos, ypos);
+		_movieObjects[wsaIndex]->displayFrame(startFrame, 0, xpos, ypos, 0, 0, 0);
 		_animator->_updateScreen = true;
 		while (_system->getMillis() < nextRun) {
 			_sprites->updateSceneAnims();
@@ -578,7 +579,7 @@ int KyraEngine_LoK::o1_restoreAllObjectBackgrounds(EMCState *script) {
 
 int KyraEngine_LoK::o1_setCustomPaletteRange(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCustomPaletteRange(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	memcpy(_screen->getPalette(1) + stackPos(1)*3, _specialPalettes[stackPos(0)], stackPos(2)*3);
+	_screen->getPalette(1).copy(_specialPalettes[stackPos(0)], 0, stackPos(2), stackPos(1));
 	return 0;
 }
 
@@ -682,7 +683,7 @@ int KyraEngine_LoK::o1_displayWSAFrameOnHidPage(EMCState *script) {
 
 	_screen->hideMouse();
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-	_movieObjects[wsaIndex]->displayFrame(frame, 2, xpos, ypos);
+	_movieObjects[wsaIndex]->displayFrame(frame, 2, xpos, ypos, 0, 0, 0);
 	_animator->_updateScreen = true;
 	while (_system->getMillis() < continueTime) {
 		_sprites->updateSceneAnims();
@@ -753,7 +754,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 	// what shouldn't happen. So we're not updating the screen for this special
 	// case too.
 	if (startFrame == 18 && endFrame == 18 && _currentRoom == 45) {
-		_movieObjects[wsaIndex]->displayFrame(18, 0, xpos, ypos);
+		_movieObjects[wsaIndex]->displayFrame(18, 0, xpos, ypos, 0, 0, 0);
 		delay(waitTime * _tickLength);
 		return 0;
 	}
@@ -765,7 +766,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 			int frame = startFrame;
 			while (endFrame >= frame) {
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos);
+				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos, 0, 0, 0);
 				if (waitTime)
 					_animator->_updateScreen = true;
 				while (_system->getMillis() < continueTime) {
@@ -783,7 +784,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 			int frame = startFrame;
 			while (endFrame <= frame) {
 				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos);
+				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos, 0, 0, 0);
 				if (waitTime)
 					_animator->_updateScreen = true;
 				while (_system->getMillis() < continueTime) {
@@ -911,8 +912,6 @@ int KyraEngine_LoK::o1_placeCharacterInOtherScene(EMCState *script) {
 
 int KyraEngine_LoK::o1_getKey(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getKey(%p) ()", (const void *)script);
-
-	// TODO: Check this implementation
 
 	while (true) {
 		delay(10);
@@ -1243,8 +1242,8 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 			palIndex = 14;
 		}
 	}
-	const uint8 *palette = _specialPalettes[palIndex];
-	memcpy(_screen->getPalette(1) + 684, palette, 44);
+
+	_screen->getPalette(1).copy(_specialPalettes[palIndex], 0, 15, 228);
 	return 0;
 }
 
@@ -1276,7 +1275,7 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 			if (code == 14)
 				snd_playSoundEffect(0x73);
 
-			amulet.displayFrame(code, 0, 224, 152);
+			amulet.displayFrame(code, 0, 224, 152, 0, 0, 0);
 			_animator->_updateScreen = true;
 
 			while (_system->getMillis() < nextTime) {
@@ -1501,40 +1500,38 @@ int KyraEngine_LoK::o1_setNoDrawShapesFlag(EMCState *script) {
 int KyraEngine_LoK::o1_fadeEntirePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fadeEntirePalette(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int cmd = stackPos(0);
-	uint8 *fadePal = 0;
+
+	int fadePal = 0;
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (cmd == 0) {
-			fadePal = _screen->getPalette(2);
-			memset(fadePal, 0, 32*3);
-			memcpy(_screen->getPalette(4), _screen->getPalette(0), 32*3);
+			_screen->getPalette(2).clear();
+			fadePal = 2;
+			_screen->copyPalette(4, 0);
 		} else if (cmd == 1) {
-			fadePal = _screen->getPalette(0);
-			memcpy(_screen->getPalette(0), _screen->getPalette(4), 32*3);
+			fadePal = 0;
+			_screen->copyPalette(0, 4);
 		} else if (cmd == 2) {
-			fadePal = _screen->getPalette(0);
-			memset(_screen->getPalette(2), 0, 32*3);
+			fadePal = 0;
+			_screen->getPalette(2).clear();
 		}
 	} else {
 		if (cmd == 0) {
-			fadePal = _screen->getPalette(2);
-			uint8 *screenPal = _screen->getPalette(0);
-			uint8 *backUpPal = _screen->getPalette(3);
-
-			memcpy(backUpPal, screenPal, sizeof(uint8)*768);
-			memset(fadePal, 0, sizeof(uint8)*768);
+			fadePal = 2;
+			_screen->getPalette(2).clear();
+			_screen->copyPalette(3, 0);
 		} else if (cmd == 1) {
-			//fadePal = _screen->getPalette(3);
+			//fadePal = 3;
 			warning("unimplemented o1_fadeEntirePalette function");
 			return 0;
 		} else if (cmd == 2) {
-			memset(_screen->getPalette(2), 0, 768);
-			memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
-			fadePal = _screen->getPalette(0);
+			_screen->getPalette(2).clear();
+			_screen->copyPalette(0, 1);
+			fadePal = 0;
 		}
 	}
 
-	_screen->fadePalette(fadePal, stackPos(1));
+	_screen->fadePalette(_screen->getPalette(fadePal), stackPos(1));
 	return 0;
 }
 

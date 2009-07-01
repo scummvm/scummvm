@@ -975,49 +975,42 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 // Used for speech playback in CD games
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Audio::Mixer *mixer = g_system->getMixer();
-	int sampleLen = 0;
-
-	if (!s->_sound._audioResource)
-		s->_sound._audioResource = new AudioResource(s->resmgr, s->_version);
 
 	switch (argv[0].toUint16()) {
 	case kSciAudioWPlay:
-	case kSciAudioPlay:
-		s->_sound._audioResource->stop();
+	case kSciAudioPlay: {
+		uint16 module;
+		uint32 number;
 
-		if (argc == 2) {			// KQ5CD, KQ6 floppy
-			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(argv[1].toUint16(), 65535, &sampleLen);
+		s->_sound.stopAudio();
 
-			if (audioStream)
-				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
-		} else if (argc == 6) {		// SQ4CD or newer
-			// Make a BE number
-			uint32 audioNumber = (((argv[2].toUint16() & 0xFF) << 24) & 0xFF000000) |
-								 (((argv[3].toUint16() & 0xFF) << 16) & 0x00FF0000) |
-								 (((argv[4].toUint16() & 0xFF) <<  8) & 0x0000FF00) |
-								 ( (argv[5].toUint16() & 0xFF)        & 0x000000FF);
-
-			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(audioNumber, argv[1].toUint16(), &sampleLen);
-
-			if (audioStream)
-				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
-		} else {					// Hopefully, this should never happen
+		if (argc == 2) {
+			module = 65535;
+			number = argv[1].toUint16();
+		} else if (argc == 6) {
+			module = argv[1].toUint16();
+			number = ((argv[2].toUint16() & 0xff) << 24) | ((argv[3].toUint16() & 0xff) << 16) |
+					 ((argv[4].toUint16() & 0xff) <<  8) | (argv[5].toUint16() & 0xff);
+		} else {
 			warning("kDoAudio: Play called with an unknown number of parameters (%d)", argc);
+			return NULL_REG;
 		}
-		return make_reg(0, sampleLen);		// return sample length in ticks
+
+		return make_reg(0, s->_sound.startAudio(module, number)); // return sample length in ticks
+	}
 	case kSciAudioStop:
-		s->_sound._audioResource->stop();
+		s->_sound.stopAudio();
 		break;
 	case kSciAudioPause:
-		s->_sound._audioResource->pause();
+		s->_sound.pauseAudio();
 		break;
 	case kSciAudioResume:
-		s->_sound._audioResource->resume();
+		s->_sound.resumeAudio();
 		break;
 	case kSciAudioPosition:
-		return make_reg(0, s->_sound._audioResource->getAudioPosition());
+		return make_reg(0, s->_sound.getAudioPosition());
 	case kSciAudioRate:
-		s->_sound._audioResource->setAudioRate(argv[1].toUint16());
+		s->_sound.setAudioRate(argv[1].toUint16());
 		break;
 	case kSciAudioVolume:
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, argv[1].toUint16());
@@ -1027,7 +1020,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			// In SCI1.1: tests for digital audio support
 			return make_reg(0, 1);
 		} else {
-			s->_sound._audioResource->setAudioLang(argv[1].toSint16());
+			s->resmgr->setAudioLanguage(argv[1].toSint16());
 		}
 		break;
 	default:
@@ -1042,8 +1035,10 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case kSciAudioSyncStart: {
 		ResourceId id;
 
-		if (s->_sound._soundSync)
-			s->resmgr->unlockResource(s->_sound._soundSync);
+		if (s->_sound._syncResource) {
+			s->resmgr->unlockResource(s->_sound._syncResource);
+			s->_sound._syncResource = NULL;
+		}
 
 		// Load sound sync resource and lock it
 		if (argc == 3) {
@@ -1056,10 +1051,11 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		s->_sound._soundSync = (ResourceSync *)s->resmgr->findResource(id, 1);
+		s->_sound._syncResource = s->resmgr->findResource(id, 1);
 
-		if (s->_sound._soundSync) {
-			s->_sound._soundSync->startSync(s, argv[1]);
+		if (s->_sound._syncResource) {
+			PUT_SEL32V(argv[1], syncCue, 0);
+			s->_sound._syncOffset = 0;
 		} else {
 			warning("DoSync: failed to find resource %s", id.toString().c_str());
 			// Notify the scripts to stop sound sync
@@ -1067,20 +1063,32 @@ reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 		break;
 	}
-	case kSciAudioSyncNext:
-		if (s->_sound._soundSync) {
-			s->_sound._soundSync->nextSync(s, argv[1]);
+	case kSciAudioSyncNext: {
+		Resource *res = s->_sound._syncResource;
+		if (res && (s->_sound._syncOffset < res->size - 1)) {
+			int16 syncCue = -1;
+			int16 syncTime = (int16)READ_LE_UINT16(res->data + s->_sound._syncOffset);
+
+			s->_sound._syncOffset += 2;
+
+			if ((syncTime != -1) && (s->_sound._syncOffset < res->size - 1)) {
+				syncCue = (int16)READ_LE_UINT16(res->data + s->_sound._syncOffset);
+				s->_sound._syncOffset += 2;
+			}
+
+			PUT_SEL32V(argv[1], syncTime, syncTime);
+			PUT_SEL32V(argv[1], syncCue, syncCue);
 		}
 		break;
+	}
 	case kSciAudioSyncStop:
-		if (s->_sound._soundSync) {
-			s->_sound._soundSync->stopSync();
-			s->resmgr->unlockResource(s->_sound._soundSync);
-			s->_sound._soundSync = NULL;
+		if (s->_sound._syncResource) {
+			s->resmgr->unlockResource(s->_sound._syncResource);
+			s->_sound._syncResource = NULL;
 		}
 		break;
 	default:
-		warning("kDoSync: Unhandled case %d", argv[0].toUint16());
+		warning("DoSync: Unhandled subfunction %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;

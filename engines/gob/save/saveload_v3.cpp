@@ -302,7 +302,7 @@ bool SaveLoad_v3::GameHandler::createReader(int slot) {
 
 	if (!_reader || (_reader->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
-		
+
 		if (slotFile.empty())
 			return false;
 
@@ -319,7 +319,7 @@ bool SaveLoad_v3::GameHandler::createReader(int slot) {
 
 		} else
 			_reader = new SaveReader(_usesScreenshots ? 3 : 2, slot, slotFile);
-		
+
 		if (!_reader->load()) {
 			delete _reader;
 			_reader = 0;
@@ -337,7 +337,7 @@ bool SaveLoad_v3::GameHandler::createWriter(int slot) {
 
 	if (!_writer || (_writer->getSlot() != ((uint32) slot))) {
 		Common::String slotFile = _slotFile->build(slot);
-		
+
 		if (slotFile.empty())
 			return false;
 
@@ -495,7 +495,7 @@ SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName, ScreenshotType s
 		_gameHandler = new GameHandler(vm, targetName, true);
 		_screenshotHandler = new ScreenshotHandler(vm, _gameHandler, sShotType);
 	}
-	
+
 	_tempSpriteHandler = new TempSpriteHandler(vm);
 	_notesHandler = new NotesHandler(2560, vm, targetName);
 

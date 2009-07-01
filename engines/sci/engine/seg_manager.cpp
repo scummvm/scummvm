@@ -430,7 +430,7 @@ void SegManager::heapRelocate(reg_t block) {
 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff) ? NULL_REG : get_class_address(s, id, SCRIPT_GET_LOCK, NULL_REG))
 
-reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller);
+reg_t get_class_address(EngineState *s, int classnr, SCRIPT_GET lock, reg_t caller);
 
 Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 	Object *obj;

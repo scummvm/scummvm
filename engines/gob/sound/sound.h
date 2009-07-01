@@ -27,15 +27,18 @@
 #define GOB_SOUND_SOUND_H
 
 #include "gob/sound/sounddesc.h"
-#include "gob/sound/pcspeaker.h"
-#include "gob/sound/soundblaster.h"
-#include "gob/sound/adlib.h"
-#include "gob/sound/infogrames.h"
-#include "gob/sound/protracker.h"
-#include "gob/sound/cdrom.h"
 #include "gob/sound/bgatmosphere.h"
 
 namespace Gob {
+
+class GobEngine;
+class PCSpeaker;
+class SoundBlaster;
+class ADLPlayer;
+class MDYPlayer;
+class Infogrames;
+class Protracker;
+class CDROM;
 
 class Sound {
 public:
@@ -77,8 +80,10 @@ public:
 
 
 	// AdLib
-	bool adlibLoad(const char *fileName);
-	bool adlibLoad(byte *data, uint32 size, int index = -1);
+	bool adlibLoadADL(const char *fileName);
+	bool adlibLoadADL(byte *data, uint32 size, int index = -1);
+	bool adlibLoadMDY(const char *fileName);
+	bool adlibLoadTBR(const char *fileName);
 	void adlibUnload();
 
 	void adlibPlayTrack(const char *trackname);
@@ -139,11 +144,14 @@ public:
 private:
 	GobEngine *_vm;
 
+	bool _hasAdLib;
+
 	SoundDesc _sounds[kSoundsCount];
 
 	PCSpeaker *_pcspeaker;
 	SoundBlaster *_blaster;
-	AdLib *_adlib;
+	ADLPlayer *_adlPlayer;
+	MDYPlayer *_mdyPlayer;
 	Infogrames *_infogrames;
 	Protracker *_protracker;
 	CDROM *_cdrom;

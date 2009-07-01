@@ -52,7 +52,6 @@ class MoviePlayer {
 	bool _rightButtonDown;
 	bool _skipMovie;
 	uint32 _ticks;
-	uint16 _frameSkipped;
 
 	char baseName[40];
 public:

@@ -331,7 +331,7 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 	int yl = READ_LE_UINT16(cel_base + 2);
 	int pixmap_size = xl * yl;
 	int xdisplace = isSci11 ? READ_LE_UINT16(cel_base + 4) : (int8) cel_base[4];
-	int ydisplace = isSci11 ? READ_LE_UINT16(cel_base + 6) : (int8) cel_base[5];
+	int ydisplace = isSci11 ? READ_LE_UINT16(cel_base + 6) : cel_base[5];
 	int runlength_offset = isSci11 ? READ_LE_UINT16(cel_base + 24) : 8;
 	int literal_offset = isSci11 ? READ_LE_UINT16(cel_base + 28) : 8;
 	gfx_pixmap_t *retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(xl, yl, id, loop, cel));

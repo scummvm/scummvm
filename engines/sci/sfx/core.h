@@ -50,8 +50,9 @@ public:	// FIXME, make private
 	SongLibrary _songlib; /**< Song library */
 	Song *_song; /**< Active song, or start of active song chain */
 	bool _suspended; /**< Whether we are suspended */
-	ResourceSync *_soundSync; /**< Used by kDoSync for speech syncing in CD talkie games */
-	AudioResource *_audioResource; /**< Used for audio resources in CD talkie games */
+	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
+	uint _syncOffset;
+	ResourceManager *_resMgr;
 
 public:
 	SfxState();
@@ -164,6 +165,15 @@ public:
 	Common::Error sfx_send_midi(SongHandle handle, int channel,
 		int command, int arg1, int arg2);
 
+	// Functions for digital sound
+	void setAudioRate(uint16 rate) { _audioRate = rate; }
+	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
+	int getAudioPosition();
+	int startAudio(uint16 module, uint32 tuple);
+	void stopAudio() { g_system->getMixer()->stopHandle(_audioHandle); }
+	void pauseAudio() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
+	void resumeAudio() { g_system->getMixer()->pauseHandle(_audioHandle, false); }
+
 protected:
 	void freezeTime();
 	void thawTime();
@@ -173,8 +183,12 @@ protected:
 	void updateSingleSong();
 	void updateMultiSong();
 	void update();
-};
 
+private:
+	uint16 _audioRate;
+	Audio::SoundHandle _audioHandle;
+	Audio::AudioStream* getAudioStream(uint32 number, uint32 volume, int *sampleLen);
+};
 
 } // End of namespace Sci
 

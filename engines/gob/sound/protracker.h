@@ -28,7 +28,6 @@
 
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
-#include "sound/mods/protracker.h"
 
 namespace Gob {
 

@@ -26,6 +26,7 @@
 #ifndef KYRA_WSAMOVIE_H
 #define KYRA_WSAMOVIE_H
 
+
 namespace Audio {
 class AppendableAudioStream;
 class SoundHandle;
@@ -34,10 +35,11 @@ class SoundHandle;
 namespace Kyra {
 class KyraEngine_v1;
 class Screen_v2;
+class Palette;
 
 class Movie {
 public:
-	Movie(KyraEngine_v1 *vm) : _vm(vm), _opened(false),  _x(-1), _y(-1), _drawPage(-1) {}
+	Movie(KyraEngine_v1 *vm) : _vm(vm), _screen(vm->screen()), _opened(false),  _x(-1), _y(-1), _drawPage(-1) {}
 	virtual ~Movie() {}
 
 	virtual bool opened() { return _opened; }
@@ -48,15 +50,16 @@ public:
 	virtual int width() const = 0;
 	virtual int height() const = 0;
 
-	virtual int open(const char *filename, int offscreen, uint8 *palette) = 0;
+	virtual int open(const char *filename, int offscreen, Palette *palette) = 0;
 	virtual void close() = 0;
 
 	virtual int frames() = 0;
 
-	virtual void displayFrame(int frameNum, int pageNum, int x, int y, ...) = 0;
+	virtual void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) = 0;
 
 protected:
 	KyraEngine_v1 *_vm;
+	Screen *_screen;
 	bool _opened;
 
 	int _x, _y;
@@ -71,12 +74,12 @@ public:
 	int width() const { return _width; }
 	int height() const { return _height; }
 
-	virtual int open(const char *filename, int offscreen, uint8 *palette);
+	virtual int open(const char *filename, int offscreen, Palette *palette);
 	virtual void close();
 
 	virtual int frames() { return _opened ? _numFrames : -1; }
 
-	virtual void displayFrame(int frameNum, int pageNum, int x, int y, ...);
+	virtual void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2);
 
 	enum WSAFlags {
 		WF_OFFSCREEN_DECODE = 0x10,
@@ -104,10 +107,10 @@ protected:
 class WSAMovieAmiga : public WSAMovie_v1 {
 public:
 	WSAMovieAmiga(KyraEngine_v1 *vm);
-	int open(const char *filename, int offscreen, uint8 *palette);
+	int open(const char *filename, int offscreen, Palette *palette);
 	void close();
 
-	void displayFrame(int frameNum, int pageNum, int x, int y, ...);
+	void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2);
 private:
 	void processFrame(int frameNum, uint8 *dst);
 
@@ -116,11 +119,12 @@ private:
 
 class WSAMovie_v2 : public WSAMovie_v1 {
 public:
-	WSAMovie_v2(KyraEngine_v1 *vm, Screen_v2 *screen);
+	WSAMovie_v2(KyraEngine_v1 *vm);
 
-	int open(const char *filename, int unk1, uint8 *palette);
-
-	virtual void displayFrame(int frameNum, int pageNum, int x, int y, ...);
+	int open(const char *filename, int unk1, Palette *palette);
+	virtual void displayFrame(int frameNum, int pageNum, int x, int y, uint16 flags, const uint8 *table1, const uint8 *table2) {
+		WSAMovie_v1::displayFrame(frameNum, pageNum, x + _xAdd, y + _yAdd, flags, table1, table2);
+	}
 
 	int xAdd() const { return _xAdd; }
 	int yAdd() const { return _yAdd; }
@@ -128,8 +132,6 @@ public:
 	void setWidth(int w) { _width = w; }
 	void setHeight(int h) { _height = h; }
 protected:
-	Screen_v2 *_screen;
-
 	int16 _xAdd;
 	int16 _yAdd;
 };

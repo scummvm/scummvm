@@ -123,7 +123,9 @@ void DemoPlayer::init() {
 
 void DemoPlayer::clearScreen() {
 	debugC(1, kDebugDemo, "Clearing the screen");
-	_vm->_video->clearScreen();
+	_vm->_video->clearSurf(*_vm->_draw->_backSurface);
+	_vm->_draw->forceBlit();
+	_vm->_video->retrace();
 }
 
 void DemoPlayer::playVideo(const char *fileName) {

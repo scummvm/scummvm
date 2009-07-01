@@ -73,16 +73,8 @@ void loadPal(const char *fileName);
 
 void loadRelatedPalette(const char *fileName);
 
-void palRotate(uint16 *pal, byte a, byte b, byte c);
-void palRotate(byte *pal, byte a, byte b, byte c);
-uint16 transformColor(uint16 baseColor, int r, int g, int b);
-void transformPaletteRange(uint16 *srcPal, uint16 *dstPal, int startColor, int stopColor, int r, int g, int b);
-void transformPaletteRange(byte *srcPal, byte *dstPal, int startColor, int stopColor, int r, int g, int b);
-
-// This class might be used for handling Cine-engine's palettes in the future. WIP!
-// TODO: Document
-// TODO: Make use of
-// TODO: Test
+// A class for handling Cine-engine's palettes.
+// TODO: Test a bit more
 class Palette {
 public:
 	struct Color {
@@ -135,7 +127,10 @@ public:
 	 */
 	byte *save(byte *buf, const uint size, const Graphics::PixelFormat format, const uint numColors, const EndianType endian, const byte firstIndex = 0) const;
 
-	Palette &rotateRight(byte firstIndex, byte lastIndex);
+	/*! \brief Rotate the palette in color range [firstIndex, lastIndex] to the right by the specified rotation amount.
+	 * \param rotationAmount Amount to rotate the sub-palette to the right. Only values 0 and 1 are currently supported!
+	 */
+	Palette &rotateRight(byte firstIndex, byte lastIndex, signed rotationAmount = 1);
 	Palette &saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b);
 
 	/*! \brief Saturated add an RGB color in given color format to current palette's subset and save the modified colors in the given output palette.

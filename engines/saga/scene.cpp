@@ -472,7 +472,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 		for (int i = 0; i < ARRAYSIZE(sceneSubstitutes); i++) {
 			if (sceneSubstitutes[i].sceneId == sceneNumber) {
 				Surface bbmBuffer;
-				byte *pal, *colors;
+				byte *pal, colors[768];
 				Common::File file;
 				Rect rect;
 				PalEntry cPal[PAL_ENTRIES];
@@ -480,8 +480,8 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 				_vm->_interface->setMode(kPanelSceneSubstitute);
 
 				if (file.open(sceneSubstitutes[i].image)) {
-					Graphics::decodePBM(file, bbmBuffer, pal);
-					colors = pal;
+					Graphics::decodePBM(file, bbmBuffer, colors);
+					pal = colors;
 					rect.setWidth(bbmBuffer.w);
 					rect.setHeight(bbmBuffer.h);
 					_vm->_gfx->drawRegion(rect, (const byte*)bbmBuffer.pixels);
@@ -490,7 +490,6 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 						cPal[j].green = *pal++;
 						cPal[j].blue = *pal++;
 					}
-					free(colors);
 					_vm->_gfx->setPalette(cPal);
 
 				}

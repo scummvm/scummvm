@@ -32,6 +32,7 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/game.h"
+#include "gob/resources.h"
 #include "gob/scenery.h"
 #include "gob/inter.h"
 #include "gob/sound/sound.h"
@@ -173,12 +174,12 @@ void Draw_v1::printTotText(int16 id) {
 
 	_vm->_sound->cdPlayMultMusic();
 
-	if (!_vm->_game->_totTextData || !_vm->_game->_totTextData->dataPtr)
+	TextItem *textItem = _vm->_game->_resources->getTextItem(id);
+	if (!textItem)
 		return;
 
-	dataPtr = _vm->_game->_totTextData->dataPtr +
-		_vm->_game->_totTextData->items[id].offset;
-	ptr = dataPtr;
+	dataPtr = textItem->getData();
+	ptr     = dataPtr;
 
 	destX = READ_LE_UINT16(ptr) & 0x7FFF;
 	destY = READ_LE_UINT16(ptr + 2);
@@ -312,7 +313,9 @@ void Draw_v1::printTotText(int16 id) {
 		}
 	}
 
+	delete textItem;
 	_renderFlags = savedFlags;
+
 	if (_renderFlags & RENDERFLAG_COLLISIONS)
 		_vm->_game->checkCollisions(0, 0, 0, 0);
 
@@ -323,11 +326,10 @@ void Draw_v1::printTotText(int16 id) {
 }
 
 void Draw_v1::spriteOperation(int16 operation) {
-	uint16 id;
-	byte *dataBuf;
 	int16 len;
 	int16 x, y;
 	int16 perLine;
+	Resource *resource;
 
 	if (_sourceSurface >= 100)
 		_sourceSurface -= 80;
@@ -396,30 +398,20 @@ void Draw_v1::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_LOADSPRITE:
-		id = _spriteLeft;
-		if (id >= 30000) {
-			dataBuf =
-			    _vm->_game->loadExtData(id, &_spriteRight, &_spriteBottom);
-			_vm->_video->drawPackedSprite(dataBuf,
-					_spriteRight, _spriteBottom,
-					_destSpriteX, _destSpriteY,
-					_transparency, *_spritesArray[_destSurface]);
-			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-					_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
-			delete[] dataBuf;
-			break;
-		}
+		resource = _vm->_game->_resources->getResource((uint16) _spriteLeft,
+			                                             &_spriteRight, &_spriteBottom);
 
-		if (!(dataBuf = _vm->_game->loadTotResource(id, 0, &_spriteRight, &_spriteBottom)))
+		if (!resource)
 			break;
 
-		_vm->_video->drawPackedSprite(dataBuf,
-		    _spriteRight, _spriteBottom,
-		    _destSpriteX, _destSpriteY,
-		    _transparency, *_spritesArray[_destSurface]);
+		_vm->_video->drawPackedSprite(resource->getData(),
+				_spriteRight, _spriteBottom, _destSpriteX, _destSpriteY,
+				_transparency, *_spritesArray[_destSurface]);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+
+		delete resource;
 		break;
 
 	case DRAW_PRINTTEXT:

@@ -57,10 +57,8 @@ private:
 	bool _preLoad;
 	Debugger *_debugger;
 	MidiDriver *_driver;
-	MusicPlayer *_music;
-	SoundPlayer *_sound;
+	PCSound *_sound;
 	bool _mt32, _adlib;
-	int _musicVolume;
 	Common::StringList _langStrings;
 	CursorType _savedCursor;
 	uint32 lastTick, lastTickDebug;
@@ -90,8 +88,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
-	MusicPlayer &music() { return *_music; }
-	SoundPlayer &sound() { return *_sound; }
+	PCSound &sound() { return *_sound; }
 	bool mt32() const { return _mt32; }
 	bool adlib() const { return _adlib; }
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
@@ -103,6 +100,7 @@ public:
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const char *desc);
 	virtual bool canSaveGameStateCurrently();
+	virtual void syncSoundSettings();
 
 	const CRUISEGameDescription *_gameDescription;
 	void initAllData(void);
@@ -128,7 +126,8 @@ enum {
 };
 
 enum {
-	kCruiseDebugScript = 1 << 0
+	kCruiseDebugScript = 1 << 0,
+	kCruiseDebugSound = 1 << 1
 };
 
 enum {

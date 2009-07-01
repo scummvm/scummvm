@@ -82,7 +82,6 @@ byte loadCtOS(const char *ctName) {
 	ptr += 2;
 
 	if (bpp == 8) {
-		memcpy(collisionPage, ptr + 256 * 3, 320 * 200);
 		renderer->loadCt256(ptr, ctName);
 	} else {
 		gfxConvertSpriteToRaw(collisionPage, ptr + 32, 160, 200);

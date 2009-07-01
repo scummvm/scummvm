@@ -238,9 +238,7 @@ void KyraEngine_HoF::itemDropDown(int startX, int startY, int dstX, int dstY, in
 				_screen->drawShape(0, itemShape, curX, curY-16, 0, 0);
 				_screen->updateScreen();
 
-				// XXX: original doesn't update game state while delaying
-				// our implementation *could* do it, so maybe check this again
-				delayUntil(endDelay);
+				delayUntil(endDelay, false, true);
 			}
 
 			if (dstX != dstY || (dstY - startY > 16)) {
@@ -275,9 +273,7 @@ void KyraEngine_HoF::itemDropDown(int startX, int startY, int dstX, int dstY, in
 					_screen->drawShape(0, itemShape, x, y, 0, 0);
 					_screen->updateScreen();
 
-					// XXX: original doesn't update game state while delaying
-					// our implementation *could* do it, so maybe check this again
-					delayUntil(endDelay);
+					delayUntil(endDelay, false, true);
 				}
 
 				restoreGfxRect24x24(x, y);

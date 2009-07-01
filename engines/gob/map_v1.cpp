@@ -64,7 +64,6 @@ void Map_v1::init(void) {
 void Map_v1::loadMapObjects(const char *avjFile) {
 	char avoName[128];
 	byte *dataBuf;
-	int16 handle;
 	int16 tmp;
 	int32 flag;
 	int16 gobDataCount;
@@ -75,15 +74,14 @@ void Map_v1::loadMapObjects(const char *avjFile) {
 	strcpy(avoName, _sourceFile);
 	strcat(avoName, ".avo");
 
-	handle = _vm->_dataIO->openData(avoName);
-	if (handle >= 0) {
+	if (_vm->_dataIO->existData(avoName)) {
 		_loadFromAvo = true;
-		_vm->_dataIO->closeData(handle);
 		dataBuf = _vm->_dataIO->getData(avoName);
 	} else {
 		_loadFromAvo = false;
 		dataBuf = _vm->_dataIO->getData(avjFile);
 	}
+
 	Common::MemoryReadStream mapData(dataBuf, 4294967295U);
 
 	init();
@@ -146,7 +144,6 @@ void Map_v1::loadMapObjects(const char *avjFile) {
 
 void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 	int16 count;
-	int16 handle;
 	char buf[19];
 	char sndNames[20][14];
 
@@ -162,11 +159,9 @@ void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 	_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[14], SOUND_SND, "diamant1.snd");
 
 	for (int i = 0; i < count; i++) {
-		handle = _vm->_dataIO->openData(sndNames[i]);
-		if (handle < 0)
+		if (!_vm->_dataIO->existData(sndNames[i]))
 			continue;
 
-		_vm->_dataIO->closeData(handle);
 		_vm->_sound->sampleLoad(&_vm->_goblin->_soundData[i], SOUND_SND, sndNames[i]);
 	}
 }

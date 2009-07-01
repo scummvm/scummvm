@@ -73,7 +73,6 @@ public:
 	virtual void unlockScreen();
 	virtual void updateScreen();
 	/* TODO : check */
-	virtual void fillScreen(unsigned int i) { printf("fillScreen %d\n", i); };
 	virtual void displayMessageOnOSD(const char *msg) { printf("displayMessageOnOSD: %s\n", msg); };
 	/* */
 

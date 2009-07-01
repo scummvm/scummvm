@@ -138,6 +138,8 @@ struct Game
   char dir[256];
   char filename_base[256];
   char text[256];
+  Common::Language language;
+  Common::Platform platform;
   Icon icon;
   Label label;
 };
@@ -183,11 +185,15 @@ static void makeDefIcon(Icon &icon)
   icon.load(scummvm_icon, sizeof(scummvm_icon));
 }
 
-static bool uniqueGame(const char *base, const char *dir, Game *games, int cnt)
+static bool uniqueGame(const char *base, const char *dir,
+		       Common::Language lang, Common::Platform plf,
+		       Game *games, int cnt)
 {
   while (cnt--)
     if (!strcmp(dir, games->dir) &&
-       !stricmp(base, games->filename_base))
+	!stricmp(base, games->filename_base) &&
+	lang == games->language &&
+	plf == games->platform)
       return false;
     else
       games++;
@@ -227,14 +233,20 @@ static int findGames(Game *games, int max)
       if (curr_game < max) {
 	strcpy(games[curr_game].filename_base, ge->gameid().c_str());
 	strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
+	games[curr_game].language = ge->language();
+	games[curr_game].platform = ge->platform();
 	if (uniqueGame(games[curr_game].filename_base,
-		      games[curr_game].dir, games, curr_game)) {
+		       games[curr_game].dir,
+		       games[curr_game].language,
+		       games[curr_game].platform, games, curr_game)) {
 
 	  strcpy(games[curr_game].text, ge->description().c_str());
 #if 0
-	  printf("Registered game <%s> in <%s> <%s> because of <%s> <*>\n",
-		 games[curr_game].text, games[curr_game].dir,
-		 games[curr_game].filename_base,
+	  printf("Registered game <%s> (l:%d p:%d) in <%s> <%s> because of <%s> <*>\n",
+		 games[curr_game].text,
+		 (int)games[curr_game].language,
+		 (int)games[curr_game].platform,
+		 games[curr_game].dir, games[curr_game].filename_base,
 		 dirs[curr_dir-1].name);
 #endif
 	  curr_game++;
@@ -405,7 +417,7 @@ int gameMenu(Game *games, int num_games)
   }
 }
 
-bool selectGame(char *&ret, char *&dir_ret, Icon &icon)
+bool selectGame(char *&ret, char *&dir_ret, Common::Language &lang_ret, Common::Platform &plf_ret, Icon &icon)
 {
   Game *games = new Game[MAX_GAMES];
   int selected, num_games;
@@ -449,6 +461,8 @@ bool selectGame(char *&ret, char *&dir_ret, Icon &icon)
     dir_ret = the_game.dir;
 #endif
     ret = the_game.filename_base;
+    lang_ret = the_game.language;
+    plf_ret = the_game.platform;
     icon = the_game.icon;
     return true;
   } else

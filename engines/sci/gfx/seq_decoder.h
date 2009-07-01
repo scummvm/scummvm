@@ -28,6 +28,9 @@
 
 namespace Sci {
 
+/**
+ * Decoder for image sequences
+ */
 class SeqDecoder {
 public:
 	SeqDecoder() : _fileStream(0), _palette(0) { }
@@ -37,7 +40,9 @@ public:
 	gfx_pixmap_t *getFrame(bool &hasNext);
 
 private:
-	bool decodeFrame(byte *runlength_data, int runlength_size, byte *literal_data, int literal_size, byte *dest, int xl, int yl, int color_key);
+	bool decodeFrame(byte *runlength_data, int runlength_size,
+		byte *literal_data, int literal_size, byte *dest, int xl, int yl,
+		int color_key);
 
 	Common::SeekableReadStream *_fileStream;
 	Palette *_palette;

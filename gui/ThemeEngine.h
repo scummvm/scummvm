@@ -529,7 +529,7 @@ private:
 
 	static Common::String getThemeFile(const Common::String &id);
 	static Common::String getThemeId(const Common::String &filename);
-	static void listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list, int depth=-1);
+	static void listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth = -1);
 
 protected:
 	OSystem *_system; /** Global system object. */

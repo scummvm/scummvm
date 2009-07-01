@@ -26,24 +26,9 @@
 // Script debugger functionality. Absolutely not threadsafe.
 
 #include "sci/sci.h"
+#include "sci/console.h"
 #include "sci/debug.h"
 #include "sci/engine/state.h"
-#include "sci/engine/gc.h"
-#include "sci/engine/kernel_types.h"
-#include "sci/engine/kernel.h"
-#include "sci/engine/savegame.h"
-#include "sci/gfx/gfx_widgets.h"
-#include "sci/gfx/gfx_gui.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
-#include "sci/resource.h"
-#include "sci/vocabulary.h"
-#include "sci/sfx/iterator.h"
-#include "sci/sfx/sci_midi.h"
-
-#include "common/util.h"
-#include "common/savefile.h"
-
-#include "sound/audiostream.h"
 
 namespace Sci {
 
@@ -63,13 +48,13 @@ static int *p_var_max; // May be NULL even in valid state!
 
 extern const char *selector_name(EngineState *s, int selector);
 
-int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
+int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
 	Object *obj = obj_get(s, objp);
 	byte *selectoroffset;
 	int selectors;
 
 	if (!obj) {
-		sciprintf("Applied prop_ofs_to_id on non-object at %04x:%04x\n", PRINT_REG(objp));
+		sciprintf("Applied propertyOffsetToId on non-object at %04x:%04x\n", PRINT_REG(objp));
 		return -1;
 	}
 
@@ -86,7 +71,7 @@ int prop_ofs_to_id(EngineState *s, int prop_ofs, reg_t objp) {
 	}
 
 	if (prop_ofs < 0 || (prop_ofs >> 1) >= selectors) {
-		sciprintf("Applied prop_ofs_to_id to invalid property offset %x (property #%d not in [0..%d]) on object at %04x:%04x\n",
+		sciprintf("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d]) on object at %04x:%04x\n",
 		          prop_ofs, prop_ofs >> 1, selectors - 1, PRINT_REG(objp));
 		return -1;
 	}
@@ -257,7 +242,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
 			int prop_ofs = scr[pos.offset + 1];
-			int prop_id = prop_ofs_to_id(s, prop_ofs, *p_objp);
+			int prop_id = propertyOffsetToId(s, prop_ofs, *p_objp);
 
 			sciprintf("	(%s)", selector_name(s, prop_id));
 		}
@@ -342,8 +327,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *objp, int *restadjust,
 	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
-// TODO: disabled till this is moved in console.cpp
-#if 0
 	// Do we support a separate console?
 
 	int old_debugstate = g_debugstate_valid;
@@ -412,7 +395,6 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			// OK, found whatever we were looking for
 		}
 	}
-#endif
 
 	g_debugstate_valid = (g_debug_step_running == 0);
 

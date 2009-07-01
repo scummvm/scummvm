@@ -52,26 +52,24 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_currentVolumeFile = new Common::File();
 #endif
 
-	Common::addDebugChannel(kCruiseDebugScript, "Script",
-	                             "Script debug level");
+	Common::addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
+	Common::addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-	                              ConfMan.getInt("sfx_volume"));
+			ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-	                              ConfMan.getInt("music_volume"));
+			ConfMan.getInt("music_volume"));
 
 	_vm = this;
 	_debugger = new Debugger();
-	_music = new MusicPlayer();
-	_sound = new SoundPlayer();
+	_sound = new PCSound(_mixer, this);
 
 	syst->getEventManager()->registerRandomSource(_rnd, "cruise");
 }
 
 CruiseEngine::~CruiseEngine() {
 	delete _debugger;
-	delete _music;
 	delete _sound;
 
 	freeSystem();
@@ -126,9 +124,8 @@ void CruiseEngine::initialize() {
 	readVolCnf();
 
 	// Setup mixer
-	_musicVolume = ConfMan.getInt("music_volume");
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+//	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+//	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
@@ -228,6 +225,10 @@ const char *CruiseEngine::getSavegameFile(int saveGameIdx) {
 	static char buffer[20];
 	sprintf(buffer, "cruise.s%02d", saveGameIdx);
 	return buffer;
+}
+
+void CruiseEngine::syncSoundSettings() {
+	_sound->syncSounds();
 }
 
 } // End of namespace Cruise

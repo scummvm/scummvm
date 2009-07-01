@@ -297,15 +297,11 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V1,
 	},
 
-	{	// UK multilanguage PSX CD
+	{	// Discworld PSX CD
 		{
 			"dw",
 			"CD",
 			{
-				{"french.txt", 0, "e7020d35f58d0d187052ac406d86cc87", 273918},
-				{"german.txt", 0, "6e2c0f0655bc3cec5a6b3552164ec984", 263942},
-				{"italian.txt", 0, "15f0703f85477d7fab4280bf938b61c1", 239830},
-				{"spanish.txt", 0, "bda9bea9078d1483409082a3e180378a", 236702},
 				{"english.txt", 0, "7526cfc3a64e00f223795de476b4e2c9", 230326},
 				{NULL, 0, NULL, 0}
 			},

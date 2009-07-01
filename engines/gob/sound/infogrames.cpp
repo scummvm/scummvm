@@ -55,7 +55,7 @@ bool Infogrames::loadSong(const char *fileName) {
 			_mixer->getOutputRate(), _mixer->getOutputRate() / 75);
 
 	if (!_song->load(fileName)) {
-		warning("Couldn't load infogrames music");
+		warning("Infogrames: Couldn't load music \"%s\"", fileName);
 		clearSong();
 		return false;
 	}
@@ -92,7 +92,7 @@ void Infogrames::clearSong() {
 bool Infogrames::loadInst(const char *fileName) {
 	_instruments = new Audio::Infogrames::Instruments;
 	if (!_instruments->load(fileName)) {
-		warning("Couldn't load instruments file");
+		warning("Infogrames: Couldn't load instruments \"%s\"", fileName);
 		clearInstruments();
 		return false;
 	}

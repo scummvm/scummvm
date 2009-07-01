@@ -47,7 +47,7 @@ Sprites::Sprites(KyraEngine_LoK *vm, OSystem *system) {
 	_spriteDefStart = 0;
 	memset(_drawLayerTable, 0, sizeof(_drawLayerTable));
 	_sceneAnimatorBeaconFlag = 0;
-	system->getEventManager()->registerRandomSource(_rnd, "kyraSprites");
+	_vm->getEventManager()->registerRandomSource(_rnd, "kyraSprites");
 }
 
 Sprites::~Sprites() {
@@ -420,16 +420,16 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		if (_vm->queryGameFlag(0xA0))
-			memcpy(_screen->getPalette(3), _screen->getPalette(4), 32*3);
+			_screen->copyPalette(3, 4);
 		else
-			memcpy(_screen->getPalette(3), _screen->getPalette(0), 32*3);
+			_screen->copyPalette(3, 0);
 	} else {
 		if (_vm->queryGameFlag(0xA0))
-			memcpy(_screen->getPalette(1), _screen->getPalette(3), 768);
+			_screen->copyPalette(1, 3);
 		else
-			memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+			_screen->copyPalette(1, 0);
 
-		_screen->loadPalette(_dat + 0x17, _screen->getPalette(1) + 684, 60);
+		_screen->getPalette(1).copy(_dat + 0x17, 0, 20, 228);
 	}
 	uint8 *data = _dat + 0x6B;
 

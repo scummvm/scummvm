@@ -168,6 +168,9 @@ using Common::GUIO_NONE;
 
 #define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPN(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
 
+#define FANMADE_ISVP(id,name,md5,size,ver,platform) GAME_LVFPN(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
+#define FANMADE_SVP(name,md5,size,ver,platform) FANMADE_ISVP("agi-fanmade",name,md5,size,ver,platform)
+
 #define FANMADE_LVF(name,md5,lang,ver,features) FANMADE_ILVF("agi-fanmade",name,md5,lang,ver,features)
 
 #define FANMADE_LF(name,md5,lang,features) FANMADE_LVF(name,md5,lang,0x2917,features)
@@ -221,6 +224,12 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Black Cauldron (PC) 2.10 [AGI 3.002.097]
 	GAME3("bc", "2.10", "bcdir", "0de3953c9225009dc91e5b0d1692967b", 0x3149, GID_BC),
+
+	// Black Cauldron (CoCo3 360k) [AGI 2.023]
+	GAME_PS("bc", "", "51212c54808ade96176f201ae0ac7a6f", 357, 0x2440, GID_BC, Common::kPlatformCoCo3),
+
+	// Black Cauldron (CoCo3 360k) [AGI 2.072]
+	GAME_PS("bc", "updated", "c4e1937f74e8100cd0152b904434d8b4", 357, 0x2440, GID_BC, Common::kPlatformCoCo3),
 
 // TODO
 // These aren't supposed to work now as they require unsupported agi engine 2.01
@@ -279,6 +288,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 
+	// Gold Rush! (CoCo3 720k) [AGI 2.023]
+	GAME_PS("goldrush", "", "0a41b65efc0cd6c4271e957e6ffbbd8e", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
+
+	// Gold Rush! (CoCo3 360k/720k) [AGI 2.072]
+	GAME_PS("goldrush", "updated", "c49bf56bf91e31a4601a604e51ef8bfb", 744, 0x2440, GID_GOLDRUSH, Common::kPlatformCoCo3),
+
 	// King's Quest 1 (Amiga) 1.0U		# 2.082
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FP("kq1", "1.0U 1986", "246c695324f1c514aee2b904fa352fad", 0x2440, GF_MENUS, GID_KQ1, Common::kPlatformAmiga),
@@ -296,6 +311,15 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 1 (PC 5.25"/3.5") 2.0F [AGI 2.917]
 	GAME("kq1", "2.0F 1987-05-05 5.25\"/3.5\"", "10ad66e2ecbd66951534a50aedcd0128", 0x2917, GID_KQ1),
+
+	// King's Quest 1 (CoCo3 360k) [AGI 2.023]
+	GAME_PS("kq1", "", "10ad66e2ecbd66951534a50aedcd0128", 315, 0x2440, GID_KQ1, Common::kPlatformCoCo3),
+
+	// King's Quest 1 (CoCo3 360k) [AGI 2.023]
+	GAME_PS("kq1", "fixed", "4c8ef8b5d2f1b6c1a93e456d1f1ffc74", 768, 0x2440, GID_KQ1, Common::kPlatformCoCo3),
+
+	// King's Quest 1 (CoCo3 360k) [AGI 2.072]
+	GAME_PS("kq1", "updated", "94087178c78933a4af3cd24d1c8dd7b2", 315, 0x2440, GID_KQ1, Common::kPlatformCoCo3),
 
 	// King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
 	GAME_P("kq2", "2.0A 1988-06-16 (CE)", "5203c8b95250a2ecfee93ddb99414753", 0x2917, GID_KQ2, Common::kPlatformApple2GS),
@@ -315,6 +339,15 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 2 (Russian)
 	GAME_LPS("kq2", "", "35211c574ececebdc723b23e35f99275", 543, Common::RU_RUS, 0x2917, GID_KQ2, Common::kPlatformPC),
+
+	// King's Quest 2 (CoCo3 360k) [AGI 2.023]
+	GAME_PS("kq2", "", "b944c4ff18fb8867362dc21cc688a283", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
+
+	// King's Quest 2 (CoCo3 360k) [AGI 2.072]
+	GAME_PS("kq2", "updated", "f64a606de740a5348f3d125c03e989fe", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
+
+	// King's Quest 2 (CoCo3 360k) [AGI 2.023]
+	GAME_PS("kq2", "fixed", "fb33ac2768a94a89117a270771db465c", 768, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
 
 	// King's Quest 3 (Amiga) 1.01 11/8/86
 	// The original game did not have menus, they are enabled under ScummVM
@@ -350,6 +383,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 3 (PC 3.5") 2.14 3/15/88 [AGI 2.936]
 	GAME("kq3", "2.14 1988-03-15 3.5\"", "d3d17b77b3b3cd13246749231d9473cd", 0x2936, GID_KQ3),
 
+	// King's Quest 3 (CoCo3 158k/360k) [AGI 2.023]
+	GAME_PS("kq3", "", "5a6be7d16b1c742c369ef5cc64fefdd2", 429, 0x2440, GID_KQ3, Common::kPlatformCoCo3),
+
 	// King's Quest 4 (PC 5.25") 2.3 9/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.3 1988-09-27", "kq4dir", "6d7714b8b61466a5f5981242b993498f", 0x3086, GID_KQ4),
 
@@ -370,6 +406,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 4 demo (PC) [AGI 3.002.102]
 	// Menus not tested
 	GAME3("kq4", "Demo 1988-12-20", "dmdir", "a3332d70170a878469d870b14863d0bf", 0x3149, GID_KQ4),
+
+	// King's Quest 4 (CoCo3 720k) [AGI 2.023]
+	GAME_PS("kq4", "", "9e7729a28e749ca241d2bf71b9b2dbde", 741, 0x2440, GID_KQ4, Common::kPlatformCoCo3),
+
+	// King's Quest 4 (CoCo3 360k/720k) [AGI 2.072]
+	GAME_PS("kq4", "updated", "1959ca10739edb34069bb504dbd74805", 741, 0x2440, GID_KQ4, Common::kPlatformCoCo3),
 
 	// Leisure Suit Larry 1 (PC 5.25"/3.5") 1.00 6/1/87 [AGI 2.440]
 	GAME("lsl1", "1.00 1987-06-01 5.25\"/3.5\"", "1fe764e66857e7f305a5f03ca3f4971d", 0x2440, GID_LSL1),
@@ -392,6 +434,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Leisure Suit Larry 1 (Mac) 1.05 6/26/87
 	GAME_P("lsl1", "1.05 1987-06-26", "8a0076429890531832f0dc113285e31e", 0x2440, GID_LSL1, Common::kPlatformMacintosh),
 
+	// Leisure Suit Larry 1 (CoCo3 158k/360k) [AGI 2.072]
+	GAME_PS("lsl1", "", "a2de1fe76565c3e8b40c9d036b5e5612", 198, 0x2440, GID_LSL1, Common::kPlatformCoCo3),
+
 	// Manhunter NY (ST) 1.03 10/20/88
 	GAME3_P("mh1", "1.03 1988-10-20", "mhdir", "f2d58056ad802452d60776ee920a52a6", 0x3149, 0, GID_MH1, Common::kPlatformAtariST),
 
@@ -408,6 +453,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.102]
 	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141, 0x3149, 0, GID_MH1, Common::kPlatformPC),
 
+	// Manhunter NY (CoCo3 720k) [AGI 2.023]
+	GAME_PS("mh1", "", "b968285caf2f591c78dd9c9e26ab8974", 495, 0x2440, GID_MH1, Common::kPlatformCoCo3),
+
+	// Manhunter NY (CoCo3 360k/720k) [AGI 2.072]
+	GAME_PS("mh1", "updated", "d47da950c62289f8d4ccf36af73365f2", 495, 0x2440, GID_MH1, Common::kPlatformCoCo3),
+
 	// Manhunter SF (ST) 1.0 7/29/89
 	GAME3_P("mh2", "1.0 1989-07-29", "mh2dir", "5e3581495708b952fea24438a6c7e040", 0x3149, 0, GID_MH1, Common::kPlatformAtariST),
 
@@ -419,6 +470,12 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Manhunter SF (PC 3.5") 3.02 7/26/89 [AGI 3.002.149]
 	GAME3("mh2", "3.02 1989-07-26 3.5\"", "mh2dir", "6fb6f0ee2437704c409cf17e081ba152", 0x3149, GID_MH2),
+
+	// Manhunter SF (CoCo3 720k) [AGI 2.023]
+	GAME_PS("mh2", "", "acaaa577e10d1753c5a74f6ae1d858d4", 591, 0x2440, GID_MH2, Common::kPlatformCoCo3),
+
+	// Manhunter SF (CoCo3 720k) [AGI 2.072]
+	GAME_PS("mh2", "updated", "c64875766700196e72a92359f70f45a9", 591, 0x2440, GID_MH2, Common::kPlatformCoCo3),
 
 	// Mickey's Space Adventure
 	// Preagi game
@@ -437,11 +494,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Mixed-Up Mother Goose (PC) [AGI 2.915]
 	GAME("mixedup", "1987-11-10", "e524655abf9b96a3b179ffcd1d0f79af", 0x2917, GID_MIXEDUP),
 
-#if 0
-	// Mixed Up Mother Goose (PC) [AGI 2.915] (Broken)
-	// Menus not tested
-	GAME("mixedup", "[corrupt/OBJECT from disk 1]", "e524655abf9b96a3b179ffcd1d0f79af", 0x2917, GID_MIXEDUP),
-#endif
+	// Mixed-Up Mother Goose (CoCo3 360k) [AGI 2.072]
+	GAME_PS("mixedup", "", "44e63e9b4d4822a31edea0e8a7e7eac4", 606, 0x2440, GID_MIXEDUP, Common::kPlatformCoCo3),
 
 	// Police Quest 1 (PC) 2.0E 11/17/87 [AGI 2.915]
 	GAME("pq1", "2.0E 1987-11-17", "2fd992a92df6ab0461d5a2cd83c72139", 0x2917, GID_PQ1),
@@ -471,6 +525,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	// not sure about disk format -- dsymonds
 	GAME("pq1", "2.0G 1987-12-03", "d194e5d88363095f55d5096b8e32fbbb", 0x2917, GID_PQ1),
 
+	// Police Quest 1 (CoCo3 360k) [AGI 2.023]
+	GAME_PS("pq1", "", "28a077041f75aab78f66804800940085", 375, 0x2440, GID_PQ1, Common::kPlatformCoCo3),
+
+	// Police Quest 1 (CoCo3 360k) [AGI 2.072]
+	GAME_PS("pq1", "updated", "63b9a9c6eec154751dd446cd3693e0e2", 768, 0x2440, GID_PQ1, Common::kPlatformCoCo3),
+
 	// Space Quest 1 (ST) 1.1A
 	// The original game did not have menus, they are enabled under ScummVM
 	GAME_FP("sq1", "1.1A 1986-02-06", "6421fb64b0e6604c9dd065975d9279e9", 0x2440, GF_MENUS, GID_SQ1, Common::kPlatformAtariST),
@@ -499,8 +559,14 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.426/2.917]
 	GAME("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "5d67630aba008ec5f7f9a6d0a00582f4", 0x2440, GID_SQ1),
 
-	// Space Quest 1 (CoCo3)
-	GAME_P("sq1", "", "5d67630aba008ec5f7f9a6d0a00582f4", 0x2440, GID_SQ1, Common::kPlatformCoCo3),
+	// Space Quest 1 (CoCo3 360k) [AGI 2.072]
+	GAME_PS("sq1", "", "5d67630aba008ec5f7f9a6d0a00582f4", 372, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
+
+	// Space Quest 1 (CoCo3 360k) [AGI 2.023]
+	GAME_PS("sq1", "fixed", "ca822b768b6462e410423ea7f498daee", 768, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
+
+	// Space Quest 1 (CoCo3 360k) [AGI 2.072]
+	GAME_PS("sq1", "updated", "7fa54e6bb7ffeb4cf20eca39d86f5fb2", 387, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
 
 	// Space Quest 2 (PC 3.5") 2.0D [AGI 2.936]
 	GAME("sq2", "2.0D 1988-03-14 3.5\"", "85390bde8958c39830e1adbe9fff87f3", 0x2936, GID_SQ2),
@@ -550,6 +616,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Space Quest 2 (PC 3.5") 2.0F [AGI 2.936]
 	GAME("sq2", "2.0F 1989-01-05 3.5\"", "28add5125484302d213911df60d2aded", 0x2936, GID_SQ2),
 
+	// Space Quest 2 (CoCo3 360k) [AGI 2.023]
+	GAME_PS("sq2", "", "12973d39b892dc9d280257fd271e9597", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
+
+	// Space Quest 2 (CoCo3 360k) [AGI 2.072]
+	GAME_PS("sq2", "updated", "d24f19b047e65e1763eff4b46f3d50df", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
+
 	// Troll's Tale
 	GAMEpre_PS("troll", "", "troll.img", "62903f264b3d849be4214b3a5c42a2fa", 184320, 0x0000, GID_TROLL, Common::kPlatformPC),
 
@@ -567,6 +639,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Xmas Card 1986 (PC) [AGI 2.272]
 	GAME("xmascard", "1986-11-13 [version 1]", "3067b8d5957e2861e069c3c0011bd43d", 0x2272, GID_XMASCARD),
+
+	// Xmas Card 1986 (CoCo3 360k) [AGI 2.072]
+	GAME_PS("xmascard", "", "25ad35e9628fc77e5e0dd35852a272b6", 768, 0x2440, GID_XMASCARD, Common::kPlatformCoCo3),
 
 	FANMADE_F("2 Player Demo", "4279f46b3cebd855132496476b1d2cca", GF_AGIMOUSE),
 	FANMADE("AGI Contest 1 Template", "d879aed25da6fc655564b29567358ae2"),
@@ -630,6 +705,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Elfintard", "c3b847e9e9e978af9708df76a0751dc2"),
 	FANMADE("Enclosure (v1.01)", "f08e66fee9ecdde77db7ee9a10c96ba2"),
 	FANMADE("Enclosure (v1.03)", "e4a0613ed02401502e506ba3565a8c40"),
+	FANMADE_SVP("Enclosure", "fe98e6126db74c6cc6fd8fe395cc6e8c", 345, 0x2440, Common::kPlatformCoCo3),
 	FANMADE("Epic Fighting (v0.1)", "aff24a1b3bdd676187685c4d95ba4294"),
 	FANMADE("Escape Quest (v0.0.3)", "2346b65619b1da0298b715b06d1a45a1"),
 	FANMADE("Escape from the Desert (beta 1)", "dfdc634d340854bd6ece28024010758d"),
@@ -777,8 +853,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Sorceror's Appraisal", "fe62615557b3cb7b08dd60c9d35efef1"),
 	FANMADE_I("sq0", "v1.03", "d2fd6f7404e86182458494e64375e590"),
 	FANMADE_I("sq0", "v1.04", "2ad9d1a4624a98571ee77dcc83f231b6"),
+    FANMADE_ISVP("sq0", "", "e1a8e4efcce86e1efcaa14633b9eb986", 762, 0x2440, Common::kPlatformCoCo3),
 	FANMADE_I("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1"),
 	FANMADE_I("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910"),
+    FANMADE_ISVP("sqx", "", "f0a59044475a5fa37c055d8c3eb4d1a7", 768, 0x2440, Common::kPlatformCoCo3),
 	FANMADE_F("Space Quest 3.5", "c077bc28d7b36213dd99dc9ecb0147fc", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE_F("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a", GF_CLIPCOORDS),
 	FANMADE("Special Delivery", "88764dfe61126b8e73612c851b510a33"),
@@ -805,6 +883,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("The Shadow Plan", "c02cd10267e721f4e836b1431f504a0a"),
 	FANMADE("Time Quest (Demo v0.1)", "12e1a6f03ea4b8c5531acd0400b4ed8d"),
 	FANMADE("Time Quest (Demo v0.2)", "7b710608abc99e0861ac59b967bf3f6d"),
+	FANMADE_SVP("Time Quest", "90314f473d8317be5cd1f0306f139aea", 300, 0x2440, Common::kPlatformCoCo3),
 	FANMADE("Tonight The Shrieking Corpses Bleed (Demo v0.11)", "bcc57a7c8d563fa0c333107ae1c0a6e6"),
 	FANMADE("Tonight The Shrieking Corpses Bleed (v1.01)", "36b38f621b38e8d104aa0807302dc8c9"),
 	FANMADE("Turks' Quest - Heir to the Planet", "3d19254b737c8b218e5bc4580542b79a"),
@@ -826,6 +905,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		GF_FANMADE,
 		0x3149,
 	},
+	FANMADE_SVP("V - The Graphical Adventure", "1646eaade74f137a9041eb427a389969", 768, 0x2440, Common::kPlatformCoCo3),
 
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Jan 1)", "ae95f0c77d9a97b61420fd192348b937"),
 	FANMADE("Voodoo Girl - Queen of the Darned (v1.2 2002 Mar 29)", "11d0417b7b886f963d0b36789dac4c8f"),

@@ -108,6 +108,11 @@ enum SciGameFlags {
 	** Older SCI versions had simpler code for GetTime()
 	*/
 	GF_SCI0_OLDGETTIME		= (1 << 2),
+	
+	/* Applies to any game that requires the SCI1 kernel vocab
+	** Some games (such as the King's Quest I demo) require the default kernel vocab table.
+	*/
+	GF_SCI0_SCI1VOCAB       = (1 << 3),
 
 	// ----------------------------------------------------------------------------
 
@@ -118,18 +123,18 @@ enum SciGameFlags {
 	/*
 	** Used to distinguish SCI1 EGA games
 	*/
-	GF_SCI1_EGA				= (1 << 3),
+	GF_SCI1_EGA				= (1 << 4),
 
 	/* Applies to all SCI1 versions after 1.000.200
     ** In late SCI1 versions, the argument of lofs[as] instructions
 	** is absolute rather than relative.
 	*/
-	GF_SCI1_LOFSABSOLUTE	= (1 << 4),
+	GF_SCI1_LOFSABSOLUTE	= (1 << 5),
 
 	/* Applies to all versions from 1.000.510 onwards
 	** kDoSound() is different than in earlier SCI1 versions.
 	*/
-	GF_SCI1_NEWDOSOUND		= (1 << 5)
+	GF_SCI1_NEWDOSOUND		= (1 << 6)
 };
 
 class SciEngine : public Engine {

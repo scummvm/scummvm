@@ -29,62 +29,55 @@
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/mixer.h"
+
+#include "common/config-manager.h"
 #include "common/serializer.h"
 
 namespace Cruise {
 
-class MusicPlayer {
+class CruiseEngine;
+class PCSoundDriver;
+class PCSoundFxPlayer;
+
+class PCSound {
 private:
-	byte _channelVolume[16];
-	int _fadeVolume;
-	char _musicName[33];
-
-	bool _isPlaying;
-	bool _songPlayed;
-	bool _looping;
-	byte _masterVolume;
-
-	byte *_songPointer;
-	// TODO: lib_SongSize
-	int _songSize;
-
-	void patchMidi(uint32 adr, const byte *data, int size);
-	byte *loadInstrument(const char *name, int i);
+	Audio::Mixer *_mixer;
+	CruiseEngine *_vm;
+	int _genVolume;
+protected:
+	PCSoundDriver *_soundDriver;
+	PCSoundFxPlayer *_player;
 public:
-	MusicPlayer();
-	~MusicPlayer();
+	PCSound(Audio::Mixer *mixer, CruiseEngine *vm);
+	virtual ~PCSound();
 
-	void setVolume(int volume);
-	int getVolume() const { return _masterVolume; }
+	virtual void loadMusic(const char *name);
+	virtual void playMusic();
+	virtual void stopMusic();
+	virtual void removeMusic();
+	virtual void fadeOutMusic();
 
-	void stop();
-	void pause();
-	void resume();
-
-	// Common public access methods
+	virtual void playSound(const uint8 *data, int size, int volume);
+	virtual void stopSound(int channel);
+	
 	void doSync(Common::Serializer &s);
-	void loadSong(const char *name);
-	void startSong();
-	void stopSong();
-	void removeSong();
+	const char *musicName();
+	void stopChannel(int channel);
+	bool isPlaying() const;
+	bool songLoaded() const;
+	bool songPlayed() const;
 	void fadeSong();
+	uint8 numOrders() const;
+	void setNumOrders(uint8 v);
+	void setPattern(int offset, uint8 value);
+	bool musicLooping() const;
+	void musicLoop(bool v);
+	void startNote(int channel, int volume, int freq);
+	void syncSounds();
 
-	bool songLoaded() const { return _songPointer != NULL; }
-	bool songPlayed() const { return _songPlayed; }
-	bool isPlaying() const { return _isPlaying; }
-	bool looping() const { return _looping; }
-	byte *songData() { return _songPointer; }
-	void setPlaying(bool playing) { _isPlaying = playing; }
-	void setLoop(bool loop) { _looping = loop; }
-};
-
-class SoundPlayer {
-public:
-	SoundPlayer() {}
-
-	void startSound(int channelNum, const byte *ptr, int size, int speed, int volume, bool loop) {}
-	void startNote(int channelNum, int speed, int volume) {}
-	void stopChannel(int channelNum) {}
+	// Note: Volume variable accessed by these methods is never actually used in original game
+	void setVolume(int volume) { _genVolume = volume; }
+	uint8 getVolume() const { return _genVolume; }
 };
 
 } // End of namespace Cruise

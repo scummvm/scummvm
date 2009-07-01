@@ -171,8 +171,6 @@ public:
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual void getTimeAndDate(struct tm &t) const;
 
-	virtual void setWindowCaption(const char *caption);
-
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();

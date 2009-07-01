@@ -260,6 +260,30 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\resources.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\resources.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\totfile.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\totfile.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\script.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\script.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\dataio.cpp"
 			>
 		</File>
@@ -484,11 +508,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\parse.cpp"
+			RelativePath="..\..\engines\gob\expression.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\parse.h"
+			RelativePath="..\..\engines\gob\expression.h"
 			>
 		</File>
 		<File

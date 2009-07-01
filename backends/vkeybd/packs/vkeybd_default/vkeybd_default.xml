@@ -76,6 +76,8 @@
         <area shape="rect" coords="202,110,219,128" target="," />
         <area shape="rect" coords="223,110,241,128" target="." />
         <area shape="rect" coords="243,110,261,128" target="/" />
+        <area shape="rect" coords="277,133,292,148" target="ok" />
+        <area shape="rect" coords="292,133,309,148" target="cancel" />
       </map>
     </layout>
     <layout resolution="640x480" bitmap="lowercase640x480.bmp" transparent_color="255,0,255">
@@ -151,6 +153,8 @@
         <area shape="rect" coords="405,220,440,256" target=","	 />
         <area shape="rect" coords="447,220,483,256" target="."	 />
         <area shape="rect" coords="487,220,524,256" target="/"	 />
+        <area shape="rect" coords="555,266,585,298" target="ok" />
+        <area shape="rect" coords="585,266,619,298" target="cancel" />
       </map>
     </layout>
     <event name="esc" type="key" code="27" ascii="27" modifiers="" />
@@ -223,6 +227,8 @@
     <event name="7" type="key" code="55" ascii="55" modifiers="" />
     <event name="8" type="key" code="56" ascii="56" modifiers="" />
     <event name="9" type="key" code="57" ascii="57" modifiers="" />
+    <event name="ok" type="submit" />
+    <event name="cancel" type="cancel" />
     <event name="quit" type="submit" />
   </mode>
 

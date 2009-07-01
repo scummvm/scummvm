@@ -198,7 +198,9 @@ int AgiEngine::mainCycle() {
 
 	// In AGI Mouse emulation mode we must update the mouse-related
 	// vars in every interpreter cycle.
-	if (getFeatures() & GF_AGIMOUSE) {
+	//
+	// We run AGIMOUSE always as a side effect
+	if (getFeatures() & GF_AGIMOUSE || 1) {
 		_game.vars[28] = g_mouse.x / 2;
 		_game.vars[29] = g_mouse.y;
 	}

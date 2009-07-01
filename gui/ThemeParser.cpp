@@ -23,17 +23,11 @@
  *
  */
 
-#include "common/util.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/xmlparser.h"
-
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
 #include "gui/GuiManager.h"
+
 #include "graphics/VectorRenderer.h"
 
 namespace GUI {
@@ -86,19 +80,6 @@ static GUI::ThemeEngine::TextAlignVertical parseTextVAlign(const Common::String 
 
 
 ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
-
-	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
-	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
-	_drawFunctions["roundedsq"]  = &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
-	_drawFunctions["bevelsq"]  = &Graphics::VectorRenderer::drawCallback_BEVELSQ;
-	_drawFunctions["line"]  = &Graphics::VectorRenderer::drawCallback_LINE;
-	_drawFunctions["triangle"]  = &Graphics::VectorRenderer::drawCallback_TRIANGLE;
-	_drawFunctions["fill"]  = &Graphics::VectorRenderer::drawCallback_FILLSURFACE;
-	_drawFunctions["tab"]  = &Graphics::VectorRenderer::drawCallback_TAB;
-	_drawFunctions["void"]  = &Graphics::VectorRenderer::drawCallback_VOID;
-	_drawFunctions["bitmap"] = &Graphics::VectorRenderer::drawCallback_BITMAP;
-	_drawFunctions["cross"] = &Graphics::VectorRenderer::drawCallback_CROSS;
-
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = 0;
 	_theme = parent;
@@ -107,8 +88,6 @@ ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
 ThemeParser::~ThemeParser() {
 	delete _defaultStepGlobal;
 	delete _defaultStepLocal;
-	_palette.clear();
-	_drawFunctions.clear();
 }
 
 void ThemeParser::cleanup() {
@@ -281,15 +260,44 @@ bool ThemeParser::parserCallback_color(ParserNode *node) {
 }
 
 
+static Graphics::DrawingFunctionCallback getDrawingFunctionCallback(const Common::String &name) {
+
+	if (name == "circle")
+		return &Graphics::VectorRenderer::drawCallback_CIRCLE;
+	if (name == "square")
+		return &Graphics::VectorRenderer::drawCallback_SQUARE;
+	if (name == "roundedsq")
+		return &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
+	if (name == "bevelsq")
+		return &Graphics::VectorRenderer::drawCallback_BEVELSQ;
+	if (name == "line")
+		return &Graphics::VectorRenderer::drawCallback_LINE;
+	if (name == "triangle")
+		return &Graphics::VectorRenderer::drawCallback_TRIANGLE;
+	if (name == "fill")
+		return &Graphics::VectorRenderer::drawCallback_FILLSURFACE;
+	if (name == "tab")
+		return &Graphics::VectorRenderer::drawCallback_TAB;
+	if (name == "void")
+		return &Graphics::VectorRenderer::drawCallback_VOID;
+	if (name == "bitmap")
+		return &Graphics::VectorRenderer::drawCallback_BITMAP;
+	if (name == "cross")
+		return &Graphics::VectorRenderer::drawCallback_CROSS;
+
+	return 0;
+}
+
+
 bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 	Graphics::DrawStep *drawstep = newDrawStep();
 
 	Common::String functionName = node->values["func"];
 
-	if (_drawFunctions.contains(functionName) == false)
-		return parserError("%s is not a valid drawing function name", functionName.c_str());
+	drawstep->drawingCall = getDrawingFunctionCallback(functionName);
 
-	drawstep->drawingCall = _drawFunctions[functionName];
+	if (drawstep->drawingCall == 0)
+		return parserError("%s is not a valid drawing function name", functionName.c_str());
 
 	if (!parseDrawStep(node, drawstep, true))
 		return false;

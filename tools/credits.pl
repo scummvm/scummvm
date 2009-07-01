@@ -524,6 +524,7 @@ begin_credits("Credits");
 
 	  begin_section("Cinematique evo 2");
 		  add_person("Vincent Hamm", "yazoo", "original CruisE engine author");
+		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
 
 	  begin_section("FOTAQ");	# Flight of the Amazon Queen

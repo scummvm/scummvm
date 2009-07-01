@@ -32,6 +32,10 @@
 
 namespace Cruise {
 
+uint32 Period(uint32 hz) {
+	return ((uint32)(100000000L / ((uint32)hz * 28L)));
+}
+
 //#define FUNCTION_DEBUG
 
 int16 Op_LoadOverlay(void) {
@@ -198,15 +202,15 @@ int16 Op_Random(void) {
 int16 Op_PlayFX(void) {
 	int volume = popVar();
 	int speed = popVar();
-	int channelNum = popVar();
+	/*int channelNum = */popVar();
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
 		if (speed == -1)
 			speed = filesDatabase[sampleNum].subData.transparency;
 
-		_vm->sound().startSound(channelNum, filesDatabase[sampleNum].subData.ptr,
-			filesDatabase[sampleNum].width, speed, volume, false);
+		_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr,
+			filesDatabase[sampleNum].width, volume);
 	}
 
 	return (0);
@@ -215,15 +219,15 @@ int16 Op_PlayFX(void) {
 int16 Op_LoopFX(void) {
 	int volume = popVar();
 	int speed = popVar();
-	int channelNum = popVar();
+	/*int channelNum = */popVar();
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
 		if (speed == -1)
 			speed = filesDatabase[sampleNum].subData.transparency;
 
-		_vm->sound().startSound(channelNum, filesDatabase[sampleNum].subData.ptr,
-			filesDatabase[sampleNum].width, speed, volume, true);
+		_vm->sound().playSound(filesDatabase[sampleNum].subData.ptr,
+			filesDatabase[sampleNum].width, volume);
 	}
 
 	return (0);
@@ -246,15 +250,14 @@ int16 Op_StopFX(void) {
 
 int16 Op_FreqFX(void) {
 	int volume = popVar();
-	int speed = popVar();
+	int freq2 = popVar();
 	int channelNum = popVar();
 	int sampleNum = popVar();
 
 	if ((sampleNum >= 0) && (sampleNum < NUM_FILE_ENTRIES) && (filesDatabase[sampleNum].subData.ptr)) {
-		if (speed == -1)
-			speed = filesDatabase[sampleNum].subData.transparency;
-
-		_vm->sound().startNote(channelNum, volume, speed);
+		int freq = Period(freq2 * 1000);
+		
+		_vm->sound().startNote(channelNum, volume, freq);
 	}
 
 	return (0);
@@ -357,10 +360,10 @@ int16 Op_FindSet(void) {
 }
 
 int16 Op_RemoveFrame(void) {
-	int var1 = popVar();
-	int var2 = popVar();
+	int count = popVar();
+	int start = popVar();
 
-	resetFileEntryRange(var2, var1);
+	resetFileEntryRange(start, count);
 
 	return (0);
 }
@@ -563,26 +566,22 @@ int16 Op_LoadFrame(void) {
 }
 
 int16 Op_LoadAbs(void) {
-	int param1;
-//  int param2;
-//  int param3;
+	int slot;
 	char name[36] = "";
 	char *ptr;
 	int result = 0;
 
 	ptr = (char *) popPtr();
+	slot = popVar();
 
-	strcpy(name, ptr);
-
-	param1 = popVar();
-
-	if (param1 >= 0 || param1 < NUM_FILE_ENTRIES) {
+	if ((slot >= 0) && (slot < NUM_FILE_ENTRIES)) {
+		strcpy(name, ptr);
 		strToUpper(name);
 
 		gfxModuleData_gfxWaitVSync();
 		gfxModuleData_gfxWaitVSync();
 
-		result = loadFullBundle(name, param1);
+		result = loadFullBundle(name, slot);
 	}
 
 	changeCursor(CURSOR_NORMAL);
@@ -773,8 +772,6 @@ int16 Op_UnfreezeParent(void) {
 
 	return 0;
 }
-
-int16 protectionCode = 0;
 
 int16 Op_ProtectionFlag(void) {
 	int16 temp = protectionCode;
@@ -1356,22 +1353,22 @@ int16 Op_LoadSong(void) {
 
 	strcpy(buffer, ptr);
 	strToUpper(buffer);
-	_vm->music().loadSong(buffer);
+	_vm->sound().loadMusic(buffer);
 
 	changeCursor(CURSOR_NORMAL);
 	return 0;
 }
 
 int16 Op_PlaySong(void) {
-	if (_vm->music().songLoaded() && !_vm->music().songPlayed())
-		_vm->music().startSong();
+	if (_vm->sound().songLoaded() && !_vm->sound().songPlayed())
+		_vm->sound().playMusic();
 
 	return 0;
 }
 
 int16 Op_StopSong(void) {
-	if (_vm->music().isPlaying())
-		_vm->music().stop();
+	if (_vm->sound().isPlaying())
+		_vm->sound().stopMusic();
 
 	return 0;
 }
@@ -1385,12 +1382,12 @@ int16 Op_RestoreSong(void) {
 int16 Op_SongSize(void) {
 	int size, oldSize;
 
-	if (_vm->music().songLoaded()) {
-		byte *pSize = _vm->music().songData() + 470;
-		oldSize = *pSize;
+	if (_vm->sound().songLoaded()) {
+		oldSize = _vm->sound().numOrders();
+		
 		size = popVar();
 		if ((size >= 1) && (size < 128))
-			*pSize = size;
+			_vm->sound().setNumOrders(size);
 	} else
 		oldSize = 0;
 
@@ -1401,35 +1398,34 @@ int16 Op_SetPattern(void) {
 	int value = popVar();
 	int offset = popVar();
 
-	if (_vm->music().songLoaded()) {
-		byte *pData = _vm->music().songData();
-		*(pData + 472 + offset) = (byte)value;
+	if (_vm->sound().songLoaded()) {
+		_vm->sound().setPattern(offset, value);
 	}
 
 	return 0;
 }
 
 int16 Op_FadeSong(void) {
-	_vm->music().fadeSong();
+	_vm->sound().fadeSong();
 
 	return 0;
 }
 
 int16 Op_FreeSong(void) {
-	_vm->music().stop();
-	_vm->music().removeSong();
+	_vm->sound().stopMusic();
+	_vm->sound().removeMusic();
 	return 0;
 }
 
 int16 Op_SongLoop(void) {
-	bool oldLooping = _vm->music().looping();
-	_vm->music().setLoop(popVar() != 0);
+	bool oldLooping = _vm->sound().musicLooping();
+	_vm->sound().musicLoop(popVar() != 0);
 
 	return oldLooping;
 }
 
 int16 Op_SongPlayed(void) {
-	return _vm->music().songPlayed();
+	return _vm->sound().songPlayed();
 }
 
 void setVar49Value(int value) {
@@ -1634,25 +1630,29 @@ int16 Op_GetNodeY(void) {
 }
 
 int16 Op_SetVolume(void) {
-	int oldVolume = _vm->music().getVolume() >> 2;
+	int oldVolume = _vm->sound().getVolume();
 	int newVolume = popVar();
 
-	// TODO: The game seems to expect the volume will only range from 0 - 63, so for now
-	// I'm doing a translation of the full range 0 - 255 to the 0 - 63 for this script.
-	// Need to verify at some point that there's no problem with this
 	if (newVolume > 63) newVolume = 63;
 	if (newVolume >= 0) {
 		int volume = 63 - newVolume;
-		_vm->music().setVolume(volume << 2);
+		_vm->sound().setVolume(volume);
 	}
 
 	return oldVolume >> 2;
 }
 
 int16 Op_SongExist(void) {
-	char* songName = (char*)popPtr();
+	const char *songName = (char*)popPtr();
 
-	warning("Unimplemented \"Op_SongExist\": %s", songName);
+	if (songName) {
+		char name[33];
+		strcpy(name, songName);
+		strToUpper(name);
+
+		if (!strcmp(_vm->sound().musicName(), name))
+			return 1;
+	}
 
 	return 0;
 }

@@ -27,6 +27,7 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
 #include "kyra/text.h"
+#include "kyra/util.h"
 
 #include "common/savefile.h"
 
@@ -158,8 +159,9 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWh
 		}
 	}
 
-	int mouseX = _vm->_mouseX;
-	int mouseY = _vm->_mouseY;
+	Common::Point p = _vm->getMousePos();
+	int mouseX = _vm->_mouseX = p.x;
+	int mouseY = _vm->_mouseY = p.y;
 
 	uint16 flags = 0;
 
@@ -454,8 +456,11 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	Common::InSaveFile *in;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
-			strncpy(getTableString(menu.item[i].itemId), header.description.c_str(), 80);
-			getTableString(menu.item[i].itemId)[79] = 0;
+			char *s = getTableString(menu.item[i].itemId);
+			strncpy(s, header.description.c_str(), 80);
+			s[79] = 0;
+			Util::convertISOToDOS(s);
+
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			menu.item[i].enabled = true;
 			delete in;
@@ -601,7 +606,7 @@ int GUI_v2::saveMenu(Button *caller) {
 	updateAllMenuButtons();
 
 	while (_isSaveMenu) {
-		processHighlights(_saveMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_saveMenu);
 		getInput();
 	}
 
@@ -620,6 +625,7 @@ int GUI_v2::saveMenu(Button *caller) {
 
 	Graphics::Surface thumb;
 	createScreenThumbnail(thumb);
+	Util::convertDOSToISO(_saveDescription);
 	_vm->saveGameState(_saveSlot, _saveDescription, &thumb);
 	thumb.free();
 
@@ -697,7 +703,7 @@ int GUI_v2::deleteMenu(Button *caller) {
 		updateAllMenuButtons();
 
 		while (_isDeleteMenu) {
-			processHighlights(_saveMenu, _vm->_mouseX, _vm->_mouseY);
+			processHighlights(_saveMenu);
 			getInput();
 		}
 
@@ -749,7 +755,11 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 	_cancelNameInput = _finishNameInput = false;
 	while (running && !_vm->shouldQuit()) {
 		checkTextfieldInput();
-		processHighlights(_savenameMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_savenameMenu);
+
+		char inputKey = _keyPressed.ascii;
+		Util::convertISOToDOS(inputKey);
+
 		if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER || _finishNameInput) {
 			if (checkSavegameDescription(buffer, curPos)) {
 				buffer[curPos] = 0;
@@ -767,12 +777,12 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 			drawTextfieldBlock(x2, y2, c3);
 			_screen->updateScreen();
 			_lastScreenUpdate = _vm->_system->getMillis();
-		} else if (_keyPressed.ascii > 31 && _keyPressed.ascii < 127 && curPos < bufferSize) {
-			if (x2 + getCharWidth(_keyPressed.ascii) + 7 < 0x11F) {
-				buffer[curPos] = _keyPressed.ascii;
+		} else if ((uint8)inputKey > 31 && (uint8)inputKey < 226 && curPos < bufferSize) {
+			if (x2 + getCharWidth(inputKey) + 7 < 0x11F) {
+				buffer[curPos] = inputKey;
 				const char text[2] = { buffer[curPos], 0 };
 				_text->printText(text, x2, y2, c1, c2, c2);
-				x2 += getCharWidth(_keyPressed.ascii);
+				x2 += getCharWidth(inputKey);
 				drawTextfieldBlock(x2, y2, c3);
 				++curPos;
 				_screen->updateScreen();
@@ -840,7 +850,7 @@ bool GUI_v2::choiceDialog(int name, bool type) {
 	_choice = false;
 
 	while (_isChoiceMenu) {
-		processHighlights(_choiceMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_choiceMenu);
 		getInput();
 	}
 

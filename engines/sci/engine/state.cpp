@@ -126,4 +126,73 @@ uint16 EngineState::currentRoomNumber() const {
 	return script_000->locals_block->_locals[13].toUint16();
 }
 
+kLanguage EngineState::charToLanguage(const char c) const {
+	switch (c) {
+	case 'F':
+		return K_LANG_FRENCH;
+	case 'S':
+		return K_LANG_SPANISH;
+	case 'I':
+		return K_LANG_ITALIAN;
+	case 'G':
+		return K_LANG_GERMAN;
+	case 'J':
+	case 'j':
+		return K_LANG_JAPANESE;
+	case 'P':
+		return K_LANG_PORTUGUESE;
+	default:
+		return K_LANG_NONE;
+	}
+}
+
+Common::String EngineState::getLanguageString(const char *str, kLanguage lang) const {
+	kLanguage secondLang = K_LANG_NONE;
+
+	const char *seeker = str;
+	while (*seeker) {
+		if ((*seeker == '%') || (*seeker == '#')) {
+			secondLang = charToLanguage(*(seeker + 1));
+
+			if (secondLang != K_LANG_NONE)
+				break;
+		}
+
+		seeker++;
+	}
+
+	if ((secondLang == K_LANG_JAPANESE) && (*(seeker + 1) == 'J')) {
+		// FIXME: Add Kanji support
+		lang = K_LANG_ENGLISH;
+	}
+
+	if (secondLang == lang)
+		return Common::String(seeker + 2);
+
+	if (seeker)
+		return Common::String(str, seeker - str);
+	else
+		return Common::String(str);
+}
+
+Common::String EngineState::strSplit(const char *str, const char *sep) {
+	EngineState *s = this;
+
+	kLanguage lang = (kLanguage)GET_SEL32V(s->game_obj, printLang);
+	kLanguage subLang = (kLanguage)GET_SEL32V(s->game_obj, subtitleLang);
+
+	// Use English when no language settings are present in the game
+	if (lang == K_LANG_NONE)
+		lang = K_LANG_ENGLISH;
+
+	Common::String retval = getLanguageString(str, lang);
+
+	if ((subLang != K_LANG_NONE) && (sep != NULL)) {
+		retval += sep;
+		retval += getLanguageString(str, subLang);
+	}
+
+	return retval;
+}
+
 } // End of namespace Sci

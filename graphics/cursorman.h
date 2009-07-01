@@ -36,7 +36,21 @@ public:
 	/** Query whether the mouse cursor is visible. */
 	bool isVisible();
 
-	/** Show or hide the mouse cursor. */
+	/**
+	 * Show or hide the mouse cursor.
+	 *
+	 * This function does not call OSystem::updateScreen, when visible is true.
+	 * This fact might result in a non visible mouse cursor if the caller does
+	 * not call OSystem::updateScreen itself after a showMouse(true) call.
+	 *
+	 * TODO: We might want to reconsider this behavior, it might be confusing
+	 * for the user to call OSystem::updateScreen separately, on the other
+	 * hand OSystem::updateScreen might as well display unwanted changes on
+	 * the screen. Another alternative would be to let the backend worry
+	 * about this on OSystem::showMouse call.
+	 *
+	 * @see OSystem::showMouse.
+	 */
 	bool showMouse(bool visible);
 
 	/**
@@ -86,6 +100,17 @@ public:
 	 *
 	 */
 	void popAllCursors();
+
+	/**
+	 * Test whether cursor palettes are supported.
+	 *
+	 * This is just an convenience wrapper for checking for
+	 * OSystem::kFeatureCursorHasPalette to be supported by OSystem.
+	 *
+	 * @see OSystem::kFeatureCursorHasPalette
+	 * @see OSystem::hasFeature
+	 */
+	bool supportsCursorPalettes();
 
 	/**
 	 * Enable/Disable the current cursor palette.

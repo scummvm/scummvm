@@ -31,6 +31,7 @@
 #include "kyra/sound.h"
 #include "kyra/gui_lok.h"
 #include "kyra/timer.h"
+#include "kyra/util.h"
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -86,7 +87,6 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 		}
 	}
 	_screen->updateScreen();
-	// XXX clearKyrandiaButtonIO
 	return 0;
 }
 
@@ -182,7 +182,6 @@ int KyraEngine_LoK::buttonAmuletCallback(Button *caller) {
 		break;
 	}
 	_unkAmuletVar = 0;
-	// XXX clearKyrandiaButtonIO (!used before every return in this function!)
 	return 1;
 }
 
@@ -479,7 +478,7 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 	}
 
 	while (_displayMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[_toplevelMenu], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[_toplevelMenu]);
 		getInput();
 	}
 
@@ -538,6 +537,9 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header))) {
 			strncpy(savenames[i], header.description.c_str(), ARRAYSIZE(savenames[0]));
 			savenames[i][34] = 0;
+
+			Util::convertISOToDOS(savenames[i]);
+
 			menu.item[i].itemString = savenames[i];
 			menu.item[i].enabled = 1;
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
@@ -570,7 +572,7 @@ int GUI_LoK::saveGameMenu(Button *button) {
 	_cancelSubMenu = false;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[2], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[2]);
 		getInput();
 	}
 
@@ -616,7 +618,7 @@ int GUI_LoK::loadGameMenu(Button *button) {
 	_vm->_gameToLoad = -1;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[2], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[2]);
 		getInput();
 	}
 
@@ -654,9 +656,12 @@ void GUI_LoK::updateSavegameString() {
 	if (_keyPressed.keycode) {
 		length = strlen(_savegameName);
 
-		if (_keyPressed.ascii > 31 && _keyPressed.ascii < 127) {
+		char inputKey = _keyPressed.ascii;
+		Util::convertISOToDOS(inputKey);
+
+		if ((uint8)inputKey > 31 && (uint8)inputKey < 226) {
 			if (length < ARRAYSIZE(_savegameName)-1) {
-				_savegameName[length] = _keyPressed.ascii;
+				_savegameName[length] = inputKey;
 				_savegameName[length+1] = 0;
 				redrawTextfield();
 			}
@@ -703,7 +708,7 @@ int GUI_LoK::saveGame(Button *button) {
 	while (_displaySubMenu && !_vm->shouldQuit()) {
 		checkTextfieldInput();
 		updateSavegameString();
-		processHighlights(_menu[3], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[3]);
 	}
 
 	if (_cancelSubMenu) {
@@ -715,6 +720,8 @@ int GUI_LoK::saveGame(Button *button) {
 		if (_savegameOffset == 0 && _vm->_gameToLoad == 0)
 			_vm->_gameToLoad = getNextSavegameSlot();
 		if (_vm->_gameToLoad > 0) {
+			Util::convertDOSToISO(_savegameName);
+
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
 			_vm->saveGameState(_vm->_gameToLoad, _savegameName, &thumb);
@@ -773,7 +780,7 @@ bool GUI_LoK::quitConfirm(const char *str) {
 	_cancelSubMenu = true;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[1], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[1]);
 		getInput();
 	}
 
@@ -833,7 +840,7 @@ int GUI_LoK::gameControlsMenu(Button *button) {
 	_cancelSubMenu = false;
 
 	while (_displaySubMenu && !_vm->shouldQuit()) {
-		processHighlights(_menu[5], _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_menu[5]);
 		getInput();
 	}
 
@@ -1015,25 +1022,25 @@ void GUI_LoK::fadePalette() {
 	static const int16 menuPalIndexes[] = {248, 249, 250, 251, 252, 253, 254, -1};
 	int index = 0;
 
-	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
+	_screen->copyPalette(2, 0);
 
 	for (int i = 0; i < 768; i++)
-		_screen->_currentPalette[i] >>= 1;
+		_screen->getPalette(0)[i] >>= 1;
 
 	while (menuPalIndexes[index] != -1) {
-		memcpy(&_screen->_currentPalette[menuPalIndexes[index]*3], &_screen->getPalette(2)[menuPalIndexes[index]*3], 3);
-		index++;
+		_screen->getPalette(0).copy(_screen->getPalette(2), menuPalIndexes[index], 1);
+		++index;
 	}
 
-	_screen->fadePalette(_screen->_currentPalette, 2);
+	_screen->fadePalette(_screen->getPalette(0), 2);
 }
 
 void GUI_LoK::restorePalette() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
 
-	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
-	_screen->fadePalette(_screen->_currentPalette, 2);
+	_screen->copyPalette(0, 2);
+	_screen->fadePalette(_screen->getPalette(0), 2);
 }
 
 #pragma mark -

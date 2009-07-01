@@ -83,7 +83,7 @@ public:
 
 	/**
 	 * Checks whether a key is in the map, adds it if neccessary.
-	 * @param value		The key to check for/add
+	 * @param key		The key to check for/add
 	 * @param add		Whether to add the key if it's not in there
 	 * @param was_added	Set to non-zero if and only if the key is new, ignored if NULL.
 	 * @return The new (or old) index, or -1 if add was zero and
@@ -91,6 +91,11 @@ public:
 	 */
 	int checkKey(int key, bool add, bool *wasAdded = 0);
 
+	/**
+	 * Looks up a key in the map
+	 * @parmam key The key to look for
+	 * @return The value or -1 if not found 
+	 */
 	int lookupKey(int key) const;
 
 

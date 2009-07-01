@@ -1,9 +1,6 @@
 Wii/Gamecube port of ScummVM README
 -----------------------------------
 
-features not compiled in:
-- the AGI game engine
-
 REQUIREMENTS
 
   wii:

@@ -27,7 +27,6 @@
 #define THEME_PARSER_H
 
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "common/xmlparser.h"
 
 namespace GUI {
@@ -35,8 +34,6 @@ namespace GUI {
 class ThemeEngine;
 
 class ThemeParser : public Common::XMLParser {
-	typedef void (Graphics::VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);
-
 public:
 	ThemeParser(ThemeEngine *parent);
 
@@ -248,8 +245,6 @@ protected:
 
 	Graphics::DrawStep *_defaultStepGlobal;
 	Graphics::DrawStep *_defaultStepLocal;
-
-	Common::HashMap<Common::String, DrawingFunctionCallback, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _drawFunctions;
 
 	struct PaletteColor {
 		uint8 r, g, b;

@@ -945,7 +945,11 @@ bool Kernel::loadKernelNames() {
 	switch (_resmgr->_sciVersion) {
 	case SCI_VERSION_0:
 	case SCI_VERSION_01:
-		vocab_get_knames0(_resmgr, _kernelNames);
+		// HACK: The KQ1 demo requires the SCI1 vocabulary.
+		if (((SciEngine*)g_engine)->getFlags() & GF_SCI0_SCI1VOCAB)
+			vocab_get_knames1(_resmgr, _kernelNames);
+		else
+			vocab_get_knames0(_resmgr, _kernelNames);
 		break;
 	case SCI_VERSION_01_VGA:
 	case SCI_VERSION_01_VGA_ODD:

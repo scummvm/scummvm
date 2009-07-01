@@ -367,7 +367,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	_vm->_game.sounds[resnum]->play();
 	_playingSound = resnum;
 
-	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d)", resnum, flag);
+	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d) type = %d", resnum, flag, type);
 
 	switch (type) {
 	case AGI_SOUND_SAMPLE: {
@@ -411,6 +411,8 @@ void SoundMgr::startSound(int resnum, int flag) {
 void SoundMgr::stopSound() {
 	int i;
 
+	debugC(3, kDebugLevelSound, "stopSound() --> %d", _playingSound);
+
 	_endflag = -1;
 	if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
 		for (i = 0; i < NUM_CHANNELS; i++)
@@ -418,7 +420,8 @@ void SoundMgr::stopSound() {
 	}
 
 	if (_playingSound != -1) {
-		_vm->_game.sounds[_playingSound]->stop();
+		if (_vm->_game.sounds[_playingSound]) // sanity checking
+			_vm->_game.sounds[_playingSound]->stop();
 
 		if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
 			_gsSound.stopSounds();
@@ -473,6 +476,8 @@ int SoundMgr::initSound() {
 		break;
 	case SOUND_EMU_APPLE2GS:
 		_disabledMidi = !loadInstruments();
+		break;
+	case SOUND_EMU_COCO3:
 		break;
 	}
 
@@ -819,6 +824,35 @@ void SoundMgr::playSampleSound() {
 		_playing = _gsSound.activeSounds() > 0;
 }
 
+static int cocoFrequencies[] = {
+	 130,  138,  146,  155,  164,  174,  184,  195,  207,  220,  233,  246,
+	 261,  277,  293,  311,  329,  349,  369,  391,  415,  440,  466,  493,
+	 523,  554,  587,  622,  659,  698,  739,  783,  830,  880,  932,  987,
+	1046, 1108, 1174, 1244, 1318, 1396, 1479, 1567, 1661, 1760, 1864, 1975,
+	2093, 2217, 2349, 2489, 2637, 2793, 2959, 3135, 3322, 3520, 3729, 3951
+};
+
+void SoundMgr::playCoCoSound() {
+	int i = 0;
+	CoCoNote note;
+
+	do {
+		note.read(_chn[i].ptr);
+
+		if (note.freq != 0xff) {
+			playNote(0, cocoFrequencies[note.freq], note.volume);
+
+			uint32 start_time = _vm->_system->getMillis();
+
+			while (_vm->_system->getMillis() < start_time + note.duration) {
+                _vm->_system->updateScreen();
+
+                _vm->_system->delayMillis(10);
+			}
+		}
+	} while (note.freq != 0xff);
+}
+
 void SoundMgr::playAgiSound() {
 	int i;
 	AgiNote note;
@@ -875,6 +909,8 @@ void SoundMgr::playSound() {
 				playSampleSound();
 			}
 		}
+	} else if (_vm->_soundemu == SOUND_EMU_COCO3) {
+		playCoCoSound();
 	} else {
 		//debugC(3, kDebugLevelSound, "playSound: Trying to play a PCjr 4-channel sound");
 		playAgiSound();

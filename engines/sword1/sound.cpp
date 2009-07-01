@@ -226,14 +226,14 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			return false;
 		}
 		
-		uint16 numRooms = file.readUint16LE(); // Number of rooms 
+		uint16 numRooms = file.readUint16LE(); // Read number of rooms referenced in this file
 
 		file.seek(locIndex * 4 + 2); // 4 bytes per room, skip first 2 bytes
 
 		uint16 numLines = file.readUint16LE();
 		uint16 roomOffset = file.readUint16LE();
 
-		file.seek(2 + numRooms * 4 + roomOffset * 2); // The offset is in terms of uint16's, so multiply by 2. Skip the 0x112 byte header too.
+		file.seek(2 + numRooms * 4 + roomOffset * 2); // The offset is in terms of uint16's, so multiply by 2. Skip the room indexes too.
 
 		locIndex = 0xFFFFFFFF;
 

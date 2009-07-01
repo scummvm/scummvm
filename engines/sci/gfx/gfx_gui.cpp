@@ -266,7 +266,7 @@ static rect_t _move_and_extend_rect(rect_t rect, Common::Point point, int yplus)
 	return gfx_rect(rect.x + point.x, rect.y + point.y, rect.width + 1, rect.height + yplus);
 }
 
-GfxList *_sciw_add_text_to_list(GfxList *list, GfxPort *port, rect_t zone, char *text,
+GfxList *_sciw_add_text_to_list(GfxList *list, GfxPort *port, rect_t zone, const char *text,
 	int font, gfx_alignment_t align, char framed, char inverse, int flags, char gray_text) {
 	gfx_color_t *color1, *color2, *bgcolor;
 
@@ -294,7 +294,7 @@ GfxList *_sciw_add_text_to_list(GfxList *list, GfxPort *port, rect_t zone, char 
 	return list;
 }
 
-GfxList *sciw_new_button_control(GfxPort *port, reg_t ID, rect_t zone, char *text, int font, char selected, char inverse, char grayed_out) {
+GfxList *sciw_new_button_control(GfxPort *port, reg_t ID, rect_t zone, const char *text, int font, char selected, char inverse, char grayed_out) {
 	gfx_color_t *frame_col = (inverse) ? &(port->_bgcolor) : &(port->_color);
 	GfxList *list;
 
@@ -332,7 +332,7 @@ GfxList *sciw_new_button_control(GfxPort *port, reg_t ID, rect_t zone, char *tex
 	return list;
 }
 
-GfxList *sciw_new_text_control(GfxPort *port, reg_t ID, rect_t zone, char *text, int font,
+GfxList *sciw_new_text_control(GfxPort *port, reg_t ID, rect_t zone, const char *text, int font,
 								   gfx_alignment_t align, char framed, char inverse) {
 	GfxList *list = gfxw_new_list(_move_and_extend_rect(zone, Common::Point(port->zone.x, port->zone.y), 2), 0);
 
@@ -344,7 +344,7 @@ GfxList *sciw_new_text_control(GfxPort *port, reg_t ID, rect_t zone, char *text,
 	return _sciw_add_text_to_list(list, port, zone, text, font, align, framed, inverse, 0, port->gray_text);
 }
 
-GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone, char *text, int font, unsigned int cursor,
+GfxList *sciw_new_edit_control(GfxPort *port, reg_t ID, rect_t zone, const char *text, int font, unsigned int cursor,
 								   char inverse) {
 	GfxText *text_handle;
 
@@ -440,7 +440,7 @@ GfxList *sciw_new_icon_control(GfxPort *port, reg_t ID, rect_t zone, int view, i
 	return list;
 }
 
-GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr, char **entries_list,
+GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr, const char **entries_list,
 	int entries_nr, int list_top, int selection, char inverse) {
 	GfxList *list;
 

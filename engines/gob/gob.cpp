@@ -47,7 +47,6 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/palanim.h"
-#include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/videoplayer.h"
 #include "gob/save/saveload.h"
@@ -102,12 +101,12 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
-	_sound     = 0; _mult     = 0; _game   = 0;
-	_global    = 0; _dataIO   = 0; _goblin = 0;
-	_vidPlayer = 0; _init     = 0; _inter  = 0;
-	_map       = 0; _palAnim  = 0; _parse  = 0;
-	_scenery   = 0; _draw     = 0; _util   = 0;
-	_video     = 0; _saveLoad = 0;
+	_sound     = 0; _mult     = 0; _game    = 0;
+	_global    = 0; _dataIO   = 0; _goblin  = 0;
+	_vidPlayer = 0; _init     = 0; _inter   = 0;
+	_map       = 0; _palAnim  = 0; _scenery = 0;
+	_draw      = 0; _util     = 0; _video   = 0;
+	_saveLoad  = 0;
 
 	_pauseStart = 0;
 
@@ -121,7 +120,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addDebugChannel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
 	Common::addDebugChannel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
 	Common::addDebugChannel(kDebugSound, "Sound", "Sound output debug level");
-	Common::addDebugChannel(kDebugParser, "Parser", "Parser debug level");
+	Common::addDebugChannel(kDebugExpression, "Expression", "Expression parser debug level");
 	Common::addDebugChannel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
 	Common::addDebugChannel(kDebugFileIO, "FileIO", "File Input/Output debug level");
 	Common::addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
@@ -248,42 +247,42 @@ Common::Error GobEngine::run() {
 	switch (_language) {
 	case Common::FR_FRA:
 	case Common::RU_RUS:
-		_global->_language = 0;
+		_global->_language = kLanguageFrench;
 		break;
 	case Common::DE_DEU:
-		_global->_language = 1;
+		_global->_language = kLanguageGerman;
 		break;
 	case Common::EN_ANY:
 	case Common::EN_GRB:
-		_global->_language = 2;
+	case Common::HU_HUN:
+		_global->_language = kLanguageBritish;
 		break;
 	case Common::ES_ESP:
-		_global->_language = 3;
+		_global->_language = kLanguageSpanish;
 		break;
 	case Common::IT_ITA:
-		_global->_language = 4;
+		_global->_language = kLanguageItalian;
 		break;
 	case Common::EN_USA:
-		_global->_language = 5;
+		_global->_language = kLanguageAmerican;
 		break;
 	case Common::NL_NLD:
-		_global->_language = 6;
+		_global->_language = kLanguageDutch;
 		break;
 	case Common::KO_KOR:
-		_global->_language = 7;
+		_global->_language = kLanguageKorean;
 		break;
 	case Common::HB_ISR:
-		_global->_language = 8;
+		_global->_language = kLanguageHebrew;
 		break;
 	case Common::PT_BRA:
-		_global->_language = 9;
+		_global->_language = kLanguagePortuguese;
 		break;
 	case Common::JA_JPN:
-		_global->_language = 10;
+		_global->_language = kLanguageJapanese;
 		break;
 	default:
-		// Default to English
-		_global->_language = 2;
+		_global->_language = kLanguageBritish;
 		break;
 	}
 	_global->_languageWanted = _global->_language;
@@ -332,7 +331,6 @@ bool GobEngine::initGameParts() {
 	_palAnim = new PalAnim(this);
 	_vidPlayer = new VideoPlayer(this);
 	_sound = new Sound(this);
-	_parse = new Parse(this);
 
 	switch (_gameType) {
 	case kGameTypeGeisha:
@@ -465,6 +463,8 @@ bool GobEngine::initGameParts() {
 		break;
 	}
 
+	_inter->setupOpcodes();
+
 	if (is640()) {
 		_video->_surfWidth = _width = 640;
 		_video->_surfHeight = _video->_splitHeight1 = _height = 480;
@@ -495,7 +495,6 @@ void GobEngine::deinitGameParts() {
 	delete _inter;     _inter = 0;
 	delete _map;       _map = 0;
 	delete _palAnim;   _palAnim = 0;
-	delete _parse;     _parse = 0;
 	delete _scenery;   _scenery = 0;
 	delete _draw;      _draw = 0;
 	delete _util;      _util = 0;

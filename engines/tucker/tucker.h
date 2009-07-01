@@ -848,11 +848,32 @@ enum AnimationSoundType {
 	kAnimationSoundTypeLoopingWAV
 };
 
+enum {
+	kSoundsList_Seq3_4,
+	kSoundsList_Seq9_10,
+	kSoundsList_Seq21_20,
+	kSoundsList_Seq13_14,
+	kSoundsList_Seq15_16,
+	kSoundsList_Seq27_28,
+	kSoundsList_Seq17_18,
+	kSoundsList_Seq19_20
+};
+
 struct SoundSequenceData {
 	int timestamp;
 	int index;
-	int opcode;
+	int num;
 	int volume;
+	int opcode;
+};
+
+struct SoundSequenceDataList {
+	int musicIndex;
+	int musicVolume;
+	int soundList1Count;
+	int soundList2Count;
+	int soundSeqDataCount;
+	const SoundSequenceData *soundSeqData;
 };
 
 class AnimationSequencePlayer {
@@ -919,13 +940,9 @@ private:
 	int _updateFuncIndex;
 	::Graphics::FlicDecoder _flicPlayer[2];
 	uint8 _animationPalette[256 * 4];
-	int _soundsList1Offset;
-	int _soundsList1Count;
-	int _soundsList2Offset;
-	int _soundsList2Count;
-	int _soundSeqDataOffset;
 	int _soundSeqDataCount;
 	int _soundSeqDataIndex;
+	const SoundSequenceData *_soundSeqData;
 	uint8 *_offscreenBuffer;
 	int _updateScreenWidth;
 	int _updateScreenPicture;
@@ -938,8 +955,7 @@ private:
 	Audio::SoundHandle _sfxHandle;
 	Audio::SoundHandle _musicHandle;
 
-	static const SoundSequenceData _soundSeqData[];
-	static const char *_musicFileNamesTable[];
+	static const SoundSequenceDataList _soundSeqDataList[];
 	static const char *_audioFileNamesTable[];
 };
 

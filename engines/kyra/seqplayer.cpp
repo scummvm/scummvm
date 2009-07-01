@@ -92,7 +92,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 }
 
 void SeqPlayer::makeHandShapes() {
-	_screen->loadBitmap("WRITING.CPS", 3, 3, _screen->_currentPalette);
+	_screen->loadBitmap("WRITING.CPS", 3, 3, &_screen->getPalette(0));
 	if (_vm->gameFlags().platform == Common::kPlatformMacintosh || _vm->gameFlags().platform == Common::kPlatformAmiga) {
 		freeHandShapes();
 
@@ -148,7 +148,7 @@ void SeqPlayer::s1_wsaPlayFrame() {
 	_seqMovies[wsaObj].pos.x = READ_LE_UINT16(_seqData); _seqData += 2;
 	_seqMovies[wsaObj].pos.y = *_seqData++;
 	assert(_seqMovies[wsaObj].movie);
-	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y);
+	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, 0, 0, 0);
 	_seqMovies[wsaObj].frame = frame;
 }
 
@@ -160,7 +160,7 @@ void SeqPlayer::s1_wsaPlayNextFrame() {
 		frame = 0;
 		_seqMovies[wsaObj].frame = 0;
 	}
-	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y);
+	_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, 0, 0, 0);
 }
 
 void SeqPlayer::s1_wsaPlayPrevFrame() {
@@ -171,7 +171,7 @@ void SeqPlayer::s1_wsaPlayPrevFrame() {
 		frame = _seqMovies[wsaObj].numFrames;
 		_seqMovies[wsaObj].frame = frame;
 	} else {
-		_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y);
+		_seqMovies[wsaObj].movie->displayFrame(frame, _seqMovies[wsaObj].page, _seqMovies[wsaObj].pos.x, _seqMovies[wsaObj].pos.y, 0, 0, 0);
 	}
 }
 
@@ -194,21 +194,18 @@ void SeqPlayer::s1_copyWaitTicks() {
 
 void SeqPlayer::s1_shuffleScreen() {
 	_screen->shuffleScreen(0, 16, 320, 128, 2, 0, 0, false);
-	_screen->_curPage = 2;
 	if (_specialBuffer)
-		_screen->copyCurPageBlock(0, 16, 40, 128, _specialBuffer);
+		_screen->copyRegionToBuffer(2, 0, 16, 320, 128, _specialBuffer);
 	_screen->_curPage = 0;
 }
 
 void SeqPlayer::s1_copyView() {
-	int y = 128;
-	if (!_copyViewOffs)
-		y -= 8;
+	int h = !_copyViewOffs ? 120 : 128;
 
 	if (_specialBuffer && !_copyViewOffs)
-		_screen->copyToPage0(16, y, 3, _specialBuffer);
+		_screen->copyToPage0(16, h, 3, _specialBuffer);
 	else
-		_screen->copyRegion(0, 16, 0, 16, 320, y, 2, 0);
+		_screen->copyRegion(0, 16, 0, 16, 320, h, 2, 0);
 }
 
 void SeqPlayer::s1_loopInit() {
@@ -244,25 +241,21 @@ void SeqPlayer::s1_loadPalette() {
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		if (!colNum)
-			memcpy(_screen->_currentPalette, _screen->_currentPalette + 576, 3*32);
+			_screen->copyPalette(0, 6);
 		else if (colNum == 3)
-			memcpy(_screen->_currentPalette, _screen->_currentPalette + 672, 3*32);
+			_screen->copyPalette(0, 7);
 		else if (colNum == 4)
-			memcpy(_screen->_currentPalette, _screen->_currentPalette + 288, 3*32);
+			_screen->copyPalette(0, 3);
 
-		_screen->setScreenPalette(_screen->_currentPalette);
+		_screen->setScreenPalette(_screen->getPalette(0));
 	} else {
-		uint32 fileSize;
-		uint8 *srcData;
-		srcData = _res->fileData(_vm->seqCOLTable()[colNum], &fileSize);
-		memcpy(_screen->_currentPalette, srcData, fileSize);
-		delete[] srcData;
+		_screen->loadPalette(_vm->seqCOLTable()[colNum], _screen->getPalette(0));
 	}
 }
 
 void SeqPlayer::s1_loadBitmap() {
 	uint8 cpsNum = *_seqData++;
-	_screen->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, _screen->_currentPalette);
+	_screen->loadBitmap(_vm->seqCPSTable()[cpsNum], 3, 3, &_screen->getPalette(0));
 }
 
 void SeqPlayer::s1_fadeToBlack() {
@@ -449,10 +442,7 @@ void SeqPlayer::s1_allocTempBuffer() {
 		if (!_specialBuffer && !_copyViewOffs) {
 			_specialBuffer = new uint8[40960];
 			assert(_specialBuffer);
-			int page = _screen->_curPage;
-			_screen->_curPage = 0;
-			_screen->copyCurPageBlock(0, 0, 320, 128, _specialBuffer);
-			_screen->_curPage = page;
+			_screen->copyRegionToBuffer(2, 0, 16, 320, 128, _specialBuffer);
 		}
 	}
 }

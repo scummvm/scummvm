@@ -502,7 +502,11 @@ public:
 		entries_used--;
 	}
 
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
+	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
+		for (uint i = 0; i < _table.size(); i++)
+			if (isValidEntry(i))
+				(*note)(param, make_reg(segId, i));
+	}
 };
 
 

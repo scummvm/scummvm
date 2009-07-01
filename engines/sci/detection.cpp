@@ -953,9 +953,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "59b13619078bd47011421468959ee5d4", 954},
 		{"resource.001", 0, "4cfb9040db152868f7cb6a1e8151c910", 296555},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
-		0,
+		GF_SCI0_SCI1VOCAB,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_01
+		SCI_VERSION_0
 	},
 
 	// King's Quest 1 SCI Remake - English DOS (from the King's Quest Collection)
@@ -969,7 +969,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_01
+		SCI_VERSION_0
 	},
 
 	// King's Quest 4 - English Amiga (from www.back2roots.org)
@@ -2504,6 +2504,32 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_0
 	},
 
+	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy
+	// Executable scanning reports "S.old.201"
+	{{"qfg1", "8 Colors", {
+		{"resource.map", 0, "5cbeb95dd2a4b7cb242b415cc6ec1c47", 6444},
+		{"resource.001", 0, "a21451ef6fa8179bd4b22c4950004c44", 859959},
+		{"resource.002", 0, "a21451ef6fa8179bd4b22c4950004c44", 1136968},
+		{"resource.003", 0, "a21451ef6fa8179bd4b22c4950004c44", 769897},
+		{NULL, 0, NULL, 0}}, Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_01
+	},
+
+	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy
+	// Executable scanning reports "S.old.201"
+	{{"qfg1", "16 Colors", {
+		{"resource.map", 0, "3ecaba33bf77cb434067a0b8aee15097", 6444},
+		{"resource.001", 0, "a21451ef6fa8179bd4b22c4950004c44", 864754},
+		{"resource.002", 0, "a21451ef6fa8179bd4b22c4950004c44", 1147121},
+		{"resource.003", 0, "a21451ef6fa8179bd4b22c4950004c44", 777575},
+		{NULL, 0, NULL, 0}}, Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_01
+	},
+
 	// Quest for Glory 1 - English Amiga
 	// Executable scanning reports "1.002.020"
 	// SCI interpreter version 0.000.685
@@ -3081,6 +3107,32 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "5f885abd335978e2fd4e5f886d7676c8", 1102880},
 		{NULL, 0, NULL, 0}}, Common::IT_ITA, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		GF_FOR_SCI1_200_OR_LATER,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1
+	},
+
+	// Space Quest 4 - Japanese PC-98 5.25" Floppy
+	// SCI interpreter version 1.000.1068
+	{{"sq4", "", {
+		{"resource.map", 0, "ca7bba01019222b6f3e54e9051067a99", 5283},
+		{"resource.000", 0, "161d719f38ed98d33f058a8cf3dc09c3", 952909},
+		{"resource.001", 0, "454684e3a7a68cbca073945e50778447", 1187088},
+		{"resource.002", 0, "6dc668326cc22cb9e8bd8ca9e68d2a66", 1181249},
+		{NULL, 0, NULL, 0}}, Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
+		GF_FOR_SCI1_510_OR_LATER | GF_SCI1_EGA,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1
+	},
+
+	// Space Quest 4 - Japanese PC-98 5.25" Floppy
+	// SCI interpreter version 1.000.1068
+	{{"sq4", "", {
+		{"resource.map", 0, "ca7bba01019222b6f3e54e9051067a99", 5283},
+		{"resource.000", 0, "161d719f38ed98d33f058a8cf3dc09c3", 952909},
+		{"resource.001", 0, "454684e3a7a68cbca073945e50778447", 1187088},
+		{"resource.002", 0, "6dc668326cc22cb9e8bd8ca9e68d2a66", 1181249},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
+		GF_FOR_SCI1_510_OR_LATER | GF_SCI1_EGA,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_1
 	},

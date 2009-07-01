@@ -2105,9 +2105,9 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		w = getFeebleFontSize(chr);
 
 		if (_language == Common::PL_POL)
-			src = feeble_windowFont + (chr - 32) * 13;
-		else
 			src = polish_feeble_windowFont + (chr - 32) * 13;
+		else
+			src = feeble_windowFont + (chr - 32) * 13;
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 8;

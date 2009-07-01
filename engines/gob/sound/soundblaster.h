@@ -29,10 +29,11 @@
 #include "common/mutex.h"
 #include "sound/mixer.h"
 
-#include "gob/sound/sounddesc.h"
 #include "gob/sound/soundmixer.h"
 
 namespace Gob {
+
+class SoundDesc;
 
 class SoundBlaster : public SoundMixer {
 public:
