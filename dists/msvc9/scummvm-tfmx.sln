@@ -4,9 +4,12 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scummvm", "scummvm-tfmx.vcproj", "{8434CB15-D08F-427D-9E6D-581AE5B28440}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B6AFD548-63D2-40CD-A652-E87095AFCBAF} = {B6AFD548-63D2-40CD-A652-E87095AFCBAF}
+		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC} = {9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scumm", "scumm.vcproj", "{B6AFD548-63D2-40CD-A652-E87095AFCBAF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kyra", "kyra.vcproj", "{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,12 +28,19 @@ Global
 		{8434CB15-D08F-427D-9E6D-581AE5B28440}.Release|Win32.ActiveCfg = Release|Win32
 		{8434CB15-D08F-427D-9E6D-581AE5B28440}.Release|Win32.Build.0 = Release|Win32
 		{B6AFD548-63D2-40CD-A652-E87095AFCBAF}.Debug_Command|Win32.ActiveCfg = Debug|Win32
-		{B6AFD548-63D2-40CD-A652-E87095AFCBAF}.Debug_Command|Win32.Build.0 = Debug|Win32
 		{B6AFD548-63D2-40CD-A652-E87095AFCBAF}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B6AFD548-63D2-40CD-A652-E87095AFCBAF}.Debug|Win32.Build.0 = Debug|Win32
 		{B6AFD548-63D2-40CD-A652-E87095AFCBAF}.Release_Command|Win32.ActiveCfg = Release|Win32
 		{B6AFD548-63D2-40CD-A652-E87095AFCBAF}.Release|Win32.ActiveCfg = Release|Win32
 		{B6AFD548-63D2-40CD-A652-E87095AFCBAF}.Release|Win32.Build.0 = Release|Win32
+		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}.Debug_Command|Win32.ActiveCfg = Debug|Win32
+		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}.Debug_Command|Win32.Build.0 = Debug|Win32
+		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}.Debug|Win32.Build.0 = Debug|Win32
+		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}.Release_Command|Win32.ActiveCfg = Release|Win32
+		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}.Release_Command|Win32.Build.0 = Release|Win32
+		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}.Release|Win32.ActiveCfg = Release|Win32
+		{9D9A98A0-F88F-4CA2-B8FF-462470EBE3EC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -101,7 +101,7 @@ void Tfmx::interrupt() {
 		if (channel.macroRun) {
 			if (!channel.macroWait) {
 				macroRun(channel);
-				assert( !channel.deferWait ); // we can remove this variable as it should be never true after macroRun?
+				//assert( !channel.deferWait ); // we can remove this variable as it should be never true after macroRun?
 			}
 			else
 				--channel.macroWait;

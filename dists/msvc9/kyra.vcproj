@@ -44,7 +44,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;ENABLE_LOL"
+				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;ENABLE_LOL"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -55,7 +55,6 @@
 				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="true"
 				SuppressStartupBanner="false"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
@@ -121,7 +120,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;ENABLE_LOL"
+				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;ENABLE_LOL"
 				StringPooling="true"
 				ExceptionHandling="1"
 				RuntimeLibrary="0"
@@ -131,7 +130,6 @@
 				ForceConformanceInForLoopScope="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
-				WarnAsError="true"
 				DebugInformationFormat="0"
 			/>
 			<Tool
