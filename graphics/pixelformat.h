@@ -68,7 +68,6 @@ struct PixelFormat {
 	static inline PixelFormat createFormatCLUT8() { 
 		return PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
 	}
-#ifdef ENABLE_RGB_COLOR
 	// 2 Bytes-per-pixel modes
 	static inline PixelFormat createFormatRGB555() {
 		return PixelFormat(2, 3, 3, 3, 8, 10, 5, 0, 0);
@@ -102,7 +101,6 @@ struct PixelFormat {
 	static inline PixelFormat createFormatBGRA4444() {
 		return PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0);
 	}
-#ifdef ENABLE_32BIT
 	// 3 to 4 byte per pixel modes
 	static inline PixelFormat createFormatRGB888() {
 		return PixelFormat(3, 0, 0, 0, 8, 16, 8, 0, 0);
@@ -122,8 +120,6 @@ struct PixelFormat {
 	static inline PixelFormat createFormatBGRA8888() {
 		return PixelFormat(4, 0, 0, 0, 0, 8, 16, 24, 0);
 	}
-#endif // ENABLE_32BIT
-#endif // ENABLE_RGB_COLOR
 
 	inline bool operator==(const PixelFormat &fmt) const {
 		// TODO: If aLoss==8, then the value of aShift is irrelevant, and should be ignored.
