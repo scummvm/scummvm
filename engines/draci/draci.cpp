@@ -178,7 +178,7 @@ int DraciEngine::go() {
 
 		// Load frame to memory
 		f = ar[t];
-		Sprite sp(f->_data, f->_length, ((kScreenWidth - 50) / 2), 60, true);
+		Sprite sp(f->_data, f->_length, ((kScreenWidth - 50) / 2), 60, 0);
 
 		// Delete previous frame
 		Common::Rect r(sp.getX(), sp.getY(), sp.getX() + sp.getWidth(), sp.getY() + sp.getHeight());

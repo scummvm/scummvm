@@ -53,13 +53,14 @@ static void transformToRows(byte *img, uint16 width, uint16 height) {
 
 /**
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
- */
-Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x, uint16 y, 
-			   bool columnwise) : _data(NULL) {
+ */ 
+Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint x, uint y, 
+			   uint z, bool columnwise) : _data(NULL) {
 	 _width = width;
 	 _height = height;
 	 _x = x;
 	 _y = y;
+	 _z = z;
 	
 	_data = new byte[width * height];
 	
@@ -71,14 +72,16 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x, uint16 y,
 	}	
 }
 
+
 /**
  *  Constructor for loading sprites from a sprite-formatted buffer, one byte per 
  *	pixel.
  */
-Sprite::Sprite(byte *sprite_data, uint16 length, uint16 x, uint16 y, 
+Sprite::Sprite(byte *sprite_data, uint16 length, uint x, uint y, uint z,
 			   bool columnwise) : _data(NULL) {
 	 _x = x;
 	 _y = y;
+	 _z = z;
 	
 	Common::MemoryReadStream reader(sprite_data, length);
 
@@ -127,12 +130,13 @@ void Sprite::draw(Surface *surface) const {
 }
 
 Text::Text(const Common::String &str, Font *font, byte fontColour, 
-				uint16 x, uint16 y, uint spacing) {
+				uint x, uint y, uint z, uint spacing) {
 	uint len = str.size();
 	_length = len;
 	
 	_x = x;
 	_y = y;
+	_z = z;
 	
 	_text = new byte[len];
 	memcpy(_text, str.c_str(), len);

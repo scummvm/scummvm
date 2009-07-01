@@ -43,19 +43,19 @@ public:
 	virtual uint16 getWidth() { return _width; }
 	virtual uint16 getHeight() { return _height; }
 
-	virtual uint16 getX() { return _x; }
-	virtual uint16 getY() { return _y; }
-	virtual uint16 getZ() { return _z; }
+	virtual uint getX() { return _x; }
+	virtual uint getY() { return _y; }
+	virtual uint getZ() { return _z; }
 
-	virtual void setX(uint16 x) { _x = x; }
-	virtual void setY(uint16 y) { _y = y; }
-	virtual void setZ(uint16 z) { _z = z; }
+	virtual void setX(uint x) { _x = x; }
+	virtual void setY(uint y) { _y = y; }
+	virtual void setZ(uint z) { _z = z; }
 	
 private:
 	uint16 _width;	//!< Width of the sprite
 	uint16 _height;	//!< Height of the sprite
-	uint16 _x, _y;	//!< Sprite coordinates
-	uint16 _z; 		//!< Sprite depth position
+	uint _x, _y;	//!< Sprite coordinates
+	uint _z; 		//!< Sprite depth position
 };
 
 /**
@@ -74,11 +74,12 @@ private:
 class Sprite : public Drawable {
 
 public:
-	Sprite(byte *raw_data, uint16 width, uint16 height, uint16 x = 0, uint16 y = 0, 
-		bool columnwise = false); 
+	Sprite(byte *raw_data, uint16 width, uint16 height, uint x, uint y, 
+		uint z, bool columnwise = true); 
+
 	
-	Sprite(byte *sprite_data, uint16 length, uint16 x = 0, uint16 y = 0, 
-		bool columnwise = false); 
+	Sprite(byte *sprite_data, uint16 length, uint x, uint y, 
+		uint z, bool columnwise = true); 
 
 	~Sprite();
 
@@ -94,7 +95,7 @@ class Text : public Drawable {
 	
 public:
 	Text(const Common::String &str, Font *font, byte fontColour, 
-		uint16 x = 0, uint16 y = 0, uint spacing = 0);
+		uint x, uint y, uint z, uint spacing = 0);
 	~Text();
 	
 	void setText(const Common::String &str);
