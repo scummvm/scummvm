@@ -154,6 +154,9 @@ public:
 	void setLookAtVector(Graphics::Vector3d vector) {
 		_lookAtVector = vector;
 	}
+	Graphics::Vector3d getLookAtVector() {
+		return _lookAtVector;
+	}
 	void setLookAtRate(float rate) {
 		_lookAtRate = rate;
 	}
