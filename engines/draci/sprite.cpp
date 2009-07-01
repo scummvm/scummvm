@@ -145,6 +145,9 @@ Text::Text(const Common::String &str, Font *font, byte fontColour,
 	_colour = fontColour;
 	
 	_font = font;
+
+	_width = _font->getStringWidth(str, _spacing);
+	_height = _font->getFontHeight();
 } 
 
 Text::~Text() {
@@ -156,6 +159,9 @@ void Text::setText(const Common::String &str) {
 	
 	uint len = str.size();
 	_length = len;
+
+	_width = _font->getStringWidth(str, _spacing);
+	_height = _font->getFontHeight();
 
 	 _text = new byte[len];
 	memcpy(_text, str.c_str(), len);

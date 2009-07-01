@@ -129,7 +129,7 @@ int DraciEngine::go() {
 	Common::String testString = "Testing, testing, read all about it!";
 	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
 	ypos = 130;
-	Text txt(testString, _font, kFontColour1, xpos, ypos, 1);
+	Text txt(testString, _font, kFontColour1, xpos, ypos, 0, 1);
 	
 	txt.draw(surf);
 
