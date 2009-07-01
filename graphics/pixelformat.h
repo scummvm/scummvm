@@ -200,6 +200,7 @@ struct PixelFormat {
 		return (1 << aBits()) - 1;
 	}
 };
+
 inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
 #ifdef ENABLE_RGB_COLOR
 	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
@@ -210,7 +211,7 @@ inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Commo
 	}
 #endif
 	return PixelFormat::createFormatCLUT8();
-};
+}
 
 } // end of namespace Graphics
 
