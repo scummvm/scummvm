@@ -787,8 +787,6 @@ void ResourceManager::setResourceCounter(int type, int idx, byte flag) {
 #define SAFETY_AREA 2
 
 byte *ResourceManager::createResource(int type, int idx, uint32 size) {
-	byte *ptr;
-
 	debugC(DEBUG_RESOURCE, "_res->createResource(%s,%d,%d)", resTypeFromId(type), idx, size);
 
 	if (!validateResource("allocating", type, idx))
@@ -807,17 +805,17 @@ byte *ResourceManager::createResource(int type, int idx, uint32 size) {
 
 	expireResources(size);
 
-	ptr = (byte *)calloc(size + sizeof(MemBlkHeader) + SAFETY_AREA, 1);
+	void *ptr = calloc(size + sizeof(MemBlkHeader) + SAFETY_AREA, 1);
 	if (ptr == NULL) {
 		error("createResource(%s,%d): Out of memory while allocating %d", resTypeFromId(type), idx, size);
 	}
 
 	_allocatedSize += size;
 
-	address[type][idx] = ptr;
+	address[type][idx] = (byte *)ptr;
 	((MemBlkHeader *)ptr)->size = size;
 	setResourceCounter(type, idx, 1);
-	return ptr + sizeof(MemBlkHeader);	/* skip header */
+	return (byte *)ptr + sizeof(MemBlkHeader);	/* skip header */
 }
 
 ResourceManager::ResourceManager(ScummEngine *vm) {

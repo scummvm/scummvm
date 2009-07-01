@@ -711,7 +711,7 @@ void ResourceManager::unlockResource(Resource *res) {
 int ResourceManager::detectMapVersion() {
 	Common::File file;
 	byte buff[6];
-	ResourceSource *rsrc;
+	ResourceSource *rsrc= 0;
 
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;

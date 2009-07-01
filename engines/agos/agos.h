@@ -615,8 +615,8 @@ protected:
 
 	void paletteFadeOut(byte *palPtr, uint num, uint size);
 
-	byte *allocateItem(uint size);
-	byte *allocateTable(uint size);
+	void *allocateItem(uint size);
+	void *allocateTable(uint size);
 	void alignTableMem();
 
 	Child *findChildOfType(Item *i, uint child);
