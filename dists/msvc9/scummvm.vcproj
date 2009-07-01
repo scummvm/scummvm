@@ -1478,6 +1478,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\jpeg.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\jpeg.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\primitives.cpp"
 				>
 			</File>
