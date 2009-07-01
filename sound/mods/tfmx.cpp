@@ -787,8 +787,8 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData) {
 	bool res;
 
-	assert(0 == _resource._mdatData);
-	assert(0 == _resource._sampleData);
+	assert(0 == _resource.mdatData);
+	assert(0 == _resource.sampleData);
 
 	// TODO: Sanity checks if we have a valid TFMX-Module
 	// TODO: check for Stream-Errors (other than using asserts)
@@ -825,7 +825,7 @@ bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStrea
 	uint32 offTrackstep = musicData.readUint32BE();
 	uint32 offPatternP = musicData.readUint32BE();
 	uint32 offMacroP = musicData.readUint32BE();
-	_resource._sfxTableOffset = 0x200;
+	_resource.sfxTableOffset = 0x200;
 	bool getSfxIndex = false;
 
 	// This is how MI`s TFMX-Player tests for unpacked Modules.
@@ -834,10 +834,10 @@ bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStrea
 		offPatternP		= 0x200 + 0x200;
 		offMacroP		= 0x400 + 0x200;
 		getSfxIndex = true;
-		_resource._sfxTableOffset = 0x5FC;
+		_resource.sfxTableOffset = 0x5FC;
 	}
 
-	_resource._trackstepOffset = offTrackstep;
+	_resource.trackstepOffset = offTrackstep;
 
 	// Read in pattern starting offsets
 	musicData.seek(offPatternP);
@@ -848,7 +848,7 @@ bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStrea
 	assert(!res);
 
 	if (getSfxIndex)
-		_resource._sfxTableOffset = _patternOffset[127];
+		_resource.sfxTableOffset = _patternOffset[127];
 
 	// Read in macro starting offsets
 	musicData.seek(offMacroP);
@@ -863,11 +863,11 @@ bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStrea
 	assert(size != -1);
 	// TODO: special routine if size = -1?
 
-	_resource._mdatData = new byte[size];
-	assert(_resource._mdatData);
-	_resource._mdatLen = size;
+	_resource.mdatData = new byte[size];
+	assert(_resource.mdatData);
+	_resource.mdatLen = size;
 	musicData.seek(0);
-	musicData.read(_resource._mdatData, size);
+	musicData.read(_resource.mdatData, size);
 	
 	res = musicData.err();
 	assert(!res);
@@ -888,13 +888,13 @@ bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStrea
 	assert(size != -1);
 	// TODO: special routine if size = -1?
 
-	_resource._sampleData = new byte[size];
-	assert(_resource._sampleData);
-	_resource._sampleLen = size;
+	_resource.sampleData = new byte[size];
+	assert(_resource.sampleData);
+	_resource.sampleLen = size;
 	sampleData.seek(0);
-	sampleData.read(_resource._sampleData, size);
+	sampleData.read(_resource.sampleData, size);
 	for (int i = 0; i < 4; ++i)
-		_resource._sampleData[i] = 0;
+		_resource.sampleData[i] = 0;
 	
 	res = sampleData.err();
 	assert(!res);

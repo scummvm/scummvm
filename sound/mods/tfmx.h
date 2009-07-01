@@ -51,9 +51,9 @@ public:
 	int doSfx(uint16 sfxIndex, bool unlockChannel = false);
 	void doMacro(int note, int macro, int relVol = 0, int finetune = 0, int channelNo = 0);
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
-	int getTicks() const {return _playerCtx.tickCount;}
-	int getSongIndex() const {return _playerCtx.song;}
-	void setSignalPtr(uint16 *ptr) {_playerCtx.signal = ptr;}
+	int getTicks() const { return _playerCtx.tickCount; } 
+	int getSongIndex() const { return _playerCtx.song; }
+	void setSignalPtr(uint16 *ptr) { _playerCtx.signal = ptr; }
 	void stopMacroEffect(int channel) {
 		assert(0 <= channel && channel < kNumVoices);
 		Common::StackLock lock(_mutex);
@@ -64,20 +64,20 @@ public:
 
 // Note: everythings public so the debug-Routines work.
 // private:
-	enum {kPalDefaultCiaVal = 11822, kNtscDefaultCiaVal = 14320, kCiaBaseInterval = 0x1B51F8};
-	enum {kNumVoices = 4, kNumChannels = 8, kNumSubsongs = 32, kMaxPatternOffsets = 128, kMaxMacroOffsets = 128};
+	enum { kPalDefaultCiaVal = 11822, kNtscDefaultCiaVal = 14320, kCiaBaseInterval = 0x1B51F8 };
+	enum { kNumVoices = 4, kNumChannels = 8, kNumSubsongs = 32, kMaxPatternOffsets = 128, kMaxMacroOffsets = 128 };
 
 	static const uint16 noteIntervalls[64];
 
 	struct Resource {
-		uint32 _trackstepOffset;	//!< Offset in mdat
-		uint32 _sfxTableOffset;
+		uint32 trackstepOffset;	//!< Offset in mdat
+		uint32 sfxTableOffset;
 
-		byte *_mdatData;  	//!< Currently the whole mdat-File
-		byte *_sampleData;	//!< Currently the whole sample-File
+		byte *mdatData;  	//!< Currently the whole mdat-File
+		byte *sampleData;	//!< Currently the whole sample-File
 		
-		uint32 _mdatLen;  
-		uint32 _sampleLen;
+		uint32 mdatLen;  
+		uint32 sampleLen;
 
 		byte header[10];
 		uint16 headerFlags;
@@ -85,44 +85,44 @@ public:
 		char textField[6 * 40];
 
 		const byte *getSfxPtr(uint16 index = 0) {
-			byte *sfxPtr = (byte *)(_mdatData + _sfxTableOffset + index * 8);
+			byte *sfxPtr = (byte *)(mdatData + sfxTableOffset + index * 8);
 
-			boundaryCheck(_mdatData, _mdatLen, sfxPtr, 8);
+			boundaryCheck(mdatData, mdatLen, sfxPtr, 8);
 			return sfxPtr;
 		}
 
 		const uint16 *getTrackPtr(uint16 trackstep = 0) {
-			uint16 *trackData = (uint16 *)(_mdatData + _trackstepOffset + 16 * trackstep);
+			uint16 *trackData = (uint16 *)(mdatData + trackstepOffset + 16 * trackstep);
 
-			boundaryCheck(_mdatData, _mdatLen, trackData, 16);
+			boundaryCheck(mdatData, mdatLen, trackData, 16);
 			return trackData;
 		}
 
 		const uint32 *getPatternPtr(uint32 offset) {
-			uint32 *pattData = (uint32 *)(_mdatData + offset);
+			uint32 *pattData = (uint32 *)(mdatData + offset);
 
-			boundaryCheck(_mdatData, _mdatLen, pattData, 4);
+			boundaryCheck(mdatData, mdatLen, pattData, 4);
 			return pattData;
 		}
 
 		const uint32 *getMacroPtr(uint32 offset) {
-			uint32 *macroData = (uint32 *)(_mdatData + offset);
+			uint32 *macroData = (uint32 *)(mdatData + offset);
 
-			boundaryCheck(_mdatData, _mdatLen, macroData, 4);
+			boundaryCheck(mdatData, mdatLen, macroData, 4);
 			return macroData;
 		}
 
 		const int8 *getSamplePtr(const uint32 offset) {
-			int8 *sampleData = (int8 *)(_sampleData + offset);
+			int8 *sample = (int8 *)(sampleData + offset);
 
-			boundaryCheck(_sampleData, _sampleLen, sampleData, 2);
-			return sampleData;
+			boundaryCheck(sampleData, sampleLen, sample, 2);
+			return sample;
 		}
-		Resource() : _mdatData(), _mdatLen(), _sampleData(), _sampleLen() {}
+		Resource() : mdatData(), mdatLen(), sampleData(), sampleLen() {}
 
 		~Resource() {
-			delete[] _mdatData;
-			delete[] _sampleData;
+			delete[] mdatData;
+			delete[] sampleData;
 		}
 	} _resource;
 
