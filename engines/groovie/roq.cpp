@@ -29,6 +29,8 @@
 #include "groovie/groovie.h"
 #include "groovie/roq.h"
 
+#include "graphics/jpeg.h"
+
 #ifdef ENABLE_RGB_COLOR
 // Required for the YUV to RGB conversion
 #include "graphics/dither.h"
@@ -485,18 +487,21 @@ void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, in
 bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing still (JPEG) block");
 
-	warning("Groovie::ROQ: JPEG frame (unimplemented)");
+	warning("Groovie::ROQ: JPEG frame (unfinshed)");
 
-	// HACK: Initialize to a black frame
-	//memset(_prevBuf->getBasePtr(0, 0), 0, _prevBuf->w * _prevBuf->h * _prevBuf->bytesPerPixel);
+	Graphics::JPEG *jpg = new Graphics::JPEG();
+	jpg->read(_file);
+	byte *y = (byte *)jpg->getComponent(1)->getBasePtr(0, 0);
+	byte *u = (byte *)jpg->getComponent(2)->getBasePtr(0, 0);
+	byte *v = (byte *)jpg->getComponent(3)->getBasePtr(0, 0);
+
 	byte *ptr = (byte *)_prevBuf->getBasePtr(0, 0);
 	for (int i = 0; i < _prevBuf->w * _prevBuf->h; i++) {
-		*ptr++ = 0;
-		*ptr++ = 128;
-		*ptr++ = 128;
+		*ptr++ = *y++;
+		*ptr++ = *u++;
+		*ptr++ = *v++;
 	}
 
-	_file->skip(blockHeader.size);
 	return true;
 }
 
