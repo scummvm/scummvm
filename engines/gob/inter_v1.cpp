@@ -1095,7 +1095,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		if (!resource)
 			break;
 
-		memcpy((char *) _vm->_draw->_vgaPalette, resource->getData(), MIN(768, resource->getSize()));
+		memcpy((char *) _vm->_draw->_vgaPalette, resource->getData(), MIN<int>(768, resource->getSize()));
 		delete resource;
 		break;
 
