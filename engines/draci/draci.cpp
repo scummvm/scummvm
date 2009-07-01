@@ -121,20 +121,34 @@ int DraciEngine::go() {
 	_screen->fillScreen(225);
 
 	// Draw big string
-	Common::String testString = "Testing, testing, read all about it!";
+
 	Surface *surf = _screen->getSurface();
-	_font->drawString(surf, testString, 
-		(kScreenWidth - _font->getStringWidth(testString, 1)) / 2, 130, 1);
+	uint16 xpos;
+	uint16 ypos;
+	
+	Common::String testString = "Testing, testing, read all about it!";
+	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
+	ypos = 130;
+	Text txt1(testString, _font, kFontColour1, xpos, ypos, 1);
+	
+	txt1.draw(surf);
 
 	// Draw small string
 	_font->setFont(kFontSmall);
 	testString = "I'm smaller than the font above me.";
-	_font->drawString(surf, testString, 
-		(kScreenWidth - _font->getStringWidth(testString, 1)) / 2, 150, 1);
+	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
+	ypos += 20;
+	Text txt2(testString, _font, kFontColour1, xpos, ypos, 1);
 
-	// Overflow handling test
+	txt2.draw(surf);
+
+	// Overflow handling test	
 	testString = "Checking overflooooooooooooooooooooooooow...";
-	_font->drawString(surf, testString, 50, 170, 1);
+	xpos = 50;
+	ypos += 20;
+	Text txt3(testString, _font, kFontColour1, xpos, ypos, 1);
+
+	txt3.draw(surf);
 
 	_screen->copyToScreen();
 
