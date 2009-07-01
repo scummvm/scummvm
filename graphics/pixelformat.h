@@ -27,6 +27,7 @@
 #define GRAPHICS_PIXELFORMAT_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 
 namespace Graphics {
 
@@ -198,6 +199,17 @@ struct PixelFormat {
 	inline uint aMax() const {
 		return (1 << aBits()) - 1;
 	}
+};
+inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
+#ifdef ENABLE_RGB_COLOR
+	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
+		for (Common::List<PixelFormat>::iterator j = frontend.begin(); j != frontend.end(); ++j) {
+			if (*i == *j)
+				return *i;
+		}
+	}
+#endif
+	return PixelFormat::createFormatCLUT8();
 };
 
 } // end of namespace Graphics
