@@ -33,13 +33,29 @@ namespace Draci {
 
 class Drawable {
 
+friend class Sprite;
+friend class Text;
+
 public:
 	virtual void draw(Surface *surface) const = 0;
 	virtual ~Drawable() {};
+	
+	virtual uint16 getWidth() { return _width; }
+	virtual uint16 getHeight() { return _height; }
 
+	virtual uint16 getX() { return _x; }
+	virtual uint16 getY() { return _y; }
+	virtual uint16 getZ() { return _z; }
+
+	virtual void setX(uint16 x) { _x = x; }
+	virtual void setY(uint16 y) { _y = y; }
+	virtual void setZ(uint16 z) { _z = z; }
+	
+private:
 	uint16 _width;	//!< Width of the sprite
 	uint16 _height;	//!< Height of the sprite
 	uint16 _x, _y;	//!< Sprite coordinates
+	uint16 _z; 		//!< Sprite depth position
 };
 
 /**
@@ -66,13 +82,16 @@ public:
 
 	~Sprite();
 
-	void draw(Surface *surface) const; 
+	void draw(Surface *surface) const;
 
+	const byte *getBuffer() const { return _data; }
+
+private:
 	byte *_data;	//!< Pointer to a buffer containing raw sprite data (row-wise)
 };
 
 class Text : public Drawable {
-
+	
 public:
 	Text(const Common::String &str, Font *font, byte fontColour, 
 		uint16 x = 0, uint16 y = 0, uint spacing = 0);
@@ -82,7 +101,8 @@ public:
 	void setColour(byte fontColour);
 	
 	void draw(Surface *surface) const;
-	
+
+private:
 	byte *_text;
 	uint _length;
 	uint8 _colour;

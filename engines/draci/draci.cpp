@@ -139,8 +139,8 @@ int DraciEngine::go() {
 	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
 	ypos += 20;
 	txt.setText(testString);
-	txt._x = xpos;
-	txt._y = ypos;
+	txt.setX(xpos);
+	txt.setY(ypos);
 
 	txt.draw(surf);
 
@@ -149,8 +149,8 @@ int DraciEngine::go() {
 	xpos = 50;
 	ypos += 20;
 	txt.setText(testString);
-	txt._x = xpos;
-	txt._y = ypos;
+	txt.setX(xpos);
+	txt.setY(ypos);
 
 	txt.draw(surf);
 
@@ -170,8 +170,9 @@ int DraciEngine::go() {
 	ypos = 80;
 	txt.setText(testString);
 	txt.setColour(kDefaultTransparent);
-	txt._x = xpos;
-	txt._y = ypos;
+	txt.setX(xpos);
+	txt.setY(ypos);
+	
 	for (unsigned int t = 0; t < 25; ++t) {
 		debugC(5, kDraciGeneralDebugLevel, "Drawing frame %d...", t);
 
@@ -180,7 +181,7 @@ int DraciEngine::go() {
 		Sprite sp(f->_data, f->_length, ((kScreenWidth - 50) / 2), 60, true);
 
 		// Delete previous frame
-		Common::Rect r(sp._x, sp._y, sp._x + sp._width, sp._y + sp._height);
+		Common::Rect r(sp.getX(), sp.getY(), sp.getX() + sp.getWidth(), sp.getY() + sp.getHeight());
 		_screen->drawRect(r, 225);	
 
 		// Draw dragon

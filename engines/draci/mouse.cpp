@@ -98,7 +98,8 @@ void Mouse::setCursorType(CursorType cur) {
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
-	CursorMan.replaceCursor(sp._data, sp._width, sp._height, sp._width / 2, sp._height / 2);
+	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(), 
+			sp.getWidth() / 2, sp.getHeight() / 2);
 }
 
 }
