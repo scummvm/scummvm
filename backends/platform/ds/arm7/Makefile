@@ -151,13 +151,12 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 %.bin: %.elf
 	@echo built ... $(notdir $@)
-	@$(OBJCOPY) -O binary  $(TARGET).elf $@
+	$(OBJCOPY) -O binary  $(TARGET).elf $@
 
 #---------------------------------------------------------------------------------
 %.elf:
 	echo ELF
-	@echo $(LD)  $(LDFLAGS) -specs=ds_arm7.specs $(OFILES) $(LIBPATHS) $(LIBS) -o $(TARGET).elf
-	@$(LD)  $(LDFLAGS) -specs=ds_arm7.specs $(OFILES) $(LIBPATHS) $(LIBS) -o $(TARGET).elf
+	$(LD)  $(LDFLAGS) -specs=ds_arm7.specs $(OFILES) $(LIBPATHS) $(LIBS) -o $(TARGET).elf
 
 
 
