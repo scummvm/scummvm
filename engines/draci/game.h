@@ -77,6 +77,19 @@ struct Person {
 	byte _fontColour;
 };
 
+struct Room {
+	byte _music;
+	byte _map;
+	byte _palette;
+	uint16 _numMasks;
+	uint16 _init, _look, _use, _canUse;
+	boolean _imInit, _imLook, _imUse;
+	boolean _mouseOn, _heroOn;
+	double _pers0, _persStep;
+	byte _escRoom;
+	byte _numGates;
+};
+
 class Game {
 
 public:
