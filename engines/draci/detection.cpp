@@ -121,7 +121,7 @@ bool Draci::DraciEngine::hasFeature(EngineFeature f) const {
 
 bool DraciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
-		*engine = new Draci::DraciEngine(syst, Draci::gameDescriptions);
+		*engine = new Draci::DraciEngine(syst, desc);
 	}
 	return desc != 0;
 }
