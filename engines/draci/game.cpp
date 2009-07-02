@@ -134,7 +134,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	loadObject(1);
 	_vm->_script->run(getObject(1)->_program, getObject(1)->_init);
 
-	// changeRoom(_currentRoom);
+	changeRoom(_info->_currentRoom);
 }
 
 void Game::loadObject(uint16 objNum) {
@@ -187,6 +187,38 @@ GameObject *Game::getObject(uint16 objNum) {
 	objNum -= 1;
 
 	return _objects + objNum;
+}
+
+void Game::changeRoom(uint16 roomNum) {
+	
+	// Convert to real index (indexes begin with 1 in the data files)
+	roomNum -= 1;
+
+	BAFile *f;
+	f = _vm->_roomsArchive->getFile(roomNum);
+	Common::MemoryReadStream roomReader(f->_data, f->_length);
+
+	roomReader.readUint32LE(); // Pointer to room program, not used
+	roomReader.readUint16LE(); // Program length, not used
+	roomReader.readUint32LE(); // Pointer to room title, not used
+
+	_currentRoom._music = roomReader.readByte();
+	_currentRoom._map = roomReader.readByte();
+	_currentRoom._palette = roomReader.readByte();
+	_currentRoom._numMasks = roomReader.readUint16LE();
+	_currentRoom._init = roomReader.readUint16LE();
+	_currentRoom._look = roomReader.readUint16LE();
+	_currentRoom._use = roomReader.readUint16LE();
+	_currentRoom._canUse = roomReader.readUint16LE();
+	_currentRoom._imInit = roomReader.readByte();
+	_currentRoom._imLook = roomReader.readByte();
+	_currentRoom._imUse = roomReader.readByte();
+	_currentRoom._mouseOn = roomReader.readByte();
+	_currentRoom._heroOn = roomReader.readByte();
+	roomReader.read(&_currentRoom._pers0, 12);
+	roomReader.read(&_currentRoom._persStep, 12);
+	_currentRoom._escRoom = roomReader.readByte();
+	_currentRoom._numGates = roomReader.readByte();
 }
 
 Game::~Game() {

@@ -105,9 +105,11 @@ private:
 	int16 *_variables;
 	byte *_itemStatus;
 	GameObject *_objects;	
-	
+	Room _currentRoom;	
+
 	void loadObject(uint16 numObj);
 	GameObject *getObject(uint16 objNum);
+	void changeRoom(uint16 roomNum);
 };
 
 } // End of namespace Draci
