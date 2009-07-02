@@ -26,6 +26,7 @@ CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 # Enable even more warnings...
 CXXFLAGS+= -Wpointer-arith -Wcast-qual -Wcast-align
 CXXFLAGS+= -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
+CXXFLAGS+= -Wmissing-format-attribute
 
 # Disable RTTI and exceptions, and enabled checking of pointers returned by "new"
 CXXFLAGS+= -fno-rtti -fno-exceptions -fcheck-new
