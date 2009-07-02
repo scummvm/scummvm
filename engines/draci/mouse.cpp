@@ -90,7 +90,7 @@ void Mouse::setCursorType(CursorType cur) {
 	ar.openArchive(path);
 	
 	if(ar.isOpen()) {
-		f = ar[_cursorType];	
+		f = ar.getFile(_cursorType);	
 	} else {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened - %s", path.c_str());
 		return;

@@ -35,6 +35,7 @@
 #include "draci/screen.h"
 #include "draci/font.h"
 #include "draci/script.h"
+#include "draci/barchive.h"
 
 namespace Draci {
 
@@ -54,6 +55,10 @@ public:
 	Mouse *_mouse;
 	Game *_game;
 	Script *_script;
+
+	BArchive *_objectsArchive;
+	BArchive *_spritesArchive;
+	BArchive *_paletteArchive;
 
 private:
 	Common::RandomSource _rnd;

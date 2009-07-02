@@ -41,7 +41,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	
 	// Read in persons
 	
-	file = initArchive[5];
+	file = initArchive.getFile(5);
 	Common::MemoryReadStream personData(file->_data, file->_length);
 	
 	unsigned int numPersons = file->_length / personSize;
@@ -55,7 +55,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	
 	// Read in dialog offsets
 	
-	file = initArchive[4];
+	file = initArchive.getFile(4);
 	Common::MemoryReadStream dialogData(file->_data, file->_length);
 	
 	unsigned int numDialogs = file->_length / sizeof(uint16);
@@ -69,7 +69,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	
 	// Read in game info
 	
-	file = initArchive[3];
+	file = initArchive.getFile(3);
 	Common::MemoryReadStream gameData(file->_data, file->_length);
 	_info = new GameInfo();
 	
@@ -92,7 +92,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 	// Read in variables
 	
-	file = initArchive[2];
+	file = initArchive.getFile(2);
 	unsigned int numVariables = file->_length / sizeof (int16);
 
 	_variables = new int16[numVariables];
@@ -104,13 +104,13 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 	// Read in item status
 	
-	file = initArchive[1];
+	file = initArchive.getFile(1);
 	_itemStatus = new byte[file->_length];
 	memcpy(_itemStatus, file->_data, file->_length);
 	
 	// Read in object status
 	
-	file = initArchive[0];
+	file = initArchive.getFile(0);
 	unsigned int numObjects = file->_length;
 	
 	_objects = new GameObject[numObjects];
@@ -136,15 +136,15 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 }
 
 void Game::loadObject(uint16 objNum) {
-	Common::String path("OBJEKTY.DFW");
-	
-	BArchive objArchive(path);
 	BAFile *file;
 	
-	file = objArchive[objNum * 3];
+	// Convert to real index (indexes begin with 1 in the data files)
+	objNum -= 1;
+
+	file = _vm->_objectsArchive->getFile(objNum * 3);
 	Common::MemoryReadStream objReader(file->_data, file->_length);
 	
-	GameObject *obj = getObject(objNum);
+	GameObject *obj = _objects + objNum;
 
 	obj->_init = objReader.readUint16LE();
 	obj->_look = objReader.readUint16LE();
@@ -169,11 +169,11 @@ void Game::loadObject(uint16 objNum) {
 	
 	obj->_seqTab = new uint16[obj->_numSeq];
 
-	file = objArchive[objNum * 3 + 1];
+	file = _vm->_objectsArchive->getFile(objNum * 3 + 1);
 	obj->_title = new byte[file->_length];
 	memcpy(obj->_title, file->_data, file->_length);
 	
-	file = objArchive[objNum * 3 + 2];
+	file = _vm->_objectsArchive->getFile(objNum * 3 + 2);
 	obj->_program._bytecode = new byte[file->_length];
 	obj->_program._length = file->_length;
 	memcpy(obj->_program._bytecode, file->_data, file->_length);
@@ -184,7 +184,7 @@ GameObject *Game::getObject(uint16 objNum) {
 	// Convert to real index (indexes begin with 1 in the data files)
 	objNum -= 1;
 
-	return &_objects[objNum];
+	return _objects + objNum;
 }
 
 Game::~Game() {

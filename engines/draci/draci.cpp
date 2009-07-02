@@ -42,6 +42,12 @@
 
 namespace Draci {
 
+// Data file paths
+
+const Common::String objectsPath("OBJEKTY.DFW");
+const Common::String palettePath("PALETY.DFW");
+const Common::String spritesPath("OBR_AN.DFW");
+
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc) 
  : Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -66,6 +72,11 @@ int DraciEngine::init() {
 	// Initialize graphics using following:
 	initGraphics(kScreenWidth, kScreenHeight, false);
 
+	// Open game's archives
+	_objectsArchive = new BArchive(objectsPath);
+	_spritesArchive = new BArchive(spritesPath);
+	_paletteArchive = new BArchive(palettePath);
+
 	_screen = new Screen(this);
 	_font = new Font();
 	_mouse = new Mouse(this);
@@ -75,6 +86,21 @@ int DraciEngine::init() {
 	// Load default font
 	_font->setFont(kFontBig);
 
+	if(!_objectsArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening objects archive failed");
+		return Common::kUnknownError;
+	}	
+
+	if(!_spritesArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening sprites archive failed");
+		return Common::kUnknownError;
+	}	
+
+	if(!_paletteArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening palette archive failed");
+		return Common::kUnknownError;
+	}
+
 	// Basic archive test
 	debugC(2, kDraciGeneralDebugLevel, "Running archive tests...");	
 	Common::String path("INIT.DFW");	
@@ -83,7 +109,7 @@ int DraciEngine::init() {
 	debugC(3, kDraciGeneralDebugLevel, "Number of file streams in archive: %d", ar.size());	
 	
 	if(ar.isOpen()) {
-		f = ar[0];	
+		f = ar.getFile(0);	
 	} else {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
 		return Common::kUnknownError;
@@ -102,18 +128,9 @@ int DraciEngine::go() {
  
 	debugC(2, kDraciGeneralDebugLevel, "Running graphics/animation test...");
 
-	Common::String path("PALETY.DFW");	
-	BArchive ar(path);
 	BAFile *f;
 
-	ar.openArchive(path);
-	
-	if(ar.isOpen()) {
-		f = ar[0];	
-	} else {
-		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
-		return Common::kUnknownError;
-	}	
+	f = _paletteArchive->getFile(0);
 
 	_screen->setPalette(f->_data, 0, kNumColours);
 
@@ -157,13 +174,6 @@ int DraciEngine::go() {
 	_screen->copyToScreen();
 
 	// Draw and animate the dragon
-	path = "OBR_AN.DFW";
-	ar.openArchive(path);
-	
-	if(!ar.isOpen()) {
-		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
-		return Common::kUnknownError;
-	}	
 
 	testString = "I'm transparent";
 	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
@@ -177,7 +187,7 @@ int DraciEngine::go() {
 		debugC(5, kDraciGeneralDebugLevel, "Drawing frame %d...", t);
 
 		// Load frame to memory
-		f = ar[t];
+		f = _spritesArchive->getFile(t);
 		Sprite sp(f->_data, f->_length, ((kScreenWidth - 50) / 2), 60, 0);
 
 		// Delete previous frame
@@ -227,6 +237,10 @@ DraciEngine::~DraciEngine() {
 	delete _mouse;
 	delete _game;
 	delete _script;
+
+	delete _paletteArchive;
+	delete _objectsArchive;
+	delete _spritesArchive;
 	
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();

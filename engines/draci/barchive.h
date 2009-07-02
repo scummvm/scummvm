@@ -53,7 +53,7 @@ class BArchive {
 public:
 	BArchive() : _files(NULL), _fileCount(0), _opened(false) {}
 
-	BArchive(Common::String &path) :
+	BArchive(const Common::String &path) :
 	_files(NULL), _fileCount(0), _opened(false) { 
 		openArchive(path); 
 	}
@@ -72,7 +72,7 @@ public:
 
 	void clearCache();
 
-	BAFile *operator[](unsigned int i) const;
+	BAFile *getFile(unsigned int i) const;
 
 private:
 	// Archive header data
