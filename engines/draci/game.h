@@ -83,8 +83,8 @@ struct Room {
 	byte _palette;
 	uint16 _numMasks;
 	uint16 _init, _look, _use, _canUse;
-	boolean _imInit, _imLook, _imUse;
-	boolean _mouseOn, _heroOn;
+	bool _imInit, _imLook, _imUse;
+	bool _mouseOn, _heroOn;
 	double _pers0, _persStep;
 	byte _escRoom;
 	byte _numGates;
