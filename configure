@@ -292,7 +292,7 @@ get_system_exe_extension() {
 
 # Show the configure help line for an option
 option_help() {
-        tmpopt=`echo $1 | sed 's/_/-/g'`
+	tmpopt=`echo $1 | sed 's/_/-/g'`
 	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
 	echo "  ${option}  ${2}"
 }
