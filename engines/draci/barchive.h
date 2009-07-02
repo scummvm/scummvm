@@ -70,6 +70,8 @@ public:
 	 */	
 	bool isOpen() const { return _opened; }
 
+	void clearCache();
+
 	BAFile *operator[](unsigned int i) const;
 
 private:

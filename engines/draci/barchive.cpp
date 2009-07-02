@@ -377,6 +377,18 @@ BAFile *BArchive::loadFileDFW(unsigned int i) const {
 
 	return _files + i;
 }
+
+/**
+ * Clears the cache of the open files inside the archive without closing it.
+ * If the files are subsequently accessed, they are read from the disk.
+ */
+void BArchive::clearCache() {
+
+	// Delete all cached data
+	for (unsigned int i = 0; i < _fileCount; ++i) {
+		_files[i].closeFile();
+	}
+}
 	
 
 BAFile *BArchive::operator[](unsigned int i) const {
