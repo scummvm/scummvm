@@ -133,6 +133,8 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 	loadObject(1);
 	_vm->_script->run(getObject(1)->_program, getObject(1)->_init);
+
+	// changeRoom(_currentRoom);
 }
 
 void Game::loadObject(uint16 objNum) {

@@ -47,6 +47,8 @@ namespace Draci {
 const Common::String objectsPath("OBJEKTY.DFW");
 const Common::String palettePath("PALETY.DFW");
 const Common::String spritesPath("OBR_AN.DFW");
+const Common::String overlaysPath("OBR_MAS.DFW");
+const Common::String roomsPath("MIST.DFW");
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc) 
  : Engine(syst) {
@@ -76,6 +78,8 @@ int DraciEngine::init() {
 	_objectsArchive = new BArchive(objectsPath);
 	_spritesArchive = new BArchive(spritesPath);
 	_paletteArchive = new BArchive(palettePath);
+	_roomsArchive = new BArchive(roomsPath);
+	_overlaysArchive = new BArchive(overlaysPath);
 
 	_screen = new Screen(this);
 	_font = new Font();

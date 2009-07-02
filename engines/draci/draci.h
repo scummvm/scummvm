@@ -59,6 +59,8 @@ public:
 	BArchive *_objectsArchive;
 	BArchive *_spritesArchive;
 	BArchive *_paletteArchive;
+	BArchive *_roomsArchive;
+	BArchive *_overlaysArchive;
 
 private:
 	Common::RandomSource _rnd;
