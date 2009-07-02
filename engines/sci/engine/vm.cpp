@@ -49,7 +49,7 @@ reg_t NULL_REG = {0, 0};
 int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a replay afterwards	// FIXME: Avoid non-const global vars
 int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
 int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME: Avoid non-const global vars
-
+extern DebugState debugState;
 
 static bool breakpointFlag = false;	// FIXME: Avoid non-const global vars
 static reg_t _dummy_register;		// FIXME: Avoid non-const global vars
@@ -396,7 +396,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			default:
 				sciprintf("Send error: Variable selector %04x in %04x:%04x called with %04x params\n", selector, PRINT_REG(send_obj), argc);
 				script_debug_flag = 1; // Enter debug mode
-				g_debug_seeking = g_debug_step_running = 0;
+				debugState.seeking = debugState.runningStep = 0;
 #endif
 			}
 			break;
@@ -1427,8 +1427,8 @@ void run_vm(EngineState *s, int restoring) {
 
 #if 0
 		if (script_error_flag) {
-			g_debug_step_running = 0; // Stop multiple execution
-			g_debug_seeking = 0; // Stop special seeks
+			debugState.runningStep = 0; // Stop multiple execution
+			debugState.seeking = 0; // Stop special seeks
 			xs->addr.pc.offset = old_pc_offset;
 			xs->sp = old_sp;
 		} else
@@ -2057,11 +2057,12 @@ const char *obj_get_name(EngineState *s, reg_t pos) {
 	return name;
 }
 
+
 void quit_vm() {
 	script_abort_flag = 1; // Terminate VM
-	g_debugstate_valid = 0;
-	g_debug_seeking = 0;
-	g_debug_step_running = 0;
+	debugState.isValid = false;
+	debugState.seeking = kDebugSeekNothing;
+	debugState.runningStep = 0;
 }
 
 void shrink_execution_stack(EngineState *s, uint size) {

@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-int g_stop_on_event = 0;
+extern DebugState debugState;
 
 #define SCI_VARIABLE_GAME_SPEED 3
 
@@ -90,10 +90,12 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case SCI_EVT_KEYBOARD:
 		if ((e.buckybits & SCI_EVM_LSHIFT) && (e.buckybits & SCI_EVM_RSHIFT) && (e.data == '-')) {
 			sciprintf("Debug mode activated\n");
-			g_debug_seeking = g_debug_step_running = 0;
+			debugState.seeking = kDebugSeekNothing;
+			debugState.runningStep = 0;
 		} else if ((e.buckybits & SCI_EVM_CTRL) && (e.data == '`')) {
 			sciprintf("Debug mode activated\n");
-			g_debug_seeking = g_debug_step_running = 0;
+			debugState.seeking = kDebugSeekNothing;
+			debugState.runningStep = 0;
 		} else {
 			PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);
@@ -137,8 +139,8 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->r_acc = NULL_REG; // Unknown or no event
 	}
 
-	if ((s->r_acc.offset) && (g_stop_on_event)) {
-		g_stop_on_event = 0;
+	if ((s->r_acc.offset) && (debugState.stopOnEvent)) {
+		debugState.stopOnEvent = false;
 
 		// A SCI event occured, and we have been asked to stop, so open the debug console
 		GUI::Debugger *con = ((Sci::SciEngine*)g_engine)->getDebugger();

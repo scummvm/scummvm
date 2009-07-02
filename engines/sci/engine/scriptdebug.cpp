@@ -32,10 +32,6 @@
 
 namespace Sci {
 
-int g_debugstate_valid = 0; // Set to 1 while script_debug is running
-int g_debug_step_running = 0; // Set to >0 to allow multiple stepping
-extern int g_debug_seek_special;
-
 extern const char *selector_name(EngineState *s, int selector);
 
 DebugState debugState;
@@ -101,7 +97,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	opsize = scr[pos.offset];
 	opcode = opsize >> 1;
 
-	if (!g_debugstate_valid) {
+	if (!debugState.isValid) {
 		sciprintf("Not in debug state\n");
 		return retval;
 	}
@@ -321,7 +317,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
 	// Do we support a separate console?
 
-	int old_debugstate = g_debugstate_valid;
+	bool old_debugstate = debugState.isValid;
 
 	debugState.p_var_segs = segids;
 	debugState.p_vars = variables;
@@ -333,15 +329,15 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	debugState.p_objp = objp;
 	debugState.p_restadjust = restadjust;
 	sciprintf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
-	g_debugstate_valid = 1;
+	debugState.isValid = true;
 	disassemble(s, *pc, 0, 1);
-	if (g_debug_seeking == kDebugSeekGlobal)
-		sciprintf("Global %d (0x%x) = %04x:%04x\n", g_debug_seek_special,
-		          g_debug_seek_special, PRINT_REG(s->script_000->locals_block->_locals[g_debug_seek_special]));
+	if (debugState.seeking == kDebugSeekGlobal)
+		sciprintf("Global %d (0x%x) = %04x:%04x\n", debugState.seekSpecial,
+		          debugState.seekSpecial, PRINT_REG(s->script_000->locals_block->_locals[debugState.seekSpecial]));
 
-	g_debugstate_valid = old_debugstate;
+	debugState.isValid = old_debugstate;
 
-	if (g_debug_seeking && !bp) { // Are we looking for something special?
+	if (debugState.seeking && !bp) { // Are we looking for something special?
 		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
 
 		if (mobj) {
@@ -353,9 +349,9 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			int paramb1 = pc->offset + 1 >= code_buf_size ? 0 : code_buf[pc->offset + 1];
 			int paramf1 = (opcode & 1) ? paramb1 : (pc->offset + 2 >= code_buf_size ? 0 : (int16)READ_LE_UINT16(code_buf + pc->offset + 1));
 
-			switch (g_debug_seeking) {
+			switch (debugState.seeking) {
 			case kDebugSeekSpecialCallk:
-				if (paramb1 != g_debug_seek_special)
+				if (paramb1 != debugState.seekSpecial)
 					return;
 
 			case kDebugSeekCallk: {
@@ -365,7 +361,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			}
 
 			case kDebugSeekLevelRet: {
-				if ((op != op_ret) || (g_debug_seek_level < (int)s->_executionStack.size()-1))
+				if ((op != op_ret) || (debugState.seekLevel < (int)s->_executionStack.size()-1))
 					return;
 				break;
 			}
@@ -377,20 +373,20 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 					return; // param or temp
 				if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
 					return; // locals and not running in script.000
-				if (paramf1 != g_debug_seek_special)
+				if (paramf1 != debugState.seekSpecial)
 					return; // CORRECT global?
 				break;
 
 			}
 
-			g_debug_seeking = kDebugSeekNothing;
+			debugState.seeking = kDebugSeekNothing;
 			// OK, found whatever we were looking for
 		}
 	}
 
-	g_debugstate_valid = (g_debug_step_running == 0);
+	debugState.isValid = (debugState.runningStep == 0);
 
-	if (g_debugstate_valid) {
+	if (debugState.isValid) {
 		debugState.p_pc = pc;
 		debugState.p_sp = sp;
 		debugState.p_pp = pp;

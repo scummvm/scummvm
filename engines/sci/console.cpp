@@ -50,10 +50,6 @@ int g_debug_sleeptime_factor = 1;
 int g_debug_simulated_key = 0;
 bool g_debug_track_mouse_clicks = false;
 bool g_debug_weak_validations = true;
-// Script related variables
-int g_debug_seeking = 0; // Stepping forward until some special condition is met
-int g_debug_seek_special = 0;  // Used for special seeks
-int g_debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
 extern DebugState debugState;
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
@@ -193,6 +189,12 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	con_hook_int(&(gfx_options.dirty_frames), "dirty_frames",
 		"Dirty frames management\n");
 	*/
+
+	debugState.isValid = false;
+	debugState.seeking = kDebugSeekNothing;
+	debugState.seekLevel = 0;
+	debugState.runningStep = 0;
+	debugState.stopOnEvent = false;
 }
 
 Console::~Console() {
@@ -833,7 +835,7 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 		_vm->_gamestate->successor = newstate; // Set successor
 
 		script_abort_flag = 2; // Abort current game with replay
-		g_debugstate_valid = 0;
+		debugState.isValid = false;
 
 		shrink_execution_stack(_vm->_gamestate, _vm->_gamestate->execution_stack_base + 1);
 		return 0;
@@ -864,7 +866,7 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 
 	_vm->_gamestate->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	script_abort_flag = 1;
-	g_debugstate_valid = 0;
+	debugState.isValid = false;
 
 	return false;
 }
@@ -2086,24 +2088,24 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 }
 
 bool Console::cmdStep(int argc, const char **argv) {
-	g_debugstate_valid = 0;
+	debugState.isValid = false;
 	if (argc == 2 && atoi(argv[1]) > 0)
-		g_debug_step_running = atoi(argv[1]) - 1;
+		debugState.runningStep = atoi(argv[1]) - 1;
 
 	return true;
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
-	g_stop_on_event = 1;
-	g_debugstate_valid = 0;
+	debugState.stopOnEvent = true;
+	debugState.isValid = false;
 
 	return true;
 }
 
 bool Console::cmdStepRet(int argc, const char **argv) {
-	g_debug_seeking = kDebugSeekLevelRet;
-	g_debug_seek_level = _vm->_gamestate->_executionStack.size() - 1;
-	g_debugstate_valid = 0;
+	debugState.seeking = kDebugSeekLevelRet;
+	debugState.seekLevel = _vm->_gamestate->_executionStack.size() - 1;
+	debugState.isValid = false;
 
 	return true;
 }
@@ -2115,9 +2117,9 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 		return true;
 	}
 
-	g_debug_seeking = kDebugSeekGlobal;
-	g_debug_seek_special = atoi(argv[1]);
-	g_debugstate_valid = 0;
+	debugState.seeking = kDebugSeekGlobal;
+	debugState.seekSpecial = atoi(argv[1]);
+	debugState.isValid = false;
 
 	return true;
 }
@@ -2145,12 +2147,12 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 			}
 		}
 
-		g_debug_seeking = kDebugSeekSpecialCallk;
-		g_debug_seek_special = callk_index;
-		g_debugstate_valid = 0;
+		debugState.seeking = kDebugSeekSpecialCallk;
+		debugState.seekSpecial = callk_index;
+		debugState.isValid = false;
 	} else {
-		g_debug_seeking = kDebugSeekCallk;
-		g_debugstate_valid = 0;
+		debugState.seeking = kDebugSeekCallk;
+		debugState.isValid = false;
 	}
 
 	return true;
@@ -2326,8 +2328,8 @@ bool Console::cmdSend(int argc, const char **argv) {
 }
 
 bool Console::cmdGo(int argc, const char **argv) {
-	g_debug_seeking = 0;
-	g_debugstate_valid = 0;
+	debugState.seeking = kDebugSeekNothing;
+	debugState.isValid = false;
 
 	return true;
 }
@@ -2741,9 +2743,9 @@ bool Console::cmdExit(int argc, const char **argv) {
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
 		script_abort_flag = 1; // Terminate VM
-		g_debugstate_valid = 0;
-		g_debug_seeking = 0;
-		g_debug_step_running = 0;
+		debugState.isValid = false;
+		debugState.seeking = kDebugSeekNothing;
+		debugState.runningStep = 0;
 
 	} else if (!scumm_stricmp(argv[1], "now")) {
 		// Quit ungracefully
@@ -3231,34 +3233,34 @@ int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		return 1;
 	}
 
-	g_debugstate_valid = 0;
+	debugState.isValid = false;
 	opcode = s->_heap[*p_pc];
 	opnumber = opcode >> 1;
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
 	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
-		g_debug_seeking = kDebugSeekSO;
-		g_debug_seek_level = s->_executionStack.size()-1;
-		// Store in g_debug_seek_special the offset of the next command after send
+		debugState.seeking = kDebugSeekSO;
+		debugState.seekLevel = s->_executionStack.size()-1;
+		// Store in debugState.seekSpecial the offset of the next command after send
 		switch (opcode) {
 		case 0x46: // calle W
-			g_debug_seek_special = *p_pc + 5;
+			debugState.seekSpecial = *p_pc + 5;
 			break;
 
 		case 0x44: // callb W
 		case 0x47: // calle B
 		case 0x56: // super W
-			g_debug_seek_special = *p_pc + 4;
+			debugState.seekSpecial = *p_pc + 4;
 			break;
 
 		case 0x45: // callb B
 		case 0x57: // super B
 		case 0x4A: // send W
 		case 0x54: // self W
-			g_debug_seek_special = *p_pc + 3;
+			debugState.seekSpecial = *p_pc + 3;
 			break;
 
 		default:
-			g_debug_seek_special = *p_pc + 2;
+			debugState.seekSpecial = *p_pc + 2;
 		}
 	}
 
