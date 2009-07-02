@@ -561,8 +561,10 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		// No filter -> display everything
 		_list = _dataList;
 	} else {
-		// Restrict the list to everything which contains _filter as a substring,
-		// ignoring case.
+		// Restrict the list to everything which contains all words in _filter
+		// as substrings, ignoring case.
+		
+		Common::StringTokenizer tok(filter);
 		String tmp;
 		int n = 0;
 
@@ -572,7 +574,16 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		for (StringList::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
 			tmp = *i;
 			tmp.toLowercase();
-			if (tmp.contains(_filter)) {
+			bool matches = true;
+			tok.reset();
+			while (!tok.empty()) {
+				if (!tmp.contains(tok.nextToken())) {
+					matches = false;
+					break;
+				}
+			}
+
+			if (matches) {
 				_list.push_back(*i);
 				_listIndex.push_back(n);
 			}
