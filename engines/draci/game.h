@@ -54,6 +54,8 @@ struct GameObject {
 	uint16 *_seqTab;
 	GPL2Program _program;
 	byte *_title;
+	byte _location;
+	bool _visible;
 };
 
 struct GameInfo {
@@ -89,10 +91,10 @@ private:
 	uint16 *_dialogOffsets;
 	int16 *_variables;
 	byte *_itemStatus;
-	byte *_objectStatus;
-	GameObject _heroObj;
+	GameObject *_objects;	
 	
-	void loadObject(uint16 numObj, GameObject *obj);
+	void loadObject(uint16 numObj);
+	GameObject *getObject(uint16 objNum);
 };
 
 } // End of namespace Draci

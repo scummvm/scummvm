@@ -113,19 +113,29 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	file = initArchive[0];
 	unsigned int numObjects = file->_length;
 	
-	_objectStatus = new byte[numObjects];
-	memcpy(_objectStatus, file->_data, file->_length);
+	_objects = new GameObject[numObjects];
+	Common::MemoryReadStream objStatus(file->_data, file->_length); 
 	
+	for (i = 0; i < numObjects; ++i) {
+		byte tmp = objStatus.readByte();
+
+		// Set object visibility
+		_objects[i]._visible = tmp & 1;
+
+		// Set object location
+		_objects[i]._location = tmp & ~1;
+ 	}
+
 	assert(numDialogs == _info->_numDialogs);
 	assert(numPersons == _info->_numPersons);
 	assert(numVariables == _info->_numVariables);
 	assert(numObjects == _info->_numObjects);	
 
-	loadObject(0, &_heroObj);
-	_vm->_script->run(_heroObj._program, _heroObj._init);
+	loadObject(1);
+	_vm->_script->run(getObject(1)->_program, getObject(1)->_init);
 }
 
-void Game::loadObject(uint16 objNum, GameObject *obj) {
+void Game::loadObject(uint16 objNum) {
 	Common::String path("OBJEKTY.DFW");
 	
 	BArchive objArchive(path);
@@ -134,6 +144,8 @@ void Game::loadObject(uint16 objNum, GameObject *obj) {
 	file = objArchive[objNum * 3];
 	Common::MemoryReadStream objReader(file->_data, file->_length);
 	
+	GameObject *obj = getObject(objNum);
+
 	obj->_init = objReader.readUint16LE();
 	obj->_look = objReader.readUint16LE();
 	obj->_use = objReader.readUint16LE();
@@ -166,13 +178,21 @@ void Game::loadObject(uint16 objNum, GameObject *obj) {
 	obj->_program._length = file->_length;
 	memcpy(obj->_program._bytecode, file->_data, file->_length);
 }
-	
+
+GameObject *Game::getObject(uint16 objNum) {
+
+	// Convert to real index (indexes begin with 1 in the data files)
+	objNum -= 1;
+
+	return &_objects[objNum];
+}
+
 Game::~Game() {
 	delete[] _persons;
 	delete[] _variables;
 	delete[] _dialogOffsets;
 	delete[] _itemStatus;
-	delete[] _objectStatus;
+	delete[] _objects;
 	delete _info;
 }
 
