@@ -58,6 +58,13 @@ protected:
 	};
 	static const int kNumChannels = kChannelSFX + kNumSFX;
 
+	enum SoundMode {
+		kVOCMode,
+		kMP3Mode,
+		kVorbisMode,
+		kFlacMode
+	};
+
 	struct Channel {
 		// Sample handle
 		Audio::SoundHandle handle;
@@ -86,6 +93,9 @@ protected:
 
 	/** Number of entries in the sample index */
 	long _sampleIndexLen;
+
+	/** Specifies if the sample-data is compressed and if yes, how */
+	SoundMode _soundMode;
 
 	/** file stream for sample file */
 	TinselFile _sampleStream;
