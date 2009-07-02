@@ -45,6 +45,18 @@ extern int g_debug_seeking;
 extern int g_debug_seek_special;
 extern int g_debug_seek_level;
 
+struct DebugState {
+	reg_t *p_pc;
+	StackPtr *p_sp;
+	StackPtr *p_pp;
+	reg_t *p_objp;
+	int *p_restadjust;
+	SegmentId *p_var_segs;
+	reg_t **p_vars;
+	reg_t **p_var_base;
+	int *p_var_max; // May be NULL even in valid state!
+};
+
 } // End of namespace Sci
 
 #endif

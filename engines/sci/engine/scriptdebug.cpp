@@ -36,17 +36,9 @@ int g_debugstate_valid = 0; // Set to 1 while script_debug is running
 int g_debug_step_running = 0; // Set to >0 to allow multiple stepping
 extern int g_debug_seek_special;
 
-static reg_t *p_pc;
-static StackPtr *p_sp;
-static StackPtr *p_pp;
-static reg_t *p_objp;
-static int *p_restadjust;
-static SegmentId *p_var_segs;
-static reg_t **p_vars;
-static reg_t **p_var_base;
-static int *p_var_max; // May be NULL even in valid state!
-
 extern const char *selector_name(EngineState *s, int selector);
+
+DebugState debugState;
 
 int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
 	Object *obj = obj_get(s, objp);
@@ -238,11 +230,11 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		}
 	}
 
-	if (pos == *p_pc) { // Extra information if debugging the current opcode
+	if (pos == *debugState.p_pc) { // Extra information if debugging the current opcode
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
 			int prop_ofs = scr[pos.offset + 1];
-			int prop_id = propertyOffsetToId(s, prop_ofs, *p_objp);
+			int prop_id = propertyOffsetToId(s, prop_ofs, *debugState.p_objp);
 
 			sciprintf("	(%s)", selector_name(s, prop_id));
 		}
@@ -250,38 +242,38 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	sciprintf("\n");
 
-	if (pos == *p_pc) { // Extra information if debugging the current opcode
+	if (pos == *debugState.p_pc) { // Extra information if debugging the current opcode
 		if (opcode == op_callk) {
-			int stackframe = (scr[pos.offset + 2] >> 1) + (*p_restadjust);
-			int argc = ((*p_sp)[- stackframe - 1]).offset;
+			int stackframe = (scr[pos.offset + 2] >> 1) + (*debugState.p_restadjust);
+			int argc = ((*debugState.p_sp)[- stackframe - 1]).offset;
 
 			if (!(s->_flags & GF_SCI0_OLD))
-				argc += (*p_restadjust);
+				argc += (*debugState.p_restadjust);
 
 			sciprintf(" Kernel params: (");
 
 			for (int j = 0; j < argc; j++) {
-				sciprintf("%04x:%04x", PRINT_REG((*p_sp)[j - stackframe]));
+				sciprintf("%04x:%04x", PRINT_REG((*debugState.p_sp)[j - stackframe]));
 				if (j + 1 < argc)
 					sciprintf(", ");
 			}
 			sciprintf(")\n");
 		} else if ((opcode == op_send) || (opcode == op_self)) {
-			int restmod = *p_restadjust;
+			int restmod = *debugState.p_restadjust;
 			int stackframe = (scr[pos.offset + 1] >> 1) + restmod;
-			reg_t *sb = *p_sp;
+			reg_t *sb = *debugState.p_sp;
 			uint16 selector;
 			reg_t fun_ref;
 
 			while (stackframe > 0) {
 				int argc = sb[- stackframe + 1].offset;
 				const char *name = NULL;
-				reg_t called_obj_addr = *p_objp;
+				reg_t called_obj_addr = *debugState.p_objp;
 
 				if (opcode == op_send)
 					called_obj_addr = s->r_acc;
 				else if (opcode == op_self)
-					called_obj_addr = *p_objp;
+					called_obj_addr = *debugState.p_objp;
 
 				selector = sb[- stackframe].offset;
 
@@ -331,15 +323,15 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 
 	int old_debugstate = g_debugstate_valid;
 
-	p_var_segs = segids;
-	p_vars = variables;
-	p_var_max = variables_nr;
-	p_var_base = variables_base;
-	p_pc = pc;
-	p_sp = sp;
-	p_pp = pp;
-	p_objp = objp;
-	p_restadjust = restadjust;
+	debugState.p_var_segs = segids;
+	debugState.p_vars = variables;
+	debugState.p_var_max = variables_nr;
+	debugState.p_var_base = variables_base;
+	debugState.p_pc = pc;
+	debugState.p_sp = sp;
+	debugState.p_pp = pp;
+	debugState.p_objp = objp;
+	debugState.p_restadjust = restadjust;
 	sciprintf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
 	g_debugstate_valid = 1;
 	disassemble(s, *pc, 0, 1);
@@ -399,15 +391,15 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	g_debugstate_valid = (g_debug_step_running == 0);
 
 	if (g_debugstate_valid) {
-		p_pc = pc;
-		p_sp = sp;
-		p_pp = pp;
-		p_objp = objp;
-		p_restadjust = restadjust;
-		p_var_segs = segids;
-		p_vars = variables;
-		p_var_max = variables_nr;
-		p_var_base = variables_base;
+		debugState.p_pc = pc;
+		debugState.p_sp = sp;
+		debugState.p_pp = pp;
+		debugState.p_objp = objp;
+		debugState.p_restadjust = restadjust;
+		debugState.p_var_segs = segids;
+		debugState.p_vars = variables;
+		debugState.p_var_max = variables_nr;
+		debugState.p_var_base = variables_base;
 		
 		sciprintf("Step #%d\n", script_step_counter);
 		disassemble(s, *pc, 0, 1);

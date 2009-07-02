@@ -54,6 +54,7 @@ bool g_debug_weak_validations = true;
 int g_debug_seeking = 0; // Stepping forward until some special condition is met
 int g_debug_seek_special = 0;  // Used for special seeks
 int g_debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
+extern DebugState debugState;
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -522,16 +523,13 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 
 bool Console::cmdRegisters(int argc, const char **argv) {
 	DebugPrintf("Current register values:\n");
-#if 0
-		// TODO: p_restadjust
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_vm->_gamestate->r_acc), PRINT_REG(_vm->_gamestate->r_prev), *p_restadjust);
-#endif
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_vm->_gamestate->r_acc), PRINT_REG(_vm->_gamestate->r_prev), *debugState.p_restadjust);
 
 	if (!_vm->_gamestate->_executionStack.empty()) {
-#if 0
-		// TODO: p_pc, p_objp, p_pp, p_sp
-		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
-#endif
+		EngineState *s = _vm->_gamestate;	// for PRINT_STK
+		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", 
+					PRINT_REG(*debugState.p_pc), PRINT_REG(*debugState.p_objp), 
+					PRINT_STK(*debugState.p_pp), PRINT_STK(*debugState.p_sp));
 	} else
 		DebugPrintf("<no execution stack: pc,obj,fp omitted>\n");
 
@@ -1689,20 +1687,16 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 }
 
 bool Console::cmdVMVarlist(int argc, const char **argv) {
-	//const char *varnames[] = {"global", "local", "temp", "param"};
+	const char *varnames[] = {"global", "local", "temp", "param"};
 
 	DebugPrintf("Addresses of variables in the VM:\n");
 
-#if 0
-	// TODO: p_var_segs, p_vars, p_var_base, p_var_max
-
 	for (int i = 0; i < 4; i++) {
-		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(p_var_segs[i], p_vars[i] - p_var_base[i])));
-		if (p_var_max)
-			DebugPrintf("  total %d", p_var_max[i]);
+		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(debugState.p_var_segs[i], debugState.p_vars[i] - debugState.p_var_base[i])));
+		if (debugState.p_var_max)
+			DebugPrintf("  total %d", debugState.p_var_max[i]);
 		DebugPrintf("\n");
 	}
-#endif
 
 	return true;
 }
@@ -1718,7 +1712,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-	//const char *varnames[] = {"global", "local", "temp", "param"};
+	const char *varnames[] = {"global", "local", "temp", "param"};
 	const char *varabbrev = "gltp";
 	const char *vartype_pre = strchr(varabbrev, *argv[1]);
 	int vartype;
@@ -1736,31 +1730,21 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-#if 0
-	// TODO: p_var_max
-	if ((p_var_max) && (p_var_max[vartype] <= idx)) {
-		DebugPrintf("Max. index is %d (0x%x)\n", p_var_max[vartype], p_var_max[vartype]);
+	if ((debugState.p_var_max) && (debugState.p_var_max[vartype] <= idx)) {
+		DebugPrintf("Max. index is %d (0x%x)\n", debugState.p_var_max[vartype], debugState.p_var_max[vartype]);
 		return true;
 	}
-#endif
 
 	switch (argc) {
 	case 2:
-#if 0
-		// TODO: p_vars
-		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(p_vars[vartype][idx]));
-#endif
+		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(debugState.p_vars[vartype][idx]));
 		break;
 	case 3:
-#if 0
-		// TODO: p_vars
-
-		if (parse_reg_t(_vm->_gamestate, argv[3], &p_vars[vartype][idx])) {
+		if (parse_reg_t(_vm->_gamestate, argv[3], &debugState.p_vars[vartype][idx])) {
 			DebugPrintf("Invalid address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
 		}
-#endif
 		break;
 	default:
 		DebugPrintf("Too many arguments\n");
@@ -1995,11 +1979,7 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 
 bool Console::cmdViewActiveObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class:\n");
-
-#if 0
-	// TODO: p_objp
-	printObject(_vm->_gamestate, *p_objp);
-#endif
+	printObject(_vm->_gamestate, *debugState.p_objp);
 
 	return true;
 }
