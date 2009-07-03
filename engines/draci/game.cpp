@@ -29,6 +29,7 @@
 #include "draci/game.h"
 #include "draci/barchive.h"
 #include "draci/script.h"
+#include "draci/animation.h"
 
 namespace Draci {
 
@@ -190,12 +191,12 @@ GameObject *Game::getObject(uint16 objNum) {
 }
 
 void Game::changeRoom(uint16 roomNum) {
-	
+
 	// Convert to real index (indexes begin with 1 in the data files)
 	roomNum -= 1;
 
 	BAFile *f;
-	f = _vm->_roomsArchive->getFile(roomNum);
+	f = _vm->_roomsArchive->getFile(roomNum * 4);
 	Common::MemoryReadStream roomReader(f->_data, f->_length);
 
 	roomReader.readUint32LE(); // Pointer to room program, not used
@@ -219,6 +220,30 @@ void Game::changeRoom(uint16 roomNum) {
 	roomReader.read(&_currentRoom._persStep, 12);
 	_currentRoom._escRoom = roomReader.readByte();
 	_currentRoom._numGates = roomReader.readByte();
+
+	f = _vm->_paletteArchive->getFile(_currentRoom._palette - 1);
+	_vm->_screen->setPalette(f->_data, 0, kNumColours);
+
+	uint x, y, z, num;
+
+	f = _vm->_roomsArchive->getFile(roomNum * 4 + 2);
+	Common::MemoryReadStream overlayReader(f->_data, f->_length);
+	BAFile *overlayFile;
+
+	for (uint i = 0; i < _currentRoom._numMasks; i++) {
+
+		num = overlayReader.readUint16LE();
+		x = overlayReader.readUint16LE();
+		y = overlayReader.readUint16LE();
+		z = overlayReader.readByte();
+
+		overlayFile = _vm->_overlaysArchive->getFile(num - 1);
+		Sprite *sp = new Sprite(overlayFile->_data, overlayFile->_length, x, y, z, true);
+
+		_vm->_anims->addOverlay(sp, z);		
+	}
+
+	_vm->_screen->getSurface()->markDirty();
 }
 
 Game::~Game() {
