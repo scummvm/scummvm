@@ -242,6 +242,8 @@ void Game::changeRoom(uint16 roomNum) {
 
 		_vm->_anims->addOverlay(sp, z);		
 	}
+	
+	_vm->_overlaysArchive->clearCache();
 
 	_vm->_screen->getSurface()->markDirty();
 }
