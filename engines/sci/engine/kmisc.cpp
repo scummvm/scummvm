@@ -93,8 +93,6 @@ reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-extern DebugState debugState;
-
 reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	sciprintf("Debug mode activated\n");
 

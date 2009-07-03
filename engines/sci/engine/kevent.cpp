@@ -33,8 +33,6 @@
 
 namespace Sci {
 
-extern DebugState debugState;
-
 #define SCI_VARIABLE_GAME_SPEED 3
 
 reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -112,7 +110,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		// track left buttton clicks, if requested
 		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && g_debug_track_mouse_clicks) {
-			((SciEngine *)g_engine)->getDebugger()->DebugPrintf("Mouse clicked at %d, %d\n", 
+			((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("Mouse clicked at %d, %d\n", 
 						s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 		}
 
@@ -143,7 +141,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		debugState.stopOnEvent = false;
 
 		// A SCI event occured, and we have been asked to stop, so open the debug console
-		GUI::Debugger *con = ((Sci::SciEngine*)g_engine)->getDebugger();
+		Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
 		con->DebugPrintf("SCI event occured: ");
 		switch (e.type) {
 		case SCI_EVT_QUIT:

@@ -142,6 +142,7 @@ public:
 	virtual Common::Error run();
 	void pauseEngineIntern(bool pause);
 	virtual GUI::Debugger *getDebugger();
+	Console *getSciDebugger();
 
 	const char* getGameID() const;
 	int getResourceVersion() const;

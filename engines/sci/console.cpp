@@ -50,7 +50,6 @@ int g_debug_sleeptime_factor = 1;
 int g_debug_simulated_key = 0;
 bool g_debug_track_mouse_clicks = false;
 bool g_debug_weak_validations = true;
-extern DebugState debugState;
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -1598,7 +1597,7 @@ bool Console::cmdGCObjects(int argc, const char **argv) {
 
 void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
-		((SciEngine *)g_engine)->getDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
+		((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
 }
 
 bool Console::cmdGCShowReachable(int argc, const char **argv) {

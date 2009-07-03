@@ -351,7 +351,7 @@ parse_rule_list_t *Vocabulary::buildGNF(bool verbose) {
 	int ntrules_nr;
 	parse_rule_list_t *ntlist = NULL;
 	parse_rule_list_t *tlist, *new_tlist;
-	GUI::Debugger *con = ((SciEngine *)g_engine)->getDebugger();
+	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 
 	for (uint i = 1; i < _parserBranches.size(); i++) { // branch rule 0 is treated specially
 		parse_rule_t *rule = _vbuild_rule(&_parserBranches[i]);
@@ -477,7 +477,7 @@ static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_r
 }
 
 int Vocabulary::parseGNF(parse_tree_node_t *nodes, const ResultWordList &words, bool verbose) {
-	GUI::Debugger *con = ((SciEngine *)g_engine)->getDebugger();
+	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 	// Get the start rules:
 	parse_rule_list_t *work = _vocab_clone_rule_list_by_id(_parserRules, _parserBranches[0].data[1]);
 	parse_rule_list_t *results = NULL;

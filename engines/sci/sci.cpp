@@ -29,6 +29,7 @@
 
 #include "engines/advancedDetector.h"
 #include "sci/sci.h"
+#include "sci/debug.h"
 #include "sci/console.h"
 
 #include "sci/engine/state.h"
@@ -254,7 +255,19 @@ Common::Error SciEngine::run() {
 	return Common::kNoError;
 }
 
+// Invoked by error() when a severe error occurs
 GUI::Debugger *SciEngine::getDebugger() {
+	ExecStack *xs = &(_gamestate->_executionStack.back());
+	debugState.runningStep = 0; // Stop multiple execution
+	debugState.seeking = kDebugSeekNothing; // Stop special seeks
+	xs->addr.pc.offset = debugState.old_pc_offset;
+	xs->sp = debugState.old_sp;
+
+	return _console;
+}
+
+// Used to obtain the engine's console in order to print messages to it
+Console *SciEngine::getSciDebugger() {
 	return _console;
 }
 

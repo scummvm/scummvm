@@ -154,6 +154,7 @@ private:
 
 private:
 	SciEngine *_vm;
+	bool _mouseVisible;
 };
 
 } // End of namespace Sci

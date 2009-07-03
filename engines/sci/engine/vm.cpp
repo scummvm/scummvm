@@ -49,7 +49,6 @@ reg_t NULL_REG = {0, 0};
 int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a replay afterwards	// FIXME: Avoid non-const global vars
 int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
 int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME: Avoid non-const global vars
-extern DebugState debugState;
 
 static bool breakpointFlag = false;	// FIXME: Avoid non-const global vars
 static reg_t _dummy_register;		// FIXME: Avoid non-const global vars
@@ -606,14 +605,12 @@ void run_vm(EngineState *s, int restoring) {
 
 	while (1) {
 		byte opcode;
-		int old_pc_offset;
-		StackPtr old_sp;
 		byte opnumber;
 		int var_type; // See description below
 		int var_number;
 
-		old_pc_offset = xs->addr.pc.offset;
-		old_sp = xs->sp;
+		debugState.old_pc_offset = xs->addr.pc.offset;
+		debugState.old_sp = xs->sp;
 
 		if (s->_executionStackPosChanged) {
 			Script *scr;
@@ -1424,16 +1421,7 @@ void run_vm(EngineState *s, int restoring) {
 					opnumber);
 		}
 //#endif
-
-#if 0
-		if (script_error_flag) {
-			debugState.runningStep = 0; // Stop multiple execution
-			debugState.seeking = 0; // Stop special seeks
-			xs->addr.pc.offset = old_pc_offset;
-			xs->sp = old_sp;
-		} else
-#endif
-			++script_step_counter;
+		++script_step_counter;
 	}
 }
 
