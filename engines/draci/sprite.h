@@ -37,7 +37,7 @@ friend class Sprite;
 friend class Text;
 
 public:
-	virtual void draw(Surface *surface) const = 0;
+	virtual void draw(Surface *surface, bool markDirty = true) const = 0;
 	virtual ~Drawable() {};
 	
 	virtual uint16 getWidth() { return _width; }
@@ -83,7 +83,7 @@ public:
 
 	~Sprite();
 
-	void draw(Surface *surface) const;
+	void draw(Surface *surface, bool markDirty = true) const;
 
 	const byte *getBuffer() const { return _data; }
 
@@ -102,7 +102,7 @@ public:
 	void setColour(byte fontColour);
 	void setSpacing(uint spacing);
 	
-	void draw(Surface *surface) const;
+	void draw(Surface *surface, bool markDirty = true) const;
 
 private:
 	byte *_text;

@@ -108,7 +108,7 @@ Sprite::~Sprite() {
  *
  *  Draws the sprite to a Draci::Surface and marks its rectangle on the surface as dirty.
  */
-void Sprite::draw(Surface *surface) const { 
+void Sprite::draw(Surface *surface, bool markDirty) const { 
 	byte *dst = (byte *)surface->getBasePtr(_x, _y);
 	byte *src = _data;	
 	
@@ -125,8 +125,10 @@ void Sprite::draw(Surface *surface) const {
 	}
 
 	// Mark the sprite's rectangle dirty
-	Common::Rect r(_x, _y, _x + _width, _y + _height);
-	surface->markDirtyRect(r);
+	if (markDirty) {	
+		Common::Rect r(_x, _y, _x + _width, _y + _height);
+		surface->markDirtyRect(r);
+	}
 }
 
 Text::Text(const Common::String &str, Font *font, byte fontColour, 
@@ -175,7 +177,7 @@ void Text::setSpacing(uint spacing) {
 	_spacing = spacing;
 }
 
-void Text::draw(Surface *surface) const {
+void Text::draw(Surface *surface, bool markDirty) const {
 	_font->setColour(_colour);
 	_font->drawString(surface, _text, _length, _x, _y, _spacing);
 }	
