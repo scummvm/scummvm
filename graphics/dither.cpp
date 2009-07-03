@@ -23,6 +23,7 @@
  */
 
 #include "common/endian.h"
+#include "graphics/conversion.h"
 #include "graphics/dither.h"
 
 namespace Graphics {

@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/savefile.h"
+#include "graphics/conversion.h"
 #include "graphics/dither.h"
 
 #include "gob/gob.h"
@@ -45,8 +46,8 @@ void Video_v6::setPrePalette() {
 	for (int i = 0; i < 256; i++) {
 		byte r, g, b;
 
-		Graphics::PaletteLUT::YUV2RGB(fpal[i * 3 + 0], fpal[i * 3 + 1], fpal[i * 3 + 2],
-		                              r, g, b);
+		Graphics::YUV2RGB(fpal[i * 3 + 0], fpal[i * 3 + 1], fpal[i * 3 + 2],
+		                  r, g, b);
 
 		tpal[i * 3 + 0] = r >> 2;
 		tpal[i * 3 + 1] = g >> 2;

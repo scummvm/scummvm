@@ -26,12 +26,25 @@
 #ifndef GRAPHICS_CONVERSION_H
 #define GRAPHICS_CONVERSION_H
 
-#include "common/scummsys.h"
+#include "common/util.h"
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
 
-// TODO: generic YUV to RGB pixel conversion
+/** Converting a color from YUV to RGB colorspace. */
+inline static void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
+	r = CLIP<int>(y + ((1357 * (v - 128)) >> 10), 0, 255);
+	g = CLIP<int>(y - (( 691 * (v - 128)) >> 10) - ((333 * (u - 128)) >> 10), 0, 255);
+	b = CLIP<int>(y + ((1715 * (u - 128)) >> 10), 0, 255);
+}
+
+/** Converting a color from RGB to YUV colorspace. */
+inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
+	y = CLIP<int>( ((r * 306) >> 10) + ((g * 601) >> 10) + ((b * 117) >> 10)      , 0, 255);
+	u = CLIP<int>(-((r * 172) >> 10) - ((g * 340) >> 10) + ((b * 512) >> 10) + 128, 0, 255);
+	v = CLIP<int>( ((r * 512) >> 10) - ((g * 429) >> 10) - ((b *  83) >> 10) + 128, 0, 255);
+}
+
 // TODO: generic YUV to RGB blit
 
 /**

@@ -26,6 +26,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "graphics/conversion.h"
 #include "graphics/dither.h"
 #include "graphics/video/coktelvideo/coktelvideo.h"
 #include "graphics/video/coktelvideo/indeo3.h"
@@ -1624,7 +1625,7 @@ void Vmd::blit16(byte *dest, byte *src, int16 srcPitch, int16 width, int16 heigh
 			byte b = ((data & 0x001F) >>  0);
 			byte dY, dU, dV;
 
-			Graphics::PaletteLUT::RGB2YUV(r << 3, g << 3, b << 3, dY, dU, dV);
+			Graphics::RGB2YUV(r << 3, g << 3, b << 3, dY, dU, dV);
 
 			byte p = dither->dither(dY, dU, dV, j);
 
@@ -1658,7 +1659,7 @@ void Vmd::blit24(byte *dest, byte *src, int16 srcPitch, int16 width, int16 heigh
 			byte b = s[0];
 			byte dY, dU, dV;
 
-			Graphics::PaletteLUT::RGB2YUV(r, g, b, dY, dU, dV);
+			Graphics::RGB2YUV(r, g, b, dY, dU, dV);
 
 			byte p = dither->dither(dY, dU, dV, j);
 
