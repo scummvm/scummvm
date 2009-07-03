@@ -62,9 +62,11 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	//Common::File::addDefaultDirectory(_gameDataPath + "sound/");
 
 	// Here is the right place to set up the engine specific debug levels
-	Common::addDebugChannel(kDraciGeneralDebugLevel, "general", "Draci general debug level");
+	Common::addDebugChannel(kDraciGeneralDebugLevel, "general", "Draci general debug info");
 	Common::addDebugChannel(kDraciBytecodeDebugLevel, "bytecode", "GPL bytecode instructions");
 	Common::addDebugChannel(kDraciArchiverDebugLevel, "archiver", "BAR archiver debug info");
+	Common::addDebugChannel(kDraciLogicDebugLevel, "logic", "Game logic debug info");
+	Common::addDebugChannel(kDraciAnimationDebugLevel, "animation", "Animation debug info");
  
 	// Don't forget to register your random source
 	_eventMan->registerRandomSource(_rnd, "draci");
