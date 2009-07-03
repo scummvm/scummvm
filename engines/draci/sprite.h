@@ -50,6 +50,8 @@ public:
 	virtual void setX(uint x) { _x = x; }
 	virtual void setY(uint y) { _y = y; }
 	virtual void setZ(uint z) { _z = z; }
+
+	virtual Common::Rect getRect() const = 0;
 	
 private:
 	uint16 _width;	//!< Width of the sprite
@@ -88,6 +90,8 @@ public:
 	void setMirrorOn();
 	void setMirrorOff();
 
+
+	virtual Common::Rect getRect() const;
 	const byte *getBuffer() const { return _data; }
 
 private:
@@ -107,6 +111,8 @@ public:
 	void setSpacing(uint spacing);
 	
 	void draw(Surface *surface, bool markDirty = true) const;
+
+	virtual Common::Rect getRect() const;
 
 private:
 	byte *_text;

@@ -152,6 +152,10 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 	}
 }
 
+Common::Rect Sprite::getRect() const {
+	return Common::Rect(_x, _y, _x + _width, _y + _height);
+}
+
 Text::Text(const Common::String &str, Font *font, byte fontColour, 
 				uint x, uint y, uint z, uint spacing) {
 	uint len = str.size();
@@ -201,7 +205,11 @@ void Text::setSpacing(uint spacing) {
 void Text::draw(Surface *surface, bool markDirty) const {
 	_font->setColour(_colour);
 	_font->drawString(surface, _text, _length, _x, _y, _spacing);
-}	
+}
+
+Common::Rect Text::getRect() const {
+	return Common::Rect(_x, _y, _x + _width, _y + _height);
+}
 			
 } // End of namespace Draci	
 		
