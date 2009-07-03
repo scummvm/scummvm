@@ -377,6 +377,13 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 					return; // CORRECT global?
 				break;
 
+			case kDebugSeekSO:
+				// FIXME: Unhandled?
+				break;
+
+			case kDebugSeekNothing:
+				// FIXME: Unhandled?
+				break;
 			}
 
 			debugState.seeking = kDebugSeekNothing;
