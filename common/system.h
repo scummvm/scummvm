@@ -31,6 +31,9 @@
 #include "common/rect.h"
 
 #include "graphics/pixelformat.h"
+#ifdef ENABLE_RGB_COLOR
+#include "graphics/conversion.h"
+#endif
 
 namespace Audio {
 	class Mixer;
@@ -1000,12 +1003,15 @@ public:
 #ifdef ENABLE_RGB_COLOR
 private:
 	/**
-	 * Convert a rectangle from the screenformat to the hardwareformat.
+	 * Convert a rectangle from the screen format to the hardware format.
 	 *
-	 * @param buf		the buffer containing the graphics data source
-	 * @param w			the width of the destination rectangle
-	 * @param h			the height of the destination rectangle
-	 * @param dest		the pixel format currently set in hardware
+	 * @param dstbuf	the buffer which will recieve the converted graphics data
+	 * @param srcbuf	the buffer containing the original graphics data
+	 * @param dstpitch	width in bytes of one full line of the dest buffer
+	 * @param srcpitch	width in bytes of one full line of the source buffer
+	 * @param w			the width of the graphics data
+	 * @param h			the height of the graphics data
+	 * @param hwFmt		the pixel format currently set in hardware
 	 * @return			true if conversion completes successfully, 
 	 *					false if there is an error.
 	 *
@@ -1014,61 +1020,9 @@ private:
 	 * @note This implementation requires the screen pixel format and 
 	 *		 the hardware pixel format to have a matching bytedepth
 	 */
-	virtual bool convertRect(byte *buf, int w, int h, 
-							Graphics::PixelFormat dest) {
-		Graphics::PixelFormat orig = getScreenFormat();
-
-		// Error out if conversion is impossible
-		if ((orig.bytesPerPixel != dest.bytesPerPixel) ||
-			(dest.bytesPerPixel == 1) || (!dest.bytesPerPixel))
-			return false;
-
-		// Don't perform unnecessary conversion
-		if (orig == dest)
-			return true;
-
-		byte *tmp = buf;
-		byte bytesPerPixel = dest.bytesPerPixel;
-		// Faster, but larger, to provide optimized handling for each case.
-		uint32 numpix = w * h;
-		if (bytesPerPixel == 2)
-		{
-			for (uint32 i = 0; i < numpix; i++) {
-				uint8 r,g,b,a;
-				uint16 color = *(uint16 *) tmp;
-				orig.colorToARGB(color, a, r, g, b);
-				color = dest.ARGBToColor(a, r, g, b);
-				memcpy(tmp,&color,bytesPerPixel);
-				tmp += 2;
-			}
-		} else if (bytesPerPixel == 3) {
-			for (uint32 i = 0; i < numpix; i++) {
-				uint8 r,g,b,a;
-				uint32 color;
-				uint8 *col = (uint8 *)&color;
-#ifdef SCUMM_BIG_ENDIAN
-				col++;
-#endif
-				memcpy(col,tmp,bytesPerPixel);
-				orig.colorToARGB(color, a, r, g, b);
-				color = dest.ARGBToColor(a, r, g, b);
-				memcpy(tmp,col,bytesPerPixel);
-				tmp += 3;
-			}
-		} else if (bytesPerPixel == 4) {
-			for (uint32 i = 0; i < numpix; i++) {
-				uint8 r,g,b,a;
-				uint32 color;
-				memcpy(&color,tmp,bytesPerPixel);
-				orig.colorToARGB(color, a, r, g, b);
-				color = dest.ARGBToColor(a, r, g, b);
-				memcpy(tmp,&color,bytesPerPixel);
-				tmp += 4;
-			}
-		} else {
-			return false;
-		}
-		return true;
+	virtual bool convertScreenRect(byte *dstbuf, const byte *srcbuf, int dstpitch, int srcpitch, 
+									int w, int h, Graphics::PixelFormat hwFmt) {
+		return Graphics::crossBlit(dstbuf,srcbuf,dstpitch,srcpitch,w,h,hwFmt,getScreenFormat());
 	};
 #endif // ENABLE_RGB_COLOR
 	//@}
