@@ -23,7 +23,87 @@
  *
  */
 
+#include "draci/draci.h"
+#include "draci/animation.h"
+
 namespace Draci {
 
+void Animation::addAnimation(uint id, uint z) {
+	
+	AnimObj *obj = new AnimObj();
+	obj->_id = id;
+	obj->_z = z;
+	obj->_currentFrame = 0;
+
+	insertAnimation(*obj);
 }
 
+Common::List<AnimObj>::iterator Animation::getAnimation(uint id) {
+	
+	Common::List<AnimObj>::iterator it;
+
+	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
+		if (it->_id == id) {
+			return it;
+		}
+	}
+
+	return _animObjects.end();
+}
+
+void Animation::insertAnimation(AnimObj &animObj) {
+	
+	Common::List<AnimObj>::iterator it;	
+
+	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
+		if (animObj._z < it->_z) 
+			break;
+	}
+
+	_animObjects.insert(it, animObj);
+}
+
+void Animation::addFrame(uint id, Drawable *frame) {
+	
+	Common::List<AnimObj>::iterator it = getAnimation(id);
+
+	it->_frames.push_back(frame);	
+}
+
+void Animation::addOverlay(Drawable *overlay, uint z) {
+	AnimObj *obj = new AnimObj();
+	obj->_id = kOverlayImage;
+	obj->_z = z;
+	obj->_currentFrame = 0;
+	obj->_frames.push_back(overlay);
+
+	insertAnimation(*obj);
+}
+
+void Animation::drawScene(Surface *surf) {
+	
+	Common::List<AnimObj>::iterator it;
+
+	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
+		if(it->_id == kOverlayImage) {			
+			it->_frames[it->_currentFrame]->draw(surf, false);
+		}
+		else {
+			it->_frames[it->_currentFrame]->draw(surf, true);
+		}
+	}
+}
+
+void Animation::deleteAnimation(uint id) {
+	
+	Common::List<AnimObj>::iterator it = getAnimation(id);
+
+	_animObjects.erase(it);
+}
+	
+void Animation::deleteAll() {
+	
+	_animObjects.clear();
+}
+
+}

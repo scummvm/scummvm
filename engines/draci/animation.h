@@ -26,7 +26,41 @@
 #ifndef DRACI_ANIMATION_H
 #define DRACI_ANIMATION_H
 
+#include "draci/sprite.h"
+
 namespace Draci {
+
+enum { kOverlayImage = -1 };
+
+class DraciEngine;
+
+struct AnimObj {
+	uint _id;	
+	uint _currentFrame;
+	uint _z;
+	Common::Array<Drawable*> _frames;
+};
+
+class Animation {
+
+public:
+	Animation(DraciEngine *vm) : _vm(vm) {};
+
+	void addAnimation(uint id, uint z = 0);
+	void addFrame(uint id, Drawable *frame);
+	void addOverlay(Drawable *overlay, uint z = 0);
+	void deleteAnimation(uint id);
+	void deleteAll();
+	void drawScene(Surface *surf);
+	Common::List<AnimObj>::iterator getAnimation(uint id);
+
+private:
+	
+	void insertAnimation(AnimObj &animObj);
+
+	DraciEngine *_vm;
+	Common::List<AnimObj> _animObjects;
+};
 
 }
 
