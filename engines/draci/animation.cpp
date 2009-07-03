@@ -98,11 +98,23 @@ void Animation::deleteAnimation(uint id) {
 	
 	Common::List<AnimObj>::iterator it = getAnimation(id);
 
+	for(uint i = 0; i < it->_frames.size(); ++i) {		
+		delete it->_frames[i];
+	}
+
 	_animObjects.erase(it);
 }
 	
 void Animation::deleteAll() {
 	
+	Common::List<AnimObj>::iterator it;
+
+	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
+		for(uint i = 0; i < it->_frames.size(); ++i) {		
+			delete it->_frames[i];
+		}	
+	}
+
 	_animObjects.clear();
 }
 

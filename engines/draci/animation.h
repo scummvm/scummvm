@@ -45,6 +45,7 @@ class Animation {
 
 public:
 	Animation(DraciEngine *vm) : _vm(vm) {};
+	~Animation() { deleteAll(); }
 
 	void addAnimation(uint id, uint z = 0);
 	void addFrame(uint id, Drawable *frame);
