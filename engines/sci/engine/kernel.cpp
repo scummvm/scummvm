@@ -369,6 +369,10 @@ Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
 
 	// Map a few special selectors for later use
 	mapSelectors();
+
+	// SCI0 games using old graphics functions (before version 0.000.502) have the TimesSin
+	// kernel function, whereas newer games have the SinMult kernel function in its place
+	_oldGfxFunctions = !hasKernelFunction("SinMult");
 }
 
 Kernel::~Kernel() {

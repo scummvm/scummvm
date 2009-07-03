@@ -158,7 +158,6 @@ Common::Error SciEngine::run() {
 		// SCI1
 
 		if (flags & GF_SCI0_OLD ||
-			flags & GF_SCI0_OLDGFXFUNCS ||
 			flags & GF_SCI0_OLDGETTIME) {
 			error("This game entry is erroneous. It's marked as SCI1, but it has SCI0 flags set");
 		}
@@ -170,7 +169,6 @@ Common::Error SciEngine::run() {
 		}
 
 		if (flags & GF_SCI0_OLD ||
-			flags & GF_SCI0_OLDGFXFUNCS ||
 			flags & GF_SCI0_OLDGETTIME) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI0 flags set");
 		}

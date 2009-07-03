@@ -83,6 +83,14 @@ public:
 	*/
 	bool hasKernelFunction(const char *functionName) const;
 
+	/* Applies to all versions before 0.000.502
+	** Old SCI versions used to interpret the third DrawPic() parameter inversely,
+	** with the opposite default value (obviously).
+	** Also, they used 15 priority zones from 42 to 200 instead of 14 priority
+	** zones from 42 to 190.
+	*/
+	bool usesOldGfxFunctions() const { return _oldGfxFunctions; }
+
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
 	void dumpScriptObject(char *data, int seeker, int objsize);
@@ -126,6 +134,7 @@ private:
 	bool loadOpcodes();
 
 	ResourceManager *_resmgr;
+	bool _oldGfxFunctions;
 
 	// Kernel-related lists
 	/**

@@ -164,7 +164,7 @@ int _find_view_priority(EngineState *s, int y) {
 				return j;
 		return 14; // Maximum
 	} else {
-		if (!(s->_flags & GF_SCI0_OLDGFXFUNCS))
+		if (!s->_kernel->usesOldGfxFunctions())
 			return SCI0_VIEW_PRIORITY_14_ZONES(y);
 		else
 			return SCI0_VIEW_PRIORITY(y) == 15 ? 14 : SCI0_VIEW_PRIORITY(y);
@@ -172,7 +172,7 @@ int _find_view_priority(EngineState *s, int y) {
 }
 
 int _find_priority_band(EngineState *s, int nr) {
-	if (!(s->_flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 14)) {
+	if (!s->_kernel->usesOldGfxFunctions() && (nr < 0 || nr > 14)) {
 		if (nr == 15)
 			return 0xffff;
 		else {
@@ -181,7 +181,7 @@ int _find_priority_band(EngineState *s, int nr) {
 		return 0;
 	}
 
-	if ((s->_flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 15)) {
+	if (s->_kernel->usesOldGfxFunctions() && (nr < 0 || nr > 15)) {
 		warning("Attempt to get priority band %d", nr);
 		return 0;
 	}
@@ -191,7 +191,7 @@ int _find_priority_band(EngineState *s, int nr) {
 	else {
 		int retval;
 
-		if (!(s->_flags & GF_SCI0_OLDGFXFUNCS))
+		if (!s->_kernel->usesOldGfxFunctions())
 			retval = SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr);
 		else
 			retval = SCI0_PRIORITY_BAND_FIRST(nr);
@@ -998,7 +998,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
 
-	if (s->_flags & GF_SCI0_OLDGFXFUNCS)
+	if (s->_kernel->usesOldGfxFunctions())
 		add_to_pic = (argc > 2) ? argv[2].toSint16() : false;
 
 	dp.nr = argv[0].toSint16();
@@ -1052,7 +1052,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->priority_first = 42;
 
-	if (s->_flags & GF_SCI0_OLDGFXFUNCS)
+	if (s->_kernel->usesOldGfxFunctions())
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;
