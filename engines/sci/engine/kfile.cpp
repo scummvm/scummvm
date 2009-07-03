@@ -267,6 +267,12 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 		return;
 	}
 	f->_in->readLine_NEW(dest, maxsize);
+	// The returned string must not have an ending LF
+	int strSize = strlen(dest);
+	if (strSize > 0) {
+		if (dest[strSize - 1] == 0x0A)
+			dest[strSize - 1] = 0;
+	}
 
 	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"\n", dest);
 }
