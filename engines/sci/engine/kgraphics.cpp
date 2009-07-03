@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "graphics/cursorman.h"
 
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
@@ -306,14 +307,14 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (s->_version < SCI_VERSION_1_1) {
 			if (argv[0].toSint16() <= 1) {
 				// Newer (SCI1.1) semantics: show/hide cursor
-				g_system->showMouse(argv[0].toSint16() != 0);
+				CursorMan.showMouse(argv[0].toSint16() != 0);
 			} else {
 				// Pre-SCI1.1: set cursor according to the first parameter
 				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, argv[0].toSint16()));
 			}
 		} else {
 			// SCI1.1: Show/hide cursor
-			g_system->showMouse(argv[0].toSint16() != 0);
+			CursorMan.showMouse(argv[0].toSint16() != 0);
 		}
 		break;
 	case 2 :

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
@@ -252,7 +253,7 @@ byte *GfxDriver::createCursor(gfx_pixmap_t *pointer) {
 
 int GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 	if ((pointer == NULL) || (hotspot == NULL)) {
-		g_system->showMouse(false);
+		CursorMan.showMouse(false);
 	} else {
 		byte *cursorData = createCursor(pointer);
 
@@ -266,8 +267,8 @@ int GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 		if (!pointer->palette)
 			color_key = 63;
 
-		g_system->setMouseCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
-		g_system->showMouse(true);
+		CursorMan.replaceCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
+		CursorMan.showMouse(true);
 
 		delete[] cursorData;
 		cursorData = 0;
