@@ -38,6 +38,7 @@ struct AnimObj {
 	uint _id;	
 	uint _currentFrame;
 	uint _z;
+	bool _playing;	
 	Common::Array<Drawable*> _frames;
 };
 
@@ -47,12 +48,18 @@ public:
 	Animation(DraciEngine *vm) : _vm(vm) {};
 	~Animation() { deleteAll(); }
 
-	void addAnimation(uint id, uint z = 0);
+	void addAnimation(uint id, uint z, bool playing = false);
 	void addFrame(uint id, Drawable *frame);
-	void addOverlay(Drawable *overlay, uint z = 0);
+	void addOverlay(Drawable *overlay, uint z);
+	
+	void play(uint id);
+	void stop(uint id);
+
 	void deleteAnimation(uint id);
 	void deleteAll();
+
 	void drawScene(Surface *surf);
+
 	Common::List<AnimObj>::iterator getAnimation(uint id);
 
 private:

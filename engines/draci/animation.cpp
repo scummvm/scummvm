@@ -28,14 +28,29 @@
 
 namespace Draci {
 
-void Animation::addAnimation(uint id, uint z) {
+void Animation::addAnimation(uint id, uint z, bool playing) {
 	
 	AnimObj *obj = new AnimObj();
 	obj->_id = id;
 	obj->_z = z;
 	obj->_currentFrame = 0;
+	obj->_playing = playing;
 
 	insertAnimation(*obj);
+}
+
+void Animation::play(uint id) {
+
+	AnimObj &obj = *getAnimation(id);
+
+	obj._playing = true;
+}
+
+void Animation::stop(uint id) {
+
+	AnimObj &obj = *getAnimation(id);
+
+	obj._playing = false;
 }
 
 Common::List<AnimObj>::iterator Animation::getAnimation(uint id) {
@@ -75,6 +90,7 @@ void Animation::addOverlay(Drawable *overlay, uint z) {
 	obj->_id = kOverlayImage;
 	obj->_z = z;
 	obj->_currentFrame = 0;
+	obj->_playing = true;
 	obj->_frames.push_back(overlay);
 
 	insertAnimation(*obj);
@@ -85,7 +101,11 @@ void Animation::drawScene(Surface *surf) {
 	Common::List<AnimObj>::iterator it;
 
 	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
-		if(it->_id == kOverlayImage) {			
+		if (!it->_playing) {
+			continue;
+		}	
+	
+		if (it->_id == kOverlayImage) {			
 			it->_frames[it->_currentFrame]->draw(surf, false);
 		}
 		else {
@@ -98,7 +118,7 @@ void Animation::deleteAnimation(uint id) {
 	
 	Common::List<AnimObj>::iterator it = getAnimation(id);
 
-	for(uint i = 0; i < it->_frames.size(); ++i) {		
+	for (uint i = 0; i < it->_frames.size(); ++i) {		
 		delete it->_frames[i];
 	}
 
@@ -110,7 +130,7 @@ void Animation::deleteAll() {
 	Common::List<AnimObj>::iterator it;
 
 	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
-		for(uint i = 0; i < it->_frames.size(); ++i) {		
+		for (uint i = 0; i < it->_frames.size(); ++i) {		
 			delete it->_frames[i];
 		}	
 	}
