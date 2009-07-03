@@ -36,6 +36,7 @@
 #include "draci/font.h"
 #include "draci/script.h"
 #include "draci/barchive.h"
+#include "draci/animation.h"
 
 namespace Draci {
 
@@ -55,6 +56,7 @@ public:
 	Mouse *_mouse;
 	Game *_game;
 	Script *_script;
+	Animation *_anims;
 
 	BArchive *_objectsArchive;
 	BArchive *_spritesArchive;

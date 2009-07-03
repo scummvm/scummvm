@@ -28,6 +28,8 @@
 
 #include "common/str.h"
 #include "draci/script.h"
+#include "draci/animation.h"
+#include "draci/sprite.h"
 
 namespace Draci {
 

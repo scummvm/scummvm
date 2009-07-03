@@ -85,9 +85,11 @@ int DraciEngine::init() {
 
 	_screen = new Screen(this);
 	_font = new Font();
+	_anims = new Animation(this);
 	_mouse = new Mouse(this);
-	_game = new Game(this);
 	_script = new Script();
+	_game = new Game(this);
+
 
 
 	// Load default font
@@ -150,6 +152,7 @@ int DraciEngine::go() {
 				_mouse->handleEvent(event);
 			}		
 		}
+		_anims->drawScene(_screen->getSurface());
 		_screen->copyToScreen();
 		_system->delayMillis(20);
 	}
@@ -166,6 +169,7 @@ DraciEngine::~DraciEngine() {
 	delete _mouse;
 	delete _game;
 	delete _script;
+	delete _anims;
 
 	delete _paletteArchive;
 	delete _objectsArchive;
