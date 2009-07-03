@@ -61,7 +61,8 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint x, uint y,
 	 _x = x;
 	 _y = y;
 	 _z = z;
-	
+	_mirror = false;
+
 	_data = new byte[width * height];
 	
 	memcpy(_data, raw_data, width * height);
@@ -82,7 +83,8 @@ Sprite::Sprite(byte *sprite_data, uint16 length, uint x, uint y, uint z,
 	 _x = x;
 	 _y = y;
 	 _z = z;
-	
+	_mirror = false;	
+
 	Common::MemoryReadStream reader(sprite_data, length);
 
 	_width = reader.readUint16LE();
@@ -102,6 +104,14 @@ Sprite::~Sprite() {
 	delete[] _data;
 }
 
+void Sprite::setMirrorOn() {
+	_mirror = true;
+}
+
+void Sprite::setMirrorOff() {
+	_mirror = false;
+}
+
 /**
  *  @brief Draws the sprite to a Draci::Surface
  *	@param surface Pointer to a Draci::Surface
@@ -113,14 +123,25 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 	byte *src = _data;	
 	
 	// Blit the sprite to the surface
-	for (unsigned int i = 0; i < _height; ++i) {
-		for(unsigned int j = 0; j < _width; ++j, ++src) {
+	for (int i = 0; i < _height; ++i) {
 
-			// Don't blit if the pixel is transparent on the target surface
-			if (*src != surface->getTransparentColour())			
-				dst[j] = *src;
+		// Draw the sprite mirrored if the _mirror flag is set
+		if (_mirror) {
+			for(int j = _width - 1; j >= 0; --j, ++src) {
+
+				// Don't blit if the pixel is transparent on the target surface
+				if (*src != surface->getTransparentColour())			
+					dst[j] = *src;
+			}		
+		} else {
+			for(int j = 0; j < _width; ++j, ++src) {
+
+				// Don't blit if the pixel is transparent on the target surface
+				if (*src != surface->getTransparentColour())			
+					dst[j] = *src;
+			}
 		}
-		
+
 		dst += surface->pitch;
 	}
 

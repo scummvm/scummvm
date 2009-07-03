@@ -84,11 +84,15 @@ public:
 	~Sprite();
 
 	void draw(Surface *surface, bool markDirty = true) const;
+	
+	void setMirrorOn();
+	void setMirrorOff();
 
 	const byte *getBuffer() const { return _data; }
 
 private:
 	byte *_data;	//!< Pointer to a buffer containing raw sprite data (row-wise)
+	bool _mirror;
 };
 
 class Text : public Drawable {
