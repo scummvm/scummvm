@@ -46,8 +46,8 @@ public:
 	int curDimIndex() { return _curDimIndex; }
 	void modifyScreenDim(int dim, int x, int y, int w, int h);
 
-	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...);
-	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...);
+	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) GCC_PRINTF(2, 8);
+	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...) GCC_PRINTF(2, 9);
 
 	void drawGridBox(int x, int y, int w, int h, int col);
 	void fadeClearSceneWindow(int delay);

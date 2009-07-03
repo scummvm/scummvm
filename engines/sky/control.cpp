@@ -1115,7 +1115,7 @@ void Control::doAutoSave(void) {
 	outf->finalize();
 
 	if (outf->err())
-		displayMessage(0, "Unable to write autosave file '%s'. Disk full?", fName, _saveFileMan->popErrorDesc().c_str());
+		displayMessage(0, "Unable to write autosave file '%s'. Disk full? (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 
 	delete outf;
 	free(saveData);

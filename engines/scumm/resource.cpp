@@ -1372,7 +1372,7 @@ const byte *ResourceIterator::findNext(uint32 tag) {
 const byte *ScummEngine::findResource(uint32 tag, const byte *searchin) {
 	uint32 curpos, totalsize, size;
 
-	debugC(DEBUG_RESOURCE, "findResource(%s, %lx)", tag2str(tag), searchin);
+	debugC(DEBUG_RESOURCE, "findResource(%s, %p)", tag2str(tag), (const void *)searchin);
 
 	if (!searchin) {
 		if (_game.heversion >= 70) {

@@ -532,7 +532,7 @@ void AGOSEngine_Elvira1::oe1_moveDirn() {
 void AGOSEngine_Elvira1::oe1_score() {
 	// 90: score
 	SubPlayer *p = (SubPlayer *)findChildOfType(me(), kPlayerType);
-	showMessageFormat("Your score is %ld.\n", p->score);
+	showMessageFormat("Your score is %d.\n", p->score);
 }
 
 void AGOSEngine_Elvira1::oe1_look() {

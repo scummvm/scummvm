@@ -673,7 +673,7 @@ protected:
 	void uncompressText(byte *ptr);
 	byte *uncompressToken(byte a, byte *ptr);
 
-	void showMessageFormat(const char *s, ...);
+	void showMessageFormat(const char *s, ...) GCC_PRINTF(2, 3);
 	const byte *getStringPtrByID(uint16 stringId, bool upperCase = false);
 	const byte *getLocalStringByID(uint16 stringId);
 	uint getNextStringID();
