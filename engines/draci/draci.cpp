@@ -87,6 +87,7 @@ int DraciEngine::init() {
 	_game = new Game(this);
 	_script = new Script();
 
+
 	// Load default font
 	_font->setFont(kFontBig);
 
@@ -131,84 +132,6 @@ int DraciEngine::go() {
 	debugC(1, kDraciGeneralDebugLevel, "DraciEngine::go()");
  
 	debugC(2, kDraciGeneralDebugLevel, "Running graphics/animation test...");
-
-	BAFile *f;
-
-	f = _paletteArchive->getFile(0);
-
-	_screen->setPalette(f->_data, 0, kNumColours);
-
-	// Fill screen with light grey
-	_screen->fillScreen(225);
-
-	// Draw big string
-
-	Surface *surf = _screen->getSurface();
-	uint16 xpos;
-	uint16 ypos;
-	
-	Common::String testString = "Testing, testing, read all about it!";
-	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
-	ypos = 130;
-	Text txt(testString, _font, kFontColour1, xpos, ypos, 0, 1);
-	
-	txt.draw(surf);
-
-	// Draw small string
-	_font->setFont(kFontSmall);
-	testString = "I'm smaller than the font above me.";
-	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
-	ypos += 20;
-	txt.setText(testString);
-	txt.setX(xpos);
-	txt.setY(ypos);
-
-	txt.draw(surf);
-
-	// Overflow handling test	
-	testString = "Checking overflooooooooooooooooooooooooow...";
-	xpos = 50;
-	ypos += 20;
-	txt.setText(testString);
-	txt.setX(xpos);
-	txt.setY(ypos);
-
-	txt.draw(surf);
-
-	_screen->copyToScreen();
-
-	// Draw and animate the dragon
-
-	testString = "I'm transparent";
-	xpos = (kScreenWidth - _font->getStringWidth(testString, 1)) / 2;
-	ypos = 80;
-	txt.setText(testString);
-	txt.setColour(kDefaultTransparent);
-	txt.setX(xpos);
-	txt.setY(ypos);
-	
-	for (unsigned int t = 0; t < 25; ++t) {
-		debugC(5, kDraciGeneralDebugLevel, "Drawing frame %d...", t);
-
-		// Load frame to memory
-		f = _spritesArchive->getFile(t);
-		Sprite sp(f->_data, f->_length, ((kScreenWidth - 50) / 2), 60, 0);
-
-		// Delete previous frame
-		Common::Rect r(sp.getX(), sp.getY(), sp.getX() + sp.getWidth(), sp.getY() + sp.getHeight());
-		_screen->drawRect(r, 225);	
-
-		// Draw dragon
-		sp.draw(surf);
-
-		// Draw transparent text over dragon
-		txt.draw(surf);
-
-		_screen->copyToScreen();
-		_system->delayMillis(100);
-
-		debugC(5, kDraciGeneralDebugLevel, "Finished frame %d", t);	
-	}
 
 	_mouse->setCursorType(kNormalCursor);
 	_mouse->cursorOn();
