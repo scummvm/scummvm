@@ -1917,8 +1917,12 @@ void CruiseEngine::mainLoop(void) {
 
 						char* pText = getText(autoMsg, autoOvl);
 
-						if (strlen(pText))
+						if (strlen(pText)) {
 							userWait = 1;
+
+							mainDraw(0);
+							flipScreen();
+						}
 					}
 
 					changeScriptParamInList(-1, -1, &relHead, 9998, 0);
