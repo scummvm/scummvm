@@ -186,12 +186,6 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 
 #define OBJ_PROPERTY(o, p) (validate_property(o, p))
 
-int script_error(EngineState *s, const char *file, int line, const char *reason) {
-	error("Script error in file %s, line %d: %s\n", file, line, reason);
-	return 0;
-}
-#define CORE_ERROR(area, msg) script_error(s, "[" area "] " __FILE__, __LINE__, msg)
-
 reg_t get_class_address(EngineState *s, int classnr, SCRIPT_GET lock, reg_t caller) {
 
 	if (NULL == s) {
@@ -308,8 +302,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		argc = validate_arithmetic(*argp);
 
 		if (argc > 0x800) { // More arguments than the stack could possibly accomodate for
-			CORE_ERROR("SEND", "More than 0x800 arguments to function call\n");
-			return NULL;
+			error("send_selector(): More than 0x800 arguments to function call");
 		}
 
 		// Check if a breakpoint is set on this method
@@ -574,8 +567,7 @@ void run_vm(EngineState *s, int restoring) {
 	const byte *code_buf = NULL; // (Avoid spurious warning)
 
 	if (!local_script) {
-		script_error(s, __FILE__, __LINE__, "Program Counter gone astray");
-		return;
+		error("run_vm(): program counter gone astray (local_script pointer is null)");
 	}
 
 	if (!restoring)
@@ -685,12 +677,12 @@ void run_vm(EngineState *s, int restoring) {
 
 #ifndef DISABLE_VALIDATIONS
 		if (xs->sp < xs->fp)
-			script_error(s, "[VM] "__FILE__, __LINE__, "Stack underflow");
+			error("run_vm(): stack underflow");
 
 		variables_max[VAR_TEMP] = xs->sp - xs->fp;
 
 		if (xs->addr.pc.offset >= code_buf_size)
-			script_error(s, "[VM] "__FILE__, __LINE__, "Program Counter gone astray");
+			error("run_vm(): program counter gone astray");
 #endif
 
 		opcode = GET_OP_BYTE(); // Get opcode
@@ -1103,7 +1095,7 @@ void run_vm(EngineState *s, int restoring) {
 			r_temp = get_class_address(s, opparams[0], SCRIPT_GET_LOAD, xs->addr.pc);
 
 			if (!r_temp.segment)
-				CORE_ERROR("VM", "Invalid superclass in object");
+				error("[VM]: Invalid superclass in object");
 			else {
 				s_temp = xs->sp;
 				xs->sp -= ((opparams[1] >> 1) + restadjust); // Adjust stack
@@ -1407,7 +1399,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		default:
-			script_error(s, __FILE__, __LINE__, "Illegal opcode");
+			error("run_vm(): illegal opcode %x", opnumber);
 
 		} // switch(opcode >> 1)
 
@@ -1506,9 +1498,8 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 		selector_id &= ~1;
 
 	if (!obj) {
-		CORE_ERROR("SLC-LU", "Attempt to send to non-object or invalid script");
-		sciprintf("Address was %04x:%04x\n", PRINT_REG(obj_location));
-		return kSelectorNone;
+		error("lookup_selector(): Attempt to send to non-object or invalid script. Address was %04x:%04x", 
+				PRINT_REG(obj_location));
 	}
 
 	if (IS_CLASS(obj))
@@ -1518,9 +1509,8 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 
 	if (!obj) {
-		CORE_ERROR("SLC-LU", "Error while looking up Species class");
-		sciprintf("Original address was %04x:%04x\n", PRINT_REG(obj_location));
-		sciprintf("Species address was %04x:%04x\n", PRINT_REG(obj->_variables[SCRIPT_SPECIES_SELECTOR]));
+		error("lookup_selector(): Error while looking up Species class.\nOriginal address was %04x:%04x. Species address was %04x:%04x\n", 
+			PRINT_REG(obj_location), PRINT_REG(obj->_variables[SCRIPT_SPECIES_SELECTOR]));
 		return kSelectorNone;
 	}
 
@@ -1560,31 +1550,24 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 	Script *script = NULL;
 
 #ifndef DISABLE_VALIDATIONS
-	if (!seg) {
-		CORE_ERROR("EXPORTS", "Script invalid or not loaded");
-		sciprintf("Script was script.%03d (0x%x)\n",
-		          script_nr, script_nr);
-		return NULL_REG;
-	}
+	if (!seg)
+		error("script_lookup_export(): script.%03d (0x%x) is invalid or not loaded",
+				script_nr, script_nr);
 #endif
 
 	script = script_locate_by_segment(s, seg);
 
 #ifndef DISABLE_VALIDATIONS
-	if (script
-	        && export_index < script->exports_nr
-	        && export_index >= 0)
+	if (script && export_index < script->exports_nr && export_index >= 0)
 #endif
 		return make_reg(seg, READ_LE_UINT16((byte *)(script->export_table + export_index)));
 #ifndef DISABLE_VALIDATIONS
 	else {
-		CORE_ERROR("EXPORTS", "Export invalid or script missing ");
 		if (!script)
-			sciprintf("(script.%03d missing)\n", script_nr);
+			error("script_lookup_export(): script.%03d missing", script_nr);
 		else
-			sciprintf("(script.%03d: Sought export %d/%d)\n",
-			          script_nr, export_index, script->exports_nr);
-		return NULL_REG;
+			error("script_lookup_export(): script.%03d: Sought invalid export %d/%d",
+			      script_nr, export_index, script->exports_nr);
 	}
 #endif
 }
