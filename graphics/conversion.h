@@ -22,11 +22,13 @@
  * $Id$
  *
  */
+
 #ifndef GRAPHICS_CONVERSION_H
 #define GRAPHICS_CONVERSION_H
 
 #include "common/scummsys.h"
 #include "graphics/pixelformat.h"
+
 namespace Graphics {
 
 // TODO: generic YUV to RGB pixel conversion
@@ -43,14 +45,16 @@ namespace Graphics {
  * @param h			the height of the graphics data
  * @param dstFmt	the desired pixel format
  * @param srcFmt	the original pixel format
- * @return			true if conversion completes successfully, 
+ * @return			true if conversion completes successfully,
  *					false if there is an error.
  *
- * @note This implementation currently requires the destination's 
+ * @note This implementation currently requires the destination's
  *		 format have at least as high a bitdepth as the source's.
  *
  */
-bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch, 
+bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 						int w, int h, Graphics::PixelFormat dstFmt, Graphics::PixelFormat srcFmt);
+
 } // end of namespace Graphics
-#endif //GRAPHICS_CONVERSION_H
+
+#endif // GRAPHICS_CONVERSION_H

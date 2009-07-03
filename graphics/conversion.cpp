@@ -23,15 +23,16 @@
  */
 
 #include "graphics/conversion.h"
-#include "common/scummsys.h"
+
 namespace Graphics {
+
 // TODO: YUV to RGB conversion function
 
 // Function to blit a rect from one color format to another
-bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch, 
+bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 						int w, int h, Graphics::PixelFormat dstFmt, Graphics::PixelFormat srcFmt) {
 	// Error out if conversion is impossible
-	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1) 
+	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
 			 || (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel)
 			 || (srcFmt.bytesPerPixel > dstFmt.bytesPerPixel))
 		return false;
@@ -41,14 +42,13 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 		return true;
 
 	// Faster, but larger, to provide optimized handling for each case.
-	int srcDelta,dstDelta;
+	int srcDelta, dstDelta;
 	srcDelta = (srcpitch - w * srcFmt.bytesPerPixel);
 	dstDelta = (dstpitch - w * dstFmt.bytesPerPixel);
 
 	// TODO: optimized cases for dstDelta of 0
-	uint8 r,g,b,a;
-	if (dstFmt.bytesPerPixel == 2)
-	{
+	uint8 r, g, b, a;
+	if (dstFmt.bytesPerPixel == 2) {
 		uint16 color;
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++, src += 2, dst += 2) {
@@ -72,7 +72,7 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 					color = *(uint16 *) src;
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
-					memcpy(dst,col,3);
+					memcpy(dst, col, 3);
 				}
 				src += srcDelta;
 				dst += dstDelta;
@@ -80,11 +80,11 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 		} else {
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++, src += 3, dst += 3) {
-					uint8 r,g,b,a;
-					memcpy(col,src,3);
+					uint8 r, g, b, a;
+					memcpy(col, src, 3);
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
-					memcpy(dst,col,3);
+					memcpy(dst, col, 3);
 				}
 				src += srcDelta;
 				dst += dstDelta;
@@ -110,7 +110,7 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 #endif
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++, src += 2, dst += 4) {
-					memcpy(col,src,3);
+					memcpy(col, src, 3);
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
 					*(uint32 *) dst = color;
@@ -135,4 +135,5 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 	}
 	return true;
 }
+
 } // end of namespace Graphics
