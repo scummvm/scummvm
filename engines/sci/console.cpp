@@ -67,6 +67,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	// Kernel
 //	DCmd_Register("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
 	DCmd_Register("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
+	DCmd_Register("selector",			WRAP_METHOD(Console, cmdSelector));
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
 	DCmd_Register("functions",			WRAP_METHOD(Console, cmdKernelFunctions));
 	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
@@ -239,6 +240,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("Kernel:\n");
 	DebugPrintf(" opcodes - Lists the opcode names\n");
 	DebugPrintf(" selectors - Lists the selector names\n");
+	DebugPrintf(" selector - Attempts to find the requested selector by name\n");
 	DebugPrintf(" functions - Lists the kernel functions\n");
 	DebugPrintf(" class_table - Shows the available classes\n");
 	DebugPrintf("\n");
@@ -388,6 +390,25 @@ bool Console::cmdOpcodes(int argc, const char **argv) {
 	}
 
 	DebugPrintf("\n");
+
+	return true;
+}
+
+bool Console::cmdSelector(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Attempts to find the requested selector by name.\n");
+		DebugPrintf("Usage: %s <selector name>\n", argv[0]);
+		return true;
+	}
+
+	for (uint seeker = 0; seeker < _vm->_gamestate->_kernel->getSelectorNamesSize(); seeker++) {
+		if (!scumm_stricmp(_vm->_gamestate->_kernel->getSelectorName(seeker).c_str(), argv[1])) {
+			DebugPrintf("Selector %s found at %03x\n", _vm->_gamestate->_kernel->getSelectorName(seeker).c_str(), seeker);
+			return true;
+		}
+	}
+
+	DebugPrintf("Selector %s wasn't found\n", argv[1]);
 
 	return true;
 }
