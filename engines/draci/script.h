@@ -83,14 +83,13 @@ private:
 	/** List of all GPL commands. Initialised in the constructor. */
 	const GPL2Command *_commandList;
  
-	void dummy(Common::Queue<int> &params);
+	void load(Common::Queue<int> &params);
 
 	void setupCommandList();
 	const GPL2Command *findCommand(byte num, byte subnum);
 	int handleMathExpression(Common::MemoryReadStream &reader);
 
 	DraciEngine *_vm;
-
 };
 
 }

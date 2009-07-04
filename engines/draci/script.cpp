@@ -45,7 +45,7 @@ void Script::setupCommandList() {
 		{ 2,  1, "Let", 				2, { 3, 4 }, NULL },
 		{ 3,  1, "if", 					2, { 4, 3 }, NULL },
 		{ 4,  1, "Start", 				2, { 3, 2 }, NULL },
-		{ 5,  1, "Load", 				2, { 3, 2 }, &Script::dummy },
+		{ 5,  1, "Load", 				2, { 3, 2 }, &Script::load },
 		{ 5,  2, "StartPlay", 			2, { 3, 2 }, NULL },
 		{ 5,  3, "JustTalk", 			0, { 0 }, NULL },
 		{ 5,  4, "JustStay", 			0, { 0 }, NULL },
@@ -146,13 +146,14 @@ enum mathExpressionObject {
 	kMathVariable
 };
 
-void Script::dummy(Common::Queue<int> &params) {
+void Script::load(Common::Queue<int> &params) {
+	int objID = params.pop() - 1;
+	int animID = params.pop() - 1;
 
-	debug(1, "- %d", params.pop());
-	debug(1, "- %d", params.pop());
+	GameObject *obj = _vm->_game->getObject(objID);
+
+	obj->_seqTab[animID - obj->_idxSeq] = _vm->_game->loadAnimation(animID);
 }
-
-// FIXME: The evaluator is now complete but I still need to implement callbacks
 
 /**
  * @brief Evaluates mathematical expressions
