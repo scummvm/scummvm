@@ -1269,6 +1269,15 @@ static void song_iterator_remove_death_listener(SongIterator *it, TeeSongIterato
 	}
 }
 
+static void song_iterator_transfer_death_listeners(SongIterator *it, TeeSongIterator *old_client) {
+	song_iterator_remove_death_listener(it, old_client);
+	for (int i = 0; i < SONGIT_MAX_LISTENERS; ++i) {
+		if (old_client->_deathListeners[i])
+			song_iterator_add_death_listener(it, old_client->_deathListeners[i]);
+		old_client->_deathListeners[i] = 0;
+	}
+}
+
 static void songit_tee_death_notification(TeeSongIterator *self, SongIterator *corpse) {
 	if (corpse == self->_children[TEE_LEFT].it) {
 		self->_status &= ~TEE_LEFT_ACTIVE;
@@ -1505,12 +1514,14 @@ SongIterator *TeeSongIterator::handleMessage(Message msg) {
 			delete _children[TEE_LEFT].it;
 			_children[TEE_LEFT].it = 0;
 			old_it = _children[TEE_RIGHT].it;
+			song_iterator_transfer_death_listeners(old_it, this);
 			delete this;
 			return old_it;
 		} else if (!(_status & TEE_RIGHT_ACTIVE)) {
 			delete _children[TEE_RIGHT].it;
 			_children[TEE_RIGHT].it = 0;
 			old_it = _children[TEE_LEFT].it;
+			song_iterator_transfer_death_listeners(old_it, this);
 			delete this;
 			return old_it;
 		}
