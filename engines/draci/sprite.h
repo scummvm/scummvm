@@ -43,21 +43,18 @@ public:
 	virtual uint16 getWidth() { return _width; }
 	virtual uint16 getHeight() { return _height; }
 
-	virtual uint getX() { return _x; }
-	virtual uint getY() { return _y; }
-	virtual uint getZ() { return _z; }
+	virtual int getX() { return _x; }
+	virtual int getY() { return _y; }
 
-	virtual void setX(uint x) { _x = x; }
-	virtual void setY(uint y) { _y = y; }
-	virtual void setZ(uint z) { _z = z; }
+	virtual void setX(int x) { _x = x; }
+	virtual void setY(int y) { _y = y; }
 
 	virtual Common::Rect getRect() const = 0;
 	
 private:
 	uint16 _width;	//!< Width of the sprite
 	uint16 _height;	//!< Height of the sprite
-	uint _x, _y;	//!< Sprite coordinates
-	uint _z; 		//!< Sprite depth position
+	int _x, _y;	//!< Sprite coordinates
 };
 
 /**
@@ -76,12 +73,10 @@ private:
 class Sprite : public Drawable {
 
 public:
-	Sprite(byte *raw_data, uint16 width, uint16 height, uint x, uint y, 
-		uint z, bool columnwise = true); 
+	Sprite(byte *raw_data, uint16 width, uint16 height, int x, int y, bool columnwise);
 
 	
-	Sprite(byte *sprite_data, uint16 length, uint x, uint y, 
-		uint z, bool columnwise = true); 
+	Sprite(byte *sprite_data, uint16 length, int x, int y, bool columnwise); 
 
 	~Sprite();
 
@@ -89,7 +84,6 @@ public:
 	
 	void setMirrorOn();
 	void setMirrorOff();
-
 
 	virtual Common::Rect getRect() const;
 	const byte *getBuffer() const { return _data; }
@@ -103,7 +97,7 @@ class Text : public Drawable {
 	
 public:
 	Text(const Common::String &str, Font *font, byte fontColour, 
-		uint x, uint y, uint z, uint spacing = 0);
+		int x, int y, uint spacing = 0);
 	~Text();
 	
 	void setText(const Common::String &str);

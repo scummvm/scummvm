@@ -53,14 +53,15 @@ static void transformToRows(byte *img, uint16 width, uint16 height) {
 
 /**
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
- */ 
-Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint x, uint y, 
-			   uint z, bool columnwise) : _data(NULL) {
+ */
+Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, int x, int y, 
+	bool columnwise) : _data(NULL) {
+
 	 _width = width;
 	 _height = height;
 	 _x = x;
 	 _y = y;
-	 _z = z;
+
 	_mirror = false;
 
 	_data = new byte[width * height];
@@ -73,22 +74,22 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, uint x, uint y,
 	}	
 }
 
-
 /**
  *  Constructor for loading sprites from a sprite-formatted buffer, one byte per 
  *	pixel.
  */
-Sprite::Sprite(byte *sprite_data, uint16 length, uint x, uint y, uint z,
-			   bool columnwise) : _data(NULL) {
+Sprite::Sprite(byte *sprite_data, uint16 length, int x, int y, bool columnwise) 
+	: _data(NULL) {
+
 	 _x = x;
 	 _y = y;
-	 _z = z;
+
 	_mirror = false;	
 
 	Common::MemoryReadStream reader(sprite_data, length);
 
-	_width = reader.readUint16LE();
-	_height = reader.readUint16LE();
+	_width = reader.readSint16LE();
+	_height = reader.readSint16LE();
 
 	_data = new byte[_width * _height];
 
@@ -122,19 +123,27 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 	byte *dst = (byte *)surface->getBasePtr(_x, _y);
 	byte *src = _data;	
 	
+	// Determine how many pixels to draw horizontally (to prevent overflow)
+	int xSpaceLeft = surface->w - _x - 1;	
+	int xPixelsToDraw = (_width < xSpaceLeft) ? _width : xSpaceLeft;
+
+	// Determine how many pixels to draw vertically
+	int ySpaceLeft = surface->h - _y - 1;	
+	int yPixelsToDraw = (_height < ySpaceLeft) ? _height : ySpaceLeft;
+
 	// Blit the sprite to the surface
-	for (int i = 0; i < _height; ++i) {
+	for (int i = 0; i < yPixelsToDraw; ++i) {
 
 		// Draw the sprite mirrored if the _mirror flag is set
 		if (_mirror) {
-			for(int j = _width - 1; j >= 0; --j, ++src) {
+			for (int j = xPixelsToDraw - 1; j >= 0; --j, ++src) {
 
 				// Don't blit if the pixel is transparent on the target surface
 				if (*src != surface->getTransparentColour())			
 					dst[j] = *src;
 			}		
 		} else {
-			for(int j = 0; j < _width; ++j, ++src) {
+			for (int j = 0; j < xPixelsToDraw; ++j, ++src) {
 
 				// Don't blit if the pixel is transparent on the target surface
 				if (*src != surface->getTransparentColour())			
@@ -142,6 +151,7 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 			}
 		}
 
+		src += _width - xPixelsToDraw;
 		dst += surface->pitch;
 	}
 
@@ -157,13 +167,12 @@ Common::Rect Sprite::getRect() const {
 }
 
 Text::Text(const Common::String &str, Font *font, byte fontColour, 
-				uint x, uint y, uint z, uint spacing) {
+				int x, int y, uint spacing) {
 	uint len = str.size();
 	_length = len;
 	
 	_x = x;
 	_y = y;
-	_z = z;
 	
 	_text = new byte[len];
 	memcpy(_text, str.c_str(), len);
