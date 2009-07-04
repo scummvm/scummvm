@@ -913,7 +913,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 				if (entries[c].dib_size	!= bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad))
 					debugC(DEBUG_RESOURCE, "incorrect total size of bitmap (%d specified; %d real)",
 					    entries[c].dib_size,
-					    bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad)
+					    (int)(bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad))
 					);
 
 				image_data = (byte *)malloc(image_size);

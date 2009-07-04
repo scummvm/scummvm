@@ -80,6 +80,7 @@ enum MidiDriverType {
 	// "Fake" MIDI devices
 	MD_ADLIB,
 	MD_PCSPK,
+	MD_CMS,
 	MD_PCJR,
 	MD_TOWNS,
 	MD_TIMIDITY
@@ -98,10 +99,11 @@ enum MidiDriverType {
 enum MidiDriverFlags {
 	MDT_NONE   = 0,
 	MDT_PCSPK  = 1 << 0,      // PC Speaker: Maps to MD_PCSPK and MD_PCJR
-	MDT_ADLIB  = 1 << 1,      // Adlib: Maps to MD_ADLIB
-	MDT_TOWNS  = 1 << 2,      // FM-TOWNS: Maps to MD_TOWNS
-	MDT_MIDI   = 1 << 3,      // Real MIDI
-	MDT_PREFER_MIDI = 1 << 4  // Real MIDI output is preferred
+	MDT_CMS    = 1 << 1,      // Creative Music System / Gameblaster: Maps to MD_CMS
+	MDT_ADLIB  = 1 << 2,      // Adlib: Maps to MD_ADLIB
+	MDT_TOWNS  = 1 << 3,      // FM-TOWNS: Maps to MD_TOWNS
+	MDT_MIDI   = 1 << 4,      // Real MIDI
+	MDT_PREFER_MIDI = 1 << 5  // Real MIDI output is preferred
 };
 
 /**

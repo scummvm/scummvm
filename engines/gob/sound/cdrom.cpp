@@ -30,6 +30,7 @@
 #include "gob/gob.h"
 #include "gob/sound/cdrom.h"
 #include "gob/helper.h"
+#include "gob/dataio.h"
 
 namespace Gob {
 
@@ -86,7 +87,7 @@ void CDROM::startTrack(const char *trackName) {
 
 	byte *matchPtr = getTrackBuffer(trackName);
 	if (!matchPtr) {
-		warning("Track \"%s\" not found", trackName);
+		warning("CDROM: Track \"%s\" not found", trackName);
 		return;
 	}
 

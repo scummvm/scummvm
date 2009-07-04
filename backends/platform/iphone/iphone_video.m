@@ -36,6 +36,9 @@ static int _textureHeight = 0;
 NSLock* _lock = nil;
 static int _needsScreenUpdate = 0;
 
+static UITouch* _firstTouch = NULL;
+static UITouch* _secondTouch = NULL;
+
 // static long lastTick = 0;
 // static int frames = 0;
 
@@ -47,14 +50,14 @@ void iPhone_updateScreen() {
 }
 
 void iPhone_updateScreenRect(unsigned short* screen, int x1, int y1, int x2, int y2) {
-	[_lock lock];
+	//[_lock lock];
 
 	int y;
 	for (y = y1; y < y2; ++y) {
 		memcpy(&_textureBuffer[(y * _textureWidth + x1 )* 2], &screen[y * _width + x1], (x2 - x1) * 2);
 	}
 
-	[_lock unlock];
+	//[_lock unlock];
 }
 
 
@@ -192,12 +195,12 @@ uint getSizeNextPOT(uint size) {
 	glVertexPointer(2, GL_FLOAT, 0, vertices);
 	glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
 
-	[_lock lock];
+	//[_lock lock];
 	// Unfortunately we have to update the whole texture every frame, since glTexSubImage2D is actually slower in all cases
 	// due to the iPhone internals having to convert the whole texture back from its internal format when used.
 	// In the future we could use several tiled textures instead.
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _textureWidth, _textureHeight, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _textureBuffer);
-	[_lock unlock];
+	//[_lock unlock];
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer);
@@ -280,7 +283,7 @@ uint getSizeNextPOT(uint size) {
 	glBindRenderbufferOES(GL_RENDERBUFFER_OES, _viewRenderbuffer);
 
 	// The color buffer is triple-buffered, so we clear it multiple times right away to avid doing any glClears later.
-	int clearCount = 3;
+	int clearCount = 5;
 	while (clearCount-- > 0) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		[_context presentRenderbuffer:GL_RENDERBUFFER_OES];
@@ -366,7 +369,6 @@ uint getSizeNextPOT(uint size) {
 	];
 }
 
-
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	NSSet *allTouches = [event allTouches];
@@ -374,11 +376,12 @@ uint getSizeNextPOT(uint size) {
 	switch ([allTouches count]) {
 		case 1:
 		{
-			UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
+			UITouch *touch = [touches anyObject];
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
 
+			_firstTouch = touch;
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseDown], @"type",
@@ -391,11 +394,12 @@ uint getSizeNextPOT(uint size) {
 		}
 		case 2:
 		{
-			UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
+			UITouch *touch = [touches anyObject];
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
 
+			_secondTouch = touch;
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
@@ -413,14 +417,13 @@ uint getSizeNextPOT(uint size) {
 {
 	NSSet *allTouches = [event allTouches];
 
-	switch ([allTouches count]) {
-		case 1:
-		{
-			UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
+	for (UITouch* touch in touches) {
+		if (touch == _firstTouch) {
+
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-
+			
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseDragged], @"type",
@@ -429,15 +432,13 @@ uint getSizeNextPOT(uint size) {
 			  nil
 			  ]
 			 ];
-			break;
-		}
-		case 2:
-		{
-			UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
+			
+		} else if (touch == _secondTouch) {
+
 			CGPoint point = [touch locationInView:self];
 			if (!getLocalMouseCoords(&point))
 				return;
-
+			
 			[self addEvent:
 			 [[NSDictionary alloc] initWithObjectsAndKeys:
 			  [NSNumber numberWithInt:kInputMouseSecondDragged], @"type",
@@ -446,7 +447,7 @@ uint getSizeNextPOT(uint size) {
 			  nil
 			  ]
 			 ];
-			break;
+			
 		}
 	}
 }

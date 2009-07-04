@@ -120,7 +120,9 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NONE
 };
 
 class SagaMetaEngine : public AdvancedMetaEngine {

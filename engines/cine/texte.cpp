@@ -37,8 +37,6 @@ const char **otherMessages;
 const char *defaultCommandPreposition;
 const char **commandPrepositionTable;
 
-void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
-
 /*! \brief Loads font data from the given file.
  * The number of characters used in the font varies between game versions:
  * 78 (Most PC, Amiga and Atari ST versions of Future Wars, but also Operation Stealth's Amiga demo),

@@ -64,6 +64,8 @@ static const PlainGameDescriptor cruiseGames[] = {
 
 namespace Cruise {
 
+using Common::GUIO_NONE;
+
 static const CRUISEGameDescription gameDescriptions[] = {
 	{
 		{
@@ -72,7 +74,8 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("D1", "41a7a4d426dbd048eb369cfee4bb2717"),
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GType_CRUISE,
 		0,
@@ -84,7 +87,8 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("D1", "a90d2b9ead6b4d812cd14268672cf178"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GType_CRUISE,
 		0,
@@ -96,7 +100,8 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("D1", "e258865807ea31b2d523340e6f0a606b"),
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GType_CRUISE,
 		0,
@@ -108,7 +113,8 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("D1", "287d2ec1799e2f881dee23c70be96e81"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GType_CRUISE,
 		0,
@@ -120,7 +126,8 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("D1", "f2a26522d49983c4ae32bcccbb801b02"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GType_CRUISE,
 		0,
@@ -132,7 +139,8 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("D1", "e19a4ab2e24a69087e4ea994a5506231"),
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GType_CRUISE,
 		0,
@@ -144,7 +152,8 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("D1", "9a302ada55600d96061fda1d63a6ccda"),
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		GType_CRUISE,
 		0,
@@ -170,7 +179,9 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI
 };
 
 class CruiseMetaEngine : public AdvancedMetaEngine {
@@ -198,7 +209,8 @@ bool CruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportThumbnail) ||
+		(f == kSupportsLoadingDuringStartup);
 }
 
 SaveStateList CruiseMetaEngine::listSaves(const char *target) const {

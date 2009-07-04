@@ -1181,7 +1181,7 @@ int ScummEngine::readSoundResource(int idx) {
 				break;
 			}
 
-			if ((_musicType == MDT_PCSPK) && pri != 11)
+			if ((_musicType == MDT_PCSPK || _musicType == MDT_CMS) && pri != 11)
 				pri = -1;
 
 			debugC(DEBUG_RESOURCE, "    tag: %s, total_size=%d, pri=%d", tag2str(tag), size, pri);
@@ -1710,7 +1710,7 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, in
 		} else {
 			dw = 500000 * 256 / ticks;
 		}
-		debugC(DEBUG_SOUND, "  ticks = %d, speed = %ld", ticks, dw);
+		debugC(DEBUG_SOUND, "  ticks = %d, speed = %d", ticks, dw);
 
 		// Write a tempo change Meta event
 		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
@@ -2121,6 +2121,19 @@ int ScummEngine::readSoundResourceSmallHeader(int idx) {
 			_fileHandle->read(_res->createResource(rtSound, idx, wa_size + 6), wa_size + 6);
 		}
 		return 1;
+	} else if (_musicType == MDT_CMS && ad_offs != 0) {
+		if (_game.features & GF_OLD_BUNDLE) {
+			_fileHandle->seek(wa_offs + wa_size + 6, SEEK_SET);
+			byte musType = _fileHandle->readByte();
+		
+			if (musType == 0x80) {
+				_fileHandle->seek(ad_offs, SEEK_SET);
+				_fileHandle->read(_res->createResource(rtSound, idx, ad_size), ad_size);
+			} else {
+				_fileHandle->seek(wa_offs, SEEK_SET);
+				_fileHandle->read(_res->createResource(rtSound, idx, wa_size), wa_size);
+			}
+		}
 	} else if (ad_offs != 0) {
 		// AD resources have a header, instrument definitions and one MIDI track.
 		// We build an 'ADL ' resource from that:

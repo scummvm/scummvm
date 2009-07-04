@@ -36,6 +36,8 @@ struct IgorGameDescription {
 	int gameFlags;
 };
 
+using Common::GUIO_NONE;
+
 static const IgorGameDescription igorGameDescriptions[] = {
 	{
 		{
@@ -48,7 +50,8 @@ static const IgorGameDescription igorGameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO
+			ADGF_DEMO,
+			GUIO_NONE
 		},
 		Igor::kIdEngDemo100,
 		Igor::kFlagDemo | Igor::kFlagFloppy
@@ -64,7 +67,8 @@ static const IgorGameDescription igorGameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_DEMO
+			ADGF_DEMO,
+			GUIO_NONE
 		},
 		Igor::kIdEngDemo110,
 		Igor::kFlagDemo | Igor::kFlagFloppy
@@ -80,7 +84,8 @@ static const IgorGameDescription igorGameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 		Igor::kIdSpaCD,
 		Igor::kFlagTalkie
@@ -101,7 +106,9 @@ static const ADParams igorDetectionParams = {
 	0,
 	"igor",
 	0,
-	0
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NONE
 };
 
 class IgorMetaEngine : public AdvancedMetaEngine {

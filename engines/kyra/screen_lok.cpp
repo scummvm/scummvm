@@ -26,8 +26,9 @@
 #include "kyra/kyra_lok.h"
 #include "kyra/screen_lok.h"
 
-namespace Kyra {
+#include "graphics/cursorman.h"
 
+namespace Kyra {
 
 Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
 	: Screen(vm, system) {
@@ -80,13 +81,15 @@ const ScreenDim *Screen_LoK::getScreenDim(int dim) {
 
 void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
 	assert(_vm->palTable1()[palIndex]);
-	assert(_currentPalette);
-	uint8 tempPal[768];
-	memcpy(tempPal, _currentPalette, 768);
-	memcpy(&tempPal[startIndex*3], _vm->palTable1()[palIndex], size*3);
+
+	Palette tempPal(getPalette(0).getNumColors());
+	tempPal.copy(getPalette(0));
+	tempPal.copy(_vm->palTable1()[palIndex], 0, size, startIndex);
+
 	fadePalette(tempPal, fadeTime*18);
-	memcpy(&_currentPalette[startIndex*3], &tempPal[startIndex*3], size*3);
-	setScreenPalette(_currentPalette);
+
+	getPalette(0).copy(tempPal, startIndex, size);
+	setScreenPalette(getPalette(0));
 	_system->updateScreen();
 }
 
@@ -235,6 +238,202 @@ int Screen_LoK::getRectSize(int x, int y) {
 		y = 200;
 
 	return ((x*y) << 3);
+}
+
+#pragma mark -
+
+Screen_LoK_16::Screen_LoK_16(KyraEngine_LoK *vm, OSystem *system) : Screen_LoK(vm, system) {
+	memset(_paletteDither, 0, sizeof(_paletteDither));
+}
+
+void Screen_LoK_16::setScreenPalette(const Palette &pal) {
+	_screenPalette->copy(pal);
+
+	for (int i = 0; i < 256; ++i)
+		paletteMap(i, pal[i * 3 + 0] << 2, pal[i * 3 + 1] << 2, pal[i * 3 + 2] << 2);
+
+	set16ColorPalette(_palette16);
+}
+
+void Screen_LoK_16::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc) {
+	uint8 notBlackFlag = 0;
+	for (int i = 0; i < 768; ++i) {
+		if ((*_screenPalette)[i])
+			notBlackFlag |= 1;
+		if (pal[i])
+			notBlackFlag |= 2;
+	}
+
+	if (notBlackFlag == 1 || notBlackFlag == 2) {
+		bool upFade = false;
+
+		for (int i = 0; i < 768; ++i) {
+			if ((*_screenPalette)[i] < pal[i]) {
+				upFade = true;
+				break;
+			}
+		}
+
+		if (upFade) {
+			for (int i = 0; i < 256; ++i)
+				paletteMap(i, pal[i * 3 + 0] << 2, pal[i * 3 + 1] << 2, pal[i * 3 + 2] << 2);
+			_forceFullUpdate = true;
+		}
+
+		uint8 color16Palette[16 * 3];
+
+		if (upFade)
+			memset(color16Palette, 0, sizeof(color16Palette));
+		else
+			memcpy(color16Palette, _palette16, sizeof(color16Palette));
+
+		set16ColorPalette(color16Palette);
+		updateScreen();
+
+		for (int i = 0; i < 16; ++i) {
+			set16ColorPalette(color16Palette);
+
+			for (int k = 0; k < 48; ++k) {
+				if (upFade) {
+					if (color16Palette[k] < _palette16[k])
+						++color16Palette[k];
+				} else {
+					if (color16Palette[k] > 0)
+						--color16Palette[k];
+				}
+			}
+
+			if (upFunc && upFunc->isValid())
+				(*upFunc)();
+			else
+				_system->updateScreen();
+
+			_vm->delay((delay >> 5) * _vm->tickLength());
+		}
+	}
+
+	setScreenPalette(pal);
+}
+
+void Screen_LoK_16::getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) {
+	error("Screen_LoK_16::getFadeParams called");
+}
+
+int Screen_LoK_16::fadePalStep(const Palette &pal, int diff) {
+	error("Screen_LoK_16::fadePalStep called");
+	return 0;
+}
+
+void Screen_LoK_16::paletteMap(uint8 idx, int r, int g, int b) {
+	const int red = r;
+	const int green = g;
+	const int blue = b;
+
+	uint16 rgbDiff = 1000;
+	int rDiff = 0, gDiff = 0, bDiff = 0;
+
+	int index1 = -1;
+
+	for (int i = 0; i < 16; ++i) {
+		const int realR = _palette16[i * 3 + 0] << 4;
+		const int realG = _palette16[i * 3 + 1] << 4;
+		const int realB = _palette16[i * 3 + 2] << 4;
+
+		uint16 diff = ABS(r - realR) + ABS(g - realG) + ABS(b - realB);
+
+		if (diff < rgbDiff) {
+			rgbDiff = diff;
+			index1 = i;
+
+			rDiff = r - realR;
+			gDiff = g - realG;
+			bDiff = b - realB;
+		}
+	}
+
+	r = rDiff / 4 + red;
+	g = gDiff / 4 + green;
+	b = bDiff / 4 + blue;
+
+	rgbDiff = 1000;
+	int index2 = -1;
+
+	for (int i = 0; i < 16; ++i) {
+		const int realR = _palette16[i * 3 + 0] << 4;
+		const int realG = _palette16[i * 3 + 1] << 4;
+		const int realB = _palette16[i * 3 + 2] << 4;
+
+		uint16 diff = ABS(r - realR) + ABS(g - realG) + ABS(b - realB);
+
+		if (diff < rgbDiff) {
+			rgbDiff = diff;
+			index2 = i;
+		}
+	}
+
+	_paletteDither[idx].bestMatch = index1;
+	_paletteDither[idx].invertMatch = index2;
+}
+
+void Screen_LoK_16::convertTo16Colors(uint8 *page, int w, int h, int pitch, int keyColor) {
+	const int rowAdd = pitch * 2 - w;
+
+	uint8 *row1 = page;
+	uint8 *row2 = page + pitch;
+
+	for (int i = 0; i < h; i += 2) {
+		for (int k = 0; k < w; k += 2) {
+			if (keyColor == -1 || keyColor != *row1) {
+				const PaletteDither &dither = _paletteDither[*row1];
+
+				*row1++ = dither.bestMatch;
+				*row1++ = dither.invertMatch;
+				*row2++ = dither.invertMatch;
+				*row2++ = dither.bestMatch;
+			} else {
+				row1 += 2;
+				row2 += 2;
+			}
+		}
+
+		row1 += rowAdd;
+		row2 += rowAdd;
+	}
+}
+
+void Screen_LoK_16::mergeOverlay(int x, int y, int w, int h) {
+	byte *dst = _sjisOverlayPtrs[0] + y * 640 + x;
+
+	// We do a game screen rect to 16 color dithering here. It is
+	// important that we do not dither the overlay, since else the
+	// japanese fonts will look wrong.
+	convertTo16Colors(dst, w, h, 640);
+
+	const byte *src = _sjisOverlayPtrs[1] + y * 640 + x;
+
+	int add = 640 - w;
+
+	while (h--) {
+		for (x = 0; x < w; ++x, ++dst) {
+			byte col = *src++;
+			if (col != _sjisInvisibleColor)
+				*dst = _paletteDither[col].bestMatch;
+		}
+		dst += add;
+		src += add;
+	}
+}
+
+void Screen_LoK_16::set16ColorPalette(const uint8 *pal) {
+	uint8 palette[16 * 4];
+	for (int i = 0; i < 16; ++i) {
+		palette[i * 4 + 0] = (pal[i * 3 + 0] * 0xFF) / 0x0F;
+		palette[i * 4 + 1] = (pal[i * 3 + 1] * 0xFF) / 0x0F;
+		palette[i * 4 + 2] = (pal[i * 3 + 2] * 0xFF) / 0x0F;
+		palette[i * 4 + 3] = 0;
+	}
+
+	_system->setPalette(palette, 0, 16);
 }
 
 } // end of namespace Kyra

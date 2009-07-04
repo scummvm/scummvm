@@ -278,7 +278,7 @@ void DefaultEventManager::init() {
 	if (ConfMan.hasKey("vkeybd_pack_name")) {
 		_vk->loadKeyboardPack(ConfMan.get("vkeybd_pack_name"));
 	} else {
-		_vk->loadKeyboardPack("vkeybd");
+		_vk->loadKeyboardPack("vkeybd_default");
 	}
 #endif
 }
@@ -551,6 +551,11 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 					g_engine->pauseEngine(false);
 			} else
 				_shouldRTL = true;
+			break;
+
+		case Common::EVENT_MUTE:
+			if (g_engine)
+				g_engine->flipMute();
 			break;
 
 		case Common::EVENT_QUIT:

@@ -46,11 +46,11 @@ reg_t kAddMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kSetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int index = UKPV(0);
+	int index = argv[0].toUint16();
 	int i = 2;
 
 	while (i < argc) {
-		s->_menubar->setAttribute(s, (index >> 8) - 1, (index & 0xff) - 1, UKPV(i - 1), argv[i]);
+		s->_menubar->setAttribute(s, (index >> 8) - 1, (index & 0xff) - 1, argv[i - 1].toUint16(), argv[i]);
 		i += 2;
 	}
 
@@ -58,16 +58,16 @@ reg_t kSetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kGetMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int index = UKPV(0);
+	int index = argv[0].toUint16();
 
-	return s->_menubar->getAttribute((index >> 8) - 1, (index & 0xff) - 1, UKPV(1));
+	return s->_menubar->getAttribute((index >> 8) - 1, (index & 0xff) - 1, argv[1].toUint16());
 }
 
 
 reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t text = argv[0];
-	int fgcolor = SKPV_OR_ALT(1, s->status_bar_foreground);
-	int bgcolor = SKPV_OR_ALT(2, s->status_bar_background);
+	int fgcolor = (argc > 1) ? argv[1].toSint16() : s->status_bar_foreground;
+	int bgcolor = (argc > 2) ? argv[2].toSint16() : s->status_bar_background;
 
 	s->titlebar_port->_color.visual = get_pic_color(s, fgcolor);
 	s->titlebar_port->_color.mask = GFX_MASK_VISUAL;
@@ -92,7 +92,7 @@ reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kDrawMenuBar(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
-	if (SKPV(0))
+	if (argv[0].toSint16())
 		sciw_set_menubar(s, s->titlebar_port, s->_menubar, -1);
 	else
 		sciw_set_status_bar(s, s->titlebar_port, "", 0, 0);
@@ -125,7 +125,7 @@ static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
 
 reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t event = argv[0];
-	/*int pause_sound = UKPV_OR_ALT(1, 1);*/ /* FIXME: Do this eventually */
+	/*int pause_sound = (argc > 1) ? argv[1].toUint16() : 1;*/ /* FIXME: Do this eventually */
 	bool claimed = false;
 	int type = GET_SEL32V(event, type);
 	int message = GET_SEL32V(event, message);

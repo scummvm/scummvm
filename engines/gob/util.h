@@ -64,6 +64,7 @@ public:
 	void clearKeyBuf(void);
 	int16 getKey(void);
 	int16 checkKey(void);
+	bool checkKey(int16 &key);
 
 	void getMouseState(int16 *pX, int16 *pY, int16 *pButtons);
 	void setMousePos(int16 x, int16 y);
@@ -75,6 +76,7 @@ public:
 	void clearPalette(void);
 	int16 getFrameRate();
 	void setFrameRate(int16 rate);
+	void notifyNewAnim();
 	void waitEndFrame();
 	void setScrollOffset(int16 x = -1, int16 y = -1);
 

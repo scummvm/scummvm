@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "agi/agi.h"
 
 namespace Agi {
@@ -41,8 +40,8 @@ int AgiEngine::checkPosition(VtEntry *v) {
 		return 0;
 	}
 
-	/* MH1 needs this, but it breaks LSL1 */
-	if (agiGetRelease() >= 0x3000) {
+	// MH1 needs this, but it breaks LSL1
+	if (getVersion() >= 0x3000) {
 		if (v->yPos < v->ySize)
 			return 0;
 	}
@@ -66,21 +65,21 @@ int AgiEngine::checkCollision(VtEntry *v) {
 		if (u->flags & IGNORE_OBJECTS)
 			continue;
 
-		/* Same object, check next */
+		// Same object, check next
 		if (v->entry == u->entry)
 			continue;
 
-		/* No horizontal overlap, check next */
+		// No horizontal overlap, check next
 		if (v->xPos + v->xSize < u->xPos || v->xPos > u->xPos + u->xSize)
 			continue;
 
-		/* Same y, return error! */
+		// Same y, return error!
 		if (v->yPos == u->yPos) {
 			debugC(4, kDebugLevelSprites, "check returns 1 (object %d)", v->entry);
 			return 1;
 		}
 
-		/* Crossed the baseline, return error! */
+		// Crossed the baseline, return error!
 		if ((v->yPos > u->yPos && v->yPos2 < u->yPos2) ||
 				(v->yPos < u->yPos && v->yPos2 > u->yPos2)) {
 			debugC(4, kDebugLevelSprites, "check returns 1 (object %d)", v->entry);
@@ -97,7 +96,7 @@ int AgiEngine::checkPriority(VtEntry *v) {
 	uint8 *p0;
 
 	if (~v->flags & FIXED_PRIORITY) {
-		/* Priority bands */
+		// Priority bands
 		v->priority = _game.priTable[v->yPos];
 	}
 
@@ -122,17 +121,17 @@ int AgiEngine::checkPriority(VtEntry *v) {
 	for (i = 0; i < v->xSize; i++, p0++) {
 		pri = *p0 >> 4;
 
-		if (pri == 0) {	/* unconditional black. no go at all! */
+		if (pri == 0) {	// unconditional black. no go at all!
 			pass = 0;
 			break;
 		}
 
-		if (pri == 3)	/* water surface */
+		if (pri == 3)	// water surface
 			continue;
 
 		water = 0;
 
-		if (pri == 1) {	/* conditional blue */
+		if (pri == 1) {	// conditional blue
 			if (v->flags & IGNORE_BLOCKS)
 				continue;
 
@@ -141,7 +140,7 @@ int AgiEngine::checkPriority(VtEntry *v) {
 			break;
 		}
 
-		if (pri == 2) {	/* trigger */
+		if (pri == 2) {	// trigger
 			debugC(4, kDebugLevelSprites, "stepped on trigger");
 			if (!_debug.ignoretriggers)
 				trigger = 1;
@@ -198,7 +197,7 @@ void AgiEngine::updatePosition() {
 		x = oldX = v->xPos;
 		y = oldY = v->yPos;
 
-		/* If object has moved, update its position */
+		// If object has moved, update its position
 		if (~v->flags & UPDATE_POS) {
 			int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
 			int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
@@ -206,18 +205,18 @@ void AgiEngine::updatePosition() {
 			y += v->stepSize * dy[v->direction];
 		}
 
-		/* Now check if it touched the borders */
+		// Now check if it touched the borders
 		border = 0;
 
-		/* Check left/right borders */
+		// Check left/right borders
 		if (x < 0) {
 			x = 0;
 			border = 4;
-		} else if (x <= 0 && agiGetRelease() == 0x3086) {	/* KQ4 */
-			x = 0;	/* See Sarien bug #590462 */
+		} else if (x <= 0 && getVersion() == 0x3086) {	// KQ4
+			x = 0;	// See Sarien bug #590462
 			border = 4;
 		} else if (v->entry == 0 && x == 0 && v->flags & ADJ_EGO_XY) {
-			/* Extra test to walk west clicking the mouse */
+			// Extra test to walk west clicking the mouse
 			x = 0;
 			border = 4;
 		} else if (x + v->xSize > _WIDTH) {
@@ -225,7 +224,7 @@ void AgiEngine::updatePosition() {
 			border = 2;
 		}
 
-		/* Check top/bottom borders. */
+		// Check top/bottom borders.
 		if (y - v->ySize + 1 < 0) {
 			y = v->ySize - 1;
 			border = 1;
@@ -238,7 +237,7 @@ void AgiEngine::updatePosition() {
 			border = 1;
 		}
 
-		/* Test new position. rollback if test fails */
+		// Test new position. rollback if test fails
 		v->xPos = x;
 		v->yPos = y;
 		if (checkCollision(v) || !checkPriority(v)) {
@@ -279,7 +278,7 @@ void AgiEngine::fixPosition(int n) {
 
 	debugC(4, kDebugLevelSprites, "adjusting view table entry #%d (%d,%d)", n, v->xPos, v->yPos);
 
-	/* test horizon */
+	// test horizon
 	if ((~v->flags & IGNORE_HORIZON) && v->yPos <= _game.horizon)
 		v->yPos = _game.horizon + 1;
 
@@ -288,26 +287,26 @@ void AgiEngine::fixPosition(int n) {
 
 	while (!checkPosition(v) || checkCollision(v) || !checkPriority(v)) {
 		switch (dir) {
-		case 0:	/* west */
+		case 0:	// west
 			v->xPos--;
 			if (--count)
 				continue;
 			dir = 1;
 			break;
-		case 1:	/* south */
+		case 1:	// south
 			v->yPos++;
 			if (--count)
 				continue;
 			dir = 2;
 			size++;
 			break;
-		case 2:	/* east */
+		case 2:	// east
 			v->xPos++;
 			if (--count)
 				continue;
 			dir = 3;
 			break;
-		case 3:	/* north */
+		case 3:	// north
 			v->yPos--;
 			if (--count)
 				continue;

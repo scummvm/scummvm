@@ -30,51 +30,24 @@
 
 namespace Agi {
 
-int AgiEngine::v2IdGame() {
-	int ver;
-
-	ver = getVersion();
-	_game.ver = ver;
-	debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
-	agiSetRelease(ver);
-
-	return setupV2Game(ver, 0);
-}
-
-/*
- * Currently, there is no known difference between v3.002.098 -> v3.002.149
- * So version emulated;
- *
- * 0x0086,
- * 0x0149
- */
-
-int AgiEngine::v3IdGame() {
-	int ver;
-
-	ver = getVersion();
-	_game.ver = ver;
-	debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
-	agiSetRelease(ver);
-
-	return setupV3Game(ver, 0);
-}
+//
+// Currently, there is no known difference between v3.002.098 -> v3.002.149
+// So version emulated;
+//
+// 0x0086,
+// 0x0149
+//
 
 /**
  *
  */
-int AgiEngine::setupV2Game(int ver, uint32 crc) {
+int AgiEngine::setupV2Game(int ver) {
 	int ec = errOK;
-
-	if (ver == 0) {
-		report("Unknown v2 Sierra game: %08x\n\n", crc);
-		agiSetRelease(ver = 0x2917);
-	}
 
 	// Should this go above the previous lines, so we can force emulation versions
 	// even for AGDS games? -- dsymonds
 	if (getFeatures() & GF_AGDS)
-		agiSetRelease(ver = 0x2440);	/* ALL AGDS games built for 2.440 */
+		setVersion(ver = 0x2440);	// ALL AGDS games built for 2.440
 
 	report("Setting up for version 0x%04X\n", ver);
 
@@ -96,13 +69,8 @@ int AgiEngine::setupV2Game(int ver, uint32 crc) {
 /**
  *
  */
-int AgiEngine::setupV3Game(int ver, uint32 crc) {
+int AgiEngine::setupV3Game(int ver) {
 	int ec = errOK;
-
-	if (ver == 0) {
-		report("Unknown v3 Sierra game: %08x\n\n", crc);
-		agiSetRelease(ver = 0x3149);
-	}
 
 	report("Setting up for version 0x%04X\n", ver);
 

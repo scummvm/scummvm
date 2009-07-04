@@ -38,26 +38,26 @@ static void plotPixel(int x, int y, int color, void *data) {
 		dest->getVidMem()[(y * dest->getWidth()) + x] = color;
 }
 
-void VGAVideoDriver::putPixel(int16 x, int16 y, byte color, SurfaceDesc *dest) {
-	if ((x >= 0) && (x < dest->getWidth()) &&
-	    (y >= 0) && (y < dest->getHeight()))
-		dest->getVidMem()[(y * dest->getWidth()) + x] = color;
+void VGAVideoDriver::putPixel(int16 x, int16 y, byte color, SurfaceDesc &dest) {
+	if ((x >= 0) && (x < dest.getWidth()) &&
+	    (y >= 0) && (y < dest.getHeight()))
+		dest.getVidMem()[(y * dest.getWidth()) + x] = color;
 }
 
-void VGAVideoDriver::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1,
+void VGAVideoDriver::drawLine(SurfaceDesc &dest, int16 x0, int16 y0, int16 x1,
 		int16 y1, byte color) {
 
-	Graphics::drawLine(x0, y0, x1, y1, color, &plotPixel, dest);
+	Graphics::drawLine(x0, y0, x1, y1, color, &plotPixel, &dest);
 }
 
-void VGAVideoDriver::fillRect(SurfaceDesc *dest, int16 left, int16 top,
+void VGAVideoDriver::fillRect(SurfaceDesc &dest, int16 left, int16 top,
 		int16 right, int16 bottom, byte color) {
 
-	if ((left >= dest->getWidth()) || (right >= dest->getWidth()) ||
-	    (top >= dest->getHeight()) || (bottom >= dest->getHeight()))
+	if ((left >= dest.getWidth()) || (right >= dest.getWidth()) ||
+	    (top >= dest.getHeight()) || (bottom >= dest.getHeight()))
 		return;
 
-	byte *pos = dest->getVidMem() + (top * dest->getWidth()) + left;
+	byte *pos = dest.getVidMem() + (top * dest.getWidth()) + left;
 	int16 width = (right - left) + 1;
 	int16 height = (bottom - top) + 1;
 
@@ -65,19 +65,19 @@ void VGAVideoDriver::fillRect(SurfaceDesc *dest, int16 left, int16 top,
 		for (int16 i = 0; i < width; ++i)
 			pos[i] = color;
 
-		pos += dest->getWidth();
+		pos += dest.getWidth();
 	}
 }
 
 void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
 		Video::FontDesc *fontDesc, byte color1, byte color2,
-		byte transp, SurfaceDesc *dest) {
+		byte transp, SurfaceDesc &dest) {
 	byte *src, *dst;
 	uint16 data;
 
 	src = fontDesc->dataPtr +
 		(item - fontDesc->startItem) * (fontDesc->itemSize & 0xFF);
-	dst = dest->getVidMem() + x + dest->getWidth() * y;
+	dst = dest.getVidMem() + x + dest.getWidth() * y;
 
 	int nWidth = fontDesc->itemWidth;
 
@@ -106,26 +106,26 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
 
 		}
 
-		dst += dest->getWidth() - fontDesc->itemWidth;
+		dst += dest.getWidth() - fontDesc->itemWidth;
 	}
 }
 
-void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
+void VGAVideoDriver::drawSprite(SurfaceDesc &source, SurfaceDesc &dest,
 		int16 left, int16 top, int16 right, int16 bottom,
 		int16 x, int16 y, int16 transp) {
 
-	if ((x >= dest->getWidth()) || (x < 0) ||
-	    (y >= dest->getHeight()) || (y < 0))
+	if ((x >= dest.getWidth()) || (x < 0) ||
+	    (y >= dest.getHeight()) || (y < 0))
 		return;
 
-	int16 width = MIN((right - left) + 1, (int) dest->getWidth());
-	int16 height = MIN((bottom - top) + 1, (int) dest->getHeight());
+	int16 width = MIN((right - left) + 1, (int) dest.getWidth());
+	int16 height = MIN((bottom - top) + 1, (int) dest.getHeight());
 
 	if ((width < 1) || (height < 1))
 		return;
 
-	const byte *srcPos = source->getVidMem() + (top * source->getWidth()) + left;
-	byte *destPos = dest->getVidMem() + (y * dest->getWidth()) + x;
+	const byte *srcPos = source.getVidMem() + (top * source.getWidth()) + left;
+	byte *destPos = dest.getVidMem() + (y * dest.getWidth()) + x;
 
 	uint32 size = width * height;
 
@@ -137,8 +137,8 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 					destPos[i] = srcPos[i];
 			}
 
-			srcPos += source->getWidth();
-			destPos += dest->getWidth();
+			srcPos += source.getWidth();
+			destPos += dest.getWidth();
 		}
 
 	} else if (((srcPos  >= destPos) && (srcPos  <= (destPos + size))) ||
@@ -147,8 +147,8 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 		while (height--) {
 			memmove(destPos, srcPos, width);
 
-			srcPos += source->getWidth();
-			destPos += dest->getWidth();
+			srcPos += source.getWidth();
+			destPos += dest.getWidth();
 		}
 
 	} else {
@@ -156,29 +156,29 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 		while (height--) {
 			memcpy(destPos, srcPos, width);
 
-			srcPos += source->getWidth();
-			destPos += dest->getWidth();
+			srcPos += source.getWidth();
+			destPos += dest.getWidth();
 		}
 
 	}
 }
 
-void VGAVideoDriver::drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest,
+void VGAVideoDriver::drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest,
 		int16 left, int16 top, int16 right, int16 bottom,
 		int16 x, int16 y, int16 transp) {
 
-	if ((x >= dest->getWidth()) || (x < 0) ||
-	    (y >= dest->getHeight()) || (y < 0))
+	if ((x >= dest.getWidth()) || (x < 0) ||
+	    (y >= dest.getHeight()) || (y < 0))
 		return;
 
-	int16 width = MIN<int>((right - left) + 1, dest->getWidth() / 2);
-	int16 height = MIN<int>((bottom - top) + 1, dest->getHeight() / 2);
+	int16 width = MIN<int>((right - left) + 1, dest.getWidth() / 2);
+	int16 height = MIN<int>((bottom - top) + 1, dest.getHeight() / 2);
 
 	if ((width < 1) || (height < 1))
 		return;
 
-	const byte *srcPos = source->getVidMem() + (top * source->getWidth()) + left;
-	byte *destPos = dest->getVidMem() + ((y * 2) * dest->getWidth()) + (x * 2);
+	const byte *srcPos = source.getVidMem() + (top * source.getWidth()) + left;
+	byte *destPos = dest.getVidMem() + ((y * 2) * dest.getWidth()) + (x * 2);
 
 	while (height--) {
 		const byte *srcBak = srcPos;
@@ -193,19 +193,19 @@ void VGAVideoDriver::drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest,
 				}
 			}
 
-			destPos += dest->getWidth();
+			destPos += dest.getWidth();
 		}
 
-		srcPos = srcBak + source->getWidth();
+		srcPos = srcBak + source.getWidth();
 	}
 }
 
 void VGAVideoDriver::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
-		int16 x, int16 y, byte transp, SurfaceDesc *dest) {
+		int16 x, int16 y, byte transp, SurfaceDesc &dest) {
 	int destRight = x + width;
 	int destBottom = y + height;
 
-	byte *dst = dest->getVidMem() + x + dest->getWidth() * y;
+	byte *dst = dest.getVidMem() + x + dest.getWidth() * y;
 
 	int curx = x;
 	int cury = y;
@@ -223,14 +223,14 @@ void VGAVideoDriver::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 		val >>= 4;
 
 		for (unsigned int i = 0; i < repeat; ++i) {
-			if (curx < dest->getWidth() && cury < dest->getHeight())
+			if (curx < dest.getWidth() && cury < dest.getHeight())
 				if (!transp || val)
 					*dst = val;
 
 			dst++;
 			curx++;
 			if (curx == destRight) {
-				dst += dest->getWidth() + x - curx;
+				dst += dest.getWidth() + x - curx;
 				curx = x;
 				cury++;
 				if (cury == destBottom)

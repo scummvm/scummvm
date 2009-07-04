@@ -257,13 +257,15 @@ int loadFile(const char* name, int idx, int destIdx) {
 		return loadFNTSub(ptr, idx);
 		break;
 	}
-	case type_UNK: {
-		break;
-	}
 	case type_SPL: {
+		// Sound file
+		loadSPLSub(ptr, idx);
 		break;
 	}
+	default:
+		error("Unknown fileType in loadFile");
 	}
+
 	return -1;
 }
 
@@ -293,13 +295,15 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 		loadFNTSub(ptr, startIdx);
 		break;
 	}
-	case type_UNK: {
-		break;
-	}
 	case type_SPL: {
+		// Sound file
+		loadSPLSub(ptr, startIdx);
 		break;
 	}
+	default:
+		error("Unknown fileType in loadFileRange");
 	}
+
 	return 0;
 }
 
@@ -316,6 +320,7 @@ int loadFullBundle(const char *name, int startIdx) {
 
 	switch (fileType) {
 	case type_SET: {
+		// Sprite set
 		int i;
 		int numMaxEntriesInSet;
 
@@ -328,15 +333,17 @@ int loadFullBundle(const char *name, int startIdx) {
 		break;
 	}
 	case type_FNT: {
+		// Font file
 		loadFNTSub(ptr, startIdx);
 		break;
 	}
-	case type_UNK: {
-		break;
-	}
 	case type_SPL: {
+		// Sound file
+		loadSPLSub(ptr, startIdx);
 		break;
 	}
+	default:
+		error("Unknown fileType in loadFullBundle");
 	}
 
 	return 0;
@@ -386,6 +393,23 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 
 	return 1;
 }
+
+int loadSPLSub(uint8 *ptr, int destIdx) {
+	uint8 *destPtr;
+	int fileIndex;
+
+	if (destIdx == -1) {
+		fileIndex = createResFileEntry(loadFileVar1, 1, loadFileVar1, 1);
+	} else {
+		fileIndex = updateResFileEntry(loadFileVar1, 1, loadFileVar1, destIdx, 1);
+	}
+
+	destPtr = filesDatabase[fileIndex].subData.ptr;
+	memcpy(destPtr, ptr, loadFileVar1);
+
+	return 1;
+}
+
 
 int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentDestEntry) {
 	uint8 *ptr3;

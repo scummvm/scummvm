@@ -197,7 +197,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 
 reg_t kFOpen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *name = kernel_dereference_char_pointer(s, argv[0], 0);
-	int mode = UKPV(1);
+	int mode = argv[1].toUint16();
 
 	debug(3, "kFOpen(%s,0x%x)", name, mode);
 	file_open(s, name, mode);
@@ -227,8 +227,8 @@ void file_close(EngineState *s, int handle) {
 }
 
 reg_t kFClose(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	debug(3, "kFClose(%d)", UKPV(0));
-	file_close(s, UKPV(0));
+	debug(3, "kFClose(%d)", argv[0].toUint16());
+	file_close(s, argv[0].toUint16());
 	return s->r_acc;
 }
 
@@ -248,7 +248,7 @@ void fwrite_wrapper(EngineState *s, int handle, char *data, int length) {
 }
 
 reg_t kFPuts(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int handle = UKPV(0);
+	int handle = argv[0].toUint16();
 	char *data = kernel_dereference_char_pointer(s, argv[1], 0);
 
 	fwrite_wrapper(s, handle, data, strlen(data));
@@ -267,6 +267,12 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 		return;
 	}
 	f->_in->readLine_NEW(dest, maxsize);
+	// The returned string must not have an ending LF
+	int strSize = strlen(dest);
+	if (strSize > 0) {
+		if (dest[strSize - 1] == 0x0A)
+			dest[strSize - 1] = 0;
+	}
 
 	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"\n", dest);
 }
@@ -301,8 +307,8 @@ static void fseek_wrapper(EngineState *s, int handle, int offset, int whence) {
 
 reg_t kFGets(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *dest = kernel_dereference_char_pointer(s, argv[0], 0);
-	int maxsize = UKPV(1);
-	int handle = UKPV(2);
+	int maxsize = argv[1].toUint16();
+	int handle = argv[2].toUint16();
 
 	debug(3, "kFGets(%d,%d)", handle, maxsize);
 	fgets_wrapper(s, dest, maxsize, handle);
@@ -344,7 +350,7 @@ enum {
 };
 
 reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int mode = UKPV(0);
+	int mode = argv[0].toUint16();
 	char *game_prefix, *input_s, *output_s;
 
 	switch (mode) {
@@ -394,7 +400,7 @@ reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_DEVICE_INFO_GET_SAVEFILE_NAME: {
 		output_s = kernel_dereference_char_pointer(s, argv[1], 0);
 		game_prefix = kernel_dereference_char_pointer(s, argv[2], 0);
-		int savegame_id = UKPV(3);
+		int savegame_id = argv[3].toUint16();
 		sprintf(output_s, "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix, savegame_id, output_s);
 		delete_savegame(s, savegame_id);
@@ -474,7 +480,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 
 reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
-	int savedir_nr = UKPV(1);
+	int savedir_nr = argv[1].toUint16();
 
 	debug(3, "kCheckSaveGame(%s, %d)", game_id, savedir_nr);
 
@@ -560,7 +566,7 @@ reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
-	int savedir_nr = UKPV(1);
+	int savedir_nr = argv[1].toUint16();
 	int savedir_id; // Savegame ID, derived from savedir_nr and the savegame ID list
 	char *game_description = kernel_dereference_char_pointer(s, argv[2], 0);
 	char *version = argc > 3 ? strdup(kernel_dereference_char_pointer(s, argv[3], 0)) : NULL;
@@ -633,7 +639,7 @@ reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *game_id = kernel_dereference_char_pointer(s, argv[0], 0);
-	int savedir_nr = UKPV(1);
+	int savedir_nr = argv[1].toUint16();
 
 	debug(3, "kRestoreGame(%s,%d)", game_id, savedir_nr);
 
@@ -739,37 +745,37 @@ void DirSeeker::nextFile() {
 
 
 reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int func_nr = UKPV(0);
+	int func_nr = argv[0].toUint16();
 
 	switch (func_nr) {
 	case K_FILEIO_OPEN : {
 		char *name = kernel_dereference_char_pointer(s, argv[1], 0);
-		int mode = UKPV(2);
+		int mode = argv[2].toUint16();
 
 		file_open(s, name, mode);
 		debug(3, "K_FILEIO_OPEN(%s,0x%x)", name, mode);
 		break;
 	}
 	case K_FILEIO_CLOSE : {
-		int handle = UKPV(1);
+		int handle = argv[1].toUint16();
 		debug(3, "K_FILEIO_CLOSE(%d)", handle);
 
 		file_close(s, handle);
 		break;
 	}
 	case K_FILEIO_READ_RAW : {
-		int handle = UKPV(1);
+		int handle = argv[1].toUint16();
 		char *dest = kernel_dereference_char_pointer(s, argv[2], 0);
-		int size = UKPV(3);
+		int size = argv[3].toUint16();
 		debug(3, "K_FILEIO_READ_RAW(%d,%d)", handle, size);
 
 		fread_wrapper(s, dest, size, handle);
 		break;
 	}
 	case K_FILEIO_WRITE_RAW : {
-		int handle = UKPV(1);
+		int handle = argv[1].toUint16();
 		char *buf = kernel_dereference_char_pointer(s, argv[2], 0);
-		int size = UKPV(3);
+		int size = argv[3].toUint16();
 		debug(3, "K_FILEIO_WRITE_RAW(%d,%d)", handle, size);
 
 		fwrite_wrapper(s, handle, buf, size);
@@ -788,16 +794,16 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	case K_FILEIO_READ_STRING : {
 		char *dest = kernel_dereference_char_pointer(s, argv[1], 0);
-		int size = UKPV(2);
-		int handle = UKPV(3);
+		int size = argv[2].toUint16();
+		int handle = argv[3].toUint16();
 		debug(3, "K_FILEIO_READ_STRING(%d,%d)", handle, size);
 
 		fgets_wrapper(s, dest, size, handle);
 		return argv[1];
 	}
 	case K_FILEIO_WRITE_STRING : {
-		int handle = UKPV(1);
-		int size = UKPV(3);
+		int handle = argv[1].toUint16();
+		int size = argv[3].toUint16();
 		char *buf = kernel_dereference_char_pointer(s, argv[2], size);
 		debug(3, "K_FILEIO_WRITE_STRING(%d,%d)", handle, size);
 
@@ -810,9 +816,9 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case K_FILEIO_SEEK : {
-		int handle = UKPV(1);
-		int offset = UKPV(2);
-		int whence = UKPV(3);
+		int handle = argv[1].toUint16();
+		int offset = argv[2].toUint16();
+		int whence = argv[3].toUint16();
 		debug(3, "K_FILEIO_SEEK(%d,%d,%d)", handle, offset, whence);
 
 		fseek_wrapper(s, handle, offset, whence);
@@ -821,7 +827,7 @@ reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_FILEIO_FIND_FIRST : {
 		char *mask = kernel_dereference_char_pointer(s, argv[1], 0);
 		reg_t buf = argv[2];
-		int attr = UKPV(3); // We won't use this, Win32 might, though...
+		int attr = argv[3].toUint16(); // We won't use this, Win32 might, though...
 		debug(3, "K_FILEIO_FIND_FIRST(%s,0x%x)", mask, attr);
 
 #ifndef WIN32

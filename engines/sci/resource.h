@@ -72,19 +72,14 @@ enum {
 
 enum ResSourceType {
 	kSourceDirectory = 0,
-	kSourcePatch = 1,
-	kSourceVolume = 2,
-	kSourceExtMap = 3,
-	kSourceIntMap = 4,
-	kSourceAudioVolume = 5,
-	kSourceMask = 127
+	kSourcePatch,
+	kSourceVolume,
+	kSourceExtMap,
+	kSourceIntMap,
+	kSourceAudioVolume,
+	kSourceExtAudioMap
 };
 
-#define RESSOURCE_ADDRESSING_BASIC 0
-#define RESSOURCE_ADDRESSING_EXTENDED 128
-#define RESSOURCE_ADDRESSING_MASK 128
-
-#define RESOURCE_HASH(type, number) (uint32)((type<<16) | number)
 #define SCI0_RESMAP_ENTRIES_SIZE 6
 #define SCI1_RESMAP_ENTRIES_SIZE 6
 #define SCI11_RESMAP_ENTRIES_SIZE 5
@@ -136,10 +131,59 @@ struct ResourceSource {
 	Common::String location_name;	// FIXME: Replace by FSNode ?
 	int volume_number;
 	ResourceSource *associated_map;
-	ResourceSource *next;
 };
 
 class ResourceManager;
+
+class ResourceId {
+public:
+	ResourceType type;
+	uint16 number;
+	uint32 tuple; // Only used for audio36 and sync36
+
+	ResourceId() : type(kResourceTypeInvalid), number(0), tuple(0) { };
+
+	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0) : type(type_), number(number_), tuple(tuple_) {
+		if ((type < kResourceTypeView) || (type > kResourceTypeInvalid))
+			type = kResourceTypeInvalid;
+	}
+
+	ResourceId(ResourceType type_, uint16 number_, byte noun, byte verb, byte cond, byte seq) : type(type_), number(number_) {
+		tuple = (noun << 24) | (verb << 16) | (cond << 8) | seq;
+
+		if ((type < kResourceTypeView) || (type > kResourceTypeInvalid))
+			type = kResourceTypeInvalid;
+	}
+
+	Common::String toString() {
+		char buf[32];
+
+		snprintf(buf, 32, "%s.%i", getResourceTypeName(type), number);
+		Common::String retStr = buf;
+
+		if (tuple != 0) {
+			snprintf(buf, 32, "(%i, %i, %i, %i)", tuple >> 24, (tuple >> 16) & 0xff, (tuple >> 8) & 0xff, tuple & 0xff);
+			retStr += buf;
+		}
+
+		return retStr;
+	}
+};
+
+struct ResourceIdHash : public Common::UnaryFunction<ResourceId, uint> {
+	uint operator()(ResourceId val) const { return ((uint)((val.type << 16) | val.number)) ^ val.tuple; }
+};
+
+struct ResourceIdEqualTo : public Common::BinaryFunction<ResourceId, ResourceId, bool> {
+	bool operator()(const ResourceId &x, const ResourceId &y) const { return (x.type == y.type) && (x.number == y.number) && (x.tuple == y.tuple); }
+};
+
+struct ResourceIdLess : public Common::BinaryFunction<ResourceId, ResourceId, bool> {
+	bool operator()(const ResourceId &x, const ResourceId &y) const {
+		return (x.type < y.type) || ((x.type == y.type) && (x.number < y.number))
+			    || ((x.type == y.type) && (x.number == y.number) && (x.tuple < y.tuple));
+	}
+};
 
 /** Class for storing resources in memory */
 class Resource {
@@ -153,9 +197,7 @@ public:
 // to let the rest of the engine compile without changes
 public:
 	byte *data;
-	uint16 number;
-	ResourceType type;
-	uint32 id;	//!< contains number and type.
+	ResourceId id;
 	uint32 size;
 	byte *header;
 	uint32 headerSize;
@@ -166,6 +208,7 @@ protected:
 	ResourceSource *source;
 };
 
+typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash, ResourceIdEqualTo> ResourceMap;
 
 class ResourceManager {
 public:
@@ -188,26 +231,22 @@ public:
 
 	/**
 	 * Looks up a resource's data.
-	 * @param type: The resource type to look for
-	 * @param number: The resource number to search
+	 * @param id: The resource type to look for
 	 * @param lock: non-zero iff the resource should be locked
 	 * @return (Resource *): The resource, or NULL if it doesn't exist
 	 * @note Locked resources are guaranteed not to have their contents freed until
 	 *       they are unlocked explicitly (by unlockResource).
 	 */
-	Resource *findResource(ResourceType type, int number, bool lock);
+	Resource *findResource(ResourceId id, bool lock);
 
 	/* Unlocks a previously locked resource
 	**             (Resource *) res: The resource to free
-	**             (int) number: Number of the resource to check (ditto)
-	**             (ResourceType) type: Type of the resource to check (for error checking)
 	** Returns   : (void)
 	*/
-	void unlockResource(Resource *res, int restype, ResourceType resnum);
+	void unlockResource(Resource *res);
 
 	/* Tests whether a resource exists
-	**             (ResourceType) type: Type of the resource to check
-	**             (int) number: Number of the resource to check
+	**             (ResourceId) id: Id of the resource to check
 	** Returns   : (Resource *) non-NULL if the resource exists, NULL otherwise
 	** This function may often be much faster than finding the resource
 	** and should be preferred for simple tests.
@@ -215,16 +254,27 @@ public:
 	** it should be used with care, as it may be unallocated.
 	** Use scir_find_resource() if you want to use the data contained in the resource.
 	*/
-	Resource *testResource(ResourceType type, int number);
+	Resource *testResource(ResourceId id);
+
+	/**
+	 * Returns a list of all resources of the specified type.
+	 * @param type: The resource type to look for
+	 * @param mapNumber: For audio36 and sync36, limit search to this map
+	 * @return: The resource list
+	 */
+	Common::List<ResourceId> *listResources(ResourceType type, int mapNumber = -1);
+
+	void setAudioLanguage(int language);
 
 protected:
 	int _maxMemory; //!< Config option: Maximum total byte number allocated
-	ResourceSource *_sources;
+	Common::List<ResourceSource *> _sources;
 	int _memoryLocked;	//!< Amount of resource bytes in locked memory
 	int _memoryLRU;		//!< Amount of resource bytes under LRU control
 	Common::List<Resource *> _LRU; //!< Last Resource Used list
-	Common::HashMap<uint32, Resource *> _resMap;
+	ResourceMap _resMap;
 	Common::List<Common::File *> _volumeFiles; //!< list of opened volume files
+	ResourceSource *_audioMapSCI1; //!< Currently loaded audio map for SCI1
 
 	/**
 	 * Add a path to the resource manager's list of sources.
@@ -263,19 +313,22 @@ protected:
 	 *					 used during startup. May be NULL.
 	 * @return One of SCI_ERROR_*.
 	 */
-	int scanNewSources(ResourceSource *source);
+	void scanNewSources();
 	int addAppropriateSources();
 	int addInternalSources();
-	void freeResourceSources(ResourceSource *rss);
+	void freeResourceSources();
 
 	Common::File *getVolumeFile(const char *filename);
 	void loadResource(Resource *res);
 	bool loadPatch(Resource *res, Common::File &file);
 	bool loadFromPatchFile(Resource *res);
-	bool loadFromAudioVolume(Resource *res);
-	void freeOldResources(int last_invulnerable);
+	bool loadFromAudioVolumeSCI1(Resource *res, Common::File &file);
+	bool loadFromAudioVolumeSCI11(Resource *res, Common::File &file);
+	void freeOldResources();
 	int decompress(Resource *res, Common::File *file);
 	int readResourceInfo(Resource *res, Common::File *file, uint32&szPacked, ResourceCompression &compression);
+	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0);
+	void removeAudioResource(ResourceId resId);
 
 	/**--- Resource map decoding functions ---*/
 	int detectMapVersion();
@@ -283,21 +336,32 @@ protected:
 
 	/**
 	 * Reads the SCI0 resource.map file from a local directory.
+	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
 	int readResourceMapSCI0(ResourceSource *map);
 
 	/**
 	 * Reads the SCI1 resource.map file from a local directory.
+	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
 	int readResourceMapSCI1(ResourceSource *map);
 
 	/**
-	 * Reads the SCI1.1 65535.map resource
+	 * Reads SCI1.1 audio map resources
+	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
-	int readMap65535(ResourceSource *map);
+	int readAudioMapSCI11(ResourceSource *map);
+
+	/**
+	 * Reads SCI1 audio map files
+	 * @param map The map
+	 * @param unload Unload the map instead of loading it
+	 * @return 0 on success, an SCI_ERROR_* code otherwise
+	 */
+	int readAudioMapSCI1(ResourceSource *map, bool unload = false);
 
 	/**--- Patch management functions ---*/
 
@@ -312,60 +376,6 @@ protected:
 	void removeFromLRU(Resource *res);
 
 	int guessSciVersion();
-};
-
-/**
- * Used for lip and animation syncing in CD talkie games
- */
-class ResourceSync : public Resource {
-public:
-	ResourceSync() {}
-	~ResourceSync() {}
-
-	void startSync(EngineState *s, reg_t obj);
-	void nextSync(EngineState *s, reg_t obj);
-	void stopSync();
-
-protected:
-	uint16 *_ptr;
-	int16 _syncTime, _syncCue;
-	//bool _syncStarted;	// not used
-};
-
-/**
- * Used for speech playback and digital music playback
- * in CD talkie games
- */
-class AudioResource {
-public:
-	AudioResource(ResourceManager *resMgr, int sciVersion);
-	~AudioResource();
-
-	void setAudioRate(uint16 audioRate) { _audioRate = audioRate; }
-	void setAudioLang(int16 lang);
-
-	Audio::SoundHandle* getAudioHandle() { return &_audioHandle; }
-	int getAudioPosition();
-
-	Audio::AudioStream* getAudioStream(uint32 audioNumber, uint32 volume, int *sampleLen);
-
-	void stop() { g_system->getMixer()->stopHandle(_audioHandle); }
-	void pause() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
-	void resume() { g_system->getMixer()->pauseHandle(_audioHandle, false); }
-
-private:
-	Audio::SoundHandle _audioHandle;
-	uint16 _audioRate;
-	int16 _lang;
-	byte *_audioMapSCI1;
-	Resource *_audioMapSCI11;
-	ResourceManager *_resMgr;
-	int _sciVersion;
-
-	bool findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &offset, uint32 &size);
-	bool findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset, bool getSync = false, uint32 *size = NULL);
-	bool findAudEntrySCI11Late(uint32 audioNumber, uint32 &offset, bool getSync, uint32 *size);
-	bool findAudEntrySCI11Early(uint32 audioNumber, uint32 &offset, bool getSync, uint32 *size);
 };
 
 } // End of namespace Sci

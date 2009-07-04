@@ -307,6 +307,7 @@ public:
 
 	Screen *screen();
 	GUI *gui() const;
+
 private:
 	Screen_LoL *_screen;
 	GUI_LoL *_gui;
@@ -326,6 +327,10 @@ private:
 	void startup();
 	void startupNew();
 
+	void registerDefaultSettings();
+	void writeSettings();
+	void readSettings();
+
 	// options
 	int _monsterDifficulty;
 	bool _smoothScrollingEnabled;
@@ -342,7 +347,9 @@ private:
 	uint8 *getItemIconShapePtr(int index);
 	bool posWithinRect(int mouseX, int mouseY, int x1, int y1, int x2, int y2);
 
-	int _floatingMouseArrowControl;
+	void checkFloatingPointerRegions();
+	int _floatingCursorControl;
+	int _currentFloatingCursor;
 
 	// intro + character selection
 	int processPrologue();
@@ -441,6 +448,9 @@ private:
 	int _timer3Para;
 
 	// sound
+	int convertVolumeToMixer(int value);
+	int convertVolumeFromMixer(int value);
+
 	void loadTalkFile(int index);
 	void snd_playVoiceFile(int track) {}
 	bool snd_playCharacterSpeech(int id, int8 speaker, int);
@@ -473,7 +483,6 @@ private:
 	Common::List<Audio::AudioStream*> _speechList;
 
 	int _curTlkFile;
-	int _speechFlag;
 
 	char **_ingameSoundList;
 	int _ingameSoundListSize;
@@ -627,7 +636,6 @@ private:
 	uint16 _currentBlock;
 	bool _sceneUpdateRequired;
 	int16 _visibleBlockIndex[18];
-	uint16 _gameFlags[40];
 	int16 _globalScriptVars[24];
 
 	// emc opcode
@@ -714,6 +722,7 @@ private:
 	int olol_getWallFlags(EMCState *script);
 	int olol_changeMonsterStat(EMCState *script);
 	int olol_getMonsterStat(EMCState *script);
+	int olol_releaseMonsterShapes(EMCState *script);
 	int olol_playCharacterScriptChat(EMCState *script);
 	int olol_playEnvironmentalSfx(EMCState *script);
 	int olol_update(EMCState *script);
@@ -724,6 +733,7 @@ private:
 	int olol_countBlockItems(EMCState *script);
 	int olol_characterSkillTest(EMCState *script);
 	int olol_countAllMonsters(EMCState *script);
+	int olol_playEndSequence(EMCState *script);
 	int olol_stopCharacterSpeech(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_calcInflictableDamage(EMCState *script);
@@ -771,17 +781,19 @@ private:
 	int olol_getNextActiveCharacter(EMCState *script);
 	int olol_paralyzePoisonCharacter(EMCState *script);
 	int olol_drawCharPortrait(EMCState *script);
-	int olol_removeInventoryItem(EMCState *script);	
+	int olol_removeInventoryItem(EMCState *script);
 	int olol_getAnimationLastPart(EMCState *script);
 	int olol_assignSpecialGuiShape(EMCState *script);
 	int olol_findInventoryItem(EMCState *script);
 	int olol_restoreFadePalette(EMCState *script);
+	int olol_drinkBezelCup(EMCState *script);
 	int olol_changeItemTypeOrFlag(EMCState *script);
 	int olol_placeInventoryItemInHand(EMCState *script);
 	int olol_castSpell(EMCState *script);
 	int olol_pitDrop(EMCState *script);
 	int olol_increaseSkill(EMCState *script);
 	int olol_paletteFlash(EMCState *script);
+	int olol_restoreMagicShroud(EMCState *script);
 	int olol_disableControls(EMCState *script);
 	int olol_enableControls(EMCState *script);
 	int olol_shakeScene(EMCState *script);
@@ -860,9 +872,9 @@ private:
 	void toggleSelectedCharacterFrame(bool mode);
 	void fadeText();
 	void transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
-	void setPaletteBrightness(uint8 *palette, int brightness, int modifier);
-	void generateBrightnessPalette(uint8 *src, uint8 *dst, int brightness, int modifier);
-	void generateFlashPalette(uint8 *src, uint8 *dst, int colorFlags);
+	void setPaletteBrightness(const Palette &srcPal, int brightness, int modifier);
+	void generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier);
+	void generateFlashPalette(const Palette &src, Palette &dst, int colorFlags);
 	void updateSequenceBackgroundAnimations();
 
 	bool _dialogueField;
@@ -903,7 +915,7 @@ private:
 
 	void setCharacterMagicOrHitPoints(int charNum, int type, int points, int mode);
 	void increaseExperience(int charNum, int skill, uint32 points);
-	void increaseCharacterHitpoints(int charNum, int points, bool unk);
+	void increaseCharacterHitpoints(int charNum, int points, bool ignoreDeath);
 
 	LoLCharacter *_characters;
 	uint16 _activeCharsXpos[3];
@@ -1301,7 +1313,6 @@ private:
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
-	uint8 getRandomNumberSpecial();
 
 	uint8 _compassBroken;
 	uint8 _drainMagic;
@@ -1346,6 +1357,8 @@ private:
 
 	void callbackProcessMagicSwarm(WSAMovie_v2 *mov, int x, int y);
 	void callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y);
+
+	void drinkBezelCup(int a, int charNum);
 
 	void addSpellToScroll(int spell, int charNum);
 	void transferSpellToScollAnimation(int charNum, int spell, int slot);
@@ -1393,14 +1406,14 @@ private:
 	// fight
 	int battleHitSkillTest(int16 attacker, int16 target, int skill);
 	int calcInflictableDamage(int16 attacker, int16 target, int hitType);
-	int inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int deathFlag);
+	int inflictDamage(uint16 target, int damage, uint16 attacker, int skill, int flags);
 	void characterHitpointsZero(int16 charNum, int a);
 	void removeCharacterEffects(LoLCharacter *c, int first, int last);
 	int calcInflictableDamagePerItem(int16 attacker, int16 target, uint16 itemMight, int index, int hitType);
 	void checkForPartyDeath();
 
 	void applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, int16 damage);
-	void applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int deathFlag, int skill, int damage);
+	void applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int flags, int skill, int damage);
 	int removeCharacterItem(int charNum, int itemFlags);
 	int paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFlags, int hitChance, int redraw);
 	void paralyzePoisonAllCharacters(int typeFlag, int immunityFlags, int hitChance);
@@ -1417,7 +1430,7 @@ private:
 	uint16 getNearestMonsterFromPos(int x, int y);
 	uint16 getNearestPartyMemberFromPos(int x, int y);
 
-	int _partyDeathFlag;
+	int _partyDamageFlags;
 
 	// magic atlas
 	void displayAutomap();
@@ -1459,7 +1472,7 @@ private:
 	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
 	void generateTempData();
-	LevelTempData *_lvlTempData[28];
+	LevelTempData *_lvlTempData[29];
 };
 
 } // end of namespace Kyra

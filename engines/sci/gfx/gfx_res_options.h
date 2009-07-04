@@ -23,8 +23,6 @@
  *
  */
 
-/* Configuration options for per-resource customisations */
-
 #ifndef SCI_GFX_GFX_RES_OPTIONS_H
 #define SCI_GFX_GFX_RES_OPTIONS_H
 
@@ -35,13 +33,16 @@
 #include "sci/gfx/gfx_resmgr.h"
 
 namespace Sci {
+/** @name Configuration options for per-resource customisations */
+/** @{ */
 
 struct gfx_res_pattern_t {
 	int min, max;
 };
 
-/* GFX resource assignments */
-
+/**
+ * GFX resource assignments.
+ */
 struct gfx_res_assign_t {
 	union {
 		struct {
@@ -52,23 +53,24 @@ struct gfx_res_assign_t {
 };
 
 
-/* GFX resource modifications */
-
+/**
+ * GFX resource modifications/
+ */
 struct gfx_res_conf_t {
-	int type; /* Resource type-- only one allowed */
+	int type; /**< Resource type-- only one allowed */
 
 	/* If any of the following is 0, it means that there is no restriction.
 	** Otherwise, one of the patterns associated with them must match. */
-	int patterns_nr; /* Number of patterns (only 'view' patterns for views) */
-	int loops_nr, cels_nr; /* Number of loop/cel patterns, for views only.
+	int patterns_nr; /**< Number of patterns (only 'view' patterns for views) */
+	int loops_nr, cels_nr; /**< Number of loop/cel patterns, for views only.
 			       ** For pics, loops_nr identifies the palette. */
 
 	gfx_res_pattern_t *patterns;
 
 	union {
 		gfx_res_assign_t assign;
-		byte factor[3]; /* divide by 16 to retrieve factor */
-	} conf; /* The actual configuration */
+		byte factor[3]; /**< divide by 16 to retrieve factor */
+	} conf; /**< The actual configuration */
 
 	gfx_res_conf_t *next;
 };
@@ -84,16 +86,20 @@ struct gfx_res_fullconf_t {
 
 struct gfx_options_t;
 
+/**
+ * Configures a graphical pixmap according to config options.
+ *
+ * Modifies pxm as considered appropriate by configuration options. Does
+ * not do anything in colour index mode.
+ *
+ * @param[in] options	The options according to which configuration
+ * 						should be performed
+ * @param[in] pxm		The pixmap to configure
+ * @return				0 on success, non-zero otherwise
+ */
 int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm);
-/* Configures a graphical pixmap according to config options
-** Parameters: (gfx_options_t *) options: The options according to which
-**                                        configuration should be performed
-**             (gfx_resource_type_t) pxm: The pixmap to configure
-** Returns   : (int) 0 on success, non-zero otherwise
-** Modifies pxm as considered appropriate by configuration options. Does
-** not do anything in colour index mode.
-*/
 
+/** @} */
 } // End of namespace Sci
 
 #endif

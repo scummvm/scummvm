@@ -125,6 +125,9 @@
 			RelativePath="..\..\engines\parallaction\dialogue.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\disk.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\disk.h">
 		</File>
 		<File
@@ -168,12 +171,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\gui_ns.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\iff.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\iff.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\input.cpp">

@@ -92,13 +92,10 @@ public:
 
 	void putBlock(int x1, int y1, int x2, int y2);
 	void gfxSetPalette();
-	void setCursor(bool amigaStyleCursor = false);
+	void setCursor(bool amigaStyleCursor = false, bool busy = false);
 	void setCursorPalette(bool amigaStylePalette = false);
 
-	int keypress();
-	int getKey();
 	void printCharacter(int, int, char, int, int);
-	void pollTimer();
 	int initMachine();
 	int deinitMachine();
 };

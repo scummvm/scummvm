@@ -335,14 +335,6 @@ void DosSoundMan_ns::playLocationMusic(const char *location) {
 
 AmigaSoundMan_ns::AmigaSoundMan_ns(Parallaction_ns *vm) : SoundMan_ns(vm) {
 	_musicStream = 0;
-	_channels[0].data = 0;
-	_channels[0].dispose = false;
-	_channels[1].data = 0;
-	_channels[1].dispose = false;
-	_channels[2].data = 0;
-	_channels[2].dispose = false;
-	_channels[3].data = 0;
-	_channels[3].dispose = false;
 }
 
 AmigaSoundMan_ns::~AmigaSoundMan_ns() {
@@ -360,30 +352,30 @@ static int8 res_amigaBeep[AMIGABEEP_SIZE] = {
 	0, 20, 40, 60, 80, 60, 40, 20, 0, -20, -40, -60, -80, -60, -40, -20
 };
 
+Audio::AudioStream *AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch, bool looping) {
+	Audio::AudioStream *input = 0;
 
-void AmigaSoundMan_ns::loadChannelData(const char *filename, Channel *ch) {
 	if (!scumm_stricmp("beep", filename)) {
-		ch->header.oneShotHiSamples = 0;
-		ch->header.repeatHiSamples = 0;
-		ch->header.samplesPerHiCycle = 0;
-		ch->header.samplesPerSec = 11934;
-		ch->header.volume = 160;
-		ch->data = (int8*)malloc(AMIGABEEP_SIZE * NUM_REPEATS);
-		int8* odata = ch->data;
+		// TODO: make a permanent stream out of this
+		uint32 dataSize = AMIGABEEP_SIZE * NUM_REPEATS;
+		int8 *data = (int8*)malloc(dataSize);
+		int8 *odata = data;
 		for (uint i = 0; i < NUM_REPEATS; i++) {
 			memcpy(odata, res_amigaBeep, AMIGABEEP_SIZE);
 			odata += AMIGABEEP_SIZE;
 		}
-		ch->dataSize = AMIGABEEP_SIZE * NUM_REPEATS;
-		ch->dispose = true;
-		return;
+		int rate = 11934;
+		ch->volume = 160;
+		input = Audio::makeLinearInputStream((byte *)data, dataSize, rate, Audio::Mixer::FLAG_AUTOFREE, 0, 0);
+	} else {
+		Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
+		input = Audio::make8SVXStream(*stream, looping);
+		delete stream;
 	}
 
-	Common::SeekableReadStream *stream = _vm->_disk->loadSound(filename);
-	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
-	decoder.decode();
-	ch->dispose = true;
-	delete stream;
+	ch->stream = input;
+
+	return input;
 }
 
 void AmigaSoundMan_ns::playSfx(const char *filename, uint channel, bool looping, int volume) {
@@ -397,27 +389,13 @@ void AmigaSoundMan_ns::playSfx(const char *filename, uint channel, bool looping,
 	debugC(1, kDebugAudio, "AmigaSoundMan_ns::playSfx(%s, %i)", filename, channel);
 
 	Channel *ch = &_channels[channel];
-	loadChannelData(filename, ch);
-
-	uint32 loopStart, loopEnd, flags;
-	if (looping) {
-		// the standard way to loop 8SVX audio implies use of the oneShotHiSamples and
-		// repeatHiSamples fields, but Nippon Safes handles loops according to flags
-		// set in its location scripts and always operates on the whole data.
-		loopStart = 0;
-		loopEnd = ch->header.oneShotHiSamples + ch->header.repeatHiSamples;
-		flags = Audio::Mixer::FLAG_LOOP;
-	} else {
-		loopStart = loopEnd = 0;
-		flags = 0;
-	}
+	Audio::AudioStream *input = loadChannelData(filename, ch, looping);
 
 	if (volume == -1) {
-		volume = ch->header.volume;
+		volume = ch->volume;
 	}
 
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &ch->handle, ch->data, ch->dataSize,
-		ch->header.samplesPerSec, flags, -1, volume, 0, loopStart, loopEnd);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 }
 
 void AmigaSoundMan_ns::stopSfx(uint channel) {
@@ -426,12 +404,9 @@ void AmigaSoundMan_ns::stopSfx(uint channel) {
 		return;
 	}
 
-	if (_channels[channel].dispose) {
-		debugC(1, kDebugAudio, "AmigaSoundMan_ns::stopSfx(%i)", channel);
-		_mixer->stopHandle(_channels[channel].handle);
-		free(_channels[channel].data);
-		_channels[channel].data = 0;
-	}
+	debugC(1, kDebugAudio, "AmigaSoundMan_ns::stopSfx(%i)", channel);
+	_mixer->stopHandle(_channels[channel].handle);
+	_channels[channel].stream = 0;
 }
 
 void AmigaSoundMan_ns::playMusic() {

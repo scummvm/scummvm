@@ -1596,6 +1596,13 @@ void ScummEngine::setupMusic(int midi) {
 	case MD_PCJR:
 		_musicType = MDT_PCSPK;
 		break;
+	case MD_CMS:
+#if 1
+		_musicType = MDT_ADLIB;
+#else
+		_musicType = MDT_CMS; // Still has number of bugs, disable by default
+#endif
+		break;
 	case MD_TOWNS:
 		_musicType = MDT_TOWNS;
 		break;
@@ -1650,7 +1657,7 @@ void ScummEngine::setupMusic(int midi) {
 	 * automatically when samples need to be generated */
 	if (!_mixer->isReady()) {
 		warning("Sound mixer initialization failed");
-		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK)	{
+		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK || _musicType == MDT_CMS)	{
 			midiDriver = MD_NULL;
 			_musicType = MDT_NONE;
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
@@ -1680,6 +1687,8 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V2(this, _mixer, midiDriver != MD_PCSPK);
 	} else if ((_musicType == MDT_PCSPK) && (_game.version > 2 && _game.version <= 4)) {
 		_musicEngine = new Player_V2(this, _mixer, midiDriver != MD_PCSPK);
+	} else if (_musicType == MDT_CMS) {
+		_musicEngine = new Player_V2CMS(this, _mixer);
 	} else if (_game.platform == Common::kPlatform3DO && _game.heversion == 61) {
 		// 3DO versions use digital music and sound samples.
 	} else if (_game.version >= 3 && _game.heversion <= 61) {

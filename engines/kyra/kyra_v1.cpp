@@ -81,7 +81,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	Common::addDebugChannel(kDebugLevelMovie, "Movie", "Movie debug level");
 	Common::addDebugChannel(kDebugLevelTimer, "Timer", "Timer debug level");
 
-	system->getEventManager()->registerRandomSource(_rnd, "kyra");
+	_eventMan->registerRandomSource(_rnd, "kyra");
 }
 
 ::GUI::Debugger *KyraEngine_v1::getDebugger() {
@@ -94,8 +94,6 @@ void KyraEngine_v1::pauseEngineIntern(bool pause) {
 }
 
 Common::Error KyraEngine_v1::init() {
-	registerDefaultSettings();
-
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
@@ -278,10 +276,10 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 			} else {
 				switch(event.kbd.keycode) {
 				case Common::KEYCODE_SPACE:
-					keys = 43;
+					keys = 61;
 					break;
 				case Common::KEYCODE_RETURN:
-					keys = 61;
+					keys = 43;
 					break;
 				case Common::KEYCODE_UP:
 				case Common::KEYCODE_KP8:
@@ -343,6 +341,10 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		case Common::EVENT_LBUTTONUP: {
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
+			if (_flags.useHiResOverlay) {
+				_mouseX >>= 1;
+				_mouseY >>= 1;
+			}
 			keys = (event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800));
 			breakLoop = true;
 			} break;
@@ -351,6 +353,10 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		case Common::EVENT_RBUTTONUP: {
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
+			if (_flags.useHiResOverlay) {
+				_mouseX >>= 1;
+				_mouseY >>= 1;
+			}
 			keys = (event.type == Common::EVENT_RBUTTONDOWN ? 201 : (202 | 0x800));
 			breakLoop = true;
 			} break;
@@ -462,15 +468,18 @@ void KyraEngine_v1::resetSkipFlag(bool removeEvent) {
 
 
 int KyraEngine_v1::setGameFlag(int flag) {
+	assert((flag >> 3) >= 0 && (flag >> 3) <= ARRAYSIZE(_flagsTable));
 	_flagsTable[flag >> 3] |= (1 << (flag & 7));
 	return 1;
 }
 
 int KyraEngine_v1::queryGameFlag(int flag) const {
+	assert((flag >> 3) >= 0 && (flag >> 3) <= ARRAYSIZE(_flagsTable));
 	return ((_flagsTable[flag >> 3] >> (flag & 7)) & 1);
 }
 
 int KyraEngine_v1::resetGameFlag(int flag) {
+	assert((flag >> 3) >= 0 && (flag >> 3) <= ARRAYSIZE(_flagsTable));
 	_flagsTable[flag >> 3] &= ~(1 << (flag & 7));
 	return 0;
 }
@@ -583,27 +592,27 @@ bool KyraEngine_v1::textEnabled() {
 	return !_flags.isTalkie || (_configVoice == 0 || _configVoice == 2);
 }
 
-inline int convertValueToMixer(int value) {
+int KyraEngine_v1::convertVolumeToMixer(int value) {
 	value -= 2;
 	return (value * Audio::Mixer::kMaxMixerVolume) / 95;
 }
 
-inline int convertValueFromMixer(int value) {
+int KyraEngine_v1::convertVolumeFromMixer(int value) {
 	return (value * 95) / Audio::Mixer::kMaxMixerVolume + 2;
 }
 
 void KyraEngine_v1::setVolume(kVolumeEntry vol, uint8 value) {
 	switch (vol) {
 	case kVolumeMusic:
-		ConfMan.setInt("music_volume", convertValueToMixer(value));
+		ConfMan.setInt("music_volume", convertVolumeToMixer(value));
 		break;
 
 	case kVolumeSfx:
-		ConfMan.setInt("sfx_volume", convertValueToMixer(value));
+		ConfMan.setInt("sfx_volume", convertVolumeToMixer(value));
 		break;
 
 	case kVolumeSpeech:
-		ConfMan.setInt("speech_volume", convertValueToMixer(value));
+		ConfMan.setInt("speech_volume", convertVolumeToMixer(value));
 		break;
 	}
 
@@ -618,16 +627,16 @@ void KyraEngine_v1::setVolume(kVolumeEntry vol, uint8 value) {
 uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 	switch (vol) {
 	case kVolumeMusic:
-		return convertValueFromMixer(ConfMan.getInt("music_volume"));
+		return convertVolumeFromMixer(ConfMan.getInt("music_volume"));
 		break;
 
 	case kVolumeSfx:
-		return convertValueFromMixer(ConfMan.getInt("sfx_volume"));
+		return convertVolumeFromMixer(ConfMan.getInt("sfx_volume"));
 		break;
 
 	case kVolumeSpeech:
 		if (speechEnabled())
-			return convertValueFromMixer(ConfMan.getInt("speech_volume"));
+			return convertVolumeFromMixer(ConfMan.getInt("speech_volume"));
 		else
 			return 2;
 		break;

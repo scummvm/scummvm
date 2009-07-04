@@ -211,6 +211,8 @@ dist-src: \
 	@#RPM-src?
 	@#DEB-src?
 
+# Common files
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.LGPL COPYRIGHT NEWS README)
 
 # Themes files
 DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,scummmodern.zip)
@@ -239,6 +241,11 @@ ifdef ENABLE_SKY
 DIST_FILES_ENGINEDATA+=sky.cpt
 endif
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
+
+# pred.dic is currently only used for the AGI engine
+ifdef ENABLE_AGI
+DIST_FILES_ENGINEDATA+=$(srcdir)/dists/pred.dic
+endif
 
 # Plugin files
 DIST_FILES_PLUGINS:=$(addprefix $(srcdir)/,$(PLUGINS))

@@ -69,18 +69,27 @@ public:
 	uint getKernelNamesSize() const { return _kernelNames.size(); }
 	const Common::String &getKernelName(uint number) const { return _kernelNames[number]; }
 
-	/* Determines the selector ID of a selector by its name
-	**             (const char *) selectorName: Name of the selector to look up
-	** Returns   : (int) The appropriate selector ID, or -1 on error
-	*/
+	/**
+	 * Determines the selector ID of a selector by its name
+	 * @param selectorName Name of the selector to look up
+	 * @return The appropriate selector ID, or -1 on error
+	 */
 	int findSelector(const char *selectorName) const;
 
-	/* Detects whether a particular kernel function is required in the game
-	**             (const char *) functionName: The name of the desired kernel function
-	** Returns   : (bool) true if the kernel function is listed in the kernel table,
-	**                   false otherwise
+	/**
+	 * Detects whether a particular kernel function is required in the game
+	 * @param functionName The name of the desired kernel function
+	 * @return True if the kernel function is listed in the kernel table, false otherwise
 	*/
 	bool hasKernelFunction(const char *functionName) const;
+
+	/* Applies to all versions before 0.000.502
+	** Old SCI versions used to interpret the third DrawPic() parameter inversely,
+	** with the opposite default value (obviously).
+	** Also, they used 15 priority zones from 42 to 200 instead of 14 priority
+	** zones from 42 to 190.
+	*/
+	bool usesOldGfxFunctions() const { return _oldGfxFunctions; }
 
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
@@ -104,18 +113,18 @@ private:
 
 	/**
 	* Loads the kernel selector names.
-	* Returns true upon success, false otherwise.
+	* @return True upon success, false otherwise.
 	*/
 	bool loadSelectorNames(bool isOldSci0);
 
-	/* Maps special selectors
-	** Returns   : (void)
-	*/
+	/**
+	 * Maps special selectors
+	 */
 	void mapSelectors();
 
-	/* Maps kernel functions
-	** Returns   : (void)
-	*/
+	/**
+	 * Maps kernel functions
+	 */
 	void mapFunctions();
 
 	/**
@@ -125,10 +134,13 @@ private:
 	bool loadOpcodes();
 
 	ResourceManager *_resmgr;
+	bool _oldGfxFunctions;
 
 	// Kernel-related lists
-	// List of opcodes, loaded from vocab.998. This list is only used for debugging
-	// purposes, as we hardcode the list of opcodes in the sci_opcodes enum (script.h)
+	/**
+	 * List of opcodes, loaded from vocab.998. This list is only used for debugging
+	 * purposes, as we hardcode the list of opcodes in the sci_opcodes enum (script.h)
+	 */
 	Common::Array<opcode> _opcodes;
 	Common::StringList _selectorNames;
 	Common::StringList _kernelNames;
@@ -178,72 +190,62 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 
 
 /******************** Text functionality ********************/
+/**
+ * Looks up text referenced by scripts
+ * SCI uses two values to reference to text: An address, and an index. The address
+ * determines whether the text should be read from a resource file, or from the heap,
+ * while the index either refers to the number of the string in the specified source,
+ * or to a relative position inside the text.
+ *
+ * @param s The current state
+ * @param address The address to look up
+ * @param index The relative index
+ * @return The referenced text, or NULL on error.
+ */
 char *kernel_lookup_text(EngineState *s, reg_t address, int index);
-/* Looks up text referenced by scripts
-** Parameters: (EngineState *s): The current state
-**             (reg_t) address: The address to look up
-**             (int) index: The relative index
-** Returns   : (char *): The referenced text, or NULL on error.
-** SCI uses two values to reference to text: An address, and an index. The address
-** determines whether the text should be read from a resource file, or from the heap,
-** while the index either refers to the number of the string in the specified source,
-** or to a relative position inside the text.
-*/
 
 
 /******************** Debug functionality ********************/
-
+/**
+ * Checks whether a heap address contains an object
+ * @param s The current state
+ * @parm obj The address to check
+ * @return True if it is an object, false otherwise
+ */
 bool is_object(EngineState *s, reg_t obj);
-/* Checks whether a heap address contains an object
-** Parameters: (EngineState *) s: The current state
-**             (reg_t) obj: The address to check
-** Returns   : (bool) true if it is an object, false otherwise
-*/
 
 /******************** Kernel function parameter macros ********************/
 
 /* Returns the parameter value or (alt) if not enough parameters were supplied */
-
-
-#define KP_ALT(x, alt) ((x < argc)? argv[x] : (alt))
-#define KP_UINT(x) ((uint16) x.offset)
-#define KP_SINT(x) ((int16) x.offset)
-
-
-#define SKPV(x) KP_SINT(argv[x])
-#define UKPV(x) KP_UINT(argv[x])
-#define SKPV_OR_ALT(x,a) KP_SINT(KP_ALT(x, make_reg(0, a)))
-#define UKPV_OR_ALT(x,a) KP_UINT(KP_ALT(x, make_reg(0, a)))
-
+/**
+ * Dereferences a heap pointer
+ * @param s The state to operate on
+ * @param pointer The pointer to dereference
+ * @parm entries The number of values expected (for checking; use 0 for strings)
+ * @return A physical reference to the address pointed to, or NULL on error or
+ * if not enugh entries were available.
+ * reg_t dereferenciation also assures alignedness of data.
+ */
 reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries);
 byte *kernel_dereference_bulk_pointer(EngineState *s, reg_t pointer, int entries);
 #define kernel_dereference_char_pointer(state, pointer, entries) (char*)kernel_dereference_bulk_pointer(state, pointer, entries)
-/* Dereferences a heap pointer
-** Parameters: (EngineState *) s: The state to operate on
-**             (reg_t ) pointer: The pointer to dereference
-**             (int) entries: The number of values expected (for checking)
-**                            (use 0 for strings)
-** Returns   : (reg_t/char *): A physical reference to the address pointed
-**                        to, or NULL on error or if not enugh entries
-**                        were available
-** reg_t dereferenciation also assures alignedness of data.
-*/
 
 /******************** Priority macros/functions ********************/
-
+/**
+ * Finds the position of the priority band specified
+ * Parameters: (EngineState *) s: State to search in
+ * (int) band: Band to look for
+ * Returns   : (int) Offset at which the band starts
+ */
 int _find_priority_band(EngineState *s, int band);
-/* Finds the position of the priority band specified
-** Parameters: (EngineState *) s: State to search in
-**             (int) band: Band to look for
-** Returns   : (int) Offset at which the band starts
-*/
 
+/**
+ * Does the opposite of _find_priority_band
+ * @param s Engine state
+ * @param y Coordinate to check
+ * @return The priority band y belongs to
+ */
 int _find_view_priority(EngineState *s, int y);
-/* Does the opposite of _find_priority_band
-** Parameters: (EngineState *) s: State
-**             (int) y: Coordinate to check
-** Returns   : (int) The priority band y belongs to
-*/
 
 #define SCI0_VIEW_PRIORITY_14_ZONES(y) (((y) < s->priority_first)? 0 : (((y) >= s->priority_last)? 14 : 1\
 	+ ((((y) - s->priority_first) * 14) / (s->priority_last - s->priority_first))))
@@ -257,58 +259,62 @@ int _find_view_priority(EngineState *s, int y);
 #define SCI0_PRIORITY_BAND_FIRST(nr) ((((nr) == 0)? 0 :  \
 	((s->priority_first) + (((nr)-1) * (s->priority_last - s->priority_first)) / 15)))
 
-#define VIEW_PRIORITY(y) _find_view_priority(s, y)
-#define PRIORITY_BAND_FIRST(nr) _find_priority_band(s, nr)
-
-
-
 
 
 /******************** Dynamic view list functions ********************/
-
+/**
+ * Determines the base rectangle of the specified view object
+ * @param s The state to use
+ * @param object The object to set
+ * @return The absolute base rectangle
+ */
 Common::Rect set_base(EngineState *s, reg_t object);
-/* Determines the base rectangle of the specified view object
-** Parameters: (EngineState *) s: The state to use
-**             (reg_t) object: The object to set
-** Returns   : (abs_rect) The absolute base rectangle
-*/
 
+/**
+ * Determines the now-seen rectangle of a view object
+ * @param s The state to use
+ * @param object The object to check
+ * @param clip Flag to determine wheter priority band clipping 
+ * should be performed
+ * @return The absolute rectangle describing the now-seen area.
+ */
 extern Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip);
-/* Determines the now-seen rectangle of a view object
-** Parameters: (EngineState *) s: The state to use
-**             (reg_t) object: The object to check
-**             (byte) clip: Flag to determine wheter priority band
-**                          clipping should be performed
-** Returns   : (abs_rect) The absolute rectangle describing the
-** now-seen area.
-*/
 
+/**
+ * Removes all views in anticipation of a new window or text 
+ */
 void _k_dyn_view_list_prepare_change(EngineState *s);
-/* Removes all views in anticipation of a new window or text */
+
+/**
+ * Redraws all views after a new window or text was added 
+ */
 void _k_dyn_view_list_accept_change(EngineState *s);
-/* Redraws all views after a new window or text was added */
 
 
 
 
 /******************** Misc functions ********************/
 
-void process_sound_events(EngineState *s); /* Get all sound events, apply their changes to the heap */
+/**
+ * Get all sound events, apply their changes to the heap 
+ */
+void process_sound_events(EngineState *s);
 
+/**
+ * Resolves an address into a list node
+ * @param s The state to operate on
+ * @param addr The address to resolve
+ * @return The list node referenced, or NULL on error
+ */
 Node *lookup_node(EngineState *s, reg_t addr);
-/* Resolves an address into a list node
-** Parameters: (EngineState *) s: The state to operate on
-**             (reg_t) addr: The address to resolve
-** Returns   : (Node *) The list node referenced, or NULL on error
-*/
 
-
+/**
+ * Resolves a list pointer to a list
+ * @param s The state to operate on
+ * @param addr The address to resolve
+ * @return The list referenced, or NULL on error
+ */
 List *lookup_list(EngineState *s, reg_t addr);
-/* Resolves a list pointer to a list
-** Parameters: (EngineState *) s: The state to operate on
-**             (reg_t) addr: The address to resolve
-** Returns   : (List *) The list referenced, or NULL on error
-*/
 
 
 /******************** Constants ********************/

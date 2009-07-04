@@ -44,9 +44,8 @@ int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 	_game.numObjects = 0;
 	_objects = NULL;
 
-	/* check if first pointer exceeds file size
-	 * if so, its encrypted, else it is not
-	 */
+	// check if first pointer exceeds file size
+	// if so, its encrypted, else it is not
 
 	if (READ_LE_UINT16(mem) > flen) {
 		report("Decrypting objects... ");
@@ -54,11 +53,10 @@ int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 		report("done.\n");
 	}
 
-	/* alloc memory for object list
-	 * byte 3 = number of animated objects. this is ignored.. ??
-	 */
+	// alloc memory for object list
+	// byte 3 = number of animated objects. this is ignored.. ??
 	if (READ_LE_UINT16(mem) / padsize >= 256) {
-		/* die with no error! AGDS game needs not to die to work!! :( */
+		// die with no error! AGDS game needs not to die to work!! :(
 		return errOK;
 	}
 
@@ -68,7 +66,7 @@ int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 	if (allocObjects(_game.numObjects) != errOK)
 		return errNotEnoughMemory;
 
-	/* build the object list */
+	// build the object list
 	for (i = 0, so = padsize; i < _game.numObjects; i++, so += padsize) {
 		int offset;
 

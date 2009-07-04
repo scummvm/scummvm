@@ -107,11 +107,8 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	changeCursor(CURSOR_DISK);
 
-	currentVolumeFile.read(&volumeNumberOfEntry, 2);
-	currentVolumeFile.read(&volumeSizeOfEntry, 2);
-
-	bigEndianShortToNative(&volumeNumberOfEntry);
-	bigEndianShortToNative(&volumeSizeOfEntry);
+	volumeNumberOfEntry = currentVolumeFile.readSint16BE();
+	volumeSizeOfEntry = currentVolumeFile.readSint16BE();
 
 	volumeNumEntry = volumeNumberOfEntry;
 
@@ -129,16 +126,10 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	for (i = 0; i < volumeNumEntry; i++) {
 		currentVolumeFile.read(&volumePtrToFileDescriptor[i].name, 14);
-		currentVolumeFile.read(&volumePtrToFileDescriptor[i].offset, 4);
-		currentVolumeFile.read(&volumePtrToFileDescriptor[i].size, 4);
-		currentVolumeFile.read(&volumePtrToFileDescriptor[i].extSize, 4);
-		currentVolumeFile.read(&volumePtrToFileDescriptor[i].unk3, 4);
-	}
-
-	for (i = 0; i < volumeNumEntry; i++) {
-		bigEndianLongToNative(&volumePtrToFileDescriptor[i].offset);
-		bigEndianLongToNative(&volumePtrToFileDescriptor[i].size);
-		bigEndianLongToNative(&volumePtrToFileDescriptor[i].extSize);
+		volumePtrToFileDescriptor[i].offset = currentVolumeFile.readSint32BE();
+		volumePtrToFileDescriptor[i].size = currentVolumeFile.readSint32BE();
+		volumePtrToFileDescriptor[i].extSize = currentVolumeFile.readSint32BE();
+		volumePtrToFileDescriptor[i].unk3 = currentVolumeFile.readSint32BE();
 	}
 
 	strcpy(currentBaseName, entry->ident);
@@ -355,29 +346,23 @@ int16 readVolCnf(void) {
 		return (0);
 	}
 
-	fileHandle.read(&numOfDisks, 2);
-	bigEndianShortToNative(&numOfDisks);
-
-	fileHandle.read(&sizeHEntry, 2);
-	bigEndianShortToNative(&sizeHEntry);	// size of one header entry - 20 bytes
+	numOfDisks = fileHandle.readSint16BE();
+	sizeHEntry = fileHandle.readSint16BE();		// size of one header entry - 20 bytes
 
 	for (i = 0; i < numOfDisks; i++) {
 		//      fread(&volumeData[i],20,1,fileHandle);
 		fileHandle.read(&volumeData[i].ident, 10);
 		fileHandle.read(&volumeData[i].ptr, 4);
-		fileHandle.read(&volumeData[i].diskNumber, 2);
-		fileHandle.read(&volumeData[i].size, 4);
+		volumeData[i].diskNumber = fileHandle.readSint16BE();
+		volumeData[i].size = fileHandle.readSint32BE();
 
-		bigEndianShortToNative(&volumeData[i].diskNumber);
 		debug(1, "Disk number: %d", volumeData[i].diskNumber);
-		bigEndianLongToNative(&volumeData[i].size);
 	}
 
 	for (i = 0; i < numOfDisks; i++) {
 		dataFileName *ptr;
 
-		fileHandle.read(&volumeData[i].size, 4);
-		bigEndianLongToNative(&volumeData[i].size);
+		volumeData[i].size = fileHandle.readSint32BE();
 
 		ptr = (dataFileName *) mallocAndZero(volumeData[i].size);
 

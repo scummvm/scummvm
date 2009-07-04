@@ -106,6 +106,8 @@ inline void debug(int level, const char *s, ...) {}
 inline void debugN(int level, const char *s, ...) {}
 inline void debugC(int level, uint32 engine_level, const char *s, ...) {}
 inline void debugC(uint32 engine_level, const char *s, ...) {}
+inline void debugCN(int level, uint32 engine_level, const char *s, ...) {}
+inline void debugCN(uint32 engine_level, const char *s, ...) {}
 
 
 #else
@@ -135,7 +137,7 @@ void debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
 
 /**
  * Print a debug message to the text console (stdout), but only if
- * the specified level does not exceed the value of gDebugLevel OR
+ * the specified level does not exceed the value of gDebugLevel AND
  * if the specified special debug level is active.
  * As a rule of thumb, the more important the message, the lower the level.
  * Automatically appends a newline.
@@ -146,6 +148,17 @@ void debugC(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4
 
 /**
  * Print a debug message to the text console (stdout), but only if
+ * the specified level does not exceed the value of gDebugLevel AND
+ * if the specified special debug level is active.
+ * As a rule of thumb, the more important the message, the lower the level.
+ * Does not append a newline automatically.
+ *
+ * @see enableDebugChannel
+ */
+void debugCN(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4);
+
+/**
+ * Print a debug message to the text console (stdout), but only if
  * the specified special debug level is active.
  * Automatically appends a newline.
  *
@@ -153,6 +166,14 @@ void debugC(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4
  */
 void debugC(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
 
+/**
+ * Print a debug message to the text console (stdout), but only if
+ * the specified special debug level is active.
+ * Does not append a newline automatically.
+ *
+ * @see enableDebugChannel
+ */
+void debugCN(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
 
 #endif
 

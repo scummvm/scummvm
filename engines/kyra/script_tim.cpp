@@ -116,6 +116,33 @@ TIMInterpreter::~TIMInterpreter() {
 	delete[] _animations;
 }
 
+bool TIMInterpreter::callback(Common::IFFChunk &chunk) {
+	switch (chunk._type) {
+	case MKID_BE('TEXT'):
+		_tim->text = new byte[chunk._size];
+		assert(_tim->text);
+		if (chunk._stream->read(_tim->text, chunk._size) != chunk._size)
+			error("Couldn't read TEXT chunk from file '%s'", _filename);
+		break;
+
+	case MKID_BE('AVTL'):
+		_avtlChunkSize = chunk._size >> 1;
+		_tim->avtl = new uint16[_avtlChunkSize];
+		assert(_tim->avtl);
+		if (chunk._stream->read(_tim->avtl, chunk._size) != chunk._size)
+			error("Couldn't read AVTL chunk from file '%s'", _filename);
+
+		for (int i = _avtlChunkSize - 1; i >= 0; --i)
+			_tim->avtl[i] = READ_LE_UINT16(&_tim->avtl[i]);
+		break;
+
+	default:
+		warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk._type), chunk._size, _filename);
+	}
+
+	return false;
+}
+
 TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpcode *> *opcodes) {
 	if (!_vm->resource()->exists(filename))
 		return 0;
@@ -124,44 +151,21 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	if (!stream)
 		error("Couldn't open TIM file '%s'", filename);
 
+	_avtlChunkSize = 0;
+	_filename = filename;
+
+	_tim = new TIM;
+	assert(_tim);
+	memset(_tim, 0, sizeof(TIM));
+
+	_tim->procFunc = -1;
+	_tim->opcodes = opcodes;
+
 	IFFParser iff(*stream);
-	Common::IFFChunk *chunk = 0;
+	Common::Functor1Mem< Common::IFFChunk &, bool, TIMInterpreter > c(this, &TIMInterpreter::callback);
+	iff.parse(c);
 
-	TIM *tim = new TIM;
-	assert(tim);
-	memset(tim, 0, sizeof(TIM));
-
-	tim->procFunc = -1;
-	tim->opcodes = opcodes;
-
-	int avtlChunkSize = 0;
-
-	while ((chunk = iff.nextChunk()) != 0) {
-		switch (chunk->id) {
-		case MKID_BE('TEXT'):
-			tim->text = new byte[chunk->size];
-			assert(tim->text);
-			if (chunk->read(tim->text, chunk->size) != chunk->size)
-				error("Couldn't read TEXT chunk from file '%s'", filename);
-			break;
-
-		case MKID_BE('AVTL'):
-			avtlChunkSize = chunk->size >> 1;
-			tim->avtl = new uint16[avtlChunkSize];
-			assert(tim->avtl);
-			if (chunk->read(tim->avtl, chunk->size) != chunk->size)
-				error("Couldn't read AVTL chunk from file '%s'", filename);
-
-			for (int i = avtlChunkSize - 1; i >= 0; --i)
-				tim->avtl[i] = READ_LE_UINT16(&tim->avtl[i]);
-			break;
-
-		default:
-			warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk->id), chunk->size, filename);
-		}
-	}
-
-	if (!tim->avtl)
+	if (!_tim->avtl)
 		error("No AVTL chunk found in file: '%s'", filename);
 
 	if (stream->err())
@@ -169,17 +173,17 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 
 	delete stream;
 
-	int num = (avtlChunkSize < TIM::kCountFuncs) ? avtlChunkSize : (int)TIM::kCountFuncs;
+	int num = (_avtlChunkSize < TIM::kCountFuncs) ? _avtlChunkSize : (int)TIM::kCountFuncs;
 	for (int i = 0; i < num; ++i)
-		tim->func[i].avtl = tim->avtl + tim->avtl[i];
+		_tim->func[i].avtl = _tim->avtl + _tim->avtl[i];
 
-	strncpy(tim->filename, filename, 13);
-	tim->filename[12] = 0;
+	strncpy(_tim->filename, filename, 13);
+	_tim->filename[12] = 0;
 
-	tim->isLoLOutro = (_vm->gameFlags().gameID == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
-	tim->lolCharacter = 0;
+	_tim->isLoLOutro = (_vm->gameFlags().gameID == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
+	_tim->lolCharacter = 0;
 
-	return tim;
+	return _tim;
 }
 
 void TIMInterpreter::unload(TIM *&tim) const {
@@ -300,13 +304,15 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 			memcpy(filename, text+1, end-1-text);
 	}
 
-	if (filename[0])
+	const bool isPC98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
+	if (filename[0] && (_vm->speechEnabled() || isPC98))
 		_vm->sound()->voicePlay(filename);
 
 	if (text[0] == '$')
 		text = strchr(text + 1, '$') + 1;
 
-	setupTextPalette((flags < 0) ? 1 : flags, 0);
+	if (!isPC98)
+		setupTextPalette((flags < 0) ? 1 : flags, 0);
 
 	if (flags < 0) {
 		static const uint8 colorMap[] = { 0x00, 0xF0, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -324,7 +330,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	char *str = text;
 	int heightAdd = 0;
 
-	while (str[0]) {
+	while (str[0] && _vm->textEnabled()) {
 		char *nextLine = strchr(str, '\r');
 
 		backupChar = 0;
@@ -335,10 +341,16 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 
 		int width = _screen->getTextWidth(str);
 
-		if (flags >= 0)
-			_screen->printText(str, (320 - width) >> 1, 160 + heightAdd, 0xF0, 0x00);
-		else
+		if (flags >= 0) {
+			if (isPC98) {
+				static const uint8 colorMap[] = { 0xE1, 0xE1, 0xC1, 0xA1, 0x81, 0x61 };
+				_screen->printText(str, (320 - width) >> 1, 160 + heightAdd, colorMap[flags], 0x00);
+			} else {
+				_screen->printText(str, (320 - width) >> 1, 160 + heightAdd, 0xF0, 0x00);
+			}
+		} else {
 			_screen->printText(str, (320 - width) >> 1, 188, 0xF0, 0x00);
+		}
 
 		heightAdd += _screen->getFontHeight();
 		str += strlen(str);
@@ -423,7 +435,7 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 	};
 
 	for (int i = 0; i < 15; ++i) {
-		uint8 *palette = _screen->getPalette(0) + (240 + i) * 3;
+		uint8 *palette = _screen->getPalette(0).getData() + (240 + i) * 3;
 
 		uint8 c1 = (((15 - i) << 2) * palTable[index*3+0]) / 100;
 		uint8 c2 = (((15 - i) << 2) * palTable[index*3+1]) / 100;
@@ -471,10 +483,10 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		if (isLoLDemo)
 			anim->wsa = new WSAMovie_v1(_vm);
 		else
-			anim->wsa = new WSAMovie_v2(_vm, _screen);
+			anim->wsa = new WSAMovie_v2(_vm);
 		assert(anim->wsa);
 
-		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? _screen->getPalette(0) : 0);
+		anim->wsa->open(file, wsaOpenFlags, (index == 1) ? &_screen->getPalette(0) : 0);
 	}
 
 	if (anim->wsa && anim->wsa->opened()) {
@@ -511,14 +523,14 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 			snprintf(file, 32, "%s.CPS", filename);
 
 			if (_vm->resource()->exists(file)) {
-				_screen->loadBitmap(file, 3, 3, _screen->getPalette(0));
+				_screen->loadBitmap(file, 3, 3, &_screen->getPalette(0));
 				_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 				if (_drawPage2)
 					_screen->checkedPageUpdate(8, 4);
 				_screen->updateScreen();
 			}
 
-			anim->wsa->displayFrame(0, 0, x, y, 0);
+			anim->wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 		}
 
 		if (wsaFlags & 2)
@@ -535,7 +547,7 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 		snprintf(file, 32, "%s.CPS", filename);
 
 		if (_vm->resource()->exists(file)) {
-			_screen->loadBitmap(file, 3, 3, _screen->getPalette(0));
+			_screen->loadBitmap(file, 3, 3, &_screen->getPalette(0));
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, _drawPage2, Screen::CR_NO_P_CHECK);
 			if (_drawPage2)
 				_screen->checkedPageUpdate(8, 4);
@@ -941,21 +953,21 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 	snprintf(file, 32, "%s.WSA", filename);
 
 	if (_vm->resource()->exists(file)) {
-		anim->wsa = new WSAMovie_v2(_vm, TIMInterpreter::_screen);
+		anim->wsa = new WSAMovie_v2(_vm);
 		assert(anim->wsa);
-		anim->wsa->open(file, wsaOpenFlags, _screen->getPalette(3));
+		anim->wsa->open(file, wsaOpenFlags, &_screen->getPalette(3));
 	}
 
 	if (wsaFlags & 1) {
 		if (_screen->_fadeFlag != 1)
 			_screen->fadeClearSceneWindow(10);
-		memcpy(_screen->getPalette(3) + 384, _screen->_currentPalette + 384, 384);
+		_screen->getPalette(3).copy(_screen->getPalette(0), 128, 128);
 	} else if (wsaFlags & 2) {
 		_screen->fadeToBlack(10);
 	}
 
 	if (wsaFlags & 7)
-		anim->wsa->displayFrame(0, 0, x, y, 0);
+		anim->wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 
 	if (wsaFlags & 3) {
 		_screen->loadSpecialColors(_screen->getPalette(3));
@@ -1000,7 +1012,7 @@ void TIMInterpreter_LoL::advanceToOpcode(int opcode) {
 void TIMInterpreter_LoL::drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {
 	_screen->setScreenDim(5);
 
-	if (numStr == 1 && _vm->_speechFlag) {
+	if (numStr == 1 && _vm->speechEnabled()) {
 		_dialogueNumButtons = 0;
 		_dialogueButtonString[0] = _dialogueButtonString[1] = _dialogueButtonString[2] = 0;
 	} else {
@@ -1051,7 +1063,7 @@ void TIMInterpreter_LoL::startBackgroundAnimation(int animIndex, int part) {
 
 	// WORKAROUND for some bugged scripts that will try to display frames of non-existent animations
 	if (anim->wsa)
-		anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0);
+		anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0, 0, 0);
 }
 
 void TIMInterpreter_LoL::stopBackgroundAnimation(int animIndex) {
@@ -1110,7 +1122,7 @@ void TIMInterpreter_LoL::updateBackgroundAnimation(int animIndex) {
 
 	anim->nextFrame += (anim->frameDelay * _vm->_tickLength);
 
-	anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0);
+	anim->wsa->displayFrame(anim->curFrame - 1, 0, anim->x, anim->y, 0, 0, 0);
 	anim->nextFrame += _system->getMillis();
 }
 
@@ -1126,10 +1138,12 @@ void TIMInterpreter_LoL::playAnimationPart(int animIndex, int firstFrame, int la
 			_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
 			_screen->updateScreen();
 		} else {
-			anim->wsa->displayFrame(i - 1, 0, anim->x, anim->y, 0);
+			anim->wsa->displayFrame(i - 1, 0, anim->x, anim->y, 0, 0, 0);
 			_screen->updateScreen();
 		}
-		_vm->delayUntil(next);
+		int32 del  = (int32)(next - _system->getMillis());
+		if (del > 0)
+			_vm->delay(del, true);
 	}
 }
 
@@ -1162,7 +1176,8 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	int x = _dialogueButtonPosX;
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
-		if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
+		Common::Point p = _vm->getMousePos();
+		if (_vm->posWithinRect(p.x, p.y, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
 			_dialogueHighlightedButton = i;
 			break;
 		}
@@ -1222,7 +1237,8 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 			x = _dialogueButtonPosX;
 
 			for (int i = 0; i < _dialogueNumButtons; i++) {
-				if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
+				Common::Point p = _vm->getMousePos();
+				if (_vm->posWithinRect(p.x, p.y, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
 					_dialogueHighlightedButton = i;
 					res = _dialogueHighlightedButton + 1;
 					break;

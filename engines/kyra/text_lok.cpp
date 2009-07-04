@@ -39,12 +39,9 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 	uint8 currPage;
 	Common::Event event;
 
-	//while (towns_isEscKeyPressed() )
-		//towns_getKey();
-
 	uint32 timeToEnd = strlen(chatStr) * 8 * _tickLength + _system->getMillis();
 
-	if (_configVoice == 0 && chatDuration != -1) {
+	if (textEnabled() && !speechEnabled() && chatDuration != -1) {
 		switch (_configTextspeed) {
 		case 0:
 			chatDuration *= 2;
@@ -136,7 +133,6 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 	_timer->enable(15);
 	_timer->enable(18);
 	_timer->enable(19);
-	//clearKyrandiaButtonIO();
 }
 
 void KyraEngine_LoK::endCharacterChat(int8 charNum, int16 convoInitialized) {
@@ -329,11 +325,11 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 	_screen->fillRect(8, 143, 311, 152, 12);
 
 	if (_startSentencePalIndex != color || _fadeText != false) {
-		_currSentenceColor[0] = _screen->_currentPalette[765] = _screen->_currentPalette[color*3];
-		_currSentenceColor[1] = _screen->_currentPalette[766] = _screen->_currentPalette[color*3+1];
-		_currSentenceColor[2] = _screen->_currentPalette[767] = _screen->_currentPalette[color*3+2];
+		_currSentenceColor[0] = _screen->getPalette(0)[765] = _screen->getPalette(0)[color*3];
+		_currSentenceColor[1] = _screen->getPalette(0)[766] = _screen->getPalette(0)[color*3+1];
+		_currSentenceColor[2] = _screen->getPalette(0)[767] = _screen->getPalette(0)[color*3+2];
 
-		_screen->setScreenPalette(_screen->_currentPalette);
+		_screen->setScreenPalette(_screen->getPalette(0));
 		_startSentencePalIndex = 0;
 	}
 
@@ -368,10 +364,10 @@ void KyraEngine_LoK::updateTextFade() {
 			}
 	}
 
-	_screen->_currentPalette[765] = _currSentenceColor[0];
-	_screen->_currentPalette[766] = _currSentenceColor[1];
-	_screen->_currentPalette[767] = _currSentenceColor[2];
-	_screen->setScreenPalette(_screen->_currentPalette);
+	_screen->getPalette(0)[765] = _currSentenceColor[0];
+	_screen->getPalette(0)[766] = _currSentenceColor[1];
+	_screen->getPalette(0)[767] = _currSentenceColor[2];
+	_screen->setScreenPalette(_screen->getPalette(0));
 
 	if (finished) {
 		_fadeText = false;

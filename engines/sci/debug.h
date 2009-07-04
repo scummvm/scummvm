@@ -28,19 +28,41 @@
 
 namespace Sci {
 
+enum DebugSeeking {
+	kDebugSeekNothing = 0,
+	kDebugSeekCallk = 1,        // Step forward until callk is found
+	kDebugSeekLevelRet = 2,     // Step forward until returned from this level
+	kDebugSeekSpecialCallk = 3, // Step forward until a /special/ callk is found
+	kDebugSeekSO = 4,           // Step forward until specified PC (after the send command) and stack depth
+	kDebugSeekGlobal = 5        // Step forward until one specified global variable is modified
+};
+
+struct DebugState {
+	bool isValid;
+	bool stopOnEvent;
+	DebugSeeking seeking;		// Stepping forward until some special condition is met
+	int runningStep;			// Set to > 0 to allow multiple stepping
+	int seekLevel;				// Used for seekers that want to check their exec stack depth
+	int seekSpecial;			// Used for special seeks
+	int old_pc_offset;
+	StackPtr old_sp;
+	reg_t *p_pc;
+	StackPtr *p_sp;
+	StackPtr *p_pp;
+	reg_t *p_objp;
+	int *p_restadjust;
+	SegmentId *p_var_segs;
+	reg_t **p_vars;
+	reg_t **p_var_base;
+	int *p_var_max;				// May be NULL even in valid state!
+};
+
 // Various global variables used for debugging are declared here
-
-extern int g_stop_on_event;
-
-extern int g_debugstate_valid;
-extern int g_debug_seeking;
-extern int g_debug_step_running;
-
 extern int g_debug_sleeptime_factor;
 extern int g_debug_simulated_key;
 extern bool g_debug_track_mouse_clicks;
 extern bool g_debug_weak_validations;
-
+extern DebugState debugState;
 
 } // End of namespace Sci
 

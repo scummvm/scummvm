@@ -242,14 +242,14 @@ bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 	if ((index < 0) || (index >= SPRITES_COUNT))
 		return false;
 
-	SurfaceDesc *sprite = _vm->_draw->_spritesArray[index];
+	SurfaceDescPtr sprite = _vm->_draw->_spritesArray[index];
 
 	// Target sprite exists?
 	if (!sprite)
 		return false;
 
 	// Load the sprite
-	if (!_sprite->writeSprite(sprite))
+	if (!_sprite->writeSprite(*sprite))
 		return false;
 
 	// Handle palette
@@ -272,13 +272,13 @@ bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 }
 
 bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
-	SurfaceDesc *sprite;
+	SurfaceDescPtr sprite;
 
 	if (!createSprite(dataVar, size, offset, &sprite))
 		return false;
 
 	// Save the sprite
-	if (!_sprite->readSprite(sprite))
+	if (!_sprite->readSprite(*sprite))
 		return false;
 
 	// Handle palette
@@ -291,7 +291,7 @@ bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
 }
 
 bool TempSpriteHandler::createSprite(int16 dataVar, int32 size,
-		int32 offset, SurfaceDesc **sprite) {
+		int32 offset, SurfaceDescPtr *sprite) {
 
 	delete _sprite;
 	_sprite = 0;
@@ -305,7 +305,7 @@ bool TempSpriteHandler::createSprite(int16 dataVar, int32 size,
 	if ((index < 0) || (index >= SPRITES_COUNT))
 		return false;
 
-	SurfaceDesc *sprt = _vm->_draw->_spritesArray[index];
+	SurfaceDescPtr sprt = _vm->_draw->_spritesArray[index];
 
 	// Sprite exists?
 	if (!sprt)

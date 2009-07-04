@@ -423,8 +423,8 @@ public:
 	void setPalette(int16 startEntry, int16 noEntries, byte *palette, uint8 setNow);
 	void setSystemPalette(const byte *colors, uint start, uint num);
 	uint8 quickMatch(uint8 r, uint8 g, uint8 b);
-	int32 fadeUp(float time = 0.75);
-	int32 fadeDown(float time = 0.75);
+	int32 fadeUp(float time = 0.75f);
+	int32 fadeDown(float time = 0.75f);
 	uint8 getFadeStatus();
 	void dimPalette(bool dim);
 	void waitForFade();

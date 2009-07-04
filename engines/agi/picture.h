@@ -70,7 +70,7 @@ private:
 	void drawLine(int x1, int y1, int x2, int y2);
 	void dynamicDrawLine();
 	void absoluteDrawLine();
-	INLINE int isOkFillHere(int x, int y);
+	int isOkFillHere(int x, int y);
 	void agiFill(unsigned int x, unsigned int y);
 	void xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);

@@ -114,7 +114,7 @@ struct MenuItem {
 	uint16 labelId;
 	int16 labelX, labelY;
 
-	uint16 unk1F;
+	uint16 keyCode;
 };
 
 struct Menu {
@@ -161,7 +161,7 @@ public:
 	virtual void initMenuLayout(Menu &menu);
 	void initMenu(Menu &menu);
 
-	void processHighlights(Menu &menu, int mouseX, int mouseY);
+	void processHighlights(Menu &menu);
 
 	// utilities for thumbnail creation
 	virtual void createScreenThumbnail(Graphics::Surface &dst) = 0;
@@ -175,6 +175,9 @@ protected:
 	bool _displayMenu;
 	bool _displaySubMenu;
 	bool _cancelSubMenu;
+
+	virtual void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font=Screen::FID_8_FNT);
+	virtual int getMenuCenterStringX(const char *str, int x1, int x2);
 
 	Button::Callback _redrawShadedButtonFunctor;
 	Button::Callback _redrawButtonFunctor;
@@ -201,7 +204,7 @@ protected:
 	void redrawHighlight(const Menu &menu);
 
 	Common::Array<int> _saveSlots;
-	void updateSaveList();
+	void updateSaveList(bool excludeQuickSaves = false);
 	int getNextSavegameSlot();
 
 	uint32 _lastScreenUpdate;
@@ -257,7 +260,7 @@ private:
 	void drawBox(int x, int y, int w, int h, int fill);
 	bool getInput();
 
-	void printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
+	void printString(const char *string, int x, int y, int col1, int col2, int flags, ...) GCC_PRINTF(2, 8);
 };
 
 } // end of namesapce Kyra

@@ -52,7 +52,7 @@ reg_t kGameIsRestarting(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, (s->restarting_flags & SCI_GAME_WAS_RESTARTED));
 
 	if (argc) { // Only happens during replay
-		if (!UKPV(0)) // Set restarting flag
+		if (!argv[0].toUint16()) // Set restarting flag
 			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
 	}
 
@@ -89,14 +89,15 @@ reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	run_gc(s);
-	debugC(2, kDebugLevelRoom, "Entering room number %d", UKPV(0));
+	debugC(2, kDebugLevelRoom, "Entering room number %d", argv[0].toUint16());
 	return s->r_acc;
 }
 
 reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	sciprintf("Debug mode activated\n");
 
-	g_debug_seeking = g_debug_step_running = 0;
+	debugState.seeking = kDebugSeekNothing;
+	debugState.runningStep = 0;
 	return s->r_acc;
 }
 
@@ -127,7 +128,7 @@ reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return make_reg(0, retval);
 	}
 
-	int mode = argc > 0 ? UKPV_OR_ALT(0, 0) : 0;
+	int mode = (argc > 0) ? argv[0].toUint16() : 0;
 
 	switch (mode) {
 	case _K_NEW_GETTIME_TICKS :
@@ -164,15 +165,15 @@ enum {
 };
 
 reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	switch (UKPV(0)) {
+	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
-		if (!s->seg_manager->allocDynmem(UKPV(1), "kMemory() critical", &s->r_acc)) {
+		if (!s->seg_manager->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
 		return s->r_acc;
 		break;
 	case K_MEMORY_ALLOCATE_NONCRITICAL :
-		s->seg_manager->allocDynmem(UKPV(1), "kMemory() non-critical", &s->r_acc);
+		s->seg_manager->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
 		break;
 	case K_MEMORY_FREE :
 		if (s->seg_manager->freeDynmem(argv[1])) {
@@ -180,7 +181,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 		break;
 	case K_MEMORY_MEMCPY : {
-		int size = UKPV(3);
+		int size = argv[3].toUint16();
 		byte *dest = kernel_dereference_bulk_pointer(s, argv[1], size);
 		byte *src = kernel_dereference_bulk_pointer(s, argv[2], size);
 

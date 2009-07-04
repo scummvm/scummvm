@@ -29,6 +29,7 @@
 namespace Cruise {
 
 int loadFNTSub(uint8 *ptr, int destIdx);
+int loadSPLSub(uint8 *ptr, int destIdx);
 int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentDestEntry);
 int loadFile(const char* name, int idx, int destIdx);
 int loadData(const char * name, int startIdx);

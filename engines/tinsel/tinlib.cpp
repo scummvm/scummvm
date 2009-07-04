@@ -89,8 +89,6 @@ int clRunMode = 0;
 
 // in BG.CPP
 extern void ChangePalette(SCNHANDLE hPal);
-extern int BgWidth(void);
-extern int BgHeight(void);
 
 // in BMV.CPP
 void PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape);
@@ -278,7 +276,6 @@ static COLORREF s_talkfontColor = 0;
 //----------------- FORWARD REFERENCES --------------------
 
 static int HeldObject(void);
-void Offset(EXTREME extreme, int x, int y);
 static void PostTag(CORO_PARAM, int tagno, TINSEL_EVENT event, HPOLYGON hp, int myEscape);
 void ResetIdleTime(void);
 static void SendTag(CORO_PARAM, int tagno, TINSEL_EVENT event, HPOLYGON hp, int myEscape, bool *result);

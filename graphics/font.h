@@ -36,6 +36,7 @@ namespace Graphics {
 
 /** Text alignment modes */
 enum TextAlign {
+	kTextAlignInvalid,
 	kTextAlignLeft,		//!< Text should be aligned to the left
 	kTextAlignCenter,	//!< Text should be centered
 	kTextAlignRight		//!< Text should be aligned to the right

@@ -46,9 +46,9 @@ private:
 	uint8 *_spritePool;
 	uint8 *_poolTop;
 
-	/*
-	 * Sprite management functions
-	 */
+	//
+	// Sprite management functions
+	//
 
 	SpriteList _sprUpd;
 	SpriteList _sprNonupd;
@@ -60,7 +60,7 @@ private:
 	void objsSaveArea(Sprite *s);
 	void objsRestoreArea(Sprite *s);
 
-	FORCEINLINE int prioToY(int p);
+	int prioToY(int p);
 	Sprite *newSprite(VtEntry *v);
 	void sprAddlist(SpriteList &l, VtEntry *v);
 	void buildList(SpriteList &l, bool (*test)(VtEntry *, AgiEngine *));

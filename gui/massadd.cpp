@@ -32,6 +32,7 @@
 #include "gui/massadd.h"
 #include "gui/GuiManager.h"
 #include "gui/widget.h"
+#include "gui/ListWidget.h"
 
 
 namespace GUI {
@@ -65,6 +66,8 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_dirProgressText(0),
 	_gameProgressText(0) {
 
+	Common::StringList l;
+
 	// The dir we start our scan at
 	_scanStack.push(startDir);
 
@@ -79,6 +82,11 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 
 	_dirProgressText->setAlign(Graphics::kTextAlignCenter);
 	_gameProgressText->setAlign(Graphics::kTextAlignCenter);
+
+	_list = new ListWidget(this, "MassAdd.GameList");
+	_list->setEditable(false);
+	_list->setNumberingMode(kListNumberingOff);
+	_list->setList(l);
 
 	_okButton = new ButtonWidget(this, "MassAdd.Ok", "OK", kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
@@ -110,9 +118,15 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	}
 }
 
-struct GameDescLess {
+struct GameTargetLess {
 	bool operator()(const GameDescriptor &x, const GameDescriptor &y) const {
 		return x.preferredtarget().compareToIgnoreCase(y.preferredtarget()) < 0;
+	}
+};
+
+struct GameDescLess {
+	bool operator()(const GameDescriptor &x, const GameDescriptor &y) const {
+		return x.description().compareToIgnoreCase(y.description()) < 0;
 	}
 };
 
@@ -122,17 +136,21 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	if (cmd == kOkCmd) {
 		// Sort the detected games. This is not strictly necessary, but nice for
 		// people who want to edit their config file by hand after a mass add.
-		sort(_games.begin(), _games.end(), GameDescLess());
+		sort(_games.begin(), _games.end(), GameTargetLess());
 		// Add all the detected games to the config
-		for (GameList::const_iterator iter = _games.begin(); iter != _games.end(); ++iter) {
+		for (GameList::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
 			printf("  Added gameid '%s', desc '%s'\n",
 				(*iter)["gameid"].c_str(),
 				(*iter)["description"].c_str());
-			addGameToConf(*iter);
+			(*iter)["gameid"] = addGameToConf(*iter);
 		}
 
 		// Write everything to disk
 		ConfMan.flushToDisk();
+
+		// And scroll to first detected game
+		sort(_games.begin(), _games.end(), GameDescLess());
+		ConfMan.set("temp_selection", _games.front().gameid());
 
 		close();
 	} else if (cmd == kCancelCmd) {
@@ -196,6 +214,8 @@ void MassAddDialog::handleTickle() {
 			}
 			result["path"] = path;
 			_games.push_back(result);
+
+			_list->append(result.description());
 		}
 
 
@@ -229,6 +249,10 @@ void MassAddDialog::handleTickle() {
 
 		snprintf(buf, sizeof(buf), "Discovered %d new games ...", _games.size());
 		_gameProgressText->setLabel(buf);
+	}
+
+	if (_games.size() > 0) {
+		_list->scrollToEnd();
 	}
 
 	drawDialog();

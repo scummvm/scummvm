@@ -30,6 +30,7 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/inter.h"
 #include "gob/video.h"
 #include "gob/palanim.h"
@@ -62,8 +63,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 8; i++)
 		_fonts[i] = 0;
 
-	for (int i = 0; i < SPRITES_COUNT; i++)
-		_spritesArray[i] = 0;
+	_spritesArray.resize(SPRITES_COUNT);
 
 	_invalidatedCount = 0;
 	for (int i = 0; i < 30; i++) {
@@ -77,9 +77,6 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_noInvalidated57 = false;
 	_paletteCleared = false;
 	_applyPal = false;
-
-	_backSurface = 0;
-	_frontSurface = 0;
 
 	for (int i = 0; i < 18; i++)
 		_unusedPalette1[i] = 0;
@@ -108,10 +105,6 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 
 	_cursorHotspotXVar = -1;
 	_cursorHotspotYVar = -1;
-
-	_cursorSprites = 0;
-	_cursorSpritesBack = 0;
-	_scummvmCursor = 0;
 
 	_cursorAnim = 0;
 	for (int i = 0; i < 40; i++) {
@@ -265,7 +258,7 @@ void Draw::blitInvalidated() {
 
 	_vm->_video->_doRangeClamp = false;
 	for (int i = 0; i < _invalidatedCount; i++) {
-		_vm->_video->drawSprite(_backSurface, _frontSurface,
+		_vm->_video->drawSprite(*_backSurface, *_frontSurface,
 		    _invalidatedLefts[i], _invalidatedTops[i],
 		    _invalidatedRights[i], _invalidatedBottoms[i],
 		    _invalidatedLefts[i], _invalidatedTops[i], 0);
@@ -302,7 +295,7 @@ void Draw::dirtiedRect(int16 surface,
 	dirtiedRect(_spritesArray[surface], left, top, right, bottom);
 }
 
-void Draw::dirtiedRect(SurfaceDesc::Ptr surface,
+void Draw::dirtiedRect(SurfaceDescPtr surface,
 		int16 left, int16 top, int16 right, int16 bottom) {
 
 	if (surface == _backSurface)
@@ -316,7 +309,7 @@ void Draw::initSpriteSurf(int16 index, int16 width, int16 height,
 
 	_spritesArray[index] =
 		_vm->_video->initSurfDesc(_vm->_global->_videoMode, width, height, flags);
-	_vm->_video->clearSurf(_spritesArray[index]);
+	_vm->_video->clearSurf(*_spritesArray[index]);
 }
 
 void Draw::adjustCoords(char adjust, int16 *coord1, int16 *coord2) {
@@ -379,7 +372,7 @@ int Draw::stringLength(const char *str, int16 fontIndex) {
 }
 
 void Draw::drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-		int16 transp, SurfaceDesc *dest, Video::FontDesc *font) {
+		int16 transp, SurfaceDesc &dest, Video::FontDesc *font) {
 
 	while (*str != '\0') {
 		_vm->_video->drawLetter(*str, x, y, font, transp, color1, color2, dest);
@@ -397,11 +390,10 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	adjustCoords(1, &left, &top);
 	adjustCoords(1, &right, &bottom);
 
-	if (READ_LE_UINT16(_vm->_game->_totFileData + 0x7E) != 0) {
-		byte *storedIP = _vm->_global->_inter_execPtr;
+	uint16 centerOffset = _vm->_game->_script->getFunctionOffset(TOTFile::kFunctionCenter);
+	if (centerOffset != 0) {
+		_vm->_game->_script->call(centerOffset);
 
-		_vm->_global->_inter_execPtr = _vm->_game->_totFileData +
-			READ_LE_UINT16(_vm->_game->_totFileData + 0x7E);
 		WRITE_VAR(17, (uint32) id);
 		WRITE_VAR(18, (uint32) left);
 		WRITE_VAR(19, (uint32) top);
@@ -409,7 +401,7 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 		WRITE_VAR(21, (uint32) (bottom - top + 1));
 		_vm->_inter->funcBlock(0);
 
-		_vm->_global->_inter_execPtr = storedIP;
+		_vm->_game->_script->pop();
 	}
 
 	if (str[0] == '\0')
@@ -447,7 +439,7 @@ int32 Draw::getSpriteRectSize(int16 index) {
 }
 
 void Draw::forceBlit(bool backwards) {
-	if ((_frontSurface == 0) || (_backSurface == 0))
+	if (!_frontSurface || !_backSurface)
 		return;
 	if (_frontSurface == _backSurface)
 		return;
@@ -457,12 +449,12 @@ void Draw::forceBlit(bool backwards) {
 		return;
 
 	if (!backwards) {
-		_vm->_video->drawSprite(_backSurface, _frontSurface, 0, 0,
+		_vm->_video->drawSprite(*_backSurface, *_frontSurface, 0, 0,
 				_backSurface->getWidth() - 1, _backSurface->getHeight() - 1,
 				0, 0, 0);
 		_vm->_video->dirtyRectsAll();
 	} else
-		_vm->_video->drawSprite(_frontSurface, _backSurface, 0, 0,
+		_vm->_video->drawSprite(*_frontSurface, *_backSurface, 0, 0,
 				_frontSurface->getWidth() - 1, _frontSurface->getHeight() - 1,
 				0, 0, 0);
 
@@ -511,7 +503,7 @@ const int16 Draw::_wobbleTable[360] = {
 	-0x0A03, -0x08E8, -0x07CC, -0x06B0, -0x0593, -0x0476, -0x0359, -0x023B, -0x011D
 };
 
-void Draw::wobble(SurfaceDesc *surfDesc) {
+void Draw::wobble(SurfaceDesc &surfDesc) {
 	int16 amplitude = 32;
 	uint16 curFrame = 0;
 	uint16 frameWobble = 0;
@@ -535,7 +527,7 @@ void Draw::wobble(SurfaceDesc *surfDesc) {
 			amplitude--;
 
 		for (uint16 y = 0; y < _vm->_height; y++)
-			_vm->_video->drawSprite(surfDesc, _frontSurface,
+			_vm->_video->drawSprite(surfDesc, *_frontSurface,
 					0, y, _vm->_width - 1, y, offsets[y], y, 0);
 
 		_vm->_palAnim->fadeStep(0);
@@ -543,7 +535,7 @@ void Draw::wobble(SurfaceDesc *surfDesc) {
 		_vm->_video->waitRetrace();
 	}
 
-	_vm->_video->drawSprite(surfDesc, _frontSurface,
+	_vm->_video->drawSprite(surfDesc, *_frontSurface,
 			0, 0, _vm->_width - 1, _vm->_height - 1, 0, 0, 0);
 
 	_applyPal = false;

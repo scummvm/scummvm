@@ -70,7 +70,7 @@ class KyraEngine_v1;
 
 class IFFParser : public Common::IFFParser {
 public:
-	IFFParser(Common::SeekableReadStream &input) : Common::IFFParser(input) {
+	IFFParser(Common::ReadStream &input) : Common::IFFParser(&input) {
 		// It seems Westwood missunderstood the 'size' field of the FORM chunk.
 		//
 		// For EMC scripts (type EMC2) it's filesize instead of filesize - 8,
@@ -84,9 +84,9 @@ public:
 		// Both lead to some problems in our IFF parser, either reading after the end
 		// of file or producing a "Chunk overread" error message. To work around this
 		// we need to adjust the size field properly.
-		if (_typeId == MKID_BE('EMC2'))
+		if (_formType == MKID_BE('EMC2'))
 			_formChunk.size -= 8;
-		else if (_typeId == MKID_BE('AVFS'))
+		else if (_formType == MKID_BE('AVFS'))
 			_formChunk.size += 4;
 	}
 };
@@ -107,6 +107,11 @@ public:
 protected:
 	KyraEngine_v1 *_vm;
 	int16 _parameter;
+
+	const char *_filename;
+	EMCData *_scriptData;
+
+	bool callback(Common::IFFChunk &chunk);
 
 	typedef void (EMCInterpreter::*OpcodeProc)(EMCState *);
 	struct OpcodeEntry {

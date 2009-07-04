@@ -42,6 +42,16 @@
 
 namespace WIZ_HW {
 
+enum {
+	VOLUME_NOCHG			= 0,
+	VOLUME_DOWN				= 1,
+	VOLUME_UP				= 2,
+	VOLUME_CHANGE_RATE		= 8,
+	VOLUME_MIN				= 0,
+	VOLUME_INITIAL			= 70,
+	VOLUME_MAX				= 100
+};
+
 int volumeLevel = VOLUME_INITIAL;
 
 void deviceInit() {

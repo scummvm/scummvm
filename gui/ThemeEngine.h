@@ -32,7 +32,7 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.4"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.5"
 
 namespace Graphics {
 	struct DrawStep;
@@ -123,6 +123,7 @@ protected:
 public:
 	//! Vertical alignment of the text.
 	enum TextAlignVertical {
+		kTextAlignVInvalid,
 		kTextAlignVBottom,
 		kTextAlignVCenter,
 		kTextAlignVTop
@@ -181,11 +182,10 @@ public:
 		kShadingLuminance	//!< Converting colors to luminance for unused areas
 	};
 
-	//! Special image ids for images used in the GUI
-	enum kThemeImages {
-		kImageLogo = 0,		//!< ScummVM Logo used in the launcher
-		kImageLogoSmall		//!< ScummVM logo used in the GMM
-	};
+	// Special image ids for images used in the GUI
+	static const char * const kImageLogo;		//!< ScummVM logo used in the launcher
+	static const char * const kImageLogoSmall;	//!< ScummVM logo used in the GMM
+	static const char * const kImageSearch;	//!< Search tool image used in the launcher
 
 	/**
 	 * Graphics mode enumeration.
@@ -420,13 +420,8 @@ public:
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
 
-	const Graphics::Surface *getImageSurface(const kThemeImages n) const {
-		if (n == kImageLogo)
-			return _bitmaps.contains("logo.bmp") ? _bitmaps["logo.bmp"] : 0;
-		else if (n == kImageLogoSmall)
-			return _bitmaps.contains("logo_small.bmp") ? _bitmaps["logo_small.bmp"] : 0;
-
-		return 0;
+	const Graphics::Surface *getImageSurface(const Common::String &name) const {
+		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
 
 	/**
@@ -534,7 +529,7 @@ private:
 
 	static Common::String getThemeFile(const Common::String &id);
 	static Common::String getThemeId(const Common::String &filename);
-	static void listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list, int depth=-1);
+	static void listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth = -1);
 
 protected:
 	OSystem *_system; /** Global system object. */

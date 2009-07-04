@@ -23,22 +23,22 @@
  *
  */
 
-/*
- * New find_word algorithm by Thomas Akesson <tapilot@home.se>
- */
+//
+// New find_word algorithm by Thomas Akesson <tapilot@home.se>
+//
 
 #include "agi/agi.h"
-#include "agi/keyboard.h"	/* for clean_input() */
+#include "agi/keyboard.h"	// for clean_input()
 
 namespace Agi {
 
-static uint8 *words;		/* words in the game */
-static uint32 wordsFlen;	/* length of word memory */
+static uint8 *words;		// words in the game
+static uint32 wordsFlen;	// length of word memory
 
-/*
- * Local implementation to avoid problems with strndup() used by
- * gcc 3.2 Cygwin (see #635984)
- */
+//
+// Local implementation to avoid problems with strndup() used by
+// gcc 3.2 Cygwin (see #635984)
+//
 static char *myStrndup(char *src, int n) {
 	char *tmp = strncpy((char *)malloc(n + 1), src, n);
 	tmp[n] = 0;
@@ -54,7 +54,7 @@ int AgiEngine::loadWords(const char *fname) {
 
 	if (!fp.open(fname)) {
 		report("Warning: can't open %s\n", fname);
-		return errOK /*err_BadFileOpen */ ;
+		return errOK; // err_BadFileOpen
 	}
 	report("Loading dictionary: %s\n", fname);
 
@@ -91,13 +91,14 @@ void AgiEngine::unloadWords() {
  * Thomas Akesson, November 2001
  */
 int AgiEngine::findWord(char *word, int *flen) {
-	int mchr = 0;		/* matched chars */
+	int mchr = 0;		// matched chars
 	int len, fchr, id = -1;
 	uint8 *p = words;
 	uint8 *q = words + wordsFlen;
 	*flen = 0;
 
 	debugC(2, kDebugLevelScripts, "find_word(%s)", word);
+
 	if (word[0] >= 'a' && word[0] <= 'z')
 		fchr = word[0] - 'a';
 	else
@@ -105,22 +106,20 @@ int AgiEngine::findWord(char *word, int *flen) {
 
 	len = strlen(word);
 
-	/* Get the offset to the first word beginning with the
-	 * right character
-	 */
+	// Get the offset to the first word beginning with the
+	// right character
 	p += READ_BE_UINT16(p + 2 * fchr);
 
 	while (p[0] >= mchr) {
 		if (p[0] == mchr) {
 			p++;
-			/* Loop through all matching characters */
+			// Loop through all matching characters
 			while ((p[0] ^ word[mchr]) == 0x7F && mchr < len) {
 				mchr++;
 				p++;
 			}
-			/* Check if this is the last character of the word
-			 * and if it matches
-			 */
+			// Check if this is the last character of the word
+			// and if it matches
 			if ((p[0] ^ word[mchr]) == 0xFF && mchr < len) {
 				mchr++;
 				if (word[mchr] == 0 || word[mchr] == 0x20) {
@@ -132,9 +131,10 @@ int AgiEngine::findWord(char *word, int *flen) {
 		if (p >= q)
 			return -1;
 
-		/* Step to the next word */
+		// Step to the next word
 		while (p[0] < 0x80)
 			p++;
+
 		p += 3;
 	}
 
@@ -164,20 +164,24 @@ void AgiEngine::dictionaryWords(char *msg) {
 		case -1:
 			debugC(2, kDebugLevelScripts, "unknown word");
 			_game.egoWords[_game.numEgoWords].word = strdup(p);
+
 			q = _game.egoWords[_game.numEgoWords].word;
+
 			_game.egoWords[_game.numEgoWords].id = 19999;
 			setvar(vWordNotFound, 1 + _game.numEgoWords);
+
 			_game.numEgoWords++;
+
 			p += strlen(p);
 			break;
 		case 0:
-			/* ignore this word */
+			// ignore this word
 			debugC(2, kDebugLevelScripts, "ignore word");
 			p += wlen;
 			q = NULL;
 			break;
 		default:
-			/* an OK word */
+			// an OK word
 			debugC(3, kDebugLevelScripts, "ok word (%d)", wid);
 			_game.egoWords[_game.numEgoWords].id = wid;
 			_game.egoWords[_game.numEgoWords].word = myStrndup(p, wlen);
@@ -209,4 +213,4 @@ void AgiEngine::dictionaryWords(char *msg) {
 	}
 }
 
-}// End of namespace Agi
+} // End of namespace Agi

@@ -30,16 +30,16 @@
 
 namespace GUI {
 
-EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text)
-	: EditableWidget(boss, x, y - 1, w, h + 2) {
+EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, uint32 cmd)
+	: EditableWidget(boss, x, y - 1, w, h + 2, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 
 	setEditString(text);
 }
 
-EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text)
-	: EditableWidget(boss, name) {
+EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text, uint32 cmd)
+	: EditableWidget(boss, name, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 
@@ -54,8 +54,6 @@ void EditTextWidget::setEditString(const String &str) {
 void EditTextWidget::reflowLayout() {
 	_leftPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Left", 0);
 	_rightPadding = g_gui.xmlEval()->getVar("Globals.EditTextWidget.Padding.Right", 0);
-
-	_font = (ThemeEngine::FontStyle)g_gui.xmlEval()->getVar("EditTextWidget.Font", ThemeEngine::kFontStyleNormal);
 
 	EditableWidget::reflowLayout();
 }
@@ -113,6 +111,7 @@ void EditTextWidget::endEditMode() {
 
 void EditTextWidget::abortEditMode() {
 	setEditString(_backupString);
+	sendCommand(_cmd, 0);
 	releaseFocus();
 }
 

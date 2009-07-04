@@ -41,21 +41,21 @@
 namespace Agi {
 
 #define MAXBITS		12
-#define TABLE_SIZE	18041	/* strange number */
+#define TABLE_SIZE	18041	// strange number
 #define START_BITS	9
 
 static int32 BITS, MAX_VALUE, MAX_CODE;
 static uint32 *prefixCode;
 static uint8 *appendCharacter;
 static uint8 *decodeStack;
-static int32 inputBitCount = 0;	/* Number of bits in input bit buffer */
+static int32 inputBitCount = 0;	// Number of bits in input bit buffer
 static uint32 inputBitBuffer = 0L;
 
 static void initLZW() {
 	decodeStack = (uint8 *)calloc(1, 8192);
 	prefixCode = (uint32 *)malloc(TABLE_SIZE * sizeof(uint32));
 	appendCharacter = (uint8 *)malloc(TABLE_SIZE * sizeof(uint8));
-	inputBitCount = 0;	/* Number of bits in input bit buffer */
+	inputBitCount = 0;	// Number of bits in input bit buffer
 	inputBitBuffer = 0L;
 }
 
@@ -141,18 +141,18 @@ void lzwExpand(uint8 *in, uint8 *out, int32 len) {
 
 	initLZW();
 
-	setBits(START_BITS);	/* Starts at 9-bits */
-	lzwnext = 257;		/* Next available code to define */
+	setBits(START_BITS);	// Starts at 9-bits
+	lzwnext = 257;		// Next available code to define
 
 	end = (uint8 *)(out + (uint32)len);
 
-	lzwold = inputCode(&in);	/* Read in the first code */
+	lzwold = inputCode(&in);	// Read in the first code
 	c = lzwold;
 	lzwnew = inputCode(&in);
 
 	while ((out < end) && (lzwnew != 0x101)) {
 		if (lzwnew == 0x100) {
-			/* Code to "start over" */
+			// Code to "start over"
 			lzwnext = 258;
 			setBits(START_BITS);
 			lzwold = inputCode(&in);
@@ -161,15 +161,14 @@ void lzwExpand(uint8 *in, uint8 *out, int32 len) {
 			lzwnew = inputCode(&in);
 		} else {
 			if (lzwnew >= lzwnext) {
-				/* Handles special LZW scenario */
+				// Handles special LZW scenario
 				*decodeStack = c;
 				s = decodeString(decodeStack + 1, lzwold);
 			} else
 				s = decodeString(decodeStack, lzwnew);
 
-			/* Reverse order of decoded string and
-			 * store in out buffer
-			 */
+			// Reverse order of decoded string and
+			// store in out buffer
 			c = *s;
 			while (s >= decodeStack)
 				*out++ = *s--;

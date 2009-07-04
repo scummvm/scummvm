@@ -172,6 +172,7 @@ enum Language {
 	RU_RUS,
 	ES_ESP,
 	SE_SWE,
+	HU_HUN,
 
 	UNK_LANG = -1	// Use default language (i.e. none specified)
 };
@@ -205,6 +206,7 @@ enum Platform {
 	kPlatformWindows,
 	kPlatformNES,
 	kPlatformC64,
+	kPlatformCoCo3,
 	kPlatformLinux,
 	kPlatformAcorn,
 	kPlatformSegaCD,
@@ -268,6 +270,19 @@ extern RenderMode parseRenderMode(const String &str);
 extern const char *getRenderModeCode(RenderMode id);
 extern const char *getRenderModeDescription(RenderMode id);
 
+enum GameGUIOption {
+	GUIO_NONE		= 0,
+	GUIO_NOSUBTITLES	= (1 << 0),
+	GUIO_NOMUSIC		= (1 << 1),
+	GUIO_NOSPEECH		= (1 << 2),
+	GUIO_NOSFX		= (1 << 3),
+	GUIO_NOMIDI		= (1 << 4),
+	GUIO_NOLAUNCHLOAD	= (1 << 5)
+};
+
+bool checkGameGUIOption(GameGUIOption option, const String &str);
+uint32 parseGameGUIOptions(const String &str);
+String getGameGUIOptionsDescription(uint32 options);
 
 }	// End of namespace Common
 

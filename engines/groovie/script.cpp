@@ -38,7 +38,9 @@
 
 namespace Groovie {
 
-void debugScript(int level, bool nl, const char *s, ...) {
+static void debugScript(int level, bool nl, const char *s, ...) GCC_PRINTF(3, 4);
+
+static void debugScript(int level, bool nl, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -511,7 +513,7 @@ void Script::o_videofromref() {			// 0x09
 		}
 	}
 	if (fileref != _videoRef) {
-		debugScript(1, true, "");
+		debugScript(1, false, "\n");
 	}
 	// Play the video
 	if (!playvideofromref(fileref)) {
@@ -569,7 +571,7 @@ bool Script::playvideofromref(uint32 fileref) {
 			_eventKbdChar = 0;
 
 			// Newline
-			debugScript(1, true, "");
+			debugScript(1, false, "\n");
 		}
 
 		// Let the caller know if the video has ended
@@ -759,7 +761,7 @@ void Script::o_loadstring() {
 		setVariable(varnum++, readScriptChar(true, true, true));
 		debugScript(1, false, " 0x%02X", _variables[varnum - 1]);
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
-	debugScript(1, true, "");
+	debugScript(1, false, "\n");
 }
 
 void Script::o_ret() {
@@ -840,7 +842,7 @@ void Script::o_xor_obfuscate() {
 
 		varnum++;
 	} while (!_firstbit);
-	debugScript(1, true, "");
+	debugScript(1, false, "\n");
 }
 
 void Script::o_vdxtransition() {		// 0x1C
@@ -1095,7 +1097,7 @@ void Script::o_loadstringvar() {
 		setVariable(varnum++, readScriptChar(true, true, true));
 		debugScript(1, false, " 0x%02X", _variables[varnum - 1]);
 	} while (!(getCodeByte(_currentInstruction - 1) & 0x80));
-	debugScript(1, true, "");
+	debugScript(1, false, "\n");
 }
 
 void Script::o_chargreatjmp() {

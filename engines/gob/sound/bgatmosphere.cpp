@@ -27,6 +27,7 @@
 #include "common/events.h"
 
 #include "gob/sound/bgatmosphere.h"
+#include "gob/sound/sounddesc.h"
 
 namespace Gob {
 

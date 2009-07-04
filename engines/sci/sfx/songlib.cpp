@@ -31,169 +31,169 @@ namespace Sci {
 
 #define debug_stream stderr
 
-song_t *song_new(song_handle_t handle, SongIterator *it, int priority) {
-	song_t *retval;
-	retval = (song_t*) malloc(sizeof(song_t));
+Song::Song() {
+	_handle = 0;
+	_priority = 0;
+	_status = SOUND_STATUS_STOPPED;
 
-#ifdef SATISFY_PURIFY
-	memset(retval, 0, sizeof(song_t));
-#endif
+	_restoreBehavior = RESTORE_BEHAVIOR_CONTINUE;
+	_restoreTime = 0;
 
-	retval->handle = handle;
-	retval->priority = priority;
-	retval->next = NULL;
-	retval->_delay = 0;
-	retval->_wakeupTime = Audio::Timestamp();
-	retval->it = it;
-	retval->status = SOUND_STATUS_STOPPED;
-	retval->next_playing = NULL;
-	retval->next_stopping = NULL;
-	retval->restore_behavior = RESTORE_BEHAVIOR_CONTINUE;
-	retval->restore_time = 0;
+	_loops = 0;
+	_hold = 0;
 
-	return retval;
+	_it = 0;
+	_delay = 0;
+
+	_next = NULL;
+	_nextPlaying = NULL;
+	_nextStopping = NULL;
 }
 
-void song_lib_add(const songlib_t &songlib, song_t *song) {
-	song_t **seeker = NULL;
-	int pri	= song->priority;
+Song::Song(SongHandle handle, SongIterator *it, int priority) {
+	_handle = handle;
+	_priority = priority;
+	_status = SOUND_STATUS_STOPPED;
+
+	_restoreBehavior = RESTORE_BEHAVIOR_CONTINUE;
+	_restoreTime = 0;
+
+	_loops = 0;
+	_hold = 0;
+
+	_it = it;
+	_delay = 0;
+
+	_next = NULL;
+	_nextPlaying = NULL;
+	_nextStopping = NULL;
+}
+
+void SongLibrary::addSong(Song *song) {
+	Song **seeker = NULL;
+	int pri	= song->_priority;
 
 	if (NULL == song) {
-		sciprintf("song_lib_add(): NULL passed for song\n");
+		sciprintf("addSong(): NULL passed for song\n");
 		return;
 	}
 
-	if (*(songlib.lib) == NULL) {
-		*(songlib.lib) = song;
-		song->next = NULL;
+	seeker = &_lib;
+	while (*seeker && ((*seeker)->_priority > pri))
+		seeker = &((*seeker)->_next);
 
-		return;
-	}
-
-	seeker = (songlib.lib);
-	while (*seeker && ((*seeker)->priority > pri))
-		seeker = &((*seeker)->next);
-
-	song->next = *seeker;
+	song->_next = *seeker;
 	*seeker = song;
 }
 
-static void _songfree_chain(song_t *song) {
-	/* Recursively free a chain of songs */
-	if (song) {
-		_songfree_chain(song->next);
-		delete song->it;
-		song->it = NULL;
-		free(song);
+void SongLibrary::freeSounds() {
+	Song *next = _lib;
+	while (next) {
+		Song *song = next;
+		delete song->_it;
+		song->_it = NULL;
+		next = song->_next;
+		delete song;
 	}
-}
-
-void song_lib_init(songlib_t *songlib) {
-	songlib->lib = &(songlib->_s);
-	songlib->_s = NULL;
-}
-
-void song_lib_free(const songlib_t &songlib) {
-	_songfree_chain(*(songlib.lib));
-	*(songlib.lib) = NULL;
+	_lib = NULL;
 }
 
 
-song_t *song_lib_find(const songlib_t &songlib, song_handle_t handle) {
-	song_t *seeker = *(songlib.lib);
+Song *SongLibrary::findSong(SongHandle handle) {
+	Song *seeker = _lib;
 
 	while (seeker) {
-		if (seeker->handle == handle)
+		if (seeker->_handle == handle)
 			break;
-		seeker = seeker->next;
+		seeker = seeker->_next;
 	}
 
 	return seeker;
 }
 
-song_t *song_lib_find_next_active(const songlib_t &songlib, song_t *other) {
-	song_t *seeker = other ? other->next : *(songlib.lib);
+Song *SongLibrary::findNextActive(Song *other) {
+	Song *seeker = other ? other->_next : _lib;
 
 	while (seeker) {
-		if ((seeker->status == SOUND_STATUS_WAITING) ||
-		        (seeker->status == SOUND_STATUS_PLAYING))
+		if ((seeker->_status == SOUND_STATUS_WAITING) ||
+		        (seeker->_status == SOUND_STATUS_PLAYING))
 			break;
-		seeker = seeker->next;
+		seeker = seeker->_next;
 	}
 
 	/* Only return songs that have equal priority */
-	if (other && seeker && other->priority > seeker->priority)
+	if (other && seeker && other->_priority > seeker->_priority)
 		return NULL;
 
 	return seeker;
 }
 
-song_t *song_lib_find_active(const songlib_t &songlib) {
-	return song_lib_find_next_active(songlib, NULL);
+Song *SongLibrary::findFirstActive() {
+	return findNextActive(NULL);
 }
 
-int song_lib_remove(const songlib_t &songlib, song_handle_t handle) {
+int SongLibrary::removeSong(SongHandle handle) {
 	int retval;
-	song_t *goner = *(songlib.lib);
+	Song *goner = _lib;
 
 	if (!goner)
 		return -1;
 
-	if (goner->handle == handle)
-		*(songlib.lib) = goner->next;
+	if (goner->_handle == handle)
+		_lib = goner->_next;
 
 	else {
-		while ((goner->next) && (goner->next->handle != handle))
-			goner = goner->next;
+		while ((goner->_next) && (goner->_next->_handle != handle))
+			goner = goner->_next;
 
-		if (goner->next) { /* Found him? */
-			song_t *oldnext = goner->next;
+		if (goner->_next) { /* Found him? */
+			Song *oldnext = goner->_next;
 
-			goner->next = goner->next->next;
+			goner->_next = goner->_next->_next;
 			goner = oldnext;
 		} else return -1; /* No. */
 	}
 
-	retval = goner->status;
+	retval = goner->_status;
 
-	delete goner->it;
-	free(goner);
+	delete goner->_it;
+	delete goner;
 
 	return retval;
 }
 
-void song_lib_resort(const songlib_t &songlib, song_t *song) {
-	if (*(songlib.lib) == song)
-		*(songlib.lib) = song->next;
+void SongLibrary::resortSong(Song *song) {
+	if (_lib == song)
+		_lib = song->_next;
 	else {
-		song_t *seeker = *(songlib.lib);
+		Song *seeker = _lib;
 
-		while (seeker->next && (seeker->next != song))
-			seeker = seeker->next;
+		while (seeker->_next && (seeker->_next != song))
+			seeker = seeker->_next;
 
-		if (seeker->next)
-			seeker->next = seeker->next->next;
+		if (seeker->_next)
+			seeker->_next = seeker->_next->_next;
 	}
 
-	song_lib_add(songlib, song);
+	addSong(song);
 }
 
-int song_lib_count(const songlib_t &songlib) {
-	song_t *seeker = *(songlib.lib);
+int SongLibrary::countSongs() {
+	Song *seeker = _lib;
 	int retval = 0;
 
 	while (seeker) {
 		retval++;
-		seeker = seeker->next;
+		seeker = seeker->_next;
 	}
 
 	return retval;
 }
 
-void song_lib_set_restore_behavior(const songlib_t &songlib, song_handle_t handle, RESTORE_BEHAVIOR action) {
-	song_t *seeker = song_lib_find(songlib, handle);
+void SongLibrary::setSongRestoreBehavior(SongHandle handle, RESTORE_BEHAVIOR action) {
+	Song *seeker = findSong(handle);
 
-	seeker->restore_behavior = action;
+	seeker->_restoreBehavior = action;
 }
 
 } // End of namespace Sci

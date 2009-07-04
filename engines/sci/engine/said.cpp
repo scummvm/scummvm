@@ -1918,7 +1918,7 @@ static int said_next_node() {
 #define SAID_NEXT_NODE said_next_node()
 
 static int said_leaf_node(tree_t pos, int value) {
-	said_tree[pos].type = PARSE_TREE_NODE_LEAF;
+	said_tree[pos].type = kParseTreeLeafNode;
 
 	if (value != VALUE_IGNORE)
 		said_tree[pos].content.value = value;
@@ -1927,7 +1927,7 @@ static int said_leaf_node(tree_t pos, int value) {
 }
 
 static int said_branch_node(tree_t pos, int left, int right) {
-	said_tree[pos].type = PARSE_TREE_NODE_BRANCH;
+	said_tree[pos].type = kParseTreeBranchNode;
 
 	if (left != VALUE_IGNORE)
 		said_tree[pos].content.branches[0] = left;
@@ -2057,12 +2057,12 @@ static int said_parse_spec(EngineState *s, byte *spec) {
 // primitive functions
 
 #define AUG_READ_BRANCH(a, br, p) \
-	if (tree[p].type != PARSE_TREE_NODE_BRANCH) \
+	if (tree[p].type != kParseTreeBranchNode) \
 		return 0; \
 	a = tree[p].content.branches[br];
 
 #define AUG_READ_VALUE(a, p) \
-	if (tree[p].type != PARSE_TREE_NODE_LEAF) \
+	if (tree[p].type != kParseTreeLeafNode) \
 		return 0; \
 	a = tree[p].content.value;
 

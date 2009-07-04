@@ -123,7 +123,7 @@ public:
 	virtual void displayTemp(InkColor color, const char *name, bool outlined) {
 		char temp[MAX_COMMAND_LEN];
 		// don't show a space after the goto and give commands in the Greek version
-		if (_command[1] != -34 && !(_command[1] == -2 && strlen(_command) > 5))
+		if (_command[1] != (char)-34 && !(_command[1] == (char)-2 && strlen(_command) > 5))
 			sprintf(temp, "%s %s", _command, name);
 		else
 			sprintf(temp, "%s%s", _command, name);
@@ -132,7 +132,7 @@ public:
 
 	virtual void addObject(const char *objName) {
 		// don't show a space after the goto and give commands in the Greek version
-		if (_command[1] != -34 && !(_command[1] == -2 && strlen(_command) > 5))
+		if (_command[1] != (char)-34 && !(_command[1] == (char)-2 && strlen(_command) > 5))
 			strcat(_command, " ");
 		strcat(_command, objName);
 	}

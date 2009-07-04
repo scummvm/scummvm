@@ -70,7 +70,7 @@ void sciprintf(const char *fmt, ...) {
 
 	// Display the result suitably
 	if (g_redirect_sciprintf_to_gui)
-		((SciEngine *)g_engine)->getDebugger()->DebugPrintf("%s", buf);
+		((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("%s", buf);
 	printf("%s", buf);
 
 	free(buf);

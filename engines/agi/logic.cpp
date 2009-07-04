@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "agi/agi.h"
 
 namespace Agi {
@@ -40,52 +38,50 @@ int AgiEngine::decodeLogic(int n) {
 	int mstart, mend, mc;
 	uint8 *m0;
 
-	/* decrypt messages at end of logic + build message list */
+	// decrypt messages at end of logic + build message list
 
-	/* report ("decoding logic #%d\n", n); */
+	// report ("decoding logic #%d\n", n);
 	m0 = _game.logics[n].data;
 
 	mstart = READ_LE_UINT16(m0) + 2;
 	mc = *(m0 + mstart);
 	mend = READ_LE_UINT16(m0 + mstart + 1);
-	m0 += mstart + 3;	/* cover header info */
+	m0 += mstart + 3;	// cover header info
 	mstart = mc << 1;
 
-	/* if the logic was not compressed, decrypt the text messages
-	 * only if there are more than 0 messages
-	 */
+	// if the logic was not compressed, decrypt the text messages
+	// only if there are more than 0 messages
 	if ((~_game.dirLogic[n].flags & RES_COMPRESSED) && mc > 0)
-		decrypt(m0 + mstart, mend - mstart);	/* decrypt messages */
+		decrypt(m0 + mstart, mend - mstart);	// decrypt messages
 
-	/* build message list */
+	// build message list
 	m0 = _game.logics[n].data;
-	mstart = READ_LE_UINT16(m0) + 2;	/* +2 covers pointer */
+	mstart = READ_LE_UINT16(m0) + 2;	// +2 covers pointer
 	_game.logics[n].numTexts = *(m0 + mstart);
 
-	/* resetp logic pointers */
+	// resetp logic pointers
 	_game.logics[n].sIP = 2;
 	_game.logics[n].cIP = 2;
-	_game.logics[n].size = READ_LE_UINT16(m0) + 2;	/* logic end pointer */
+	_game.logics[n].size = READ_LE_UINT16(m0) + 2;	// logic end pointer
 
-	/* allocate list of pointers to point into our data */
+	// allocate list of pointers to point into our data
 
 	_game.logics[n].texts = (const char **)calloc(1 + _game.logics[n].numTexts, sizeof(char *));
 
-	/* cover header info */
+	// cover header info
 	m0 += mstart + 3;
 
 	if (_game.logics[n].texts != NULL) {
-		/* move list of strings into list to make real pointers */
+		// move list of strings into list to make real pointers
 		for (mc = 0; mc < _game.logics[n].numTexts; mc++) {
 			mend = READ_LE_UINT16(m0 + mc * 2);
 			_game.logics[n].texts[mc] = mend ? (const char *)m0 + mend - 2 : (const char *)"";
 		}
-		/* set loaded flag now its all completly loaded */
+		// set loaded flag now its all completly loaded
 		_game.dirLogic[n].flags |= RES_LOADED;
 	} else {
-		/* unload data
-		 * Note that not every logic has text
-		 */
+		// unload data
+		// Note that not every logic has text
 		free(_game.logics[n].data);
 		ec = errNotEnoughMemory;
 	}
@@ -108,7 +104,7 @@ void AgiEngine::unloadLogic(int n) {
 		_game.dirLogic[n].flags &= ~RES_LOADED;
 	}
 
-	/* if cached, we end up here */
+	// if cached, we end up here
 	_game.logics[n].sIP = 2;
 	_game.logics[n].cIP = 2;
 }

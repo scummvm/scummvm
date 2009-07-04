@@ -66,6 +66,8 @@ static const PlainGameDescriptor drasculaGames[] = {
 
 namespace Drascula {
 
+using Common::GUIO_NONE;
+
 static const DrasculaGameDescription gameDescriptions[] = {
 
 	{
@@ -76,7 +78,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "09b2735953edcd43af115c65ae00b10e", 1595),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 	},
 
@@ -88,7 +91,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("packet.001", "c6a8697396e213a18472542d5f547cb4", 32847563),
 			Common::EN_ANY,
 			Common::kPlatformPC,
-			ADGF_KEEPMATCH | GF_PACKED
+			ADGF_KEEPMATCH | GF_PACKED,
+			GUIO_NONE
 		},
 	},
 
@@ -104,7 +108,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			GF_PACKED
+			GF_PACKED,
+			GUIO_NONE
 		},
 	},
 
@@ -120,7 +125,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			GF_PACKED
+			GF_PACKED,
+			GUIO_NONE
 		},
 	},
 
@@ -132,7 +138,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("packet.001", "3c971aba65a037d29d0b479cad6f5943", 31702652),
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			GF_PACKED
+			GF_PACKED,
+			GUIO_NONE
 		},
 	},
 
@@ -144,7 +151,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "0746ed1a5cc8d9728f790c29813f4b43", 23059),
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 	},
 
@@ -156,7 +164,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "72e46089033d56bad1c179ac36e2a9d2", 610),
 			Common::DE_DEU,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 	},
 
@@ -168,7 +177,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "eeeee96b82169003630e08992248296c", 608),
 			Common::FR_FRA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 	},
 
@@ -180,7 +190,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("packet.001", "0253e924af223f5fe52537023385159b", 32564209),
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			GF_PACKED
+			GF_PACKED,
+			GUIO_NONE
 		},
 	},
 	{
@@ -191,7 +202,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("14.ald", "02b49a18328d0bf2efe6ba658c9c7a1d", 2098),
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			GUIO_NONE
 		},
 	},
 
@@ -207,7 +219,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			},
 			Common::ES_ESP,
 			Common::kPlatformPC,
-			GF_PACKED
+			GF_PACKED,
+			GUIO_NONE
 		},
 	},
 
@@ -223,7 +236,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformPC,
-			GF_PACKED
+			GF_PACKED,
+			GUIO_NONE
 		},
 	},
 
@@ -248,7 +262,9 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NOMIDI
 };
 
 class DrasculaMetaEngine : public AdvancedMetaEngine {

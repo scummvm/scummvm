@@ -37,20 +37,20 @@
 		
 		<def var = 'ListWidget.hlLeftPadding' value = '0'/>
 		<def var = 'ListWidget.hlRightPadding' value = '0'/>
-		<def var = 'PopUpWidget.labelSpacing' value = '10' />
-		<def var = 'PopUpWidget.labelWidth' value = '110' />
 		
 		<def var = 'ShowLauncherLogo' value = '1'/>
 		<def var = 'ShowGlobalMenuLogo' value = '1'/>
+		<def var = 'ShowSearchPic' value = '1'/>
 		
 		<def var = 'ScummSaveLoad.ExtInfo.Visible' value = '1'/>
 
-		<def var = 'KeyRemapper.Spacing' value = '10'/>
-		<def var = 'KeyRemapper.LabelWidth' value = '100'/>
-		<def var = 'KeyRemapper.ButtonWidth' value = '80'/>
+		<def var = 'KeyMapper.Spacing' value = '10'/>
+		<def var = 'KeyMapper.LabelWidth' value = '100'/>
+		<def var = 'KeyMapper.ButtonWidth' value = '80'/>
 
 		<widget name = 'OptionsLabel'
 				size = '110, Globals.Line.Height'
+				textalign = 'right'
 		/>
 		<widget name = 'SmallLabel'
 				size = '24, Globals.Line.Height'
@@ -105,6 +105,21 @@
 					width = '283'
 					height = '80'
 			/>		
+			<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
+				<widget name = 'SearchPic'
+						width = '16'
+						height = '17'
+				/>		
+				<widget name = 'Search'
+						width = '150'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'SearchClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+				<space />
+			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'GameList'/>
 				<layout type = 'vertical' padding = '10, 0, 0, 0'>
@@ -181,12 +196,22 @@
 	
 	<dialog name = 'GlobalOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<widget name = 'grModePopup'
-					type = 'PopUp'
-			/>
-			<widget name = 'grRenderPopup'
-					type = 'PopUp'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'grModePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grModePopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'grRenderPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grRenderPopup'
+						type = 'PopUp'
+				/>
+			</layout>
 			<widget name = 'grAspectCheckbox'
 					type = 'Checkbox'
 			/>
@@ -198,16 +223,31 @@
 	
 	<dialog name = 'GlobalOptions_Audio' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<widget name = 'auMidiPopup'
-					type = 'PopUp'
-			/>
-			<widget name = 'auOPLPopup'
-					type = 'PopUp'
-			/>
-			<widget name = 'auSampleRatePopup'
-					type = 'PopUp'
-			/>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'auMidiPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auMidiPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'auOPLPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auOPLPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'auSampleRatePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auSampleRatePopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
@@ -216,7 +256,7 @@
 						height = 'Globals.Slider.Height'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'subSubtitleSpeedDesc'
 						type = 'OptionsLabel'
 				/>
@@ -231,38 +271,45 @@
 	</dialog>
 	
 	<dialog name = 'GlobalOptions_Volume' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
-				<widget name = 'vcMusicText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcMusicSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcMusicLabel'
-						type = 'SmallLabel'
-				/>
+		<layout type = 'horizontal' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '8'>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+					<widget name = 'vcMusicText'
+							type = 'OptionsLabel'
+					/>
+					<widget name = 'vcMusicSlider'
+							type = 'Slider'
+					/>
+					<widget name = 'vcMusicLabel'
+							type = 'SmallLabel'
+					/>
+				</layout>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+					<widget name = 'vcSfxText'
+							type = 'OptionsLabel'
+					/>
+					<widget name = 'vcSfxSlider'
+							type = 'Slider'
+					/>
+					<widget name = 'vcSfxLabel'
+							type = 'SmallLabel'
+					/>
+				</layout>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+					<widget name = 'vcSpeechText'
+							type = 'OptionsLabel'
+					/>
+					<widget name = 'vcSpeechSlider'
+							type = 'Slider'
+					/>
+					<widget name = 'vcSpeechLabel'
+							type = 'SmallLabel'
+					/>
+				</layout>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
-				<widget name = 'vcSfxText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcSfxSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcSfxLabel'
-						type = 'SmallLabel'
-				/>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
-				<widget name = 'vcSpeechText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcSpeechSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcSpeechLabel'
-						type = 'SmallLabel'
+			<layout type = 'vertical' padding = '24, 0, 24, 0' center = 'true'>
+				<widget name = 'vcMuteCheckbox'
+						type = 'Checkbox'
 				/>
 			</layout>
 		</layout>
@@ -270,7 +317,7 @@
 	
 	<dialog name = 'GlobalOptions_MIDI' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'mcFontButton'
 						type = 'Button'
 				/>	
@@ -291,7 +338,7 @@
 			<widget name = 'mcGSCheckbox'
 					type = 'Checkbox'
 			/>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'mcMidiGainText'
 						type = 'OptionsLabel'
 				/>
@@ -308,7 +355,7 @@
 	
 	<dialog name = 'GlobalOptions_Paths' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'SaveButton'
 						type = 'Button'
 				/>
@@ -316,7 +363,7 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'ThemeButton'
 						type = 'Button'
 				/>
@@ -324,7 +371,7 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'ExtraButton'
 						type = 'Button'
 				/>
@@ -332,7 +379,7 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'PluginsButton'
 						type = 'Button'
 				/>
@@ -345,7 +392,7 @@
 	
 	<dialog name = 'GlobalOptions_Misc' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'ThemeButton'
 						type = 'Button'
 				/>
@@ -353,12 +400,22 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
-			<widget name = 'Renderer'
-					type = 'PopUp'
-			/>
-			<widget name = 'AutosavePeriod'
-					type = 'PopUp'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'RendererPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'RendererPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'AutosavePeriodPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'AutosavePeriodPopup'
+						type = 'PopUp'
+				/>
+			</layout>
 			<widget name='KeysButton' 
  				     type='Button' 
 			/> 
@@ -443,7 +500,7 @@
 	
 	<dialog name = 'GameOptions_Game' overlays = 'Dialog.GameOptions.TabWidget' shading = 'dim'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'Id'
 						type = 'OptionsLabel'
 				/>
@@ -451,7 +508,7 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'Name'
 						type = 'OptionsLabel'
 				/>
@@ -459,12 +516,22 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			<widget name = 'Lang'
-					type = 'PopUp'
-			/>
-			<widget name = 'Platform'
-					type = 'PopUp'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'LangPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'LangPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'PlatformPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'PlatformPopup'
+						type = 'PopUp'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 	
@@ -571,41 +638,53 @@
 	</dialog>
 	
 	<dialog name = 'ScummConfig' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8' center = 'true'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
-				<widget name = 'vcMusicText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcMusicSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcMusicLabel'
-						type = 'SmallLabel'
-				/>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+				<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '8' center = 'true'>
+					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+						<widget name = 'vcMusicText'
+								type = 'OptionsLabel'
+						/>
+						<widget name = 'vcMusicSlider'
+								type = 'Slider'
+						/>
+						<widget name = 'vcMusicLabel'
+								type = 'SmallLabel'
+						/>
+					</layout>
+					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+						<widget name = 'vcSfxText'
+								type = 'OptionsLabel'
+						/>
+						<widget name = 'vcSfxSlider'
+								type = 'Slider'
+						/>
+						<widget name = 'vcSfxLabel'
+								type = 'SmallLabel'
+						/>
+					</layout>
+					<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+						<widget name = 'vcSpeechText'
+								type = 'OptionsLabel'
+						/>
+						<widget name = 'vcSpeechSlider'
+								type = 'Slider'
+						/>
+						<widget name = 'vcSpeechLabel'
+								type = 'SmallLabel'
+						/>
+					</layout>
+				</layout>
+
+				<layout type = 'vertical' padding = '24, 24, 24, 24' center = 'true'>
+					<widget name = 'vcMuteCheckbox'
+							type = 'Checkbox'
+							width = '80'   <!-- FIXME: Why this is needed? -->
+					/>
+				</layout>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
-				<widget name = 'vcSfxText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcSfxSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcSfxLabel'
-						type = 'SmallLabel'
-				/>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
-				<widget name = 'vcSpeechText'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'vcSpeechSlider'
-						type = 'Slider'
-				/>
-				<widget name = 'vcSpeechLabel'
-						type = 'SmallLabel'
-				/>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+			<space size = '8' />
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
@@ -614,7 +693,7 @@
 						height = 'Globals.Slider.Height'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'subSubtitleSpeedDesc'
 						type = 'OptionsLabel'
 				/>
@@ -626,7 +705,7 @@
 				/>
 			</layout>
 			<space size = '60'/>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name='Keys' 
  					    type='Button'
 				/>
@@ -703,7 +782,14 @@
 					width = '250'
 					height = 'Globals.Line.Height'
 			/>
-			<space size = '32' />
+			<widget name = 'GameProgressText' 
+					width = '250'
+					height = 'Globals.Line.Height'
+			/>
+			<widget name = 'GameList'
+					width = '480'
+					height = '250'
+			/>
 			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<widget name = 'Ok'
 						type = 'Button'
@@ -715,15 +801,21 @@
 		</layout>
 	</dialog>
 	
-	<dialog name = 'KeyRemapper' overlays = 'screen_center' shading = 'dim'>
-		<layout type = 'vertical' padding = '8, 8, 32, 8' center = 'true'>
-			<widget name = 'Popup'
-					type = 'PopUp'
-					width = '600'
-			/>
+	<dialog name = 'KeyMapper' overlays = 'screen_center' shading = 'dim'>
+		<layout type = 'vertical' padding = '8, 8, 32, 8' spacing = '10' center = 'true'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'PopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'Popup'
+						type = 'PopUp'
+						width = '400'
+						height = 'Globals.Line.Height'
+				/>
+			</layout>
 			<widget name = 'KeymapArea'
 					width = '600'
-					height = '378'
+					height = '280'
 			/>
 			<widget name = 'Close'
 					type = 'Button'

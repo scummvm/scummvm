@@ -119,11 +119,17 @@ void OptionsDialog::init() {
 	_speechVolumeDesc = 0;
 	_speechVolumeSlider = 0;
 	_speechVolumeLabel = 0;
+	_muteCheckbox = 0;
 	_subToggleDesc = 0;
 	_subToggleButton = 0;
 	_subSpeedDesc = 0;
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
+
+	// Retrieve game GUI options
+	_guioptions = 0;
+	if (ConfMan.hasKey("guioptions", _domain))
+		_guioptions = parseGameGUIOptions(ConfMan.get("guioptions", _domain));
 }
 
 void OptionsDialog::open() {
@@ -131,6 +137,11 @@ void OptionsDialog::open() {
 
 	// Reset result value
 	setResult(0);
+
+	// Retrieve game GUI options
+	_guioptions = 0;
+	if (ConfMan.hasKey("guioptions", _domain))
+		_guioptions = parseGameGUIOptions(ConfMan.get("guioptions", _domain));
 
 	// Graphic options
 	if (_fullscreenCheckbox) {
@@ -240,12 +251,19 @@ void OptionsDialog::open() {
 		vol = ConfMan.getInt("speech_volume", _domain);
 		_speechVolumeSlider->setValue(vol);
 		_speechVolumeLabel->setValue(vol);
+
+		bool val = false;
+		if (ConfMan.hasKey("mute", _domain)) {
+			val = ConfMan.getBool("mute", _domain);
+		} else {
+			ConfMan.setBool("mute", false);
+		}
+		_muteCheckbox->setState(val);
 	}
 
 	// Subtitle options
 	if (_subToggleButton) {
-		int speed;
-		int sliderMaxValue = _subSpeedSlider->getMaxValue();
+		int speed;		int sliderMaxValue = _subSpeedSlider->getMaxValue();
 
 		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute", _domain));
 		_subToggleButton->setLabel(_subModeDesc[_subMode]);
@@ -300,10 +318,12 @@ void OptionsDialog::close() {
 				ConfMan.setInt("music_volume", _musicVolumeSlider->getValue(), _domain);
 				ConfMan.setInt("sfx_volume", _sfxVolumeSlider->getValue(), _domain);
 				ConfMan.setInt("speech_volume", _speechVolumeSlider->getValue(), _domain);
+				ConfMan.setBool("mute", _muteCheckbox->getState(), _domain);
 			} else {
 				ConfMan.removeKey("music_volume", _domain);
 				ConfMan.removeKey("sfx_volume", _domain);
 				ConfMan.removeKey("speech_volume", _domain);
+				ConfMan.removeKey("mute", _domain);
 			}
 		}
 
@@ -467,7 +487,9 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
+	_gfxPopUpDesc->setEnabled(enabled);
 	_gfxPopUp->setEnabled(enabled);
+	_renderModePopUpDesc->setEnabled(enabled);
 	_renderModePopUp->setEnabled(enabled);
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
@@ -478,12 +500,18 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 
+	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
+	_oplPopUpDesc->setEnabled(enabled);
 	_oplPopUp->setEnabled(enabled);
+	_outputRatePopUpDesc->setEnabled(enabled);
 	_outputRatePopUp->setEnabled(enabled);
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
+	if (_guioptions & Common::GUIO_NOMIDI)
+		enabled = false;
+
 	_enableMIDISettings = enabled;
 
 	_soundFontButton->setEnabled(enabled);
@@ -503,34 +531,63 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 }
 
 void OptionsDialog::setVolumeSettingsState(bool enabled) {
+	bool ena;
+
 	_enableVolumeSettings = enabled;
 
-	_musicVolumeDesc->setEnabled(enabled);
-	_musicVolumeSlider->setEnabled(enabled);
-	_musicVolumeLabel->setEnabled(enabled);
-	_sfxVolumeDesc->setEnabled(enabled);
-	_sfxVolumeSlider->setEnabled(enabled);
-	_sfxVolumeLabel->setEnabled(enabled);
-	_speechVolumeDesc->setEnabled(enabled);
-	_speechVolumeSlider->setEnabled(enabled);
-	_speechVolumeLabel->setEnabled(enabled);
+	ena = enabled;
+	if (_guioptions & Common::GUIO_NOMUSIC)
+		ena = false;
+
+	_musicVolumeDesc->setEnabled(ena);
+	_musicVolumeSlider->setEnabled(ena);
+	_musicVolumeLabel->setEnabled(ena);
+
+	ena = enabled;
+	if (_guioptions & Common::GUIO_NOSFX)
+		ena = false;
+
+	_sfxVolumeDesc->setEnabled(ena);
+	_sfxVolumeSlider->setEnabled(ena);
+	_sfxVolumeLabel->setEnabled(ena);
+
+	ena = enabled;
+	if (_guioptions & Common::GUIO_NOSPEECH)
+		ena = false;
+
+	_speechVolumeDesc->setEnabled(ena);
+	_speechVolumeSlider->setEnabled(ena);
+	_speechVolumeLabel->setEnabled(ena);
+
+	_muteCheckbox->setEnabled(enabled);
 }
 
 void OptionsDialog::setSubtitleSettingsState(bool enabled) {
+	bool ena;
 	_enableSubtitleSettings = enabled;
 
-	_subToggleButton->setEnabled(enabled);
-	_subToggleDesc->setEnabled(enabled);
-	_subSpeedDesc->setEnabled(enabled);
-	_subSpeedSlider->setEnabled(enabled);
-	_subSpeedLabel->setEnabled(enabled);
+	ena = enabled;
+	if ((_guioptions & Common::GUIO_NOSUBTITLES) || (_guioptions & Common::GUIO_NOSPEECH))
+		ena = false;
+
+	_subToggleButton->setEnabled(ena);
+	_subToggleDesc->setEnabled(ena);
+
+	ena = enabled;
+	if (_guioptions & Common::GUIO_NOSUBTITLES)
+		ena = false;
+
+	_subSpeedDesc->setEnabled(ena);
+	_subSpeedSlider->setEnabled(ena);
+	_subSpeedLabel->setEnabled(ena);
 }
 
 void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
 	// The GFX mode popup
-	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup", "Graphics mode:");
+	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", "Graphics mode:");
+	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup");
 
 	_gfxPopUp->appendEntry("<default>");
 	_gfxPopUp->appendEntry("");
@@ -540,7 +597,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// RenderMode popup
-	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", "Render mode:");
+	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", "Render mode:");
+	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup");
 	_renderModePopUp->appendEntry("<default>", Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
@@ -559,7 +617,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const String &prefix) {
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	// The MIDI mode popup & a label
-	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", "Music driver:");
+	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", "Music driver:");
+	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup");
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
@@ -569,7 +628,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// The OPL emulator popup & a label
-	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup", "AdLib emulator:");
+	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", "AdLib emulator:");
+	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup");
 
 	// Populate it
 	const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
@@ -579,7 +639,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const String &prefix) {
 	}
 
 	// Sample rate settings
-	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", "Output rate:");
+	_outputRatePopUpDesc = new StaticTextWidget(boss, prefix + "auSampleRatePopupDesc", "Output rate:");
+	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup");
 
 	for (int i = 0; outputRateLabels[i]; i++) {
 		_outputRatePopUp->appendEntry(outputRateLabels[i], outputRateValues[i]);
@@ -640,6 +701,9 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const String &prefix) {
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 
+	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", "Mute All", 0, 0);
+
+
 	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", "SFX volume:");
 	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", kSfxVolumeChanged);
 	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", "100%");
@@ -658,6 +722,11 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const String &prefix) {
 }
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
+	if (_guioptions & Common::GUIO_NOSUBTITLES)
+		return 0; // Speech only
+	if (_guioptions & Common::GUIO_NOSPEECH)
+		return 2; // Subtitles only
+
 	if (!subtitles && !speech_mute) // Speech only
 		return 0;
 	else if (subtitles && !speech_mute) // Speech and subtitles
@@ -740,12 +809,14 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
 
-	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.Renderer", "GUI Renderer:");
+	_rendererPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.RendererPopupDesc", "GUI Renderer:");
+	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.RendererPopup");
 
 	for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
 		_rendererPopUp->appendEntry(GUI::ThemeEngine::_rendererModes[i].name, GUI::ThemeEngine::_rendererModes[i].mode);
 
-	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriod", "Autosave:");
+	_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", "Autosave:");
+	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopup");
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
 		_autosavePeriodPopUp->appendEntry(savePeriodLabels[i], savePeriodValues[i]);

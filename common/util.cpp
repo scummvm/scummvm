@@ -211,6 +211,7 @@ const LanguageDescription g_languages[] = {
 	{"ru", "Russian", RU_RUS},
 	{"es", "Spanish", ES_ESP},
 	{"se", "Swedish", SE_SWE},
+	{"hu", "Hungarian", HU_HUN},
 	{0, 0, UNK_LANG}
 };
 
@@ -259,6 +260,7 @@ const PlatformDescription g_platforms[] = {
 	{"pc", "dos", "ibm", "DOS", kPlatformPC},
 	{"pc98", "pc98", "pc98", "PC-98", kPlatformPC98},
 	{"wii", "wii", "wii", "Nintendo Wii", kPlatformWii},
+	{"coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3},
 
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
@@ -371,6 +373,52 @@ const char *getRenderModeDescription(RenderMode id) {
 	return 0;
 }
 
+const struct GameOpt {
+	uint32 option;
+	const char *desc;
+} g_gameOptions[] = {
+	{ GUIO_NOSUBTITLES, "sndNoSubs" },
+	{ GUIO_NOMUSIC, "sndNoMusic" },
+	{ GUIO_NOSPEECH, "sndNoSpeech" },
+	{ GUIO_NOSFX, "sndNoSFX" },
+	{ GUIO_NOMIDI, "sndNoMIDI" },
+	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
+	{ GUIO_NONE, 0 }
+};
+
+bool checkGameGUIOption(GameGUIOption option, const String &str) {
+	for (int i = 0; g_gameOptions[i].desc; i++) {
+		if (g_gameOptions[i].option & option) {
+			if (str.contains(g_gameOptions[i].desc))
+				return true;
+			else
+				return false;
+		}
+	}
+	return false;
+}
+
+uint32 parseGameGUIOptions(const String &str) {
+	uint32 res = 0;
+
+	for (int i = 0; g_gameOptions[i].desc; i++)
+		if (str.contains(g_gameOptions[i].desc))
+			res |= g_gameOptions[i].option;
+
+	return res;
+}
+
+String getGameGUIOptionsDescription(uint32 options) {
+	String res = "";
+
+	for (int i = 0; g_gameOptions[i].desc; i++)
+		if (options & g_gameOptions[i].option)
+			res += String(g_gameOptions[i].desc) + " ";
+
+	res.trim();
+
+	return res;
+}
 
 }	// End of namespace Common
 

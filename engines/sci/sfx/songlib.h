@@ -42,7 +42,7 @@ class SongIterator;
 #define SOUND_STATUS_WAITING   3
 /* "waiting" means "tagged for playing, but not active right now" */
 
-typedef unsigned long song_handle_t;
+typedef unsigned long SongHandle;
 
 enum RESTORE_BEHAVIOR {
 	RESTORE_BEHAVIOR_CONTINUE, /* restart a song when restored from
@@ -50,123 +50,122 @@ enum RESTORE_BEHAVIOR {
 	RESTORE_BEHAVIOR_RESTART /* continue it from where it was */
 };
 
-struct song_t {
-	song_handle_t handle;
-	int resource_num; /* Resource number */
-	int priority; /* Song priority (more important if priority is higher) */
-	int status;   /* See above */
+class Song {
+public:
+	SongHandle _handle;
+	int _resourceNum; /**<! Resource number */
+	int _priority; /**!< Song priority (more important if priority is higher) */
+	int _status;   /* See above */
 
-	int restore_behavior;
-	int restore_time;
+	int _restoreBehavior;
+	int _restoreTime;
 
 	/* Grabbed from the sound iterator, for save/restore purposes */
-	int loops;
-	int hold;
+	int _loops;
+	int _hold;
 
-	SongIterator *it;
-	int _delay; /* Delay before accessing the iterator, in ticks */
+	SongIterator *_it;
+	int _delay; /**!< Delay before accessing the iterator, in ticks */
 
-	Audio::Timestamp _wakeupTime; /**< Timestamp indicating the next MIDI event */
+	Audio::Timestamp _wakeupTime; /**!< Timestamp indicating the next MIDI event */
 
-	song_t *next; /* Next song or NULL if this is the last one */
-	song_t *next_playing; /* Next playing song; used by the
-				    ** core song system */
-	song_t *next_stopping; /* Next song pending stopping; used exclusively by
-				     ** the core song system's _update_multi_song() */
+	Song *_next; /**!< Next song or NULL if this is the last one */
+
+	/**
+	 * Next playing song. Used by the core song system.
+	 */
+	Song *_nextPlaying;
+
+	/**
+	 * Next song pending stopping. Used exclusively by the core song system's
+	 * _update_multi_song()
+	 */
+	Song *_nextStopping;
+
+public:
+
+	Song();
+
+	/**
+	 * Initializes a new song.
+	 * @param handle	the sound handle
+	 * @param it		the song
+	 * @param priority	the song's priority
+	 * @return a freshly allocated song
+	 */
+	Song(SongHandle handle, SongIterator *it, int priority);
 };
 
 
-struct songlib_t {
-	song_t **lib;
-	song_t *_s;
+class SongLibrary {
+public:
+	Song *_lib;
+
+public:
+	SongLibrary() : _lib(0) {}
+
+	/** Frees a song library. */
+	void freeSounds();
+
+	/**
+	 * Adds a song to a song library.
+	 * @param song		song to add
+	 */
+	void addSong(Song *song);
+
+	/**
+	 * Looks up the song with the specified handle.
+	 * @param handle	sound handle to look for
+	 * @return the song or NULL if it wasn't found
+	 */
+	Song *findSong(SongHandle handle);
+
+	/**
+	 * Finds the first song playing with the highest priority.
+	 * @return the song that should be played next, or NULL if there is none
+	 */
+	Song *findFirstActive();
+
+	/**
+	 * Finds the next song playing with the highest priority.
+	 *
+	 * The functions 'findFirstActive' and 'findNextActive'
+	 * allow to iterate over all songs that satisfy the requirement of
+	 * being 'playable'.
+	 *
+	 * @param song		a song previously returned from the song library
+	 * @return the next song to play relative to 'song', or NULL if none are left
+	 */
+	Song *findNextActive(Song *song);
+
+	/**
+	 * Removes a song from the library.
+	 * @param handle		handle of the song to remove
+	 * @return the status of the song that was removed
+	 */
+	int removeSong(SongHandle handle);
+
+	/**
+	 * Removes a song from the library and sorts it in again; for use after renicing.
+	 * @param son		song to work on
+	 */
+	void resortSong(Song *song);
+
+	/**
+	 * Counts the number of songs in a song library.
+	 * @return the number of songs
+	 */
+	int countSongs();
+
+	/**
+	 * Determines what should be done with the song "handle" when restoring
+	 * it from a saved game.
+	 * @param handle	sound handle being restored
+	 * @param action	desired action
+	 */
+	void setSongRestoreBehavior(SongHandle handle,
+		RESTORE_BEHAVIOR action);
 };
-
-/**************************/
-/* Song library commands: */
-/**************************/
-
-song_t *song_new(song_handle_t handle, SongIterator *it, int priority);
-/* Initializes a new song
-** Parameters: (song_handle_t) handle: The sound handle
-**             (SongIterator *) it: The song
-**             (int) priority: The song's priority
-** Returns   : (song_t *) A freshly allocated song
-** Other values are set to predefined defaults.
-*/
-
-
-void song_lib_init(songlib_t *songlib);
-/* Initializes a static song library
-** Parameters: (songlib_t *) songlib: Pointer to the library
-**             to initialize
-** Returns   : (void)
-*/
-
-void song_lib_free(const songlib_t &songlib);
-/* Frees a song library
-** Parameters: (songlib_t) songlib: The library to free
-** Returns   : (void)
-*/
-
-void song_lib_add(const songlib_t &songlib, song_t *song);
-/* Adds a song to a song library.
-** Parameters: (songlib_t) songlib: An existing sound library, or NULL
-**             (song_t *) song: The song to add
-** Returns   : (void)
-*/
-
-song_t *song_lib_find(const songlib_t &songlib, song_handle_t handle);
-/* Looks up the song with the specified handle
-** Parameters: (songlib_t) songlib: An existing sound library, may point to NULL
-**             (song_handle_t) handle: The sound handle to look for
-** Returns   : (song_t *) The song or NULL if it wasn't found
-*/
-
-song_t *song_lib_find_active(const songlib_t &songlib);
-/* Finds the first song playing with the highest priority
-** Parameters: (songlib_t) songlib: An existing sound library
-** Returns   : (song_t *) The song that should be played next, or NULL if there is none
-*/
-
-song_t *song_lib_find_next_active(const songlib_t &songlib, song_t *song);
-/* Finds the next song playing with the highest priority
-** Parameters: (songlib_t) songlib: The song library to operate on
-**             (song_t *) song: A song previously returned from the song library
-** Returns   : (song_t *) The next song to play relative to 'song', or
-**                        NULL if none are left
-** The functions 'song_lib_find_active' and 'song_lib_find_next_active
-** allow to iterate over all songs that satisfy the requirement of
-** being 'playable'.
-*/
-
-int song_lib_remove(const songlib_t &songlib, song_handle_t handle);
-/* Removes a song from the library
-** Parameters: (songlib_t) songlib: An existing sound library
-**             (song_handle_t) handle: Handle of the song to remove
-** Returns   : (int) The status of the song that was removed
-*/
-
-void song_lib_resort(const songlib_t &songlib, song_t *song);
-/* Removes a song from the library and sorts it in again; for use after renicing
-** Parameters: (songlib_t) songlib: An existing sound library
-**             (song_t *) song: The song to work on
-** Returns   : (void)
-*/
-
-int song_lib_count(const songlib_t &songlib);
-/* Counts the number of songs in a song library
-** Parameters: (songlib_t) songlib: The library to count
-** Returns   : (int) The number of songs
-*/
-
-void song_lib_set_restore_behavior(const songlib_t &songlib, song_handle_t handle,
-	RESTORE_BEHAVIOR action);
-/* Determines what should be done with the song "handle" when
-** restoring it from a saved game.
-** Parameters: (songlib_t) songlib: The library that contains the song
-**             (song_handle_t) handle: Its handle
-**             (RESTORE_BEHAVIOR) action: The desired action
-*/
 
 } // End of namespace Sci
 

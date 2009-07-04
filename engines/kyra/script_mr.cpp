@@ -381,13 +381,10 @@ int KyraEngine_MR::o3_checkInRect(EMCState *script) {
 		y += desc[1];
 	}
 
-	if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
-		//XXX
+	if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
 		return 1;
-	} else {
-		//XXX
+	else
 		return 0;
-	}
 }
 
 int KyraEngine_MR::o3_updateConversations(EMCState *script) {

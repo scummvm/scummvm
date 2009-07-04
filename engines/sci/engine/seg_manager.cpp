@@ -129,8 +129,8 @@ Script *SegManager::allocateScript(EngineState *s, int script_nr, SegmentId *seg
 }
 
 void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
-	Resource *script = s->resmgr->findResource(kResourceTypeScript, script_nr, 0);
-	Resource *heap = s->resmgr->findResource(kResourceTypeHeap, script_nr, 0);
+	Resource *script = s->resmgr->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	Resource *heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 
 	scr.script_size = script->size;
 	scr.heap_size = 0; // Set later
@@ -430,7 +430,7 @@ void SegManager::heapRelocate(reg_t block) {
 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff) ? NULL_REG : get_class_address(s, id, SCRIPT_GET_LOCK, NULL_REG))
 
-reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller);
+reg_t get_class_address(EngineState *s, int classnr, SCRIPT_GET lock, reg_t caller);
 
 Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 	Object *obj;

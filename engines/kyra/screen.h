@@ -29,7 +29,9 @@
 #include "common/util.h"
 #include "common/func.h"
 #include "common/list.h"
+#include "common/array.h"
 #include "common/rect.h"
+#include "common/stream.h"
 
 class OSystem;
 
@@ -53,10 +55,112 @@ struct ScreenDim {
 struct Font {
 	uint8 *fontData;
 	uint8 *charWidthTable;
-	uint16 charSizeOffset;
+	uint16 fontDescOffset;
 	uint16 charBitmapOffset;
 	uint16 charWidthTableOffset;
 	uint16 charHeightTableOffset;
+
+	uint8 lastGlyph;
+};
+
+/**
+ * A class that manages KYRA palettes.
+ *
+ * This class stores the palette data as VGA RGB internally.
+ */
+class Palette {
+public:
+	Palette(const int numColors);
+	~Palette();
+
+	enum {
+		kVGABytesPerColor = 3,
+		kPC98BytesPerColor = 3,
+		kAmigaBytesPerColor = 2
+	};
+
+	/**
+	 * Load a VGA palette from the given stream.
+	 */
+	void loadVGAPalette(Common::ReadStream &stream, int startIndex, int colors);
+
+	/**
+	 * Load a AMIGA palette from the given stream.
+	 */
+	void loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors);
+
+	/**
+	 * Load a PC98 16 color palette from the given stream.
+	 */
+	void loadPC98Palette(Common::ReadStream &stream, int startIndex, int colors);
+
+	/**
+	 * Return the number of colors this palette manages.
+	 */
+	int getNumColors() const { return _numColors; }
+
+	/**
+	 * Set all palette colors to black.
+	 */
+	void clear();
+
+	/**
+	 * Fill the given indexes with the given component value.
+	 *
+	 * @param firstCol	the first color, which should be overwritten.
+	 * @param numCols	number of colors, which schould be overwritten.
+	 * @param value		color component value, which should be stored.
+	 */
+	void fill(int firstCol, int numCols, uint8 value);
+
+	/**
+	 * Copy data from another palette.
+	 *
+	 * @param source	palette to copy data from.
+	 * @param firstCol	the first color of the source which should be copied.
+	 * @param numCols	number of colors, which should be copied. -1 all remaining colors.
+	 * @param dstStart	the first color, which should be ovewritten. If -1 firstCol will be used as start.
+	 */
+	void copy(const Palette &source, int firstCol = 0, int numCols = -1, int dstStart = -1);
+
+	/**
+	 * Copy data from a raw VGA palette.
+	 *
+	 * @param source	source buffer
+	 * @param firstCol	the first color of the source which should be copied.
+	 * @param numCols	number of colors, which should be copied.
+	 * @param dstStart	the first color, which should be ovewritten. If -1 firstCol will be used as start.
+	 */
+	void copy(const uint8 *source, int firstCol, int numCols, int dstStart = -1);
+
+	/**
+	 * Fetch a RGB palette.
+	 *
+	 * @return a pointer to the RGB palette data, the client must delete[] it.
+	 */
+	uint8 *fetchRealPalette() const;
+
+	//XXX
+	uint8 &operator[](const int index) {
+		assert(index >= 0 && index <= _numColors * 3);
+		return _palData[index];
+	}
+
+	const uint8 &operator[](const int index) const {
+		assert(index >= 0 && index <= _numColors * 3);
+		return _palData[index];
+	}
+
+	/**
+	 * Gets raw access to the palette.
+	 *
+	 * TODO: Get rid of this.
+	 */
+	uint8 *getData() { return _palData; }
+	const uint8 *getData() const { return _palData; }
+private:
+	uint8 *_palData;
+	const int _numColors;
 };
 
 class Screen {
@@ -110,11 +214,10 @@ public:
 
 	// page cur. functions
 	int setCurPage(int pageNum);
-
-	void copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src);
-	void copyCurPageBlock(int x, int y, int w, int h, uint8 *dst);
-
 	void clearCurPage();
+
+	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
+					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
 
 	// page 0 functions
 	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);
@@ -142,21 +245,25 @@ public:
 	void fadeFromBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 
-	void fadePalette(const uint8 *palData, int delay, const UpdateFunctor *upFunc = 0);
-	virtual void getFadeParams(const uint8 *palette, int delay, int &delayInc, int &diff);
-	int fadePalStep(const uint8 *palette, int diff);
+	virtual void fadePalette(const Palette &pal, int delay, const UpdateFunctor *upFunc = 0);
+	virtual void getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff);
+	virtual int fadePalStep(const Palette &pal, int diff);
 
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
-	void setScreenPalette(const uint8 *palData);
-	const uint8 *getScreenPalette() const { return _screenPalette; }
+	virtual void setScreenPalette(const Palette &pal);
 
 	void getRealPalette(int num, uint8 *dst);
-	uint8 *getPalette(int num);
+	Palette &getPalette(int num);
+	void copyPalette(const int dst, const int src);
 
 	// gui specific (processing on _curPage)
+	enum ShadeType {
+		kShadeTypeKyra,
+		kShadeTypeLol
+	};
 	void drawLine(bool vertical, int x, int y, int length, int color);
 	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
-	void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
+	void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2, ShadeType shadeType = kShadeTypeKyra);
 	void drawBox(int x1, int y1, int x2, int y2, int color);
 
 	// font/text handling
@@ -199,10 +306,11 @@ public:
 	void rectClip(int &x, int &y, int w, int h);
 
 	// misc
-	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData, bool skip=false);
+	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
 
-	bool loadPalette(const char *filename, uint8 *palData);
-	void loadPalette(const byte *data, uint8 *palData, int bytes);
+	bool loadPalette(const char *filename, Palette &pal);
+	bool loadPaletteTable(const char *filename, int firstPalette);
+	void loadPalette(const byte *data, Palette &pal, int bytes);
 
 	void setAnimBlockPtr(int size);
 
@@ -220,7 +328,6 @@ public:
 	int _charWidth;
 	int _charOffset;
 	int _curPage;
-	uint8 *_currentPalette;
 	uint8 *_shapePages[2];
 	int _maskMinY, _maskMaxY;
 	FontId _currentFont;
@@ -231,6 +338,7 @@ public:
 	static uint decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor = false);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
+
 	static void convertAmigaGfx(uint8 *data, int w, int h, bool offscreen = true);
 	static void convertAmigaMsc(uint8 *data);
 
@@ -240,7 +348,7 @@ protected:
 	void updateDirtyRectsOvl();
 
 	void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
-	void mergeOverlay(int x, int y, int w, int h);
+	virtual void mergeOverlay(int x, int y, int w, int h);
 
 	// overlay specific
 	byte *getOverlayPtr(int pageNum);
@@ -258,10 +366,6 @@ protected:
 	};
 
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
-	void restoreMouseRect();
-	void copyMouseToScreen();
-	void copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr);
-	void copyScreenToRect(int x, int y, int w, int h, uint8 *ptr);
 
 	template<bool noXor> static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
 	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
@@ -279,8 +383,9 @@ protected:
 	uint8 *_sjisSourceChar;
 	uint8 _sjisInvisibleColor;
 
-	uint8 *_screenPalette;
-	uint8 *_palettes[6];
+	Palette *_screenPalette;
+	Common::Array<Palette *> _palettes;
+	Palette *_internFadePalette;
 
 	Font _fonts[FID_NUM];
 	uint8 _textColorsMap[16];
@@ -291,7 +396,11 @@ protected:
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
 
+	// mouse handling
 	int _mouseLockCount;
+	const uint8 _cursorColorKey;
+
+	virtual void postProcessCursor(uint8 *data, int w, int h, int pitch) {};
 
 	enum {
 		kMaxDirtyRects = 50

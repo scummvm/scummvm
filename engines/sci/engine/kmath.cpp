@@ -29,18 +29,18 @@
 namespace Sci {
 
 reg_t kRandom(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	return make_reg(0, SKPV(0) + (int)((SKPV(1) + 1.0 - SKPV(0)) * (rand() / (RAND_MAX + 1.0))));
+	return make_reg(0, argv[0].toSint16() + (int)((argv[1].toSint16() + 1.0 - argv[0].toSint16()) * (rand() / (RAND_MAX + 1.0))));
 }
 
 reg_t kAbs(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// This is a hack, but so is the code in Hoyle1 that needs it.
 	if (argv[0].segment)
 		return make_reg(0, 0x3e8); // Yes people, this is an object
-	return make_reg(0, abs(SKPV(0)));
+	return make_reg(0, abs(argv[0].toSint16()));
 }
 
 reg_t kSqrt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	return make_reg(0, (int16) sqrt((float) abs(SKPV(0))));
+	return make_reg(0, (int16) sqrt((float) abs(argv[0].toSint16())));
 }
 
 int get_angle(int xrel, int yrel) {
@@ -66,10 +66,10 @@ int get_angle(int xrel, int yrel) {
 reg_t kGetAngle(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Based on behavior observed with a test program created with
 	// SCI Studio.
-	int x1 = SKPV(0);
-	int y1 = SKPV(1);
-	int x2 = SKPV(2);
-	int y2 = SKPV(3);
+	int x1 = argv[0].toSint16();
+	int y1 = argv[1].toSint16();
+	int x2 = argv[2].toSint16();
+	int y2 = argv[3].toSint16();
 	int xrel = x2 - x1;
 	int yrel = y1 - y2; // y-axis is mirrored.
 	int angle;
@@ -101,29 +101,31 @@ reg_t kGetAngle(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kGetDistance(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int xrel = (int)(((float) SKPV(1) - SKPV_OR_ALT(3, 0)) / cos(SKPV_OR_ALT(5, 0) * PI / 180.0)); // This works because cos(0)==1
-	int yrel = SKPV(0) - SKPV_OR_ALT(2, 0);
-
+	int xdiff = (argc > 3) ? argv[3].toSint16() : 0;
+	int ydiff = (argc > 2) ? argv[2].toSint16() : 0;
+	int angle = (argc > 5) ? argv[5].toSint16() : 0;
+	int xrel = (int)(((float) argv[1].toSint16() - xdiff) / cos(angle * PI / 180.0)); // This works because cos(0)==1
+	int yrel = argv[0].toSint16() - ydiff;
 	return make_reg(0, (int16)sqrt((float) xrel*xrel + yrel*yrel));
 }
 
 reg_t kTimesSin(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int angle = SKPV(0);
-	int factor = SKPV(1);
+	int angle = argv[0].toSint16();
+	int factor = argv[1].toSint16();
 
 	return make_reg(0, (int)(factor * 1.0 * sin(angle * PI / 180.0)));
 }
 
 reg_t kTimesCos(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int angle = SKPV(0);
-	int factor = SKPV(1);
+	int angle = argv[0].toSint16();
+	int factor = argv[1].toSint16();
 
 	return make_reg(0, (int)(factor * 1.0 * cos(angle * PI / 180.0)));
 }
 
 reg_t kCosDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int angle = SKPV(0);
-	int value = SKPV(1);
+	int angle = argv[0].toSint16();
+	int value = argv[1].toSint16();
 	double cosval = cos(angle * PI / 180.0);
 
 	if ((cosval < 0.0001) && (cosval > 0.0001)) {
@@ -134,8 +136,8 @@ reg_t kCosDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kSinDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int angle = SKPV(0);
-	int value = SKPV(1);
+	int angle = argv[0].toSint16();
+	int value = argv[1].toSint16();
 	double sinval = sin(angle * PI / 180.0);
 
 	if ((sinval < 0.0001) && (sinval > 0.0001)) {
@@ -146,8 +148,8 @@ reg_t kSinDiv(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kTimesTan(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int param = SKPV(0);
-	int scale = SKPV_OR_ALT(1, 1);
+	int param = argv[0].toSint16();
+	int scale = (argc > 1) ? argv[1].toSint16() : 1;
 
 	param -= 90;
 	if ((param % 90) == 0) {
@@ -158,8 +160,8 @@ reg_t kTimesTan(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kTimesCot(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int param = SKPV(0);
-	int scale = SKPV_OR_ALT(1, 1);
+	int param = argv[0].toSint16();
+	int scale = (argc > 1) ? argv[1].toSint16() : 1;
 
 	if ((param % 90) == 0) {
 		warning("Attempted tan(pi/2)");

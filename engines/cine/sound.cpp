@@ -507,8 +507,6 @@ void AdlibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 	}
 	int freq, note, oct;
 	findNote(frequency, &note, &oct);
-
-	note += oct * 12;
 	if (ins->amDepth) {
 		note = ins->amDepth;
 	}

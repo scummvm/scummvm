@@ -51,6 +51,7 @@ namespace Agi {
 #define SOUND_EMU_MAC	3
 #define SOUND_EMU_AMIGA	4
 #define SOUND_EMU_APPLE2GS 5
+#define SOUND_EMU_COCO3 6
 
 #define WAVEFORM_SIZE   64
 #define ENV_ATTACK	10000		/**< envelope attack rate */
@@ -228,27 +229,42 @@ struct IIgsChannelInfo {
 	bool playing(); ///< Is there a note playing on this channel?
 };
 
-	/**
-	 * AGI sound resource types.
-	 * It's probably coincidence that all the values here are powers of two
-	 * as they're simply the different used values in AGI sound resources'
-	 * starts (The first 16-bit little endian word, to be precise).
-	 */
-	enum AgiSoundType {
-		AGI_SOUND_SAMPLE	= 0x0001,
-		AGI_SOUND_MIDI		= 0x0002,
-		AGI_SOUND_4CHN		= 0x0008
-	};
-	enum AgiSoundFlags {
-		AGI_SOUND_LOOP		= 0x0001,
-		AGI_SOUND_ENVELOPE	= 0x0002
-	};
-	enum AgiSoundEnv {
-		AGI_SOUND_ENV_ATTACK	= 3,
-		AGI_SOUND_ENV_DECAY		= 2,
-		AGI_SOUND_ENV_SUSTAIN	= 1,
-		AGI_SOUND_ENV_RELEASE	= 0
-	};
+struct CoCoNote {
+	uint8  freq;
+	uint8  volume;
+	uint16 duration;    ///< Note duration
+
+	/** Reads a CoCoNote through the given pointer. */
+	void read(const uint8 *ptr) {
+		freq = *ptr;
+		volume = *(ptr + 1);
+		duration = READ_LE_UINT16(ptr + 2);
+	}
+};
+
+/**
+ * AGI sound resource types.
+ * It's probably coincidence that all the values here are powers of two
+ * as they're simply the different used values in AGI sound resources'
+ * starts (The first 16-bit little endian word, to be precise).
+ */
+enum AgiSoundType {
+	AGI_SOUND_SAMPLE	= 0x0001,
+	AGI_SOUND_MIDI		= 0x0002,
+	AGI_SOUND_4CHN		= 0x0008
+};
+enum AgiSoundFlags {
+	AGI_SOUND_LOOP		= 0x0001,
+	AGI_SOUND_ENVELOPE	= 0x0002
+};
+enum AgiSoundEnv {
+	AGI_SOUND_ENV_ATTACK	= 3,
+	AGI_SOUND_ENV_DECAY		= 2,
+	AGI_SOUND_ENV_SUSTAIN	= 1,
+	AGI_SOUND_ENV_RELEASE	= 0
+};
+
+
 /**
  * AGI engine sound channel structure.
  */
@@ -485,6 +501,7 @@ public:
 	void stopNote(int i);
 	void playNote(int i, int freq, int vol);
 	void playAgiSound();
+	void playCoCoSound();
 	uint32 mixSound();
 	bool loadInstruments();
 	void playMidiSound();

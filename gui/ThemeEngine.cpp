@@ -50,6 +50,10 @@
 
 namespace GUI {
 
+const char * const ThemeEngine::kImageLogo = "logo.bmp";
+const char * const ThemeEngine::kImageLogoSmall = "logo_small.bmp";
+const char * const ThemeEngine::kImageSearch = "search.bmp";
+
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
 
@@ -952,7 +956,7 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 	queueDD(dd, r);
 
 	if (!sel.empty()) {
-		Common::Rect text(r.left, r.top, r.right - 16, r.bottom);
+		Common::Rect text(r.left + 3, r.top + 1, r.right - 10, r.bottom);
 		queueDDText(getTextData(dd), text, sel, true, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV, deltax);
 	}
 }
@@ -1449,7 +1453,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	output.clear();
 }
 
-void ThemeEngine::listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list, int depth) {
+void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth) {
 	if (!node.exists() || !node.isReadable() || !node.isDirectory())
 		return;
 

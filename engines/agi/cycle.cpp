@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "agi/agi.h"
 #include "agi/sprite.h"
 #include "agi/graphics.h"
@@ -40,6 +39,10 @@ namespace Agi {
 void AgiEngine::newRoom(int n) {
 	VtEntry *v;
 	int i;
+
+	// Simulate slowww computer.
+	// Many effects rely on it.
+	pause(kPauseRoom);
 
 	debugC(4, kDebugLevelMain, "*** room %d ***", n);
 	_sound->stopSound();
@@ -68,7 +71,7 @@ void AgiEngine::newRoom(int n) {
 
 	agiLoadResource(rLOGIC, n);
 
-	/* Reposition ego in the new room */
+	// Reposition ego in the new room
 	switch (_game.vars[vBorderTouchEgo]) {
 	case 1:
 		_game.viewTable[0].yPos = _HEIGHT - 1;
@@ -97,7 +100,7 @@ void AgiEngine::resetControllers() {
 	int i;
 
 	for (i = 0; i < MAX_DIRS; i++) {
-		_game.evKeyp[i].occured = false;
+		_game.controllerOccured[i] = false;
 	}
 }
 
@@ -115,7 +118,7 @@ void AgiEngine::interpretCycle() {
 	oldSound = getflag(fSoundOn);
 
 	_game.exitAllLogics = false;
-	while (runLogic(0) == 0 && !(shouldQuit() || restartGame)) {
+	while (runLogic(0) == 0 && !(shouldQuit() || _restartGame)) {
 		_game.vars[vWordNotFound] = 0;
 		_game.vars[vBorderTouchObj] = 0;
 		_game.vars[vBorderCode] = 0;
@@ -183,25 +186,21 @@ void AgiEngine::oldInputMode() {
 	_game.inputMode = _oldMode;
 }
 
-/* If main_cycle returns false, don't process more events! */
+// If main_cycle returns false, don't process more events!
 int AgiEngine::mainCycle() {
 	unsigned int key, kascii;
 	VtEntry *v = &_game.viewTable[0];
 
-	_gfx->pollTimer();		/* msdos driver -> does nothing */
+	pollTimer();
 	updateTimer();
-
-	if (_game.ver == 0) {
-		messageBox("Warning: game CRC not listed, assuming AGI version 2.917.");
-		_game.ver = -1;
-	}
 
 	key = doPollKeyboard();
 
-	/* In AGI Mouse emulation mode we must update the mouse-related
-	 * vars in every interpreter cycle.
-	 */
-	if (getFeatures() & GF_AGIMOUSE) {
+	// In AGI Mouse emulation mode we must update the mouse-related
+	// vars in every interpreter cycle.
+	//
+	// We run AGIMOUSE always as a side effect
+	if (getFeatures() & GF_AGIMOUSE || 1) {
 		_game.vars[28] = g_mouse.x / 2;
 		_game.vars[29] = g_mouse.y;
 	}
@@ -220,7 +219,7 @@ int AgiEngine::mainCycle() {
 		key = 0;
 	}
 
-	/* Click-to-walk mouse interface */
+	// Click-to-walk mouse interface
 	if (_game.playerControl && v->flags & ADJ_EGO_XY) {
 		int toX = v->parm1;
 		int toY = v->parm2;
@@ -257,25 +256,24 @@ process_key:
 				break;
 			handleKeys(key);
 
-			/* if ESC pressed, activate menu before
-			 * accept.input from the interpreter cycle
-			 * sets the input mode to normal again
-			 * (closes: #540856)
-			 */
+			// if ESC pressed, activate menu before
+			// accept.input from the interpreter cycle
+			// sets the input mode to normal again
+			// (closes: #540856)
 			if (key == KEY_ESCAPE) {
 				key = 0;
 				goto process_key;
 			}
 
-			/* commented out to close Sarien bug #438872
-			 * if (key) game.keypress = key;
-			 */
+			// commented out to close Sarien bug #438872
+			if (key)
+				_game.keypress = key;
 		}
 		break;
 	case INPUT_GETSTRING:
 		handleController(key);
 		handleGetstring(key);
-		setvar(vKey, 0);	/* clear ENTER key */
+		setvar(vKey, 0);	// clear ENTER key
 		break;
 	case INPUT_MENU:
 		_menu->keyhandler(key);
@@ -299,7 +297,7 @@ int AgiEngine::playGame() {
 	int ec = errOK;
 
 	debugC(2, kDebugLevelMain, "initializing...");
-	debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
+	debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
 
 	_sound->stopSound();
 	_gfx->clearScreen(0);
@@ -307,10 +305,10 @@ int AgiEngine::playGame() {
 	_game.horizon = HORIZON;
 	_game.playerControl = false;
 
-	setflag(fLogicZeroFirsttime, true);	/* not in 2.917 */
-	setflag(fNewRoomExec, true);	/* needed for MUMG and SQ2! */
-	setflag(fSoundOn, true);	/* enable sound */
-	setvar(vTimeDelay, 2);	/* "normal" speed */
+	setflag(fLogicZeroFirsttime, true);	// not in 2.917
+	setflag(fNewRoomExec, true);	// needed for MUMG and SQ2!
+	setflag(fSoundOn, true);	// enable sound
+	setvar(vTimeDelay, 2);	// "normal" speed
 
 	_game.gfxMode = true;
 	_game.clockEnabled = true;
@@ -365,7 +363,7 @@ int AgiEngine::playGame() {
 			saveGame(getSavegameFilename(0), "Autosave");
 		}
 
-	} while (!(shouldQuit() || restartGame));
+	} while (!(shouldQuit() || _restartGame));
 
 	_sound->stopSound();
 
@@ -373,22 +371,19 @@ int AgiEngine::playGame() {
 }
 
 int AgiEngine::runGame() {
-	int i, ec = errOK;
+	int ec = errOK;
 
-	for (i = 0; i < MAX_DIRS; i++)
-		memset(&_game.evKeyp[i], 0, sizeof(struct AgiEvent));
-
-	/* Execute the game */
+	// Execute the game
 	do {
 		debugC(2, kDebugLevelMain, "game loop");
-		debugC(2, kDebugLevelMain, "game.ver = 0x%x", _game.ver);
+		debugC(2, kDebugLevelMain, "game version = 0x%x", getVersion());
 
 		if (agiInit() != errOK)
 			break;
 
-		if (restartGame) {
+		if (_restartGame) {
 			setflag(fRestartGame, true);
-			restartGame = false;
+			_restartGame = false;
 		}
 
 		// Set computer type (v20 i.e. vComputer)
@@ -411,7 +406,7 @@ int AgiEngine::runGame() {
 			break;
 		}
 
-		setvar(vSoundgen, 1);	/* IBM PC SOUND */
+		setvar(vSoundgen, 1);	// IBM PC SOUND
 
 		// Set monitor type (v26 i.e. vMonitor)
 		switch (_renderMode) {
@@ -432,7 +427,7 @@ int AgiEngine::runGame() {
 			break;
 		}
 
-		setvar(vFreePages, 255); // Set amount of free memory to the maximum value
+		setvar(vFreePages, 180); // Set amount of free memory to realistic value
 		setvar(vMaxInputChars, 38);
 		_game.inputMode = INPUT_NONE;
 		_game.inputEnabled = 0;
@@ -442,7 +437,7 @@ int AgiEngine::runGame() {
 		ec = playGame();
 		_game.state = STATE_LOADED;
 		agiDeinit();
-	} while (restartGame);
+	} while (_restartGame);
 
 	delete _menu;
 	_menu = NULL;

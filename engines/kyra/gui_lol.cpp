@@ -28,32 +28,40 @@
 #include "kyra/lol.h"
 #include "kyra/screen_lol.h"
 #include "kyra/gui_lol.h"
+#include "kyra/resource.h"
+#include "kyra/util.h"
+
+#include "common/savefile.h"
+#include "common/config-manager.h"
+#include "graphics/scaler.h"
+
+#include "base/version.h"
 
 namespace Kyra {
 
 void LoLEngine::gui_drawPlayField() {
 	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, 0);
 
-	if (_gameFlags[15] & 0x4000) {
+	if (_flagsTable[31] & 0x40) {
 		// copy compass shape
 		static const int cx[] = { 112, 152, 224 };
 		_screen->copyRegion(cx[_lang], 32, 288, 0, 32, 32, 2, 2, Screen::CR_NO_P_CHECK);
 		_compassDirection = -1;
 	}
 
-	if (_gameFlags[15] & 0x1000)
+	if (_flagsTable[31] & 0x10)
 		// draw automap book
 		_screen->drawShape(2, _gameShapes[78], 290, 32, 0, 0);
 
 	int cp = _screen->setCurPage(2);
 
-	if (_gameFlags[15] & 0x2000) {
+	if (_flagsTable[31] & 0x20) {
 		gui_drawScroll();
 	} else {
 		_selectedSpell = 0;
 	}
 
-	if (_gameFlags[15] & 0x800)
+	if (_flagsTable[31] & 0x08)
 		resetLampStatus();
 
 	updateDrawPage2();
@@ -548,7 +556,7 @@ void LoLEngine::gui_drawMoneyBox(int pageNum) {
 }
 
 void LoLEngine::gui_drawCompass() {
-	if (!(_gameFlags[15] & 0x4000))
+	if (!(_flagsTable[31] & 0x40))
 		return;
 
 	if (_compassDirection == -1) {
@@ -577,7 +585,7 @@ void LoLEngine::gui_drawCompass() {
 }
 
 int LoLEngine::gui_enableControls() {
-	_floatingMouseArrowControl = 0;
+	_floatingCursorControl = 0;
 
 	if (!_currentControlMode) {
 		for (int i = 76; i < 85; i++)
@@ -592,7 +600,7 @@ int LoLEngine::gui_disableControls(int controlMode) {
 	if (_currentControlMode)
 		return 0;
 
-	_floatingMouseArrowControl = (controlMode & 2) ? 2 : 1;
+	_floatingCursorControl = (controlMode & 2) ? 2 : 1;
 
 	gui_toggleFightButtons(true);
 
@@ -606,7 +614,7 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 	static const int16 buttonX[] = { 0x0056, 0x0128, 0x000C, 0x0021, 0x0122, 0x000C, 0x0021, 0x0036, 0x000C, 0x0021, 0x0036 };
 	static const int16 buttonY[] = { 0x00B4, 0x00B4, 0x00B4, 0x00B4, 0x0020, 0x0084, 0x0084, 0x0084, 0x0096, 0x0096, 0x0096 };
 
-	if (shapeIndex == 78 && !(_gameFlags[15] & 0x1000))
+	if (shapeIndex == 78 && !(_flagsTable[31] & 0x10))
 		return;
 
 	if (_currentControlMode && _needSceneRestore)
@@ -836,7 +844,7 @@ void LoLEngine::gui_enableDefaultPlayfieldButtons() {
 	gui_setFaceFramesControlButtons(29, 0);
 	gui_setFaceFramesControlButtons(25, 33);
 
-	if (_gameFlags[15] & 0x2000)
+	if (_flagsTable[31] & 0x20)
 		gui_initMagicScrollButtons();
 }
 
@@ -1364,7 +1372,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		(_itemsInPlay[hItem].itemPropertyIndex == 220 || _itemsInPlay[slotItem].itemPropertyIndex == 220)) {
 		// merge ruby of truth
 
-		WSAMovie_v2 *wsa = new WSAMovie_v2(this, _screen);
+		WSAMovie_v2 *wsa = new WSAMovie_v2(this);
 		wsa->open("truth.wsa", 0, 0);
 
 		_screen->hideMouse();
@@ -1377,7 +1385,7 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 		for (int i = 0; i < 25; i++) {
 			uint32 delayTimer = _system->getMillis() + 7 * _tickLength;
 			_screen->copyRegion(button->x, button->y - 3, 0, 0, 25, 27, 2, 2);
-			wsa->displayFrame(i, 2, 0, 0, 0x4000);
+			wsa->displayFrame(i, 2, 0, 0, 0x4000, 0, 0);
 			_screen->copyRegion(0, 0, button->x, button->y - 3, 25, 27, 2, 0);
 			_screen->updateScreen();
 			delayUntil(delayTimer);
@@ -1536,9 +1544,42 @@ int LoLEngine::clickedSceneThrowItem(Button *button) {
 }
 
 int LoLEngine::clickedOptions(Button *button) {
+	removeInputTop();
 	gui_toggleButtonDisplayMode(76, 1);
 
+	_updateFlags |= 4;
+
+	Button b;
+	b.data0Val2 = b.data1Val2 = b.data2Val2 = 0xfe;
+	b.data0Val3 = b.data1Val3 = b.data2Val3 = 0x01;
+
+	if (_weaponsDisabled)
+		clickedExitCharInventory(&b);
+
+	initTextFading(0, 1);
+	updatePortraits();
+	setLampMode(true);
+	setMouseCursorToIcon(0);
+	disableSysTimer(2);
+
 	gui_toggleButtonDisplayMode(76, 0);
+
+	bool speechWasEnabled = speechEnabled();
+	_gui->runMenu(_gui->_mainMenu);
+
+	_updateFlags &= 0xfffb;
+	setMouseCursorToItemInHand();
+	resetLampStatus();
+	gui_enableDefaultPlayfieldButtons();
+	enableSysTimer(2);
+	updateDrawPage2();
+
+	gui_drawPlayField();
+
+	if (speechWasEnabled && !textEnabled() && (!speechEnabled() || getVolume(kVolumeSpeech) == 2))
+		_configVoice = 0;
+
+	writeSettings();
 
 	return 1;
 }
@@ -1752,7 +1793,7 @@ int LoLEngine::clickedMoneyBox(Button *button) {
 }
 
 int LoLEngine::clickedCompass(Button *button) {
-	if (!(_gameFlags[15] & 0x4000))
+	if (!(_flagsTable[31] & 0x40))
 		return 0;
 
 	if (_compassBroken) {
@@ -1766,19 +1807,19 @@ int LoLEngine::clickedCompass(Button *button) {
 }
 
 int LoLEngine::clickedAutomap(Button *button) {
-	if (!(_gameFlags[15] & 0x1000))
+	if (!(_flagsTable[31] & 0x10))
 		return 0;
 
 	removeInputTop();
 	displayAutomap();
 
 	gui_drawPlayField();
-	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+	setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 	return 1;
 }
 
 int LoLEngine::clickedLamp(Button *button) {
-	if (!(_gameFlags[15] & 0x800))
+	if (!(_flagsTable[31] & 0x08))
 		return 0;
 
 	if (_itemsInPlay[_itemInHand].itemPropertyIndex == 248) {
@@ -1801,7 +1842,7 @@ int LoLEngine::clickedLamp(Button *button) {
 	}
 
 	if (_brightness)
-		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 
 	return 1;
 }
@@ -1826,9 +1867,13 @@ int LoLEngine::clickedStatusIcon(Button *button) {
 GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollDown);
+	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawButtonCallback);
+	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawShadedButtonCallback);
+
 	_specialProcessButton = _backUpButtonList = 0;
 	_flagsModifier = 0;
 	_mouseClick = 0;
+	_sliderSfx = 11;
 	_buttonListChanged = false;
 }
 
@@ -2162,6 +2207,624 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 	if (!returnValue)
 		returnValue = inputFlag & 0x7FFF;
 	return returnValue;
+}
+
+int GUI_LoL::redrawButtonCallback(Button *button) {
+	if (!_displayMenu)
+		return 0;
+
+	_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 225);
+	return 0;
+}
+
+int GUI_LoL::redrawShadedButtonCallback(Button *button) {
+	if (!_displayMenu)
+		return 0;
+
+	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 223, 227, Screen::kShadeTypeLol);
+	return 0;
+}
+
+int GUI_LoL::runMenu(Menu &menu) {
+	_currentMenu = &menu;
+	_lastMenu = _currentMenu;
+	_newMenu = 0;
+	_displayMenu = true;
+	_menuResult = 1;
+	_savegameOffset = 0;
+	backupPage0();
+
+	const ScreenDim *d = _screen->getScreenDim(8);
+	uint32 textCursorTimer = 0;
+	uint8 textCursorStatus = 1;
+	int wW = _screen->getCharWidth('W');
+	int fW = (d->w << 3) - wW;
+	int fC = 0;
+
+	// LoL doesnt't have default higlighted items. No item should be
+	// highlighted when entering a new menu.
+	// Instead, the respevtive struct entry is used to determine whether
+	// a menu has scroll buttons or slider bars.
+	uint8 hasSpecialButtons = 0;
+
+	while (_displayMenu) {
+		_vm->_mouseX = _vm->_mouseY = 0;
+
+		if (_currentMenu == &_loadMenu || _currentMenu == &_saveMenu || _currentMenu == &_deleteMenu) {
+			updateSaveList(true);
+			Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Greater<int>());
+			setupSavegameNames(*_currentMenu, 4);
+		}
+
+		hasSpecialButtons = _currentMenu->highlightedItem;
+		_currentMenu->highlightedItem = 255;
+
+		if (_currentMenu == &_gameOptions) {
+			char *s = (char *)_vm->_tempBuffer5120;
+			strncpy(s, _vm->getLangString(0x406f + _vm->_monsterDifficulty), 30);
+			s[29] = 0;
+			_currentMenu->item[0].itemString = s;
+			s += (strlen(s) + 1);
+
+			strncpy(s, _vm->getLangString(_vm->_smoothScrollingEnabled ? 0x4068 : 0x4069), 30);
+			s[29] = 0;
+			_currentMenu->item[1].itemString = s;
+			s += (strlen(s) + 1);
+
+			strncpy(s, _vm->getLangString(_vm->_floatingCursorsEnabled ? 0x4068 : 0x4069), 30);
+			s[29] = 0;
+			_currentMenu->item[2].itemString = s;
+			s += (strlen(s) + 1);
+
+			strncpy(s, _vm->getLangString(0x42d6 + _vm->_lang), 30);
+			s[29] = 0;
+			_currentMenu->item[3].itemString = s;
+			s += (strlen(s) + 1);
+
+			strncpy(s, _vm->getLangString(_vm->textEnabled() ? 0x4068 : 0x4069), 30);
+			s[29] = 0;
+			_currentMenu->item[4].itemString = s;
+			s += (strlen(s) + 1);
+		}
+
+		if (hasSpecialButtons == 1) {
+			if (_savegameOffset == 0) {
+				_scrollUpButton.data0ShapePtr = _scrollUpButton.data1ShapePtr = _scrollUpButton.data2ShapePtr = 0;
+			} else {
+				_scrollUpButton.data0ShapePtr = _vm->_gameShapes[17];
+				_scrollUpButton.data1ShapePtr = _scrollUpButton.data2ShapePtr = _vm->_gameShapes[19];
+			}
+			if ((uint)_savegameOffset == _saveSlots.size() - 4) {
+				_scrollDownButton.data0ShapePtr = _scrollDownButton.data1ShapePtr = _scrollDownButton.data2ShapePtr = 0;
+			} else {
+				_scrollDownButton.data0ShapePtr = _vm->_gameShapes[18];
+				_scrollDownButton.data1ShapePtr = _scrollDownButton.data2ShapePtr = _vm->_gameShapes[20];
+			}
+		}
+
+		for (uint i = 0; i < _currentMenu->numberOfItems; ++i) {
+			_menuButtons[i].data0Val1 = _menuButtons[i].data1Val1 = _menuButtons[i].data2Val1 = 4;
+			_menuButtons[i].data0Callback = _redrawShadedButtonFunctor;
+			_menuButtons[i].data1Callback = _menuButtons[i].data2Callback = _redrawButtonFunctor;
+			_menuButtons[i].flags = 0x4487;
+			_menuButtons[i].flags2 = 0;
+		}
+
+		initMenu(*_currentMenu);
+
+		if (hasSpecialButtons == 2) {
+			static const uint8 oX[] = { 0, 10, 124 };
+			static const uint8 oW[] = { 10, 114, 10 };
+
+			for (int i = 1; i < 4; ++i) {
+				int tX = _currentMenu->x + _currentMenu->item[i].x;
+				int tY = _currentMenu->y + _currentMenu->item[i].y;
+
+				for (int ii = 0; ii < 3; ++ii) {
+					Button *b = getButtonListData() + 1 + (i - 1) * 3 + ii;
+					b->nextButton = 0;
+					b->data0Val2 = b->data1Val2 = b->data2Val2 = 0xfe;
+					b->data0Val3 = b->data1Val3 = b->data2Val3 = 0x01;
+
+					b->index = ii;
+					b->keyCode = b->keyCode2 = 0;
+
+					b->x = tX + oX[ii];
+					b->y = tY;
+					b->width = oW[ii];
+					b->height = _currentMenu->item[i].height;
+
+					b->data0Val1 = b->data1Val1 = b->data2Val1 = 0;
+					b->flags = (ii == 1) ? 0x6606 : 0x4406;
+
+					b->dimTableIndex = 0;
+
+					b->buttonCallback = _currentMenu->item[i].callback;
+					b->arg = _currentMenu->item[i].itemId;
+
+					_menuButtonList = addButtonToList(_menuButtonList, b);
+
+					processButton(b);
+					updateButton(b);
+				}
+
+				_currentMenu->item[i].labelX = _currentMenu->item[i].x - 5;
+				_currentMenu->item[i].labelY = _currentMenu->item[i].y + 3;
+
+				printMenuText(getMenuItemLabel(_currentMenu->item[i]), _currentMenu->x + _currentMenu->item[i].labelX, _currentMenu->y + _currentMenu->item[i].labelY, _currentMenu->item[i].textColor, 0, 10);
+
+				int volume = _vm->getVolume((KyraEngine_v1::kVolumeEntry)(i - 1));
+				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[85], tX , tY, 0, 0x10);
+				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[87], tX + 2 + oX[1], tY, 0, 0x10);
+				_screen->drawShape(_screen->_curPage, _vm->_gameShapes[86], tX + oX[1] + volume, tY, 0, 0x10);
+			}
+
+			_screen->updateScreen();
+		}
+
+		if (_currentMenu == &_mainMenu) {
+			Screen::FontId f = _screen->setFont(Screen::FID_6_FNT);
+			_screen->fprintString("%s", menu.x + 8, menu.y + menu.height - 12, 204, 0, 8, gScummVMVersion);
+			_screen->setFont(f);
+			_screen->updateScreen();
+		}
+
+		if (_currentMenu == &_savenameMenu) {
+			int mx = (d->sx << 3) - 1;
+			int my = d->sy - 1;
+			int mw = (d->w << 3) + 1;
+			int mh = d->h + 1;
+			_screen->drawShadedBox(mx, my, mx + mw, my + mh, 227, 223, Screen::kShadeTypeLol);
+			int pg = _screen->setCurPage(0);
+			_vm->_txt->clearDim(8);
+			textCursorTimer = 0;
+			textCursorStatus = 0;
+
+			fC = _screen->getTextWidth(_saveDescription);
+			while (fC >= fW) {
+				_saveDescription[strlen(_saveDescription) - 1] = 0;
+				fC = _screen->getTextWidth(_saveDescription);
+			}
+
+			_screen->fprintString(_saveDescription, (d->sx << 3), d->sy + 2, d->unk8, d->unkA, 0);
+			_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - 1, d->unk8, 0);
+			_screen->setCurPage(pg);
+		}
+
+		while (!_newMenu && _displayMenu) {
+			processHighlights(*_currentMenu);
+
+			if (_currentMenu == &_savenameMenu) {
+				if (textCursorTimer <= _vm->_system->getMillis()) {
+					fC = _screen->getTextWidth(_saveDescription);
+					textCursorStatus ^= 1;
+					textCursorTimer = _vm->_system->getMillis() + 20 * _vm->_tickLength;
+					_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - 1, textCursorStatus ? d->unk8 : d->unkA, 0);
+					_screen->updateScreen();
+				}
+			}
+
+			if (getInput()) {
+				if (!_newMenu)
+					_newMenu = (_currentMenu != &_audioOptions) ? _currentMenu : 0;
+				else
+					_lastMenu = _menuResult == -1 ? _lastMenu : _currentMenu;
+			}
+
+			if (!_menuResult)
+				_displayMenu = false;
+		}
+
+		if (_newMenu != _currentMenu || !_displayMenu)
+			restorePage0();
+
+		_currentMenu->highlightedItem = hasSpecialButtons;
+
+		if (_newMenu)
+			_currentMenu = _newMenu;
+
+		_newMenu = 0;
+	}
+
+	return _menuResult;
+}
+
+void GUI_LoL::createScreenThumbnail(Graphics::Surface &dst) {
+	uint8 *screenPal = new uint8[768];
+	_screen->getRealPalette(1, screenPal);
+	::createThumbnail(&dst, _screen->getCPagePtr(7), Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
+	delete[] screenPal;
+}
+
+void GUI_LoL::backupPage0() {
+	_screen->copyPage(0, 7);
+}
+
+void GUI_LoL::restorePage0() {
+	_screen->copyPage(7, 0);
+	_screen->updateScreen();
+}
+
+void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
+	char *s = (char *)_vm->_tempBuffer5120;
+
+	for (int i = 0; i < num; ++i) {
+		menu.item[i].saveSlot = -1;
+		menu.item[i].enabled = false;
+	}
+
+	int startSlot = 0;
+	if (&menu == &_saveMenu && _savegameOffset == 0)
+		startSlot = 1;
+
+	KyraEngine_v1::SaveHeader header;
+	Common::InSaveFile *in;
+	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
+		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset - startSlot]), header)) != 0) {
+			strncpy(s, header.description.c_str(), 80);
+			s[79] = 0;
+
+			Util::convertISOToDOS(s);
+
+			menu.item[i].itemString = s;
+			s += (strlen(s) + 1);
+			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
+			menu.item[i].enabled = true;
+			delete in;
+		}
+	}
+
+	if (_savegameOffset == 0) {
+		if (&menu == &_saveMenu) {
+			strcpy(s, _vm->getLangString(0x4010));
+			menu.item[0].itemString = s;
+			menu.item[0].saveSlot = -3;
+			menu.item[0].enabled = true;
+		}
+	}
+}
+
+void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags, Screen::FontId font) {
+	_screen->fprintString(str, x, y, c0, c1, flags);
+}
+
+int GUI_LoL::getMenuCenterStringX(const char *str, int x1, int x2) {
+	if (!str)
+		return 0;
+
+	int strWidth = _screen->getTextWidth(str);
+	int w = x2 - x1 + 1;
+	return x1 + (w - strWidth) / 2;
+}
+
+int GUI_LoL::getInput() {
+	if (!_displayMenu)
+		return 0;
+
+	Common::Point p = _vm->getMousePos();
+	_vm->_mouseX = p.x;
+	_vm->_mouseY = p.y;
+
+	if (_currentMenu == &_savenameMenu) {
+		_vm->updateInput();
+
+		for (Common::List<KyraEngine_v1::Event>::const_iterator evt = _vm->_eventList.begin(); evt != _vm->_eventList.end(); evt++) {
+			if (evt->event.type == Common::EVENT_KEYDOWN)
+				_keyPressed = evt->event.kbd;
+		}
+	}
+
+	int inputFlag = _vm->checkInput(_menuButtonList);
+
+	if (_currentMenu == &_savenameMenu && _keyPressed.ascii){
+		char inputKey = _keyPressed.ascii;
+		Util::convertISOToDOS(inputKey);
+
+		if ((uint8)inputKey > 31 && (uint8)inputKey < 226) {
+			_saveDescription[strlen(_saveDescription) + 1] = 0;
+			_saveDescription[strlen(_saveDescription)] = inputKey;
+			inputFlag |= 0x8000;
+		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE && strlen(_saveDescription)) {
+			_saveDescription[strlen(_saveDescription) - 1] = 0;
+			inputFlag |= 0x8000;
+		}
+	}
+
+	_vm->removeInputTop();
+	_keyPressed.reset();
+
+	if (_vm->shouldQuit())
+		_displayMenu = false;
+
+	_vm->delay(8);
+	return inputFlag & 0x8000 ? 1 : 0;
+}
+
+int GUI_LoL::clickedMainMenu(Button *button) {
+	updateMenuButton(button);
+	switch (button->arg) {
+	case 0x4001:
+		_savegameOffset = 0;
+		_newMenu = &_loadMenu;
+		break;
+	case 0x4002:
+		_savegameOffset = 0;
+		_newMenu = &_saveMenu;
+		break;
+	case 0x4003:
+		_savegameOffset = 0;
+		_newMenu = &_deleteMenu;
+		break;
+	case 0x4004:
+		_newMenu = &_gameOptions;
+		break;
+	case 0x42D9:
+		_newMenu = &_audioOptions;
+		break;
+	case 0x4006:
+		_choiceMenu.menuNameId = 0x400a;
+		_newMenu = &_choiceMenu;
+		break;
+	case 0x4005:
+		_displayMenu = false;
+		break;
+	}
+	return 1;
+}
+
+int GUI_LoL::clickedLoadMenu(Button *button) {
+	updateMenuButton(button);
+
+	if (button->arg == 0x4011) {
+		if (_currentMenu != _lastMenu)
+			_newMenu = _lastMenu;
+		else
+			_menuResult = 0;
+		return 1;
+	}
+
+	int16 s = (int16)button->arg;
+	_vm->_gameToLoad = _loadMenu.item[-s - 2].saveSlot;
+	_displayMenu = false;
+
+	return 1;
+}
+
+int GUI_LoL::clickedSaveMenu(Button *button) {
+	updateMenuButton(button);
+
+	if (button->arg == 0x4011) {
+		_newMenu = &_mainMenu;
+		return 1;
+	}
+
+	_newMenu = &_savenameMenu;
+	int16 s = (int16)button->arg;
+	_menuResult = _saveMenu.item[-s - 2].saveSlot + 1;
+	_saveDescription = (char*)_vm->_tempBuffer5120 + 1000;
+	_saveDescription[0] = 0;
+	if (_saveMenu.item[-s - 2].saveSlot != -3)
+		strcpy(_saveDescription, _saveMenu.item[-s - 2].itemString);
+
+	return 1;
+}
+
+int GUI_LoL::clickedDeleteMenu(Button *button) {
+	updateMenuButton(button);
+
+	if (button->arg == 0x4011) {
+		_newMenu = &_mainMenu;
+		return 1;
+	}
+
+	_choiceMenu.menuNameId = 0x400b;
+	_newMenu = &_choiceMenu;
+	int16 s = (int16)button->arg;
+	_menuResult = _deleteMenu.item[-s - 2].saveSlot + 1;
+
+	return 1;
+}
+
+int GUI_LoL::clickedOptionsMenu(Button *button) {
+	updateMenuButton(button);
+
+	switch (button->arg) {
+	case 0xfff7:
+		_vm->_monsterDifficulty = ++_vm->_monsterDifficulty % 3;
+		break;
+	case 0xfff6:
+		_vm->_smoothScrollingEnabled ^= true;
+		break;
+	case 0xfff5:
+		_vm->_floatingCursorsEnabled ^= true;
+		break;
+	case 0xfff4:
+		_vm->_lang = ++_vm->_lang % 3;
+		break;
+	case 0xfff3:
+		_vm->_configVoice ^= 1;
+		break;
+	case 0x4072:
+		char filename[13];
+		snprintf(filename, sizeof(filename), "LEVEL%02d.%s", _vm->_currentLevel, _vm->_languageExt[_vm->_lang]);
+		if (_vm->_levelLangFile)
+			delete[] _vm->_levelLangFile;
+		_vm->_levelLangFile = _vm->resource()->fileData(filename, 0);
+		snprintf(filename, sizeof(filename), "LANDS.%s", _vm->_languageExt[_vm->_lang]);
+		if (_vm->_landsFile)
+			delete[] _vm->_landsFile;
+		_vm->_landsFile = _vm->resource()->fileData(filename, 0);
+		_newMenu = _lastMenu;
+		break;
+	}
+
+	return 1;
+}
+
+int GUI_LoL::clickedAudioMenu(Button *button) {
+	updateMenuButton(button);
+
+	if (button->arg == 0x4072) {
+		_newMenu = _lastMenu;
+		return 1;
+	}
+
+	int tX = button->x;
+	const int oldVolume = _vm->getVolume((KyraEngine_v1::kVolumeEntry)(button->arg - 3));
+	int newVolume = oldVolume;
+
+	if (button->index == 0) {
+		newVolume -= 10;
+		tX += 10;
+	} else if (button->index == 1) {
+		newVolume = _vm->_mouseX - (tX + 7);
+	} else if (button->index == 2) {
+		newVolume += 10;
+		tX -= 114;
+	}
+
+	newVolume = CLIP(newVolume, 2, 102);
+
+	if (newVolume == oldVolume) {
+		_screen->updateScreen();
+		return 0;
+	}
+
+	_screen->drawShape(0, _vm->_gameShapes[87], tX + oldVolume, button->y, 0, 0x10);
+	// Temporary HACK
+	const int volumeDrawX = _vm->convertVolumeFromMixer(_vm->convertVolumeToMixer(newVolume));
+	_screen->drawShape(0, _vm->_gameShapes[86], tX + volumeDrawX, button->y, 0, 0x10);
+	_screen->updateScreen();
+
+	_vm->snd_stopSpeech(0);
+
+	_vm->setVolume((KyraEngine_v1::kVolumeEntry)(button->arg - 3), newVolume);
+
+	if (newVolume) {
+		if (button->arg == 4) {
+			_vm->snd_playSoundEffect(_sliderSfx, -1);
+			int16 vocIndex = (int16)READ_LE_UINT16(&_vm->_ingameSoundIndex[_sliderSfx * 2]);
+			do {
+				++_sliderSfx;
+				if (_sliderSfx < 47)
+					_sliderSfx++;
+				if (vocIndex == 199)
+					_sliderSfx = 11;
+				vocIndex = (int16)READ_LE_UINT16(&_vm->_ingameSoundIndex[_sliderSfx * 2]);
+				if (vocIndex == -1)
+					continue;
+				if (!scumm_stricmp(_vm->_ingameSoundList[vocIndex], "EMPTY"))
+					continue;
+				break;
+			} while (1);
+		} else if (button->arg == 5) {
+			_vm->_lastSpeechId = -1;
+			_vm->snd_playCharacterSpeech(0x42e0, 0, 0);
+		}
+	}
+
+	return 1;
+}
+
+int GUI_LoL::clickedDeathMenu(Button *button) {
+	updateMenuButton(button);
+	if (button->arg == _deathMenu.item[0].itemId) {
+		_vm->quitGame();
+	} else if (button->arg == _deathMenu.item[1].itemId) {
+		_newMenu = &_loadMenu;
+	}
+	return 1;
+}
+
+int GUI_LoL::clickedSavenameMenu(Button *button) {
+	updateMenuButton(button);
+	if (button->arg == _savenameMenu.item[0].itemId) {
+
+		Util::convertDOSToISO(_saveDescription);
+
+		int slot = _menuResult == -2 ? getNextSavegameSlot() : _menuResult;
+		Graphics::Surface thumb;
+		createScreenThumbnail(thumb);
+		_vm->saveGameState(slot, _saveDescription, &thumb);
+		thumb.free();
+
+		_displayMenu = false;
+
+	} else if (button->arg == _savenameMenu.item[1].itemId) {
+		_newMenu = &_saveMenu;
+	}
+
+	return 1;
+}
+
+int GUI_LoL::clickedChoiceMenu(Button *button) {
+	updateMenuButton(button);
+	if (button->arg == _choiceMenu.item[0].itemId) {
+		if (_lastMenu == &_mainMenu) {
+			_vm->quitGame();
+		} else if (_lastMenu == &_deleteMenu) {
+			_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_menuResult - 1));
+			Common::Array<int>::iterator i = Common::find(_saveSlots.begin(), _saveSlots.end(), _menuResult);
+			while (i != _saveSlots.end()) {
+				++i;
+				if (i == _saveSlots.end())
+					break;
+				// We are only renaming all savefiles until we get some slots missing
+				// Also not rename quicksave slot filenames
+				if (*(i-1) != *i || *i >= 990)
+					break;
+				Common::String oldName = _vm->getSavegameFilename(*i);
+				Common::String newName = _vm->getSavegameFilename(*i-1);
+				_vm->_saveFileMan->renameSavefile(oldName, newName);
+			}
+			_newMenu = &_mainMenu;
+		}
+	} else if (button->arg == _choiceMenu.item[1].itemId) {
+		_newMenu = &_mainMenu;
+	}
+	return 1;
+}
+
+int GUI_LoL::scrollUp(Button *button) {
+	updateButton(button);
+	if (_savegameOffset > 0) {
+		_savegameOffset--;
+		_newMenu = _currentMenu;
+		_menuResult = -1;
+	}
+	return 1;
+}
+
+int GUI_LoL::scrollDown(Button *button) {
+	updateButton(button);
+	if ((uint)_savegameOffset < _saveSlots.size() - 4) {
+		_savegameOffset++;
+		_newMenu = _currentMenu;
+		_menuResult = -1;
+	}
+	return 1;
+}
+
+const char *GUI_LoL::getMenuTitle(const Menu &menu) {
+	if (!menu.menuNameId)
+		return 0;
+	return _vm->getLangString(menu.menuNameId);
+}
+
+const char *GUI_LoL::getMenuItemTitle(const MenuItem &menuItem) {
+	if (menuItem.itemId & 0x8000 && menuItem.itemString)
+		return menuItem.itemString;
+	else if (menuItem.itemId & 0x8000 || !menuItem.itemId)
+		return 0;
+	return _vm->getLangString(menuItem.itemId);
+}
+
+const char *GUI_LoL::getMenuItemLabel(const MenuItem &menuItem) {
+	if (menuItem.labelId & 0x8000 && menuItem.labelString)
+		return menuItem.labelString;
+	else if (menuItem.labelId & 0x8000 || !menuItem.labelId)
+		return 0;
+	return _vm->getLangString(menuItem.labelId);
 }
 
 } // end of namespace Kyra

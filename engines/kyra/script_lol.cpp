@@ -206,12 +206,10 @@ int LoLEngine::olol_delay(EMCState *script) {
 int LoLEngine::olol_setGameFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setGameFlag(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 
-	assert((stackPos(0) >> 4) < 40);
-
 	if (stackPos(1))
-		_gameFlags[stackPos(0) >> 4] |= (1 << (stackPos(0) & 0x0f));
+		setGameFlag(stackPos(0));
 	else
-		_gameFlags[stackPos(0) >> 4] &= (~(1 << (stackPos(0) & 0x0f)));
+		resetGameFlag(stackPos(0));
 
 	return 1;
 }
@@ -221,12 +219,7 @@ int LoLEngine::olol_testGameFlag(EMCState *script) {
 	if (stackPos(0) < 0)
 		return 0;
 
-	assert((stackPos(0) >> 4) < 40);
-
-	if (_gameFlags[stackPos(0) >> 4] & (1 << (stackPos(0) & 0x0f)))
-		return 1;
-
-	return 0;
+	return queryGameFlag(stackPos(0));
 }
 
 int LoLEngine::olol_loadLevelGraphics(EMCState *script) {
@@ -616,7 +609,7 @@ int LoLEngine::olol_fadePalette(EMCState *script) {
 
 int LoLEngine::olol_loadBitmap(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_clearDialogueField(%p) (%s, %d)", (const void *)script, stackPosString(0), stackPos(1));
-	_screen->loadBitmap(stackPosString(0), 3, 3, _screen->getPalette(3));
+	_screen->loadBitmap(stackPosString(0), 3, 3, &_screen->getPalette(3));
 	if (stackPos(1) != 2)
 		_screen->copyPage(3, stackPos(1));
 	return 1;
@@ -670,7 +663,7 @@ int LoLEngine::olol_getGlobalVar(EMCState *script) {
 	case 12:
 		return _drainMagic;
 	case 13:
-		return _speechFlag;
+		return getVolume(kVolumeSpeech) - 2;
 	default:
 		break;
 	}
@@ -871,7 +864,7 @@ int LoLEngine::olol_fadeClearSceneWindow(EMCState *script) {
 
 int LoLEngine::olol_fadeSequencePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeSequencePalette(%p)", (const void *)script);
-	memcpy(_screen->getPalette(3) + 0x180, _screen->_currentPalette + 0x180, 0x180);
+	_screen->getPalette(3).copy(_screen->getPalette(0), 128);
 	_screen->loadSpecialColors(_screen->getPalette(3));
 	_screen->fadePalette(_screen->getPalette(3), 10);
 	_screen->_fadeFlag = 0;
@@ -883,7 +876,7 @@ int LoLEngine::olol_redrawPlayfield(EMCState *script) {
 	if (_screen->_fadeFlag != 2)
 		_screen->fadeClearSceneWindow(10);
 	gui_drawPlayField();
-	setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+	setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -1280,6 +1273,13 @@ int LoLEngine::olol_getMonsterStat(EMCState *script) {
 	return 0;
 }
 
+int LoLEngine::olol_releaseMonsterShapes(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_releaseMonsterShapes(%p)", (const void *)script);
+	for (int i = 0; i < 3; i++)
+		releaseMonsterShapes(i);
+	return 0;
+}
+
 int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playCharacterScriptChat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	snd_stopSpeech(1);
@@ -1392,6 +1392,30 @@ int LoLEngine::olol_countAllMonsters(EMCState *script){
 	return res;
 }
 
+int LoLEngine::olol_playEndSequence(EMCState *script){
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playEndSequence(%p)", (const void *)script);
+
+	int c = 0;
+	if (_characters[0].id == -9)
+		c = 1;
+	else if (_characters[0].id == -5)
+		c = 3;
+	else if (_characters[0].id == -1)
+		c = 2;
+
+	while (snd_updateCharacterSpeech())
+		delay(_tickLength);
+
+	_eventList.clear();
+	_screen->hideMouse();
+	_screen->getPalette(1).clear();
+
+	showOutro(c, (_monsterDifficulty == 2));
+	quitGame();
+
+	return 0;
+}
+
 int LoLEngine::olol_stopCharacterSpeech(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopCharacterSpeech(%p)", (const void *)script);
 	snd_stopSpeech(1);
@@ -1404,7 +1428,7 @@ int LoLEngine::olol_setPaletteBrightness(EMCState *script) {
 	uint16 old = _brightness;
 	_brightness = stackPos(0);
 	if (stackPos(1) == 1)
-		setPaletteBrightness(_screen->_currentPalette, stackPos(0), _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), stackPos(0), _lampEffect);
 	return old;
 }
 
@@ -1970,10 +1994,16 @@ int LoLEngine::olol_findInventoryItem(EMCState *script) {
 	return -1;
 }
 
+int LoLEngine::olol_drinkBezelCup(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drinkBezelCup(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	drinkBezelCup(3 - stackPos(0), stackPos(1));
+	return 1;
+}
+
 int LoLEngine::olol_restoreFadePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreFadePalette(%p)", (const void *)script);
-	memcpy(_screen->_currentPalette, _screen->getPalette(1), 384);
-	_screen->fadePalette(_screen->_currentPalette, 10);
+	_screen->getPalette(0).copy(_screen->getPalette(1), 0, 128);
+	_screen->fadePalette(_screen->getPalette(0), 10);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -2071,32 +2101,103 @@ int LoLEngine::olol_increaseSkill(EMCState *script) {
 
 int LoLEngine::olol_paletteFlash(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_paletteFlash(%p) (%d)", (const void *)script, stackPos(0));
-	uint8 *s = _screen->getPalette(1);
-	uint8 *d = _screen->getPalette(3);
+	Palette &p1 = _screen->getPalette(1);
+	Palette &p2 = _screen->getPalette(3);
+
 	uint8 ovl[256];
-	generateFlashPalette(s, d, stackPos(0));
-	_screen->loadSpecialColors(s);
-	_screen->loadSpecialColors(d);
+	generateFlashPalette(p1, p2, stackPos(0));
+	_screen->loadSpecialColors(p1);
+	_screen->loadSpecialColors(p2);
 
 	if (_smoothScrollModeNormal) {
 		for (int i = 0; i < 256; i++)
 			ovl[i] = i;
 		ovl[1] = 6;
+
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, 0, 2);
 		_screen->applyOverlay(112, 0, 176, 120, 0, ovl);
 	}
 
-	_screen->setScreenPalette(d);
+	_screen->setScreenPalette(p2);
 	_screen->updateScreen();
 
 	delay(2 * _tickLength);
 
-	_screen->setScreenPalette(s);
+	_screen->setScreenPalette(p1);
 	if (_smoothScrollModeNormal)
 		_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
 
 	_screen->updateScreen();
 	return 0;
+}
+
+int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreMagicShroud(%p)", (const void *)script);
+
+	WSAMovie_v2 *mov = new WSAMovie_v2(this);
+	mov->open("DARKLITE.WSA", 2, 0);
+	if (!mov->opened())
+		return 0;
+
+	_screen->hideMouse();
+
+	// TODO: This function could need some major cleanup to work with our
+	// new palette code without needless conversions.
+	uint8 *fadeTab = new uint8[21504];
+	uint8 *tpal1 = fadeTab;
+	uint8 *tpal2 = tpal1 + 768;
+	uint8 *tpal3 = tpal2 + 768;
+	uint8 *tpal4 = 0;
+	_res->loadFileToBuf("LITEPAL1.COL", tpal1, 768);
+	tpal2 = _screen->generateFadeTable(tpal3, 0, tpal1, 21);
+	_res->loadFileToBuf("LITEPAL2.COL", tpal2, 768);
+	tpal4 = tpal2;
+	tpal2 += 768;
+	_res->loadFileToBuf("LITEPAL3.COL", tpal1, 768);
+	_screen->generateFadeTable(tpal2, tpal4, tpal1, 4);
+
+	Palette pal(768);
+
+	for (int i = 0; i < 21; i++) {
+		uint32 etime = _system->getMillis() + 20 * _tickLength;
+		mov->displayFrame(i, 0, 0, 0, 0, 0, 0);
+		_screen->updateScreen();
+
+		pal.copy(tpal3, 0, 256);
+		_screen->setScreenPalette(pal);
+		tpal3 += 768;
+
+		if (i == 2 || i == 5 || i == 8 || i == 11 || i == 13 || i == 15 || i == 17 || i == 19)
+			snd_playSoundEffect(95, -1);
+		delayUntil(etime);
+	}
+
+	pal.copy(tpal3, 0, 256);
+	snd_playSoundEffect(91, -1);
+	_screen->fadePalette(pal, 300);
+	tpal3 += 768;
+
+	for (int i = 22; i < 38; i++) {
+		uint32 etime = _system->getMillis() + 12 * _tickLength;
+		mov->displayFrame(i, 0, 0, 0, 0, 0, 0);
+		_screen->updateScreen();
+		if (i == 22 || i == 24 || i == 28 || i == 32) {
+			snd_playSoundEffect(131, -1);
+
+			pal.copy(tpal3, 0, 256);
+			_screen->setScreenPalette(pal);
+			tpal3 += 768;
+		}
+		delayUntil(etime);
+	}
+
+	mov->close();
+	delete mov;
+	delete[] fadeTab;
+
+	_screen->showMouse();
+
+	return 1;
 }
 
 int LoLEngine::olol_disableControls(EMCState *script) {
@@ -2214,7 +2315,7 @@ int LoLEngine::tlol_loadPalette(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setupPaletteFadeEx(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
-	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+	_screen->copyPalette(0, 1);
 
 	_screen->getFadeParams(_screen->getPalette(0), param[0], _tim->_palDelayInc, _tim->_palDiff);
 	_tim->_palDelayAcc = 0;
@@ -2292,7 +2393,6 @@ int LoLEngine::tlol_setPartyPosition(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeClearWindow(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
-	uint8 *tmp = 0;
 
 	switch (param[0]) {
 	case 0:
@@ -2300,10 +2400,9 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 		break;
 
 	case 1:
-		tmp = _screen->getPalette(3);
-		memcpy(tmp + 0x180, _screen->_currentPalette + 0x180, 0x180);
-		_screen->loadSpecialColors(tmp);
-		_screen->fadePalette(tmp, 10);
+		_screen->getPalette(3).copy(_screen->getPalette(0), 128);
+		_screen->loadSpecialColors(_screen->getPalette(3));
+		_screen->fadePalette(_screen->getPalette(3), 10);
 		_screen->_fadeFlag = 0;
 		break;
 
@@ -2312,9 +2411,8 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 		break;
 
 	case 3:
-		tmp = _screen->getPalette(3);
-		_screen->loadSpecialColors(tmp);
-		_screen->fadePalette(tmp, 10);
+		_screen->loadSpecialColors(_screen->getPalette(3));
+		_screen->fadePalette(_screen->getPalette(3), 10);
 		_screen->_fadeFlag = 0;
 		break;
 
@@ -2322,13 +2420,12 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 		if (_screen->_fadeFlag != 2)
 			_screen->fadeClearSceneWindow(10);
 		gui_drawPlayField();
-		setPaletteBrightness(_screen->_currentPalette, _brightness, _lampEffect);
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 		_screen->_fadeFlag = 0;
 		break;
 
 	case 5:
-		tmp = _screen->getPalette(3);
-		_screen->loadSpecialColors(tmp);
+		_screen->loadSpecialColors(_screen->getPalette(3));
 		_screen->fadePalette(_screen->getPalette(1), 10);
 		_screen->_fadeFlag = 0;
 		break;
@@ -2428,7 +2525,7 @@ int LoLEngine::tlol_fadeInScene(const TIM *tim, const uint16 *param) {
 	strcpy(filename, sceneFile);
 	strcat(filename, ".CPS");
 
-	_screen->loadBitmap(filename, 7, 5, _screen->getPalette(0));
+	_screen->loadBitmap(filename, 7, 5, &_screen->getPalette(0));
 
 	filename[0] = 0;
 
@@ -2464,9 +2561,11 @@ int LoLEngine::tlol_unusedResourceFunc(const TIM *tim, const uint16 *param) {
 int LoLEngine::tlol_fadeInPalette(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeInPalette(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
 	const char *bitmap = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
-	uint8 palette[768];
-	_screen->loadBitmap(bitmap, 3, 3, palette);
-	_screen->fadePalette(palette, param[1]);
+
+	Palette pal(_screen->getPalette(0).getNumColors());
+	_screen->loadBitmap(bitmap, 3, 3, &pal);
+	_screen->fadePalette(pal, param[1]);
+
 	return 1;
 }
 
@@ -2483,7 +2582,7 @@ int LoLEngine::tlol_displayAnimFrame(const TIM *tim, const uint16 *param) {
 	if (param[1] == 0xFFFF) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 	} else {
-		anim->wsa->displayFrame(param[1], 2, anim->x, anim->y, 0);
+		anim->wsa->displayFrame(param[1], 2, anim->x, anim->y, 0, 0, 0);
 		_screen->copyRegion(anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->xAdd(), anim->wsa->yAdd(), anim->wsa->width(), anim->wsa->height(), 2, 0);
 	}
 
@@ -2654,7 +2753,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x5C
 	Opcode(olol_getMonsterStat);
-	OpcodeUnImpl();
+	Opcode(olol_releaseMonsterShapes);
 	Opcode(olol_playCharacterScriptChat);
 	Opcode(olol_update);
 
@@ -2672,7 +2771,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x68
 	Opcode(olol_countAllMonsters);
-	OpcodeUnImpl();
+	Opcode(olol_playEndSequence);
 	Opcode(olol_stopCharacterSpeech);
 	Opcode(olol_setPaletteBrightness);
 
@@ -2769,7 +2868,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0xA8
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	OpcodeUnImpl();
+	Opcode(olol_drinkBezelCup);
 	Opcode(olol_changeItemTypeOrFlag);
 
 	// 0xAC
@@ -2780,7 +2879,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0xB0
 	Opcode(olol_paletteFlash);
-	OpcodeUnImpl();
+	Opcode(olol_restoreMagicShroud);
 	Opcode(olol_dummy1); // anim buffer select?
 	Opcode(olol_disableControls);
 

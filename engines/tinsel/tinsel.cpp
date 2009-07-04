@@ -93,10 +93,6 @@ extern void InventoryProcess(CORO_PARAM, const void *);
 extern void PrimeBackground();
 extern SCNHANDLE GetSceneHandle(void);
 
-// In TIMER.CPP
-extern void FettleTimers(void);
-extern void RebootTimers(void);
-
 //----------------- FORWARD DECLARATIONS  ---------------------
 void SetNewScene(SCNHANDLE scene, int entrance, int transition);
 
@@ -850,19 +846,8 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("dw2"));
 
 	// Add subfolders needed for psx versions of Discworld 1	
-	if(TinselV1PSX) {
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("MIDI"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("SAMPLES"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXAB"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXC"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXDG"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXHL"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXMO"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXP"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXRS"));
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("GFX").getChild("GFXTW"));
-	}
+	if (TinselV1PSX)
+		SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 3, true);
 
 	const GameSettings *g;
 

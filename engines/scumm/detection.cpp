@@ -765,6 +765,8 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 		dg["preferredtarget"] = res;
 
+		dg.setGUIOptions(x->game.guioptions);
+
 		detectedGames.push_back(dg);
 	}
 

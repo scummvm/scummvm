@@ -41,9 +41,10 @@ protected:
 	void initialize();
 
 public:
-	void agiTimerLow() {}
-	int agiGetKeypressLow() { return 0; }
-	int agiIsKeypressLow() { return 0; }
+	void pollTimer(void) {}
+	int getKeypress(void) { return 0; }
+	bool isKeypress(void) { return false; }
+	void clearKeyQueue(void) {}
 
 	PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~PreAgiEngine();

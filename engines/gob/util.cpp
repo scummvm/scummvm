@@ -120,6 +120,8 @@ void Util::processInput(bool scroll) {
 					_fastMode ^= 1;
 				else if (event.kbd.keycode == Common::KEYCODE_g)
 					_fastMode ^= 2;
+				else if (event.kbd.keycode == Common::KEYCODE_p)
+					_vm->pauseGame();
 				break;
 			}
 			addKeyToBuffer(event.kbd);
@@ -233,6 +235,17 @@ int16 Util::checkKey(void) {
 	return translateKey(key);
 }
 
+bool Util::checkKey(int16 &key) {
+	Common::KeyState keyS;
+
+	if (!getKeyFromBuffer(keyS))
+		return false;
+
+	key = translateKey(keyS);
+
+	return true;
+}
+
 void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
 	*pX = mouse.x + _vm->_video->_scrollOffsetX - _vm->_video->_screenDeltaX;
@@ -318,6 +331,12 @@ void Util::setFrameRate(int16 rate) {
 	_frameRate = rate;
 	_frameWaitTime = 1000 / rate;
 	_startFrameTime = getTimeKey();
+	_frameWaitLag = 0;
+}
+
+void Util::notifyNewAnim() {
+	_startFrameTime = getTimeKey();
+	_frameWaitLag = 0;
 }
 
 void Util::waitEndFrame() {

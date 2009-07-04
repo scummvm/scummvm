@@ -28,7 +28,6 @@
 #include "common/config-manager.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
-#include "parallaction/iff.h"
 
 
 namespace Parallaction {
@@ -331,32 +330,40 @@ void DosDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 	}
 }
 
-void DosDisk_br::loadMask(const char *name, MaskBuffer &buffer) {
+MaskBuffer *DosDisk_br::loadMask(const char *name, uint32 w, uint32 h) {
 	if (!name) {
-		return;
+		return 0;
 	}
 
 	Common::SeekableReadStream *stream = openFile("msk/" + Common::String(name), ".msk");
 
-	// NOTE: info.width and info.height are only valid if the background graphics
-	// have already been loaded
-	buffer.bigEndian = false;
-	stream->read(buffer.data, buffer.size);
+	MaskBuffer *buffer = new MaskBuffer;
+	assert(buffer);
+	buffer->create(w, h);
+	buffer->bigEndian = false;
+
+	stream->read(buffer->data, buffer->size);
 	delete stream;
+
+	return buffer;
 }
 
-void DosDisk_br::loadPath(const char *name, PathBuffer &buffer) {
+PathBuffer *DosDisk_br::loadPath(const char *name, uint32 w, uint32 h) {
 	if (!name) {
-		return;
+		return 0;
 	}
 
 	Common::SeekableReadStream *stream = openFile("pth/" + Common::String(name), ".pth");
 
-	// NOTE: info.width and info.height are only valid if the background graphics
-	// have already been loaded
-	buffer.bigEndian = false;
-	stream->read(buffer.data, buffer.size);
+	PathBuffer *buffer = new PathBuffer;
+	assert(buffer);
+	buffer->create(w, h);
+	buffer->bigEndian = false;
+
+	stream->read(buffer->data, buffer->size);
 	delete stream;
+
+	return buffer;
 }
 
 void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
@@ -380,18 +387,12 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 	}
 
 	if (mask) {
-		info._mask = new MaskBuffer;
-		info._mask->create(info.width, info.height);
-		loadMask(mask, *info._mask);
+		info._mask = loadMask(mask, info.width, info.height);
 	}
 
 	if (path) {
-		info._path = new PathBuffer;
-		info._path->create(info.width, info.height);
-		loadPath(path, *info._path);
+		info._path = loadPath(path, info.width, info.height);
 	}
-
-	return;
 }
 
 Table* DosDisk_br::loadTable(const char* name) {
@@ -459,7 +460,7 @@ void AmigaDisk_br::adjustForPalette(Graphics::Surface &surf, int transparentColo
 
 void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	byte r,g,b;
-	byte *pal, *p;
+	byte *p;
 	Common::SeekableReadStream *stream;
 	uint i;
 
@@ -488,20 +489,14 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 	}
 
 	stream = openFile("backs/" + Common::String(filename), ".bkg");
-	ILBMDecoder decoder(stream, true);
 
-	// TODO: encapsulate surface creation
-	info.bg.w = decoder.getWidth();
-	info.bg.h = decoder.getHeight();
-	info.bg.pitch = info.bg.w;
-	info.bg.bytesPerPixel = 1;
-	info.bg.pixels = decoder.getBitmap();
-	assert(info.bg.pixels);
+	byte pal[768];
+	ILBMLoader loader(&info.bg, pal);
+	loader.load(stream, true);
 
 	info.width = info.bg.w;
 	info.height = info.bg.h;
 
-	pal = decoder.getPalette();
 	p = pal;
 	for (i = 16; i < 32; i++) {
 		r = *p >> 2;
@@ -515,8 +510,6 @@ void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *filename) {
 
 	// Overwrite the first color (transparent key) in the palette
 	info.palette.setEntry(0, pal[0] >> 2, pal[1] >> 2, pal[2] >> 0);
-
-	delete []pal;
 
 	// background data is drawn used the upper portion of the palette
 	adjustForPalette(info.bg);
@@ -543,27 +536,24 @@ void finalpass(byte *buffer, uint32 size) {
 	}
 }
 
-void AmigaDisk_br::loadMask(const char *name, MaskBuffer &buffer) {
+MaskBuffer *AmigaDisk_br::loadMask(const char *name, uint32 w, uint32 h) {
 	if (!name) {
-		return;
+		return 0;
 	}
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadMask '%s'", name);
 
 	Common::SeekableReadStream *stream = tryOpenFile("msk/" + Common::String(name), ".msk");
 	if (!stream) {
-		return;
+		return 0;
 	}
 
-	ILBMDecoder decoder(stream, true);
+	ILBMLoader loader(ILBMLoader::BODYMODE_MASKBUFFER);
+	loader.load(stream, true);
 
-	// TODO: the buffer is allocated by the caller, so a copy here is
-	// unavoidable... a better solution would be inform the function
-	// of the size of the mask (the size in the mask file is not valid!)
-	byte *bitmap = decoder.getBitmap(2, true);
-	memcpy(buffer.data, bitmap, buffer.size);
-	finalpass(buffer.data, buffer.size);
-
-	buffer.bigEndian = true;
+	MaskBuffer *buffer = loader._maskBuffer;
+	buffer->bigEndian = true;
+	finalpass(buffer->data, buffer->size);
+	return buffer;
 }
 
 void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path) {
@@ -573,18 +563,12 @@ void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const cha
 		loadBackground(info, name);
 	}
 	if (mask) {
-		info._mask = new MaskBuffer;
-		info._mask->create(info.width, info.height);
-		loadMask(mask, *info._mask);
+		info._mask = loadMask(mask, info.width, info.height);
 	}
 
 	if (path) {
-		info._path = new PathBuffer;
-		info._path->create(info.width, info.height);
-		loadPath(path, *info._path);
+		info._path = loadPath(path, info.width, info.height);
 	}
-
-	return;
 }
 
 void AmigaDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
@@ -596,20 +580,13 @@ GfxObj* AmigaDisk_br::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_br::loadStatic '%s'", name);
 
 	Common::String sName = name;
-
 	Common::SeekableReadStream *stream = openFile("ras/" + sName, ".ras");
-	ILBMDecoder decoder(stream, true);
 
-	Graphics::Surface* surf = new Graphics::Surface;
+	ILBMLoader loader(ILBMLoader::BODYMODE_SURFACE);
+	loader.load(stream, true);
+
+	Graphics::Surface* surf = loader._surf;
 	assert(surf);
-
-	// TODO: encapsulate surface creation
-	surf->w = decoder.getWidth();
-	surf->h = decoder.getHeight();
-	surf->pitch = surf->w;
-	surf->bytesPerPixel = 1;
-	surf->pixels = decoder.getBitmap();
-	assert(surf->pixels);
 
 	// Static pictures are drawn used the upper half of the palette: this must be
 	// done before shadow mask is applied. This way, only really transparent pixels
@@ -741,15 +718,16 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 	debugC(5, kDebugDisk, "AmigaDisk_br::loadObjects");
 
 	Common::SeekableReadStream *stream = openFile(name);
-	ILBMDecoder decoder(stream, true);
+	ILBMLoader loader(ILBMLoader::BODYMODE_SURFACE);
+	loader.load(stream, true);
 
 	uint16 max = objectsMax[part];
 	if (_vm->getFeatures() & GF_DEMO)
 		max = 72;
 
 	byte *data = new byte[max * 2601];
-	byte *srcPtr = decoder.getBitmap();
-	int w = decoder.getWidth();
+	byte *srcPtr = (byte*)loader._surf->getBasePtr(0,0);
+	int w = loader._surf->w;
 
 	// Convert to the expected display format
 	for (int i = 0; i < max; i++) {
@@ -764,7 +742,7 @@ GfxObj* AmigaDisk_br::loadObjects(const char *name, uint8 part) {
 			dst += 51;
 		}
 	}
-	free(srcPtr);
+	delete loader._surf;
 
 	return new GfxObj(0, new Cnv(max, 51, 51, data, true));
 }

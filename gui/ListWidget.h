@@ -47,12 +47,14 @@ enum {
 };
 
 /* ListWidget */
-class ListWidget : public EditableWidget, public CommandSender {
+class ListWidget : public EditableWidget {
 public:
 	typedef Common::String String;
 	typedef Common::StringList StringList;
 protected:
 	StringList		_list;
+	StringList		_dataList;
+	Common::Array<int>		_listIndex;
 	bool			_editable;
 	bool			_editMode;
 	NumberingMode	_numberingMode;
@@ -73,22 +75,33 @@ protected:
 	int				_bottomPadding;
 	int				_scrollBarWidth;
 
+	String			_filter;
+	bool			_quickSelect;
+
+	uint32			_cmd;
+
 public:
-	ListWidget(GuiObject *boss, const String &name);
-	ListWidget(GuiObject *boss, int x, int y, int w, int h);
+	ListWidget(GuiObject *boss, const String &name, uint32 cmd = 0);
+	ListWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd = 0);
 	virtual ~ListWidget();
 
 	virtual Widget *findWidget(int x, int y);
 
 	void setList(const StringList &list);
-	const StringList &getList()	const			{ return _list; }
-	int getSelected() const						{ return _selectedItem; }
+	void append(const String &s);
+	const StringList &getList()	const			{ return _dataList; }
+	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 	void setSelected(int item);
 	const String &getSelectedString() const		{ return _list[_selectedItem]; }
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
 	bool isEditable() const						{ return _editable; }
 	void setEditable(bool editable)				{ _editable = editable; }
 	void scrollTo(int item);
+	void scrollToEnd();
+	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
+	String getQuickSelectString() const 		{ return _quickSelectStr; }
+
+	void setFilter(const String &filter, bool redraw = true);
 
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);

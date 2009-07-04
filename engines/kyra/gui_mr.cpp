@@ -352,10 +352,10 @@ void KyraEngine_MR::drawMalcolmsMoodPointer(int frame, int page) {
 		frame = 13;
 
 	if (page == 0) {
-		_invWsa->displayFrame(frame, 0, 0, 0, 0);
+		_invWsa->displayFrame(frame, 0, 0, 0, 0, 0, 0);
 		_screen->updateScreen();
 	} else if (page == 30) {
-		_invWsa->displayFrame(frame, 2, 0, -144, 0);
+		_invWsa->displayFrame(frame, 2, 0, -144, 0, 0, 0);
 	}
 
 	_invWsaFrame = frame;
@@ -674,21 +674,21 @@ void KyraEngine_MR::showAlbum() {
 	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, _screenBuffer);
 	_screen->copyRegionToBuffer(4, 0, 0, 320, 200, _album.backUpPage);
 
-	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+	_screen->copyPalette(1, 0);
 	_screen->fadeToBlack(9);
 
 	int itemInHand = _itemInHand;
 	removeHandItem();
 
-	_res->loadFileToBuf("ALBUM.COL", _screen->getPalette(0), 768);
+	_screen->loadPalette("ALBUM.COL", _screen->getPalette(0));
 	loadAlbumPage();
 	loadAlbumPageWSA();
 
 	if (_album.leftPage.wsa->opened())
-		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000);
+		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000, 0, 0);
 
 	if (_album.rightPage.wsa->opened())
-		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000);
+		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000, 0, 0);
 
 	printAlbumPageText();
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -707,7 +707,7 @@ void KyraEngine_MR::showAlbum() {
 	_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
 	_screen->copyBlockToPage(4, 0, 0, 320, 200, _album.backUpPage);
 
-	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+	_screen->copyPalette(0, 1);
 	_screen->fadePalette(_screen->getPalette(0), 9);
 
 	delete[] _album.backUpRect;
@@ -843,10 +843,10 @@ void KyraEngine_MR::processAlbum() {
 			loadAlbumPageWSA();
 
 			if (_album.leftPage.wsa->opened())
-				_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000);
+				_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000, 0, 0);
 
 			if (_album.rightPage.wsa->opened())
-				_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000);
+				_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000, 0, 0);
 
 			printAlbumPageText();
 
@@ -899,7 +899,7 @@ void KyraEngine_MR::albumUpdateAnims() {
 
 	nextRun = _album.leftPage.timer + 5 * _tickLength;
 	if (nextRun < _system->getMillis() && _album.leftPage.wsa->opened()) {
-		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000);
+		_album.leftPage.wsa->displayFrame(_album.leftPage.curFrame, 2, _albumWSAX[_album.nextPage+0], _albumWSAY[_album.nextPage+0], 0x4000, 0, 0);
 		_screen->copyRegion(40, 17, 40, 17, 87, 73, 2, 0, Screen::CR_NO_P_CHECK);
 
 		++_album.leftPage.curFrame;
@@ -918,7 +918,7 @@ void KyraEngine_MR::albumUpdateAnims() {
 
 	nextRun = _album.rightPage.timer + 5 * _tickLength;
 	if (nextRun < _system->getMillis() && _album.rightPage.wsa->opened()) {
-		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000);
+		_album.rightPage.wsa->displayFrame(_album.rightPage.curFrame, 2, _albumWSAX[_album.nextPage+1], _albumWSAY[_album.nextPage+1], 0x4000, 0, 0);
 		_screen->copyRegion(194, 20, 194, 20, 85, 69, 2, 0, Screen::CR_NO_P_CHECK);
 
 		++_album.rightPage.curFrame;
@@ -936,13 +936,13 @@ void KyraEngine_MR::albumUpdateAnims() {
 void KyraEngine_MR::albumAnim1() {
 	for (int i = 6; i >= 3; --i) {
 		albumRestoreRect();
-		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000);
+		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000, 0, 0);
 		albumUpdateRect();
 		delayWithTicks(1);
 	}
 
 	albumRestoreRect();
-	_album.wsa->displayFrame(14, 2, -100, 90, 0x4000);
+	_album.wsa->displayFrame(14, 2, -100, 90, 0x4000, 0, 0);
 	albumUpdateRect();
 	delayWithTicks(1);
 }
@@ -950,7 +950,7 @@ void KyraEngine_MR::albumAnim1() {
 void KyraEngine_MR::albumAnim2() {
 	for (int i = 3; i <= 6; ++i) {
 		albumRestoreRect();
-		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000);
+		_album.wsa->displayFrame(i, 2, -100, 90, 0x4000, 0, 0);
 		albumUpdateRect();
 		delayWithTicks(1);
 	}
@@ -979,25 +979,25 @@ void KyraEngine_MR::albumSwitchPages(int oldPage, int newPage, int srcPage) {
 
 		_screen->copyRegion(260, 7, 260, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x32, 0xBA, srcPage, 0, 2);
 
 		_screen->copyRegion(210, 7, 210, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->copyRegion(160, 7, 160, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0x10, 0x07, 0x6E, 0x07, 0x96, 0xBA, 0x32, 0xBA, 2, 0, 2);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0x10, 0x07, 0x3C, 0x07, 0x96, 0xBA, 0x64, 0xBA, 2, 0, 2);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->copyRegion(10, 7, 10, 7, 150, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -1006,25 +1006,25 @@ void KyraEngine_MR::albumSwitchPages(int oldPage, int newPage, int srcPage) {
 
 		_screen->copyRegion(10, 7, 10, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0x0A, 0x07, 0x6E, 0x07, 0x96, 0xBA, 0x32, 0xBA, srcPage, 0, 2);
 
 		_screen->copyRegion(60, 7, 60, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->copyRegion(110, 7, 110, 7, 50, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x32, 0xBA, 2, 0, 2);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->wsaFrameAnimationStep(0xA0, 0x07, 0xA0, 0x07, 0x96, 0xBA, 0x64, 0xBA, 2, 0, 2);
 		_screen->updateScreen();
-		delayWithTicks(1);
+		delayWithTicks(2);
 
 		_screen->copyRegion(160, 7, 160, 7, 150, 186, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -1269,7 +1269,7 @@ int GUI_MR::optionsButton(Button *button) {
 	}
 
 	while (_displayMenu) {
-		processHighlights(*_currentMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(*_currentMenu);
 		getInput();
 	}
 
@@ -1312,7 +1312,7 @@ int GUI_MR::loadMenu(Button *caller) {
 
 	_screen->updateScreen();
 	while (_isLoadMenu) {
-		processHighlights(_loadMenu, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_loadMenu);
 		getInput();
 	}
 
@@ -1362,7 +1362,7 @@ int GUI_MR::gameOptions(Button *caller) {
 	_isOptionsMenu = true;
 
 	while (_isOptionsMenu) {
-		processHighlights(_gameOptions, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_gameOptions);
 		getInput();
 	}
 
@@ -1525,7 +1525,7 @@ int GUI_MR::audioOptions(Button *caller) {
 	updateAllMenuButtons();
 	bool speechEnabled = _vm->speechEnabled();
 	while (_isOptionsMenu) {
-		processHighlights(_audioOptions, _vm->_mouseX, _vm->_mouseY);
+		processHighlights(_audioOptions);
 		getInput();
 	}
 
@@ -1554,7 +1554,7 @@ int GUI_MR::sliderHandler(Button *caller) {
 
 	assert(button >= 0 && button <= 3);
 
-	int oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
+	const int oldVolume = _vm->getVolume(KyraEngine_v1::kVolumeEntry(button));
 	int newVolume = oldVolume;
 
 	if (caller->index >= 24 && caller->index <= 27)
@@ -1564,8 +1564,7 @@ int GUI_MR::sliderHandler(Button *caller) {
 	else
 		newVolume = _vm->_mouseX - caller->x - 7;
 
-	newVolume = MAX(2, newVolume);
-	newVolume = MIN(97, newVolume);
+	newVolume = CLIP(newVolume, 2, 97);
 
 	if (newVolume == oldVolume)
 		return 0;
@@ -1621,8 +1620,7 @@ void GUI_MR::drawSliderBar(int slider, const uint8 *shape) {
 
 	int position = _vm->getVolume(KyraEngine_v1::kVolumeEntry(slider));
 
-	position = MAX(2, position);
-	position = MIN(97, position);
+	position = CLIP(position, 2, 97);
 	_screen->drawShape(0, shape, x+position, y, 0, 0);
 }
 

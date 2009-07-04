@@ -142,7 +142,7 @@ void MidiDriver_SEQ::send(uint32 b) {
 		warning("MidiDriver_SEQ::send: unknown : %08x", (int)b);
 		break;
 	}
-	write(device, buf, position);
+	(void)write(device, buf, position);
 }
 
 void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
@@ -167,7 +167,7 @@ void MidiDriver_SEQ::sysEx (const byte *msg, uint16 length) {
 	buf[position++] = _device_num;
 	buf[position++] = 0;
 
-	write (device, buf, position);
+	(void)write(device, buf, position);
 }
 
 

@@ -70,9 +70,9 @@ used in an iterative stepping algorithm
 reg_t kSetJump(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	// Input data
 	reg_t object = argv[0];
-	int dx = SKPV(1);
-	int dy = SKPV(2);
-	int gy = SKPV(3);
+	int dx = argv[1].toSint16();
+	int dy = argv[2].toSint16();
+	int gy = argv[3].toSint16();
 
 	// Derived data
 	int c;
@@ -223,8 +223,9 @@ reg_t kInitBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	int deltax = GET_SEL32SV(mover, x) - GET_SEL32SV(client, x);
 	int deltay = GET_SEL32SV(mover, y) - GET_SEL32SV(client, y);
+	int step_factor = (argc < 1) ? argv[1].toUint16() : 1;
 
-	initialize_bresen(s, argc, argv, mover, KP_UINT(KP_ALT(1, make_reg(0, 1))), deltax, deltay);
+	initialize_bresen(s, argc, argv, mover, step_factor, deltax, deltay);
 
 	return s->r_acc;
 }

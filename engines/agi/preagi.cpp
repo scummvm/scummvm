@@ -54,15 +54,6 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-	/*
-	const GameSettings *g;
-
-	const char *gameid = ConfMan.get("gameid").c_str();
-	for (g = agiSettings; g->gameid; ++g)
-		if (!scumm_stricmp(g->gameid, gameid))
-			_gameId = g->id;
-	*/
-
 	_rnd = new Common::RandomSource();
 
 	Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
@@ -79,29 +70,6 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 	memset(&_game, 0, sizeof(struct AgiGame));
 	memset(&_debug, 0, sizeof(struct AgiDebug));
 	memset(&g_mouse, 0, sizeof(struct Mouse));
-
-/*
-	_game.clockEnabled = false;
-	_game.state = STATE_INIT;
-
-	_keyQueueStart = 0;
-	_keyQueueEnd = 0;
-
-	_allowSynthetic = false;
-
-	g_tickTimer = 0;
-
-	_intobj = NULL;
-
-	_lastSentence[0] = 0;
-	memset(&_stringdata, 0, sizeof(struct StringData));
-
-	_objects = NULL;
-
-	_oldMode = -1;
-
-	_firstSlot = 0;
-*/
 }
 
 void PreAgiEngine::initialize() {
@@ -166,11 +134,9 @@ void PreAgiEngine::initialize() {
 
 	//_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
 
-	_game.ver = -1;		// Don't display the conf file warning
-
 	debugC(2, kDebugLevelMain, "Detect game");
 
-	/* clear all resources and events */
+	// clear all resources and events
 	for (int i = 0; i < MAX_DIRS; i++) {
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
 		memset(&_game.sounds[i], 0, sizeof(class AgiSound *)); // _game.sounds contains pointers now
@@ -190,10 +156,10 @@ PreAgiEngine::~PreAgiEngine() {
 Common::Error PreAgiEngine::go() {
 	setflag(fSoundOn, true);	// enable sound
 
-/*
-FIXME (Fingolfin asks): Why are Mickey, Winnie and Troll standalone classes
- instead of being subclasses of PreAgiEngine ?
-*/
+//
+// FIXME (Fingolfin asks): Why are Mickey, Winnie and Troll standalone classes
+// instead of being subclasses of PreAgiEngine ?
+//
 
 	// run preagi engine main loop
 	switch (getGameID()) {

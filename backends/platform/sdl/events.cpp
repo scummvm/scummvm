@@ -252,6 +252,11 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 			}
 #endif
 
+			if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'u') {
+				event.type = Common::EVENT_MUTE;
+				return true;
+			}
+
 			// Ctrl-Alt-<key> will change the GFX mode
 			if ((b & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
 

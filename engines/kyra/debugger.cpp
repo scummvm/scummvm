@@ -69,7 +69,7 @@ bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
 }
 
 bool Debugger::cmd_loadPalette(int argc, const char **argv) {
-	uint8 palette[768];
+	Palette palette(_vm->screen()->getPalette(0).getNumColors());
 
 	if (argc <= 1) {
 		DebugPrintf("Use load_palette <file> [start_col] [end_col]\n");
@@ -80,7 +80,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 		uint8 buffer[320*200];
 		_vm->screen()->copyRegionToBuffer(5, 0, 0, 320, 200, buffer);
 		_vm->screen()->loadBitmap(argv[1], 5, 5, 0);
-		memcpy(palette, _vm->screen()->getCPagePtr(5), 768);
+		palette.copy(_vm->screen()->getCPagePtr(5), 0, 256);
 		_vm->screen()->copyBlockToPage(5, 0, 0, 320, 200, buffer);
 	} else if (!_vm->screen()->loadPalette(argv[1], palette)) {
 		DebugPrintf("ERROR: Palette '%s' not found!\n", argv[1]);
@@ -88,16 +88,16 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 	}
 
 	int startCol = 0;
-	int endCol = 255;
+	int endCol = palette.getNumColors();
 	if (argc > 2)
-		startCol = MIN(255, MAX(0, atoi(argv[2])));
+		startCol = MIN(palette.getNumColors(), MAX(0, atoi(argv[2])));
 	if (argc > 3)
-		endCol = MIN(255, MAX(0, atoi(argv[3])));
+		endCol = MIN(palette.getNumColors(), MAX(0, atoi(argv[3])));
 
 	if (startCol > 0)
-		memcpy(palette, _vm->screen()->getScreenPalette(), startCol*3);
-	if (endCol < 255)
-		memcpy(palette + endCol * 3, _vm->screen()->getScreenPalette() + endCol * 3, (255-endCol)*3);
+		palette.copy(_vm->screen()->getPalette(0), 0, startCol);
+	if (endCol < palette.getNumColors())
+		palette.copy(_vm->screen()->getPalette(0), endCol);
 
 	_vm->screen()->setScreenPalette(palette);
 	_vm->screen()->updateScreen();
@@ -464,53 +464,6 @@ bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
 
 #ifdef ENABLE_LOL
 Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
-}
-
-bool Debugger_LoL::cmd_listFlags(int argc, const char **argv) {
-	for (int i = 0, p = 0; i < (int)sizeof(_vm->_gameFlags)*8; ++i, ++p) {
-		const uint8 index = (i >> 4);
-		const uint8 offset = i & 0xF;
-
-		DebugPrintf("(%-3i): %-2i", i, (_vm->_gameFlags[index] >> offset) & 1);
-		if (p == 5) {
-			DebugPrintf("\n");
-			p -= 6;
-		}
-	}
-	DebugPrintf("\n");
-	return true;
-}
-
-bool Debugger_LoL::cmd_toggleFlag(int argc, const char **argv) {
-	if (argc > 1) {
-		uint flag = atoi(argv[1]);
-
-		const uint8 index = (flag >> 4);
-		const uint8 offset = flag & 0xF;
-
-		_vm->_gameFlags[index] ^= _vm->_gameFlags[index] & (1 << offset);
-
-		DebugPrintf("Flag %i is now %i\n", flag, (_vm->_gameFlags[index] >> offset) & 1);
-	} else {
-		DebugPrintf("Syntax: toggleflag <flag>\n");
-	}
-
-	return true;
-}
-
-bool Debugger_LoL::cmd_queryFlag(int argc, const char **argv) {
-	if (argc > 1) {
-		uint flag = atoi(argv[1]);
-
-		const uint8 index = (flag >> 4);
-		const uint8 offset = flag & 0xF;
-
-		DebugPrintf("Flag %i is %i\n", flag, (_vm->_gameFlags[index] >> offset) & 1);
-	} else {
-		DebugPrintf("Syntax: queryflag <flag>\n");
-	}
-
-	return true;
 }
 #endif // ENABLE_LOL
 

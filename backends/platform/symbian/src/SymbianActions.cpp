@@ -102,7 +102,14 @@ SymbianActions::SymbianActions()
 }
 
 void SymbianActions::initInstanceMain(OSystem *mainSystem) {
+	int i;
+	
 	Actions::initInstanceMain(mainSystem);
+
+	// Disable all mappings before setting main mappings again
+	for (i = 0; i < ACTION_LAST; i++) {		
+		_action_enabled[i] = false;
+	}
 
 	// Mouse Up
 	_action_enabled[ACTION_UP] = true;

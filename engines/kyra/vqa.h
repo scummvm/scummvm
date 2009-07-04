@@ -26,13 +26,24 @@
 #ifndef KYRA_VQA_H
 #define KYRA_VQA_H
 
-#include "common/stream.h"
+#include "common/scummsys.h"
+
+#include "sound/mixer.h"
 
 class OSystem;
+
+namespace Audio {
+class AppendableAudioStream;
+} // end of namespace Audio
+
+namespace Common {
+class SeekableReadStream;
+} // end of namespace Common
 
 namespace Kyra {
 
 class KyraEngine_v1;
+class Screen;
 
 class VQAMovie {
 public:
@@ -57,6 +68,7 @@ public:
 protected:
 	OSystem *_system;
 	KyraEngine_v1 *_vm;
+	Screen *_screen;
 
 	bool _opened;
 	int _x, _y;

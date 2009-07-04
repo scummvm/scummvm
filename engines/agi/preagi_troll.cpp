@@ -80,7 +80,9 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 				case Common::KEYCODE_t:
 				case Common::KEYCODE_f:
 					inventory();
+
 					return false;
+
 					break;
 				case Common::KEYCODE_DOWN:
 				case Common::KEYCODE_SPACE:
@@ -282,6 +284,7 @@ void Troll::tutorial() {
 		done = false;
 		while (!done && !_vm->shouldQuit()) {
 			getMenuSel(IDS_TRO_TUTORIAL_1, &iSel, IDI_TRO_MAX_OPTION);
+
 			switch(iSel) {
 			case IDI_TRO_SEL_OPTION_1:
 				_vm->clearScreen(0x22, false);
@@ -410,6 +413,7 @@ void Troll::gameOver() {
 	_vm->drawStr(21, 1, kColorDefault, szMoves);
 	_vm->drawStr(22, 1, kColorDefault, IDS_TRO_GAMEOVER_1);
 	_vm->_gfx->doUpdate();
+
 	pressAnyKey();
 }
 
@@ -473,12 +477,6 @@ int Troll::drawRoom(char *menu) {
 void Troll::playTune(int tune, int len) {
 	if (!_soundOn)
 		return;
-
-	warning("STUB: playTune(%d, %d)", tune, len);
-
-	// TODO:
-	//
-	// apparently sound format consist of 16bit LE pairs of frequency and duration
 
 	int freq, duration;
 	int ptr = _tunes[tune - 1];

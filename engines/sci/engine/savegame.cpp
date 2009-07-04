@@ -52,7 +52,7 @@ SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type,
 // of the classes they are syncing.
 
 static void sync_MemObjPtr(Common::Serializer &s, MemObject *&obj);
-static void sync_songlib_t(Common::Serializer &s, songlib_t &obj);
+static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj);
 
 static void sync_reg_t(Common::Serializer &s, reg_t &obj) {
 	s.syncAsUint16LE(obj.segment);
@@ -73,22 +73,22 @@ static void syncCStr(Common::Serializer &s, char **str) {
 }
 
 
-static void sync_song_t(Common::Serializer &s, song_t &obj) {
-	s.syncAsSint32LE(obj.handle);
-	s.syncAsSint32LE(obj.resource_num);
-	s.syncAsSint32LE(obj.priority);
-	s.syncAsSint32LE(obj.status);
-	s.syncAsSint32LE(obj.restore_behavior);
-	s.syncAsSint32LE(obj.restore_time);
-	s.syncAsSint32LE(obj.loops);
-	s.syncAsSint32LE(obj.hold);
+static void sync_song_t(Common::Serializer &s, Song &obj) {
+	s.syncAsSint32LE(obj._handle);
+	s.syncAsSint32LE(obj._resourceNum);
+	s.syncAsSint32LE(obj._priority);
+	s.syncAsSint32LE(obj._status);
+	s.syncAsSint32LE(obj._restoreBehavior);
+	s.syncAsSint32LE(obj._restoreTime);
+	s.syncAsSint32LE(obj._loops);
+	s.syncAsSint32LE(obj._hold);
 
 	if (s.isLoading()) {
+		obj._it = 0;
 		obj._delay = 0;
-		obj.it = 0;
-		obj.next_playing = 0;
-		obj.next_stopping = 0;
-		obj.next = 0;
+		obj._next = 0;
+		obj._nextPlaying = 0;
+		obj._nextStopping = 0;
 	}
 }
 
@@ -401,25 +401,25 @@ void StringFrag::saveLoadWithSerializer(Common::Serializer &s) {
 
 #pragma mark -
 
-static void sync_songlib_t(Common::Serializer &s, songlib_t &obj) {
+static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 	int songcount = 0;
 	if (s.isSaving())
-		songcount = song_lib_count(obj);
+		songcount = obj.countSongs();
 	s.syncAsUint32LE(songcount);
 
 	if (s.isLoading()) {
-		song_lib_init(&obj);
+		obj._lib = 0;
 		while (songcount--) {
-			song_t *newsong = (song_t *)calloc(1, sizeof(song_t));
+			Song *newsong = (Song *)calloc(1, sizeof(Song));
 			sync_song_t(s, *newsong);
-			song_lib_add(obj, newsong);
+			obj.addSong(newsong);
 		}
 	} else {
-		song_t *seeker = *(obj.lib);
+		Song *seeker = obj._lib;
 		while (seeker) {
-			seeker->restore_time = seeker->it->getTimepos();
+			seeker->_restoreTime = seeker->_it->getTimepos();
 			sync_song_t(s, *seeker);
-			seeker = seeker->next;
+			seeker = seeker->_next;
 		}
 	}
 }
@@ -544,9 +544,9 @@ static void load_script(EngineState *s, SegmentId seg) {
 	scr->buf = (byte *)malloc(scr->buf_size);
 	assert(scr->buf);
 
-	script = s->resmgr->findResource(kResourceTypeScript, scr->nr, 0);
+	script = s->resmgr->findResource(ResourceId(kResourceTypeScript, scr->nr), 0);
 	if (s->_version >= SCI_VERSION_1_1)
-		heap = s->resmgr->findResource(kResourceTypeHeap, scr->nr, 0);
+		heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, scr->nr), 0);
 
 	memcpy(scr->buf, script->data, script->size);
 	if (s->seg_manager->isSci1_1)
@@ -692,36 +692,31 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 int _reset_graphics_input(EngineState *s);
 
 static void reconstruct_sounds(EngineState *s) {
-	song_t *seeker;
+	Song *seeker;
 	SongIteratorType it_type = s->resmgr->_sciVersion >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
 
-	if (s->_sound._songlib.lib)
-		seeker = *(s->_sound._songlib.lib);
-	else {
-		song_lib_init(&s->_sound._songlib);
-		seeker = NULL;
-	}
+	seeker = s->_sound._songlib._lib;
 
 	while (seeker) {
 		SongIterator *base, *ff;
 		int oldstatus;
 		SongIterator::Message msg;
 
-		base = ff = build_iterator(s, seeker->resource_num, it_type, seeker->handle);
-		if (seeker->restore_behavior == RESTORE_BEHAVIOR_CONTINUE)
-			ff = new_fast_forward_iterator(base, seeker->restore_time);
+		base = ff = build_iterator(s, seeker->_resourceNum, it_type, seeker->_handle);
+		if (seeker->_restoreBehavior == RESTORE_BEHAVIOR_CONTINUE)
+			ff = new_fast_forward_iterator(base, seeker->_restoreTime);
 		ff->init();
 
-		msg = SongIterator::Message(seeker->handle, SIMSG_SET_LOOPS(seeker->loops));
+		msg = SongIterator::Message(seeker->_handle, SIMSG_SET_LOOPS(seeker->_loops));
 		songit_handle_message(&ff, msg);
-		msg = SongIterator::Message(seeker->handle, SIMSG_SET_HOLD(seeker->hold));
+		msg = SongIterator::Message(seeker->_handle, SIMSG_SET_HOLD(seeker->_hold));
 		songit_handle_message(&ff, msg);
 
-		oldstatus = seeker->status;
-		seeker->status = SOUND_STATUS_STOPPED;
-		seeker->it = ff;
-		s->_sound.sfx_song_set_status(seeker->handle, oldstatus);
-		seeker = seeker->next;
+		oldstatus = seeker->_status;
+		seeker->_status = SOUND_STATUS_STOPPED;
+		seeker->_it = ff;
+		s->_sound.sfx_song_set_status(seeker->_handle, oldstatus);
+		seeker = seeker->_next;
 	}
 }
 
@@ -729,7 +724,7 @@ void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int le
 
 EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	EngineState *retval;
-	songlib_t temp;
+	SongLibrary temp;
 
 /*
 	if (s->sound_server) {
@@ -782,7 +777,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	temp = retval->_sound._songlib;
 	retval->_sound.sfx_init(retval->resmgr, s->sfx_init_flags);
 	retval->sfx_init_flags = s->sfx_init_flags;
-	song_lib_free(retval->_sound._songlib);
+	retval->_sound._songlib.freeSounds();
 	retval->_sound._songlib = temp;
 
 	_reset_graphics_input(retval);
@@ -803,8 +798,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		str = &retval->sys_strings->strings[i];
 		char *data = (char *)str->value;
 		if (data) {
-			str->value = (reg_t *)calloc(str->max_size+1, sizeof(char));	// FIXME -- sizeof(char) or sizeof(reg_t) ??
-			strncpy((char *)str->value, data, str->max_size+1);		// FIXME -- strncpy or internal_stringfrag_strncpy ?
+			str->value = (reg_t *)calloc(str->max_size + 1, sizeof(reg_t));
+			strncpy((char *)str->value, data, str->max_size + 1);		// FIXME -- strncpy or internal_stringfrag_strncpy ?
 			free(data);
 		}
 	}

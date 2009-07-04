@@ -52,6 +52,8 @@ Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	DCmd_Register("setvar",     WRAP_METHOD(Console, Cmd_SetVar));
 	DCmd_Register("setflag",    WRAP_METHOD(Console, Cmd_SetFlag));
 	DCmd_Register("setobj",     WRAP_METHOD(Console, Cmd_SetObj));
+	DCmd_Register("room",       WRAP_METHOD(Console, Cmd_Room));
+	DCmd_Register("bt",         WRAP_METHOD(Console, Cmd_BT));
 }
 
 Console::~Console() {
@@ -133,7 +135,7 @@ bool Console::Cmd_Crc(int argc, const char **argv) {
 bool Console::Cmd_Agiver(int argc, const char **argv) {
 	int ver, maj, min;
 
-	ver = _vm->agiGetRelease();
+	ver = _vm->getVersion();
 	maj = (ver >> 12) & 0xf;
 	min = ver & 0xfff;
 
@@ -243,6 +245,39 @@ bool Console::Cmd_Cont(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::Cmd_Room(int argc, const char **argv) {
+	DebugPrintf("Current room: %d\n", _vm->getvar(0));
+
+	return true;
+}
+
+bool Console::Cmd_BT(int argc, const char **argv) {
+	DebugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.lognum, _vm->_game.execStack.size());
+
+	uint8 *code = NULL;
+	uint8 op = 0;
+	uint8 p[CMD_BSIZE] = { 0 };
+	int num;
+	Common::Array<ScriptPos>::iterator it;
+
+	for (it = _vm->_game.execStack.begin(); it != _vm->_game.execStack.end(); it++) {
+		code = _vm->_game.logics[it->script].data;
+		op = code[it->curIP];
+		num = logicNamesCmd[op].numArgs;
+		memmove(p, &code[it->curIP], num);
+		memset(p + num, 0, CMD_BSIZE - num);
+
+		DebugPrintf("%d(%d): %s(", it->script, it->curIP, logicNamesCmd[op].name);
+
+		for (int i = 0; i < num; i++)
+			DebugPrintf("%d, ", p[i]);
+
+		DebugPrintf(")\n");
+	}
+
+	return true;
+}
+
 PreAGI_Console::PreAGI_Console(PreAgiEngine *vm) {
 	_vm = vm;
 }
@@ -288,7 +323,7 @@ bool Mickey_Console::Cmd_DrawObj(int argc, const char **argv) {
 Winnie_Console::Winnie_Console(PreAgiEngine *vm, Winnie *winnie) : PreAGI_Console(vm) {
 	_winnie = winnie;
 
-	DCmd_Register("curRoom",     WRAP_METHOD(Winnie_Console, Cmd_CurRoom));
+	DCmd_Register("curRoom", WRAP_METHOD(Winnie_Console, Cmd_CurRoom));
 }
 
 bool Winnie_Console::Cmd_CurRoom(int argc, const char **argv) {

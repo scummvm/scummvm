@@ -96,18 +96,10 @@ enum SciGameFlags {
 	*/
 	GF_SCI0_OLD				= (1 << 0),
 
-	/* Applies to all versions before 0.000.502
-	** Old SCI versions used to interpret the third DrawPic() parameter inversely,
-	** with the opposite default value (obviously).
-	** Also, they used 15 priority zones from 42 to 200 instead of 14 priority
-	** zones from 42 to 190.
-	*/
-	GF_SCI0_OLDGFXFUNCS		= (1 << 1),
-
 	/* Applies to all versions before 0.000.629
 	** Older SCI versions had simpler code for GetTime()
 	*/
-	GF_SCI0_OLDGETTIME		= (1 << 2),
+	GF_SCI0_OLDGETTIME		= (1 << 1),
 
 	// ----------------------------------------------------------------------------
 
@@ -118,21 +110,22 @@ enum SciGameFlags {
 	/*
 	** Used to distinguish SCI1 EGA games
 	*/
-	GF_SCI1_EGA				= (1 << 3),
+	GF_SCI1_EGA				= (1 << 2),
 
 	/* Applies to all SCI1 versions after 1.000.200
     ** In late SCI1 versions, the argument of lofs[as] instructions
 	** is absolute rather than relative.
 	*/
-	GF_SCI1_LOFSABSOLUTE	= (1 << 4),
+	GF_SCI1_LOFSABSOLUTE	= (1 << 3),
 
 	/* Applies to all versions from 1.000.510 onwards
 	** kDoSound() is different than in earlier SCI1 versions.
 	*/
-	GF_SCI1_NEWDOSOUND		= (1 << 5)
+	GF_SCI1_NEWDOSOUND		= (1 << 4)
 };
 
 class SciEngine : public Engine {
+	friend class Console;
 public:
 	SciEngine(OSystem *syst, const SciGameDescription *desc);
 	~SciEngine();
@@ -141,6 +134,7 @@ public:
 	virtual Common::Error run();
 	void pauseEngineIntern(bool pause);
 	virtual GUI::Debugger *getDebugger();
+	Console *getSciDebugger();
 
 	const char* getGameID() const;
 	int getResourceVersion() const;

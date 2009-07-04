@@ -40,9 +40,6 @@ public:
 	TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen);
 	~TextDisplayer_LoL();
 
-	void setAnimParameters(const char *str, int x, uint8 col1, uint8 col2);
-	void setAnimFlag(bool flag) { _animFlag = flag; }
-
 	void setupField(bool mode);
 	void expandField();
 
@@ -50,7 +47,7 @@ public:
 	void resetDimTextPositions(int dim);
 
 	void printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
-	void printMessage(uint16 type, const char *str, ...);
+	void printMessage(uint16 type, const char *str, ...) GCC_PRINTF(3, 4);
 
 	int16 _scriptParameter;
 
@@ -80,12 +77,6 @@ private:
 	uint32 _numCharsLeft;
 	uint32 _numCharsPrinted;
 
-	const char *_animString;
-	int16 _animWidth;
-	uint8 _animColor1;
-	uint8 _animColor2;
-
-	bool _animFlag;
 	bool _printFlag;
 
 	LoLEngine *_vm;

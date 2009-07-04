@@ -113,8 +113,6 @@ public:
 
 	virtual void quit();
 
-	virtual void setWindowCaption(const char *caption);
-
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
 	virtual void getTimeAndDate(struct tm &t) const;
@@ -306,9 +304,6 @@ bool OSystem_NULL::setSoundCallback(SoundProc proc, void *param) {
 }
 
 void OSystem_NULL::quit() {
-}
-
-void OSystem_NULL::setWindowCaption(const char *caption) {
 }
 
 Common::SaveFileManager *OSystem_NULL::getSavefileManager() {

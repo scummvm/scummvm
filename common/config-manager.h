@@ -155,6 +155,7 @@ public:
 	void				renameGameDomain(const String &oldName, const String &newName);
 	bool				hasGameDomain(const String &domName) const;
 	const DomainMap &	getGameDomains() const { return _gameDomains; }
+	DomainMap &			getGameDomains() { return _gameDomains; }
 
 private:
 	friend class Singleton<SingletonBaseType>;

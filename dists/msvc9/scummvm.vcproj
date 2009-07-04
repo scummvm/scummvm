@@ -1494,6 +1494,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\pixelformat.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\primitives.cpp"
 				>
 			</File>

@@ -81,12 +81,11 @@ int getNumObjectsByClass(int scriptIdx, int param) {
 	return (counter);
 }
 
-void resetFileEntryRange(int param1, int param2) {
+void resetFileEntryRange(int start, int count) {
 	int i;
 
-	for (i = param1; i < param2; i++) {
-		resetFileEntry(i);
-	}
+	for (i = 0; i < count; ++i)
+		resetFileEntry(start + i);
 }
 
 int getProcParam(int overlayIdx, int param2, const char *name) {
@@ -294,15 +293,15 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	if (!strcmp(buffer, ".SPL")) {
 		removeExtention(name, buffer);
 
-		// if (useH32)
-		{
-			strcat(buffer, ".H32");
-		}
-		/* else
+		/* if (useH32)
+		 *{
+		 *	strcat(buffer, ".H32");
+		 *}
+		 * else
 		 * if (useAdlib)
-		 * {
-		 * strcatuint8(buffer,".ADL");
-		 * }
+		 * { */
+		 strcat(buffer,".ADL");
+		/* }
 		 * else
 		 * {
 		 * strcatuint8(buffer,".HP");
@@ -1739,6 +1738,9 @@ void CruiseEngine::mainLoop(void) {
 	int quitValue2 = 1;
 	int quitValue = 0;
 
+	if (ConfMan.hasKey("save_slot"))
+		loadGameState(ConfMan.getInt("save_slot"));
+
 	do {
 		// Handle frame delay
 		uint32 currentTick = g_system->getMillis();
@@ -1915,8 +1917,12 @@ void CruiseEngine::mainLoop(void) {
 
 						char* pText = getText(autoMsg, autoOvl);
 
-						if (strlen(pText))
+						if (strlen(pText)) {
 							userWait = 1;
+
+							mainDraw(0);
+							flipScreen();
+						}
 					}
 
 					changeScriptParamInList(-1, -1, &relHead, 9998, 0);

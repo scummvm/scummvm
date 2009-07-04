@@ -66,6 +66,42 @@ EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm) {
 #undef OPCODE
 }
 
+bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
+	switch (chunk._type) {
+	case MKID_BE('TEXT'):
+		_scriptData->text = new byte[chunk._size];
+		assert(_scriptData->text);
+		if (chunk._stream->read(_scriptData->text, chunk._size) != chunk._size)
+			error("Couldn't read TEXT chunk from file '%s'", _filename);
+		break;
+
+	case MKID_BE('ORDR'):
+		_scriptData->ordr = new uint16[chunk._size >> 1];
+		assert(_scriptData->ordr);
+		if (chunk._stream->read(_scriptData->ordr, chunk._size) != chunk._size)
+			error("Couldn't read ORDR chunk from file '%s'", _filename);
+
+		for (int i = (chunk._size >> 1) - 1; i >= 0; --i)
+			_scriptData->ordr[i] = READ_BE_UINT16(&_scriptData->ordr[i]);
+		break;
+
+	case MKID_BE('DATA'):
+		_scriptData->data = new uint16[chunk._size >> 1];
+		assert(_scriptData->data);
+		if (chunk._stream->read(_scriptData->data, chunk._size) != chunk._size)
+			error("Couldn't read DATA chunk from file '%s'", _filename);
+
+		for (int i = (chunk._size >> 1) - 1; i >= 0; --i)
+			_scriptData->data[i] = READ_BE_UINT16(&_scriptData->data[i]);
+		break;
+
+	default:
+		warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk._type), chunk._size, _filename);
+	}
+
+	return false;
+}
+
 bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Common::Array<const Opcode*> *opcodes) {
 	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 	if (!stream) {
@@ -75,47 +111,17 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 	memset(scriptData, 0, sizeof(EMCData));
 
+	_scriptData = scriptData;
+	_filename = filename;
+
 	IFFParser iff(*stream);
-	Common::IFFChunk *chunk = 0;
+	Common::Functor1Mem< Common::IFFChunk &, bool, EMCInterpreter > c(this, &EMCInterpreter::callback);
+	iff.parse(c);
 
-	while ((chunk = iff.nextChunk()) != 0) {
-		switch (chunk->id) {
-		case MKID_BE('TEXT'):
-			scriptData->text = new byte[chunk->size];
-			assert(scriptData->text);
-			if (chunk->read(scriptData->text, chunk->size) != chunk->size)
-				error("Couldn't read TEXT chunk from file '%s'", filename);
-			break;
-
-		case MKID_BE('ORDR'):
-			scriptData->ordr = new uint16[chunk->size >> 1];
-			assert(scriptData->ordr);
-			if (chunk->read(scriptData->ordr, chunk->size) != chunk->size)
-				error("Couldn't read ORDR chunk from file '%s'", filename);
-
-			for (int i = (chunk->size >> 1) - 1; i >= 0; --i)
-				scriptData->ordr[i] = READ_BE_UINT16(&scriptData->ordr[i]);
-			break;
-
-		case MKID_BE('DATA'):
-			scriptData->data = new uint16[chunk->size >> 1];
-			assert(scriptData->data);
-			if (chunk->read(scriptData->data, chunk->size) != chunk->size)
-				error("Couldn't read DATA chunk from file '%s'", filename);
-
-			for (int i = (chunk->size >> 1) - 1; i >= 0; --i)
-				scriptData->data[i] = READ_BE_UINT16(&scriptData->data[i]);
-			break;
-
-		default:
-			warning("Unexpected chunk '%s' of size %d found in file '%s'", Common::ID2string(chunk->id), chunk->size, filename);
-		}
-	}
-
-	if (!scriptData->ordr)
+	if (!_scriptData->ordr)
 		error("No ORDR chunk found in file: '%s'", filename);
 
-	if (!scriptData->data)
+	if (!_scriptData->data)
 		error("No DATA chunk found in file: '%s'", filename);
 
 	if (stream->err())
@@ -123,10 +129,10 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 
 	delete stream;
 
-	scriptData->sysFuncs = opcodes;
+	_scriptData->sysFuncs = opcodes;
 
-	strncpy(scriptData->filename, filename, 13);
-	scriptData->filename[12] = 0;
+	strncpy(_scriptData->filename, filename, 13);
+	_scriptData->filename[12] = 0;
 
 	return true;
 }

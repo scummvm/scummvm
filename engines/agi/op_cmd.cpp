@@ -57,7 +57,7 @@ namespace Agi {
 static struct AgiLogic *curLogic;
 static AgiEngine *g_agi;
 
-int timerHack;			/* Workaround for timer loop in MH1 */
+int timerHack;			// Workaround for timer loop in MH1
 
 #define _v game.vars
 #define cmd(x) static void cmd_##x (uint8 *p)
@@ -291,7 +291,7 @@ cmd(release_priority) {
 	vt.flags &= ~FIXED_PRIORITY;
 }
 
-cmd(set_upper_left) {				/* do nothing (AGI 2.917) */
+cmd(set_upper_left) {				// do nothing (AGI 2.917)
 }
 
 cmd(start_update) {
@@ -497,23 +497,23 @@ cmd(load_game) {
 	game.simpleSave ? g_agi->loadGameSimple() : g_agi->loadGameDialog();
 }
 
-cmd(init_disk) {				/* do nothing */
+cmd(init_disk) {				// do nothing
 }
 
-cmd(log) {				/* do nothing */
+cmd(log) {				// do nothing
 }
 
-cmd(trace_on) {				/* do nothing */
+cmd(trace_on) {				// do nothing
 }
 
-cmd(trace_info) {				/* do nothing */
+cmd(trace_info) {				// do nothing
 }
 
 cmd(show_mem) {
 	g_agi->messageBox("Enough memory");
 }
 
-cmd(init_joy) { /* do nothing */ ;
+cmd(init_joy) { // do nothing
 }
 
 cmd(script_size) {
@@ -521,7 +521,8 @@ cmd(script_size) {
 }
 
 cmd(cancel_line) {
-	report("cancel.line\n");
+	g_agi->_game.inputBuffer[0] = 0;
+	g_agi->writePrompt();
 }
 
 // This implementation is based on observations of Amiga's Gold Rush.
@@ -535,8 +536,6 @@ cmd(cancel_line) {
 // 471 (When walking on the first screen's bridge),
 // 71 (When walking around, using the mouse or the keyboard).
 cmd(obj_status_f) {
-	report("obj.status.f\n");
-
 	const char *cycleDesc;  // Object's cycle description line
 	const char *motionDesc; // Object's motion description line
 	char msg[256];          // The whole object status message
@@ -600,15 +599,14 @@ cmd(obj_status_f) {
 	g_agi->messageBox(msg);
 }
 
-/* unknown commands:
- * unk_170: Force savegame name -- j5
- * unk_171: script save -- j5
- * unk_172: script restore -- j5
- * unk_173: Activate keypressed control (ego only moves while key is pressed)
- * unk_174: Change priority table (used in KQ4) -- j5
- * unk_177: Disable menus completely -- j5
- * unk_181: Deactivate keypressed control (default control of ego)
- */
+// unknown commands:
+// unk_170: Force savegame name -- j5
+// unk_171: script save -- j5
+// unk_172: script restore -- j5
+// unk_173: Activate keypressed control (ego only moves while key is pressed)
+// unk_174: Change priority table (used in KQ4) -- j5
+// unk_177: Disable menus completely -- j5
+// unk_181: Deactivate keypressed control (default control of ego)
 cmd(set_simple) {
 	if (!(g_agi->getFeatures() & (GF_AGI256 | GF_AGI256_2))) {
 		game.simpleSave = true;
@@ -627,50 +625,63 @@ cmd(set_simple) {
 		cmd_close_window(NULL);
 		g_picture->showPic();
 		game.pictureShown = 1;
+
+		// Simulate slowww computer. Many effects rely on this
+		g_agi->pause(kPausePicture);
 	}
 }
 
 cmd(pop_script) {
-	report("pop.script\n");
-}
-
-cmd(hold_key) {
-	report("hold.key\n");
-}
-
-cmd(discard_sound) {
-	report("discard.sound\n");
-}
-
-cmd(hide_mouse) {
-	report("hide.mouse\n");
-
-	if (g_agi->getPlatform() == Common::kPlatformAmiga && g_agi->getGameID() == GID_GOLDRUSH) {
-		// WORKAROUND: Turns off current movement that's being caused with the mouse.
-		// This fixes problems with too many popup boxes appearing in the Amiga
-		// Gold Rush's copy protection failure scene (i.e. the hanging scene, logic.192).
-		// Previously multiple popup boxes appeared one after another if you tried
-		// to walk somewhere else than to the right using the mouse.
-		// FIXME: Write a proper implementation using disassembly and
-		//        apply it to other games as well if applicable.
-		game.viewTable[0].flags &= ~ADJ_EGO_XY;
+	if (g_agi->getVersion() >= 0x2915) {
+		report("pop.script\n");
 	}
 }
 
+cmd(hold_key) {
+	if (g_agi->getVersion() >= 0x3098) {
+		g_agi->_egoHoldKey = true;
+	}
+}
+
+cmd(discard_sound) {
+	if (g_agi->getVersion() >= 0x2936) {
+		report("discard.sound\n");
+	}
+}
+
+cmd(hide_mouse) {
+	// WORKAROUND: Turns off current movement that's being caused with the mouse.
+	// This fixes problems with too many popup boxes appearing in the Amiga
+	// Gold Rush's copy protection failure scene (i.e. the hanging scene, logic.192).
+	// Previously multiple popup boxes appeared one after another if you tried
+	// to walk somewhere else than to the right using the mouse.
+	// FIXME: Write a proper implementation using disassembly and
+	//        apply it to other games as well if applicable.
+	game.viewTable[0].flags &= ~ADJ_EGO_XY;
+
+	g_system->showMouse(false);
+}
+
 cmd(allow_menu) {
-	report("allow.menu\n");
+	if (g_agi->getVersion() >= 0x3098) {
+		g_agi->setflag(fMenusWork, ((p0 != 0) ? true : false));
+	}
 }
 
 cmd(show_mouse) {
-	report("show.mouse\n");
+	g_system->showMouse(true);
 }
 
 cmd(fence_mouse) {
-	report("fence.mouse\n");
+	g_agi->_game.mouseFence.moveTo(p0, p1);
+	g_agi->_game.mouseFence.setWidth(p2 - p0);
+	g_agi->_game.mouseFence.setHeight(p3 - p1);
 }
 
 cmd(release_key) {
-	report("release.key\n");
+	if (g_agi->getVersion() >= 0x3098) {
+		g_agi->_egoHoldKey = false;
+	}
 }
 
 cmd(adj_ego_move_to_x_y) {
@@ -723,9 +734,8 @@ cmd(call) {
 	int oldCIP;
 	int oldLognum;
 
-	/* CM: we don't save sIP because set.scan.start can be
-	 *     used in a called script (fixes xmas demo)
-	 */
+	// CM: we don't save sIP because set.scan.start can be
+	//     used in a called script (fixes xmas demo)
 	oldCIP = curLogic->cIP;
 	oldLognum = game.lognum;
 
@@ -762,14 +772,19 @@ cmd(draw_pic) {
 	// Fixes bug #1658514: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
 	if (g_agi->getGameID() == GID_SQ1 && _v[p0] == 20)
 		g_agi->setflag(103, false);
+
+	// Simulate slowww computer. Many effects rely on this
+	g_agi->pause(kPausePicture);
 }
 
 cmd(show_pic) {
 	debugC(6, kDebugLevelScripts, "=== show pic ===");
+
 	g_agi->setflag(fOutputMode, false);
 	cmd_close_window(NULL);
 	g_picture->showPic();
 	game.pictureShown = 1;
+
 	debugC(6, kDebugLevelScripts, "--- end of show pic ---");
 }
 
@@ -781,16 +796,20 @@ cmd(load_pic) {
 
 cmd(discard_pic) {
 	debugC(6, kDebugLevelScripts, "--- discard pic ---");
-	/* do nothing */
+	// do nothing
 }
 
 cmd(overlay_pic) {
 	debugC(6, kDebugLevelScripts, "--- overlay pic ---");
+
 	g_sprites->eraseBoth();
 	g_picture->decodePicture(_v[p0], false);
 	g_sprites->blitBoth();
 	game.pictureShown = 0;
 	g_sprites->commitBoth();
+
+	// Simulate slowww computer. Many effects rely on this
+	g_agi->pause(kPausePicture);
 }
 
 cmd(show_pri_screen) {
@@ -798,7 +817,9 @@ cmd(show_pri_screen) {
 	g_sprites->eraseBoth();
 	g_picture->showPic();
 	g_sprites->blitBoth();
+
 	g_agi->waitKey();
+
 	g_agi->_debug.priority = 0;
 	g_sprites->eraseBoth();
 	g_picture->showPic();
@@ -818,6 +839,7 @@ cmd(animate_obj) {
 
 cmd(unanimate_all) {
 	int i;
+
 	for (i = 0; i < MAX_VIEWTABLE; i++)
 		game.viewTable[i].flags &= ~(ANIMATED | DRAWN);
 }
@@ -832,10 +854,11 @@ cmd(draw) {
 	debugC(4, kDebugLevelScripts, "draw entry %d", vt.entry);
 
 	vt.flags |= UPDATE;
-	if (g_agi->agiGetRelease() >= 0x3000) {
+	if (g_agi->getVersion() >= 0x3000) {
 		g_agi->setLoop(&vt, vt.currentLoop);
 		g_agi->setCel(&vt, vt.currentCel);
 	}
+
 	g_agi->fixPosition(p0);
 	vt.xPos2 = vt.xPos;
 	vt.yPos2 = vt.yPos;
@@ -854,7 +877,7 @@ cmd(draw) {
 	// TODO: Investigate this further and check if any other fanmade AGI
 	// games are affected. If yes, then it'd be best to set this for Space
 	// Trek only
-	if (g_agi->getFeatures() & GF_FANMADE)	/* See Sarien bug #546562 */
+	if (g_agi->getFeatures() & GF_FANMADE)	// See Sarien bug #546562
 		vt.flags |= ANIMATED;
 
 	g_sprites->blitUpdSprites();
@@ -870,6 +893,7 @@ cmd(erase) {
 		return;
 
 	g_sprites->eraseUpdSprites();
+
 	if (vt.flags & UPDATE) {
 		vt.flags &= ~DRAWN;
 	} else {
@@ -1002,7 +1026,7 @@ cmd(normal_motion) {
 cmd(stop_motion) {
 	vt.direction = 0;
 	vt.motion = MOTION_NORMAL;
-	if (p0 == 0) {		/* ego only */
+	if (p0 == 0) {		// ego only
 		_v[vEgoDir] = 0;
 		game.playerControl = false;
 	}
@@ -1010,7 +1034,7 @@ cmd(stop_motion) {
 
 cmd(start_motion) {
 	vt.motion = MOTION_NORMAL;
-	if (p0 == 0) {		/* ego only */
+	if (p0 == 0) {		// ego only
 		_v[vEgoDir] = 0;
 		game.playerControl = true;
 	}
@@ -1035,7 +1059,7 @@ cmd(follow_ego) {
 }
 
 cmd(move_obj) {
-	/* _D (_D_WARN "o=%d, x=%d, y=%d, s=%d, f=%d", p0, p1, p2, p3, p4); */
+	// _D (_D_WARN "o=%d, x=%d, y=%d, s=%d, f=%d", p0, p1, p2, p3, p4);
 
 	vt.motion = MOTION_MOVE_OBJ;
 	vt.parm1 = p1;
@@ -1052,8 +1076,8 @@ cmd(move_obj) {
 	if (p0 == 0)
 		game.playerControl = false;
 
-	/* AGI 2.272 (ddp, xmas) doesn't call move_obj! */
-	if (g_agi->agiGetRelease() > 0x2272)
+	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
+	if (g_agi->getVersion() > 0x2272)
 		g_agi->moveObj(&vt);
 }
 
@@ -1073,14 +1097,15 @@ cmd(move_obj_f) {
 	if (p0 == 0)
 		game.playerControl = false;
 
-	/* AGI 2.272 (ddp, xmas) doesn't call move_obj! */
-	if (g_agi->agiGetRelease() > 0x2272)
+	// AGI 2.272 (ddp, xmas) doesn't call move_obj!
+	if (g_agi->getVersion() > 0x2272)
 		g_agi->moveObj(&vt);
 }
 
 cmd(wander) {
 	if (p0 == 0)
 		game.playerControl = false;
+
 	vt.motion = MOTION_WANDER;
 	vt.flags |= UPDATE;
 }
@@ -1114,12 +1139,14 @@ cmd(pause) {
 
 cmd(set_menu) {
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, curLogic->numTexts);
+
 	if (curLogic->texts != NULL && p0 <= curLogic->numTexts)
 		g_agi->_menu->add(curLogic->texts[p0 - 1]);
 }
 
 cmd(set_menu_item) {
 	debugC(4, kDebugLevelScripts, "text %02x of %02x", p0, curLogic->numTexts);
+
 	if (curLogic->texts != NULL && p0 <= curLogic->numTexts)
 		g_agi->_menu->addItem(curLogic->texts[p0 - 1], p1);
 }
@@ -1134,7 +1161,7 @@ cmd(version) {
 	    "\n"
 	    "                             \n\n"
 	    "  Emulating AGI v%x.002.%03x\n";
-	/* no Sierra as it wraps textbox */
+	// no Sierra as it wraps textbox
 	char *r, *q;
 	int ver, maj, min;
 	char msg[256];
@@ -1143,16 +1170,17 @@ cmd(version) {
 
 	sprintf(verMsg, TITLE " v%s", gScummVMVersion);
 
-	ver = g_agi->agiGetRelease();
+	ver = g_agi->getVersion();
 	maj = (ver >> 12) & 0xf;
 	min = ver & 0xfff;
 
 	q = maj == 2 ? ver2Msg : ver3Msg;
 	r = strchr(q + 1, '\n');
 
-	/* insert our version into the other version */
+	// insert our version into the other version
 	len = strlen(verMsg);
 	gap = r - q;
+
 	if (gap < 0)
 		gap = 0;
 	else
@@ -1172,17 +1200,18 @@ cmd(configure_screen) {
 cmd(text_screen) {
 	debugC(4, kDebugLevelScripts, "switching to text mode");
 	game.gfxMode = false;
-	/*
-	 * Simulates the "bright background bit" of the PC video
-	 * controller.
-	 */
+
+	// Simulates the "bright background bit" of the PC video
+	// controller.
 	if (game.colorBg)
 		game.colorBg |= 0x08;
+
 	g_gfx->clearScreen(game.colorBg);
 }
 
 cmd(graphics) {
 	debugC(4, kDebugLevelScripts, "switching to graphics mode");
+
 	if (!game.gfxMode) {
 		game.gfxMode = true;
 		g_gfx->clearScreen(0);
@@ -1231,7 +1260,7 @@ cmd(restart_game) {
 		g_agi->selectionBox(" Restart game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
-		g_agi->restartGame = true;
+		g_agi->_restartGame = true;
 		g_agi->setflag(fRestartGame, true);
 		g_agi->_menu->enableAll();
 	}
@@ -1290,6 +1319,7 @@ cmd(distance) {
 
 cmd(accept_input) {
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "input normal");
+
 	g_agi->newInputMode(INPUT_NORMAL);
 	game.inputEnabled = true;
 	g_agi->writePrompt();
@@ -1297,8 +1327,11 @@ cmd(accept_input) {
 
 cmd(prevent_input) {
 	debugC(4, kDebugLevelScripts | kDebugLevelInput, "no input");
+
 	g_agi->newInputMode(INPUT_NONE);
 	game.inputEnabled = false;
+
+	g_agi->clearPrompt();
 }
 
 cmd(get_string) {
@@ -1310,9 +1343,8 @@ cmd(get_string) {
 	row = p2;
 	col = p3;
 
-	/* Workaround for SQLC bug.
-	 * See Sarien bug #792125 for details
-	 */
+	// Workaround for SQLC bug.
+	// See Sarien bug #792125 for details
 	if (row > 24)
 		row = 24;
 	if (col > 39)
@@ -1322,37 +1354,42 @@ cmd(get_string) {
 
 	if (curLogic->texts != NULL && curLogic->numTexts >= tex) {
 		int len = strlen(curLogic->texts[tex]);
+
 		g_agi->printText(curLogic->texts[tex], 0, col, row, len, game.colorFg, game.colorBg);
 		g_agi->getString(col + len - 1, row, p4, p0);
 
-		/* SGEO: display input char */
+		// SGEO: display input char
 		g_gfx->printCharacter((col + len), row, game.cursorChar, game.colorFg, game.colorBg);
 	}
 
 	do {
 		g_agi->mainCycle();
-	} while (game.inputMode == INPUT_GETSTRING && !(g_agi->shouldQuit() || g_agi->restartGame));
+	} while (game.inputMode == INPUT_GETSTRING && !(g_agi->shouldQuit() || g_agi->_restartGame));
 }
 
 cmd(get_num) {
 	debugC(4, kDebugLevelScripts, "%d %d", p0, p1);
+
 	g_agi->newInputMode(INPUT_GETSTRING);
 
 	if (curLogic->texts != NULL && curLogic->numTexts >= (p0 - 1)) {
 		int len = strlen(curLogic->texts[p0 - 1]);
+
 		g_agi->printText(curLogic->texts[p0 - 1], 0, 0, 22, len, game.colorFg, game.colorBg);
 		g_agi->getString(len - 1, 22, 3, MAX_STRINGS);
 
-		/* CM: display input char */
+		// CM: display input char
 		g_gfx->printCharacter((p3 + len), 22, game.cursorChar, game.colorFg, game.colorBg);
 	}
 
 	do {
 		g_agi->mainCycle();
-	} while (game.inputMode == INPUT_GETSTRING && !(g_agi->shouldQuit() || g_agi->restartGame));
+	} while (game.inputMode == INPUT_GETSTRING && !(g_agi->shouldQuit() || g_agi->_restartGame));
 
 	_v[p1] = atoi(game.strings[MAX_STRINGS]);
+
 	debugC(4, kDebugLevelScripts, "[%s] -> %d", game.strings[MAX_STRINGS], _v[p1]);
+
 	g_agi->clearLines(22, 22, game.colorBg);
 	g_agi->flushLines(22, 22);
 }
@@ -1361,7 +1398,7 @@ cmd(set_cursor_char) {
 	if (curLogic->texts != NULL && (p0 - 1) <= curLogic->numTexts) {
 		game.cursorChar = *curLogic->texts[p0 - 1];
 	} else {
-		/* default */
+		// default
 		game.cursorChar = '_';
 	}
 }
@@ -1369,18 +1406,24 @@ cmd(set_cursor_char) {
 cmd(set_key) {
 	int key;
 
+	if (game.lastController >= MAX_CONTROLLERS) {
+		warning("Number of set.keys exceeded %d", MAX_CONTROLLERS);
+		return;
+	}
+
 	debugC(4, kDebugLevelScripts, "%d %d %d", p0, p1, p2);
 
-	if (game.evKeyp[p2].data != 0)	/* TBC sets c23 (ESC) twice! */
-		return;
-
 	key = 256 * p1 + p0;
-	game.evKeyp[p2].data = key;
-	game.evKeyp[p2].occured = false;
+
+	game.controllers[game.lastController].keycode = key;
+	game.controllers[game.lastController].controller = p2;
+	game.lastController++;
+
+	game.controllerOccured[p2] = false;
 }
 
 cmd(set_string) {
-	/* CM: to avoid crash in Groza (str = 150) */
+	// CM: to avoid crash in Groza (str = 150)
 	if (p0 > MAX_STRINGS)
 		return;
 	strcpy(game.strings[p0], curLogic->texts[p1 - 1]);
@@ -1406,12 +1449,13 @@ cmd(clear_text_rect) {
 
 	if ((c = p4) != 0)
 		c = 15;
+
 	x1 = p1 * CHAR_COLS;
 	y1 = p0 * CHAR_LINES;
 	x2 = (p3 + 1) * CHAR_COLS - 1;
 	y2 = (p2 + 1) * CHAR_LINES - 1;
 
-	/* Added to prevent crash with x2 = 40 in the iigs demo */
+	// Added to prevent crash with x2 = 40 in the iigs demo
 	if (x1 > GFX_WIDTH)
 		x1 = GFX_WIDTH - 1;
 	if (x2 > GFX_WIDTH)
@@ -1438,7 +1482,7 @@ cmd(echo_line) {
 cmd(clear_lines) {
 	uint8 l;
 
-	/* Residence 44 calls clear.lines(24,0,0), see Sarien bug #558423 */
+	// Residence 44 calls clear.lines(24,0,0), see Sarien bug #558423
 	l = p1 ? p1 : p0;
 
 	// Agent06 incorrectly calls clear.lines(1,150,0), see ScummVM bugs
@@ -1451,32 +1495,41 @@ cmd(clear_lines) {
 
 cmd(print) {
 	int n = p0 < 1 ? 1 : p0;
+
 	g_agi->print(curLogic->texts[n - 1], 0, 0, 0);
 }
 
 cmd(print_f) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
+
 	g_agi->print(curLogic->texts[n - 1], 0, 0, 0);
 }
 
 cmd(print_at) {
 	int n = p0 < 1 ? 1 : p0;
+
 	debugC(4, kDebugLevelScripts, "%d %d %d %d", p0, p1, p2, p3);
+
 	g_agi->print(curLogic->texts[n - 1], p1, p2, p3);
 }
 
 cmd(print_at_v) {
 	int n = _v[p0] < 1 ? 1 : _v[p0];
+
 	g_agi->print(curLogic->texts[n - 1], p1, p2, p3);
 }
 
 cmd(push_script) {
-	if (g_agi->getFeatures() & GF_AGIMOUSE) {
+	// We run AGIMOUSE always as a side effect
+	if (g_agi->getFeatures() & GF_AGIMOUSE || 1) {
 		game.vars[27] = g_mouse.button;
 		game.vars[28] = g_mouse.x / 2;
 		game.vars[29] = g_mouse.y;
-	} else
-		report("push.script\n");
+	} else {
+		if (g_agi->getVersion() >= 0x2915) {
+			report("push.script\n");
+		}
+	}
 }
 
 cmd(set_pri_base) {
@@ -1484,7 +1537,7 @@ cmd(set_pri_base) {
 
 	report("Priority base set to %d\n", p0);
 
-	/* game.alt_pri = true; */
+	// game.alt_pri = true;
 	x = (_HEIGHT - p0) * _HEIGHT / 10;
 
 	for (i = 0; i < _HEIGHT; i++) {
@@ -1521,7 +1574,7 @@ cmd(shake_screen) {
 
 	g_gfx->shakeStart();
 
-	g_sprites->commitBoth();		/* Fixes SQ1 demo */
+	g_sprites->commitBoth();		// Fixes SQ1 demo
 	for (i = 4 * p0; i; i--) {
 		g_gfx->shakeScreen(i & 1);
 		g_gfx->flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
@@ -1529,12 +1582,12 @@ cmd(shake_screen) {
 	}
 	g_gfx->shakeEnd();
 
-	//Sets input back to what it was
+	// Sets input back to what it was
 	game.inputEnabled = originalValue;
 }
 
 static void (*agiCommand[183])(uint8 *) = {
-	NULL,			/* 0x00 */
+	NULL,			// 0x00
 	cmd_increment,
 	cmd_decrement,
 	cmd_assignn,
@@ -1542,7 +1595,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_addn,
 	cmd_addv,
 	cmd_subn,
-	cmd_subv,	/* 0x08 */
+	cmd_subv,	// 0x08
 	cmd_lindirectv,
 	cmd_rindirect,
 	cmd_lindirectn,
@@ -1550,7 +1603,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_reset,
 	cmd_toggle,
 	cmd_set_v,
-	cmd_reset_v,	/* 0x10 */
+	cmd_reset_v,	// 0x10
 	cmd_toggle_v,
 	cmd_new_room,
 	cmd_new_room_f,
@@ -1558,7 +1611,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_load_logic_f,
 	cmd_call,
 	cmd_call_f,
-	cmd_load_pic,	/* 0x18 */
+	cmd_load_pic,	// 0x18
 	cmd_draw_pic,
 	cmd_show_pic,
 	cmd_discard_pic,
@@ -1566,7 +1619,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_show_pri_screen,
 	cmd_load_view,
 	cmd_load_view_f,
-	cmd_discard_view,	/* 0x20 */
+	cmd_discard_view,	// 0x20
 	cmd_animate_obj,
 	cmd_unanimate_all,
 	cmd_draw,
@@ -1574,7 +1627,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_position,
 	cmd_position_f,
 	cmd_get_posn,
-	cmd_reposition,	/* 0x28 */
+	cmd_reposition,	// 0x28
 	cmd_set_view,
 	cmd_set_view_f,
 	cmd_set_loop,
@@ -1582,7 +1635,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_fix_loop,
 	cmd_release_loop,
 	cmd_set_cel,
-	cmd_set_cel_f,	/* 0x30 */
+	cmd_set_cel_f,	// 0x30
 	cmd_last_cel,
 	cmd_current_cel,
 	cmd_current_loop,
@@ -1590,7 +1643,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_number_of_loops,
 	cmd_set_priority,
 	cmd_set_priority_f,
-	cmd_release_priority,	/* 0x38 */
+	cmd_release_priority,	// 0x38
 	cmd_get_priority,
 	cmd_stop_update,
 	cmd_start_update,
@@ -1598,7 +1651,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_ignore_horizon,
 	cmd_observe_horizon,
 	cmd_set_horizon,
-	cmd_object_on_water,	/* 0x40 */
+	cmd_object_on_water,	// 0x40
 	cmd_object_on_land,
 	cmd_object_on_anything,
 	cmd_ignore_objs,
@@ -1606,7 +1659,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_distance,
 	cmd_stop_cycling,
 	cmd_start_cycling,
-	cmd_normal_cycle,	/* 0x48 */
+	cmd_normal_cycle,	// 0x48
 	cmd_end_of_loop,
 	cmd_reverse_cycle,
 	cmd_reverse_loop,
@@ -1614,7 +1667,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_stop_motion,
 	cmd_start_motion,
 	cmd_step_size,
-	cmd_step_time,	/* 0x50 */
+	cmd_step_time,	// 0x50
 	cmd_move_obj,
 	cmd_move_obj_f,
 	cmd_follow_ego,
@@ -1622,7 +1675,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_normal_motion,
 	cmd_set_dir,
 	cmd_get_dir,
-	cmd_ignore_blocks,	/* 0x58 */
+	cmd_ignore_blocks,	// 0x58
 	cmd_observe_blocks,
 	cmd_block,
 	cmd_unblock,
@@ -1630,7 +1683,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_get_f,
 	cmd_drop,
 	cmd_put,
-	cmd_put_f,	/* 0x60 */
+	cmd_put_f,	// 0x60
 	cmd_get_room_f,
 	cmd_load_sound,
 	cmd_sound,
@@ -1638,7 +1691,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_print,
 	cmd_print_f,
 	cmd_display,
-	cmd_display_f,	/* 0x68 */
+	cmd_display_f,	// 0x68
 	cmd_clear_lines,
 	cmd_text_screen,
 	cmd_graphics,
@@ -1646,7 +1699,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_set_text_attribute,
 	cmd_shake_screen,
 	cmd_configure_screen,
-	cmd_status_line_on,	/* 0x70 */
+	cmd_status_line_on,	// 0x70
 	cmd_status_line_off,
 	cmd_set_string,
 	cmd_get_string,
@@ -1654,7 +1707,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_parse,
 	cmd_get_num,
 	cmd_prevent_input,
-	cmd_accept_input,	/* 0x78 */
+	cmd_accept_input,	// 0x78
 	cmd_set_key,
 	cmd_add_to_pic,
 	cmd_add_to_pic_f,
@@ -1662,7 +1715,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_save_game,
 	cmd_load_game,
 	cmd_init_disk,
-	cmd_restart_game,	/* 0x80 */
+	cmd_restart_game,	// 0x80
 	cmd_show_obj,
 	cmd_random,
 	cmd_program_control,
@@ -1670,7 +1723,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_obj_status_f,
 	cmd_quit,
 	cmd_show_mem,
-	cmd_pause,	/* 0x88 */
+	cmd_pause,	// 0x88
 	cmd_echo_line,
 	cmd_cancel_line,
 	cmd_init_joy,
@@ -1678,7 +1731,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_version,
 	cmd_script_size,
 	cmd_set_game_id,
-	cmd_log,	/* 0x90 */
+	cmd_log,	// 0x90
 	cmd_set_scan_start,
 	cmd_reset_scan_start,
 	cmd_reposition_to,
@@ -1686,7 +1739,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_trace_on,
 	cmd_trace_info,
 	cmd_print_at,
-	cmd_print_at_v,	/* 0x98 */
+	cmd_print_at_v,	// 0x98
 	cmd_discard_view,
 	cmd_clear_text_rect,
 	cmd_set_upper_left,
@@ -1694,7 +1747,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_set_menu_item,
 	cmd_submit_menu,
 	cmd_enable_item,
-	cmd_disable_item,	/* 0xa0 */
+	cmd_disable_item,	// 0xa0
 	cmd_menu_input,
 	cmd_show_obj_v,
 	cmd_open_dialogue,
@@ -1702,7 +1755,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_mul_n,
 	cmd_mul_v,
 	cmd_div_n,
-	cmd_div_v,	/* 0xa8 */
+	cmd_div_v,	// 0xa8
 	cmd_close_window,
 	cmd_set_simple,
 	cmd_push_script,
@@ -1710,7 +1763,7 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_hold_key,
 	cmd_set_pri_base,
 	cmd_discard_sound,
-	cmd_hide_mouse,	/* 0xb0 */
+	cmd_hide_mouse,	// 0xb0
 	cmd_allow_menu,
 	cmd_show_mouse,
 	cmd_fence_mouse,
@@ -1718,8 +1771,6 @@ static void (*agiCommand[183])(uint8 *) = {
 	cmd_release_key,
 	cmd_adj_ego_move_to_x_y
 };
-
-#define CMD_BSIZE 12
 
 /**
  * Execute a logic script
@@ -1731,8 +1782,13 @@ int AgiEngine::runLogic(int n) {
 	uint8 *code = NULL;
 	g_agi = this;
 	int num = 0;
+	ScriptPos sp;
 
-	/* If logic not loaded, load it */
+	sp.script = n;
+	sp.curIP = 0;
+	_game.execStack.push_back(sp);
+
+	// If logic not loaded, load it
 	if (~_game.dirLogic[n].flags & RES_LOADED) {
 		debugC(4, kDebugLevelScripts, "logic %d not loaded!", n);
 		agiLoadResource(rLOGIC, n);
@@ -1745,7 +1801,7 @@ int AgiEngine::runLogic(int n) {
 	curLogic->cIP = curLogic->sIP;
 
 	timerHack = 0;
-	while (ip < _game.logics[n].size && !(shouldQuit() || restartGame)) {
+	while (ip < _game.logics[n].size && !(shouldQuit() || _restartGame)) {
 		if (_debug.enabled) {
 			if (_debug.steps > 0) {
 				if (_debug.logic0 || n) {
@@ -1761,23 +1817,27 @@ int AgiEngine::runLogic(int n) {
 			}
 		}
 
+		_game.execStack.back().curIP = ip;
+		processEvents();
+
 		switch (op = *(code + ip++)) {
-		case 0xff:	/* if (open/close) */
+		case 0xff:	// if (open/close)
 			testIfCode(n);
 			break;
-		case 0xfe:	/* goto */
-			/* +2 covers goto size */
+		case 0xfe:	// goto
+			// +2 covers goto size
 			ip += 2 + ((int16)READ_LE_UINT16(code + ip));
-			/* timer must keep running even in goto loops,
-			 * but AGI engine can't do that :(
-			 */
+
+			// timer must keep running even in goto loops,
+			// but AGI engine can't do that :(
 			if (timerHack > 20) {
-				g_gfx->pollTimer();
+				pollTimer();
 				updateTimer();
 				timerHack = 0;
 			}
 			break;
-		case 0x00:	/* return */
+		case 0x00:	// return
+			_game.execStack.pop_back();
 			return 1;
 		default:
 			num = logicNamesCmd[op].numArgs;
@@ -1785,7 +1845,7 @@ int AgiEngine::runLogic(int n) {
 			memset(p + num, 0, CMD_BSIZE - num);
 
 			debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logicNamesCmd[op].name, p[0], p[1], p[2]);
-			agiCommand[op] (p);
+			agiCommand[op](p);
 			ip += num;
 		}
 
@@ -1793,7 +1853,9 @@ int AgiEngine::runLogic(int n) {
 			break;
 	}
 
-	return 0;		/* after executing new.room() */
+	_game.execStack.pop_back();
+
+	return 0;		// after executing new.room()
 }
 
 void AgiEngine::executeAgiCommand(uint8 op, uint8 *p) {

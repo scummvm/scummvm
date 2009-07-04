@@ -33,12 +33,10 @@
 
 namespace Sci {
 
-int g_stop_on_event = 0;
-
 #define SCI_VARIABLE_GAME_SPEED 3
 
 reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int mask = UKPV(0);
+	int mask = argv[0].toUint16();
 	reg_t obj = argv[1];
 	sci_event_t e;
 	int oldx, oldy;
@@ -90,10 +88,12 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case SCI_EVT_KEYBOARD:
 		if ((e.buckybits & SCI_EVM_LSHIFT) && (e.buckybits & SCI_EVM_RSHIFT) && (e.data == '-')) {
 			sciprintf("Debug mode activated\n");
-			g_debug_seeking = g_debug_step_running = 0;
+			debugState.seeking = kDebugSeekNothing;
+			debugState.runningStep = 0;
 		} else if ((e.buckybits & SCI_EVM_CTRL) && (e.data == '`')) {
 			sciprintf("Debug mode activated\n");
-			g_debug_seeking = g_debug_step_running = 0;
+			debugState.seeking = kDebugSeekNothing;
+			debugState.runningStep = 0;
 		} else {
 			PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);
@@ -110,7 +110,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		// track left buttton clicks, if requested
 		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && g_debug_track_mouse_clicks) {
-			((SciEngine *)g_engine)->getDebugger()->DebugPrintf("Mouse clicked at %d, %d\n", 
+			((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("Mouse clicked at %d, %d\n", 
 						s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 		}
 
@@ -137,8 +137,29 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->r_acc = NULL_REG; // Unknown or no event
 	}
 
-	if ((s->r_acc.offset) && (g_stop_on_event)) {
-		g_stop_on_event = 0;
+	if ((s->r_acc.offset) && (debugState.stopOnEvent)) {
+		debugState.stopOnEvent = false;
+
+		// A SCI event occured, and we have been asked to stop, so open the debug console
+		Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
+		con->DebugPrintf("SCI event occured: ");
+		switch (e.type) {
+		case SCI_EVT_QUIT:
+			con->DebugPrintf("quit event\n");
+			break;
+		case SCI_EVT_KEYBOARD:
+			con->DebugPrintf("keyboard event\n");
+			break;
+		case SCI_EVT_MOUSE_RELEASE:
+		case SCI_EVT_MOUSE_PRESS:
+			con->DebugPrintf("mouse click event\n");
+			break;
+		default:
+			con->DebugPrintf("unknown or no event (event type %d)\n", e.type);
+		}
+
+		con->attach();
+		con->onFrame();
 	}
 
 	return s->r_acc;

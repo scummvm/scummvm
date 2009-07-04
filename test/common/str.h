@@ -190,6 +190,9 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str.contains("haha"), true);
 		TS_ASSERT_EQUALS(str.contains("hahb"), false);
 		TS_ASSERT_EQUALS(str.contains("test"), true);
+
+		TS_ASSERT_EQUALS(str.contains('/'), true);
+		TS_ASSERT_EQUALS(str.contains('x'), false);
 	}
 
 	void test_toLowercase() {

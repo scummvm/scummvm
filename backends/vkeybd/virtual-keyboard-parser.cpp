@@ -87,7 +87,7 @@ bool VirtualKeyboardParser::parserCallback_keyboard(ParserNode *node) {
 	}
 
 	if (node->values.contains("v_align")) {
-		String v = node->values["h_align"];
+		String v = node->values["v_align"];
 		if (v.equalsIgnoreCase("top"))
 			_keyboard->_vAlignment = VirtualKeyboard::kAlignTop;
 		else if (v.equalsIgnoreCase("middle") || v.equalsIgnoreCase("center"))

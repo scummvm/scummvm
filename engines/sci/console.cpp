@@ -37,7 +37,7 @@
 #include "sci/gfx/gfx_gui.h"	// for sciw_set_status_bar
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gfx/gfx_widgets.h"	// for getPort
-#include "sci/sfx/songlib.h"	// for songlib_t
+#include "sci/sfx/songlib.h"	// for SongLibrary
 #include "sci/sfx/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
 #include "sci/sfx/sci_midi.h"
 #include "sci/vocabulary.h"
@@ -46,13 +46,10 @@
 
 namespace Sci {
 
-extern EngineState *g_EngineState;
-
 int g_debug_sleeptime_factor = 1;
 int g_debug_simulated_key = 0;
 bool g_debug_track_mouse_clicks = false;
 bool g_debug_weak_validations = true;
-
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -80,6 +77,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("parser_words",		WRAP_METHOD(Console, cmdParserWords));
 	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
 	DCmd_Register("parse",				WRAP_METHOD(Console, cmdParse));
+	DCmd_Register("set_parse_nodes",	WRAP_METHOD(Console, cmdSetParseNodes));
 	// Resources
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
 	DCmd_Register("resource_id",		WRAP_METHOD(Console, cmdResourceId));
@@ -141,11 +139,28 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
 	DCmd_Register("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
+	DCmd_Register("bt",					WRAP_METHOD(Console, cmdBacktrace));	// alias
+	DCmd_Register("step",				WRAP_METHOD(Console, cmdStep));
+	DCmd_Register("s",					WRAP_METHOD(Console, cmdStep));			// alias
+	DCmd_Register("step_event",			WRAP_METHOD(Console, cmdStepEvent));
+	DCmd_Register("se",					WRAP_METHOD(Console, cmdStepEvent));	// alias
+	DCmd_Register("step_ret",			WRAP_METHOD(Console, cmdStepRet));
+	DCmd_Register("sret",				WRAP_METHOD(Console, cmdStepRet));		// alias
+	DCmd_Register("step_global",		WRAP_METHOD(Console, cmdStepGlobal));
+	DCmd_Register("sg",					WRAP_METHOD(Console, cmdStepGlobal));	// alias
+	DCmd_Register("step_callk",			WRAP_METHOD(Console, cmdStepCallk));
+	DCmd_Register("snk",				WRAP_METHOD(Console, cmdStepCallk));	// alias
+	DCmd_Register("disasm",				WRAP_METHOD(Console, cmdDissassemble));
+	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDissassembleAddress));
+	DCmd_Register("send",				WRAP_METHOD(Console, cmdSend));
+	DCmd_Register("go",					WRAP_METHOD(Console, cmdGo));
 	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	DCmd_Register("bp_exec_method",		WRAP_METHOD(Console, cmdBreakpointExecMethod));
+	DCmd_Register("bpx",				WRAP_METHOD(Console, cmdBreakpointExecMethod));		// alias
 	DCmd_Register("bp_exec_function",	WRAP_METHOD(Console, cmdBreakpointExecFunction));
+	DCmd_Register("bpe",				WRAP_METHOD(Console, cmdBreakpointExecFunction));	// alias
 	// VM
 	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
@@ -154,7 +169,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
 	DCmd_Register("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
 	DCmd_Register("view_reference",		WRAP_METHOD(Console, cmdViewReference));
+	DCmd_Register("vr",					WRAP_METHOD(Console, cmdViewReference));	// alias
 	DCmd_Register("view_object",		WRAP_METHOD(Console, cmdViewObject));
+	DCmd_Register("vo",					WRAP_METHOD(Console, cmdViewObject));		// alias
 	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
 	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
 
@@ -171,18 +188,24 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	con_hook_int(&(gfx_options.dirty_frames), "dirty_frames",
 		"Dirty frames management\n");
 	*/
+
+	debugState.isValid = false;
+	debugState.seeking = kDebugSeekNothing;
+	debugState.seekLevel = 0;
+	debugState.runningStep = 0;
+	debugState.stopOnEvent = false;
 }
 
 Console::~Console() {
 }
 
 void Console::preEnter() {
-	g_EngineState->_sound.sfx_suspend(true);
+	_vm->_gamestate->_sound.sfx_suspend(true);
 	_vm->_mixer->pauseAll(true);
 }
 
 void Console::postEnter() {
-	g_EngineState->_sound.sfx_suspend(false);
+	_vm->_gamestate->_sound.sfx_suspend(false);
 	_vm->_mixer->pauseAll(false);
 }
 
@@ -205,6 +228,12 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("weak_validations: Turns some validation errors into warnings\n");
 	DebugPrintf("script_abort_flag: Set to 1 to abort script execution. Set to 2 to force a replay afterwards\n");
 	DebugPrintf("\n");
+	DebugPrintf("Debug flags\n");
+	DebugPrintf("-----------\n");
+	DebugPrintf("debugflag_list - Lists the available debug flags and their status\n");
+	DebugPrintf("debugflag_enable - Enables a debug flag\n");
+	DebugPrintf("debugflag_disable - Disables a debug flag\n");
+	DebugPrintf("\n");
 	DebugPrintf("Commands\n");
 	DebugPrintf("--------\n");
 	DebugPrintf("Kernel:\n");
@@ -220,6 +249,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" parser_words - Shows the words from the parse node tree\n");
 	DebugPrintf(" sentence_fragments - Shows the sentence fragments (used to build Parse trees)\n");
 	DebugPrintf(" parse - Parses a sequence of words and prints the resulting parse tree\n");
+	DebugPrintf(" set_parse_nodes - Sets the contents of all parse nodes\n");
 	DebugPrintf("\n");
 	DebugPrintf("Resources:\n");
 	DebugPrintf(" hexdump - Dumps the specified resource to standard output\n");
@@ -289,13 +319,22 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" registers - Shows the current register values\n");
 	DebugPrintf(" dissect_script - Examines a script\n");
 	DebugPrintf(" set_acc - Sets the accumulator\n");
-	DebugPrintf(" backtrace - Dumps the send/self/super/call/calle/callb stack\n");
+	DebugPrintf(" backtrace / bt - Dumps the send/self/super/call/calle/callb stack\n");
+	DebugPrintf(" step / s - Executes one operation (no parameters) or several operations (specified as a parameter) \n");
+	DebugPrintf(" step_event / se - Steps forward until a SCI event is received.\n");
+	DebugPrintf(" step_ret / sret - Steps forward until ret is called on the current execution stack level.\n");
+	DebugPrintf(" step_global / sg - Steps until the global variable with the specified index is modified.\n");
+	DebugPrintf(" step_callk / snk - Steps forward until it hits the next callk operation, or a specific callk (specified as a parameter)\n");
+	DebugPrintf(" disasm - Disassembles a method by name\n");
+	DebugPrintf(" disasm_addr - Disassembles one or more commands\n");
+	DebugPrintf(" send - Sends a message to an object\n");
+	DebugPrintf(" go - Executes the script\n");
 	DebugPrintf("\n");
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list - Lists the current breakpoints\n");
 	DebugPrintf(" bp_del - Deletes a breakpoint with the specified index\n");
-	DebugPrintf(" bp_exec_method - Sets a breakpoint on the execution of the specified method\n");
-	DebugPrintf(" bp_exec_function - Sets a breakpoint on the execution of the specified exported function\n");
+	DebugPrintf(" bp_exec_method / bpx - Sets a breakpoint on the execution of the specified method\n");
+	DebugPrintf(" bp_exec_function / bpe - Sets a breakpoint on the execution of the specified exported function\n");
 	DebugPrintf("\n");
 	DebugPrintf("VM:\n");
 	DebugPrintf(" script_steps - Shows the number of executed SCI operations\n");
@@ -304,8 +343,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" stack - Lists the specified number of stack elements\n");
 	DebugPrintf(" value_type - Determines the type of a value\n");
 	DebugPrintf(" view_listnode - Examines the list node at the given address\n");
-	DebugPrintf(" view_reference - Examines an arbitrary reference\n");
-	DebugPrintf(" view_object - Examines the object at the given address\n");
+	DebugPrintf(" view_reference / vr - Examines an arbitrary reference\n");
+	DebugPrintf(" view_object / vo - Examines the object at the given address\n");
 	DebugPrintf(" active_object - Shows information on the currently active object or class\n");
 	DebugPrintf(" acc_object - Shows information on the object or class at the address indexed by the accumulator\n");
 	DebugPrintf("\n");
@@ -341,8 +380,8 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 
 bool Console::cmdOpcodes(int argc, const char **argv) {
 	DebugPrintf("Opcode names in numeric order [index: type name]:\n");
-	for (uint seeker = 0; seeker < g_EngineState->_kernel->getOpcodesSize(); seeker++) {
-		opcode op = g_EngineState->_kernel->getOpcode(seeker);
+	for (uint seeker = 0; seeker < _vm->_gamestate->_kernel->getOpcodesSize(); seeker++) {
+		opcode op = _vm->_gamestate->_kernel->getOpcode(seeker);
 		DebugPrintf("%03x: %03x %20s | ", seeker, op.type, op.name.c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
@@ -355,8 +394,8 @@ bool Console::cmdOpcodes(int argc, const char **argv) {
 
 bool Console::cmdSelectors(int argc, const char **argv) {
 	DebugPrintf("Selector names in numeric order:\n");
-	for (uint seeker = 0; seeker < g_EngineState->_kernel->getSelectorNamesSize(); seeker++) {
-		DebugPrintf("%03x: %20s | ", seeker, g_EngineState->_kernel->getSelectorName(seeker).c_str());
+	for (uint seeker = 0; seeker < _vm->_gamestate->_kernel->getSelectorNamesSize(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, _vm->_gamestate->_kernel->getSelectorName(seeker).c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
@@ -368,8 +407,8 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 bool Console::cmdKernelFunctions(int argc, const char **argv) {
 	DebugPrintf("Kernel function names in numeric order:\n");
-	for (uint seeker = 0; seeker <  g_EngineState->_kernel->getKernelNamesSize(); seeker++) {
-		DebugPrintf("%03x: %20s | ", seeker, g_EngineState->_kernel->getKernelName(seeker).c_str());
+	for (uint seeker = 0; seeker <  _vm->_gamestate->_kernel->getKernelNamesSize(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, _vm->_gamestate->_kernel->getKernelName(seeker).c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
@@ -380,29 +419,118 @@ bool Console::cmdKernelFunctions(int argc, const char **argv) {
 }
 
 bool Console::cmdSuffixes(int argc, const char **argv) {
-	g_EngineState->_vocabulary->printSuffixes();
+	_vm->_gamestate->_vocabulary->printSuffixes();
 
 	return true;
 }
 
 bool Console::cmdParserWords(int argc, const char **argv) {
-	g_EngineState->_vocabulary->printParserWords();
+	_vm->_gamestate->_vocabulary->printParserWords();
+
+	return true;
+}
+
+enum {
+	kParseEndOfInput = 0,
+	kParseOpeningParenthesis = 1,
+	kParseClosingParenthesis = 2,
+	kParseNil = 3,
+	kParseNumber = 4
+};
+
+int parseNodes(EngineState *s, int *i, int *pos, int type, int nr, int argc, const char **argv) {
+	int nextToken = 0, nextValue = 0, newPos = 0, oldPos = 0;
+
+	if (type == kParseNil)
+		return 0;
+
+	if (type == kParseNumber) {
+		s->parser_nodes[*pos += 1].type = kParseTreeLeafNode;
+		s->parser_nodes[*pos].content.value = nr;
+		return *pos;
+	}
+	if (type == kParseEndOfInput) {
+		sciprintf("Unbalanced parentheses\n");
+		return -1;
+	}
+	if (type == kParseClosingParenthesis) {
+		sciprintf("Syntax error at token %d\n", *i);
+		return -1;
+	}
+
+	s->parser_nodes[oldPos = ++(*pos)].type = kParseTreeBranchNode;
+
+	for (int j = 0; j <= 1; j++) {
+		if (*i == argc) {
+			nextToken = kParseEndOfInput;
+		} else {
+			const char *token = argv[(*i)++];
+
+			if (!strcmp(token, "(")) {
+				nextToken = kParseOpeningParenthesis;
+			} else if (!strcmp(token, ")")) {
+				nextToken = kParseClosingParenthesis;
+			} else if (!strcmp(token, "nil")) {
+				nextToken = kParseNil;
+			} else {
+				nextValue = strtol(token, NULL, 0);
+				nextToken = kParseNumber;
+			}
+		}
+
+		if ((newPos = s->parser_nodes[oldPos].content.branches[j] = parseNodes(s, i, pos, nextToken, nextValue, argc, argv)) == -1)
+			return -1;
+	}
+
+	const char *token = argv[(*i)++];
+	if (strcmp(token, ")"))
+		sciprintf("Expected ')' at token %d\n", *i);
+
+	return oldPos;
+}
+
+bool Console::cmdSetParseNodes(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Sets the contents of all parse nodes.\n");
+		DebugPrintf("Usage: %s <parse node1> <parse node2> ... <parse noden>\n", argv[0]);
+		DebugPrintf("Tokens should be separated by blanks and enclosed in parentheses\n");
+		return true;
+	}
+
+	int i = 0;
+	int pos = -1;
+	int nextToken = 0, nextValue = 0;
+
+	const char *token = argv[i++];
+
+	if (!strcmp(token, "(")) {
+		nextToken = kParseOpeningParenthesis;
+	} else if (!strcmp(token, ")")) {
+		nextToken = kParseClosingParenthesis;
+	} else if (!strcmp(token, "nil")) {
+		nextToken = kParseNil;
+	} else {
+		nextValue = strtol(token, NULL, 0);
+		nextToken = kParseNumber;
+	}
+
+	if (parseNodes(_vm->_gamestate, &i, &pos, nextToken, nextValue, argc, argv) == -1)
+		return 1;
+
+	vocab_dump_parse_tree("debug-parse-tree", _vm->_gamestate->parser_nodes);
 
 	return true;
 }
 
 bool Console::cmdRegisters(int argc, const char **argv) {
 	DebugPrintf("Current register values:\n");
-#if 0
-		// TODO: p_restadjust
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(g_EngineState->r_acc), PRINT_REG(g_EngineState->r_prev), *p_restadjust);
-#endif
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_vm->_gamestate->r_acc), PRINT_REG(_vm->_gamestate->r_prev), *debugState.p_restadjust);
 
-	if (!g_EngineState->_executionStack.empty()) {
-#if 0
-		// TODO: p_pc, p_objp, p_pp, p_sp
-		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
-#endif
+	if (!_vm->_gamestate->_executionStack.empty()) {
+		EngineState *s = _vm->_gamestate;	// for PRINT_STK
+		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", 
+					PRINT_REG(*debugState.p_pc), PRINT_REG(*debugState.p_objp), 
+					PRINT_STK(*debugState.p_pp), PRINT_STK(*debugState.p_sp));
 	} else
 		DebugPrintf("<no execution stack: pc,obj,fp omitted>\n");
 
@@ -428,7 +556,7 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _vm->getResMgr()->findResource(res, resNum, 0);
+		Resource *resource = _vm->getResMgr()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			Common::hexdump(resource->data, resource->size, 16, 0);
 			DebugPrintf("Resource %s.%03d has been dumped to standard output\n", argv[1], resNum);
@@ -460,13 +588,13 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 		return true;
 	}
 
-	g_EngineState->_kernel->dissectScript(atoi(argv[1]), g_EngineState->_vocabulary);
+	_vm->_gamestate->_kernel->dissectScript(atoi(argv[1]), _vm->_gamestate->_vocabulary);
 
 	return true;
 }
 
 bool Console::cmdRoomNumber(int argc, const char **argv) {
-	DebugPrintf("Current room number is %d\n", g_EngineState->currentRoomNumber());
+	DebugPrintf("Current room number is %d\n", _vm->_gamestate->currentRoomNumber());
 
 	return true;
 }
@@ -489,7 +617,7 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _vm->getResMgr()->findResource(res, resNum, 0);
+		Resource *resource = _vm->getResMgr()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			DebugPrintf("Resource size: %d\n", resource->size);
 		} else {
@@ -559,7 +687,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	}
 
 	for (; resNumber <= resMax; resNumber++) {
-		if ((script = _vm->getResMgr()->findResource(restype, resNumber, 0))) {
+		if ((script = _vm->getResMgr()->findResource(ResourceId(restype, resNumber), 0))) {
 			unsigned int seeker = 0, seekerold = 0;
 			uint32 comppos = 0;
 			int output_script_name = 0;
@@ -593,7 +721,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 }
 
 bool Console::cmdList(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2) {
 		DebugPrintf("Lists all the resources of a given type\n");
 		cmdResourceTypes(argc, argv);
 		return true;
@@ -604,32 +732,54 @@ bool Console::cmdList(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Unknown resource type: '%s'\n", argv[1]);
 	else {
-		int j = 0;
-		for (int i = 0; i < sci_max_resource_nr[_vm->getResMgr()->_sciVersion]; i++) {
-			if (_vm->getResMgr()->testResource(res, i)) {
-				DebugPrintf("%s.%03d | ", getResourceTypeName((ResourceType)res), i);
-				if (j % 5 == 0)
-					DebugPrintf("\n");
-				j++;
+		int number = -1;
+
+		if ((res == kResourceTypeAudio36) || (res == kResourceTypeSync36)) {
+			if (argc != 3) {
+				DebugPrintf("Please specify map number\n");
+				return true;
 			}
+			number = atoi(argv[2]);
+		}
+
+		Common::List<ResourceId> *resources = _vm->getResMgr()->listResources(res, number);
+		sort(resources->begin(), resources->end(), ResourceIdLess());
+		Common::List<ResourceId>::iterator itr = resources->begin();
+
+		int cnt = 0;
+		while (itr != resources->end()) {
+			if (number == -1) {
+				DebugPrintf("%8i", itr->number);
+				if (++cnt % 10 == 0)
+					DebugPrintf("\n");
+			}
+			else if (number == (int)itr->number) {
+				DebugPrintf("(%3i, %3i, %3i, %3i)   ", (itr->tuple >> 24) & 0xff, (itr->tuple >> 16) & 0xff,
+							(itr->tuple >> 8) & 0xff, itr->tuple & 0xff);
+				if (++cnt % 4 == 0)
+					DebugPrintf("\n");
+			}
+			itr++;
 		}
 		DebugPrintf("\n");
+
+		delete resources;
 	}
 
 	return true;
 }
 
 bool Console::cmdClearScreen(int argc, const char **argv) {
-	gfxop_clear_box(g_EngineState->gfx_state, gfx_rect(0, 0, 320, 200));
-	gfxop_update_box(g_EngineState->gfx_state, gfx_rect(0, 0, 320, 200));
+	gfxop_clear_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
+	gfxop_update_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
 	return false;
 }
 
 bool Console::cmdRedrawScreen(int argc, const char **argv) {
-	g_EngineState->visual->draw(Common::Point(0, 0));
-	gfxop_update_box(g_EngineState->gfx_state, gfx_rect(0, 0, 320, 200));
-	gfxop_update(g_EngineState->gfx_state);
-	gfxop_sleep(g_EngineState->gfx_state, 0);
+	_vm->_gamestate->visual->draw(Common::Point(0, 0));
+	gfxop_update_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
+	gfxop_update(_vm->_gamestate->gfx_state);
+	gfxop_sleep(_vm->_gamestate->gfx_state, 0);
 	return false;
 }
 
@@ -641,8 +791,8 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 	}
 
 	int result = 0;
-	for (uint i = 0; i < g_EngineState->_fileHandles.size(); i++)
-		if (g_EngineState->_fileHandles[i].isOpen())
+	for (uint i = 0; i < _vm->_gamestate->_fileHandles.size(); i++)
+		if (_vm->_gamestate->_fileHandles[i].isOpen())
 			result++;
 
 	if (result)
@@ -656,7 +806,7 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 	}
 
 	// TODO: enable custom descriptions? force filename into a specific format?
-	if (gamestate_save(g_EngineState, out, "debugging")) {
+	if (gamestate_save(_vm->_gamestate, out, "debugging")) {
 		DebugPrintf("Saving the game state to '%s' failed\n", argv[1]);
 	}
 
@@ -676,17 +826,17 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 	Common::SeekableReadStream *in;
 	if (!(in = saveFileMan->openForLoading(argv[1]))) {
 		// found a savegame file
-		newstate = gamestate_restore(g_EngineState, in);
+		newstate = gamestate_restore(_vm->_gamestate, in);
 		delete in;
 	}
 
 	if (newstate) {
-		g_EngineState->successor = newstate; // Set successor
+		_vm->_gamestate->successor = newstate; // Set successor
 
 		script_abort_flag = 2; // Abort current game with replay
-		g_debugstate_valid = 0;
+		debugState.isValid = false;
 
-		shrink_execution_stack(g_EngineState, g_EngineState->execution_stack_base + 1);
+		shrink_execution_stack(_vm->_gamestate, _vm->_gamestate->execution_stack_base + 1);
 		return 0;
 	} else {
 		DebugPrintf("Restoring gamestate '%s' failed.\n", argv[1]);
@@ -705,27 +855,27 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 	}
 
 	if (!scumm_stricmp(argv[1], "play")) {
-		g_EngineState->restarting_flags |= SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
+		_vm->_gamestate->restarting_flags |= SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
 	} else if (!scumm_stricmp(argv[1], "replay")) {
-		g_EngineState->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
+		_vm->_gamestate->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
 	} else {
 		DebugPrintf("Invalid usage of %s\n", argv[0]);
 		return true;
 	}
 
-	g_EngineState->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
+	_vm->_gamestate->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	script_abort_flag = 1;
-	g_debugstate_valid = 0;
+	debugState.isValid = false;
 
 	return false;
 }
 
 bool Console::cmdClassTable(int argc, const char **argv) {
 	DebugPrintf("Available classes:\n");
-	for (uint i = 0; i < g_EngineState->_classtable.size(); i++) {
-		if (g_EngineState->_classtable[i].reg.segment) {
+	for (uint i = 0; i < _vm->_gamestate->_classtable.size(); i++) {
+		if (_vm->_gamestate->_classtable[i].reg.segment) {
 			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i, 
-					PRINT_REG(g_EngineState->_classtable[i].reg), g_EngineState->_classtable[i].script);
+					PRINT_REG(_vm->_gamestate->_classtable[i].reg), _vm->_gamestate->_classtable[i].script);
 		}
 	}
 
@@ -735,10 +885,10 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 bool Console::cmdSentenceFragments(int argc, const char **argv) {
 	DebugPrintf("Sentence fragments (used to build Parse trees)\n");
 
-	for (uint i = 0; i < g_EngineState->_vocabulary->getParserBranchesSize(); i++) {
+	for (uint i = 0; i < _vm->_gamestate->_vocabulary->getParserBranchesSize(); i++) {
 		int j = 0;
 
-		const parse_tree_branch_t &branch = g_EngineState->_vocabulary->getParseTreeBranch(i);
+		const parse_tree_branch_t &branch = _vm->_gamestate->_vocabulary->getParseTreeBranch(i);
 		DebugPrintf("R%02d: [%x] ->", i, branch.id);
 		while ((j < 10) && branch.data[j]) {
 			int dat = branch.data[j++];
@@ -770,7 +920,7 @@ bool Console::cmdSentenceFragments(int argc, const char **argv) {
 		DebugPrintf("\n");
 	}
 
-	DebugPrintf("%d rules.\n", g_EngineState->_vocabulary->getParserBranchesSize());
+	DebugPrintf("%d rules.\n", _vm->_gamestate->_vocabulary->getParserBranchesSize());
 
 	return true;
 }
@@ -793,24 +943,24 @@ bool Console::cmdParse(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Parsing '%s'\n", string);
-	bool res = g_EngineState->_vocabulary->tokenizeString(words, string, &error);
+	bool res = _vm->_gamestate->_vocabulary->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
 
-		vocab_synonymize_tokens(words, g_EngineState->_synonyms);
+		vocab_synonymize_tokens(words, _vm->_gamestate->_synonyms);
 
 		DebugPrintf("Parsed to the following blocks:\n");
 
 		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
 			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 
-		if (g_EngineState->_vocabulary->parseGNF(g_EngineState->parser_nodes, words, true))
+		if (_vm->_gamestate->_vocabulary->parseGNF(_vm->_gamestate->parser_nodes, words, true))
 			syntax_fail = 1; // Building a tree failed
 
 		if (syntax_fail)
 			DebugPrintf("Building a tree failed.\n");
 		else
-			vocab_dump_parse_tree("debug-parse-tree", g_EngineState->parser_nodes);
+			vocab_dump_parse_tree("debug-parse-tree", _vm->_gamestate->parser_nodes);
 
 	} else {
 		DebugPrintf("Unknown word: '%s'\n", error);
@@ -832,11 +982,11 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 
 	for (int i = 0; i < end; i++) {
 		DebugPrintf(" Node %03x: ", i);
-		if (g_EngineState->parser_nodes[i].type == PARSE_TREE_NODE_LEAF)
-			DebugPrintf("Leaf: %04x\n", g_EngineState->parser_nodes[i].content.value);
+		if (_vm->_gamestate->parser_nodes[i].type == kParseTreeLeafNode)
+			DebugPrintf("Leaf: %04x\n", _vm->_gamestate->parser_nodes[i].content.value);
 		else
-			DebugPrintf("Branch: ->%04x, ->%04x\n", g_EngineState->parser_nodes[i].content.branches[0],
-			          g_EngineState->parser_nodes[i].content.branches[1]);
+			DebugPrintf("Branch: ->%04x, ->%04x\n", _vm->_gamestate->parser_nodes[i].content.branches[0],
+			          _vm->_gamestate->parser_nodes[i].content.branches[1]);
 	}
 
 	return true;
@@ -860,10 +1010,10 @@ bool Console::cmdDrawPic(int argc, const char **argv) {
 	if (argc == 4)
 		flags = atoi(argv[3]);
 
-	gfxop_new_pic(g_EngineState->gfx_state, atoi(argv[1]), flags, default_palette);
-	gfxop_clear_box(g_EngineState->gfx_state, gfx_rect(0, 0, 320, 200));
-	gfxop_update(g_EngineState->gfx_state);
-	gfxop_sleep(g_EngineState->gfx_state, 0);
+	gfxop_new_pic(_vm->_gamestate->gfx_state, atoi(argv[1]), flags, default_palette);
+	gfxop_clear_box(_vm->_gamestate->gfx_state, gfx_rect(0, 0, 320, 200));
+	gfxop_update(_vm->_gamestate->gfx_state);
+	gfxop_sleep(_vm->_gamestate->gfx_state, 0);
 
 	return false;
 }
@@ -878,10 +1028,10 @@ bool Console::cmdDrawRect(int argc, const char **argv) {
 
 	int col = CLIP<int>(atoi(argv[5]), 0, 15);
 
-	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
-	gfxop_fill_box(g_EngineState->gfx_state, gfx_rect(atoi(argv[1]), atoi(argv[2]), 
-										atoi(argv[3]), atoi(argv[4])), g_EngineState->ega_colors[col]);
-	gfxop_update(g_EngineState->gfx_state);
+	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
+	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect(atoi(argv[1]), atoi(argv[2]), 
+										atoi(argv[3]), atoi(argv[4])), _vm->_gamestate->ega_colors[col]);
+	gfxop_update(_vm->_gamestate->gfx_state);
 
 	return false;
 }
@@ -898,9 +1048,9 @@ bool Console::cmdDrawCel(int argc, const char **argv) {
 	int cel = atoi(argv[3]);
 	int palette = atoi(argv[4]);
 
-	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
-	gfxop_draw_cel(g_EngineState->gfx_state, view, loop, cel, Common::Point(160, 100), g_EngineState->ega_colors[0], palette);
-	gfxop_update(g_EngineState->gfx_state);
+	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
+	gfxop_draw_cel(_vm->_gamestate->gfx_state, view, loop, cel, Common::Point(160, 100), _vm->_gamestate->ega_colors[0], palette);
+	gfxop_update(_vm->_gamestate->gfx_state);
 
 	return false;
 }
@@ -921,7 +1071,7 @@ bool Console::cmdViewInfo(int argc, const char **argv) {
 
 	DebugPrintf("Resource view.%d ", view);
 
-	loops = gfxop_lookup_view_get_loops(g_EngineState->gfx_state, view);
+	loops = gfxop_lookup_view_get_loops(_vm->_gamestate->gfx_state, view);
 
 	if (loops < 0)
 		DebugPrintf("does not exist.\n");
@@ -931,17 +1081,17 @@ bool Console::cmdViewInfo(int argc, const char **argv) {
 		for (i = 0; i < loops; i++) {
 			int j, cels;
 
-			DebugPrintf("Loop %d: %d cels.\n", i, cels = gfxop_lookup_view_get_cels(g_EngineState->gfx_state, view, i));
+			DebugPrintf("Loop %d: %d cels.\n", i, cels = gfxop_lookup_view_get_cels(_vm->_gamestate->gfx_state, view, i));
 			for (j = 0; j < cels; j++) {
 				int width;
 				int height;
 				Common::Point mod;
 
 				// Show pixmap on screen
-				view_pixmaps = g_EngineState->gfx_state->gfxResMan->getView(view, &i, &j, palette);
-				gfxop_draw_cel(g_EngineState->gfx_state, view, i, j, Common::Point(0,0), transparent, palette);
+				view_pixmaps = _vm->_gamestate->gfx_state->gfxResMan->getView(view, &i, &j, palette);
+				gfxop_draw_cel(_vm->_gamestate->gfx_state, view, i, j, Common::Point(0,0), transparent, palette);
 
-				gfxop_get_cel_parameters(g_EngineState->gfx_state, view, i, j, &width, &height, &mod);
+				gfxop_get_cel_parameters(_vm->_gamestate->gfx_state, view, i, j, &width, &height, &mod);
 
 				DebugPrintf("   cel %d: size %dx%d, adj+(%d,%d)\n", j, width, height, mod.x, mod.y);
 			}
@@ -963,7 +1113,7 @@ bool Console::cmdUpdateZone(int argc, const char **argv) {
 	int width = atoi(argv[3]);
 	int height = atoi(argv[4]);
 
-	g_EngineState->gfx_state->driver->update(gfx_rect(x, y, width, height), Common::Point(x, y), GFX_BUFFER_FRONT);
+	_vm->_gamestate->gfx_state->driver->update(gfx_rect(x, y, width, height), Common::Point(x, y), GFX_BUFFER_FRONT);
 
 	return false;
 }
@@ -983,14 +1133,14 @@ bool Console::cmdPropagateZone(int argc, const char **argv) {
 	int map = CLIP<int>(atoi(argv[5]), 0, 1);
 	rect_t rect = gfx_rect(x, y, width, height);
 
-	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
+	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
 
 	if (map == 1)
-		gfxop_clear_box(g_EngineState->gfx_state, rect);
+		gfxop_clear_box(_vm->_gamestate->gfx_state, rect);
 	else
-		gfxop_update_box(g_EngineState->gfx_state, rect);
-	gfxop_update(g_EngineState->gfx_state);
-	gfxop_sleep(g_EngineState->gfx_state, 0);
+		gfxop_update_box(_vm->_gamestate->gfx_state, rect);
+	gfxop_update(_vm->_gamestate->gfx_state);
+	gfxop_sleep(_vm->_gamestate->gfx_state, 0);
 
 	return false;
 }
@@ -1005,18 +1155,18 @@ bool Console::cmdFillScreen(int argc, const char **argv) {
 
 	int col = CLIP<int>(atoi(argv[1]), 0, 15);
 
-	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
-	gfxop_fill_box(g_EngineState->gfx_state, gfx_rect_fullscreen, g_EngineState->ega_colors[col]);
-	gfxop_update(g_EngineState->gfx_state);
+	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
+	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect_fullscreen, _vm->_gamestate->ega_colors[col]);
+	gfxop_update(_vm->_gamestate->gfx_state);
 
 	return false;
 }
 
 bool Console::cmdCurrentPort(int argc, const char **argv) {
-	if (!g_EngineState->port)
+	if (!_vm->_gamestate->port)
 		DebugPrintf("There is no port active currently.\n");
 	else
-		DebugPrintf("Current port ID: %d\n", g_EngineState->port->_ID);
+		DebugPrintf("Current port ID: %d\n", _vm->_gamestate->port->_ID);
 
 	return true;
 }
@@ -1032,16 +1182,16 @@ bool Console::cmdPrintPort(int argc, const char **argv) {
 	GfxPort *port;
 	
 	if (!scumm_stricmp(argv[1], "current")) {
-		port = g_EngineState->port;
+		port = _vm->_gamestate->port;
 		if (!port)
 			DebugPrintf("There is no active port currently\n");
 		else
 			port->print(0);
 	} else {
-		if (!g_EngineState->visual) {
+		if (!_vm->_gamestate->visual) {
 			DebugPrintf("Visual is uninitialized\n");
 		} else {
-			port = g_EngineState->visual->getPort(atoi(argv[1]));
+			port = _vm->_gamestate->visual->getPort(atoi(argv[1]));
 			if (!port)
 				DebugPrintf("No such port\n");
 			else
@@ -1055,7 +1205,7 @@ bool Console::cmdPrintPort(int argc, const char **argv) {
 bool Console::cmdParseGrammar(int argc, const char **argv) {
 	DebugPrintf("Parse grammar, in strict GNF:\n");
 
-	g_EngineState->_vocabulary->buildGNF(true);
+	_vm->_gamestate->_vocabulary->buildGNF(true);
 
 	return true;
 }
@@ -1063,8 +1213,8 @@ bool Console::cmdParseGrammar(int argc, const char **argv) {
 bool Console::cmdVisualState(int argc, const char **argv) {
 	DebugPrintf("State of the current visual widget:\n");
 
-	if (g_EngineState->visual)
-		g_EngineState->visual->print(0);
+	if (_vm->_gamestate->visual)
+		_vm->_gamestate->visual->print(0);
 	else
 		DebugPrintf("The visual widget is uninitialized.\n");
 
@@ -1072,11 +1222,11 @@ bool Console::cmdVisualState(int argc, const char **argv) {
 }
 
 bool Console::cmdFlushPorts(int argc, const char **argv) {
-	gfxop_set_pointer_cursor(g_EngineState->gfx_state, GFXOP_NO_POINTER);
+	gfxop_set_pointer_cursor(_vm->_gamestate->gfx_state, GFXOP_NO_POINTER);
 	DebugPrintf("Flushing dynamically allocated ports (for memory profiling)...\n");
-	delete g_EngineState->visual;
-	g_EngineState->gfx_state->gfxResMan->freeAllResources();
-	g_EngineState->visual = NULL;
+	delete _vm->_gamestate->visual;
+	_vm->_gamestate->gfx_state->gfxResMan->freeAllResources();
+	_vm->_gamestate->visual = NULL;
 
 	return true;
 }
@@ -1084,8 +1234,8 @@ bool Console::cmdFlushPorts(int argc, const char **argv) {
 bool Console::cmdDynamicViews(int argc, const char **argv) {
 	DebugPrintf("List of active dynamic views:\n");
 
-	if (g_EngineState->dyn_views)
-		g_EngineState->dyn_views->print(0);
+	if (_vm->_gamestate->dyn_views)
+		_vm->_gamestate->dyn_views->print(0);
 	else
 		DebugPrintf("The list is empty.\n");
 
@@ -1095,8 +1245,8 @@ bool Console::cmdDynamicViews(int argc, const char **argv) {
 bool Console::cmdDroppedViews(int argc, const char **argv) {
 	DebugPrintf("List of dropped dynamic views:\n");
 
-	if (g_EngineState->drop_views)
-		g_EngineState->drop_views->print(0);
+	if (_vm->_gamestate->drop_views)
+		_vm->_gamestate->drop_views->print(0);
 	else
 		DebugPrintf("The list is empty.\n");
 
@@ -1105,13 +1255,13 @@ bool Console::cmdDroppedViews(int argc, const char **argv) {
 
 bool Console::cmdPriorityBands(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Priority bands start at y=%d. They end at y=%d\n", g_EngineState->priority_first, g_EngineState->priority_last);
-		DebugPrintf("Use %d <priority band> to print the start of priority for the specified priority band (0 - 15)\n", argv[0]);
+		DebugPrintf("Priority bands start at y=%d. They end at y=%d\n", _vm->_gamestate->priority_first, _vm->_gamestate->priority_last);
+		DebugPrintf("Use %s <priority band> to print the start of priority for the specified priority band (0 - 15)\n", argv[0]);
 		return true;
 	}
 
 	int zone = CLIP<int>(atoi(argv[1]), 0, 15);
-	DebugPrintf("Zone %x starts at y=%d\n", zone, _find_priority_band(g_EngineState, zone));
+	DebugPrintf("Zone %x starts at y=%d\n", zone, _find_priority_band(_vm->_gamestate, zone));
 
 	return true;
 }
@@ -1123,15 +1273,15 @@ bool Console::cmdStatusBarColors(int argc, const char **argv) {
 		return true;
 	}
 
-	g_EngineState->titlebar_port->_color = g_EngineState->ega_colors[atoi(argv[1])];
-	g_EngineState->titlebar_port->_bgcolor = g_EngineState->ega_colors[atoi(argv[2])];
+	_vm->_gamestate->titlebar_port->_color = _vm->_gamestate->ega_colors[atoi(argv[1])];
+	_vm->_gamestate->titlebar_port->_bgcolor = _vm->_gamestate->ega_colors[atoi(argv[2])];
 
-	g_EngineState->status_bar_foreground = atoi(argv[1]);
-	g_EngineState->status_bar_background = atoi(argv[2]);
+	_vm->_gamestate->status_bar_foreground = atoi(argv[1]);
+	_vm->_gamestate->status_bar_background = atoi(argv[2]);
 
-	sciw_set_status_bar(g_EngineState, g_EngineState->titlebar_port, g_EngineState->_statusBarText, 
-							g_EngineState->status_bar_foreground, g_EngineState->status_bar_background);
-	gfxop_update(g_EngineState->gfx_state);
+	sciw_set_status_bar(_vm->_gamestate, _vm->_gamestate->titlebar_port, _vm->_gamestate->_statusBarText, 
+							_vm->_gamestate->status_bar_foreground, _vm->_gamestate->status_bar_background);
+	gfxop_update(_vm->_gamestate->gfx_state);
 
 	return false;
 }
@@ -1139,8 +1289,8 @@ bool Console::cmdStatusBarColors(int argc, const char **argv) {
 bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 	DebugPrintf("Segment table:\n");
 
-	for (uint i = 0; i < g_EngineState->seg_manager->_heap.size(); i++) {
-		MemObject *mobj = g_EngineState->seg_manager->_heap[i];
+	for (uint i = 0; i < _vm->_gamestate->seg_manager->_heap.size(); i++) {
+		MemObject *mobj = _vm->_gamestate->seg_manager->_heap[i];
 		if (mobj && mobj->getType()) {
 			DebugPrintf(" [%04x] ", i);
 
@@ -1201,10 +1351,10 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 bool Console::segmentInfo(int nr) {
 	DebugPrintf("[%04x] ", nr);
 
-	if ((nr < 0) || ((uint)nr >= g_EngineState->seg_manager->_heap.size()) || !g_EngineState->seg_manager->_heap[nr])
+	if ((nr < 0) || ((uint)nr >= _vm->_gamestate->seg_manager->_heap.size()) || !_vm->_gamestate->seg_manager->_heap[nr])
 		return false;
 
-	MemObject *mobj = g_EngineState->seg_manager->_heap[nr];
+	MemObject *mobj = _vm->_gamestate->seg_manager->_heap[nr];
 
 	switch (mobj->getType()) {
 
@@ -1227,10 +1377,10 @@ bool Console::segmentInfo(int nr) {
 		for (uint i = 0; i < scr->_objects.size(); i++) {
 			DebugPrintf("    ");
 			// Object header
-			Object *obj = obj_get(g_EngineState, scr->_objects[i].pos);
+			Object *obj = obj_get(_vm->_gamestate, scr->_objects[i].pos);
 			if (obj)
 				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(scr->_objects[i].pos), 
-							obj_get_name(g_EngineState, scr->_objects[i].pos), obj->_variables.size(), obj->methods_nr);
+							obj_get_name(_vm->_gamestate, scr->_objects[i].pos), obj->_variables.size(), obj->methods_nr);
 		}
 	}
 	break;
@@ -1271,12 +1421,12 @@ bool Console::segmentInfo(int nr) {
 				reg_t objpos;
 				objpos.offset = i;
 				objpos.segment = nr;
-				DebugPrintf("  [%04x] %s; copy of ", i, obj_get_name(g_EngineState, objpos));
+				DebugPrintf("  [%04x] %s; copy of ", i, obj_get_name(_vm->_gamestate, objpos));
 				// Object header
-				Object *obj = obj_get(g_EngineState, ct->_table[i].pos);
+				Object *obj = obj_get(_vm->_gamestate, ct->_table[i].pos);
 				if (obj)
 					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].pos), 
-								obj_get_name(g_EngineState, ct->_table[i].pos), obj->_variables.size(), obj->methods_nr);
+								obj_get_name(_vm->_gamestate, ct->_table[i].pos), obj->_variables.size(), obj->methods_nr);
 			}
 	}
 	break;
@@ -1342,7 +1492,7 @@ bool Console::cmdSegmentInfo(int argc, const char **argv) {
 	}
 
 	if (!scumm_stricmp(argv[1], "all")) {
-		for (uint i = 0; i < g_EngineState->seg_manager->_heap.size(); i++)
+		for (uint i = 0; i < _vm->_gamestate->seg_manager->_heap.size(); i++)
 			segmentInfo(i);
 	} else {
 		int nr = atoi(argv[1]);
@@ -1361,7 +1511,7 @@ bool Console::cmdKillSegment(int argc, const char **argv) {
 		return true;
 	}
 
-	g_EngineState->seg_manager->getScript(atoi(argv[1]))->setLockers(0);
+	_vm->_gamestate->seg_manager->getScript(atoi(argv[1]))->setLockers(0);
 
 	return true;
 }
@@ -1377,24 +1527,24 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		return true;
 	}
 
-	gfxop_set_clip_zone(g_EngineState->gfx_state, gfx_rect_fullscreen);
+	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
 
 	int map = atoi(argv[1]);
 
 	switch (map) {
 	case 0:
-		g_EngineState->visual->add_dirty_abs((GfxContainer *)g_EngineState->visual, gfx_rect(0, 0, 320, 200), 0);
-		g_EngineState->visual->draw(Common::Point(0, 0));
+		_vm->_gamestate->visual->add_dirty_abs((GfxContainer *)_vm->_gamestate->visual, gfx_rect(0, 0, 320, 200), 0);
+		_vm->_gamestate->visual->draw(Common::Point(0, 0));
 		break;
 
 	case 1:
-		gfx_xlate_pixmap(g_EngineState->gfx_state->pic->priority_map, g_EngineState->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
-		gfxop_draw_pixmap(g_EngineState->gfx_state, g_EngineState->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
+		gfx_xlate_pixmap(_vm->_gamestate->gfx_state->pic->priority_map, _vm->_gamestate->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
+		gfxop_draw_pixmap(_vm->_gamestate->gfx_state, _vm->_gamestate->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		break;
 
 	case 2:
-		gfx_xlate_pixmap(g_EngineState->gfx_state->control_map, g_EngineState->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
-		gfxop_draw_pixmap(g_EngineState->gfx_state, g_EngineState->gfx_state->control_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
+		gfx_xlate_pixmap(_vm->_gamestate->gfx_state->control_map, _vm->_gamestate->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
+		gfxop_draw_pixmap(_vm->_gamestate->gfx_state, _vm->_gamestate->gfx_state->control_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		break;
 
 	default:
@@ -1402,7 +1552,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		return true;
 	}
 
-	gfxop_update(g_EngineState->gfx_state);
+	gfxop_update(_vm->_gamestate->gfx_state);
 
 	return false;
 }
@@ -1410,14 +1560,14 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 bool Console::cmdSongLib(int argc, const char **argv) {
 	DebugPrintf("Song library:\n");
 
-	song_t *seeker = *(g_EngineState->_sound._songlib.lib);
+	Song *seeker = _vm->_gamestate->_sound._songlib._lib;
 
 	do {
 		DebugPrintf("    %p", (void *)seeker);
 
 		if (seeker) {
-			DebugPrintf("[%04lx,p=%d,s=%d]->", seeker->handle, seeker->priority, seeker->status);
-			seeker = seeker->next;
+			DebugPrintf("[%04lx,p=%d,s=%d]->", seeker->_handle, seeker->_priority, seeker->_status);
+			seeker = seeker->_next;
 		}
 		DebugPrintf("\n");
 	} while (seeker);
@@ -1428,12 +1578,12 @@ bool Console::cmdSongLib(int argc, const char **argv) {
 
 bool Console::cmdGCInvoke(int argc, const char **argv) {
 	DebugPrintf("Performing garbage collection...\n");
-	run_gc(g_EngineState);
+	run_gc(_vm->_gamestate);
 	return true;
 }
 
 bool Console::cmdGCObjects(int argc, const char **argv) {
-	reg_t_hash_map *use_map = find_all_used_references(g_EngineState);
+	reg_t_hash_map *use_map = find_all_used_references(_vm->_gamestate);
 
 	DebugPrintf("Reachable object references (normalised):\n");
 	for (reg_t_hash_map::iterator i = use_map->begin(); i != use_map->end(); ++i) {
@@ -1447,7 +1597,7 @@ bool Console::cmdGCObjects(int argc, const char **argv) {
 
 void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
-		((SciEngine *)g_engine)->getDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
+		((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
 }
 
 bool Console::cmdGCShowReachable(int argc, const char **argv) {
@@ -1460,20 +1610,20 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
-	MemObject *mobj = GET_SEGMENT_ANY(*g_EngineState->seg_manager, addr.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->seg_manager, addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return 1;
 	}
 
 	DebugPrintf("Reachable from %04x:%04x:\n", PRINT_REG(addr));
-	mobj->listAllOutgoingReferences(g_EngineState, addr, NULL, _print_address);
+	mobj->listAllOutgoingReferences(_vm->_gamestate, addr, NULL, _print_address);
 
 	return true;
 }
@@ -1489,13 +1639,13 @@ bool Console::cmdGCShowFreeable(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
-	MemObject *mobj = GET_SEGMENT_ANY(*g_EngineState->seg_manager, addr.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->seg_manager, addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return true;
@@ -1519,39 +1669,35 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
-	MemObject *mobj = GET_SEGMENT_ANY(*g_EngineState->seg_manager, addr.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->seg_manager, addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return true;
 	}
 
-	addr = mobj->findCanonicAddress(g_EngineState->seg_manager, addr);
+	addr = mobj->findCanonicAddress(_vm->_gamestate->seg_manager, addr);
 	DebugPrintf(" %04x:%04x\n", PRINT_REG(addr));
 
 	return true;
 }
 
 bool Console::cmdVMVarlist(int argc, const char **argv) {
-	//const char *varnames[] = {"global", "local", "temp", "param"};
+	const char *varnames[] = {"global", "local", "temp", "param"};
 
 	DebugPrintf("Addresses of variables in the VM:\n");
 
-#if 0
-	// TODO: p_var_segs, p_vars, p_var_base, p_var_max
-
 	for (int i = 0; i < 4; i++) {
-		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(p_var_segs[i], p_vars[i] - p_var_base[i])));
-		if (p_var_max)
-			DebugPrintf("  total %d", p_var_max[i]);
+		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(debugState.p_var_segs[i], debugState.p_vars[i] - debugState.p_var_base[i])));
+		if (debugState.p_var_max)
+			DebugPrintf("  total %d", debugState.p_var_max[i]);
 		DebugPrintf("\n");
 	}
-#endif
 
 	return true;
 }
@@ -1567,7 +1713,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-	//const char *varnames[] = {"global", "local", "temp", "param"};
+	const char *varnames[] = {"global", "local", "temp", "param"};
 	const char *varabbrev = "gltp";
 	const char *vartype_pre = strchr(varabbrev, *argv[1]);
 	int vartype;
@@ -1585,31 +1731,21 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-#if 0
-	// TODO: p_var_max
-	if ((p_var_max) && (p_var_max[vartype] <= idx)) {
-		DebugPrintf("Max. index is %d (0x%x)\n", p_var_max[vartype], p_var_max[vartype]);
+	if ((debugState.p_var_max) && (debugState.p_var_max[vartype] <= idx)) {
+		DebugPrintf("Max. index is %d (0x%x)\n", debugState.p_var_max[vartype], debugState.p_var_max[vartype]);
 		return true;
 	}
-#endif
 
 	switch (argc) {
 	case 2:
-#if 0
-		// TODO: p_vars
-		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(p_vars[vartype][idx]));
-#endif
+		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(debugState.p_vars[vartype][idx]));
 		break;
 	case 3:
-#if 0
-		// TODO: p_vars
-
-		if (parse_reg_t(g_EngineState, argv[3], &p_vars[vartype][idx])) {
+		if (parse_reg_t(_vm->_gamestate, argv[3], &debugState.p_vars[vartype][idx])) {
 			DebugPrintf("Invalid address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
 		}
-#endif
 		break;
 	default:
 		DebugPrintf("Too many arguments\n");
@@ -1625,19 +1761,19 @@ bool Console::cmdStack(int argc, const char **argv) {
 		return true;
 	}
 
-	if (g_EngineState->_executionStack.empty()) {
+	if (_vm->_gamestate->_executionStack.empty()) {
 		DebugPrintf("No exec stack!");
 		return true;
 	}
 
-	ExecStack &xs = g_EngineState->_executionStack.back();
+	ExecStack &xs = _vm->_gamestate->_executionStack.back();
 	int nr = atoi(argv[1]);
 
 	for (int i = nr; i > 0; i--) {
 		if ((xs.sp - xs.fp - i) == 0)
 			DebugPrintf("-- temp variables --\n");
-		if (xs.sp - i >= g_EngineState->stack_base)
-			DebugPrintf("ST:%04x = %04x:%04x\n", (unsigned)(xs.sp - i - g_EngineState->stack_base), PRINT_REG(xs.sp[-i]));
+		if (xs.sp - i >= _vm->_gamestate->stack_base)
+			DebugPrintf("ST:%04x = %04x:%04x\n", (unsigned)(xs.sp - i - _vm->_gamestate->stack_base), PRINT_REG(xs.sp[-i]));
 	}
 
 	return true;
@@ -1655,13 +1791,13 @@ bool Console::cmdValueType(int argc, const char **argv) {
 
 	reg_t val;
 	
-	if (parse_reg_t(g_EngineState, argv[1], &val)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &val)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
-	int t = determine_reg_type(g_EngineState, val, true);
+	int t = determine_reg_type(_vm->_gamestate, val, true);
 	int invalid = t & KSIG_INVALID;
 
 	switch (t & ~KSIG_INVALID) {
@@ -1699,7 +1835,7 @@ bool Console::cmdViewListNode(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -1722,21 +1858,21 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 	reg_t reg = NULL_REG;
 	reg_t reg_end = NULL_REG;
 
-	if (parse_reg_t(g_EngineState, argv[1], &reg)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &reg)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
 	if (argc > 2) {
-		if (parse_reg_t(g_EngineState, argv[2], &reg_end)) {
+		if (parse_reg_t(_vm->_gamestate, argv[2], &reg_end)) {
 			DebugPrintf("Invalid address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
 		}
 	}
 
-	int type_mask = determine_reg_type(g_EngineState, reg, 1);
+	int type_mask = determine_reg_type(_vm->_gamestate, reg, 1);
 	int filter;
 	int found = 0;
 
@@ -1766,7 +1902,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		case 0:
 			break;
 		case KSIG_LIST: {
-			List *l = lookup_list(g_EngineState, reg);
+			List *l = lookup_list(_vm->_gamestate, reg);
 
 			DebugPrintf("list\n");
 
@@ -1782,11 +1918,11 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			break;
 		case KSIG_OBJECT:
 			DebugPrintf("object\n");
-			printObject(g_EngineState, reg);
+			printObject(_vm->_gamestate, reg);
 			break;
 		case KSIG_REF: {
 			int size;
-			unsigned char *block = g_EngineState->seg_manager->dereference(reg, &size);
+			unsigned char *block = _vm->_gamestate->seg_manager->dereference(reg, &size);
 
 			DebugPrintf("raw data\n");
 
@@ -1830,32 +1966,28 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 
 	reg_t addr;
 	
-	if (parse_reg_t(g_EngineState, argv[1], &addr)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &addr)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
 	DebugPrintf("Information on the object at the given address:\n");
-	printObject(g_EngineState, addr);
+	printObject(_vm->_gamestate, addr);
 
 	return true;
 }
 
 bool Console::cmdViewActiveObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class:\n");
-
-#if 0
-	// TODO: p_objp
-	printObject(g_EngineState, *p_objp);
-#endif
+	printObject(_vm->_gamestate, *debugState.p_objp);
 
 	return true;
 }
 
 bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class at the address indexed by the accumulator:\n");
-	printObject(g_EngineState, g_EngineState->r_acc);
+	printObject(_vm->_gamestate, _vm->_gamestate->r_acc);
 
 	return true;
 }
@@ -1875,13 +2007,13 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 
 	reg_t val;
 	
-	if (parse_reg_t(g_EngineState, argv[1], &val)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &val)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
-	g_EngineState->r_acc = val;
+	_vm->_gamestate->r_acc = val;
 
 	return true;
 }
@@ -1889,31 +2021,31 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 bool Console::cmdBacktrace(int argc, const char **argv) {
 	DebugPrintf("Dumping the send/self/super/call/calle/callb stack:\n");
 
-	DebugPrintf("Call stack (current base: 0x%x):\n", g_EngineState->execution_stack_base);
+	DebugPrintf("Call stack (current base: 0x%x):\n", _vm->_gamestate->execution_stack_base);
 	Common::List<ExecStack>::iterator iter;
 	uint i = 0;
 
-	for (iter = g_EngineState->_executionStack.begin();
-	     iter != g_EngineState->_executionStack.end(); ++iter, ++i) {
+	for (iter = _vm->_gamestate->_executionStack.begin();
+	     iter != _vm->_gamestate->_executionStack.end(); ++iter, ++i) {
 		ExecStack &call = *iter;
-		const char *objname = obj_get_name(g_EngineState, call.sendp);
+		const char *objname = obj_get_name(_vm->_gamestate, call.sendp);
 		int paramc, totalparamc;
 
 		switch (call.type) {
 
 		case EXEC_STACK_TYPE_CALL: {// Normal function
 			sciprintf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
-			          selector_name(g_EngineState, call.selector));
+			          selector_name(_vm->_gamestate, call.selector));
 		}
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			sciprintf(" %x:[%x]  k%s(", i, call.origin, g_EngineState->_kernel->getKernelName(-(call.selector) - 42).c_str());
+			sciprintf(" %x:[%x]  k%s(", i, call.origin, _vm->_gamestate->_kernel->getKernelName(-(call.selector) - 42).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
 			sciprintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
-			          objname, g_EngineState->_kernel->getSelectorName(call.selector).c_str());
+			          objname, _vm->_gamestate->_kernel->getSelectorName(call.selector).c_str());
 			break;
 		}
 
@@ -1938,15 +2070,15 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 			if (call.sp == CALL_SP_CARRY)
 				sciprintf(" sp,fp:carry");
 			else {
-				sciprintf(" sp=ST:%04x", (unsigned)(call.sp - g_EngineState->stack_base));
-				sciprintf(" fp=ST:%04x", (unsigned)(call.fp - g_EngineState->stack_base));
+				sciprintf(" sp=ST:%04x", (unsigned)(call.sp - _vm->_gamestate->stack_base));
+				sciprintf(" fp=ST:%04x", (unsigned)(call.fp - _vm->_gamestate->stack_base));
 			}
 		} else
 			sciprintf(" pc:none");
 
-		sciprintf(" argp:ST:%04x", (unsigned)(call.variables_argp - g_EngineState->stack_base));
+		sciprintf(" argp:ST:%04x", (unsigned)(call.variables_argp - _vm->_gamestate->stack_base));
 		if (call.type == EXEC_STACK_TYPE_CALL)
-			sciprintf(" script: %d", (*(Script *)g_EngineState->seg_manager->_heap[call.addr.pc.segment]).nr);
+			sciprintf(" script: %d", (*(Script *)_vm->_gamestate->seg_manager->_heap[call.addr.pc.segment]).nr);
 		sciprintf("\n");
 	}
 
@@ -1954,8 +2086,255 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdStep(int argc, const char **argv) {
+	debugState.isValid = false;
+	if (argc == 2 && atoi(argv[1]) > 0)
+		debugState.runningStep = atoi(argv[1]) - 1;
+
+	return true;
+}
+
+bool Console::cmdStepEvent(int argc, const char **argv) {
+	debugState.stopOnEvent = true;
+	debugState.isValid = false;
+
+	return true;
+}
+
+bool Console::cmdStepRet(int argc, const char **argv) {
+	debugState.seeking = kDebugSeekLevelRet;
+	debugState.seekLevel = _vm->_gamestate->_executionStack.size() - 1;
+	debugState.isValid = false;
+
+	return true;
+}
+
+bool Console::cmdStepGlobal(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Steps until the global variable with the specified index is modified.\n");
+		DebugPrintf("Usage: %s <global variable index>\n", argv[0]);
+		return true;
+	}
+
+	debugState.seeking = kDebugSeekGlobal;
+	debugState.seekSpecial = atoi(argv[1]);
+	debugState.isValid = false;
+
+	return true;
+}
+
+bool Console::cmdStepCallk(int argc, const char **argv) {
+	int callk_index;
+	char *endptr;
+
+	if (argc == 2) {
+		/* Try to convert the parameter to a number. If the conversion stops
+		   before end of string, assume that the parameter is a function name
+		   and scan the function table to find out the index. */
+		callk_index = strtoul(argv[1], &endptr, 0);
+		if (*endptr != '\0') {
+			callk_index = -1;
+			for (uint i = 0; i < _vm->_gamestate->_kernel->getKernelNamesSize(); i++)
+				if (argv[1] == _vm->_gamestate->_kernel->getKernelName(i)) {
+					callk_index = i;
+					break;
+				}
+
+			if (callk_index == -1) {
+				DebugPrintf("Unknown kernel function '%s'\n", argv[1]);
+				return true;
+			}
+		}
+
+		debugState.seeking = kDebugSeekSpecialCallk;
+		debugState.seekSpecial = callk_index;
+		debugState.isValid = false;
+	} else {
+		debugState.seeking = kDebugSeekCallk;
+		debugState.isValid = false;
+	}
+
+	return true;
+}
+
+bool Console::cmdDissassemble(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Disassembles a method by name.\n");
+		DebugPrintf("Usage: %s <object> <method>\n", argv[0]);
+		return true;
+	}
+
+	reg_t objAddr = NULL_REG;
+
+	if (parse_reg_t(_vm->_gamestate, argv[1], &objAddr)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	Object *obj = obj_get(_vm->_gamestate, objAddr);
+	int selector_id = _vm->_gamestate->_kernel->findSelector(argv[2]);
+	reg_t addr;
+
+	if (!obj) {
+		DebugPrintf("Not an object.");
+		return true;
+	}
+
+	if (selector_id < 0) {
+		DebugPrintf("Not a valid selector name.");
+		return true;
+	}
+
+	if (lookup_selector(_vm->_gamestate, objAddr, selector_id, NULL, &addr) != kSelectorMethod) {
+		DebugPrintf("Not a method.");
+		return true;
+	}
+
+	do {
+		// TODO
+		//addr = disassemble(_vm->_gamestate, addr, 0, 0);
+	} while (addr.offset > 0);
+
+	return true;
+}
+
+bool Console::cmdDissassembleAddress(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Disassembles one or more commands.\n");
+		DebugPrintf("Usage: %s [startaddr] <options>\n", argv[0]);
+		DebugPrintf("Valid options are:\n");
+		DebugPrintf(" bwt  : Print byte/word tag\n");
+		DebugPrintf(" c<x> : Disassemble <x> bytes\n");
+		DebugPrintf(" bc   : Print bytecode\n");
+		return true;
+	}
+
+	reg_t vpc = NULL_REG;
+	int op_count = 1;
+	int do_bwc = 0;
+	int do_bytes = 0;
+	int size;
+
+	if (parse_reg_t(_vm->_gamestate, argv[1], &vpc)) {
+		DebugPrintf("Invalid address passed.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+
+	_vm->_gamestate->seg_manager->dereference(vpc, &size);
+	size += vpc.offset; // total segment size
+
+	for (int i = 1; i < argc; i++) {
+		if (!scumm_stricmp(argv[i], "bwt"))
+			do_bwc = 1;
+		else if (!scumm_stricmp(argv[i], "bc"))
+			do_bytes = 1;
+		else if (toupper(argv[i][0]) == 'C')
+			op_count = atoi(argv[i] + 1);
+		else {
+			DebugPrintf("Invalid option '%s'\n", argv[i]);
+			return true;
+		}
+	}
+
+	if (op_count < 0) {
+		DebugPrintf("Invalid op_count\n");
+		return true;
+	}
+
+	do {
+		// TODO
+		//vpc = disassemble(_vm->_gamestate, vpc, do_bwc, do_bytes);
+
+	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--op_count));
+
+	return true;
+}
+
+bool Console::cmdSend(int argc, const char **argv) {
+	if (argc < 3) {
+		DebugPrintf("Sends a message to an object.\n");
+		DebugPrintf("Usage: %s <object> <selector name> <param1> <param2> ... <paramn>\n", argv[0]);
+		DebugPrintf("Example: send ?fooScript cue\n");
+		return true;
+	}
+
+	reg_t object;
+	
+	if (parse_reg_t(_vm->_gamestate, argv[1], &object)) {
+		DebugPrintf("Invalid address passed for parameter 1.\n");
+		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+		return true;
+	}
+	
+	const char *selector_name = argv[2];
+	StackPtr stackframe = _vm->_gamestate->_executionStack.front().sp;
+	int selector_id;
+	int i;
+	ExecStack *xstack;
+	Object *o;
+	reg_t fptr;
+
+	selector_id = _vm->_gamestate->_kernel->findSelector(selector_name);
+
+	if (selector_id < 0) {
+		sciprintf("Unknown selector: \"%s\"\n", selector_name);
+		return 1;
+	}
+
+	o = obj_get(_vm->_gamestate, object);
+	if (o == NULL) {
+		sciprintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
+		return 1;
+	}
+
+	SelectorType selector_type = lookup_selector(_vm->_gamestate, object, selector_id, 0, &fptr);
+
+	if (selector_type == kSelectorNone) {
+		sciprintf("Object does not support selector: \"%s\"\n", selector_name);
+		return 1;
+	}
+
+	stackframe[0] = make_reg(0, selector_id);
+	stackframe[1] = make_reg(0, argc - 3);	// -object -selector name -command name
+
+	for (i = 3; i < argc; i++) {
+		if (parse_reg_t(_vm->_gamestate, argv[i], &stackframe[i])) {
+			DebugPrintf("Invalid address passed for parameter %d.\n", i);
+			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
+			return true;
+		}
+	}
+
+	xstack = add_exec_stack_entry(_vm->_gamestate, fptr,
+	                 _vm->_gamestate->_executionStack.front().sp + argc,
+	                 object, argc - 3,
+	                 _vm->_gamestate->_executionStack.front().sp - 1, 0, object,
+	                 _vm->_gamestate->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
+	xstack->selector = selector_id;
+	xstack->type = selector_type == kSelectorVariable ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
+
+	// Now commit the actual function:
+	xstack = send_selector(_vm->_gamestate, object, object, stackframe, argc - 3, stackframe);
+
+	xstack->sp += argc;
+	xstack->fp += argc;
+
+	_vm->_gamestate->_executionStackPosChanged = true;
+
+	return true;
+}
+
+bool Console::cmdGo(int argc, const char **argv) {
+	debugState.seeking = kDebugSeekNothing;
+	debugState.isValid = false;
+
+	return true;
+}
+
 bool Console::cmdBreakpointList(int argc, const char **argv) {
-	Breakpoint *bp = g_EngineState->bp_list;
+	Breakpoint *bp = _vm->_gamestate->bp_list;
 	int i = 0;
 	int bpdata;
 
@@ -1994,7 +2373,7 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 
 	// Find breakpoint with given index
 	bp_prev = NULL;
-	bp = g_EngineState->bp_list;
+	bp = _vm->_gamestate->bp_list;
 	while (bp && i < idx) {
 		bp_prev = bp;
 		bp = bp->next;
@@ -2013,11 +2392,11 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	if (bp_prev)
 		bp_prev->next = bp_next;
 	else
-		g_EngineState->bp_list = bp_next;
+		_vm->_gamestate->bp_list = bp_next;
 
 	// Check if there are more breakpoints of the same type. If not, clear
 	// the respective bit in s->have_bp.
-	for (bp = g_EngineState->bp_list; bp; bp = bp->next) {
+	for (bp = _vm->_gamestate->bp_list; bp; bp = bp->next) {
 		if (bp->type == type) {
 			found = 1;
 			break;
@@ -2025,7 +2404,7 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	}
 
 	if (!found)
-		g_EngineState->have_bp &= ~type;
+		_vm->_gamestate->have_bp &= ~type;
 
 	return true;
 }
@@ -2044,23 +2423,23 @@ bool Console::cmdBreakpointExecMethod(int argc, const char **argv) {
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint *bp;
-	if (g_EngineState->bp_list) {
+	if (_vm->_gamestate->bp_list) {
 		// List exists, append the breakpoint to the end
-		bp = g_EngineState->bp_list;
+		bp = _vm->_gamestate->bp_list;
 		while (bp->next)
 			bp = bp->next;
 		bp->next = (Breakpoint *)malloc(sizeof(Breakpoint));
 		bp = bp->next;
 	} else {
 		// No list, so create the list head
-		g_EngineState->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
-		bp = g_EngineState->bp_list;
+		_vm->_gamestate->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
+		bp = _vm->_gamestate->bp_list;
 	}
 	bp->next = NULL;
 	bp->type = BREAK_SELECTOR;
 	bp->data.name = (char *)malloc(strlen(argv[1]) + 1);
 	strcpy(bp->data.name, argv[1]);
-	g_EngineState->have_bp |= BREAK_SELECTOR;
+	_vm->_gamestate->have_bp |= BREAK_SELECTOR;
 
 	return true;
 }
@@ -2077,22 +2456,22 @@ bool Console::cmdBreakpointExecFunction(int argc, const char **argv) {
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint *bp;
-	if (g_EngineState->bp_list) {
+	if (_vm->_gamestate->bp_list) {
 		// List exists, append the breakpoint to the end
-		bp = g_EngineState->bp_list;
+		bp = _vm->_gamestate->bp_list;
 		while (bp->next)
 			bp = bp->next;
 		bp->next = (Breakpoint *)malloc(sizeof(Breakpoint));
 		bp = bp->next;
 	} else {
 		// No list, so create the list head
-		g_EngineState->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
-		bp = g_EngineState->bp_list;
+		_vm->_gamestate->bp_list = (Breakpoint *)malloc(sizeof(Breakpoint));
+		bp = _vm->_gamestate->bp_list;
 	}
 	bp->next = NULL;
 	bp->type = BREAK_EXPORT;
 	bp->data.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
-	g_EngineState->have_bp |= BREAK_EXPORT;
+	_vm->_gamestate->have_bp |= BREAK_EXPORT;
 
 	return true;
 }
@@ -2105,7 +2484,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _vm->getResMgr()->findResource(kResourceTypeSound, atoi(argv[1]), 0);
+	Resource *song = _vm->getResMgr()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 	SongIterator *songit;
 	Audio::AudioStream *data;
 
@@ -2143,7 +2522,7 @@ bool Console::cmdSfx01Header(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _vm->getResMgr()->findResource(kResourceTypeSound, atoi(argv[1]), 0);
+	Resource *song = _vm->getResMgr()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 
 	if (!song) {
 		DebugPrintf("Doesn't exist\n");
@@ -2308,7 +2687,7 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _vm->getResMgr()->findResource(kResourceTypeSound, atoi(argv[1]), 0);
+	Resource *song = _vm->getResMgr()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 
 	int offset = atoi(argv[2]);
 
@@ -2333,18 +2712,18 @@ bool Console::cmdStopSfx(int argc, const char **argv) {
 
 	reg_t id;
 	
-	if (parse_reg_t(g_EngineState, argv[1], &id)) {
+	if (parse_reg_t(_vm->_gamestate, argv[1], &id)) {
 		DebugPrintf("Invalid address passed.\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
 	int handle = id.segment << 16 | id.offset;	// frobnicate handle
-	EngineState* s = g_EngineState;		// for PUT_SEL32V
+	EngineState* s = _vm->_gamestate;		// for PUT_SEL32V
 
 	if (id.segment) {
-		g_EngineState->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-		g_EngineState->_sound.sfx_remove_song(handle);
+		_vm->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+		_vm->_gamestate->_sound.sfx_remove_song(handle);
 		PUT_SEL32V(id, signal, -1);
 		PUT_SEL32V(id, nodePtr, 0);
 		PUT_SEL32V(id, handle, 0);
@@ -2363,9 +2742,9 @@ bool Console::cmdExit(int argc, const char **argv) {
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
 		script_abort_flag = 1; // Terminate VM
-		g_debugstate_valid = 0;
-		g_debug_seeking = 0;
-		g_debug_step_running = 0;
+		debugState.isValid = false;
+		debugState.seeking = kDebugSeekNothing;
+		debugState.runningStep = 0;
 
 	} else if (!scumm_stricmp(argv[1], "now")) {
 		// Quit ungracefully
@@ -2583,7 +2962,7 @@ void Console::printList(List *l) {
 
 	while (!pos.isNull()) {
 		Node *node;
-		NodeTable *nt = (NodeTable *)GET_SEGMENT(*g_EngineState->seg_manager, pos.segment, MEM_OBJ_NODES);
+		NodeTable *nt = (NodeTable *)GET_SEGMENT(*_vm->_gamestate->seg_manager, pos.segment, MEM_OBJ_NODES);
 
 		if (!nt || !nt->isValidEntry(pos.offset)) {
 			DebugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
@@ -2610,7 +2989,7 @@ void Console::printList(List *l) {
 }
 
 int Console::printNode(reg_t addr) {
-	MemObject *mobj = GET_SEGMENT(*g_EngineState->seg_manager, addr.segment, MEM_OBJ_LISTS);
+	MemObject *mobj = GET_SEGMENT(*_vm->_gamestate->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (mobj) {
 		ListTable *lt = (ListTable *)mobj;
@@ -2627,7 +3006,7 @@ int Console::printNode(reg_t addr) {
 	} else {
 		NodeTable *nt;
 		Node *node;
-		mobj = GET_SEGMENT(*g_EngineState->seg_manager, addr.segment, MEM_OBJ_NODES);
+		mobj = GET_SEGMENT(*_vm->_gamestate->seg_manager, addr.segment, MEM_OBJ_NODES);
 
 		if (!mobj) {
 			DebugPrintf("Segment #%04x is not a list or node segment\n", addr.segment);
@@ -2853,34 +3232,34 @@ int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		return 1;
 	}
 
-	g_debugstate_valid = 0;
+	debugState.isValid = false;
 	opcode = s->_heap[*p_pc];
 	opnumber = opcode >> 1;
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
 	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
-		g_debug_seeking = _DEBUG_SEEK_SO;
-		s_debug_seek_level = s->_executionStack.size()-1;
-		// Store in s_debug_seek_special the offset of the next command after send
+		debugState.seeking = kDebugSeekSO;
+		debugState.seekLevel = s->_executionStack.size()-1;
+		// Store in debugState.seekSpecial the offset of the next command after send
 		switch (opcode) {
 		case 0x46: // calle W
-			s_debug_seek_special = *p_pc + 5;
+			debugState.seekSpecial = *p_pc + 5;
 			break;
 
 		case 0x44: // callb W
 		case 0x47: // calle B
 		case 0x56: // super W
-			s_debug_seek_special = *p_pc + 4;
+			debugState.seekSpecial = *p_pc + 4;
 			break;
 
 		case 0x45: // callb B
 		case 0x57: // super B
 		case 0x4A: // send W
 		case 0x54: // self W
-			s_debug_seek_special = *p_pc + 3;
+			debugState.seekSpecial = *p_pc + 3;
 			break;
 
 		default:
-			s_debug_seek_special = *p_pc + 2;
+			debugState.seekSpecial = *p_pc + 2;
 		}
 	}
 

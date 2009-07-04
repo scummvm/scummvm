@@ -144,6 +144,10 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 }
 
+bool CursorManager::supportsCursorPalettes() {
+	return g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
+}
+
 void CursorManager::disableCursorPalette(bool disable) {
 	if (!g_system->hasFeature(OSystem::kFeatureCursorHasPalette))
 		return;
@@ -154,7 +158,7 @@ void CursorManager::disableCursorPalette(bool disable) {
 	Palette *pal = _cursorPaletteStack.top();
 	pal->_disabled = disable;
 
-	g_system->disableCursorPalette(true);
+	g_system->disableCursorPalette(disable);
 }
 
 void CursorManager::pushCursorPalette(const byte *colors, uint start, uint num) {

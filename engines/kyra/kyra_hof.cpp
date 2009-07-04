@@ -381,10 +381,10 @@ void KyraEngine_HoF::startup() {
 
 	memset(_sceneAnims, 0, sizeof(_sceneAnims));
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
-		_sceneAnimMovie[i] = new WSAMovie_v2(this, _screen);
+		_sceneAnimMovie[i] = new WSAMovie_v2(this);
 	memset(_wsaSlots, 0, sizeof(_wsaSlots));
 	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
-		_wsaSlots[i] = new WSAMovie_v2(this, _screen);
+		_wsaSlots[i] = new WSAMovie_v2(this);
 
 	_screen->_curPage = 0;
 
@@ -415,7 +415,7 @@ void KyraEngine_HoF::startup() {
 	setupLangButtonShapes();
 	loadInventoryShapes();
 
-	_res->loadFileToBuf("PALETTE.COL", _screen->_currentPalette, 0x300);
+	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	_screen->loadBitmap("_PLAYFLD.CPS", 3, 3, 0);
 	_screen->copyPage(3, 0);
 	_screen->showMouse();
@@ -451,7 +451,6 @@ void KyraEngine_HoF::startup() {
 		(*_inventoryButtons[0].buttonCallback)(&_inventoryButtons[0]);
 
 	setNextIdleAnimTimer();
-	//XXX
 	setWalkspeed(_configWalkspeed);
 }
 
@@ -642,8 +641,6 @@ bool KyraEngine_HoF::handleInputUnkSub(int x, int y) {
 
 		while (_emc->isValid(&_sceneScriptState))
 			_emc->run(&_sceneScriptState);
-
-		//XXXsys_unkKeyboad (flush? wait? whatever...)
 
 		if (queryGameFlag(0x1ED)) {
 			_sound->beginFadeOut();
@@ -919,9 +916,9 @@ void KyraEngine_HoF::showMessage(const char *string, int16 palIndex) {
 	if (string) {
 		if (palIndex != -1 || _fadeMessagePalette) {
 			palIndex *= 3;
-			memcpy(_messagePal, _screen->_currentPalette + palIndex, 3);
-			memmove(_screen->_currentPalette + 765, _screen->_currentPalette + palIndex, 3);
-			_screen->setScreenPalette(_screen->_currentPalette);
+			memcpy(_messagePal, _screen->getPalette(0).getData() + palIndex, 3);
+			_screen->getPalette(0).copy(_screen->getPalette(0), palIndex / 3, 1, 255);
+			_screen->setScreenPalette(_screen->getPalette(0));
 		}
 
 		int x = _text->getCenterStringX(string, 0, 320);
@@ -978,7 +975,7 @@ void KyraEngine_HoF::fadeMessagePalette() {
 	}
 
 	if (updatePalette) {
-		memcpy(_screen->getPalette(0) + 765, _messagePal, 3);
+		_screen->getPalette(0).copy(_messagePal, 0, 1, 255);
 		_screen->setScreenPalette(_screen->getPalette(0));
 	} else {
 		_fadeMessagePalette = false;
@@ -1139,7 +1136,7 @@ void KyraEngine_HoF::updateCharPal(int unk1) {
 
 	if (palEntry != _charPalEntry && unk1) {
 		const uint8 *src = &_scenePal[(palEntry << 4) * 3];
-		uint8 *ptr = _screen->getPalette(0) + 336;
+		uint8 *ptr = _screen->getPalette(0).getData() + 336;
 		for (int i = 0; i < 48; ++i) {
 			*ptr -= (*ptr - *src) >> 1;
 			++ptr;
@@ -1149,7 +1146,7 @@ void KyraEngine_HoF::updateCharPal(int unk1) {
 		unkVar1 = true;
 		_charPalEntry = palEntry;
 	} else if (unkVar1 || !unk1) {
-		memcpy(_screen->getPalette(0) + 336, &_scenePal[(palEntry << 4) * 3], 48);
+		_screen->getPalette(0).copy(_scenePal, palEntry << 4, 16, 112);
 		_screen->setScreenPalette(_screen->getPalette(0));
 		unkVar1 = false;
 	}
@@ -1550,7 +1547,7 @@ void KyraEngine_HoF::loadInvWsa(const char *filename, int run_, int delayTime, i
 		wsaFlags |= 2;
 
 	if (!_invWsa.wsa)
-		_invWsa.wsa = new WSAMovie_v2(this, _screen);
+		_invWsa.wsa = new WSAMovie_v2(this);
 
 	if (!_invWsa.wsa->open(filename, wsaFlags, 0))
 		error("Couldn't open inventory WSA file '%s'", filename);
@@ -1656,12 +1653,12 @@ void KyraEngine_HoF::displayInvWsaLastFrame() {
 #pragma mark -
 
 void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
-	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
+	_screen->copyPalette(2, 0);
 	Common::SeekableReadStream *file = _res->createReadStream("_POTIONS.PAL");
 	if (!file)
 		error("Couldn't load cauldron palette");
 	file->seek(state*18, SEEK_SET);
-	file->read(_screen->getPalette(2)+723, 18);
+	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
 	delete file;
 	file = 0;
 
@@ -1673,7 +1670,7 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 		_screen->updateScreen();
 	}
 
-	memcpy(_screen->getPalette(0)+723, _screen->getPalette(2)+723, 18);
+	_screen->getPalette(0).copy(_screen->getPalette(2), 241, 6);
 	_cauldronState = state;
 	_cauldronUseCount = 0;
 	//if (state == 5)
@@ -1833,11 +1830,11 @@ void KyraEngine_HoF::cauldronRndPaletteFade() {
 	if (!file)
 		error("Couldn't load cauldron palette");
 	file->seek(index*18, SEEK_SET);
-	file->read(_screen->getPalette(0)+723, 18);
+	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
 	snd_playSoundEffect(0x6A);
 	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
 	file->seek(0, SEEK_SET);
-	file->read(_screen->getPalette(0)+723, 18);
+	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
 	delete file;
 	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
 }

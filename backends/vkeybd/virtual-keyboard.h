@@ -37,6 +37,7 @@ class OSystem;
 #include "common/keyboard.h"
 #include "common/list.h"
 #include "common/str.h"
+#include "common/fs.h"
 
 #include "backends/vkeybd/image-map.h"
 #include "graphics/surface.h"
@@ -190,7 +191,7 @@ public:
 	 * searches for a compressed keyboard pack by looking for packName.zip.
 	 * @param packName	name of the keyboard pack
 	 */
-	bool loadKeyboardPack(String packName);
+	bool loadKeyboardPack(const String &packName);
 
 	/**
 	 * Shows the keyboard, starting an event loop that will intercept all
@@ -232,6 +233,7 @@ protected:
 	VirtualKeyboardParser *_parser;
 
 	void reset();
+	bool openPack(const String &packName, const FSNode &node);
 	void deleteEvents();
 	bool checkModeResolutions();
 	void switchMode(Mode *newMode);

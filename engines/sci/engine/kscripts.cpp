@@ -32,16 +32,16 @@
 namespace Sci {
 
 reg_t read_selector(EngineState *s, reg_t object, Selector selector_id, const char *file, int line) {
-	reg_t *address;
+	ObjVarRef address;
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != kSelectorVariable)
 		return NULL_REG;
 	else
-		return *address;
+		return *address.getPointer(s);
 }
 
 void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t value, const char *fname, int line) {
-	reg_t *address;
+	ObjVarRef address;
 
 	if ((selector_id < 0) || (selector_id > (int)s->_kernel->getSelectorNamesSize())) {
 		warning("Attempt to write to invalid selector %d of"
@@ -53,7 +53,7 @@ void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t va
 		warning("Selector '%s' of object at %04x:%04x could not be"
 		         " written to (%s L%d)", s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
 	else
-		*address = value;
+		*address.getPointer(s) = value;
 }
 
 int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, int kfunct,
@@ -114,8 +114,8 @@ bool is_object(EngineState *s, reg_t object) {
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
 // This implementation ignores all resource numbers except the first one.
 reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int restype = KP_UINT(argv[0]);
-	int resnr = KP_UINT(argv[1]);
+	int restype = argv[0].toUint16();
+	int resnr = argv[1].toUint16();
 
 	// Request to dynamically allocate hunk memory for later use
 	if (restype == kResourceTypeMemory)
@@ -125,19 +125,27 @@ reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int restype = UKPV(0) & 0x7f;
-	int resnr = UKPV(1);
-	int state = argc > 2 ? UKPV(2) : 1;
+	int state = argc > 2 ? argv[2].toUint16() : 1;
+	ResourceType type = (ResourceType)(argv[0].toUint16() & 0x7f);
+	ResourceId id = ResourceId(type, argv[1].toUint16());
 
 	Resource *which;
 
 	switch (state) {
 	case 1 :
-		s->resmgr->findResource((ResourceType)restype, resnr, 1);
+		s->resmgr->findResource(id, 1);
 		break;
 	case 0 :
-		which = s->resmgr->findResource((ResourceType)restype, resnr, 0);
-		s->resmgr->unlockResource(which, resnr, (ResourceType)restype);
+		which = s->resmgr->findResource(id, 0);
+
+		if (which)
+			s->resmgr->unlockResource(which);
+		else {
+			if (id.type == kResourceTypeInvalid)
+				warning("[Resmgr] Attempt to unlock resource %i of invalid type %i", id.number, type);
+			else
+				warning("[Resmgr] Attempt to unlock non-existant resource %s", id.toString().c_str());
+		}
 		break;
 	}
 	return s->r_acc;
@@ -145,7 +153,7 @@ reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 // Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
 reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int restype = KP_UINT(argv[0]);
+	int restype = argv[0].toUint16();
 	reg_t resnr = argv[1];
 
 	if (restype == kResourceTypeMemory)
@@ -155,26 +163,23 @@ reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	ResourceType restype = (ResourceType)(UKPV(0) & 0x7f);
+	Resource *res = NULL;
+	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
 
-	switch (restype) {
-	case kResourceTypeAudio36:
-	case kResourceTypeSync36: {
-		assert(argc >= 6);
+	if ((restype == kResourceTypeAudio36) || (restype == kResourceTypeSync36)) {
+		if (argc >= 6) {
+			uint noun = argv[2].toUint16() & 0xff;
+			uint verb = argv[3].toUint16() & 0xff;
+			uint cond = argv[4].toUint16() & 0xff;
+			uint seq = argv[5].toUint16() & 0xff;
 
-		uint module = UKPV(1);
-		uint noun = UKPV(2);
-		uint verb = UKPV(3);
-		uint cond = UKPV(4);
-		uint seq = UKPV(5);
-		warning("ResCheck: checking for currently unsupported %s resource: module %i; tuple (%i, %i, %i, %i)",
-				getResourceTypeName(restype), module, noun, verb, cond, seq);
-		return make_reg(0, 1);
+			res = s->resmgr->testResource(ResourceId(restype, argv[1].toUint16(), noun, verb, cond, seq));
+		}
+	} else {
+		res = s->resmgr->testResource(ResourceId(restype, argv[1].toUint16()));
 	}
-	default:
-		Resource *res = s->resmgr->testResource(restype, UKPV(1));
-		return make_reg(0, res != NULL);
-	}
+
+	return make_reg(0, res != NULL);
 }
 
 reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
@@ -252,8 +257,8 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 // Returns script dispatch address index in the supplied script
 reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	int script = KP_UINT(argv[0]);
-	int index = KP_UINT(KP_ALT(1, NULL_REG));
+	int script = argv[0].toUint16();
+	int index = (argc > 1) ? argv[1].toUint16() : 0;
 
 	SegmentId scriptid = script_get_segment(s, script, SCRIPT_GET_LOAD);
 	Script *scr;
@@ -313,7 +318,7 @@ reg_t kIsObject(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kRespondsTo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
-	int selector = KP_UINT(argv[1]);
+	int selector = argv[1].toUint16();
 
 	return make_reg(0, is_heap_object(s, obj) && lookup_selector(s, obj, selector, NULL, NULL) != kSelectorNone);
 }

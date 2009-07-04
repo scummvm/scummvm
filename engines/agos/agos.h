@@ -615,8 +615,8 @@ protected:
 
 	void paletteFadeOut(byte *palPtr, uint num, uint size);
 
-	byte *allocateItem(uint size);
-	byte *allocateTable(uint size);
+	void *allocateItem(uint size);
+	void *allocateTable(uint size);
 	void alignTableMem();
 
 	Child *findChildOfType(Item *i, uint child);
@@ -673,7 +673,7 @@ protected:
 	void uncompressText(byte *ptr);
 	byte *uncompressToken(byte a, byte *ptr);
 
-	void showMessageFormat(const char *s, ...);
+	void showMessageFormat(const char *s, ...) GCC_PRINTF(2, 3);
 	const byte *getStringPtrByID(uint16 stringId, bool upperCase = false);
 	const byte *getLocalStringByID(uint16 stringId);
 	uint getNextStringID();
@@ -848,6 +848,7 @@ protected:
 
 	void skipSpeech();
 
+	const char *getPixelLength(const char *string, uint16 maxWidth, uint16 &pixels);
 	bool printNameOf(Item *item, uint x, uint y);
 	bool printTextOf(uint a, uint x, uint y);
 	void printVerbOf(uint hitarea_id);
@@ -1976,7 +1977,7 @@ protected:
 	virtual void printScreenText(uint vgaSpriteId, uint color, const char *stringPtr, int16 x, int16 y, int16 width);
 
 	void printInteractText(uint16 num, const char *string);
-	void sendInteractText(uint16 num, const char *fmt, ...);
+	void sendInteractText(uint16 num, const char *fmt, ...) GCC_PRINTF(3, 4);
 
 	void checkLinkBox();
 	void hyperLinkOn(uint16 x);

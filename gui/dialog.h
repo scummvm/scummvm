@@ -63,6 +63,8 @@ public:
 	bool	isVisible() const	{ return _visible; }
 
 	void	releaseFocus();
+	void	setFocusWidget(Widget *widget);
+	Widget *getFocusWidget() { return _focusedWidget; }
 
 	virtual void reflowLayout();
 

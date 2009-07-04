@@ -152,7 +152,7 @@ void gfxr_init_static_palette() {
 }
 
 
-gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, int sci1) {
+gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, bool sci1) {
 	gfxr_pic_t *pic = (gfxr_pic_t*)malloc(sizeof(gfxr_pic_t));
 
 	pic->mode = mode;
@@ -798,7 +798,7 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 	line.height = ey - y;
 
 	if (x > 319 || y > 199 || x < 0 || y < 0 || ex > 319 || ey > 199 || ex < 0 || ey < 0) {
-		GFXWARN("While building pic: Attempt to draw line (%d,%d) to (%d,%d): cmd was %d\n", x, y, ex, ey, cmd);
+		warning("[GFX] While building pic: Attempt to draw line (%d,%d) to (%d,%d): cmd was %d", x, y, ex, ey, cmd);
 		return;
 	}
 
@@ -1088,7 +1088,7 @@ void gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src) {
 	assert(src->mode->yfact == 1);
 
 	if (bound_x == 1 && bound_y == 1) {
-		GFXWARN("attempt to remove artifacts from unscaled pic!\n");
+		warning("[GFX] attempt to remove artifacts from unscaled pic");
 		return;
 	}
 
@@ -1431,7 +1431,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			switch (opx) {
 
 			case PIC_SCI1_OPX_SET_PALETTE_ENTRIES:
-				GFXWARN("SCI1 Set palette entried not implemented\n");
+				warning("[GFX] SCI1 Set palette entried not implemented");
 				goto end_op_loop;
 
 			case PIC_SCI0_OPX_SET_PALETTE_ENTRIES:
@@ -1580,7 +1580,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 					pic->priorityTable = (int*)malloc(16 * sizeof(int));
 				} else {
 					// This occurs in the title screen of Longbow, perhaps with the animated Robin sprite
-					GFXWARN("pic->priorityTable is not NULL (%p); this only occurs with overlaid pics, otherwise it's a bug", (void *)pic->priorityTable);
+					warning("[GFX] pic->priorityTable is not NULL (%p); this only occurs with overlaid pics, otherwise it's a bug", (void *)pic->priorityTable);
 				}
 
 				pri_table = pic->priorityTable;
@@ -1626,13 +1626,13 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			return;
 
 		default:
-			GFXWARN("Unknown op %02x\n", op);
+			warning("[GFX] Unknown op %02x", op);
 			return;
 		}
 end_op_loop: {}
 	}
 
-	GFXWARN("Reached end of pic resource %04x\n", resid);
+	warning("[GFX] Reached end of pic resource %04x", resid);
 }
 
 void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, byte *resource,
@@ -1674,7 +1674,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		                      view->index_height,
 		                      1);
 	} else {
-		GFXWARN("No view was contained in SCI1.1 pic resource");
+		warning("[GFX] No view was contained in SCI1.1 pic resource");
 	}
 
 	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr, resource + vector_data_ptr, style, resid, 1, static_pal, portBounds);

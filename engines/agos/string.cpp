@@ -333,6 +333,32 @@ void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 	error("loadTextIntoMem: didn't find %d", stringId);
 }
 
+static const byte polish_charWidth[226] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 6, 2, 8, 7, 6,10, 8, 2,
+	4, 4, 7, 6, 3, 4, 2, 3, 6, 4,
+	6, 6, 7, 6, 6, 6, 6, 6, 2, 8,
+	6, 9, 7, 6, 6, 8, 7, 8, 8, 7,
+	6, 9, 8, 2, 6, 7, 6,10, 8, 9,
+	7, 9, 7, 7, 8, 8, 8,12, 8, 8,
+	7, 6, 7, 6, 4, 7, 7, 7, 7, 6,
+	7, 7, 4, 7, 6, 2, 3, 6, 2,10,
+	6, 7, 7, 7, 5, 6, 4, 6, 6,10,
+	6, 6, 6, 0, 0, 0, 0, 0, 8, 6,
+	7, 7, 7, 7, 7, 6, 7, 7, 7, 4,
+	4, 3, 8, 8, 7, 0, 0, 7, 7, 7,
+	6, 6, 6, 9, 8, 0, 0, 0, 0, 0,
+	7, 3, 7, 6, 6, 8, 0, 0, 6, 0,
+	0, 0, 0, 2, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 7
+};
+
 static const byte charWidth[226] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -359,14 +385,15 @@ static const byte charWidth[226] = {
 	0, 0, 0, 0, 0, 7
 };
 
-const char *getPixelLength(const char *string, uint16 maxWidth, uint16 &pixels) {
+const char *AGOSEngine::getPixelLength(const char *string, uint16 maxWidth, uint16 &pixels) {
 	pixels = 0;
 
 	while (*string != 0) {
 		byte chr = *string;
-		if ((pixels + charWidth[chr]) > maxWidth)
+		uint8 len = (_language == Common::PL_POL) ? polish_charWidth[chr] : charWidth[chr];
+		if ((pixels + len) > maxWidth)
 			break;
-		pixels += charWidth[chr];
+		pixels += len;
 		string++;
 	}
 
@@ -559,7 +586,7 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 		}
 		while (*string2 != ' ') {
 			byte chr = *string2;
-			pixels -= charWidth[chr];
+			pixels -= (_language == Common::PL_POL) ? polish_charWidth[chr] : charWidth[chr];
 			string2--;
 		}
 		spaces = (width - pixels) / 12;
@@ -609,7 +636,7 @@ void AGOSEngine_Feeble::printInteractText(uint16 num, const char *string) {
 		}
 		while (*string2 != ' ') {
 			byte chr = *string2;
-			pixels -= charWidth[chr];
+			pixels -= (_language == Common::PL_POL) ? polish_charWidth[chr] : charWidth[chr];
 			string2--;
 		}
 		if (w == 0xFFFF)

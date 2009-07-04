@@ -83,6 +83,7 @@ public:
 
 	static bool isMac() { return _systemVars.platform == Common::kPlatformMacintosh; }
 	static bool isPsx() { return _systemVars.platform == Common::kPlatformPSX; }
+	static bool isPc() { return _systemVars.platform == Common::kPlatformPC; }
 
 protected:
 	// Engine APIs

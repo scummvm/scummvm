@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+/*  ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -32,6 +32,8 @@
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/inter.h"
 #include "gob/scenery.h"
 
@@ -41,9 +43,6 @@ Mult_v1::Mult_v1(GobEngine *vm) : Mult(vm) {
 }
 
 void Mult_v1::loadMult(int16 resId) {
-	uint32 dataSize;
-	byte *extData;
-
 	debugC(4, kDebugGameFlow, "Loading mult");
 
 	_multData = new Mult_Data;
@@ -52,8 +51,11 @@ void Mult_v1::loadMult(int16 resId) {
 	_multData->sndSlotsCount = 0;
 	_multData->frameStart = 0;
 
-	extData = (byte *) _vm->_game->loadExtData(resId, 0, 0, &dataSize);
-	Common::MemoryReadStream data(extData, dataSize);
+	Resource *resource = _vm->_game->_resources->getResource(resId);
+	if (!resource)
+		return;
+
+	Common::SeekableReadStream &data = *resource->stream();
 
 	_multData->staticCount = data.readSByte() + 1;
 	_multData->animCount = data.readSByte() + 1;
@@ -157,15 +159,14 @@ void Mult_v1::loadMult(int16 resId) {
 		switch (_multData->sndKeys[i].cmd) {
 		case 1:
 		case 4:
-			_multData->sndKeys[i].resId =
-			  READ_LE_UINT16(_vm->_global->_inter_execPtr);
+			_multData->sndKeys[i].resId = _vm->_game->_script->peekUint16();
 
 			for (j = 0; j < i; j++) {
 				if (_multData->sndKeys[i].resId ==
 				    _multData->sndKeys[j].resId) {
 					_multData->sndKeys[i].soundIndex =
 					    _multData->sndKeys[j].soundIndex;
-					_vm->_global->_inter_execPtr += 2;
+					_vm->_game->_script->skip(2);
 					break;
 				}
 			}
@@ -178,16 +179,16 @@ void Mult_v1::loadMult(int16 resId) {
 			break;
 
 		case 3:
-			_vm->_global->_inter_execPtr += 6;
+			_vm->_game->_script->skip(6);
 			break;
 
 		case 5:
-			_vm->_global->_inter_execPtr += _multData->sndKeys[i].freq * 2;
+			_vm->_game->_script->skip(_multData->sndKeys[i].freq * 2);
 			break;
 		}
 	}
 
-	delete[] extData;
+	delete resource;
 }
 
 void Mult_v1::freeMultKeys() {
@@ -234,7 +235,7 @@ void Mult_v1::freeMultKeys() {
 		_animArrayY = 0;
 		_animArrayData = 0;
 
-		_animSurf = 0;
+		_animSurf.reset();
 		_vm->_draw->freeSprite(22);
 
 		_animDataAllocated = false;
@@ -319,8 +320,8 @@ void Mult_v1::playMultInit() {
 				320, 200, 0);
 		_vm->_draw->_spritesArray[22] = _animSurf;
 
-		_vm->_video->drawSprite(_vm->_draw->_backSurface,
-			_animSurf, 0, 0, 319, 199, 0, 0, 0);
+		_vm->_video->drawSprite(*_vm->_draw->_backSurface,
+			*_animSurf, 0, 0, 319, 199, 0, 0, 0);
 
 		_animDataAllocated = true;
 	} else
@@ -349,7 +350,7 @@ void Mult_v1::drawStatics(bool &stop) {
 
 		_vm->_scenery->_curStatic = _multData->staticIndices[_vm->_scenery->_curStatic];
 		_vm->_scenery->renderStatic(_vm->_scenery->_curStatic, _vm->_scenery->_curStaticLayer);
-		_vm->_video->drawSprite(_vm->_draw->_backSurface, _animSurf,
+		_vm->_video->drawSprite(*_vm->_draw->_backSurface, *_animSurf,
 		    0, 0, 319, 199, 0, 0, 0);
 	}
 }

@@ -232,7 +232,7 @@ public:
 
 	int8 *_orderArray;
 
-	SurfaceDesc::Ptr _animSurf;
+	SurfaceDescPtr _animSurf;
 	int16 _animLeft;
 	int16 _animTop;
 	int16 _animWidth;

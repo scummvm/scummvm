@@ -90,7 +90,7 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 #else
 	int i, x, y, deltaX, deltaY, stepX, stepY, errorX, errorY, detdelta;
 
-	/* Vertical line */
+	// Vertical line
 
 	if (x1 == x2) {
 		if (y1 > y2) {
@@ -103,7 +103,7 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 		return;
 	}
 
-	/* Horizontal line */
+	// Horizontal line
 
 	if (y1 == y2) {
 		if (x1 > x2) {
@@ -231,7 +231,7 @@ void PictureMgr::absoluteDrawLine() {
 /**************************************************************************
 ** okToFill
 **************************************************************************/
-INLINE int PictureMgr::isOkFillHere(int x, int y) {
+int PictureMgr::isOkFillHere(int x, int y) {
 	uint8 p;
 
 	x += _xOffset;
@@ -274,7 +274,7 @@ void PictureMgr::agiFill(unsigned int x, unsigned int y) {
 		if (!isOkFillHere(p.x, p.y))
 			continue;
 
-		/* Scan for left border */
+		// Scan for left border
 		for (c = p.x - 1; isOkFillHere(c, p.y); c--)
 			;
 
@@ -592,7 +592,7 @@ void PictureMgr::drawPicture() {
 			break;
 		case 0xe4:	// fill (C64)
 			_scrColor = nextByte();
-			_scrColor &= 0xF;	/* for v3 drawing diff */
+			_scrColor &= 0xF;	// for v3 drawing diff
 			fill();
 			break;
 		case 0xe5:	// enable screen drawing (C64)
@@ -883,7 +883,7 @@ int PictureMgr::decodePicture(byte* data, uint32 length, int clr, int pic_width,
  * @param n AGI picture resource number
  */
 int PictureMgr::unloadPicture(int n) {
-	/* remove visual buffer & priority buffer if they exist */
+	// remove visual buffer & priority buffer if they exist
 	if (_vm->_game.dirPic[n].flags & RES_LOADED) {
 		free(_vm->_game.pictures[n].rdata);
 		_vm->_game.dirPic[n].flags &= ~RES_LOADED;

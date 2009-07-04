@@ -59,15 +59,15 @@ GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, Gf
 	if (_version < SCI_VERSION_01_VGA || !_isVGA) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
 	} else if (_version == SCI_VERSION_1_1) {
-		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
+		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #ifdef ENABLE_SCI32
 	} else if (_version == SCI_VERSION_32) {
-		GFXDEBUG("Palettes are not yet supported in this SCI version\n");
+		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #endif
 	} else {
-		Resource *res = resManager->findResource(kResourceTypePalette, 999, 0);
+		Resource *res = resManager->findResource(ResourceId(kResourceTypePalette, 999), 0);
 		if (res && res->data)
-			_staticPalette = gfxr_read_pal1(res->id, res->data, res->size);
+			_staticPalette = gfxr_read_pal1(res->id.number, res->data, res->size);
 	}
 }
 
@@ -77,7 +77,7 @@ GfxResManager::~GfxResManager() {
 }
 
 int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic, int flags, int default_palette, int nr) {
-	Resource *res = _resManager->findResource(kResourceTypePic, nr, 0);
+	Resource *res = _resManager->findResource(ResourceId(kResourceTypePic, nr), 0);
 	int need_unscaled = unscaled_pic != NULL;
 	gfxr_pic0_params_t style, basic_style;
 
@@ -97,18 +97,18 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 
 	if (need_unscaled) {
 		if (_version == SCI_VERSION_1_1)
-			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id, _staticPalette, _portBounds);
+			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _staticPalette, _portBounds);
 		else
-			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id, _isVGA, _staticPalette, _portBounds);
+			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _isVGA, _staticPalette, _portBounds);
 	}
 
 	if (scaled_pic && scaled_pic->undithered_buffer)
 		memcpy(scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer, scaled_pic->undithered_buffer_size);
 
 	if (_version == SCI_VERSION_1_1)
-		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id, _staticPalette, _portBounds);
+		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _staticPalette, _portBounds);
 	else
-		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id, _isVGA, _staticPalette, _portBounds);
+		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _isVGA, _staticPalette, _portBounds);
 
 	if (!_isVGA) {
 		if (need_unscaled)
@@ -201,7 +201,7 @@ void gfxr_free_resource(gfx_resource_t *resource, int type) {
 		break;
 
 	default:
-		GFXWARN("Attempt to free invalid resource type %d\n", type);
+		warning("[GFX] Attempt to free invalid resource type %d", type);
 	}
 
 	free(resource);
@@ -474,7 +474,7 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 		res = resMap.contains(old_nr) ? resMap[old_nr] : NULL;
 
 		if (!res) {
-			GFXWARN("Attempt to add pic %d to non-existing pic %d\n", new_nr, old_nr);
+			warning("[GFX] Attempt to add pic %d to non-existing pic %d", new_nr, old_nr);
 			return NULL;
 		}
 	}
@@ -525,7 +525,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	res = resMap.contains(nr) ? resMap[nr] : NULL;
 
 	if (!res || res->mode != hash) {
-		Resource *viewRes = _resManager->findResource(kResourceTypeView, nr, 0);
+		Resource *viewRes = _resManager->findResource(ResourceId(kResourceTypeView, nr), 0);
 		if (!viewRes || !viewRes->data)
 			return NULL;
 
@@ -579,26 +579,26 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	*loop = CLIP<int>(*loop, 0, view->loops_nr - 1);
 
 	if (*loop < 0) {
-		GFXWARN("View %d has no loops\n", nr);
+		warning("[GFX] View %d has no loops", nr);
 		return NULL;
 	}
 
 	loop_data = view->loops + (*loop);
 	if (loop_data == NULL) {
-		GFXWARN("Trying to load invalid loop %d of view %d\n", *loop, nr);
+		warning("[GFX] Trying to load invalid loop %d of view %d", *loop, nr);
 		return NULL;
 	}
 
 	*cel = CLIP<int>(*cel, 0, loop_data->cels_nr - 1);
 
 	if (*cel < 0) {
-		GFXWARN("View %d loop %d has no cels\n", nr, *loop);
+		warning("[GFX] View %d loop %d has no cels", nr, *loop);
 		return NULL;
 	}
 
 	cel_data = loop_data->cels[*cel];
 	if (loop_data == NULL) {
-		GFXWARN("Trying to load invalid view/loop/cel %d/%d/%d\n", nr, *loop, *cel);
+		warning("[GFX] Trying to load invalid view/loop/cel %d/%d/%d", nr, *loop, *cel);
 		return NULL;
 	}
 
@@ -622,11 +622,11 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
 	if (!res || res->mode != hash) {
-		Resource *fontRes = _resManager->findResource(kResourceTypeFont, num, 0);
+		Resource *fontRes = _resManager->findResource(ResourceId(kResourceTypeFont, num), 0);
 		if (!fontRes || !fontRes->data)
 			return NULL;
 
-		gfx_bitmap_font_t *font = gfxr_read_font(fontRes->id, fontRes->data, fontRes->size);
+		gfx_bitmap_font_t *font = gfxr_read_font(fontRes->id.number, fontRes->data, fontRes->size);
 
 		if (!res) {
 			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
@@ -659,12 +659,12 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
 	if (!res || res->mode != hash) {
-		Resource *cursorRes = _resManager->findResource(kResourceTypeCursor, num, 0);
+		Resource *cursorRes = _resManager->findResource(ResourceId(kResourceTypeCursor, num), 0);
 		if (!cursorRes || !cursorRes->data)
 			return NULL;
 
 		if (_version >= SCI_VERSION_1_1) {
-			GFXWARN("Attempt to retrieve cursor in SCI1.1 or later\n");
+			warning("[GFX] Attempt to retrieve cursor in SCI1.1 or later");
 			return NULL;
 		}
 

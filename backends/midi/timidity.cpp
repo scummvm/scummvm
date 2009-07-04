@@ -221,7 +221,7 @@ int MidiDriver_TIMIDITY::open() {
 	 * "200 Ready data connection" */
 	res = timidity_ctl_command(NULL);
 	if (atoi(res) != 200) {
-		fprintf(stderr, "Can't connect timidity: %s\t(host=%s, port=%d)\n", res, timidity_host, data_port);
+		warning("Can't connect timidity: %s\t(host=%s, port=%d)", res, timidity_host, data_port);
 		close_all();
 		return -1;
 	}
@@ -334,7 +334,7 @@ char *MidiDriver_TIMIDITY::timidity_ctl_command(const char *fmt, ...) {
 			buff[len++] = '\n';
 
 		/* write command to control socket */
-		write(_control_fd, buff, len);
+		(void)write(_control_fd, buff, len);
 	}
 
 	while (1) {

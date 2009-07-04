@@ -264,6 +264,9 @@ String& String::operator  =(char c) {
 }
 
 String &String::operator +=(const char *str) {
+	if (_str <= str && str <= _str + _size)
+		return operator+=(Common::String(str));
+
 	int len = strlen(str);
 	if (len > 0) {
 		ensureCapacity(_size + len, true);
@@ -275,6 +278,9 @@ String &String::operator +=(const char *str) {
 }
 
 String &String::operator +=(const String &str) {
+	if (&str == this)
+		return operator+=(Common::String(str));
+
 	int len = str._size;
 	if (len > 0) {
 		ensureCapacity(_size + len, true);
@@ -294,6 +300,10 @@ String &String::operator +=(char c) {
 	return *this;
 }
 
+bool String::hasPrefix(const String &x) const {
+	return hasPrefix(x.c_str());
+}
+
 bool String::hasPrefix(const char *x) const {
 	assert(x != 0);
 	// Compare x with the start of _str.
@@ -305,6 +315,10 @@ bool String::hasPrefix(const char *x) const {
 	// It's a prefix, if and only if all letters in x are 'used up' before
 	// _str ends.
 	return *x == 0;
+}
+
+bool String::hasSuffix(const String &x) const {
+	return hasSuffix(x.c_str());
 }
 
 bool String::hasSuffix(const char *x) const {
@@ -321,6 +335,10 @@ bool String::hasSuffix(const char *x) const {
 	// It's a suffix, if and only if all letters in x are 'used up' before
 	// _str ends.
 	return *x == 0;
+}
+
+bool String::contains(const String &x) const {
+	return strstr(c_str(), x.c_str()) != NULL;
 }
 
 bool String::contains(const char *x) const {

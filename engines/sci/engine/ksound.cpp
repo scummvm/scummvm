@@ -123,7 +123,7 @@ enum AudioSyncCommands {
 
 static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 	int song_nr = GET_SEL32V(obj, number);
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, song_nr, 0);
+	Resource *song = s->resmgr->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
 	int flags = GET_SEL32V(obj, flags);
 
 	if (priority == -1) {
@@ -140,7 +140,7 @@ static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 }
 
 SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id) {
-	Resource *song = s->resmgr->findResource(kResourceTypeSound, song_nr, 0);
+	Resource *song = s->resmgr->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
 
 	if (!song)
 		return NULL;
@@ -151,7 +151,7 @@ SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type,
 
 void process_sound_events(EngineState *s) { /* Get all sound events, apply their changes to the heap */
 	int result;
-	song_handle_t handle;
+	SongHandle handle;
 	int cue;
 
 	if (s->_version >= SCI_VERSION_01)
@@ -202,9 +202,9 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 
 
 reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	reg_t obj = KP_ALT(1, NULL_REG);
-	uint16 command = UKPV(0);
-	song_handle_t handle = FROBNICATE_HANDLE(obj);
+	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
+	uint16 command = argv[0].toUint16();
+	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :
 	             -1; /* We were not going to use it anyway */
@@ -335,7 +335,7 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case _K_SCI0_SOUND_VOLUME: {
 		/* range from 0x0 to 0xf */
 		/* parameter optional. If present, set.*/
-		int vol = SKPV_OR_ALT(1, -1);
+		int vol = (argc > 1) ? argv[1].toSint16() : -1;
 
 		if (vol != -1)
 			s->_sound.sfx_set_volume(vol << 0xf);
@@ -381,9 +381,9 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	uint16 command = UKPV(0);
-	reg_t obj = KP_ALT(1, NULL_REG);
-	song_handle_t handle = FROBNICATE_HANDLE(obj);
+	uint16 command = argv[0].toUint16();
+	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
+	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :
 	             -1; /* We were not going to use it anyway */
@@ -456,7 +456,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	switch (command) {
 	case _K_SCI01_SOUND_MASTER_VOLME : {
-		int vol = SKPV_OR_ALT(1, -1);
+		int vol = (argc > 1) ? argv[1].toSint16() : -1;
 
 		if (vol != -1)
 			s->_sound.sfx_set_volume(vol << 0xf);
@@ -487,13 +487,13 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
-		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) UKPV(2);		/* Too lazy to look up a default value for this */
+		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) argv[2].toUint16();		/* Too lazy to look up a default value for this */
 
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 			s->_sound.sfx_song_set_loops(handle, looping);
 			s->_sound.sfx_song_renice(handle, pri);
-			song_lib_set_restore_behavior(s->_sound._songlib, handle, rb);
+			s->_sound._songlib.setSongRestoreBehavior(handle, rb);
 		}
 
 		break;
@@ -503,7 +503,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		//int vol = GET_SEL32V(obj, vol);
 		//int pri = GET_SEL32V(obj, pri);
 
-		if (obj.segment && (s->resmgr->testResource(kResourceTypeSound, number))) {
+		if (obj.segment && (s->resmgr->testResource(ResourceId(kResourceTypeSound, number)))) {
 			sciprintf("Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                      handle), 0, handle, number);
@@ -551,7 +551,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI01_SOUND_SUSPEND_HANDLE : {
-		int state = UKPV(2);
+		int state = argv[2].toUint16();
 		int setstate = (state) ?
 		               SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING;
 
@@ -647,12 +647,12 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI01_SOUND_MIDI_SEND : {
-		int channel = SKPV(2);
-		int midiCmd = UKPV(3) == 0xff ?
+		int channel = argv[2].toSint16();
+		int midiCmd = argv[3].toUint16() == 0xff ?
 		              0xe0 : /* Pitch wheel */
-		              0xb0; /* UKPV(3) is actually a controller number */
-		int controller = UKPV(3);
-		int param = UKPV(4);
+		              0xb0; /* argv[3].toUint16() is actually a controller number */
+		int controller = argv[3].toUint16();
+		int param = argv[4].toUint16();
 
 		s->_sound.sfx_send_midi(handle,
 		              channel, midiCmd, controller, param);
@@ -662,7 +662,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI01_SOUND_HOLD : {
-		//int flag = SKPV(2);
+		//int flag = argv[2].toSint16();
 		break;
 	}
 	}
@@ -671,9 +671,9 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	uint16 command = UKPV(0);
-	reg_t obj = KP_ALT(1, NULL_REG);
-	song_handle_t handle = FROBNICATE_HANDLE(obj);
+	uint16 command = argv[0].toUint16();
+	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
+	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
 	             GET_SEL32V(obj, number) :
 	             -1; /* We were not going to use it anyway */
@@ -798,16 +798,16 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
-		song_t *song = song_lib_find(s->_sound._songlib, handle);
+		Song *song = s->_sound._songlib.findSong(handle);
 
-		if (GET_SEL32V(obj, nodePtr) && (song && number != song->resource_num)) {
+		if (GET_SEL32V(obj, nodePtr) && (song && number != song->_resourceNum)) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			s->_sound.sfx_remove_song(handle);
 			PUT_SEL32(obj, nodePtr, NULL_REG);
 		}
 
 		if (!GET_SEL32V(obj, nodePtr) && obj.segment) {
-			if (!s->resmgr->testResource(kResourceTypeSound, number)) {
+			if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
 				sciprintf("Could not open song number %d\n", number);
 				return NULL_REG;
 			}
@@ -837,7 +837,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			s->_sound.sfx_remove_song(handle);
 		}
 
-		if (obj.segment && (s->resmgr->testResource(kResourceTypeSound, number))) {
+		if (obj.segment && (s->resmgr->testResource(ResourceId(kResourceTypeSound, number)))) {
 			sciprintf("Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                    handle), 0, handle, number);
@@ -866,10 +866,10 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case _K_SCI1_SOUND_FADE_HANDLE : {
 		fade_params_t fade;
 		if (obj.segment) {
-			fade.final_volume = UKPV(2);
-			fade.ticks_per_step = UKPV(3);
-			fade.step_size = UKPV(4);
-			fade.action = UKPV(5) ?
+			fade.final_volume = argv[2].toUint16();
+			fade.ticks_per_step = argv[3].toUint16();
+			fade.step_size = argv[4].toUint16();
+			fade.action = argv[5].toUint16() ?
 			              FADE_ACTION_FADE_AND_STOP :
 			              FADE_ACTION_FADE_AND_CONT;
 
@@ -877,7 +877,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			/* FIXME: The next couple of lines actually STOP the handle, rather
 			** than fading it! */
-			if (UKPV(5)) {
+			if (argv[5].toUint16()) {
 				PUT_SEL32V(obj, signal, -1);
 				PUT_SEL32V(obj, nodePtr, 0);
 				PUT_SEL32V(obj, handle, 0);
@@ -890,7 +890,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_HOLD_HANDLE : {
-		int value = SKPV(2);
+		int value = argv[2].toSint16();
 
 		s->_sound.sfx_song_set_hold(handle, value);
 		break;
@@ -902,7 +902,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_SET_HANDLE_PRIORITY : {
-		int value = SKPV(2);
+		int value = argv[2].toSint16();
 
 		script_set_priority(s, obj, value);
 		break;
@@ -950,7 +950,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	case _K_SCI1_SOUND_MIDI_SEND : {
 		s->_sound.sfx_send_midi(handle,
-		              UKPV(2), UKPV(3), UKPV(4), UKPV(5));
+		              argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(), argv[5].toUint16());
 		break;
 	}
 	case _K_SCI1_SOUND_REVERB : {
@@ -975,109 +975,120 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 // Used for speech playback in CD games
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Audio::Mixer *mixer = g_system->getMixer();
-	int sampleLen = 0;
 
-	if (!s->_sound._audioResource)
-		s->_sound._audioResource = new AudioResource(s->resmgr, s->_version);
-
-	switch (UKPV(0)) {
+	switch (argv[0].toUint16()) {
 	case kSciAudioWPlay:
-	case kSciAudioPlay:
-		s->_sound._audioResource->stop();
+	case kSciAudioPlay: {
+		uint16 module;
+		uint32 number;
 
-		if (argc == 2) {			// KQ5CD, KQ6 floppy
-			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(UKPV(1), 65535, &sampleLen);
+		s->_sound.stopAudio();
 
-			if (audioStream)
-				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
-		} else if (argc == 6) {		// SQ4CD or newer
-			//uint32 volume = UKPV(1);
-			// Make a BE number
-			uint32 audioNumber = (((UKPV(2) & 0xFF) << 24) & 0xFF000000) |
-								 (((UKPV(3) & 0xFF) << 16) & 0x00FF0000) |
-								 (((UKPV(4) & 0xFF) <<  8) & 0x0000FF00) |
-								 ( (UKPV(5) & 0xFF)        & 0x000000FF);
-
-			printf("%d %d %d %d -> %d\n", UKPV(2), UKPV(3), UKPV(4), UKPV(5), audioNumber);	// debugging
-
-			Audio::AudioStream *audioStream = s->_sound._audioResource->getAudioStream(audioNumber, UKPV(1), &sampleLen);
-
-			if (audioStream)
-				mixer->playInputStream(Audio::Mixer::kSpeechSoundType, s->_sound._audioResource->getAudioHandle(), audioStream);
-		} else {					// Hopefully, this should never happen
+		if (argc == 2) {
+			module = 65535;
+			number = argv[1].toUint16();
+		} else if (argc == 6) {
+			module = argv[1].toUint16();
+			number = ((argv[2].toUint16() & 0xff) << 24) | ((argv[3].toUint16() & 0xff) << 16) |
+					 ((argv[4].toUint16() & 0xff) <<  8) | (argv[5].toUint16() & 0xff);
+		} else {
 			warning("kDoAudio: Play called with an unknown number of parameters (%d)", argc);
+			return NULL_REG;
 		}
-		return make_reg(0, sampleLen);		// return sample length in ticks
+
+		return make_reg(0, s->_sound.startAudio(module, number)); // return sample length in ticks
+	}
 	case kSciAudioStop:
-		s->_sound._audioResource->stop();
+		s->_sound.stopAudio();
 		break;
 	case kSciAudioPause:
-		s->_sound._audioResource->pause();
+		s->_sound.pauseAudio();
 		break;
 	case kSciAudioResume:
-		s->_sound._audioResource->resume();
+		s->_sound.resumeAudio();
 		break;
 	case kSciAudioPosition:
-		return make_reg(0, s->_sound._audioResource->getAudioPosition());
+		return make_reg(0, s->_sound.getAudioPosition());
 	case kSciAudioRate:
-		s->_sound._audioResource->setAudioRate(UKPV(1));
+		s->_sound.setAudioRate(argv[1].toUint16());
 		break;
 	case kSciAudioVolume:
-		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, UKPV(1));
+		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, argv[1].toUint16());
 		break;
 	case kSciAudioLanguage:
 		if (argc == 1) {
 			// In SCI1.1: tests for digital audio support
 			return make_reg(0, 1);
 		} else {
-			s->_sound._audioResource->setAudioLang(SKPV(1));
+			s->resmgr->setAudioLanguage(argv[1].toSint16());
 		}
 		break;
 	default:
-		warning("kDoAudio: Unhandled case %d", UKPV(0));
+		warning("kDoAudio: Unhandled case %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;
 }
 
 reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	switch (UKPV(0)) {
-	case kSciAudioSyncStart:
-		if (argc == 3) {			// KQ5CD, KQ6 floppy
-			if (s->_sound._soundSync) {
-				s->resmgr->unlockResource(s->_sound._soundSync, s->_sound._soundSync->number, kResourceTypeSync);
-			}
+	switch (argv[0].toUint16()) {
+	case kSciAudioSyncStart: {
+		ResourceId id;
 
-			// Load sound sync resource and lock it
-			s->_sound._soundSync = (ResourceSync *)s->resmgr->findResource(kResourceTypeSync, UKPV(2), 1);
+		if (s->_sound._syncResource) {
+			s->resmgr->unlockResource(s->_sound._syncResource);
+			s->_sound._syncResource = NULL;
+		}
 
-			if (s->_sound._soundSync) {
-				s->_sound._soundSync->startSync(s, argv[1]);
-			} else {
-				// Notify the scripts to stop sound sync
-				PUT_SEL32V(argv[1], syncCue, -1);
-			}
-		} else if (argc == 7) {		// SQ4CD or newer
-			// TODO
-			warning("kDoSync: Start called with new semantics - 6 parameters: %d %d %d %d %d %d", UKPV(1), UKPV(2), UKPV(3), UKPV(4), UKPV(5), UKPV(6));
-		} else {					// Hopefully, this should never happen
+		// Load sound sync resource and lock it
+		if (argc == 3) {
+			id = ResourceId(kResourceTypeSync, argv[2].toUint16());
+		} else if (argc == 7) {
+			id = ResourceId(kResourceTypeSync36, argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(),
+							argv[5].toUint16(), argv[6].toUint16());
+		} else {
 			warning("kDoSync: Start called with an unknown number of parameters (%d)", argc);
+			return s->r_acc;
+		}
+
+		s->_sound._syncResource = s->resmgr->findResource(id, 1);
+
+		if (s->_sound._syncResource) {
+			PUT_SEL32V(argv[1], syncCue, 0);
+			s->_sound._syncOffset = 0;
+		} else {
+			warning("DoSync: failed to find resource %s", id.toString().c_str());
+			// Notify the scripts to stop sound sync
+			PUT_SEL32V(argv[1], syncCue, -1);
 		}
 		break;
-	case kSciAudioSyncNext:
-		if (s->_sound._soundSync) {
-			s->_sound._soundSync->nextSync(s, argv[1]);
+	}
+	case kSciAudioSyncNext: {
+		Resource *res = s->_sound._syncResource;
+		if (res && (s->_sound._syncOffset < res->size - 1)) {
+			int16 syncCue = -1;
+			int16 syncTime = (int16)READ_LE_UINT16(res->data + s->_sound._syncOffset);
+
+			s->_sound._syncOffset += 2;
+
+			if ((syncTime != -1) && (s->_sound._syncOffset < res->size - 1)) {
+				syncCue = (int16)READ_LE_UINT16(res->data + s->_sound._syncOffset);
+				s->_sound._syncOffset += 2;
+			}
+
+			PUT_SEL32V(argv[1], syncTime, syncTime);
+			PUT_SEL32V(argv[1], syncCue, syncCue);
 		}
 		break;
+	}
 	case kSciAudioSyncStop:
-		if (s->_sound._soundSync) {
-			s->_sound._soundSync->stopSync();
-			s->resmgr->unlockResource(s->_sound._soundSync, s->_sound._soundSync->number, kResourceTypeSync);
-			s->_sound._soundSync = NULL;
+		if (s->_sound._syncResource) {
+			s->resmgr->unlockResource(s->_sound._syncResource);
+			s->_sound._syncResource = NULL;
 		}
 		break;
 	default:
-		warning("kDoSync: Unhandled case %d", UKPV(0));
+		warning("DoSync: Unhandled subfunction %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;

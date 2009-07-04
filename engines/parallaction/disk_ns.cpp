@@ -23,17 +23,10 @@
  *
  */
 
-#include "parallaction/iff.h"
 #include "common/config-manager.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
 
-
-namespace Audio {
-	class AudioStream;
-
-	AudioStream *make8SVXStream(Common::ReadStream &input);
-}
 
 namespace Parallaction {
 
@@ -900,56 +893,18 @@ void AmigaDisk_ns::buildMask(byte* buf) {
 	}
 }
 
-// TODO: extend the ILBMDecoder to return CRNG chunks and get rid of this BackgroundDecoder crap
-class BackgroundDecoder : public ILBMDecoder {
-
-public:
-	BackgroundDecoder(Common::SeekableReadStream *input, bool disposeStream = false) : ILBMDecoder(input, disposeStream) {
-	}
-
-	uint32 getCRNG(PaletteFxRange *ranges, uint32 num) {
-		assert(ranges);
-
-		uint32 size = _parser.getIFFBlockSize(ID_CRNG);
-		if (size == (uint32)-1) {
-			return 0;
-		}
-
-		uint32 count = MIN((uint32)(size / sizeof(PaletteFxRange)), num);
-		_parser.loadIFFBlock(ID_CRNG, ranges, count * sizeof(PaletteFxRange));
-
-		for (uint32 i = 0; i < count; ++i) {
-			ranges[i]._timer = FROM_BE_16(ranges[i]._timer);
-			ranges[i]._step = FROM_BE_16(ranges[i]._step);
-			ranges[i]._flags = FROM_BE_16(ranges[i]._flags);
-		}
-
-		return count;
-	}
-};
-
 
 void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
+	PaletteFxRange ranges[6];
+	byte pal[768];
 
 	Common::SeekableReadStream *s = openFile(name);
-	BackgroundDecoder decoder(s, true);
-
-	PaletteFxRange ranges[6];
-	memset(ranges, 0, 6*sizeof(PaletteFxRange));
-	decoder.getCRNG(ranges, 6);
-
-	// TODO: encapsulate surface creation
-	info.bg.w = decoder.getWidth();
-	info.bg.h = decoder.getHeight();
-	info.bg.pitch = info.bg.w;
-	info.bg.bytesPerPixel = 1;
-	info.bg.pixels = decoder.getBitmap();
+	ILBMLoader loader(&info.bg, pal, ranges);
+	loader.load(s, true);
 
 	info.width = info.bg.w;
 	info.height = info.bg.h;
 
-	byte *pal = decoder.getPalette();
-	assert(pal);
 	byte *p = pal;
 	for (uint i = 0; i < 32; i++) {
 		byte r = *p >> 2;
@@ -960,7 +915,6 @@ void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 		p++;
 		info.palette.setEntry(i, r, g, b);
 	}
-	delete []pal;
 
 	for (uint j = 0; j < 6; j++) {
 		info.setPaletteRange(j, ranges[j]);
@@ -979,9 +933,9 @@ void AmigaDisk_ns::loadMask(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing mask files: not every location has one
 	}
 
-	ILBMDecoder decoder(s, true);
-	byte *pal = decoder.getPalette();
-	assert(pal);
+	byte pal[768];
+	ILBMLoader loader(ILBMLoader::BODYMODE_MASKBUFFER, pal);
+	loader.load(s, true);
 
 	byte r, g, b;
 	for (uint i = 0; i < 4; i++) {
@@ -990,14 +944,8 @@ void AmigaDisk_ns::loadMask(BackgroundInfo& info, const char *name) {
 		b = pal[i*3+2];
 		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
 	}
-	delete []pal;
 
-	info._mask = new MaskBuffer;
-	info._mask->w = info.width;
-	info._mask->h = info.height;
-	info._mask->internalWidth = info.width >> 2;
-	info._mask->size = info._mask->internalWidth * info._mask->h;
-	info._mask->data = decoder.getBitmap(2, true);
+	info._mask = loader._maskBuffer;
 }
 
 void AmigaDisk_ns::loadPath(BackgroundInfo& info, const char *name) {
@@ -1010,15 +958,10 @@ void AmigaDisk_ns::loadPath(BackgroundInfo& info, const char *name) {
 		return;	// no errors if missing path files: not every location has one
 	}
 
-	ILBMDecoder decoder(s, true);
-	info._path = new PathBuffer;
-	info._path->create(info.width, info.height);
+	ILBMLoader loader(ILBMLoader::BODYMODE_PATHBUFFER);
+	loader.load(s, true);
+	info._path = loader._pathBuffer;
 	info._path->bigEndian = true;
-
-	byte *bitmap = decoder.getBitmap(1, true);
-	assert(bitmap);
-	memcpy(info._path->data, bitmap, info._path->size);
-	delete bitmap;
 }
 
 void AmigaDisk_ns::loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) {

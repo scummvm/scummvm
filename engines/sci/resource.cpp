@@ -56,13 +56,6 @@ const char *sci_version_types[] = {
 
 const int sci_max_resource_nr[] = {65536, 1000, 2048, 2048, 2048, 65536, 65536, 65536};
 
-enum SolFlags {
-	kSolFlagCompressed = 1 << 0,
-	kSolFlagUnknown    = 1 << 1,
-	kSolFlag16Bit      = 1 << 2,
-	kSolFlagIsSigned   = 1 << 3
-};
-
 static const char *sci_error_types[] = {
 	"No error",
 	"I/O error",
@@ -94,15 +87,15 @@ static const char *resourceTypeSuffixes[] = {
 };
 
 const char *getResourceTypeName(ResourceType restype) {
-	return resourceTypeNames[restype];
+	if (restype != kResourceTypeInvalid)
+		return resourceTypeNames[restype];
+	else
+		return "invalid";
 }
 
 //-- Resource main functions --
 Resource::Resource() {
 	data = NULL;
-	number = 0;
-	type = kResourceTypeInvalid;
-	id = 0;
 	size = 0;
 	file_offset = 0;
 	status = kResStatusNoMalloc;
@@ -131,24 +124,17 @@ void Resource::unalloc() {
 ResourceSource *ResourceManager::addExternalMap(const char *file_name) {
 	ResourceSource *newsrc = new ResourceSource();
 
-	// Add the new source to the SLL of sources
-	newsrc->next = _sources;
-	_sources = newsrc;
-
 	newsrc->source_type = kSourceExtMap;
 	newsrc->location_name = file_name;
 	newsrc->scanned = false;
 	newsrc->associated_map = NULL;
 
+	_sources.push_back(newsrc);
 	return newsrc;
 }
 
 ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const char *filename, int number) {
 	ResourceSource *newsrc = new ResourceSource();
-
-	// Add the new source to the SLL of sources
-	newsrc->next = _sources;
-	_sources = newsrc;
 
 	newsrc->source_type = type;
 	newsrc->scanned = false;
@@ -156,31 +142,27 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
 
+	_sources.push_back(newsrc);
 	return newsrc;
 }
 
 ResourceSource *ResourceManager::addPatchDir(const char *dirname) {
 	ResourceSource *newsrc = new ResourceSource();
 
-	// Add the new source to the SLL of sources
-	newsrc->next = _sources;
-	_sources = newsrc;
-
 	newsrc->source_type = kSourceDirectory;
 	newsrc->scanned = false;
 	newsrc->location_name = dirname;
 
+	_sources.push_back(newsrc);
 	return 0;
 }
 
 ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
-	ResourceSource *seeker = _sources;
-
-	while (seeker) {
-		if ((seeker->source_type == kSourceVolume || seeker->source_type == kSourceAudioVolume)
-			&& seeker->associated_map == map && seeker->volume_number == volume_nr)
-			return seeker;
-		seeker = seeker->next;
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		ResourceSource *src = *it;
+		if ((src->source_type == kSourceVolume || src->source_type == kSourceAudioVolume)
+			&& src->associated_map == map && src->volume_number == volume_nr)
+			return src;
 	}
 
 	return NULL;
@@ -198,19 +180,19 @@ bool ResourceManager::loadPatch(Resource *res, Common::File &file) {
 		res->header = new byte[res->headerSize];	
 
 	if ((res->data == NULL) || ((res->headerSize > 0) && (res->header == NULL))) {
-		error("Can't allocate %d bytes needed for loading %s.%i", res->size + res->headerSize, resourceTypeNames[res->type], res->number);
+		error("Can't allocate %d bytes needed for loading %s", res->size + res->headerSize, res->id.toString().c_str());
 	}
 
 	unsigned int really_read;
 	if (res->headerSize > 0) {
 		really_read = file.read(res->header, res->headerSize);
 		if (really_read != res->headerSize)
-			error("Read %d bytes from %s.%i but expected %d", really_read, resourceTypeNames[res->type], res->number, res->headerSize);
+			error("Read %d bytes from %s but expected %d", really_read, res->id.toString().c_str(), res->headerSize);
 	}
 
 	really_read = file.read(res->data, res->size);
 	if (really_read != res->size)
-		error("Read %d bytes from %s.%i but expected %d", really_read, resourceTypeNames[res->type], res->number, res->size);
+		error("Read %d bytes from %s but expected %d", really_read, res->id.toString().c_str(), res->size);
 
 	res->status = kResStatusAllocated;
 	return true;
@@ -228,20 +210,11 @@ bool ResourceManager::loadFromPatchFile(Resource *res) {
 	return loadPatch(res, file);
 }
 
-bool ResourceManager::loadFromAudioVolume(Resource *res) {
-	Common::File file;
-	const char *filename = res->source->location_name.c_str();
-	if (file.open(filename) == false) {
-		warning("Failed to open audio volume %s", filename);
-		res->unalloc();
-		return false;
-	}
-
-	file.seek(res->file_offset, SEEK_SET);
-
-	int type = file.readByte() & 0x7f;
-	if (type != res->type) {
-		warning("Resource type mismatch loading %s.%i from %s", resourceTypeNames[res->type], res->number, filename);
+bool ResourceManager::loadFromAudioVolumeSCI11(Resource *res, Common::File &file) {
+	ResourceType type = (ResourceType)(file.readByte() & 0x7f);
+	if (((res->id.type == kResourceTypeAudio || res->id.type == kResourceTypeAudio36) && (type != kResourceTypeAudio))
+		|| ((res->id.type == kResourceTypeSync || res->id.type == kResourceTypeSync36) && (type != kResourceTypeSync))) {
+		warning("Resource type mismatch loading %s from %s", res->id.toString().c_str(), file.getName());
 		res->unalloc();
 		return false;
 	}
@@ -261,6 +234,21 @@ bool ResourceManager::loadFromAudioVolume(Resource *res) {
 	}
 
 	return loadPatch(res, file);
+}
+
+bool ResourceManager::loadFromAudioVolumeSCI1(Resource *res, Common::File &file) {
+	res->data = new byte[res->size];
+
+	if (res->data == NULL) {
+		error("Can't allocate %d bytes needed for loading %s", res->size, res->id.toString().c_str());
+	}
+
+	unsigned int really_read = file.read(res->data, res->size);
+	if (really_read != res->size)
+		warning("Read %d bytes from %s but expected %d", really_read, res->id.toString().c_str(), res->size);
+
+	res->status = kResStatusAllocated;
+	return true;
 }
 
 Common::File *ResourceManager::getVolumeFile(const char *filename) {
@@ -301,8 +289,7 @@ void ResourceManager::loadResource(Resource *res) {
 
 	if (res->source->source_type == kSourcePatch && loadFromPatchFile(res))
 		return;
-	if (res->source->source_type == kSourceAudioVolume && loadFromAudioVolume(res))
-		return;
+
 	// Either loading from volume or patch loading failed
 	file = getVolumeFile(res->source->location_name.c_str());
 	if (!file) {
@@ -311,18 +298,25 @@ void ResourceManager::loadResource(Resource *res) {
 		return;
 	}
 	file->seek(res->file_offset, SEEK_SET);
-	int error = decompress(res, file);
-	if (error) {
-		warning("Error %d occured while reading %s.%03d from resource file: %s",
-		        error, getResourceTypeName(res->type), res->number, sci_error_types[error]);
-		res->unalloc();
-	}
 
+	if (res->source->source_type == kSourceAudioVolume) {
+		if (_sciVersion < SCI_VERSION_1_1)
+			loadFromAudioVolumeSCI1(res, *file);
+		else
+			loadFromAudioVolumeSCI11(res, *file);
+	} else {
+		int error = decompress(res, file);
+		if (error) {
+			warning("Error %d occured while reading %s from resource file: %s",
+				    error, res->id.toString().c_str(), sci_error_types[error]);
+			res->unalloc();
+		}
+	}
 }
 
-Resource *ResourceManager::testResource(ResourceType type, int number) {
-	if (_resMap.contains(RESOURCE_HASH(type, number)))
-		return _resMap.getVal(RESOURCE_HASH(type, number));
+Resource *ResourceManager::testResource(ResourceId id) {
+	if (_resMap.contains(id))
+		return _resMap.getVal(id);
 	return NULL;
 }
 
@@ -347,7 +341,7 @@ int ResourceManager::guessSciVersion() {
 	int i;
 
 	for (i = 0; i < 1000; i++) {
-		res = testResource(kResourceTypeView, i);
+		res = testResource(ResourceId(kResourceTypeView, i));
 
 		if (!res)
 			continue;
@@ -371,7 +365,7 @@ int ResourceManager::guessSciVersion() {
 
 	// Try the same thing with pics
 	for (i = 0; i < 1000; i++) {
-		res = testResource(kResourceTypePic, i);
+		res = testResource(ResourceId(kResourceTypePic, i));
 
 		if (!res)
 			continue;
@@ -414,72 +408,63 @@ int ResourceManager::addAppropriateSources() {
 		addSource(map, kSourceVolume, name.c_str(), number);
 	}
 	addPatchDir(".");
-	// TODO: add RESOURCE.AUD and RESOURCE.SFX for SCI1.1 games
 	if (Common::File::exists("MESSAGE.MAP"))
 		addSource(addExternalMap("MESSAGE.MAP"), kSourceVolume, "RESOURCE.MSG", 0);
 	return 1;
 }
 
 int ResourceManager::addInternalSources() {
-	if (testResource(kResourceTypeMap, 65535)) {
-		ResourceSource *src = addSource(NULL, kSourceIntMap, "65535.MAP", 65535);
+	Common::List<ResourceId> *resources = listResources(kResourceTypeMap);
+	Common::List<ResourceId>::iterator itr = resources->begin();
 
-		if (Common::File::exists("RESOURCE.SFX"))
+	while (itr != resources->end()) {
+		ResourceSource *src = addSource(NULL, kSourceIntMap, "MAP", itr->number);
+
+		if ((itr->number == 65535) && Common::File::exists("RESOURCE.SFX"))
 			addSource(src, kSourceAudioVolume, "RESOURCE.SFX", 0);
 		else if (Common::File::exists("RESOURCE.AUD"))
 			addSource(src, kSourceAudioVolume, "RESOURCE.AUD", 0);
+
+		itr++;
 	}
 
 	return 1;
 }
 
-int ResourceManager::scanNewSources(ResourceSource *source) {
-	if (!source)
-		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
+void ResourceManager::scanNewSources() {
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		ResourceSource *source = *it;
 
-	int resource_error = 0;
-	if (source->next)
-		scanNewSources(source->next);
-
-	if (!source->scanned) {
-		source->scanned = true;
-		switch (source->source_type) {
-		case kSourceDirectory:
-			readResourcePatches(source);
-			break;
-		case kSourceExtMap:
-			if (_mapVersion < SCI_VERSION_1)
-				resource_error = readResourceMapSCI0(source);
-			else
-				resource_error = readResourceMapSCI1(source);
-
-			if (resource_error == SCI_ERROR_RESMAP_NOT_FOUND) {
-				// FIXME: Try reading w/o resource.map
-				resource_error = SCI_ERROR_NO_RESOURCE_FILES_FOUND;
+		if (!source->scanned) {
+			source->scanned = true;
+			switch (source->source_type) {
+			case kSourceDirectory:
+				readResourcePatches(source);
+				break;
+			case kSourceExtMap:
+				if (_mapVersion < SCI_VERSION_1)
+					readResourceMapSCI0(source);
+				else
+					readResourceMapSCI1(source);
+				break;
+			case kSourceExtAudioMap:
+				readAudioMapSCI1(source);
+				break;
+			case kSourceIntMap:
+				readAudioMapSCI11(source);
+				break;
+			default:
+				break;
 			}
-
-			if (resource_error == SCI_ERROR_NO_RESOURCE_FILES_FOUND) {
-				// Initialize empty resource manager
-				_resMap.clear();
-				resource_error = 0;
-			}
-			break;
-		case kSourceIntMap:
-			if (source->volume_number == 65535)
-				resource_error = readMap65535(source);
-			break;
-		default:
-			break;
 		}
 	}
-	return resource_error;
 }
 
-void ResourceManager::freeResourceSources(ResourceSource *rss) {
-	if (rss) {
-		freeResourceSources(rss->next);
-		delete rss;
-	}
+void ResourceManager::freeResourceSources() {
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it)
+		delete *it;
+
+	_sources.clear();
 }
 
 ResourceManager::ResourceManager(int version, int maxMemory) {
@@ -488,8 +473,8 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	_memoryLRU = 0;
 	_LRU.clear();
 	_resMap.clear();
-	_sources = NULL;
 	_sciVersion = version;
+	_audioMapSCI1 = NULL;
 
 	addAppropriateSources();
 
@@ -503,19 +488,19 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	debug("Using resource map version %d %s", _mapVersion, sci_version_types[_mapVersion]);
 	debug("Using volume version %d %s", _volVersion, sci_version_types[_volVersion]);
 
-	scanNewSources(_sources);
+	scanNewSources();
 	addInternalSources();
-	scanNewSources(_sources);
+	scanNewSources();
 
 	if (version == SCI_VERSION_AUTODETECT)
 		switch (_mapVersion) {
 		case SCI_VERSION_0:
-			if (testResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB)) {
+			if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB))) {
 				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
-			} else if (testResource(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB)) {
+			} else if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB))) {
 				version = guessSciVersion();
 				if (version != SCI_VERSION_01_VGA) {
-					version = testResource(kResourceTypeVocab, 912) ? SCI_VERSION_0 : SCI_VERSION_01;
+					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01;
 				}
 			} else {
 				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
@@ -525,7 +510,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			version = _mapVersion;
 			break;
 		case SCI_VERSION_1: {
-			Resource *res = testResource(kResourceTypeScript, 0);
+			Resource *res = testResource(ResourceId(kResourceTypeScript, 0));
 
 			_sciVersion = version = SCI_VERSION_1_EARLY;
 			loadResource(res);
@@ -579,12 +564,12 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 
 ResourceManager::~ResourceManager() {
 	// freeing resources
-	Common::HashMap<uint32, Resource *>::iterator itr = _resMap.begin();
+	ResourceMap::iterator itr = _resMap.begin();
 	while (itr != _resMap.end()) {
 		delete itr->_value;
 		itr ++;
 	}
-	freeResourceSources(_sources);
+	freeResourceSources();
 	_resMap.empty();
 
 	Common::List<Common::File *>::iterator it = _volumeFiles.begin();
@@ -628,8 +613,7 @@ void ResourceManager::printLRU() {
 
 	while (it != _LRU.end()) {
 		res = *it;
-		debug("\t%s.%03d: %d bytes", getResourceTypeName(res->type),
-		      res->number, res->size);
+		debug("\t%s: %d bytes", res->id.toString().c_str(), res->size);
 		mem += res->size;
 		entries ++;
 		it ++;
@@ -638,15 +622,10 @@ void ResourceManager::printLRU() {
 	debug("Total: %d entries, %d bytes (mgr says %d)", entries, mem, _memoryLRU);
 }
 
-void ResourceManager::freeOldResources(int last_invulnerable) {
-	while (_maxMemory < _memoryLRU && (!last_invulnerable || !_LRU.empty())) {
+void ResourceManager::freeOldResources() {
+	while (_maxMemory < _memoryLRU) {
+		assert(!_LRU.empty());
 		Resource *goner = *_LRU.reverse_begin();
-		if (!goner) {
-			debug("Internal error: mgr->lru_last is NULL!");
-			debug("LRU-mem= %d", _memoryLRU);
-			debug("lru_first = %p", (void *)*_LRU.begin());
-			printLRU();
-		}
 		removeFromLRU(goner);
 		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMGR
@@ -655,17 +634,30 @@ void ResourceManager::freeOldResources(int last_invulnerable) {
 	}
 }
 
-Resource *ResourceManager::findResource(ResourceType type, int number, bool lock) {
-	Resource *retval;
+Common::List<ResourceId> *ResourceManager::listResources(ResourceType type, int mapNumber) {
+	Common::List<ResourceId> *resources = new Common::List<ResourceId>;
 
-	if (number >= sci_max_resource_nr[_sciVersion]) {
-		int modded_number = number % sci_max_resource_nr[_sciVersion];
-		sciprintf("[resmgr] Requested invalid resource %s.%d, mapped to %s.%d\n",
-		          getResourceTypeName(type), number, getResourceTypeName(type), modded_number);
-		number = modded_number;
+	ResourceMap::iterator itr = _resMap.begin();
+	while (itr != _resMap.end()) {
+		if ((itr->_value->id.type == type) && ((mapNumber == -1) || (itr->_value->id.number == mapNumber)))
+			resources->push_back(itr->_value->id);
+		itr++;
 	}
 
-	retval = testResource(type, number);
+	return resources;
+}
+
+Resource *ResourceManager::findResource(ResourceId id, bool lock) {
+	Resource *retval;
+
+	if (id.number >= sci_max_resource_nr[_sciVersion]) {
+		ResourceId moddedId = ResourceId(id.type, id.number % sci_max_resource_nr[_sciVersion], id.tuple);
+		sciprintf("[resmgr] Requested invalid resource %s, mapped to %s\n",
+		          id.toString().c_str(), moddedId.toString().c_str());
+		id = moddedId;
+	}
+
+	retval = testResource(id);
 
 	if (!retval)
 		return NULL;
@@ -676,6 +668,8 @@ Resource *ResourceManager::findResource(ResourceType type, int number, bool lock
 		removeFromLRU(retval);
 	// Unless an error occured, the resource is now either
 	// locked or allocated, but never queued or freed.
+
+	freeOldResources();
 
 	if (lock) {
 		if (retval->status == kResStatusAllocated) {
@@ -689,28 +683,19 @@ Resource *ResourceManager::findResource(ResourceType type, int number, bool lock
 			addToLRU(retval);
 	}
 
-	freeOldResources(retval->status == kResStatusAllocated);
-
 	if (retval->data)
 		return retval;
 	else {
-		sciprintf("Resmgr: Failed to read %s.%03d\n", getResourceTypeName(retval->type), retval->number);
+		sciprintf("Resmgr: Failed to read %s\n", retval->id.toString().c_str());
 		return NULL;
 	}
 }
 
-void ResourceManager::unlockResource(Resource *res, int resnum, ResourceType restype) {
-	if (!res) {
-		if (restype == kResourceTypeInvalid)
-			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %03d.%03d!\n", restype, resnum);
-		else
-			sciprintf("Resmgr: Warning: Attempt to unlock non-existant resource %s.%03d!\n", getResourceTypeName(restype), resnum);
-		return;
-	}
+void ResourceManager::unlockResource(Resource *res) {
+	assert(res);
 
 	if (res->status != kResStatusLocked) {
-		sciprintf("Resmgr: Warning: Attempt to unlock unlocked resource %s.%03d\n",
-		          getResourceTypeName(res->type), res->number);
+		warning("[Resmgr] Attempt to unlock unlocked resource %s", res->id.toString().c_str());
 		return;
 	}
 
@@ -720,20 +705,21 @@ void ResourceManager::unlockResource(Resource *res, int resnum, ResourceType res
 		addToLRU(res);
 	}
 
-	freeOldResources(0);
+	freeOldResources();
 }
 
 int ResourceManager::detectMapVersion() {
 	Common::File file;
 	byte buff[6];
-	ResourceSource *rsrc = _sources;
-	// looking for extarnal map among sources
-	while (rsrc) {
+	ResourceSource *rsrc= 0;
+
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		rsrc = *it;
+
 		if (rsrc->source_type == kSourceExtMap) {
 			file.open(rsrc->location_name);
 			break;
 		}
-		rsrc = rsrc->next;
 	}
 	if (file.isOpen() == false) {
 		warning("Failed to open resource map file");
@@ -787,14 +773,14 @@ int ResourceManager::detectMapVersion() {
 
 int ResourceManager::detectVolVersion() {
 	Common::File file;
-	ResourceSource *rsrc = _sources;
-	// looking for a volume among sources
-	while (rsrc) {
+	ResourceSource *rsrc;
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		rsrc = *it;
+
 		if (rsrc->source_type == kSourceVolume) {
 			file.open(rsrc->location_name);
 			break;
 		}
-		rsrc = rsrc->next;
 	}
 	if (file.isOpen() == false) {
 		warning("Failed to open volume file");
@@ -865,7 +851,7 @@ int ResourceManager::detectVolVersion() {
 void ResourceManager::processPatch(ResourceSource *source, ResourceType restype, int resnumber) {
 	Common::File file;
 	Resource *newrsc;
-	uint32 resId = RESOURCE_HASH(restype, resnumber);
+	ResourceId resId = ResourceId(restype, resnumber);
 	byte patchtype, patch_data_offset;
 	int fsize;
 
@@ -895,23 +881,13 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	}
 	// Prepare destination, if neccessary
 	if (_resMap.contains(resId) == false) {
-		// FIXME: code duplication
-		switch (restype) {
-		case kResourceTypeSync:
-			newrsc = new ResourceSync;
-			break;
-		default:
-			newrsc = new Resource;
-			break;
-		}
+		newrsc = new Resource;
 		_resMap.setVal(resId, newrsc);
 	} else
 		newrsc = _resMap.getVal(resId);
 	// Overwrite everything, because we're patching
 	newrsc->id = resId;
-	newrsc->number = resnumber;
 	newrsc->status = kResStatusNoMalloc;
-	newrsc->type = restype;
 	newrsc->source = source;
 	newrsc->size = fsize - patch_data_offset - 2;
 	newrsc->headerSize = patch_data_offset;
@@ -1001,14 +977,12 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 
 		type = (ResourceType)(id >> 11);
 		number = id & 0x7FF;
-		uint32 resId = RESOURCE_HASH(type, number);
+		ResourceId resId = ResourceId(type, number);
 		// adding a new resource
 		if (_resMap.contains(resId) == false) {
 			res = new Resource;
-			res->id = resId;//id;
 			res->file_offset = offset & (((~bMask) << 24) | 0xFFFFFF);
-			res->number = number;
-			res->type = type;
+			res->id = resId;
 			res->source = getVolume(map, offset >> bShift);
 			_resMap.setVal(resId, res);
 		}
@@ -1026,7 +1000,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	memset(resMap, 0, sizeof(resource_index_t) * 32);
 	byte type = 0, prevtype = 0;
 	byte nEntrySize = _mapVersion == SCI_VERSION_1_1 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
-	uint32 resId;
+	ResourceId resId;
 
 	// Read resource type and offsets to resource offsets block from .MAP file
 	// The last entry has type=0xFF (0x1F) and offset equals to map file length
@@ -1067,22 +1041,12 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				perror("");
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
-			resId = RESOURCE_HASH(type, number);
+			resId = ResourceId((ResourceType)type, number);
 			// adding new resource only if it does not exist
 			if (_resMap.contains(resId) == false) {
-				switch (type) {
-				case kResourceTypeSync:
-					res = new ResourceSync;
-					break;
-				default:
-					res = new Resource;
-					break;
-				}
-
+				res = new Resource;
 				_resMap.setVal(resId, res);
-				res->type = (ResourceType)type;
-				res->number = number;
-				res->id = resId;//res->number | (res->type << 16);
+				res->id = resId;
 				res->source = getVolume(map, volume_nr);
 				res->file_offset = off;
 			}
@@ -1091,71 +1055,249 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	return 0;
 }
 
-int ResourceManager::readMap65535(ResourceSource *map) {
-	// Early SCI1.1 65535.MAP structure (uses RESOURCE.AUD):
-	// =========
-	// 6-byte entries:
-	// w nEntry
-	// dw offset
+void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size) {
+	// Adding new resource only if it does not exist
+	if (_resMap.contains(resId) == false) {
+		Resource *res = new Resource;
+		_resMap.setVal(resId, res);
+		res->id = resId;
+		res->source = src;
+		res->file_offset = offset;
+		res->size = size;
+	}
+}
 
-	// Late SCI1.1 65535.MAP structure (uses RESOURCE.SFX):
-	// =========
-	// 5-byte entries:
-	// w nEntry
-	// tb offset (cumulative)
+void ResourceManager::removeAudioResource(ResourceId resId) {
+	// Remove resource, unless it was loaded from a patch
+	if (_resMap.contains(resId)) {
+		Resource *res = _resMap.getVal(resId);
 
-	Resource *mapRes = findResource(kResourceTypeMap, map->volume_number, false);
+		if (res->source->source_type == kSourceAudioVolume) {
+			if (res->lockers == 0) {
+				_resMap.erase(resId);
+				delete res;
+			} else {
+				warning("Failed to remove resource %s (still in use)", resId.toString().c_str());
+			}
+		}
+	}
+}
+
+// Early SCI1.1 65535.MAP structure (uses RESOURCE.AUD):
+// =========
+// 6-byte entries:
+// w nEntry
+// dw offset
+
+// Late SCI1.1 65535.MAP structure (uses RESOURCE.SFX):
+// =========
+// 5-byte entries:
+// w nEntry
+// tb offset (cumulative)
+
+// Early SCI1.1 MAP structure:
+// ===============
+// 10-byte entries:
+// b noun
+// b verb
+// b cond
+// b seq
+// dw offset
+// w syncSize + syncAscSize
+
+// Late SCI1.1 MAP structure:
+// ===============
+// Header:
+// dw baseOffset
+// Followed by 7 or 11-byte entries:
+// b noun
+// b verb
+// b cond
+// b seq
+// tb cOffset (cumulative offset)
+// w syncSize (iff seq has bit 7 set)
+// w syncAscSize (iff seq has bit 6 set)
+
+int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
+	bool isEarly = true;
+	uint32 offset = 0;
+	Resource *mapRes = findResource(ResourceId(kResourceTypeMap, map->volume_number), false);
 
 	if (!mapRes) {
-		warning("Failed to open 65535.MAP");
+		warning("Failed to open %i.MAP", map->volume_number);
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
 	ResourceSource *src = getVolume(map, 0);
 
-	if (!src) {
-		warning("No audio resource files found");
+	if (!src)
 		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
-	}
-
-	bool isEarly = true;
 
 	byte *ptr = mapRes->data;
-	// Heuristic to detect late SCI1.1 map format
-	if ((mapRes->size >= 6) && (ptr[mapRes->size - 6] != 0xff))
-		isEarly = false;
 
-	uint32 offset = 0;
+	if (map->volume_number == 65535) {
+		// Heuristic to detect late SCI1.1 map format
+		if ((mapRes->size >= 6) && (ptr[mapRes->size - 6] != 0xff))
+			isEarly = false;
 
-	while (ptr < mapRes->data + mapRes->size) {
-		uint16 n = READ_LE_UINT16(ptr);
-		ptr += 2;
+		while (ptr < mapRes->data + mapRes->size) {
+			uint16 n = READ_LE_UINT16(ptr);
+			ptr += 2;
 
-		if (n == 0xffff)
-			break;
+			if (n == 0xffff)
+				break;
 
-		if (isEarly) {
+			if (isEarly) {
+				offset = READ_LE_UINT32(ptr);
+				ptr += 4;
+			} else {
+				offset += READ_LE_UINT24(ptr);
+				ptr += 3;
+			}
+
+			addResource(ResourceId(kResourceTypeAudio, n), src, offset);
+		}
+	} else {
+		// Heuristic to detect late SCI1.1 map format
+		if ((mapRes->size >= 11) && (ptr[mapRes->size - 11] == 0xff))
+			isEarly = false;
+
+		if (!isEarly) {
 			offset = READ_LE_UINT32(ptr);
 			ptr += 4;
-		} else {
-			offset += READ_LE_UINT24(ptr);
-			ptr += 3;
 		}
 
-		uint32 resId = RESOURCE_HASH(kResourceTypeAudio, n);
-		// Adding new resource only if it does not exist
-		if (_resMap.contains(resId) == false) {
-			Resource *res = new Resource;
-			_resMap.setVal(resId, res);
-			res->type = kResourceTypeAudio;
-			res->number = n;
-			res->id = resId;
-			res->source = src;
-			res->file_offset = offset;
+		while (ptr < mapRes->data + mapRes->size) {
+			uint32 n = READ_BE_UINT32(ptr);
+			int syncSize = 0;
+			ptr += 4;
+
+			if (n == 0xffffffff)
+				break;
+
+			if (isEarly) {
+				offset = READ_LE_UINT32(ptr);
+				ptr += 4;
+			} else {
+				offset += READ_LE_UINT24(ptr);
+				ptr += 3;
+			}
+
+			if (isEarly || (n & 0x80)) {
+				syncSize = READ_LE_UINT16(ptr);
+				ptr += 2;
+
+				if (syncSize > 0)
+					addResource(ResourceId(kResourceTypeSync36, map->volume_number, n & 0xffffff3f), src, offset, syncSize);
+			}
+
+			if (n & 0x40) {
+				syncSize += READ_LE_UINT16(ptr);
+				ptr += 2;
+			}
+
+			addResource(ResourceId(kResourceTypeAudio36, map->volume_number, n & 0xffffff3f), src, offset + syncSize);
 		}
 	}
 
 	return 0;
+}
+
+// AUDIOnnn.MAP contains 10-byte entries:
+// w nEntry
+// dw offset+volume (as in resource.map)
+// dw size
+// ending with 10 0xFFs
+
+int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
+	Common::File file;
+
+	if (!file.open(map->location_name))
+		return SCI_ERROR_RESMAP_NOT_FOUND;
+
+	while (1) {
+		uint16 n = file.readUint16LE();
+		uint32 offset = file.readUint32LE();
+		uint32 size = file.readUint32LE();
+
+		if (file.ioFailed()) {
+			warning("Error while reading %s", map->location_name.c_str());
+			return SCI_ERROR_RESMAP_NOT_FOUND;
+		}
+
+		if (n == 0xffff)
+			break;
+
+		byte volume_nr = offset >> 28; // most significant 4 bits
+		offset &= 0x0fffffff; // least significant 28 bits
+
+		ResourceSource *src = getVolume(map, volume_nr);
+
+		if (src) {
+			if (unload)
+				removeAudioResource(ResourceId(kResourceTypeAudio, n));
+			else
+				addResource(ResourceId(kResourceTypeAudio, n), src, offset, size);
+		} else {
+			warning("Failed to find audio volume %i", volume_nr);
+		}
+	}
+
+	return 0;
+}
+
+void ResourceManager::setAudioLanguage(int language) {
+	if (_audioMapSCI1) {
+		if (_audioMapSCI1->volume_number == language) {
+			// This language is already loaded
+			return;
+		}
+
+		// We already have a map loaded, so we unload it first
+		readAudioMapSCI1(_audioMapSCI1, true);
+
+		// Remove all volumes that use this map from the source list
+		Common::List<ResourceSource *>::iterator it = _sources.begin();
+		while (it != _sources.end()) {
+			ResourceSource *src = *it;
+			if (src->associated_map == _audioMapSCI1) {
+				it = _sources.erase(it);
+				delete src;
+			} else {
+				++it;
+			}
+		}
+
+		// Remove the map itself from the source list
+		_sources.remove(_audioMapSCI1);
+		delete _audioMapSCI1;
+
+		_audioMapSCI1 = NULL;
+	}
+
+	char filename[9];
+	snprintf(filename, 9, "AUDIO%03d", language);
+
+	Common::String fullname = Common::String(filename) + ".MAP";
+	if (!Common::File::exists(fullname)) {
+		warning("No audio map found for language %i", language);
+		return;
+	}
+
+	_audioMapSCI1 = addSource(NULL, kSourceExtAudioMap, fullname.c_str(), language);
+
+	// Search for audio volumes for this language and add them to the source list
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, Common::String(filename) + ".0??");
+	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+		const Common::String name = (*x)->getName();
+		const char *dot = strrchr(name.c_str(), '.');
+		int number = atoi(dot + 1);
+
+		addSource(_audioMapSCI1, kSourceAudioVolume, name.c_str(), number);
+	}
+
+	scanNewSources();
 }
 
 int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
@@ -1206,9 +1348,7 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 	// check if there were errors while reading
 	if (file->ioFailed())
 		return SCI_ERROR_IO_ERROR;
-	res->id = RESOURCE_HASH(type, number);
-	res->type = type;
-	res->number = number;
+	res->id = ResourceId(type, number);
 	res->size = szUnpacked;
 	// checking compression method
 	switch (wCompression) {
@@ -1277,8 +1417,7 @@ int ResourceManager::decompress(Resource *res, Common::File *file) {
 		break;
 #endif
 	default:
-		warning("Resource %s #%d: Compression method %d not supported",
-		        getResourceTypeName(res->type), res->number, compression);
+		warning("Resource %s: Compression method %d not supported", res->id.toString().c_str(), compression);
 		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
@@ -1290,471 +1429,6 @@ int ResourceManager::decompress(Resource *res, Common::File *file) {
 
 	delete dec;
 	return error;
-}
-
-void ResourceSync::startSync(EngineState *s, reg_t obj) {
-	_syncTime = _syncCue = -1;
-	PUT_SEL32V(obj, syncCue, 0);
-	_ptr = (uint16 *)data;
-	//syncStarted = true;	// not used
-}
-
-void ResourceSync::nextSync(EngineState *s, reg_t obj) {
-	if (_ptr) {
-		_syncTime = (int16)READ_LE_UINT16(_ptr);
-		if (_syncTime == -1) {
-			stopSync();
-		} else {
-			_syncCue = (int16)READ_LE_UINT16(_ptr + 1);
-			_ptr += 2;
-		}
-		PUT_SEL32V(obj, syncTime, _syncTime);
-		PUT_SEL32V(obj, syncCue, _syncCue);
-	}
-}
-//--------------------------------
-void ResourceSync::stopSync() {
-	_ptr = 0;
-	_syncCue = -1;
-	//syncStarted = false;	// not used
-}
-
-
-AudioResource::AudioResource(ResourceManager *resMgr, int sciVersion) {
-	_resMgr = resMgr;
-	_sciVersion = sciVersion;
-	_audioRate = 11025;
-	_lang = 0;
-	_audioMapSCI1 = 0;
-	_audioMapSCI11 = 0;
-}
-
-AudioResource::~AudioResource() {
-	if (_sciVersion < SCI_VERSION_1_1) {
-		if (_audioMapSCI1) {
-			delete[] _audioMapSCI1;
-			_audioMapSCI1 = 0;
-		}
-	} else {
-		if (_audioMapSCI11)
-			_resMgr->unlockResource(_audioMapSCI11, _audioMapSCI11->number, kResourceTypeMap);
-	}
-}
-
-// Used in SCI1 games
-void AudioResource::setAudioLang(int16 lang) {
-	if (lang != -1) {
-		_lang = lang;
-
-		char filename[40];
-		sprintf(filename, "AUDIO%03d.MAP", _lang);
-
-		Common::File* audioMapFile = new Common::File();
-		if (audioMapFile->open(filename)) {
-			// The audio map is freed in the destructor
-			_audioMapSCI1 = new byte[audioMapFile->size()];
-			audioMapFile->read(_audioMapSCI1, audioMapFile->size());
-			audioMapFile->close();
-			delete audioMapFile;
-		} else {
-			_audioMapSCI1 = 0;
-		}
-	}
-}
-
-int AudioResource::getAudioPosition() {
-	if (g_system->getMixer()->isSoundHandleActive(_audioHandle)) {
-		return g_system->getMixer()->getSoundElapsedTime(_audioHandle) * 6 / 100; // return elapsed time in ticks
-	} else {
-		return -1; // Sound finished
-	}
-}
-
-bool AudioResource::findAudEntrySCI1(uint16 audioNumber, byte &volume, uint32 &offset, uint32 &size) {
-	// AUDIO00X.MAP contains 10-byte entries:
-	// w nEntry
-	// dw offset+volume (as in resource.map)
-	// dw size
-	// ending with 10 0xFFs
-	uint16 n;
-	uint32 off;
-
-	if (_audioMapSCI1 == 0)
-		return false;
-
-	byte *ptr = _audioMapSCI1;
-	while ((n = READ_LE_UINT16(ptr)) != 0xFFFF) {
-		if (n == audioNumber) {
-			off = READ_LE_UINT32(ptr + 2);
-			size = READ_LE_UINT32(ptr + 6);
-			volume = off >> 28;
-			offset = off & 0x0FFFFFFF;
-			return true;
-		}
-		ptr += 10;
-	}
-
-	return false;
-}
-
-bool AudioResource::findAudEntrySCI11Late(uint32 audioNumber, uint32 &offset, bool getSync, uint32 *size) {
-	// Map structure:
-	// ===============
-	// Header:
-	// dw baseOffset
-	// Followed by 7 or 11-byte entries:
-	// b noun
-	// b verb
-	// b cond
-	// b seq
-	// tb cOffset (cumulative offset)
-	// w syncSize (iff seq has bit 7 set)
-	// w syncAscSize (iff seq has bit 6 set)
-
-	uint32 n;
-	offset = 0;
-
-	byte *ptr = _audioMapSCI11->data;
-
-	offset = READ_LE_UINT32(ptr);
-	ptr += 4;
-
-	while (ptr < _audioMapSCI11->data + _audioMapSCI11->size) {
-		n = READ_BE_UINT32(ptr);
-		ptr += 4;
-
-		if (n == 0xffffffff)
-			break;
-
-		offset += READ_LE_UINT24(ptr);
-		ptr += 3;
-
-		int syncSkip = 0;
-
-		if (n & 0x80) {
-			n ^= 0x80;
-
-			if (getSync) {
-				if (size)
-					*size = READ_LE_UINT16(ptr);
-			} else {
-				syncSkip = READ_LE_UINT16(ptr);
-			}
-
-			ptr += 2;
-
-			if (n & 0x40) {
-				n ^= 0x40;
-
-				if (!getSync)
-					syncSkip += READ_LE_UINT16(ptr);
-
-				ptr += 2;
-			}
-
-			offset += syncSkip;
-
-			if (n == audioNumber)
-				return true;
-
-		} else {
-			if (n == audioNumber)
-				return !getSync;
-		}
-
-		offset -= syncSkip;
-	}
-
-	return false;
-}
-
-bool AudioResource::findAudEntrySCI11Early(uint32 audioNumber, uint32 &offset, bool getSync, uint32 *size) {
-	// Map structure:
-	// ===============
-	// 10-byte entries:
-	// b noun
-	// b verb
-	// b cond
-	// b seq
-	// dw offset
-	// w syncSize + syncAscSize
-
-	uint32 n;
-	offset = 0;
-
-	byte *ptr = _audioMapSCI11->data;
-
-	while (ptr < _audioMapSCI11->data + _audioMapSCI11->size) {
-		n = READ_BE_UINT32(ptr);
-		ptr += 4;
-
-		if (n == 0xffffffff)
-			break;
-
-		offset = READ_LE_UINT32(ptr);
-		ptr += 4;
-
-		int syncSize = READ_LE_UINT16(ptr);
-		ptr += 2;
-
-		if (n == audioNumber) {
-			if (getSync) {
-				if (size)
-					*size = syncSize;
-				return true;
-			} else {
-				offset += syncSize;
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
-bool AudioResource::findAudEntrySCI11(uint32 audioNumber, uint32 volume, uint32 &offset, bool getSync, uint32 *size) {
-	if (_audioMapSCI11 && _audioMapSCI11->number != volume) {
-		_resMgr->unlockResource(_audioMapSCI11, _audioMapSCI11->number, kResourceTypeMap);
-		_audioMapSCI11 = 0;
-	}
-
-	if (!_audioMapSCI11) {
-		_audioMapSCI11 = _resMgr->findResource(kResourceTypeMap, volume, 1);
-	}
-
-	byte *ptr = _audioMapSCI11->data;
-
-	if (volume == 65535)
-		return false;
-
-	// In early SCI1.1 the map is terminated with 10x 0xff, in late SCI1.1
-	// with 11x 0xff. If we look at the 11th last byte in an early SCI1.1
-	// map, this will be the high byte of the Sync length of the last entry.
-	// As Sync resources are relative small, we should never encounter a
-	// Sync with a size of 0xffnn. As such, the following heuristic should be
-	// sufficient to tell these map formats apart.
-	if (_audioMapSCI11->size >= 11 && (ptr[_audioMapSCI11->size - 11] == 0xff))
-		return findAudEntrySCI11Late(audioNumber, offset, getSync, size);
-	else {
-		return findAudEntrySCI11Early(audioNumber, offset, getSync, size);
-	}
-
-	return false;
-}
-
-// FIXME: Move this to sound/adpcm.cpp?
-// Note that the 16-bit version is also used in coktelvideo.cpp
-static const uint16 tableDPCM16[128] = {
-	0x0000, 0x0008, 0x0010, 0x0020, 0x0030, 0x0040, 0x0050, 0x0060, 0x0070, 0x0080,
-	0x0090, 0x00A0, 0x00B0, 0x00C0, 0x00D0, 0x00E0, 0x00F0, 0x0100, 0x0110, 0x0120,
-	0x0130, 0x0140, 0x0150, 0x0160, 0x0170, 0x0180, 0x0190, 0x01A0, 0x01B0, 0x01C0,
-	0x01D0, 0x01E0, 0x01F0, 0x0200, 0x0208, 0x0210, 0x0218, 0x0220, 0x0228, 0x0230,
-	0x0238, 0x0240, 0x0248, 0x0250, 0x0258, 0x0260, 0x0268, 0x0270, 0x0278, 0x0280,
-	0x0288, 0x0290, 0x0298, 0x02A0, 0x02A8, 0x02B0, 0x02B8, 0x02C0, 0x02C8, 0x02D0,
-	0x02D8, 0x02E0, 0x02E8, 0x02F0, 0x02F8, 0x0300, 0x0308, 0x0310, 0x0318, 0x0320,
-	0x0328, 0x0330, 0x0338, 0x0340, 0x0348, 0x0350, 0x0358, 0x0360, 0x0368, 0x0370,
-	0x0378, 0x0380, 0x0388, 0x0390, 0x0398, 0x03A0, 0x03A8, 0x03B0, 0x03B8, 0x03C0,
-	0x03C8, 0x03D0, 0x03D8, 0x03E0, 0x03E8, 0x03F0, 0x03F8, 0x0400, 0x0440, 0x0480,
-	0x04C0, 0x0500, 0x0540, 0x0580, 0x05C0, 0x0600, 0x0640, 0x0680, 0x06C0, 0x0700,
-	0x0740, 0x0780, 0x07C0, 0x0800, 0x0900, 0x0A00, 0x0B00, 0x0C00, 0x0D00, 0x0E00,
-	0x0F00, 0x1000, 0x1400, 0x1800, 0x1C00, 0x2000, 0x3000, 0x4000
-};
-
-static const byte tableDPCM8[8] = {0, 1, 2, 3, 6, 10, 15, 21};
-
-static void deDPCM16(byte *soundBuf, Common::SeekableReadStream &audioStream, uint32 n) {
-	int16 *out = (int16 *) soundBuf;
-
-	int32 s = 0;
-	for (uint32 i = 0; i < n; i++) {
-		byte b = audioStream.readByte();
-		if (b & 0x80)
-			s -= tableDPCM16[b & 0x7f];
-		else
-			s += tableDPCM16[b];
-
-		s = CLIP<int32>(s, -32768, 32767);
-		*out++ = TO_BE_16(s);
-	}
-}
-
-static void deDPCM8Nibble(byte *soundBuf, int32 &s, byte b) {
-	if (b & 8)
-		s -= tableDPCM8[7 - (b & 7)];
-	else
-		s += tableDPCM8[b & 7];
-	s = CLIP<int32>(s, 0, 255);
-	*soundBuf = s;
-}
-
-static void deDPCM8(byte *soundBuf, Common::SeekableReadStream &audioStream, uint32 n) {
-	int32 s = 0x80;
-
-	for (uint i = 0; i < n; i++) {
-		byte b = audioStream.readByte();
-
-		deDPCM8Nibble(soundBuf++, s, b >> 4);
-		deDPCM8Nibble(soundBuf++, s, b & 0xf);
-	}
-}
-
-// Sierra SOL audio file reader
-// Check here for more info: http://wiki.multimedia.cx/index.php?title=Sierra_Audio
-static bool readSOLHeader(Common::SeekableReadStream *audioStream, int headerSize, uint32 &size, uint16 &audioRate, byte &audioFlags) {
-	if (headerSize != 11 && headerSize != 12) {
-		warning("SOL audio header of size %i not supported", headerSize);
-		return false;
-	}
-
-	audioStream->readUint32LE();			// skip "SOL" + 0 (4 bytes)
-	audioRate = audioStream->readUint16LE();
-	audioFlags = audioStream->readByte();
-
-	size = audioStream->readUint32LE();
-	return true;
-}
-
-static byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size, byte audioFlags, byte &flags) {
-	byte *buffer;
-
-	// Convert the SOL stream flags to our own format
-	flags = 0;
-	if (audioFlags & kSolFlag16Bit)
-		flags |= Audio::Mixer::FLAG_16BITS;
-	if (!(audioFlags & kSolFlagIsSigned))
-		flags |= Audio::Mixer::FLAG_UNSIGNED;
-
-	if (audioFlags & kSolFlagCompressed) {
-		buffer = new byte[size * 2];
-
-		if (audioFlags & kSolFlag16Bit)
-			deDPCM16(buffer, *audioStream, size);
-		else
-			deDPCM8(buffer, *audioStream, size);
-
-		size *= 2;
-	} else {
-		// We assume that the sound data is raw PCM
-		buffer = (byte *)malloc(size);
-		audioStream->read(buffer, size);
-	}
-
-	return buffer;
-}
-
-Audio::AudioStream* AudioResource::getAudioStream(uint32 audioNumber, uint32 volume, int *sampleLen) {
-	Audio::AudioStream *audioStream = 0;
-	uint32 offset;
-	uint32 size;
-	bool found = false;
-	byte *data = 0;
-	char filename[40];
-	byte flags = 0;
-
-	// Try to load from resource manager
-	if (volume == 65535) {
-		Sci::Resource* audioRes = _resMgr->findResource(kResourceTypeAudio, audioNumber, false);
-
-		if (_sciVersion < SCI_VERSION_1_1) {
-			size = audioRes->size;
-			data = audioRes->data;
-		} else {
-			byte audioFlags;
-
-			Common::MemoryReadStream *headerStream = 
-				new Common::MemoryReadStream(audioRes->header, audioRes->headerSize, false);
-
-			if (readSOLHeader(headerStream, audioRes->headerSize, size, _audioRate, audioFlags)) {
-				Common::MemoryReadStream *dataStream = 
-					new Common::MemoryReadStream(audioRes->data, audioRes->size, false);
-				data = readSOLAudio(dataStream, size, audioFlags, flags);
-				delete dataStream;
-			}
-			delete headerStream;
-		}
-
-		if (data) {
-			audioStream = Audio::makeLinearInputStream(data, size, _audioRate, 
-											flags | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
-		}
-	} else {
-		// Load it from the audio file
-		if (_sciVersion < SCI_VERSION_1_1) {
-			byte sci1Volume;
-			found = findAudEntrySCI1(audioNumber, sci1Volume, offset, size);
-			sprintf(filename, "AUDIO%03d.%03d", _lang, sci1Volume);
-			flags |= Audio::Mixer::FLAG_UNSIGNED;
-		} else {
-			found = findAudEntrySCI11(audioNumber, volume, offset);
-			strcpy(filename, "RESOURCE.AUD");
-		}
-
-		if (found) {
-	#if 0
-			// TODO: This tries to load directly from the KQ5CD audio file with MP3/OGG/FLAC
-			// compression. Once we got a tool to compress this file AND update the map file
-			// at the same time, we can use this code to play compressed audio.
-			if (_sciVersion < SCI_VERSION_1_1) {
-				uint32 start = offset * 1000 / _audioRate;
-				uint32 duration = size * 1000 / _audioRate;
-		
-				// Try to load compressed
-				audioStream = Audio::AudioStream::openStreamFile(filename, start, duration); 
-			}
-	#endif
-
-			if (!audioStream) { 
-				// Compressed file load failed, try to load original raw data
-				Common::File* audioFile = new Common::File();
-				if (audioFile->open(filename)) {
-					audioFile->seek(offset);
-
-					if (_sciVersion < SCI_VERSION_1_1) {
-						data = (byte *)malloc(size);
-						audioFile->read(data, size);
-					} else {
-						byte type = audioFile->readByte() & 0x7f;
-						byte audioFlags;
-
-						if (type != kResourceTypeAudio) {
-							warning("Resource type mismatch");
-							delete audioFile;
-							return NULL;
-						}
-
-						byte headerSize = audioFile->readByte();
-
-						if (readSOLHeader(audioFile, headerSize, size, _audioRate, audioFlags))
-							data = readSOLAudio(audioFile, size, audioFlags, flags);
-
-						if (!data) {
-							delete audioFile;
-							return NULL;
-						}
-					}
-
-					audioFile->close();
-
-					if (data) {
-						audioStream = Audio::makeLinearInputStream(data, size, _audioRate,
-														flags | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
-					}
-				}
-
-				delete audioFile;
-			}
-		} else {
-			warning("Failed to find audio entry (%i, %i, %i, %i, %i)", volume, (audioNumber >> 24) & 0xff,
-					(audioNumber >> 16) & 0xff, (audioNumber >> 8) & 0xff, audioNumber & 0xff);
-		}
-	}
-
-	if (audioStream) {
-		*sampleLen = (flags & Audio::Mixer::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
-		return audioStream;
-	}
-
-	return NULL;
 }
 
 } // End of namespace Sci

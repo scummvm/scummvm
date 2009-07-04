@@ -34,7 +34,7 @@ Video_v2::Video_v2(GobEngine *vm) : Video_v1(vm) {
 }
 
 char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
-	    int16 x, int16 y, int16 transp, SurfaceDesc *destDesc) {
+	    int16 x, int16 y, int16 transp, SurfaceDesc &destDesc) {
 	byte *memBuffer;
 	byte *srcPtr, *destPtr, *linePtr;
 	byte temp;
@@ -47,10 +47,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 	int16 strLen;
 	int16 lenCmd;
 
-	if (!destDesc)
-		return 1;
-
-	_vm->validateVideoMode(destDesc->_vidMode);
+	_vm->validateVideoMode(destDesc._vidMode);
 
 	if (sprBuf[0] != 1)
 		return 0;
@@ -60,7 +57,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 
 	if (sprBuf[2] == 2) {
 		SurfaceDesc sourceDesc(0x13, srcWidth, srcHeight, sprBuf + 3);
-		Video::drawSprite(&sourceDesc, destDesc, 0, 0, srcWidth - 1,
+		Video::drawSprite(sourceDesc, destDesc, 0, 0, srcWidth - 1,
 		    srcHeight - 1, x, y, transp);
 		return 1;
 	} else if (sprBuf[2] == 1) {
@@ -70,7 +67,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		srcPtr = sprBuf + 3;
 		sourceLeft = READ_LE_UINT32(srcPtr);
 
-		destPtr = destDesc->getVidMem() + destDesc->getWidth() * y + x;
+		destPtr = destDesc.getVidMem() + destDesc.getWidth() * y + x;
 
 		curWidth = 0;
 		curHeight = 0;
@@ -104,7 +101,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 				curWidth++;
 				if (curWidth >= srcWidth) {
 					curWidth = 0;
-					linePtr += destDesc->getWidth();
+					linePtr += destDesc.getWidth();
 					destPtr = linePtr;
 					curHeight++;
 					if (curHeight >= srcHeight)
@@ -133,7 +130,7 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 					curWidth++;
 					if (curWidth >= srcWidth) {
 						curWidth = 0;
-						linePtr += destDesc->getWidth();
+						linePtr += destDesc.getWidth();
 						destPtr = linePtr;
 						curHeight++;
 						if (curHeight >= srcHeight) {

@@ -30,7 +30,7 @@
 
 #include "backends/platform/gp2xwiz/gp2xwiz-sdl.h"
 #include "backends/platform/gp2xwiz/gp2xwiz-hw.h"
-#include "backends/keymapper/keymapper.h"
+
 #include "common/util.h"
 #include "common/events.h"
 
@@ -40,6 +40,28 @@
 
 #define JOY_XAXIS 0
 #define JOY_YAXIS 1
+
+/* GP2X Wiz: Main Joystick Mappings */
+enum {
+	GP2X_BUTTON_UP			= 0,
+	GP2X_BUTTON_UPLEFT		= 1,
+	GP2X_BUTTON_LEFT		= 2,
+	GP2X_BUTTON_DOWNLEFT	= 3,
+	GP2X_BUTTON_DOWN		= 4,
+	GP2X_BUTTON_DOWNRIGHT	= 5,
+	GP2X_BUTTON_RIGHT		= 6,
+	GP2X_BUTTON_UPRIGHT		= 7,
+	GP2X_BUTTON_MENU		= 8,
+	GP2X_BUTTON_SELECT		= 9,
+	GP2X_BUTTON_L			= 10,
+	GP2X_BUTTON_R			= 11,
+	GP2X_BUTTON_A			= 12,
+	GP2X_BUTTON_B			= 13,
+	GP2X_BUTTON_X			= 14,
+	GP2X_BUTTON_Y			= 15,
+	GP2X_BUTTON_VOLUP		= 16,
+	GP2X_BUTTON_VOLDOWN		= 17
+};
 
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
@@ -173,8 +195,8 @@ bool OSystem_GP2XWIZ::pollEvent(Common::Event &event) {
 	GP2X_BUTTON_Y               Space Bar
 	GP2X_BUTTON_X               Right Mouse Click
 	GP2X_BUTTON_L				Combo Modifier (Left Trigger)
-	GP2X_BUTTON_R               F5 (Right Trigger)
-	GP2X_BUTTON_MENU			Return
+	GP2X_BUTTON_R               Return (Right Trigger)
+	GP2X_BUTTON_MENU			F5 (Game Menu)
 	GP2X_BUTTON_SELECT          Escape
 	GP2X_BUTTON_VOLUP           /dev/mixer Global Volume Up
 	GP2X_BUTTON_VOLDOWN         /dev/mixer Global Volume Down
@@ -291,8 +313,13 @@ bool OSystem_GP2XWIZ::pollEvent(Common::Event &event) {
 						break;
 					case GP2X_BUTTON_R:
 						if (GP2X_BUTTON_STATE_L == true) {
+#ifdef ENABLE_VKEYBD
+							event.kbd.keycode = Common::KEYCODE_F7;
+							event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
+#else
 							event.kbd.keycode = Common::KEYCODE_0;
 							event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
+#endif
 						} else {
 							event.kbd.keycode = Common::KEYCODE_RETURN;
 							event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);
@@ -388,8 +415,13 @@ bool OSystem_GP2XWIZ::pollEvent(Common::Event &event) {
 						break;
 					case GP2X_BUTTON_R:
 						if (GP2X_BUTTON_STATE_L == true) {
+#ifdef ENABLE_VKEYBD
+							event.kbd.keycode = Common::KEYCODE_F7;
+							event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
+#else
 							event.kbd.keycode = Common::KEYCODE_0;
 							event.kbd.ascii = mapKey(SDLK_0, ev.key.keysym.mod, 0);
+#endif
 						} else {
 							event.kbd.keycode = Common::KEYCODE_RETURN;
 							event.kbd.ascii = mapKey(SDLK_RETURN, ev.key.keysym.mod, 0);

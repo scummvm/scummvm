@@ -106,7 +106,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 			wm.push(es.objp);
 			wm.push(es.sendp);
 			if (es.type == EXEC_STACK_TYPE_VARSELECTOR)
-				wm.push(*(es.addr.varp));
+				wm.push(*(es.getVarPointer(s)));
 		}
 	}
 #ifdef DEBUG_GC_VERBOSE

@@ -120,10 +120,13 @@ GameList QueenMetaEngine::detectGames(const Common::FSList &fslist) const {
 				GameDescriptor dg(queenGameDescriptor.gameid, queenGameDescriptor.description, version.language, version.platform);
 				if (version.features & Queen::GF_DEMO) {
 					dg.updateDesc("Demo");
+					dg.setGUIOptions(Common::GUIO_NOSPEECH);
 				} else if (version.features & Queen::GF_INTERVIEW) {
 					dg.updateDesc("Interview");
+					dg.setGUIOptions(Common::GUIO_NOSPEECH);
 				} else if (version.features & Queen::GF_FLOPPY) {
 					dg.updateDesc("Floppy");
+					dg.setGUIOptions(Common::GUIO_NOSPEECH);
 				} else if (version.features & Queen::GF_TALKIE) {
 					dg.updateDesc("Talkie");
 				}

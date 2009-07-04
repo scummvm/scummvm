@@ -50,7 +50,6 @@ int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a r
 int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
 int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME: Avoid non-const global vars
 
-
 static bool breakpointFlag = false;	// FIXME: Avoid non-const global vars
 static reg_t _dummy_register;		// FIXME: Avoid non-const global vars
 
@@ -187,13 +186,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 
 #define OBJ_PROPERTY(o, p) (validate_property(o, p))
 
-int script_error(EngineState *s, const char *file, int line, const char *reason) {
-	error("Script error in file %s, line %d: %s\n", file, line, reason);
-	return 0;
-}
-#define CORE_ERROR(area, msg) script_error(s, "[" area "] " __FILE__, __LINE__, msg)
-
-reg_t get_class_address(EngineState *s, int classnr, int lock, reg_t caller) {
+reg_t get_class_address(EngineState *s, int classnr, SCRIPT_GET lock, reg_t caller) {
 
 	if (NULL == s) {
 		warning("vm.c: get_class_address(): NULL passed for \"s\"");
@@ -280,10 +273,10 @@ static void _exec_varselectors(EngineState *s) {
 		ExecStack &xs = s->_executionStack.back();
 		// varselector access?
 		if (xs.argc) { // write?
-			*(xs.addr.varp) = xs.variables_argp[1];
+			*(xs.getVarPointer(s)) = xs.variables_argp[1];
 
 		} else // No, read
-			s->r_acc = *(xs.addr.varp);
+			s->r_acc = *(xs.getVarPointer(s));
 
 		s->_executionStack.pop_back();
 	}
@@ -294,7 +287,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 // Returns a pointer to the TOS exec_stack element
 	assert(s);
 
-	reg_t *varp;
 	reg_t funcp;
 	int selector;
 	int argc;
@@ -310,8 +302,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		argc = validate_arithmetic(*argp);
 
 		if (argc > 0x800) { // More arguments than the stack could possibly accomodate for
-			CORE_ERROR("SEND", "More than 0x800 arguments to function call\n");
-			return NULL;
+			error("send_selector(): More than 0x800 arguments to function call");
 		}
 
 		// Check if a breakpoint is set on this method
@@ -341,6 +332,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		sciprintf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, s->_selectorNames[selector].c_str());
 #endif // VM_DEBUG_SEND
 
+		ObjVarRef varp;
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
 			// WORKAROUND: LSL6 tries to access the invalid 'keep' selector of the game object.
@@ -377,7 +369,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #endif
 				{ // Argument is supplied -> Selector should be set
 					if (print_send_action) {
-						reg_t oldReg = *varp;
+						reg_t oldReg = *varp.getPointer(s);
 						reg_t newReg = argp[1];
 
 						sciprintf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
@@ -396,7 +388,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			default:
 				sciprintf("Send error: Variable selector %04x in %04x:%04x called with %04x params\n", selector, PRINT_REG(send_obj), argc);
 				script_debug_flag = 1; // Enter debug mode
-				g_debug_seeking = g_debug_step_running = 0;
+				debugState.seeking = debugState.runningStep = 0;
 #endif
 			}
 			break;
@@ -454,8 +446,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	return &(s->_executionStack.back());
 }
 
-ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp, Selector selector, reg_t *address, int origin) {
-	ExecStack *xstack = add_exec_stack_entry(s, NULL_REG, address, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
+ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, StackPtr argp, Selector selector, const ObjVarRef& address, int origin) {
+	ExecStack *xstack = add_exec_stack_entry(s, NULL_REG, 0, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
 	// Store selector address in sp
 
 	xstack->addr.varp = address;
@@ -575,8 +567,7 @@ void run_vm(EngineState *s, int restoring) {
 	const byte *code_buf = NULL; // (Avoid spurious warning)
 
 	if (!local_script) {
-		script_error(s, __FILE__, __LINE__, "Program Counter gone astray");
-		return;
+		error("run_vm(): program counter gone astray (local_script pointer is null)");
 	}
 
 	if (!restoring)
@@ -606,14 +597,12 @@ void run_vm(EngineState *s, int restoring) {
 
 	while (1) {
 		byte opcode;
-		int old_pc_offset;
-		StackPtr old_sp;
 		byte opnumber;
 		int var_type; // See description below
 		int var_number;
 
-		old_pc_offset = xs->addr.pc.offset;
-		old_sp = xs->sp;
+		debugState.old_pc_offset = xs->addr.pc.offset;
+		debugState.old_sp = xs->sp;
 
 		if (s->_executionStackPosChanged) {
 			Script *scr;
@@ -688,12 +677,12 @@ void run_vm(EngineState *s, int restoring) {
 
 #ifndef DISABLE_VALIDATIONS
 		if (xs->sp < xs->fp)
-			script_error(s, "[VM] "__FILE__, __LINE__, "Stack underflow");
+			error("run_vm(): stack underflow");
 
 		variables_max[VAR_TEMP] = xs->sp - xs->fp;
 
 		if (xs->addr.pc.offset >= code_buf_size)
-			script_error(s, "[VM] "__FILE__, __LINE__, "Program Counter gone astray");
+			error("run_vm(): program counter gone astray");
 #endif
 
 		opcode = GET_OP_BYTE(); // Get opcode
@@ -1048,9 +1037,9 @@ void run_vm(EngineState *s, int restoring) {
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
 					// varselector access?
 					if (old_xs->argc) // write?
-						*(old_xs->addr.varp) = old_xs->variables_argp[1];
+						*(old_xs->getVarPointer(s)) = old_xs->variables_argp[1];
 					else // No, read
-						s->r_acc = *(old_xs->addr.varp);
+						s->r_acc = *(old_xs->getVarPointer(s));
 				}
 
 				// Not reached the base, so let's do a soft return
@@ -1106,7 +1095,7 @@ void run_vm(EngineState *s, int restoring) {
 			r_temp = get_class_address(s, opparams[0], SCRIPT_GET_LOAD, xs->addr.pc);
 
 			if (!r_temp.segment)
-				CORE_ERROR("VM", "Invalid superclass in object");
+				error("[VM]: Invalid superclass in object");
 			else {
 				s_temp = xs->sp;
 				xs->sp -= ((opparams[1] >> 1) + restadjust); // Adjust stack
@@ -1410,7 +1399,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		default:
-			script_error(s, __FILE__, __LINE__, "Illegal opcode");
+			error("run_vm(): illegal opcode %x", opnumber);
 
 		} // switch(opcode >> 1)
 
@@ -1424,16 +1413,7 @@ void run_vm(EngineState *s, int restoring) {
 					opnumber);
 		}
 //#endif
-
-#if 0
-		if (script_error_flag) {
-			g_debug_step_running = 0; // Stop multiple execution
-			g_debug_seeking = 0; // Stop special seeks
-			xs->addr.pc.offset = old_pc_offset;
-			xs->sp = old_sp;
-		} else
-#endif
-			++script_step_counter;
+		++script_step_counter;
 	}
 }
 
@@ -1507,7 +1487,7 @@ static SelectorType _lookup_selector_function(EngineState *s, int seg_id, Object
 	return kSelectorNone;
 }
 
-SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector selector_id, reg_t **vptr, reg_t *fptr) {
+SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector selector_id, ObjVarRef *varp, reg_t *fptr) {
 	Object *obj = obj_get(s, obj_location);
 	Object *species;
 	int index;
@@ -1518,9 +1498,8 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 		selector_id &= ~1;
 
 	if (!obj) {
-		CORE_ERROR("SLC-LU", "Attempt to send to non-object or invalid script");
-		sciprintf("Address was %04x:%04x\n", PRINT_REG(obj_location));
-		return kSelectorNone;
+		error("lookup_selector(): Attempt to send to non-object or invalid script. Address was %04x:%04x", 
+				PRINT_REG(obj_location));
 	}
 
 	if (IS_CLASS(obj))
@@ -1530,9 +1509,8 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 
 	if (!obj) {
-		CORE_ERROR("SLC-LU", "Error while looking up Species class");
-		sciprintf("Original address was %04x:%04x\n", PRINT_REG(obj_location));
-		sciprintf("Species address was %04x:%04x\n", PRINT_REG(obj->_variables[SCRIPT_SPECIES_SELECTOR]));
+		error("lookup_selector(): Error while looking up Species class.\nOriginal address was %04x:%04x. Species address was %04x:%04x\n", 
+			PRINT_REG(obj_location), PRINT_REG(obj->_variables[SCRIPT_SPECIES_SELECTOR]));
 		return kSelectorNone;
 	}
 
@@ -1540,15 +1518,17 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 	if (index >= 0) {
 		// Found it as a variable
-		if (vptr)
-			*vptr = &obj->_variables[index];
+		if (varp) {
+			varp->obj = obj_location;
+			varp->varindex = index;
+		}
 		return kSelectorVariable;
 	}
 
 	return _lookup_selector_function(s, obj_location.segment, obj, selector_id, fptr);
 }
 
-SegmentId script_get_segment(EngineState *s, int script_nr, int load) {
+SegmentId script_get_segment(EngineState *s, int script_nr, SCRIPT_GET load) {
 	SegmentId segment;
 
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
@@ -1570,31 +1550,24 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index) {
 	Script *script = NULL;
 
 #ifndef DISABLE_VALIDATIONS
-	if (!seg) {
-		CORE_ERROR("EXPORTS", "Script invalid or not loaded");
-		sciprintf("Script was script.%03d (0x%x)\n",
-		          script_nr, script_nr);
-		return NULL_REG;
-	}
+	if (!seg)
+		error("script_lookup_export(): script.%03d (0x%x) is invalid or not loaded",
+				script_nr, script_nr);
 #endif
 
 	script = script_locate_by_segment(s, seg);
 
 #ifndef DISABLE_VALIDATIONS
-	if (script
-	        && export_index < script->exports_nr
-	        && export_index >= 0)
+	if (script && export_index < script->exports_nr && export_index >= 0)
 #endif
 		return make_reg(seg, READ_LE_UINT16((byte *)(script->export_table + export_index)));
 #ifndef DISABLE_VALIDATIONS
 	else {
-		CORE_ERROR("EXPORTS", "Export invalid or script missing ");
 		if (!script)
-			sciprintf("(script.%03d missing)\n", script_nr);
+			error("script_lookup_export(): script.%03d missing", script_nr);
 		else
-			sciprintf("(script.%03d: Sought export %d/%d)\n",
-			          script_nr, export_index, script->exports_nr);
-		return NULL_REG;
+			error("script_lookup_export(): script.%03d: Sought invalid export %d/%d",
+			      script_nr, export_index, script->exports_nr);
 	}
 #endif
 }
@@ -1607,9 +1580,9 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 
 	*was_new = 1;
 
-	*script = s->resmgr->findResource(kResourceTypeScript, script_nr, 0);
+	*script = s->resmgr->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 	if (s->_version >= SCI_VERSION_1_1)
-		*heap = s->resmgr->findResource(kResourceTypeHeap, script_nr, 0);
+		*heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 
 	if (!*script || (s->_version >= SCI_VERSION_1_1 && !heap)) {
 		sciprintf("Script 0x%x requested but not found\n", script_nr);
@@ -1943,12 +1916,9 @@ static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
 	s->stack_base[1] = NULL_REG;
 }
 
-EngineState *g_EngineState = 0;
-
-static EngineState *_game_run(EngineState *s, int restoring) {
+static EngineState *_game_run(EngineState *&s, int restoring) {
 	EngineState *successor = NULL;
 	int game_is_finished = 0;
-	g_EngineState = s;
 	do {
 		s->_executionStackPosChanged = false;
 		run_vm(s, (successor || restoring) ? 1 : 0);
@@ -1976,7 +1946,6 @@ static EngineState *_game_run(EngineState *s, int restoring) {
 				script_free_vm_memory(s);
 				delete s;
 				s = successor;
-				g_EngineState = s;
 
 				if (script_abort_flag == 2) {
 					sciprintf("Restarting with replay()\n");
@@ -2012,7 +1981,7 @@ int game_run(EngineState **_s) {
 		return 1;
 	}
 	// and ENGAGE!
-	*_s = s = _game_run(s, 0);
+	_game_run(*_s, 0);
 
 	sciprintf(" Game::play() finished.\n");
 
@@ -2059,11 +2028,12 @@ const char *obj_get_name(EngineState *s, reg_t pos) {
 	return name;
 }
 
+
 void quit_vm() {
 	script_abort_flag = 1; // Terminate VM
-	g_debugstate_valid = 0;
-	g_debug_seeking = 0;
-	g_debug_step_running = 0;
+	debugState.isValid = false;
+	debugState.seeking = kDebugSeekNothing;
+	debugState.runningStep = 0;
 }
 
 void shrink_execution_stack(EngineState *s, uint size) {
@@ -2075,5 +2045,15 @@ void shrink_execution_stack(EngineState *s, uint size) {
 	s->_executionStack.erase(iter, s->_executionStack.end());
 }
 
+reg_t* ObjVarRef::getPointer(EngineState *s) const {
+	Object *o = obj_get(s, obj);
+	if (!o) return 0;
+	return &(o->_variables[varindex]);
+}
+
+reg_t* ExecStack::getVarPointer(EngineState *s) const {
+	assert(type == EXEC_STACK_TYPE_VARSELECTOR);
+	return addr.varp.getPointer(s);
+}
 
 } // End of namespace Sci

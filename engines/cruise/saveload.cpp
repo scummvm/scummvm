@@ -25,6 +25,7 @@
 
 #include "cruise/cruise_main.h"
 #include "cruise/cruise.h"
+#include "cruise/vars.h"
 
 #include "common/serializer.h"
 #include "common/savefile.h"
@@ -143,6 +144,7 @@ static void syncBasicInfo(Common::Serializer &s) {
 	s.syncAsSint16LE(flagCt);
 	s.syncAsSint16LE(var41);
 	s.syncAsSint16LE(playerMenuEnabled);
+	s.syncAsSint16LE(protectionCode);
 }
 
 static void syncBackgroundTable(Common::Serializer &s) {
@@ -608,7 +610,7 @@ static void syncCT(Common::Serializer &s) {
 
 static void DoSync(Common::Serializer &s) {
 	syncBasicInfo(s);
-	_vm->music().doSync(s);
+	_vm->sound().doSync(s);
 
 	syncPalette(s, newPal);
 	syncPalette(s, workpal);
@@ -818,6 +820,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 	printInfoBlackBox("Loading in progress...");
 
 	initVars();
+	_vm->sound().stopMusic();
 
 	// Skip over the savegame header
 	CruiseSavegameHeader header;
@@ -895,11 +898,15 @@ Common::Error loadSavegameData(int saveGameIdx) {
 				printf("Unsupported mono file load!\n");
 				ASSERT(0);
 				//loadFileMode1(filesDatabase[j].subData.name,filesDatabase[j].subData.var4);
-			} else */{
+			} else */
+			if (strlen(filesDatabase[i].subData.name) > 0) { 
 				loadFileRange(filesDatabase[i].subData.name, filesDatabase[i].subData.index, i, j - i);
-				i = j - 1;
+			} else {
+				filesDatabase[i].subData.ptr = NULL;
+				filesDatabase[i].subData.ptrMask = NULL;
 			}
 
+			i = j - 1;
 			lowMemory = lowMemorySave;
 		}
 	}
@@ -925,8 +932,6 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 		currentcellHead = currentcellHead->next;
 	}
-
-	//TODO: here, restart music
 
 	if (strlen(currentCtpName)) {
 		loadCtFromSave = 1;

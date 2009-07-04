@@ -96,7 +96,6 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 	_scrollOffsetX = 0;
 	_scrollOffsetY = 0;
 
-	_splitSurf = 0;
 	_splitHeight1 = 200;
 	_splitHeight2 = 0;
 	_splitStart = 0;
@@ -148,9 +147,8 @@ void Video::initPrimary(int16 mode) {
 	}
 }
 
-SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height,
-		int16 flags) {
-	SurfaceDesc *descPtr = 0;
+SurfaceDescPtr Video::initSurfDesc(int16 vidMode, int16 width, int16 height, int16 flags) {
+	SurfaceDescPtr descPtr;
 
 	if (flags & PRIMARY_SURFACE)
 		assert((width == _surfWidth) && (height == _surfHeight));
@@ -170,7 +168,7 @@ SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height,
 		if (!(flags & SCUMMVM_CURSOR))
 			width = (width + 7) & 0xFFF8;
 
-		descPtr = new SurfaceDesc(vidMode, width, height);
+		descPtr = SurfaceDescPtr(new SurfaceDesc(vidMode, width, height));
 	}
 	return descPtr;
 }
@@ -241,15 +239,15 @@ void Video::sparseRetrace(int max) {
 	_lastSparse = timeKey;
 }
 
-void Video::putPixel(int16 x, int16 y, int16 color, SurfaceDesc *dest) {
-	if ((x >= dest->getWidth()) || (x < 0) ||
-	    (y >= dest->getHeight()) || (y < 0))
+void Video::putPixel(int16 x, int16 y, int16 color, SurfaceDesc &dest) {
+	if ((x >= dest.getWidth()) || (x < 0) ||
+	    (y >= dest.getHeight()) || (y < 0))
 		return;
 
 	_videoDriver->putPixel(x, y, color, dest);
 }
 
-void Video::fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right,
+void Video::fillRect(SurfaceDesc &dest, int16 left, int16 top, int16 right,
 		int16 bottom, int16 color) {
 
 	if (_doRangeClamp) {
@@ -258,20 +256,20 @@ void Video::fillRect(SurfaceDesc *dest, int16 left, int16 top, int16 right,
 		if (top > bottom)
 			SWAP(top, bottom);
 
-		if ((left >= dest->getWidth()) || (right < 0) ||
-		    (top >= dest->getHeight()) || (bottom < 0))
+		if ((left >= dest.getWidth()) || (right < 0) ||
+		    (top >= dest.getHeight()) || (bottom < 0))
 			return;
 
-		left = CLIP(left, (int16) 0, (int16) (dest->getWidth() - 1));
-		top = CLIP(top, (int16) 0, (int16) (dest->getHeight() - 1));
-		right = CLIP(right, (int16) 0, (int16) (dest->getWidth() - 1));
-		bottom = CLIP(bottom, (int16) 0, (int16) (dest->getHeight() - 1));
+		left = CLIP(left, (int16)0, (int16)(dest.getWidth() - 1));
+		top = CLIP(top, (int16)0, (int16)(dest.getHeight() - 1));
+		right = CLIP(right, (int16)0, (int16)(dest.getWidth() - 1));
+		bottom = CLIP(bottom, (int16)0, (int16)(dest.getHeight() - 1));
 	}
 
 	_videoDriver->fillRect(dest, left, top, right, bottom, color);
 }
 
-void Video::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1,
+void Video::drawLine(SurfaceDesc &dest, int16 x0, int16 y0, int16 x1,
 		int16 y1, int16 color) {
 
 	if ((x0 == x1) || (y0 == y1))
@@ -286,7 +284,7 @@ void Video::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1,
  * version found in the Wikipedia article about the
  * "Bresenham's line algorithm" instead
  */
-void Video::drawCircle(SurfaceDesc *dest, int16 x0, int16 y0,
+void Video::drawCircle(SurfaceDesc &dest, int16 x0, int16 y0,
 		int16 radius, int16 color) {
 	int16 f = 1 - radius;
 	int16 ddFx = 0;
@@ -319,11 +317,11 @@ void Video::drawCircle(SurfaceDesc *dest, int16 x0, int16 y0,
 	}
 }
 
-void Video::clearSurf(SurfaceDesc *dest) {
-	Video::fillRect(dest, 0, 0, dest->getWidth() - 1, dest->getHeight() - 1, 0);
+void Video::clearSurf(SurfaceDesc &dest) {
+	Video::fillRect(dest, 0, 0, dest.getWidth() - 1, dest.getHeight() - 1, 0);
 }
 
-void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
+void Video::drawSprite(SurfaceDesc &source, SurfaceDesc &dest,
 	    int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
 	int16 destRight;
 	int16 destBottom;
@@ -334,8 +332,8 @@ void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 		if (top > bottom)
 			SWAP(top, bottom);
 
-		if ((left >= source->getWidth()) || (right < 0) ||
-		    (top >= source->getHeight()) || (bottom < 0))
+		if ((left >= source.getWidth()) || (right < 0) ||
+		    (top >= source.getHeight()) || (bottom < 0))
 			return;
 
 		if (left < 0) {
@@ -346,12 +344,12 @@ void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 			y -= top;
 			top = 0;
 		}
-		right = CLIP(right, (int16) 0, (int16) (source->getWidth() - 1));
-		bottom = CLIP(bottom, (int16) 0, (int16) (source->getHeight() - 1));
-		if (right - left >= source->getWidth())
-			right = left + source->getWidth() - 1;
-		if (bottom - top >= source->getHeight())
-			bottom = top + source->getHeight() - 1;
+		right = CLIP(right, (int16)0, (int16)(source.getWidth() - 1));
+		bottom = CLIP(bottom, (int16)0, (int16)(source.getHeight() - 1));
+		if (right - left >= source.getWidth())
+			right = left + source.getWidth() - 1;
+		if (bottom - top >= source.getHeight())
+			bottom = top + source.getHeight() - 1;
 
 		if (x < 0) {
 			left -= x;
@@ -361,30 +359,30 @@ void Video::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 			top -= y;
 			y = 0;
 		}
-		if ((x >= dest->getWidth()) || (left > right) ||
-		    (y >= dest->getHeight()) || (top > bottom))
+		if ((x >= dest.getWidth()) || (left > right) ||
+		    (y >= dest.getHeight()) || (top > bottom))
 			return;
 
 		destRight = x + right - left;
 		destBottom = y + bottom - top;
-		if (destRight >= dest->getWidth())
-			right -= destRight - dest->getWidth() + 1;
+		if (destRight >= dest.getWidth())
+			right -= destRight - dest.getWidth() + 1;
 
-		if (destBottom >= dest->getHeight())
-			bottom -= destBottom - dest->getHeight() + 1;
+		if (destBottom >= dest.getHeight())
+			bottom -= destBottom - dest.getHeight() + 1;
 	}
 
 	_videoDriver->drawSprite(source, dest, left, top, right, bottom, x, y, transp);
 }
 
-void Video::drawSpriteDouble(SurfaceDesc *source, SurfaceDesc *dest,
+void Video::drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest,
 	    int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) {
 
 	_videoDriver->drawSpriteDouble(source, dest, left, top, right, bottom, x, y, transp);
 }
 
 void Video::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
-		int16 color1, int16 color2, int16 transp, SurfaceDesc *dest) {
+		int16 color1, int16 color2, int16 transp, SurfaceDesc &dest) {
 	byte *dataPtr;
 	byte *itemData;
 	int16 itemSize;
@@ -417,25 +415,25 @@ void Video::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
 		item = 0;
 	}
 
-	_videoDriver->drawLetter((unsigned char) item, x, y, fontDesc, color1, color2, transp, dest);
+	_videoDriver->drawLetter((unsigned char)item, x, y, fontDesc, color1, color2, transp, dest);
 }
 
 void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height,
-		int16 x, int16 y, int16 transp, SurfaceDesc *dest) {
+		int16 x, int16 y, int16 transp, SurfaceDesc &dest) {
 
 	if (spriteUncompressor(sprBuf, width, height, x, y, transp, dest))
 		return;
 
-	_vm->validateVideoMode(dest->_vidMode);
+	_vm->validateVideoMode(dest._vidMode);
 
 	_videoDriver->drawPackedSprite(sprBuf, width, height, x, y, transp, dest);
 }
 
-void Video::drawPackedSprite(const char *path, SurfaceDesc *dest, int width) {
+void Video::drawPackedSprite(const char *path, SurfaceDesc &dest, int width) {
 	byte *data;
 
 	data = _vm->_dataIO->getData(path);
-	drawPackedSprite(data, width, dest->getHeight(), 0, 0, 0, dest);
+	drawPackedSprite(data, width, dest.getHeight(), 0, 0, 0, dest);
 	delete[] data;
 }
 

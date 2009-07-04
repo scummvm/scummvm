@@ -37,8 +37,9 @@ namespace Agi {
 #define USE_INTERPOLATION
 static bool g_useChorus = true;
 
-/* TODO: add support for variable sampling rate in the output device
- */
+//
+// TODO: add support for variable sampling rate in the output device
+//
 
 AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager) {
 	if (data == NULL || len < 2) // Check for too small resource or no resource at all
@@ -83,6 +84,7 @@ PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 const uint8 *PCjrSound::getVoicePointer(uint voiceNum) {
 	assert(voiceNum < 4);
 	uint16 voiceStartOffset = READ_LE_UINT16(_data + voiceNum * 2);
+
 	return _data + voiceStartOffset;
 }
 
@@ -99,11 +101,13 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) :
 			// of sample data although header says it should have 16384 bytes.
 			warning("Apple IIGS sample (%d) too short (%d bytes. Should be %d bytes). Using the part that's left",
 				resnum, tailLen, _header.sampleSize);
+
 			_header.sampleSize = (uint16) tailLen; // Use the part that's left
 		}
 
 		if (_header.pitch > 0x7F) { // Check if the pitch is invalid
 			warning("Apple IIGS sample (%d) has too high pitch (0x%02x)", resnum, _header.pitch);
+
 			_header.pitch &= 0x7F; // Apple IIGS AGI probably did it this way too
 		}
 
@@ -113,6 +117,7 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) :
 		// Convert sample data from 8-bit unsigned to 8-bit signed format
 		stream.seek(sampleStartPos);
 		_sample = new int8[_header.sampleSize];
+
 		if (_sample != NULL)
 			_isValid = SoundMgr::convertWave(stream, _sample, _header.sampleSize);
 	}
@@ -127,6 +132,7 @@ bool IIgsEnvelope::read(Common::SeekableReadStream &stream) {
 		seg[segNum].bp  = stream.readByte();
 		seg[segNum].inc = stream.readUint16LE();
 	}
+
 	return !stream.ioFailed();
 }
 
@@ -170,6 +176,7 @@ bool IIgsWaveInfo::finalize(Common::SeekableReadStream &uint8Wave) {
 	size = trueSize; // Set the true sample size
 
 	uint8Wave.seek(startPos); // Seek back to the stream's starting position
+
 	return true;
 }
 
@@ -177,6 +184,7 @@ bool IIgsOscillator::finalize(Common::SeekableReadStream &uint8Wave) {
 	for (uint i = 0; i < WAVES_PER_OSCILLATOR; i++)
 		if (!waves[i].finalize(uint8Wave))
 			return false;
+
 	return true;
 }
 
@@ -188,6 +196,7 @@ bool IIgsOscillatorList::read(Common::SeekableReadStream &stream, uint oscillato
 				return false;
 
 	count = oscillatorCount; // Set the oscillator count
+
 	return true;
 }
 
@@ -195,6 +204,7 @@ bool IIgsOscillatorList::finalize(Common::SeekableReadStream &uint8Wave) {
 	for (uint i = 0; i < count; i++)
 		if (!osc[i].finalize(uint8Wave))
 			return false;
+
 	return true;
 }
 
@@ -225,6 +235,7 @@ bool IIgsSampleHeader::read(Common::SeekableReadStream &stream) {
 	instrumentSize   = stream.readUint16LE();
 	sampleSize       = stream.readUint16LE();
 	// Read the instrument header *ignoring* its wave address info
+
 	return instrument.read(stream, true);
 }
 
@@ -287,7 +298,7 @@ static const int16 waveformRamp[WAVEFORM_SIZE] = {
 	0, -248, -240, -232, -224, -216, -208, -200,
 	-192, -184, -176, -168, -160, -152, -144, -136,
 	-128, -120, -112, -104, -96, -88, -80, -72,
-	-64, -56, -48, -40, -32, -24, -16, -8	/* Ramp up */
+	-64, -56, -48, -40, -32, -24, -16, -8	// Ramp up
 };
 
 static const int16 waveformSquare[WAVEFORM_SIZE] = {
@@ -298,7 +309,7 @@ static const int16 waveformSquare[WAVEFORM_SIZE] = {
 	-255, -230, -220, -220, -220, -220, -220, -220,
 	-220, -220, -220, -220, -220, -220, -220, -220,
 	-220, -220, -220, -220, -220, -220, -220, -220,
-	-220, -220, -220, -110, 0, 0, 0, 0	/* Square */
+	-220, -220, -220, -110, 0, 0, 0, 0	// Square
 };
 
 static const int16 waveformMac[WAVEFORM_SIZE] = {
@@ -356,7 +367,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	_vm->_game.sounds[resnum]->play();
 	_playingSound = resnum;
 
-	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d)", resnum, flag);
+	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d) type = %d", resnum, flag, type);
 
 	switch (type) {
 	case AGI_SOUND_SAMPLE: {
@@ -369,14 +380,17 @@ void SoundMgr::startSound(int resnum, int flag) {
 		break;
 	case AGI_SOUND_4CHN:
 		PCjrSound *pcjrSound = (PCjrSound *) _vm->_game.sounds[resnum];
-		/* Initialize channel info */
+
+		// Initialize channel info
 		for (i = 0; i < NUM_CHANNELS; i++) {
 			_chn[i].type = type;
 			_chn[i].flags = AGI_SOUND_LOOP;
+
 			if (_env) {
 				_chn[i].flags |= AGI_SOUND_ENVELOPE;
 				_chn[i].adsr = AGI_SOUND_ENV_ATTACK;
 			}
+
 			_chn[i].ins = _waveform;
 			_chn[i].size = WAVEFORM_SIZE;
 			_chn[i].ptr = pcjrSound->getVoicePointer(i % 4);
@@ -390,13 +404,14 @@ void SoundMgr::startSound(int resnum, int flag) {
 	memset(_sndBuffer, 0, BUFFER_SIZE << 1);
 	_endflag = flag;
 
-	/* Nat Budin reports that the flag should be reset when sound starts
-	 */
+	// Nat Budin reports that the flag should be reset when sound starts
 	_vm->setflag(_endflag, false);
 }
 
 void SoundMgr::stopSound() {
 	int i;
+
+	debugC(3, kDebugLevelSound, "stopSound() --> %d", _playingSound);
 
 	_endflag = -1;
 	if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
@@ -405,7 +420,8 @@ void SoundMgr::stopSound() {
 	}
 
 	if (_playingSound != -1) {
-		_vm->_game.sounds[_playingSound]->stop();
+		if (_vm->_game.sounds[_playingSound]) // sanity checking
+			_vm->_game.sounds[_playingSound]->stop();
 
 		if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
 			_gsSound.stopSounds();
@@ -424,9 +440,11 @@ void IIgsSoundMgr::stopSounds() {
 bool IIgsSoundMgr::playSampleSound(const IIgsSampleHeader &sampleHeader, const int8 *sample) {
 	stopSounds();
 	IIgsMidiChannel &channel = _midiChannels[kSfxMidiChannel];
+
 	channel.setInstrument(&sampleHeader.instrument, sample);
 	channel.setVolume(sampleHeader.volume);
 	channel.noteOn(sampleHeader.pitch, 64); // Use default velocity (i.e. 64)
+
 	return true;
 }
 
@@ -434,6 +452,7 @@ void IIgsMidiChannel::stopSounds() {
 	// Stops all sounds on this single MIDI channel
 	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
 		iter->stop();
+
 	_gsChannels.clear();
 }
 
@@ -458,6 +477,8 @@ int SoundMgr::initSound() {
 	case SOUND_EMU_APPLE2GS:
 		_disabledMidi = !loadInstruments();
 		break;
+	case SOUND_EMU_COCO3:
+		break;
 	}
 
 	report("Initializing sound:\n");
@@ -476,6 +497,7 @@ int SoundMgr::initSound() {
 
 void SoundMgr::deinitSound() {
 	debugC(3, kDebugLevelSound, "()");
+
 	_mixer->stopHandle(_soundHandle);
 }
 
@@ -483,7 +505,7 @@ void SoundMgr::stopNote(int i) {
 	_chn[i].adsr = AGI_SOUND_ENV_RELEASE;
 
 	if (g_useChorus) {
-		/* Stop chorus ;) */
+		// Stop chorus ;)
 		if (_chn[i].type == AGI_SOUND_4CHN &&
 			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 			stopNote(i + 4);
@@ -504,12 +526,15 @@ void SoundMgr::playNote(int i, int freq, int vol) {
 	_chn[i].adsr = AGI_SOUND_ENV_ATTACK;
 
 	if (g_useChorus) {
-		/* Add chorus ;) */
+		// Add chorus ;)
 		if (_chn[i].type == AGI_SOUND_4CHN &&
 			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
+
 			int newfreq = freq * 1007 / 1000;
+
 			if (freq == newfreq)
 				newfreq++;
+
 			playNote(i + 4, newfreq, vol * 2 / 3);
 		}
 	}
@@ -526,6 +551,7 @@ void SoundMgr::playMidiSound() {
 	if (_playingSound == -1 || _vm->_game.sounds[_playingSound] == NULL) {
 		warning("Error playing Apple IIGS MIDI sound resource");
 		_playing = false;
+
 		return;
 	}
 
@@ -543,11 +569,14 @@ void SoundMgr::playMidiSound() {
 		if (readByte == MIDI_BYTE_STOP_SEQUENCE) {
 			debugC(3, kDebugLevelSound, "End of MIDI sequence (Before reading delta-time)");
 			_playing = false;
+
 			midiObj->rewind();
+
 			return;
 		} else if (readByte == MIDI_BYTE_TIMER_SYNC) {
 			debugC(3, kDebugLevelSound, "Timer sync");
 			p++; // Jump over the timer sync byte as it's not needed
+
 			continue;
 		}
 
@@ -562,7 +591,9 @@ void SoundMgr::playMidiSound() {
 		if (*p == MIDI_BYTE_STOP_SEQUENCE) {
 			debugC(3, kDebugLevelSound, "End of MIDI sequence (After reading delta-time)");
 			_playing = false;
+
 			midiObj->rewind();
+
 			return;
 		}
 
@@ -597,6 +628,7 @@ void SoundMgr::playMidiSound() {
 		case MIDI_CMD_PITCH_WHEEL:
 			parm1 = *p++;
 			parm2 = *p++;
+
 			uint16 wheelPos = ((parm2 & 0x7F) << 7) | (parm1 & 0x7F); // 14-bit value
 			_gsSound.midiPitchWheel(wheelPos);
 			break;
@@ -675,22 +707,27 @@ void IIgsMidiChannel::removeStoppedSounds() {
 
 uint IIgsSoundMgr::activeSounds() const {
 	uint result = 0;
+
 	for (Common::Array<IIgsMidiChannel>::const_iterator iter = _midiChannels.begin(); iter != _midiChannels.end(); iter++)
 		result += iter->activeSounds();
+
 	return result;
 }
 
 uint IIgsMidiChannel::activeSounds() const {
 	uint result = 0;
+
 	for (const_iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
 		if (!iter->end)
 			result++;
+
 	return result;
 }
 
 void IIgsMidiChannel::setInstrument(const IIgsInstrumentHeader *instrument, const int8 *sample) {
 	_instrument = instrument;
 	_sample = sample;
+
 	// Set program on each Apple IIGS channel playing on this MIDI channel
 	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
 		iter->setInstrument(instrument, sample);
@@ -698,6 +735,7 @@ void IIgsMidiChannel::setInstrument(const IIgsInstrumentHeader *instrument, cons
 
 void IIgsMidiChannel::setVolume(uint8 volume) {
 	_volume = volume;
+
 	// Set volume on each Apple IIGS channel playing on this MIDI channel
 	for (iterator iter = _gsChannels.begin(); iter != _gsChannels.end(); iter++)
 		iter->setChannelVolume(volume);
@@ -713,9 +751,11 @@ void IIgsMidiChannel::noteOff(uint8 note, uint8 velocity) {
 
 void IIgsMidiChannel::noteOn(uint8 note, uint8 velocity) {
 	IIgsChannelInfo channel;
+
 	// Use the default channel volume and instrument
 	channel.setChannelVolume(_volume);
 	channel.setInstrument(_instrument, _sample);
+
 	// Set the note on and save the channel
 	channel.noteOn(note, velocity);
 	_gsChannels.push_back(channel);
@@ -742,11 +782,15 @@ void IIgsChannelInfo::noteOn(uint8 noteParam, uint8 velocity) {
 	this->origNote = noteParam;
 	this->startEnvVol = intToFrac(0);
 	rewind();
+
 	const IIgsWaveInfo *waveInfo = NULL;
+
 	for (uint i = 0; i < ins->oscList.count; i++)
 		if (ins->oscList(i).waves[0].top >= noteParam)
 			waveInfo = &ins->oscList(i).waves[0];
+
 	assert(waveInfo != NULL);
+
 	this->relocatedSample = this->unrelocatedSample + waveInfo->addr;
 	this->posAdd  = intToFrac(0);
 	this->note    = intToFrac(noteParam) + doubleToFrac(waveInfo->relPitch/256.0);
@@ -780,6 +824,35 @@ void SoundMgr::playSampleSound() {
 		_playing = _gsSound.activeSounds() > 0;
 }
 
+static int cocoFrequencies[] = {
+	 130,  138,  146,  155,  164,  174,  184,  195,  207,  220,  233,  246,
+	 261,  277,  293,  311,  329,  349,  369,  391,  415,  440,  466,  493,
+	 523,  554,  587,  622,  659,  698,  739,  783,  830,  880,  932,  987,
+	1046, 1108, 1174, 1244, 1318, 1396, 1479, 1567, 1661, 1760, 1864, 1975,
+	2093, 2217, 2349, 2489, 2637, 2793, 2959, 3135, 3322, 3520, 3729, 3951
+};
+
+void SoundMgr::playCoCoSound() {
+	int i = 0;
+	CoCoNote note;
+
+	do {
+		note.read(_chn[i].ptr);
+
+		if (note.freq != 0xff) {
+			playNote(0, cocoFrequencies[note.freq], note.volume);
+
+			uint32 start_time = _vm->_system->getMillis();
+
+			while (_vm->_system->getMillis() < start_time + note.duration) {
+                _vm->_system->updateScreen();
+
+                _vm->_system->delayMillis(10);
+			}
+		}
+	} while (note.freq != 0xff);
+}
+
 void SoundMgr::playAgiSound() {
 	int i;
 	AgiNote note;
@@ -808,7 +881,7 @@ void SoundMgr::playAgiSound() {
 				_chn[i].env = 0;
 
 				if (g_useChorus) {
-					/* chorus */
+					// chorus
 					if (_chn[i].type == AGI_SOUND_4CHN && _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 						_chn[i + 4].vol = 0;
 						_chn[i + 4].env = 0;
@@ -836,6 +909,8 @@ void SoundMgr::playSound() {
 				playSampleSound();
 			}
 		}
+	} else if (_vm->_soundemu == SOUND_EMU_COCO3) {
+		playCoCoSound();
 	} else {
 		//debugC(3, kDebugLevelSound, "playSound: Trying to play a PCjr 4-channel sound");
 		playAgiSound();
@@ -929,7 +1004,7 @@ uint32 SoundMgr::mixSound(void) {
 		}
 		_gsSound.removeStoppedSounds();
 		return IIGS_BUFFER_SIZE;
-	} /* else ... */
+	} // else ...
 
 	// Handle PCjr 4-channel sound mixing here
 	for (c = 0; c < NUM_CHANNELS; c++) {
@@ -954,7 +1029,7 @@ uint32 SoundMgr::mixSound(void) {
 
 				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
 				// needs fixing, or remove it!
-				/* FIXME */
+				// FIXME
 				if (_chn[c].flags & AGI_SOUND_LOOP) {
 					p %= _chn[c].size << 8;
 				} else {
@@ -968,7 +1043,7 @@ uint32 SoundMgr::mixSound(void) {
 			}
 			_chn[c].phase = p;
 		} else {
-			/* Add white noise */
+			// Add white noise
 			for (i = 0; i < BUFFER_SIZE; i++) {
 				b = _vm->_rnd->getRandomNumber(255) - 128;
 				_sndBuffer[i] += (b * m) >> 4;
@@ -977,7 +1052,7 @@ uint32 SoundMgr::mixSound(void) {
 
 		switch (_chn[c].adsr) {
 		case AGI_SOUND_ENV_ATTACK:
-			/* not implemented */
+			// not implemented
 			_chn[c].adsr = AGI_SOUND_ENV_DECAY;
 			break;
 		case AGI_SOUND_ENV_DECAY:
@@ -1040,6 +1115,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::FSNode &exePath, const II
 
 		// Check instrument set's md5sum
 		data->seek(exeInfo.instSetStart);
+
 		char md5str[32+1];
 		Common::md5_file_string(*data, md5str, exeInfo.instSet.byteCount);
 		if (scumm_stricmp(md5str, exeInfo.instSet.md5)) {
@@ -1053,6 +1129,7 @@ bool IIgsSoundMgr::loadInstrumentHeaders(const Common::FSNode &exePath, const II
 		// Load the instruments
 		_instruments.clear();
 		_instruments.reserve(exeInfo.instSet.instCount);
+
 		IIgsInstrumentHeader instrument;
 		for (uint i = 0; i < exeInfo.instSet.instCount; i++) {
 			if (!instrument.read(*data)) {
@@ -1102,6 +1179,7 @@ bool IIgsSoundMgr::loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInf
 				"Please report the information on the previous line to the ScummVM team.\n" \
 				"Using the wave file as it is - music may sound weird", md5str, exeInfo.exePrefix);
 		}
+
 		uint8Wave->seek(0); // Seek wave to its start
 		// Convert the wave file from 8-bit unsigned to 8-bit signed and save the result
 		_wave.resize(uint8Wave->size());

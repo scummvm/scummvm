@@ -234,14 +234,24 @@ int main()
 int DCLauncherDialog::runModal()
 {
   char *base = NULL, *dir = NULL;
+  Common::Language language = Common::UNK_LANG;
+  Common::Platform platform = Common::kPlatformUnknown;
 
-  if (!selectGame(base, dir, icon))
+  if (!selectGame(base, dir, language, platform, icon))
     g_system->quit();
 
   // Set the game path.
   ConfMan.addGameDomain(base);
   if (dir != NULL)
     ConfMan.set("path", dir, base);
+
+  // Set the game language.
+  if (language != Common::UNK_LANG)
+    ConfMan.set("language", Common::getLanguageCode(language), base);
+
+  // Set the game platform.
+  if (platform != Common::kPlatformUnknown)
+    ConfMan.set("platform", Common::getPlatformCode(platform), base);
 
   // Set the target.
   ConfMan.setActiveDomain(base);

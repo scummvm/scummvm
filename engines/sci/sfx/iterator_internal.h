@@ -49,7 +49,7 @@ enum {
 struct SongIteratorChannel {
 
 	int state;	//!< State of this song iterator channel
-	int offset;     //!< Offset into the data chunk */
+	int offset;	//!< Offset into the data chunk */
 	int end;	//!< Last allowed byte in track */
 	int id;		//!< Some channel ID */
 
@@ -64,14 +64,14 @@ struct SongIteratorChannel {
 	int loop_offset;
 	int initial_offset;
 
-	int playmask; //!< Active playmask (MIDI channels to play in here) */
-	int notes_played; //!< #of notes played since the last loop start */
-	int loop_timepos; //!< Total delay for this channel's loop marker */
-	int total_timepos; //!< Number of ticks since the beginning, ignoring loops */
-	int timepos_increment; //!< Number of ticks until the next command (to add) */
+	int playmask;			//!< Active playmask (MIDI channels to play in here) */
+	int notes_played;		//!< #of notes played since the last loop start */
+	int loop_timepos;		//!< Total delay for this channel's loop marker */
+	int total_timepos;		//!< Number of ticks since the beginning, ignoring loops */
+	int timepos_increment;	//!< Number of ticks until the next command (to add) */
 
-	int saw_notes;  //!< Bitmask of channels we have currently played notes on */
-	byte last_cmd;	//!< Last operation executed, for running status */
+	int saw_notes;			//!< Bitmask of channels we have currently played notes on */
+	byte last_cmd;			//!< Last operation executed, for running status */
 
 public:
 	void init(int id, int offset, int end);
@@ -80,21 +80,24 @@ public:
 
 class BaseSongIterator : public SongIterator {
 public:
-	int polyphony[MIDI_CHANNELS]; //!< # of simultaneous notes on each
-	int importance[MIDI_CHANNELS]; //!< priority rating for each channel, 0 means unrated.
+	int _polyphony[MIDI_CHANNELS];	//!< # of simultaneous notes on each
+	int _importance[MIDI_CHANNELS];	//!< priority rating for each channel, 0 means unrated.
 
 
-	int ccc; //!< Cumulative cue counter, for those who need it
-	byte resetflag; //!< for 0x4C -- on DoSound StopSound, do we return to start?
-	int _deviceId; //!< ID of the device we generating events for
-	int active_channels; //!< Number of active channels
+	int _ccc;					//!< Cumulative cue counter, for those who need it
+	byte _resetflag;			//!< for 0x4C -- on DoSound StopSound, do we return to start?
+	int _deviceId;				//!< ID of the device we generating events for
+	int _numActiveChannels;		//!< Number of active channels
 	Common::Array<byte> _data;	//!< Song data
 
-	int loops; //!< Number of loops remaining
-	int recover_delay;
+	int _loops; //!< Number of loops remaining
 
 public:
 	BaseSongIterator(byte *data, uint size, songit_id_t id);
+
+protected:
+	int parseMidiCommand(byte *buf, int *result, SongIteratorChannel *channel, int flags);
+	int processMidi(byte *buf, int *result, SongIteratorChannel *channel, int flags);
 };
 
 /********************************/
@@ -103,7 +106,7 @@ public:
 
 class Sci0SongIterator : public BaseSongIterator {
 public:
-	SongIteratorChannel channel;
+	SongIteratorChannel _channel;
 
 public:
 	Sci0SongIterator(byte *data, uint size, songit_id_t id);
@@ -142,12 +145,12 @@ public:
 	/* Invariant: Whenever channels[i].delay == CHANNEL_DELAY_MISSING,
 	** channel_offset[i] points to a delta time object. */
 
-	bool _initialised; /* Whether the MIDI channel setup has been initialised */
-	int _numChannels; /* Number of channels actually used */
+	bool _initialised; /**!< Whether the MIDI channel setup has been initialised */
+	int _numChannels; /**!< Number of channels actually used */
 	Common::List<Sci1Sample> _samples;
-	int _numLoopedChannels; /* Number of channels that are ready to loop */
+	int _numLoopedChannels; /**!< Number of channels that are ready to loop */
 
-	int _delayRemaining; /* Number of ticks that haven't been polled yet */
+	int _delayRemaining; /**!< Number of ticks that haven't been polled yet */
 	int _hold;
 
 public:
@@ -162,6 +165,9 @@ public:
 	SongIterator *clone(int delta);
 
 private:
+	int initSample(const int offset);
+	int initSong();
+
 	int getSmallestDelta() const;
 
 	void updateDelta(int delta);
@@ -186,7 +192,7 @@ private:
 class FastForwardSongIterator : public SongIterator {
 protected:
 	SongIterator *_delegate;
-	int _delta; /**< Remaining time */
+	int _delta; /**!< Remaining time */
 
 public:
 	FastForwardSongIterator(SongIterator *capsit, int delta);
@@ -208,8 +214,8 @@ enum {
 	TEE_RIGHT = 1,
 	TEE_LEFT_ACTIVE  = (1<<0),
 	TEE_RIGHT_ACTIVE = (1<<1),
-	TEE_LEFT_READY  = (1<<2), /**< left result is ready */
-	TEE_RIGHT_READY = (1<<3), /**< right result is ready */
+	TEE_LEFT_READY  = (1<<2), /**!< left result is ready */
+	TEE_RIGHT_READY = (1<<3), /**!< right result is ready */
 	TEE_LEFT_PCM = (1<<4),
 	TEE_RIGHT_PCM = (1<<5)
 };
@@ -221,7 +227,7 @@ class TeeSongIterator : public SongIterator {
 public:
 	int _status;
 
-	bool _readyToMorph; /* One of TEE_MORPH_* above */
+	bool _readyToMorph; /**!< One of TEE_MORPH_* above */
 
 	struct {
 		SongIterator *it;
@@ -229,8 +235,8 @@ public:
 		int result;
 		int retval;
 
-		byte channel_remap[MIDI_CHANNELS];
 		/* Remapping for channels */
+		byte channel_remap[MIDI_CHANNELS];
 
 	} _children[2];
 

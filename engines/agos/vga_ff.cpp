@@ -70,7 +70,7 @@ int AGOSEngine::getScale(int16 y, int16 x) {
 
 void AGOSEngine::vc75_setScale() {
 	_baseY = vcReadNextWord();
-	_scale = (float)vcReadNextWord() / 1000000.;
+	_scale = vcReadNextWord() / 1000000.0f;
 }
 
 void AGOSEngine::vc76_setScaleXOffs() {

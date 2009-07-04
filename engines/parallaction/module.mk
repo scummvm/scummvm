@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	debug.o \
 	detection.o \
 	dialogue.o \
+	disk.o \
 	disk_br.o \
 	disk_ns.o \
 	exec.o \
@@ -18,7 +19,6 @@ MODULE_OBJS := \
 	gui.o \
 	gui_br.o \
 	gui_ns.o \
-	iff.o \
 	input.o \
 	inventory.o \
 	objects.o \

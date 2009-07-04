@@ -233,7 +233,7 @@ void Goblin::drawObjects(void) {
 		if (objDesc->toRedraw == 0)
 			continue;
 
-		_vm->_video->drawSprite(_vm->_mult->_animSurf, _vm->_draw->_backSurface,
+		_vm->_video->drawSprite(*_vm->_mult->_animSurf, *_vm->_draw->_backSurface,
 		    objDesc->left, objDesc->top, objDesc->right,
 		    objDesc->bottom, objDesc->left, objDesc->top, 0);
 

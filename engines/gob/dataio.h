@@ -80,6 +80,7 @@ public:
 	byte *getUnpackedData(const char *name);
 	void closeData(int16 handle);
 	int16 openData(const char *path);
+	bool existData(const char *path);
 	DataStream *openAsStream(int16 handle, bool dispose = false);
 
 	int32 getDataSize(const char *name);
@@ -92,7 +93,7 @@ public:
 protected:
 	Common::File _filesHandles[MAX_FILES];
 	struct ChunkDesc *_dataFiles[MAX_DATA_FILES];
-	int16 _numDataChunks[MAX_DATA_FILES];
+	uint16 _numDataChunks[MAX_DATA_FILES];
 	int16 _dataFileHandles[MAX_DATA_FILES];
 	bool _dataFileItk[MAX_DATA_FILES];
 	int32 _chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];

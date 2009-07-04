@@ -247,7 +247,7 @@ void LoLEngine::timerUpdatePortraitAnimations(int skipUpdate) {
 }
 
 void LoLEngine::timerUpdateLampState(int timerNum) {
-	if ((_gameFlags[15] & 0x800) && (_gameFlags[15] & 0x400) && _lampOilStatus > 0)
+	if ((_flagsTable[31] & 0x08) && (_flagsTable[31] & 0x04) && _lampOilStatus > 0)
 		_lampOilStatus--;
 }
 

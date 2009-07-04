@@ -31,6 +31,7 @@
 #include "gob/util.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/palanim.h"
 #include "gob/scenery.h"
 #include "gob/video.h"
@@ -85,7 +86,6 @@ Mult::Mult(GobEngine *vm) : _vm(vm) {
 	_palFadingGreen = 0;
 	_palFadingBlue = 0;
 
-	_animSurf = 0;
 	_animLeft = 0;
 	_animTop = 0;
 	_animWidth = 0;
@@ -111,7 +111,7 @@ Mult::~Mult() {
 
 void Mult::initAll(void) {
 	_objects = 0;
-	_animSurf = 0;
+	_animSurf.reset();
 	_renderData = 0;
 
 	_vm->_scenery->init();
@@ -145,7 +145,7 @@ void Mult::freeMult() {
 	_renderObjs = 0;
 	_orderArray = 0;
 
-	_animSurf = 0;
+	_animSurf.reset();
 	_vm->_draw->freeSprite(22);
 }
 
@@ -237,7 +237,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			_animArrayData = 0;
 			_orderArray = 0;
 
-			_animSurf = 0;
+			_animSurf.reset();
 			_vm->_draw->freeSprite(22);
 
 			_animDataAllocated = false;
@@ -252,8 +252,6 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 }
 
 void Mult::drawText(bool &stop, bool &stopNoClear) {
-	byte *savedIP;
-
 	int16 cmd;
 	for (_index = 0; _index < _multData->textKeysCount; _index++) {
 		if (_multData->textKeys[_index].frame != _frame)
@@ -266,9 +264,10 @@ void Mult::drawText(bool &stop, bool &stopNoClear) {
 			stopNoClear = true;
 			_multData->frameStart = 0;
 		} else if (cmd == 3) {
+			warning("Mult::drawText, cmd == 3");
 			stop = false;
-			savedIP = _vm->_global->_inter_execPtr;
-			_vm->_global->_inter_execPtr = _multData->textKeys[_index].script;
+//			uint32 startPos = _vm->_game->_script->pos();
+//			_vm->_global->_inter_execPtr = _multData->textKeys[_index].script;
 		}
 	}
 }

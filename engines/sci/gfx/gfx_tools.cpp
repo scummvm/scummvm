@@ -163,7 +163,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 	int size;
 
 	if (pixmap->index_data) {
-		GFXWARN("Attempt to allocate pixmap index data twice!\n");
+		warning("[GFX] Attempt to allocate pixmap index data twice");
 		return pixmap;
 	}
 
@@ -180,7 +180,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_index_data(gfx_pixmap_t *pixmap) {
 
 gfx_pixmap_t *gfx_pixmap_free_index_data(gfx_pixmap_t *pixmap) {
 	if (!pixmap->index_data) {
-		GFXWARN("Attempt to free pixmap index data twice!\n");
+		warning("[GFX] Attempt to free pixmap index data twice");
 		return pixmap;
 	}
 
@@ -193,7 +193,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 	int size;
 
 	if (pixmap->data) {
-		GFXWARN("Attempt to allocate pixmap data twice!\n");
+		warning("[GFX] Attempt to allocate pixmap data twice");
 		return pixmap;
 	}
 
@@ -215,7 +215,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 
 gfx_pixmap_t *gfx_pixmap_free_data(gfx_pixmap_t *pixmap) {
 	if (!pixmap->data) {
-		GFXWARN("Attempt to free pixmap data twice!\n");
+		warning("[GFX] Attempt to free pixmap data twice");
 		return pixmap;
 	}
 

@@ -128,7 +128,7 @@ enum GameFeatures {
 };
 
 /* SCUMM Debug Channels */
-void debugC(int level, const char *s, ...);
+void debugC(int level, const char *s, ...) GCC_PRINTF(2, 3);
 
 enum {
 	DEBUG_GENERAL	=	1 << 0,		// General debug
@@ -528,7 +528,7 @@ protected:
 	void versionDialog();
 	void scummMenuDialog();
 
-	char displayMessage(const char *altButton, const char *message, ...);
+	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
 
 	byte _fastMode;
 
@@ -543,15 +543,13 @@ public:
 	// VAR is a wrapper around scummVar, which attempts to include additional
 	// useful information should an illegal var access be detected.
 	#define VAR(x)	scummVar(x, #x, __FILE__, __LINE__)
-	int32& scummVar(byte var, const char *varName, const char *file, int line)
-	{
+	int32& scummVar(byte var, const char *varName, const char *file, int line) {
 		if (var == 0xFF) {
 			error("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}
 		return _scummVars[var];
 	}
-	int32 scummVar(byte var, const char *varName, const char *file, int line) const
-	{
+	int32 scummVar(byte var, const char *varName, const char *file, int line) const {
 		if (var == 0xFF) {
 			error("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}

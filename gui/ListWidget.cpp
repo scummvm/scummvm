@@ -33,8 +33,8 @@
 
 namespace GUI {
 
-ListWidget::ListWidget(GuiObject *boss, const String &name)
-	: EditableWidget(boss, name), CommandSender(boss) {
+ListWidget::ListWidget(GuiObject *boss, const String &name, uint32 cmd)
+	: EditableWidget(boss, name), _cmd(cmd) {
 
 	_scrollBar = NULL;
 	_textWidth = NULL;
@@ -60,10 +60,12 @@ ListWidget::ListWidget(GuiObject *boss, const String &name)
 
 	// FIXME: This flag should come from widget definition
 	_editable = true;
+
+	_quickSelect = true;
 }
 
-ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
-	: EditableWidget(boss, x, y, w, h), CommandSender(boss) {
+ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
+	: EditableWidget(boss, x, y, w, h), _cmd(cmd) {
 
 	_scrollBar = NULL;
 	_textWidth = NULL;
@@ -105,11 +107,14 @@ Widget *ListWidget::findWidget(int x, int y) {
 void ListWidget::setSelected(int item) {
 	assert(item >= -1 && item < (int)_list.size());
 
+	// We only have to do something if the widget is enabled and the selection actually changes
 	if (isEnabled() && _selectedItem != item) {
 		if (_editMode)
 			abortEditMode();
 
 		_selectedItem = item;
+
+		// Notify clients that the selection changed.
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 
 		_currentPos = _selectedItem - _entriesPerPage / 2;
@@ -121,8 +126,13 @@ void ListWidget::setSelected(int item) {
 void ListWidget::setList(const StringList &list) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
-	int size = list.size();
+
+	// Copy everything
+	_dataList = list;
 	_list = list;
+	_filter.clear();
+
+	int size = list.size();
 	if (_currentPos >= size)
 		_currentPos = size - 1;
 	if (_currentPos < 0)
@@ -130,6 +140,15 @@ void ListWidget::setList(const StringList &list) {
 	_selectedItem = -1;
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	scrollBarRecalc();
+}
+
+void ListWidget::append(const String &s) {
+	_dataList.push_back(s);
+	_list.push_back(s);
+
+	setFilter(_filter, false);
+
 	scrollBarRecalc();
 }
 
@@ -223,8 +242,6 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
-		// TODO: Maybe this should be off by default, and instead we add a
-		// method "enableQuickSelect()" or so ?
 		uint32 time = getMillis();
 		if (_quickSelectTime < time) {
 			_quickSelectStr = (char)state.ascii;
@@ -233,26 +250,29 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 		}
 		_quickSelectTime = time + 300;	// TODO: Turn this into a proper constant (kQuickSelectDelay ?)
 
-
-		// FIXME: This is bad slow code (it scans the list linearly each time a
-		// key is pressed); it could be much faster. Only of importance if we have
-		// quite big lists to deal with -- so for now we can live with this lazy
-		// implementation :-)
-		int newSelectedItem = 0;
-		int bestMatch = 0;
-		bool stop;
-		for (StringList::const_iterator i = _list.begin(); i != _list.end(); ++i) {
-			const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop);
-			if (match > bestMatch || stop) {
-				_selectedItem = newSelectedItem;
-				bestMatch = match;
-				if (stop)
-					break;
+		if (_quickSelect) {
+			// FIXME: This is bad slow code (it scans the list linearly each time a
+			// key is pressed); it could be much faster. Only of importance if we have
+			// quite big lists to deal with -- so for now we can live with this lazy
+			// implementation :-)
+			int newSelectedItem = 0;
+			int bestMatch = 0;
+			bool stop;
+			for (StringList::const_iterator i = _list.begin(); i != _list.end(); ++i) {
+				const int match = matchingCharsIgnoringCase(i->c_str(), _quickSelectStr.c_str(), stop);
+				if (match > bestMatch || stop) {
+					_selectedItem = newSelectedItem;
+					bestMatch = match;
+					if (stop)
+						break;
+				}
+				newSelectedItem++;
 			}
-			newSelectedItem++;
-		}
 
-		scrollToCurrent();
+			scrollToCurrent();
+		} else {
+			sendCommand(_cmd, 0);
+		}
 	} else if (_editMode) {
 		// Class EditableWidget handles all text editing related key presses for us
 		handled = EditableWidget::handleKeyDown(state);
@@ -445,6 +465,18 @@ void ListWidget::scrollToCurrent() {
 	_scrollBar->recalc();
 }
 
+void ListWidget::scrollToEnd() {
+	if (_currentPos + _entriesPerPage < (int)_list.size()) {
+		_currentPos = _list.size() - _entriesPerPage;
+	} else {
+		return;
+	}
+
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
+	_scrollBar->draw();
+}
+
 void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
@@ -509,6 +541,72 @@ void ListWidget::reflowLayout() {
 		_scrollBar->resize(_w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
 		scrollBarRecalc();
 		scrollToCurrent();
+	}
+}
+
+void ListWidget::setFilter(const String &filter, bool redraw) {
+	// FIXME: This method does not deal correctly with edit mode!
+	// Until we fix that, let's make sure it isn't called while editing takes place
+	assert(!_editMode);
+
+	String filt = filter;
+	filt.toLowercase();
+
+	if (_filter == filt) // Filter was not changed
+		return;
+
+	_filter = filt;
+
+	if (_filter.empty()) {
+		// No filter -> display everything
+		_list = _dataList;
+	} else {
+		// Restrict the list to everything which contains all words in _filter
+		// as substrings, ignoring case.
+		
+		Common::StringTokenizer tok(filter);
+		String tmp;
+		int n = 0;
+
+		_list.clear();
+		_listIndex.clear();
+
+		for (StringList::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+			tmp = *i;
+			tmp.toLowercase();
+			bool matches = true;
+			tok.reset();
+			while (!tok.empty()) {
+				if (!tmp.contains(tok.nextToken())) {
+					matches = false;
+					break;
+				}
+			}
+
+			if (matches) {
+				_list.push_back(*i);
+				_listIndex.push_back(n);
+			}
+		}
+	}
+
+	_currentPos = 0;
+	_selectedItem = -1;
+
+	if (redraw) {
+		scrollBarRecalc();
+		// Redraw the whole dialog. This is annoying, as this might be rather
+		// expensive when really only the list widget and its scroll bar area
+		// to be redrawn. However, since the scrollbar might change its
+		// visibility status, and the list its width, we cannot just redraw
+		// the two.
+		// TODO: A more efficient (and elegant?) way to handle this would be to
+		// introduce a kind of "BoxWidget" or "GroupWidget" which defines a
+		// rectangular region and subwidgets can be placed within it.
+		// Such a widget could also (optionally) draw a border (or even different
+		// kinds of borders) around the objects it groups; and also a 'title'
+		// (I am borrowing these "ideas" from the NSBox class in Cocoa :).
+		_boss->draw();
 	}
 }
 

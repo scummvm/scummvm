@@ -471,7 +471,16 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 
 void OSystem_SDL_Symbian::setWindowCaption(const char *caption) {
 	OSystem_SDL::setWindowCaption(caption);
+}
+
+void OSystem_SDL_Symbian::engineInit() {
+	// Check mappings for the engine just started
 	check_mappings();
+}
+
+void OSystem_SDL_Symbian::engineDone() {
+	// Need to reset engine to basic state after an engine has been running
+	GUI::Actions::Instance()->initInstanceMain(this);
 }
 
 void OSystem_SDL_Symbian::check_mappings() {

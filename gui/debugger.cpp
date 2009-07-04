@@ -39,7 +39,7 @@ Debugger::Debugger() {
 	_isAttached = false;
 	_errStr = NULL;
 	_firstTime = true;
-	_debuggerDialog = new GUI::ConsoleDialog(1.0, 0.67F);
+	_debuggerDialog = new GUI::ConsoleDialog(1.0f, 0.67f);
 	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
 	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
 

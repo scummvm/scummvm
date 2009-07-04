@@ -23,7 +23,6 @@
  *
  */
 
-/* Graphical state management */
 
 #ifndef SCI_GFX_GFX_WIDGETS_H
 #define SCI_GFX_GFX_WIDGETS_H
@@ -34,6 +33,8 @@
 #include "sci/gfx/operations.h"
 
 namespace Sci {
+/** @name Widget Graphical State Management */
+/** @{ */
 
 struct GfxState;
 struct GfxBox;
@@ -155,241 +156,324 @@ extern Common::Point gfxw_point_zero;
 
 /*-- Primitive types --*/
 
+/**
+ * Creates a new box
+ *
+ * The graphics state, if non-NULL, is used here for some optimizations.
+ *
+ * @param[in] state			The (optional) state
+ * @param[in] area			The box's dimensions, relative to its container
+ * 							widget
+ * @param[in] color1		The primary color
+ * @param[in] color2		The secondary color (ignored if shading is disabled)
+ * @param[in] shade_type	The shade type for the box
+ * @return					The resulting box widget
+ */
 GfxBox *gfxw_new_box(GfxState *state, rect_t area, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type);
-/* Creates a new box
-** Parameters: (GfxState *) state: The (optional) state
-**             (rect_t) area: The box's dimensions, relative to its container widget
-**             (gfx_color_t) color1: The primary color
-**             (gfx_color_t) color1: The secondary color (ignored if shading is disabled)
-**             (gfx_box_shade_t) shade_type: The shade type for the box
-** Returns   : (GfxBox *) The resulting box widget
-** The graphics state- if non-NULL- is used here for some optimizations.
-*/
 
-GfxPrimitive *gfxw_new_rect(rect_t rect, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style);
-/* Creates a new rectangle
-** Parameters: (rect_t) rect: The rectangle area
-**             (gfx_color_t) color: The rectangle's color
-**             (gfx_line_mode_t) line_mode: The line mode for the lines that make up the rectangle
-**             (gfx_line_style_t) line_style: The rectangle's lines' style
-** Returns   : (GfxPrimitive *) The newly allocated rectangle widget (a Primitive)
-*/
+/**
+ * Creates a new rectangle
+ *
+ * @param[in] rect			The rectangle area
+ * @param[in] color			The rectangle's color
+ * @param[in] line_mode		The line mode for the lines that make up the
+ * 							rectangle
+ * @param[in] line_style	The rectangle's lines' style
+ * @return					The newly allocated rectangle widget (a Primitive)
+ */
+GfxPrimitive *gfxw_new_rect(rect_t rect, gfx_color_t color,
+	gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 
-GfxPrimitive *gfxw_new_line(Common::Point start, Common::Point end, gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style);
-/* Creates a new line
-** Parameters: (Common::Point * Common::Point) (start, line): The line origin and end point
-**             (gfx_color_t) color: The line's color
-**             (gfx_line_mode_t) line_mode: The line mode to use for drawing
-**             (gfx_line_style_t) line_style: The line style
-** Returns   : (GfxPrimitive *) The newly allocated line widget (a Primitive)
-*/
+/**
+ * Creates a new line
+ *
+ * @param[in] start			The line's origin
+ * @param[in] end			The line's end point
+ * @param[in] color			The line's color
+ * @param[in] line_mode		The line mode to use for drawing
+ * @param[in] line_style	The line style
+ * @return					The newly allocated line widget (a Primitive)
+ */
+GfxPrimitive *gfxw_new_line(Common::Point start, Common::Point end,
+	gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style);
+
+/** View flags */
+enum {
+	GFXW_VIEW_FLAG_STATIC = (1 << 0), /**< Whether the view should be static */
+	GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET = (1 << 1) /**< Whether the view should _not_ apply its x/y offset modifyers */
+};
+
+/**
+ * Creates a new view (a cel, actually)
+ *
+ * @param[in] state		The graphics state
+ * @param[in] pos		The position to place the view at
+ * @param[in] view		The global cel ID
+ * @param[in] loop		The global cel ID
+ * @param[in] cel		The global cel ID
+ * @param[in] palette	The palette to use
+ * @param[in] priority	The priority to use for drawing, or -1 for none
+ * @param[in] control	The value to write to the control map, or -1 for none
+ * @param[in] halign	Horizontal cel alignment
+ * @param[in] valign	Vertical cel alignment
+ * @param[in] flags		Any combination of GFXW_VIEW_FLAGs
+ * @return				A newly allocated cel according to the specs
+ */
+GfxView *gfxw_new_view(GfxState *state, Common::Point pos, int view, int loop,
+	int cel, int palette, int priority, int control, gfx_alignment_t halign,
+	gfx_alignment_t valign, int flags);
 
 
-/* Whether the view should be static */
-#define GFXW_VIEW_FLAG_STATIC (1 << 0)
+/**
+ * Creates a new dyn view
+ *
+ * Dynamic views are non-pic views with a unique global identifyer. This allows for drawing optimizations when they move or change shape.
+ *
+ * @param[in] state		The graphics state
+ * @param[in] pos		The position to place the dynamic view at
+ * @param[in] z			The z coordinate
+ * @param[in] view		The global cel ID
+ * @param[in] loop		The global cel ID
+ * @param[in] cel		The global cel ID
+ * @param[in] palette	The palette to use
+ * @param[in] priority	The priority to use for drawing, or -1 for none
+ * @param[in] control	The value to write to the control map, or -1 for none
+ * @param[in] halign	Horizontal cel alignment
+ * @param[in] valign	Vertical cel alignment
+ * @param[in] sequence	Sequence number: When sorting dynviews, this number is
+ * 						considered last for sorting (ascending order)
+ * @return				A newly allocated cel according to the specs
+ */
+GfxDynView *gfxw_new_dyn_view(GfxState *state, Common::Point pos, int z,
+	int view, int loop, int cel, int palette, int priority, int control,
+	gfx_alignment_t halign, gfx_alignment_t valign, int sequence);
 
-/* Whether the view should _not_ apply its x/y offset modifyers */
-#define GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET (1 << 1)
+/**
+ * Creates a new text widget
+ *
+ * @param[in] state		The state the text is to be calculated from
+ * @param[in] area		The area the text is to be confined to (the yl value is
+ * 						only relevant for text aligment, though)
+ * @param[in] font		The number of the font to use
+ * @param[in] text		String to put in text widget
+ * @param[in] halign	Horizontal text alignment
+ * @param[in] valign	Vertical text alignment
+ * @param[in] color1	Text foreground colors (if not equal, the foreground is
+ * 						dithered between them)
+ * @param[in] color2	Text foreground colors (if not equal, the foreground is
+ * 						dithered between them)
+ * @param[in] bgcolor	Text background color
+ * @param[in] flags		GFXR_FONT_FLAGs, orred together (see gfx_resource.h)
+ * @return				The resulting text widget
+ */
+GfxText *gfxw_new_text(GfxState *state, rect_t area, int font, const char *text,
+	gfx_alignment_t halign, gfx_alignment_t valign, gfx_color_t color1,
+	gfx_color_t color2,	gfx_color_t bgcolor, int flags);
 
-GfxView *gfxw_new_view(GfxState *state, Common::Point pos, int view, int loop, int cel, int palette, int priority, int control,
-	gfx_alignment_t halign, gfx_alignment_t valign, int flags);
-/* Creates a new view (a cel, actually)
-** Parameters: (GfxState *) state: The graphics state
-**             (Common::Point) pos: The position to place the view at
-**             (int x int x int) view, loop, cel: The global cel ID
-**             (int) priority: The priority to use for drawing, or -1 for none
-**             (int) control: The value to write to the control map, or -1 for none
-**             (gfx_alignment_t x gfx_alignment_t) halign, valign: Horizontal and vertical
-**                                                                 cel alignment
-**             (int) flags: Any combination of GFXW_VIEW_FLAGs
-** Returns   : (gfxw_cel_t *) A newly allocated cel according to the specs
-*/
-
-GfxDynView *gfxw_new_dyn_view(GfxState *state, Common::Point pos, int z, int view, int loop, int cel, int palette,
-	int priority, int control, gfx_alignment_t halign, gfx_alignment_t valign, int sequence);
-/* Creates a new dyn view
-** Parameters: (GfxState *) state: The graphics state
-**             (Common::Point) pos: The position to place the dynamic view at
-**             (int) z: The z coordinate
-**             (int x int x int) view, loop, cel: The global cel ID
-**             (int) priority: The priority to use for drawing, or -1 for none
-**             (int) control: The value to write to the control map, or -1 for none
-**             (gfx_alignment_t x gfx_alignment_t) halign, valign: Horizontal and vertical
-**                                                                 cel alignment
-**             (int) sequence: Sequence number: When sorting dynviews, this number is
-**                             considered last for sorting (ascending order)
-** Returns   : (gfxw_cel_t *) A newly allocated cel according to the specs
-** Dynamic views are non-pic views with a unique global identifyer. This allows for drawing
-** optimizations when they move or change shape.
-*/
-
-GfxText *gfxw_new_text(GfxState *state, rect_t area, int font, const char *text, gfx_alignment_t halign,
-	gfx_alignment_t valign, gfx_color_t color1, gfx_color_t color2,
-	gfx_color_t bgcolor, int flags);
-/* Creates a new text widget
-** Parameters: (GfxState *) state: The state the text is to be calculated from
-**             (rect_t) area: The area the text is to be confined to (the yl value is only
-**                            relevant for text aligment, though)
-**             (int) font: The number of the font to use
-**             (gfx_alignment_t x gfx_alignment_t) halign, valign: Horizontal and
-**                                                                 vertical text alignment
-**             (gfx_color_t x gfx_color_t) color1, color2: Text foreground colors (if not equal,
-**                                                         The foreground is dithered between them)
-**             (gfx_color_t) bgcolor: Text background color
-**             (int) flags: GFXR_FONT_FLAGs, orred together (see gfx_resource.h)
-** Returns   : (GfxText *) The resulting text widget
-*/
-
+/**
+ * Determines text widget meta-information
+ *
+ * @param[in]  state		The state to operate on
+ * @param[in]  text			The widget to query
+ * @param[out] lines_nr		Number of lines used in the text
+ * @param[out] lineheight	Pixel height (SCI scale) of each text line
+ * @param[out] offset		Pixel offset (SCI scale) of the space after the last
+ * 							character in the last line
+ */
 void gfxw_text_info(GfxState *state, GfxText *text, int *lines_nr,
 	int *lineheight, int *offset);
-/* Determines text widget meta-information
-** Parameters: (GfxState *) state: The state to operate on
-**             (gfx_text_t *) text: The widget to query
-** Returns   : (int) lines_nr: Number of lines used in the text
-**             (int) lineheight: Pixel height (SCI scale) of each text line
-**             (int) offset: Pixel offset (SCI scale) of the space after the
-**                           last character in the last line
-*/
 
+/**
+ * Sets a widget's ID
+ *
+ * A widget ID is unique within the container it is stored in, if and only if it
+ * was added to that container with gfxw_add(). This function handles widget ==
+ * NULL gracefully (by doing nothing and returning NULL).
+ *
+ * @param[in] widget	The widget whose ID should be set
+ * @param[in] ID		The ID to set
+ * @param[in] subID		The ID to set
+ * @return				The widget
+ */
 GfxWidget *gfxw_set_id(GfxWidget *widget, int ID, int subID);
-/* Sets a widget's ID
-** Parmaeters: (GfxWidget *) widget: The widget whose ID should be set
-**             (int x int) ID, subID: The ID to set
-** Returns   : (GfxWidget *) widget
-** A widget ID is unique within the container it is stored in, if and only if it was
-** added to that container with gfxw_add().
-** This function handles widget = NULL gracefully (by doing nothing and returning NULL).
-*/
 
+/**
+ * Finds a widget with a specific ID in a container and removes it from there
+ *
+ * Search is non-recursive; widgets with IDs hidden in subcontainers will not
+ * be found.
+ *
+ * @param[in] container	The container to search in
+ * @param[in] ID		The ID to look for
+ * @param[in] subID		The subID to look for, or GFXW_NO_ID for any
+ * @return				The resulting widget or NULL if no match was found
+ */
 GfxWidget *gfxw_remove_id(GfxContainer *container, int ID, int subID);
-/* Finds a widget with a specific ID in a container and removes it from there
-** Parameters: (GfxContainer *) container: The container to search in
-**             (int) ID: The ID to look for
-**             (int) subID: The subID to look for, or GFXW_NO_ID for any
-** Returns   : (GfxWidget *) The resulting widget or NULL if no match was found
-** Search is non-recursive; widgets with IDs hidden in subcontainers will not be found.
-*/
 
+/**
+ * Initializes a dyn view's interpreter attributes
+ *
+ * @param[in] widget		The widget affected
+ * @param[in] under_bits	Interpreter-dependant data
+ * @param[in] under_bitsp	Interpreter-dependant data
+ * @param[in] signal		Interpreter-dependant data
+ * @param[in] signalp		Interpreter-dependant data
+ * @return					The widget
+ */
+GfxDynView *gfxw_dyn_view_set_params(GfxDynView *widget, int under_bits,
+	const ObjVarRef& under_bitsp, int signal, const ObjVarRef& signalp);
 
-GfxDynView *gfxw_dyn_view_set_params(GfxDynView *widget, int under_bits, void *under_bitsp, int signal, void *signalp);
-/* Initializes a dyn view's interpreter attributes
-** Parameters: (GfxDynView *) widget: The widget affected
-**             (int x void * x int x void *) under_bits, inder_bitsp, signal, signalp: Interpreter-dependant data
-** Returns   : (GfxDynView *) widget
-*/
-
+/**
+ * Makes a widget invisible without removing it from the list of widgets
+ *
+ * Has no effect on invisible widgets
+ *
+ * @param[in] widget	The widget to invisibilize
+ * @return				The widget
+ */
 GfxWidget *gfxw_hide_widget(GfxWidget *widget);
-/* Makes a widget invisible without removing it from the list of widgets
-** Parameters: (GfxWidget *) widget: The widget to invisibilize
-** Returns   : (GfxWidget *) widget
-** Has no effect on invisible widgets
-*/
 
+/**
+ * Makes an invisible widget reappear
+ *
+ * Does not affect visible widgets
+ *
+ * @param[in] widget	The widget to show again
+ * @return				The widget
+ */
 GfxWidget *gfxw_show_widget(GfxWidget *widget);
-/* Makes an invisible widget reappear
-** Parameters: (GfxWidget *) widget: The widget to show again
-** Returns   : (GfxWidget *) widget
-** Does not affect visible widgets
-*/
 
+/**
+ * Marks a widget as "abandoned"
+ *
+ * @param[in] widget	The widget to abandon
+ * @return				The widget
+ */
 GfxWidget *gfxw_abandon_widget(GfxWidget *widget);
-/* Marks a widget as "abandoned"
-** Parameters: (GfxWidget *) widget: The widget to abandon
-** Returns   : (GfxWidget *) widget
-*/
 
-/*-- Container types --*/
+/** Container types */
+enum {
+	GFXW_LIST_UNSORTED = 0,
+	GFXW_LIST_SORTED = 1
+};
 
-#define GFXW_LIST_UNSORTED 0
-#define GFXW_LIST_SORTED 1
-
+/**
+ * Creates a new list widget
+ *
+ * List widgets are also referred to as Display Lists.
+ *
+ * @param[in] area		The area covered by the list (absolute position)
+ * @param[in] sorted	Whether the list should be a sorted list
+ * @return				A newly allocated list widget
+ */
 GfxList *gfxw_new_list(rect_t area, int sorted);
-/* Creates a new list widget
-** Parameters: (rect_t) area: The area covered by the list (absolute position)
-**             (int) sorted: Whether the list should be a sorted list
-** Returns   : (GfxList *) A newly allocated list widget
-** List widgets are also referred to as Display Lists.
-*/
 
+/**
+ * Retrieves the default port from a visual
+ *
+ * The 'default port' is the last port to be instantiated; usually the topmost
+ * or highest-ranking port.
+ *
+ * @param[in] visual	The visual the port should be retrieved from
+ * @return				The default port, or NULL if no port is present
+ */
 GfxPort *gfxw_find_default_port(GfxVisual *visual);
-/* Retrieves the default port from a visual
-** Parameters: (GfxVisual *) visual: The visual the port should be retrieved from
-** Returns   : (GfxPort *) The default port, or NULL if no port is present
-** The 'default port' is the last port to be instantiated; usually the topmost
-** or highest-ranking port.
-*/
 
+/**
+ * Sets rectangle to be restored upon port removal
+ *
+ * @param[in] visual	The visual to operate on
+ * @param[in] window	The affected window
+ * @param[in] auto_rect	The area to restore
+ */
 void gfxw_port_set_auto_restore(GfxVisual *visual, GfxPort *window, rect_t auto_rect);
-/* Sets rectangle to be restored upon port removal
-** Parameters: (state_t *) s: The state to operate on
-**             (GfxPort *) window: The affected window
-**             (rect_t) auto_rect: The area to restore
-** Returns   : (void)
-*/
 
+/**
+ * Removes a port from a visual
+ *
+ * @param[in] visual	The visual the port should be removed from
+ * @param[in] port		The port to remove
+ * @return				port's parent port, or NULL if it had none
+ */
 GfxPort *gfxw_remove_port(GfxVisual *visual, GfxPort *port);
-/* Removes a port from a visual
-** Parameters: (GfxVisual *) visual: The visual the port should be removed from
-**             (GfxPort *) port: The port to remove
-** Returns   : (GfxPort *) port's parent port, or NULL if it had none
-*/
 
+/**
+ * Removes the widget from the specified port
+ *
+ * @param[in] container	The container it should be removed from
+ * @param[in] widget	The widget to remove
+ */
 void gfxw_remove_widget_from_container(GfxContainer *container, GfxWidget *widget);
-/* Removes the widget from the specified port
-** Parameters: (GfxContainer *) container: The container it should be removed from
-**             (GfxWidget *) widget: The widget to remove
-** Returns   : (void)
-*/
 
+/**
+ * Makes a "snapshot" of a visual
+ *
+ * It's not really a full qualified snaphot, though. See gfxw_restore_snapshot
+ * for a full discussion. This operation also increases the global serial number
+ * counter by one.
+ *
+ * @param[in] visual	The visual a snapshot is to be taken of
+ * @param[in] area		The area a snapshot should be taken of
+ * @return				The resulting, newly allocated snapshot
+ */
 gfxw_snapshot_t *gfxw_make_snapshot(GfxVisual *visual, rect_t area);
-/* Makes a "snapshot" of a visual
-** Parameters: (GfxVisual *) visual: The visual a snapshot is to be taken of
-**             (rect_t) area: The area a snapshot should be taken of
-** Returns   : (gfxw_snapshot_t *) The resulting, newly allocated snapshot
-** It's not really a full qualified snaphot, though. See gfxw_restore_snapshot
-** for a full discussion.
-** This operation also increases the global serial number counter by one.
-*/
 
+/**
+ * Predicate to test whether a widget would be destroyed by applying a snapshot
+ *
+ * @param[in] snapshot	The snapshot to test against
+ * @param[in] widget	The widget to test
+ * @return				An appropriate boolean value
+ */
 int gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, GfxWidget *widget);
-/* Predicate to test whether a widget would be destroyed by applying a snapshot
-** Parameters: (gfxw_snapshot_t *) snapshot: The snapshot to test against
-**             (GfxWidget *) widget: The widget to test
-** Retunrrs  : (int) An appropriate boolean value
-*/
 
+/**
+ * Restores a snapshot to a visual
+ *
+ * The snapshot is not really restored; only more recent widgets touching
+ * the snapshotted area are destroyed.
+ *
+ * @param[in] visual	The visual to operate on
+ * @param[in] snapshot	The snapshot to restore
+ * @return				The snapshot (still needs to be freed)
+ */
 gfxw_snapshot_t *gfxw_restore_snapshot(GfxVisual *visual, gfxw_snapshot_t *snapshot);
-/* Restores a snapshot to a visual
-** Parameters: (GfxVisual *) visual: The visual to operate on
-**             (gfxw_snapshot_t *) snapshot: The snapshot to restore
-** Returns   : (gfxw_snapshot_t *) snapshot (still needs to be freed)
-** The snapshot is not really restored; only more recent widgets touching
-** the snapshotted area are destroyed.
-*/
 
+/**
+ * As widget->widfree(widget), but destroys all overlapping widgets
+ *
+ * This operation calls widget->widfree(widget), but it also destroys all
+ * widgets with a higher or equal priority drawn after this widget.
+ *
+ * @param[in] widget	The widget to use
+ */
 void gfxw_annihilate(GfxWidget *widget);
-/* As widget->widfree(widget), but destroys all overlapping widgets
-** Parameters: (GfxWidget *) widget: The widget to use
-** Returns   : (void)
-** This operation calls widget->widfree(widget), but it also destroys
-** all widgets with a higher or equal priority drawn after this widget.
-*/
 
+/**
+ * Turns a dynview into a picview
+ *
+ * The only changes are in function and type variables, actually.
+ *
+ * @param[in] dynview	The victim
+ * @return				The victim, after his transformation
+ */
 GfxDynView *gfxw_picviewize_dynview(GfxDynView *dynview);
-/* Turns a dynview into a picview
-** Parameters: (GfxDynView *) dynview: The victim
-** Returns   : (GfxDynView *) The victim, after his transformation
-** The only changes are in function and type variables, actually.
-*/
 
-void gfxw_port_auto_restore_background(GfxVisual *visual, GfxPort *window, rect_t auto_rect);
-/* Tags a window widget as automatically restoring the visual background upon removal
-** Parameters: (gfx_visual_t *) visual: The base visual
-**             (GfxPort *) window: The window to tag
-**             (rect_t) auto_rect: The background to remember
-** Also records the specified background rectangle, for later recovery
-*/
+/**
+ * Tags a window widget as automatically restoring the visual background
+ * upon removal.
+ *
+ * Also records the specified background rectangle, for later recovery.
+ *
+ * @param[in] visual	The base visual
+ * @param[in] window	The window to tag
+ * @param[in] auto_rect	The background to remember
 
+ */
+void gfxw_port_auto_restore_background(GfxVisual *visual, GfxPort *window,
+	rect_t auto_rect);
+
+/** @} */
 } // End of namespace Sci
 
 #endif // SCI_GFX_GFX_WIDGETS_H

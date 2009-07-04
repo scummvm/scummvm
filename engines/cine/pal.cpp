@@ -103,65 +103,6 @@ void loadRelatedPalette(const char *fileName) {
 	}
 }
 
-void palRotate(uint16 *pal, byte a, byte b, byte c) {
-	assert(pal);
-
-	if (c == 1) {
-		uint16 currentColor = pal[b];
-
-		for (int i = b; i > a; i--) {
-			pal[i] = pal[i - 1];
-		}
-
-		pal[a] = currentColor;
-	}
-}
-
-void palRotate(byte *pal, byte a, byte b, byte c) {
-	assert(pal);
-
-	if (c == 1) {
-		byte currentR = pal[3 * b + 0];
-		byte currentG = pal[3 * b + 1];
-		byte currentB = pal[3 * b + 2];
-
-		for (int i = b; i > a; i--) {
-			pal[3 * i + 0] = pal[3 * (i - 1) + 0];
-			pal[3 * i + 1] = pal[3 * (i - 1) + 1];
-			pal[3 * i + 2] = pal[3 * (i - 1) + 2];
-		}
-
-		pal[3 * a + 0] = currentR;
-		pal[3 * a + 1] = currentG;
-		pal[3 * a + 2] = currentB;
-	}
-}
-
-uint16 transformColor(uint16 baseColor, int r, int g, int b) {
-	int8 oriR = CLIP( (baseColor & 0x007)       + b, 0, 7);
-	int8 oriG = CLIP(((baseColor & 0x070) >> 4) + g, 0, 7);
-	int8 oriB = CLIP(((baseColor & 0x700) >> 8) + r, 0, 7);
-
-	return oriR | (oriG << 4) | (oriB << 8);
-}
-
-void transformPaletteRange(uint16 *dstPal, uint16 *srcPal, int startColor, int stopColor, int r, int g, int b) {
-	assert(srcPal && dstPal);
-
-	for (int i = startColor; i <= stopColor; i++)
-		dstPal[i] = transformColor(srcPal[i], r, g, b);
-}
-
-void transformPaletteRange(byte *dstPal, byte *srcPal, int startColor, int stopColor, int r, int g, int b) {
-	assert(srcPal && dstPal);
-
-	for (int i = startColor; i <= stopColor; i++) {
-		dstPal[3 * i + 0] = CLIP(srcPal[3 * i + 0] + r * 36, 0, 252);
-		dstPal[3 * i + 1] = CLIP(srcPal[3 * i + 1] + g * 36, 0, 252);
-		dstPal[3 * i + 2] = CLIP(srcPal[3 * i + 2] + b * 36, 0, 252);
-	}
-}
-
 /*! \brief Shift byte to the left by given amount (Handles negative shifting amounts too, otherwise this would be trivial). */
 byte shiftByteLeft(const byte value, const signed shiftLeft) {
 	if (shiftLeft >= 0)
@@ -198,13 +139,17 @@ int bytePos(const int bitPos, const int numBytes, const bool bigEndian) {
 }
 
 // a.k.a. palRotate
-Palette &Palette::rotateRight(byte firstIndex, byte lastIndex) {
-	const Color lastColor = _colors[lastIndex];
+Palette &Palette::rotateRight(byte firstIndex, byte lastIndex, signed rotationAmount) {
+	assert(rotationAmount == 0 || rotationAmount == 1);
 
-	for (int i = lastIndex; i > firstIndex; i--)
-		_colors[i] = _colors[i - 1];
+	if (rotationAmount == 1) {
+		const Color lastColor = _colors[lastIndex];
 
-	_colors[firstIndex] = lastColor;
+		for (int i = lastIndex; i > firstIndex; i--)
+			_colors[i] = _colors[i - 1];
+
+		_colors[firstIndex] = lastColor;
+	}
 	return *this;
 }
 
@@ -277,18 +222,18 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 
 Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed rSource, signed gSource, signed bSource, const Graphics::PixelFormat &sourceFormat) {
 	// Convert the source color to the internal color format ensuring that no divide by zero will happen
-	const signed r = _format.rMax() * rSource / MAX<int>(sourceFormat.rMax(), 1);
-	const signed g = _format.gMax() * gSource / MAX<int>(sourceFormat.gMax(), 1);
-	const signed b = _format.bMax() * bSource / MAX<int>(sourceFormat.bMax(), 1);
+	const signed r = ((signed) _format.rMax()) * rSource / MAX<int>(sourceFormat.rMax(), 1);
+	const signed g = ((signed) _format.gMax()) * gSource / MAX<int>(sourceFormat.gMax(), 1);
+	const signed b = ((signed) _format.bMax()) * bSource / MAX<int>(sourceFormat.bMax(), 1);
 
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }
 
 Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, int grayDividend, int grayDenominator) {
 	assert(grayDenominator != 0);
-	const signed r = _format.rMax() * grayDividend / grayDenominator;
-	const signed g = _format.gMax() * grayDividend / grayDenominator;
-	const signed b = _format.bMax() * grayDividend / grayDenominator;
+	const signed r = ((signed) _format.rMax()) * grayDividend / grayDenominator;
+	const signed g = ((signed) _format.gMax()) * grayDividend / grayDenominator;
+	const signed b = ((signed) _format.bMax()) * grayDividend / grayDenominator;
 
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }

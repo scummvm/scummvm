@@ -269,13 +269,6 @@ void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, 
 
 //-------------------- clones --------------------
 
-template<typename T>
-void Table<T>::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
-	for (uint i = 0; i < _table.size(); i++)
-		if (isValidEntry(i))
-			(*note)(param, make_reg(segId, i));
-}
-
 void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	CloneTable *clone_table = this;
 	Clone *clone;

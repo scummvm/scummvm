@@ -281,13 +281,13 @@ gfx_pixmap_t *_gfxr_get_cel(GfxState *state, int nr, int *loop, int *cel, int pa
 		return NULL;
 
 	if (*loop >= view->loops_nr || *loop < 0) {
-		GFXWARN("Attempt to get cel from loop %d/%d inside view %d\n", *loop, view->loops_nr, nr);
+		warning("[GFX] Attempt to get cel from loop %d/%d inside view %d", *loop, view->loops_nr, nr);
 		return NULL;
 	}
 	indexed_loop = view->loops + *loop;
 
 	if (*cel >= indexed_loop->cels_nr || *cel < 0) {
-		GFXWARN("Attempt to get cel %d/%d from view %d/%d\n", *cel, indexed_loop->cels_nr, nr, *loop);
+		warning("[GFX] Attempt to get cel %d/%d from view %d/%d", *cel, indexed_loop->cels_nr, nr, *loop);
 		return NULL;
 	}
 
@@ -414,7 +414,8 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 int gfxop_init(int version, bool isVGA, GfxState *state,
 				gfx_options_t *options, ResourceManager *resManager,
 				Graphics::PixelFormat mode, int xfact, int yfact) {
-	int initialized = 0;
+	//int color_depth = bpp ? bpp : 1;
+	//int initialized = 0;
 
 	BASIC_CHECKS(GFX_FATAL);
 
@@ -662,7 +663,7 @@ static int line_clip(rect_t *line, rect_t clip, int xfact, int yfact) {
 			return line_check_bar(&(line->x), &(line->width), clip.x, clip.width);
 
 		} else { // "normal" line
-			float start = 0.0, end = 1.0;
+			float start = 0.0f, end = 1.0f;
 			float xv = (float)line->width;
 			float yv = (float)line->height;
 
@@ -682,7 +683,7 @@ static int line_clip(rect_t *line, rect_t clip, int xfact, int yfact) {
 			line->width = (int)(xv * (end - start));
 			line->height = (int)(yv * (end - start));
 
-			return (start > 1.0 || end < 0.0);
+			return (start > 1.0f || end < 0.0f);
 		}
 	}
 
@@ -806,7 +807,7 @@ static int _gfxop_draw_line_clipped(GfxState *state, Common::Point start, Common
 
 	if (line_style == GFX_LINE_STYLE_STIPPLED) {
 		if (start.x != end.x && start.y != end.y) {
-			GFXWARN("Attempt to draw stippled line which is neither an hbar nor a vbar: (%d,%d) -- (%d,%d)\n", start.x, start.y, end.x, end.y);
+			warning("[GFX] Attempt to draw stippled line which is neither an hbar nor a vbar: (%d,%d) -- (%d,%d)", start.x, start.y, end.x, end.y);
 			return GFX_ERROR;
 		}
 		return simulate_stippled_line_draw(state->driver, skipone, start, end, color, line_mode);
@@ -902,7 +903,7 @@ int gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color, gfx_li
 int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type) {
 	GfxDriver *drv = state->driver;
 	int reverse = 0; // switch color1 and color2
-	float mod_offset = 0.0, mod_breadth = 1.0; // 0.0 to 1.0: Color adjustment
+	float mod_offset = 0.0f, mod_breadth = 1.0f; // 0.0 to 1.0: Color adjustment
 	gfx_rectangle_fill_t driver_shade_type;
 	rect_t new_box;
 
@@ -928,7 +929,7 @@ int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t 
 		return GFX_OK;
 
 	if (box.width <= 1 || box.height <= 1) {
-		GFXDEBUG("Attempt to draw box with size %dx%d\n", box.width, box.height);
+		debugC(2, kDebugLevelGraphics, "Attempt to draw box with size %dx%d", box.width, box.height);
 		return GFX_OK;
 	}
 
@@ -976,7 +977,7 @@ int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t 
 		return drv->drawFilledRect(new_box, color1, color1, GFX_SHADE_FLAT);
 	} else {
 		if (PALETTE_MODE) {
-			GFXWARN("Attempting to draw shaded box in palette mode!\n");
+			warning("[GFX] Attempting to draw shaded box in palette mode");
 			return GFX_ERROR;
 		}
 
@@ -1183,7 +1184,7 @@ int gfxop_set_pointer_cursor(GfxState *state, int nr) {
 	gfx_pixmap_t *new_pointer = state->gfxResMan->getCursor(nr);
 
 	if (!new_pointer) {
-		GFXWARN("Attempt to set invalid pointer #%d\n", nr);
+		warning("[GFX] Attempt to set invalid pointer #%d\n", nr);
 		return GFX_ERROR;
 	}
 
@@ -1200,12 +1201,12 @@ int gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::P
 	gfx_pixmap_t *new_pointer = _gfxr_get_cel(state, nr, &real_loop, &real_cel, 0);
 
 	if (!new_pointer) {
-		GFXWARN("Attempt to set invalid pointer #%d\n", nr);
+		warning("[GFX] Attempt to set invalid pointer #%d", nr);
 		return GFX_ERROR;
 	}
 
 	if (real_loop != loop || real_cel != cel) {
-		GFXDEBUG("Changed loop/cel from %d/%d to %d/%d in view %d\n", loop, cel, real_loop, real_cel, nr);
+		debugC(2, kDebugLevelGraphics, "Changed loop/cel from %d/%d to %d/%d in view %d\n", loop, cel, real_loop, real_cel, nr);
 	}
 
 	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the user. Some scalers don't seem to support this.
@@ -1227,7 +1228,7 @@ int gfxop_set_pointer_position(GfxState *state, Common::Point pos) {
 	state->pointer_pos = pos;
 
 	if (pos.x > 320 || pos.y > 200) {
-		GFXWARN("Attempt to place pointer at invalid coordinates (%d, %d)\n", pos.x, pos.y);
+		warning("[GFX] Attempt to place pointer at invalid coordinates (%d, %d)", pos.x, pos.y);
 		return 0; // Not fatal
 	}
 
@@ -1420,8 +1421,9 @@ static sci_event_t scummvm_get_event(GfxDriver *drv) {
 			// Debug console
 			if (ev.kbd.flags == Common::KBD_CTRL && ev.kbd.keycode == Common::KEYCODE_d) {	
 				// Open debug console
-				((Sci::SciEngine*)g_engine)->getDebugger()->attach();
-				((Sci::SciEngine*)g_engine)->getDebugger()->onFrame();
+				Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
+				con->attach();
+				con->onFrame();
 
 				// Clear keyboard event
 				input.type = SCI_EVT_NONE;
@@ -1620,7 +1622,7 @@ int gfxop_lookup_view_get_loops(GfxState *state, int nr) {
 	view = state->gfxResMan->getView(nr, &loop, &cel, 0);
 
 	if (!view) {
-		GFXWARN("Attempt to retrieve number of loops from invalid view %d\n", nr);
+		warning("[GFX] Attempt to retrieve number of loops from invalid view %d", nr);
 		return 0;
 	}
 
@@ -1636,10 +1638,10 @@ int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop) {
 	view = state->gfxResMan->getView(nr, &real_loop, &cel, 0);
 
 	if (!view) {
-		GFXWARN("Attempt to retrieve number of cels from invalid/broken view %d\n", nr);
+		warning("[GFX] Attempt to retrieve number of cels from invalid/broken view %d", nr);
 		return 0;
 	} else if (real_loop != loop) {
-		GFXWARN("Loop number was corrected from %d to %d in view %d\n", loop, real_loop, nr);
+		warning("[GFX] Loop number was corrected from %d to %d in view %d", loop, real_loop, nr);
 	}
 
 	return view->loops[real_loop].cels_nr;
@@ -1651,7 +1653,7 @@ int gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel) {
 	gfxr_view_t *testView = state->gfxResMan->getView(nr, loop, cel, 0);
 
 	if (!testView) {
-		GFXWARN("Attempt to verify loop/cel values for invalid view %d\n", nr);
+		warning("[GFX] Attempt to verify loop/cel values for invalid view %d", nr);
 		return GFX_ERROR;
 	}
 
@@ -1666,7 +1668,7 @@ int gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel) {
 	gfxr_view_t *testView = state->gfxResMan->getView(nr, &loop_v, &cel_v, 0);
 
 	if (!testView) {
-		GFXWARN("Attempt to verify loop/cel values for invalid view %d\n", nr);
+		warning("[GFX] Attempt to verify loop/cel values for invalid view %d", nr);
 		return GFX_ERROR;
 	}
 
@@ -1688,7 +1690,7 @@ int gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel, int *wi
 	view = state->gfxResMan->getView(nr, &loop, &cel, 0);
 
 	if (!view) {
-		GFXWARN("Attempt to get cel parameters for invalid view %d\n", nr);
+		warning("[GFX] Attempt to get cel parameters for invalid view %d", nr);
 		return GFX_ERROR;
 	}
 
@@ -1712,7 +1714,7 @@ static int _gfxop_draw_cel_buffer(GfxState *state, int nr, int loop, int cel, Co
 	view = state->gfxResMan->getView(nr, &loop, &cel, palette);
 
 	if (!view) {
-		GFXWARN("Attempt to draw loop/cel %d/%d in invalid view %d\n", loop, cel, nr);
+		warning("[GFX] Attempt to draw loop/cel %d/%d in invalid view %d\n", loop, cel, nr);
 		return GFX_ERROR;
 	}
 	pxm = view->loops[loop].cels[cel];
@@ -1994,7 +1996,7 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 	}
 
 	if (handle->lines.empty()) {
-		GFXDEBUG("Skipping draw_text operation because number of lines is zero\n");
+		debugC(2, kDebugLevelGraphics, "Skipping draw_text operation because number of lines is zero\n");
 		return GFX_OK;
 	}
 

@@ -34,6 +34,16 @@ class Util {
 public:
 	static int decodeString1(const char *src, char *dst);
 	static void decodeString2(const char *src, char *dst);
+
+	// Since our current GUI font uses ISO-8859-1, this
+	// conversion functionallty uses that as a base.
+	static void convertDOSToISO(char *str);
+	static void convertISOToDOS(char *str);
+	static void convertISOToDOS(char &c);
+
+private:
+	static const uint8 _charMapDOSToISO[128];
+	static const uint8 _charMapISOToDOS[128];
 };
 
 } // end of namespace Kyra

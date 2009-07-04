@@ -48,8 +48,8 @@ static void POLY_SET_POINT(byte *p, int i, const Common::Point &pt) {
 }
 
 static void POLY_GET_POINT_REG_T(const reg_t *p, int i, Common::Point &pt) {
-	pt.x = KP_SINT((p)[(i) * 2]);
-	pt.y = KP_SINT((p)[(i) * 2 + 1]);
+	pt.x = (p)[(i) * 2].toUint16();
+	pt.y = (p)[(i) * 2 + 1].toUint16();
 }
 
 // SCI-defined polygon types
@@ -286,13 +286,13 @@ static Common::Point read_point(const byte *list, int is_reg_t, int offset) {
  */
 static bool polygons_equal(EngineState *s, reg_t p1, reg_t p2) {
 	// Check for same type
-	if (KP_UINT(GET_SEL32(p1, type)) != KP_UINT(GET_SEL32(p2, type)))
+	if (GET_SEL32(p1, type).toUint16() != GET_SEL32(p2, type).toUint16())
 		return false;
 
-	int size = KP_UINT(GET_SEL32(p1, size));
+	int size = GET_SEL32(p1, size).toUint16();
 
 	// Check for same number of points
-	if (size != KP_UINT(GET_SEL32(p2, size)))
+	if (size != GET_SEL32(p2, size).toUint16())
 		return false;
 
 	const byte *p1_points = kernel_dereference_bulk_pointer(s, GET_SEL32(p1, points), size * POLY_POINT_SIZE);
@@ -356,8 +356,8 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 
 static void draw_polygon(EngineState *s, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
-	int size = KP_UINT(GET_SEL32(polygon, size));
-	int type = KP_UINT(GET_SEL32(polygon, type));
+	int size = GET_SEL32(polygon, size).toUint16();
+	int type = GET_SEL32(polygon, type).toUint16();
 	Common::Point first, prev;
 	const byte *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(list, size);
@@ -403,8 +403,8 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 
 static void print_polygon(EngineState *s, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
-	int size = KP_UINT(GET_SEL32(polygon, size));
-	int type = KP_UINT(GET_SEL32(polygon, type));
+	int size = GET_SEL32(polygon, size).toUint16();
+	int type = GET_SEL32(polygon, type).toUint16();
 	int i;
 	const byte *point_array = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(point_array, size);
@@ -1228,9 +1228,9 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Returns   : (Polygon *) The converted polygon
 	int i;
 	reg_t points = GET_SEL32(polygon, points);
-	int size = KP_UINT(GET_SEL32(polygon, size));
+	int size = GET_SEL32(polygon, size).toUint16();
 	const byte *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
-	Polygon *poly = new Polygon(KP_UINT(GET_SEL32(polygon, type)));
+	Polygon *poly = new Polygon(GET_SEL32(polygon, type).toUint16());
 	int is_reg_t = polygon_is_reg_t(list, size);
 
 	// WORKAROUND: broken polygon in LSL1VGA, room 350, after opening elevator
@@ -1388,7 +1388,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 				// Polygon is not a duplicate, so convert it
 				polygon = convert_polygon(s, node->value);
 				pf_s->polygons.push_back(polygon);
-				count += KP_UINT(GET_SEL32(node->value, size));
+				count += GET_SEL32(node->value, size).toUint16();
 			}
 
 			node = lookup_node(s, node->succ);
@@ -1642,7 +1642,7 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 }
 
 reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	Common::Point start = Common::Point(SKPV(0), SKPV(1));
+	Common::Point start = Common::Point(argv[0].toSint16(), argv[1].toSint16());
 
 #ifdef DEBUG_AVOIDPATH
 	GfxPort *port = s->picture_port;
@@ -1669,10 +1669,10 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	case 6 :
 	case 7 : {
-		Common::Point end = Common::Point(SKPV(2), SKPV(3));
+		Common::Point end = Common::Point(argv[2].toSint16(), argv[3].toSint16());
 		reg_t poly_list = argv[4];
-		//int poly_list_size = UKPV(5);
-		int opt = UKPV_OR_ALT(6, 1);
+		//int poly_list_size = argv[5].toUint16();
+		int opt = (argc > 6) ? argv[6].toUint16() : 1;
 		reg_t output;
 		PathfindingState *p;
 

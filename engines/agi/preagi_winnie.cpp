@@ -150,9 +150,11 @@ void Winnie::randomize() {
 
 	for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
 		done = false;
+
 		while (!done) {
 			iObj = _vm->rnd(IDI_WTP_MAX_OBJ - 1);
 			done = true;
+
 			for (int j = 0; j < IDI_WTP_MAX_OBJ_MISSING; j++) {
 				if (_game.iUsedObj[j] == iObj) {
 					done = false;
@@ -167,6 +169,7 @@ void Winnie::randomize() {
 		while (!done) {
 			iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL);
 			done = true;
+
 			for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
 				if (_game.iObjRoom[j] == iRoom) {
 					done = false;
@@ -185,17 +188,23 @@ void Winnie::intro() {
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(0x640);
+
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
 		_vm->_gfx->clearScreen(0);
+
 	drawPic(IDS_WTP_FILE_TITLE);
+
 	_vm->printStr(IDS_WTP_INTRO_1);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(0x640);
+
 	if (!playSound(IDI_WTP_SND_POOH_0))
 		return;
+
 	if (!playSound(IDI_WTP_SND_POOH_1))
 		return;
+
 	if (!playSound(IDI_WTP_SND_POOH_2))
 		return;
 }
@@ -346,6 +355,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			case IDI_WTP_SEL_EAST:
 			case IDI_WTP_SEL_WEST:
 				iDir = iSel - IDI_WTP_SEL_NORTH;
+
 				if (hdr.roomNew[iDir] == IDI_WTP_ROOM_NONE) {
 					_vm->printStr(IDS_WTP_CANT_GO);
 					_vm->getSelection(kSelAnyKey);
@@ -517,6 +527,7 @@ void Winnie::takeObj(int iRoom) {
 	} else {
 		// take object
 		int iObj = getObjInRoom(iRoom);
+
 		_game.iObjHave = iObj;
 		_game.iObjRoom[iObj] = 0;
 
@@ -590,8 +601,10 @@ void Winnie::dropObj(int iRoom) {
 			// object has been dropped in the wrong place
 			_vm->printStr(IDS_WTP_WRONG_PLACE);
 			_vm->getSelection(kSelAnyKey);
+
 			playSound(IDI_WTP_SND_DROP);
 			drawRoomPic();
+
 			_vm->printStr(IDS_WTP_WRONG_PLACE);
 			_vm->getSelection(kSelAnyKey);
 
@@ -639,6 +652,7 @@ void Winnie::wind() {
 	_vm->printStr(IDS_WTP_WIND_0);
 	playSound(IDI_WTP_SND_WIND_0);
 	_vm->getSelection(kSelAnyKey);
+
 	_vm->printStr(IDS_WTP_WIND_1);
 	playSound(IDI_WTP_SND_WIND_0);
 	_vm->getSelection(kSelAnyKey);
@@ -652,6 +666,7 @@ void Winnie::wind() {
 			while (!done) {
 				iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL);
 				done = true;
+
 				for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
 					if (_game.iObjRoom[j] == iRoom) {
 						done = false;
@@ -1006,11 +1021,13 @@ phase0:
 	drawRoomPic();
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
+
 phase1:
 	if (getObjInRoom(_room)) {
 		printObjStr(getObjInRoom(_room), IDI_WTP_OBJ_DESC);
 		_vm->getSelection(kSelAnyKey);
 	}
+
 phase2:
 	for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
 		if (parser(hdr.ofsDesc[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK)
@@ -1047,6 +1064,7 @@ void Winnie::drawPic(const char *szName) {
 		warning ("Could not open file \'%s\'", szFile);
 		return;
 	}
+
 	uint32 size = file.size();
 	file.read(buffer, size);
 	file.close();

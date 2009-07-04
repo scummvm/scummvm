@@ -55,15 +55,11 @@ protected:
 	EntryList		_entries;
 	int				_selectedItem;
 
-	String			_label;
-	int				_labelWidth;
-
 	int				_leftPadding;
 	int				_rightPadding;
-	int				_labelSpacing;
 
 public:
-	PopUpWidget(GuiObject *boss, const String &name, const String &label);
+	PopUpWidget(GuiObject *boss, const String &name);
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseWheel(int x, int y, int direction);

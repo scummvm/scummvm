@@ -62,6 +62,10 @@ bool SCNPlayer::playStream(Common::SeekableReadStream &scn) {
 			playVideo(line.c_str() + 4);
 		} else if (lineStartsWith(line, "GOTO ")) {
 			gotoLabel(scn, labels, line.c_str() + 5);
+		} else if (lineStartsWith(line, "REBASE0:ON")) {
+			_rebase0 = true;
+		} else if (lineStartsWith(line, "REBASE0:OFF")) {
+			_rebase0 = false;
 		}
 
 		// Mind user input

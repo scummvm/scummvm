@@ -37,27 +37,32 @@
 #include "engines/metaengine.h"
 
 /* Broken Sword 1 */
-static const PlainGameDescriptor sword1FullSettings =
-	{"sword1", "Broken Sword 1: The Shadow of the Templars"};
-static const PlainGameDescriptor sword1DemoSettings =
-	{"sword1demo", "Broken Sword 1: The Shadow of the Templars (Demo)"};
-static const PlainGameDescriptor sword1MacFullSettings =
-	{"sword1mac", "Broken Sword 1: The Shadow of the Templars (Mac)"};
-static const PlainGameDescriptor sword1MacDemoSettings =
-	{"sword1macdemo", "Broken Sword 1: The Shadow of the Templars (Mac demo)"};
-static const PlainGameDescriptor sword1PSXSettings =
-	{"sword1psx", "Broken Sword 1: The Shadow of the Templars (PlayStation)"};
+static const PlainGameDescriptorGUIOpts sword1FullSettings =
+	{"sword1", "Broken Sword 1: The Shadow of the Templars", Common::GUIO_NOMIDI};
+static const PlainGameDescriptorGUIOpts sword1DemoSettings =
+	{"sword1demo", "Broken Sword 1: The Shadow of the Templars (Demo)", Common::GUIO_NOMIDI};
+static const PlainGameDescriptorGUIOpts sword1MacFullSettings =
+	{"sword1mac", "Broken Sword 1: The Shadow of the Templars (Mac)", Common::GUIO_NOMIDI};
+static const PlainGameDescriptorGUIOpts sword1MacDemoSettings =
+	{"sword1macdemo", "Broken Sword 1: The Shadow of the Templars (Mac demo)", Common::GUIO_NOMIDI};
+static const PlainGameDescriptorGUIOpts sword1PSXSettings =
+	{"sword1psx", "Broken Sword 1: The Shadow of the Templars (PlayStation)", Common::GUIO_NOMIDI};
+static const PlainGameDescriptorGUIOpts sword1PSXDemoSettings =
+	{"sword1psxdemo", "Broken Sword 1: The Shadow of the Templars (PlayStation demo)", Common::GUIO_NOMIDI};
+ 
 
 // check these subdirectories (if present)
-static const char *g_dirNames[] = {	"clusters",	"speech" };
+static const char *g_dirNames[] = {	"clusters",	"speech", "english", "italian"};
 
 #define NUM_COMMON_FILES_TO_CHECK 1
 #define NUM_PC_FILES_TO_CHECK 3
 #define NUM_MAC_FILES_TO_CHECK 4
-#define NUM_PSX_FILES_TO_CHECK 2
+#define NUM_PSX_FILES_TO_CHECK 1 
+#define NUM_PSX_DEMO_FILES_TO_CHECK 2
 #define NUM_DEMO_FILES_TO_CHECK 1
 #define NUM_MAC_DEMO_FILES_TO_CHECK 1
-#define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_PSX_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK + NUM_MAC_DEMO_FILES_TO_CHECK
+
+#define NUM_FILES_TO_CHECK NUM_COMMON_FILES_TO_CHECK + NUM_PC_FILES_TO_CHECK + NUM_MAC_FILES_TO_CHECK + NUM_PSX_FILES_TO_CHECK + NUM_DEMO_FILES_TO_CHECK + NUM_MAC_DEMO_FILES_TO_CHECK + NUM_PSX_DEMO_FILES_TO_CHECK
 static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to be found
 	"swordres.rif", // Mac, PC and PSX version
 	"general.clu", // PC and PSX version
@@ -69,6 +74,7 @@ static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to
 	"paris2.clm", // Mac version (full game only)
 	"cows.mad",	// this one should only exist in the demo version
 	"scripts.clm", // Mac version both demo and full game
+	"train.plx", // PSX version only
 	"speech.dat", // PSX version only
 	"tunes.dat", // PSX version only
 	// the engine needs several more files to work, but checking these should be sufficient
@@ -119,6 +125,8 @@ GameList SwordMetaEngine::getSupportedGames() const {
 	games.push_back(sword1DemoSettings);
 	games.push_back(sword1MacFullSettings);
 	games.push_back(sword1MacDemoSettings);
+	games.push_back(sword1PSXSettings);
+	games.push_back(sword1PSXDemoSettings);
 	return games;
 }
 
@@ -133,6 +141,8 @@ GameDescriptor SwordMetaEngine::findGame(const char *gameid) const {
 		return sword1MacDemoSettings;
 	if (0 == scumm_stricmp(gameid, sword1PSXSettings.gameid))
 		return sword1PSXSettings;
+	if (0 == scumm_stricmp(gameid, sword1PSXDemoSettings.gameid))
+		return sword1PSXDemoSettings;
 	return GameDescriptor();
 }
 
@@ -168,6 +178,7 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 	bool demoFilesFound = true;
 	bool macDemoFilesFound = true;
 	bool psxFilesFound = true;
+	bool psxDemoFilesFound = true;
 	for (i = 0; i < NUM_COMMON_FILES_TO_CHECK; i++)
 		if (!filesFound[i])
 			mainFilesFound = false;
@@ -186,11 +197,16 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 	for (j = 0; j < NUM_PSX_FILES_TO_CHECK; i++, j++)
 		if (!filesFound[i])
 			psxFilesFound = false;
+	for (j = 0; j < NUM_PSX_DEMO_FILES_TO_CHECK; i++, j++)
+		if (!filesFound[i] || psxFilesFound)
+			psxDemoFilesFound = false;
 
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
 		detectedGames.push_back(sword1DemoSettings);
 	else if (mainFilesFound && pcFilesFound && psxFilesFound)
 		detectedGames.push_back(sword1PSXSettings);
+	else if (mainFilesFound && pcFilesFound && psxDemoFilesFound)
+		detectedGames.push_back(sword1PSXDemoSettings);
 	else if (mainFilesFound && pcFilesFound && !psxFilesFound)
 		detectedGames.push_back(sword1FullSettings);
 	else if (mainFilesFound && macFilesFound)

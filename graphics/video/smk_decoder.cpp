@@ -30,7 +30,6 @@
 #include "graphics/video/smk_decoder.h"
 
 #include "common/archive.h"
-#include "common/array.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
@@ -50,16 +49,14 @@ enum SmkBlockTypes {
 
 /*
  * class BitStream
- * Keeps a two-byte lookahead, so overallocate buf by 2 bytes if
- * you want to avoid OOB reads.
+ * Little-endian bit stream provider.
  */
 
 class BitStream {
 public:
 	BitStream(byte *buf, uint32 length)
-		: _buf(buf), _end(buf+length), _curBit(8) {
-		_curBytes  = *_buf++;
-		_curBytes |= *_buf++ << 8;
+		: _buf(buf), _end(buf+length), _bitCount(8) {
+		_curByte = *_buf++;
 	}
 
 	bool getBit();
@@ -71,64 +68,63 @@ public:
 private:
 	byte *_buf;
 	byte *_end;
-	uint16 _curBytes;
-	byte  _curBit;
+	byte _curByte;
+	byte  _bitCount;
 };
 
 bool BitStream::getBit() {
-	bool v = _curBytes & 1;
-
-	_curBytes >>= 1;
-
-	if (--_curBit == 0) {
-		_curBytes |= *_buf++ << 8;
-		_curBit = 8;
+	if (_bitCount == 0) {
+		assert(_buf < _end);
+		_curByte = *_buf++;
+		_bitCount = 8;
 	}
+
+	bool v = _curByte & 1;
+
+	_curByte >>= 1;
+	--_bitCount;
 
 	return v;
 }
 
 byte BitStream::getBits8() {
-	byte v = _curBytes & 0xff;
-	_curBytes >>= 8;
-	_curBytes |= *_buf++ << _curBit;
+	assert(_buf < _end);
+
+	byte v = (*_buf << _bitCount) | _curByte;
+	_curByte = *_buf++ >> (8 - _bitCount);
+
 	return v;
 }
 
 byte BitStream::peek8() const {
-	return _curBytes & 0xff;
+	if (_buf == _end)
+		return _curByte;
+
+	assert(_buf < _end);
+	return (*_buf << _bitCount) | _curByte;
 }
 
 void BitStream::skip(int n) {
 	assert(n <= 8);
-	_curBytes >>= n;
+	_curByte >>= n;
 
-	if (_curBit > n) {
-		_curBit -= n;
+	if (_bitCount >= n) {
+		_bitCount -= n;
 	} else {
-		_curBit = _curBit + 8 - n;
-		_curBytes |= *_buf++ << _curBit;
+		assert(_buf < _end);
+		_bitCount = _bitCount + 8 - n;
+		_curByte = *_buf++ >> (8 - _bitCount);
 	}
 }
 
 /*
  * class SmallHuffmanTree
  * A Huffman-tree to hold 8-bit values.
- * Unoptimized since it's only used during smk initialization.
  */
 
 class SmallHuffmanTree {
 public:
-	SmallHuffmanTree(BitStream &bs) : _bs(bs) {
-		uint32 bit = _bs.getBit();
-		assert(bit);
-
-		_tree.reserve(256);
-		decodeTree(0);
-
-		bit = _bs.getBit();
-		assert(!bit);
-	}
+	SmallHuffmanTree(BitStream &bs);
 
 	uint16 getCode(BitStream &bs);
 private:
@@ -136,34 +132,66 @@ private:
 		SMK_NODE = 0x8000
 	};
 
-	int decodeTree(int length);
+	uint16 decodeTree(uint32 prefix, int length);
 
-	Common::Array<uint16> _tree;
+	uint16 _treeSize;
+	uint16 _tree[511];
+
+	uint16 _prefixtree[256];
+	byte _prefixlength[256];
+
 	BitStream &_bs;
 };
 
-int SmallHuffmanTree::decodeTree(int length) {
-	if (!_bs.getBit()) { // Leaf
-		uint16 v = _bs.getBits8();
+SmallHuffmanTree::SmallHuffmanTree(BitStream &bs)
+	: _treeSize(0), _bs(bs) {
+	uint32 bit = _bs.getBit();
+	assert(bit);
 
-		_tree.push_back(v);
+	for (uint16 i = 0; i < 256; ++i)
+		_prefixtree[i] = _prefixlength[i] = 0;
+
+	decodeTree(0, 0);
+
+	bit = _bs.getBit();
+	assert(!bit);
+}
+
+uint16 SmallHuffmanTree::decodeTree(uint32 prefix, int length) {
+	if (!_bs.getBit()) { // Leaf
+		_tree[_treeSize] = _bs.getBits8();
+
+		if (length <= 8) {
+			for (int i = 0; i < 256; i += (1 << length)) {
+				_prefixtree[prefix | i] = _treeSize;
+				_prefixlength[prefix | i] = length;
+			}
+		}
+		++_treeSize;
+
 		return 1;
 	}
 
-	_tree.push_back(0); // placeholder for r1
-	int t = _tree.size() - 1;
+	uint16 t = _treeSize++;
 
-	int r1 = decodeTree(length + 1);
+	if (length == 8) {
+		_prefixtree[prefix] = t;
+		_prefixlength[prefix] = 8;
+	}
+
+	uint16 r1 = decodeTree(prefix, length + 1);
 
 	_tree[t] = (SMK_NODE | r1);
 
-	int r2 = decodeTree(length + 1);
+	uint16 r2 = decodeTree(prefix | (1 << length), length + 1);
 
 	return r1+r2+1;
 }
 
 uint16 SmallHuffmanTree::getCode(BitStream &bs) {
-	uint16 *p = &_tree[0];
+	byte peek = bs.peek8();
+	uint16 *p = &_tree[_prefixtree[peek]];
+	bs.skip(_prefixlength[peek]);
 
 	while (*p & SMK_NODE) {
 		if (bs.getBit())
@@ -177,12 +205,12 @@ uint16 SmallHuffmanTree::getCode(BitStream &bs) {
 /*
  * class BigHuffmanTree
  * A Huffman-tree to hold 16-bit values.
- * Contains the beginnings of an optimization.
  */
 
 class BigHuffmanTree {
 public:
-	BigHuffmanTree(BitStream &bs);
+	BigHuffmanTree(BitStream &bs, int allocSize);
+	~BigHuffmanTree();
 
 	void reset();
 	uint32 getCode(BitStream &bs);
@@ -191,13 +219,14 @@ private:
 		SMK_NODE = 0x80000000
 	};
 
-	int decodeTree(uint32 prefix, int length);
+	uint32 decodeTree(uint32 prefix, int length);
 
-	Common::Array<uint32> _tree;
-	uint32 _last[3];
+	uint32  _treeSize;
+	uint32 *_tree;
+	uint32  _last[3];
 
-	int _prefixtree[256];
-	int _prefixlength[256];
+	uint32 _prefixtree[256];
+	byte _prefixlength[256];
 
 	/* Used during construction */
 	BitStream &_bs;
@@ -206,18 +235,18 @@ private:
 	SmallHuffmanTree *_hiBytes;
 };
 
-BigHuffmanTree::BigHuffmanTree(BitStream &bs)
+BigHuffmanTree::BigHuffmanTree(BitStream &bs, int allocSize)
 	: _bs(bs) {
 	uint32 bit = _bs.getBit();
 	if (!bit) {
-		_tree.push_back(0);
+		_tree = new uint32[1];
+		_tree[0] = 0;
 		_last[0] = _last[1] = _last[2] = 0;
 		return;
 	}
 
-	int i;
-	for (i = 0; i < 256; ++i)
-		_prefixtree[i] = 0;
+	for (uint32 i = 0; i < 256; ++i)
+		_prefixtree[i] = _prefixlength[i] = 0;
 
 	_loBytes = new SmallHuffmanTree(_bs);
 	_hiBytes = new SmallHuffmanTree(_bs);
@@ -228,15 +257,16 @@ BigHuffmanTree::BigHuffmanTree(BitStream &bs)
 
 	_last[0] = _last[1] = _last[2] = 0xffffffff;
 
-	_tree.reserve(256);
+	_treeSize = 0;
+	_tree = new uint32[allocSize / 4];
 	decodeTree(0, 0);
 	bit = _bs.getBit();
 	assert(!bit);
 
-	for (i = 0; i < 3; ++i) {
+	for (uint32 i = 0; i < 3; ++i) {
 		if (_last[i] == 0xffffffff) {
-			_tree.push_back(0);
-			_last[i] = _tree.size() - 1;
+			_last[i] = _treeSize;
+			_tree[_treeSize++] = 0;
 		}
 	}
 
@@ -244,11 +274,16 @@ BigHuffmanTree::BigHuffmanTree(BitStream &bs)
 	delete _hiBytes;
 }
 
+BigHuffmanTree::~BigHuffmanTree()
+{
+	delete[] _tree;
+}
+
 void BigHuffmanTree::reset() {
 	_tree[_last[0]] = _tree[_last[1]] = _tree[_last[2]] = 0;
 }
 
-int BigHuffmanTree::decodeTree(uint32 prefix, int length) {
+uint32 BigHuffmanTree::decodeTree(uint32 prefix, int length) {
 	uint32 bit = _bs.getBit();
 
 	if (!bit) { // Leaf
@@ -256,50 +291,45 @@ int BigHuffmanTree::decodeTree(uint32 prefix, int length) {
 		uint32 hi = _hiBytes->getCode(_bs);
 
 		uint32 v = (hi << 8) | lo;
-		_tree.push_back(v);
 
-		int t = _tree.size() - 1;
+		_tree[_treeSize] = v;
 
 		if (length <= 8) {
-			uint32 i;
-			for (i = 0; i < 256; i += (1 << length)) {
-				_prefixtree[prefix | i] = t;
+			for (int i = 0; i < 256; i += (1 << length)) {
+				_prefixtree[prefix | i] = _treeSize;
 				_prefixlength[prefix | i] = length;
 			}
 		}
 
-		int i;
-		for (i = 0; i < 3; ++i) {
+		for (int i = 0; i < 3; ++i) {
 			if (_markers[i] == v) {
-				_last[i] = t;
-				_tree[t] = 0;
+				_last[i] = _treeSize;
+				_tree[_treeSize] = 0;
 			}
 		}
+		++_treeSize;
 
 		return 1;
 	}
 
-	_tree.push_back(0); // placeholder for r1
-	int t = _tree.size() - 1;
+	uint32 t = _treeSize++;
 
 	if (length == 8) {
 		_prefixtree[prefix] = t;
 		_prefixlength[prefix] = 8;
 	}
 
-	int r1 = decodeTree(prefix, length + 1);
+	uint32 r1 = decodeTree(prefix, length + 1);
 
 	_tree[t] = SMK_NODE | r1;
 
-	int r2 = decodeTree(prefix | (1 << length), length + 1);
+	uint32 r2 = decodeTree(prefix | (1 << length), length + 1);
 	return r1+r2+1;
 }
 
 uint32 BigHuffmanTree::getCode(BitStream &bs) {
-	uint32 *p = &_tree[0];
-
 	byte peek = bs.peek8();
-	p = &_tree[_prefixtree[peek]];
+	uint32 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
 
 	while (*p & SMK_NODE) {
@@ -457,18 +487,17 @@ bool SmackerDecoder::loadFile(const char *fileName) {
 	for (i = 0; i < _videoInfo.frameCount; ++i)
 		_frameTypes[i] = _fileStream->readByte();
 
-	Common::Array<byte> huffmanTrees;
-	huffmanTrees.resize(_header.treesSize + 2);
-	_fileStream->read(&huffmanTrees[0], _header.treesSize);
-	huffmanTrees[_header.treesSize] = 0;
-	huffmanTrees[_header.treesSize + 1] = 0;
+	byte *huffmanTrees = new byte[_header.treesSize];
+	_fileStream->read(huffmanTrees, _header.treesSize);
 
-	BitStream bs(&huffmanTrees[0], _header.treesSize);
+	BitStream bs(huffmanTrees, _header.treesSize);
 
-	_MMapTree = new BigHuffmanTree(bs);
-	_MClrTree = new BigHuffmanTree(bs);
-	_FullTree = new BigHuffmanTree(bs);
-	_TypeTree = new BigHuffmanTree(bs);
+	_MMapTree = new BigHuffmanTree(bs, _header.mMapSize);
+	_MClrTree = new BigHuffmanTree(bs, _header.mClrSize);
+	_FullTree = new BigHuffmanTree(bs, _header.fullSize);
+	_TypeTree = new BigHuffmanTree(bs, _header.typeSize);
+
+	delete[] huffmanTrees;
 
 	_videoFrameBuffer = (byte *)malloc(2 * _videoInfo.width * _videoInfo.height);
 	memset(_videoFrameBuffer, 0, 2 * _videoInfo.width * _videoInfo.height);
@@ -539,11 +568,9 @@ bool SmackerDecoder::decodeNextFrame() {
 
 		if (_header.audioInfo[i].hasAudio && chunkSize > 0 && i == 0) {
 			// If it's track 0, play the audio data
-			byte *soundBuffer = new byte[chunkSize + 2];
+			byte *soundBuffer = new byte[chunkSize];
 
 			_fileStream->read(soundBuffer, chunkSize);
-			soundBuffer[chunkSize] = 0;
-			soundBuffer[chunkSize + 1] = 0;
 
 			if (_header.audioInfo[i].isCompressed) {
 				// Compressed audio (Huffman DPCM encoded)
@@ -575,10 +602,8 @@ bool SmackerDecoder::decodeNextFrame() {
 
 	uint32 frameDataSize = frameSize - (_fileStream->pos() - startPos);
 
-	_frameData = (byte *)malloc(frameDataSize + 2);
+	_frameData = (byte *)malloc(frameDataSize);
 	_fileStream->read(_frameData, frameDataSize);
-	_frameData[frameDataSize] = 0;
-	_frameData[frameDataSize + 1] = 0;
 
 	BitStream bs(_frameData, frameDataSize);
 

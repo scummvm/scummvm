@@ -137,8 +137,6 @@ int GetActorFilmNumber(int ano);
 void StoreActorReel(int actor, int column, OBJECT *pObj);
 void NotPlayingReel(int actor, int filmNumber, int column);
 bool ActorReelPlaying(int actor, int column);
-void SetActorPlayFilm(int ano, SCNHANDLE hFilm);
-SCNHANDLE GetActorPlayFilm(int ano);
 
 /*----------------------------------------------------------------------*/
 
@@ -160,8 +158,6 @@ struct Z_POSITIONS {
 	short	column;
 	int		z;
 };
-
-int SaveActors(SAVED_ACTOR *sActorInfo);
 
 void RestoreActorProcess(int id, INT_CONTEXT *pic);
 

@@ -22,7 +22,7 @@
 #ifndef MT32EMU_SYNTH_H
 #define MT32EMU_SYNTH_H
 
-#include <stdarg.h>
+#include "common/scummsys.h"
 
 class revmodel;
 
@@ -256,7 +256,7 @@ protected:
 	int report(ReportType type, const void *reportData);
 	File *openFile(const char *filename, File::OpenMode mode);
 	void closeFile(File *file);
-	void printDebug(const char *fmt, ...);
+	void printDebug(const char *fmt, ...) GCC_PRINTF(2, 3);
 
 public:
 	static Bit8u calcSysexChecksum(const Bit8u *data, Bit32u len, Bit8u checksum);

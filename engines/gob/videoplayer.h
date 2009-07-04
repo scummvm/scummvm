@@ -44,7 +44,8 @@ public:
 		kFlagUseBackSurfaceContent = 0x40,
 		kFlagFrontSurface = 0x80,
 		kFlagNoVideo = 0x100,
-		kFlagOtherSurface = 0x800
+		kFlagOtherSurface = 0x800,
+		kFlagScreenSurface = 0x400000
 	};
 
 	enum Type {
@@ -58,12 +59,16 @@ public:
 	~VideoPlayer();
 
 	bool primaryOpen(const char *videoFile, int16 x = -1, int16 y = -1,
-			int16 flags = kFlagFrontSurface, Type which = kVideoTypeTry);
+			int32 flags = kFlagFrontSurface, Type which = kVideoTypeTry);
 	bool primaryPlay(int16 startFrame = -1, int16 lastFrame = -1, int16 breakKey = 27,
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
 			int16 palFrame = -1, int16 endFrame = -1, bool fade = false,
 			int16 reverseTo = -1, bool forceSeek = false);
 	void primaryClose();
+
+	void playFrame(int16 frame, int16 breakKey = 27,
+			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
+			int16 palFrame = -1 , int16 endFrame = -1);
 
 	int slotOpen(const char *videoFile, Type which = kVideoTypeTry);
 	void slotPlay(int slot, int16 frame = -1);
@@ -72,7 +77,7 @@ public:
 			uint16 left, uint16 top, uint16 width, uint16 height,
 			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
 	void slotCopyPalette(int slot, int16 palStart = -1, int16 palEnd = -1);
-	void slotWaitEndFrame(int slot, bool onlySound = false);
+	void slotWaitEndFrame(int slot = -1, bool onlySound = false);
 
 	void slotSetDoubleMode(int slot, bool doubleMode);
 
@@ -140,6 +145,7 @@ private:
 
 	Common::Array<Video *> _videoSlots;
 	Video *_primaryVideo;
+	bool _ownSurf;
 	bool _backSurf;
 	bool _needBlit;
 	bool _noCursorSwitch;

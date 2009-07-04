@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "agi/agi.h"
 #include "agi/sprite.h"
 #include "agi/graphics.h"
@@ -32,9 +30,9 @@
 
 namespace Agi {
 
-/*
- * Messages and coordinates
- */
+//
+// Messages and coordinates
+//
 
 #define NOTHING_X	16
 #define NOTHING_Y	3
@@ -92,7 +90,7 @@ int AgiEngine::showItems() {
 
 	for (x = i = 0; x < _game.numObjects; x++) {
 		if (objectGetLocation(x) == EGO_OWNED) {
-			/* add object to our list! */
+			// add object to our list!
 			_intobj[i] = x;
 			printItem(i, STATUS_FG, STATUS_BG);
 			i++;
@@ -182,7 +180,7 @@ void AgiEngine::inventory() {
 	int oldFg, oldBg;
 	int n;
 
-	/* screen is white with black text */
+	// screen is white with black text
 	oldFg = _game.colorFg;
 	oldBg = _game.colorBg;
 	_game.colorFg = 0;
@@ -198,7 +196,7 @@ void AgiEngine::inventory() {
 		break;
 	}
 
-	/* FIXME: doesn't check if objects overflow off screen... */
+	// FIXME: doesn't check if objects overflow off screen...
 
 	_intobj = (uint8 *)malloc(4 + _game.numObjects);
 	memset(_intobj, 0, (4 + _game.numObjects));
@@ -224,10 +222,9 @@ void AgiEngine::inventory() {
 
 	_gfx->flushScreen();
 
-	/* If flag 13 is set, we want to highlight & select an item.
-	 * opon selection, put objnum in var 25. Then on esc put in
-	 * var 25 = 0xff.
-	 */
+	// If flag 13 is set, we want to highlight & select an item.
+	// opon selection, put objnum in var 25. Then on esc put in
+	// var 25 = 0xff.
 
 	if (getflag(fStatusSelectsItems))
 		selectItems(n);

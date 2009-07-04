@@ -31,8 +31,8 @@
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/draw.h"
-#include "gob/parse.h"
 #include "gob/game.h"
+#include "gob/script.h"
 #include "gob/palanim.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
@@ -40,494 +40,73 @@
 
 namespace Gob {
 
-#define OPCODE(x) _OPCODE(Inter_Fascination, x)
-
-const int Inter_Fascination::_goblinFuncLookUp[][2] = {
-	{1, 0},
-	{2, 1},
-	{3, 2},
-	{4, 3},
-	{5, 4},
-	{6, 5},
-	{7, 6},
-	{8, 7},
-	{9, 8},
-	{10, 9},
-	{11, 10},
-	{12, 11},
-	{1000, 12},
-	{1001, 13},
-	{1002, 14}
-};
+#define OPCODEVER Inter_Fascination
+#define OPCODEDRAW(i, x)  _opcodesDraw[i]._OPCODEDRAW(OPCODEVER, x)
+#define OPCODEFUNC(i, x)  _opcodesFunc[i]._OPCODEFUNC(OPCODEVER, x)
+#define OPCODEGOB(i, x)   _opcodesGob[i]._OPCODEGOB(OPCODEVER, x)
 
 Inter_Fascination::Inter_Fascination(GobEngine *vm) : Inter_v2(vm) {
-	setupOpcodes();
 }
 
-void Inter_Fascination::setupOpcodes() {
-	static const OpcodeDrawEntryFascination opcodesDraw[256] = {
-		/* 00 */
-		OPCODE(o1_loadMult),
-		OPCODE(o2_playMult),
-		OPCODE(o1_freeMultKeys),
-		OPCODE(oFascin_cdUnknown3),
-		/* 04 */
-		OPCODE(oFascin_cdUnknown4),
-		OPCODE(oFascin_cdUnknown5),
-		OPCODE(oFascin_cdUnknown6),
-		OPCODE(o1_initCursor),
-		/* 08 */
-		OPCODE(o1_initCursorAnim),
-		OPCODE(o1_clearCursorAnim),
-		OPCODE(oFascin_setRenderFlags),
-		OPCODE(oFascin_cdUnknown11),
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		OPCODE(o1_loadAnim),
-		OPCODE(o1_freeAnim),
-		OPCODE(o1_updateAnim),
-		OPCODE(o2_multSub),
-		/* 14 */
-		OPCODE(o2_initMult),
-		OPCODE(o1_freeMult),
-		OPCODE(o1_animate),
-		OPCODE(o2_loadMultObject),
-		/* 18 */
-		OPCODE(o1_getAnimLayerInfo),
-		OPCODE(o1_getObjAnimSize),
-		OPCODE(o1_loadStatic),
-		OPCODE(o1_freeStatic),
-		/* 1C */
-		OPCODE(o2_renderStatic),
-		OPCODE(o2_loadCurLayer),
-		{0, ""},
-		{0, ""},
-		/* 20 */
-		OPCODE(o2_playCDTrack),
-		OPCODE(o2_waitCDTrackEnd),
-		OPCODE(o2_stopCD),
-		OPCODE(o2_readLIC),
-		/* 24 */
-		OPCODE(o2_freeLIC),
-		OPCODE(o2_getCDTrackPos),
-		{0, ""},
-		{0, ""},
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		OPCODE(o2_loadFontToSprite),
-		OPCODE(o1_freeFontToSprite),
-		{0, ""},
-		{0, ""},
-		/* 34 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 38 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 3C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 40 */
-		OPCODE(o2_totSub),
-		OPCODE(o2_switchTotSub),
-		OPCODE(o2_pushVars),
-		OPCODE(o2_popVars),
-		/* 44 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 48 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 4C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 50 */
-		{0, ""},//OPCODE(o2_loadMapObjects),
-		{0, ""},//OPCODE(o2_freeGoblins),
-		{0, ""},//OPCODE(o2_moveGoblin),
-		{0, ""},//OPCODE(o2_writeGoblinPos),
-		/* 54 */
-		{0, ""},//OPCODE(o2_stopGoblin),
-		{0, ""},//OPCODE(o2_setGoblinState),
-		{0, ""},//OPCODE(o2_placeGoblin),
-		{0, ""},
-		/* 58 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 5C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 60 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 64 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 68 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 6C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 70 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 74 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 78 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 7C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 80 */
-		{0, ""},//OPCODE(o2_initScreen),
-		{0, ""},//OPCODE(o2_scroll),
-		{0, ""},//OPCODE(o2_setScrollOffset),
-		{0, ""},//OPCODE(o2_playImd),
-		/* 84 */
-		{0, ""},//OPCODE(o2_getImdInfo),
-		{0, ""},//OPCODE(o2_openItk),
-		{0, ""},//OPCODE(o2_closeItk),
-		{0, ""},//OPCODE(o2_setImdFrontSurf),
-		/* 88 */
-		{0, ""},//OPCODE(o2_resetImdFrontSurf),
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 8C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 90 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 94 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 98 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 9C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* A8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* AC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* B8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* BC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* C8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* CC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* D8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* DC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* E8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* EC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F0 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F4 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* F8 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* FC */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""}
-	};
+void Inter_Fascination::setupOpcodesDraw() {
+	Inter_v2::setupOpcodesDraw();
 
-	static const OpcodeFuncEntryFascination opcodesFunc[80] = {
-		/* 00 */
-		OPCODE(o1_callSub),
-		OPCODE(o1_callSub),
-		OPCODE(o1_printTotText),
-		OPCODE(o1_loadCursor),
-		/* 04 */
-		{0, ""},
-		OPCODE(o1_switch),
-		OPCODE(o1_repeatUntil),
-		OPCODE(o1_whileDo),
-		/* 08 */
-		OPCODE(o1_if),
-		OPCODE(o2_evaluateStore),
-		OPCODE(o1_loadSpriteToPos),
-		{0, ""},
-		/* 0C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 10 */
-		{0, ""},
-		OPCODE(o2_printText),
-		OPCODE(o1_loadTot),
-		OPCODE(o1_palLoad),
-		/* 14 */
-		OPCODE(o1_keyFunc),
-		OPCODE(o1_capturePush),
-		OPCODE(o1_capturePop),
-		OPCODE(o1_animPalInit),
-		/* 18 */
-		OPCODE(o2_addCollision),
-		OPCODE(o2_freeCollision),
-		{0, ""},
-		{0, ""},
-		/* 1C */
-		{0, ""},
-		{0, ""},
-		OPCODE(o1_drawOperations),
-		OPCODE(o1_setcmdCount),
-		/* 20 */
-		OPCODE(o1_return),
-		OPCODE(o1_renewTimeInVars),
-		OPCODE(o1_speakerOn),
-		OPCODE(o1_speakerOff),
-		/* 24 */
-		OPCODE(o1_putPixel),
-		OPCODE(o2_goblinFunc),
-		OPCODE(o1_createSprite),
-		OPCODE(o1_freeSprite),
-		/* 28 */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 2C */
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		{0, ""},
-		/* 30 */
-		OPCODE(o1_returnTo),
-		OPCODE(o1_loadSpriteContent),
-		OPCODE(o1_copySprite),
-		OPCODE(o1_fillRect),
-		/* 34 */
-		OPCODE(o1_drawLine),
-		OPCODE(o1_strToLong),
-		OPCODE(o1_invalidate),
-		OPCODE(o1_setBackDelta),
-		/* 38 */
-		OPCODE(o1_playSound),
-		OPCODE(o2_stopSound),
-		OPCODE(o2_loadSound),
-		OPCODE(o1_freeSoundSlot),
-		/* 3C */
-		OPCODE(o1_waitEndPlay),
-		OPCODE(o1_playComposition),
-		OPCODE(o2_getFreeMem),
-		OPCODE(o2_checkData),
-		/* 40 */
-		{0, ""},
-		OPCODE(o1_prepareStr),
-		OPCODE(o1_insertStr),
-		OPCODE(o1_cutStr),
-		/* 44 */
-		OPCODE(o1_strstr),
-		OPCODE(o1_istrlen),
-		OPCODE(o1_setMousePos),
-		OPCODE(o1_setFrameRate),
-		/* 48 */
-		OPCODE(o1_animatePalette),
-		OPCODE(o1_animateCursor),
-		OPCODE(o1_blitCursor),
-		OPCODE(o1_loadFont),
-		/* 4C */
-		OPCODE(o1_freeFont),
-		OPCODE(o2_readData),
-		OPCODE(o2_writeData),
-		OPCODE(o1_manageDataFile),
-	};
+	OPCODEDRAW(0x03, oFascin_cdUnknown3);
 
-	static const OpcodeGoblinEntryFascination opcodesGoblin[15] = {
-		/* 00 */
-		OPCODE(oFascin_geUnknown0),
-		OPCODE(oFascin_geUnknown1),
-		OPCODE(oFascin_geUnknown2),
-		OPCODE(oFascin_geUnknown3),
-		/* 04 */
-		OPCODE(oFascin_geUnknown4),
-		OPCODE(oFascin_geUnknown5),
-		OPCODE(oFascin_geUnknown6),
-		OPCODE(oFascin_geUnknown7),
-		/* 08 */
-		OPCODE(oFascin_geUnknown8),
-		OPCODE(oFascin_geUnknown9),
-		OPCODE(oFascin_geUnknown10),
-		OPCODE(oFascin_geUnknown11),
-		/* 0C */
-		OPCODE(oFascin_geUnknown1000),
-		OPCODE(oFascin_geUnknown1001), //protrackerPlay doesn't play correctly "mod.extasy"
-		OPCODE(oFascin_geUnknown1002), //to be replaced by o2_stopProtracker when protrackerPlay is fixed
-	};
+	OPCODEDRAW(0x04, oFascin_cdUnknown4);
+	OPCODEDRAW(0x05, oFascin_cdUnknown5);
+	OPCODEDRAW(0x06, oFascin_cdUnknown6);
 
-	_opcodesDrawFascination = opcodesDraw;
-	_opcodesFuncFascination = opcodesFunc;
-	_opcodesGoblinFascination = opcodesGoblin;
+	OPCODEDRAW(0x0A, oFascin_setRenderFlags);
+	OPCODEDRAW(0x0B, oFascin_cdUnknown11);
+
+	CLEAROPCODEDRAW(0x50);
+	CLEAROPCODEDRAW(0x51);
+	CLEAROPCODEDRAW(0x52);
+	CLEAROPCODEDRAW(0x53);
+
+	CLEAROPCODEDRAW(0x54);
+	CLEAROPCODEDRAW(0x55);
+	CLEAROPCODEDRAW(0x56);
+
+	CLEAROPCODEDRAW(0x80);
+	CLEAROPCODEDRAW(0x81);
+	CLEAROPCODEDRAW(0x82);
+	CLEAROPCODEDRAW(0x83);
+
+	CLEAROPCODEDRAW(0x84);
+	CLEAROPCODEDRAW(0x85);
+	CLEAROPCODEDRAW(0x86);
+	CLEAROPCODEDRAW(0x87);
+
+	CLEAROPCODEDRAW(0x88);
 }
 
-void Inter_Fascination::executeDrawOpcode(byte i) {
-	debugC(1, kDebugDrawOp, "opcodeDraw %d [0x%X] (%s)",
-			i, i, getOpcodeDrawDesc(i));
+void Inter_Fascination::setupOpcodesFunc() {
+	Inter_v2::setupOpcodesFunc();
 
-	OpcodeDrawProcFascination op = _opcodesDrawFascination[i].proc;
+	OPCODEFUNC(0x09, o1_assign);
+}
 
-	if (op == 0)
-		warning("Not yet implemented Fascination opcodeDraw: %d", i);
-	else
-		(this->*op) ();
+void Inter_Fascination::setupOpcodesGob() {
+	OPCODEGOB(   1, oFascin_geUnknown0);
+	OPCODEGOB(   2, oFascin_geUnknown1);
+	OPCODEGOB(   3, oFascin_geUnknown2);
+	OPCODEGOB(   4, oFascin_geUnknown3);
+
+	OPCODEGOB(   5, oFascin_geUnknown4);
+	OPCODEGOB(   6, oFascin_geUnknown5);
+	OPCODEGOB(   7, oFascin_geUnknown6);
+	OPCODEGOB(   8, oFascin_geUnknown7);
+
+	OPCODEGOB(   9, oFascin_geUnknown8);
+	OPCODEGOB(  10, oFascin_geUnknown9);
+	OPCODEGOB(  11, oFascin_geUnknown10);
+	OPCODEGOB(  12, oFascin_geUnknown11);
+
+	OPCODEGOB(1000, oFascin_geUnknown1000);
+	OPCODEGOB(1001, oFascin_geUnknown1001); //protrackerPlay doesn't play correctly "mod.extasy"
+	OPCODEGOB(1002, oFascin_geUnknown1002); //to be replaced by o2_stopProtracker when protrackerPlay is fixed
 }
 
 void Inter_Fascination::oFascin_geUnknown0(OpGobParams &params) {
@@ -552,70 +131,58 @@ void Inter_Fascination::oFascin_geUnknown1(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_geUnknown2(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 2");
-	warning("funcLoadInstruments with parameter : 'extasy.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'extasy.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTBR("extasy.tbr");
+	_vm->_sound->adlibLoadMDY("extasy.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown3(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 3");
-	warning("Verify if 'Guess music' is loaded. If yes, call funcPlayMusic. (Guess)");
+	_vm->_sound->adlibPlay();
 }
 
 void Inter_Fascination::oFascin_geUnknown4(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 4");
-	warning("Verify if 'Guess music' is loaded. If yes, call funcStopMusic. (Guess)");
+	_vm->_sound->adlibStop();
 }
 
 void Inter_Fascination::oFascin_geUnknown5(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 5");
-	warning("Verify if 'instruments' are loaded, If so, call mem_free");
-	warning("Verify if 'Guess music' is loaded. If yes, call _cleanupMdy");
-	warning("Then set _ptrTbr and _ptrMdy to 0");
+	_vm->_sound->adlibUnload();
 }
 
 void Inter_Fascination::oFascin_geUnknown6(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 6");
-	warning("funcLoadInstruments with parameter : 'music1.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'music1.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTBR("music1.tbr");
+	_vm->_sound->adlibLoadMDY("music1.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown7(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 7");
-	warning("funcLoadInstruments with parameter : 'music2.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'music2.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTBR("music2.tbr");
+	_vm->_sound->adlibLoadMDY("music2.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown8(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 8");
-	warning("funcLoadInstruments with parameter : 'music3.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'music3.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTBR("music3.tbr");
+	_vm->_sound->adlibLoadMDY("music3.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown9(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 9");
-	warning("funcLoadInstruments with parameter : 'batt1.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'batt1.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTBR("batt1.tbr");
+	_vm->_sound->adlibLoadMDY("batt1.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown10(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 10");
-	warning("funcLoadInstruments with parameter : 'batt2.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'batt2.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTBR("batt2.tbr");
+	_vm->_sound->adlibLoadMDY("batt2.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown11(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 11");
-	warning("funcLoadInstruments with parameter : 'batt3.tbr'. (Guess)");
-	warning("funcLoadMusic with parameter : 'batt3.mdy'. (Guess)");
+	_vm->_sound->adlibLoadTBR("batt3.tbr");
+	_vm->_sound->adlibLoadMDY("batt3.mdy");
 }
 
 void Inter_Fascination::oFascin_geUnknown1000(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 1000 - Load music ?");
+	warning("Fascination Unknown GE Function 1000 - Load MOD music");
 }
 
 void Inter_Fascination::oFascin_geUnknown1001(OpGobParams &params) {
-	warning("Fascination oFascin_playProtracker - MOD not compatible, ToBeFixed");
+	warning("Fascination oFascin_playProtracker - MOD not compatible (sample > 32768), To Be Fixed");
 }
 
 void Inter_Fascination::oFascin_geUnknown1002(OpGobParams &params) {
@@ -638,15 +205,15 @@ void Inter_Fascination::oFascin_cdUnknown3() {
 
 	warning("Fascination oFascin_cdUnknown3 - Variables initialisations");
 
-	resVar = (uint16) load16();
-	resVar2 = (uint16) load16();
-	retVal1 = _vm->_parse->parseVarIndex();
-	retVal2 = _vm->_parse->parseVarIndex();
-	retVal3 = _vm->_parse->parseVarIndex();
-	retVal4 = _vm->_parse->parseVarIndex();
-	retVal5 = _vm->_parse->parseVarIndex();
-	retVal6 = _vm->_parse->parseVarIndex();
-	retVal7 = _vm->_parse->parseVarIndex();
+	resVar = _vm->_game->_script->readUint16();
+	resVar2 = _vm->_game->_script->readUint16();
+	retVal1 = _vm->_game->_script->readVarIndex();
+	retVal2 = _vm->_game->_script->readVarIndex();
+	retVal3 = _vm->_game->_script->readVarIndex();
+	retVal4 = _vm->_game->_script->readVarIndex();
+	retVal5 = _vm->_game->_script->readVarIndex();
+	retVal6 = _vm->_game->_script->readVarIndex();
+	retVal7 = _vm->_game->_script->readVarIndex();
 	warning ("Width? :%d Height? :%d",resVar, resVar2);
 	warning ("Fetched variables 1:%d 2:%d 3:%d 4:%d 5:%d 6:%d 7:%d", retVal1, retVal2, retVal3, retVal4, retVal5, retVal6, retVal7);
 }
@@ -654,98 +221,37 @@ void Inter_Fascination::oFascin_cdUnknown3() {
 void Inter_Fascination::oFascin_cdUnknown4() {
 	int16 expr;
 	warning("Fascination oFascin_cdUnknown4");
-	evalExpr(&expr);
-	warning ("evalExpr: %d, the rest is not yet implemented",expr);
+	_vm->_game->_script->evalExpr(&expr);
+	warning ("_vm->_game->_script->evalExpr: %d, the rest is not yet implemented",expr);
 }
 
 void Inter_Fascination::oFascin_cdUnknown5() {
 	int16 retVal1,expr;
 	warning("Fascination oFascin_cdUnknown5");
-	evalExpr(&expr);
-	retVal1 = _vm->_parse->parseVarIndex();
-	warning ("evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
+	_vm->_game->_script->evalExpr(&expr);
+	retVal1 = _vm->_game->_script->readVarIndex();
+	warning ("_vm->_game->_script->evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
 }
 
 void Inter_Fascination::oFascin_cdUnknown6() {
 	int16 retVal1,expr;
 	warning("Fascination oFascin_cdUnknown6");
-	evalExpr(&expr);
-	retVal1 = _vm->_parse->parseVarIndex();
-	warning ("evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
+	_vm->_game->_script->evalExpr(&expr);
+	retVal1 = _vm->_game->_script->readVarIndex();
+	warning ("_vm->_game->_script->evalExpr: %d Variable index %d, the rest is not yet implemented",expr, retVal1);
 }
 
 void Inter_Fascination::oFascin_setRenderFlags() {
 	int16 expr;
 //	warning("Fascination oFascin_cdUnknown10 (set render flags)");
-	evalExpr(&expr);
+	_vm->_game->_script->evalExpr(&expr);
 	warning("_draw_renderFlags <- %d",expr);
 	_vm->_draw->_renderFlags = expr;
 }
 
 void Inter_Fascination::oFascin_cdUnknown11() {
 //	warning("Fascination oFascin_cdUnknown11 (set variable)");
-	evalExpr(0);
-}
-
-bool Inter_Fascination::executeFuncOpcode(byte i, byte j, OpFuncParams &params) {
-	debugC(1, kDebugFuncOp, "opcodeFunc %d.%d [0x%X.0x%X] (%s)",
-			i, j, i, j, getOpcodeFuncDesc(i, j));
-
-	if ((i > 4) || (j > 16)) {
-		warning("Invalid opcodeFunc: %d.%d", i, j);
-		return false;
-	}
-
-	OpcodeFuncProcFascination op = _opcodesFuncFascination[i*16 + j].proc;
-
-	if (op == 0)
-		warning("unimplemented opcodeFunc: %d.%d", i, j);
-	else
-		return (this->*op) (params);
-
-	return false;
-}
-
-void Inter_Fascination::executeGoblinOpcode(int i, OpGobParams &params) {
-	debugC(1, kDebugGobOp, "opcodeGoblin %d [0x%X] (%s)",
-			i, i, getOpcodeGoblinDesc(i));
-
-	OpcodeGoblinProcFascination op = 0;
-
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i) {
-			op = _opcodesGoblinFascination[_goblinFuncLookUp[j][1]].proc;
-			break;
-		}
-
-	if (op == 0) {
-		int16 val;
-
-		_vm->_global->_inter_execPtr -= 2;
-		val = load16();
-		_vm->_global->_inter_execPtr += val << 1;
-		warning("unimplemented opcodeGob: %d", i);
-	} else
-		(this->*op) (params);
-}
-
-const char *Inter_Fascination::getOpcodeDrawDesc(byte i) {
-	return _opcodesDrawFascination[i].desc;
-}
-
-const char *Inter_Fascination::getOpcodeFuncDesc(byte i, byte j) {
-	if ((i > 4) || (j > 15))
-		return "";
-
-	return _opcodesFuncFascination[i*16 + j].desc;
-}
-
-const char *Inter_Fascination::getOpcodeGoblinDesc(int i) {
-	for (int j = 0; j < ARRAYSIZE(_goblinFuncLookUp); j++)
-		if (_goblinFuncLookUp[j][0] == i)
-			return _opcodesGoblinFascination[_goblinFuncLookUp[j][1]].desc;
-	warning("Error in getOpcodeGoblinDesc %d",i);
-	return "";
+	_vm->_game->_script->evalExpr(0);
 }
 
 void Inter_Fascination::oFascin_playProtracker(OpGobParams &params) {

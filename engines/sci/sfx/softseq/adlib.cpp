@@ -482,7 +482,7 @@ void MidiDriver_Adlib::setNote(int voice, int note, bool key) {
 
 	if (bend < 8192)
 		bend = 8192 - bend;
-	delta = pow(2.0, (float)(bend % 8192) / 8192.0);
+	delta = (float)pow(2.0, (bend % 8192) / 8192.0);
 
 	if (bend > 8192)
 		fre = (int)(ym3812_note[n] * delta);
@@ -627,7 +627,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 	assert(resmgr != NULL);
 
 	// Load up the patch.003 file, parse out the instruments
-	Resource *res = resmgr->findResource(kResourceTypePatch, 3, 0);
+	Resource *res = resmgr->findResource(ResourceId(kResourceTypePatch, 3), 0);
 
 	if (!res) {
 		warning("ADLIB: Failed to load patch.003");

@@ -70,6 +70,22 @@ bool ThemeLayout::getWidgetData(const Common::String &name, int16 &x, int16 &y, 
 	return false;
 }
 
+Graphics::TextAlign ThemeLayout::getWidgetTextHAlign(const Common::String &name) {
+	if (name.empty()) {
+		assert(getLayoutType() == kLayoutMain);
+		return _textHAlign;
+	}
+
+	Graphics::TextAlign res;
+
+	for (uint i = 0; i < _children.size(); ++i) {
+		if ((res = _children[i]->getWidgetTextHAlign(name)) != Graphics::kTextAlignInvalid)
+			return res;
+	}
+
+	return Graphics::kTextAlignInvalid;
+}
+
 int16 ThemeLayoutStacked::getParentWidth() {
 	ThemeLayout *p = _parent;
 	int width = 0;
@@ -133,6 +149,14 @@ bool ThemeLayoutWidget::getWidgetData(const Common::String &name, int16 &x, int1
 	}
 
 	return false;
+}
+
+Graphics::TextAlign ThemeLayoutWidget::getWidgetTextHAlign(const Common::String &name) {
+	if (name == _name) {
+		return _textHAlign;
+	}
+
+	return Graphics::kTextAlignInvalid;
 }
 
 void ThemeLayoutMain::reflowLayout() {

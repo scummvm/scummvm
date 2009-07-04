@@ -62,7 +62,7 @@
 				rgb = '251, 241, 206'
 		/>
 		<color name = 'blandyellow'
-				rgb = '246, 224, 139'
+				rgb = '248, 228, 152'
 		/>
 
 		<!-- Others -->
@@ -84,6 +84,9 @@
 		<color name = 'lightgray'
 				rgb = '210, 200, 170'
 		/>
+		<color name = 'lightgray2'
+				rgb = '231, 223, 189'
+		/>
 		<color name = 'paleyellow'
 				rgb = '247, 228, 166'
 		/>
@@ -94,7 +97,9 @@
 		<bitmap filename = 'cursor.bmp'/>
 		<bitmap filename = 'cursor_small.bmp'/>
 		<bitmap filename = 'checkbox.bmp'/>
+		<bitmap filename = 'checkbox_empty.bmp'/>
 		<bitmap filename = 'logo_small.bmp'/>
+		<bitmap filename = 'search.bmp'/>
 	</bitmaps>
 
 	<fonts>
@@ -153,7 +158,7 @@
 	<!-- Load screen -->
 	<drawdata id = 'special_bg' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = '4'
+					radius = '5'
 					fill = 'gradient'
 					stroke = '0'
 					gradient_start = 'darkorange'
@@ -294,7 +299,7 @@
 	<drawdata id = 'widget_slider' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '0'
-					radius = '4'
+					radius = '5'
 					fill = 'foreground'
 					fg_color = 'paleyellow'
 					bevel = '1'
@@ -306,7 +311,7 @@
 	<drawdata id = 'slider_full' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
-					radius = '4'
+					radius = '5'
 					fill = 'gradient'
 					fg_color = '123, 112, 56'
 					gradient_start = 'brightred'
@@ -318,7 +323,7 @@
 	<drawdata id = 'slider_hover' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
-					radius = '4'
+					radius = '5'
 					fill = 'gradient'
 					fg_color = '123, 112, 56'
 					gradient_start = 'brightpink'
@@ -330,7 +335,7 @@
 	<drawdata id = 'slider_disabled' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
-					radius = '4'
+					radius = '5'
 					fill = 'gradient'
 					fg_color = '123, 112, 56'
 					gradient_start = 'darkenedbrightred'
@@ -341,9 +346,9 @@
 	<!-- Idle popup -->
 	<drawdata id = 'popup_idle' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = '4'
+					radius = '5'
 					stroke = '1'
-					fg_color = 'lightgray'
+					fg_color = 'lightgray2'
 					fill = 'background'
 					bg_color = 'xtrabrightred'
 					shadow = '2'
@@ -366,7 +371,7 @@
 	<!-- Disabled popup -->
 	<drawdata id = 'popup_disabled' cache = 'false'>
 		<drawstep	func = 'roundedsq'
-					radius = '4'
+					radius = '5'
 					fill = 'foreground'
 					fg_color = 'darkgray'
 					shadow = '2'
@@ -391,7 +396,7 @@
 		<drawstep	func = 'roundedsq'
 					stroke = '1'
 					fg_color = 'lightgray'
-					radius = '4'
+					radius = '5'
 					fill = 'gradient'
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'
@@ -416,7 +421,7 @@
 	<drawdata id = 'widget_textedit' cache = 'false'>
 		<drawstep	func = 'roundedsq'
 					fill = 'foreground'
-					radius = '4'
+					radius = '5'
 					fg_color = 'paleyellow'
 					shadow = '0'
 					bevel = '1'
@@ -464,7 +469,7 @@
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
-					radius = '4'
+					radius = '5'
 					stroke = '1'
 					fill = 'gradient'
 					shadow = '0'
@@ -483,7 +488,7 @@
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
-					radius = '4'
+					radius = '5'
 					stroke = '1'
 					fill = 'gradient'
 					shadow = '0'
@@ -502,7 +507,7 @@
 				horizontal_align = 'center'
 		/>
 		<drawstep	func = 'roundedsq'
-					radius = '4'
+					radius = '5'
 					stroke = '1'
 					fill = 'gradient'
 					shadow = '0'
@@ -520,13 +525,8 @@
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
-		<drawstep	func = 'roundedsq'
-					fill = 'none'
-					radius = '4'
-					fg_color = 'black'
-					shadow = '0'
-					bevel = '1'
-					bevel_color = 'shadowcolor'
+		<drawstep	func = 'bitmap'
+					file = 'checkbox_empty.bmp'
 		/>
 	</drawdata>
 
@@ -547,13 +547,8 @@
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
-		<drawstep	func = 'roundedsq'
-					fill = 'foreground'
-					radius = '4'
-					fg_color = 'paleyellow'
-					shadow = '0'
-					bevel = '1'
-					bevel_color = 'shadowcolor'
+		<drawstep	func = 'bitmap'
+					file = 'checkbox_empty.bmp'
 		/>
 	</drawdata>
 

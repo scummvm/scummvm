@@ -50,11 +50,13 @@ DemoPlayer::Script DemoPlayer::_scripts[] = {
 		"slide tumid.imd 1\nslide post.imd 1\nslide posta.imd 1\n"      \
 		"slide postb.imd 1\nslide postc.imd 1\nslide xdome.imd 20\n"    \
 		"slide xant.imd 20\nslide tum.imd 20\nslide voile.imd 20\n"     \
-		"slide int.imd 20\nslide voila.imd 1\nslide voilb.imd 1\n"}
+		"slide int.imd 20\nslide voila.imd 1\nslide voilb.imd 1\n"},
+	{kScriptSourceFile, "coktelplayer.scn"},
 };
 
 DemoPlayer::DemoPlayer(GobEngine *vm) : _vm(vm) {
 	_doubleMode = false;
+	_rebase0 = false;
 }
 
 DemoPlayer::~DemoPlayer() {
@@ -121,7 +123,9 @@ void DemoPlayer::init() {
 
 void DemoPlayer::clearScreen() {
 	debugC(1, kDebugDemo, "Clearing the screen");
-	_vm->_video->clearScreen();
+	_vm->_video->clearSurf(*_vm->_draw->_backSurface);
+	_vm->_draw->forceBlit();
+	_vm->_video->retrace();
 }
 
 void DemoPlayer::playVideo(const char *fileName) {
@@ -148,9 +152,20 @@ void DemoPlayer::playVideo(const char *fileName) {
 
 	debugC(1, kDebugDemo, "Playing video \"%s\"", file);
 
-	if (_vm->_vidPlayer->primaryOpen(file)) {
+	int16 x = _rebase0 ? 0 : -1;
+	int16 y = _rebase0 ? 0 : -1;
+	if (_vm->_vidPlayer->primaryOpen(file, x, y)) {
 		bool videoSupportsDouble =
 			((_vm->_vidPlayer->getFeatures() & Graphics::CoktelVideo::kFeaturesSupportsDouble) != 0);
+
+		if (_autoDouble) {
+			int16 defX = _rebase0 ? 0 : _vm->_vidPlayer->getDefaultX();
+			int16 defY = _rebase0 ? 0 : _vm->_vidPlayer->getDefaultY();
+			int16 right  = defX + _vm->_vidPlayer->getWidth()  - 1;
+			int16 bottom = defY + _vm->_vidPlayer->getHeight() - 1;
+
+			_doubleMode = ((right < 320) && (bottom < 200));
+		}
 
 		if (_doubleMode) {
 			if (videoSupportsDouble) {
@@ -176,13 +191,16 @@ void DemoPlayer::playVideoNormal() {
 }
 
 void DemoPlayer::playVideoDoubled() {
-	const char *fileNameOpened = _vm->_vidPlayer->getFileName();
+	Common::String fileNameOpened = _vm->_vidPlayer->getFileName();
 	_vm->_vidPlayer->primaryClose();
 
-	if (_vm->_vidPlayer->primaryOpen(fileNameOpened, 0, -1, VideoPlayer::kFlagOtherSurface)) {
+	int16 x = _rebase0 ? 0 : -1;
+	int16 y = _rebase0 ? 0 : -1;
+	if (_vm->_vidPlayer->primaryOpen(fileNameOpened.c_str(), x, y,
+				VideoPlayer::kFlagScreenSurface)) {
+
 		for (int i = 0; i < _vm->_vidPlayer->getFramesCount(); i++) {
-			if (_vm->_vidPlayer->primaryPlay(i, i))
-				break;
+			_vm->_vidPlayer->playFrame(i);
 
 			Graphics::CoktelVideo::State state = _vm->_vidPlayer->getState();
 
@@ -191,11 +209,26 @@ void DemoPlayer::playVideoDoubled() {
 			int16 wD = (state.left * 2) + (w * 2);
 			int16 hD = (state.top * 2) + (h * 2);
 
-			_vm->_video->drawSpriteDouble(_vm->_draw->_spritesArray[0], _vm->_draw->_frontSurface,
+			_vm->_video->drawSpriteDouble(*_vm->_draw->_spritesArray[0], *_vm->_draw->_frontSurface,
 					state.left, state.top, state.right, state.bottom, state.left, state.top, 0);
 			_vm->_draw->dirtiedRect(_vm->_draw->_frontSurface,
 					state.left * 2, state.top * 2, wD, hD);
 			_vm->_video->retrace();
+
+			_vm->_util->processInput();
+			if (_vm->shouldQuit())
+				break;
+
+			int16 key;
+			bool end = false;
+			while (_vm->_util->checkKey(key))
+				if (key == 0x011B)
+					end = true;
+			if (end)
+				break;
+
+			_vm->_vidPlayer->slotWaitEndFrame();
+
 		}
 	}
 }
@@ -203,10 +236,16 @@ void DemoPlayer::playVideoDoubled() {
 void DemoPlayer::evaluateVideoMode(const char *mode) {
 	debugC(2, kDebugDemo, "Video mode \"%s\"", mode);
 
-	if (!scumm_strnicmp(mode, "VESA", 4))
-		_doubleMode = false;
-	else if (!scumm_strnicmp(mode, "VGA", 3) && _vm->is640())
-		_doubleMode = true;
+	_autoDouble = false;
+	_doubleMode = false;
+
+	// Only applicable when we actually can double
+	if (_vm->is640()) {
+		if (!scumm_strnicmp(mode, "AUTO", 4))
+			_autoDouble = true;
+		else if (!scumm_strnicmp(mode, "VGA", 3) && _vm->is640())
+			_doubleMode = true;
+	}
 }
 
 } // End of namespace Gob

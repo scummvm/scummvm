@@ -34,7 +34,7 @@
 namespace Kyra {
 
 bool LoLEngine::snd_playCharacterSpeech(int id, int8 speaker, int) {
-	if (!_speechFlag)
+	if (!speechEnabled())
 		return false;
 
 	if (speaker < 65) {
@@ -160,7 +160,7 @@ void LoLEngine::snd_stopSpeech(bool setFlag) {
 }
 
 void LoLEngine::snd_playSoundEffect(int track, int volume) {
-	if (track == 1 && (_lastSfxTrack == -1 || _lastSfxTrack == 1))
+	if ((track == 1 && (_lastSfxTrack == -1 || _lastSfxTrack == 1)) || shouldQuit())
 		return;
 
 	_lastSfxTrack = track;
@@ -186,12 +186,13 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	}
 
 	if (hasVocFile) {
-		_sound->voicePlay(_ingameSoundList[vocIndex], 0, volume & 0xff, true);
+		if (_sound->isVoicePresent(_ingameSoundList[vocIndex]))
+			_sound->voicePlay(_ingameSoundList[vocIndex], 0, volume & 0xff, true);
 	} else if (_flags.platform == Common::kPlatformPC) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
-			track = track < _ingameMT32SoundIndexSize ? _ingameMT32SoundIndex[track] - 1 : -1;
+			track = (track < _ingameMT32SoundIndexSize) ? (_ingameMT32SoundIndex[track] - 1) : -1;
 		else if (_sound->getSfxType() == Sound::kMidiGM)
-			track = track < _ingameGMSoundIndexSize ? _ingameGMSoundIndex[track] - 1: -1;
+			track = (track < _ingameGMSoundIndexSize) ? (_ingameGMSoundIndex[track] - 1) : -1;
 
 		if (track == 168)
 			track = 167;
@@ -202,7 +203,7 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 }
 
 void LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
-	if (!_sound->sfxEnabled())
+	if (!_sound->sfxEnabled() || shouldQuit())
 		return;
 
 	if (_environmentSfx)
@@ -301,6 +302,15 @@ int LoLEngine::snd_stopMusic() {
 		_sound->haltTrack();
 	}
 	return snd_playTrack(-1);
+}
+
+int LoLEngine::convertVolumeToMixer(int value) {
+	value -= 2;
+	return (value * Audio::Mixer::kMaxMixerVolume) / 100;
+}
+
+int LoLEngine::convertVolumeFromMixer(int value) {
+	return (value * 100) / Audio::Mixer::kMaxMixerVolume + 2;
 }
 
 } // end of namespace Kyra

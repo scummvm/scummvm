@@ -31,6 +31,9 @@
 #include "common/md5.h"
 #include "sound/mididrv.h"
 
+#include "gui/GuiManager.h"
+#include "gui/widget.h"
+
 #include "gob/gob.h"
 #include "gob/global.h"
 #include "gob/util.h"
@@ -44,7 +47,6 @@
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/palanim.h"
-#include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/videoplayer.h"
 #include "gob/save/saveload.h"
@@ -67,13 +69,44 @@ const Common::Language GobEngine::_gobToScummVMLang[] = {
 	Common::JA_JPN
 };
 
+
+PauseDialog::PauseDialog() : GUI::Dialog("PauseDialog") {
+	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
+
+	_message = "Game paused. Press Ctrl+p again to continue.";
+	_text = new GUI::StaticTextWidget(this, 4, 0, 10, 10,
+			_message, Graphics::kTextAlignCenter);
+}
+
+void PauseDialog::reflowLayout() {
+	const int screenW = g_system->getOverlayWidth();
+	const int screenH = g_system->getOverlayHeight();
+
+	int width = g_gui.getStringWidth(_message) + 16;
+	int height = g_gui.getFontHeight() + 8;
+
+	_w = width;
+	_h = height;
+	_x = (screenW - width) / 2;
+	_y = (screenH - height) / 2;
+
+	_text->setSize(_w - 8, _h);
+}
+
+void PauseDialog::handleKeyDown(Common::KeyState state) {
+	// Close on CTRL+p
+	if ((state.flags == Common::KBD_CTRL) && (state.keycode == Common::KEYCODE_p))
+		close();
+}
+
+
 GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
-	_sound     = 0; _mult     = 0; _game   = 0;
-	_global    = 0; _dataIO   = 0; _goblin = 0;
-	_vidPlayer = 0; _init     = 0; _inter  = 0;
-	_map       = 0; _palAnim  = 0; _parse  = 0;
-	_scenery   = 0; _draw     = 0; _util   = 0;
-	_video     = 0; _saveLoad = 0;
+	_sound     = 0; _mult     = 0; _game    = 0;
+	_global    = 0; _dataIO   = 0; _goblin  = 0;
+	_vidPlayer = 0; _init     = 0; _inter   = 0;
+	_map       = 0; _palAnim  = 0; _scenery = 0;
+	_draw      = 0; _util     = 0; _video   = 0;
+	_saveLoad  = 0;
 
 	_pauseStart = 0;
 
@@ -87,7 +120,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addDebugChannel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
 	Common::addDebugChannel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
 	Common::addDebugChannel(kDebugSound, "Sound", "Sound output debug level");
-	Common::addDebugChannel(kDebugParser, "Parser", "Parser debug level");
+	Common::addDebugChannel(kDebugExpression, "Expression", "Expression parser debug level");
 	Common::addDebugChannel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
 	Common::addDebugChannel(kDebugFileIO, "FileIO", "File Input/Output debug level");
 	Common::addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
@@ -214,42 +247,42 @@ Common::Error GobEngine::run() {
 	switch (_language) {
 	case Common::FR_FRA:
 	case Common::RU_RUS:
-		_global->_language = 0;
+		_global->_language = kLanguageFrench;
 		break;
 	case Common::DE_DEU:
-		_global->_language = 1;
+		_global->_language = kLanguageGerman;
 		break;
 	case Common::EN_ANY:
 	case Common::EN_GRB:
-		_global->_language = 2;
+	case Common::HU_HUN:
+		_global->_language = kLanguageBritish;
 		break;
 	case Common::ES_ESP:
-		_global->_language = 3;
+		_global->_language = kLanguageSpanish;
 		break;
 	case Common::IT_ITA:
-		_global->_language = 4;
+		_global->_language = kLanguageItalian;
 		break;
 	case Common::EN_USA:
-		_global->_language = 5;
+		_global->_language = kLanguageAmerican;
 		break;
 	case Common::NL_NLD:
-		_global->_language = 6;
+		_global->_language = kLanguageDutch;
 		break;
 	case Common::KO_KOR:
-		_global->_language = 7;
+		_global->_language = kLanguageKorean;
 		break;
 	case Common::HB_ISR:
-		_global->_language = 8;
+		_global->_language = kLanguageHebrew;
 		break;
 	case Common::PT_BRA:
-		_global->_language = 9;
+		_global->_language = kLanguagePortuguese;
 		break;
 	case Common::JA_JPN:
-		_global->_language = 10;
+		_global->_language = kLanguageJapanese;
 		break;
 	default:
-		// Default to English
-		_global->_language = 2;
+		_global->_language = kLanguageBritish;
 		break;
 	}
 	_global->_languageWanted = _global->_language;
@@ -277,6 +310,16 @@ void GobEngine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 }
 
+void GobEngine::pauseGame() {
+	pauseEngineIntern(true);
+
+	PauseDialog pauseDialog;
+
+	pauseDialog.runModal();
+
+	pauseEngineIntern(false);
+}
+
 bool GobEngine::initGameParts() {
 	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
 
@@ -296,7 +339,6 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v1(this);
 		_video = new Video_v1(this);
 		_inter = new Inter_v1(this);
-		_parse = new Parse_v1(this);
 		_mult = new Mult_v1(this);
 		_draw = new Draw_v1(this);
 		_game = new Game_v1(this);
@@ -309,7 +351,6 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v2(this);
 		_video = new Video_v2(this);
 		_inter = new Inter_Fascination(this);
-		_parse = new Parse_v1(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
 		_game = new Game_Fascination(this);
@@ -324,7 +365,6 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v2(this);
 		_video = new Video_v2(this);
 		_inter = new Inter_v2(this);
-		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
 		_game = new Game_v2(this);
@@ -338,7 +378,6 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v2(this);
 		_video = new Video_v2(this);
 		_inter = new Inter_Bargon(this);
-		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_Bargon(this);
 		_game = new Game_v2(this);
@@ -353,7 +392,6 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v3(this);
 		_video = new Video_v2(this);
 		_inter = new Inter_v3(this);
-		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
 		_game = new Game_v2(this);
@@ -367,7 +405,6 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v3(this);
 		_video = new Video_v2(this);
 		_inter = new Inter_v3(this);
-		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
 		_game = new Game_v2(this);
@@ -381,7 +418,6 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v3(this);
 		_video = new Video_v2(this);
 		_inter = new Inter_v4(this);
-		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
 		_game = new Game_v2(this);
@@ -398,7 +434,6 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v3(this);
 		_video = new Video_v2(this);
 		_inter = new Inter_v5(this);
-		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
 		_game = new Game_v2(this);
@@ -413,7 +448,6 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v3(this);
 		_video = new Video_v6(this);
 		_inter = new Inter_v6(this);
-		_parse = new Parse_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
 		_game = new Game_v6(this);
@@ -429,20 +463,22 @@ bool GobEngine::initGameParts() {
 		break;
 	}
 
+	_inter->setupOpcodes();
+
 	if (is640()) {
 		_video->_surfWidth = _width = 640;
 		_video->_surfHeight = _video->_splitHeight1 = _height = 480;
 		_global->_mouseMaxX = 640;
 		_global->_mouseMaxY = 480;
 		_mode = 0x18;
-		_global->_primarySurfDesc = new SurfaceDesc(0x18, 640, 480);
+		_global->_primarySurfDesc = SurfaceDescPtr(new SurfaceDesc(0x18, 640, 480));
 	} else {
 		_video->_surfWidth = _width = 320;
 		_video->_surfHeight = _video->_splitHeight1 = _height = 200;
 		_global->_mouseMaxX = 320;
 		_global->_mouseMaxY = 200;
 		_mode = 0x14;
-		_global->_primarySurfDesc = new SurfaceDesc(0x14, 320, 200);
+		_global->_primarySurfDesc = SurfaceDescPtr(new SurfaceDesc(0x14, 320, 200));
 	}
 
 	return true;
@@ -459,7 +495,6 @@ void GobEngine::deinitGameParts() {
 	delete _inter;     _inter = 0;
 	delete _map;       _map = 0;
 	delete _palAnim;   _palAnim = 0;
-	delete _parse;     _parse = 0;
 	delete _scenery;   _scenery = 0;
 	delete _draw;      _draw = 0;
 	delete _util;      _util = 0;

@@ -92,10 +92,7 @@ void Dialog::open() {
 		w = w->_next;
 	}
 
-	if (w) {
-		w->receivedFocus();
-		_focusedWidget = w;
-	}
+	setFocusWidget(w);
 }
 
 void Dialog::close() {
@@ -121,6 +118,18 @@ void Dialog::reflowLayout() {
 	}
 
 	GuiObject::reflowLayout();
+}
+
+void Dialog::setFocusWidget(Widget *widget) {
+	// The focus will change. Tell the old focused widget (if any)
+	// that it lost the focus.
+	releaseFocus();
+
+	// Tell the new focused widget (if any) that it just gained the focus.
+	if (widget)
+		widget->receivedFocus();
+
+	_focusedWidget = widget;
 }
 
 void Dialog::releaseFocus() {
@@ -165,15 +174,7 @@ void Dialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	// If the click occured inside a widget which is not the currently
 	// focused one, change the focus to that widget.
 	if (w && w != _focusedWidget && w->wantsFocus()) {
-		// The focus will change. Tell the old focused widget (if any)
-		// that it lost the focus.
-		releaseFocus();
-
-		// Tell the new focused widget (if any) that it just gained the focus.
-		if (w)
-			w->receivedFocus();
-
-		_focusedWidget = w;
+		setFocusWidget(w);
 	}
 
 	if (w)

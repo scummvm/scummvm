@@ -88,6 +88,11 @@ struct GameSettings {
 	 * specific platform.
 	 */
 	Common::Platform platform;
+
+	/**
+	 * Game GUI options. Used to enable/disable certain GUI widgets
+	 */
+	uint32 guioptions;
 };
 
 enum FilenameGenMethod {

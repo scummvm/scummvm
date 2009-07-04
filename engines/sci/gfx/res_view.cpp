@@ -232,7 +232,7 @@ static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *
 
 		/*
 		if (writepos - bytes < 0) {
-			GFXWARN("View %02x:(%d/%d) describes more bytes than needed: %d/%d bytes at rel. offset 0x%04x\n",
+			warning("[GFX] View %02x:(%d/%d) describes more bytes than needed: %d/%d bytes at rel. offset 0x%04x",
 					id, loop, cel, writepos - bytes, pixmap_size, pos - 1);
 			bytes = pixmap_size - writepos;
 		}
@@ -246,7 +246,7 @@ static int decompress_sci_view(int id, int loop, int cel, byte *resource, byte *
 		assert(op || literal_pos + bytes <= size);
 
 		if (!mirrored && (writepos + bytes > pixmap_size)) {
-			GFXWARN("Writing out of bounds: %d bytes at %d > size %d\n", bytes, writepos, pixmap_size);
+			warning("[GFX] Writing out of bounds: %d bytes at %d > size %d", bytes, writepos, pixmap_size);
 		}
 
 		if (mirrored) {
@@ -302,14 +302,14 @@ static int decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, 
 					writepos += 2 * xl;
 
 					if (writepos >= pixmap_size && bytes) {
-						GFXWARN("View %02x:(%d/%d) writing out of bounds\n", id, loop, cel);
+						warning("[GFX] View %02x:(%d/%d) writing out of bounds", id, loop, cel);
 						break;
 					}
 				}
 			}
 		} else {
 			if (writepos + bytes > pixmap_size) {
-				GFXWARN("View %02x:(%d/%d) describes more bytes than needed: %d/%d bytes at rel. offset 0x%04x\n",
+				warning("[GFX] View %02x:(%d/%d) describes more bytes than needed: %d/%d bytes at rel. offset 0x%04x",
 				        id, loop, cel, writepos - bytes, pixmap_size, pos - 1);
 				bytes = pixmap_size - writepos;
 			}
@@ -319,7 +319,7 @@ static int decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, 
 	}
 
 	if (writepos < pixmap_size) {
-		GFXWARN("View %02x:(%d/%d) not enough pixel data in view\n", id, loop, cel);
+		warning("[GFX] View %02x:(%d/%d) not enough pixel data in view", id, loop, cel);
 		return 1;
 	}
 
@@ -331,7 +331,7 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 	int yl = READ_LE_UINT16(cel_base + 2);
 	int pixmap_size = xl * yl;
 	int xdisplace = isSci11 ? READ_LE_UINT16(cel_base + 4) : (int8) cel_base[4];
-	int ydisplace = isSci11 ? READ_LE_UINT16(cel_base + 6) : (int8) cel_base[5];
+	int ydisplace = isSci11 ? READ_LE_UINT16(cel_base + 6) : cel_base[5];
 	int runlength_offset = isSci11 ? READ_LE_UINT16(cel_base + 24) : 8;
 	int literal_offset = isSci11 ? READ_LE_UINT16(cel_base + 28) : 8;
 	gfx_pixmap_t *retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(xl, yl, id, loop, cel));

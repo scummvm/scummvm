@@ -64,7 +64,9 @@ enum {
 	kRemoveGameCmd = 'REMG',
 	kLoadGameCmd = 'LOAD',
 	kQuitCmd = 'QUIT',
-
+	kSearchCmd = 'SRCH',
+	kListSearchCmd = 'LSSR',
+	kSearchClearCmd = 'SRCL',
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
 	kCmdGlobalAudioOverride = 'OSFX',
@@ -133,7 +135,9 @@ protected:
 	StaticTextWidget *_extraPathWidget;
 	StaticTextWidget *_savePathWidget;
 
+	StaticTextWidget *_langPopUpDesc;
 	PopUpWidget *_langPopUp;
+	StaticTextWidget *_platformPopUpDesc;
 	PopUpWidget *_platformPopUp;
 
 	CheckboxWidget *_globalGraphicsOverride;
@@ -173,7 +177,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description);
 
 	// Language popup
-	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.Lang", "Language:");
+	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", "Language:");
+	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup");
 	_langPopUp->appendEntry("<default>");
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -182,7 +187,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.Platform", "Platform:");
+	_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", "Platform:");
+	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup");
 	_platformPopUp->appendEntry("<default>");
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -224,6 +230,9 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab("MIDI");
 
 	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
+
+	if (_guioptions & Common::GUIO_NOMIDI)
+		_globalMIDIOverride->setEnabled(false);
 
 	addMIDIControls(tab, "GameOptions_MIDI.");
 
@@ -504,9 +513,22 @@ LauncherDialog::LauncherDialog()
 	_removeButton =
 		new ButtonWidget(this, "Launcher.RemoveGameButton", "Remove Game", kRemoveGameCmd, 'R');
 
+	// Search box
+	_searchDesc = 0;
+#ifndef DISABLE_FANCY_THEMES
+	_searchPic = 0;
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
+		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+	} else
+#endif
+		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", "Search:");
+
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, kSearchCmd);
+	_searchClearButton = new ButtonWidget(this, "Launcher.SearchClearButton", "C", kSearchClearCmd, 0);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList");
+	_list = new ListWidget(this, "Launcher.GameList", kListSearchCmd);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 
@@ -630,10 +652,21 @@ void LauncherDialog::addGame() {
 							"This could potentially add a huge number of games.", "Yes", "No");
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 			MassAddDialog massAddDlg(_browser->getResult());
+
+			if (_list->getSelected() != -1) {
+				// Save current game position, so on cancel cursor will move back
+				ConfMan.set("temp_selection", _domains[_list->getSelected()], ConfigManager::kApplicationDomain);
+			}
+
 			massAddDlg.runModal();
 
 			// Update the ListWidget and force a redraw
 			updateListing();
+
+			// Set cursor to first detected game
+			selectGame(ConfMan.get("temp_selection", ConfigManager::kApplicationDomain));
+			ConfMan.removeKey("temp_selection", ConfigManager::kApplicationDomain);
+
 			draw();
 		}
 
@@ -652,68 +685,77 @@ void LauncherDialog::addGame() {
 	// 3) Display the 'Edit' dialog for that item, letting the user specify
 	//    an alternate description (to distinguish multiple versions of the
 	//    game, e.g. 'Monkey German' and 'Monkey English') and set default
-	//    options for that game.
+	//    options for that game
+	// 4) If no game is found in the specified directory, return to the
+	//    dialog.
 
-	if (_browser->runModal() > 0) {
-		// User made his choice...
-		Common::FSNode dir(_browser->getResult());
-		Common::FSList files;
-		if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-			MessageDialog alert("ScummVM couldn't open the specified directory!");
-			alert.runModal();
-			return;
-		}
+	bool looping;
+	do {
+		looping = false;
 
-		// ...so let's determine a list of candidates, games that
-		// could be contained in the specified directory.
-		GameList candidates(EngineMan.detectGames(files));
-
-		int idx;
-		if (candidates.empty()) {
-			// No game was found in the specified directory
-			MessageDialog alert("ScummVM could not find any game in the specified directory!");
-			alert.runModal();
-			idx = -1;
-		} else if (candidates.size() == 1) {
-			// Exact match
-			idx = 0;
-		} else {
-			// Display the candidates to the user and let her/him pick one
-			StringList list;
-			for (idx = 0; idx < (int)candidates.size(); idx++)
-				list.push_back(candidates[idx].description());
-
-			ChooserDialog dialog("Pick the game:");
-			dialog.setList(list);
-			idx = dialog.runModal();
-		}
-		if (0 <= idx && idx < (int)candidates.size()) {
-			GameDescriptor result = candidates[idx];
-
-			// TODO: Change the detectors to set "path" !
-			result["path"] = dir.getPath();
-
-			Common::String domain = addGameToConf(result);
-
-			// Display edit dialog for the new entry
-			EditGameDialog editDialog(domain, result.description());
-			if (editDialog.runModal() > 0) {
-				// User pressed OK, so make changes permanent
-
-				// Write config to disk
-				ConfMan.flushToDisk();
-
-				// Update the ListWidget, select the new item, and force a redraw
-				updateListing();
-				selectGame(editDialog.getDomain());
-				draw();
-			} else {
-				// User aborted, remove the the new domain again
-				ConfMan.removeGameDomain(domain);
+		if (_browser->runModal() > 0) {
+			// User made his choice...
+			Common::FSNode dir(_browser->getResult());
+			Common::FSList files;
+			if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+				MessageDialog alert("ScummVM couldn't open the specified directory!");
+				alert.runModal();
+				return;
 			}
 
+			// ...so let's determine a list of candidates, games that
+			// could be contained in the specified directory.
+			GameList candidates(EngineMan.detectGames(files));
+
+			int idx;
+			if (candidates.empty()) {
+				// No game was found in the specified directory
+				MessageDialog alert("ScummVM could not find any game in the specified directory!");
+				alert.runModal();
+				idx = -1;
+
+				looping = true;
+			} else if (candidates.size() == 1) {
+				// Exact match
+				idx = 0;
+			} else {
+				// Display the candidates to the user and let her/him pick one
+				StringList list;
+				for (idx = 0; idx < (int)candidates.size(); idx++)
+					list.push_back(candidates[idx].description());
+
+				ChooserDialog dialog("Pick the game:");
+				dialog.setList(list);
+				idx = dialog.runModal();
+			}
+			if (0 <= idx && idx < (int)candidates.size()) {
+				GameDescriptor result = candidates[idx];
+
+				// TODO: Change the detectors to set "path" !
+				result["path"] = dir.getPath();
+
+				Common::String domain = addGameToConf(result);
+
+				// Display edit dialog for the new entry
+				EditGameDialog editDialog(domain, result.description());
+				if (editDialog.runModal() > 0) {
+					// User pressed OK, so make changes permanent
+
+					// Write config to disk
+					ConfMan.flushToDisk();
+
+					// Update the ListWidget, select the new item, and force a redraw
+					updateListing();
+					selectGame(editDialog.getDomain());
+					draw();
+				} else {
+					// User aborted, remove the the new domain again
+					ConfMan.removeGameDomain(domain);
+				}
+
+			}
 		}
-	}
+	} while (looping);
 }
 
 Common::String addGameToConf(const GameDescriptor &result) {
@@ -831,6 +873,14 @@ void LauncherDialog::loadGame(int item) {
 }
 
 void LauncherDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == Common::KEYCODE_TAB) {
+		// Toggle between the game list and the quick search field.
+		if (getFocusWidget() == _searchWidget) {
+			setFocusWidget(_list);
+		} else if (getFocusWidget() == _list) {
+			setFocusWidget(_searchWidget);
+		}
+	}
 	Dialog::handleKeyDown(state);
 	updateButtons();
 }
@@ -885,6 +935,13 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		setResult(-1);
 		close();
 		break;
+	case kSearchCmd:
+		_list->setFilter(_searchWidget->getEditString());
+		break;
+	case kSearchClearCmd:
+		_searchWidget->setEditString("");
+		_list->setFilter("");
+		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
@@ -904,8 +961,15 @@ void LauncherDialog::updateButtons() {
 		_removeButton->setEnabled(enable);
 		_removeButton->draw();
 	}
-	if (enable != _loadButton->isEnabled()) {
-		_loadButton->setEnabled(enable);
+
+	int item = _list->getSelected();
+	bool en = enable;
+
+	if (item >= 0)
+		en = !(Common::checkGameGUIOption(Common::GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
+
+	if (en != _loadButton->isEnabled()) {
+		_loadButton->setEnabled(en);
 		_loadButton->draw();
 	}
 
@@ -944,6 +1008,29 @@ void LauncherDialog::reflowLayout() {
 			_logo->setNext(0);
 			delete _logo;
 			_logo = 0;
+		}
+	}
+
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		if (!_searchPic)
+			_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
+		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+
+		if (_searchDesc) {
+			removeWidget(_searchDesc);
+			_searchDesc->setNext(0);
+			delete _searchDesc;
+			_searchDesc = 0;
+		}
+	} else {
+		if (!_searchDesc)
+			_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", "Search:");
+
+		if (_searchPic) {
+			removeWidget(_searchPic);
+			_searchPic->setNext(0);
+			delete _searchPic;
+			_searchPic = 0;
 		}
 	}
 #endif

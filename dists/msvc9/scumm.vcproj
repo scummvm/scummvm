@@ -676,6 +676,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\player_v2cms.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\player_v3a.cpp"
 			>
 		</File>

@@ -31,8 +31,10 @@
 #include "gob/global.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
+#include "gob/variables.h"
+#include "gob/script.h"
+#include "gob/resources.h"
 #include "gob/inter.h"
-#include "gob/parse.h"
 #include "gob/draw.h"
 #include "gob/mult.h"
 #include "gob/videoplayer.h"
@@ -40,20 +42,138 @@
 
 namespace Gob {
 
+Environments::Environments(GobEngine *vm) : _vm(vm) {
+	_environments = new Environment[kEnvironmentCount];
+
+	for (uint i = 0; i < kEnvironmentCount; i++) {
+		Environment &e = _environments[i];
+
+		e.cursorHotspotX = 0;
+		e.cursorHotspotY = 0;
+		e.variables      = 0;
+		e.script         = 0;
+		e.resources      = 0;
+		e.curTotFile[0]  = '\0';
+	}
+}
+
+Environments::~Environments() {
+	clear();
+
+	delete[] _environments;
+}
+
+void Environments::clear() {
+	// Deleting unique variables, script and resources
+
+	for (uint i = 0; i < kEnvironmentCount; i++) {
+		if (_environments[i].variables == _vm->_inter->_variables)
+			continue;
+
+		if (!has(_environments[i].variables, i + 1))
+			delete _environments[i].variables;
+	}
+
+	for (uint i = 0; i < kEnvironmentCount; i++) {
+		if (_environments[i].script == _vm->_game->_script)
+			continue;
+
+		if (!has(_environments[i].script, i + 1))
+			delete _environments[i].script;
+	}
+
+	for (uint i = 0; i < kEnvironmentCount; i++) {
+		if (_environments[i].resources == _vm->_game->_resources)
+			continue;
+
+		if (!has(_environments[i].resources, i + 1))
+			delete _environments[i].resources;
+	}
+}
+
+void Environments::set(uint8 env) {
+	if (env >= kEnvironmentCount)
+		return;
+
+	Environment &e = _environments[env];
+
+	// If it already has a unique script or resource assigned, delete them
+	if ((e.script != _vm->_game->_script) && !has(e.script, 0, env))
+		delete e.script;
+	if ((e.resources != _vm->_game->_resources) && !has(e.resources, 0, env))
+		delete e.resources;
+
+	e.cursorHotspotX = _vm->_draw->_cursorHotspotXVar;
+	e.cursorHotspotY = _vm->_draw->_cursorHotspotYVar;
+	e.script         = _vm->_game->_script;
+	e.resources      = _vm->_game->_resources;
+	e.variables      = _vm->_inter->_variables;
+	strncpy(e.curTotFile, _vm->_game->_curTotFile, 14);
+}
+
+void Environments::get(uint8 env) const {
+	if (env >= kEnvironmentCount)
+		return;
+
+	const Environment &e = _environments[env];
+
+	_vm->_draw->_cursorHotspotXVar = e.cursorHotspotX;
+	_vm->_draw->_cursorHotspotYVar = e.cursorHotspotY;
+	_vm->_game->_script            = e.script;
+	_vm->_game->_resources         = e.resources;
+	_vm->_inter->_variables        = e.variables;
+	strncpy(_vm->_game->_curTotFile, e.curTotFile, 14);
+}
+
+const char *Environments::getTotFile(uint8 env) const {
+	if (env >= kEnvironmentCount)
+		return "";
+
+	return _environments[env].curTotFile;
+}
+
+bool Environments::has(Variables *variables, uint8 startEnv, int16 except) const {
+	for (uint i = startEnv; i < kEnvironmentCount; i++) {
+		if ((except >= 0) && (((uint16) except) == i))
+			continue;
+
+		if (_environments[i].variables == variables)
+			return true;
+	}
+
+	return false;
+}
+
+bool Environments::has(Script *script, uint8 startEnv, int16 except) const {
+	for (uint i = startEnv; i < kEnvironmentCount; i++) {
+		if ((except >= 0) && (((uint16) except) == i))
+			continue;
+
+		if (_environments[i].script == script)
+			return true;
+	}
+
+	return false;
+}
+
+bool Environments::has(Resources *resources, uint8 startEnv, int16 except) const {
+	for (uint i = startEnv; i < kEnvironmentCount; i++) {
+		if ((except >= 0) && (((uint16) except) == i))
+			continue;
+
+		if (_environments[i].resources == resources)
+			return true;
+	}
+
+	return false;
+}
+
+
 Game::Game(GobEngine *vm) : _vm(vm) {
-	_extTable = 0;
-	_totFileData = 0;
-	_totResourceTable = 0;
-	_imFileData = 0;
-	_extHandle = 0;
-	_lomHandle = -1;
 	_collisionAreas = 0;
 	_shouldPushColls = 0;
 
 	_captureCount = 0;
-
-	_foundTotLoc = false;
-	_totTextData = 0;
 
 	_collStackSize = 0;
 
@@ -63,7 +183,6 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	}
 
 	_curTotFile[0] = 0;
-	_curExtFile[0] = 0;
 	_totToLoad[0] = 0;
 
 	_startTimeKey = 0;
@@ -85,138 +204,20 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_noCd = false;
 
 	_tempStr[0] = 0;
-	_curImaFile[0] = 0;
 	_collStr[0] = 0;
 
-	_backupedCount = 0;
-	_curBackupPos = 0;
+	_numEnvironments = 0;
+	_curEnvironment = 0;
 
-	for (int i = 0; i < 5; i++) {
-		_cursorHotspotXArray[i] = 0;
-		_cursorHotspotYArray[i] = 0;
-		_totTextDataArray[i] = 0;
-		_totFileDataArray[i] = 0;
-		_totResourceTableArray[i] = 0;
-		_extTableArray[i] = 0;
-		_extHandleArray[i] = 0;
-		_imFileDataArray[i] = 0;
-		_variablesArray[i] = 0;
-		_curTotFileArray[i][0] = 0;
-	}
+	_environments = new Environments(_vm);
+	_script       = new Script(_vm);
+	_resources    = new Resources(_vm);
 }
 
 Game::~Game() {
-	delete[] _vm->_game->_totFileData;
-	if (_vm->_game->_totTextData) {
-		if (_vm->_game->_totTextData->items)
-			delete[] _vm->_game->_totTextData->items;
-		delete _vm->_game->_totTextData;
-	}
-	if (_vm->_game->_totResourceTable) {
-		delete[] _vm->_game->_totResourceTable->items;
-		delete _vm->_game->_totResourceTable;
-	}
-}
-
-byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
-		int16 *pResHeight, uint32 *dataSize) {
-	int16 commonHandle;
-	int16 itemsCount;
-	int32 offset;
-	uint32 size;
-	uint32 realSize;
-	ExtItem *item;
-	bool isPacked;
-	int16 handle;
-	int32 tableSize;
-	char path[20];
-	byte *dataBuf;
-	byte *packedBuf;
-	byte *dataPtr;
-
-	itemId -= 30000;
-	if (_extTable == 0)
-		return 0;
-
-	commonHandle = -1;
-	itemsCount = _extTable->itemsCount;
-	item = &_extTable->items[itemId];
-	tableSize = szGame_ExtTable + szGame_ExtItem * itemsCount;
-
-	offset = item->offset;
-	size = item->size;
-	isPacked = (item->width & 0x8000) != 0;
-
-	if ((pResWidth != 0) && (pResHeight != 0)) {
-		*pResWidth = item->width & 0x7FFF;
-
-		if (*pResWidth & 0x4000)
-			size += 1 << 16;
-		if (*pResWidth & 0x2000)
-			size += 2 << 16;
-		if (*pResWidth & 0x1000)
-			size += 4 << 16;
-
-		*pResWidth &= 0xFFF;
-
-		*pResHeight = item->height;
-		debugC(7, kDebugFileIO, "loadExtData(%d, %d, %d)",
-				itemId, *pResWidth, *pResHeight);
-	}
-
-	debugC(7, kDebugFileIO, "loadExtData(%d, 0, 0)", itemId);
-
-	if (item->height == 0)
-		size += (item->width & 0x7FFF) << 16;
-
-	debugC(7, kDebugFileIO, "size: %d off: %d", size, offset);
-	if (offset < 0) {
-		offset = -(offset + 1);
-		tableSize = 0;
-		_vm->_dataIO->closeData(_extHandle);
-		strcpy(path, "commun.ex1");
-		path[strlen(path) - 1] = *(_totFileData + 0x3C) + '0';
-		commonHandle = _vm->_dataIO->openData(path);
-		handle = commonHandle;
-	} else
-		handle = _extHandle;
-
-	DataStream *stream = _vm->_dataIO->openAsStream(handle);
-
-	debugC(7, kDebugFileIO, "off: %d size: %d", offset, tableSize);
-	stream->seek(offset + tableSize);
-	realSize = size;
-	if (isPacked)
-		dataBuf = new byte[size + 2];
-	else
-		dataBuf = new byte[size];
-
-	dataPtr = dataBuf;
-	while (size > 32000) {
-		// BUG: huge->far conversion. Need normalization?
-		stream->read(dataPtr, 32000);
-		size -= 32000;
-		dataPtr += 32000;
-	}
-	stream->read(dataPtr, size);
-
-	delete stream;
-	if (commonHandle != -1) {
-		_vm->_dataIO->closeData(commonHandle);
-		_extHandle = _vm->_dataIO->openData(_curExtFile);
-	}
-
-	if (isPacked) {
-		packedBuf = dataBuf;
-		realSize = READ_LE_UINT32(packedBuf);
-		dataBuf = new byte[realSize];
-		_vm->_dataIO->unpackData(packedBuf, dataBuf);
-		delete[] packedBuf;
-	}
-
-	if (dataSize)
-		*dataSize = realSize;
-	return dataBuf;
+	delete _environments;
+	delete _script;
+	delete _resources;
 }
 
 void Game::freeCollision(int16 id) {
@@ -281,39 +282,9 @@ void Game::capturePop(char doDraw) {
 	_vm->_draw->freeSprite(30 + _captureCount);
 }
 
-byte *Game::loadTotResource(int16 id,
-		int16 *dataSize, int16 *width, int16 *height) {
-
-	TotResItem *itemPtr;
-	int32 offset;
-
-	if (id >= _vm->_game->_totResourceTable->itemsCount) {
-		warning("Trying to load non-existent TOT resource (%s, %d/%d)",
-				_curTotFile, id, _totResourceTable->itemsCount - 1);
-		return 0;
-	}
-
-	itemPtr = &_totResourceTable->items[id];
-	offset = itemPtr->offset;
-
-	if (dataSize)
-		*dataSize = itemPtr->size;
-	if (width)
-		*width = itemPtr->width;
-	if (height)
-		*height = itemPtr->height;
-
-	if (offset < 0) {
-		offset = (-offset - 1) * 4;
-		return _imFileData + (int32) READ_LE_UINT32(_imFileData + offset);
-	} else
-		return _totResourceTable->dataPtr + szGame_TotResTable +
-		    szGame_TotResItem * _totResourceTable->itemsCount + offset;
-}
-
 void Game::freeSoundSlot(int16 slot) {
 	if (slot == -1)
-		slot = _vm->_parse->parseValExpr();
+		slot = _vm->_game->_script->readValExpr();
 
 	_vm->_sound->sampleFree(_vm->_sound->sampleGetBySlot(slot));
 }
@@ -416,104 +387,6 @@ int16 Game::adjustKey(int16 key) {
 	return key - 0x20;
 }
 
-int32 Game::loadTotFile(const char *path) {
-	int16 handle;
-	int32 size;
-
-	_lomHandle = -1;
-
-	size = -1;
-	handle = _vm->_dataIO->openData(path);
-	if (handle >= 0) {
-
-		if (!scumm_stricmp(path + strlen(path) - 3, "LOM")) {
-			warning("Urban Stub: loadTotFile %s", path);
-
-			_lomHandle = handle;
-
-			DataStream *stream = _vm->_dataIO->openAsStream(handle);
-
-			stream->seek(48);
-			size = stream->readUint32LE();
-			stream->seek(0);
-
-			_totFileData = new byte[size];
-			stream->read(_totFileData, size);
-
-			delete stream;
-		} else {
-			_vm->_dataIO->closeData(handle);
-			size = _vm->_dataIO->getDataSize(path);
-			_totFileData = _vm->_dataIO->getData(path);
-		}
-
-	} else {
-		Common::MemoryReadStream *videoExtraData = _vm->_vidPlayer->getExtraData(path);
-
-		if (videoExtraData) {
-			warning("Found \"%s\" in video file", path);
-
-			size = videoExtraData->size();
-			_totFileData = new byte[size];
-			videoExtraData->read(_totFileData, size);
-			delete videoExtraData;
-		} else
-			_totFileData = 0;
-	}
-
-	return size;
-}
-
-void Game::loadExtTable(void) {
-	int16 count;
-
-	// Function is correct. [sev]
-
-	_extHandle = _vm->_dataIO->openData(_curExtFile);
-	if (_extHandle < 0)
-		return;
-
-	DataStream *stream = _vm->_dataIO->openAsStream(_extHandle);
-	count = stream->readUint16LE();
-
-	stream->seek(0);
-	_extTable = new ExtTable;
-	_extTable->items = 0;
-	if (count)
-		_extTable->items = new ExtItem[count];
-
-	_extTable->itemsCount = stream->readUint16LE();
-	_extTable->unknown = stream->readByte();
-
-	for (int i = 0; i < count; i++) {
-		_extTable->items[i].offset = stream->readUint32LE();
-		_extTable->items[i].size = stream->readUint16LE();
-		_extTable->items[i].width = stream->readUint16LE();
-		_extTable->items[i].height = stream->readUint16LE();
-	}
-
-	delete stream;
-}
-
-void Game::loadImFile(void) {
-	char path[20];
-	int16 handle;
-
-	if ((_totFileData[0x3D] != 0) && (_totFileData[0x3B] == 0))
-		return;
-
-	strcpy(path, "commun.im1");
-	if (_totFileData[0x3B] != 0)
-		path[strlen(path) - 1] = '0' + _totFileData[0x3B];
-
-	handle = _vm->_dataIO->openData(path);
-	if (handle < 0)
-		return;
-
-	_vm->_dataIO->closeData(handle);
-	_imFileData = _vm->_dataIO->getData(path);
-}
-
 void Game::start(void) {
 	_collisionAreas = new Collision[250];
 	memset(_collisionAreas, 0, 250 * sizeof(Collision));
@@ -526,34 +399,24 @@ void Game::start(void) {
 
 	for (int i = 0; i < SPRITES_COUNT; i++)
 		_vm->_draw->freeSprite(i);
-	_vm->_draw->_scummvmCursor = 0;
+	_vm->_draw->_scummvmCursor.reset();
 }
 
 // flagbits: 0 = freeInterVariables, 1 = skipPlay
 void Game::totSub(int8 flags, const char *newTotFile) {
 	int8 curBackupPos;
 
-	if (_backupedCount >= 5)
+	if (_numEnvironments >= Environments::kEnvironmentCount)
 		return;
 
-	_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
-	_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
-	_totTextDataArray[_backupedCount] = _totTextData;
-	_totFileDataArray[_backupedCount] = _totFileData;
-	_totResourceTableArray[_backupedCount] = _totResourceTable;
-	_extTableArray[_backupedCount] = _extTable;
-	_extHandleArray[_backupedCount] = _extHandle;
-	_imFileDataArray[_backupedCount] = _imFileData;
-	_variablesArray[_backupedCount] = _vm->_inter->_variables;
-	strcpy(_curTotFileArray[_backupedCount], _curTotFile);
+	_environments->set(_numEnvironments);
 
-	curBackupPos = _curBackupPos;
-	_backupedCount++;
-	_curBackupPos = _backupedCount;
+	curBackupPos = _curEnvironment;
+	_numEnvironments++;
+	_curEnvironment = _numEnvironments;
 
-	_totTextData = 0;
-	_totFileData = 0;
-	_totResourceTable = 0;
+	_script = new Script(_vm);
+	_resources = new Resources(_vm);
 	if (flags & 1)
 		_vm->_inter->_variables = 0;
 
@@ -563,8 +426,10 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 //	else
 	strcat(_curTotFile, ".TOT");
 
-	if (_vm->_inter->_terminate != 0)
+	if (_vm->_inter->_terminate != 0) {
+		clearUnusedEnvironment();
 		return;
+	}
 
 	pushCollisions(0);
 
@@ -582,197 +447,64 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 		_vm->_inter->delocateVars();
 	}
 
-	_backupedCount--;
-	_curBackupPos = curBackupPos;
+	clearUnusedEnvironment();
 
-	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_backupedCount];
-	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_backupedCount];
-	_totTextData = _totTextDataArray[_backupedCount];
-	_totFileData = _totFileDataArray[_backupedCount];
-	_totResourceTable = _totResourceTableArray[_backupedCount];
-	_extTable = _extTableArray[_backupedCount];
-	_extHandle = _extHandleArray[_backupedCount];
-	_imFileData = _imFileDataArray[_backupedCount];
-	_vm->_inter->_variables = _variablesArray[_backupedCount];
-	strcpy(_curTotFile, _curTotFileArray[_backupedCount]);
-	strcpy(_curExtFile, _curTotFile);
-	_curExtFile[strlen(_curExtFile) - 4] = '\0';
-	strcat(_curExtFile, ".EXT");
+	_numEnvironments--;
+	_curEnvironment = curBackupPos;
+	_environments->get(_numEnvironments);
 }
 
 void Game::switchTotSub(int16 index, int16 skipPlay) {
 	int16 backupedCount;
 	int16 curBackupPos;
 
-	if ((_backupedCount - index) < 1)
+	if ((_numEnvironments - index) < 1)
 		return;
 
-	int16 newPos = _curBackupPos - index - ((index >= 0) ? 1 : 0);
+	int16 newPos = _curEnvironment - index - ((index >= 0) ? 1 : 0);
+	if (newPos >= Environments::kEnvironmentCount)
+		return;
+
 	// WORKAROUND: Some versions don't make the MOVEMENT menu item unselectable
 	// in the dreamland screen, resulting in a crash when it's clicked.
 	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (skipPlay == 7) &&
-	    !scumm_stricmp(_curTotFileArray[newPos], "gob06.tot"))
+	    !scumm_stricmp(_environments->getTotFile(newPos), "gob06.tot"))
 		return;
 
-	curBackupPos = _curBackupPos;
-	backupedCount = _backupedCount;
-	if (_curBackupPos == _backupedCount) {
-		_cursorHotspotXArray[_backupedCount] = _vm->_draw->_cursorHotspotXVar;
-		_cursorHotspotYArray[_backupedCount] = _vm->_draw->_cursorHotspotYVar;
-		_totTextDataArray[_backupedCount] = _totTextData;
-		_totFileDataArray[_backupedCount] = _totFileData;
-		_totResourceTableArray[_backupedCount] = _totResourceTable;
-		_extTableArray[_backupedCount] = _extTable;
-		_extHandleArray[_backupedCount] = _extHandle;
-		_imFileDataArray[_backupedCount] = _imFileData;
-		_variablesArray[_backupedCount] = _vm->_inter->_variables;
-		strcpy(_curTotFileArray[_backupedCount], _curTotFile);
-		_backupedCount++;
-	}
-	_curBackupPos -= index;
+	curBackupPos = _curEnvironment;
+	backupedCount = _numEnvironments;
+	if (_curEnvironment == _numEnvironments)
+		_environments->set(_numEnvironments++);
+
+	_curEnvironment -= index;
 	if (index >= 0)
-		_curBackupPos--;
+		_curEnvironment--;
 
-	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_curBackupPos];
-	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_curBackupPos];
-	_totTextData = _totTextDataArray[_curBackupPos];
-	_totFileData = _totFileDataArray[_curBackupPos];
-	_totResourceTable = _totResourceTableArray[_curBackupPos];
-	_imFileData = _imFileDataArray[_curBackupPos];
-	_extTable = _extTableArray[_curBackupPos];
-	_extHandle = _extHandleArray[_curBackupPos];
-	_vm->_inter->_variables = _variablesArray[_curBackupPos];
-	strcpy(_curTotFile, _curTotFileArray[_curBackupPos]);
-	strcpy(_curExtFile, _curTotFile);
-	_curExtFile[strlen(_curExtFile) - 4] = '\0';
-	strcat(_curExtFile, ".EXT");
+	clearUnusedEnvironment();
 
-	if (_vm->_inter->_terminate != 0)
+	_environments->get(_curEnvironment);
+
+	if (_vm->_inter->_terminate != 0) {
+		clearUnusedEnvironment();
 		return;
+	}
 
-	_vm->_game->pushCollisions(0);
-	_vm->_game->playTot(skipPlay);
+	pushCollisions(0);
+	playTot(skipPlay);
 
 	if (_vm->_inter->_terminate != 2)
 		_vm->_inter->_terminate = 0;
 
-	_vm->_game->popCollisions();
+	popCollisions();
 
-	_curBackupPos = curBackupPos;
-	_backupedCount = backupedCount;
-	_vm->_draw->_cursorHotspotXVar = _cursorHotspotXArray[_curBackupPos];
-	_vm->_draw->_cursorHotspotYVar = _cursorHotspotYArray[_curBackupPos];
-	_totTextData = _totTextDataArray[_curBackupPos];
-	_totFileData = _totFileDataArray[_curBackupPos];
-	_totResourceTable = _totResourceTableArray[_curBackupPos];
-	_extTable = _extTableArray[_curBackupPos];
-	_extHandle = _extHandleArray[_curBackupPos];
-	_imFileData = _imFileDataArray[_curBackupPos];
-	_vm->_inter->_variables = _variablesArray[_curBackupPos];
-	strcpy(_curTotFile, _curTotFileArray[_curBackupPos]);
-	strcpy(_curExtFile, _curTotFile);
-	_curExtFile[strlen(_curExtFile) - 4] = '\0';
-	strcat(_curExtFile, ".EXT");
-}
+	clearUnusedEnvironment();
 
-int16 Game::openLocTextFile(char *locTextFile, int language) {
-	int n;
-
-	n = strlen(locTextFile);
-	if (n < 4)
-		return -1;
-
-	locTextFile[n - 4] = 0;
-	switch (language) {
-	case 0:
-		strcat(locTextFile, ".dat");
-		break;
-	case 1:
-		strcat(locTextFile, ".all");
-		break;
-	case 3:
-		strcat(locTextFile, ".esp");
-		break;
-	case 4:
-		strcat(locTextFile, ".ita");
-		break;
-	case 5:
-		strcat(locTextFile, ".usa");
-		break;
-	case 6:
-		strcat(locTextFile, ".ndl");
-		break;
-	case 7:
-		strcat(locTextFile, ".kor");
-		break;
-	case 8:
-		strcat(locTextFile, ".isr");
-		break;
-	default:
-		strcat(locTextFile, ".ang");
-		break;
-	}
-	return _vm->_dataIO->openData(locTextFile);
-}
-
-byte *Game::loadLocTexts(int32 *dataSize) {
-	char locTextFile[20];
-	int16 handle;
-	int i;
-
-	strcpy(locTextFile, _curTotFile);
-
-	handle = openLocTextFile(locTextFile, _vm->_global->_languageWanted);
-	if (handle >= 0) {
-
-		_foundTotLoc = true;
-		_vm->_global->_language = _vm->_global->_languageWanted;
-
-	} else if (!_foundTotLoc) {
-		bool found = false;
-
-		if (_vm->_global->_languageWanted == 2) {
-			handle = openLocTextFile(locTextFile, 5);
-			if (handle >= 0) {
-				_vm->_global->_language = 5;
-				found = true;
-			}
-		} else if (_vm->_global->_languageWanted == 5) {
-			handle = openLocTextFile(locTextFile, 2);
-			if (handle >= 0) {
-				_vm->_global->_language = 2;
-				found = true;
-			}
-		}
-
-		if (!found) {
-			for (i = 0; i < 10; i++) {
-				handle = openLocTextFile(locTextFile, i);
-				if (handle >= 0) {
-					_vm->_global->_language = i;
-					break;
-				}
-			}
-		}
-
-	}
-
-	debugC(1, kDebugFileIO, "Using language %d for %s",
-			_vm->_global->_language, _curTotFile);
-
-	if (handle >= 0) {
-		_vm->_dataIO->closeData(handle);
-
-		if (dataSize)
-			*dataSize = _vm->_dataIO->getDataSize(locTextFile);
-
-		return _vm->_dataIO->getData(locTextFile);
-	}
-	return 0;
+	_curEnvironment = curBackupPos;
+	_numEnvironments = backupedCount;
+	_environments->get(_curEnvironment);
 }
 
 void Game::setCollisions(byte arg_0) {
-	byte *savedIP;
 	uint16 left;
 	uint16 top;
 	uint16 width;
@@ -783,12 +515,12 @@ void Game::setCollisions(byte arg_0) {
 		if (((collArea->id & 0xC000) != 0x8000) || (collArea->funcSub == 0))
 			continue;
 
-		savedIP = _vm->_global->_inter_execPtr;
-		_vm->_global->_inter_execPtr = _totFileData + collArea->funcSub;
-		left = _vm->_parse->parseValExpr();
-		top = _vm->_parse->parseValExpr();
-		width = _vm->_parse->parseValExpr();
-		height = _vm->_parse->parseValExpr();
+		_script->call(collArea->funcSub);
+
+		left = _script->readValExpr();
+		top = _script->readValExpr();
+		width = _script->readValExpr();
+		height = _script->readValExpr();
 		if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) &&
 				(left != 0xFFFF)) {
 			left += _vm->_draw->_backDeltaX;
@@ -807,16 +539,15 @@ void Game::setCollisions(byte arg_0) {
 		collArea->top = top;
 		collArea->right = left + width - 1;
 		collArea->bottom = top + height - 1;
-		_vm->_global->_inter_execPtr = savedIP;
+
+		_script->pop();
 	}
 }
 
 void Game::collSub(uint16 offset) {
-	byte *savedIP;
 	int16 collStackSize;
 
-	savedIP = _vm->_global->_inter_execPtr;
-	_vm->_global->_inter_execPtr = _totFileData + offset;
+	_script->call(offset);
 
 	_shouldPushColls = 1;
 	collStackSize = _collStackSize;
@@ -827,7 +558,9 @@ void Game::collSub(uint16 offset) {
 		popCollisions();
 
 	_shouldPushColls = 0;
-	_vm->_global->_inter_execPtr = savedIP;
+
+	_script->pop();
+
 	setCollisions();
 }
 
@@ -850,6 +583,18 @@ void Game::collAreaSub(int16 index, int8 enter) {
 		if (_collisionAreas[index].funcLeave != 0)
 			collSub(_collisionAreas[index].funcLeave);
 	}
+}
+
+void Game::clearUnusedEnvironment() {
+	if (!_environments->has(_script)) {
+		delete _script;
+		_script = 0;
+	}
+	if (!_environments->has(_resources)) {
+		delete _resources;
+		_resources = 0;
+	}
+
 }
 
 } // End of namespace Gob

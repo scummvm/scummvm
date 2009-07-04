@@ -2095,7 +2095,7 @@ int IgorEngine::getHorizontalStepsCount(int minX, int minY, int maxX, int maxY) 
 	float r2 = _walkScaleSpeedTable[scale - 1];
 	debugC(9, kDebugWalk, "getHorizontalStepsCount() maxX - minX = %d r1 = %f r2 = %f", maxX - minX, r1, r2);
 
-	int16 steps = roundReal((maxX - minX) / ((r1 + r2) / 2.));
+	int16 steps = roundReal((maxX - minX) / ((r1 + r2) / 2.0f));
 	int count = 0;
 	if (steps != 0) {
 		float r3 = (maxY - minY) / (float)steps;

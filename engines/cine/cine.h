@@ -127,11 +127,15 @@ extern CineEngine *g_cine;
 #define COPY_PROT_FAIL_PRC_NAME "L201.ANI"
 
 enum {
-	VAR_MOUSE_X_MODE = 253,
+	// Both FW and OS
 	VAR_MOUSE_X_POS = 249,
-	VAR_MOUSE_Y_MODE = 251,
 	VAR_MOUSE_Y_POS = 250,
+	// FW only
+	VAR_MOUSE_X_MODE = 253,
+	VAR_MOUSE_Y_MODE = 251,
 	// OS only
+	VAR_MOUSE_X_POS_2ND = 251, // Many times used in conjunction with VAR_MOUSE_X_POS
+	VAR_MOUSE_Y_POS_2ND = 252, // Many times used in conjunction with VAR_MOUSE_Y_POS
 	VAR_BYPASS_PROTECTION = 255,
 	VAR_LOW_MEMORY = 0
 };

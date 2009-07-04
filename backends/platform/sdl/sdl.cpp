@@ -395,13 +395,20 @@ Common::WriteStream *OSystem_SDL::createConfigWriteStream() {
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {
-	Common::String cap(caption);
+	Common::String cap;
+	byte c;
 
-	// Filter out any non-ASCII characters, replacing them by question marks.
-	// At some point, we may wish to allow LATIN 1 or UTF-8.
-	for (uint i = 0; i < cap.size(); ++i)
-		if ((byte)cap[i] > 0x7F)
-			cap.setChar('?', i);
+	// The string caption is supposed to be in LATIN-1 encoding.
+	// SDL expects UTF-8. So we perform the conversion here.
+	while ((c = *(const byte *)caption++)) {
+		if (c < 0x80)
+			cap += c;
+		else {
+			cap += 0xC0 | (c >> 6);
+			cap += 0x80 | (c & 0x3F);
+		}
+	}
+
 	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
 }
 
@@ -487,7 +494,7 @@ void OSystem_SDL::quit() {
 void OSystem_SDL::setupIcon() {
 	int x, y, w, h, ncols, nbytes, i;
 	unsigned int rgba[256];
-        unsigned int *icon;
+	unsigned int *icon;
 
 	sscanf(scummvm_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
 	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
