@@ -83,12 +83,13 @@ public:
 	*/
 	bool hasKernelFunction(const char *functionName) const;
 
-	/* Applies to all versions before 0.000.502
-	** Old SCI versions used to interpret the third DrawPic() parameter inversely,
-	** with the opposite default value (obviously).
-	** Also, they used 15 priority zones from 42 to 200 instead of 14 priority
-	** zones from 42 to 190.
-	*/
+	/**
+	 * Applies to all versions before 0.000.502
+	 * Old SCI versions used to interpret the third DrawPic() parameter inversely,
+	 * with the opposite default value (obviously).
+	 * Also, they used 15 priority zones from 42 to 200 instead of 14 priority
+	 * zones from 42 to 190.
+	 */
 	bool usesOldGfxFunctions() const { return _oldGfxFunctions; }
 
 	// Script dissection/dumping functions
@@ -112,10 +113,14 @@ private:
 	bool loadKernelNames();
 
 	/**
+	 * Sets the default kernel function names, based on the SCI version used
+	 */
+	void setDefaultKernelNames();
+
+	/**
 	* Loads the kernel selector names.
-	* @return True upon success, false otherwise.
 	*/
-	bool loadSelectorNames(bool isOldSci0);
+	void loadSelectorNames(bool isOldSci0);
 
 	/**
 	 * Maps special selectors

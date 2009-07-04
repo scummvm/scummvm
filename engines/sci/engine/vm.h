@@ -203,7 +203,9 @@ struct selector_map_t {
 	Selector printLang; /**< Used for i18n */
 	Selector subtitleLang;
 	Selector parseLang;
-	Selector setVol;	/**< Used to detect newer sound semantics */
+	Selector curAngle;	 // Used to detect newer graphics functions semantics. 
+	Selector sightAngle; // Used to detect some SCI0/SCI01 games which need a SCI1 table
+	Selector setVol;	 // Used to detect newer sound semantics
 };
 
 // A reference to an object's variable.
