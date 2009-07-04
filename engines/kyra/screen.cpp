@@ -1529,6 +1529,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			_dsTmpWidth = shapeWidth;
 			int cnt = _dsOffscreenLeft;
 			int scaleState = (this->*_dsProcessMargin)(d, src, cnt);
+
 			if (_dsTmpWidth) {
 				cnt += shpWidthScaled1;
 				if (cnt > 0) {
@@ -1584,7 +1585,6 @@ int Screen::drawShapeMarginScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt)
 
 	while (cnt > 0) {
 		--cnt;
-
 		if (*src++)
 			continue;
 
@@ -1611,7 +1611,6 @@ int Screen::drawShapeMarginScaleDownwind(uint8 *&dst, const uint8 *&src, int &cn
 
 	while (cnt > 0) {
 		--cnt;
-
 		if (*src++)
 			continue;
 
@@ -1640,10 +1639,11 @@ int Screen::drawShapeSkipScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt) {
 		return 0;
 
 	do {
+		--cnt;
 		if (*src++)
 			continue;
 		cnt = cnt + 1 - (*src++);
-	} while (--cnt > 0);
+	} while (cnt > 0);
 
 	return 0;
 }
@@ -1656,16 +1656,17 @@ int Screen::drawShapeSkipScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt)
 		return 0;
 
 	do {
+		--cnt;
 		if (*src++)
 			continue;
 		found = true;
 		cnt = cnt + 1 - (*src++);
-	} while (--cnt > 0);
+	} while (cnt > 0);
 
 	return found ? 0 : _dsOffscreenScaleVal1;
 }
 
-void Screen::drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, uint16) {
+void Screen::drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int16) {
 	do {
 		uint8 c = *src++;
 		if (c) {
@@ -1680,7 +1681,7 @@ void Screen::drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, i
 	} while (cnt > 0);
 }
 
-void Screen::drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, uint16) {
+void Screen::drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int16) {
 	do {
 		uint8 c = *src++;
 		if (c) {
@@ -1695,7 +1696,7 @@ void Screen::drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src,
 	} while (cnt > 0);
 }
 
-void Screen::drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, uint16 scaleState) {
+void Screen::drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int16 scaleState) {
 	int c = 0;
 
 	do {
@@ -1723,7 +1724,7 @@ void Screen::drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int
 	cnt = -1;
 }
 
-void Screen::drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, uint16 scaleState) {
+void Screen::drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int16 scaleState) {
 	int c = 0;
 
 	do {
