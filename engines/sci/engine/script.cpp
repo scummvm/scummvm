@@ -203,6 +203,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(printLang);
 	FIND_SELECTOR(subtitleLang);
 	FIND_SELECTOR(parseLang);
+	FIND_SELECTOR(setVol);
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {

@@ -150,8 +150,7 @@ Common::Error SciEngine::run() {
 	if (version < SCI_VERSION_1_EARLY) {
 		// SCI0/SCI01
 		if (flags & GF_SCI1_EGA ||
-			flags & GF_SCI1_LOFSABSOLUTE ||
-			flags & GF_SCI1_NEWDOSOUND) {
+			flags & GF_SCI1_LOFSABSOLUTE) {
 			error("This game entry is erroneous. It's marked as SCI0/SCI01, but it has SCI1 flags set");
 		}
 	} else if (version >= SCI_VERSION_1_EARLY && version <= SCI_VERSION_1_LATE) {
@@ -163,8 +162,7 @@ Common::Error SciEngine::run() {
 		}
 	} else if (version == SCI_VERSION_1_1 || version == SCI_VERSION_32) {
 		if (flags & GF_SCI1_EGA ||
-			flags & GF_SCI1_LOFSABSOLUTE ||
-			flags & GF_SCI1_NEWDOSOUND) {
+			flags & GF_SCI1_LOFSABSOLUTE) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI1 flags set");
 		}
 

@@ -116,12 +116,7 @@ enum SciGameFlags {
     ** In late SCI1 versions, the argument of lofs[as] instructions
 	** is absolute rather than relative.
 	*/
-	GF_SCI1_LOFSABSOLUTE	= (1 << 3),
-
-	/* Applies to all versions from 1.000.510 onwards
-	** kDoSound() is different than in earlier SCI1 versions.
-	*/
-	GF_SCI1_NEWDOSOUND		= (1 << 4)
+	GF_SCI1_LOFSABSOLUTE	= (1 << 3)
 };
 
 class SciEngine : public Engine {

@@ -203,6 +203,7 @@ struct selector_map_t {
 	Selector printLang; /**< Used for i18n */
 	Selector subtitleLang;
 	Selector parseLang;
+	Selector setVol;	/**< Used to detect newer sound semantics */
 };
 
 // A reference to an object's variable.
