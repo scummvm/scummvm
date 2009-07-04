@@ -99,6 +99,17 @@ public:
 	Game(DraciEngine *vm);
 	~Game();
 
+	void init();
+
+	void changeRoom(uint roomNum);
+
+	void loadRoom(uint roomNum);
+	int loadAnimation(uint animNum);
+	void loadOverlays();
+	void loadObject(uint numObj);
+
+	GameObject *getObject(uint objNum);
+
 private:
 	DraciEngine *_vm;
 	
@@ -109,15 +120,6 @@ private:
 	byte *_itemStatus;
 	GameObject *_objects;	
 	Room _currentRoom;	
-
-	void loadRoom(uint roomNum);
-	int loadAnimation(uint animNum);
-	void loadOverlays();
-	void loadObject(uint numObj);
-
-	GameObject *getObject(uint objNum);
-
-	void changeRoom(uint roomNum);
 };
 
 } // End of namespace Draci

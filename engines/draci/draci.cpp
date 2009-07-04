@@ -92,8 +92,6 @@ int DraciEngine::init() {
 	_script = new Script(this);
 	_game = new Game(this);
 
-
-
 	// Load default font
 	_font->setFont(kFontBig);
 
@@ -138,6 +136,8 @@ int DraciEngine::go() {
 	debugC(1, kDraciGeneralDebugLevel, "DraciEngine::go()");
  
 	debugC(2, kDraciGeneralDebugLevel, "Running graphics/animation test...");
+
+	_game->init();
 
 	_mouse->setCursorType(kNormalCursor);
 	_mouse->cursorOn();

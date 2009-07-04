@@ -131,7 +131,9 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	assert(numPersons == _info->_numPersons);
 	assert(numVariables == _info->_numVariables);
 	assert(numObjects == _info->_numObjects);	
+}
 
+void Game::init() {
 	loadObject(0);
 	
 	_vm->_script->run(getObject(0)->_program, getObject(0)->_init);
@@ -202,7 +204,7 @@ int Game::loadAnimation(uint animNum) {
 
 		BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
 
-		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length, x, y, 1, true);
+		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length, x, y, true);
 
 		if (mirror) 
 			sp->setMirrorOn();
@@ -275,7 +277,7 @@ void Game::loadOverlays() {
  		z = overlayReader.readByte();
  
 		overlayFile = _vm->_overlaysArchive->getFile(num);
- 		Sprite *sp = new Sprite(overlayFile->_data, overlayFile->_length, x, y, z, true);
+ 		Sprite *sp = new Sprite(overlayFile->_data, overlayFile->_length, x, y, true);
  
  		_vm->_anims->addOverlay(sp, z);		
 	}
