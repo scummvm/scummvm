@@ -49,6 +49,7 @@ const Common::String palettePath("PALETY.DFW");
 const Common::String spritesPath("OBR_AN.DFW");
 const Common::String overlaysPath("OBR_MAS.DFW");
 const Common::String roomsPath("MIST.DFW");
+const Common::String animationsPath("ANIM.DFW");
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc) 
  : Engine(syst) {
@@ -82,6 +83,7 @@ int DraciEngine::init() {
 	_paletteArchive = new BArchive(palettePath);
 	_roomsArchive = new BArchive(roomsPath);
 	_overlaysArchive = new BArchive(overlaysPath);
+	_animationsArchive = new BArchive(animationsPath);
 
 	_screen = new Screen(this);
 	_font = new Font();
