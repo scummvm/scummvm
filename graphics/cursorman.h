@@ -148,22 +148,20 @@ private:
 		int _hotspotX;
 		int _hotspotY;
 		uint32 _keycolor;
-		const Graphics::PixelFormat *_format;
+		Graphics::PixelFormat _format;
 		byte _targetScale;
 
 		uint _size;
 		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL) {
 #ifdef ENABLE_RGB_COLOR
-			if (!format) {
-				_size = w * h;
-				_keycolor &= 0xFF;
-			} else {
-				_size = w * h * format->bytesPerPixel;
-				_keycolor &= ((1 << (format->bytesPerPixel << 3)) - 1);
-			}
-			_format = format;
+			if (!format)
+				_format = Graphics::PixelFormat::createFormatCLUT8();
+			 else 
+				_format = *format;
+			_size = w * h * _format.bytesPerPixel;
+			_keycolor &= ((1 << (_format.bytesPerPixel << 3)) - 1);
 #else
-			_format = NULL;
+			_format = Graphics::PixelFormat::createFormatCLUT8();
 			_size = w * h;
 			_keycolor &= 0xFF;
 #endif
