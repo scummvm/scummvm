@@ -534,7 +534,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, -1);
 		else if (_version == SCI_VERSION_01 || !_isVGA)
 			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, palette);
-		else if (_version >= SCI_VERSION_01_VGA && _version <= SCI_VERSION_1_LATE)
+		else if (_version >= SCI_VERSION_01_VGA && _version <= SCI_VERSION_1)
 			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, _staticPalette, false);
 		else if (_version >= SCI_VERSION_1_1)
 			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, 0, true);

@@ -386,6 +386,7 @@ void Kernel::loadSelectorNames(bool isOldSci0) {
 
 		Common::String tmp((const char *)r->data + offset + 2, len);
 		_selectorNames.push_back(tmp);
+		//printf("%s\n", tmp.c_str());	// debug
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
@@ -751,6 +752,11 @@ void Kernel::setDefaultKernelNames() {
 			offset = 4;
 		}
 	}
+
+	if (_resmgr->_sciVersion == SCI_VERSION_1_1) {
+		// KQ6CD calls unimplemented function 0x26
+		_kernelNames[0x26] = "Dummy";
+	}
 }
 
 #ifdef ENABLE_SCI32
@@ -788,14 +794,9 @@ bool Kernel::loadKernelNames() {
 	case SCI_VERSION_01:
 	case SCI_VERSION_01_VGA:
 	case SCI_VERSION_01_VGA_ODD:
-	case SCI_VERSION_1_EARLY:
-	case SCI_VERSION_1_LATE:
+	case SCI_VERSION_1:
 	case SCI_VERSION_1_1:
 		setDefaultKernelNames();
-		if (_resmgr->_sciVersion == SCI_VERSION_1_1) {
-			// KQ6CD calls unimplemented function 0x26
-			_kernelNames[0x26] = "Dummy";
-		}
 		break;
 #ifdef ENABLE_SCI32
 	case SCI_VERSION_32:

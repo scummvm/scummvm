@@ -147,13 +147,13 @@ Common::Error SciEngine::run() {
 	_gamestate = new EngineState(_resmgr, version, flags);
 
 	// Verify that we haven't got an invalid game detection entry
-	if (version < SCI_VERSION_1_EARLY) {
+	if (version < SCI_VERSION_1) {
 		// SCI0/SCI01
 		if (flags & GF_SCI1_EGA ||
 			flags & GF_SCI1_LOFSABSOLUTE) {
 			error("This game entry is erroneous. It's marked as SCI0/SCI01, but it has SCI1 flags set");
 		}
-	} else if (version >= SCI_VERSION_1_EARLY && version <= SCI_VERSION_1_LATE) {
+	} else if (version == SCI_VERSION_1) {
 		// SCI1
 
 		if (flags & GF_SCI0_OLD ||
