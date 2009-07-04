@@ -462,7 +462,7 @@ void ScummEngine::executeScript() {
 			vm.slot[_currentScript].didexec = true;
 		debugC(DEBUG_OPCODES, "Script %d, offset 0x%x: [%X] %s()",
 				vm.slot[_currentScript].number,
-				_scriptPointer - _scriptOrgPointer,
+				(uint)(_scriptPointer - _scriptOrgPointer),
 				_opcode,
 				getOpcodeDesc(_opcode));
 		if (_hexdumpScripts == true) {

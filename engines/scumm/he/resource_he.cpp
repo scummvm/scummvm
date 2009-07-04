@@ -474,7 +474,7 @@ bool Win32ResExtractor::check_offset(byte *memory, int total_size, const char *n
 	int need_size = (int)((byte *)offset - memory + size);
 
 	debugC(DEBUG_RESOURCE, "check_offset: size=%x vs %x offset=%x size=%x",
-		need_size, total_size, (byte *)offset - memory, size);
+		need_size, total_size, (uint)((byte *)offset - memory), size);
 
 	if (need_size < 0 || need_size > total_size) {
 		error("%s: premature end", name);
