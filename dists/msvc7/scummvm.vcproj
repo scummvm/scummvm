@@ -1046,6 +1046,12 @@
 				RelativePath="..\..\graphics\colormasks.h">
 			</File>
 			<File
+				RelativePath="..\..\graphics\conversion.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\conversion.h">
+			</File>
+			<File
 				RelativePath="..\..\graphics\cursorman.cpp">
 			</File>
 			<File
