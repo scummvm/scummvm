@@ -82,39 +82,35 @@ enum SciGameVersions {
 extern const char *versionNames[9];
 
 enum SciGameFlags {
-	/*
-	** SCI0 flags
-	*/
+	// SCI0 flags
 
 	/* Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2)
-	** Old SCI versions used two word header for script blocks (first word equal
-	** to 0x82, meaning of the second one unknown). New SCI versions used one
-	** word header.
-	** Also, old SCI versions assign 120 degrees to left & right, and 60 to up
-	** and down. Later versions use an even 90 degree distribution.
-	*/
+	 * Old SCI versions used two word header for script blocks (first word equal
+	 * to 0x82, meaning of the second one unknown). New SCI versions used one
+	 * word header.
+	 * Also, old SCI versions assign 120 degrees to left & right, and 60 to up
+	 * and down. Later versions use an even 90 degree distribution.
+	 */
 	GF_SCI0_OLD				= (1 << 0),
 
 	/* Applies to all versions before 0.000.629
-	** Older SCI versions had simpler code for GetTime()
-	*/
+	 * Older SCI versions had simpler code for GetTime()
+	 */
 	GF_SCI0_OLDGETTIME		= (1 << 1),
 
 	// ----------------------------------------------------------------------------
 
-	/*
-	** SCI1 flags
-	*/
+	// SCI1 flags
 
 	/*
-	** Used to distinguish SCI1 EGA games
-	*/
+	 * Used to distinguish SCI1 EGA games
+	 */
 	GF_SCI1_EGA				= (1 << 2),
 
 	/* Applies to all SCI1 versions after 1.000.200
-    ** In late SCI1 versions, the argument of lofs[as] instructions
-	** is absolute rather than relative.
-	*/
+     * In late SCI1 versions, the argument of lofs[as] instructions
+	 * is absolute rather than relative.
+	 */
 	GF_SCI1_LOFSABSOLUTE	= (1 << 3)
 };
 
