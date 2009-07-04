@@ -74,8 +74,8 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	Common::MemoryReadStream gameData(file->_data, file->_length);
 	_info = new GameInfo();
 	
-	_info->_currentRoom = gameData.readByte();
-	_info->_mapRoom = gameData.readByte();
+	_info->_currentRoom = gameData.readByte() - 1;
+	_info->_mapRoom = gameData.readByte() - 1;
 	_info->_numObjects = gameData.readUint16LE();
 	_info->_numIcons = gameData.readUint16LE();
 	_info->_numVariables = gameData.readByte();
@@ -132,18 +132,90 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	assert(numVariables == _info->_numVariables);
 	assert(numObjects == _info->_numObjects);	
 
-	loadObject(1);
-	_vm->_script->run(getObject(1)->_program, getObject(1)->_init);
+	loadObject(0);
+	
+	_vm->_script->run(getObject(0)->_program, getObject(0)->_init);
 
-	changeRoom(1);
+	changeRoom(0);
 }
 
-void Game::loadObject(uint16 objNum) {
+void Game::loadRoom(uint roomNum) {
+
+	BAFile *f;
+	f = _vm->_roomsArchive->getFile(roomNum * 4);
+	Common::MemoryReadStream roomReader(f->_data, f->_length);
+
+	roomReader.readUint32LE(); // Pointer to room program, not used
+	roomReader.readUint16LE(); // Program length, not used
+	roomReader.readUint32LE(); // Pointer to room title, not used
+
+	_currentRoom._music = roomReader.readByte();
+	_currentRoom._map = roomReader.readByte();
+	_currentRoom._palette = roomReader.readByte() - 1;
+	_currentRoom._numMasks = roomReader.readUint16LE();
+	_currentRoom._init = roomReader.readUint16LE();
+	_currentRoom._look = roomReader.readUint16LE();
+	_currentRoom._use = roomReader.readUint16LE();
+	_currentRoom._canUse = roomReader.readUint16LE();
+	_currentRoom._imInit = roomReader.readByte();
+	_currentRoom._imLook = roomReader.readByte();
+	_currentRoom._imUse = roomReader.readByte();
+	_currentRoom._mouseOn = roomReader.readByte();
+	_currentRoom._heroOn = roomReader.readByte();
+	roomReader.read(&_currentRoom._pers0, 12);
+	roomReader.read(&_currentRoom._persStep, 12);
+	_currentRoom._escRoom = roomReader.readByte() - 1;
+	_currentRoom._numGates = roomReader.readByte();
+
+	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
+	_vm->_screen->setPalette(f->_data, 0, kNumColours);
+}
+
+int Game::loadAnimation(uint animNum) {
+
+	BAFile *animFile = _vm->_animationsArchive->getFile(animNum);
+	Common::MemoryReadStream animationReader(animFile->_data, animFile->_length);	
+
+	int numFrames = animationReader.readByte();
+
+	// FIXME: handle these properly
+	animationReader.readByte(); // Memory logic field, not used
+	animationReader.readByte(); // Disable erasing field, not used
+	animationReader.readByte(); // Cyclic field, not used
+	animationReader.readByte(); // Relative field, not used
+
+	_vm->_anims->addAnimation(animNum, 254, true);
+	
+	for (uint i = 0; i < numFrames; ++i) {
+		uint spriteNum = animationReader.readUint16LE() - 1;
+		int x = animationReader.readSint16LE();
+		int y = animationReader.readSint16LE();
+		uint zoomX = animationReader.readUint16LE();
+		uint zoomY = animationReader.readUint16LE();
+		byte mirror = animationReader.readByte();
+		uint sample = animationReader.readUint16LE();
+		uint freq = animationReader.readUint16LE();
+		uint delay = animationReader.readUint16LE();
+
+		// TODO: implement Animation::setDelay()
+		//_vm->_anims->setDelay(animNum, delay*10);
+
+		BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
+
+		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length, x, y, 1, true);
+
+		if (mirror) 
+			sp->setMirrorOn();
+
+		_vm->_anims->addFrame(animNum, sp);
+	}
+
+	return animNum;
+}
+
+void Game::loadObject(uint objNum) {
 	BAFile *file;
 	
-	// Convert to real index (indexes begin with 1 in the data files)
-	objNum -= 1;
-
 	file = _vm->_objectsArchive->getFile(objNum * 3);
 	Common::MemoryReadStream objReader(file->_data, file->_length);
 	
@@ -182,70 +254,41 @@ void Game::loadObject(uint16 objNum) {
 	memcpy(obj->_program._bytecode, file->_data, file->_length);
 }
 
-GameObject *Game::getObject(uint16 objNum) {
-
-	// Convert to real index (indexes begin with 1 in the data files)
-	objNum -= 1;
-
+GameObject *Game::getObject(uint objNum) {
 	return _objects + objNum;
 }
 
-void Game::changeRoom(uint16 roomNum) {
+void Game::loadOverlays() {
+ 	uint x, y, z, num;
+ 
+	BAFile *overlayHeader;
 
-	// Convert to real index (indexes begin with 1 in the data files)
-	roomNum -= 1;
-
-	BAFile *f;
-	f = _vm->_roomsArchive->getFile(roomNum * 4);
-	Common::MemoryReadStream roomReader(f->_data, f->_length);
-
-	roomReader.readUint32LE(); // Pointer to room program, not used
-	roomReader.readUint16LE(); // Program length, not used
-	roomReader.readUint32LE(); // Pointer to room title, not used
-
-	_currentRoom._music = roomReader.readByte();
-	_currentRoom._map = roomReader.readByte();
-	_currentRoom._palette = roomReader.readByte();
-	_currentRoom._numMasks = roomReader.readUint16LE();
-	_currentRoom._init = roomReader.readUint16LE();
-	_currentRoom._look = roomReader.readUint16LE();
-	_currentRoom._use = roomReader.readUint16LE();
-	_currentRoom._canUse = roomReader.readUint16LE();
-	_currentRoom._imInit = roomReader.readByte();
-	_currentRoom._imLook = roomReader.readByte();
-	_currentRoom._imUse = roomReader.readByte();
-	_currentRoom._mouseOn = roomReader.readByte();
-	_currentRoom._heroOn = roomReader.readByte();
-	roomReader.read(&_currentRoom._pers0, 12);
-	roomReader.read(&_currentRoom._persStep, 12);
-	_currentRoom._escRoom = roomReader.readByte();
-	_currentRoom._numGates = roomReader.readByte();
-
-	f = _vm->_paletteArchive->getFile(_currentRoom._palette - 1);
-	_vm->_screen->setPalette(f->_data, 0, kNumColours);
-
-	uint x, y, z, num;
-
-	f = _vm->_roomsArchive->getFile(roomNum * 4 + 2);
-	Common::MemoryReadStream overlayReader(f->_data, f->_length);
-	BAFile *overlayFile;
-
-	for (uint i = 0; i < _currentRoom._numMasks; i++) {
-
-		num = overlayReader.readUint16LE();
-		x = overlayReader.readUint16LE();
-		y = overlayReader.readUint16LE();
-		z = overlayReader.readByte();
-
-		overlayFile = _vm->_overlaysArchive->getFile(num - 1);
-		Sprite *sp = new Sprite(overlayFile->_data, overlayFile->_length, x, y, z, true);
-
-		_vm->_anims->addOverlay(sp, z);		
+	overlayHeader = _vm->_roomsArchive->getFile(_currentRoom._roomNum * 4 + 2);
+	Common::MemoryReadStream overlayReader(overlayHeader->_data, overlayHeader->_length);
+ 	BAFile *overlayFile;
+ 
+ 	for (uint i = 0; i < _currentRoom._numMasks; i++) {
+ 
+		num = overlayReader.readUint16LE() - 1;
+ 		x = overlayReader.readUint16LE();
+ 		y = overlayReader.readUint16LE();
+ 		z = overlayReader.readByte();
+ 
+		overlayFile = _vm->_overlaysArchive->getFile(num);
+ 		Sprite *sp = new Sprite(overlayFile->_data, overlayFile->_length, x, y, z, true);
+ 
+ 		_vm->_anims->addOverlay(sp, z);		
 	}
-	
+
 	_vm->_overlaysArchive->clearCache();
 
-	_vm->_screen->getSurface()->markDirty();
+ 	_vm->_screen->getSurface()->markDirty();
+}
+
+void Game::changeRoom(uint roomNum) {
+	_currentRoom._roomNum = roomNum;
+	loadRoom(roomNum);
+	loadOverlays();	
 }
 
 Game::~Game() {

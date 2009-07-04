@@ -80,6 +80,7 @@ struct Person {
 };
 
 struct Room {
+	byte _roomNum;	
 	byte _music;
 	byte _map;
 	byte _palette;
@@ -109,9 +110,14 @@ private:
 	GameObject *_objects;	
 	Room _currentRoom;	
 
-	void loadObject(uint16 numObj);
-	GameObject *getObject(uint16 objNum);
-	void changeRoom(uint16 roomNum);
+	void loadRoom(uint roomNum);
+	int loadAnimation(uint animNum);
+	void loadOverlays();
+	void loadObject(uint numObj);
+
+	GameObject *getObject(uint objNum);
+
+	void changeRoom(uint roomNum);
 };
 
 } // End of namespace Draci
