@@ -115,50 +115,55 @@ void Sprite::setMirrorOff() {
 
 /**
  *  @brief Draws the sprite to a Draci::Surface
- *	@param surface Pointer to a Draci::Surface
+ *  @param surface Pointer to a Draci::Surface
  *
  *  Draws the sprite to a Draci::Surface and marks its rectangle on the surface as dirty.
+ *  It is safe to call it for sprites that would overflow the surface.
  */
 void Sprite::draw(Surface *surface, bool markDirty) const { 
-	byte *dst = (byte *)surface->getBasePtr(_x, _y);
-	byte *src = _data;	
-	
-	// Determine how many pixels to draw horizontally (to prevent overflow)
-	int xSpaceLeft = surface->w - _x - 1;	
-	int xPixelsToDraw = (_width < xSpaceLeft) ? _width : xSpaceLeft;
 
-	// Determine how many pixels to draw vertically
-	int ySpaceLeft = surface->h - _y - 1;	
-	int yPixelsToDraw = (_height < ySpaceLeft) ? _height : ySpaceLeft;
+	Common::Rect sourceRect(0, 0, _width, _height);
+	Common::Rect destRect(_x, _y, _x + _width, _y + _height);
+	Common::Rect surfaceRect(0, 0, surface->w, surface->h);
+	Common::Rect clippedDestRect(destRect);
+
+	clippedDestRect.clip(surfaceRect);
+
+	int adjustLeft = clippedDestRect.left - destRect.left;
+	int adjustRight = clippedDestRect.right - destRect.right;
+	int adjustTop = clippedDestRect.top - destRect.top;
+	int adjustBottom = clippedDestRect.bottom - destRect.bottom;
+
+	sourceRect.left += adjustLeft;
+	sourceRect.right += adjustRight;
+	sourceRect.top += adjustTop;
+	sourceRect.bottom += adjustBottom;
+
+	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
+	byte *src = _data;
 
 	// Blit the sprite to the surface
-	for (int i = 0; i < yPixelsToDraw; ++i) {
+	for (int i = sourceRect.top; i < sourceRect.bottom; ++i) {
+		for (int j = sourceRect.left; j < sourceRect.right; ++j) {
+			
+			// Don't blit if the pixel is transparent on the target surface
+			if (src[i * _width + j] != surface->getTransparentColour())	{
 
-		// Draw the sprite mirrored if the _mirror flag is set
-		if (_mirror) {
-			for (int j = xPixelsToDraw - 1; j >= 0; --j, ++src) {
-
-				// Don't blit if the pixel is transparent on the target surface
-				if (*src != surface->getTransparentColour())			
-					dst[j] = *src;
+				// Draw the sprite mirrored if the _mirror flag is set						
+				if (_mirror) {
+					dst[sourceRect.right - j - 1] = src[i * _width + j];
+				} else {	
+					dst[j] = src[i * _width + j];
+				}
 			}		
-		} else {
-			for (int j = 0; j < xPixelsToDraw; ++j, ++src) {
-
-				// Don't blit if the pixel is transparent on the target surface
-				if (*src != surface->getTransparentColour())			
-					dst[j] = *src;
-			}
 		}
 
-		src += _width - xPixelsToDraw;
 		dst += surface->pitch;
 	}
 
 	// Mark the sprite's rectangle dirty
 	if (markDirty) {	
-		Common::Rect r(_x, _y, _x + _width, _y + _height);
-		surface->markDirtyRect(r);
+		surface->markDirtyRect(destRect);
 	}
 }
 

@@ -138,6 +138,9 @@ void Game::init() {
 	
 	_vm->_script->run(getObject(0)->_program, getObject(0)->_init);
 
+	// HACK: this is only for testing
+	_vm->_anims->play(getObject(0)->_seqTab[9]);
+
 	changeRoom(0);
 }
 
@@ -186,7 +189,7 @@ int Game::loadAnimation(uint animNum) {
 	animationReader.readByte(); // Cyclic field, not used
 	animationReader.readByte(); // Relative field, not used
 
-	_vm->_anims->addAnimation(animNum, 254, true);
+	_vm->_anims->addAnimation(animNum, 254, false);
 	
 	for (uint i = 0; i < numFrames; ++i) {
 		uint spriteNum = animationReader.readUint16LE() - 1;
