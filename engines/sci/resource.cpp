@@ -48,8 +48,7 @@ const char *sci_version_types[] = {
 	"SCI version 0.xxx w/ 1.000 compression",
 	"SCI version 1.000 w/ 0.xxx resource.map",
 	"SCI version 1.000 w/ special resource.map",
-	"SCI version 1.000 (early)",
-	"SCI version 1.000 (late)",
+	"SCI version 1.000",
 	"SCI version 1.001",
 	"SCI WIN/32"
 };
