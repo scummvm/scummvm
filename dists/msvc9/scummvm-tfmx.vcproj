@@ -1147,6 +1147,14 @@
 				<File
 					RelativePath="..\..\sound\mods\maxtrax.cpp"
 					>
+					<FileConfiguration
+						Name="Debug_Command|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AssemblerOutput="2"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\sound\mods\maxtrax.h"

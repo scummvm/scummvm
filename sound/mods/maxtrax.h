@@ -35,9 +35,101 @@ public:
 	MaxTrax(int rate, bool stereo);
 	virtual ~MaxTrax();
 
+protected:
 	void interrupt();
-};
 
+private:
+public:
+
+	uint16	_microtonal[128];
+
+	struct PlayerContext {
+		uint16	tempo;
+		bool	filterOn;
+		bool	handleVolume;
+
+	} _playerCtx;
+
+	struct Envelope {
+		uint16	duration;
+		uint16	volume;
+	};
+
+	struct Patch {
+		Envelope *attackPtr;
+		//Envelope *releasePtr;
+		uint16	attackLen;
+		uint16	releaseLen;
+
+		uint16	tune;
+		uint16	volume;
+
+		// this was the SampleData struct in the assembler source
+		int8	*samplePtr;
+		uint32	sampleAttack;
+		uint32	sampleSustain;
+		uint16	sampleOctaves;
+	} _patch[64];
+
+	struct Event {
+		uint16	startTime;
+		uint16	stopTime;
+		byte	command;
+		byte	parameter;
+	};
+
+	struct Score {
+		Event	*events;
+		uint32	numEvents;
+	} *_scores;
+
+	int _numScores;
+
+
+
+	bool load(Common::SeekableReadStream &musicData, bool loadScores = true, bool loadSamples = true);
+
+	void stopMusic();
+	void freePatches();
+	void freeScores();
+
+	static void outPutEvent(const Event &ev, int num = -1) {
+		struct {
+			byte cmd;
+			char *name;
+			char *param;
+		} COMMANDS[] = {
+			{0x80, "TEMPO   ", "TEMPO, N/A      "},
+			{0xa0, "SPECIAL ", "CHAN, SPEC # | VAL"},
+			{0xb0, "CONTROL ", "CHAN, CTRL # | VAL"},
+			{0xc0, "PROGRAM ", "CHANNEL, PROG # "},
+			{0xe0, "BEND    ", "CHANNEL, BEND VALUE"},
+			{0xf0, "SYSEX   ", "TYPE, SIZE      "},
+			{0xf8, "REALTIME", "REALTIME, N/A   "},
+			{0xff, "END     ", "N/A, N/A        "},
+			{0xff, "NOTE    ", "VOL | CHAN, STOP"},
+		};
+
+		int i = 0;
+		for (; i < ARRAYSIZE(COMMANDS) - 1 && ev.command != COMMANDS[i].cmd; ++i)
+			;
+
+		if (num == -1)
+			debug("Event    : %02X %s %s %02X %04X %04X", ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
+		else
+			debug("Event %3d: %02X %s %s %02X %04X %04X", num, ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
+	}
+
+	static void outPutScore(const Score &sc, int num = -1) {
+		if (num == -1)
+			debug("score   : %i Events", sc.numEvents);
+		else
+			debug("score %2d: %i Events", num, sc.numEvents);
+		for (uint i = 0; i < sc.numEvents; ++i)
+			outPutEvent(sc.events[i], i);
+		debug("");
+	}
+};
 }	// End of namespace Audio
 
 #endif

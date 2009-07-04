@@ -26,13 +26,13 @@ Audio::Tfmx *loadTfmxfile(const char *mdatName, const char *sampleName) {
 	FSNode sampleNode = fileDir.getChild(sampleName);
 	SeekableReadStream *musicIn = musicNode.createReadStream();
 	if (0 == musicIn) {
-		debug("Couldnt load file %s", MUSICFILE);
+		debug("Couldnt load file %s", mdatName);
 		return 0;
 	}
 
 	SeekableReadStream *sampleIn = sampleNode.createReadStream();
 	if (0 == sampleIn) {
-		debug("Couldnt load file %s", SAMPLEFILE);
+		debug("Couldnt load file %s", sampleName);
 		delete musicIn;
 		return 0;
 	}
