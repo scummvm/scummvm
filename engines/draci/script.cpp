@@ -26,73 +26,78 @@
 #include "common/debug.h"
 #include "common/stream.h"
 #include "common/stack.h"
+#include "common/queue.h"
 
-#include "draci/script.h"
 #include "draci/draci.h"
+#include "draci/script.h"
+#include "draci/game.h"
 
 namespace Draci {
 
 // FIXME: Change parameter types to names once I figure out what they are exactly
 
-/** A table of all the commands the game player uses */
-GPL2Command gplCommands[] = {
-	{ 0,  0, "gplend",				0, { 0 } },
-	{ 0,  1, "exit",				0, { 0 } },
-	{ 1,  1, "goto", 				1, { 3 } },
-	{ 2,  1, "Let", 				2, { 3, 4 } },
-	{ 3,  1, "if", 					2, { 4, 3 } },
-	{ 4,  1, "Start", 				2, { 3, 2 } },
-	{ 5,  1, "Load", 				2, { 3, 2 } },
-	{ 5,  2, "StartPlay", 			2, { 3, 2 } },
-	{ 5,  3, "JustTalk", 			0, { 0 } },
-	{ 5,  4, "JustStay", 			0, { 0 } },
-	{ 6,  1, "Talk", 				2, { 3, 2 } },
-	{ 7,  1, "ObjStat", 			2, { 3, 3 } },
-	{ 7,  2, "ObjStat_On", 			2, { 3, 3 } },
-	{ 8,  1, "IcoStat", 			2, { 3, 3 } },
-	{ 9,  1, "Dialogue", 			1, { 2 } },
-	{ 9,  2, "ExitDialogue", 		0, { 0 } },
-	{ 9,  3, "ResetDialogue", 		0, { 0 } },
-	{ 9,  4, "ResetDialogueFrom", 	0, { 0 } },
-	{ 9,  5, "ResetBlock", 			1, { 3 } },
-	{ 10, 1, "WalkOn", 				3, { 1, 1, 3 } },
-	{ 10, 2, "StayOn", 				3, { 1, 1, 3 } },
-	{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 } },
-	{ 11, 1, "LoadPalette", 		1, { 2 } },
-	{ 12, 1, "SetPalette", 			0, { 0 } },
-	{ 12, 2, "BlackPalette", 		0, { 0 } },
-	{ 13, 1, "FadePalette", 		3, { 1, 1, 1 } },
-	{ 13, 2, "FadePalettePlay", 	3, { 1, 1, 1 } },
-	{ 14, 1, "NewRoom", 			2, { 3, 1 } },
-	{ 15, 1, "ExecInit", 			1, { 3 } },
-	{ 15, 2, "ExecLook", 			1, { 3 } },
-	{ 15, 3, "ExecUse", 			1, { 3 } },
-	{ 16, 1, "RepaintInventory", 	0, { 0 } },
-	{ 16, 2, "ExitInventory", 		0, { 0 } },
-	{ 17, 1, "ExitMap", 			0, { 0 } },
-	{ 18, 1, "LoadMusic", 			1, { 2 } },
-	{ 18, 2, "StartMusic", 			0, { 0 } },
-	{ 18, 3, "StopMusic", 			0, { 0 } },
-	{ 18, 4, "FadeOutMusic",		1, { 1 } },
-	{ 18, 5, "FadeInMusic", 		1, { 1 } },
-	{ 19, 1, "Mark", 				0, { 0 } },
-	{ 19, 2, "Release", 			0, { 0 } },
-	{ 20, 1, "Play", 				0, { 0 } },
-	{ 21, 1, "LoadMap", 			1, { 2 } },
-	{ 21, 2, "RoomMap", 			0, { 0 } },
-	{ 22, 1, "DisableQuickHero", 	0, { 0 } },
-	{ 22, 2, "EnableQuickHero", 	0, { 0 } },
-	{ 23, 1, "DisableSpeedText", 	0, { 0 } },
-	{ 23, 2, "EnableSpeedText", 	0, { 0 } },
-	{ 24, 1, "QuitGame", 			0, { 0 } },
-	{ 25, 1, "PushNewRoom", 		0, { 0 } },
-	{ 25, 2, "PopNewRoom", 			0, { 0 } },
-	{ 26, 1, "ShowCheat", 			0, { 0 } },
-	{ 26, 2, "HideCheat", 			0, { 0 } },
-	{ 26, 3, "ClearCheat", 			1, { 1 } },
-	{ 27, 1, "FeedPassword", 		3, { 1, 1, 1 } }
-};
+void Script::setupCommandList() {
+	/** A table of all the commands the game player uses */
+	static const GPL2Command gplCommands[] = {
+		{ 0,  0, "gplend",				0, { 0 }, NULL },
+		{ 0,  1, "exit",				0, { 0 }, NULL },
+		{ 1,  1, "goto", 				1, { 3 }, NULL },
+		{ 2,  1, "Let", 				2, { 3, 4 }, NULL },
+		{ 3,  1, "if", 					2, { 4, 3 }, NULL },
+		{ 4,  1, "Start", 				2, { 3, 2 }, NULL },
+		{ 5,  1, "Load", 				2, { 3, 2 }, &Script::dummy },
+		{ 5,  2, "StartPlay", 			2, { 3, 2 }, NULL },
+		{ 5,  3, "JustTalk", 			0, { 0 }, NULL },
+		{ 5,  4, "JustStay", 			0, { 0 }, NULL },
+		{ 6,  1, "Talk", 				2, { 3, 2 }, NULL },
+		{ 7,  1, "ObjStat", 			2, { 3, 3 }, NULL },
+		{ 7,  2, "ObjStat_On", 			2, { 3, 3 }, NULL },
+		{ 8,  1, "IcoStat", 			2, { 3, 3 }, NULL },
+		{ 9,  1, "Dialogue", 			1, { 2 }, NULL },
+		{ 9,  2, "ExitDialogue", 		0, { 0 }, NULL },
+		{ 9,  3, "ResetDialogue", 		0, { 0 }, NULL },
+		{ 9,  4, "ResetDialogueFrom", 	0, { 0 }, NULL },
+		{ 9,  5, "ResetBlock", 			1, { 3 }, NULL },
+		{ 10, 1, "WalkOn", 				3, { 1, 1, 3 }, NULL },
+		{ 10, 2, "StayOn", 				3, { 1, 1, 3 }, NULL },
+		{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 }, NULL },
+		{ 11, 1, "LoadPalette", 		1, { 2 }, NULL },
+		{ 12, 1, "SetPalette", 			0, { 0 }, NULL },
+		{ 12, 2, "BlackPalette", 		0, { 0 }, NULL },
+		{ 13, 1, "FadePalette", 		3, { 1, 1, 1 }, NULL },
+		{ 13, 2, "FadePalettePlay", 	3, { 1, 1, 1 }, NULL },
+		{ 14, 1, "NewRoom", 			2, { 3, 1 }, NULL },
+		{ 15, 1, "ExecInit", 			1, { 3 }, NULL },
+		{ 15, 2, "ExecLook", 			1, { 3 }, NULL },
+		{ 15, 3, "ExecUse", 			1, { 3 }, NULL },
+		{ 16, 1, "RepaintInventory", 	0, { 0 }, NULL },
+		{ 16, 2, "ExitInventory", 		0, { 0 }, NULL },
+		{ 17, 1, "ExitMap", 			0, { 0 }, NULL },
+		{ 18, 1, "LoadMusic", 			1, { 2 }, NULL },
+		{ 18, 2, "StartMusic", 			0, { 0 }, NULL },
+		{ 18, 3, "StopMusic", 			0, { 0 }, NULL },
+		{ 18, 4, "FadeOutMusic",		1, { 1 }, NULL },
+		{ 18, 5, "FadeInMusic", 		1, { 1 }, NULL },
+		{ 19, 1, "Mark", 				0, { 0 }, NULL },
+		{ 19, 2, "Release", 			0, { 0 }, NULL },
+		{ 20, 1, "Play", 				0, { 0 }, NULL },
+		{ 21, 1, "LoadMap", 			1, { 2 }, NULL },
+		{ 21, 2, "RoomMap", 			0, { 0 }, NULL },
+		{ 22, 1, "DisableQuickHero", 	0, { 0 }, NULL },
+		{ 22, 2, "EnableQuickHero", 	0, { 0 }, NULL },
+		{ 23, 1, "DisableSpeedText", 	0, { 0 }, NULL },
+		{ 23, 2, "EnableSpeedText", 	0, { 0 }, NULL },
+		{ 24, 1, "QuitGame", 			0, { 0 }, NULL },
+		{ 25, 1, "PushNewRoom", 		0, { 0 }, NULL },
+		{ 25, 2, "PopNewRoom", 			0, { 0 }, NULL },
+		{ 26, 1, "ShowCheat", 			0, { 0 }, NULL },
+		{ 26, 2, "HideCheat", 			0, { 0 }, NULL },
+		{ 26, 3, "ClearCheat", 			1, { 1 }, NULL },
+		{ 27, 1, "FeedPassword", 		3, { 1, 1, 1 }, NULL }
+	};
 
+	_commandList = gplCommands;
+}
 /** Operators used by the mathematical evaluator */
 Common::String operators[] = {
 	"oper_and",
@@ -132,8 +137,6 @@ Common::String functions[] = {
 	"F_Cheat"
 };
 
-const unsigned int kNumCommands = sizeof gplCommands / sizeof gplCommands[0];
-
 /** Type of mathematical object */
 enum mathExpressionObject {
 	kMathEnd,
@@ -143,6 +146,12 @@ enum mathExpressionObject {
 	kMathVariable
 };
 
+void Script::dummy(Common::Queue<int> &params) {
+
+	debug(1, "- %d", params.pop());
+	debug(1, "- %d", params.pop());
+}
+
 // FIXME: The evaluator is now complete but I still need to implement callbacks
 
 /**
@@ -150,7 +159,7 @@ enum mathExpressionObject {
  * @param reader Stream reader set to the beginning of the expression
  */
 
-void Script::handleMathExpression(Common::MemoryReadStream &reader) {
+int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 	Common::Stack<uint16> stk;
 	mathExpressionObject obj;
 
@@ -211,7 +220,7 @@ void Script::handleMathExpression(Common::MemoryReadStream &reader) {
 		obj = (mathExpressionObject) reader.readUint16LE();
 	}
 
-	return;
+	return stk.pop();
 }
 
 /**
@@ -223,7 +232,7 @@ void Script::handleMathExpression(Common::MemoryReadStream &reader) {
  * @return NULL if command is not found. Otherwise, a pointer to a GPL2Command
  *         struct representing the command.
  */
-GPL2Command *Script::findCommand(byte num, byte subnum) {
+const GPL2Command *Script::findCommand(byte num, byte subnum) {
 	unsigned int i = 0;
 	while (1) {
 
@@ -233,9 +242,9 @@ GPL2Command *Script::findCommand(byte num, byte subnum) {
 		}
 
 		// Return found command
-		if (gplCommands[i]._number == num &&
-			gplCommands[i]._subNumber == subnum) {
-			return &gplCommands[i];
+		if (_commandList[i]._number == num &&
+			_commandList[i]._subNumber == subnum) {
+			return &_commandList[i];
 		}
 
 		++i;
@@ -276,7 +285,12 @@ GPL2Command *Script::findCommand(byte num, byte subnum) {
  */
 
 int Script::run(GPL2Program program, uint16 offset) {
+
+	// Stream reader for the whole program
 	Common::MemoryReadStream reader(program._bytecode, program._length);
+	
+	// Parameter queue that is passed to each command
+	Common::Queue<int> params;
 
 	// Offset is given as number of 16-bit integers so we need to convert
 	// it to a number of bytes  
@@ -286,7 +300,7 @@ int Script::run(GPL2Program program, uint16 offset) {
 	// Seek to the requested part of the program
 	reader.seek(offset);
 	
-	GPL2Command *cmd;
+	const GPL2Command *cmd;
 	do {
 		// read in command pair
 		uint16 cmdpair = reader.readUint16BE();
@@ -298,17 +312,20 @@ int Script::run(GPL2Program program, uint16 offset) {
 		byte subnum = cmdpair & 0xFF;
 
 		if ((cmd = findCommand(num, subnum))) {
+			int tmp;
 
 			// Print command name
 			debugC(2, kDraciBytecodeDebugLevel, "%s", cmd->_name.c_str());
 
-			for (uint16 i = 0; i < cmd->_numParams; ++i) {
+			for (int i = 0; i < cmd->_numParams; ++i) {
 				if (cmd->_paramTypes[i] == 4) {
 					debugC(3, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
-					handleMathExpression(reader);
+					params.push(handleMathExpression(reader));
 				}
 				else {
-					debugC(3, kDraciBytecodeDebugLevel, "\t%hu", reader.readUint16LE());
+					tmp = reader.readUint16LE();
+					params.push(tmp);
+					debugC(3, kDraciBytecodeDebugLevel, "\t%hu", tmp);
 				}
 			}
 		}
@@ -316,6 +333,14 @@ int Script::run(GPL2Program program, uint16 offset) {
 			debugC(2, kDraciBytecodeDebugLevel, "Unknown opcode %hu, %hu",
 				num, subnum);
 		}
+
+		GPLHandler handler = cmd->_handler;
+
+		if (handler != NULL) {
+			// Call the handler for the current command
+			(this->*(cmd->_handler))(params);
+		}
+
 	} while (cmd->_name != "gplend");
 
 	return 0;

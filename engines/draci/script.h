@@ -28,13 +28,21 @@
 
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/queue.h"
 
 namespace Draci {
 
 /** The maximum number of parameters for a GPL command */
 const int kMaxParams = 3; 
 
-// FIXME: Add function handlers
+class DraciEngine;
+class Script;
+
+enum {
+	kNumCommands = 55
+};
+
+typedef void (Script::* GPLHandler)(Common::Queue<int> &);
 
 /**
  *  Represents a single command in the GPL scripting language bytecode.
@@ -48,6 +56,7 @@ struct GPL2Command {
 	Common::String _name; 
 	uint16 _numParams;
 	int _paramTypes[kMaxParams];
+	GPLHandler _handler;
 };
 
 /** 
@@ -65,11 +74,22 @@ struct GPL2Program {
 class Script {
 
 public:
+	Script(DraciEngine *vm) : _vm(vm) { setupCommandList(); };	
+
 	int run(GPL2Program program, uint16 offset);
-	
+
 private:
-	GPL2Command *findCommand(byte num, byte subnum);
-	void handleMathExpression(Common::MemoryReadStream &reader);
+	
+	/** List of all GPL commands. Initialised in the constructor. */
+	const GPL2Command *_commandList;
+ 
+	void dummy(Common::Queue<int> &params);
+
+	void setupCommandList();
+	const GPL2Command *findCommand(byte num, byte subnum);
+	int handleMathExpression(Common::MemoryReadStream &reader);
+
+	DraciEngine *_vm;
 
 };
 
