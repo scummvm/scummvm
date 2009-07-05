@@ -133,7 +133,7 @@ enum {
 	kDebugSaveLoad   = 1 <<  7,
 	kDebugGraphics   = 1 <<  8,
 	kDebugVideo      = 1 <<  9,
-	kDebugCollisions = 1 << 10,
+	kDebugHotspots   = 1 << 10,
 	kDebugDemo       = 1 << 11
 };
 

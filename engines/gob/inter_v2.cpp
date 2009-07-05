@@ -122,8 +122,8 @@ void Inter_v2::setupOpcodesFunc() {
 
 	OPCODEFUNC(0x17, o2_animPalInit);
 
-	OPCODEFUNC(0x18, o2_addCollision);
-	OPCODEFUNC(0x19, o2_freeCollision);
+	OPCODEFUNC(0x18, o2_addHotspot);
+	OPCODEFUNC(0x19, o2_removeHotspot);
 
 	OPCODEFUNC(0x25, o2_goblinFunc);
 
@@ -1177,7 +1177,7 @@ bool Inter_v2::o2_animPalInit(OpFuncParams &params) {
 	return false;
 }
 
-bool Inter_v2::o2_addCollision(OpFuncParams &params) {
+bool Inter_v2::o2_addHotspot(OpFuncParams &params) {
 	int16 id       = _vm->_game->_script->readValExpr();
 	uint16 funcPos = _vm->_game->_script->pos();
 	int16 left     = _vm->_game->_script->readValExpr();
@@ -1211,7 +1211,7 @@ bool Inter_v2::o2_addCollision(OpFuncParams &params) {
 	return false;
 }
 
-bool Inter_v2::o2_freeCollision(OpFuncParams &params) {
+bool Inter_v2::o2_removeHotspot(OpFuncParams &params) {
 	int16 id = _vm->_game->_script->readValExpr();
 
 	if (id == -2)

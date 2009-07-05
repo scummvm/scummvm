@@ -126,7 +126,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
 	Common::addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 	Common::addDebugChannel(kDebugVideo, "Video", "IMD/VMD video debug level");
-	Common::addDebugChannel(kDebugCollisions, "Collisions", "Collisions debug level");
+	Common::addDebugChannel(kDebugHotspots, "Hotspots", "Hotspots debug level");
 	Common::addDebugChannel(kDebugDemo, "Demo", "Demo script debug level");
 
 	syst->getEventManager()->registerRandomSource(_rnd, "gob");

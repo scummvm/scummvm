@@ -66,7 +66,7 @@ void Inter_v6::setupOpcodesFunc() {
 	OPCODEFUNC(0x03, o6_loadCursor);
 	OPCODEFUNC(0x09, o6_assign);
 	OPCODEFUNC(0x13, o6_palLoad);
-	OPCODEFUNC(0x19, o6_freeCollision);
+	OPCODEFUNC(0x19, o6_removeHotspot);
 	OPCODEFUNC(0x33, o6_fillRect);
 }
 
@@ -353,7 +353,7 @@ bool Inter_v6::o6_palLoad(OpFuncParams &params) {
 	return false;
 }
 
-bool Inter_v6::o6_freeCollision(OpFuncParams &params) {
+bool Inter_v6::o6_removeHotspot(OpFuncParams &params) {
 	int16 id;
 
 	id = _vm->_game->_script->readValExpr();
