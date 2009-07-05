@@ -82,6 +82,7 @@ Common::Error GroovieEngine::run() {
 		break;
 	case kGroovieT7G:
 		initGraphics(640, 480, true);
+		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 		break;
 	}
 
