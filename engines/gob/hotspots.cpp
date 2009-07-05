@@ -119,13 +119,29 @@ bool Hotspots::Hotspot::isActiveInput() const {
 	if (isEnd())
 		return false;
 
-	if ((getState() & 0xC) != 0x8)
+	if (!isFilledEnabled())
 		return false;
 
 	if (!isInput())
 		return false;
 
 	return true;
+}
+
+bool Hotspots::Hotspot::isFilled() const {
+	return getState() & kStateFilled;
+}
+
+bool Hotspots::Hotspot::isFilledEnabled() const {
+	return (getState() & kStateFilledDisabled) == kStateFilled;
+}
+
+bool Hotspots::Hotspot::isFilledNew() const {
+	return getState() == kStateFilled;
+}
+
+bool Hotspots::Hotspot::isDisabled() const {
+	return getState() & kStateDisabled;
 }
 
 bool Hotspots::Hotspot::isIn(uint16 x, uint16 y) const {
@@ -154,6 +170,14 @@ bool Hotspots::Hotspot::buttonMatch(MouseButtons button) const {
 		return true;
 
 	return false;
+}
+
+void Hotspots::Hotspot::disable() {
+	id |= (kStateDisabled << 12);
+}
+
+void Hotspots::Hotspot::enable() {
+	id &= ~(kStateDisabled << 12);
 }
 
 
@@ -203,9 +227,10 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 		if (! (spot.isEnd() || (spot.id == hotspot.id)))
 			continue;
 
-		// When updating, keep bit 0x4000 intact
+		// When updating, keep disabled state intact
 		uint16 id = hotspot.id;
-		if ((spot.id & 0xBFFF) == (hotspot.id & 0xBFFF))
+		if ((spot.id     & ~(kStateDisabled << 12)) ==
+		     (hotspot.id & ~(kStateDisabled << 12)))
 			id = spot.id;
 
 		// Set
@@ -276,7 +301,7 @@ void Hotspots::recalculate(bool force) {
 
 		// Re-read the flags too, if applicable
 		uint16 flags = 0;
-		if (spot.getState() == 0xA)
+		if (spot.getState() == (kStateFilled | kStateType2))
 			flags = _vm->_game->_script->readValExpr();
 
 		// Apply backDelta, if needed
@@ -301,7 +326,7 @@ void Hotspots::recalculate(bool force) {
 		spot.right  = left + width  - 1;
 		spot.bottom = top  + height - 1;
 
-		if (spot.getState() == 0xA)
+		if (spot.getState() == (kStateFilled | kStateType2))
 			spot.flags = flags;
 
 		// Return
@@ -327,10 +352,10 @@ void Hotspots::push(uint8 all, bool force) {
 		if ( (all == 1) ||
 		     // Don't save the global ones
 		    ((all == 0) && (spot.id >= 20)) ||
-		     // Only save the ones with the correct state
-		    ((all == 2) && ((spot.getState() == 0xD) ||
-		                    (spot.getState() == 0x4) ||
-		                    (spot.getState() == 0xE)))) {
+		     // Only save disabled ones
+		    ((all == 2) && ((spot.getState() == (kStateFilledDisabled | kStateType1)) ||
+		                    (spot.getState() == (kStateDisabled)) ||
+		                    (spot.getState() == (kStateFilledDisabled | kStateType2))))) {
 			size++;
 		}
 
@@ -355,10 +380,10 @@ void Hotspots::push(uint8 all, bool force) {
 		if ( (all == 1) ||
 		     // Don't save the global ones
 		    ((all == 0) && (spot.id >= 20)) ||
-		     // Only save the ones with the correct state
-		    ((all == 2) && ((spot.getState() == 0xD) ||
-		                    (spot.getState() == 0x4) ||
-		                    (spot.getState() == 0xE)))) {
+		     // Only save disabled ones
+		    ((all == 2) && ((spot.getState() == (kStateFilledDisabled | kStateType1)) ||
+		                    (spot.getState() == (kStateDisabled)) ||
+		                    (spot.getState() == (kStateFilledDisabled | kStateType2))))) {
 
 			memcpy(destPtr, &spot, sizeof(Hotspot));
 			destPtr++;
@@ -412,8 +437,8 @@ bool Hotspots::isValid(uint16 key, uint16 id, uint16 index) const {
 	if (key == 0)
 		return false;
 
-	if (!(id & 0x8000))
-			return false;
+	if (!(Hotspot::getState(id) & kStateFilled))
+		return false;
 
 	return true;
 }
@@ -449,7 +474,8 @@ void Hotspots::enter(uint16 index) {
 
 	Hotspot &spot = _hotspots[index];
 
-	if ((spot.getState() == 0xA) || (spot.getState() == 0x9))
+	if ((spot.getState() == (kStateFilled | kStateType1)) ||
+	    (spot.getState() == (kStateFilled | kStateType2)))
 		WRITE_VAR(17, -(spot.id & 0x0FFF));
 
 	if (spot.funcEnter != 0)
@@ -466,7 +492,8 @@ void Hotspots::leave(uint16 index) {
 
 	Hotspot &spot = _hotspots[index];
 
-	if ((spot.getState() == 0xA) || (spot.getState() == 0x9))
+	if ((spot.getState() == (kStateFilled | kStateType1)) ||
+	    (spot.getState() == (kStateFilled | kStateType2)))
 		WRITE_VAR(17, spot.id & 0x0FFF);
 
 	if (spot.funcLeave != 0)
@@ -482,7 +509,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 			Hotspot &spot = _hotspots[i];
 
-			if (spot.getState() & 0x4)
+			if (spot.isDisabled())
 				continue;
 
 			if (spot.getType() > kTypeMove)
@@ -507,7 +534,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 			Hotspot &spot = _hotspots[i];
 
-			if (spot.getState() & 0x4)
+			if (spot.isDisabled())
 				continue;
 
 			if (spot.getWindow() != 0)
@@ -1048,9 +1075,13 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	right  = left + width  - 1;
 	bottom = top  + height - 1;
 
-	// Removing 0x4 from the state
-	if ((type == 11) || (type == 12)) {
-		uint8 wantedState = (type == 11) ? 0xE : 0xD;
+	// Enabling the hotspots again
+	if ((type == kTypeEnable2) || (type == kTypeEnable1)) {
+		uint8 wantedState = 0;
+		if (type == kTypeEnable2)
+			wantedState = kStateFilledDisabled | kStateType2;
+		else
+			wantedState = kStateFilledDisabled | kStateType1;
 
 		_vm->_game->_script->skip(6);
 
@@ -1058,7 +1089,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 			Hotspot &spot = _hotspots[j];
 
 			if (spot.getState() == wantedState) {
-				spot.id       &= 0xBFFF;
+				spot.enable();
 				spot.funcEnter = _vm->_game->_script->pos();
 				spot.funcLeave = _vm->_game->_script->pos();
 			}
@@ -1085,7 +1116,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		funcLeave = _vm->_game->_script->pos();
 		_vm->_game->_script->skipBlock();
 
-		key   = i + 0xA000;
+		key   = i + ((kStateFilled | kStateType2) << 12);
 		flags = type + (window << 8);
 		break;
 
@@ -1101,7 +1132,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		_vm->_game->_script->skipBlock();
 
 		if (key == 0)
-			key = i + 0xA000;
+			key = i + ((kStateFilled | kStateType2) << 12);
 
 		flags = type + (window << 8) + (flags << 4);
 		break;
@@ -1167,10 +1198,10 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		funcLeave = _vm->_game->_script->pos();
 		_vm->_game->_script->skipBlock();
 
-		flags = 2 + (window << 8) + (flags << 4);
+		flags = ((uint16) kTypeClick) + (window << 8) + (flags << 4);
 		break;
 
-	case 21:
+	case kTypeClickEnter:
 		key    = _vm->_game->_script->readInt16();
 		ids[i] = _vm->_game->_script->readInt16();
 		flags  = _vm->_game->_script->readInt16() & 3;
@@ -1180,11 +1211,11 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 
 		funcLeave = 0;
 
-		flags = 2 + (window << 8) + (flags << 4);
+		flags = ((uint16) kTypeClick) + (window << 8) + (flags << 4);
 		break;
 	}
 
-	add(i + 0x8000, left, top, right, bottom,
+	add(i | (kStateFilled << 12), left, top, right, bottom,
 			flags, key, funcEnter, funcLeave, funcPos);
 }
 
@@ -1257,7 +1288,7 @@ void Hotspots::evaluate() {
 				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
 
-					if ((spot.getState() & 0xC) != 0x8)
+					if (!spot.isFilledEnabled())
 						continue;
 
 					if ((spot.getType() & 1) != 0)
@@ -1285,7 +1316,7 @@ void Hotspots::evaluate() {
 				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
 
-					if ((spot.getState() & 0xC) != 0x8)
+					if (!spot.isFilledEnabled())
 						continue;
 
 					if ((spot.key == key) || (spot.key == 0x7FFF)) {
@@ -1299,7 +1330,7 @@ void Hotspots::evaluate() {
 					for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 						Hotspot &spot = _hotspots[i];
 
-						if ((spot.getState() & 0xC) != 0x8)
+						if (!spot.isFilledEnabled())
 							continue;
 
 						if ((spot.key & 0xFF00) != 0)
@@ -1322,7 +1353,7 @@ void Hotspots::evaluate() {
 					for (int i = endIndex; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 						Hotspot &spot = _hotspots[i];
 
-						if (spot.getState() != 0x8)
+						if (!spot.isFilledNew())
 							continue;
 
 						collStackPos++;
@@ -1335,7 +1366,7 @@ void Hotspots::evaluate() {
 						if (VAR(16) != 0)
 							break;
 
-						if (Hotspot::getState(id) == 0x8)
+						if (Hotspot::getState(id) == kStateFilled)
 							WRITE_VAR(16, ids[id & 0xFFF]);
 						else
 							WRITE_VAR(16, id & 0xFFF);
@@ -1378,7 +1409,7 @@ void Hotspots::evaluate() {
 						for (int i = endIndex; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 							Hotspot &spot = _hotspots[i];
 
-							if (spot.getState() == 0x8) {
+							if (spot.isFilledNew()) {
 								if (++counter == descIndex) {
 									id    = spot.id;
 									index = i;
@@ -1393,7 +1424,7 @@ void Hotspots::evaluate() {
 						for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 							Hotspot &spot = _hotspots[i];
 
-							if (spot.getState() == 0x8) {
+							if (spot.isFilledNew()) {
 								id    = spot.id;
 								index = i;
 								break;
@@ -1418,7 +1449,7 @@ void Hotspots::evaluate() {
 
 		_vm->_inter->storeMouse();
 
-		if (Hotspot::getState(id) == 0x8)
+		if (Hotspot::getState(id) == kStateFilled)
 			WRITE_VAR(16, ids[id & 0xFFF]);
 		else
 			WRITE_VAR(16, id & 0xFFF);
@@ -1442,7 +1473,7 @@ void Hotspots::evaluate() {
 			if (spot.isEnd())
 				continue;
 
-			if ((spot.getState() & 0xC) != 0x8)
+			if (!spot.isFilledEnabled())
 				continue;
 
 			if (!spot.isInput())
@@ -1507,7 +1538,7 @@ void Hotspots::evaluate() {
 
 		_vm->_inter->storeMouse();
 		if (VAR(16) == 0) {
-			if (Hotspot::getState(id) == 0x8)
+			if (Hotspot::getState(id) == kStateFilled)
 				WRITE_VAR(16, ids[id & 0xFFF]);
 			else
 				WRITE_VAR(16, id & 0xFFF);
@@ -1516,13 +1547,14 @@ void Hotspots::evaluate() {
 		_vm->_game->_script->setFinished(true);
 
 	for (int i = 0; i < count; i++)
-		remove(i + 0x8000);
+		remove(i + (kStateFilled << 12));
 
 	for (int i = 0; i < kHotspotCount; i++) {
 		Hotspot &spot = _hotspots[i];
 
-		if ((spot.getState() == 0xA) || (spot.getState() == 0x9))
-			spot.id |= 0x4000;
+	if ((spot.getState() == (kStateFilled | kStateType1)) ||
+	    (spot.getState() == (kStateFilled | kStateType2)))
+			spot.disable();
 	}
 
 }
@@ -1533,7 +1565,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 		Hotspot &spot = _hotspots[i];
 
-		if ((spot.getWindow() != 0) || (spot.getState() & 0x4))
+		if ((spot.getWindow() != 0) || spot.isDisabled())
 			continue;
 
 		if (!spot.isIn(x, y))
@@ -1576,7 +1608,7 @@ uint16 Hotspots::findClickedInput(uint16 index) const {
 		if (spot.getWindow() != 0)
 			continue;
 
-		if (spot.getState() & 0x4)
+		if (spot.isDisabled())
 			continue;
 
 		if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
@@ -1669,7 +1701,7 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 		if (spot.isEnd())
 			continue;
 
-		if ((spot.getState() & 0xC) != 0x8)
+		if (!spot.isFilledEnabled())
 			continue;
 
 		if (!spot.isInput())

@@ -1213,13 +1213,15 @@ bool Inter_v2::o2_addHotspot(OpFuncParams &params) {
 
 bool Inter_v2::o2_removeHotspot(OpFuncParams &params) {
 	int16 id = _vm->_game->_script->readValExpr();
+	uint8 stateType1 = Hotspots::kStateFilledDisabled | Hotspots::kStateType1;
+	uint8 stateType2 = Hotspots::kStateFilledDisabled | Hotspots::kStateType2;
 
-	if (id == -2)
-		_vm->_game->_hotspots->removeState(0xD);
+	if      (id == -2)
+		_vm->_game->_hotspots->removeState(stateType1);
 	else if (id == -1)
-		_vm->_game->_hotspots->removeState(0xE);
+		_vm->_game->_hotspots->removeState(stateType2);
 	else
-		_vm->_game->_hotspots->remove(0xE000 + id);
+		_vm->_game->_hotspots->remove((stateType2 << 12) + id);
 
 	return false;
 }

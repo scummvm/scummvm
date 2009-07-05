@@ -49,7 +49,18 @@ public:
 		kTypeInput3NoLeave     =  7,
 		kTypeInput3Leave       =  8,
 		kTypeInputFloatNoLeave =  9,
-		kTypeInputFloatLeave   = 10
+		kTypeInputFloatLeave   = 10,
+		kTypeEnable2           = 11,
+		kTypeEnable1           = 12,
+		kTypeClickEnter        = 21
+	};
+
+	enum State {
+		kStateFilledDisabled = 0xC,
+		kStateFilled         = 0x8,
+		kStateDisabled       = 0x4,
+		kStateType2          = 0x2,
+		kStateType1          = 0x1
 	};
 
 	Hotspots(GobEngine *vm);
@@ -68,7 +79,7 @@ public:
 
 	/** Push the current hotspots onto the stack.
 	 *
-	 *  @param all   0: Don't push global ones; 1: Push all; 2: Push only the ones with the correct state
+	 *  @param all   0: Don't push global ones; 1: Push all; 2: Push only the disabled ones
 	 *  @param force Force a push although _shouldPush is false
 	 */
 	void push(uint8 all, bool force = false);
@@ -115,12 +126,20 @@ private:
 		bool isInput() const;
 		bool isActiveInput() const;
 
+		bool isFilled() const;
+		bool isFilledEnabled() const;
+		bool isFilledNew() const;
+		bool isDisabled() const;
+
 		/** Are the specified coordinates in the hotspot? */
 		bool isIn(uint16 x, uint16 y) const;
 		/** Does the specified button trigger the hotspot? */
 		bool buttonMatch(MouseButtons button) const;
 
 		static uint8 getState(uint16 id);
+
+		void disable();
+		void enable();
 	};
 
 	struct StackEntry {

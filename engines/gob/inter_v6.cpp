@@ -355,6 +355,9 @@ bool Inter_v6::o6_palLoad(OpFuncParams &params) {
 
 bool Inter_v6::o6_removeHotspot(OpFuncParams &params) {
 	int16 id;
+	uint8 stateType1    = Hotspots::kStateFilledDisabled | Hotspots::kStateType1;
+	uint8 stateType2    = Hotspots::kStateFilledDisabled | Hotspots::kStateType2;
+	uint8 stateDisabled = Hotspots::kStateDisabled;
 
 	id = _vm->_game->_script->readValExpr();
 
@@ -369,14 +372,14 @@ bool Inter_v6::o6_removeHotspot(OpFuncParams &params) {
 		_vm->_game->_hotspots->push(2);
 		break;
 	case 3:
-		_vm->_game->_hotspots->removeState(0xD);
-		_vm->_game->_hotspots->removeState(0x4);
+		_vm->_game->_hotspots->removeState(stateType1);
+		_vm->_game->_hotspots->removeState(stateDisabled);
 		break;
 	case 4:
-		_vm->_game->_hotspots->removeState(0xE);
+		_vm->_game->_hotspots->removeState(stateType2);
 		break;
 	default:
-		_vm->_game->_hotspots->remove(0xE000 + id);
+		_vm->_game->_hotspots->remove((stateType2 << 12) + id);
 		break;
 	}
 
