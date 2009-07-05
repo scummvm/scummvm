@@ -72,7 +72,6 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 			error("Failed to load any GUI theme, aborting");
 		}
 	}
-	_themeChange = false;
 }
 
 GuiManager::~GuiManager() {
@@ -143,12 +142,20 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx) 
 	// Enable the new theme
 	//
 	_theme = newTheme;
-	_themeChange = true;
+	_useStdCursor = !_theme->ownCursor();
+
+	// If _stateIsSaved is set, we know that a Theme is already initialized,
+	// thus we initialize the new theme properly
+	if (_stateIsSaved) {
+		_theme->enable();
+
+		if (_useStdCursor)
+			setupCursor();
+	}
 
 	// refresh all dialogs
-	for (int i = 0; i < _dialogStack.size(); ++i) {
+	for (int i = 0; i < _dialogStack.size(); ++i)
 		_dialogStack[i]->reflowLayout();
-	}
 
 	// We need to redraw immediately. Otherwise
 	// some other event may cause a widget to be
@@ -233,7 +240,6 @@ void GuiManager::runLoop() {
 
 //		_theme->refresh();
 
-		_themeChange = false;
 		_redrawStatus = kRedrawFull;
 		redraw();
 	}
@@ -284,21 +290,6 @@ void GuiManager::runLoop() {
 				continue;
 
 			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
-
-			// HACK to change the cursor to the new themes one
-			if (_themeChange) {
-				_theme->enable();
-
-				_useStdCursor = !_theme->ownCursor();
-				if (_useStdCursor)
-					setupCursor();
-
-//				_theme->refresh();
-
-				_themeChange = false;
-				_redrawStatus = kRedrawFull;
-				redraw();
-			}
 
 			if (lastRedraw + waitTime < _system->getMillis()) {
 				_theme->updateScreen();
