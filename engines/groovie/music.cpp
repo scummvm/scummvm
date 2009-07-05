@@ -31,72 +31,20 @@
 
 namespace Groovie {
 
-MusicPlayer::MusicPlayer(GroovieEngine *vm, const Common::String &gtlName) :
-	_vm(vm), _midiParser(NULL), _data(NULL), _driver(NULL),
-	_backgroundFileRef(0), _gameVolume(100), _prevCDtrack(0), _isPlaying(0) {
-	// Create the parser
-	_midiParser = MidiParser::createParser_XMIDI();
+// MusicPlayer
 
-	// Create the driver
-	int driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	_driver = createMidi(driver);
-	this->open();
-
-	// Initialize the channel volumes and banks
-	for (int i = 0; i < 0x10; i++) {
-		_chanVolumes[i] = 0x7F;
-		_chanBanks[i] = 0;
-	}
-
-	// Load the Global Timbre Library
-	if (driver == MD_ADLIB) {
-		// MIDI through AdLib
-		_musicType = MD_ADLIB;
-		loadTimbres(gtlName + ".ad");
-
-		// Setup the percussion channel
-		for (unsigned int i = 0; i < _timbres.size(); i++) {
-			if (_timbres[i].bank == 0x7F)
-				setTimbreAD(9, _timbres[i]);
-		}
-	} else if ((driver == MD_MT32) || ConfMan.getBool("native_mt32")) {
-		// MT-32
-		_musicType = MD_MT32;
-		loadTimbres(gtlName + ".mt");
-	} else {
-		// GM
-		_musicType = 0;
-	}
-
-	// Set the parser's driver
-	_midiParser->setMidiDriver(this);
-
-	// Set the timer rate
-	_midiParser->setTimerRate(_driver->getBaseTempo());
-}
-
-MusicPlayer::~MusicPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-
-	Common::StackLock lock(_mutex);
-
-	// Unload the parser
-	unload();
-	delete _midiParser;
-
-	// Unload the MIDI Driver
-	_driver->close();
-	delete _driver;
-
-	// Unload the timbres
-	clearTimbres();
+MusicPlayer::MusicPlayer(GroovieEngine *vm) :
+	_vm(vm), _isPlaying(false), _backgroundFileRef(0), _gameVolume(100),
+	_prevCDtrack(0) {
 }
 
 void MusicPlayer::playSong(uint32 fileref) {
 	Common::StackLock lock(_mutex);
 
+	// Set the volumes
 	_fadingEndVolume = 100;
 	_gameVolume = 100;
+
 	// Play the referenced file once
 	play(fileref, false);
 }
@@ -146,6 +94,14 @@ void MusicPlayer::playCD(uint8 track) {
 	AudioCD.play(track - 1, 1, startms * 75 / 1000, 0);
 }
 
+void MusicPlayer::startBackground() {
+	debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: startBackground()");
+	if (!_isPlaying && _backgroundFileRef) {
+		debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the background song (0x%4X)", _backgroundFileRef);
+		play(_backgroundFileRef, true);
+	}
+}
+
 void MusicPlayer::setUserVolume(uint16 volume) {
 	Common::StackLock lock(_mutex);
 
@@ -154,10 +110,8 @@ void MusicPlayer::setUserVolume(uint16 volume) {
 	if (_userVolume > 0x100)
 		_userVolume = 0x100;
 
-	// Apply it to all the channels
-	for (int i = 0; i < 0x10; i++) {
-		updateChanVolume(i);
-	}
+	// Apply it
+	updateVolume();
 }
 
 void MusicPlayer::setGameVolume(uint16 volume, uint16 time) {
@@ -176,17 +130,15 @@ void MusicPlayer::setGameVolume(uint16 volume, uint16 time) {
 		_fadingEndVolume = 100;
 }
 
-void MusicPlayer::startBackground() {
-	debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: startBackground()");
-	if (!_isPlaying && _backgroundFileRef) {
-		debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the background song (0x%4X)", _backgroundFileRef);
-		play(_backgroundFileRef, true);
-	}
-}
-
-void MusicPlayer::endTrack() {
-	debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: endTrack()");
+bool MusicPlayer::play(uint32 fileref, bool loop) {
+	// Unload the previous song
 	unload();
+
+	// Set the new state
+	_isPlaying = true;
+
+	// Load the new file
+	return load(fileref, loop);
 }
 
 void MusicPlayer::applyFading() {
@@ -212,80 +164,61 @@ void MusicPlayer::applyFading() {
 		}
 	}
 
-	// Apply the new volume to all the channels
-	for (int i = 0; i < 0x10; i++) {
-		updateChanVolume(i);
-	}
+	// Apply it
+	updateVolume();
 }
 
-void MusicPlayer::updateChanVolume(byte channel) {
-	// Generate a MIDI Control change message for the volume
-	uint32 b = 0x7B0;
+void MusicPlayer::onTimer(void *refCon) {
+	debugC(9, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: onTimer()");
+	MusicPlayer *music = (MusicPlayer *)refCon;
+	Common::StackLock lock(music->_mutex);
 
-	// Specify the channel
-	b |= (channel & 0xF);
-
-	// Scale by the user and game volumes
-	uint32 val = (_chanVolumes[channel] * _userVolume * _gameVolume) / 0x100 / 100;
-	val &= 0x7F;
-
-	// Send it to the driver
-	_driver->send(b | (val << 16));
-}
-
-bool MusicPlayer::play(uint32 fileref, bool loop) {
-	// Unload the previous song
-	unload();
-
-	// Set the looping option
-	_midiParser->property(MidiParser::mpAutoLoop, loop);
-
-	_isPlaying = true;
-	// Load the new file
-	return load(fileref);
-}
-
-bool MusicPlayer::load(uint32 fileref) {
-	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
-
-	// Open the song resource
-	Common::SeekableReadStream *xmidiFile = _vm->_resMan->open(fileref);
-	if (!xmidiFile) {
-		error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
-		return false;
+	// Apply the game volume fading
+	if (music->_gameVolume != music->_fadingEndVolume) {
+		// Apply the next step of the fading
+		music->applyFading();
 	}
 
-	// Read the whole file to memory
-	int length = xmidiFile->size();
-	_data = new byte[length];
-	xmidiFile->read(_data, length);
-	delete xmidiFile;
-
-	// Start parsing the data
-	if (!_midiParser->loadMusic(_data, length)) {
-		error("Groovie::Music: Invalid XMI file");
-		return false;
-	}
-
-	// Activate the timer source
-	_driver->setTimerCallback(this, &onTimer);
-
-	return true;
+	// Handle internal timed events
+	music->onTimerInternal();
 }
 
 void MusicPlayer::unload() {
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Stopping the playback");
 
+	// Set the new state
 	_isPlaying = false;
-	// Unload the parser
-	_midiParser->unloadMusic();
-
-	// Unload the xmi file
-	delete[] _data;
-	_data = NULL;
 }
 
-int MusicPlayer::open() {
+
+// MusicPlayerMidi
+
+MusicPlayerMidi::MusicPlayerMidi(GroovieEngine *vm) :
+	MusicPlayer(vm), _midiParser(NULL), _data(NULL), _driver(NULL) {
+	// Initialize the channel volumes
+	for (int i = 0; i < 0x10; i++) {
+		_chanVolumes[i] = 0x7F;
+	}
+}
+
+MusicPlayerMidi::~MusicPlayerMidi() {
+	// Stop the callback
+	if (_driver)
+		_driver->setTimerCallback(NULL, NULL);
+
+	Common::StackLock lock(_mutex);
+
+	// Unload the parser
+	unload();
+	delete _midiParser;
+
+	// Unload the MIDI Driver
+	if (_driver)
+		_driver->close();
+	delete _driver;
+}
+
+int MusicPlayerMidi::open() {
 	// Don't ever call open without first setting the output driver!
 	if (!_driver)
 		return 255;
@@ -297,9 +230,187 @@ int MusicPlayer::open() {
 	return 0;
 }
 
-void MusicPlayer::close() {}
+void MusicPlayerMidi::close() {}
 
-void MusicPlayer::send(uint32 b) {
+void MusicPlayerMidi::send(uint32 b) {
+	if ((b & 0xFFF0) == 0x07B0) { // Volume change
+		// Save the specific channel volume
+		byte chan = b & 0xF;
+		_chanVolumes[chan] = (b >> 16) & 0x7F;
+
+		// Send the updated value
+		updateChanVolume(chan);
+
+		return;
+	}
+	if (_driver)
+		_driver->send(b);
+}
+
+void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
+	switch (type) {
+	case 0x2F:
+		// End of Track, play the background song
+		endTrack();
+		break;
+	default:
+		if (_driver)
+			_driver->metaEvent(type, data, length);
+		break;
+	}
+}
+
+void MusicPlayerMidi::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
+	if (_driver)
+		_driver->setTimerCallback(timer_param, timer_proc);
+}
+
+uint32 MusicPlayerMidi::getBaseTempo(void) {
+	if (_driver)
+		return _driver->getBaseTempo();
+	else
+		return 0;
+}
+
+MidiChannel *MusicPlayerMidi::allocateChannel() {
+	if (_driver)
+		return _driver->allocateChannel();
+	else
+		return 0;
+}
+
+MidiChannel *MusicPlayerMidi::getPercussionChannel() {
+	if (_driver)
+		return _driver->getPercussionChannel();
+	else
+		return 0;
+}
+
+void MusicPlayerMidi::updateChanVolume(byte channel) {
+	// Generate a MIDI Control change message for the volume
+	uint32 b = 0x7B0;
+
+	// Specify the channel
+	b |= (channel & 0xF);
+
+	// Scale by the user and game volumes
+	uint32 val = (_chanVolumes[channel] * _userVolume * _gameVolume) / 0x100 / 100;
+	val &= 0x7F;
+
+	// Send it to the driver
+	if (_driver)
+		_driver->send(b | (val << 16));
+}
+
+void MusicPlayerMidi::endTrack() {
+	debugC(3, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: endTrack()");
+	unload();
+}
+
+void MusicPlayerMidi::onTimerInternal() {
+	// TODO: We really only need to call this while music is playing.
+	if (_midiParser)
+		_midiParser->onTimer();
+}
+
+void MusicPlayerMidi::updateVolume() {
+	// Apply it to all the channels
+	for (int i = 0; i < 0x10; i++) {
+		updateChanVolume(i);
+	}
+}
+
+void MusicPlayerMidi::unload() {
+	MusicPlayer::unload();
+
+	// Unload the parser data
+	if (_midiParser)
+		_midiParser->unloadMusic();
+
+	// Unload the data
+	delete[] _data;
+	_data = NULL;
+}
+
+bool MusicPlayerMidi::loadParser(Common::SeekableReadStream *stream, bool loop) {
+	if (!_midiParser)
+		return false;
+
+	// Read the whole file to memory
+	int length = stream->size();
+	_data = new byte[length];
+	stream->read(_data, length);
+	delete stream;
+
+	// Set the looping option
+	_midiParser->property(MidiParser::mpAutoLoop, loop);
+
+	// Start parsing the data
+	if (!_midiParser->loadMusic(_data, length)) {
+		error("Groovie::Music: Couldn't parse the data");
+		return false;
+	}
+
+	// Activate the timer source
+	if (_driver)
+		_driver->setTimerCallback(this, &onTimer);
+
+	return true;
+}
+
+
+// MusicPlayerXMI
+
+MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName) :
+	MusicPlayerMidi(vm) {
+	// Create the parser
+	_midiParser = MidiParser::createParser_XMIDI();
+
+	// Create the driver
+	int driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_driver = createMidi(driver);
+	this->open();
+
+	// Set the parser's driver
+	_midiParser->setMidiDriver(this);
+
+	// Set the timer rate
+	_midiParser->setTimerRate(_driver->getBaseTempo());
+
+	// Initialize the channel banks
+	for (int i = 0; i < 0x10; i++) {
+		_chanBanks[i] = 0;
+	}
+
+	// Load the Global Timbre Library
+	if (driver == MD_ADLIB) {
+		// MIDI through AdLib
+		_musicType = MD_ADLIB;
+		loadTimbres(gtlName + ".ad");
+
+		// Setup the percussion channel
+		for (unsigned int i = 0; i < _timbres.size(); i++) {
+			if (_timbres[i].bank == 0x7F)
+				setTimbreAD(9, _timbres[i]);
+		}
+	} else if ((driver == MD_MT32) || ConfMan.getBool("native_mt32")) {
+		// MT-32
+		_musicType = MD_MT32;
+		loadTimbres(gtlName + ".mt");
+	} else {
+		// GM
+		_musicType = 0;
+	}
+}
+
+MusicPlayerXMI::~MusicPlayerXMI() {
+	//~MusicPlayer();
+
+	// Unload the timbres
+	clearTimbres();
+}
+
+void MusicPlayerXMI::send(uint32 b) {
 	if ((b & 0xFFF0) == 0x72B0) { // XMIDI Patch Bank Select 114
 		// From AIL2's documentation: XMIDI Patch Bank Select controller (114)
 		// selects a bank to be used when searching the next patches
@@ -337,63 +448,24 @@ void MusicPlayer::send(uint32 b) {
 			// If we got here we couldn't find the patch, and the
 			// received message will be sent unchanged.
 		}
-	} else if ((b & 0xFFF0) == 0x07B0) { // Volume change
-		// Save the specific channel volume
-		byte chan = b & 0xF;
-		_chanVolumes[chan] = (b >> 16) & 0x7F;
-
-		// Send the updated value
-		updateChanVolume(chan);
-
-		return;
 	}
-	_driver->send(b);
+	MusicPlayerMidi::send(b);
 }
 
-void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	switch (type) {
-	case 0x2F:
-		// End of Track, play the background song
-		endTrack();
-		break;
-	default:
-		_driver->metaEvent(type, data, length);
-		break;
-	}
-}
+bool MusicPlayerXMI::load(uint32 fileref, bool loop) {
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
 
-void MusicPlayer::onTimer(void *refCon) {
-	debugC(9, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: onTimer()");
-	MusicPlayer *music = (MusicPlayer *)refCon;
-	Common::StackLock lock(music->_mutex);
-
-	// Apply the game volume fading
-	if (music->_gameVolume != music->_fadingEndVolume) {
-		// Apply the next step of the fading
-		music->applyFading();
+	// Open the song resource
+	Common::SeekableReadStream *file = _vm->_resMan->open(fileref);
+	if (!file) {
+		error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
+		return false;
 	}
 
-	// TODO: We really only need to call this while music is playing.
-	music->_midiParser->onTimer();
+	return loadParser(file, loop);
 }
 
-void MusicPlayer::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
-	_driver->setTimerCallback(timer_param, timer_proc);
-}
-
-uint32 MusicPlayer::getBaseTempo(void) {
-	return _driver->getBaseTempo();
-}
-
-MidiChannel *MusicPlayer::allocateChannel() {
-	return _driver->allocateChannel();
-}
-
-MidiChannel *MusicPlayer::getPercussionChannel() {
-	return _driver->getPercussionChannel();
-}
-
-void MusicPlayer::loadTimbres(const Common::String &filename) {
+void MusicPlayerXMI::loadTimbres(const Common::String &filename) {
 	// Load the Global Timbre Library format as documented in AIL2
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Loading the GTL file %s", filename.c_str());
 
@@ -451,7 +523,7 @@ void MusicPlayer::loadTimbres(const Common::String &filename) {
 	delete gtl;
 }
 
-void MusicPlayer::clearTimbres() {
+void MusicPlayerXMI::clearTimbres() {
 	// Delete the allocated data
 	int num = _timbres.size();
 	for (int i = 0; i < num; i++) {
@@ -462,7 +534,7 @@ void MusicPlayer::clearTimbres() {
 	_timbres.clear();
 }
 
-void MusicPlayer::setTimbreAD(byte channel, const Timbre &timbre) {
+void MusicPlayerXMI::setTimbreAD(byte channel, const Timbre &timbre) {
 	// Verify the timbre size
 	if (timbre.size != 12) {
 		error("Groovie::Music: Invalid size for an AdLib timbre: %d", timbre.size);
@@ -514,7 +586,7 @@ void MusicPlayer::setTimbreAD(byte channel, const Timbre &timbre) {
 	}
 }
 
-void MusicPlayer::setTimbreMT(byte channel, const Timbre &timbre) {
+void MusicPlayerXMI::setTimbreMT(byte channel, const Timbre &timbre) {
 	// Verify the timbre size
 	if (timbre.size != 0xF6) {
 		error("Groovie::Music: Invalid size for an MT-32 timbre: %d", timbre.size);
@@ -526,6 +598,30 @@ void MusicPlayer::setTimbreMT(byte channel, const Timbre &timbre) {
 
 	// TODO: Support MT-32 custom instruments
 	warning("Groovie::Music: Setting MT32 custom instruments isn't supported yet");
+}
+
+
+// MusicPlayerMac
+
+MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) :
+	MusicPlayerMidi(vm) {
+}
+
+bool MusicPlayerMac::load(uint32 fileref, bool loop) {
+	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
+	debug("Groovie::Music: Starting the playback of song: %04X %d", fileref, fileref);
+
+	// Open the song resource
+	/*
+	Common::SeekableReadStream *file = _vm->_resMan->open(fileref);
+	if (!file) {
+		error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
+		return false;
+	}
+	*/
+
+	//return loadParser(file, loop);
+	return false;
 }
 
 } // End of Groovie namespace
