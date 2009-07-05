@@ -112,6 +112,9 @@ private:
 		/** Is this hotspot the block end marker? */
 		bool isEnd() const;
 
+		bool isInput() const;
+		bool isActiveInput() const;
+
 		/** Are the specified coordinates in the hotspot? */
 		bool isIn(uint16 x, uint16 y) const;
 		/** Does the specified button trigger the hotspot? */
@@ -174,17 +177,23 @@ void checkHotspotChanged();
 			uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
 			Type type, int16 &duration, uint16 &id, uint16 index);
 
-	uint16 handleInput(int16 time, uint16 hotspotIndex, uint16 &curPos,
+	uint16 handleInput(int16 time, uint16 inputCount, uint16 &curInput,
 			InputDesc *inputs, uint16 &id, uint16 &index);
 
 	void evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
-			uint16 &validId, bool &hasInput, uint16 &inputIndex);
+			uint16 &validId, bool &hasInput, uint16 &inputCount);
 
-	void printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color);
-	void fillRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint16 color);
+	void updateAllTexts(const InputDesc *inputs) const;
+
+	uint16 findInput(uint16 input) const;
+	uint16 findClickedInput(uint16 index) const;
+	uint16 findNthInput(uint16 n) const;
+
+	void printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) const;
+	void fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 color) const;
 	void getTextCursorPos(const Video::FontDesc &font, const char *str,
 			uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
-			uint16 &left, uint16 &top, uint16 &right, uint16 &bottom);
+			uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const;
 };
 
 } // End of namespace Gob

@@ -105,6 +105,29 @@ bool Hotspots::Hotspot::isEnd() const {
 	return (left == 0xFFFF);
 }
 
+bool Hotspots::Hotspot::isInput() const {
+	if (getType() < kTypeInput1NoLeave)
+		return false;
+
+	if (getType() > kTypeInputFloatLeave)
+		return false;
+
+	return true;
+}
+
+bool Hotspots::Hotspot::isActiveInput() const {
+	if (isEnd())
+		return false;
+
+	if ((getState() & 0xC) != 0x8)
+		return false;
+
+	if (!isInput())
+		return false;
+
+	return true;
+}
+
 bool Hotspots::Hotspot::isIn(uint16 x, uint16 y) const {
 	if (x < left)
 		return false;
@@ -664,7 +687,7 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay) {
 	return Hotspots::check(handleMouse, delay, id, index);
 }
 
-void Hotspots::printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) {
+void Hotspots::printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) const {
 	_vm->_draw->_destSpriteX  = x;
 	_vm->_draw->_destSpriteY  = y;
 	_vm->_draw->_frontColor   = color;
@@ -675,12 +698,12 @@ void Hotspots::printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, 
 	_vm->_draw->spriteOperation(DRAW_PRINTTEXT | 0x10);
 }
 
-void Hotspots::fillRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint16 color) {
+void Hotspots::fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 color) const {
 	_vm->_draw->_destSurface  = 21;
-	_vm->_draw->_destSpriteX  = left;
-	_vm->_draw->_destSpriteY  = top;
-	_vm->_draw->_spriteRight  = right;
-	_vm->_draw->_spriteBottom = bottom;
+	_vm->_draw->_destSpriteX  = x;
+	_vm->_draw->_destSpriteY  = y;
+	_vm->_draw->_spriteRight  = width;
+	_vm->_draw->_spriteBottom = height;
 	_vm->_draw->_backColor    = color;
 
 	_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10 );
@@ -688,25 +711,26 @@ void Hotspots::fillRect(uint16 left, uint16 top, uint16 right, uint16 bottom, ui
 
 void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
 		uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
-		uint16 &left, uint16 &top, uint16 &right, uint16 &bottom) {
+		uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const {
 
 	if (font.extraData) {
 		// Cursor to the right of the current character
 
-		left   = x;
-		top    = y;
-		right  = 1;
-		bottom = height;
+		cursorX      = x;
+		cursorY      = y;
+		cursorWidth  = 1;
+		cursorHeight = height;
 
 		for (uint32 i = 0; i < pos; i++)
-			left += font.extraData[str[i] - font.startItem];
+			cursorX += font.extraData[str[i] - font.startItem];
+
 	} else {
 		// Cursor underlining the current character
 
-		left   = x + font.itemWidth * pos;
-		top    = y + height - 1;
-		right  = font.itemWidth;
-		bottom = 1;
+		cursorX      = x + font.itemWidth * pos;
+		cursorY      = y + height - 1;
+		cursorWidth  = font.itemWidth;
+		cursorHeight = 1;
 	}
 }
 
@@ -760,9 +784,10 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 			tempStr[1] = 0;
 
 			// Draw cursor
-			uint16 left, top, right, bottom;
-			getTextCursorPos(font, str, pos, xPos, yPos, width, height, left, top, right, bottom);
-			fillRect(left, top, right, bottom, frontColor);
+			uint16 cursorX, cursorY, cursorWidth, cursorHeight;
+			getTextCursorPos(font, str, pos, xPos, yPos, width, height,
+					cursorX, cursorY, cursorWidth, cursorHeight);
+			fillRect(cursorX, cursorY, cursorWidth, cursorHeight, frontColor);
 
 			if (first) {
 				key = check(handleMouse, -1, id, index);
@@ -778,10 +803,11 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 			tempStr[1] = 0;
 
 			// Clear cursor
-			getTextCursorPos(font, str, pos, xPos, yPos, width, height, left, top, right, bottom);
-			fillRect(left, top, right, bottom, backColor);
+			getTextCursorPos(font, str, pos, xPos, yPos, width, height,
+					cursorX, cursorY, cursorWidth, cursorHeight);
+			fillRect(cursorX, cursorY, cursorWidth, cursorHeight, backColor);
 
-			printText(left, yPos + (height - font.itemHeight) / 2,
+			printText(cursorX, yPos + (height - font.itemHeight) / 2,
 					tempStr, fontIndex, frontColor);
 
 			if ((key != 0) || (id != 0))
@@ -926,15 +952,11 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 	}
 }
 
-uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
-		InputDesc *inputs, uint16 &id, uint16 &index) {
-
-	uint16 descInd = 0;
-	uint16 key     = 0;
-	uint16 found   = 0xFFFF;
+void Hotspots::updateAllTexts(const InputDesc *inputs) const {
+	uint16 input = 0;
 
 	for (int i = 0; i < kHotspotCount; i++) {
-		Hotspot &spot = _hotspots[i];
+		const Hotspot &spot = _hotspots[i];
 
 		if (spot.isEnd())
 			continue;
@@ -942,65 +964,107 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 		if ((spot.getState() & 0xC) != 0x8)
 			continue;
 
-		if (spot.getType() < kTypeInput1NoLeave)
-			continue;
-
-		if (spot.getType() > kTypeInputFloatLeave)
+		if (!spot.isInput())
 			continue;
 
 		char tempStr[256];
 		strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
 
-		fillRect(spot.left, spot.top,
-				spot.right - spot.left + 1, spot.bottom - spot.top + 1,
-				inputs[descInd].backColor);
+		uint16 x      = spot.left;
+		uint16 y      = spot.top;
+		uint16 width  = spot.right  - spot.left + 1;
+		uint16 height = spot.bottom - spot.top  + 1;
+		fillRect(x, y, width, height, inputs[input].backColor);
 
-		printText(spot.left,
-				spot.top + ((spot.bottom - spot.top + 1) -
-				            _vm->_draw->_fonts[_vm->_draw->_fontIndex]->itemHeight) / 2,
-				tempStr, inputs[descInd].fontIndex, inputs[descInd].frontColor);
+		y += (width - _vm->_draw->_fonts[_vm->_draw->_fontIndex]->itemHeight) / 2;
 
-		descInd++;
+		printText(x, y, tempStr, inputs[input].fontIndex, inputs[input].frontColor);
+
+		input++;
 	}
+}
+
+uint16 Hotspots::findInput(uint16 input) const {
+	uint16 inputIndex = 0;
+	for (int i = 0; i < kHotspotCount; i++) {
+		Hotspot &spot = _hotspots[i];
+
+		if (!spot.isActiveInput())
+			continue;
+
+		if (inputIndex == input)
+			return i;
+
+		inputIndex++;
+	}
+
+	return 0xFFFF;
+}
+
+uint16 Hotspots::findClickedInput(uint16 index) const {
+	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
+		Hotspot &spot = _hotspots[i];
+
+		if (spot.getWindow() != 0)
+			continue;
+
+		if (spot.getState() & 0x4)
+			continue;
+
+		if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
+			continue;
+
+		if (spot.getCursor() != 0)
+			continue;
+
+		if (!spot.isInput())
+			continue;
+
+		index = i;
+		break;
+	}
+
+	return index;
+}
+
+uint16 Hotspots::findNthInput(uint16 n) const {
+	uint16 input = 0;
+
+	for (int i = 0; i < kHotspotCount; i++) {
+		Hotspot &spot = _hotspots[i];
+
+		if (!spot.isActiveInput())
+			continue;
+
+		if (i == n)
+			break;
+
+		input++;
+	}
+
+	return input;
+}
+
+uint16 Hotspots::handleInput(int16 time, uint16 inputCount, uint16 &curInput,
+		InputDesc *inputs, uint16 &id, uint16 &index) {
+
+	updateAllTexts(inputs);
 
 	for (int i = 0; i < 40; i++)
 		WRITE_VAR_OFFSET(i * 4 + 0x44, 0);
 
 	while (1) {
-		descInd = 0;
+		uint16 hotspotIndex = findInput(curInput);
 
-		for (int i = 0; i < kHotspotCount; i++) {
-			Hotspot &spot = _hotspots[i];
+		assert(hotspotIndex != 0xFFFF);
 
-			if (spot.isEnd())
-				continue;
+		Hotspot inputSpot = _hotspots[hotspotIndex];
 
-			if ((spot.getState() & 0xC) != 0x8)
-				continue;
-
-			if (spot.getType() < kTypeInput1NoLeave)
-				continue;
-
-			if (spot.getType() > kTypeInputFloatLeave)
-				continue;
-
-			if (descInd == curPos) {
-				found = i;
-				break;
-			}
-
-			descInd++;
-		}
-
-		assert(found != 0xFFFF);
-
-		Hotspot inputSpot = _hotspots[found];
-
-		key = readString(inputSpot.left, inputSpot.top,
-		    inputSpot.right - inputSpot.left + 1,
-		    inputSpot.bottom - inputSpot.top + 1,
-		    inputs[curPos].backColor, inputs[curPos].frontColor,
-		    GET_VARO_STR(inputSpot.key), inputs[curPos].fontIndex,
+		uint16 key = readString(inputSpot.left, inputSpot.top,
+				inputSpot.right - inputSpot.left + 1,
+				inputSpot.bottom - inputSpot.top + 1,
+				inputs[curInput].backColor, inputs[curInput].frontColor,
+				GET_VARO_STR(inputSpot.key), inputs[curInput].fontIndex,
 				inputSpot.getType(), time, id, index);
 
 		if (_vm->_inter->_terminate)
@@ -1011,60 +1075,13 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 			if (id == 0)
 				return 0;
 
-			if (_vm->_game->_mouseButtons != kMouseButtonsNone) {
-				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
-					Hotspot &spot = _hotspots[i];
+			if (_vm->_game->_mouseButtons != kMouseButtonsNone)
+				index = findClickedInput(index);
 
-					if (spot.getWindow() != 0)
-						continue;
-
-					if (spot.getState() & 0x4)
-						continue;
-
-					if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
-						continue;
-
-					if (spot.getCursor() != 0)
-						continue;
-
-					if (spot.getType() < kTypeInput1NoLeave)
-						continue;
-
-					if (spot.getType() > kTypeInputFloatLeave)
-						continue;
-
-					index = i;
-					break;
-				}
-			}
-
-			if (_hotspots[index].getType() < kTypeInput1NoLeave)
+			if (!_hotspots[index].isInput())
 				return 0;
 
-			if (_hotspots[index].getType() > kTypeInputFloatLeave)
-				return 0;
-
-			curPos = 0;
-			for (int i = 0; i < kHotspotCount; i++) {
-				Hotspot &spot = _hotspots[i];
-
-				if (spot.isEnd())
-					continue;
-
-				if ((spot.getState() & 0xC) != 0x8)
-					continue;
-
-				if (spot.getType() < kTypeInput1NoLeave)
-					continue;
-
-				if (spot.getType() > kTypeInputFloatLeave)
-					continue;
-
-				if (i == index)
-					break;
-
-				curPos++;
-			}
+			curInput = findNthInput(index);
 			break;
 
 		case kKeyF1:
@@ -1081,32 +1098,37 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 
 		case kKeyReturn:
 
-			if (maxPos == 1)
-				return key;
+			// Just one input => return
+			if (inputCount == 1)
+				return kKeyReturn;
 
-			if (curPos == (maxPos - 1)) {
-				curPos = 0;
+			// End of input chain reached => wap
+			if (curInput == (inputCount - 1)) {
+				curInput = 0;
 				break;
 			}
 
-			curPos++;
+			// Next input
+			curInput++;
 			break;
 
 		case kKeyDown:
-			if ((maxPos - 1) > curPos)
-				curPos++;
+			// Next input
+			if ((inputCount - 1) > curInput)
+				curInput++;
 			break;
 
 		case kKeyUp:
-			if (curPos > 0)
-				curPos--;
+			// Previous input
+			if (curInput > 0)
+				curInput--;
 			break;
 		}
 	}
 }
 
 void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
-		uint16 &validId, bool &hasInput, uint16 &inputIndex) {
+		uint16 &validId, bool &hasInput, uint16 &inputCount) {
 
 	ids[i] = 0;
 
@@ -1218,13 +1240,13 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 
 		// Input text parameters
 		key                           = _vm->_game->_script->readVarIndex();
-		inputs[inputIndex].fontIndex  = _vm->_game->_script->readInt16();
-		inputs[inputIndex].backColor  = _vm->_game->_script->readByte();
-		inputs[inputIndex].frontColor = _vm->_game->_script->readByte();
-		inputs[inputIndex].str        = 0;
+		inputs[inputCount].fontIndex  = _vm->_game->_script->readInt16();
+		inputs[inputCount].backColor  = _vm->_game->_script->readByte();
+		inputs[inputCount].frontColor = _vm->_game->_script->readByte();
+		inputs[inputCount].str        = 0;
 
 		if ((type >= kTypeInput2NoLeave) && (type <= kTypeInput3Leave)) {
-			inputs[inputIndex].str =
+			inputs[inputCount].str =
 				(const char *) (_vm->_game->_script->getData() + _vm->_game->_script->pos() + 2);
 			_vm->_game->_script->skip(_vm->_game->_script->peekUint16() + 2);
 		}
@@ -1235,7 +1257,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 			break;
 		}
 
-		font = _vm->_draw->_fonts[inputs[inputIndex].fontIndex];
+		font = _vm->_draw->_fonts[inputs[inputCount].fontIndex];
 		if (!font->extraData)
 			right = left + width * font->itemWidth - 1;
 
@@ -1249,7 +1271,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 
 		flags = type;
 
-		inputIndex++;
+		inputCount++;
 		break;
 
 	case 20:
@@ -1333,9 +1355,9 @@ void Hotspots::evaluate() {
 	uint16 index   = 0;
 
 	bool   hasInput   = false;
-	uint16 inputIndex = 0;
+	uint16 inputCount = 0;
 	for (uint16 i = 0; i < count; i++)
-		evaluateNew(i, ids, inputs, validId, hasInput, inputIndex);
+		evaluateNew(i, ids, inputs, validId, hasInput, inputCount);
 
 	if (needRecalculation)
 		recalculate(true);
@@ -1346,11 +1368,11 @@ void Hotspots::evaluate() {
 	do {
 		uint16 key = 0;
 		if (hasInput) {
-			uint16 curEditIndex = 0;
+			uint16 curInput = 0;
 
-			key = handleInput(duration, inputIndex, curEditIndex, inputs, id, index);
+			key = handleInput(duration, inputCount, curInput, inputs, id, index);
 
-			WRITE_VAR(55, curEditIndex);
+			WRITE_VAR(55, curInput);
 			if (key == kKeyReturn) {
 				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
@@ -1543,10 +1565,7 @@ void Hotspots::evaluate() {
 			if ((spot.getState() & 0xC) != 0x8)
 				continue;
 
-			if (spot.getType() < kTypeInput1NoLeave)
-				continue;
-
-			if (spot.getType() > kTypeInputFloatLeave)
+			if (!spot.isInput())
 				continue;
 
 			if (spot.getType() > kTypeInput3Leave) {
