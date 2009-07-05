@@ -687,53 +687,6 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay) {
 	return Hotspots::check(handleMouse, delay, id, index);
 }
 
-void Hotspots::printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) const {
-	_vm->_draw->_destSpriteX  = x;
-	_vm->_draw->_destSpriteY  = y;
-	_vm->_draw->_frontColor   = color;
-	_vm->_draw->_fontIndex    = fontIndex;
-	_vm->_draw->_textToPrint  = str;
-	_vm->_draw->_transparency = 1;
-
-	_vm->_draw->spriteOperation(DRAW_PRINTTEXT | 0x10);
-}
-
-void Hotspots::fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 color) const {
-	_vm->_draw->_destSurface  = 21;
-	_vm->_draw->_destSpriteX  = x;
-	_vm->_draw->_destSpriteY  = y;
-	_vm->_draw->_spriteRight  = width;
-	_vm->_draw->_spriteBottom = height;
-	_vm->_draw->_backColor    = color;
-
-	_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10 );
-}
-
-void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
-		uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
-		uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const {
-
-	if (font.charWidths) {
-		// Cursor to the right of the current character
-
-		cursorX      = x;
-		cursorY      = y;
-		cursorWidth  = 1;
-		cursorHeight = height;
-
-		for (uint32 i = 0; i < pos; i++)
-			cursorX += font.charWidths[str[i] - font.startItem];
-
-	} else {
-		// Cursor underlining the current character
-
-		cursorX      = x + font.itemWidth * pos;
-		cursorY      = y + height - 1;
-		cursorWidth  = font.itemWidth;
-		cursorHeight = 1;
-	}
-}
-
 uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 height,
 		uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
 		Type type, int16 &duration, uint16 &id, uint16 index) {
@@ -950,99 +903,6 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 
 		}
 	}
-}
-
-void Hotspots::updateAllTexts(const InputDesc *inputs) const {
-	uint16 input = 0;
-
-	for (int i = 0; i < kHotspotCount; i++) {
-		const Hotspot &spot = _hotspots[i];
-
-		if (spot.isEnd())
-			continue;
-
-		if ((spot.getState() & 0xC) != 0x8)
-			continue;
-
-		if (!spot.isInput())
-			continue;
-
-		char tempStr[256];
-		strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
-
-		uint16 x      = spot.left;
-		uint16 y      = spot.top;
-		uint16 width  = spot.right  - spot.left + 1;
-		uint16 height = spot.bottom - spot.top  + 1;
-		fillRect(x, y, width, height, inputs[input].backColor);
-
-		y += (width - _vm->_draw->_fonts[_vm->_draw->_fontIndex]->itemHeight) / 2;
-
-		printText(x, y, tempStr, inputs[input].fontIndex, inputs[input].frontColor);
-
-		input++;
-	}
-}
-
-uint16 Hotspots::findInput(uint16 input) const {
-	uint16 inputIndex = 0;
-	for (int i = 0; i < kHotspotCount; i++) {
-		Hotspot &spot = _hotspots[i];
-
-		if (!spot.isActiveInput())
-			continue;
-
-		if (inputIndex == input)
-			return i;
-
-		inputIndex++;
-	}
-
-	return 0xFFFF;
-}
-
-uint16 Hotspots::findClickedInput(uint16 index) const {
-	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
-		Hotspot &spot = _hotspots[i];
-
-		if (spot.getWindow() != 0)
-			continue;
-
-		if (spot.getState() & 0x4)
-			continue;
-
-		if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
-			continue;
-
-		if (spot.getCursor() != 0)
-			continue;
-
-		if (!spot.isInput())
-			continue;
-
-		index = i;
-		break;
-	}
-
-	return index;
-}
-
-uint16 Hotspots::findNthInput(uint16 n) const {
-	uint16 input = 0;
-
-	for (int i = 0; i < kHotspotCount; i++) {
-		Hotspot &spot = _hotspots[i];
-
-		if (!spot.isActiveInput())
-			continue;
-
-		if (i == n)
-			break;
-
-		input++;
-	}
-
-	return input;
 }
 
 uint16 Hotspots::handleInput(int16 time, uint16 inputCount, uint16 &curInput,
@@ -1670,6 +1530,146 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	}
 
 	return cursor;
+}
+
+uint16 Hotspots::findInput(uint16 input) const {
+	uint16 inputIndex = 0;
+	for (int i = 0; i < kHotspotCount; i++) {
+		Hotspot &spot = _hotspots[i];
+
+		if (!spot.isActiveInput())
+			continue;
+
+		if (inputIndex == input)
+			return i;
+
+		inputIndex++;
+	}
+
+	return 0xFFFF;
+}
+
+uint16 Hotspots::findClickedInput(uint16 index) const {
+	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
+		Hotspot &spot = _hotspots[i];
+
+		if (spot.getWindow() != 0)
+			continue;
+
+		if (spot.getState() & 0x4)
+			continue;
+
+		if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
+			continue;
+
+		if (spot.getCursor() != 0)
+			continue;
+
+		if (!spot.isInput())
+			continue;
+
+		index = i;
+		break;
+	}
+
+	return index;
+}
+
+uint16 Hotspots::findNthInput(uint16 n) const {
+	uint16 input = 0;
+
+	for (int i = 0; i < kHotspotCount; i++) {
+		Hotspot &spot = _hotspots[i];
+
+		if (!spot.isActiveInput())
+			continue;
+
+		if (i == n)
+			break;
+
+		input++;
+	}
+
+	return input;
+}
+
+void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
+		uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
+		uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const {
+
+	if (font.charWidths) {
+		// Cursor to the right of the current character
+
+		cursorX      = x;
+		cursorY      = y;
+		cursorWidth  = 1;
+		cursorHeight = height;
+
+		for (uint32 i = 0; i < pos; i++)
+			cursorX += font.charWidths[str[i] - font.startItem];
+
+	} else {
+		// Cursor underlining the current character
+
+		cursorX      = x + font.itemWidth * pos;
+		cursorY      = y + height - 1;
+		cursorWidth  = font.itemWidth;
+		cursorHeight = 1;
+	}
+}
+
+void Hotspots::fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 color) const {
+	_vm->_draw->_destSurface  = 21;
+	_vm->_draw->_destSpriteX  = x;
+	_vm->_draw->_destSpriteY  = y;
+	_vm->_draw->_spriteRight  = width;
+	_vm->_draw->_spriteBottom = height;
+	_vm->_draw->_backColor    = color;
+
+	_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10 );
+}
+
+void Hotspots::printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) const {
+	_vm->_draw->_destSpriteX  = x;
+	_vm->_draw->_destSpriteY  = y;
+	_vm->_draw->_frontColor   = color;
+	_vm->_draw->_fontIndex    = fontIndex;
+	_vm->_draw->_textToPrint  = str;
+	_vm->_draw->_transparency = 1;
+
+	_vm->_draw->spriteOperation(DRAW_PRINTTEXT | 0x10);
+}
+
+void Hotspots::updateAllTexts(const InputDesc *inputs) const {
+	uint16 input = 0;
+
+	for (int i = 0; i < kHotspotCount; i++) {
+		const Hotspot &spot = _hotspots[i];
+
+		if (spot.isEnd())
+			continue;
+
+		if ((spot.getState() & 0xC) != 0x8)
+			continue;
+
+		if (!spot.isInput())
+			continue;
+
+		char tempStr[256];
+		strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
+
+		uint16 x      = spot.left;
+		uint16 y      = spot.top;
+		uint16 width  = spot.right  - spot.left + 1;
+		uint16 height = spot.bottom - spot.top  + 1;
+		fillRect(x, y, width, height, inputs[input].backColor);
+
+		y += (width - _vm->_draw->_fonts[_vm->_draw->_fontIndex]->itemHeight) / 2;
+
+		printText(x, y, tempStr, inputs[input].fontIndex, inputs[input].frontColor);
+
+		input++;
+	}
 }
 
 } // End of namespace Gob
