@@ -215,6 +215,10 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 		// Remember the current script
 		spot.script = _vm->_game->_script;
 
+		debugC(1, kDebugHotspots, "Adding hotspot %03d: %3d+%3d+%3d+%3d - %04X, %04X, %04X - %5d, %5d, %5d",
+				i, spot.left, spot.top, spot.right, spot.bottom,
+				spot.id, spot.key, spot.flags, spot.funcEnter, spot.funcLeave, spot.funcPos);
+
 		return i;
 	}
 
@@ -224,8 +228,10 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 
 void Hotspots::remove(uint16 id) {
 	for (int i = 0; i < kHotspotCount; i++) {
-		if (_hotspots[i].id == id)
+		if (_hotspots[i].id == id) {
+			debugC(1, kDebugHotspots, "Removing hotspot %d: %X", i, id);
 			_hotspots[i].clear();
+		}
 	}
 }
 
@@ -233,12 +239,16 @@ void Hotspots::removeState(uint8 state) {
 	for (int i = 0; i < kHotspotCount; i++) {
 		Hotspot &spot = _hotspots[i];
 
-		if (spot.getState() == state)
+		if (spot.getState() == state) {
+			debugC(1, kDebugHotspots, "Removing hotspot %d: %X (by state %X)", i, spot.id, state);
 			spot.clear();
+		}
 	}
 }
 
 void Hotspots::recalculate(bool force) {
+	debugC(5, kDebugHotspots, "Recalculating hotspots");
+
 	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 		Hotspot &spot = _hotspots[i];
 
@@ -302,6 +312,8 @@ void Hotspots::recalculate(bool force) {
 }
 
 void Hotspots::push(uint8 all, bool force) {
+	debugC(1, kDebugHotspots, "Pushing hotspots (%d, %d)", all, force);
+
 	// Should we push at all?
 	if (!_shouldPush && !force)
 		return;
@@ -366,6 +378,8 @@ void Hotspots::push(uint8 all, bool force) {
 }
 
 void Hotspots::pop() {
+	debugC(1, kDebugHotspots, "Popping hotspots");
+
 	assert(!_stack.empty());
 
 	StackEntry backup = _stack.pop();
@@ -405,6 +419,8 @@ bool Hotspots::isValid(uint16 key, uint16 id, uint16 index) const {
 }
 
 void Hotspots::call(uint16 offset) {
+	debugC(4, kDebugHotspots, "Calling hotspot function %d", offset);
+
 	_vm->_game->_script->call(offset);
 
 	_shouldPush = true;
@@ -424,6 +440,8 @@ void Hotspots::call(uint16 offset) {
 }
 
 void Hotspots::enter(uint16 index) {
+	debugC(2, kDebugHotspots, "Entering hotspot %d", index);
+
 	if (index >= kHotspotCount) {
 		warning("Hotspots::enter(): Index %d out of range", index);
 		return;
@@ -439,6 +457,8 @@ void Hotspots::enter(uint16 index) {
 }
 
 void Hotspots::leave(uint16 index) {
+	debugC(2, kDebugHotspots, "Leaving hotspot %d", index);
+
 	if (index >= kHotspotCount) {
 		warning("Hotspots::leave(): Index %d out of range", index);
 		return;
