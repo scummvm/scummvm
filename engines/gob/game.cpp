@@ -186,8 +186,6 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_preventScroll = false;
 	_scrollHandleMouse = false;
 
-	_noCd = false;
-
 	_tempStr[0] = 0;
 
 	_numEnvironments = 0;

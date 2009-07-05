@@ -123,6 +123,8 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_inter_mouseY = 0;
 
 	_speedFactor = 1;
+
+	_noCd = false;
 }
 
 Global::~Global() {

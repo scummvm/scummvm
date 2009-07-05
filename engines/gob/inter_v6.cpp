@@ -189,7 +189,7 @@ void Inter_v6::o6_openItk() {
 	// (it checks CD1.ITK - CD4.ITK and the first that's found determines
 	// the CD number), while its NO_CD modus wants everything in CD1.ITK.
 	// So we just open the other ITKs, too.
-	if (_vm->_game->_noCd && !scumm_stricmp(fileName, "CD1.ITK")) {
+	if (_vm->_global->_noCd && !scumm_stricmp(fileName, "CD1.ITK")) {
 		_vm->_dataIO->openDataFile("CD2.ITK", true);
 		_vm->_dataIO->openDataFile("CD3.ITK", true);
 		_vm->_dataIO->openDataFile("CD4.ITK", true);

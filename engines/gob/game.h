@@ -84,15 +84,13 @@ public:
 	bool _preventScroll;
 	bool _scrollHandleMouse;
 
-	bool _noCd;
-
 	byte _handleMouse;
 	char _forceHandleMouse;
 
 	Game(GobEngine *vm);
 	virtual ~Game();
 
-	virtual void prepareStart();
+	void prepareStart();
 
 	void playTot(int16 skipPlay);
 
@@ -145,8 +143,6 @@ class Game_v6 : public Game_v2 {
 public:
 	Game_v6(GobEngine *vm);
 	virtual ~Game_v6() {}
-
-	virtual void prepareStart();
 };
 
 } // End of namespace Gob

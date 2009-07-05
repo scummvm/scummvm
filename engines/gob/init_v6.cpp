@@ -23,63 +23,26 @@
  *
  */
 
-#ifndef GOB_INIT_H
-#define GOB_INIT_H
+#include "common/endian.h"
 
-#include "gob/video.h"
+#include "gob/gob.h"
+#include "gob/init.h"
+#include "gob/global.h"
 
 namespace Gob {
 
-class Init {
-public:
-	virtual void initGame();
+Init_v6::Init_v6(GobEngine *vm) : Init_v3(vm) {
+}
 
-	virtual void initVideo() = 0;
+void Init_v6::initGame() {
+	_vm->_global->_noCd = false;
 
-	Init(GobEngine *vm);
-	virtual ~Init() {}
+	if (Common::File::exists("cd1.itk") && Common::File::exists("cd2.itk") &&
+	    Common::File::exists("cd3.itk") && Common::File::exists("cd4.itk")) {
+		_vm->_global->_noCd = true;
+	}
 
-protected:
-	Video::PalDesc *_palDesc;
-	static const char *_fontNames[4];
-	GobEngine *_vm;
-
-	void cleanup();
-	void doDemo();
-};
-
-class Init_v1 : public Init {
-public:
-	virtual void initVideo();
-
-	Init_v1(GobEngine *vm);
-	virtual ~Init_v1() {}
-};
-
-class Init_v2 : public Init_v1 {
-public:
-	virtual void initVideo();
-
-	Init_v2(GobEngine *vm);
-	virtual ~Init_v2() {}
-};
-
-class Init_v3 : public Init_v2 {
-public:
-	virtual void initVideo();
-
-	Init_v3(GobEngine *vm);
-	virtual ~Init_v3() {}
-};
-
-class Init_v6 : public Init_v3 {
-public:
-	virtual void initGame();
-
-	Init_v6(GobEngine *vm);
-	virtual ~Init_v6() {}
-};
+	Init::initGame();
+}
 
 } // End of namespace Gob
-
-#endif // GOB_INIT_H

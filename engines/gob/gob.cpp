@@ -445,7 +445,7 @@ bool GobEngine::initGameParts() {
 
 	case kGameTypeAdibou4:
 	case kGameTypeUrban:
-		_init = new Init_v3(this);
+		_init = new Init_v6(this);
 		_video = new Video_v6(this);
 		_inter = new Inter_v6(this);
 		_mult = new Mult_v2(this);
