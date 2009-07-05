@@ -924,7 +924,7 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 }
 
 uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
-		InputDesc *inpDesc, uint16 &id, uint16 &index) {
+		InputDesc *inputs, uint16 &id, uint16 &index) {
 
 	uint16 descInd = 0;
 	uint16 key     = 0;
@@ -955,11 +955,11 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 
 		_vm->_draw->_destSurface = 21;
 
-		_vm->_draw->_backColor    = inpDesc[descInd].backColor;
-		_vm->_draw->_frontColor   = inpDesc[descInd].frontColor;
+		_vm->_draw->_backColor    = inputs[descInd].backColor;
+		_vm->_draw->_frontColor   = inputs[descInd].frontColor;
 		_vm->_draw->_textToPrint  = tempStr;
 		_vm->_draw->_transparency = 1;
-		_vm->_draw->_fontIndex    = inpDesc[descInd].fontIndex;
+		_vm->_draw->_fontIndex    = inputs[descInd].fontIndex;
 
 		_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10);
 
@@ -1006,8 +1006,8 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 		key = readString(inputSpot.left, inputSpot.top,
 		    inputSpot.right - inputSpot.left + 1,
 		    inputSpot.bottom - inputSpot.top + 1,
-		    inpDesc[curPos].backColor, inpDesc[curPos].frontColor,
-		    GET_VARO_STR(inputSpot.key), inpDesc[curPos].fontIndex,
+		    inputs[curPos].backColor, inputs[curPos].frontColor,
+		    GET_VARO_STR(inputSpot.key), inputs[curPos].fontIndex,
 				inputSpot.getType(), time, id, index);
 
 		if (_vm->_inter->_terminate)
@@ -1112,10 +1112,190 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 	}
 }
 
+void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
+		uint16 &validId, bool &hasInput, uint16 &inputIndex) {
+
+	ids[i] = 0;
+
+	// Type and window
+	byte type = _vm->_game->_script->readByte();
+	byte window = 0;
+
+	if ((type & 0x40) != 0) {
+		type  -= 0x40;
+		window = _vm->_game->_script->readByte();
+	}
+
+	// Coordinates
+	uint16 left, top, width, height, right, bottom;
+	uint32 funcPos = 0;
+	if ((type & 0x80) != 0) {
+		funcPos = _vm->_game->_script->pos();
+		left    = _vm->_game->_script->readValExpr();
+		top     = _vm->_game->_script->readValExpr();
+		width   = _vm->_game->_script->readValExpr();
+		height  = _vm->_game->_script->readValExpr();
+	} else {
+		funcPos = 0;
+		left    = _vm->_game->_script->readUint16();
+		top     = _vm->_game->_script->readUint16();
+		width   = _vm->_game->_script->readUint16();
+		height  = _vm->_game->_script->readUint16();
+	}
+	type &= 0x7F;
+
+	// Apply global drawing offset
+	if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) && (left != 0xFFFF)) {
+		left += _vm->_draw->_backDeltaX;
+		top  += _vm->_draw->_backDeltaY;
+	}
+
+	right  = left + width  - 1;
+	bottom = top  + height - 1;
+
+	// Removing 0x4 from the state
+	if ((type == 11) || (type == 12)) {
+		uint8 wantedState = (type == 11) ? 0xE : 0xD;
+
+		_vm->_game->_script->skip(6);
+
+		for (int j = 0; j < kHotspotCount; j++) {
+			Hotspot &spot = _hotspots[j];
+
+			if (spot.getState() == wantedState) {
+				spot.id       &= 0xBFFF;
+				spot.funcEnter = _vm->_game->_script->pos();
+				spot.funcLeave = _vm->_game->_script->pos();
+			}
+		}
+
+		_vm->_game->_script->skipBlock();
+
+		return;
+	}
+
+	int16 key   = 0;
+	int16 flags = 0;
+	Video::FontDesc *font = 0;
+	uint32 funcEnter = 0, funcLeave = 0;
+
+	// Evaluate parameters for the new hotspot
+	switch (type) {
+	case kTypeNone:
+		_vm->_game->_script->skip(6);
+
+		funcEnter = _vm->_game->_script->pos();
+		_vm->_game->_script->skipBlock();
+
+		funcLeave = _vm->_game->_script->pos();
+		_vm->_game->_script->skipBlock();
+
+		key   = i + 0xA000;
+		flags = type + (window << 8);
+		break;
+
+	case kTypeMove:
+		key    = _vm->_game->_script->readInt16();
+		ids[i] = _vm->_game->_script->readInt16();
+		flags  = _vm->_game->_script->readInt16();
+
+		funcEnter = _vm->_game->_script->pos();
+		_vm->_game->_script->skipBlock();
+
+		funcLeave = _vm->_game->_script->pos();
+		_vm->_game->_script->skipBlock();
+
+		if (key == 0)
+			key = i + 0xA000;
+
+		flags = type + (window << 8) + (flags << 4);
+		break;
+
+	case kTypeInput1NoLeave:
+	case kTypeInput1Leave:
+	case kTypeInput2NoLeave:
+	case kTypeInput2Leave:
+	case kTypeInput3NoLeave:
+	case kTypeInput3Leave:
+	case kTypeInputFloatNoLeave:
+	case kTypeInputFloatLeave:
+		hasInput = true;
+
+		_vm->_util->clearKeyBuf();
+
+		// Input text parameters
+		key                           = _vm->_game->_script->readVarIndex();
+		inputs[inputIndex].fontIndex  = _vm->_game->_script->readInt16();
+		inputs[inputIndex].backColor  = _vm->_game->_script->readByte();
+		inputs[inputIndex].frontColor = _vm->_game->_script->readByte();
+		inputs[inputIndex].str        = 0;
+
+		if ((type >= kTypeInput2NoLeave) && (type <= kTypeInput3Leave)) {
+			inputs[inputIndex].str =
+				(const char *) (_vm->_game->_script->getData() + _vm->_game->_script->pos() + 2);
+			_vm->_game->_script->skip(_vm->_game->_script->peekUint16() + 2);
+		}
+
+		if (left == 0xFFFF) {
+			if ((type & 1) == 0)
+				_vm->_game->_script->skipBlock();
+			break;
+		}
+
+		font = _vm->_draw->_fonts[inputs[inputIndex].fontIndex];
+		if (!font->extraData)
+			right = left + width * font->itemWidth - 1;
+
+		funcEnter = 0;
+		funcPos   = 0;
+		funcLeave = 0;
+		if (!(type & 1)) {
+			funcLeave = _vm->_game->_script->pos();
+			_vm->_game->_script->skipBlock();
+		}
+
+		flags = type;
+
+		inputIndex++;
+		break;
+
+	case 20:
+		validId = i;
+		// Fall through to case 2
+	case kTypeClick:
+		key    = _vm->_game->_script->readInt16();
+		ids[i] = _vm->_game->_script->readInt16();
+		flags  = _vm->_game->_script->readInt16();
+
+		funcEnter = 0;
+
+		funcLeave = _vm->_game->_script->pos();
+		_vm->_game->_script->skipBlock();
+
+		flags = 2 + (window << 8) + (flags << 4);
+		break;
+
+	case 21:
+		key    = _vm->_game->_script->readInt16();
+		ids[i] = _vm->_game->_script->readInt16();
+		flags  = _vm->_game->_script->readInt16() & 3;
+
+		funcEnter = _vm->_game->_script->pos();
+		_vm->_game->_script->skipBlock();
+
+		funcLeave = 0;
+
+		flags = 2 + (window << 8) + (flags << 4);
+		break;
+	}
+
+	add(i + 0x8000, left, top, right, bottom,
+			flags, key, funcEnter, funcLeave, funcPos);
+}
+
 void Hotspots::evaluate() {
-	InputDesc descArray[20];
-	int16 array[300];
-	char *str;
+	InputDesc inputs[20];
+	uint16 ids[kHotspotCount];
 	int16 counter;
 	int16 var_24;
 	int16 var_26;
@@ -1161,201 +1341,8 @@ void Hotspots::evaluate() {
 
 	bool   hasInput   = false;
 	uint16 inputIndex = 0;
-
-	for (uint16 i = 0; i < count; i++) {
-		array[i] = 0;
-
-		byte type = _vm->_game->_script->readByte();
-		byte window = 0;
-
-		if ((type & 0x40) != 0) {
-			type  -= 0x40;
-			window = _vm->_game->_script->readByte();
-		}
-
-		uint16 left, top, width, height, right, bottom;
-		uint32 funcEnter = 0, funcLeave = 0, funcPos = 0;
-		if ((type & 0x80) != 0) {
-			funcPos = _vm->_game->_script->pos();
-			left    = _vm->_game->_script->readValExpr();
-			top     = _vm->_game->_script->readValExpr();
-			width   = _vm->_game->_script->readValExpr();
-			height  = _vm->_game->_script->readValExpr();
-		} else {
-			funcPos = 0;
-			left    = _vm->_game->_script->readUint16();
-			top     = _vm->_game->_script->readUint16();
-			width   = _vm->_game->_script->readUint16();
-			height  = _vm->_game->_script->readUint16();
-		}
-
-		if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) && (left != 0xFFFF)) {
-			left += _vm->_draw->_backDeltaX;
-			top  += _vm->_draw->_backDeltaY;
-		}
-
-		right  = left + width  - 1;
-		bottom = top  + height - 1;
-
-		int16 key   = 0;
-		int16 flags = 0;
-		Video::FontDesc *font = 0;
-
-		type &= 0x7F;
-		switch (type) {
-		case kTypeNone:
-			_vm->_game->_script->skip(6);
-
-			funcEnter = _vm->_game->_script->pos();
-			_vm->_game->_script->skipBlock();
-
-			funcLeave = _vm->_game->_script->pos();
-			_vm->_game->_script->skipBlock();
-
-			key   = i + 0xA000;
-			flags = type + (window << 8);
-
-			add(i + 0x8000, left, top, right, bottom,
-					flags, key, funcEnter, funcLeave, funcPos);
-			break;
-
-		case kTypeMove:
-			key      = _vm->_game->_script->readInt16();
-			array[i] = _vm->_game->_script->readInt16();
-			flags    = _vm->_game->_script->readInt16();
-
-			funcEnter = _vm->_game->_script->pos();
-			_vm->_game->_script->skipBlock();
-
-			funcLeave = _vm->_game->_script->pos();
-			_vm->_game->_script->skipBlock();
-
-			if (key == 0)
-				key = i + 0xA000;
-			flags = type + (window << 8) + (flags << 4);
-
-			add(i + 0x8000, left, top, right, bottom,
-					flags, key, funcEnter, funcLeave, funcPos);
-			break;
-
-		case kTypeInput1NoLeave:
-		case kTypeInput1Leave:
-		case kTypeInput2NoLeave:
-		case kTypeInput2Leave:
-		case kTypeInput3NoLeave:
-		case kTypeInput3Leave:
-		case kTypeInputFloatNoLeave:
-		case kTypeInputFloatLeave:
-			hasInput = true;
-
-			_vm->_util->clearKeyBuf();
-
-			key                              = _vm->_game->_script->readVarIndex();
-			descArray[inputIndex].fontIndex  = _vm->_game->_script->readInt16();
-			descArray[inputIndex].backColor  = _vm->_game->_script->readByte();
-			descArray[inputIndex].frontColor = _vm->_game->_script->readByte();
-			descArray[inputIndex].ptr        = 0;
-
-			if ((type >= kTypeInput2NoLeave) && (type <= kTypeInput3Leave)) {
-				descArray[inputIndex].ptr = _vm->_game->_script->getData() + _vm->_game->_script->pos() + 2;
-				_vm->_game->_script->skip(_vm->_game->_script->peekUint16() + 2);
-			}
-
-			if (left == 0xFFFF) {
-				if ((type & 1) == 0)
-					_vm->_game->_script->skipBlock();
-				break;
-			}
-
-			font = _vm->_draw->_fonts[descArray[inputIndex].fontIndex];
-			if (!font->extraData)
-				right = left + width * font->itemWidth - 1;
-
-			funcEnter = 0;
-			funcPos   = 0;
-			funcLeave = 0;
-			if (!(type & 1)) {
-				funcLeave = _vm->_game->_script->pos();
-				_vm->_game->_script->skipBlock();
-			}
-
-			flags = type;
-
-			inputIndex++;
-
-			add(i + 0x8000, left, top, right, bottom,
-					flags, key, funcEnter, funcLeave, funcPos);
-
-			break;
-
-		case 11:
-			_vm->_game->_script->skip(6);
-
-			for (int j = 0; j < kHotspotCount; j++) {
-				Hotspot &spot = _hotspots[j];
-
-				if (spot.getState() == 0xE) {
-					spot.id       &= 0xBFFF;
-					spot.funcEnter = _vm->_game->_script->pos();
-					spot.funcLeave = _vm->_game->_script->pos();
-				}
-			}
-
-			_vm->_game->_script->skipBlock();
-			break;
-
-		case 12:
-			_vm->_game->_script->skip(6);
-
-			for (int j = 0; j < kHotspotCount; j++) {
-				Hotspot &spot = _hotspots[j];
-
-				if (spot.getState() == 0xD) {
-					spot.id       &= 0xBFFF;
-					spot.funcEnter = _vm->_game->_script->pos();
-					spot.funcLeave = _vm->_game->_script->pos();
-				}
-			}
-
-			_vm->_game->_script->skipBlock();
-			break;
-
-		case 20:
-			validId = i;
-			// Fall through to case 2
-		case kTypeClick:
-			key      = _vm->_game->_script->readInt16();
-			array[i] = _vm->_game->_script->readInt16();
-			flags    = _vm->_game->_script->readInt16();
-
-			funcEnter = 0;
-
-			funcLeave = _vm->_game->_script->pos();
-			_vm->_game->_script->skipBlock();
-
-			flags = 2 + (window << 8) + (flags << 4);
-
-			add(i + 0x8000, left, top, right, bottom,
-					flags, key, funcEnter, funcLeave, funcPos);
-			break;
-
-		case 21:
-			key      = _vm->_game->_script->readInt16();
-			array[i] = _vm->_game->_script->readInt16();
-			flags    = _vm->_game->_script->readInt16() & 3;
-
-			funcEnter = _vm->_game->_script->pos();
-			_vm->_game->_script->skipBlock();
-
-			funcLeave = 0;
-
-			flags = 2 + (window << 8) + (flags << 4);
-
-			add(i + 0x8000, left, top, right, bottom,
-					flags, key, funcEnter, funcLeave, funcPos);
-			break;
-		}
-	}
+	for (uint16 i = 0; i < count; i++)
+		evaluateNew(i, ids, inputs, validId, hasInput, inputIndex);
 
 	if (needRecalculation)
 		recalculate(true);
@@ -1368,7 +1355,7 @@ void Hotspots::evaluate() {
 		if (hasInput) {
 			uint16 curEditIndex = 0;
 
-			key = handleInput(duration, inputIndex, curEditIndex, descArray, id, index);
+			key = handleInput(duration, inputIndex, curEditIndex, inputs, id, index);
 
 			WRITE_VAR(55, curEditIndex);
 			if (key == kKeyReturn) {
@@ -1454,7 +1441,7 @@ void Hotspots::evaluate() {
 							break;
 
 						if (Hotspot::getState(id) == 0x8)
-							WRITE_VAR(16, array[id & 0xFFF]);
+							WRITE_VAR(16, ids[id & 0xFFF]);
 						else
 							WRITE_VAR(16, id & 0xFFF);
 
@@ -1537,7 +1524,7 @@ void Hotspots::evaluate() {
 		_vm->_inter->storeMouse();
 
 		if (Hotspot::getState(id) == 0x8)
-			WRITE_VAR(16, array[id & 0xFFF]);
+			WRITE_VAR(16, ids[id & 0xFFF]);
 		else
 			WRITE_VAR(16, id & 0xFFF);
 
@@ -1581,7 +1568,7 @@ void Hotspots::evaluate() {
 			}
 
 			if ((spot.getType() >= kTypeInput2NoLeave) && (spot.getType() <= kTypeInput3Leave)) {
-				str = (char *) descArray[var_24].ptr;
+				const char *str = inputs[var_24].str;
 
 				strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
 
@@ -1605,7 +1592,7 @@ void Hotspots::evaluate() {
 						WRITE_VAR(17 + var_26, 1);
 						break;
 					}
-				} while (READ_LE_UINT16(descArray[var_24].ptr - 2) > pos);
+				} while (READ_LE_UINT16(inputs[var_24].str - 2) > pos);
 				collStackPos++;
 			} else {
 				WRITE_VAR(17 + var_26, 2);
@@ -1629,7 +1616,7 @@ void Hotspots::evaluate() {
 		_vm->_inter->storeMouse();
 		if (VAR(16) == 0) {
 			if (Hotspot::getState(id) == 0x8)
-				WRITE_VAR(16, array[id & 0xFFF]);
+				WRITE_VAR(16, ids[id & 0xFFF]);
 			else
 				WRITE_VAR(16, id & 0xFFF);
 		}

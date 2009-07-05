@@ -133,7 +133,7 @@ private:
 		uint16 fontIndex;
 		uint16 backColor;
 		uint16 frontColor;
-		byte *ptr;
+		const char *str;
 	};
 
 	GobEngine *_vm;
@@ -175,7 +175,10 @@ void checkHotspotChanged();
 			Type type, int16 &duration, uint16 &id, uint16 index);
 
 	uint16 handleInput(int16 time, uint16 hotspotIndex, uint16 &curPos,
-			InputDesc *inpDesc, uint16 &id, uint16 &index);
+			InputDesc *inputs, uint16 &id, uint16 &index);
+
+	void evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
+			uint16 &validId, bool &hasInput, uint16 &inputIndex);
 };
 
 } // End of namespace Gob
