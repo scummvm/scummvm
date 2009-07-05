@@ -85,8 +85,8 @@ void Game_v6::totSub(int8 flags, const char *newTotFile) {
 	if (_vm->_inter->_terminate < 2)
 		_vm->_inter->_terminate = 0;
 
-_hotspots->clear();
-_hotspots->pop();
+	_hotspots->clear();
+	_hotspots->pop();
 
 	if ((flags & 5) && _vm->_inter->_variables) {
 		_vm->_inter->delocateVars();
