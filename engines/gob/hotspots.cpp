@@ -681,7 +681,7 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 	bool monoSpaced = (font.extraData == 0);
 
 	uint32 pos            = strlen(str);
-	uint32 editSize       = monoSpaced ? 0 : (width / font.itemWidth);
+	uint32 editSize       = monoSpaced ? (width / font.itemWidth) : 0;
 
 	uint16 key = 0;
 	char tempStr[256];
