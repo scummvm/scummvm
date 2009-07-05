@@ -179,26 +179,26 @@ int16 Util::translateKey(const Common::KeyState &key) {
 		int16 from;
 		int16 to;
 	} keys[] = {
-		{Common::KEYCODE_INVALID,   0x0000},
-		{Common::KEYCODE_BACKSPACE, 0x0E08},
-		{Common::KEYCODE_SPACE,     0x3920},
-		{Common::KEYCODE_RETURN,    0x1C0D},
-		{Common::KEYCODE_ESCAPE,    0x011B},
-		{Common::KEYCODE_DELETE,    0x5300},
-		{Common::KEYCODE_UP,        0x4800},
-		{Common::KEYCODE_DOWN,      0x5000},
-		{Common::KEYCODE_RIGHT,     0x4D00},
-		{Common::KEYCODE_LEFT,      0x4B00},
-		{Common::KEYCODE_F1,        0x3B00},
-		{Common::KEYCODE_F2,        0x3C00},
-		{Common::KEYCODE_F3,        0x3D00},
-		{Common::KEYCODE_F4,        0x3E00},
-		{Common::KEYCODE_F5,        0x011B},
-		{Common::KEYCODE_F6,        0x4000},
-		{Common::KEYCODE_F7,        0x4100},
-		{Common::KEYCODE_F8,        0x4200},
-		{Common::KEYCODE_F9,        0x4300},
-		{Common::KEYCODE_F10,       0x4400}
+		{Common::KEYCODE_INVALID,   kKeyNone     },
+		{Common::KEYCODE_BACKSPACE, kKeyBackspace},
+		{Common::KEYCODE_SPACE,     kKeySpace    },
+		{Common::KEYCODE_RETURN,    kKeyReturn   },
+		{Common::KEYCODE_ESCAPE,    kKeyEscape   },
+		{Common::KEYCODE_DELETE,    kKeyDelete   },
+		{Common::KEYCODE_UP,        kKeyUp       },
+		{Common::KEYCODE_DOWN,      kKeyDown     },
+		{Common::KEYCODE_RIGHT,     kKeyRight    },
+		{Common::KEYCODE_LEFT,      kKeyLeft     },
+		{Common::KEYCODE_F1,        kKeyF1       },
+		{Common::KEYCODE_F2,        kKeyF2       },
+		{Common::KEYCODE_F3,        kKeyF3       },
+		{Common::KEYCODE_F4,        kKeyF4       },
+		{Common::KEYCODE_F5,        kKeyEscape   },
+		{Common::KEYCODE_F6,        kKeyF6       },
+		{Common::KEYCODE_F7,        kKeyF7       },
+		{Common::KEYCODE_F8,        kKeyF8       },
+		{Common::KEYCODE_F9,        kKeyF9       },
+		{Common::KEYCODE_F10,       kKeyF10      }
 	};
 
 	for (int i = 0; i < ARRAYSIZE(keys); i++)

@@ -31,6 +31,7 @@
 #include "gob/inter.h"
 #include "gob/helper.h"
 #include "gob/global.h"
+#include "gob/dataio.h"
 #include "gob/game.h"
 #include "gob/expression.h"
 #include "gob/script.h"

@@ -204,7 +204,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			stop = false;
 
 		_vm->_util->processInput();
-		if (checkEscape && (_vm->_util->checkKey() == 0x11B))
+		if (checkEscape && (_vm->_util->checkKey() == kKeyEscape))
 			stop = true;
 
 		_frame++;

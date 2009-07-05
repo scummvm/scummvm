@@ -189,20 +189,20 @@ void Inter::storeKey(int16 key) {
 	storeMouse();
 	WRITE_VAR(1, _vm->_sound->blasterPlayingSound());
 
-	if (key == 0x4800)
-		key = 0x0B;
-	else if (key == 0x5000)
-		key = 0x0A;
-	else if (key == 0x4D00)
-		key = 0x09;
-	else if (key == 0x4B00)
-		key = 0x08;
-	else if (key == 0x011B)
-		key = 0x1B;
-	else if (key == 0x0E08)
-		key = 0x19;
-	else if (key == 0x5300)
-		key = 0x1A;
+	if      (key == kKeyUp)
+		key =    kShortKeyUp;
+	else if (key == kKeyDown)
+		key =    kShortKeyDown;
+	else if (key == kKeyRight)
+		key =    kShortKeyRight;
+	else if (key == kKeyLeft)
+		key =    kShortKeyLeft;
+	else if (key == kKeyEscape)
+		key =    kShortKeyEscape;
+	else if (key == kKeyBackspace)
+		key =    kShortKeyBackspace;
+	else if (key == kKeyDelete)
+		key =    kShortKeyDelete;
 	else if ((key & 0xFF) != 0)
 		key &= 0xFF;
 

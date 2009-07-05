@@ -506,7 +506,7 @@ void Sound::blasterWaitEndPlay(bool interruptible, bool stopComp) {
 		_blaster->endComposition();
 
 	while (_blaster->isPlaying() && !_vm->shouldQuit()) {
-		if (interruptible && (_vm->_util->checkKey() == 0x11B)) {
+		if (interruptible && (_vm->_util->checkKey() == kKeyEscape)) {
 			WRITE_VAR(57, (uint32) -1);
 			return;
 		}

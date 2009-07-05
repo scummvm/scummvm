@@ -684,7 +684,7 @@ void Game_v1::collisionsBlock(void) {
 			key = multiEdit(deltaTime, index, &curEditIndex,
 					descArray, &_activeCollResId, &_activeCollIndex);
 
-			if (key == 0x1C0D) {
+			if (key == kKeyReturn) {
 				for (i = 0; i < 250; i++) {
 					if (_collisionAreas[i].left == 0xFFFF)
 						continue;
@@ -1066,7 +1066,7 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos,
 			return 0;
 
 		switch (key) {
-		case 0:
+		case kKeyNone:
 			if (*collResId == 0)
 				return 0;
 
@@ -1099,19 +1099,19 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos,
 			}
 			break;
 
-		case 0x3B00:
-		case 0x3C00:
-		case 0x3D00:
-		case 0x3E00:
-		case 0x3F00:
-		case 0x4000:
-		case 0x4100:
-		case 0x4200:
-		case 0x4300:
-		case 0x4400:
+		case kKeyF1:
+		case kKeyF2:
+		case kKeyF3:
+		case kKeyF4:
+		case kKeyF5:
+		case kKeyF6:
+		case kKeyF7:
+		case kKeyF8:
+		case kKeyF9:
+		case kKeyF10:
 			return key;
 
-		case 0x1C0D:
+		case kKeyReturn:
 
 			if (index == 1)
 				return key;
@@ -1124,12 +1124,12 @@ int16 Game_v1::multiEdit(int16 time, int16 index, int16 *pCurPos,
 			pCurPos[0]++;
 			break;
 
-		case 0x5000:
+		case kKeyDown:
 			if (index - 1 > *pCurPos)
 				pCurPos[0]++;
 			break;
 
-		case 0x4800:
+		case kKeyUp:
 			if (*pCurPos > 0)
 				pCurPos[0]--;
 			break;
@@ -1259,51 +1259,50 @@ int16 Game_v1::inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
 			return 0;
 
 		switch (key) {
-		case 0x4D00: // Right Arrow
+		case kKeyRight:
 			if ((pos < strlen(str)) && (pos < (editSize - 1))) {
 				pos++;
 				continue;
 			}
-			return 0x5000;
+			return kKeyDown;
 
-		case 0x4B00: // Left Arrow
+		case kKeyLeft:
 			if (pos > 0) {
 				pos--;
 				continue;
 			}
-			return 0x4800;
+			return kKeyUp;
 
-		case 0xE08: // Backspace
+		case kKeyBackspace:
 			if (pos > 0) {
 				_vm->_util->cutFromStr(str, pos - 1, 1);
 				pos--;
 				continue;
 			}
 
-		case 0x5300: // Del
-
+		case kKeyDelete:
 			if (pos >= strlen(str))
 				continue;
 
 			_vm->_util->cutFromStr(str, pos, 1);
 			continue;
 
-		case 0x1C0D: // Enter
-		case 0x3B00: // F1
-		case 0x3C00: // F2
-		case 0x3D00: // F3
-		case 0x3E00: // F4
-		case 0x3F00: // F5
-		case 0x4000: // F6
-		case 0x4100: // F7
-		case 0x4200: // F8
-		case 0x4300: // F9
-		case 0x4400: // F10
-		case 0x4800: // Up arrow
-		case 0x5000: // Down arrow
+		case kKeyReturn:
+		case kKeyF1:
+		case kKeyF2:
+		case kKeyF3:
+		case kKeyF4:
+		case kKeyF5:
+		case kKeyF6:
+		case kKeyF7:
+		case kKeyF8:
+		case kKeyF9:
+		case kKeyF10:
+		case kKeyUp:
+		case kKeyDown:
 			return key;
 
-		case 0x11B: // Escape
+		case kKeyEscape:
 			if (_vm->_global->_useMouse != 0)
 				continue;
 
@@ -1418,7 +1417,7 @@ int16 Game_v1::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 	}
 
 	if ((_mouseButtons != kMouseButtonsLeft) && (all == 0))
-		return 0x11B;
+		return kKeyEscape;
 
 	return 0;
 }

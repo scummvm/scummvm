@@ -107,13 +107,13 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 	for (i = 320; i >= 0; i--) {
 		_vm->_util->setScrollOffset(i, 0);
 		_vm->_video->dirtyRectsAll();
-		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == 0x11B) ||
+		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == kKeyEscape) ||
 				_vm->shouldQuit()) {
 			_vm->_palAnim->fade(0, -2, 0);
 			_vm->_video->clearSurf(*_vm->_draw->_frontSurface);
 			memset((char *) _vm->_draw->_vgaPalette, 0, 768);
 			WRITE_VAR(4, buttons);
-			WRITE_VAR(0, 0x11B);
+			WRITE_VAR(0, kKeyEscape);
 			WRITE_VAR(57, (uint32) -1);
 			break;
 		}
@@ -158,14 +158,14 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			_vm->_util->longDelay(_vm->_util->getRandom(200));
 		}
-		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == 0x11B) ||
+		if ((_vm->_game->checkKeys(&mouseX, &mouseY, &buttons, 0) == kKeyEscape) ||
 				_vm->shouldQuit()) {
 			_vm->_sound->blasterStop(10);
 			_vm->_palAnim->fade(0, -2, 0);
 			_vm->_video->clearSurf(*_vm->_draw->_frontSurface);
 			memset(_vm->_draw->_vgaPalette, 0, 768);
 			WRITE_VAR(4, buttons);
-			WRITE_VAR(0, 0x11B);
+			WRITE_VAR(0, kKeyEscape);
 			WRITE_VAR(57, (uint32) -1);
 			break;
 		}

@@ -630,7 +630,7 @@ void Game_v6::collisionsBlock(void) {
 					&activeCollResId, &activeCollIndex, false);
 
 			WRITE_VAR(55, curEditIndex);
-			if (key == 0x1C0D) {
+			if (key == kKeyReturn) {
 				for (i = 0; i < 150; i++) {
 					if (_collisionAreas[i].left == 0xFFFF)
 						break;
@@ -1089,7 +1089,7 @@ int16 Game_v6::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 	}
 
 	if ((_mouseButtons != kMouseButtonsLeft) && (all == 0))
-		return 0x11B;
+		return kKeyEscape;
 
 	return 0;
 }

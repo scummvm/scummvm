@@ -222,7 +222,7 @@ void DemoPlayer::playVideoDoubled() {
 			int16 key;
 			bool end = false;
 			while (_vm->_util->checkKey(key))
-				if (key == 0x011B)
+				if (key == kKeyEscape)
 					end = true;
 			if (end)
 				break;
