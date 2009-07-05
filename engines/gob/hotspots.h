@@ -107,6 +107,7 @@ private:
 		MouseButtons getButton() const;
 		uint8 getWindow() const;
 		uint8 getCursor() const;
+		uint8 getState() const;
 
 		/** Is this hotspot the block end marker? */
 		bool isEnd() const;

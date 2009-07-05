@@ -93,6 +93,10 @@ uint8 Hotspots::Hotspot::getCursor() const {
 	return (flags & 0xF000) >> 12;
 }
 
+uint8 Hotspots::Hotspot::getState() const {
+	return (id & 0xF000) >> 12;
+}
+
 bool Hotspots::Hotspot::isEnd() const {
 	return (left == 0xFFFF);
 }
@@ -235,7 +239,7 @@ void Hotspots::recalculate(bool force) {
 
 		// Re-read the flags too, if applicable
 		uint16 flags = 0;
-		if ((spot.id & 0xF000) == 0xA000)
+		if (spot.getState() == 0xA)
 			flags = _vm->_game->_script->readValExpr();
 
 		// Apply backDelta, if needed
@@ -260,7 +264,7 @@ void Hotspots::recalculate(bool force) {
 		spot.right  = left + width  - 1;
 		spot.bottom = top  + height - 1;
 
-		if ((spot.id & 0xF000) == 0xA000)
+		if (spot.getState() == 0xA)
 			spot.flags = flags;
 
 		// Return
@@ -285,9 +289,9 @@ void Hotspots::push(uint8 all, bool force) {
 		     // Don't save the global ones
 		    ((all == 0) && (spot.id >= 20)) ||
 		     // Only save the ones with the correct state
-		    ((all == 2) && (((spot.id & 0xF000) == 0xD000) ||
-		                    ((spot.id & 0xF000) == 0x4000) ||
-		                    ((spot.id & 0xF000) == 0xE000)))) {
+		    ((all == 2) && ((spot.getState() == 0xD) ||
+		                    (spot.getState() == 0x4) ||
+		                    (spot.getState() == 0xE)))) {
 			size++;
 		}
 
@@ -313,9 +317,9 @@ void Hotspots::push(uint8 all, bool force) {
 		     // Don't save the global ones
 		    ((all == 0) && (spot.id >= 20)) ||
 		     // Only save the ones with the correct state
-		    ((all == 2) && (((spot.id & 0xF000) == 0xD000) ||
-		                    ((spot.id & 0xF000) == 0x4000) ||
-		                    ((spot.id & 0xF000) == 0xE000)))) {
+		    ((all == 2) && ((spot.getState() == 0xD) ||
+		                    (spot.getState() == 0x4) ||
+		                    (spot.getState() == 0xE)))) {
 
 			memcpy(destPtr, &spot, sizeof(Hotspot));
 			destPtr++;
@@ -400,7 +404,7 @@ void Hotspots::enter(uint16 index) {
 
 	Hotspot &spot = _hotspots[index];
 
-	if (((spot.id & 0xF000) == 0xA000) || ((spot.id & 0xF000) == 0x9000))
+	if ((spot.getState() == 0xA) || (spot.getState() == 0x9))
 		WRITE_VAR(17, -(spot.id & 0x0FFF));
 
 	if (spot.funcEnter != 0)
@@ -415,7 +419,7 @@ void Hotspots::leave(uint16 index) {
 
 	Hotspot &spot = _hotspots[index];
 
-	if (((spot.id & 0xF000) == 0xA000) || ((spot.id & 0xF000) == 0x9000))
+	if ((spot.getState() == 0xA) || (spot.getState() == 0x9))
 		WRITE_VAR(17, spot.id & 0x0FFF);
 
 	if (spot.funcLeave != 0)
@@ -431,7 +435,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 			Hotspot &spot = _hotspots[i];
 
-			if (spot.id & 0x4000)
+			if (spot.getState() & 0x4)
 				continue;
 
 			if (spot.getType() > kTypeMove)
@@ -456,7 +460,7 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 			Hotspot &spot = _hotspots[i];
 
-			if (spot.id & 0x4000)
+			if (spot.getState() & 0x4)
 				continue;
 
 			if (spot.getWindow() != 0)
@@ -928,7 +932,7 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 		if (spot.isEnd())
 			continue;
 
-		if ((spot.id & 0xC000) != 0x8000)
+		if ((spot.getState() & 0xC) != 0x8)
 			continue;
 
 		if (spot.getType() < kTypeInput1NoLeave)
@@ -974,7 +978,7 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 			if (spot.isEnd())
 				continue;
 
-			if ((spot.id & 0xC000) != 0x8000)
+			if ((spot.getState() & 0xC) != 0x8)
 				continue;
 
 			if (spot.getType() < kTypeInput1NoLeave)
@@ -1017,7 +1021,7 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 					if (spot.getWindow() != 0)
 						continue;
 
-					if ((spot.id & 0x4000))
+					if (spot.getState() & 0x4)
 						continue;
 
 					if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
@@ -1050,7 +1054,7 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 				if (spot.isEnd())
 					continue;
 
-				if ((spot.id & 0xC000) != 0x8000)
+				if ((spot.getState() & 0xC) != 0x8)
 					continue;
 
 				if (spot.getType() < kTypeInput1NoLeave)
@@ -1286,7 +1290,7 @@ void Hotspots::evaluate() {
 			for (int j = 0; j < kHotspotCount; j++) {
 				Hotspot &spot = _hotspots[j];
 
-				if ((spot.id & 0xF000) == 0xE000) {
+				if (spot.getState() == 0xE) {
 					spot.id       &= 0xBFFF;
 					spot.funcEnter = _vm->_game->_script->pos();
 					spot.funcLeave = _vm->_game->_script->pos();
@@ -1302,7 +1306,7 @@ void Hotspots::evaluate() {
 			for (int j = 0; j < kHotspotCount; j++) {
 				Hotspot &spot = _hotspots[j];
 
-				if ((spot.id & 0xF000) == 0xD000) {
+				if (spot.getState() == 0xD) {
 					spot.id       &= 0xBFFF;
 					spot.funcEnter = _vm->_game->_script->pos();
 					spot.funcLeave = _vm->_game->_script->pos();
@@ -1367,7 +1371,7 @@ void Hotspots::evaluate() {
 				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
 
-					if ((spot.id & 0xC000) != 0x8000)
+					if ((spot.getState() & 0xC) != 0x8)
 						continue;
 
 					if ((spot.getType() & 1) != 0)
@@ -1395,7 +1399,7 @@ void Hotspots::evaluate() {
 				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
 
-					if ((spot.id & 0xC000) != 0x8000)
+					if ((spot.getState() & 0xC) != 0x8)
 						continue;
 
 					if ((spot.key == key) || (spot.key == 0x7FFF)) {
@@ -1409,7 +1413,7 @@ void Hotspots::evaluate() {
 					for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 						Hotspot &spot = _hotspots[i];
 
-						if ((spot.id & 0xC000) != 0x8000)
+						if ((spot.getState() & 0xC) != 0x8)
 							continue;
 
 						if ((spot.key & 0xFF00) != 0)
@@ -1432,7 +1436,7 @@ void Hotspots::evaluate() {
 					for (int i = endIndex; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 						Hotspot &spot = _hotspots[i];
 
-						if ((spot.id & 0xF000) != 0x8000)
+						if (spot.getState() != 0x8)
 							continue;
 
 						collStackPos++;
@@ -1488,7 +1492,7 @@ void Hotspots::evaluate() {
 						for (int i = endIndex; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 							Hotspot &spot = _hotspots[i];
 
-							if ((spot.id & 0xF000) == 0x8000) {
+							if (spot.getState() == 0x8) {
 								if (++counter == descIndex) {
 									id    = spot.id;
 									index = i;
@@ -1503,7 +1507,7 @@ void Hotspots::evaluate() {
 						for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 							Hotspot &spot = _hotspots[i];
 
-							if ((spot.id & 0xF000) == 0x8000) {
+							if (spot.getState() == 0x8) {
 								id    = spot.id;
 								index = i;
 								break;
@@ -1552,7 +1556,7 @@ void Hotspots::evaluate() {
 			if (spot.isEnd())
 				continue;
 
-			if ((spot.id & 0xC000) != 0x8000)
+			if ((spot.getState() & 0xC) != 0x8)
 				continue;
 
 			if (spot.getType() < kTypeInput1NoLeave)
@@ -1634,7 +1638,7 @@ void Hotspots::evaluate() {
 	for (int i = 0; i < kHotspotCount; i++) {
 		Hotspot &spot = _hotspots[i];
 
-		if (((spot.id & 0xF000) == 0xA000) || ((spot.id & 0xF000) == 0x9000))
+		if ((spot.getState() == 0xA) || (spot.getState() == 0x9))
 			spot.id |= 0x4000;
 	}
 
@@ -1646,7 +1650,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 		Hotspot &spot = _hotspots[i];
 
-		if ((spot.getWindow() != 0) || (spot.id & 0x4000))
+		if ((spot.getWindow() != 0) || (spot.getState() & 0x4))
 			continue;
 
 		if (!spot.isIn(x, y))
