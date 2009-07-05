@@ -53,6 +53,7 @@ public:
 	// Stream seeking
 	bool seek(int32 offset, int whence = SEEK_SET);
 	bool skip(int32 offset);
+	bool skipBlock();
 
 	// Reading data
 	byte   readByte  ();
