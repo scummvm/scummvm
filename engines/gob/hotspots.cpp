@@ -93,6 +93,10 @@ uint8 Hotspots::Hotspot::getCursor() const {
 	return (flags & 0xF000) >> 12;
 }
 
+bool Hotspots::Hotspot::isEnd() const {
+	return (left == 0xFFFF);
+}
+
 bool Hotspots::Hotspot::isIn(uint16 x, uint16 y) const {
 	if (x < left)
 		return false;
@@ -164,8 +168,8 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 	for (int i = 0; i < kHotspotCount; i++) {
 		Hotspot &spot = _hotspots[i];
 
-		//       free space => add         same id => update
-		if (! ((spot.left == 0xFFFF) || (spot.id == hotspot.id)))
+		//     free space => add    same id => update
+		if (! (spot.isEnd() || (spot.id == hotspot.id)))
 			continue;
 
 		// When updating, keep bit 0x4000 intact
@@ -204,12 +208,8 @@ void Hotspots::removeState(uint16 state) {
 }
 
 void Hotspots::recalculate(bool force) {
-	for (int i = 0; i < kHotspotCount; i++) {
+	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 		Hotspot &spot = _hotspots[i];
-
-		if (spot.left == 0xFFFF)
-			// End reached
-			break;
 
 		if (!force && ((spot.flags & 0x80) != 0))
 			continue;
@@ -277,12 +277,8 @@ void Hotspots::push(uint8 all, bool force) {
 
 	// Count the hotspots
 	uint32 size = 0;
-	for (int i = 0; i < kHotspotCount; i++) {
+	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 		Hotspot &spot = _hotspots[i];
-
-		if (spot.left == 0xFFFF)
-			// End reached
-			break;
 
 		     // Save all of them
 		if ( (all == 1) ||
@@ -309,12 +305,8 @@ void Hotspots::push(uint8 all, bool force) {
 
 	// Copy the hotspots
 	Hotspot *destPtr = backup.hotspots;
-	for (int i = 0; i < kHotspotCount; i++) {
+	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 		Hotspot &spot = _hotspots[i];
-
-		if (spot.left == 0xFFFF)
-			// End reached
-			break;
 
 		     // Save all of them
 		if ( (all == 1) ||
@@ -328,7 +320,7 @@ void Hotspots::push(uint8 all, bool force) {
 			memcpy(destPtr, &spot, sizeof(Hotspot));
 			destPtr++;
 
-			spot.left = 0xFFFF;
+			spot.clear();
 		}
 
 	}
@@ -351,7 +343,7 @@ void Hotspots::pop() {
 	int i;
 	Hotspot *destPtr = _hotspots;
 	for (i = 0; i < kHotspotCount; i++, destPtr++)
-		if (destPtr->left == 0xFFFF)
+		if (destPtr->isEnd())
 			break;
 
 	if (((uint32) (kHotspotCount - i)) < backup.size)
@@ -436,11 +428,8 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 
 	if        (type == kTypeMove) {
 
-		for (int i = 0; i < kHotspotCount; i++) {
+		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 			Hotspot &spot = _hotspots[i];
-
-			if (spot.left == 0xFFFF)
-				break;
 
 			if (spot.id & 0x4000)
 				continue;
@@ -464,11 +453,8 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 
 	} else if (type == kTypeClick) {
 
-		for (int i = 0; i < kHotspotCount; i++) {
+		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 			Hotspot &spot = _hotspots[i];
-
-			if (spot.left == 0xFFFF)
-				break;
 
 			if (spot.id & 0x4000)
 				continue;
@@ -939,7 +925,7 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 	for (int i = 0; i < kHotspotCount; i++) {
 		Hotspot &spot = _hotspots[i];
 
-		if (spot.left == 0xFFFF)
+		if (spot.isEnd())
 			continue;
 
 		if ((spot.id & 0xC000) != 0x8000)
@@ -985,7 +971,7 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 		for (int i = 0; i < kHotspotCount; i++) {
 			Hotspot &spot = _hotspots[i];
 
-			if (spot.left == 0xFFFF)
+			if (spot.isEnd())
 				continue;
 
 			if ((spot.id & 0xC000) != 0x8000)
@@ -1025,11 +1011,8 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 				return 0;
 
 			if (_vm->_game->_mouseButtons != kMouseButtonsNone) {
-				for (int i = 0; i < kHotspotCount; i++) {
+				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
-
-					if (spot.left == 0xFFFF)
-						break;
 
 					if (spot.getWindow() != 0)
 						continue;
@@ -1064,7 +1047,7 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 			for (int i = 0; i < kHotspotCount; i++) {
 				Hotspot &spot = _hotspots[i];
 
-				if (spot.left == 0xFFFF)
+				if (spot.isEnd())
 					continue;
 
 				if ((spot.id & 0xC000) != 0x8000)
@@ -1133,7 +1116,7 @@ void Hotspots::evaluate() {
 	push(0);
 
 	uint16 endIndex = 0;
-	while (_hotspots[endIndex].left != 0xFFFF)
+	while (!_hotspots[endIndex].isEnd())
 		endIndex++;
 
 	_shouldPush = false;
@@ -1381,11 +1364,8 @@ void Hotspots::evaluate() {
 
 			WRITE_VAR(55, curEditIndex);
 			if (key == kKeyReturn) {
-				for (int i = 0; i < kHotspotCount; i++) {
+				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
-
-					if (spot.left == 0xFFFF)
-						break;
 
 					if ((spot.id & 0xC000) != 0x8000)
 						continue;
@@ -1412,11 +1392,8 @@ void Hotspots::evaluate() {
 
 		if (id == 0) {
 			if (key != 0) {
-				for (int i = 0; i < kHotspotCount; i++) {
+				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
-
-					if (spot.left == 0xFFFF)
-						break;
 
 					if ((spot.id & 0xC000) != 0x8000)
 						continue;
@@ -1429,11 +1406,8 @@ void Hotspots::evaluate() {
 				}
 
 				if (id == 0) {
-					for (int i = 0; i < kHotspotCount; i++) {
+					for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 						Hotspot &spot = _hotspots[i];
-
-						if (spot.left == 0xFFFF)
-							break;
 
 						if ((spot.id & 0xC000) != 0x8000)
 							continue;
@@ -1455,11 +1429,8 @@ void Hotspots::evaluate() {
 				if (stackPos2 != 0) {
 					collStackPos = 0;
 
-					for (int i = endIndex; i < kHotspotCount; i++) {
+					for (int i = endIndex; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 						Hotspot &spot = _hotspots[i];
-
-						if (spot.left == 0xFFFF)
-							break;
 
 						if ((spot.id & 0xF000) != 0x8000)
 							continue;
@@ -1514,11 +1485,8 @@ void Hotspots::evaluate() {
 					if (descIndex != 0) {
 
 						counter = 0;
-						for (int i = endIndex; i < kHotspotCount; i++) {
+						for (int i = endIndex; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 							Hotspot &spot = _hotspots[i];
-
-							if (spot.left == 0xFFFF)
-								break;
 
 							if ((spot.id & 0xF000) == 0x8000) {
 								if (++counter == descIndex) {
@@ -1532,11 +1500,8 @@ void Hotspots::evaluate() {
 
 					} else {
 
-						for (int i = 0; i < kHotspotCount; i++) {
+						for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 							Hotspot &spot = _hotspots[i];
-
-							if (spot.left == 0xFFFF)
-								break;
 
 							if ((spot.id & 0xF000) == 0x8000) {
 								id    = spot.id;
@@ -1584,7 +1549,7 @@ void Hotspots::evaluate() {
 		for (int i = 0; i < kHotspotCount; i++) {
 			Hotspot &spot = _hotspots[i];
 
-			if (spot.left == 0xFFFF)
+			if (spot.isEnd())
 				continue;
 
 			if ((spot.id & 0xC000) != 0x8000)
@@ -1678,11 +1643,8 @@ void Hotspots::evaluate() {
 int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	int16 cursor = 0;
 
-	for (int i = 0; i < kHotspotCount; i++) {
+	for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 		Hotspot &spot = _hotspots[i];
-
-		if (spot.left == 0xFFFF)
-			break;
 
 		if ((spot.getWindow() != 0) || (spot.id & 0x4000))
 			continue;

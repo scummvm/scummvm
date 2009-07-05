@@ -108,6 +108,9 @@ private:
 		uint8 getWindow() const;
 		uint8 getCursor() const;
 
+		/** Is this hotspot the block end marker? */
+		bool isEnd() const;
+
 		/** Are the specified coordinates in the hotspot? */
 		bool isIn(uint16 x, uint16 y) const;
 		/** Does the specified button trigger the hotspot? */
