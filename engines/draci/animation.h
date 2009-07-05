@@ -34,10 +34,11 @@ enum { kOverlayImage = -1, kUnused = -2 };
 
 class DraciEngine;
 
-class AnimObj {
+class Animation {
+
 public:
-	AnimObj(DraciEngine *vm);
-	~AnimObj();	
+	Animation(DraciEngine *vm);
+	~Animation();	
 	
 	uint getZ();
 	void setZ(uint z);
@@ -60,7 +61,6 @@ public:
 	bool isLooping();
 	void setLooping(bool looping);
 
-
 private:
 	
 	uint nextFrameNum();
@@ -77,16 +77,14 @@ private:
 	DraciEngine *_vm;
 };
 
-// TODO: Probably needs a namechange to AnimationManager or similar since AnimObj now
-// acts as an animation object
 
-class Animation {
+class AnimationManager {
 
 public:
-	Animation(DraciEngine *vm) : _vm(vm) {};
-	~Animation() { deleteAll(); }
+	AnimationManager(DraciEngine *vm) : _vm(vm) {};
+	~AnimationManager() { deleteAll(); }
 
-	AnimObj *addAnimation(int id, uint z, bool playing = false);
+	Animation *addAnimation(int id, uint z, bool playing = false);
 	void addOverlay(Drawable *overlay, uint z);
 	
 	void play(int id);
@@ -97,14 +95,14 @@ public:
 
 	void drawScene(Surface *surf);
 
-	AnimObj *getAnimation(int id);
+	Animation *getAnimation(int id);
 
 private:
 	
-	void insertAnimation(AnimObj *animObj);
+	void insertAnimation(Animation *anim);
 
 	DraciEngine *_vm;
-	Common::List<AnimObj *> _animObjects;
+	Common::List<Animation *> _animations;
 };
 
 }

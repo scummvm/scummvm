@@ -56,7 +56,7 @@ public:
 	Mouse *_mouse;
 	Game *_game;
 	Script *_script;
-	Animation *_anims;
+	AnimationManager *_anims;
 
 	BArchive *_objectsArchive;
 	BArchive *_spritesArchive;

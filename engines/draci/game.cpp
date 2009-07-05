@@ -189,7 +189,7 @@ int Game::loadAnimation(uint animNum) {
 	animationReader.readByte(); // Cyclic field, not used
 	animationReader.readByte(); // Relative field, not used
 
-	AnimObj *obj = _vm->_anims->addAnimation(animNum, 254, false);
+	Animation *anim = _vm->_anims->addAnimation(animNum, 254, false);
 	
 	for (uint i = 0; i < numFrames; ++i) {
 		uint spriteNum = animationReader.readUint16LE() - 1;
@@ -202,7 +202,7 @@ int Game::loadAnimation(uint animNum) {
 		uint freq = animationReader.readUint16LE();
 		uint delay = animationReader.readUint16LE();
 
-		obj->setDelay(delay * 10);
+		anim->setDelay(delay * 10);
 
 		BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
 
@@ -212,9 +212,9 @@ int Game::loadAnimation(uint animNum) {
 			sp->setMirrorOn();
 
 		// HACK: This is only for testing
-		obj->setLooping(true);
+		anim->setLooping(true);
 
-		obj->addFrame(sp);
+		anim->addFrame(sp);
 	}
 
 	return animNum;

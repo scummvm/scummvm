@@ -28,7 +28,7 @@
 
 namespace Draci {
 
-AnimObj::AnimObj(DraciEngine *vm) : _vm(vm) {
+Animation::Animation(DraciEngine *vm) : _vm(vm) {
 	_id = kUnused;
 	_z = 0;
 	_playing = false;
@@ -38,23 +38,23 @@ AnimObj::AnimObj(DraciEngine *vm) : _vm(vm) {
 	_currentFrame = 0;
 }	
 
-AnimObj::~AnimObj() {
+Animation::~Animation() {
 	deleteFrames();
 }
 
-bool AnimObj::isLooping() {
+bool Animation::isLooping() {
 	return _looping;
 }
 
-void AnimObj::setLooping(bool looping) {
+void Animation::setLooping(bool looping) {
 	_looping = looping;
 }
 
-void AnimObj::setDelay(uint delay) {
+void Animation::setDelay(uint delay) {
 	_delay = delay;
 }
 
-void AnimObj::nextFrame(bool force) {
+void Animation::nextFrame(bool force) {
 
 	// If there's only one or no frames, return
 	if (getFramesNum() < 2)
@@ -81,7 +81,7 @@ void AnimObj::nextFrame(bool force) {
 	_tick, _delay, _tick + _delay, _vm->_system->getMillis(), _currentFrame, _frames.size());
 }
 
-uint AnimObj::nextFrameNum() {
+uint Animation::nextFrameNum() {
 
 	if ((_currentFrame == getFramesNum() - 1) && _looping)
 		return 0;
@@ -89,7 +89,7 @@ uint AnimObj::nextFrameNum() {
 		return _currentFrame + 1;
 }
 
-void AnimObj::drawFrame(Surface *surface) {
+void Animation::drawFrame(Surface *surface) {
 	
 	if (_frames.size() == 0)
 		return;
@@ -102,47 +102,47 @@ void AnimObj::drawFrame(Surface *surface) {
 	}
 }
 
-void AnimObj::setID(int id) {
+void Animation::setID(int id) {
 	
 	_id = id;
 }
 
-int AnimObj::getID() {
+int Animation::getID() {
 	
 	return _id;
 }
 
-void AnimObj::setZ(uint z) {
+void Animation::setZ(uint z) {
 
 	_z = z;
 }
 
-uint AnimObj::getZ() {
+uint Animation::getZ() {
 	
 	return _z;
 }
 
-bool AnimObj::isPlaying() {
+bool Animation::isPlaying() {
 
 	return _playing;
 }
 
-void AnimObj::setPlaying(bool playing) {
+void Animation::setPlaying(bool playing) {
 	
 	_playing = playing;
 }
 
-void AnimObj::addFrame(Drawable *frame) {
+void Animation::addFrame(Drawable *frame) {
 	
 	_frames.push_back(frame);	
 }
 
-uint AnimObj::getFramesNum() {
+uint Animation::getFramesNum() {
 	
 	return _frames.size();
 }
 
-void AnimObj::deleteFrames() {
+void Animation::deleteFrames() {
 	
 	for (uint i = 0; i < getFramesNum(); ++i) {		
 		delete _frames[i];
@@ -150,73 +150,74 @@ void AnimObj::deleteFrames() {
 	}
 }
 
-AnimObj *Animation::addAnimation(int id, uint z, bool playing) {
+Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 	
-	AnimObj *obj = new AnimObj(_vm);
-	obj->setID(id);
-	obj->setZ(z);
-	obj->setPlaying(playing);
-	obj->setLooping(false);
-
-	insertAnimation(obj);
-
-	return obj;
-}
-
-void Animation::play(int id) {
-
-	AnimObj *obj = getAnimation(id);
-
-	obj->setPlaying(true);
-}
-
-void Animation::stop(int id) {
-
-	AnimObj *obj = getAnimation(id);
-
-	obj->setPlaying(false);
-}
-
-AnimObj *Animation::getAnimation(int id) {
+	Animation *anim = new Animation(_vm);
 	
-	Common::List<AnimObj *>::iterator it;
+	anim->setID(id);
+	anim->setZ(z);
+	anim->setPlaying(playing);
+	anim->setLooping(false);
 
-	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
+	insertAnimation(anim);
+
+	return anim;
+}
+
+void AnimationManager::play(int id) {
+
+	Animation *anim = getAnimation(id);
+
+	anim->setPlaying(true);
+}
+
+void AnimationManager::stop(int id) {
+
+	Animation *anim = getAnimation(id);
+
+	anim->setPlaying(false);
+}
+
+Animation *AnimationManager::getAnimation(int id) {
+	
+	Common::List<Animation *>::iterator it;
+
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if ((*it)->getID() == id) {
 			return *it;
 		}
 	}
 
-	return *_animObjects.end();
+	return *_animations.end();
 }
 
-void Animation::insertAnimation(AnimObj *animObj) {
+void AnimationManager::insertAnimation(Animation *animObj) {
 	
-	Common::List<AnimObj *>::iterator it;	
+	Common::List<Animation *>::iterator it;	
 
-	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if (animObj->getZ() < (*it)->getZ()) 
 			break;
 	}
 
-	_animObjects.insert(it, animObj);
+	_animations.insert(it, animObj);
 }
 
-void Animation::addOverlay(Drawable *overlay, uint z) {
-	AnimObj *obj = new AnimObj(_vm);
-	obj->setID(kOverlayImage);
-	obj->setZ(z);
-	obj->setPlaying(true);
-	obj->addFrame(overlay);
+void AnimationManager::addOverlay(Drawable *overlay, uint z) {
+	Animation *anim = new Animation(_vm);
+	anim->setID(kOverlayImage);
+	anim->setZ(z);
+	anim->setPlaying(true);
+	anim->addFrame(overlay);
 
-	insertAnimation(obj);
+	insertAnimation(anim);
 }
 
-void Animation::drawScene(Surface *surf) {
+void AnimationManager::drawScene(Surface *surf) {
 	
-	Common::List<AnimObj *>::iterator it;
+	Common::List<Animation *>::iterator it;
 
-	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if (! ((*it)->isPlaying()) ) {
 			continue;
 		}	
@@ -226,29 +227,29 @@ void Animation::drawScene(Surface *surf) {
 	}
 }
 
-void Animation::deleteAnimation(int id) {
+void AnimationManager::deleteAnimation(int id) {
 	
-	Common::List<AnimObj *>::iterator it;
+	Common::List<Animation *>::iterator it;
 
-	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if ((*it)->getID() == id)
 			break;
 	}
 	
 	(*it)->deleteFrames();
 
-	_animObjects.erase(it);
+	_animations.erase(it);
 }
 	
-void Animation::deleteAll() {
+void AnimationManager::deleteAll() {
 	
-	Common::List<AnimObj *>::iterator it;
+	Common::List<Animation *>::iterator it;
 
-	for (it = _animObjects.begin(); it != _animObjects.end(); ++it) {
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		(*it)->deleteFrames();	
 	}
 
-	_animObjects.clear();
+	_animations.clear();
 }
 
 }

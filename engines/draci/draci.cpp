@@ -87,7 +87,7 @@ int DraciEngine::init() {
 
 	_screen = new Screen(this);
 	_font = new Font();
-	_anims = new Animation(this);
+	_anims = new AnimationManager(this);
 	_mouse = new Mouse(this);
 	_script = new Script(this);
 	_game = new Game(this);
