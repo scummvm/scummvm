@@ -127,24 +127,6 @@ protected:
 	void clearUnusedEnvironment();
 };
 
-class Game_v1 : public Game {
-public:
-	Game_v1(GobEngine *vm);
-	virtual ~Game_v1() {}
-};
-
-class Game_v2 : public Game_v1 {
-public:
-	Game_v2(GobEngine *vm);
-	virtual ~Game_v2() {}
-};
-
-class Game_v6 : public Game_v2 {
-public:
-	Game_v6(GobEngine *vm);
-	virtual ~Game_v6() {}
-};
-
 } // End of namespace Gob
 
 #endif // GOB_GAME_H

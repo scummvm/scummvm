@@ -11,9 +11,6 @@ MODULE_OBJS := \
 	driver_vga.o \
 	expression.o \
 	game.o \
-	game_v1.o \
-	game_v2.o \
-	game_v6.o \
 	global.o \
 	gob.o \
 	goblin.o \
