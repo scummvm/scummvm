@@ -125,9 +125,14 @@ private:
 	void setDefaultKernelNames();
 
 	/**
-	* Loads the kernel selector names.
-	*/
+	 * Loads the kernel selector names.
+	 */
 	void loadSelectorNames(bool isOldSci0);
+
+	/**
+	 * Prints auto-detected features from selectors
+	 */
+	void printAutoDetectedFeatures();
 
 	/**
 	 * Maps special selectors

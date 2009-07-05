@@ -202,7 +202,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(printLang);
 	FIND_SELECTOR(subtitleLang);
 	FIND_SELECTOR(parseLang);
-	FIND_SELECTOR(curAngle);
+	FIND_SELECTOR(motionCue);
 	FIND_SELECTOR(sightAngle);
 	FIND_SELECTOR(setVol);
 	FIND_SELECTOR(egoMoveSpeed);

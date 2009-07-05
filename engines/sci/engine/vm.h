@@ -203,7 +203,7 @@ struct selector_map_t {
 	Selector printLang; /**< Used for i18n */
 	Selector subtitleLang;
 	Selector parseLang;
-	Selector curAngle;	   // Used to detect newer graphics functions semantics. 
+	Selector motionCue;	   // Used to detect newer graphics functions semantics. 
 	Selector sightAngle;   // Used to detect some SCI0/SCI01 games which need a SCI1 table
 	Selector setVol;	   // Used to detect newer sound semantics
 	Selector egoMoveSpeed; // Used to detect SCI1 games which use absolute values in lofs

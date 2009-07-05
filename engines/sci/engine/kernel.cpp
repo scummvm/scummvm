@@ -363,14 +363,38 @@ Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
 	mapFunctions();     // Map the kernel functions
 
 	// SCI0 games using old graphics functions (before version 0.000.502) did not have a
-	// curAngle selector
-	_oldGfxFunctions = (_selectorMap.curAngle == -1 && _resmgr->_sciVersion == SCI_VERSION_0);
+	// motionCue selector
+	_oldGfxFunctions = (_selectorMap.motionCue == -1 && _resmgr->_sciVersion == SCI_VERSION_0);
 
 	// SCI1 games which use absolute lofs have the egoMoveSpeed selector
 	_hasLofsAbsolute = (_selectorMap.egoMoveSpeed != -1 && _resmgr->_sciVersion < SCI_VERSION_1_1);
+
+	printAutoDetectedFeatures();
 }
 
 Kernel::~Kernel() {
+}
+
+void Kernel::printAutoDetectedFeatures() {
+	if (_oldGfxFunctions)
+		printf("Kernel auto-detection: game found to be using old graphics functions\n");
+	else
+		printf("Kernel auto-detection: game found to be using newer graphics functions\n");
+
+	if (_hasLofsAbsolute)
+		printf("Kernel auto-detection: game found to be using absolute parameters for lofs\n");
+	else
+		printf("Kernel auto-detection: game found to be using relative parameters for lofs\n");
+
+	if (_selectorMap.setVol != -1)
+		printf("Kernel auto-detection: using SCI1 sound functions\n");
+	else if (_selectorMap.nodePtr != -1)
+		printf("Kernel auto-detection: using SCI01 sound functions\n");
+	else
+		printf("Kernel auto-detection: using SCI0 sound functions\n");
+
+	if (_resmgr->_sciVersion == SCI_VERSION_0 && _selectorMap.sightAngle != -1)
+		printf("Kernel auto-detection: found SCI0 game using a SCI1 kernel table\n");
 }
 
 void Kernel::loadSelectorNames(bool isOldSci0) {
@@ -733,7 +757,7 @@ void Kernel::setDefaultKernelNames() {
 	// Check if we have a SCI01 game which uses a SCI1 kernel table (e.g. the KQ1 demo
 	// and full version). We do this by checking if the sightAngle selector exists, as no
 	// SCI0 game seems to have it
-	if (_selectorMap.sightAngle != -1)
+	if (_selectorMap.sightAngle != -1 && isSci0)
 		isSci0 = false;
 
 	_kernelNames.resize(SCI_KNAMES_DEFAULT_ENTRIES_NR + (isSci0 ? 4 : 0));
