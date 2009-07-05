@@ -64,7 +64,7 @@ public:
 			uint16 funcEnter, uint16 funcLeave, uint16 funcPos);
 
 	void remove(uint16 id);
-	void removeState(uint16 state);
+	void removeState(uint8 state);
 
 	/** Push the current hotspots onto the stack.
 	 *
@@ -116,6 +116,8 @@ private:
 		bool isIn(uint16 x, uint16 y) const;
 		/** Does the specified button trigger the hotspot? */
 		bool buttonMatch(MouseButtons button) const;
+
+		static uint8 getState(uint16 id);
 	};
 
 	struct StackEntry {

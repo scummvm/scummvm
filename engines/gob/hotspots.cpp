@@ -93,8 +93,12 @@ uint8 Hotspots::Hotspot::getCursor() const {
 	return (flags & 0xF000) >> 12;
 }
 
-uint8 Hotspots::Hotspot::getState() const {
+uint8 Hotspots::Hotspot::getState(uint16 id) {
 	return (id & 0xF000) >> 12;
+}
+
+uint8 Hotspots::Hotspot::getState() const {
+	return getState(id);
 }
 
 bool Hotspots::Hotspot::isEnd() const {
@@ -202,11 +206,11 @@ void Hotspots::remove(uint16 id) {
 	}
 }
 
-void Hotspots::removeState(uint16 state) {
+void Hotspots::removeState(uint8 state) {
 	for (int i = 0; i < kHotspotCount; i++) {
 		Hotspot &spot = _hotspots[i];
 
-		if ((spot.id & 0xF000) == state)
+		if (spot.getState() == state)
 			spot.clear();
 	}
 }
@@ -1449,7 +1453,7 @@ void Hotspots::evaluate() {
 						if (VAR(16) != 0)
 							break;
 
-						if ((id & 0xF000) == 0x8000)
+						if (Hotspot::getState(id) == 0x8)
 							WRITE_VAR(16, array[id & 0xFFF]);
 						else
 							WRITE_VAR(16, id & 0xFFF);
@@ -1532,7 +1536,7 @@ void Hotspots::evaluate() {
 
 		_vm->_inter->storeMouse();
 
-		if ((id & 0xF000) == 0x8000)
+		if (Hotspot::getState(id) == 0x8)
 			WRITE_VAR(16, array[id & 0xFFF]);
 		else
 			WRITE_VAR(16, id & 0xFFF);
@@ -1624,7 +1628,7 @@ void Hotspots::evaluate() {
 
 		_vm->_inter->storeMouse();
 		if (VAR(16) == 0) {
-			if ((id & 0xF000) == 0x8000)
+			if (Hotspot::getState(id) == 0x8)
 				WRITE_VAR(16, array[id & 0xFFF]);
 			else
 				WRITE_VAR(16, id & 0xFFF);

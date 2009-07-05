@@ -1215,9 +1215,9 @@ bool Inter_v2::o2_freeCollision(OpFuncParams &params) {
 	int16 id = _vm->_game->_script->readValExpr();
 
 	if (id == -2)
-		_vm->_game->_hotspots->removeState(0xD000);
+		_vm->_game->_hotspots->removeState(0xD);
 	else if (id == -1)
-		_vm->_game->_hotspots->removeState(0xE000);
+		_vm->_game->_hotspots->removeState(0xE);
 	else
 		_vm->_game->_hotspots->remove(0xE000 + id);
 

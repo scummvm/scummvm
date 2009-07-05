@@ -369,11 +369,11 @@ bool Inter_v6::o6_freeCollision(OpFuncParams &params) {
 		_vm->_game->_hotspots->push(2);
 		break;
 	case 3:
-		_vm->_game->_hotspots->removeState(0xD000);
-		_vm->_game->_hotspots->removeState(0x4000);
+		_vm->_game->_hotspots->removeState(0xD);
+		_vm->_game->_hotspots->removeState(0x4);
 		break;
 	case 4:
-		_vm->_game->_hotspots->removeState(0xE000);
+		_vm->_game->_hotspots->removeState(0xE);
 		break;
 	default:
 		_vm->_game->_hotspots->remove(0xE000 + id);
