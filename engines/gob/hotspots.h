@@ -179,6 +179,12 @@ void checkHotspotChanged();
 
 	void evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 			uint16 &validId, bool &hasInput, uint16 &inputIndex);
+
+	void printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color);
+	void fillRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint16 color);
+	void getTextCursorPos(const Video::FontDesc &font, const char *str,
+			uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
+			uint16 &left, uint16 &top, uint16 &right, uint16 &bottom);
 };
 
 } // End of namespace Gob

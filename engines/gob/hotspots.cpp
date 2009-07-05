@@ -664,6 +664,52 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay) {
 	return Hotspots::check(handleMouse, delay, id, index);
 }
 
+void Hotspots::printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) {
+	_vm->_draw->_destSpriteX  = x;
+	_vm->_draw->_destSpriteY  = y;
+	_vm->_draw->_frontColor   = color;
+	_vm->_draw->_fontIndex    = fontIndex;
+	_vm->_draw->_textToPrint  = str;
+	_vm->_draw->_transparency = 1;
+
+	_vm->_draw->spriteOperation(DRAW_PRINTTEXT | 0x10);
+}
+
+void Hotspots::fillRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint16 color) {
+	_vm->_draw->_destSurface  = 21;
+	_vm->_draw->_destSpriteX  = left;
+	_vm->_draw->_destSpriteY  = top;
+	_vm->_draw->_spriteRight  = right;
+	_vm->_draw->_spriteBottom = bottom;
+	_vm->_draw->_backColor    = color;
+
+	_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10 );
+}
+
+void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
+		uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
+		uint16 &left, uint16 &top, uint16 &right, uint16 &bottom) {
+
+	if (font.extraData) {
+		// Cursor to the right of the current character
+
+		left   = x;
+		top    = y;
+		right  = 1;
+		bottom = height;
+
+		for (uint32 i = 0; i < pos; i++)
+			left += font.extraData[str[i] - font.startItem];
+	} else {
+		// Cursor underlining the current character
+
+		left   = x + font.itemWidth * pos;
+		top    = y + height - 1;
+		right  = font.itemWidth;
+		bottom = 1;
+	}
+}
+
 uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 height,
 		uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
 		Type type, int16 &duration, uint16 &id, uint16 index) {
@@ -676,7 +722,7 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 	    ((_vm->_global->_useMouse != 0) || (_vm->_game->_forceHandleMouse != 0)))
 		handleMouse = true;
 
-	Video::FontDesc &font = *_vm->_draw->_fonts[fontIndex];
+	const Video::FontDesc &font = *_vm->_draw->_fonts[fontIndex];
 
 	bool monoSpaced = (font.extraData == 0);
 
@@ -692,21 +738,13 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 		if ((editSize != 0) && strlen(tempStr) > editSize)
 			strncpy0(tempStr, str, 255);
 
-		_vm->_draw->_destSpriteX  = xPos;
-		_vm->_draw->_destSpriteY  = yPos;
-		_vm->_draw->_spriteRight  = monoSpaced ? (editSize * font.itemWidth) : width;
-		_vm->_draw->_spriteBottom = height;
+		// Clear input area
+		fillRect(xPos, yPos,
+		         monoSpaced ? (editSize * font.itemWidth) : width, height,
+		         backColor);
 
-		_vm->_draw->_destSurface  = 21;
-		_vm->_draw->_backColor    = backColor;
-		_vm->_draw->_frontColor   = frontColor;
-		_vm->_draw->_textToPrint  = tempStr;
-		_vm->_draw->_transparency = 1;
-		_vm->_draw->_fontIndex    = fontIndex;
-		_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10 );
-
-		_vm->_draw->_destSpriteY  = yPos + (height - font.itemHeight) / 2;
-		_vm->_draw->spriteOperation(DRAW_PRINTTEXT | 0x10);
+		printText(xPos, yPos + (height - font.itemHeight) / 2,
+				tempStr, fontIndex, frontColor);
 
 		if ((editSize != 0) && (pos == editSize))
 			pos--;
@@ -721,25 +759,10 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 			tempStr[0] = curSym;
 			tempStr[1] = 0;
 
-			if (font.extraData) {
-				_vm->_draw->_destSpriteY  = yPos;
-				_vm->_draw->_spriteBottom = height;
-				_vm->_draw->_spriteRight  = 1;
-
-				_vm->_draw->_destSpriteX = xPos;
-				for (uint32 j = 0; j < pos; j++)
-					_vm->_draw->_destSpriteX += font.extraData[str[j] - font.startItem];
-
-			} else {
-				_vm->_draw->_destSpriteX  = xPos + font.itemWidth * pos;
-				_vm->_draw->_destSpriteY  = yPos + height - 1;
-				_vm->_draw->_spriteRight  = font.itemWidth;
-				_vm->_draw->_spriteBottom = 1;
-			}
-
-			_vm->_draw->_destSurface = 21;
-			_vm->_draw->_backColor   = frontColor;
-			_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10);
+			// Draw cursor
+			uint16 left, top, right, bottom;
+			getTextCursorPos(font, str, pos, xPos, yPos, width, height, left, top, right, bottom);
+			fillRect(left, top, right, bottom, frontColor);
 
 			if (first) {
 				key = check(handleMouse, -1, id, index);
@@ -754,32 +777,12 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 			tempStr[0] = curSym;
 			tempStr[1] = 0;
 
-			if (font.extraData) {
-				_vm->_draw->_destSpriteY  = yPos;
-				_vm->_draw->_spriteBottom = height;
-				_vm->_draw->_spriteRight  = 1;
+			// Clear cursor
+			getTextCursorPos(font, str, pos, xPos, yPos, width, height, left, top, right, bottom);
+			fillRect(left, top, right, bottom, backColor);
 
-				_vm->_draw->_destSpriteX = xPos;
-				for (uint32 j = 0; j < pos; j++)
-					_vm->_draw->_destSpriteX += font.extraData[str[j] - font.startItem];
-
-			} else {
-				_vm->_draw->_destSpriteX  = xPos + font.itemWidth * pos;
-				_vm->_draw->_destSpriteY  = yPos + height - 1;
-				_vm->_draw->_spriteRight  = font.itemWidth;
-				_vm->_draw->_spriteBottom = 1;
-			}
-
-			_vm->_draw->_destSurface  = 21;
-			_vm->_draw->_backColor    = backColor;
-			_vm->_draw->_frontColor   = frontColor;
-			_vm->_draw->_textToPrint  = tempStr;
-			_vm->_draw->_transparency = 1;
-			_vm->_draw->_fontIndex    = fontIndex;
-			_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10);
-
-			_vm->_draw->_destSpriteY = yPos + (height - font.itemHeight) / 2;
-			_vm->_draw->spriteOperation(DRAW_PRINTTEXT | 0x10);
+			printText(left, yPos + (height - font.itemHeight) / 2,
+					tempStr, fontIndex, frontColor);
 
 			if ((key != 0) || (id != 0))
 				break;
@@ -948,24 +951,14 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 		char tempStr[256];
 		strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
 
-		_vm->_draw->_destSpriteX  = spot.left;
-		_vm->_draw->_destSpriteY  = spot.top;
-		_vm->_draw->_spriteRight  = spot.right  - spot.left + 1;
-		_vm->_draw->_spriteBottom = spot.bottom - spot.top  + 1;
+		fillRect(spot.left, spot.top,
+				spot.right - spot.left + 1, spot.bottom - spot.top + 1,
+				inputs[descInd].backColor);
 
-		_vm->_draw->_destSurface = 21;
-
-		_vm->_draw->_backColor    = inputs[descInd].backColor;
-		_vm->_draw->_frontColor   = inputs[descInd].frontColor;
-		_vm->_draw->_textToPrint  = tempStr;
-		_vm->_draw->_transparency = 1;
-		_vm->_draw->_fontIndex    = inputs[descInd].fontIndex;
-
-		_vm->_draw->spriteOperation(DRAW_FILLRECT | 0x10);
-
-		_vm->_draw->_destSpriteY += ((spot.bottom - spot.top + 1) -
-				_vm->_draw->_fonts[_vm->_draw->_fontIndex]->itemHeight) / 2;
-		_vm->_draw->spriteOperation(DRAW_PRINTTEXT | 0x10);
+		printText(spot.left,
+				spot.top + ((spot.bottom - spot.top + 1) -
+				            _vm->_draw->_fonts[_vm->_draw->_fontIndex]->itemHeight) / 2,
+				tempStr, inputs[descInd].fontIndex, inputs[descInd].frontColor);
 
 		descInd++;
 	}
