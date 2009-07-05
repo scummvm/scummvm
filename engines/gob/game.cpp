@@ -409,6 +409,9 @@ void Game::start(void) {
 void Game::totSub(int8 flags, const char *newTotFile) {
 	int8 curBackupPos;
 
+	if ((flags == 16) || (flags == 17))
+		warning("Urban Stub: Game::totSub(), flags == %d", flags);
+
 	if (_numEnvironments >= Environments::kEnvironmentCount)
 		return;
 
@@ -420,13 +423,14 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 
 	_script = new Script(_vm);
 	_resources = new Resources(_vm);
+
+	if (flags & 0x80)
+		warning("Urban Stub: Game::totSub(), flags & 0x80");
+
 	if (flags & 1)
 		_vm->_inter->_variables = 0;
 
 	strncpy0(_curTotFile, newTotFile, 9);
-//	if (_vm->getGameType() == kGameTypeGeisha)
-//		strcat(_curTotFile, ".0OT");
-//	else
 	strcat(_curTotFile, ".TOT");
 
 	if (_vm->_inter->_terminate != 0) {
@@ -444,6 +448,7 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 	if (_vm->_inter->_terminate != 2)
 		_vm->_inter->_terminate = 0;
 
+	_hotspots->clear();
 	_hotspots->pop();
 
 	if ((flags & 1) && _vm->_inter->_variables) {

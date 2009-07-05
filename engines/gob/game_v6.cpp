@@ -42,63 +42,6 @@ namespace Gob {
 Game_v6::Game_v6(GobEngine *vm) : Game_v2(vm) {
 }
 
-// flagbits: 5 = freeInterVariables, 6 = skipPlay
-void Game_v6::totSub(int8 flags, const char *newTotFile) {
-	int8 curBackupPos;
-
-	if ((flags == 16) || (flags == 17))
-		warning("Urban Stub: Game_v6::totSub(), flags == %d", flags);
-
-	if (_numEnvironments >= Environments::kEnvironmentCount)
-		return;
-
-	_environments->set(_numEnvironments);
-
-	curBackupPos = _curEnvironment;
-	_numEnvironments++;
-	_curEnvironment = _numEnvironments;
-
-	_script = new Script(_vm);
-	_resources = new Resources(_vm);
-
-	if (flags & 0x80)
-		warning("Urban Stub: Game_v6::totSub(), flags & 0x80");
-
-	if (flags & 5)
-		_vm->_inter->_variables = 0;
-
-	strncpy0(_curTotFile, newTotFile, 9);
-	strcat(_curTotFile, ".TOT");
-
-	if (_vm->_inter->_terminate != 0) {
-		clearUnusedEnvironment();
-		return;
-	}
-
-	_hotspots->push(0, true);
-
-	if (flags & 6)
-		playTot(-1);
-	else
-		playTot(0);
-
-	if (_vm->_inter->_terminate < 2)
-		_vm->_inter->_terminate = 0;
-
-	_hotspots->clear();
-	_hotspots->pop();
-
-	if ((flags & 5) && _vm->_inter->_variables) {
-		_vm->_inter->delocateVars();
-	}
-
-	clearUnusedEnvironment();
-
-	_numEnvironments--;
-	_curEnvironment = curBackupPos;
-	_environments->get(_numEnvironments);
-}
-
 void Game_v6::prepareStart(void) {
 	_noCd = false;
 

@@ -105,8 +105,8 @@ public:
 			MouseButtons *pButtons = 0, char handleMouse = 0);
 	void start(void);
 
-	virtual void totSub(int8 flags, const char *newTotFile);
-	virtual void switchTotSub(int16 index, int16 skipPlay);
+	void totSub(int8 flags, const char *newTotFile);
+	void switchTotSub(int16 index, int16 skipPlay);
 
 	virtual void playTot(int16 skipPlay) = 0;
 
@@ -149,8 +149,6 @@ class Game_v6 : public Game_v2 {
 public:
 	Game_v6(GobEngine *vm);
 	virtual ~Game_v6() {}
-
-	virtual void totSub(int8 flags, const char *newTotFile);
 
 	virtual void prepareStart(void);
 };
