@@ -202,6 +202,8 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
   if (((int)(t-_devpoll))>=0)
     _devpoll = t + USEC_TO_TIMER(17000);
 
+  maybeRefreshScreen();
+
   int mask = getimask();
   setimask(15);
   checkSound();
