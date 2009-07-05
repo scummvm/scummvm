@@ -112,22 +112,6 @@ private:
 	static const uint8 _paletteConvTable[256];
 	void mergeOverlay(int x, int y, int w, int h);
 	void postProcessCursor(uint8 *data, int width, int height, int pitch);
-
-	// magic atlas
-	void calcBoundariesIntern(int dstX, int dstY, int c, int d);
-
-	int _internDimX;
-	int _internDimY;
-	int _internDimW;
-	int _internDimH;
-	int _internDimDstX;
-	int _internBlockWidth;
-	int _internDimDstY;
-	int _internBlockHeight;
-	int _internDimU5;
-	int _internDimU6;
-	int _internBlockWidth2;
-	int _internDimU8;
 };
 
 } // end of namespace Kyra
