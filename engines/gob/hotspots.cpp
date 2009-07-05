@@ -1027,7 +1027,7 @@ uint16 Hotspots::handleInput(int16 time, uint16 maxPos, uint16 &curPos,
 					if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
 						continue;
 
-					if ((spot.id & 0xF000))
+					if (spot.getCursor() != 0)
 						continue;
 
 					if (spot.getType() < kTypeInput1NoLeave)
