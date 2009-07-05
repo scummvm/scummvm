@@ -164,10 +164,6 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx) 
 	redraw();
 	_system->updateScreen();
 
-	Common::Event event;
-	event.type = Common::EVENT_SCREEN_CHANGED;
-	_system->getEventManager()->pushEvent(event);
-
 	return true;
 }
 
