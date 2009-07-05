@@ -89,7 +89,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 	int i;
 	int16 mouseX;
 	int16 mouseY;
-	int16 buttons;
+	MouseButtons buttons;
 	SurfaceDescPtr surface;
 	SoundDesc samples[4];
 	int16 comp[5] = { 0, 1, 2, 3, -1 };
@@ -137,7 +137,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 	int16 mouseX;
 	int16 mouseY;
-	int16 buttons;
+	MouseButtons buttons;
 	Video::Color *palBak;
 	SoundDesc samples[2];
 	int16 comp[3] = { 0, 1, -1 };

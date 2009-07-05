@@ -38,14 +38,14 @@
 namespace Gob {
 
 Util::Util(GobEngine *vm) : _vm(vm) {
-	_mouseButtons = 0;
-	_keyBufferHead = 0;
-	_keyBufferTail = 0;
-	_fastMode = 0;
-	_frameRate = 12;
-	_frameWaitTime = 0;
+	_mouseButtons   = kMouseButtonsNone,
+	_keyBufferHead  = 0;
+	_keyBufferTail  = 0;
+	_fastMode       = 0;
+	_frameRate      = 12;
+	_frameWaitTime  = 0;
 	_startFrameTime = 0;
-	_frameWaitLag = 0;
+	_frameWaitLag   = 0;
 }
 
 uint32 Util::getTimeKey(void) {
@@ -85,7 +85,7 @@ void Util::longDelay(uint16 msecs) {
 }
 
 void Util::initInput(void) {
-	_mouseButtons = 0;
+	_mouseButtons  = kMouseButtonsNone;
 	_keyBufferHead = _keyBufferTail = 0;
 }
 
@@ -103,16 +103,16 @@ void Util::processInput(bool scroll) {
 			y = event.mouse.y;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			_mouseButtons |= 1;
+			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) | ((uint32) kMouseButtonsLeft));
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			_mouseButtons |= 2;
+			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) | ((uint32) kMouseButtonsRight));
 			break;
 		case Common::EVENT_LBUTTONUP:
-			_mouseButtons &= ~1;
+			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsLeft));
 			break;
 		case Common::EVENT_RBUTTONUP:
-			_mouseButtons &= ~2;
+			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsRight));
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags == Common::KBD_CTRL) {
@@ -246,7 +246,7 @@ bool Util::checkKey(int16 &key) {
 	return true;
 }
 
-void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
+void Util::getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons) {
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
 	*pX = mouse.x + _vm->_video->_scrollOffsetX - _vm->_video->_screenDeltaX;
 	*pY = mouse.y + _vm->_video->_scrollOffsetY - _vm->_video->_screenDeltaY;
@@ -264,15 +264,15 @@ void Util::setMousePos(int16 x, int16 y) {
 void Util::waitMouseUp(void) {
 	do {
 		processInput();
-		if (_mouseButtons != 0)
+		if (_mouseButtons != kMouseButtonsNone)
 			delay(10);
-	} while (_mouseButtons != 0);
+	} while (_mouseButtons != kMouseButtonsNone);
 }
 
 void Util::waitMouseDown(void) {
 	int16 x;
 	int16 y;
-	int16 buttons;
+	MouseButtons buttons;
 
 	do {
 		processInput();
@@ -283,7 +283,7 @@ void Util::waitMouseDown(void) {
 }
 
 void Util::waitMouseRelease(char drawMouse) {
-	int16 buttons;
+	MouseButtons buttons;
 	int16 mouseX;
 	int16 mouseY;
 
@@ -300,8 +300,8 @@ void Util::forceMouseUp(bool onlyWhenSynced) {
 	if (onlyWhenSynced && (_vm->_game->_mouseButtons != _mouseButtons))
 		return;
 
-	_vm->_game->_mouseButtons = 0;
-	_mouseButtons = 0;
+	_vm->_game->_mouseButtons = kMouseButtonsNone;
+	_mouseButtons             = kMouseButtonsNone;
 }
 
 void Util::clearPalette(void) {

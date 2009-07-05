@@ -180,7 +180,7 @@ void Inter::storeMouse() {
 
 	WRITE_VAR(2, x);
 	WRITE_VAR(3, y);
-	WRITE_VAR(4, _vm->_game->_mouseButtons);
+	WRITE_VAR(4, (uint32) _vm->_game->_mouseButtons);
 }
 
 void Inter::storeKey(int16 key) {

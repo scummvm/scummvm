@@ -338,7 +338,7 @@ int16 Game_v2::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 		key = checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_mouseButtons, handleMouse);
 
-		if ((handleMouse == 0) && (_mouseButtons != 0)) {
+		if ((handleMouse == 0) && (_mouseButtons != kMouseButtonsNone)) {
 			_vm->_util->waitMouseRelease(0);
 			key = 3;
 		}
@@ -363,7 +363,7 @@ int16 Game_v2::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 		}
 
 		if (handleMouse != 0) {
-			if (_mouseButtons != 0) {
+			if (_mouseButtons != kMouseButtonsNone) {
 				if (deltaTime > 0) {
 					_vm->_draw->animateCursor(2);
 					_vm->_util->delay(deltaTime);
@@ -380,7 +380,7 @@ int16 Game_v2::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 
 				if ((key != 0) || ((pResId != 0) && (*pResId != 0))) {
 					if ((handleMouse & 1) &&
-							((deltaTime <= 0) || (_mouseButtons == 0)))
+							((deltaTime <= 0) || (_mouseButtons == kMouseButtonsNone)))
 						_vm->_draw->blitCursor();
 
 					if ((_lastCollKey != 0) && (key != _lastCollKey))
@@ -418,7 +418,7 @@ int16 Game_v2::checkCollisions(byte handleMouse, int16 deltaTime, int16 *pResId,
 			}
 		}
 
-		if ((deltaTime < 0) && (key == 0) && (_mouseButtons == 0)) {
+		if ((deltaTime < 0) && (key == 0) && (_mouseButtons == kMouseButtonsNone)) {
 			uint32 curtime = _vm->_util->getTimeKey();
 			if ((curtime + deltaTime) > timeKey) {
 				if (pResId != 0)
@@ -1103,7 +1103,7 @@ int16 Game_v2::multiEdit(int16 time, int16 index, int16 *pCurPos,
 			if (*collResId == 0)
 				return 0;
 
-			if (_mouseButtons != 0) {
+			if (_mouseButtons != kMouseButtonsNone) {
 				for (collArea = _collisionAreas, i = 0;
 						collArea->left != 0xFFFF; collArea++, i++) {
 					if ((collArea->flags & 0xF00))
@@ -1535,7 +1535,7 @@ int16 Game_v2::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 			if ((ptr->flags & 0xF) < 1)
 				continue;
 
-			if ((((ptr->flags & 0xF0) >> 4) != (_mouseButtons - 1)) &&
+			if ((((ptr->flags & 0xF0) >> 4) != (((int32) _mouseButtons) - 1)) &&
 					(((ptr->flags & 0xF0) >> 4) != 2))
 				continue;
 
@@ -1554,7 +1554,7 @@ int16 Game_v2::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 		}
 	}
 
-	if ((_mouseButtons != 1) && (all == 0))
+	if ((_mouseButtons != kMouseButtonsLeft) && (all == 0))
 		return 0x11B;
 
 	return 0;

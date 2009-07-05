@@ -317,7 +317,7 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 		key = checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_mouseButtons, handleMouse);
 
-		if ((handleMouse == 0) && (_mouseButtons != 0)) {
+		if ((handleMouse == 0) && (_mouseButtons != kMouseButtonsNone)) {
 			_vm->_util->waitMouseRelease(0);
 			key = 3;
 		}
@@ -347,7 +347,7 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 		}
 
 		if (handleMouse != 0) {
-			if (_mouseButtons != 0) {
+			if (_mouseButtons != kMouseButtonsNone) {
 				oldIndex = 0;
 
 				_vm->_draw->animateCursor(2);
@@ -368,7 +368,7 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 
 				if ((key != 0) || ((pResId != 0) && (*pResId != 0))) {
 					if ((handleMouse == 1) &&
-							((deltaTime <= 0) || (_mouseButtons == 0)))
+							((deltaTime <= 0) || (_mouseButtons == kMouseButtonsNone)))
 						_vm->_draw->blitCursor();
 
 					if ((_lastCollKey != 0) &&
@@ -775,7 +775,7 @@ void Game_v1::collisionsBlock(void) {
 							_activeCollIndex = i;
 							WRITE_VAR(2, _vm->_global->_inter_mouseX);
 							WRITE_VAR(3, _vm->_global->_inter_mouseY);
-							WRITE_VAR(4, _mouseButtons);
+							WRITE_VAR(4, (uint32) _mouseButtons);
 							WRITE_VAR(16, array[(uint16) _activeCollResId & ~0x8000]);
 
 							if (collPtr->funcLeave != 0) {
@@ -870,7 +870,7 @@ void Game_v1::collisionsBlock(void) {
 
 		WRITE_VAR(2, _vm->_global->_inter_mouseX);
 		WRITE_VAR(3, _vm->_global->_inter_mouseY);
-		WRITE_VAR(4, _mouseButtons);
+		WRITE_VAR(4, (uint32) _mouseButtons);
 		WRITE_VAR(16, array[(uint16) _activeCollResId & ~0x8000]);
 
 		if (_collisionAreas[_activeCollIndex].funcEnter != 0) {
@@ -965,7 +965,7 @@ void Game_v1::collisionsBlock(void) {
 
 		WRITE_VAR(2, _vm->_global->_inter_mouseX);
 		WRITE_VAR(3, _vm->_global->_inter_mouseY);
-		WRITE_VAR(4, _mouseButtons);
+		WRITE_VAR(4, (uint32) _mouseButtons);
 
 		if (VAR(16) == 0)
 			WRITE_VAR(16, array[(uint16) _activeCollResId & ~0x8000]);
@@ -1400,7 +1400,7 @@ int16 Game_v1::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 			if (((ptr->flags & 0xF) != 1) && ((ptr->flags & 0xF) != 2))
 				continue;
 
-			if ((((ptr->flags & 0xF0) >> 4) != (_mouseButtons - 1))
+			if ((((ptr->flags & 0xF0) >> 4) != (((int32) _mouseButtons) - 1))
 					&& (((ptr->flags & 0xF0) >> 4) != 2))
 				continue;
 
@@ -1417,7 +1417,7 @@ int16 Game_v1::checkMousePoint(int16 all, int16 *resId, int16 *resIndex) {
 		}
 	}
 
-	if ((_mouseButtons != 1) && (all == 0))
+	if ((_mouseButtons != kMouseButtonsLeft) && (all == 0))
 		return 0x11B;
 
 	return 0;

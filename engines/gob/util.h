@@ -34,6 +34,14 @@ namespace Gob {
 
 #define KEYBUFSIZE 16
 
+enum MouseButtons {
+	kMouseButtonsNone  = 0,
+	kMouseButtonsLeft  = 1,
+	kMouseButtonsRight = 2,
+	kMouseButtonsBoth  = 3,
+	kMouseButtonsAny   = 4
+};
+
 class Util {
 public:
 	struct ListNode;
@@ -66,7 +74,7 @@ public:
 	int16 checkKey(void);
 	bool checkKey(int16 &key);
 
-	void getMouseState(int16 *pX, int16 *pY, int16 *pButtons);
+	void getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons);
 	void setMousePos(int16 x, int16 y);
 	void waitMouseUp(void);
 	void waitMouseDown(void);
@@ -95,7 +103,8 @@ public:
 	Util(GobEngine *vm);
 
 protected:
-	int16 _mouseButtons;
+	MouseButtons _mouseButtons;
+
 	Common::KeyState _keyBuffer[KEYBUFSIZE];
 	int16 _keyBufferHead;
 	int16 _keyBufferTail;

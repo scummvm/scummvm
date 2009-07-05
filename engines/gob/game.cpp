@@ -29,7 +29,6 @@
 #include "gob/game.h"
 #include "gob/helper.h"
 #include "gob/global.h"
-#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/variables.h"
 #include "gob/script.h"
@@ -186,7 +185,7 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_totToLoad[0] = 0;
 
 	_startTimeKey = 0;
-	_mouseButtons = 0;
+	_mouseButtons = kMouseButtonsNone;
 
 	_lastCollKey = 0;
 	_lastCollAreaIndex = 0;
@@ -349,7 +348,7 @@ void Game::evaluateScroll(int16 x, int16 y) {
 }
 
 int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
-		int16 *pButtons, char handleMouse) {
+		MouseButtons *pButtons, char handleMouse) {
 
 	_vm->_util->processInput(true);
 
@@ -373,8 +372,8 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 	if (pMouseX && pMouseY && pButtons) {
 		_vm->_util->getMouseState(pMouseX, pMouseY, pButtons);
 
-		if (*pButtons == 3)
-			*pButtons = 0;
+		if (*pButtons == kMouseButtonsBoth)
+			*pButtons = kMouseButtonsNone;
 	}
 
 	return _vm->_util->checkKey();

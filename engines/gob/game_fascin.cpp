@@ -100,7 +100,7 @@ int16 Game_Fascination::checkCollisions(byte handleMouse, int16 deltaTime, int16
 		key = checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_mouseButtons, handleMouse);
 
-		if ((handleMouse == 0) && (_mouseButtons != 0)) {
+		if ((handleMouse == 0) && (_mouseButtons != kMouseButtonsNone)) {
 			_vm->_util->waitMouseRelease(0);
 			key = 3;
 		}
@@ -125,7 +125,7 @@ int16 Game_Fascination::checkCollisions(byte handleMouse, int16 deltaTime, int16
 		}
 
 		if (handleMouse != 0) {
-			if (_mouseButtons != 0) {
+			if (_mouseButtons != kMouseButtonsNone) {
 				if (deltaTime > 0) {
 					_vm->_draw->animateCursor(2);
 					_vm->_util->delay(deltaTime);
@@ -142,7 +142,7 @@ int16 Game_Fascination::checkCollisions(byte handleMouse, int16 deltaTime, int16
 
 				if ((key != 0) || ((pResId != 0) && (*pResId != 0))) {
 					if ((handleMouse & 1) &&
-							((deltaTime <= 0) || (_mouseButtons == 0)))
+							((deltaTime <= 0) || (_mouseButtons == kMouseButtonsNone)))
 						_vm->_draw->blitCursor();
 
 					if ((_lastCollKey != 0) && (key != _lastCollKey))
@@ -180,7 +180,7 @@ int16 Game_Fascination::checkCollisions(byte handleMouse, int16 deltaTime, int16
 			}
 		}
 
-		if ((deltaTime < 0) && (key == 0) && (_mouseButtons == 0)) {
+		if ((deltaTime < 0) && (key == 0) && (_mouseButtons == kMouseButtonsNone)) {
 			uint32 curtime = _vm->_util->getTimeKey();
 			if ((curtime + deltaTime) > timeKey) {
 				if (pResId != 0)

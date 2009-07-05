@@ -26,6 +26,8 @@
 #ifndef GOB_GAME_H
 #define GOB_GAME_H
 
+#include "gob/util.h"
+
 namespace Gob {
 
 class Script;
@@ -103,7 +105,7 @@ public:
 	char _totToLoad[20];
 
 	int32 _startTimeKey;
-	int16 _mouseButtons;
+	MouseButtons _mouseButtons;
 
 	bool _noScroll;
 	bool _preventScroll;
@@ -122,7 +124,7 @@ public:
 	void evaluateScroll(int16 x, int16 y);
 
 	int16 checkKeys(int16 *pMousex = 0, int16 *pMouseY = 0,
-			int16 *pButtons = 0, char handleMouse = 0);
+			MouseButtons *pButtons = 0, char handleMouse = 0);
 	void start(void);
 
 	virtual void totSub(int8 flags, const char *newTotFile);
