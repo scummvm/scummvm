@@ -868,7 +868,16 @@ bool Inter_v1::o1_loadSpriteToPos(OpFuncParams &params) {
 	_vm->_draw->_spriteLeft = _vm->_game->_script->readInt16();
 
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
-	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
+
+	// WORKAROUND: The EGA version of Gobliiins 1 has an invalid expression there
+	if (_vm->isEGA() && (_vm->_game->_script->pos() == 1398) &&
+			!scumm_stricmp(_vm->_game->_curTotFile, "intro.tot")) {
+
+		_vm->_draw->_destSpriteY = 0;
+		_vm->_game->_script->skip(1);
+
+	} else
+		_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
 
 	_vm->_draw->_transparency = _vm->_game->_script->peekByte() & 1;
 	_vm->_draw->_destSurface = ((int16) (_vm->_game->_script->peekByte() >> 1)) - 1;
