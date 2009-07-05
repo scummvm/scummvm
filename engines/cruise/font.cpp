@@ -242,7 +242,7 @@ int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
 			if (character == '|' || !character) {
 				finish = 1;
 			} else {
-				if (charData) {
+				if (charData >= 0) {
 					if (pixelCount + wordSpacingWidth +
 							(int16)fontData[charData].charWidth >= inRightBorder_X) {
 						finish = 1;
