@@ -762,7 +762,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
 
-			if (!_fonts[_fontIndex]->extraData) {
+			if (!_fonts[_fontIndex]->charWidths) {
 				if (((int8) _textToPrint[0]) == -1) {
 					_vm->validateLanguage();
 
@@ -785,7 +785,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 						_vm->_video->drawLetter(_textToPrint[i], _destSpriteX,
 								_destSpriteY, _fonts[_fontIndex], _transparency,
 								_frontColor, _backColor, *_spritesArray[_destSurface]);
-						_destSpriteX += *(_fonts[_fontIndex]->extraData +
+						_destSpriteX += *(_fonts[_fontIndex]->charWidths +
 								(_textToPrint[i] - _fonts[_fontIndex]->startItem));
 					}
 					else

@@ -403,10 +403,10 @@ Video::FontDesc *Util::loadFont(const char *path) {
 	fontDesc->bitWidth = fontDesc->itemWidth;
 
 	if (data[0] & 0x80)
-		fontDesc->extraData = data + 4 + fontDesc->itemSize *
+		fontDesc->charWidths = data + 4 + fontDesc->itemSize *
 			(fontDesc->endItem - fontDesc->startItem + 1);
 	else
-		fontDesc->extraData = 0;
+		fontDesc->charWidths = 0;
 
 	return fontDesc;
 }

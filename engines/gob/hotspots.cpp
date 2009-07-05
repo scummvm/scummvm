@@ -713,7 +713,7 @@ void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
 		uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
 		uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const {
 
-	if (font.extraData) {
+	if (font.charWidths) {
 		// Cursor to the right of the current character
 
 		cursorX      = x;
@@ -722,7 +722,7 @@ void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
 		cursorHeight = height;
 
 		for (uint32 i = 0; i < pos; i++)
-			cursorX += font.extraData[str[i] - font.startItem];
+			cursorX += font.charWidths[str[i] - font.startItem];
 
 	} else {
 		// Cursor underlining the current character
@@ -748,7 +748,7 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 
 	const Video::FontDesc &font = *_vm->_draw->_fonts[fontIndex];
 
-	bool monoSpaced = (font.extraData == 0);
+	bool monoSpaced = (font.charWidths == 0);
 
 	uint32 pos            = strlen(str);
 	uint32 editSize       = monoSpaced ? (width / font.itemWidth) : 0;
@@ -925,8 +925,8 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 			if ((key >= ' ') && (key <= 0xFF)) {
 				if (editSize == 0) {
 					int length = _vm->_draw->stringLength(str, fontIndex) +
-						font.extraData[' ' - font.startItem] +
-						font.extraData[key - font.startItem];
+						font.charWidths[' ' - font.startItem] +
+						font.charWidths[key - font.startItem];
 
 					if (length > width)
 						continue;
@@ -1258,7 +1258,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		}
 
 		font = _vm->_draw->_fonts[inputs[inputCount].fontIndex];
-		if (!font->extraData)
+		if (!font->charWidths)
 			right = left + width * font->itemWidth - 1;
 
 		funcEnter = 0;

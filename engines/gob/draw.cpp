@@ -360,9 +360,9 @@ int Draw::stringLength(const char *str, int16 fontIndex) {
 
 	} else {
 
-		if (_fonts[fontIndex]->extraData)
+		if (_fonts[fontIndex]->charWidths)
 			while (*str != 0)
-				len += *(_fonts[fontIndex]->extraData + (*str++ - _fonts[fontIndex]->startItem));
+				len += *(_fonts[fontIndex]->charWidths + (*str++ - _fonts[fontIndex]->startItem));
 		else
 			len = (strlen(str) * _fonts[fontIndex]->itemWidth);
 
@@ -376,10 +376,10 @@ void Draw::drawString(const char *str, int16 x, int16 y, int16 color1, int16 col
 
 	while (*str != '\0') {
 		_vm->_video->drawLetter(*str, x, y, font, transp, color1, color2, dest);
-		if (!font->extraData)
+		if (!font->charWidths)
 			x += font->itemWidth;
 		else
-			x += *(font->extraData + (*str - font->startItem));
+			x += *(font->charWidths + (*str - font->startItem));
 		str++;
 	}
 }
@@ -415,12 +415,12 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	_fontIndex = fontIndex;
 	_frontColor = color;
 	_textToPrint = str;
-	if (_fonts[fontIndex]->extraData != 0) {
-		byte *data = _fonts[fontIndex]->extraData;
+	if (_fonts[fontIndex]->charWidths != 0) {
+		uint8 *widths = _fonts[fontIndex]->charWidths;
 		int length = strlen(str);
 
 		for (int i = 0; i < length; i++)
-			width += *(data + (str[i] - _fonts[_fontIndex]->startItem));
+			width += *(widths + (str[i] - _fonts[_fontIndex]->startItem));
 	}
 	else
 		width = strlen(str) * _fonts[fontIndex]->itemWidth;
