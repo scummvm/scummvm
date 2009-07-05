@@ -567,11 +567,6 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 	}
 
 	int resNum = atoi(argv[2]);
-	if (resNum == 0) {
-		DebugPrintf("The resource number specified is not a number");
-		return true;
-	}
-
 	ResourceType res = parseResourceType(argv[1]);
 
 	if (res == kResourceTypeInvalid)
@@ -628,11 +623,6 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 	}
 
 	int resNum = atoi(argv[2]);
-	if (resNum == 0) {
-		DebugPrintf("The resource number specified is not a number");
-		return true;
-	}
-
 	ResourceType res = parseResourceType(argv[1]);
 
 	if (res == kResourceTypeInvalid)
