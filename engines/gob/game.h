@@ -159,12 +159,6 @@ public:
 	virtual void prepareStart(void);
 };
 
-class Game_Fascination : public Game_v2 {
-public:
-	Game_Fascination(GobEngine *vm);
-	virtual ~Game_Fascination() {}
-};
-
 } // End of namespace Gob
 
 #endif // GOB_GAME_H
