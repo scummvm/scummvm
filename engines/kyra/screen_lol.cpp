@@ -593,7 +593,6 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 	int iu5_1 = na;
 	int iu6_1 = nb;
 	int ibw_1 = w3;
-	//int ibh_1 = h3;
 	int dx_1 = x1;
 	int dy_1 = y1;
 
@@ -702,27 +701,6 @@ void Screen_LoL::applyOverlaySpecial(int page1, int x1, int y1, int page2, int x
 	int na = 0, nb = 0, nc = w;
 	if (!calcBounds(iw, ih, x2, y2, w, h, na, nb, nc))
 		return;
-
-			//		_internDimH: h0
-//		_internDimW: w0
-//		_internDimDstX: x1
-//		_internDimDstY: y1
-//		_internBlockWidth: w1
-//		_internBlockHeight: h1
-//		_internDimU5: x2 na
-//		_internDimU6: y2 nb
-//		_internBlockWidth2: w2 nc
-
-//	_internDimX = _internDimY = 0;
-//	_internDimW = w1;
-/*	_internDimH = h1;
-	calcBoundariesIntern(x1, y1, w3, h3);
-	if (_internBlockWidth == -1)
-		return;
-
-	calcBoundariesIntern(x2, y2, w, h);
-	if (_internBlockWidth == -1)
-		return;*/
 
 	uint8 *src = getPagePtr(page1) + y1 * 320 + x1;
 	uint8 *dst = getPagePtr(page2) + (y2 + iy) * 320;
