@@ -94,6 +94,8 @@ public:
 
 	virtual void prepareStart();
 
+	void playTot(int16 skipPlay);
+
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 	void capturePop(char doDraw);
 
@@ -103,12 +105,10 @@ public:
 
 	int16 checkKeys(int16 *pMousex = 0, int16 *pMouseY = 0,
 			MouseButtons *pButtons = 0, char handleMouse = 0);
-	void start(void);
+	void start();
 
 	void totSub(int8 flags, const char *newTotFile);
 	void switchTotSub(int16 index, int16 skipPlay);
-
-	virtual void playTot(int16 skipPlay) = 0;
 
 protected:
 	uint32 _menuLevel;
@@ -133,16 +133,12 @@ class Game_v1 : public Game {
 public:
 	Game_v1(GobEngine *vm);
 	virtual ~Game_v1() {}
-
-	virtual void playTot(int16 skipPlay);
 };
 
 class Game_v2 : public Game_v1 {
 public:
 	Game_v2(GobEngine *vm);
 	virtual ~Game_v2() {}
-
-	virtual void playTot(int16 skipPlay);
 };
 
 class Game_v6 : public Game_v2 {
@@ -150,7 +146,7 @@ public:
 	Game_v6(GobEngine *vm);
 	virtual ~Game_v6() {}
 
-	virtual void prepareStart(void);
+	virtual void prepareStart();
 };
 
 } // End of namespace Gob

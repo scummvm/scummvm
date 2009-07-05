@@ -42,7 +42,7 @@ namespace Gob {
 Game_v6::Game_v6(GobEngine *vm) : Game_v2(vm) {
 }
 
-void Game_v6::prepareStart(void) {
+void Game_v6::prepareStart() {
 	_noCd = false;
 
 	if (Common::File::exists("cd1.itk") && Common::File::exists("cd2.itk") &&
