@@ -30,17 +30,55 @@
 
 namespace Draci {
 
-enum { kOverlayImage = -1 };
+enum { kOverlayImage = -1, kUnused = -2 };
 
 class DraciEngine;
 
-struct AnimObj {
-	uint _id;	
+class AnimObj {
+public:
+	AnimObj(DraciEngine *vm);
+	~AnimObj();	
+	
+	uint getZ();
+	void setZ(uint z);
+	
+	void setID(int id);
+	int getID();
+
+	void setDelay(uint delay);
+
+	void nextFrame(bool force = false);
+	void drawFrame(Surface *surface);
+
+	void addFrame(Drawable *frame);
+	uint getFramesNum();
+	void deleteFrames();
+
+	bool isPlaying();
+	void setPlaying(bool playing);
+
+	bool isLooping();
+	void setLooping(bool looping);
+
+
+private:
+	
+	uint nextFrameNum();
+
+	int _id;	
 	uint _currentFrame;
 	uint _z;
-	bool _playing;	
+	uint _delay;
+	uint _tick;
+	bool _playing;
+	bool _looping;
 	Common::Array<Drawable*> _frames;
+
+	DraciEngine *_vm;
 };
+
+// TODO: Probably needs a namechange to AnimationManager or similar since AnimObj now
+// acts as an animation object
 
 class Animation {
 
@@ -48,26 +86,25 @@ public:
 	Animation(DraciEngine *vm) : _vm(vm) {};
 	~Animation() { deleteAll(); }
 
-	void addAnimation(uint id, uint z, bool playing = false);
-	void addFrame(uint id, Drawable *frame);
+	AnimObj *addAnimation(int id, uint z, bool playing = false);
 	void addOverlay(Drawable *overlay, uint z);
 	
-	void play(uint id);
-	void stop(uint id);
+	void play(int id);
+	void stop(int id);
 
-	void deleteAnimation(uint id);
+	void deleteAnimation(int id);
 	void deleteAll();
 
 	void drawScene(Surface *surf);
 
-	Common::List<AnimObj>::iterator getAnimation(uint id);
+	AnimObj *getAnimation(int id);
 
 private:
 	
-	void insertAnimation(AnimObj &animObj);
+	void insertAnimation(AnimObj *animObj);
 
 	DraciEngine *_vm;
-	Common::List<AnimObj> _animObjects;
+	Common::List<AnimObj *> _animObjects;
 };
 
 }
