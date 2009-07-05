@@ -78,7 +78,7 @@ enum SciGameVersions {
 	SCI_VERSION_32 = 8
 };
 
-extern const char *versionNames[9];
+extern const char *versionNames[8];
 
 enum SciGameFlags {
 	// SCI0 flags

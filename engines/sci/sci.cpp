@@ -43,14 +43,13 @@ namespace Sci {
 
 class GfxDriver;
 
-const char *versionNames[9] = {
+const char *versionNames[8] = {
 	"Autodetected",
 	"SCI0",
 	"SCI01 EGA",
 	"SCI01 VGA",
 	"SCI01 VGA ODD",
-	"SCI1 early",
-	"SCI1 late",
+	"SCI1",
 	"SCI1.1",
 	"SCI32"
 };
