@@ -92,6 +92,8 @@ public:
 	Game(GobEngine *vm);
 	virtual ~Game();
 
+	virtual void prepareStart();
+
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 	void capturePop(char doDraw);
 
@@ -107,8 +109,6 @@ public:
 	virtual void switchTotSub(int16 index, int16 skipPlay);
 
 	virtual void playTot(int16 skipPlay) = 0;
-
-	virtual void prepareStart(void) = 0;
 
 protected:
 	uint32 _menuLevel;
@@ -135,8 +135,6 @@ public:
 	virtual ~Game_v1() {}
 
 	virtual void playTot(int16 skipPlay);
-
-	virtual void prepareStart(void);
 };
 
 class Game_v2 : public Game_v1 {
@@ -145,8 +143,6 @@ public:
 	virtual ~Game_v2() {}
 
 	virtual void playTot(int16 skipPlay);
-
-	virtual void prepareStart(void);
 };
 
 class Game_v6 : public Game_v2 {

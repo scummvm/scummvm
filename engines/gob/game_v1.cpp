@@ -160,46 +160,4 @@ void Game_v1::playTot(int16 skipPlay) {
 	_script->pop();
 }
 
-void Game_v1::prepareStart(void) {
-	_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->_unusedPalette2;
-	_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
-	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
-
-	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
-
-	_vm->_draw->initScreen();
-	_vm->_video->fillRect(*_vm->_draw->_backSurface, 0, 0, 319, 199, 1);
-	_vm->_draw->_frontSurface = _vm->_global->_primarySurfDesc;
-	_vm->_video->fillRect(*_vm->_draw->_frontSurface, 0, 0, 319, 199, 1);
-
-	_vm->_util->setMousePos(152, 92);
-	_vm->_draw->_cursorX = _vm->_global->_inter_mouseX = 152;
-	_vm->_draw->_cursorY = _vm->_global->_inter_mouseY = 92;
-
-	_vm->_draw->_invalidatedCount = 0;
-	_vm->_draw->_noInvalidated = true;
-	_vm->_draw->_applyPal = false;
-	_vm->_draw->_paletteCleared = false;
-	_vm->_draw->_cursorWidth = 16;
-	_vm->_draw->_cursorHeight = 16;
-	_vm->_draw->_transparentCursor = 1;
-
-	for (int i = 0; i < 40; i++) {
-		_vm->_draw->_cursorAnimLow[i] = -1;
-		_vm->_draw->_cursorAnimDelays[i] = 0;
-		_vm->_draw->_cursorAnimHigh[i] = 0;
-	}
-
-	_vm->_draw->_cursorAnimLow[1] = 0;
-	_vm->_draw->_cursorSprites =
-		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 32, 16, 2);
-	_vm->_draw->_scummvmCursor =
-		_vm->_video->initSurfDesc(_vm->_global->_videoMode, 16, 16, SCUMMVM_CURSOR);
-	_vm->_draw->_renderFlags = 0;
-	_vm->_draw->_backDeltaX = 0;
-	_vm->_draw->_backDeltaY = 0;
-
-	_startTimeKey = _vm->_util->getTimeKey();
-}
-
 } // End of namespace Gob

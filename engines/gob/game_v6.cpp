@@ -107,7 +107,7 @@ void Game_v6::prepareStart(void) {
 		_noCd = true;
 	}
 
-	Game_v2::prepareStart();
+	Game::prepareStart();
 }
 
 } // End of namespace Gob
