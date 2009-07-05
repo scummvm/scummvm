@@ -238,7 +238,7 @@ protected:
 	bool o1_playComposition(OpFuncParams &params);
 	bool o1_getFreeMem(OpFuncParams &params);
 	bool o1_checkData(OpFuncParams &params);
-	bool o1_prepareStr(OpFuncParams &params);
+	bool o1_cleanupStr(OpFuncParams &params);
 	bool o1_insertStr(OpFuncParams &params);
 	bool o1_cutStr(OpFuncParams &params);
 	bool o1_strstr(OpFuncParams &params);

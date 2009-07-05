@@ -935,7 +935,7 @@ void Game_v2::collisionsBlock(void) {
 				strncpy0(_tempStr, GET_VARO_STR(_collisionAreas[i].key), 255);
 
 				if ((_collisionAreas[i].flags & 0x0F) < 7)
-					_vm->_util->prepareStr(_tempStr);
+					_vm->_util->cleanupStr(_tempStr);
 
 				int16 pos = 0;
 				do {
@@ -945,7 +945,7 @@ void Game_v2::collisionsBlock(void) {
 					str += strlen(str) + 1;
 
 					if ((_collisionAreas[i].flags & 0x0F) < 7)
-						_vm->_util->prepareStr(_collStr);
+						_vm->_util->cleanupStr(_collStr);
 
 					if (strcmp(_tempStr, _collStr) == 0) {
 						WRITE_VAR(17, VAR(17) + 1);

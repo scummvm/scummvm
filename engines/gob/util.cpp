@@ -452,7 +452,7 @@ static const char trStr2[] =
 	"                                                           ";
 static const char trStr3[] = "                                ";
 
-void Util::prepareStr(char *str) {
+void Util::cleanupStr(char *str) {
 	char *start, *end;
 	char buf[300];
 
@@ -460,17 +460,20 @@ void Util::prepareStr(char *str) {
 	strcat(buf, trStr2);
 	strcat(buf, trStr3);
 
+	// Translating "wrong" characters
 	for (size_t i = 0; i < strlen(str); i++)
-		str[i] = buf[str[i] - 32];
+		str[i] = buf[MIN<int>(str[i] - 32, 32)];
 
+	// Trim spaces left
 	while (str[0] == ' ')
 		cutFromStr(str, 0, 1);
 
+	// Trim spaces right
 	while ((strlen(str) > 0) && (str[strlen(str) - 1] == ' '))
 		cutFromStr(str, strlen(str) - 1, 1);
 
+	// Merge double spaces
 	start = strchr(str, ' ');
-
 	while (start) {
 		if (start[1] == ' ') {
 			cutFromStr(str, start - str, 1);

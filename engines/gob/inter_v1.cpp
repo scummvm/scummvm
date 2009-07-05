@@ -147,7 +147,7 @@ void Inter_v1::setupOpcodesFunc() {
 	OPCODEFUNC(0x3E, o1_getFreeMem);
 	OPCODEFUNC(0x3F, o1_checkData);
 
-	OPCODEFUNC(0x41, o1_prepareStr);
+	OPCODEFUNC(0x41, o1_cleanupStr);
 	OPCODEFUNC(0x42, o1_insertStr);
 	OPCODEFUNC(0x43, o1_cutStr);
 
@@ -1601,11 +1601,11 @@ bool Inter_v1::o1_checkData(OpFuncParams &params) {
 	return false;
 }
 
-bool Inter_v1::o1_prepareStr(OpFuncParams &params) {
+bool Inter_v1::o1_cleanupStr(OpFuncParams &params) {
 	int16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
-	_vm->_util->prepareStr(GET_VARO_FSTR(strVar));
+	_vm->_util->cleanupStr(GET_VARO_FSTR(strVar));
 	return false;
 }
 

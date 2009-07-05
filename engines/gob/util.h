@@ -92,7 +92,7 @@ public:
 
 	static void insertStr(const char *str1, char *str2, int16 pos);
 	static void cutFromStr(char *str, int16 from, int16 cutlen);
-	static void prepareStr(char *str);
+	static void cleanupStr(char *str);
 	static void replaceChar(char *str, char c1, char c2);
 
 	static void listInsertFront(List *list, void *data);
