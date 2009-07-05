@@ -33,6 +33,7 @@
 #include "gob/util.h"
 #include "gob/game.h"
 #include "gob/resources.h"
+#include "gob/hotspots.h"
 #include "gob/scenery.h"
 #include "gob/inter.h"
 #include "gob/sound/sound.h"
@@ -58,7 +59,6 @@ void Draw_v1::blitCursor() {
 }
 
 void Draw_v1::animateCursor(int16 cursor) {
-	Game::Collision *ptr;
 	int16 cursorIndex = cursor;
 	int16 newX = 0, newY = 0;
 	uint16 hotspotX = 0, hotspotY = 0;
@@ -66,29 +66,10 @@ void Draw_v1::animateCursor(int16 cursor) {
 	_showCursor = 2;
 
 	if (cursorIndex == -1) {
-		cursorIndex = 0;
-		for (ptr = _vm->_game->_collisionAreas; ptr->left != 0xFFFF; ptr++) {
-			if (ptr->flags & 0xFFF0)
-				continue;
+		cursorIndex =
+			_vm->_game->_hotspots->findCursor(_vm->_global->_inter_mouseX,
+			                                  _vm->_global->_inter_mouseY);
 
-			if (ptr->left > _vm->_global->_inter_mouseX)
-				continue;
-
-			if (ptr->right < _vm->_global->_inter_mouseX)
-				continue;
-
-			if (ptr->top > _vm->_global->_inter_mouseY)
-				continue;
-
-			if (ptr->bottom < _vm->_global->_inter_mouseY)
-				continue;
-
-			if ((ptr->flags & 0xF) < 3)
-				cursorIndex = 1;
-			else
-				cursorIndex = 3;
-			break;
-		}
 		if (_cursorAnimLow[cursorIndex] == -1)
 			cursorIndex = 1;
 	}
@@ -317,7 +298,7 @@ void Draw_v1::printTotText(int16 id) {
 	_renderFlags = savedFlags;
 
 	if (_renderFlags & RENDERFLAG_COLLISIONS)
-		_vm->_game->checkCollisions(0, 0, 0, 0);
+		_vm->_game->_hotspots->check(0, 0);
 
 	if ((_renderFlags & RENDERFLAG_CAPTUREPOP) && *_vm->_scenery->_pCaptureCounter != 0) {
 		(*_vm->_scenery->_pCaptureCounter)--;

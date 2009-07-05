@@ -35,6 +35,7 @@
 #include "gob/game.h"
 #include "gob/expression.h"
 #include "gob/script.h"
+#include "gob/hotspots.h"
 #include "gob/scenery.h"
 #include "gob/sound/sound.h"
 
@@ -334,7 +335,7 @@ void Inter::callSub(int16 retFlag) {
 		if (block == 1)
 			funcBlock(retFlag);
 		else if (block == 2)
-			_vm->_game->collisionsBlock();
+			_vm->_game->_hotspots->evaluate();
 		else
 			error("Unknown block type %d in Inter::callSub()", block);
 	}

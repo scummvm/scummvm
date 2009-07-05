@@ -39,6 +39,7 @@
 #include "gob/expression.h"
 #include "gob/script.h"
 #include "gob/resources.h"
+#include "gob/hotspots.h"
 #include "gob/goblin.h"
 #include "gob/map.h"
 #include "gob/mult.h"
@@ -1177,66 +1178,48 @@ bool Inter_v2::o2_animPalInit(OpFuncParams &params) {
 }
 
 bool Inter_v2::o2_addCollision(OpFuncParams &params) {
-	int16 id;
-	int16 left, top, width, height;
-	int16 flags;
-	int16 key;
-	int16 funcSub;
-
-	id = _vm->_game->_script->readValExpr();
-	funcSub = _vm->_game->_script->pos();
-	left = _vm->_game->_script->readValExpr();
-	top = _vm->_game->_script->readValExpr();
-	width = _vm->_game->_script->readValExpr();
-	height = _vm->_game->_script->readValExpr();
-	flags = _vm->_game->_script->readValExpr();
-	key = _vm->_game->_script->readInt16();
+	int16 id       = _vm->_game->_script->readValExpr();
+	uint16 funcPos = _vm->_game->_script->pos();
+	int16 left     = _vm->_game->_script->readValExpr();
+	int16 top      = _vm->_game->_script->readValExpr();
+	uint16 width   = _vm->_game->_script->readValExpr();
+	uint16 height  = _vm->_game->_script->readValExpr();
+	uint16 flags   = _vm->_game->_script->readValExpr();
+	uint16 key     = _vm->_game->_script->readInt16();
 
 	if (key == 0)
 		key = ABS(id) + 41960;
 
-	_vm->_draw->adjustCoords(0, &left, &top);
-	_vm->_draw->adjustCoords(2, &width, &height);
-
 	if (left < 0) {
 		width += left;
-		left = 0;
+		left   = 0;
 	}
 
 	if (top < 0) {
 		height += top;
-		top = 0;
+		top     = 0;
 	}
 
 	int16 index;
 	if (id < 0)
-		index = _vm->_game->addNewCollision(0xD000 - id, left & 0xFFFC, top & 0xFFFC,
-				left + width + 3, top + height + 3, flags, key, 0, 0);
+		index = _vm->_game->_hotspots->add(0xD000 - id, left & 0xFFFC, top & 0xFFFC,
+				left + width + 3, top + height + 3, flags, key, 0, 0, funcPos);
 	else
-		index = _vm->_game->addNewCollision(0xE000 + id, left, top,
-				left + width - 1, top + height - 1, flags, key, 0, 0);
-
-	_vm->_game->_collisionAreas[index].funcSub = funcSub;
+		index = _vm->_game->_hotspots->add(0xE000 + id, left, top,
+				left + width - 1, top + height - 1, flags, key, 0, 0, funcPos);
 
 	return false;
 }
 
 bool Inter_v2::o2_freeCollision(OpFuncParams &params) {
-	int16 id;
+	int16 id = _vm->_game->_script->readValExpr();
 
-	id = _vm->_game->_script->readValExpr();
-	if (id == -2) {
-		for (int i = 0; i < 150; i++) {
-			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xD000)
-				_vm->_game->_collisionAreas[i].left = 0xFFFF;
-		}
-	} else if (id == -1) {
-		for (int i = 0; i < 150; i++) {
-			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xE000)
-				_vm->_game->_collisionAreas[i].left = 0xFFFF;
-		}
-	} else
-		_vm->_game->freeCollision(0xE000 + id);
+	if (id == -2)
+		_vm->_game->_hotspots->removeState(0xD000);
+	else if (id == -1)
+		_vm->_game->_hotspots->removeState(0xE000);
+	else
+		_vm->_game->_hotspots->remove(0xE000 + id);
 
 	return false;
 }

@@ -36,6 +36,7 @@
 #include "gob/expression.h"
 #include "gob/script.h"
 #include "gob/resources.h"
+#include "gob/hotspots.h"
 #include "gob/draw.h"
 #include "gob/sound/sound.h"
 #include "gob/videoplayer.h"
@@ -359,29 +360,23 @@ bool Inter_v6::o6_freeCollision(OpFuncParams &params) {
 
 	switch (id + 5) {
 	case 0:
-		_vm->_game->pushCollisions(1);
+		_vm->_game->_hotspots->push(1);
 		break;
 	case 1:
-		_vm->_game->popCollisions();
+		_vm->_game->_hotspots->pop();
 		break;
 	case 2:
-		_vm->_game->pushCollisions(2);
+		_vm->_game->_hotspots->push(2);
 		break;
 	case 3:
-		for (int i = 0; i < 150; i++) {
-			if (((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xD000) ||
-					((_vm->_game->_collisionAreas[i].id & 0xF000) == 0x4000))
-				_vm->_game->_collisionAreas[i].left = 0xFFFF;
-		}
+		_vm->_game->_hotspots->removeState(0xD000);
+		_vm->_game->_hotspots->removeState(0x4000);
 		break;
 	case 4:
-		for (int i = 0; i < 150; i++) {
-			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xE000)
-				_vm->_game->_collisionAreas[i].left = 0xFFFF;
-		}
+		_vm->_game->_hotspots->removeState(0xE000);
 		break;
 	default:
-		_vm->_game->freeCollision(0xE000 + id);
+		_vm->_game->_hotspots->remove(0xE000 + id);
 		break;
 	}
 

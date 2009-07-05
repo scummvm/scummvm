@@ -22,7 +22,7 @@ MODULE_OBJS := \
 	goblin_v2.o \
 	goblin_v3.o \
 	goblin_v4.o \
-	videoplayer.o \
+	hotspots.o \
 	init.o \
 	init_v1.o \
 	init_v2.o \
@@ -56,6 +56,7 @@ MODULE_OBJS := \
 	video_v1.o \
 	video_v2.o \
 	video_v6.o \
+	videoplayer.o \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \

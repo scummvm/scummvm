@@ -37,6 +37,7 @@
 #include "gob/expression.h"
 #include "gob/script.h"
 #include "gob/resources.h"
+#include "gob/hotspots.h"
 #include "gob/goblin.h"
 #include "gob/inter.h"
 #include "gob/map.h"
@@ -1173,7 +1174,7 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	case 0:
 		_vm->_draw->_showCursor &= ~2;
 		_vm->_util->longDelay(1);
-		key = _vm->_game->checkCollisions(0, 0, 0, 0);
+		key = _vm->_game->_hotspots->check(0, 0);
 		storeKey(key);
 
 		_vm->_util->clearKeyBuf();
