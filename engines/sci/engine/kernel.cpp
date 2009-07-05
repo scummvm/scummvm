@@ -365,6 +365,9 @@ Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
 	// SCI0 games using old graphics functions (before version 0.000.502) did not have a
 	// curAngle selector
 	_oldGfxFunctions = (_selectorMap.curAngle == -1 && _resmgr->_sciVersion == SCI_VERSION_0);
+
+	// SCI1 games which use absolute lofs have the egoMoveSpeed selector
+	_hasLofsAbsolute = (_selectorMap.egoMoveSpeed != -1 && _resmgr->_sciVersion < SCI_VERSION_1_1);
 }
 
 Kernel::~Kernel() {

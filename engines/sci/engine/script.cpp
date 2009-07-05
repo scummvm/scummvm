@@ -205,6 +205,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(curAngle);
 	FIND_SELECTOR(sightAngle);
 	FIND_SELECTOR(setVol);
+	FIND_SELECTOR(egoMoveSpeed);
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {

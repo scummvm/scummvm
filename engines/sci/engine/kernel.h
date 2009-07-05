@@ -92,6 +92,13 @@ public:
 	 */
 	bool usesOldGfxFunctions() const { return _oldGfxFunctions; }
 
+	/**
+	 * Applies to all SCI1 versions after 1.000.200
+	 * In late SCI1 versions, the argument of lofs[as] instructions
+	 * is absolute rather than relative.
+	 */
+	bool hasLofsAbsolute() const { return _hasLofsAbsolute; }
+
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
 	void dumpScriptObject(char *data, int seeker, int objsize);
@@ -140,6 +147,7 @@ private:
 
 	ResourceManager *_resmgr;
 	bool _oldGfxFunctions;
+	bool _hasLofsAbsolute;
 
 	// Kernel-related lists
 	/**

@@ -104,13 +104,7 @@ enum SciGameFlags {
 	/*
 	 * Used to distinguish SCI1 EGA games
 	 */
-	GF_SCI1_EGA				= (1 << 2),
-
-	/* Applies to all SCI1 versions after 1.000.200
-     * In late SCI1 versions, the argument of lofs[as] instructions
-	 * is absolute rather than relative.
-	 */
-	GF_SCI1_LOFSABSOLUTE	= (1 << 3)
+	GF_SCI1_EGA				= (1 << 2)
 };
 
 class SciEngine : public Engine {
