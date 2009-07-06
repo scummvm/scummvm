@@ -30,7 +30,7 @@ Audio::MaxTrax *loadMtmxfile(const char *mdatName, const char *smplName) {
 
 	Audio::MaxTrax *mxtxPlay = new Audio::MaxTrax(44100, true);
 
-	if (!strcmp(mdatName, smplName)) {	
+	if (strcmp(mdatName, smplName)) {	
 		SeekableReadStream *sampleIn = sampleNode.createReadStream();
 		if (0 == sampleIn) {
 			debug("Couldnt load file %s", smplName);
@@ -73,6 +73,11 @@ void modcmdmain(const int argc, const char *const argv[]) {
 			if (i + 1 < argc) {
 				param = atoi(argv[++i]);
 				debug( "play Song %02X", param);
+
+				player->doSong(0);
+
+				//player->noteOn(player->_channelCtx[0], 43, 64, 0);
+
 				
 				hasCmd = true;
 			}
@@ -83,6 +88,7 @@ void modcmdmain(const int argc, const char *const argv[]) {
 	}
 
 	if (!hasCmd) {
+
 	}
 
 	int maxsecs = 10 * 60;
