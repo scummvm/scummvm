@@ -128,14 +128,14 @@ void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 
 	_videoLockOut |= 0x8000;
 
-	dst = getBackGround() + _dxSurfacePitch * window->y + window->x;
+	dst = getBackGround() + _backGroundBuf->pitch * window->y + window->x;
 
 	for (h = 0; h < window->height; h++) {
 		for (w = 0; w < window->width; w++) {
 			if (dst[w] == 113 || dst[w] == 116 || dst[w] == 252)
 				dst[w] = window->fillColor;
 		}
-		dst += _screenWidth;
+		dst += _backGroundBuf->pitch;
 	}
 
 	_videoLockOut &= ~0x8000;
@@ -171,7 +171,7 @@ void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, u
 	_videoLockOut |= 0x8000;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	byte *dst = (byte *)screen->pixels + y * _screenWidth + x;
+	byte *dst = (byte *)screen->pixels + y * screen->pitch + x;
 
 	uint8 color = window->fillColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
@@ -179,7 +179,7 @@ void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, u
 
 	do {
 		memset(dst, color, w);
-		dst += _screenWidth;
+		dst += screen->pitch;
 	} while (--h);
 
 	_system->unlockScreen();
@@ -236,8 +236,8 @@ void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	dst = (byte *)screen->pixels;
 	src = getBackGround();
 
-	dst += y * _dxSurfacePitch;
-	src += y * _dxSurfacePitch;
+	dst += y * screen->pitch;
+	src += y * _backGroundBuf->pitch;
 
 	uint8 paletteMod = 0;
 	if (getGameType() == GType_ELVIRA1 && !(getFeatures() & GF_DEMO) && y >= 133)
@@ -247,8 +247,8 @@ void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 		for (i = x; i < w; i++)
 			dst[i] = src[i] + paletteMod;
 		y++;
-		dst += _dxSurfacePitch;
-		src += _dxSurfacePitch;
+		dst += screen->pitch;
+		src += _backGroundBuf->pitch;
 	}
 
 	_system->unlockScreen();

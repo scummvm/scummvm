@@ -272,13 +272,13 @@ void AGOSEngine_Feeble::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scro
 	byte *src = getScaleBuf();
 	byte *dst = getBackBuf();
 
-	dst += _dxSurfacePitch * dstRect.top + dstRect.left;
+	dst += dstRect.top * _backBuf->pitch + dstRect.left;
 
 	for (int dstY = 0; dstY < scaledH; dstY++) {
 		if (dstRect.top + dstY >= 0 && dstRect.top + dstY < _screenHeight) {
 			int srcY = (dstY * h) / scaledH;
-			byte *srcPtr = src + _dxSurfacePitch * srcY;
-			byte *dstPtr = dst + _dxSurfacePitch * dstY;
+			byte *srcPtr = src + _scaleBuf->pitch * srcY;
+			byte *dstPtr = dst + _backBuf->pitch * dstY;
 			for (int dstX = 0; dstX < scaledW; dstX++) {
 				if (dstRect.left + dstX >= 0 && dstRect.left + dstX < _screenWidth) {
 					int srcX = (dstX * w) / scaledW;
@@ -292,12 +292,12 @@ void AGOSEngine_Feeble::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scro
 
 void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 	state->surf_addr = getBackBuf();
-	state->surf_pitch = _dxSurfacePitch;
+	state->surf_pitch = _backBuf->pitch;
 
 	if (state->flags & kDFCompressed) {
 		if (state->flags & kDFScaled) {
 			state->surf_addr = getScaleBuf();
-			state->surf_pitch = _dxSurfacePitch;
+			state->surf_pitch = _scaleBuf->pitch;
 
 			uint w, h;
 			byte *src, *dst, *dstPtr;
@@ -314,7 +314,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 				h = 0;
 				do {
 					*dst = *src;
-					dst += _screenWidth;
+					dst += state->surf_pitch;
 					src++;
 				} while (++h != state->draw_height);
 				dstPtr++;
@@ -330,7 +330,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 			}
 		} else if (state->flags & kDFOverlayed) {
 			state->surf_addr = getScaleBuf();
-			state->surf_pitch = _dxSurfacePitch;
+			state->surf_pitch = _scaleBuf->pitch;
 			state->surf_addr += (state->x + _scrollX) + (state->y + _scrollY) * state->surf_pitch;
 
 			uint w, h;
@@ -352,7 +352,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 					color = *src;
 					if (color != 0)
 						*dst = color;
-					dst += _screenWidth;
+					dst += state->surf_pitch;
 					src++;
 				} while (++h != state->draw_height);
 				dstPtr++;
@@ -406,7 +406,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 						color = *src;
 						if (color)
 							*dst = color;
-						dst += _screenWidth;
+						dst += state->surf_pitch;
 						src++;
 					} while (++h != state->draw_height);
 					dstPtr++;
@@ -425,7 +425,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 						color = *src;
 						if ((state->flags & kDFNonTrans) || color != 0)
 							*dst = color;
-						dst += _screenWidth;
+						dst += state->surf_pitch;
 						src++;
 					} while (++h != state->draw_height);
 					dstPtr++;
@@ -456,7 +456,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 					dst[count] = color;
 				}
 			}
-			dst += _screenWidth;
+			dst += state->surf_pitch;
 			src += state->width;
 		} while (--state->draw_height);
 	}
@@ -557,8 +557,8 @@ void AGOSEngine_Simon1::drawMaskedImage(VC10_state *state) {
 						dst[count * 2 + 1] = src[count * 2 + 1];
 				}
 			}
-			src += _screenWidth;
-			dst += _screenWidth;
+			src += state->surf2_pitch;
+			dst += state->surf_pitch;
 			mask += state->width * 8;
 		} while (--state->draw_height);
 	}
@@ -615,7 +615,7 @@ void AGOSEngine_Simon1::draw32ColorImage(VC10_state *state) {
 				dst += 8;
 				src += 5;
 			} while (--count);
-			dstPtr += _screenWidth;
+			dstPtr += state->surf_pitch;
 		} while (--state->draw_height);
 	} else {
 		src = state->srcPtr + (state->width * state->y_skip * 16) + (state->x_skip * 8);
@@ -628,7 +628,7 @@ void AGOSEngine_Simon1::draw32ColorImage(VC10_state *state) {
 			for (i = 0; i != state->draw_width; i++)
 				if ((state->flags & kDFNonTrans) || src[i])
 					dst[i] = src[i] + state->paletteMod;
-			dst += _screenWidth;
+			dst += state->surf_pitch;
 			src += state->width * 16;
 		} while (--h);
 	}
@@ -648,10 +648,10 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 	uint16 xoffs, yoffs;
 	if (getGameType() == GType_SIMON2) {
 		state->surf2_addr = getBackGround();
-		state->surf2_pitch = _screenWidth;
+		state->surf2_pitch = _backGroundBuf->pitch;
 
-		state->surf_addr = _window4BackScn;
-		state->surf_pitch = _screenWidth;
+		state->surf_addr = (byte *)_window4BackScn->pixels;
+		state->surf_pitch = _window4BackScn->pitch;
 
 		xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
 		yoffs = (vlut[1] - _videoWindows[17] + state->y);
@@ -665,9 +665,9 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 		// The DOS Floppy demo was based off Waxworks engine
 		if (_windowNum == 4 || (_windowNum >= 10 && _windowNum <= 27)) {
 			state->surf2_addr = getBackGround();
-			state->surf2_pitch = _screenWidth;
+			state->surf2_pitch = _backGroundBuf->pitch;
 
-			state->surf_addr = _window4BackScn;
+			state->surf_addr = (byte *)_window4BackScn;
 			state->surf_pitch = _videoWindows[18] * 16;
 
 			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
@@ -680,7 +680,7 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 			_window4Flag = 1;
 		} else {
 			state->surf_addr = (byte *)screen->pixels;
-			state->surf_pitch = _screenWidth;
+			state->surf_pitch = screen->pitch;
 
 			xoffs = (vlut[0] * 2 + state->x) * 8;
 			yoffs = vlut[1] + state->y;
@@ -689,16 +689,16 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 		if (_windowNum == 3 || _windowNum == 4 || _windowNum >= 10) {
 			if (_window3Flag == 1) {
 				state->surf2_addr = getBackGround();
-				state->surf2_pitch = _screenWidth;
+				state->surf2_pitch = _backGroundBuf->pitch;
 
 				state->surf_addr = getBackGround();
-				state->surf_pitch = _screenWidth;
+				state->surf_pitch = _backGroundBuf->pitch;
 			} else {
 				state->surf2_addr = getBackGround();
-				state->surf2_pitch = _screenWidth;
+				state->surf2_pitch = _backGroundBuf->pitch;
 
-				state->surf_addr = _window4BackScn;
-				state->surf_pitch = _screenWidth;
+				state->surf_addr = (byte *)_window4BackScn->pixels;
+				state->surf_pitch = _window4BackScn->pitch;
 			}
 
 			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
@@ -711,10 +711,10 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 			_window4Flag = 1;
 		} else {
 			state->surf2_addr = getBackGround();
-			state->surf2_pitch = _screenWidth;
+			state->surf2_pitch = _backGroundBuf->pitch;
 
 			state->surf_addr = (byte *)screen->pixels;
-			state->surf_pitch = _screenWidth;
+			state->surf_pitch = screen->pitch;
 
 			xoffs = (vlut[0] * 2 + state->x) * 8;
 			yoffs = vlut[1] + state->y;
@@ -862,7 +862,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 	uint16 xoffs = 0, yoffs = 0;
 	if (getGameType() == GType_WW) {
 		if (_windowNum == 4 || (_windowNum >= 10 && _windowNum <= 27)) {
-			state->surf_addr = _window4BackScn;
+			state->surf_addr = (byte *)_window4BackScn->pixels;
 			state->surf_pitch = _videoWindows[18] * 16;
 
 			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
@@ -875,14 +875,14 @@ void AGOSEngine::drawImage(VC10_state *state) {
 			_window4Flag = 1;
 		} else {
 			state->surf_addr = (byte *)screen->pixels;
-			state->surf_pitch = _screenWidth;
+			state->surf_pitch = screen->pitch;
 
 			xoffs = (vlut[0] * 2 + state->x) * 8;
 			yoffs = vlut[1] + state->y;
 		}
 	} else if (getGameType() == GType_ELVIRA2) {
 		if (_windowNum == 4 || _windowNum >= 10) {
-			state->surf_addr = _window4BackScn;
+			state->surf_addr = (byte *)_window4BackScn->pixels;
 			state->surf_pitch = _videoWindows[18] * 16;
 
 			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
@@ -895,26 +895,26 @@ void AGOSEngine::drawImage(VC10_state *state) {
 			_window4Flag = 1;
 		} else {
 			state->surf_addr = (byte *)screen->pixels;
-			state->surf_pitch = _screenWidth;
+			state->surf_pitch = screen->pitch;
 
 			xoffs = (vlut[0] * 2 + state->x) * 8;
 			yoffs = vlut[1] + state->y;
 		}
 	} else if (getGameType() == GType_ELVIRA1) {
 		if (_windowNum == 6) {
-			state->surf_addr = _window6BackScn;
-			state->surf_pitch = 48;
+			state->surf_addr = (byte *)_window6BackScn->pixels;
+			state->surf_pitch = _window6BackScn->pitch;
 
 			xoffs = state->x * 8;
 			yoffs = state->y;
 		} else if (_windowNum == 2 || _windowNum == 3) {
 			state->surf_addr = (byte *)screen->pixels;
-			state->surf_pitch = _screenWidth;
+			state->surf_pitch = screen->pitch;
 
 			xoffs = (vlut[0] * 2 + state->x) * 8;
 			yoffs = vlut[1] + state->y;
 		} else {
-			state->surf_addr = _window4BackScn;
+			state->surf_addr = (byte *)_window4BackScn->pixels;
 			state->surf_pitch = _videoWindows[18] * 16;
 
 			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
@@ -928,7 +928,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 		}
 	} else {
 		state->surf_addr = (byte *)screen->pixels;
-		state->surf_pitch = _screenWidth;
+		state->surf_pitch = screen->pitch;
 
 		xoffs = (vlut[0] * 2 + state->x) * 8;
 		yoffs = vlut[1] + state->y;
@@ -957,7 +957,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 void AGOSEngine::horizontalScroll(VC10_state *state) {
 	const byte *src;
 	byte *dst;
-	int w;
+	int dstPitch, w;
 
 	if (getGameType() == GType_FF)
 		_scrollXMax = state->width - 640;
@@ -974,9 +974,11 @@ void AGOSEngine::horizontalScroll(VC10_state *state) {
 	vcWriteVar(251, _scrollX);
 
 	if (getGameType() == GType_SIMON2) {
-		dst = _window4BackScn;
+		dst = (byte *)_window4BackScn->pixels;
+		dstPitch = _window4BackScn->pitch;
 	} else {
 		dst = getBackBuf();
+		dstPitch = _backBuf->pitch;
 	}
 
 	if (getGameType() == GType_FF)
@@ -985,7 +987,7 @@ void AGOSEngine::horizontalScroll(VC10_state *state) {
 		src = state->srcPtr + _scrollX * 4;
 
 	for (w = 0; w < _screenWidth; w += 8) {
-		decodeColumn(dst, src + readUint32Wrapper(src), state->height, _dxSurfacePitch);
+		decodeColumn(dst, src + readUint32Wrapper(src), state->height, dstPitch);
 		dst += 8;
 		src += 4;
 	}
@@ -1015,7 +1017,7 @@ void AGOSEngine::verticalScroll(VC10_state *state) {
 	src = state->srcPtr + _scrollY / 2;
 
 	for (h = 0; h < _screenHeight; h += 8) {
-		decodeRow(dst, src + READ_LE_UINT32(src), state->width, _dxSurfacePitch);
+		decodeRow(dst, src + READ_LE_UINT32(src), state->width, _backBuf->pitch);
 		dst += 8 * state->width;
 		src += 4;
 	}
@@ -1366,21 +1368,21 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 		uint height = _videoWindows[updateWindow * 4 + 3];
 
 		Graphics::Surface *screen = _system->lockScreen();
-		byte *dst = getBackGround() + xoffs + yoffs * _screenWidth;
+		byte *dst = (byte *)_backGroundBuf->getBasePtr(xoffs, yoffs);
 		byte *src = 0;
 		uint srcWidth = 0;
 
 		if (getGameType() == GType_SIMON2) {
-			src = _window4BackScn + xoffs + yoffs * 320;
+			src = (byte *)_window4BackScn->getBasePtr(xoffs, yoffs);
 			srcWidth = 320;
 		} else if (getGameType() == GType_SIMON1 && (getFeatures() & GF_DEMO)) {
 			// The DOS Floppy demo was based off Waxworks engine
 			if (updateWindow == 4 || updateWindow >= 10) {
-				src = _window4BackScn;
+				src = (byte *)_window4BackScn->pixels;
 				srcWidth = _videoWindows[18] * 16;
 			} else if (updateWindow == 3 || updateWindow == 9) {
-				src = (byte *)screen->pixels + xoffs + yoffs * _screenWidth;
-				srcWidth = _screenWidth;
+				src = (byte *)screen->pixels + yoffs * screen->pitch + xoffs;
+				srcWidth = screen->pitch;
 			} else {
 				_system->unlockScreen();
 				_videoLockOut &= ~0x20;
@@ -1388,14 +1390,14 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 			}
 		} else if (getGameType() == GType_SIMON1) {
 			if (updateWindow == 4) {
-				src = _window4BackScn;
+				src = (byte *)_window4BackScn->pixels;
 				srcWidth = _videoWindows[18] * 16;
 			} else if (updateWindow >= 10) {
-				src = _window4BackScn + xoffs + yoffs * 320;
+				src = (byte *)_window4BackScn->pixels + xoffs + yoffs * 320;
 				srcWidth = _videoWindows[18] * 16;
 			} else if (updateWindow == 0) {
-				src = (byte *)screen->pixels + xoffs + yoffs * _screenWidth;
-				srcWidth = _screenWidth;
+				src = (byte *)screen->pixels + yoffs * screen->pitch + xoffs;
+				srcWidth = screen->pitch;
 			} else {
 				_system->unlockScreen();
 				_videoLockOut &= ~0x20;
@@ -1403,11 +1405,11 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 			}
 		} else if (getGameType() == GType_WW) {
 			if (updateWindow == 4 || updateWindow >= 10) {
-				src = _window4BackScn;
+				src = (byte *)_window4BackScn->pixels;
 				srcWidth = _videoWindows[18] * 16;
 			} else if (updateWindow == 3 || updateWindow == 9) {
-				src = (byte *)screen->pixels + xoffs + yoffs * _screenWidth;
-				srcWidth = _screenWidth;
+				src = (byte *)screen->pixels + yoffs * screen->pitch + xoffs;
+				srcWidth = screen->pitch;
 			} else {
 				_system->unlockScreen();
 				_videoLockOut &= ~0x20;
@@ -1415,11 +1417,11 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 			}
 		} else if (getGameType() == GType_ELVIRA2) {
 			if (updateWindow == 4 || updateWindow >= 10) {
-				src = _window4BackScn;
+				src = (byte *)_window4BackScn->pixels;
 				srcWidth = _videoWindows[18] * 16;
 			} else if (updateWindow == 3) {
-				src = (byte *)screen->pixels + xoffs + yoffs * _screenWidth;
-				srcWidth = _screenWidth;
+				src = (byte *)screen->pixels + yoffs * screen->pitch + xoffs;
+				srcWidth = screen->pitch;
 			} else {
 				_system->unlockScreen();
 				_videoLockOut &= ~0x20;
@@ -1428,25 +1430,25 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 		} else if (getGameType() == GType_ELVIRA1) {
 			if (updateWindow == 6) {
 				_window6Flag = 1;
-				src = _window6BackScn;
+				src = (byte *)_window6BackScn->pixels;
 				srcWidth = 48;
 			} else if (updateWindow == 2 || updateWindow == 3) {
-				src = (byte *)screen->pixels + xoffs + yoffs * _screenWidth;
-				srcWidth = _screenWidth;
+				src = (byte *)screen->pixels + yoffs * screen->pitch + xoffs;
+				srcWidth = screen->pitch;
 			} else {
-				src = _window4BackScn;
+				src = (byte *)_window4BackScn->pixels;
 				srcWidth = _videoWindows[18] * 16;
 			}
 		} else {
-			src = (byte *)screen->pixels + xoffs + yoffs * _screenWidth;
-			srcWidth = _screenWidth;
+			src = (byte *)screen->pixels + yoffs * screen->pitch + xoffs;
+			srcWidth = screen->pitch;
 		}
 
 		_boxStarHeight = height;
 
 		for (; height > 0; height--) {
 			memcpy(dst, src, width);
-			dst += _screenWidth;
+			dst += _backGroundBuf->pitch;
 			src += srcWidth;
 		}
 
@@ -1455,15 +1457,15 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 			dst = (byte *)screen->pixels + 48;
 			memset(dst, color, 224);
 
-			dst = (byte *)screen->pixels + 132 * _screenWidth + 48;
+			dst = (byte *)screen->pixels + 132 * screen->pitch + 48;
 			memset(dst, color, 224);
 		} else if (getGameType() == GType_ELVIRA1 && updateWindow == 3 && _bottomPalette) {
-			dst = (byte *)screen->pixels + 133 * _screenWidth;
-			int size = 67 * _screenWidth;
+			dst = (byte *)screen->pixels + 133 * screen->pitch;
 
-			while (size--) {
-				*dst += 0x10;
-				dst++;
+			for (int h = 0; h < 67; h++) {
+				for (int w = 0; w < _screenWidth; w++)
+					dst[w] += 0x10;
+				dst += screen->pitch;
 			}
 		}
 
@@ -1480,16 +1482,16 @@ void AGOSEngine::drawEdging() {
 
 	Graphics::Surface *screen = _system->lockScreen();
 
-	dst = (byte *)screen->pixels + 136 * _screenWidth;
+	dst = (byte *)screen->pixels + 136 * screen->pitch;
 	uint8 len = 52;
 
 	while (len--) {
 		dst[0] = color;
 		dst[319] = color;
-		dst += _screenWidth;
+		dst += screen->pitch;
 	}
 
-	dst = (byte *)screen->pixels + 187 * _screenWidth;
+	dst = (byte *)screen->pixels + 187 * screen->pitch;
 	memset(dst, color, _screenWidth);
 
 	_system->unlockScreen();

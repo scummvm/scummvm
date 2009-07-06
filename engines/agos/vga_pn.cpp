@@ -168,7 +168,7 @@ void AGOSEngine::vc48_specialEffect() {
 					if (dst[w] == 15)
 						dst[w] = 4;
 				}
-				dst += _screenWidth;
+				dst += screen->pitch;
 			}
 			_system->unlockScreen();
 		} else if (num == 2) {

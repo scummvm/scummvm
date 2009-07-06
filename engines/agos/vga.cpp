@@ -1182,11 +1182,12 @@ void AGOSEngine::vc31_setWindow() {
 void AGOSEngine::vc32_saveScreen() {
 	if (getGameType() == GType_PN) {
 		Graphics::Surface *screen = _system->lockScreen();
-
 		byte *dst = getBackGround();
 		byte *src = (byte *)screen->pixels;
-		memcpy(dst, src, 64000);
-
+		for (int i = 0; i < _screenHeight; i++) {
+			memcpy(dst, src, _screenWidth);
+			dst += screen->pitch;
+		}
 		_system->unlockScreen();
 	} else {
 		uint16 xoffs = _videoWindows[4 * 4 + 0] * 16;
@@ -1194,12 +1195,12 @@ void AGOSEngine::vc32_saveScreen() {
 		uint16 width = _videoWindows[4 * 4 + 2] * 16;
 		uint16 height = _videoWindows[4 * 4 + 3];
 
-		byte *dst = getBackGround() + xoffs + yoffs * _screenWidth;
-		byte *src = _window4BackScn;
+		byte *dst = (byte *)_backGroundBuf->getBasePtr(xoffs, yoffs);
+		byte *src = (byte *)_window4BackScn->pixels;;
 		uint16 srcWidth = _videoWindows[4 * 4 + 2] * 16;
 		for (; height > 0; height--) {
 			memcpy(dst, src, width);
-			dst += _screenWidth;
+			dst += _backGroundBuf->pitch;
 			src += srcWidth;
 		}
 	}
@@ -1228,11 +1229,11 @@ void AGOSEngine::vc34_setMouseOff() {
 
 void AGOSEngine::clearVideoBackGround(uint16 num, uint16 color) {
 	const uint16 *vlut = &_videoWindows[num * 4];
-	byte *dst = getBackGround() + vlut[0] * 16 + vlut[1] * _dxSurfacePitch;
+	byte *dst = (byte *)_backGroundBuf->getBasePtr(vlut[0] * 16, vlut[1]);
 
 	for (uint h = 0; h < vlut[3]; h++) {
 		memset(dst, color, vlut[2] * 16);
-		dst += _screenWidth;
+		dst += _backGroundBuf->pitch;
 	}
 }
 
@@ -1250,14 +1251,18 @@ void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {
 
 	if (getGameType() == GType_ELVIRA1 && num == 3) {
 		Graphics::Surface *screen = _system->lockScreen();
-		memset((byte *)screen->pixels, color, _screenWidth * _screenHeight);
+		byte *dst = (byte *)screen->pixels;
+		for (int i = 0; i < _screenHeight; i++) {
+			memset(dst, color, _screenWidth);
+			dst += screen->pitch;
+		}
 		 _system->unlockScreen();
 	} else if (num == 4) {
 		const uint16 *vlut = &_videoWindows[num * 4];
 		uint16 xoffs = (vlut[0] - _videoWindows[16]) * 16;
 		uint16 yoffs = (vlut[1] - _videoWindows[17]);
 		uint16 dstWidth = _videoWindows[18] * 16;
-		byte *dst = _window4BackScn + xoffs + yoffs * dstWidth;
+		byte *dst = (byte *)_window4BackScn->pixels + xoffs + yoffs * dstWidth;
 
 		setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
 

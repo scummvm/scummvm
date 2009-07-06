@@ -276,8 +276,6 @@ protected:
 
 	Subroutine *_subroutineList;
 
-	uint16 _dxSurfacePitch;
-
 	uint8 _recursionDepth;
 
 	uint32 _lastVgaTick;
@@ -527,8 +525,6 @@ protected:
 	uint8 _window3Flag;
 	uint8 _window4Flag;
 	uint8 _window6Flag;
-	byte *_window4BackScn;
-	byte *_window6BackScn;
 
 	uint16 _moveXMin, _moveYMin;
 	uint16 _moveXMax, _moveYMax;
@@ -566,9 +562,11 @@ protected:
 	byte _saveLoadType, _saveLoadSlot;
 	char _saveLoadName[108];
 
-	byte *_backGroundBuf;
-	byte *_backBuf;
-	byte *_scaleBuf;
+	Graphics::Surface *_backGroundBuf;
+	Graphics::Surface *_backBuf;
+	Graphics::Surface *_scaleBuf;
+	Graphics::Surface *_window4BackScn;
+	Graphics::Surface *_window6BackScn;
 
 	Common::RandomSource _rnd;
 
