@@ -1508,7 +1508,7 @@ static sci_event_t scummvm_get_event(GfxDriver *drv) {
 }
 
 sci_event_t gfxop_get_event(GfxState *state, unsigned int mask) {
-	sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
+	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
 	sci_event_t event = { 0, 0, 0, 0 };
 
 	_gfxop_full_pointer_refresh(state);
