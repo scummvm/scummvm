@@ -91,6 +91,7 @@ struct Room {
 	double _pers0, _persStep;
 	byte _escRoom;
 	byte _numGates;
+	GPL2Program _program;
 };
 
 class Game {
@@ -102,6 +103,8 @@ public:
 	void init();
 
 	void changeRoom(uint roomNum);
+
+	int getRoomNum();
 
 	void loadRoom(uint roomNum);
 	int loadAnimation(uint animNum);
@@ -118,7 +121,7 @@ private:
 	uint16 *_dialogOffsets;
 	int16 *_variables;
 	byte *_itemStatus;
-	GameObject *_objects;	
+	GameObject *_objects;
 	Room _currentRoom;	
 };
 

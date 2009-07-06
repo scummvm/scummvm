@@ -121,10 +121,10 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		byte tmp = objStatus.readByte();
 
 		// Set object visibility
-		_objects[i]._visible = tmp & 1;
+		_objects[i]._visible = tmp & (1 << 7);
 
 		// Set object location
-		_objects[i]._location = tmp & ~1;
+		_objects[i]._location = (~(1 << 7) & tmp) - 1;
  	}
 
 	assert(numDialogs == _info->_numDialogs);
@@ -171,6 +171,32 @@ void Game::loadRoom(uint roomNum) {
 	roomReader.read(&_currentRoom._persStep, 12);
 	_currentRoom._escRoom = roomReader.readByte() - 1;
 	_currentRoom._numGates = roomReader.readByte();
+
+	for (uint i = 0; i < _info->_numObjects; ++i) {
+		debugC(1, kDraciLogicDebugLevel, 
+			"Checking if object %d (%d) is at the current location (%d)", i,
+			_objects[i]._location, roomNum);
+
+		if (_objects[i]._location == roomNum) {
+			debugC(1, kDraciLogicDebugLevel, "Loading object %d from room %d", i, roomNum);
+			loadObject(i);
+		}
+	}
+	
+	// We can't do this in the above loop because some objects' scripts reference
+	// other objects that may not yet be loaded
+	for (uint i = 0; i < _info->_numObjects; ++i) {
+		if (_objects[i]._location == roomNum) {
+			_vm->_script->run(getObject(i)->_program, getObject(i)->_init);
+		}
+	}
+
+	f = _vm->_roomsArchive->getFile(roomNum * 4 + 3);
+	_currentRoom._program._bytecode = new byte[f->_length];
+	_currentRoom._program._length = f->_length;
+	memcpy(_currentRoom._program._bytecode, f->_data, f->_length);
+
+	_vm->_script->run(_currentRoom._program, _currentRoom._init);
 
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
@@ -295,7 +321,13 @@ void Game::loadOverlays() {
 void Game::changeRoom(uint roomNum) {
 	_currentRoom._roomNum = roomNum;
 	loadRoom(roomNum);
-	loadOverlays();	
+	loadOverlays();
+
+	_vm->_script->run(_currentRoom._program, _currentRoom._init);
+}
+
+int Game::getRoomNum() {
+	return _currentRoom._roomNum;
 }
 
 Game::~Game() {
