@@ -66,6 +66,7 @@ public:
 	Hotspots(GobEngine *vm);
 	~Hotspots();
 
+	/** Remove all hotspots. */
 	void clear();
 
 	/** Add a hotspot, returning the new index. */
@@ -74,7 +75,9 @@ public:
 			uint16 flags, uint16 key,
 			uint16 funcEnter, uint16 funcLeave, uint16 funcPos);
 
+	/** Remove a specific hotspot. */
 	void remove(uint16 id);
+	/** Remove all hotspots in this state. */
 	void removeState(uint8 state);
 
 	/** Push the current hotspots onto the stack.
@@ -86,11 +89,15 @@ public:
 	/** Pop hotspots from the stack. */
 	void pop();
 
+	/** Check the current hotspot. */
 	uint16 check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index);
+	/** Check the current hotspot. */
 	uint16 check(uint8 handleMouse, int16 delay);
 
+	/** Evaluate hotspot changes. */
 	void evaluate();
 
+	/** Return the cursor found in the hotspot to the coordinates. */
 	int16 findCursor(uint16 x, uint16 y) const;
 
 private:
@@ -123,13 +130,13 @@ private:
 		/** Is this hotspot the block end marker? */
 		bool isEnd() const;
 
-		bool isInput() const;
+		bool isInput()       const;
 		bool isActiveInput() const;
 
-		bool isFilled() const;
+		bool isFilled()        const;
 		bool isFilledEnabled() const;
-		bool isFilledNew() const;
-		bool isDisabled() const;
+		bool isFilledNew()     const;
+		bool isDisabled()      const;
 
 		/** Are the specified coordinates in the hotspot? */
 		bool isIn(uint16 x, uint16 y) const;
@@ -155,6 +162,7 @@ private:
 		uint16 fontIndex;
 		uint16 backColor;
 		uint16 frontColor;
+		uint16 length;
 		const char *str;
 	};
 
@@ -178,6 +186,7 @@ private:
 	 */
 	void recalculate(bool force);
 
+	/** Is this a valid hotspot? */
 	bool isValid(uint16 key, uint16 id, uint16 index) const;
 
 	/** Call a hotspot subroutine. */
@@ -190,32 +199,40 @@ private:
 	/** Which hotspot is the mouse cursor currently at? */
 	uint16 checkMouse(Type type, uint16 &id, uint16 &index) const;
 
-	void checkHotspotChanged();
+	/** Did the current hotspot change in the meantime? */
+	bool checkHotspotChanged();
 
-	uint16 readString(uint16 xPos, uint16 yPos, uint16 width, uint16 height,
+	/** Update events from a specific input. */
+	uint16 updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 height,
 			uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
-			Type type, int16 &duration, uint16 &id, uint16 index);
+			Type type, int16 &duration, uint16 &id, uint16 &index);
 
-	uint16 handleInput(int16 time, uint16 inputCount, uint16 &curInput,
+	/** Handle all inputs we currently manage. */
+	uint16 handleInputs(int16 time, uint16 inputCount, uint16 &curInput,
 			InputDesc *inputs, uint16 &id, uint16 &index);
 
+	/** Evaluate adding new hotspots script commands. */
 	void evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 			uint16 &validId, bool &hasInput, uint16 &inputCount);
 
-	// Finding certain inputs
-	uint16 findInput(uint16 input) const;
+	/** Find the hotspot index that corresponds to the input index. */
+	uint16 inputToHotspot(uint16 input) const;
+	/** Find the input index that corresponds to the hotspot index. */
+	uint16 hotspotToInput(uint16 hotspot) const;
+	/** Find the input that was clicked on. */
 	uint16 findClickedInput(uint16 index) const;
-	uint16 findNthInput(uint16 n) const;
 
 	/** Calculate the graphical cursor position. */
 	void getTextCursorPos(const Video::FontDesc &font, const char *str,
 			uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
 			uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const;
 
-	// Drawing functions
+	/** Fill that rectangle with the color. */
 	void fillRect(uint16 x, uint16 y, uint16 width, uint16 height, uint16 color) const;
+	/** Print the given text. */
 	void printText(uint16 x, uint16 y, const char *str, uint16 fontIndex, uint16 color) const;
 
+	/** Go through all inputs we manage and redraw their texts. */
 	void updateAllTexts(const InputDesc *inputs) const;
 };
 

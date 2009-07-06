@@ -161,12 +161,15 @@ bool Hotspots::Hotspot::buttonMatch(MouseButtons button) const {
 	MouseButtons myButton = getButton();
 
 	if (myButton == kMouseButtonsAny)
+		// Any button allowed
 		return true;
 
 	if (myButton == kMouseButtonsNone)
+		// No button allowed
 		return false;
 
 	if (myButton == button)
+		// Exact match
 		return true;
 
 	return false;
@@ -194,7 +197,9 @@ Hotspots::Hotspots(GobEngine *vm) : _vm(vm) {
 Hotspots::~Hotspots() {
 	delete[] _hotspots;
 
+	// Pop the whole stack and free each element's memory
 	while (!_stack.empty()) {
+
 		StackEntry backup = _stack.pop();
 
 		delete[] backup.hotspots;
@@ -278,9 +283,11 @@ void Hotspots::recalculate(bool force) {
 		Hotspot &spot = _hotspots[i];
 
 		if (!force && ((spot.flags & 0x80) != 0))
+			// Not forcing a special hotspot
 			continue;
 
 		if (spot.funcPos == 0)
+			// Simple coordinates don't need update
 			continue;
 
 		// Setting the needed script
@@ -420,6 +427,7 @@ void Hotspots::pop() {
 		error("Hotspots::pop(): Not enough free space in the current Hotspot "
 		      "array to pop %d elements (got %d)", backup.size, kHotspotCount - i);
 
+	// Copy
 	memcpy(destPtr, backup.hotspots, backup.size * sizeof(Hotspot));
 
 	_shouldPush   = backup.shouldPush;
@@ -474,6 +482,7 @@ void Hotspots::enter(uint16 index) {
 
 	Hotspot &spot = _hotspots[index];
 
+	// If requested, write the ID into a variable
 	if ((spot.getState() == (kStateFilled | kStateType1)) ||
 	    (spot.getState() == (kStateFilled | kStateType2)))
 		WRITE_VAR(17, -(spot.id & 0x0FFF));
@@ -492,6 +501,7 @@ void Hotspots::leave(uint16 index) {
 
 	Hotspot &spot = _hotspots[index];
 
+	// If requested, write the ID into a variable
 	if ((spot.getState() == (kStateFilled | kStateType1)) ||
 	    (spot.getState() == (kStateFilled | kStateType2)))
 		WRITE_VAR(17, spot.id & 0x0FFF);
@@ -504,21 +514,26 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 	id    = 0;
 	index = 0;
 
-	if        (type == kTypeMove) {
+	if (type == kTypeMove) {
+		// Check where the mouse was moved to
 
 		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 			Hotspot &spot = _hotspots[i];
 
 			if (spot.isDisabled())
+				// Only consider enabled hotspots
 				continue;
 
 			if (spot.getType() > kTypeMove)
+				// Only consider click and move hotspots
 				continue;
 
 			if (spot.getWindow() != 0)
+				// Only check the main window
 				continue;
 
 			if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
+				// If we're not in it, ignore it
 				continue;
 
 			id    = spot.id;
@@ -530,35 +545,44 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 		return 0;
 
 	} else if (type == kTypeClick) {
+		// Check if something was clicked
 
 		for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 			Hotspot &spot = _hotspots[i];
 
 			if (spot.isDisabled())
+				// Only consider enabled hotspots
 				continue;
 
 			if (spot.getWindow() != 0)
+				// Only check the main window
 				continue;
 
 			if (spot.getType() < kTypeMove)
+				// Only consider hotspots that can be clicked
 				continue;
 
 			if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
+				// If we're not in it, ignore it
 				continue;
 
 			if (!spot.buttonMatch(_vm->_game->_mouseButtons))
+				// Don't follow hotspots with button requirements we don't meet
 				continue;
 
 			id    = spot.id;
 			index = i;
 
 			if ((spot.getType() == kTypeMove) || (spot.getType() == kTypeClick))
+				// It's a move or click => return the key
 				return spot.key;
 
+			// Otherwise, the key has a different meaning, so ignore it
 			return 0;
 		}
 
 		if (_vm->_game->_mouseButtons != kMouseButtonsLeft)
+			// Let the right mouse button act as an escape key
 			return kKeyEscape;
 
 		return 0;
@@ -568,23 +592,29 @@ uint16 Hotspots::checkMouse(Type type, uint16 &id, uint16 &index) const {
 	return 0;
 }
 
-void Hotspots::checkHotspotChanged() {
+bool Hotspots::checkHotspotChanged() {
 	uint16 key, id, index;
 
+	// Get the current hotspot
 	key = checkMouse(kTypeMove, id, index);
 
 	if (key == _currentKey)
-		return;
+		// Nothing changed => nothing to do
+		return false;
 
-	if (isValid(_currentKey, _currentId, _currentIndex))
+	// Leave the old area
+	if (isValid(_currentKey, _currentId,_currentIndex))
 		leave(_currentIndex);
 
 	_currentKey   = key;
 	_currentId    = id;
 	_currentIndex = index;
 
+	// Enter the new one
 	if (isValid(key, id, index))
 		enter(index);
+
+	return true;
 }
 
 uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index) {
@@ -601,6 +631,8 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 
 	if (handleMouse) {
 		if ((_vm->_draw->_cursorIndex == -1) && (_currentKey == 0)) {
+			// Last know state: No hotspot hit. Look if that changed
+
 			_currentKey = checkMouse(kTypeMove, _currentId, _currentIndex);
 
 			if (isValid(_currentKey, _currentId, _currentIndex))
@@ -612,6 +644,7 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 
 	uint32 startTime = _vm->_util->getTimeKey();
 
+	// Update display
 	_vm->_draw->blitInvalidated();
 	_vm->_video->retrace();
 
@@ -624,8 +657,10 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 			return 0;
 		}
 
+		// Anything changed?
 		checkHotspotChanged();
 
+		// Update display
 		if (!_vm->_draw->_noInvalidated) {
 			if (handleMouse)
 				_vm->_draw->animateCursor(-1);
@@ -634,21 +669,27 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 			_vm->_video->waitRetrace();
 		}
 
+		// Update keyboard and mouse state
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, handleMouse);
 
 		if (!handleMouse && (_vm->_game->_mouseButtons != kMouseButtonsNone)) {
+			// We don't want any mouse input but got one => Wait till it went away
+
 			_vm->_util->waitMouseRelease(0);
 			key = 3;
 		}
 
 		if (key != 0) {
+			// Got a key press
+
 			if (handleMouse & 1)
 				_vm->_draw->blitCursor();
 
 			id    = 0;
 			index = 0;
 
+			// Leave the current hotspot
 			if (isValid(_currentKey, _currentId, _currentIndex))
 				leave(_currentIndex);
 
@@ -659,8 +700,11 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 		if (handleMouse) {
 
 			if (_vm->_game->_mouseButtons != kMouseButtonsNone) {
+				// Mouse button pressed
 
 				if (delay > 0) {
+					// If a delay was requested, wait the specified time
+
 					_vm->_draw->animateCursor(2);
 					_vm->_util->delay(delay);
 				} else if (handleMouse & 1)
@@ -668,13 +712,17 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 
 				_vm->_draw->animateCursor(-1);
 
+				// Which region was clicked?
 				key = checkMouse(kTypeClick, id, index);
 
 				if ((key != 0) || (id != 0)) {
+					// Got a valid region
+
 					if ( (handleMouse & 1) &&
 						  ((delay <= 0) || (_vm->_game->_mouseButtons == kMouseButtonsNone)))
 						_vm->_draw->blitCursor();
 
+					// If the hotspot changed, leave the old one
 					if (key != _currentKey)
 						leave(_currentIndex);
 
@@ -683,22 +731,26 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 				}
 
 				if (handleMouse & 4)
+					// Nothing further than one simple check was requested => return
 					return 0;
 
+				// Leave the current area
 				if (_currentKey != 0)
 					leave(_currentIndex);
 
+				// No click, but do we have a move event? If so, enter that hotspot
 				_currentKey = checkMouse(kTypeMove, _currentId, _currentIndex);
 				if (isValid(_currentKey, _currentId, _currentIndex))
 					enter(_currentIndex);
 
 			} else
+				// No mouse button pressed, check whether the position changed at least
 				checkHotspotChanged();
-
 		}
 
 		if ((delay == -2) && (key == 0) &&
 		    (_vm->_game->_mouseButtons == kMouseButtonsNone)) {
+			// Nothing found and no further handling requested. Return.
 
 			id    = 0;
 			index = 0;
@@ -711,9 +763,12 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 		if ((delay < 0) && (key == 0) &&
 		    (_vm->_game->_mouseButtons == kMouseButtonsNone)) {
 
+			// Look if we've maybe reached the timeout
+
 			uint32 curTime = _vm->_util->getTimeKey();
-			// Timeout reached?
 			if ((curTime + delay) > startTime) {
+				// If so, return
+
 				id    = 0;
 				index = 0;
 				break;
@@ -721,6 +776,7 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 
 		}
 
+	// Sleep for a short amount of time
 	_vm->_util->delay(10);
 
 	}
@@ -731,16 +787,20 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 uint16 Hotspots::check(uint8 handleMouse, int16 delay) {
 	uint16 id, index;
 
+	// Check and ignore the id and index
 	return Hotspots::check(handleMouse, delay, id, index);
 }
 
-uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 height,
+uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 height,
 		uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
-		Type type, int16 &duration, uint16 &id, uint16 index) {
+		Type type, int16 &duration, uint16 &id, uint16 &index) {
 
-	if ((fontIndex >= 8) || !_vm->_draw->_fonts[fontIndex])
+	if ((fontIndex >= 8) || !_vm->_draw->_fonts[fontIndex]) {
+		warning("Hotspots::updateInput(): Invalid font specified: %d", fontIndex);
 		return 0;
+	}
 
+	// Check if we need to consider mouse events
 	bool handleMouse = false;
 	if ( (_vm->_game->_handleMouse != 0) &&
 	    ((_vm->_global->_useMouse != 0) || (_vm->_game->_forceHandleMouse != 0)))
@@ -748,15 +808,20 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 
 	const Video::FontDesc &font = *_vm->_draw->_fonts[fontIndex];
 
+	// The font doesn't specify individual character widths => monospaced
 	bool monoSpaced = (font.charWidths == 0);
 
-	uint32 pos            = strlen(str);
-	uint32 editSize       = monoSpaced ? (width / font.itemWidth) : 0;
+	// Current position in the string, preset to the end
+	uint32 pos      = strlen(str);
+	/* Size of input field in characters.
+	 * If the font is not monospaced, we can't know that */
+	uint32 editSize = monoSpaced ? (width / font.itemWidth) : 0;
 
 	uint16 key = 0;
 	char tempStr[256];
 
 	while (1) {
+		// If we the edit field has enough space, add a space for the new character
 		strncpy0(tempStr, str, 254);
 		strcat(tempStr, " ");
 		if ((editSize != 0) && strlen(tempStr) > editSize)
@@ -767,12 +832,15 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 		         monoSpaced ? (editSize * font.itemWidth) : width, height,
 		         backColor);
 
+		// Print the current string, vertically centered
 		printText(xPos, yPos + (height - font.itemHeight) / 2,
 				tempStr, fontIndex, frontColor);
 
+		// If we've reached the end of the input field, set the cursor to the last character
 		if ((editSize != 0) && (pos == editSize))
 			pos--;
 
+		// The character under the cursor
 		char curSym = tempStr[pos];
 
 		if (_vm->_inter->_variables)
@@ -790,13 +858,16 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 			fillRect(cursorX, cursorY, cursorWidth, cursorHeight, frontColor);
 
 			if (first) {
+				// The first time, purge old information too
 				key = check(handleMouse, -1, id, index);
 
 				if (key == 0)
+					// We didn't catch any input, let's try again with a real timeout
 					key = check(handleMouse, -300, id, index);
 
 				first = false;
 			} else
+				// Try to catch a character
 				key = check(handleMouse, -300, id, index);
 
 			tempStr[0] = curSym;
@@ -807,21 +878,27 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 					cursorX, cursorY, cursorWidth, cursorHeight);
 			fillRect(cursorX, cursorY, cursorWidth, cursorHeight, backColor);
 
+			// Print the current string, vertically centered
 			printText(cursorX, yPos + (height - font.itemHeight) / 2,
 					tempStr, fontIndex, frontColor);
 
 			if ((key != 0) || (id != 0))
+				// We did get a key, stop looking
 				break;
 
+			// Try again
 			key = check(handleMouse, -300, id, index);
 
 			if ((key != 0) || (id != 0) ||
 					_vm->_inter->_terminate || _vm->shouldQuit())
+				// We did get a key, stop looking
 				break;
 
 			if (duration > 0) {
+				// Look if we reached the time limit
 				duration -= 600;
 				if (duration <= 1) {
+					// If so, abort
 					key = 0;
 					id  = 0;
 					break;
@@ -831,30 +908,37 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 
 		if ((key == 0) || (id != 0) ||
 				_vm->_inter->_terminate || _vm->shouldQuit())
+			// Got no key, or a region ID instead, return
 			return 0;
 
 		switch (key) {
 		case kKeyRight:
+			// If possible, move the cursor right
 			if ((pos > strlen(str)) || (pos > (editSize - 1)) || (editSize == 0)) {
 				pos++;
 				continue;
 			}
+			// Continue downwards instead
 			return kKeyDown;
 
 		case kKeyLeft:
+			// If possible, move the cursor left
 			if (pos > 0) {
 				pos--;
 				continue;
 			}
+			// Continue upwards instead
 			return kKeyUp;
 
 		case kKeyBackspace:
 			if (pos > 0) {
+				// Delete the character to the left
 				_vm->_util->cutFromStr(str, pos - 1, 1);
 				pos--;
 				continue;
 			} else {
 				if (pos < strlen(str))
+					// Delete the character to the right
 					_vm->_util->cutFromStr(str, pos, 1);
 			}
 
@@ -862,6 +946,7 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 			if (pos >= strlen(str))
 				continue;
 
+			// Delete the character to the right
 			_vm->_util->cutFromStr(str, pos, 1);
 			continue;
 
@@ -881,6 +966,7 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 			return key;
 
 		case kKeyEscape:
+			// If we got an escape event, wait until the mouse buttons have been released
 			if (_vm->_global->_useMouse != 0)
 				continue;
 
@@ -891,17 +977,21 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 			    ((_vm->_global->_useMouse != 0) || (_vm->_game->_forceHandleMouse != 0)))
 				handleMouse = true;
 
-			while (_vm->_global->_pressedKeys[1] != 0)
-				;
+			while (_vm->_global->_pressedKeys[1] != 0);
 			continue;
 
 		default:
+			// Got a "normal" key
+
 			uint16 savedKey = key;
 
 			key &= 0xFF;
 
 			if (((type == kTypeInputFloatNoLeave) || (type == kTypeInputFloatLeave)) &&
 					 (key >= ' ') && (key <= 0xFF)) {
+
+				// Only allow character found in numerical floating values
+
 				const char *str1 = "0123456789-.,+ ";
 				const char *str2 = "0123456789-,,+ ";
 
@@ -924,27 +1014,34 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 
 			if ((key >= ' ') && (key <= 0xFF)) {
 				if (editSize == 0) {
+					// Length of the string + current character + next one
 					int length = _vm->_draw->stringLength(str, fontIndex) +
 						font.charWidths[' ' - font.startItem] +
 						font.charWidths[key - font.startItem];
 
 					if (length > width)
+						// We're above the limit, ignore the key
 						continue;
 
 					if (((int32) strlen(str)) >= (_vm->_global->_inter_animDataSize * 4 - 1))
+						// Above the limit of character allowed in a string, ignore the key
 						continue;
 
 				} else {
 					if (strlen(str) > editSize)
+						// We're over the upper character limit for this field
 						continue;
 					else if (editSize == strlen(str))
+						// We've reached the upper limit, overwrite the last character
 						_vm->_util->cutFromStr(str, strlen(str) - 1, 1);
 				}
 
+				// Advance cursor
 				pos++;
 				tempStr[0] = key;
 				tempStr[1] = 0;
 
+				// Add character
 				_vm->_util->insertStr(tempStr, str, pos - 1);
 			}
 
@@ -952,22 +1049,25 @@ uint16 Hotspots::readString(uint16 xPos, uint16 yPos, uint16 width, uint16 heigh
 	}
 }
 
-uint16 Hotspots::handleInput(int16 time, uint16 inputCount, uint16 &curInput,
+uint16 Hotspots::handleInputs(int16 time, uint16 inputCount, uint16 &curInput,
 		InputDesc *inputs, uint16 &id, uint16 &index) {
 
+	// Redraw all texts in all inputs we currently manage
 	updateAllTexts(inputs);
 
 	for (int i = 0; i < 40; i++)
-		WRITE_VAR_OFFSET(i * 4 + 0x44, 0);
+		WRITE_VAR(17 + i, 0);
 
 	while (1) {
-		uint16 hotspotIndex = findInput(curInput);
+		// Find the hotspot index to our current input
+		uint16 hotspotIndex = inputToHotspot(curInput);
 
 		assert(hotspotIndex != 0xFFFF);
 
 		Hotspot inputSpot = _hotspots[hotspotIndex];
 
-		uint16 key = readString(inputSpot.left, inputSpot.top,
+		// Handle input events from that input field
+		uint16 key = updateInput(inputSpot.left, inputSpot.top,
 				inputSpot.right - inputSpot.left + 1,
 				inputSpot.bottom - inputSpot.top + 1,
 				inputs[curInput].backColor, inputs[curInput].frontColor,
@@ -980,15 +1080,19 @@ uint16 Hotspots::handleInput(int16 time, uint16 inputCount, uint16 &curInput,
 		switch (key) {
 		case kKeyNone:
 			if (id == 0)
+				// No key and no hotspot => return
 				return 0;
 
 			if (_vm->_game->_mouseButtons != kMouseButtonsNone)
+				// Clicked something, get the hotspot index
 				index = findClickedInput(index);
 
 			if (!_hotspots[index].isInput())
+				// It's no input, return
 				return 0;
 
-			curInput = findNthInput(index);
+			// Get the associated input index
+			curInput = hotspotToInput(index);
 			break;
 
 		case kKeyF1:
@@ -1004,12 +1108,11 @@ uint16 Hotspots::handleInput(int16 time, uint16 inputCount, uint16 &curInput,
 			return key;
 
 		case kKeyReturn:
-
 			// Just one input => return
 			if (inputCount == 1)
 				return kKeyReturn;
 
-			// End of input chain reached => wap
+			// End of input chain reached => wrap
 			if (curInput == (inputCount - 1)) {
 				curInput = 0;
 				break;
@@ -1044,6 +1147,8 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	byte window = 0;
 
 	if ((type & 0x40) != 0) {
+		// Got a window ID
+
 		type  -= 0x40;
 		window = _vm->_game->_script->readByte();
 	}
@@ -1052,12 +1157,14 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 	uint16 left, top, width, height, right, bottom;
 	uint32 funcPos = 0;
 	if ((type & 0x80) != 0) {
+		// Complex coordinate expressions
 		funcPos = _vm->_game->_script->pos();
 		left    = _vm->_game->_script->readValExpr();
 		top     = _vm->_game->_script->readValExpr();
 		width   = _vm->_game->_script->readValExpr();
 		height  = _vm->_game->_script->readValExpr();
 	} else {
+		// Immediate values
 		funcPos = 0;
 		left    = _vm->_game->_script->readUint16();
 		top     = _vm->_game->_script->readUint16();
@@ -1154,28 +1261,35 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		inputs[inputCount].fontIndex  = _vm->_game->_script->readInt16();
 		inputs[inputCount].backColor  = _vm->_game->_script->readByte();
 		inputs[inputCount].frontColor = _vm->_game->_script->readByte();
+		inputs[inputCount].length     = 0;
 		inputs[inputCount].str        = 0;
 
 		if ((type >= kTypeInput2NoLeave) && (type <= kTypeInput3Leave)) {
+			uint16 length = _vm->_game->_script->readUint16();
+
 			inputs[inputCount].str =
-				(const char *) (_vm->_game->_script->getData() + _vm->_game->_script->pos() + 2);
-			_vm->_game->_script->skip(_vm->_game->_script->peekUint16() + 2);
+				(const char *) (_vm->_game->_script->getData() + _vm->_game->_script->pos());
+
+			_vm->_game->_script->skip(length);
 		}
 
 		if (left == 0xFFFF) {
-			if ((type & 1) == 0)
+			if (!(type & 1))
+				// No coordinates but a leave block => skip it
 				_vm->_game->_script->skipBlock();
 			break;
 		}
 
 		font = _vm->_draw->_fonts[inputs[inputCount].fontIndex];
 		if (!font->charWidths)
+			// Monospaced font
 			right = left + width * font->itemWidth - 1;
 
 		funcEnter = 0;
 		funcPos   = 0;
 		funcLeave = 0;
 		if (!(type & 1)) {
+			// Got a leave
 			funcLeave = _vm->_game->_script->pos();
 			_vm->_game->_script->skipBlock();
 		}
@@ -1215,6 +1329,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		break;
 	}
 
+	// Add the new hotspot
 	add(i | (kStateFilled << 12), left, top, right, bottom,
 			flags, key, funcEnter, funcLeave, funcPos);
 }
@@ -1227,8 +1342,10 @@ void Hotspots::evaluate() {
 	int16 var_26;
 	int16 collStackPos;
 
+	// Push all local hotspots
 	push(0);
 
+	// Find the current end of the hotspot block
 	uint16 endIndex = 0;
 	while (!_hotspots[endIndex].isEnd())
 		endIndex++;
@@ -1237,15 +1354,19 @@ void Hotspots::evaluate() {
 
 	_vm->_game->_script->skip(1);
 
+	// Number of new hotspots
 	byte count = _vm->_game->_script->readByte();
 
-	_vm->_game->_handleMouse           = _vm->_game->_script->peekByte(0);
-	int16 duration         = _vm->_game->_script->peekByte(1);
-	byte stackPos2         = _vm->_game->_script->peekByte(3);
-	byte descIndex         = _vm->_game->_script->peekByte(4);
-	bool needRecalculation = _vm->_game->_script->peekByte(5) != 0;
+	// Parameters of this block
+	_vm->_game->_handleMouse = _vm->_game->_script->peekByte(0);
+	int16 duration           = _vm->_game->_script->peekByte(1);
+	byte stackPos2           = _vm->_game->_script->peekByte(3);
+	byte descIndex           = _vm->_game->_script->peekByte(4);
+	bool needRecalculation   = _vm->_game->_script->peekByte(5) != 0;
 
+	// Seconds -> Milliseconds
 	duration *= 1000;
+
 	if ((stackPos2 != 0) || (descIndex != 0)) {
 		duration /= 100;
 		if (_vm->_game->_script->peekByte(1) == 100)
@@ -1256,6 +1377,7 @@ void Hotspots::evaluate() {
 
 	_vm->_game->_script->skip(6);
 
+	// Clear current ID
 	WRITE_VAR(16, 0);
 
 	byte var_41 = 0;
@@ -1267,9 +1389,12 @@ void Hotspots::evaluate() {
 
 	bool   hasInput   = false;
 	uint16 inputCount = 0;
+
+	// Adding new hotspots
 	for (uint16 i = 0; i < count; i++)
 		evaluateNew(i, ids, inputs, validId, hasInput, inputCount);
 
+	// Recalculate all hotspots if requested
 	if (needRecalculation)
 		recalculate(true);
 
@@ -1279,22 +1404,29 @@ void Hotspots::evaluate() {
 	do {
 		uint16 key = 0;
 		if (hasInput) {
+			// Input
+
 			uint16 curInput = 0;
 
-			key = handleInput(duration, inputCount, curInput, inputs, id, index);
+			key = handleInputs(duration, inputCount, curInput, inputs, id, index);
 
+			// Notify the script of the current input index
 			WRITE_VAR(55, curInput);
 			if (key == kKeyReturn) {
+				// Return pressed, invoke input leave
 				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
 
 					if (!spot.isFilledEnabled())
+						// Not filled or disabled
 						continue;
 
 					if ((spot.getType() & 1) != 0)
+						// Not an input with a leave function
 						continue;
 
 					if (spot.getType() <= kTypeClick)
+						// Not an input
 						continue;
 
 					id      = spot.id;
@@ -1305,20 +1437,29 @@ void Hotspots::evaluate() {
 				break;
 			}
 		} else
+			// Normal move or click check
 			key = check(_vm->_game->_handleMouse, -duration, id, index);
 
+		// Handle special number keys
 		if (((key & 0xFF) >= ' ') && ((key & 0xFF) <= 0xFF) &&
 		    ((key >> 8) > 1) && ((key >> 8) < 12))
 			key = '0' + (((key >> 8) - 1) % 10) + (key & 0xFF00);
 
 		if (id == 0) {
+			// No hotspot area
+
 			if (key != 0) {
+				// But a key
+
+				// Find the hotspot with that key associated
 				for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 					Hotspot &spot = _hotspots[i];
 
 					if (!spot.isFilledEnabled())
+						// Not filled or disabled
 						continue;
 
+					//      Key match              Catch all
 					if ((spot.key == key) || (spot.key == 0x7FFF)) {
 						id    = spot.id;
 						index = i;
@@ -1327,6 +1468,9 @@ void Hotspots::evaluate() {
 				}
 
 				if (id == 0) {
+					// Didn't find such a hotspot
+
+					// Try it again, this time case insensitively
 					for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 						Hotspot &spot = _hotspots[i];
 
@@ -1358,26 +1502,33 @@ void Hotspots::evaluate() {
 
 						collStackPos++;
 						if (collStackPos != stackPos2)
+							// Isn't yet the one wanted
 							continue;
 
 						id    = spot.id;
 						index = i;
 						_vm->_inter->storeMouse();
 						if (VAR(16) != 0)
+							// We already handle a hotspot
 							break;
 
+						// Notify the scripts that we now handle this hotspot
 						if (Hotspot::getState(id) == kStateFilled)
 							WRITE_VAR(16, ids[id & 0xFFF]);
 						else
 							WRITE_VAR(16, id & 0xFFF);
 
 						if (spot.funcLeave != 0) {
+							// It has a leave function
+
 							uint32 timeKey = _vm->_util->getTimeKey();
 							call(spot.funcLeave);
 
 							if (timeVal != 2) {
+								// Rest time we have left = time we had - time the leave took
 								duration = timeVal - (_vm->_util->getTimeKey() - timeKey);
 
+								// Remove the buffer time
 								if ((duration - var_46) < 3) {
 									var_46 -= (duration - 3);
 									duration = 3;
@@ -1386,6 +1537,7 @@ void Hotspots::evaluate() {
 									var_46 = 0;
 								}
 
+								// Clamp
 								if (duration > timeVal)
 									duration = timeVal;
 
@@ -1395,6 +1547,7 @@ void Hotspots::evaluate() {
 						}
 
 						if (VAR(16) == 0)
+							// Didn't find anything
 							id = 0;
 						else
 							var_41 = 1;
@@ -1406,6 +1559,7 @@ void Hotspots::evaluate() {
 					if (descIndex != 0) {
 
 						counter = 0;
+						// Enter the nth hotspot
 						for (int i = endIndex; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 							Hotspot &spot = _hotspots[i];
 
@@ -1421,6 +1575,7 @@ void Hotspots::evaluate() {
 
 					} else {
 
+						// Enter the first hotspot
 						for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
 							Hotspot &spot = _hotspots[i];
 
@@ -1431,6 +1586,7 @@ void Hotspots::evaluate() {
 							}
 						}
 
+						// Leave the current hotspot
 						if ((_currentKey != 0) && (_hotspots[_currentIndex].funcLeave != 0))
 							call(_hotspots[_currentIndex].funcLeave);
 
@@ -1445,15 +1601,18 @@ void Hotspots::evaluate() {
 			break;
 
 		if ((id == 0) || (_hotspots[index].funcLeave != 0))
+			// We don't have a new ID, but haven't yet handled the leave function
 			continue;
 
 		_vm->_inter->storeMouse();
 
+		// Notify the scripts of the currently handled hotspot
 		if (Hotspot::getState(id) == kStateFilled)
 			WRITE_VAR(16, ids[id & 0xFFF]);
 		else
 			WRITE_VAR(16, id & 0xFFF);
 
+		// Enter it
 		if (_hotspots[index].funcEnter != 0)
 			call(_hotspots[index].funcEnter);
 
@@ -1470,23 +1629,30 @@ void Hotspots::evaluate() {
 		for (int i = 0; i < kHotspotCount; i++) {
 			Hotspot &spot = _hotspots[i];
 
+			// Looking for all enabled inputs
 			if (spot.isEnd())
 				continue;
-
 			if (!spot.isFilledEnabled())
 				continue;
-
 			if (!spot.isInput())
 				continue;
 
-			if (spot.getType() > kTypeInput3Leave) {
+			// Clean up numerical floating values
+			if (spot.getType() >= kTypeInputFloatNoLeave) {
+				// Get the string
 				char *ptr;
 				strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
+
+				// Remove spaces
 				while ((ptr = strchr(tempStr, ' ')))
 					_vm->_util->cutFromStr(tempStr, (ptr - tempStr), 1);
+
+				// Exchange decimal separator if needed
 				if (_vm->_global->_language == kLanguageBritish)
 					while ((ptr = strchr(tempStr, '.')))
 						*ptr = ',';
+
+				// Write it back
 				WRITE_VARO_STR(spot.key, tempStr);
 			}
 
@@ -1498,6 +1664,7 @@ void Hotspots::evaluate() {
 				if (spot.getType() < kTypeInput3NoLeave)
 					_vm->_util->cleanupStr(tempStr);
 
+				// Look if we find a match between the wanted and the typed string
 				int16 pos = 0;
 				do {
 					char spotStr[256];
@@ -1510,20 +1677,23 @@ void Hotspots::evaluate() {
 					if (spot.getType() < kTypeInput3NoLeave)
 						_vm->_util->cleanupStr(spotStr);
 
+					// Compare the entered string with the string we wanted
 					if (strcmp(tempStr, spotStr) == 0) {
 						WRITE_VAR(17, VAR(17) + 1);
 						WRITE_VAR(17 + var_26, 1);
 						break;
 					}
-				} while (READ_LE_UINT16(inputs[var_24].str - 2) > pos);
+				} while (inputs[var_24].length > pos);
+
 				collStackPos++;
-			} else {
+			} else
 				WRITE_VAR(17 + var_26, 2);
-			}
+
 			var_24++;
 			var_26++;
 		}
 
+		// Notify the scripts if we reached the requested hotspot
 		if (collStackPos != (int16) VAR(17))
 			WRITE_VAR(17, 0);
 		else
@@ -1538,6 +1708,8 @@ void Hotspots::evaluate() {
 
 		_vm->_inter->storeMouse();
 		if (VAR(16) == 0) {
+			// No hotspot currently handled, now we'll handle the newly found one
+
 			if (Hotspot::getState(id) == kStateFilled)
 				WRITE_VAR(16, ids[id & 0xFFF]);
 			else
@@ -1547,14 +1719,16 @@ void Hotspots::evaluate() {
 		_vm->_game->_script->setFinished(true);
 
 	for (int i = 0; i < count; i++)
+		// Remove all local hotspots
 		remove(i + (kStateFilled << 12));
 
 	for (int i = 0; i < kHotspotCount; i++) {
 		Hotspot &spot = _hotspots[i];
 
-	if ((spot.getState() == (kStateFilled | kStateType1)) ||
-	    (spot.getState() == (kStateFilled | kStateType2)))
-			spot.disable();
+		// Disable the ones still there
+		if ((spot.getState() == (kStateFilled | kStateType1)) ||
+				(spot.getState() == (kStateFilled | kStateType2)))
+				spot.disable();
 	}
 
 }
@@ -1566,39 +1740,70 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 		Hotspot &spot = _hotspots[i];
 
 		if ((spot.getWindow() != 0) || spot.isDisabled())
+			// Ignore disabled and non-main-windowed hotspots
 			continue;
 
 		if (!spot.isIn(x, y))
+			// We're not in that hotspot, ignore it
 			continue;
 
 		if (spot.getCursor() == 0) {
+			// Hotspot doesn't itself specify a cursor...
 			if (spot.getType() >= kTypeInput1NoLeave) {
+				// ...but the type has a generic one
 				cursor = 3;
 				break;
 			} else if ((spot.getButton() != kMouseButtonsRight) && (cursor == 0))
+				// ...but there's a generic "click" cursor
 				cursor = 1;
 		} else if (cursor == 0)
+			// Hotspot had an attached cursor index
 			cursor = spot.getCursor();
 	}
 
 	return cursor;
 }
 
-uint16 Hotspots::findInput(uint16 input) const {
+uint16 Hotspots::inputToHotspot(uint16 input) const {
 	uint16 inputIndex = 0;
 	for (int i = 0; i < kHotspotCount; i++) {
 		Hotspot &spot = _hotspots[i];
 
 		if (!spot.isActiveInput())
+			// Not an active input
 			continue;
 
 		if (inputIndex == input)
+			// We've found our input
 			return i;
 
+		// Next one
 		inputIndex++;
 	}
 
+	// None found
 	return 0xFFFF;
+}
+
+uint16 Hotspots::hotspotToInput(uint16 hotspot) const {
+	uint16 input = 0;
+
+	for (int i = 0; i < kHotspotCount; i++) {
+		Hotspot &spot = _hotspots[i];
+
+		if (!spot.isActiveInput())
+			// Not an active input
+			continue;
+
+		if (i == hotspot)
+			// We've found our hotspot
+			break;
+
+		// Next one
+		input++;
+	}
+
+	return input;
 }
 
 uint16 Hotspots::findClickedInput(uint16 index) const {
@@ -1606,18 +1811,23 @@ uint16 Hotspots::findClickedInput(uint16 index) const {
 		Hotspot &spot = _hotspots[i];
 
 		if (spot.getWindow() != 0)
+			// Ignore other windows
 			continue;
 
 		if (spot.isDisabled())
+			// Ignore disabled hotspots
 			continue;
 
 		if (!spot.isIn(_vm->_global->_inter_mouseX, _vm->_global->_inter_mouseY))
+			// This one wasn't it
 			continue;
 
 		if (spot.getCursor() != 0)
+			// This one specifies a cursor, so we don't want it
 			continue;
 
 		if (!spot.isInput())
+			// It's no input
 			continue;
 
 		index = i;
@@ -1625,24 +1835,6 @@ uint16 Hotspots::findClickedInput(uint16 index) const {
 	}
 
 	return index;
-}
-
-uint16 Hotspots::findNthInput(uint16 n) const {
-	uint16 input = 0;
-
-	for (int i = 0; i < kHotspotCount; i++) {
-		Hotspot &spot = _hotspots[i];
-
-		if (!spot.isActiveInput())
-			continue;
-
-		if (i == n)
-			break;
-
-		input++;
-	}
-
-	return input;
 }
 
 void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
@@ -1657,6 +1849,7 @@ void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
 		cursorWidth  = 1;
 		cursorHeight = height;
 
+		// Iterate through the string and add each character's width
 		for (uint32 i = 0; i < pos; i++)
 			cursorX += font.charWidths[str[i] - font.startItem];
 
@@ -1699,25 +1892,33 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 		const Hotspot &spot = _hotspots[i];
 
 		if (spot.isEnd())
+			// It's an end, we don't want it
 			continue;
 
 		if (!spot.isFilledEnabled())
+			// This one's either not used or disabled
 			continue;
 
 		if (!spot.isInput())
+			// Not an input
 			continue;
 
+		// Get its text
 		char tempStr[256];
 		strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
 
+		// Coordinates
 		uint16 x      = spot.left;
 		uint16 y      = spot.top;
 		uint16 width  = spot.right  - spot.left + 1;
 		uint16 height = spot.bottom - spot.top  + 1;
+		// Clear the background
 		fillRect(x, y, width, height, inputs[input].backColor);
 
-		y += (width - _vm->_draw->_fonts[_vm->_draw->_fontIndex]->itemHeight) / 2;
+		// Center the text vertically
+		y += (height - _vm->_draw->_fonts[_vm->_draw->_fontIndex]->itemHeight) / 2;
 
+		// Draw it
 		printText(x, y, tempStr, inputs[input].fontIndex, inputs[input].frontColor);
 
 		input++;
