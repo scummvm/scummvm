@@ -807,20 +807,24 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		if (!GET_SEL32V(obj, nodePtr) && obj.segment) {
-			if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
-				// Check if the resource exists as an audio resource - this can happen
-				// in SQ4CD and perhaps other games as well. If the resource exists, play
-				// it using map 65535 (sound effects map).
-				if (s->resmgr->testResource(ResourceId(kResourceTypeAudio, number))) {
-					// Found a relevant audio resource, play it
-					PUT_SEL32V(obj, signal, s->_sound.startAudio(65535, number));
-				} else {
+			// In SCI1.1 games, sound effects are started from here. If we can find
+			// a relevant audio resource, play it, otherwise switch to synthesized
+			// effects. If the resource exists, play it using map 65535 (sound
+			// effects map)
+			if (s->resmgr->testResource(ResourceId(kResourceTypeAudio, number)) &&
+				s->_version >= SCI_VERSION_1_1) {
+				// Found a relevant audio resource, play it
+				s->_sound.stopAudio();
+				PUT_SEL32V(obj, signal, s->_sound.startAudio(65535, number));
+				return s->r_acc;
+			} else {
+				if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
 					warning("Could not open song number %d", number);
 					// Send a "stop handle" event so that the engine won't wait forever here
 					s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 					PUT_SEL32V(obj, signal, -1);
+					return s->r_acc;
 				}
-				return s->r_acc;
 			}
 
 			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
