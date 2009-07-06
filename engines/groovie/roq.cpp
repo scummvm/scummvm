@@ -160,7 +160,7 @@ void ROQPlayer::buildShowBuf() {
 
 	for (int line = 0; line < _showBuf.h; line++) {
 		byte *out = (byte *)_showBuf.getBasePtr(0, line);
-		byte *in = (byte *)_prevBuf->getBasePtr(0, line / _scaleY);
+		byte *in = (byte *)_currBuf->getBasePtr(0, line / _scaleY);
 		for (int x = 0; x < _showBuf.w; x++) {
 			if (_vm->_mode8bit) {
 #ifdef DITHER
@@ -182,12 +182,17 @@ void ROQPlayer::buildShowBuf() {
 			// Skip to the next pixel
 			out += _vm->_pixelFormat.bytesPerPixel;
 			if (!(x % _scaleX))
-				in += _prevBuf->bytesPerPixel;
+				in += _currBuf->bytesPerPixel;
 		}
 #ifdef DITHER
 		_dither->nextLine();
 #endif
 	}
+
+	// Swap buffers
+	Graphics::Surface *tmp = _prevBuf;
+	_prevBuf = _currBuf;
+	_currBuf = tmp;
 }
 
 bool ROQPlayer::playFrameInternal() {
@@ -200,7 +205,7 @@ bool ROQPlayer::playFrameInternal() {
 	}
 
 	if (_dirty) {
-		// Build the show buffer from the previous (back) buffer
+		// Build the show buffer from the current buffer
 		buildShowBuf();
 	}
 
@@ -260,19 +265,15 @@ bool ROQPlayer::processBlock() {
 	case 0x1002: // Quad codebook definition
 		ok = processBlockQuadCodebook(blockHeader);
 		break;
-	case 0x1011: { // Quad vector quantised video frame
+	case 0x1011: // Quad vector quantised video frame
 		ok = processBlockQuadVector(blockHeader);
 		_dirty = true;
 		endframe = true;
-
-		// Swap buffers
-		Graphics::Surface *tmp = _prevBuf;
-		_prevBuf = _currBuf;
-		_currBuf = tmp;
 		break;
-	}
 	case 0x1012: // Still image (JPEG)
 		ok = processBlockStill(blockHeader);
+		_dirty = true;
+		endframe = true;
 		break;
 	case 0x1013: // Hang
 		assert(blockHeader.size == 0 && blockHeader.param == 0);
@@ -495,12 +496,13 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	byte *u = (byte *)jpg->getComponent(2)->getBasePtr(0, 0);
 	byte *v = (byte *)jpg->getComponent(3)->getBasePtr(0, 0);
 
-	byte *ptr = (byte *)_prevBuf->getBasePtr(0, 0);
-	for (int i = 0; i < _prevBuf->w * _prevBuf->h; i++) {
+	byte *ptr = (byte *)_currBuf->getBasePtr(0, 0);
+	for (int i = 0; i < _currBuf->w * _currBuf->h; i++) {
 		*ptr++ = *y++;
 		*ptr++ = *u++;
 		*ptr++ = *v++;
 	}
+	memcpy(_prevBuf->getBasePtr(0, 0), _currBuf->getBasePtr(0, 0), _prevBuf->w * _prevBuf->h * 3);
 
 	return true;
 }
