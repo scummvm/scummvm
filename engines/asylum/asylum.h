@@ -34,6 +34,7 @@
 #include "asylum/screen.h"
 #include "asylum/sound.h"
 #include "asylum/video.h"
+#include "asylum/interpreter.h"
 
 namespace Asylum {
 
@@ -44,6 +45,18 @@ class Scene;
 class Screen;
 class Sound;
 class Video;
+class Interpreter;
+
+enum kDebugLevels {
+	kDebugLevelMain =      1 << 0,
+	kDebugLevelResources = 1 << 1,
+	kDebugLevelSprites =   1 << 2,
+	kDebugLevelInput =     1 << 3,
+	kDebugLevelMenu =      1 << 4,
+	kDebugLevelScripts =   1 << 5,
+	kDebugLevelSound =     1 << 6,
+	kDebugLevelSavegame =  1 << 7
+};
 
 class AsylumEngine: public Engine {
 public:
@@ -66,12 +79,13 @@ private:
     Common::Language     _language;
     Common::RandomSource _rnd;
 
-	Console  *_console;
-	Scene    *_scene;
-    MainMenu *_mainMenu;
-	Screen   *_screen;
-	Sound    *_sound;
-	Video    *_video;
+	Console     *_console;
+	Scene       *_scene;
+    MainMenu    *_mainMenu;
+	Screen      *_screen;
+	Sound       *_sound;
+	Video       *_video;
+	Interpreter *_interpreter;
 	int       _delayedVideoNumber;
 
 	friend class Console;
