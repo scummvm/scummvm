@@ -11,10 +11,6 @@ MODULE_OBJS := \
 	driver_vga.o \
 	expression.o \
 	game.o \
-	game_v1.o \
-	game_v2.o \
-	game_v6.o \
-	game_fascin.o \
 	global.o \
 	gob.o \
 	goblin.o \
@@ -22,11 +18,12 @@ MODULE_OBJS := \
 	goblin_v2.o \
 	goblin_v3.o \
 	goblin_v4.o \
-	videoplayer.o \
+	hotspots.o \
 	init.o \
 	init_v1.o \
 	init_v2.o \
 	init_v3.o \
+	init_v6.o \
 	inter.o \
 	inter_v1.o \
 	inter_v2.o \
@@ -56,6 +53,7 @@ MODULE_OBJS := \
 	video_v1.o \
 	video_v2.o \
 	video_v6.o \
+	videoplayer.o \
 	demos/demoplayer.o \
 	demos/scnplayer.o \
 	demos/batplayer.o \

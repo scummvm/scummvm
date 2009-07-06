@@ -259,30 +259,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\resources.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\resources.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\totfile.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\totfile.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\script.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\script.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\gob\dataio.cpp"
 			>
 		</File>
@@ -335,27 +311,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\expression.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\expression.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\game.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\game.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\game_fascin.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\game_v1.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\game_v2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\game_v6.cpp"
 			>
 		</File>
 		<File
@@ -403,6 +371,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\hotspots.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\hotspots.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\init.cpp"
 			>
 		</File>
@@ -420,6 +396,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\init_v3.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\init_v6.cpp"
 			>
 		</File>
 		<File
@@ -507,11 +487,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\expression.cpp"
+			RelativePath="..\..\engines\gob\resources.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\expression.h"
+			RelativePath="..\..\engines\gob\resources.h"
 			>
 		</File>
 		<File
@@ -600,6 +580,22 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\demos\scnplayer.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\script.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\script.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\totfile.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\totfile.h"
 			>
 		</File>
 		<File

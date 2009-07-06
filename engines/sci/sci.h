@@ -49,16 +49,15 @@ enum kDebugLevels {
 	kDebugLevelGfxDriver  = 1 << 8,
 	kDebugLevelBaseSetter = 1 << 9,
 	kDebugLevelParser     = 1 << 10,
-	// FIXME: seems that debug level 11 is special (check debugC in common/debug.cpp)
-	kDebugLevelMenu       = 1 << 12,
-	kDebugLevelSaid       = 1 << 13,
-	kDebugLevelFile       = 1 << 14,
-	kDebugLevelTime       = 1 << 15,
-	kDebugLevelRoom       = 1 << 16,
-	kDebugLevelAvoidPath  = 1 << 17,
-	kDebugLevelDclInflate = 1 << 18,
-	kDebugLevelVM         = 1 << 19,
-	kDebugLevelScripts    = 1 << 20
+	kDebugLevelMenu       = 1 << 11,
+	kDebugLevelSaid       = 1 << 12,
+	kDebugLevelFile       = 1 << 13,
+	kDebugLevelTime       = 1 << 14,
+	kDebugLevelRoom       = 1 << 15,
+	kDebugLevelAvoidPath  = 1 << 16,
+	kDebugLevelDclInflate = 1 << 17,
+	kDebugLevelVM         = 1 << 18,
+	kDebugLevelScripts    = 1 << 19
 };
 
 struct SciGameDescription {
@@ -74,54 +73,38 @@ enum SciGameVersions {
 	SCI_VERSION_01 = 2,
 	SCI_VERSION_01_VGA = 3,
 	SCI_VERSION_01_VGA_ODD = 4,
-	SCI_VERSION_1_EARLY = 5,
-	SCI_VERSION_1_LATE = 6,
+	SCI_VERSION_1 = 5,
 	SCI_VERSION_1_1 = 7,
 	SCI_VERSION_32 = 8
 };
 
-extern const char *versionNames[9];
+extern const char *versionNames[8];
 
 enum SciGameFlags {
-	/*
-	** SCI0 flags
-	*/
+	// SCI0 flags
 
 	/* Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2)
-	** Old SCI versions used two word header for script blocks (first word equal
-	** to 0x82, meaning of the second one unknown). New SCI versions used one
-	** word header.
-	** Also, old SCI versions assign 120 degrees to left & right, and 60 to up
-	** and down. Later versions use an even 90 degree distribution.
-	*/
+	 * Old SCI versions used two word header for script blocks (first word equal
+	 * to 0x82, meaning of the second one unknown). New SCI versions used one
+	 * word header.
+	 * Also, old SCI versions assign 120 degrees to left & right, and 60 to up
+	 * and down. Later versions use an even 90 degree distribution.
+	 */
 	GF_SCI0_OLD				= (1 << 0),
 
 	/* Applies to all versions before 0.000.629
-	** Older SCI versions had simpler code for GetTime()
-	*/
+	 * Older SCI versions had simpler code for GetTime()
+	 */
 	GF_SCI0_OLDGETTIME		= (1 << 1),
 
 	// ----------------------------------------------------------------------------
 
-	/*
-	** SCI1 flags
-	*/
+	// SCI1 flags
 
 	/*
-	** Used to distinguish SCI1 EGA games
-	*/
-	GF_SCI1_EGA				= (1 << 2),
-
-	/* Applies to all SCI1 versions after 1.000.200
-    ** In late SCI1 versions, the argument of lofs[as] instructions
-	** is absolute rather than relative.
-	*/
-	GF_SCI1_LOFSABSOLUTE	= (1 << 3),
-
-	/* Applies to all versions from 1.000.510 onwards
-	** kDoSound() is different than in earlier SCI1 versions.
-	*/
-	GF_SCI1_NEWDOSOUND		= (1 << 4)
+	 * Used to distinguish SCI1 EGA games
+	 */
+	GF_SCI1_EGA				= (1 << 2)
 };
 
 class SciEngine : public Engine {

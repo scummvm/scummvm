@@ -44,8 +44,6 @@ Screen_LoL::Screen_LoL(LoLEngine *vm, OSystem *system) : Screen_v2(vm, system), 
 
 	_fadeFlag = 2;
 	_curDimIndex = 0;
-
-	_internDimX = _internDimY = _internDimW = _internDimH = _internDimDstX = _internBlockWidth = _internDimDstY = _internBlockHeight = _internDimU5 = _internDimU6 = _internBlockWidth2 = _internDimU8 = 0;
 }
 
 Screen_LoL::~Screen_LoL() {
@@ -588,44 +586,25 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 		va_end(args);
 	}
 
-	//		_internDimH: h0
-//		_internDimW: w0
-//		_internDimDstX: x1
-//		_internDimDstY: y1
-//		_internBlockWidth: w1
-//		_internBlockHeight: h1
-//		_internDimU5: x2
-//		_internDimU6: y2
-//		_internBlockWidth2: w2
-
-	_internDimX = _internDimY = 0;
-	_internDimW = w1;
-	_internDimH = h1;
-	calcBoundariesIntern(x1, y1, w3, h3);
-	if (_internBlockWidth == -1)
+	int na = 0, nb = 0, nc = w3;
+	if (!calcBounds(w1, h1, x1, y1, w3, h3, na, nb, nc))
 		return;
 
-	int iu5_1 = _internDimU5;
-	int iu6_1 = _internDimU6;
-	int ibw_1 = _internBlockWidth;
-	int ibh_1 = _internBlockHeight;
-	int dx_1 = _internDimDstX;
-	int dy_1 = _internDimDstY;
+	int iu5_1 = na;
+	int iu6_1 = nb;
+	int ibw_1 = w3;
+	int dx_1 = x1;
+	int dy_1 = y1;
 
-	_internDimX = _internDimY = 0;
-	_internDimW = w2;
-	_internDimH = h2;
-
-	calcBoundariesIntern(x2, y2, ibw_1, ibh_1);
-	if (_internBlockWidth == -1)
+	if (!calcBounds(w2, h2, x2, y2, w3, h3, na, nb, nc))
 		return;
 
-	int iu5_2 = _internDimU5;
-	int iu6_2 = _internDimU6;
-	int ibw_2 = _internBlockWidth;
-	int ibh_2 = _internBlockHeight;
-	int dx_2 = _internDimDstX;
-	int dy_2 = _internDimDstY;
+	int iu5_2 = na;
+	int iu6_2 = nb;
+	int ibw_2 = w3;
+	int ibh_2 = h3;
+	int dx_2 = x2;
+	int dy_2 = y2;
 
 	uint8 *src = getPagePtr(page1) + (dy_1 + iu6_2) * w1;
 	uint8 *dst = getPagePtr(page2) + (dy_2 + iu6_1) * w2;
@@ -670,7 +649,7 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 	}
 
 	if (!page2)
-		addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
+		addDirtyRect(x2, y2, w2, h2);
 }
 
 void Screen_LoL::copyBlockAndApplyOverlay(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl) {
@@ -678,23 +657,23 @@ void Screen_LoL::copyBlockAndApplyOverlay(int page1, int x1, int y1, int page2, 
 		return;
 
 	const ScreenDim *cdim = getScreenDim(dim);
-	_internDimX = cdim->sx << 3;
-	_internDimY = cdim->sy;
-	_internDimW = cdim->w << 3;
-	_internDimH = cdim->h;
+	int ix = cdim->sx << 3;
+	int iy = cdim->sy;
+	int iw = cdim->w << 3;
+	int ih = cdim->h;
 
-	calcBoundariesIntern(x2, y2, w, h);
-	if (_internBlockWidth == -1)
+	int na = 0, nb = 0, nc = w;
+	if (!calcBounds(iw, ih, x2, y2, w, h, na, nb, nc))
 		return;
 
 	uint8 *src = getPagePtr(page1) + y1 * 320 + x1;
-	uint8 *dst = getPagePtr(page2) + (_internDimDstY + _internDimY) * 320;
+	uint8 *dst = getPagePtr(page2) + (y2 + iy) * 320;
 
-	for (int i = 0; i < _internBlockHeight; i++) {
-		uint8 *s = src + _internDimU5;
-		uint8 *d = dst + (_internDimDstX + _internDimX);
+	for (int i = 0; i < h; i++) {
+		uint8 *s = src + na;
+		uint8 *d = dst + (x2 + ix);
 
-		for (int ii = 0; ii < _internBlockWidth; ii++) {
+		for (int ii = 0; ii < w; ii++) {
 			uint8 p = ovl[*s++];
 			if (p)
 				*d = p;
@@ -706,7 +685,7 @@ void Screen_LoL::copyBlockAndApplyOverlay(int page1, int x1, int y1, int page2, 
 	}
 
 	if (!page2)
-		addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
+		addDirtyRect(x2 + ix, y2 + iy, w, h);
 }
 
 void Screen_LoL::applyOverlaySpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, int flag, uint8 *ovl) {
@@ -714,26 +693,26 @@ void Screen_LoL::applyOverlaySpecial(int page1, int x1, int y1, int page2, int x
 		return;
 
 	const ScreenDim *cdim = getScreenDim(dim);
-	_internDimX = cdim->sx << 3;
-	_internDimY = cdim->sy;
-	_internDimW = cdim->w << 3;
-	_internDimH = cdim->h;
+	int ix = cdim->sx << 3;
+	int iy = cdim->sy;
+	int iw = cdim->w << 3;
+	int ih = cdim->h;
 
-	calcBoundariesIntern(x2, y2, w, h);
-	if (_internBlockWidth == -1)
+	int na = 0, nb = 0, nc = w;
+	if (!calcBounds(iw, ih, x2, y2, w, h, na, nb, nc))
 		return;
 
 	uint8 *src = getPagePtr(page1) + y1 * 320 + x1;
-	uint8 *dst = getPagePtr(page2) + (_internDimDstY + _internDimY) * 320;
+	uint8 *dst = getPagePtr(page2) + (y2 + iy) * 320;
 
-	for (int i = 0; i < _internBlockHeight; i++) {
-		uint8 *s = src + _internDimU5;
-		uint8 *d = dst + (_internDimDstX + _internDimX);
+	for (int i = 0; i < h; i++) {
+		uint8 *s = src + na;
+		uint8 *d = dst + (x2 + ix);
 
 		if (flag)
 			d += (i >> 1);
 
-		for (int ii = 0; ii < _internBlockWidth; ii++) {
+		for (int ii = 0; ii < w; ii++) {
 			if (*s++)
 				*d = ovl[*d];
 			d++;
@@ -744,7 +723,7 @@ void Screen_LoL::applyOverlaySpecial(int page1, int x1, int y1, int page2, int x
 	}
 
 	if (!page2)
-		addDirtyRect(_internDimDstX + _internDimX, _internDimDstY + _internDimY, _internBlockWidth, _internBlockHeight);
+		addDirtyRect(x2 + ix, y2 + iy, w, h);
 }
 
 void Screen_LoL::copyBlockAndApplyOverlayOutro(int srcPage, int dstPage, const uint8 *ovl) {
@@ -776,59 +755,6 @@ void Screen_LoL::copyBlockAndApplyOverlayOutro(int srcPage, int dstPage, const u
 			*dst++ = ovl[offset];
 		}
 	}
-}
-
-void Screen_LoL::calcBoundariesIntern(int dstX, int dstY, int width, int height) {
-	_internBlockWidth = _internBlockWidth2 = width;
-	_internBlockHeight = height;
-	_internDimDstX = dstX;
-	_internDimDstY = dstY;
-
-	_internDimU5 = _internDimU6 = _internDimU8 = 0;
-
-	int t = _internDimDstX + _internBlockWidth;
-	if (t <= 0) {
-		_internBlockWidth = _internBlockHeight = -1;
-		return;
-	}
-
-	if (t <= _internDimDstX) {
-		_internDimU5 = _internBlockWidth - t;
-		_internBlockWidth = t;
-		_internDimDstX = 0;
-	}
-
-	t = _internDimW - _internDimDstX;
-	if (t <= 0) {
-		_internBlockWidth = _internBlockHeight = -1;
-		return;
-	}
-
-	if (t <= _internBlockWidth)
-		_internBlockWidth = t;
-
-	_internBlockWidth2 -= _internBlockWidth;
-
-	t = _internDimDstY + _internBlockHeight;
-	if (t <= 0) {
-		_internBlockWidth = _internBlockHeight = -1;
-		return;
-	}
-
-	if (t <= _internDimDstY) {
-		_internDimU6 = _internBlockHeight - t;
-		_internBlockHeight = t;
-		_internDimDstY = 0;
-	}
-
-	t = _internDimH - _internDimDstY;
-	if (t <= 0) {
-		_internBlockWidth = _internBlockHeight = -1;
-		return;
-	}
-
-	if (t <= _internBlockHeight)
-		_internBlockHeight = t;
 }
 
 void Screen_LoL::fadeToBlack(int delay, const UpdateFunctor *upFunc) {

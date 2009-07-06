@@ -43,14 +43,13 @@ namespace Sci {
 
 class GfxDriver;
 
-const char *versionNames[9] = {
+const char *versionNames[8] = {
 	"Autodetected",
 	"SCI0",
 	"SCI01 EGA",
 	"SCI01 VGA",
 	"SCI01 VGA ODD",
-	"SCI1 early",
-	"SCI1 late",
+	"SCI1",
 	"SCI1.1",
 	"SCI32"
 };
@@ -154,14 +153,12 @@ Common::Error SciEngine::run() {
 	_gamestate = new EngineState(_resmgr, version, flags);
 
 	// Verify that we haven't got an invalid game detection entry
-	if (version < SCI_VERSION_1_EARLY) {
+	if (version < SCI_VERSION_1) {
 		// SCI0/SCI01
-		if (flags & GF_SCI1_EGA ||
-			flags & GF_SCI1_LOFSABSOLUTE ||
-			flags & GF_SCI1_NEWDOSOUND) {
+		if (flags & GF_SCI1_EGA) {
 			error("This game entry is erroneous. It's marked as SCI0/SCI01, but it has SCI1 flags set");
 		}
-	} else if (version >= SCI_VERSION_1_EARLY && version <= SCI_VERSION_1_LATE) {
+	} else if (version == SCI_VERSION_1) {
 		// SCI1
 
 		if (flags & GF_SCI0_OLD ||
@@ -169,9 +166,7 @@ Common::Error SciEngine::run() {
 			error("This game entry is erroneous. It's marked as SCI1, but it has SCI0 flags set");
 		}
 	} else if (version == SCI_VERSION_1_1 || version == SCI_VERSION_32) {
-		if (flags & GF_SCI1_EGA ||
-			flags & GF_SCI1_LOFSABSOLUTE ||
-			flags & GF_SCI1_NEWDOSOUND) {
+		if (flags & GF_SCI1_EGA) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI1 flags set");
 		}
 

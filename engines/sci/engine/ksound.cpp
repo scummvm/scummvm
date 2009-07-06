@@ -964,9 +964,9 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (s->_version >= SCI_VERSION_1_1 || s->_flags & GF_SCI1_NEWDOSOUND)
+	if (s->_kernel->_selectorMap.setVol != -1)
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
-	else if (s->_version >= SCI_VERSION_01)
+	else if (s->_kernel->_selectorMap.nodePtr != -1)
 		return kDoSound_SCI01(s, funct_nr, argc, argv);
 	else
 		return kDoSound_SCI0(s, funct_nr, argc, argv);

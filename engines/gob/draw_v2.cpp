@@ -34,6 +34,7 @@
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/resources.h"
+#include "gob/hotspots.h"
 #include "gob/scenery.h"
 #include "gob/inter.h"
 #include "gob/video.h"
@@ -82,7 +83,6 @@ void Draw_v2::blitCursor() {
 }
 
 void Draw_v2::animateCursor(int16 cursor) {
-	Game::Collision *ptr;
 	int16 cursorIndex = cursor;
 	int16 newX = 0, newY = 0;
 	uint16 hotspotX = 0, hotspotY = 0;
@@ -91,32 +91,10 @@ void Draw_v2::animateCursor(int16 cursor) {
 
 	// .-- _draw_animateCursorSUB1 ---
 	if (cursorIndex == -1) {
-		cursorIndex = 0;
-		for (ptr = _vm->_game->_collisionAreas; ptr->left != 0xFFFF; ptr++) {
-			if ((ptr->flags & 0xF00) || (ptr->id & 0x4000))
-				continue;
+		cursorIndex =
+			_vm->_game->_hotspots->findCursor(_vm->_global->_inter_mouseX,
+			                                  _vm->_global->_inter_mouseY);
 
-			if (ptr->left > _vm->_global->_inter_mouseX)
-				continue;
-
-			if (ptr->right < _vm->_global->_inter_mouseX)
-				continue;
-
-			if (ptr->top > _vm->_global->_inter_mouseY)
-				continue;
-
-			if (ptr->bottom < _vm->_global->_inter_mouseY)
-				continue;
-
-			if ((ptr->flags & 0xF000) == 0) {
-				if ((ptr->flags & 0xF) >= 3) {
-					cursorIndex = 3;
-					break;
-				} else if (((ptr->flags & 0xF0) != 0x10) && (cursorIndex == 0))
-					cursorIndex = 1;
-			} else if (cursorIndex == 0)
-				cursorIndex = (ptr->flags >> 12) & 0xF;
-		}
 		if (_cursorAnimLow[cursorIndex] == -1)
 			cursorIndex = 1;
 	}
@@ -407,8 +385,8 @@ void Draw_v2::printTotText(int16 id) {
 				adjustCoords(2, &rectRight, &rectBottom);
 
 				if (colId != -1)
-					_vm->_game->addNewCollision(colId + 0xD000, rectLeft, rectTop,
-							rectRight, rectBottom, 2, 0, 0, 0);
+					_vm->_game->_hotspots->add(colId + 0xD000, rectLeft, rectTop,
+							rectRight, rectBottom, (uint16) Hotspots::kTypeClick, 0, 0, 0, 0);
 
 				if (_needAdjust != 2)
 					printTextCentered(colCmd & 0x0F, rectLeft + 4, rectTop + 4,
@@ -501,8 +479,8 @@ void Draw_v2::printTotText(int16 id) {
 				rectBottom = destY + (int16)READ_LE_UINT16(ptr + 6);
 				adjustCoords(2, &rectLeft, &rectTop);
 				adjustCoords(2, &rectRight, &rectBottom);
-				_vm->_game->addNewCollision(colId + 0x0D000, rectLeft, rectTop,
-						rectRight, rectBottom, 2, 0, 0, 0);
+				_vm->_game->_hotspots->add(colId + 0x0D000, rectLeft, rectTop,
+						rectRight, rectBottom, (uint16) Hotspots::kTypeClick, 0, 0, 0, 0);
 				ptr += 8;
 			}
 			break;
@@ -604,7 +582,7 @@ void Draw_v2::printTotText(int16 id) {
 	if (!(_renderFlags & RENDERFLAG_COLLISIONS))
 		return;
 
-	_vm->_game->checkCollisions(0, 0, 0, 0);
+	_vm->_game->_hotspots->check(0, 0);
 
 	if (*_vm->_scenery->_pCaptureCounter != 0) {
 		(*_vm->_scenery->_pCaptureCounter)--;
@@ -784,7 +762,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 
 		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
 
-			if (!_fonts[_fontIndex]->extraData) {
+			if (!_fonts[_fontIndex]->charWidths) {
 				if (((int8) _textToPrint[0]) == -1) {
 					_vm->validateLanguage();
 
@@ -807,7 +785,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 						_vm->_video->drawLetter(_textToPrint[i], _destSpriteX,
 								_destSpriteY, _fonts[_fontIndex], _transparency,
 								_frontColor, _backColor, *_spritesArray[_destSurface]);
-						_destSpriteX += *(_fonts[_fontIndex]->extraData +
+						_destSpriteX += *(_fonts[_fontIndex]->charWidths +
 								(_textToPrint[i] - _fonts[_fontIndex]->startItem));
 					}
 					else

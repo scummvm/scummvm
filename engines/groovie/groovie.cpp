@@ -108,7 +108,11 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Create the music player
-	_musicPlayer = new MusicPlayer(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
+	if (_gameDescription->desc.platform == Common::kPlatformMacintosh) {
+		_musicPlayer = new MusicPlayerMac(this);
+	} else {
+		_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
+	}
 
 	// Load volume levels
 	syncSoundSettings();

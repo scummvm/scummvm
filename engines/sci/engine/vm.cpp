@@ -1193,7 +1193,7 @@ void run_vm(EngineState *s, int restoring) {
 			if (s->_version >= SCI_VERSION_1_1) {
 				s->r_acc.offset = opparams[0] + local_script->script_size;
 			} else {
-				if (s->_flags & GF_SCI1_LOFSABSOLUTE)
+				if (s->_kernel->hasLofsAbsolute())
 					s->r_acc.offset = opparams[0];
 				else
 					s->r_acc.offset = xs->addr.pc.offset + opparams[0];
@@ -1210,7 +1210,7 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x3a: // lofss
 			r_temp.segment = xs->addr.pc.segment;
 
-			if (s->_flags & GF_SCI1_LOFSABSOLUTE)
+			if (s->_kernel->hasLofsAbsolute())
 				r_temp.offset = opparams[0];
 			else
 				r_temp.offset = xs->addr.pc.offset + opparams[0];

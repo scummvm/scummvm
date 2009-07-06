@@ -209,9 +209,9 @@ int setNodeState(int nodeIdx, int nodeState) {
 	int oldState = walkboxState[nodeIdx];
 
 	if (nodeState == -1)
-		return
+		return oldState;
 
-		    walkboxState[nodeIdx] = nodeState;
+	walkboxState[nodeIdx] = nodeState;
 
 	return oldState;
 }

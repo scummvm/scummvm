@@ -27,7 +27,6 @@
 #include "gob/videoplayer.h"
 #include "gob/helper.h"
 #include "gob/global.h"
-#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/video.h"
 #include "gob/draw.h"

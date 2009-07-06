@@ -238,7 +238,7 @@ protected:
 	bool o1_playComposition(OpFuncParams &params);
 	bool o1_getFreeMem(OpFuncParams &params);
 	bool o1_checkData(OpFuncParams &params);
-	bool o1_prepareStr(OpFuncParams &params);
+	bool o1_cleanupStr(OpFuncParams &params);
 	bool o1_insertStr(OpFuncParams &params);
 	bool o1_cutStr(OpFuncParams &params);
 	bool o1_strstr(OpFuncParams &params);
@@ -380,8 +380,8 @@ protected:
 	bool o2_assign(OpFuncParams &params);
 	bool o2_printText(OpFuncParams &params);
 	bool o2_animPalInit(OpFuncParams &params);
-	bool o2_addCollision(OpFuncParams &params);
-	bool o2_freeCollision(OpFuncParams &params);
+	bool o2_addHotspot(OpFuncParams &params);
+	bool o2_removeHotspot(OpFuncParams &params);
 	bool o2_goblinFunc(OpFuncParams &params);
 	bool o2_stopSound(OpFuncParams &params);
 	bool o2_loadSound(OpFuncParams &params);
@@ -541,7 +541,7 @@ protected:
 	bool o6_loadCursor(OpFuncParams &params);
 	bool o6_assign(OpFuncParams &params);
 	bool o6_palLoad(OpFuncParams &params);
-	bool o6_freeCollision(OpFuncParams &params);
+	bool o6_removeHotspot(OpFuncParams &params);
 	bool o6_fillRect(OpFuncParams &params);
 
 	void probe16bitMusic(char *fileName);

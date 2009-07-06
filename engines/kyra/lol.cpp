@@ -2880,7 +2880,7 @@ void LoLEngine::drinkBezelCup(int numUses, int charNum) {
 	uint16 step = 0;
 
 	do {
-		step = (step & 0xff) + (hpDiff * 256) / (bezelAnimData[numUses * 3 + 2]);
+		step = (step & 0xff) + (hpDiff * 256) / (bezelAnimData[numUses * 3 + 1]);
 		increaseCharacterHitpoints(charNum, step / 256, true);
 		gui_drawCharPortraitWithStats(charNum);
 

@@ -126,7 +126,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
 	Common::addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 	Common::addDebugChannel(kDebugVideo, "Video", "IMD/VMD video debug level");
-	Common::addDebugChannel(kDebugCollisions, "Collisions", "Collisions debug level");
+	Common::addDebugChannel(kDebugHotspots, "Hotspots", "Hotspots debug level");
 	Common::addDebugChannel(kDebugDemo, "Demo", "Demo script debug level");
 
 	syst->getEventManager()->registerRandomSource(_rnd, "gob");
@@ -331,6 +331,7 @@ bool GobEngine::initGameParts() {
 	_palAnim = new PalAnim(this);
 	_vidPlayer = new VideoPlayer(this);
 	_sound = new Sound(this);
+	_game = new Game(this);
 
 	switch (_gameType) {
 	case kGameTypeGeisha:
@@ -341,7 +342,6 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_v1(this);
 		_mult = new Mult_v1(this);
 		_draw = new Draw_v1(this);
-		_game = new Game_v1(this);
 		_map = new Map_v1(this);
 		_goblin = new Goblin_v1(this);
 		_scenery = new Scenery_v1(this);
@@ -353,7 +353,6 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_Fascination(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_game = new Game_Fascination(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);
 		_scenery = new Scenery_v2(this);
@@ -367,7 +366,6 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_v2(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_game = new Game_v2(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);
 		_scenery = new Scenery_v2(this);
@@ -380,7 +378,6 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_Bargon(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_Bargon(this);
-		_game = new Game_v2(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);
 		_scenery = new Scenery_v2(this);
@@ -394,7 +391,6 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_v3(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_game = new Game_v2(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v3(this);
 		_scenery = new Scenery_v2(this);
@@ -407,7 +403,6 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_v3(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_game = new Game_v2(this);
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v3(this);
 		_scenery = new Scenery_v2(this);
@@ -420,7 +415,6 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_v4(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_game = new Game_v2(this);
 		_map = new Map_v4(this);
 		_goblin = new Goblin_v4(this);
 		_scenery = new Scenery_v2(this);
@@ -436,7 +430,6 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_v5(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_game = new Game_v2(this);
 		_map = new Map_v4(this);
 		_goblin = new Goblin_v4(this);
 		_scenery = new Scenery_v2(this);
@@ -445,12 +438,11 @@ bool GobEngine::initGameParts() {
 
 	case kGameTypeAdibou4:
 	case kGameTypeUrban:
-		_init = new Init_v3(this);
+		_init = new Init_v6(this);
 		_video = new Video_v6(this);
 		_inter = new Inter_v6(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_game = new Game_v6(this);
 		_map = new Map_v4(this);
 		_goblin = new Goblin_v4(this);
 		_scenery = new Scenery_v2(this);

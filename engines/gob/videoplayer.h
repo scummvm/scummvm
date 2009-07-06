@@ -31,11 +31,12 @@
 
 #include "graphics/video/coktelvideo/coktelvideo.h"
 
-#include "gob/dataio.h"
+#include "gob/util.h"
 
 namespace Gob {
 
 class GobEngine;
+class DataStream;
 
 class VideoPlayer {
 public:
@@ -60,13 +61,14 @@ public:
 
 	bool primaryOpen(const char *videoFile, int16 x = -1, int16 y = -1,
 			int32 flags = kFlagFrontSurface, Type which = kVideoTypeTry);
-	bool primaryPlay(int16 startFrame = -1, int16 lastFrame = -1, int16 breakKey = 27,
+	bool primaryPlay(int16 startFrame = -1, int16 lastFrame = -1,
+			int16 breakKey = kShortKeyEscape,
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
 			int16 palFrame = -1, int16 endFrame = -1, bool fade = false,
 			int16 reverseTo = -1, bool forceSeek = false);
 	void primaryClose();
 
-	void playFrame(int16 frame, int16 breakKey = 27,
+	void playFrame(int16 frame, int16 breakKey = kShortKeyEscape,
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
 			int16 palFrame = -1 , int16 endFrame = -1);
 

@@ -194,7 +194,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   SoftKeyboard _softkbd;
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
-  int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll;
+  int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll, _last_screen_refresh;
   int _current_shake_pos, _screen_w, _screen_h;
   int _overlay_x, _overlay_y;
   unsigned char *_ms_buf;
@@ -220,10 +220,14 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   uint initSound();
   void checkSound();
 
+  void updateScreenTextures(void);
+  void updateScreenPolygons(void);
+  void maybeRefreshScreen(void);
   void drawMouse(int xdraw, int ydraw, int w, int h,
 		 unsigned char *buf, bool visible);
 
   void setScaling();
+
 
   Common::SaveFileManager *createSavefileManager();
 };

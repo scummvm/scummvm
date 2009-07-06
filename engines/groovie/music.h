@@ -34,10 +34,11 @@
 
 namespace Groovie {
 
-class MusicPlayer : public MidiDriver {
+class MusicPlayer {
 public:
-	MusicPlayer(GroovieEngine *vm, const Common::String &gtlName);
-	~MusicPlayer();
+	MusicPlayer(GroovieEngine *vm);
+	virtual ~MusicPlayer() {}
+
 	void playSong(uint32 fileref);
 	void setBackgroundSong(uint32 fileref);
 	void playCD(uint8 track);
@@ -48,24 +49,88 @@ public:
 	void setGameVolume(uint16 volume, uint16 time);
 
 private:
-	// User volume
-	uint16 _userVolume;
+	// Song playback
+	bool play(uint32 fileref, bool loop);
+	bool _isPlaying;
+	uint32 _backgroundFileRef;
+	uint8 _prevCDtrack;
 
-	// Game volume
-	uint16 _gameVolume;
+	// Volume fading
 	uint32 _fadingStartTime;
 	uint16 _fadingStartVolume;
 	uint16 _fadingEndVolume;
 	uint16 _fadingDuration;
-	void endTrack();
 	void applyFading();
 
-	// Song volumes
+protected:
+	GroovieEngine *_vm;
+
+	// Callback
+	static void onTimer(void *data);
+	virtual void onTimerInternal() {}
+	Common::Mutex _mutex;
+
+	// User volume
+	uint16 _userVolume;
+	// Game volume
+	uint16 _gameVolume;
+
+	// These are specific for each type of music
+	virtual void updateVolume() = 0;
+	virtual bool load(uint32 fileref, bool loop) = 0;
+	virtual void unload();
+};
+
+class MusicPlayerMidi : public MusicPlayer, public MidiDriver {
+public:
+	MusicPlayerMidi(GroovieEngine *vm);
+	~MusicPlayerMidi();
+
+	// MidiDriver interface
+	int open();
+	void close();
+	void send(uint32 b);
+	void metaEvent(byte type, byte *data, uint16 length);
+	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
+	uint32 getBaseTempo(void);
+	MidiChannel *allocateChannel();
+	MidiChannel *getPercussionChannel();
+
+private:
+	// Channel volumes
 	byte _chanVolumes[0x10];
 	void updateChanVolume(byte channel);
 
+	void endTrack();
+
+protected:
+	byte *_data;
+	MidiParser *_midiParser;
+	MidiDriver *_driver;
+
+	void onTimerInternal();
+	void updateVolume();
+	void unload();
+
+	bool loadParser(Common::SeekableReadStream *stream, bool loop);
+};
+
+class MusicPlayerXMI : public MusicPlayerMidi {
+public:
+	MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName);
+	~MusicPlayerXMI();
+
+	void send(uint32 b);
+
+protected:
+	bool load(uint32 fileref, bool loop);
+
+private:
 	// Channel banks
 	byte _chanBanks[0x10];
+
+	// Output music type
+	uint8 _musicType;
 
 	// Timbres
 	class Timbre {
@@ -81,35 +146,14 @@ private:
 	void clearTimbres();
 	void setTimbreAD(byte channel, const Timbre &timbre);
 	void setTimbreMT(byte channel, const Timbre &timbre);
+};
 
+class MusicPlayerMac : public MusicPlayerMidi {
 public:
-	// MidiDriver interface
-	int open();
-	void close();
-	void send(uint32 b);
-	void metaEvent(byte type, byte *data, uint16 length);
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc);
-	uint32 getBaseTempo(void);
-	MidiChannel *allocateChannel();
-	MidiChannel *getPercussionChannel();
+	MusicPlayerMac(GroovieEngine *vm);
 
-private:
-	GroovieEngine *_vm;
-	Common::Mutex _mutex;
-	byte *_data;
-	MidiParser *_midiParser;
-	MidiDriver *_driver;
-	uint8 _musicType;
-	bool _isPlaying;
-
-	uint32 _backgroundFileRef;
-	uint8 _prevCDtrack;
-
-	static void onTimer(void *data);
-
-	bool play(uint32 fileref, bool loop);
-	bool load(uint32 fileref);
-	void unload();
+protected:
+	bool load(uint32 fileref, bool loop);
 };
 
 } // End of Groovie namespace

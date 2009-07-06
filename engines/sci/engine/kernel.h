@@ -83,13 +83,21 @@ public:
 	*/
 	bool hasKernelFunction(const char *functionName) const;
 
-	/* Applies to all versions before 0.000.502
-	** Old SCI versions used to interpret the third DrawPic() parameter inversely,
-	** with the opposite default value (obviously).
-	** Also, they used 15 priority zones from 42 to 200 instead of 14 priority
-	** zones from 42 to 190.
-	*/
+	/**
+	 * Applies to all versions before 0.000.502
+	 * Old SCI versions used to interpret the third DrawPic() parameter inversely,
+	 * with the opposite default value (obviously).
+	 * Also, they used 15 priority zones from 42 to 200 instead of 14 priority
+	 * zones from 42 to 190.
+	 */
 	bool usesOldGfxFunctions() const { return _oldGfxFunctions; }
+
+	/**
+	 * Applies to all SCI1 versions after 1.000.200
+	 * In late SCI1 versions, the argument of lofs[as] instructions
+	 * is absolute rather than relative.
+	 */
+	bool hasLofsAbsolute() const { return _hasLofsAbsolute; }
 
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
@@ -112,10 +120,19 @@ private:
 	bool loadKernelNames();
 
 	/**
-	* Loads the kernel selector names.
-	* @return True upon success, false otherwise.
-	*/
-	bool loadSelectorNames(bool isOldSci0);
+	 * Sets the default kernel function names, based on the SCI version used
+	 */
+	void setDefaultKernelNames();
+
+	/**
+	 * Loads the kernel selector names.
+	 */
+	void loadSelectorNames(bool isOldSci0);
+
+	/**
+	 * Prints auto-detected features from selectors
+	 */
+	void printAutoDetectedFeatures();
 
 	/**
 	 * Maps special selectors
@@ -135,6 +152,7 @@ private:
 
 	ResourceManager *_resmgr;
 	bool _oldGfxFunctions;
+	bool _hasLofsAbsolute;
 
 	// Kernel-related lists
 	/**

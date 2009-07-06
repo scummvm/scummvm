@@ -52,6 +52,7 @@ private:
 	// Kernel
 //	bool cmdClasses(int argc, const char **argv);	// TODO
 	bool cmdOpcodes(int argc, const char **argv);
+	bool cmdSelector(int argc, const char **argv);
 	bool cmdSelectors(int argc, const char **argv);
 	bool cmdKernelFunctions(int argc, const char **argv);
 	bool cmdClassTable(int argc, const char **argv);

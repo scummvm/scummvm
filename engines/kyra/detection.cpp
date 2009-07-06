@@ -263,26 +263,12 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_TOWNS_SJIS_FLAGS
 	},
 
-	{ // PC-9821 (CD) version
-		{
-			"kyra1",
-			"CD",
-			{
-				{ "EMC.PAK", 0, "a046bb0b422061aab8e4c4689400343a", -1 },
-				{ "MUSIC98.PAK", 0, "02fc212f799331b769b274e33d87b37f", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
-			Common::EN_ANY,
-			Common::kPlatformPC98,
-			ADGF_CD,
-			Common::GUIO_NOSPEECH
-		},
-		KYRA1_TOWNS_FLAGS
-	},
+	// PC-9801 floppy + CD / PC-9821 floppy version are all using the same data files,
+	// thus we will mark it as non CD game.
 	{
 		{
 			"kyra1",
-			"CD",
+			"",
 			{
 				{ "JMC.PAK", 0, "9c5707a2a478e8167e44283246612d2c", -1 },
 				{ "MUSIC98.PAK", 0, "02fc212f799331b769b274e33d87b37f", -1 },
@@ -290,7 +276,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::JA_JPN,
 			Common::kPlatformPC98,
-			ADGF_CD,
+			ADGF_NO_FLAGS,
 			Common::GUIO_NOSPEECH
 		},
 		KYRA1_TOWNS_SJIS_FLAGS

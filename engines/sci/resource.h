@@ -66,8 +66,6 @@ enum {
 	/* the first critical error number */
 };
 
-#define SCI_VERSION_1 SCI_VERSION_1_EARLY
-
 #define MAX_OPENED_VOLUMES 5 // Max number of simultaneously opened volumes
 
 enum ResSourceType {

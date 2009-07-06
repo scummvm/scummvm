@@ -48,8 +48,7 @@ const char *sci_version_types[] = {
 	"SCI version 0.xxx w/ 1.000 compression",
 	"SCI version 1.000 w/ 0.xxx resource.map",
 	"SCI version 1.000 w/ special resource.map",
-	"SCI version 1.000 (early)",
-	"SCI version 1.000 (late)",
+	"SCI version 1.000",
 	"SCI version 1.001",
 	"SCI WIN/32"
 };
@@ -509,16 +508,9 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		case SCI_VERSION_01_VGA_ODD:
 			version = _mapVersion;
 			break;
-		case SCI_VERSION_1: {
-			Resource *res = testResource(ResourceId(kResourceTypeScript, 0));
-
-			_sciVersion = version = SCI_VERSION_1_EARLY;
-			loadResource(res);
-
-			if (res->status == kResStatusNoMalloc)
-				version = SCI_VERSION_1_LATE;
+		case SCI_VERSION_1:
+			_sciVersion = version = SCI_VERSION_1;
 			break;
-		}
 		case SCI_VERSION_1_1:
 			// No need to handle SCI 1.1 here - it was done in resource_map.cpp
 			version = SCI_VERSION_1_1;
@@ -542,11 +534,8 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	case SCI_VERSION_01_VGA_ODD:
 		debug("Resmgr: Detected SCI01VGA - Jones/CD or similar");
 		break;
-	case SCI_VERSION_1_EARLY:
-		debug("Resmgr: Detected SCI1 Early");
-		break;
-	case SCI_VERSION_1_LATE:
-		debug("Resmgr: Detected SCI1 Late");
+	case SCI_VERSION_1:
+		debug("Resmgr: Detected SCI1");
 		break;
 	case SCI_VERSION_1_1:
 		debug("Resmgr: Detected SCI1.1");

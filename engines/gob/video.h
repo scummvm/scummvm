@@ -78,7 +78,7 @@ public:
 		uint8 endItem;
 		int8 itemSize;
 		int8 bitWidth;
-		byte *extraData;
+		uint8 *charWidths;
 		FontDesc() : dataPtr(0), itemWidth(0), itemHeight(0), startItem(0),
 		             endItem(0), itemSize(0), bitWidth(0) {}
 		~FontDesc() {

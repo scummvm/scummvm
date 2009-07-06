@@ -356,35 +356,54 @@ static const char *argtype_description[] = {
 Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
-	loadKernelNames();
-
+	loadSelectorNames(isOldSci0);
+	mapSelectors();     // Map a few special selectors for later use
 	loadOpcodes();
+	loadKernelNames();
+	mapFunctions();     // Map the kernel functions
 
-	if (!loadSelectorNames(isOldSci0)) {
-		error("Kernel: Could not retrieve selector names");
-	}
+	// SCI0 games using old graphics functions (before version 0.000.502) did not have a
+	// motionCue selector
+	_oldGfxFunctions = (_selectorMap.motionCue == -1 && _resmgr->_sciVersion == SCI_VERSION_0);
 
-	// Map the kernel functions
-	mapFunctions();
+	// SCI1 games which use absolute lofs have the egoMoveSpeed selector
+	_hasLofsAbsolute = (_selectorMap.egoMoveSpeed != -1 && _resmgr->_sciVersion < SCI_VERSION_1_1);
 
-	// Map a few special selectors for later use
-	mapSelectors();
-
-	// SCI0 games using old graphics functions (before version 0.000.502) have the TimesSin
-	// kernel function, whereas newer games have the SinMult kernel function in its place
-	_oldGfxFunctions = !hasKernelFunction("SinMult");
+	printAutoDetectedFeatures();
 }
 
 Kernel::~Kernel() {
 }
 
-bool Kernel::loadSelectorNames(bool isOldSci0) {
+void Kernel::printAutoDetectedFeatures() {
+	if (_oldGfxFunctions)
+		printf("Kernel auto-detection: game found to be using old graphics functions\n");
+	else
+		printf("Kernel auto-detection: game found to be using newer graphics functions\n");
+
+	if (_hasLofsAbsolute)
+		printf("Kernel auto-detection: game found to be using absolute parameters for lofs\n");
+	else
+		printf("Kernel auto-detection: game found to be using relative parameters for lofs\n");
+
+	if (_selectorMap.setVol != -1)
+		printf("Kernel auto-detection: using SCI1 sound functions\n");
+	else if (_selectorMap.nodePtr != -1)
+		printf("Kernel auto-detection: using SCI01 sound functions\n");
+	else
+		printf("Kernel auto-detection: using SCI0 sound functions\n");
+
+	if (_resmgr->_sciVersion == SCI_VERSION_0 && _selectorMap.sightAngle != -1)
+		printf("Kernel auto-detection: found SCI0 game using a SCI1 kernel table\n");
+}
+
+void Kernel::loadSelectorNames(bool isOldSci0) {
 	int count;
 
 	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
 
 	if (!r) // No such resource?
-		return false;
+		error("Kernel: Could not retrieve selector names");
 
 	count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
 
@@ -394,14 +413,13 @@ bool Kernel::loadSelectorNames(bool isOldSci0) {
 
 		Common::String tmp((const char *)r->data + offset + 2, len);
 		_selectorNames.push_back(tmp);
+		//printf("%s\n", tmp.c_str());	// debug
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
 		if (isOldSci0)
 			_selectorNames.push_back(tmp);
 	}
-
-	return true;
 }
 
 bool Kernel::loadOpcodes() {
@@ -732,46 +750,39 @@ reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries
 	return (reg_t*)_kernel_dereference_pointer(s, pointer, entries, sizeof(reg_t));
 }
 
-void setDefaultKernelNames(Common::StringList &names) {
-	names.resize(SCI_KNAMES_DEFAULT_ENTRIES_NR);
-	for (int i = 0; i < SCI_KNAMES_DEFAULT_ENTRIES_NR; i++)
-		names[i] = sci_default_knames[i];
-}
+void Kernel::setDefaultKernelNames() {
+	bool isSci0 = (_resmgr->_sciVersion == SCI_VERSION_0);
+	int offset = 0;
 
-static void vocab_get_knames0(ResourceManager *resmgr, Common::StringList &names) {
-	int count, i, index = 2, empty_to_add = 1;
-	Resource *r = resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES), 0);
+	// Check if we have a SCI01 game which uses a SCI1 kernel table (e.g. the KQ1 demo
+	// and full version). We do this by checking if the sightAngle selector exists, as no
+	// SCI0 game seems to have it
+	if (_selectorMap.sightAngle != -1 && isSci0)
+		isSci0 = false;
 
-	if (!r) { // No kernel name table found? Fall back to default table
-		setDefaultKernelNames(names);
-		return;
+	_kernelNames.resize(SCI_KNAMES_DEFAULT_ENTRIES_NR + (isSci0 ? 4 : 0));
+	for (int i = 0; i < SCI_KNAMES_DEFAULT_ENTRIES_NR; i++) {
+		// In SCI0, Platform was DoAvoider
+		if (!strcmp(sci_default_knames[i], "Platform") && isSci0) {
+			_kernelNames[i + offset] = "DoAvoider";
+			continue;
+		}
+
+		_kernelNames[i + offset] = sci_default_knames[i];
+
+		// SCI0 has 4 extra functions between SetCursor (0x28) and Savegame
+		if (!strcmp(sci_default_knames[i], "SetCursor") && isSci0) {
+			_kernelNames[i + 1] = "FOpen";
+			_kernelNames[i + 2] = "FPuts";
+			_kernelNames[i + 3] = "FGets";
+			_kernelNames[i + 4] = "FClose";
+			offset = 4;
+		}
 	}
 
-	count = READ_LE_UINT16(r->data);
-
-	if (count > 1023) {
-		// Newer kernel name table, found in KQ1. We can use the default table here
-		setDefaultKernelNames(names);
-		return;
-	}
-
-	if (count < SCI0_KNAMES_WELL_DEFINED) {
-		empty_to_add = SCI0_KNAMES_WELL_DEFINED - count;
-		sciprintf("Less than %d kernel functions; adding %d\n", SCI0_KNAMES_WELL_DEFINED, empty_to_add);
-	}
-
-	names.resize(count + 1 + empty_to_add);
-
-	for (i = 0; i < count; i++) {
-		int offset = READ_LE_UINT16(r->data + index);
-		int len = READ_LE_UINT16(r->data + offset);
-		//fprintf(stderr,"Getting name %d of %d...\n", i, count);
-		index += 2;
-		names[i] = Common::String((const char *)r->data + offset + 2, len);
-	}
-
-	for (i = 0; i < empty_to_add; i++) {
-		names[count + i] = SCRIPT_UNKNOWN_FUNCTION_STRING;
+	if (_resmgr->_sciVersion == SCI_VERSION_1_1) {
+		// KQ6CD calls unimplemented function 0x26
+		_kernelNames[0x26] = "Dummy";
 	}
 }
 
@@ -810,16 +821,9 @@ bool Kernel::loadKernelNames() {
 	case SCI_VERSION_01:
 	case SCI_VERSION_01_VGA:
 	case SCI_VERSION_01_VGA_ODD:
-		vocab_get_knames0(_resmgr, _kernelNames);
-		break;
-	case SCI_VERSION_1_EARLY:
-	case SCI_VERSION_1_LATE:
+	case SCI_VERSION_1:
 	case SCI_VERSION_1_1:
-		setDefaultKernelNames(_kernelNames);
-		if (_resmgr->_sciVersion == SCI_VERSION_1_1) {
-			// KQ6CD calls unimplemented function 0x26
-			_kernelNames[0x26] = "Dummy";
-		}
+		setDefaultKernelNames();
 		break;
 #ifdef ENABLE_SCI32
 	case SCI_VERSION_32:
