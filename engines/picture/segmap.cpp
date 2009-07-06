@@ -343,7 +343,7 @@ void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 so
 	
 	debug(0, "SegmentMap::findPath() count = %d", pointsArray[1]);
 
-#if 1 // DEBUG: Draw the path we found
+#if 0 // DEBUG: Draw the path we found
 	int sx = sourceX, sy = sourceY;
 	LineData ld;
 	ld.pitch = _vm->_sceneWidth;
