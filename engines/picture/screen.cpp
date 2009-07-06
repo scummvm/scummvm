@@ -807,10 +807,4 @@ void Screen::loadState(Common::ReadStream *in) {
 
 }
 
-
-/*
-void Screen::update() {
-}
-*/
-
 } // End of namespace Picture

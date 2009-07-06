@@ -81,7 +81,7 @@ public:
 	void getRgbModifiertAtPoint(int16 x, int16 y, int16 id, byte &r, byte &g, byte &b);
 
 	void addMasksToRenderQueue();
-
+	
 //protected:
 public: // for debugging purposes
 

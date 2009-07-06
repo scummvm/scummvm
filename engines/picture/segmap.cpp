@@ -364,7 +364,7 @@ int8 SegmentMap::getScalingAtPoint(int16 x, int16 y) {
 		if (_infoRects[i].id == 0 && _infoRects[i].isPointInside(x, y)) {
 			int8 topScaling = (int8)_infoRects[i].b;
 			int8 bottomScaling = (int8)_infoRects[i].c;
-			if (y - _infoRects[i].y > 0) {
+			if (y - _infoRects[i].y != 0) {
 				scaling = (ABS(y - _infoRects[i].y) * (bottomScaling - topScaling) / _infoRects[i].height) + topScaling;
 			}
 		}

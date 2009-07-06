@@ -68,7 +68,7 @@ void Sound::playSound(int16 resIndex, int16 type, int16 volume) {
 
 	debug("playSound(%d, %d, %d)", resIndex, type, volume);
 	
-	if (volume == -1 || type == kChannelTypeSfx) {
+	if (volume == -1 || type == -2) {
 		if (type == kChannelTypeBackground) {
 			internalPlaySound(resIndex, type, 50 /*TODO*/, 0);
 		} else {
@@ -119,7 +119,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			channels[i].type = kChannelTypeEmpty;
 			channels[i].resIndex = -1;
 		}
-	} else if (type == kChannelTypeSfx) {
+	} else if (type == -2) {
 		// Stop sounds with specified resIndex
 		for (int i = 0; i < 4; i++) {
 			if (channels[i].resIndex == resIndex) {
@@ -130,7 +130,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 		}
 	} else {
 
-		if (type == -2) {
+		if (type == -3) {
 			// Stop speech and play new sound
 			stopSpeech();
 		}
@@ -158,7 +158,13 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			channels[freeChannel].type = type;
 			channels[freeChannel].resIndex = resIndex;
 
-			_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType/*TODO*/, &channels[freeChannel].handle,
+			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
+			/*
+			switch (type) {
+			}
+			*/
+
+			_vm->_mixer->playInputStream(soundType, &channels[freeChannel].handle,
 				stream, -1, volume, panning);
 			
 		}

@@ -289,7 +289,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	
 	sprite.x -= xoffs;
 	sprite.y -= yoffs;
-
+	
 	sprite.yerror = sprite.ydelta;
 
 	// Now we check if the sprite needs to be clipped
@@ -298,7 +298,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 	if (sprite.y - _vm->_cameraY < 0) {
 
 		int16 clipHeight = ABS(sprite.y - _vm->_cameraY);
-		int16 chopHeight, skipHeight, lineWidth;
+		int16 skipHeight = clipHeight;
 		byte *spriteFrameData;
 
 		sprite.height -= clipHeight;
@@ -309,8 +309,7 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 
 		// If the sprite is scaled
 		if (sprite.flags & 3) {
-			chopHeight = sprite.ydelta;
-			skipHeight = clipHeight;
+			int16 chopHeight = sprite.ydelta;
 			if ((sprite.flags & 2) == 0) {
 				do {
 					chopHeight -= 100;
@@ -338,20 +337,21 @@ void Screen::addDrawRequest(const DrawRequest &drawRequest) {
 		
 		// Now the sprite's offset is adjusted to point to the starting line
 		if ((sprite.flags & 0x10) == 0) {
-			while (clipHeight--) {
-				lineWidth = 0;
-				while (lineWidth </*CHECKME was != */ sprite.origWidth) {
+			while (skipHeight--) {
+				int16 lineWidth = 0;
+				while (lineWidth < sprite.origWidth) {
 					sprite.offset++;
-					lineWidth += (*spriteFrameData++) & 0x0F;
+					lineWidth += spriteFrameData[0] & 0x0F;
+					spriteFrameData++;
 				}
 			}
 		} else {
-			lineWidth = 0;
-			while (clipHeight--) {
+			while (skipHeight--) {
+				int16 lineWidth = 0;
 				while (lineWidth < sprite.origWidth) {
 					sprite.offset += 2;
-					spriteFrameData++;
-					lineWidth += *spriteFrameData++;
+					lineWidth += spriteFrameData[1];
+					spriteFrameData += 2;
 				}
 			}
 		}
