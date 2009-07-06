@@ -492,7 +492,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_scaleBuf = 0;
 	_window4BackScn = 0;
 	_window6BackScn = 0;
-	printf("Cleared all\n");
 
 	_window3Flag = 0;
 	_window4Flag = 0;
