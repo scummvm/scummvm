@@ -117,7 +117,7 @@ void Script::setupCommandList() {
 	/** Functions used by the mathematical evaluator */
 	static const GPL2Function gplFunctions[] = {
 		{ "Not", 		NULL },
-		{ "Random", 	NULL },
+		{ "Random", 	&Script::funcRandom },
 		{ "IsIcoOn", 	NULL },
 		{ "IsIcoAct", 	NULL },
 		{ "IcoStat", 	NULL },
@@ -205,6 +205,17 @@ int Script::operDiv(int op1, int op2) {
 
 int Script::operMod(int op1, int op2) {
 	return op1 % op2;
+}
+
+/* GPL functions */
+
+int Script::funcRandom(int n) {
+
+// The function needs to return numbers in the [0..n-1] range so we need to deduce 1
+// (RandomSource::getRandomNumber returns a number in the range [0..n])
+
+	n -= 1;
+	return _vm->_rnd.getRandomNumber(n);
 }
 
 /* GPL commands */

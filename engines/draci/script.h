@@ -115,6 +115,8 @@ private:
 	int operLessOrEqual(int op1, int op2);
 	int operMod(int op1, int op2);
 
+	int funcRandom(int n);
+
 	void setupCommandList();
 	const GPL2Command *findCommand(byte num, byte subnum);
 	int handleMathExpression(Common::MemoryReadStream &reader);
