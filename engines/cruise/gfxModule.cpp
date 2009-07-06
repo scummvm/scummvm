@@ -40,7 +40,6 @@ palEntry lpalette[256];
 
 int palDirtyMin = 256;
 int palDirtyMax = -1;
-bool isBlack = false;
 
 gfxModuleDataStruct gfxModuleData = {
 	0,			// use Tandy
@@ -238,12 +237,6 @@ void flip() {
 		g_system->setPalette(paletteRGBA + palDirtyMin*4, palDirtyMin, palDirtyMax - palDirtyMin + 1);
 		palDirtyMin = 256;
 		palDirtyMax = -1;
-
-		isBlack = true;
-		for (i = 0; i < 256; ++i) {
-			isBlack = (lpalette[i].R == 0) && (lpalette[i].G == 0) && (lpalette[i].B == 0);
-			if (!isBlack) break;
-		}
 	}
 
 	g_system->copyRectToScreen(globalScreen, 320, 0, 0, 320, 200);
