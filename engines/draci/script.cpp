@@ -235,10 +235,7 @@ void Script::start(Common::Queue<int> &params) {
 
 	GameObject *obj = _vm->_game->getObject(objID);
 
-	int visiblethingy = obj->_visible ? 1 << 7 : 0x00;
-	int thingy = (obj->_location + 1) | visiblethingy;
-
-	if ( ((objID == 0) || (obj->_visible)) && (obj->_location == _vm->_game->_currentRoom._roomNum))
+	if ( ((objID == 0) || (obj->_visible)) && (obj->_location == _vm->_game->getRoomNum()))
 		_vm->_anims->play(animID);
 }
 
