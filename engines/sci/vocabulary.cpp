@@ -472,7 +472,7 @@ int Kernel::findSelector(const char *selectorName) const {
 			return pos;
 	}
 
-	warning("Could not map '%s' to any selector", selectorName);
+	debugC(2, kDebugLevelVM, "Could not map '%s' to any selector\n", selectorName);
 
 	return -1;
 }

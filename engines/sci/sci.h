@@ -75,8 +75,8 @@ enum SciGameVersions {
 	SCI_VERSION_01_VGA = 3,
 	SCI_VERSION_01_VGA_ODD = 4,
 	SCI_VERSION_1 = 5,
-	SCI_VERSION_1_1 = 7,
-	SCI_VERSION_32 = 8
+	SCI_VERSION_1_1 = 6,
+	SCI_VERSION_32 = 7
 };
 
 extern const char *versionNames[8];
