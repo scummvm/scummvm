@@ -828,7 +828,7 @@ int16 Op_Preload(void) {
 }
 
 int16 Op_LoadCt(void) {
-	return initCt((char*)popPtr());
+	return initCt((const char *)popPtr());
 }
 
 int16 Op_EndAnim(void) {
