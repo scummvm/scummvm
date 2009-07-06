@@ -162,6 +162,8 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty) con
 	int ySpaceLeft = dst->h - ty - 1;	
 	int yPixelsToDraw = (_fontHeight < ySpaceLeft) ? _fontHeight : ySpaceLeft;
 
+	int _transparent = dst->getTransparentColour();
+
 	for (int y = 0; y < yPixelsToDraw; ++y) {
 		for (int x = 0; x <= xPixelsToDraw; ++x) {
 
@@ -189,7 +191,7 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty) con
 			}
 			
 			// Paint pixel (if not transparent)
-			if (colour != dst->getTransparentColour())			
+			if (colour != _transparent)			
 				ptr[x] = colour;
 		}
 
