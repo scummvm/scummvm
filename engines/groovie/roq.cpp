@@ -256,6 +256,7 @@ bool ROQPlayer::processBlock() {
 		break;
 	case 0x1013: // Hang
 		assert(blockHeader.size == 0 && blockHeader.param == 0);
+		endframe = true;
 		break;
 	case 0x1020: // Mono sound samples
 		ok = processBlockSoundMono(blockHeader);
