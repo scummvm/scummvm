@@ -809,7 +809,10 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (!GET_SEL32V(obj, nodePtr) && obj.segment) {
 			if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
 				warning("Could not open song number %d", number);
-				return NULL_REG;
+				// Send a "stop handle" event so that the engine won't wait forever here
+				s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+				PUT_SEL32V(obj, signal, -1);
+				return s->r_acc;
 			}
 
 			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
