@@ -793,6 +793,11 @@ void Kernel::setDefaultKernelNames() {
 			offset = 4;
 		}
 	}
+
+	if (_resmgr->_sciVersion == SCI_VERSION_1_1) {
+		// HACK: KQ6CD calls unimplemented function 0x26
+		_kernelNames[0x26] = "Dummy";
+	}
 }
 
 #ifdef ENABLE_SCI32
