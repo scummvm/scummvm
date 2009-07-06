@@ -217,8 +217,8 @@ public:
 	static void outPutEvent(const Event &ev, int num = -1) {
 		struct {
 			byte cmd;
-			char *name;
-			char *param;
+			const char *name;
+			const char *param;
 		} COMMANDS[] = {
 			{0x80, "TEMPO   ", "TEMPO, N/A      "},
 			{0xa0, "SPECIAL ", "CHAN, SPEC # | VAL"},

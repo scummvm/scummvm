@@ -181,6 +181,7 @@ bool MaxTrax::doSong(int songIndex, int advance) {
 
 	_playerCtx.musicPlaying = true;
 	Paula::startPaula();
+	return true;
 }
 
 void MaxTrax::killVoice(byte num) {
@@ -199,6 +200,8 @@ void MaxTrax::killVoice(byte num) {
 }
 
 int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, uint16 pri) {
+	bool processNote = true;
+
 	if (channel.microtonal >= 0)
 		_microtonal[note % 127] = channel.microtonal;
 	if (!volume)
@@ -223,7 +226,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			voice.flags |= VoiceContext::kFlagPortamento;
 			voice.endNote = channel.lastNote = note;
 			voice.noteVolume = (_playerCtx.handleVolume) ? volume + 1 : 128;
-			goto endFunction;
+			processNote = false;
 		}
 	} else {
 		// TODO:
@@ -231,74 +234,75 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		// return if no channel found
 		voiceNum = (channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 0 : 1;
 	}
-	assert(voiceNum >= 0 && voiceNum < ARRAYSIZE(_voiceCtx));
+	if (processNote) {
+		assert(voiceNum >= 0 && voiceNum < ARRAYSIZE(_voiceCtx));
 
-	VoiceContext &voice = _voiceCtx[voiceNum];
-	voice.flags = 0;
-	if (voice.channel) {
-		killVoice(voiceNum);
-		voice.flags |= VoiceContext::kFlagStolen;
-	}
-	voice.channel = &channel;
-	voice.patch = &patch;
-	voice.baseNote = note;
+		VoiceContext &voice = _voiceCtx[voiceNum];
+		voice.flags = 0;
+		if (voice.channel) {
+			killVoice(voiceNum);
+			voice.flags |= VoiceContext::kFlagStolen;
+		}
+		voice.channel = &channel;
+		voice.patch = &patch;
+		voice.baseNote = note;
 
-	// calc note period
-	voice.priority = (byte)pri;
-	voice.status = VoiceContext::kStatusStart;
+		// calc note period
+		voice.priority = (byte)pri;
+		voice.status = VoiceContext::kStatusStart;
 
-	voice.noteVolume = (_playerCtx.handleVolume) ? volume + 1 : 128;
+		voice.noteVolume = (_playerCtx.handleVolume) ? volume + 1 : 128;
 
-	// ifeq HAS_FULLCHANVOL macro
-	if (channel.volume < 128)
-		voice.noteVolume = (voice.noteVolume * channel.volume) >> 7;
+		// ifeq HAS_FULLCHANVOL macro
+		if (channel.volume < 128)
+			voice.noteVolume = (voice.noteVolume * channel.volume) >> 7;
 
-	voice.baseVolume = 0;
-	voice.lastTicks = 0;
+		voice.baseVolume = 0;
+		voice.lastTicks = 0;
 
-	uint16 period = voice.lastPeriod;
-	if (!period)
-		period = 1000;
+		uint16 period = voice.lastPeriod;
+		if (!period)
+			period = 1000;
 
-	int useOctave = 0;
-	// get samplestart for the given octave
-	const int8 *samplePtr = patch.samplePtr + (patch.sampleTotalLen << useOctave) - patch.sampleTotalLen;
-	if (patch.sampleAttackLen) {
-		Paula::setChannelSampleStart(voiceNum, samplePtr);
-		Paula::setChannelSampleLen(voiceNum, patch.sampleAttackLen << useOctave);
-		Paula::setChannelPeriod(voiceNum, period);
-		Paula::setChannelVolume(voiceNum, 0);
-
-		Paula::enableChannel(voiceNum);
-		// wait  for dma-clear
-	}
-
-	if (patch.sampleTotalLen > patch.sampleAttackLen) {
-		Paula::setChannelSampleStart(voiceNum, samplePtr + patch.sampleAttackLen);
-		Paula::setChannelSampleLen(voiceNum, (patch.sampleTotalLen - patch.sampleAttackLen) << useOctave);
-		if (!patch.sampleAttackLen) {
-			// need to enable channel
+		int useOctave = 0;
+		// get samplestart for the given octave
+		const int8 *samplePtr = patch.samplePtr + (patch.sampleTotalLen << useOctave) - patch.sampleTotalLen;
+		if (patch.sampleAttackLen) {
+			Paula::setChannelSampleStart(voiceNum, samplePtr);
+			Paula::setChannelSampleLen(voiceNum, patch.sampleAttackLen << useOctave);
 			Paula::setChannelPeriod(voiceNum, period);
 			Paula::setChannelVolume(voiceNum, 0);
 
 			Paula::enableChannel(voiceNum);
+			// wait  for dma-clear
 		}
-		// another pointless wait for DMA-Clear???
-	}
 
-	channel.voicesActive++;
-	if (&channel < &_channelCtx[kNumChannels]) {
-		const byte flagsSet = ChannelContext::kFlagMono | ChannelContext::kFlagPortamento;
-		if ((channel.flags & flagsSet) == flagsSet && channel.lastNote < 0x80 && channel.lastNote != voice.baseNote) {
-			voice.portaTicks = 0;
-			voice.endNote = voice.baseNote;
-			voice.baseNote = channel.lastNote;
-			voice.flags |= VoiceContext::kFlagPortamento;
+		if (patch.sampleTotalLen > patch.sampleAttackLen) {
+			Paula::setChannelSampleStart(voiceNum, samplePtr + patch.sampleAttackLen);
+			Paula::setChannelSampleLen(voiceNum, (patch.sampleTotalLen - patch.sampleAttackLen) << useOctave);
+			if (!patch.sampleAttackLen) {
+				// need to enable channel
+				Paula::setChannelPeriod(voiceNum, period);
+				Paula::setChannelVolume(voiceNum, 0);
+
+				Paula::enableChannel(voiceNum);
+			}
+			// another pointless wait for DMA-Clear???
 		}
-		if ((channel.flags & ChannelContext::kFlagPortamento) != 0)
-			channel.lastNote = note;
+
+		channel.voicesActive++;
+		if (&channel < &_channelCtx[kNumChannels]) {
+			const byte flagsSet = ChannelContext::kFlagMono | ChannelContext::kFlagPortamento;
+			if ((channel.flags & flagsSet) == flagsSet && channel.lastNote < 0x80 && channel.lastNote != voice.baseNote) {
+				voice.portaTicks = 0;
+				voice.endNote = voice.baseNote;
+				voice.baseNote = channel.lastNote;
+				voice.flags |= VoiceContext::kFlagPortamento;
+			}
+			if ((channel.flags & ChannelContext::kFlagPortamento) != 0)
+				channel.lastNote = note;
+		}
 	}
-endFunction:
 	_playerCtx.addedNote = true;
 	_playerCtx.lastVoice = voiceNum;
 	return voiceNum;
