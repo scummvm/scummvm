@@ -112,7 +112,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (new_lastmatch  != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
 
 #ifdef DEBUG_PARSER
-		sciprintf("Match.\n");
+		printf("kSaid: Match.\n");
 #endif
 
 		s->r_acc = make_reg(0, 1);
@@ -192,11 +192,6 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t event = argv[1];
 
 	s->parser_event = event;
-
-	if (s->parser_valid == 2) {
-		sciprintf("Parsing skipped: Parser in simparse mode\n");
-		return s->r_acc;
-	}
 
 	bool res = s->_vocabulary->tokenizeString(words, string, &error);
 	s->parser_valid = 0; /* not valid */

@@ -57,7 +57,8 @@ enum kDebugLevels {
 	kDebugLevelAvoidPath  = 1 << 16,
 	kDebugLevelDclInflate = 1 << 17,
 	kDebugLevelVM         = 1 << 18,
-	kDebugLevelScripts    = 1 << 19
+	kDebugLevelScripts    = 1 << 19,
+	kDebugLevelGC         = 1 << 20
 };
 
 struct SciGameDescription {

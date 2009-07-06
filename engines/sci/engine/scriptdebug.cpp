@@ -42,7 +42,7 @@ int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
 	int selectors;
 
 	if (!obj) {
-		sciprintf("Applied propertyOffsetToId on non-object at %04x:%04x\n", PRINT_REG(objp));
+		warning("Applied propertyOffsetToId on non-object at %04x:%04x", PRINT_REG(objp));
 		return -1;
 	}
 
@@ -59,7 +59,7 @@ int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
 	}
 
 	if (prop_ofs < 0 || (prop_ofs >> 1) >= selectors) {
-		sciprintf("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d]) on object at %04x:%04x\n",
+		warning("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d]) on object at %04x:%04x",
 		          prop_ofs, prop_ofs >> 1, selectors - 1, PRINT_REG(objp));
 		return -1;
 	}
@@ -81,7 +81,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	int i = 0;
 
 	if (!mobj) {
-		sciprintf("Disassembly failed: Segment %04x non-existant or not a script\n", pos.segment);
+		warning("Disassembly failed: Segment %04x non-existant or not a script", pos.segment);
 		return retval;
 	} else
 		script_entity = (Script *)mobj;
@@ -90,7 +90,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	scr_size = script_entity->buf_size;
 
 	if (pos.offset >= scr_size) {
-		sciprintf("Trying to disassemble beyond end of script\n");
+		warning("Trying to disassemble beyond end of script");
 		return pos;
 	}
 
@@ -98,13 +98,13 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	opcode = opsize >> 1;
 
 	if (!debugState.isValid) {
-		sciprintf("Not in debug state\n");
+		warning("Not in debug state");
 		return retval;
 	}
 
 	opsize &= 1; // byte if true, word if false
 
-	sciprintf("%04x:%04x: ", PRINT_REG(pos));
+	printf("%04x:%04x: ", PRINT_REG(pos));
 
 	if (print_bytecode) {
 		while (g_opcode_formats[opcode][i]) {
@@ -140,36 +140,36 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		}
 
 		if (pos.offset + bytecount > scr_size) {
-			sciprintf("Operation arguments extend beyond end of script\n");
+			warning("Operation arguments extend beyond end of script");
 			return retval;
 		}
 
 		for (i = 0; i < bytecount; i++)
-			sciprintf("%02x ", scr[pos.offset + i]);
+			printf("%02x ", scr[pos.offset + i]);
 
 		for (i = bytecount; i < 5; i++)
-			sciprintf("   ");
+			printf("   ");
 	}
 
 	if (print_bw_tag)
-		sciprintf("[%c] ", opsize ? 'B' : 'W');
-	sciprintf("%s", s->_kernel->getOpcode(opcode).name.c_str());
+		printf("[%c] ", opsize ? 'B' : 'W');
+	printf("%s", s->_kernel->getOpcode(opcode).name.c_str());
 
 	i = 0;
 	while (g_opcode_formats[opcode][i]) {
 		switch (g_opcode_formats[opcode][i++]) {
 		case Script_Invalid:
-			sciprintf("-Invalid operation-");
+			warning("-Invalid operation-");
 			break;
 
 		case Script_SByte:
 		case Script_Byte:
-			sciprintf(" %02x", scr[retval.offset++]);
+			printf(" %02x", scr[retval.offset++]);
 			break;
 
 		case Script_Word:
 		case Script_SWord:
-			sciprintf(" %04x", 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8)));
+			printf(" %04x", 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8)));
 			retval.offset += 2;
 			break;
 
@@ -188,11 +188,11 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			}
 
 			if (opcode == op_callk)
-				sciprintf(" %s[%x]", (param_value < s->_kernel->_kernelFuncs.size()) ?
+				printf(" %s[%x]", (param_value < s->_kernel->_kernelFuncs.size()) ?
 							((param_value < s->_kernel->getKernelNamesSize()) ? s->_kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
 			else
-				sciprintf(opsize ? " %02x" : " %04x", param_value);
+				printf(opsize ? " %02x" : " %04x", param_value);
 
 			break;
 
@@ -203,7 +203,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				param_value = 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8));
 				retval.offset += 2;
 			}
-			sciprintf(opsize ? " %02x" : " %04x", param_value);
+			printf(opsize ? " %02x" : " %04x", param_value);
 			break;
 
 		case Script_SRelative:
@@ -213,7 +213,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				param_value = 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8));
 				retval.offset += 2;
 			}
-			sciprintf(opsize ? " %02x  [%04x]" : " %04x  [%04x]", param_value, (0xffff) & (retval.offset + param_value));
+			printf(opsize ? " %02x  [%04x]" : " %04x  [%04x]", param_value, (0xffff) & (retval.offset + param_value));
 			break;
 
 		case Script_End:
@@ -221,7 +221,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			break;
 
 		default:
-			sciprintf("Internal assertion failed in 'disassemble', %s, L%d\n", __FILE__, __LINE__);
+			error("Internal assertion failed in disassemble()");
 
 		}
 	}
@@ -232,11 +232,11 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			int prop_ofs = scr[pos.offset + 1];
 			int prop_id = propertyOffsetToId(s, prop_ofs, *debugState.p_objp);
 
-			sciprintf("	(%s)", selector_name(s, prop_id));
+			printf("	(%s)", selector_name(s, prop_id));
 		}
 	}
 
-	sciprintf("\n");
+	printf("\n");
 
 	if (pos == *debugState.p_pc) { // Extra information if debugging the current opcode
 		if (opcode == op_callk) {
@@ -246,14 +246,14 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			if (!(s->_flags & GF_SCI0_OLD))
 				argc += (*debugState.p_restadjust);
 
-			sciprintf(" Kernel params: (");
+			printf(" Kernel params: (");
 
 			for (int j = 0; j < argc; j++) {
-				sciprintf("%04x:%04x", PRINT_REG((*debugState.p_sp)[j - stackframe]));
+				printf("%04x:%04x", PRINT_REG((*debugState.p_sp)[j - stackframe]));
 				if (j + 1 < argc)
-					sciprintf(", ");
+					printf(", ");
 			}
-			sciprintf(")\n");
+			printf(")\n");
 		} else if ((opcode == op_send) || (opcode == op_self)) {
 			int restmod = *debugState.p_restadjust;
 			int stackframe = (scr[pos.offset + 1] >> 1) + restmod;
@@ -278,32 +278,32 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				if (!name)
 					name = "<invalid>";
 
-				sciprintf("  %s::%s[", name, (selector > s->_kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
+				printf("  %s::%s[", name, (selector > s->_kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
 
 				switch (lookup_selector(s, called_obj_addr, selector, 0, &fun_ref)) {
 				case kSelectorMethod:
-					sciprintf("FUNCT");
+					printf("FUNCT");
 					argc += restmod;
 					restmod = 0;
 					break;
 				case kSelectorVariable:
-					sciprintf("VAR");
+					printf("VAR");
 					break;
 				case kSelectorNone:
-					sciprintf("INVALID");
+					printf("INVALID");
 					break;
 				}
 
-				sciprintf("](");
+				printf("](");
 
 				while (argc--) {
-					sciprintf("%04x:%04x", PRINT_REG(sb[- stackframe + 2]));
+					printf("%04x:%04x", PRINT_REG(sb[- stackframe + 2]));
 					if (argc)
-						sciprintf(", ");
+						printf(", ");
 					stackframe--;
 				}
 
-				sciprintf(")\n");
+				printf(")\n");
 				stackframe -= 2;
 			} // while (stackframe > 0)
 		} // Send-like opcodes
@@ -328,11 +328,11 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 	debugState.p_pp = pp;
 	debugState.p_objp = objp;
 	debugState.p_restadjust = restadjust;
-	sciprintf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
+	printf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
 	debugState.isValid = true;
 	disassemble(s, *pc, 0, 1);
 	if (debugState.seeking == kDebugSeekGlobal)
-		sciprintf("Global %d (0x%x) = %04x:%04x\n", debugState.seekSpecial,
+		printf("Global %d (0x%x) = %04x:%04x\n", debugState.seekSpecial,
 		          debugState.seekSpecial, PRINT_REG(s->script_000->locals_block->_locals[debugState.seekSpecial]));
 
 	debugState.isValid = old_debugstate;
@@ -404,7 +404,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 		debugState.p_var_max = variables_nr;
 		debugState.p_var_base = variables_base;
 		
-		sciprintf("Step #%d\n", script_step_counter);
+		printf("Step #%d\n", script_step_counter);
 		disassemble(s, *pc, 0, 1);
 	}
 

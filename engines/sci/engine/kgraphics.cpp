@@ -417,7 +417,7 @@ reg_t kShow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				s->visual->draw(Common::Point(0, 0));
 
 			gfxop_update(s->gfx_state);
-			sciprintf("Switching visible map to %x\n", s->pic_visible_map);
+			debugC(2, kDebugLevelGraphics, "Switching visible map to %x\n", s->pic_visible_map);
 		}
 		break;
 
@@ -439,13 +439,12 @@ reg_t kPicNotValid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 void _k_redraw_box(EngineState *s, int x1, int y1, int x2, int y2) {
-	sciprintf("_k_redraw_box(): Unimplemented!\n");
+	warning("_k_redraw_box(): Unimplemented");
 #if 0
 	int i;
 	ViewObject *list = s->dyn_views;
 
-	sciprintf("Reanimating views\n", s->dyn_views_nr);
-
+	printf("Reanimating views\n", s->dyn_views_nr);
 
 	for (i = 0;i < s->dyn_views_nr;i++) {
 		*(list[i].underBitsp) = graph_save_box(s, list[i].nsLeft, list[i].nsTop, list[i].nsRight - list[i].nsLeft,
@@ -2464,7 +2463,7 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	while (id > 0 && (!s->visual->_portRefs[id] || (s->visual->_portRefs[id]->_flags & GFXW_FLAG_NO_IMPLICIT_SWITCH)))
 		id--;
 
-	sciprintf("Activating port %d after disposing window %d\n", id, goner_nr);
+	debugC(2, kDebugLevelGraphics, "Activating port %d after disposing window %d\n", id, goner_nr);
 	s->port = (id >= 0) ? s->visual->_portRefs[id] : 0;
 
 	if (!s->port)

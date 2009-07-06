@@ -351,46 +351,46 @@ void Vocabulary::decipherSaidBlock(byte *addr) {
 
 		if (nextitem < 0xf0) {
 			nextitem = nextitem << 8 | *addr++;
-			sciprintf(" %s[%03x]", getAnyWordFromGroup(nextitem), nextitem);
+			printf(" %s[%03x]", getAnyWordFromGroup(nextitem), nextitem);
 
 			nextitem = 42; // Make sure that group 0xff doesn't abort
 		} else switch (nextitem) {
 			case 0xf0:
-				sciprintf(" ,");
+				printf(" ,");
 				break;
 			case 0xf1:
-				sciprintf(" &");
+				printf(" &");
 				break;
 			case 0xf2:
-				sciprintf(" /");
+				printf(" /");
 				break;
 			case 0xf3:
-				sciprintf(" (");
+				printf(" (");
 				break;
 			case 0xf4:
-				sciprintf(" )");
+				printf(" )");
 				break;
 			case 0xf5:
-				sciprintf(" [");
+				printf(" [");
 				break;
 			case 0xf6:
-				sciprintf(" ]");
+				printf(" ]");
 				break;
 			case 0xf7:
-				sciprintf(" #");
+				printf(" #");
 				break;
 			case 0xf8:
-				sciprintf(" <");
+				printf(" <");
 				break;
 			case 0xf9:
-				sciprintf(" >");
+				printf(" >");
 				break;
 			case 0xff:
 				break;
 			}
 	} while (nextitem != 0xff);
 
-	sciprintf("\n");
+	printf("\n");
 }
 
 bool Vocabulary::tokenizeString(ResultWordList &retval, const char *sentence, char **error) {
@@ -484,32 +484,32 @@ bool Kernel::hasKernelFunction(const char *functionName) const {
 
 void _vocab_recursive_ptree_dump_treelike(parse_tree_node_t *nodes, int nr, int prevnr) {
 	if ((nr > VOCAB_TREE_NODES)/* || (nr < prevnr)*/) {
-		sciprintf("Error(%04x)", nr);
+		printf("Error(%04x)", nr);
 		return;
 	}
 
 	if (nodes[nr].type == kParseTreeLeafNode)
-		//sciprintf("[%03x]%04x", nr, nodes[nr].content.value);
-		sciprintf("%x", nodes[nr].content.value);
+		//printf("[%03x]%04x", nr, nodes[nr].content.value);
+		printf("%x", nodes[nr].content.value);
 	else {
 		int lbranch = nodes[nr].content.branches[0];
 		int rbranch = nodes[nr].content.branches[1];
-		//sciprintf("<[%03x]", nr);
-		sciprintf("<");
+		//printf("<[%03x]", nr);
+		printf("<");
 
 		if (lbranch)
 			_vocab_recursive_ptree_dump_treelike(nodes, lbranch, nr);
 		else
-			sciprintf("NULL");
+			printf("NULL");
 
-		sciprintf(",");
+		printf(",");
 
 		if (rbranch)
 			_vocab_recursive_ptree_dump_treelike(nodes, rbranch, nr);
 		else
-			sciprintf("NULL");
+			printf("NULL");
 
-		sciprintf(">");
+		printf(">");
 	}
 }
 
@@ -519,43 +519,43 @@ void _vocab_recursive_ptree_dump(parse_tree_node_t *nodes, int nr, int prevnr, i
 	int i;
 
 	if (nodes[nr].type == kParseTreeLeafNode) {
-		sciprintf("vocab_dump_parse_tree: Error: consp is nil for element %03x\n", nr);
+		printf("vocab_dump_parse_tree: Error: consp is nil for element %03x\n", nr);
 		return;
 	}
 
 	if ((nr > VOCAB_TREE_NODES)/* || (nr < prevnr)*/) {
-		sciprintf("Error(%04x))", nr);
+		printf("Error(%04x))", nr);
 		return;
 	}
 
 	if (lbranch) {
 		if (nodes[lbranch].type == kParseTreeBranchNode) {
-			sciprintf("\n");
+			printf("\n");
 			for (i = 0; i < blanks; i++)
-				sciprintf("    ");
-			sciprintf("(");
+				printf("    ");
+			printf("(");
 			_vocab_recursive_ptree_dump(nodes, lbranch, nr, blanks + 1);
-			sciprintf(")\n");
+			printf(")\n");
 			for (i = 0; i < blanks; i++)
-				sciprintf("    ");
+				printf("    ");
 		} else
-			sciprintf("%x", nodes[lbranch].content.value);
-		sciprintf(" ");
-	}/* else sciprintf ("nil");*/
+			printf("%x", nodes[lbranch].content.value);
+		printf(" ");
+	}/* else printf ("nil");*/
 
 	if (rbranch) {
 		if (nodes[rbranch].type == kParseTreeBranchNode)
 			_vocab_recursive_ptree_dump(nodes, rbranch, nr, blanks);
 		else
-			sciprintf("%x", nodes[rbranch].content.value);
-	}/* else sciprintf("nil");*/
+			printf("%x", nodes[rbranch].content.value);
+	}/* else printf("nil");*/
 }
 
 void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes) {
 	//_vocab_recursive_ptree_dump_treelike(nodes, 0, 0);
-	sciprintf("(setq %s \n'(", tree_name);
+	printf("(setq %s \n'(", tree_name);
 	_vocab_recursive_ptree_dump(nodes, 0, 0, 1);
-	sciprintf("))\n");
+	printf("))\n");
 }
 
 void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms) {

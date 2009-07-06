@@ -87,11 +87,11 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case SCI_EVT_KEYBOARD:
 		if ((e.buckybits & SCI_EVM_LSHIFT) && (e.buckybits & SCI_EVM_RSHIFT) && (e.data == '-')) {
-			sciprintf("Debug mode activated\n");
+			printf("Debug mode activated\n");
 			debugState.seeking = kDebugSeekNothing;
 			debugState.runningStep = 0;
 		} else if ((e.buckybits & SCI_EVM_CTRL) && (e.data == '`')) {
-			sciprintf("Debug mode activated\n");
+			printf("Debug mode activated\n");
 			debugState.seeking = kDebugSeekNothing;
 			debugState.runningStep = 0;
 		} else {

@@ -334,7 +334,7 @@ int Menubar::setAttribute(EngineState *s, int menu_nr, int item_nr, int attribut
 		break;
 
 	default:
-		sciprintf("Attempt to set invalid attribute of menu %d, item %d: 0x%04x\n", menu_nr, item_nr, attribute);
+		error("Attempt to set invalid attribute of menu %d, item %d: 0x%04x", menu_nr, item_nr, attribute);
 		return 1;
 	}
 
@@ -367,7 +367,7 @@ reg_t Menubar::getAttribute(int menu_nr, int item_nr, int attribute) const {
 		return make_reg(0, item._tag);
 
 	default:
-		sciprintf("Attempt to read invalid attribute from menu %d, item %d: 0x%04x\n", menu_nr, item_nr, attribute);
+		warning("Attempt to read invalid attribute from menu %d, item %d: 0x%04x", menu_nr, item_nr, attribute);
 		return make_reg(0, -1);
 	}
 }

@@ -205,7 +205,7 @@ int GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 		g_system->updateScreen();
 		break;
 	default:
-		GFXERROR("Invalid buffer %d in update!\n", buffer);
+		error("Invalid buffer %d in update", buffer);
 		return GFX_ERROR;
 	}
 

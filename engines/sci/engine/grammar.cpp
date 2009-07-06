@@ -51,51 +51,51 @@ static void vocab_print_rule(parse_rule_t *rule) {
 	int wspace = 0;
 
 	if (!rule) {
-		sciprintf("NULL rule");
+		warning("NULL rule");
 		return;
 	}
 
-	sciprintf("[%03x] -> ", rule->id);
+	printf("[%03x] -> ", rule->id);
 
 	if (!rule->length)
-		sciprintf("e");
+		printf("e");
 
 	for (i = 0; i < rule->length; i++) {
 		uint token = rule->data[i];
 
 		if (token == TOKEN_OPAREN) {
 			if (i == rule->first_special)
-				sciprintf("_");
+				printf("_");
 
-			sciprintf("(");
+			printf("(");
 			wspace = 0;
 		} else if (token == TOKEN_CPAREN) {
 			if (i == rule->first_special)
-				sciprintf("_");
+				printf("_");
 
-			sciprintf(")");
+			printf(")");
 			wspace = 0;
 		} else {
 			if (wspace)
-				sciprintf(" ");
+				printf(" ");
 
 			if (i == rule->first_special)
-				sciprintf("_");
+				printf("_");
 			if (token & TOKEN_TERMINAL_CLASS)
-				sciprintf("C(%04x)", token & 0xffff);
+				printf("C(%04x)", token & 0xffff);
 			else if (token & TOKEN_TERMINAL_GROUP)
-				sciprintf("G(%04x)", token & 0xffff);
+				printf("G(%04x)", token & 0xffff);
 			else if (token & TOKEN_STUFFING_WORD)
-				sciprintf("%03x", token & 0xffff);
+				printf("%03x", token & 0xffff);
 			else
-				sciprintf("[%03x]", token); /* non-terminal */
+				printf("[%03x]", token); /* non-terminal */
 			wspace = 1;
 		}
 
 		if (i == rule->first_special)
-			sciprintf("_");
+			printf("_");
 	}
-	sciprintf(" [%d specials]", rule->specials_nr);
+	printf(" [%d specials]", rule->specials_nr);
 }
 
 static void _vfree(parse_rule_t *rule) {
@@ -287,12 +287,12 @@ static parse_rule_list_t *_vocab_add_rule(parse_rule_list_t *list, parse_rule_t 
 
 static void _vprl(parse_rule_list_t *list, int pos) {
 	if (list) {
-		sciprintf("R%03d: ", pos);
+		printf("R%03d: ", pos);
 		vocab_print_rule(list->rule);
-		sciprintf("\n");
+		printf("\n");
 		_vprl(list->next, pos + 1);
 	} else {
-		sciprintf("%d rules total.\n", pos);
+		printf("%d rules total.\n", pos);
 	}
 }
 
@@ -466,9 +466,9 @@ static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_r
 			else
 				writepos = _vbpt_append(nodes, pos, writepos, token & 0xffff);
 		} else {
-			sciprintf("\nError in parser (grammar.cpp, _vbpt_write_subexpression()): Rule data broken in rule ");
+			printf("\nError in parser (grammar.cpp, _vbpt_write_subexpression()): Rule data broken in rule ");
 			vocab_print_rule(rule);
-			sciprintf(", at token position %d\n", *pos);
+			printf(", at token position %d\n", *pos);
 			return rulepos;
 		}
 	}

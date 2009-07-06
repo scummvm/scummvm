@@ -53,7 +53,7 @@ gfx_pixmap_t *gfxr_draw_cursor(int id, byte *resource, int size, bool isSci01) {
 		colors[3] = 2;
 
 	if (size != CURSOR_RESOURCE_SIZE) {
-		GFXERROR("Expected resource size of %d, but found %d\n", CURSOR_RESOURCE_SIZE, size);
+		error("Expected resource size of %d, but found %d", CURSOR_RESOURCE_SIZE, size);
 		return NULL;
 	}
 

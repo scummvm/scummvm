@@ -400,7 +400,7 @@ enum {
 
 
 #ifdef GFXR_DEBUG_PIC0
-#define p0printf sciprintf
+#define p0printf printf
 #else
 void do_nothing(...) { }
 #define p0printf do_nothing
@@ -1197,7 +1197,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				pal += default_palette;
 
 				if (pal >= GFXR_PIC0_NUM_PALETTES) {
-					GFXERROR("Attempt to access invalid palette %d\n", pal);
+					error("Attempt to access invalid palette %d", pal);
 					return;
 				}
 
@@ -1442,7 +1442,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 					index %= GFXR_PIC0_PALETTE_SIZE;
 
 					if (pal >= GFXR_PIC0_NUM_PALETTES) {
-						GFXERROR("Attempt to write to invalid palette %d\n", pal);
+						error("Attempt to write to invalid palette %d", pal);
 						return;
 					}
 					palette[pal][index] = *(resource + pos++);
@@ -1453,7 +1453,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				p0printf("Set palette @%d\n", pos);
 				pal = *(resource + pos++);
 				if (pal >= GFXR_PIC0_NUM_PALETTES) {
-					GFXERROR("Attempt to write to invalid palette %d\n", pal);
+					error("Attempt to write to invalid palette %d", pal);
 					return;
 				}
 
@@ -1527,7 +1527,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				// *if it's not for some reason, we should die
 
 				if (view->palette && view->palette->isShared() && !sci1) {
-					sciprintf("gfx_draw_pic0(): can't set a non-static palette for an embedded view!\n");
+					warning("gfx_draw_pic0(): can't set a non-static palette for an embedded view");
 				}
 
 				// For SCI0, use special color mapping to copy the low
@@ -1602,7 +1602,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				if (!pic->priorityTable) {
 					pic->priorityTable = (int*)malloc(16 * sizeof(int));
 				} else {
-					GFXERROR("pic->priorityTable is not NULL (%p); possible memory corruption", (void *)pic->priorityTable);
+					error("pic->priorityTable is not NULL (%p); possible memory corruption", (void *)pic->priorityTable);
 				}
 
 				pri_table = pic->priorityTable;
@@ -1614,7 +1614,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			}
 
 			default:
-				sciprintf("%s L%d: Warning: Unknown opx %02x\n", __FILE__, __LINE__, opx);
+				warning("gfxr_draw_pic01(): Unknown opx %02x", opx);
 				return;
 			}
 			goto end_op_loop;
@@ -1714,7 +1714,7 @@ void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
 				break;
 
 			default:
-				GFXERROR("Invalid dither mode %d!\n", dmode);
+				error("Invalid dither mode %d", dmode);
 				return;
 			}
 

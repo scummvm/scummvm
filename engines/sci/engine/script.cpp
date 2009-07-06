@@ -103,7 +103,7 @@ void script_adjust_opcode_formats(int res_version) {
 		g_opcode_formats[op_lofss][0] = Script_Offset;
 		break;
 	default:
-		sciprintf("script_adjust_opcode_formats(): Unknown script version %d\n", res_version);
+		error("script_adjust_opcode_formats(): Unknown script version %d\n", res_version);
 	}
 }
 
@@ -215,28 +215,27 @@ void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {
 	int namepos = (int16)READ_LE_UINT16((unsigned char *) data + 14 + seeker);
 	int i = 0;
 
-	sciprintf("Object\n");
+	printf("Object\n");
 
 	Common::hexdump((unsigned char *) data + seeker, objsize - 4, 16, seeker);
 	//-4 because the size includes the two-word header
 
-	sciprintf("Name: %s\n", namepos ? ((char *)(data + namepos)) : "<unknown>");
-	sciprintf("Superclass: %x\n", superclass);
-	sciprintf("Species: %x\n", species);
-	sciprintf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *) data + 12 + seeker) & 0xffff);
+	printf("Name: %s\n", namepos ? ((char *)(data + namepos)) : "<unknown>");
+	printf("Superclass: %x\n", superclass);
+	printf("Species: %x\n", species);
+	printf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *) data + 12 + seeker) & 0xffff);
 
-	sciprintf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *) data + seeker + 4));
-	sciprintf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *) data + seeker + 6)));
+	printf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *) data + seeker + 4));
+	printf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *) data + seeker + 6)));
 
 	seeker += 8;
 
 	while (selectors--) {
-		sciprintf("  [#%03x] = 0x%x\n", i++, (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
-
+		printf("  [#%03x] = 0x%x\n", i++, (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
 		seeker += 2;
 	}
 
-	sciprintf("Overridden functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
+	printf("Overridden functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
 
 	seeker += 2;
 
@@ -244,8 +243,8 @@ void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {
 		while (overloads--) {
 			int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker));
 
-			sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>");
-			sciprintf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors*2 + 2) & 0xffff);
+			printf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>");
+			printf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors*2 + 2) & 0xffff);
 
 			seeker += 2;
 		}
@@ -257,17 +256,17 @@ void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
 	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
 	int namepos = (int16)READ_LE_UINT16((unsigned char *) data + 14 + seeker);
 
-	sciprintf("Class\n");
+	printf("Class\n");
 
 	Common::hexdump((unsigned char *) data + seeker, objsize - 4, 16, seeker);
 
-	sciprintf("Name: %s\n", namepos ? ((char *)data + namepos) : "<unknown>");
-	sciprintf("Superclass: %x\n", superclass);
-	sciprintf("Species: %x\n", species);
-	sciprintf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *)data + 12 + seeker) & 0xffff);
+	printf("Name: %s\n", namepos ? ((char *)data + namepos) : "<unknown>");
+	printf("Superclass: %x\n", superclass);
+	printf("Species: %x\n", species);
+	printf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *)data + 12 + seeker) & 0xffff);
 
-	sciprintf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + 4));
-	sciprintf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *)data + seeker + 6)));
+	printf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + 4));
+	printf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *)data + seeker + 6)));
 
 	seeker += 8;
 	selectorsize <<= 1;
@@ -275,7 +274,7 @@ void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
 	while (selectors--) {
 		int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker) + selectorsize);
 
-		sciprintf("  [%03x] %s = 0x%x\n", 0xffff & selector, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>",
+		printf("  [%03x] %s = 0x%x\n", 0xffff & selector, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>",
 		          (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
 
 		seeker += 2;
@@ -283,16 +282,16 @@ void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
 
 	seeker += selectorsize;
 
-	sciprintf("Overloaded functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
+	printf("Overloaded functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
 
 	seeker += 2;
 
 	while (overloads--) {
 		int selector = (int16)READ_LE_UINT16((unsigned char *)data + (seeker));
 		fprintf(stderr, "selector=%d; selectorNames.size() =%d\n", selector, _selectorNames.size());
-		sciprintf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ?
+		printf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ?
 		          _selectorNames[selector].c_str() : "<?>");
-		sciprintf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors * 2 + 2) & 0xffff);
+		printf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors * 2 + 2) & 0xffff);
 
 		seeker += 2;
 	}
@@ -304,7 +303,7 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	Resource *script = _resmgr->findResource(ResourceId(kResourceTypeScript, scriptNumber), 0);
 
 	if (!script) {
-		sciprintf("Script not found!\n");
+		warning("dissectScript(): Script not found!\n");
 		return;
 	}
 
@@ -314,17 +313,17 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 		unsigned int seeker = _seeker + 4;
 
 		if (!objtype) {
-			sciprintf("End of script object (#0) encountered.\n");
-			sciprintf("Classes: %i, Objects: %i, Export: %i,\n Var: %i (all base 10)",
+			printf("End of script object (#0) encountered.\n");
+			printf("Classes: %i, Objects: %i, Export: %i,\n Var: %i (all base 10)",
 			          objectctr[6], objectctr[1], objectctr[7], objectctr[10]);
 			return;
 		}
 
-		sciprintf("\n");
+		printf("\n");
 
 		objsize = (int16)READ_LE_UINT16(script->data + _seeker + 2);
 
-		sciprintf("Obj type #%x, size 0x%x: ", objtype, objsize);
+		printf("Obj type #%x, size 0x%x: ", objtype, objsize);
 
 		_seeker += objsize;
 
@@ -336,72 +335,72 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 			break;
 
 		case SCI_OBJ_CODE: {
-			sciprintf("Code\n");
+			printf("Code\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case 3: {
-			sciprintf("<unknown>\n");
+			printf("<unknown>\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case SCI_OBJ_SAID: {
-			sciprintf("Said\n");
+			printf("Said\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 
-			sciprintf("%04x: ", seeker);
+			printf("%04x: ", seeker);
 			while (seeker < _seeker) {
 				unsigned char nextitem = script->data [seeker++];
 				if (nextitem == 0xFF)
-					sciprintf("\n%04x: ", seeker);
+					printf("\n%04x: ", seeker);
 				else if (nextitem >= 0xF0) {
 					switch (nextitem) {
 					case 0xf0:
-						sciprintf(", ");
+						printf(", ");
 						break;
 					case 0xf1:
-						sciprintf("& ");
+						printf("& ");
 						break;
 					case 0xf2:
-						sciprintf("/ ");
+						printf("/ ");
 						break;
 					case 0xf3:
-						sciprintf("( ");
+						printf("( ");
 						break;
 					case 0xf4:
-						sciprintf(") ");
+						printf(") ");
 						break;
 					case 0xf5:
-						sciprintf("[ ");
+						printf("[ ");
 						break;
 					case 0xf6:
-						sciprintf("] ");
+						printf("] ");
 						break;
 					case 0xf7:
-						sciprintf("# ");
+						printf("# ");
 						break;
 					case 0xf8:
-						sciprintf("< ");
+						printf("< ");
 						break;
 					case 0xf9:
-						sciprintf("> ");
+						printf("> ");
 						break;
 					}
 				} else {
 					nextitem = nextitem << 8 | script->data [seeker++];
-					sciprintf("%s[%03x] ", vocab->getAnyWordFromGroup(nextitem), nextitem);
+					printf("%s[%03x] ", vocab->getAnyWordFromGroup(nextitem), nextitem);
 				}
 			}
-			sciprintf("\n");
+			printf("\n");
 		}
 		break;
 
 		case SCI_OBJ_STRINGS: {
-			sciprintf("Strings\n");
+			printf("Strings\n");
 			while (script->data [seeker]) {
-				sciprintf("%04x: %s\n", seeker, script->data + seeker);
+				printf("%04x: %s\n", seeker, script->data + seeker);
 				seeker += strlen((char *)script->data + seeker) + 1;
 			}
 			seeker++; // the ending zero byte
@@ -413,37 +412,37 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 			break;
 
 		case SCI_OBJ_EXPORTS: {
-			sciprintf("Exports\n");
+			printf("Exports\n");
 			Common::hexdump((unsigned char *)script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case SCI_OBJ_POINTERS: {
-			sciprintf("Pointers\n");
+			printf("Pointers\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case 9: {
-			sciprintf("<unknown>\n");
+			printf("<unknown>\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		case SCI_OBJ_LOCALVARS: {
-			sciprintf("Local vars\n");
+			printf("Local vars\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 		};
 		break;
 
 		default:
-			sciprintf("Unsupported!\n");
+			printf("Unsupported!\n");
 			return;
 		}
 
 	}
 
-	sciprintf("Script ends without terminator\n");
+	printf("Script ends without terminator\n");
 }
 
 } // End of namespace Sci

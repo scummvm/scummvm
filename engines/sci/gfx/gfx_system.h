@@ -35,9 +35,6 @@ namespace Sci {
 
 #define GFX_DEBUG
 
-/* General output macros */
-#define GFXERROR sciprintf("GFX Error: %s, L%d:", __FILE__, __LINE__); error
-
 /***********************/
 /*** Data structures ***/
 /***********************/

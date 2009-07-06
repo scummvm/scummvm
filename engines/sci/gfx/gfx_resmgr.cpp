@@ -165,7 +165,7 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 
 	case GFX_RESOURCE_TYPES_NR:
 	default:
-		GFXERROR("Invalid resource type: %d\n", type);
+		error("Invalid resource type: %d", type);
 		return -1;
 	}
 }
@@ -349,7 +349,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 #endif
 
 		if (!pic) {
-			GFXERROR("Failed to allocate scaled pic!\n");
+			error("Failed to allocate scaled pic");
 			return NULL;
 		}
 
@@ -358,7 +358,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 		if (need_unscaled) {
 			unscaled_pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
 			if (!unscaled_pic) {
-				GFXERROR("Failed to allocate unscaled pic!\n");
+				error("Failed to allocate unscaled pic");
 				return NULL;
 			}
 			gfxr_clear_pic0(pic, SCI_TITLEBAR_SIZE);

@@ -610,15 +610,15 @@ void Kernel::mapFunctions() {
 				_kernelFuncs[functnr].signature = kfunct_mappers[found].signature;
 				kernel_compile_signature(&(_kernelFuncs[functnr].signature));
 				++mapped;
-			} else
+			} else {
+				//warning("Ignoring function %s\n", kfunct_mappers[found].name);
 				++ignored;
+			}
 		}
 	} // for all functions requesting to be mapped
 
-	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, getKernelNamesSize(), mapped);
-	if (ignored)
-		sciprintf(" and ignoring %d", ignored);
-	sciprintf(".\n");
+	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.\n", 
+				mapped + ignored, getKernelNamesSize(), mapped, ignored);
 
 	return;
 }
@@ -696,12 +696,12 @@ bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const r
 			int type = determine_reg_type(s, *argv, *sig & KSIG_ALLOW_INV);
 
 			if (!type) {
-				sciprintf("[KERN] Could not determine type of ref %04x:%04x; failing signature check\n", PRINT_REG(*argv));
+				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
 				return false;
 			}
 
 			if (type & KSIG_INVALID) {
-				sciprintf("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid\n",
+				warning("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid",
 				          PRINT_REG(*argv), kernel_argtype_description(type));
 				return false;
 			}

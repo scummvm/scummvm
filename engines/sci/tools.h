@@ -31,13 +31,6 @@
 
 namespace Sci {
 
-/**
- * Prints a string to the console stack.
- * @param fmt	a printf-style format string
- * @param  Additional parameters as defined in fmt
- */
-void sciprintf(const char *fmt, ...) GCC_PRINTF(1, 2);
-
 /** Find first set bit in bits and return its index. Returns 0 if bits is 0. */
 int sci_ffs(int bits);
 
