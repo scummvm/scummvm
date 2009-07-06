@@ -808,10 +808,18 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (!GET_SEL32V(obj, nodePtr) && obj.segment) {
 			if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
-				warning("Could not open song number %d", number);
-				// Send a "stop handle" event so that the engine won't wait forever here
-				s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-				PUT_SEL32V(obj, signal, -1);
+				// Check if the resource exists as an audio resource - this can happen
+				// in SQ4CD and perhaps other games as well. If the resource exists, play
+				// it using map 65535 (sound effects map).
+				if (s->resmgr->testResource(ResourceId(kResourceTypeAudio, number))) {
+					// Found a relevant audio resource, play it
+					PUT_SEL32V(obj, signal, s->_sound.startAudio(65535, number));
+				} else {
+					warning("Could not open song number %d", number);
+					// Send a "stop handle" event so that the engine won't wait forever here
+					s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+					PUT_SEL32V(obj, signal, -1);
+				}
 				return s->r_acc;
 			}
 
@@ -966,6 +974,9 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+/**
+ * Used for synthesized music playback
+ */
 reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->_kernel->_selectorMap.setVol != -1)
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
@@ -975,7 +986,9 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return kDoSound_SCI0(s, funct_nr, argc, argv);
 }
 
-// Used for speech playback in CD games
+/**
+ * Used for speech playback and digital soundtracks in CD games
+ */
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Audio::Mixer *mixer = g_system->getMixer();
 
