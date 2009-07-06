@@ -147,6 +147,8 @@ Common::Error ToltecsEngine::run() {
 
 	_system->showMouse(true);
 
+	syncSoundSettings();
+
 //#define TEST_MENU
 #ifdef TEST_MENU
 	_screen->registerFont(0, 0x0D);
@@ -220,7 +222,7 @@ void ToltecsEngine::loadScene(uint resIndex) {
 
 	_screen->_fullRefresh = true;
 	_screen->_renderQueue->clear();
-
+	
 }
 
 void ToltecsEngine::updateScreen() {
