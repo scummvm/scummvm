@@ -96,25 +96,27 @@ void Script::setupCommandList() {
 		{ 27, 1, "FeedPassword", 		3, { 1, 1, 1 }, NULL }
 	};
 
+	/** Operators used by the mathematical evaluator */
+	static const GPL2Operator gplOperators[] = {
+		{"&", 	&Script::operAnd 			},
+		{"|",	&Script::operOr 			},
+		{"^", 	&Script::operXor 			},
+		{"==",	&Script::operEqual 			},
+		{"!=", 	&Script::operNotEqual		},
+		{"<", 	&Script::operLess			},
+		{">", 	&Script::operGreater		},
+		{"<=",	&Script::operLessOrEqual	},
+		{">=",	&Script::operGreaterOrEqual	},
+		{"*",	&Script::operMul			},
+		{"/", 	&Script::operDiv			},
+		{"%",	&Script::operMod			},
+		{"+", 	&Script::operAdd			},
+		{"-",	&Script::operSub			}
+	};
+
 	_commandList = gplCommands;
+	_operatorList = gplOperators;
 }
-/** Operators used by the mathematical evaluator */
-Common::String operators[] = {
-	"oper_and",
-	"oper_or",
-	"oper_xor",
-	"oper_equals",
-	"oper_not_equal",
-	"oper_less_than",
-	"oper_greater_than",
-	"oper_less_or_equal",
-	"oper_greater_or_equal",
-	"oper_multiply",
-	"oper_divide",
-	"oper_remainder",
-	"oper_plus",
-	"oper_minus"
-};
 
 /** Functions used by the mathematical evaluator */
 Common::String functions[] = {
@@ -146,6 +148,66 @@ enum mathExpressionObject {
 	kMathVariable
 };
 
+/* GPL operators */
+
+int Script::operAnd(int op1, int op2) {
+	return op1 & op2;
+}
+
+int Script::operOr(int op1, int op2) {
+	return op1 | op2;
+}
+
+int Script::operXor(int op1, int op2) {
+	return op1 ^ op2;
+}
+
+int Script::operEqual(int op1, int op2) {
+	return op1 == op2;
+}
+
+int Script::operNotEqual(int op1, int op2) {
+	return op1 != op2;
+}
+
+int Script::operLess(int op1, int op2) {
+	return op1 < op2;
+}
+
+int Script::operGreater(int op1, int op2) {
+	return op1 > op2;
+}
+
+int Script::operGreaterOrEqual(int op1, int op2) {
+	return op1 >= op2;
+}
+
+int Script::operLessOrEqual(int op1, int op2) {
+	return op1 <= op2;
+}
+
+int Script::operMul(int op1, int op2) {
+	return op1 * op2;
+}
+
+int Script::operAdd(int op1, int op2) {
+	return op1 + op2;
+}
+
+int Script::operSub(int op1, int op2) {
+	return op1 - op2;
+}
+
+int Script::operDiv(int op1, int op2) {
+	return op1 / op2;
+}
+
+int Script::operMod(int op1, int op2) {
+	return op1 % op2;
+}
+
+/* GPL commands */
+
 void Script::load(Common::Queue<int> &params) {
 	int objID = params.pop() - 1;
 	int animID = params.pop() - 1;
@@ -161,13 +223,16 @@ void Script::load(Common::Queue<int> &params) {
  */
 
 int Script::handleMathExpression(Common::MemoryReadStream &reader) {
-	Common::Stack<uint16> stk;
+	Common::Stack<int> stk;
 	mathExpressionObject obj;
+	GPL2Operator oper;
 
 	// Read in initial math object
 	obj = (mathExpressionObject)reader.readUint16LE();
 
-	uint16 value;
+	int value;
+	int op1, op2, res;
+
 	while (1) {
 		if (obj == kMathEnd) {
 			// Check whether the expression was evaluated correctly
@@ -184,25 +249,31 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 		case kMathNumber:
 			value = reader.readUint16LE();
 			stk.push(value);
-			debugC(3, kDraciBytecodeDebugLevel, "\t\t-number %hu", value);
+			debugC(3, kDraciBytecodeDebugLevel, "\t\tnumber: %d", value);
 			break;
 
 		case kMathOperator:
 			value = reader.readUint16LE();
-			stk.pop();
-			stk.pop();
+			op1 = stk.pop();
+			op2 = stk.pop();
 
-			// FIXME: Pushing dummy value for now, but should push return value
-			stk.push(0);
+			// Fetch operator
+			oper = _operatorList[value-1];
 
-			debugC(3, kDraciBytecodeDebugLevel, "\t\t-operator %s",
-				operators[value-1].c_str());
+			// Calculate result
+			res = (this->*(oper._handler))(op1, op2);
+			
+			// Push result
+			stk.push(res);
+
+			debugC(3, kDraciBytecodeDebugLevel, "\t\t%d %s %d (res: %d)",
+				op1, oper._name.c_str(), op2, res);
 			break;
 
 		case kMathVariable:
 			value = reader.readUint16LE();
 			stk.push(value);
-			debugC(3, kDraciBytecodeDebugLevel, "\t\t-variable %hu", value);
+			debugC(3, kDraciBytecodeDebugLevel, "\t\tvariable: %d", value);
 			break;
 
 		case kMathFunctionCall:
@@ -213,7 +284,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 			// FIXME: Pushing dummy value for now, but should push return value
 			stk.push(0);
 
-			debugC(3, kDraciBytecodeDebugLevel, "\t\t-functioncall %s",
+			debugC(3, kDraciBytecodeDebugLevel, "\t\tfunction: %s",
 				functions[value-1].c_str());
 			break;
 		}
@@ -303,6 +374,7 @@ int Script::run(GPL2Program program, uint16 offset) {
 	
 	const GPL2Command *cmd;
 	do {
+
 		// read in command pair
 		uint16 cmdpair = reader.readUint16BE();
 

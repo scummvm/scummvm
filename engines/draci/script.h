@@ -43,6 +43,7 @@ enum {
 };
 
 typedef void (Script::* GPLHandler)(Common::Queue<int> &);
+typedef int  (Script::* GPLOperatorHandler)(int, int);
 
 /**
  *  Represents a single command in the GPL scripting language bytecode.
@@ -57,6 +58,11 @@ struct GPL2Command {
 	uint16 _numParams;
 	int _paramTypes[kMaxParams];
 	GPLHandler _handler;
+};
+
+struct GPL2Operator {
+	Common::String _name;
+	GPLOperatorHandler _handler;
 };
 
 /** 
@@ -82,8 +88,25 @@ private:
 	
 	/** List of all GPL commands. Initialised in the constructor. */
 	const GPL2Command *_commandList;
+	const GPL2Operator *_operatorList;
  
 	void load(Common::Queue<int> &params);
+	void start(Common::Queue<int> &params);
+
+	int operAnd(int op1, int op2);
+	int operOr(int op1, int op2);
+	int operXor(int op1, int op2);
+	int operSub(int op1, int op2);
+	int operAdd(int op1, int op2);
+	int operDiv(int op1, int op2);
+	int operMul(int op1, int op2);
+	int operEqual(int op1, int op2);
+	int operNotEqual(int op1, int op2);
+	int operGreater(int op1, int op2);
+	int operLess(int op1, int op2);
+	int operGreaterOrEqual(int op1, int op2);
+	int operLessOrEqual(int op1, int op2);
+	int operMod(int op1, int op2);
 
 	void setupCommandList();
 	const GPL2Command *findCommand(byte num, byte subnum);
