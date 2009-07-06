@@ -114,30 +114,31 @@ void Script::setupCommandList() {
 		{"-",	&Script::operSub			}
 	};
 
+	/** Functions used by the mathematical evaluator */
+	static const GPL2Function gplFunctions[] = {
+		{ "Not", 		NULL },
+		{ "Random", 	NULL },
+		{ "IsIcoOn", 	NULL },
+		{ "IsIcoAct", 	NULL },
+		{ "IcoStat", 	NULL },
+		{ "ActIco", 	NULL },
+		{ "IsObjOn", 	NULL },
+		{ "IsObjOff", 	NULL },
+		{ "IsObjAway", 	NULL },
+		{ "ObjStat", 	NULL },
+		{ "LastBlock", 	NULL },
+		{ "AtBegin", 	NULL },
+		{ "BlockVar", 	NULL },
+		{ "HasBeen", 	NULL },
+		{ "MaxLine", 	NULL },
+		{ "ActPhase", 	NULL },
+		{ "Cheat",  	NULL },
+	};
+
 	_commandList = gplCommands;
 	_operatorList = gplOperators;
+	_functionList = gplFunctions;
 }
-
-/** Functions used by the mathematical evaluator */
-Common::String functions[] = {
-	"F_Not",
-	"F_Random",
-	"F_IsIcoOn",
-	"F_IsIcoAct",
-	"F_IcoStat",
-	"F_ActIco",
-	"F_IsObjOn",
-	"F_IsObjOff",
-	"F_IsObjAway",
-	"F_ObjStat",
-	"F_LastBlock",
-	"F_AtBegin",
-	"F_BlockVar",
-	"F_HasBeen",
-	"F_MaxLine",
-	"F_ActPhase",
-	"F_Cheat"
-};
 
 /** Type of mathematical object */
 enum mathExpressionObject {
@@ -223,7 +224,11 @@ void Script::start(Common::Queue<int> &params) {
 
 	GameObject *obj = _vm->_game->getObject(objID);
 
-	_vm->_anims->play(animID);
+	int visiblethingy = obj->_visible ? 1 << 7 : 0x00;
+	int thingy = (obj->_location + 1) | visiblethingy;
+
+	if ( ((objID == 0) || (obj->_visible)) && (obj->_location == _vm->_game->_currentRoom._roomNum))
+		_vm->_anims->play(animID);
 }
 
 /**
@@ -235,12 +240,13 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 	Common::Stack<int> stk;
 	mathExpressionObject obj;
 	GPL2Operator oper;
+	GPL2Function func;
 
 	// Read in initial math object
 	obj = (mathExpressionObject)reader.readUint16LE();
 
 	int value;
-	int op1, op2, res;
+	int arg1, arg2, res;
 
 	while (1) {
 		if (obj == kMathEnd) {
@@ -263,20 +269,20 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 
 		case kMathOperator:
 			value = reader.readUint16LE();
-			op1 = stk.pop();
-			op2 = stk.pop();
+			arg1 = stk.pop();
+			arg2 = stk.pop();
 
 			// Fetch operator
 			oper = _operatorList[value-1];
 
 			// Calculate result
-			res = (this->*(oper._handler))(op1, op2);
+			res = (this->*(oper._handler))(arg1, arg2);
 			
 			// Push result
 			stk.push(res);
 
 			debugC(3, kDraciBytecodeDebugLevel, "\t\t%d %s %d (res: %d)",
-				op1, oper._name.c_str(), op2, res);
+				arg1, oper._name.c_str(), arg2, res);
 			break;
 
 		case kMathVariable:
@@ -287,14 +293,29 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 
 		case kMathFunctionCall:
 			value = reader.readUint16LE();
-						
-			stk.pop();
 
-			// FIXME: Pushing dummy value for now, but should push return value
-			stk.push(0);
+			// Fetch function
+			func = _functionList[value-1];
+					
+			// If not yet implemented	
+			if (func._handler == NULL) {
+				stk.pop();
 
-			debugC(3, kDraciBytecodeDebugLevel, "\t\tfunction: %s",
-				functions[value-1].c_str());
+				// FIXME: Pushing dummy value for now, but should push return value
+				stk.push(0);
+
+				debugC(3, kDraciBytecodeDebugLevel, "\t\tcall: %s (not implemented)",
+					func._name.c_str());
+			} else {
+				arg1 = stk.pop();
+
+				// Calculate result
+				res = (this->*(func._handler))(arg1);
+			
+				debugC(3, kDraciBytecodeDebugLevel, "\t\tcall: %s(%d) (res: %d)",
+					func._name.c_str(), arg1, res);
+			}
+
 			break;
 		}
 

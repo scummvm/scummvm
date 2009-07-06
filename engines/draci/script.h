@@ -44,6 +44,7 @@ enum {
 
 typedef void (Script::* GPLHandler)(Common::Queue<int> &);
 typedef int  (Script::* GPLOperatorHandler)(int, int);
+typedef int  (Script::* GPLFunctionHandler)(int);
 
 /**
  *  Represents a single command in the GPL scripting language bytecode.
@@ -63,6 +64,11 @@ struct GPL2Command {
 struct GPL2Operator {
 	Common::String _name;
 	GPLOperatorHandler _handler;
+};
+
+struct GPL2Function {
+	Common::String _name;
+	GPLFunctionHandler _handler;
 };
 
 /** 
@@ -89,6 +95,7 @@ private:
 	/** List of all GPL commands. Initialised in the constructor. */
 	const GPL2Command *_commandList;
 	const GPL2Operator *_operatorList;
+	const GPL2Function *_functionList;
  
 	void load(Common::Queue<int> &params);
 	void start(Common::Queue<int> &params);
