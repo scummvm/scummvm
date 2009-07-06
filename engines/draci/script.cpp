@@ -384,6 +384,10 @@ int Script::run(GPL2Program program, uint16 offset) {
 	const GPL2Command *cmd;
 	do {
 
+		// Clear any parameters left on the stack from the previous command
+		// This likely won't be needed once all commands are implemented
+		params.clear();
+
 		// read in command pair
 		uint16 cmdpair = reader.readUint16BE();
 
