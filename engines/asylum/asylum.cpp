@@ -35,7 +35,16 @@ namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
     : Engine(system) {
-
+    
+    Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
+	Common::addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
+	Common::addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");
+	Common::addDebugChannel(kDebugLevelInput, "Input", "Input events debugging");
+	Common::addDebugChannel(kDebugLevelMenu, "Menu", "Menu debugging");
+	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Scripts debugging");
+	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
+	Common::addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
+	
     Common::File::addDefaultDirectory(_gameDataDir.getChild("Data"));
     Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("Music"));
@@ -67,12 +76,13 @@ Common::Error AsylumEngine::init() {
 
 	initGraphics(640, 480, true);
 
-	_screen   = new Screen(_system);
-	_sound    = new Sound(_mixer);
-	_video    = new Video(_mixer);
-	_console  = new Console(this);
-	_mainMenu = 0;
-	_scene    = 0;
+	_screen             = new Screen(_system);
+	_sound              = new Sound(_mixer);
+	_video              = new Video(_mixer);
+	_console            = new Console(this);
+	_interpreter        = 0;
+	_mainMenu           = 0;
+	_scene              = 0;
 	_delayedVideoNumber = -1;
 
     return Common::kNoError;
@@ -94,6 +104,9 @@ Common::Error AsylumEngine::go() {
 
 	// Set up the game's main scene
     _scene = new Scene(_screen, _sound, 5);
+    
+    // Set up the game's script interpreter
+	_interpreter = new Interpreter(_scene);
 
 	// Set up main menu
 	_mainMenu = new MainMenu(_screen, _sound, _scene);
@@ -116,6 +129,7 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 		checkForEvent(false);
 		checkForDelayedVideo();
 		_system->updateScreen();
+		_interpreter->processActionLists();
 	}
 }
 

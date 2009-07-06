@@ -69,6 +69,8 @@ public:
     GamePolygons* getGamePolygons() { return _gamePolygons; }
     ActionList*   getActionList()   { return _actionList; }
     MainActor*    getMainActor()    { return _mainActor; }
+    
+    int getBarrierIndexById(int id);
 
 private:
     WorldStats   *_worldStats;

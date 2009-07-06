@@ -40,6 +40,15 @@ SceneResource::~SceneResource() {
     delete _actionList;
 }
 
+int SceneResource::getBarrierIndexById(int id) {
+    for (int i=0; i < _worldStats->numBarriers; i++)
+    {
+        if (_worldStats->barriers[i].id == id)
+            return i;
+    }
+    return -1;
+}
+
 bool SceneResource::load(uint8 sceneIdx) {
     char sceneTag[6];
     Common::File* fd        = new Common::File;

@@ -24,6 +24,7 @@
  */
 
 #include "asylum/scene.h"
+#include "asylum/sceneres.h"
 
 namespace Asylum {
 
@@ -41,6 +42,8 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 		_speechPack = new ResourcePack(3);
 
 		_sceneResource->getMainActor()->setResourcePack(_resPack);
+		
+		_text->loadFont(_resPack, _sceneResource->getWorldStats()->commonRes.font1);
 
         char musPackFileName[10];
 	    sprintf(musPackFileName, "mus.%03d", sceneIdx);
@@ -90,6 +93,77 @@ void Scene::enterScene() {
 	_isActive = true;
 }
 
+int Scene::getDefaultActionIndex() {
+    if (_sceneResource) {
+        return _sceneResource->getWorldStats()->actionListIdx;
+    }
+    else
+        return -1;
+}
+
+ActionDefinitions * Scene::getActionList(int actionListIndex) {
+    if ((actionListIndex >= 0) && (actionListIndex < (int)_sceneResource->getWorldStats()->numActions)) {
+        return &_sceneResource->getActionList()->actions[actionListIndex];
+    }
+    else
+        return 0;
+}
+
+void Scene::setActorPosition(int actorIndex, int x, int y) {
+    if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
+        _sceneResource->getWorldStats()->actors[actorIndex].boundingRect.left = x;
+        _sceneResource->getWorldStats()->actors[actorIndex].boundingRect.top = y;
+    }
+    
+    // FIXME - Remove this once mainActor uses proper actor info
+    if (actorIndex == 0) {
+        _sceneResource->getMainActor()->_actorX = x;
+        _sceneResource->getMainActor()->_actorY = y;
+    }
+}
+
+void Scene::setActorAction(int actorIndex, int action) {
+    if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
+        _sceneResource->getWorldStats()->actors[actorIndex].direction = action;
+    }
+    
+    // FIXME - Remove this once mainActor uses proper actor info
+    if (actorIndex == 0) {
+        if(_sceneResource->getMainActor())
+        _sceneResource->getMainActor()->setAction(action);
+    }
+}
+
+void Scene::actorVisible(int actorIndex, bool visible) {
+    if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
+        if(visible) //  TODO - enums for flags (0x01 is visible)
+            _sceneResource->getWorldStats()->actors[actorIndex].flags |= 0x01;
+        else
+            _sceneResource->getWorldStats()->actors[actorIndex].flags &= 0xFFFFFFFE;
+    }
+    
+    
+    // FIXME - Remove this once mainActor uses proper actor info
+    if (actorIndex == 0) {
+        if(_sceneResource->getMainActor())
+        ;//_sceneResource->getMainActor()->setAction(action);
+    }
+}
+
+bool Scene::actorVisible(int actorIndex) {
+    if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
+        return _sceneResource->getWorldStats()->actors[actorIndex].flags & 0x01;    //  TODO - enums for flags (0x01 is visible)
+    }
+    
+    // FIXME - Remove this once mainActor uses proper actor info
+    if (actorIndex == 0) {
+        if(_sceneResource->getMainActor())
+        ;//_sceneResource->getMainActor()->setAction(action);
+    }
+    
+    return false;
+}
+
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	_ev = event;
 
@@ -132,11 +206,54 @@ void Scene::update() {
 	WorldStats *worldStats = _sceneResource->getWorldStats();
 	int32 curHotspot = -1;
 
-	// TESTING
+	// Horizontal scrolling
+	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
+		_startX -= SCROLL_STEP;
+		//scrollScreen = true;
+	} else if (_mouseX > 640 - SCREEN_EDGES && _startX <= bg->surface.w - 640 - SCROLL_STEP) {
+		_startX += SCROLL_STEP;
+		//scrollScreen = true;
+	}
+
+	// Vertical scrolling
+	if (_mouseY < SCREEN_EDGES && _startY >= SCROLL_STEP) {
+		_startY -= SCROLL_STEP;
+		//scrollScreen = true;
+	} else if (_mouseY > 480 - SCREEN_EDGES && _startY <= bg->surface.h - 480 - SCROLL_STEP) {
+		_startY += SCROLL_STEP;
+		//scrollScreen = true;
+	}
+
+	// Copy the background to the back buffer before updating the scene animations
+	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
+
+    updateBarrier(_screen, _resPack, 1);	// inside the middle room
+    for(uint b=0; b < _sceneResource->getWorldStats()->barriers.size(); b++) {
+        if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20) != 0)   //  TODO - enums for flags (0x20 is visible/playing?)
+            updateBarrier(_screen, _resPack, b);
+    }
+    /*
+	updateBarrier(_screen, _resPack, 0);	// the "statue with fireworks" animation
+	//updateBarrier(_screen, _resPack, 1);	// inside the middle room
+	//updateBarrier(_screen, _resPack, 2);	// the lit candles at the base of the statue
+	updateBarrier(_screen, _resPack, 3);	// the rat animation (in front of the statue)
+	updateBarrier(_screen, _resPack, 4);	// inside the bottom room
+	updateBarrier(_screen, _resPack, 6);	// inside the top room (should be shown before the rat animation)
+	updateBarrier(_screen, _resPack, 5);	// the rat animation (outside the second room)
+	updateBarrier(_screen, _resPack, 7);	// the "crazy prisoner banging head" animation
+	//updateBarrier(_screen, _resPack, 8);	// going up the ladder
+	//updateBarrier(_screen, _resPack, 9);	// going down the ladder
+	updateBarrier(_screen, _resPack, 59);	// Wobbly Guy
+	*/
+	// TODO
+	
+		// TESTING
 	// Main actor walking
 	if (!_rightButton) {
-		mainActor->setAction(15);	// face south
-		mainActor->drawActorAt(_screen, mainActor->_actorX, mainActor->_actorY);
+		//mainActor->setAction(15);	// face south
+		//mainActor->drawActorAt(_screen, mainActor->_actorX, mainActor->_actorY);
+		if (_sceneResource->getWorldStats()->actors[0].flags & 0x01)    // TESTING - only draw if visible flag
+            mainActor->drawActor(_screen);
 	} else {
 		mainActor->walkTo(_screen, _mouseX, _mouseY);
 
@@ -176,40 +293,6 @@ void Scene::update() {
 		}
 	}
 
-	// Horizontal scrolling
-	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
-		_startX -= SCROLL_STEP;
-		//scrollScreen = true;
-	} else if (_mouseX > 640 - SCREEN_EDGES && _startX <= bg->surface.w - 640 - SCROLL_STEP) {
-		_startX += SCROLL_STEP;
-		//scrollScreen = true;
-	}
-
-	// Vertical scrolling
-	if (_mouseY < SCREEN_EDGES && _startY >= SCROLL_STEP) {
-		_startY -= SCROLL_STEP;
-		//scrollScreen = true;
-	} else if (_mouseY > 480 - SCREEN_EDGES && _startY <= bg->surface.h - 480 - SCROLL_STEP) {
-		_startY += SCROLL_STEP;
-		//scrollScreen = true;
-	}
-
-	// Copy the background to the back buffer before updating the scene animations
-	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
-
-	updateBarrier(_screen, _resPack, 0);	// the "statue with fireworks" animation
-	//updateBarrier(_screen, _resPack, 1);	// inside the middle room
-	//updateBarrier(_screen, _resPack, 2);	// the lit candles at the base of the statue
-	updateBarrier(_screen, _resPack, 3);	// the rat animation (in front of the statue)
-	updateBarrier(_screen, _resPack, 4);	// inside the bottom room
-	updateBarrier(_screen, _resPack, 6);	// inside the top room (should be shown before the rat animation)
-	updateBarrier(_screen, _resPack, 5);	// the rat animation (outside the second room)
-	updateBarrier(_screen, _resPack, 7);	// the "crazy prisoner banging head" animation
-	//updateBarrier(_screen, _resPack, 8);	// going up the ladder
-	//updateBarrier(_screen, _resPack, 9);	// going down the ladder
-	//updateBarrier(_screen, _resPack, 59);	// Wobbly Guy
-	// TODO
-
 	if (g_debugPolygons)
 		ShowPolygons();
 
@@ -229,7 +312,8 @@ void Scene::update() {
 		if (curHotspot >= 0) {
 			for (uint32 a = 0; a < worldStats->numActions; a++) {
 				if (worldStats->actions[a].polyIdx == curHotspot) {
-					printf("Hotspot: \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n", 
+					printf("Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
+                            worldStats->actions[a].id, 
 							worldStats->actions[a].name,
 							worldStats->actions[a].polyIdx,
 							worldStats->actions[a].actionListIdx1,
@@ -245,6 +329,7 @@ void Scene::update() {
 					for (int command = 0; command < 161; command++) {
 						if (actionDefs.commands[command].opcode == 65) {	// play voice
 							_sound->playSfx(_speechPack, actionDefs.commands[command].param1);
+							//_text->drawResText(actionDefs.commands[command].param1+83);
 							// TODO: param2 (usually 1) -> number of loops?
 						}
 					}

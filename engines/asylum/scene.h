@@ -40,6 +40,8 @@ class Screen;
 class Sound;
 class SceneResource;
 class Text;
+class ActionDefinitions;
+class Interpreter;
 
 class Scene {
 public:
@@ -52,6 +54,15 @@ public:
 	void activate() { _isActive = true; }
 	void deactivate() { _isActive = false; }
 	bool isActive() { return _isActive; }
+	int getSceneIndex() { return _sceneIdx; }
+	
+	int getDefaultActionIndex();
+	ActionDefinitions *getActionList(int actionListIndex);
+	
+	void setActorPosition(int actorIndex, int x, int y);
+	void setActorAction(int actorIndex, int action);
+	void actorVisible(int actorIndex, bool visible);
+	bool actorVisible(int actorIndex);
 
 private:
 #if 0
@@ -88,6 +99,8 @@ private:
     void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
 
     void ShowPolygons();
+    
+    friend class Interpreter;
 }; // end of class Scene
 
 } // end of namespace Asylum

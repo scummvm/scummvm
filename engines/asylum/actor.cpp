@@ -112,6 +112,18 @@ void MainActor::drawActorAt(Screen *screen, uint16 x, uint16 y) {
 	_actorY = y;
 }
 
+void MainActor::drawActor(Screen *screen) {
+	GraphicFrame *frame = getFrame();
+
+	screen->copyToBackBufferWithTransparency(
+			((byte *)frame->surface.pixels),
+			frame->surface.w,
+			_actorX,
+			_actorY - frame->surface.h,
+			frame->surface.w,
+			frame->surface.h );
+}
+
 void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 	// TODO: pathfinding! The character can walk literally anywhere
 	int newAction = _currentAction;
@@ -122,7 +134,7 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 		_actorX--;
 		if (ABS(y - _actorY) <= 30) {
 			setAction(newAction);
-			drawActorAt(screen, _actorX, _actorY);
+			drawActor(screen);
 			return;
 		}
 	}
@@ -133,7 +145,7 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 		_actorX++;
 		if (ABS(y - _actorY) <= 30) {
 			setAction(newAction);
-			drawActorAt(screen, _actorX, _actorY);
+			drawActor(screen);
 			return;
 		}
 	}
@@ -161,7 +173,7 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 	}
 
 	setAction(newAction);
-	drawActorAt(screen, _actorX, _actorY);
+	drawActor(screen);
 }
 
 } // end of namespace Asylum
