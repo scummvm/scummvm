@@ -1795,23 +1795,24 @@ uint32 Hotspots::getCurrentHotspot() const {
 }
 
 void Hotspots::cleanFloatString(const Hotspot &spot) const {
-	static char tempStr[256];	//the static keyword is unnecessary, but was added to work around a PSP compiler ICE.
+	char *to, *from;
 
-	// Get the string
-	strncpy0(tempStr, GET_VARO_STR(spot.key), 255);
+	to = from = GET_VARO_STR(spot.key);
+	for (int i = 0; (i < 257) && (*from != '\0'); i++, from++) {
+		char c = *from;
 
-	// Remove spaces
-	char *ptr;
-	while ((ptr = strchr(tempStr, ' ')))
-		_vm->_util->cutFromStr(tempStr, (ptr - tempStr), 1);
+		// Skip spaces
+		if (c == ' ')
+			continue;
 
-	// Exchange decimal separator if needed
-	if (_vm->_global->_language == kLanguageBritish)
-		while ((ptr = strchr(tempStr, '.')))
-			*ptr = ',';
+		// Convert decimal separator if necessary
+		if ((_vm->_global->_language == kLanguageBritish) && (c == '.'))
+			c = ',';
 
-	// Write it back
-	WRITE_VARO_STR(spot.key, tempStr);
+		*to++ = c;
+	}
+
+	*to = '\0';
 }
 
 void Hotspots::checkStringMatch(const Hotspot &spot, const InputDesc &input,
