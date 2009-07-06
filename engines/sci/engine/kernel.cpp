@@ -832,7 +832,7 @@ bool Kernel::loadKernelNames() {
 
 	switch (_resmgr->_sciVersion) {
 	case SCI_VERSION_0:
-	case SCI_VERSION_01:
+	case SCI_VERSION_01_EGA:
 	case SCI_VERSION_01_VGA:
 	case SCI_VERSION_01_VGA_ODD:
 	case SCI_VERSION_1:

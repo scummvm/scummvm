@@ -43,7 +43,7 @@ int _reset_graphics_input(EngineState *s) {
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 	debug(2, "Initializing graphics");
 
-	if (s->resmgr->_sciVersion <= SCI_VERSION_01 || (s->_flags & GF_SCI1_EGA)) {
+	if (s->resmgr->_sciVersion <= SCI_VERSION_01_EGA || (s->_flags & GF_SCI1_EGA)) {
 		int i;
 
 		for (i = 0; i < 16; i++) {
@@ -181,7 +181,7 @@ static void _free_graphics_input(EngineState *s) {
 }
 
 int game_init_sound(EngineState *s, int sound_flags) {
-	if (s->resmgr->_sciVersion >= SCI_VERSION_01)
+	if (s->resmgr->_sciVersion >= SCI_VERSION_01_EGA)
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;

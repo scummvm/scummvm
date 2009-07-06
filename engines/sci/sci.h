@@ -71,7 +71,7 @@ struct SciGameDescription {
 enum SciGameVersions {
 	SCI_VERSION_AUTODETECT = 0,
 	SCI_VERSION_0 = 1,
-	SCI_VERSION_01 = 2,
+	SCI_VERSION_01_EGA = 2,
 	SCI_VERSION_01_VGA = 3,
 	SCI_VERSION_01_VGA_ODD = 4,
 	SCI_VERSION_1 = 5,

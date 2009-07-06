@@ -499,7 +499,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			} else if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB))) {
 				version = guessSciVersion();
 				if (version != SCI_VERSION_01_VGA) {
-					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01;
+					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01_EGA;
 				}
 			} else {
 				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
@@ -525,7 +525,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	case SCI_VERSION_0:
 		debug("Resmgr: Detected SCI0");
 		break;
-	case SCI_VERSION_01:
+	case SCI_VERSION_01_EGA:
 		debug("Resmgr: Detected SCI01");
 		break;
 	case SCI_VERSION_01_VGA:
