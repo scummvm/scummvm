@@ -309,7 +309,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*6f*/	DEFUN("6f", kTimesCos, "ii"),
 	/*70*/	DEFUN("Graph", kGraph, ".*"),
 	/*71*/	DEFUN("Joystick", kJoystick, ".*"),
-	/*72*/	NOFUN("unknown72"),
+	/*72*/	NOFUN("unknown72"),		// ShiftScreen, perhaps?
 	/*73*/	NOFUN("unknown73"),
 
 	// Experimental functions
@@ -322,7 +322,6 @@ SciKernelFunction kfunct_mappers[] = {
 	/*(?)*/	DEFUN("IsItSkip", kIsItSkip, "iiiii"),
 
 	// Non-experimental Functions without a fixed ID
-
 	DEFUN("CosMult", kTimesCos, "ii"),
 	DEFUN("SinMult", kTimesSin, "ii"),
 	/*(?)*/	DEFUN("CosDiv", kCosDiv, "ii"),
@@ -340,6 +339,21 @@ SciKernelFunction kfunct_mappers[] = {
 
 	// Special and NOP stuff
 	{NULL, k_Unknown, NULL},
+
+	// Stub functions
+	DEFUN("ShiftScreen", kStub, ".*"),
+	DEFUN("MemorySegment", kStub, ".*"),
+	DEFUN("ListOps", kStub, ".*"),
+	DEFUN("ATan", kStub, ".*"),
+	DEFUN("StrSplit", kStub, ".*"),
+	DEFUN("MergePoly", kStub, ".*"),
+	DEFUN("AssertPalette", kStub, ".*"),
+	DEFUN("TextColors", kStub, ".*"),
+	DEFUN("TextFonts", kStub, ".*"),
+	DEFUN("Record", kStub, ".*"),
+	DEFUN("PlayBack", kStub, ".*"),
+	DEFUN("DbugStr", kStub, ".*"),
+	DEFUN("Platform", kStub, ".*"),    // SCI1
 
 	{NULL, NULL, NULL} // Terminator
 };
@@ -778,11 +792,6 @@ void Kernel::setDefaultKernelNames() {
 			_kernelNames[i + 4] = "FClose";
 			offset = 4;
 		}
-	}
-
-	if (_resmgr->_sciVersion == SCI_VERSION_1_1) {
-		// KQ6CD calls unimplemented function 0x26
-		_kernelNames[0x26] = "Dummy";
 	}
 }
 

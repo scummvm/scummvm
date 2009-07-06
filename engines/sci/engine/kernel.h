@@ -509,12 +509,10 @@ reg_t kSetVideoMode(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
 // The Unknown/Unnamed kernel function
-reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv);
 // for unimplemented kernel functions
 reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv);
 // for kernel functions that don't do anything
-reg_t kFsciEmu(EngineState *s, int funct_nr, int argc, reg_t *argv);
-// Emulating "old" kernel functions on the heap
 
 
 } // End of namespace Sci
