@@ -376,8 +376,10 @@ public:
 	 *
 	 * @see Graphics::PixelFormat
 	 *
-	 * @note All backends supporting RGB color must be able to accept game data 
-	 *       in RGB color order, even if hardware uses BGR or some other color order.
+	 * @note Backends supporting RGB color should accept game data in RGB color 
+	 *       order, even if hardware uses BGR or some other color order.
+	 *
+	 * @see convertScreenRect
 	 */
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
 #else
@@ -412,7 +414,7 @@ public:
 	 * This is the pixel format for which the client code generates data;
 	 * this is not necessarily equal to the hardware pixel format. For example,
 	 * a backend may perform color lookup of 8-bit graphics before pushing
-	 * a screen to hardware, or correct the ARGB color order.
+	 * a screen to hardware, or correct the ARGB color order via convertScreenRect.
 	 *
 	 * @param width		the new virtual screen width
 	 * @param height	the new virtual screen height
@@ -1026,6 +1028,8 @@ public:
 private:
 	/**
 	 * Convert a rectangle from the screen format to the hardware format.
+	 * Expected usage is for this to be called in copyRectToScreen when 
+	 * conversion is necessary.
 	 *
 	 * @param dstbuf	the buffer which will recieve the converted graphics data
 	 * @param srcbuf	the buffer containing the original graphics data
@@ -1040,7 +1044,9 @@ private:
 	 * @note This implementation is slow. Please override this if
 	 *		 your backend hardware has a better way to deal with this.
 	 * @note This implementation requires the screen pixel format and 
-	 *		 the hardware pixel format to have a matching bytedepth
+	 *		 the hardware pixel format to have a matching bytedepth.
+	 * @note This is meant for RGB modes only, do not attempt
+	 *		 to use it when running in 256 color mode.
 	 */
 	virtual bool convertScreenRect(byte *dstbuf, const byte *srcbuf, int dstpitch, int srcpitch, 
 									int w, int h, Graphics::PixelFormat hwFmt) {

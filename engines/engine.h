@@ -59,6 +59,8 @@ void initCommonGFX(bool defaultTo1XScaler);
  *
  * Errors out when backend is not able to switch to the specified
  * mode.
+ *
+ * Defaults to 256 color paletted mode if no graphics format is provided.
  */
 void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format = NULL);
 

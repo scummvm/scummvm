@@ -63,14 +63,14 @@ public:
 	 * safely freed afterwards.
 	 *
 	 * @param buf		the new cursor data
-	 * @param w		the width
-	 * @param h		the height
+	 * @param w			the width
+	 * @param h			the height
 	 * @param hotspotX	the hotspot X coordinate
 	 * @param hotspotY	the hotspot Y coordinate
 	 * @param keycolor	the index for the transparent color
 	 * @param targetScale	the scale for which the cursor is designed
-	 * @param format	the pixel format which the cursor graphic uses
-	 *
+	 * @param format	a pointer to the pixel format which the cursor graphic uses, 
+	 *					CLUT8 will be used if this is NULL or not specified.
 	 * @note It is ok for the buffer to be a NULL pointer. It is sometimes
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
@@ -95,7 +95,8 @@ public:
 	 * @param hotspotY	the hotspot Y coordinate
 	 * @param keycolor	the index for the transparent color
 	 * @param targetScale	the scale for which the cursor is designed
-	 * @param format	the pixel format which the cursor graphic uses
+	 * @param format	a pointer to the pixel format which the cursor graphic uses,
+	 *					CLUT8 will be used if this is NULL or not specified.
 	 */
 	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL);
 

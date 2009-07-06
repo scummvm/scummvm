@@ -48,7 +48,7 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
 // TODO: generic YUV to RGB blit
 
 /**
- * Convert a rectangle from the one format to another, and blits it.
+ * Blits a rectangle from one graphical format to another.
  *
  * @param dstbuf	the buffer which will recieve the converted graphics data
  * @param srcbuf	the buffer containing the original graphics data
@@ -61,8 +61,11 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
  * @return			true if conversion completes successfully,
  *					false if there is an error.
  *
- * @note This implementation currently requires the destination's
- *		 format have at least as high a bitdepth as the source's.
+ * @note This implementation currently arbitrarily requires that the 
+ *		 destination's format have at least as high a bytedepth as 
+ *		 the source's.
+ * @note This can convert a rectangle in place, if the source and 
+ *		 destination format have the same bytedepth.
  *
  */
 bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,

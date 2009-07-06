@@ -65,7 +65,11 @@ struct PixelFormat {
 		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
 	}
 
-	// "Factory" methods for convenience
+	/////////////////////////////////////////////////////////
+	// Convenience functions for creating standard formats //
+	/////////////////////////////////////////////////////////
+
+	// 256 color palette.
 	static inline PixelFormat createFormatCLUT8() { 
 		return PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
 	}
@@ -201,6 +205,14 @@ struct PixelFormat {
 	}
 };
 
+/**
+ * Determines the first matching format between two lists.
+ *
+ * @param backend	The higher priority list, meant to be a list of formats supported by the backend
+ * @param frontend	The lower priority list, meant to be a list of formats supported by the engine
+ * @return			The first item on the backend list that also occurs on the frontend list
+ *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
+ */
 inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
 #ifdef ENABLE_RGB_COLOR
 	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
