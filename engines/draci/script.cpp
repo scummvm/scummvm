@@ -234,8 +234,10 @@ void Script::start(Common::Queue<int> &params) {
 	int animID = params.pop() - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
+	
+	bool visible = (objID == kDragonObject || obj->_visible);
 
-	if ( ((objID == 0) || (obj->_visible)) && (obj->_location == _vm->_game->getRoomNum()))
+	if (visible && (obj->_location == _vm->_game->getRoomNum()))
 		_vm->_anims->play(animID);
 }
 

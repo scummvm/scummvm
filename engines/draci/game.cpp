@@ -134,7 +134,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 }
 
 void Game::init() {
-	loadObject(0);
+	loadObject(kDragonObject);
 	
 	_vm->_script->run(getObject(0)->_program, getObject(0)->_init);
 

@@ -35,6 +35,10 @@ namespace Draci {
 
 class DraciEngine;
 
+enum {
+	kDragonObject
+};
+
 enum StructSizes {
 	personSize = sizeof(uint16) * 2 + sizeof(byte)
 };
