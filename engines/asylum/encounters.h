@@ -52,4 +52,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif /* ENCOUNTERS_H_ */
+#endif
