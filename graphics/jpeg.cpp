@@ -408,8 +408,8 @@ bool JPEG::readMCU(uint16 xMCU, uint16 yMCU) {
 }
 
 float JPEG::idct(int x, int y, int weight, int fx, int fy) {
-	float vx = cos((2 * x + 1) * fx * M_PI / 16);
-	float vy = cos((2 * y + 1) * fy * M_PI / 16);
+	float vx = cos((2 * x + 1) * fx * PI / 16);
+	float vy = cos((2 * y + 1) * fy * PI / 16);
 	float ret = (float)weight * vx * vy;
 	
 	if (fx == 0)

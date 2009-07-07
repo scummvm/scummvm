@@ -26,8 +26,6 @@
 #ifndef GRAPHICS_JPEG_H
 #define GRAPHICS_JPEG_H
 
-#define M_PI 3.141592f
-
 #include "common/stream.h"
 #include "graphics/surface.h"
 
