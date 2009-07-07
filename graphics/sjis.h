@@ -42,12 +42,12 @@ public:
 	virtual ~FontSJIS() {}
 
 	/**
-	 * Enable shadow drawing.
+	 * Enable outline drawing.
 	 *
-	 * After changing shadow state, getFontHeight and getFontWidth might return
+	 * After changing outline state, getFontHeight and getFontWidth might return
 	 * different values!
 	 */
-	virtual void enableShadow(bool enable) {}
+	virtual void enableOutline(bool enable) {}
 
 	/**
 	 * Returns the height of the font.
@@ -74,7 +74,7 @@ public:
 	 * @param pitch	pitch of the destination buffer (size in *bytes*)
 	 * @param bpp	bytes per pixel of the destination buffer
 	 * @param c1	forground color
-	 * @param c2	shadow/outline color
+	 * @param c2	outline color
 	 */
 	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const = 0;
 };
@@ -86,21 +86,23 @@ public:
  */
 class FontTowns : public FontSJIS {
 public:
+	FontTowns() : _outlineEnabled(false) {}
+
 	/**
 	 * Loads the ROM data from the given read stream.
 	 */
 	bool loadFromStream(Common::ReadStream &stream);
 
-	void enableShadow(bool enable) { _shadowEnabled = enable; }
+	void enableOutline(bool enable) { _outlineEnabled = enable; }
 
-	uint getFontHeight() const { return _shadowEnabled ? 18 : 16; }
-	uint getFontWidth() const { return _shadowEnabled ? 18 : 16; }
+	uint getFontHeight() const { return _outlineEnabled ? 18 : 16; }
+	uint getFontWidth() const { return _outlineEnabled ? 18 : 16; }
 
 	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
 
 private:
 	template<typename Color>
-	void drawCharInternShadow(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const;
+	void drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const;
 
 	template<typename Color>
 	void drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const;
@@ -109,7 +111,7 @@ private:
 		kFontRomSize = 262144
 	};
 
-	bool _shadowEnabled;
+	bool _outlineEnabled;
 	uint16 _fontData[kFontRomSize / 2];
 
 	static uint sjisToChunk(uint8 low, uint8 high);

@@ -115,7 +115,7 @@ bool Screen::init() {
 				}*/
 			}
 			
-			_sjisFont->enableShadow(!_use16ColorMode);
+			_sjisFont->enableOutline(!_use16ColorMode);
 		}
 	}
 
@@ -3021,7 +3021,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 		color2 = _textColorsMap[0];
 
 		if (color2 == _sjisInvisibleColor)
-			_sjisFont->enableShadow(false);
+			_sjisFont->enableOutline(false);
 	}
 
 	if (_curPage == 0 || _curPage == 1)
@@ -3040,7 +3040,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 
 	_sjisFont->drawChar(destPage, c, 640, 1, color1, color2);
 
-	_sjisFont->enableShadow(!_use16ColorMode);
+	_sjisFont->enableOutline(!_use16ColorMode);
 }
 
 #pragma mark -
