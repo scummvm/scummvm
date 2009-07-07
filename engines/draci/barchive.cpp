@@ -251,7 +251,7 @@ void BArchive::closeArchive(void) {
 
 	for (unsigned int i = 0; i < _fileCount; ++i) {
 		if (_files[i]._data) {
-			delete _files[i]._data; 
+			delete[] _files[i]._data; 
 		}
 	}
 

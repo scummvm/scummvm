@@ -44,7 +44,7 @@ struct BAFile {
 
 	/** Releases the file data (for memory considerations) */
 	void closeFile(void) {  
-		delete _data;
+		delete[] _data;
 		_data = NULL;
 	}
 };
