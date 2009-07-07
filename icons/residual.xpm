@@ -1,5 +1,5 @@
 /* XPM */
-static char * residual_icon[] = {
+static const char *residual_icon[] = {
 "32 32 83 1",
 " 	c None",
 ".	c #010200",
