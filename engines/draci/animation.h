@@ -91,6 +91,7 @@ public:
 	void stop(int id);
 
 	void deleteAnimation(int id);
+	void deleteOverlays();
 	void deleteAll();
 
 	void drawScene(Surface *surf);

@@ -232,15 +232,26 @@ void AnimationManager::deleteAnimation(int id) {
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if ((*it)->getID() == id)
+		if ((*it)->getID() == id) {
+			(*it)->deleteFrames();
+			_animations.erase(it);
 			break;
+		}
 	}
-	
-	(*it)->deleteFrames();
-
-	_animations.erase(it);
 }
+
+void AnimationManager::deleteOverlays() {
 	
+	Common::List<Animation *>::iterator it;
+
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
+		if((*it)->getID() == kOverlayImage)
+			(*it)->deleteFrames();
+		
+		_animations.erase(it);	
+	}
+}
+
 void AnimationManager::deleteAll() {
 	
 	Common::List<Animation *>::iterator it;
