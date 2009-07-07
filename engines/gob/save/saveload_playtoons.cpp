@@ -29,7 +29,7 @@
 
 namespace Gob {
 
-SaveLoad_playtoons::SaveFile SaveLoad_playtoons::_saveFiles[] = {
+SaveLoad_Playtoons::SaveFile SaveLoad_Playtoons::_saveFiles[] = {
 	{  "disk.001", kSaveModeExists, 0, 0}, // Playtoons 1 identification file
 	{  "disk.002", kSaveModeExists, 0, 0}, // Playtoons 2 identification file
 	{  "disk.003", kSaveModeExists, 0, 0}, // Playtoons 3 identification file
@@ -49,7 +49,7 @@ SaveLoad_playtoons::SaveFile SaveLoad_playtoons::_saveFiles[] = {
 	{  "mdo.def",  kSaveModeExists, 0, 0},
 };
 
-SaveLoad::SaveMode SaveLoad_playtoons::getSaveMode(const char *fileName) const {
+SaveLoad::SaveMode SaveLoad_Playtoons::getSaveMode(const char *fileName) const {
 	const SaveFile *saveFile = getSaveFile(fileName);
 
 	if (saveFile)
@@ -58,14 +58,14 @@ SaveLoad::SaveMode SaveLoad_playtoons::getSaveMode(const char *fileName) const {
 	return kSaveModeNone;
 }
 
-SaveLoad_playtoons::SaveLoad_playtoons(GobEngine *vm) :
+SaveLoad_Playtoons::SaveLoad_Playtoons(GobEngine *vm) :
 		SaveLoad(vm) {
 }
 
-SaveLoad_playtoons::~SaveLoad_playtoons() {
+SaveLoad_Playtoons::~SaveLoad_Playtoons() {
 }
 
-const SaveLoad_playtoons::SaveFile *SaveLoad_playtoons::getSaveFile(const char *fileName) const {
+const SaveLoad_Playtoons::SaveFile *SaveLoad_Playtoons::getSaveFile(const char *fileName) const {
 	fileName = stripPath(fileName);
 
 	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)
@@ -75,7 +75,7 @@ const SaveLoad_playtoons::SaveFile *SaveLoad_playtoons::getSaveFile(const char *
 	return 0;
 }
 
-SaveLoad_playtoons::SaveFile *SaveLoad_playtoons::getSaveFile(const char *fileName) {
+SaveLoad_Playtoons::SaveFile *SaveLoad_Playtoons::getSaveFile(const char *fileName) {
 	fileName = stripPath(fileName);
 
 	for (int i = 0; i < ARRAYSIZE(_saveFiles); i++)

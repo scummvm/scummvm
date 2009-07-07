@@ -218,6 +218,7 @@ public:
 	bool hasAdlib() const;
 	bool isSCNDemo() const;
 	bool isBATDemo() const;
+	bool is800() const;
 	bool isDemo() const;
 
 	GobEngine(OSystem *syst);

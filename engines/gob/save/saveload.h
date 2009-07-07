@@ -446,10 +446,12 @@ protected:
 };
 
 /** Save/Load class for Playtoons. */
-class SaveLoad_playtoons : public SaveLoad {
+/** Only used for the moment to check file presence */
+
+class SaveLoad_Playtoons : public SaveLoad {
 public:
-	SaveLoad_playtoons(GobEngine *vm);
-	virtual ~SaveLoad_playtoons();
+	SaveLoad_Playtoons(GobEngine *vm);
+	virtual ~SaveLoad_Playtoons();
 
 protected:
 	struct SaveFile {

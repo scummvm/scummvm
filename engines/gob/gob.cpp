@@ -205,6 +205,10 @@ bool GobEngine::isBATDemo() const {
 	return (_features & kFeaturesBATDemo) != 0;
 }
 
+bool GobEngine::is800() const {
+	return (_features & kFeatures800) != 0;
+}
+
 bool GobEngine::isDemo() const {
 	return (isSCNDemo() || isBATDemo());
 }
@@ -458,7 +462,7 @@ bool GobEngine::initGameParts() {
 		_map = new Map_v2(this);
 		_goblin = new Goblin_v2(this);
 		_scenery = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_playtoons(this);
+		_saveLoad = new SaveLoad_Playtoons(this);
 		break;
 
 	default:
