@@ -33,14 +33,16 @@ namespace Asylum {
 
 class Interpreter {
 public:
-    Interpreter(Scene *scene);
+    Interpreter(AsylumEngine *vm);
     ~Interpreter();
     
+    void doSceneChanged();
     void processActionLists();
     bool isProcessing() { return _processing; }
     
 private:
-    Scene * _scene;
+    AsylumEngine *_engine;
+    Scene *_scene;
     int _currentLine;
     int _currentScriptIndex;
     int _currentLoops;
