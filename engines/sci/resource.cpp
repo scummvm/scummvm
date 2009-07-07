@@ -42,8 +42,6 @@ namespace Sci {
 
 //#define SCI_VERBOSE_RESMGR 1
 
-const int sci_max_resource_nr[] = {65536, 1000, 2048, 2048, 2048, 65536, 65536, 65536};
-
 static const char *sci_error_types[] = {
 	"No error",
 	"I/O error",
@@ -649,16 +647,7 @@ Common::List<ResourceId> *ResourceManager::listResources(ResourceType type, int 
 }
 
 Resource *ResourceManager::findResource(ResourceId id, bool lock) {
-	Resource *retval;
-
-	if (id.number >= sci_max_resource_nr[_sciVersion]) {
-		ResourceId moddedId = ResourceId(id.type, id.number % sci_max_resource_nr[_sciVersion], id.tuple);
-		warning("[resmgr] Requested invalid resource %s, mapped to %s",
-		          id.toString().c_str(), moddedId.toString().c_str());
-		id = moddedId;
-	}
-
-	retval = testResource(id);
+	Resource *retval = testResource(id);
 
 	if (!retval)
 		return NULL;

@@ -95,7 +95,7 @@ int _reset_graphics_input(EngineState *s) {
 	font_nr = -1;
 	do {
 		resource = s->resmgr->testResource(ResourceId(kResourceTypeFont, ++font_nr));
-	} while ((!resource) && (font_nr < sci_max_resource_nr[s->resmgr->_sciVersion]));
+	} while ((!resource) && (font_nr < 65536));
 
 	if (!resource) {
 		debug(2, "No text font was found.");

@@ -82,8 +82,6 @@ enum ResSourceType {
 #define SCI1_RESMAP_ENTRIES_SIZE 6
 #define SCI11_RESMAP_ENTRIES_SIZE 5
 
-extern const int sci_max_resource_nr[]; /**< Highest possible resource numbers */
-
 enum ResourceType {
 	kResourceTypeView = 0,
 	kResourceTypePic,
