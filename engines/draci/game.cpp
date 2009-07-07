@@ -183,6 +183,7 @@ void Game::loadRoom(uint roomNum) {
 		}
 	}
 	
+	// Run the init scripts	for room objects
 	// We can't do this in the above loop because some objects' scripts reference
 	// other objects that may not yet be loaded
 	for (uint i = 0; i < _info->_numObjects; ++i) {
@@ -337,8 +338,6 @@ void Game::changeRoom(uint roomNum) {
 	_currentRoom._roomNum = roomNum;
 	loadRoom(roomNum);
 	loadOverlays();
-
-	_vm->_script->run(_currentRoom._program, _currentRoom._init);
 }
 
 int Game::getRoomNum() {
