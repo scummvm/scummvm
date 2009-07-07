@@ -214,6 +214,8 @@ public:
 	int _mapVersion; //!< RESOURCE.MAP version
 	int _volVersion; //!< RESOURCE.0xx version
 
+	bool isVGA() const { return _isVGA; }
+
 	/**
 	 * Creates a new SCI resource manager.
 	 * @param version		The SCI version to look for; use SCI_VERSION_AUTODETECT
@@ -265,6 +267,7 @@ public:
 	void setAudioLanguage(int language);
 
 protected:
+	bool _isVGA; // Used to determine if the game has EGA or VGA graphics
 	int _maxMemory; //!< Config option: Maximum total byte number allocated
 	Common::List<ResourceSource *> _sources;
 	int _memoryLocked;	//!< Amount of resource bytes in locked memory

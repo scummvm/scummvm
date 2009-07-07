@@ -457,7 +457,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	      {"resource.005", 0, "58942b1aa6d6ffeb66e9f8897fd4435f", 469243},
 	      {"resource.006", 0, "8c767b3939add63d11274065e46aad04", 713158},
 	      {NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
-	      GF_SCI1_EGA,
+	      0,
 	      SCI_VERSION_AUTODETECT,
 	      SCI_VERSION_1
 	},
@@ -949,8 +949,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "9ae2a13708d691cd42f9129173c4b39d", 820443},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH},
 		0,
-		SCI_VERSION_01_EGA,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01,
+		SCI_VERSION_01
 	},
 
 	// King's Quest 1 SCI Remake - English DOS Non-Interactive Demo
@@ -2066,8 +2066,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "9e33566515b18bee7915db448063bba2", 871853},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
 		0,
-		SCI_VERSION_01_EGA,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01,
+		SCI_VERSION_01
 	},
 
 	// Mixed-Up Fairy Tales v1.000 - English DOS (supplied by markcoolio in bug report #2723791)
@@ -2081,8 +2081,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "f79daa70390d73746742ffcfc3dc4471", 937580},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0,
-		SCI_VERSION_01_EGA,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01,
+		SCI_VERSION_01
 	},
 
 	// Mixed-Up Fairy Tales - English DOS Floppy (from jvprat)
@@ -2095,8 +2095,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "dd6cef0c592eadb7e6be9a25307c57a2", 1344719},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0,
-		SCI_VERSION_01_EGA,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01,
+		SCI_VERSION_01
 	},
 
 	// Mixed-Up Mother Goose - English Amiga (from www.back2roots.org)
@@ -2108,8 +2108,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "fb552ae550ca1dac19ed8f6a3767612d", 817191},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH},
 		0,
-		SCI_VERSION_01_EGA,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01,
+		SCI_VERSION_01
 	},
 
 	// Mixed-Up Mother Goose v2.000 - English DOS Floppy (supplied by markcoolio in bug report #2723795)
@@ -2119,8 +2119,8 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "b7ecd8ae9e254e80310b5a668b276e6e", 2948975},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0,
-		SCI_VERSION_01_EGA,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01,
+		SCI_VERSION_01
 	},
 
 	// Mixed-Up Mother Goose - English DOS CD (from jvprat)
@@ -2520,7 +2520,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
 		0,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01
 	},
 
 	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy
@@ -2533,7 +2533,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
 		0,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01
 	},
 
 	// Quest for Glory 1 - English Amiga
@@ -2606,7 +2606,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH},
 		0,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01
 	},
 
 	// Quest for Glory 2 - English (from FRG)
@@ -2621,7 +2621,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01
 	},
 
 	// Quest for Glory 2 - English DOS
@@ -2639,7 +2639,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0,
 		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_01_EGA
+		SCI_VERSION_01
 	},
 
 	// Quest for Glory 3 - English DOS Non-Interactive Demo (from FRG)
@@ -3125,7 +3125,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "454684e3a7a68cbca073945e50778447", 1187088},
 		{"resource.002", 0, "6dc668326cc22cb9e8bd8ca9e68d2a66", 1181249},
 		{NULL, 0, NULL, 0}}, Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
-		GF_SCI1_EGA,
+		0,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_1
 	},
@@ -3138,7 +3138,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "454684e3a7a68cbca073945e50778447", 1187088},
 		{"resource.002", 0, "6dc668326cc22cb9e8bd8ca9e68d2a66", 1181249},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC98, 0, GUIO_NOSPEECH},
-		GF_SCI1_EGA,
+		0,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_1
 	},

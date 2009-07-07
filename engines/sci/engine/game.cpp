@@ -43,10 +43,8 @@ int _reset_graphics_input(EngineState *s) {
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 	debug(2, "Initializing graphics");
 
-	if (s->resmgr->_sciVersion <= SCI_VERSION_01_EGA || (s->_flags & GF_SCI1_EGA)) {
-		int i;
-
-		for (i = 0; i < 16; i++) {
+	if (!s->resmgr->isVGA()) {
+		for (int i = 0; i < 16; i++) {
 			if (gfxop_set_color(s->gfx_state, &(s->ega_colors[i]), gfx_sci0_image_colors[sci0_palette][i].r,
 					gfx_sci0_image_colors[sci0_palette][i].g, gfx_sci0_image_colors[sci0_palette][i].b, 0, -1, -1)) {
 				return 1;
@@ -111,7 +109,7 @@ int _reset_graphics_input(EngineState *s) {
 	s->iconbar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
-	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
+	if (s->resmgr->isVGA()) {
 		// This bit sets the foreground and background colors in VGA SCI games
 		gfx_color_t fgcolor;
 		gfx_color_t bgcolor;
@@ -181,7 +179,7 @@ static void _free_graphics_input(EngineState *s) {
 }
 
 int game_init_sound(EngineState *s, int sound_flags) {
-	if (s->resmgr->_sciVersion >= SCI_VERSION_01_EGA)
+	if (s->resmgr->_sciVersion >= SCI_VERSION_01)
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;
@@ -466,7 +464,7 @@ int game_init(EngineState *s) {
 	s->successor = NULL; // No successor
 	s->_statusBarText.clear(); // Status bar is blank
 	s->status_bar_foreground = 0;
-	s->status_bar_background = (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) ? 255 : 15;
+	s->status_bar_background = !s->resmgr->isVGA() ? 15 : 255;
 
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_PARSER_BASE];
 	str->name = strdup("parser-base");

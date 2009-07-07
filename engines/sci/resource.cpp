@@ -358,7 +358,7 @@ int ResourceManager::guessSciVersion() {
 		file.close();
 
 		if (compression == 3) {
-			return SCI_VERSION_01_VGA;
+			return SCI_VERSION_01;
 		}
 	}
 
@@ -382,7 +382,7 @@ int ResourceManager::guessSciVersion() {
 		file.close();
 
 		if (compression == 3) {
-			return SCI_VERSION_01_VGA;
+			return SCI_VERSION_01;
 		}
 	}
 
@@ -495,14 +495,14 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		switch (_mapVersion) {
 		case SCI_VERSION_0:
 			if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB))) {
-				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
+				version = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
 			} else if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB))) {
 				version = guessSciVersion();
-				if (version != SCI_VERSION_01_VGA) {
-					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01_EGA;
+				if (version != SCI_VERSION_01) {
+					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01;
 				}
 			} else {
-				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
+				version = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
 			}
 			break;
 		case SCI_VERSION_01_VGA_ODD:
@@ -519,17 +519,36 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			version = SCI_VERSION_AUTODETECT;
 		}
 
+	_isVGA = false;
+
+	// Determine if the game is using EGA graphics or not
+	if (version == SCI_VERSION_0) {
+		_isVGA = false;		// There is no SCI0 VGA game
+	} else if (version >= SCI_VERSION_1_1) {
+		_isVGA = true;		// There is no SCI11 EGA game
+	} else {
+		// SCI01 or SCI1: EGA games have the second byte of their views set
+		// to 0, VGA ones to non-zero
+		int i = 0;
+
+		while (true) {
+			Resource *res = findResource(ResourceId(kResourceTypeView, i), 0);
+			if (res) {
+				_isVGA = (res->data[1] != 0);
+				break;
+			}
+			i++;
+		}
+	}
+
 	_sciVersion = version;
 	// temporary version printout - should be reworked later
 	switch (_sciVersion) {
 	case SCI_VERSION_0:
 		debug("Resmgr: Detected SCI0");
 		break;
-	case SCI_VERSION_01_EGA:
+	case SCI_VERSION_01:
 		debug("Resmgr: Detected SCI01");
-		break;
-	case SCI_VERSION_01_VGA:
-		debug("Resmgr: Detected SCI01VGA - KQ5 or similar");
 		break;
 	case SCI_VERSION_01_VGA_ODD:
 		debug("Resmgr: Detected SCI01VGA - Jones/CD or similar");

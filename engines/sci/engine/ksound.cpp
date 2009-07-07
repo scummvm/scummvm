@@ -154,7 +154,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	SongHandle handle;
 	int cue;
 
-	if (s->_version >= SCI_VERSION_01_EGA)
+	if (s->_version >= SCI_VERSION_01)
 		return;
 	/* SCI01 and later explicitly poll for everything */
 

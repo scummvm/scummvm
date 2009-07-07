@@ -245,7 +245,7 @@ void gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src);
 void gfxr_dither_pic0(gfxr_pic_t *pic, int mode, int pattern);
 
 /**
- * Calculates a SCI0 view.
+ * Calculates an EGA view.
  *
  * @param[in] id		Resource ID of the view
  * @param[in] resource	Pointer to the resource to read
@@ -253,7 +253,7 @@ void gfxr_dither_pic0(gfxr_pic_t *pic, int mode, int pattern);
  * @param[in] palette	The palette to use
  * @return				The resulting view
  */
-gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette);
+gfxr_view_t *getEGAView(int id, byte *resource, int size, int palette);
 
 /**
  * Calculates a SCI cursor.
@@ -265,8 +265,7 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette);
  * @return				A newly allocated pixmap containing an index color
  * 						representation of the cursor
  */
-gfx_pixmap_t *gfxr_draw_cursor(int id, byte *resource, int size,
-		bool isSci01);
+gfx_pixmap_t *gfxr_draw_cursor(int id, byte *resource, int size, bool isSci01);
 /** @} */
 
 
@@ -304,7 +303,7 @@ Palette *gfxr_read_pal1_amiga(Common::File &file);
 Palette *gfxr_read_pal11(int id, byte *resource, int size);
 
 /**
- * Calculates an SCI1 view.
+ * Calculates a VGA view.
  *
  * @param[in] id			Resource ID of the view
  * @param[in] resource		Pointer to the resource to read
@@ -313,7 +312,7 @@ Palette *gfxr_read_pal11(int id, byte *resource, int size);
  * @param[in] isSci11		true if SCI1.1, false otherwise
  * @return					The resulting view
  */
-gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_pal, bool isSci11);
+gfxr_view_t *getVGAView(int id, byte *resource, int size, Palette *static_pal, bool isSci11);
 
 gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, byte *cel_base, int size, gfxr_view_t *view, bool isAmiga, bool isSci11);
 /** @} */

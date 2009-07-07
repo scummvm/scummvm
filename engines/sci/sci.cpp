@@ -43,11 +43,10 @@ namespace Sci {
 
 class GfxDriver;
 
-const char *versionNames[8] = {
+const char *versionNames[7] = {
 	"Autodetected",
 	"SCI0",
-	"SCI01 EGA",
-	"SCI01 VGA",
+	"SCI01",
 	"SCI01 VGA ODD",
 	"SCI1",
 	"SCI1.1",
@@ -151,9 +150,6 @@ Common::Error SciEngine::run() {
 	// Verify that we haven't got an invalid game detection entry
 	if (version < SCI_VERSION_1) {
 		// SCI0/SCI01
-		if (flags & GF_SCI1_EGA) {
-			error("This game entry is erroneous. It's marked as SCI0/SCI01, but it has SCI1 flags set");
-		}
 	} else if (version == SCI_VERSION_1) {
 		// SCI1
 
@@ -162,10 +158,6 @@ Common::Error SciEngine::run() {
 			error("This game entry is erroneous. It's marked as SCI1, but it has SCI0 flags set");
 		}
 	} else if (version == SCI_VERSION_1_1 || version == SCI_VERSION_32) {
-		if (flags & GF_SCI1_EGA) {
-			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI1 flags set");
-		}
-
 		if (flags & GF_SCI0_OLD ||
 			flags & GF_SCI0_OLDGETTIME) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI0 flags set");
@@ -218,8 +210,7 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	bool isVGA = _resmgr->_sciVersion >= SCI_VERSION_01_VGA && !(getFlags() & GF_SCI1_EGA);
-	if (gfxop_init(_resmgr->_sciVersion, isVGA, &gfx_state, &gfx_options, _resmgr)) {
+	if (gfxop_init(_resmgr->_sciVersion, &gfx_state, &gfx_options, _resmgr)) {
 		warning("Graphics initialization failed. Aborting...");
 		return Common::kUnknownError;
 	}

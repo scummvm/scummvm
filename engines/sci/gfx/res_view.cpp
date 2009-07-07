@@ -135,7 +135,7 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 	return retval;
 }
 
-gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
+gfxr_view_t *getEGAView(int id, byte *resource, int size, int palette) {
 	int i;
 	gfxr_view_t *view;
 	int mirror_bitpos = 1;
@@ -365,7 +365,7 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 	return retval;
 }
 
-gfxr_view_t *gfxr_draw_view1(int id, byte *resource, int size, Palette *static_pal, bool isSci11) {
+gfxr_view_t *getVGAView(int id, byte *resource, int size, Palette *static_pal, bool isSci11) {
 	uint16 palOffset = READ_LE_UINT16(resource + V1_PALETTE_OFFSET + (isSci11 ? 2 : 0));
 	uint16 headerSize = isSci11 ? READ_LE_UINT16(resource + V2_HEADER_SIZE) : 0;
 	byte* seeker = resource + headerSize;
