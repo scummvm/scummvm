@@ -103,42 +103,34 @@ void Animation::drawFrame(Surface *surface) {
 }
 
 void Animation::setID(int id) {
-	
 	_id = id;
 }
 
 int Animation::getID() {
-	
 	return _id;
 }
 
 void Animation::setZ(uint z) {
-
 	_z = z;
 }
 
 uint Animation::getZ() {
-	
 	return _z;
 }
 
 bool Animation::isPlaying() {
-
 	return _playing;
 }
 
 void Animation::setPlaying(bool playing) {
-	
 	_playing = playing;
 }
 
 void Animation::addFrame(Drawable *frame) {
-	
 	_frames.push_back(frame);	
 }
 
 uint Animation::getFramesNum() {
-	
 	return _frames.size();
 }
 
@@ -165,17 +157,11 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 }
 
 void AnimationManager::play(int id) {
-
-	Animation *anim = getAnimation(id);
-
-	anim->setPlaying(true);
+	getAnimation(id)->setPlaying(true);
 }
 
 void AnimationManager::stop(int id) {
-
-	Animation *anim = getAnimation(id);
-
-	anim->setPlaying(false);
+	getAnimation(id)->setPlaying(false);
 }
 
 Animation *AnimationManager::getAnimation(int id) {
