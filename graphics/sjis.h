@@ -42,6 +42,14 @@ public:
 	virtual ~FontSJIS() {}
 
 	/**
+	 * Enable shadow drawing.
+	 *
+	 * After changing shadow state, getFontHeight and getFontWidth might return
+	 * different values!
+	 */
+	virtual void enableShadow(bool enable) {}
+
+	/**
 	 * Returns the height of the font.
 	 */
 	virtual uint getFontHeight() const = 0;
@@ -54,8 +62,8 @@ public:
 	/**
 	 * Draws a SJIS encoded character on the given surface.
 	 */
-	void drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1) const {
-		drawChar(dst.getBasePtr(x, y), ch, c1, dst.pitch, dst.bytesPerPixel);
+	void drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
+		drawChar(dst.getBasePtr(x, y), ch, c1, c2, dst.pitch, dst.bytesPerPixel);
 	}
 
 	/**
@@ -66,8 +74,9 @@ public:
 	 * @param pitch	pitch of the destination buffer (size in *bytes*)
 	 * @param bpp	bytes per pixel of the destination buffer
 	 * @param c1	forground color
+	 * @param c2	shadow/outline color
 	 */
-	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1) const = 0;
+	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const = 0;
 };
 
 /**
@@ -82,12 +91,17 @@ public:
 	 */
 	bool loadFromStream(Common::ReadStream &stream);
 
-	uint getFontHeight() const { return 16; }
-	uint getFontWidth() const { return 16; }
+	void enableShadow(bool enable) { _shadowEnabled = enable; }
 
-	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1) const;
+	uint getFontHeight() const { return _shadowEnabled ? 18 : 16; }
+	uint getFontWidth() const { return _shadowEnabled ? 18 : 16; }
+
+	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
 
 private:
+	template<typename Color>
+	void drawCharInternShadow(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const;
+
 	template<typename Color>
 	void drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const;
 
@@ -95,6 +109,7 @@ private:
 		kFontRomSize = 262144
 	};
 
+	bool _shadowEnabled;
 	uint16 _fontData[kFontRomSize / 2];
 
 	static uint sjisToChunk(uint8 low, uint8 high);

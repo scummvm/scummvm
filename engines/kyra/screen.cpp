@@ -114,8 +114,11 @@ bool Screen::init() {
 						error("missing font rom ('FONT.ROM') required for this version");
 				}*/
 			}
+			
+			_sjisFont->enableShadow(!_use16ColorMode);
 		}
 	}
+
 
 	_curPage = 0;
 	uint8 *pagePtr = new uint8[SCREEN_PAGE_SIZE * 8];
@@ -3016,6 +3019,9 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 	} else {
 		color1 = _textColorsMap[1];
 		color2 = _textColorsMap[0];
+
+		if (color2 == _sjisInvisibleColor)
+			_sjisFont->enableShadow(false);
 	}
 
 	if (_curPage == 0 || _curPage == 1)
@@ -3032,9 +3038,9 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 
 	destPage += y * 640 + x;
 
-	// We used to have shadow around the gylphs, with the old drawing code, but that didn't
-	// match the original.
-	_sjisFont->drawChar(destPage, c, 640, 1, color1);
+	_sjisFont->drawChar(destPage, c, 640, 1, color1, color2);
+
+	_sjisFont->enableShadow(!_use16ColorMode);
 }
 
 #pragma mark -

@@ -35,8 +35,43 @@ bool FontTowns::loadFromStream(Common::ReadStream &stream) {
 }
 
 template<typename Color>
+void FontTowns::drawCharInternShadow(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const {
+	uint32 outlineGlyph[18];
+	memset(outlineGlyph, 0, sizeof(outlineGlyph));
+
+	// Create an outline map including the original character
+	const uint16 *src = glyph;
+	for (int i = 0; i < 16; ++i) {
+		uint32 line = *src++;
+		line = (line << 2) | (line << 1) | (line << 0);
+
+		outlineGlyph[i + 0] |= line;
+		outlineGlyph[i + 1] |= line;
+		outlineGlyph[i + 2] |= line;
+	}
+
+	uint8 *dstLine = dst;
+	for (int y = 0; y < 18; ++y) {
+		Color *lineBuf = (Color *)dstLine;
+		uint32 line = outlineGlyph[y];
+
+		for (int x = 0; x < 18; ++x) {
+			if (line & 0x20000)
+				*lineBuf = c2;
+			line <<= 1;
+			++lineBuf;
+		}
+
+		dstLine += pitch;
+	}
+
+	// draw the original char
+	drawCharIntern<Color>(glyph, dst + pitch + 1, pitch, c1);
+}
+
+template<typename Color>
 void FontTowns::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const {
-	for (int y = getFontHeight(); y > 0; --y) {
+	for (int y = 0; y < 16; ++y) {
 		Color *lineBuf = (Color *)dst;
 		uint16 line = *glyph++;
 
@@ -51,15 +86,22 @@ void FontTowns::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color
 	}
 }
 
-void FontTowns::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1) const {
+void FontTowns::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const {
 	const uint16 *glyphSource = _fontData + sjisToChunk(ch & 0xFF, ch >> 8) * 16;
 
-	if (bpp == 1)
-		drawCharIntern<uint8>(glyphSource, (uint8 *)dst, pitch, c1);
-	else if (bpp == 2)
-		drawCharIntern<uint16>(glyphSource, (uint8 *)dst, pitch, c1);
-	else
+	if (bpp == 1) {
+		if (!_shadowEnabled)
+			drawCharIntern<uint8>(glyphSource, (uint8 *)dst, pitch, c1);
+		else
+			drawCharInternShadow<uint8>(glyphSource, (uint8 *)dst, pitch, c1, c2);
+	} else if (bpp == 2) {
+		if (!_shadowEnabled)
+			drawCharIntern<uint16>(glyphSource, (uint8 *)dst, pitch, c1);
+		else
+			drawCharInternShadow<uint16>(glyphSource, (uint8 *)dst, pitch, c1, c2);
+	} else {
 		error("FontTowns::drawChar: unsupported bpp: %d", bpp);
+	}
 }
 
 uint FontTowns::sjisToChunk(uint8 f, uint8 s) {
