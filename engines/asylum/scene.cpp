@@ -59,7 +59,7 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 	_leftClick = false;
 	_rightButton = false;
 	_isActive = false;
-	g_debugPolygons = 0;
+	g_debugPolygons = 1;
 }
 
 Scene::~Scene() {
@@ -300,9 +300,11 @@ void Scene::update() {
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 		PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
 		if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
-			curHotspot = (int32)p;
-			updateCursor();
-			break;
+		    if (pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
+                curHotspot = (int32)p;
+                updateCursor();
+                break;
+		    }
 		}
 	}
 
@@ -407,6 +409,33 @@ void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex)
 
     delete gra;
 }
+
+bool Scene::pointInPoly(PolyDefinitions *poly, int x, int y) {
+    // Copied from backends/vkeybd/polygon.cpp
+    int yflag0;
+	int yflag1;
+	bool inside_flag = false;
+	unsigned int pt;
+
+	Common::Point *vtx0 = &poly->points[poly->numPoints - 1];
+	Common::Point *vtx1 = &poly->points[0];
+
+	yflag0 = (vtx0->y >= y);
+	for (pt = 0; pt < poly->numPoints; pt++, vtx1++) {
+		yflag1 = (vtx1->y >= y);
+		if (yflag0 != yflag1) {
+			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=
+				(vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
+				inside_flag = !inside_flag;
+			}
+		}
+		yflag0 = yflag1;
+		vtx0 = vtx1;
+	}
+
+	return inside_flag;
+}
+
 
 // POLYGONS DEBUG
 void Scene::ShowPolygons() {
