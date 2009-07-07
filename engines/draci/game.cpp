@@ -201,7 +201,7 @@ void Game::loadRoom(uint roomNum) {
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
 }
 
-int Game::loadAnimation(uint animNum) {
+int Game::loadAnimation(uint animNum, uint z) {
 
 	BAFile *animFile = _vm->_animationsArchive->getFile(animNum);
 	Common::MemoryReadStream animationReader(animFile->_data, animFile->_length);	
@@ -211,10 +211,10 @@ int Game::loadAnimation(uint animNum) {
 	// FIXME: handle these properly
 	animationReader.readByte(); // Memory logic field, not used
 	animationReader.readByte(); // Disable erasing field, not used
-	animationReader.readByte(); // Cyclic field, not used
+	bool cyclic = animationReader.readByte(); // Cyclic field, not used
 	animationReader.readByte(); // Relative field, not used
 
-	Animation *anim = _vm->_anims->addAnimation(animNum, 254, false);
+	Animation *anim = _vm->_anims->addAnimation(animNum, z, false);
 	
 	for (uint i = 0; i < numFrames; ++i) {
 		uint spriteNum = animationReader.readUint16LE() - 1;
@@ -236,8 +236,7 @@ int Game::loadAnimation(uint animNum) {
 		if (mirror) 
 			sp->setMirrorOn();
 
-		// HACK: This is only for testing
-		anim->setLooping(true);
+		anim->setLooping(cyclic);
 
 		anim->addFrame(sp);
 	}
@@ -262,8 +261,8 @@ void Game::loadObject(uint objNum) {
 	obj->_imUse = objReader.readByte();
 	obj->_walkDir = objReader.readByte();
 	obj->_priority = objReader.readByte();
-	obj->_idxSeq = objReader.readUint16LE();
-	obj->_numSeq = objReader.readUint16LE();
+	objReader.readUint16LE(); // idxSeq field, not used
+	objReader.readUint16LE(); // numSeq field, not used
 	obj->_lookX = objReader.readUint16LE();
 	obj->_lookY = objReader.readUint16LE();
 	obj->_useX = objReader.readUint16LE();
@@ -272,10 +271,7 @@ void Game::loadObject(uint objNum) {
 	obj->_useDir = objReader.readByte();
 	
 	obj->_absNum = objNum;
-	obj->_animObj = 0;
 	
-	obj->_seqTab = new uint16[obj->_numSeq];
-
 	file = _vm->_objectsArchive->getFile(objNum * 3 + 1);
 	obj->_title = new byte[file->_length];
 	memcpy(obj->_title, file->_data, file->_length);
@@ -327,8 +323,9 @@ void Game::changeRoom(uint roomNum) {
 		GameObject *obj = &_objects[i];
 	
 		if (i != 0 && obj->_location == oldRoomNum) {
-			for (uint j = 0; j < obj->_numSeq; ++j) {
-					_vm->_anims->deleteAnimation(obj->_seqTab[j]);
+			for (uint j = 0; j < obj->_anims.size(); ++j) {
+					_vm->_anims->deleteAnimation(obj->_anims[j]);
+					obj->_anims.pop_back();
 			}
 		}
 	}
@@ -352,7 +349,6 @@ Game::~Game() {
 }
 
 GameObject::~GameObject() { 
-	delete[] _seqTab; 
 	delete[] _title;
 	delete[] _program._bytecode;
 }

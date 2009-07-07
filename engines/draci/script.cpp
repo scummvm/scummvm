@@ -226,7 +226,8 @@ void Script::load(Common::Queue<int> &params) {
 
 	GameObject *obj = _vm->_game->getObject(objID);
 
-	obj->_seqTab[animID - obj->_idxSeq] = _vm->_game->loadAnimation(animID);
+	_vm->_game->loadAnimation(animID, obj->_priority);
+	obj->_anims.push_back(animID);
 }
 
 void Script::start(Common::Queue<int> &params) {

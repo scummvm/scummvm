@@ -45,19 +45,17 @@ enum StructSizes {
 
 struct GameObject {
 	
-	GameObject() : _seqTab(NULL), _title(NULL) {}
+	GameObject() : _title(NULL) {}
 	~GameObject();
 		
 	uint16 _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	byte _walkDir;
 	byte _priority;
-	uint16 _idxSeq, _numSeq;
 	uint16 _lookX, _lookY, _useX, _useY;
 	byte _lookDir, _useDir;
 	uint16 _absNum;
-	byte _animObj;
-	uint16 *_seqTab;
+	Common::Array<int> _anims;
 	GPL2Program _program;
 	byte *_title;
 	byte _location;
@@ -125,7 +123,7 @@ public:
 	}
 
 	void loadRoom(uint roomNum);
-	int loadAnimation(uint animNum);
+	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();
 	void loadObject(uint numObj);
 
