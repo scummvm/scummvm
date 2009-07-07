@@ -71,6 +71,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
+	{"magicstones", "The Land of the Magic Stones"},
 	{"adibou4", "Adibou v4"},
 	{"adibouunknown", "Adibou (not yet supported)"},
 	{0, 0}
@@ -3652,6 +3653,24 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"magicstones",
+			"",
+			{
+				{"ed4.stk", 0, "98721a7cfdc5a358d7ac56b7c6d3ba3d", 541882},
+				{"ed4cd.itk", 0, "0627a91d9a6f4772c33747ce752024c2", 606993908},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeMagicStones,
+		kFeatures800,
+		"ed4.stk", "main.obc", 0
+	},
+	{
+		{
 			"adibou4",
 			"",
 			AD_ENTRY1s("intro.stk", "a3c35d19b2d28ea261d96321d208cb5a", 6021466),
@@ -4207,6 +4226,20 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
+			"magicstones",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeMagicStones,
+		kFeatures800,
+		"ed4.stk", "main.obc", 0
+	},
+	{
+		{
 			"adibou4",
 			"",
 			AD_ENTRY1(0, 0),
@@ -4259,8 +4292,9 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[19], { "intro.stk", "bambou.itk", 0 } },
 	{ &fallbackDescs[20], { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
 	{ &fallbackDescs[21], { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[22], { "adif41.stk", "adim41.stk", 0 } },
-	{ &fallbackDescs[23], { "coktelplayer.scn", 0 } },
+	{ &fallbackDescs[22], { "ed4.stk", 0 } },
+	{ &fallbackDescs[23], { "adif41.stk", "adim41.stk", 0 } },
+	{ &fallbackDescs[24], { "coktelplayer.scn", 0 } },
 	{ 0, { 0 } }
 };
 
