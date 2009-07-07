@@ -10,7 +10,7 @@ DefaultDirName={pf}\Residual
 DefaultGroupName=Residual
 SolidCompression=yes
 OutputDir=userdocs:Residual_ISS5_Output
-OutputBaseFilename=residualwin32
+OutputBaseFilename=residual-win32
 UninstallDisplayIcon={app}\residual.exe
 
 [Files]
