@@ -142,14 +142,14 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
 	byte *src = _data;
 
-	int _transparent = surface->getTransparentColour();
+	const int transparent = surface->getTransparentColour();
 
 	// Blit the sprite to the surface
 	for (int i = sourceRect.top; i < sourceRect.bottom; ++i) {
 		for (int j = sourceRect.left; j < sourceRect.right; ++j) {
 			
 			// Don't blit if the pixel is transparent on the target surface
-			if (src[i * _width + j] != _transparent) {
+			if (src[i * _width + j] != transparent) {
 
 				// Draw the sprite mirrored if the _mirror flag is set						
 				if (_mirror) {
