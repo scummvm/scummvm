@@ -40,8 +40,9 @@ class Screen;
 class Sound;
 class SceneResource;
 class Text;
-class ActionDefinitions;
 class Interpreter;
+class ActionDefinitions;
+class PolyDefinitions;
 
 class Scene {
 public:
@@ -99,6 +100,7 @@ private:
     void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
 
     void ShowPolygons();
+    bool pointInPoly(PolyDefinitions *poly, int x, int y);
     
     friend class Interpreter;
 }; // end of class Scene
