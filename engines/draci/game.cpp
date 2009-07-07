@@ -136,10 +136,8 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 void Game::init() {
 	loadObject(kDragonObject);
 	
-	_vm->_script->run(getObject(0)->_program, getObject(0)->_init);
-
-	// HACK: this is only for testing
-	_vm->_anims->play(getObject(0)->_seqTab[9]);
+	GameObject *dragon = getObject(kDragonObject);
+	_vm->_script->run(dragon->_program, dragon->_init);
 
 	changeRoom(0);
 }
