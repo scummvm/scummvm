@@ -354,6 +354,13 @@ bool JPEG::readSOS() {
 	// Read all the scan MCUs
 	uint16 xMCU = _w / (_maxFactorH * 8);
 	uint16 yMCU = _h / (_maxFactorV * 8);
+
+	// Check for non- multiple-of-8 dimensions
+	if (_w % 8 != 0)
+		xMCU++;
+	if (_h % 8 != 0)
+		yMCU++;
+
 	bool ok = true;
 	for (int y = 0; ok && (y < yMCU); y++) 
 		for (int x = 0; ok && (x < xMCU); x++)
@@ -478,12 +485,21 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 	// Convert coordinates from MCU blocks to pixels
 	x <<= 3;
 	y <<= 3;
-	for (int j = 0; j < 8; j++) {
+
+	// Handle non- multiple-of-8 dimensions
+	byte xLim = 8;
+	byte yLim = 8;
+	if (x*scalingH + 8 > _w)
+		xLim -= (x*scalingH + 8 - _w);
+	if (y*scalingV + 8 > _h)
+		yLim -= (y*scalingV + 8 - _h);
+
+	for (int j = 0; j < yLim; j++) {
 		for (int sV = 0; sV < scalingV; sV++) {
 			// Get the beginning of the block line
 			byte *ptr = (byte *)_currentComp->surface.getBasePtr(x * scalingH, (y + j) * scalingV + sV);
 
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < xLim; i++) {
 				for (uint8 sH = 0; sH < scalingH; sH++) {
 					*ptr = (byte)(result[j * 8 + i]);
 					ptr++;
