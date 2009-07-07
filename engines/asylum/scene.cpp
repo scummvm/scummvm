@@ -59,7 +59,7 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 	_leftClick = false;
 	_rightButton = false;
 	_isActive = false;
-	g_debugPolygons = 1;
+	g_debugPolygons = 0;
 }
 
 Scene::~Scene() {
@@ -389,7 +389,9 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex) {
 	BarrierItem barrier = _sceneResource->getWorldStats()->barriers[barrierIndex];
 	GraphicResource *gra = new GraphicResource(res, barrier.resId);
-	GraphicFrame *fra = gra->getFrame(barrier.tickCount);
+	if (!gra->getFrameCount())
+        return;
+    GraphicFrame *fra = gra->getFrame(barrier.tickCount);
 
 #if 0
     // DEBUG bounding box 
