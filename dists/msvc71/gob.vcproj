@@ -412,6 +412,9 @@
 			RelativePath="..\..\engines\gob\save\saveload_v6.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\save\saveload_playtoons.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\scenery.cpp">
 		</File>
 		<File

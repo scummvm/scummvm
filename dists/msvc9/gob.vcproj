@@ -536,6 +536,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\save\saveconverter.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\save\saveload.cpp"
 			>
 		</File>
@@ -557,6 +561,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\save\saveload_v6.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\save\saveload_playtoons.cpp"
 			>
 		</File>
 		<File
