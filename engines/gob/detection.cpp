@@ -3666,7 +3666,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeMagicStones,
-		kFeatures800,
+		kFeatures800x600,
 		"ed4.stk", "main.obc", 0
 	},
 	{
@@ -4235,7 +4235,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeMagicStones,
-		kFeatures800,
+		kFeatures800x600,
 		"ed4.stk", "main.obc", 0
 	},
 	{

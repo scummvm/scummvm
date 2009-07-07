@@ -121,7 +121,7 @@ enum Features {
 	kFeatures640     = 1 << 3,
 	kFeaturesSCNDemo = 1 << 4,
 	kFeaturesBATDemo = 1 << 5,
-	kFeatures800     = 1 << 6
+	kFeatures800x600     = 1 << 6
 };
 
 enum {
@@ -218,7 +218,7 @@ public:
 	bool hasAdlib() const;
 	bool isSCNDemo() const;
 	bool isBATDemo() const;
-	bool is800() const;
+	bool is800x600() const;
 	bool isDemo() const;
 
 	GobEngine(OSystem *syst);

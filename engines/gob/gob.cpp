@@ -205,8 +205,8 @@ bool GobEngine::isBATDemo() const {
 	return (_features & kFeaturesBATDemo) != 0;
 }
 
-bool GobEngine::is800() const {
-	return (_features & kFeatures800) != 0;
+bool GobEngine::is800x600() const {
+	return (_features & kFeatures800x600) != 0;
 }
 
 bool GobEngine::isDemo() const {
