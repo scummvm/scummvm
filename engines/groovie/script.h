@@ -57,7 +57,7 @@ public:
 	void directGameLoad(int slot);
 	void step();
 
-	void setMouseClick();
+	void setMouseClick(uint8 button);
 	void setKbdChar(uint8 c);
 
 	Common::String &getContext();
@@ -95,7 +95,7 @@ private:
 
 	// Input
 	bool _mouseClicked;
-	bool _eventMouseClicked;
+	uint8 _eventMouseClicked;
 	uint8 _kbdChar;
 	uint8 _eventKbdChar;
 	uint16 _inputLoopAddress;
@@ -114,6 +114,7 @@ private:
 	Common::SeekableReadStream *_videoFile;
 	uint32 _videoRef;
 	uint16 _bitflags;
+	uint16 _videoSkipAddress;
 
 	// Debugging
 	Debugger *_debugger;
@@ -224,7 +225,9 @@ private:
 	void o2_setbackgroundsong();
 	void o2_videofromref();
 	void o2_vdxtransition();
+	void o2_setvideoskip();
 	void o2_stub52();
+	void o2_setscriptend();
 };
 
 } // End of Groovie namespace

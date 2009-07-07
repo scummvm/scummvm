@@ -218,11 +218,16 @@ Common::Error GroovieEngine::run() {
 
 			case Common::EVENT_LBUTTONDOWN:
 				// Send the event to the scripts
-				_script.setMouseClick();
+				_script.setMouseClick(1);
 
 				// Continue the script execution to handle
 				// the click
 				_waitingForInput = false;
+				break;
+
+			case Common::EVENT_RBUTTONDOWN:
+				// Send the event to the scripts (to skip the video)
+				_script.setMouseClick(2);
 				break;
 
 			case Common::EVENT_QUIT:
