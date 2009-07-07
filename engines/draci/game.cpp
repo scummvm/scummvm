@@ -211,7 +211,9 @@ int Game::loadAnimation(uint animNum, uint z) {
 	// FIXME: handle these properly
 	animationReader.readByte(); // Memory logic field, not used
 	animationReader.readByte(); // Disable erasing field, not used
-	bool cyclic = animationReader.readByte(); // Cyclic field, not used
+	
+	bool cyclic = animationReader.readByte();
+
 	animationReader.readByte(); // Relative field, not used
 
 	Animation *anim = _vm->_anims->addAnimation(animNum, z, false);
@@ -337,6 +339,14 @@ void Game::changeRoom(uint roomNum) {
 
 int Game::getRoomNum() {
 	return _currentRoom._roomNum;
+}
+
+int Game::getVariable(int numVar) {
+	return _variables[numVar];
+}
+
+void Game::setVariable(int numVar, int value) {
+	_variables[numVar] = value;
 }
 
 Game::~Game() {

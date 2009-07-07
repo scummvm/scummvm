@@ -303,10 +303,10 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 		case kMathVariable:
 			value = reader.readUint16LE();
 
-			stk.push(_vm->_game->_variables[value-1]);
+			stk.push(_vm->_game->getVariable(value-1));
 
 			debugC(3, kDraciBytecodeDebugLevel, "\t\tvariable: %d (%d)", value,
-				_vm->_game->_variables[value-1]);
+				_vm->_game->getVariable(value-1));
 			break;
 
 		case kMathFunctionCall:

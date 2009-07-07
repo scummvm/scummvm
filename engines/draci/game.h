@@ -129,11 +129,12 @@ public:
 
 	GameObject *getObject(uint objNum);
 
-	int *_variables;
+	int getVariable(int varNum);
+	void setVariable(int varNum, int value);	
 
 private:
 	DraciEngine *_vm;
-	
+	int *_variables;
 	GameInfo *_info;
 	Person *_persons;
 	uint16 *_dialogOffsets;
