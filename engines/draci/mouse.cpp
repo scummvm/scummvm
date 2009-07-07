@@ -41,27 +41,45 @@ Mouse::Mouse(DraciEngine *vm) {
 void Mouse::handleEvent(Common::Event event) {
 	_x = (uint16) event.mouse.x;
 	_y = (uint16) event.mouse.y;
-
+	int room;
+	
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 		debugC(6, kDraciGeneralDebugLevel, "Left button down (x: %u y: %u)", _x, _y);
 		_lButton = true;
+
+		// HACK: We change to the next room when the left mouse button is pressed.
+		// This is only for testing. 
+		_vm->_game->incRoomNum();		
+		room = _vm->_game->getRoomNum();		
+		_vm->_game->changeRoom(room);
 		break;
+
 	case Common::EVENT_LBUTTONUP:
 		debugC(6, kDraciGeneralDebugLevel, "Left button up (x: %u y: %u)", _x, _y);
 		_lButton = false;
 		break;
+
 	case Common::EVENT_RBUTTONDOWN:
 		debugC(6, kDraciGeneralDebugLevel, "Right button down (x: %u y: %u)", _x, _y);
 		_rButton = true;
+
+		// HACK: We change to the previous room when the right mouse button is pressed.
+		// This is only for testing. 
+		_vm->_game->decRoomNum();		
+		room = _vm->_game->getRoomNum();		
+		_vm->_game->changeRoom(room);
 		break;
+
 	case Common::EVENT_RBUTTONUP:
 		debugC(6, kDraciGeneralDebugLevel, "Right button up (x: %u y: %u)", _x, _y);
 		_rButton = false;
 		break;
+
 	case Common::EVENT_MOUSEMOVE:
 		setPosition(_x, _y);
 		break;	
+
 	default:
 		break;
 	}

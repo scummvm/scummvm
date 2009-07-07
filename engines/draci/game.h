@@ -106,6 +106,20 @@ public:
 
 	int getRoomNum();
 
+	// HACK: this is only for testing
+	void incRoomNum() { 
+		int n = _currentRoom._roomNum;
+		n = n < 25 ? n+1 : n;
+		_currentRoom._roomNum = n;
+	}
+
+	// HACK: same as above
+	void decRoomNum() { 
+		int n = _currentRoom._roomNum;
+		n = n > 0 ? n-1 : n;
+		_currentRoom._roomNum = n;
+	}
+
 	void loadRoom(uint roomNum);
 	int loadAnimation(uint animNum);
 	void loadOverlays();

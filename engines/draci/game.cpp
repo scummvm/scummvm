@@ -319,6 +319,21 @@ void Game::loadOverlays() {
 }
 
 void Game::changeRoom(uint roomNum) {
+	_vm->_roomsArchive->clearCache();	
+	_vm->_anims->deleteOverlays();
+
+	int oldRoomNum = _currentRoom._roomNum;
+
+	for (uint i = 0; i < _info->_numObjects; ++i) {
+		GameObject *obj = &_objects[i];
+	
+		if (i != 0 && obj->_location == oldRoomNum) {
+			for (uint j = 0; j < obj->_numSeq; ++j) {
+					_vm->_anims->deleteAnimation(obj->_seqTab[j]);
+			}
+		}
+	}
+
 	_currentRoom._roomNum = roomNum;
 	loadRoom(roomNum);
 	loadOverlays();
