@@ -197,8 +197,8 @@ OSystem_SDL::OSystem_SDL()
 #endif
 	_hwscreen(0), _screen(0), _tmpscreen(0),
 #ifdef ENABLE_RGB_COLOR
-	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
-	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
+	_screenFormat(Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0)),
+	_cursorFormat(Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0)),
 #endif
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),

@@ -65,67 +65,6 @@ struct PixelFormat {
 		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
 	}
 
-	/////////////////////////////////////////////////////////
-	// Convenience functions for creating standard formats //
-	/////////////////////////////////////////////////////////
-
-	// 256 color palette.
-	static inline PixelFormat createFormatCLUT8() { 
-		return PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
-	}
-	// 2 Bytes-per-pixel modes
-	static inline PixelFormat createFormatRGB555() {
-		return PixelFormat(2, 3, 3, 3, 8, 10, 5, 0, 0);
-	}
-	static inline PixelFormat createFormatBGR555() {
-		return PixelFormat(2, 3, 3, 3, 8, 0, 5, 10, 0);
-	}
-	static inline PixelFormat createFormatXRGB1555() {
-		// Special case, alpha bit is always high in this mode.
-		return PixelFormat(2, 3, 3, 3, 7, 10, 5, 0, 15);
-	}
-	static inline PixelFormat createFormatXBGR1555() {
-		// Special case, alpha bit is always high in this mode.
-		return PixelFormat(2, 3, 3, 3, 7, 0, 5, 10, 15);
-	}
-	static inline PixelFormat createFormatRGB565() {
-		return PixelFormat(2, 3, 2, 3, 8, 11, 5, 0, 0);
-	}
-	static inline PixelFormat createFormatBGR565() {
-		return PixelFormat(2, 3, 2, 3, 8, 0, 5, 11, 0);
-	}
-	static inline PixelFormat createFormatRGBA4444() {
-		return PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
-	}
-	static inline PixelFormat createFormatARGB4444() {
-		return PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12);
-	}
-	static inline PixelFormat createFormatABGR4444() {
-		return PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12);
-	}
-	static inline PixelFormat createFormatBGRA4444() {
-		return PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0);
-	}
-	// 3 to 4 byte per pixel modes
-	static inline PixelFormat createFormatRGB888() {
-		return PixelFormat(3, 0, 0, 0, 8, 16, 8, 0, 0);
-	}
-	static inline PixelFormat createFormatBGR888() {
-		return PixelFormat(3, 0, 0, 0, 8, 0, 8, 16, 0);
-	}
-	static inline PixelFormat createFormatRGBA8888() {
-		return PixelFormat(4, 0, 0, 0, 0, 24, 16, 8, 0);
-	}
-	static inline PixelFormat createFormatARGB8888() {
-		return PixelFormat(4, 0, 0, 0, 0, 16 ,8, 0, 24);
-	}
-	static inline PixelFormat createFormatABGR8888() {
-		return PixelFormat(4, 0, 0, 0, 0, 0, 8, 16, 24);
-	}
-	static inline PixelFormat createFormatBGRA8888() {
-		return PixelFormat(4, 0, 0, 0, 0, 8, 16, 24, 0);
-	}
-
 	inline bool operator==(const PixelFormat &fmt) const {
 		// TODO: If aLoss==8, then the value of aShift is irrelevant, and should be ignored.
 		return 0 == memcmp(this, &fmt, sizeof(PixelFormat));
@@ -211,7 +150,7 @@ struct PixelFormat {
  * @param backend	The higher priority list, meant to be a list of formats supported by the backend
  * @param frontend	The lower priority list, meant to be a list of formats supported by the engine
  * @return			The first item on the backend list that also occurs on the frontend list
- *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
+ *					or PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0) if no matching formats were found.
  */
 inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
 #ifdef ENABLE_RGB_COLOR
@@ -222,7 +161,7 @@ inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Commo
 		}
 	}
 #endif
-	return PixelFormat::createFormatCLUT8();
+	return PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
 }
 
 } // end of namespace Graphics

@@ -138,7 +138,7 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	if (format)
 		cur->_format = *format;
 	else
-		cur->_format = Graphics::PixelFormat::createFormatCLUT8();
+		cur->_format = Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
 #endif
 
 	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, format);

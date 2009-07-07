@@ -361,7 +361,7 @@ void OSystem_SDL::initSize(uint w, uint h, const Graphics::PixelFormat *format) 
 	//avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
-		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+		newFormat = Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
 	else
 		newFormat = *format;
 

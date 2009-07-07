@@ -368,11 +368,14 @@ public:
 	 *
 	 * EG: a backend that supports 32-bit ABGR and 16-bit 555 BGR in hardware
 	 * and provides conversion from equivalent RGB(A) modes should order its list
-	 *    1) Graphics::PixelFormat::createFormatABGR8888()
-	 *    2) Graphics::PixelFormat::createFormatBGR555()
-	 *    3) Graphics::PixelFormat::createFormatRGBA8888()
-	 *    4) Graphics::PixelFormat::createFormatRGB555()
-	 *    5) Graphics::PixelFormat::createFormatCLUT8()
+	 *    1) Graphics::PixelFormat(4, 0, 0, 0, 0, 0, 8, 16, 24)
+
+	 *    2) Graphics::PixelFormat(2, 3, 3, 3, 8, 0, 5, 10, 0)
+
+	 *    3) Graphics::PixelFormat(4, 0, 0, 0, 0, 24, 16, 8, 0)
+	 *    4) Graphics::PixelFormat(2, 3, 3, 3, 8, 10, 5, 0, 0)
+
+	 *    5) Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0)
 	 *
 	 * @see Graphics::PixelFormat
 	 *
@@ -384,12 +387,12 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
 #else
 	inline Graphics::PixelFormat getScreenFormat() const {
-		return Graphics::PixelFormat::createFormatCLUT8();
+		return Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
 	};
 
 	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const {
 		Common::List<Graphics::PixelFormat> list;
-		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+		list.push_back(Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0));
 		return list;
 	};
 #endif
