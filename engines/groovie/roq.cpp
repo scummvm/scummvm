@@ -505,6 +505,7 @@ bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	}
 	memcpy(_prevBuf->getBasePtr(0, 0), _currBuf->getBasePtr(0, 0), _prevBuf->w * _prevBuf->h * 3);
 
+	delete jpg;
 	return true;
 }
 
