@@ -31,7 +31,6 @@
 
 namespace Sci {
 
-#define GF_FOR_SCI0_BEFORE_395 (GF_SCI0_OLD | GF_SCI0_OLDGETTIME)
 #define GF_FOR_SCI0_BEFORE_629 GF_SCI0_OLDGETTIME
 
 // Titles of the games
@@ -219,7 +218,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "39485580d34a72997f3d5b3aba4d24f1", 426},
 		{"resource.001", 0, "11391434f41c834090d7a1e9488ce936", 129739},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
-		GF_FOR_SCI0_BEFORE_395,
+		GF_FOR_SCI0_BEFORE_629,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_0
 	},
@@ -1032,7 +1031,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "851a62d00972dc4002f472cc0d84e71d", 333777},
 		{"resource.007", 0, "851a62d00972dc4002f472cc0d84e71d", 341038},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
-		GF_FOR_SCI0_BEFORE_395,
+		GF_FOR_SCI0_BEFORE_629,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_0
 	},
@@ -1049,7 +1048,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "0c8566848a76eea19a6d6220914030a7", 337288},
 		{"resource.007", 0, "0c8566848a76eea19a6d6220914030a7", 343882},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
-		GF_FOR_SCI0_BEFORE_395,
+		GF_FOR_SCI0_BEFORE_629,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_0
 	},
@@ -1616,7 +1615,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "96033f57accfca903750413fd09193c8", 274953},
 		{"resource.006", 0, "96033f57accfca903750413fd09193c8", 345818},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
-		GF_FOR_SCI0_BEFORE_395,
+		GF_FOR_SCI0_BEFORE_629,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_0
 	},

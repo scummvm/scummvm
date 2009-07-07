@@ -367,10 +367,11 @@ static const char *argtype_description[] = {
 	"Arithmetic"
 };
 
-Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
+Kernel::Kernel(ResourceManager *resmgr) : _resmgr(resmgr) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
-	loadSelectorNames(isOldSci0);
+	detectOldScriptHeader();	// must be called before loadSelectorNames()
+	loadSelectorNames();
 	mapSelectors();     // Map a few special selectors for later use
 	loadOpcodes();
 	loadKernelNames();
@@ -390,6 +391,11 @@ Kernel::~Kernel() {
 }
 
 void Kernel::printAutoDetectedFeatures() {
+	if (_oldScriptHeader)
+		printf("Kernel auto-detection: game found to have old headers for script blocks\n");
+	else
+		printf("Kernel auto-detection: game found to have newer headers for script blocks\n");
+
 	if (_oldGfxFunctions)
 		printf("Kernel auto-detection: game found to be using old graphics functions\n");
 	else
@@ -411,15 +417,44 @@ void Kernel::printAutoDetectedFeatures() {
 		printf("Kernel auto-detection: found SCI0 game using a SCI1 kernel table\n");
 }
 
-void Kernel::loadSelectorNames(bool isOldSci0) {
-	int count;
+void Kernel::detectOldScriptHeader() {
+	if (_resmgr->_sciVersion != SCI_VERSION_0) {
+		_oldScriptHeader = false;
+		return;
+	}
 
 	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
 
 	if (!r) // No such resource?
 		error("Kernel: Could not retrieve selector names");
 
-	count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
+	int count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
+
+	_oldScriptHeader = true;
+
+	for (int i = 0; i < count; i++) {
+		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
+		int len = READ_LE_UINT16(r->data + offset);
+
+		Common::String tmp((const char *)r->data + offset + 2, len);
+
+		// We determine if the game has old script headers by the existence of the
+		// "setTarget" selector. The "motionInited" selector can also be used for the
+		// same purpose
+		if (tmp == "setTarget") {
+			_oldScriptHeader = false;
+			break;
+		}
+	}
+}
+
+void Kernel::loadSelectorNames() {
+	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
+
+	if (!r) // No such resource?
+		error("Kernel: Could not retrieve selector names");
+
+	int count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
 
 	for (int i = 0; i < count; i++) {
 		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
@@ -431,7 +466,7 @@ void Kernel::loadSelectorNames(bool isOldSci0) {
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
-		if (isOldSci0)
+		if (_oldScriptHeader)
 			_selectorNames.push_back(tmp);
 	}
 }

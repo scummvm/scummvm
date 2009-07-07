@@ -696,7 +696,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc,
 
 	angle %= 360;
 
-	if (!(s->_flags & GF_SCI0_OLD)) {
+	if (!s->_kernel->hasOldScriptHeader()) {
 		if (angle < 45)
 			loop = 3;
 		else if (angle < 136)

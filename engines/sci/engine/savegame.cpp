@@ -497,7 +497,7 @@ static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
 }
 
 static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
-	if (s->_flags & GF_SCI0_OLD)
+	if (s->_kernel->hasOldScriptHeader())
 		buf += 2;
 
 	do {

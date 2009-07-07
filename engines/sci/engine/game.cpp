@@ -257,7 +257,7 @@ static int create_class_table_sci0(EngineState *s) {
 		Resource *script = s->resmgr->findResource(ResourceId(kResourceTypeScript, scriptnr), 0);
 
 		if (script) {
-			if (s->_flags & GF_SCI0_OLD)
+			if (s->_kernel->hasOldScriptHeader())
 				magic_offset = seeker = 2;
 			else
 				magic_offset = seeker = 0;
@@ -327,6 +327,9 @@ int script_init_engine(EngineState *s) {
 
 	s->kernel_opt_flags = 0;
 
+	s->_kernel = new Kernel(s->resmgr);
+	s->_vocabulary = new Vocabulary(s->resmgr);
+
 	if (s->_version >= SCI_VERSION_1_1)
 		result = create_class_table_sci11(s);
 	else
@@ -366,9 +369,6 @@ int script_init_engine(EngineState *s) {
 
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
-
-	s->_kernel = new Kernel(s->resmgr, (s->_flags & GF_SCI0_OLD));
-	s->_vocabulary = new Vocabulary(s->resmgr);
 
 	s->restarting_flags = SCI_GAME_IS_NOT_RESTARTING;
 

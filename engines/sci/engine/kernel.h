@@ -57,7 +57,7 @@ struct KernelFuncWithSignature {
 
 class Kernel {
 public:
-	Kernel(ResourceManager *resmgr, bool isOldSci0);
+	Kernel(ResourceManager *resmgr);
 	~Kernel();
 
 	uint getOpcodesSize() const { return _opcodes.size(); }
@@ -82,6 +82,16 @@ public:
 	 * @return True if the kernel function is listed in the kernel table, false otherwise
 	*/
 	bool hasKernelFunction(const char *functionName) const;
+
+	/**
+	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
+	 * Old SCI versions used two word header for script blocks (first word equal
+	 * to 0x82, meaning of the second one unknown). New SCI versions used one
+	 * word header.
+	 * Also, old SCI versions assign 120 degrees to left & right, and 60 to up
+	 * and down. Later versions use an even 90 degree distribution.
+	 */
+	bool hasOldScriptHeader() const { return _oldScriptHeader; }
 
 	/**
 	 * Applies to all versions before 0.000.502
@@ -127,7 +137,12 @@ private:
 	/**
 	 * Loads the kernel selector names.
 	 */
-	void loadSelectorNames(bool isOldSci0);
+	void loadSelectorNames();
+
+	/**
+	 * Maps special selectors
+	 */
+	void mapSelectors();
 
 	/**
 	 * Prints auto-detected features from selectors
@@ -135,9 +150,9 @@ private:
 	void printAutoDetectedFeatures();
 
 	/**
-	 * Maps special selectors
+	 * Detects if the game is using older script headers
 	 */
-	void mapSelectors();
+	void detectOldScriptHeader();
 
 	/**
 	 * Maps kernel functions
@@ -151,6 +166,7 @@ private:
 	bool loadOpcodes();
 
 	ResourceManager *_resmgr;
+	bool _oldScriptHeader;
 	bool _oldGfxFunctions;
 	bool _hasLofsAbsolute;
 
