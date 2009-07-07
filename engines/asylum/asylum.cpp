@@ -84,6 +84,7 @@ Common::Error AsylumEngine::init() {
 	_mainMenu           = 0;
 	_scene              = 0;
 	_delayedVideoNumber = -1;
+	_delayedSceneNumber = -1;
 
     return Common::kNoError;
 }
@@ -106,7 +107,7 @@ Common::Error AsylumEngine::go() {
     _scene = new Scene(_screen, _sound, 5);
     
     // Set up the game's script interpreter
-	_interpreter = new Interpreter(_scene);
+	_interpreter = new Interpreter(this);
 
 	// Set up main menu
 	_mainMenu = new MainMenu(_screen, _sound, _scene);
@@ -128,6 +129,7 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 	while (_system->getMillis() < start_time + msec_delay) {
 		checkForEvent(false);
 		checkForDelayedVideo();
+		checkForDelayedSceneChange();
 		_system->updateScreen();
 		_interpreter->processActionLists();
 	}
@@ -189,6 +191,23 @@ void AsylumEngine::checkForDelayedVideo() {
 		} else if (_scene->isActive()) {
 			_scene->enterScene();
 		}
+	}
+}
+
+
+void AsylumEngine::checkForDelayedSceneChange() {
+    if (_delayedSceneNumber >= 0 && !_interpreter->isProcessing()) {
+		_sound->stopMusic();
+		_sound->stopSfx();
+		
+        if(_scene)
+            delete _scene;
+        _scene = new Scene(_screen, _sound, _delayedSceneNumber);
+
+        _interpreter->doSceneChanged();
+
+        _scene->enterScene();
+        _delayedSceneNumber = -1;
 	}
 }
 

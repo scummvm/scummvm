@@ -37,6 +37,8 @@ Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
 	DCmd_Register("video",			WRAP_METHOD(Console, cmdPlayVideo));
+	DCmd_Register("script",			WRAP_METHOD(Console, cmdRunScript));
+	DCmd_Register("scene",			WRAP_METHOD(Console, cmdChangeScene));
 	DVar_Register("debugpolygons",  &g_debugPolygons, DVAR_INT, 0);
 
 }
@@ -51,6 +53,29 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	}
 	
 	_vm->_delayedVideoNumber = atoi(argv[1]);
+
+	return false;
+}
+
+bool Console::cmdRunScript(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage %s <script number>\n", argv[0]);
+		return true;
+	}
+	
+	_vm->_interpreter->_currentScriptIndex = atoi(argv[1]);
+	_vm->_interpreter->_currentLine = 0;
+
+	return false;
+}
+
+bool Console::cmdChangeScene(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage %s <scene number>\n", argv[0]);
+		return true;
+	}
+	
+	_vm->_delayedSceneNumber = atoi(argv[1]);
 
 	return false;
 }
