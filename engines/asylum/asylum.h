@@ -75,6 +75,7 @@ private:
 	void waitForTimer(int msec_delay);
 	void updateMouseCursor();
 	void checkForDelayedVideo();
+	void checkForDelayedSceneChange();
 
     Common::Language     _language;
     Common::RandomSource _rnd;
@@ -87,8 +88,10 @@ private:
 	Video       *_video;
 	Interpreter *_interpreter;
 	int       _delayedVideoNumber;
+	int       _delayedSceneNumber;
 
 	friend class Console;
+	friend class Interpreter;
 };
 
 } // namespace Asylum

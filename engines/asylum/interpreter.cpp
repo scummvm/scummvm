@@ -28,14 +28,21 @@
 
 namespace Asylum {
 
-Interpreter::Interpreter(Scene *scene): _scene(scene) {
+Interpreter::Interpreter(AsylumEngine *vm): _engine(vm) {
     _currentLine = 0;
-    _currentScriptIndex = _scene->getDefaultActionIndex();
+    _currentScriptIndex = 0;
     _currentLoops = 0;
     _processing = false;
+    doSceneChanged();
 }
 
 Interpreter::~Interpreter() {
+}
+
+void Interpreter::doSceneChanged() {
+    _scene = _engine->_scene;
+    _currentLine = 0;
+    _currentScriptIndex = _scene->getDefaultActionIndex();
 }
 
 void Interpreter::processActionLists() {
@@ -135,6 +142,13 @@ void Interpreter::processActionLists() {
                         debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
                     }
                     break;
+                case kChangeScene:
+                    _engine->_delayedSceneNumber = currentCommand.param1 + 4;
+                    debug(kDebugLevelScripts, "Queueing Scene Change to scene %d...", currentCommand.param1 + 4);
+                    break;
+                case kPlayMovie:
+                    _engine->_delayedVideoNumber = currentCommand.param1;
+                    break;
                 case kWaitUntilFramePlayed: {
                     int barrierIndex = _scene->_sceneResource->getBarrierIndexById(currentCommand.param1);
                     if (barrierIndex >= 0) {
@@ -154,6 +168,7 @@ void Interpreter::processActionLists() {
                     }
                     break;
                 case kPlaySpeech:
+                    //  TODO - Add support for other param options
                     if (currentCommand.param1 >= 0) {
                         if (currentCommand.param3)  //  HACK - Find out why sometimes an offset is needed and other times not
                             _scene->_sound->playSfx(_scene->_speechPack, currentCommand.param1 - 9);
