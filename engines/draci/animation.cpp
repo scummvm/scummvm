@@ -48,10 +48,14 @@ bool Animation::isLooping() {
 
 void Animation::setLooping(bool looping) {
 	_looping = looping;
+	debugC(7, kDraciAnimationDebugLevel, "Setting looping to %d on animation %d", 
+		looping, _id);
 }
 
 void Animation::setDelay(uint delay) {
 	_delay = delay;
+	debugC(7, kDraciAnimationDebugLevel, "Setting delay to %u on animation %d", 
+		delay, _id);
 }
 
 void Animation::nextFrame(bool force) {
@@ -62,23 +66,22 @@ void Animation::nextFrame(bool force) {
 
 	Common::Rect frameRect = _frames[_currentFrame]->getRect();
 
-	// If we are at the last frame and not looping, stop the animation
-	// The animation is also restarted to frame zero
-	if ((_currentFrame == nextFrameNum() - 1) && !_looping) {
-		_currentFrame = 0;
-		_playing = false;
-		return;
-	}
-
 	if (force || (_tick + _delay <= _vm->_system->getMillis())) {
-		_vm->_screen->getSurface()->markDirtyRect(frameRect);
-		_currentFrame = nextFrameNum();
-		_tick = _vm->_system->getMillis();
+		// If we are at the last frame and not looping, stop the animation
+		// The animation is also restarted to frame zero
+		if ((_currentFrame == getFramesNum() - 1) && !_looping) {
+			_currentFrame = 0;
+			_playing = false;
+		} else {
+			_vm->_screen->getSurface()->markDirtyRect(frameRect);
+			_currentFrame = nextFrameNum();
+			_tick += _delay;
+		}
 	}
 
 	debugC(6, kDraciAnimationDebugLevel, 
-	"tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d", 
-	_tick, _delay, _tick + _delay, _vm->_system->getMillis(), _currentFrame, _frames.size());
+	"anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d", 
+	_id, _tick, _delay, _tick + _delay, _vm->_system->getMillis(), _currentFrame, _frames.size());
 }
 
 uint Animation::nextFrameNum() {
@@ -157,11 +160,21 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 }
 
 void AnimationManager::play(int id) {
-	getAnimation(id)->setPlaying(true);
+	Animation *anim = getAnimation(id);
+
+	if (anim) 
+		anim->setPlaying(true);
+
+	debugC(5, kDraciAnimationDebugLevel, "Playing animation %d...", id);
 }
 
 void AnimationManager::stop(int id) {
-	getAnimation(id)->setPlaying(false);
+	Animation *anim = getAnimation(id);
+	
+	if (anim) 
+		anim->setPlaying(false);
+
+	debugC(5, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
 }
 
 Animation *AnimationManager::getAnimation(int id) {
