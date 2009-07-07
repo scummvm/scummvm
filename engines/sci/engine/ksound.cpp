@@ -940,14 +940,14 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case SI_ABSOLUTE_CUE:
 			signal = cue;
-			fprintf(stderr, "[CUE] %04x:%04x Absolute Cue: %d\n",
+			debugC(2, kDebugLevelSound, "[CUE] %04x:%04x Absolute Cue: %d\n",
 			        PRINT_REG(obj), signal);
 
 			PUT_SEL32V(obj, signal, signal);
 			break;
 
 		case SI_RELATIVE_CUE:
-			fprintf(stderr, "[CUE] %04x:%04x Relative Cue: %d\n",
+			debugC(2, kDebugLevelSound, "[CUE] %04x:%04x Relative Cue: %d\n",
 			        PRINT_REG(obj), cue);
 
 			PUT_SEL32V(obj, dataInc, cue);
