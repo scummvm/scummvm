@@ -130,7 +130,7 @@ void Scene::setActorAction(int actorIndex, int action) {
     // FIXME - Remove this once mainActor uses proper actor info
     if (actorIndex == 0) {
         if(_sceneResource->getMainActor())
-        _sceneResource->getMainActor()->setAction(action);
+        _sceneResource->getMainActor()->setActionByIndex(action);  // The action appears to be an index rather than a direct resId
     }
 }
 

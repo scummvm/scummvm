@@ -58,6 +58,7 @@ void MainActor::setAction(int action) {
 
 	delete _graphic;
 	int act = (action < 100) ? action : action - 100;
+
 	_graphic = new GraphicResource(_resPack, _resources[act]);
 
 	// Flip horizontally if necessary
@@ -77,6 +78,10 @@ void MainActor::setAction(int action) {
 	}
 
 	_currentFrame = 0;
+}
+
+void MainActor::setActionByIndex(int index) {
+    setAction(_resources[index] & 0xFFFF);
 }
 
 GraphicFrame *MainActor::getFrame() {

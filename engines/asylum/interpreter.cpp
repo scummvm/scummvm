@@ -117,7 +117,7 @@ void Interpreter::processActionLists() {
                         
                     if ((actorIndex >= 0) && (actorIndex < _scene->_sceneResource->getWorldStats()->numActors)) {
                         _scene->setActorPosition(actorIndex, currentCommand.param2, currentCommand.param3);
-                        _scene->setActorAction(actorIndex, 112);//currentCommand.param4);
+                        _scene->setActorAction(actorIndex, currentCommand.param4);
                     }
                     else
                         debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
@@ -164,17 +164,19 @@ void Interpreter::processActionLists() {
                         debugC(kDebugLevelScripts, "Requested invalid sound ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
                     break;
                 default:
-                    debugC(kDebugLevelScripts, "Unhandled opcode 0x%02X in Scene %d Script %d Line %d.", _currentScript->commands[_currentLine].opcode, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
+                    debugC(kDebugLevelScripts, "Unhandled opcode 0x%02X in Scene %d Script %d Line %d.", currentCommand.opcode, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
                     break;
             }   // end switch
             
             _currentLine += lineIncrement;
+            _currentLoops++;
             
         }   // end while
 
         if(done) {
             _currentLine = 0;
             _currentScriptIndex = 0;
+            _currentLoops = 0;
         }
     }
     _processing = false;

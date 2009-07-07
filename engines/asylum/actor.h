@@ -134,6 +134,7 @@ public:
 
 	void setResourcePack(ResourcePack *resPack) { _resPack = resPack; }
 	void setAction(int action);
+	void setActionByIndex(int index);
 	void drawActorAt(Screen *screen, uint16 x, uint16 y);
 	void drawActor(Screen *screen);
 	void walkTo(Screen *screen, uint16 x, uint16 y);
