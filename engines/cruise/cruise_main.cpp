@@ -1292,11 +1292,6 @@ int CruiseEngine::processInput(void) {
 		buttonDown = 0;
 	}
 
-	if (userDelay && !userWait) {
-		userDelay--;
-		return 0;
-	}
-
 	// Check for Exit 'X' key
 	if (keyboardCode == Common::KEYCODE_x)
 		return 1;
@@ -1794,6 +1789,11 @@ void CruiseEngine::mainLoop(void) {
 		if (enableUser) {
 			userEnabled = 1;
 			enableUser = 0;
+		}
+
+		if (userDelay && !userWait) {
+			userDelay--;
+			continue;
 		}
 
 		if (isUserWait & !userWait) {
