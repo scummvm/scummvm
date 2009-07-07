@@ -709,9 +709,7 @@ int16 Op_GetMouseButton(void) {
 
 	getMouseStatus(&dummy, &mouseX, &mouseButton, &mouseY);
 
-	if (mouseButton)
-		return 1;
-	return 0;
+	return mouseButton;
 }
 
 int16 Op_AddCell(void) {
