@@ -70,7 +70,7 @@ public:
     ActionList*   getActionList()   { return _actionList; }
     MainActor*    getMainActor()    { return _mainActor; }
     
-    int getBarrierIndexById(int id);
+    int getBarrierIndexById(uint32 id);
 
 private:
     WorldStats   *_worldStats;

@@ -40,8 +40,8 @@ SceneResource::~SceneResource() {
     delete _actionList;
 }
 
-int SceneResource::getBarrierIndexById(int id) {
-    for (int i=0; i < _worldStats->numBarriers; i++)
+int SceneResource::getBarrierIndexById(uint32 id) {
+    for (uint32 i=0; i < _worldStats->numBarriers; i++)
     {
         if (_worldStats->barriers[i].id == id)
             return i;
