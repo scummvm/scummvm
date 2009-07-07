@@ -116,7 +116,7 @@ void Script::setupCommandList() {
 
 	/** Functions used by the mathematical evaluator */
 	static const GPL2Function gplFunctions[] = {
-		{ "Not", 		NULL },
+		{ "Not", 		&Script::funcNot },
 		{ "Random", 	&Script::funcRandom },
 		{ "IsIcoOn", 	NULL },
 		{ "IsIcoAct", 	NULL },
@@ -216,6 +216,10 @@ int Script::funcRandom(int n) {
 
 	n -= 1;
 	return _vm->_rnd.getRandomNumber(n);
+}
+
+int Script::funcNot(int n) {
+	return !n;
 }
 
 /* GPL commands */

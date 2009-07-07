@@ -116,6 +116,7 @@ private:
 	int operMod(int op1, int op2);
 
 	int funcRandom(int n);
+	int funcNot(int n);
 
 	void setupCommandList();
 	const GPL2Command *findCommand(byte num, byte subnum);
