@@ -97,10 +97,10 @@ bool Screen::init() {
 
 		if (_useSJIS) {
 			if (!_sjisFont) {
-				// we use the FM-Towns font rom for PC-98, too, until we feel
+				// we use the FM-TOWNS font rom for PC-98, too, until we feel
 				// like adding support for the PC-98 font
 				//if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-					// FM-Towns
+					// FM-TOWNS
 					Common::SeekableReadStream *rom = _vm->resource()->createReadStream("FMT_FNT.ROM");
 					Graphics::FontTowns *townsFont = new Graphics::FontTowns();
 					if (!rom || !townsFont || !townsFont->loadFromStream(*rom))
@@ -658,7 +658,7 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 	}
 	addDirtyRect(0, y, SCREEN_W, h);
 	// This would remove the text in the end sequence of
-	// the (Kyrandia 1) FM-Towns version.
+	// the (Kyrandia 1) FM-TOWNS version.
 	// Since this method is just used for the Seqplayer
 	// this shouldn't be a problem anywhere else, so it's
 	// safe to disable the call here.

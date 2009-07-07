@@ -80,7 +80,7 @@ public:
 };
 
 /**
- * FM-Towns ROM based SJIS compatible font.
+ * FM-TOWNS ROM based SJIS compatible font.
  *
  * This is used in KYRA and SCI.
  */
