@@ -568,6 +568,11 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		debug("Resmgr: Couldn't determine SCI version");
 		break;
 	}
+
+	if (_isVGA)
+		debug("Resmgr: Detected VGA graphic resources");
+	else
+		debug("Resmgr: Detected non-VGA/EGA graphic resources");
 }
 
 ResourceManager::~ResourceManager() {

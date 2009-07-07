@@ -982,9 +982,9 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
  * Used for synthesized music playback
  */
 reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (s->_kernel->_selectorMap.setVol != -1)
+	if (s->_kernel->usesSci1SoundFunctions())
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
-	else if (s->_kernel->_selectorMap.nodePtr != -1)
+	else if (s->_kernel->usesSci01SoundFunctions())
 		return kDoSound_SCI01(s, funct_nr, argc, argv);
 	else
 		return kDoSound_SCI0(s, funct_nr, argc, argv);
