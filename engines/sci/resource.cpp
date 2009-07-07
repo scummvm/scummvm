@@ -42,17 +42,6 @@ namespace Sci {
 
 //#define SCI_VERBOSE_RESMGR 1
 
-const char *sci_version_types[] = {
-	"SCI version undetermined (Autodetect failed / not run)",
-	"SCI version 0.xxx",
-	"SCI version 0.xxx w/ 1.000 compression",
-	"SCI version 1.000 w/ 0.xxx resource.map",
-	"SCI version 1.000 w/ special resource.map",
-	"SCI version 1.000",
-	"SCI version 1.001",
-	"SCI WIN/32"
-};
-
 const int sci_max_resource_nr[] = {65536, 1000, 2048, 2048, 2048, 65536, 65536, 65536};
 
 static const char *sci_error_types[] = {
@@ -484,8 +473,8 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		_mapVersion = detectMapVersion();
 		_volVersion = detectVolVersion();
 	}
-	debug("Using resource map version %d %s", _mapVersion, sci_version_types[_mapVersion]);
-	debug("Using volume version %d %s", _volVersion, sci_version_types[_volVersion]);
+	debug("Using resource map version %d %s", _mapVersion, versionNames[_mapVersion]);
+	debug("Using volume version %d %s", _volVersion, versionNames[_volVersion]);
 
 	scanNewSources();
 	addInternalSources();
