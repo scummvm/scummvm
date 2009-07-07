@@ -89,6 +89,8 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
 	Common::addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
 
+	_gamestate = 0;
+
 	printf("SciEngine::SciEngine\n");
 }
 
@@ -251,11 +253,14 @@ Common::Error SciEngine::run() {
 
 // Invoked by error() when a severe error occurs
 GUI::Debugger *SciEngine::getDebugger() {
-	ExecStack *xs = &(_gamestate->_executionStack.back());
+	if (_gamestate) {
+		ExecStack *xs = &(_gamestate->_executionStack.back());
+		xs->addr.pc.offset = debugState.old_pc_offset;
+		xs->sp = debugState.old_sp;
+	}
+
 	debugState.runningStep = 0; // Stop multiple execution
 	debugState.seeking = kDebugSeekNothing; // Stop special seeks
-	xs->addr.pc.offset = debugState.old_pc_offset;
-	xs->sp = debugState.old_sp;
 
 	return _console;
 }
