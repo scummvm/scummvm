@@ -297,8 +297,11 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 
 		case kMathVariable:
 			value = reader.readUint16LE();
-			stk.push(value);
-			debugC(3, kDraciBytecodeDebugLevel, "\t\tvariable: %d", value);
+
+			stk.push(_vm->_game->_variables[value-1]);
+
+			debugC(3, kDraciBytecodeDebugLevel, "\t\tvariable: %d (%d)", value,
+				_vm->_game->_variables[value-1]);
 			break;
 
 		case kMathFunctionCall:
@@ -458,7 +461,7 @@ int Script::run(GPL2Program program, uint16 offset) {
 			(this->*(cmd->_handler))(params);
 		}
 
-	} while (cmd->_name != "gplend" || cmd->_name != "exit");
+	} while (cmd->_name != "gplend" && cmd->_name != "exit");
 
 	return 0;
 }

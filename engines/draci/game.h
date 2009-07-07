@@ -131,13 +131,14 @@ public:
 
 	GameObject *getObject(uint objNum);
 
+	int *_variables;
+
 private:
 	DraciEngine *_vm;
 	
 	GameInfo *_info;
 	Person *_persons;
 	uint16 *_dialogOffsets;
-	int16 *_variables;
 	byte *_itemStatus;
 	GameObject *_objects;
 	Room _currentRoom;	

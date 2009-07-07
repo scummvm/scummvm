@@ -96,7 +96,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	file = initArchive.getFile(2);
 	unsigned int numVariables = file->_length / sizeof (int16);
 
-	_variables = new int16[numVariables];
+	_variables = new int[numVariables];
 	Common::MemoryReadStream variableData(file->_data, file->_length);
 	
 	for (i = 0; i < numVariables; ++i) {
