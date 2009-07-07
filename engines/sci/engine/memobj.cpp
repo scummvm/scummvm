@@ -159,7 +159,7 @@ bool Script::isValidOffset(uint16 offset) const {
 
 byte *Script::dereference(reg_t pointer, int *size) {
 	if (pointer.offset > buf_size) {
-		sciprintf("Error: Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)\n",
+		warning("Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)\n",
 				  PRINT_REG(pointer), (uint)buf_size);
 		return NULL;
 	}
@@ -231,9 +231,9 @@ reg_t Script::findCanonicAddress(SegManager *segmgr, reg_t addr) {
 
 void Script::freeAtAddress(SegManager *segmgr, reg_t addr) {
 	/*
-		sciprintf("[GC] Freeing script %04x:%04x\n", PRINT_REG(addr));
+		debugC(2, kDebugLevelGC, "[GC] Freeing script %04x:%04x\n", PRINT_REG(addr));
 		if (locals_segment)
-			sciprintf("[GC] Freeing locals %04x:0000\n", locals_segment);
+			debugC(2, kDebugLevelGC, "[GC] Freeing locals %04x:0000\n", locals_segment);
 	*/
 
 	if (_markedAsDeleted)
@@ -289,7 +289,7 @@ void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *par
 
 	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
 	(*note)(param, clone->pos);
-	//sciprintf("[GC] Reporting clone-pos %04x:%04x\n", PRINT_REG(clone->pos));
+	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x\n", PRINT_REG(clone->pos));
 }
 
 void CloneTable::freeAtAddress(SegManager *segmgr, reg_t addr) {
@@ -302,15 +302,15 @@ void CloneTable::freeAtAddress(SegManager *segmgr, reg_t addr) {
 
 #ifdef GC_DEBUG
 	if (!(victim_obj->flags & OBJECT_FLAG_FREED))
-		sciprintf("[GC] Warning: Clone %04x:%04x not reachable and not freed (freeing now)\n", PRINT_REG(addr));
+		warning("[GC] Clone %04x:%04x not reachable and not freed (freeing now)", PRINT_REG(addr));
 #ifdef GC_DEBUG_VERBOSE
 	else
-		sciprintf("[GC-DEBUG] Clone %04x:%04x: Freeing\n", PRINT_REG(addr));
+		warning("[GC-DEBUG] Clone %04x:%04x: Freeing", PRINT_REG(addr));
 #endif
 #endif
 	/*
-		sciprintf("[GC] Clone %04x:%04x: Freeing\n", PRINT_REG(addr));
-		sciprintf("[GC] Clone had pos %04x:%04x\n", PRINT_REG(victim_obj->pos));
+		warning("[GC] Clone %04x:%04x: Freeing", PRINT_REG(addr));
+		warning("[GC] Clone had pos %04x:%04x", PRINT_REG(victim_obj->pos));
 	*/
 	clone_table->freeEntry(addr.offset);
 }

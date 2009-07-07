@@ -33,8 +33,6 @@ namespace Sci {
 struct EngineState;
 class ResourceManager;
 
-/*#define SCRIPT_DEBUG */
-
 #define SCI_SCRIPTS_NR 1000
 
 enum ScriptObjectTypes {

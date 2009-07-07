@@ -40,8 +40,6 @@ unsigned int timer = 0;
 
 gfxEntryStruct* linkedMsgList = NULL;
 
-extern bool isBlack;
-
 void drawBlackSolidBoxSmall() {
 //  gfxModuleData.drawSolidBox(64,100,256,117,0);
 	drawSolidBox(64, 100, 256, 117, 0);
@@ -514,6 +512,7 @@ void CruiseEngine::initAllData(void) {
 	strcpy(lastOverlay, "AUTO00");
 
 	_gameSpeed = GAME_FRAME_DELAY_1;
+	_speedFlag = false;
 
 	return;
 }
@@ -1293,11 +1292,6 @@ int CruiseEngine::processInput(void) {
 		buttonDown = 0;
 	}
 
-	if (userDelay && !userWait) {
-		userDelay--;
-		return 0;
-	}
-
 	// Check for Exit 'X' key
 	if (keyboardCode == Common::KEYCODE_x)
 		return 1;
@@ -1343,6 +1337,8 @@ int CruiseEngine::processInput(void) {
 		// Check for left mouse button click or Space to end user waiting
 		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == MB_LEFT))
 			userWait = 0;
+
+		keyboardCode = Common::KEYCODE_INVALID;
 		return 0;
 	}
 
@@ -1784,35 +1780,35 @@ void CruiseEngine::mainLoop(void) {
 //      t_start=Osystem_GetTicks();
 
 //      readKeyboard();
-		bool isUserWait = userWait != 0;
 
+		bool isUserWait = userWait != 0;
 		playerDontAskQuit = processInput();
 		if (playerDontAskQuit)
 			break;
-
-		if (isUserWait && !userWait) {
-			// User waiting has ended
-			changeScriptParamInList(-1, -1, &procHead, 9999, 0);
-			changeScriptParamInList(-1, -1, &relHead, 9999, 0);
-
-			mainDraw(0);
-			flipScreen();
-		}
 
 		if (enableUser) {
 			userEnabled = 1;
 			enableUser = 0;
 		}
 
-		if (userWait < 1) {
-			manageScripts(&relHead);
-			manageScripts(&procHead);
-
-			removeFinishedScripts(&relHead);
-			removeFinishedScripts(&procHead);
-
-			processAnimation();
+		if (userDelay && !userWait) {
+			userDelay--;
+			continue;
 		}
+
+		if (isUserWait & !userWait) {
+			// User waiting has ended
+			changeScriptParamInList(-1, -1, &procHead, 9999, 0);
+			changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+		} 
+
+		manageScripts(&relHead);
+		manageScripts(&procHead);
+
+		removeFinishedScripts(&relHead);
+		removeFinishedScripts(&procHead);
+
+		processAnimation();
 
 		if (remdo) {
 			// ASSERT(0);
@@ -1837,10 +1833,8 @@ void CruiseEngine::mainLoop(void) {
 				PCFadeFlag = 0;
 
 			/*if (!PCFadeFlag)*/
-			if (!isUserWait) {
-				mainDraw(0);
-				flipScreen();
-			}
+			mainDraw(userWait);
+			flipScreen();
 
 			if (userEnabled && !userWait && !autoTrack) {
 				if (currentActiveMenu == -1) {
@@ -1874,38 +1868,9 @@ void CruiseEngine::mainLoop(void) {
 				changeCursor(CURSOR_NORMAL);
 			}
 
-			if (isUserWait) {
-				// User Wait handling
-				if (userWait == 1) {
-					// Initial step
-					do {
-						// Make sure any previous mouse press is released
-						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-					} while (mouseButton != 0);
-
-					++userWait;
-//					mainDraw(0);
-//					flipScreen();
-				} else {
-					// Standard handling
-/*
-					manageScripts(&relHead);
-					manageScripts(&procHead);
-
-					removeFinishedScripts(&relHead);
-					removeFinishedScripts(&procHead);
-*/
-					if (isBlack) {
-						// This is a bit of a hack to ensure that user waits directly after a palette fade
-						// have time to restore the palette before waiting starts
-						mainDraw(0);
-						flipScreen();
-					} else {
-						// Draw the next screen
-						processAnimation();
-						gfxModuleData_flipScreen();
-					}
-				}
+			if (userWait == 1) {
+				// Waiting for press - original wait loop has been integrated into the
+				// main event loop
 				continue;
 			}
 
@@ -1917,12 +1882,8 @@ void CruiseEngine::mainLoop(void) {
 
 						char* pText = getText(autoMsg, autoOvl);
 
-						if (strlen(pText)) {
+						if (strlen(pText))
 							userWait = 1;
-
-							mainDraw(0);
-							flipScreen();
-						}
 					}
 
 					changeScriptParamInList(-1, -1, &relHead, 9998, 0);

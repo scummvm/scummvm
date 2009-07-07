@@ -87,6 +87,7 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	Common::addDebugChannel(kDebugLevelDclInflate, "DCL", "DCL inflate debugging");
 	Common::addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
 	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
+	Common::addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
 
 	printf("SciEngine::SciEngine\n");
 }

@@ -81,7 +81,7 @@ static void _gfxw_debug_remove_widget(GfxWidget *widget) {
 
 static void indent(int indentation) {
 	for (int i = 0; i < indentation; i++)
-		sciprintf("    ");
+		printf("    ");
 }
 
 void GfxWidget::printIntern(int indentation) const {
@@ -92,35 +92,35 @@ void GfxWidget::printIntern(int indentation) const {
 
 	if (_magic == GFXW_MAGIC_VALID) {
 		if (_visual)
-			sciprintf("v ");
+			printf("v ");
 		else
-			sciprintf("NoVis ");
+			printf("NoVis ");
 	} else if (_magic == GFXW_MAGIC_INVALID)
-		sciprintf("INVALID ");
+		printf("INVALID ");
 
-	sciprintf("S%08x", _serial);
+	printf("S%08x", _serial);
 
 	if (_ID != GFXW_NO_ID) {
-		sciprintf("#%x", _ID);
+		printf("#%x", _ID);
 
 		if (_subID != GFXW_NO_ID)
-			sciprintf(":%x ", _subID);
+			printf(":%x ", _subID);
 		else
-			sciprintf(" ");
+			printf(" ");
 	}
 
-	sciprintf("[(%d,%d)(%dx%d)]", _bounds.x, _bounds.y, _bounds.width, _bounds.height);
+	printf("[(%d,%d)(%dx%d)]", _bounds.x, _bounds.y, _bounds.width, _bounds.height);
 
 	for (i = 0; i < strlen(flags_list); i++)
 		if (_flags & (1 << i))
-			sciprintf("%c", flags_list[i]);
+			printf("%c", flags_list[i]);
 
-	sciprintf(" ");
+	printf(" ");
 }
 
 void GfxWidget::print(int indentation) const {
 	printIntern(indentation);
-	sciprintf("<untyped #%d>", _type);
+	printf("<untyped #%d>", _type);
 }
 
 GfxWidget::GfxWidget(gfxw_widget_type_t type_) {
@@ -149,13 +149,13 @@ GfxWidget::GfxWidget(gfxw_widget_type_t type_) {
 
 static int verify_widget(GfxWidget *widget) {
 	if (!widget) {
-		GFXERROR("Attempt to use NULL widget\n");
+		warning("Attempt to use NULL widget");
 		return 1;
 	} else if (widget->_magic != GFXW_MAGIC_VALID) {
 		if (widget->_magic == GFXW_MAGIC_INVALID) {
-			GFXERROR("Attempt to use invalidated widget\n");
+			warning("Attempt to use invalidated widget");
 		} else {
-			GFXERROR("Attempt to use non-widget\n");
+			warning("Attempt to use non-widget");
 		}
 		return 1;
 	}
@@ -163,13 +163,13 @@ static int verify_widget(GfxWidget *widget) {
 }
 
 #define VERIFY_WIDGET(w) \
-	if (verify_widget((GfxWidget *)(w))) { GFXERROR("Error occured while validating widget\n"); }
+	if (verify_widget((GfxWidget *)(w))) { error("Error occured while validating widget"); }
 
 #define GFX_ASSERT(_x) \
 { \
 	int retval = (_x); \
 	if (retval == GFX_ERROR) { \
-		GFXERROR("Error occured while drawing widget!\n"); \
+		warning("Error occured while drawing widget"); \
 		return 1; \
 	} else if (retval == GFX_FATAL) { \
 		error("Fatal error occured while drawing widget!\nGraphics state invalid; aborting program..."); \
@@ -183,23 +183,23 @@ static int verify_widget(GfxWidget *widget) {
 // Assertion for drawing
 #define DRAW_ASSERT(widget, exp_type) \
 	if (!(widget)) { \
-		sciprintf("L%d: NULL widget", __LINE__); \
+		printf("L%d: NULL widget", __LINE__); \
 		return 1; \
 	} \
 	if ((widget)->_type != (exp_type)) { \
-		sciprintf("L%d: Error in widget: Expected type " # exp_type "(%d) but got %d\n", __LINE__, exp_type, (widget)->_type); \
-		sciprintf("Erroneous widget: "); \
+		printf("L%d: Error in widget: Expected type " # exp_type "(%d) but got %d\n", __LINE__, exp_type, (widget)->_type); \
+		printf("Erroneous widget: "); \
 		widget->print(4); \
-		sciprintf("\n"); \
+		printf("\n"); \
 		return 1; \
 	} \
 	if (!(widget->_flags & GFXW_FLAG_VISIBLE)) \
 		return 0; \
 	if (!(widget->_type == GFXW_VISUAL || widget->_visual)) { \
-		sciprintf("L%d: Error while drawing widget: Widget has no visual\n", __LINE__); \
-		sciprintf("Erroneous widget: "); \
+		printf("L%d: Error while drawing widget: Widget has no visual\n", __LINE__); \
+		printf("Erroneous widget: "); \
 		widget->print(1); \
-		sciprintf("\n"); \
+		printf("\n"); \
 		return 1; \
 	}
 
@@ -253,8 +253,7 @@ void gfxw_remove_widget_from_container(GfxContainer *container, GfxWidget *widge
 	GfxWidget **seekerp;
 
 	if (!container) {
-		GFXERROR("Attempt to remove widget from NULL container!\n");
-		error("gfxw_remove_widget_from_container() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
+		error("Attempt to remove widget from NULL container!\n");
 	}
 
 	seekerp = &(container->_contents);
@@ -271,10 +270,10 @@ void gfxw_remove_widget_from_container(GfxContainer *container, GfxWidget *widge
 		seekerp = &((*seekerp)->_next);
 
 	if (!*seekerp) {
-		GFXERROR("Internal error: Attempt to remove widget from container it was not contained in!\n");
-		sciprintf("Widget:");
+		printf("Internal error: Attempt to remove widget from container it was not contained in!\n");
+		printf("Widget:");
 		widget->print(1);
-		sciprintf("Container:");
+		printf("Container:");
 		widget->print(1);
 		error("gfxw_remove_widget_from_container() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 		return;
@@ -341,7 +340,7 @@ int GfxBox::draw(const Common::Point &pos) {
 
 void GfxBox::print(int indentation) const {
 	printIntern(indentation);
-	sciprintf("BOX");
+	printf("BOX");
 }
 
 static int _gfxwop_box_superarea_of(GfxWidget *widget, GfxWidget *other) {
@@ -472,7 +471,7 @@ int GfxRect::draw(const Common::Point &pos) {
 
 void GfxRect::print(int indentation) const {
 	printIntern(indentation);
-	sciprintf("RECT");
+	printf("RECT");
 }
 
 void _gfxw_set_ops_RECT(GfxWidget *prim) {
@@ -518,7 +517,7 @@ int GfxLine::draw(const Common::Point &pos) {
 
 void GfxLine::print(int indentation) const {
 	printIntern(indentation);
-//	sciprintf("LINE");
+//	printf("LINE");
 }
 
 void _gfxw_set_ops_LINE(GfxWidget *prim) {
@@ -598,13 +597,13 @@ void GfxView::print(int indentation) const {
 	printIntern(indentation);
 
 	if (_type == GFXW_STATIC_VIEW)
-		sciprintf("STATICVIEW");
+		printf("STATICVIEW");
 	else if (_type == GFXW_VIEW)
-		sciprintf("VIEW");
+		printf("VIEW");
 	else
 		error("GfxView::print: Invalid type %d", _type);
 
-	sciprintf("(%d/%d/%d)@(%d,%d)[p:%d,c:%d]", _view, _loop, _cel, _pos.x, _pos.y,
+	printf("(%d/%d/%d)@(%d,%d)[p:%d,c:%d]", _view, _loop, _cel, _pos.x, _pos.y,
 	          (_color.mask & GFX_MASK_PRIORITY) ? _color.priority : -1,
 	          (_color.mask & GFX_MASK_CONTROL) ? _color.control : -1);
 }
@@ -675,13 +674,13 @@ int GfxDynView::draw(const Common::Point &pos) {
 	printIntern(indentation);
 
 	if (_type == GFXW_DYN_VIEW)
-		sciprintf("DYNVIEW");
+		printf("DYNVIEW");
 	else if (_type == GFXW_PIC_VIEW)
-		sciprintf("PICVIEW");
+		printf("PICVIEW");
 	else
 		error("GfxDynView::print: Invalid type %d", _type);
 
-	sciprintf(" SORT=%d z=%d seq=%d (%d/%d/%d)@(%d,%d)[p:%d,c:%d]; sig[%04x@%04X:%04X[%d]]", force_precedence, _z,
+	printf(" SORT=%d z=%d seq=%d (%d/%d/%d)@(%d,%d)[p:%d,c:%d]; sig[%04x@%04X:%04X[%d]]", force_precedence, _z,
 	          sequence, _view, _loop, _cel, _pos.x, _pos.y,
 	          (_color.mask & GFX_MASK_PRIORITY) ? _color.priority : -1,
 	          (_color.mask & GFX_MASK_CONTROL) ? _color.control : -1, signal, signalp.obj.segment, signalp.obj.offset, signalp.varindex);
@@ -815,8 +814,7 @@ GfxText::~GfxText() {
 	if (_textHandle) {
 		GfxState *state = _visual ? _visual->_gfxState : NULL;
 		if (!state) {
-			GFXERROR("Attempt to free text without supplying mode to free it from!\n");
-			error("GfxText destructor failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
+			error("Attempt to free text without supplying mode to free it from!\n");
 		} else {
 			gfxop_free_text(state, _textHandle);
 			_textHandle = NULL;
@@ -838,7 +836,7 @@ int GfxText::draw(const Common::Point &pos) {
 
 void GfxText::print(int indentation) const {
 	printIntern(indentation);
-	sciprintf("TEXT:'%s'", _text.c_str());
+	printf("TEXT:'%s'", _text.c_str());
 }
 
 static int _gfxwop_text_equals(GfxWidget *widget, GfxWidget *other) {
@@ -964,11 +962,11 @@ static int _w_gfxwop_container_print_contents(const char *name, GfxWidget *widge
 
 	indent(indentation);
 
-	sciprintf("--%s:\n", name);
+	printf("--%s:\n", name);
 
 	while (seeker) {
 		seeker->print(indentation + 1);
-		sciprintf("\n");
+		printf("\n");
 		seeker = seeker->_next;
 	}
 
@@ -976,14 +974,14 @@ static int _w_gfxwop_container_print_contents(const char *name, GfxWidget *widge
 }
 
 void GfxContainer::print(int indentation) const {
-	sciprintf(" viszone=((%d,%d),(%dx%d))\n", zone.x, zone.y, zone.width, zone.height);
+	printf(" viszone=((%d,%d),(%dx%d))\n", zone.x, zone.y, zone.width, zone.height);
 
 	indent(indentation);
-	sciprintf("--dirty:\n");
+	printf("--dirty:\n");
 
 	for (DirtyRectList::const_iterator dirty = _dirtyRects.begin(); dirty != _dirtyRects.end(); ++dirty) {
 		indent(indentation + 1);
-		sciprintf("dirty(%d,%d, (%dx%d))\n", dirty->x, dirty->y, dirty->width, dirty->height);
+		printf("dirty(%d,%d, (%dx%d))\n", dirty->x, dirty->y, dirty->width, dirty->height);
 	}
 
 	_w_gfxwop_container_print_contents("contents", _contents, indentation);
@@ -1155,11 +1153,11 @@ static void _gfxw_dirtify_container(GfxContainer *container, GfxWidget *widget) 
 
 static int _parentize_widget(GfxContainer *container, GfxWidget *widget) {
 	if (widget->_parent) {
-		GFXERROR("_gfxwop_container_add(): Attempt to give second parent node to widget!\nWidget:");
+		printf("_parentize_widget(): Attempt to give second parent node to widget!\nWidget:");
 		widget->print(3);
-		sciprintf("\nContainer:");
+		printf("\nContainer:");
 		container->print(3);
-
+		error("Error in _parentize_widget()");
 		return 1;
 	}
 
@@ -1253,9 +1251,9 @@ void GfxList::print(int indentation) const {
 	printIntern(indentation);
 
 	if (_type == GFXW_LIST)
-		sciprintf("LIST");
+		printf("LIST");
 	else if (_type == GFXW_SORTED_LIST)
-		sciprintf("SORTED_LIST");
+		printf("SORTED_LIST");
 	else
 		error("GfxList::print: Invalid type %d", _type);
 
@@ -1272,7 +1270,7 @@ static int _gfxwop_list_equals(GfxWidget *widget, GfxWidget *other) {
 	if (!GFXW_IS_LIST(widget)) {
 		warning("[GFX] _gfxwop_list_equals(): Method called on non-list");
 		widget->print(0);
-		sciprintf("\n");
+		printf("\n");
 		return 0;
 	}
 
@@ -1316,11 +1314,11 @@ int _gfxwop_ordered_add(GfxContainer *container, GfxWidget *widget, int compare_
 	GfxWidget **seekerp = &(container->_contents);
 
 	if (widget->_next) {
-		GFXERROR("_gfxwop_sorted_list_add(): Attempt to add widget to two lists!\nWidget:");
+		printf("_gfxwop_ordered_add(): Attempt to add widget to two lists!\nWidget:");
 		widget->print(3);
-		sciprintf("\nList:");
+		printf("\nList:");
 		container->print(3);
-		error("Breakpoint in %s, line %d", __FILE__, __LINE__);
+		error("Error in _gfxwop_ordered_add()");
 	}
 
 	if (_gfxw_container_id_equals(container, widget))
@@ -1388,7 +1386,7 @@ int GfxVisual::draw(const Common::Point &pos) {
 		int err = gfxop_clear_box(_gfxState, *dirty);
 
 		if (err) {
-			GFXERROR("Error while clearing dirty rect (%d,%d,(%dx%d))\n", dirty->x,
+			error("Error while clearing dirty rect (%d,%d,(%dx%d))", dirty->x,
 			         dirty->y, dirty->width, dirty->height);
 			if (err == GFX_FATAL)
 				return err;
@@ -1405,15 +1403,15 @@ int GfxVisual::draw(const Common::Point &pos) {
 
 void GfxVisual::print(int indentation) const {
 	printIntern(indentation);
-	sciprintf("VISUAL; ports={");
+	printf("VISUAL; ports={");
 	for (uint i = 0; i < _portRefs.size(); i++) {
 		if (_portRefs[i]) {
 			if (i != 0)
-				sciprintf(",");
-			sciprintf("%d", i);
+				printf(",");
+			printf("%d", i);
 		}
 	}
-	sciprintf("}\n");
+	printf("}\n");
 
 	GfxContainer::print(indentation);
 }
@@ -1519,10 +1517,10 @@ GfxPort::~GfxPort() {
 
 void GfxPort::print(int indentation) const {
 	printIntern(indentation);
-	sciprintf("PORT");
-	sciprintf(" font=%d drawpos=(%d,%d)", _font, draw_pos.x, draw_pos.y);
+	printf("PORT");
+	printf(" font=%d drawpos=(%d,%d)", _font, draw_pos.x, draw_pos.y);
 	if (gray_text)
-		sciprintf(" (gray)");
+		printf(" (gray)");
 
 	GfxContainer::print(indentation);
 	_w_gfxwop_container_print_contents("decorations", _decorations, indentation);

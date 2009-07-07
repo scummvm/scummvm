@@ -74,7 +74,7 @@ void SongLibrary::addSong(Song *song) {
 	int pri	= song->_priority;
 
 	if (NULL == song) {
-		sciprintf("addSong(): NULL passed for song\n");
+		warning("addSong(): NULL passed for song");
 		return;
 	}
 

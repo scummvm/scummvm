@@ -410,24 +410,24 @@ static void print_polygon(EngineState *s, reg_t polygon) {
 	int is_reg_t = polygon_is_reg_t(point_array, size);
 	Common::Point point;
 
-	sciprintf("%i:", type);
+	printf("%i:", type);
 
 	for (i = 0; i < size; i++) {
 		point = read_point(point_array, is_reg_t, i);
-		sciprintf(" (%i, %i)", point.x, point.y);
+		printf(" (%i, %i)", point.x, point.y);
 	}
 
 	point = read_point(point_array, is_reg_t, 0);
-	sciprintf(" (%i, %i);\n", point.x, point.y);
+	printf(" (%i, %i);\n", point.x, point.y);
 }
 
 static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Common::Point end, int opt) {
 	List *list;
 	Node *node;
 
-	sciprintf("Start point: (%i, %i)\n", start.x, start.y);
-	sciprintf("End point: (%i, %i)\n", end.x, end.y);
-	sciprintf("Optimization level: %i\n", opt);
+	printf("Start point: (%i, %i)\n", start.x, start.y);
+	printf("End point: (%i, %i)\n", end.x, end.y);
+	printf("Optimization level: %i\n", opt);
 
 	if (!poly_list.segment)
 		return;
@@ -439,7 +439,7 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 		return;
 	}
 
-	sciprintf("Polygons:\n");
+	printf("Polygons:\n");
 	node = lookup_node(s, list->first);
 
 	while (node) {
@@ -1539,7 +1539,7 @@ static void dijkstra(PathfindingState *s) {
 		}
 
 		if (min == HUGE_DISTANCE) {
-			sciprintf("[avoidpath] Warning: end point (%i, %i) is unreachable\n", s->vertex_end->v.x, s->vertex_end->v.y);
+			warning("[avoidpath] End point (%i, %i) is unreachable", s->vertex_end->v.x, s->vertex_end->v.y);
 			return;
 		}
 
@@ -1629,13 +1629,13 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	POLY_SET_POINT(oref, offset, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
 #ifdef DEBUG_AVOIDPATH
-	sciprintf("[avoidpath] Returning path:");
+	printf("[avoidpath] Returning path:");
 	for (int i = 0; i < offset; i++) {
 		Common::Point pt;
 		POLY_GET_POINT(oref, i, pt);
-		sciprintf(" (%i, %i)", pt.x, pt.y);
+		printf(" (%i, %i)", pt.x, pt.y);
 	}
-	sciprintf("\n");
+	printf("\n");
 #endif
 
 	return output;
@@ -1677,7 +1677,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		PathfindingState *p;
 
 #ifdef DEBUG_AVOIDPATH
-		sciprintf("[avoidpath] Pathfinding input:\n");
+		printf("[avoidpath] Pathfinding input:\n");
 		draw_point(s, start, 1);
 		draw_point(s, end, 0);
 
@@ -1690,16 +1690,16 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		p = convert_polygon_set(s, poly_list, start, end, opt);
 
 		if (p && intersecting_polygons(p)) {
-			sciprintf("[avoidpath] Error: input set contains (self-)intersecting polygons\n");
+			warning("[avoidpath] input set contains (self-)intersecting polygons");
 			delete p;
 			p = NULL;
 		}
 
 		if (!p) {
 			byte *oref;
-			sciprintf("[avoidpath] Error: pathfinding failed for following input:\n");
+			printf("[avoidpath] Error: pathfinding failed for following input:\n");
 			print_input(s, poly_list, start, end, opt);
-			sciprintf("[avoidpath] Returning direct path from start point to end point\n");
+			printf("[avoidpath] Returning direct path from start point to end point\n");
 			oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * 3,
 			                                   AVOIDPATH_DYNMEM_STRING, &output);
 
@@ -1720,8 +1720,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	default:
-		warning("Unknown AvoidPath subfunction %d",
-		         argc);
+		warning("Unknown AvoidPath subfunction %d", argc);
 		return NULL_REG;
 		break;
 	}

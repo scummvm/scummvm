@@ -246,7 +246,7 @@ gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode
 	old_data = pixmap->index_data;
 
 	if (!old_data) {
-		GFXERROR("Attempt to scale index data without index data!\n");
+		error("Attempt to scale index data without index data!\n");
 		return pixmap;
 	}
 

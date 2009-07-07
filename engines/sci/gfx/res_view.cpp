@@ -76,7 +76,7 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 
 	if (xl <= 0 || yl <= 0) {
 		gfx_free_pixmap(retval);
-		GFXERROR("View %02x:(%d/%d) has invalid xl=%d or yl=%d\n", id, loop, cel, xl, yl);
+		error("View %02x:(%d/%d) has invalid xl=%d or yl=%d", id, loop, cel, xl, yl);
 		return NULL;
 	}
 
@@ -123,7 +123,7 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 				color = retval->color_key;
 
 			if (writepos + count > pixmap_size) {
-				GFXERROR("View %02x:(%d/%d) writes RLE data over its designated end at rel. offset 0x%04x\n", id, loop, cel, pos);
+				error("View %02x:(%d/%d) writes RLE data over its designated end at rel. offset 0x%04x", id, loop, cel, pos);
 				return NULL;
 			}
 
@@ -143,7 +143,7 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 	int palette_ofs = READ_LE_UINT16(resource + 6);
 
 	if (size < V0_FIRST_LOOP_OFFSET + 8) {
-		GFXERROR("Attempt to draw empty view %04x\n", id);
+		error("Attempt to draw empty view %04x", id);
 		return NULL;
 	}
 
@@ -166,7 +166,7 @@ gfxr_view_t *gfxr_draw_view0(int id, byte *resource, int size, int palette) {
 	}
 
 	if (view->loops_nr * 2 + V0_FIRST_LOOP_OFFSET > size) {
-		GFXERROR("View %04x: Not enough space in resource to accomodate for the claimed %d loops\n", id, view->loops_nr);
+		error("View %04x: Not enough space in resource to accomodate for the claimed %d loops", id, view->loops_nr);
 		free(view);
 		return NULL;
 	}
@@ -346,7 +346,7 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 
 	if (xl <= 0 || yl <= 0) {
 		gfx_free_pixmap(retval);
-		GFXERROR("View %02x:(%d/%d) has invalid xl=%d or yl=%d\n", id, loop, cel, xl, yl);
+		error("View %02x:(%d/%d) has invalid xl=%d or yl=%d", id, loop, cel, xl, yl);
 		return NULL;
 	}
 

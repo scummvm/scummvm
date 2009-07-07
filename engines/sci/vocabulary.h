@@ -236,7 +236,7 @@ public:
 	parse_rule_list_t *buildGNF(bool verbose = false);
 
 	/**
-	 * Deciphers a said block and dumps its content via sciprintf.
+	 * Deciphers a said block and dumps its content via printf.
 	 * For debugging only.
 	 * @param pos	pointer to the data to dump
 	 */

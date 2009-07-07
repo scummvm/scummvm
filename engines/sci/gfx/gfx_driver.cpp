@@ -114,7 +114,7 @@ int GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t colo
 		modeDrawProc = drawProc<4, uint32, 0>;
 		break;
 	default:
-		GFXERROR("Invalid mode->bytespp=%d\n", _mode->bytespp);
+		error("Invalid mode->bytespp=%d", _mode->bytespp);
 	}
 
 	if (color.mask & GFX_MASK_VISUAL) {
@@ -237,7 +237,7 @@ int GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 		break;
 	}
 	default:
-		GFXERROR("Invalid buffer %d in update!\n", buffer);
+		error("Invalid buffer %d in update", buffer);
 		return GFX_ERROR;
 	}
 

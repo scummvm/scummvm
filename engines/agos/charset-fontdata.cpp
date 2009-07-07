@@ -2090,7 +2090,7 @@ static const byte english_pnFont[] = {
 void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	const byte *src;
 	byte color, *dst;
-	uint h, w, i;
+	uint dstPitch, h, w, i;
 
 	if (_noOracleScroll)
 		return;
@@ -2100,7 +2100,8 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	Graphics::Surface *screen = _system->lockScreen();
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		dst = getBackGround() + y * _dxSurfacePitch + x + window->textColumnOffset;
+		dst = getBackGround();
+		dstPitch = _backGroundBuf->pitch;
 		h = 13;
 		w = getFeebleFontSize(chr);
 
@@ -2109,7 +2110,8 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		else
 			src = feeble_windowFont + (chr - 32) * 13;
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
-		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
+		dst = (byte *)screen->pixels;
+		dstPitch = screen->pitch;
 		h = 8;
 		w = 6;
 
@@ -2145,7 +2147,8 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 			error("windowDrawChar: Unknown language %d", _language);
 		}
 	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
+		dst = (byte *)screen->pixels;
+		dstPitch = screen->pitch;
 		h = 8;
 		w = 6;
 
@@ -2169,18 +2172,21 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 			error("windowDrawChar: Unknown language %d", _language);
 		}
 	} else if (getGameType() == GType_ELVIRA1) {
-		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
+		dst = (byte *)screen->pixels;
+		dstPitch = screen->pitch;
 		h = 8;
 		w = 6;
 
 		src = english_elvira1Font + (chr - 32) * 8;
 	} else {
-		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
+		dst = (byte *)screen->pixels;
+		dstPitch = screen->pitch;
 		h = 8;
 		w = 8;
 
 		src = english_pnFont + (chr - 32) * 8;
 	}
+	dst += y * dstPitch + x + window->textColumnOffset;
 
 	color = window->textColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
@@ -2201,7 +2207,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 
 			b <<= 1;
 		} while (++i != w);
-		dst += _dxSurfacePitch;
+		dst += dstPitch;
 	} while (--h);
 
 	_system->unlockScreen();

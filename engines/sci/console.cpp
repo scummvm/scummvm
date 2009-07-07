@@ -461,6 +461,7 @@ enum {
 
 int parseNodes(EngineState *s, int *i, int *pos, int type, int nr, int argc, const char **argv) {
 	int nextToken = 0, nextValue = 0, newPos = 0, oldPos = 0;
+	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 
 	if (type == kParseNil)
 		return 0;
@@ -471,11 +472,11 @@ int parseNodes(EngineState *s, int *i, int *pos, int type, int nr, int argc, con
 		return *pos;
 	}
 	if (type == kParseEndOfInput) {
-		sciprintf("Unbalanced parentheses\n");
+		con->DebugPrintf("Unbalanced parentheses\n");
 		return -1;
 	}
 	if (type == kParseClosingParenthesis) {
-		sciprintf("Syntax error at token %d\n", *i);
+		con->DebugPrintf("Syntax error at token %d\n", *i);
 		return -1;
 	}
 
@@ -505,7 +506,7 @@ int parseNodes(EngineState *s, int *i, int *pos, int type, int nr, int argc, con
 
 	const char *token = argv[(*i)++];
 	if (strcmp(token, ")"))
-		sciprintf("Expected ')' at token %d\n", *i);
+		con->DebugPrintf("Expected ')' at token %d\n", *i);
 
 	return oldPos;
 }
@@ -2032,7 +2033,7 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 bool Console::cmdBacktrace(int argc, const char **argv) {
 	DebugPrintf("Dumping the send/self/super/call/calle/callb stack:\n");
 
-	DebugPrintf("Call stack (current base: 0x%x):\n", _vm->_gamestate->execution_stack_base);
+	printf("Call stack (current base: 0x%x):\n", _vm->_gamestate->execution_stack_base);
 	Common::List<ExecStack>::iterator iter;
 	uint i = 0;
 
@@ -2045,17 +2046,17 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		switch (call.type) {
 
 		case EXEC_STACK_TYPE_CALL: {// Normal function
-			sciprintf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
+			printf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
 			          selector_name(_vm->_gamestate, call.selector));
 		}
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			sciprintf(" %x:[%x]  k%s(", i, call.origin, _vm->_gamestate->_kernel->getKernelName(-(call.selector) - 42).c_str());
+			printf(" %x:[%x]  k%s(", i, call.origin, _vm->_gamestate->_kernel->getKernelName(-(call.selector) - 42).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
-			sciprintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
+			printf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
 			          objname, _vm->_gamestate->_kernel->getSelectorName(call.selector).c_str());
 			break;
 		}
@@ -2066,31 +2067,31 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 			totalparamc = 16;
 
 		for (paramc = 1; paramc <= totalparamc; paramc++) {
-			sciprintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
+			printf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
 
 			if (paramc < call.argc)
-				sciprintf(", ");
+				printf(", ");
 		}
 
 		if (call.argc > 16)
-			sciprintf("...");
+			printf("...");
 
-		sciprintf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
+		printf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
 		if (call.type == EXEC_STACK_TYPE_CALL) {
-			sciprintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
+			printf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
 			if (call.sp == CALL_SP_CARRY)
-				sciprintf(" sp,fp:carry");
+				printf(" sp,fp:carry");
 			else {
-				sciprintf(" sp=ST:%04x", (unsigned)(call.sp - _vm->_gamestate->stack_base));
-				sciprintf(" fp=ST:%04x", (unsigned)(call.fp - _vm->_gamestate->stack_base));
+				printf(" sp=ST:%04x", (unsigned)(call.sp - _vm->_gamestate->stack_base));
+				printf(" fp=ST:%04x", (unsigned)(call.fp - _vm->_gamestate->stack_base));
 			}
 		} else
-			sciprintf(" pc:none");
+			printf(" pc:none");
 
-		sciprintf(" argp:ST:%04x", (unsigned)(call.variables_argp - _vm->_gamestate->stack_base));
+		printf(" argp:ST:%04x", (unsigned)(call.variables_argp - _vm->_gamestate->stack_base));
 		if (call.type == EXEC_STACK_TYPE_CALL)
-			sciprintf(" script: %d", (*(Script *)_vm->_gamestate->seg_manager->_heap[call.addr.pc.segment]).nr);
-		sciprintf("\n");
+			printf(" script: %d", (*(Script *)_vm->_gamestate->seg_manager->_heap[call.addr.pc.segment]).nr);
+		printf("\n");
 	}
 
 	return 0;
@@ -2290,21 +2291,21 @@ bool Console::cmdSend(int argc, const char **argv) {
 	selector_id = _vm->_gamestate->_kernel->findSelector(selector_name);
 
 	if (selector_id < 0) {
-		sciprintf("Unknown selector: \"%s\"\n", selector_name);
-		return 1;
+		DebugPrintf("Unknown selector: \"%s\"\n", selector_name);
+		return true;
 	}
 
 	o = obj_get(_vm->_gamestate, object);
 	if (o == NULL) {
-		sciprintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
-		return 1;
+		DebugPrintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
+		return true;
 	}
 
 	SelectorType selector_type = lookup_selector(_vm->_gamestate, object, selector_id, 0, &fptr);
 
 	if (selector_type == kSelectorNone) {
-		sciprintf("Object does not support selector: \"%s\"\n", selector_name);
-		return 1;
+		DebugPrintf("Object does not support selector: \"%s\"\n", selector_name);
+		return true;
 	}
 
 	stackframe[0] = make_reg(0, selector_id);
@@ -3043,42 +3044,43 @@ int printObject(EngineState *s, reg_t pos) {
 	Object *obj = obj_get(s, pos);
 	Object *var_container = obj;
 	int i;
+	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 
 	if (!obj) {
-		sciprintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
+		con->DebugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
 		return 1;
 	}
 
 	// Object header
-	sciprintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
+	printf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
 				obj->_variables.size(), obj->methods_nr);
 
 	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
 		var_container = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
-	sciprintf("  -- member variables:\n");
+	printf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->_variables.size(); i++) {
-		sciprintf("    ");
+		printf("    ");
 		if (i < var_container->variable_names_nr) {
-			sciprintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
+			printf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
 		} else
-			sciprintf("p#%x = ", i);
+			printf("p#%x = ", i);
 
 		reg_t val = obj->_variables[i];
-		sciprintf("%04x:%04x", PRINT_REG(val));
+		printf("%04x:%04x", PRINT_REG(val));
 
 		Object *ref = obj_get(s, val);
 		if (ref)
-			sciprintf(" (%s)", obj_get_name(s, val));
+			printf(" (%s)", obj_get_name(s, val));
 
-		sciprintf("\n");
+		printf("\n");
 	}
-	sciprintf("  -- methods:\n");
+	printf("  -- methods:\n");
 	for (i = 0; i < obj->methods_nr; i++) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
-		sciprintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
+		printf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
 	if (s->seg_manager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
-		sciprintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
+		printf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
 
 	return 0;
 }
@@ -3129,39 +3131,39 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 
 	GETRECT(view, loop, signal, cel);
 
-	sciprintf("\n-- View information:\ncel %d/%d/%d at ", view, loop, cel);
+	printf("\n-- View information:\ncel %d/%d/%d at ", view, loop, cel);
 
 	x = GET_SELECTOR(pos, x);
 	y = GET_SELECTOR(pos, y);
 	priority = GET_SELECTOR(pos, priority);
 	if (s->_kernel->_selectorMap.z > 0) {
 		z = GET_SELECTOR(pos, z);
-		sciprintf("(%d,%d,%d)\n", x, y, z);
+		printf("(%d,%d,%d)\n", x, y, z);
 	} else
-		sciprintf("(%d,%d)\n", x, y);
+		printf("(%d,%d)\n", x, y);
 
 	if (priority == -1)
-		sciprintf("No priority.\n\n");
+		printf("No priority.\n\n");
 	else
-		sciprintf("Priority = %d (band starts at %d)\n\n", priority, PRIORITY_BAND_FIRST(priority));
+		printf("Priority = %d (band starts at %d)\n\n", priority, PRIORITY_BAND_FIRST(priority));
 
 	if (have_rects) {
-		sciprintf("nsRect: [%d..%d]x[%d..%d]\n", nsLeft, nsRight, nsTop, nsBottom);
-		sciprintf("lsRect: [%d..%d]x[%d..%d]\n", lsLeft, lsRight, lsTop, lsBottom);
-		sciprintf("brRect: [%d..%d]x[%d..%d]\n", brLeft, brRight, brTop, brBottom);
+		printf("nsRect: [%d..%d]x[%d..%d]\n", nsLeft, nsRight, nsTop, nsBottom);
+		printf("lsRect: [%d..%d]x[%d..%d]\n", lsLeft, lsRight, lsTop, lsBottom);
+		printf("brRect: [%d..%d]x[%d..%d]\n", brLeft, brRight, brTop, brBottom);
 	}
 
 	nsrect = get_nsrect(s, pos, 0);
 	nsrect_clipped = get_nsrect(s, pos, 1);
 	brrect = set_base(s, pos);
-	sciprintf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend, nsrect.y, nsrect.yend);
-	sciprintf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x, nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
-	sciprintf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend, brrect.y, brrect.yend);
-	sciprintf("\n signals = %04x:\n", signal);
+	printf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend, nsrect.y, nsrect.yend);
+	printf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x, nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
+	printf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend, brrect.y, brrect.yend);
+	printf("\n signals = %04x:\n", signal);
 
 	for (i = 0; i < 16; i++)
 		if (signal & (1 << i))
-			sciprintf("  %04x: %s\n", 1 << i, signals[i]);
+			printf("  %04x: %s\n", 1 << i, signals[i]);
 }
 #endif
 #undef GETRECT
@@ -3183,17 +3185,17 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 	int brLeft, brRight, brBottom, brTop;
 
 	if (!s) {
-		sciprintf("Not in debug state!\n");
+		printf("Not in debug state!\n");
 		return 1;
 	}
 
 	if ((pos < 4) || (pos > 0xfff0)) {
-		sciprintf("Invalid address.\n");
+		printf("Invalid address.\n");
 		return 1;
 	}
 
 	if (((int16)READ_LE_UINT16(s->heap + pos + SCRIPT_OBJECT_MAGIC_OFFSET)) != SCRIPT_OBJECT_MAGIC_NUMBER) {
-		sciprintf("Not an object.\n");
+		printf("Not an object.\n");
 		return 0;
 	}
 
@@ -3204,7 +3206,7 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 	    (lookup_selector(s, pos, s->_kernel->_selectorMap.nsTop, NULL) == kSelectorVariable);
 
 	if (!is_view) {
-		sciprintf("Not a dynamic View object.\n");
+		printf("Not a dynamic View object.\n");
 		return 0;
 	}
 
@@ -3239,7 +3241,7 @@ int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int opcode, opnumber;
 
 	if (!g_debugstate_valid) {
-		sciprintf("Not in debug state\n");
+		printf("Not in debug state\n");
 		return 1;
 	}
 

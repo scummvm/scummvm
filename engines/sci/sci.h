@@ -57,7 +57,8 @@ enum kDebugLevels {
 	kDebugLevelAvoidPath  = 1 << 16,
 	kDebugLevelDclInflate = 1 << 17,
 	kDebugLevelVM         = 1 << 18,
-	kDebugLevelScripts    = 1 << 19
+	kDebugLevelScripts    = 1 << 19,
+	kDebugLevelGC         = 1 << 20
 };
 
 struct SciGameDescription {
@@ -70,12 +71,12 @@ struct SciGameDescription {
 enum SciGameVersions {
 	SCI_VERSION_AUTODETECT = 0,
 	SCI_VERSION_0 = 1,
-	SCI_VERSION_01 = 2,
+	SCI_VERSION_01_EGA = 2,
 	SCI_VERSION_01_VGA = 3,
 	SCI_VERSION_01_VGA_ODD = 4,
 	SCI_VERSION_1 = 5,
-	SCI_VERSION_1_1 = 7,
-	SCI_VERSION_32 = 8
+	SCI_VERSION_1_1 = 6,
+	SCI_VERSION_32 = 7
 };
 
 extern const char *versionNames[8];

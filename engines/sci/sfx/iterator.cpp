@@ -287,15 +287,15 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 					voices += _polyphony[i];
 				}
 
-				sciprintf("SET_POLYPHONY(%d, %d) for a total of %d voices\n", midi_channel, buf[2], voices);
-				sciprintf("[iterator-1] DEBUG: Polyphony = [ ");
+				printf("SET_POLYPHONY(%d, %d) for a total of %d voices\n", midi_channel, buf[2], voices);
+				printf("[iterator] DEBUG: Polyphony = [ ");
 				for (i = 0; i < self1->_numChannels; i++)
-					sciprintf("%d ", _polyphony[i]);
-				sciprintf("]\n");
-				sciprintf("[iterator-1] DEBUG: Importance = [ ");
+					printf("%d ", _polyphony[i]);
+				printf("]\n");
+				printf("[iterator] DEBUG: Importance = [ ");
 				for (i = 0; i < self1->_numChannels; i++)
-					sciprintf("%d ", _importance[i]);
-				sciprintf("]\n");
+					printf("%d ", _importance[i]);
+				printf("]\n");
 			}
 #endif
 			break;
@@ -304,7 +304,7 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 			break;
 
 		case SCI_MIDI_CHANNEL_MUTE:
-			sciprintf("CHANNEL_MUTE(%d, %d)\n", midi_channel, buf[2]);
+			warning("CHANNEL_MUTE(%d, %d)", midi_channel, buf[2]);
 			break;
 
 		case SCI_MIDI_HOLD: {
@@ -680,7 +680,7 @@ int Sci1SongIterator::initSample(const int offset) {
 
 	CHECK_FOR_END_ABSOLUTE((uint)offset + 10);
 	if (_data[offset + 1] != 0)
-		sciprintf("[iterator-1] In sample at offset 0x04x: Byte #1 is %02x instead of zero\n",
+		warning("[iterator-1] In sample at offset 0x04x: Byte #1 is %02x instead of zero",
 		          _data[offset + 1]);
 
 	rate = (int16)READ_LE_UINT16(_data.begin() + offset + 2);
@@ -739,9 +739,7 @@ int Sci1SongIterator::initSong() {
 	}
 
 	if (_data[offset] == 0xff) {
-		sciprintf("[iterator-1] Song does not support"
-		          " hardware 0x%02x\n",
-		          _deviceId);
+		warning("[iterator] Song does not support hardware 0x%02x", _deviceId);
 		return 1;
 	}
 
@@ -765,16 +763,18 @@ int Sci1SongIterator::initSong() {
 		} else {
 			/* Regular MIDI channel */
 			if (_numChannels >= MIDI_CHANNELS) {
-				sciprintf("[iterator-1] Warning: Song has more than %d channels, cutting them off\n",
+				warning("[iterator] Song has more than %d channels, cutting them off",
 				          MIDI_CHANNELS);
 				break; /* Scan for remaining samples */
 			} else {
 				int channel_nr = _data[track_offset] & 0xf;
 				SongIteratorChannel &channel = _channels[_numChannels++];
 
+				/*
 				if (_data[track_offset] & 0xf0)
 					printf("Channel %d has mapping bits %02x\n",
 					       channel_nr, _data[track_offset] & 0xf0);
+				*/
 
 				// Add 2 to skip over header bytes */
 				channel.init(channel_nr, track_offset + 2, track_offset + end);
@@ -801,8 +801,8 @@ int Sci1SongIterator::initSong() {
 	for (Common::List<Sci1Sample>::iterator seeker = _samples.begin();
 			seeker != _samples.end(); ++seeker) {
 		int prev_last_time = last_time;
-		sciprintf("[iterator-1] Detected sample: %d Hz, %d bytes at time %d\n",
-		          seeker->format.rate, seeker->size, seeker->delta);
+		//printf("[iterator] Detected sample: %d Hz, %d bytes at time %d\n",
+		//          seeker->format.rate, seeker->size, seeker->delta);
 		last_time = seeker->delta;
 		seeker->delta -= prev_last_time;
 	}
@@ -884,8 +884,7 @@ Audio::AudioStream *Sci1SongIterator::getAudioStream() {
 int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 
 	if (!_initialised) {
-		sciprintf("[iterator-1] DEBUG: Initialising for %d\n",
-		          _deviceId);
+		//printf("[iterator] DEBUG: Initialising for %d\n", _deviceId);
 		_initialised = true;
 		if (initSong())
 			return SI_FINISHED;
@@ -1010,7 +1009,7 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 				  ;
 
 				if (_deviceId == 0xff) {
-					sciprintf("[iterator-1] Warning: Device %d(%d) not supported",
+					warning("[iterator] Device %d(%d) not supported",
 					          msg._arg.i & 0xff, sfx_pcm_available());
 				}
 				if (_initialised) {

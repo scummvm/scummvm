@@ -310,16 +310,19 @@ Common::Error KyraEngine_MR::go() {
 			break;
 
 		case 3:
-		default:
 			fadeOutMusic(60);
 			_screen->fadeToBlack(60);
 			uninitMainMenu();
 			quitGame();
 			running = false;
+			break;
+
+		default:
+			break;
 		}
 	}
 
-	if (_showOutro)
+	if (_showOutro && !shouldQuit())
 		playVQA("CREDITS");
 
 	return Common::kNoError;

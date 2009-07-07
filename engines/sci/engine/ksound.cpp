@@ -154,7 +154,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	SongHandle handle;
 	int cue;
 
-	if (s->_version >= SCI_VERSION_01)
+	if (s->_version >= SCI_VERSION_01_EGA)
 		return;
 	/* SCI01 and later explicitly poll for everything */
 
@@ -194,7 +194,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 			break;
 
 		default:
-			sciprintf("Unexpected result from sfx_poll: %d\n", result);
+			warning("Unexpected result from sfx_poll: %d", result);
 			break;
 		}
 	}
@@ -215,63 +215,63 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelSound, "Command 0x%x", command);
 	switch (command) {
 	case 0:
-		sciprintf("[InitObj]");
+		debugC(2, kDebugLevelSound, "[InitObj]");
 		break;
 	case 1:
-		sciprintf("[Play]");
+		debugC(2, kDebugLevelSound, "[Play]");
 		break;
 	case 2:
-		sciprintf("[NOP]");
+		debugC(2, kDebugLevelSound, "[NOP]");
 		break;
 	case 3:
-		sciprintf("[DisposeHandle]");
+		debugC(2, kDebugLevelSound, "[DisposeHandle]");
 		break;
 	case 4:
-		sciprintf("[SetSoundOn(?)]");
+		debugC(2, kDebugLevelSound, "[SetSoundOn(?)]");
 		break;
 	case 5:
-		sciprintf("[Stop]");
+		debugC(2, kDebugLevelSound, "[Stop]");
 		break;
 	case 6:
-		sciprintf("[Suspend]");
+		debugC(2, kDebugLevelSound, "[Suspend]");
 		break;
 	case 7:
-		sciprintf("[Resume]");
+		debugC(2, kDebugLevelSound, "[Resume]");
 		break;
 	case 8:
-		sciprintf("[Get(Set?)Volume]");
+		debugC(2, kDebugLevelSound, "[Get(Set?)Volume]");
 		break;
 	case 9:
-		sciprintf("[Signal: Obj changed]");
+		debugC(2, kDebugLevelSound, "[Signal: Obj changed]");
 		break;
 	case 10:
-		sciprintf("[Fade(?)]");
+		debugC(2, kDebugLevelSound, "[Fade(?)]");
 		break;
 	case 11:
-		sciprintf("[ChkDriver]");
+		debugC(2, kDebugLevelSound, "[ChkDriver]");
 		break;
 	case 12:
-		sciprintf("[PlayNextSong (formerly StopAll)]");
+		debugC(2, kDebugLevelSound, "[PlayNextSong (formerly StopAll)]");
 		break;
 	default:
-		sciprintf("[unknown]");
+		debugC(2, kDebugLevelSound, "[unknown]");
 		break;
 	}
 
-	sciprintf("(");
+	debugC(2, kDebugLevelSound, "(");
 	for (i = 1; i < argc; i++) {
-		sciprintf("%04x:%04x", PRINT_REG(argv[i]));
+		debugC(2, kDebugLevelSound, "%04x:%04x", PRINT_REG(argv[i]));
 		if (i + 1 < argc)
-			sciprintf(", ");
+			debugC(2, kDebugLevelSound, ", ");
 	}
-	sciprintf(")\n");
+	debugC(2, kDebugLevelSound, ")\n");
 #endif	// DEBUG_SOUND
 
 
 	switch (command) {
 	case _K_SCI0_SOUND_INIT_HANDLE:
 		if (obj.segment) {
-			sciprintf("Initializing song number %d\n", GET_SEL32V(obj, number));
+			debugC(2, kDebugLevelSound, "Initializing song number %d\n", GET_SEL32V(obj, number));
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI0,
 			                                               handle), 0, handle, number);
 
@@ -395,62 +395,62 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		debugC(2, kDebugLevelSound, "Command 0x%x", command);
 		switch (command) {
 		case 0:
-			sciprintf("[MasterVolume]");
+			debugC(2, kDebugLevelSound, "[MasterVolume]");
 			break;
 		case 1:
-			sciprintf("[Mute]");
+			debugC(2, kDebugLevelSound, "[Mute]");
 			break;
 		case 2:
-			sciprintf("[NOP(2)]");
+			debugC(2, kDebugLevelSound, "[NOP(2)]");
 			break;
 		case 3:
-			sciprintf("[GetPolyphony]");
+			debugC(2, kDebugLevelSound, "[GetPolyphony]");
 			break;
 		case 4:
-			sciprintf("[Update]");
+			debugC(2, kDebugLevelSound, "[Update]");
 			break;
 		case 5:
-			sciprintf("[Init]");
+			debugC(2, kDebugLevelSound, "[Init]");
 			break;
 		case 6:
-			sciprintf("[Dispose]");
+			debugC(2, kDebugLevelSound, "[Dispose]");
 			break;
 		case 7:
-			sciprintf("[Play]");
+			debugC(2, kDebugLevelSound, "[Play]");
 			break;
 		case 8:
-			sciprintf("[Stop]");
+			debugC(2, kDebugLevelSound, "[Stop]");
 			break;
 		case 9:
-			sciprintf("[Suspend]");
+			debugC(2, kDebugLevelSound, "[Suspend]");
 			break;
 		case 10:
-			sciprintf("[Fade]");
+			debugC(2, kDebugLevelSound, "[Fade]");
 			break;
 		case 11:
-			sciprintf("[UpdateCues]");
+			debugC(2, kDebugLevelSound, "[UpdateCues]");
 			break;
 		case 12:
-			sciprintf("[MidiSend]");
+			debugC(2, kDebugLevelSound, "[MidiSend]");
 			break;
 		case 13:
-			sciprintf("[Reverb]");
+			debugC(2, kDebugLevelSound, "[Reverb]");
 			break;
 		case 14:
-			sciprintf("[Hold]");
+			debugC(2, kDebugLevelSound, "[Hold]");
 			break;
 		default:
-			sciprintf("[unknown]");
+			debugC(2, kDebugLevelSound, "[unknown]");
 			break;
 		}
 
-		sciprintf("(");
+		debugC(2, kDebugLevelSound, "(");
 		for (i = 1; i < argc; i++) {
-			sciprintf("%04x:%04x", PRINT_REG(argv[i]));
+			debugC(2, kDebugLevelSound, "%04x:%04x", PRINT_REG(argv[i]));
 			if (i + 1 < argc)
-				sciprintf(", ");
+				debugC(2, kDebugLevelSound, ", ");
 		}
-		sciprintf(")\n");
+		debugC(2, kDebugLevelSound, ")\n");
 	}
 #endif
 
@@ -504,7 +504,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		//int pri = GET_SEL32V(obj, pri);
 
 		if (obj.segment && (s->resmgr->testResource(ResourceId(kResourceTypeSound, number)))) {
-			sciprintf("Initializing song number %d\n", number);
+			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                      handle), 0, handle, number);
 			PUT_SEL32(obj, nodePtr, obj);
@@ -685,80 +685,80 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		debugC(2, kDebugLevelSound, "Command 0x%x", command);
 		switch (command) {
 		case 0:
-			sciprintf("[MasterVolume]");
+			debugC(2, kDebugLevelSound, "[MasterVolume]");
 			break;
 		case 1:
-			sciprintf("[Mute]");
+			debugC(2, kDebugLevelSound, "[Mute]");
 			break;
 		case 2:
-			sciprintf("[NOP(2)]");
+			debugC(2, kDebugLevelSound, "[NOP(2)]");
 			break;
 		case 3:
-			sciprintf("[GetPolyphony]");
+			debugC(2, kDebugLevelSound, "[GetPolyphony]");
 			break;
 		case 4:
-			sciprintf("[GetAudioCapability]");
+			debugC(2, kDebugLevelSound, "[GetAudioCapability]");
 			break;
 		case 5:
-			sciprintf("[GlobalSuspend]");
+			debugC(2, kDebugLevelSound, "[GlobalSuspend]");
 			break;
 		case 6:
-			sciprintf("[Init]");
+			debugC(2, kDebugLevelSound, "[Init]");
 			break;
 		case 7:
-			sciprintf("[Dispose]");
+			debugC(2, kDebugLevelSound, "[Dispose]");
 			break;
 		case 8:
-			sciprintf("[Play]");
+			debugC(2, kDebugLevelSound, "[Play]");
 			break;
 		case 9:
-			sciprintf("[Stop]");
+			debugC(2, kDebugLevelSound, "[Stop]");
 			break;
 		case 10:
-			sciprintf("[SuspendHandle]");
+			debugC(2, kDebugLevelSound, "[SuspendHandle]");
 			break;
 		case 11:
-			sciprintf("[Fade]");
+			debugC(2, kDebugLevelSound, "[Fade]");
 			break;
 		case 12:
-			sciprintf("[Hold]");
+			debugC(2, kDebugLevelSound, "[Hold]");
 			break;
 		case 13:
-			sciprintf("[Unused(13)]");
+			debugC(2, kDebugLevelSound, "[Unused(13)]");
 			break;
 		case 14:
-			sciprintf("[SetVolume]");
+			debugC(2, kDebugLevelSound, "[SetVolume]");
 			break;
 		case 15:
-			sciprintf("[SetPriority]");
+			debugC(2, kDebugLevelSound, "[SetPriority]");
 			break;
 		case 16:
-			sciprintf("[SetLoop]");
+			debugC(2, kDebugLevelSound, "[SetLoop]");
 			break;
 		case 17:
-			sciprintf("[UpdateCues]");
+			debugC(2, kDebugLevelSound, "[UpdateCues]");
 			break;
 		case 18:
-			sciprintf("[MidiSend]");
+			debugC(2, kDebugLevelSound, "[MidiSend]");
 			break;
 		case 19:
-			sciprintf("[Reverb]");
+			debugC(2, kDebugLevelSound, "[Reverb]");
 			break;
 		case 20:
-			sciprintf("[UpdateVolPri]");
+			debugC(2, kDebugLevelSound, "[UpdateVolPri]");
 			break;
 		default:
-			sciprintf("[unknown]");
+			debugC(2, kDebugLevelSound, "[unknown]");
 			break;
 		}
 
-		sciprintf("(");
+		debugC(2, kDebugLevelSound, "(");
 		for (i = 1; i < argc; i++) {
-			sciprintf("%04x:%04x", PRINT_REG(argv[i]));
+			debugC(2, kDebugLevelSound, "%04x:%04x", PRINT_REG(argv[i]));
 			if (i + 1 < argc)
-				sciprintf(", ");
+				debugC(2, kDebugLevelSound, ", ");
 		}
-		sciprintf(")\n");
+		debugC(2, kDebugLevelSound, ")\n");
 	}
 #endif	// DEBUG_SOUND
 
@@ -807,12 +807,27 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		if (!GET_SEL32V(obj, nodePtr) && obj.segment) {
-			if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
-				sciprintf("Could not open song number %d\n", number);
-				return NULL_REG;
+			// In SCI1.1 games, sound effects are started from here. If we can find
+			// a relevant audio resource, play it, otherwise switch to synthesized
+			// effects. If the resource exists, play it using map 65535 (sound
+			// effects map)
+			if (s->resmgr->testResource(ResourceId(kResourceTypeAudio, number)) &&
+				s->_version >= SCI_VERSION_1_1) {
+				// Found a relevant audio resource, play it
+				s->_sound.stopAudio();
+				PUT_SEL32V(obj, signal, s->_sound.startAudio(65535, number));
+				return s->r_acc;
+			} else {
+				if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
+					warning("Could not open song number %d", number);
+					// Send a "stop handle" event so that the engine won't wait forever here
+					s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
+					PUT_SEL32V(obj, signal, -1);
+					return s->r_acc;
+				}
 			}
 
-			sciprintf("Initializing song number %d\n", number);
+			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                          handle), 0, handle, number);
 			PUT_SEL32(obj, nodePtr, obj);
@@ -838,7 +853,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		}
 
 		if (obj.segment && (s->resmgr->testResource(ResourceId(kResourceTypeSound, number)))) {
-			sciprintf("Initializing song number %d\n", number);
+			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                    handle), 0, handle, number);
 			PUT_SEL32(obj, nodePtr, obj);
@@ -963,6 +978,9 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+/**
+ * Used for synthesized music playback
+ */
 reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (s->_kernel->_selectorMap.setVol != -1)
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
@@ -972,7 +990,9 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return kDoSound_SCI0(s, funct_nr, argc, argv);
 }
 
-// Used for speech playback in CD games
+/**
+ * Used for speech playback and digital soundtracks in CD games
+ */
 reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Audio::Mixer *mixer = g_system->getMixer();
 

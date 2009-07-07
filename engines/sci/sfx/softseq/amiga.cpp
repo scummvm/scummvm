@@ -28,6 +28,7 @@
 
 #include "common/file.h"
 #include "common/frac.h"
+#include "common/util.h"
 
 namespace Sci {
 
@@ -253,9 +254,9 @@ static void play_instrument(int16 *dest, channel_t *channel, int count) {
 static void change_instrument(int channel, int instrument) {
 #ifdef DEBUG
 	if (bank.instruments[instrument])
-		sciprintf("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, bank.instruments[instrument]->name, instrument);
+		printf("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, bank.instruments[instrument]->name, instrument);
 	else
-		sciprintf("[sfx:seq:amiga] Warning: instrument %i does not exist (channel %i)\n", instrument, channel);
+		warning("[sfx:seq:amiga] instrument %i does not exist (channel %i)", instrument, channel);
 #endif
 	hw_channels[channel].instrument = instrument;
 }
@@ -283,7 +284,7 @@ static void stop_note(int ch, int note) {
 
 	if (channel == CHANNELS_NR) {
 #ifdef DEBUG
-		sciprintf("[sfx:seq:amiga] Warning: cannot stop note %i on channel %i\n", note, ch);
+		warning("[sfx:seq:amiga] cannot stop note %i on channel %i", note, ch);
 #endif
 		return;
 	}
@@ -300,14 +301,14 @@ static void start_note(int ch, int note, int velocity) {
 	int channel;
 
 	if (hw_channels[ch].instrument < 0 || hw_channels[ch].instrument > 255) {
-		sciprintf("[sfx:seq:amiga] Error: invalid instrument %i on channel %i\n", hw_channels[ch].instrument, ch);
+		warning("[sfx:seq:amiga] invalid instrument %i on channel %i", hw_channels[ch].instrument, ch);
 		return;
 	}
 
 	instrument = bank.instruments[hw_channels[ch].instrument];
 
 	if (!instrument) {
-		sciprintf("[sfx:seq:amiga] Error: instrument %i does not exist\n", hw_channels[ch].instrument);
+		warning("[sfx:seq:amiga] instrument %i does not exist", hw_channels[ch].instrument);
 		return;
 	}
 
@@ -316,7 +317,7 @@ static void start_note(int ch, int note, int velocity) {
 			break;
 
 	if (channel == CHANNELS_NR) {
-		sciprintf("[sfx:seq:amiga] Warning: could not find a free channel\n");
+		warning("[sfx:seq:amiga] could not find a free channel");
 		return;
 	}
 
@@ -326,7 +327,7 @@ static void start_note(int ch, int note, int velocity) {
 		int fnote = note + instrument->transpose;
 
 		if (fnote < 0 || fnote > 127) {
-			sciprintf("[sfx:seq:amiga] Error: illegal note %i\n", fnote);
+			warning("[sfx:seq:amiga] illegal note %i\n", fnote);
 			return;
 		}
 
@@ -369,7 +370,7 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 	int i;
 
 	if (file.read(header, 61) < 61) {
-		sciprintf("[sfx:seq:amiga] Error: failed to read instrument header\n");
+		warning("[sfx:seq:amiga] failed to read instrument header");
 		return NULL;
 	}
 
@@ -402,31 +403,31 @@ static instrument_t *read_instrument(Common::File &file, int *id) {
 	strncpy(instrument->name, (char *) header + 2, 29);
 	instrument->name[29] = 0;
 #ifdef DEBUG
-	sciprintf("[sfx:seq:amiga] Reading instrument %i: \"%s\" (%i bytes)\n",
+	printf("[sfx:seq:amiga] Reading instrument %i: \"%s\" (%i bytes)\n",
 	          *id, instrument->name, size);
-	sciprintf("                Mode: %02x\n", instrument->mode);
-	sciprintf("                Looping: %s\n", instrument->mode & MODE_LOOP ? "on" : "off");
-	sciprintf("                Pitch changes: %s\n", instrument->mode & MODE_PITCH ? "on" : "off");
-	sciprintf("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
-	sciprintf("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
+	printf("                Mode: %02x\n", instrument->mode);
+	printf("                Looping: %s\n", instrument->mode & MODE_LOOP ? "on" : "off");
+	printf("                Pitch changes: %s\n", instrument->mode & MODE_PITCH ? "on" : "off");
+	printf("                Segment sizes: %i %i %i\n", seg_size[0], seg_size[1], seg_size[2]);
+	printf("                Segment offsets: 0 %i %i\n", loop_offset, read_int32(header + 43));
 #endif
 	instrument->samples = (int8 *) malloc(size + 1);
 	if (file.read(instrument->samples, size) < (unsigned int)size) {
-		sciprintf("[sfx:seq:amiga] Error: failed to read instrument samples\n");
+		warning("[sfx:seq:amiga] failed to read instrument samples");
 		return NULL;
 	}
 
 	if (instrument->mode & MODE_LOOP) {
 		if (loop_offset + seg_size[1] > size) {
 #ifdef DEBUG
-			sciprintf("[sfx:seq:amiga] Warning: looping samples extend %i bytes past end of sample block\n",
+			warning("[sfx:seq:amiga] looping samples extend %i bytes past end of sample block",
 			          loop_offset + seg_size[1] - size);
 #endif
 			seg_size[1] = size - loop_offset;
 		}
 
 		if (seg_size[1] < 0) {
-			sciprintf("[sfx:seq:amiga] Error: invalid looping point\n");
+			warning("[sfx:seq:amiga] invalid looping point");
 			return NULL;
 		}
 
@@ -456,12 +457,12 @@ static Common::Error ami_init(sfx_softseq_t *self, byte *patch, int patch_len, b
 	int i;
 
 	if (!file.open("bank.001")) {
-		sciprintf("[sfx:seq:amiga] Error: file bank.001 not found\n");
+		warning("[sfx:seq:amiga] file bank.001 not found");
 		return Common::kUnknownError;
 	}
 
 	if (file.read(header, 40) < 40) {
-		sciprintf("[sfx:seq:amiga] Error: failed to read header of file bank.001\n");
+		warning("[sfx:seq:amiga] failed to read header of file bank.001");
 		return Common::kUnknownError;
 	}
 
@@ -482,7 +483,7 @@ static Common::Error ami_init(sfx_softseq_t *self, byte *patch, int patch_len, b
 	strncpy(bank.name, (char *) header + 8, 29);
 	bank.name[29] = 0;
 #ifdef DEBUG
-	sciprintf("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", bank.size, bank.name);
+	printf("[sfx:seq:amiga] Reading %i instruments from bank \"%s\"\n", bank.size, bank.name);
 #endif
 
 	for (i = 0; i < bank.size; i++) {
@@ -490,12 +491,12 @@ static Common::Error ami_init(sfx_softseq_t *self, byte *patch, int patch_len, b
 		instrument_t *instrument = read_instrument(file, &id);
 
 		if (!instrument) {
-			sciprintf("[sfx:seq:amiga] Error: failed to read bank.001\n");
+			warning("[sfx:seq:amiga] failed to read bank.001");
 			return Common::kUnknownError;
 		}
 
 		if (id < 0 || id > 255) {
-			sciprintf("[sfx:seq:amiga] Error: instrument ID out of bounds\n");
+			warning("[sfx:seq:amiga] Error: instrument ID out of bounds");
 			return Common::kUnknownError;
 		}
 
@@ -524,7 +525,7 @@ static void ami_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 
 	if (channel >= HW_CHANNELS_NR) {
 #ifdef DEBUG
-		sciprintf("[sfx:seq:amiga] Warning: received event for non-existing channel %i\n", channel);
+		warning("[sfx:seq:amiga] received event for non-existing channel %i", channel);
 #endif
 		return;
 	}
@@ -543,21 +544,21 @@ static void ami_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 			break;
 		case 0x0a:
 #ifdef DEBUG
-			sciprintf("[sfx:seq:amiga] Warning: ignoring pan 0x%02x event for channel %i\n", argv[1], channel);
+			warning("[sfx:seq:amiga] ignoring pan 0x%02x event for channel %i", argv[1], channel);
 #endif
 			break;
 		case 0x7b:
 			stop_channel(channel);
 			break;
 		default:
-			sciprintf("[sfx:seq:amiga] Warning: unknown control event 0x%02x\n", argv[0]);
+			warning("[sfx:seq:amiga] unknown control event 0x%02x", argv[0]);
 		}
 		break;
 	case 0xc0:
 		change_instrument(channel, argv[0]);
 		break;
 	default:
-		sciprintf("[sfx:seq:amiga] Warning: unknown event %02x\n", command);
+		warning("[sfx:seq:amiga] unknown event %02x", command);
 	}
 }
 

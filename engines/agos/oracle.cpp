@@ -246,28 +246,28 @@ void AGOSEngine_Feeble::scrollOracleUp() {
 	byte *src, *dst;
 	uint16 w, h;
 
-	dst = getBackGround() + 103 * _screenWidth + 136;
-	src = getBackGround() + 106 * _screenWidth + 136;
+	dst = getBackGround() + 103 * _backGroundBuf->pitch + 136;
+	src = getBackGround() + 106 * _backGroundBuf->pitch + 136;
 
 	for (h = 0; h < 21; h++) {
 		for (w = 0; w < 360; w++) {
 			if (dst[w] == 0 || dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
 				dst[w] = src[w];
 		}
-		dst += _screenWidth;
-		src += _screenWidth;
+		dst += _backGroundBuf->pitch;
+		src += _backGroundBuf->pitch;
 	}
 
 	for (h = 0; h < 80; h++) {
 		memcpy(dst, src, 360);
-		dst += _screenWidth;
-		src += _screenWidth;
+		dst += _backGroundBuf->pitch;
+		src += _backGroundBuf->pitch;
 	}
 
 	for (h = 0; h < 3; h++) {
 		memset(dst, 0, 360);
-		dst += _screenWidth;
-		src += _screenWidth;
+		dst += _backGroundBuf->pitch;
+		src += _backGroundBuf->pitch;
 	}
 }
 
@@ -275,13 +275,13 @@ void AGOSEngine_Feeble::scrollOracleDown() {
 	byte *src, *dst;
 	uint16 w, h;
 
-	src = getBackGround() + 203 * _screenWidth + 136;
-	dst = getBackGround() + 206 * _screenWidth + 136;
+	src = getBackGround() + 203 * _backGroundBuf->pitch + 136;
+	dst = getBackGround() + 206 * _backGroundBuf->pitch + 136;
 
 	for (h = 0; h < 77; h++) {
 		memcpy(dst, src, 360);
-		dst -= _screenWidth;
-		src -= _screenWidth;
+		dst -= _backGroundBuf->pitch;
+		src -= _backGroundBuf->pitch;
 	}
 
 	for (h = 0; h < 24; h++) {
@@ -294,8 +294,8 @@ void AGOSEngine_Feeble::scrollOracleDown() {
 				src[w] = 0;
 			}
 		}
-		dst -= _screenWidth;
-		src -= _screenWidth;
+		dst -= _backGroundBuf->pitch;
+		src -= _backGroundBuf->pitch;
 	}
 }
 
@@ -315,7 +315,7 @@ void AGOSEngine_Feeble::oracleLogo() {
 	srcRect.bottom = 43;
 
 	src = _iconFilePtr;
-	dst = getBackBuf() + _screenWidth * dstRect.top + dstRect.left;
+	dst = getBackBuf() + _backBuf->pitch * dstRect.top + dstRect.left;
 
 	for (h = 0; h < dstRect.height(); h++) {
 		for (w = 0; w < dstRect.width(); w++) {
@@ -323,7 +323,7 @@ void AGOSEngine_Feeble::oracleLogo() {
 				dst[w] = src[w];
 		}
 		src += 336;
-		dst += _screenWidth;
+		dst += _backBuf->pitch;
 	}
 }
 
@@ -355,7 +355,7 @@ void AGOSEngine_Feeble::swapCharacterLogo() {
 	srcRect.right = srcRect.left + 42;
 
 	src = _iconFilePtr + srcRect.top * 336 + srcRect.left;
-	dst = getBackBuf() + _screenWidth * dstRect.top + dstRect.left;
+	dst = getBackBuf() + _backBuf->pitch * dstRect.top + dstRect.left;
 
 	for (h = 0; h < dstRect.height(); h++) {
 		for (w = 0; w < dstRect.width(); w++) {
@@ -363,7 +363,7 @@ void AGOSEngine_Feeble::swapCharacterLogo() {
 				dst[w] = src[w];
 		}
 		src += 336;
-		dst += _screenWidth;
+		dst += _backBuf->pitch;
 	}
 }
 
@@ -506,14 +506,14 @@ void AGOSEngine_Feeble::windowBackSpace(WindowBlock *window) {
 	x = window->x + window->textColumn;
 	y = window->y + window->textRow;
 
-	dst = getBackGround() + _dxSurfacePitch * y + x;
+	dst = getBackGround() + _backGroundBuf->pitch * y + x;
 
 	for (h = 0; h < 13; h++) {
 		for (w = 0; w < 8; w++) {
 			if (dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
 				dst[w] = 0;
 		}
-		dst += _screenWidth;
+		dst += _backGroundBuf->pitch;
 	}
 
 	_videoLockOut &= ~0x8000;

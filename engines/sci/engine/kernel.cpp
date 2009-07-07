@@ -309,7 +309,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*6f*/	DEFUN("6f", kTimesCos, "ii"),
 	/*70*/	DEFUN("Graph", kGraph, ".*"),
 	/*71*/	DEFUN("Joystick", kJoystick, ".*"),
-	/*72*/	NOFUN("unknown72"),
+	/*72*/	NOFUN("unknown72"),		// ShiftScreen, perhaps?
 	/*73*/	NOFUN("unknown73"),
 
 	// Experimental functions
@@ -322,7 +322,6 @@ SciKernelFunction kfunct_mappers[] = {
 	/*(?)*/	DEFUN("IsItSkip", kIsItSkip, "iiiii"),
 
 	// Non-experimental Functions without a fixed ID
-
 	DEFUN("CosMult", kTimesCos, "ii"),
 	DEFUN("SinMult", kTimesSin, "ii"),
 	/*(?)*/	DEFUN("CosDiv", kCosDiv, "ii"),
@@ -340,6 +339,21 @@ SciKernelFunction kfunct_mappers[] = {
 
 	// Special and NOP stuff
 	{NULL, k_Unknown, NULL},
+
+	// Stub functions
+	DEFUN("ShiftScreen", kStub, ".*"),
+	DEFUN("MemorySegment", kStub, ".*"),
+	DEFUN("ListOps", kStub, ".*"),
+	DEFUN("ATan", kStub, ".*"),
+	DEFUN("StrSplit", kStub, ".*"),
+	DEFUN("MergePoly", kStub, ".*"),
+	DEFUN("AssertPalette", kStub, ".*"),
+	DEFUN("TextColors", kStub, ".*"),
+	DEFUN("TextFonts", kStub, ".*"),
+	DEFUN("Record", kStub, ".*"),
+	DEFUN("PlayBack", kStub, ".*"),
+	DEFUN("DbugStr", kStub, ".*"),
+	DEFUN("Platform", kStub, ".*"),    // SCI1
 
 	{NULL, NULL, NULL} // Terminator
 };
@@ -610,15 +624,15 @@ void Kernel::mapFunctions() {
 				_kernelFuncs[functnr].signature = kfunct_mappers[found].signature;
 				kernel_compile_signature(&(_kernelFuncs[functnr].signature));
 				++mapped;
-			} else
+			} else {
+				//warning("Ignoring function %s\n", kfunct_mappers[found].name);
 				++ignored;
+			}
 		}
 	} // for all functions requesting to be mapped
 
-	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, getKernelNamesSize(), mapped);
-	if (ignored)
-		sciprintf(" and ignoring %d", ignored);
-	sciprintf(".\n");
+	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.\n", 
+				mapped + ignored, getKernelNamesSize(), mapped, ignored);
 
 	return;
 }
@@ -696,12 +710,12 @@ bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const r
 			int type = determine_reg_type(s, *argv, *sig & KSIG_ALLOW_INV);
 
 			if (!type) {
-				sciprintf("[KERN] Could not determine type of ref %04x:%04x; failing signature check\n", PRINT_REG(*argv));
+				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
 				return false;
 			}
 
 			if (type & KSIG_INVALID) {
-				sciprintf("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid\n",
+				warning("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid",
 				          PRINT_REG(*argv), kernel_argtype_description(type));
 				return false;
 			}
@@ -781,7 +795,7 @@ void Kernel::setDefaultKernelNames() {
 	}
 
 	if (_resmgr->_sciVersion == SCI_VERSION_1_1) {
-		// KQ6CD calls unimplemented function 0x26
+		// HACK: KQ6CD calls unimplemented function 0x26
 		_kernelNames[0x26] = "Dummy";
 	}
 }
@@ -818,7 +832,7 @@ bool Kernel::loadKernelNames() {
 
 	switch (_resmgr->_sciVersion) {
 	case SCI_VERSION_0:
-	case SCI_VERSION_01:
+	case SCI_VERSION_01_EGA:
 	case SCI_VERSION_01_VGA:
 	case SCI_VERSION_01_VGA_ODD:
 	case SCI_VERSION_1:

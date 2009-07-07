@@ -94,7 +94,7 @@ static void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth,
 		return;
 
 	default:
-		GFXERROR("pixelwidth=%d not supported!\n", pixelwidth);
+		error("pixelwidth=%d not supported", pixelwidth);
 		return;
 
 	}
@@ -292,7 +292,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 
 		alpha_mask = mode->alpha_mask;
 		if (!alpha_mask && pxm->alpha_map) {
-			GFXERROR("Invalid alpha mode: both pxm->alpha_map and alpha_mask are white!\n");
+			error("Invalid alpha mode: both pxm->alpha_map and alpha_mask are white");
 			return GFX_ERROR;
 		}
 
@@ -335,7 +335,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel, alpha_mask, alpha_min,
 					        0, 0, 0, 0);
 				else {
-					GFXERROR("Invalid mode->bytespp: %d\n", mode->bytespp);
+					error("Invalid mode->bytespp: %d", mode->bytespp);
 					return GFX_ERROR;
 				}
 			} else { // priority
@@ -344,7 +344,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel, alpha_mask, alpha_min,
 					        priority_pos, priority_line_width, priority_skip, priority);
 				else {
-					GFXERROR("Invalid mode->bytespp: %d\n", mode->bytespp);
+					error("Invalid mode->bytespp: %d", mode->bytespp);
 					return GFX_ERROR;
 				}
 			}

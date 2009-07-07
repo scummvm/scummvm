@@ -170,7 +170,7 @@ void AGOSEngine::unlightMenuStrip() {
 	mouseOff();
 
 	Graphics::Surface *screen = _system->lockScreen();
-	src = (byte *)screen->pixels + 2832;
+	src = (byte *)screen->pixels + 8 * screen->pitch + 272;
 	w = 48;
 	h = 82;
 
@@ -179,7 +179,7 @@ void AGOSEngine::unlightMenuStrip() {
 			if (src[i] != 0)
 				src[i] = 14;
 		}
-		src += _dxSurfacePitch;
+		src += screen->pitch;
 	} while (--h);
 
 	for (i = 120; i != 130; i++)
@@ -198,7 +198,7 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 	mouseOff();
 
 	Graphics::Surface *screen = _system->lockScreen();
-	src = (byte *)screen->pixels + ha->y * _dxSurfacePitch + ha->x;
+	src = (byte *)screen->pixels + ha->y * screen->pitch + ha->x;
 	w = ha->width;
 	h = ha->height;
 
@@ -207,7 +207,7 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 			if (src[i] == 14)
 				src[i] = 15;
 		}
-		src += _dxSurfacePitch;
+		src += screen->pitch;
 	} while (--h);
 
 	_system->unlockScreen();

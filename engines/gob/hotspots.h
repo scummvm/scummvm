@@ -121,22 +121,23 @@ private:
 
 		void clear();
 
-		Type getType() const;
+		Type         getType  () const;
 		MouseButtons getButton() const;
-		uint8 getWindow() const;
-		uint8 getCursor() const;
-		uint8 getState() const;
+		uint8        getWindow() const;
+		uint8        getCursor() const;
+		uint8        getState () const;
 
 		/** Is this hotspot the block end marker? */
 		bool isEnd() const;
 
-		bool isInput()       const;
+		bool isInput      () const;
 		bool isActiveInput() const;
+		bool isInputLeave () const;
 
-		bool isFilled()        const;
+		bool isFilled       () const;
 		bool isFilledEnabled() const;
-		bool isFilledNew()     const;
-		bool isDisabled()      const;
+		bool isFilledNew    () const;
+		bool isDisabled     () const;
 
 		/** Are the specified coordinates in the hotspot? */
 		bool isIn(uint16 x, uint16 y) const;
@@ -146,7 +147,7 @@ private:
 		static uint8 getState(uint16 id);
 
 		void disable();
-		void enable();
+		void enable ();
 	};
 
 	struct StackEntry {
@@ -213,14 +214,43 @@ private:
 
 	/** Evaluate adding new hotspots script commands. */
 	void evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
-			uint16 &validId, bool &hasInput, uint16 &inputCount);
+			uint16 &inputId, bool &hasInput, uint16 &inputCount);
+	/** Find the hotspot requested by script commands. */
+	bool evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
+			uint16 hotspotIndex1, uint16 hotspotIndex2, uint16 endIndex,
+			int16 &duration, uint16 &id, uint16 &index, bool &finished);
 
+	// Finding specific hotspots
 	/** Find the hotspot index that corresponds to the input index. */
 	uint16 inputToHotspot(uint16 input) const;
 	/** Find the input index that corresponds to the hotspot index. */
 	uint16 hotspotToInput(uint16 hotspot) const;
 	/** Find the input that was clicked on. */
 	uint16 findClickedInput(uint16 index) const;
+	/** Find the first input hotspot with a leave function. */
+	bool findFirstInputLeave(uint16 &id, uint16 &inputId, uint16 &index) const;
+	/** Find the hotspot with the matching key, case sensitively. */
+	bool findKey(uint16 key, uint16 &id, uint16 &index) const;
+	/** Find the hotspot with the matching key, case insensitively. */
+	bool findKeyCaseInsensitive(uint16 key, uint16 &id, uint16 &index) const;
+	/** Find the nth plain (without Type1 or Type2 state) hotspot. */
+	bool findNthPlain(uint16 n, uint16 startIndex, uint16 &id, uint16 &index) const;
+
+	/** Leave the nth plain (without Type1 or Type2 state) hotspot. */
+	bool leaveNthPlain(uint16 n, uint16 startIndex, int16 timeVal, const uint16 *ids,
+			uint16 &id, uint16 &index, int16 &duration);
+
+	// Hotspot ID variable access
+	void setCurrentHotspot(const uint16 *ids, uint16 id) const;
+	uint32 getCurrentHotspot() const;
+
+	// String input functions
+	void cleanFloatString(const Hotspot &spot) const;
+	void checkStringMatch(const Hotspot &spot, const InputDesc &input,
+			uint16 inputPos) const;
+	void matchInputStrings(const InputDesc *inputs) const;
+
+	uint16 convertSpecialKey(uint16 key) const;
 
 	/** Calculate the graphical cursor position. */
 	void getTextCursorPos(const Video::FontDesc &font, const char *str,

@@ -61,13 +61,6 @@ gfx_pixmap_color_t default_colors[DEFAULT_COLORS_NR] = {{GFX_COLOR_SYSTEM, 0x00,
 
 #define POINTER_VISIBLE_BUT_CLIPPED 2
 
-// Performs basic checks that apply to most functions
-#define BASIC_CHECKS(error_retval) \
-if (!state) { \
-	GFXERROR("Null state!\n"); \
-	return error_retval; \
-}
-
 // How to determine whether colors have to be allocated
 #define PALETTE_MODE state->driver->getMode()->palette
 
@@ -157,7 +150,7 @@ static int _gfxop_grab_pixmap(GfxState *state, gfx_pixmap_t **pxmp, int x, int y
 	int x,y;											\
 													\
 	if (!pxm->index_data) {										\
-		GFXERROR("Attempt to draw control color %d on pixmap %d/%d/%d without index data", color, pxm->ID, pxm->loop, pxm->cel);						\
+		error("Attempt to draw control color %d on pixmap %d/%d/%d without index data", color, pxm->ID, pxm->loop, pxm->cel);						\
 		return;											\
 	}												\
 													\
@@ -257,7 +250,7 @@ static int _gfxop_draw_pixmap(GfxDriver *driver, gfx_pixmap_t *pxm, int priority
 	err = driver->drawPixmap(pxm, priority, src, clipped_dest, static_buf ? GFX_BUFFER_STATIC : GFX_BUFFER_BACK);
 
 	if (err) {
-		GFXERROR("driver->draw_pixmap() returned err!\n");
+		error("driver->draw_pixmap() returned error code");
 		return err;
 	}
 
@@ -301,7 +294,7 @@ static int _gfxop_update_box(GfxState *state, rect_t box) {
 	_gfxop_scale_rect(&box, state->driver->getMode());
 
 	if ((retval = _gfxop_buffer_propagate_box(state, box, GFX_BUFFER_FRONT))) {
-		GFXERROR("Error occured while propagating box (%d,%d,%d,%d) to front buffer\n", box.x, box.y, box.width, box.height);
+		error("Error occured while propagating box (%d,%d,%d,%d) to front buffer", box.x, box.y, box.width, box.height);
 		return retval;
 	}
 	return GFX_OK;
@@ -354,7 +347,7 @@ void gfxdr_add_dirty(DirtyRectList &list, rect_t box, int strategy) {
 		break;
 
 	default:
-		GFXERROR("Attempt to use invalid dirty frame mode %d!\nPlease refer to gfx_options.h.", strategy);
+		error("Attempt to use invalid dirty frame mode %d!\nPlease refer to gfx_options.h", strategy);
 
 	}
 }
@@ -417,8 +410,6 @@ int gfxop_init(int version, bool isVGA, GfxState *state,
 	//int color_depth = bpp ? bpp : 1;
 	//int initialized = 0;
 
-	BASIC_CHECKS(GFX_FATAL);
-
 	state->options = options;
 	state->visible_map = GFX_MASK_VISUAL;
 	state->fullscreen_override = NULL; // No magical override
@@ -445,8 +436,6 @@ int gfxop_init(int version, bool isVGA, GfxState *state,
 }
 
 int gfxop_exit(GfxState *state) {
-	BASIC_CHECKS(GFX_ERROR);
-
 	state->gfxResMan->freeResManager();
 
 	if (state->control_map) {
@@ -521,7 +510,6 @@ int gfxop_scan_bitmask(GfxState *state, rect_t area, gfx_map_mask_t map) {
 
 int gfxop_set_clip_zone(GfxState *state, rect_t zone) {
 	int xfact, yfact;
-	BASIC_CHECKS(GFX_ERROR);
 
 	DDIRTY(stderr, "-- Setting clip zone %d %d %d %d\n", GFX_PRINT_RECT(zone));
 
@@ -558,8 +546,6 @@ int gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b, in
 	int mask = ((r >= 0 && g >= 0 && b >= 0) ? GFX_MASK_VISUAL : 0) | ((priority >= 0) ? GFX_MASK_PRIORITY : 0)
 	           | ((control >= 0) ? GFX_MASK_CONTROL : 0);
 
-	BASIC_CHECKS(GFX_FATAL);
-
 	if (PALETTE_MODE && a >= GFXOP_ALPHA_THRESHOLD)
 		mask &= ~GFX_MASK_VISUAL;
 
@@ -594,13 +580,11 @@ int gfxop_set_color(GfxState *state, gfx_color_t *colorOut, gfx_color_t &colorIn
 }
 
 int gfxop_set_system_color(GfxState *state, unsigned int index, gfx_color_t *color) {
-	BASIC_CHECKS(GFX_FATAL);
-
 	if (!PALETTE_MODE)
 		return GFX_OK;
 
 	if (index >= state->driver->getMode()->palette->size()) {
-		GFXERROR("Attempt to set invalid color index %02x as system color\n", color->visual.parent_index);
+		error("Attempt to set invalid color index %02x as system color", color->visual.parent_index);
 		return GFX_ERROR;
 	}
 
@@ -753,7 +737,7 @@ static int simulate_stippled_line_draw(GfxDriver *driver, int skipone, Common::P
 		Common::Point nextpos = Common::Point(start.x + xl, start.y + yl);
 
 		if ((retval = driver->drawLine(start, nextpos, color, line_mode, GFX_LINE_STYLE_NORMAL))) {
-			GFXERROR("Failed to draw partial stippled line (%d,%d) -- (%d,%d)\n", start.x, start.y, nextpos.x, nextpos.y);
+			error("Failed to draw partial stippled line (%d,%d) -- (%d,%d)", start.x, start.y, nextpos.x, nextpos.y);
 			return retval;
 		}
 		*posvar += delta;
@@ -775,7 +759,7 @@ static int simulate_stippled_line_draw(GfxDriver *driver, int skipone, Common::P
 		nextpos = Common::Point(start.x + xl, start.y + yl);
 
 		if ((retval = driver->drawLine(start, nextpos, color, line_mode, GFX_LINE_STYLE_NORMAL))) {
-			GFXERROR("Failed to draw partial stippled line (%d,%d) -- (%d,%d)\n", start.x, start.y, nextpos.x, nextpos.y);
+			error("Failed to draw partial stippled line (%d,%d) -- (%d,%d)", start.x, start.y, nextpos.x, nextpos.y);
 			return retval;
 		}
 	}
@@ -788,7 +772,6 @@ static int _gfxop_draw_line_clipped(GfxState *state, Common::Point start, Common
 	int retval;
 	int skipone = (start.x ^ end.y) & 1; // Used for simulated line stippling
 
-	BASIC_CHECKS(GFX_FATAL);
 	_gfxop_full_pointer_refresh(state);
 
 	// First, make sure that the line is normalized
@@ -814,7 +797,7 @@ static int _gfxop_draw_line_clipped(GfxState *state, Common::Point start, Common
 	}
 
 	if ((retval = state->driver->drawLine(start, end, color, line_mode, line_style))) {
-		GFXERROR("Failed to draw line (%d,%d) -- (%d,%d)\n", start.x, start.y, end.x, end.y);
+		error("Failed to draw line (%d,%d) -- (%d,%d)", start.x, start.y, end.x, end.y);
 		return retval;
 	}
 
@@ -825,7 +808,6 @@ int gfxop_draw_line(GfxState *state, Common::Point start, Common::Point end,
 	gfx_color_t color, gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	int xfact, yfact;
 
-	BASIC_CHECKS(GFX_FATAL);
 	_gfxop_add_dirty_x(state, gfx_rect(start.x, start.y, end.x - start.x, end.y - start.y));
 
 	xfact = state->driver->getMode()->xfact;
@@ -856,7 +838,6 @@ int gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color, gfx_li
 	Common::Point upper_left_u, upper_right_u, lower_left_u, lower_right_u;
 	Common::Point upper_left, upper_right, lower_left, lower_right;
 
-	BASIC_CHECKS(GFX_FATAL);
 	_gfxop_full_pointer_refresh(state);
 
 	xfact = state->driver->getMode()->xfact;
@@ -890,7 +871,7 @@ int gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color, gfx_li
 
 #undef PARTIAL_LINE
 	if (retval) {
-		GFXERROR("Failed to draw rectangle (%d,%d)+(%d,%d)\n", rect.x, rect.y, rect.width, rect.height);
+		error("Failed to draw rectangle (%d,%d)+(%d,%d)", rect.x, rect.y, rect.width, rect.height);
 		return retval;
 	}
 
@@ -907,7 +888,6 @@ int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t 
 	gfx_rectangle_fill_t driver_shade_type;
 	rect_t new_box;
 
-	BASIC_CHECKS(GFX_FATAL);
 	_gfxop_full_pointer_refresh(state);
 
 	shade_type = GFX_BOX_SHADE_FLAT;
@@ -960,7 +940,7 @@ int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t 
 		break;
 
 	default:
-		GFXERROR("Invalid shade type: %d\n", shade_type);
+		error("Invalid shade type: %d", shade_type);
 		return GFX_ERROR;
 	}
 
@@ -1021,7 +1001,7 @@ static int _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t
 		return GFX_OK;
 
 	if ((err = state->driver->update(box, Common::Point(box.x, box.y), buffer))) {
-		GFXERROR("Error occured while updating region (%d,%d,%d,%d) in buffer %d\n", box.x, box.y, box.width, box.height, buffer);
+		error("Error occured while updating region (%d,%d,%d,%d) in buffer %d", box.x, box.y, box.width, box.height, buffer);
 		return err;
 	}
 
@@ -1031,7 +1011,6 @@ static int _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t
 extern int sci0_palette;
 
 int gfxop_clear_box(GfxState *state, rect_t box) {
-	BASIC_CHECKS(GFX_FATAL);
 	_gfxop_full_pointer_refresh(state);
 	_gfxop_add_dirty(state, box);
 	DDIRTY(stderr, "[]  clearing box %d %d %d %d\n", GFX_PRINT_RECT(box));
@@ -1078,11 +1057,7 @@ int gfxop_set_visible_map(GfxState *state, gfx_map_mask_t visible_map) {
 }
 
 int gfxop_update(GfxState *state) {
-	int retval;
-
-	BASIC_CHECKS(GFX_FATAL);
-
-	retval = _gfxop_clear_dirty_rec(state, state->_dirtyRects);
+	int retval = _gfxop_clear_dirty_rec(state, state->_dirtyRects);
 
 	if (state->fullscreen_override) {
 		// We've been asked to re-draw the active full-screen image, essentially.
@@ -1093,7 +1068,7 @@ int gfxop_update(GfxState *state) {
 	}
 
 	if (retval) {
-		GFXERROR("Clearing the dirty rectangles failed!\n");
+		error("Clearing the dirty rectangles failed");
 	}
 
 	if (state->tag_mode) {
@@ -1108,8 +1083,6 @@ int gfxop_update(GfxState *state) {
 }
 
 int gfxop_update_box(GfxState *state, rect_t box) {
-	BASIC_CHECKS(GFX_FATAL);
-
 	if (state->disable_dirty)
 		_gfxop_update_box(state, box);
 	else
@@ -1119,15 +1092,12 @@ int gfxop_update_box(GfxState *state, rect_t box) {
 }
 
 int gfxop_enable_dirty_frames(GfxState *state) {
-	BASIC_CHECKS(GFX_ERROR);
 	state->disable_dirty = 0;
 
 	return GFX_OK;
 }
 
 int gfxop_disable_dirty_frames(GfxState *state) {
-	BASIC_CHECKS(GFX_ERROR);
-
 	state->disable_dirty = 1;
 
 	return GFX_OK;
@@ -1136,8 +1106,6 @@ int gfxop_disable_dirty_frames(GfxState *state) {
 
 // Pointer and IO ops
 int gfxop_sleep(GfxState *state, uint32 msecs) {
-	BASIC_CHECKS(GFX_FATAL);
-
 	uint32 time;
 	const uint32 wakeup_time = g_system->getMillis() + msecs;
 
@@ -1160,8 +1128,6 @@ int gfxop_sleep(GfxState *state, uint32 msecs) {
 }
 
 static int _gfxop_set_pointer(GfxState *state, gfx_pixmap_t *pxm, Common::Point *hotspot) {
-	BASIC_CHECKS(GFX_FATAL);
-
 	// FIXME: We may have to store this pxm somewhere, as the global palette
 	// may change when a new PIC is loaded. The cursor has to be regenerated
 	// from this pxm at that point. (An alternative might be to ensure the
@@ -1176,8 +1142,6 @@ static int _gfxop_set_pointer(GfxState *state, gfx_pixmap_t *pxm, Common::Point 
 }
 
 int gfxop_set_pointer_cursor(GfxState *state, int nr) {
-	BASIC_CHECKS(GFX_FATAL);
-
 	if (nr == GFXOP_NO_POINTER)
 		return _gfxop_set_pointer(state, NULL, NULL);
 
@@ -1193,8 +1157,6 @@ int gfxop_set_pointer_cursor(GfxState *state, int nr) {
 }
 
 int gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot) {
-	BASIC_CHECKS(GFX_FATAL);
-
 	int real_loop = loop;
 	int real_cel = cel;
 	// FIXME: For now, don't palettize pointers
@@ -1223,8 +1185,6 @@ int gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::P
 }
 
 int gfxop_set_pointer_position(GfxState *state, Common::Point pos) {
-	BASIC_CHECKS(GFX_ERROR);
-
 	state->pointer_pos = pos;
 
 	if (pos.x > 320 || pos.y > 200) {
@@ -1551,10 +1511,9 @@ static sci_event_t scummvm_get_event(GfxDriver *drv) {
 }
 
 sci_event_t gfxop_get_event(GfxState *state, unsigned int mask) {
-	sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
+	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
 	sci_event_t event = { 0, 0, 0, 0 };
 
-	BASIC_CHECKS(error_event);
 	_gfxop_full_pointer_refresh(state);
 
 	// Update the screen here, since it's called very often
@@ -1617,8 +1576,6 @@ int gfxop_lookup_view_get_loops(GfxState *state, int nr) {
 	int loop = 0, cel = 0;
 	gfxr_view_t *view = NULL;
 
-	BASIC_CHECKS(GFX_ERROR);
-
 	view = state->gfxResMan->getView(nr, &loop, &cel, 0);
 
 	if (!view) {
@@ -1633,8 +1590,6 @@ int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop) {
 	int real_loop = loop, cel = 0;
 	gfxr_view_t *view = NULL;
 
-	BASIC_CHECKS(GFX_ERROR);
-
 	view = state->gfxResMan->getView(nr, &real_loop, &cel, 0);
 
 	if (!view) {
@@ -1648,8 +1603,6 @@ int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop) {
 }
 
 int gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel) {
-	BASIC_CHECKS(GFX_ERROR);
-
 	gfxr_view_t *testView = state->gfxResMan->getView(nr, loop, cel, 0);
 
 	if (!testView) {
@@ -1663,7 +1616,6 @@ int gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel) {
 int gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel) {
 	int loop_v = *loop;
 	int cel_v = *cel;
-	BASIC_CHECKS(GFX_ERROR);
 
 	gfxr_view_t *testView = state->gfxResMan->getView(nr, &loop_v, &cel_v, 0);
 
@@ -1685,7 +1637,6 @@ int gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel) {
 int gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel, int *width, int *height, Common::Point *offset) {
 	gfxr_view_t *view = NULL;
 	gfx_pixmap_t *pxm = NULL;
-	BASIC_CHECKS(GFX_ERROR);
 
 	view = state->gfxResMan->getView(nr, &loop, &cel, 0);
 
@@ -1709,7 +1660,6 @@ static int _gfxop_draw_cel_buffer(GfxState *state, int nr, int loop, int cel, Co
 	gfxr_view_t *view = NULL;
 	gfx_pixmap_t *pxm = NULL;
 	int old_x, old_y;
-	BASIC_CHECKS(GFX_FATAL);
 
 	view = state->gfxResMan->getView(nr, &loop, &cel, palette);
 
@@ -1781,8 +1731,6 @@ int *gfxop_get_pic_metainfo(GfxState *state) {
 }
 
 int gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette) {
-	BASIC_CHECKS(GFX_FATAL);
-
 	state->gfxResMan->tagResources();
 	state->tag_mode = 1;
 	state->palette_nr = default_palette;
@@ -1795,15 +1743,16 @@ int gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette) {
 	}
 
 	if (!state->pic || !state->pic_unscaled) {
-		GFXERROR("Could not retrieve background pic %d!\n", nr);
+		warning("Could not retrieve background pic %d", nr);
 		if (state->pic) {
-			GFXERROR("  -- Inconsistency: scaled pic _was_ retrieved!\n");
+			warning("  -- Inconsistency: scaled pic _was_ retrieved!");
 		}
 
 		if (state->pic_unscaled) {
-			GFXERROR("  -- Inconsistency: unscaled pic _was_ retrieved!\n");
+			warning("  -- Inconsistency: unscaled pic _was_ retrieved!");
 		}
 
+		error("Error occured in gfxop_new_pic()");
 		state->pic = state->pic_unscaled = NULL;
 		return GFX_ERROR;
 	}
@@ -1814,17 +1763,15 @@ int gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette) {
 }
 
 int gfxop_add_to_pic(GfxState *state, int nr, int flags, int default_palette) {
-	BASIC_CHECKS(GFX_FATAL);
-
 	if (!state->pic) {
-		GFXERROR("Attempt to add to pic with no pic active!\n");
+		error("Attempt to add to pic with no pic active");
 		return GFX_ERROR;
 	}
 
 	state->pic = state->gfxResMan->addToPic(state->pic_nr, nr, flags, state->palette_nr, default_palette);
 
 	if (!state->pic) {
-		GFXERROR("Could not add pic #%d to pic #%d!\n", state->pic_nr, nr);
+		error("Could not add pic #%d to pic #%d", state->pic_nr, nr);
 		return GFX_ERROR;
 	}
 
@@ -1839,7 +1786,6 @@ int gfxop_add_to_pic(GfxState *state, int nr, int flags, int default_palette) {
 // replacing GfxState* state parameter with gfx_resstate_t* gfxResourceState and adjust callers accordingly
 int gfxop_get_font_height(GfxState *state, int font_nr) {
 	gfx_bitmap_font_t *font;
-	BASIC_CHECKS(GFX_FATAL);
 
 	font = state->gfxResMan->getFont(font_nr);
 
@@ -1855,12 +1801,10 @@ int gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int ma
 	bool textsplits;
 	gfx_bitmap_font_t *font;
 
-	BASIC_CHECKS(GFX_FATAL);
-
 	font = state->gfxResMan->getFont(font_nr);
 
 	if (!font) {
-		GFXERROR("Attempt to calculate text size with invalid font #%d\n", font_nr);
+		error("Attempt to calculate text size with invalid font #%d", font_nr);
 		*width = *height = 0;
 		return GFX_ERROR;
 	}
@@ -1873,7 +1817,7 @@ int gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int ma
 #endif
 
 	if (!textsplits) {
-		GFXERROR("Could not calculate text size!");
+		error("Could not calculate text size");
 		*width = *height = 0;
 		return GFX_ERROR;
 	}
@@ -1889,21 +1833,20 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &t
 	TextHandle *handle;
 	gfx_bitmap_font_t *font;
 	int err = 0;
-	BASIC_CHECKS(NULL);
 
 	// mapping text colors to palette
 	err |= gfxop_set_color(state, &color1, color1);
 	err |= gfxop_set_color(state, &color2, color2);
 	err |= gfxop_set_color(state, &bg_color, bg_color);
 	if (err) {
-		GFXERROR("Unable to set up colors");
+		error("Unable to set up colors");
 		return NULL;
 	}
 
 	font = state->gfxResMan->getFont(font_nr);
 
 	if (!font) {
-		GFXERROR("Attempt to draw text with invalid font #%d\n", font_nr);
+		error("Attempt to draw text with invalid font #%d", font_nr);
 		return NULL;
 	}
 
@@ -1925,7 +1868,7 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &t
 #endif
 
 	if (!result) {
-		GFXERROR("Could not calculate text parameters in font #%d\n", font_nr);
+		error("Could not calculate text parameters in font #%d", font_nr);
 		delete handle;
 		return NULL;
 	}
@@ -1946,7 +1889,7 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &t
 		                          (bg_color.mask & GFX_MASK_VISUAL) ? &bg_color.visual : NULL);
 
 		if (!handle->text_pixmaps[i]) {
-			GFXERROR("Failed to draw text pixmap for line %d/%d\n", i, handle->lines.size());
+			error("Failed to draw text pixmap for line %d/%d", i, handle->lines.size());
 			delete handle;
 			return NULL;
 		}
@@ -1961,8 +1904,6 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &t
 }
 
 int gfxop_free_text(GfxState *state, TextHandle *handle) {
-	BASIC_CHECKS(GFX_ERROR);
-
 	delete handle;
 
 	return GFX_OK;
@@ -1987,11 +1928,10 @@ TextHandle::~TextHandle() {
 int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 	int line_height;
 	rect_t pos;
-	BASIC_CHECKS(GFX_FATAL);
 	_gfxop_full_pointer_refresh(state);
 
 	if (!handle) {
-		GFXERROR("Attempt to draw text with NULL handle!\n");
+		error("Attempt to draw text with NULL handle");
 		return GFX_ERROR;
 	}
 
@@ -2020,7 +1960,7 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 		break;
 
 	default:
-		GFXERROR("Invalid vertical alignment %d!\n", handle->valign);
+		error("Invalid vertical alignment %d", handle->valign);
 		return GFX_FATAL; // Internal error...
 	}
 
@@ -2036,7 +1976,7 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 #endif
 		}
 		if (!pxm) {
-			GFXERROR("Could not find text pixmap %d/%d\n", i, handle->lines.size());
+			error("Could not find text pixmap %d/%d", i, handle->lines.size());
 			return GFX_ERROR;
 		}
 
@@ -2056,7 +1996,7 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 			break;
 
 		default:
-			GFXERROR("Invalid vertical alignment %d!\n", handle->valign);
+			error("Invalid vertical alignment %d", handle->valign);
 			return GFX_FATAL; // Internal error...
 		}
 
@@ -2076,7 +2016,6 @@ int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 gfx_pixmap_t *gfxop_grab_pixmap(GfxState *state, rect_t area) {
 	gfx_pixmap_t *pixmap = NULL;
 	rect_t resultzone; // Ignored for this application
-	BASIC_CHECKS(NULL);
 	_gfxop_full_pointer_refresh(state);
 
 	_gfxop_scale_rect(&area, state->driver->getMode());
@@ -2088,10 +2027,9 @@ gfx_pixmap_t *gfxop_grab_pixmap(GfxState *state, rect_t area) {
 
 int gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone, Common::Point pos) {
 	rect_t target;
-	BASIC_CHECKS(GFX_ERROR);
 
 	if (!pxm) {
-		GFXERROR("Attempt to draw NULL pixmap!\n");
+		error("Attempt to draw NULL pixmap");
 		return GFX_ERROR;
 	}
 
@@ -2102,7 +2040,7 @@ int gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone, Common::P
 	_gfxop_add_dirty(state, target);
 
 	if (!pxm) {
-		GFXERROR("Attempt to draw_pixmap with pxm=NULL\n");
+		error("Attempt to draw_pixmap with pxm=NULL");
 		return GFX_ERROR;
 	}
 
@@ -2114,7 +2052,6 @@ int gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone, Common::P
 }
 
 int gfxop_free_pixmap(GfxState *state, gfx_pixmap_t *pxm) {
-	BASIC_CHECKS(GFX_ERROR);
 	gfx_free_pixmap(pxm);
 	return GFX_OK;
 }

@@ -33,6 +33,8 @@
 #include "agos/agos.h"
 #include "agos/vga.h"
 
+#include "graphics/surface.h"
+
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
 #include "sound/audiocd.h"
@@ -181,8 +183,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_subroutineListOrg = 0;
 
 	_subroutineList = 0;
-
-	_dxSurfacePitch = 0;
 
 	_recursionDepth = 0;
 
@@ -490,12 +490,12 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_backGroundBuf = 0;
 	_backBuf = 0;
 	_scaleBuf = 0;
+	_window4BackScn = 0;
+	_window6BackScn = 0;
 
 	_window3Flag = 0;
 	_window4Flag = 0;
 	_window6Flag = 0;
-	_window4BackScn = 0;
-	_window6BackScn = 0;
 
 	_moveXMin = 0;
 	_moveYMin = 0;
@@ -580,26 +580,34 @@ Common::Error AGOSEngine::init() {
 	syncSoundSettings();
 
 	// allocate buffers
-	_backGroundBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
+	_backGroundBuf = new Graphics::Surface();
+	_backGroundBuf->create(_screenWidth, _screenHeight, 1);
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		_backBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
-		_scaleBuf = (byte *)calloc(_screenWidth * _screenHeight, 1);
+		_backBuf = new Graphics::Surface();
+		_backBuf->create(_screenWidth, _screenHeight, 1);
+		_scaleBuf = new Graphics::Surface();
+		_scaleBuf->create(_screenWidth, _screenHeight, 1);
 	}
 
 	if (getGameType() == GType_SIMON2) {
-		_window4BackScn = (byte *)calloc(_screenWidth * _screenHeight, 1);
+		_window4BackScn = new Graphics::Surface();
+		_window4BackScn->create(_screenWidth, _screenHeight, 1);
 	} else if (getGameType() == GType_SIMON1) {
-		_window4BackScn = (byte *)calloc(_screenWidth * 134, 1);
+		_window4BackScn = new Graphics::Surface();
+		_window4BackScn->create(_screenWidth, 134, 1);
 	} else if (getGameType() == GType_WW || getGameType() == GType_ELVIRA2) {
-		_window4BackScn = (byte *)calloc(224 * 127, 1);
+		_window4BackScn = new Graphics::Surface();
+		_window4BackScn->create(224, 127, 1);
 	} else if (getGameType() == GType_ELVIRA1) {
+		_window4BackScn = new Graphics::Surface();
 		if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_DEMO)) {
-			_window4BackScn = (byte *)calloc(224 * 196, 1);
+			_window4BackScn->create(224, 196, 1);
 		} else {
-			_window4BackScn = (byte *)calloc(224 * 144, 1);
+			_window4BackScn->create(224, 144, 1);
 		}
-		_window6BackScn = (byte *)calloc(48 * 80, 1);
+		_window6BackScn = new Graphics::Surface();
+		_window6BackScn->create(48, 80, 1);
 	}
 
 	setupGame();

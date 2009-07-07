@@ -27,6 +27,7 @@
 #include "common/stack.h"
 
 #include "sci/sci.h"
+#include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_weak_validations
 #include "sci/resource.h"
 #include "sci/engine/state.h"
@@ -135,10 +136,10 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 		if (type == VAR_PARAM || type == VAR_TEMP) {
 			int total_offset = r - stack_base;
 			if (total_offset < 0 || total_offset >= VM_STACK_SIZE) {
-				sciprintf("[VM] Access would be outside even of the stack (%d); access denied\n", total_offset);
+				warning("[VM] Access would be outside even of the stack (%d); access denied", total_offset);
 				return 1;
 			} else {
-				sciprintf("[VM] Access within stack boundaries; access granted.\n");
+				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.\n");
 				return 0;
 			}
 		}
@@ -255,7 +256,8 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		bp = s->bp_list;
 		while (bp) {
 			if (bp->type == BREAK_EXPORT && bp->data.address == bpaddress) {
-				sciprintf("Break on script %d, export %d\n", script, pubfunct);
+				Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
 				breakpointFlag = true;
 				break;
 			}
@@ -319,7 +321,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					cmplen = 256;
 
 				if (bp->type == BREAK_SELECTOR && !strncmp(bp->data.name, method_name, cmplen)) {
-					sciprintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
+					Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
 					print_send_action = 1;
 					breakpointFlag = true;
 					break;
@@ -329,7 +332,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 #ifdef VM_DEBUG_SEND
-		sciprintf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, s->_selectorNames[selector].c_str());
+		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, s->_selectorNames[selector].c_str());
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
@@ -349,17 +352,16 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		case kSelectorVariable:
 
 #ifdef VM_DEBUG_SEND
-			sciprintf("Varselector: ");
 			if (argc)
-				sciprintf("Write %04x:%04x\n", PRINT_REG(argp[1]));
+				printf("Varselector: Write %04x:%04x\n", PRINT_REG(argp[1]));
 			else
-				sciprintf("Read\n");
+				printf("Varselector: Read\n");
 #endif // VM_DEBUG_SEND
 
 			switch (argc) {
 			case 0:   // Read selector
 				if (print_send_action) {
-					sciprintf("[read selector]\n");
+					printf("[read selector]\n");
 					print_send_action = 0;
 				}
 				// fallthrough
@@ -372,7 +374,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 						reg_t oldReg = *varp.getPointer(s);
 						reg_t newReg = argp[1];
 
-						sciprintf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
+						printf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
 						print_send_action = 0;
 					}
 					CallsStruct call;
@@ -386,9 +388,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				break;
 #ifdef STRICT_SEND
 			default:
-				sciprintf("Send error: Variable selector %04x in %04x:%04x called with %04x params\n", selector, PRINT_REG(send_obj), argc);
-				script_debug_flag = 1; // Enter debug mode
 				debugState.seeking = debugState.runningStep = 0;
+				error("Send error: Variable selector %04x in %04x:%04x called with %04x params", selector, PRINT_REG(send_obj), argc);
 #endif
 			}
 			break;
@@ -396,16 +397,16 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		case kSelectorMethod:
 
 #ifdef VM_DEBUG_SEND
-			sciprintf("Funcselector(");
+			printf("Funcselector(");
 			for (int i = 0; i < argc; i++) {
-				sciprintf(PREG, PRINT_REG(argp[i+1]));
+				printf(PREG, PRINT_REG(argp[i+1]));
 				if (i + 1 < argc)
-					sciprintf(", ");
+					printf(", ");
 			}
-			sciprintf(") at %04x:%04x\n", PRINT_REG(funcp));
+			printf(") at %04x:%04x\n", PRINT_REG(funcp));
 #endif // VM_DEBUG_SEND
 			if (print_send_action) {
-				sciprintf("[invoke selector]\n");
+				printf("[invoke selector]\n");
 				print_send_action = 0;
 			}
 
@@ -461,7 +462,7 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 	// Returns new TOS element for the execution stack
 	// locals_segment may be -1 if derived from the called object
 
-	//sciprintf("Exec stack: [%d/%d], origin %d, at %p\n", s->execution_stack_pos, s->_executionStack.size(), origin, s->execution_stack);
+	//printf("Exec stack: [%d/%d], origin %d, at %p\n", s->execution_stack_pos, s->_executionStack.size(), origin, s->execution_stack);
 
 	ExecStack xstack;
 
@@ -506,7 +507,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	MemObject *mobj = GET_SEGMENT_ANY(*s->seg_manager, base.segment);
 
 	if (!mobj) {
-		error("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x!", offset, PRINT_REG(base));
+		error("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x", offset, PRINT_REG(base));
 		return NULL_REG;
 	}
 
@@ -524,7 +525,7 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 		break;
 
 	default:
-		sciprintf("[VM] Error: Attempt to add %d to pointer %04x:%04x: Pointer arithmetics of this type unsupported!", offset, PRINT_REG(base));
+		error("[VM] Error: Attempt to add %d to pointer %04x:%04x: Pointer arithmetics of this type unsupported", offset, PRINT_REG(base));
 		return NULL_REG;
 
 	}
@@ -1585,18 +1586,18 @@ int script_instantiate_common(EngineState *s, int script_nr, Resource **script, 
 		*heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 
 	if (!*script || (s->_version >= SCI_VERSION_1_1 && !heap)) {
-		sciprintf("Script 0x%x requested but not found\n", script_nr);
+		warning("Script 0x%x requested but not found", script_nr);
 		if (s->_version >= SCI_VERSION_1_1) {
 			if (*heap)
-				sciprintf("Inconsistency: heap resource WAS found\n");
+				warning("Inconsistency: heap resource WAS found");
 			else if (*script)
-				sciprintf("Inconsistency: script resource WAS found\n");
+				warning("Inconsistency: script resource WAS found");
 		}
 		return 0;
 	}
 
 	if (NULL == s) {
-		sciprintf("vm.c: script_instantiate(): NULL passed for \"s\"\n");
+		warning("script_instantiate_common(): script_instantiate(): NULL passed for \"s\"");
 		return 0;
 	}
 
@@ -1897,7 +1898,7 @@ void script_uninstantiate(EngineState *s, int script_nr) {
 	if (s->_version < SCI_VERSION_1_1)
 		script_uninstantiate_sci0(s, script_nr, reg.segment);
 	else
-		sciprintf("FIXME: Add proper script uninstantiation for SCI 1.1\n");
+		warning("FIXME: Add proper script uninstantiation for SCI 1.1");
 
 	if (scr->getLockers())
 		return; // if xxx.lockers > 0
@@ -1948,7 +1949,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 				s = successor;
 
 				if (script_abort_flag == 2) {
-					sciprintf("Restarting with replay()\n");
+					debugC(2, kDebugLevelVM, "Restarting with replay()\n");
 					s->_executionStack.clear(); // Restart with replay
 
 					_init_stack_base_with_selector(s, s->_kernel->_selectorMap.replay);
@@ -1971,19 +1972,19 @@ int printObject(EngineState *s, reg_t pos);
 int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
-	sciprintf(" Calling %s::play()\n", s->_gameName.c_str());
+	debugC(2, kDebugLevelVM, "Calling %s::play()\n", s->_gameName.c_str());
 	_init_stack_base_with_selector(s, s->_kernel->_selectorMap.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
 	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base)) {
 		printObject(s, s->game_obj);
-		sciprintf("Failed to run the game! Aborting...\n");
+		warning("Failed to run the game! Aborting...");
 		return 1;
 	}
 	// and ENGAGE!
 	_game_run(*_s, 0);
 
-	sciprintf(" Game::play() finished.\n");
+	debugC(2, kDebugLevelVM, "Game::play() finished.\n");
 
 	return 0;
 }

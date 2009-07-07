@@ -165,7 +165,7 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 
 	case GFX_RESOURCE_TYPES_NR:
 	default:
-		GFXERROR("Invalid resource type: %d\n", type);
+		error("Invalid resource type: %d", type);
 		return -1;
 	}
 }
@@ -350,7 +350,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 #endif
 
 		if (!pic) {
-			GFXERROR("Failed to allocate scaled pic!\n");
+			error("Failed to allocate scaled pic");
 			return NULL;
 		}
 
@@ -359,7 +359,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 		if (need_unscaled) {
 			unscaled_pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
 			if (!unscaled_pic) {
-				GFXERROR("Failed to allocate unscaled pic!\n");
+				error("Failed to allocate unscaled pic");
 				return NULL;
 			}
 			gfxr_clear_pic0(pic, SCI_TITLEBAR_SIZE);
@@ -531,9 +531,9 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 
 		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
 
-		if (_version < SCI_VERSION_01)
+		if (_version < SCI_VERSION_01_EGA)
 			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, -1);
-		else if (_version == SCI_VERSION_01 || !_isVGA)
+		else if (_version == SCI_VERSION_01_EGA || !_isVGA)
 			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, palette);
 		else if (_version >= SCI_VERSION_01_VGA && _version <= SCI_VERSION_1)
 			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, _staticPalette, false);

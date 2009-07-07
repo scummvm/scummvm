@@ -275,7 +275,7 @@ static void bresenham_autodetect(EngineState *s) {
 
 		buf = s->seg_manager->getScript(fptr.segment)->buf + fptr.offset;
 		handle_movecnt = (s->_version <= SCI_VERSION_0 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
-		sciprintf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
+		printf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
 	} else {
 		warning("bresenham_autodetect failed");
 		handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
@@ -313,7 +313,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bdelta = GET_SEL32SV(mover, b_incr);
 	axis = GET_SEL32SV(mover, b_xAxis);
 
-	//sciprintf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
+	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
 	if (handle_movecnt) {
 		if (max_movcnt > movcnt) {

@@ -132,7 +132,7 @@ public:
 	}
 
 	/**
-	 * Prints a string representation of the widget with sciprintf.
+	 * Prints a string representation of the widget with printf.
 	 *
 	 * Will recursively print all of the widget's contents if the widget
 	 * contains further sub-widgets

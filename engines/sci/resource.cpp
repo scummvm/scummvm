@@ -499,7 +499,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			} else if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB))) {
 				version = guessSciVersion();
 				if (version != SCI_VERSION_01_VGA) {
-					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01;
+					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01_EGA;
 				}
 			} else {
 				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
@@ -525,7 +525,7 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	case SCI_VERSION_0:
 		debug("Resmgr: Detected SCI0");
 		break;
-	case SCI_VERSION_01:
+	case SCI_VERSION_01_EGA:
 		debug("Resmgr: Detected SCI01");
 		break;
 	case SCI_VERSION_01_VGA:
@@ -570,7 +570,7 @@ ResourceManager::~ResourceManager() {
 
 void ResourceManager::removeFromLRU(Resource *res) {
 	if (res->status != kResStatusEnqueued) {
-		sciprintf("Resmgr: Oops: trying to remove resource that isn't enqueued\n");
+		warning("Resmgr: trying to remove resource that isn't enqueued");
 		return;
 	}
 	_LRU.remove(res);
@@ -580,16 +580,15 @@ void ResourceManager::removeFromLRU(Resource *res) {
 
 void ResourceManager::addToLRU(Resource *res) {
 	if (res->status != kResStatusAllocated) {
-		warning("Resmgr: Oops: trying to enqueue resource with state %d", res->status);
+		warning("Resmgr: trying to enqueue resource with state %d", res->status);
 		return;
 	}
 	_LRU.push_front(res);
 	_memoryLRU += res->size;
-#if (SCI_VERBOSE_RESMGR > 1)
+#if SCI_VERBOSE_RESMGR
 	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
 	      getResourceTypeName(res->type), res->number, res->size,
 	      mgr->_memoryLRU);
-
 #endif
 	res->status = kResStatusEnqueued;
 }
@@ -618,7 +617,7 @@ void ResourceManager::freeOldResources() {
 		removeFromLRU(goner);
 		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMGR
-		sciprintf("Resmgr-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
+		printf("Resmgr-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
 #endif
 	}
 }
@@ -641,7 +640,7 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 
 	if (id.number >= sci_max_resource_nr[_sciVersion]) {
 		ResourceId moddedId = ResourceId(id.type, id.number % sci_max_resource_nr[_sciVersion], id.tuple);
-		sciprintf("[resmgr] Requested invalid resource %s, mapped to %s\n",
+		warning("[resmgr] Requested invalid resource %s, mapped to %s",
 		          id.toString().c_str(), moddedId.toString().c_str());
 		id = moddedId;
 	}
@@ -675,7 +674,7 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 	if (retval->data)
 		return retval;
 	else {
-		sciprintf("Resmgr: Failed to read %s\n", retval->id.toString().c_str());
+		warning("Resmgr: Failed to read %s", retval->id.toString().c_str());
 		return NULL;
 	}
 }

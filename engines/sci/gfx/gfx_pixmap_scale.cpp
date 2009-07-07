@@ -514,8 +514,7 @@ static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, in
 		break;
 
 	default:
-		GFXERROR("Invalid mode->bytespp=%d\n", mode->bytespp);
-
+		error("Invalid mode->bytespp=%d", mode->bytespp);
 	}
 
 	if (pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX) {
@@ -559,8 +558,7 @@ static void _gfx_xlate_pixmap_linear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int sc
 		break;
 
 	default:
-		GFXERROR("Invalid mode->bytespp=%d\n", mode->bytespp);
-
+		error("Invalid mode->bytespp=%d", mode->bytespp);
 	}
 
 }
@@ -596,7 +594,7 @@ static void _gfx_xlate_pixmap_trilinear(gfx_mode_t *mode, gfx_pixmap_t *pxm, int
 		break;
 
 	default:
-		GFXERROR("Invalid mode->bytespp=%d\n", mode->bytespp);
+		error("Invalid mode->bytespp=%d", mode->bytespp);
 
 	}
 }
@@ -635,7 +633,7 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t fi
 		break;
 
 	default:
-		GFXERROR("Attempt to filter pixmap %04x in invalid mode #%d\n", pxm->ID, filter);
+		error("Attempt to filter pixmap %04x in invalid mode #%d", pxm->ID, filter);
 
 		if (!was_allocated) {
 			if (!mode->alpha_mask && pxm->colors_nr() < GFX_PIC_COLORS)
