@@ -201,12 +201,14 @@ Console::~Console() {
 }
 
 void Console::preEnter() {
-	_vm->_gamestate->_sound.sfx_suspend(true);
+	if (_vm->_gamestate)
+		_vm->_gamestate->_sound.sfx_suspend(true);
 	_vm->_mixer->pauseAll(true);
 }
 
 void Console::postEnter() {
-	_vm->_gamestate->_sound.sfx_suspend(false);
+	if (_vm->_gamestate)
+		_vm->_gamestate->_sound.sfx_suspend(false);
 	_vm->_mixer->pauseAll(false);
 }
 
