@@ -174,7 +174,7 @@ Animation *AnimationManager::getAnimation(int id) {
 		}
 	}
 
-	return *_animations.end();
+	return NULL;
 }
 
 void AnimationManager::insertAnimation(Animation *animObj) {
