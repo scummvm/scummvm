@@ -512,6 +512,7 @@ void CruiseEngine::initAllData(void) {
 	strcpy(lastOverlay, "AUTO00");
 
 	_gameSpeed = GAME_FRAME_DELAY_1;
+	_speedFlag = false;
 
 	return;
 }
