@@ -458,7 +458,7 @@ int Script::run(GPL2Program program, uint16 offset) {
 			(this->*(cmd->_handler))(params);
 		}
 
-	} while (cmd->_name != "gplend");
+	} while (cmd->_name != "gplend" || cmd->_name != "exit");
 
 	return 0;
 }
