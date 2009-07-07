@@ -1211,10 +1211,15 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x3a: // lofss
 			r_temp.segment = xs->addr.pc.segment;
 
-			if (s->_kernel->hasLofsAbsolute())
-				r_temp.offset = opparams[0];
-			else
-				r_temp.offset = xs->addr.pc.offset + opparams[0];
+			if (s->_version >= SCI_VERSION_1_1) {
+				r_temp.offset = opparams[0] + local_script->script_size;
+			} else {
+				if (s->_kernel->hasLofsAbsolute())
+					r_temp.offset = opparams[0];
+				else
+					r_temp.offset = xs->addr.pc.offset + opparams[0];
+			}
+
 #ifndef DISABLE_VALIDATIONS
 			if (r_temp.offset >= code_buf_size) {
 				error("VM: lofss operation overflowed: %04x:%04x beyond end"
