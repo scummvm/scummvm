@@ -3438,6 +3438,24 @@ static const GOBGameDescription gameDescriptions[] = {
 			"playtoons2",
 			"",
 			{
+				{"playtoon.stk", 0, "4772c96be88a57f0561519e4a1526c62", 24406262},
+				{"spirou.stk", 0, "5d9c7644d0c47840169b4d016765cc1a", 9816201},
+				{0, 0, 0, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"playtoons2",
+			"",
+			{
 				{"playtoon.stk", 0, "55a85036dd93cce93532d8f743d90074", 17467154},
 				{"spirou.stk", 0, "e3e1b6148dd72fafc3637f1a8e5764f5", 9812043},
 				{0, 0, 0, 0}
