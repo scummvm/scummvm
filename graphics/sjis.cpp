@@ -22,6 +22,12 @@
  * $Id$
  */
 
+// The code in this files is currently only used in KYRA and SCI.
+// So if no of those is enabled, we will not compile it.
+// If you plan to use this code in another engine, you will have
+// to add the proper defined check here and in sjis.h
+#if defined(ENABLE_KYRA) || defined(ENABLE_SCI)
+
 #include "graphics/sjis.h"
 
 #include "common/debug.h"
@@ -190,4 +196,6 @@ uint FontTowns::sjisToChunk(uint8 f, uint8 s) {
 }
 
 } // end of namespace Graphics
+
+#endif // defined(ENABLE_KYRA) || defined(ENABLE_SCI)
 

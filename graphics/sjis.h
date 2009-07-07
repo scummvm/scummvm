@@ -22,6 +22,12 @@
  * $Id$
  */
 
+// The code in this files is currently only used in KYRA and SCI.
+// So if no of those is enabled, we will not compile it.
+// If you plan to use this code in another engine, you will have
+// to add the proper defined check here and in sjis.cpp
+#if defined(ENABLE_KYRA) || defined(ENABLE_SCI)
+
 #ifndef GRAPHICS_SJIS_H
 #define GRAPHICS_SJIS_H
 
@@ -122,4 +128,6 @@ private:
 } // end of namespace Graphics
 
 #endif
+
+#endif // defined(ENABLE_KYRA) || defined(ENABLE_SCI)
 
