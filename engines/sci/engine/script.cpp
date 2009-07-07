@@ -30,8 +30,6 @@
 
 namespace Sci {
 
-// #define SCRIPT_DEBUG
-
 #define END Script_None
 
 opcode_format g_opcode_formats[128][4] = {
