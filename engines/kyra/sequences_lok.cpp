@@ -1049,7 +1049,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = -1;
 
-	// we only need this for the fm-towns version
+	// we only need this for the FM-TOWNS version
 	if (_flags.platform == Common::kPlatformFMTowns && _configMusic == 1)
 		snd_playWanderScoreViaMap(53, 1);
 

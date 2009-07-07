@@ -154,7 +154,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	SongHandle handle;
 	int cue;
 
-	if (s->_version >= SCI_VERSION_01_EGA)
+	if (s->_version >= SCI_VERSION_01)
 		return;
 	/* SCI01 and later explicitly poll for everything */
 
@@ -940,14 +940,14 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		case SI_ABSOLUTE_CUE:
 			signal = cue;
-			fprintf(stderr, "[CUE] %04x:%04x Absolute Cue: %d\n",
+			debugC(2, kDebugLevelSound, "[CUE] %04x:%04x Absolute Cue: %d\n",
 			        PRINT_REG(obj), signal);
 
 			PUT_SEL32V(obj, signal, signal);
 			break;
 
 		case SI_RELATIVE_CUE:
-			fprintf(stderr, "[CUE] %04x:%04x Relative Cue: %d\n",
+			debugC(2, kDebugLevelSound, "[CUE] %04x:%04x Relative Cue: %d\n",
 			        PRINT_REG(obj), cue);
 
 			PUT_SEL32V(obj, dataInc, cue);
@@ -982,9 +982,9 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
  * Used for synthesized music playback
  */
 reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (s->_kernel->_selectorMap.setVol != -1)
+	if (s->_kernel->usesSci1SoundFunctions())
 		return kDoSound_SCI1(s, funct_nr, argc, argv);
-	else if (s->_kernel->_selectorMap.nodePtr != -1)
+	else if (s->_kernel->usesSci01SoundFunctions())
 		return kDoSound_SCI01(s, funct_nr, argc, argv);
 	else
 		return kDoSound_SCI0(s, funct_nr, argc, argv);

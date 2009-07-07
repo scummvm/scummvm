@@ -269,7 +269,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 }
 
 PaletteEntry get_pic_color(EngineState *s, int color) {
-	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
+	if (!s->resmgr->isVGA())
 		return s->ega_colors[color].visual;
 
 	if (color == -1 || color == 255)     // -1 occurs in Eco Quest 1. Not sure if this is the best approach, but it seems to work
@@ -286,7 +286,7 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int control) {
 	gfx_color_t retval;
 
-	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA) {
+	if (!s->resmgr->isVGA()) {
 		retval = s->ega_colors[(color >=0 && color < 16)? color : 0];
 		gfxop_set_color(s->gfx_state, &retval, (color < 0) ? -1 : retval.visual.r, retval.visual.g, retval.visual.b,
 		                (color == -1) ? 255 : 0, priority, control);
@@ -502,7 +502,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_GET_COLORS_NR:
 
-		return make_reg(0, s->resmgr->_sciVersion < SCI_VERSION_01_VGA ? 0x10 : 0x100);
+		return make_reg(0, !s->resmgr->isVGA() ? 0x10 : 0x100);
 		break;
 
 	case K_GRAPH_DRAW_LINE: {
@@ -696,7 +696,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc,
 
 	angle %= 360;
 
-	if (!(s->_flags & GF_SCI0_OLD)) {
+	if (!s->_kernel->hasOldScriptHeader()) {
 		if (angle < 45)
 			loop = 3;
 		else if (angle < 136)
@@ -2502,7 +2502,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int16 bgColor = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
 
 	if (bgColor >= 0) {
-		if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
+		if (!s->resmgr->isVGA())
 			bgcolor.visual = get_pic_color(s, MIN<int>(bgColor, 15));
 		else
 			bgcolor.visual = get_pic_color(s, bgColor);
@@ -2528,7 +2528,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	black.alpha = 0;
 	black.control = -1;
 	black.priority = -1;
-	lWhite.visual = get_pic_color(s, s->resmgr->_sciVersion < SCI_VERSION_01_VGA ? 15 : 255);
+	lWhite.visual = get_pic_color(s, !s->resmgr->isVGA() ? 15 : 255);
 	lWhite.mask = GFX_MASK_VISUAL;
 	lWhite.alpha = 0;
 	lWhite.priority = -1;
@@ -3149,7 +3149,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bg_color = port->_bgcolor;
 	// TODO: in SCI1VGA the default colors for text and background are #0 (black)
 	// SCI0 case should be checked
-	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
+	if (s->resmgr->isVGA()) {
 		// This priority check fixes the colors in the menus in KQ5
 		// TODO/FIXME: Is this correct?
 		if (color0.priority >= 0)
@@ -3191,10 +3191,10 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			temp = argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_color(%d)\n", temp);
-			if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA) && temp >= 0 && temp <= 15)
+			if (!s->resmgr->isVGA() && temp >= 0 && temp <= 15)
 				color0 = (s->ega_colors[temp]);
 			else
-				if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA && temp >= 0 && temp < 256) {
+				if (s->resmgr->isVGA() && temp >= 0 && temp < 256) {
 					color0.visual = get_pic_color(s, temp);
 					color0.mask = GFX_MASK_VISUAL;
 				} else
@@ -3208,10 +3208,10 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			temp = argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_bg_color(%d)\n", temp);
-			if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA && temp >= 0 && temp <= 15)
+			if (!s->resmgr->isVGA() && temp >= 0 && temp <= 15)
 				bg_color = s->ega_colors[temp];
 			else
-				if ((s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) && temp >= 0 && temp <= 256) {
+				if (s->resmgr->isVGA() && temp >= 0 && temp <= 256) {
 					bg_color.visual = get_pic_color(s, temp);
 					bg_color.mask = GFX_MASK_VISUAL;
 				} else

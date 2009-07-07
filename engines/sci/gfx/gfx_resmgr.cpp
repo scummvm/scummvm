@@ -49,14 +49,14 @@ struct param_struct {
 	GfxDriver *driver;
 };
 
-GfxResManager::GfxResManager(int version, bool isVGA, gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager) :
-				_version(version), _isVGA(isVGA), _options(options), _driver(driver), _resManager(resManager),
+GfxResManager::GfxResManager(int version, gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager) :
+				_version(version), _options(options), _driver(driver), _resManager(resManager),
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
 	_portBounds = Common::Rect(0, 10, 320, 200);	// default value, with a titlebar of 10px
 
-	if (_version < SCI_VERSION_01_VGA || !_isVGA) {
+	if (!_resManager->isVGA()) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
 	} else if (_version == SCI_VERSION_1_1) {
 		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
@@ -99,7 +99,7 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 		if (_version == SCI_VERSION_1_1)
 			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _staticPalette, _portBounds);
 		else
-			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _isVGA, _staticPalette, _portBounds);
+			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _resManager->isVGA(), _staticPalette, _portBounds);
 	}
 
 	if (scaled_pic && scaled_pic->undithered_buffer)
@@ -108,9 +108,9 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 	if (_version == SCI_VERSION_1_1)
 		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _staticPalette, _portBounds);
 	else
-		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _isVGA, _staticPalette, _portBounds);
+		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resManager->isVGA(), _staticPalette, _portBounds);
 
-	if (!_isVGA) {
+	if (!_resManager->isVGA()) {
 		if (need_unscaled)
 			gfxr_remove_artifacts_pic0(scaled_pic, unscaled_pic);
 
@@ -144,7 +144,7 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 
 	case GFX_RESOURCE_TYPE_PIC:
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-		if (_version >= SCI_VERSION_01_VGA)
+		if (_resManager->isVGA())
 			// NOTE: here, it is assumed that the upper port bound is always 10, but this doesn't seem to matter for the
 			// generated options hash anyway
 			return 10;
@@ -153,7 +153,7 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 			       | (_options->pic0_dither_pattern << 8) | (_options->pic0_brush_mode << 4)
 				   | (_options->pic0_line_mode);
 #else
-		if (_version >= SCI_VERSION_01_VGA)
+		if (_resManager->isVGA())
 			return 10;
 		else
 			return 0x10000 | (GFXR_DITHER_PATTERN_SCALED << 8) | (GFX_BRUSH_MODE_RANDOM_ELLIPSES << 4) | GFX_LINE_MODE_CORRECT;
@@ -341,12 +341,12 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 		if (_options->pic0_unscaled) {
 			need_unscaled = 0;
-			pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
+			pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resManager->isVGA());
 		} else
-			pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
+			pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resManager->isVGA());
 #else
 		need_unscaled = 0;
-		pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
+		pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resManager->isVGA());
 #endif
 
 		if (!pic) {
@@ -357,7 +357,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 		gfxr_clear_pic0(pic, SCI_TITLEBAR_SIZE);
 
 		if (need_unscaled) {
-			unscaled_pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _version >= SCI_VERSION_01_VGA);
+			unscaled_pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resManager->isVGA());
 			if (!unscaled_pic) {
 				error("Failed to allocate unscaled pic");
 				return NULL;
@@ -530,17 +530,16 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 			return NULL;
 
 		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
+		
+		if (!_resManager->isVGA()) {
+			int pal = (_version == SCI_VERSION_0) ? -1 : palette;
+			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
+		} else {
+			if (_version < SCI_VERSION_1_1)
+				view = getVGAView(resid, viewRes->data, viewRes->size, _staticPalette, false);
+			else
+				view = getVGAView(resid, viewRes->data, viewRes->size, 0, true);
 
-		if (_version < SCI_VERSION_01_EGA)
-			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, -1);
-		else if (_version == SCI_VERSION_01_EGA || !_isVGA)
-			view = gfxr_draw_view0(resid, viewRes->data, viewRes->size, palette);
-		else if (_version >= SCI_VERSION_01_VGA && _version <= SCI_VERSION_1)
-			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, _staticPalette, false);
-		else if (_version >= SCI_VERSION_1_1)
-			view = gfxr_draw_view1(resid, viewRes->data, viewRes->size, 0, true);
-
-		if (_isVGA) {
 			if (!view->palette) {
 				view->palette = new Palette(_staticPalette->size());
 				view->palette->name = "interpreter_get_view";
@@ -554,7 +553,6 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 					view->palette->setColor(i, sc.r, sc.g, sc.b);
 				}
 			}
-
 		}
 
 		if (!res) {
@@ -618,6 +616,11 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_FONT];
 	gfx_resource_t *res = NULL;
 	int hash = getOptionsHash(GFX_RESOURCE_TYPE_FONT);
+
+	// Workaround: LSL1VGA mixes its own internal fonts with the global
+	// SCI ones, so we translate them here, by removing their extra bits
+	if (!resMap.contains(num) && !_resManager->testResource(ResourceId(kResourceTypeFont, num)))
+		num = num & 0x7ff;
 
 	res = resMap.contains(num) ? resMap[num] : NULL;
 

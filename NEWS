@@ -323,7 +323,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Renamed Simon engine to AGOS.
 
  Kyrandia:
-   - Added support for FM-Towns version (both English and Japanese).
+   - Added support for FM-TOWNS version (both English and Japanese).
 
  BASS:
    - Fixed long-standing font bug. We were using the control panel font for

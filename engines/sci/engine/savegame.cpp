@@ -497,7 +497,7 @@ static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
 }
 
 static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
-	if (s->_flags & GF_SCI0_OLD)
+	if (s->_kernel->hasOldScriptHeader())
 		buf += 2;
 
 	do {
@@ -693,7 +693,7 @@ int _reset_graphics_input(EngineState *s);
 
 static void reconstruct_sounds(EngineState *s) {
 	Song *seeker;
-	SongIteratorType it_type = s->resmgr->_sciVersion >= SCI_VERSION_01_EGA ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
+	SongIteratorType it_type = s->resmgr->_sciVersion >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
 
 	seeker = s->_sound._songlib._lib;
 

@@ -91,9 +91,8 @@ opcode_format g_opcode_formats[128][4] = {
 void script_adjust_opcode_formats(int res_version) {
 	switch (res_version) {
 	case SCI_VERSION_0:
-	case SCI_VERSION_01_EGA:
 		break;
-	case SCI_VERSION_01_VGA:
+	case SCI_VERSION_01:
 	case SCI_VERSION_01_VGA_ODD:
 	case SCI_VERSION_1:
 	case SCI_VERSION_1_1:
@@ -200,10 +199,6 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(printLang);
 	FIND_SELECTOR(subtitleLang);
 	FIND_SELECTOR(parseLang);
-	FIND_SELECTOR(motionCue);
-	FIND_SELECTOR(sightAngle);
-	FIND_SELECTOR(setVol);
-	FIND_SELECTOR(egoMoveSpeed);
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {

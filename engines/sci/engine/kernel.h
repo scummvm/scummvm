@@ -55,9 +55,18 @@ struct KernelFuncWithSignature {
 	Common::String orig_name; /**< Original name, in case we couldn't map it */
 };
 
+enum AutoDetectedFeatures {
+	kFeatureOldScriptHeader = 1 << 0,
+	kFeatureOldGfxFunctions = 1 << 1,
+	kFeatureLofsAbsolute    = 1 << 2,
+	kFeatureSci01Sound      = 1 << 3,
+	kFeatureSci1Sound       = 1 << 4,
+	kFeatureSci0Sci1Table   = 1 << 5
+};
+
 class Kernel {
 public:
-	Kernel(ResourceManager *resmgr, bool isOldSci0);
+	Kernel(ResourceManager *resmgr);
 	~Kernel();
 
 	uint getOpcodesSize() const { return _opcodes.size(); }
@@ -84,20 +93,40 @@ public:
 	bool hasKernelFunction(const char *functionName) const;
 
 	/**
+	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
+	 * Old SCI versions used two word header for script blocks (first word equal
+	 * to 0x82, meaning of the second one unknown). New SCI versions used one
+	 * word header.
+	 * Also, old SCI versions assign 120 degrees to left & right, and 60 to up
+	 * and down. Later versions use an even 90 degree distribution.
+	 */
+	bool hasOldScriptHeader() const { return (features & kFeatureOldScriptHeader); }
+
+	/**
 	 * Applies to all versions before 0.000.502
 	 * Old SCI versions used to interpret the third DrawPic() parameter inversely,
 	 * with the opposite default value (obviously).
 	 * Also, they used 15 priority zones from 42 to 200 instead of 14 priority
 	 * zones from 42 to 190.
 	 */
-	bool usesOldGfxFunctions() const { return _oldGfxFunctions; }
+	bool usesOldGfxFunctions() const { return (features & kFeatureOldGfxFunctions); }
 
 	/**
 	 * Applies to all SCI1 versions after 1.000.200
 	 * In late SCI1 versions, the argument of lofs[as] instructions
 	 * is absolute rather than relative.
 	 */
-	bool hasLofsAbsolute() const { return _hasLofsAbsolute; }
+	bool hasLofsAbsolute() const { return (features & kFeatureLofsAbsolute); }
+
+	/**
+	 * Determines if the game is using SCI01 sound functions
+	 */
+	bool usesSci01SoundFunctions() const { return (features & kFeatureSci01Sound); }
+
+	/**
+	 * Determines if the game is using SCI1 sound functions
+	 */
+	bool usesSci1SoundFunctions() const { return (features & kFeatureSci1Sound); }
 
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
@@ -127,17 +156,17 @@ private:
 	/**
 	 * Loads the kernel selector names.
 	 */
-	void loadSelectorNames(bool isOldSci0);
-
-	/**
-	 * Prints auto-detected features from selectors
-	 */
-	void printAutoDetectedFeatures();
+	void loadSelectorNames();
 
 	/**
 	 * Maps special selectors
 	 */
 	void mapSelectors();
+
+	/**
+	 * Detects SCI features based on the existence of certain selectors
+	 */
+	void detectSciFeatures();
 
 	/**
 	 * Maps kernel functions
@@ -151,8 +180,7 @@ private:
 	bool loadOpcodes();
 
 	ResourceManager *_resmgr;
-	bool _oldGfxFunctions;
-	bool _hasLofsAbsolute;
+	uint32 features;
 
 	// Kernel-related lists
 	/**

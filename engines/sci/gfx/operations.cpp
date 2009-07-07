@@ -404,7 +404,7 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 	(*pixmap)->palette = new Palette(default_colors, DEFAULT_COLORS_NR);
 }
 
-int gfxop_init(int version, bool isVGA, GfxState *state,
+int gfxop_init(int version, GfxState *state,
 				gfx_options_t *options, ResourceManager *resManager,
 				Graphics::PixelFormat mode, int xfact, int yfact) {
 	//int color_depth = bpp ? bpp : 1;
@@ -424,8 +424,8 @@ int gfxop_init(int version, bool isVGA, GfxState *state,
 
 	state->driver = new GfxDriver(xfact, yfact, mode);
 
-	state->gfxResMan = new GfxResManager(version, isVGA, state->options, state->driver, resManager);
-
+	state->gfxResMan = new GfxResManager(version, state->options, state->driver, resManager);
+	
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
 
 	init_aux_pixmap(&(state->control_map));

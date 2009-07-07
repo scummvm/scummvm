@@ -815,11 +815,6 @@ int16 Op_AddMessage(void) {
 
 	createTextObject(&cellHead, overlayIdx, var_8, var_6, var_4, var_2, color, masterScreen, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
 
-	// WORKAROUND: The first message in the 'shooting cutscene' goes too fast on newer systems,
-	// so this introduces a delay so the user has more time to read the message
-	if ((overlayIdx == 46) && (var_8 == 0))
-		userDelay = 3 * (1000 / GAME_FRAME_DELAY_2);
-
 	return 0;
 }
 

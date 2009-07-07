@@ -243,7 +243,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			int stackframe = (scr[pos.offset + 2] >> 1) + (*debugState.p_restadjust);
 			int argc = ((*debugState.p_sp)[- stackframe - 1]).offset;
 
-			if (!(s->_flags & GF_SCI0_OLD))
+			if (!s->_kernel->hasOldScriptHeader())
 				argc += (*debugState.p_restadjust);
 
 			printf(" Kernel params: (");

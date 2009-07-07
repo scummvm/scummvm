@@ -507,14 +507,14 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 			if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
 				g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
 				g->special == k2TownsFile2E || g->special == k2TownsFile2J || fmtPatch == 5) {
-				// prevents creation of empty entries (which we have mostly between all strings in the fm-towns version)
+				// prevents creation of empty entries (which we have mostly between all strings in the FM-TOWNS version)
 				while (!data[++i]) {
 					if (i == size)
 						break;
 					targetsize--;
 				}
 				if (fmtPatch == 1) {
-					// Here is the first step of the extra treatment for all fm-towns string arrays that
+					// Here is the first step of the extra treatment for all FM-TOWNS string arrays that
 					// contain more than one string and which the original code
 					// addresses via stringname[boolJapanese].
 					// We simply skip every other string
@@ -593,7 +593,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 			}
 
 			if (fmtPatch == 1) {
-				// Here is the extra treatment for all fm-towns string arrays that
+				// Here is the extra treatment for all FM-TOWNS string arrays that
 				// contain more than one string and which the original code
 				// addresses via stringname[boolJapanese].
 				// We simply skip every other string
@@ -637,7 +637,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 }
 
 bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
-	// different entry size for the fm-towns version
+	// different entry size for the FM-TOWNS version
 	const int roomEntrySize = (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) ? (0x69) : ((g->special == kAmigaVersion) ? 0x52 : 0x51);
 	const int countRooms = size / roomEntrySize;
 

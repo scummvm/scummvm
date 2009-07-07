@@ -71,41 +71,22 @@ struct SciGameDescription {
 enum SciGameVersions {
 	SCI_VERSION_AUTODETECT = 0,
 	SCI_VERSION_0 = 1,
-	SCI_VERSION_01_EGA = 2,
-	SCI_VERSION_01_VGA = 3,
-	SCI_VERSION_01_VGA_ODD = 4,
-	SCI_VERSION_1 = 5,
-	SCI_VERSION_1_1 = 6,
-	SCI_VERSION_32 = 7
+	SCI_VERSION_01 = 2,
+	SCI_VERSION_01_VGA_ODD = 3,
+	SCI_VERSION_1 = 4,
+	SCI_VERSION_1_1 = 5,
+	SCI_VERSION_32 = 6
 };
 
-extern const char *versionNames[8];
+extern const char *versionNames[7];
 
 enum SciGameFlags {
 	// SCI0 flags
 
-	/* Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2)
-	 * Old SCI versions used two word header for script blocks (first word equal
-	 * to 0x82, meaning of the second one unknown). New SCI versions used one
-	 * word header.
-	 * Also, old SCI versions assign 120 degrees to left & right, and 60 to up
-	 * and down. Later versions use an even 90 degree distribution.
-	 */
-	GF_SCI0_OLD				= (1 << 0),
-
 	/* Applies to all versions before 0.000.629
 	 * Older SCI versions had simpler code for GetTime()
 	 */
-	GF_SCI0_OLDGETTIME		= (1 << 1),
-
-	// ----------------------------------------------------------------------------
-
-	// SCI1 flags
-
-	/*
-	 * Used to distinguish SCI1 EGA games
-	 */
-	GF_SCI1_EGA				= (1 << 2)
+	GF_SCI0_OLDGETTIME		= (1 << 0)
 };
 
 class SciEngine : public Engine {

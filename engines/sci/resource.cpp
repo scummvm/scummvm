@@ -42,19 +42,6 @@ namespace Sci {
 
 //#define SCI_VERBOSE_RESMGR 1
 
-const char *sci_version_types[] = {
-	"SCI version undetermined (Autodetect failed / not run)",
-	"SCI version 0.xxx",
-	"SCI version 0.xxx w/ 1.000 compression",
-	"SCI version 1.000 w/ 0.xxx resource.map",
-	"SCI version 1.000 w/ special resource.map",
-	"SCI version 1.000",
-	"SCI version 1.001",
-	"SCI WIN/32"
-};
-
-const int sci_max_resource_nr[] = {65536, 1000, 2048, 2048, 2048, 65536, 65536, 65536};
-
 static const char *sci_error_types[] = {
 	"No error",
 	"I/O error",
@@ -358,7 +345,7 @@ int ResourceManager::guessSciVersion() {
 		file.close();
 
 		if (compression == 3) {
-			return SCI_VERSION_01_VGA;
+			return SCI_VERSION_01;
 		}
 	}
 
@@ -382,7 +369,7 @@ int ResourceManager::guessSciVersion() {
 		file.close();
 
 		if (compression == 3) {
-			return SCI_VERSION_01_VGA;
+			return SCI_VERSION_01;
 		}
 	}
 
@@ -484,8 +471,8 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		_mapVersion = detectMapVersion();
 		_volVersion = detectVolVersion();
 	}
-	debug("Using resource map version %d %s", _mapVersion, sci_version_types[_mapVersion]);
-	debug("Using volume version %d %s", _volVersion, sci_version_types[_volVersion]);
+	debug("Using resource map version %d %s", _mapVersion, versionNames[_mapVersion]);
+	debug("Using volume version %d %s", _volVersion, versionNames[_volVersion]);
 
 	scanNewSources();
 	addInternalSources();
@@ -495,14 +482,14 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		switch (_mapVersion) {
 		case SCI_VERSION_0:
 			if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB))) {
-				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
+				version = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
 			} else if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB))) {
 				version = guessSciVersion();
-				if (version != SCI_VERSION_01_VGA) {
-					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01_EGA;
+				if (version != SCI_VERSION_01) {
+					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01;
 				}
 			} else {
-				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
+				version = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
 			}
 			break;
 		case SCI_VERSION_01_VGA_ODD:
@@ -519,17 +506,36 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			version = SCI_VERSION_AUTODETECT;
 		}
 
+	_isVGA = false;
+
+	// Determine if the game is using EGA graphics or not
+	if (version == SCI_VERSION_0) {
+		_isVGA = false;		// There is no SCI0 VGA game
+	} else if (version >= SCI_VERSION_1_1) {
+		_isVGA = true;		// There is no SCI11 EGA game
+	} else {
+		// SCI01 or SCI1: EGA games have the second byte of their views set
+		// to 0, VGA ones to non-zero
+		int i = 0;
+
+		while (true) {
+			Resource *res = findResource(ResourceId(kResourceTypeView, i), 0);
+			if (res) {
+				_isVGA = (res->data[1] != 0);
+				break;
+			}
+			i++;
+		}
+	}
+
 	_sciVersion = version;
 	// temporary version printout - should be reworked later
 	switch (_sciVersion) {
 	case SCI_VERSION_0:
 		debug("Resmgr: Detected SCI0");
 		break;
-	case SCI_VERSION_01_EGA:
+	case SCI_VERSION_01:
 		debug("Resmgr: Detected SCI01");
-		break;
-	case SCI_VERSION_01_VGA:
-		debug("Resmgr: Detected SCI01VGA - KQ5 or similar");
 		break;
 	case SCI_VERSION_01_VGA_ODD:
 		debug("Resmgr: Detected SCI01VGA - Jones/CD or similar");
@@ -549,6 +555,11 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		debug("Resmgr: Couldn't determine SCI version");
 		break;
 	}
+
+	if (_isVGA)
+		debug("Resmgr: Detected VGA graphic resources");
+	else
+		debug("Resmgr: Detected non-VGA/EGA graphic resources");
 }
 
 ResourceManager::~ResourceManager() {
@@ -636,16 +647,7 @@ Common::List<ResourceId> *ResourceManager::listResources(ResourceType type, int 
 }
 
 Resource *ResourceManager::findResource(ResourceId id, bool lock) {
-	Resource *retval;
-
-	if (id.number >= sci_max_resource_nr[_sciVersion]) {
-		ResourceId moddedId = ResourceId(id.type, id.number % sci_max_resource_nr[_sciVersion], id.tuple);
-		warning("[resmgr] Requested invalid resource %s, mapped to %s",
-		          id.toString().c_str(), moddedId.toString().c_str());
-		id = moddedId;
-	}
-
-	retval = testResource(id);
+	Resource *retval = testResource(id);
 
 	if (!retval)
 		return NULL;

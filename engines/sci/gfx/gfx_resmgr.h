@@ -90,7 +90,7 @@ typedef Common::HashMap<int, gfx_resource_t *> IntResMap;
 /** Graphics resource manager */
 class GfxResManager {
 public:
-	GfxResManager(int version, bool isVGA, gfx_options_t *options,
+	GfxResManager(int version, gfx_options_t *options,
 			GfxDriver *driver, ResourceManager *resManager);
 
 	~GfxResManager();
@@ -311,14 +311,12 @@ public:
 	 *
 	 * @return	Number of pallete entries
 	 */
-	int getColorCount()
-	{
+	int getColorCount() {
 		return _staticPalette ? _staticPalette->size() : 0;
 	}
 
 private:
 	int _version;
-	bool _isVGA;
 	gfx_options_t *_options;
 	GfxDriver *_driver;
 	Palette *_staticPalette;

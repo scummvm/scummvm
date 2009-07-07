@@ -961,7 +961,7 @@ void run_vm(EngineState *s, int restoring) {
 			gc_countdown(s);
 
 			xs->sp -= (opparams[1] >> 1) + 1;
-			if (!(s->_flags & GF_SCI0_OLD)) {
+			if (!s->_kernel->hasOldScriptHeader()) {
 				xs->sp -= restadjust;
 				s->r_amp_rest = 0; // We just used up the restadjust, remember?
 			}
@@ -971,7 +971,7 @@ void run_vm(EngineState *s, int restoring) {
 			} else {
 				int argc = ASSERT_ARITHMETIC(xs->sp[0]);
 
-				if (!(s->_flags & GF_SCI0_OLD))
+				if (!s->_kernel->hasOldScriptHeader())
 					argc += restadjust;
 
 				if (s->_kernel->_kernelFuncs[opparams[0]].signature
@@ -988,7 +988,7 @@ void run_vm(EngineState *s, int restoring) {
 				xs_new = &(s->_executionStack.back());
 				s->_executionStackPosChanged = true;
 
-				if (!(s->_flags & GF_SCI0_OLD))
+				if (!s->_kernel->hasOldScriptHeader())
 					restadjust = s->r_amp_rest;
 
 			}
@@ -1211,10 +1211,15 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x3a: // lofss
 			r_temp.segment = xs->addr.pc.segment;
 
-			if (s->_kernel->hasLofsAbsolute())
-				r_temp.offset = opparams[0];
-			else
-				r_temp.offset = xs->addr.pc.offset + opparams[0];
+			if (s->_version >= SCI_VERSION_1_1) {
+				r_temp.offset = opparams[0] + local_script->script_size;
+			} else {
+				if (s->_kernel->hasLofsAbsolute())
+					r_temp.offset = opparams[0];
+				else
+					r_temp.offset = xs->addr.pc.offset + opparams[0];
+			}
+
 #ifndef DISABLE_VALIDATIONS
 			if (r_temp.offset >= code_buf_size) {
 				error("VM: lofss operation overflowed: %04x:%04x beyond end"
@@ -1495,7 +1500,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
 	// toggle, meaning that we must remove it for selector lookup.
-	if (s->_flags & GF_SCI0_OLD)
+	if (s->_kernel->hasOldScriptHeader())
 		selector_id &= ~1;
 
 	if (!obj) {
@@ -1654,7 +1659,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 
 	Script *scr = s->seg_manager->getScript(seg_id);
 
-	if (s->_flags & GF_SCI0_OLD) {
+	if (s->_kernel->hasOldScriptHeader()) {
 		//
 		int locals_nr = READ_LE_UINT16(script->data);
 
@@ -1830,7 +1835,7 @@ int script_instantiate(EngineState *s, int script_nr) {
 }
 
 void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
-	reg_t reg = make_reg(seg, (s->_flags & GF_SCI0_OLD) ? 2 : 0);
+	reg_t reg = make_reg(seg, s->_kernel->hasOldScriptHeader() ? 2 : 0);
 	int objtype, objlength;
 	Script *scr = s->seg_manager->getScript(seg);
 
@@ -1874,7 +1879,7 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 }
 
 void script_uninstantiate(EngineState *s, int script_nr) {
-	reg_t reg = make_reg(0, (s->_flags & GF_SCI0_OLD) ? 2 : 0);
+	reg_t reg = make_reg(0, s->_kernel->hasOldScriptHeader() ? 2 : 0);
 
 	reg.segment = s->seg_manager->segGet(script_nr);
 	Script *scr = script_locate_by_segment(s, reg.segment);

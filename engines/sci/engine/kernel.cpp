@@ -367,59 +367,102 @@ static const char *argtype_description[] = {
 	"Arithmetic"
 };
 
-Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
+Kernel::Kernel(ResourceManager *resmgr) : _resmgr(resmgr) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
-	loadSelectorNames(isOldSci0);
-	mapSelectors();     // Map a few special selectors for later use
+	detectSciFeatures(); // must be called before loadSelectorNames()
+	loadSelectorNames();
+	mapSelectors();      // Map a few special selectors for later use
 	loadOpcodes();
 	loadKernelNames();
-	mapFunctions();     // Map the kernel functions
-
-	// SCI0 games using old graphics functions (before version 0.000.502) did not have a
-	// motionCue selector
-	_oldGfxFunctions = (_selectorMap.motionCue == -1 && _resmgr->_sciVersion == SCI_VERSION_0);
-
-	// SCI1 games which use absolute lofs have the egoMoveSpeed selector
-	_hasLofsAbsolute = (_selectorMap.egoMoveSpeed != -1 && _resmgr->_sciVersion < SCI_VERSION_1_1);
-
-	printAutoDetectedFeatures();
+	mapFunctions();      // Map the kernel functions
 }
 
 Kernel::~Kernel() {
 }
 
-void Kernel::printAutoDetectedFeatures() {
-	if (_oldGfxFunctions)
-		printf("Kernel auto-detection: game found to be using old graphics functions\n");
-	else
-		printf("Kernel auto-detection: game found to be using newer graphics functions\n");
-
-	if (_hasLofsAbsolute)
-		printf("Kernel auto-detection: game found to be using absolute parameters for lofs\n");
-	else
-		printf("Kernel auto-detection: game found to be using relative parameters for lofs\n");
-
-	if (_selectorMap.setVol != -1)
-		printf("Kernel auto-detection: using SCI1 sound functions\n");
-	else if (_selectorMap.nodePtr != -1)
-		printf("Kernel auto-detection: using SCI01 sound functions\n");
-	else
-		printf("Kernel auto-detection: using SCI0 sound functions\n");
-
-	if (_resmgr->_sciVersion == SCI_VERSION_0 && _selectorMap.sightAngle != -1)
-		printf("Kernel auto-detection: found SCI0 game using a SCI1 kernel table\n");
-}
-
-void Kernel::loadSelectorNames(bool isOldSci0) {
-	int count;
-
+void Kernel::detectSciFeatures() {
 	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
 
 	if (!r) // No such resource?
 		error("Kernel: Could not retrieve selector names");
 
-	count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
+	int count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
+	features = 0;
+
+	// Initialize features based on SCI version
+	if (_resmgr->_sciVersion == SCI_VERSION_0) {
+		features |= kFeatureOldScriptHeader;
+		features |= kFeatureOldGfxFunctions;
+	}
+
+	for (int i = 0; i < count; i++) {
+		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
+		int len = READ_LE_UINT16(r->data + offset);
+
+		Common::String tmp((const char *)r->data + offset + 2, len);
+
+		if (tmp == "setTarget")     // "motionInited" can also be used
+			features &= ~kFeatureOldScriptHeader;
+
+		if (tmp == "motionCue")
+			features &= ~kFeatureOldGfxFunctions;
+
+		if (tmp == "egoMoveSpeed" && _resmgr->_sciVersion < SCI_VERSION_1_1)
+			features |= kFeatureLofsAbsolute;
+
+		if (tmp == "sightAngle" && _resmgr->_sciVersion == SCI_VERSION_0)
+			features |= kFeatureSci0Sci1Table;
+
+		if (tmp == "setVol")
+			features |= kFeatureSci1Sound;
+
+		if (tmp == "nodePtr")
+			features |= kFeatureSci01Sound;
+	}
+
+	if (features & kFeatureSci1Sound)
+		features &= ~kFeatureSci01Sound;
+
+	printf("Kernel auto-detected features:\n");
+
+	printf("Script block headers: ");
+	if (features & kFeatureOldScriptHeader)
+		printf("old\n");
+	else
+		printf("new\n");
+
+	printf("Graphics functions: ");
+	if (features & kFeatureOldGfxFunctions)
+		printf("old\n");
+	else
+		printf("new\n");
+
+	printf("lofs parameters: ");
+	if (features & kFeatureLofsAbsolute)
+		printf("absolute\n");
+	else
+		printf("relative\n");
+
+	printf("Sound functions: ");
+	if (features & kFeatureSci1Sound)
+		printf("SCI1\n");
+	else if (features & kFeatureSci01Sound)
+		printf("SCI01\n");
+	else
+		printf("SCI0\n");
+
+	if (features & kFeatureSci0Sci1Table)
+		printf("Found SCI0 game using a SCI1 kernel table\n");
+}
+
+void Kernel::loadSelectorNames() {
+	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
+
+	if (!r) // No such resource?
+		error("Kernel: Could not retrieve selector names");
+
+	int count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
 
 	for (int i = 0; i < count; i++) {
 		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
@@ -431,7 +474,7 @@ void Kernel::loadSelectorNames(bool isOldSci0) {
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
-		if (isOldSci0)
+		if (features & kFeatureOldScriptHeader)
 			_selectorNames.push_back(tmp);
 	}
 }
@@ -771,7 +814,7 @@ void Kernel::setDefaultKernelNames() {
 	// Check if we have a SCI01 game which uses a SCI1 kernel table (e.g. the KQ1 demo
 	// and full version). We do this by checking if the sightAngle selector exists, as no
 	// SCI0 game seems to have it
-	if (_selectorMap.sightAngle != -1 && isSci0)
+	if (features & kFeatureSci0Sci1Table)
 		isSci0 = false;
 
 	_kernelNames.resize(SCI_KNAMES_DEFAULT_ENTRIES_NR + (isSci0 ? 4 : 0));
@@ -832,8 +875,7 @@ bool Kernel::loadKernelNames() {
 
 	switch (_resmgr->_sciVersion) {
 	case SCI_VERSION_0:
-	case SCI_VERSION_01_EGA:
-	case SCI_VERSION_01_VGA:
+	case SCI_VERSION_01:
 	case SCI_VERSION_01_VGA_ODD:
 	case SCI_VERSION_1:
 	case SCI_VERSION_1_1:

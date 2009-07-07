@@ -374,10 +374,8 @@ const char *selector_name(EngineState *s, int selector) {
 }
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
-	int ver = _vm->getVersion();
-
-	DebugPrintf("Resource file version:        %s\n", sci_version_types[_vm->getResMgr()->_sciVersion]);
-	DebugPrintf("Emulated interpreter version: %s\n", versionNames[ver]);
+	DebugPrintf("Resource file version:        %s\n", versionNames[_vm->getResMgr()->_sciVersion]);
+	DebugPrintf("Emulated interpreter version: %s\n", versionNames[_vm->getVersion()]);
 
 	return true;
 }

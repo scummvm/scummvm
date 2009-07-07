@@ -82,10 +82,6 @@ enum ResSourceType {
 #define SCI1_RESMAP_ENTRIES_SIZE 6
 #define SCI11_RESMAP_ENTRIES_SIZE 5
 
-extern const char *sci_version_types[];
-extern const int sci_max_resource_nr[]; /**< Highest possible resource numbers */
-
-
 enum ResourceType {
 	kResourceTypeView = 0,
 	kResourceTypePic,
@@ -214,6 +210,8 @@ public:
 	int _mapVersion; //!< RESOURCE.MAP version
 	int _volVersion; //!< RESOURCE.0xx version
 
+	bool isVGA() const { return _isVGA; }
+
 	/**
 	 * Creates a new SCI resource manager.
 	 * @param version		The SCI version to look for; use SCI_VERSION_AUTODETECT
@@ -265,6 +263,7 @@ public:
 	void setAudioLanguage(int language);
 
 protected:
+	bool _isVGA; // Used to determine if the game has EGA or VGA graphics
 	int _maxMemory; //!< Config option: Maximum total byte number allocated
 	Common::List<ResourceSource *> _sources;
 	int _memoryLocked;	//!< Amount of resource bytes in locked memory

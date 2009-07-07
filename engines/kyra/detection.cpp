@@ -230,7 +230,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
-	{ // FM-Towns version
+	{ // FM-TOWNS version
 		{
 			"kyra1",
 			0,
@@ -638,7 +638,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_DEMO_FLAGS
 	},
 
-	{ // FM-Towns
+	{ // FM-TOWNS
 		{
 			"kyra2",
 			0,

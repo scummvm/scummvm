@@ -770,12 +770,12 @@ int KyraEngine_HoF::seq_introDragon(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 }
 
 int KyraEngine_HoF::seq_introDarm(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in fm-towns version)
+	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 
 int KyraEngine_HoF::seq_introLibrary2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in fm-towns version)
+	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 
@@ -788,7 +788,7 @@ int KyraEngine_HoF::seq_introMarco(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 }
 
 int KyraEngine_HoF::seq_introHand1a(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in fm-towns version)
+	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 
@@ -805,12 +805,12 @@ int KyraEngine_HoF::seq_introHand1c(WSAMovie_v2 *wsaObj, int x, int y, int frm) 
 }
 
 int KyraEngine_HoF::seq_introHand2(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in fm-towns version)
+	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 
 int KyraEngine_HoF::seq_introHand3(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
-	//NULLSUB (at least in fm-towns version)
+	//NULLSUB (at least in FM-TOWNS version)
 	return frm;
 }
 

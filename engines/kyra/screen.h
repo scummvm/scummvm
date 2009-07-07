@@ -35,6 +35,10 @@
 
 class OSystem;
 
+namespace Graphics {
+class FontSJIS;
+} // end of namespace Graphics
+
 namespace Kyra {
 
 typedef Common::Functor0<void> UpdateFunctor;
@@ -360,11 +364,6 @@ protected:
 	void drawCharANSI(uint8 c, int x, int y);
 	void drawCharSJIS(uint16 c, int x, int y);
 
-	enum {
-		SJIS_CHARSIZE = 18,
-		SJIS_CHARS = 8192
-	};
-
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 
 	template<bool noXor> static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
@@ -377,10 +376,7 @@ protected:
 	bool _useSJIS;
 	bool _use16ColorMode;
 
-	uint8 *_sjisFontData;
-	uint8 *_sjisTempPage;
-	uint8 *_sjisTempPage2;
-	uint8 *_sjisSourceChar;
+	Graphics::FontSJIS *_sjisFont;
 	uint8 _sjisInvisibleColor;
 
 	Palette *_screenPalette;
