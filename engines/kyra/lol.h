@@ -642,6 +642,7 @@ private:
 	int olol_setWallType(EMCState *script);
 	int olol_getWallType(EMCState *script);
 	int olol_drawScene(EMCState *script);
+	int olol_getRand(EMCState *script);
 	int olol_moveParty(EMCState *script);
 	int olol_delay(EMCState *script);
 	int olol_setGameFlag(EMCState *script);
@@ -1313,6 +1314,7 @@ private:
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
+	int generateRandomNumber(int min, int max);
 
 	uint8 _compassBroken;
 	uint8 _drainMagic;
@@ -1320,8 +1322,7 @@ private:
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;
-	uint32 _rndSpecial;
-
+	
 	// spells
 	typedef Common::Functor1Mem<ActiveSpell*, int, LoLEngine> SpellProc;
 	Common::Array<const SpellProc*> _spellProcs;

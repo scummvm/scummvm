@@ -552,14 +552,14 @@ void LoLEngine::updateLampStatus() {
 		if (_lampEffect == -1) {
 			if (_screen->_fadeFlag == 0)
 				setPaletteBrightness(_screen->getPalette(0), _brightness, newLampEffect);
-			_lampStatusTimer = _system->getMillis() + (10 + _rnd.getRandomNumberRng(1, 30)) * _tickLength;
+			_lampStatusTimer = _system->getMillis() + (10 + generateRandomNumber(1, 30)) * _tickLength;
 		} else {
 			if ((_lampEffect & 0xfe) == (newLampEffect & 0xfe)) {
 				if (_system->getMillis() <= _lampStatusTimer) {
 					newLampEffect = _lampEffect;
 				} else {
 					newLampEffect = _lampEffect ^ 1;
-					_lampStatusTimer = _system->getMillis() + (10 + _rnd.getRandomNumberRng(1, 30)) * _tickLength;
+					_lampStatusTimer = _system->getMillis() + (10 + generateRandomNumber(1, 30)) * _tickLength;
 				}
 			} else {
 				if (_screen->_fadeFlag == 0)

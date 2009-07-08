@@ -147,7 +147,7 @@ void LoLEngine::timerSpecialCharacterUpdate(int timerNum) {
 				break;
 
 			case 3:
-				v = _rnd.getRandomNumberRng(1, 2);
+				v = generateRandomNumber(1, 2);
 				if (inflictDamage(i, v, 0x8000, 0, 0x80)) {
 					_txt->printMessage(2, getLangString(0x4022), _characters[i].name);
 					_characters[i].characterUpdateDelay[ii] = 10;
@@ -241,7 +241,7 @@ void LoLEngine::timerUpdatePortraitAnimations(int skipUpdate) {
 		} else {
 			_characters[i].curFaceFrame = 0;
 			gui_drawCharPortraitWithStats(i);
-			_characters[i].nextAnimUpdateCountdown = (int16) _rnd.getRandomNumberRng(1, 12) + 6;
+			_characters[i].nextAnimUpdateCountdown = (int16) generateRandomNumber(1, 12) + 6;
 		}
 	}
 }
