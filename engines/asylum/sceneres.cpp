@@ -54,21 +54,21 @@ bool SceneResource::load(uint8 sceneIdx) {
 	Common::String filename = parseFilename(sceneIdx);
 
 	if (!fd->exists(filename)) {
-		printf("Scene file doesn't exist %s", filename.c_str());
+		warning("Scene file doesn't exist %s", filename.c_str());
 		return false;
 	}
 
 	fd->open(filename);
 
 	if (!fd->isOpen()) {
-		printf("Failed to load scene file %s", filename.c_str());
+		warning("Failed to load scene file %s", filename.c_str());
 		return false;
 	}
 
 	fd->read(sceneTag,6);
 
 	if (Common::String(sceneTag,6) != "DFISCN") {
-		printf("The file isn't recognized as scene %s", filename.c_str());
+		warning("The file isn't recognized as scene %s", filename.c_str());
 		return false;
 	}
 
