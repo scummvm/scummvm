@@ -241,7 +241,7 @@ void LoLEngine::timerUpdatePortraitAnimations(int skipUpdate) {
 		} else {
 			_characters[i].curFaceFrame = 0;
 			gui_drawCharPortraitWithStats(i);
-			_characters[i].nextAnimUpdateCountdown = (int16) rollDice(1, 12) + 6;
+			_characters[i].nextAnimUpdateCountdown = rollDice(1, 12) + 6;
 		}
 	}
 }

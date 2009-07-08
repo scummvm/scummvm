@@ -1080,7 +1080,7 @@ bool LoLEngine::addCharacter(int id) {
 
 	loadCharFaceShapes(numChars, id);
 
-	_characters[numChars].nextAnimUpdateCountdown = (int16) rollDice(1, 12) + 6;
+	_characters[numChars].nextAnimUpdateCountdown = rollDice(1, 12) + 6;
 
 	for (i = 0; i < 11; i++) {
 		if (_characters[numChars].items[i]) {
@@ -3609,7 +3609,7 @@ int LoLEngine::paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFl
 	if (!(_characters[charNum].flags & 1) || (_characters[charNum].flags & immunityFlags))
 		return 0;
 
-	if ((int)rollDice(1, 100) > hitChance)
+	if (rollDice(1, 100) > hitChance)
 		return 0;
 
 	int r = 0;
