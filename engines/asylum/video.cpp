@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -59,11 +59,11 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 	// -1 means that the video has no subtitles, -2 that it doesn't exist
 	// The negative values aren't used in the code, they just make the table easier to
 	// understand.
-	int textRes[49] = {   -1, 1088, 1279, 1122, 1286, 1132, 1133, 1134, 1135, 1136,	//  0 - 9
-						  -1,   -2, 1140, 1141,   -2,   -1, 1142,   -1,   -2, 1155,	// 10 - 19
-						1157, 1159, 1162, 1164,   -2, 1171, 1177, 1184, 1190, 1201,	// 20 - 29
-						  -2,   -2,   -2, 1207, 1213, 1217, 1223, 1227,   -2, 1228,	// 30 - 39
-						  -2, 1244, 1247, 1250, 1256, 1120, 1127,   -1,   -1};    	// 40 - 48
+	int textRes[49] = {	  -1, 1088, 1279, 1122, 1286, 1132, 1133, 1134, 1135, 1136,	//	0 - 9
+						  -1,	-2, 1140, 1141,	  -2,	-1, 1142,	-1,	  -2, 1155,	// 10 - 19
+						1157, 1159, 1162, 1164,	  -2, 1171, 1177, 1184, 1190, 1201,	// 20 - 29
+						  -2,	-2,	  -2, 1207, 1213, 1217, 1223, 1227,	  -2, 1228,	// 30 - 39
+						  -2, 1244, 1247, 1250, 1256, 1120, 1127,	-1,	  -1};		// 40 - 48
 
 	if (start) {
 		start += 20;	// skip token, newline and "CAPTION = "
@@ -120,8 +120,8 @@ Video::Video(Audio::Mixer *mixer) {
 	stopEvent.kbd  = Common::KEYCODE_ESCAPE;
 	_stopEvents.push_back(stopEvent);
 
-	_smkDecoder  = new Graphics::SmackerDecoder(mixer);
-	_player      = new VideoPlayer(_smkDecoder);
+	_smkDecoder	 = new Graphics::SmackerDecoder(mixer);
+	_player		 = new VideoPlayer(_smkDecoder);
 }
 
 Video::~Video() {
@@ -149,7 +149,7 @@ bool Video::playVideo(int number, VideoSubtitles subtitles) {
 }
 
 VideoText::VideoText() {
-    _curFontFlags = 0;
+	_curFontFlags = 0;
 	_fontResource = 0;
 
 	_textPack = new ResourcePack(0);
@@ -165,10 +165,10 @@ void VideoText::loadFont(ResourcePack *resPack, uint32 resId) {
 
 	_fontResource = new GraphicResource(resPack, resId);
 
-    if (resId > 0) {
-        // load font flag data
-        _curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F; 
-    }
+	if (resId > 0) {
+		// load font flag data
+		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F; 
+	}
 }
 
 void VideoText::drawMovieSubtitle(byte *screenBuffer, uint32 resId) {
@@ -212,17 +212,17 @@ void VideoText::drawMovieSubtitle(byte *screenBuffer, uint32 resId) {
 uint32 VideoText::getTextWidth(const char *text) {
 	assert (_fontResource);
 
-    int width = 0;
-    uint8 character = *text;
+	int width = 0;
+	uint8 character = *text;
 	const char *curChar = text;
-    while (character) {
+	while (character) {
 		GraphicFrame *font = _fontResource->getFrame(character);
-        width += font->surface.w + font->x - _curFontFlags;
+		width += font->surface.w + font->x - _curFontFlags;
 
-        curChar++;
-        character = *curChar;
-    }
-    return width;
+		curChar++;
+		character = *curChar;
+	}
+	return width;
 }
 
 void VideoText::drawText(byte *screenBuffer, int x, int y, const char *text) {
@@ -230,17 +230,17 @@ void VideoText::drawText(byte *screenBuffer, int x, int y, const char *text) {
 	const char *curChar = text;
 	int curX = x;
 
-    while (*curChar) {
+	while (*curChar) {
 		GraphicFrame *fontLetter = _fontResource->getFrame(*curChar);
 		copyToVideoFrame(screenBuffer, fontLetter, curX, y + fontLetter->y);
 		curX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
-        curChar++;
-    }
+		curChar++;
+	}
 }
 
 void VideoText::copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y) {
 	int h = frame->surface.h;
-    int w = frame->surface.w;
+	int w = frame->surface.w;
 	int screenBufferPitch = 640;
 	byte *buffer = (byte *)frame->surface.pixels;
 	byte *dest = screenBuffer + y * screenBufferPitch + x;

@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -34,23 +34,23 @@ namespace Asylum {
 int g_debugPolygons;
 
 Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
-    _sceneIdx = sceneIdx;
-    _sceneResource = new SceneResource;
-    if (_sceneResource->load(_sceneIdx)) {
-        _text = new Text(_screen);
-        _resPack = new ResourcePack(sceneIdx);
+	_sceneIdx = sceneIdx;
+	_sceneResource = new SceneResource;
+	if (_sceneResource->load(_sceneIdx)) {
+		_text = new Text(_screen);
+		_resPack = new ResourcePack(sceneIdx);
 		_speechPack = new ResourcePack(3);
 
 		_sceneResource->getMainActor()->setResourcePack(_resPack);
 		
 		_text->loadFont(_resPack, _sceneResource->getWorldStats()->commonRes.font1);
 
-        char musPackFileName[10];
-	    sprintf(musPackFileName, "mus.%03d", sceneIdx);
-        _musPack = new ResourcePack(musPackFileName);
+		char musPackFileName[10];
+		sprintf(musPackFileName, "mus.%03d", sceneIdx);
+		_musPack = new ResourcePack(musPackFileName);
 
 		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.backgroundImage);
-    }
+	}
 
 	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
 
@@ -65,11 +65,11 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 Scene::~Scene() {
 	delete _cursorResource;
 	delete _bgResource;
-    delete _musPack;
+	delete _musPack;
 	delete _speechPack;
-    delete _resPack;
-    delete _text;
-    delete _sceneResource;
+	delete _resPack;
+	delete _text;
+	delete _sceneResource;
  }
 
 void Scene::enterScene() {
@@ -94,74 +94,74 @@ void Scene::enterScene() {
 }
 
 int Scene::getDefaultActionIndex() {
-    if (_sceneResource) {
-        return _sceneResource->getWorldStats()->actionListIdx;
-    }
-    else
-        return -1;
+	if (_sceneResource) {
+		return _sceneResource->getWorldStats()->actionListIdx;
+	}
+	else
+		return -1;
 }
 
 ActionDefinitions * Scene::getActionList(int actionListIndex) {
-    if ((actionListIndex >= 0) && (actionListIndex < (int)_sceneResource->getWorldStats()->numActions)) {
-        return &_sceneResource->getActionList()->actions[actionListIndex];
-    }
-    else
-        return 0;
+	if ((actionListIndex >= 0) && (actionListIndex < (int)_sceneResource->getWorldStats()->numActions)) {
+		return &_sceneResource->getActionList()->actions[actionListIndex];
+	}
+	else
+		return 0;
 }
 
 void Scene::setActorPosition(int actorIndex, int x, int y) {
-    if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
-        _sceneResource->getWorldStats()->actors[actorIndex].boundingRect.left = x;
-        _sceneResource->getWorldStats()->actors[actorIndex].boundingRect.top = y;
-    }
-    
-    // FIXME - Remove this once mainActor uses proper actor info
-    if (actorIndex == 0) {
-        _sceneResource->getMainActor()->_actorX = x;
-        _sceneResource->getMainActor()->_actorY = y;
-    }
+	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
+		_sceneResource->getWorldStats()->actors[actorIndex].boundingRect.left = x;
+		_sceneResource->getWorldStats()->actors[actorIndex].boundingRect.top = y;
+	}
+	
+	// FIXME - Remove this once mainActor uses proper actor info
+	if (actorIndex == 0) {
+		_sceneResource->getMainActor()->_actorX = x;
+		_sceneResource->getMainActor()->_actorY = y;
+	}
 }
 
 void Scene::setActorAction(int actorIndex, int action) {
-    if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
-        _sceneResource->getWorldStats()->actors[actorIndex].direction = action;
-    }
-    
-    // FIXME - Remove this once mainActor uses proper actor info
-    if (actorIndex == 0) {
-        if(_sceneResource->getMainActor())
-        _sceneResource->getMainActor()->setActionByIndex(action);  // The action appears to be an index rather than a direct resId
-    }
+	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
+		_sceneResource->getWorldStats()->actors[actorIndex].direction = action;
+	}
+	
+	// FIXME - Remove this once mainActor uses proper actor info
+	if (actorIndex == 0) {
+		if(_sceneResource->getMainActor())
+		_sceneResource->getMainActor()->setActionByIndex(action);  // The action appears to be an index rather than a direct resId
+	}
 }
 
 void Scene::actorVisible(int actorIndex, bool visible) {
-    if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
-        if(visible) //  TODO - enums for flags (0x01 is visible)
-            _sceneResource->getWorldStats()->actors[actorIndex].flags |= 0x01;
-        else
-            _sceneResource->getWorldStats()->actors[actorIndex].flags &= 0xFFFFFFFE;
-    }
-    
-    
-    // FIXME - Remove this once mainActor uses proper actor info
-    if (actorIndex == 0) {
-        //if(_sceneResource->getMainActor())
-        //_sceneResource->getMainActor()->setAction(action);
-    }
+	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
+		if(visible) //	TODO - enums for flags (0x01 is visible)
+			_sceneResource->getWorldStats()->actors[actorIndex].flags |= 0x01;
+		else
+			_sceneResource->getWorldStats()->actors[actorIndex].flags &= 0xFFFFFFFE;
+	}
+	
+	
+	// FIXME - Remove this once mainActor uses proper actor info
+	if (actorIndex == 0) {
+		//if(_sceneResource->getMainActor())
+		//_sceneResource->getMainActor()->setAction(action);
+	}
 }
 
 bool Scene::actorVisible(int actorIndex) {
-    if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
-        return _sceneResource->getWorldStats()->actors[actorIndex].flags & 0x01;    //  TODO - enums for flags (0x01 is visible)
-    }
-    
-    // FIXME - Remove this once mainActor uses proper actor info
-    if (actorIndex == 0) {
-        //if(_sceneResource->getMainActor())
-        //_sceneResource->getMainActor()->setAction(action);
-    }
-    
-    return false;
+	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
+		return _sceneResource->getWorldStats()->actors[actorIndex].flags & 0x01;	//	TODO - enums for flags (0x01 is visible)
+	}
+	
+	// FIXME - Remove this once mainActor uses proper actor info
+	if (actorIndex == 0) {
+		//if(_sceneResource->getMainActor())
+		//_sceneResource->getMainActor()->setAction(action);
+	}
+	
+	return false;
 }
 
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
@@ -227,12 +227,12 @@ void Scene::update() {
 	// Copy the background to the back buffer before updating the scene animations
 	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
 
-    updateBarrier(_screen, _resPack, 1);	// inside the middle room
-    for(uint b=0; b < _sceneResource->getWorldStats()->barriers.size(); b++) {
-        if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20) != 0)   //  TODO - enums for flags (0x20 is visible/playing?)
-            updateBarrier(_screen, _resPack, b);
-    }
-    /*
+	updateBarrier(_screen, _resPack, 1);	// inside the middle room
+	for(uint b=0; b < _sceneResource->getWorldStats()->barriers.size(); b++) {
+		if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20) != 0)	//	TODO - enums for flags (0x20 is visible/playing?)
+			updateBarrier(_screen, _resPack, b);
+	}
+	/*
 	updateBarrier(_screen, _resPack, 0);	// the "statue with fireworks" animation
 	//updateBarrier(_screen, _resPack, 1);	// inside the middle room
 	//updateBarrier(_screen, _resPack, 2);	// the lit candles at the base of the statue
@@ -252,8 +252,8 @@ void Scene::update() {
 	if (!_rightButton) {
 		//mainActor->setAction(15);	// face south
 		//mainActor->drawActorAt(_screen, mainActor->_actorX, mainActor->_actorY);
-		if (_sceneResource->getWorldStats()->actors[0].flags & 0x01)    // TESTING - only draw if visible flag
-            mainActor->drawActor(_screen);
+		if (_sceneResource->getWorldStats()->actors[0].flags & 0x01)	// TESTING - only draw if visible flag
+			mainActor->drawActor(_screen);
 	} else {
 		mainActor->walkTo(_screen, _mouseX, _mouseY);
 
@@ -300,11 +300,11 @@ void Scene::update() {
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 		PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
 		if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
-		    if (pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
-                curHotspot = (int32)p;
-                updateCursor();
-                break;
-		    }
+			if (pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
+				curHotspot = (int32)p;
+				updateCursor();
+				break;
+			}
 		}
 	}
 
@@ -315,7 +315,7 @@ void Scene::update() {
 			for (uint32 a = 0; a < worldStats->numActions; a++) {
 				if (worldStats->actions[a].polyIdx == curHotspot) {
 					printf("Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
-                            worldStats->actions[a].id, 
+							worldStats->actions[a].id, 
 							worldStats->actions[a].name,
 							worldStats->actions[a].polyIdx,
 							worldStats->actions[a].actionListIdx1,
@@ -346,7 +346,7 @@ void Scene::update() {
 #if 0
 void Scene::copyToSceneBackground(GraphicFrame *frame, int x, int y) {
 	int h = frame->surface.h;
-    int w = frame->surface.w;
+	int w = frame->surface.w;
 	byte *buffer = (byte *)frame->surface.pixels;
 	byte *dest = ((byte *)_background->surface.pixels) + y * _background->surface.w + x;
 
@@ -370,10 +370,10 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 		int startX = animRect.right == 640 ? 0 : surface->w - animRect.width();
 		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
 
-        if(surface->w > 640)
-            startX = _startX;
-        if(surface->h > 480)
-            startY = _startY;
+		if (surface->w > 640)
+			startX = _startX;
+		if (surface->h > 480)
+			startY = _startY;
 		
 		_screen->copyToBackBufferWithTransparency(((byte*)surface->pixels) +
 												  startY * surface->pitch + 
@@ -390,31 +390,31 @@ void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex)
 	BarrierItem barrier = _sceneResource->getWorldStats()->barriers[barrierIndex];
 	GraphicResource *gra = new GraphicResource(res, barrier.resId);
 	if (!gra->getFrameCount())
-        return;
-    GraphicFrame *fra = gra->getFrame(barrier.tickCount);
+		return;
+	GraphicFrame *fra = gra->getFrame(barrier.tickCount);
 
 #if 0
-    // DEBUG bounding box 
-    // FIXME this should be a generic method which draws for an entire graphicResource and not for single graphicFrames
-    fra->surface.frameRect(barrier.boundingRect, 0xFF);
+	// DEBUG bounding box 
+	// FIXME this should be a generic method which draws for an entire graphicResource and not for single graphicFrames
+	fra->surface.frameRect(barrier.boundingRect, 0xFF);
 #endif
 
 	copyToBackBufferClipped(&fra->surface, barrier.x, barrier.y);
 
 	if (barrier.tickCount < barrier.frameCount - 1) {
 		barrier.tickCount++;
-	}else{
+	} else {
 		barrier.tickCount = barrier.frameIdx;
 	}
-    
+	
 	_sceneResource->getWorldStats()->barriers[barrierIndex] = barrier;
 
-    delete gra;
+	delete gra;
 }
 
 bool Scene::pointInPoly(PolyDefinitions *poly, int x, int y) {
-    // Copied from backends/vkeybd/polygon.cpp
-    int yflag0;
+	// Copied from backends/vkeybd/polygon.cpp
+	int yflag0;
 	int yflag1;
 	bool inside_flag = false;
 	unsigned int pt;
@@ -441,27 +441,27 @@ bool Scene::pointInPoly(PolyDefinitions *poly, int x, int y) {
 
 // POLYGONS DEBUG
 void Scene::ShowPolygons() {
-    for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
-        Graphics::Surface surface;
-        PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
-        surface.create(poly.boundingRect.right - poly.boundingRect.left + 1, poly.boundingRect.bottom - poly.boundingRect.top + 1, 1);
-        
-        // Draw all lines in Polygon
-        for (uint32 i=0; i < poly.numPoints; i++) {
-            surface.drawLine(
-                poly.points[i].x - poly.boundingRect.left, 
-                poly.points[i].y - poly.boundingRect.top, 
+	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
+		Graphics::Surface surface;
+		PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
+		surface.create(poly.boundingRect.right - poly.boundingRect.left + 1, poly.boundingRect.bottom - poly.boundingRect.top + 1, 1);
+		
+		// Draw all lines in Polygon
+		for (uint32 i=0; i < poly.numPoints; i++) {
+			surface.drawLine(
+				poly.points[i].x - poly.boundingRect.left, 
+				poly.points[i].y - poly.boundingRect.top, 
 				poly.points[(i+1) % poly.numPoints].x - poly.boundingRect.left, 
 				poly.points[(i+1) % poly.numPoints].y - poly.boundingRect.top, 0xFF);
-        }
-        
-        // Draw Bounding Box
-        //surface.frameRect(Common::Rect(0, 0, surface.w, surface.h), 0xFF);   
+		}
+		
+		// Draw Bounding Box
+		//surface.frameRect(Common::Rect(0, 0, surface.w, surface.h), 0xFF);   
 
-        copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);
+		copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);
 
-        surface.free();
-    }
+		surface.free();
+	}
 }
 
 } // end of namespace Asylum

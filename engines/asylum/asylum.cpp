@@ -34,9 +34,9 @@
 namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
-    : Engine(system) {
-    
-    Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
+	: Engine(system) {
+	
+	Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
 	Common::addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
 	Common::addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");
 	Common::addDebugChannel(kDebugLevelInput, "Input", "Input events debugging");
@@ -45,15 +45,15 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
 	Common::addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
 	
-    Common::File::addDefaultDirectory(_gameDataDir.getChild("Data"));
-    Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("Data"));
+	Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("Music"));
 
-    _eventMan->registerRandomSource(_rnd, "asylum");
+	_eventMan->registerRandomSource(_rnd, "asylum");
 }
 
 AsylumEngine::~AsylumEngine() {
-    //Common::clearAllDebugChannels();
+	//Common::clearAllDebugChannels();
 	delete _console;
 	delete _scene;
 	delete _mainMenu;
@@ -63,11 +63,11 @@ AsylumEngine::~AsylumEngine() {
 }
 
 Common::Error AsylumEngine::run() {
-    Common::Error err;
-    err = init();
-    if (err != Common::kNoError)
-            return err;
-    return go();
+	Common::Error err;
+	err = init();
+	if (err != Common::kNoError)
+			return err;
+	return go();
 }
 
 // Will do the same as subroutine at address 0041A500
@@ -76,21 +76,21 @@ Common::Error AsylumEngine::init() {
 
 	initGraphics(640, 480, true);
 
-	_screen             = new Screen(_system);
-	_sound              = new Sound(_mixer);
-	_video              = new Video(_mixer);
-	_console            = new Console(this);
-	_interpreter        = 0;
-	_mainMenu           = 0;
-	_scene              = 0;
+	_screen				= new Screen(_system);
+	_sound				= new Sound(_mixer);
+	_video				= new Video(_mixer);
+	_console			= new Console(this);
+	_interpreter		= 0;
+	_mainMenu			= 0;
+	_scene				= 0;
 	_delayedVideoNumber = -1;
 	_delayedSceneNumber = -1;
 
-    return Common::kNoError;
+	return Common::kNoError;
 }
 
 Common::Error AsylumEngine::go() {
-    // initializing game
+	// initializing game
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
 	// TODO: load startup configurations (address 0041A970)
 	// TODO: init unknown game stuffs (address 0040F430)
@@ -104,9 +104,9 @@ Common::Error AsylumEngine::go() {
 	//_video->playVideo(1, kSubtitlesOn);
 
 	// Set up the game's main scene
-    _scene = new Scene(_screen, _sound, 5);
-    
-    // Set up the game's script interpreter
+	_scene = new Scene(_screen, _sound, 5);
+	
+	// Set up the game's script interpreter
 	_interpreter = new Interpreter(this);
 
 	// Set up main menu
@@ -120,7 +120,7 @@ Common::Error AsylumEngine::go() {
 		waitForTimer(55);
 	}
 
-    return Common::kNoError;
+	return Common::kNoError;
 }
 
 void AsylumEngine::waitForTimer(int msec_delay) {
@@ -196,18 +196,18 @@ void AsylumEngine::checkForDelayedVideo() {
 
 
 void AsylumEngine::checkForDelayedSceneChange() {
-    if (_delayedSceneNumber >= 0 && !_interpreter->isProcessing()) {
+	if (_delayedSceneNumber >= 0 && !_interpreter->isProcessing()) {
 		_sound->stopMusic();
 		_sound->stopSfx();
 		
-        if(_scene)
-            delete _scene;
-        _scene = new Scene(_screen, _sound, _delayedSceneNumber);
+		if (_scene)
+			delete _scene;
+		_scene = new Scene(_screen, _sound, _delayedSceneNumber);
 
-        _interpreter->doSceneChanged();
+		_interpreter->doSceneChanged();
 
-        _scene->enterScene();
-        _delayedSceneNumber = -1;
+		_scene->enterScene();
+		_delayedSceneNumber = -1;
 	}
 }
 

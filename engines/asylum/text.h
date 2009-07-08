@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -38,33 +38,33 @@ public:
 	Text(Screen *screen);
 	~Text();
 
-    void loadFont(ResourcePack *resPack, uint32 resId);
+	void loadFont(ResourcePack *resPack, uint32 resId);
 
-    void setTextPos(uint32 x, uint32 y);
-    uint32 getTextWidth(char *text);
-    uint32 getResTextWidth(uint32 resId);
+	void setTextPos(uint32 x, uint32 y);
+	uint32 getTextWidth(char *text);
+	uint32 getResTextWidth(uint32 resId);
 
-    void drawChar(char character);
-    void drawText(char *text);
+	void drawChar(char character);
+	void drawText(char *text);
 	void drawText(uint32 x, uint32 y, char *text);
 	void drawResText(uint32 resId);
 	void drawResText(uint32 x, uint32 y, uint32 resId);
 
-    void drawTextCentered(uint32 x, uint32 y, uint32 width, char *text);
-    void drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId);
+	void drawTextCentered(uint32 x, uint32 y, uint32 width, char *text);
+	void drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId);
 	void drawResTextWithValueCentered(uint32 x, uint32 y, uint32 width, uint32 resId, uint32 value);
 
-    void drawTextAlignRight(uint32 x, uint32 y, char *text);
-    void drawResTextAlignRight(uint32 x, uint32 y, uint32 resId);
+	void drawTextAlignRight(uint32 x, uint32 y, char *text);
+	void drawResTextAlignRight(uint32 x, uint32 y, uint32 resId);
 
 private:
-    Screen          *_screen;
+	Screen			*_screen;
 	GraphicResource *_fontResource;
-	ResourcePack    *_textPack;
+	ResourcePack	*_textPack;
 
 	uint32 _posX;
-    uint32 _posY;
-    uint8  _curFontFlags;
+	uint32 _posY;
+	uint8  _curFontFlags;
 
 }; // end of class Text
 

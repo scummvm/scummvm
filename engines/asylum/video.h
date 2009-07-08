@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -63,7 +63,7 @@ public:
 private:
 	void performPostProcessing(byte *screen);
 
-	VideoText		            *_text;
+	VideoText					*_text;
 	Common::Array<VideoSubtitle> _subtitles;
 };
 
@@ -76,7 +76,7 @@ public:
 
 private:
 	Common::List<Common::Event> _stopEvents;
-	Graphics::SmackerDecoder    *_smkDecoder;
+	Graphics::SmackerDecoder	*_smkDecoder;
 	VideoPlayer					*_player;
 }; // end of class Video
 
@@ -89,18 +89,18 @@ public:
 	VideoText();
 	~VideoText();
 
-    void loadFont(ResourcePack *resPack, uint32 resId);
+	void loadFont(ResourcePack *resPack, uint32 resId);
 	void drawMovieSubtitle(byte *screenBuffer, uint32 resId);
 
 private:
-    uint32 getTextWidth(const char *text);
+	uint32 getTextWidth(const char *text);
 
-    void drawText(byte *screenBuffer, int x, int y, const char *text);
+	void drawText(byte *screenBuffer, int x, int y, const char *text);
 	void copyToVideoFrame(byte *screenBuffer, GraphicFrame *frame, int x, int y);
 
 	GraphicResource *_fontResource;
-	ResourcePack    *_textPack;
-    uint8  _curFontFlags;
+	ResourcePack	*_textPack;
+	uint8  _curFontFlags;
 
 }; // end of class VideoText
 
