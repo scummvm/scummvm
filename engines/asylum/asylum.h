@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -48,27 +48,27 @@ class Video;
 class Interpreter;
 
 enum kDebugLevels {
-	kDebugLevelMain =      1 << 0,
+	kDebugLevelMain =	   1 << 0,
 	kDebugLevelResources = 1 << 1,
 	kDebugLevelSprites =   1 << 2,
-	kDebugLevelInput =     1 << 3,
-	kDebugLevelMenu =      1 << 4,
+	kDebugLevelInput =	   1 << 3,
+	kDebugLevelMenu =	   1 << 4,
 	kDebugLevelScripts =   1 << 5,
-	kDebugLevelSound =     1 << 6,
+	kDebugLevelSound =	   1 << 6,
 	kDebugLevelSavegame =  1 << 7
 };
 
 class AsylumEngine: public Engine {
 public:
 
-    AsylumEngine(OSystem *system, Common::Language language);
-    virtual ~AsylumEngine();
+	AsylumEngine(OSystem *system, Common::Language language);
+	virtual ~AsylumEngine();
 
-    // Engine APIs
-    Common::Error init();
-    Common::Error go();
-    virtual Common::Error run();
-    virtual bool hasFeature(EngineFeature f) const;
+	// Engine APIs
+	Common::Error init();
+	Common::Error go();
+	virtual Common::Error run();
+	virtual bool hasFeature(EngineFeature f) const;
 
 private:
 	void checkForEvent(bool doUpdate);
@@ -77,18 +77,18 @@ private:
 	void checkForDelayedVideo();
 	void checkForDelayedSceneChange();
 
-    Common::Language     _language;
-    Common::RandomSource _rnd;
+	Common::Language	 _language;
+	Common::RandomSource _rnd;
 
-	Console     *_console;
-	Scene       *_scene;
-    MainMenu    *_mainMenu;
-	Screen      *_screen;
-	Sound       *_sound;
-	Video       *_video;
+	Console		*_console;
+	Scene		*_scene;
+	MainMenu	*_mainMenu;
+	Screen		*_screen;
+	Sound		*_sound;
+	Video		*_video;
 	Interpreter *_interpreter;
-	int       _delayedVideoNumber;
-	int       _delayedSceneNumber;
+	int		  _delayedVideoNumber;
+	int		  _delayedSceneNumber;
 
 	friend class Console;
 	friend class Interpreter;

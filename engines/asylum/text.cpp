@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -29,9 +29,9 @@
 namespace Asylum {
 
 Text::Text(Screen *screen) : _screen(screen) {
-    _posX = 0;
-    _posY = 0;
-    _curFontFlags = 0;
+	_posX = 0;
+	_posY = 0;
+	_curFontFlags = 0;
 	_fontResource = 0;
 
 	_textPack = new ResourcePack(0);
@@ -51,36 +51,36 @@ void Text::loadFont(ResourcePack *resPack, uint32 resId) {
 
 	_fontResource = new GraphicResource(resPack, resId);
 
-    if (resId > 0) {
-        // load font flag data
-        _curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F; 
-    }
+	if (resId > 0) {
+		// load font flag data
+		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F; 
+	}
 }
-    
+	
 void Text::setTextPos(uint32 x, uint32 y) {
-    _posX = x;
-    _posY = y;
+	_posX = x;
+	_posY = y;
 }
 
 // getTextWidth at address 004357C0
 uint32 Text::getTextWidth(char *text) {
 	assert (_fontResource);
 
-    int width = 0;
-    uint8 character = *text;
-    while (character) {
+	int width = 0;
+	uint8 character = *text;
+	while (character) {
 		GraphicFrame *font = _fontResource->getFrame(character);
-        width += font->surface.w + font->x - _curFontFlags;
+		width += font->surface.w + font->x - _curFontFlags;
 
-        text++;
-        character = *text;
-    }
-    return width;
+		text++;
+		character = *text;
+	}
+	return width;
 }
 
 uint32 Text::getResTextWidth(uint32 resId) {
-    ResourceEntry *textRes = _textPack->getResource(resId);
-    return getTextWidth((char*)textRes->data);
+	ResourceEntry *textRes = _textPack->getResource(resId);
+	return getTextWidth((char*)textRes->data);
 }
 
 void Text::drawChar(char character) {
@@ -88,29 +88,29 @@ void Text::drawChar(char character) {
 
 	GraphicFrame *fontLetter = _fontResource->getFrame(character);
 	_screen->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, fontLetter->surface.w, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);
-    _posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
+	_posX += fontLetter->surface.w + fontLetter->x - _curFontFlags;
 }
 
 void Text::drawText(char *text) {
-    while (*text) {
-        drawChar(*text);
-        text++;
-    }
+	while (*text) {
+		drawChar(*text);
+		text++;
+	}
 }
 
 void Text::drawResText(uint32 resId) {
-    ResourceEntry *textRes = _textPack->getResource(resId);
-    drawText((char*)textRes->data);
+	ResourceEntry *textRes = _textPack->getResource(resId);
+	drawText((char*)textRes->data);
 }
 
 void Text::drawTextCentered(uint32 x, uint32 y, uint32 width, char *text) {
-    int textWidth = getTextWidth(text);
-    setTextPos(x + (width - textWidth) / 2, y);
-    drawText(text);
+	int textWidth = getTextWidth(text);
+	setTextPos(x + (width - textWidth) / 2, y);
+	drawText(text);
 }
 
 void Text::drawResTextWithValueCentered(uint32 x, uint32 y, uint32 width, uint32 resId, uint32 value) {
-    ResourceEntry *textRes = _textPack->getResource(resId);
+	ResourceEntry *textRes = _textPack->getResource(resId);
 	char *text = (char *)textRes->data;
 	char txt[100];
 	sprintf(txt, text, value);
@@ -118,14 +118,14 @@ void Text::drawResTextWithValueCentered(uint32 x, uint32 y, uint32 width, uint32
 }
 
 void Text::drawResTextCentered(uint32 x, uint32 y, uint32 width, uint32 resId) {
-    ResourceEntry *textRes = _textPack->getResource(resId);
-    drawTextCentered(x, y, width, (char *)textRes->data);
+	ResourceEntry *textRes = _textPack->getResource(resId);
+	drawTextCentered(x, y, width, (char *)textRes->data);
 }
 
 void Text::drawText(uint32 x, uint32 y, char *text) {
-    int textWidth = getTextWidth(text);
-    setTextPos(x - textWidth, y);
-    drawText(text);
+	int textWidth = getTextWidth(text);
+	setTextPos(x - textWidth, y);
+	drawText(text);
 }
 
 void Text::drawResText(uint32 x, uint32 y, uint32 resId) {
@@ -134,13 +134,13 @@ void Text::drawResText(uint32 x, uint32 y, uint32 resId) {
 }
 
 void Text::drawTextAlignRight(uint32 x, uint32 y, char *text) {
-    int textWidth = getTextWidth(text);
-    setTextPos(x - textWidth, y);
-    drawText(text);
+	int textWidth = getTextWidth(text);
+	setTextPos(x - textWidth, y);
+	drawText(text);
 }
 
 void Text::drawResTextAlignRight(uint32 x, uint32 y, uint32 resId) {
-    ResourceEntry *textRes = _textPack->getResource(resId);
+	ResourceEntry *textRes = _textPack->getResource(resId);
 	drawTextAlignRight(x, y, (char *)textRes->data);
 }
 

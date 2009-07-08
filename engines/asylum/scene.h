@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -46,10 +46,10 @@ struct PolyDefinitions;
 
 class Scene {
 public:
-    Scene(Screen *screen, Sound *sound, uint8 sceneIdx);
+	Scene(Screen *screen, Sound *sound, uint8 sceneIdx);
 	~Scene();
 
-    void handleEvent(Common::Event *event, bool doUpdate);
+	void handleEvent(Common::Event *event, bool doUpdate);
 
 	void enterScene();
 	void activate() { _isActive = true; }
@@ -69,40 +69,40 @@ private:
 #if 0
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
 #endif
-    void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
+	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
-	Screen        *_screen;
-    Sound         *_sound;
+	Screen		  *_screen;
+	Sound		  *_sound;
 	Common::Event *_ev;
 
-    Text            *_text;
-    SceneResource   *_sceneResource;
-    ResourcePack    *_resPack;
-	ResourcePack    *_speechPack;
-	ResourcePack    *_musPack;
-    GraphicResource *_bgResource;
+	Text			*_text;
+	SceneResource	*_sceneResource;
+	ResourcePack	*_resPack;
+	ResourcePack	*_speechPack;
+	ResourcePack	*_musPack;
+	GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
-	GraphicFrame    *_background;
+	GraphicFrame	*_background;
 
-    uint8   _sceneIdx;
-    uint32  _mouseX;
-	uint32  _mouseY;
-	int32   _startX;
-	int32   _startY;
-    bool    _leftClick;
-	bool    _rightButton;
-	uint32  _curMouseCursor;
-	int32   _cursorStep;
-	bool    _isActive;
+	uint8	_sceneIdx;
+	uint32	_mouseX;
+	uint32	_mouseY;
+	int32	_startX;
+	int32	_startY;
+	bool	_leftClick;
+	bool	_rightButton;
+	uint32	_curMouseCursor;
+	int32	_cursorStep;
+	bool	_isActive;
 
 	void update();
 	void updateCursor();
-    void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
+	void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
 
-    void ShowPolygons();
-    bool pointInPoly(PolyDefinitions *poly, int x, int y);
-    
-    friend class Interpreter;
+	void ShowPolygons();
+	bool pointInPoly(PolyDefinitions *poly, int x, int y);
+	
+	friend class Interpreter;
 }; // end of class Scene
 
 } // end of namespace Asylum
