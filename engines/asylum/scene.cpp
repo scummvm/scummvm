@@ -32,13 +32,15 @@ namespace Asylum {
 #define SCROLL_STEP 10
 
 int g_debugPolygons;
+int g_debugBarriers;
 
 Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
-	_sceneIdx = sceneIdx;
-	_sceneResource = new SceneResource;
+	_sceneIdx		= sceneIdx;
+	_sceneResource	= new SceneResource;
+
 	if (_sceneResource->load(_sceneIdx)) {
-		_text = new Text(_screen);
-		_resPack = new ResourcePack(sceneIdx);
+		_text 		= new Text(_screen);
+		_resPack 	= new ResourcePack(sceneIdx);
 		_speechPack = new ResourcePack(3);
 
 		_sceneResource->getMainActor()->setResourcePack(_resPack);
@@ -47,19 +49,21 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 
 		char musPackFileName[10];
 		sprintf(musPackFileName, "mus.%03d", sceneIdx);
-		_musPack = new ResourcePack(musPackFileName);
-
+		_musPack 	= new ResourcePack(musPackFileName);
 		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.backgroundImage);
 	}
 
 	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
 
-	_background = 0;
-	_startX = _startY = 0;
-	_leftClick = false;
+	_background  = 0;
+	_startX      = 0;
+	_startY      = 0;
+	_leftClick   = false;
 	_rightButton = false;
-	_isActive = false;
+	_isActive    = false;
+
 	g_debugPolygons = 0;
+	g_debugBarriers = 0;
 }
 
 Scene::~Scene() {
@@ -78,8 +82,8 @@ void Scene::enterScene() {
 	_background = _bgResource->getFrame(0);
 	_screen->copyToBackBuffer(((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w, 0, 0, 640, 480);
 
-	_cursorStep = 1;
-	_curMouseCursor = 0;
+	_cursorStep		= 1;
+	_curMouseCursor	= 0;
 	_screen->setCursor(_cursorResource, 0);
 	_screen->showCursor();
 
@@ -94,17 +98,15 @@ void Scene::enterScene() {
 }
 
 int Scene::getDefaultActionIndex() {
-	if (_sceneResource) {
+	if (_sceneResource)
 		return _sceneResource->getWorldStats()->actionListIdx;
-	}
 	else
 		return -1;
 }
 
 ActionDefinitions * Scene::getActionList(int actionListIndex) {
-	if ((actionListIndex >= 0) && (actionListIndex < (int)_sceneResource->getWorldStats()->numActions)) {
+	if ((actionListIndex >= 0) && (actionListIndex < (int)_sceneResource->getWorldStats()->numActions))
 		return &_sceneResource->getActionList()->actions[actionListIndex];
-	}
 	else
 		return 0;
 }
@@ -141,8 +143,7 @@ void Scene::actorVisible(int actorIndex, bool visible) {
 		else
 			_sceneResource->getWorldStats()->actors[actorIndex].flags &= 0xFFFFFFFE;
 	}
-	
-	
+
 	// FIXME - Remove this once mainActor uses proper actor info
 	if (actorIndex == 0) {
 		//if(_sceneResource->getMainActor())
@@ -151,9 +152,8 @@ void Scene::actorVisible(int actorIndex, bool visible) {
 }
 
 bool Scene::actorVisible(int actorIndex) {
-	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
+	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors))
 		return _sceneResource->getWorldStats()->actors[actorIndex].flags & 0x01;	//	TODO - enums for flags (0x01 is visible)
-	}
 	
 	// FIXME - Remove this once mainActor uses proper actor info
 	if (actorIndex == 0) {
@@ -178,7 +178,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	case Common::EVENT_RBUTTONUP:
 		delete _cursorResource;
 		_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
-		_rightButton = false;
+		_rightButton    = false;
 		break;
 	case Common::EVENT_RBUTTONDOWN:
 		_rightButton = true;
@@ -201,9 +201,10 @@ void Scene::updateCursor() {
 
 void Scene::update() {
 	//bool scrollScreen = false;
-	GraphicFrame *bg = _bgResource->getFrame(0);
-	MainActor *mainActor = _sceneResource->getMainActor();
-	WorldStats *worldStats = _sceneResource->getWorldStats();
+	GraphicFrame *bg         = _bgResource->getFrame(0);
+	MainActor    *mainActor  = _sceneResource->getMainActor();
+	WorldStats   *worldStats = _sceneResource->getWorldStats();
+
 	int32 curHotspot = -1;
 
 	// Horizontal scrolling
@@ -245,9 +246,8 @@ void Scene::update() {
 	//updateBarrier(_screen, _resPack, 9);	// going down the ladder
 	updateBarrier(_screen, _resPack, 59);	// Wobbly Guy
 	*/
-	// TODO
-	
-		// TESTING
+
+	// TESTING
 	// Main actor walking
 	if (!_rightButton) {
 		//mainActor->setAction(15);	// face south
@@ -295,6 +295,8 @@ void Scene::update() {
 
 	if (g_debugPolygons)
 		ShowPolygons();
+	if (g_debugBarriers)
+		ShowBarriers();
 
 	// Update cursor if it's in a hotspot
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
@@ -348,11 +350,11 @@ void Scene::copyToSceneBackground(GraphicFrame *frame, int x, int y) {
 	int h = frame->surface.h;
 	int w = frame->surface.w;
 	byte *buffer = (byte *)frame->surface.pixels;
-	byte *dest = ((byte *)_background->surface.pixels) + y * _background->surface.w + x;
+	byte *dest   = ((byte *)_background->surface.pixels) + y * _background->surface.w + x;
 
 	while (h--) {
 		memcpy(dest, buffer, w);
-		dest += _background->surface.w;
+		dest   += _background->surface.w;
 		buffer += frame->surface.w;
 	}
 }
@@ -387,10 +389,11 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 }
 
 void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex) {
-	BarrierItem barrier = _sceneResource->getWorldStats()->barriers[barrierIndex];
+	BarrierItem barrier  = _sceneResource->getWorldStats()->barriers[barrierIndex];
 	GraphicResource *gra = new GraphicResource(res, barrier.resId);
 	if (!gra->getFrameCount())
 		return;
+
 	GraphicFrame *fra = gra->getFrame(barrier.tickCount);
 
 #if 0
@@ -463,5 +466,22 @@ void Scene::ShowPolygons() {
 		surface.free();
 	}
 }
+
+// BARRIER DEBUGGING
+void Scene::ShowBarriers() {
+	for (uint32 p = 0; p < _sceneResource->getWorldStats()->numBarriers; p++) {
+		Graphics::Surface surface;
+		BarrierItem b = _sceneResource->getWorldStats()->barriers[p];
+
+		if (b.flags & 0x20) {
+			surface.create(b.boundingRect.right - b.boundingRect.left + 1, b.boundingRect.bottom - b.boundingRect.top + 1, 1);
+			surface.frameRect(b.boundingRect, 0x22);
+			copyToBackBufferClipped(&surface, b.x, b.y);
+		}
+
+		surface.free();
+	}
+}
+
 
 } // end of namespace Asylum
