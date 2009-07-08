@@ -1498,6 +1498,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\sjis.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\sjis.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\surface.cpp"
 				>
 			</File>
