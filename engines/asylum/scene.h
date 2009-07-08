@@ -41,8 +41,8 @@ class Sound;
 class SceneResource;
 class Text;
 class Interpreter;
-class ActionDefinitions;
-class PolyDefinitions;
+struct ActionDefinitions;
+struct PolyDefinitions;
 
 class Scene {
 public:

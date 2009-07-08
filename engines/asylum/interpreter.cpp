@@ -87,7 +87,7 @@ void Interpreter::processActionLists() {
                     break;
                 case kHideActor:
                  {
-                    int actorIndex = 0;
+                    uint32 actorIndex = 0;
                     if (currentCommand.param1 == -1)
                         ;//actorIndex = _scene->getWorldStats()->playerActor;
                     else
@@ -102,7 +102,7 @@ void Interpreter::processActionLists() {
                     break;
                 case kShowActor:
                  {
-                    int actorIndex = 0;
+                    uint32 actorIndex = 0;
                     if (currentCommand.param1 == -1)
                         ;//actorIndex = _scene->getWorldStats()->playerActor;
                     else
@@ -116,7 +116,7 @@ void Interpreter::processActionLists() {
                     }
                     break;
                 case kSetActorStats: {
-                    int actorIndex = 0;
+                    uint32 actorIndex = 0;
                     if (currentCommand.param1 == -1)
                         ;//actorIndex = _scene->getWorldStats()->playerActor;
                     else
@@ -152,7 +152,7 @@ void Interpreter::processActionLists() {
                 case kWaitUntilFramePlayed: {
                     int barrierIndex = _scene->_sceneResource->getBarrierIndexById(currentCommand.param1);
                     if (barrierIndex >= 0) {
-                        int frameNum = 0;
+                        uint32 frameNum = 0;
                         if (currentCommand.param2 == -1)
                             frameNum = _scene->_sceneResource->getWorldStats()->barriers[barrierIndex].frameCount - 1;
                         else

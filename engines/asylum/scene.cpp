@@ -145,8 +145,8 @@ void Scene::actorVisible(int actorIndex, bool visible) {
     
     // FIXME - Remove this once mainActor uses proper actor info
     if (actorIndex == 0) {
-        if(_sceneResource->getMainActor())
-        ;//_sceneResource->getMainActor()->setAction(action);
+        //if(_sceneResource->getMainActor())
+        //_sceneResource->getMainActor()->setAction(action);
     }
 }
 
@@ -157,8 +157,8 @@ bool Scene::actorVisible(int actorIndex) {
     
     // FIXME - Remove this once mainActor uses proper actor info
     if (actorIndex == 0) {
-        if(_sceneResource->getMainActor())
-        ;//_sceneResource->getMainActor()->setAction(action);
+        //if(_sceneResource->getMainActor())
+        //_sceneResource->getMainActor()->setAction(action);
     }
     
     return false;
