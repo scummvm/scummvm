@@ -156,7 +156,7 @@ public:
 		uint32	uinqueId;
 		uint32	lastTicks;
 		uint32	tocksLeft;
-		uint32	portaTicks;
+		int32	portaTicks;
 		uint32	incrVolume;
 		uint32	periodOffset;
 		/*ifne FASTSOUND
@@ -205,6 +205,8 @@ public:
 	void freePatches();
 	void freeScores();
 
+	static int32 omgItsAntiLog(uint32 val);
+	int calcNote(VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void noteOff(ChannelContext &channel, byte note);
 	void killVoice(byte num);

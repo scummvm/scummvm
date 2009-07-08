@@ -22,7 +22,6 @@
  * $Id$
  *
  */
-
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/stream.h"
@@ -124,7 +123,8 @@ void MaxTrax::interrupt() {
 					break;
 				case 0xE0:	// BEND
 					channel.pitchBend = ((stopTime & 0x7F00) >> 1) | (stopTime & 0x7f);
-					channel.pitchReal = ((int32)(channel.pitchBendRange << 8) * (channel.pitchBend - (64 << 7))) / (64 << 7);
+					// channel.pitchReal = ((int32)(channel.pitchBendRange << 8) * (channel.pitchBend - (64 << 7))) / (64 << 7);
+					channel.pitchReal = ((channel.pitchBendRange * channel.pitchBend) >> 5) - (channel.pitchBendRange << 8);
 					channel.flags |= ChannelContext::kFlagAltered;
 					break;
 				case 0xFF:	// END
@@ -165,6 +165,13 @@ void MaxTrax::interrupt() {
 
 }
 
+int32 MaxTrax::omgItsAntiLog(uint32 val) {
+	// some really weird exponential function, and some also very nonstandard "standard format" floats
+	// format is 16? bit exponent, 16 bit mantissa. and we need to scale with log(2)
+	const float v = ldexp((float)((val & 0xFFFF) + 0x10000) * (float)(0.69314718055994530942 / 65536), val >> 16);
+	return (uint32)exp(v);
+}
+
 void MaxTrax::stopMusic() {
 }
 
@@ -197,6 +204,54 @@ void MaxTrax::killVoice(byte num) {
 	Paula::disableChannel(0);
 	Paula::setChannelPeriod(num, 1);
 	Paula::setChannelVolume(num, 0);
+}
+
+int MaxTrax::calcNote(VoiceContext &voice) {
+	ChannelContext &channel = *voice.channel;
+	voice.lastPeriod = 0;
+
+	int16 bend = 0;
+	if ((voice.flags & VoiceContext::kFlagPortamento) != 0) {
+		// microtonal crap
+
+		bend = (int16)((int8)(voice.endNote - voice.baseNote) * voice.portaTicks) / channel.portamento;
+	}
+	// modulation
+	if (channel.modulation && (channel.flags & ChannelContext::kFlagModVolume) == 0) {
+		// TODO get sine
+		int32 sinevalue = 0;
+		// TODO
+	}
+
+	int32 tone = bend + channel.pitchReal;
+	// more it-never-worked microtonal code
+	tone += voice.baseNote << 8;
+
+	Patch &patch = *voice.patch;
+	tone += ((int16)patch.tune << 8) / 24;
+
+	tone -= 45 << 8; // MIDI note 45
+
+	tone = (((tone * 4) / 3) << 4);
+	enum { K_VALUE = 0x9fd77, PREF_PERIOD = 0x8fd77, PERIOD_LIMIT = 0x6f73d };
+
+	tone = K_VALUE - tone;
+	int octave = 0;
+
+	if ((voice.flags & VoiceContext::kFlagRecalc) == 0) {
+		voice.periodOffset = 0;
+		const int maxOctave = patch.sampleOctaves - 1;
+		while (tone > PREF_PERIOD && octave < maxOctave) {
+			tone -= 1 << 4;
+			voice.periodOffset += 1 <<4;
+			octave++;
+		}
+		tone -= voice.periodOffset;
+	}
+	if (tone < PERIOD_LIMIT)
+		voice.lastPeriod = (uint16)omgItsAntiLog((float)tone);
+
+	return octave;
 }
 
 int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, uint16 pri) {
@@ -246,7 +301,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 	voice.patch = &patch;
 	voice.baseNote = note;
 
-	// calc note period
+	int useOctave = calcNote(voice);
 	voice.priority = (byte)pri;
 	voice.status = VoiceContext::kStatusStart;
 
@@ -263,14 +318,13 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 	if (!period)
 		period = 1000;
 
-	int useOctave = 0;
 	// get samplestart for the given octave
 	const int8 *samplePtr = patch.samplePtr + (patch.sampleTotalLen << useOctave) - patch.sampleTotalLen;
 	if (patch.sampleAttackLen) {
 		Paula::setChannelSampleStart(voiceNum, samplePtr);
 		Paula::setChannelSampleLen(voiceNum, patch.sampleAttackLen << useOctave);
 		Paula::setChannelPeriod(voiceNum, period);
-		Paula::setChannelVolume(voiceNum, 0);
+		Paula::setChannelVolume(voiceNum, 0x64);
 
 		Paula::enableChannel(voiceNum);
 		// wait  for dma-clear
@@ -282,7 +336,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		if (!patch.sampleAttackLen) {
 			// need to enable channel
 			Paula::setChannelPeriod(voiceNum, period);
-			Paula::setChannelVolume(voiceNum, 0);
+			Paula::setChannelVolume(voiceNum, 0x64);
 
 			Paula::enableChannel(voiceNum);
 		}
