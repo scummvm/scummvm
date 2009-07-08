@@ -206,6 +206,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\asylum\interpreter.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\interpreter.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\asylum\menu.cpp"
 			>
 		</File>
