@@ -642,7 +642,7 @@ private:
 	int olol_setWallType(EMCState *script);
 	int olol_getWallType(EMCState *script);
 	int olol_drawScene(EMCState *script);
-	int olol_getRand(EMCState *script);
+	int olol_rollDice(EMCState *script);
 	int olol_moveParty(EMCState *script);
 	int olol_delay(EMCState *script);
 	int olol_setGameFlag(EMCState *script);
@@ -1314,7 +1314,7 @@ private:
 
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
-	int generateRandomNumber(int min, int max);
+	int rollDice(int times, int pips);
 
 	uint8 _compassBroken;
 	uint8 _drainMagic;

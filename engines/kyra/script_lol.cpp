@@ -135,9 +135,9 @@ int LoLEngine::olol_drawScene(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_getRand(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	return generateRandomNumber(stackPos(0), stackPos(1));
+int LoLEngine::olol_rollDice(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_rollDice(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return rollDice(stackPos(0), stackPos(1));
 }
 
 int LoLEngine::olol_moveParty(EMCState *script) {
@@ -836,10 +836,10 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->hitPoints = (l->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
 
 		if (_currentLevel == 12 && l->type == 2)
-			l->hitPoints = (l->hitPoints * (generateRandomNumber(1, 128) + 192)) >> 8;
+			l->hitPoints = (l->hitPoints * (rollDice(1, 128) + 192)) >> 8;
 
 		l->numDistAttacks = l->properties->numDistAttacks;
-		l->distAttackTick = generateRandomNumber(1, calcMonsterSkillLevel(l->id | 0x8000, 8)) - 1;
+		l->distAttackTick = rollDice(1, calcMonsterSkillLevel(l->id | 0x8000, 8)) - 1;
 		l->flyingHeight = 2;
 		l->flags = stackPos(5);
 		l->assignedItems = 0;
@@ -1382,7 +1382,7 @@ int LoLEngine::olol_characterSkillTest(EMCState *script){
 		}
 	}
 
-	return (generateRandomNumber(1, 100) > m) ? -1 : c;
+	return (rollDice(1, 100) > m) ? -1 : c;
 }
 
 int LoLEngine::olol_countAllMonsters(EMCState *script){
@@ -1445,7 +1445,7 @@ int LoLEngine::olol_calcInflictableDamage(EMCState *script) {
 int LoLEngine::olol_getInflictedDamage(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getInflictedDamage(%p) (%d)", (const void *)script, stackPos(0));
 	int mx = stackPos(0);
-	return generateRandomNumber(2, mx);
+	return rollDice(2, mx);
 }
 
 int LoLEngine::olol_checkForCertainPartyMember(EMCState *script) {
@@ -2622,7 +2622,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_setWallType);
 	Opcode(olol_getWallType);
 	Opcode(olol_drawScene);
-	Opcode(olol_getRand);
+	Opcode(olol_rollDice);
 
 	// 0x04
 	Opcode(olol_moveParty);

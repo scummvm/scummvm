@@ -1071,7 +1071,7 @@ void LoLEngine::updateMonster(MonsterInPlay *monster) {
 	monster->speedTick = 0;
 
 	if (monster->properties->flags & 0x40) {
-		monster->hitPoints += generateRandomNumber(1, 8);
+		monster->hitPoints += rollDice(1, 8);
 		if (monster->hitPoints > monster->properties->hitPoints)
 			monster->hitPoints = monster->properties->hitPoints;
 	}
@@ -1264,7 +1264,7 @@ bool LoLEngine::chasePartyWithDistanceAttacks(MonsterInPlay *monster) {
 	int s = 0;
 
 	if (monster->flags & 0x10) {
-		s = monster->properties->numDistWeapons ? generateRandomNumber(1, monster->properties->numDistWeapons) : 0;
+		s = monster->properties->numDistWeapons ? rollDice(1, monster->properties->numDistWeapons) : 0;
 	} else {
 		s = monster->curDistWeapon++;
 		if (monster->curDistWeapon >= monster->properties->numDistWeapons)
@@ -1344,7 +1344,7 @@ void LoLEngine::chasePartyWithCloseAttacks(MonsterInPlay *monster) {
 
 				if (hit) {
 					int mx = calcInflictableDamage(m, dst, hit);
-					int dmg = generateRandomNumber(2, mx );
+					int dmg = rollDice(2, mx );
 					inflictDamage(dst, dmg, m, 0, 0);
 					applyMonsterAttackSkill(monster, dst, dmg);
 				}
@@ -1364,7 +1364,7 @@ void LoLEngine::chasePartyWithCloseAttacks(MonsterInPlay *monster) {
 		walkMonster(monster);
 	} else {
 		setMonsterDirection(monster, monster->destDirection);
-		setMonsterMode(monster, (generateRandomNumber(1, 100) <= 50) ? 4 : 3);
+		setMonsterMode(monster, (rollDice(1, 100) <= 50) ? 4 : 3);
 	}
 }
 
