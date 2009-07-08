@@ -176,6 +176,9 @@ DraciEngine::~DraciEngine() {
 	delete _paletteArchive;
 	delete _objectsArchive;
 	delete _spritesArchive;
+	delete _roomsArchive;
+	delete _overlaysArchive;
+	delete _animationsArchive;
 	
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
