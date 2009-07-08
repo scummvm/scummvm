@@ -23,6 +23,14 @@
  *
  */
 
+// The code in this file is currently only used in SAGA2 (in the
+// SAGA engine), so if that engine isn't enabled, we will skip
+// compiling it. If you plan to use this code in another engine,
+// you will have to add the proper define check here.
+// Also please add the define check at the comment after the
+// matching #endif further down this file.
+#if defined(ENABLE_SAGA2)
+
 // Based on etree's Shorten tool, version 3.6.1
 // http://etree.org/shnutils/shorten/
 
@@ -526,3 +534,6 @@ AudioStream *makeShortenStream(Common::SeekableReadStream &stream) {
 }
 
 } // End of namespace Audio
+
+#endif // defined(ENABLE_SAGA2)
+
