@@ -87,7 +87,7 @@ EngineState::EngineState(ResourceManager *res, sci_version_t version, uint32 fla
 	_executionStackPosChanged = false;
 
 	r_acc = NULL_REG;
-	r_amp_rest = 0;
+	restAdjust = 0;
 	r_prev = NULL_REG;
 
 	stack_segment = 0;

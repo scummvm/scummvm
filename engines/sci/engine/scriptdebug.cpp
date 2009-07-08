@@ -34,7 +34,7 @@ namespace Sci {
 
 extern const char *selector_name(EngineState *s, int selector);
 
-DebugState debugState;
+ScriptState scriptState;
 
 int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
 	Object *obj = obj_get(s, objp);
@@ -96,11 +96,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	opsize = scr[pos.offset];
 	opcode = opsize >> 1;
-
-	if (!debugState.isValid) {
-		warning("Not in debug state");
-		return retval;
-	}
 
 	opsize &= 1; // byte if true, word if false
 
@@ -226,11 +221,11 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		}
 	}
 
-	if (pos == *debugState.p_pc) { // Extra information if debugging the current opcode
+	if (pos == scriptState.xs->addr.pc) { // Extra information if debugging the current opcode
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
 			int prop_ofs = scr[pos.offset + 1];
-			int prop_id = propertyOffsetToId(s, prop_ofs, *debugState.p_objp);
+			int prop_id = propertyOffsetToId(s, prop_ofs, scriptState.xs->objp);
 
 			printf("	(%s)", selector_name(s, prop_id));
 		}
@@ -238,38 +233,38 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	printf("\n");
 
-	if (pos == *debugState.p_pc) { // Extra information if debugging the current opcode
+	if (pos == scriptState.xs->addr.pc) { // Extra information if debugging the current opcode
 		if (opcode == op_callk) {
-			int stackframe = (scr[pos.offset + 2] >> 1) + (*debugState.p_restadjust);
-			int argc = ((*debugState.p_sp)[- stackframe - 1]).offset;
+			int stackframe = (scr[pos.offset + 2] >> 1) + (scriptState.restadjust);
+			int argc = ((scriptState.xs->sp)[- stackframe - 1]).offset;
 
 			if (!s->_kernel->hasOldScriptHeader())
-				argc += (*debugState.p_restadjust);
+				argc += (scriptState.restadjust);
 
 			printf(" Kernel params: (");
 
 			for (int j = 0; j < argc; j++) {
-				printf("%04x:%04x", PRINT_REG((*debugState.p_sp)[j - stackframe]));
+				printf("%04x:%04x", PRINT_REG((scriptState.xs->sp)[j - stackframe]));
 				if (j + 1 < argc)
 					printf(", ");
 			}
 			printf(")\n");
 		} else if ((opcode == op_send) || (opcode == op_self)) {
-			int restmod = *debugState.p_restadjust;
+			int restmod = scriptState.restadjust;
 			int stackframe = (scr[pos.offset + 1] >> 1) + restmod;
-			reg_t *sb = *debugState.p_sp;
+			reg_t *sb = scriptState.xs->sp;
 			uint16 selector;
 			reg_t fun_ref;
 
 			while (stackframe > 0) {
 				int argc = sb[- stackframe + 1].offset;
 				const char *name = NULL;
-				reg_t called_obj_addr = *debugState.p_objp;
+				reg_t called_obj_addr = scriptState.xs->objp;
 
 				if (opcode == op_send)
 					called_obj_addr = s->r_acc;
 				else if (opcode == op_self)
-					called_obj_addr = *debugState.p_objp;
+					called_obj_addr = scriptState.xs->objp;
 
 				selector = sb[- stackframe].offset;
 
@@ -313,45 +308,30 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 }
 
 
-void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *objp, int *restadjust,
-	SegmentId *segids, reg_t **variables, reg_t **variables_base, int *variables_nr, int bp) {
+void script_debug(EngineState *s, bool bp) {
 	// Do we support a separate console?
 
-	bool old_debugstate = debugState.isValid;
-
-	debugState.p_var_segs = segids;
-	debugState.p_vars = variables;
-	debugState.p_var_max = variables_nr;
-	debugState.p_var_base = variables_base;
-	debugState.p_pc = pc;
-	debugState.p_sp = sp;
-	debugState.p_pp = pp;
-	debugState.p_objp = objp;
-	debugState.p_restadjust = restadjust;
 	printf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
-	debugState.isValid = true;
-	disassemble(s, *pc, 0, 1);
-	if (debugState.seeking == kDebugSeekGlobal)
-		printf("Global %d (0x%x) = %04x:%04x\n", debugState.seekSpecial,
-		          debugState.seekSpecial, PRINT_REG(s->script_000->locals_block->_locals[debugState.seekSpecial]));
+	disassemble(s, scriptState.xs->addr.pc, 0, 1);
+	if (scriptState.seeking == kDebugSeekGlobal)
+		printf("Global %d (0x%x) = %04x:%04x\n", scriptState.seekSpecial,
+		          scriptState.seekSpecial, PRINT_REG(s->script_000->locals_block->_locals[scriptState.seekSpecial]));
 
-	debugState.isValid = old_debugstate;
-
-	if (debugState.seeking && !bp) { // Are we looking for something special?
-		MemObject *mobj = GET_SEGMENT(*s->seg_manager, pc->segment, MEM_OBJ_SCRIPT);
+	if (scriptState.seeking && !bp) { // Are we looking for something special?
+		MemObject *mobj = GET_SEGMENT(*s->seg_manager, scriptState.xs->addr.pc.segment, MEM_OBJ_SCRIPT);
 
 		if (mobj) {
 			Script *scr = (Script *)mobj;
 			byte *code_buf = scr->buf;
 			int code_buf_size = scr->buf_size;
-			int opcode = pc->offset >= code_buf_size ? 0 : code_buf[pc->offset];
+			int opcode = scriptState.xs->addr.pc.offset >= code_buf_size ? 0 : code_buf[scriptState.xs->addr.pc.offset];
 			int op = opcode >> 1;
-			int paramb1 = pc->offset + 1 >= code_buf_size ? 0 : code_buf[pc->offset + 1];
-			int paramf1 = (opcode & 1) ? paramb1 : (pc->offset + 2 >= code_buf_size ? 0 : (int16)READ_LE_UINT16(code_buf + pc->offset + 1));
+			int paramb1 = scriptState.xs->addr.pc.offset + 1 >= code_buf_size ? 0 : code_buf[scriptState.xs->addr.pc.offset + 1];
+			int paramf1 = (opcode & 1) ? paramb1 : (scriptState.xs->addr.pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_LE_UINT16(code_buf + scriptState.xs->addr.pc.offset + 1));
 
-			switch (debugState.seeking) {
+			switch (scriptState.seeking) {
 			case kDebugSeekSpecialCallk:
-				if (paramb1 != debugState.seekSpecial)
+				if (paramb1 != scriptState.seekSpecial)
 					return;
 
 			case kDebugSeekCallk: {
@@ -361,7 +341,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 			}
 
 			case kDebugSeekLevelRet: {
-				if ((op != op_ret) || (debugState.seekLevel < (int)s->_executionStack.size()-1))
+				if ((op != op_ret) || (scriptState.seekLevel < (int)s->_executionStack.size()-1))
 					return;
 				break;
 			}
@@ -373,7 +353,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 					return; // param or temp
 				if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
 					return; // locals and not running in script.000
-				if (paramf1 != debugState.seekSpecial)
+				if (paramf1 != scriptState.seekSpecial)
 					return; // CORRECT global?
 				break;
 
@@ -382,32 +362,17 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, reg_t *
 				break;
 
 			case kDebugSeekNothing:
-				// FIXME: Unhandled?
+				// We seek nothing, so just continue
 				break;
 			}
 
-			debugState.seeking = kDebugSeekNothing;
+			scriptState.seeking = kDebugSeekNothing;
 			// OK, found whatever we were looking for
 		}
 	}
-
-	debugState.isValid = (debugState.runningStep == 0);
-
-	if (debugState.isValid) {
-		debugState.p_pc = pc;
-		debugState.p_sp = sp;
-		debugState.p_pp = pp;
-		debugState.p_objp = objp;
-		debugState.p_restadjust = restadjust;
-		debugState.p_var_segs = segids;
-		debugState.p_vars = variables;
-		debugState.p_var_max = variables_nr;
-		debugState.p_var_base = variables_base;
-		
-		printf("Step #%d\n", script_step_counter);
-		disassemble(s, *pc, 0, 1);
-	}
-
+	
+	printf("Step #%d\n", script_step_counter);
+	disassemble(s, scriptState.xs->addr.pc, 0, 1);
 }
 
 } // End of namespace Sci

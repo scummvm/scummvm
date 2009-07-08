@@ -365,7 +365,7 @@ int script_init_engine(EngineState *s) {
 
 
 	s->r_acc = s->r_prev = NULL_REG;
-	s->r_amp_rest = 0;
+	s->restAdjust = 0;
 
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet

@@ -190,11 +190,10 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 		"Dirty frames management\n");
 	*/
 
-	debugState.isValid = false;
-	debugState.seeking = kDebugSeekNothing;
-	debugState.seekLevel = 0;
-	debugState.runningStep = 0;
-	debugState.stopOnEvent = false;
+	scriptState.seeking = kDebugSeekNothing;
+	scriptState.seekLevel = 0;
+	scriptState.runningStep = 0;
+	scriptState.stopOnEvent = false;
 }
 
 Console::~Console() {
@@ -546,13 +545,13 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 
 bool Console::cmdRegisters(int argc, const char **argv) {
 	DebugPrintf("Current register values:\n");
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_vm->_gamestate->r_acc), PRINT_REG(_vm->_gamestate->r_prev), *debugState.p_restadjust);
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_vm->_gamestate->r_acc), PRINT_REG(_vm->_gamestate->r_prev), scriptState.restadjust);
 
 	if (!_vm->_gamestate->_executionStack.empty()) {
 		EngineState *s = _vm->_gamestate;	// for PRINT_STK
 		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", 
-					PRINT_REG(*debugState.p_pc), PRINT_REG(*debugState.p_objp), 
-					PRINT_STK(*debugState.p_pp), PRINT_STK(*debugState.p_sp));
+					PRINT_REG(scriptState.xs->addr.pc), PRINT_REG(scriptState.xs->objp), 
+					PRINT_STK(scriptState.xs->fp), PRINT_STK(scriptState.xs->sp));
 	} else
 		DebugPrintf("<no execution stack: pc,obj,fp omitted>\n");
 
@@ -846,7 +845,6 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 		_vm->_gamestate->successor = newstate; // Set successor
 
 		script_abort_flag = 2; // Abort current game with replay
-		debugState.isValid = false;
 
 		shrink_execution_stack(_vm->_gamestate, _vm->_gamestate->execution_stack_base + 1);
 		return 0;
@@ -877,7 +875,6 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 
 	_vm->_gamestate->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	script_abort_flag = 1;
-	debugState.isValid = false;
 
 	return false;
 }
@@ -1705,9 +1702,9 @@ bool Console::cmdVMVarlist(int argc, const char **argv) {
 	DebugPrintf("Addresses of variables in the VM:\n");
 
 	for (int i = 0; i < 4; i++) {
-		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(debugState.p_var_segs[i], debugState.p_vars[i] - debugState.p_var_base[i])));
-		if (debugState.p_var_max)
-			DebugPrintf("  total %d", debugState.p_var_max[i]);
+		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(scriptState.variables_seg[i], scriptState.variables[i] - scriptState.variables_base[i])));
+		if (scriptState.variables_max)
+			DebugPrintf("  total %d", scriptState.variables_max[i]);
 		DebugPrintf("\n");
 	}
 
@@ -1743,17 +1740,17 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-	if ((debugState.p_var_max) && (debugState.p_var_max[vartype] <= idx)) {
-		DebugPrintf("Max. index is %d (0x%x)\n", debugState.p_var_max[vartype], debugState.p_var_max[vartype]);
+	if ((scriptState.variables_max) && (scriptState.variables_max[vartype] <= idx)) {
+		DebugPrintf("Max. index is %d (0x%x)\n", scriptState.variables_max[vartype], scriptState.variables_max[vartype]);
 		return true;
 	}
 
 	switch (argc) {
 	case 2:
-		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(debugState.p_vars[vartype][idx]));
+		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(scriptState.variables[vartype][idx]));
 		break;
 	case 3:
-		if (parse_reg_t(_vm->_gamestate, argv[3], &debugState.p_vars[vartype][idx])) {
+		if (parse_reg_t(_vm->_gamestate, argv[3], &scriptState.variables[vartype][idx])) {
 			DebugPrintf("Invalid address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
@@ -1992,7 +1989,7 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 
 bool Console::cmdViewActiveObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class:\n");
-	printObject(_vm->_gamestate, *debugState.p_objp);
+	printObject(_vm->_gamestate, scriptState.xs->objp);
 
 	return true;
 }
@@ -2099,24 +2096,21 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 }
 
 bool Console::cmdStep(int argc, const char **argv) {
-	debugState.isValid = false;
 	if (argc == 2 && atoi(argv[1]) > 0)
-		debugState.runningStep = atoi(argv[1]) - 1;
+		scriptState.runningStep = atoi(argv[1]) - 1;
 
 	return true;
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
-	debugState.stopOnEvent = true;
-	debugState.isValid = false;
+	scriptState.stopOnEvent = true;
 
 	return true;
 }
 
 bool Console::cmdStepRet(int argc, const char **argv) {
-	debugState.seeking = kDebugSeekLevelRet;
-	debugState.seekLevel = _vm->_gamestate->_executionStack.size() - 1;
-	debugState.isValid = false;
+	scriptState.seeking = kDebugSeekLevelRet;
+	scriptState.seekLevel = _vm->_gamestate->_executionStack.size() - 1;
 
 	return true;
 }
@@ -2128,9 +2122,8 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 		return true;
 	}
 
-	debugState.seeking = kDebugSeekGlobal;
-	debugState.seekSpecial = atoi(argv[1]);
-	debugState.isValid = false;
+	scriptState.seeking = kDebugSeekGlobal;
+	scriptState.seekSpecial = atoi(argv[1]);
 
 	return true;
 }
@@ -2158,12 +2151,10 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 			}
 		}
 
-		debugState.seeking = kDebugSeekSpecialCallk;
-		debugState.seekSpecial = callk_index;
-		debugState.isValid = false;
+		scriptState.seeking = kDebugSeekSpecialCallk;
+		scriptState.seekSpecial = callk_index;
 	} else {
-		debugState.seeking = kDebugSeekCallk;
-		debugState.isValid = false;
+		scriptState.seeking = kDebugSeekCallk;
 	}
 
 	return true;
@@ -2339,8 +2330,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 }
 
 bool Console::cmdGo(int argc, const char **argv) {
-	debugState.seeking = kDebugSeekNothing;
-	debugState.isValid = false;
+	scriptState.seeking = kDebugSeekNothing;
 
 	return true;
 }
@@ -2754,9 +2744,8 @@ bool Console::cmdExit(int argc, const char **argv) {
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
 		script_abort_flag = 1; // Terminate VM
-		debugState.isValid = false;
-		debugState.seeking = kDebugSeekNothing;
-		debugState.runningStep = 0;
+		scriptState.seeking = kDebugSeekNothing;
+		scriptState.runningStep = 0;
 
 	} else if (!scumm_stricmp(argv[1], "now")) {
 		// Quit ungracefully
@@ -3245,34 +3234,33 @@ int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 		return 1;
 	}
 
-	debugState.isValid = false;
 	opcode = s->_heap[*p_pc];
 	opnumber = opcode >> 1;
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
 	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
-		debugState.seeking = kDebugSeekSO;
-		debugState.seekLevel = s->_executionStack.size()-1;
-		// Store in debugState.seekSpecial the offset of the next command after send
+		scriptState.seeking = kDebugSeekSO;
+		scriptState.seekLevel = s->_executionStack.size()-1;
+		// Store in scriptState.seekSpecial the offset of the next command after send
 		switch (opcode) {
 		case 0x46: // calle W
-			debugState.seekSpecial = *p_pc + 5;
+			scriptState.seekSpecial = *p_pc + 5;
 			break;
 
 		case 0x44: // callb W
 		case 0x47: // calle B
 		case 0x56: // super W
-			debugState.seekSpecial = *p_pc + 4;
+			scriptState.seekSpecial = *p_pc + 4;
 			break;
 
 		case 0x45: // callb B
 		case 0x57: // super B
 		case 0x4A: // send W
 		case 0x54: // self W
-			debugState.seekSpecial = *p_pc + 3;
+			scriptState.seekSpecial = *p_pc + 3;
 			break;
 
 		default:
-			debugState.seekSpecial = *p_pc + 2;
+			scriptState.seekSpecial = *p_pc + 2;
 		}
 	}
 
