@@ -1972,8 +1972,6 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 	return s;
 }
 
-int printObject(EngineState *s, reg_t pos);
-
 int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
@@ -1982,7 +1980,8 @@ int game_run(EngineState **_s) {
 
 	// Now: Register the first element on the execution stack-
 	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base)) {
-		printObject(s, s->game_obj);
+		Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+		con->printObject(s->game_obj);
 		warning("Failed to run the game! Aborting...");
 		return 1;
 	}

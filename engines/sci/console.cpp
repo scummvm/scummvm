@@ -1927,7 +1927,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			break;
 		case KSIG_OBJECT:
 			DebugPrintf("object\n");
-			printObject(_vm->_gamestate, reg);
+			printObject(reg);
 			break;
 		case KSIG_REF: {
 			int size;
@@ -1982,21 +1982,21 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Information on the object at the given address:\n");
-	printObject(_vm->_gamestate, addr);
+	printObject(addr);
 
 	return true;
 }
 
 bool Console::cmdViewActiveObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class:\n");
-	printObject(_vm->_gamestate, scriptState.xs->objp);
+	printObject(scriptState.xs->objp);
 
 	return true;
 }
 
 bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class at the address indexed by the accumulator:\n");
-	printObject(_vm->_gamestate, _vm->_gamestate->r_acc);
+	printObject(_vm->_gamestate->r_acc);
 
 	return true;
 }
@@ -2195,8 +2195,7 @@ bool Console::cmdDissassemble(int argc, const char **argv) {
 	}
 
 	do {
-		// TODO
-		//addr = disassemble(_vm->_gamestate, addr, 0, 0);
+		addr = disassemble(_vm->_gamestate, addr, 0, 0);
 	} while (addr.offset > 0);
 
 	return true;
@@ -2247,9 +2246,7 @@ bool Console::cmdDissassembleAddress(int argc, const char **argv) {
 	}
 
 	do {
-		// TODO
-		//vpc = disassemble(_vm->_gamestate, vpc, do_bwc, do_bytes);
-
+		vpc = disassemble(_vm->_gamestate, vpc, do_bwc, do_bytes);
 	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--op_count));
 
 	return true;
@@ -3029,47 +3026,47 @@ int Console::printNode(reg_t addr) {
 	return 0;
 }
 
-int printObject(EngineState *s, reg_t pos) {
+int Console::printObject(reg_t pos) {
+	EngineState *s = _vm->_gamestate;	// for the several defines in this function
 	Object *obj = obj_get(s, pos);
 	Object *var_container = obj;
 	int i;
-	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 
 	if (!obj) {
-		con->DebugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
+		DebugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
 		return 1;
 	}
 
 	// Object header
-	printf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
+	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
 				obj->_variables.size(), obj->methods_nr);
 
 	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
 		var_container = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
-	printf("  -- member variables:\n");
+	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->_variables.size(); i++) {
 		printf("    ");
 		if (i < var_container->variable_names_nr) {
-			printf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
+			DebugPrintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
 		} else
-			printf("p#%x = ", i);
+			DebugPrintf("p#%x = ", i);
 
 		reg_t val = obj->_variables[i];
-		printf("%04x:%04x", PRINT_REG(val));
+		DebugPrintf("%04x:%04x", PRINT_REG(val));
 
 		Object *ref = obj_get(s, val);
 		if (ref)
-			printf(" (%s)", obj_get_name(s, val));
+			DebugPrintf(" (%s)", obj_get_name(s, val));
 
-		printf("\n");
+		DebugPrintf("\n");
 	}
-	printf("  -- methods:\n");
+	DebugPrintf("  -- methods:\n");
 	for (i = 0; i < obj->methods_nr; i++) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
-		printf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
+		DebugPrintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
 	if (s->seg_manager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
-		printf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
+		DebugPrintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
 
 	return 0;
 }
