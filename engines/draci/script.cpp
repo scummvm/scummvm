@@ -450,7 +450,8 @@ int Script::run(GPL2Program program, uint16 offset) {
 			reader.pos(), _jump, reader.pos() + _jump);
 
 		// Account for GPL jump that some commands set
-		reader.seek(reader.pos() + _jump);
+		if (_jump != 0)		
+			reader.seek(_jump, SEEK_CUR);
 
 		// Reset jump
 		_jump = 0;
