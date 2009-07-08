@@ -100,6 +100,7 @@ private:
 	void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
 
 	void ShowPolygons();
+	void ShowBarriers();
 	bool pointInPoly(PolyDefinitions *poly, int x, int y);
 	
 	friend class Interpreter;

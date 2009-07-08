@@ -32,6 +32,7 @@
 namespace Asylum {
 
 extern int g_debugPolygons;
+extern int g_debugBarriers;
 
 Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -39,8 +40,9 @@ Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 	DCmd_Register("video",			WRAP_METHOD(Console, cmdPlayVideo));
 	DCmd_Register("script",			WRAP_METHOD(Console, cmdRunScript));
 	DCmd_Register("scene",			WRAP_METHOD(Console, cmdChangeScene));
-	DVar_Register("debugpolygons",  &g_debugPolygons, DVAR_INT, 0);
 
+	DVar_Register("showpolygons",  &g_debugPolygons, DVAR_INT, 0);
+	DVar_Register("showbarriers",  &g_debugBarriers, DVAR_INT, 0);
 }
 
 Console::~Console() {
