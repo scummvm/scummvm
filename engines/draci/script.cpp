@@ -41,9 +41,9 @@ void Script::setupCommandList() {
 	static const GPL2Command gplCommands[] = {
 		{ 0,  0, "gplend",				0, { 0 }, NULL },
 		{ 0,  1, "exit",				0, { 0 }, NULL },
-		{ 1,  1, "goto", 				1, { 3 }, NULL },
-		{ 2,  1, "Let", 				2, { 3, 4 }, NULL },
-		{ 3,  1, "if", 					2, { 4, 3 }, NULL },
+		{ 1,  1, "goto", 				1, { 3 }, &Script::c_Goto },
+		{ 2,  1, "Let", 				2, { 3, 4 }, &Script::c_Let },
+		{ 3,  1, "if", 					2, { 4, 3 }, &Script::c_If },
 		{ 4,  1, "Start", 				2, { 3, 2 }, &Script::start },
 		{ 5,  1, "Load", 				2, { 3, 2 }, &Script::load },
 		{ 5,  2, "StartPlay", 			2, { 3, 2 }, NULL },
@@ -246,6 +246,27 @@ void Script::start(Common::Queue<int> &params) {
 		_vm->_anims->play(animID);
 }
 
+void Script::c_If(Common::Queue<int> &params) {
+	int expression = params.pop();
+	int jump = params.pop();
+
+	if (expression)
+		_jump = jump;
+}
+
+void Script::c_Goto(Common::Queue<int> &params) {
+	int jump = params.pop();
+
+	_jump = jump;
+}
+
+void Script::c_Let(Common::Queue<int> &params) {
+	int var = params.pop() - 1;
+	int value = params.pop();
+
+	_vm->_game->setVariable(var, value);
+}
+
 /**
  * @brief Evaluates mathematical expressions
  * @param reader Stream reader set to the beginning of the expression
@@ -258,7 +279,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 	GPL2Function func;
 
 	// Read in initial math object
-	obj = (mathExpressionObject)reader.readUint16LE();
+	obj = (mathExpressionObject)reader.readSint16LE();
 
 	int value;
 	int arg1, arg2, res;
@@ -277,13 +298,13 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 		// If the object type is not known, assume that it's a number
 		default:
 		case kMathNumber:
-			value = reader.readUint16LE();
+			value = reader.readSint16LE();
 			stk.push(value);
 			debugC(3, kDraciBytecodeDebugLevel, "\t\tnumber: %d", value);
 			break;
 
 		case kMathOperator:
-			value = reader.readUint16LE();
+			value = reader.readSint16LE();
 			arg1 = stk.pop();
 			arg2 = stk.pop();
 
@@ -301,7 +322,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 			break;
 
 		case kMathVariable:
-			value = reader.readUint16LE();
+			value = reader.readSint16LE();
 
 			stk.push(_vm->_game->getVariable(value-1));
 
@@ -310,7 +331,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 			break;
 
 		case kMathFunctionCall:
-			value = reader.readUint16LE();
+			value = reader.readSint16LE();
 
 			// Fetch function
 			func = _functionList[value-1];
@@ -337,7 +358,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 			break;
 		}
 
-		obj = (mathExpressionObject) reader.readUint16LE();
+		obj = (mathExpressionObject) reader.readSint16LE();
 	}
 
 	return stk.pop();
@@ -374,12 +395,12 @@ const GPL2Command *Script::findCommand(byte num, byte subnum) {
 }
 
 /**
- * @brief GPL2 bytecode disassembler
+ * @brief GPL2 bytecode interpreter
  * @param program GPL program in the form of a GPL2Program struct
  *        offset Offset into the program where execution should begin
  *
  * GPL2 is short for Game Programming Language 2 which is the script language
- * used by Draci Historie. This is a simple disassembler for the language.
+ * used by Draci Historie. This is the interpreter for the language.
  *
  * A compiled GPL2 program consists of a stream of bytes representing commands
  * and their parameters. The syntax is as follows:
@@ -423,6 +444,17 @@ int Script::run(GPL2Program program, uint16 offset) {
 	const GPL2Command *cmd;
 	do {
 
+		debugC(3, kDraciBytecodeDebugLevel, 
+			"Program length = %d Current position = %d "
+			"Jump = %d New Position = %d", program._length,
+			reader.pos(), _jump, reader.pos() + _jump);
+
+		// Account for GPL jump that some commands set
+		reader.seek(reader.pos() + _jump);
+
+		// Reset jump
+		_jump = 0;
+
 		// Clear any parameters left on the stack from the previous command
 		// This likely won't be needed once all commands are implemented
 		params.clear();
@@ -440,22 +472,22 @@ int Script::run(GPL2Program program, uint16 offset) {
 			int tmp;
 
 			// Print command name
-			debugC(2, kDraciBytecodeDebugLevel, "%s", cmd->_name.c_str());
+			debugC(1, kDraciBytecodeDebugLevel, "%s", cmd->_name.c_str());
 
 			for (int i = 0; i < cmd->_numParams; ++i) {
 				if (cmd->_paramTypes[i] == 4) {
-					debugC(3, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
+					debugC(2, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
 					params.push(handleMathExpression(reader));
 				}
 				else {
-					tmp = reader.readUint16LE();
+					tmp = reader.readSint16LE();
 					params.push(tmp);
-					debugC(3, kDraciBytecodeDebugLevel, "\t%hu", tmp);
+					debugC(2, kDraciBytecodeDebugLevel, "\t%d", tmp);
 				}
 			}
 		}
 		else {
-			debugC(2, kDraciBytecodeDebugLevel, "Unknown opcode %hu, %hu",
+			debugC(1, kDraciBytecodeDebugLevel, "Unknown opcode %d, %d",
 				num, subnum);
 		}
 

@@ -86,17 +86,22 @@ struct GPL2Program {
 class Script {
 
 public:
-	Script(DraciEngine *vm) : _vm(vm) { setupCommandList(); };	
+	Script(DraciEngine *vm) : _vm(vm), _jump(0) { setupCommandList(); };	
 
 	int run(GPL2Program program, uint16 offset);
 
 private:
 	
+	int _jump;
+
 	/** List of all GPL commands. Initialised in the constructor. */
 	const GPL2Command *_commandList;
 	const GPL2Operator *_operatorList;
 	const GPL2Function *_functionList;
  
+	void c_If(Common::Queue<int> &params);
+	void c_Goto(Common::Queue<int> &params);
+	void c_Let(Common::Queue<int> &params);
 	void load(Common::Queue<int> &params);
 	void start(Common::Queue<int> &params);
 
