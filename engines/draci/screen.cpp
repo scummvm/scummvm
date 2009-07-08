@@ -52,7 +52,6 @@ void Screen::setPaletteEmpty(unsigned int numEntries) {
 	}
 
 	_vm->_system->setPalette(_palette, 0, numEntries);
-	copyToScreen();
 }	
 
 /**
@@ -81,7 +80,6 @@ void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 	}
 
 	_vm->_system->setPalette(_palette, start, num);
-	copyToScreen();
 }
 
 /**
