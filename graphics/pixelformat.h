@@ -65,6 +65,10 @@ struct PixelFormat {
 		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
 	}
 
+	static inline PixelFormat createFormatCLUT8() {
+		return PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
+	}
+
 	inline bool operator==(const PixelFormat &fmt) const {
 		// TODO: If aLoss==8, then the value of aShift is irrelevant, and should be ignored.
 		return 0 == memcmp(this, &fmt, sizeof(PixelFormat));
@@ -150,7 +154,7 @@ struct PixelFormat {
  * @param backend	The higher priority list, meant to be a list of formats supported by the backend
  * @param frontend	The lower priority list, meant to be a list of formats supported by the engine
  * @return			The first item on the backend list that also occurs on the frontend list
- *					or PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0) if no matching formats were found.
+ *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
  */
 inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
 #ifdef ENABLE_RGB_COLOR
@@ -161,7 +165,7 @@ inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Commo
 		}
 	}
 #endif
-	return PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
+	return PixelFormat::createFormatCLUT8();
 }
 
 } // end of namespace Graphics

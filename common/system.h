@@ -375,7 +375,7 @@ public:
 	 *    3) Graphics::PixelFormat(4, 0, 0, 0, 0, 24, 16, 8, 0)
 	 *    4) Graphics::PixelFormat(2, 3, 3, 3, 8, 10, 5, 0, 0)
 
-	 *    5) Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0)
+	 *    5) Graphics::PixelFormat::createFormatCLUT8()
 	 *
 	 * @see Graphics::PixelFormat
 	 *
@@ -387,12 +387,12 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
 #else
 	inline Graphics::PixelFormat getScreenFormat() const {
-		return Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
+		return Graphics::PixelFormat::createFormatCLUT8();
 	};
 
 	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const {
 		Common::List<Graphics::PixelFormat> list;
-		list.push_back(Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0));
+		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 		return list;
 	};
 #endif

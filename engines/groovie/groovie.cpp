@@ -78,11 +78,11 @@ Common::Error GroovieEngine::run() {
 
 		// Save the enabled mode as it can be both an RGB mode or CLUT8
 		_pixelFormat = _system->getScreenFormat();
-		_mode8bit = (_pixelFormat == Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0));
+		_mode8bit = (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8());
 		break;
 	case kGroovieT7G:
 		initGraphics(640, 480, true);
-		_pixelFormat = Graphics::PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
+		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 		break;
 	}
 
