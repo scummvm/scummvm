@@ -248,7 +248,7 @@ void Draw_v1::printTotText(int16 id) {
 			_letterToPrint = (char) *ptr;
 			spriteOperation(DRAW_DRAWLETTER);
 			_destSpriteX +=
-			    _fonts[_fontIndex]->itemWidth;
+			    _fonts[_fontIndex]->getCharWidth();
 			ptr++;
 		} else {
 			cmd = ptrEnd[17] & 0x7F;
@@ -281,7 +281,7 @@ void Draw_v1::printTotText(int16 id) {
 			spriteOperation(DRAW_PRINTTEXT);
 			if (ptrEnd[17] & 0x80) {
 				if (ptr[1] == ' ') {
-					_destSpriteX += _fonts[_fontIndex]->itemWidth;
+					_destSpriteX += _fonts[_fontIndex]->getCharWidth();
 					while (ptr[1] == ' ')
 						ptr++;
 					if (ptr[1] == 2) {
@@ -290,10 +290,10 @@ void Draw_v1::printTotText(int16 id) {
 					}
 				} else if (ptr[1] == 2 && READ_LE_UINT16(ptr + 4) == _destSpriteY) {
 					ptr += 5;
-					_destSpriteX += _fonts[_fontIndex]->itemWidth;
+					_destSpriteX += _fonts[_fontIndex]->getCharWidth();
 				}
 			} else {
-				_destSpriteX = destSpriteX + _fonts[_fontIndex]->itemWidth;
+				_destSpriteX = destSpriteX + _fonts[_fontIndex]->getCharWidth();
 			}
 			ptrEnd += 23;
 			ptr++;
@@ -341,6 +341,7 @@ void Draw_v1::spriteOperation(int16 operation) {
 		}
 	}
 
+	Font *font = 0;
 	switch (operation) {
 	case DRAW_BLITSURF:
 		_vm->_video->drawSprite(*_spritesArray[_sourceSurface],
@@ -402,20 +403,25 @@ void Draw_v1::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_PRINTTEXT:
+		font = _fonts[_fontIndex];
+		if (!font) {
+			warning("Trying to print \"%s\" with undefined font %d", _textToPrint, _fontIndex);
+			break;
+		}
+
 		len = strlen(_textToPrint);
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-				_destSpriteX + len * _fonts[_fontIndex]->itemWidth - 1,
-				_destSpriteY + _fonts[_fontIndex]->itemHeight - 1);
+				_destSpriteX + len * font->getCharWidth() - 1,
+				_destSpriteY + font->getCharHeight() - 1);
 
 		for (int i = 0; i < len; i++) {
 			_vm->_video->drawLetter(_textToPrint[i],
 			    _destSpriteX, _destSpriteY,
-			    _fonts[_fontIndex],
-			    _transparency,
+			    *font, _transparency,
 			    _frontColor, _backColor,
 			    *_spritesArray[_destSurface]);
 
-			_destSpriteX += _fonts[_fontIndex]->itemWidth;
+			_destSpriteX += font->getCharWidth();
 		}
 		break;
 
@@ -458,14 +464,19 @@ void Draw_v1::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_DRAWLETTER:
+		font = _fonts[_fontIndex];
+		if (!font) {
+			warning("Trying to print \'%c\' with undefined font %d", _letterToPrint, _fontIndex);
+			break;
+		}
+
 		if (_fontToSprite[_fontIndex].sprite == -1) {
 			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
-					_destSpriteX + _fonts[_fontIndex]->itemWidth - 1,
-					_destSpriteY + _fonts[_fontIndex]->itemHeight - 1);
+					_destSpriteX + font->getCharWidth()  - 1,
+					_destSpriteY + font->getCharHeight() - 1);
 			_vm->_video->drawLetter(_letterToPrint,
 			    _destSpriteX, _destSpriteY,
-			    _fonts[_fontIndex],
-			    _transparency,
+			    *font, _transparency,
 			    _frontColor, _backColor,
 			    *_spritesArray[_destSurface]);
 			break;

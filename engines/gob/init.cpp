@@ -123,8 +123,7 @@ void Init::initGame() {
 	if (!_vm->_dataIO->existData("intro.inf")) {
 
 		for (int i = 0; i < 4; i++)
-			if (_vm->_dataIO->existData(_fontNames[i]))
-				_vm->_draw->_fonts[i] = _vm->_util->loadFont(_fontNames[i]);
+			_vm->_draw->loadFont(i, _fontNames[i]);
 
 	} else {
 		infBuf = _vm->_dataIO->getData("intro.inf");
@@ -140,8 +139,8 @@ void Init::initGame() {
 			buffer[j] = 0;
 
 			strcat(buffer, ".let");
-			if (_vm->_dataIO->existData(buffer))
-				_vm->_draw->_fonts[i] = _vm->_util->loadFont(buffer);
+
+			_vm->_draw->loadFont(i, buffer);
 
 			if ((infPtr + 1) >= infEnd)
 				break;

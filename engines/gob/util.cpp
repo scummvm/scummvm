@@ -379,38 +379,6 @@ void Util::setScrollOffset(int16 x, int16 y) {
 	_vm->_video->waitRetrace();
 }
 
-Video::FontDesc *Util::loadFont(const char *path) {
-	Video::FontDesc *fontDesc = new Video::FontDesc;
-	byte *data;
-
-	if (!fontDesc)
-		return 0;
-
-	data = _vm->_dataIO->getData(path);
-	if (!data) {
-		delete fontDesc;
-		return 0;
-	}
-
-	fontDesc->dataPtr = data + 4;
-	fontDesc->itemWidth = data[0] & 0x7F;
-	fontDesc->itemHeight = data[1];
-	fontDesc->startItem = data[2];
-	fontDesc->endItem = data[3];
-
-	fontDesc->itemSize =
-	    ((fontDesc->itemWidth - 1) / 8 + 1) * fontDesc->itemHeight;
-	fontDesc->bitWidth = fontDesc->itemWidth;
-
-	if (data[0] & 0x80)
-		fontDesc->charWidths = data + 4 + fontDesc->itemSize *
-			(fontDesc->endItem - fontDesc->startItem + 1);
-	else
-		fontDesc->charWidths = 0;
-
-	return fontDesc;
-}
-
 void Util::insertStr(const char *str1, char *str2, int16 pos) {
 	int len1 = strlen(str1);
 	int len2 = strlen(str2);

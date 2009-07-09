@@ -805,7 +805,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 		uint16 backColor, uint16 frontColor, char *str, uint16 fontIndex,
 		Type type, int16 &duration, uint16 &id, uint16 &index) {
 
-	if ((fontIndex >= 8) || !_vm->_draw->_fonts[fontIndex]) {
+	if ((fontIndex >= Draw::kFontCount) || !_vm->_draw->_fonts[fontIndex]) {
 		warning("Hotspots::updateInput(): Invalid font specified: %d", fontIndex);
 		return 0;
 	}
@@ -816,16 +816,13 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 	    ((_vm->_global->_useMouse != 0) || (_vm->_game->_forceHandleMouse != 0)))
 		handleMouse = true;
 
-	const Video::FontDesc &font = *_vm->_draw->_fonts[fontIndex];
-
-	// The font doesn't specify individual character widths => monospaced
-	bool monoSpaced = (font.charWidths == 0);
+	const Font &font = *_vm->_draw->_fonts[fontIndex];
 
 	// Current position in the string, preset to the end
 	uint32 pos      = strlen(str);
 	/* Size of input field in characters.
 	 * If the font is not monospaced, we can't know that */
-	uint32 editSize = monoSpaced ? (width / font.itemWidth) : 0;
+	uint32 editSize = font.isMonospaced() ? (width / font.getCharWidth()) : 0;
 
 	uint16 key = 0;
 	char tempStr[256];
@@ -839,11 +836,11 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 
 		// Clear input area
 		fillRect(xPos, yPos,
-		         monoSpaced ? (editSize * font.itemWidth) : width, height,
+		         font.isMonospaced() ? (editSize * font.getCharWidth()) : width, height,
 		         backColor);
 
 		// Print the current string, vertically centered
-		printText(xPos, yPos + (height - font.itemHeight) / 2,
+		printText(xPos, yPos + (height - font.getCharHeight()) / 2,
 				tempStr, fontIndex, frontColor);
 
 		// If we've reached the end of the input field, set the cursor to the last character
@@ -889,7 +886,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 			fillRect(cursorX, cursorY, cursorWidth, cursorHeight, backColor);
 
 			// Print the current string, vertically centered
-			printText(cursorX, yPos + (height - font.itemHeight) / 2,
+			printText(cursorX, yPos + (height - font.getCharHeight()) / 2,
 					tempStr, fontIndex, frontColor);
 
 			if ((key != 0) || (id != 0))
@@ -1027,8 +1024,7 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 				if (editSize == 0) {
 					// Length of the string + current character + next one
 					int length = _vm->_draw->stringLength(str, fontIndex) +
-						font.charWidths[' ' - font.startItem] +
-						font.charWidths[key - font.startItem];
+						font.getCharWidth(' ') + font.getCharWidth(key);
 
 					if (length > width)
 						// We're above the limit, ignore the key
@@ -1220,7 +1216,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 
 	int16 key   = 0;
 	int16 flags = 0;
-	Video::FontDesc *font = 0;
+	Font *font = 0;
 	uint32 funcEnter = 0, funcLeave = 0;
 
 	// Evaluate parameters for the new hotspot
@@ -1292,9 +1288,8 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		}
 
 		font = _vm->_draw->_fonts[inputs[inputCount].fontIndex];
-		if (!font->charWidths)
-			// Monospaced font
-			right = left + width * font->itemWidth - 1;
+		if (font->isMonospaced())
+			right = left + width * font->getCharWidth() - 1;
 
 		funcEnter = 0;
 		funcPos   = 0;
@@ -1890,11 +1885,11 @@ uint16 Hotspots::convertSpecialKey(uint16 key) const {
 	return key;
 }
 
-void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
+void Hotspots::getTextCursorPos(const Font &font, const char *str,
 		uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
 		uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const {
 
-	if (font.charWidths) {
+	if (!font.isMonospaced()) {
 		// Cursor to the right of the current character
 
 		cursorX      = x;
@@ -1904,14 +1899,14 @@ void Hotspots::getTextCursorPos(const Video::FontDesc &font, const char *str,
 
 		// Iterate through the string and add each character's width
 		for (uint32 i = 0; i < pos; i++)
-			cursorX += font.charWidths[str[i] - font.startItem];
+			cursorX += font.getCharWidth(str[i]);
 
 	} else {
 		// Cursor underlining the current character
 
-		cursorX      = x + font.itemWidth * pos;
+		cursorX      = x + font.getCharWidth() * pos;
 		cursorY      = y + height - 1;
-		cursorWidth  = font.itemWidth;
+		cursorWidth  = font.getCharWidth();
 		cursorHeight = 1;
 	}
 }
@@ -1969,7 +1964,7 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 		fillRect(x, y, width, height, inputs[input].backColor);
 
 		// Center the text vertically
-		y += (height - _vm->_draw->_fonts[_vm->_draw->_fontIndex]->itemHeight) / 2;
+		y += (height - _vm->_draw->_fonts[_vm->_draw->_fontIndex]->getCharHeight()) / 2;
 
 		// Draw it
 		printText(x, y, tempStr, inputs[input].fontIndex, inputs[input].frontColor);

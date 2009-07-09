@@ -28,9 +28,9 @@
 
 #include "common/keyboard.h"
 
-#include "gob/video.h"
-
 namespace Gob {
+
+class GobEngine;
 
 #define KEYBUFSIZE 16
 
@@ -120,8 +120,6 @@ public:
 	void notifyNewAnim();
 	void waitEndFrame();
 	void setScrollOffset(int16 x = -1, int16 y = -1);
-
-	Video::FontDesc *loadFont(const char *path);
 
 	static void insertStr(const char *str1, char *str2, int16 pos);
 	static void cutFromStr(char *str, int16 from, int16 cutlen);

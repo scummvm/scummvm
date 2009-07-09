@@ -488,6 +488,9 @@ int16 DataIO::openData(const char *path) {
 }
 
 bool DataIO::existData(const char *path) {
+	if (!path || (path[0] == '\0'))
+		return false;
+
 	int16 handle = openData(path);
 
 	if (handle < 0)
@@ -584,7 +587,7 @@ byte *DataIO::getData(const char *path) {
 }
 
 DataStream *DataIO::getDataStream(const char *path) {
-	if (!path || (path[0] == '\0') || !existData(path))
+	if (!existData(path))
 		return 0;
 
 	uint32 size = getDataSize(path);

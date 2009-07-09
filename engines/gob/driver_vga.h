@@ -41,7 +41,7 @@ public:
 	void fillRect(SurfaceDesc &dest, int16 left, int16 top,
 			int16 right, int16 bottom, byte color);
 	void drawLetter(unsigned char item, int16 x, int16 y,
-			Video::FontDesc *fontDesc, byte color1, byte color2,
+			const Font &font, byte color1, byte color2,
 			byte transp, SurfaceDesc &dest);
 	void drawSprite(SurfaceDesc &source, SurfaceDesc &dest, int16 left,
 			int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
