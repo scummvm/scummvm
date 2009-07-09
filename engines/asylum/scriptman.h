@@ -33,6 +33,8 @@
 namespace Asylum {
 
 struct ActionCommand;
+struct ActionItem;
+struct BarrierItem;
 
 class ScriptManager: public Common::Singleton<ScriptManager> {
 public:
@@ -43,6 +45,9 @@ public:
 	void setScript(ActionDefinitions *action);
 	void setScriptIndex(uint32 index);
 
+	void setScriptTarget(BarrierItem *barrier);
+	void setScriptTarget(ActionItem *action);
+
 	void setDelayedSceneIndex(int index) { _delayedSceneIndex = index; }
 	int  getDelayedSceneIndex() { return _delayedSceneIndex; }
 
@@ -51,6 +56,8 @@ public:
 
 	bool isInputAllowed() { return _allowInput; }
 	bool isProcessing() { return _processing; }
+
+	void setGameFlag(int flag);
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;
@@ -67,10 +74,25 @@ private:
 	Scene 			  *_scene;
 	ActionDefinitions *_currentScript;
 
+	// NOTE
+	// Storing the gameflags on the
+	// scriptmanager since this makes the
+	// most sense
+	int 		_gameFlags[1512];
+	int			_currentTarget;
+	BarrierItem *_currentTargetBarrier;
+	ActionItem  *_currentTargetAction;
+
 	friend class Console;
 
 
 }; // end of class ScriptManager
+
+enum targets {
+	kTargetNothing = 0,
+	kTargetBarrier,
+	kTargetAction
+};
 
 enum opcodes {
 	kReturn0				= 0x00,

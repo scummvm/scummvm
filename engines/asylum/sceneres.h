@@ -196,7 +196,7 @@ typedef struct CommonResources {
 	uint32 unused;
 	uint32 smallCurUp;
 	uint32 smallCurDown;
-	uint32 field_7C;
+	uint32 encounterFrameBg;
 
 } CommonResources;
 
@@ -228,10 +228,10 @@ typedef struct ActorItem {
 	// TODO field_68 till field_617
 	uint32		 reaction[8];
 	uint32		 field_638;
-	uint32		 field_63C;
-	uint32		 field_640;
-	uint32		 field_644;
-	uint32		 field_648;
+	uint32		 walkingSound1;
+	uint32		 walkingSound2;
+	uint32		 walkingSound3;
+	uint32		 walkingSound4;
 	uint32		 field_64C;
 	uint32		 field_650;
 	uint32		 grResTable[55];
