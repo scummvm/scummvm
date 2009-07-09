@@ -23,6 +23,14 @@
  *
  */
 
+// The code in this file is currently only used in SAGA2 (in the
+// SAGA engine), so if that engine isn't enabled, we will skip
+// compiling it. If you plan to use this code in another engine,
+// you will have to add the proper define check here.
+// Also please add the define check at the comment after the
+// matching #endif further down this file.
+#if defined(ENABLE_SAGA2)
+
 #ifndef SOUND_SHORTEN_H
 #define SOUND_SHORTEN_H
 
@@ -53,3 +61,7 @@ AudioStream *makeShortenStream(Common::ReadStream &stream);
 } // End of namespace Audio
 
 #endif
+
+#endif // defined(ENABLE_SAGA2)
+
+
