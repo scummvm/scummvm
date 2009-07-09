@@ -73,8 +73,7 @@ private:
 	void checkForEvent(bool doUpdate);
 	void waitForTimer(int msec_delay);
 	void updateMouseCursor();
-	void checkForDelayedVideo();
-	void checkForDelayedSceneChange();
+	void processDelayedEvents();
 
 	Common::Language	 _language;
 	Common::RandomSource _rnd;
