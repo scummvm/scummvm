@@ -728,26 +728,39 @@ int ResourceManager::detectMapVersion() {
 		}
 		return SCI_VERSION_0;
 	}
-	// SCI1E/L and some SCI1.1 maps have last directory entry set to 0xFF
-	// and offset set to filesize
-	// SCI1 have 6-bytes entries, while SCI1.1 have 5-byte entries
-	file.seek(1, SEEK_SET);
-	uint16 off1, off = file.readUint16LE();
-	uint16 nEntries  = off / 3;
-	file.seek(1, SEEK_CUR);
-	file.seek(off - 3, SEEK_SET);
-	if (file.readByte() == 0xFF && file.readUint16LE() == file.size()) {
-		file.seek(3, SEEK_SET);
-		for (int i = 0; i < nEntries; i++) {
-			file.seek(1, SEEK_CUR);
-			off1 = file.readUint16LE();
-			if ((off1 - off) % 5 && (off1 - off) % 6 == 0)
-				return SCI_VERSION_1;
-			if ((off1 - off) % 5 == 0 && (off1 - off) % 6)
-				return SCI_VERSION_1_1;
-			off = off1;
+
+	// SCI1 and SCI1.1 maps consist of a fixed 3-byte header, a directory list (3-bytes each) that has one entry
+	// of id FFh and points to EOF. The actual entries have 6-bytes on SCI1 and 5-bytes on SCI1.1
+	byte directoryType = 0;
+	uint16 directoryOffset = 0;
+	uint16 lastDirectoryOffset = 0;
+	uint16 directorySize = 0;
+	int    mapDetected = 0;
+	file.seek(0, SEEK_SET);
+	while (!file.eos()) {
+		directoryType = file.readByte();
+		directoryOffset = file.readUint16LE();
+		if ((directoryType < 0x80) || ((directoryType > 0xA0) && (directoryType != 0xFF)))
+			break;
+		// Offset is above file size? -> definitely not SCI1/SCI1.1
+		if (directoryOffset > file.size())
+			break;
+		if (lastDirectoryOffset) {
+			directorySize = directoryOffset - lastDirectoryOffset;
+			if ((directorySize % 5) && (directorySize % 6 == 0))
+				mapDetected = SCI_VERSION_1;
+			if ((directorySize % 5 == 0) && (directorySize % 6))
+				mapDetected = SCI_VERSION_1_1;
 		}
-		return SCI_VERSION_1;
+		if (directoryType==0xFF) {
+			// FFh entry needs to point to EOF
+			if (directoryOffset != file.size())
+				break;
+			if (mapDetected) 
+				return mapDetected;
+			return SCI_VERSION_1;
+		}
+		lastDirectoryOffset = directoryOffset;
 	}
 
 #ifdef ENABLE_SCI32
@@ -974,6 +987,9 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			res->file_offset = offset & (((~bMask) << 24) | 0xFFFFFF);
 			res->id = resId;
 			res->source = getVolume(map, offset >> bShift);
+			if (!res->source) {
+				warning("Could not get volume for resource %d, VolumeID %d\n", resId, offset >> bShift);
+			}
 			_resMap.setVal(resId, res);
 		}
 	} while (!file.eos());
