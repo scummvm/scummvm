@@ -41,6 +41,7 @@ public:
 
 	void setScene(Scene *scene) { _scene = scene; }
 	void setScript(ActionDefinitions *action) { _currentScript = action; }
+	void setScriptIndex(uint32 index);
 
 	void setDelayedSceneIndex(int index) { _delayedSceneIndex = index; }
 	int  getDelayedSceneIndex() { return _delayedSceneIndex; }

@@ -90,10 +90,6 @@ void Scene::enterScene() {
 	// Music testing: play the first music track
 	_sound->playMusic(_musPack, 0);
 
-	// TEST
-	// Draw the actor facing south
-	_sceneResource->getMainActor()->setAction(15);
-	_sceneResource->getMainActor()->drawActorAt(_screen, 200, 200);
 	_isActive = true;
 }
 

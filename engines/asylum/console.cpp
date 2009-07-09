@@ -65,10 +65,7 @@ bool Console::cmdRunScript(int argc, const char **argv) {
 		return true;
 	}
 	
-	/*
-	_vm->_interpreter->_currentScriptIndex = atoi(argv[1]);
-	_vm->_interpreter->_currentLine = 0;
-	*/
+	ScriptMan.setScriptIndex(atoi(argv[1]));
 
 	return false;
 }

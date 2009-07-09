@@ -43,6 +43,11 @@ ScriptManager::ScriptManager() {
 	}
 }
 
+void ScriptManager::setScriptIndex(uint32 index) {
+	_currentScript = _scene->getActionList(index);
+	_currentLine = 0;
+}
+
 void ScriptManager::processActionList() {
 	bool done = false, waitCycle = false;
 	int lineIncrement = 1;
@@ -81,7 +86,7 @@ void ScriptManager::processActionList() {
 				if (barrierIndex >= 0)
 					_scene->_sceneResource->getWorldStats()->barriers[barrierIndex].flags |= 0x20;	//	TODO - enums for flags (0x20 is visible/playing?)
 				else
-					; //debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
+					debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
 			}
 				break;
 
@@ -96,7 +101,7 @@ void ScriptManager::processActionList() {
 					_scene->actorVisible(actorIndex, false);
 				}
 				else
-					; //debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
+					debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
 			}
 				break;
 
@@ -111,7 +116,7 @@ void ScriptManager::processActionList() {
 					_scene->actorVisible(actorIndex, true);
 				}
 				else
-					; //debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
+					debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
 			}
 				break;
 
@@ -127,7 +132,7 @@ void ScriptManager::processActionList() {
 					_scene->setActorAction(actorIndex, currentCommand.param4);
 				}
 				else
-					; //debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
+					debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
 			}
 				break;
 
@@ -141,7 +146,7 @@ void ScriptManager::processActionList() {
 				if (barrierIndex >= 0)
 					_scene->_sceneResource->getWorldStats()->barriers[barrierIndex].flags &= 0xFFFFDF;	//	TODO - enums for flags (0x20 is visible/playing?)
 				else
-					; //debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
+					debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
 			}
 				break;
 
@@ -168,7 +173,7 @@ void ScriptManager::processActionList() {
 						waitCycle = true;
 					}
 				} else {
-					; //debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
+					debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
 				}
 				break;
 			}
@@ -181,11 +186,11 @@ void ScriptManager::processActionList() {
 					else
 						_scene->_sound->playSfx(_scene->_speechPack, currentCommand.param1);
 				} else
-					; //debugC(kDebugLevelScripts, "Requested invalid sound ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
+					debugC(kDebugLevelScripts, "Requested invalid sound ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
 				break;
 
 			default:
-				; //debugC(kDebugLevelScripts, "Unhandled opcode 0x%02X in Scene %d Script %d Line %d.", currentCommand.opcode, _scene->getSceneIndex(), _currentScriptIndex, _currentLine);
+				debugC(kDebugLevelScripts, "Unhandled opcode 0x%02X in Scene %d Line %d.", currentCommand.opcode, _scene->getSceneIndex(), _currentLine);
 				break;
 
 			}	// end switch
