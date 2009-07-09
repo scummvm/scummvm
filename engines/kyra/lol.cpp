@@ -1877,15 +1877,8 @@ int LoLEngine::rollDice(int times, int pips) {
 		return 0;
 
 	int res = 0;
-	int d = 0;
-
-	do {
-		int val = (((int)_rnd.getRandomNumber(0x7fff) * pips) / 0x8000) + 1;
-		if (val > pips)
-			val -= pips;
-		res += val;
-		d++;
-	} while (d < times);
+	while (times--)
+		res += _rnd.getRandomNumberRng(1, pips);
 
 	return res;
 }
