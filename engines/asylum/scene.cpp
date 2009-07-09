@@ -204,6 +204,7 @@ void Scene::update() {
 	int32 curHotspot = -1;
 	int32 curBarrier = -1;
 
+	/*
 	// Horizontal scrolling
 	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
 		_startX -= SCROLL_STEP;
@@ -221,6 +222,7 @@ void Scene::update() {
 		_startY += SCROLL_STEP;
 		//scrollScreen = true;
 	}
+	*/
 
 	// Copy the background to the back buffer before updating the scene animations
 	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
@@ -305,6 +307,21 @@ void Scene::update() {
 			}
 		}
 	}
+
+	// DEBUGGING
+	// Check current walk region
+	for (uint32 a = 0; a < worldStats->numActions; a++) {
+		if (worldStats->actions[a].actionType == 0) {
+			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[worldStats->actions[a].polyIdx];
+			if (pointInPoly(&poly, mainActor->_actorX, mainActor->_actorY)) {
+				ShowWalkRegion(&poly);
+				break;
+			}
+		}
+	}
+
+		//	if
+			//ShowWalkRegion(15);
 
 	if (_leftClick) {
 		_leftClick = false;
@@ -447,6 +464,24 @@ bool Scene::pointInPoly(PolyDefinitions *poly, int x, int y) {
 	}
 
 	return inside_flag;
+}
+
+void Scene::ShowWalkRegion(PolyDefinitions *poly) {
+	Graphics::Surface surface;
+	surface.create(poly->boundingRect.right - poly->boundingRect.left + 1, poly->boundingRect.bottom - poly->boundingRect.top + 1, 1);
+
+	// Draw all lines in Polygon
+	for (uint32 i=0; i < poly->numPoints; i++) {
+		surface.drawLine(
+			poly->points[i].x - poly->boundingRect.left,
+			poly->points[i].y - poly->boundingRect.top,
+			poly->points[(i+1) % poly->numPoints].x - poly->boundingRect.left,
+			poly->points[(i+1) % poly->numPoints].y - poly->boundingRect.top, 0x3A);
+	}
+
+	copyToBackBufferClipped(&surface, poly->boundingRect.left, poly->boundingRect.top);
+
+	surface.free();
 }
 
 // POLYGONS DEBUG

@@ -101,6 +101,7 @@ private:
 
 	void ShowPolygons();
 	void ShowBarriers();
+	void ShowWalkRegion(PolyDefinitions *poly);
 	bool pointInPoly(PolyDefinitions *poly, int x, int y);
 	
 	friend class ScriptManager;
